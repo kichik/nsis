@@ -849,6 +849,11 @@ Var /GLOBAL MUI_TEMP2
     !define "MUI_STARTMENUPAGE_${ID}_REGISTRY_VALUENAME" "${MUI_STARTMENUPAGE_REGISTRY_VALUENAME}"
   !endif
 
+  !ifndef MUI_VAR_HWND
+    Var /GLOBAL MUI_HWND
+    !define MUI_VAR_HWND
+  !endif
+
   PageEx ${MUI_PAGE_UNINSTALLER_FUNCPREFIX}custom
 
     PageCallbacks ${MUI_PAGE_UNINSTALLER_FUNCPREFIX}mui.StartmenuPre_${MUI_UNIQUEID} ${MUI_PAGE_UNINSTALLER_FUNCPREFIX}mui.StartmenuLeave_${MUI_UNIQUEID}
@@ -1313,18 +1318,24 @@ Var /GLOBAL MUI_TEMP2
 
     StrCmp $(^RTL) 0 mui.startmenu_nortl
       !ifndef MUI_STARTMENUPAGE_NODISABLE
-        StartMenu::Select /rtl /noicon /autoadd /text "${MUI_STARTMENUPAGE_TEXT_TOP}" /lastused "${MUI_STARTMENUPAGE_VARIABLE}" /checknoshortcuts "${MUI_STARTMENUPAGE_TEXT_CHECKBOX}" "${MUI_STARTMENUPAGE_DEFAULTFOLDER}"
+        StartMenu::Init /NOUNLOAD /rtl /noicon /autoadd /text "${MUI_STARTMENUPAGE_TEXT_TOP}" /lastused "${MUI_STARTMENUPAGE_VARIABLE}" /checknoshortcuts "${MUI_STARTMENUPAGE_TEXT_CHECKBOX}" "${MUI_STARTMENUPAGE_DEFAULTFOLDER}"
       !else
-        StartMenu::Select /rtl /noicon /autoadd /text "${MUI_STARTMENUPAGE_TEXT_TOP}" /lastused "${MUI_STARTMENUPAGE_VARIABLE}" "${MUI_STARTMENUPAGE_DEFAULTFOLDER}"
+        StartMenu::Init /NOUNLOAD /rtl /noicon /autoadd /text "${MUI_STARTMENUPAGE_TEXT_TOP}" /lastused "${MUI_STARTMENUPAGE_VARIABLE}" "${MUI_STARTMENUPAGE_DEFAULTFOLDER}"
       !endif
-      Goto mui.startmenu_calldone
+      Goto mui.startmenu_initdone
     mui.startmenu_nortl:
       !ifndef MUI_STARTMENUPAGE_NODISABLE
-        StartMenu::Select /noicon /autoadd /text "${MUI_STARTMENUPAGE_TEXT_TOP}" /lastused "${MUI_STARTMENUPAGE_VARIABLE}" /checknoshortcuts "${MUI_STARTMENUPAGE_TEXT_CHECKBOX}" "${MUI_STARTMENUPAGE_DEFAULTFOLDER}"
+        StartMenu::Init /NOUNLOAD /noicon /autoadd /text "${MUI_STARTMENUPAGE_TEXT_TOP}" /lastused "${MUI_STARTMENUPAGE_VARIABLE}" /checknoshortcuts "${MUI_STARTMENUPAGE_TEXT_CHECKBOX}" "${MUI_STARTMENUPAGE_DEFAULTFOLDER}"
       !else
-        StartMenu::Select /noicon /autoadd /text "${MUI_STARTMENUPAGE_TEXT_TOP}" /lastused "${MUI_STARTMENUPAGE_VARIABLE}" "${MUI_STARTMENUPAGE_DEFAULTFOLDER}"
+        StartMenu::Init /NOUNLOAD /noicon /autoadd /text "${MUI_STARTMENUPAGE_TEXT_TOP}" /lastused "${MUI_STARTMENUPAGE_VARIABLE}" "${MUI_STARTMENUPAGE_DEFAULTFOLDER}"
       !endif
-    mui.startmenu_calldone:
+    mui.startmenu_initdone:
+
+	Pop $MUI_HWND
+
+	!insertmacro MUI_PAGE_FUNCTION_CUSTOM SHOW
+
+	StartMenu::Show
 
     Pop $MUI_TEMP1
     StrCmp $MUI_TEMP1 "success" 0 +2
