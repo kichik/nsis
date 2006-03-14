@@ -1170,7 +1170,7 @@ Var /GLOBAL MUI_TEMP2
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1038
     ShowWindow $MUI_TEMP1 ${SW_HIDE}
 
-	GetDlgItem $MUI_TEMP1 $HWNDPARENT 1039
+    GetDlgItem $MUI_TEMP1 $HWNDPARENT 1039
     ShowWindow $MUI_TEMP1 ${SW_HIDE}
 
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1045
@@ -1210,7 +1210,7 @@ Var /GLOBAL MUI_TEMP2
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1038
     ShowWindow $MUI_TEMP1 ${SW_NORMAL}
 
-	GetDlgItem $MUI_TEMP1 $HWNDPARENT 1039
+    GetDlgItem $MUI_TEMP1 $HWNDPARENT 1039
     ShowWindow $MUI_TEMP1 ${SW_NORMAL}
 
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1045
@@ -1331,11 +1331,11 @@ Var /GLOBAL MUI_TEMP2
       !endif
     mui.startmenu_initdone:
 
-	Pop $MUI_HWND
+  Pop $MUI_HWND
 
-	!insertmacro MUI_PAGE_FUNCTION_CUSTOM SHOW
+  !insertmacro MUI_PAGE_FUNCTION_CUSTOM SHOW
 
-	StartMenu::Show
+  StartMenu::Show
 
     Pop $MUI_TEMP1
     StrCmp $MUI_TEMP1 "success" 0 +2
@@ -1630,7 +1630,7 @@ Var /GLOBAL MUI_TEMP2
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1038
     ShowWindow $MUI_TEMP1 ${SW_HIDE}
 
-	GetDlgItem $MUI_TEMP1 $HWNDPARENT 1039
+    GetDlgItem $MUI_TEMP1 $HWNDPARENT 1039
     ShowWindow $MUI_TEMP1 ${SW_HIDE}
 
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1045
@@ -1723,7 +1723,7 @@ Var /GLOBAL MUI_TEMP2
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1038
     ShowWindow $MUI_TEMP1 ${SW_NORMAL}
 
-	GetDlgItem $MUI_TEMP1 $HWNDPARENT 1039
+    GetDlgItem $MUI_TEMP1 $HWNDPARENT 1039
     ShowWindow $MUI_TEMP1 ${SW_NORMAL}
 
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1045
