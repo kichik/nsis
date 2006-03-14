@@ -74,6 +74,27 @@ Adds file(s) to be extracted to the current output path ($OUTDIR).
 \c File /r /x CVS myproject\*.*
 \c File /r /x *.res /x *.obj /x *.pch source\*.*
 
+\\<b\\>Note:\\</b\\> when using the \e{/r} switch, both matching directories and files will be searched. This is always done with or without the use of wildcards, even if the given path perfectly matches one directory. That means, the following directory structure:
+
+\c <DIR> something
+\c   file.dat
+\c   another.dat
+\c <DIR> dir
+\c   something
+\c   <DIR> dir2
+\c     file2.dat
+\c <DIR> another
+\c   <DIR> something
+\c     readme.txt
+
+with the following \e{File} usage:
+
+\c File /r something
+
+will match the directory named \e{something} on the root directory, the file named \e{something} in the directory named \e{dir} and the directory named \e{something} in the directory named \e{another}. To match only the directory named \e{something} on the root directory, use the following:
+
+\c File /r something\*.*
+
 \S2{rename} Rename
 
 \c [/REBOOTOK] source_file dest_file
