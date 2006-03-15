@@ -644,13 +644,45 @@ string get_file_name(const string& path) {
 
 string get_executable_path(const char* argv0) {
 #ifdef _WIN32
-  char temp_buf[1024];
+  char temp_buf[MAX_PATH+1];
   temp_buf[0] = '\0';
-  int rc = GetModuleFileName(NULL,temp_buf,1024);
+  int rc = GetModuleFileName(NULL,temp_buf,MAX_PATH);
   assert(rc != 0);
   return string(temp_buf);
-#else
-  return get_full_path(argv0);
+#elif __APPLE__
+  char temp_buf[MAXPATHLEN+1];
+  unsigned long buf_len = MAXPATHLEN;
+  int rc = _NSGetExecutablePath(temp_buf, &buf_len);
+  assert(rc == 0);
+  return string(temp_buf);
+#else /* Linux/BSD/POSIX/etc */
+  const char *path = getenv("_");
+  if( path != NULL ) return get_full_path( path );
+  else {
+    char* pathtmp;
+    size_t len = 100;
+    int nchars;
+    while(1){
+      pathtmp = (char*)realloc(path,len+1);
+      if( pathtmp == NULL ){
+        free(path);
+        return get_full_path(argv0);
+      }
+      path = pathtmp;
+      nchars = readlink("/proc/self/exe", path, len);
+      if( nchars < 0 ){
+        free(path);
+        return get_full_path(argv0);
+      }
+      if( nchars < len ){
+        path[nchars] = '\0';
+        string result(path);
+        free(path);
+        return result;
+      }
+      len *= 2;
+    }
+  }
 #endif
 }
 
