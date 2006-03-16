@@ -73,7 +73,7 @@ As of NSIS 2.01, the compiler, makensis, also compiles on POSIX platforms. POSIX
 
 If you don't have a cross compiler, you can use:
 
-\c scons SKIPSTUBS=all SKIPPLUGINS=all SKIPUTILS=all SKIPMISC=all
+\c scons SKIPSTUBS=all SKIPPLUGINS=all SKIPUTILS=all SKIPMISC=all NSIS_CONFIG_CONST_DATA_PATH=yes
 
 This should only build makensis. Once you have makensis, you can drop it in a downloaded precompiled package such as the \R{build_nightly}{nightly build} or a \W{http://sourceforge.net/project/showfiles.php?group_id=22049}{zipped release version} (nsis-x.xx.zip). Note that the in order for this to work, the precompiled package must be compiled using the exact same sources as makensis. In particular, \c{Source\\exehead\\config.h} and \c{Source\\exehead\\fileform.h} must be identical.
 
