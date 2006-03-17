@@ -488,6 +488,7 @@
 
   "installlib.file_${INSTALLLIB_UNIQUE}:"
     SetFileAttributes $R0 FILE_ATTRIBUTE_NORMAL
+	ClearErrors
     File /oname=$R0 "${LOCALFILE}"
     Return
 
