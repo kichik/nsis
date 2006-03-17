@@ -116,6 +116,30 @@ cp_util_env = util_env.Copy()
 
 test_env = defenv.Copy()
 
-# return
+### weird compiler requirements
+
+#
+# MSVC 6 SP6 doesn't like direct shifting of 64-bit integers.
+# It generates a call to ___aullshr which requires libc, which
+# we don't like. However, it does agree to work properly with
+# a call to Int64ShrlMod32.
+#
+
+conf = stub_env.Configure()
+
+int64test = """
+#include <windows.h>
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, int nCmdShow) {
+	ULARGE_INTEGER *i = 0;
+	return (int)(i->QuadPart >> 10);
+}
+"""
+
+if not conf.TryLink(int64test, '.c'):
+	stub_env.Append(CPPDEFINES = ['_NSIS_NO_INT64_SHR'])
+
+conf.Finish()
+
+### return
 
 Return('stub_env makensis_env plugin_env util_env cp_util_env test_env')
