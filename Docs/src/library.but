@@ -24,7 +24,7 @@ The macros are stored in the header file Library.nsh, which should be included i
 
 \c !include Library.nsh
 
-Note that you can only compile scripts using this system on Windows systems. It is not possible to compile on Linux etc.
+Note that the library macros are limited on non-Windows platforms. Type libraries are supported only when compiling on Windows platforms and DLL version information is required when compiling on non-Windows platforms.
 
 
 \H{library_install} Library Installation
