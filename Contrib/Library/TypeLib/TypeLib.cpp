@@ -114,6 +114,8 @@ NSISFunction(GetLibVersion) {
 			wsprintf(buf, "%d", typelibAttr->wMinorVerNum);
 			pushstring(buf);
 
+      typeLib->ReleaseTLibAttr(typelibAttr);
+
 		}
 
 		typeLib->Release();
