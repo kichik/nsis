@@ -256,6 +256,10 @@ definedlist.add("NSIS_SUPPORT_LANG_IN_STRINGS");
   definedlist.add("NSIS_CONFIG_CONST_DATA_PATH");
 #endif
 
+#ifdef _WIN32
+  definedlist.add("NSIS_WIN32_MAKENSIS");
+#endif
+
   db_opt_save=db_comp_save=db_full_size=db_opt_save_u=db_comp_save_u=db_full_size_u=0;
 
   // Added by Amir Szekely 31st July 2002
