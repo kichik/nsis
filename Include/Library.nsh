@@ -121,7 +121,7 @@
 
     !if ${TYPE} == 'T'
 
-      !error "InstallLib can only handle type libraries on Windows"
+      !error "__InstallLib_Helper_GetVersion can only handle type libraries on Windows"
 
     !endif
 
