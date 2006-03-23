@@ -52,8 +52,8 @@
     TFileOffset targetCDataBaseOffset;
     TFileOffset targetCDataSize;
 
-    SameBlock* PatchGenerator::findBlock(ChunkedFile* sourceTree,
-                                         TFileOffset targetFileStartOffset);
+    SameBlock* findBlock(ChunkedFile* sourceTree,
+                         TFileOffset targetFileStartOffset);
 //    SameBlock* findBlock(ChunkedFile* sourceTree, unsigned char* targetData, TFileOffset targetStartOffset);
     void improveSameBlockMatch(SameBlock& match, TFileOffset currentBest = 0);
   public:
