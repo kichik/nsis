@@ -32,7 +32,11 @@
 #include <vector>
 #include <stdexcept>
 
-#define EXTENDED_DIALOG ((DWORD) 0xFFFF0001)
+#ifndef __BIG_ENDIAN__
+#  define EXTENDED_DIALOG ((DWORD) 0xFFFF0001)
+#else
+#  define EXTENDED_DIALOG ((DWORD) 0x0100FFFF)
+#endif
 
 struct DialogItemTemplate {
   DWORD  dwHelpId; // Extended only
