@@ -656,12 +656,13 @@ string get_executable_path(const char* argv0) {
   assert(rc == 0);
   return string(temp_buf);
 #else /* Linux/BSD/POSIX/etc */
-  const char *path = getenv("_");
-  if( path != NULL ) return get_full_path( path );
+  const char *envpath = getenv("_");
+  if( envpath != NULL ) return get_full_path( envpath );
   else {
     char* pathtmp;
+    char* path;
     size_t len = 100;
-    int nchars;
+    size_t nchars;
     while(1){
       pathtmp = (char*)realloc(path,len+1);
       if( pathtmp == NULL ){
