@@ -71,7 +71,7 @@ CResourceEditor::CResourceEditor(BYTE* pbPE, int iSize) {
   // Pointer to the sections headers array
   PIMAGE_SECTION_HEADER sectionHeadersArray = IMAGE_FIRST_SECTION(m_ntHeaders);
 
-  m_dwResourceSectionIndex = 0xFFFFFFFF;
+  m_dwResourceSectionIndex = (DWORD) -1;
 
   // Find resource section index in the array
   for (int i = 0; i < m_ntHeaders->FileHeader.NumberOfSections; i++) {
@@ -81,6 +81,8 @@ CResourceEditor::CResourceEditor(BYTE* pbPE, int iSize) {
       // Check for invalid resource section pointer
       if (!sectionHeadersArray[i].PointerToRawData)
         throw runtime_error("Invalid resource section pointer");
+
+      break;
     }
 
     // Invalid section pointer (goes beyond the PE image)
@@ -89,7 +91,7 @@ CResourceEditor::CResourceEditor(BYTE* pbPE, int iSize) {
   }
 
   // No resource section...
-  if (m_dwResourceSectionIndex == m_ntHeaders->FileHeader.NumberOfSections)
+  if (m_dwResourceSectionIndex == (DWORD) -1)
     throw runtime_error("PE file doesn't contain any resource section");
 
   // Pointer to section data, the first resource directory
