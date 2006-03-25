@@ -2926,7 +2926,11 @@ int CEXEBuild::uninstall_generate()
 
     MMapBuf udata;
 
-    udata.add(&fh, sizeof(fh));
+    {
+      growbuf_writer_sink sink(&udata);
+      firstheader_writer w(&sink);
+      w.write(&fh);
+    }
 
     ubuild_datablock.setro(TRUE);
 
@@ -2987,7 +2991,7 @@ int CEXEBuild::uninstall_generate()
       }
 
       firstheader *_fh=(firstheader *)udata.get(0, sizeof(firstheader));
-      _fh->length_of_all_following_data=udata.getlen()+(build_crcchk?sizeof(int):0);
+      _fh->length_of_all_following_data=FIX_ENDIAN_INT32(udata.getlen()+(build_crcchk?sizeof(int):0));
       udata.release();
     }
     else
@@ -3029,6 +3033,7 @@ int CEXEBuild::uninstall_generate()
         left -= l;
       }
       udata.setro(FALSE);
+      FIX_ENDIAN_INT32_INPLACE(crc);
       udata.add(&crc, sizeof(crc));
       udata.setro(TRUE);
     }
