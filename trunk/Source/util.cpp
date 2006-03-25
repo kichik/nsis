@@ -280,66 +280,56 @@ unsigned char* generate_uninstall_icon_data(const char* filename, size_t &size)
 
 int find_in_dir(PRESOURCE_DIRECTORY rd, WORD id) {
   WORD i = FIX_ENDIAN_INT16(rd->Header.NumberOfNamedEntries);
-  WORD l = FIX_ENDIAN_INT16(rd->Header.NumberOfNamedEntries + rd->Header.NumberOfIdEntries);
+  WORD l = i + FIX_ENDIAN_INT16(rd->Header.NumberOfIdEntries);
 
   for (; i < l; i++) {
     if (FIX_ENDIAN_INT16(rd->Entries[i].Id) == id) {
       return i;
     }
   }
+
   return -1;
 }
 
 // Fill the array of icons for uninstall with their offsets
-// Returns 0 if failed, anything else is the icon offset in the PE.
-int generate_unicons_offsets(unsigned char* exeHeader, unsigned char* uninstIconData) {
-  int i;
+// Returns zero on failure
+int generate_unicons_offsets(unsigned char* exeHeader, size_t exeHeaderSize, unsigned char* uninstIconData) {
+  DWORD dwResourceSectionVA;
 
-  MY_ASSERT(PIMAGE_DOS_HEADER(exeHeader)->e_magic != IMAGE_DOS_SIGNATURE, "invalid dos header");
-
-  PIMAGE_NT_HEADERS ntHeaders = PIMAGE_NT_HEADERS(exeHeader + PIMAGE_DOS_HEADER(exeHeader)->e_lfanew);
-
-  MY_ASSERT(ntHeaders->Signature != IMAGE_NT_SIGNATURE, "invalid nt headers");
-
-  DWORD dwResourceSectionVA = ntHeaders->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_RESOURCE].VirtualAddress;
-  PIMAGE_SECTION_HEADER sectionHeadersArray = IMAGE_FIRST_SECTION(ntHeaders);
-
-  for (i = 0; i < ntHeaders->FileHeader.NumberOfSections; i++)
-    if (dwResourceSectionVA == sectionHeadersArray[i].VirtualAddress)
-      break;
-
-  MY_ASSERT(i == ntHeaders->FileHeader.NumberOfSections, "can't find resource section");
-
-  PRESOURCE_DIRECTORY rdRoot = PRESOURCE_DIRECTORY(exeHeader + sectionHeadersArray[i].PointerToRawData);
-
-  int iNextSection;
-  if (i == ntHeaders->FileHeader.NumberOfSections - 1)
-    iNextSection = (int)ntHeaders->OptionalHeader.SizeOfImage;
-  else
-    iNextSection = (int)sectionHeadersArray[i+1].PointerToRawData;
-
-  MY_ASSERT((long)rdRoot - (long)exeHeader > iNextSection, "corrupted EXE - invalid pointer");
+  PIMAGE_NT_HEADERS ntHeaders = CResourceEditor::GetNTHeaders(exeHeader);
+  PRESOURCE_DIRECTORY rdRoot = CResourceEditor::GetResourceDirectory(exeHeader, exeHeaderSize, ntHeaders, &dwResourceSectionVA);
 
   int idx = find_in_dir(rdRoot, (WORD) (long) RT_ICON);
-  MY_ASSERT(idx == -1, "no icons?!");
-  MY_ASSERT(!rdRoot->Entries[idx].DirectoryOffset.DataIsDirectory, "bad resource directory");
+  MY_ASSERT(idx < 0, "no icons found");
+  MY_IMAGE_RESOURCE_DIRECTORY_ENTRY rdEntry = rdRoot->Entries[idx];
+  FIX_ENDIAN_INT32_INPLACE(rdEntry.OffsetToData);
+  MY_ASSERT(!rdEntry.DirectoryOffset.DataIsDirectory, "bad resource directory");
 
-  PRESOURCE_DIRECTORY rdIcons = PRESOURCE_DIRECTORY(rdRoot->Entries[idx].DirectoryOffset.OffsetToDirectory + DWORD(rdRoot));
+  PRESOURCE_DIRECTORY rdIcons = PRESOURCE_DIRECTORY(rdEntry.DirectoryOffset.OffsetToDirectory + DWORD(rdRoot));
 
-  MY_ASSERT((long)rdIcons - (long)exeHeader > iNextSection, "corrupted EXE - invalid pointer");
+  MY_ASSERT((size_t)rdIcons - (size_t)exeHeader > exeHeaderSize, "corrupted EXE - invalid pointer");
 
-  MY_ASSERT(rdIcons->Header.NumberOfIdEntries == 0, "no icons found");
+  WORD wNumberOfEntries = FIX_ENDIAN_INT16(rdIcons->Header.NumberOfIdEntries);
 
-  for (i = 0; i < rdIcons->Header.NumberOfIdEntries; i++) { // Icons dir can't have named entries
-    MY_ASSERT(!rdIcons->Entries[i].DirectoryOffset.DataIsDirectory, "bad resource directory");
-    PRESOURCE_DIRECTORY rd = PRESOURCE_DIRECTORY(rdIcons->Entries[i].DirectoryOffset.OffsetToDirectory + DWORD(rdRoot));
+  MY_ASSERT(wNumberOfEntries == 0, "no icons found");
+
+  for (WORD i = 0; i < wNumberOfEntries; i++) { // Icons dir can't have named entries
+    MY_IMAGE_RESOURCE_DIRECTORY_ENTRY icoEntry = rdIcons->Entries[i];
+    FIX_ENDIAN_INT32_INPLACE(icoEntry.OffsetToData);
+
+    MY_ASSERT(!icoEntry.DirectoryOffset.DataIsDirectory, "bad resource directory");
+    PRESOURCE_DIRECTORY rd = PRESOURCE_DIRECTORY(icoEntry.DirectoryOffset.OffsetToDirectory + DWORD(rdRoot));
     
-    MY_ASSERT((long)rd - (long)exeHeader > iNextSection, "corrupted EXE - invalid pointer");
-    MY_ASSERT(rd->Entries[0].DirectoryOffset.DataIsDirectory, "bad resource directory");
-    
-    PIMAGE_RESOURCE_DATA_ENTRY rde = PIMAGE_RESOURCE_DATA_ENTRY(rd->Entries[0].OffsetToData + DWORD(rdRoot));
+    MY_ASSERT((size_t)rd - (size_t)exeHeader > exeHeaderSize, "corrupted EXE - invalid pointer");
 
-    MY_ASSERT((long)rde - (long)exeHeader > iNextSection, "corrupted EXE - invalid pointer");
+    MY_IMAGE_RESOURCE_DIRECTORY_ENTRY datEntry = rd->Entries[0];
+    FIX_ENDIAN_INT32_INPLACE(datEntry.OffsetToData);
+
+    MY_ASSERT(datEntry.DirectoryOffset.DataIsDirectory, "bad resource directory");
+    
+    PIMAGE_RESOURCE_DATA_ENTRY rde = PIMAGE_RESOURCE_DATA_ENTRY(datEntry.OffsetToData + DWORD(rdRoot));
+
+    MY_ASSERT((size_t)rde - (size_t)exeHeader > exeHeaderSize, "corrupted EXE - invalid pointer");
 
     // find icon to replace
     LPBYTE seeker = uninstIconData;
@@ -351,16 +341,17 @@ int generate_unicons_offsets(unsigned char* exeHeader, unsigned char* uninstIcon
       if (!dwOffset && dwSize == rde->Size)
         break;
 
-      seeker += dwSize + sizeof(DWORD);
+      seeker += FIX_ENDIAN_INT32(dwSize) + sizeof(DWORD);
 
       // reached the end of the list and no match
       MY_ASSERT(!*seeker, "installer, uninstaller icon size mismatch - see the Icon instruction's documentation for more information");
     }
 
     // Set offset
-    *(LPDWORD) seeker = rde->OffsetToData + DWORD(rdRoot) - dwResourceSectionVA - DWORD(exeHeader);
+    DWORD dwOffset = FIX_ENDIAN_INT32(rde->OffsetToData) + DWORD(rdRoot) - dwResourceSectionVA - DWORD(exeHeader);
+    *(LPDWORD) seeker = FIX_ENDIAN_INT32(dwOffset);
 
-    MY_ASSERT(*(int*)seeker > iNextSection || *(int*)seeker < (long)rdRoot - (long)exeHeader, "invalid data offset - icon resource probably compressed");
+    MY_ASSERT(dwOffset > exeHeaderSize || dwOffset < (DWORD)rdRoot - (DWORD)exeHeader, "invalid data offset - icon resource probably compressed");
   }
 
   LPBYTE seeker = uninstIconData;
@@ -371,10 +362,10 @@ int generate_unicons_offsets(unsigned char* exeHeader, unsigned char* uninstIcon
     seeker += sizeof(DWORD);
     // offset isn't set which means we found no match for this one
     MY_ASSERT(!dwOffset, "installer, uninstaller number of icons doesn't match - see the Icon instruction's documentation for more information");
-    seeker += dwSize;
+    seeker += FIX_ENDIAN_INT32(dwSize);
   }
 
-  return PIMAGE_RESOURCE_DATA_ENTRY(PRESOURCE_DIRECTORY(rdIcons->Entries[0].DirectoryOffset.OffsetToDirectory + DWORD(rdRoot))->Entries[0].OffsetToData + DWORD(rdRoot))->OffsetToData + DWORD(rdRoot) - dwResourceSectionVA - DWORD(exeHeader);
+  return 1;
 }
 #endif // NSIS_CONFIG_UNINSTALL_SUPPORT
 
