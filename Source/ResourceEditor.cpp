@@ -45,7 +45,7 @@ static inline WORD ConvertEndianness(WORD w) {
   return FIX_ENDIAN_INT16(w);
 }
 
-static PIMAGE_NT_HEADERS GetNTHeaders(BYTE* pbPE) {
+PIMAGE_NT_HEADERS CResourceEditor::GetNTHeaders(BYTE* pbPE) {
   // Get dos header
   PIMAGE_DOS_HEADER dosHeader = (PIMAGE_DOS_HEADER) pbPE;
   if (dosHeader->e_magic != IMAGE_DOS_SIGNATURE)
@@ -57,6 +57,52 @@ static PIMAGE_NT_HEADERS GetNTHeaders(BYTE* pbPE) {
     throw runtime_error("PE file missing NT signature");
 
   return ntHeaders;
+}
+
+PRESOURCE_DIRECTORY CResourceEditor::GetResourceDirectory(
+  BYTE* pbPE,
+  DWORD dwSize,
+  PIMAGE_NT_HEADERS ntHeaders,
+  DWORD *pdwResSecVA /*=NULL*/,
+  DWORD *pdwSectionIndex /*=NULL*/
+) {
+  // Get resource section virtual address
+  DWORD dwResSecVA = ConvertEndianness(ntHeaders->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_RESOURCE].VirtualAddress);
+  // Pointer to the sections headers array
+  PIMAGE_SECTION_HEADER sectionHeadersArray = IMAGE_FIRST_SECTION(ntHeaders);
+
+  DWORD dwSectionIndex = (DWORD) -1;
+
+  // Find resource section index in the array
+  for (int i = 0; i < ConvertEndianness(ntHeaders->FileHeader.NumberOfSections); i++) {
+    if (dwResSecVA == ConvertEndianness(sectionHeadersArray[i].VirtualAddress)) {
+      // Remember resource section index
+      dwSectionIndex = i;
+      // Check for invalid resource section pointer
+      if (!sectionHeadersArray[i].PointerToRawData)
+        throw runtime_error("Invalid resource section pointer");
+
+      break;
+    }
+
+    // Invalid section pointer (goes beyond the PE image)
+    if (ConvertEndianness(sectionHeadersArray[i].PointerToRawData) > dwSize)
+      throw runtime_error("Invalid section pointer");
+  }
+
+  // No resource section...
+  if (dwSectionIndex == (DWORD) -1)
+    throw runtime_error("PE file doesn't contain any resource section");
+
+  // Return extra parameters
+  if (pdwSectionIndex)
+    *pdwSectionIndex = dwSectionIndex;
+  if (pdwResSecVA)
+    *pdwResSecVA = dwResSecVA;
+
+  // Pointer to section data, the first resource directory
+  DWORD dwResSecPtr = ConvertEndianness(sectionHeadersArray[dwSectionIndex].PointerToRawData);
+  return PRESOURCE_DIRECTORY(pbPE + dwResSecPtr);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -85,37 +131,8 @@ CResourceEditor::CResourceEditor(BYTE* pbPE, int iSize) {
     //throw runtime_error("CResourceEditor doesn't yet support check sum");
   }
 
-  // Get resource section virtual address
-  m_dwResourceSectionVA = ConvertEndianness(m_ntHeaders->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_RESOURCE].VirtualAddress);
-  // Pointer to the sections headers array
-  PIMAGE_SECTION_HEADER sectionHeadersArray = IMAGE_FIRST_SECTION(m_ntHeaders);
-
-  m_dwResourceSectionIndex = (DWORD) -1;
-
-  // Find resource section index in the array
-  for (int i = 0; i < ConvertEndianness(m_ntHeaders->FileHeader.NumberOfSections); i++) {
-    if (m_dwResourceSectionVA == ConvertEndianness(sectionHeadersArray[i].VirtualAddress)) {
-      // Remember resource section index
-      m_dwResourceSectionIndex = i;
-      // Check for invalid resource section pointer
-      if (!sectionHeadersArray[i].PointerToRawData)
-        throw runtime_error("Invalid resource section pointer");
-
-      break;
-    }
-
-    // Invalid section pointer (goes beyond the PE image)
-    if (ConvertEndianness(sectionHeadersArray[i].PointerToRawData) > (unsigned int)m_iSize)
-      throw runtime_error("Invalid section pointer");
-  }
-
-  // No resource section...
-  if (m_dwResourceSectionIndex == (DWORD) -1)
-    throw runtime_error("PE file doesn't contain any resource section");
-
-  // Pointer to section data, the first resource directory
-  DWORD dwResSecPtr = ConvertEndianness(sectionHeadersArray[m_dwResourceSectionIndex].PointerToRawData);
-  PRESOURCE_DIRECTORY rdRoot = PRESOURCE_DIRECTORY(m_pbPE + dwResSecPtr);
+  // Get resource section virtual address, resource section index and pointer to resource directory
+  PRESOURCE_DIRECTORY rdRoot = GetResourceDirectory(m_pbPE, iSize, m_ntHeaders, &m_dwResourceSectionVA, &m_dwResourceSectionIndex);
 
   // Scan the resource directory
   m_cResDir = ScanDirectory(rdRoot, rdRoot);
