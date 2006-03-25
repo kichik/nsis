@@ -160,13 +160,18 @@ static FILE * open_icon(const char* filename, IconGroupHeader *igh)
 // replace_icon, must get an initialized resource editor
 void replace_icon(CResourceEditor* re, WORD wIconId, const char* filename)
 {
-  IconGroupHeader igh;
+  IconGroupHeader igh, *new_igh;
   FILE *f = open_icon(filename, &igh);
 
   BYTE* rsrcIconGroup = (BYTE*)malloc(sizeof(IconGroupHeader) + igh.wCount*SIZEOF_RSRC_ICON_GROUP_ENTRY);
   if (!rsrcIconGroup) throw bad_alloc();
 
   CopyMemory(rsrcIconGroup, &igh, sizeof(IconGroupHeader));
+
+  new_igh = (IconGroupHeader *) rsrcIconGroup;
+  FIX_ENDIAN_INT16_INPLACE(new_igh->wIsIcon);
+  FIX_ENDIAN_INT16_INPLACE(new_igh->wReserved);
+  FIX_ENDIAN_INT16_INPLACE(new_igh->wCount);
 
   RsrcIconGroupEntry* ige = (RsrcIconGroupEntry*)(rsrcIconGroup + sizeof(IconGroupHeader));
 
@@ -178,10 +183,9 @@ void replace_icon(CResourceEditor* re, WORD wIconId, const char* filename)
   for (i = 0; i < igh.wCount; i++) {
     fread(ige, sizeof(FileIconGroupEntry)-sizeof(DWORD), 1, f);
 
-    FIX_ENDIAN_INT16_INPLACE(ige->wRsrcId);
-    FIX_ENDIAN_INT32_INPLACE(ige->dwRawSize);
+    DWORD dwRawSize = FIX_ENDIAN_INT32(ige->dwRawSize);
 
-    ige->wRsrcId = i+1;
+    ige->wRsrcId = FIX_ENDIAN_INT16(i + 1);
 
     DWORD dwOffset;
     fread(&dwOffset, sizeof(DWORD), 1, f);
@@ -195,13 +199,13 @@ void replace_icon(CResourceEditor* re, WORD wIconId, const char* filename)
       free(rsrcIconGroup);
       throw runtime_error("corrupted icon file, too small");
     }
-    BYTE* iconData = (BYTE*)malloc(ige->dwRawSize);
+    BYTE* iconData = (BYTE*)malloc(dwRawSize);
     if (!iconData) {
       free(rsrcIconGroup);
       throw bad_alloc();
     }
-    fread(iconData, sizeof(BYTE), ige->dwRawSize, f);
-    re->UpdateResource(RT_ICON, MAKEINTRESOURCE(i+1), NSIS_DEFAULT_LANG, iconData, ige->dwRawSize);
+    fread(iconData, sizeof(BYTE), dwRawSize, f);
+    re->UpdateResource(RT_ICON, MAKEINTRESOURCE(i+1), NSIS_DEFAULT_LANG, iconData, dwRawSize);
     free(iconData);
 
     fsetpos(f, &pos);
