@@ -94,6 +94,9 @@ if build_chm:
 
 	chm = env.HalibutCHM('NSIS.chm', [chm_config_but] + buts)
 	env.Depends(chm, halibut)
+	env.Depends(chm, '#Docs/style.css')
+	env.Depends(chm, 'chmlink.js')
+	env.Depends(chm, 'nsis.hhp')
 	env.DistributeDoc(chm)
 
 else:
