@@ -9,9 +9,9 @@ NLF v6
 -
 # RTL - anything else than RTL means LTR
 -
-# Translation by Janez Dolinar, edited by Martin Srebotnjak
+# Translation by Janez Dolinar, edited by Martin Srebotnjak - Lugos.si
 # ^Branding
-Nullsoft Install System %s
+Namestitveni sistem Nullsoft %s
 # ^SetupCaption
 Namestitev $(^Name)
 # ^UninstallCaption
@@ -59,57 +59,57 @@ Prebrsk&aj ...
 # ^ShowDetailsBtn
 &Podrobnosti
 # ^ClickNext
-Pritisnite tipko Naprej za nadaljevanje
+Pritisnite tipko Naprej za nadaljevanje.
 # ^ClickInstall	
-Pritisnite tipko Namesti za zaèetek namestitve
+Pritisnite tipko Namesti za zaèetek namestitve.
 # ^ClickUninstall	
-Pritisnite tipko Odstrani za odstranitev
+Pritisnite tipko Odstrani za odstranitev.
 # ^NameIme
 Ime
 # ^Completed
 Dokonèano
 # ^LicenseText
-Prosimo vas, da pred namestitvijo $(^Name) pregledate licenèno pogodbo. Èe se z njo strinjate, pritisnite Se strinjam.
+Prosimo vas, da pred namestitvijo $(^NameDA) pregledate licenèno pogodbo. Èe se z njo strinjate, pritisnite Se strinjam.
 # ^LicenseTextCB
-Prosimo vas, da pred namestitvijo $(^Name) pregledate licenèno pogodbo. Èe sprejmete vse naštete pogoje, obkljukajte spodnje okence. $_CLICK
+Prosimo vas, da pred namestitvijo $(^NameDA) pregledate licenèno pogodbo. Èe sprejmete vse naštete pogoje, obkljukajte spodnje okence. $_CLICK
 # ^LicenseTextRB
-Prosimo vas, da pred namestitvijo $(^Name) pregledate licenèno pogodbo. Èe sprejmete vse naštete pogoje, izberite spodaj prvo podano možnost. $_CLICK
+Prosimo vas, da pred namestitvijo $(^NameDA) pregledate licenèno pogodbo. Èe sprejmete vse naštete pogoje, izberite prvo spodaj podano možnost. $_CLICK
 # ^UnLicenseText
-Prosimo vas, da pred odstranitvijo $(^Name) pregledate licenèno pogodbo. Èe se z njo strinjate, pritisnite Se strinjam.
+Prosimo vas, da pred odstranitvijo $(^NameDA) pregledate licenèno pogodbo. Èe se z njo strinjate, pritisnite Se strinjam.
 # ^UnLicenseTextCB
-Prosimo vas, da pred odstranitvijo $(^Name) pregledate licenèno pogodbo. Èe sprejmete vse naštete pogoje, obkljukajte spodnje okence. $_CLICK
+Prosimo vas, da pred odstranitvijo $(^NameDA) pregledate licenèno pogodbo. Èe sprejmete vse naštete pogoje, obkljukajte spodnje okence. $_CLICK
 # ^UnLicenseTextRB
-Prosimo vas, da pred odstranitvijo $(^Name) pregledate licenèno pogodbo. Èe sprejmete vse naštete pogoje, izberite spodaj prvo podano možnost. $_CLICK
+Prosimo vas, da pred odstranitvijo $(^NameDA) pregledate licenèno pogodbo. Èe sprejmete vse naštete pogoje, izberite prvo spodaj podano možnost. $_CLICK
 # ^Custom
-Po meri
+Po meri ...
 # ^ComponentsText
 Oznaèite bloke, ki jih želite namestiti, in odznaèite tiste, katerih ne želite namestiti. $_CLICK
 # ^ComponentsSubText1
-Izberite vrsto namestitve: 
+Izberite vrsto namestitve:
 # ^ComponentsSubText2_NoInstTypes
-Izberite bloke namestitve: 
+Izberite bloke namestitve:
 # ^ComponentsSubText2
-Ali pa si izberite bloke, ki jih želite namestiti: 
+Ali pa izberite bloke, ki jih želite namestiti:
 # ^UnComponentsText
 Oznaèite bloke, ki jih želite odstraniti, in odznaèite tiste, ki jih ne želite odstraniti. $_CLICK
 # ^UnComponentsSubText1
-Izberite vrsto odstranitve: 
+Izberite vrsto odstranitve:
 # ^UnComponentsSubText2_NoInstTypes
-Izberite bloke za odstranitev: 
+Izberite bloke za odstranitev:
 # ^UnComponentsSubText2
-Ali pa si izberite bloke namestitve, ki jih želite odstraniti: 
+Ali pa si izberite bloke namestitve, ki jih želite odstraniti:
 # ^DirText
 Nastavitev bo namestila $(^NameDA) v sledeèo mapo. Za izbiro druge mape kliknite na tipko Prebrskaj in izberite drugo mapo. $_CLICK
 # ^DirSubText
 Ciljna mapa
 # ^DirBrowseText
-Izberite mapo, kamor bo namešèena aplikacija $(^NameDA):
+Izberite mapo, kamor želite namestiti $(^NameDA):
 # ^UnDirText
-Nastavitev odstrani $(^NameDA) iz sledeèe mape. Za izbiro druge mape kliknite na tipko Prebrskaj in izberite drugo mapo. $_CLICK
+Nastavitev bo odstranila $(^NameDA) iz sledeèe mape. Za izbiro druge mape kliknite na tipko Prebrskaj in izberite drugo mapo. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
-Izberite mapo, od koder bo odstranjena aplikacija $(^NameDA):
+Izberite mapo, od koder želite odstraniti $(^NameDA):
 # ^SpaceAvailable
 "Prostor na disku: "
 # ^SpaceRequired
@@ -117,11 +117,11 @@ Izberite mapo, od koder bo odstranjena aplikacija $(^NameDA):
 # ^UninstallingText
 $(^NameDA) bo odstranjen iz naslednje mape. $_CLICK
 # ^UninstallingSubText
-Odstranjevanje iz: 
+Odstranjevanje iz:
 # ^FileError
-Napaka pri odpiranju datoteke za pisanje: \r\n\t"$0"\r\nPritisnite Preklièi za prekinitev namestitve,\r\nPonovi za ponoven poskus pisanja v datoteko ali\r\nIgnoriraj za preskok te datoteke.
+Napaka pri odpiranju datoteke za pisanje: \r\n\r\n$0\r\n\r\nPritisnite Prekini za prekinitev namestitve,\r\nPonovi za ponoven poskus ali\r\nPrezri za izpust te datoteke.
 # ^FileError_NoIgnore
-Napaka pri odpiranju datoteke za pisanje: \r\n\t"$0"\r\nPritisnite Ponovi za ponoven poskus pisanja v datoteko ali\r\Preklièi za prekinitev namestitve.
+Napaka pri odpiranju datoteke za pisanje: \r\n\r\n$0\r\n\r\nPritisnite Ponovi za ponoven poskus pisanja ali\r\Preklièi za prekinitev namestitve.
 # ^CantWrite
 "Ni mogoèe pisati: "
 # ^CopyFailed
@@ -131,7 +131,7 @@ Kopiranje neuspešno
 # ^Registering
 "Registracija: "
 # ^Unregistering
-"Od-registracija: "
+"Preklic registracije: "
 # ^SymbolNotFound
 "Ni mogoèe najti simbola: "
 # ^CouldNotLoad
@@ -143,9 +143,9 @@ Kopiranje neuspešno
 # ^CreatedUninstaller
 "Ustvarjena odstranitev: "
 # ^Delete
-"Zbrisana datoteka: "
+"Izbrisana datoteka: "
 # ^DeleteOnReboot
-"Zbriši ob ponovnem zagonu: "
+"Izbriši ob ponovnem zagonu: "
 # ^ErrorCreatingShortcut
 "Napaka ustvarjanja bližnjice: "
 # ^ErrorCreating
@@ -165,19 +165,19 @@ Napaka registracije DLL
 # ^InvalidOpcode
 Namestitev neveljavna: napaèen ukaz
 # ^NoOLE
-"Ne obstaja OLE za: "
+"Neobstojeèi OLE za: "
 # ^OutputFolder
 "Ciljna mapa: "
 # ^RemoveFolder
-"Brisanje mape: "
+"Odstranjevanje mape: "
 # ^RenameOnReboot
 "Preimenovanje ob zagonu: "
 # ^Rename
 "Preimenovanje: "
 # ^Skipped
-"Prezrto: "
+"Izpušèeno: "
 # ^CopyDetails
-Prenesi podrobnosti v odlagališèe
+Kopiraj podrobnosti v odlagališèe
 # ^LogInstall
 Shrani potek namestitve
 # ^Byte
