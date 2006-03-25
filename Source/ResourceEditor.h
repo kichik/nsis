@@ -67,8 +67,13 @@ typedef struct _IMAGE_RESOURCE_DIR_STRING_U {
 typedef struct _MY_IMAGE_RESOURCE_DIRECTORY_ENTRY {
   union {
     struct {
+#ifndef __BIG_ENDIAN__
       DWORD NameOffset:31;
       DWORD NameIsString:1;
+#else
+      DWORD NameIsString:1;
+      DWORD NameOffset:31;
+#endif
     } NameString;
     DWORD Name;
     WORD Id;
@@ -76,8 +81,13 @@ typedef struct _MY_IMAGE_RESOURCE_DIRECTORY_ENTRY {
   union {
     DWORD OffsetToData;
     struct {
+#ifndef __BIG_ENDIAN__
       DWORD OffsetToDirectory:31;
       DWORD DataIsDirectory:1;
+#else
+      DWORD DataIsDirectory:1;
+      DWORD OffsetToDirectory:31;
+#endif
     } DirectoryOffset;
   };
 } MY_IMAGE_RESOURCE_DIRECTORY_ENTRY,*PMY_IMAGE_RESOURCE_DIRECTORY_ENTRY;
@@ -116,7 +126,6 @@ private:
   BYTE* m_pbPE;
   int   m_iSize;
 
-  PIMAGE_DOS_HEADER m_dosHeader;
   PIMAGE_NT_HEADERS m_ntHeaders;
 
   DWORD m_dwResourceSectionIndex;
@@ -128,6 +137,9 @@ private:
 
   void WriteRsrcSec(BYTE* pbRsrcSec);
   void SetOffsets(CResourceDirectory* resDir, DWORD newResDirAt);
+
+  DWORD AdjustVA(DWORD dwVirtualAddress, DWORD dwAdjustment);
+  DWORD AlignVA(DWORD dwVirtualAddress);
 };
 
 class CResourceDirectory {
