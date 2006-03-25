@@ -96,6 +96,7 @@ typedef struct _MY_IMAGE_RESOURCE_DIRECTORY_ENTRY {
 
 #include <stdexcept>
 
+// classes
 class CResourceDirectory;
 class CResourceDirectoryEntry;
 class CResourceDataEntry;
@@ -121,6 +122,17 @@ public:
 
   bool  AddExtraVirtualSize2PESection(const char* pszSectionName, int addsize);
   DWORD Save(BYTE* pbBuf, DWORD &dwSize);
+
+  // utitlity functions
+  static PIMAGE_NT_HEADERS GetNTHeaders(BYTE* pbPE);
+
+  static PRESOURCE_DIRECTORY GetResourceDirectory(
+    BYTE* pbPE,
+    DWORD dwSize,
+    PIMAGE_NT_HEADERS ntHeaders,
+    DWORD *pdwResSecVA = NULL,
+    DWORD *pdwSectionIndex = NULL
+  );
 
 private:
   BYTE* m_pbPE;
