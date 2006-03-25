@@ -28,7 +28,7 @@ void replace_icon(CResourceEditor* re, WORD wIconId, const char* filename);
 // returns the data of the uninstaller icon (inside filename) that should replace the installer icon data
 unsigned char* generate_uninstall_icon_data(const char* filename, size_t &size);
 // Fill the array of icons for uninstall with their offsets
-int generate_unicons_offsets(unsigned char* exeHeader, unsigned char* uninstIconData);
+int generate_unicons_offsets(unsigned char* exeHeader, size_t exeHeaderSize, unsigned char* uninstIconData);
 #endif//NSIS_CONFIG_UNINSTALL_SUPPORT
 
 // returns the number of WCHARs in str including null charcter
