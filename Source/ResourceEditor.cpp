@@ -329,8 +329,8 @@ DWORD CResourceEditor::Save(BYTE* pbBuf, DWORD &dwSize) {
   // Set the new size of the resource section (size aligned to FileAlignment)
   sectionHeadersArray[m_dwResourceSectionIndex].SizeOfRawData = ConvertEndianness(dwRsrcSizeAligned);
   // Set the virtual size as well (in memory)
-  sectionHeadersArray[m_dwResourceSectionIndex].Misc.VirtualSize = ConvertEndianness(dwNewVirtualSize);
-  ntHeaders->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_RESOURCE].Size = ConvertEndianness(dwNewVirtualSize);
+  sectionHeadersArray[m_dwResourceSectionIndex].Misc.VirtualSize = ConvertEndianness(dwRsrcSize);
+  ntHeaders->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_RESOURCE].Size = ConvertEndianness(dwRsrcSize);
 
   // Set the new virtual size of the image
   ntHeaders->OptionalHeader.SizeOfImage = AlignVA(ntHeaders->OptionalHeader.SizeOfHeaders);
