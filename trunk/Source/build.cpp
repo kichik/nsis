@@ -2856,8 +2856,7 @@ int CEXEBuild::uninstall_generate()
 
     // Get offsets of icons to replace for uninstall
     // Also makes sure that the icons are there and in the right size.
-    // TODO: fix generate_unicons_offsets to check ranges (!)
-    if (generate_unicons_offsets(m_exehead, m_unicon_data) == 0)
+    if (generate_unicons_offsets(m_exehead, m_exehead_size, m_unicon_data) == 0)
       return PS_ERROR;
 
     entry *ent = (entry *) build_entries.get();
@@ -2894,9 +2893,9 @@ int CEXEBuild::uninstall_generate()
       // patch the icons
       LPBYTE seeker = m_unicon_data;
       while (*seeker) {
-        DWORD dwSize = *(LPDWORD) seeker;
+        DWORD dwSize = FIX_ENDIAN_INT32(*(LPDWORD) seeker);
         seeker += sizeof(DWORD);
-        DWORD dwOffset = *(LPDWORD) seeker;
+        DWORD dwOffset = FIX_ENDIAN_INT32(*(LPDWORD) seeker);
         seeker += sizeof(DWORD);
         memcpy(uninst_header + dwOffset, seeker, dwSize);
         seeker += dwSize;
