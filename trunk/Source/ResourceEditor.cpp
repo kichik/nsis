@@ -324,6 +324,7 @@ DWORD CResourceEditor::Save(BYTE* pbBuf, DWORD &dwSize) {
   // Save the old virtual size of the resource section
   DWORD dwNewVirtualSize = RALIGN(dwRsrcSize, dwSecAlign);
   DWORD dwOldVirtualSize = ConvertEndianness(sectionHeadersArray[m_dwResourceSectionIndex].Misc.VirtualSize);
+  ALIGN(dwOldVirtualSize, dwSecAlign);
   DWORD dwVAAdjustment = dwNewVirtualSize - dwOldVirtualSize;
 
   // Set the new size of the resource section (size aligned to FileAlignment)
