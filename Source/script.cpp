@@ -2693,14 +2693,19 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       char mathbuf[256];
       bool date=false;
 
-      if (!stricmp(define,"/date")) {
+      if (!stricmp(define,"/date") || !stricmp(define,"/utcdate")) {
         if (line.getnumtokens()!=4) PRINTHELP()
+
+        char *date_type = define;
 
         define=line.gettoken_str(2);
         value=line.gettoken_str(3);
 
         time_t rawtime;
         time(&rawtime);
+
+        if (!stricmp(date_type,"/utcdate"))
+          rawtime = mktime(gmtime(&rawtime));
 
         datebuf[0]=0;
         size_t s=strftime(datebuf,sizeof(datebuf),value,localtime(&rawtime));
