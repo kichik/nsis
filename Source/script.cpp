@@ -5256,7 +5256,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           ent.offsets[2]=OPEN_ALWAYS;
         }
 
-        if (ent.offsets[3] < 0 || !ent.offsets[1]) PRINTHELP()
+        if (ent.offsets[0] < 0 || !ent.offsets[1]) PRINTHELP()
       }
       SCRIPT_MSG("FileOpen: %s as %s -> %s\n",line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(1));
     return add_entry(&ent);
