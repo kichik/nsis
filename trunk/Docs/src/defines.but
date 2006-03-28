@@ -10,11 +10,11 @@ Define/conditional compilation related commands:
 
 \S1{define} !define
 
-\c ([/date] gflag [value]) | (/math gflag val1 OP val2)
+\c ([/date|/utcdate] gflag [value]) | (/math gflag val1 OP val2)
 
 This command will add \e{gflag} to the global define list. This will have a similar effect as using the /D switch on the command line (only the define only becomes effective after the !define command).
 
-If \e{/date} is used, \e{value} will be passed into strftime and the result will be used as the value of \e{gflag}. strftime converts special symbols into certain parts of the current time or date. For example, %H will be converted into the current hour in 24-hour format. For a complete list of available symbols, search for strftime on \W{http://msdn.microsoft.com/}{MSDN}. On POSIX, you can get the list by using \c{man strftime}.
+If \e{/date} or \e{/utcdate} are used, \e{value} will be passed into strftime and the result will be used as the value of \e{gflag}. strftime converts special symbols into certain parts of the current time or date. For example, %H will be converted into the current hour in 24-hour format. For a complete list of available symbols, search for strftime on \W{http://msdn.microsoft.com/}{MSDN}. On POSIX, you can get the list by using \c{man strftime}.
 
 If \e{/math} is used, the result of 'val1 OP val2', where OP may be +,-,*,/ or % , will be used as the value of \e{gflag}. Note that val1 AND val2 MUST be integer values!
 
