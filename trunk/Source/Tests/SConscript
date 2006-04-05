@@ -15,6 +15,7 @@ required = Split("""
 	growbuf.cpp
 	mmap.cpp
 	ResourceEditor.cpp
+	util.cpp
 """)
 
 cppunitlibs = Split("""
