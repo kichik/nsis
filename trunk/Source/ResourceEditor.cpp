@@ -66,6 +66,8 @@ PRESOURCE_DIRECTORY CResourceEditor::GetResourceDirectory(
   DWORD *pdwResSecVA /*=NULL*/,
   DWORD *pdwSectionIndex /*=NULL*/
 ) {
+  if (ConvertEndianness(ntHeaders->OptionalHeader.NumberOfRvaAndSizes) <= IMAGE_DIRECTORY_ENTRY_RESOURCE)
+    throw runtime_error("No resource section found");
   // Get resource section virtual address
   DWORD dwResSecVA = ConvertEndianness(ntHeaders->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_RESOURCE].VirtualAddress);
   // Pointer to the sections headers array
