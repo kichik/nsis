@@ -8,6 +8,7 @@
 #include "Plugins.h"
 #include "Platform.h"
 #include "util.h"
+#include "ResourceEditor.h"
 
 #include "dirreader.h"
 
@@ -85,55 +86,52 @@ vector<unsigned char> read_file(const string& filename) {
 void Plugins::GetExports(const string &pathToDll, bool displayInfo)
 {
   vector<unsigned char> dlldata;
+  PIMAGE_NT_HEADERS NTHeaders;
   try {
     dlldata = read_file(pathToDll);
-  } catch (NSISException&) {
+    NTHeaders = CResourceEditor::GetNTHeaders(&dlldata[0]);
+  } catch (std::runtime_error&) {
     return;
   }
 
   const string dllName = remove_file_extension(get_file_name(pathToDll));
 
-  LONG lfanew = FIX_ENDIAN_INT32(PIMAGE_DOS_HEADER(&dlldata[0])->e_lfanew);
-  PIMAGE_NT_HEADERS NTHeaders = PIMAGE_NT_HEADERS(&dlldata[0] + lfanew);
-  if (NTHeaders->Signature == IMAGE_NT_SIGNATURE)
+  FIX_ENDIAN_INT16_INPLACE(NTHeaders->FileHeader.Characteristics);
+  if (NTHeaders->FileHeader.Characteristics & IMAGE_FILE_DLL)
   {
-    FIX_ENDIAN_INT16_INPLACE(NTHeaders->FileHeader.Characteristics);
-    if (NTHeaders->FileHeader.Characteristics & IMAGE_FILE_DLL)
+    FIX_ENDIAN_INT32_INPLACE(NTHeaders->OptionalHeader.NumberOfRvaAndSizes);
+    if (NTHeaders->OptionalHeader.NumberOfRvaAndSizes <= IMAGE_DIRECTORY_ENTRY_EXPORT) return;
+
+    DWORD ExportDirVA = NTHeaders->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].VirtualAddress;
+    DWORD ExportDirSize = NTHeaders->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].Size;
+    PIMAGE_SECTION_HEADER sections = IMAGE_FIRST_SECTION(NTHeaders);
+
+    FIX_ENDIAN_INT32_INPLACE(ExportDirVA);
+    FIX_ENDIAN_INT32_INPLACE(ExportDirSize);
+
+    WORD num_sections = FIX_ENDIAN_INT16(NTHeaders->FileHeader.NumberOfSections);
+
+    for (DWORD i = 0; i < num_sections; i++)
     {
-      FIX_ENDIAN_INT32_INPLACE(NTHeaders->OptionalHeader.NumberOfRvaAndSizes);
-      if (NTHeaders->OptionalHeader.NumberOfRvaAndSizes <= IMAGE_DIRECTORY_ENTRY_EXPORT) return;
-
-      DWORD ExportDirVA = NTHeaders->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].VirtualAddress;
-      DWORD ExportDirSize = NTHeaders->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].Size;
-      PIMAGE_SECTION_HEADER sections = IMAGE_FIRST_SECTION(NTHeaders);
-
-      FIX_ENDIAN_INT32_INPLACE(ExportDirVA);
-      FIX_ENDIAN_INT32_INPLACE(ExportDirSize);
-
-      WORD num_sections = FIX_ENDIAN_INT16(NTHeaders->FileHeader.NumberOfSections);
-
-      for (DWORD i = 0; i < num_sections; i++)
+      DWORD va = FIX_ENDIAN_INT32(sections[i].VirtualAddress);
+      if (va <= ExportDirVA
+          && va + FIX_ENDIAN_INT32(sections[i].Misc.VirtualSize) >= ExportDirVA + ExportDirSize)
       {
-        DWORD va = FIX_ENDIAN_INT32(sections[i].VirtualAddress);
-        if (va <= ExportDirVA
-            && va + FIX_ENDIAN_INT32(sections[i].Misc.VirtualSize) >= ExportDirVA + ExportDirSize)
+        DWORD prd = FIX_ENDIAN_INT32(sections[i].PointerToRawData);
+        PIMAGE_EXPORT_DIRECTORY exports = PIMAGE_EXPORT_DIRECTORY(&dlldata[0] + prd + ExportDirVA - va);
+        DWORD na = FIX_ENDIAN_INT32(exports->AddressOfNames);
+        unsigned long *names = (unsigned long*)((unsigned long) exports + (char *) na - ExportDirVA);
+        for (unsigned long j = 0; j < FIX_ENDIAN_INT32(exports->NumberOfNames); j++)
         {
-          DWORD prd = FIX_ENDIAN_INT32(sections[i].PointerToRawData);
-          PIMAGE_EXPORT_DIRECTORY exports = PIMAGE_EXPORT_DIRECTORY(&dlldata[0] + prd + ExportDirVA - va);
-          DWORD na = FIX_ENDIAN_INT32(exports->AddressOfNames);
-          unsigned long *names = (unsigned long*)((unsigned long) exports + (char *) na - ExportDirVA);
-          for (unsigned long j = 0; j < FIX_ENDIAN_INT32(exports->NumberOfNames); j++)
-          {
-            const string name = string((char*)exports + FIX_ENDIAN_INT32(names[j]) - ExportDirVA);
-            const string signature = dllName + "::" + name;
-            const string lcsig = lowercase(signature);
-            m_command_to_path[lcsig] = pathToDll;
-            m_command_lowercase_to_command[lcsig] = signature;
-            if (displayInfo)
-              fprintf(g_output, " - %s\n", signature.c_str());
-          }
-          break;
+          const string name = string((char*)exports + FIX_ENDIAN_INT32(names[j]) - ExportDirVA);
+          const string signature = dllName + "::" + name;
+          const string lcsig = lowercase(signature);
+          m_command_to_path[lcsig] = pathToDll;
+          m_command_lowercase_to_command[lcsig] = signature;
+          if (displayInfo)
+            fprintf(g_output, " - %s\n", signature.c_str());
         }
+        break;
       }
     }
   }
