@@ -712,7 +712,7 @@ void CResourceDirectory::AddEntry(CResourceDirectoryEntry* entry) {
   int i = 0;
   if (entry->HasName()) {
     char* szEntName = entry->GetName();
-    for (i = 0; i < m_rdDir.NumberOfIdEntries; i++) {
+    for (i = 0; i < m_rdDir.NumberOfNamedEntries; i++) {
       char* szName = m_vEntries[i]->GetName();
       int cmp = strcmp(szName, szEntName);
       delete [] szName;
