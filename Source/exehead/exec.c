@@ -448,7 +448,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           if (overwriteflag)
           {
             update_status_text(LANG_SKIPPED,buf3);
-            if (overwriteflag==2) g_exec_flags.exec_error++;
+            if (overwriteflag==2) exec_error++;
             log_printf3("File: skipped: \"%s\" (overwriteflag=%d)",buf0,overwriteflag);
             break;
           }
