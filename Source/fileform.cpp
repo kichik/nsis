@@ -160,7 +160,7 @@ void lang_table_writer::write(const unsigned char *data)
 void lang_table_writer::write_block(IGrowBuf *buf, writer_sink *sink, const size_t table_size)
 {
   unsigned char *tables = (unsigned char *) buf->get();
-  size_t lang_strings = table_size - 2 * sizeof(int) - sizeof(LANGID);
+  size_t lang_strings = ( table_size - 2 * sizeof(int) - sizeof(LANGID) ) / sizeof(int);
   size_t l = buf->getlen() / table_size;
   lang_table_writer writer(sink, lang_strings);
   for (size_t i = 0; i < l; i++)
