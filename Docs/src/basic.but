@@ -53,7 +53,7 @@ Adds file(s) to be extracted to the current output path ($OUTDIR).
 
 \b Wildcards are supported.
 
-\b If the /r switch is used, matching files are recursively searched for in subdirectories. If a directory name matches, all of its contents is added recursively. Directory structure is preserved.
+\b If the /r switch is used, matching files and directories are recursively searched for in subdirectories. If just one path segment is specified (e.g. \c{File /r something}), the current directory will be recursively searched. If more than one segment is specified (e.g. \c{File /r something\\*.*}), the last path segment will be used as the matching condition and the rest for the directory to search recursively. If a directory name matches, all of its contents is added recursively. Directory structure is preserved.
 
 \b Use the /x switch to exclude files or directories.
 
@@ -94,6 +94,8 @@ with the following \e{File} usage:
 will match the directory named \e{something} on the root directory, the file named \e{something} in the directory named \e{dir} and the directory named \e{something} in the directory named \e{another}. To match only the directory named \e{something} on the root directory, use the following:
 
 \c File /r something\*.*
+
+When adding \e{\\*.*}, it will be used as the matching condition and \e{something} will be used as the directory to search. When only \e{something} is specified, the current directory will be recursively searched for every and directory named \e{something} and \e{another\\something} will be matched.
 
 \S2{rename} Rename
 
