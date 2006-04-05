@@ -147,14 +147,21 @@ if defenv['PLATFORM'] != 'win32':
 	defenv.Append(NSIS_CPPDEFINES = [('PREFIX_CONF', '"%s"' % defenv.subst('$PREFIX_CONF'))])
 	defenv.Append(NSIS_CPPDEFINES = [('PREFIX_DATA', '"%s"' % defenv.subst('$PREFIX_DATA'))])
 
-# write configuration into sconf.h
-f = open(File('#Source/exehead/sconf.h').abspath, 'w')
+# write configuration into sconf.h and defines.h
+sconf_h = open(File('#Source/exehead/sconf.h').abspath, 'w')
+defines_h = open(File('#Source/defines.h').abspath, 'w')
 for i in defenv['NSIS_CPPDEFINES']:
 	if type(i) is not str:
-		f.write('#define %s %s\n' % (i[0], i[1]))
+		sconf_h.write('#define %s %s\n' % (i[0], i[1]))
+		if type(i[1]) is int:
+			defines_h.write('definedlist.add("%s", "%s");\n' % (i[0], i[1]))
+		else:
+			defines_h.write('definedlist.add("%s", %s);\n' % (i[0], i[1]))
 	else:
-		f.write('#define %s\n' % (i))
-f.close()
+		sconf_h.write('#define %s\n' % (i))
+		defines_h.write('definedlist.add("%s");\n' % (i))
+sconf_h.close()
+defines_h.close()
 
 # write version into version.h
 f = open(File('#Source/version.h').abspath, 'w')
