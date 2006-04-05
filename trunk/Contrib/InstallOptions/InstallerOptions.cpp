@@ -1362,7 +1362,7 @@ void WINAPI showCfgDlg()
 
   while (!g_done) {
     MSG msg;
-    int nResult = GetMessage(&msg, NULL, 0, 0);
+    GetMessage(&msg, NULL, 0, 0);
     if (!IsDialogMessage(hConfigWindow,&msg) && !IsDialogMessage(hMainWindow,&msg))
     {
       TranslateMessage(&msg);
