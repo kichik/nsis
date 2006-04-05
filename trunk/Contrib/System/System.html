@@ -561,15 +561,17 @@ good:
 <li>Subtraction -- <b>-</b></li>
 <li>Multiplication -- <b>*</b></li>
 <li>Division -- <b>/</b></li>
-<li>Module -- <b>%</b></li>
+<li>Modulo -- <b>%</b></li>
+<li>Shift right -- <b>&gt;&gt;</b></li>
+<li>Shift left -- <b>&lt;&lt;</b></li>
 <li>Bitwise or -- <b>|</b></li>
 <li>Bitwise and -- <b>&amp;</b></li>
 <li>Bitwise xor -- <b>^</b></li>
 <li>Logical or -- <b>||</b></li>
 <li>Logical and -- <b>&amp;&amp;</b></li>
 <li>Less than -- <b>&lt;</b></li>
-<li>Greater than -- <b>&gt;</b></li>
 <li>Equals -- <b>=</b></li>
+<li>Greater than -- <b>&gt;</b></li>
 <li>Bitwise not (one argument) -- <b>~</b></li>
 <li>Logical not (one argument) -- <b>!</b></li>
 </ul>
@@ -600,6 +602,16 @@ DetailPrint "5498449498849818 / 3 = $0" # 1832816499616606
 System::<b>Int64Op</b> 0x89498A198E4566C % 157
 Pop $0
 DetailPrint "0x89498A198E4566C % 157 = $0" # 118
+</pre></blockquote>
+<blockquote><pre>
+System::<b>Int64Op</b> 1 &lt;&lt; 62
+Pop $0
+DetailPrint "1 &lt;&lt; 62 = $0" # 4611686018427387904
+</pre></blockquote>
+<blockquote><pre>
+System::<b>Int64Op</b> 0x4000000000000000 &gt;&gt; 62
+Pop $0
+DetailPrint "0x4000000000000000 &gt;&gt; 62 = $0" # 1
 </pre></blockquote>
 <blockquote><pre>
 System::<b>Int64Op</b> 0xF0F0F0F | 0xF0F0FFF
