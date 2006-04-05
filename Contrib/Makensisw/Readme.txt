@@ -178,6 +178,9 @@ Version History
  - Added compressor setting option
  - Added support for lzma compression
  - Added named Symbols sets.
+
+2.1
+ - Added "Cancel compilation" menu item.
  
 Copyright Information
 ---------------------
