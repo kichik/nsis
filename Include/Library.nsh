@@ -119,12 +119,6 @@
 
   !else
 
-    !if ${TYPE} == 'T'
-
-      !error "__InstallLib_Helper_GetVersion can only handle type libraries on Windows"
-
-    !endif
-
     !ifndef INSTALLLIB_GETVERSION_VARS_DEFINED
 
       !define INSTALLLIB_GETVERSION_VARS_DEFINED
@@ -488,7 +482,7 @@
 
   "installlib.file_${INSTALLLIB_UNIQUE}:"
     SetFileAttributes $R0 FILE_ATTRIBUTE_NORMAL
-	ClearErrors
+    ClearErrors
     File /oname=$R0 "${LOCALFILE}"
     Return
 
