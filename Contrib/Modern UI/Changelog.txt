@@ -1,5 +1,9 @@
 NSIS Modern User Interface - VERSION HISTORY
 
+1.75 - April 1, 2006
+* Added show function for the start menu page
+* Added MUI_HEADER_TRANSPARENT_TEXT for transparent header texts
+
 1.74 - September 4, 2005
 * Fixed compile error when checkboxes are used on multiple finish page pages
 
