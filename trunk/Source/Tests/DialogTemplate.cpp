@@ -36,10 +36,6 @@ public:
     DWORD dwSize;
     unsigned char *saved_dialog = dt.Save(dwSize);
 
-    FILE *f = fopen("F:\\NSIS\\Source\\test2.dlg", "wb");
-    fwrite(saved_dialog, dwSize, 1, f);
-    fclose(f);
-
     CPPUNIT_ASSERT_EQUAL( (DWORD) sizeof(original_dialog), dwSize );
     CPPUNIT_ASSERT_EQUAL( 0, memcmp(saved_dialog, original_dialog, dwSize) );
 
