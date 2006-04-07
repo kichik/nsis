@@ -137,6 +137,8 @@ The next example will succeed in deleting the directory.
 \c SetOutPath $TEMP
 \c RMDir $TEMP\dir
 
+\\<b\\>Warning:\\</b\\> using \e{RMDir /r $INSTDIR} in the uninstaller is not safe. Though it is unlikely, the user might select to install to the Program Files folder and so this command will wipe out the entire Program Files folder, including other programs that has nothing to do with the uninstaller. The user can also put other files but the program's files and would expect them to get deleted with the program. Solutions are \W{http://nsis.sourceforge.net/Uninstall_only_installed_files}{available} for easily uninstalling only files which were installed by the installer.
+
 \S2{setoutpath} SetOutPath
 
 \c outpath
