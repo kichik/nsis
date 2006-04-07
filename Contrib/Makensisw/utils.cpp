@@ -920,3 +920,17 @@ BOOL FileExists(char *fname)
     return true;
   }
 }
+
+HMENU FindSubMenu(HMENU hMenu, UINT uId)
+{
+  MENUITEMINFO mii = {
+    sizeof(MENUITEMINFO),
+    MIIM_SUBMENU,
+  };
+
+  mii.hSubMenu = NULL;
+
+  GetMenuItemInfo(hMenu, uId, FALSE, &mii);
+
+  return mii.hSubMenu;
+}

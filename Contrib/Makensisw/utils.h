@@ -60,4 +60,6 @@ void LoadMRUFile(int position);
 void ClearMRUList();
 
 BOOL FileExists(char *fname);
+
+HMENU FindSubMenu(HMENU hMenu, UINT uId);
 #endif

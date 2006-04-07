@@ -108,8 +108,8 @@ void CreateToolBar()
     SendMessage(g_toolbar.hwnd, TB_ADDBITMAP, IMAGECOUNT, (LONG) &tbBitmap);
   }
 
-  HMENU toolmenu = GetSubMenu(g_sdata.menu, SCRIPT_MENU_INDEX);
-  g_toolbar.dropdownmenu = GetSubMenu(toolmenu, COMPRESSOR_MENU_INDEX);
+  HMENU toolmenu = FindSubMenu(g_sdata.menu, IDM_SCRIPT);
+  g_toolbar.dropdownmenu = FindSubMenu(toolmenu, IDM_COMPRESSOR_SUBMENU);
   RECT rect;
   SendMessage(g_toolbar.hwnd, TB_GETITEMRECT, TBB_COMPRESSOR, (LPARAM) (LPRECT) &rect);
   g_toolbar.dropdownpoint.x = rect.left;
