@@ -28,7 +28,7 @@ int NSISCALL my_GetDialogItemText(UINT idx, char *val);
 //#define my_GetDialogItemText GetDlgItemText
 
 #ifdef NSIS_CONFIG_LOG
-extern char log_text[NSIS_MAX_STRLEN*4];
+extern char log_text[2048];
 void NSISCALL log_write(int close);
 const char * _RegKeyHandleToName(HKEY hKey);
 void _LogData2Hex(char *buf, size_t buflen, unsigned char *data, size_t datalen);
