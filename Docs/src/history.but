@@ -1,5 +1,87 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.16} 2.16
+
+Released on April 7th, 2006
+
+\S1{v2.16-rn} Release Notes
+
+\b The script compiler, makensis, builds and works on big-endian platforms. This change enlarges the portability range of NSIS to theoretically every POSIX platform. Please \W{http://sourceforge.net/tracker/?group_id=22049&atid=373085}{report} any incompatibility with specific platforms or build-tools.
+
+\b The internal changes made to support big-endian platforms also pave the road to x64 installers. There is now a central function which writes data to disk. This function currently only converts the endianity of integers, but it can be changed to selectively write 64-bit integers. Hopefully, there'll soon be a simple method of compiling a script to both x86 and x64 installers.
+
+\b Changing Source/exehead/fileform.h to alter the internal structure of installers is no longer enough. The compiler has its own definitions of the structures which must also be changed in Source/fileform.cpp. In the future, fileform.cpp should be automatically generated from fileform.h, but for now, the synchronization must be done manually.
+
+\S1{v2.16-cl} Changelog
+
+\S2{} Major Changes
+
+\b Big-endian platforms are now fully supported by makensis
+
+\b \R{library}{Library} now available on non-Windows platforms as well, although it requires the installed DLL to have version information
+
+\b \L{../Docs/makensisw/Readme.txt}{MakeNSISW 2.1}: added "Cancel compilation" menu item
+
+\S2{} New/Changed Commands
+
+\b Added /utcdate switch to \R{define}{!define} for UTC dates (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373088&aid=1459210}{RFE #1459210})
+
+\S2{} Minor Changes
+
+\b Added an optional timestamp in the log - NSIS_CONFIG_LOG_TIMESTAMP build setting (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373088&aid=1460586}{RFE #1460586})
+
+\b Added NSIS_WIN32_MAKENSIS define, defined only when compiling on Windows
+
+\b Exported validate_filename to plug-ins
+
+\b Fixed a crash in CResourceEditor when adding resources to a PE that already contains named resources
+
+\b Fixed a small resource leak in the TypeLib::GetLibVersion plug-in function
+
+\b Fixed CResourceEditor input sanity checks
+
+\b Fixed incorrect \R{FileOpen}{FileOpen} input validation (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1459789}{bug #1459789})
+    
+\b Fixed \R{library}{Library} failure with DLLs marked as read-only
+
+\b Fixed lzma's POSIX implemention thread synchronization issues and resource leaks
+
+\b Fixed makensis self-path detection on non-Windows platforms (NSIS_CONFIG_CONST_DATA_PATH=no)
+
+\b Fixed replace_icon and and generate_uninstall_icon_data icon validation
+
+\b Made external CHM links safer to script exceptions (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1449879}{bug #1449879})
+
+\b Minor documentation improvements and fixes (including \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1077439}{bug #1077439}, \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1448374}{bug #1448374}, \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373088&aid=1464446}{RFE #1464446})
+
+\b \L{../Docs/Modern UI/Readme.html}{Modern UI 1.75}: added show function for the start menu page (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373088&aid=1448176}{RFE #1448176}), added MUI_HEADER_TRANSPARENT_TEXT for transparent header texts (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373088&aid=1447766}{RFE #1447766})
+
+\b \L{../Docs/NSISdl/ReadMe.txt}{NSISdl}: better header detection for better compatibility with proxies like WinProxy (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1445735}{bug #1445735}), fail if no headers are sent, faster downloads (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1465378}{patch #1465378})
+
+\b \L{../Docs/StartMenu/Readme.txt}{StartMenu}: validate user input (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1440636}{bug #1440636})
+
+\S2{} Translations
+
+\b Added Basque translation
+
+\b Minor Slovenian fixes
+
+\S2{} Build System
+
+\b Added code tests for CResourceEditor and CDialogTemplate
+
+\b Automatically pass build settings to script, eliminating the need to edit build.cpp for new settings
+
+\b Fixed $PREFIX expansion during installation on POSIX platforms (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1456943}{bug #1456943})
+
+\b Fixed CHM dependencies
+
+\b Fixed compatibility issue with EclipseNSIS (version wasn't prefixed with 'v')
+
+\b Fixed GCC 4.1 compatibility (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1456861}{patch #1456861})
+
+\b Test for -Wl,-Map availability
+
 \H{v2.15} 2.15
 
 Released on March 4th, 2006
