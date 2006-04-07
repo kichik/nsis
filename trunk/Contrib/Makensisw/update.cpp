@@ -119,7 +119,7 @@ DWORD CALLBACK UpdateThread(LPVOID v) {
       ShellExecute(g_sdata.hwnd,"open",NSIS_DL_URL,NULL,NULL,SW_SHOWNORMAL);
     }
   }
-  else MessageBox(g_sdata.hwnd,"There is no update available for NSIS at this time.","NSIS pdate",MB_OK|MB_ICONINFORMATION);
+  else MessageBox(g_sdata.hwnd,"There is no update available for NSIS at this time.","NSIS Update",MB_OK|MB_ICONINFORMATION);
   GlobalFree(response);
   delete get;
   EnableMenuItem(g_sdata.menu,IDM_NSISUPDATE,MF_ENABLED);
