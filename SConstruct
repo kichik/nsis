@@ -153,7 +153,7 @@ defines_h = open(File('#Source/defines.h').abspath, 'w')
 for i in defenv['NSIS_CPPDEFINES']:
 	if type(i) is not str:
 		sconf_h.write('#define %s %s\n' % (i[0], i[1]))
-		if type(i[1]) is int:
+		if str(i[1])[0] != '"':
 			defines_h.write('definedlist.add("%s", "%s");\n' % (i[0], i[1]))
 		else:
 			defines_h.write('definedlist.add("%s", %s);\n' % (i[0], i[1]))
