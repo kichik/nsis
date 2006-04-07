@@ -56,11 +56,6 @@
 #define TIMEOUT      100
 #define MINWIDTH     350
 #define MINHEIGHT    180
-#define FILE_MENU_INDEX 0
-#define EDIT_MENU_INDEX 1
-#define SCRIPT_MENU_INDEX 2
-#define COMPRESSOR_MENU_INDEX 4
-#define TOOLS_MENU_INDEX 3
 #define COMPRESSOR_MESSAGE "\n\nThe %s compressor created the smallest installer (%d bytes)."
 #define RESTORED_COMPRESSOR_MESSAGE "\n\nThe %s compressor created the smallest installer (%d bytes)."
 #define EXE_HEADER_COMPRESSOR_STAT "EXE header size:"
@@ -112,7 +107,7 @@ char *compressor_display_names[] = {"Defined in Script/Compiler Default",
                             "LZMA",
                             "LZMA (solid)",
                             "Best Compressor"};
-WORD compressor_commands[] = {IDM_SCRIPT,
+WORD compressor_commands[] = {IDM_COMPRESSOR_SCRIPT,
                               IDM_ZLIB,
                               IDM_ZLIB_SOLID,
                               IDM_BZIP2,

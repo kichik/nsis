@@ -106,9 +106,9 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
       SendMessage(GetDlgItem(hwndDlg,IDC_LOGWIN),EM_SETEVENTMASK,NULL,ENM_SELCHANGE|ENM_MOUSEEVENTS|ENM_KEYEVENTS);
       DragAcceptFiles(g_sdata.hwnd,FALSE);
       g_sdata.menu = GetMenu(g_sdata.hwnd);
-      g_sdata.fileSubmenu = GetSubMenu(g_sdata.menu, FILE_MENU_INDEX);
-      g_sdata.editSubmenu = GetSubMenu(g_sdata.menu, EDIT_MENU_INDEX);
-      g_sdata.toolsSubmenu = GetSubMenu(g_sdata.menu, TOOLS_MENU_INDEX);
+      g_sdata.fileSubmenu = FindSubMenu(g_sdata.menu, IDM_FILE);
+      g_sdata.editSubmenu = FindSubMenu(g_sdata.menu, IDM_EDIT);
+      g_sdata.toolsSubmenu = FindSubMenu(g_sdata.menu, IDM_TOOLS);
       RestoreMRUList();
       CreateToolBar();
       InitTooltips(g_sdata.hwnd);
@@ -1253,7 +1253,7 @@ void SetCompressor(NCOMPRESSOR compressor)
     }
     else {
       compressor = COMPRESSOR_SCRIPT;
-      command = IDM_SCRIPT;
+      command = IDM_COMPRESSOR_SCRIPT;
       compressor_name = "";
     }
     g_sdata.compressor = compressor;
