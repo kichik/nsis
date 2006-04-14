@@ -22,6 +22,7 @@ contribs = Split("""
 languages = Split("""
 	Albanian.nsh
 	Arabic.nsh
+	Basque.nsh
 	Belarusian.nsh
 	Bosnian.nsh
 	Breton.nsh
@@ -70,6 +71,7 @@ languages = Split("""
 	TradChinese.nsh
 	Turkish.nsh
 	Ukrainian.nsh
+	Welsh.nsh
 """)
 
 Import('defenv')
