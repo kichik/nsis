@@ -39,7 +39,7 @@ For more information about installer attributes, have a look at \R{instattribs}{
 
 \S1{tut-pages} Pages
 
-An non-silent installer has a set of wizard pages to let the user configure the installer. You can set which pages to display using the \R{page}{Page} command (or \R{pageex}{PageEx} for more advanced settings). A typical set of pages looks like this:
+A non-silent installer has a set of wizard pages to let the user configure the installer. You can set which pages to display using the \R{page}{Page} command (or \R{pageex}{PageEx} for more advanced settings). A typical set of pages looks like this:
 
 \c Page license
 \c Page components
