@@ -1,6 +1,7 @@
 languages = Split("""
 	Albanian.nlf
 	Arabic.nlf
+	Basque.nlf
 	Belarusian.nlf
 	Bosnian.nlf
 	Breton.nlf
@@ -48,6 +49,7 @@ languages = Split("""
 	TradChinese.nlf
 	Turkish.nlf
 	Ukrainian.nlf
+	Welsh.nlf
 """)
 
 Import('defenv')
