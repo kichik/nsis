@@ -655,7 +655,7 @@ string get_executable_path(const char* argv0) {
   if( envpath != NULL ) return get_full_path( envpath );
   else {
     char* pathtmp;
-    char* path;
+    char* path = NULL;
     size_t len = 100;
     size_t nchars;
     while(1){
