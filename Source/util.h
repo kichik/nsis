@@ -9,7 +9,6 @@
 #ifndef _WIN32
 #  include <iconv.h>
 #  include <stdio.h>
-#  include <glob.h>
 #endif
 
 
@@ -64,13 +63,11 @@ int my_glob(const char *pattern, int flags,
             int errfunc(const char * epath, int eerrno), glob_t *pglob);
 
 #define FOPEN(a, b) my_fopen(a, b)
-#define GLOB(a, b, c, d) my_glob(a, b, c, d)
 #define OPEN(a, b) my_open(a, b)
 
 #else
 
 #define FOPEN(a, b) fopen(a, b)
-#define GLOB(a, b, c, d) glob(a, b, c, d)
 #define OPEN(a, b) open(a, b)
 #endif
 
