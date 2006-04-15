@@ -555,16 +555,6 @@ FILE *my_fopen(const char *path, const char *mode)
   my_convert_free(converted_path);
   return result;
 }
-
-int my_glob(const char *pattern, int flags,
-         int errfunc(const char * epath, int eerrno), glob_t *pglob)
-{
-  char *converted_pattern = my_convert(pattern);
-
-  int result = glob(converted_pattern, flags, errfunc, pglob);
-  my_convert_free(converted_pattern);
-  return result;
-}
 #endif//!_WIN32
 
 void *operator new(size_t size) {
