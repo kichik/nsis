@@ -117,9 +117,19 @@ NSISFunction(GetLibVersion) {
       typeLib->ReleaseTLibAttr(typelibAttr);
 
     }
+    else
+    {
+      pushstring("0");
+      pushstring("0");
+    }
 
     typeLib->Release();
 
+  }
+  else
+  {
+    pushstring("0");
+    pushstring("0");
   }
 
 }
