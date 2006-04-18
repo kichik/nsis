@@ -305,8 +305,8 @@
       StrCpy $R1 ${LIBRARY_VERSION_LOW}
 
       TypeLib::GetLibVersion $R4
-      Pop $R2
       Pop $R3
+      Pop $R2
 
       IntCmpU $R0 $R2 0 "installlib.register_${INSTALLLIB_UNIQUE}" "installlib.upgrade_${INSTALLLIB_UNIQUE}"
       IntCmpU $R1 $R3 "installlib.register_${INSTALLLIB_UNIQUE}" "installlib.register_${INSTALLLIB_UNIQUE}" \
