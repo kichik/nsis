@@ -36,19 +36,26 @@ def check_compile_flag(ctx, flag):
 """
 Checks if a linker flag is valid.
 """
-def check_link_flag(ctx, flag):
+def check_link_flag(ctx, flag, run = 0, extension = '.c', code = None):
 	ctx.Message('Checking for linker flag %s... ' % flag)
 
 	old_flags = ctx.env['LINKFLAGS']
 	ctx.env.Append(LINKFLAGS = flag)
 
-	test = """
-		int main() {
-			return 0;
-		}
-	"""
+	if code:
+		test =  code
+	else:
+		test = """
+			int main() {
+				return 0;
+			}
+		"""
 
-	result = ctx.TryLink(test, '.c')
+	result = ctx.TryLink(test, extension)
+
+	if run:
+		result = result and ctx.TryRun(test, extension)[0]
+
 	ctx.Result(result)
 
 	if not result:
