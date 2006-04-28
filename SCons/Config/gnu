@@ -35,6 +35,25 @@ defenv['ALIGN_FLAG'] = '-Wl,--file-alignment,512'
 defenv['CPP_REQUIRES_STDLIB'] = 1
 defenv['SUBSYS_CON'] = '-Wl,--subsystem,console'
 
+### helper functions
+
+# on Mac OS X, programs built with g++ 4.0, stl and -s error out:
+#   dyld: lazy symbol binding failed: lazy pointer not found
+#   dyld: lazy pointer not found
+#
+# to avoid this, this function checks if -s works
+
+def TestStrip(ctx):
+	c = """
+		#include <vector>
+
+		int main() {
+			std::vector<int> v;
+			return 0;
+		}
+	"""
+	ctx.CheckLinkFlag('-s', run = 1, extension = '.cpp', code = c)
+
 ### debug
 
 if defenv['DEBUG']:
@@ -66,11 +85,10 @@ if not defenv['DEBUG']:
 	makensis_env.Append(CCFLAGS = '-O2')            # optimize
 makensis_env.Append(CCFLAGS = '-Wall')            # all warnings
 
-if not defenv['DEBUG']:
-	makensis_env.Append(LINKFLAGS = '-s')           # strip
-
 conf = FlagsConfigure(makensis_env)
 conf.CheckLinkFlag('$MAP_FLAG')                   # generate map file
+if not defenv['DEBUG']:
+	TestStrip(conf)                                 # strip
 conf.Finish()
 
 ### plugin environment
@@ -93,14 +111,13 @@ plugin_env.Append(LINKFLAGS = '$MAP_FLAG')        # generate map file
 cp_util_env = defenv.Copy()
 
 if not defenv['DEBUG']:
-	cp_util_env.Append(CCFLAGS = '-O2')                # optimize
-cp_util_env.Append(CCFLAGS = '-Wall')                # all warnings
-
-if not defenv['DEBUG']:
-	cp_util_env.Append(LINKFLAGS = '-s')               # strip
+	cp_util_env.Append(CCFLAGS = '-O2')             # optimize
+cp_util_env.Append(CCFLAGS = '-Wall')             # all warnings
 
 conf = FlagsConfigure(cp_util_env)
 conf.CheckLinkFlag('$MAP_FLAG')                   # generate map file
+if not defenv['DEBUG']:
+	TestStrip(conf)                                 # strip
 conf.Finish()
 
 ### util environment
