@@ -131,7 +131,7 @@ class SortedStringListND // no delete - can be placed in GrowBuf
     // returns -1 when name already exists and pos if added
     int add(const char *name, int case_sensitive=0, int alwaysreturnpos=0)
     {
-      int where;
+      int where=0;
       T newstruct={0,};
       int pos=find(name,-1,case_sensitive,1,&where);
       if (pos==-1) return alwaysreturnpos ? where : -1;
