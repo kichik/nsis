@@ -6,6 +6,8 @@
 
 class CBzip2 : public ICompressor {
   public:
+    virtual ~CBzip2() {}
+
     int Init(int level, unsigned int dict_size) {
       last_ret = !BZ_STREAM_END;
       stream = new bz_stream;

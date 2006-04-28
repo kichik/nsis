@@ -6,6 +6,8 @@
 
 class CZlib : public ICompressor {
   public:
+    virtual ~CZlib() {}
+
     int Init(int level, unsigned int dict_size) {
       stream = new z_stream;
       if (!stream) return Z_MEM_ERROR;
