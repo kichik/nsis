@@ -14,6 +14,13 @@
 #  include <iconv.h>
 #endif
 
+#ifdef __APPLE__
+namespace Apple { // defines struct section
+#  include <mach-o/dyld.h> // for _NSGetExecutablePath
+};
+#  include <sys/param.h> // for MAXPATHLEN
+#endif
+
 #include <cassert> // for assert
 #include <algorithm>
 #include <stdexcept>
@@ -636,8 +643,8 @@ string get_executable_path(const char* argv0) {
   return string(temp_buf);
 #elif __APPLE__
   char temp_buf[MAXPATHLEN+1];
-  unsigned long buf_len = MAXPATHLEN;
-  int rc = _NSGetExecutablePath(temp_buf, &buf_len);
+  unsigned int buf_len = MAXPATHLEN;
+  int rc = Apple::_NSGetExecutablePath(temp_buf, &buf_len);
   assert(rc == 0);
   return string(temp_buf);
 #else /* Linux/BSD/POSIX/etc */

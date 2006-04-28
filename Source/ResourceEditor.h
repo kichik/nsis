@@ -61,6 +61,7 @@ typedef struct _IMAGE_RESOURCE_DIR_STRING_U {
   WORD Length;
   WCHAR NameString[1];
 } IMAGE_RESOURCE_DIR_STRING_U,*PIMAGE_RESOURCE_DIR_STRING_U;
+#  pragma pack()
 #endif
 
 #pragma pack(4)
