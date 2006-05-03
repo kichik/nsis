@@ -668,6 +668,7 @@ typedef struct _IMAGE_DOS_HEADER {
   WORD e_res2[10];
   LONG e_lfanew;
 } IMAGE_DOS_HEADER,*PIMAGE_DOS_HEADER;
+#  pragma pack()
 #  pragma pack(4)
 typedef struct _IMAGE_FILE_HEADER {
   WORD Machine;
