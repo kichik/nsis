@@ -59,8 +59,6 @@ char *my_convert(const char *path);
 void my_convert_free(char *converted_path);
 int my_open(const char *pathname, int flags);
 FILE *my_fopen(const char *path, const char *mode);
-int my_glob(const char *pattern, int flags,
-            int errfunc(const char * epath, int eerrno), glob_t *pglob);
 
 #define FOPEN(a, b) my_fopen(a, b)
 #define OPEN(a, b) my_open(a, b)
