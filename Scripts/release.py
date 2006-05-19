@@ -86,7 +86,7 @@ UPDATE_URL = cfg.get('wiki', 'UPDATE_URL')
 ### config env
 
 os.environ['CVS_EXT'] = CVS_EXT
-os.environ['CVSROOT'] = ':ext:%s@cvs.sourceforge.net:/cvsroot/nsis' % USER
+os.environ['CVSROOT'] = ':ext:%s@nsis.cvs.sourceforge.net:/cvsroot/nsis' % USER
 
 CVS_TAG = 'v' + ''.join(VERSION.split('.'))
 
