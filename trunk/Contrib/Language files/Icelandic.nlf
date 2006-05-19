@@ -2,7 +2,7 @@
 NLF v6
 # Start editing here
 # Language ID
-1039
+15
 # Font and size - dash (-) means default
 -
 -
@@ -16,9 +16,9 @@ Nullsoft Install System %s
 # ^SetupCaption
 $(^Name) Uppsetning
 # ^UninstallCaption
-$(^Name) Fjarlægja
+$(^Name) Fjarlæging
 # ^LicenseSubCaption
-: Leyfissamningur
+: Notandaleyfissamningur
 # ^ComponentsSubCaption
 : Uppsetningarvalmöguleikar
 # ^DirSubCaption
@@ -28,9 +28,9 @@ $(^Name) Fjarlægja
 # ^CompletedSubCaption
 : Lokið
 # ^UnComponentsSubCaption
-: Fjarlægjavalmöguleikar
+: Fjarlægingarvalmöguleikar
 # ^UnDirSubCaption
-: Fjarlægjaskráarsafn
+: Fjarlægingarskráarsafn
 # ^ConfirmSubCaption
 : Staðfesting
 # ^UninstallingSubCaption
@@ -58,7 +58,7 @@ Hætta við
 # ^BrowseBtn
 &Vafra...
 # ^ShowDetailsBtn
-Sýna &smáatriði
+Sýna &upplýsingar
 # ^ClickNext
 Smelltu á 'Áfram' til að halda áfram.
 # ^ClickInstall
@@ -70,45 +70,45 @@ Nafn
 # ^Completed
 Lokið
 # ^LicenseText
-Vinsamlegast skoðaðu vandlega leyfissamninginn áður en uppsetning $(^NameDA) hefst. Ef þú samþykkir alla skilmála samningsins, smelltu á 'Ég samþykki'.
+Vinsamlegast skoðaðu notandaleyfissamninginn vel áður en uppsetning á $(^NameDA) hefst. Ef þú samþykkir skilmála samningsins, smelltu þá á 'Ég samþykki'.
 # ^LicenseTextCB
-Vinsamlegast skoðaðu vandlega leyfissamninginn áður en uppsetning $(^NameDA) hefst. Ef þú samþykkir alla skilmála samningsins, hakaðu í kassann hér að neðan. $_CLICK
+Vinsamlegast skoðaðu notandaleyfissamninginn vel áður en uppsetning á $(^NameDA) hefst. Ef þú samþykkir skilmála samningsins, hakaðu þá í kassann hér að neðan. $_CLICK
 # ^LicenseTextRB
-Vinsamlegast skoðaðu vandlega leyfissamninginn áður en uppsetning $(^NameDA) hefst. Ef þú samþykkir alla skilmála samningsins, veldu þá fyrsta valmöguleikann hér að neðan. $_CLICK
+Vinsamlegast skoðaðu notandaleyfissamninginn vel áður en uppsetning á $(^NameDA) hefst. Ef þú samþykkir skilmála samningsins, veldu þá fyrsta valmöguleikann hér að neðan. $_CLICK
 # ^UnLicenseText
-Vinsamlegast skoðaðu vandlega leyfissamninginn áður en uppsetning $(^NameDA) hefst. Ef þú samþykkir alla skilmála samningsins, smelltu á 'Ég samþykki'.
+Vinsamlegast skoðaðu notandaleyfissamninginn vel áður en uppsetning á $(^NameDA) hefst. Ef þú samþykkir skilmála samningsins, smelltu þá á 'Ég samþykki'.
 # ^UnLicenseTextCB
-Vinsamlegast skoðaðu vandlega leyfissamninginn áður en uppsetning $(^NameDA) hefst. Ef þú samþykkir alla skilmála samningsins, hakaðu í kassann hér að neðan. $_CLICK
+Vinsamlegast skoðaðu notandaleyfissamninginn vel áður en uppsetning á $(^NameDA) hefst. Ef þú samþykkir skilmála samningsins, hakaðu þá í kassann hér að neðan. $_CLICK
 # ^UnLicenseTextRB
-Vinsamlegast skoðaðu vandlega leyfissamninginn áður en uppsetning $(^NameDA) hefst. Ef þú samþykkir alla skilmála samningsins, veldu þá fyrsta valmöguleikann hér að neðan. $_CLICK
+Vinsamlegast skoðaðu notandaleyfissamninginn vel áður en uppsetning á $(^NameDA) hefst. Ef þú samþykkir skilmála samningsins, veldu þá fyrsta valmöguleikann hér að neðan. $_CLICK
 # ^Custom
-Sjálfsnið
+Sjálfval
 # ^ComponentsText
-Hakaðu við þá hluti sem þú vilt setja upp og taktu hakið af þeim hlutum sem þú vilt ekki setja upp. $_CLICK
+Hakaðu við þá íhluti sem þú vilt setja upp og taktu hakið af þeim íhlutum sem þú vilt ekki setja upp. $_CLICK
 # ^ComponentsSubText1
 Veldu tegund uppsetningar:
 # ^ComponentsSubText2_NoInstTypes
-Veldu hluti til að setja upp:
+Veldu þá íhluti sem á að setja upp:
 # ^ComponentsSubText2
-Eða, veldu valfrjálsa hluti sem þú vilt setja upp:
+Eða, veldu valfrjálsa íhluti á að setja upp:
 # ^UnComponentsText
-Hakaðu við þá hluti sem þú vilt fjarlægja og taktu hakið af þeim hlutum sem þú vilt ekki fjarlægja. $_CLICK
+Hakaðu við þá íhluti sem þú vilt fjarlægja og taktu hakið af þeim íhlutum sem þú vilt ekki fjarlægja. $_CLICK
 # ^UnComponentsSubText1
 Veldu tegund fjarlægingar:
 # ^UnComponentsSubText2_NoInstTypes
-Veldu hluti til að fjarlægja:
+Veldu íhluti sem á að fjarlægja:
 # ^UnComponentsSubText2
-Eða, veldu valfrjálsa hluti sem þú vilt fjarlægja:
+Eða, veldu valfrjálsa íhluti sem á að fjarlægja:
 # ^DirText
-Uppsetningin mun setja upp $(^NameDA) í eftirfarandi skráarsafn. Til að setja forritið upp í annað skráarsafn, smelltu á 'Vafra' og veldu annað skráarsafn. $_CLICK
+Uppsetningin mun setja $(^NameDA) upp í eftirfarandi skráarsafn. Til að setja forritið upp í annað skráarsafn, smelltu á 'Vafra...' og veldu annað skráarsafn. $_CLICK
 # ^DirSubText
 Uppsetningarskráarsafn
 # ^DirBrowseText
 Veldu það skráarsafn sem þú vilt setja $(^NameDA) upp í:
 # ^UnDirText
-Uppsetningin mun fjarlægja $(^NameDA) úr eftirfarandi skráarsafni. Til að fjarlægja forritið úr öðru skráarsafni, smelltu á 'Vafra' og veldu annað skráarsafn. $_CLICK
+Uppsetningin mun fjarlægja $(^NameDA) úr eftirfarandi skráarsafni. Til að fjarlægja forritið úr öðru skráarsafni, smelltu á 'Vafra...' og veldu annað skráarsafn. $_CLICK
 # ^UnDirSubText
-""
+"Fjarlægingarskráarsafn"
 # ^UnDirBrowseText
 Veldu það skráarsafn sem þú vilt fjarlægja $(^NameDA) úr:
 # ^SpaceAvailable
@@ -120,9 +120,9 @@ $(^NameDA) verður fjarlægt úr eftirfarandi skráarsafni. $_CLICK
 # ^UninstallingSubText
 Fjarlægi úr:
 # ^FileError
-Villa við að opna skrá til að skrifa til: \r\n\r\n$0\r\n\r\nSmelltu á 'Hætta við' til að stoppa uppsetninguna,\r\n'Reyna aftur' til að gera aðra tilraun, eða\r\n'Hunsa' til sleppa þessari skrá.
+Villa við að skrifa í skrá: \r\n\r\n$0\r\n\r\nSmelltu á 'Hætta við' til að stoppa uppsetninguna,\r\n'Reyna aftur' til að gera aðra tilraun, eða\r\n'Hunsa' til sleppa þessari skrá.
 # ^FileError_NoIgnore
-Villa við að opna skrá til að skrifa til: \r\n\r\n$0\r\n\r\nSmelltu á 'Reyna aftur' til að gera aðra tilraun, eða\r\n'Hætta við' til að stoppa uppsetninguna.
+Villa við að skrifa í skrá: \r\n\r\n$0\r\n\r\nSmelltu á 'Reyna aftur' til að gera aðra tilraun, eða\r\n'Hætta við' til að stoppa uppsetninguna.
 # ^CantWrite
 "Get ei skrifað: "
 # ^CopyFailed
@@ -136,13 +136,13 @@ Afritun mistókst
 # ^SymbolNotFound
 "Fann ekki tákn: "
 # ^CouldNotLoad
-"Gat ekki ræst: "
+"Gat ekki hlaðið inn: "
 # ^CreateFolder
 "Búa til skráarsafn: "
 # ^CreateShortcut
 "Búa til flýtileið: "
 # ^CreatedUninstaller
-"Bjó til fjarlægjara: "
+"Bjó til fjarlægingarhjálp: "
 # ^Delete
 "Eyða skrá: "
 # ^DeleteOnReboot
@@ -152,7 +152,7 @@ Afritun mistókst
 # ^ErrorCreating
 "Villa við gerð: "
 # ^ErrorDecompressing
-Villa við afþjöppun gagna! Bilaður uppsetjari?
+Villa við afþjöppun gagna! Biluð uppsetningarhjálp?
 # ^ErrorRegistering
 Villa við skrásetningu DLL
 # ^ExecShell
@@ -164,7 +164,7 @@ Villa við skrásetningu DLL
 # ^ErrorWriting
 "Færa út: villa við að skrifa í skrá "
 # ^InvalidOpcode
-Uppsetjari bilaður: rangur stýrikóði
+Uppsetningarhjálp biluð: rangur stýrikóði
 # ^NoOLE
 "Engin OLE fyrir: "
 # ^OutputFolder
