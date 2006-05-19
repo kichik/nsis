@@ -655,7 +655,7 @@ Section -post
     mui:
 
     SetDetailsPrint textonly
-    DetailPrint "Configurating Modern UI..."
+    DetailPrint "Configuring Modern UI..."
     SetDetailsPrint listonly
 
     !insertmacro SectionFlagIsSet ${SecLangFiles} ${SF_SELECTED} langfiles nolangfiles
