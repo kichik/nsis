@@ -28,7 +28,6 @@ ZIP="C:\Program Files\7-zip\7za.exe" a -tzip %s -mx9 -mfb=255 -mpass=4 %s
 RSH="C:\Program Files\PuTTY\plink.exe" -2 -l kichik nsis.sourceforge.net
 
 [wiki]
-PURGE_URL=http://nsis.sourceforge.net/%s?action=purge
 UPDATE_URL=http://nsis.sourceforge.net/Special:Simpleupdate?action=raw
 =========================
 
@@ -321,19 +320,9 @@ def update_wiki_page(page, data, summary):
 		print '  *** failed updating `%s` wiki page' % page
 		exit()
 
-def purge_wiki_page(page):
-	import urllib
-	urllib.urlopen(PURGE_URL % page).read()
-
 update_wiki_page('Template:NSISVersion', VERSION, 'new version')
 update_wiki_page('Template:NSISReleaseDate', time.strftime('%B %d, %Y'), 'new version')
 update_wiki_page('Template:NSISReleaseID', release_id, 'new version')
-
-purge_wiki_page('Main_Page')
-purge_wiki_page('Download')
-purge_wiki_page('Special_Builds')
-purge_wiki_page('What_is_the_latest_version_of_NSIS')
-purge_wiki_page('Change_Log')
 
 # update changelog start time
 
