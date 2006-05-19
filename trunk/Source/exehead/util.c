@@ -192,6 +192,7 @@ void NSISCALL myDelete(char *buf, int flags)
     {
       addtrailingslash(buf);
       log_printf2("RMDir: RemoveDirectory(\"%s\")",buf);
+      SetFileAttributes(buf,FILE_ATTRIBUTE_NORMAL);
       if (!RemoveDirectory(buf))
       {
 #ifdef NSIS_SUPPORT_MOVEONREBOOT
