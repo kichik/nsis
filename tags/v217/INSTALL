@@ -1,0 +1,71 @@
+INSTALLING NSIS
+~~~~~~~~~~~~~~~
+
+This is a trimmed version of Appendix "Building NSIS" of the documentation.
+
+ - Requirements
+
+   * Python version 1.6 and above (http://www.python.org/)
+   * SCons version 0.96.91 and above (http://www.scons.org/)
+   * C compiler
+
+ - Optional Tools
+
+   * HTML Help Workshop for CHM documentation (http://msdn.microsoft.com/)
+   * Cross compiler on POSIX platforms, i.e. MinGW (http://www.mingw.org/)
+
+ - Installing
+
+   * type:
+
+       scons PREFIX="C:\Program Files\NSIS" install
+
+ - More options
+
+   * For build options, type:
+
+       scons -h
+
+   * For SCons options, type:
+
+       scons -H
+
+ - Special cases
+
+   * If using the free Visual C++ Toolkit and Platform SDK
+     (available at http://msdn.microsoft.com/visualc/vctoolkit2003/,
+      http://www.microsoft.com/msdownload/platformsdk/sdkupdate/),
+     add MSTOOLKIT=yes to the build command line. For example:
+
+        scons MSTOOLKIT=yes PREFIX=C:\NSIS install
+
+     If path problems occur, try:
+
+        set MSSDK=C:\Path\To\Platform SDK
+        set VCToolkitInstallDir=C:\Path\To\VCToolkit
+        scons MSTOOLKIT=yes
+
+    * If a cross compiler is not available on POSIX, use:
+
+        scons SKIPSTUBS=all SKIPPLUGINS=all SKIPUTILS=all SKIPMISC=all
+
+      This should only build makensis. Once you have makensis, you can
+      drop it in a downloaded precompiled package such as the nightly
+      build.
+
+    * Options for POSIX installs
+
+      PREFIX: defaults to /usr/local
+      PREFIX_BIN: Where to put native binaries. Defaults to $PREFIX/bin/
+      PREFIX_CONF: Where to put the config file. Defaults to $PREFIX/etc/
+      PREFIX_DATA: Where to put the plugins, stubs, etc. Defaults to $PREFIX/share/nsis/
+      PREFIX_DOC: Where to put the docs and examples. Defaults to $PREFIX/share/doc/nsis/
+      PREFIX_DEST: The install root Useful for packagers. Defaults to the root directory.
+
+  - Problems
+
+    * Get help in the forum:
+        http://forums.winamp.com/forumdisplay.php?forumid=65
+
+    * Report bugs in the bug tracker:
+        http://sourceforge.net/tracker/?group_id=22049&atid=373085
