@@ -1,5 +1,35 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.17} 2.17
+
+Released on May 19th, 2006
+
+\S1{v2.17-cl} Changelog
+
+\S2{} Minor Changes
+
+\b Fixed build failures and segfaults on PowerPC Mac OS X (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1474597}{bug #1474597}, \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1481044}{bug #1481044})
+
+\b Fixed \R{library}{Library}'s TLB version interpretation  (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1471341}{bug #1471341})
+
+\b Fixed possible stack corruption when using TypeLib.dll on an invalid TLB
+
+\b Fixed RMDir deletion failure of read-only folders (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1481664}{bug #1481664})
+
+\b \L{../Docs/makensisw/Readme.txt}{MakeNSISW}: Fixed toolbar compressor selection menu, broken in the previous version (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1466486}{bug #1466486})
+
+\b Minor documentation improvements and fixes (including \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1469306}{bug #1469306}, \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1491616}{bug #1491616})
+
+\S2{} Translations
+
+\b Brazilian Portuguese updates
+
+\b Bulgarian fixes
+
+\b Fixed a typo in Hebrew translation (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1474587 }{bug #1474587})
+
+\b Icelandic fixes and improvements
+
 \H{v2.16} 2.16
 
 Released on April 7th, 2006
