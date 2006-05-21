@@ -15,7 +15,7 @@ body
         font-size: 13px;
         font-family: Verdana, Arial, Helvetica, sans-serif;
         font-weight: normal;
-        text-align: left;
+        text-align: justify;
         }
 
 p, li
@@ -69,6 +69,11 @@ div
         {
         margin: 20px;
         }
+		
+div.settings
+		{
+		margin-right: 0;
+		}
 
 .footer
         {
@@ -188,18 +193,15 @@ a:hover
 user interface. The Modern UI is an interface with a style like the
 wizards of recent Windows versions.</p>
 <p>This new interface also features new pages (Welcome, Finish,
-Start Menu) and a description area on the components page. The
-interface and the graphics can be customized using the provided
-settings.</p>
+Start Menu) and a description area on the components page.</p>
 <p>Using the Modern UI macros and language files, writing scripts
-with a modern interface is easy. This document contains information
-about writing Modern UI scripts and a reference of all
+with a modern interface is easy. This document contains all 
+information about writing Modern UI scripts and a reference of all
 settings.</p>
-<p><strong>Important:</strong> Because the Modern UI has its own
-macro system, its own default settings and a lot of new features,
-the interface configuration works differently. So you should not
-use commands like LicenseText, Icon, CheckBitmap, InstallColors
-etc.</p>
+<p>Please be aware that the Modern UI interface settings are
+different compared to the classic interface. This means that you
+should not use settings like LicenseText, Icon, CheckBitmap,
+InstallColors etc. but the ones that are documented here.</p>
 <h3><img class="trigger" alt="Open/Close section" id="trigger_scr"
 src="images/closed.gif" onclick=
 "toggle('trigger_scr', 'toggle_scr');" /> Screenshots</h3>
@@ -210,13 +212,13 @@ src="images/closed.gif" onclick=
 "" /></p>
 </div>
 </div>
-<h1>How to use</h1>
+<h1>Writing Modern UI Scripts</h1>
 <div>
 <p>The Modern UI has a macro system, so all the code to control the
 interface has already been written for you.</p>
 <p>If you want to start a new Modern UI script or upgrade an older
 script with the Classic UI, follow the steps below.</p>
-<p>Taking a look at the <a href="#examples">example</a> scripts
+<p>Taking a look at the <a href="#examples">example scripts</a>
 will also help you to learn more about the Modern UI.</p>
 <h2>Syntax</h2>
 <div>
@@ -273,13 +275,13 @@ The icon for the uninstaller.<br />
 ${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall.ico</em></p>
 <p><strong>MUI_HEADERIMAGE</strong><br />
 Display an image on the header of the page.</p>
-<div>
+<div class="settings">
 <p><strong>MUI_HEADERIMAGE_BITMAP</strong> <span class=
 "parameter">bmp_file</span><br />
 Bitmap image to display on the header of installers pages
 (recommended size: 150x57 pixels).<br />
 <em>Default: ${NSISDIR}\Contrib\Graphics\Header\nsis.bmp</em></p>
-<div>
+<div class="settings">
 <p><strong>MUI_HEADERIMAGE_BITMAP_NOSTRETCH</strong><br />
 Do not stretch the installer header bitmap to fit the size of the
 field. Use this option only if you have an image that does not use
@@ -291,7 +293,7 @@ be different if the user has a custom DPI setting.</p>
 Bitmap image to display on the header of installers pages when
 using a RTL language (recommended size: 150x57 pixels).<br />
 <em>Default: Non-RTL bitmap</em></p>
-<div>
+<div class="settings">
 <p><strong>MUI_HEADERIMAGE_BITMAP_RTL_NOSTRETCH</strong><br />
 Do not stretch the installer header bitmap when using a RTL
 language to fit the size of the field. Use this option only if you
@@ -306,7 +308,7 @@ custom DPI setting.</p>
 Bitmap image to display on the header of uninstaller pages
 (recommended size: 150x57 pixels).<br />
 <em>Default: Installer header bitmap</em></p>
-<div>
+<div class="settings">
 <p><strong>MUI_HEADERIMAGE_UNBITMAP_NOSTRETCH</strong><br />
 Do not stretch the uninstaller header bitmap to fit the size of the
 field. Use this option only if you have an image that does not use
@@ -318,7 +320,7 @@ be different if the user has a custom DPI setting.</p>
 Bitmap image to display on the header of uninstallers pages when
 using a RTL language (recommended size: 150x57 pixels).<br />
 <em>Default: Installer RTL header bitmap</em></p>
-<div>
+<div class="settings">
 <p><strong>MUI_HEADERIMAGE_UNBITMAP_RTL_NOSTRETCH</strong><br />
 Do not stretch the uninstaller header bitmap when using a RTL
 language to fit the size of the field. Use this option only if you
@@ -384,7 +386,7 @@ Interface Settings</h3>
 Bitmap for the Welcome page and the Finish page (recommended size:
 164x314 pixels).<br />
 <em>Default: ${NSISDIR}\Contrib\Graphics\Wizard\win.bmp</em></p>
-<div>
+<div class="settings">
 <p><strong>MUI_WELCOMEFINISHPAGE_BITMAP_NOSTRETCH</strong><br />
 Do not stretch the bitmap for the Welcome and Finish page to fit
 the size of the field. Use this option only if you have an image
@@ -415,7 +417,7 @@ Welcome/Finish Page Settings</h3>
 Bitmap for the Welcome page and the Finish page (recommended size:
 164x314 pixels).<br />
 <em>Default: ${NSISDIR}\Contrib\Graphics\Wizard\win.bmp</em></p>
-<div>
+<div class="settings">
 <p><strong>MUI_UNWELCOMEFINISHPAGE_BITMAP_NOSTRETCH</strong><br />
 Do not stretch the bitmap for the Welcome and Finish page to fit
 the size of the field. Use this option only if you have an image
@@ -509,7 +511,7 @@ Settings</h3>
 <p><strong>MUI_ABORTWARNING</strong><br />
 Show a message box with a warning when the user wants to close the
 installer.</p>
-<div>
+<div class="settings">
 <p><strong>MUI_ABORTWARNING_TEXT</strong> <span class=
 "parameter">text</span><br />
 Text to display on the abort warning messagebox.</p>
@@ -523,7 +525,7 @@ Warning Settings</h3>
 <p><strong>MUI_UNABORTWARNING</strong><br />
 Show a message box with a warning when the user wants to close the
 uninstaller.</p>
-<div>
+<div class="settings">
 <p><strong>MUI_UNABORTWARNING_TEXT</strong> <span class=
 "parameter">text</span><br />
 Text to display on the abort warning messagebox.</p>
@@ -573,10 +575,9 @@ MUI_UNPAGE_FINISH</p>
 src="images/closed.gif" onclick=
 "toggle('trigger_pg', 'toggle_pg');" /> Page Settings</h3>
 <div class="toggle" id="toggle_pg">
-<p>Page Settings apply to a single page and should be set before
-inserting a page macro. If you have multiple pages of one type and
-you want to set a setting for all them, put the setting before each
-page macro. Example:</p>
+<p>Page settings apply to a single page and should be set before
+inserting a page macro. You have to repeat the setting if you
+want it to apply to multiple pages. Example:</p>
 <pre>
 ;Add a directory page to let the user specify a plug-ins folder
 ;Store the folder in $PLUGINS_FOLDER
@@ -630,7 +631,7 @@ Text to display on the 'I Agree' button.</p>
 <p><strong>MUI_LICENSEPAGE_CHECKBOX</strong><br />
 Display a checkbox the user has to check to agree with the license
 terms.</p>
-<div>
+<div class="settings">
 <p><strong>MUI_LICENSEPAGE_CHECKBOX_TEXT</strong> <span class=
 "parameter">text</span><br />
 Text to display next to the checkbox to agree with the license
@@ -639,7 +640,7 @@ terms.</p>
 <p><strong>MUI_LICENSEPAGE_RADIOBUTTONS</strong><br />
 Display two radio buttons to allow the user to choose between
 accepting the license terms or not.</p>
-<div>
+<div class="settings">
 <p><strong>MUI_LICENSEPAGE_RADIOBUTTONS_TEXT_ACCEPT</strong>
 <span class="parameter">text</span><br />
 Text to display next to the checkbox to accept the license
@@ -792,7 +793,7 @@ Text to display next to the 'Reboot later' option button.</p>
 Application which the user can select to run using a checkbox. You
 don't need to put quotes around the filename when it contains
 spaces.</p>
-<div>
+<div class="settings">
 <p><strong>MUI_FINISHPAGE_RUN_TEXT</strong> <span class=
 "parameter">text</span><br />
 Texts to display next to the 'Run program' checkbox.</p>
@@ -814,7 +815,7 @@ and use it for other things.</p>
 File or website which the user can select to view using a checkbox.
 You don't need to put quotes around the filename when it contains
 spaces.</p>
-<div>
+<div class="settings">
 <p><strong>MUI_FINISHPAGE_SHOWREADME_TEXT</strong> <span class=
 "parameter">text</span><br />
 Texts to display next to the 'Show Readme' checkbox.</p>
@@ -831,7 +832,7 @@ and use it for other things.</p>
 "parameter">link_text</span><br />
 Text for a link on the which the user can click to view a website
 or file.</p>
-<div>
+<div class="settings">
 <p><strong>MUI_FINISHPAGE_LINK_LOCATION</strong> <span class=
 "parameter">file/url</span><br />
 Website or file which the user can select to view using the link.
@@ -1193,7 +1194,7 @@ for the page is written, so you can use it to initialize any
 variables used in the page settings.</p>
 </div>
 </div>
-<h1><a name="examples" id="examples">Examples</a></h1>
+<h1><a name="examples" id="examples">Example Scripts</a></h1>
 <div>
 <p>Basic: <a href=
 "../../Examples/Modern%20UI/Basic.nsi">Basic.nsi</a><br />
@@ -1212,7 +1213,7 @@ Custom pages: <a href=
 Start Menu Folder page: <a href=
 "../../Examples/Modern%20UI/StartMenu.nsi">StartMenu.nsi</a></p>
 </div>
-<h1>Version history</h1>
+<h1>Version History</h1>
 <div>
 <ul>
 <li>1.75 - April 1, 2006
