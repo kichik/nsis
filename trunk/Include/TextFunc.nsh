@@ -1,7 +1,7 @@
 /*
 _____________________________________________________________________________
 
-                       Text Functions Header v2.3
+                       Text Functions Header v2.4
 _____________________________________________________________________________
 
  2006 Shengalts Aleksander aka Instructor (Shengalts@mail.ru)
@@ -58,6 +58,9 @@ TrimNewLines
 ; ${TEXTFUNC_VERBOSE} 4   # all verbosity
 ; !insertmacro LineSum
 ; ${TEXTFUNC_VERBOSE} 3   # no script
+
+!ifndef TEXTFUNC_INCLUDED
+!define TEXTFUNC_INCLUDED
 
 !verbose push
 !verbose 3
@@ -1479,3 +1482,5 @@ TrimNewLines
 		!verbose pop
 	!endif
 !macroend
+
+!endif

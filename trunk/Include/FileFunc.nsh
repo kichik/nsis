@@ -1,7 +1,7 @@
 /*
 _____________________________________________________________________________
 
-                       File Functions Header v3.1
+                       File Functions Header v3.2
 _____________________________________________________________________________
 
  2006 Shengalts Aleksander aka Instructor (Shengalts@mail.ru)
@@ -72,6 +72,9 @@ RefreshShellIcons
 ; ${FILEFUNC_VERBOSE} 4   # all verbosity
 ; !insertmacro VersionCompare
 ; ${FILEFUNC_VERBOSE} 3   # no script
+
+!ifndef FILEFUNC_INCLUDED
+!define FILEFUNC_INCLUDED
 
 !verbose push
 !verbose 3
@@ -1192,92 +1195,65 @@ RefreshShellIcons
 			Push $5
 
 			System::Call 'kernel32::GetFileAttributes(t r0)i .r2'
-
 			StrCmp $2 -1 error
 			StrCpy $3 ''
 
-			IntOp $0 $2 - 16384
-			IntCmp $0 0 0 +4
+			IntOp $0 $2 & 0x4000
+			IntCmp $0 0 +2
 			StrCpy $3 'ENCRYPTED|'
-			StrCpy $2 $0
-			StrCmp $2 0 all
 
-			IntOp $0 $2 - 8192
-			IntCmp $0 0 0 +4
+			IntOp $0 $2 & 0x2000
+			IntCmp $0 0 +2
 			StrCpy $3 'NOT_CONTENT_INDEXED|$3'
-			StrCpy $2 $0
-			StrCmp $2 0 all
 
-			IntOp $0 $2 - 4096
-			IntCmp $0 0 0 +4
+			IntOp $0 $2 & 0x1000
+			IntCmp $0 0 +2
 			StrCpy $3 'OFFLINE|$3'
-			StrCpy $2 $0
-			StrCmp $2 0 all
 
-			IntOp $0 $2 - 2048
-			IntCmp $0 0 0 +4
+			IntOp $0 $2 & 0x0800
+			IntCmp $0 0 +2
 			StrCpy $3 'COMPRESSED|$3'
-			StrCpy $2 $0
-			StrCmp $2 0 all
 
-			IntOp $0 $2 - 1024
-			IntCmp $0 0 0 +4
+			IntOp $0 $2 & 0x0400
+			IntCmp $0 0 +2
 			StrCpy $3 'REPARSE_POINT|$3'
-			StrCpy $2 $0
-			StrCmp $2 0 all
 
-			IntOp $0 $2 - 512
-			IntCmp $0 0 0 +4
+			IntOp $0 $2 & 0x0200
+			IntCmp $0 0 +2
 			StrCpy $3 'SPARSE_FILE|$3'
-			StrCpy $2 $0
-			StrCmp $2 0 all
 
-			IntOp $0 $2 - 256
-			IntCmp $0 0 0 +4
+			IntOp $0 $2 & 0x0100
+			IntCmp $0 0 +2
 			StrCpy $3 'TEMPORARY|$3'
-			StrCpy $2 $0
-			StrCmp $2 0 all
 
-			IntOp $0 $2 - 128
-			IntCmp $0 0 0 +4
+			IntOp $0 $2 & 0x0080
+			IntCmp $0 0 +2
 			StrCpy $3 'NORMAL|$3'
-			StrCpy $2 $0
-			StrCmp $2 0 all
 
-			IntOp $0 $2 - 64
-			IntCmp $0 0 0 +4
+			IntOp $0 $2 & 0x0040
+			IntCmp $0 0 +2
 			StrCpy $3 'DEVICE|$3'
-			StrCpy $2 $0
-			StrCmp $2 0 all
 
-			IntOp $0 $2 - 32
-			IntCmp $0 0 0 +4
+			IntOp $0 $2 & 0x0020
+			IntCmp $0 0 +2
 			StrCpy $3 'ARCHIVE|$3'
-			StrCpy $2 $0
-			StrCmp $2 0 all
 
-			IntOp $0 $2 - 16
-			IntCmp $0 0 0 +4
+			IntOp $0 $2 & 0x0010
+			IntCmp $0 0 +2
 			StrCpy $3 'DIRECTORY|$3'
-			StrCpy $2 $0
-			StrCmp $2 0 all
 
-			IntOp $0 $2 - 4
-			IntCmp $0 0 0 +4
+			IntOp $0 $2 & 0x0004
+			IntCmp $0 0 +2
 			StrCpy $3 'SYSTEM|$3'
-			StrCpy $2 $0
-			StrCmp $2 0 all
 
-			IntOp $0 $2 - 2
-			IntCmp $0 0 0 +4
+			IntOp $0 $2 & 0x0002
+			IntCmp $0 0 +2
 			StrCpy $3 'HIDDEN|$3'
-			StrCpy $2 $0
-			StrCmp $2 0 all
 
-			IntOp $0 $2 - 1
+			IntOp $0 $2 & 0x0001
+			IntCmp $0 0 +2
 			StrCpy $3 'READONLY|$3'
 
-			all:
 			StrCpy $0 $3 -1
 			StrCmp $1 '' end
 			StrCmp $1 'ALL' end
@@ -1898,7 +1874,7 @@ RefreshShellIcons
 		!define ${_FILEFUNC_UN}RefreshShellIcons `!insertmacro ${_FILEFUNC_UN}RefreshShellIconsCall`
 
 		Function ${_FILEFUNC_UN}RefreshShellIcons
-			System::Call 'shell32.dll::SHChangeNotify(i, i, i, i) v (0x08000000, 0, 0, 0)'
+			System::Call 'shell32::SHChangeNotify(i 0x08000000, i 0, i 0, i 0)'
 		FunctionEnd
 
 		!verbose pop
@@ -2439,3 +2415,5 @@ RefreshShellIcons
 		!verbose pop
 	!endif
 !macroend
+
+!endif
