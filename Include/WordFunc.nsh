@@ -1,7 +1,7 @@
 /*
 _____________________________________________________________________________
 
-                       Word Functions Header v3.2
+                       Word Functions Header v3.3
 _____________________________________________________________________________
 
  2006 Shengalts Aleksander aka Instructor (Shengalts@mail.ru)
@@ -54,6 +54,9 @@ VersionConvert
 ; ${WORDFUNC_VERBOSE} 4   # all verbosity
 ; !insertmacro WordReplace
 ; ${WORDFUNC_VERBOSE} 3   # no script
+
+!ifndef WORDFUNC_INCLUDED
+!define WORDFUNC_INCLUDED
 
 !verbose push
 !verbose 3
@@ -2198,3 +2201,5 @@ VersionConvert
 		!verbose pop
 	!endif
 !macroend
+
+!endif
