@@ -50,9 +50,9 @@ typedef WORD LANGID;
 #endif
 
 #ifndef __BIG_ENDIAN__
-# define FIX_ENDIAN_INT32_INPLACE(x) (x)
+# define FIX_ENDIAN_INT32_INPLACE(x) ((void)(x))
 # define FIX_ENDIAN_INT32(x) (x)
-# define FIX_ENDIAN_INT16_INPLACE(x) (x)
+# define FIX_ENDIAN_INT16_INPLACE(x) ((void)(x))
 # define FIX_ENDIAN_INT16(x) (x)
 #else
 # define FIX_ENDIAN_INT32_INPLACE(x) ((x) = SWAP_ENDIAN_INT32(x))
