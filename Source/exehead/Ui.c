@@ -945,13 +945,14 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     }
     if (id == IDC_BROWSE)
     {
+      static char bt[NSIS_MAX_STRLEN];
       BROWSEINFO bi = {0,};
       ITEMIDLIST *idlist;
       bi.hwndOwner = hwndDlg;
       bi.pszDisplayName = g_tmp;
       bi.lpfn = BrowseCallbackProc;
       bi.lParam = (LPARAM)dir;
-      bi.lpszTitle = GetNSISStringTT(browse_text);
+      bi.lpszTitle = GetNSISString(bt, browse_text);
       bi.ulFlags = BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE;
       idlist = SHBrowseForFolder(&bi);
       if (idlist)
