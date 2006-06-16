@@ -3,6 +3,7 @@
 
 #include "exehead/config.h"
 #include "growbuf.h"
+#include "crc32.h"
 #include <stdio.h>
 
 class writer_sink {
@@ -57,12 +58,12 @@ private:
 #ifdef NSIS_CONFIG_CRC_SUPPORT
 class crc_writer_sink : public writer_sink {
 public:
-  crc_writer_sink(unsigned long *crc) : m_crc(crc) {}
+  crc_writer_sink(crc32_t *crc) : m_crc(crc) {}
 
   virtual void write_data(const void *data, const size_t size);
 
 private:
-  unsigned long *m_crc;
+  crc32_t *m_crc;
 
 };
 #endif

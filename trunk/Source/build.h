@@ -35,13 +35,6 @@
 #  include "Plugins.h"
 #endif //NSIS_CONFIG_PLUGIN_SUPPORT
 
-#ifdef NSIS_CONFIG_CRC_SUPPORT
-extern "C"
-{
-  unsigned long NSISCALL CRC32(unsigned long crc, const unsigned char *buf, unsigned int len);
-};
-#endif
-
 #define PS_OK 0
 #define PS_EOF 1
 #define PS_ERROR 50

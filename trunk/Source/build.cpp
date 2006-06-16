@@ -8,6 +8,7 @@
 #include "util.h"
 #include "fileform.h"
 #include "writer.h"
+#include "crc32.h"
 
 #include <stdexcept>
 
@@ -2274,7 +2275,7 @@ int CEXEBuild::write_output(void)
 
   RET_UNLESS_OK( uninstall_generate() );
 
-  int crc=0;
+  crc32_t crc=0;
 
   {
     string full_path = get_full_path(build_output_filename);
@@ -2349,7 +2350,7 @@ int CEXEBuild::write_output(void)
     }
 
     if (!build_compress_whole)
-      fh.length_of_all_following_data=ihd.getlen()+build_datablock.getlen()+(int)sizeof(firstheader)+(build_crcchk?sizeof(int):0);
+      fh.length_of_all_following_data=ihd.getlen()+build_datablock.getlen()+(int)sizeof(firstheader)+(build_crcchk?sizeof(crc32_t):0);
     else
       fd_start=ftell(fp);
 
@@ -2384,7 +2385,7 @@ int CEXEBuild::write_output(void)
         return PS_ERROR;
       }
 #ifdef NSIS_CONFIG_CRC_SUPPORT
-      crc_writer_sink crc_sink((unsigned long *) &crc);
+      crc_writer_sink crc_sink((crc32_t *) &crc);
       firstheader_writer w(&crc_sink);
       w.write(&fh);
 
@@ -2455,7 +2456,7 @@ int CEXEBuild::write_output(void)
   if (db_opt_save)
   {
     int total_out_size_estimate=
-      m_exehead_size+sizeof(fh)+build_datablock.getlen()+(build_crcchk?sizeof(int):0);
+      m_exehead_size+sizeof(fh)+build_datablock.getlen()+(build_crcchk?sizeof(crc32_t):0);
 #ifdef _WIN32
     int pc=MulDiv(db_opt_save,1000,db_opt_save+total_out_size_estimate);
 #else
@@ -2564,7 +2565,7 @@ int CEXEBuild::write_output(void)
 
     unsigned fend = ftell(fp);
 
-    fh.length_of_all_following_data=ftell(fp)-fd_start+(build_crcchk?sizeof(int):0);
+    fh.length_of_all_following_data=ftell(fp)-fd_start+(build_crcchk?sizeof(crc32_t):0);
     INFO_MSG(
       "%10d / %d bytes\n",
       ftell(fp) - fd_start,
@@ -2608,9 +2609,9 @@ int CEXEBuild::write_output(void)
   {
     total_usize+=sizeof(int);
     int rcrc = FIX_ENDIAN_INT32(crc);
-    if (fwrite(&rcrc,1,sizeof(int),fp) != sizeof(int))
+    if (fwrite(&rcrc,1,sizeof(crc32_t),fp) != sizeof(crc32_t))
     {
-      ERROR_MSG("Error: can't write %d bytes to output\n",sizeof(int));
+      ERROR_MSG("Error: can't write %d bytes to output\n",sizeof(crc32_t));
       fclose(fp);
       return PS_ERROR;
     }
@@ -2693,7 +2694,7 @@ int CEXEBuild::uninstall_generate()
       if (err < 0) return PS_ERROR;
     }
 
-    int crc=0;
+    crc32_t crc=0;
 
     // Get offsets of icons to replace for uninstall
     // Also makes sure that the icons are there and in the right size.
@@ -2763,7 +2764,7 @@ int CEXEBuild::uninstall_generate()
 #endif
     fh.siginfo=FH_SIG;
     fh.length_of_all_following_data=
-      uhd.getlen()+ubuild_datablock.getlen()+(int)sizeof(firstheader)+(build_crcchk?sizeof(int):0);
+      uhd.getlen()+ubuild_datablock.getlen()+(int)sizeof(firstheader)+(build_crcchk?sizeof(crc32_t):0);
 
     MMapBuf udata;
 
@@ -2832,7 +2833,7 @@ int CEXEBuild::uninstall_generate()
       }
 
       firstheader *_fh=(firstheader *)udata.get(0, sizeof(firstheader));
-      _fh->length_of_all_following_data=FIX_ENDIAN_INT32(udata.getlen()+(build_crcchk?sizeof(int):0));
+      _fh->length_of_all_following_data=FIX_ENDIAN_INT32(udata.getlen()+(build_crcchk?sizeof(crc32_t):0));
       udata.release();
     }
     else

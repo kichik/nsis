@@ -64,7 +64,7 @@ void file_writer_sink::write_data(const void *data, const size_t size)
 }
 
 #ifdef NSIS_CONFIG_CRC_SUPPORT
-extern "C" unsigned long NSISCALL CRC32(unsigned long crc, const unsigned char *buf, unsigned int len);
+#include "crc32.h"
 
 void crc_writer_sink::write_data(const void *data, const size_t size)
 {
