@@ -11,26 +11,27 @@ NLF v6
 -
 # Translation by Piotr Murawski & Rafa³ Lampe <ppiter@skrzynka.pl> - www.lomsel.prv.pl
 # Updated by cube, kubad(at)poczta.onet.pl and SYSTEMsoft Group, http://www.systemsoft-group.com
+# Corrections by Marek Stepien <marcoos@aviary.pl> - http://www.aviary.pl/
 # ^Branding
 Nullsoft Install System %s
 # ^SetupCaption
-Instalator $(^Name)
+Instalator programu $(^Name)
 # ^UninstallCaption
-Deinstalator $(^Name) 
+Deinstalator programu $(^Name) 
 # ^LicenseSubCaption
 : Umowa licencyjna
 # ^ComponentsSubCaption
-: Opcje Instalacji
+: Opcje instalacji
 # ^DirSubCaption
-: Folder Instalacyjny
+: Folder instalacyjny
 # ^InstallingSubCaption
 : Instalowanie plików
 # ^CompletedSubCaption
 : Zakoñczono
 # ^UnComponentsSubCaption
-: Opcje Deinstalacji
+: Opcje deinstalacji
 # ^UnDirSubCaption
-: Folder Deinstalacyjny
+: Folder deinstalacyjny
 # ^ConfirmSubCaption
 : Potwierdzenie
 # ^UnDirSubCaption
@@ -60,11 +61,11 @@ Deinstalator $(^Name)
 # ^ShowDetailsBtn
 Poka¿ &szczegó³y
 # ^ClickNext
-Kliknij Dalej aby kontynuowaæ.
+Kliknij Dalej, aby kontynuowaæ.
 # ^ClickInstall
-Kliknij Zainstaluj aby rozpocz¹æ instalacjê.
+Kliknij Zainstaluj, aby rozpocz¹æ instalacjê.
 # ^ClickUninstall
-Kliknij Odinstaluj aby rozpocz¹æ deinstalacjê.
+Kliknij Odinstaluj, aby rozpocz¹æ deinstalacjê.
 # ^Name
 Nazwa
 # ^Completed
@@ -84,23 +85,23 @@ Przed odinstalowaniem $(^NameDA) przeczytaj licencjê. Jeœli akceptujesz wszystki
 # ^Custom
 U¿ytkownika
 # ^ComponentsText
-Zaznacz komponenty które chcesz zainstalowaæ i odznacz te, których nie chcesz zainstalowaæ. $_CLICK
+Zaznacz komponenty, które chcesz zainstalowaæ i odznacz te, których nie chcesz zainstalowaæ. $_CLICK
 # ^ComponentsSubText1
 Wybierz typ instalacji:
 # ^ComponentsSubText2_NoInstTypes
 Wybierz komponenty do zainstalowania:
 # ^ComponentsSubText2
-Lub wybierz opcjonalne komponenty, które chcesz zainstalowaæ:
+Albo wybierz opcjonalne komponenty, które chcesz zainstalowaæ:
 # ^UnComponentsText
-Zaznacz komponenty które chcesz odinstalowaæ i odznacz te, których nie chcesz odinstalowaæ. $_CLICK
+Zaznacz komponenty, które chcesz odinstalowaæ, i odznacz te, których nie chcesz odinstalowaæ. $_CLICK
 # ^UnComponentsSubText1
 Wybierz typ deinstalacji:
 # ^UnComponentsSubText2_NoInstTypes
 Wybierz komponenty do odinstalowania:
 # ^UnComponentsSubText2
-Lub wybierz opcjonalne komponenty, które chcesz odinstalowaæ:
+Albo wybierz opcjonalne komponenty, które chcesz odinstalowaæ:
 # ^DirText
-Instalator zainstaluje $(^NameDA) w nastêpuj¹cym folderze. Aby zainstalowaæ w innym folderze, kliknij Przegl¹daj i wybierz folder. $_CLICK
+Instalator zainstaluje program $(^NameDA) w nastêpuj¹cym folderze. Aby zainstalowaæ w innym folderze, kliknij Przegl¹daj i wybierz folder. $_CLICK
 # ^DirSubText
 Folder docelowy
 # ^DirBrowseText
@@ -110,7 +111,7 @@ Deinstalator usunie $(^NameDA) z nastêpuj¹cego folderu. Aby odinstalowaæ z inneg
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
-Wybierz folder z którego zostanie odinstalowany $(^NameDA):
+Wybierz folder, z którego zostanie odinstalowany program $(^NameDA):
 # ^SpaceAvailable
 Dostêpne miejsce: 
 # ^SpaceRequired
@@ -120,9 +121,9 @@ Ten kreator odinstaluje  $(^NameDA) z twojego komputera. $_CLICK
 # ^UninstallingSubText
 Deinstalacja z: 
 # ^FileError
-B³¹d otwarcia pliku do zapisu: \r\n\t"$0"\r\nWybierz anuluj, aby przerwaæ instalacjê,\r\nponów, aby ponowiæ zapis do pliku lub\r\nignoruj, aby pomin¹æ ten plik
+B³¹d otwarcia pliku do zapisu: \r\n\t"$0"\r\nWybierz Anuluj, aby przerwaæ instalacjê,\r\nPonów, aby ponowiæ zapis do pliku lub\r\nIgnoruj, aby pomin¹æ ten plik
 # ^FileError_NoIgnore
-B³¹d otwarcia pliku do zapisu: \r\n\t"$0"\r\nWybierz ponów, aby ponowiæ zapis do pliku lub\r\nanuluj, aby przerwaæ instalacjê
+B³¹d otwarcia pliku do zapisu: \r\n\t"$0"\r\nWybierz Ponów, aby ponowiæ zapis do pliku lub\r\nAnuluj, aby przerwaæ instalacjê
 # ^CantWrite
 Nie mo¿na zapisaæ:  
 # ^CopyFailed
@@ -134,7 +135,7 @@ B³¹d kopiowania
 # ^Unregistering
 "Odrejestrowywanie:"
 # ^SymbolNotFound
-"Nie mo¿na znaleŸæ symbolu: "
+"Nie mo¿na odnaleŸæ symbolu: "
 # ^CouldNotLoad
 "Nie mo¿na wczytaæ: "
 #^CreateFolder
@@ -146,13 +147,13 @@ B³¹d kopiowania
 # ^Delete
 "Usuñ plik: "
 # ^DeleteOnReboot
-"Usuñ przy restarcie: "
+"Usuñ przy ponownym uruchomieniu: "
 # ^ErrorCreatingShortcut
 "B³¹d tworzenia skrótu: "
 # ^ErrorCreating
 "B³¹d tworzenia: "
 # ^ErrorDecompressing
-B³¹d rozpakowania danych! Uszkodzony instalator?
+B³¹d rozpakowywania danych! Uszkodzony instalator?
 # ^ErrorRegistering
 B³¹d rejestracji pliku DLL
 # ^ExecShell
@@ -164,7 +165,7 @@ B³¹d rejestracji pliku DLL
 # ^ErrorWriting
 "Rozpakuj: b³¹d zapisu do pliku "
 # ^InvalidOpcode
-Instalator uszkodzony: z³y kod operacji
+Instalator uszkodzony: nieprawid³owy kod operacji
 # ^NoOLE
 "Brak OLE dla: "
 # ^OutputFolder
@@ -172,7 +173,7 @@ Instalator uszkodzony: z³y kod operacji
 # ^RemoveFolder
 "Usuñ folder: "
 # ^RenameOnReboot
-"Zmieñ nazwê przy restarcie: "
+"Zmieñ nazwê przy ponownym uruchomieniu: "
 # ^Rename
 "Zmieñ nazwê: "
 # ^Skipped
