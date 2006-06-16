@@ -11,8 +11,9 @@ NLF v6
 -
 # Translation orginally started by Orfanik - http://www.orfanik.hu
 # Updated v2 to v6 by Alessandro Staltari < staltari (a) geocities.com >
+# corrected by < mdalco@gmail.com >
 # ^Branding
-Nullsoft Install System %s
+Sistema di installazione Nullsoft %s
 # ^SetupCaption
 Installazione di $(^Name)
 # ^UninstallCaption
@@ -70,47 +71,47 @@ Nome
 # ^Completed
 Completata
 # ^LicenseText
-Prego leggere la licenza prima di installare $(^NameDA). Se si accettano pienamente le condizioni di licenza, selezionare Accetto.
+Leggere la licenza prima di procedere con l'installazione di $(^NameDA). Se si accettano le condizioni di licenza, selezionare Accetto.
 # ^LicenseTextCB
-Prego leggere la licenza prima di installare $(^NameDA). Se si accettano pienamente le condizioni di licenza, selezionare la casella sottostante. $_CLICK
+Leggere la licenza prima di procedere con l'installazione di $(^NameDA). Se si accettano pienamente le condizioni di licenza, selezionare la casella sottostante. $_CLICK
 # ^LicesnseTextRB
-Prego leggere la licenza prima di installare $(^NameDA). Se si accettano pienamente le condizioni di licenza, selezionare la prima delle opzioni sottoindicate. $_CLICK
+Leggere la licenza prima di procedere con l'installazione di $(^NameDA). Se si accettano pienamente le condizioni di licenza, selezionare la prima delle opzioni sottoindicate. $_CLICK
 # ^UnLicenseText
-Prego leggere la licenza prima di disinstallare $(^NameDA). Se si accettano pienamente le condizioni di licenza, selezionare Accetto. $_CLICK
+Leggere la licenza prima di procedere con la disinstallazione di $(^NameDA). Se si accettano pienamente le condizioni di licenza, selezionare Accetto. $_CLICK
 # ^UnLicenseTextCB
-Prego leggere la licenza prima di disinstallare $(^NameDA). Se si accettano pienamente le condizioni di licenza, selezionare la casella sottostante. $_CLICK
+Leggere la licenza prima di procedere con la disinstallazione di $(^NameDA). Se si accettano pienamente le condizioni di licenza, selezionare la casella sottostante. $_CLICK
 # ^UnLicesnseTextRB
-Prego leggere la licenza prima di disinstallare $(^NameDA). Se si accettano pienamente le condizioni di licenza, selezionare la prima delle opzioni sottoindicate. $_CLICK
+Leggere la licenza prima di procedere con la disinstallazione di $(^NameDA). Se si accettano pienamente le condizioni di licenza, selezionare la prima delle opzioni sottoindicate. $_CLICK
 # ^Custom
 Personalizzata
 # ^ComponentsText
-Selezionare i componenti che si desidera installare e deselezionare quelli che non si desidera installare.
+Selezionare i componenti che si desidera installare.
 # ^ComponentsSubText1
-Seleziona il tipo d'installazione:
+Selezionare il tipo d'installazione:
 # ^ComponentsSubText2_NoInstTypes
-Seleziona i componenti da installare:
+Selezionare i componenti da installare:
 # ^ComponentsSubText2
-Oppure, seleziona i componenti opzionali che vuoi installare:
+Oppure, selezionare i componenti opzionali che si desidera installare:
 # ^UnComponentsText
-Selezionare i componenti che si desidera disinstallare e deselezionare quelli che non si desidera disinstallare.
+Selezionare i componenti che si desidera disinstallare.
 # ^UnComponentsSubText1
-Seleziona il tipo di disinstallazione:
+Selezionare il tipo di disinstallazione:
 # ^UnComponentsSubText2_NoInstTypes
-Seleziona i componenti da disinstallare:
+Selezionare i componenti da disinstallare:
 # ^UnComponentsSubText2
-Oppure, seleziona i componenti opzionali che vuoi disinstallare :
+Oppure, selezionare i componenti opzionali che si desidera disinstallare :
 # ^DirText
-Questa procedura installerà $(^NameDA) nella cartella seguente. Per installare in una cartella diversa, selezionare Sfoglia e scegliere un'altra cartella. $_CLICK
+Questa procedura installerà $(^NameDA) nella cartella seguente. Per installare in una cartella diversa, selezionare Sfoglia e sceglierne un'altra. $_CLICK
 # ^DirSubText
 Cartella di destinazione
 # ^DirBrowseText
-Seleziona la cartella dove installare $(^NameDA):
+Selezionare la cartella dove installare $(^NameDA):
 # ^UnDirText
-Questa procedura disinstallerà $(^NameDA) nella cartella seguente. Per disinstallare da una cartella diversa, selezionare Sfoglia e scegliere un'altra cartella. $_CLICK
+Questa procedura disinstallerà $(^NameDA) nella cartella seguente. Per disinstallare da una cartella diversa, selezionare Sfoglia e sceglierene un'altra. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
-Seleziona la cartella dalla quale disinstallare $(^NameDA):
+Selezionare la cartella dalla quale disinstallare $(^NameDA):
 # ^SpaceAvailable
 "Spazio disponibile: "
 # ^SpaceRequired
@@ -120,9 +121,9 @@ $(^NameDA) verrà disinstallato dalla cartella seguente. $_CLICK
 # ^UninstallingSubText
 Rimozione da:
 # ^FileError
-Errore nell'apertura del file per la scrittura: \r\n\t"$0"\r\nSeleziona Termina per interrompere l'installazione,\r\nsu Riprova per riprovare, oppure\r\nsu Ignora per saltare questo file.
+Errore nell'apertura del file per la scrittura: \r\n\t"$0"\r\nSeleziona Termina per interrompere l'installazione,\r\nsu Riprova per ritentare, oppure\r\nsu Ignora per saltare questo file.
 # ^FileError_NoIgnore
-Errore nell'apertura del file per la scrittura: \r\n\t"$0"\r\nSeleziona Riprova per riprovare a scrivere il file, oppure\r\nsu Termina per interrompere l'installazione
+Errore nell'apertura del file per la scrittura: \r\n\t"$0"\r\nSeleziona Riprova per ritentare, oppure\r\nsu Termina per interrompere l'installazione
 # ^CantWrite
 "Impossibile scrivere: "
 # ^CopyFailed
@@ -184,7 +185,7 @@ Log del processo di installazione
 # ^Byte
 B
 # ^Kilo
-K
+k
 # ^Mega
 M
 # ^Giga
