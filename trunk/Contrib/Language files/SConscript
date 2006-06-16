@@ -22,6 +22,7 @@ languages = Split("""
 	Hungarian.nlf
 	Icelandic.nlf
 	Indonesian.nlf
+	Irish.nlf
 	Italian.nlf
 	Japanese.nlf
 	Korean.nlf
