@@ -100,13 +100,13 @@ Roghnaigh comhpháirteanna le díshuiteáil:
 # ^UnComponentsSubText2
 Nó, roghnaigh na comhpháirteanna roghnacha is mian leat a dhíshuiteáil:
 # ^DirText
-Cuirfidh an Suiteálaí $(^NameDA) san fhillteán a leanas. Más mian leat suiteáil i bhfillteán difriúil, cliceáil "Brabhsáil" agus roghnaigh fillteán eile. $_CLICK
+Cuirfidh an Suiteálaí $(^NameDA) san fhillteán seo a leanas. Más mian leat suiteáil i bhfillteán difriúil, cliceáil "Brabhsáil" agus roghnaigh fillteán eile. $_CLICK
 # ^DirSubText
 Sprioc-Fhillteán
 # ^DirBrowseText
 Roghnaigh an fillteán inar mian leat $(^NameDA) a shuiteáil:
 # ^UnDirText
-Bainfidh an Suiteálaí $(^NameDA) amach as an bhfillteán a leanas. Más mian leat é a dhíshuiteáil ó fhillteán difriúil, cliceáil "Brabhsáil" agus roghnaigh fillteán eile. $_CLICK
+Bainfidh an Suiteálaí $(^NameDA) amach as an bhfillteán seo a leanas. Más mian leat é a dhíshuiteáil ó fhillteán difriúil, cliceáil "Brabhsáil" agus roghnaigh fillteán eile. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
@@ -116,11 +116,11 @@ Roghnaigh an fillteán ar mian leat $(^NameDA) a dhíshuiteáil as:
 # ^SpaceRequired
 "Spás de dhíth: "
 # ^UninstallingText
-Díshuiteálfar $(^NameDA) ón fhillteán a leanas. $_CLICK
+Díshuiteálfar $(^NameDA) ón fhillteán seo a leanas. $_CLICK
 # ^UninstallingSubText
 Á dhíshuiteáil ó:
 # ^FileError
-Earráid agus comhad á scríobh: \r\n\r\n$0\r\n\r\nCliceáil "Abort" chun an tsuiteáil a stopadh,\r\n"Retry" chun iarracht eile a dhéanamh, nó\r\n"Ignore" chun an comhad seo a scipeáil.
+Earráid agus comhad á scríobh: \r\n\r\n$0\r\n\r\nCliceáil "Abort" chun an tsuiteáil a stopadh,\r\n"Retry" chun iarracht eile a dhéanamh, nó\r\n"Ignore" chun neamhaird a dhéanamh den chomhad seo.
 # ^FileError_NoIgnore
 Earráid agus comhad á scríobh: \r\n\r\n$0\r\n\r\nCliceáil "Retry" chun iarracht eile a dhéanamh, nó\r\n"Cancel" chun an tsuiteáil a stopadh.
 # ^CantWrite
@@ -176,7 +176,7 @@ Díshuiteálaí truaillithe: cód neamhbhailí oibríochta
 # ^Rename
 "Athainmnigh: "
 # ^Skipped
-"Scipeáilte: "
+"Neamhaird déanta de: "
 # ^CopyDetails
 Cóipeáil Sonraí go dtí an Ghearrthaisce
 # ^LogInstall
