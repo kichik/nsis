@@ -35,7 +35,7 @@ $(^Name) Deinstalacija
 # ^UninstallingSubCaption
 : Deinstalacija
 # ^UnCompletedSubCaption
-: Završena deinstalacije
+: Završena deinstalacija
 # ^BackBtn
 < Nazad
 # ^NextBtn
@@ -59,27 +59,27 @@ Izbor...
 # ^ShowDetailsBtn
 Detalji
 # ^ClickNext
-Pritisnite dugme 'Napred' za nastavak.
+Pritisnite dugme „Napred“ za nastavak.
 # ^ClickInstall
-Pritisnite dugme 'Instaliraj' za poèetak instalacije.
+Pritisnite dugme „Instaliraj“ za poèetak instalacije.
 # ^ClickUninstall
-Pritisnite dugme 'Deinstaliraj' za poèetak deinstalacije.
+Pritisnite dugme „Deinstaliraj“ za poèetak deinstalacije.
 # ^Name
 Ime
 # ^Completed
 Završeno
 # ^LicenseText
-Pažljivo proèitajte dogovor o pravu korišæenja pre instalacije programa $(^NameDA). Ako prihvatate sve uslove dogovora, pritisnite dugme 'Prihvatam'.
+Pažlivo proèitajte dogovor o pravu korišæenja pre instalacije programa $(^NameDA). Ako prihvatate sve uslove dogovora, pritisnite dugme „Prihvatam“.
 # ^LicenseTextCB
-Pažljivo proèitajte dogovor o pravu korišæenja pre instalacije programa $(^NameDA). Ako prihvatate sve uslove dogovora, obeležite kvadratiæ ispod. $_CLICK
+Pažlivo proèitajte dogovor o pravu korišæenja pre instalacije programa $(^NameDA). Ako prihvatate sve uslove dogovora, obeležite kvadratiæ ispod. $_CLICK
 # ^LicenseTextRB
-Pažljivo proèitajte dogovor o pravu korišæenja pre instalacije programa $(^NameDA). Ako prihvatate sve uslove dogovora, izaberite prvu opciju ispod. $_CLICK
+Pažlivo proèitajte dogovor o pravu korišæenja pre instalacije programa $(^NameDA). Ako prihvatate sve uslove dogovora, izaberite prvu opciju ispod. $_CLICK
 # ^UnLicenseText
-Pažljivo proèitajte dogovor o pravu korišæenja pre deinstalacije programa $(^NameDA). Ako prihvatate sve uslove dogovora, pritisnite dugme 'Prihvatam'.
+Pažlivo proèitajte dogovor o pravu korišæenja pre deinstalacije programa $(^NameDA). Ako prihvatate sve uslove dogovora, pritisnite dugme „Prihvatam“.
 # ^UnLicenseTextCB
-Pažljivo proèitajte dogovor o pravu korišæenja pre deinstalacije programa $(^NameDA). Ako prihvatate sve uslove dogovora, obeležite kvadratiæ ispod. $_CLICK
+Pažlivo proèitajte dogovor o pravu korišæenja pre deinstalacije programa $(^NameDA). Ako prihvatate sve uslove dogovora, obeležite kvadratiæ ispod. $_CLICK
 # ^UnLicenseTextRB
-Pažljivo proèitajte dogovor o pravu korišæenja pre deinstalacije programa $(^NameDA). Ako prihvatate sve uslove dogovora, izaberite prvu opciju ispod. $_CLICK
+Pažlivo proèitajte dogovor o pravu korišæenja pre deinstalacije programa $(^NameDA). Ako prihvatate sve uslove dogovora, izaberite prvu opciju ispod. $_CLICK
 # ^Custom
 Prilagoðavanje
 # ^ComponentsText
@@ -99,13 +99,13 @@ Izaberite komponente za deinstalaciju:
 # ^UnComponentsSubText2
 Ili, izaberite opcione komponente koje želite da deinstalirate: 
 # ^DirText
-Program $(^NameDA) æe biti instaliran u navedeni folder. Za instalaciju u drugi folder pritisnite dugme 'Izbor...' i izaberite folder. $_CLICK
+Program $(^NameDA) æe biti instaliran u navedeni folder. Za instalaciju u drugi folder pritisnite dugme „Izbor...“ i izaberite folder. $_CLICK
 # ^DirSubText
 Folder
 # ^DirBrowseText
 Izaberite folder u koji æete instalirati program $(^NameDA):
 # ^UnDirText
-Program $(^NameDA) æe biti deinstaliran iz navedenog foldera. Za deinstalaciju iz drugog foldera pritisnite dugme 'Izbor...' i izaberite folder. $_CLICK
+Program $(^NameDA) æe biti deinstaliran iz navedenog foldera. Za deinstalaciju iz drugog foldera pritisnite dugme „Izbor...“ i izaberite folder. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
@@ -119,9 +119,9 @@ Program $(^NameDA) æe biti deinstaliran iz navedenog foldera. $_CLICK
 # ^UninstallingSubText
 Deinstalacija iz: 
 # ^FileError
-Greška pri otvaranju fajla za pisanje: \r\n\t"$0"\r\nPritisnite dugme 'Odustani' za prekid instalacije,\r\n'Ponovi' za ponovni pokušaj pisanja u fajl, ili\r\n'Ignoriši' za preskakanje ovog fajla.
+Greška pri otvaranju fajla za pisanje: \r\n\t"$0"\r\nPritisnite dugme „Odustani“ za prekid instalacije,\r\n„Ponovi“ za ponovni pokušaj pisanja u fajl, ili\r\n„Ignoriši“ za preskakanje ovog fajla.
 # ^FileError_NoIgnore
-Greška pri otvaranju fajla za pisanje: \r\n\t"$0"\r\nPritisnite dugme 'Ponovi' za ponovni pokušaj pisanja u fajl, ili\r\n'Odustani' za prekid instaliranja.
+Greška pri otvaranju fajla za pisanje: \r\n\t"$0"\r\nPritisnite dugme „Ponovi“ za ponovni pokušaj pisanja u fajl, ili\r\n„Odustani“ za prekid instaliranja.
 # ^CantWrite
 "Nemoguæe pisanje: "
 # ^CopyFailed
@@ -171,7 +171,7 @@ Ošteæen instalacioni program: neispravna komanda
 # ^RemoveFolder
 "Brisanje foldera: "
 # ^RenameOnReboot
-"Preimenovanje pri restartovanju: "
+"Preimenovanje pri restartu: "
 # ^Rename
 "Preimenovan: "
 # ^Skipped
