@@ -10,13 +10,13 @@ Released on July 1st, 2006
 
 \b CRC32 implementation used potentially non-32bit types (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1504758}{bug #1504758})
 
-\b Fixed \R{getfileattributes}{GetFileAttributes}
-
-\b Fixed \R{library}{Library}'s implementation on POSIX
-
 \b Fixed errors on multiple inclusion of \R{headers}{useful headers}
 
+\b Fixed \R{getfileattributes}{GetFileAttributes}
+
 \b Fixed incorrect text on browse dialog with \R{onverifyinstdir}{.onVerifyInstDir} (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1504297}{bug #1504297})
+
+\b Fixed \R{library}{Library}'s implementation on POSIX
 
 \b Minor documentation updates and fixes
 
