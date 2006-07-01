@@ -1,5 +1,49 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.18} 2.18
+
+Released on July 1st, 2006
+
+\S1{v2.18-cl} Changelog
+
+\S2{} Minor Changes
+
+\b CRC32 implementation used potentially non-32bit types (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1504758}{bug #1504758})
+
+\b Fixed \R{getfileattributes}{GetFileAttributes}
+
+\b Fixed \R{library}{Library}'s implementation on POSIX
+
+\b Fixed errors on multiple inclusion of \R{headers}{useful headers}
+
+\b Fixed incorrect text on browse dialog with \R{onverifyinstdir}{.onVerifyInstDir} (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1504297}{bug #1504297})
+
+\b Minor documentation updates and fixes
+
+\S2{} Translations
+
+\b Added Irish translation (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1503639}{patch #1503639})
+
+\b Catalan corrections (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1504104}{bug #1504104})
+
+\b Dutch corrections
+
+\b Finnish corrections (Mozilla bug #341643)
+
+\b Fixed Serbian grammar and typos
+
+\b Italian corrections (Mozilla bug #340450)
+
+\b Polish corrections (Mozilla bug #224532)
+
+\b Portuguese (Brazil) corrections (Mozilla bug #340885)
+
+\b Romanian corrections (Mozilla bug #340645)
+
+\b Thai corrections
+
+\b Turkish corrections (Mozilla bug #340511)
+
 \H{v2.17} 2.17
 
 Released on May 19th, 2006
