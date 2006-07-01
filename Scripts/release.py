@@ -318,7 +318,6 @@ def update_wiki_page(page, data, summary):
 	if urllib.urlopen(UPDATE_URL, post).read() != 'success':
 		log('*** failed updating `%s` wiki page' % page)
 		print '  *** failed updating `%s` wiki page' % page
-		exit()
 
 update_wiki_page('Template:NSISVersion', VERSION, 'new version')
 update_wiki_page('Template:NSISReleaseDate', time.strftime('%B %d, %Y'), 'new version')
