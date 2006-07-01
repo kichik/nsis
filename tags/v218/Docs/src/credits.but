@@ -1,0 +1,213 @@
+\A{credits} Credits
+
+\H{programmers} Programmers
+
+\e{Justin Frankel aka 0xDEADBEEF}
+
+\b Creating the all mighty NSIS
+
+\e{Amir "make me stop" Szekely aka KiCHiK}
+
+\b Multilingual NSIS
+
+\b RTF license text
+
+\b The new paging system
+
+\b Full color support for icons and bitmaps
+
+\b Branding image
+
+\b Customizable UI
+
+\b One makensis.exe for both zlib and bzip2
+
+\e{Joost Verburg}
+
+\b Modern User Interface
+
+\b NSIS website
+
+\b NSIS Menu
+
+\b System for DLL/TLB library setup
+
+\b NSIS Update for NSIS distribution (original version by Nathan Purciful)
+
+\e{Robert Rainwater}
+
+\b MakeNSISW
+
+\b New documentation format
+
+\b Enhancing the TreeView
+
+\b Reorganizing NSIS directory structure
+
+\e{Dave "bit-by-bit" Laundon aka eccles}
+
+\b Massive optimizing
+
+\e{Ximon Eighteen aka Sunjammer}
+
+\b The new plug-ins system
+
+\b "Copy to clipboard" context menu for the Details window
+
+\b License text initial focus
+
+\e{Ramon aka Ramon18}
+
+\b Version information resource commands
+
+\b Named user variables
+
+\b Lots of UI fixes
+
+\b InstallOptions improvements
+
+\H{contributors} Contributors
+
+\e{nnop@newmail.ru}
+
+\e{Ryan Geiss}
+
+\e{Andras Varga}
+
+\e{Drew Davidson}
+
+\e{Peter Windridge}
+
+\e{Yaroslav Faybishenko}
+
+\e{Jeff Doozan}
+
+\b NSIS 2's new TreeView
+
+\e{Nike (nike@sendmail.ru)}
+
+\b HTML Help support for Halibut
+
+\e{Diego Pedroso aka deguix}
+
+\b New NSIS Wiki
+
+\e{Shengalts Aleksander aka Instructor}
+
+\e{Stuart Welch aka Afrow UK}
+
+\e{David Weiss aka Comm@nder21}
+
+\H{designers} Designers
+
+\e{Nikos Adamamas}
+
+\b The new modern icons
+
+\e{Jan T. Sott / whyEye.org}
+
+\b Lots of icons and check marks
+
+\H{translators} Translators
+
+Albanian - \e{Besnik Bleta}
+
+Arabic - \e{asdfuae, Rami Kattan}
+
+Basque - \e{I\u00F1aki San Vicente}
+
+Belarusian - \e{Sitnikov Vjacheslav}
+
+Bosnian - \e{Salih CAVKIC}
+
+Breton - \e{Korvigello\uF9 An Drouizig}
+
+Bulgarian - \e{Asparouh Kalyandjiev, Plamen Penkov}
+
+Catalan - \e{falanko}
+
+Croatian - \e{Igor Ostriz, Vedran "RIV@NVX" Miletic}
+
+Czech - \e{T.V. Zuggy, SELiCE}
+
+Danish - \e{Christopher, Casper Bergenstoff, Claus Futtrup}
+
+Dutch - \e{Hendri Adriaens, Joost Verburg}
+
+Estonian - \e{izzo}
+
+Farsi - \e{Masoud Alinaqian, FzerorubigD}
+
+Finnish - \e{AKX, Eclipser}
+
+French - \e{veekee, Sebastien Delahaye, Jerome Charaoui}
+
+German - \e{L.King, K. Windszus, R. Bisswanger, M. Simmack, Tim Kosse}
+
+Greek - \e{Makidis N. Michael}
+
+Hebrew - \e{Amir Szekely (aka KiCHiK), Yaron Shahrabani}
+
+Hungarian - \e{Soft-Trans Bt., Jozsef Tamas Herczeg, Lajos Molnar (Orfanik)}
+
+Icelandic - \e{Gretar Orri Kristinsson}
+
+Indonesian - \e{ariel825010106}
+
+Italian - \e{Orfanik, sanface, Alessandro Staltari, Lorenzo Bevilacqua}
+
+Japanese - \e{Dnanako, Takahiro Yoshimura}
+
+Korean - \e{dTomoyo, linak, koder}
+
+Kurdish - \e{Erdal Ronahi}
+
+Latvian - \e{Valdis Griíis, Kristaps Meòìelis}
+
+Lithuanian - \e{NorCis, Vytautas Krivickas, Danielius Scepanskis}
+
+Luxembourgish - \e{Jo Hoeser}
+
+Macedonian - \e{Sasko Zdravkin}
+
+Mongolian - \e{Bayarsaikhan Enkhtaivan}
+
+Norwegian - \e{Jonas Christoffer Lindstrom, Jan Ivar Beddari}
+
+Polish - \e{Piotr Murawski, Rafa³ Lampe, cube, SYSTEMsoft Group}
+
+Portuguese - \e{DragonSoull, Dre', Ramon}
+
+Portuguese Brasil - \e{Layout do Brasil, deguix}
+
+Romanian - \e{Sorin Sbarnea, Cristian Pirvu, George Radu}
+
+Russian - \e{Sergey `Timon` Kusnetsov, Nik Medved, Scam, THRaSH, Dmitry Yerokhin}
+
+Serbian - \e{Srdjan Obucina}
+
+Serbian Latin - \e{Srdjan Obucina, Vladan Obradovic}
+
+Slovak - \e{trace, Kypec}
+
+Slovenian - \e{Janez Dolinar, Martin Sebotnjak}
+
+Spanish - \e{MoNKi, Lobo Lunar}
+
+Swedish - \e{Peter Gustafsson, Magnus Bonnevier, Rickard Angbratt}
+
+Thai - \e{SoKoOLz, TuW@nNu (asdfuae)}
+
+Traditional & Simplified Chinese - \e{Kii Ali}
+
+Turkish - \e{Bertan Kodamanoglu, Cagatay Dilsiz, Fatih BOY}
+
+Ukrainian - \e{Yuri Holubow, Nash-Soft}
+
+Welsh - \e{Rhoslyn Prys, Meddal.com}
+
+\H{writers} Writers
+
+\e{Sebastian Armbrust aka flizebogen}
+
+\b Tutorial

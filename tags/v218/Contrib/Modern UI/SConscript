@@ -1,0 +1,88 @@
+target = 'Modern UI'
+
+docs = Split("""
+	Changelog.txt
+	License.txt
+	Readme.html
+""")
+
+doc_images = Split("""
+	closed.gif
+	header.gif
+	open.gif
+	screen1.png
+	screen2.png
+""")
+
+contribs = Split("""
+	ioSpecial.ini
+	System.nsh
+""")
+
+languages = Split("""
+	Albanian.nsh
+	Arabic.nsh
+	Basque.nsh
+	Belarusian.nsh
+	Bosnian.nsh
+	Breton.nsh
+	Bulgarian.nsh
+	Catalan.nsh
+	Croatian.nsh
+	Czech.nsh
+	Danish.nsh
+	Default.nsh
+	Dutch.nsh
+	English.nsh
+	Estonian.nsh
+	Farsi.nsh
+	Finnish.nsh
+	French.nsh
+	German.nsh
+	Greek.nsh
+	Hebrew.nsh
+	Hungarian.nsh
+	Icelandic.nsh
+	Indonesian.nsh
+	Irish.nsh
+	Italian.nsh
+	Japanese.nsh
+	Korean.nsh
+	Kurdish.nsh
+	Latvian.nsh
+	Lithuanian.nsh
+	Luxembourgish.nsh
+	Macedonian.nsh
+	Malay.nsh
+	Mongolian.nsh
+	Norwegian.nsh
+	Polish.nsh
+	Portuguese.nsh
+	PortugueseBR.nsh
+	Romanian.nsh
+	Russian.nsh
+	Serbian.nsh
+	SerbianLatin.nsh
+	SimpChinese.nsh
+	Slovak.nsh
+	Slovenian.nsh
+	Spanish.nsh
+	Swedish.nsh
+	Thai.nsh
+	TradChinese.nsh
+	Turkish.nsh
+	Ukrainian.nsh
+	Welsh.nsh
+""")
+
+Import('defenv')
+
+def join(prefix, list):
+	return map(lambda x: '%s/%s' % (prefix, x), list)
+
+defenv.DistributeDocs(docs, path=target)
+path = 'images'
+defenv.DistributeDocs(join(path,doc_images), path='%s/%s'%(target,path))
+defenv.DistributeContrib(contribs, path=target)
+path = 'Language files'
+defenv.DistributeContrib(join(path,languages), path='%s/%s'%(target,path))
