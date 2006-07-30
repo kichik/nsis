@@ -692,3 +692,30 @@ string lowercase(const string &str) {
   transform(str.begin(), str.end(), result.begin(), tolower);
   return result;
 }
+
+int sane_system(const char *command) {
+#ifdef _WIN32
+
+  // workaround for bug #1509909
+  // http://sf.net/tracker/?func=detail&atid=373085&aid=1509909&group_id=22049
+  //
+  // cmd.exe /C has some weird handling for quotes. it strips
+  // the surrounding quotes, if they exist. if there are quotes
+  // around the program path and its arguments, it will strip
+  // the outer quotes. this may result in something like:
+  //   `program files\nsis\makensis.exe" "args`
+  // which obviously fails...
+  //
+  // to avoid the stripping, a harmless string is prefixed
+  // to the command line.
+
+  string command_s = "IF 1==1 ";
+  command_s += command;
+  return system(command_s.c_str());
+
+#else
+
+  return system(command);
+
+#endif
+}

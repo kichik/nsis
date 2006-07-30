@@ -45,6 +45,8 @@ std::string lowercase(const std::string&);
 std::string get_string_prefix(const std::string& str, const std::string& separator);
 std::string get_string_suffix(const std::string& str, const std::string& separator);
 
+int sane_system(const char *command);
+
 #ifndef _WIN32
 char *CharPrev(const char *s, const char *p);
 char *CharNext(const char *s);

@@ -2191,7 +2191,7 @@ int CEXEBuild::pack_exe_header()
   }
   fwrite(m_exehead,1,m_exehead_size,tmpfile);
   fclose(tmpfile);
-  if (system(build_packcmd) == -1)
+  if (sane_system(build_packcmd) == -1)
   {
     remove(build_packname);
     ERROR_MSG("Error: calling packer on \"%s\"\n",build_packname);
