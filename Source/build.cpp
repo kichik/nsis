@@ -2472,7 +2472,7 @@ int CEXEBuild::write_output(void)
   INFO_MSG("\nUsing %s%s compression.\n\n", compressor->GetName(), build_compress_whole?" (compress whole)":"");
 #endif
 
-  int total_usize=m_exehead_original_size;
+  unsigned int total_usize=m_exehead_original_size;
 
   INFO_MSG("EXE header size:          %10d / %d bytes\n",m_exehead_size,m_exehead_original_size);
 
@@ -2621,12 +2621,8 @@ int CEXEBuild::write_output(void)
   }
   INFO_MSG("\n");
   {
-#ifdef _WIN32
-    int pc=MulDiv(ftell(fp),1000,total_usize);
-#else
-    int pc=(int)(((long long)ftell(fp)*1000)/(total_usize));
-#endif
-    INFO_MSG("Total size:               %10d / %d bytes (%d.%d%%)\n",
+    UINT pc=(UINT)(((UINT64)ftell(fp)*1000)/(total_usize));
+    INFO_MSG("Total size:               %10u / %u bytes (%u.%u%%)\n",
       ftell(fp),total_usize,pc/10,pc%10);
   }
   fclose(fp);
