@@ -26,10 +26,11 @@ public:
   int resolve(char *hostname, unsigned long *addr); // return 0 on success, 1 on wait, -1 on unresolvable
 
 private:
+  void wait_for_thread_death();
+
   char m_hostname[256];
   unsigned long m_addr;
 
-  volatile int m_thread_kill;
   HANDLE m_thread;
   static unsigned long WINAPI _threadfunc(LPVOID _d);
 

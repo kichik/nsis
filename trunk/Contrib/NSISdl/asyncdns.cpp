@@ -13,7 +13,6 @@
 
 JNL_AsyncDNS::JNL_AsyncDNS(int max_cache_entries)
 {
-  m_thread_kill=1;
   m_thread=0;
   m_addr=0;
   m_hostname[0]=0;
@@ -21,13 +20,7 @@ JNL_AsyncDNS::JNL_AsyncDNS(int max_cache_entries)
 
 JNL_AsyncDNS::~JNL_AsyncDNS()
 {
-  m_thread_kill=1;
-
-  if (m_thread)
-  {
-    WaitForSingleObject(m_thread,INFINITE);
-    CloseHandle(m_thread);
-  }
+  wait_for_thread_death();
 }
 
 unsigned long WINAPI JNL_AsyncDNS::_threadfunc(LPVOID _d)
@@ -41,7 +34,6 @@ unsigned long WINAPI JNL_AsyncDNS::_threadfunc(LPVOID _d)
   }
   else
     _this->m_addr=INADDR_NONE;
-  _this->m_thread_kill=1;
   return 0;
 }
 
@@ -56,21 +48,35 @@ int JNL_AsyncDNS::resolve(char *hostname, unsigned long *addr)
   }
 
   if (lstrcmpi(m_hostname,hostname)) m_addr=0;
-  else if (m_addr == INADDR_NONE) return -1;
+  else if (m_addr == INADDR_NONE)
+  {
+    wait_for_thread_death();
+    return -1;
+  }
   else if (m_addr)
   {
     *addr=m_addr;
+    wait_for_thread_death();
     return 0;
   }
   lstrcpy(m_hostname,hostname);
 
-  if (m_thread_kill)
+  if (!m_thread)
   {
     DWORD id;
-    if (m_thread) return -1;
-    m_thread_kill=0;
     m_thread=CreateThread(NULL,0,_threadfunc,(LPVOID)this,0,&id);
     if (!m_thread) return -1;
   }
   return 1;
 }  
+
+void JNL_AsyncDNS::wait_for_thread_death()
+{
+  if (m_thread)
+  {
+    WaitForSingleObject(m_thread,INFINITE);
+    CloseHandle(m_thread);
+  }
+
+  m_thread=0;
+}
