@@ -464,7 +464,8 @@ int CEXEBuild::preprocess_string(char *out, const char *in, WORD codepage/*=CP_A
                 // So the line below must be commented !??
                 //m_UserVarNames.inc_reference(idxUserVar);
                 *out++ = (unsigned int) NS_VAR_CODE; // Named user variable;
-                *(WORD*)out = FIX_ENDIAN_INT16(CODE_SHORT(idxUserVar));
+                WORD w = FIX_ENDIAN_INT16(CODE_SHORT(idxUserVar));
+                memcpy(out, &w, sizeof(WORD));
                 out += sizeof(WORD);
                 p += pUserVarName-p;
                 bProceced = true;
@@ -508,7 +509,8 @@ int CEXEBuild::preprocess_string(char *out, const char *in, WORD codepage/*=CP_A
               if (idx < 0)
               {
                 *out++ = (unsigned int)NS_LANG_CODE; // Next word is lang-string Identifier
-                *(WORD*)out = FIX_ENDIAN_INT16(CODE_SHORT(-idx-1));
+                WORD w = FIX_ENDIAN_INT16(CODE_SHORT(-idx-1));
+                memcpy(out, &w, sizeof(WORD));
                 out += sizeof(WORD);
                 p += strlen(cp) + 2;
                 bProceced = true;
