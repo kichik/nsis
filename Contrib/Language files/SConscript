@@ -34,6 +34,7 @@ languages = Split("""
 	Malay.nlf
 	Mongolian.nlf
 	Norwegian.nlf
+	NorwegianNynorsk.nlf
 	Polish.nlf
 	Portuguese.nlf
 	PortugueseBR.nlf
