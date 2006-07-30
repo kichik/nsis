@@ -2790,7 +2790,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (!success && comp != 4) PRINTHELP()
         SCRIPT_MSG("!system: \"%s\"\n",exec);
 #ifdef _WIN32
-        int ret=system(exec);
+        int ret=sane_system(exec);
 #else
         char *execfixed = my_convert(exec);
         int ret=system(execfixed);
