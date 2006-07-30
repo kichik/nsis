@@ -16,7 +16,7 @@
 // basic types
 typedef unsigned char BYTE, *PBYTE, *LPBYTE;
 typedef unsigned short WORD, *LPWORD;
-typedef unsigned long DWORD, *LPDWORD;
+typedef unsigned int DWORD, *LPDWORD;
 typedef short SHORT;
 typedef unsigned short USHORT;
 typedef unsigned int UINT;
