@@ -20,7 +20,7 @@
 class JNL_AsyncDNS
 {
 public:
-  JNL_AsyncDNS(int max_cache_entries=64);
+  JNL_AsyncDNS();
   ~JNL_AsyncDNS();
 
   int resolve(char *hostname, unsigned long *addr); // return 0 on success, 1 on wait, -1 on unresolvable
