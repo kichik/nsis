@@ -28,6 +28,7 @@ InstallDirRegKey HKLM Software\NSIS ""
 
 !include "MUI.nsh"
 !include "Sections.nsh"
+!include "LogicLib.nsh"
 
 ;--------------------------------
 ;Definitions
@@ -68,6 +69,10 @@ Page custom PageReinstall PageLeaveReinstall
 
 !define MUI_FINISHPAGE_RUN "$INSTDIR\NSIS.exe"
 !define MUI_FINISHPAGE_NOREBOOTSUPPORT
+
+!define MUI_FINISHPAGE_SHOWREADME
+!define MUI_FINISHPAGE_SHOWREADME_TEXT "Show release notes"
+!define MUI_FINISHPAGE_SHOWREADME_FUNCTION ShowReleaseNotes
 
 !insertmacro MUI_PAGE_FINISH
 
@@ -945,6 +950,20 @@ Function AddReadmeToStartMenu
   done:
 FunctionEnd
 !endif
+
+Function ShowReleaseNotes
+  ${If} ${FileExists} $WINDIR\hh.exe
+    StrCpy $0 $WINDIR\hh.exe
+    Exec '"$0" mk:@MSITStore:$INSTDIR\NSIS.chm::/SectionF.1.html'
+  ${Else}
+    SearchPath $0 hh.exe
+    ${If} ${FileExists} $0
+      Exec '"$0" mk:@MSITStore:$INSTDIR\NSIS.chm::/SectionF.1.html'
+    ${Else}
+      ExecShell "open" "http://nsis.sourceforge.net/Docs/AppendixF.html#F.1"
+    ${EndIf}
+  ${EndIf}
+FunctionEnd
 
 ;--------------------------------
 ;Uninstaller Section
