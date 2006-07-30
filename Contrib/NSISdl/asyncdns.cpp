@@ -11,7 +11,7 @@
 #include "util.h"
 #include "asyncdns.h"
 
-JNL_AsyncDNS::JNL_AsyncDNS(int max_cache_entries)
+JNL_AsyncDNS::JNL_AsyncDNS()
 {
   m_thread=0;
   m_addr=0;
