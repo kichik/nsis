@@ -85,7 +85,7 @@
   !define MUI_UNTEXT_ABORT_TITLE "Désinstallation interrompue"
   !define MUI_UNTEXT_ABORT_SUBTITLE "La désinstallation n'a pas été terminée."
 
-  !define MUI_UNTEXT_FINISH_INFO_TITLE "Fin de la déinstallation de $(^NameDA)"
+  !define MUI_UNTEXT_FINISH_INFO_TITLE "Fin de la désinstallation de $(^NameDA)"
   !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) a été supprimé de votre ordinateur.\r\n\r\nCliquez sur Fermer pour quitter le programme d'installation."
   !define MUI_UNTEXT_FINISH_INFO_REBOOT "Votre ordinateur doit être redémarré pour terminer l'installation de $(^NameDA). Souhaitez-vous redémarrer maintenant ?"
 

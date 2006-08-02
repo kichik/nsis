@@ -98,7 +98,7 @@ Sélectionnez le type de désinstallation :
 # ^UnComponentsSubText2_NoInstTypes
 Sélectionnez les composants à désinstaller :
 # ^UnComponentsSubText2
-Ou, sélectionnez les composants optionnels que vous voulez déinstaller :
+Ou, sélectionnez les composants optionnels que vous voulez désinstaller :
 # ^DirText
 Ceci installera $(^NameDA) dans le dossier suivant. Pour installer dans un autre dossier, cliquez sur Parcourir et choisissez un autre dossier. $_CLICK
 # ^DirSubText
