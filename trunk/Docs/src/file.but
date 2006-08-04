@@ -50,7 +50,7 @@ Reads a byte from a file opened with FileOpen. The byte is stored in the output 
 
 \c handle offset [mode] [user_var(new position)]
 
-Seeks a file opened with FileOpen. If mode is omitted or specified as SET, the file is positioned to "offset". If mode is specified as CUR, then the file pointer is moved by offset. If mode is specified as END, the file pointer is set to a position relative to EOF. If the final parameter "new position" is specified, the new file position will be stored to that variable.
+Seeks a file opened with FileOpen. If mode is omitted or specified as SET, the file is positioned to "offset", relative to the beginning of the file. If mode is specified as CUR, then the file is positioned to "offset", relative to the current file position. If mode is specified as END, then the file is positioned to "offset", relative to the end of the file. If the final parameter "new position" is specified, the new file position will be stored to that variable.
 
 \c ClearErrors
 \c FileOpen $0 $INSTDIR\file.dat r
