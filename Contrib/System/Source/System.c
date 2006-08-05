@@ -943,6 +943,18 @@ SystemProc __declspec(naked) *CallProc(SystemProc *proc)
     SYSTEM_EVENT("\n\t\t\tNear call          ")
     SYSTEM_LOG_POST;
 
+    // workaround for bug #1535007
+    // http://sf.net/tracker/index.php?func=detail&aid=1535007&group_id=22049&atid=373085
+    //
+    // If a function returns short and doesn't clear eax in the process,
+    // it will only set 2 bytes of eax, and the other 2 bytes remain
+    // "random". In this case, they'll be part of the proc pointer.
+    //
+    // To avoid this, eax is cleared before the function is called. This
+    // makes sure the value eax will contain is only what the function
+    // actually sets.
+    _asm xor eax, eax
+
     _asm
     {
         // Call
