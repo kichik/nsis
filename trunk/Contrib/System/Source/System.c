@@ -305,6 +305,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
         ChangesDone = 0,
         ParamIndex = 0,
         temp = 0, temp2, temp3, temp4;
+    BOOL param_defined = FALSE;
     SystemProc *proc = NULL;
     char *ibuf, *ib, *sbuf, *cbuf, *cb;
 
@@ -327,7 +328,8 @@ SystemProc *PrepareProc(BOOL NeedForCall)
             SectionType = PST_PARAMS; 
             // fake-real parameter: for COM interfaces first param is Interface Pointer
             ParamIndex = ((ProcType == PT_VTABLEPROC)?(2):(1)); 
-            temp3 = temp = 0; 
+            temp3 = temp = 0;
+            param_defined = FALSE;
             break;
         case ')': SectionType = PST_RETURN; temp3 = temp = 0; break;
         case '?': SectionType = PST_OPTIONS; temp = 1; break;
@@ -397,7 +399,11 @@ SystemProc *PrepareProc(BOOL NeedForCall)
                 }
                 break;
             case PST_PARAMS:
-                proc->ParamCount = ParamIndex;
+                if (param_defined)
+                    proc->ParamCount = ParamIndex;
+                else
+                    // not simply zero because of vtable calls
+                    proc->ParamCount = ParamIndex - 1;
             case PST_RETURN:
             case PST_OPTIONS:
                 break;
@@ -457,10 +463,19 @@ SystemProc *PrepareProc(BOOL NeedForCall)
             case '_': // No param cutting specifier
                 if (proc->ParamCount > ParamIndex) ParamIndex = proc->ParamCount;
                 temp3 = temp = 0; // Clear parameter options
+                if (proc->ParamCount != ((ProcType == PT_VTABLEPROC) ? 1 : 0))
+                {
+                  // only define params if the last count wasn't zero
+                  // this prevents errornous param count for:
+                  //   'user32::CloseClipboard()(_)'
+                  // for vtable calls, param count should not be one
+                  param_defined = TRUE;
+                }
                 break;
             case ',': // Next param
                 temp3 = temp = 0; // Clear parameter options
                 ParamIndex++;
+                param_defined = TRUE;
                 break;
             case '&':
                 temp = 1; break; // Special parameter option
@@ -538,6 +553,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
             // Param type changed?
             if (temp2 != -1)
             {
+                param_defined = TRUE;
                 proc->Params[ParamIndex].Type = temp2;
                 proc->Params[ParamIndex].Size = // If pointer, then 1, else by type
                     (temp == -1)?(1):((ParamSizeByType[temp2]>0)?(ParamSizeByType[temp2]):(1));
@@ -552,6 +568,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
             // Param source/dest changed?
             if (temp4 != 0)
             {
+                param_defined = TRUE;
                 if (temp3 == 0)
                 {
                     // it may contain previous inline input
