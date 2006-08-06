@@ -1,5 +1,41 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.19} 2.19
+
+Released on August 6th, 2006
+
+\S1{v2.19-cl} Changelog
+
+\S2{} Minor Changes
+
+\b Fixed \R{system}{!system} and \R{packhdr}{!packhdr} failure with quoted long file names (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1509909}{bug #1509909})
+
+\b Fixed build problems on 64bit platforms (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1504772}{bug #1504772})
+
+\b Fixed negative total size for data larger than 2GB in script compilation summary (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1468852}{bug #1468852})
+
+\b Minor documentation updates and fixes
+
+\b Replaced \R{detect.netframework}{IsDotNETInstalled} with a simpler and better version
+
+\S2{} New/Changed Commands
+
+\b Made \R{if}{!if} compare strings case insensitively, like \R{strcmp}{StrCmp} and \R{ifdef}{!ifdef}
+
+\S2{} Plug-ins
+
+\b \L{../Docs/NSISdl/ReadMe.txt}{NSISdl}: fixed random DNS errors (\W{http://forums.winamp.com/showthread.php?s=&threadid=247723}{reported in the forums})
+
+\b \L{../Docs/System/System.html}{System}: fixed a bug that caused stack corruption and stopped the installer from deleting System.dll when a function with no arguments was called (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1535005}{bug #1535005})
+
+\b \L{../Docs/System/System.html}{System}: fixed wrong return values for functions that return \c{short} or \c{char} (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1535007}{bug #1535007})
+
+\S2{} Translations
+
+\b Added Norwegian Nynorsk translation (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1503208}{patch #1503208})
+
+\b Fixed typos in the French translation (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1531874}{bug #1531874})
+
 \H{v2.18} 2.18
 
 Released on July 1st, 2006
