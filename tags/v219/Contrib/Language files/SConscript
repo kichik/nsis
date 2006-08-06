@@ -1,0 +1,59 @@
+languages = Split("""
+	Albanian.nlf
+	Arabic.nlf
+	Basque.nlf
+	Belarusian.nlf
+	Bosnian.nlf
+	Breton.nlf
+	Bulgarian.nlf
+	Catalan.nlf
+	Croatian.nlf
+	Czech.nlf
+	Danish.nlf
+	Dutch.nlf
+	English.nlf
+	Estonian.nlf
+	Farsi.nlf
+	Finnish.nlf
+	French.nlf
+	German.nlf
+	Greek.nlf
+	Hebrew.nlf
+	Hungarian.nlf
+	Icelandic.nlf
+	Indonesian.nlf
+	Irish.nlf
+	Italian.nlf
+	Japanese.nlf
+	Korean.nlf
+	Kurdish.nlf
+	Latvian.nlf
+	Lithuanian.nlf
+	Luxembourgish.nlf
+	Macedonian.nlf
+	Malay.nlf
+	Mongolian.nlf
+	Norwegian.nlf
+	NorwegianNynorsk.nlf
+	Polish.nlf
+	Portuguese.nlf
+	PortugueseBR.nlf
+	Romanian.nlf
+	Russian.nlf
+	Serbian.nlf
+	SerbianLatin.nlf
+	SimpChinese.nlf
+	Slovak.nlf
+	Slovenian.nlf
+	Spanish.nlf
+	Swedish.nlf
+	Thai.nlf
+	TradChinese.nlf
+	Turkish.nlf
+	Ukrainian.nlf
+	Welsh.nlf
+""")
+
+Import('defenv')
+
+defenv.DistributeContrib(languages, path='Language files')
