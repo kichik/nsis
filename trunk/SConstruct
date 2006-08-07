@@ -83,8 +83,13 @@ cvs_version = strftime('%d-%b-%Y.cvs', gmtime())
 
 opts = Options()
 
+# Find the value of NSIS_CONFIG_CONST_DATA_PATH
+SConscript('SCons/config.py')
+opts.Update(defenv)
+Help(opts.GenerateHelpText(defenv))
+
 install_dirs = {
-	'win32': {
+	'relocatable': {
 		'dest': '',
 		'prefix': '',
 		'conf': '$PREFIX',
@@ -92,7 +97,7 @@ install_dirs = {
 		'data': '$PREFIX',
 		'doc': '$PREFIX',
 	},
-	'default': {
+	'static': {
 		'dest': '',
 		'prefix': '/usr/local',
 		'conf': '$PREFIX/etc',
@@ -102,10 +107,10 @@ install_dirs = {
 	}
 }
 
-if defenv['PLATFORM'] in install_dirs:
-	dirs = install_dirs[defenv['PLATFORM']]
+if 'NSIS_CONFIG_CONST_DATA_PATH' in defenv['NSIS_CPPDEFINES']:
+	dirs = install_dirs['static']
 else:
-	dirs = install_dirs['default']
+	dirs = install_dirs['relocatable']
 
 # version
 opts.Add(('VERSION', 'Version of NSIS', cvs_version))
@@ -136,14 +141,10 @@ opts.Add(('PREFIX_DATA', 'Path to install nsis data to (plugins, includes, stubs
 opts.Add(('PREFIX_DOC','Path to install nsis README / INSTALL / TODO files to.', dirs['doc']))
 
 opts.Update(defenv)
-
 Help(opts.GenerateHelpText(defenv))
 
-# build configuration
-SConscript('SCons/config.py')
-
 # add prefixes defines
-if defenv['PLATFORM'] != 'win32':
+if 'NSIS_CONFIG_CONST_DATA_PATH' in defenv['NSIS_CPPDEFINES']:
 	defenv.Append(NSIS_CPPDEFINES = [('PREFIX_CONF', '"%s"' % defenv.subst('$PREFIX_CONF'))])
 	defenv.Append(NSIS_CPPDEFINES = [('PREFIX_DATA', '"%s"' % defenv.subst('$PREFIX_DATA'))])
 
@@ -199,7 +200,7 @@ def Distribute(files, names, component, path, subpath, alias, install_alias=None
 		paths = map(lambda file: os.path.join(d, path, subpath, file), names)
 		defenv.InstallAs(paths, files)
 
-	if defenv.has_key('PREFIX') and defenv['PREFIX']:
+	if (defenv.has_key('PREFIX') and defenv['PREFIX']) or (defenv.has_key('PREFIX_DEST') and defenv['PREFIX_DEST']) :
 		prefix = '${PREFIX_DEST}${PREFIX_%s}' % component.upper()
 		paths = map(lambda file: os.path.join(prefix, path, subpath, file), names)
 		ins = defenv.InstallAs(paths, files)
