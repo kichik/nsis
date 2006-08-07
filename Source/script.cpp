@@ -5765,6 +5765,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         return ret;
       }
 
+      DefineInnerLangString(NLF_SYMBOL_NOT_FOUND);
+      DefineInnerLangString(NLF_COULD_NOT_LOAD);
+      DefineInnerLangString(NLF_NO_OLE);
+      DefineInnerLangString(NLF_ERR_REG_DLL);
+
       return PS_OK;
     }
     return PS_ERROR;
