@@ -9,7 +9,7 @@ NLF v6
 -
 # RTL - anything else than RTL means LTR
 -
-# Translation by MoNKi & Lobo Lunar
+# Translation by MoNKi & Joel
 # ^Branding
 Nullsoft Install System %s
 # ^SetupCaption
@@ -83,17 +83,17 @@ Por favor, revise el acuerdo de licencia antes de desinstalar $(^NameDA). Si ace
 # ^Custom
 Personalizada
 # ^ComponentsText
-Marque los componentes que desea instalar y desmarque los componentes que no desea instalar. $_CLICK
+Marque los componentes que desee instalar y desmarque los componentes que no desee instalar. $_CLICK
 # ^ComponentsSubText1
-Seleccione el tipo de instalación:
+Tipos de instalación:
 # ^ComponentsSubText2_NoInstTypes
 Seleccione los componentes a instalar:
 # ^ComponentsSubText2
 O seleccione los componentes opcionales que desee instalar:
 # ^UnComponentsText
-Marque los componentes que desea desinstalar y desmarque los componentes que no desea desinstalar. $_CLICK
+Marque los componentes que desee desinstalar y desmarque los componentes que no desee desinstalar. $_CLICK
 # ^UnComponentsSubText1
-Seleccione el tipo de desinstalación:
+Tipos de desinstalación:
 # ^UnComponentsSubText2_NoInstTypes
 Seleccione los componentes a desinstalar:
 # ^UnComponentsSubText2
