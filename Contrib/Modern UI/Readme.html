@@ -1074,7 +1074,7 @@ Function FunctionName ;FunctionName defined with Page command
   !insertmacro MUI_INSTALLOPTIONS_INITDIALOG "ioFile.ini"
   Pop $HWND ;HWND of dialog
     
-  GetDlgItem $DLGITEM $HWND 1200 ;1200 + Field number - 1
+  !insertmacro MUI_INSTALLOPTIONS_READ $DLGITEM "ioFile.ini" "Field 1" "HWND"
     
   ;$DLGITEM contains the HWND of the first field
   CreateFont $FONT "Tahoma" 10 700 
