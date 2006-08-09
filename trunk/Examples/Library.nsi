@@ -14,7 +14,7 @@ Page instfiles
 
 XPStyle on
 
-!define TestDLL '"${NSISDIR}\Plugins\TypeLib.dll"'
+!define TestDLL '"${NSISDIR}\Plugins\LangDLL.dll"'
 
 Section
 
