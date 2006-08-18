@@ -83,8 +83,11 @@ cvs_version = strftime('%d-%b-%Y.cvs', gmtime())
 
 opts = Options()
 
-# Find the value of NSIS_CONFIG_CONST_DATA_PATH
+# load configuration options
+#  it's important this will be done here so NSIS_CONFIG_CONST_DATA_PATH
+#  will be available for the next few lines and so `dirs` can be set
 SConscript('SCons/config.py')
+
 opts.Update(defenv)
 Help(opts.GenerateHelpText(defenv))
 
