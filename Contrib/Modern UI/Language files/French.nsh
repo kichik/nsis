@@ -11,7 +11,7 @@
   !define MUI_LANGNAME "Français" ;Use only ASCII characters (if this is not possible, use the English name)
 
   !define MUI_TEXT_WELCOME_INFO_TITLE "Bienvenue dans le programme d'installation de $(^NameDA)"
-  !define MUI_TEXT_WELCOME_INFO_TEXT "Vous êtes sur le point d'installer $(^NameDA) sur votre ordinateur.\r\n\r\nAvant de débuter l'installation, il est recommandé de fermer toutes les autres applications. Cela permettra de mettre à jour certains fichiers système sans redémarrer votre ordinateur.\r\n\r\n"
+  !define MUI_TEXT_WELCOME_INFO_TEXT "Vous êtes sur le point d'installer $(^NameDA) sur votre ordinateur.\r\n\r\nAvant de débuter l'installation, il est recommandé de fermer toutes les autres applications. Cela permettra de mettre à jour certains fichiers système sans redémarrer votre ordinateur.\r\n\r\n$_CLICK"
 
   !define MUI_TEXT_LICENSE_TITLE "Licence utilisateur"
   !define MUI_TEXT_LICENSE_SUBTITLE "Veuillez examiner les termes de la licence avant d'installer $(^NameDA)."
@@ -59,7 +59,7 @@
   
   
   !define MUI_UNTEXT_WELCOME_INFO_TITLE "Bienvenue dans le programme de désinstallation de $(^NameDA)"
-  !define MUI_UNTEXT_WELCOME_INFO_TEXT "Vous êtes sur le point de désinstaller $(^NameDA) de votre ordinateur.\r\n\r\nAvant de débuter l'installation, il est recommandé de fermer toutes les autres applications.\r\n\r\n"
+  !define MUI_UNTEXT_WELCOME_INFO_TEXT "Vous êtes sur le point de désinstaller $(^NameDA) de votre ordinateur.\r\n\r\nAvant de débuter l'installation, il est recommandé de fermer toutes les autres applications.\r\n\r\n$_CLICK"
 
   !define MUI_UNTEXT_CONFIRM_TITLE "Désinstaller $(^NameDA)"
   !define MUI_UNTEXT_CONFIRM_SUBTITLE "Supprimer $(^NameDA) de votre ordinateur."
