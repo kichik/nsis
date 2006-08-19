@@ -4744,18 +4744,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         struct stat st;
         if (!stat(line.gettoken_str(1), &st))
         {
-          union
-          {
-            struct
-            {
-              long l;
-              long h;
-            } words;
-            long long ll;
-          };
-          ll = (st.st_mtime * 10000000LL) + 116444736000000000LL;
-          high = words.h;
-          low = words.l;
+          unsigned long long ll = (st.st_mtime * 10000000LL) + 116444736000000000LL;
+          high = (DWORD) (ll >> 32);
+          low = (DWORD) ll;
         }
         else
         {
@@ -6076,22 +6067,13 @@ int CEXEBuild::add_file(const string& dir, const string& file, int attrib, const
       struct stat st;
       if (!fstat(fd, &st))
       {
-        union
-        {
-          struct
-          {
-            long l;
-            long h;
-          } words;
-          long long ll;
-        };
-        ll = (st.st_mtime * 10000000LL) + 116444736000000000LL;
+        unsigned long long ll = (st.st_mtime * 10000000LL) + 116444736000000000LL;
 
         // FAT write time has a resolution of 2 seconds
         ll -= ll % 20000000;
 
-        ent.offsets[3] = words.l;
-        ent.offsets[4] = words.h;
+        ent.offsets[3] = (int) ll;
+        ent.offsets[4] = (int) (ll >> 32);
       }
 #endif
       else
