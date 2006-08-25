@@ -49,7 +49,7 @@ Disinstallazione di $(^Name)
 # ^DontAcceptBtn
 &Non accetto le condizioni della licenza
 # ^InstallBtn
-&Installa
+Ins&talla
 # ^UninstallBtn
 &Disinstalla
 # ^CancelBtn
