@@ -59,7 +59,7 @@
   
   
   !define MUI_UNTEXT_WELCOME_INFO_TITLE "Bienvenue dans le programme de désinstallation de $(^NameDA)"
-  !define MUI_UNTEXT_WELCOME_INFO_TEXT "Vous êtes sur le point de désinstaller $(^NameDA) de votre ordinateur.\r\n\r\nAvant de débuter la désinstallation, il est recommandé de fermer toutes les autres applications.\r\n\r\n$_CLICK"
+  !define MUI_UNTEXT_WELCOME_INFO_TEXT "Vous êtes sur le point de désinstaller $(^NameDA) de votre ordinateur.\r\n\r\nAvant de débuter la désinstallation, assurez-vous que $(^NameDA) ne soit pas en cours d'exécution.\r\n\r\n$_CLICK"
 
   !define MUI_UNTEXT_CONFIRM_TITLE "Désinstaller $(^NameDA)"
   !define MUI_UNTEXT_CONFIRM_SUBTITLE "Supprimer $(^NameDA) de votre ordinateur."
