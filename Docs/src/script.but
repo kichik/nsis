@@ -17,6 +17,9 @@ Lines beginning with ; or # are comments. You can put comments after commands. Y
 \c ; Comment
 \c # Comment
 \c
+\c # Comment \
+\c     Another comment line (see `Long commands` section below)
+\c
 \c /*
 \c Comment
 \c Comment
@@ -83,6 +86,11 @@ To extend a command over multiple lines, use a backslash (\\) at the end of the 
 \c     (If you have anything you created that you want \
 \c      to keep, click No)" \
 \c     IDNO NoRemoveLabel
+
+Line extension for long commands works for comments as well. It can be a bit confusing, so it should be avoided.
+
+\c # A comment \
+\c     still a comment here...
 
 \\<b\\>Configuration file\\</b\\>
 
