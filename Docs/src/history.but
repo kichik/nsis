@@ -1,5 +1,41 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.20} 2.20
+
+Released on September 9th, 2006
+
+\S1{v2.20-cl} Changelog
+
+\S2{} Minor Changes
+
+\b Better LogicLib errors (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1537976}{bug #1537976})
+
+\b Fixed incomplete plug-in call error messages (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1535995}{bug #1535995})
+
+\b Fixed incorrect file timestamp querying on big-endian platforms (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1536377}{bug #1536377})
+
+\b Minor documentation updates and fixes
+
+\S2{} Translations
+
+\b Danish corrections (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1548190}{bug #1548190})
+
+\b Fixed incorrectly encoded Turkish translation (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1542765}{bug #1542765})
+
+\b French corrections
+
+\b Italian corrections (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1546183}{bug #1546183})
+
+\b Spanish corrections
+
+\b Swedish corrections (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1542680}{bug #1542680})
+
+\b Ukrainian corrections
+
+\S2{} Build System
+
+\b Fixed NSIS_CONFIG_CONST_DATA_PATH being ignored on POSIX platforms (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1515592}{bug #1515592})
+
 \H{v2.19} 2.19
 
 Released on August 6th, 2006
