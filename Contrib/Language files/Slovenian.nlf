@@ -1,6 +1,7 @@
 # Header, don't edit
 NLF v6
 # Language ID
+
 1060
 # Font and size - dash (-) means default
 -
@@ -69,21 +70,21 @@ Ime
 # ^Completed
 Dokonèano
 # ^LicenseText
-Prosimo vas, da pred namestitvijo $(^NameDA) pregledate licenèno pogodbo. Èe se z njo strinjate, pritisnite Se strinjam.
+Prosimo, da pred namestitvijo $(^NameDA) pregledate licenèno pogodbo. Èe se z njo strinjate, pritisnite Se strinjam.
 # ^LicenseTextCB
-Prosimo vas, da pred namestitvijo $(^NameDA) pregledate licenèno pogodbo. Èe sprejmete vse naštete pogoje, obkljukajte spodnje okence. $_CLICK
+Prosimo, da pred namestitvijo $(^NameDA) pregledate licenèno pogodbo. Èe sprejmete vse naštete pogoje, obkljukajte spodnje okence. $_CLICK
 # ^LicenseTextRB
-Prosimo vas, da pred namestitvijo $(^NameDA) pregledate licenèno pogodbo. Èe sprejmete vse naštete pogoje, izberite prvo spodaj podano možnost. $_CLICK
+Prosimo, da pred namestitvijo $(^NameDA) pregledate licenèno pogodbo. Èe sprejmete vse naštete pogoje, izberite prvo spodaj podano možnost. $_CLICK
 # ^UnLicenseText
-Prosimo vas, da pred odstranitvijo $(^NameDA) pregledate licenèno pogodbo. Èe se z njo strinjate, pritisnite Se strinjam.
+Prosimo, da pred odstranitvijo $(^NameDA) pregledate licenèno pogodbo. Èe se z njo strinjate, pritisnite Se strinjam.
 # ^UnLicenseTextCB
-Prosimo vas, da pred odstranitvijo $(^NameDA) pregledate licenèno pogodbo. Èe sprejmete vse naštete pogoje, obkljukajte spodnje okence. $_CLICK
+Prosimo, da pred odstranitvijo $(^NameDA) pregledate licenèno pogodbo. Èe sprejmete vse naštete pogoje, obkljukajte spodnje okence. $_CLICK
 # ^UnLicenseTextRB
-Prosimo vas, da pred odstranitvijo $(^NameDA) pregledate licenèno pogodbo. Èe sprejmete vse naštete pogoje, izberite prvo spodaj podano možnost. $_CLICK
+Prosimo, da pred odstranitvijo $(^NameDA) pregledate licenèno pogodbo. Èe sprejmete vse naštete pogoje, izberite prvo spodaj podano možnost. $_CLICK
 # ^Custom
 Po meri ...
 # ^ComponentsText
-Oznaèite bloke, ki jih želite namestiti, in odznaèite tiste, katerih ne želite namestiti. $_CLICK
+Oznaèite bloke, ki jih želite namestiti, in pustite neoznaèene tiste, katerih ne želite namestiti. $_CLICK
 # ^ComponentsSubText1
 Izberite vrsto namestitve:
 # ^ComponentsSubText2_NoInstTypes
@@ -91,7 +92,7 @@ Izberite bloke namestitve:
 # ^ComponentsSubText2
 Ali pa izberite bloke, ki jih želite namestiti:
 # ^UnComponentsText
-Oznaèite bloke, ki jih želite odstraniti, in odznaèite tiste, ki jih ne želite odstraniti. $_CLICK
+Oznaèite bloke, ki jih želite odstraniti, in pustite neoznaèene tiste, ki jih ne želite odstraniti. $_CLICK
 # ^UnComponentsSubText1
 Izberite vrsto odstranitve:
 # ^UnComponentsSubText2_NoInstTypes
@@ -99,13 +100,13 @@ Izberite bloke za odstranitev:
 # ^UnComponentsSubText2
 Ali pa si izberite bloke namestitve, ki jih želite odstraniti:
 # ^DirText
-Nastavitev bo namestila $(^NameDA) v sledeèo mapo. Za izbiro druge mape kliknite na tipko Prebrskaj in izberite drugo mapo. $_CLICK
+Nastavitev bo namestila $(^NameDA) v sledeèo mapo. Za izbiro druge mape kliknite tipko Prebrskaj in izberite drugo mapo. $_CLICK
 # ^DirSubText
 Ciljna mapa
 # ^DirBrowseText
 Izberite mapo, kamor želite namestiti $(^NameDA):
 # ^UnDirText
-Nastavitev bo odstranila $(^NameDA) iz sledeèe mape. Za izbiro druge mape kliknite na tipko Prebrskaj in izberite drugo mapo. $_CLICK
+Nastavitev bo odstranila $(^NameDA) iz sledeèe mape. Za izbiro druge mape kliknite tipko Prebrskaj in izberite drugo mapo. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
@@ -113,7 +114,7 @@ Izberite mapo, od koder želite odstraniti $(^NameDA):
 # ^SpaceAvailable
 "Prostor na disku: "
 # ^SpaceRequired
-"Zahtevan prostor: "
+"Potreben prostor: "
 # ^UninstallingText
 $(^NameDA) bo odstranjen iz naslednje mape. $_CLICK
 # ^UninstallingSubText
@@ -143,9 +144,9 @@ Kopiranje neuspešno
 # ^CreatedUninstaller
 "Ustvarjena odstranitev: "
 # ^Delete
-"Izbrisana datoteka: "
+"Brisanje datoteke: "
 # ^DeleteOnReboot
-"Izbriši ob ponovnem zagonu: "
+"Brisanje ob ponovnem zagonu: "
 # ^ErrorCreatingShortcut
 "Napaka ustvarjanja bližnjice: "
 # ^ErrorCreating
