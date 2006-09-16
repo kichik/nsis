@@ -2091,6 +2091,28 @@ void CEXEBuild::PrepareHeaders(IGrowBuf *hdrbuf)
   sink2.write_growbuf(&blocks_buf);
 }
 
+int CEXEBuild::SetVarsSection()
+{
+  try {
+    init_res_editor();
+
+    VerifyDeclaredUserVarRefs(&m_UserVarNames);
+    int MaxUserVars = m_UserVarNames.getnum();
+    // -1 because the default size is 1
+    if (!res_editor->AddExtraVirtualSize2PESection(NSIS_VARS_SECTION, (MaxUserVars - 1) * sizeof(NSIS_STRING)))
+    {
+      ERROR_MSG("Internal compiler error #12346: invalid exehead cannot find section \"%s\"!\n", NSIS_VARS_SECTION);
+      return PS_ERROR;
+    }
+  }
+  catch (exception& err) {
+    ERROR_MSG("\nError: %s\n", err.what());
+    return PS_ERROR;
+  }
+
+  return PS_OK;
+}
+
 int CEXEBuild::check_write_output_errors() const
 {
   if (has_called_write_output)
@@ -2248,18 +2270,10 @@ int CEXEBuild::write_output(void)
   // Generate language tables
   RET_UNLESS_OK( GenerateLangTables() );
 
+  // Setup user variables PE section
+  RET_UNLESS_OK( SetVarsSection() );
+
   try {
-    init_res_editor();
-
-    VerifyDeclaredUserVarRefs(&m_UserVarNames);
-    int MaxUserVars = m_UserVarNames.getnum();
-    // -1 because the default size is 1
-    if (!res_editor->AddExtraVirtualSize2PESection(NSIS_VARS_SECTION, (MaxUserVars - 1) * sizeof(NSIS_STRING)))
-    {
-      ERROR_MSG("Internal compiler error #12346: invalid exehead cannot find section \"%s\"!\n", NSIS_VARS_SECTION);
-      return PS_ERROR;
-    }
-
     // Save all changes to the exe header
     close_res_editor();
   }
