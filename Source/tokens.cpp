@@ -219,6 +219,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_WRITEREGEXPANDSTR,"WriteRegExpandStr",4,0,"rootkey subkey entry_name new_value_string\n    root_key=(HKCR|HKLM|HKCU|HKU|HKCC|HKDD|HKPD|SHCTX)",TP_CODE},
 {TOK_WRITEUNINSTALLER,"WriteUninstaller",1,0,"uninstall_exe_name",TP_CODE},
 {TOK_XPSTYLE, "XPStyle",1,0,"(on|off)",TP_GLOBAL},
+{TOK_REQEXECLEVEL, "RequestExecutionLevel",1,0,"none|user|admin",TP_GLOBAL},
 {TOK_P_PACKEXEHEADER,"!packhdr",2,0,"temp_file_name command_line_to_compress_that_temp_file",TP_ALL},
 {TOK_P_SYSTEMEXEC,"!system",1,2,"command [<|>|<>|=) retval]",TP_ALL},
 {TOK_P_EXECUTE,"!execute",1,0,"command",TP_ALL},
