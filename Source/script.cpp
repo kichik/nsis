@@ -2332,17 +2332,14 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     }
     return PS_OK;
     case TOK_XPSTYLE:
-      try {
+      {
         int k=line.gettoken_enum(1,"on\0off\0");
         if (k == -1) PRINTHELP()
         SCRIPT_MSG("XPStyle: %s\n", line.gettoken_str(1));
-        init_res_editor();
-        const char *szXPManifest = k ? 0 : "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><assembly xmlns=\"urn:schemas-microsoft-com:asm.v1\" manifestVersion=\"1.0\"><assemblyIdentity version=\"1.0.0.0\" processorArchitecture=\"X86\" name=\"Nullsoft.NSIS.exehead\" type=\"win32\"/><description>Nullsoft Install System " NSIS_VERSION "</description><dependency><dependentAssembly><assemblyIdentity type=\"win32\" name=\"Microsoft.Windows.Common-Controls\" version=\"6.0.0.0\" processorArchitecture=\"X86\" publicKeyToken=\"6595b64144ccf1df\" language=\"*\" /></dependentAssembly></dependency></assembly>";
-        res_editor->UpdateResource(MAKEINTRESOURCE(24), MAKEINTRESOURCE(1), NSIS_DEFAULT_LANG, (unsigned char*)szXPManifest, k ? 0 : strlen(szXPManifest));
-      }
-      catch (exception& err) {
-        ERROR_MSG("Error while adding XP style: %s\n", err.what());
-        return PS_ERROR;
+        if (!k)
+          manifest_comctl = manifest::comctl_xp;
+        else
+          manifest_comctl = manifest::comctl_old;
       }
     return PS_OK;
     case TOK_CHANGEUI:
