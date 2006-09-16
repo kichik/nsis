@@ -2580,6 +2580,27 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ERROR_MSG("Error: %s specified, NSIS_CONFIG_VISIBLE_SUPPORT not defined.\n",line.gettoken_str(0));
     return PS_ERROR;
 #endif// NSIS_CONFIG_VISIBLE_SUPPORT
+
+    case TOK_REQEXECLEVEL:
+    {
+      int k=line.gettoken_enum(1,"none\0user\0admin\0");
+      switch (k)
+      {
+      case 0:
+        manifest_exec_level = manifest::exec_level_none;
+        break;
+      case 1:
+        manifest_exec_level = manifest::exec_level_user;
+        break;
+      case 2:
+        manifest_exec_level = manifest::exec_level_admin;
+        break;
+      default:
+        PRINTHELP();
+      }
+    }
+    return PS_OK;
+
     // Ability to change compression methods from within the script
     case TOK_SETCOMPRESSOR:
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
