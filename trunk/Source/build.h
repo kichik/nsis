@@ -216,6 +216,7 @@ class CEXEBuild {
     int ProcessPages();
     void PrepareInstTypes();
     void PrepareHeaders(IGrowBuf *hdrbuf);
+    int SetVarsSection();
 
     int resolve_jump_int(const char *fn, int *a, int offs, int start, int end);
     int resolve_call_int(const char *fn, const char *str, int fptr, int *ofs);
