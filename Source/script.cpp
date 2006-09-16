@@ -2572,13 +2572,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     }
     return PS_OK;
 #else
-  case TOK_INSTCOLORS:
-  case TOK_XPSTYLE:
-  case TOK_CHANGEUI:
-  case TOK_ADDBRANDINGIMAGE:
-  case TOK_SETFONT:
-    ERROR_MSG("Error: %s specified, NSIS_CONFIG_VISIBLE_SUPPORT not defined.\n",line.gettoken_str(0));
-  return PS_ERROR;
+    case TOK_INSTCOLORS:
+    case TOK_XPSTYLE:
+    case TOK_CHANGEUI:
+    case TOK_ADDBRANDINGIMAGE:
+    case TOK_SETFONT:
+      ERROR_MSG("Error: %s specified, NSIS_CONFIG_VISIBLE_SUPPORT not defined.\n",line.gettoken_str(0));
+    return PS_ERROR;
 #endif// NSIS_CONFIG_VISIBLE_SUPPORT
     // Ability to change compression methods from within the script
     case TOK_SETCOMPRESSOR:
