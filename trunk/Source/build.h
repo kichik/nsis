@@ -9,6 +9,7 @@
 #include "uservars.h"
 #include "ShConstants.h"
 #include "mmap.h"
+#include "manifest.h"
 
 #include "exehead/fileform.h"
 #include "exehead/config.h"
@@ -217,6 +218,7 @@ class CEXEBuild {
     void PrepareInstTypes();
     void PrepareHeaders(IGrowBuf *hdrbuf);
     int SetVarsSection();
+    int SetManifest();
 
     int resolve_jump_int(const char *fn, int *a, int offs, int start, int end);
     int resolve_call_int(const char *fn, const char *str, int fptr, int *ofs);
@@ -374,6 +376,9 @@ class CEXEBuild {
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
     int deflateToFile(FILE *fp, char *buf, int len); // len==0 to flush
 #endif
+
+    manifest::comctl manifest_comctl;
+    manifest::exec_level manifest_exec_level;
 
     CResourceEditor *res_editor;
     void init_res_editor();
