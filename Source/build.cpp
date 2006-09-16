@@ -9,6 +9,7 @@
 #include "fileform.h"
 #include "writer.h"
 #include "crc32.h"
+#include "manifest.h"
 
 #include <stdexcept>
 
@@ -225,6 +226,9 @@ CEXEBuild::CEXEBuild() :
   last_used_lang=NSIS_DEFAULT_LANG;
 
   res_editor=0;
+
+  manifest_comctl = manifest::comctl_old;
+  manifest_exec_level = manifest::exec_level_none;
 
   enable_last_page_cancel=0;
   uenable_last_page_cancel=0;
@@ -2113,6 +2117,26 @@ int CEXEBuild::SetVarsSection()
   return PS_OK;
 }
 
+int CEXEBuild::SetManifest()
+{
+  try {
+    init_res_editor();
+
+    string manifest = manifest::generate(manifest_comctl, manifest_exec_level);
+
+    if (manifest == "")
+      return PS_OK;
+
+    res_editor->UpdateResource(MAKEINTRESOURCE(24), MAKEINTRESOURCE(1), NSIS_DEFAULT_LANG, (LPBYTE) manifest.c_str(), manifest.length());
+  }
+  catch (exception& err) {
+    ERROR_MSG("Error while setting manifest: %s\n", err.what());
+    return PS_ERROR;
+  }
+
+  return PS_OK;
+}
+
 int CEXEBuild::check_write_output_errors() const
 {
   if (has_called_write_output)
@@ -2272,6 +2296,9 @@ int CEXEBuild::write_output(void)
 
   // Setup user variables PE section
   RET_UNLESS_OK( SetVarsSection() );
+
+  // Set XML manifest
+  RET_UNLESS_OK( SetManifest() );
 
   try {
     // Save all changes to the exe header
