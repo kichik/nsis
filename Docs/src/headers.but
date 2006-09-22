@@ -376,7 +376,7 @@ Call functions:
 
 \\<b\\>Syntax:\\</b\\>
 
-\c ${GetSize} "[Drive]" "[Options]" $var
+\c ${DriveSpace} "[Drive]" "[Options]" $var
 
 \c "[Drive]"     ; Disk to check
 \c               ;     
