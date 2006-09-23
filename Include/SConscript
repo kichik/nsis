@@ -10,6 +10,7 @@ includes = Split("""
 	UpgradeDLL.nsh
 	WinMessages.nsh
 	WordFunc.nsh
+	x64.nsh
 """)
 
 Import('env')
