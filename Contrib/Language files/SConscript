@@ -51,6 +51,7 @@ languages = Split("""
 	TradChinese.nlf
 	Turkish.nlf
 	Ukrainian.nlf
+	Valencian.nlf
 	Welsh.nlf
 """)
 
