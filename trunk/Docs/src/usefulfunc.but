@@ -166,7 +166,7 @@
 \c  ;
 \c  ; Returns on top of stack
 \c  ;
-\c  ; Windows Version (95, 98, ME, NT x.x, 2000, XP, 2003)
+\c  ; Windows Version (95, 98, ME, NT x.x, 2000, XP, 2003, Vista)
 \c  ; or
 \c  ; '' (Unknown Windows Version)
 \c  ;
@@ -223,6 +223,7 @@
 \c    StrCmp $R1 '5.0' lbl_winnt_2000
 \c    StrCmp $R1 '5.1' lbl_winnt_XP
 \c    StrCmp $R1 '5.2' lbl_winnt_2003 lbl_error
+\c    StrCmp $R1 '6.0' lbl_winnt_vista lbl_error
 \c  
 \c    lbl_winnt_x:
 \c      StrCpy $R0 "NT $R0" 6
@@ -238,6 +239,10 @@
 \c  
 \c    lbl_winnt_2003:
 \c      Strcpy $R0 '2003'
+\c    Goto lbl_done
+\c  
+\c    lbl_winnt_vista:
+\c      Strcpy $R0 'Vista'
 \c    Goto lbl_done
 \c  
 \c    lbl_error:
