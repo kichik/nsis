@@ -9,6 +9,7 @@ includes = Split("""
 	TextFunc.nsh
 	UpgradeDLL.nsh
 	WinMessages.nsh
+	WinVer.nsh
 	WordFunc.nsh
 	x64.nsh
 """)
