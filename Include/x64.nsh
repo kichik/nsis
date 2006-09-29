@@ -6,9 +6,7 @@
 ;
 ; IsRunningX64 checks if the installers is running on x64.
 ;
-;   ${IsRunningX64}
-;   Pop $0
-;   ${If} $0 != 0
+;   ${If} ${RunningX64}
 ;     MessageBox MB_OK "running on x64"
 ;   ${EndIf}
 ;
@@ -24,14 +22,17 @@
 !ifndef ___X64__NSH___
 !define ___X64__NSH___
 
-!macro IsRunningX64
+!include LogicLib.nsh
 
+!macro _RunningX64 _a _b _t _f
+  !insertmacro _LOGICLIB_TEMP
   System::Call kernel32::GetCurrentProcess()i.s
   System::Call kernel32::IsWow64Process(is,*i.s)
-
+  Pop $_LOGICLIB_TEMP
+  !insertmacro _!= $_LOGICLIB_TEMP 0 `${_t}` `${_f}`
 !macroend
 
-!define IsRunningX64 "!insertmacro IsRunningX64"
+!define RunningX64 `"" RunningX64 ""`
 
 !macro DisableX64FSRedirection
 
