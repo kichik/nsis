@@ -222,7 +222,7 @@
 \c  
 \c    StrCmp $R1 '5.0' lbl_winnt_2000
 \c    StrCmp $R1 '5.1' lbl_winnt_XP
-\c    StrCmp $R1 '5.2' lbl_winnt_2003 lbl_error
+\c    StrCmp $R1 '5.2' lbl_winnt_2003
 \c    StrCmp $R1 '6.0' lbl_winnt_vista lbl_error
 \c  
 \c    lbl_winnt_x:
