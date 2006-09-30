@@ -138,6 +138,8 @@ Section "NSIS Core Files (required)" SecCore
   File ..\Include\FileFunc.nsh
   File ..\Include\TextFunc.nsh
   File ..\Include\WordFunc.nsh
+  File ..\Include\WinVer.nsh
+  File ..\Include\x64.nsh
 
   SetOutPath $INSTDIR\Docs\StrFunc
   File ..\Docs\StrFunc\StrFunc.txt
