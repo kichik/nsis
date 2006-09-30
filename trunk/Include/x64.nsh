@@ -4,7 +4,7 @@
 ;
 ; A few simple macros to handle installations on x64 machines.
 ;
-; IsRunningX64 checks if the installer is running on x64.
+; RunningX64 checks if the installer is running on x64.
 ;
 ;   ${If} ${RunningX64}
 ;     MessageBox MB_OK "running on x64"
