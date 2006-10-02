@@ -8,7 +8,7 @@
 
 !insertmacro MUI_LANGUAGEFILE_BEGIN "Danish"
 
-  !define MUI_LANGNAME "Danish" ;Use only ASCII characters (if this is not possible, use the English name)
+  !define MUI_LANGNAME "Dansk" ;Use only ASCII characters (if this is not possible, use the English name)
 
   !define MUI_TEXT_WELCOME_INFO_TITLE "Velkommen til setup-guiden for $(^NameDA)"
   !define MUI_TEXT_WELCOME_INFO_TEXT "Denne guide vil installere $(^NameDA) på din computer.\r\n\r\nDet anbefales at du lukker alle kørende programmer inden start af setup-guiden. Dette vil tillade guiden at opdatere de nødvendige systemfiler uden at skulle genstarte computeren.\r\n\r\n$_CLICK"
