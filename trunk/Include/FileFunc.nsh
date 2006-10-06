@@ -1,7 +1,7 @@
 /*
 _____________________________________________________________________________
 
-                       File Functions Header v3.2
+                       File Functions Header v3.4
 _____________________________________________________________________________
 
  2006 Shengalts Aleksander aka Instructor (Shengalts@mail.ru)
@@ -439,11 +439,13 @@ RefreshShellIcons
 			findfirst:
 			FindFirst $0 $R7 '$R8\$4'
 			IfErrors subdir
-			StrCmp $R7 '.' 0 +5
+			StrCmp $R7 '.' 0 dir
 			FindNext $0 $R7
-			StrCmp $R7 '..' 0 +3
+			StrCmp $R7 '..' 0 dir
 			FindNext $0 $R7
-			IfErrors subdir
+			IfErrors 0 dir
+			FindClose $0
+			goto subdir
 
 			dir:
 			IfFileExists '$R8\$R7\*.*' 0 file
@@ -512,9 +514,13 @@ RefreshShellIcons
 			Pop $2
 			Pop $1
 			Pop $0
-			IfErrors error
 
-			StrCmp $R9 'StopLocate' clearstack
+			IfErrors 0 +3
+			FindClose $0
+			goto error
+			StrCmp $R9 'StopLocate' 0 +3
+			FindClose $0
+			goto clearstack
 			goto $9
 
 			findnext:
@@ -526,17 +532,20 @@ RefreshShellIcons
 			StrCpy $9 $7 2
 			StrCmp $9 'G0' end
 			FindFirst $0 $R7 '$R8\*.*'
-			StrCmp $R7 '.' 0 +5
+			StrCmp $R7 '.' 0 pushdir
 			FindNext $0 $R7
-			StrCmp $R7 '..' 0 +3
+			StrCmp $R7 '..' 0 pushdir
 			FindNext $0 $R7
-			IfErrors +7
+			IfErrors 0 pushdir
+			FindClose $0
+			StrCmp $8 0 end nextdir
 
+			pushdir:
 			IfFileExists '$R8\$R7\*.*' 0 +3
 			Push '$R8\$R7'
 			IntOp $8 $8 + 1
 			FindNext $0 $R7
-			IfErrors 0 -4
+			IfErrors 0 pushdir
 			FindClose $0
 			StrCmp $8 0 end nextdir
 
@@ -700,11 +709,13 @@ RefreshShellIcons
 			Pop $R8
 			FindFirst $0 $R7 '$R8\$4'
 			IfErrors show
-			StrCmp $R7 '.' 0 +5
+			StrCmp $R7 '.' 0 dir
 			FindNext $0 $R7
-			StrCmp $R7 '..' 0 +3
+			StrCmp $R7 '..' 0 dir
 			FindNext $0 $R7
-			IfErrors show
+			IfErrors 0 dir
+			FindClose $0
+			goto show
 
 			dir:
 			IfFileExists '$R8\$R7\*.*' 0 file
@@ -745,19 +756,22 @@ RefreshShellIcons
 			subdir:
 			StrCmp $7 0 preend
 			FindFirst $0 $R7 '$R8\*.*'
-			StrCmp $R7 '.' 0 +5
+			StrCmp $R7 '.' 0 pushdir
 			FindNext $0 $R7
-			StrCmp $R7 '..' 0 +3
+			StrCmp $R7 '..' 0 pushdir
 			FindNext $0 $R7
-			IfErrors +7
+			IfErrors 0 pushdir
+			FindClose $0
+			StrCmp $8 0 preend nextdir
 
+			pushdir:
 			IfFileExists '$R8\$R7\*.*' 0 +3
 			Push '$R8\$R7'
 			IntOp $8 $8 + 1
 			FindNext $0 $R7
-			IfErrors 0 -4
+			IfErrors 0 pushdir
 			FindClose $0
-			StrCmp $8 0 0 nextdir
+			StrCmp $8 0 preend nextdir
 
 			preend:
 			StrCmp $R3 '' nosizeend
