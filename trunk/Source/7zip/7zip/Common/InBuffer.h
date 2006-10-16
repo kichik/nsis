@@ -4,6 +4,7 @@
 #define __INBUFFER_H
 
 #include "../IStream.h"
+#include "../../Common/MyCom.h"
 
 #ifndef _NO_EXCEPTIONS
 class CInBufferException
@@ -16,15 +17,16 @@ public:
 
 class CInBuffer
 {
-  UInt64 _processedSize;
-  Byte *_bufferBase;
-  UInt32 _bufferSize;
   Byte *_buffer;
   Byte *_bufferLimit;
-  ISequentialInStream *_stream;
+  Byte *_bufferBase;
+  CMyComPtr<ISequentialInStream> _stream;
+  UInt64 _processedSize;
+  UInt32 _bufferSize;
   bool _wasFinished;
 
   bool ReadBlock();
+  Byte ReadBlock2();
 
 public:
   #ifdef _NO_EXCEPTIONS
@@ -37,8 +39,9 @@ public:
   bool Create(UInt32 bufferSize);
   void Free();
   
-  void Init(ISequentialInStream *stream);
-  // void ReleaseStream() { _stream.Release(); }
+  void SetStream(ISequentialInStream *stream);
+  void Init();
+  void ReleaseStream() { _stream.Release(); }
 
   bool ReadByte(Byte &b)
   {
@@ -51,8 +54,7 @@ public:
   Byte ReadByte()
   {
     if(_buffer >= _bufferLimit)
-      if(!ReadBlock())
-        return 0xFF;
+      return ReadBlock2();
     return *_buffer++;
   }
   void ReadBytes(void *data, UInt32 size, UInt32 &processedSize)
