@@ -1,4 +1,5 @@
 #include <windows.h>
+#include <commctrl.h>
 #include "resource.h"
 
 #define CBL(x) {x,#x}
@@ -228,6 +229,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,
                      LPSTR     lpCmdLine,
                      int       nCmdShow)
 {
+	InitCommonControls();
+
 	DialogBox(
 		GetModuleHandle(0),
 		MAKEINTRESOURCE(IDD_DIALOG),
