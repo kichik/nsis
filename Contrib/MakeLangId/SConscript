@@ -15,6 +15,7 @@ resources = Split("""
 libs = Split("""
 	kernel32
 	user32
+	comctl32
 """)
 
 Import('BuildUtil')
