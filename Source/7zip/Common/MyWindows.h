@@ -3,21 +3,71 @@
 #ifndef __MYWINDOWS_H
 #define __MYWINDOWS_H
 
-#ifndef WIN32
-
-#include <string.h>
-
 #include "../../Platform.h"
 
-#include "Types.h"
+#ifdef _WIN32
 
+#include <windows.h>
+
+/*
+#define CHAR_PATH_SEPARATOR '\\'
+#define WCHAR_PATH_SEPARATOR L'\\'
+#define STRING_PATH_SEPARATOR "\\"
+#define WSTRING_PATH_SEPARATOR L"\\"
+*/
+
+#else
+
+/*
+#define CHAR_PATH_SEPARATOR '/'
+#define WCHAR_PATH_SEPARATOR L'/'
+#define STRING_PATH_SEPARATOR "/"
+#define WSTRING_PATH_SEPARATOR L"/"
+
+#include <stddef.h> // for wchar_t
+#include <string.h>
+*/
+#include "MyGuidDef.h"
+/*
+typedef char CHAR;
+typedef unsigned char UCHAR;
+
+#undef BYTE
+typedef unsigned char BYTE;
+
+typedef short SHORT;
+typedef unsigned short USHORT;
+
+#undef WORD
+typedef unsigned short WORD;
 typedef short VARIANT_BOOL;
 
-typedef wchar_t OLECHAR;
+typedef int INT;
+typedef Int32 INT32;
+typedef unsigned int UINT;
+typedef UInt32 UINT32;
+typedef INT32 LONG;   // LONG, ULONG and DWORD must be 32-bit
+typedef UINT32 ULONG;
+
+#undef DWORD
+typedef UINT32 DWORD;
+
+typedef Int64 LONGLONG;
+typedef UInt64 ULONGLONG;
+
+typedef struct LARGE_INTEGER { LONGLONG QuadPart; }LARGE_INTEGER;
+typedef struct _ULARGE_INTEGER { ULONGLONG QuadPart;} ULARGE_INTEGER;
+
+typedef const CHAR *LPCSTR;
+typedef CHAR TCHAR;
+typedef const TCHAR *LPCTSTR;
+typedef wchar_t WCHAR;
+typedef WCHAR OLECHAR;
+typedef const WCHAR *LPCWSTR;
 typedef OLECHAR *BSTR;
 typedef const OLECHAR *LPCOLESTR;
 typedef OLECHAR *LPOLESTR;
-
+*/
 typedef struct _FILETIME
 {
   DWORD dwLowDateTime;
@@ -31,6 +81,7 @@ typedef LONG SCODE;
 
 #define S_OK    ((HRESULT)0x00000000L)
 #define S_FALSE ((HRESULT)0x00000001L)
+#define E_NOTIMPL ((HRESULT)0x80004001L)
 #define E_NOINTERFACE ((HRESULT)0x80004002L)
 #define E_ABORT ((HRESULT)0x80004004L)
 #define E_FAIL ((HRESULT)0x80004005L)
@@ -51,46 +102,7 @@ typedef LONG SCODE;
 
 #define PURE = 0
 
-typedef struct {
-  unsigned long  Data1;
-  unsigned short Data2;
-  unsigned short Data3;
-  unsigned char Data4[8];
-} GUID;
-
-#ifdef __cplusplus
-    #define MY_EXTERN_C    extern "C"
-#else
-    #define MY_EXTERN_C    extern
-#endif
-
-#ifdef INITGUID
-  #define DEFINE_GUID(name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8) \
-      MY_EXTERN_C const GUID name = { l, w1, w2, { b1, b2,  b3,  b4,  b5,  b6,  b7,  b8 } }
-#else
-  #define DEFINE_GUID(name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8) \
-      MY_EXTERN_C const GUID name
-#endif
-
-#ifdef __cplusplus
-#define REFGUID const GUID &
-#else
-#define REFGUID const GUID * __MIDL_CONST
-#endif
-
-#define REFCLSID REFGUID
-#define REFIID REFGUID
-
 #define MIDL_INTERFACE(x) struct 
-inline bool operator==(REFGUID g1, REFGUID g2)
-{ 
-  for (size_t i = 0; i < sizeof(g1); i++)
-    if (((unsigned char *)&g1)[i] != ((unsigned char *)&g2)[i])
-      return false;
-  return true;
-}
-inline bool operator!=(REFGUID g1, REFGUID g2)
-  { return !(g1 == g2); }
 
 struct IUnknown
 {
@@ -164,20 +176,20 @@ typedef struct tagPROPVARIANT
   };
 } PROPVARIANT;
 
-typedef tagPROPVARIANT tagVARIANT;
+typedef PROPVARIANT tagVARIANT;
 typedef tagVARIANT VARIANT;
 typedef VARIANT VARIANTARG;
 
-BSTR SysAllocStringByteLen(LPCSTR psz, unsigned int len);
-BSTR SysAllocString(const OLECHAR *sz);
-void SysFreeString(BSTR bstr);
-UINT SysStringByteLen(BSTR bstr);
-UINT SysStringLen(BSTR bstr);
+MY_EXTERN_C BSTR SysAllocStringByteLen(LPCSTR psz, UINT len);
+MY_EXTERN_C BSTR SysAllocString(const OLECHAR *sz);
+MY_EXTERN_C void SysFreeString(BSTR bstr);
+MY_EXTERN_C UINT SysStringByteLen(BSTR bstr);
+MY_EXTERN_C UINT SysStringLen(BSTR bstr);
 
-DWORD GetLastError();
-HRESULT VariantClear(VARIANTARG *prop);
-HRESULT VariantCopy(VARIANTARG *dest, VARIANTARG *src);
-LONG CompareFileTime(const FILETIME* ft1, const FILETIME* ft2);
+MY_EXTERN_C DWORD GetLastError();
+MY_EXTERN_C HRESULT VariantClear(VARIANTARG *prop);
+MY_EXTERN_C HRESULT VariantCopy(VARIANTARG *dest, VARIANTARG *src);
+MY_EXTERN_C LONG CompareFileTime(const FILETIME* ft1, const FILETIME* ft2);
 
 #define CP_ACP    0
 #define CP_OEMCP  1

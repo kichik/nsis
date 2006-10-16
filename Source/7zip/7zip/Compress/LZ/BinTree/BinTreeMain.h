@@ -4,163 +4,187 @@
 #include "../../../../Common/CRC.h"
 #include "../../../../Common/Alloc.h"
 
+#include "BinTree.h"
+
+// #include <xmmintrin.h>
+// It's for prefetch
+// But prefetch doesn't give big gain in K8.
+
 namespace BT_NAMESPACE {
 
 #ifdef HASH_ARRAY_2
   static const UInt32 kHash2Size = 1 << 10;
+  #define kNumHashDirectBytes 0
   #ifdef HASH_ARRAY_3
-    static const UInt32 kNumHashDirectBytes = 0;
     static const UInt32 kNumHashBytes = 4;
-    static const UInt32 kHash3Size = 1 << 18;
-    #ifdef HASH_BIG
-    static const UInt32 kHashSize = 1 << 23;
-    #else
-    static const UInt32 kHashSize = 1 << 20;
-    #endif
+    static const UInt32 kHash3Size = 1 << 16;
   #else
-    static const UInt32 kNumHashDirectBytes = 3;
     static const UInt32 kNumHashBytes = 3;
-    static const UInt32 kHashSize = 1 << (8 * kNumHashBytes);
   #endif
+  static const UInt32 kHashSize = 0;
+  static const UInt32 kMinMatchCheck = kNumHashBytes;
+  static const UInt32 kStartMaxLen = 1;
 #else
   #ifdef HASH_ZIP 
-    static const UInt32 kNumHashDirectBytes = 0;
+    #define kNumHashDirectBytes 0
     static const UInt32 kNumHashBytes = 3;
     static const UInt32 kHashSize = 1 << 16;
+    static const UInt32 kMinMatchCheck = kNumHashBytes;
+    static const UInt32 kStartMaxLen = 1;
   #else
-    static const UInt32 kNumHashDirectBytes = 2;
+    #define kNumHashDirectBytes 2
     static const UInt32 kNumHashBytes = 2;
     static const UInt32 kHashSize = 1 << (8 * kNumHashBytes);
+    static const UInt32 kMinMatchCheck = kNumHashBytes + 1;
+    static const UInt32 kStartMaxLen = 1;
   #endif
 #endif
 
+#ifdef HASH_ARRAY_2
+#ifdef HASH_ARRAY_3
+static const UInt32 kHash3Offset = kHash2Size;
+#endif
+#endif
 
-CInTree::CInTree():
-  _hash(0),
-  #ifdef HASH_ARRAY_2
-  _hash2(0),
-  #ifdef HASH_ARRAY_3
-  _hash3(0),
-  #endif
-  #endif
-  _son(0),
-  _cutValue(0xFF)
+static const UInt32 kFixHashSize = 0
+    #ifdef HASH_ARRAY_2
+    + kHash2Size
+    #ifdef HASH_ARRAY_3
+    + kHash3Size
+    #endif
+    #endif
+    ;
+
+CMatchFinder::CMatchFinder():
+  _hash(0)
 {
 }
 
-void CInTree::FreeMemory()
+void CMatchFinder::FreeThisClassMemory()
 {
-  BigFree(_son);
-  _son = 0;
   BigFree(_hash);
   _hash = 0;
+}
+
+void CMatchFinder::FreeMemory()
+{
+  FreeThisClassMemory();
   CLZInWindow::Free();
 }
 
-CInTree::~CInTree()
+CMatchFinder::~CMatchFinder()
 { 
   FreeMemory();
 }
 
-HRESULT CInTree::Create(UInt32 sizeHistory, UInt32 keepAddBufferBefore, 
-    UInt32 matchMaxLen, UInt32 keepAddBufferAfter, UInt32 sizeReserv)
+STDMETHODIMP CMatchFinder::Create(UInt32 historySize, UInt32 keepAddBufferBefore, 
+    UInt32 matchMaxLen, UInt32 keepAddBufferAfter)
 {
-  FreeMemory();
-  if (!CLZInWindow::Create(sizeHistory + keepAddBufferBefore, 
-      matchMaxLen + keepAddBufferAfter, sizeReserv))
-    return E_OUTOFMEMORY;
-  
-  if (_blockSize + 256 > kMaxValForNormalize)
+  if (historySize > kMaxValForNormalize - 256)
+  {
+    FreeMemory();
     return E_INVALIDARG;
-  
-  _historySize = sizeHistory;
-  _matchMaxLen = matchMaxLen;
-  
-  _cyclicBufferSize = sizeHistory + 1;
-  
-  
-  UInt32 size = kHashSize;
-  #ifdef HASH_ARRAY_2
-  size += kHash2Size;
-  #ifdef HASH_ARRAY_3
-  size += kHash3Size;
-  #endif
-  #endif
-  
-  _son = (CPair *)BigAlloc((_cyclicBufferSize + 1) * sizeof(CPair));
-  if (_son == 0)
-  {
-    FreeMemory();
-    return E_OUTOFMEMORY;
   }
-  
-  // UInt32 numBundles = (_cyclicBufferSize + kNumPairsInBundle) >> kNumBundleBits;
-  // _son = (CBundle *)::VirtualAlloc(0, numBundles * sizeof(CBundle), MEM_COMMIT, PAGE_READWRITE);
-  _hash = (CIndex *)BigAlloc((size + 1) * sizeof(CIndex));
-  if (_hash == 0)
+  _cutValue = 
+  #ifdef _HASH_CHAIN
+    8 + (matchMaxLen >> 2);
+  #else
+    16 + (matchMaxLen >> 1);
+  #endif
+  UInt32 sizeReserv = (historySize + keepAddBufferBefore + 
+      matchMaxLen + keepAddBufferAfter) / 2 + 256;
+  if (CLZInWindow::Create(historySize + keepAddBufferBefore, 
+      matchMaxLen + keepAddBufferAfter, sizeReserv))
   {
-    FreeMemory();
-    return E_OUTOFMEMORY;
+    _matchMaxLen = matchMaxLen;
+    UInt32 newCyclicBufferSize = historySize + 1;
+    if (_hash != 0 && newCyclicBufferSize == _cyclicBufferSize)
+      return S_OK;
+    FreeThisClassMemory();
+    _cyclicBufferSize = newCyclicBufferSize; // don't change it
+
+    UInt32 hs = kHashSize;
+
+    #ifdef HASH_ARRAY_2
+    hs = historySize - 1;
+    hs |= (hs >> 1);
+    hs |= (hs >> 2);
+    hs |= (hs >> 4);
+    hs |= (hs >> 8);
+    hs >>= 1;
+    hs |= 0xFFFF;
+    if (hs > (1 << 24))
+    {
+      #ifdef HASH_ARRAY_3
+      hs >>= 1;
+      #else
+      hs = (1 << 24) - 1;
+      #endif
+    }
+    _hashMask = hs;
+    hs++;
+    #endif
+    _hashSizeSum = hs + kFixHashSize;
+    UInt32 numItems = _hashSizeSum + _cyclicBufferSize
+    #ifndef _HASH_CHAIN
+     * 2
+    #endif
+    ;
+    size_t sizeInBytes = (size_t)numItems * sizeof(CIndex);
+    if (sizeInBytes / sizeof(CIndex) != numItems)
+      return E_OUTOFMEMORY;
+    _hash = (CIndex *)BigAlloc(sizeInBytes);
+    _son = _hash + _hashSizeSum;
+    if (_hash != 0)
+      return S_OK;
   }
-  
-  // _hash = &m_RightBase[_blockSize];
-  #ifdef HASH_ARRAY_2
-  _hash2 = &_hash[kHashSize]; 
-  #ifdef HASH_ARRAY_3
-  _hash3 = &_hash2[kHash2Size]; 
-  #endif
-  #endif
-  return S_OK;
+  FreeMemory();
+  return E_OUTOFMEMORY;
 }
 
 static const UInt32 kEmptyHashValue = 0;
 
-HRESULT CInTree::Init(ISequentialInStream *stream)
+STDMETHODIMP CMatchFinder::SetStream(ISequentialInStream *stream)
 {
-  RINOK(CLZInWindow::Init(stream));
-  UInt32 i;
-  for(i = 0; i < kHashSize; i++)
+  CLZInWindow::SetStream(stream);
+  return S_OK;
+}
+
+STDMETHODIMP CMatchFinder::Init()
+{
+  RINOK(CLZInWindow::Init());
+  for(UInt32 i = 0; i < _hashSizeSum; i++)
     _hash[i] = kEmptyHashValue;
-
-  #ifdef HASH_ARRAY_2
-  for(i = 0; i < kHash2Size; i++)
-    _hash2[i] = kEmptyHashValue;
-  #ifdef HASH_ARRAY_3
-  for(i = 0; i < kHash3Size; i++)
-    _hash3[i] = kEmptyHashValue;
-  #endif
-  #endif
-
   _cyclicBufferPos = 0;
-
   ReduceOffsets(-1);
   return S_OK;
 }
 
+STDMETHODIMP_(void) CMatchFinder::ReleaseStream()
+{ 
+  // ReleaseStream(); 
+}
 
 #ifdef HASH_ARRAY_2
 #ifdef HASH_ARRAY_3
-inline UInt32 Hash(const Byte *pointer, UInt32 &hash2Value, UInt32 &hash3Value)
-{
-  UInt32 temp = CCRC::Table[pointer[0]] ^ pointer[1];
-  hash2Value = temp & (kHash2Size - 1);
-  hash3Value = (temp ^ (UInt32(pointer[2]) << 8)) & (kHash3Size - 1);
-  return (temp ^ (UInt32(pointer[2]) << 8) ^ (CCRC::Table[pointer[3]] << 5)) & 
-      (kHashSize - 1);
-}
+
+#define HASH_CALC { \
+  UInt32 temp = CCRC::Table[cur[0]] ^ cur[1]; \
+  hash2Value = temp & (kHash2Size - 1); \
+  hash3Value = (temp ^ (UInt32(cur[2]) << 8)) & (kHash3Size - 1); \
+  hashValue = (temp ^ (UInt32(cur[2]) << 8) ^ (CCRC::Table[cur[3]] << 5)) & _hashMask; }
+  
 #else // no HASH_ARRAY_3
-inline UInt32 Hash(const Byte *pointer, UInt32 &hash2Value)
-{
-  hash2Value = (CCRC::Table[pointer[0]] ^ pointer[1]) & (kHash2Size - 1);
-  return ((UInt32(pointer[0]) << 16)) | ((UInt32(pointer[1]) << 8)) | pointer[2];
-}
+#define HASH_CALC { \
+  UInt32 temp = CCRC::Table[cur[0]] ^ cur[1]; \
+  hash2Value = temp & (kHash2Size - 1); \
+  hashValue = (temp ^ (UInt32(cur[2]) << 8)) & _hashMask; }
 #endif // HASH_ARRAY_3
 #else // no HASH_ARRAY_2
 #ifdef HASH_ZIP 
 inline UInt32 Hash(const Byte *pointer)
 {
-  return ((UInt32(pointer[0]) << 8) ^ 
-      CCRC::Table[pointer[1]] ^ pointer[2]) & (kHashSize - 1);
+  return ((UInt32(pointer[0]) << 8) ^ CCRC::Table[pointer[1]] ^ pointer[2]) & (kHashSize - 1);
 }
 #else // no HASH_ZIP 
 inline UInt32 Hash(const Byte *pointer)
@@ -170,7 +194,7 @@ inline UInt32 Hash(const Byte *pointer)
 #endif // HASH_ZIP
 #endif // HASH_ARRAY_2
 
-UInt32 CInTree::GetLongestMatch(UInt32 *distances)
+STDMETHODIMP CMatchFinder::GetMatches(UInt32 *distances)
 {
   UInt32 lenLimit;
   if (_pos + _matchMaxLen <= _streamPos)
@@ -178,346 +202,288 @@ UInt32 CInTree::GetLongestMatch(UInt32 *distances)
   else
   {
     lenLimit = _streamPos - _pos;
-    if(lenLimit < kNumHashBytes)
-      return 0; 
+    if(lenLimit < kMinMatchCheck)
+    {
+      distances[0] = 0;
+      return MovePos(); 
+    }
   }
 
-  UInt32 matchMinPos = (_pos > _historySize) ? (_pos - _historySize) : 1;
-  Byte *cur = _buffer + _pos;
+  int offset = 1;
 
-  /*
-  if ((_cyclicBufferPos & kBundleMask) == 0)
-  {
-    Byte *bytes = _son[_cyclicBufferPos >> kNumBundleBits].Bytes;
-    UInt32 bundleLimit = kNumBundleBytes;
-    if (bundleLimit > lenLimit)
-      bundleLimit = lenLimit;
-    for (UInt32 i = 0; i < bundleLimit; i++)
-      bytes[i] = cur[i];
-  }
-  */
-  
-  UInt32 matchHashLenMax = 0;
+  UInt32 matchMinPos = (_pos > _cyclicBufferSize) ? (_pos - _cyclicBufferSize) : 0;
+  const Byte *cur = _buffer + _pos;
+
+  UInt32 maxLen = kStartMaxLen; // to avoid items for len < hashSize;
 
   #ifdef HASH_ARRAY_2
   UInt32 hash2Value;
   #ifdef HASH_ARRAY_3
   UInt32 hash3Value;
-  UInt32 hashValue = Hash(cur, hash2Value, hash3Value);
-  #else
-  UInt32 hashValue = Hash(cur, hash2Value);
   #endif
+  UInt32 hashValue;
+  HASH_CALC;
   #else
   UInt32 hashValue = Hash(cur);
   #endif
 
-  UInt32 curMatch = _hash[hashValue];
+  UInt32 curMatch = _hash[kFixHashSize + hashValue];
   #ifdef HASH_ARRAY_2
-  UInt32 curMatch2 = _hash2[hash2Value];
+  UInt32 curMatch2 = _hash[hash2Value];
   #ifdef HASH_ARRAY_3
-  UInt32 curMatch3 = _hash3[hash3Value];
+  UInt32 curMatch3 = _hash[kHash3Offset + hash3Value];
   #endif
-  _hash2[hash2Value] = _pos;
-  bool matchLen2Exist = false;
-  UInt32 len2Distance = 0;
-  if(curMatch2 >= matchMinPos)
-  {
+  _hash[hash2Value] = _pos;
+  if(curMatch2 > matchMinPos)
     if (_buffer[curMatch2] == cur[0])
     {
-      len2Distance = _pos - curMatch2 - 1;
-      matchHashLenMax = 2;
-      matchLen2Exist = true;
+      distances[offset++] = maxLen = 2;
+      distances[offset++] = _pos - curMatch2 - 1;
     }
-  }
 
   #ifdef HASH_ARRAY_3
-  _hash3[hash3Value] = _pos;
-  UInt32 matchLen3Exist = false;
-  UInt32 len3Distance = 0;
-  if(curMatch3 >= matchMinPos)
-  {
+  _hash[kHash3Offset + hash3Value] = _pos;
+  if(curMatch3 > matchMinPos)
     if (_buffer[curMatch3] == cur[0])
     {
-      len3Distance = _pos - curMatch3 - 1;
-      matchHashLenMax = 3;
-      matchLen3Exist = true;
-      if (matchLen2Exist)
-      {
-        if (len3Distance < len2Distance)
-          len2Distance = len3Distance;
-      }
-      else
-      {
-        len2Distance = len3Distance;
-        matchLen2Exist = true;
-      }
+      if (curMatch3 == curMatch2)
+        offset -= 2;
+      distances[offset++] = maxLen = 3;
+      distances[offset++] = _pos - curMatch3 - 1;
+      curMatch2 = curMatch3;
+    }
+  #endif
+  if (offset != 1 && curMatch2 == curMatch)
+  {
+    offset -= 2;
+    maxLen = kStartMaxLen;
+  }
+  #endif
+
+  _hash[kFixHashSize + hashValue] = _pos;
+
+  CIndex *son = _son;
+
+  #ifdef _HASH_CHAIN
+  son[_cyclicBufferPos] = curMatch;
+  #else
+  CIndex *ptr0 = son + (_cyclicBufferPos << 1) + 1;
+  CIndex *ptr1 = son + (_cyclicBufferPos << 1);
+
+  UInt32 len0, len1;
+  len0 = len1 = kNumHashDirectBytes;
+  #endif
+
+  #if kNumHashDirectBytes != 0
+  if(curMatch > matchMinPos)
+  {
+    if (_buffer[curMatch + kNumHashDirectBytes] != cur[kNumHashDirectBytes])
+    {
+      distances[offset++] = maxLen = kNumHashDirectBytes;
+      distances[offset++] = _pos - curMatch - 1;
     }
   }
   #endif
-  #endif
-
-  _hash[hashValue] = _pos;
-
-  // UInt32 bi = _cyclicBufferPos >> kNumBundleBits;
-  // UInt32 bo = _cyclicBufferPos & kBundleMask;
-  // CPair &pair = _son[bi].Pairs[bo];
-  CPair &pair = _son[_cyclicBufferPos];
-  if(curMatch < matchMinPos)
+  UInt32 count = _cutValue;
+  while(true)
   {
-    pair.Left = kEmptyHashValue; 
-    pair.Right = kEmptyHashValue; 
-
-    #ifdef HASH_ARRAY_2
-    distances[2] = len2Distance;
-    #ifdef HASH_ARRAY_3
-    distances[3] = len3Distance;
-    #endif
-    #endif
-
-    return matchHashLenMax;
-  }
-  CIndex *ptrLeft = &pair.Right;
-  CIndex *ptrRight = &pair.Left;
-
-  UInt32 maxLen, minLeft, minRight;
-  maxLen = minLeft = minRight = kNumHashDirectBytes;
-
-  #ifdef HASH_ARRAY_2
-  #ifndef HASH_ARRAY_3
-    if (matchLen2Exist)
-      distances[2] = len2Distance;
-    else
-      if (kNumHashDirectBytes >= 2)
-        distances[2] = _pos - curMatch - 1;
-  #endif
-  #endif
-
-  distances[maxLen] = _pos - curMatch - 1;
-  
-  for(UInt32 count = _cutValue; count > 0; count--)
-  {
-    /*
-    UInt32 delta = _pos - curMatch;
-    UInt32 cyclicPos = (delta <= _cyclicBufferPos) ?
-        (_cyclicBufferPos - delta):
-        (_cyclicBufferPos - delta + _cyclicBufferSize);
-
-    CBundle &bundle = _son[cyclicPos >> kNumBundleBits];
-    UInt32 bo = cyclicPos & kBundleMask;
-    CPair &pair = bundle.Pairs[bo];
-
-    Byte *pby1 = bundle.Bytes + bo;
-    UInt32 bundleLimit = kNumBundleBytes - bo;
-    UInt32 currentLen = minSame;
-    if (bundleLimit > lenLimit)
-      bundleLimit = lenLimit;
-    for(; currentLen < bundleLimit; currentLen++)
-      if (pby1[currentLen] != cur[currentLen])
-        break;
-    if (currentLen >= bundleLimit)
+    if(curMatch <= matchMinPos || count-- == 0)
     {
-      pby1 = _buffer + curMatch;
-      for(; currentLen < lenLimit; currentLen++)
-        if (pby1[currentLen] != cur[currentLen])
-          break;
-    }
-    */
-    Byte *pby1 = _buffer + curMatch;
-    // CIndex left = pair.Left; // it's prefetch
-    UInt32 currentLen = MyMin(minLeft, minRight);
-    for(; currentLen < lenLimit; currentLen++)
-      if (pby1[currentLen] != cur[currentLen])
-        break;
-    UInt32 delta = _pos - curMatch;
-    while (currentLen > maxLen)
-      distances[++maxLen] = delta - 1;
-
-    UInt32 cyclicPos = (delta <= _cyclicBufferPos) ?
-        (_cyclicBufferPos - delta):
-        (_cyclicBufferPos - delta + _cyclicBufferSize);
-    CPair &pair = _son[cyclicPos];
-    
-    if (currentLen != lenLimit)
-    {
-      if (pby1[currentLen] < cur[currentLen])
-      {
-        *ptrRight = curMatch;
-        ptrRight = &pair.Right;
-        curMatch = pair.Right;
-        if(currentLen > minLeft)
-          minLeft = currentLen;
-      }
-      else
-      {
-        *ptrLeft = curMatch;
-        ptrLeft = &pair.Left;
-        curMatch = pair.Left;
-        if(currentLen > minRight)
-          minRight = currentLen;
-      }
-    }
-    else
-    {
-      if(currentLen < _matchMaxLen)
-      {
-        *ptrLeft = curMatch;
-        ptrLeft = &pair.Left;
-        curMatch = pair.Left;
-        if(currentLen > minRight)
-          minRight = currentLen;
-      }
-      else
-      {
-        *ptrLeft = pair.Right;
-        *ptrRight = pair.Left;
-
-        #ifdef HASH_ARRAY_2
-        if (matchLen2Exist && len2Distance < distances[2])
-          distances[2] = len2Distance;
-        #ifdef HASH_ARRAY_3
-        if (matchLen3Exist && len3Distance < distances[3])
-          distances[3] = len3Distance;
-        #endif
-        #endif
-
-        return maxLen;
-      }
-    }
-    if(curMatch < matchMinPos)
+      #ifndef _HASH_CHAIN
+      *ptr0 = *ptr1 = kEmptyHashValue;
+      #endif
       break;
-  }
-  *ptrLeft = kEmptyHashValue;
-  *ptrRight = kEmptyHashValue;
-  #ifdef HASH_ARRAY_2
-  if (matchLen2Exist)
-  {
-    if (maxLen < 2)
-    {
-      distances[2] = len2Distance;
-      maxLen = 2;
     }
-    else if (len2Distance < distances[2])
-      distances[2] = len2Distance;
-  }
-  #ifdef HASH_ARRAY_3
-  if (matchLen3Exist)
-  {
-    if (maxLen < 3)
+    UInt32 delta = _pos - curMatch;
+    UInt32 cyclicPos = (delta <= _cyclicBufferPos) ?
+        (_cyclicBufferPos - delta):
+        (_cyclicBufferPos - delta + _cyclicBufferSize);
+    CIndex *pair = son + 
+    #ifdef _HASH_CHAIN
+      cyclicPos;
+    #else
+      (cyclicPos << 1);
+    #endif
+    
+    // _mm_prefetch((const char *)pair, _MM_HINT_T0);
+    
+    const Byte *pb = _buffer + curMatch;
+    UInt32 len = 
+    #ifdef _HASH_CHAIN
+    kNumHashDirectBytes;
+    if (pb[maxLen] == cur[maxLen])
+    #else
+    MyMin(len0, len1);
+    #endif
+    if (pb[len] == cur[len])
     {
-      distances[3] = len3Distance;
-      maxLen = 3;
+      while(++len != lenLimit)
+        if (pb[len] != cur[len])
+          break;
+      if (maxLen < len)
+      {
+        distances[offset++] = maxLen = len;
+        distances[offset++] = delta - 1;
+        if (len == lenLimit)
+        {
+          #ifndef _HASH_CHAIN
+          *ptr1 = pair[0];
+          *ptr0 = pair[1];
+          #endif
+          break;
+        }
+      }
     }
-    else if (len3Distance < distances[3])
-      distances[3] = len3Distance;
+    #ifdef _HASH_CHAIN
+    curMatch = *pair;
+    #else
+    if (pb[len] < cur[len])
+    {
+      *ptr1 = curMatch;
+      ptr1 = pair + 1;
+      curMatch = *ptr1;
+      len1 = len;
+    }
+    else
+    {
+      *ptr0 = curMatch;
+      ptr0 = pair;
+      curMatch = *ptr0;
+      len0 = len;
+    }
+    #endif
   }
-  #endif
-  #endif
-  return maxLen;
+  distances[0] = offset - 1;
+  if (++_cyclicBufferPos == _cyclicBufferSize)
+    _cyclicBufferPos = 0;
+  RINOK(CLZInWindow::MovePos());
+  if (_pos == kMaxValForNormalize)
+    Normalize();
+  return S_OK;
 }
 
-void CInTree::DummyLongestMatch()
+STDMETHODIMP CMatchFinder::Skip(UInt32 num)
 {
+  do
+  {
+  #ifdef _HASH_CHAIN
+  if (_streamPos - _pos < kNumHashBytes)
+  {
+    RINOK(MovePos()); 
+    continue;
+  }
+  #else
   UInt32 lenLimit;
   if (_pos + _matchMaxLen <= _streamPos)
     lenLimit = _matchMaxLen;
   else
   {
     lenLimit = _streamPos - _pos;
-    if(lenLimit < kNumHashBytes)
-      return; 
+    if(lenLimit < kMinMatchCheck)
+    {
+      RINOK(MovePos());
+      continue;
+    }
   }
-  UInt32 matchMinPos = (_pos > _historySize) ? (_pos - _historySize) : 1;
-  Byte *cur = _buffer + _pos;
+  UInt32 matchMinPos = (_pos > _cyclicBufferSize) ? (_pos - _cyclicBufferSize) : 0;
+  #endif
+  const Byte *cur = _buffer + _pos;
 
   #ifdef HASH_ARRAY_2
   UInt32 hash2Value;
   #ifdef HASH_ARRAY_3
   UInt32 hash3Value;
-  UInt32 hashValue = Hash(cur, hash2Value, hash3Value);
-  _hash3[hash3Value] = _pos;
+  UInt32 hashValue;
+  HASH_CALC;
+  _hash[kHash3Offset + hash3Value] = _pos;
   #else
-  UInt32 hashValue = Hash(cur, hash2Value);
+  UInt32 hashValue;
+  HASH_CALC;
   #endif
-  _hash2[hash2Value] = _pos;
+  _hash[hash2Value] = _pos;
   #else
   UInt32 hashValue = Hash(cur);
   #endif
 
-  UInt32 curMatch = _hash[hashValue];
-  _hash[hashValue] = _pos;
+  UInt32 curMatch = _hash[kFixHashSize + hashValue];
+  _hash[kFixHashSize + hashValue] = _pos;
 
-  CPair &pair = _son[_cyclicBufferPos];
+  #ifdef _HASH_CHAIN
+  _son[_cyclicBufferPos] = curMatch;
+  #else
+  CIndex *son = _son;
+  CIndex *ptr0 = son + (_cyclicBufferPos << 1) + 1;
+  CIndex *ptr1 = son + (_cyclicBufferPos << 1);
 
-  if(curMatch < matchMinPos)
+  UInt32 len0, len1;
+  len0 = len1 = kNumHashDirectBytes;
+  UInt32 count = _cutValue;
+  while(true)
   {
-    pair.Left = kEmptyHashValue; 
-    pair.Right = kEmptyHashValue; 
-    return;
-  }
-  CIndex *ptrLeft = &pair.Right;
-  CIndex *ptrRight = &pair.Left;
-
-  UInt32 maxLen, minLeft, minRight;
-  maxLen = minLeft = minRight = kNumHashDirectBytes;
-  for(UInt32 count = _cutValue; count > 0; count--)
-  {
-    Byte *pby1 = _buffer + curMatch;
-    UInt32 currentLen = MyMin(minLeft, minRight);
-    for(; currentLen < lenLimit; currentLen++)
-      if (pby1[currentLen] != cur[currentLen])
-        break;
-
+    if(curMatch <= matchMinPos || count-- == 0)
+    {
+      *ptr0 = *ptr1 = kEmptyHashValue;
+      break;
+    }
+    
     UInt32 delta = _pos - curMatch;
     UInt32 cyclicPos = (delta <= _cyclicBufferPos) ?
-        (_cyclicBufferPos - delta):
-        (_cyclicBufferPos - delta + _cyclicBufferSize);
-    CPair &pair = _son[cyclicPos];
-
-    if (currentLen != lenLimit)
+      (_cyclicBufferPos - delta):
+      (_cyclicBufferPos - delta + _cyclicBufferSize);
+    CIndex *pair = son + (cyclicPos << 1);
+    
+    // _mm_prefetch((const char *)pair, _MM_HINT_T0);
+    
+    const Byte *pb = _buffer + curMatch;
+    UInt32 len = MyMin(len0, len1);
+    
+    if (pb[len] == cur[len])
     {
-      if (pby1[currentLen] < cur[currentLen])
+      while(++len != lenLimit)
+        if (pb[len] != cur[len])
+          break;
+      if (len == lenLimit)
       {
-        *ptrRight = curMatch;
-        ptrRight = &pair.Right;
-        curMatch = pair.Right;
-        if(currentLen > minLeft)
-          minLeft = currentLen;
+        *ptr1 = pair[0];
+        *ptr0 = pair[1];
+        break;
       }
-      else 
-      {
-        *ptrLeft = curMatch;
-        ptrLeft = &pair.Left;
-        curMatch = pair.Left;
-        if(currentLen > minRight)
-          minRight = currentLen;
-      }
+    }
+    if (pb[len] < cur[len])
+    {
+      *ptr1 = curMatch;
+      ptr1 = pair + 1;
+      curMatch = *ptr1;
+      len1 = len;
     }
     else
     {
-      if(currentLen < _matchMaxLen)
-      {
-        *ptrLeft = curMatch;
-        ptrLeft = &pair.Left;
-        curMatch = pair.Left;
-        if(currentLen > minRight)
-          minRight = currentLen;
-      }
-      else
-      {
-        *ptrLeft = pair.Right;
-        *ptrRight = pair.Left;
-        return;
-      }
+      *ptr0 = curMatch;
+      ptr0 = pair;
+      curMatch = *ptr0;
+      len0 = len;
     }
-    if(curMatch < matchMinPos)
-      break;
   }
-  *ptrLeft = kEmptyHashValue;
-  *ptrRight = kEmptyHashValue;
+  #endif
+  if (++_cyclicBufferPos == _cyclicBufferSize)
+    _cyclicBufferPos = 0;
+  RINOK(CLZInWindow::MovePos());
+  if (_pos == kMaxValForNormalize)
+    Normalize();
+  }
+  while(--num != 0);
+  return S_OK;
 }
 
-void CInTree::NormalizeLinks(CIndex *items, UInt32 numItems, UInt32 subValue)
+void CMatchFinder::Normalize()
 {
+  UInt32 subValue = _pos - _cyclicBufferSize;
+  CIndex *items = _hash;
+  UInt32 numItems = (_hashSizeSum + _cyclicBufferSize 
+    #ifndef _HASH_CHAIN
+     * 2
+    #endif
+    );
   for (UInt32 i = 0; i < numItems; i++)
   {
     UInt32 value = items[i];
@@ -527,25 +493,39 @@ void CInTree::NormalizeLinks(CIndex *items, UInt32 numItems, UInt32 subValue)
       value -= subValue;
     items[i] = value;
   }
-}
-
-void CInTree::Normalize()
-{
-  UInt32 startItem = _pos - _historySize;
-  UInt32 subValue = startItem - 1;
-  // NormalizeLinks((CIndex *)(_son + startItem), _historySize * 2, subValue);
-  NormalizeLinks((CIndex *)_son, _cyclicBufferSize * 2, subValue);
-  
-  NormalizeLinks(_hash, kHashSize, subValue);
-
-  #ifdef HASH_ARRAY_2
-  NormalizeLinks(_hash2, kHash2Size, subValue);
-  #ifdef HASH_ARRAY_3
-  NormalizeLinks(_hash3, kHash3Size, subValue);
-  #endif
-  #endif
-
   ReduceOffsets(subValue);
 }
+
+HRESULT CMatchFinder::MovePos()
+{
+  if (++_cyclicBufferPos == _cyclicBufferSize)
+    _cyclicBufferPos = 0;
+  RINOK(CLZInWindow::MovePos());
+  if (_pos == kMaxValForNormalize)
+    Normalize();
+  return S_OK;
+}
+
+STDMETHODIMP_(Byte) CMatchFinder::GetIndexByte(Int32 index)
+  { return CLZInWindow::GetIndexByte(index); }
+
+STDMETHODIMP_(UInt32) CMatchFinder::GetMatchLen(Int32 index, 
+    UInt32 back, UInt32 limit)
+  { return CLZInWindow::GetMatchLen(index, back, limit); }
+
+STDMETHODIMP_(UInt32) CMatchFinder::GetNumAvailableBytes()
+  { return CLZInWindow::GetNumAvailableBytes(); }
+
+STDMETHODIMP_(const Byte *) CMatchFinder::GetPointerToCurrentPos()
+  { return CLZInWindow::GetPointerToCurrentPos(); }
+
+STDMETHODIMP_(Int32) CMatchFinder::NeedChangeBufferPos(UInt32 numCheckBytes)
+  { return CLZInWindow::NeedMove(numCheckBytes) ? 1: 0; }
+
+STDMETHODIMP_(void) CMatchFinder::ChangeBufferPos()
+  { CLZInWindow::MoveBlock();}
+
+#undef HASH_CALC
+#undef kNumHashDirectBytes
  
 }
