@@ -7,11 +7,11 @@
 #include "../../Common/Alloc.h"
 
 CInBuffer::CInBuffer(): 
-  _bufferBase(0), 
-  _bufferSize(0),
   _buffer(0), 
   _bufferLimit(0), 
-  _stream(0) 
+  _bufferBase(0), 
+  _stream(0),
+  _bufferSize(0)
 {}
 
 bool CInBuffer::Create(UInt32 bufferSize)
@@ -23,19 +23,23 @@ bool CInBuffer::Create(UInt32 bufferSize)
     return true;
   Free();
   _bufferSize = bufferSize;
-  _bufferBase = (Byte *)::BigAlloc(bufferSize);
+  _bufferBase = (Byte *)::MidAlloc(bufferSize);
   return (_bufferBase != 0);
 }
 
 void CInBuffer::Free()
 {
-  BigFree(_bufferBase);
+  ::MidFree(_bufferBase);
   _bufferBase = 0;
 }
 
-void CInBuffer::Init(ISequentialInStream *stream)
+void CInBuffer::SetStream(ISequentialInStream *stream)
 {
   _stream = stream;
+}
+
+void CInBuffer::Init()
+{
   _processedSize = 0;
   _buffer = _bufferBase;
   _bufferLimit = _buffer;
@@ -55,7 +59,7 @@ bool CInBuffer::ReadBlock()
     return false;
   _processedSize += (_buffer - _bufferBase);
   UInt32 numProcessedBytes;
-  HRESULT result = _stream->ReadPart(_bufferBase, _bufferSize, &numProcessedBytes);
+  HRESULT result = _stream->Read(_bufferBase, _bufferSize, &numProcessedBytes);
   #ifdef _NO_EXCEPTIONS
   ErrorCode = result;
   #else
@@ -66,4 +70,11 @@ bool CInBuffer::ReadBlock()
   _bufferLimit = _buffer + numProcessedBytes;
   _wasFinished = (numProcessedBytes == 0);
   return (!_wasFinished);
+}
+
+Byte CInBuffer::ReadBlock2()
+{
+  if(!ReadBlock())
+    return 0xFF;
+  return *_buffer++;
 }

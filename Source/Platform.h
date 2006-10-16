@@ -28,13 +28,14 @@ typedef unsigned long ULONG;
 typedef long long INT64, LARGE_INTEGER;
 typedef unsigned long long UINT64, ULARGE_INTEGER;
 typedef int BOOL, *LPBOOL;
+typedef short VARIANT_BOOL;
 typedef void VOID;
 typedef void *LPVOID;
 typedef char CHAR, *PCHAR, *LPCH, *PCH, *NPSTR, *LPSTR, *PSTR;
 typedef unsigned char UCHAR;
 typedef const char *LPCCH, *PCSTR, *LPCSTR;
-typedef unsigned short WCHAR, *PWCHAR, *LPWCH, *PWCH, *NWPSTR, *LPWSTR, *PWSTR;
-typedef const unsigned short *LPCWCH, *PCWCH, *LPCWSTR, *PCWSTR;
+typedef unsigned short WCHAR, OLECHAR, *PWCHAR, *LPWCH, *PWCH, *NWPSTR, *LPWSTR, *PWSTR, *BSTR;
+typedef const unsigned short *LPCWCH, *PCWCH, *LPCWSTR, *PCWSTR, *LPCOLESTR;
 typedef unsigned int UINT_PTR;
 // basic stuff
 typedef void * HANDLE;
