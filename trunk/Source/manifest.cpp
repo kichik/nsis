@@ -25,6 +25,8 @@ string generate(comctl comctl_selection, exec_level exec_level_selection)
 
     switch (exec_level_selection)
     {
+    case exec_level_none:
+      break;
     case exec_level_user:
       level = "asInvoker";
       break;
