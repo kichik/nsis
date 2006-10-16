@@ -13,7 +13,7 @@ makensis_files = Split("""
 	lang.cpp
 	lineparse.cpp
 	makenssi.cpp
-    manifest.cpp
+	manifest.cpp
 	mmap.cpp
 	Plugins.cpp
 	ResourceEditor.cpp
