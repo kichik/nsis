@@ -503,6 +503,11 @@ def BuildUtil(target, source, libs, entry = None, res = None,
 	if file_name != '':
 		target = "%s/%s" % (target, file_name)
 
+	# make sure the environment suffix fits
+	if env['PROGSUFFIX'] not in target:
+		if '.' in target:
+			env['PROGSUFFIX'] = target[target.rindex('.'):]
+
 	util = env.Program(target, source, LIBS = libs)
 	defenv.Alias(target, util)
 	defenv.Alias('utils', util)
