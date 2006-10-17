@@ -9,9 +9,9 @@
 EnsurePythonVersion(1,6)
 
 try:
-	EnsureSConsVersion(0,96,91)
+	EnsureSConsVersion(0,96,92)
 except TypeError: # EnsureSConsVersion in older versions took only two parameters
-	print 'SCons 0.96.91 or greater is required, but you have an older version'
+	print 'SCons 0.96.92 or greater is required, but you have an older version'
 	Exit(2)
 	
 stubs = [
