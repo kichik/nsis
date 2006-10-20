@@ -1,0 +1,253 @@
+print "Using GNU tools configuration"
+
+Import('defenv')
+
+### imports
+
+Import('FlagsConfigure')
+
+### cross compiling
+
+def cross_env(env):
+	if env['PLATFORM'] != 'win32':
+		env.Tool('crossmingw', toolpath = ['../Tools'])
+
+### flags
+
+def entry(x):
+	if x == 'WinMain':
+		x = '_WinMain@16'
+	elif x == 'DllMain':
+		x = '_DllMain@12'
+	return '-Wl,-e%s' % x
+
+defenv['ENTRY_FLAG'] = entry
+defenv['MAP_FLAG'] = '-Wl,-Map,${TARGET.base}.map'
+defenv['EXCEPTION_FLAG'] = ''
+defenv['NODEFLIBS_FLAG'] = '-nostdlib -Wl,--exclude-libs,msvcrt.a'
+defenv['C_FLAG'] = '-x c'
+defenv['CPP_FLAG'] = '-x c++'
+defenv['ALIGN_FLAG'] = '-Wl,--file-alignment,512'
+defenv['CPP_REQUIRES_STDLIB'] = 1
+defenv['SUBSYS_CON'] = '-Wl,--subsystem,console'
+
+### helper functions
+
+# on Mac OS X, programs built with g++ 4.0, stl and -s error out:
+#   dyld: lazy symbol binding failed: lazy pointer not found
+#   dyld: lazy pointer not found
+#
+# to avoid this, this function checks if -s works
+
+def TestStrip(ctx):
+	c = """
+		#include <vector>
+
+		int main() {
+			std::vector<int> v;
+			return 0;
+		}
+	"""
+	ctx.CheckLinkFlag('-s', run = 1, extension = '.cpp', code = c)
+
+### debug
+
+if defenv['DEBUG']:
+	defenv.Append(CCFLAGS = '-g')
+
+### stub environment
+
+stub_env = defenv.Copy()
+cross_env(stub_env)
+
+if not defenv['DEBUG']:
+	stub_env.Append(CCFLAGS = '-Os')                # optimize for size
+stub_env.Append(CCFLAGS = '-Wall')                # all warnings
+stub_env.Append(CCFLAGS = '-x c')                 # force compile as c
+
+if not defenv['DEBUG']:
+	stub_env.Append(LINKFLAGS = '-s')               # strip
+stub_env.Append(LINKFLAGS = '-mwindows')          # build windows executables
+stub_env.Append(LINKFLAGS = '$NODEFLIBS_FLAG')    # no standard libraries
+stub_env.Append(LINKFLAGS = '$ALIGN_FLAG')        # 512 bytes align
+stub_env.Append(LINKFLAGS = '-Wl,-e,_WinMain@16') # entry point
+stub_env.Append(LINKFLAGS = '$MAP_FLAG')          # generate map file
+
+### makensis environment
+
+makensis_env = defenv.Copy()
+
+if not defenv['DEBUG']:
+	makensis_env.Append(CCFLAGS = '-O2')            # optimize
+makensis_env.Append(CCFLAGS = '-Wall')            # all warnings
+
+conf = FlagsConfigure(makensis_env)
+conf.CheckLinkFlag('$MAP_FLAG')                   # generate map file
+if not defenv['DEBUG']:
+	TestStrip(conf)                                 # strip
+conf.Finish()
+
+### plugin environment
+
+plugin_env = defenv.Copy()
+cross_env(plugin_env)
+
+if not defenv['DEBUG']:
+	plugin_env.Append(CCFLAGS = '-Os')              # optimize for size
+plugin_env.Append(CCFLAGS = '-Wall')              # level 3 warnings
+
+if not defenv['DEBUG']:
+	plugin_env.Append(LINKFLAGS = '-s')             # strip
+plugin_env.Append(LINKFLAGS = '-mwindows')        # build windows executables
+plugin_env.Append(LINKFLAGS = '$ALIGN_FLAG')      # 512 bytes align
+plugin_env.Append(LINKFLAGS = '$MAP_FLAG')        # generate map file
+
+### cross-platform util environment
+
+cp_util_env = defenv.Copy()
+
+if not defenv['DEBUG']:
+	cp_util_env.Append(CCFLAGS = '-O2')             # optimize
+cp_util_env.Append(CCFLAGS = '-Wall')             # all warnings
+
+conf = FlagsConfigure(cp_util_env)
+conf.CheckLinkFlag('$MAP_FLAG')                   # generate map file
+if not defenv['DEBUG']:
+	TestStrip(conf)                                 # strip
+conf.Finish()
+
+### util environment
+
+util_env = cp_util_env.Copy()
+cross_env(util_env)
+
+util_env.Append(LINKFLAGS = '-mwindows')          # build windows executables
+util_env.Append(LINKFLAGS = '$ALIGN_FLAG')        # 512 bytes align
+
+### test environment
+
+test_env = defenv.Copy()
+
+### weird GCC requirements
+
+#
+# GCC puts new PE sections, added by code, between other sections.
+# This is not good for the .ndata section because makensis changes
+# its size dynamically. This is not good if RVAs to sections below
+# it are saved in other places. The RVAs will point to garbage.
+#
+# To fix this, a linker script is provided. The linker script makes
+# sure the sections will be written in the correct order.
+#
+
+stub_env.Append(LINKFLAGS = '-T %s' % File('linker_script').abspath)
+
+#
+# GCC requires some functions from the CRT to be present, if certain
+# operations are done. For example, if a small string is assigned to
+# a larger buffer, GCC 3.4+ uses memset to fill the remaining of the
+# buffer with zeros.
+#
+
+def check_requirement(ctx, func, trigger):
+	ctx.Message('Checking for %s requirement... ' % func)
+
+	flags = ctx.env['LINKFLAGS']
+
+	ctx.env.Append(LINKFLAGS = '$NODEFLIBS_FLAG')
+	ctx.env.Append(LINKFLAGS = '-Wl,-e,___main')
+
+	test = """
+		int __main() {
+			%s
+			return 0;
+		}
+	""" % trigger
+
+	result = not ctx.TryLink(test, '.c')
+	ctx.Result(result)
+
+	ctx.env['LINKFLAGS'] = flags
+
+	return result
+
+def add_file_to_emitter(env, emitter_name, file):
+	try:
+		original_emitter = env[emitter_name]
+		if type(original_emitter) == list:
+			original_emitter = original_emitter[0]
+	except KeyError:
+		original_emitter = None
+
+	def emitter(target, source, env):
+		if original_emitter:
+			target, source = original_emitter(target, source, env)
+
+		if '$NODEFLIBS_FLAG' not in env['LINKFLAGS']:
+			return target, source
+
+		return target, source + [file]
+
+	env[emitter_name] = emitter
+
+def add_file(file):
+	file = File(file)
+	add_file_to_emitter(stub_env, 'PROGEMITTER', file)
+	add_file_to_emitter(util_env, 'PROGEMITTER', file)
+	add_file_to_emitter(plugin_env, 'SHLIBEMITTER', file)
+
+cenv = defenv.Copy()
+cross_env(cenv)
+conf = cenv.Configure(custom_tests = { 'CheckRequirement' : check_requirement })
+
+if conf.CheckRequirement('memcpy', 'struct s { char c[128]; } t = { "test" };'):
+	add_file('memcpy.c')
+
+if conf.CheckRequirement('memset', 'char c[128] = "test";'):
+	add_file('memset.c')
+
+conf.Finish()
+
+#
+# Some platforms, like FreeBSD, require -pthread flag to be passed
+# instead of -lpthread.
+#
+
+conf = FlagsConfigure(makensis_env)
+conf.CheckLinkFlag('-pthread')
+conf.Finish()
+
+#
+# GCC doesn't define __BIG_ENDIAN__ or __LITTLE_ENDIAN__, so manually check
+# for the endianess and define __BIG_ENDIAN__ if needed.
+#
+
+def check_big_endian(ctx):
+	ctx.Message('Checking for __BIG_ENDIAN__... ')
+
+	test = """
+		int main() {
+			#ifdef __BIG_ENDIAN__
+				// already defined, no need to define again
+				return 0;
+			#else
+				int i = 1;
+				char *c = (char *) &i;
+				return c[0] != 1;
+			#endif
+		}
+	"""
+
+	result = not ctx.TryRun(test, '.c')[0]
+	ctx.Result(result)
+	return result
+
+conf = defenv.Configure(custom_tests = { 'CheckBigEndian' : check_big_endian })
+if conf.CheckBigEndian():
+	makensis_env.Append(CPPDEFINES = ['__BIG_ENDIAN__'])
+	test_env.Append(CPPDEFINES = ['__BIG_ENDIAN__'])
+conf.Finish()
+
+### return
+
+Return('stub_env makensis_env plugin_env util_env cp_util_env test_env')
