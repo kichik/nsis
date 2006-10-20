@@ -1,5 +1,45 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.21} 2.21
+
+Released on October 20th, 2006
+
+\S1{v2.21-cl} Changelog
+
+\S2{} Major Changes
+
+\b Added \L{../Include/WinVer.nsh}{WinVer.nsh} for easy Windows version comprasions
+
+\b Upgraded to lzma sdk 4.43 for faster compression
+
+\S2{} Minor Changes
+
+\b Added Vista support to \R{getwindowsversion}{GetWindowsVersion}
+
+\b Added \L{../Include/x64.nsh}{x64.nsh} including a few simple macros for handling x64 installations
+
+\b Fixed a handle leak in \R{locate}{Locate}
+
+\b Minor documentation updates and fixes
+
+\b \L{../Docs/Modern UI/Readme.html}{Modern UI 1.76}: Added MUI_ABORTWARNING_CANCEL_DEFAULT (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373088&aid=1547844}{RFE #1547844})
+
+\S2{} New/Changed Commands
+
+\b Added \R{requestexecutionlevel}{RequestExecutionLevel} (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373088&aid=1524709}{RFE #1524709})
+
+\S2{} Translations
+
+\b Added Valencian translation (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1558822}{patch #1558822})
+
+\b Bulgarian corrections
+
+\b Slovenian corrections
+
+\S2{} Build System
+
+\b SCons requirement upgraded to 0.96.92
+
 \H{v2.20} 2.20
 
 Released on September 9th, 2006
