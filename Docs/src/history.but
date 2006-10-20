@@ -8,7 +8,7 @@ Released on October 20th, 2006
 
 \S2{} Major Changes
 
-\b Added \L{../Include/WinVer.nsh}{WinVer.nsh} for easy Windows version comprasions
+\b Added \L{../Include/WinVer.nsh}{WinVer.nsh} for easy Windows version comparisons
 
 \b Upgraded to lzma sdk 4.43 for faster compression
 
