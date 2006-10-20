@@ -74,7 +74,7 @@ def fix_html(target, source, env):
 	return None
 
 if build_chm:
-	hhc_action = Action('cd "%s" && hhc nsis.hhp' % (build_dir))
+	hhc_action = Action(r'hhc "%s\nsis.hhp"' % (build_dir))
 	execute = hhc_action.execute
 	def rexecute(*args):
 		return execute(*args) != 1 # hhc returns 1 on success
