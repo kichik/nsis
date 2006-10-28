@@ -73,6 +73,7 @@ languages = Split("""
 	TradChinese.nsh
 	Turkish.nsh
 	Ukrainian.nsh
+	Uzbek.nsh
 	Valencian.nsh
 	Welsh.nsh
 """)
