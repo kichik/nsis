@@ -1,22 +1,23 @@
-\A{license} License
-
-\H{copyright} Copyright
+COPYRIGHT
+---------
 
 Copyright (C) 1995-2006 Contributors
 
 More detailed copyright information can be found in the individual source code files.
 
-\H{licenses} Applicable licenses
+APPLICABLE LICENSES
+-------------------
 
-\b All NSIS source code, plug-ins, documentation, examples, header files and graphics, with expection of the compression modules, is licensed under the zlib/libpng license.
+* All NSIS source code, plug-ins, documentation, examples, header files and graphics, with the expection of the compression modules, are licensed under the zlib/libpng license.
 
-\b The zlib compression module for NSIS is licensed under the zlib/libpng license.
+* The zlib compression module for NSIS is licensed under the zlib/libpng license.
 
-\b The bzip2 compression module for NSIS is licensed under the bzip2 license.
+* The bzip2 compression module for NSIS is licensed under the bzip2 license.
 
-\b The LZMA compression module for NSIS is licensed under the Common Public License version 1.0.
+* The LZMA compression module for NSIS is licensed under the Common Public License version 1.0.
 
-\H{zlib-license} zlib/libpng license
+ZLIB/LIBPNG LICENSE
+-------------------
 
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 
@@ -28,7 +29,10 @@ Permission is granted to anyone to use this software for any purpose, including 
 
       3. This notice may not be removed or altered from any source distribution.
 
-\H{zlib-license} bzip2 license
+BZIP2 LICENSE
+-------------
+
+This program, "bzip2" and associated library "libbzip2", are copyright (C) 1996-2000 Julian R Seward. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 
@@ -46,7 +50,8 @@ Julian Seward, Cambridge, UK.
 
 jseward@acm.org
 
-\H{cpl-license} Common Public License version 1.0
+COMMON PUBLIC LICENSE VERSION 1.0
+---------------------------------
 
 THE ACCOMPANYING PROGRAM IS PROVIDED UNDER THE TERMS OF THIS COMMON PUBLIC LICENSE ("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION OF THE PROGRAM CONSTITUTES RECIPIENT'S ACCEPTANCE OF THIS AGREEMENT.
 
