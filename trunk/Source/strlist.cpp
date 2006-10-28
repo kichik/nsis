@@ -1,8 +1,20 @@
-#include "strlist.h"
+/*
+ * strlist.cpp: Implementation of the StringList class.
+ * 
+ * This file is a part of NSIS.
+ * 
+ * Copyright (C) 1999-2006 Nullsoft and Contributors
+ * 
+ * Licensed under the zlib/libpng license (the "License");
+ * you may not use this file except in compliance with the License.
+ * 
+ * Licence details can be found in the file COPYING.
+ * 
+ * This software is provided 'as-is', without any express or implied
+ * warranty.
+ */
 
-// ==========
-// StringList
-// ==========
+#include "strlist.h"
 
 int StringList::add(const char *str, int case_sensitive)
 {

@@ -1,3 +1,16 @@
+/*
+ * This file is a part of the zlib compression module for NSIS.
+ * 
+ * Copyright and license information can be found below.
+ * Modifications Copyright (C) 1999-2006 Nullsoft and Contributors
+ * 
+ * The original zlib source code is available at
+ * http://www.zlib.net/
+ * 
+ * This software is provided 'as-is', without any express or implied
+ * warranty.
+ */
+
 #include "../exehead/config.h"
 #ifdef NSIS_COMPRESS_USE_ZLIB
 

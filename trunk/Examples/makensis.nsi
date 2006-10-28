@@ -56,7 +56,7 @@ Caption "NSIS ${VERSION} Setup"
 !define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of NSIS (Nullsoft Scriptable Install System) ${VERSION}, the next generation of the Windows installer and uninstaller system that doesn't suck and isn't huge.\r\n\r\nNSIS 2 includes a new Modern User Interface, LZMA compression, support for multiple languages and an easy plug-in system.\r\n\r\n$_CLICK"
 
 !insertmacro MUI_PAGE_WELCOME
-!insertmacro MUI_PAGE_LICENSE "..\license.txt"
+!insertmacro MUI_PAGE_LICENSE "..\COPYING"
 !ifdef VER_MAJOR & VER_MINOR & VER_REVISION & VER_BUILD
 Page custom PageReinstall PageLeaveReinstall
 !endif
@@ -108,7 +108,7 @@ Section "NSIS Core Files (required)" SecCore
   SetOverwrite on
   File ..\makensis.exe
   File ..\makensisw.exe
-  File ..\license.txt
+  File ..\COPYING
   File ..\NSIS.chm
 
   File ..\NSIS.exe
