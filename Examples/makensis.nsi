@@ -1011,6 +1011,7 @@ Section Uninstall
   Delete $INSTDIR\makensisw.exe
   Delete $INSTDIR\NSIS.exe
   Delete $INSTDIR\license.txt
+  Delete $INSTDIR\COPYING
   Delete $INSTDIR\uninst-nsis.exe
   Delete $INSTDIR\nsisconf.nsi
   Delete $INSTDIR\nsisconf.nsh

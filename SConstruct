@@ -57,7 +57,7 @@ misc = [
 ]
 
 doc = [
-	'license.txt'
+	'COPYING'
 ]
 
 defenv = Environment()
