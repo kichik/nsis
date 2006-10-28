@@ -97,7 +97,8 @@
   !insertmacro MUI_LANGUAGE "Malay"
   !insertmacro MUI_LANGUAGE "Bosnian"
   !insertmacro MUI_LANGUAGE "Kurdish"
-  !insertmacro MUI_LANGUAGE "Irish"  
+  !insertmacro MUI_LANGUAGE "Irish"
+  !insertmacro MUI_LANGUAGE "Uzbek"
 
 ;--------------------------------
 ;License Language String
@@ -152,7 +153,8 @@
   LicenseLangString MUILicense ${LANG_MALAY} "${NSISDIR}\Docs\Modern UI\License.txt"
   LicenseLangString MUILicense ${LANG_BOSNIAN} "${NSISDIR}\Docs\Modern UI\License.txt"
   LicenseLangString MUILicense ${LANG_KURDISH} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_IRISH} "${NSISDIR}\Docs\Modern UI\License.txt"  
+  LicenseLangString MUILicense ${LANG_IRISH} "${NSISDIR}\Docs\Modern UI\License.txt"
+  LicenseLangString MUILicense ${LANG_UZBEK} "${NSISDIR}\Docs\Modern UI\License.txt"  
 
 ;--------------------------------
 ;Reserve Files
