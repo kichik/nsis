@@ -1,10 +1,19 @@
 /*
-LzmaDecode.c
-LZMA Decoder
-LZMA SDK 4.01 Copyright (c) 1999-2004 Igor Pavlov (2004-02-15)
-
-Converted to a state machine by Amir Szekely
-*/
+ * LZMADecode.c
+ * 
+ * This file is a part of LZMA compression module for NSIS.
+ * 
+ * Original LZMA SDK Copyright (C) 1999-2006 Igor Pavlov
+ * Modifications Copyright (C) 2003-2006 Amir Szekely <kichik@netvision.net.il>
+ * 
+ * Licensed under the Common Public License version 1.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * 
+ * Licence details can be found in the file COPYING.
+ * 
+ * This software is provided 'as-is', without any express or implied
+ * warranty.
+ */
 
 #include <stdlib.h>
 #include "LZMADecode.h"

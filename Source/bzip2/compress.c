@@ -1,3 +1,18 @@
+/*
+ * This file is a part of the bzip2 compression module for NSIS.
+ * 
+ * Copyright and license information can be found below.
+ * Modifications Copyright (C) 1999-2006 Nullsoft and Contributors
+ * 
+ * The original zlib source code is available at
+ * http://www.bzip.org/
+ * 
+ * This modification is not compatible with the original bzip2.
+ * 
+ * This software is provided 'as-is', without any express or implied
+ * warranty.
+ */
+
 /*-------------------------------------------------------------*/
 /*--- Compression machinery (not incl block sorting)        ---*/
 /*---                                            compress.c ---*/

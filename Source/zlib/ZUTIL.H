@@ -1,3 +1,16 @@
+/*
+ * This file is a part of the zlib compression module for NSIS.
+ * 
+ * Copyright and license information can be found below.
+ * Modifications Copyright (C) 1999-2006 Nullsoft and Contributors
+ * 
+ * The original zlib source code is available at
+ * http://www.zlib.net/
+ * 
+ * This software is provided 'as-is', without any express or implied
+ * warranty.
+ */
+
 /* zutil.h -- internal interface and configuration of the compression library
  * Copyright (C) 1995-1998 Jean-loup Gailly.
  * For conditions of distribution and use, see copyright notice in zlib.h
@@ -8,7 +21,7 @@
    subject to change. Applications should only use zlib.h.
  */
 
-/* @(#) $Id: ZUTIL.H,v 1.2 2002/09/22 20:02:03 eccles Exp $ */
+/* @(#) $Id: ZUTIL.H,v 1.3 2004/03/29 20:21:00 kichik Exp $ */
 
 #ifndef _Z_UTIL_H
 #define _Z_UTIL_H

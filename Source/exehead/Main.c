@@ -1,35 +1,18 @@
-/* 
-
-  Nullsoft Scriptable Install System (NSIS)
-  main.c - executable header main code
-
-  Copyright (C) 1999-2006 Nullsoft, Inc.
-  
-  This license applies to everything in the NSIS package, except where otherwise noted.
-
-  This software is provided 'as-is', without any express or implied
-  warranty.  In no event will the authors be held liable for any damages
-  arising from the use of this software.
-
-  Permission is granted to anyone to use this software for any purpose,
-  including commercial applications, and to alter it and redistribute it
-  freely, subject to the following restrictions:
-
-  1. The origin of this software must not be misrepresented; you must not
-     claim that you wrote the original software. If you use this software
-     in a product, an acknowledgment in the product documentation would be
-     appreciated but is not required.
-  2. Altered source versions must be plainly marked as such, and must not be
-     misrepresented as being the original software.
-  3. This notice may not be removed or altered from any source distribution.
-
-  This is the zlib/libpng license, which is approved by opensource.org.
-
-  Portions Copyright (C) 1995-1998 Jean-loup Gailly and Mark Adler (zlib).
-  Portions Copyright (C) 1996-2002 Julian R Seward (bzip2).
-  Portions Copyright (C) 1999-2003 Igor Pavlov (lzma).
-
-*/
+/*
+ * main.c: executable header main code
+ * 
+ * This file is a part of NSIS.
+ * 
+ * Copyright (C) 1999-2006 Nullsoft and Contributors
+ * 
+ * Licensed under the zlib/libpng license (the "License");
+ * you may not use this file except in compliance with the License.
+ * 
+ * Licence details can be found in the file COPYING.
+ * 
+ * This software is provided 'as-is', without any express or implied
+ * warranty.
+ */
 
 #include "../Platform.h"
 #include <shlobj.h>
