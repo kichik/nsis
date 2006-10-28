@@ -94,7 +94,7 @@ static void print_logo()
 {
   fprintf(g_output,"MakeNSIS %s - Copyright 1995-2006 Contributors\n"
          "See the file COPYING for license details.\n"
-         "Credits can be found in the Users Manual.\n\n"
+         "Credits can be found in the Users Manual.\n\n");
   fflush(g_output);
 }
 
