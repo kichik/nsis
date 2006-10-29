@@ -2,6 +2,17 @@ print "Using Microsoft tools configuration"
 
 Import('defenv')
 
+### workaround for MSVC 2005 support
+
+import os
+
+if defenv['TEMP_MSVC2005']:
+	defenv['ENV']['PATH'] = os.environ.get('PATH')
+	defenv['ENV']['HOME'] = os.environ.get('HOME')
+	defenv['ENV']['LIB'] = os.environ.get('LIB')
+	defenv['ENV']['INCLUDE'] = os.environ.get('INCLUDE')
+	defenv.Append(CCFLAGS = '/GS-')
+
 ### flags
 
 defenv['ENTRY_FLAG'] = lambda x: '/entry:' + x
@@ -71,7 +82,7 @@ stub_env.Append(CCFLAGS = '/W3')                 # level 3 warnings
 
 stub_env.Append(LINKFLAGS = '/opt:nowin98')      # 512 bytes align
 stub_env.Append(LINKFLAGS = '/entry:WinMain')    # entry point
-stub_env.Append(LINKFLAGS = '/NODEFAULTLIB')     # no default libraries
+stub_env.Append(LINKFLAGS = '$NODEFLIBS_FLAG')   # no default libraries
 stub_env.Append(LINKFLAGS = '$MAP_FLAG')         # generate map file
 
 ### makensis environment
@@ -118,6 +129,52 @@ test_env = defenv.Copy()
 
 ### weird compiler requirements
 
+def check_requirement(ctx, func, trigger):
+	ctx.Message('Checking for %s requirement... ' % func)
+
+	flags = ctx.env['LINKFLAGS']
+
+	ctx.env.Append(LINKFLAGS = '$NODEFLIBS_FLAG')	
+
+	test = """
+		int __main() {
+			%s
+			return 0;
+		}
+	""" % trigger
+
+	result = not ctx.TryLink(test, '.c')
+	ctx.Result(result)
+
+	ctx.env['LINKFLAGS'] = flags
+
+	return result
+
+def add_file_to_emitter(env, emitter_name, file):
+	try:
+		original_emitter = env[emitter_name]
+		if type(original_emitter) == list:
+			original_emitter = original_emitter[0]
+	except KeyError:
+		original_emitter = None
+
+	def emitter(target, source, env):
+		if original_emitter:
+			target, source = original_emitter(target, source, env)
+
+		if '$NODEFLIBS_FLAG' not in env['LINKFLAGS']:
+			return target, source
+
+		return target, source + env.Object(emitter_name, file)
+
+	env[emitter_name] = emitter
+
+def add_file(file):
+	file = File(file)
+	add_file_to_emitter(stub_env, 'PROGEMITTER', file)
+	add_file_to_emitter(util_env, 'PROGEMITTER', file)
+	add_file_to_emitter(plugin_env, 'SHLIBEMITTER', file)
+
 #
 # MSVC 6 SP6 doesn't like direct shifting of 64-bit integers.
 # It generates a call to ___aullshr which requires libc, which
@@ -125,7 +182,7 @@ test_env = defenv.Copy()
 # a call to Int64ShrlMod32.
 #
 
-conf = stub_env.Configure()
+conf = stub_env.Configure(custom_tests = { 'CheckRequirement' : check_requirement })
 
 int64test = """
 #include <windows.h>
@@ -137,8 +194,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
 
 if not conf.TryLink(int64test, '.c'):
 	stub_env.Append(CPPDEFINES = ['_NSIS_NO_INT64_SHR'])
+	
+#
+# MSVC 2005 requires the memset CRT function to be present
+#
 
-conf.Finish()
+if conf.CheckRequirement('memset', 'char c[128] = "test";'):
+	add_file('memset.c')
+
+conf.Finish()	
 
 ### return
 
