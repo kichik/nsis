@@ -1,11 +1,19 @@
 target = 'Math'
 
-files = Split("""
-	Source/Math.c
-	Source/MyMath.c
-	Source/plugin.c
-	Source/mathcrt.lib
-""")
+if ['TEMP_MSVC2005']:
+	files = Split("""
+		Source/Math.c
+		Source/MyMath.c
+		Source/plugin.c
+		Source/mathcrtmt.lib
+	""")
+else:
+	files = Split("""
+		Source/Math.c
+		Source/MyMath.c
+		Source/plugin.c
+		Source/mathcrt.lib
+	""")
 
 libs = Split("""
 	kernel32
