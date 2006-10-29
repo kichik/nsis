@@ -33,44 +33,46 @@ if defenv['DEBUG']:
 
 ### workarounds
 
-# latest Platform SDK includes a bad version of libcp.lib.
+# Some Platform SDK version includes a bad version of libcp.lib.
 # if stl usage causes link failure, copy the good libcp.lib
 # from one of the other lib folders and use it instead.
 
-confenv = defenv.Copy()
-conf = confenv.Configure()
+if not defenv['TEMP_MSVC2005']:
 
-libcptest = """
-#include <fstream>
-int main() {
-	// %s
-	std::ofstream header("test", std::ofstream::out);
-	return 0;
-}
-"""
+	confenv = defenv.Copy()
+	conf = confenv.Configure()
 
-conf.env.PrependENVPath('LIB', Dir('#/.sconf_temp').abspath)
-conf.env.Append(CCFLAGS = ['$EXCEPTION_FLAG'])
+	libcptest = """
+	#include <fstream>
+	int main() {
+		// %s
+		std::ofstream header("test", std::ofstream::out);
+		return 0;
+	}
+	"""
 
-if not conf.TryLink(libcptest % 'no change', '.cpp'):
-	import os, shutil
+	conf.env.PrependENVPath('LIB', Dir('#/.sconf_temp').abspath)
+	conf.env.Append(CCFLAGS = ['$EXCEPTION_FLAG'])
 
-	libdirs = defenv['ENV']['LIB'].split(os.pathsep)
+	if not conf.TryLink(libcptest % 'no change', '.cpp'):
+		import os, shutil
 
-	for libdir in libdirs:
-		try:
-			libcp = r'%s\libcp.lib' % libdir
-			shutil.copy(libcp, Dir('#/.sconf_temp').abspath)
-			if conf.TryLink(libcptest % (r'using %s' % libcp), '.cpp'):
-				defenv.PrependENVPath('LIB', Dir('#/.sconf_temp').abspath)
-				break
-		except IOError:
-			continue
-	else:
-		print "*** Couldn't find a good version of libcp.lib"
-		Exit(2)
+		libdirs = defenv['ENV']['LIB'].split(os.pathsep)
 
-conf.Finish()
+		for libdir in libdirs:
+			try:
+				libcp = r'%s\libcp.lib' % libdir
+				shutil.copy(libcp, Dir('#/.sconf_temp').abspath)
+				if conf.TryLink(libcptest % (r'using %s' % libcp), '.cpp'):
+					defenv.PrependENVPath('LIB', Dir('#/.sconf_temp').abspath)
+					break
+			except IOError:
+				continue
+		else:
+			print "*** Couldn't find a good version of libcp.lib"
+			Exit(2)
+
+	conf.Finish()
 
 ### stub environment
 
