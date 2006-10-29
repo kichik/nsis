@@ -14,7 +14,7 @@ More detailed copyright information can be found in the individual source code f
 
 \b The bzip2 compression module for NSIS is licensed under the bzip2 license.
 
-\b The LZMA compression module for NSIS is licensed under the Common Public License version 1.0.
+\b The lzma compression module for NSIS is licensed under the Common Public License version 1.0.
 
 \H{zlib-license} zlib/libpng license
 
@@ -22,29 +22,29 @@ This software is provided 'as-is', without any express or implied warranty. In n
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
 
-      1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
+\n The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
 
-      2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
+\n Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
 
-      3. This notice may not be removed or altered from any source distribution.
+\n This notice may not be removed or altered from any source distribution.
 
 \H{bzip2-license} bzip2 license
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 
-      1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-    
-      2. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
+\n Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
 
-      3. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
+\n The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
 
-      4. The name of the author may not be used to endorse or promote products derived from this software without specific prior written permission.
+\n Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
+
+\n The name of the author may not be used to endorse or promote products derived from this software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Julian Seward, Cambridge, UK.
 
-jseward@acm.org
+\W{mailto:jseward@acm.org}{jseward@acm.org}
 
 \H{cpl-license} Common Public License version 1.0
 
