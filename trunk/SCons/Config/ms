@@ -136,10 +136,11 @@ def check_requirement(ctx, func, trigger):
 
 	flags = ctx.env['LINKFLAGS']
 
-	ctx.env.Append(LINKFLAGS = '$NODEFLIBS_FLAG')	
+	ctx.env.Append(LINKFLAGS = '$NODEFLIBS_FLAG')
+	ctx.env.Append(LINKFLAGS = '${ENTRY_FLAG("main")}')
 
 	test = """
-		int __main() {
+		int main() {
 			%s
 			return 0;
 		}
@@ -184,7 +185,7 @@ def add_file(file):
 # a call to Int64ShrlMod32.
 #
 
-conf = stub_env.Configure(custom_tests = { 'CheckRequirement' : check_requirement })
+conf = stub_env.Configure()
 
 int64test = """
 #include <windows.h>
@@ -196,10 +197,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
 
 if not conf.TryLink(int64test, '.c'):
 	stub_env.Append(CPPDEFINES = ['_NSIS_NO_INT64_SHR'])
-	
+
+conf.Finish()	
+
 #
 # MSVC 2005 requires the memset CRT function to be present
 #
+
+conf = defenv.Configure(custom_tests = { 'CheckRequirement' : check_requirement })
 
 if conf.CheckRequirement('memset', 'char c[128] = "test";'):
 	add_file('memset.c')
