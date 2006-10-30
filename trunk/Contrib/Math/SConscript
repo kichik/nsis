@@ -1,19 +1,10 @@
 target = 'Math'
 
-if ['TEMP_MSVC2005']:
-	files = Split("""
-		Source/Math.c
-		Source/MyMath.c
-		Source/plugin.c
-		Source/mathcrtmt.lib
-	""")
-else:
-	files = Split("""
-		Source/Math.c
-		Source/MyMath.c
-		Source/plugin.c
-		Source/mathcrt.lib
-	""")
+files = Split("""
+	Source/Math.c
+	Source/MyMath.c
+	Source/plugin.c
+""")
 
 libs = Split("""
 	kernel32
@@ -31,5 +22,10 @@ docs = Split("""
 """)
 
 Import('BuildPlugin env')
+
+if env['TEMP_MSVC2005']:
+	files += ['Source/mathcrtmt.lib']
+else:
+	files += ['Source/mathcrt.lib']
 
 BuildPlugin(target, files, libs, examples, docs, nodeflib = False, flags = ['$CPP_FLAG'])
