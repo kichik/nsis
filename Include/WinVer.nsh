@@ -72,8 +72,8 @@
 !include LogicLib.nsh
 
 !define WINVER_95 0x400
-!define WINVER_98 0x410
-!define WINVER_ME 0x490
+!define WINVER_98 0x40A ;4.10
+!define WINVER_ME 0x45A ;4.90
 
 !define WINVER_NT4 0x400
 !define WINVER_2000 0x500
