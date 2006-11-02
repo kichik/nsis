@@ -42,11 +42,11 @@ Distaliañ $(^Name)
 # ^NextBtn
 &War-lerc'h >
 # ^AgreeBtn
-&A-du on
+&A-du emaon
 # ^AcceptBtn
-&Degemer holl dermoù an aotre arverañ
+&Degemer holl dermoù al lañvaz emglev
 # ^DontAcceptBtn
-&Chom hep degemer termoù an aotre arverañ
+&Chom hep degemer termoù al lañvaz emglev
 # ^InstallBtn
 &Staliañ
 # ^UninstallBtn
@@ -70,13 +70,13 @@ Anv
 # ^Completed
 Echu eo
 # ^LicenseText
-Bezit aketus en ur lenn an aotre arverañ a-raok staliañ $(^NameDA) mar plij. Mar degemerit pep term eus an aotre, klikit war « A-du on ».
+Bezit aketus en ur lenn an aotre arverañ a-raok staliañ $(^NameDA) mar plij. Mar degemerit pep term eus an aotre, klikit war « A-du emaon ».
 # ^LicenseTextCB
-Bezit aketus en ur lenn an aotre arverañ a-raok staliañ $(^NameDA) mar plij. Mar degemerit pep term eus an aotre, klikit al log a-zindan. $_CLICK
+Bezit aketus en ur lenn an aotre arverañ a-raok staliañ $(^NameDA) mar plij. Mar degemerit pep term eus an aotre, klikit war al log a-zindan. $_CLICK
 # ^LicenseTextRB
 Bezit aketus en ur lenn an aotre arverañ a-raok staliañ $(^NameDA) mar plij. Mar degemerit pep term eus an aotre, dizuzit an dibab kentañ a-zindan. $_CLICK
 # ^UnLicenseText
-Bezit aketus en ur lenn an aotre arverañ a-raok distaliañ $(^NameDA) mar plij. Mar degemerit pep term eus an aotre, klikit war « A-du on ».
+Bezit aketus en ur lenn an aotre arverañ a-raok distaliañ $(^NameDA) mar plij. Mar degemerit pep term eus an aotre, klikit war « A-du emaon ».
 # ^UnLicenseTextCB
 Bezit aketus en ur lenn an aotre arverañ a-raok distaliañ $(^NameDA) mar plij. Mar degemerit pep term eus an aotre, klikit war al log a-zindan. $_CLICK
 # ^UnLicenseTextRB
