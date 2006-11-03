@@ -66,6 +66,9 @@
 ;       ${EndIf}
 ;     ${EndIf}
 
+!verbose push
+!verbose 3
+
 !ifndef ___WINVER__NSH___
 !define ___WINVER__NSH___
 
@@ -144,3 +147,5 @@
 !insertmacro __WinVer_DefineOSTests AtMost
 
 !endif # !___WINVER__NSH___
+
+!verbose pop
