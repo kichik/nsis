@@ -817,7 +817,7 @@ Call functions:
 
 \S1{getfileext} GetFileExt
 
-\b Get extention of file.
+\b Get extension of file.
 
 \\<b\\>Syntax:\\</b\\>
 
@@ -1807,7 +1807,7 @@ Call functions:
 \c 	IfErrors end
 \c 
 \c 	StrLen $0 $R0             ; $0 = Start position of word (11)
-\c 	StrLen $1 ':\lo'          ; $1 = Word leght (4)
+\c 	StrLen $1 ':\lo'          ; $1 = Word length (4)
 \c 	; StrCpy $R0 $R1 $1 $0    ; $R0 = :\lo
 \c 
 \c 	end:
