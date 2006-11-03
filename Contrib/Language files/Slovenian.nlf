@@ -84,29 +84,29 @@ Prosimo, da pred odstranitvijo $(^NameDA) pregledate licenèno pogodbo. Èe sprejm
 # ^Custom
 Po meri ...
 # ^ComponentsText
-Oznaèite bloke, ki jih želite namestiti, in pustite neoznaèene tiste, katerih ne želite namestiti. $_CLICK
+Oznaèite komponente, ki jih želite namestiti, in pustite neoznaèene tiste, katerih ne želite namestiti. $_CLICK
 # ^ComponentsSubText1
 Izberite vrsto namestitve:
 # ^ComponentsSubText2_NoInstTypes
-Izberite bloke namestitve:
+Izberite komponente namestitve:
 # ^ComponentsSubText2
-Ali pa izberite bloke, ki jih želite namestiti:
+Ali pa izberite komponente, ki jih želite namestiti:
 # ^UnComponentsText
-Oznaèite bloke, ki jih želite odstraniti, in pustite neoznaèene tiste, ki jih ne želite odstraniti. $_CLICK
+Oznaèite komponente, ki jih želite odstraniti, in pustite neoznaèene tiste, ki jih ne želite odstraniti. $_CLICK
 # ^UnComponentsSubText1
 Izberite vrsto odstranitve:
 # ^UnComponentsSubText2_NoInstTypes
-Izberite bloke za odstranitev:
+Izberite komponente za odstranitev:
 # ^UnComponentsSubText2
-Ali pa si izberite bloke namestitve, ki jih želite odstraniti:
+Ali pa izberite komponente namestitve, ki jih želite odstraniti:
 # ^DirText
-Nastavitev bo namestila $(^NameDA) v sledeèo mapo. Za izbiro druge mape kliknite tipko Prebrskaj in izberite drugo mapo. $_CLICK
+$(^NameDA) boste namestili v sledeèo mapo. Za izbiro druge mape kliknite tipko Prebrskaj in izberite drugo mapo. $_CLICK
 # ^DirSubText
 Ciljna mapa
 # ^DirBrowseText
 Izberite mapo, kamor želite namestiti $(^NameDA):
 # ^UnDirText
-Nastavitev bo odstranila $(^NameDA) iz sledeèe mape. Za izbiro druge mape kliknite tipko Prebrskaj in izberite drugo mapo. $_CLICK
+Odstranili boste $(^NameDA) iz sledeèe mape. Za izbiro druge mape kliknite tipko Prebrskaj in izberite drugo mapo. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
@@ -156,9 +156,9 @@ Napaka pri razširjanju podatkov! Je namestitvena datoteka okvarjena?
 # ^ErrorRegistering
 Napaka registracije DLL
 # ^ExecShell
-"Zagon ExecShell: "
+"Izvajanje ExecShell: "
 # ^Exec
-"Zagon Execute: "
+"Izvajanje Execute: "
 # ^Extract
 "Razširjanje: "
 # ^ErrorWriting
