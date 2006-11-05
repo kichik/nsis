@@ -101,7 +101,8 @@ static void print_logo()
 static void print_license()
 {
   fprintf(g_output,"Copyright (C) 1999-2006 Nullsoft and Contributors\n\n"
-       "This license applies to everything in the NSIS package, except where otherwise\nnoted.\n\n"
+       "This license applies to everything in the NSIS package, except where otherwise\n"
+	   "noted.\n\n"
        "This software is provided 'as-is', without any express or implied warranty.\n"
        "In no event will the authors be held liable for any damages arising from the\n"
        "use of this software.\n\n"
@@ -115,8 +116,8 @@ static void print_license()
        "  2. Altered source versions must be plainly marked as such, and must not be\n"
        "     misrepresented as being the original software.\n"
        "  3. This notice may not be removed or altered from any source distribution.\n\n"
-       "In addition to this license, different licenses apply to the included compression\n"
-       "modules. See the file COPYING for details.\n\n"
+       "In addition to this license, different licenses apply to the included\n"
+	   "compression modules. See the file COPYING for details.\n"
        );
   fflush(g_output);
 }
