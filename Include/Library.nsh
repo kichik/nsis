@@ -41,10 +41,7 @@
 
   StrCmp $__INSTALLLLIB_SESSIONGUID '' 0 +6
 
-    System::Alloc 16
-    System::Call 'ole32::CoCreateGuid(i sR0)'
-    System::Call 'ole32::StringFromGUID2(i R0, w .s, i ${NSIS_MAX_STRLEN})'
-    System::Free $R0
+    System::Call 'ole32::CoCreateGuid(g .s)'
     Pop $__INSTALLLLIB_SESSIONGUID
 
     StrCmp $__INSTALLLLIB_SESSIONGUID '' 0 +2
