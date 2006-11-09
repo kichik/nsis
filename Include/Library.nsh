@@ -39,13 +39,19 @@
 
   !endif
 
-  StrCmp $__INSTALLLLIB_SESSIONGUID '' 0 +6
+  !define __InstallLib_Helper_InitSession_Label "${__FILE__}${__LINE__}"
+
+  StrCmp $__INSTALLLLIB_SESSIONGUID '' 0 "${__InstallLib_Helper_InitSession_Label}"
 
     System::Call 'ole32::CoCreateGuid(g .s)'
     Pop $__INSTALLLLIB_SESSIONGUID
 
-    StrCmp $__INSTALLLLIB_SESSIONGUID '' 0 +2
+    StrCmp $__INSTALLLLIB_SESSIONGUID '{00000000-0000-0000-0000-000000000000}' 0 +2
       StrCpy $__INSTALLLLIB_SESSIONGUID 'session'
+
+  "${__InstallLib_Helper_InitSession_Label}:"
+
+  !undef __InstallLib_Helper_InitSession_Label
 
 !macroend
 
