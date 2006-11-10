@@ -2599,7 +2599,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
     case TOK_REQEXECLEVEL:
     {
-      int k=line.gettoken_enum(1,"none\0user\0admin\0");
+      int k=line.gettoken_enum(1,"none\0user\0highest\0admin\0");
       switch (k)
       {
       case 0:
@@ -2609,6 +2609,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         manifest_exec_level = manifest::exec_level_user;
         break;
       case 2:
+        manifest_exec_level = manifest::exec_level_highest;
+        break;
+      case 3:
         manifest_exec_level = manifest::exec_level_admin;
         break;
       default:
