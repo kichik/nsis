@@ -31,6 +31,7 @@ namespace manifest
   {
     exec_level_none,
     exec_level_user,
+    exec_level_highest,
     exec_level_admin
   };
 

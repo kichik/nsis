@@ -46,6 +46,9 @@ string generate(comctl comctl_selection, exec_level exec_level_selection)
     case exec_level_user:
       level = "asInvoker";
       break;
+    case exec_level_highest:
+      level = "highestAvailable";
+      break;
     case exec_level_admin:
       level = "requireAdministrator";
       break;

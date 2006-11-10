@@ -308,9 +308,9 @@ Specifies the output file that the MakeNSIS should write the installer to. This 
 
 \S2{requestexecutionlevel} RequestExecutionLevel
 
-\c \\<b\\>none\\</b\\>|user|admin
+\c \\<b\\>none\\</b\\>|user|highest|admin
 
-Specifies the requested execution level for Windows Vista. The value is embedded in the installer and uninstaller's XML manifest and tells Vista, and probably future versions of Windows, what privileges level the installer requires. \e{user} requests the current's user level, be it normal user or administrator. \e{admin} requests administrator level and will cause Windows to prompt for the administrator password to verify privilege escalation. Specifying \e{none}, which is also the default, will keep the manifest empty and let Windows decide which execution level is required. Windows Vista automatically identifies NSIS installers and decides administrator privileges are required. Because of this, \e{none} and \e{admin} have virtually the same effect.
+Specifies the requested execution level for Windows Vista. The value is embedded in the installer and uninstaller's XML manifest and tells Vista, and probably future versions of Windows, what privileges level the installer requires. \e{user} requests the a normal user's level with no administrative privileges. \e{highest} will request the highest execution level available for the current user and will cause Windows to prompt the user to verify privilege escalation. The prompt might request for the user's password. \e{admin} requests administrator level and will cause Windows to prompt the user as well. Specifying \e{none}, which is also the default, will keep the manifest empty and let Windows decide which execution level is required. Windows Vista automatically identifies NSIS installers and decides administrator privileges are required. Because of this, \e{none} and \e{admin} have virtually the same effect.
 
 As Windows Vista is still in development, anything might change. It's recommended, at least by Microsoft, that every application will be marked with the required execution level. Installers that need not install anything into system folders or write to the local machine registry (HKLM) should specify \e{user} execution level.
 
