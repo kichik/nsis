@@ -57,7 +57,7 @@ if defenv['DEBUG']:
 
 ### stub environment
 
-stub_env = defenv.Copy()
+stub_env = defenv.Clone()
 cross_env(stub_env)
 
 if not defenv['DEBUG']:
@@ -75,7 +75,7 @@ stub_env.Append(LINKFLAGS = '$MAP_FLAG')          # generate map file
 
 ### makensis environment
 
-makensis_env = defenv.Copy()
+makensis_env = defenv.Clone()
 
 if not defenv['DEBUG']:
 	makensis_env.Append(CCFLAGS = '-O2')            # optimize
@@ -89,7 +89,7 @@ conf.Finish()
 
 ### plugin environment
 
-plugin_env = defenv.Copy()
+plugin_env = defenv.Clone()
 cross_env(plugin_env)
 
 if not defenv['DEBUG']:
@@ -104,7 +104,7 @@ plugin_env.Append(LINKFLAGS = '$MAP_FLAG')        # generate map file
 
 ### cross-platform util environment
 
-cp_util_env = defenv.Copy()
+cp_util_env = defenv.Clone()
 
 if not defenv['DEBUG']:
 	cp_util_env.Append(CCFLAGS = '-O2')             # optimize
@@ -118,7 +118,7 @@ conf.Finish()
 
 ### util environment
 
-util_env = cp_util_env.Copy()
+util_env = cp_util_env.Clone()
 cross_env(util_env)
 
 util_env.Append(LINKFLAGS = '-mwindows')          # build windows executables
@@ -126,7 +126,7 @@ util_env.Append(LINKFLAGS = '$ALIGN_FLAG')        # 512 bytes align
 
 ### test environment
 
-test_env = defenv.Copy()
+test_env = defenv.Clone()
 
 ### weird GCC requirements
 
@@ -196,7 +196,7 @@ def add_file(file):
 	add_file_to_emitter(util_env, 'PROGEMITTER', file)
 	add_file_to_emitter(plugin_env, 'SHLIBEMITTER', file)
 
-cenv = defenv.Copy()
+cenv = defenv.Clone()
 cross_env(cenv)
 conf = cenv.Configure(custom_tests = { 'CheckRequirement' : check_requirement })
 

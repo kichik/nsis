@@ -6,7 +6,7 @@ This is a trimmed version of Appendix "Building NSIS" of the documentation.
  - Requirements
 
    * Python version 1.6 and above (http://www.python.org/)
-   * SCons version 0.96.92 and above (http://www.scons.org/)
+   * SCons version 0.96.93 and above (http://www.scons.org/)
    * C compiler
 
  - Optional Tools
@@ -32,7 +32,7 @@ This is a trimmed version of Appendix "Building NSIS" of the documentation.
 
  - Special cases
 
-   * SCons 0.96.92 does not yet support Microsoft Visual C++ 2005.
+   * SCons 0.96.93 does not yet support Microsoft Visual C++ 2005.
      Therefore a temporary workaround has been added to support this
      compiler. Add TEMP_MSVC2005=yes to the build command line when
      using MSVC 2005:
