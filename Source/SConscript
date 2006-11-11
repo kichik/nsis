@@ -80,7 +80,7 @@ env.Append(CPPDEFINES = ['_WIN32_IE=0x0500'])
 
 ##### LZMA specific defines
 
-lzma_env = env.Copy()
+lzma_env = env.Clone()
 lzma_env.Append(CPPDEFINES = ['COMPRESS_MF_BT'])
 lzma_files = lzma_env.Object(lzma_files)
 
