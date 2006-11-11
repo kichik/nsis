@@ -39,7 +39,7 @@ if defenv['DEBUG']:
 
 if not defenv['TEMP_MSVC2005']:
 
-	confenv = defenv.Copy()
+	confenv = defenv.Clone()
 	conf = confenv.Configure()
 
 	libcptest = """
@@ -76,7 +76,7 @@ if not defenv['TEMP_MSVC2005']:
 
 ### stub environment
 
-stub_env = defenv.Copy()
+stub_env = defenv.Clone()
 
 if not defenv['DEBUG']:
 	stub_env.Append(CCFLAGS = '/O1')               # optimize for size
@@ -89,7 +89,7 @@ stub_env.Append(LINKFLAGS = '$MAP_FLAG')         # generate map file
 
 ### makensis environment
 
-makensis_env = defenv.Copy()
+makensis_env = defenv.Clone()
 
 if not defenv['DEBUG']:
 	makensis_env.Append(CCFLAGS = '/O2')           # optimize for speed
@@ -101,7 +101,7 @@ makensis_env.Append(LINKFLAGS = '$MAP_FLAG')     # generate map file
 
 ### plugin environment
 
-plugin_env = defenv.Copy(no_import_lib = 1)
+plugin_env = defenv.Clone(no_import_lib = 1)
 
 if not defenv['DEBUG']:
 	plugin_env.Append(CCFLAGS = '/O1')             # optimize for size
@@ -112,7 +112,7 @@ plugin_env.Append(LINKFLAGS = '$MAP_FLAG')       # generate map file
 
 ### util environment
 
-util_env = defenv.Copy()
+util_env = defenv.Clone()
 
 if not defenv['DEBUG']:
 	util_env.Append(CCFLAGS = '/O1')            # optimize for speed
@@ -123,11 +123,11 @@ util_env.Append(LINKFLAGS = '$MAP_FLAG')      # generate map file
 
 ### cross-platform util environment
 
-cp_util_env = util_env.Copy()
+cp_util_env = util_env.Clone()
 
 ### test environment
 
-test_env = defenv.Copy()
+test_env = defenv.Clone()
 
 ### weird compiler requirements
 

@@ -9,9 +9,9 @@
 EnsurePythonVersion(1,6)
 
 try:
-	EnsureSConsVersion(0,96,92)
+	EnsureSConsVersion(0,96,93)
 except TypeError: # EnsureSConsVersion in older versions took only two parameters
-	print 'SCons 0.96.92 or greater is required, but you have an older version'
+	print 'SCons 0.96.93 or greater is required, but you have an older version'
 	Exit(2)
 	
 stubs = [
@@ -366,7 +366,7 @@ defenv.DistributeConf('nsisconf.nsh')
 ######################################################################
 
 def BuildStub(compression, solid):
-	env = stub_env.Copy()
+	env = stub_env.Clone()
 
 	suffix = ''
 	if solid:
@@ -448,7 +448,7 @@ def BuildPlugin(target, source, libs, examples = None, docs = None,
                 entry = 'DllMain', res = None, res_target = None,
                 resources = None, defines = None, flags = None, 
                 nodeflib = True, cppused = False):
-	env = plugin_env.Copy()
+	env = plugin_env.Clone()
 
 	if cppused and env['CPP_REQUIRES_STDLIB']:
 		nodeflib = False
@@ -479,7 +479,7 @@ for plugin in plugins:
 
 	path = 'Contrib/' + plugin
 	build_dir = '$BUILD_PREFIX/' + plugin
-	exports = {'BuildPlugin' : BuildPlugin, 'env' : plugin_env.Copy()}
+	exports = {'BuildPlugin' : BuildPlugin, 'env' : plugin_env.Clone()}
 
 	defenv.SConscript(dirs = path, build_dir = build_dir, duplicate = False, exports = exports)
 
@@ -493,9 +493,9 @@ def BuildUtil(target, source, libs, entry = None, res = None,
               examples = None, docs = None, cross_platform = False,
 							root_util = False):
 	if not cross_platform:
-		env = util_env.Copy()
+		env = util_env.Clone()
 	else:
-		env = cp_util_env.Copy()
+		env = cp_util_env.Clone()
 
 	AddEnvStandardFlags(env, defines, flags, entry, nodeflib)
 
@@ -534,7 +534,7 @@ for util in utils:
 
 	path = 'Contrib/' + util
 	build_dir = '$BUILD_PREFIX/' + util
-	exports = {'BuildUtil' : BuildUtil, 'env' : util_env.Copy()}
+	exports = {'BuildUtil' : BuildUtil, 'env' : util_env.Clone()}
 
 	defenv.SConscript(dirs = path, build_dir = build_dir, duplicate = False, exports = exports)
 
@@ -546,7 +546,7 @@ halibut = defenv.SConscript(
 	dirs = 'Docs/src/bin/halibut',
 	build_dir = '$BUILD_PREFIX/halibut',
 	duplicate = False,
-	exports = {'env' : defenv.Copy()}
+	exports = {'env' : defenv.Clone()}
 )
 
 if defenv['CHMDOCS']:
@@ -554,14 +554,14 @@ if defenv['CHMDOCS']:
 		dirs = 'Docs/src',
 		build_dir = '$BUILD_PREFIX/Docs/chm',
 		duplicate = False,
-		exports = {'halibut' : halibut, 'env' : defenv.Copy(), 'build_chm' : True}
+		exports = {'halibut' : halibut, 'env' : defenv.Clone(), 'build_chm' : True}
 	)
 else:
 	defenv.SConscript(
 		dirs = 'Docs/src',
 		build_dir = '$BUILD_PREFIX/Docs/html',
 		duplicate = False,
-		exports = {'halibut' : halibut, 'env' : defenv.Copy(), 'build_chm' : False}
+		exports = {'halibut' : halibut, 'env' : defenv.Clone(), 'build_chm' : False}
 	)
 
 ######################################################################
@@ -570,7 +570,7 @@ else:
 
 defenv.SConscript(
 	dirs = 'Examples',
-	exports = {'env': defenv.Copy()}
+	exports = {'env': defenv.Clone()}
 )
 
 ######################################################################
@@ -579,7 +579,7 @@ defenv.SConscript(
 
 defenv.SConscript(
 	dirs = 'Include',
-	exports = {'env': defenv.Copy()}
+	exports = {'env': defenv.Clone()}
 )
 
 ######################################################################
@@ -599,7 +599,7 @@ for i in misc:
 # test code
 
 build_dir = '$BUILD_PREFIX/tests'
-exports = {'env' : test_env.Copy()}
+exports = {'env' : test_env.Clone()}
 
 defenv.SConscript(
 	dirs = 'Source/Tests',
@@ -612,7 +612,7 @@ defenv.Ignore('$BUILD_PREFIX', '$BUILD_PREFIX/tests')
 
 # test scripts
 
-test_scripts_env = defenv.Copy(ENV = os.environ) # env needed for some scripts
+test_scripts_env = defenv.Clone(ENV = os.environ) # env needed for some scripts
 test_scripts_env['ENV']['NSISDIR'] = os.path.abspath(str(defenv['TESTDISTDIR']))
 test_scripts_env['ENV']['NSISCONFDIR'] = os.path.abspath(str(defenv['TESTDISTDIR']))
 
