@@ -2,27 +2,21 @@ print "Using Microsoft tools configuration"
 
 Import('defenv')
 
-### workaround for MSVC 2005 support
-
-import os
-
-if defenv['TEMP_MSVC2005']:
-	defenv['ENV']['PATH'] = os.environ.get('PATH')
-	defenv['ENV']['HOME'] = os.environ.get('HOME')
-	defenv['ENV']['LIB'] = os.environ.get('LIB')
-	defenv['ENV']['INCLUDE'] = os.environ.get('INCLUDE')
-	defenv.Append(CCFLAGS = '/GS-')
-
 ### flags
 
 defenv['ENTRY_FLAG'] = lambda x: '/entry:' + x
 defenv['MAP_FLAG'] = '/map'
-defenv['EXCEPTION_FLAG'] = '/GX'
 defenv['NODEFLIBS_FLAG'] = '/NODEFAULTLIB'
 defenv['C_FLAG'] = '/TC'
 defenv['CPP_FLAG'] = '/TP'
 defenv['CPP_REQUIRES_STDLIB'] = 0
 defenv['SUBSYS_CON'] = '/subsystem:console'
+
+if defenv['TEMP_MSVC2005']:
+	defenv['EXCEPTION_FLAG'] = '/EHsc'
+	defenv.Append(CCFLAGS = '/GS-')
+else:
+	defenv['EXCEPTION_FLAG'] = '/GX'
 
 ### debug
 
