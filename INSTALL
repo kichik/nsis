@@ -32,10 +32,9 @@ This is a trimmed version of Appendix "Building NSIS" of the documentation.
 
  - Special cases
 
-   * SCons 0.96.93 does not yet support Microsoft Visual C++ 2005.
-     Therefore a temporary workaround has been added to support this
-     compiler. Add TEMP_MSVC2005=yes to the build command line when
-     using MSVC 2005:
+   * When using Microsoft Visual C++ 2005, add TEMP_MSVC2005=yes to
+     the build command line (this temporary workaround will soon be
+     removed):
 
         scons TEMP_MSVC2005=yes PREFIX=C:\NSIS install
 
