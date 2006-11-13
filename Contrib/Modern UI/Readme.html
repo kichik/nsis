@@ -960,13 +960,11 @@ will be selected by default.</p>
 </div>
 <h2>6. Reserve files</h2>
 <div>
-<p>If you are using solid compression, it's important that files
-which are being extracted in init- or page functions function are
-located before other files in the data block, because this will
-make your installer faster.</p>
-<p>If there are File commands in your sections or functions above
-the init- or page functions, add the reserve file macros above your
-sections and functions.</p>
+<p>If you are using solid compression, files that are required
+before the actual installation should be stored first in the data
+block, because this will make your installer start faster.
+Include reserve file commands for such files before your sections
+and functions:</p>
 <pre>
 ReserveFile "ioFile.ini" ;Your own InstallOptions INI files
 !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS ;InstallOptions plug-in
