@@ -36,7 +36,7 @@
 ;--------------------------------
 ;Pages
 
-  !insertmacro MUI_PAGE_LICENSE $(MUILicense)
+  !insertmacro MUI_PAGE_LICENSE "${NSISDIR}\Docs\Modern UI\License.txt"
   !insertmacro MUI_PAGE_COMPONENTS
   !insertmacro MUI_PAGE_DIRECTORY
   !insertmacro MUI_PAGE_INSTFILES
@@ -47,7 +47,7 @@
 ;--------------------------------
 ;Languages
 
-  !insertmacro MUI_LANGUAGE "English" # first language is the default language
+  !insertmacro MUI_LANGUAGE "English" ;first language is the default language
   !insertmacro MUI_LANGUAGE "French"
   !insertmacro MUI_LANGUAGE "German"
   !insertmacro MUI_LANGUAGE "Spanish"
@@ -101,67 +101,11 @@
   !insertmacro MUI_LANGUAGE "Uzbek"
 
 ;--------------------------------
-;License Language String
-
-  LicenseLangString MUILicense ${LANG_ENGLISH} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_FRENCH} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_GERMAN} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_SPANISH} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_SIMPCHINESE} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_TRADCHINESE} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_JAPANESE} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_KOREAN} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_ITALIAN} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_DUTCH} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_DANISH} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_SWEDISH} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_NORWEGIAN} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_NORWEGIANNYNORSK} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_FINNISH} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_GREEK} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_RUSSIAN} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_PORTUGUESE} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_PORTUGUESEBR} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_POLISH} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_UKRAINIAN} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_CZECH} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_SLOVAK} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_CROATIAN} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_BULGARIAN} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_HUNGARIAN} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_THAI} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_ROMANIAN} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_LATVIAN} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_MACEDONIAN} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_ESTONIAN} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_TURKISH} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_LITHUANIAN} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_CATALAN} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_SLOVENIAN} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_SERBIAN} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_SERBIANLATIN} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_ARABIC} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_FARSI} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_HEBREW} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_INDONESIAN} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_MONGOLIAN} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_LUXEMBOURGISH} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_ALBANIAN} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_BRETON} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_BELARUSIAN} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_ICELANDIC} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_MALAY} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_BOSNIAN} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_KURDISH} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_IRISH} "${NSISDIR}\Docs\Modern UI\License.txt"
-  LicenseLangString MUILicense ${LANG_UZBEK} "${NSISDIR}\Docs\Modern UI\License.txt"  
-
-;--------------------------------
 ;Reserve Files
   
-  ;These files should be inserted before other files in the data block
-  ;Keep these lines before any File command
-  ;Only for solid compression (by default, solid compression is enabled for BZIP2 and LZMA)
+  ;If you are using solid compression, files that are required before
+  ;the actual installation should be stored first in the data block,
+  ;because this will make your installer start faster.
   
   !insertmacro MUI_RESERVEFILE_LANGDLL
 
