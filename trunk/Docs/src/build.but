@@ -51,15 +51,9 @@ To get a complete list of options SCons has to offer, type:
 
 \H{build_windows} Building on Windows
 
-If Microsoft Visual C++ is installed, SCons will automatically detect and use it.
+SCons will automatically detect Microsoft Visual C++. If you are looking for a free compiler to compile NSIS, we recommend \W{http://msdn.microsoft.com/vstudio/express/visualc/download/}{Microsoft Visual C++ 2005 Express Edition}.
 
-SCons 0.96.93 does not yet support Microsoft Visual C++ 2005. Therefore a temporary workaround has been added to support this compiler. Add TEMP_MSVC2005=yes to the build command line when using MSVC 2005:
-
-\c scons TEMP_MSVC2005=yes
-
-If you are looking for a free compiler to compile NSIS, we recommend \W{http://msdn.microsoft.com/vstudio/express/visualc/download/}{Microsoft Visual C++ 2005 Express Edition}.
-
-When using the Microsoft Visual C++ Toolkit, add MSTOOLKIT=yes to the build command line:
+When using the Microsoft Visual C++ Toolkit 2003, add MSTOOLKIT=yes to the build command line:
 
 \c scons MSTOOLKIT=yes
 
