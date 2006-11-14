@@ -130,7 +130,6 @@ opts.Add(ListOption('SKIPMISC', 'A list of plug-ins that will not be built', 'no
 opts.Add(ListOption('SKIPDOC', 'A list of doc files that will not be built/installed', 'none', doc))
 # build tools
 opts.Add(BoolOption('MSTOOLKIT', 'Use Microsoft Visual C++ Toolkit', 'no'))
-opts.Add(BoolOption('TEMP_MSVC2005', 'Enable temporary work-around for Microsoft Visual C++ 2005 support', 'no'))
 opts.Add(BoolOption('CHMDOCS', 'Build CHM documentation, requires hhc.exe', hhc))
 opts.Add(PathOption('CPPPATH', 'Path to search for include files', None))
 opts.Add(PathOption('LIBPATH', 'Path to search for libraries', None))

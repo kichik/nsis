@@ -23,7 +23,7 @@ docs = Split("""
 
 Import('BuildPlugin env')
 
-if env['TEMP_MSVC2005']:
+if env['MSVS_VERSION'] >= 8.0:
 	files += ['Source/mathcrtmt.lib']
 else:
 	files += ['Source/mathcrt.lib']
