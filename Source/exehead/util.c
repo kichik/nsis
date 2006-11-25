@@ -450,9 +450,7 @@ void NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
 
     GetWindowsDirectory(wininit, 1024-16);
     mystrcat(wininit, "\\wininit.ini");
-    hfile = CreateFile(wininit,
-        GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_ALWAYS,
-        FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, NULL);
+    hfile = myOpenFile(wininit, GENERIC_READ | GENERIC_WRITE, OPEN_ALWAYS);
 
     if (hfile != INVALID_HANDLE_VALUE)
     {
