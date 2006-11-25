@@ -1648,7 +1648,7 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
         TPM_NONOTIFY|TPM_RETURNCMD,
         pt.x,
         pt.y,
-        0,linsthwnd,0))
+        0,hwndDlg,0))
       {
         int i,total = 1; // 1 for the null char
         LVITEM item;
