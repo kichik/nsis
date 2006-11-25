@@ -455,8 +455,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         // remove read only flag if overwrite mode is on
         if (!overwriteflag)
         {
-          int attr=GetFileAttributes(buf0);
-          SetFileAttributes(buf0,attr&(~FILE_ATTRIBUTE_READONLY));
+          remove_ro_attr(buf0);
         }
         hOut=myOpenFile(buf0,GENERIC_WRITE,(overwriteflag==1)?CREATE_NEW:CREATE_ALWAYS);
         if (hOut == INVALID_HANDLE_VALUE)
@@ -1445,6 +1444,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         }
         validate_filename(buf1);
 
+        remove_ro_attr(buf1);
         hFile=myOpenFile(buf1,GENERIC_WRITE,CREATE_ALWAYS);
         if (hFile != INVALID_HANDLE_VALUE)
         {
