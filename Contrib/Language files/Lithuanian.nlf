@@ -72,19 +72,19 @@ Baigta
 # ^LicenseText
 Praðome perskaityti sutartá prieð ádiegdami $(^NameDA). Jei jûs sutinkate su nurodytomis sàlygomis, spauskite Sutinku.
 # ^LicenseTextCB
-Praðome perskaityti sutartá prieð ádiegdami $(^NameDA). Jei jûs sutinkate su nurodytomis sàlygomis, padëkite varnelæ tam skirtame laukelyje.
+Praðome perskaityti sutartá prieð ádiegdami $(^NameDA). Jei jûs sutinkate su nurodytomis sàlygomis, padëkite varnelæ tam skirtame laukelyje. $_CLICK
 # ^LicenseTextRB
-Praðome perskaityti sutartá prieð ádiegdami $(^NameDA). Jei jûs sutinkate su nurodytomis sàlygomis, pasirinkite pirmà pasirinkimà esantá þemiau.
+Praðome perskaityti sutartá prieð ádiegdami $(^NameDA). Jei jûs sutinkate su nurodytomis sàlygomis, pasirinkite pirmà pasirinkimà esantá þemiau. $_CLICK
 # ^UnLicenseText
 Praðome perskaityti sutartá prieð iðtrinant $(^NameDA). Jei jûs sutinkate su nurodytomis sàlygomis, spauskite Sutinku.
 # ^UnLicenseTextCB
-Praðome perskaityti sutartá prieð iðtrinant $(^NameDA). Jei jûs sutinkate su nurodytomis sàlygomis, padëkite varnelæ tam skirtame laukelyje.
+Praðome perskaityti sutartá prieð iðtrinant $(^NameDA). Jei jûs sutinkate su nurodytomis sàlygomis, padëkite varnelæ tam skirtame laukelyje. $_CLICK
 # ^UnLicenseTextRB
-Praðome perskaityti sutartá prieð iðtrinant $(^NameDA). Jei jûs sutinkate su nurodytomis sàlygomis, pasirinkite pirmà pasirinkimà esantá þemiau.
+Praðome perskaityti sutartá prieð iðtrinant $(^NameDA). Jei jûs sutinkate su nurodytomis sàlygomis, pasirinkite pirmà pasirinkimà esantá þemiau.  $_CLICK
 # ^Custom
 Kitoks
 # ^ComponentsText
-Padëkite varneles laukeliuose komponentø kuriuos norite ádiegti ir nuimkite nuo kuriø nenorite ádiegti.
+Padëkite varneles laukeliuose komponentø kuriuos norite ádiegti ir nuimkite nuo kuriø nenorite ádiegti. $_CLICK
 # ^ComponentsSubText1
 Pasirinkite ádiegimo bûdà:
 # ^ComponentsSubText2_NoInstTypes
@@ -92,7 +92,7 @@ Pasirinkite komponentus, kuriuos ádiegti:
 # ^ComponentsSubText2
 Arba, pasirinkite neprivalomus komponentus, kuriuos jûs norite ádiegti:
 # ^UnComponentsText
-Padëkite varneles laukeliuose komponentø kuriuos norite paðalinti ir nuimkite nuo kuriø nenorite paðalinti.
+Padëkite varneles laukeliuose komponentø kuriuos norite paðalinti ir nuimkite nuo kuriø nenorite paðalinti. $_CLICK
 # ^UnComponentsSubText1
 Pasirinkite ðalinimo bûdà:
 # ^UnComponentsSubText2_NoInstTypes
@@ -100,13 +100,13 @@ Pasirinkite komponentus, kuriuos ðalinti:
 # ^UnComponentsSubText2
 Arba, pasirinkite neprivalomus komponentus, kuriuos jûs norite paðalinti:
 # ^DirText
-Ádiegimas dabar ádiegs $(^NameDA) ðiame kataloge. Jeigu norite pakeisti ðá katalogà, paspauskite Pasirinkti
+Ádiegimas dabar ádiegs $(^NameDA) ðiame kataloge. Jeigu norite pakeisti ðá katalogà, paspauskite Pasirinkti. $_CLICK
 # ^DirSubText
 Ádiegimo katalogas
 # ^DirBrowseText
 Pasirinkite katalogà, kur ádiegti $(^NameDA):
 # ^UnDirText
-Ádiegimas dabar paðalins $(^NameDA) ið ðio katalogo. Jeigu norite pakeisti ðá katalogà paspauskite Pasirinkti
+Ádiegimas dabar paðalins $(^NameDA) ið ðio katalogo. Jeigu norite pakeisti ðá katalogà paspauskite Pasirinkti. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
@@ -116,8 +116,7 @@ Yra vietos:
 # ^SpaceRequired
 Reikia vietos: 
 # ^UninstallingText
-Idiegimas dabar paðalins $(^NameDA).
-$(^NameDA) dabar bus paðalintas ið ðio katalogo.
+$(^NameDA) dabar bus paðalintas ið ðio katalogo. $_CLICK
 # ^UninstallingSubText
 Trinama ið:
 # ^FileError
