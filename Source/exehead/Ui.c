@@ -1674,8 +1674,7 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
         i = 0;
         do {
           item.pszText = ptr;
-          SendMessage(linsthwnd,LVM_GETITEMTEXT,i,(LPARAM)&item);
-          ptr += mystrlen(ptr);
+          ptr += SendMessage(linsthwnd,LVM_GETITEMTEXT,i,(LPARAM)&item);
           *(WORD*)ptr = CHAR2_TO_WORD('\r','\n');
           ptr+=2;
         } while (++i < count);
