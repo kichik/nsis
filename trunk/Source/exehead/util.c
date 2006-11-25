@@ -165,7 +165,7 @@ void NSISCALL myDelete(char *buf, int flags)
           else
           {
             log_printf2("Delete: DeleteFile(\"%s\")",buf);
-            SetFileAttributes(buf,fd.dwFileAttributes&(~FILE_ATTRIBUTE_READONLY));
+            remove_ro_attr(buf);
             if (!DeleteFile(buf))
             {
 #ifdef NSIS_SUPPORT_MOVEONREBOOT
@@ -208,7 +208,7 @@ void NSISCALL myDelete(char *buf, int flags)
     {
       addtrailingslash(buf);
       log_printf2("RMDir: RemoveDirectory(\"%s\")",buf);
-      SetFileAttributes(buf,FILE_ATTRIBUTE_NORMAL);
+      remove_ro_attr(buf);
       if (!RemoveDirectory(buf))
       {
 #ifdef NSIS_SUPPORT_MOVEONREBOOT
@@ -368,6 +368,13 @@ void NSISCALL mini_memcpy(void *out, const void *in, int len)
   {
     *c_out++=*c_in++;
   }
+}
+
+void NSISCALL remove_ro_attr(char *file)
+{
+  int attr = GetFileAttributes(file);
+  if (attr != INVALID_FILE_ATTRIBUTES)
+    SetFileAttributes(file,attr&(~FILE_ATTRIBUTE_READONLY));
 }
 
 HANDLE NSISCALL myOpenFile(const char *fn, DWORD da, DWORD cd)
