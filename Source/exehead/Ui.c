@@ -1153,17 +1153,14 @@ int NSISCALL TreeGetSelectedSection(HWND tree, BOOL mouse)
 }
 
 static LONG oldTreeWndProc;
+static LPARAM last_selected_tree_item;
 static DWORD WINAPI newTreeWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  static LPARAM last_item=-1;
   if (uMsg == WM_CHAR && wParam == VK_SPACE) {
     NotifyCurWnd(WM_TREEVIEW_KEYHACK);
     return 0;
   }
 #if defined(NSIS_SUPPORT_CODECALLBACKS) && defined(NSIS_CONFIG_ENHANCEDUI_SUPPORT)
-  if (uMsg == WM_DESTROY) {
-    last_item=-1;
-  }
 #ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
   if (uMsg == WM_MOUSEMOVE) {
     if (IsWindowVisible(hwnd)) {
@@ -1173,9 +1170,9 @@ static DWORD WINAPI newTreeWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
   }
 #endif
   if (uMsg == WM_NOTIFY_SELCHANGE) {
-    if (last_item != lParam)
+    if (last_selected_tree_item != lParam)
     {
-      last_item = lParam;
+      last_selected_tree_item = lParam;
 
       mystrcpy(g_tmp, g_usrvars[0]);
 
@@ -1212,6 +1209,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
     hBMcheck1=LoadBitmap(g_hInstance, MAKEINTRESOURCE(IDB_BITMAP1));
 
+    last_selected_tree_item=-1;
     oldTreeWndProc=SetWindowLong(hwndTree1,GWL_WNDPROC,(long)newTreeWndProc);
 
     hImageList = ImageList_Create(16,16, ILC_COLOR32|ILC_MASK, 6, 0);
