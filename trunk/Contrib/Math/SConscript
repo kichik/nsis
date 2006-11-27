@@ -23,7 +23,7 @@ docs = Split("""
 
 Import('BuildPlugin env')
 
-if float(env['MSVS_VERSION']) >= 8.0:
+if float(env['MSVS_VERSION'].replace('Exp','')) >= 8.0:
 	files += ['Source/mathcrtmt.lib']
 else:
 	files += ['Source/mathcrt.lib']
