@@ -14,9 +14,9 @@ Released on November 27th, 2006
 
 \S2{} Minor Changes
 
-\b Fixed \L{../Include/WinVer.nsh}{WinVer.nsh}'s detection of Windows 98 and ME (reported on the \W{http://forums.winamp.com/showthread.php?s=&threadid=257994&highlight=winver.nsh}{forum})
-
 \b Fixed context menu not disappearing when moving from instfiles page (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1115825}{bug #1115825})
+
+\b Fixed \L{../Include/WinVer.nsh}{WinVer.nsh}'s detection of Windows 98 and ME (reported on the \W{http://forums.winamp.com/showthread.php?s=&threadid=257994&highlight=winver.nsh}{forum})
 
 \b Fixed WriteUninstaller failure to overwrite read-only uninstallers (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1542530}{bug #1542530})
 
