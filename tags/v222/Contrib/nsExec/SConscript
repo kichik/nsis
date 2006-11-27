@@ -1,0 +1,24 @@
+target = 'nsExec'
+
+files = Split("""
+	nsexec.c
+""")
+
+libs = Split("""
+	kernel32
+	user32
+	advapi32
+""")
+
+examples = Split("""
+	test.nsi
+""")
+
+docs = Split("""
+	nsExec.txt
+""")
+
+Import('BuildPlugin')
+
+BuildPlugin(target, files, libs, examples, docs)
+

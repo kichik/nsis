@@ -1,0 +1,31 @@
+target = 'Math'
+
+files = Split("""
+	Source/Math.c
+	Source/MyMath.c
+	Source/plugin.c
+""")
+
+libs = Split("""
+	kernel32
+""")
+
+examples = Split("""
+	math.nsi
+	mathtest.nsi
+	mathtest.ini
+	mathtest.txt
+""")
+
+docs = Split("""
+	Math.txt
+""")
+
+Import('BuildPlugin env')
+
+if float(env['MSVS_VERSION'].replace('Exp','')) >= 8.0:
+	files += ['Source/mathcrtmt.lib']
+else:
+	files += ['Source/mathcrt.lib']
+
+BuildPlugin(target, files, libs, examples, docs, nodeflib = False, flags = ['$CPP_FLAG'])
