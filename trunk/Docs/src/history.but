@@ -1,5 +1,51 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.22} 2.22
+
+Released on November 27th, 2006
+
+\S1{v2.22-rl} Release Notes
+
+\b Some changes have been made to the credit and license files in order to avoid copyrights and license related confusions. This does not change in any way how NSIS should or could be used. NSIS itself is still licensed with the permissive BSD-like \W{http://nsis.sourceforge.net/License}{zlib license}.
+
+\b Upgrade is recommended for early adopters of WinVer.nsh, due to a bug in Windows 98 and ME detection.
+
+\S1{v2.22-cl} Changelog
+
+\S2{} Minor Changes
+
+\b Fixed \L{../Include/WinVer.nsh}{WinVer.nsh}'s detection of Windows 98 and ME (reported on the \W{http://forums.winamp.com/showthread.php?s=&threadid=257994&highlight=winver.nsh}{forum})
+
+\b Fixed context menu not disappearing when moving from instfiles page (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1115825}{bug #1115825})
+
+\b Fixed WriteUninstaller failure to overwrite read-only uninstallers (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1542530}{bug #1542530})
+
+\b Licensed lzma under \R{cpl-license}{CPL} with a \R{lzma-special-exception}{special exception}, instead of LGPL
+
+\b Minor documentation updates and fixes (including \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1584618}{bug #1584618}, \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1589877}{bug #1589877})
+
+\b Updated comments in MUI examples (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1595500}{bug #1595500})
+
+\S2{} New/Changed Commands
+
+\b Added `highest` option for \R{requestexecutionlevel}{RequestExecutionLevel}
+
+\S2{} Translations
+
+\b Added Uzbek translation
+
+\b Fixed corruption in Lithuanian (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1602673}{bug #1602673})
+
+\b Minor Breton fixes
+
+\b Slovenian corrections (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1590108}{patch #1590108})
+
+\S2{} Build System
+
+\b Added \W{http://msdn.microsoft.com/vstudio/express/visualc/}{Microsoft Visual C++ 2005 Express} support
+
+\b SCons requirement upgraded to 0.96.93
+
 \H{v2.21} 2.21
 
 Released on October 20th, 2006
