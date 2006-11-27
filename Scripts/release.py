@@ -90,6 +90,8 @@ os.environ['CVSROOT'] = ':ext:%s@nsis.cvs.sourceforge.net:/cvsroot/nsis' % USER
 CVS_TAG = 'v' + ''.join(VERSION.split('.'))
 
 newverdir = 'nsis-%s-src' % VERSION
+scons_line = 'scons -C %s VERSION=%s VER_MAJOR=%s VER_MINOR=%s VER_REVISION=%s VER_BUILD=%s ' \
+						 % (newverdir, VERSION, VER_MAJOR, VER_MINOR, VER_REVISION, VER_BUILD)
 
 ### utility functions
 
@@ -228,9 +230,6 @@ def CreateSourceTarball():
 	)
 
 def BuildRelease():
-	scons_line = 'scons -C %s VERSION=%s VER_MAJOR=%s VER_MINOR=%s VER_REVISION=%s VER_BUILD=%s ' \
-							 % (newverdir, VERSION, VER_MAJOR, VER_MINOR, VER_REVISION, VER_BUILD)
-
 	print 'creating distribution files...'
 
 	run(
