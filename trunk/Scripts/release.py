@@ -322,11 +322,11 @@ def UpdateChangeLog():
 def ToDo():
 	print 'automatic phase done\n'
 	print """
-	 * Edit update.php
-	 * Post news item
-	 * http://en.wikipedia.org/w/index.php?title=Nullsoft_Scriptable_Install_System&action=edit
-	 * Update Freshmeat
-	 * Update BetaNews
+ * Edit update.php
+ * Post news item
+ * http://en.wikipedia.org/w/index.php?title=Nullsoft_Scriptable_Install_System&action=edit
+ * Update Freshmeat
+ * Update BetaNews
 	"""
 
 def CloseLog():
