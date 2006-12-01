@@ -143,7 +143,9 @@ void ExecScript(int log) {
   g_to = 0;      // default is no timeout
   bOEM = FALSE;  // default is no OEM->ANSI conversion
 
-  g_hwndList = FindWindowEx(FindWindowEx(g_hwndParent,NULL,"#32770",NULL),NULL,"SysListView32",NULL);
+  g_hwndList = NULL;
+  if (g_hwndParent)
+    g_hwndList = FindWindowEx(FindWindowEx(g_hwndParent,NULL,"#32770",NULL),NULL,"SysListView32",NULL);
 
   // add space
   pExec = g_exec + lstrlen(g_exec);
