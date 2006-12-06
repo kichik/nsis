@@ -338,7 +338,7 @@ def generate(env):
 	env['REGSVRFLAGS'] = '/s '
 	env['REGSVRCOM'] = '$REGSVR $REGSVRFLAGS $TARGET'
 
-  env['MSVS_VERSION'] = '7.1'
+	env['MSVS_VERSION'] = '7.1'
 
 
 def exists(env):
