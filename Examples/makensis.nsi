@@ -23,6 +23,8 @@ InstType "Minimal"
 InstallDir $PROGRAMFILES\NSIS
 InstallDirRegKey HKLM Software\NSIS ""
 
+RequestExecutionLevel admin
+
 ;--------------------------------
 ;Header Files
 
