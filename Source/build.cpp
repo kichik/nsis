@@ -614,13 +614,12 @@ int CEXEBuild::datablock_optimize(int start_offset, int first_int)
       while (left > 0)
       {
         int l = min(left, build_filebuflen);
-        int la = l;
         void *newstuff = db->get(start_offset + this_len - left, l);
-        void *oldstuff = db->getmore(pos + this_len - left, &la);
+        void *oldstuff = db->getmore(pos + this_len - left, l);
 
         int res = memcmp(newstuff, oldstuff, l);
 
-        db->release(oldstuff, la);
+        db->release(oldstuff, l);
         db->release();
 
         if (res)

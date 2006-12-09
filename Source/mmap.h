@@ -31,7 +31,7 @@ class IMMap
     virtual int  getsize() const=0;
     virtual void *get(int offset, int size) const=0;
     virtual void *get(int offset, int *size) const=0;
-    virtual void *getmore(int offset, int *size) const=0;
+    virtual void *getmore(int offset, int size) const=0;
     virtual void release()=0;
     virtual void release(void *view, int size)=0;
     virtual void clear()=0;
@@ -61,7 +61,7 @@ class MMapFile : public IMMap
     int  getsize() const;
     void *get(int offset, int size) const;
     void *get(int offset, int *sizep) const;
-    void *getmore(int offset, int *size) const;
+    void *getmore(int offset, int size) const;
     void release();
     void release(void *pView, int size);
     void flush(int num);
@@ -94,7 +94,7 @@ class MMapFake : public IMMap
     int  getsize() const;
     void *get(int offset, int size) const;
     void *get(int offset, int *size) const;
-    void *getmore(int offset, int *size) const;
+    void *getmore(int offset, int size) const;
 
     void resize(int n);
     void release();
@@ -126,7 +126,7 @@ class MMapBuf : public IGrowBuf, public IMMap
     void *get() const;
     void *get(int offset, int *sizep) const;
     void *get(int offset, int size) const;
-    void *getmore(int offset, int *size) const;
+    void *getmore(int offset, int size) const;
     void release();
     void release(void *pView, int size);
     void clear();
