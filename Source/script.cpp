@@ -279,30 +279,33 @@ int CEXEBuild::doParse(const char *str)
 
   while (*str == ' ' || *str == '\t') str++;
 
-  if (m_linebuild.getlen()>1) m_linebuild.resize(m_linebuild.getlen()-2);
+  // remove trailing slash and null, if there's a previous line
+  if (m_linebuild.getlen()>1)
+    m_linebuild.resize(m_linebuild.getlen()-2);
 
   m_linebuild.add(str,strlen(str)+1);
 
-  // remove trailing slash and null
-  if (str[0] && CharPrev(str,str+strlen(str))[0] == '\\') {
-    last_line_had_slash = 1;
+  // keep waiting for more lines, if this line ends with a backslash
+  if (str[0] && CharPrev(str,str+strlen(str))[0] == '\\')
     return PS_OK;
-  }
-  else last_line_had_slash = 0;
 
+  // parse before checking if the line should be ignored, so block comments won't be missed
   res=line.parse((char*)m_linebuild.get(),!strnicmp((char*)m_linebuild.get(),"!define",7));
 
   inside_comment = line.InCommentBlock();
-
-  m_linebuild.resize(0);
 
   // if ignoring, ignore all lines that don't begin with an exclamation mark
   {
     bool ignore_line = cur_ifblock && (cur_ifblock->ignore || cur_ifblock->inherited_ignore);
     char first_char = *(char *) m_linebuild.get();
-    if (ignore_line && first_char!='!' && !last_line_had_slash)
+    if (ignore_line && first_char!='!')
+    {
+      m_linebuild.resize(0);
       return PS_OK;
+    }
   }
+
+  m_linebuild.resize(0);
 
   if (res)
   {
