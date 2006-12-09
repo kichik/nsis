@@ -41,8 +41,7 @@ public:
 
       int offset2 = rand() % BUF_SIZE;
       int size2 = rand() % (BUF_SIZE - offset2);
-      int size2forrelease = size2;
-      char *p2 = (char *) mmap.getmore(offset2, &size2forrelease);
+      char *p2 = (char *) mmap.getmore(offset2, size2);
 
       int minsize = min(size1, size2);
       for (size_t j = 0; j < minsize; j++) {
@@ -50,7 +49,7 @@ public:
       }
 
       mmap.release();
-      mmap.release(p2, size2forrelease);
+      mmap.release(p2, size2);
     }
   }
 
