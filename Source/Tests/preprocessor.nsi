@@ -51,6 +51,13 @@ d\
 i\
 f
 
+!if 0
+/*
+this shouldn't be compiled
+!endif
+*/
+!endif
+
 # tests for !if statement
 !if 'test' == 'test'
  !if 1 <= 2
