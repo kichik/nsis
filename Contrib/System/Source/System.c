@@ -139,6 +139,12 @@ PLUGINFUNCTION(Debug)
 PLUGINFUNCTION(Get)
 {
     SystemProc *proc = PrepareProc(FALSE);
+    if (proc == NULL)
+    {
+      pushstring("error");
+      return;
+    }
+
     SYSTEM_LOG_ADD("Get ");
     SYSTEM_LOG_ADD(proc->DllName);
     SYSTEM_LOG_ADD("::");
@@ -169,6 +175,9 @@ PLUGINFUNCTION(Call)
 {
     // Prepare input
     SystemProc *proc = PrepareProc(TRUE);
+    if (proc == NULL)
+      return;
+
     SYSTEM_LOG_ADD("Call ");
     SYSTEM_LOG_ADD(proc->DllName);
     SYSTEM_LOG_ADD("::");
@@ -320,6 +329,13 @@ SystemProc *PrepareProc(BOOL NeedForCall)
         // Check for Section Change
         BOOL changed = TRUE;
         ChangesDone = SectionType;
+
+        if (SectionType != PST_PROC && proc == NULL)
+            // no proc after PST_PROC is done means something is wrong with
+            // the call syntax and we'll get a crash because everything needs
+            // proc from here on.
+            break;
+
         switch (*ib)
         {
         case 0x0: SectionType = -1; break;
@@ -640,7 +656,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
     GlobalFree(sbuf);
 
     // Ok, the final step: check proc for existance
-    if (proc->Proc == NULL)
+    if (proc != NULL && proc->Proc == NULL)
     {
         switch (proc->ProcType)
         {
