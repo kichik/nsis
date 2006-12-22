@@ -84,6 +84,8 @@ PLUGINFUNCTION(Store)
             break;
         case 'l':
         case 'L':
+            if (tempstack == NULL) break;
+
             // Fill with data
             copymem(g_variables, tempstack->Data, size);
 
