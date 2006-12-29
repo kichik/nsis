@@ -151,9 +151,9 @@ vpatch::vpatchfile "patch.pat" "oldfile.txt" "temporary_newfile.txt"
           <h3>Multiple patches in one file</h3>
           <div>
           <p>GenPat appends a patch to the file you specified. If there is already 
-            a patch for the same original file in the patch file, the patch will 
-            be replaced. For example, if you want to be able to upgrade version 
-            1 and 2 to version 3, you can put a 1 &gt; 3 and 2 &gt; 3 patch in 
+            a patch for the same original file, with the same CRC, in the patch file,
+			the patch will be replaced. For example, if you want to be able to upgrade
+			version 1 and 2 to version 3, you can put a 1 &gt; 3 and 2 &gt; 3 patch in 
             one file.</p>
           <p>You can also put patches for different files in one patch file, for 
             example, a patch from file A version 1 to file A version 2 and a patch 
