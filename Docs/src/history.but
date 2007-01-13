@@ -1,5 +1,33 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.23} 2.23
+
+Release on January 13th, 2007
+
+\S1{v2.23-cl} Changelog
+
+\S2{} Minor Changes
+
+\b Fixed compiler crash on Mac OS X (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1611866}{patch #1611866})
+
+\b Fixed deletion of start menu icons in NSIS installer on Vista (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1611251}{bug #1611251})
+
+\S2{} Utilities and Plug-ins
+
+\b Fixed incorrect \L{../Docs/nsExec/nsExec.txt}{nsExec} message handling in silent mode (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1605581}{bug #1605581})
+
+\b Fixed \L{../Docs/System/System.html}{System} crash when System::Store is called on an empty private stack (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1620178}{bug #1620178})
+
+\b Fixed \L{../Docs/System/System.html}{System} crash with parenthesis in filename (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1616267}{bug #1616267})
+
+\b Minor VPatch documentation enhancements (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1624292}{patch #1624292})
+
+\S2{} Build System
+
+\b Fixed build failures on mingw32 (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1610773}{bug #1610773})
+
+\b Fixed build problems with MSVCTOOLKIT=yes
+
 \H{v2.22} 2.22
 
 Released on November 27th, 2006
