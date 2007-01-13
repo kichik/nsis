@@ -2,7 +2,7 @@
  * This file is a part of the zlib compression module for NSIS.
  * 
  * Copyright and license information can be found below.
- * Modifications Copyright (C) 1999-2006 Nullsoft and Contributors
+ * Modifications Copyright (C) 1999-2007 Nullsoft and Contributors
  * 
  * The original zlib source code is available at
  * http://www.zlib.net/
@@ -16,7 +16,7 @@
  * For conditions of distribution and use, see copyright notice in zlib.h 
  */
 
-/* @(#) $Id: ZCONF.H,v 1.1.1.1 2002/08/02 10:01:35 kichik Exp $ */
+/* @(#) $Id: ZCONF.H,v 1.2 2006/10/28 19:45:02 joostverburg Exp $ */
 
 #ifndef _ZCONF_H
 #define _ZCONF_H
