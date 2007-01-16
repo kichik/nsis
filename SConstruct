@@ -188,16 +188,30 @@ defenv.Execute(Delete('$ZIPDISTDIR'))
 defenv.Execute(Delete('$INSTDISTDIR'))
 defenv.Execute(Delete('$TESTDISTDIR'))
 
-def Distribute(files, names, component, path, subpath, alias, install_alias=None):
-	if isinstance(files, (str, type(File('SConstruct')))):
-		files = [files]
-	files = map(File, files)
+def SafeFile(f):
+	from types import StringType
 
-	if isinstance(names, str):
+	if isinstance(f, StringType):
+		return File(f)
+
+	return f
+
+def MakeFileList(files):
+	from types import ListType, TupleType
+
+	if isinstance(files, (ListType, TupleType)):
+		return map(SafeFile, files)
+
+	return Flatten([SafeFile(files)])
+
+def Distribute(files, names, component, path, subpath, alias, install_alias=None):
+	from types import StringType
+
+	files = MakeFileList(files)
+
+	names = names or map(lambda x: x.name, files)
+	if isinstance(names, StringType):
 		names = [names]
-	if not names:
-		names = map(str, files)
-		names = map(os.path.basename, names)
 
 	for d in ('$ZIPDISTDIR', '$INSTDISTDIR', '$TESTDISTDIR'):
 		paths = map(lambda file: os.path.join(d, path, subpath, file), names)

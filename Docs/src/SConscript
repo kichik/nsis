@@ -68,9 +68,9 @@ replacement = '<a href="%s/\\1/' % env.subst('$PREFIX_DATA')
 
 def fix_html(target, source, env):
 	for i in range(len(source)):
-		data = open(str(source[i]),'rb').read()
+		data = open(source[i].path,'rb').read()
 		data = re.sub('<a href="../(Include|Stubs|Plugins|Contrib)/', replacement, data)
-		open(str(target[i]),'wb').write(data)
+		open(target[i].path,'wb').write(data)
 	return None
 
 if build_chm:
