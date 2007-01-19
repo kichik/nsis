@@ -38,6 +38,7 @@ languages = Split("""
 	Farsi.nsh
 	Finnish.nsh
 	French.nsh
+	Galician.nsh
 	German.nsh
 	Greek.nsh
 	Hebrew.nsh
