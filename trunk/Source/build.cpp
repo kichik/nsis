@@ -2212,7 +2212,7 @@ int CEXEBuild::prepare_uninstaller() {
   {
     if (!uninstaller_writes_used)
     {
-      warning("Uninstall section found but WriteUninstaller never used - no uninstaller will be created.");
+      warning("Uninstaller script code found but WriteUninstaller never used - no uninstaller will be created.");
       return PS_OK;
     }
 
