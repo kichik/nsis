@@ -263,7 +263,7 @@ int CLZMA::CompressReal()
           break;
         if (finished)
         {
-          res = C_OK;
+          res = C_FINISHED;
           break;
         }
       }

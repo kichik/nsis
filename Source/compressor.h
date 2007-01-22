@@ -18,6 +18,8 @@
 #define __COMPRESSOR_H__
 
 #define C_OK 0
+#define C_FINISHED 1
+
 #define C_FINISH true
 
 class ICompressor {
