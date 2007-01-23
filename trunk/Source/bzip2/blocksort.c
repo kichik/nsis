@@ -15,7 +15,6 @@
 
 #include "bzlib.h"
 
-#if (defined(NSIS_COMPRESS_USE_BZIP2) && defined(NSIS_CONFIG_COMPRESSION_SUPPORT)) || !defined(EXEHEAD)
 /*-------------------------------------------------------------*/
 /*--- Block sorting machinery                               ---*/
 /*---                                           blocksort.c ---*/
@@ -1108,5 +1107,3 @@ void BZ2_blockSort ( EState* s )
 /*-------------------------------------------------------------*/
 /*--- end                                       blocksort.c ---*/
 /*-------------------------------------------------------------*/
-
-#endif
