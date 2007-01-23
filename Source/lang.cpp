@@ -328,13 +328,12 @@ void CEXEBuild::InitLangTables() {
   keep_ref = true;
 }
 
-LanguageTable* CEXEBuild::GetLangTable(LANGID &lang) {
+LanguageTable* CEXEBuild::GetLangTable(LANGID &lang, bool create/*=true*/) {
   int nlt = lang_tables.getlen() / sizeof(LanguageTable);
   LanguageTable *nla = (LanguageTable*)lang_tables.get();
 
   lang = lang ? lang : last_used_lang;
-  last_used_lang = lang;
-  LanguageTable *table = 0;
+  LanguageTable *table = NULL;
 
   for (int i = 0; i < nlt; i++) {
     if (lang == nla[i].lang_id) {
@@ -342,7 +341,7 @@ LanguageTable* CEXEBuild::GetLangTable(LANGID &lang) {
       break;
     }
   }
-  if (!table) {
+  if (!table && create) {
     LanguageTable newtable;
 
     newtable.lang_id = lang;
@@ -355,7 +354,30 @@ LanguageTable* CEXEBuild::GetLangTable(LANGID &lang) {
     table = (LanguageTable*)lang_tables.get() + nlt;
   }
 
+  if (table) // update last used language if a table was loaded
+    last_used_lang = lang;
+
   return table;
+}
+
+char *CEXEBuild::GetLangNameAndCP(LANGID lang, unsigned int *codepage/*=NULL*/) {
+  LanguageTable *table = GetLangTable(lang, false);
+
+  if (table && table->nlf.m_bLoaded) {
+    if (codepage)
+      *codepage = table->nlf.m_uCodePage;
+
+    return table->nlf.m_szName;
+  }
+  else {
+    if (codepage)
+      *codepage = 1252; // English US
+
+    if (lang == 1033)
+      return "English";
+    else
+      return "???";
+  }
 }
 
 int CEXEBuild::DefineLangString(char *name, int process/*=-1*/) {

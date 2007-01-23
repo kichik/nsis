@@ -1602,14 +1602,15 @@ int CEXEBuild::AddVersionInfo()
         {
           LANGID lang_id = rVersionInfo.GetLangID(i);
           int code_page = rVersionInfo.GetCodePage(i);
-          LanguageTable *Table = GetLangTable(lang_id);
+
+          char *lang_name = GetLangNameAndCP(lang_id);
 
           if ( !rVersionInfo.FindKey(lang_id, code_page, "FileVersion") )
-            warning("Generating version information for language \"%04d-%s\" without standard key \"FileVersion\"", lang_id, Table->nlf.m_bLoaded ? Table->nlf.m_szName : lang_id == 1033 ? "English" : "???");
+            warning("Generating version information for language \"%04d-%s\" without standard key \"FileVersion\"", lang_id, lang_name);
           if ( !rVersionInfo.FindKey(lang_id, code_page, "FileDescription") )
-            warning("Generating version information for language \"%04d-%s\" without standard key \"FileDescription\"", lang_id, Table->nlf.m_bLoaded ? Table->nlf.m_szName : lang_id == 1033 ? "English" : "???");
+            warning("Generating version information for language \"%04d-%s\" without standard key \"FileDescription\"", lang_id, lang_name);
           if ( !rVersionInfo.FindKey(lang_id, code_page, "LegalCopyright") )
-            warning("Generating version information for language \"%04d-%s\" without standard key \"LegalCopyright\"", lang_id, Table->nlf.m_bLoaded ? Table->nlf.m_szName : lang_id == 1033 ? "English" : "???");
+            warning("Generating version information for language \"%04d-%s\" without standard key \"LegalCopyright\"", lang_id, lang_name);
 
           rVersionInfo.ExportToStream(VerInfoStream, i);
           res_editor->UpdateResource(RT_VERSION, 1, lang_id, (BYTE*)VerInfoStream.get(), VerInfoStream.getlen());
