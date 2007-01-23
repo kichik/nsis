@@ -15,7 +15,6 @@
 
 #include "bzlib.h"
 
-#if (defined(NSIS_COMPRESS_USE_BZIP2) && defined(NSIS_CONFIG_COMPRESSION_SUPPORT)) || !defined(EXEHEAD)
 /*-------------------------------------------------------------*/
 /*--- Library top-level functions.                          ---*/
 /*---                                               bzlib.c ---*/
@@ -618,7 +617,5 @@ int NSISCALL BZ2_bzDecompress( DState *s )
 }
 
 
-
-#endif
 
 #endif
