@@ -133,9 +133,12 @@ opts.Add(BoolOption('MSTOOLKIT', 'Use Microsoft Visual C++ Toolkit', 'no'))
 opts.Add(BoolOption('CHMDOCS', 'Build CHM documentation, requires hhc.exe', hhc))
 opts.Add(PathOption('CPPPATH', 'Path to search for include files', None))
 opts.Add(PathOption('LIBPATH', 'Path to search for libraries', None))
+opts.Add(('APPEND_CCFLAGS', 'Additional C/C++ compiler flags'))
+opts.Add(('APPEND_LINKFLAGS', 'Additional linker flags'))
 # build options
 opts.Add(BoolOption('DEBUG', 'Build executables with debugging information', 'no'))
 opts.Add(PathOption('CODESIGNER', 'A program used to sign executables', None))
+opts.Add(BoolOption('STRIP', 'Strips executables of any unrequired data such as symbols', 'yes'))
 # path related build options
 opts.Add(('PREFIX_DEST', 'Intermediate installation prefix (extra install time prefix)', dirs['dest']))
 opts.Add(('PREFIX_CONF', 'Path to install nsisconf.nsh to', dirs['conf']))
@@ -302,6 +305,9 @@ else:
 
 if defenv['MSTOOLKIT']:
 	defenv.Tool('mstoolkit', toolpath = ['SCons/Tools'])
+
+defenv.Append(CCFLAGS = Split('$APPEND_CCFLAGS'))
+defenv.Append(LINKFLAGS = Split('$APPEND_LINKFLAGS'))
 
 defenv.Default('$BUILD_PREFIX')
 
