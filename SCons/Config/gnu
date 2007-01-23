@@ -64,8 +64,9 @@ if not defenv['DEBUG']:
 	stub_env.Append(CCFLAGS = '-Os')                # optimize for size
 stub_env.Append(CCFLAGS = '-Wall')                # all warnings
 stub_env.Append(CCFLAGS = '-x c')                 # force compile as c
+stub_env.Append(CCFLAGS = '-fno-strict-aliasing') # not safe for strict aliasing
 
-if not defenv['DEBUG']:
+if not defenv['DEBUG'] and defenv['STRIP']:
 	stub_env.Append(LINKFLAGS = '-s')               # strip
 stub_env.Append(LINKFLAGS = '-mwindows')          # build windows executables
 stub_env.Append(LINKFLAGS = '$NODEFLIBS_FLAG')    # no standard libraries
@@ -83,7 +84,7 @@ makensis_env.Append(CCFLAGS = '-Wall')            # all warnings
 
 conf = FlagsConfigure(makensis_env)
 conf.CheckLinkFlag('$MAP_FLAG')                   # generate map file
-if not defenv['DEBUG']:
+if not defenv['DEBUG'] and defenv['STRIP']:
 	TestStrip(conf)                                 # strip
 conf.Finish()
 
@@ -95,8 +96,9 @@ cross_env(plugin_env)
 if not defenv['DEBUG']:
 	plugin_env.Append(CCFLAGS = '-Os')              # optimize for size
 plugin_env.Append(CCFLAGS = '-Wall')              # level 3 warnings
+plugin_env.Append(CCFLAGS = '-fno-strict-aliasing') # not safe for strict aliasing
 
-if not defenv['DEBUG']:
+if not defenv['DEBUG'] and defenv['STRIP']:
 	plugin_env.Append(LINKFLAGS = '-s')             # strip
 plugin_env.Append(LINKFLAGS = '-mwindows')        # build windows executables
 plugin_env.Append(LINKFLAGS = '$ALIGN_FLAG')      # 512 bytes align
@@ -112,7 +114,7 @@ cp_util_env.Append(CCFLAGS = '-Wall')             # all warnings
 
 conf = FlagsConfigure(cp_util_env)
 conf.CheckLinkFlag('$MAP_FLAG')                   # generate map file
-if not defenv['DEBUG']:
+if not defenv['DEBUG'] and defenv['STRIP']:
 	TestStrip(conf)                                 # strip
 conf.Finish()
 
