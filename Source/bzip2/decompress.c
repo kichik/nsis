@@ -15,8 +15,6 @@
 
 #include "bzlib.h"
 
-#if defined(NSIS_COMPRESS_USE_BZIP2) && defined(NSIS_CONFIG_COMPRESSION_SUPPORT)
-
 /*-------------------------------------------------------------*/
 /*--- Decompression machinery                               ---*/
 /*---                                          decompress.c ---*/
@@ -534,4 +532,3 @@ Int32 NSISCALL BZ2_decompress ( DState* s )
 /*-------------------------------------------------------------*/
 /*--- end                                      decompress.c ---*/
 /*-------------------------------------------------------------*/
-#endif
