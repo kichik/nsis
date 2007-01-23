@@ -13,10 +13,11 @@
 ; DisableX64FSRedirection disables file system redirection.
 ; EnableX64FSRedirection enables file system redirection.
 ;
+;   SetOutPath $SYSDIR
 ;   ${DisableX64FSRedirection}
-;   DetailPrint $SYSDIR # prints C:\Windows\System32
+;   File some.dll # extracts to C:\Windows\System32
 ;   ${EnableX64FSRedirection}
-;   DetailPrint $SYSDIR # prints C:\Windows\SysWOW64
+;   File some.dll # extracts to C:\Windows\SysWOW64
 ;
 
 !ifndef ___X64__NSH___
