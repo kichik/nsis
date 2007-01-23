@@ -956,7 +956,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           if (parm4)
             h=GetModuleHandle(buf1);
           if (!h)
-            h=LoadLibrary(buf1);
+            h=LoadLibraryEx(buf1, NULL, LOAD_WITH_ALTERED_SEARCH_PATH);
           if (h)
           {
             FARPROC funke = GetProcAddress(h,buf0);
