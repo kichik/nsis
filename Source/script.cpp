@@ -5611,39 +5611,42 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #ifdef NSIS_SUPPORT_VERSION_INFO
     case TOK_VI_ADDKEY:
     {
-        LANGID LangID=0;
-        int a = 1;
-        if (!strnicmp(line.gettoken_str(a),"/LANG=",6))
-          LangID=atoi(line.gettoken_str(a++)+6);
-        if (line.getnumtokens()!=a+2) PRINTHELP();
-        char *pKey = line.gettoken_str(a);
-        char *pValue = line.gettoken_str(a+1);
-        if ( !(*pKey) )
-        {
-           ERROR_MSG("Error: empty name for version info key!\n");
-           return PS_ERROR;
-        }
-        else
-        {
-           SCRIPT_MSG("%s: \"%s\" \"%s\"\n", line.gettoken_str(0), line.gettoken_str(a), line.gettoken_str(a+1));
-           LANGID lReaded = LangID;
-           LanguageTable *table = GetLangTable(LangID);
-           if ( a > 1 && lReaded == 0 )
-             warning_fl("%s: %s language not loaded, using default \"1033-English\"", line.gettoken_str(0), line.gettoken_str(1));
-           if ( rVersionInfo.SetKeyValue(LangID, table->nlf.m_bLoaded ? table->nlf.m_uCodePage : 1252 /*English US*/, pKey, pValue) )
-           {
-             ERROR_MSG("%s: \"%s\" \"%04d-%s\" already defined!\n",line.gettoken_str(0), line.gettoken_str(2), LangID, table->nlf.m_bLoaded ? table->nlf.m_szName : LangID == 1033 ? "English" : "???");
-             return PS_ERROR;
-           }
+      LANGID LangID=0;
+      int a = 1;
+      if (!strnicmp(line.gettoken_str(a),"/LANG=",6))
+        LangID=atoi(line.gettoken_str(a++)+6);
+      if (line.getnumtokens()!=a+2) PRINTHELP();
+      char *pKey = line.gettoken_str(a);
+      char *pValue = line.gettoken_str(a+1);
+      if ( !(*pKey) )
+      {
+         ERROR_MSG("Error: empty name for version info key!\n");
+         return PS_ERROR;
+      }
+      else
+      {
+        SCRIPT_MSG("%s: \"%s\" \"%s\"\n", line.gettoken_str(0), line.gettoken_str(a), line.gettoken_str(a+1));
+        LANGID lReaded = LangID;
+        if ( a > 1 && lReaded == 0 )
+          warning_fl("%s: %s language not loaded, using default \"1033-English\"", line.gettoken_str(0), line.gettoken_str(1));
 
-           return PS_OK;
+        unsigned int codepage;
+        char *lang_name = GetLangNameAndCP(LangID, &codepage);
+
+        if ( rVersionInfo.SetKeyValue(LangID, codepage, pKey, pValue) )
+        {
+          ERROR_MSG("%s: \"%s\" \"%04d-%s\" already defined!\n",line.gettoken_str(0), line.gettoken_str(2), LangID, lang_name);
+          return PS_ERROR;
         }
+
+        return PS_OK;
+      }
     }
     case TOK_VI_SETPRODUCTVERSION:
       if ( version_product_v[0] )
       {
-           ERROR_MSG("Error: %s already defined!\n", line.gettoken_str(0));
-           return PS_ERROR;
+        ERROR_MSG("Error: %s already defined!\n", line.gettoken_str(0));
+        return PS_ERROR;
       }
       strcpy(version_product_v, line.gettoken_str(1));
       return PS_OK;

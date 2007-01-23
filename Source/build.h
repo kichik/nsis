@@ -247,7 +247,8 @@ class CEXEBuild {
 
     // lang.cpp functions and variables
     void InitLangTables();
-    LanguageTable *GetLangTable(LANGID &lang);
+    LanguageTable *GetLangTable(LANGID &lang, bool create = true);
+    char *GetLangNameAndCP(LANGID lang, unsigned int *codepage = NULL);
     int DefineLangString(char *name, int process=-1);
     int DefineInnerLangString(int id, int process=-1);
     int SetLangString(char *name, LANGID lang, char *string);
