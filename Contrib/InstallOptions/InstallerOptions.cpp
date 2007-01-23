@@ -120,6 +120,7 @@ char *WINAPI STRDUP(const char *c)
 // WS_HSCROLL              0x00100000 // *ALL*
 // WS_VSCROLL              0x00200000 // *ALL*
 // WS_DISABLED             0x08000000 // *ALL*
+#define FLAG_FOCUS         0x10000000 // Controls that can receive focus
 
 struct TableEntry {
   char *pszName;
@@ -481,6 +482,7 @@ int WINAPI ReadSettings(void) {
       { "VSCROLL",           WS_VSCROLL          },
       { "DISABLED",          WS_DISABLED         },
       { "TRANSPARENT",       TRANSPARENT_BMP     },
+      { "FOCUS",             FLAG_FOCUS          },
       { NULL,                0                   }
     };
     FieldType *pField = pFields + nIdx;
@@ -949,6 +951,7 @@ int WINAPI createCfgDlg()
   }
 
   BOOL fFocused = FALSE;
+  BOOL fFocusedByFlag = FALSE;
 
 #define DEFAULT_STYLES (WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS)
 #define RTL_EX_STYLES (WS_EX_RTLREADING | WS_EX_LEFTSCROLLBAR)
@@ -1339,10 +1342,15 @@ int WINAPI createCfgDlg()
 #endif
       }
 
-      // Set initial focus to the first appropriate field
-      if (!fFocused && (dwStyle & (WS_TABSTOP | WS_DISABLED)) == WS_TABSTOP && pField->nType >= FIELD_SETFOCUS) {
-        fFocused = TRUE;
-        mySetFocus(hwCtrl);
+      // Set initial focus to the first appropriate field ( with FOCUS flag)
+      if (!fFocusedByFlag && (dwStyle & (WS_TABSTOP | WS_DISABLED)) == WS_TABSTOP && pField->nType >= FIELD_SETFOCUS) {
+        if (pField->nFlags & FLAG_FOCUS) {
+          fFocusedByFlag = TRUE;
+        }
+        if (!fFocused || fFocusedByFlag) {
+          fFocused = TRUE;
+          mySetFocus(hwCtrl);
+        }
       }
 
       // If multiline-readonly then hold the text back until after the
