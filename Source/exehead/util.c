@@ -614,45 +614,21 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
 
       if (nVarIdx == NS_SHELL_CODE)
       {
-        // NOTE 1: the code CSIDL_PRINTERS, is used for QUICKLAUNCH
-        // NOTE 2: the code CSIDL_BITBUCKET is used for COMMONFILES
-        // NOTE 3: the code CSIDL_CONTROLS is used for PROGRAMFILES
         LPITEMIDLIST idl;
         char *append = 0;
 
-        int x = 0;
+        int x = 2;
 
-        *out = 0;
-
-        if (fldrs[2] == CSIDL_PRINTERS) // QUICKLAUNCH
+        // all users' version is CSIDL_APPDATA only for $QUICKLAUNCH
+        // for normal $APPDATA, it'd be CSIDL_APPDATA_COMMON
+        if (fldrs[2] == CSIDL_APPDATA)
         {
           append = "\\Microsoft\\Internet Explorer\\Quick Launch";
-          x = 2;
-        }
-        else if (fldrs[0] == CSIDL_PROGRAM_FILES_COMMON)
-        {
-          myRegGetStr(HKEY_LOCAL_MACHINE, SYSREGKEY, "CommonFilesDir", out);
-        }
-        else if (fldrs[0] == CSIDL_PROGRAM_FILES)
-        {
-          myRegGetStr(HKEY_LOCAL_MACHINE, SYSREGKEY, "ProgramFilesDir", out);
-          if (!*out)
-            mystrcpy(out, "C:\\Program Files");
-        }
-        else if (fldrs[0] == CSIDL_SYSTEM)
-        {
-          GetSystemDirectory(out, NSIS_MAX_STRLEN);
-        }
-        else if (fldrs[0] == CSIDL_WINDOWS)
-        {
-          GetWindowsDirectory(out, NSIS_MAX_STRLEN);
         }
 
-        if (!*out)
+        if (g_exec_flags.all_user_var)
         {
           x = 4;
-          if (!g_exec_flags.all_user_var)
-            x = 2;
         }
 
         while (x--)
@@ -666,8 +642,30 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
               break;
             }
           }
-          else
-            *out=0;
+          *out=0;
+        }
+
+        // resort to old registry methods, only when CSIDL failed
+        if (!*out)
+        {
+          if (fldrs[0] == CSIDL_PROGRAM_FILES_COMMON)
+          {
+            myRegGetStr(HKEY_LOCAL_MACHINE, SYSREGKEY, "CommonFilesDir", out);
+          }
+          else if (fldrs[0] == CSIDL_PROGRAM_FILES)
+          {
+            myRegGetStr(HKEY_LOCAL_MACHINE, SYSREGKEY, "ProgramFilesDir", out);
+            if (!*out)
+              mystrcpy(out, "C:\\Program Files");
+          }
+          else if (fldrs[0] == CSIDL_SYSTEM)
+          {
+            GetSystemDirectory(out, NSIS_MAX_STRLEN);
+          }
+          else if (fldrs[0] == CSIDL_WINDOWS)
+          {
+            GetWindowsDirectory(out, NSIS_MAX_STRLEN);
+          }
         }
 
         if (*out && append)
