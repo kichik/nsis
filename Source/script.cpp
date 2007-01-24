@@ -299,7 +299,7 @@ int CEXEBuild::doParse(const char *str)
   // parse before checking if the line should be ignored, so block comments won't be missed
   res=line.parse((char*)m_linebuild.get(),!strnicmp((char*)m_linebuild.get(),"!define",7));
 
-  inside_comment = line.InCommentBlock();
+  inside_comment = line.inCommentBlock();
 
   // if ignoring, ignore all lines that don't begin with an exclamation mark
   {
