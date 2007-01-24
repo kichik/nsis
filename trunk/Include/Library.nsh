@@ -17,6 +17,9 @@
 # For more information, read appendix B in the documentation.
 #
 
+!verbose push
+!verbose 3
+
 !ifndef LIB_INCLUDED
 
 !define LIB_INCLUDED
@@ -743,3 +746,5 @@
 !macroend
 
 !endif
+
+!verbose pop
