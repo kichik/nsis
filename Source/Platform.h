@@ -148,8 +148,14 @@ typedef WORD LANGID;
 #  ifndef FIELD_OFFSET
 #    define FIELD_OFFSET(t,f) ((LONG)&(((t*)0)->f))
 #  endif
+#  ifndef MAKEINTRESOURCEA
+#    define MAKEINTRESOURCEA(i) ((LPSTR)((DWORD)((WORD)(i))))
+#  endif
+#  ifndef MAKEINTRESOURCEW
+#    define MAKEINTRESOURCEW(i) ((LPWSTR)((DWORD)((WORD)(i))))
+#  endif
 #  ifndef MAKEINTRESOURCE
-#    define MAKEINTRESOURCE(i) (LPSTR)((DWORD)((WORD)(i)))
+#    define MAKEINTRESOURCE MAKEINTRESOURCEA
 #  endif
 #  ifndef IMAGE_FIRST_SECTION
 #    define IMAGE_FIRST_SECTION(h) ( PIMAGE_SECTION_HEADER( (DWORD) h + \
