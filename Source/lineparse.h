@@ -24,7 +24,7 @@ class LineParser {
     virtual ~LineParser();
 
     bool inComment();
-    bool InCommentBlock();
+    bool inCommentBlock();
     int parse(char *line, int ignore_escaping=0); // returns -1 on error
     int getnumtokens();
     void eattoken();
@@ -40,7 +40,7 @@ class LineParser {
 
     int m_eat;
     int m_nt;
-    bool m_bCommentBlock;
+    bool m_incommentblock;
     bool m_incomment;
     char **m_tokens;
 };

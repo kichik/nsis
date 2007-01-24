@@ -22,7 +22,7 @@
 
 LineParser::LineParser(bool bCommentBlock)
 {
-  m_bCommentBlock=bCommentBlock;
+  m_incommentblock=bCommentBlock;
   m_incomment=false;
   m_nt=m_eat=0;
   m_tokens=0;
@@ -38,20 +38,20 @@ bool LineParser::inComment()
   return m_incomment;
 }
 
-bool LineParser::InCommentBlock()
+bool LineParser::inCommentBlock()
 {
-  return m_bCommentBlock;
+  return m_incommentblock;
 }
 
 int LineParser::parse(char *line, int ignore_escaping/*=0*/) // returns -1 on error
 {
   freetokens();
-  bool bPrevCB=m_bCommentBlock;
+  bool bPrevCB=m_incommentblock;
   int n=doline(line, ignore_escaping);
   if (n) return n;
   if (m_nt)
   {
-    m_bCommentBlock=bPrevCB;
+    m_incommentblock=bPrevCB;
     m_tokens=(char**)malloc(sizeof(char*)*m_nt);
     n=doline(line, ignore_escaping);
     if (n)
@@ -150,13 +150,13 @@ int LineParser::doline(char *line, int ignore_escaping/*=0*/)
   while (*line == ' ' || *line == '\t') line++;
   while (*line)
   {
-    if ( m_bCommentBlock )
+    if ( m_incommentblock )
     {
       while ( *line )
       {
         if ( *line == '*' && *(line+1) == '/' )
         {
-          m_bCommentBlock=false; // Found end of comment block
+          m_incommentblock=false; // Found end of comment block
           line+=2;
           while (*line == ' ' || *line == '\t') line++;
           break;
@@ -173,7 +173,7 @@ int LineParser::doline(char *line, int ignore_escaping/*=0*/)
       }
       if (*line == '/' && *(line+1) == '*')
       {
-        m_bCommentBlock = true;
+        m_incommentblock = true;
         line+=2;
       }
       else {
