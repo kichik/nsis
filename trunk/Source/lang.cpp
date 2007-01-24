@@ -512,14 +512,14 @@ int CEXEBuild::GenerateLangTables() {
       init_res_editor();
 
 #define ADD_FONT(id) { \
-        BYTE* dlg = res_editor->GetResource(RT_DIALOG, MAKEINTRESOURCE(id), NSIS_DEFAULT_LANG); \
+        BYTE* dlg = res_editor->GetResourceA(RT_DIALOG, MAKEINTRESOURCE(id), NSIS_DEFAULT_LANG); \
         if (dlg) { \
           CDialogTemplate td(dlg); \
           res_editor->FreeResource(dlg); \
           td.SetFont(build_font, build_font_size); \
           DWORD dwSize; \
           dlg = td.Save(dwSize); \
-          res_editor->UpdateResource(RT_DIALOG, MAKEINTRESOURCE(id), NSIS_DEFAULT_LANG, dlg, dwSize); \
+          res_editor->UpdateResourceA(RT_DIALOG, MAKEINTRESOURCE(id), NSIS_DEFAULT_LANG, dlg, dwSize); \
           delete [] dlg; \
         } \
       }
@@ -567,7 +567,7 @@ int CEXEBuild::GenerateLangTables() {
         init_res_editor();
 
 #define ADD_FONT(id) { \
-          BYTE* dlg = res_editor->GetResource(RT_DIALOG, MAKEINTRESOURCE(id), NSIS_DEFAULT_LANG); \
+          BYTE* dlg = res_editor->GetResourceA(RT_DIALOG, MAKEINTRESOURCE(id), NSIS_DEFAULT_LANG); \
           if (dlg) { \
             CDialogTemplate td(dlg,lt[i].nlf.m_uCodePage); \
             res_editor->FreeResource(dlg); \
@@ -582,7 +582,7 @@ int CEXEBuild::GenerateLangTables() {
             } \
             DWORD dwSize; \
             dlg = td.Save(dwSize); \
-            res_editor->UpdateResource(RT_DIALOG, MAKEINTRESOURCE(id+cur_offset), NSIS_DEFAULT_LANG, dlg, dwSize); \
+            res_editor->UpdateResourceA(RT_DIALOG, MAKEINTRESOURCE(id+cur_offset), NSIS_DEFAULT_LANG, dlg, dwSize); \
             delete [] dlg; \
           } \
         }
