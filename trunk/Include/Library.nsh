@@ -34,7 +34,7 @@
 !include LogicLib.nsh
 !include FileFunc.nsh
 
-!insertmacro GetParent
+!insertmacro un.GetParent
 
 ### Initialize session id (GUID)
 !macro __InstallLib_Helper_InitSession
@@ -693,7 +693,7 @@
           Delete $R0
 
           # Try moving to directory containing the file.
-          ${GetParent} $R1 $R0
+          ${un.GetParent} $R1 $R0
           GetTempFileName $R0 $R0
           Delete $R0
           Rename $R1 $R0
