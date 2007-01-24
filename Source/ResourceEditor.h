@@ -102,6 +102,11 @@ typedef struct RESOURCE_DIRECTORY {
   MY_IMAGE_RESOURCE_DIRECTORY_ENTRY Entries[1];
 } *PRESOURCE_DIRECTORY;
 
+#define GetMemberFromOptionalHeader(optionalHeader, member) \
+    ( (optionalHeader.Magic == IMAGE_NT_OPTIONAL_HDR32_MAGIC) ? \
+      &((PIMAGE_OPTIONAL_HEADER32)&optionalHeader)->member : \
+      &((PIMAGE_OPTIONAL_HEADER64)&optionalHeader)->member \
+    )
 class CResourceEditor {
 public:
   CResourceEditor(BYTE* pbPE, int iSize);
