@@ -678,7 +678,7 @@
       ${If} ${FileExists} $R1
         # File is in use, can't just delete.
         # Move file to another location before using Delete /REBOOTOK. This way, if
-        #  the user installs a new version of the DLL, it won't be deleted affter
+        #  the user installs a new version of the DLL, it won't be deleted after
         #  reboot. See bug #1097642 for more information on this.
 
         # Try moving to $TEMP.
@@ -692,7 +692,7 @@
           #  for example.
           Delete $R0
 
-          # Try moving to directory containg the file.
+          # Try moving to directory containing the file.
           ${GetParent} $R1 $R0
           GetTempFileName $R0 $R0
           Delete $R0
