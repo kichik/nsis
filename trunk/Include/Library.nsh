@@ -28,6 +28,11 @@
   !define SHCNF_IDLIST 0x0000
 !endif
 
+!include LogicLib.nsh
+!include FileFunc.nsh
+
+!insertmacro GetParent
+
 ### Initialize session id (GUID)
 !macro __InstallLib_Helper_InitSession
 
@@ -663,13 +668,45 @@
     ;------------------------
     ;Delete
 
+    Delete $R1
+
     !ifdef UNINSTALLLIB_UNINSTALL_REBOOT_PROTECTED | UNINSTALLLIB_UNINSTALL_REBOOT_NOTPROTECTED
 
-      Delete /REBOOTOK $R1
+      ${If} ${FileExists} $R1
+        # File is in use, can't just delete.
+        # Move file to another location before using Delete /REBOOTOK. This way, if
+        #  the user installs a new version of the DLL, it won't be deleted affter
+        #  reboot. See bug #1097642 for more information on this.
 
-    !else
+        # Try moving to $TEMP.
+        GetTempFileName $R0
+        Delete $R0
+        Rename $R1 $R0
 
-      Delete $R1
+        ${If} ${FileExists} $R1
+          # Still here, delete temporary file, in case the file was copied
+          #  and not deleted. This happens when moving from network drives,
+          #  for example.
+          Delete $R0
+
+          # Try moving to directory containg the file.
+          ${GetParent} $R1 $R0
+          GetTempFileName $R0 $R0
+          Delete $R0
+          Rename $R1 $R0
+
+          ${If} ${FileExists} $R1
+            # Still here, delete temporary file.
+            Delete $R0
+
+            # Give up moving, simply Delete /REBOOTOK the file.
+            StrCpy $R0 $R1
+          ${EndIf}
+        ${EndIf}
+
+        # Delete the moved file.
+        Delete /REBOOTOK $R0
+      ${EndIf}
 
     !endif
 
