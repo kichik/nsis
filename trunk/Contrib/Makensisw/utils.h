@@ -40,6 +40,7 @@ void ErrorMessage(HWND hwnd,const char *str);
 void Items(HWND hwnd, int on);
 /*void DisableItems(HWND hwnd);
 void EnableItems(HWND hwnd);*/
+bool OpenRegSettingsKey(HKEY &hKey, bool create = false);
 void RestoreWindowPos(HWND hwnd);
 void SaveWindowPos(HWND hwnd);
 void ResetObjects();

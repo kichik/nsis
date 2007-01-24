@@ -1125,10 +1125,10 @@ BOOL CALLBACK SymbolSetProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
       HKEY hKey;
 
       EnableWindow(GetDlgItem(hwndDlg, IDDEL), FALSE);
-      if (RegOpenKeyEx(REGSEC,REGKEY,0,KEY_READ,&hKey) == ERROR_SUCCESS) {
+      if (OpenRegSettingsKey(hKey)) {
         HKEY hSubKey;
 
-        if (RegCreateKey(hKey,REGSYMSUBKEY,&hSubKey) == ERROR_SUCCESS) {
+        if (RegOpenKeyEx(hKey,REGSYMSUBKEY,0,KEY_READ,&hSubKey) == ERROR_SUCCESS) {
           char subkey[1024];
           int i=0;
 
