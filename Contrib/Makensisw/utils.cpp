@@ -299,10 +299,29 @@ void CompileNSISScript() {
   g_sdata.thread=CreateThread(NULL,0,MakeNSISProc,0,0,&id);
 }
 
+static bool InternalOpenRegSettingsKey(HKEY root, HKEY &key, bool create) {
+  if (create) {
+    if (RegCreateKey(root, REGKEY, &key) == ERROR_SUCCESS)
+      return true;
+  } else {
+    if (RegOpenKeyEx(root, REGKEY, 0, KEY_READ, &key) == ERROR_SUCCESS)
+      return true;
+  }
+  return false;
+}
+
+bool OpenRegSettingsKey(HKEY &hKey, bool create) {
+  if (InternalOpenRegSettingsKey(REGSEC, hKey, create))
+    return true;
+  if (InternalOpenRegSettingsKey(REGSECDEF, hKey, create))
+    return true;
+  return false;
+}
+
 void RestoreWindowPos(HWND hwnd) {
   HKEY hKey;
   WINDOWPLACEMENT p;
-  if (RegOpenKeyEx(REGSEC,REGKEY,0,KEY_READ,&hKey) == ERROR_SUCCESS) {
+  if (OpenRegSettingsKey(hKey)) {
     DWORD l = sizeof(p);
     DWORD t;
     if ((RegQueryValueEx(hKey,REGLOC,NULL,&t,(unsigned char*)&p,&l)==ERROR_SUCCESS)&&(t == REG_BINARY)&&(l==sizeof(p))) {
@@ -352,7 +371,7 @@ void SaveWindowPos(HWND hwnd) {
   WINDOWPLACEMENT p;
   p.length = sizeof(p);
   GetWindowPlacement(hwnd, &p);
-  if (RegCreateKey(REGSEC,REGKEY,&hKey) == ERROR_SUCCESS) {
+  if (OpenRegSettingsKey(hKey, true)) {
     RegSetValueEx(hKey,REGLOC,0,REG_BINARY,(unsigned char*)&p,sizeof(p));
     RegCloseKey(hKey);
   }
@@ -372,7 +391,7 @@ void DeleteSymbolSet(char *name)
 {
   if(name) {
     HKEY hKey;
-    if (RegOpenKeyEx(REGSEC,REGKEY,0,KEY_READ,&hKey) == ERROR_SUCCESS) {
+    if (OpenRegSettingsKey(hKey)) {
       char subkey[1024];
       wsprintf(subkey,"%s\\%s",REGSYMSUBKEY,name);
       RegDeleteKey(hKey,subkey);
@@ -386,7 +405,7 @@ char** LoadSymbolSet(char *name)
   HKEY hKey;
   HKEY hSubKey;
   char **symbols = NULL;
-  if (RegOpenKeyEx(REGSEC,REGKEY,0,KEY_READ,&hKey) == ERROR_SUCCESS) {
+  if (OpenRegSettingsKey(hKey)) {
     char subkey[1024];
     if(name) {
       wsprintf(subkey,"%s\\%s",REGSYMSUBKEY,name);
@@ -448,7 +467,7 @@ void SaveSymbolSet(char *name, char **symbols)
   HKEY hKey;
   HKEY hSubKey;
   int n = 0;
-  if (RegCreateKey(REGSEC,REGKEY,&hKey) == ERROR_SUCCESS) {
+  if (OpenRegSettingsKey(hKey, true)) {
     char subkey[1024];
     if(name) {
       wsprintf(subkey,"%s\\%s",REGSYMSUBKEY,name);
@@ -815,7 +834,7 @@ void RestoreMRUList()
   HKEY hSubKey;
   int n = 0;
   int i;
-  if (RegOpenKeyEx(REGSEC,REGKEY,0,KEY_READ,&hKey) == ERROR_SUCCESS) {
+  if (OpenRegSettingsKey(hKey)) {
     if (RegCreateKey(hKey,REGMRUSUBKEY,&hSubKey) == ERROR_SUCCESS) {
       char buf[8];
       DWORD l;
@@ -843,7 +862,7 @@ void SaveMRUList()
   HKEY hKey;
   HKEY hSubKey;
   int i = 0;
-  if (RegCreateKey(REGSEC,REGKEY,&hKey) == ERROR_SUCCESS) {
+  if (OpenRegSettingsKey(hKey, true)) {
     if (RegCreateKey(hKey,REGMRUSUBKEY,&hSubKey) == ERROR_SUCCESS) {
       char buf[8];
       for(i = 0; i < MRU_LIST_SIZE; i++) {
@@ -870,7 +889,7 @@ void RestoreCompressor()
 {
   HKEY hKey;
   NCOMPRESSOR v = COMPRESSOR_SCRIPT;
-  if (RegOpenKeyEx(REGSEC,REGKEY,0,KEY_READ,&hKey) == ERROR_SUCCESS) {
+  if (OpenRegSettingsKey(hKey)) {
     char compressor_name[32];
     DWORD l = sizeof(compressor_name);
     DWORD t;
@@ -899,7 +918,7 @@ void SaveCompressor()
     n = (int)v;
   }
 
-  if (RegCreateKey(REGSEC,REGKEY,&hKey) == ERROR_SUCCESS) {
+  if (OpenRegSettingsKey(hKey, true)) {
     RegSetValueEx(hKey,REGCOMPRESSOR,0,REG_SZ,(unsigned char*)compressor_names[n],
                   lstrlen(compressor_names[n]));
     RegCloseKey(hKey);
