@@ -287,7 +287,14 @@ int CEXEBuild::doParse(const char *str)
 
   // keep waiting for more lines, if this line ends with a backslash
   if (str[0] && CharPrev(str,str+strlen(str))[0] == '\\')
+  {
+    line.parse((char*)m_linebuild.get());
+    if (line.inComment())
+    {
+      warning_fl("comment contains line-continuation character, following line will be ignored");
+    }
     return PS_OK;
+  }
 
   // parse before checking if the line should be ignored, so block comments won't be missed
   res=line.parse((char*)m_linebuild.get(),!strnicmp((char*)m_linebuild.get(),"!define",7));

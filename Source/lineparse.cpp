@@ -23,6 +23,7 @@
 LineParser::LineParser(bool bCommentBlock)
 {
   m_bCommentBlock=bCommentBlock;
+  m_incomment=false;
   m_nt=m_eat=0;
   m_tokens=0;
 }
@@ -30,6 +31,11 @@ LineParser::LineParser(bool bCommentBlock)
 LineParser::~LineParser()
 {
   freetokens();
+}
+
+bool LineParser::inComment()
+{
+  return m_incomment;
 }
 
 bool LineParser::InCommentBlock()
@@ -140,6 +146,7 @@ void LineParser::freetokens()
 int LineParser::doline(char *line, int ignore_escaping/*=0*/)
 {
   m_nt=0;
+  m_incomment = false;
   while (*line == ' ' || *line == '\t') line++;
   while (*line)
   {
@@ -159,7 +166,11 @@ int LineParser::doline(char *line, int ignore_escaping/*=0*/)
     }
     else {
       int lstate=0; // 1=", 2=`, 4='
-      if (*line == ';' || *line == '#') break;
+      if (*line == ';' || *line == '#')
+      {
+        m_incomment = true;
+        break;
+      }
       if (*line == '/' && *(line+1) == '*')
       {
         m_bCommentBlock = true;
