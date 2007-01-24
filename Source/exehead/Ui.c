@@ -955,7 +955,8 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
         addtrailingslash(dir);
 
-        if (g_header->install_directory_auto_append)
+        if (g_header->install_directory_auto_append &&
+          dir == state_install_directory) // only append to $INSTDIR (bug #1174184)
         {
           const char *post_str = ps_tmpbuf;
           GetNSISStringTT(g_header->install_directory_auto_append);
