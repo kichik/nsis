@@ -107,12 +107,16 @@ public:
   CResourceEditor(BYTE* pbPE, int iSize);
   virtual ~CResourceEditor();
 
-  bool  UpdateResource(char* szType, char* szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize);
-  bool  UpdateResource(WORD szType, char* szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize);
-  bool  UpdateResource(char* szType, WORD szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize);
   bool  UpdateResource(WORD szType, WORD szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize);
-  BYTE* GetResource(char* szType, char* szName, LANGID wLanguage);
-  int   GetResourceSize(char* szType, char* szName, LANGID wLanguage);
+  bool  UpdateResourceW(WCHAR* szType, WCHAR* szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize);
+  bool  UpdateResourceW(WORD szType, WCHAR* szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize);
+  bool  UpdateResourceW(WCHAR* szType, WORD szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize);
+  bool  UpdateResourceA(char* szType, char* szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize);
+  bool  UpdateResourceA(WORD szType, char* szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize);
+  bool  UpdateResourceA(char* szType, WORD szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize);
+  BYTE* GetResourceW(WCHAR* szType, WCHAR* szName, LANGID wLanguage);
+  BYTE* GetResourceA(char* szType, char* szName, LANGID wLanguage);
+  int   GetResourceSize(WCHAR* szType, WCHAR* szName, LANGID wLanguage);
   void  FreeResource(BYTE* pbResource);
 
   bool  AddExtraVirtualSize2PESection(const char* pszSectionName, int addsize);
@@ -160,7 +164,7 @@ public:
   void AddEntry(CResourceDirectoryEntry* entry);
   void RemoveEntry(int i);
   int  CountEntries();
-  int  Find(char* szName);
+  int  Find(WCHAR* szName);
   int  Find(WORD wId);
 
   DWORD GetSize();
@@ -176,12 +180,12 @@ private:
 
 class CResourceDirectoryEntry {
 public:
-  CResourceDirectoryEntry(char* szName, CResourceDirectory* rdSubDir);
-  CResourceDirectoryEntry(char* szName, CResourceDataEntry* rdeData);
+  CResourceDirectoryEntry(WCHAR* szName, CResourceDirectory* rdSubDir);
+  CResourceDirectoryEntry(WCHAR* szName, CResourceDataEntry* rdeData);
   virtual ~CResourceDirectoryEntry();
 
   bool HasName();
-  char* GetName();
+  WCHAR* GetName();
   int GetNameLength();
 
   WORD GetId();
@@ -195,10 +199,8 @@ public:
 
 private:
   bool m_bHasName;
-  union {
-    char* m_szName;
-    WORD m_wId;
-  };
+  WCHAR* m_szName;
+  WORD m_wId;
 
   bool m_bIsDataDirectory;
   union {
