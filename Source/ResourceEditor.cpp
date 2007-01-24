@@ -50,6 +50,10 @@ PIMAGE_NT_HEADERS CResourceEditor::GetNTHeaders(BYTE* pbPE) {
   if (ntHeaders->Signature != IMAGE_NT_SIGNATURE)
     throw runtime_error("PE file missing NT signature");
 
+  // Make sure this is a 32-bit PE
+  if (ntHeaders->OptionalHeader.Magic != IMAGE_NT_OPTIONAL_HDR32_MAGIC)
+    throw runtime_error("Unsupported PE format");
+
   return ntHeaders;
 }
 
