@@ -95,18 +95,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
 
   mystrcpy(g_caption,_LANG_GENERIC_ERROR);
 
-  GetTempPath(NSIS_MAX_STRLEN, state_temp_dir);
-  if (!ValidateTempDir())
-  {
-    GetWindowsDirectory(state_temp_dir, NSIS_MAX_STRLEN - 5); // leave space for \Temp
-    mystrcat(state_temp_dir, "\\Temp");
-    if (!ValidateTempDir())
-    {
-      goto end;
-    }
-  }
-  DeleteFile(state_command_line);
-
   mystrcpy(state_command_line, GetCommandLine());
 
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
@@ -164,6 +152,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
     if (*cmdline == '\"')
       cmdline++;
   }
+
+  GetTempPath(NSIS_MAX_STRLEN, state_temp_dir);
+  if (!ValidateTempDir())
+  {
+    GetWindowsDirectory(state_temp_dir, NSIS_MAX_STRLEN - 5); // leave space for \Temp
+    mystrcat(state_temp_dir, "\\Temp");
+    if (!ValidateTempDir())
+    {
+      goto end;
+    }
+  }
+  DeleteFile(state_command_line);
 
   m_Err = loadHeaders(cl_flags);
   if (m_Err) goto end;
