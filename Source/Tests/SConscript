@@ -9,6 +9,7 @@ tests = Split("""
 	ResourceEditor.cpp
 	specmatch.cpp
 	textrunner.cpp
+	winchar.cpp
 """)
 
 required = Split("""
@@ -18,6 +19,7 @@ required = Split("""
 	mmap.cpp
 	ResourceEditor.cpp
 	util.cpp
+	winchar.cpp
 """)
 
 required_exehead = Split("""
