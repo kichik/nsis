@@ -167,10 +167,10 @@ typedef DWORDLONG ULONGLONG,*PULONGLONG;
 #    define FIELD_OFFSET(t,f) ((LONG)&(((t*)0)->f))
 #  endif
 #  ifndef MAKEINTRESOURCEA
-#    define MAKEINTRESOURCEA(i) ((LPSTR)((DWORD)((WORD)(i))))
+#    define MAKEINTRESOURCEA(i) ((LPSTR)((ULONG_PTR)((WORD)(i))))
 #  endif
 #  ifndef MAKEINTRESOURCEW
-#    define MAKEINTRESOURCEW(i) ((LPWSTR)((DWORD)((WORD)(i))))
+#    define MAKEINTRESOURCEW(i) ((LPWSTR)((ULONG_PTR)((WORD)(i))))
 #  endif
 #  ifndef MAKEINTRESOURCE
 #    define MAKEINTRESOURCE MAKEINTRESOURCEA
