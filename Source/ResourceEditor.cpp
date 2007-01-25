@@ -319,7 +319,7 @@ BYTE* CResourceEditor::GetResourceA(char* szType, char* szName, LANGID wLanguage
 
 // Returns the size of the requested resource
 // Returns -1 if the requested resource can't be found
-int CResourceEditor::GetResourceSize(WCHAR* szType, WCHAR* szName, LANGID wLanguage) {
+int CResourceEditor::GetResourceSizeW(WCHAR* szType, WCHAR* szName, LANGID wLanguage) {
   CResourceDirectory* nameDir = 0;
   CResourceDirectory* langDir = 0;
   CResourceDataEntry* data = 0;
@@ -343,6 +343,18 @@ int CResourceEditor::GetResourceSize(WCHAR* szType, WCHAR* szName, LANGID wLangu
     return (int) data->GetSize();
   else
     return -1;
+}
+
+int CResourceEditor::GetResourceSizeA(char* szType, char* szName, LANGID wLanguage) {
+  WCHAR* szwType = ResStringToUnicode(szType);
+  WCHAR* szwName = ResStringToUnicode(szName);
+
+  int result = GetResourceSizeW(szwType, szwName, wLanguage);
+
+  FreeUnicodeResString(szwType);
+  FreeUnicodeResString(szwName);
+
+  return result;
 }
 
 void CResourceEditor::FreeResource(BYTE* pbResource)
