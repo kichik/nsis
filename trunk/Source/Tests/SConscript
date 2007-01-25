@@ -120,6 +120,7 @@ if cppunit:
 
 	# exehead files special treatment
 	exehead_env = env.Clone()
+	exehead_env.Append(CCFLAGS = ['$C_FLAG'])
 	exehead_env.Append(
 		CPPDEFINES = [
 			'EXEHEAD',
