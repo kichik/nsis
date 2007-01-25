@@ -219,7 +219,7 @@ bool CResourceEditor::UpdateResourceW(WCHAR* szType, WCHAR* szName, LANGID wLang
 
 static WCHAR* ResStringToUnicode(const char *szString) {
   if (IS_INTRESOURCE(szString))
-    return MAKEINTRESOURCEW(szString);
+    return MAKEINTRESOURCEW((ULONG_PTR)szString);
   else
     return winchar_fromansi(szString);
 }
