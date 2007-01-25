@@ -18,6 +18,7 @@
 
 #include "Platform.h"
 #include "util.h"
+#include "winchar.h"
 
 #ifdef NSIS_SUPPORT_VERSION_INFO
 
@@ -131,19 +132,6 @@ void CResourceVersionInfo::SetProductVersion(int HighPart, int LowPart)
     m_FixedInfo.dwProductVersionMS = HighPart;
 }
 
-// Util function - must be freeded
-WCHAR* StrToWstrAlloc(const char* istr, int codepage)
-{
-  int strSize = MultiByteToWideChar(codepage, 0, istr, -1, 0, 0);
-  WCHAR* wstr = new WCHAR[strSize];
-  if (!MultiByteToWideChar(codepage, 0, istr, -1, wstr, strSize))
-  {
-    delete [] wstr;
-    wstr = NULL;
-  }
-  return wstr;
-}
-
 int GetVersionHeader (LPSTR &p, WORD &wLength, WORD &wValueLength, WORD &wType)
 {
     WCHAR *szKey;
@@ -202,7 +190,7 @@ void CResourceVersionInfo::ExportToStream(GrowBuf &strm, int Index)
     WCHAR *KeyName, *KeyValue;
 
     strm.resize(0);
-    KeyName = StrToWstrAlloc("VS_VERSION_INFO", CP_ACP);
+    KeyName = winchar_fromansi("VS_VERSION_INFO");
     SaveVersionHeader (strm, 0, sizeof (VS_FIXEDFILEINFO), 0, KeyName, &m_FixedInfo);
     delete [] KeyName;
     
