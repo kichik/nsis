@@ -15,6 +15,7 @@
  */
 
 #include "DialogTemplate.h"
+#include "winchar.h"
 #include <cassert> // for assert(3)
 #ifndef _WIN32
 #  include "util.h" // for Unicode conversion functions
@@ -58,21 +59,7 @@ void ReadVarLenArr(LPBYTE &seeker, char* &readInto, unsigned int uCodePage) {
     break;
   default:
     {
-      int iStrLen = WideCharToMultiByte(uCodePage, 0, (WCHAR*)arr, -1, 0, 0, 0, 0);
-      if (iStrLen)
-      {
-        readInto = new char[iStrLen];
-        if (!WideCharToMultiByte(uCodePage, 0, (WCHAR*)arr, -1, readInto, iStrLen, 0, 0))
-        {
-          delete [] readInto;
-          throw runtime_error("ReadVarLenArr - Unicode conversion failed.");
-        }
-      }
-      else
-      {
-        throw runtime_error("ReadVarLenArr - Unicode conversion failed.");
-      }
-
+      readInto = winchar_toansi(arr, uCodePage);
       PWCHAR wseeker = PWCHAR(seeker);
       while (*wseeker++);
       seeker = LPBYTE(wseeker);
