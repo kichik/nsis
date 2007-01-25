@@ -130,7 +130,7 @@ const char * NSISCALL loadHeaders(int cl_flags)
 
   HANDLE db_hFile;
 
-  GetModuleFileName(g_hInstance, state_exe_directory, NSIS_MAX_STRLEN);
+  GetModuleFileName(NULL, state_exe_directory, NSIS_MAX_STRLEN);
 
   g_db_hFile = db_hFile = myOpenFile(state_exe_directory, GENERIC_READ, OPEN_EXISTING);
   if (db_hFile == INVALID_HANDLE_VALUE)
