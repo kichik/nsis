@@ -1,4 +1,4 @@
-#include "../exehead/util.h"
+#include "../Platform.h"
 
 void NSISCALL mini_memcpy(void *out, const void *in, int len)
 {
