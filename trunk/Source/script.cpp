@@ -4708,7 +4708,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         {
           CResourceEditor *dllre = new CResourceEditor(dll, len);
           LPBYTE ver = dllre->GetResourceA(VS_FILE_INFO, MAKEINTRESOURCE(VS_VERSION_INFO), 0);
-          int versize = dllre->GetResourceASize(VS_FILE_INFO, MAKEINTRESOURCE(VS_VERSION_INFO), 0);
+          int versize = dllre->GetResourceSizeA(VS_FILE_INFO, MAKEINTRESOURCE(VS_VERSION_INFO), 0);
 
           if (ver)
           {
