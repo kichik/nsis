@@ -4,6 +4,14 @@ OutFile "nsExec Test.exe"
 
 ShowInstDetails show
 
+Section "Silent MakeNSIS"
+	nsExec::Exec '"${NSISDIR}\makensis.exe"'
+	Pop $0 # return value/error/timeout
+	DetailPrint ""
+	DetailPrint "       Return value: $0"
+	DetailPrint ""
+SectionEnd
+
 Section "MakeNSIS commands help"
 	nsExec::ExecToLog '"${NSISDIR}\makensis.exe" /CMDHELP'
 	Pop $0 # return value/error/timeout
