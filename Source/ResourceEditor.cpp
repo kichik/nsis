@@ -217,24 +217,11 @@ bool CResourceEditor::UpdateResourceW(WCHAR* szType, WCHAR* szName, LANGID wLang
   return true;
 }
 
-static WCHAR* CreateUnicodeString(const char* szString) {
-  int iLen = MultiByteToWideChar(CP_ACP, 0, szString, -1, 0, 0);
-  if (iLen == 0)
-    throw runtime_error("Unicode conversion failed");
-
-  WCHAR* szwString = new WCHAR[iLen + 1];
-
-  if (MultiByteToWideChar(CP_ACP, 0, szString, -1, szwString, iLen + 1) == 0)
-    throw runtime_error("Unicode conversion failed");
-
-  return szwString;
-}
-
 static WCHAR* ResStringToUnicode(const char *szString) {
   if (IS_INTRESOURCE(szString))
     return MAKEINTRESOURCEW(szString);
   else
-    return CreateUnicodeString(szString);
+    return winchar_fromansi(szString);
 }
 
 static void FreeUnicodeResString(WCHAR* szwString) {
