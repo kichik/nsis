@@ -257,8 +257,6 @@ extern void BZ2_hbMakeCodeLengths ( UChar*, Int32*, Int32, Int32 );
 
 #else//EXEHEAD
 
-#include "../exehead/util.h"
-
 /*-- states for decompression. --*/
 
 #define BZ_X_IDLE        1
