@@ -80,15 +80,15 @@ size_t winchar_strlen(WCHAR *ws)
 
 int winchar_strcmp(const WCHAR *ws1, const WCHAR *ws2)
 {
-  WCHAR diff = 0;
+  int diff = 0;
 
   do
   {
-    diff = *ws1 - *ws2;
+    diff = static_cast<int>(*ws1) - static_cast<int>(*ws2);
   }
-  while (*ws1++ && *ws2++);
+  while (*ws1++ && *ws2++ && !diff);
 
-  return static_cast<int>(diff);
+  return diff;
 }
 
 int winchar_stoi(const WCHAR *ws)
