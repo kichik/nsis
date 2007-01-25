@@ -21,7 +21,7 @@
    subject to change. Applications should only use zlib.h.
  */
 
-/* @(#) $Id: ZUTIL.H,v 1.4 2006/10/28 19:45:02 joostverburg Exp $ */
+/* @(#) $Id: ZUTIL.H,v 1.5 2007/01/13 17:28:23 kichik Exp $ */
 
 #ifndef _Z_UTIL_H
 #define _Z_UTIL_H
@@ -59,28 +59,26 @@ typedef unsigned long  ulg;
 
 
 #ifdef EXEHEAD
-#include "../exehead/util.h"
-#define zmemcpy mini_memcpy
+#  ifdef _WIN32
+#    include "../exehead/util.h"
+#    define zmemcpy mini_memcpy
+#  else
+#    define zmemcpy memcpy
+#  endif
 #else
-#define zmemcpy memcpy
-#define zmemzero(a,b) memset(a,0,b)
+#  define zmemcpy memcpy
+#  define zmemzero(a,b) memset(a,0,b)
 #endif
 
-#  define Assert(cond,msg)
-#  define Trace(x)
-#  define Tracev(x)
-#  define Tracevv(x)
-#  define Tracec(c,x)
-#  define Tracecv(c,x)
+#define Assert(cond,msg)
+#define Trace(x)
+#define Tracev(x)
+#define Tracevv(x)
+#define Tracec(c,x)
+#define Tracecv(c,x)
 
-#ifdef EXEHEAD
-#include "../exehead/util.h"
-#define ZALLOC(strm, items, size) my_GlobalAlloc((items)*(size))
-#define ZFREE(strm, addr)  { if (addr) GlobalFree(addr); }
-#else   // def EXEHEAD
 #define ZALLOC(strm, items, size) malloc((items)*(size))
 #define ZFREE(strm, addr)  { if (addr) free(addr); }
-#endif  // def EXEHEAD
 #define TRY_FREE(s, p) { ZFREE(s, p); }
 #define ERR_RETURN(strm,err) return (err)
 

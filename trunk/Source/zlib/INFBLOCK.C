@@ -11,11 +11,14 @@
  * warranty.
  */
 
+#include "../Platform.h"
 #include "../exehead/config.h"
-#ifdef NSIS_COMPRESS_USE_ZLIB
 
 #include "ZUTIL.H"
 
+#ifndef min
+#  define min(x,y) ((x<y)?x:y)
+#endif
 
 /* defines for inflate input/output */
 /*   update pointers and return */
@@ -705,6 +708,3 @@ int ZEXPORT inflate(z_streamp z)
 #undef n
 #undef q
 #undef m
-
-
-#endif
