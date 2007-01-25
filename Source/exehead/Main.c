@@ -216,7 +216,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
         if (m_Err) // not done yet
         {
           // get current name
-          int l=GetModuleFileName(g_hInstance,ibuf,sizeof(ibuf));
+          int l=GetModuleFileName(NULL,ibuf,sizeof(ibuf));
           // check if it is ?Au_.exe - if so, fuck it
           if (!lstrcmpi(ibuf+l-(sizeof(s)-2),s+1)) break;
 
