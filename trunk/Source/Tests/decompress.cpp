@@ -23,8 +23,8 @@ extern "C" {
   }                                               \
                                                   \
   name::~name() {                                 \
-    delete vs;                                    \
-    vs = NULL;                                    \
+    delete (type *) vs;                           \
+    vs = 0;                                       \
   }                                               \
                                                   \
   void name::setNextIn(void *buffer, int size) {  \
