@@ -202,7 +202,7 @@ void CResourceVersionInfo::ExportToStream(GrowBuf &strm, int Index)
       LANGID langid = m_ChildStringLists.get_lang(Index);
       char Buff[16];
       sprintf(Buff, "%04x%04x", langid, codepage);
-      KeyName = StrToWstrAlloc(Buff, CP_ACP);
+      KeyName = winchar_fromansi(Buff, CP_ACP);
       SaveVersionHeader (stringInfoStream, 0, 0, 0, KeyName, &ZEROS);
       delete [] KeyName;
       
@@ -211,8 +211,8 @@ void CResourceVersionInfo::ExportToStream(GrowBuf &strm, int Index)
         PadStream (stringInfoStream);
         
         p = stringInfoStream.getlen();
-        KeyName = StrToWstrAlloc(pChildStrings->getname(i), codepage);
-        KeyValue = StrToWstrAlloc(pChildStrings->getvalue(i), codepage);
+        KeyName = winchar_fromansi(pChildStrings->getname(i), codepage);
+        KeyValue = winchar_fromansi(pChildStrings->getvalue(i), codepage);
         SaveVersionHeader (stringInfoStream, 0, WCStrLen(KeyValue), 1, KeyName, (void*)KeyValue);
         delete [] KeyName;
         delete [] KeyValue;
@@ -226,7 +226,7 @@ void CResourceVersionInfo::ExportToStream(GrowBuf &strm, int Index)
       
       PadStream (strm);
       p = strm.getlen();
-      KeyName = StrToWstrAlloc("StringFileInfo", CP_ACP);
+      KeyName = winchar_fromansi("StringFileInfo", CP_ACP);
       SaveVersionHeader (strm, 0, 0, 0, KeyName, &ZEROS);
       delete [] KeyName;
       strm.add (stringInfoStream.get(), stringInfoStream.getlen());
@@ -240,13 +240,13 @@ void CResourceVersionInfo::ExportToStream(GrowBuf &strm, int Index)
     {
       PadStream (strm);
       p = strm.getlen();
-      KeyName = StrToWstrAlloc("VarFileInfo", CP_ACP);
+      KeyName = winchar_fromansi("VarFileInfo", CP_ACP);
       SaveVersionHeader (strm, 0, 0, 0, KeyName, &ZEROS);
       delete [] KeyName;
       PadStream (strm);
       
       p1 = strm.getlen();
-      KeyName = StrToWstrAlloc("Translation", CP_ACP);
+      KeyName = winchar_fromansi("Translation", CP_ACP);
       SaveVersionHeader (strm, 0, 0, 0, KeyName, &ZEROS);
       delete [] KeyName;
       
