@@ -48,8 +48,8 @@ char *ValidateTempDir()
     return NULL;
   addtrailingslash(state_temp_dir);
   CreateDirectory(state_temp_dir, NULL);
-  // state_command_line is used as a temp var here
-  return my_GetTempFileName(state_command_line, state_temp_dir);
+  // state_language is used as a temp var here
+  return my_GetTempFileName(state_language, state_temp_dir);
 }
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, int nCmdShow)
@@ -163,7 +163,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
       goto end;
     }
   }
-  DeleteFile(state_command_line);
+  DeleteFile(state_language);
 
   m_Err = loadHeaders(cl_flags);
   if (m_Err) goto end;
