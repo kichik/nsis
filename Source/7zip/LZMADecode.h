@@ -23,14 +23,15 @@
  ***********************/
 
 #include "../Platform.h"
-#include "../exehead/util.h"
 
 /* #define _LZMA_PROB32 */
 /* It can increase speed on some 32-bit CPUs, 
    but memory usage will be doubled in that case */
 
-#define lzmaalloc(bytes) GlobalAlloc(GPTR,bytes)
-#define lzmafree GlobalFree
+#ifdef _WIN32
+#  define lzmaalloc(bytes) GlobalAlloc(GPTR,bytes)
+#  define lzmafree GlobalFree
+#endif
 
 /***********************
  *  Configuration End  *
