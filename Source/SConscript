@@ -23,6 +23,7 @@ makensis_files = Split("""
 	strlist.cpp
 	tokens.cpp
 	util.cpp
+	winchar.cpp
 	writer.cpp
 """)
 
