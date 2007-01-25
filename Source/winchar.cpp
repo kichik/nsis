@@ -6,28 +6,29 @@
 
 using std::runtime_error;
 
-WCHAR *winchar_fromansi(const char* s) {
-  int l = MultiByteToWideChar(CP_ACP, 0, s, -1, 0, 0);
+WCHAR *winchar_fromansi(const char* s, unsigned int codepage/*=CP_ACP*/)
+{
+  int l = MultiByteToWideChar(codepage, 0, s, -1, 0, 0);
   if (l == 0)
     throw runtime_error("Unicode conversion failed");
 
   WCHAR *ws = new WCHAR[l + 1];
 
-  if (MultiByteToWideChar(CP_ACP, 0, s, -1, ws, l + 1) == 0)
+  if (MultiByteToWideChar(codepage, 0, s, -1, ws, l + 1) == 0)
     throw runtime_error("Unicode conversion failed");
 
   return ws;
 }
 
-char *winchar_toansi(const WCHAR* ws)
+char *winchar_toansi(const WCHAR* ws, unsigned int codepage/*=CP_ACP*/)
 {
-  int l = WideCharToMultiByte(CP_ACP, 0, ws, -1, 0, 0, 0, 0);
+  int l = WideCharToMultiByte(codepage, 0, ws, -1, 0, 0, 0, 0);
   if (l == 0)
     throw runtime_error("Unicode conversion failed");
 
   char *s = new char[l + 1];
 
-  if (WideCharToMultiByte(CP_ACP, 0, ws, -1, s, l + 1, 0, 0) == 0)
+  if (WideCharToMultiByte(codepage, 0, ws, -1, s, l + 1, 0, 0) == 0)
     throw runtime_error("Unicode conversion failed");
 
   return s;
