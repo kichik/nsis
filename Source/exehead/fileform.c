@@ -166,14 +166,18 @@ const char * NSISCALL loadHeaders(int cl_flags)
            h.nsinst[0] == FH_INT1
          )
       {
-        if (h.length_of_all_following_data > left)
-          return _LANG_INVALIDCRC;
-
         g_filehdrsize = m_pos;
 
-#if defined(NSIS_CONFIG_CRC_SUPPORT) || (defined(NSIS_CONFIG_SILENT_SUPPORT) && defined(NSIS_CONFIG_VISIBLE_SUPPORT))
+#if defined(NSIS_CONFIG_CRC_SUPPORT) || defined(NSIS_CONFIG_SILENT_SUPPORT)
         cl_flags |= h.flags;
 #endif
+
+#ifdef NSIS_CONFIG_SILENT_SUPPORT
+        g_exec_flags.silent |= cl_flags & FH_FLAGS_SILENT;
+#endif
+
+        if (h.length_of_all_following_data > left)
+          return _LANG_INVALIDCRC;
 
 #ifdef NSIS_CONFIG_CRC_SUPPORT
         if ((cl_flags & FH_FLAGS_FORCE_CRC) == 0)
@@ -281,13 +285,6 @@ const char * NSISCALL loadHeaders(int cl_flags)
   }
 
   header = g_header = data;
-
-#ifdef NSIS_CONFIG_SILENT_SUPPORT
-  if (cl_flags & FH_FLAGS_SILENT)
-    header->flags |= CH_FLAGS_SILENT;
-
-  g_exec_flags.silent = header->flags & (CH_FLAGS_SILENT | CH_FLAGS_SILENT_LOG);
-#endif
 
   g_flags = header->flags;
 
