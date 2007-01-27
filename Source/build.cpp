@@ -2990,6 +2990,8 @@ void CEXEBuild::set_uninstall_mode(int un)
       cur_strlist=&ubuild_strlist;
       cur_langtables=&ubuild_langtables;
       cur_ctlcolors=&ubuild_ctlcolors;
+
+      definedlist.add("__UNINSTALL__");
     }
     else
     {
@@ -3005,6 +3007,8 @@ void CEXEBuild::set_uninstall_mode(int un)
       cur_strlist=&build_strlist;
       cur_langtables=&build_langtables;
       cur_ctlcolors=&build_ctlcolors;
+
+      definedlist.del("__UNINSTALL__");
     }
 
     SWAP(db_opt_save_u,db_opt_save,int);
@@ -3410,7 +3414,6 @@ void CEXEBuild::set_code_type_predefines(const char *value)
   definedlist.del("__FUNCTION__");
   definedlist.del("__PAGEEX__");
   definedlist.del("__GLOBAL__");
-  definedlist.del("__UNINSTALL__");
 
   switch (GetCurrentTokenPlace())
   {
@@ -3425,11 +3428,6 @@ void CEXEBuild::set_code_type_predefines(const char *value)
     break;
     default:
       definedlist.add("__GLOBAL__");
-  }
-
-  if (uninstall_mode)
-  {
-    definedlist.add("__UNINSTALL__");
   }
 }
 
