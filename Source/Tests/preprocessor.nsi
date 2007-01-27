@@ -144,41 +144,41 @@ SectionEnd
 
 # test scopes
 
-!macro TEST_SCOPES scope global section function pageex uninstall
+!macro TEST_SCOPE scope def should_exist
 
-  !if${global} __GLOBAL__
-    !error "__GLOBAL__ error in ${scope} scope"
-  !endif
-
-  !if${section} __SECTION__
-    !error "__SECTION__ error in ${scope} scope"
-  !endif
-
-  !if${function} __FUNCTION__
-    !error "__FUNCTION__ error in ${scope} scope"
-  !endif
-
-  !if${uninstall} __UNINSTALL__
-    !error "__UNINSTALL__ error in ${scope} scope"
-  !endif
-
-  !if${pageex} __PAGEEX__
-    !error "__PAGEEX__ error in ${scope} scope"
+  !if ${should_exist} == y
+    !ifndef ${def}
+      !error "${def} not defined in ${scope} scope"
+    !endif
+  !else
+    !ifdef ${def}
+      !error "${def} defined in ${scope} scope"
+    !endif
   !endif
 
 !macroend
 
-!insertmacro TEST_SCOPES "global" ndef def def def def
+!macro TEST_SCOPES scope global section function pageex uninstall
+
+  !insertmacro TEST_SCOPE "${scope}" __GLOBAL__    ${global}
+  !insertmacro TEST_SCOPE "${scope}" __SECTION__   ${section}
+  !insertmacro TEST_SCOPE "${scope}" __FUNCTION__  ${function}
+  !insertmacro TEST_SCOPE "${scope}" __PAGEEX__    ${pageex}
+  !insertmacro TEST_SCOPE "${scope}" __UNINSTALL__ ${uninstall}
+
+!macroend
+
+!insertmacro TEST_SCOPES "global" y n n n n
 
 Section test
-!insertmacro TEST_SCOPES "section" def ndef def def def
+!insertmacro TEST_SCOPES "section" n y n n n
 !if ${__SECTION__} != test
   !error "invalid __SECTION__ value"
 !endif
 SectionEnd
 
 Section un.test
-!insertmacro TEST_SCOPES "uninstall section" def ndef def def ndef
+!insertmacro TEST_SCOPES "uninstall section" n y n n y
 !if ${__SECTION__} != test
   !error "invalid __SECTION__ value"
 !endif
@@ -186,7 +186,7 @@ SectionEnd
 
 Function test
 Call test # avoid warning
-!insertmacro TEST_SCOPES "function" def def ndef def def
+!insertmacro TEST_SCOPES "function" n n y n n
 !if ${__FUNCTION__} != test
   !error "invalid __FUNCTION__ value"
 !endif
@@ -194,21 +194,21 @@ FunctionEnd
 
 Function un.test
 Call un.test # avoid warning
-!insertmacro TEST_SCOPES "uninstall function" def def ndef def ndef
+!insertmacro TEST_SCOPES "uninstall function" n n y n y
 !if ${__FUNCTION__} != test
   !error "invalid __FUNCTION__ value"
 !endif
 FunctionEnd
 
 PageEx instfiles
-!insertmacro TEST_SCOPES "pageex" def def def ndef def
+!insertmacro TEST_SCOPES "pageex" n n n y n
 PageExEnd
 
 PageEx un.instfiles
-!insertmacro TEST_SCOPES "uninstall pageex" def def def ndef ndef
+!insertmacro TEST_SCOPES "uninstall pageex" n n n y y
 PageExEnd
 
-!insertmacro TEST_SCOPES "global" ndef def def def def
+!insertmacro TEST_SCOPES "global" y n n n n
 
 !else
 
