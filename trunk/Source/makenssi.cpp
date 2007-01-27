@@ -130,6 +130,8 @@ static void print_usage()
          "    " OPT_STR "HDRINFO prints information about what options makensis was compiled with\n"
          "    " OPT_STR "LICENSE prints the makensis software license\n"
          "    " OPT_STR "VERSION prints the makensis version and exits\n"
+         "    " OPT_STR "Px sets the compiler process priority, where x is 5=realtime,4=high,\n"
+         "    "         "    3=above normal,2=normal,1=below normal,0=idle\n"
          "    " OPT_STR "Vx verbosity where x is 4=all,3=no script,2=no info,1=no warnings,0=none\n"
          "    " OPT_STR "Ofile specifies a text file to log compiler output (default is stdout)\n"
          "    " OPT_STR "PAUSE pauses after execution\n"
@@ -386,6 +388,39 @@ int main(int argc, char **argv)
       {
         print_stub_info(build);
         nousage++;
+      }
+      else if ((argv[argpos][1]=='P' || argv[argpos][1]=='p') &&
+               argv[argpos][2] >= '0' && argv[argpos][2] <= '5' && !argv[argpos][3])
+      {
+#ifdef _WIN32
+        // priority setting added 01-2007 by Comm@nder21
+        int p=argv[argpos][2]-'0';
+        HANDLE hProc = GetCurrentProcess();
+        
+        struct
+        {
+          DWORD priority;
+          DWORD fallback;
+        } classes[] = {
+          {IDLE_PRIORITY_CLASS,         IDLE_PRIORITY_CLASS},
+          {BELOW_NORMAL_PRIORITY_CLASS, IDLE_PRIORITY_CLASS},
+          {NORMAL_PRIORITY_CLASS,       NORMAL_PRIORITY_CLASS},
+          {ABOVE_NORMAL_PRIORITY_CLASS, HIGH_PRIORITY_CLASS},
+          {HIGH_PRIORITY_CLASS,         HIGH_PRIORITY_CLASS},
+          {REALTIME_PRIORITY_CLASS,     REALTIME_PRIORITY_CLASS}
+        };
+
+        if (SetPriorityClass(hProc, classes[p].priority) == FALSE)
+        {
+          SetPriorityClass(hProc, classes[p].fallback);
+        }
+
+        if (p == 5)
+          build.warning("makensis is running in REALTIME priority mode!");
+
+#else
+        build.warning(OPT_STR "Px is disabled for non Win32 platforms.");
+#endif
       }
       else break;
     }
