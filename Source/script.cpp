@@ -305,7 +305,7 @@ int CEXEBuild::doParse(const char *str)
   {
     bool ignore_line = cur_ifblock && (cur_ifblock->ignore || cur_ifblock->inherited_ignore);
     char first_char = *(char *) m_linebuild.get();
-    if (ignore_line && first_char!='!')
+    if (ignore_line && (first_char!='!' || !is_valid_token(line.gettoken_str(0))))
     {
       m_linebuild.resize(0);
       return PS_OK;

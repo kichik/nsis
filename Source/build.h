@@ -140,6 +140,7 @@ class CEXEBuild {
     void update_exehead(const unsigned char *new_exehead, size_t new_size);
 
     // tokens.cpp
+    bool is_valid_token(char *s);
     int get_commandtoken(char *s, int *np, int *op, int *pos);
     int GetCurrentTokenPlace();
     int IsTokenPlacedRight(int pos, char *tok);
