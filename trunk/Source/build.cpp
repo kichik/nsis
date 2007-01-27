@@ -338,6 +338,8 @@ CEXEBuild::CEXEBuild() :
   m_ShellConstants.add("RESOURCES", CSIDL_RESOURCES, CSIDL_RESOURCES);
   m_ShellConstants.add("RESOURCES_LOCALIZED", CSIDL_RESOURCES_LOCALIZED, CSIDL_RESOURCES_LOCALIZED);
   m_ShellConstants.add("CDBURN_AREA", CSIDL_CDBURN_AREA, CSIDL_CDBURN_AREA);
+
+  set_code_type_predefines();
 }
 
 void CEXEBuild::initialize(const char *makensis_path)
@@ -937,10 +939,10 @@ int CEXEBuild::add_function(const char *funname)
   for (x = 0; x < n; x ++)
   {
     if (tmp[x].name_ptr == addr)
-  {
-    ERROR_MSG("Error: Function named \"%s\" already exists.\n",funname);
-    return PS_ERROR;
-  }
+    {
+      ERROR_MSG("Error: Function named \"%s\" already exists.\n",funname);
+      return PS_ERROR;
+    }
   }
 
   cur_functions->resize((n+1)*sizeof(section));
@@ -953,6 +955,12 @@ int CEXEBuild::add_function(const char *funname)
   build_cursection->flags=0;
   build_cursection->size_kb=0;
   memset(build_cursection->name,0,sizeof(build_cursection->name));
+  
+  if (uninstall_mode)
+    set_code_type_predefines(funname+3);
+  else
+    set_code_type_predefines(funname);
+  
   return PS_OK;
 }
 
@@ -970,6 +978,8 @@ int CEXEBuild::function_end()
   build_cursection=NULL;
 
   set_uninstall_mode(0);
+  
+  set_code_type_predefines();
   return PS_OK;
 }
 
@@ -1023,6 +1033,8 @@ int CEXEBuild::section_end()
   build_cursection=NULL;
   if (!sectiongroup_open_cnt)
     set_uninstall_mode(0);
+  
+  set_code_type_predefines();
   return PS_OK;
 }
 
@@ -1146,7 +1158,9 @@ int CEXEBuild::add_section(const char *secname, const char *defname, int expand/
     else
       sectiongroup_open_cnt++;
   }
-
+  
+  set_code_type_predefines(name);
+    
   return PS_OK;
 }
 
@@ -1560,7 +1574,8 @@ int CEXEBuild::add_page(int type)
   cur_page = (page *)cur_pages->get() + cur_header->blocks[NB_PAGES].num++;
 
   cur_page_type = type;
-
+  
+  set_code_type_predefines();
   return PS_OK;
 }
 
@@ -1568,6 +1583,7 @@ int CEXEBuild::page_end()
 {
   cur_page = 0;
 
+  set_code_type_predefines();
   return PS_OK;
 }
 #endif
@@ -3386,5 +3402,34 @@ void CEXEBuild::update_exehead(const unsigned char *new_exehead, size_t new_size
 
   // zero rest of exehead
   memset(m_exehead + new_size, 0, m_exehead_size - new_size);
+}
+
+void CEXEBuild::set_code_type_predefines(const char *value)
+{
+  definedlist.del("__SECTION__");
+  definedlist.del("__FUNCTION__");
+  definedlist.del("__PAGEEX__");
+  definedlist.del("__GLOBAL__");
+  definedlist.del("__UNINSTALL__");
+
+  switch (GetCurrentTokenPlace())
+  {
+    case TP_SEC:
+      definedlist.add("__SECTION__", value==NULL?"":value);
+    break;
+    case TP_FUNC:
+      definedlist.add("__FUNCTION__", value==NULL?"":value);
+    break;
+    case TP_PAGEEX:
+      definedlist.add("__PAGEEX__");
+    break;
+    default:
+      definedlist.add("__GLOBAL__");
+  }
+
+  if (uninstall_mode)
+  {
+    definedlist.add("__UNINSTALL__");
+  }
 }
 

@@ -21,15 +21,6 @@
 #include "build.h"
 #include "tokens.h"
 
-// token placement
-#define TP_SEC    1
-#define TP_FUNC   2
-#define TP_CODE   (TP_SEC | TP_FUNC)
-#define TP_GLOBAL 4
-#define TP_PAGEEX 8
-#define TP_PG     (TP_GLOBAL | TP_PAGEEX)
-#define TP_ALL    (TP_CODE | TP_PG)
-
 typedef struct 
 {
   int id;
@@ -320,69 +311,77 @@ int CEXEBuild::get_commandtoken(char *s, int *np, int *op, int *pos)
   return -1;
 }
 
+int CEXEBuild::GetCurrentTokenPlace()
+{
+  if (build_cursection)
+  {
+    if (build_cursection_isfunc)
+    {
+      return TP_FUNC;
+    }
+    else
+    {
+      return TP_SEC;
+    }
+  }
+
+  if (cur_page)
+    return TP_PAGEEX;
+
+  return TP_GLOBAL;
+}
+
 int CEXEBuild::IsTokenPlacedRight(int pos, char *tok)
 {
   if ((unsigned int) pos > (sizeof(tokenlist) / sizeof(tokenType)))
     return PS_OK;
 
   int tp = tokenlist[pos].placement;
-  if (build_cursection && !build_cursection_isfunc)
-  {
-    // section
-    if (tp & TP_SEC)
-      return PS_OK;
-    ERROR_MSG("Error: command %s not valid in section\n", tok);
-    return PS_ERROR;
+  int cp = GetCurrentTokenPlace();
+  if (tp & cp) {
+    return PS_OK;
   }
-  else if (build_cursection && build_cursection_isfunc)
-  {
-    // function
-    if (tp & TP_FUNC)
-      return PS_OK;
-    ERROR_MSG("Error: command %s not valid in function\n", tok);
-    return PS_ERROR;
-  }
-  else if (cur_page)
-  {
-    // pageex
-    if (tp & TP_PAGEEX)
-      return PS_OK;
-    ERROR_MSG("Error: command %s not valid in PageEx\n", tok);
-    return PS_ERROR;
-  }
-  else
-  {
-    // global
-    if (tp & TP_GLOBAL)
-      return PS_OK;
+  else {
     char err[1024];
-    strcpy(err, "Error: command %s not valid outside ");
-    if (tp & TP_SEC)
-      strcat(err, "section");
-    if (tp & TP_FUNC)
+    if (cp == TP_SEC) {
+      strcpy(err, "Error: command %s not valid in Section\n");
+    }
+    else if (cp == TP_FUNC) {
+      strcpy(err, "Error: command %s not valid in Function\n");
+    }
+    else if (cp == TP_PAGEEX) {
+      strcpy(err, "Error: command %s not valid in PageEx\n");
+    }
+    else
     {
+      strcpy(err, "Error: command %s not valid outside ");
       if (tp & TP_SEC)
+        strcat(err, "Section");
+      if (tp & TP_FUNC)
       {
-        if (tp & TP_PAGEEX)
+        if (tp & TP_SEC)
         {
-          strcat(err, ", ");
+          if (tp & TP_PAGEEX)
+          {
+            strcat(err, ", ");
+          }
+          else
+          {
+            strcat(err, " or ");
+          }
         }
-        else
+        strcat(err, "Function");
+      }
+      if (tp & TP_PAGEEX)
+      {
+        if (tp & TP_CODE)
         {
           strcat(err, " or ");
         }
+        strcat(err, "PageEx");
       }
-      strcat(err, "function");
+      strcat(err, "\n");
     }
-    if (tp & TP_PAGEEX)
-    {
-      if (tp & TP_CODE)
-      {
-        strcat(err, " or ");
-      }
-      strcat(err, "PageEx");
-    }
-    strcat(err, "\n");
     ERROR_MSG(err, tok);
     return PS_ERROR;
   }

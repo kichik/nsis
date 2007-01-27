@@ -57,6 +57,15 @@
 #define PS_ERROR 50
 #define PS_WARNING 100
 
+// token placement
+#define TP_SEC    1
+#define TP_FUNC   2
+#define TP_CODE   (TP_SEC | TP_FUNC)
+#define TP_GLOBAL 4
+#define TP_PAGEEX 8
+#define TP_PG     (TP_GLOBAL | TP_PAGEEX)
+#define TP_ALL    (TP_CODE | TP_PG)
+
 enum notify_e {
   MAKENSIS_NOTIFY_SCRIPT,
   MAKENSIS_NOTIFY_WARNING,
@@ -132,6 +141,7 @@ class CEXEBuild {
 
     // tokens.cpp
     int get_commandtoken(char *s, int *np, int *op, int *pos);
+    int GetCurrentTokenPlace();
     int IsTokenPlacedRight(int pos, char *tok);
 
     // script.cpp
@@ -195,6 +205,7 @@ class CEXEBuild {
 #endif //NSIS_CONFIG_PLUGIN_SUPPORT
 
     // build.cpp functions used mostly by script.cpp
+    void set_code_type_predefines(const char *value = NULL);
     int getcurdbsize();
     int add_section(const char *secname, const char *defname, int expand=0);
     int section_end();
