@@ -136,9 +136,81 @@ ${increase} number3
 !include preprocessor.nsi
 
 Section
+Return
+WriteUninstaller uninst.exe # avoid warning
 SectionEnd
 
+# test scopes
+
+!macro TEST_SCOPES scope global section function pageex uninstall
+
+  !if${global} __GLOBAL__
+    !error "__GLOBAL__ error in ${scope} scope"
+  !endif
+
+  !if${section} __SECTION__
+    !error "__SECTION__ error in ${scope} scope"
+  !endif
+
+  !if${function} __FUNCTION__
+    !error "__FUNCTION__ error in ${scope} scope"
+  !endif
+
+  !if${uninstall} __UNINSTALL__
+    !error "__UNINSTALL__ error in ${scope} scope"
+  !endif
+
+  !if${pageex} __PAGEEX__
+    !error "__PAGEEX__ error in ${scope} scope"
+  !endif
+
+!macroend
+
+!insertmacro TEST_SCOPES "global" ndef def def def def
+
+Section test
+!insertmacro TEST_SCOPES "section" def ndef def def def
+!if ${__SECTION__} != test
+  !error "invalid __SECTION__ value"
+!endif
+SectionEnd
+
+Section un.test
+!insertmacro TEST_SCOPES "uninstall section" def ndef def def ndef
+!if ${__SECTION__} != test
+  !error "invalid __SECTION__ value"
+!endif
+SectionEnd
+
+Function test
+Call test # avoid warning
+!insertmacro TEST_SCOPES "function" def def ndef def def
+!if ${__FUNCTION__} != test
+  !error "invalid __FUNCTION__ value"
+!endif
+FunctionEnd
+
+Function un.test
+Call un.test # avoid warning
+!insertmacro TEST_SCOPES "uninstall function" def def ndef def ndef
+!if ${__FUNCTION__} != test
+  !error "invalid __FUNCTION__ value"
+!endif
+FunctionEnd
+
+PageEx instfiles
+!insertmacro TEST_SCOPES "pageex" def def def ndef def
+PageExEnd
+
+PageEx un.instfiles
+!insertmacro TEST_SCOPES "uninstall pageex" def def def ndef ndef
+PageExEnd
+
+!insertmacro TEST_SCOPES "global" ndef def def def def
+
 !else
+
 # this should just give a warning, not an error
 !include /NONFATAL another_file_that_doesnt_exist.nsh
+
 !endif
