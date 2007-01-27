@@ -10,6 +10,8 @@ this should not be executed, so no error should be raised
 code inside comments should not be executed
 !ifdef
 */
+# invalid preprocessor should be ignored
+!hello
 !endif
 
 !ifdef d1
