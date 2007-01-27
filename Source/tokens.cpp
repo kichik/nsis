@@ -297,6 +297,14 @@ void CEXEBuild::print_help(char *commandname)
 
 }
 
+bool CEXEBuild::is_valid_token(char *s)
+{
+  for (int x = 0; x < TOK__LAST; x ++)
+    if (!stricmp(tokenlist[x].name,s)) 
+      return true;
+  return false;
+}
+
 int CEXEBuild::get_commandtoken(char *s, int *np, int *op, int *pos)
 {
   int x;
