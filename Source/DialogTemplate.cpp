@@ -59,7 +59,7 @@ void ReadVarLenArr(LPBYTE &seeker, char* &readInto, unsigned int uCodePage) {
     break;
   default:
     {
-      readInto = winchar_toansi(arr, uCodePage);
+      readInto = winchar_toansi((WCHAR *) arr, uCodePage);
       PWCHAR wseeker = PWCHAR(seeker);
       while (*wseeker++);
       seeker = LPBYTE(wseeker);
