@@ -1,6 +1,8 @@
 #ifndef _EXDLL_H_
 #define _EXDLL_H_
 
+#include <windows.h>
+
 // only include this file from one place in your DLL.
 // (it is all static, if you use it in two places it will fail)
 
