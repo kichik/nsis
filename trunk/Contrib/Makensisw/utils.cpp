@@ -739,8 +739,9 @@ void BuildMRUMenus()
   HMENU hMenu = g_sdata.fileSubmenu;
   int i;
   MENUITEMINFO mii;
-  char buf[MRU_DISPLAY_LENGTH+1];
+  char buf[MRU_DISPLAY_LENGTH + 5/*number*/ + 1/*null*/];
   char buf2[MRU_DISPLAY_LENGTH - 6];
+  char buf3[MRU_DISPLAY_LENGTH + 1];
   int n;
 
   for(i = 0; i < MRU_LIST_SIZE; i++) {
@@ -757,6 +758,7 @@ void BuildMRUMenus()
       mii.fMask = MIIM_ID | MIIM_TYPE | MIIM_STATE;
       mii.wID = IDM_MRU_FILE+i;
       mii.fType = MFT_STRING;
+      wsprintf(buf, "&%d ", i + 1);
       if(lstrlen(g_mru_list[i]) > MRU_DISPLAY_LENGTH) {
         char *p = my_strrchr(g_mru_list[i],'\\');
         if(p) {
@@ -766,23 +768,26 @@ void BuildMRUMenus()
             lstrcpyn(buf2,p,MRU_DISPLAY_LENGTH - 9);
             lstrcat(buf2,"...");
 
-            lstrcpyn(buf,g_mru_list[i],4);
+            lstrcpyn(buf3,g_mru_list[i],4);
+            lstrcat(buf,buf3);
             lstrcat(buf,"...\\");
             lstrcat(buf,buf2);
           }
           else {
-            lstrcpyn(buf,g_mru_list[i],(MRU_DISPLAY_LENGTH - lstrlen(p) - 3));
+            lstrcpyn(buf3,g_mru_list[i],(MRU_DISPLAY_LENGTH - lstrlen(p) - 3));
+            lstrcat(buf,buf3);
             lstrcat(buf,"...\\");
             lstrcat(buf,p);
           }
         }
         else {
-          lstrcpyn(buf,g_mru_list[i],(MRU_DISPLAY_LENGTH-2));
+          lstrcpyn(buf3,g_mru_list[i],(MRU_DISPLAY_LENGTH-2));
+          lstrcat(buf,buf3);
           lstrcat(buf,"...");
         }
       }
       else {
-        lstrcpy(buf, g_mru_list[i]);
+        lstrcat(buf, g_mru_list[i]);
       }
 
       mii.dwTypeData = buf;
