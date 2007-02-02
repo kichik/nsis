@@ -169,10 +169,10 @@ Version History
 
 2.0
  - Improved user interface
- - Define Symbols is available even if a script is not loaded.
- - Defined Symbols are saved on exit and reloaded on start.
- - Added NSIS Update menu.
- - Added toolbar for commonly used menus.
+ - Define Symbols is available even if a script is not loaded
+ - Defined Symbols are saved on exit and reloaded on start
+ - Added NSIS Update menu
+ - Added toolbar for commonly used menus
  - Made the Toolbar style flat
  - Added option for compile & run
  - Added compressor setting option
@@ -180,7 +180,11 @@ Version History
  - Added named Symbols sets.
 
 2.1
- - Added "Cancel compilation" menu item.
+ - Added "Cancel compilation" menu item
+
+2.2
+- Settings saved in HKCU instead of HKLM
+- Added menu accelerators to MRU list
  
 Copyright Information
 ---------------------
