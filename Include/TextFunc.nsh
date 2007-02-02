@@ -62,6 +62,8 @@ TrimNewLines
 !ifndef TEXTFUNC_INCLUDED
 !define TEXTFUNC_INCLUDED
 
+!include FileFunc.nsh
+
 !verbose push
 !verbose 3
 !ifndef _TEXTFUNC_VERBOSE
@@ -192,11 +194,22 @@ TrimNewLines
 	!verbose pop
 !macroend
 
+!macro _TextFunc_TempFileForFile _FILE _RESULT
+	${${_TEXTFUNC_UN}GetParent} ${_FILE} ${_RESULT}
+	StrCmp ${_RESULT} "" 0 +2
+		StrCpy ${_RESULT} $EXEDIR
+	GetTempFileName ${_RESULT} ${_RESULT}
+	StrCmp ${_RESULT} "" 0 +2
+		GetTempFileName ${_RESULT}
+!macroend
+
 !macro LineFind
 	!ifndef ${_TEXTFUNC_UN}LineFind
 		!verbose push
 		!verbose ${_TEXTFUNC_VERBOSE}
 		!define ${_TEXTFUNC_UN}LineFind `!insertmacro ${_TEXTFUNC_UN}LineFindCall`
+
+		!insertmacro ${_TEXTFUNC_UN}GetParent
 
 		Function ${_TEXTFUNC_UN}LineFind
 			Exch $3
@@ -304,10 +317,11 @@ TrimNewLines
 			goto $7
 
 			file:
-			StrCmp $1 '/NUL' +4
-			GetTempFileName $R4
+			StrCmp $1 '/NUL' notemp
+			!insertmacro _TextFunc_TempFileForFile $1 $R4
 			Push $R4
 			FileOpen $R4 $R4 w
+			notemp:
 			FileOpen $R5 $0 r
 			IfErrors preerror
 
@@ -609,6 +623,8 @@ TrimNewLines
 		!verbose ${_TEXTFUNC_VERBOSE}
 		!define ${_TEXTFUNC_UN}FileJoin `!insertmacro ${_TEXTFUNC_UN}FileJoinCall`
 
+		!insertmacro ${_TEXTFUNC_UN}GetParent
+
 		Function ${_TEXTFUNC_UN}FileJoin
 			Exch $2
 			Exch
@@ -636,9 +652,10 @@ TrimNewLines
 			StrCpy $2 ''
 			StrCmp $2 '' 0 +3
 			StrCpy $4 $0
-			goto +3
-			GetTempFileName $4
+			Goto notemp
+			!insertmacro _TextFunc_TempFileForFile $2 $4
 			CopyFiles /SILENT $0 $4
+			notemp:
 			FileOpen $3 $4 a
 			IfErrors error
 			FileSeek $3 -1 END
