@@ -8,7 +8,7 @@ More detailed copyright information can be found in the individual source code f
 
 \H{licenses} Applicable licenses
 
-\b All NSIS source code, plug-ins, documentation, examples, header files and graphics, with expection of the compression modules, is licensed under the zlib/libpng license.
+\b All NSIS source code, plug-ins, documentation, examples, header files and graphics, with the exception of the compression modules and where otherwise noted, are licensed under the zlib/libpng license.
 
 \b The zlib compression module for NSIS is licensed under the zlib/libpng license.
 
