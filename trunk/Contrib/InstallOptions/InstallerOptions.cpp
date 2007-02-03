@@ -611,7 +611,10 @@ LRESULT WINAPI WMCommandProc(HWND hWnd, UINT id, HWND hwndCtl, UINT codeNotify) 
   }
 
   if (pFields[nIdx].nType == FIELD_BROWSEBUTTON)
+  {
     --nIdx;
+    --pField;
+  }
 
   char szBrowsePath[MAX_PATH];
 
