@@ -591,11 +591,10 @@ LRESULT WINAPI WMCommandProc(HWND hWnd, UINT id, HWND hwndCtl, UINT codeNotify) 
   if (g_done || nIdx < 0)
     return 0;
 
-  FieldType *pField = pFields + nIdx;
-
-  switch (pField->nType)
+  switch (pFields[nIdx].nType)
   {
     case FIELD_BROWSEBUTTON:
+      --nIdx;
     case FIELD_LINK:
     case FIELD_BUTTON:
     case FIELD_CHECKBOX:
@@ -612,11 +611,7 @@ LRESULT WINAPI WMCommandProc(HWND hWnd, UINT id, HWND hwndCtl, UINT codeNotify) 
       return 0;
   }
 
-  if (pFields[nIdx].nType == FIELD_BROWSEBUTTON)
-  {
-    --nIdx;
-    --pField;
-  }
+  FieldType *pField = pFields + nIdx;
 
   char szBrowsePath[MAX_PATH];
 
