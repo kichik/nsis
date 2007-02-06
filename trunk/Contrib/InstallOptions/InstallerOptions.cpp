@@ -160,6 +160,8 @@ struct FieldType {
 
   int    nField; // field number in INI file
   char  *pszHwndEntry; // "HWND" or "HWND2"
+
+  long   wndProc; 
 };
 
 // initial buffer size.  buffers will grow as required.
@@ -593,21 +595,21 @@ LRESULT WINAPI WMCommandProc(HWND hWnd, UINT id, HWND hwndCtl, UINT codeNotify) 
 
   switch (pField->nType)
   {
-  case FIELD_BROWSEBUTTON:
-  case FIELD_LINK:
-  case FIELD_BUTTON:
-  case FIELD_CHECKBOX:
-  case FIELD_RADIOBUTTON:
-    if (codeNotify != BN_CLICKED)
+    case FIELD_BROWSEBUTTON:
+    case FIELD_LINK:
+    case FIELD_BUTTON:
+    case FIELD_CHECKBOX:
+    case FIELD_RADIOBUTTON:
+      if (codeNotify != BN_CLICKED)
+        return 0;
+      break;
+    case FIELD_COMBOBOX:
+    case FIELD_LISTBOX:
+      if (codeNotify != LBN_SELCHANGE) // LBN_SELCHANGE == CBN_SELCHANGE
+        return 0;
+      break;
+    default:
       return 0;
-    break;
-  case FIELD_COMBOBOX:
-  case FIELD_LISTBOX:
-    if (codeNotify != LBN_SELCHANGE) // LBN_SELCHANGE == CBN_SELCHANGE
-      return 0;
-    break;
-  default:
-    return 0;
   }
 
   if (pFields[nIdx].nType == FIELD_BROWSEBUTTON)
@@ -877,6 +879,57 @@ int WINAPI StaticLINKWindowProc(HWND hWin, UINT uMsg, WPARAM wParam, LPARAM lPar
   return CallWindowProc((WNDPROC)pField->nParentIdx, hWin, uMsg, wParam, lParam);
 }
 #endif
+
+int WINAPI NumbersOnlyPasteWndProc(HWND hWin, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+  int nIdx = FindControlIdx(GetDlgCtrlID(hWin));
+  if (nIdx < 0)
+    return 0;
+
+  FieldType *pField = pFields + nIdx;
+
+  if (uMsg == WM_PASTE)
+  {
+    if (OpenClipboard(hWin))
+    {
+      HGLOBAL hData = GetClipboardData(CF_TEXT);
+      
+      if (hData)
+      {
+        char *lpData = (char *) GlobalLock(hData);
+        if (lpData)
+        {
+          int iLen = lstrlen(lpData);
+          char *lpFilteredData = (char *) MALLOC(iLen + 1);
+
+          if (lpFilteredData)
+          {
+            for (int i = 0, j = 0; i < iLen; i++)
+            {
+              if (lpData[i] >= '0' && lpData[i] <= '9')
+              {
+                lpFilteredData[j] = lpData[i];
+                j++;
+                lpFilteredData[j] = 0;
+              }
+            }
+
+            SendMessage(hWin, EM_REPLACESEL, TRUE, (LPARAM) lpFilteredData);
+            FREE(lpFilteredData);
+          }
+
+          GlobalUnlock(hData);
+        }
+      }
+
+      CloseClipboard();
+
+      return 0;
+    }
+  }
+
+  return CallWindowProc((WNDPROC) pField->wndProc, hWin, uMsg, wParam, lParam);
+}
 
 int old_cancel_visible;
 
@@ -1160,6 +1213,11 @@ int WINAPI createCfgDlg()
         case FIELD_FILEREQUEST:
         case FIELD_DIRREQUEST:
           mySendMessage(hwCtrl, EM_LIMITTEXT, (WPARAM)pField->nMaxLength, (LPARAM)0);
+          if (dwStyle & ES_NUMBER)
+          {
+            pField->wndProc = GetWindowLong(hwCtrl, GWL_WNDPROC);
+            SetWindowLong(hwCtrl, GWL_WNDPROC, (long) NumbersOnlyPasteWndProc);
+          }
           break;
 
         case FIELD_CHECKBOX:
