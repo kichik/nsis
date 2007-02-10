@@ -301,7 +301,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       {
         char *p = skip_root(buf1);
         char c = 'c';
-        if (*buf1 && p)
+        if (p)
         {
           while (c)
           {
