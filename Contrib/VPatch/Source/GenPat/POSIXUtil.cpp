@@ -29,6 +29,7 @@
 #include <fstream>
 
 #include <time.h>
+#include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -108,21 +109,22 @@ namespace POSIX {
     return string(buffer);
   }
 #else
-//#ifdef POSIX
-  // This is a POSIX version of the function, together with #include <stdio.h>
-  // but I will not add it in a final release version.
   string getTempFile() {
-    char filebuf [L_tmpnam];
+    char t[] = "/tmp/genpatXXXXXX";
 
-    // create a temporary filename
-    const char *fname = tmpnam (filebuf);
+    mode_t old_umask = umask(0077);
 
-    if (!fname)
+    int fd = mkstemp(t);
+    if (fd == -1) {
       cerr << "Cannot create temporary filename";
+      return "";
+    }
+    close(fd);
 
-    return string(fname);
+    umask(old_umask);
+
+    return string(t);
   }
-//#endif
 #endif
 
 }

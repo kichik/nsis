@@ -4,11 +4,30 @@
 
 \c section_index section_flags
 
-Sets the section's flags. The flag is a 32 bit integer. The first bit (lowest) represents whether the section is currently enabled, the second bit represents whether the section is a section group (don't modify this unless you really know what you are doing), the third bit represents whether the section is a section group end (again, don't modify), the fourth bit represents whether the section is shown in bold or not, the fifth bit represents whether the section is read-only, the sixth bit represents whether the section group is to be automatically expanded, the seventh bit is set for section groups which are partially selected, the eighth bit is internally used for partially selected section group toggling and the ninth bit is used for reflecting section name changes. The error flag will be set if an out of range section is specified.
+Sets the section's flags. The flag is a 32 bit integer. The first bit (lowest) represents whether the section is currently selected, the second bit represents whether the section is a section group (don't modify this unless you really know what you are doing), the third bit represents whether the section is a section group end (again, don't modify), the fourth bit represents whether the section is shown in bold or not, the fifth bit represents whether the section is read-only, the sixth bit represents whether the section group is to be automatically expanded, the seventh bit is set for section groups which are partially selected, the eighth bit is internally used for partially selected section group toggling and the ninth bit is used for reflecting section name changes. The error flag will be set if an out of range section is specified.
+
+Each flag has a name, prefixed with `SF_`:
+
+\c !define SF_SELECTED   1
+\c !define SF_SECGRP     2
+\c !define SF_SECGRPEND  4
+\c !define SF_BOLD       8
+\c !define SF_RO         16
+\c !define SF_EXPAND     32
+\c !define SF_PSELECTED  64
 
 For an example of usage please see the \L{../Examples/one-section.nsi}{one-section.nsi} example.
 
-For useful macros and definitions, see Include\\Sections.nsh.
+For more useful macros and definitions, see Include\\Sections.nsh.
+
+\c Section test test_section_id
+\c SectionEnd
+\c
+\c Function .onInit
+\c   # set section 'test' as selected and read-only
+\c   IntOp $0 ${SF_SELECTED} | ${SF_RO}
+\c   SectionSetFlags ${test_section_id} $0
+\c FunctionEnd
 
 \S2{sectiongetflags} SectionGetFlags
 
@@ -16,17 +35,45 @@ For useful macros and definitions, see Include\\Sections.nsh.
 
 Retrieves the section's flags. See above for a description of the flag. The error flag will be set if an out of range section is specified.
 
+\c Section test test_section_id
+\c SectionEnd
+\c
+\c Function .onSelChange
+\c   # keep section 'test' selected
+\c   SectionGetFlags ${test_section_id} $0
+\c   IntOp $0 $0 | ${SF_SELECTED}
+\c   SectionSetFlags ${test_section_id} $0
+\c FunctionEnd
+
 \S2{sectionsettext} SectionSetText
 
 \c section_index section_text
 
 Sets the description for the section section_index. If the text is set to "" then the section will be hidden. The error flag will be set if an out of range section is specified.
 
+\c Section "" test_section_id
+\c SectionEnd
+\c
+\c Function .onInit
+\c   # change section's name to $WINDIR
+\c   SectionSetText ${test_section_id} $WINDIR
+\c FunctionEnd
+
 \S2{sectiongettext} SectionGetText
 
 \c section_index user_var(output)
 
 Stores the text description of the section section_index into the output. If the section is hidden, stores an empty string. The error flag will be set if an out of range section is specified.
+
+\c Section test test_section_id
+\c SectionEnd
+\c
+\c Function .onInit
+\c   # append $WINDIR to section's name
+\c   SectionGetText ${test_section_id} $0
+\c   StrCpy $0 "$0 - $WINDIR"
+\c   SectionSetText ${test_section_id} $0
+\c FunctionEnd
 
 \S2{sectionsetinsttypes} SectionSetInstTypes
 
@@ -38,11 +85,29 @@ Sets the install types the section specified by section_index defaults to the en
 
 because the binary value for 5 is "00000101". The error flag will be set if the section index specified is out of range.
 
+\c Section test test_section_id
+\c SectionEnd
+\c
+\c Function .onInit
+\c   # associate section 'test' with installation types 3 and 4
+\c   SectionSetInstTypes ${test_section_id} 12
+\c FunctionEnd
+
 \S2{sectiongetinsttypes} SectionGetInstTypes
 
 \c section_index user_var(output)
 
 Retrieves the install types flags array of a section. See above explanation about SectionSetInstTypes for a description of how to deal with the output. The error flag will be set if the section index specified is out of range.
+
+\c Section test test_section_id
+\c SectionEnd
+\c
+\c Function .onInit
+\c   # associate section 'test' with installation types 5, on top of its existing associations
+\c   SectionGetInstTypes ${test_section_id} $0
+\c   IntOp $0 $0 | 16
+\c   SectionSetInstTypes ${test_section_id} $0
+\c FunctionEnd
 
 \S2{ssectionsetsize} SectionSetSize
 
@@ -50,11 +115,29 @@ Retrieves the install types flags array of a section. See above explanation abou
 
 Sets the Size of the section specified by section_index. Note that the Index starts with Zero. The Value for Size must be entered in KiloByte and supports only whole numbers.
 
+\c Section test test_section_id
+\c SectionEnd
+\c
+\c Function .onInit
+\c   # set required size of section 'test' to 100 bytes
+\c   SectionSetSize ${test_section_id} 100
+\c FunctionEnd
+
 \S2{ssectiongetsize} SectionGetSize
 
 \c section_index user_var
 
 Gets the Size of the section specified by section_index and stores the value in the given User Variable. Note that the Index starts with Zero.
+
+\c Section test test_section_id
+\c SectionEnd
+\c
+\c Function .onInit
+\c   # increase required size of section 'test' by 100 bytes
+\c   SectionGetSize ${test_section_id} $0
+\c   IntOp $0 $0 + 100
+\c   SectionSetSize ${test_section_id} $0
+\c FunctionEnd
 
 \S2{ssetcurinsttype} SetCurInstType
 
@@ -74,11 +157,28 @@ Get the current InstType and stores it in user_var. If the first install type is
 
 Sets the Text of the specified InstType. If the Text is empty than the InstType is removed. By using a previously unused inst_type_idx number you can create new InstTypes. To add/remove Sections to this new InstType see \R{sectionsetinsttypes}{SectionSetInstTypes}. Unlike \R{ssectionin}{SectionIn} the index is zero based, which means the first install type's index is 0.
 
+\c InstType a
+\c InstType b
+\c
+\c Function .onInit
+\c   # set first installation type's name to $WINDIR
+\c   InstTypeSetText 0 $WINDIR
+\c   # set second installation type's name to $TEMP
+\c   InstTypeSetText 1 $TEMP
+\c FunctionEnd
+
 \S2{sinsttypegettext} InstTypeGetText
 
 \c inst_type_idx user_var
 
 Gets the Text of the specified InstType.
 
-
-
+\c InstType a
+\c InstType b
+\c
+\c Function .onInit
+\c   InstTypeGetText 0 $0
+\c   DetailPrint $0 # prints 'a'
+\c   InstTypeGetText 1 $0
+\c   DetailPrint $0 # prints 'b'
+\c FunctionEnd

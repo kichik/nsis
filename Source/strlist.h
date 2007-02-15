@@ -1,10 +1,25 @@
+/*
+ * strlist.h: Implementation of the StringList class.
+ * 
+ * This file is a part of NSIS.
+ * 
+ * Copyright (C) 1999-2007 Nullsoft and Contributors
+ * 
+ * Licensed under the zlib/libpng license (the "License");
+ * you may not use this file except in compliance with the License.
+ * 
+ * Licence details can be found in the file COPYING.
+ * 
+ * This software is provided 'as-is', without any express or implied
+ * warranty.
+ */
+
 #ifndef _STRLIST_H_
 #define _STRLIST_H_
 
 #include "Platform.h"
 #include <cstdio>
 #include "growbuf.h"
-#include <tchar.h>
 
 class StringList
 {
@@ -16,18 +31,19 @@ public:
   StringList() {}
   ~StringList() {}
 
-  int add(const TCHAR *str, int case_sensitive);
+  int add(const char *str, int case_sensitive);
   // use 2 for case sensitive end-of-string matches too
-  int find(const TCHAR *str, int case_sensitive, int *idx=NULL) const; // returns -1 if not found
+  int find(const char *str, int case_sensitive, int *idx=NULL) const; // returns -1 if not found
   void delbypos(int pos);
   int idx2pos(int idx) const;
   int getnum() const;
-  const TCHAR *get() const;
+  const char *get() const;
   int getlen() const;
 
 private:
   GrowBuf gr;
 };
+
 template <class T>
 class SortedStringList
 {
@@ -43,12 +59,12 @@ class SortedStringList
     }
 
     // returns -1 when name already exists and pos if added
-    int add(const TCHAR *name, int case_sensitive=0)
+    int add(const char *name, int case_sensitive=0)
     {
       T newstruct={0,};
       int pos=find(name,case_sensitive,1);
       if (pos==-1) return -1;
-      newstruct.name=(TCHAR*)malloc((_tcslen(name)+1)*sizeof(TCHAR));
+      newstruct.name=(char*)malloc(strlen(name)+1);
       if (!newstruct.name)
       {
         extern FILE *g_output;
@@ -56,12 +72,12 @@ class SortedStringList
         extern void quit();
         if (g_display_errors)
         {
-          fwprintf(g_output,L"\nInternal compiler error #12345: GrowBuf realloc/malloc(%d) failed.\n",_tcslen(name)+1);
+          fprintf(g_output,"\nInternal compiler error #12345: GrowBuf realloc/malloc(%d) failed.\n",strlen(name)+1);
           fflush(g_output);
         }
         quit();
       }
-      _tcscpy(newstruct.name,name);
+      strcpy(newstruct.name,name);
       gr.add(&newstruct,sizeof(T));
 
       T *s=(T*)gr.get();
@@ -73,7 +89,7 @@ class SortedStringList
 
     // returns -1 if not found, position if found
     // if returnbestpos=1 returns -1 if found, best pos to insert if not found
-    int find(const TCHAR *str, int case_sensitive=0, int returnbestpos=0)
+    int find(const char *str, int case_sensitive=0, int returnbestpos=0)
     {
       T *data=(T *)gr.get();
       int ul=gr.getlen()/sizeof(T);
@@ -84,9 +100,9 @@ class SortedStringList
       {
         int res;
         if (case_sensitive)
-          res=_tcscmp(str, data[nextpos].name);
+          res=strcmp(str, data[nextpos].name);
         else
-          res=_tcsicmp(str, data[nextpos].name);
+          res=stricmp(str, data[nextpos].name);
         if (res==0) return returnbestpos ? -1 : nextpos;
         if (res<0) ul=nextpos;
         else ll=nextpos+1;
@@ -97,7 +113,7 @@ class SortedStringList
     }
 
     // returns 0 on success, 1 otherwise
-    int del(const TCHAR *str, int case_sensitive=0)
+    int del(const char *str, int case_sensitive=0)
     {
       int pos=find(str, case_sensitive);
       if (pos==-1) return 1;
@@ -129,13 +145,13 @@ class SortedStringListND // no delete - can be placed in GrowBuf
     virtual ~SortedStringListND() { }
 
     // returns -1 when name already exists and pos if added
-    int add(const TCHAR *name, int case_sensitive=0, int alwaysreturnpos=0)
+    int add(const char *name, int case_sensitive=0, int alwaysreturnpos=0)
     {
-      int where;
+      int where=0;
       T newstruct={0,};
       int pos=find(name,-1,case_sensitive,1,&where);
       if (pos==-1) return alwaysreturnpos ? where : -1;
-      newstruct.name=strings.add(name,_tcslen(name)+1);
+      newstruct.name=strings.add(name,strlen(name)+1);
 
       gr.add(&newstruct,sizeof(T));
       T *s=(T*)gr.get();
@@ -148,7 +164,7 @@ class SortedStringListND // no delete - can be placed in GrowBuf
     // returns -1 if not found, position if found
     // if returnbestpos=1 returns -1 if found, best pos to insert if not found
     // if n_chars equal to -1 all string is tested
-    int find(const TCHAR *str, int n_chars=-1, int case_sensitive=0, int returnbestpos=0, int *where=0)
+    int find(const char *str, int n_chars=-1, int case_sensitive=0, int returnbestpos=0, int *where=0)
     {
       T *data=(T *)gr.get();
       int ul=gr.getlen()/sizeof(T);
@@ -158,22 +174,22 @@ class SortedStringListND // no delete - can be placed in GrowBuf
       while (ul > ll)
       {
         int res;
-        const TCHAR *pCurr = (TCHAR*)strings.get() + data[nextpos].name;
+        const char *pCurr = (char*)strings.get() + data[nextpos].name;
         if (n_chars < 0)
         {
           if (case_sensitive)
-            res = _tcscmp(str, pCurr);
+            res = strcmp(str, pCurr);
           else
-            res = _tcsicmp(str, pCurr);
+            res = stricmp(str, pCurr);
         }
         else
         {
           if (case_sensitive)
-            res=_tcsncmp(str, pCurr, mymin((unsigned int) n_chars, _tcslen(pCurr)));
+            res=strncmp(str, pCurr, mymin((unsigned int) n_chars, strlen(pCurr)));
           else
-            res=_tcsnicmp(str, pCurr, mymin((unsigned int) n_chars, _tcslen(pCurr)));
-          if (res == 0 && n_chars != -1 && (unsigned int) n_chars != _tcslen(pCurr))
-            res = n_chars - _tcslen(pCurr);
+            res=strnicmp(str, pCurr, mymin((unsigned int) n_chars, strlen(pCurr)));
+          if (res == 0 && n_chars != -1 && (unsigned int) n_chars != strlen(pCurr))
+            res = n_chars - strlen(pCurr);
         }
 
         if (res==0)
@@ -195,8 +211,8 @@ class SortedStringListND // no delete - can be placed in GrowBuf
 };
 
 struct define {
-  TCHAR *name;
-  TCHAR *value;
+  char *name;
+  char *value;
 };
 
 class DefineList : public SortedStringList<struct define>
@@ -209,14 +225,14 @@ class DefineList : public SortedStringList<struct define>
     DefineList() {} // VC6 complains otherwise
     virtual ~DefineList();
 
-    int add(const TCHAR *name, const TCHAR *value=__T(""));
-    TCHAR *find(const TCHAR *name);
+    int add(const char *name, const char *value="");
+    char *find(const char *name);
 
     // returns 0 on success, 1 otherwise
-    int del(const TCHAR *str);
+    int del(const char *str);
     int getnum();
-    TCHAR *getname(int num);
-    TCHAR *getvalue(int num);
+    char *getname(int num);
+    char *getvalue(int num);
 };
 
 struct string_t {
@@ -233,8 +249,8 @@ class FastStringList : public SortedStringListND<struct string_t>
     FastStringList() {} // VC6 complains otherwise
     virtual ~FastStringList() {}
 
-    int add(const TCHAR *name, int case_sensitive=0);
-    TCHAR *get() const;
+    int add(const char *name, int case_sensitive=0);
+    char *get() const;
     int getlen() const;
     int getnum() const;
 };

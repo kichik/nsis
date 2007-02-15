@@ -24,16 +24,16 @@ The macros are stored in the header file Library.nsh, which should be included i
 
 \c !include Library.nsh
 
-Note that you can only compile scripts using this system on Windows systems. It is not possible to compile on Linux etc.
+Note that the library macros are limited on non-Windows platforms. DLL version information is required when compiling on non-Windows platforms.
 
 
 \H{library_install} Library Installation
 
 \S1{} Introduction
 
-The InstallLib macro allows you to install a library.
+The InstallLib macro allows you to install a library. It sets the error flag if something went wrong during library setup.
 
-To ask the user for a reboot if required, use the Modern UI with a Finish page or use \R{ifrebootflag}{IfRebootFlag} and make your own page or message box.
+To ask the user for a reboot, if required, use the Modern UI with a Finish page or use \R{ifrebootflag}{IfRebootFlag} and make your own page or message box.
 
 \S1{} Parameters
 
@@ -132,7 +132,7 @@ LIBRARY_COM
 
 \S1{} Introduction
 
-The UnInstallLib macro allows you to uninstall a library.
+The UnInstallLib macro allows you to uninstall a library. It sets the error flag if something went wrong during library removal.
 
 \S1{} Parameters
 
@@ -232,7 +232,7 @@ The correct version of the following files should be stored in your script folde
 
 A \W{http://support.microsoft.com/default.aspx?scid=kb;en-us;290887}{Microsoft article} that explains how to obtain these files is available.
 
-To ask the user for a reboot if required, use the Modern UI with a Finish page or use \R{ifrebootflag}{IfRebootFlag} and make your own page or message box.
+To ask the user for a reboot, if required, use the Modern UI with a Finish page or use \R{ifrebootflag}{IfRebootFlag} and make your own page or message box.
 
 \c  !include Library.nsh
 \c

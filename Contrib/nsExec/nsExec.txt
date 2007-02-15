@@ -6,19 +6,21 @@ without opening a dos box.
 
 Usage
 -----
-nsExec::Exec [/TIMEOUT=x] path
+nsExec::Exec [/OEM] [/TIMEOUT=x] path
 
 -or-
 
-nsExec::ExecToLog [/TIMEOUT=x] path
+nsExec::ExecToLog [/OEM] [/TIMEOUT=x] path
 
 -or-
 
-nsExec::ExecToStack [/TIMEOUT=x] path
+nsExec::ExecToStack [/OEM] [/TIMEOUT=x] path
 
 All functions are the same except ExecToLog will print the output
-to the logwindow and ExecToStack will push up to ${NSIS_MAX_STRLEN}
+to the log window and ExecToStack will push up to ${NSIS_MAX_STRLEN}
 characters of output onto the stack after the return value.
+
+Use the /OEM switch to convert the output text from OEM to ANSI.
 
 The timeout value is optional.  The timeout is the time in
 milliseconds nsExec will wait for output.  If output from the

@@ -15,7 +15,7 @@ Creates a font and puts its handle into user_var. For more information about the
 You can get the current font used by NSIS using the ^Font and ^FontSize \R{langstring}{LangString}s.
 
 \c !include WinMessages.nsh
-\c GetDlgItem $$0 $HWNDPARENT 1
+\c GetDlgItem $0 $HWNDPARENT 1
 \c CreateFont $1 "Times New Roman" "7" "700" /UNDERLINE
 \c SendMessage $0 ${WM_SETFONT} $1 1
 
@@ -66,7 +66,7 @@ Hides the installer.
 If HWND is a window, Gotos jump_if_window, otherwise, Gotos jump_if_not_window (if specified).
 
 \c GetDlgItem $0 $HWNDPARENT 1
-\c IsWindow 0 +3
+\c IsWindow $0 0 +3
 \c   MessageBox MB_OK "found a window"
 \c   Goto +2
 \c   MessageBox MB_OK "no window"
@@ -131,11 +131,13 @@ Sets mode at which commands print their status. None has commands be quiet, list
 
 \c hwnd [/BRANDING] [text_color] [transparent|bg_color]
 
-Sets a background color and the text color for a static control, edit control, button or a dialog. \e{text_color} and \e{bg_color} don't accept variables. Use GetDlgItem to get the handle (HWND) of the control. To make the control transparent specify "transparent" as the background color value. You can also specify /BRANDING with or without text color and background color to make the control completely gray (or any other color you choose). This is used by the branding text control in the MUI.
+Sets a background color and the text color for a static control, edit control, button or a dialog. \e{text_color} and \e{bg_color} don't accept variables. Use \R{getdlgitem}{GetDlgItem} to get the handle (HWND) of the control. To make the control transparent specify "transparent" as the background color value. You can also specify /BRANDING with or without text color and background color to make the control completely gray (or any other color you choose). This is used by the branding text control in the MUI.
 
 \c FindWindow $0 "#32770" "" $HWNDPARENT
 \c GetDlgItem $0 $0 1006
 \c SetCtlColors $0 0xFF0000 0x00FF00
+
+\\<b\\>Warning:\\</b\\> setting the background color of check boxes to "transparent" may not function properly when using \c{\R{axpstyle}{XPStlye} on}. The background may be completely black, instead of transparent, when using certain Windows themes.
 
 \S2{setsilent} SetSilent
 

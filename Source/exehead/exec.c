@@ -1,3 +1,19 @@
+/*
+ * exec.c
+ * 
+ * This file is a part of NSIS.
+ * 
+ * Copyright (C) 1999-2007 Nullsoft and Contributors
+ * 
+ * Licensed under the zlib/libpng license (the "License");
+ * you may not use this file except in compliance with the License.
+ * 
+ * Licence details can be found in the file COPYING.
+ * 
+ * This software is provided 'as-is', without any express or implied
+ * warranty.
+ */
+
 #include "../Platform.h"
 #include <shlobj.h>
 #include <shellapi.h>
@@ -30,9 +46,11 @@ exec_flags g_exec_flags;
 struct {
   exec_flags *flags;
   void *ExecuteCodeSegment;
+  void *validate_filename;
 } plugin_extra_parameters = {
   &g_exec_flags,
-  &ExecuteCodeSegment
+  &ExecuteCodeSegment,
+  &validate_filename
 };
 
 #if defined(NSIS_SUPPORT_ACTIVEXREG) || defined(NSIS_SUPPORT_CREATESHORTCUT)
@@ -283,7 +301,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       {
         char *p = skip_root(buf1);
         char c = 'c';
-        if (*buf1 && p)
+        if (p)
         {
           while (c)
           {
@@ -437,8 +455,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         // remove read only flag if overwrite mode is on
         if (!overwriteflag)
         {
-          int attr=GetFileAttributes(buf0);
-          SetFileAttributes(buf0,attr&(~FILE_ATTRIBUTE_READONLY));
+          remove_ro_attr(buf0);
         }
         hOut=myOpenFile(buf0,GENERIC_WRITE,(overwriteflag==1)?CREATE_NEW:CREATE_ALWAYS);
         if (hOut == INVALID_HANDLE_VALUE)
@@ -446,7 +463,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           if (overwriteflag)
           {
             update_status_text(LANG_SKIPPED,buf3);
-            if (overwriteflag==2) g_exec_flags.exec_error++;
+            if (overwriteflag==2) exec_error++;
             log_printf3("File: skipped: \"%s\" (overwriteflag=%d)",buf0,overwriteflag);
             break;
           }
@@ -581,10 +598,18 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         }
       }
     break;
-    case EW_STRCMP: {
+    case EW_STRCMP:
+    {
       char *buf2=GetStringFromParm(0x20);
       char *buf3=GetStringFromParm(0x31);
-      if (!lstrcmpi(buf2,buf3)) return parm2;
+      if (!parm4) {
+        // case insensitive
+        if (!lstrcmpi(buf2,buf3)) return parm2;
+      }
+      else {
+        // case sensitive
+        if (!lstrcmp(buf2,buf3)) return parm2;
+      }
     }
     return parm3;
 #endif//NSIS_SUPPORT_STROPTS
@@ -931,7 +956,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           if (parm4)
             h=GetModuleHandle(buf1);
           if (!h)
-            h=LoadLibrary(buf1);
+            h=LoadLibraryEx(buf1, NULL, LOAD_WITH_ALTERED_SEARCH_PATH);
           if (h)
           {
             FARPROC funke = GetProcAddress(h,buf0);
@@ -1129,6 +1154,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     case EW_DELREG:
       {
         long res=!ERROR_SUCCESS;
+        const char *rkn=RegKeyHandleToName((HKEY)parm1);
         if (!parm4)
         {
           HKEY hKey=myRegOpenKey(KEY_SET_VALUE);
@@ -1136,14 +1162,14 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           {
             char *buf3=GetStringFromParm(0x33);
             res = RegDeleteValue(hKey,buf3);
-            log_printf4("DeleteRegValue: %d\\%s\\%s",parm1,buf2,buf3);
+            log_printf4("DeleteRegValue: \"%s\\%s\" \"%s\"",rkn,buf2,buf3);
             RegCloseKey(hKey);
           }
         }
         else
         {
           char *buf2=GetStringFromParm(0x22);
-          log_printf3("DeleteRegKey: %d\\%s",parm1,buf2);
+          log_printf3("DeleteRegKey: \"%s\\%s\"",rkn,buf2);
           res = myRegDeleteKeyEx(GetRegRootKey(parm1),buf2,parm4&2);
         }
         if (res != ERROR_SUCCESS)
@@ -1158,6 +1184,8 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         int rtype=parm5;
         char *buf0=GetStringFromParm(0x02);
         char *buf1=GetStringFromParm(0x11);
+        const char *rkn=RegKeyHandleToName(rootkey);
+
         exec_error++;
         if (RegCreateKeyEx(rootkey,buf1,0,0,REG_OPTION_NON_VOLATILE,KEY_SET_VALUE,0,&hKey,0) == ERROR_SUCCESS)
         {
@@ -1167,25 +1195,36 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           {
             GetStringFromParm(0x23);
             size = mystrlen((char *) data) + 1;
-            log_printf5("WriteRegStr: set %d\\%s\\%s to %s",rootkey,buf1,buf0,data);
+            if (rtype == REG_SZ)
+            {
+              log_printf5("WriteRegStr: \"%s\\%s\" \"%s\"=\"%s\"",rkn,buf1,buf0,data);
+            }
+            else
+            {
+              log_printf5("WriteRegExpandStr: \"%s\\%s\" \"%s\"=\"%s\"",rkn,buf1,buf0,data);
+            }
           }
           if (type == REG_DWORD)
           {
             *(LPDWORD) data = GetIntFromParm(3);
             size = sizeof(DWORD);
-            log_printf5("WriteRegDWORD: set %d\\%s\\%s to %d",rootkey,buf1,buf0,*(LPDWORD)data);
+            log_printf5("WriteRegDWORD: \"%s\\%s\" \"%s\"=\"0x%08x\"",rkn,buf1,buf0,*(LPDWORD) data);
           }
           if (type == REG_BINARY)
           {
+#ifdef NSIS_CONFIG_LOG
+            char binbuf[128];
+#endif
             // use buf2, buf3 and buf4
             size = GetCompressedDataFromDataBlockToMemory(parm3, data, 3 * NSIS_MAX_STRLEN);
-            log_printf5("WriteRegBin: set %d\\%s\\%s with %d bytes",rootkey,buf1,buf0,size);
+            LogData2Hex(binbuf, sizeof(binbuf), data, size);
+            log_printf5("WriteRegBin: \"%s\\%s\" \"%s\"=\"%s\"",rkn,buf1,buf0,binbuf);
           }
           if (size >= 0 && RegSetValueEx(hKey,buf0,0,rtype,data,size) == ERROR_SUCCESS)
             exec_error--;
           RegCloseKey(hKey);
         }
-        else { log_printf3("WriteReg: error creating key %d\\%s",rootkey,buf1); }
+        else { log_printf3("WriteReg: error creating key \"%s\\%s\"",buf3,buf1); }
       }
     break;
     case EW_READREGSTR: // read registry string
@@ -1405,6 +1444,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         }
         validate_filename(buf1);
 
+        remove_ro_attr(buf1);
         hFile=myOpenFile(buf1,GENERIC_WRITE,CREATE_ALWAYS);
         if (hFile != INVALID_HANDLE_VALUE)
         {
@@ -1460,7 +1500,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         log_printf2("settings logging to %d",parm1);
         log_dolog=parm1;
         log_printf2("logging set to %d",parm1);
-#ifndef NSIS_CONFIG_LOG_ODS
+#if !defined(NSIS_CONFIG_LOG_ODS) && !defined(NSIS_CONFIG_LOG_STDOUT)
         if (parm1) build_g_logfile();
 #endif
       }

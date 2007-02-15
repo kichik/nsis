@@ -83,7 +83,7 @@
 #define IDM_BROWSESCR                   40013
 #define IDM_FORUM                       40016
 #define IDM_NSISUPDATE                  40018
-#define IDM_SCRIPT                      40020
+#define IDM_COMPRESSOR_SCRIPT           40020
 #define IDM_ZLIB                        40021
 #define IDM_ZLIB_SOLID                  40022
 #define IDM_BZIP2                       40023
@@ -95,13 +95,20 @@
 #define IDM_RECOMPILE_TEST              40033
 #define IDM_BEST                        40034
 #define IDM_SETTINGS                    40035
+#define IDM_CANCEL                      40036
+#define IDM_FILE                        40037
+#define IDM_EDIT                        40038
+#define IDM_SCRIPT                      40039
+#define IDM_COMPRESSOR_SUBMENU          40040
+#define IDM_TOOLS                       40041
+#define IDM_HELP                        40042
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        133
-#define _APS_NEXT_COMMAND_VALUE         40036
+#define _APS_NEXT_COMMAND_VALUE         40043
 #define _APS_NEXT_CONTROL_VALUE         1032
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

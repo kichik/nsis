@@ -166,6 +166,8 @@ int main( int argc, char * argv[] ) {
   targetCRC->mode = TChecksum::MD5;  // default
 
   string tempFileName = POSIX::getTempFile();
+  if (tempFileName == "")
+    return 2;
 
   // open the files
   bifstream source;

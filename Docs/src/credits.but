@@ -66,8 +66,6 @@
 
 \b InstallOptions improvements
 
-\H{contributors} Contributors
-
 \e{nnop@newmail.ru}
 
 \e{Ryan Geiss}
@@ -88,6 +86,16 @@
 
 \b HTML Help support for Halibut
 
+\e{Diego Pedroso aka deguix}
+
+\b New NSIS Wiki
+
+\e{Shengalts Aleksander aka Instructor}
+
+\e{Stuart Welch aka Afrow UK}
+
+\e{David Weiss aka Comm@nder21}
+
 \H{designers} Designers
 
 \e{Nikos Adamamas}
@@ -103,6 +111,8 @@
 Albanian - \e{Besnik Bleta}
 
 Arabic - \e{asdfuae, Rami Kattan}
+
+Basque - \e{I\u00F1aki San Vicente}
 
 Belarusian - \e{Sitnikov Vjacheslav}
 
@@ -129,6 +139,8 @@ Farsi - \e{Masoud Alinaqian, FzerorubigD}
 Finnish - \e{AKX, Eclipser}
 
 French - \e{veekee, Sebastien Delahaye, Jerome Charaoui}
+
+Galician - \e{Ramon Flores}
 
 German - \e{L.King, K. Windszus, R. Bisswanger, M. Simmack, Tim Kosse}
 
@@ -162,6 +174,8 @@ Mongolian - \e{Bayarsaikhan Enkhtaivan}
 
 Norwegian - \e{Jonas Christoffer Lindstrom, Jan Ivar Beddari}
 
+Norwegian Nynorsk - \e{Vebj\u00F8rn Sture}
+
 Polish - \e{Piotr Murawski, Rafa³ Lampe, cube, SYSTEMsoft Group}
 
 Portuguese - \e{DragonSoull, Dre', Ramon}
@@ -191,6 +205,10 @@ Traditional & Simplified Chinese - \e{Kii Ali}
 Turkish - \e{Bertan Kodamanoglu, Cagatay Dilsiz, Fatih BOY}
 
 Ukrainian - \e{Yuri Holubow, Nash-Soft}
+
+Uzbek - \e{Emil Garipov (emil.garipov@gmail.com)}
+
+Valencian - \e{Bernardo Arlandis Ma\uF1\uF3}
 
 Welsh - \e{Rhoslyn Prys, Meddal.com}
 

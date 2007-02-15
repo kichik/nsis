@@ -53,7 +53,7 @@ Adds file(s) to be extracted to the current output path ($OUTDIR).
 
 \b Wildcards are supported.
 
-\b If the /r switch is used, matching files are recursively searched for in subdirectories. If a directory name matches, all of its contents is added recursively. Directory structure is preserved.
+\b If the /r switch is used, matching files and directories are recursively searched for in subdirectories. If just one path segment is specified (e.g. \c{File /r something}), the current directory will be recursively searched. If more than one segment is specified (e.g. \c{File /r something\\*.*}), the last path segment will be used as the matching condition and the rest for the directory to search recursively. If a directory name matches, all of its contents is added recursively. Directory structure is preserved.
 
 \b Use the /x switch to exclude files or directories.
 
@@ -73,6 +73,29 @@ Adds file(s) to be extracted to the current output path ($OUTDIR).
 \c File /nonfatal "a file that might not exist"
 \c File /r /x CVS myproject\*.*
 \c File /r /x *.res /x *.obj /x *.pch source\*.*
+
+\\<b\\>Note:\\</b\\> when using the \e{/r} switch, both matching directories and files will be searched. This is always done with or without the use of wildcards, even if the given path perfectly matches one directory. That means, the following directory structure:
+
+\c <DIR> something
+\c   file.dat
+\c   another.dat
+\c <DIR> dir
+\c   something
+\c   <DIR> dir2
+\c     file2.dat
+\c <DIR> another
+\c   <DIR> something
+\c     readme.txt
+
+with the following \e{File} usage:
+
+\c File /r something
+
+will match the directory named \e{something} on the root directory, the file named \e{something} in the directory named \e{dir} and the directory named \e{something} in the directory named \e{another}. To match only the directory named \e{something} on the root directory, use the following:
+
+\c File /r something\*.*
+
+When adding \e{\\*.*}, it will be used as the matching condition and \e{something} will be used as the directory to search. When only \e{something} is specified, the current directory will be recursively searched for every and directory named \e{something} and \e{another\\something} will be matched.
 
 \S2{rename} Rename
 
@@ -96,11 +119,11 @@ See \R{file}{File} for more information about the parameters.
 
 \c [/r] [/REBOOTOK] directory_name
 
-Remove the specified directory (which should be a full path). Without /r, the directory will only be removed if it is completely empty. If /r is specified, the directory will be removed recursively, so all directories and files in the specified directory will be removed. If /REBOOTOK is specified, any file or directory which could not have been removed during the process will be removed on reboot -- if any file or directory will be removed on a reboot, the reboot flag will be set. The error flag is set if any file or directory cannot be removed.
+Remove the specified directory (fully qualified path with no wildcards). Without /r, the directory will only be removed if it is completely empty. If /r is specified, the directory will be removed recursively, so all directories and files in the specified directory will be removed. If /REBOOTOK is specified, any file or directory which could not have been removed during the process will be removed on reboot -- if any file or directory will be removed on a reboot, the reboot flag will be set. The error flag is set if any file or directory cannot be removed.
 
 \c RMDir $INSTDIR
 \c RMDir $INSTDIR\data
-\c RMDir /r /REBOOTOK $INSTIDR
+\c RMDir /r /REBOOTOK $INSTDIR
 \c RMDir /REBOOTOK $INSTDIR\DLLs
 
 Note that the current working directory can not be deleted. The current working directory is set by \R{setoutpath}{SetOutPath}. For example, the following example will not delete the directory.
@@ -113,6 +136,8 @@ The next example will succeed in deleting the directory.
 \c SetOutPath $TEMP\dir
 \c SetOutPath $TEMP
 \c RMDir $TEMP\dir
+
+\\<b\\>Warning:\\</b\\> using \e{RMDir /r $INSTDIR} in the uninstaller is not safe. Though it is unlikely, the user might select to install to the Program Files folder and so this command will wipe out the entire Program Files folder, including other programs that has nothing to do with the uninstaller. The user can also put other files but the program's files and would expect them to get deleted with the program. Solutions are \W{http://nsis.sourceforge.net/Uninstall_only_installed_files}{available} for easily uninstalling only files which were installed by the installer.
 
 \S2{setoutpath} SetOutPath
 

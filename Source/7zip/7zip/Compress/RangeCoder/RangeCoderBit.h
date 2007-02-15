@@ -1,4 +1,19 @@
-// Compress/RangeCoder/RangeCoderBit.h
+/*
+ * RangeCoderBit.h
+ * 
+ * This file is a part of LZMA compression module for NSIS.
+ * 
+ * Original LZMA SDK Copyright (C) 1999-2006 Igor Pavlov
+ * Modifications Copyright (C) 2003-2006 Amir Szekely <kichik@netvision.net.il>
+ * 
+ * Licensed under the Common Public License version 1.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * 
+ * Licence details can be found in the file COPYING.
+ * 
+ * This software is provided 'as-is', without any express or implied
+ * warranty.
+ */
 
 #ifndef __COMPRESS_RANGECODER_BIT_H
 #define __COMPRESS_RANGECODER_BIT_H
@@ -50,9 +65,10 @@ class CBitEncoder: public CBitModel<numMoveBits>
 public:
   void Encode(CEncoder *encoder, UInt32 symbol)
   {
+    /*
     encoder->EncodeBit(this->Prob, kNumBitModelTotalBits, symbol);
     this->UpdateModel(symbol);
-    /*
+    */
     UInt32 newBound = (encoder->Range >> kNumBitModelTotalBits) * this->Prob;
     if (symbol == 0)
     {
@@ -65,18 +81,19 @@ public:
       encoder->Range -= newBound;
       this->Prob -= (this->Prob) >> numMoveBits;
     }
-    while (encoder->Range < kTopValue)
+    if (encoder->Range < kTopValue)
     {
       encoder->Range <<= 8;
       encoder->ShiftLow();
     }
-    */
   }
   UInt32 GetPrice(UInt32 symbol) const
   {
     return CPriceTables::ProbPrices[
       (((this->Prob - symbol) ^ ((-(int)symbol))) & (kBitModelTotal - 1)) >> kNumMoveReducingBits];
   }
+  UInt32 GetPrice0() const { return CPriceTables::ProbPrices[this->Prob >> kNumMoveReducingBits]; }
+  UInt32 GetPrice1() const { return CPriceTables::ProbPrices[(kBitModelTotal - this->Prob) >> kNumMoveReducingBits]; }
 };
 
 

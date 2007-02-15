@@ -15,11 +15,13 @@ If you want to use MakeNSIS on the command line, the syntax of the makensis comm
 
 \b The /V switch followed by a number between 0 and 4 will set the verbosity of output accordingly. 0=no output, 1=errors only, 2=warnings and errors, 3=info, warnings, and errors, 4=all output.
 
+\b The /P switch followed by a number between 0 and 5 will set the priority of the compiler process accordingly. 0=idle, 1=below normal, 2=normal (default), 3=above normal, 4=high, 5=realtime.
+
 \b The /O switch followed by a filename tells the compiler to print its log to that file (instead of the screen)
 
 \b /PAUSE makes makensis pause before quitting, which is useful when executing directly from Windows.
 
-\b /NOCONFIG disables inclusion of <path to makensis.exe>\\nsisconf.nsh. Without this parameter, installer defaults are set from nsisconf.nsh.
+\b /NOCONFIG disables inclusion of nsisconf.nsh. Without this parameter, installer defaults are set from nsisconf.nsh.
 
 \b /CMDHELP prints basic usage information for command (if specified), or all commands (if command is not specified).
 
@@ -38,6 +40,16 @@ If you want to use MakeNSIS on the command line, the syntax of the makensis comm
 \b Parameters are processed by order. \c{makensis /Ddef script.nsi} is not the same as \c{makensis script.nsi /Ddef}.
 
 \b If multiple scripts are specified, they are treated as one concatenated script.
+
+\b On Windows 95, 98 and NT, below normal and above normal process priorities are not available. On those systems, below normal will actually set priority to idle and above normal will set to high.
+
+\S1{usageenvironment} Environment variables
+
+makensis checks a number of environment variables that tell it where to locate the things it needs in order to create installers. These variables include:
+
+\b NSISDIR, NSISCONFDIR - Places where nsis data and config files are installed. NSISDIR alters the script variable $\{NSISDIR\}.  See \k{varconstant} for more info.
+
+\b APPDATA (on Windows) or HOME (on other platforms) - Location of the per-user configuration file.
 
 \S1{usageexamples} Examples
 

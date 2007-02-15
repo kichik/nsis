@@ -2,7 +2,7 @@
 ;Compatible with Modern UI 1.68
 
 ;Language: Spanish (1034)
-;By MoNKi & Lobo Lunar
+;By MoNKi & Joel
 
 ;--------------------------------
 

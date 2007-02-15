@@ -1,26 +1,21 @@
 /*
-  Copyright (C) 2002 Amir Szekely <kichik@netvision.net.il>
-
-  This software is provided 'as-is', without any express or implied
-  warranty.  In no event will the authors be held liable for any damages
-  arising from the use of this software.
-
-  Permission is granted to anyone to use this software for any purpose,
-  including commercial applications, and to alter it and redistribute it
-  freely, subject to the following restrictions:
-
-  1. The origin of this software must not be misrepresented; you must not
-  claim that you wrote the original software. If you use this software
-  in a product, an acknowledgment in the product documentation would be
-  appreciated but is not required.
-
-  2. Altered source versions must be plainly marked as such, and must not be
-  misrepresented as being the original software.
-
-  3. This notice may not be removed or altered from any source distribution.
-*/
+ * DialogTemplate.cpp
+ * 
+ * This file is a part of NSIS.
+ * 
+ * Copyright (C) 2002 Amir Szekely <kichik@netvision.net.il>
+ * 
+ * Licensed under the zlib/libpng license (the "License");
+ * you may not use this file except in compliance with the License.
+ * 
+ * Licence details can be found in the file COPYING.
+ * 
+ * This software is provided 'as-is', without any express or implied
+ * warranty.
+ */
 
 #include "DialogTemplate.h"
+#include "winchar.h"
 #include <cassert> // for assert(3)
 #ifndef _WIN32
 #  include "util.h" // for Unicode conversion functions
@@ -36,37 +31,35 @@ using namespace std;
 // Utilities
 //////////////////////////////////////////////////////////////////////
 
+static inline DWORD ConvertEndianness(DWORD d) {
+  return FIX_ENDIAN_INT32(d);
+}
+
+static inline WORD ConvertEndianness(WORD w) {
+  return FIX_ENDIAN_INT16(w);
+}
+
+static inline short ConvertEndianness(short s) {
+  return ConvertEndianness(WORD(s));
+}
+
 #define ALIGN(dwToAlign, dwAlignOn) dwToAlign = (dwToAlign%dwAlignOn == 0) ? dwToAlign : dwToAlign - (dwToAlign%dwAlignOn) + dwAlignOn
 
-// Reads a variany length array from seeker into readInto and advances seeker
+// Reads a variant length array from seeker into readInto and advances seeker
 void ReadVarLenArr(LPBYTE &seeker, char* &readInto, unsigned int uCodePage) {
   WORD* arr = (WORD*)seeker;
-  switch (arr[0]) {
+  switch (ConvertEndianness(arr[0])) {
   case 0x0000:
     readInto = 0;
     seeker += sizeof(WORD);
     break;
   case 0xFFFF:
-    readInto = MAKEINTRESOURCE(arr[1]);
+    readInto = MAKEINTRESOURCE(ConvertEndianness(arr[1]));
     seeker += 2*sizeof(WORD);
     break;
   default:
     {
-      int iStrLen = WideCharToMultiByte(uCodePage, 0, (WCHAR*)arr, -1, 0, 0, 0, 0);
-      if (iStrLen)
-      {
-        readInto = new char[iStrLen];
-        if (!WideCharToMultiByte(uCodePage, 0, (WCHAR*)arr, -1, readInto, iStrLen, 0, 0))
-        {
-          delete [] readInto;
-          throw runtime_error("ReadVarLenArr - Unicode conversion failed.");
-        }
-      }
-      else
-      {
-        throw runtime_error("ReadVarLenArr - Unicode conversion failed.");
-      }
-
+      readInto = winchar_toansi((WCHAR *) arr, uCodePage);
       PWCHAR wseeker = PWCHAR(seeker);
       while (*wseeker++);
       seeker = LPBYTE(wseeker);
@@ -81,7 +74,7 @@ void ReadVarLenArr(LPBYTE &seeker, char* &readInto, unsigned int uCodePage) {
     if (IS_INTRESOURCE(x)) { \
       *(WORD*)seeker = 0xFFFF; \
       seeker += sizeof(WORD); \
-      *(WORD*)seeker = WORD(DWORD(x)); \
+      *(WORD*)seeker = ConvertEndianness(WORD(DWORD(x))); \
       seeker += sizeof(WORD); \
     } \
     else { \
@@ -121,29 +114,29 @@ CDialogTemplate::CDialogTemplate(BYTE* pbData, unsigned int uCodePage) {
 
     DLGTEMPLATEEX* dTemplateEx = (DLGTEMPLATEEX*)pbData;
 
-    m_dwHelpId = dTemplateEx->helpID;
-    m_dwStyle = dTemplateEx->style;
-    m_dwExtStyle = dTemplateEx->exStyle;
-    m_sX = dTemplateEx->x;
-    m_sY = dTemplateEx->y;
-    m_sWidth = dTemplateEx->cx;
-    m_sHeight = dTemplateEx->cy;
+    m_dwHelpId = ConvertEndianness(dTemplateEx->helpID);
+    m_dwStyle = ConvertEndianness(dTemplateEx->style);
+    m_dwExtStyle = ConvertEndianness(dTemplateEx->exStyle);
+    m_sX = ConvertEndianness(dTemplateEx->x);
+    m_sY = ConvertEndianness(dTemplateEx->y);
+    m_sWidth = ConvertEndianness(dTemplateEx->cx);
+    m_sHeight = ConvertEndianness(dTemplateEx->cy);
 
-    wItems = dTemplateEx->cDlgItems;
+    wItems = ConvertEndianness(dTemplateEx->cDlgItems);
   }
   else {
     m_bExtended = false;
 
     DLGTEMPLATE* dTemplate = (DLGTEMPLATE*)pbData;
 
-    m_dwStyle = dTemplate->style;
-    m_dwExtStyle = dTemplate->dwExtendedStyle;
-    m_sX = dTemplate->x;
-    m_sY = dTemplate->y;
-    m_sWidth = dTemplate->cx;
-    m_sHeight = dTemplate->cy;
+    m_dwStyle = ConvertEndianness(dTemplate->style);
+    m_dwExtStyle = ConvertEndianness(dTemplate->dwExtendedStyle);
+    m_sX = ConvertEndianness(dTemplate->x);
+    m_sY = ConvertEndianness(dTemplate->y);
+    m_sWidth = ConvertEndianness(dTemplate->cx);
+    m_sHeight = ConvertEndianness(dTemplate->cy);
 
-    wItems = dTemplate->cdit;
+    wItems = ConvertEndianness(dTemplate->cdit);
   }
 
   BYTE* seeker = pbData + (m_bExtended ? sizeof(DLGTEMPLATEEX) : sizeof(DLGTEMPLATE));
@@ -156,10 +149,10 @@ CDialogTemplate::CDialogTemplate(BYTE* pbData, unsigned int uCodePage) {
   ReadVarLenArr(seeker, m_szTitle, m_uCodePage);
   // Read font size and variant length array (only if style DS_SETFONT is used!)
   if (m_dwStyle & DS_SETFONT) {
-    m_sFontSize = *(short*)seeker;
+    m_sFontSize = ConvertEndianness(*(short*)seeker);
     seeker += sizeof(short);
     if (m_bExtended) {
-      m_sFontWeight = *(short*)seeker;
+      m_sFontWeight = ConvertEndianness(*(short*)seeker);
       seeker += sizeof(short);
       m_bItalic = *(BYTE*)seeker;
       seeker += sizeof(BYTE);
@@ -181,14 +174,14 @@ CDialogTemplate::CDialogTemplate(BYTE* pbData, unsigned int uCodePage) {
     if (m_bExtended) {
       DLGITEMTEMPLATEEX* rawItem = (DLGITEMTEMPLATEEX*)seeker;
 
-      item->dwHelpId = rawItem->helpID;
-      item->dwStyle = rawItem->style;
-      item->dwExtStyle = rawItem->exStyle;
-      item->sX = rawItem->x;
-      item->sY = rawItem->y;
-      item->sWidth = rawItem->cx;
-      item->sHeight = rawItem->cy;
-      item->wId = rawItem->id;
+      item->dwHelpId = ConvertEndianness(rawItem->helpID);
+      item->dwStyle = ConvertEndianness(rawItem->style);
+      item->dwExtStyle = ConvertEndianness(rawItem->exStyle);
+      item->sX = ConvertEndianness(rawItem->x);
+      item->sY = ConvertEndianness(rawItem->y);
+      item->sWidth = ConvertEndianness(rawItem->cx);
+      item->sHeight = ConvertEndianness(rawItem->cy);
+      item->wId = ConvertEndianness(rawItem->id);
 
       seeker += sizeof(DLGITEMTEMPLATEEX);
     }
@@ -196,13 +189,13 @@ CDialogTemplate::CDialogTemplate(BYTE* pbData, unsigned int uCodePage) {
       DLGITEMTEMPLATE* rawItem = (DLGITEMTEMPLATE*)seeker;
 
       item->dwHelpId = 0;
-      item->dwStyle = rawItem->style;
-      item->dwExtStyle = rawItem->dwExtendedStyle;
-      item->sX = rawItem->x;
-      item->sY = rawItem->y;
-      item->sWidth = rawItem->cx;
-      item->sHeight = rawItem->cy;
-      item->wId = rawItem->id;
+      item->dwStyle = ConvertEndianness(rawItem->style);
+      item->dwExtStyle = ConvertEndianness(rawItem->dwExtendedStyle);
+      item->sX = ConvertEndianness(rawItem->x);
+      item->sY = ConvertEndianness(rawItem->y);
+      item->sWidth = ConvertEndianness(rawItem->cx);
+      item->sHeight = ConvertEndianness(rawItem->cy);
+      item->wId = ConvertEndianness(rawItem->id);
 
       seeker += sizeof(DLGITEMTEMPLATE);
     }
@@ -214,7 +207,7 @@ CDialogTemplate::CDialogTemplate(BYTE* pbData, unsigned int uCodePage) {
 
     // Read creation data variant length array
     // First read the size of the array (no null termination)
-    item->wCreateDataSize = *(WORD*)seeker;
+    item->wCreateDataSize = ConvertEndianness(*(WORD*)seeker);
     seeker += sizeof(WORD);
     // Then read the array it self (if size is not 0)
     if (item->wCreateDataSize) {
@@ -511,16 +504,16 @@ BYTE* CDialogTemplate::Save(DWORD& dwSize) {
 
   if (m_bExtended) {
     DLGTEMPLATEEX dh = {
-      0x0001,
-      0xFFFF,
-      m_dwHelpId,
-      m_dwExtStyle,
-      m_dwStyle,
-      m_vItems.size(),
-      m_sX,
-      m_sY,
-      m_sWidth,
-      m_sHeight
+      ConvertEndianness(WORD(0x0001)),
+      ConvertEndianness(WORD(0xFFFF)),
+      ConvertEndianness(m_dwHelpId),
+      ConvertEndianness(m_dwExtStyle),
+      ConvertEndianness(m_dwStyle),
+      ConvertEndianness(WORD(m_vItems.size())),
+      ConvertEndianness(m_sX),
+      ConvertEndianness(m_sY),
+      ConvertEndianness(m_sWidth),
+      ConvertEndianness(m_sHeight)
     };
 
     CopyMemory(seeker, &dh, sizeof(DLGTEMPLATEEX));
@@ -528,13 +521,13 @@ BYTE* CDialogTemplate::Save(DWORD& dwSize) {
   }
   else {
     DLGTEMPLATE dh = {
-      m_dwStyle,
-      m_dwExtStyle,
-      m_vItems.size(),
-      m_sX,
-      m_sY,
-      m_sWidth,
-      m_sHeight
+      ConvertEndianness(m_dwStyle),
+      ConvertEndianness(m_dwExtStyle),
+      ConvertEndianness(WORD(m_vItems.size())),
+      ConvertEndianness(m_sX),
+      ConvertEndianness(m_sY),
+      ConvertEndianness(m_sWidth),
+      ConvertEndianness(m_sHeight)
     };
 
     CopyMemory(seeker, &dh, sizeof(DLGTEMPLATE));
@@ -550,10 +543,10 @@ BYTE* CDialogTemplate::Save(DWORD& dwSize) {
 
   // Write font variant length array, size, and extended info (if needed)
   if (m_dwStyle & DS_SETFONT) {
-    *(short*)seeker = m_sFontSize;
+    *(short*)seeker = ConvertEndianness(m_sFontSize);
     seeker += sizeof(short);
     if (m_bExtended) {
-      *(short*)seeker = m_sFontWeight;
+      *(short*)seeker = ConvertEndianness(m_sFontWeight);
       seeker += sizeof(short);
       *(BYTE*)seeker = m_bItalic;
       seeker += sizeof(BYTE);
@@ -571,14 +564,14 @@ BYTE* CDialogTemplate::Save(DWORD& dwSize) {
 
     if (m_bExtended) {
       DLGITEMTEMPLATEEX dih = {
-        m_vItems[i]->dwHelpId,
-        m_vItems[i]->dwExtStyle,
-        m_vItems[i]->dwStyle,
-        m_vItems[i]->sX,
-        m_vItems[i]->sY,
-        m_vItems[i]->sWidth,
-        m_vItems[i]->sHeight,
-        m_vItems[i]->wId
+        ConvertEndianness(m_vItems[i]->dwHelpId),
+        ConvertEndianness(m_vItems[i]->dwExtStyle),
+        ConvertEndianness(m_vItems[i]->dwStyle),
+        ConvertEndianness(m_vItems[i]->sX),
+        ConvertEndianness(m_vItems[i]->sY),
+        ConvertEndianness(m_vItems[i]->sWidth),
+        ConvertEndianness(m_vItems[i]->sHeight),
+        ConvertEndianness(m_vItems[i]->wId)
       };
 
       CopyMemory(seeker, &dih, sizeof(DLGITEMTEMPLATEEX));
@@ -586,13 +579,13 @@ BYTE* CDialogTemplate::Save(DWORD& dwSize) {
     }
     else {
       DLGITEMTEMPLATE dih = {
-        m_vItems[i]->dwStyle,
-        m_vItems[i]->dwExtStyle,
-        m_vItems[i]->sX,
-        m_vItems[i]->sY,
-        m_vItems[i]->sWidth,
-        m_vItems[i]->sHeight,
-        m_vItems[i]->wId
+        ConvertEndianness(m_vItems[i]->dwStyle),
+        ConvertEndianness(m_vItems[i]->dwExtStyle),
+        ConvertEndianness(m_vItems[i]->sX),
+        ConvertEndianness(m_vItems[i]->sY),
+        ConvertEndianness(m_vItems[i]->sWidth),
+        ConvertEndianness(m_vItems[i]->sHeight),
+        ConvertEndianness(m_vItems[i]->wId)
       };
 
       CopyMemory(seeker, &dih, sizeof(DLGITEMTEMPLATE));
@@ -608,7 +601,7 @@ BYTE* CDialogTemplate::Save(DWORD& dwSize) {
     // First write its size
     WORD wCreateDataSize = m_vItems[i]->wCreateDataSize;
     if (m_vItems[i]->wCreateDataSize) wCreateDataSize += sizeof(WORD);
-    *(WORD*)seeker = wCreateDataSize;
+    *(WORD*)seeker = ConvertEndianness(wCreateDataSize);
     seeker += sizeof(WORD);
     // If size is nonzero write the data too
     if (m_vItems[i]->wCreateDataSize) {

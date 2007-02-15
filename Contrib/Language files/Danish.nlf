@@ -55,7 +55,7 @@ Afbryd
 # ^CloseBtn
 &Luk
 # ^BrowseBtn
-B&rowse...
+G&ennemse...
 # ^ShowDetailsBtn
 Vis &detaljer
 # ^ClickNext
@@ -99,13 +99,13 @@ Vælg de komponenter, der skal afinstalleres:
 # ^UnComponentsSubText2
 Eller vælg de tillægskomponenter du ønsker at afinstallere:
 # ^DirText
-Setup-guiden vil installere $(^NameDA) i følgende mappe. For at installere i en anden mappe, tryk Browse og vælg en anden mappe. $_CLICK
+Setup-guiden vil installere $(^NameDA) i følgende mappe. For at installere i en anden mappe, tryk Gennemse og vælg en anden mappe. $_CLICK
 # ^DirSubText
 Destinationsmappe
 # ^DirBrowseText
 Vælg den mappe $(^NameDA) skal installeres i:
 # ^UnDirText
-Setup-guiden vil afinstallere $(^NameDA) fra følgende mappe. For at afinstallere fra en anden mappe, tryk Browse og vælg en anden mappe. $_CLICK
+Setup-guiden vil afinstallere $(^NameDA) fra følgende mappe. For at afinstallere fra en anden mappe, tryk Gennemse og vælg en anden mappe. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText

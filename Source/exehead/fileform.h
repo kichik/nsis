@@ -1,3 +1,19 @@
+/*
+ * fileform.h
+ * 
+ * This file is a part of NSIS.
+ * 
+ * Copyright (C) 1999-2007 Nullsoft and Contributors
+ * 
+ * Licensed under the zlib/libpng license (the "License");
+ * you may not use this file except in compliance with the License.
+ * 
+ * Licence details can be found in the file COPYING.
+ * 
+ * This software is provided 'as-is', without any express or implied
+ * warranty.
+ */
+
 #include "config.h"
 #include "../Platform.h"
 
@@ -73,7 +89,7 @@ enum
 #ifdef NSIS_SUPPORT_STROPTS
   EW_STRLEN,            // StrLen: 2 [output, input]
   EW_ASSIGNVAR,         // Assign: 4 [variable (0-9) to assign, string to assign, maxlen, startpos]
-  EW_STRCMP,            // StrCmp: 4 [str1, str2, jump_if_equal, jump_if_not_equal] (case-insensitive)
+  EW_STRCMP,            // StrCmp: 5 [str1, str2, jump_if_equal, jump_if_not_equal, case-sensitive?]
 #endif
 #ifdef NSIS_SUPPORT_ENVIRONMENT
   EW_READENVSTR,        // ReadEnvStr/ExpandEnvStrings: 3 [output, string_with_env_variables, IsRead]
@@ -254,6 +270,10 @@ enum {
 
   BLOCKS_NUM
 };
+
+// nsis strings
+
+typedef char NSIS_STRING[NSIS_MAX_STRLEN];
 
 // Settings common to both installers and uninstallers
 typedef struct

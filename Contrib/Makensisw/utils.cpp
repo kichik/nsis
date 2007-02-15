@@ -162,6 +162,7 @@ void ErrorMessage(HWND hwnd,const char *str) {
 // Altered by Darren Owen (DrO) on 1/10/2003
 void Items(HWND hwnd, int on){
   UINT mf = (!on ? MF_GRAYED : MF_ENABLED);
+  UINT nmf = (!on ? MF_ENABLED : MF_GRAYED);
 
   if(!on)
       g_sdata.focused_hwnd = GetFocus();
@@ -189,6 +190,7 @@ void Items(HWND hwnd, int on){
   EnableMenuItem(g_sdata.menu,IDM_BROWSESCR,mf);
   EnableMenuItem(g_sdata.menu,IDM_RECOMPILE_TEST,mf);
   EnableMenuItem(g_sdata.menu,IDM_COMPRESSOR,mf);
+  EnableMenuItem(g_sdata.menu,IDM_CANCEL,nmf);
 
   EnableToolBarButton(IDM_SAVE,on);
   // Altered by Darren Owen (DrO) on 6/10/2003
@@ -297,10 +299,29 @@ void CompileNSISScript() {
   g_sdata.thread=CreateThread(NULL,0,MakeNSISProc,0,0,&id);
 }
 
+static bool InternalOpenRegSettingsKey(HKEY root, HKEY &key, bool create) {
+  if (create) {
+    if (RegCreateKey(root, REGKEY, &key) == ERROR_SUCCESS)
+      return true;
+  } else {
+    if (RegOpenKeyEx(root, REGKEY, 0, KEY_READ, &key) == ERROR_SUCCESS)
+      return true;
+  }
+  return false;
+}
+
+bool OpenRegSettingsKey(HKEY &hKey, bool create) {
+  if (InternalOpenRegSettingsKey(REGSEC, hKey, create))
+    return true;
+  if (InternalOpenRegSettingsKey(REGSECDEF, hKey, create))
+    return true;
+  return false;
+}
+
 void RestoreWindowPos(HWND hwnd) {
   HKEY hKey;
   WINDOWPLACEMENT p;
-  if (RegOpenKeyEx(REGSEC,REGKEY,0,KEY_READ,&hKey) == ERROR_SUCCESS) {
+  if (OpenRegSettingsKey(hKey)) {
     DWORD l = sizeof(p);
     DWORD t;
     if ((RegQueryValueEx(hKey,REGLOC,NULL,&t,(unsigned char*)&p,&l)==ERROR_SUCCESS)&&(t == REG_BINARY)&&(l==sizeof(p))) {
@@ -350,7 +371,7 @@ void SaveWindowPos(HWND hwnd) {
   WINDOWPLACEMENT p;
   p.length = sizeof(p);
   GetWindowPlacement(hwnd, &p);
-  if (RegCreateKey(REGSEC,REGKEY,&hKey) == ERROR_SUCCESS) {
+  if (OpenRegSettingsKey(hKey, true)) {
     RegSetValueEx(hKey,REGLOC,0,REG_BINARY,(unsigned char*)&p,sizeof(p));
     RegCloseKey(hKey);
   }
@@ -370,7 +391,7 @@ void DeleteSymbolSet(char *name)
 {
   if(name) {
     HKEY hKey;
-    if (RegOpenKeyEx(REGSEC,REGKEY,0,KEY_READ,&hKey) == ERROR_SUCCESS) {
+    if (OpenRegSettingsKey(hKey)) {
       char subkey[1024];
       wsprintf(subkey,"%s\\%s",REGSYMSUBKEY,name);
       RegDeleteKey(hKey,subkey);
@@ -384,7 +405,7 @@ char** LoadSymbolSet(char *name)
   HKEY hKey;
   HKEY hSubKey;
   char **symbols = NULL;
-  if (RegOpenKeyEx(REGSEC,REGKEY,0,KEY_READ,&hKey) == ERROR_SUCCESS) {
+  if (OpenRegSettingsKey(hKey)) {
     char subkey[1024];
     if(name) {
       wsprintf(subkey,"%s\\%s",REGSYMSUBKEY,name);
@@ -446,7 +467,7 @@ void SaveSymbolSet(char *name, char **symbols)
   HKEY hKey;
   HKEY hSubKey;
   int n = 0;
-  if (RegCreateKey(REGSEC,REGKEY,&hKey) == ERROR_SUCCESS) {
+  if (OpenRegSettingsKey(hKey, true)) {
     char subkey[1024];
     if(name) {
       wsprintf(subkey,"%s\\%s",REGSYMSUBKEY,name);
@@ -718,8 +739,9 @@ void BuildMRUMenus()
   HMENU hMenu = g_sdata.fileSubmenu;
   int i;
   MENUITEMINFO mii;
-  char buf[MRU_DISPLAY_LENGTH+1];
+  char buf[MRU_DISPLAY_LENGTH + 5/*number*/ + 1/*null*/];
   char buf2[MRU_DISPLAY_LENGTH - 6];
+  char buf3[MRU_DISPLAY_LENGTH + 1];
   int n;
 
   for(i = 0; i < MRU_LIST_SIZE; i++) {
@@ -736,6 +758,7 @@ void BuildMRUMenus()
       mii.fMask = MIIM_ID | MIIM_TYPE | MIIM_STATE;
       mii.wID = IDM_MRU_FILE+i;
       mii.fType = MFT_STRING;
+      wsprintf(buf, "&%d ", i + 1);
       if(lstrlen(g_mru_list[i]) > MRU_DISPLAY_LENGTH) {
         char *p = my_strrchr(g_mru_list[i],'\\');
         if(p) {
@@ -745,23 +768,26 @@ void BuildMRUMenus()
             lstrcpyn(buf2,p,MRU_DISPLAY_LENGTH - 9);
             lstrcat(buf2,"...");
 
-            lstrcpyn(buf,g_mru_list[i],4);
+            lstrcpyn(buf3,g_mru_list[i],4);
+            lstrcat(buf,buf3);
             lstrcat(buf,"...\\");
             lstrcat(buf,buf2);
           }
           else {
-            lstrcpyn(buf,g_mru_list[i],(MRU_DISPLAY_LENGTH - lstrlen(p) - 3));
+            lstrcpyn(buf3,g_mru_list[i],(MRU_DISPLAY_LENGTH - lstrlen(p) - 3));
+            lstrcat(buf,buf3);
             lstrcat(buf,"...\\");
             lstrcat(buf,p);
           }
         }
         else {
-          lstrcpyn(buf,g_mru_list[i],(MRU_DISPLAY_LENGTH-2));
+          lstrcpyn(buf3,g_mru_list[i],(MRU_DISPLAY_LENGTH-2));
+          lstrcat(buf,buf3);
           lstrcat(buf,"...");
         }
       }
       else {
-        lstrcpy(buf, g_mru_list[i]);
+        lstrcat(buf, g_mru_list[i]);
       }
 
       mii.dwTypeData = buf;
@@ -813,7 +839,7 @@ void RestoreMRUList()
   HKEY hSubKey;
   int n = 0;
   int i;
-  if (RegOpenKeyEx(REGSEC,REGKEY,0,KEY_READ,&hKey) == ERROR_SUCCESS) {
+  if (OpenRegSettingsKey(hKey)) {
     if (RegCreateKey(hKey,REGMRUSUBKEY,&hSubKey) == ERROR_SUCCESS) {
       char buf[8];
       DWORD l;
@@ -841,7 +867,7 @@ void SaveMRUList()
   HKEY hKey;
   HKEY hSubKey;
   int i = 0;
-  if (RegCreateKey(REGSEC,REGKEY,&hKey) == ERROR_SUCCESS) {
+  if (OpenRegSettingsKey(hKey, true)) {
     if (RegCreateKey(hKey,REGMRUSUBKEY,&hSubKey) == ERROR_SUCCESS) {
       char buf[8];
       for(i = 0; i < MRU_LIST_SIZE; i++) {
@@ -868,7 +894,7 @@ void RestoreCompressor()
 {
   HKEY hKey;
   NCOMPRESSOR v = COMPRESSOR_SCRIPT;
-  if (RegOpenKeyEx(REGSEC,REGKEY,0,KEY_READ,&hKey) == ERROR_SUCCESS) {
+  if (OpenRegSettingsKey(hKey)) {
     char compressor_name[32];
     DWORD l = sizeof(compressor_name);
     DWORD t;
@@ -897,7 +923,7 @@ void SaveCompressor()
     n = (int)v;
   }
 
-  if (RegCreateKey(REGSEC,REGKEY,&hKey) == ERROR_SUCCESS) {
+  if (OpenRegSettingsKey(hKey, true)) {
     RegSetValueEx(hKey,REGCOMPRESSOR,0,REG_SZ,(unsigned char*)compressor_names[n],
                   lstrlen(compressor_names[n]));
     RegCloseKey(hKey);
@@ -917,4 +943,18 @@ BOOL FileExists(char *fname)
     FindClose(h);
     return true;
   }
+}
+
+HMENU FindSubMenu(HMENU hMenu, UINT uId)
+{
+  MENUITEMINFO mii = {
+    sizeof(MENUITEMINFO),
+    MIIM_SUBMENU,
+  };
+
+  mii.hSubMenu = NULL;
+
+  GetMenuItemInfo(hMenu, uId, FALSE, &mii);
+
+  return mii.hSubMenu;
 }

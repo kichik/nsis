@@ -61,7 +61,7 @@ LangString SCRIPTSAMPLE1 ${LANG_ENGLISH} "a =0; b=1.0\r\n#{a++ < 100, b *= a}\r\
 LangString SCRIPTSAMPLE2 ${LANG_ENGLISH} 'pi=3.14159; \r\nangle = pi/4;\r\ntext = "x = " + ff(angle,16+3) \r\nr0 = text +=  ", sin x = " + sin(angle)'
 LangString SCRIPTSAMPLE3 ${LANG_ENGLISH} "v1 = 123.456;  v2 = 123456789.1011\r\nr0 = v1; r1 = v2\r\nr2 = ff(v1, 3); r3 = ff(v2, 3); r4 = ff(v1, 3+16); r5 = ff(v2, 3+16)\r\nr6 = ff(v1, 3+32); r7 = ff(v2, 3+32); r8 = ff(v1, 3+32+64); r9 = ff(v2, 3+32+64)\r\n"
 LangString SCRIPTSAMPLE4 ${LANG_ENGLISH} "a = 10000; b = 0; #{--a > 0, b+= a}; r0 = a; r1 = b\r\nz = 1.55; r2 = #[z > 1.5, 'Its greater', 'Its lower']\r\nz = 1.45; r3 = #[z > 1.5, 'Its greater', 'Its lower']"
-LangString SCRIPTSAMPLE5 ${LANG_ENGLISH} 'r0 = "123a123"\r\nr1 = r0; \r\nr2 = s(r0); r3 = f(r0); r4 = i(r0); r5 = len(r0)' 
+LangString SCRIPTSAMPLE5 ${LANG_ENGLISH} 'r0 = "123a123"\r\nr1 = r0; \r\nr2 = s(r0); r3 = f(r0); r4 = i(r0); r5 = l(r0)' 
 
 Function .onInit
 

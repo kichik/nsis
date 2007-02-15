@@ -3,7 +3,7 @@
 ;                          File Functions
 ;_____________________________________________________________________________
 ;
-; 2005 Shengalts Aleksander aka Instructor (Shengalts@mail.ru)
+; 2006 Shengalts Aleksander aka Instructor (Shengalts@mail.ru)
 
 Name "File Functions"
 OutFile "FileFunc.exe"
@@ -382,8 +382,7 @@ Function LeaveCustom
 	EnableWindow $1 0
 	GetDlgItem $1 $HWND 1205
 	ShowWindow $1 1
-	EnableWindow $1 0
-	SendMessage $1 ${WM_ENABLE} 1 0
+	EnableWindow $1 1
 	SendMessage $1 ${WM_SETTEXT} 1 "STR:L"
 	GetDlgItem $1 $HWND 1210
 	SendMessage $1 ${WM_SETTEXT} 1 "STR:Option"
@@ -671,6 +670,7 @@ Function LeaveCustom
 
 	GetOptions:
 	${GetOptions} "$R1" "$R3" $0
+	IfErrors error
 	StrCpy $R0  '$0'
 	goto send
 

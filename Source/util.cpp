@@ -1,3 +1,19 @@
+/*
+ * util.cpp
+ * 
+ * This file is a part of NSIS.
+ * 
+ * Copyright (C) 1999-2007 Nullsoft and Contributors
+ * 
+ * Licensed under the zlib/libpng license (the "License");
+ * you may not use this file except in compliance with the License.
+ * 
+ * Licence details can be found in the file COPYING.
+ * 
+ * This software is provided 'as-is', without any express or implied
+ * warranty.
+ */
+
 #include "Platform.h"
 #include <stdio.h>
 #include <stdarg.h>
@@ -14,8 +30,16 @@
 #  include <iconv.h>
 #endif
 
+#ifdef __APPLE__
+namespace Apple { // defines struct section
+#  include <mach-o/dyld.h> // for _NSGetExecutablePath
+};
+#  include <sys/param.h> // for MAXPATHLEN
+#endif
+
 #include <cassert> // for assert
 #include <algorithm>
+#include <stdexcept>
 
 using namespace std;
 
@@ -52,6 +76,7 @@ int update_bitmap(CResourceEditor* re, WORD id, const char* filename, int width/
     LONG biWidth;
     fseek(f, 18, SEEK_SET); // Seek to the width member of the header
     fread(&biWidth, sizeof(LONG), 1, f);
+    FIX_ENDIAN_INT32_INPLACE(biWidth);
     if (width != biWidth) {
       fclose(f);
       return -3;
@@ -62,6 +87,7 @@ int update_bitmap(CResourceEditor* re, WORD id, const char* filename, int width/
     LONG biHeight;
     fseek(f, 22, SEEK_SET); // Seek to the height member of the header
     fread(&biHeight, sizeof(LONG), 1, f);
+    FIX_ENDIAN_INT32_INPLACE(biHeight);
     // Bitmap height can be negative too...
     if (height != abs(biHeight)) {
       fclose(f);
@@ -73,6 +99,7 @@ int update_bitmap(CResourceEditor* re, WORD id, const char* filename, int width/
     WORD biBitCount;
     fseek(f, 28, SEEK_SET); // Seek to the height member of the header
     fread(&biBitCount, sizeof(WORD), 1, f);
+    FIX_ENDIAN_INT16_INPLACE(biBitCount);
     if (biBitCount > maxbpp) {
       fclose(f);
       return -4;
@@ -82,6 +109,7 @@ int update_bitmap(CResourceEditor* re, WORD id, const char* filename, int width/
   DWORD dwSize;
   fseek(f, 2, SEEK_SET);
   fread(&dwSize, sizeof(DWORD), 1, f);
+  FIX_ENDIAN_INT32_INPLACE(dwSize);
   dwSize -= 14;
 
   unsigned char* bitmap = (unsigned char*)malloc(dwSize);
@@ -94,7 +122,7 @@ int update_bitmap(CResourceEditor* re, WORD id, const char* filename, int width/
   }
   fclose(f);
 
-  re->UpdateResource(RT_BITMAP, MAKEINTRESOURCE(id), NSIS_DEFAULT_LANG, bitmap, dwSize);
+  re->UpdateResourceA(RT_BITMAP, MAKEINTRESOURCE(id), NSIS_DEFAULT_LANG, bitmap, dwSize);
 
   free(bitmap);
 
@@ -133,62 +161,77 @@ typedef struct {
 
 #define SIZEOF_RSRC_ICON_GROUP_ENTRY 14
 
-// Added by Amir Szekely 8th July 2002
-// replace_icon, must get an initialized resource editor
-// return values:
-//   0  - All OK
-//   -1 - Bad icon file
-int replace_icon(CResourceEditor* re, WORD wIconId, const char* filename)
+static FILE * open_icon(const char* filename, IconGroupHeader *igh)
 {
   FILE* f = FOPEN(filename, "rb");
-  if (!f) return -1;
+  if (!f)
+    throw runtime_error("can't open file");
 
-  IconGroupHeader igh;
-  fread(&igh, sizeof(IconGroupHeader), 1, f);
+  if (!fread(igh, sizeof(IconGroupHeader), 1, f))
+    throw runtime_error("unable to read file");
 
-  if (igh.wIsIcon != 1 && igh.wReserved != 0) return -1;
+  FIX_ENDIAN_INT16_INPLACE(igh->wIsIcon);
+  FIX_ENDIAN_INT16_INPLACE(igh->wReserved);
+  FIX_ENDIAN_INT16_INPLACE(igh->wCount);
+
+  if (igh->wIsIcon != 1 || igh->wReserved != 0)
+    throw runtime_error("invalid icon file");
+
+  return f;
+}
+
+// replace_icon, must get an initialized resource editor
+void replace_icon(CResourceEditor* re, WORD wIconId, const char* filename)
+{
+  IconGroupHeader igh, *new_igh;
+  FILE *f = open_icon(filename, &igh);
 
   BYTE* rsrcIconGroup = (BYTE*)malloc(sizeof(IconGroupHeader) + igh.wCount*SIZEOF_RSRC_ICON_GROUP_ENTRY);
   if (!rsrcIconGroup) throw bad_alloc();
 
   CopyMemory(rsrcIconGroup, &igh, sizeof(IconGroupHeader));
 
+  new_igh = (IconGroupHeader *) rsrcIconGroup;
+  FIX_ENDIAN_INT16_INPLACE(new_igh->wIsIcon);
+  FIX_ENDIAN_INT16_INPLACE(new_igh->wReserved);
+  FIX_ENDIAN_INT16_INPLACE(new_igh->wCount);
+
   RsrcIconGroupEntry* ige = (RsrcIconGroupEntry*)(rsrcIconGroup + sizeof(IconGroupHeader));
 
   int i = 1;
 
   // Delete old icons
-  while (re->UpdateResource(RT_ICON, MAKEINTRESOURCE(i++), NSIS_DEFAULT_LANG, 0, 0));
-
-  int iNewIconSize = 0;
+  while (re->UpdateResourceA(RT_ICON, MAKEINTRESOURCE(i++), NSIS_DEFAULT_LANG, 0, 0));
 
   for (i = 0; i < igh.wCount; i++) {
     fread(ige, sizeof(FileIconGroupEntry)-sizeof(DWORD), 1, f);
-    ige->wRsrcId = i+1;
+
+    DWORD dwRawSize = FIX_ENDIAN_INT32(ige->dwRawSize);
+
+    ige->wRsrcId = FIX_ENDIAN_INT16(i + 1);
 
     DWORD dwOffset;
     fread(&dwOffset, sizeof(DWORD), 1, f);
+
+    FIX_ENDIAN_INT32_INPLACE(dwOffset);
 
     fpos_t pos;
     fgetpos(f, &pos);
 
     if (fseek(f, dwOffset, SEEK_SET)) {
       free(rsrcIconGroup);
-      return -1;
+      throw runtime_error("corrupted icon file, too small");
     }
-    BYTE* iconData = (BYTE*)malloc(ige->dwRawSize);
+    BYTE* iconData = (BYTE*)malloc(dwRawSize);
     if (!iconData) {
       free(rsrcIconGroup);
       throw bad_alloc();
     }
-    fread(iconData, sizeof(BYTE), ige->dwRawSize, f);
-    re->UpdateResource(RT_ICON, MAKEINTRESOURCE(i+1), NSIS_DEFAULT_LANG, iconData, ige->dwRawSize);
+    fread(iconData, sizeof(BYTE), dwRawSize, f);
+    re->UpdateResourceA(RT_ICON, MAKEINTRESOURCE(i+1), NSIS_DEFAULT_LANG, iconData, dwRawSize);
     free(iconData);
 
     fsetpos(f, &pos);
-
-    // Every icon entry should be 8 aligned
-    iNewIconSize += ((ige->dwRawSize%8 == 0) ? ige->dwRawSize : ige->dwRawSize - (ige->dwRawSize%8) + 8);
 
     // Seems like the compiler refuses to increase the pointer by just 14.
     // If you'll replace this line by ige++ you will get unwanted results.
@@ -197,30 +240,19 @@ int replace_icon(CResourceEditor* re, WORD wIconId, const char* filename)
 
   fclose(f);
 
-  re->UpdateResource(RT_GROUP_ICON, MAKEINTRESOURCE(wIconId), NSIS_DEFAULT_LANG, rsrcIconGroup, sizeof(IconGroupHeader) + igh.wCount*SIZEOF_RSRC_ICON_GROUP_ENTRY);
+  re->UpdateResourceA(RT_GROUP_ICON, MAKEINTRESOURCE(wIconId), NSIS_DEFAULT_LANG, rsrcIconGroup, sizeof(IconGroupHeader) + igh.wCount*SIZEOF_RSRC_ICON_GROUP_ENTRY);
 
   free(rsrcIconGroup);
-
-  return 0;
 }
 
-// Added by Amir Szekely 8th July 2002
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
 // returns the data of the uninstaller icon that should replace the installer icon data
-// return values:
-//   0  - Bad icon file
-//   Anything else - Pointer to the uninstaller icon data
 unsigned char* generate_uninstall_icon_data(const char* filename, size_t &size)
 {
   int i;
 
-  FILE* f = FOPEN(filename, "rb");
-  if (!f) return 0;
-
   IconGroupHeader igh;
-  if (!fread(&igh, sizeof(IconGroupHeader), 1, f)) return 0;
-
-  if (igh.wIsIcon != 1 && igh.wReserved != 0) return 0;
+  FILE *f = open_icon(filename, &igh);
 
   int iNewIconSize = 0;
   FileIconGroupEntry ige;
@@ -230,10 +262,10 @@ unsigned char* generate_uninstall_icon_data(const char* filename, size_t &size)
   if (!offsets || !rawSizes) throw bad_alloc();
 
   for (i = 0; i < igh.wCount; i++) {
-    if (!fread(&ige, sizeof(FileIconGroupEntry), 1, f)) return 0;
+    if (!fread(&ige, sizeof(FileIconGroupEntry), 1, f)) throw runtime_error("unable to read file");
     offsets[i] = ige.dwImageOffset;
     rawSizes[i] = ige.dwRawSize;
-    iNewIconSize += ige.dwRawSize;
+    iNewIconSize += FIX_ENDIAN_INT32(ige.dwRawSize);
   }
 
   // Before each icon come two DWORDs, one for size and the other for offset (set later)
@@ -250,9 +282,9 @@ unsigned char* generate_uninstall_icon_data(const char* filename, size_t &size)
     seeker += sizeof(DWORD);
     *(DWORD*)seeker = 0;
     seeker += sizeof(DWORD);
-    fseek(f, offsets[i], SEEK_SET);
-    fread(seeker, 1, rawSizes[i], f);
-    seeker += rawSizes[i];
+    fseek(f, FIX_ENDIAN_INT32(offsets[i]), SEEK_SET);
+    fread(seeker, 1, FIX_ENDIAN_INT32(rawSizes[i]), f);
+    seeker += FIX_ENDIAN_INT32(rawSizes[i]);
   }
 
   // This is how we know there are no more icons (size = 0)
@@ -270,64 +302,57 @@ unsigned char* generate_uninstall_icon_data(const char* filename, size_t &size)
 #define MY_ASSERT(x, y) if (x) {if (g_display_errors) fprintf(g_output,"\nError finding icon resources: %s -- failing!\n", y);return 0;}
 
 int find_in_dir(PRESOURCE_DIRECTORY rd, WORD id) {
-  for (int i = rd->Header.NumberOfNamedEntries; i < rd->Header.NumberOfNamedEntries + rd->Header.NumberOfIdEntries; i++) {
-    if (rd->Entries[i].Id == id) {
+  WORD i = FIX_ENDIAN_INT16(rd->Header.NumberOfNamedEntries);
+  WORD l = i + FIX_ENDIAN_INT16(rd->Header.NumberOfIdEntries);
+
+  for (; i < l; i++) {
+    if (FIX_ENDIAN_INT16(rd->Entries[i].Id) == id) {
       return i;
     }
   }
+
   return -1;
 }
 
 // Fill the array of icons for uninstall with their offsets
-// Returns 0 if failed, anything else is the icon offset in the PE.
-int generate_unicons_offsets(unsigned char* exeHeader, unsigned char* uninstIconData) {
-  int i;
+// Returns zero on failure
+int generate_unicons_offsets(unsigned char* exeHeader, size_t exeHeaderSize, unsigned char* uninstIconData) {
+  DWORD dwResourceSectionVA;
 
-  MY_ASSERT(PIMAGE_DOS_HEADER(exeHeader)->e_magic != IMAGE_DOS_SIGNATURE, "invalid dos header");
-
-  PIMAGE_NT_HEADERS ntHeaders = PIMAGE_NT_HEADERS(exeHeader + PIMAGE_DOS_HEADER(exeHeader)->e_lfanew);
-
-  MY_ASSERT(ntHeaders->Signature != IMAGE_NT_SIGNATURE, "invalid nt headers");
-
-  DWORD dwResourceSectionVA = ntHeaders->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_RESOURCE].VirtualAddress;
-  PIMAGE_SECTION_HEADER sectionHeadersArray = IMAGE_FIRST_SECTION(ntHeaders);
-
-  for (i = 0; i < ntHeaders->FileHeader.NumberOfSections; i++)
-    if (dwResourceSectionVA == sectionHeadersArray[i].VirtualAddress)
-      break;
-
-  MY_ASSERT(i == ntHeaders->FileHeader.NumberOfSections, "can't find resource section");
-
-  PRESOURCE_DIRECTORY rdRoot = PRESOURCE_DIRECTORY(exeHeader + sectionHeadersArray[i].PointerToRawData);
-
-  int iNextSection;
-  if (i == ntHeaders->FileHeader.NumberOfSections - 1)
-    iNextSection = (int)ntHeaders->OptionalHeader.SizeOfImage;
-  else
-    iNextSection = (int)sectionHeadersArray[i+1].PointerToRawData;
-
-  MY_ASSERT((long)rdRoot - (long)exeHeader > iNextSection, "corrupted EXE - invalid pointer");
+  PIMAGE_NT_HEADERS ntHeaders = CResourceEditor::GetNTHeaders(exeHeader);
+  PRESOURCE_DIRECTORY rdRoot = CResourceEditor::GetResourceDirectory(exeHeader, exeHeaderSize, ntHeaders, &dwResourceSectionVA);
 
   int idx = find_in_dir(rdRoot, (WORD) (long) RT_ICON);
-  MY_ASSERT(idx == -1, "no icons?!");
-  MY_ASSERT(!rdRoot->Entries[idx].DirectoryOffset.DataIsDirectory, "bad resource directory");
+  MY_ASSERT(idx < 0, "no icons found");
+  MY_IMAGE_RESOURCE_DIRECTORY_ENTRY rdEntry = rdRoot->Entries[idx];
+  FIX_ENDIAN_INT32_INPLACE(rdEntry.OffsetToData);
+  MY_ASSERT(!rdEntry.DirectoryOffset.DataIsDirectory, "bad resource directory");
 
-  PRESOURCE_DIRECTORY rdIcons = PRESOURCE_DIRECTORY(rdRoot->Entries[idx].DirectoryOffset.OffsetToDirectory + DWORD(rdRoot));
+  PRESOURCE_DIRECTORY rdIcons = PRESOURCE_DIRECTORY(rdEntry.DirectoryOffset.OffsetToDirectory + DWORD(rdRoot));
 
-  MY_ASSERT((long)rdIcons - (long)exeHeader > iNextSection, "corrupted EXE - invalid pointer");
+  MY_ASSERT((size_t)rdIcons - (size_t)exeHeader > exeHeaderSize, "corrupted EXE - invalid pointer");
 
-  MY_ASSERT(rdIcons->Header.NumberOfIdEntries == 0, "no icons found");
+  WORD wNumberOfEntries = FIX_ENDIAN_INT16(rdIcons->Header.NumberOfIdEntries);
 
-  for (i = 0; i < rdIcons->Header.NumberOfIdEntries; i++) { // Icons dir can't have named entries
-    MY_ASSERT(!rdIcons->Entries[i].DirectoryOffset.DataIsDirectory, "bad resource directory");
-    PRESOURCE_DIRECTORY rd = PRESOURCE_DIRECTORY(rdIcons->Entries[i].DirectoryOffset.OffsetToDirectory + DWORD(rdRoot));
+  MY_ASSERT(wNumberOfEntries == 0, "no icons found");
+
+  for (WORD i = 0; i < wNumberOfEntries; i++) { // Icons dir can't have named entries
+    MY_IMAGE_RESOURCE_DIRECTORY_ENTRY icoEntry = rdIcons->Entries[i];
+    FIX_ENDIAN_INT32_INPLACE(icoEntry.OffsetToData);
+
+    MY_ASSERT(!icoEntry.DirectoryOffset.DataIsDirectory, "bad resource directory");
+    PRESOURCE_DIRECTORY rd = PRESOURCE_DIRECTORY(icoEntry.DirectoryOffset.OffsetToDirectory + DWORD(rdRoot));
     
-    MY_ASSERT((long)rd - (long)exeHeader > iNextSection, "corrupted EXE - invalid pointer");
-    MY_ASSERT(rd->Entries[0].DirectoryOffset.DataIsDirectory, "bad resource directory");
-    
-    PIMAGE_RESOURCE_DATA_ENTRY rde = PIMAGE_RESOURCE_DATA_ENTRY(rd->Entries[0].OffsetToData + DWORD(rdRoot));
+    MY_ASSERT((size_t)rd - (size_t)exeHeader > exeHeaderSize, "corrupted EXE - invalid pointer");
 
-    MY_ASSERT((long)rde - (long)exeHeader > iNextSection, "corrupted EXE - invalid pointer");
+    MY_IMAGE_RESOURCE_DIRECTORY_ENTRY datEntry = rd->Entries[0];
+    FIX_ENDIAN_INT32_INPLACE(datEntry.OffsetToData);
+
+    MY_ASSERT(datEntry.DirectoryOffset.DataIsDirectory, "bad resource directory");
+    
+    PIMAGE_RESOURCE_DATA_ENTRY rde = PIMAGE_RESOURCE_DATA_ENTRY(datEntry.OffsetToData + DWORD(rdRoot));
+
+    MY_ASSERT((size_t)rde - (size_t)exeHeader > exeHeaderSize, "corrupted EXE - invalid pointer");
 
     // find icon to replace
     LPBYTE seeker = uninstIconData;
@@ -339,16 +364,17 @@ int generate_unicons_offsets(unsigned char* exeHeader, unsigned char* uninstIcon
       if (!dwOffset && dwSize == rde->Size)
         break;
 
-      seeker += dwSize + sizeof(DWORD);
+      seeker += FIX_ENDIAN_INT32(dwSize) + sizeof(DWORD);
 
       // reached the end of the list and no match
       MY_ASSERT(!*seeker, "installer, uninstaller icon size mismatch - see the Icon instruction's documentation for more information");
     }
 
     // Set offset
-    *(LPDWORD) seeker = rde->OffsetToData + DWORD(rdRoot) - dwResourceSectionVA - DWORD(exeHeader);
+    DWORD dwOffset = FIX_ENDIAN_INT32(rde->OffsetToData) + DWORD(rdRoot) - dwResourceSectionVA - DWORD(exeHeader);
+    *(LPDWORD) seeker = FIX_ENDIAN_INT32(dwOffset);
 
-    MY_ASSERT(*(int*)seeker > iNextSection || *(int*)seeker < (long)rdRoot - (long)exeHeader, "invalid data offset - icon resource probably compressed");
+    MY_ASSERT(dwOffset > exeHeaderSize || dwOffset < (DWORD)rdRoot - (DWORD)exeHeader, "invalid data offset - icon resource probably compressed");
   }
 
   LPBYTE seeker = uninstIconData;
@@ -359,10 +385,10 @@ int generate_unicons_offsets(unsigned char* exeHeader, unsigned char* uninstIcon
     seeker += sizeof(DWORD);
     // offset isn't set which means we found no match for this one
     MY_ASSERT(!dwOffset, "installer, uninstaller number of icons doesn't match - see the Icon instruction's documentation for more information");
-    seeker += dwSize;
+    seeker += FIX_ENDIAN_INT32(dwSize);
   }
 
-  return PIMAGE_RESOURCE_DATA_ENTRY(PRESOURCE_DIRECTORY(rdIcons->Entries[0].DirectoryOffset.OffsetToDirectory + DWORD(rdRoot))->Entries[0].OffsetToData + DWORD(rdRoot))->OffsetToData + DWORD(rdRoot) - dwResourceSectionVA - DWORD(exeHeader);
+  return 1;
 }
 #endif // NSIS_CONFIG_UNINSTALL_SUPPORT
 
@@ -426,7 +452,7 @@ int WideCharToMultiByte(UINT CodePage, DWORD dwFlags, LPCWSTR lpWideCharStr,
   char cp[128];
   create_code_page_string(cp, sizeof(cp), CodePage);
 
-  iconv_t cd = iconv_open(cp, "UCS-2");
+  iconv_t cd = iconv_open(cp, "UCS-2LE");
   if (cd == (iconv_t) -1) {
     return 0;
   }
@@ -462,7 +488,7 @@ int MultiByteToWideChar(UINT CodePage, DWORD dwFlags, LPCSTR lpMultiByteStr,
   char cp[128];
   create_code_page_string(cp, sizeof(cp), CodePage);
 
-  iconv_t cd = iconv_open("UCS-2", cp);
+  iconv_t cd = iconv_open("UCS-2LE", cp);
   if (cd == (iconv_t) -1) {
     return 0;
   }
@@ -552,16 +578,6 @@ FILE *my_fopen(const char *path, const char *mode)
   my_convert_free(converted_path);
   return result;
 }
-
-int my_glob(const char *pattern, int flags,
-         int errfunc(const char * epath, int eerrno), glob_t *pglob)
-{
-  char *converted_pattern = my_convert(pattern);
-
-  int result = glob(converted_pattern, flags, errfunc, pglob);
-  my_convert_free(converted_pattern);
-  return result;
-}
 #endif//!_WIN32
 
 void *operator new(size_t size) {
@@ -636,13 +652,46 @@ string get_file_name(const string& path) {
 
 string get_executable_path(const char* argv0) {
 #ifdef _WIN32
-  char temp_buf[1024];
+  char temp_buf[MAX_PATH+1];
   temp_buf[0] = '\0';
-  int rc = GetModuleFileName(NULL,temp_buf,1024);
+  int rc = GetModuleFileName(NULL,temp_buf,MAX_PATH);
   assert(rc != 0);
   return string(temp_buf);
-#else
-  return get_full_path(argv0);
+#elif __APPLE__
+  char temp_buf[MAXPATHLEN+1];
+  unsigned int buf_len = MAXPATHLEN;
+  int rc = Apple::_NSGetExecutablePath(temp_buf, &buf_len);
+  assert(rc == 0);
+  return string(temp_buf);
+#else /* Linux/BSD/POSIX/etc */
+  const char *envpath = getenv("_");
+  if( envpath != NULL ) return get_full_path( envpath );
+  else {
+    char* pathtmp;
+    char* path = NULL;
+    size_t len = 100;
+    size_t nchars;
+    while(1){
+      pathtmp = (char*)realloc(path,len+1);
+      if( pathtmp == NULL ){
+        free(path);
+        return get_full_path(argv0);
+      }
+      path = pathtmp;
+      nchars = readlink("/proc/self/exe", path, len);
+      if( nchars < 0 ){
+        free(path);
+        return get_full_path(argv0);
+      }
+      if( nchars < len ){
+        path[nchars] = '\0';
+        string result(path);
+        free(path);
+        return result;
+      }
+      len *= 2;
+    }
+  }
 #endif
 }
 
@@ -658,4 +707,31 @@ string lowercase(const string &str) {
   string result = str;
   transform(str.begin(), str.end(), result.begin(), tolower);
   return result;
+}
+
+int sane_system(const char *command) {
+#ifdef _WIN32
+
+  // workaround for bug #1509909
+  // http://sf.net/tracker/?func=detail&atid=373085&aid=1509909&group_id=22049
+  //
+  // cmd.exe /C has some weird handling for quotes. it strips
+  // the surrounding quotes, if they exist. if there are quotes
+  // around the program path and its arguments, it will strip
+  // the outer quotes. this may result in something like:
+  //   `program files\nsis\makensis.exe" "args`
+  // which obviously fails...
+  //
+  // to avoid the stripping, a harmless string is prefixed
+  // to the command line.
+
+  string command_s = "IF 1==1 ";
+  command_s += command;
+  return system(command_s.c_str());
+
+#else
+
+  return system(command);
+
+#endif
 }

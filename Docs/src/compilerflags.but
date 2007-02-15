@@ -18,7 +18,7 @@ This command sets the size of the compiler's internal file buffers. This command
 
 \c \\<b\\>auto\\</b\\>|force|off
 
-This command sets the compress flag which is used by the installer to determine whether or not data should be compressed. Typically the SetCompress flag will effect the commands after it, and the last SetCompress command in the file also determines whether or not the install info section and uninstall data of the installer is compressed. If compressflag is 'auto', then files are compressed if the compressed size is smaller than the uncompressed size. If compressflag is set to 'force', then the compressed version is always used. If compressflag is 'off' then compression is not used (which can be faster).
+This command sets the compress flag which is used by the installer to determine whether or not data should be compressed. Typically the SetCompress flag will affect the commands after it, and the last SetCompress command in the file also determines whether or not the install info section and uninstall data of the installer is compressed. If compressflag is 'auto', then files are compressed if the compressed size is smaller than the uncompressed size. If compressflag is set to 'force', then the compressed version is always used. If compressflag is 'off' then compression is not used (which can be faster).
 
 Note that this option has no effect when solid compression is used.
 
@@ -62,7 +62,7 @@ This command sets the file date/time saving flag which is used by the File comma
 
 \c \\<b\\>on\\</b\\>|off|try|ifnewer|ifdiff|lastused
 
-This command sets the overwrite flag which is used by the File command to determine whether or not the file should overwrite any existing files that are present. If overwriteflag is 'on', files are overwritten (this is the default). If overwriteflag is 'off', files that are already present are not overwritten. If overwriteflag is 'try', files are overwritten if possible (meaning that if the file is not able to be written to, it is skipped without any user interaction). If overwriteflag is 'ifnewer', then files are only overwritten if the existing file is older than the new file. If overwriteflag is 'ifdiff', then files are only overwritten if the existing file is older or newer than the new file. Note that when in 'ifnewer' or 'ifdiff' mode, the destination file's date is set, regardless of what SetDateSave is set to.
+This command sets the overwrite flag which is used by the \R{file}{File} command to determine whether or not the file should overwrite any existing files that are present. If overwriteflag is 'on', files are overwritten (this is the default). If overwriteflag is 'off', files that are already present are not overwritten. If overwriteflag is 'try', files are overwritten if possible (meaning that if the file is not able to be written to, it is skipped without any user interaction). If overwriteflag is 'ifnewer', then files are only overwritten if the existing file is older than the new file. If overwriteflag is 'ifdiff', then files are only overwritten if the existing file is older or newer than the new file. Note that when in 'ifnewer' or 'ifdiff' mode, the destination file's date is set, regardless of what SetDateSave is set to.
 
 \c SetOverwrite off
 \c File program.cfg # config file we don't want to overwrite
@@ -72,7 +72,7 @@ This command sets the overwrite flag which is used by the File command to determ
 
 \c \\<b\\>manual\\</b\\>|alwaysoff
 
-This command sets the unload plug-in flag which is by CallInstDLL and plug-in calls (dll::func). Setting this to always off will behave as if you have added the /NOUNLOAD to every CallInstDLL and plug-in call. Setting this to manual will only not unload if you specifically use /NOUNLOAD.
+This command sets the unload plug-in flag which is by \R{callinstdll}{CallInstDLL} and \R{plugindlls}{plug-in calls}. Setting this to always off will behave as if you have added the /NOUNLOAD to every CallInstDLL and plug-in call. Setting this to manual will only not unload if you specifically use /NOUNLOAD.
 
 \S1{versioninfo} Version Information
 

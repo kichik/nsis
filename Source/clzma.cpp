@@ -1,3 +1,19 @@
+/*
+ * clzma.cpp
+ * 
+ * This file is a part of NSIS.
+ * 
+ * Copyright (C) 1999-2007 Nullsoft and Contributors
+ * 
+ * Licensed under the zlib/libpng license (the "License");
+ * you may not use this file except in compliance with the License.
+ * 
+ * Licence details can be found in the file COPYING.
+ * 
+ * This software is provided 'as-is', without any express or implied
+ * warranty.
+ */
+
 #include <algorithm> // for std::min
 #include "clzma.h"
 
@@ -46,7 +62,11 @@ BOOL SetEvent(HANDLE _event)
 BOOL ResetEvent(HANDLE _event)
 {
   evnet_t *event = (evnet_t *) _event;
+  if (pthread_mutex_lock(&event->mutex))
+    return FALSE;
   event->signaled = false;
+  if (pthread_mutex_unlock(&event->mutex))
+    return FALSE;
   return TRUE;
 }
 
@@ -54,7 +74,7 @@ BOOL CloseHandle(HANDLE _event)
 {
   BOOL ret = TRUE;
   evnet_t *event = (evnet_t *) _event;
-  if (event)
+  if (!event)
     return FALSE;
   if (pthread_cond_destroy(&event->cond))
     ret = FALSE;
@@ -69,21 +89,17 @@ BOOL CloseHandle(HANDLE _event)
 DWORD WaitForSingleObject(HANDLE _event, DWORD) {
   DWORD ret = WAIT_OBJECT_0;
   evnet_t *event = (evnet_t *) _event;
+  if (pthread_mutex_lock(&event->mutex))
+    return !WAIT_OBJECT_0;
   if (!event->signaled)
   {
-    pthread_mutex_t m = PTHREAD_MUTEX_INITIALIZER;
-    if (pthread_mutex_lock(&m) || pthread_cond_wait(&event->cond, &m))
+    if (pthread_cond_wait(&event->cond, &event->mutex))
     {
       ret = !WAIT_OBJECT_0;
     }
-    pthread_mutex_unlock(&m);
-    pthread_mutex_destroy(&m);
   }
-  if (pthread_mutex_lock(&event->mutex))
-    return !WAIT_OBJECT_0;
   event->signaled = false;
-  if (pthread_mutex_unlock(&event->mutex))
-    return !WAIT_OBJECT_0;
+  pthread_mutex_unlock(&event->mutex);
   return ret;
 }
 
@@ -133,15 +149,23 @@ CLZMA::CLZMA(): _encoder(NULL)
   hCompressionThread = 0;
   SetNextOut(NULL, 0);
   SetNextIn(NULL, 0);
+
+  AddRef(); // will be manually deleted, not released
 }
 
 CLZMA::~CLZMA()
 {
   End();
   if (hNeedIOEvent)
+  {
     CloseHandle(hNeedIOEvent);
+    hNeedIOEvent = NULL;
+  }
   if (hIOReadyEvent)
+  {
     CloseHandle(hIOReadyEvent);
+    hIOReadyEvent = NULL;
+  }
   if (_encoder)
   {
     delete _encoder;
@@ -239,7 +263,7 @@ int CLZMA::CompressReal()
           break;
         if (finished)
         {
-          res = C_OK;
+          res = C_FINISHED;
           break;
         }
       }

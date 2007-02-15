@@ -1,6 +1,8 @@
 #ifndef _EXDLL_H_
 #define _EXDLL_H_
 
+#include <windows.h>
+
 // only include this file from one place in your DLL.
 // (it is all static, if you use it in two places it will fail)
 
@@ -75,6 +77,7 @@ typedef struct {
 typedef struct {
   exec_flags_type *exec_flags;
   int (__stdcall *ExecuteCodeSegment)(int, HWND);
+  void (__stdcall *validate_filename)(char *);
 } extra_parameters;
 
 // utility functions (not required but often useful)

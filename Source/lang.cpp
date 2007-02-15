@@ -1,3 +1,19 @@
+/*
+ * lang.cpp
+ * 
+ * This file is a part of NSIS.
+ * 
+ * Copyright (C) 1999-2007 Nullsoft and Contributors
+ * 
+ * Licensed under the zlib/libpng license (the "License");
+ * you may not use this file except in compliance with the License.
+ * 
+ * Licence details can be found in the file COPYING.
+ * 
+ * This software is provided 'as-is', without any express or implied
+ * warranty.
+ */
+
 #include "Platform.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -5,6 +21,7 @@
 #include "util.h"
 #include "DialogTemplate.h"
 #include "exehead/resource.h"
+#include "version.h"
 
 using namespace std;
 
@@ -311,13 +328,12 @@ void CEXEBuild::InitLangTables() {
   keep_ref = true;
 }
 
-LanguageTable* CEXEBuild::GetLangTable(LANGID &lang) {
+LanguageTable* CEXEBuild::GetLangTable(LANGID &lang, bool create/*=true*/) {
   int nlt = lang_tables.getlen() / sizeof(LanguageTable);
   LanguageTable *nla = (LanguageTable*)lang_tables.get();
 
   lang = lang ? lang : last_used_lang;
-  last_used_lang = lang;
-  LanguageTable *table = 0;
+  LanguageTable *table = NULL;
 
   for (int i = 0; i < nlt; i++) {
     if (lang == nla[i].lang_id) {
@@ -325,7 +341,7 @@ LanguageTable* CEXEBuild::GetLangTable(LANGID &lang) {
       break;
     }
   }
-  if (!table) {
+  if (!table && create) {
     LanguageTable newtable;
 
     newtable.lang_id = lang;
@@ -338,7 +354,30 @@ LanguageTable* CEXEBuild::GetLangTable(LANGID &lang) {
     table = (LanguageTable*)lang_tables.get() + nlt;
   }
 
+  if (table) // update last used language if a table was loaded
+    last_used_lang = lang;
+
   return table;
+}
+
+char *CEXEBuild::GetLangNameAndCP(LANGID lang, unsigned int *codepage/*=NULL*/) {
+  LanguageTable *table = GetLangTable(lang, false);
+
+  if (table && table->nlf.m_bLoaded) {
+    if (codepage)
+      *codepage = table->nlf.m_uCodePage;
+
+    return table->nlf.m_szName;
+  }
+  else {
+    if (codepage)
+      *codepage = 1252; // English US
+
+    if (lang == 1033)
+      return "English";
+    else
+      return "???";
+  }
 }
 
 int CEXEBuild::DefineLangString(char *name, int process/*=-1*/) {
@@ -473,14 +512,14 @@ int CEXEBuild::GenerateLangTables() {
       init_res_editor();
 
 #define ADD_FONT(id) { \
-        BYTE* dlg = res_editor->GetResource(RT_DIALOG, MAKEINTRESOURCE(id), NSIS_DEFAULT_LANG); \
+        BYTE* dlg = res_editor->GetResourceA(RT_DIALOG, MAKEINTRESOURCE(id), NSIS_DEFAULT_LANG); \
         if (dlg) { \
           CDialogTemplate td(dlg); \
           res_editor->FreeResource(dlg); \
           td.SetFont(build_font, build_font_size); \
           DWORD dwSize; \
           dlg = td.Save(dwSize); \
-          res_editor->UpdateResource(RT_DIALOG, MAKEINTRESOURCE(id), NSIS_DEFAULT_LANG, dlg, dwSize); \
+          res_editor->UpdateResourceA(RT_DIALOG, MAKEINTRESOURCE(id), NSIS_DEFAULT_LANG, dlg, dwSize); \
           delete [] dlg; \
         } \
       }
@@ -528,15 +567,22 @@ int CEXEBuild::GenerateLangTables() {
         init_res_editor();
 
 #define ADD_FONT(id) { \
-          BYTE* dlg = res_editor->GetResource(RT_DIALOG, MAKEINTRESOURCE(id), NSIS_DEFAULT_LANG); \
+          BYTE* dlg = res_editor->GetResourceA(RT_DIALOG, MAKEINTRESOURCE(id), NSIS_DEFAULT_LANG); \
           if (dlg) { \
             CDialogTemplate td(dlg,lt[i].nlf.m_uCodePage); \
             res_editor->FreeResource(dlg); \
             if (font) td.SetFont(font, lt[i].nlf.m_iFontSize); \
-            if (lt[i].nlf.m_bRTL) td.ConvertToRTL(); \
+            if (lt[i].nlf.m_bRTL) { \
+              td.ConvertToRTL(); \
+              DialogItemTemplate* dir = td.GetItem(IDC_DIR); \
+              if (id == IDD_DIR && dir) { \
+                if ((dir->dwStyle & ES_CENTER) == 0) dir->dwStyle ^= ES_RIGHT; \
+                dir->dwExtStyle &= ~(WS_EX_RTLREADING | WS_EX_LEFTSCROLLBAR); \
+              } \
+            } \
             DWORD dwSize; \
             dlg = td.Save(dwSize); \
-            res_editor->UpdateResource(RT_DIALOG, MAKEINTRESOURCE(id+cur_offset), NSIS_DEFAULT_LANG, dlg, dwSize); \
+            res_editor->UpdateResourceA(RT_DIALOG, MAKEINTRESOURCE(id+cur_offset), NSIS_DEFAULT_LANG, dlg, dwSize); \
             delete [] dlg; \
           } \
         }
@@ -840,8 +886,8 @@ void CEXEBuild::FillLanguageTable(LanguageTable *table) {
           if (!dstr)
             continue;
           if (i == NLF_BRANDING) {
-            char temp[NSIS_MAX_STRLEN + sizeof(CONST_STR(NSIS_VERSION))];
-            sprintf(temp, dstr, CONST_STR(NSIS_VERSION));
+            char temp[NSIS_MAX_STRLEN + sizeof(NSIS_VERSION)];
+            sprintf(temp, dstr, NSIS_VERSION);
             table->lang_strings->set(sn, temp);
             continue;
           }

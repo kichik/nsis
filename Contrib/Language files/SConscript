@@ -1,6 +1,7 @@
 languages = Split("""
 	Albanian.nlf
 	Arabic.nlf
+	Basque.nlf
 	Belarusian.nlf
 	Bosnian.nlf
 	Breton.nlf
@@ -15,12 +16,14 @@ languages = Split("""
 	Farsi.nlf
 	Finnish.nlf
 	French.nlf
+	Galician.nlf
 	German.nlf
 	Greek.nlf
 	Hebrew.nlf
 	Hungarian.nlf
 	Icelandic.nlf
 	Indonesian.nlf
+	Irish.nlf
 	Italian.nlf
 	Japanese.nlf
 	Korean.nlf
@@ -32,6 +35,7 @@ languages = Split("""
 	Malay.nlf
 	Mongolian.nlf
 	Norwegian.nlf
+	NorwegianNynorsk.nlf
 	Polish.nlf
 	Portuguese.nlf
 	PortugueseBR.nlf
@@ -48,8 +52,11 @@ languages = Split("""
 	TradChinese.nlf
 	Turkish.nlf
 	Ukrainian.nlf
+	Uzbek.nlf
+	Valencian.nlf
+	Welsh.nlf
 """)
 
 Import('defenv')
 
-defenv.DistributeContribs('Language files', languages)
+defenv.DistributeContrib(languages, path='Language files')

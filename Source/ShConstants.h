@@ -1,4 +1,18 @@
-// constants.h by Ramon 18 Nov 2003
+/*
+ * ShConstants.h
+ * 
+ * This file is a part of NSIS.
+ * 
+ * Copyright (C) 2003 Ramon
+ * 
+ * Licensed under the zlib/libpng license (the "License");
+ * you may not use this file except in compliance with the License.
+ * 
+ * Licence details can be found in the file COPYING.
+ * 
+ * This software is provided 'as-is', without any express or implied
+ * warranty.
+ */
 
 #ifndef ___CONSTANTS___H_____
 #define ___CONSTANTS___H_____

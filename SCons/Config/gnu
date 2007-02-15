@@ -2,9 +2,9 @@ print "Using GNU tools configuration"
 
 Import('defenv')
 
-# patch #1313856 for SCons
-# http://sourceforge.net/tracker/?func=detail&aid=1313856&group_id=30337&atid=398973
-defenv['RCCOM'] = '$RC $_CPPDEFFLAGS $_CPPINCFLAGS ${INCPREFIX}${SOURCE.dir} $RCFLAGS -i $SOURCE -o $TARGET'
+### imports
+
+Import('FlagsConfigure')
 
 ### cross compiling
 
@@ -29,6 +29,26 @@ defenv['C_FLAG'] = '-x c'
 defenv['CPP_FLAG'] = '-x c++'
 defenv['ALIGN_FLAG'] = '-Wl,--file-alignment,512'
 defenv['CPP_REQUIRES_STDLIB'] = 1
+defenv['SUBSYS_CON'] = '-Wl,--subsystem,console'
+
+### helper functions
+
+# on Mac OS X, programs built with g++ 4.0, stl and -s error out:
+#   dyld: lazy symbol binding failed: lazy pointer not found
+#   dyld: lazy pointer not found
+#
+# to avoid this, this function checks if -s works
+
+def TestStrip(ctx):
+	c = """
+		#include <vector>
+
+		int main() {
+			std::vector<int> v;
+			return 0;
+		}
+	"""
+	ctx.CheckLinkFlag('-s', run = 1, extension = '.cpp', code = c)
 
 ### debug
 
@@ -37,15 +57,16 @@ if defenv['DEBUG']:
 
 ### stub environment
 
-stub_env = defenv.Copy()
+stub_env = defenv.Clone()
 cross_env(stub_env)
 
 if not defenv['DEBUG']:
 	stub_env.Append(CCFLAGS = '-Os')                # optimize for size
 stub_env.Append(CCFLAGS = '-Wall')                # all warnings
 stub_env.Append(CCFLAGS = '-x c')                 # force compile as c
+stub_env.Append(CCFLAGS = '-fno-strict-aliasing') # not safe for strict aliasing
 
-if not defenv['DEBUG']:
+if not defenv['DEBUG'] and defenv['STRIP']:
 	stub_env.Append(LINKFLAGS = '-s')               # strip
 stub_env.Append(LINKFLAGS = '-mwindows')          # build windows executables
 stub_env.Append(LINKFLAGS = '$NODEFLIBS_FLAG')    # no standard libraries
@@ -55,26 +76,31 @@ stub_env.Append(LINKFLAGS = '$MAP_FLAG')          # generate map file
 
 ### makensis environment
 
-makensis_env = defenv.Copy()
+makensis_env = defenv.Clone()
 
 if not defenv['DEBUG']:
 	makensis_env.Append(CCFLAGS = '-O2')            # optimize
 makensis_env.Append(CCFLAGS = '-Wall')            # all warnings
 
-if not defenv['DEBUG']:
-	makensis_env.Append(LINKFLAGS = '-s')           # strip
-makensis_env.Append(LINKFLAGS = '$MAP_FLAG')      # generate map file
+conf = FlagsConfigure(makensis_env)
+conf.CheckLinkFlag('-m32')                        # 
+conf.CheckCompileFlag('-m32')                     #
+conf.CheckLinkFlag('$MAP_FLAG')                   # generate map file
+if not defenv['DEBUG'] and defenv['STRIP']:
+	TestStrip(conf)                                 # strip
+conf.Finish()
 
 ### plugin environment
 
-plugin_env = defenv.Copy()
+plugin_env = defenv.Clone()
 cross_env(plugin_env)
 
 if not defenv['DEBUG']:
 	plugin_env.Append(CCFLAGS = '-Os')              # optimize for size
 plugin_env.Append(CCFLAGS = '-Wall')              # level 3 warnings
+plugin_env.Append(CCFLAGS = '-fno-strict-aliasing') # not safe for strict aliasing
 
-if not defenv['DEBUG']:
+if not defenv['DEBUG'] and defenv['STRIP']:
 	plugin_env.Append(LINKFLAGS = '-s')             # strip
 plugin_env.Append(LINKFLAGS = '-mwindows')        # build windows executables
 plugin_env.Append(LINKFLAGS = '$ALIGN_FLAG')      # 512 bytes align
@@ -82,23 +108,29 @@ plugin_env.Append(LINKFLAGS = '$MAP_FLAG')        # generate map file
 
 ### cross-platform util environment
 
-cp_util_env = defenv.Copy()
+cp_util_env = defenv.Clone()
 
 if not defenv['DEBUG']:
-	cp_util_env.Append(CCFLAGS = '-O2')                # optimize
-cp_util_env.Append(CCFLAGS = '-Wall')                # all warnings
+	cp_util_env.Append(CCFLAGS = '-O2')             # optimize
+cp_util_env.Append(CCFLAGS = '-Wall')             # all warnings
 
-if not defenv['DEBUG']:
-	cp_util_env.Append(LINKFLAGS = '-s')               # strip
-cp_util_env.Append(LINKFLAGS = '$MAP_FLAG')          # generate map file
+conf = FlagsConfigure(cp_util_env)
+conf.CheckLinkFlag('$MAP_FLAG')                   # generate map file
+if not defenv['DEBUG'] and defenv['STRIP']:
+	TestStrip(conf)                                 # strip
+conf.Finish()
 
 ### util environment
 
-util_env = cp_util_env.Copy()
+util_env = cp_util_env.Clone()
 cross_env(util_env)
 
 util_env.Append(LINKFLAGS = '-mwindows')          # build windows executables
 util_env.Append(LINKFLAGS = '$ALIGN_FLAG')        # 512 bytes align
+
+### test environment
+
+test_env = defenv.Clone()
 
 ### weird GCC requirements
 
@@ -168,7 +200,9 @@ def add_file(file):
 	add_file_to_emitter(util_env, 'PROGEMITTER', file)
 	add_file_to_emitter(plugin_env, 'SHLIBEMITTER', file)
 
-conf = defenv.Configure(custom_tests = { 'CheckRequirement' : check_requirement })
+cenv = defenv.Clone()
+cross_env(cenv)
+conf = cenv.Configure(custom_tests = { 'CheckRequirement' : check_requirement })
 
 if conf.CheckRequirement('memcpy', 'struct s { char c[128]; } t = { "test" };'):
 	add_file('memcpy.c')
@@ -178,6 +212,46 @@ if conf.CheckRequirement('memset', 'char c[128] = "test";'):
 
 conf.Finish()
 
+#
+# Some platforms, like FreeBSD, require -pthread flag to be passed
+# instead of -lpthread.
+#
+
+conf = FlagsConfigure(makensis_env)
+conf.CheckLinkFlag('-pthread')
+conf.Finish()
+
+#
+# GCC doesn't define __BIG_ENDIAN__ or __LITTLE_ENDIAN__, so manually check
+# for the endianess and define __BIG_ENDIAN__ if needed.
+#
+
+def check_big_endian(ctx):
+	ctx.Message('Checking for __BIG_ENDIAN__... ')
+
+	test = """
+		int main() {
+			#ifdef __BIG_ENDIAN__
+				// already defined, no need to define again
+				return 0;
+			#else
+				int i = 1;
+				char *c = (char *) &i;
+				return c[0] != 1;
+			#endif
+		}
+	"""
+
+	result = not ctx.TryRun(test, '.c')[0]
+	ctx.Result(result)
+	return result
+
+conf = defenv.Configure(custom_tests = { 'CheckBigEndian' : check_big_endian })
+if conf.CheckBigEndian():
+	makensis_env.Append(CPPDEFINES = ['__BIG_ENDIAN__'])
+	test_env.Append(CPPDEFINES = ['__BIG_ENDIAN__'])
+conf.Finish()
+
 ### return
 
-Return('stub_env makensis_env plugin_env util_env cp_util_env')
+Return('stub_env makensis_env plugin_env util_env cp_util_env test_env')

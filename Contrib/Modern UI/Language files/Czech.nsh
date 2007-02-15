@@ -3,6 +3,7 @@
 
 ;Language: Czech (1029)
 ;By SELiCE (ls@selice.cz - http://ls.selice.cz)
+;Corrected by Ondøej Vaniš - http://www.vanis.cz/ondra
 
 ;--------------------------------
 
@@ -11,7 +12,7 @@
   !define MUI_LANGNAME "Cesky" ;Use only ASCII characters (if this is not possible, use the English name)
   
   !define MUI_TEXT_WELCOME_INFO_TITLE "Vítejte v prùvodci instalace programu $(^NameDA)"
-  !define MUI_TEXT_WELCOME_INFO_TEXT "Tento prùvodce Vás bude provázet skrz instalaci $(^NameDA).\r\n\r\nJe doporuèeno, aby jste zavøeli všechny ostatní aplikace pøed spuštìním instalace. Toto umožní aktualizovat dùležité systémové soubory bez restartování vašeho poèítaèe.\r\n\r\n$_CLICK"
+  !define MUI_TEXT_WELCOME_INFO_TEXT "Tento prùvodce Vás provede instalací $(^NameDA).\r\n\r\nPøed zaèátkem instalace je doporuèeno zavøít všechny ostatní aplikace. Toto umožní aktualizovat dùležité systémové soubory bez restartování Vašeho poèítaèe.\r\n\r\n$_CLICK"
   
   !define MUI_TEXT_LICENSE_TITLE "Licenèní ujednání"  
   !define MUI_TEXT_LICENSE_SUBTITLE "Pøed instalací programu $(^NameDA) si prosím prostudujte licenèní podmínky."
@@ -48,23 +49,23 @@
   
   !define MUI_TEXT_STARTMENU_TITLE "Zvolte složku v Nabídce Start"
   !define MUI_TEXT_STARTMENU_SUBTITLE "Zvolte složku v Nabídce Start pro zástupce programu $(^NameDA)."
-  !define MUI_INNERTEXT_STARTMENU_TOP "Zvolte složku v Nabídce STart, ve které chcete vytvoøit zástupce programu. Mùžete také zadat nové jméno pro vytvoøení nové složky."
+  !define MUI_INNERTEXT_STARTMENU_TOP "Zvolte složku v Nabídce Start, ve které chcete vytvoøit zástupce programu. Mùžete také zadat nové jméno pro vytvoøení nové složky."
   !define MUI_INNERTEXT_STARTMENU_CHECKBOX "Nevytváøet zástupce"
   
   !define MUI_TEXT_ABORTWARNING "Opravdu chcete ukonèit instalaci programu $(^Name)?"  
   
   
   !define MUI_UNTEXT_WELCOME_INFO_TITLE "Vítejte v $(^NameDA) odinstalaèním prùvodci"
-  !define MUI_UNTEXT_WELCOME_INFO_TEXT "Tento prùvodce Vás bude provázet skrz odinstalaci $(^NameDA).\r\n\r\nPøed zapoèetím odinstalace, se pøesvìdète, že $(^NameDA) nebìží.\r\n\r\n$_CLICK"
+  !define MUI_UNTEXT_WELCOME_INFO_TEXT "Tento prùvodce Vás provede odinstalací $(^NameDA).\r\n\r\nPøed zaèátkem odinstalace, se pøesvìdète, že $(^NameDA) není spuštìn.\r\n\r\n$_CLICK"
 
   !define MUI_UNTEXT_CONFIRM_TITLE "Odinstalovat program $(^NameDA)"
   !define MUI_UNTEXT_CONFIRM_SUBTITLE "Odebrat program $(^NameDA) z Vašeho poèítaèe."
   
   !define MUI_UNTEXT_LICENSE_TITLE "Licenèní ujednání"  
   !define MUI_UNTEXT_LICENSE_SUBTITLE "Pøed odinstalováním programu $(^NameDA) si prosím prostudujte licenèní podmínky."
-  !define MUI_UNINNERTEXT_LICENSE_BOTTOM "estliže souhlasíte se všemi podmínkami ujednání, zvolte 'Souhlasím' pro pokraèování. Pro odinstalování programu $(^NameDA) je nutné souhlasit s licenèním ujednáním."
+  !define MUI_UNINNERTEXT_LICENSE_BOTTOM "Jestliže souhlasíte se všemi podmínkami ujednání, zvolte 'Souhlasím' pro pokraèování. Pro odinstalování programu $(^NameDA) je nutné souhlasit s licenèním ujednáním."
   !define MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Jestliže souhlasíte se všemi podmínkami ujednání, zaškrtnìte níže uvedenou volbu. Pro odinstalování programu $(^NameDA) je nutné souhlasit s licenèním ujednáním. $_CLICK"
-  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Jestliže souhlasíte se všemi podmínkami ujednání, zvolte první z možností uvedených níže. Pro odinstalování programu $(^NameDA) je nutné souhlasit s licenèním ujednáním. $_CLICK"
+  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Jestliže souhlasíte se všemi podmínkami ujednání, zvolte první z níže uvedených možností. Pro odinstalování programu $(^NameDA) je nutné souhlasit s licenèním ujednáním. $_CLICK"
   
   !define MUI_UNTEXT_COMPONENTS_TITLE "Volba souèástí"
   !define MUI_UNTEXT_COMPONENTS_SUBTITLE "Zvolte souèásti programu $(^NameDA), které chcete odinstalovat."
@@ -81,10 +82,10 @@
   !define MUI_UNTEXT_ABORT_TITLE "Odinstalace pøerušena"
   !define MUI_UNTEXT_ABORT_SUBTITLE "Odinstalace nebyla dokonèena."
   
-  !define MUI_UNTEXT_FINISH_INFO_TITLE "Dokonèuji $(^NameDA) odinstalaèního prùvodce"
-  !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) byl odinstalován z vašeho poèítaèe.\r\n\r\nKliknìte na Dokonèit pro ukonèení tohoto prùvodce."
-  !define MUI_UNTEXT_FINISH_INFO_REBOOT "Váš poèítaè musí být restartován pro dokonèení odinstalace $(^NameDA). Chcete nyní restartovat?"
+  !define MUI_UNTEXT_FINISH_INFO_TITLE "Dokonèuji odinstalaèního prùvodce $(^NameDA)"
+  !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) byl odinstalován z Vašeho poèítaèe.\r\n\r\nKliknìte na 'Dokonèit' pro ukonèení tohoto prùvodce."
+  !define MUI_UNTEXT_FINISH_INFO_REBOOT "Pro dokonèení odinstalace $(^NameDA) musí být Váš poèítaè restartován. Chcete restartovat nyní?"
 
-  !define MUI_UNTEXT_ABORTWARNING "Jste si jistý, že chcete ukonèit $(^Name) odinstalaci?"  
+  !define MUI_UNTEXT_ABORTWARNING "Skuteènì chcete ukonèit odinstalaci $(^Name)?"  
   
 !insertmacro MUI_LANGUAGEFILE_END

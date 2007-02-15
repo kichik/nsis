@@ -22,6 +22,7 @@ contribs = Split("""
 languages = Split("""
 	Albanian.nsh
 	Arabic.nsh
+	Basque.nsh
 	Belarusian.nsh
 	Bosnian.nsh
 	Breton.nsh
@@ -37,12 +38,14 @@ languages = Split("""
 	Farsi.nsh
 	Finnish.nsh
 	French.nsh
+	Galician.nsh
 	German.nsh
 	Greek.nsh
 	Hebrew.nsh
 	Hungarian.nsh
 	Icelandic.nsh
 	Indonesian.nsh
+	Irish.nsh
 	Italian.nsh
 	Japanese.nsh
 	Korean.nsh
@@ -54,6 +57,7 @@ languages = Split("""
 	Malay.nsh
 	Mongolian.nsh
 	Norwegian.nsh
+	NorwegianNynorsk.nsh
 	Polish.nsh
 	Portuguese.nsh
 	PortugueseBR.nsh
@@ -70,6 +74,9 @@ languages = Split("""
 	TradChinese.nsh
 	Turkish.nsh
 	Ukrainian.nsh
+	Uzbek.nsh
+	Valencian.nsh
+	Welsh.nsh
 """)
 
 Import('defenv')
@@ -77,7 +84,9 @@ Import('defenv')
 def join(prefix, list):
 	return map(lambda x: '%s/%s' % (prefix, x), list)
 
-defenv.DistributeDocs(target, docs)
-defenv.DistributeDocs('%s/%s' % (target, 'images'), join('images', doc_images))
-defenv.DistributeContribs(target, contribs)
-defenv.DistributeContribs('%s/%s' % (target, 'Language files'), join('Language files', languages))
+defenv.DistributeDocs(docs, path=target)
+path = 'images'
+defenv.DistributeDocs(join(path,doc_images), path='%s/%s'%(target,path))
+defenv.DistributeContrib(contribs, path=target)
+path = 'Language files'
+defenv.DistributeContrib(join(path,languages), path='%s/%s'%(target,path))

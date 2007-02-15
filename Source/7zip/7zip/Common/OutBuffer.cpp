@@ -1,4 +1,19 @@
-// OutByte.cpp
+/*
+ * OutBuffer.cpp
+ * 
+ * This file is a part of LZMA compression module for NSIS.
+ * 
+ * Original LZMA SDK Copyright (C) 1999-2006 Igor Pavlov
+ * Modifications Copyright (C) 2003-2006 Amir Szekely <kichik@netvision.net.il>
+ * 
+ * Licensed under the Common Public License version 1.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * 
+ * Licence details can be found in the file COPYING.
+ * 
+ * This software is provided 'as-is', without any express or implied
+ * warranty.
+ */
 
 #include "StdAfx.h"
 
@@ -15,48 +30,98 @@ bool COutBuffer::Create(UInt32 bufferSize)
     return true;
   Free();
   _bufferSize = bufferSize;
-  _buffer = (Byte *)::BigAlloc(bufferSize);
+  _buffer = (Byte *)::MidAlloc(bufferSize);
   return (_buffer != 0);
 }
 
 void COutBuffer::Free()
 {
-  BigFree(_buffer);
+  ::MidFree(_buffer);
   _buffer = 0;
 }
 
-void COutBuffer::Init(ISequentialOutStream *stream)
+void COutBuffer::SetStream(ISequentialOutStream *stream)
 {
   _stream = stream;
-  _processedSize = 0;
+}
+
+void COutBuffer::Init()
+{
+  _streamPos = 0;
+  _limitPos = _bufferSize;
   _pos = 0;
+  _processedSize = 0;
+  _overDict = false;
   #ifdef _NO_EXCEPTIONS
   ErrorCode = S_OK;
   #endif
 }
 
-HRESULT COutBuffer::Flush()
-{
-  if (_pos == 0)
-    return S_OK;
-  UInt32 processedSize;
-  HRESULT result = _stream->Write(_buffer, _pos, &processedSize);
-  if (result != S_OK)
-    return result;
-  if (_pos != processedSize)
-    return E_FAIL;
-  _processedSize += processedSize;
-  _pos = 0;
-  return S_OK;
+UInt64 COutBuffer::GetProcessedSize() const
+{ 
+  UInt64 res = _processedSize + _pos - _streamPos;
+  if (_streamPos > _pos) 
+    res += _bufferSize;
+  return res;
 }
 
-void COutBuffer::WriteBlock()
+
+HRESULT COutBuffer::FlushPart()
+{
+  // _streamPos < _bufferSize
+  UInt32 size = (_streamPos >= _pos) ? (_bufferSize - _streamPos) : (_pos - _streamPos);
+  HRESULT result = S_OK;
+  #ifdef _NO_EXCEPTIONS
+  result = ErrorCode;
+  #endif
+  if (_buffer2 != 0)
+  {
+    memmove(_buffer2, _buffer + _streamPos, size);
+    _buffer2 += size;
+  }
+
+  if (_stream != 0
+      #ifdef _NO_EXCEPTIONS
+      && (ErrorCode == S_OK)
+      #endif
+     )
+  {
+    UInt32 processedSize = 0;
+    result = _stream->Write(_buffer + _streamPos, size, &processedSize);
+    size = processedSize;
+  }
+  _streamPos += size;
+  if (_streamPos == _bufferSize)
+    _streamPos = 0;
+  if (_pos == _bufferSize)
+  {
+    _overDict = true;
+    _pos = 0;
+  }
+  _limitPos = (_streamPos > _pos) ? _streamPos : _bufferSize;
+  _processedSize += size;
+  return result;
+}
+
+HRESULT COutBuffer::Flush()
 {
   #ifdef _NO_EXCEPTIONS
   if (ErrorCode != S_OK)
-    return;
+    return ErrorCode;
   #endif
-  HRESULT result = Flush();
+
+  while(_streamPos != _pos)
+  {
+    HRESULT result = FlushPart();
+    if (result != S_OK)
+      return result;
+  }
+  return S_OK;
+}
+
+void COutBuffer::FlushWithCheck()
+{
+  HRESULT result = FlushPart();
   #ifdef _NO_EXCEPTIONS
   ErrorCode = result;
   #else

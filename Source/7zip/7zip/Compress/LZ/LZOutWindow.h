@@ -1,69 +1,69 @@
-// LZOutWindow.h
+/*
+ * LZOutWindow.h
+ * 
+ * This file is a part of LZMA compression module for NSIS.
+ * 
+ * Original LZMA SDK Copyright (C) 1999-2006 Igor Pavlov
+ * Modifications Copyright (C) 2003-2006 Amir Szekely <kichik@netvision.net.il>
+ * 
+ * Licensed under the Common Public License version 1.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * 
+ * Licence details can be found in the file COPYING.
+ * 
+ * This software is provided 'as-is', without any express or implied
+ * warranty.
+ */
 
 #ifndef __LZ_OUT_WINDOW_H
 #define __LZ_OUT_WINDOW_H
 
 #include "../../IStream.h"
+#include "../../Common/OutBuffer.h"
 
 #ifndef _NO_EXCEPTIONS
-class CLZOutWindowException
-{
-public:
-  HRESULT ErrorCode;
-  CLZOutWindowException(HRESULT errorCode): ErrorCode(errorCode) {}
-};
+typedef COutBufferException CLZOutWindowException;
 #endif
 
-class CLZOutWindow
+class CLZOutWindow: public COutBuffer
 {
-  Byte  *_buffer;
-  UInt32 _pos;
-  UInt32 _windowSize;
-  UInt32 _streamPos;
-  ISequentialOutStream *_stream;
-  void FlushWithCheck();
 public:
-  #ifdef _NO_EXCEPTIONS
-  HRESULT ErrorCode;
-  #endif
-
-  void Free();
-  CLZOutWindow(): _buffer(0), _stream(0) {}
-  ~CLZOutWindow() { Free();  /* ReleaseStream(); */ }
-  bool Create(UInt32 windowSize);
+  void Init(bool solid = false);
   
-  void Init(ISequentialOutStream *stream, bool solid = false);
-  HRESULT Flush();
-  // void ReleaseStream();
-  
-  void CopyBlock(UInt32 distance, UInt32 len)
+  // distance >= 0, len > 0, 
+  bool CopyBlock(UInt32 distance, UInt32 len)
   {
     UInt32 pos = _pos - distance - 1;
-    if (pos >= _windowSize)
-      pos += _windowSize;
-    for(; len > 0; len--)
+    if (distance >= _pos)
     {
-      if (pos >= _windowSize)
+      if (!_overDict || distance >= _bufferSize)
+        return false;
+      pos += _bufferSize;
+    }
+    do
+    {
+      if (pos == _bufferSize)
         pos = 0;
       _buffer[_pos++] = _buffer[pos++];
-      if (_pos >= _windowSize)
+      if (_pos == _limitPos)
         FlushWithCheck();  
-      // PutOneByte(GetOneByte(distance));
     }
+    while(--len != 0);
+    return true;
   }
   
   void PutByte(Byte b)
   {
     _buffer[_pos++] = b;
-    if (_pos >= _windowSize)
+    if (_pos == _limitPos)
       FlushWithCheck();  
   }
   
   Byte GetByte(UInt32 distance) const
   {
     UInt32 pos = _pos - distance - 1;
-    if (pos >= _windowSize)
-      pos += _windowSize;
+    if (pos >= _bufferSize)
+      pos += _bufferSize;
     return _buffer[pos]; 
   }
 };

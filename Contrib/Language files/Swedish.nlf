@@ -69,7 +69,7 @@ Namn
 # ^Completed
 Slutförd
 # ^LicenseText
-Please review the license agreement before installing $(^NameDA). Om du accepterar villkoren i avtalet, klicka Jag Godkänner.
+Var vänlig läs igenom licensvillkoren innan du installerar $(^NameDA). Om du accepterar villkoren i avtalet, klicka Jag Godkänner.
 # ^LicenseTextCB
 Var vänlig läs igenom licensvillkoren innan du installerar $(^NameDA). Om du accepterar villkoren i avtalet, klicka i checkrutan nedan. $_CLICK
 # ^LicenseTextRB

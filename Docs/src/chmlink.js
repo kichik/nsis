@@ -80,8 +80,11 @@ function parser(fn)
 
   if (FolderExists(lfn))
   {
-    var objShell = new ActiveXObject("Shell.Application");
-    objShell.Open(lfn);
+    if (!TryShellExec(lfn))
+    {
+      var objShell = new ActiveXObject("Shell.Application");
+      objShell.Open(lfn);
+    }
   }
   else if (FileExists(lfn))
   {

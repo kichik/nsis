@@ -1,3 +1,19 @@
+/*
+ * fileform.c
+ * 
+ * This file is a part of NSIS.
+ * 
+ * Copyright (C) 1999-2007 Nullsoft and Contributors
+ * 
+ * Licensed under the zlib/libpng license (the "License");
+ * you may not use this file except in compliance with the License.
+ * 
+ * Licence details can be found in the file COPYING.
+ * 
+ * This software is provided 'as-is', without any express or implied
+ * warranty.
+ */
+
 #include "../Platform.h"
 #include "fileform.h"
 #include "util.h"
@@ -6,6 +22,7 @@
 #include "lang.h"
 #include "ui.h"
 #include "exec.h"
+#include "../crc32.h"
 
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
 #ifdef NSIS_COMPRESS_USE_ZLIB
@@ -95,8 +112,6 @@ BOOL CALLBACK verProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 static z_stream g_inflate_stream;
 #endif
 
-extern unsigned long NSISCALL CRC32(unsigned long crc, const unsigned char *buf, unsigned int len);
-
 const char * NSISCALL loadHeaders(int cl_flags)
 {
 #ifdef NSIS_CONFIG_CRC_SUPPORT
@@ -104,7 +119,7 @@ const char * NSISCALL loadHeaders(int cl_flags)
   HWND hwnd = 0;
   unsigned int verify_time = GetTickCount() + 1000;
 #endif
-  int crc = 0;
+  crc32_t crc = 0;
   int do_crc = 0;
 #endif//NSIS_CONFIG_CRC_SUPPORT
   int left;
@@ -115,7 +130,7 @@ const char * NSISCALL loadHeaders(int cl_flags)
 
   HANDLE db_hFile;
 
-  GetModuleFileName(g_hInstance, state_exe_directory, NSIS_MAX_STRLEN);
+  GetModuleFileName(NULL, state_exe_directory, NSIS_MAX_STRLEN);
 
   g_db_hFile = db_hFile = myOpenFile(state_exe_directory, GENERIC_READ, OPEN_EXISTING);
   if (db_hFile == INVALID_HANDLE_VALUE)
@@ -151,14 +166,18 @@ const char * NSISCALL loadHeaders(int cl_flags)
            h.nsinst[0] == FH_INT1
          )
       {
-        if (h.length_of_all_following_data > left)
-          return _LANG_INVALIDCRC;
-
         g_filehdrsize = m_pos;
 
-#if defined(NSIS_CONFIG_CRC_SUPPORT) || (defined(NSIS_CONFIG_SILENT_SUPPORT) && defined(NSIS_CONFIG_VISIBLE_SUPPORT))
+#if defined(NSIS_CONFIG_CRC_SUPPORT) || defined(NSIS_CONFIG_SILENT_SUPPORT)
         cl_flags |= h.flags;
 #endif
+
+#ifdef NSIS_CONFIG_SILENT_SUPPORT
+        g_exec_flags.silent |= cl_flags & FH_FLAGS_SILENT;
+#endif
+
+        if (h.length_of_all_following_data > left)
+          return _LANG_INVALIDCRC;
 
 #ifdef NSIS_CONFIG_CRC_SUPPORT
         if ((cl_flags & FH_FLAGS_FORCE_CRC) == 0)
@@ -230,9 +249,9 @@ const char * NSISCALL loadHeaders(int cl_flags)
 #ifdef NSIS_CONFIG_CRC_SUPPORT
   if (do_crc)
   {
-    int fcrc;
+    crc32_t fcrc;
     SetSelfFilePointer(m_pos);
-    if (!ReadSelfFile(&fcrc, sizeof(int)) || crc != fcrc)
+    if (!ReadSelfFile(&fcrc, sizeof(crc32_t)) || crc != fcrc)
       return _LANG_INVALIDCRC;
   }
 #endif//NSIS_CONFIG_CRC_SUPPORT
@@ -251,7 +270,7 @@ const char * NSISCALL loadHeaders(int cl_flags)
   }
   dbd_srcpos = SetSelfFilePointer(g_filehdrsize + sizeof(firstheader));
 #ifdef NSIS_CONFIG_CRC_SUPPORT
-  dbd_fulllen = dbd_srcpos - sizeof(h) + h.length_of_all_following_data - ((h.flags & FH_FLAGS_NO_CRC) ? 0 : sizeof(int));
+  dbd_fulllen = dbd_srcpos - sizeof(h) + h.length_of_all_following_data - ((h.flags & FH_FLAGS_NO_CRC) ? 0 : sizeof(crc32_t));
 #else
   dbd_fulllen = dbd_srcpos - sizeof(h) + h.length_of_all_following_data;
 #endif//NSIS_CONFIG_CRC_SUPPORT
@@ -266,13 +285,6 @@ const char * NSISCALL loadHeaders(int cl_flags)
   }
 
   header = g_header = data;
-
-#ifdef NSIS_CONFIG_SILENT_SUPPORT
-  if (cl_flags & FH_FLAGS_SILENT)
-    header->flags |= CH_FLAGS_SILENT;
-
-  g_exec_flags.silent = header->flags & (CH_FLAGS_SILENT | CH_FLAGS_SILENT_LOG);
-#endif
 
   g_flags = header->flags;
 

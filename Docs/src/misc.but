@@ -52,6 +52,10 @@ Initializes the plug-ins dir (\R{varconstant}{$PLUGINSDIR}) if not already initi
 \c InitPluginsDir
 \c File /oname=$PLUGINSDIR\image.bmp image.bmp
 
+\S2{nop} Nop
+
+Does nothing.
+
 \S2{seterrorlevel} SetErrorLevel
 
 \c error_level
@@ -66,6 +70,8 @@ Sets the error level of the installer or uninstaller to \e{error_level}. See \R{
 \c \\<b\\>current\\</b\\>|all
 
 Sets the context of $SMPROGRAMS and other shell folders. If set to 'current' (the default), the current user's shell folders are used. If set to 'all', the 'all users' shell folder is used. The all users folder may not be supported on all OSes. If the all users folder is not found, the current user folder will be used. Please take into consideration that a "normal user" has no rights to write in the all users area. Only admins have full access rights to the all users area. You can check this by using the UserInfo plug-in. See Contrib\\UserInfo\\UserInfo.nsi for an example.
+
+Note that, if used in installer code, this will only affect the installer, and if used in uninstaller code, this will only affect the uninstaller. To affect both, it needs to be used in both.
 
 \c SetShellVarContext current
 \c StrCpy $0 $DESKTOP

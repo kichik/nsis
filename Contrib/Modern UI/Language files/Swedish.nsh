@@ -43,7 +43,7 @@
   
   !define MUI_BUTTONTEXT_FINISH "&Slutför"
   !define MUI_TEXT_FINISH_INFO_TITLE "Avslutar installationsguiden för $(^NameDA)."
-  !define MUI_TEXT_FINISH_INFO_TEXT "$(^NameDA) har installerats på din dator.\r\n\r\nKlicka på Avsluta för att avsluta guiden."
+  !define MUI_TEXT_FINISH_INFO_TEXT "$(^NameDA) har installerats på din dator.\r\n\r\nKlicka på Slutför för att avsluta guiden."
   !define MUI_TEXT_FINISH_INFO_REBOOT "Din dator måste startas om för att fullborda installationen av $(^NameDA). Vill du starta om nu?"
   !define MUI_TEXT_FINISH_REBOOTNOW "Starta om nu"
   !define MUI_TEXT_FINISH_REBOOTLATER "Jag vill starta om själv senare"
@@ -86,7 +86,7 @@
   !define MUI_UNTEXT_ABORT_SUBTITLE "Avinstallationen genomfördes inte korrekt."
 
   !define MUI_UNTEXT_FINISH_INFO_TITLE "Avslutar avinstallationsguiden för $(^NameDA)."
-  !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) komponenter har avinstallerats från din dator.\r\n\r\nKlicka på Avsluta för att avsluta guiden."
+  !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) komponenter har avinstallerats från din dator.\r\n\r\nKlicka på Slutför för att avsluta guiden."
   !define MUI_UNTEXT_FINISH_INFO_REBOOT "Din dator måste startas om för att fullborda avinstallationen av $(^NameDA). Vill du starta om nu?"
 
   !define MUI_UNTEXT_ABORTWARNING "Är du säker på att du vill avbryta avinstallationen av $(^Name)?"

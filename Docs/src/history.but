@@ -1,5 +1,623 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.23} 2.23
+
+Release on January 13th, 2007
+
+\S1{v2.23-cl} Changelog
+
+\S2{} Minor Changes
+
+\b Fixed compiler crash on Mac OS X (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1611866}{patch #1611866})
+
+\b Fixed deletion of start menu icons in NSIS installer on Vista (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1611251}{bug #1611251})
+
+\S2{} Utilities and Plug-ins
+
+\b Fixed incorrect \L{../Docs/nsExec/nsExec.txt}{nsExec} message handling in silent mode (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1605581}{bug #1605581})
+
+\b Fixed \L{../Docs/System/System.html}{System} crash when System::Store is called on an empty private stack (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1620178}{bug #1620178})
+
+\b Fixed \L{../Docs/System/System.html}{System} crash with parenthesis in filename (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1616267}{bug #1616267})
+
+\b Minor VPatch documentation enhancements (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1624292}{patch #1624292})
+
+\S2{} Build System
+
+\b Fixed build failures on mingw32 (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1610773}{bug #1610773})
+
+\b Fixed build problems with MSVCTOOLKIT=yes
+
+\H{v2.22} 2.22
+
+Released on November 27th, 2006
+
+\S1{v2.22-rl} Release Notes
+
+\b Some changes have been made to the credit and license files in order to avoid copyrights and license related confusions. This does not change in any way how NSIS should or could be used. NSIS itself is still licensed with the permissive BSD-like \W{http://nsis.sourceforge.net/License}{zlib license}.
+
+\b Upgrade is recommended for early adopters of WinVer.nsh, due to a bug in Windows 98 and ME detection.
+
+\S1{v2.22-cl} Changelog
+
+\S2{} Minor Changes
+
+\b Fixed context menu not disappearing when moving from instfiles page (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1115825}{bug #1115825})
+
+\b Fixed \L{../Include/WinVer.nsh}{WinVer.nsh}'s detection of Windows 98 and ME (reported on the \W{http://forums.winamp.com/showthread.php?s=&threadid=257994&highlight=winver.nsh}{forum})
+
+\b Fixed WriteUninstaller failure to overwrite read-only uninstallers (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1542530}{bug #1542530})
+
+\b Licensed lzma under \R{cpl-license}{CPL} with a \R{lzma-special-exception}{special exception}, instead of LGPL
+
+\b Minor documentation updates and fixes (including \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1584618}{bug #1584618}, \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1589877}{bug #1589877})
+
+\b Updated comments in MUI examples (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1595500}{bug #1595500})
+
+\S2{} New/Changed Commands
+
+\b Added `highest` option for \R{requestexecutionlevel}{RequestExecutionLevel}
+
+\S2{} Translations
+
+\b Added Uzbek translation
+
+\b Fixed corruption in Lithuanian (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1602673}{bug #1602673})
+
+\b Minor Breton fixes
+
+\b Slovenian corrections (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1590108}{patch #1590108})
+
+\S2{} Build System
+
+\b Added \W{http://msdn.microsoft.com/vstudio/express/visualc/}{Microsoft Visual C++ 2005 Express} support
+
+\b SCons requirement upgraded to 0.96.93
+
+\H{v2.21} 2.21
+
+Released on October 20th, 2006
+
+\S1{v2.21-cl} Changelog
+
+\S2{} Major Changes
+
+\b Added \L{../Include/WinVer.nsh}{WinVer.nsh} for easy Windows version comparisons
+
+\b Upgraded to lzma sdk 4.43 for faster compression
+
+\S2{} Minor Changes
+
+\b Added Vista support to \R{getwindowsversion}{GetWindowsVersion}
+
+\b Added \L{../Include/x64.nsh}{x64.nsh} including a few simple macros for handling x64 installations
+
+\b Fixed a handle leak in \R{locate}{Locate}
+
+\b Minor documentation updates and fixes
+
+\b \L{../Docs/Modern UI/Readme.html}{Modern UI 1.76}: Added MUI_ABORTWARNING_CANCEL_DEFAULT (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373088&aid=1547844}{RFE #1547844})
+
+\S2{} New/Changed Commands
+
+\b Added \R{requestexecutionlevel}{RequestExecutionLevel} (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373088&aid=1524709}{RFE #1524709})
+
+\S2{} Translations
+
+\b Added Valencian translation (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1558822}{patch #1558822})
+
+\b Bulgarian corrections
+
+\b Slovenian corrections
+
+\S2{} Build System
+
+\b SCons requirement upgraded to 0.96.92
+
+\H{v2.20} 2.20
+
+Released on September 9th, 2006
+
+\S1{v2.20-cl} Changelog
+
+\S2{} Minor Changes
+
+\b Better LogicLib errors (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1537976}{bug #1537976})
+
+\b Fixed incomplete plug-in call error messages (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1535995}{bug #1535995})
+
+\b Fixed incorrect file timestamp querying on big-endian platforms (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1536377}{bug #1536377})
+
+\b Minor documentation updates and fixes
+
+\S2{} Translations
+
+\b Danish corrections (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1548190}{bug #1548190})
+
+\b Fixed incorrectly encoded Turkish translation (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1542765}{bug #1542765})
+
+\b French corrections
+
+\b Italian corrections (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1546183}{bug #1546183})
+
+\b Spanish corrections
+
+\b Swedish corrections (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1542680}{bug #1542680})
+
+\b Ukrainian corrections
+
+\S2{} Build System
+
+\b Fixed NSIS_CONFIG_CONST_DATA_PATH being ignored on POSIX platforms (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1515592}{bug #1515592})
+
+\H{v2.19} 2.19
+
+Released on August 6th, 2006
+
+\S1{v2.19-cl} Changelog
+
+\S2{} Minor Changes
+
+\b Fixed \R{system}{!system} and \R{packhdr}{!packhdr} failure with quoted long file names (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1509909}{bug #1509909})
+
+\b Fixed build problems on 64bit platforms (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1504772}{bug #1504772})
+
+\b Fixed negative total size for data larger than 2GB in script compilation summary (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1468852}{bug #1468852})
+
+\b Minor documentation updates and fixes
+
+\b Replaced \R{detect.netframework}{IsDotNETInstalled} with a simpler and better version
+
+\S2{} New/Changed Commands
+
+\b Made \R{if}{!if} compare strings case insensitively, like \R{strcmp}{StrCmp} and \R{ifdef}{!ifdef}
+
+\S2{} Plug-ins
+
+\b \L{../Docs/NSISdl/ReadMe.txt}{NSISdl}: fixed random DNS errors (\W{http://forums.winamp.com/showthread.php?s=&threadid=247723}{reported in the forums})
+
+\b \L{../Docs/System/System.html}{System}: fixed a bug that caused stack corruption and stopped the installer from deleting System.dll when a function with no arguments was called (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1535005}{bug #1535005})
+
+\b \L{../Docs/System/System.html}{System}: fixed wrong return values for functions that return \c{short} or \c{char} (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1535007}{bug #1535007})
+
+\S2{} Translations
+
+\b Added Norwegian Nynorsk translation (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1503208}{patch #1503208})
+
+\b Fixed typos in the French translation (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1531874}{bug #1531874})
+
+\H{v2.18} 2.18
+
+Released on July 1st, 2006
+
+\S1{v2.18-cl} Changelog
+
+\S2{} Minor Changes
+
+\b CRC32 implementation used potentially non-32bit types (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1504758}{bug #1504758})
+
+\b Fixed errors on multiple inclusion of \R{headers}{useful headers}
+
+\b Fixed \R{getfileattributes}{GetFileAttributes}
+
+\b Fixed incorrect text on browse dialog with \R{onverifyinstdir}{.onVerifyInstDir} (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1504297}{bug #1504297})
+
+\b Fixed \R{library}{Library}'s implementation on POSIX
+
+\b Minor documentation updates and fixes
+
+\S2{} Translations
+
+\b Added Irish translation (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1503639}{patch #1503639})
+
+\b Catalan corrections (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1504104}{bug #1504104})
+
+\b Dutch corrections
+
+\b Finnish corrections (Mozilla bug #341643)
+
+\b Fixed Serbian grammar and typos
+
+\b Italian corrections (Mozilla bug #340450)
+
+\b Polish corrections (Mozilla bug #224532)
+
+\b Portuguese (Brazil) corrections (Mozilla bug #340885)
+
+\b Romanian corrections (Mozilla bug #340645)
+
+\b Thai corrections
+
+\b Turkish corrections (Mozilla bug #340511)
+
+\H{v2.17} 2.17
+
+Released on May 19th, 2006
+
+\S1{v2.17-cl} Changelog
+
+\S2{} Minor Changes
+
+\b Fixed build failures and segfaults on PowerPC Mac OS X (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1474597}{bug #1474597}, \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1481044}{bug #1481044})
+
+\b Fixed \R{library}{Library}'s TLB version interpretation  (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1471341}{bug #1471341})
+
+\b Fixed possible stack corruption when using TypeLib.dll on an invalid TLB
+
+\b Fixed RMDir deletion failure of read-only folders (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1481664}{bug #1481664})
+
+\b \L{../Docs/makensisw/Readme.txt}{MakeNSISW}: Fixed toolbar compressor selection menu, broken in the previous version (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1466486}{bug #1466486})
+
+\b Minor documentation improvements and fixes (including \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1469306}{bug #1469306}, \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1491616}{bug #1491616})
+
+\S2{} Translations
+
+\b Added missing Basque and Welsh files (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1469471}{bug #1469471})
+
+\b Brazilian Portuguese updates
+
+\b Bulgarian fixes
+
+\b Fixed a typo in Hebrew translation (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1474587 }{bug #1474587})
+
+\b Icelandic fixes and improvements
+
+\H{v2.16} 2.16
+
+Released on April 7th, 2006
+
+\S1{v2.16-rn} Release Notes
+
+\b The script compiler, makensis, builds and works on big-endian platforms. This change enlarges the portability range of NSIS to theoretically every POSIX platform. Please \W{http://sourceforge.net/tracker/?group_id=22049&atid=373085}{report} any incompatibility with specific platforms or build-tools.
+
+\b The internal changes made to support big-endian platforms also pave the road to x64 installers. There is now a central function which writes data to disk. This function currently only converts the endianity of integers, but it can be changed to selectively write 64-bit integers. Hopefully, there'll soon be a simple method of compiling a script to both x86 and x64 installers.
+
+\b Changing Source/exehead/fileform.h to alter the internal structure of installers is no longer enough. The compiler has its own definitions of the structures which must also be changed in Source/fileform.cpp. In the future, fileform.cpp should be automatically generated from fileform.h, but for now, the synchronization must be done manually.
+
+\S1{v2.16-cl} Changelog
+
+\S2{} Major Changes
+
+\b Big-endian platforms are now fully supported by makensis
+
+\b \R{library}{Library} now available on non-Windows platforms as well, although it requires the installed DLL to have version information
+
+\b \L{../Docs/makensisw/Readme.txt}{MakeNSISW 2.1}: added "Cancel compilation" menu item
+
+\S2{} New/Changed Commands
+
+\b Added /utcdate switch to \R{define}{!define} for UTC dates (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373088&aid=1459210}{RFE #1459210})
+
+\S2{} Minor Changes
+
+\b Added an optional timestamp in the log - NSIS_CONFIG_LOG_TIMESTAMP build setting (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373088&aid=1460586}{RFE #1460586})
+
+\b Added NSIS_WIN32_MAKENSIS define, defined only when compiling on Windows
+
+\b Exported validate_filename to plug-ins
+
+\b Fixed a crash in CResourceEditor when adding resources to a PE that already contains named resources
+
+\b Fixed a small resource leak in the TypeLib::GetLibVersion plug-in function
+
+\b Fixed CResourceEditor input sanity checks
+
+\b Fixed incorrect \R{FileOpen}{FileOpen} input validation (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1459789}{bug #1459789})
+    
+\b Fixed \R{library}{Library} failure with DLLs marked as read-only
+
+\b Fixed lzma's POSIX implemention thread synchronization issues and resource leaks
+
+\b Fixed makensis self-path detection on non-Windows platforms (NSIS_CONFIG_CONST_DATA_PATH=no)
+
+\b Fixed replace_icon and and generate_uninstall_icon_data icon validation
+
+\b Made external CHM links safer to script exceptions (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1449879}{bug #1449879})
+
+\b Minor documentation improvements and fixes (including \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1077439}{bug #1077439}, \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1448374}{bug #1448374}, \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373088&aid=1464446}{RFE #1464446})
+
+\b \L{../Docs/Modern UI/Readme.html}{Modern UI 1.75}: added show function for the start menu page (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373088&aid=1448176}{RFE #1448176}), added MUI_HEADER_TRANSPARENT_TEXT for transparent header texts (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373088&aid=1447766}{RFE #1447766})
+
+\b \L{../Docs/NSISdl/ReadMe.txt}{NSISdl}: better header detection for better compatibility with proxies like WinProxy (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1445735}{bug #1445735}), fail if no headers are sent, faster downloads (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1465378}{patch #1465378})
+
+\b \L{../Docs/StartMenu/Readme.txt}{StartMenu}: validate user input (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1440636}{bug #1440636})
+
+\S2{} Translations
+
+\b Added Basque translation
+
+\b Minor Slovenian fixes
+
+\S2{} Build System
+
+\b Added code tests for CResourceEditor and CDialogTemplate
+
+\b Automatically pass build settings to script, eliminating the need to edit build.cpp for new settings
+
+\b Fixed $PREFIX expansion during installation on POSIX platforms (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1456943}{bug #1456943})
+
+\b Fixed CHM dependencies
+
+\b Fixed compatibility issue with EclipseNSIS (version wasn't prefixed with 'v')
+
+\b Fixed GCC 4.1 compatibility (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1456861}{patch #1456861})
+
+\b Test for -Wl,-Map availability
+
+\H{v2.15} 2.15
+
+Released on March 4th, 2006
+
+\S1{v2.15-cl} Changelog
+
+\S2{} New/Changed Commands
+
+\b Added \R{if}{!if} for more complex compile-time flow control (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1412982}{patch #1412982})
+
+\b Added /math switch to \R{define}{!define} for simple compile-time mathematical operations (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1372561}{patch #1372561})
+
+\S2{} Minor Changes
+
+\b Added more replacement options to \R{wordreplace}{WordReplace}
+
+\b Added NSIS_CONFIG_LOG_STDOUT configuration option for logging to stdout
+
+\b Added path translation for \R{addincludedir}{!addincludedir} (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1431958}{bug #1431958})
+
+\b \R{configread}{ConfigRead} now sets the error flag, if the entry wasn't found
+
+\b Documented \R{nop}{Nop}
+
+\b Edit box in the installation directory selection page is now always LTR, even for RTL languages
+
+\b Fixed improper iterator usage in dir_reader (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1431593}{bug #1431593})
+
+\b Fixed \c{\R{messagebox}{MessageBox} MB_TOPMOST} not showing up, if used as the first sections' instruction  (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1400995}{bug #1400995})
+
+\b Fixed \R{rmdir}{RMDir} skipping files with names starting with two dots (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1420657}{bug #1420657})
+
+\b \R{getoptions}{GetOptions} now sets the error flag, if the option wasn't found
+
+\b Made \R{include}{!include} stop searching the include directories after a match is found (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1441877}{bug #1441877})
+
+\b Made \R{headers}{header functions} use /NOUNLOAD for faster plug-in calls
+
+\b Minor documentation improvements and fixes (including \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1420352}{bug #1420352}, \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1432423}{bug #1432423})
+
+\b More informative \R{aicon}{Icon} error messages (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1174742}{bug #1174742})
+
+\b New case sesnsitive functions in headers: \R{wordfinds}{WordFindS}, \R{wordfind2xs}{WordFind2XS}, \R{wordfind3xs}{WordFind3XS}, \R{wordreplaces}{WordReplaceS}, \R{wordadds}{WordAddS}, \R{wordinserts}{WordInsertS}, \R{strfilters}{StrFilterS}, \R{textcompares}{TextCompareS}, \R{configreads}{ConfigReadS}, \R{configwrites}{ConfigWriteS}, \R{getoptionss}{GetOptionsS}
+
+\S2{} Translations
+
+\b Added proper language identifier for Breton
+
+\b Breton translation improvements
+
+\b Bulgarian translation improvements
+
+\b Fixed Czech grammer mistakes (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1427189}{patch #1427189})
+
+\b Fixed Italian typo (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1416988}{patch #1416988})
+
+\b Updated Mongolian
+
+\S2{} Build System
+
+\b Fixed __BIG_ENDIAN__ definition
+
+\b Fixed improper handling of paths passed to the compiler (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1434215}{bug #1434215})
+
+\b Improved GCC 4.2 compatibility (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1434174}{patch #1434174})
+
+\b Moved NSIS_VARS_SECTION from config.h to scons
+
+\b Write all configuration to sconf.h instead of passing it on the command line
+
+\H{v2.14} 2.14
+
+Released on January 24th, 2006
+
+\S1{v2.14-rn} Release Notes
+
+\b This release fixes a critical bug that caused installers using plug-ins to fail loading on Windows 9x and NT. Upgrading from 2.13 is highly recommended.
+
+\S1{v2.14-cl} Changelog
+
+\S2{} Major Changes
+
+\b Fixed a bug that corrupted $TEMP under Windows 9x and NT and caused InitPluginsDir to fail (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1412159}{bug #1412159})
+
+\S2{} Minor Changes
+
+\b Fixed a possible buffer overflow caused by long values of $0, when using large NSIS_MAX_STRLEN builds (above 4096)
+
+\H{v2.13} 2.13
+
+Released on January 21st, 2006
+
+\S1{v2.13-rn} Release Notes
+
+\b Language detection has changed. The default language is now set to the user's user-interface language instead of the locale language, as suggested by \W{http://msdn.microsoft.com/library/default.asp?url=/library/en-us/intl/nls_0xrn.asp}{MSDN}. To restore the old behavior, use \c{System::Call "kernel32::GetUserDefaultLangID()i.a"} in \R{oninit}{.onInit}.
+
+\S1{v2.13-cl} Changelog
+
+\S2{} Major Changes
+
+\b Default $LANGUAGE value is now based on user's UI language instead of locale (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1324734}{bug #1324734})
+
+\S2{} New/Changed Commands
+
+\b Added \R{strcmps}{StrCmpS} for case sensitive string comparison (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1381929}{patch #1381929})
+
+\S2{} Minor Changes
+
+\b Added system time support to \R{filefunc}{GetTime}
+
+\b Fixed components page checkbox redraw problem under Windows 95 (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1397031}{bug #1397031})
+
+\b Fixed constant maximum string length in \R{FileRead}{FileRead} (changed from 1024 to NSIS_MAX_STRLEN)
+
+\b Fixed empty $INSTDIR value in directory page show callback function (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1209843}{bug #1209843})
+
+\b Fixed relative jumps ignoring \c{\R{file}{File} /nonfatal} (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1299100}{bug #1299100})
+
+\b Fixed typo in NSIS Menu (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1387748}{bug #1387748})
+
+\b Issue a warning when \c{\R{abrandingtext}{BrandingText} /TRIM*} actually expands the label (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1362443}{bug #1362443})
+
+\b Made \c{\R{rmdir}{RMDir} /r} remove Unicode paths as well using short names (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1378785}{bug #1378785})
+
+\b Minor documentation improvements and fixes
+
+\S2{} Utilities and Plug-ins
+
+\b Fixed System plug-in \L{../Docs/System/System.html}{documentation} of callback functions (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1403608}{bug #1403608})
+
+\b Fixed System plug-in heap corruption (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1403601}{bug #1403601})
+
+\S2{} Translations
+
+\b Mongolian translation improvements
+
+\S2{} Build System
+
+\b Better installation under POSIX with proper $\{NSISDIR\} detection and appropriate directory paths (/usr/bin, /usr/share/doc, etc.)
+
+\H{v2.12} 2.12
+
+Released on December 17th, 2005
+
+\S1{v2.12-cl} Changelog
+
+\S2{} Major Changes
+
+\b Fixed compile-time assertion failure for big uninstallers (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1380447}{bug #1380447})
+
+\b \R{tutorial}{Tutorial} enhancements (including \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1366431}{bug #1366431})
+
+\S2{} New/Changed Commands
+
+\b Added /NONFATAL switch to \R{include}{!include} (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1372048}{patch #1372048})
+
+\S2{} Minor Changes
+
+\b Clearer error message for double label definition (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1374675}{patch #1374675})
+
+\b Fixed browsed network root directory not being accepted (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1331292}{bug #1331292})
+
+\b Fixed incorrect \R{acompletedtext}{CompletedText} parsing (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1349810}{bug #1349810})
+
+\b Fixed sdbarker_tiny.exe's compatibility with NSIS_CONFIG_LOG (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1365869}{bug #1365869})
+
+\b Implemented nicer registry commands log (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1340255}{patch #1340255})
+
+\b Minor documentation improvements and fixes (including \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1355653}{patch #1355653}, \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1349810}{bug #1349810})
+
+\b Multi-line comments are no longer ignored inside !ifdef'd block
+
+\S2{} Utilities and Plug-ins
+
+\b Added drag & drop support for zip2exe
+
+\b Better drag & drop error handling in MakeNSISw
+
+\b Fixed Math plug-in array issues (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1235875}{bug #1235875})
+
+\S2{} Translations
+
+\b Added browse button Danish translation
+
+\b Breton translation fixes and improvements
+
+\b Fixed finish button Swedish translation
+
+\S2{} Build System
+
+\b Fixed endianess detection problem on POSIX platforms (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1370179}{bug #1370179})
+
+\b Generated installers use nsis-VERSION-setup.exe template
+
+\H{v2.11} 2.11
+
+Released on November 12th, 2005
+
+\S1{v2.11-rl} Release Notes
+
+\b Rebuilding existing installers that use \c{\R{asetoverwrite}{SetOverwrite} ifdiff}, might falsely overwrite files once
+
+\S1{v2.11-cl} Changelog
+
+\S2{} Major Changes
+
+\b Added a workaround for a bug that prevented detection of some special folders (e.g. \R{varother}{$DESKTOP} for all users) on Windows 9x (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1008632}{bug #1008632})
+
+\b Fixed a crash caused by copying very long details to clipboard in the installation log page (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1314004}{bug #1314004})
+
+\S2{} New/Changed Commands
+
+\b Added \R{tempfile}{!tempfile}, \R{delfile}{!delfile} and \R{appendfile}{!appendfile} for cross-platform handling of text files during compilation
+
+\b Fixed \R{achangeui}{ChangeUI} input handling (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1348473}{patch #1348473})
+
+\b \R{ssectionin}{SectionIn} RO is no longer case sensitive
+
+\S2{} Minor Changes
+
+\b Added support URL to the NSIS package entry in the Add/Remove control panel (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373088&aid=1349867}{RFE #1349867})
+
+\b Fixed comment handling (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1324898}{patch #1324898})
+
+\b Fixed duplicate RegTool test in \R{library}{Library}
+
+\b Fixed invalid language selection according to \R{varother}{$LANGUAGE} in \R{oninit}{.onInit} when only primary language match is found (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1328629}{bug #1328629})
+
+\b Fixed missing RegTool error after install-reboot-install-reboot sequence with \R{library}{Library}
+
+\b Fixed portability issues with \L{../Examples/LogicLib.nsi}{LogicLib} (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1320297}{bug #1320297}, \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1248336}{patch #1248336})
+
+\b Fixed \c{\R{asetoverwrite}{SetOverwrite} ifdiff} always overwriting on FAT file system (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1338423}{bug #1338423})
+
+\b Fixed wrong size of red.bmp check box image
+
+\b Larger browse button for localized texts (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1314682}{bug #1314682})
+
+\b Minor documentation improvements and fixes (including \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1349810}{bug #1349810})
+
+\b Sort language names in language selection dialog
+
+\b Use the temporary directory for \R{library}{Library} temporary files, instead of the possibly write-protected installation directory
+
+\S2{} Utilities and Plug-ins
+
+\b Added /OEM switch for OEM to ANSI conversion in \L{../Docs/nsExec/nsExec.txt}{nsExec} (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1346737}{patch #1346737})
+
+\b Added /PROXY switch for manual proxy configuration in \L{../Docs/NSISdl/ReadMe.txt}{NSISdl} (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1334166}{patch #1334166})
+
+\b Added solid compression check box to zip2exe (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1334155}{patch #1334155})
+
+\b Added stdin in MakeNSISw to allow xcopy to run
+
+\b Added timestamp handling to zip2exe (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1349853}{bug #1349853})
+
+\b Fixed input validation of \L{../Docs/nsExec/nsExec.txt}{nsExec}
+
+\b \L{../Docs/InstallOptions/Readme.html}{InstallOptions 2.44}: Added HWND and HWND2 entries to the INI file to avoid messy calculations of the correct control id
+
+\S2{} Translations
+
+\b Slovenian translation fixes and improvements
+
+\S2{} Build System
+
+\b Added a workaround for linking errors caused by a bad library included in recent Platform SDK versions
+
+\b Check for and use -pthread linker flag
+
+\b Improved FreeBSD portability
+
+\b Nicer error message for SCons version older than 0.96.90
+
 \H{v2.10} 2.10
 
 Released on October 4th, 2005
@@ -25,6 +643,8 @@ Released on October 4th, 2005
 \b Fixed alteration of the working directory by FileRequest in InstallOptions (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1287731}{bug #1287731})
 
 \b Fixed bad mnemonic key in MakeNSISw menu (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1288159}{bug #1288159})
+
+\b Fixed negative size values showing up after the decimal point in the directory page for very big sizes
 
 \b Minor documentation improvements and fixes
 

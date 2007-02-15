@@ -1,7 +1,25 @@
+/*
+ * config.h
+ * 
+ * This file is a part of NSIS.
+ * 
+ * Copyright (C) 1999-2007 Nullsoft and Contributors
+ * 
+ * Licensed under the zlib/libpng license (the "License");
+ * you may not use this file except in compliance with the License.
+ * 
+ * Licence details can be found in the file COPYING.
+ * 
+ * This software is provided 'as-is', without any express or implied
+ * warranty.
+ */
+
 #ifndef NSIS_CONFIG_H
 #define NSIS_CONFIG_H
 
 #ifndef APSTUDIO_INVOKED // keep msdev's resource editor from mangling the .rc file
+
+#include "sconf.h"
 
 #ifndef NSIS_CONFIG_VISIBLE_SUPPORT
   #ifdef NSIS_CONFIG_LICENSEPAGE
@@ -27,6 +45,18 @@
 #ifdef NSIS_CONFIG_LOG_ODS
   #ifndef NSIS_CONFIG_LOG
     #error NSIS_CONFIG_LOG_ODS relies on NSIS_CONFIG_LOG, but NSIS_CONFIG_LOG is not defined
+  #endif
+#endif
+
+#ifdef NSIS_CONFIG_LOG_STDOUT
+  #ifndef NSIS_CONFIG_LOG
+    #error NSIS_CONFIG_LOG_STDOUT relies on NSIS_CONFIG_LOG, but NSIS_CONFIG_LOG is not defined
+  #endif
+#endif
+
+#ifdef NSIS_CONFIG_LOG_TIMESTAMP
+  #ifndef NSIS_CONFIG_LOG
+    #error NSIS_CONFIG_LOG_TIMESTAMP relies on NSIS_CONFIG_LOG, but NSIS_CONFIG_LOG is not defined
   #endif
 #endif
 
@@ -125,10 +155,6 @@
 #ifndef NSIS_DEFAULT_LANG
   #define NSIS_DEFAULT_LANG 1033
 #endif
-
-#define VARS_SECTION_NAME ".ndata"
-
-typedef char NSIS_STRING[NSIS_MAX_STRLEN];
 
 #endif//!APSTUDIO_INVOKED
 

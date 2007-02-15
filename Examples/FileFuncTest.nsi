@@ -3,7 +3,7 @@
 ;                          File Functions Test
 ;_____________________________________________________________________________
 ;
-; 2005 Shengalts Aleksander aka Instructor (Shengalts@mail.ru)
+; 2006 Shengalts Aleksander aka Instructor (Shengalts@mail.ru)
 
 Name "File Functions Test"
 OutFile "FileFuncTest.exe"
@@ -33,6 +33,7 @@ Var OUT7
 !insertmacro GetExePath
 !insertmacro GetParameters
 !insertmacro GetOptions
+!insertmacro GetOptionsS
 !insertmacro GetRoot
 !insertmacro GetParent
 !insertmacro GetFileName
@@ -53,6 +54,7 @@ Var OUT7
 !insertmacro un.GetExePath
 !insertmacro un.GetParameters
 !insertmacro un.GetOptions
+!insertmacro un.GetOptionsS
 !insertmacro un.GetRoot
 !insertmacro un.GetParent
 !insertmacro un.GetFileName
@@ -281,9 +283,38 @@ Section GetOptions
 	StrCmp $OUT1 '"C:/Program Files/Common Files"' 0 error
 
 	${GetOptions} `/INSTDIR='"C:/Program Files/Common Files"' /SILENT=yes` '/INSTDIR*=' $OUT1
+	IfErrors 0 error
 	StrCmp $OUT1 '' 0 error
 
 	${GetOptions} `/INSTDIR="C:/Program Files/Common Files" /SILENT=yes` '' $OUT1
+	IfErrors 0 error
+	StrCmp $OUT1 '' 0 error
+
+	${GetOptionsS} '/INSTDIR=C:\Program Files\Common Files /SILENT' '/SILENT' $OUT1
+	IfErrors error
+	StrCmp $OUT1 '' 0 error
+
+	goto +2
+	error:
+	SetErrors
+
+	${StackVerificationEnd}
+SectionEnd
+
+
+Section GetOptionsS
+	${StackVerificationStart} GetOptionsS
+
+	${GetOptionsS} '/INSTDIR=C:\Program Files\Common Files /SILENT=yes' '/INSTDIR=' $OUT1
+	IfErrors error
+	StrCmp $OUT1 'C:\Program Files\Common Files' 0 error
+
+	${GetOptionsS} '/INSTDIR=C:\Program Files\Common Files /SILENT=yes' '/Instdir=' $OUT1
+	IfErrors 0 error
+	StrCmp $OUT1 '' 0 error
+
+	${GetOptionsS} '/INSTDIR=C:\Program Files\Common Files /SILENT' '/SILENT' $OUT1
+	IfErrors error
 	StrCmp $OUT1 '' 0 error
 
 	goto +2
@@ -510,6 +541,7 @@ Section un.Uninstall
 	${un.GetExePath} $OUT1
 	${un.GetParameters} $OUT1
 	${un.GetOptions} '/INSTDIR=C:\Program Files\Common Files /SILENT=yes' '/INSTDIR=' $OUT1
+	${un.GetOptionsS} '/INSTDIR=C:\Program Files\Common Files /SILENT=yes' '/INSTDIR=' $OUT1
 	${un.GetRoot} 'C:\Program Files\NSIS' $OUT1
 	${un.GetParent} 'C:\Program Files\Winamp\uninstwa.exe' $OUT1
 	${un.GetFileName} 'C:\Program Files\Winamp\uninstwa.exe' $OUT1

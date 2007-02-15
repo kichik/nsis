@@ -1,3 +1,19 @@
+/*
+ * util.h
+ * 
+ * This file is a part of NSIS.
+ * 
+ * Copyright (C) 1999-2007 Nullsoft and Contributors
+ * 
+ * Licensed under the zlib/libpng license (the "License");
+ * you may not use this file except in compliance with the License.
+ * 
+ * Licence details can be found in the file COPYING.
+ * 
+ * This software is provided 'as-is', without any express or implied
+ * warranty.
+ */
+
 #ifndef _UTIL_H_
 #define _UTIL_H_
 
@@ -9,7 +25,6 @@
 #ifndef _WIN32
 #  include <iconv.h>
 #  include <stdio.h>
-#  include <glob.h>
 #endif
 
 
@@ -22,33 +37,19 @@ extern void dopause(void);
 int update_bitmap(CResourceEditor* re, WORD id, const char* filename, int width=0, int height=0, int maxbpp=0);
 
 // reads icon file filename and places its icons in the resource wIconId using resource editor re
-int replace_icon(CResourceEditor* re, WORD wIconId, const char* filename);
+void replace_icon(CResourceEditor* re, WORD wIconId, const char* filename);
 
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
 // returns the data of the uninstaller icon (inside filename) that should replace the installer icon data
 unsigned char* generate_uninstall_icon_data(const char* filename, size_t &size);
 // Fill the array of icons for uninstall with their offsets
-int generate_unicons_offsets(unsigned char* exeHeader, unsigned char* uninstIconData);
+int generate_unicons_offsets(unsigned char* exeHeader, size_t exeHeaderSize, unsigned char* uninstIconData);
 #endif//NSIS_CONFIG_UNINSTALL_SUPPORT
 
 // returns the number of WCHARs in str including null charcter
 size_t WCStrLen(const WCHAR* szwStr);
 
 size_t my_strftime(char *s, size_t max, const char  *fmt, const struct tm *tm);
-
-#define _CONST_STR(x) #x
-#define CONST_STR(x) _CONST_STR(x)
-
-#ifndef __BIG_ENDIAN__
-# define FIX_ENDIAN_INT32_INPLACE(x) (x)
-#else
-# define FIX_ENDIAN_INT32_INPLACE(x) ((x) = SWAP_ENDIAN_INT32(x))
-#endif
-#define SWAP_ENDIAN_INT32(x) ( \
-  (((x)&0xFF000000) >> 24) | \
-  (((x)&0x00FF0000) >>  8) | \
-  (((x)&0x0000FF00) <<  8) | \
-  (((x)&0x000000FF) << 24) )
 
 std::string get_full_path(const std::string& path);
 std::string get_dir_name(const std::string& path);
@@ -59,6 +60,8 @@ std::string lowercase(const std::string&);
 
 std::string get_string_prefix(const std::string& str, const std::string& separator);
 std::string get_string_suffix(const std::string& str, const std::string& separator);
+
+int sane_system(const char *command);
 
 #ifndef _WIN32
 char *CharPrev(const char *s, const char *p);
@@ -74,17 +77,13 @@ char *my_convert(const char *path);
 void my_convert_free(char *converted_path);
 int my_open(const char *pathname, int flags);
 FILE *my_fopen(const char *path, const char *mode);
-int my_glob(const char *pattern, int flags,
-            int errfunc(const char * epath, int eerrno), glob_t *pglob);
 
 #define FOPEN(a, b) my_fopen(a, b)
-#define GLOB(a, b, c, d) my_glob(a, b, c, d)
 #define OPEN(a, b) my_open(a, b)
 
 #else
 
 #define FOPEN(a, b) fopen(a, b)
-#define GLOB(a, b, c, d) glob(a, b, c, d)
 #define OPEN(a, b) open(a, b)
 #endif
 

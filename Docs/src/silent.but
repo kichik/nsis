@@ -20,7 +20,7 @@ Since the directory page can not be shown on silent installers, the user has an 
 
 \c foo.exe /S /D=C:\Program Files\Foo
 
-If your installer/uninstaller requires some more information that can not be gathered when silent, you can allow the user to specify that information on the command line and process it in .onInit. For example:
+If your installer/uninstaller requires some more information that can not be gathered when silent, you can allow the user to specify that information on the command line and process it in .onInit. You can use \R{getoptions}{GetOptions}, or a variant of the following example:
 
 \c Function .onInit
 \c   Call GetParameters

@@ -1,88 +1,32 @@
-// LZOutWindow.cpp
+/*
+ * LZOutWindow.cpp
+ * 
+ * This file is a part of LZMA compression module for NSIS.
+ * 
+ * Original LZMA SDK Copyright (C) 1999-2006 Igor Pavlov
+ * Modifications Copyright (C) 2003-2006 Amir Szekely <kichik@netvision.net.il>
+ * 
+ * Licensed under the Common Public License version 1.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * 
+ * Licence details can be found in the file COPYING.
+ * 
+ * This software is provided 'as-is', without any express or implied
+ * warranty.
+ */
 
 #include "StdAfx.h"
 
 #include "../../../Common/Alloc.h"
 #include "LZOutWindow.h"
 
-bool CLZOutWindow::Create(UInt32 windowSize)
+void CLZOutWindow::Init(bool solid)
 {
-  _pos = 0;
-  _streamPos = 0;
-  const UInt32 kMinBlockSize = 1;
-  if (windowSize < kMinBlockSize)
-    windowSize = kMinBlockSize;
-  if (_buffer != 0 && _windowSize == windowSize)
-    return true;
-  Free();
-  _windowSize = windowSize;
-  _buffer = (Byte *)::BigAlloc(windowSize);
-  return (_buffer != 0);
-}
-
-void CLZOutWindow::Free()
-{
-  ::BigFree(_buffer);
-  _buffer = 0;
-}
-
-void CLZOutWindow::Init(ISequentialOutStream *stream, bool solid)
-{
-  // ReleaseStream();
-  _stream = stream;
-  // _stream->AddRef();
-
   if(!solid)
-  {
-    _streamPos = 0;
-    _pos = 0;
-  }
+    COutBuffer::Init();
   #ifdef _NO_EXCEPTIONS
   ErrorCode = S_OK;
   #endif
 }
 
-/*
-void CLZOutWindow::ReleaseStream()
-{
-  if(_stream != 0)
-  {
-    // Flush(); // Test it
-    _stream->Release();
-    _stream = 0;
-  }
-}
-*/
 
-void CLZOutWindow::FlushWithCheck()
-{
-  HRESULT result = Flush();
-  #ifdef _NO_EXCEPTIONS
-  ErrorCode = result;
-  #else
-  if (result != S_OK)
-    throw CLZOutWindowException(result);
-  #endif
-}
-
-HRESULT CLZOutWindow::Flush()
-{
-  UInt32 size = _pos - _streamPos;
-  if(size == 0)
-    return S_OK;
-  #ifdef _NO_EXCEPTIONS
-  if (ErrorCode != S_OK)
-    return ErrorCode;
-  #endif
-
-  UInt32 processedSize;
-  HRESULT result = _stream->Write(_buffer + _streamPos, size, &processedSize);
-  if (result != S_OK)
-    return result;
-  if (size != processedSize)
-    return E_FAIL;
-  if (_pos >= _windowSize)
-    _pos = 0;
-  _streamPos = _pos;
-  return S_OK;
-}

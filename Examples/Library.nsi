@@ -14,7 +14,7 @@ Page instfiles
 
 XPStyle on
 
-!define TestDLL "$%WINDIR%\Explorer.exe"
+!define TestDLL '"${NSISDIR}\Plugins\LangDLL.dll"'
 
 Section
 

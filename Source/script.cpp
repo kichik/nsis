@@ -1,3 +1,19 @@
+/*
+ * script.cpp
+ * 
+ * This file is a part of NSIS.
+ * 
+ * Copyright (C) 1999-2007 Nullsoft and Contributors
+ * 
+ * Licensed under the zlib/libpng license (the "License");
+ * you may not use this file except in compliance with the License.
+ * 
+ * Licence details can be found in the file COPYING.
+ * 
+ * This software is provided 'as-is', without any express or implied
+ * warranty.
+ */
+
 #include "Platform.h"
 #include <stdio.h>
 #include <ctype.h>
@@ -8,11 +24,13 @@
 #include "DialogTemplate.h"
 #include "lang.h"
 #include "dirreader.h"
+#include "version.h"
 #include "exehead/resource.h"
 #include <cassert> // for assert(3)
 #include <time.h>
 #include <string>
 #include <algorithm>
+#include "boost/scoped_ptr.hpp"
 
 using namespace std;
 
@@ -261,23 +279,38 @@ int CEXEBuild::doParse(const char *str)
 
   while (*str == ' ' || *str == '\t') str++;
 
-  // if ignoring, ignore all lines that don't begin with !.
-  if (cur_ifblock && (cur_ifblock->ignore || cur_ifblock->inherited_ignore) && *str!='!' && !last_line_had_slash) return PS_OK;
-
-  if (m_linebuild.getlen()>1) m_linebuild.resize(m_linebuild.getlen()-2);
+  // remove trailing slash and null, if there's a previous line
+  if (m_linebuild.getlen()>1)
+    m_linebuild.resize(m_linebuild.getlen()-2);
 
   m_linebuild.add(str,strlen(str)+1);
 
-  // remove trailing slash and null
-  if (str[0] && CharPrev(str,str+strlen(str))[0] == '\\') {
-    last_line_had_slash = 1;
+  // keep waiting for more lines, if this line ends with a backslash
+  if (str[0] && CharPrev(str,str+strlen(str))[0] == '\\')
+  {
+    line.parse((char*)m_linebuild.get());
+    if (line.inComment())
+    {
+      warning_fl("comment contains line-continuation character, following line will be ignored");
+    }
     return PS_OK;
   }
-  else last_line_had_slash = 0;
 
+  // parse before checking if the line should be ignored, so block comments won't be missed
   res=line.parse((char*)m_linebuild.get(),!strnicmp((char*)m_linebuild.get(),"!define",7));
 
-  inside_comment = line.InCommentBlock();
+  inside_comment = line.inCommentBlock();
+
+  // if ignoring, ignore all lines that don't begin with an exclamation mark
+  {
+    bool ignore_line = cur_ifblock && (cur_ifblock->ignore || cur_ifblock->inherited_ignore);
+    char first_char = *(char *) m_linebuild.get();
+    if (ignore_line && (first_char!='!' || !is_valid_token(line.gettoken_str(0))))
+    {
+      m_linebuild.resize(0);
+      return PS_OK;
+    }
+  }
 
   m_linebuild.resize(0);
 
@@ -347,9 +380,15 @@ parse_again:
     if (cur_ifblock && cur_ifblock->inherited_ignore)
       return PS_OK;
 
-    if (!num_ifblock() || cur_ifblock->elseused)
+    if (!num_ifblock())
     {
-      ERROR_MSG("!else: stray !else\n");
+      ERROR_MSG("!else: no if block open (!if[macro][n][def])\n");
+      return PS_ERROR;
+    }
+    
+    if (cur_ifblock->elseused)
+    {
+      ERROR_MSG("!else: else already used in current if block\n");
       return PS_ERROR;
     }
 
@@ -370,16 +409,17 @@ parse_again:
 
     line.eattoken();
 
-    int v=line.gettoken_enum(0,"ifdef\0ifndef\0ifmacrodef\0ifmacrondef\0");
+    int v=line.gettoken_enum(0,"if\0ifdef\0ifndef\0ifmacrodef\0ifmacrondef\0");
     if (v < 0) PRINTHELP()
     if (line.getnumtokens() == 1) PRINTHELP()
-    int cmds[] = {TOK_P_IFDEF, TOK_P_IFNDEF, TOK_P_IFMACRODEF, TOK_P_IFMACRONDEF};
+    int cmds[] = {TOK_P_IF, TOK_P_IFDEF, TOK_P_IFNDEF, TOK_P_IFMACRODEF, TOK_P_IFMACRONDEF};
     tkid = cmds[v];
     if_from_else++;
   }
 
   if (tkid == TOK_P_IFNDEF || tkid == TOK_P_IFDEF ||
-      tkid == TOK_P_IFMACRODEF || tkid == TOK_P_IFMACRONDEF)
+      tkid == TOK_P_IFMACRODEF || tkid == TOK_P_IFMACRONDEF ||
+      tkid == TOK_P_IF)
   {
     if (!if_from_else)
       start_ifblock();
@@ -392,29 +432,74 @@ parse_again:
     int istrue=0;
 
     int mod=0;
-    int p;
-
-    // pure left to right precedence. Not too powerful, but useful.
-    for (p = 1; p < line.getnumtokens(); p ++)
-    {
-      if (p & 1)
-      {
-        int new_s;
-        if (tkid == TOK_P_IFNDEF || tkid == TOK_P_IFDEF)
-          new_s=!!definedlist.find(line.gettoken_str(p));
-        else
-          new_s=MacroExists(line.gettoken_str(p));
-        if (tkid == TOK_P_IFNDEF || tkid == TOK_P_IFMACRONDEF)
-          new_s=!new_s;
-
-        if (mod == 0) istrue = istrue || new_s;
-        else istrue = istrue && new_s;
+  
+    int p=0;
+    
+    if (tkid == TOK_P_IF) {
+      if(!strcmp(line.gettoken_str(1),"!")) {
+        p = 1;
+        line.eattoken();
       }
-      else
+      
+      if(line.getnumtokens() == 2)
+        istrue = line.gettoken_int(1);
+          
+      else if (line.getnumtokens() == 4) {
+        mod = line.gettoken_enum(2,"=\0==\0!=\0<=\0<\0>\0>=\0&\0&&\0|\0||\0");
+        
+        switch(mod) {
+          case 0:
+          case 1:
+            istrue = stricmp(line.gettoken_str(1),line.gettoken_str(3)) == 0; break;
+          case 2:
+            istrue = stricmp(line.gettoken_str(1),line.gettoken_str(3)) != 0; break;
+          case 3:
+            istrue = line.gettoken_float(1) <= line.gettoken_float(3); break;
+          case 4:
+            istrue = line.gettoken_float(1) <  line.gettoken_float(3); break;
+          case 5:
+            istrue = line.gettoken_float(1) >  line.gettoken_float(3); break;
+          case 6:
+            istrue = line.gettoken_float(1) >= line.gettoken_float(3); break;
+          case 7:
+          case 8:
+            istrue = line.gettoken_int(1) && line.gettoken_int(3); break;
+          case 9:
+          case 10:
+            istrue = line.gettoken_int(1) || line.gettoken_int(3); break;
+          default:
+            PRINTHELP()
+        }
+      }
+      else PRINTHELP()
+        
+      if(p) istrue = !istrue;
+    }
+
+    else {
+  
+      // pure left to right precedence. Not too powerful, but useful.
+      for (p = 1; p < line.getnumtokens(); p ++)
       {
-        mod=line.gettoken_enum(p,"|\0&\0||\0&&\0");
-        if (mod == -1) PRINTHELP()
-        mod &= 1;
+        if (p & 1)
+        {
+          int new_s;
+          if (tkid == TOK_P_IFNDEF || tkid == TOK_P_IFDEF)
+            new_s=!!definedlist.find(line.gettoken_str(p));
+          else
+            new_s=MacroExists(line.gettoken_str(p));
+          if (tkid == TOK_P_IFNDEF || tkid == TOK_P_IFMACRONDEF)
+            new_s=!new_s;
+  
+          if (mod == 0) istrue = istrue || new_s;
+          else istrue = istrue && new_s;
+        }
+        else
+        {
+          mod=line.gettoken_enum(p,"|\0&\0||\0&&\0");
+          if (mod == -1) PRINTHELP()
+          mod &= 1;
+        }
       }
     }
 
@@ -431,7 +516,7 @@ parse_again:
   if (tkid == TOK_P_ENDIF) {
     if (!num_ifblock())
     {
-      ERROR_MSG("!endif: no !ifdef open\n");
+      ERROR_MSG("!endif: no if block open (!if[macro][n][def])\n");
       return PS_ERROR;
     }
     end_ifblock();
@@ -1512,13 +1597,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       SCRIPT_MSG("Icon: \"%s\"\n",line.gettoken_str(1));
       try {
         init_res_editor();
-        if (replace_icon(res_editor, IDI_ICON2, line.gettoken_str(1)) < 0) {
-          ERROR_MSG("Error: File doesn't exist or is an invalid icon file\n");
-          return PS_ERROR;
-        }
+        replace_icon(res_editor, IDI_ICON2, line.gettoken_str(1));
       }
       catch (exception& err) {
-        ERROR_MSG("Error while replacing icon: %s\n", err.what());
+        ERROR_MSG("Error while setting icon to \"%s\": %s\n", line.gettoken_str(1), err.what());
         return PS_ERROR;
       }
     return PS_OK;
@@ -2023,7 +2105,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         try {
           init_res_editor();
 
-          BYTE* dlg = res_editor->GetResource(RT_DIALOG, MAKEINTRESOURCE(IDD_INSTFILES), NSIS_DEFAULT_LANG);
+          BYTE* dlg = res_editor->GetResourceA(RT_DIALOG, MAKEINTRESOURCE(IDD_INSTFILES), NSIS_DEFAULT_LANG);
           if (!dlg) throw runtime_error("IDD_INSTFILES doesn't exist!");
           CDialogTemplate dt(dlg,uDefCodePage);
           free(dlg);
@@ -2039,7 +2121,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
           DWORD dwSize;
           dlg = dt.Save(dwSize);
-          res_editor->UpdateResource(RT_DIALOG, MAKEINTRESOURCE(IDD_INSTFILES), NSIS_DEFAULT_LANG, dlg, dwSize);
+          res_editor->UpdateResourceA(RT_DIALOG, MAKEINTRESOURCE(IDD_INSTFILES), NSIS_DEFAULT_LANG, dlg, dwSize);
           delete [] dlg;
         }
         catch (exception& err) {
@@ -2276,17 +2358,14 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     }
     return PS_OK;
     case TOK_XPSTYLE:
-      try {
+      {
         int k=line.gettoken_enum(1,"on\0off\0");
         if (k == -1) PRINTHELP()
         SCRIPT_MSG("XPStyle: %s\n", line.gettoken_str(1));
-        init_res_editor();
-        const char *szXPManifest = k ? 0 : "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><assembly xmlns=\"urn:schemas-microsoft-com:asm.v1\" manifestVersion=\"1.0\"><assemblyIdentity version=\"1.0.0.0\" processorArchitecture=\"X86\" name=\"Nullsoft.NSIS.exehead\" type=\"win32\"/><description>Nullsoft Install System " CONST_STR(NSIS_VERSION) "</description><dependency><dependentAssembly><assemblyIdentity type=\"win32\" name=\"Microsoft.Windows.Common-Controls\" version=\"6.0.0.0\" processorArchitecture=\"X86\" publicKeyToken=\"6595b64144ccf1df\" language=\"*\" /></dependentAssembly></dependency></assembly>";
-        res_editor->UpdateResource(MAKEINTRESOURCE(24), MAKEINTRESOURCE(1), NSIS_DEFAULT_LANG, (unsigned char*)szXPManifest, k ? 0 : strlen(szXPManifest));
-      }
-      catch (exception& err) {
-        ERROR_MSG("Error while adding XP style: %s\n", err.what());
-        return PS_ERROR;
+        if (!k)
+          manifest_comctl = manifest::comctl_xp;
+        else
+          manifest_comctl = manifest::comctl_old;
       }
     return PS_OK;
     case TOK_CHANGEUI:
@@ -2321,9 +2400,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         init_res_editor();
 
         // Search for required items
-        #define GET(x) dlg = uire->GetResource(RT_DIALOG, MAKEINTRESOURCE(x), 0); if (!dlg) return PS_ERROR; CDialogTemplate UIDlg(dlg, uDefCodePage);
+        #define GET(x) dlg = uire->GetResourceA(RT_DIALOG, MAKEINTRESOURCE(x), 0); if (!dlg) return PS_ERROR; CDialogTemplate UIDlg(dlg, uDefCodePage);
         #define SEARCH(x) if (!UIDlg.GetItem(x)) {ERROR_MSG("Error: Can't find %s (%u) in the custom UI!\n", #x, x);delete [] dlg;delete uire;return PS_ERROR;}
-        #define SAVE(x) dwSize = UIDlg.GetSize(); res_editor->UpdateResource(RT_DIALOG, x, NSIS_DEFAULT_LANG, dlg, dwSize); delete [] dlg;
+        #define SAVE(x) dwSize = UIDlg.GetSize(); res_editor->UpdateResourceA(RT_DIALOG, x, NSIS_DEFAULT_LANG, dlg, dwSize); delete [] dlg;
 
         LPBYTE dlg = NULL;
 
@@ -2430,7 +2509,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           padding = line.gettoken_int(3);
 
         init_res_editor();
-        BYTE* dlg = res_editor->GetResource(RT_DIALOG, MAKEINTRESOURCE(IDD_INST), NSIS_DEFAULT_LANG);
+        BYTE* dlg = res_editor->GetResourceA(RT_DIALOG, MAKEINTRESOURCE(IDD_INST), NSIS_DEFAULT_LANG);
 
         CDialogTemplate dt(dlg, uDefCodePage);
 
@@ -2478,7 +2557,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         DWORD dwDlgSize;
         dlg = dt.Save(dwDlgSize);
 
-        res_editor->UpdateResource(RT_DIALOG, IDD_INST, NSIS_DEFAULT_LANG, dlg, dwDlgSize);
+        res_editor->UpdateResourceA(RT_DIALOG, IDD_INST, NSIS_DEFAULT_LANG, dlg, dwDlgSize);
 
         delete [] dlg;
 
@@ -2519,14 +2598,38 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     }
     return PS_OK;
 #else
-  case TOK_INSTCOLORS:
-  case TOK_XPSTYLE:
-  case TOK_CHANGEUI:
-  case TOK_ADDBRANDINGIMAGE:
-  case TOK_SETFONT:
-    ERROR_MSG("Error: %s specified, NSIS_CONFIG_VISIBLE_SUPPORT not defined.\n",line.gettoken_str(0));
-  return PS_ERROR;
+    case TOK_INSTCOLORS:
+    case TOK_XPSTYLE:
+    case TOK_CHANGEUI:
+    case TOK_ADDBRANDINGIMAGE:
+    case TOK_SETFONT:
+      ERROR_MSG("Error: %s specified, NSIS_CONFIG_VISIBLE_SUPPORT not defined.\n",line.gettoken_str(0));
+    return PS_ERROR;
 #endif// NSIS_CONFIG_VISIBLE_SUPPORT
+
+    case TOK_REQEXECLEVEL:
+    {
+      int k=line.gettoken_enum(1,"none\0user\0highest\0admin\0");
+      switch (k)
+      {
+      case 0:
+        manifest_exec_level = manifest::exec_level_none;
+        break;
+      case 1:
+        manifest_exec_level = manifest::exec_level_user;
+        break;
+      case 2:
+        manifest_exec_level = manifest::exec_level_highest;
+        break;
+      case 3:
+        manifest_exec_level = manifest::exec_level_admin;
+        break;
+      default:
+        PRINTHELP();
+      }
+    }
+    return PS_OK;
+
     // Ability to change compression methods from within the script
     case TOK_SETCOMPRESSOR:
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
@@ -2634,16 +2737,21 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       char *define=line.gettoken_str(1);
       char *value;
       char datebuf[256];
-      bool date=false;
+      char mathbuf[256];
 
-      if (!stricmp(define,"/date")) {
+      if (!stricmp(define,"/date") || !stricmp(define,"/utcdate")) {
         if (line.getnumtokens()!=4) PRINTHELP()
+
+        char *date_type = define;
 
         define=line.gettoken_str(2);
         value=line.gettoken_str(3);
 
         time_t rawtime;
-		    time(&rawtime);
+        time(&rawtime);
+
+        if (!stricmp(date_type,"/utcdate"))
+          rawtime = mktime(gmtime(&rawtime));
 
         datebuf[0]=0;
         size_t s=strftime(datebuf,sizeof(datebuf),value,localtime(&rawtime));
@@ -2655,7 +2763,40 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
         value=datebuf;
 
-        date=true;
+      } else if (!stricmp(define,"/math")) {
+      
+        int value1;
+        int value2;
+        char *mathop;
+        
+        if (line.getnumtokens()!=6) PRINTHELP()
+
+        define = line.gettoken_str(2);
+        value1 = line.gettoken_int(3);
+        mathop = line.gettoken_str(4);
+        value2 = line.gettoken_int(5);
+        value = mathbuf;
+
+        if (!strcmp(mathop,"+")) {
+          sprintf(value,"%d",value1+value2);
+        } else if (!strcmp(mathop,"-")) {
+          sprintf(value,"%d",value1-value2);
+        } else if (!strcmp(mathop,"*")) {
+          sprintf(value,"%d",value1*value2);
+        } else if (!strcmp(mathop,"/")) {
+          if (value2==0) {
+            ERROR_MSG("!define /math: division by zero! (\"%i / %i\")\n",value1,value2);
+            return PS_ERROR;
+          }
+          sprintf(value,"%d",value1/value2);
+        } else if (!strcmp(mathop,"%")) {
+          if (value2==0) {
+            ERROR_MSG("!define /math: division by zero! (\"%i %% %i\")\n",value1,value2);
+            return PS_ERROR;
+          }
+          sprintf(value,"%d",value1%value2);
+        } else PRINTHELP()
+
       } else {
         if (line.getnumtokens()==4) PRINTHELP()
 
@@ -2667,7 +2808,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         ERROR_MSG("!define: \"%s\" already defined!\n",define);
         return PS_ERROR;
       }
-      SCRIPT_MSG("!define: %s\"%s\"=\"%s\"\n",date?"/date ":"",define,date?line.gettoken_str(3):value);
+      SCRIPT_MSG("!define: \"%s\"=\"%s\"\n",define,value);
     }
     return PS_OK;
     case TOK_P_UNDEF:
@@ -2696,7 +2837,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (!success && comp != 4) PRINTHELP()
         SCRIPT_MSG("!system: \"%s\"\n",exec);
 #ifdef _WIN32
-        int ret=system(exec);
+        int ret=sane_system(exec);
 #else
         char *execfixed = my_convert(exec);
         int ret=system(execfixed);
@@ -2735,11 +2876,33 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         SCRIPT_MSG("!execute: \"%s\"\n",exec);
       }
     case TOK_P_ADDINCLUDEDIR:
+#ifdef _WIN32
       include_dirs.add(line.gettoken_str(1),0);
+#else
+      {
+        char *f = line.gettoken_str(1);
+        char *fc = my_convert(f);
+        include_dirs.add(fc,0);
+        my_convert_free(fc);
+      }
+#endif
     return PS_OK;
     case TOK_P_INCLUDE:
       {
+        bool required = true;
+
         char *f = line.gettoken_str(1);
+
+        if(!stricmp(f,"/nonfatal")) {
+          if (line.getnumtokens()!=3)
+            PRINTHELP();
+
+          f = line.gettoken_str(2);
+          required = false;
+        } else if (line.getnumtokens()!=2) {
+          PRINTHELP();
+        }
+
 #ifdef _WIN32
         char *fc = f;
 #else
@@ -2761,27 +2924,24 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #endif
 
         // search working directory
-        dir_reader *dr = new_dir_reader();
+        boost::scoped_ptr<dir_reader> dr( new_dir_reader() );
         dr->read(dir);
 
-        dir_reader::iterator files_itr = dr->files().begin();
-        dir_reader::iterator files_end = dr->files().end();
-
-        for (; files_itr != files_end; files_itr++) {
+        for (dir_reader::iterator files_itr = dr->files().begin();
+             files_itr != dr->files().end();
+             files_itr++)
+        {
           if (!dir_reader::matches(*files_itr, spec))
             continue;
 
           string incfile = basedir + *files_itr;
 
           if (includeScript((char *) incfile.c_str()) != PS_OK) {
-            delete dr;
             return PS_ERROR;
           }
 
           included++;
         }
-
-        delete dr;
 
         if (included)
           return PS_OK;
@@ -2793,34 +2953,39 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         for (int i = 0; i < incdirs; i++, incdir += strlen(incdir) + 1) {
           string curincdir = string(incdir) + PLATFORM_PATH_SEPARATOR_STR + dir;
 
-          dir_reader *dr = new_dir_reader();
+          boost::scoped_ptr<dir_reader> dr( new_dir_reader() );
           dr->read(curincdir);
 
-          files_itr = dr->files().begin();
-          files_end = dr->files().end();
-
-          for (; files_itr != files_end; files_itr++) {
-            if (!dir_reader::matches(*files_itr, spec))
+          for (dir_reader::iterator incdir_itr = dr->files().begin();
+               incdir_itr != dr->files().end();
+               incdir_itr++)
+          {
+            if (!dir_reader::matches(*incdir_itr, spec))
               continue;
 
-            string incfile = string(incdir) + PLATFORM_PATH_SEPARATOR_STR + basedir + *files_itr;
+            string incfile = string(incdir) + PLATFORM_PATH_SEPARATOR_STR + basedir + *incdir_itr;
 
             if (includeScript((char *) incfile.c_str()) != PS_OK) {
-              delete dr;
               return PS_ERROR;
             }
 
             included++;
           }
 
-          delete dr;
+          if (included)
+            return PS_OK;
+
         }
 
         // nothing found
         if (!included)
         {
-          ERROR_MSG("!include: could not find: \"%s\"\n",f);
-          return PS_ERROR;
+          if(required) {
+            ERROR_MSG("!include: could not find: \"%s\"\n",f);
+            return PS_ERROR;
+          } else {
+            warning_fl("!include: could not find: \"%s\"",f);
+          }
         }
       }
     return PS_OK;
@@ -2911,13 +3076,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       try {
         free(m_unicon_data);
         m_unicon_data = generate_uninstall_icon_data(line.gettoken_str(1), m_unicon_size);
-        if (!m_unicon_data) {
-          ERROR_MSG("Error: File doesn't exist or is an invalid icon file\n");
-          return PS_ERROR;
-        }
       }
       catch (exception& err) {
-        ERROR_MSG("Error while replacing icon: %s\n", err.what());
+        ERROR_MSG("Error while setting icon to \"%s\": %s\n", line.gettoken_str(1), err.what());
         return PS_ERROR;
       }
     return PS_OK;
@@ -3248,7 +3409,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (trim) try {
           init_res_editor();
 
-          BYTE* dlg = res_editor->GetResource(RT_DIALOG, MAKEINTRESOURCE(IDD_INST), NSIS_DEFAULT_LANG);
+          BYTE* dlg = res_editor->GetResourceA(RT_DIALOG, MAKEINTRESOURCE(IDD_INST), NSIS_DEFAULT_LANG);
           CDialogTemplate td(dlg,uDefCodePage);
           free(dlg);
 
@@ -3257,18 +3418,25 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             if (line.getnumtokens()==a+1 && line.gettoken_str(a)[0])
               strcpy(str, line.gettoken_str(a));
             else
-              wsprintf(str, "Nullsoft Install System %s", CONST_STR(NSIS_VERSION));
+              wsprintf(str, "Nullsoft Install System %s", NSIS_VERSION);
+
+            short old_width = td.GetItem(IDC_VERSTR)->sWidth;
 
             switch (trim) {
               case 1: td.LTrimToString(IDC_VERSTR, str, 4); break;
               case 2: td.RTrimToString(IDC_VERSTR, str, 4); break;
               case 3: td.CTrimToString(IDC_VERSTR, str, 4); break;
             }
+
+            if (td.GetItem(IDC_VERSTR)->sWidth > old_width)
+            {
+              warning_fl("BrandingText: \"%s\" is too long, trimming has expanded the label", str);
+            }
           }
 
           DWORD dwSize;
           dlg = td.Save(dwSize);
-          res_editor->UpdateResource(RT_DIALOG, MAKEINTRESOURCE(IDD_INST), NSIS_DEFAULT_LANG, dlg, dwSize);
+          res_editor->UpdateResourceA(RT_DIALOG, MAKEINTRESOURCE(IDD_INST), NSIS_DEFAULT_LANG, dlg, dwSize);
           res_editor->FreeResource(dlg);
         }
         catch (exception& err) {
@@ -3534,7 +3702,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       DefineInnerLangString(NLF_SYMBOL_NOT_FOUND);
       DefineInnerLangString(NLF_COULD_NOT_LOAD);
       DefineInnerLangString(NLF_NO_OLE);
-      DefineInnerLangString(NLF_ERR_REG_DLL);
+      // not used anywhere - DefineInnerLangString(NLF_ERR_REG_DLL);
     return add_entry(&ent);
 #endif//NSIS_SUPPORT_ACTIVEXREG
     case TOK_RENAME:
@@ -4140,6 +4308,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             else
             {
               warning_fl("%sFile: \"%s\" -> no files found",(which_token == TOK_FILE)?"":"Reserve",line.gettoken_str(a));
+
+              // workaround for bug #1299100
+              // add a nop opcode so relative jumps will work as expected
+              add_entry_direct(EW_NOP);
             }
           }
 
@@ -4447,12 +4619,14 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       SCRIPT_MSG("GetCurrentAddress: %s",line.gettoken_str(1));
     return add_entry(&ent);
     case TOK_STRCMP:
+    case TOK_STRCMPS:
       ent.which=EW_STRCMP;
       ent.offsets[0]=add_string(line.gettoken_str(1));
       ent.offsets[1]=add_string(line.gettoken_str(2));
+      ent.offsets[4]=which_token == TOK_STRCMPS;
       if (process_jump(line,3,&ent.offsets[2]) ||
           process_jump(line,4,&ent.offsets[3])) PRINTHELP()
-      SCRIPT_MSG("StrCmp \"%s\" \"%s\" equal=%s, nonequal=%s\n",line.gettoken_str(1),line.gettoken_str(2), line.gettoken_str(3),line.gettoken_str(4));
+      SCRIPT_MSG("%s \"%s\" \"%s\" equal=%s, nonequal=%s\n",line.gettoken_str(0),line.gettoken_str(1),line.gettoken_str(2), line.gettoken_str(3),line.gettoken_str(4));
     return add_entry(&ent);
     case TOK_GETDLLVERSIONLOCAL:
       {
@@ -4533,8 +4707,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         try
         {
           CResourceEditor *dllre = new CResourceEditor(dll, len);
-          LPBYTE ver = dllre->GetResource(VS_FILE_INFO, MAKEINTRESOURCE(VS_VERSION_INFO), 0);
-          int versize = dllre->GetResourceSize(VS_FILE_INFO, MAKEINTRESOURCE(VS_VERSION_INFO), 0);
+          LPBYTE ver = dllre->GetResourceA(VS_FILE_INFO, MAKEINTRESOURCE(VS_VERSION_INFO), 0);
+          int versize = dllre->GetResourceSizeA(VS_FILE_INFO, MAKEINTRESOURCE(VS_VERSION_INFO), 0);
 
           if (ver)
           {
@@ -4617,18 +4791,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         struct stat st;
         if (!stat(line.gettoken_str(1), &st))
         {
-          union
-          {
-            struct
-            {
-              long l;
-              long h;
-            } words;
-            long long ll;
-          };
-          ll = (st.st_mtime * 10000000LL) + 116444736000000000LL;
-          high = words.h;
-          low = words.l;
+          unsigned long long ll = (st.st_mtime * 10000000LL) + 116444736000000000LL;
+          high = (DWORD) (ll >> 32);
+          low = (DWORD) ll;
         }
         else
         {
@@ -4666,6 +4831,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_STRLEN:
     case TOK_STRCPY:
     case TOK_STRCMP:
+    case TOK_STRCMPS:
       ERROR_MSG("Error: %s specified, NSIS_SUPPORT_STROPTS not defined.\n",  line.gettoken_str(0));
     return PS_ERROR;
 #endif//!NSIS_SUPPORT_STROPTS
@@ -5130,7 +5296,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           ent.offsets[2]=OPEN_ALWAYS;
         }
 
-        if (ent.offsets[3] < 0 || !ent.offsets[1]) PRINTHELP()
+        if (ent.offsets[0] < 0 || !ent.offsets[1]) PRINTHELP()
       }
       SCRIPT_MSG("FileOpen: %s as %s -> %s\n",line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(1));
     return add_entry(&ent);
@@ -5144,7 +5310,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.which=EW_FGETS;
       ent.offsets[0]=GetUserVarIndex(line, 1); // file handle
       ent.offsets[1]=GetUserVarIndex(line, 2); // output string
-      ent.offsets[2]=add_string(line.gettoken_str(3)[0]?line.gettoken_str(3):"1023");
+      if (line.gettoken_str(3)[0])
+        ent.offsets[2]=add_string(line.gettoken_str(3));
+      else
+        ent.offsets[2]=add_intstring(NSIS_MAX_STRLEN-1);
       if (ent.offsets[0]<0 || ent.offsets[1]<0) PRINTHELP()
       SCRIPT_MSG("FileRead: %s->%s (max:%s)\n",line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3));
     return add_entry(&ent);
@@ -5449,39 +5618,42 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #ifdef NSIS_SUPPORT_VERSION_INFO
     case TOK_VI_ADDKEY:
     {
-        LANGID LangID=0;
-        int a = 1;
-        if (!strnicmp(line.gettoken_str(a),"/LANG=",6))
-          LangID=atoi(line.gettoken_str(a++)+6);
-        if (line.getnumtokens()!=a+2) PRINTHELP();
-        char *pKey = line.gettoken_str(a);
-        char *pValue = line.gettoken_str(a+1);
-        if ( !(*pKey) )
-        {
-           ERROR_MSG("Error: empty name for version info key!\n");
-           return PS_ERROR;
-        }
-        else
-        {
-           SCRIPT_MSG("%s: \"%s\" \"%s\"\n", line.gettoken_str(0), line.gettoken_str(a), line.gettoken_str(a+1));
-           LANGID lReaded = LangID;
-           LanguageTable *table = GetLangTable(LangID);
-           if ( a > 1 && lReaded == 0 )
-             warning_fl("%s: %s language not loaded, using default \"1033-English\"", line.gettoken_str(0), line.gettoken_str(1));
-           if ( rVersionInfo.SetKeyValue(LangID, table->nlf.m_bLoaded ? table->nlf.m_uCodePage : 1252 /*English US*/, pKey, pValue) )
-           {
-             ERROR_MSG("%s: \"%s\" \"%04d-%s\" already defined!\n",line.gettoken_str(0), line.gettoken_str(2), LangID, table->nlf.m_bLoaded ? table->nlf.m_szName : LangID == 1033 ? "English" : "???");
-             return PS_ERROR;
-           }
+      LANGID LangID=0;
+      int a = 1;
+      if (!strnicmp(line.gettoken_str(a),"/LANG=",6))
+        LangID=atoi(line.gettoken_str(a++)+6);
+      if (line.getnumtokens()!=a+2) PRINTHELP();
+      char *pKey = line.gettoken_str(a);
+      char *pValue = line.gettoken_str(a+1);
+      if ( !(*pKey) )
+      {
+         ERROR_MSG("Error: empty name for version info key!\n");
+         return PS_ERROR;
+      }
+      else
+      {
+        SCRIPT_MSG("%s: \"%s\" \"%s\"\n", line.gettoken_str(0), line.gettoken_str(a), line.gettoken_str(a+1));
+        LANGID lReaded = LangID;
+        if ( a > 1 && lReaded == 0 )
+          warning_fl("%s: %s language not loaded, using default \"1033-English\"", line.gettoken_str(0), line.gettoken_str(1));
 
-           return PS_OK;
+        unsigned int codepage;
+        char *lang_name = GetLangNameAndCP(LangID, &codepage);
+
+        if ( rVersionInfo.SetKeyValue(LangID, codepage, pKey, pValue) )
+        {
+          ERROR_MSG("%s: \"%s\" \"%04d-%s\" already defined!\n",line.gettoken_str(0), line.gettoken_str(2), LangID, lang_name);
+          return PS_ERROR;
         }
+
+        return PS_OK;
+      }
     }
     case TOK_VI_SETPRODUCTVERSION:
       if ( version_product_v[0] )
       {
-           ERROR_MSG("Error: %s already defined!\n", line.gettoken_str(0));
-           return PS_ERROR;
+        ERROR_MSG("Error: %s already defined!\n", line.gettoken_str(0));
+        return PS_ERROR;
       }
       strcpy(version_product_v, line.gettoken_str(1));
       return PS_OK;
@@ -5634,6 +5806,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         return ret;
       }
 
+      DefineInnerLangString(NLF_SYMBOL_NOT_FOUND);
+      DefineInnerLangString(NLF_COULD_NOT_LOAD);
+      DefineInnerLangString(NLF_NO_OLE);
+      // not used anywhere - DefineInnerLangString(NLF_ERR_REG_DLL);
+
       return PS_OK;
     }
     return PS_ERROR;
@@ -5708,27 +5885,26 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int *total
     spec = "*";
   }
 
-  dir_reader *dr = new_dir_reader();
-  dr->exclude(excluded);
-  dr->read(dir);
-
-  dir_reader::iterator files_itr = dr->files().begin();
-  dir_reader::iterator files_end = dr->files().end();
-
   if (basedir == "") {
     dir_created = true;
 
     if (recurse) {
       // save $OUTDIR into $_OUTDIR [StrCpy $_OUTDIR $OUTDIR]
       if (add_entry_direct(EW_ASSIGNVAR, m_UserVarNames.get("_OUTDIR"), add_string("$OUTDIR")) != PS_OK) {
-        delete dr;
         return PS_ERROR;
       }
     }
   }
 
+  boost::scoped_ptr<dir_reader> dr( new_dir_reader() );
+  dr->exclude(excluded);
+  dr->read(dir);
+
   // add files in the current directory
-  for (; files_itr != files_end; files_itr++) {
+  for (dir_reader::iterator files_itr = dr->files().begin();
+       files_itr != dr->files().end();
+       files_itr++)
+  {
     if (!dir_reader::matches(*files_itr, spec))
       continue;
 
@@ -5736,7 +5912,6 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int *total
       SCRIPT_MSG("%sFile: Descending to: \"%s\"\n", generatecode ? "" : "Reserve", dir.c_str());
 
       if (do_add_file_create_dir(dir, basedir, attrib) != PS_OK) {
-        delete dr;
         return PS_ERROR;
       }
 
@@ -5744,66 +5919,62 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int *total
     }
 
     if (add_file(dir, *files_itr, attrib, name_override, generatecode, data_handle) != PS_OK) {
-      delete dr;
       return PS_ERROR;
     }
 
     (*total_files)++;
   }
 
+  if (!recurse) {
+    return PS_OK;
+  }
+
   // recurse into directories
-  if (recurse) {
-    dir_reader::iterator dirs_itr = dr->dirs().begin();
-    dir_reader::iterator dirs_end = dr->dirs().end();
-
-    for (; dirs_itr != dirs_end; dirs_itr++) {
-      string new_dir;
-      bool created = false;
-
-      if (basedir == "") {
-        new_dir = *dirs_itr;
-      } else {
-        new_dir = basedir + '\\' + *dirs_itr;
-      }
-
-      string new_spec = dir + PLATFORM_PATH_SEPARATOR_STR + *dirs_itr + PLATFORM_PATH_SEPARATOR_STR;
-
-      if (!dir_reader::matches(*dirs_itr, spec)) {
-        new_spec += spec;
-      } else if (generatecode) {
-        // always create directories that match
-
-        SCRIPT_MSG("%sFile: Descending to: \"%s\"\n", generatecode ? "" : "Reserve", new_spec.c_str());
-
-        if (do_add_file_create_dir(*dirs_itr, new_dir, attrib) != PS_OK) {
-          delete dr;
-          return PS_ERROR;
-        }
-
-        created = true;
-      }
-
-      const char *new_spec_c = new_spec.c_str();
-
-      int res = do_add_file(new_spec_c, attrib, 1, total_files, NULL, generatecode, NULL, excluded, new_dir, created);
-      if (res != PS_OK) {
-        delete dr;
-        return PS_ERROR;
-      }
-    }
+  for (dir_reader::iterator dirs_itr = dr->dirs().begin();
+       dirs_itr != dr->dirs().end();
+       dirs_itr++)
+  {
+    string new_dir;
+    bool created = false;
 
     if (basedir == "") {
-      SCRIPT_MSG("%sFile: Returning to: \"%s\"\n", generatecode ? "" : "Reserve", dir.c_str());
+      new_dir = *dirs_itr;
+    } else {
+      new_dir = basedir + '\\' + *dirs_itr;
+    }
 
-      // restore $OUTDIR from $_OUTDIR [SetOutPath $_OUTDIR]
-      if (add_entry_direct(EW_CREATEDIR, add_string("$_OUTDIR"), 1) != PS_OK) {
-        delete dr;
+    string new_spec = dir + PLATFORM_PATH_SEPARATOR_STR + *dirs_itr + PLATFORM_PATH_SEPARATOR_STR;
+
+    if (!dir_reader::matches(*dirs_itr, spec)) {
+      new_spec += spec;
+    } else if (generatecode) {
+      // always create directories that match
+
+      SCRIPT_MSG("%sFile: Descending to: \"%s\"\n", generatecode ? "" : "Reserve", new_spec.c_str());
+
+      if (do_add_file_create_dir(*dirs_itr, new_dir, attrib) != PS_OK) {
         return PS_ERROR;
       }
+
+      created = true;
+    }
+
+    const char *new_spec_c = new_spec.c_str();
+
+    int res = do_add_file(new_spec_c, attrib, 1, total_files, NULL, generatecode, NULL, excluded, new_dir, created);
+    if (res != PS_OK) {
+      return PS_ERROR;
     }
   }
 
-  delete dr;
+  if (basedir == "") {
+    SCRIPT_MSG("%sFile: Returning to: \"%s\"\n", generatecode ? "" : "Reserve", dir.c_str());
+
+    // restore $OUTDIR from $_OUTDIR [SetOutPath $_OUTDIR]
+    if (add_entry_direct(EW_CREATEDIR, add_string("$_OUTDIR"), 1) != PS_OK) {
+      return PS_ERROR;
+    }
+  }
 
   return PS_OK;
 }
@@ -5935,6 +6106,10 @@ int CEXEBuild::add_file(const string& dir, const string& file, int attrib, const
       FILETIME ft;
       if (GetFileTime(hFile,NULL,NULL,&ft))
       {
+        // FAT write time has a resolution of 2 seconds
+        PULONGLONG fti = (PULONGLONG) &ft;
+        *fti -= *fti % 20000000;
+
         ent.offsets[3]=ft.dwLowDateTime;
         ent.offsets[4]=ft.dwHighDateTime;
       }
@@ -5942,18 +6117,13 @@ int CEXEBuild::add_file(const string& dir, const string& file, int attrib, const
       struct stat st;
       if (!fstat(fd, &st))
       {
-        union
-        {
-          struct
-          {
-            long l;
-            long h;
-          } words;
-          long long ll;
-        };
-        ll = (st.st_mtime * 10000000LL) + 116444736000000000LL;
-        ent.offsets[3] = words.l;
-        ent.offsets[4] = words.h;
+        unsigned long long ll = (st.st_mtime * 10000000LL) + 116444736000000000LL;
+
+        // FAT write time has a resolution of 2 seconds
+        ll -= ll % 20000000;
+
+        ent.offsets[3] = (int) ll;
+        ent.offsets[4] = (int) (ll >> 32);
       }
 #endif
       else

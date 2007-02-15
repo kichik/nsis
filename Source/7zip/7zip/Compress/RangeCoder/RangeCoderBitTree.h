@@ -1,4 +1,19 @@
-// Compress/RangeCoder/RangeCoderBitTree.h
+/*
+ * RangeCoderBitTree.h
+ * 
+ * This file is a part of LZMA compression module for NSIS.
+ * 
+ * Original LZMA SDK Copyright (C) 1999-2006 Igor Pavlov
+ * Modifications Copyright (C) 2003-2006 Amir Szekely <kichik@netvision.net.il>
+ * 
+ * Licensed under the Common Public License version 1.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * 
+ * Licence details can be found in the file COPYING.
+ * 
+ * This software is provided 'as-is', without any express or implied
+ * warranty.
+ */
 
 #ifndef __COMPRESS_RANGECODER_BIT_TREE_H
 #define __COMPRESS_RANGECODER_BIT_TREE_H
@@ -9,7 +24,7 @@
 namespace NCompress {
 namespace NRangeCoder {
 
-template <int numMoveBits, UInt32 NumBitLevels>
+template <int numMoveBits, int NumBitLevels>
 class CBitTreeEncoder
 {
   CBitEncoder<numMoveBits> Models[1 << NumBitLevels];
@@ -22,7 +37,7 @@ public:
   void Encode(CEncoder *rangeEncoder, UInt32 symbol)
   {
     UInt32 modelIndex = 1;
-    for (UInt32 bitIndex = NumBitLevels; bitIndex > 0 ;)
+    for (int bitIndex = NumBitLevels; bitIndex != 0 ;)
     {
       bitIndex--;
       UInt32 bit = (symbol >> bitIndex) & 1;
@@ -33,7 +48,7 @@ public:
   void ReverseEncode(CEncoder *rangeEncoder, UInt32 symbol)
   {
     UInt32 modelIndex = 1;
-    for (UInt32 i = 0; i < NumBitLevels; i++)
+    for (int i = 0; i < NumBitLevels; i++)
     {
       UInt32 bit = symbol & 1;
       Models[modelIndex].Encode(rangeEncoder, bit);
@@ -43,14 +58,12 @@ public:
   }
   UInt32 GetPrice(UInt32 symbol) const
   {
+    symbol |= (1 << NumBitLevels);
     UInt32 price = 0;
-    UInt32 modelIndex = 1;
-    for (UInt32 bitIndex = NumBitLevels; bitIndex > 0 ;)
+    while (symbol != 1)
     {
-      bitIndex--;
-      UInt32 bit = (symbol >> bitIndex) & 1;
-      price += Models[modelIndex].GetPrice(bit);
-      modelIndex = (modelIndex << 1) + bit;
+      price += Models[symbol >> 1].GetPrice(symbol & 1);
+      symbol >>= 1;
     }
     return price;
   }
@@ -58,7 +71,7 @@ public:
   {
     UInt32 price = 0;
     UInt32 modelIndex = 1;
-    for (UInt32 i = NumBitLevels; i > 0; i--)
+    for (int i = NumBitLevels; i != 0; i--)
     {
       UInt32 bit = symbol & 1;
       symbol >>= 1;
@@ -69,7 +82,7 @@ public:
   }
 };
 
-template <int numMoveBits, UInt32 NumBitLevels>
+template <int numMoveBits, int NumBitLevels>
 class CBitTreeDecoder
 {
   CBitDecoder<numMoveBits> Models[1 << NumBitLevels];
@@ -83,7 +96,7 @@ public:
   {
     UInt32 modelIndex = 1;
     RC_INIT_VAR
-    for(UInt32 bitIndex = NumBitLevels; bitIndex > 0; bitIndex--)
+    for(int bitIndex = NumBitLevels; bitIndex != 0; bitIndex--)
     {
       // modelIndex = (modelIndex << 1) + Models[modelIndex].Decode(rangeDecoder);
       RC_GETBIT(numMoveBits, Models[modelIndex].Prob, modelIndex)
@@ -96,7 +109,7 @@ public:
     UInt32 modelIndex = 1;
     UInt32 symbol = 0;
     RC_INIT_VAR
-    for(UInt32 bitIndex = 0; bitIndex < NumBitLevels; bitIndex++)
+    for(int bitIndex = 0; bitIndex < NumBitLevels; bitIndex++)
     {
       // UInt32 bit = Models[modelIndex].Decode(rangeDecoder);
       // modelIndex <<= 1;
@@ -111,10 +124,10 @@ public:
 
 template <int numMoveBits>
 void ReverseBitTreeEncode(CBitEncoder<numMoveBits> *Models, 
-    CEncoder *rangeEncoder, UInt32 NumBitLevels, UInt32 symbol)
+    CEncoder *rangeEncoder, int NumBitLevels, UInt32 symbol)
 {
   UInt32 modelIndex = 1;
-  for (UInt32 i = 0; i < NumBitLevels; i++)
+  for (int i = 0; i < NumBitLevels; i++)
   {
     UInt32 bit = symbol & 1;
     Models[modelIndex].Encode(rangeEncoder, bit);
@@ -129,7 +142,7 @@ UInt32 ReverseBitTreeGetPrice(CBitEncoder<numMoveBits> *Models,
 {
   UInt32 price = 0;
   UInt32 modelIndex = 1;
-  for (UInt32 i = NumBitLevels; i > 0; i--)
+  for (int i = NumBitLevels; i != 0; i--)
   {
     UInt32 bit = symbol & 1;
     symbol >>= 1;
@@ -141,12 +154,12 @@ UInt32 ReverseBitTreeGetPrice(CBitEncoder<numMoveBits> *Models,
 
 template <int numMoveBits>
 UInt32 ReverseBitTreeDecode(CBitDecoder<numMoveBits> *Models, 
-    CDecoder *rangeDecoder, UInt32 NumBitLevels)
+    CDecoder *rangeDecoder, int NumBitLevels)
 {
   UInt32 modelIndex = 1;
   UInt32 symbol = 0;
   RC_INIT_VAR
-  for(UInt32 bitIndex = 0; bitIndex < NumBitLevels; bitIndex++)
+  for(int bitIndex = 0; bitIndex < NumBitLevels; bitIndex++)
   {
     // UInt32 bit = Models[modelIndex].Decode(rangeDecoder);
     // modelIndex <<= 1;

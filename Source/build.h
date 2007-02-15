@@ -1,3 +1,19 @@
+/*
+ * build.h
+ * 
+ * This file is a part of NSIS.
+ * 
+ * Copyright (C) 1999-2007 Nullsoft and Contributors
+ * 
+ * Licensed under the zlib/libpng license (the "License");
+ * you may not use this file except in compliance with the License.
+ * 
+ * Licence details can be found in the file COPYING.
+ * 
+ * This software is provided 'as-is', without any express or implied
+ * warranty.
+ */
+
 #ifndef _BUILD_H_
 #define _BUILD_H_
 
@@ -9,6 +25,7 @@
 #include "uservars.h"
 #include "ShConstants.h"
 #include "mmap.h"
+#include "manifest.h"
 
 #include "exehead/fileform.h"
 #include "exehead/config.h"
@@ -35,17 +52,19 @@
 #  include "Plugins.h"
 #endif //NSIS_CONFIG_PLUGIN_SUPPORT
 
-#ifdef NSIS_CONFIG_CRC_SUPPORT
-extern "C"
-{
-  unsigned long NSISCALL CRC32(unsigned long crc, const unsigned char *buf, unsigned int len);
-};
-#endif
-
 #define PS_OK 0
 #define PS_EOF 1
 #define PS_ERROR 50
 #define PS_WARNING 100
+
+// token placement
+#define TP_SEC    1
+#define TP_FUNC   2
+#define TP_CODE   (TP_SEC | TP_FUNC)
+#define TP_GLOBAL 4
+#define TP_PAGEEX 8
+#define TP_PG     (TP_GLOBAL | TP_PAGEEX)
+#define TP_ALL    (TP_CODE | TP_PG)
 
 enum notify_e {
   MAKENSIS_NOTIFY_SCRIPT,
@@ -121,7 +140,9 @@ class CEXEBuild {
     void update_exehead(const unsigned char *new_exehead, size_t new_size);
 
     // tokens.cpp
+    bool is_valid_token(char *s);
     int get_commandtoken(char *s, int *np, int *op, int *pos);
+    int GetCurrentTokenPlace();
     int IsTokenPlacedRight(int pos, char *tok);
 
     // script.cpp
@@ -185,6 +206,7 @@ class CEXEBuild {
 #endif //NSIS_CONFIG_PLUGIN_SUPPORT
 
     // build.cpp functions used mostly by script.cpp
+    void set_code_type_predefines(const char *value = NULL);
     int getcurdbsize();
     int add_section(const char *secname, const char *defname, int expand=0);
     int section_end();
@@ -223,6 +245,8 @@ class CEXEBuild {
     int ProcessPages();
     void PrepareInstTypes();
     void PrepareHeaders(IGrowBuf *hdrbuf);
+    int SetVarsSection();
+    int SetManifest();
 
     int resolve_jump_int(const char *fn, int *a, int offs, int start, int end);
     int resolve_call_int(const char *fn, const char *str, int fptr, int *ofs);
@@ -235,7 +259,8 @@ class CEXEBuild {
 
     // lang.cpp functions and variables
     void InitLangTables();
-    LanguageTable *GetLangTable(LANGID &lang);
+    LanguageTable *GetLangTable(LANGID &lang, bool create = true);
+    char *GetLangNameAndCP(LANGID lang, unsigned int *codepage = NULL);
     int DefineLangString(char *name, int process=-1);
     int DefineInnerLangString(int id, int process=-1);
     int SetLangString(char *name, LANGID lang, char *string);
@@ -380,6 +405,9 @@ class CEXEBuild {
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
     int deflateToFile(FILE *fp, char *buf, int len); // len==0 to flush
 #endif
+
+    manifest::comctl manifest_comctl;
+    manifest::exec_level manifest_exec_level;
 
     CResourceEditor *res_editor;
     void init_res_editor();

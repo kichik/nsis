@@ -1,6 +1,20 @@
+/*
+ * This file is a part of the bzip2 compression module for NSIS.
+ * 
+ * Copyright and license information can be found below.
+ * Modifications Copyright (C) 1999-2007 Nullsoft and Contributors
+ * 
+ * The original zlib source code is available at
+ * http://www.bzip.org/
+ * 
+ * This modification is not compatible with the original bzip2.
+ * 
+ * This software is provided 'as-is', without any express or implied
+ * warranty.
+ */
+
 #include "bzlib.h"
 
-#if (defined(NSIS_COMPRESS_USE_BZIP2) && defined(NSIS_CONFIG_COMPRESSION_SUPPORT)) || !defined(EXEHEAD)
 /*-------------------------------------------------------------*/
 /*--- Huffman coding low-level stuff                        ---*/
 /*---                                             huffman.c ---*/
@@ -228,4 +242,3 @@ BZ2_hbCreateDecodeTables ( Int32 *limit,
 /*-------------------------------------------------------------*/
 /*--- end                                         huffman.c ---*/
 /*-------------------------------------------------------------*/
-#endif

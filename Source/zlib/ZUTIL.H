@@ -1,3 +1,16 @@
+/*
+ * This file is a part of the zlib compression module for NSIS.
+ * 
+ * Copyright and license information can be found below.
+ * Modifications Copyright (C) 1999-2007 Nullsoft and Contributors
+ * 
+ * The original zlib source code is available at
+ * http://www.zlib.net/
+ * 
+ * This software is provided 'as-is', without any express or implied
+ * warranty.
+ */
+
 /* zutil.h -- internal interface and configuration of the compression library
  * Copyright (C) 1995-1998 Jean-loup Gailly.
  * For conditions of distribution and use, see copyright notice in zlib.h
@@ -8,7 +21,7 @@
    subject to change. Applications should only use zlib.h.
  */
 
-/* @(#) $Id: ZUTIL.H,v 1.2 2002/09/22 20:02:03 eccles Exp $ */
+/* @(#) $Id: ZUTIL.H,v 1.6 2007/01/25 18:07:40 kichik Exp $ */
 
 #ifndef _Z_UTIL_H
 #define _Z_UTIL_H
@@ -46,28 +59,26 @@ typedef unsigned long  ulg;
 
 
 #ifdef EXEHEAD
-#include "../exehead/util.h"
-#define zmemcpy mini_memcpy
+#  ifdef _WIN32
+#    include "../exehead/util.h"
+#    define zmemcpy mini_memcpy
+#  else
+#    define zmemcpy memcpy
+#  endif
 #else
-#define zmemcpy memcpy
-#define zmemzero(a,b) memset(a,0,b)
+#  define zmemcpy memcpy
+#  define zmemzero(a,b) memset(a,0,b)
 #endif
 
-#  define Assert(cond,msg)
-#  define Trace(x)
-#  define Tracev(x)
-#  define Tracevv(x)
-#  define Tracec(c,x)
-#  define Tracecv(c,x)
+#define Assert(cond,msg)
+#define Trace(x)
+#define Tracev(x)
+#define Tracevv(x)
+#define Tracec(c,x)
+#define Tracecv(c,x)
 
-#ifdef EXEHEAD
-#include "../exehead/util.h"
-#define ZALLOC(strm, items, size) my_GlobalAlloc((items)*(size))
-#define ZFREE(strm, addr)  { if (addr) GlobalFree(addr); }
-#else   // def EXEHEAD
 #define ZALLOC(strm, items, size) malloc((items)*(size))
 #define ZFREE(strm, addr)  { if (addr) free(addr); }
-#endif  // def EXEHEAD
 #define TRY_FREE(s, p) { ZFREE(s, p); }
 #define ERR_RETURN(strm,err) return (err)
 

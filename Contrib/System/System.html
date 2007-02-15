@@ -165,7 +165,7 @@ DetailPrint $4
 <blockquote>
 <p>Call and get both share a common syntax. As the names suggest, Call calls and Get gets. What does it call or get? It depends on <i>PROC</i>'s value.</p>
 
-<p><i>PARAMS</i> is a list of parameters and what do to with them. You can pass data in the parameters and you can also get data from them. The parameters list is separated by commas. Each parameter is combined of three values: <i>type</i>, <i>source</i> and <i>destination</i>. <i>Type</i> can be an integer, a string, etc. <i>Source</i>, which is the source of the parameter value, can be a NSIS register ($0, $1, $INSTDIR), the NSIS stack, a concrete value (5, "test", etc.) or nothing (null). <i>Destination</i>, which is the destination of the parameter value after the call returns, can can be a NSIS register, the NSIS stack or nothing which means no output is required. Either one of <i>source</i> or <i>destination</i> can also be a dot (`.') if it is not needed.</p>
+<p><i>PARAMS</i> is a list of parameters and what do to with them. You can pass data in the parameters and you can also get data from them. The parameters list is separated by commas. Each parameter is combined of three values: <i>type</i>, <i>source</i> and <i>destination</i>. <i>Type</i> can be an integer, a string, etc. <i>Source</i>, which is the source of the parameter value, can be a NSIS register ($0, $1, $INSTDIR), the NSIS stack, a concrete value (5, "test", etc.) or nothing (null). <i>Destination</i>, which is the destination of the parameter value after the call returns, can be a NSIS register, the NSIS stack or nothing which means no output is required. Either one of <i>source</i> or <i>destination</i> can also be a dot (`.') if it is not needed.</p>
 
 <p><i>RETURN</i> is like a single parameter definition, but <i>source</i> is only used when creating callback functions. Normally <i>source</i> is a dot.</p>
 
@@ -334,7 +334,7 @@ DetailPrint $4
 </tr>
 <tr>
 <th>a</th>
-<td>$LANG</td>
+<td>$LANGUAGE</td>
 </tr>
 <tr>
 <th>s</th>
@@ -371,7 +371,7 @@ StrCmp $R0 "callback1" 0 +2
 DetailPrint "UseCallback passed ($0, $1) to the callback"
 </pre></blockquote>
 
-<p>After you've processed the callback call, you should use <a href="#callfuncs">Call</a>, passing it the value returned by <a href="#callfuncs">Get</a> - the callback. This tells System to return from the callback. If you've specified a source for the return "parameter" when the callback was created, you should fill that source with the appropriate return value. Callbacks are not automatically freed, don't forget to free it after you've finished using it.</p>
+<p>After you've processed the callback call, you should use <a href="#callfuncs">Call</a>, passing it the value returned by <a href="#callfuncs">Get</a> - the callback. This tells System to return from the callback. Destination of the return "parameter" must be cleared prior to calling a function, to avoid false detection of a callback call. If you've specified a source for the return "parameter" when the callback was created, you should fill that source with the appropriate return value. Callbacks are not automatically freed, don't forget to free it after you've finished using it.</p>
 
 <blockquote><pre>SetPluginUnload alwaysoff
 System::Get "(i .r0, i .r1) isR0"
@@ -381,6 +381,7 @@ loop:
 	StrCmp $R0 "callback1" 0 done
 	DetailPrint "UseCallback passed ($0, $1) to the callback"
 	Push 1 # return value of the callback
+	StrCpy $R0 "" # clear $R0 in case there are no more callback calls
 	System::Call $0 # tell system to return from the callback
 	Goto loop
 done:
@@ -560,15 +561,17 @@ good:
 <li>Subtraction -- <b>-</b></li>
 <li>Multiplication -- <b>*</b></li>
 <li>Division -- <b>/</b></li>
-<li>Module -- <b>%</b></li>
+<li>Modulo -- <b>%</b></li>
+<li>Shift right -- <b>&gt;&gt;</b></li>
+<li>Shift left -- <b>&lt;&lt;</b></li>
 <li>Bitwise or -- <b>|</b></li>
 <li>Bitwise and -- <b>&amp;</b></li>
 <li>Bitwise xor -- <b>^</b></li>
 <li>Logical or -- <b>||</b></li>
 <li>Logical and -- <b>&amp;&amp;</b></li>
 <li>Less than -- <b>&lt;</b></li>
-<li>Greater than -- <b>&gt;</b></li>
 <li>Equals -- <b>=</b></li>
+<li>Greater than -- <b>&gt;</b></li>
 <li>Bitwise not (one argument) -- <b>~</b></li>
 <li>Logical not (one argument) -- <b>!</b></li>
 </ul>
@@ -599,6 +602,16 @@ DetailPrint "5498449498849818 / 3 = $0" # 1832816499616606
 System::<b>Int64Op</b> 0x89498A198E4566C % 157
 Pop $0
 DetailPrint "0x89498A198E4566C % 157 = $0" # 118
+</pre></blockquote>
+<blockquote><pre>
+System::<b>Int64Op</b> 1 &lt;&lt; 62
+Pop $0
+DetailPrint "1 &lt;&lt; 62 = $0" # 4611686018427387904
+</pre></blockquote>
+<blockquote><pre>
+System::<b>Int64Op</b> 0x4000000000000000 &gt;&gt; 62
+Pop $0
+DetailPrint "0x4000000000000000 &gt;&gt; 62 = $0" # 1
 </pre></blockquote>
 <blockquote><pre>
 System::<b>Int64Op</b> 0xF0F0F0F | 0xF0F0FFF

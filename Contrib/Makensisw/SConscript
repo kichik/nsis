@@ -53,7 +53,7 @@ BuildUtil(
 	res = res,
 	resources = resources,
 	entry = 'WinMain',
-	install = '',
-	defines = ['WIN32_MEAN_AND_LEAN', 'RELEASE=2.0'],
-	docs = docs
+	defines = ['WIN32_MEAN_AND_LEAN', 'RELEASE=2.2'],
+	docs = docs,
+	root_util = True
 )
