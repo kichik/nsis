@@ -1,24 +1,18 @@
 /*
-*  Copyright (C) 1999-2005 Nullsoft, Inc.
-*  Portions Copyright (C) 2002 Jeff Doozan
-*
-*  This software is provided 'as-is', without any express or implied warranty.
-*  In no event will the authors be held liable for any damages arising from the
-*  use of this software.
-*
-*  Permission is granted to anyone to use this software for any purpose, including
-*  commercial applications, and to alter it and redistribute it freely, subject to
-*  the following restrictions:
-*
-*  1. The origin of this software must not be misrepresented; you must not claim that
-*  you wrote the original software. If you use this software in a product, an
-*  acknowledgment in the product documentation would be appreciated but is not required.
-*
-*  2. Altered source versions must be plainly marked as such, and must not be
-*  misrepresented as being the original software.
-*
-*  3. This notice may not be removed or altered from any source distribution.
-*/
+ * Ui.c
+ * 
+ * This file is a part of NSIS.
+ * 
+ * Copyright (C) 1999-2007 Nullsoft, Jeff Doozan and Contributors
+ * 
+ * Licensed under the zlib/libpng license (the "License");
+ * you may not use this file except in compliance with the License.
+ * 
+ * Licence details can be found in the file COPYING.
+ * 
+ * This software is provided 'as-is', without any express or implied
+ * warranty.
+ */
 
 #include <windowsx.h>
 #include <shlobj.h>
@@ -51,7 +45,11 @@ int g_quit_flag; // set when Quit has been called (meaning bail out ASAP)
 
 int progress_bar_pos, progress_bar_len;
 
+#if NSIS_MAX_STRLEN < 1024
 static char g_tmp[4096];
+#else
+static char g_tmp[NSIS_MAX_STRLEN * 4];
+#endif
 
 static int m_page=-1,m_retcode,m_delta;
 static page *g_this_page;
@@ -161,7 +159,7 @@ static BOOL NSISCALL _HandleStaticBkColor(UINT uMsg, WPARAM wParam, LPARAM lPara
 #endif//!NSIS_CONFIG_ENHANCEDUI_SUPPORT
 
 #ifdef NSIS_CONFIG_LOG
-#ifndef NSIS_CONFIG_LOG_ODS
+#if !defined(NSIS_CONFIG_LOG_ODS) && !defined(NSIS_CONFIG_LOG_STDOUT)
 void NSISCALL build_g_logfile()
 {
   mystrcat(addtrailingslash(mystrcpy(g_log_file,state_install_directory)),"install.log");
@@ -174,7 +172,7 @@ int *cur_langtable;
 static void NSISCALL set_language()
 {
   LANGID lang_mask=(LANGID)~0;
-  LANGID lang=state_language[0]?myatoi(state_language):GetUserDefaultLangID();
+  LANGID lang=myatoi(state_language);
   char *language_table=0;
   int lang_num;
   int *selected_langtable=0;
@@ -228,10 +226,51 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
 {
   header *header = g_header;
   static WNDCLASS wc; // richedit subclassing and bgbg creation
-  g_exec_flags.autoclose=g_flags&CH_FLAGS_AUTO_CLOSE;
 
+  // detect default language
+  // more information at:
+  //   http://msdn.microsoft.com/library/default.asp?url=/library/en-us/intl/nls_0xrn.asp
+
+  LANGID (WINAPI *GUDUIL)();
+  static const char guduil[] = "GetUserDefaultUILanguage";
+
+  GUDUIL = myGetProcAddress("KERNEL32.dll", (char *) guduil);
+  if (GUDUIL)
+  {
+    // Windows ME/2000+
+    myitoa(state_language, GUDUIL());
+  }
+  else
+  {
+    *(DWORD*)state_language = CHAR4_TO_DWORD('0', 'x', 0, 0);
+
+    {
+      // Windows 9x
+      static const char reg_9x_locale[] = "Control Panel\\Desktop\\ResourceLocale";
+
+      myRegGetStr(HKEY_CURRENT_USER, reg_9x_locale, NULL, g_tmp);
+    }
+
+    if (!g_tmp[0])
+    {
+      // Windows NT
+      // This key exists on 9x as well, so it's only read if ResourceLocale wasn't found
+      static const char reg_nt_locale_key[] = ".DEFAULT\\Control Panel\\International";
+      static const char reg_nt_locale_val[] = "Locale";
+
+      myRegGetStr(HKEY_USERS, reg_nt_locale_key, reg_nt_locale_val, g_tmp);
+    }
+
+    mystrcat(state_language, g_tmp);
+  }
+
+  // set default language
   set_language();
 
+  // initialize auto close flag
+  g_exec_flags.autoclose=g_flags&CH_FLAGS_AUTO_CLOSE;
+
+  // read install directory from registry
   if (!is_valid_instpath(state_install_directory))
   {
     if (header->install_reg_key_ptr)
@@ -284,7 +323,7 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
 #ifdef NSIS_CONFIG_LOG
   if (g_flags & CH_FLAGS_SILENT_LOG && !g_is_uninstaller)
   {
-#ifndef NSIS_CONFIG_LOG_ODS
+#if !defined(NSIS_CONFIG_LOG_ODS) && !defined(NSIS_CONFIG_LOG_STDOUT)
     build_g_logfile();
 #endif
     log_dolog=1;
@@ -609,11 +648,10 @@ skipPage:
   if (uMsg == WM_COMMAND)
   {
     int id = LOWORD(wParam);
-    HWND hCtl = GetDlgItem(hwndDlg, id);
-    if (hCtl)
+    if (lParam)
     {
-      SendMessage(hCtl, BM_SETSTATE, FALSE, 0);
-      if (!IsWindowEnabled(hCtl))
+      SendMessage((HWND) lParam, BM_SETSTATE, FALSE, 0);
+      if (!IsWindowEnabled((HWND) lParam))
         return 0;
     }
 
@@ -733,13 +771,10 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
         };
         if (tr.chrg.cpMax-tr.chrg.cpMin < sizeof(ps_tmpbuf)) {
           SendMessage(hwLicense,EM_GETTEXTRANGE,0,(LPARAM)&tr);
-          SetCursor(LoadCursor(0,IDC_WAIT));
+          SetCursor(LoadCursor(0, IDC_WAIT));
           ShellExecute(hwndDlg,"open",tr.lpstrText,NULL,NULL,SW_SHOWNORMAL);
-          SetCursor(LoadCursor(0,IDC_ARROW));
+          SetCursor(LoadCursor(0, IDC_ARROW));
         }
-      }
-      if (enlink->msg==WM_SETCURSOR) {
-        SetCursor(LoadCursor(0,IDC_HAND));
       }
     }
     //Ximon Eighteen 8th September 2002 Capture return key presses in the rich
@@ -840,7 +875,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     GetUIText(IDC_DIR,dir);
     validate_filename(dir);
 #ifdef NSIS_CONFIG_LOG
-#ifndef NSIS_CONFIG_LOG_ODS
+#if !defined(NSIS_CONFIG_LOG_ODS) && !defined(NSIS_CONFIG_LOG_STDOUT)
     build_g_logfile();
 #endif
     if (GetUIItem(IDC_CHECK1) != NULL)
@@ -861,6 +896,22 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 #endif
     if (validpathspec(dir) && !skip_root(dir))
       addtrailingslash(dir);
+
+    // workaround for bug #1209843
+    //
+    // m_curwnd is only updated once WM_INITDIALOG returns.
+    // my_SetWindowText triggers an EN_CHANGE message that
+    // triggers a WM_IN_UPDATEMSG message that uses m_curwnd
+    // to get the selected directory (GetUIText).
+    // because m_curwnd is still outdated, dir varialble is
+    // filled with an empty string. by default, dir points
+    // to $INSTDIR.
+    //
+    // to solve this, m_curwnd is manually set to the correct
+    // window handle.
+
+    m_curwnd=hwndDlg;
+
     my_SetWindowText(hDir,dir);
     SetUITextFromLang(IDC_BROWSE,this_page->parms[2]);
     SetUITextFromLang(IDC_SELDIRTEXT,this_page->parms[1]);
@@ -887,13 +938,14 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     }
     if (id == IDC_BROWSE)
     {
+      static char bt[NSIS_MAX_STRLEN];
       BROWSEINFO bi = {0,};
       ITEMIDLIST *idlist;
       bi.hwndOwner = hwndDlg;
       bi.pszDisplayName = g_tmp;
       bi.lpfn = BrowseCallbackProc;
       bi.lParam = (LPARAM)dir;
-      bi.lpszTitle = GetNSISStringTT(browse_text);
+      bi.lpszTitle = GetNSISString(bt, browse_text);
       bi.ulFlags = BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE;
       idlist = SHBrowseForFolder(&bi);
       if (idlist)
@@ -901,14 +953,17 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
         // free idlist
         FreePIDL(idlist);
 
-        if (g_header->install_directory_auto_append)
+        addtrailingslash(dir);
+
+        if (g_header->install_directory_auto_append &&
+          dir == state_install_directory) // only append to $INSTDIR (bug #1174184)
         {
           const char *post_str = ps_tmpbuf;
           GetNSISStringTT(g_header->install_directory_auto_append);
           // display name gives just the folder name
           if (lstrcmpi(post_str, g_tmp))
           {
-            mystrcat(addtrailingslash(dir), post_str);
+            mystrcat(dir, post_str);
           }
         }
 
@@ -1022,8 +1077,6 @@ static void FORCE_INLINE NSISCALL RefreshComponents(HWND hwTree, HTREEITEM *item
     item.hItem = items[i];
 
     item.mask = TVIF_STATE;
-    item.state = (flags & SF_BOLD) << 1; // (SF_BOLD << 1) == 16 == TVIS_BOLD
-    item.state |= flags & SF_EXPAND; // TVIS_EXPANDED == SF_EXPAND
 
     if (flags & SF_NAMECHG)
     {
@@ -1042,71 +1095,84 @@ static void FORCE_INLINE NSISCALL RefreshComponents(HWND hwTree, HTREEITEM *item
       if (flags & SF_RO) state += 3;
     }
 
+    item.state = (flags & SF_BOLD) << 1; // (SF_BOLD << 1) == 16 == TVIS_BOLD
+    item.state |= flags & SF_EXPAND; // TVIS_EXPANDED == SF_EXPAND
     item.state |= INDEXTOSTATEIMAGEMASK(state);
 
-    TreeView_Expand(hwTree, item.hItem, (flags & SF_EXPAND) ? TVE_EXPAND : TVE_COLLAPSE);
+    // TVE_COLLAPSE = 1, TVE_EXPAND = 2
+    TreeView_Expand(hwTree, item.hItem, TVE_COLLAPSE + ((flags & SF_EXPAND) / SF_EXPAND));
+
     TreeView_SetItem(hwTree, &item);
   }
+
+  // workaround for bug #1397031
+  //
+  // windows 95 doesn't erase the background of the state image
+  // before it draws a new one. because of this parts of the old
+  // state image will show where the new state image is masked.
+  //
+  // to solve this, the following line forces the background to
+  // be erased. sadly, this redraws the entire control. it might
+  // be a good idea to figure out where the state images are and
+  // redraw only those.
+
+  InvalidateRect(hwTree, NULL, TRUE);
 }
 
-HTREEITEM NSISCALL TreeHitTest(HWND tree)
+int NSISCALL TreeGetSelectedSection(HWND tree, BOOL mouse)
 {
-  TVHITTESTINFO ht;
-  DWORD dwpos = GetMessagePos();
+  HTREEITEM hItem = TreeView_GetSelection(tree);
+  TVITEM item;
 
-  ht.pt.x = GET_X_LPARAM(dwpos);
-  ht.pt.y = GET_Y_LPARAM(dwpos);
-  ScreenToClient(tree, &ht.pt);
+  if (mouse)
+  {
+    TVHITTESTINFO ht;
+    DWORD dwpos = GetMessagePos();
 
-  TreeView_HitTest(tree, &ht);
+    ht.pt.x = GET_X_LPARAM(dwpos);
+    ht.pt.y = GET_Y_LPARAM(dwpos);
+    ScreenToClient(tree, &ht.pt);
+
+    TreeView_HitTest(tree, &ht);
 
 #ifdef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
-  if (ht.flags & TVHT_ONITEMSTATEICON)
+    if (!(ht.flags & TVHT_ONITEMSTATEICON))
 #else
-  if (ht.flags & (TVHT_ONITEMSTATEICON|TVHT_ONITEMLABEL|TVHT_ONITEMRIGHT|TVHT_ONITEM))
+    if (!(ht.flags & (TVHT_ONITEMSTATEICON|TVHT_ONITEMLABEL|TVHT_ONITEMRIGHT|TVHT_ONITEM)))
 #endif
-    return ht.hItem;
+      return -1;
 
-  return 0;
+    hItem = ht.hItem;
+  }
+
+  item.mask = TVIF_PARAM;
+  item.hItem = hItem;
+  TreeView_GetItem(tree, &item);
+
+  return (int) item.lParam;
 }
 
 static LONG oldTreeWndProc;
+static LPARAM last_selected_tree_item;
 static DWORD WINAPI newTreeWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  static LPARAM last_item=-1;
   if (uMsg == WM_CHAR && wParam == VK_SPACE) {
     NotifyCurWnd(WM_TREEVIEW_KEYHACK);
     return 0;
   }
 #if defined(NSIS_SUPPORT_CODECALLBACKS) && defined(NSIS_CONFIG_ENHANCEDUI_SUPPORT)
-  if (uMsg == WM_DESTROY) {
-    last_item=-1;
-  }
 #ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
   if (uMsg == WM_MOUSEMOVE) {
-    TVITEM tvItem;
-
     if (IsWindowVisible(hwnd)) {
-      tvItem.hItem = TreeHitTest(hwnd);
-
-      lParam = -1;
-
-      if (tvItem.hItem)
-      {
-        tvItem.mask = TVIF_PARAM;
-
-        TreeView_GetItem(hwnd, &tvItem);
-
-        lParam = tvItem.lParam;
-      }
+      lParam = TreeGetSelectedSection(hwnd, TRUE);
       uMsg = WM_NOTIFY_SELCHANGE;
     }
   }
 #endif
   if (uMsg == WM_NOTIFY_SELCHANGE) {
-    if (last_item != lParam)
+    if (last_selected_tree_item != lParam)
     {
-      last_item = lParam;
+      last_selected_tree_item = lParam;
 
       mystrcpy(g_tmp, g_usrvars[0]);
 
@@ -1143,6 +1209,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
     hBMcheck1=LoadBitmap(g_hInstance, MAKEINTRESOURCE(IDB_BITMAP1));
 
+    last_selected_tree_item=-1;
     oldTreeWndProc=SetWindowLong(hwndTree1,GWL_WNDPROC,(long)newTreeWndProc);
 
     hImageList = ImageList_Create(16,16, ILC_COLOR32|ILC_MASK, 6, 0);
@@ -1150,8 +1217,8 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
     TreeView_SetImageList(hwndTree1, hImageList, TVSIL_STATE);
 
-    if (SendMessage(hwndTree1, TVM_GETITEMHEIGHT, 0, 0) < 16)
-      SendMessage(hwndTree1, TVM_SETITEMHEIGHT, 16, 0);
+    if (TreeView_GetItemHeight(hwndTree1) < 16)
+      TreeView_SetItemHeight(hwndTree1, 16);
 
     DeleteObject(hBMcheck1);
 
@@ -1211,7 +1278,6 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     {
       SetWindowLong(hwndTree1,GWL_STYLE,GetWindowLong(hwndTree1,GWL_STYLE)&~(TVS_LINESATROOT));
     }
-    SendMessage(hwndTree1,WM_VSCROLL,SB_TOP,0);
 
     if (!noCombo)
     {
@@ -1236,48 +1302,39 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     {
       if (!(g_flags&CH_FLAGS_NO_CUSTOM) && (uMsg == WM_TREEVIEW_KEYHACK || lpnmh->code == NM_CLICK))
       {
-        TVITEM tvItem;
+        int secid = TreeGetSelectedSection(hwndTree1, uMsg != WM_TREEVIEW_KEYHACK);
 
-        if (uMsg != WM_TREEVIEW_KEYHACK)
-          tvItem.hItem=TreeHitTest(hwndTree1);
-        else
-          tvItem.hItem=TreeView_GetSelection(hwndTree1);
-
-        if (tvItem.hItem)
+        if (secid >= 0)
         {
-          tvItem.mask = TVIF_PARAM;
-          if (TreeView_GetItem(hwndTree1, &tvItem))
+          int flags = sections[secid].flags;
+
+          if ((flags & SF_RO) == 0)
           {
-            int flags = sections[tvItem.lParam].flags;
-
-            if ((flags & SF_RO) == 0)
+            if ((flags & SF_PSELECTED))
             {
-              if ((flags & SF_PSELECTED))
-              {
-                flags ^= SF_TOGGLED;
+              flags ^= SF_TOGGLED;
 
-                if (flags & SF_TOGGLED)
-                {
-                  flags |= SF_SELECTED;
-                }
-                else
-                {
-                  flags &= ~SF_SELECTED;
-                }
+              if (flags & SF_TOGGLED)
+              {
+                flags |= SF_SELECTED;
               }
               else
               {
-                flags ^= SF_SELECTED;
+                flags &= ~SF_SELECTED;
               }
-
-              sections[tvItem.lParam].flags = flags;
-
-              SectionFlagsChanged(tvItem.lParam);
-
-              wParam = 1;
-              lParam = !(g_flags & CH_FLAGS_COMP_ONLY_ON_CUSTOM);
-              uMsg = WM_IN_UPDATEMSG;
             }
+            else
+            {
+              flags ^= SF_SELECTED;
+            }
+
+            sections[secid].flags = flags;
+
+            SectionFlagsChanged(secid);
+
+            wParam = 1;
+            lParam = !(g_flags & CH_FLAGS_COMP_ONLY_ON_CUSTOM);
+            uMsg = WM_IN_UPDATEMSG;
           }
         } // was valid click
       } // was click or hack
@@ -1419,7 +1476,8 @@ void NSISCALL update_status_text(int strtab, const char *text) {
       new_item.pszText = tmp;
       new_item.iItem = ListView_GetItemCount(linsthwnd) - (updateflag & 1);
       new_item.iSubItem = 0;
-      SendMessage(linsthwnd, (updateflag & 1) ? LVM_SETITEM : LVM_INSERTITEM, 0, (LPARAM) &new_item);
+      // LVM_INSERTITEM - LVM_SETITEM = 1
+      SendMessage(linsthwnd, LVM_INSERTITEM - (updateflag & 1), 0, (LPARAM) &new_item);
       ListView_EnsureVisible(linsthwnd, new_item.iItem, 0);
     }
 
@@ -1440,6 +1498,17 @@ static DWORD WINAPI install_thread(LPVOID p)
     g_hres|=OleInitialize(NULL);
   }
 #endif
+
+  // workaround for bug #1400995
+  //
+  // for an unexplained reason, MessageBox with MB_TOPMOST
+  // will fail, if no other messages were sent from this
+  // thread to the GUI thread before it.
+  //
+  // the source of the problem couldn't be found, so a
+  // WM_NULL is sent to work around it.
+
+  NotifyCurWnd(WM_NULL);
 
   while (m_inst_sec--)
   {
@@ -1577,7 +1646,7 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
         TPM_NONOTIFY|TPM_RETURNCMD,
         pt.x,
         pt.y,
-        0,linsthwnd,0))
+        0,hwndDlg,0))
       {
         int i,total = 1; // 1 for the null char
         LVITEM item;
@@ -1603,9 +1672,7 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
         i = 0;
         do {
           item.pszText = ptr;
-          item.cchTextMax = total;
-          SendMessage(linsthwnd,LVM_GETITEMTEXT,i,(LPARAM)&item);
-          ptr += mystrlen(ptr);
+          ptr += SendMessage(linsthwnd,LVM_GETITEMTEXT,i,(LPARAM)&item);
           *(WORD*)ptr = CHAR2_TO_WORD('\r','\n');
           ptr+=2;
         } while (++i < count);

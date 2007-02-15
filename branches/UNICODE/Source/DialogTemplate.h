@@ -1,24 +1,18 @@
 /*
-  Copyright (C) 2002 Amir Szekely <kichik@netvision.net.il>
-
-  This software is provided 'as-is', without any express or implied
-  warranty.  In no event will the authors be held liable for any damages
-  arising from the use of this software.
-
-  Permission is granted to anyone to use this software for any purpose,
-  including commercial applications, and to alter it and redistribute it
-  freely, subject to the following restrictions:
-
-  1. The origin of this software must not be misrepresented; you must not
-  claim that you wrote the original software. If you use this software
-  in a product, an acknowledgment in the product documentation would be
-  appreciated but is not required.
-
-  2. Altered source versions must be plainly marked as such, and must not be
-  misrepresented as being the original software.
-
-  3. This notice may not be removed or altered from any source distribution.
-*/
+ * DialogTemplate.h
+ * 
+ * This file is a part of NSIS.
+ * 
+ * Copyright (C) 2002 Amir Szekely <kichik@netvision.net.il>
+ * 
+ * Licensed under the zlib/libpng license (the "License");
+ * you may not use this file except in compliance with the License.
+ * 
+ * Licence details can be found in the file COPYING.
+ * 
+ * This software is provided 'as-is', without any express or implied
+ * warranty.
+ */
 
 #if !defined(AFX_DIALOGTEMPLATE_H__C5A973AF_0F56_4BEC_814A_79318E2EB4AC__INCLUDED_)
 #define AFX_DIALOGTEMPLATE_H__C5A973AF_0F56_4BEC_814A_79318E2EB4AC__INCLUDED_
@@ -32,7 +26,11 @@
 #include <vector>
 #include <stdexcept>
 
-#define EXTENDED_DIALOG ((DWORD) 0xFFFF0001)
+#ifndef __BIG_ENDIAN__
+#  define EXTENDED_DIALOG ((DWORD) 0xFFFF0001)
+#else
+#  define EXTENDED_DIALOG ((DWORD) 0x0100FFFF)
+#endif
 
 struct DialogItemTemplate {
   DWORD  dwHelpId; // Extended only

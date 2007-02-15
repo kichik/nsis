@@ -11,7 +11,7 @@
 !ifdef OUTFILE
   OutFile "${OUTFILE}"
 !else
-  OutFile ..\nsis-${VERSION}.exe
+  OutFile ..\nsis-${VERSION}-setup.exe
 !endif
 
 SetCompressor /SOLID lzma
@@ -23,11 +23,14 @@ InstType "Minimal"
 InstallDir $PROGRAMFILES\NSIS
 InstallDirRegKey HKLM Software\NSIS ""
 
+RequestExecutionLevel admin
+
 ;--------------------------------
 ;Header Files
 
 !include "MUI.nsh"
 !include "Sections.nsh"
+!include "LogicLib.nsh"
 
 ;--------------------------------
 ;Definitions
@@ -55,7 +58,7 @@ Caption "NSIS ${VERSION} Setup"
 !define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of NSIS (Nullsoft Scriptable Install System) ${VERSION}, the next generation of the Windows installer and uninstaller system that doesn't suck and isn't huge.\r\n\r\nNSIS 2 includes a new Modern User Interface, LZMA compression, support for multiple languages and an easy plug-in system.\r\n\r\n$_CLICK"
 
 !insertmacro MUI_PAGE_WELCOME
-!insertmacro MUI_PAGE_LICENSE "..\license.txt"
+!insertmacro MUI_PAGE_LICENSE "..\COPYING"
 !ifdef VER_MAJOR & VER_MINOR & VER_REVISION & VER_BUILD
 Page custom PageReinstall PageLeaveReinstall
 !endif
@@ -68,6 +71,10 @@ Page custom PageReinstall PageLeaveReinstall
 
 !define MUI_FINISHPAGE_RUN "$INSTDIR\NSIS.exe"
 !define MUI_FINISHPAGE_NOREBOOTSUPPORT
+
+!define MUI_FINISHPAGE_SHOWREADME
+!define MUI_FINISHPAGE_SHOWREADME_TEXT "Show release notes"
+!define MUI_FINISHPAGE_SHOWREADME_FUNCTION ShowReleaseNotes
 
 !insertmacro MUI_PAGE_FINISH
 
@@ -103,7 +110,7 @@ Section "NSIS Core Files (required)" SecCore
   SetOverwrite on
   File ..\makensis.exe
   File ..\makensisw.exe
-  File ..\license.txt
+  File ..\COPYING
   File ..\NSIS.chm
 
   File ..\NSIS.exe
@@ -133,6 +140,8 @@ Section "NSIS Core Files (required)" SecCore
   File ..\Include\FileFunc.nsh
   File ..\Include\TextFunc.nsh
   File ..\Include\WordFunc.nsh
+  File ..\Include\WinVer.nsh
+  File ..\Include\x64.nsh
 
   SetOutPath $INSTDIR\Docs\StrFunc
   File ..\Docs\StrFunc\StrFunc.txt
@@ -143,7 +152,12 @@ Section "NSIS Core Files (required)" SecCore
   SetOutPath $INSTDIR\Menu
   File ..\Menu\*.html
   SetOutPath $INSTDIR\Menu\images
-  File ..\Menu\images\*.gif
+  File ..\Menu\images\clear.gif
+  File ..\Menu\images\header.gif
+  File ..\Menu\images\line.gif
+  File ..\Menu\images\menu.gif
+  File ..\Menu\images\menud.gif
+  File ..\Menu\images\site.gif
 
   Delete $INSTDIR\makensis.htm
   Delete $INSTDIR\Docs\*.html
@@ -650,7 +664,7 @@ Section -post
     mui:
 
     SetDetailsPrint textonly
-    DetailPrint "Configurating Modern UI..."
+    DetailPrint "Configuring Modern UI..."
     SetDetailsPrint listonly
 
     !insertmacro SectionFlagIsSet ${SecLangFiles} ${SF_SELECTED} langfiles nolangfiles
@@ -708,6 +722,7 @@ Section -post
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "VersionMinor" "${VER_MINOR}.${VER_REVISION}"
 !endif
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "URLInfoAbout" "http://nsis.sourceforge.net/"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "HelpLink" "http://nsis.sourceforge.net/Support"
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "NoModify" "1"
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "NoRepair" "1"
 
@@ -940,6 +955,20 @@ Function AddReadmeToStartMenu
 FunctionEnd
 !endif
 
+Function ShowReleaseNotes
+  ${If} ${FileExists} $WINDIR\hh.exe
+    StrCpy $0 $WINDIR\hh.exe
+    Exec '"$0" mk:@MSITStore:$INSTDIR\NSIS.chm::/SectionF.1.html'
+  ${Else}
+    SearchPath $0 hh.exe
+    ${If} ${FileExists} $0
+      Exec '"$0" mk:@MSITStore:$INSTDIR\NSIS.chm::/SectionF.1.html'
+    ${Else}
+      ExecShell "open" "http://nsis.sourceforge.net/Docs/AppendixF.html#F.1"
+    ${EndIf}
+  ${EndIf}
+FunctionEnd
+
 ;--------------------------------
 ;Uninstaller Section
 
@@ -984,6 +1013,7 @@ Section Uninstall
   Delete $INSTDIR\makensisw.exe
   Delete $INSTDIR\NSIS.exe
   Delete $INSTDIR\license.txt
+  Delete $INSTDIR\COPYING
   Delete $INSTDIR\uninst-nsis.exe
   Delete $INSTDIR\nsisconf.nsi
   Delete $INSTDIR\nsisconf.nsh

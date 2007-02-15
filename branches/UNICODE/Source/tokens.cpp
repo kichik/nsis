@@ -1,18 +1,25 @@
+/*
+ * tokens.cpp
+ * 
+ * This file is a part of NSIS.
+ * 
+ * Copyright (C) 1999-2007 Nullsoft and Contributors
+ * 
+ * Licensed under the zlib/libpng license (the "License");
+ * you may not use this file except in compliance with the License.
+ * 
+ * Licence details can be found in the file COPYING.
+ * 
+ * This software is provided 'as-is', without any express or implied
+ * warranty.
+ */
+
 #include "Platform.h"
 #include <stdlib.h>
 #include <stdio.h>
 
 #include "build.h"
 #include "tokens.h"
-
-// token placement
-#define TP_SEC    1
-#define TP_FUNC   2
-#define TP_CODE   (TP_SEC | TP_FUNC)
-#define TP_GLOBAL 4
-#define TP_PAGEEX 8
-#define TP_PG     (TP_GLOBAL | TP_PAGEEX)
-#define TP_ALL    (TP_CODE | TP_PG)
 
 typedef struct 
 {
@@ -38,7 +45,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_CALL,"Call",1,0,"function_name | [:label_name]",TP_CODE},
 {TOK_CALLINSTDLL,"CallInstDLL",2,1,"dll_path_on_target.dll [/NOUNLOAD] function",TP_CODE},
 {TOK_CAPTION,"Caption",1,0,"installer_caption",TP_GLOBAL|TP_PAGEEX},
-{TOK_CHANGEUI,"ChangeUI",1,1,"[/RTL] (all|dlg_id) ui_file.exe",TP_GLOBAL},
+{TOK_CHANGEUI,"ChangeUI",2,0,"(all|dlg_id) ui_file.exe",TP_GLOBAL},
 {TOK_CLEARERRORS,"ClearErrors",0,0,"",TP_CODE},
 {TOK_COMPTEXT,"ComponentText",0,3,"[component_page_description] [component_subtext1] [component_subtext2]",TP_PG},
 {TOK_GETDLLVERSION,"GetDLLVersion",3,0,"filename $(user_var: high output) $(user_var: low output)",TP_CODE},
@@ -71,7 +78,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_EXCH,"Exch",0,1,"[$(user_var)] | [stack_item_index]",TP_CODE},
 {TOK_EXEC,"Exec",1,0,"command_line",TP_CODE},
 {TOK_EXECWAIT,"ExecWait",1,1,"command_line [$(user_var: return value)]",TP_CODE},
-{TOK_EXECSHELL,"ExecShell",2,2,"(open|print|etc) command_line [parameters [showmode]]\n   showmode=(SW_SHOWNORMAL|SW_SHOWMAXIMIZED|SW_SHOWMINIMIZED)",TP_CODE},
+{TOK_EXECSHELL,"ExecShell",2,2,"(open|print|etc) command_line [parameters [showmode]]\n   showmode=(SW_SHOWNORMAL|SW_SHOWMAXIMIZED|SW_SHOWMINIMIZED|SW_HIDE)",TP_CODE},
 {TOK_EXPANDENVSTRS,"ExpandEnvStrings",2,0,"$(user_var: output) string",TP_CODE},
 {TOK_FINDWINDOW,"FindWindow",2,3,"$(user_var: handle output) WindowClass [WindowTitle] [Window_Parent] [Child_After]",TP_CODE},
 {TOK_FINDCLOSE,"FindClose",1,0,"$(user_var: handle input)",TP_CODE},
@@ -196,6 +203,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_SILENTUNINST,"SilentUnInstall",1,0,"(normal|silent)",TP_GLOBAL},
 {TOK_SLEEP,"Sleep",1,0,"sleep_time_in_ms",TP_CODE},
 {TOK_STRCMP,"StrCmp",3,1,"str1 str2 label_to_goto_if_equal [label_to_goto_if_not]",TP_CODE},
+{TOK_STRCMPS,"StrCmpS",3,1,"str1 str2 label_to_goto_if_equal [label_to_goto_if_not]",TP_CODE},
 {TOK_STRCPY,"StrCpy",2,2,"$(user_var: output) str [maxlen] [startoffset]",TP_CODE},
 {TOK_STRLEN,"StrLen",2,0,"$(user_var: length output) str",TP_CODE},
 {TOK_SUBCAPTION,"SubCaption",2,0,"page_number(0-4) new_subcaption",TP_GLOBAL},
@@ -218,18 +226,20 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_WRITEREGEXPANDSTR,"WriteRegExpandStr",4,0,"rootkey subkey entry_name new_value_string\n    root_key=(HKCR|HKLM|HKCU|HKU|HKCC|HKDD|HKPD|SHCTX)",TP_CODE},
 {TOK_WRITEUNINSTALLER,"WriteUninstaller",1,0,"uninstall_exe_name",TP_CODE},
 {TOK_XPSTYLE, "XPStyle",1,0,"(on|off)",TP_GLOBAL},
+{TOK_REQEXECLEVEL, "RequestExecutionLevel",1,0,"none|user|highest|admin",TP_GLOBAL},
 {TOK_P_PACKEXEHEADER,"!packhdr",2,0,"temp_file_name command_line_to_compress_that_temp_file",TP_ALL},
 {TOK_P_SYSTEMEXEC,"!system",1,2,"command [<|>|<>|=) retval]",TP_ALL},
 {TOK_P_EXECUTE,"!execute",1,0,"command",TP_ALL},
 {TOK_P_ADDINCLUDEDIR,"!AddIncludeDir",1,0,"dir",TP_ALL},
-{TOK_P_INCLUDE,"!include",1,0,"filename.nsi",TP_ALL},
+{TOK_P_INCLUDE,"!include",1,1,"[/NONFATAL] filename.nsh",TP_ALL},
 {TOK_P_CD,"!cd",1,0,"absolute_or_relative_new_directory",TP_ALL},
+{TOK_P_IF,"!if",1,3,"[!] value [(==,!=,<=,<,>,>=,&&,||) value2] [...]",TP_ALL},
 {TOK_P_IFDEF,"!ifdef",1,-1,"symbol [| symbol2 [& symbol3 [...]]]",TP_ALL},
 {TOK_P_IFNDEF,"!ifndef",1,-1,"symbol [| symbol2 [& symbol3 [...]]]",TP_ALL},
 {TOK_P_ENDIF,"!endif",0,0,"",TP_ALL},
-{TOK_P_DEFINE,"!define",1,2,"[/date] symbol [value]",TP_ALL},
+{TOK_P_DEFINE,"!define",1,4,"([/date|/utcdate] symbol [value]) | (/math symbol val1 OP val2)\n    OP=(+ - * / %)",TP_ALL},
 {TOK_P_UNDEF,"!undef",1,1,"symbol [value]",TP_ALL},
-{TOK_P_ELSE,"!else",0,-1,"[ifdef|ifndef symbol [|symbol2 [& symbol3 [...]]]]",TP_ALL},
+{TOK_P_ELSE,"!else",0,-1,"[if[macro][n][def] ...]",TP_ALL},
 {TOK_P_ECHO,"!echo",1,0,"message",TP_ALL},
 {TOK_P_WARNING,"!warning",0,1,"[warning_message]",TP_ALL},
 {TOK_P_ERROR,"!error",0,1,"[error_message]",TP_ALL},
@@ -251,7 +261,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_UNINSTBUTTONTEXT,"UninstallButtonText",0,1,"[uninstall button text]",TP_GLOBAL},
 {TOK_INSTBUTTONTEXT,"InstallButtonText",0,1,"[install button text]",TP_GLOBAL},
 {TOK_SPACETEXTS,"SpaceTexts",0,2,"none | ([space required text] [space available text])",TP_GLOBAL},
-{TOK_COMPLETEDTEXT,"CompletedText",0,2,"[completed text]",TP_PG},
+{TOK_COMPLETEDTEXT,"CompletedText",0,1,"[completed text]",TP_PG},
 
 {TOK_GETFUNCTIONADDR,"GetFunctionAddress",2,0,"output function",TP_CODE},
 {TOK_GETLABELADDR,"GetLabelAddress",2,0,"output label",TP_CODE},
@@ -287,6 +297,14 @@ void CEXEBuild::print_help(char *commandname)
 
 }
 
+bool CEXEBuild::is_valid_token(char *s)
+{
+  for (int x = 0; x < TOK__LAST; x ++)
+    if (!stricmp(tokenlist[x].name,s)) 
+      return true;
+  return false;
+}
+
 int CEXEBuild::get_commandtoken(char *s, int *np, int *op, int *pos)
 {
   int x;
@@ -301,69 +319,77 @@ int CEXEBuild::get_commandtoken(char *s, int *np, int *op, int *pos)
   return -1;
 }
 
+int CEXEBuild::GetCurrentTokenPlace()
+{
+  if (build_cursection)
+  {
+    if (build_cursection_isfunc)
+    {
+      return TP_FUNC;
+    }
+    else
+    {
+      return TP_SEC;
+    }
+  }
+
+  if (cur_page)
+    return TP_PAGEEX;
+
+  return TP_GLOBAL;
+}
+
 int CEXEBuild::IsTokenPlacedRight(int pos, char *tok)
 {
   if ((unsigned int) pos > (sizeof(tokenlist) / sizeof(tokenType)))
     return PS_OK;
 
   int tp = tokenlist[pos].placement;
-  if (build_cursection && !build_cursection_isfunc)
-  {
-    // section
-    if (tp & TP_SEC)
-      return PS_OK;
-    ERROR_MSG("Error: command %s not valid in section\n", tok);
-    return PS_ERROR;
+  int cp = GetCurrentTokenPlace();
+  if (tp & cp) {
+    return PS_OK;
   }
-  else if (build_cursection && build_cursection_isfunc)
-  {
-    // function
-    if (tp & TP_FUNC)
-      return PS_OK;
-    ERROR_MSG("Error: command %s not valid in function\n", tok);
-    return PS_ERROR;
-  }
-  else if (cur_page)
-  {
-    // pageex
-    if (tp & TP_PAGEEX)
-      return PS_OK;
-    ERROR_MSG("Error: command %s not valid in PageEx\n", tok);
-    return PS_ERROR;
-  }
-  else
-  {
-    // global
-    if (tp & TP_GLOBAL)
-      return PS_OK;
+  else {
     char err[1024];
-    strcpy(err, "Error: command %s not valid outside ");
-    if (tp & TP_SEC)
-      strcat(err, "section");
-    if (tp & TP_FUNC)
+    if (cp == TP_SEC) {
+      strcpy(err, "Error: command %s not valid in Section\n");
+    }
+    else if (cp == TP_FUNC) {
+      strcpy(err, "Error: command %s not valid in Function\n");
+    }
+    else if (cp == TP_PAGEEX) {
+      strcpy(err, "Error: command %s not valid in PageEx\n");
+    }
+    else
     {
+      strcpy(err, "Error: command %s not valid outside ");
       if (tp & TP_SEC)
+        strcat(err, "Section");
+      if (tp & TP_FUNC)
       {
-        if (tp & TP_PAGEEX)
+        if (tp & TP_SEC)
         {
-          strcat(err, ", ");
+          if (tp & TP_PAGEEX)
+          {
+            strcat(err, ", ");
+          }
+          else
+          {
+            strcat(err, " or ");
+          }
         }
-        else
+        strcat(err, "Function");
+      }
+      if (tp & TP_PAGEEX)
+      {
+        if (tp & TP_CODE)
         {
           strcat(err, " or ");
         }
+        strcat(err, "PageEx");
       }
-      strcat(err, "function");
+      strcat(err, "\n");
     }
-    if (tp & TP_PAGEEX)
-    {
-      if (tp & TP_CODE)
-      {
-        strcat(err, " or ");
-      }
-      strcat(err, "PageEx");
-    }
-    strcat(err, "\n");
     ERROR_MSG(err, tok);
     return PS_ERROR;
   }

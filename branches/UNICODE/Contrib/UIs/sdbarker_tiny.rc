@@ -20,9 +20,11 @@ BEGIN
     PUSHBUTTON      "",IDC_BROWSE,202,34,55,14
     ICON            103,IDC_ULICON,0,0,20,20
     CONTROL         "",IDC_SELDIRTEXT,"Static",SS_LEFTNOWORDWRAP,0,22,265,8
+    CONTROL         "",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | NOT WS_VISIBLE | 
+                    WS_TABSTOP,187,54,78,10
     CONTROL         "",IDC_SPACEAVAILABLE,"Static",SS_LEFTNOWORDWRAP,1,63,
-                    265,8
-    CONTROL         "",IDC_SPACEREQUIRED,"Static",SS_LEFTNOWORDWRAP,1,54,265,
+                    185,8
+    CONTROL         "",IDC_SPACEREQUIRED,"Static",SS_LEFTNOWORDWRAP,1,54,185,
                     8
     LTEXT           "",IDC_INTROTEXT,25,0,241,18,NOT WS_GROUP
 END

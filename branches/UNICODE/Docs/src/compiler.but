@@ -6,14 +6,15 @@ These commands are similar to the C preprocessor in terms of purpose and functio
 
 \S1{include} !include
 
-\c file
+\c [/NONFATAL] file
 
-This command will include 'file' as if it was part of the original script. Note that if a file is included in another directory, the current directory is still where the script was compiled from (not where the included file resides). If the compiler can't find the file it will look for it in every include directory. See \R{addincludedir}{!addincludedir} for more information.
+This command will include 'file' as if it was part of the original script. Note that if a file is included in another directory, the current directory is still where the script was compiled from (not where the included file resides). If the compiler can't find the file it will look for it in every include directory. See \R{addincludedir}{!addincludedir} for more information. If the /nonfatal switch is used and no files are found, a warning will be issued instead of an error.
 
 \c !include WinMessages.nsh
 \c !include Library.nsh
-\c !include MyConfig.nsh
+\c !include C:\MyConfig.nsi
 \c !include ..\MyConfig.nsh
+\c !include /NONFATAL file_that_may_exist_or_not.nsh
 
 \S1{addincludedir} !addincludedir
 
@@ -176,6 +177,142 @@ Time when the script started compiling according to the current locale.
 \S1{pretimestamp} $\{__TIMESTAMP__\}
 
 Date & time of the last modification to the script file according to the current locale.
+
+\S1{} Scope Predefines
+
+Standard predefines that contain information of the current code scope.
+
+\S2{} $\{__GLOBAL__\}
+
+Defined in the global scope.
+
+\c Section test
+\c
+\c   !ifdef ${__GLOBAL__}
+\c     !error "this shouldn't be here!"
+\c   !endif
+\c 
+\c SectionEnd
+\c
+\c Function test
+\c 
+\c   !ifdef ${__GLOBAL__}
+\c     !error "this shouldn't be here!"
+\c   !endif
+\c 
+\c FunctionEnd
+\c
+\c PageEx instfiles
+\c 
+\c   !ifdef ${__GLOBAL__}
+\c     !error "this shouldn't be here!"
+\c   !endif
+\c 
+\c PageExEnd
+
+\S2{} $\{__SECTION__\}
+
+Defined as the section name, without any prefixes, in \R{ssection}{section} scope.
+
+\c !ifdef __SECTION__
+\c   !error "this shouldn't be here!"
+\c !endif
+\c 
+\c Section test
+\c 
+\c   !ifndef __SECTION__
+\c     !error "missing predefine!"
+\c   !endif
+\c
+\c   !if ${__SECTION__} != test
+\c     !error "wrong predefine value!"
+\c   !endif
+\c 
+\c SectionEnd
+\c
+\c Section !test
+\c
+\c   !if ${__SECTION__} != test
+\c     !error "wrong predefine value!"
+\c   !endif
+\c 
+\c SectionEnd
+\c
+\c Section un.test
+\c
+\c   !if ${__SECTION__} != test
+\c     !error "wrong predefine value!"
+\c   !endif
+\c 
+\c SectionEnd
+
+\S2{} $\{__FUNCTION__\}
+
+Defined as the function name, without any prefixes, in \R{ffunction}{function} scope.
+
+\c !ifdef __FUNCTION__
+\c   !error "this shouldn't be here!"
+\c !endif
+\c 
+\c Function test
+\c 
+\c   !ifndef __FUNCTION__
+\c     !error "missing predefine!"
+\c   !endif
+\c
+\c   !if ${__FUNCTION__} != test
+\c     !error "wrong predefine value!"
+\c   !endif
+\c 
+\c FunctionEnd
+\c
+\c Function un.test
+\c
+\c   !if ${__FUNCTION__} != test
+\c     !error "wrong predefine value!"
+\c   !endif
+\c 
+\c FunctionEnd
+
+\S2{} $\{__PAGEEX__\}
+
+Defined in \R{pageex}{PageEx} scope.
+
+\c !ifdef __PAGEEX__
+\c   !error "this shouldn't be here!"
+\c !endif
+\c 
+\c PageEx instfiles
+\c 
+\c   !ifndef __PAGEEX__
+\c     !error "missing predefine!"
+\c   !endif
+\c 
+\c PageExEnd
+
+\S2{} $\{__UNINSTALL__\}
+
+Defined in \R{ssection}{section}, \R{ffunction}{function} or \R{pageex}{PageEx} scopes of the uninstaller.
+
+\c !ifdef __UNINSTALL__
+\c   !error "this shouldn't be here!"
+\c !endif
+\c 
+\c Function test
+\c 
+\c   !ifdef __UNINSTALL__
+\c     !error "this shouldn't be here!"
+\c   !endif
+\c 
+\c FunctionEnd
+\c 
+\c Function un.test
+\c 
+\c   !ifndef __UNINSTALL__
+\c     !error "missing predefine!"
+\c   !endif
+\c 
+\c FunctionEnd
 
 \S0{compenvvarread} Read environment variables
 

@@ -1,5 +1,6 @@
 # Header, don't edit
 NLF v6
+# Start editing here
 # Language ID
 1055
 # Font and size - dash (-) means default
@@ -9,11 +10,12 @@ NLF v6
 -
 # RTL - anything else than RTL means LTR
 -
-# Translation by çagatay Dilsiz(chagy) (amigos_cagi@hotmail.com)
+# Translation by ?atay Dilsiz(chagy) (amigos_cagi@hotmail.com)
+# Corrections by Mozilla Türkiye Yerelleþtirme Topluluðu tarafýndan çevrilmiþtir. http://mozilla.org.tr
 # ^Branding
 Nullsoft Kurulum Sistemi %s
 # ^SetupCaption
-$(^Name) Kurulum
+$(^Name) Kurulumu
 # ^UninstallCaption
 $(^Name) Kaldýrma
 # ^LicenseSubCaption
@@ -29,9 +31,9 @@ $(^Name) Kaldýrma
 # ^UnComponentsSubCaption
 : Kaldýrma Seçenekleri
 # ^UnDirSubCaption
-: Kaldýrma Dizini
+: Kaldýrýlacak Dizin
 # ^ConfirmSubCaption
-: Onaylama
+: Onay
 # ^UninstallingSubCaption
 : Kaldýrýlýyor
 # ^UnCompletedSubCaption
@@ -39,147 +41,147 @@ $(^Name) Kaldýrma
 # ^BackBtn
 < &Geri
 # ^NextBtn
-&Devam >
+Ý&leri >
 # ^AgreeBtn
 &Kabul Ediyorum
 # ^AcceptBtn
-Sözleþme Koþullarýný &Kabul Ediyorum
+Lisans Sözleþmesi'nin koþullarýný &kabul ediyorum
 # ^DontAcceptBtn
-Sözleþme Koþullarýný Kabul Et&miyorum
+Lisans Sözleþmesi'nin koþullarýný kabul et&miyorum
 # ^InstallBtn
 &Kur
 # ^UninstallBtn
 &Kaldýr
 # ^CancelBtn
-Ýptal
+Vazgeç
 # ^CloseBtn
 &Kapat
 # ^BrowseBtn
-&Göz At...
+&Gözat...
 # ^ShowDetailsBtn
-Ayrýntýlarý &Göster
+&Ayrýntýlarý göster
 # ^ClickNext
-Devam etmek için 'Devam'a basýnýz.
+Devam etmek için Ýleri düðmesine basýn.
 # ^ClickInstall
-Kurulumu baþlatmak için 'Kur'a basýnýz.
+Kurulumu baþlatmak için Kur düðmesine basýn.
 # ^ClickUninstall
-Kaldýrma iþlemini baþlatmak için 'Kaldýr'a basýnýz.
+Kaldýrmayý baþlatmak için Kaldýr düðmesine basýn.
 # ^Name
-isim
+Ad
 # ^Completed
 Tamamlandý
 # ^LicenseText
-Lütfen $(^NameDA) programýný kurmadan önce lisans sözleþmesini gözden geçiriniz. Eðer sözleþmenin tüm koþullarýný kabul ediyorsanýz,'Kabul Ediyorum'a basýnýz.
+Lütfen $(^NameDA) uygulamasýný kurmadan önce lisans sözleþmesini gözden geçirin. Sözleþmedeki bütün koþullarý kabul ediyorsanýz Kabul Ediyorum düðmesine basýn.
 # ^LicenseTextCB
-Lütfen $(^NameDA) programýný kurmadan önce lisans sözleþmesini gözden geçiriniz. Eðer sözleþmenin tüm koþullarýný kabul ediyorsanýz, aþaðýdaki onay kutusunu doldurunuz. $_CLICK
+Lütfen $(^NameDA) uygulamasýný kurmadan önce lisans sözleþmesini gözden geçirin. Sözleþmedeki bütün koþullarý kabul ediyorsanýz aþaðýdaki kutuya iþaret koyun. $_CLICK
 # ^LicenseTextRB
-Lütfen $(^NameDA) Programýný kurmadan önce lisans sözleþmesini gözden geçiriniz. Eðer sözleþmenin tüm koþullarýný kabul ediyorsanýz, aþaðýdaki seçenek kutusunu doldurunuz. $_CLICK
+Lütfen $(^NameDA) uygulamasýný kurmadan önce lisans sözleþmesini gözden geçirin. Sözleþmedeki bütün koþullarý kabul ediyorsanýz aþaðýdaki ilk seçeneði seçin. $_CLICK
 # ^UnLicenseText
-Lütfen $(^NameDA) programýný sisteminizden kaldýrmadan önce lisans sözleþmesini gözden geçiriniz. Eðer sözleþmenin tüm koþullarýný kabul ediyorsanýz,'Kabul Ediyorum'a basýnýz.
+Lütfen $(^NameDA) uygulamasýný kaldýrmadan önce lisans sözleþmesini gözden geçirin. Sözleþmedeki bütün koþullarý kabul ediyorsanýz Kabul Ediyorum düðmesine basýn.
 # ^UnLicenseTextCB
-Lütfen $(^NameDA) programýný sisteminizden kaldýrmadan önce lisans sözleþmesini gözden geçiriniz. Eðer sözleþmenin tüm koþullarýný kabul ediyorsanýz, aþaðýdaki onay kutusunu doldurunuz. $_CLICK
+Lütfen $(^NameDA) uygulamasýný kaldýrmadan önce lisans sözleþmesini gözden geçirin. Sözleþmedeki bütün koþullarý kabul ediyorsanýz aþaðýdaki kutuya iþaret koyun. $_CLICK
 # ^UnLicenseTextRB
-Lütfen $(^NameDA) Programýný sisteminizden kaldýrmadan önce lisans sözleþmesini gözden geçiriniz. Eðer sözleþmenin tüm koþullarýný kabul ediyorsanýz, aþaðýdaki seçenek kutusunu doldurunuz. $_CLICK
+Lütfen $(^NameDA) uygulamasýný kaldýrmadan önce lisans sözleþmesini gözden geçirin. Sözleþmedeki bütün koþullarý kabul ediyorsanýz aþaðýdaki ilk seçeneði seçin. $_CLICK
 # ^Custom
 Özel
 # ^ComponentsText
-Kurmak istediðiniz bileþenleri seçiniz ya da kurulmasýný istemediðiniz bileþenlerdeki 'check' iþaretini  kaldýrýnýz. $_CLICK
+Kurmak istediðiniz bileþenleri iþaretleyip kurmak istemediklerinizi iþaretlemeden býrakýn. $_CLICK
 # ^ComponentsSubText1
-Kurulum þeklini seçiniz:
+Kurulum türünü seçin:
 # ^ComponentsSubText2_NoInstTypes
-Kurulacak bileþenleri seçiniz:
+Kurulacak bileþenleri seçin:
 # ^ComponentsSubText2
-ya da, kurulmasýný istediðiniz bileþenleri seçiniz:
+ya da isteðe baðlý olarak kurmak istediðiniz bileþenleri seçin:
 # ^UnComponentsText
-Kaldýrmak istediðiniz bileþenleri seçiniz ya da kaldýrýlmasýný istemediðiniz bileþenlerdeki 'check' iþaretini kaldýrýnýz. $_CLICK
+Kaldýrmak istediðiniz bileþenleri iþaretleyip kaldýrmak istemediklerinizi iþaretlemeden býrakýn. $_CLICK
 # ^UnComponentsSubText1
-Kaldýrma þeklini seçiniz:
+Kaldýrma türünü seçin:
 # ^UnComponentsSubText2_NoInstTypes
-Kaldýrýlacak bileþenleri seçiniz:
+Kaldýrýlacak bileþenleri seçin:
 # ^UnComponentsSubText2
-ya da, kaldýrýlmasýný istediðiniz bileþenleri seçiniz:
+ya da isteðe baðlý olarak kaldýrmak istediðiniz bileþenleri seçin:
 # ^DirText
-$(^NameDA) kurulum tarafýndan aþaðýdaki dizine kurulacaktýr. Farklý bir dizine kurmak için 'Göz at'a týklayýnýz ve farklý bir dizin seçiniz. $_CLICK
+$(^NameDA) aþaðýdaki dizinde kurulacak. Farklý bir dizinde kurmak için Gözat düðmesine basýp baþka bir dizin seçin. $_CLICK
 # ^DirSubText
 Hedef Dizin
 # ^DirBrowseText
-$(^NameDA) programýnýn kurulmasýný istediðiniz dizini seçiniz:
+$(^NameDA) uygulamasýnýn kurulacaðý dizini seçin:
 # ^UnDirText
-$(^NameDA) kurulum tarafýndan aþaðýdaki dizinden kaldýrýlacaktýr. Farklý bir dizinden kaldýrmak için 'Göz at'a týklayýnýz ve farklý bir dizin seçiniz. $_CLICK
+$(^NameDA) aþaðýdaki dizinden kaldýrýlacak. Farklý bir dizinden kaldýrmak için Gözat düðmesine basýp baþka bir dizin seçin. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
-$(^NameDA) programýnýn kaldýrýlmasýný istediðiniz dizini seçiniz:
+$(^NameDA) uygulamasýnýn kaldýrýlacaðý dizini seçin:
 # ^SpaceAvailable
 "Kullanýlabilir boþ alan: "
 # ^SpaceRequired
-"Gerekli boþ alan: "
+"Gereken boþ alan: "
 # ^UninstallingText
-$(^NameDA) programý aþaðýdaki dizinden kaldýrýlacaktýr. $_CLICK
+$(^NameDA) aþaðýdaki dizinden kaldýrýlacak. $_CLICK
 # ^UninstallingSubText
-kaldýrýlýyor:
+Kaldýrýlan yer:
 # ^FileError
-Dosya yazma için açýlamadý: \r\n\t"$0"\r\nKurulumdan çýkmak için abort'a basýnýz,\r\nyeniden yazmayý denemek için retry'i, veya\r\ndosyayý yoksayýp devam etmek için ignore'u týklayýnýz
+Dosya yazmak için açýlýrken hata meydana geldi: \r\n\r\n$0\r\n\r\nKurulumu durdurmak için Dur düðmesine,\r\nyeniden denemek için Yeniden Dene düðmesine,\r\nbu dosyayý atlamak için Yoksay düðmesine basýn.
 # ^FileError_NoIgnore
-Dosya yazma için açýlamadý: \r\n\t"$0"\r\nYeniden yazmayý denemek için retry'ye, veya\r\nKurulumdan çýkmak için abort'a basýnýz
+Dosya yazmak için açýlýrken hata meydana geldi: \r\n\r\n$0\r\n\r\nYeniden denemek için Yeniden Dene düðmesine,\r\nkurulumu durdurmak için Vazgeç düðmesine basýn.
 # ^CantWrite
 "Yazýlamadý: "
 # ^CopyFailed
-Kopyalama Hatasý
+Kopyalama baþarýsýz oldu
 # ^CopyTo
-"Kopyala "
+"Kayýt: "
 # ^Registering
-"Kayýt Ediliyor: "
+"Kaydediliyor: "
 # ^Unregistering
-"Kayýt Siliniyor: "
+"Kayýt siliniyor: "
 # ^SymbolNotFound
-"Sembol Bulunamadý: "
+"Simge bulunamadý: "
 # ^CouldNotLoad
 "Yüklenemedi: "
 # ^CreateFolder
-"Dizin Oluþtur: "
+"Dizin oluþtur: "
 # ^CreateShortcut
-"Kýsayol Oluþtur: "
+"Kýsayol oluþtur: "
 # ^CreatedUninstaller
-"Kaldýrma Sihirbazý Oluþturuldu: "
+"Kaldýrma uygulamasý oluþtur: "
 # ^Delete
-"Dosya Sil: "
+"Dosya sil: "
 # ^DeleteOnReboot
-"Yeniden baþlatýnca dosyayý sil: "
+"Açýlýþta sil: "
 # ^ErrorCreatingShortcut
-"Kýsayol yaratýlýrken hata oluþtu: "
+"Kýsayol oluþturulurken hata meydana geldi: "
 # ^ErrorCreating
 "Oluþturma hatasý: "
 # ^ErrorDecompressing
-Veri açýlýrken hata oluþtu! Bozuk kurulum?
+Veriyi açarken hata meydana geldi! Acaba kurulum uygulamasý mý bozuk?
 # ^ErrorRegistering
-DLL kayýt hatasý
+DLL kaydedilirken hata meydana geldi
 # ^ExecShell
-"Çalýþma Kabuðu: "
+"ExecShell: "
 # ^Exec
 "Çalýþtýr: "
 # ^Extract
 "Aç: "
 # ^ErrorWriting
-"Aç: Dosyaya yazarken hata ile karþýlaþýldý "
+"Açma: Dosyaya yazarken hata meydana geldi "
 # ^InvalidOpcode
-Bozuk kurulum: geçersiz iþlem kodu
+Kurulum bozuk: Geçersiz kod
 # ^NoOLE
-"OLE Bulunamadý: "
+"OLE yok: "
 # ^OutputFolder
-"Çýkýþ dizini: "
+"Çýktý dizini: "
 # ^RemoveFolder
 "Dizini sil: "
 # ^RenameOnReboot
-"Tekrar baþlatýnca yeniden adlandýr: "
+"Açýlýþta adýný deðiþtir: "
 # ^Rename
 "Ad deðiþtir: "
 # ^Skipped
 "Atlandý: "
 # ^CopyDetails
-Ayrýntýlarý Pano'ya kopyala
+Ayrýntýlarý panoya kopyala
 # ^LogInstall
-Kurlum iþlemini seyir defterine kaydet
+Kurulum sürecinin kaydýný tut
 # ^Byte
 B
 # ^Kilo

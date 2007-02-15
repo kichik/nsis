@@ -1,3 +1,19 @@
+/*
+ * lineparse.cpp
+ * 
+ * This file is a part of NSIS.
+ * 
+ * Copyright (C) 1999-2007 Nullsoft and Contributors
+ * 
+ * Licensed under the zlib/libpng license (the "License");
+ * you may not use this file except in compliance with the License.
+ * 
+ * Licence details can be found in the file COPYING.
+ * 
+ * This software is provided 'as-is', without any express or implied
+ * warranty.
+ */
+
 #include "lineparse.h"
 #include "Platform.h"
 
@@ -6,7 +22,8 @@
 
 LineParser::LineParser(bool bCommentBlock)
 {
-  m_bCommentBlock=bCommentBlock;
+  m_incommentblock=bCommentBlock;
+  m_incomment=false;
   m_nt=m_eat=0;
   m_tokens=0;
 }
@@ -16,20 +33,25 @@ LineParser::~LineParser()
   freetokens();
 }
 
-bool LineParser::InCommentBlock()
+bool LineParser::inComment()
 {
-  return m_bCommentBlock;
+  return m_incomment;
+}
+
+bool LineParser::inCommentBlock()
+{
+  return m_incommentblock;
 }
 
 int LineParser::parse(char *line, int ignore_escaping/*=0*/) // returns -1 on error
 {
   freetokens();
-  bool bPrevCB=m_bCommentBlock;
+  bool bPrevCB=m_incommentblock;
   int n=doline(line, ignore_escaping);
   if (n) return n;
   if (m_nt)
   {
-    m_bCommentBlock=bPrevCB;
+    m_incommentblock=bPrevCB;
     m_tokens=(char**)malloc(sizeof(char*)*m_nt);
     n=doline(line, ignore_escaping);
     if (n)
@@ -124,16 +146,17 @@ void LineParser::freetokens()
 int LineParser::doline(char *line, int ignore_escaping/*=0*/)
 {
   m_nt=0;
+  m_incomment = false;
   while (*line == ' ' || *line == '\t') line++;
   while (*line)
   {
-    if ( m_bCommentBlock )
+    if ( m_incommentblock )
     {
       while ( *line )
       {
         if ( *line == '*' && *(line+1) == '/' )
         {
-          m_bCommentBlock=false; // Found end of comment block
+          m_incommentblock=false; // Found end of comment block
           line+=2;
           while (*line == ' ' || *line == '\t') line++;
           break;
@@ -143,10 +166,14 @@ int LineParser::doline(char *line, int ignore_escaping/*=0*/)
     }
     else {
       int lstate=0; // 1=", 2=`, 4='
-      if (*line == ';' || *line == '#') break;
+      if (*line == ';' || *line == '#')
+      {
+        m_incomment = true;
+        break;
+      }
       if (*line == '/' && *(line+1) == '*')
       {
-        m_bCommentBlock = true;
+        m_incommentblock = true;
         line+=2;
       }
       else {

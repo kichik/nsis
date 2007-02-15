@@ -7,6 +7,7 @@ example release.cfg:
 =========================
 [auth]
 USER=kichik
+WIKI_PASSWORD=xxx
 
 [version]
 VERSION=2.10
@@ -23,8 +24,11 @@ CVS_EXT="C:\Program Files\PuTTY\plink.exe" -2 -l "%u" "%h"
 TAR_BZ2=7zatarbz2.bat %s %s
 ZIP="C:\Program Files\7-zip\7za.exe" a -tzip %s -mx9 -mfb=255 -mpass=4 %s
 
-[scp]
-SCP="pscp -2"
+[rsh]
+RSH="C:\Program Files\PuTTY\plink.exe" -2 -l kichik nsis.sourceforge.net
+
+[wiki]
+UPDATE_URL=http://nsis.sourceforge.net/Special:Simpleupdate?action=raw
 =========================
 
 7zatarbz2.bat:
@@ -39,11 +43,6 @@ TODO
 
  * Create release on SourceForge automatically
  * Edit update.php
- * Edit cl.sh
- * Submit news on nsis.sf.net
- * Update download page on nsis.sf.net
- * Update special builds page on nsis.sf.net
- * http://nsis.sourceforge.net/mediawiki/index.php?title=Template:NSISVersion&action=edit
  * http://en.wikipedia.org/w/index.php?title=Nullsoft_Scriptable_Install_System&action=edit
  * Update Freshmeat
  * Update BetaNews
@@ -56,6 +55,7 @@ import time
 import Image, ImageFont, ImageDraw
 from ConfigParser import ConfigParser
 from ftplib import FTP
+import time
 
 ### read config
 
@@ -63,6 +63,7 @@ cfg = ConfigParser()
 cfg.read('release.cfg')
 
 USER = cfg.get('auth', 'USER')
+WIKI_PASSWORD = cfg.get('auth', 'WIKI_PASSWORD')
 
 VERSION = cfg.get('version', 'VERSION')
 VER_MAJOR = cfg.get('version', 'VER_MAJOR')
@@ -76,253 +77,277 @@ CVS_EXT = cfg.get('cvs', 'CVS_EXT')
 TAR_BZ2 = cfg.get('compression', 'TAR_BZ2')
 ZIP = cfg.get('compression', 'ZIP')
 
-SCP = cfg.get('scp', 'SCP')
+RSH = cfg.get('rsh', 'RSH')
+
+PURGE_URL = cfg.get('wiki', 'PURGE_URL')
+UPDATE_URL = cfg.get('wiki', 'UPDATE_URL')
 
 ### config env
 
 os.environ['CVS_EXT'] = CVS_EXT
-os.environ['CVSROOT'] = ':ext:%s@cvs.sourceforge.net:/cvsroot/nsis' % USER
+os.environ['CVSROOT'] = ':ext:%s@nsis.cvs.sourceforge.net:/cvsroot/nsis' % USER
 
 CVS_TAG = 'v' + ''.join(VERSION.split('.'))
 
 newverdir = 'nsis-%s-src' % VERSION
+scons_line = 'scons -C %s VERSION=%s VER_MAJOR=%s VER_MINOR=%s VER_REVISION=%s VER_BUILD=%s ' \
+						 % (newverdir, VERSION, VER_MAJOR, VER_MINOR, VER_REVISION, VER_BUILD)
 
-### some useful functions
+### utility functions
 
 def log(msg, log_dir = '.'):
-	open('%s\\release.log' % log_dir, 'a').write(msg + '\n')
+	open('%s\\release-%s.log' % (log_dir, VERSION), 'a').write(msg + '\n')
 
 def exit(log_dir = '.'):
 	log('\nerror occurred, exiting', log_dir)
 	sys.exit(3)
 
 def run(command, log_name, err, wanted_ret = 0, log_dir = '.'):
-	log('running %s' % command, log_dir)
+	log('\nrunning %s\n' % command, log_dir)
 
 	if log_name:
-		cmd = '%s >> %s\\release.log 2>&1' % (command, log_dir)
+		cmd = '%s >> %s\\release-%s.log 2>&1' % (command, log_dir, VERSION)
 	else:
 		cmd = command
 
-	if os.system(cmd) != wanted_ret:
+	ret = os.system(cmd)
+
+	# sleep because for some weird reason, running cvs.exe hugs
+	# the release log for some time after os.system returns
+	import time
+	time.sleep(5)
+
+	if ret != wanted_ret:
 		print '*** ' + err
 		log('*** ' + err, log_dir)
 		exit(log_dir)
-
-	log('', log_dir)
 
 def confirm(question):
 	print question
 	if raw_input() != 'y':
 		sys.exit(2)
 
-### confirm
+### process functions
 
-confirm('are you sure you want to release version %s?' % VERSION)
-confirm('did you update history.but?')
+def Confirm():
+	confirm('are you sure you want to release version %s?' % VERSION)
+	confirm('did you update history.but?')
 
-### start log
+def StartLog():
+	open('release-%s.log' % VERSION, 'w').write('releasing version %s at %s\n\n' % (VERSION, time.ctime()))
 
-open('release.log', 'w').write('releasing version %s at %s\n\n' % (VERSION, time.ctime()))
-
-### test
-
-print 'running tests...'
-
-run(
-	'scons -C .. test',
-	'test',
-	'tests failed - see test.log for details'
-)
-
-### create images
-
-print 'creating images...'
-
-## create get.gif for website
-
-im = Image.new('L', (140, 50), '#ffffff')
-draw = ImageDraw.Draw(im)
-font = ImageFont.truetype('verdanab.ttf', 22)
-draw.text((9, 10), 'NSIS %s' % VERSION, font = font, fill = '#bebebe')
-im.save(r'get.gif')
-
-## create new header.gif for menu
-
-im = Image.new('RGB', (598, 45), '#000000')
-
-# copy old header.gif
-
-im_orig = Image.open(r'..\Menu\images\header.gif')
-im.paste(im_orig)
-
-# remove old version number
-
-bg = im.crop((1, 0, 11, 45))
-for x in range(60, 250, 10):
-	im.paste(bg, (x, 0))
-
-# draw new version number
-
-draw = ImageDraw.Draw(im)
-font = ImageFont.truetype('tahomabd.ttf', 24)
-
-#x = 140
-x = 66
-for t in 'NSIS %s' % VERSION:
-	draw.text((x, 5), t, font = font, fill = 'white')
-	x += draw.textsize(t, font = font)[0] + 1
-
-# save
-
-im.save(r'..\Menu\images\header.gif')
-
-# commit header.gif
-
-print 'committing header.gif...'
-
-run(
-	'%s commit -m "%s" ..\\Menu\\images\\header.gif' % (CVS, VERSION),
-	'header.gif.commit',
-	'failed committing header.gif'
-)
-
-### test installer
-
-print 'testing installer...'
-
-os.mkdir('insttestscons')
-
-run(
-	'scons -C .. VERSION=test PREFIX=%s\\insttestscons install dist-installer' % os.getcwd(),
-	'inst',
-	'installer creation failed'
-)
-
-run(
-	'..\\nsis-test.exe /S /D=%s\\insttest' % os.getcwd(),
-	None,
-	'installer failed'
-)
-
-run(
-	'diff -r insttest insttestscons | grep -v uninst-nsis.exe',
-	'diff',
-	'scons and installer installations differ',
-	1
-)
-
-### tag
-
-print 'tagging...'
-
-run(
-	'%s -z3 tag -R %s ..' % (CVS, CVS_TAG),
-	'tag',
-	'failed creating tag %s' % CVS_TAG
-)
-
-### export
-
-print 'exporting a fresh copy...'
-
-run(
-	'%s -z3 export -r %s -d %s NSIS' % (CVS, CVS_TAG, newverdir),
-	'export',
-	'export failed'
-)
-
-### create source tarball
-
-print 'creating source tarball...'
-
-run(
-	TAR_BZ2 % (newverdir + '.tar.bz2', newverdir),
-	'tarball',
-	'source tarball creation failed'
-)
-
-### build release files
-
-scons_line = 'scons -C %s VERSION=%s VER_MAJOR=%s VER_MINOR=%s VER_REVISION=%s VER_BUILD=%s ' \
-             % (newverdir, VERSION, VER_MAJOR, VER_MINOR, VER_REVISION, VER_BUILD)
-
-print 'creating distribution files...'
-
-run(
-	scons_line + 'dist',
-	'dist',
-	'creation of distribution files failed'
-)
-
-def create_special_build(name, option):
-	print 'creating %s special build...' % name
-
-	os.mkdir(name)
+def RunTests():
+	print 'running tests...'
 
 	run(
-		scons_line + 'PREFIX=%s\\%s %s install-compiler install-stubs' % (os.getcwd(), name, option),
-		name,
-		'creation of %s special build failed' % name
+		'scons -C .. test',
+		'test',
+		'tests failed - see test.log for details'
 	)
 
-	os.chdir(name)
+def CreateMenuImage():
+	print 'creating images...'
+
+	## create new header.gif for menu
+
+	im = Image.new('RGB', (598, 45), '#000000')
+
+	# copy background from header-notext.gif
+
+	bim = Image.open(r'..\Menu\images\header-notext.gif')
+	im.paste(bim)
+
+	# draw new version number
+
+	draw = ImageDraw.Draw(im)
+	font = ImageFont.truetype('trebuc.ttf', 24)
+	text = 'nullsoft scriptable install system %s' % VERSION
+	draw.text((85, 7), text, font = font, fill = 'white')
+
+	# save
+
+	im = im.convert('P', palette = Image.ADAPTIVE)
+	im.save(r'..\Menu\images\header.gif')
+
+def CommitMenuImage():
+	print 'committing header.gif...'
+
 	run(
-		ZIP % ('..\\nsis-%s-%s.zip' % (VERSION, name), '*'),
-		'%s.zip' % name,
-		'copmression of %s special build failed' % name,
-		log_dir = '..'
+		'%s commit -m %s ..\\Menu\\images\\header.gif' % (CVS, VERSION),
+		'header.gif.commit',
+		'failed committing header.gif'
 	)
-	os.chdir('..')
 
-create_special_build('strlen_8192', 'NSIS_MAX_STRLEN=8192')
-create_special_build('log', 'NSIS_CONFIG_LOG=yes')
+def TestInstaller():
+	print 'testing installer...'
 
-### upload files to SourceForge
+	os.mkdir('insttestscons')
 
-print 'uploading files to SourceForge...'
+	run(
+		'scons -C .. VERSION=test PREFIX=%s\\insttestscons install dist-installer' % os.getcwd(),
+		'inst',
+		'installer creation failed'
+	)
 
-def upload(ftp, file):
-	print '  uploading %s...' % file
-	ftp.storbinary('STOR /incoming/%s' % file.split('\\')[-1], open(file, 'rb'))
+	run(
+		'..\\nsis-test-setup.exe /S /D=%s\\insttest' % os.getcwd(),
+		None,
+		'installer failed'
+	)
 
-ftp = FTP('upload.sourceforge.net')
-ftp.login()
+	run(
+		'diff -r insttest insttestscons | grep -v uninst-nsis.exe',
+		'diff',
+		'scons and installer installations differ',
+		1
+	)
 
-upload(ftp, newverdir + '.tar.bz2')
-upload(ftp, newverdir + '\\nsis-%s.exe' % VERSION)
-upload(ftp, newverdir + '\\nsis-%s.zip' % VERSION)
-upload(ftp, 'nsis-%s-log.zip' % VERSION)
-upload(ftp, 'nsis-%s-strlen_8192.zip' % VERSION)
+def Tag():
+	print 'tagging...'
 
-ftp.quit()
+	run(
+		'%s -z3 tag -R %s ..' % (CVS, CVS_TAG),
+		'tag',
+		'failed creating tag %s' % CVS_TAG
+	)
 
-# upload get.gif
+def Export():
+	print 'exporting a fresh copy...'
 
-print '  uploading get.gif...'
+	run(
+		'%s -z3 export -r %s -d %s NSIS' % (CVS, CVS_TAG, newverdir),
+		'export',
+		'export failed'
+	)
 
-run(
-	'%s get.gif %s@nsis.sf.net:/home/groups/n/ns/nsis/htdocs/uploads/pics/get.gif' % (SCP, USER),
-	'upload',
-	'uploading get.gif failed'
-)
+def CreateSourceTarball():
+	print 'creating source tarball...'
 
-### update some websites...
+	run(
+		TAR_BZ2 % (newverdir + '.tar.bz2', newverdir),
+		'tarball',
+		'source tarball creation failed'
+	)
 
-print 'automatic phase done\n'
-print """
- * Add SourceForge release
+def BuildRelease():
+	print 'creating distribution files...'
+
+	run(
+		scons_line + 'dist',
+		'dist',
+		'creation of distribution files failed'
+	)
+
+def CreateSpecialBuilds():
+	def create_special_build(name, option):
+		print 'creating %s special build...' % name
+
+		os.mkdir(name)
+
+		run(
+			scons_line + 'PREFIX=%s\\%s %s install-compiler install-stubs' % (os.getcwd(), name, option),
+			name,
+			'creation of %s special build failed' % name
+		)
+
+		os.chdir(name)
+		run(
+			ZIP % ('..\\nsis-%s-%s.zip' % (VERSION, name), '*'),
+			'%s.zip' % name,
+			'copmression of %s special build failed' % name,
+			log_dir = '..'
+		)
+		os.chdir('..')
+
+	create_special_build('strlen_8192', 'NSIS_MAX_STRLEN=8192')
+	create_special_build('log', 'NSIS_CONFIG_LOG=yes')
+
+def UploadFiles():
+	print 'uploading files to SourceForge...'
+
+	def upload(ftp, file):
+		print '  uploading %s...' % file
+		ftp.storbinary('STOR /incoming/%s' % file.split('\\')[-1], open(file, 'rb'))
+
+	ftp = FTP('upload.sourceforge.net')
+	ftp.login()
+
+	upload(ftp, newverdir + '.tar.bz2')
+	upload(ftp, newverdir + '\\nsis-%s-setup.exe' % VERSION)
+	upload(ftp, newverdir + '\\nsis-%s.zip' % VERSION)
+	upload(ftp, 'nsis-%s-log.zip' % VERSION)
+	upload(ftp, 'nsis-%s-strlen_8192.zip' % VERSION)
+
+	ftp.quit()
+
+def ManualRelease():
+	print 'release url:'
+	print '  http://sourceforge.net/project/admin/qrs.php?package_id=0&group_id=22049'
+	print
+
+	sys.stdout.write('What\'s the SF release id of the new version? ')
+	release_id = raw_input()
+
+	return release_id
+
+def UpdateWiki(release_id):
+	print 'updating wiki...'
+
+	def update_wiki_page(page, data, summary):
+		print '  updating `%s` to `%s`' % (page, data)
+
+		import urllib
+
+		post =  'su_user=' + urllib.quote(USER)
+		post += '&su_password=' + urllib.quote(WIKI_PASSWORD)
+		post += '&su_title=' + urllib.quote(page)
+		post += '&su_data=' + urllib.quote(data)
+		post += '&su_summary=' + urllib.quote(summary)
+		
+		if urllib.urlopen(UPDATE_URL, post).read() != 'success':
+			log('*** failed updating `%s` wiki page' % page)
+			print '	*** failed updating `%s` wiki page' % page
+
+	update_wiki_page('Template:NSISVersion', VERSION, 'new version')
+	update_wiki_page('Template:NSISReleaseDate', time.strftime('%B %d, %Y'), 'new version')
+	update_wiki_page('Template:NSISReleaseID', release_id, 'new version')
+
+def UpdateChangeLog():
+	run(
+		'%s touch /home/groups/n/ns/nsis/bin/cl.timestamp' % RSH,
+		'cl-timestamp',
+		'change log start time modification failed'
+	)
+
+def ToDo():
+	print 'automatic phase done\n'
+	print """
  * Edit update.php
- * Edit cl.sh
- * Submit news on nsis.sf.net
- * Update download page on nsis.sf.net
- * Update special builds page on nsis.sf.net
- * http://nsis.sourceforge.net/mediawiki/index.php?title=Template:NSISVersion&action=edit
+ * Post news item
  * http://en.wikipedia.org/w/index.php?title=Nullsoft_Scriptable_Install_System&action=edit
  * Update Freshmeat
  * Update BetaNews
-"""
+	"""
 
-### all done
+def CloseLog():
+	log('done')
 
-log('done')
+### ok, let's go!
+
+Confirm()
+StartLog()
+RunTests()
+CreateMenuImage()
+CommitMenuImage()
+TestInstaller()
+Tag()
+Export()
+CreateSourceTarball()
+BuildRelease()
+CreateSpecialBuilds()
+UploadFiles()
+release_id = ManualRelease()
+UpdateWiki(release_id)
+UpdateChangeLog()
+ToDo()
+CloseLog()

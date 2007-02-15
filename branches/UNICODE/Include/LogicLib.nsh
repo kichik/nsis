@@ -90,7 +90,7 @@
   !macroend
 
   !macro _PushLogic
-    !insertmacro _PushScope Logic _${__LINE__}
+    !insertmacro _PushScope Logic _LogicLib_Label_${__LINE__}
   !macroend
 
   !macro _PopLogic
@@ -134,15 +134,8 @@
   !macroend
 
   ; Case-sensitive string tests
-  !macro _StrCmp _a _b _e _l _m
-    !insertmacro _LOGICLIB_TEMP
-    System::Call `kernel32::lstrcmpA(ts, ts) i.s` `${_a}` `${_b}`
-    Pop $_LOGICLIB_TEMP
-    IntCmp $_LOGICLIB_TEMP 0 `${_e}` `${_l}` `${_m}`
-  !macroend
-
   !macro _S== _a _b _t _f
-    !insertmacro _StrCmp `${_a}` `${_b}` `${_t}` `${_f}` `${_f}`
+    StrCmpS `${_a}` `${_b}` `${_t}` `${_f}`
   !macroend
 
   !macro _S!= _a _b _t _f
@@ -277,7 +270,7 @@
   !macro _Cmd _a _b _t _f
     !define _t=${_t}
     !ifdef _t=                                            ; If no true label then make one
-      !define __t _${__LINE__}
+      !define __t _LogicLib_Label_${__LINE__}
     !else
       !define __t ${_t}
     !endif
@@ -319,7 +312,7 @@
     !verbose ${LOGICLIB_VERBOSITY}
     !insertmacro _PushLogic
     !define ${_Logic}If
-    !define ${_Logic}Else _${__LINE__}                    ; Get a label for the Else
+    !define ${_Logic}Else _LogicLib_Label_${__LINE__}                    ; Get a label for the Else
     !define _c=${_c}
     !ifdef _c=true                                        ; If is true
       !insertmacro _${_o} `${_a}` `${_b}` "" ${${_Logic}Else}
@@ -362,11 +355,11 @@
     !ifndef ${_Logic}Else
       !error "Cannot use Or following an Else"
     !endif
-    !define _label _${__LINE__}                           ; Skip this test as we already
+    !define _label _LogicLib_Label_${__LINE__}                           ; Skip this test as we already
     Goto ${_label}                                        ; have a successful result
     ${${_Logic}Else}:                                     ; Place the Else label
     !undef ${_Logic}Else                                  ; and remove it
-    !define ${_Logic}Else _${__LINE__}                    ; Get a label for the next Else and perform the new If
+    !define ${_Logic}Else _LogicLib_Label_${__LINE__}                    ; Get a label for the next Else and perform the new If
     !define _c=${_c}
     !ifdef _c=true                                        ; If is true
       !insertmacro _${_o} `${_a}` `${_b}` "" ${${_Logic}Else}
@@ -391,7 +384,7 @@
       !error "Cannot use Else following an Else"
     !endif
     !ifndef ${_Logic}EndIf                                ; First Else for this If?
-      !define ${_Logic}EndIf _${__LINE__}                 ; Get a label for the EndIf
+      !define ${_Logic}EndIf _LogicLib_Label_${__LINE__}                 ; Get a label for the EndIf
     !endif
     Goto ${${_Logic}EndIf}                                ; Go to the EndIf
     ${${_Logic}Else}:                                     ; Place the Else label
@@ -404,7 +397,7 @@
     !verbose push
     !verbose ${LOGICLIB_VERBOSITY}
     ${Else}                                               ; Perform the Else
-    !define ${_Logic}Else _${__LINE__}                    ; Get a label for the next Else and perform the new If
+    !define ${_Logic}Else _LogicLib_Label_${__LINE__}                    ; Get a label for the next Else and perform the new If
     !define _c=${_c}
     !ifdef _c=true                                        ; If is true
       !insertmacro _${_o} `${_a}` `${_b}` "" ${${_Logic}Else}
@@ -491,9 +484,9 @@
     !verbose push
     !verbose ${LOGICLIB_VERBOSITY}
     !insertmacro _PushLogic
-    !define ${_Logic}${_n} _${__LINE__}                   ; Get a label for the start of the loop
+    !define ${_Logic}${_n} _LogicLib_Label_${__LINE__}                   ; Get a label for the start of the loop
     ${${_Logic}${_n}}:
-    !insertmacro _PushScope Exit${_n} _${__LINE__}        ; Get a label for the end of the loop
+    !insertmacro _PushScope Exit${_n} _LogicLib_Label_${__LINE__}        ; Get a label for the end of the loop
     !insertmacro _PushScope Break ${_Exit${_n}}           ; Break goes to the end of the loop
     !ifdef _DoLoopExpression
       ${_DoLoopExpression}                                ; Special extra parameter for inserting code
@@ -501,7 +494,7 @@
     !endif
     !define _c=${_c}
     !ifdef _c=                                            ; No starting condition
-      !insertmacro _PushScope Continue _${__LINE__}       ; Get a label for Continue at the end of the loop
+      !insertmacro _PushScope Continue _LogicLib_Label_${__LINE__}       ; Get a label for Continue at the end of the loop
     !else
       !insertmacro _PushScope Continue ${${_Logic}${_n}}  ; Continue goes to the start of the loop
       !ifdef _c=true                                      ; If is true
@@ -589,7 +582,7 @@
       ${${_Logic}Else}:                                   ; Place the Else label
       !undef ${_Logic}Else                                ; and remove it
     !else
-      !define ${_Logic}EndSelect _${__LINE__}             ; Get a label for the EndSelect
+      !define ${_Logic}EndSelect _LogicLib_Label_${__LINE__}             ; Get a label for the EndSelect
     !endif
     !verbose pop
   !macroend
@@ -601,7 +594,7 @@
     !verbose push
     !verbose ${LOGICLIB_VERBOSITY}
     ${CaseElse}                                           ; Perform the CaseElse
-    !define ${_Logic}Else _${__LINE__}                    ; Get a label for the next Else and perform the new Case
+    !define ${_Logic}Else _LogicLib_Label_${__LINE__}                    ; Get a label for the next Else and perform the new Case
     !insertmacro _== `${${_Logic}Select}` `${_a}` "" ${${_Logic}Else}
     !verbose pop
   !macroend
@@ -611,7 +604,7 @@
     !verbose push
     !verbose ${LOGICLIB_VERBOSITY}
     ${CaseElse}                                           ; Perform the CaseElse
-    !define ${_Logic}Else _${__LINE__}                    ; Get a label for the next Else and perform the new Case
+    !define ${_Logic}Else _LogicLib_Label_${__LINE__}                    ; Get a label for the next Else and perform the new Case
     !insertmacro _== `${${_Logic}Select}` `${_a}` +2 ""
     !insertmacro _== `${${_Logic}Select}` `${_b}` "" ${${_Logic}Else}
     !verbose pop
@@ -622,7 +615,7 @@
     !verbose push
     !verbose ${LOGICLIB_VERBOSITY}
     ${CaseElse}                                           ; Perform the CaseElse
-    !define ${_Logic}Else _${__LINE__}                    ; Get a label for the next Else and perform the new Case
+    !define ${_Logic}Else _LogicLib_Label_${__LINE__}                    ; Get a label for the next Else and perform the new Case
     !insertmacro _== `${${_Logic}Select}` `${_a}` +3 ""
     !insertmacro _== `${${_Logic}Select}` `${_b}` +2 ""
     !insertmacro _== `${${_Logic}Select}` `${_c}` "" ${${_Logic}Else}
@@ -634,7 +627,7 @@
     !verbose push
     !verbose ${LOGICLIB_VERBOSITY}
     ${CaseElse}                                           ; Perform the CaseElse
-    !define ${_Logic}Else _${__LINE__}                    ; Get a label for the next Else and perform the new Case
+    !define ${_Logic}Else _LogicLib_Label_${__LINE__}                    ; Get a label for the next Else and perform the new Case
     !insertmacro _== `${${_Logic}Select}` `${_a}` +4 ""
     !insertmacro _== `${${_Logic}Select}` `${_b}` +3 ""
     !insertmacro _== `${${_Logic}Select}` `${_c}` +2 ""
@@ -647,7 +640,7 @@
     !verbose push
     !verbose ${LOGICLIB_VERBOSITY}
     ${CaseElse}                                           ; Perform the CaseElse
-    !define ${_Logic}Else _${__LINE__}                    ; Get a label for the next Else and perform the new Case
+    !define ${_Logic}Else _LogicLib_Label_${__LINE__}                    ; Get a label for the next Else and perform the new Case
     !insertmacro _== `${${_Logic}Select}` `${_a}` +5 ""
     !insertmacro _== `${${_Logic}Select}` `${_b}` +4 ""
     !insertmacro _== `${${_Logic}Select}` `${_c}` +3 ""
@@ -682,10 +675,10 @@
     !verbose ${LOGICLIB_VERBOSITY}
     !insertmacro _PushLogic
     !insertmacro _PushScope Switch ${_Logic}              ; Keep a separate stack for switch data
-    !insertmacro _PushScope Break _${__LINE__}            ; Get a lable for beyond the end of the switch
+    !insertmacro _PushScope Break _LogicLib_Label_${__LINE__}            ; Get a lable for beyond the end of the switch
     !define ${_Switch}Var `${_a}`                         ; Remember the left hand side of the comparison
     !tempfile ${_Switch}Tmp                               ; Create a temporary file
-    !define ${_Logic}Switch _${__LINE__}                  ; Get a label for the end of the switch
+    !define ${_Logic}Switch _LogicLib_Label_${__LINE__}                  ; Get a label for the end of the switch
     Goto ${${_Logic}Switch}                               ; and go there
     !verbose pop
   !macroend
@@ -699,7 +692,7 @@
     !else ifndef _Switch                                  ; If not then check for an active Switch
       !error "Cannot use Case without a preceding Select or Switch"
     !else
-      !define _label _${__LINE__}                         ; Get a label for this case,
+      !define _label _LogicLib_Label_${__LINE__}                         ; Get a label for this case,
       ${_label}:                                          ; place it and add it's check to the temp file
       !appendfile "${${_Switch}Tmp}" `!insertmacro _== $\`${${_Switch}Var}$\` $\`${_a}$\` ${_label} ""$\n`
       !undef _label
@@ -717,7 +710,7 @@
     !else ifdef ${_Switch}Else                            ; Already had a default case?
       !error "Cannot use CaseElse following a CaseElse"
     !else
-      !define ${_Switch}Else _${__LINE__}                 ; Get a label for the default case,
+      !define ${_Switch}Else _LogicLib_Label_${__LINE__}                 ; Get a label for the default case,
       ${${_Switch}Else}:                                  ; and place it
     !endif
     !verbose pop

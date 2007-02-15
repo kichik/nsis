@@ -1,3 +1,19 @@
+/*
+ * util.c
+ * 
+ * This file is a part of NSIS.
+ * 
+ * Copyright (C) 1999-2007 Nullsoft and Contributors
+ * 
+ * Licensed under the zlib/libpng license (the "License");
+ * you may not use this file except in compliance with the License.
+ * 
+ * Licence details can be found in the file COPYING.
+ * 
+ * This software is provided 'as-is', without any express or implied
+ * warranty.
+ */
+
 #include "../Platform.h"
 #include <shellapi.h>
 #include "util.h"
@@ -9,7 +25,7 @@
 #include "ui.h"
 
 #ifdef NSIS_CONFIG_LOG
-#ifndef NSIS_CONFIG_LOG_ODS
+#if !defined(NSIS_CONFIG_LOG_ODS) && !defined(NSIS_CONFIG_LOG_STDOUT)
 char g_log_file[1024];
 #endif
 #endif
@@ -21,13 +37,13 @@ char g_log_file[1024];
 // which result in extra memory for extra variables without code to do allocation :)
 // nsis then removes the "DISCARDABLE" style from section (for safe)
 #ifdef _MSC_VER
-#  pragma bss_seg(VARS_SECTION_NAME)
+#  pragma bss_seg(NSIS_VARS_SECTION)
 NSIS_STRING g_usrvars[1];
 #  pragma bss_seg()
-#  pragma comment(linker, "/section:" VARS_SECTION_NAME ",rwd")
+#  pragma comment(linker, "/section:" NSIS_VARS_SECTION ",rwd")
 #else
 #  ifdef __GNUC__
-NSIS_STRING g_usrvars[1] __attribute__((section (VARS_SECTION_NAME)));
+NSIS_STRING g_usrvars[1] __attribute__((section (NSIS_VARS_SECTION)));
 #  else
 #    error Unknown compiler. You must implement the seperate PE section yourself.
 #  endif
@@ -126,12 +142,17 @@ void NSISCALL myDelete(char *buf, int flags)
     {
       do
       {
+        char *fdfn = fd.cFileName;
+        if (*findchar(fdfn, '?') && *fd.cAlternateFileName)
+          // name contains unicode, use short name
+          fdfn = fd.cAlternateFileName;
+
 #ifdef NSIS_SUPPORT_RMDIR
-        if (fd.cFileName[0] != '.' ||
-            (fd.cFileName[1] != '.' && fd.cFileName[1]))
+        if (fdfn[0] == '.' && !fdfn[1]) continue;
+        if (fdfn[0] == '.' && fdfn[1] == '.' && !fdfn[2]) continue;
 #endif//NSIS_SUPPORT_RMDIR
         {
-          mystrcpy(fn,fd.cFileName);
+          mystrcpy(fn,fdfn);
           if (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
           {
 #ifdef NSIS_SUPPORT_RMDIR
@@ -144,7 +165,7 @@ void NSISCALL myDelete(char *buf, int flags)
           else
           {
             log_printf2("Delete: DeleteFile(\"%s\")",buf);
-            SetFileAttributes(buf,fd.dwFileAttributes&(~FILE_ATTRIBUTE_READONLY));
+            remove_ro_attr(buf);
             if (!DeleteFile(buf))
             {
 #ifdef NSIS_SUPPORT_MOVEONREBOOT
@@ -187,6 +208,7 @@ void NSISCALL myDelete(char *buf, int flags)
     {
       addtrailingslash(buf);
       log_printf2("RMDir: RemoveDirectory(\"%s\")",buf);
+      remove_ro_attr(buf);
       if (!RemoveDirectory(buf))
       {
 #ifdef NSIS_SUPPORT_MOVEONREBOOT
@@ -348,6 +370,13 @@ void NSISCALL mini_memcpy(void *out, const void *in, int len)
   }
 }
 
+void NSISCALL remove_ro_attr(char *file)
+{
+  int attr = GetFileAttributes(file);
+  if (attr != INVALID_FILE_ATTRIBUTES)
+    SetFileAttributes(file,attr&(~FILE_ATTRIBUTE_READONLY));
+}
+
 HANDLE NSISCALL myOpenFile(const char *fn, DWORD da, DWORD cd)
 {
   int attr = GetFileAttributes(fn);
@@ -396,8 +425,11 @@ void NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
     static char tmpbuf[1024];
     int cchRenameLine;
     char *szRenameSec = "[Rename]\r\n";
-    HANDLE hfile, hfilemap;
-    DWORD dwFileSize, dwRenameLinePos;
+    HANDLE hfile;
+    DWORD dwFileSize;
+    DWORD dwBytes;
+    DWORD dwRenameLinePos;
+    char *pszWinInit;
 
     int spn;
 
@@ -418,20 +450,16 @@ void NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
 
     GetWindowsDirectory(wininit, 1024-16);
     mystrcat(wininit, "\\wininit.ini");
-    hfile = CreateFile(wininit,
-        GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_ALWAYS,
-        FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, NULL);
+    hfile = myOpenFile(wininit, GENERIC_READ | GENERIC_WRITE, OPEN_ALWAYS);
 
     if (hfile != INVALID_HANDLE_VALUE)
     {
       dwFileSize = GetFileSize(hfile, NULL);
-      hfilemap = CreateFileMapping(hfile, NULL, PAGE_READWRITE, 0, dwFileSize + cchRenameLine + 10, NULL);
+      pszWinInit = GlobalAlloc(GPTR, dwFileSize + cchRenameLine + 10);
 
-      if (hfilemap != NULL)
+      if (pszWinInit != NULL)
       {
-        LPSTR pszWinInit = (LPSTR) MapViewOfFile(hfilemap, FILE_MAP_WRITE, 0, 0, 0);
-
-        if (pszWinInit != NULL)
+        if (ReadFile(hfile, pszWinInit, dwFileSize, &dwBytes, NULL) && dwFileSize == dwBytes)
         {
           LPSTR pszRenameSecInFile = mystrstri(pszWinInit, szRenameSec);
           if (pszRenameSecInFile == NULL)
@@ -461,18 +489,16 @@ void NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
           mini_memcpy(&pszWinInit[dwRenameLinePos], szRenameLine, cchRenameLine);
           dwFileSize += cchRenameLine;
 
-          UnmapViewOfFile(pszWinInit);
+          SetFilePointer(hfile, 0, NULL, FILE_BEGIN);
+          WriteFile(hfile, pszWinInit, dwFileSize, &dwBytes, NULL);
 
-          //fOk++;
+          GlobalFree(pszWinInit);
         }
-        CloseHandle(hfilemap);
       }
-      SetFilePointer(hfile, dwFileSize, NULL, FILE_BEGIN);
-      SetEndOfFile(hfile);
+      
       CloseHandle(hfile);
     }
   }
-  //return fOk;
 
 #ifdef NSIS_SUPPORT_REBOOT
   g_exec_flags.exec_reboot++;
@@ -496,7 +522,8 @@ void NSISCALL myRegGetStr(HKEY root, const char *sub, const char *name, char *ou
 
 void NSISCALL myitoa(char *s, int d)
 {
-  wsprintf(s,"%d",d);
+  static const char c[] = "%d";
+  wsprintf(s,c,d);
 }
 
 int NSISCALL myatoi(char *s)
@@ -544,7 +571,7 @@ int NSISCALL myatoi(char *s)
 // of a new function there should be about a couple of dozen or so calls.
 char * NSISCALL mystrcpy(char *out, const char *in)
 {
-  return lstrcpy(out, in);
+  return lstrcpyn(out, in, NSIS_MAX_STRLEN);
 }
 
 int NSISCALL mystrlen(const char *in)
@@ -587,45 +614,21 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
 
       if (nVarIdx == NS_SHELL_CODE)
       {
-        // NOTE 1: the code CSIDL_PRINTERS, is used for QUICKLAUNCH
-        // NOTE 2: the code CSIDL_BITBUCKET is used for COMMONFILES
-        // NOTE 3: the code CSIDL_CONTROLS is used for PROGRAMFILES
         LPITEMIDLIST idl;
         char *append = 0;
 
-        int x = 0;
+        int x = 2;
 
-        *out = 0;
-
-        if (fldrs[2] == CSIDL_PRINTERS) // QUICKLAUNCH
+        // all users' version is CSIDL_APPDATA only for $QUICKLAUNCH
+        // for normal $APPDATA, it'd be CSIDL_APPDATA_COMMON
+        if (fldrs[2] == CSIDL_APPDATA)
         {
           append = "\\Microsoft\\Internet Explorer\\Quick Launch";
-          x = 2;
-        }
-        if (fldrs[0] == CSIDL_PROGRAM_FILES_COMMON)
-        {
-          myRegGetStr(HKEY_LOCAL_MACHINE, SYSREGKEY, "CommonFilesDir", out);
-        }
-        if (fldrs[0] == CSIDL_PROGRAM_FILES)
-        {
-          myRegGetStr(HKEY_LOCAL_MACHINE, SYSREGKEY, "ProgramFilesDir", out);
-          if (!*out)
-            mystrcpy(out, "C:\\Program Files");
-        }
-        if (fldrs[0] == CSIDL_SYSTEM)
-        {
-          GetSystemDirectory(out, NSIS_MAX_STRLEN);
-        }
-        if (fldrs[0] == CSIDL_WINDOWS)
-        {
-          GetWindowsDirectory(out, NSIS_MAX_STRLEN);
         }
 
-        if (!*out)
+        if (g_exec_flags.all_user_var)
         {
           x = 4;
-          if (!g_exec_flags.all_user_var)
-            x = 2;
         }
 
         while (x--)
@@ -639,8 +642,30 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
               break;
             }
           }
-          else
-            *out=0;
+          *out=0;
+        }
+
+        // resort to old registry methods, only when CSIDL failed
+        if (!*out)
+        {
+          if (fldrs[0] == CSIDL_PROGRAM_FILES_COMMON)
+          {
+            myRegGetStr(HKEY_LOCAL_MACHINE, SYSREGKEY, "CommonFilesDir", out);
+          }
+          else if (fldrs[0] == CSIDL_PROGRAM_FILES)
+          {
+            myRegGetStr(HKEY_LOCAL_MACHINE, SYSREGKEY, "ProgramFilesDir", out);
+            if (!*out)
+              mystrcpy(out, "C:\\Program Files");
+          }
+          else if (fldrs[0] == CSIDL_SYSTEM)
+          {
+            GetSystemDirectory(out, NSIS_MAX_STRLEN);
+          }
+          else if (fldrs[0] == CSIDL_WINDOWS)
+          {
+            GetWindowsDirectory(out, NSIS_MAX_STRLEN);
+          }
         }
 
         if (*out && append)
@@ -649,7 +674,6 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
         }
 
         validate_filename(out);
-        out += mystrlen(out);
       }
       else if (nVarIdx == NS_VAR_CODE)
       {
@@ -663,13 +687,12 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
           // $LANGUAGE is just a number anyway...
           validate_filename(out);
         }
-        out += mystrlen(out);
       } // == VAR_CODES_START
       else if (nVarIdx == NS_LANG_CODE)
       {
         GetNSISString(out, -nData-1);
-        out += mystrlen(out);
       }
+      out += mystrlen(out);
     }
     else if (nVarIdx == NS_SKIP_CODE)
     {
@@ -682,7 +705,7 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
   } // while
   *out = 0;
   if (outbuf)
-    return lstrcpyn(outbuf, ps_tmpbuf, NSIS_MAX_STRLEN);
+    return mystrcpy(outbuf, ps_tmpbuf);
   return ps_tmpbuf;
 }
 
@@ -727,9 +750,9 @@ void NSISCALL validate_filename(char *in) {
 
 #ifdef NSIS_CONFIG_LOG
 int log_dolog;
-char log_text[NSIS_MAX_STRLEN*4];
+char log_text[2048]; // 1024 for each wsprintf
 
-#ifndef NSIS_CONFIG_LOG_ODS
+#if !defined(NSIS_CONFIG_LOG_ODS) && !defined(NSIS_CONFIG_LOG_STDOUT)
 void NSISCALL log_write(int close)
 {
   static HANDLE fp=INVALID_HANDLE_VALUE;
@@ -758,18 +781,89 @@ void NSISCALL log_write(int close)
     }
   }
 }
-#endif//!NSIS_CONFIG_LOG_ODS
+#endif//!NSIS_CONFIG_LOG_ODS && !NSIS_CONFIG_LOG_STDOUT
+
+const char * _RegKeyHandleToName(HKEY hKey)
+{
+  if (hKey == HKEY_CLASSES_ROOT)
+    return "HKEY_CLASSES_ROOT";
+  else if (hKey == HKEY_CURRENT_USER)
+    return "HKEY_CURRENT_USER";
+  else if (hKey == HKEY_LOCAL_MACHINE)
+    return "HKEY_LOCAL_MACHINE";
+  else if (hKey == HKEY_USERS)
+    return "HKEY_USERS";
+  else if (hKey == HKEY_PERFORMANCE_DATA)
+    return "HKEY_PERFORMANCE_DATA";
+  else if (hKey == HKEY_CURRENT_CONFIG)
+    return "HKEY_CURRENT_CONFIG";
+  else if (hKey == HKEY_DYN_DATA)
+    return "HKEY_DYN_DATA";
+  else
+    return "invalid registry key";
+}
+
+void _LogData2Hex(char *buf, size_t buflen, unsigned char *data, size_t datalen)
+{
+  char *p = buf;
+
+  size_t i;
+
+  int dots = 0;
+  size_t bufbytes = buflen / 3; // 2 hex digits, one space/null
+
+  if (datalen > bufbytes)
+  {
+    bufbytes--;
+    dots = 1;
+  }
+  else
+    bufbytes = datalen;
+
+  for (i = 0; i < bufbytes; i++)
+  {
+    wsprintf(p, "%02x%c", data[i], (i == bufbytes - 1) ? '\0' : ' ');
+    p += 3;
+  }
+
+  if (dots)
+    mystrcat(buf, "...");
+}
+
+#ifdef NSIS_CONFIG_LOG_TIMESTAMP
+void log_timestamp(char *buf)
+{
+  SYSTEMTIME st;
+  GetLocalTime(&st);
+  wsprintf(buf,"[%04hu/%02hu/%02hu %02hu:%02hu:%02hu] ", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
+}
+#else
+#  define log_timestamp(x)
+#endif//NSIS_CONFIG_LOG_TIMESTAMP
 
 void log_printf(char *format, ...)
 {
   va_list val;
   va_start(val,format);
-  wvsprintf(log_text,format,val);
+
+  log_text[0] = '\0';
+  log_timestamp(log_text);
+  wvsprintf(log_text+mystrlen(log_text),format,val);
+
   va_end(val);
 #ifdef NSIS_CONFIG_LOG_ODS
   if (log_dolog)
     OutputDebugString(log_text);
-#else
+#endif
+#ifdef NSIS_CONFIG_LOG_STDOUT
+  if (log_dolog && GetStdHandle(STD_OUTPUT_HANDLE) != INVALID_HANDLE_VALUE)
+  {
+    DWORD dwBytes;
+    WriteFile(GetStdHandle(STD_OUTPUT_HANDLE), log_text, lstrlen(log_text), &dwBytes, NULL);
+    WriteFile(GetStdHandle(STD_OUTPUT_HANDLE), "\n", 1, &dwBytes, NULL);
+  }
+#endif
+#if !defined(NSIS_CONFIG_LOG_ODS) && !defined(NSIS_CONFIG_LOG_STDOUT)
   log_write(0);
 #endif
 }

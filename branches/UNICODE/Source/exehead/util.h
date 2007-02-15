@@ -1,3 +1,19 @@
+/*
+ * util.h
+ * 
+ * This file is a part of NSIS.
+ * 
+ * Copyright (C) 1999-2007 Nullsoft and Contributors
+ * 
+ * Licensed under the zlib/libpng license (the "License");
+ * you may not use this file except in compliance with the License.
+ * 
+ * Licence details can be found in the file COPYING.
+ * 
+ * This software is provided 'as-is', without any express or implied
+ * warranty.
+ */
+
 #include "../Platform.h"
 #include "config.h"
 #include <shlobj.h>
@@ -28,8 +44,10 @@ int NSISCALL my_GetDialogItemText(UINT idx, char *val);
 //#define my_GetDialogItemText GetDlgItemText
 
 #ifdef NSIS_CONFIG_LOG
-extern char log_text[NSIS_MAX_STRLEN*4];
+extern char log_text[2048];
 void NSISCALL log_write(int close);
+const char * _RegKeyHandleToName(HKEY hKey);
+void _LogData2Hex(char *buf, size_t buflen, unsigned char *data, size_t datalen);
 void log_printf(char *format, ...);
 #define log_printf2(x1,x2) log_printf(x1,x2);
 #define log_printf3(x1,x2,x3) log_printf(x1,x2,x3);
@@ -38,6 +56,8 @@ void log_printf(char *format, ...);
 #define log_printf6(x1,x2,x3,x4,x5,x6) log_printf(x1,x2,x3,x4,x5,x6);
 #define log_printf7(x1,x2,x3,x4,x5,x6,x7) log_printf(x1,x2,x3,x4,x5,x6,x7);
 #define log_printf8(x1,x2,x3,x4,x5,x6,x7,x8) log_printf(x1,x2,x3,x4,x5,x6,x7,x8);
+#define RegKeyHandleToName(x1) _RegKeyHandleToName(x1);
+#define LogData2Hex(x1,x2,x3,x4) _LogData2Hex(x1,x2,x3,x4);
 extern int log_dolog;
 extern char g_log_file[1024];
 #else
@@ -49,6 +69,8 @@ extern char g_log_file[1024];
 #define log_printf6(x1,x2,x3,x4,x5,x6)
 #define log_printf7(x1,x2,x3,x4,x5,x6,x7)
 #define log_printf8(x1,x2,x3,x4,x5,x6,x7,x8)
+#define RegKeyHandleToName(x1) NULL
+#define LogData2Hex(x1,x2,x3,x4)
 #endif
 
 HANDLE NSISCALL myCreateProcess(char *cmd, char *dir);
@@ -68,6 +90,7 @@ int NSISCALL is_valid_instpath(char *s);
 void NSISCALL validate_filename(char *fn);
 void NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew);
 void NSISCALL mini_memcpy(void *out, const void *in, int len);
+void NSISCALL remove_ro_attr(char *file);
 
 void * NSISCALL myGetProcAddress(char *dll, char *func);
 void NSISCALL MessageLoop(UINT uCheckedMsg);

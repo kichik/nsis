@@ -1,16 +1,15 @@
 /*
-  Note: this version of zlib has been hacked up quite a bit in order to reduce
-  the size of the EXE header and to remove what we didn't need.
-  For the complete real thing, go to:
-
-  http://www.info-zip.org/pub/infozip/zlib/
-
-  Peace,
-
-  -Justin
-*/
-
-
+ * This file is a part of the zlib compression module for NSIS.
+ * 
+ * Copyright and license information can be found below.
+ * Modifications Copyright (C) 1999-2007 Nullsoft and Contributors
+ * 
+ * The original zlib source code is available at
+ * http://www.zlib.net/
+ * 
+ * This software is provided 'as-is', without any express or implied
+ * warranty.
+ */
 
 /* zlib.h -- interface of the 'zlib' general purpose compression library
   version 1.1.3, July 9th, 1998

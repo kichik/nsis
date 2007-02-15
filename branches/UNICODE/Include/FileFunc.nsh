@@ -1,10 +1,10 @@
 /*
 _____________________________________________________________________________
 
-                       File Functions Header v2.7
+                       File Functions Header v3.4
 _____________________________________________________________________________
 
- 2005 Shengalts Aleksander aka Instructor (Shengalts@mail.ru)
+ 2006 Shengalts Aleksander aka Instructor (Shengalts@mail.ru)
 
  See documentation for more information about the following functions.
 
@@ -18,14 +18,14 @@ _____________________________________________________________________________
 
  FileFunction=[Locate|GetSize|DriveSpace|GetDrives|GetTime|GetFileAttributes|
                GetFileVersion|GetExeName|GetExePath|GetParameters|GetOptions|
-               GetRoot|GetParent|GetFileName|GetBaseName|GetFileExt|
+               GetOptionsS|GetRoot|GetParent|GetFileName|GetBaseName|GetFileExt|
                BannerTrimPath|DirState|RefreshShellIcons]
 
  un.FileFunction=[un.Locate|un.GetSize|un.DriveSpace|un.GetDrives|un.GetTime|
                   un.GetFileAttributes|un.GetFileVersion|un.GetExeName|
-                  un.GetExePath|un.GetParameters|un.GetOptions|un.GetRoot|
-                  un.GetParent|un.GetFileName|un.GetBaseName|un.GetFileExt|
-                  un.BannerTrimPath|un.DirState|un.RefreshShellIcons]
+                  un.GetExePath|un.GetParameters|un.GetOptions|un.GetOptionsS|
+                  un.GetRoot|un.GetParent|un.GetFileName|un.GetBaseName|
+                  un.GetFileExt|un.BannerTrimPath|un.DirState|un.RefreshShellIcons]
 
 _____________________________________________________________________________
 
@@ -61,7 +61,7 @@ RefreshShellIcons
 
 ;_____________________________________________________________________________
 ;
-;                                   Macros
+;                         Macros
 ;_____________________________________________________________________________
 ;
 ; Change log window verbosity (default: 3=no script)
@@ -73,6 +73,9 @@ RefreshShellIcons
 ; !insertmacro VersionCompare
 ; ${FILEFUNC_VERBOSE} 3   # no script
 
+!ifndef FILEFUNC_INCLUDED
+!define FILEFUNC_INCLUDED
+
 !verbose push
 !verbose 3
 !ifndef _FILEFUNC_VERBOSE
@@ -81,6 +84,7 @@ RefreshShellIcons
 !verbose ${_FILEFUNC_VERBOSE}
 !define FILEFUNC_VERBOSE `!insertmacro FILEFUNC_VERBOSE`
 !define _FILEFUNC_UN
+!define _FILEFUNC_S
 !verbose pop
 
 !macro FILEFUNC_VERBOSE _VERBOSE
@@ -88,11 +92,11 @@ RefreshShellIcons
 	!verbose 3
 	!undef _FILEFUNC_VERBOSE
 	!define _FILEFUNC_VERBOSE ${_VERBOSE}
-	!verbose 4
-	!echo `"verbosity=${_VERBOSE}"`
 	!verbose pop
 !macroend
 
+
+# Install. Case insensitive. #
 
 !macro LocateCall _PATH _OPTIONS _FUNC
 	!verbose push
@@ -435,11 +439,13 @@ RefreshShellIcons
 			findfirst:
 			FindFirst $0 $R7 '$R8\$4'
 			IfErrors subdir
-			StrCmp $R7 '.' 0 +5
+			StrCmp $R7 '.' 0 dir
 			FindNext $0 $R7
-			StrCmp $R7 '..' 0 +3
+			StrCmp $R7 '..' 0 dir
 			FindNext $0 $R7
-			IfErrors subdir
+			IfErrors 0 dir
+			FindClose $0
+			goto subdir
 
 			dir:
 			IfFileExists '$R8\$R7\*.*' 0 file
@@ -508,9 +514,13 @@ RefreshShellIcons
 			Pop $2
 			Pop $1
 			Pop $0
-			IfErrors error
 
-			StrCmp $R9 'StopLocate' clearstack
+			IfErrors 0 +3
+			FindClose $0
+			goto error
+			StrCmp $R9 'StopLocate' 0 +3
+			FindClose $0
+			goto clearstack
 			goto $9
 
 			findnext:
@@ -522,17 +532,20 @@ RefreshShellIcons
 			StrCpy $9 $7 2
 			StrCmp $9 'G0' end
 			FindFirst $0 $R7 '$R8\*.*'
-			StrCmp $R7 '.' 0 +5
+			StrCmp $R7 '.' 0 pushdir
 			FindNext $0 $R7
-			StrCmp $R7 '..' 0 +3
+			StrCmp $R7 '..' 0 pushdir
 			FindNext $0 $R7
-			IfErrors +7
+			IfErrors 0 pushdir
+			FindClose $0
+			StrCmp $8 0 end nextdir
 
+			pushdir:
 			IfFileExists '$R8\$R7\*.*' 0 +3
 			Push '$R8\$R7'
 			IntOp $8 $8 + 1
 			FindNext $0 $R7
-			IfErrors 0 -4
+			IfErrors 0 pushdir
 			FindClose $0
 			StrCmp $8 0 end nextdir
 
@@ -563,8 +576,6 @@ RefreshShellIcons
 			Pop $0
 		FunctionEnd
 
-		!undef _FILEFUNC_UN
-		!define _FILEFUNC_UN
 		!verbose pop
 	!endif
 !macroend
@@ -698,11 +709,13 @@ RefreshShellIcons
 			Pop $R8
 			FindFirst $0 $R7 '$R8\$4'
 			IfErrors show
-			StrCmp $R7 '.' 0 +5
+			StrCmp $R7 '.' 0 dir
 			FindNext $0 $R7
-			StrCmp $R7 '..' 0 +3
+			StrCmp $R7 '..' 0 dir
 			FindNext $0 $R7
-			IfErrors show
+			IfErrors 0 dir
+			FindClose $0
+			goto show
 
 			dir:
 			IfFileExists '$R8\$R7\*.*' 0 file
@@ -723,7 +736,7 @@ RefreshShellIcons
 			StrCmp $6 '' +2
 			IntCmp $R6 $6 0 0 findnext
 			IntOp $R4 $R4 + 1
-			System::Int64Op $R3 + $R6
+			System::Int64Op /NOUNLOAD $R3 + $R6
 			Pop $R3
 
 			findnext:
@@ -733,7 +746,7 @@ RefreshShellIcons
 
 			show:
 			StrCmp $5$6 '' nosize
-			System::Int64Op $R3 / $1
+			System::Int64Op /NOUNLOAD $R3 / $1
 			Pop $9
 			DetailPrint 'Size:$9 $2  Files:$R4  Folders:$R5'
 			goto subdir
@@ -743,19 +756,22 @@ RefreshShellIcons
 			subdir:
 			StrCmp $7 0 preend
 			FindFirst $0 $R7 '$R8\*.*'
-			StrCmp $R7 '.' 0 +5
+			StrCmp $R7 '.' 0 pushdir
 			FindNext $0 $R7
-			StrCmp $R7 '..' 0 +3
+			StrCmp $R7 '..' 0 pushdir
 			FindNext $0 $R7
-			IfErrors +7
+			IfErrors 0 pushdir
+			FindClose $0
+			StrCmp $8 0 preend nextdir
 
+			pushdir:
 			IfFileExists '$R8\$R7\*.*' 0 +3
 			Push '$R8\$R7'
 			IntOp $8 $8 + 1
 			FindNext $0 $R7
-			IfErrors 0 -4
+			IfErrors 0 pushdir
 			FindClose $0
-			StrCmp $8 0 0 nextdir
+			StrCmp $8 0 preend nextdir
 
 			preend:
 			StrCmp $R3 '' nosizeend
@@ -796,8 +812,6 @@ RefreshShellIcons
 			Exch $0
 		FunctionEnd
 
-		!undef _FILEFUNC_UN
-		!define _FILEFUNC_UN
 		!verbose pop
 	!endif
 !macroend
@@ -882,13 +896,13 @@ RefreshShellIcons
 			StrCpy $6 1073741824
 
 			getspace:
-			System::Call 'kernel32::GetDiskFreeSpaceExA(t, *l, *l, *l)i(r0,.r2,.r3,.)'
+			System::Call /NOUNLOAD 'kernel32::GetDiskFreeSpaceExA(t, *l, *l, *l)i(r0,.r2,.r3,.)'
 
 			StrCmp $5 T 0 +3
 			StrCpy $0 $3
 			goto getsize
 			StrCmp $5 O 0 +4
-			System::Int64Op $3 - $2
+			System::Int64Op /NOUNLOAD $3 - $2
 			Pop $0
 			goto getsize
 			StrCmp $5 F 0 +2
@@ -913,8 +927,6 @@ RefreshShellIcons
 			Exch $0
 		FunctionEnd
 
-		!undef _FILEFUNC_UN
-		!define _FILEFUNC_UN
 		!verbose pop
 	!endif
 !macroend
@@ -938,9 +950,9 @@ RefreshShellIcons
 			Push $8
 			Push $9
 
-			System::Alloc 1024
+			System::Alloc /NOUNLOAD 1024
 			Pop $2
-			System::Call 'kernel32::GetLogicalDriveStringsA(i,i) i(1024, r2)'
+			System::Call /NOUNLOAD 'kernel32::GetLogicalDriveStringsA(i,i) i(1024, r2)'
 
 			StrCmp $0 ALL drivestring
 			StrCmp $0 '' 0 typeset
@@ -977,10 +989,10 @@ RefreshShellIcons
 			StrCpy $3 $2
 
 			enumok:
-			System::Call 'kernel32::lstrlenA(t) i(i r3) .r4'
+			System::Call /NOUNLOAD 'kernel32::lstrlenA(t) i(i r3) .r4'
 			StrCmp $4$0 '0ALL' enumex
 			StrCmp $4 0 typeset
-			System::Call 'kernel32::GetDriveTypeA(t) i(i r3) .r5'
+			System::Call /NOUNLOAD 'kernel32::GetDriveTypeA(t) i(i r3) .r5'
 
 			StrCmp $0 ALL +2
 			StrCmp $5 $6 letter enumnext
@@ -1000,7 +1012,7 @@ RefreshShellIcons
 			StrCpy $8 RAM
 
 			letter:
-			System::Call '*$3(&t1024 .r9)'
+			System::Call /NOUNLOAD '*$3(&t1024 .r9)'
 
 			Push $0
 			Push $1
@@ -1041,8 +1053,6 @@ RefreshShellIcons
 			Pop $0
 		FunctionEnd
 
-		!undef _FILEFUNC_UN
-		!define _FILEFUNC_UN
 		!verbose pop
 	!endif
 !macroend
@@ -1070,33 +1080,54 @@ RefreshShellIcons
 			StrCmp $1 'A' getfile
 			StrCmp $1 'C' getfile
 			StrCmp $1 'M' getfile
+			StrCmp $1 'LS' gettime
+			StrCmp $1 'AS' getfile
+			StrCmp $1 'CS' getfile
+			StrCmp $1 'MS' getfile
 			goto error
 
 			getfile:
 			IfFileExists $0 0 error
-			System::Call '*(i,l,l,l,i,i,i,i,&t260,&t14) i .r6'
-			System::Call 'kernel32::FindFirstFileA(t,i)i(r0,r6) .r2'
-			System::Call 'kernel32::FindClose(i)i(r2)'
+			System::Call /NOUNLOAD '*(i,l,l,l,i,i,i,i,&t260,&t14) i .r6'
+			System::Call /NOUNLOAD 'kernel32::FindFirstFileA(t,i)i(r0,r6) .r2'
+			System::Call /NOUNLOAD 'kernel32::FindClose(i)i(r2)'
 
 			gettime:
-			System::Call '*(&i2,&i2,&i2,&i2,&i2,&i2,&i2,&i2) i .r7'
-			StrCmp $1 'L' 0 filetime
-			System::Call 'kernel32::GetLocalTime(i)i(r7)'
+			System::Call /NOUNLOAD '*(&i2,&i2,&i2,&i2,&i2,&i2,&i2,&i2) i .r7'
+			StrCmp $1 'L' 0 systemtime
+			System::Call /NOUNLOAD 'kernel32::GetLocalTime(i)i(r7)'
+			goto convert
+			systemtime:
+			StrCmp $1 'LS' 0 filetime
+			System::Call /NOUNLOAD 'kernel32::GetSystemTime(i)i(r7)'
 			goto convert
 
 			filetime:
-			System::Call '*$6(i,l,l,l,i,i,i,i,&t260,&t14)i(,.r4,.r3,.r2)'
-			System::Free $6
+			System::Call /NOUNLOAD '*$6(i,l,l,l,i,i,i,i,&t260,&t14)i(,.r4,.r3,.r2)'
+			System::Free /NOUNLOAD $6
 			StrCmp $1 'A' 0 +3
 			StrCpy $2 $3
-			goto +3
-			StrCmp $1 'C' 0 +2
+			goto tolocal
+			StrCmp $1 'C' 0 +3
 			StrCpy $2 $4
-			System::Call 'kernel32::FileTimeToLocalFileTime(*l,*l)i(r2,.r3)'
-			System::Call 'kernel32::FileTimeToSystemTime(*l,i)i(r3,r7)'
+			goto tolocal
+			StrCmp $1 'M' tolocal
+
+			StrCmp $1 'AS' tosystem
+			StrCmp $1 'CS' 0 +3
+			StrCpy $3 $4
+			goto tosystem
+			StrCmp $1 'MS' 0 +3
+			StrCpy $3 $2
+			goto tosystem
+
+			tolocal:
+			System::Call /NOUNLOAD 'kernel32::FileTimeToLocalFileTime(*l,*l)i(r2,.r3)'
+			tosystem:
+			System::Call /NOUNLOAD 'kernel32::FileTimeToSystemTime(*l,i)i(r3,r7)'
 
 			convert:
-			System::Call '*$7(&i2,&i2,&i2,&i2,&i2,&i2,&i2,&i2)i(.r5,.r6,.r4,.r0,.r3,.r2,.r1,)'
+			System::Call /NOUNLOAD '*$7(&i2,&i2,&i2,&i2,&i2,&i2,&i2,&i2)i(.r5,.r6,.r4,.r0,.r3,.r2,.r1,)'
 			System::Free $7
 
 			IntCmp $0 9 0 0 +2
@@ -1157,8 +1188,6 @@ RefreshShellIcons
 			Exch $0
 		FunctionEnd
 
-		!undef _FILEFUNC_UN
-		!define _FILEFUNC_UN
 		!verbose pop
 	!endif
 !macroend
@@ -1180,92 +1209,65 @@ RefreshShellIcons
 			Push $5
 
 			System::Call 'kernel32::GetFileAttributes(t r0)i .r2'
-
 			StrCmp $2 -1 error
 			StrCpy $3 ''
 
-			IntOp $0 $2 - 16384
-			IntCmp $0 0 0 +4
+			IntOp $0 $2 & 0x4000
+			IntCmp $0 0 +2
 			StrCpy $3 'ENCRYPTED|'
-			StrCpy $2 $0
-			StrCmp $2 0 all
 
-			IntOp $0 $2 - 8192
-			IntCmp $0 0 0 +4
+			IntOp $0 $2 & 0x2000
+			IntCmp $0 0 +2
 			StrCpy $3 'NOT_CONTENT_INDEXED|$3'
-			StrCpy $2 $0
-			StrCmp $2 0 all
 
-			IntOp $0 $2 - 4096
-			IntCmp $0 0 0 +4
+			IntOp $0 $2 & 0x1000
+			IntCmp $0 0 +2
 			StrCpy $3 'OFFLINE|$3'
-			StrCpy $2 $0
-			StrCmp $2 0 all
 
-			IntOp $0 $2 - 2048
-			IntCmp $0 0 0 +4
+			IntOp $0 $2 & 0x0800
+			IntCmp $0 0 +2
 			StrCpy $3 'COMPRESSED|$3'
-			StrCpy $2 $0
-			StrCmp $2 0 all
 
-			IntOp $0 $2 - 1024
-			IntCmp $0 0 0 +4
+			IntOp $0 $2 & 0x0400
+			IntCmp $0 0 +2
 			StrCpy $3 'REPARSE_POINT|$3'
-			StrCpy $2 $0
-			StrCmp $2 0 all
 
-			IntOp $0 $2 - 512
-			IntCmp $0 0 0 +4
+			IntOp $0 $2 & 0x0200
+			IntCmp $0 0 +2
 			StrCpy $3 'SPARSE_FILE|$3'
-			StrCpy $2 $0
-			StrCmp $2 0 all
 
-			IntOp $0 $2 - 256
-			IntCmp $0 0 0 +4
+			IntOp $0 $2 & 0x0100
+			IntCmp $0 0 +2
 			StrCpy $3 'TEMPORARY|$3'
-			StrCpy $2 $0
-			StrCmp $2 0 all
 
-			IntOp $0 $2 - 128
-			IntCmp $0 0 0 +4
+			IntOp $0 $2 & 0x0080
+			IntCmp $0 0 +2
 			StrCpy $3 'NORMAL|$3'
-			StrCpy $2 $0
-			StrCmp $2 0 all
 
-			IntOp $0 $2 - 64
-			IntCmp $0 0 0 +4
+			IntOp $0 $2 & 0x0040
+			IntCmp $0 0 +2
 			StrCpy $3 'DEVICE|$3'
-			StrCpy $2 $0
-			StrCmp $2 0 all
 
-			IntOp $0 $2 - 32
-			IntCmp $0 0 0 +4
+			IntOp $0 $2 & 0x0020
+			IntCmp $0 0 +2
 			StrCpy $3 'ARCHIVE|$3'
-			StrCpy $2 $0
-			StrCmp $2 0 all
 
-			IntOp $0 $2 - 16
-			IntCmp $0 0 0 +4
+			IntOp $0 $2 & 0x0010
+			IntCmp $0 0 +2
 			StrCpy $3 'DIRECTORY|$3'
-			StrCpy $2 $0
-			StrCmp $2 0 all
 
-			IntOp $0 $2 - 4
-			IntCmp $0 0 0 +4
+			IntOp $0 $2 & 0x0004
+			IntCmp $0 0 +2
 			StrCpy $3 'SYSTEM|$3'
-			StrCpy $2 $0
-			StrCmp $2 0 all
 
-			IntOp $0 $2 - 2
-			IntCmp $0 0 0 +4
+			IntOp $0 $2 & 0x0002
+			IntCmp $0 0 +2
 			StrCpy $3 'HIDDEN|$3'
-			StrCpy $2 $0
-			StrCmp $2 0 all
 
-			IntOp $0 $2 - 1
+			IntOp $0 $2 & 0x0001
+			IntCmp $0 0 +2
 			StrCpy $3 'READONLY|$3'
 
-			all:
 			StrCpy $0 $3 -1
 			StrCmp $1 '' end
 			StrCmp $1 'ALL' end
@@ -1306,8 +1308,6 @@ RefreshShellIcons
 			Exch $0
 		FunctionEnd
 
-		!undef _FILEFUNC_UN
-		!define _FILEFUNC_UN
 		!verbose pop
 	!endif
 !macroend
@@ -1351,8 +1351,6 @@ RefreshShellIcons
 			Exch $0
 		FunctionEnd
 
-		!undef _FILEFUNC_UN
-		!define _FILEFUNC_UN
 		!verbose pop
 	!endif
 !macroend
@@ -1367,7 +1365,7 @@ RefreshShellIcons
 			Push $0
 			Push $1
 			Push $2
-			System::Call 'kernel32::GetModuleFileNameA(i 0, t .r0, i 1024)'
+			System::Call /NOUNLOAD 'kernel32::GetModuleFileNameA(i 0, t .r0, i 1024)'
 			System::Call 'kernel32::GetLongPathNameA(t r0, t .r1, i 1024)i .r2'
 			StrCmp $2 error +2
 			StrCpy $0 $1
@@ -1376,8 +1374,6 @@ RefreshShellIcons
 			Exch $0
 		FunctionEnd
 
-		!undef _FILEFUNC_UN
-		!define _FILEFUNC_UN
 		!verbose pop
 	!endif
 !macroend
@@ -1401,8 +1397,6 @@ RefreshShellIcons
 			Exch $0
 		FunctionEnd
 
-		!undef _FILEFUNC_UN
-		!define _FILEFUNC_UN
 		!verbose pop
 	!endif
 !macroend
@@ -1446,19 +1440,17 @@ RefreshShellIcons
 			Exch $0
 		FunctionEnd
 
-		!undef _FILEFUNC_UN
-		!define _FILEFUNC_UN
 		!verbose pop
 	!endif
 !macroend
 
 !macro GetOptions
-	!ifndef ${_FILEFUNC_UN}GetOptions
+	!ifndef ${_FILEFUNC_UN}GetOptions${_FILEFUNC_S}
 		!verbose push
 		!verbose ${_FILEFUNC_VERBOSE}
-		!define ${_FILEFUNC_UN}GetOptions `!insertmacro ${_FILEFUNC_UN}GetOptionsCall`
+		!define ${_FILEFUNC_UN}GetOptions${_FILEFUNC_S} `!insertmacro ${_FILEFUNC_UN}GetOptions${_FILEFUNC_S}Call`
 
-		Function ${_FILEFUNC_UN}GetOptions
+		Function ${_FILEFUNC_UN}GetOptions${_FILEFUNC_S}
 			Exch $1
 			Exch
 			Exch $0
@@ -1469,6 +1461,7 @@ RefreshShellIcons
 			Push $5
 			Push $6
 			Push $7
+			ClearErrors
 
 			StrCpy $2 $1 '' 1
 			StrCpy $1 $1 1
@@ -1482,44 +1475,44 @@ RefreshShellIcons
 			quote:
 			IntOp $4 $4 + 1
 			StrCpy $5 $0 1 $4
-			StrCmp $5$7 '0' notfound
-			StrCmp $5 '' trimright
-			StrCmp $5 '"' 0 +7
-			StrCmp $6 '' 0 +3
+			StrCmp${_FILEFUNC_S} $5$7 '0' notfound
+			StrCmp${_FILEFUNC_S} $5 '' trimright
+			StrCmp${_FILEFUNC_S} $5 '"' 0 +7
+			StrCmp${_FILEFUNC_S} $6 '' 0 +3
 			StrCpy $6 '"'
 			goto quote
-			StrCmp $6 '"' 0 +3
+			StrCmp${_FILEFUNC_S} $6 '"' 0 +3
 			StrCpy $6 ''
 			goto quote
-			StrCmp $5 `'` 0 +7
-			StrCmp $6 `` 0 +3
+			StrCmp${_FILEFUNC_S} $5 `'` 0 +7
+			StrCmp${_FILEFUNC_S} $6 `` 0 +3
 			StrCpy $6 `'`
 			goto quote
-			StrCmp $6 `'` 0 +3
+			StrCmp${_FILEFUNC_S} $6 `'` 0 +3
 			StrCpy $6 ``
 			goto quote
-			StrCmp $5 '`' 0 +7
-			StrCmp $6 '' 0 +3
+			StrCmp${_FILEFUNC_S} $5 '`' 0 +7
+			StrCmp${_FILEFUNC_S} $6 '' 0 +3
 			StrCpy $6 '`'
 			goto quote
-			StrCmp $6 '`' 0 +3
+			StrCmp${_FILEFUNC_S} $6 '`' 0 +3
 			StrCpy $6 ''
 			goto quote
-			StrCmp $6 '"' quote
-			StrCmp $6 `'` quote
-			StrCmp $6 '`' quote
-			StrCmp $5 $1 0 quote
-			StrCmp $7 0 trimleft trimright
+			StrCmp${_FILEFUNC_S} $6 '"' quote
+			StrCmp${_FILEFUNC_S} $6 `'` quote
+			StrCmp${_FILEFUNC_S} $6 '`' quote
+			StrCmp${_FILEFUNC_S} $5 $1 0 quote
+			StrCmp${_FILEFUNC_S} $7 0 trimleft trimright
 
 			trimleft:
 			IntOp $4 $4 + 1
 			StrCpy $5 $0 $3 $4
-			StrCmp $5 '' notfound
-			StrCmp $5 $2 0 quote
+			StrCmp${_FILEFUNC_S} $5 '' notfound
+			StrCmp${_FILEFUNC_S} $5 $2 0 quote
 			IntOp $4 $4 + $3
 			StrCpy $0 $0 '' $4
 			StrCpy $4 $0 1
-			StrCmp $4 ' ' 0 +3
+			StrCmp${_FILEFUNC_S} $4 ' ' 0 +3
 			StrCpy $0 $0 '' 1
 			goto -3
 			StrCpy $7 1
@@ -1528,19 +1521,20 @@ RefreshShellIcons
 			trimright:
 			StrCpy $0 $0 $4
 			StrCpy $4 $0 1 -1
-			StrCmp $4 ' ' 0 +3
+			StrCmp${_FILEFUNC_S} $4 ' ' 0 +3
 			StrCpy $0 $0 -1
 			goto -3
 			StrCpy $3 $0 1
 			StrCpy $4 $0 1 -1
-			StrCmp $3 $4 0 end
-			StrCmp $3 '"' +3
-			StrCmp $3 `'` +2
-			StrCmp $3 '`' 0 end
+			StrCmp${_FILEFUNC_S} $3 $4 0 end
+			StrCmp${_FILEFUNC_S} $3 '"' +3
+			StrCmp${_FILEFUNC_S} $3 `'` +2
+			StrCmp${_FILEFUNC_S} $3 '`' 0 end
 			StrCpy $0 $0 -1 1
 			goto end
 
 			notfound:
+			SetErrors
 			StrCpy $0 ''
 
 			end:
@@ -1554,8 +1548,6 @@ RefreshShellIcons
 			Exch $0
 		FunctionEnd
 
-		!undef _FILEFUNC_UN
-		!define _FILEFUNC_UN
 		!verbose pop
 	!endif
 !macroend
@@ -1607,8 +1599,6 @@ RefreshShellIcons
 			Exch $0
 		FunctionEnd
 
-		!undef _FILEFUNC_UN
-		!define _FILEFUNC_UN
 		!verbose pop
 	!endif
 !macroend
@@ -1641,8 +1631,6 @@ RefreshShellIcons
 			Exch $0
 		FunctionEnd
 
-		!undef _FILEFUNC_UN
-		!define _FILEFUNC_UN
 		!verbose pop
 	!endif
 !macroend
@@ -1677,8 +1665,6 @@ RefreshShellIcons
 			Exch $0
 		FunctionEnd
 
-		!undef _FILEFUNC_UN
-		!define _FILEFUNC_UN
 		!verbose pop
 	!endif
 !macroend
@@ -1726,8 +1712,6 @@ RefreshShellIcons
 			Exch $0
 		FunctionEnd
 
-		!undef _FILEFUNC_UN
-		!define _FILEFUNC_UN
 		!verbose pop
 	!endif
 !macroend
@@ -1766,8 +1750,6 @@ RefreshShellIcons
 			Exch $0
 		FunctionEnd
 
-		!undef _FILEFUNC_UN
-		!define _FILEFUNC_UN
 		!verbose pop
 	!endif
 !macroend
@@ -1861,8 +1843,6 @@ RefreshShellIcons
 			Exch $0
 		FunctionEnd
 
-		!undef _FILEFUNC_UN
-		!define _FILEFUNC_UN
 		!verbose pop
 	!endif
 !macroend
@@ -1897,8 +1877,6 @@ RefreshShellIcons
 			Exch $0
 		FunctionEnd
 
-		!undef _FILEFUNC_UN
-		!define _FILEFUNC_UN
 		!verbose pop
 	!endif
 !macroend
@@ -1910,14 +1888,15 @@ RefreshShellIcons
 		!define ${_FILEFUNC_UN}RefreshShellIcons `!insertmacro ${_FILEFUNC_UN}RefreshShellIconsCall`
 
 		Function ${_FILEFUNC_UN}RefreshShellIcons
-			System::Call 'shell32.dll::SHChangeNotify(i, i, i, i) v (0x08000000, 0, 0, 0)'
+			System::Call 'shell32::SHChangeNotify(i 0x08000000, i 0, i 0, i 0)'
 		FunctionEnd
 
-		!undef _FILEFUNC_UN
-		!define _FILEFUNC_UN
 		!verbose pop
 	!endif
 !macroend
+
+
+# Uninstall. Case insensitive. #
 
 !macro un.LocateCall _PATH _OPTIONS _FUNC
 	!verbose push
@@ -2115,6 +2094,8 @@ RefreshShellIcons
 
 		!insertmacro Locate
 
+		!undef _FILEFUNC_UN
+		!define _FILEFUNC_UN
 		!verbose pop
 	!endif
 !macroend
@@ -2128,6 +2109,8 @@ RefreshShellIcons
 
 		!insertmacro GetSize
 
+		!undef _FILEFUNC_UN
+		!define _FILEFUNC_UN
 		!verbose pop
 	!endif
 !macroend
@@ -2141,6 +2124,8 @@ RefreshShellIcons
 
 		!insertmacro DriveSpace
 
+		!undef _FILEFUNC_UN
+		!define _FILEFUNC_UN
 		!verbose pop
 	!endif
 !macroend
@@ -2154,6 +2139,8 @@ RefreshShellIcons
 
 		!insertmacro GetDrives
 
+		!undef _FILEFUNC_UN
+		!define _FILEFUNC_UN
 		!verbose pop
 	!endif
 !macroend
@@ -2167,6 +2154,8 @@ RefreshShellIcons
 
 		!insertmacro GetTime
 
+		!undef _FILEFUNC_UN
+		!define _FILEFUNC_UN
 		!verbose pop
 	!endif
 !macroend
@@ -2180,6 +2169,8 @@ RefreshShellIcons
 
 		!insertmacro GetFileAttributes
 
+		!undef _FILEFUNC_UN
+		!define _FILEFUNC_UN
 		!verbose pop
 	!endif
 !macroend
@@ -2193,6 +2184,8 @@ RefreshShellIcons
 
 		!insertmacro GetFileVersion
 
+		!undef _FILEFUNC_UN
+		!define _FILEFUNC_UN
 		!verbose pop
 	!endif
 !macroend
@@ -2206,6 +2199,8 @@ RefreshShellIcons
 
 		!insertmacro GetExeName
 
+		!undef _FILEFUNC_UN
+		!define _FILEFUNC_UN
 		!verbose pop
 	!endif
 !macroend
@@ -2219,6 +2214,8 @@ RefreshShellIcons
 
 		!insertmacro GetExePath
 
+		!undef _FILEFUNC_UN
+		!define _FILEFUNC_UN
 		!verbose pop
 	!endif
 !macroend
@@ -2232,6 +2229,8 @@ RefreshShellIcons
 
 		!insertmacro GetParameters
 
+		!undef _FILEFUNC_UN
+		!define _FILEFUNC_UN
 		!verbose pop
 	!endif
 !macroend
@@ -2245,6 +2244,8 @@ RefreshShellIcons
 
 		!insertmacro GetOptions
 
+		!undef _FILEFUNC_UN
+		!define _FILEFUNC_UN
 		!verbose pop
 	!endif
 !macroend
@@ -2258,6 +2259,8 @@ RefreshShellIcons
 
 		!insertmacro GetRoot
 
+		!undef _FILEFUNC_UN
+		!define _FILEFUNC_UN
 		!verbose pop
 	!endif
 !macroend
@@ -2271,6 +2274,8 @@ RefreshShellIcons
 
 		!insertmacro GetParent
 
+		!undef _FILEFUNC_UN
+		!define _FILEFUNC_UN
 		!verbose pop
 	!endif
 !macroend
@@ -2284,6 +2289,8 @@ RefreshShellIcons
 
 		!insertmacro GetFileName
 
+		!undef _FILEFUNC_UN
+		!define _FILEFUNC_UN
 		!verbose pop
 	!endif
 !macroend
@@ -2297,6 +2304,8 @@ RefreshShellIcons
 
 		!insertmacro GetBaseName
 
+		!undef _FILEFUNC_UN
+		!define _FILEFUNC_UN
 		!verbose pop
 	!endif
 !macroend
@@ -2310,6 +2319,8 @@ RefreshShellIcons
 
 		!insertmacro GetFileExt
 
+		!undef _FILEFUNC_UN
+		!define _FILEFUNC_UN
 		!verbose pop
 	!endif
 !macroend
@@ -2323,6 +2334,8 @@ RefreshShellIcons
 
 		!insertmacro BannerTrimPath
 
+		!undef _FILEFUNC_UN
+		!define _FILEFUNC_UN
 		!verbose pop
 	!endif
 !macroend
@@ -2336,6 +2349,8 @@ RefreshShellIcons
 
 		!insertmacro DirState
 
+		!undef _FILEFUNC_UN
+		!define _FILEFUNC_UN
 		!verbose pop
 	!endif
 !macroend
@@ -2349,6 +2364,70 @@ RefreshShellIcons
 
 		!insertmacro RefreshShellIcons
 
+		!undef _FILEFUNC_UN
+		!define _FILEFUNC_UN
 		!verbose pop
 	!endif
 !macroend
+
+
+# Install. Case sensitive. #
+
+!macro GetOptionsSCall _PARAMETERS _OPTION _RESULT
+	!verbose push
+	!verbose ${_FILEFUNC_VERBOSE}
+	Push `${_PARAMETERS}`
+	Push `${_OPTION}`
+	Call GetOptionsS
+	Pop ${_RESULT}
+	!verbose pop
+!macroend
+
+!macro GetOptionsS
+	!ifndef GetOptionsS
+		!verbose push
+		!verbose ${_FILEFUNC_VERBOSE}
+		!undef _FILEFUNC_S
+		!define _FILEFUNC_S `S`
+
+		!insertmacro GetOptions
+
+		!undef _FILEFUNC_S
+		!define _FILEFUNC_S
+		!verbose pop
+	!endif
+!macroend
+
+
+# Uninstall. Case sensitive. #
+
+!macro un.GetOptionsSCall _PARAMETERS _OPTION _RESULT
+	!verbose push
+	!verbose ${_FILEFUNC_VERBOSE}
+	Push `${_PARAMETERS}`
+	Push `${_OPTION}`
+	Call un.GetOptionsS
+	Pop ${_RESULT}
+	!verbose pop
+!macroend
+
+!macro un.GetOptionsS
+	!ifndef un.GetOptionsS
+		!verbose push
+		!verbose ${_FILEFUNC_VERBOSE}
+		!undef _FILEFUNC_UN
+		!define _FILEFUNC_UN `un.`
+		!undef _FILEFUNC_S
+		!define _FILEFUNC_S `S`
+
+		!insertmacro GetOptions
+
+		!undef _FILEFUNC_UN
+		!define _FILEFUNC_UN
+		!undef _FILEFUNC_S
+		!define _FILEFUNC_S
+		!verbose pop
+	!endif
+!macroend
+
+!endif

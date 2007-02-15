@@ -8,10 +8,12 @@ makensis_files = Split("""
 	crc32.c
 	DialogTemplate.cpp
 	dirreader.cpp
+	fileform.cpp
 	growbuf.cpp
 	lang.cpp
 	lineparse.cpp
 	makenssi.cpp
+	manifest.cpp
 	mmap.cpp
 	Plugins.cpp
 	ResourceEditor.cpp
@@ -21,6 +23,8 @@ makensis_files = Split("""
 	strlist.cpp
 	tokens.cpp
 	util.cpp
+	winchar.cpp
+	writer.cpp
 """)
 
 bzip2_files = Split("""
@@ -32,12 +36,13 @@ bzip2_files = Split("""
 
 lzma_files = Split("""
 	7zip/7zGuids.cpp
-	7zip/Common/CRC.cpp
+	7zip/7zip/Common/OutBuffer.cpp
+	7zip/7zip/Common/StreamUtils.cpp
 	7zip/7zip/Compress/LZ/LZInWindow.cpp
 	7zip/7zip/Compress/LZMA/LZMAEncoder.cpp
-	7zip/7zip/Common/OutBuffer.cpp
 	7zip/7zip/Compress/RangeCoder/RangeCoderBit.cpp
 	7zip/Common/Alloc.cpp
+	7zip/Common/CRC.cpp
 """)
 
 zlib_files = Split("""
@@ -48,7 +53,6 @@ zlib_files = Split("""
 libs = Split("""
 	gdi32
 	user32
-	version
 	pthread
 	stdc++
 	iconv
@@ -58,12 +62,16 @@ Import('env AddAvailableLibs')
 
 ##### Use available libraries
 
+if env['PLATFORM'] == 'win32':
+	# XXX will cause problems if makensis is cross compiled
+	# on freebsd, libversion.a exists and gives trouble if linked
+	libs += ['version']
+
 AddAvailableLibs(env, libs)
 
-##### Configuration defines
+##### Defines
 
 env.Append(CPPDEFINES = ['_WIN32_IE=0x0500'])
-env.Append(CPPDEFINES = env['NSIS_CPPDEFINES'])
 
 ##### Set PCH
 
@@ -71,27 +79,9 @@ env.Append(CPPDEFINES = env['NSIS_CPPDEFINES'])
 #env['PCH'] = env.PCH(pch)[0]
 #env['PCHSTOP'] = pch
 
-##### Version define
-
-version_env = env.Copy()
-version_env.Append(CPPDEFINES = ['NSIS_VERSION=v$VERSION'])
-
-# only pass -DNSIS_VERSION to files that use it to minimize rebuilds
-
-new_makensis_files = []
-
-for file in makensis_files:
-	f = File(file).srcnode().abspath
-	if open(f).read().find('NSIS_VERSION') >= 0:
-		new_makensis_files.append(version_env.Object(file))
-	else:
-		new_makensis_files.append(file)
-
-makensis_files = new_makensis_files
-
 ##### LZMA specific defines
 
-lzma_env = env.Copy()
+lzma_env = env.Clone()
 lzma_env.Append(CPPDEFINES = ['COMPRESS_MF_BT'])
 lzma_files = lzma_env.Object(lzma_files)
 

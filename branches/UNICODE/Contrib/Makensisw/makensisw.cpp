@@ -45,6 +45,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmd
   g_sdata.hInstance=GetModuleHandle(0);
   g_sdata.script_alloced=false;
   g_sdata.symbols = NULL;
+  g_sdata.sigint_event = CreateEvent(NULL, FALSE, FALSE, "makensis win32 signint event");
   RestoreSymbols();
 
   if (!InitBranding()) {
@@ -70,6 +71,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmd
     }
   }
   if (g_sdata.script_alloced) GlobalFree(g_sdata.script);
+  if (g_sdata.sigint_event) CloseHandle(g_sdata.sigint_event);
   FinalizeUpdate();
   ExitProcess(msg.wParam);
   return msg.wParam;
@@ -104,9 +106,9 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
       SendMessage(GetDlgItem(hwndDlg,IDC_LOGWIN),EM_SETEVENTMASK,NULL,ENM_SELCHANGE|ENM_MOUSEEVENTS|ENM_KEYEVENTS);
       DragAcceptFiles(g_sdata.hwnd,FALSE);
       g_sdata.menu = GetMenu(g_sdata.hwnd);
-      g_sdata.fileSubmenu = GetSubMenu(g_sdata.menu, FILE_MENU_INDEX);
-      g_sdata.editSubmenu = GetSubMenu(g_sdata.menu, EDIT_MENU_INDEX);
-      g_sdata.toolsSubmenu = GetSubMenu(g_sdata.menu, TOOLS_MENU_INDEX);
+      g_sdata.fileSubmenu = FindSubMenu(g_sdata.menu, IDM_FILE);
+      g_sdata.editSubmenu = FindSubMenu(g_sdata.menu, IDM_EDIT);
+      g_sdata.toolsSubmenu = FindSubMenu(g_sdata.menu, IDM_TOOLS);
       RestoreMRUList();
       CreateToolBar();
       InitTooltips(g_sdata.hwnd);
@@ -194,9 +196,9 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
     {
       if (!g_sdata.thread) {
         DragAcceptFiles(g_sdata.hwnd,FALSE);
-		ImageList_Destroy(g_toolbar.imagelist);
-		ImageList_Destroy(g_toolbar.imagelistd);
-		ImageList_Destroy(g_toolbar.imagelisth);
+        ImageList_Destroy(g_toolbar.imagelist);
+        ImageList_Destroy(g_toolbar.imagelistd);
+        ImageList_Destroy(g_toolbar.imagelisth);
         DestroyWindow(hwndDlg);
         FreeLibrary(hRichEditDLL);
       }
@@ -216,7 +218,10 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
           ResetObjects();
           CompileNSISScript();
         }
+      } else {
+        MessageBox(hwndDlg,MULTIDROPERROR,"Error",MB_OK|MB_ICONSTOP);
       }
+      DragFinish((HDROP)wParam);
       break;
     }
     case WM_GETMINMAXINFO:
@@ -571,6 +576,11 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
           if (!g_sdata.thread) {
             DestroyWindow(g_sdata.hwnd);
           }
+          return TRUE;
+        }
+        case IDM_CANCEL:
+        {
+          SetEvent(g_sdata.sigint_event);
           return TRUE;
         }
         case IDM_COPY:
@@ -1097,7 +1107,7 @@ BOOL CALLBACK CompressorProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lPara
         case IDCANCEL:
         {
           EndDialog(hwndDlg, 1);
-		  LogMessage(g_sdata.hwnd,USAGE);
+          LogMessage(g_sdata.hwnd,USAGE);
           break;
         }
       }
@@ -1115,10 +1125,10 @@ BOOL CALLBACK SymbolSetProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
       HKEY hKey;
 
       EnableWindow(GetDlgItem(hwndDlg, IDDEL), FALSE);
-      if (RegOpenKeyEx(REGSEC,REGKEY,0,KEY_READ,&hKey) == ERROR_SUCCESS) {
+      if (OpenRegSettingsKey(hKey)) {
         HKEY hSubKey;
 
-        if (RegCreateKey(hKey,REGSYMSUBKEY,&hSubKey) == ERROR_SUCCESS) {
+        if (RegOpenKeyEx(hKey,REGSYMSUBKEY,0,KEY_READ,&hSubKey) == ERROR_SUCCESS) {
           char subkey[1024];
           int i=0;
 
@@ -1243,7 +1253,7 @@ void SetCompressor(NCOMPRESSOR compressor)
     }
     else {
       compressor = COMPRESSOR_SCRIPT;
-      command = IDM_SCRIPT;
+      command = IDM_COMPRESSOR_SCRIPT;
       compressor_name = "";
     }
     g_sdata.compressor = compressor;

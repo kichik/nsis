@@ -22,5 +22,5 @@ Import('BuildUtil env')
 code = env.Object(code)
 
 for ui in uis:
-	ui = BuildUtil(ui, [code], libs, entry = 'WinMain', res = ui + '.rc', install = 'Contrib/UIs')
+	ui = BuildUtil(ui, [code], libs, entry = 'WinMain', res = ui + '.rc', contrib = True, path = 'UIs')
 	env.Alias('UIs', ui)

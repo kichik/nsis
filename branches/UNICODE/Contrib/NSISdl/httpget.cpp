@@ -404,25 +404,36 @@ run_again:
     {
       m_con->recv_line(buf,4096);
       if (!buf[0]) { m_http_state=3; break; }
+
+      char *h = buf;
+
+      // workaround for bug #1445735
+      //
+      // some proxies, like WinProxy, prefix headers with tabs
+      // or spaces. to make sure headers are detected properly,
+      // this removes up to 128 useless white spaces.
+
+      while ((h - buf < 128) && (*h == ' ' || *h == '\t')) h++;
+
       if (!m_recvheaders)
       {
-        m_recvheaders_size=strlen(buf)+1;
+        m_recvheaders_size=strlen(h)+1;
         m_recvheaders=(char*)malloc(m_recvheaders_size+1);
         if (m_recvheaders)
         {
-          strcpy(m_recvheaders,buf);
+          strcpy(m_recvheaders,h);
           m_recvheaders[m_recvheaders_size]=0;
         }
       }
       else
       {
         int oldsize=m_recvheaders_size;
-        m_recvheaders_size+=strlen(buf)+1;
+        m_recvheaders_size+=strlen(h)+1;
         char *n=(char*)malloc(m_recvheaders_size+1);
         if (n)
         {
           memcpy(n,m_recvheaders,oldsize);
-          strcpy(n+oldsize,buf);
+          strcpy(n+oldsize,h);
           n[m_recvheaders_size]=0;
           free(m_recvheaders);
           m_recvheaders=n;

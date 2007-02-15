@@ -1,11 +1,24 @@
-// ResourceVersionInfo.cpp: implementation of the CResourceVersionInfo class.
-//
-//////////////////////////////////////////////////////////////////////
+/*
+ * ResourceVersionInfo.cpp: implementation of the CResourceVersionInfo class.
+ * 
+ * This file is a part of NSIS.
+ * 
+ * Copyright (C) 1999-2007 Nullsoft and Contributors
+ * 
+ * Licensed under the zlib/libpng license (the "License");
+ * you may not use this file except in compliance with the License.
+ * 
+ * Licence details can be found in the file COPYING.
+ * 
+ * This software is provided 'as-is', without any express or implied
+ * warranty.
+ */
 
 #include "ResourceVersionInfo.h"
 
 #include "Platform.h"
 #include "util.h"
+#include "winchar.h"
 
 #ifdef NSIS_SUPPORT_VERSION_INFO
 
@@ -119,19 +132,6 @@ void CResourceVersionInfo::SetProductVersion(int HighPart, int LowPart)
     m_FixedInfo.dwProductVersionMS = HighPart;
 }
 
-// Util function - must be freeded
-WCHAR* StrToWstrAlloc(const char* istr, int codepage)
-{
-  int strSize = MultiByteToWideChar(codepage, 0, istr, -1, 0, 0);
-  WCHAR* wstr = new WCHAR[strSize];
-  if (!MultiByteToWideChar(codepage, 0, istr, -1, wstr, strSize))
-  {
-    delete [] wstr;
-    wstr = NULL;
-  }
-  return wstr;
-}
-
 int GetVersionHeader (LPSTR &p, WORD &wLength, WORD &wValueLength, WORD &wType)
 {
     WCHAR *szKey;
@@ -190,7 +190,7 @@ void CResourceVersionInfo::ExportToStream(GrowBuf &strm, int Index)
     WCHAR *KeyName, *KeyValue;
 
     strm.resize(0);
-    KeyName = StrToWstrAlloc("VS_VERSION_INFO", CP_ACP);
+    KeyName = winchar_fromansi("VS_VERSION_INFO");
     SaveVersionHeader (strm, 0, sizeof (VS_FIXEDFILEINFO), 0, KeyName, &m_FixedInfo);
     delete [] KeyName;
     
@@ -202,7 +202,7 @@ void CResourceVersionInfo::ExportToStream(GrowBuf &strm, int Index)
       LANGID langid = m_ChildStringLists.get_lang(Index);
       char Buff[16];
       sprintf(Buff, "%04x%04x", langid, codepage);
-      KeyName = StrToWstrAlloc(Buff, CP_ACP);
+      KeyName = winchar_fromansi(Buff, CP_ACP);
       SaveVersionHeader (stringInfoStream, 0, 0, 0, KeyName, &ZEROS);
       delete [] KeyName;
       
@@ -211,8 +211,8 @@ void CResourceVersionInfo::ExportToStream(GrowBuf &strm, int Index)
         PadStream (stringInfoStream);
         
         p = stringInfoStream.getlen();
-        KeyName = StrToWstrAlloc(pChildStrings->getname(i), codepage);
-        KeyValue = StrToWstrAlloc(pChildStrings->getvalue(i), codepage);
+        KeyName = winchar_fromansi(pChildStrings->getname(i), codepage);
+        KeyValue = winchar_fromansi(pChildStrings->getvalue(i), codepage);
         SaveVersionHeader (stringInfoStream, 0, WCStrLen(KeyValue), 1, KeyName, (void*)KeyValue);
         delete [] KeyName;
         delete [] KeyValue;
@@ -226,7 +226,7 @@ void CResourceVersionInfo::ExportToStream(GrowBuf &strm, int Index)
       
       PadStream (strm);
       p = strm.getlen();
-      KeyName = StrToWstrAlloc("StringFileInfo", CP_ACP);
+      KeyName = winchar_fromansi("StringFileInfo", CP_ACP);
       SaveVersionHeader (strm, 0, 0, 0, KeyName, &ZEROS);
       delete [] KeyName;
       strm.add (stringInfoStream.get(), stringInfoStream.getlen());
@@ -240,13 +240,13 @@ void CResourceVersionInfo::ExportToStream(GrowBuf &strm, int Index)
     {
       PadStream (strm);
       p = strm.getlen();
-      KeyName = StrToWstrAlloc("VarFileInfo", CP_ACP);
+      KeyName = winchar_fromansi("VarFileInfo", CP_ACP);
       SaveVersionHeader (strm, 0, 0, 0, KeyName, &ZEROS);
       delete [] KeyName;
       PadStream (strm);
       
       p1 = strm.getlen();
-      KeyName = StrToWstrAlloc("Translation", CP_ACP);
+      KeyName = winchar_fromansi("Translation", CP_ACP);
       SaveVersionHeader (strm, 0, 0, 0, KeyName, &ZEROS);
       delete [] KeyName;
       

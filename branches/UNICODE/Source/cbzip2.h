@@ -1,3 +1,19 @@
+/*
+ * cbzip2.h
+ * 
+ * This file is a part of NSIS.
+ * 
+ * Copyright (C) 1999-2007 Nullsoft and Contributors
+ * 
+ * Licensed under the zlib/libpng license (the "License");
+ * you may not use this file except in compliance with the License.
+ * 
+ * Licence details can be found in the file COPYING.
+ * 
+ * This software is provided 'as-is', without any express or implied
+ * warranty.
+ */
+
 #ifndef __CBZIP2_H__
 #define __CBZIP2_H__
 
@@ -6,6 +22,8 @@
 
 class CBzip2 : public ICompressor {
   public:
+    virtual ~CBzip2() {}
+
     int Init(int level, unsigned int dict_size) {
       last_ret = !BZ_STREAM_END;
       stream = new bz_stream;
@@ -22,9 +40,13 @@ class CBzip2 : public ICompressor {
     int Compress(bool finish) {
       // act like zlib when it comes to stream ending
       if (last_ret == BZ_STREAM_END && finish)
-        return BZ_STREAM_END;
+        return C_FINISHED;
       last_ret = BZ2_bzCompress(stream, finish?BZ_FINISH:0);
-      return last_ret;
+      
+      if (last_ret < 0)
+        return last_ret;
+
+      return C_OK;
     }
 
     void SetNextIn(char *in, unsigned int size) {

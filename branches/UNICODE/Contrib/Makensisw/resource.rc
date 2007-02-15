@@ -62,36 +62,37 @@ IDI_SHELL               ICON                    "shell.ico"
 // Menu
 //
 
-IDM_MENU MENU 
+IDM_MENU MENUEX
 BEGIN
-    POPUP "&File"
+    POPUP "&File", IDM_FILE
     BEGIN
         MENUITEM "&Save Output...",             IDM_SAVE
         MENUITEM "&Load Script...\tCtrl+L",     IDM_LOADSCRIPT
-        MENUITEM SEPARATOR
+        MENUITEM "", -1, MFT_SEPARATOR
         MENUITEM "E&xit\tAlt+X",                IDM_EXIT
-        MENUITEM SEPARATOR
+        MENUITEM "", -1, MFT_SEPARATOR
         MENUITEM "",                            IDM_MRU_FILE
     END
-    POPUP "&Edit"
+    POPUP "&Edit", IDM_EDIT
     BEGIN
         MENUITEM "&Copy\tCtrl+C",               IDM_COPYSELECTED
         MENUITEM "Copy &All",                   IDM_COPY
-        MENUITEM SEPARATOR
+        MENUITEM "", -1, MFT_SEPARATOR
         MENUITEM "&Find...\tCtrl+F",            IDM_FIND
-        MENUITEM SEPARATOR
+        MENUITEM "", -1, MFT_SEPARATOR
         MENUITEM "&Select All\tCtrl+A",         IDM_SELECTALL
         MENUITEM "Clear &Log Window\tCtrl+W",   IDM_CLEARLOG
     END
-    POPUP "&Script"
+    POPUP "&Script", IDM_SCRIPT
     BEGIN
         MENUITEM "&Recompile\tCtrl+R",          IDM_RECOMPILE
         MENUITEM "Test &Installer\tCtrl+T",     IDM_TEST
         MENUITEM "Reco&mpile and Test\tCtrl+M", IDM_RECOMPILE_TEST
-        MENUITEM SEPARATOR
-        POPUP "Set &Compressor"
+        MENUITEM "C&ancel compilation",         IDM_CANCEL
+        MENUITEM "", -1, MFT_SEPARATOR
+        POPUP "Set &Compressor", IDM_COMPRESSOR_SUBMENU
         BEGIN
-            MENUITEM "&Defined in Script/Compiler Default", IDM_SCRIPT
+            MENUITEM "&Defined in Script/Compiler Default", IDM_COMPRESSOR_SCRIPT
             MENUITEM "&ZLIB",                       IDM_ZLIB
             MENUITEM "ZLIB (solid)",                IDM_ZLIB_SOLID
             MENUITEM "BZI&P2",                      IDM_BZIP2
@@ -100,24 +101,24 @@ BEGIN
             MENUITEM "LZMA (solid)",                IDM_LZMA_SOLID
             MENUITEM "&Best Compressor",            IDM_BEST
         END
-        MENUITEM SEPARATOR
+        MENUITEM "", -1, MFT_SEPARATOR
         MENUITEM "&Edit Script\tCtrl+E",        IDM_EDITSCRIPT
         MENUITEM "Open Script &Folder\tCtrl+B", IDM_BROWSESCR
     END
-    POPUP "&Tools"
+    POPUP "&Tools", IDM_TOOLS
     BEGIN
         MENUITEM "&Settings..\tCtrl+S",         IDM_SETTINGS
-        MENUITEM SEPARATOR
+        MENUITEM "", -1, MFT_SEPARATOR
         MENUITEM "Clear Recent &Files List",    IDM_CLEAR_MRU_LIST
     END
-    POPUP "&Help"
+    POPUP "&Help", IDM_HELP
     BEGIN
         MENUITEM "NSIS Users &Manual\tF1",      IDM_DOCS
-        MENUITEM SEPARATOR
+        MENUITEM "", -1, MFT_SEPARATOR
         MENUITEM "NSIS &Homepage",              IDM_NSISHOME
         MENUITEM "NSIS &Forum",                 IDM_FORUM
         MENUITEM "NSIS &Update",                IDM_NSISUPDATE
-        MENUITEM SEPARATOR
+        MENUITEM "", -1, MFT_SEPARATOR
         MENUITEM "&About MakeNSISW",            IDM_ABOUT
     END
 END
@@ -302,6 +303,7 @@ IDB_LOGO                BITMAP                  "logo.bmp"
 IDB_TOOLBAR             BITMAP                  "toolbar.bmp"
 IDB_TOOLBAR24           BITMAP                  "toolbar24.bmp"
 IDB_TOOLBAR24D          BITMAP                  "toolbar24d.bmp"
+IDB_TOOLBAR24H          BITMAP                  "toolbar24h.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -343,26 +345,6 @@ END
 
 #endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
-
-
-/////////////////////////////////////////////////////////////////////////////
-// Dutch (Netherlands) resources
-
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_NLD)
-#ifdef _WIN32
-LANGUAGE LANG_DUTCH, SUBLANG_DUTCH
-#pragma code_page(1252)
-#endif //_WIN32
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Bitmap
-//
-
-IDB_TOOLBAR24H          BITMAP                  "toolbar24h.bmp"
-#endif    // Dutch (Netherlands) resources
-/////////////////////////////////////////////////////////////////////////////
-
 
 
 #ifndef APSTUDIO_INVOKED

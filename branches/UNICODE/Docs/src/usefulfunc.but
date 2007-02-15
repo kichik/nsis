@@ -166,7 +166,7 @@
 \c  ;
 \c  ; Returns on top of stack
 \c  ;
-\c  ; Windows Version (95, 98, ME, NT x.x, 2000, XP, 2003)
+\c  ; Windows Version (95, 98, ME, NT x.x, 2000, XP, 2003, Vista)
 \c  ; or
 \c  ; '' (Unknown Windows Version)
 \c  ;
@@ -222,7 +222,8 @@
 \c  
 \c    StrCmp $R1 '5.0' lbl_winnt_2000
 \c    StrCmp $R1 '5.1' lbl_winnt_XP
-\c    StrCmp $R1 '5.2' lbl_winnt_2003 lbl_error
+\c    StrCmp $R1 '5.2' lbl_winnt_2003
+\c    StrCmp $R1 '6.0' lbl_winnt_vista lbl_error
 \c  
 \c    lbl_winnt_x:
 \c      StrCpy $R0 "NT $R0" 6
@@ -238,6 +239,10 @@
 \c  
 \c    lbl_winnt_2003:
 \c      Strcpy $R0 '2003'
+\c    Goto lbl_done
+\c  
+\c    lbl_winnt_vista:
+\c      Strcpy $R0 'Vista'
 \c    Goto lbl_done
 \c  
 \c    lbl_error:
@@ -303,6 +308,9 @@
 
 \c  ; IsDotNETInstalled
 \c  ;
+\c  ; Based on GetDotNETVersion
+\c  ;   http://nsis.sourceforge.net/Get_.NET_Version
+\c  ;
 \c  ; Usage:
 \c  ;   Call IsDotNETInstalled
 \c  ;   Pop $0
@@ -311,52 +319,14 @@
 \c  Function IsDotNETInstalled
 \c    Push $0
 \c    Push $1
-\c    Push $2
-\c    Push $3
-\c    Push $4
 \c
-\c    ReadRegStr $4 HKEY_LOCAL_MACHINE \
-\c      "Software\Microsoft\.NETFramework" "InstallRoot"
-\c    # remove trailing back slash
-\c    Push $4
-\c    Exch $EXEDIR
-\c    Exch $EXEDIR
-\c    Pop $4
-\c    # if the root directory doesn't exist .NET is not installed
-\c    IfFileExists $4 0 noDotNET
-\c
-\c    StrCpy $0 0
-\c
-\c    EnumStart:
-\c
-\c      EnumRegKey $2 HKEY_LOCAL_MACHINE \
-\c        "Software\Microsoft\.NETFramework\Policy"  $0
-\c      IntOp $0 $0 + 1
-\c      StrCmp $2 "" noDotNET
-\c
-\c      StrCpy $1 0
-\c
-\c      EnumPolicy:
-\c
-\c        EnumRegValue $3 HKEY_LOCAL_MACHINE \
-\c          "Software\Microsoft\.NETFramework\Policy\$2" $1
-\c        IntOp $1 $1 + 1
-\c         StrCmp $3 "" EnumStart
-\c          IfFileExists "$4\$2.$3" foundDotNET EnumPolicy
-\c
-\c    noDotNET:
+\c    StrCpy $0 1
+\c    System::Call "mscoree::GetCORVersion(w, i ${NSIS_MAX_STRLEN}, *i) i .r1"
+\c    StrCmp $1 0 +2
 \c      StrCpy $0 0
-\c      Goto done
 \c
-\c    foundDotNET:
-\c      StrCpy $0 1
-\c
-\c    done:
-\c      Pop $4
-\c      Pop $3
-\c      Pop $2
-\c      Pop $1
-\c      Exch $0
+\c    Pop $1
+\c    Exch $0
 \c  FunctionEnd
 
 \H{isflashinstalled} Is Macromedia Flash Player installed?

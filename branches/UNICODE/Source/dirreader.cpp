@@ -1,3 +1,19 @@
+/*
+ * dirreader.cpp
+ * 
+ * This file is a part of NSIS.
+ * 
+ * Copyright (C) 1999-2007 Nullsoft and Contributors
+ * 
+ * Licensed under the zlib/libpng license (the "License");
+ * you may not use this file except in compliance with the License.
+ * 
+ * Licence details can be found in the file COPYING.
+ * 
+ * This software is provided 'as-is', without any express or implied
+ * warranty.
+ */
+
 #include "Platform.h"
 #include "dirreader.h"
 #include <string>
@@ -57,13 +73,13 @@ bool dir_reader::matches(const string& name, const string& spec) {
         break;
 
       case '*':
-        // double asterisk is the same as a simgle asterisk
-        while (*spec_itr == '*' && spec_itr != spec_end)
+        // double asterisk is the same as a single asterisk
+        while (*spec_itr == '*') {
           spec_itr++;
-
-        // asterisk at the end of the spec matches the end of the name
-        if (spec_itr == spec_end)
-          return true;
+          // asterisk at the end of the spec matches the end of the name
+          if (spec_itr == spec_end)
+            return true;
+        }
 
         // remember last good name and spec for prematurely stopped asterisk
         last_good_spec = spec_itr;

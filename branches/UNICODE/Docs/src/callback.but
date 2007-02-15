@@ -10,7 +10,7 @@ This callback will be called just before the first page is loaded and the instal
 
 Example:
 
-\c  !include "${NSISDIR}\Include\WinMessages.nsh"
+\c  !include "WinMessages.nsh"
 \c
 \c  Function .onGUIInit
 \c    # 1028 is the id of the branding text control
@@ -99,6 +99,8 @@ Example:
 \S3{onselchange} .onSelChange
 
 Called when the selection changes on the \R{pages}{component page}. Useful for using with \R{sectionsetflags}{SectionSetFlags} and \R{sectiongetflags}{SectionGetFlags}.
+
+Selection changes include both section selection and installation type change.
 
 \S3{onuserabort} .onUserAbort
 

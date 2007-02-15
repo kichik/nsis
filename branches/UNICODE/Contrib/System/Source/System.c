@@ -139,6 +139,12 @@ PLUGINFUNCTION(Debug)
 PLUGINFUNCTION(Get)
 {
     SystemProc *proc = PrepareProc(FALSE);
+    if (proc == NULL)
+    {
+      pushstring("error");
+      return;
+    }
+
     SYSTEM_LOG_ADD("Get ");
     SYSTEM_LOG_ADD(proc->DllName);
     SYSTEM_LOG_ADD("::");
@@ -169,6 +175,9 @@ PLUGINFUNCTION(Call)
 {
     // Prepare input
     SystemProc *proc = PrepareProc(TRUE);
+    if (proc == NULL)
+      return;
+
     SYSTEM_LOG_ADD("Call ");
     SYSTEM_LOG_ADD(proc->DllName);
     SYSTEM_LOG_ADD("::");
@@ -305,6 +314,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
         ChangesDone = 0,
         ParamIndex = 0,
         temp = 0, temp2, temp3, temp4;
+    BOOL param_defined = FALSE;
     SystemProc *proc = NULL;
     char *ibuf, *ib, *sbuf, *cbuf, *cb;
 
@@ -319,6 +329,13 @@ SystemProc *PrepareProc(BOOL NeedForCall)
         // Check for Section Change
         BOOL changed = TRUE;
         ChangesDone = SectionType;
+
+        if (SectionType != PST_PROC && proc == NULL)
+            // no proc after PST_PROC is done means something is wrong with
+            // the call syntax and we'll get a crash because everything needs
+            // proc from here on.
+            break;
+
         switch (*ib)
         {
         case 0x0: SectionType = -1; break;
@@ -327,7 +344,8 @@ SystemProc *PrepareProc(BOOL NeedForCall)
             SectionType = PST_PARAMS; 
             // fake-real parameter: for COM interfaces first param is Interface Pointer
             ParamIndex = ((ProcType == PT_VTABLEPROC)?(2):(1)); 
-            temp3 = temp = 0; 
+            temp3 = temp = 0;
+            param_defined = FALSE;
             break;
         case ')': SectionType = PST_RETURN; temp3 = temp = 0; break;
         case '?': SectionType = PST_OPTIONS; temp = 1; break;
@@ -397,7 +415,11 @@ SystemProc *PrepareProc(BOOL NeedForCall)
                 }
                 break;
             case PST_PARAMS:
-                proc->ParamCount = ParamIndex;
+                if (param_defined)
+                    proc->ParamCount = ParamIndex;
+                else
+                    // not simply zero because of vtable calls
+                    proc->ParamCount = ParamIndex - 1;
             case PST_RETURN:
             case PST_OPTIONS:
                 break;
@@ -457,10 +479,19 @@ SystemProc *PrepareProc(BOOL NeedForCall)
             case '_': // No param cutting specifier
                 if (proc->ParamCount > ParamIndex) ParamIndex = proc->ParamCount;
                 temp3 = temp = 0; // Clear parameter options
+                if (proc->ParamCount != ((ProcType == PT_VTABLEPROC) ? 1 : 0))
+                {
+                  // only define params if the last count wasn't zero
+                  // this prevents errornous param count for:
+                  //   'user32::CloseClipboard()(_)'
+                  // for vtable calls, param count should not be one
+                  param_defined = TRUE;
+                }
                 break;
             case ',': // Next param
                 temp3 = temp = 0; // Clear parameter options
                 ParamIndex++;
+                param_defined = TRUE;
                 break;
             case '&':
                 temp = 1; break; // Special parameter option
@@ -538,6 +569,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
             // Param type changed?
             if (temp2 != -1)
             {
+                param_defined = TRUE;
                 proc->Params[ParamIndex].Type = temp2;
                 proc->Params[ParamIndex].Size = // If pointer, then 1, else by type
                     (temp == -1)?(1):((ParamSizeByType[temp2]>0)?(ParamSizeByType[temp2]):(1));
@@ -552,6 +584,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
             // Param source/dest changed?
             if (temp4 != 0)
             {
+                param_defined = TRUE;
                 if (temp3 == 0)
                 {
                     // it may contain previous inline input
@@ -623,7 +656,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
     GlobalFree(sbuf);
 
     // Ok, the final step: check proc for existance
-    if (proc->Proc == NULL)
+    if (proc != NULL && proc->Proc == NULL)
     {
         switch (proc->ProcType)
         {
@@ -700,7 +733,7 @@ void ParamAllocate(SystemProc *proc)
     for (i = 0; i <= proc->ParamCount; i++)
         if (((HANDLE) proc->Params[i].Value == NULL) && (proc->Params[i].Option == -1))
         {
-            proc->Params[i].Value = (int) GlobalAlloc(GPTR, ParamSizeByType[proc->Params[i].Type]);
+            proc->Params[i].Value = (int) GlobalAlloc(GPTR, 4*ParamSizeByType[proc->Params[i].Type]);
         }
 }
 
@@ -794,10 +827,7 @@ void ParamsDeAllocate(SystemProc *proc)
     for (i = proc->ParamCount; i >= 0; i--)
         if (((HANDLE) proc->Params[i].Value != NULL) && (proc->Params[i].Option == -1))
         {
-#ifndef _DEBUG
-            // I see no point for error debug version gives here
             GlobalFree((HANDLE) (proc->Params[i].Value));
-#endif
             proc->Params[i].Value = (int) NULL;
         }
 }
@@ -945,6 +975,18 @@ SystemProc __declspec(naked) *CallProc(SystemProc *proc)
 
     SYSTEM_EVENT("\n\t\t\tNear call          ")
     SYSTEM_LOG_POST;
+
+    // workaround for bug #1535007
+    // http://sf.net/tracker/index.php?func=detail&aid=1535007&group_id=22049&atid=373085
+    //
+    // If a function returns short and doesn't clear eax in the process,
+    // it will only set 2 bytes of eax, and the other 2 bytes remain
+    // "random". In this case, they'll be part of the proc pointer.
+    //
+    // To avoid this, eax is cleared before the function is called. This
+    // makes sure the value eax will contain is only what the function
+    // actually sets.
+    _asm xor eax, eax
 
     _asm
     {

@@ -1,12 +1,22 @@
+/*
+ * This file is a part of the bzip2 compression module for NSIS.
+ * 
+ * Copyright and license information can be found below.
+ * Modifications Copyright (C) 1999-2007 Nullsoft and Contributors
+ * 
+ * The original zlib source code is available at
+ * http://www.bzip.org/
+ * 
+ * This modification is not compatible with the original bzip2.
+ * 
+ * This software is provided 'as-is', without any express or implied
+ * warranty.
+ */
 
 /*-------------------------------------------------------------*/
 /*--- Public header file for the library.                   ---*/
 /*---                                               bzlib.h ---*/
 /*-------------------------------------------------------------*/
-
-// (this has been hacked to pieces by dave laundon and justin frankel,
-//  and others, to make it small for nsis. it is not compatible with
-//  bzip2 any longer. yay. )
 
 /*--
   This file is a part of bzip2 and/or libbzip2, a program and
@@ -246,8 +256,6 @@ extern void BZ2_hbAssignCodes ( Int32*, UChar*, Int32, Int32, Int32 );
 extern void BZ2_hbMakeCodeLengths ( UChar*, Int32*, Int32, Int32 );
 
 #else//EXEHEAD
-
-#include "../exehead/util.h"
 
 /*-- states for decompression. --*/
 

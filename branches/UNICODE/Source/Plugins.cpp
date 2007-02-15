@@ -1,12 +1,30 @@
+/*
+ * Plugins.cpp
+ * 
+ * This file is a part of NSIS.
+ * 
+ * Copyright (C) 1999-2007 Nullsoft and Contributors
+ * 
+ * Licensed under the zlib/libpng license (the "License");
+ * you may not use this file except in compliance with the License.
+ * 
+ * Licence details can be found in the file COPYING.
+ * 
+ * This software is provided 'as-is', without any express or implied
+ * warranty.
+ */
+
 #include "exehead/config.h"
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
 
 #include <map>
 #include <string>
+#include <fstream>
 
 #include "Plugins.h"
 #include "Platform.h"
 #include "util.h"
+#include "ResourceEditor.h"
 
 #include "dirreader.h"
 
@@ -16,95 +34,123 @@
 #  include <sys/stat.h>
 #endif
 
+#include "boost/scoped_ptr.hpp"
+
 using namespace std;
 
 extern FILE *g_output;
 
 void Plugins::FindCommands(const string &path, bool displayInfo)
 {
-  dir_reader *dr = new_dir_reader();
+  boost::scoped_ptr<dir_reader> dr( new_dir_reader() );
   dr->read(path);
 
-  dir_reader::iterator files_itr = dr->files().begin();
-  dir_reader::iterator files_end = dr->files().end();
-
-  for (; files_itr != files_end; files_itr++) {
+  for (dir_reader::iterator files_itr = dr->files().begin();
+       files_itr != dr->files().end();
+       files_itr++)
+  {
     if (!dir_reader::matches(*files_itr, "*.dll"))
       continue;
 
     const string plugin = path + PLATFORM_PATH_SEPARATOR_C + *files_itr;
     GetExports(plugin, displayInfo);
   }
+}
 
-  delete dr;
+struct NSISException : public std::runtime_error
+{
+  NSISException(const string& msg) : std::runtime_error(msg) {}
+};
+
+namespace {
+size_t file_size(ifstream& file) {
+  const ifstream::pos_type pos = file.tellg();
+
+  file.seekg(0, ios::end);
+
+  ifstream::pos_type result = file.tellg();
+  assert(result >= 0);
+
+  file.seekg(pos);
+
+  return (size_t)result;
+}
+
+vector<unsigned char> read_file(const string& filename) {
+  ifstream file(filename.c_str(), ios::binary);
+
+  if (!file) {
+    throw NSISException("Can't open file '" + filename + "'");
+  }
+
+  // get the file size
+  size_t filesize = file_size(file);
+
+  vector<unsigned char> result;
+  result.resize(filesize);
+
+  file.read(reinterpret_cast<char*>(&result[0]), filesize);
+
+  if (size_t(file.tellg()) != filesize) { // ifstream::eof doesn't return true here
+    throw NSISException("Couldn't read entire file '" + filename + "'");
+  }
+
+  return result;
+}
 }
 
 void Plugins::GetExports(const string &pathToDll, bool displayInfo)
 {
-  unsigned char* dlldata    = 0;
-  bool           loaded     = false;
-
-  string dllName = remove_file_extension(get_file_name(pathToDll));
-
-  FILE* dll = fopen(pathToDll.c_str() ,"rb");
-  if (dll == NULL)
-    return;
-
-  fseek(dll,0,SEEK_END);
-  long dlldatalen = ftell(dll);
-  fseek(dll,0,SEEK_SET);
-  if (dlldatalen > 0)
-  {
-    dlldata = new unsigned char [dlldatalen];
-    assert(dlldata);
-
-    size_t bytesread = fread((void*)dlldata,1,dlldatalen,dll);
-    if (bytesread == (size_t)dlldatalen)
-      loaded = true;
-  }
-  fclose(dll);
-
-  if (!loaded)
-  {
-    delete[] dlldata;
+  vector<unsigned char> dlldata;
+  PIMAGE_NT_HEADERS NTHeaders;
+  try {
+    dlldata = read_file(pathToDll);
+    NTHeaders = CResourceEditor::GetNTHeaders(&dlldata[0]);
+  } catch (std::runtime_error&) {
     return;
   }
 
-  PIMAGE_NT_HEADERS NTHeaders = PIMAGE_NT_HEADERS(dlldata + PIMAGE_DOS_HEADER(dlldata)->e_lfanew);
-  if (NTHeaders->Signature == IMAGE_NT_SIGNATURE)
+  const string dllName = remove_file_extension(get_file_name(pathToDll));
+
+  FIX_ENDIAN_INT16_INPLACE(NTHeaders->FileHeader.Characteristics);
+  if (NTHeaders->FileHeader.Characteristics & IMAGE_FILE_DLL)
   {
-    if (NTHeaders->FileHeader.Characteristics & IMAGE_FILE_DLL)
+    FIX_ENDIAN_INT32_INPLACE(NTHeaders->OptionalHeader.NumberOfRvaAndSizes);
+    if (NTHeaders->OptionalHeader.NumberOfRvaAndSizes <= IMAGE_DIRECTORY_ENTRY_EXPORT) return;
+
+    DWORD ExportDirVA = NTHeaders->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].VirtualAddress;
+    DWORD ExportDirSize = NTHeaders->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].Size;
+    PIMAGE_SECTION_HEADER sections = IMAGE_FIRST_SECTION(NTHeaders);
+
+    FIX_ENDIAN_INT32_INPLACE(ExportDirVA);
+    FIX_ENDIAN_INT32_INPLACE(ExportDirSize);
+
+    WORD num_sections = FIX_ENDIAN_INT16(NTHeaders->FileHeader.NumberOfSections);
+
+    for (DWORD i = 0; i < num_sections; i++)
     {
-      if (NTHeaders->OptionalHeader.NumberOfRvaAndSizes <= IMAGE_DIRECTORY_ENTRY_EXPORT) return;
-
-      DWORD ExportDirVA = NTHeaders->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].VirtualAddress;
-      DWORD ExportDirSize = NTHeaders->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].Size;
-      PIMAGE_SECTION_HEADER sections = IMAGE_FIRST_SECTION(NTHeaders);
-
-      for (int i = 0; i < NTHeaders->FileHeader.NumberOfSections; i++)
+      DWORD va = FIX_ENDIAN_INT32(sections[i].VirtualAddress);
+      if (va <= ExportDirVA
+          && va + FIX_ENDIAN_INT32(sections[i].Misc.VirtualSize) >= ExportDirVA + ExportDirSize)
+      {
+        DWORD prd = FIX_ENDIAN_INT32(sections[i].PointerToRawData);
+        PIMAGE_EXPORT_DIRECTORY exports = PIMAGE_EXPORT_DIRECTORY(&dlldata[0] + prd + ExportDirVA - va);
+        DWORD na = FIX_ENDIAN_INT32(exports->AddressOfNames);
+        unsigned long *names = (unsigned long*)((unsigned long) exports + (char *) na - ExportDirVA);
+        for (unsigned long j = 0; j < FIX_ENDIAN_INT32(exports->NumberOfNames); j++)
         {
-        if (sections[i].VirtualAddress <= ExportDirVA
-            && sections[i].VirtualAddress+sections[i].Misc.VirtualSize >= ExportDirVA+ExportDirSize)
-          {
-          PIMAGE_EXPORT_DIRECTORY exports = PIMAGE_EXPORT_DIRECTORY(dlldata + sections[i].PointerToRawData + ExportDirVA - sections[i].VirtualAddress);
-          unsigned long *names = (unsigned long*)((unsigned long)exports + (char *)exports->AddressOfNames - ExportDirVA);
-          for (unsigned long j = 0; j < exports->NumberOfNames; j++)
-          {
-            const string name = string((char*)exports + names[j] - ExportDirVA);
-            const string signature = dllName + "::" + name;
-            const string lcsig = lowercase(signature);
-            m_command_to_path[lcsig] = pathToDll;
-            m_command_lowercase_to_command[lcsig] = signature;
-            if (displayInfo)
-              fprintf(g_output, " - %s\n", signature.c_str());
-          }
-          break;
+          const string name = string((char*)exports + FIX_ENDIAN_INT32(names[j]) - ExportDirVA);
+          const string signature = dllName + "::" + name;
+          const string lcsig = lowercase(signature);
+          m_command_to_path[lcsig] = pathToDll;
+          m_command_lowercase_to_command[lcsig] = signature;
+          if (displayInfo)
+            fprintf(g_output, " - %s\n", signature.c_str());
         }
+        break;
       }
     }
   }
-
-  delete[] dlldata;
 }
 
 bool Plugins::IsPluginCommand(const string& token) const {

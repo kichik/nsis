@@ -78,7 +78,7 @@ def join(prefix, list):
 	return map(lambda x: '%s/%s' % (prefix, x), list)
 
 def dist(dir, files):
-	defenv.DistributeContribs('Graphics/%s' % dir, join(dir, files))
+	defenv.DistributeContrib(join(dir, files), path='Graphics/%s' % dir)
 
 dist('Checks', checks)
 dist('Header', headers)

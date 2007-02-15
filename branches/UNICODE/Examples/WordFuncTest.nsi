@@ -3,7 +3,7 @@
 ;                          Word Functions Test
 ;_____________________________________________________________________________
 ;
-; 2005 Shengalts Aleksander aka Instructor (Shengalts@mail.ru)
+; 2006 Shengalts Aleksander aka Instructor (Shengalts@mail.ru)
 
 Name "Word Functions Test"
 OutFile "WordFuncTest.exe"
@@ -17,22 +17,36 @@ Var OUT
 !include "WordFunc.nsh"
 
 !insertmacro WordFind
+!insertmacro WordFindS
 !insertmacro WordFind2X
+!insertmacro WordFind2XS
 !insertmacro WordFind3X
+!insertmacro WordFind3XS
 !insertmacro WordReplace
+!insertmacro WordReplaceS
 !insertmacro WordAdd
+!insertmacro WordAddS
 !insertmacro WordInsert
+!insertmacro WordInsertS
 !insertmacro StrFilter
+!insertmacro StrFilterS
 !insertmacro VersionCompare
 !insertmacro VersionConvert
 
 !insertmacro un.WordFind
+!insertmacro un.WordFindS
 !insertmacro un.WordFind2X
+!insertmacro un.WordFind2XS
 !insertmacro un.WordFind3X
+!insertmacro un.WordFind3XS
 !insertmacro un.WordReplace
+!insertmacro un.WordReplaceS
 !insertmacro un.WordAdd
+!insertmacro un.WordAddS
 !insertmacro un.WordInsert
+!insertmacro un.WordInsertS
 !insertmacro un.StrFilter
+!insertmacro un.StrFilterS
 !insertmacro un.VersionCompare
 !insertmacro un.VersionConvert
 
@@ -175,6 +189,23 @@ Section WordFind
 SectionEnd
 
 
+Section WordFindS
+	${StackVerificationStart} WordFindS
+
+	${WordFindS} 'C:\io.sys|||Program Files|||WINDOWS' '||' '/|PROGRAM FILES' $OUT
+	StrCmp $OUT 'C:\io.sys|||Program Files|||WINDOWS' 0 error
+
+	${WordFindS} 'C:\io.sys|||Program Files|||WINDOWS' '||' '/|Program Files' $OUT
+	StrCmp $OUT '2' 0 error
+
+	goto +2
+	error:
+	SetErrors
+
+	${StackVerificationEnd}
+SectionEnd
+
+
 Section WordFind2X
 	${StackVerificationStart} WordFind2X
 
@@ -210,6 +241,23 @@ Section WordFind2X
 	${WordFind2X} '[io.sys];[C:\logo.sys]' '\' '];' 'E2' $OUT
 	IfErrors 0 error
 	StrCmp $OUT 3 0 error
+
+	goto +2
+	error:
+	SetErrors
+
+	${StackVerificationEnd}
+SectionEnd
+
+
+Section WordFind2XS
+	${StackVerificationStart} WordFind2XS
+
+	${WordFind2XS} 'C:\WINDOWS C:\io.sys C:\logo.sys' '\' '.' '/LOGO' $OUT
+	StrCmp $OUT 'C:\WINDOWS C:\io.sys C:\logo.sys' 0 error
+
+	${WordFind2XS} 'C:\WINDOWS C:\io.sys C:\logo.sys' '\' '.' '/logo' $OUT
+	StrCmp $OUT '2' 0 error
 
 	goto +2
 	error:
@@ -260,6 +308,23 @@ Section WordFind3X
 SectionEnd
 
 
+Section WordFind3XS
+	${StackVerificationStart} WordFind3XS
+
+	${WordFind3XS} '[1.AAB];[2.BAA];[3.BBB];' '[' 'AA' '];' '/2.baa' $OUT
+	StrCmp $OUT '[1.AAB];[2.BAA];[3.BBB];' 0 error
+
+	${WordFind3XS} '[1.AAB];[2.BAA];[3.BBB];' '[' 'AA' '];' '/2.BAA' $OUT
+	StrCmp $OUT '2' 0 error
+
+	goto +2
+	error:
+	SetErrors
+
+	${StackVerificationEnd}
+SectionEnd
+
+
 Section WordReplace
 	${StackVerificationStart} WordReplace
 
@@ -278,6 +343,24 @@ Section WordReplace
 	${WordReplace} 'C:\io.sys C:\logo.sysSYSsys C:\WINDOWS' 'sys' 'bmp' '+*' $OUT
 	StrCmp $OUT 'C:\io.bmp C:\logo.bmp C:\WINDOWS' 0 error
 
+	${WordReplace} 'SYSsysC:\io.sys C:\logo.sys C:\WINDOWSsysSYSsys' 'sys' '|' '{' $OUT
+	StrCmp $OUT '||C:\io.sys C:\logo.sys C:\WINDOWSsysSYSsys' 0 error
+
+	${WordReplace} 'SYSsysC:\io.sys C:\logo.sys C:\WINDOWSsysSYSsys' 'sys' '|' '}' $OUT
+	StrCmp $OUT 'SYSsysC:\io.sys C:\logo.sys C:\WINDOWS|||' 0 error
+
+	${WordReplace} 'SYSsysC:\io.sys C:\logo.sys C:\WINDOWSsysSYSsys' 'sys' '|' '{}' $OUT
+	StrCmp $OUT '||C:\io.sys C:\logo.sys C:\WINDOWS|||' 0 error
+
+	${WordReplace} 'SYSsysC:\io.sys C:\logo.sys C:\WINDOWSsysSYSsys' 'sys' '|' '{*' $OUT
+	StrCmp $OUT '|C:\io.sys C:\logo.sys C:\WINDOWSsysSYSsys' 0 error
+
+	${WordReplace} 'SYSsysC:\io.sys C:\logo.sys C:\WINDOWSsysSYSsys' 'sys' '|' '}*' $OUT
+	StrCmp $OUT 'SYSsysC:\io.sys C:\logo.sys C:\WINDOWS|' 0 error
+
+	${WordReplace} 'SYSsysC:\io.sys C:\logo.sys C:\WINDOWSsysSYSsys' 'sys' '|' '{}*' $OUT
+	StrCmp $OUT '|C:\io.sys C:\logo.sys C:\WINDOWS|' 0 error
+
 	${WordReplace} 'sysSYSsysC:\io.sys C:\logo.sys C:\WINDOWSsysSYSsys' 'sys' '|' '{}*' $OUT
 	StrCmp $OUT '|C:\io.sys C:\logo.sys C:\WINDOWS|' 0 error
 
@@ -292,6 +375,23 @@ Section WordReplace
 	${WordReplace} 'C:\io.sys C:\logo.sys' '.sys' '|sys|' 'E3' $OUT
 	IfErrors 0 error
 	StrCmp $OUT '3' 0 error
+
+	goto +2
+	error:
+	SetErrors
+
+	${StackVerificationEnd}
+SectionEnd
+
+
+Section WordReplaceS
+	${StackVerificationStart} WordReplaceS
+
+	${WordReplaceS} 'C:\io.sys C:\logo.sys C:\WINDOWS' 'SYS' 'bmp' '+2' $OUT
+	StrCmp $OUT 'C:\io.sys C:\logo.sys C:\WINDOWS' 0 error
+
+	${WordReplaceS} 'C:\io.sys C:\logo.sys C:\WINDOWS' 'sys' 'bmp' '+2' $OUT
+	StrCmp $OUT 'C:\io.sys C:\logo.bmp C:\WINDOWS' 0 error
 
 	goto +2
 	error:
@@ -339,6 +439,23 @@ Section WordAdd
 SectionEnd
 
 
+Section WordAddS
+	${StackVerificationStart} WordAddS
+
+	${WordAddS} 'C:\io.sys C:\WINDOWS' ' ' '+C:\windows C:\config.sys' $OUT
+	StrCmp $OUT 'C:\io.sys C:\WINDOWS C:\windows C:\config.sys' 0 error
+
+	${WordAddS} 'C:\io.sys C:\WINDOWS' ' ' '+C:\WINDOWS C:\config.sys' $OUT
+	StrCmp $OUT 'C:\io.sys C:\WINDOWS C:\config.sys' 0 error
+
+	goto +2
+	error:
+	SetErrors
+
+	${StackVerificationEnd}
+SectionEnd
+
+
 Section WordInsert
 	${StackVerificationStart} WordInsert
 
@@ -362,6 +479,23 @@ Section WordInsert
 	${WordInsert} 'C:\io.sys C:\logo.sys' '' 'C:\logo.sys' 'E1' $OUT
 	IfErrors 0 error
 	StrCmp $OUT '3' 0 error
+
+	goto +2
+	error:
+	SetErrors
+
+	${StackVerificationEnd}
+SectionEnd
+
+
+Section WordInsertS
+	${StackVerificationStart} WordInsertS
+
+	${WordInsertS} 'C:\io.sys x C:\logo.sys' ' X ' 'C:\NTLDR' '+2' $OUT
+	StrCmp $OUT 'C:\io.sys x C:\logo.sys X C:\NTLDR' 0 error
+
+	${WordInsertS} 'C:\io.sys x C:\logo.sys' ' x ' 'C:\NTLDR' '+2' $OUT
+	StrCmp $OUT 'C:\io.sys x C:\NTLDR x C:\logo.sys' 0 error
 
 	goto +2
 	error:
@@ -400,6 +534,21 @@ Section StrFilter
 
 	${StrFilter} '123abc 456DEF 7890|%#' '123' 'b' 'def' $OUT
 	IfErrors 0 error
+
+	goto +2
+	error:
+	SetErrors
+
+	${StackVerificationEnd}
+SectionEnd
+
+
+Section StrFilterS
+	${StackVerificationStart} StrFilterS
+
+	${StrFilterS} '123abc 456DEF 7890|%#' '13' 'af' '4590' $OUT
+	IfErrors error
+	StrCmp $OUT '123a 6 78|%#' 0 error
 
 	goto +2
 	error:
@@ -478,12 +627,19 @@ SectionEnd
 
 Section un.Uninstall
 	${un.WordFind} 'C:\io.sys C:\Program Files C:\WINDOWS' ' C:\' '-02' $OUT
+	${un.WordFindS} 'C:\io.sys C:\Program Files C:\WINDOWS' ' C:\' '-02' $OUT
 	${un.WordFind2X} '[C:\io.sys];[C:\logo.sys];[C:\WINDOWS]' '[C:\' '];' '+2' $OUT
+	${un.WordFind2XS} '[C:\io.sys];[C:\logo.sys];[C:\WINDOWS]' '[C:\' '];' '+2' $OUT
 	${un.WordFind3X} '[1.AAB];[2.BAA];[3.BBB];' '[' 'AA' '];' '+1' $OUT
+	${un.WordFind3XS} '[1.AAB];[2.BAA];[3.BBB];' '[' 'AA' '];' '+1' $OUT
 	${un.WordReplace} 'C:\io.sys C:\logo.sys C:\WINDOWS' 'SYS' 'bmp' '+2' $OUT
+	${un.WordReplaceS} 'C:\io.sys C:\logo.sys C:\WINDOWS' 'SYS' 'bmp' '+2' $OUT
 	${un.WordAdd} 'C:\io.sys C:\WINDOWS' ' ' '+C:\WINDOWS C:\config.sys' $OUT
+	${un.WordAddS} 'C:\io.sys C:\WINDOWS' ' ' '+C:\WINDOWS C:\config.sys' $OUT
 	${un.WordInsert} 'C:\io.sys C:\WINDOWS' ' ' 'C:\logo.sys' '-2' $OUT
+	${un.WordInsertS} 'C:\io.sys C:\WINDOWS' ' ' 'C:\logo.sys' '-2' $OUT
 	${un.StrFilter} '123abc 456DEF 7890|%#' '+' '' '' $OUT
+	${un.StrFilterS} '123abc 456DEF 7890|%#' '+' '' '' $OUT
 	${un.VersionCompare} '1.1.1.9' '1.1.1.01' $OUT
 	${un.VersionConvert} '9.0a' '' $OUT
 SectionEnd

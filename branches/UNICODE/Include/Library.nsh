@@ -17,6 +17,9 @@
 # For more information, read appendix B in the documentation.
 #
 
+!verbose push
+!verbose 3
+
 !ifndef LIB_INCLUDED
 
 !define LIB_INCLUDED
@@ -27,6 +30,12 @@
 !ifndef SHCNF_IDLIST
   !define SHCNF_IDLIST 0x0000
 !endif
+
+!include LogicLib.nsh
+!include FileFunc.nsh
+
+!insertmacro GetParent
+!insertmacro un.GetParent
 
 ### Initialize session id (GUID)
 !macro __InstallLib_Helper_InitSession
@@ -39,16 +48,16 @@
 
   !endif
 
-  StrCmp $__INSTALLLLIB_SESSIONGUID '' 0 +6
+  !define __InstallLib_Helper_InitSession_Label "${__FILE__}${__LINE__}"
 
-    System::Alloc 16
-    System::Call 'ole32::CoCreateGuid(i sR0)'
-    System::Call 'ole32::StringFromGUID2(i R0, w .s, i ${NSIS_MAX_STRLEN})'
-    System::Free $R0
+  StrCmp $__INSTALLLLIB_SESSIONGUID '' 0 "${__InstallLib_Helper_InitSession_Label}"
+
+    System::Call 'ole32::CoCreateGuid(g .s)'
     Pop $__INSTALLLLIB_SESSIONGUID
 
-    StrCmp $__INSTALLLLIB_SESSIONGUID '' 0 +2
-      StrCpy $__INSTALLLLIB_SESSIONGUID 'session'
+  "${__InstallLib_Helper_InitSession_Label}:"
+
+  !undef __InstallLib_Helper_InitSession_Label
 
 !macroend
 
@@ -109,11 +118,31 @@
 ### Get library version
 !macro __InstallLib_Helper_GetVersion TYPE FILE
 
-  !tempfile LIBRARY_TEMP_NSH
-  !execute '"${NSISDIR}\Bin\LibraryLocal.exe" "${TYPE}" "${FILE}" "${LIBRARY_TEMP_NSH}"'
-  !include "${LIBRARY_TEMP_NSH}"
-  !delfile "${LIBRARY_TEMP_NSH}"
-  !undef LIBRARY_TEMP_NSH
+  !ifdef NSIS_WIN32_MAKENSIS
+
+    !tempfile LIBRARY_TEMP_NSH
+    !execute '"${NSISDIR}\Bin\LibraryLocal.exe" "${TYPE}" "${FILE}" "${LIBRARY_TEMP_NSH}"'
+    !include "${LIBRARY_TEMP_NSH}"
+    !delfile "${LIBRARY_TEMP_NSH}"
+    !undef LIBRARY_TEMP_NSH
+
+  !else
+
+    !ifndef INSTALLLIB_GETVERSION_VARS_DEFINED
+
+      !define INSTALLLIB_GETVERSION_VARS_DEFINED
+
+      Var /GLOBAL INSTALLLIB_VER_LOW
+      Var /GLOBAL INSTALLLIB_VER_HIGH
+
+    !endif
+
+    !define LIBRARY_VERSION_LOW $INSTALLLIB_VER_LOW
+    !define LIBRARY_VERSION_HIGH $INSTALLLIB_VER_HIGH
+
+    GetDLLVersionLocal "${FILE}" $INSTALLLIB_VER_HIGH $INSTALLLIB_VER_LOW
+
+  !endif
 
 !macroend
 
@@ -285,8 +314,8 @@
       StrCpy $R1 ${LIBRARY_VERSION_LOW}
 
       TypeLib::GetLibVersion $R4
-      Pop $R2
       Pop $R3
+      Pop $R2
 
       IntCmpU $R0 $R2 0 "installlib.register_${INSTALLLIB_UNIQUE}" "installlib.upgrade_${INSTALLLIB_UNIQUE}"
       IntCmpU $R1 $R3 "installlib.register_${INSTALLLIB_UNIQUE}" "installlib.register_${INSTALLLIB_UNIQUE}" \
@@ -461,6 +490,8 @@
   !endif
 
   "installlib.file_${INSTALLLIB_UNIQUE}:"
+    SetFileAttributes $R0 FILE_ATTRIBUTE_NORMAL
+    ClearErrors
     File /oname=$R0 "${LOCALFILE}"
     Return
 
@@ -641,13 +672,49 @@
     ;------------------------
     ;Delete
 
+    Delete $R1
+
     !ifdef UNINSTALLLIB_UNINSTALL_REBOOT_PROTECTED | UNINSTALLLIB_UNINSTALL_REBOOT_NOTPROTECTED
 
-      Delete /REBOOTOK $R1
+      ${If} ${FileExists} $R1
+        # File is in use, can't just delete.
+        # Move file to another location before using Delete /REBOOTOK. This way, if
+        #  the user installs a new version of the DLL, it won't be deleted after
+        #  reboot. See bug #1097642 for more information on this.
 
-    !else
+        # Try moving to $TEMP.
+        GetTempFileName $R0
+        Delete $R0
+        Rename $R1 $R0
 
-      Delete $R1
+        ${If} ${FileExists} $R1
+          # Still here, delete temporary file, in case the file was copied
+          #  and not deleted. This happens when moving from network drives,
+          #  for example.
+          Delete $R0
+
+          # Try moving to directory containing the file.
+          !ifndef __UNINSTALL__
+            ${GetParent} $R1 $R0
+          !else
+            ${un.GetParent} $R1 $R0
+          !endif
+          GetTempFileName $R0 $R0
+          Delete $R0
+          Rename $R1 $R0
+
+          ${If} ${FileExists} $R1
+            # Still here, delete temporary file.
+            Delete $R0
+
+            # Give up moving, simply Delete /REBOOTOK the file.
+            StrCpy $R0 $R1
+          ${EndIf}
+        ${EndIf}
+
+        # Delete the moved file.
+        Delete /REBOOTOK $R0
+      ${EndIf}
 
     !endif
 
@@ -684,3 +751,5 @@
 !macroend
 
 !endif
+
+!verbose pop

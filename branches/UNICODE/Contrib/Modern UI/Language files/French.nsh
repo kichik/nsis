@@ -11,7 +11,7 @@
   !define MUI_LANGNAME "Français" ;Use only ASCII characters (if this is not possible, use the English name)
 
   !define MUI_TEXT_WELCOME_INFO_TITLE "Bienvenue dans le programme d'installation de $(^NameDA)"
-  !define MUI_TEXT_WELCOME_INFO_TEXT "Vous êtes sur le point d'installer $(^NameDA) sur votre ordinateur.\r\n\r\nAvant de débuter l'installation, il est recommandé de fermer toutes les autres applications. Cela permettra de mettre à jour certains fichiers système sans redémarrer votre ordinateur.\r\n\r\n"
+  !define MUI_TEXT_WELCOME_INFO_TEXT "Vous êtes sur le point d'installer $(^NameDA) sur votre ordinateur.\r\n\r\nAvant de débuter l'installation, il est recommandé de fermer toutes les autres applications. Cela permettra de mettre à jour certains fichiers système sans redémarrer votre ordinateur.\r\n\r\n$_CLICK"
 
   !define MUI_TEXT_LICENSE_TITLE "Licence utilisateur"
   !define MUI_TEXT_LICENSE_SUBTITLE "Veuillez examiner les termes de la licence avant d'installer $(^NameDA)."
@@ -59,7 +59,7 @@
   
   
   !define MUI_UNTEXT_WELCOME_INFO_TITLE "Bienvenue dans le programme de désinstallation de $(^NameDA)"
-  !define MUI_UNTEXT_WELCOME_INFO_TEXT "Vous êtes sur le point de désinstaller $(^NameDA) de votre ordinateur.\r\n\r\nAvant de débuter l'installation, il est recommandé de fermer toutes les autres applications.\r\n\r\n"
+  !define MUI_UNTEXT_WELCOME_INFO_TEXT "Vous êtes sur le point de désinstaller $(^NameDA) de votre ordinateur.\r\n\r\nAvant de débuter la désinstallation, assurez-vous que $(^NameDA) ne soit pas en cours d'exécution.\r\n\r\n$_CLICK"
 
   !define MUI_UNTEXT_CONFIRM_TITLE "Désinstaller $(^NameDA)"
   !define MUI_UNTEXT_CONFIRM_SUBTITLE "Supprimer $(^NameDA) de votre ordinateur."
@@ -67,7 +67,7 @@
   !define MUI_UNTEXT_LICENSE_TITLE "Licence utilisateur"
   !define MUI_UNTEXT_LICENSE_SUBTITLE "Veuillez examiner les termes de la licence avant de désinstaller $(^NameDA)."
   !define MUI_UNINNERTEXT_LICENSE_BOTTOM "Si vous acceptez les termes de la licence utilisateur, cliquez sur J'accepte pour continuer. Vous devez accepter la licence utilisateur pour désinstaller $(^NameDA)."
-  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Si vous acceptez les termes de la licence utilisateur, cochez la case ci-dessous. Vous devez accepter la licence utilisateur pour dàsintaller $(^NameDA)."
+  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Si vous acceptez les termes de la licence utilisateur, cochez la case ci-dessous. Vous devez accepter la licence utilisateur pour désintaller $(^NameDA)."
   !define MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Si vous acceptez les termes de la licence utilisateur, sélectionnez le premier choix ci-dessous. Vous devez accepter la licence utilisateur pour désinstaller $(^NameDA)."
 
   !define MUI_UNTEXT_UNINSTALLING_TITLE "Désinstallation en cours"
@@ -76,8 +76,8 @@
   !define MUI_UNTEXT_COMPONENTS_TITLE "Choisissez les composants"
   !define MUI_UNTEXT_COMPONENTS_SUBTITLE "Cochez les composants de $(^NameDA) que vous souhaitez désinstaller."
 
-  !define MUI_UNTEXT_DIRECTORY_TITLE "Choisissez le dossier d'installation"
-  !define MUI_UNTEXT_DIRECTORY_SUBTITLE "Choisissez le dossier dans lequel vous voulez désinstaller $(^NameDA)."
+  !define MUI_UNTEXT_DIRECTORY_TITLE "Choisissez le dossier de désinstallation"
+  !define MUI_UNTEXT_DIRECTORY_SUBTITLE "Choisissez le dossier à partir duquel vous voulez désinstaller $(^NameDA)."
 
   !define MUI_UNTEXT_FINISH_TITLE "Désinstallation terminée"
   !define MUI_UNTEXT_FINISH_SUBTITLE "La désinstallation s'est terminée avec succès."
@@ -85,7 +85,7 @@
   !define MUI_UNTEXT_ABORT_TITLE "Désinstallation interrompue"
   !define MUI_UNTEXT_ABORT_SUBTITLE "La désinstallation n'a pas été terminée."
 
-  !define MUI_UNTEXT_FINISH_INFO_TITLE "Fin de la déinstallation de $(^NameDA)"
+  !define MUI_UNTEXT_FINISH_INFO_TITLE "Fin de la désinstallation de $(^NameDA)"
   !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) a été supprimé de votre ordinateur.\r\n\r\nCliquez sur Fermer pour quitter le programme d'installation."
   !define MUI_UNTEXT_FINISH_INFO_REBOOT "Votre ordinateur doit être redémarré pour terminer l'installation de $(^NameDA). Souhaitez-vous redémarrer maintenant ?"
 

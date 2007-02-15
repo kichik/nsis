@@ -507,6 +507,13 @@ create multiple groups of radio button and makes keyboard
 navigation using arrow keys easier.</td>
 </tr>
 <tr>
+<td class="righttable">FOCUS</td>
+<td class="righttable">Sets focus on the specified control,
+instead of the first focusable control. If more than one field
+is specified with this flag, only the first one will receive
+focus.</td>
+</tr>
+<tr>
 <td class="righttable">NOTABSTOP</td>
 <td class="righttable">Do not stop on the control when the user
 pressed the Tab key. Add NOTABSTOP to all controls of a group
@@ -567,7 +574,7 @@ selection changes. Your validation/leave function can read the
 "<em>State</em>" value from the "<em>Settings</em>" section to
 determine which control caused the notification, if any, and
 perform some appropriate action followed by an Abort instruction
-(to tell NSIS to return to the page). The Contrib\InstallOptions
+(to tell NSIS to return to the page). The Examples\InstallOptions
 folder contains an example script showing how this might be
 used.</td>
 </tr>
@@ -843,9 +850,9 @@ FunctionEnd
 <h2>Version history</h2>
 <div>
 <ul>
-<li>DLL version 2.44 (October 11th, 2005)
+<li>DLL version 2.45 (January 23th, 2007)
 <ul>
-<li>Added HWND and HWND2 entries to the INI file to avoid messy calculations of the correct control id</li>
+<li>Added FOCUS flag for setting focus to a control other than the first</li>
 </ul>
 </li>
 </ul>
@@ -863,7 +870,7 @@ New documentation by Joost Verburg</p>
 <pre>
 Original version Copyright &copy; 2001 Michael Bishop
 DLL version 1 Copyright &copy; 2001-2002 Nullsoft, Inc., ORTIM
-DLL version 2 Copyright &copy; 2003-2005 Amir Szekely, Joost Verburg, Dave Laundon
+DLL version 2 Copyright &copy; 2003-2007 Amir Szekely, Joost Verburg, Dave Laundon
 
 This software is provided 'as-is', without any express or implied
 warranty. In no event will the authors be held liable for any damages

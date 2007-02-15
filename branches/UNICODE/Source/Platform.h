@@ -1,3 +1,19 @@
+/*
+ * Platform.h
+ * 
+ * This file is a part of NSIS.
+ * 
+ * Copyright (C) 1999-2007 Nullsoft and Contributors
+ * 
+ * Licensed under the zlib/libpng license (the "License");
+ * you may not use this file except in compliance with the License.
+ * 
+ * Licence details can be found in the file COPYING.
+ * 
+ * This software is provided 'as-is', without any express or implied
+ * warranty.
+ */
+
 #ifndef ___PLATFORM__H___
 #define ___PLATFORM__H___
 
@@ -16,7 +32,7 @@
 // basic types
 typedef unsigned char BYTE, *PBYTE, *LPBYTE;
 typedef unsigned short WORD, *LPWORD;
-typedef unsigned long DWORD, *LPDWORD;
+typedef unsigned int DWORD, *LPDWORD;
 typedef short SHORT;
 typedef unsigned short USHORT;
 typedef unsigned int UINT;
@@ -28,16 +44,17 @@ typedef unsigned long ULONG;
 typedef long long INT64, LARGE_INTEGER;
 typedef unsigned long long UINT64, ULARGE_INTEGER;
 typedef int BOOL, *LPBOOL;
+typedef short VARIANT_BOOL;
 typedef void VOID;
 typedef void *LPVOID;
 typedef char CHAR, *PCHAR, *LPCH, *PCH, *NPSTR, *LPSTR, *PSTR;
 typedef unsigned char UCHAR;
 typedef const char *LPCCH, *PCSTR, *LPCSTR;
-typedef unsigned short WCHAR, *PWCHAR, *LPWCH, *PWCH, *NWPSTR, *LPWSTR, *PWSTR;
-typedef const unsigned short *LPCWCH, *PCWCH, *LPCWSTR, *PCWSTR;
+typedef unsigned short WCHAR, OLECHAR, *PWCHAR, *LPWCH, *PWCH, *NWPSTR, *LPWSTR, *PWSTR, *BSTR;
+typedef const unsigned short *LPCWCH, *PCWCH, *LPCWSTR, *PCWSTR, *LPCOLESTR;
 typedef unsigned int UINT_PTR;
 // basic stuff
-typedef unsigned long HANDLE;
+typedef void * HANDLE;
 typedef unsigned long HKEY;
 // some gdi
 typedef unsigned long COLORREF;
@@ -47,8 +64,45 @@ typedef unsigned long HBRUSH;
 #  define TRUE 1
 // more
 typedef WORD LANGID;
+// ULONGLONG
+#ifdef __GNUC__
+#define _HAVE_INT64
+#define _INTEGRAL_MAX_BITS 64
+#undef __int64
+#define __int64 long long
+#elif defined(__WATCOMC__) && (defined(_INTEGRAL_MAX_BITS) && _INTEGRAL_MAX_BITS >= 64 )
+#define _HAVE_INT64
+#endif /* __GNUC__/__WATCOMC */
+#if defined(_HAVE_INT64) || (defined(_INTEGRAL_MAX_BITS) && _INTEGRAL_MAX_BITS >= 64)
+typedef __int64 LONGLONG;
+typedef unsigned __int64 DWORDLONG;
+#else
+typedef double LONGLONG,DWORDLONG;
+#endif
+typedef LONGLONG *PLONGLONG;
+typedef DWORDLONG *PDWORDLONG;
+typedef DWORDLONG ULONGLONG,*PULONGLONG;
 #endif
 
+#ifndef __BIG_ENDIAN__
+# define FIX_ENDIAN_INT32_INPLACE(x) ((void)(x))
+# define FIX_ENDIAN_INT32(x) (x)
+# define FIX_ENDIAN_INT16_INPLACE(x) ((void)(x))
+# define FIX_ENDIAN_INT16(x) (x)
+#else
+# define FIX_ENDIAN_INT32_INPLACE(x) ((x) = SWAP_ENDIAN_INT32(x))
+# define FIX_ENDIAN_INT32(x) SWAP_ENDIAN_INT32(x)
+# define FIX_ENDIAN_INT16_INPLACE(x) ((x) = SWAP_ENDIAN_INT16(x))
+# define FIX_ENDIAN_INT16(x) SWAP_ENDIAN_INT16(x)
+#endif
+#define SWAP_ENDIAN_INT32(x) ( \
+  (((x)&0xFF000000) >> 24) | \
+  (((x)&0x00FF0000) >>  8) | \
+  (((x)&0x0000FF00) <<  8) | \
+  (((x)&0x000000FF) << 24) )
+#define SWAP_ENDIAN_INT16(x) ( \
+  (((x)&0xFF00) >> 8) | \
+  (((x)&0x00FF) << 8) )
 
 // script path separator
 
@@ -112,11 +166,19 @@ typedef WORD LANGID;
 #  ifndef FIELD_OFFSET
 #    define FIELD_OFFSET(t,f) ((LONG)&(((t*)0)->f))
 #  endif
+#  ifndef MAKEINTRESOURCEA
+#    define MAKEINTRESOURCEA(i) ((LPSTR)((ULONG_PTR)((WORD)(i))))
+#  endif
+#  ifndef MAKEINTRESOURCEW
+#    define MAKEINTRESOURCEW(i) ((LPWSTR)((ULONG_PTR)((WORD)(i))))
+#  endif
 #  ifndef MAKEINTRESOURCE
-#    define MAKEINTRESOURCE(i) (LPSTR)((DWORD)((WORD)(i)))
+#    define MAKEINTRESOURCE MAKEINTRESOURCEA
 #  endif
 #  ifndef IMAGE_FIRST_SECTION
-#    define IMAGE_FIRST_SECTION(h) ((PIMAGE_SECTION_HEADER) ((DWORD)h+FIELD_OFFSET(IMAGE_NT_HEADERS,OptionalHeader)+((PIMAGE_NT_HEADERS)(h))->FileHeader.SizeOfOptionalHeader))
+#    define IMAGE_FIRST_SECTION(h) ( PIMAGE_SECTION_HEADER( (DWORD) h + \
+                                     FIELD_OFFSET(IMAGE_NT_HEADERS, OptionalHeader) + \
+                                     FIX_ENDIAN_INT16(PIMAGE_NT_HEADERS(h)->FileHeader.SizeOfOptionalHeader) ) )
 #  endif
 #  ifndef RGB
 #    define RGB(r,g,b) ((DWORD)(((BYTE)(r)|((WORD)(g)<<8))|(((DWORD)(BYTE)(b))<<16)))
@@ -594,8 +656,13 @@ typedef WORD LANGID;
 
 #ifndef _WIN32
 #  define IMAGE_NUMBEROF_DIRECTORY_ENTRIES 16
-#  define IMAGE_DOS_SIGNATURE 0x5A4D
-#  define IMAGE_NT_SIGNATURE 0x00004550
+#  ifndef __BIG_ENDIAN__
+#    define IMAGE_DOS_SIGNATURE 0x5A4D
+#    define IMAGE_NT_SIGNATURE 0x00004550
+#  else
+#    define IMAGE_DOS_SIGNATURE 0x4D5A
+#    define IMAGE_NT_SIGNATURE 0x50450000
+#  endif
 #  define IMAGE_FILE_DLL 8192
 #  define IMAGE_DIRECTORY_ENTRY_EXPORT 0
 #  define IMAGE_SIZEOF_SHORT_NAME 8
@@ -642,6 +709,7 @@ typedef struct _IMAGE_DOS_HEADER {
   WORD e_res2[10];
   LONG e_lfanew;
 } IMAGE_DOS_HEADER,*PIMAGE_DOS_HEADER;
+#  pragma pack()
 #  pragma pack(4)
 typedef struct _IMAGE_FILE_HEADER {
   WORD Machine;
@@ -688,7 +756,48 @@ typedef struct _IMAGE_OPTIONAL_HEADER {
   DWORD LoaderFlags;
   DWORD NumberOfRvaAndSizes;
   IMAGE_DATA_DIRECTORY DataDirectory[IMAGE_NUMBEROF_DIRECTORY_ENTRIES];
-} IMAGE_OPTIONAL_HEADER,*PIMAGE_OPTIONAL_HEADER;
+} IMAGE_OPTIONAL_HEADER32,*PIMAGE_OPTIONAL_HEADER32;
+typedef struct _IMAGE_OPTIONAL_HEADER64 {
+  WORD Magic;
+  BYTE MajorLinkerVersion;
+  BYTE MinorLinkerVersion;
+  DWORD SizeOfCode;
+  DWORD SizeOfInitializedData;
+  DWORD SizeOfUninitializedData;
+  DWORD AddressOfEntryPoint;
+  DWORD BaseOfCode;
+  ULONGLONG ImageBase;
+  DWORD SectionAlignment;
+  DWORD FileAlignment;
+  WORD MajorOperatingSystemVersion;
+  WORD MinorOperatingSystemVersion;
+  WORD MajorImageVersion;
+  WORD MinorImageVersion;
+  WORD MajorSubsystemVersion;
+  WORD MinorSubsystemVersion;
+  DWORD Win32VersionValue;
+  DWORD SizeOfImage;
+  DWORD SizeOfHeaders;
+  DWORD CheckSum;
+  WORD Subsystem;
+  WORD DllCharacteristics;
+  ULONGLONG SizeOfStackReserve;
+  ULONGLONG SizeOfStackCommit;
+  ULONGLONG SizeOfHeapReserve;
+  ULONGLONG SizeOfHeapCommit;
+  DWORD LoaderFlags;
+  DWORD NumberOfRvaAndSizes;
+  IMAGE_DATA_DIRECTORY DataDirectory[IMAGE_NUMBEROF_DIRECTORY_ENTRIES];
+} IMAGE_OPTIONAL_HEADER64,*PIMAGE_OPTIONAL_HEADER64;
+#ifdef _WIN64
+typedef IMAGE_OPTIONAL_HEADER64         IMAGE_OPTIONAL_HEADER;
+typedef PIMAGE_OPTIONAL_HEADER64        PIMAGE_OPTIONAL_HEADER;
+#else
+typedef IMAGE_OPTIONAL_HEADER32         IMAGE_OPTIONAL_HEADER;
+typedef PIMAGE_OPTIONAL_HEADER32        PIMAGE_OPTIONAL_HEADER;
+#endif
+#define IMAGE_NT_OPTIONAL_HDR32_MAGIC 0x10b
+#define IMAGE_NT_OPTIONAL_HDR64_MAGIC 0x20b
 typedef struct _IMAGE_NT_HEADERS {
   DWORD Signature;
   IMAGE_FILE_HEADER FileHeader;

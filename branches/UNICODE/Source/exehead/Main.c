@@ -1,35 +1,18 @@
-/* 
-
-  Nullsoft Scriptable Install System (NSIS)
-  main.c - executable header main code
-
-  Copyright (C) 1999-2005 Nullsoft, Inc.
-  
-  This license applies to everything in the NSIS package, except where otherwise noted.
-
-  This software is provided 'as-is', without any express or implied
-  warranty.  In no event will the authors be held liable for any damages
-  arising from the use of this software.
-
-  Permission is granted to anyone to use this software for any purpose,
-  including commercial applications, and to alter it and redistribute it
-  freely, subject to the following restrictions:
-
-  1. The origin of this software must not be misrepresented; you must not
-     claim that you wrote the original software. If you use this software
-     in a product, an acknowledgment in the product documentation would be
-     appreciated but is not required.
-  2. Altered source versions must be plainly marked as such, and must not be
-     misrepresented as being the original software.
-  3. This notice may not be removed or altered from any source distribution.
-
-  This is the zlib/libpng license, which is approved by opensource.org.
-
-  Portions Copyright (C) 1995-1998 Jean-loup Gailly and Mark Adler (zlib).
-  Portions Copyright (C) 1996-2002 Julian R Seward (bzip2).
-  Portions Copyright (C) 1999-2003 Igor Pavlov (lzma).
-
-*/
+/*
+ * main.c: executable header main code
+ * 
+ * This file is a part of NSIS.
+ * 
+ * Copyright (C) 1999-2007 Nullsoft and Contributors
+ * 
+ * Licensed under the zlib/libpng license (the "License");
+ * you may not use this file except in compliance with the License.
+ * 
+ * Licence details can be found in the file COPYING.
+ * 
+ * This software is provided 'as-is', without any express or implied
+ * warranty.
+ */
 
 #include "../Platform.h"
 #include <shlobj.h>
@@ -65,8 +48,8 @@ char *ValidateTempDir()
     return NULL;
   addtrailingslash(state_temp_dir);
   CreateDirectory(state_temp_dir, NULL);
-  // state_command_line is used as a temp var here
-  return my_GetTempFileName(state_command_line, state_temp_dir);
+  // state_language is used as a temp var here
+  return my_GetTempFileName(state_language, state_temp_dir);
 }
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, int nCmdShow)
@@ -93,13 +76,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
     // workaround for bug #1008632
     // http://sourceforge.net/tracker/index.php?func=detail&aid=1008632&group_id=22049&atid=373085
     //
-    // without this, SHGetSpecialFolderPath doesn't always recognize some
-    // special folders, like the desktop folder for all users, on Windows
-    // 9x. unlike SHGetSpecialFolderPath, which is not available on all
-    // versions of Windows, SHGetSpecialFolderLocation doesn't try too
-    // hard to make sure the caller gets what he asked for. so we give it
-    // a little push in the right direction by doing part of the work for
-    // it.
+    // without this, SHGetSpecialFolderLocation doesn't always recognize
+    // some special folders, like the desktop folder for all users, on
+    // Windows 9x. unlike SHGetSpecialFolderPath, which is not available
+    // on all versions of Windows, SHGetSpecialFolderLocation doesn't try
+    // too hard to make sure the caller gets what he asked for. so we give
+    // it a little push in the right direction by doing part of the work
+    // for it.
     //
     // part of what SHGetFileInfo does, is to convert a path into an idl.
     // to do this conversion, it first needs to initialize the list of 
@@ -112,19 +95,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
 
   mystrcpy(g_caption,_LANG_GENERIC_ERROR);
 
-  GetTempPath(NSIS_MAX_STRLEN, state_temp_dir);
-  if (!ValidateTempDir())
-  {
-    GetWindowsDirectory(state_temp_dir, NSIS_MAX_STRLEN - 5); // leave space for \Temp
-    mystrcat(state_temp_dir, "\\Temp");
-    if (!ValidateTempDir())
-    {
-      goto end;
-    }
-  }
-  DeleteFile(state_command_line);
-
-  lstrcpyn(state_command_line, GetCommandLine(), NSIS_MAX_STRLEN);
+  mystrcpy(state_command_line, GetCommandLine());
 
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
   g_hInstance = GetModuleHandle(NULL);
@@ -182,6 +153,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
       cmdline++;
   }
 
+  GetTempPath(NSIS_MAX_STRLEN, state_temp_dir);
+  if (!ValidateTempDir())
+  {
+    GetWindowsDirectory(state_temp_dir, NSIS_MAX_STRLEN - 5); // leave space for \Temp
+    mystrcat(state_temp_dir, "\\Temp");
+    if (!ValidateTempDir())
+    {
+      goto end;
+    }
+  }
+  DeleteFile(state_language);
+
   m_Err = loadHeaders(cl_flags);
   if (m_Err) goto end;
 
@@ -233,7 +216,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
         if (m_Err) // not done yet
         {
           // get current name
-          int l=GetModuleFileName(g_hInstance,ibuf,sizeof(ibuf));
+          int l=GetModuleFileName(NULL,ibuf,sizeof(ibuf));
           // check if it is ?Au_.exe - if so, fuck it
           if (!lstrcmpi(ibuf+l-(sizeof(s)-2),s+1)) break;
 
@@ -272,9 +255,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
   ret = ui_doinstall();
 
 #ifdef NSIS_CONFIG_LOG
-#ifndef NSIS_CONFIG_LOG_ODS
+#if !defined(NSIS_CONFIG_LOG_ODS) && !defined(NSIS_CONFIG_LOG_STDOUT)
   log_write(1);
-#endif//!NSIS_CONFIG_LOG_ODS
+#endif//!NSIS_CONFIG_LOG_ODS && !NSIS_CONFIG_LOG_STDOUT
 #endif//NSIS_CONFIG_LOG
 end:
 

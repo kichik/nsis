@@ -83,7 +83,7 @@ void JNL_Connection::connect(char *hostname, int port)
     else
     {
       m_state=STATE_RESOLVING;
-		  m_saddr.sin_family=AF_INET;
+      m_saddr.sin_family=AF_INET;
       m_saddr.sin_port=htons((unsigned short)port);
       m_saddr.sin_addr.s_addr=inet_addr(hostname);
     }
@@ -145,7 +145,7 @@ void JNL_Connection::run(int max_send_bytes, int max_recv_bytes, int *bytes_sent
       else { m_state=STATE_CONNECTING; }
     break;
     case STATE_CONNECTING:
-      {		
+      {
         fd_set f[3];
         FD_ZERO(&f[0]);
         FD_ZERO(&f[1]);

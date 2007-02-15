@@ -380,15 +380,13 @@ __declspec(dllexport) void download (HWND   parent,
           break;
         }
 
-        Sleep(25);
-
         st = get->run ();
 
         if (st == -1) {
           lstrcpyn(url, get->geterrorstr(), sizeof(url));
           error = url;
         } else if (st == 1) {
-          if (sofar < cl)
+          if (sofar < cl || get->get_status () != 2)
             error="download incomplete";
           else
           {
@@ -423,7 +421,9 @@ __declspec(dllexport) void download (HWND   parent,
               }
             }
 
+            int data_downloaded = 0;
             while ((len = get->bytes_available ()) > 0) {
+              data_downloaded++;
               if (len > 8192)
                 len = 8192;
               len = get->get_bytes (buf, len);
@@ -466,6 +466,8 @@ __declspec(dllexport) void download (HWND   parent,
             }
             if (GetTickCount() > last_recv_time+timeout_ms)
               error = "Downloading timed out.";
+            else if (!data_downloaded)
+              Sleep(10);
 
           } else {
             error = "Bad response status.";

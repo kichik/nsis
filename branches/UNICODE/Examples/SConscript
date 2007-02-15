@@ -42,5 +42,5 @@ mui_examples = [
 
 Import('env')
 
-env.DistributeExamples('', examples)
-env.DistributeExamples('Modern UI', mui_examples)
+env.DistributeExamples(examples)
+env.DistributeExamples(mui_examples, path='Modern UI')

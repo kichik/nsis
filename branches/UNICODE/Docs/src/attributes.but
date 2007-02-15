@@ -12,6 +12,8 @@ The commands below all adjust attributes of the installer. These attributes cont
 
 Adds a branding image on the top, bottom, left, or right of the installer. Its size will be set according to the width/height specified, the installer width/height and the installer font. The final size will not always be what you requested; have a look at the output of the command for the actual size. Because this depends on the installer font, you should use SetFont before AddBrandingImage. The default padding value is 2.
 
+AddBrandingImage only adds a placeholder for an image. To set the image itself on runtime, use \R{setbrandingimage}{SetBrandimgImage}.
+
 \c AddBrandingImage left 100
 \c AddBrandingImage right 50
 \c AddBrandingImage top 20
@@ -46,7 +48,7 @@ Specifies whether or not to use a gradient background window. If 'off', the inst
 
 \c /TRIM(LEFT|RIGHT|CENTER) text
 
-Sets the text that is shown (by default it is 'Nullsoft Install System vX.XX') in the bottom of the install window. Setting this to an empty string ("") uses the default; to set the string to blank, use " " (a space). If it doesn't matter to you, leave it the default so that everybody can know why the installer didn't suck. heh. Use /TRIMLEFT, /TRIMRIGHT or /TRIMCENTER to trim down the size of the control to the size of the string.
+Sets the text that is shown (by default it is 'Nullsoft Install System vX.XX') at the bottom of the install window. Setting this to an empty string ("") uses the default; to set the string to blank, use " " (a space). If it doesn't matter to you, leave it the default so that everybody can know why the installer didn't suck. heh. Use /TRIMLEFT, /TRIMRIGHT or /TRIMCENTER to trim down the size of the control to the size of the string.
 
 Accepts variables. If variables are used, they must be initialized on \R{oninit}{.onInit}.
 
@@ -72,7 +74,7 @@ Replaces dialog (\e{IDD_LICENSE}, \e{IDD_DIR}, \e{IDD_SELCOM}, \e{IDD_INST}, \e{
 
 \b \e{IDD_SELCOM} must contain \e{IDC_TREE1} (SysTreeView32 control), and \e{IDC_COMBO1} (combo box).
 
-\b \e{IDD_INST} must contain \e{IDC_BACK} (button), \e{IDC_CHILDRECT} (static control the size of all other dialogs), \e{IDC_VERSTR} (static), \e{IDOK} (button), and \e{IDCANCEL} (button). If an image control (static with \e{SS_BITMAP} style) will be found in this dialog it will be used as the default for SetBrandingImage.
+\b \e{IDD_INST} must contain \e{IDC_BACK} (button), \e{IDC_CHILDRECT} (static control the size of all other dialogs), \e{IDC_VERSTR} (static), \e{IDOK} (button), and \e{IDCANCEL} (button). If an image control (static with \e{SS_BITMAP} style) will be found in this dialog it will be used as the default for \R{setbrandingimage}{SetBrandingImage}.
 
 \b \e{IDD_INSTFILES} must contain \e{IDC_LIST1} (SysListView32 control), \e{IDC_PROGRESS} (msctls_progress32 control), and \e{IDC_SHOWDETAILS} (button).
 
@@ -217,6 +219,9 @@ This attribute tells the installer to check a string in the registry, and use it
 
 Language strings and variables cannot be used with InstallDirRegKey.
 
+\c InstallDirRegKey HKLM Software\NSIS ""
+\c InstallDirRegKey HKLM Software\ACME\Thingy InstallLocation
+
 \S2{ainstprogressflags} InstProgressFlags
 
 \c [flag [...]]
@@ -227,8 +232,7 @@ Valid values for flag are "smooth" (smooth the progress bar) or "colored" (color
 
 \c install_type_name | /NOCUSTOM | /CUSTOMSTRING=str | /COMPONENTSONLYONCUSTOM
 
-Adds an install type to the install type list, or disables the custom install type. There can be as many as 32 types, each one specifying the name of the install type. If the name is prefixed with 'un.' it is an uninstaller install type. Instead of an "hard-coded" name you can use user variables which are processed at runtime. This allows you to change InstType name dynamically. Another way of changing the InstType name during runtime is the \R{sinsttypesettext}{InstTypeSetText} command. The difference is that with \R{sinsttypesettext}{InstTypeSetText} you are saving your precious user variables. The first type is the default (generally 'Typical'). If the /NOCUSTOM switch is specified, then the "custom" install type is disabled, and the user has to choose one of the pre-defined install types. Alternatively, if the /CUSTOMSTRING switch is specified, the parameter will override the "Custom" install type text. Alternatively, if the /COMPONENTSONLYONCUSTOM flag is specified, the component list will only be show
-n if the "Custom" install type is selected.
+Adds an install type to the install type list, or disables the custom install type. There can be as many as 32 types, each one specifying the name of the install type. If the name is prefixed with 'un.' it is an uninstaller install type. The name can contain variables which will be processed at runtime before the components page shows. Another way of changing the InstType name during runtime is the \R{sinsttypesettext}{InstTypeSetText} command. The difference is that with \R{sinsttypesettext}{InstTypeSetText} you are saving your precious user variables. The first type is the default (generally 'Typical'). If the /NOCUSTOM switch is specified, then the "custom" install type is disabled, and the user has to choose one of the pre-defined install types. Alternatively, if the /CUSTOMSTRING switch is specified, the parameter will override the "Custom" install type text. Alternatively, if the /COMPONENTSONLYONCUSTOM flag is specified, the component list will only be shown if the "Custom" install type is selected.
 
 Accepts variables for type names. If variables are used, they must be initialized before the components page is created.
 
@@ -302,6 +306,16 @@ Accepts variables. If variables are used, they must be initialized in \R{oninit}
 
 Specifies the output file that the MakeNSIS should write the installer to. This is just the file that MakeNSIS writes, it doesn't affect the contents of the installer.
 
+\S2{requestexecutionlevel} RequestExecutionLevel
+
+\c \\<b\\>none\\</b\\>|user|highest|admin
+
+Specifies the requested execution level for Windows Vista. The value is embedded in the installer and uninstaller's XML manifest and tells Vista, and probably future versions of Windows, what privileges level the installer requires. \e{user} requests the a normal user's level with no administrative privileges. \e{highest} will request the highest execution level available for the current user and will cause Windows to prompt the user to verify privilege escalation. The prompt might request for the user's password. \e{admin} requests administrator level and will cause Windows to prompt the user as well. Specifying \e{none}, which is also the default, will keep the manifest empty and let Windows decide which execution level is required. Windows Vista automatically identifies NSIS installers and decides administrator privileges are required. Because of this, \e{none} and \e{admin} have virtually the same effect.
+
+It's recommended, at least by Microsoft, that every application will be marked with the required execution level. Unmarked installers are subject to compatibility mode. Workarounds of this mode include automatically moving any shortcuts created in the user's start menu to all users' start menu. Installers that need not install anything into system folders or write to the local machine registry (HKLM) should specify \e{user} execution level.
+
+More information about this topic can be found at MSDN. Keywords include "UAC", "requested execution level", "vista manifest" and "vista security".
+
 \S2{asetfont} SetFont
 
 \c [/LANG=lang_id] font_face_name font_size
@@ -331,7 +345,7 @@ Sets whether or not the details of the uninstall are shown. Can be 'hide' to hid
 
 \c \\<b\\>normal\\</b\\>|silent|silentlog
 
-Specifies whether or not the installer should be silent. If it is 'silent' or 'silentlog', all sections that have the SF_SELECTED flag are installed quietly (you can set this flag using see \R{sectionsetflags}{SectionSetFlags}), with no screen output from the installer itself (the script can still display whatever it wants, use \R{messagebox}{MessageBox}'s /SD to specify a default for silent installers). Note that if this is set to 'normal' and the user runs the installer with /S (case sensitive) on the command line, it will behave as if SilentInstall 'silent' was used. Note: see also \R{logset}{LogSet}.
+Specifies whether or not the installer should be silent. If it is 'silent' or 'silentlog', all sections that have the SF_SELECTED flag are installed quietly (you can set this flag using \R{sectionsetflags}{SectionSetFlags}), with no screen output from the installer itself (the script can still display whatever it wants, use \R{messagebox}{MessageBox}'s /SD to specify a default for silent installers). Note that if this is set to 'normal' and the user runs the installer with /S (case sensitive) on the command line, it will behave as if SilentInstall 'silent' was used. Note: see also \R{logset}{LogSet}.
 
 See \k{silent} for more information.
 
