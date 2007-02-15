@@ -45,7 +45,7 @@ static inline short ConvertEndianness(short s) {
 
 #define ALIGN(dwToAlign, dwAlignOn) dwToAlign = (dwToAlign%dwAlignOn == 0) ? dwToAlign : dwToAlign - (dwToAlign%dwAlignOn) + dwAlignOn
 
-// Reads a variany length array from seeker into readInto and advances seeker
+// Reads a variant length array from seeker into readInto and advances seeker
 void ReadVarLenArr(LPBYTE &seeker, char* &readInto, unsigned int uCodePage) {
   WORD* arr = (WORD*)seeker;
   switch (ConvertEndianness(arr[0])) {
