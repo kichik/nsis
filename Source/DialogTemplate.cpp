@@ -164,7 +164,7 @@ CDialogTemplate::CDialogTemplate(BYTE* pbData, unsigned int uCodePage) {
 
   // Read items
   for (int i = 0; i < wItems; i++) {
-    // DLGITEMTEMPLATE[EX]s must be aligned on DWORD boundry
+    // DLGITEMTEMPLATE[EX]s must be aligned on DWORD boundary
     if (DWORD(seeker - pbData) % sizeof(DWORD))
       seeker += sizeof(WORD);
 
@@ -558,7 +558,7 @@ BYTE* CDialogTemplate::Save(DWORD& dwSize) {
 
   // Write all of the items
   for (unsigned int i = 0; i < m_vItems.size(); i++) {
-    // DLGITEMTEMPLATE[EX]s must be aligned on DWORD boundry
+    // DLGITEMTEMPLATE[EX]s must be aligned on DWORD boundary
     if (DWORD(seeker - pbDlg) % sizeof(DWORD))
       seeker += sizeof(WORD);
 
@@ -634,7 +634,7 @@ DWORD CDialogTemplate::GetSize() {
   }
 
   for (unsigned int i = 0; i < m_vItems.size(); i++) {
-    // DLGITEMTEMPLATE[EX]s must be aligned on DWORD boundry
+    // DLGITEMTEMPLATE[EX]s must be aligned on DWORD boundary
     ALIGN(dwSize, sizeof(DWORD));
 
     dwSize += m_bExtended ? sizeof(DLGITEMTEMPLATEEX) : sizeof(DLGITEMTEMPLATE);
