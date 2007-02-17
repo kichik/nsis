@@ -249,7 +249,9 @@ bool INLINE ValidateFields() {
       if (((pField->nMaxLength > 0) && (nLength > pField->nMaxLength)) ||
          ((pField->nMinLength > 0) && (nLength < pField->nMinLength))) {
         if (pField->pszValidateText) {
-          MessageBox(hConfigWindow, pField->pszValidateText, NULL, MB_OK|MB_ICONWARNING);
+          char szTitle[1024];
+          GetWindowText(hMainWindow, szTitle, sizeof(szTitle));
+          MessageBox(hConfigWindow, pField->pszValidateText, szTitle, MB_OK|MB_ICONWARNING);
         }
         mySetFocus(pField->hwnd);
         return false;
