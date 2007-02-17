@@ -221,7 +221,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
           if (!lstrcmpi(ibuf+l-(sizeof(s)-2),s+1)) break;
 
           // copy file
-          if (CopyFile(ibuf,buf2+1,FALSE))
+          if (CopyFile(ibuf,buf2+1,TRUE))
           {
             HANDLE hProc;
 #ifdef NSIS_SUPPORT_MOVEONREBOOT
