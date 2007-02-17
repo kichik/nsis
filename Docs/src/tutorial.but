@@ -221,7 +221,7 @@ Compiler commands will be executed on compile time on your computer. They can be
 
 For more information about defines see \R{compdefines}{Conditional Compilation}.
 
-Another common use is macros. Macros are used to insert code on compile time, depending on defines and using the values of the defines. The macro's commands are inserts at compile time. This allows you to write a general code only once and use it a lot of times but with a few changes. For example:
+Another common use is macros. Macros are used to insert code on compile time, depending on defines and using the values of the defines. The macro's commands are inserted at compile time. This allows you to write a general code only once and use it a lot of times but with a few changes. For example:
 
 \c !macro MyFunc UN
 \c Function ${UN}MyFunc
