@@ -78,6 +78,13 @@ size_t winchar_strlen(WCHAR *ws)
   return len;
 }
 
+WCHAR *winchar_strdup(WCHAR *ws)
+{
+  WCHAR *dup = new WCHAR[winchar_strlen(ws) + 1];
+  winchar_strcpy(dup, ws);
+  return dup;
+}
+
 int winchar_strcmp(const WCHAR *ws1, const WCHAR *ws2)
 {
   int diff = 0;

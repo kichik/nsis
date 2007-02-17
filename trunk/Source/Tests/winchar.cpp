@@ -13,6 +13,7 @@ class WinCharTest : public CppUnit::TestFixture {
   CPPUNIT_TEST( testStrNCpy );
   CPPUNIT_TEST( testStrLen );
   CPPUNIT_TEST( testStrCmp );
+  CPPUNIT_TEST( testStrDup );
   CPPUNIT_TEST( testStoi );
   CPPUNIT_TEST_SUITE_END();
 
@@ -94,6 +95,16 @@ public:
     TEST_STR_CMP(a, empty);
     TEST_STR_CMP(empty, b);
     TEST_STR_CMP(empty, empty);
+  }
+
+  void testStrDup() {
+    WCHAR a[] = { 'a', 'b', 'c', 0 };
+
+    WCHAR *b = winchar_strdup(a);
+
+    CPPUNIT_ASSERT_EQUAL( 0, winchar_strcmp(a, b) );
+
+    delete [] b;
   }
 
   void testStoi() {
