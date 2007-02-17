@@ -896,8 +896,7 @@ CResourceDirectoryEntry::CResourceDirectoryEntry(WCHAR* szName, CResourceDirecto
   }
   else {
     m_bHasName = true;
-    m_szName = new WCHAR[winchar_strlen(szName)+1];
-    winchar_strcpy(m_szName, szName);
+    m_szName = winchar_strdup(szName);
   }
   m_bIsDataDirectory = true;
   m_rdSubDir = rdSubDir;
@@ -911,8 +910,7 @@ CResourceDirectoryEntry::CResourceDirectoryEntry(WCHAR* szName, CResourceDataEnt
   }
   else {
     m_bHasName = true;
-    m_szName = new WCHAR[winchar_strlen(szName)+1];
-    winchar_strcpy(m_szName, szName);
+    m_szName = winchar_strdup(szName);
   }
   m_bIsDataDirectory = false;
   m_rdeData = rdeData;
@@ -935,10 +933,7 @@ bool CResourceDirectoryEntry::HasName() {
 WCHAR* CResourceDirectoryEntry::GetName() {
   if (!m_bHasName)
     return 0;
-  WCHAR* szName = 0;
-  szName = new WCHAR[winchar_strlen(m_szName)+1];
-  winchar_strcpy(szName, m_szName);
-  return szName;
+  return winchar_strdup(m_szName);
 }
 
 int CResourceDirectoryEntry::GetNameLength() {
