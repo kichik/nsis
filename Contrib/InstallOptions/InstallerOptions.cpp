@@ -905,8 +905,8 @@ int WINAPI NumbersOnlyPasteWndProc(HWND hWin, UINT uMsg, WPARAM wParam, LPARAM l
               {
                 lpFilteredData[j] = lpData[i];
                 j++;
-                lpFilteredData[j] = 0;
               }
+              lpFilteredData[j] = 0;
             }
 
             SendMessage(hWin, EM_REPLACESEL, TRUE, (LPARAM) lpFilteredData);
