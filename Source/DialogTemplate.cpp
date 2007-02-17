@@ -46,7 +46,7 @@ static inline short ConvertEndianness(short s) {
 #define ALIGN(dwToAlign, dwAlignOn) dwToAlign = (dwToAlign%dwAlignOn == 0) ? dwToAlign : dwToAlign - (dwToAlign%dwAlignOn) + dwAlignOn
 
 // Reads a variant length array from seeker into readInto and advances seeker
-void ReadVarLenArr(LPBYTE &seeker, char* &readInto, unsigned int uCodePage) {
+void ReadVarLenArr(LPBYTE &seeker, WCHAR* &readInto, unsigned int uCodePage) {
   WORD* arr = (WORD*)seeker;
   switch (ConvertEndianness(arr[0])) {
   case 0x0000:
@@ -54,12 +54,12 @@ void ReadVarLenArr(LPBYTE &seeker, char* &readInto, unsigned int uCodePage) {
     seeker += sizeof(WORD);
     break;
   case 0xFFFF:
-    readInto = MAKEINTRESOURCE(ConvertEndianness(arr[1]));
+    readInto = MAKEINTRESOURCEW(ConvertEndianness(arr[1]));
     seeker += 2*sizeof(WORD);
     break;
   default:
     {
-      readInto = winchar_toansi((WCHAR *) arr, uCodePage);
+      readInto = winchar_strdup((WCHAR *) arr);
       PWCHAR wseeker = PWCHAR(seeker);
       while (*wseeker++);
       seeker = LPBYTE(wseeker);
@@ -78,17 +78,14 @@ void ReadVarLenArr(LPBYTE &seeker, char* &readInto, unsigned int uCodePage) {
       seeker += sizeof(WORD); \
     } \
     else { \
-      int us = MultiByteToWideChar(m_uCodePage, 0, x, -1, (WCHAR*)seeker, dwSize - DWORD(seeker - pbDlg)); \
-      if (!us) { \
-        throw runtime_error("WriteStringOrId - Unicode conversion failed."); \
-      } \
-      seeker += us*sizeof(WCHAR); \
+      winchar_strcpy((WCHAR *) seeker, x); \
+      seeker += winchar_strlen((WCHAR *) seeker) * sizeof(WCHAR) + sizeof(WCHAR); \
     } \
   else \
     seeker += sizeof(WORD);
 
 // A macro that adds the size of x (which can be a string a number, or nothing) to dwSize
-#define AddStringOrIdSize(x) dwSize += x ? (IS_INTRESOURCE(x) ? sizeof(DWORD) : MultiByteToWideChar(m_uCodePage, 0, x, -1, 0, 0) * sizeof(WCHAR)) : sizeof(WORD)
+#define AddStringOrIdSize(x) dwSize += x ? (IS_INTRESOURCE(x) ? sizeof(DWORD) : (winchar_strlen(x) + 1) * sizeof(WCHAR)) : sizeof(WORD)
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -295,8 +292,7 @@ void CDialogTemplate::SetFont(char* szFaceName, WORD wFontSize) {
   m_bCharset = DEFAULT_CHARSET;
   m_dwStyle |= DS_SETFONT;
   if (m_szFont) delete [] m_szFont;
-  m_szFont = new char[strlen(szFaceName)+1];
-  strcpy(m_szFont, szFaceName);
+  m_szFont = winchar_fromansi(szFaceName);
   m_sFontSize = wFontSize;
 }
 
@@ -306,12 +302,10 @@ void CDialogTemplate::AddItem(DialogItemTemplate item) {
   CopyMemory(newItem, &item, sizeof(DialogItemTemplate));
 
   if (item.szClass && !IS_INTRESOURCE(item.szClass)) {
-    newItem->szClass = new char[strlen(item.szClass)+1];
-    strcpy(newItem->szClass, item.szClass);
+    newItem->szClass = winchar_strdup(item.szClass);
   }
   if (item.szTitle && !IS_INTRESOURCE(item.szTitle)) {
-    newItem->szTitle = new char[strlen(item.szTitle)+1];
-    strcpy(newItem->szTitle, item.szTitle);
+    newItem->szTitle = winchar_strdup(item.szTitle);
   }
   if (item.wCreateDataSize) {
     newItem->szCreationData = new char[item.wCreateDataSize];
@@ -442,6 +436,8 @@ void CDialogTemplate::ConvertToRTL() {
   for (unsigned int i = 0; i < m_vItems.size(); i++) {
     bool addExStyle = false;
 
+    char *szClass = winchar_toansi(m_vItems[i]->szClass);
+
     // Button
     if (long(m_vItems[i]->szClass) == 0x80) {
       m_vItems[i]->dwStyle ^= BS_LEFTTEXT;
@@ -473,12 +469,12 @@ void CDialogTemplate::ConvertToRTL() {
         m_vItems[i]->dwStyle |= SS_CENTERIMAGE;
       }
     }
-    else if (!IS_INTRESOURCE(m_vItems[i]->szClass) && !stricmp(m_vItems[i]->szClass, "RichEdit20A")) {
+    else if (!IS_INTRESOURCE(m_vItems[i]->szClass) && !stricmp(szClass, "RichEdit20A")) {
       if ((m_vItems[i]->dwStyle & ES_CENTER) == 0) {
         m_vItems[i]->dwStyle ^= ES_RIGHT;
       }
     }
-    else if (!IS_INTRESOURCE(m_vItems[i]->szClass) && !stricmp(m_vItems[i]->szClass, "SysTreeView32")) {
+    else if (!IS_INTRESOURCE(m_vItems[i]->szClass) && !stricmp(szClass, "SysTreeView32")) {
       m_vItems[i]->dwStyle |= TVS_RTLREADING;
       addExStyle = true;
     }
@@ -490,6 +486,8 @@ void CDialogTemplate::ConvertToRTL() {
     m_vItems[i]->dwExtStyle |= WS_EX_RTLREADING | WS_EX_LEFTSCROLLBAR;
 
     m_vItems[i]->sX = m_sWidth - m_vItems[i]->sWidth - m_vItems[i]->sX;
+
+    delete [] szClass;
   }
   m_dwExtStyle |= WS_EX_RIGHT | WS_EX_RTLREADING | WS_EX_LEFTSCROLLBAR;
 }
