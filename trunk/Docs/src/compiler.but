@@ -178,7 +178,7 @@ Time when the script started compiling according to the current locale.
 
 Date & time of the last modification to the script file according to the current locale.
 
-\S1{} Scope Predefines
+\S1{scopepredefines} Scope Predefines
 
 Standard predefines that contain information of the current code scope.
 
