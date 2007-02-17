@@ -201,6 +201,7 @@ TrimNewLines
 	GetTempFileName ${_RESULT} ${_RESULT}
 	StrCmp ${_RESULT} "" 0 +2
 		GetTempFileName ${_RESULT}
+	ClearErrors
 !macroend
 
 !macro LineFind
