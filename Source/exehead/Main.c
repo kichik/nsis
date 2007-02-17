@@ -226,6 +226,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
             HANDLE hProc;
 #ifdef NSIS_SUPPORT_MOVEONREBOOT
             MoveFileOnReboot(buf2+1,NULL);
+            MoveFileOnReboot(state_temp_dir,NULL);
 #endif
             if (state_install_directory[0]) mystrcpy(ibuf,state_install_directory);
             else trimslashtoend(ibuf);
