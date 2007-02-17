@@ -1,0 +1,208 @@
+print "Using Microsoft tools configuration"
+
+Import('defenv')
+
+### flags
+
+defenv['ENTRY_FLAG'] = lambda x: '/entry:' + x
+defenv['MAP_FLAG'] = '/map'
+defenv['NODEFLIBS_FLAG'] = '/NODEFAULTLIB'
+defenv['C_FLAG'] = '/TC'
+defenv['CPP_FLAG'] = '/TP'
+defenv['CPP_REQUIRES_STDLIB'] = 0
+defenv['SUBSYS_CON'] = '/subsystem:console'
+
+if float(defenv['MSVS_VERSION'].replace('Exp','')) >= 8.0:
+	defenv['EXCEPTION_FLAG'] = '/EHsc'
+	defenv.Append(CCFLAGS = '/GS-')
+else:
+	defenv['EXCEPTION_FLAG'] = '/GX'
+
+### debug
+
+if defenv['DEBUG']:
+	defenv.Append(CCFLAGS = '/Zi')
+	defenv.Append(CCFLAGS = '/Fd${TARGET.dir}\\${TARGET.dir.file}.pdb')
+	defenv.Append(LINKFLAGS = '/debug')
+
+### workarounds
+
+# Some Platform SDK version includes a bad version of libcp.lib.
+# if stl usage causes link failure, copy the good libcp.lib
+# from one of the other lib folders and use it instead.
+
+confenv = defenv.Clone()
+conf = confenv.Configure()
+
+libcptest = """
+#include <fstream>
+int main() {
+  // %s
+  std::ofstream header("test", std::ofstream::out);
+  return 0;
+}
+"""
+
+conf.env.PrependENVPath('LIB', Dir('#/.sconf_temp').abspath)
+conf.env.Append(CCFLAGS = ['$EXCEPTION_FLAG'])
+
+if not conf.TryLink(libcptest % 'no change', '.cpp'):
+  import os, shutil
+
+  libdirs = defenv['ENV']['LIB'].split(os.pathsep)
+
+  for libdir in libdirs:
+    try:
+      libcp = r'%s\libcp.lib' % libdir
+      shutil.copy(libcp, Dir('#/.sconf_temp').abspath)
+      if conf.TryLink(libcptest % (r'using %s' % libcp), '.cpp'):
+        defenv.PrependENVPath('LIB', Dir('#/.sconf_temp').abspath)
+        break
+    except IOError:
+      continue
+  else:
+    print "*** Couldn't find a good version of libcp.lib"
+    Exit(2)
+
+conf.Finish()
+
+### stub environment
+
+stub_env = defenv.Clone()
+
+if not defenv['DEBUG']:
+	stub_env.Append(CCFLAGS = '/O1')               # optimize for size
+stub_env.Append(CCFLAGS = '/W3')                 # level 3 warnings
+
+stub_env.Append(LINKFLAGS = '/opt:nowin98')      # 512 bytes align
+stub_env.Append(LINKFLAGS = '/entry:WinMain')    # entry point
+stub_env.Append(LINKFLAGS = '$NODEFLIBS_FLAG')   # no default libraries
+stub_env.Append(LINKFLAGS = '$MAP_FLAG')         # generate map file
+
+### makensis environment
+
+makensis_env = defenv.Clone()
+
+if not defenv['DEBUG']:
+	makensis_env.Append(CCFLAGS = '/O2')           # optimize for speed
+makensis_env.Append(CCFLAGS = '$EXCEPTION_FLAG') # enable exceptions
+makensis_env.Append(CCFLAGS = '/W3')             # level 3 warnings
+
+makensis_env.Append(LINKFLAGS = '/opt:nowin98')  # 512 bytes align
+makensis_env.Append(LINKFLAGS = '$MAP_FLAG')     # generate map file
+
+### plugin environment
+
+plugin_env = defenv.Clone(no_import_lib = 1)
+
+if not defenv['DEBUG']:
+	plugin_env.Append(CCFLAGS = '/O1')             # optimize for size
+plugin_env.Append(CCFLAGS = '/W3')               # level 3 warnings
+
+plugin_env.Append(LINKFLAGS = '/opt:nowin98')    # 512 bytes align
+plugin_env.Append(LINKFLAGS = '$MAP_FLAG')       # generate map file
+
+### util environment
+
+util_env = defenv.Clone()
+
+if not defenv['DEBUG']:
+	util_env.Append(CCFLAGS = '/O1')            # optimize for speed
+util_env.Append(CCFLAGS = '/W3')              # level 3 warnings
+
+util_env.Append(LINKFLAGS = '/opt:nowin98')   # 512 bytes align
+util_env.Append(LINKFLAGS = '$MAP_FLAG')      # generate map file
+
+### cross-platform util environment
+
+cp_util_env = util_env.Clone()
+
+### test environment
+
+test_env = defenv.Clone()
+
+### weird compiler requirements
+
+def check_requirement(ctx, func, trigger):
+	ctx.Message('Checking for %s requirement... ' % func)
+
+	flags = ctx.env['LINKFLAGS']
+
+	ctx.env.Append(LINKFLAGS = '$NODEFLIBS_FLAG')
+	ctx.env.Append(LINKFLAGS = '${ENTRY_FLAG("main")}')
+
+	test = """
+		int main() {
+			%s
+			return 0;
+		}
+	""" % trigger
+
+	result = not ctx.TryLink(test, '.c')
+	ctx.Result(result)
+
+	ctx.env['LINKFLAGS'] = flags
+
+	return result
+
+def add_file_to_emitter(env, emitter_name, file):
+	try:
+		original_emitter = env[emitter_name]
+		if type(original_emitter) == list:
+			original_emitter = original_emitter[0]
+	except KeyError:
+		original_emitter = None
+
+	def emitter(target, source, env):
+		if original_emitter:
+			target, source = original_emitter(target, source, env)
+
+		if '$NODEFLIBS_FLAG' not in env['LINKFLAGS']:
+			return target, source
+
+		return target, source + env.Object(emitter_name, file)
+
+	env[emitter_name] = emitter
+
+def add_file(file):
+	file = File(file)
+	add_file_to_emitter(stub_env, 'PROGEMITTER', file)
+	add_file_to_emitter(util_env, 'PROGEMITTER', file)
+	add_file_to_emitter(plugin_env, 'SHLIBEMITTER', file)
+
+#
+# MSVC 6 SP6 doesn't like direct shifting of 64-bit integers.
+# It generates a call to ___aullshr which requires libc, which
+# we don't like. However, it does agree to work properly with
+# a call to Int64ShrlMod32.
+#
+
+conf = stub_env.Configure()
+
+int64test = """
+#include <windows.h>
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, int nCmdShow) {
+	ULARGE_INTEGER *i = 0;
+	return (int)(i->QuadPart >> 10);
+}
+"""
+
+if not conf.TryLink(int64test, '.c'):
+	stub_env.Append(CPPDEFINES = ['_NSIS_NO_INT64_SHR'])
+
+conf.Finish()	
+
+#
+# MSVC 2005 requires the memset CRT function to be present
+#
+
+conf = defenv.Configure(custom_tests = { 'CheckRequirement' : check_requirement })
+
+if conf.CheckRequirement('memset', 'char c[128] = "test";'):
+	add_file('memset.c')
+
+conf.Finish()	
+
+### return
+
+Return('stub_env makensis_env plugin_env util_env cp_util_env test_env')

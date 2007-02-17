@@ -1,0 +1,15 @@
+target = 'LibraryLocal'
+
+files = Split("""
+	LibraryLocal.cpp
+""")
+
+libs = Split("""
+	kernel32
+	oleaut32
+	version
+""")
+
+Import('BuildUtil')
+
+BuildUtil(target, files, libs, flags = ['$EXCEPTION_FLAG'])
