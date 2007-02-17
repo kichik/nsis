@@ -1,8 +1,70 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.24} 2.24
+
+Released on February 17th, 2007
+
+\S1{v2.24-cl} Changelog
+
+\S2{} Major Changes
+
+\b Library uninstall-reinstall-reboot problems workaround (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1097642}{bug #1097642})
+
+\b Minimized number of cases where an error message appears in silent mode
+
+\b New compiler predefines for \R{scopepredefines}{code scope} (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1644712}{patch #1644712})
+
+\S2{} Minor Changes
+
+\b Added \R{usagereference}{/P command line option} for setting process priority of makensis (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1638974}{patch #1638974})
+
+\b Added support for 64-bit PE on POSIX to \R{getdllversionlocal}{GetDLLVersionLocal} (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1643633}{patch #1643633})
+
+\b Append last part of \R{ainstalldir}{InstallDir} only to $INSTDIR on directory pages (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1174184}{bug #1174184})
+
+\b Avoid permissions change of output files for \R{linefind}{LineFind} and \R{filejoin}{FileJoin} (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1631773}{bug #1631773})
+
+\b Fixed erroneous warnings on uninstall sections (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1631889}{bug #1631889})
+
+\b Fixed lossy Unicode conversion in resource editor (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1083492}{bug #1083492})
+
+\b Ignore invalid preprocessor commands in ignored block or comments
+
+\b Made \R{viaddversionkey}{VIAddVersionKey} only query language tables instead of creating them and generating warnings (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1626504}{bug #1626504})
+
+\b Minor documentation updates and fixes (including  \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1642107}{bug #1642107}, \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1649187}{patch #1649187})
+
+\b Warn when continuing a comment line using backslash (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1554178}{bug #1554178})
+
+\S2{} New/Changed Commands
+
+\b \R{regdll}{RegDLL} and \R{unregdll}{UnregDLL} now use LOAD_WITH_ALTERED_SEARCH_PATH, so there's no need to use \R{setoutpath}{SetOutPath} to set the working directory (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1638191}{bug #1638191})
+
+\S2{} Utilities and Plug-ins
+
+\b \L{../Docs/InstallOptions/Readme.html}{InstallOptions 2.45}: Added FOCUS flag (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1634704}{patch #1634704}) and fixed paste with ONLY_NUMBERS flag (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1652075}{bug #1652075})
+
+\b \L{../Docs/makensisw/Readme.txt}{MakeNSISW}: settings in HKCU instead of HKLM (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1411970}{bug #1411970}) and MRU menu accelerators
+
+\S2{} Translations
+
+\b Added Galician translation (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1631765}{patch #1631765})
+
+\S2{} Build System
+
+\b Added a workaround for building on x64 POSIX platforms (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1646170}{bug #1646170})
+
+\b Added a workaround for strict-aliasing compatibility (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1635841}{bug #1635841})
+
+\b Added compression tests
+
+\b Added STRIP, APPEND_CCFLAGS and APPEND_LINKFLAGS build options
+
+\b Fixed SCons 0.96.94 compatibility
+
 \H{v2.23} 2.23
 
-Release on January 13th, 2007
+Released on January 13th, 2007
 
 \S1{v2.23-cl} Changelog
 
