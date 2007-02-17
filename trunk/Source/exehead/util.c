@@ -615,16 +615,8 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
       if (nVarIdx == NS_SHELL_CODE)
       {
         LPITEMIDLIST idl;
-        char *append = 0;
 
         int x = 2;
-
-        // all users' version is CSIDL_APPDATA only for $QUICKLAUNCH
-        // for normal $APPDATA, it'd be CSIDL_APPDATA_COMMON
-        if (fldrs[2] == CSIDL_APPDATA)
-        {
-          append = "\\Microsoft\\Internet Explorer\\Quick Launch";
-        }
 
         if (g_exec_flags.all_user_var)
         {
@@ -668,9 +660,14 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
           }
         }
 
-        if (*out && append)
+        if (*out)
         {
-          mystrcat(out, append);
+          // all users' version is CSIDL_APPDATA only for $QUICKLAUNCH
+          // for normal $APPDATA, it'd be CSIDL_APPDATA_COMMON
+          if (fldrs[2] == CSIDL_APPDATA)
+          {
+            mystrcat(out, "\\Microsoft\\Internet Explorer\\Quick Launch");
+          }
         }
 
         validate_filename(out);
