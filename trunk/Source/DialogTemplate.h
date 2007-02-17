@@ -43,8 +43,8 @@ struct DialogItemTemplate {
   DWORD  dwStyle;
   WORD   wId;
 
-  char  *szClass;
-  char  *szTitle;
+  WCHAR *szClass;
+  WCHAR *szTitle;
   char  *szCreationData;
 
   WORD  wCreateDataSize;
@@ -144,16 +144,16 @@ private:
   DWORD m_dwExtStyle;
   DWORD m_dwStyle;
 
-  char* m_szMenu;
-  char* m_szClass;
-  char* m_szTitle;
+  WCHAR *m_szMenu;
+  WCHAR *m_szClass;
+  WCHAR *m_szTitle;
 
    // Only if DS_FONT style is set
   short m_sFontSize;
   short m_sFontWeight; // Extended only
   BYTE  m_bItalic; // Extended only
   BYTE  m_bCharset; // Extended only
-  char* m_szFont;
+  WCHAR *m_szFont;
 
   // For (en/de)coding Unicode
   unsigned int m_uCodePage;
