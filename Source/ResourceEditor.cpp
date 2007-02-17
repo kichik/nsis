@@ -666,13 +666,9 @@ void CResourceEditor::WriteRsrcSec(BYTE* pbRsrcSec) {
     WORD iLen = winchar_strlen(szName) + 1;
 
     *(WORD*)seeker = ConvertEndianness(iLen);
-    seeker += sizeof(WORD);
-    CopyMemory(seeker, szName, iLen*sizeof(WCHAR));
-    seeker += iLen*sizeof(WCHAR);
+    CopyMemory(seeker + sizeof(WORD), szName, iLen*sizeof(WCHAR));
 
-    // Even though the number of chars is predefined a null termination is required
-    *(WORD*)seeker = 0;
-    seeker += sizeof(WORD);
+    seeker += RALIGN(iLen * sizeof(WCHAR) + sizeof(WORD), 4);
 
     delete [] szName;
 
