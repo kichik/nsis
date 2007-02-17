@@ -20,6 +20,7 @@
 #include "tokens.h"
 #include "build.h"
 #include "util.h"
+#include "winchar.h"
 #include "ResourceEditor.h"
 #include "DialogTemplate.h"
 #include "lang.h"
@@ -2441,8 +2442,19 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           branding_image_found = false;
           DialogItemTemplate* dlgItem = 0;
           for (int i = 0; (dlgItem = UIDlg.GetItemByIdx(i)); i++) {
-            if ((IS_INTRESOURCE(dlgItem->szClass) && dlgItem->szClass == MAKEINTRESOURCE(0x0082))
-                || (!IS_INTRESOURCE(dlgItem->szClass) && !strcmp(dlgItem->szClass, "Static"))) {
+            bool check = false;
+
+            if (IS_INTRESOURCE(dlgItem->szClass)) {
+              if (dlgItem->szClass == MAKEINTRESOURCEW(0x0082)) {
+                check = true;
+              }
+            } else {
+              char *szClass = winchar_toansi(dlgItem->szClass);
+              check = strcmp(szClass, "Static") == 0;
+              delete [] szClass;
+            }
+
+            if (check) {
               if ((dlgItem->dwStyle & SS_BITMAP) == SS_BITMAP) {
                 branding_image_found = true;
                 branding_image_id = dlgItem->wId;
@@ -2520,8 +2532,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         brandingCtl.dwStyle = SS_BITMAP | WS_CHILD | WS_VISIBLE;
         brandingCtl.sX = padding;
         brandingCtl.sY = padding;
-        brandingCtl.szClass = MAKEINTRESOURCE(0x0082);
-        brandingCtl.szTitle = "";
+        brandingCtl.szClass = MAKEINTRESOURCEW(0x0082);
+        brandingCtl.szTitle = NULL;
         brandingCtl.wId = IDC_BRANDIMAGE;
 
         brandingCtl.sHeight = wh;
@@ -2892,17 +2904,17 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         bool required = true;
 
         char *f = line.gettoken_str(1);
-
+        
         if(!stricmp(f,"/nonfatal")) {
           if (line.getnumtokens()!=3)
             PRINTHELP();
-
+        
           f = line.gettoken_str(2);
-          required = false;
+            required = false;
         } else if (line.getnumtokens()!=2) {
           PRINTHELP();
         }
-
+        
 #ifdef _WIN32
         char *fc = f;
 #else
@@ -2924,27 +2936,27 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #endif
 
         // search working directory
-        boost::scoped_ptr<dir_reader> dr( new_dir_reader() );
-        dr->read(dir);
+          boost::scoped_ptr<dir_reader> dr( new_dir_reader() );
+          dr->read(dir);
 
-        for (dir_reader::iterator files_itr = dr->files().begin();
-             files_itr != dr->files().end();
-             files_itr++)
-        {
-          if (!dir_reader::matches(*files_itr, spec))
-            continue;
+          for (dir_reader::iterator files_itr = dr->files().begin();
+               files_itr != dr->files().end();
+               files_itr++)
+          {
+            if (!dir_reader::matches(*files_itr, spec))
+              continue;
 
-          string incfile = basedir + *files_itr;
+            string incfile = basedir + *files_itr;
 
-          if (includeScript((char *) incfile.c_str()) != PS_OK) {
-            return PS_ERROR;
-          }
+            if (includeScript((char *) incfile.c_str()) != PS_OK) {
+              return PS_ERROR;
+            }
 
           included++;
         }
 
         if (included)
-          return PS_OK;
+            return PS_OK;
 
         // search include dirs
         char *incdir = include_dirs.get();
@@ -2981,12 +2993,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (!included)
         {
           if(required) {
-            ERROR_MSG("!include: could not find: \"%s\"\n",f);
-            return PS_ERROR;
-          } else {
-            warning_fl("!include: could not find: \"%s\"",f);
-          }
+          ERROR_MSG("!include: could not find: \"%s\"\n",f);
+          return PS_ERROR;
+        } else {
+          warning_fl("!include: could not find: \"%s\"",f);
         }
+      }
       }
     return PS_OK;
     case TOK_P_CD:
