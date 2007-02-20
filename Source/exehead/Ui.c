@@ -648,10 +648,11 @@ skipPage:
   if (uMsg == WM_COMMAND)
   {
     int id = LOWORD(wParam);
-    if (lParam)
+    HWND hCtl = GetDlgItem(hwndDlg, id); // lParam might be NULL
+    if (hCtl)
     {
-      SendMessage((HWND) lParam, BM_SETSTATE, FALSE, 0);
-      if (!IsWindowEnabled((HWND) lParam))
+      SendMessage(hCtl, BM_SETSTATE, FALSE, 0);
+      if (!IsWindowEnabled(hCtl))
         return 0;
     }
 
