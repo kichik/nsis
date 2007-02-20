@@ -45,9 +45,12 @@
 !macro SelectSection SECTION
 
   Push $0
-    SectionGetFlags "${SECTION}" $0
+  Push $1
+    StrCpy $1 "${SECTION}"
+    SectionGetFlags $1 $0
     IntOp $0 $0 | ${SF_SELECTED}
-    SectionSetFlags "${SECTION}" $0
+    SectionSetFlags $1 $0
+  Pop $1
   Pop $0
 
 !macroend
@@ -55,9 +58,12 @@
 !macro UnselectSection SECTION
 
   Push $0
-    SectionGetFlags "${SECTION}" $0
+  Push $1
+    StrCpy $1 "${SECTION}"
+    SectionGetFlags $1 $0
     IntOp $0 $0 & ${SECTION_OFF}
-    SectionSetFlags "${SECTION}" $0
+    SectionSetFlags $1 $0
+  Pop $1
   Pop $0
 
 !macroend
@@ -67,9 +73,11 @@
 !macro ReverseSection SECTION
 
   Push $0
-    SectionGetFlags "${SECTION}" $0
+  Push $1
+    SectionGetFlags $1 $0
     IntOp $0 $0 ^ ${SF_SELECTED}
-    SectionSetFlags "${SECTION}" $0
+    SectionSetFlags $1 $0
+  Pop $1
   Pop $0
 
 !macroend
@@ -179,9 +187,12 @@
 !macro SetSectionInInstType SECTION_NAME WANTED_INSTTYPE
 
   Push $0
-    SectionGetInstTypes "${SECTION_NAME}" $0
+  Push $1
+    StrCpy $1 "${SECTION_NAME}"
+    SectionGetInstTypes $1 $0
     IntOp $0 $0 | ${WANTED_INSTTYPE}
-    SectionSetInstTypes "${SECTION_NAME}" $0
+    SectionSetInstTypes $1 $0
+  Pop $1
   Pop $0
 
 !macroend
@@ -190,11 +201,14 @@
 
   Push $0
   Push $1
-    SectionGetInstTypes "${SECTION_NAME}" $0
+  Push $2
+    StrCpy $2 "${SECTION_NAME}"
+    SectionGetInstTypes $2 $0
     StrCpy $1 ${WANTED_INSTTYPE}
     IntOp $1 $1 ~
     IntOp $0 $0 & $1
-    SectionSetInstTypes "${SECTION_NAME}" $0
+    SectionSetInstTypes $2 $0
+  Pop $2
   Pop $1
   Pop $0
 
@@ -210,9 +224,12 @@
 !macro SetSectionFlag SECTION BITS
 
   Push $R0
-    SectionGetFlags "${SECTION}" $R0
+  Push $R1
+    StrCpy $R1 "${SECTION}"
+    SectionGetFlags $R1 $R0
     IntOp $R0 $R0 | "${BITS}"
-    SectionSetFlags "${SECTION}" $R0
+    SectionSetFlags $R1 $R0
+  Pop $R1
   Pop $R0
  
 !macroend
@@ -223,10 +240,13 @@
 
   Push $R0
   Push $R1
-    SectionGetFlags "${SECTION}" $R0
+  Push $R2
+    StrCpy $R2 "${SECTION}"
+    SectionGetFlags $R2 $R0
     IntOp $R1 "${BITS}" ~
     IntOp $R0 $R0 & $R1
-    SectionSetFlags "${SECTION}" $R0
+    SectionSetFlags $R2 $R0
+  Pop $R2
   Pop $R1
   Pop $R0
 
