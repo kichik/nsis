@@ -99,6 +99,7 @@
   !insertmacro MUI_LANGUAGE "Kurdish"
   !insertmacro MUI_LANGUAGE "Irish"
   !insertmacro MUI_LANGUAGE "Uzbek"
+  !insertmacro MUI_LANGUAGE "Galician"
 
 ;--------------------------------
 ;Reserve Files
