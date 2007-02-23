@@ -23,9 +23,4 @@ docs = Split("""
 
 Import('BuildPlugin env')
 
-if env.has_key('MSVS_VERSION') and float(env['MSVS_VERSION'].replace('Exp','')) >= 8.0:
-	files += ['Source/mathcrtmt.lib']
-else:
-	files += ['Source/mathcrt.lib']
-
 BuildPlugin(target, files, libs, examples, docs, nodeflib = False, flags = ['$CPP_FLAG'])
