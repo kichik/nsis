@@ -570,7 +570,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
           }
           return TRUE;
         }
-        case IDC_CLOSE:
+        case IDCANCEL:
         case IDM_EXIT:
         {
           if (!g_sdata.thread) {
@@ -752,7 +752,7 @@ BOOL CALLBACK DialogResize(HWND hWnd, LPARAM /* unused */)
         SetWindowPos(hWnd, 0, r.left, r.top,r.right - r.left + g_resize.dx, r.bottom - r.top + g_resize.dy, SWP_NOZORDER|SWP_NOMOVE);
         break;
       case IDC_TEST:
-      case IDC_CLOSE:
+      case IDCANCEL:
         SetWindowPos(hWnd, 0, r.left + g_resize.dx, r.top + g_resize.dy, 0, 0, SWP_NOZORDER|SWP_NOSIZE);
         break;
       default:

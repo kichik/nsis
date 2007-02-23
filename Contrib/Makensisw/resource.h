@@ -48,7 +48,6 @@
 #define IDB_TOOLBAR24H                  132
 #define IDC_LOGWIN                      402
 #define IDC_VERSION                     405
-#define IDC_CLOSE                       406
 #define IDM_ABOUT                       501
 #define IDM_EXIT                        502
 #define IDM_SAVE                        503
