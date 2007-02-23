@@ -1,5 +1,4 @@
 #include <windows.h>
-#include "mathcrt.h"
 #include "MyMath.h"
 #include "Math.h"
 
@@ -198,9 +197,20 @@ void itoa64(__int64 i, char *buffer)
 
 #define _FLOAT_ROUND_ADJUST (double)5e-15
 extern "C"
-    int _floatp10(double *fnum, int *fsign, int prec);
-extern "C"
     int _ftol(double num);
+
+int _floatp10(double *fnum, int *fsign, int prec)
+{
+  int fpower, _d;
+  fcvt(*fnum, prec, &fpower, &_d);
+
+  if (*fnum < 0)
+    *fsign = -1;
+  else
+    *fsign = 1;
+
+  return fpower;
+}
 
 #define POS_INFINITY  "#INF"
 #define NEG_INFINITY "-#INF"
@@ -314,6 +324,8 @@ void FloatFormat(char *s, double value, int options)
 {
     int prec = options & 0xF;
 
+    *s = 0;
+
     if(value == HUGE_VAL)
     {
         lstrcpy(s, POS_INFINITY);
@@ -323,7 +335,18 @@ void FloatFormat(char *s, double value, int options)
         return;
     }
 
-    if (options & FF_NOEXP) FloatFormatF(s, value, prec);
+    int decpt, sign;
+
+    char *res = fcvt(value, prec, &decpt, &sign);
+
+    if (res)
+    {
+        lstrcpyn(s, res, decpt + 1);
+        lstrcat(s, ".");
+        lstrcpy(s + decpt + 1, res + decpt);
+    }
+
+    /*if (options & FF_NOEXP) FloatFormatF(s, value, prec);
     else
     if (options & FF_EXP) FloatFormatE(s, value, options);
     else
@@ -342,7 +365,7 @@ void FloatFormat(char *s, double value, int options)
             if(prec <= 0) prec = 1;
             FloatFormatF(s, value, prec);
         }
-    }
+    }*/
 }
 
 int lstrcmpn(char *s1, const char *s2, int chars)
