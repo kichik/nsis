@@ -20,6 +20,7 @@ extern "C" {
 #define DECOMPRESSOR(name, type, initf, dec, u)   \
   name::name() {                                  \
     vs = new type;                                \
+    memset(vs, 0, sizeof(type));                  \
   }                                               \
                                                   \
   name::~name() {                                 \
