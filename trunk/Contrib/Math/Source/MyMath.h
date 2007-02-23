@@ -1,5 +1,8 @@
 #pragma once
 
+#include <math.h>
+#include <float.h>
+
 #define DEFAULT_ARRAY_SIZE  1024
 
 #define ITEMTYPE        0xFF0000
