@@ -24,6 +24,7 @@
 #ifdef _WIN32
 #  include <windows.h>
 #  include <commctrl.h>
+#  include <stddef.h>
 #else
 #  ifndef EXEHEAD
 #    include <string.h>
