@@ -20,6 +20,9 @@
   ;Get installation folder from registry if available
   InstallDirRegKey HKCU "Software\Modern UI Test" ""
 
+  ;Vista redirects $SMPROGRAMS to all users without this
+  RequestExecutionLevel admin
+
 ;--------------------------------
 ;Variables
 
