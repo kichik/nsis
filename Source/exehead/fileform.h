@@ -273,7 +273,7 @@ enum {
 
 // nsis strings
 
-typedef char NSIS_STRING[NSIS_MAX_STRLEN];
+typedef TCHAR NSIS_STRING[NSIS_MAX_STRLEN];
 
 // Settings common to both installers and uninstallers
 typedef struct
@@ -282,7 +282,7 @@ typedef struct
   struct block_header blocks[BLOCKS_NUM];
 
   // InstallDirRegKey stuff
-  int install_reg_rootkey;
+  intptr_t install_reg_rootkey;
   // these two are not processed!
   int install_reg_key_ptr, install_reg_value_ptr;
 
@@ -373,7 +373,7 @@ typedef struct
   int code;
   int code_size;
   int size_kb;
-  char name[NSIS_MAX_STRLEN]; // '' for invisible sections
+  TCHAR name[NSIS_MAX_STRLEN]; // '' for invisible sections
 } section;
 
 #define SECTION_OFFSET(field) (FIELD_OFFSET(section, field)/sizeof(int))
@@ -515,7 +515,7 @@ int NSISCALL isheader(firstheader *h); // returns 0 on not header, length_of_dat
 // returns 0 on success
 // on success, m_header will be set to a pointer that should eventually be GlobalFree()'d.
 // (or m_uninstheader)
-const char * NSISCALL loadHeaders(int cl_flags);
+const TCHAR * NSISCALL loadHeaders(int cl_flags);
 
 int NSISCALL _dodecomp(int offset, HANDLE hFileOut, char *outbuf, int outbuflen);
 

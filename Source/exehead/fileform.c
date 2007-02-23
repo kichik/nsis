@@ -70,18 +70,18 @@ static int m_pos;
 
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
 #if defined(NSIS_CONFIG_CRC_SUPPORT) || defined(NSIS_COMPRESS_WHOLE)
-BOOL CALLBACK verProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK verProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  static char *msg;
+  static TCHAR *msg;
   if (uMsg == WM_INITDIALOG)
   {
     SetTimer(hwndDlg,1,250,NULL);
-    msg = (char *) lParam;
+    msg = (TCHAR *) lParam;
     uMsg = WM_TIMER;
   }
   if (uMsg == WM_TIMER)
   {
-    static char bt[64];
+    static TCHAR bt[64];
     int percent=MulDiv(min(m_pos,m_length),100,m_length);
 #ifdef NSIS_COMPRESS_WHOLE
     if (msg)
@@ -112,7 +112,7 @@ BOOL CALLBACK verProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 static z_stream g_inflate_stream;
 #endif
 
-const char * NSISCALL loadHeaders(int cl_flags)
+const TCHAR * NSISCALL loadHeaders(int cl_flags)
 {
 #ifdef NSIS_CONFIG_CRC_SUPPORT
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
@@ -262,7 +262,7 @@ const char * NSISCALL loadHeaders(int cl_flags)
   inflateReset(&g_inflate_stream);
 
   {
-    char fno[MAX_PATH];
+    TCHAR fno[MAX_PATH];
     my_GetTempFileName(fno, state_temp_dir);
     dbd_hFile=CreateFile(fno,GENERIC_WRITE|GENERIC_READ,0,NULL,CREATE_ALWAYS,FILE_ATTRIBUTE_TEMPORARY|FILE_FLAG_DELETE_ON_CLOSE,NULL);
     if (dbd_hFile == INVALID_HANDLE_VALUE)
@@ -296,7 +296,7 @@ const char * NSISCALL loadHeaders(int cl_flags)
   // set offsets to real memory offsets rather than installer's header offset
   left = BLOCKS_NUM;
   while (left--)
-    header->blocks[left].offset += (int)data;
+    header->blocks[left].offset += (ptrdiff_t)data;
 
 #ifdef NSIS_COMPRESS_WHOLE
   header->blocks[NB_DATA].offset = dbd_pos;
@@ -336,7 +336,7 @@ int NSISCALL _dodecomp(int offset, HANDLE hFileOut, char *outbuf, int outbuflen)
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
   if (input_len & 0x80000000) // compressed
   {
-    char progress[64];
+    TCHAR progress[64];
     int input_len_total;
     DWORD ltc = GetTickCount(), tc;
 
@@ -371,7 +371,7 @@ int NSISCALL _dodecomp(int offset, HANDLE hFileOut, char *outbuf, int outbuflen)
         tc = GetTickCount();
         if (ui_st_updateflag & 1 && (tc - ltc > 200 || !input_len))
         {
-          wsprintf(progress, "... %d%%", MulDiv(input_len_total - input_len, 100, input_len_total));
+          wsprintf(progress, TEXT("... %d%%"), MulDiv(input_len_total - input_len, 100, input_len_total));
           update_status_text(0, progress);
           ltc = tc;
         }
@@ -427,8 +427,8 @@ static char _inbuffer[IBUFSIZE];
 static char _outbuffer[OBUFSIZE];
 extern int m_length;
 extern int m_pos;
-extern BOOL CALLBACK verProc(HWND, UINT, WPARAM, LPARAM);
-extern BOOL CALLBACK DialogProc(HWND, UINT, WPARAM, LPARAM);
+extern INT_PTR CALLBACK verProc(HWND, UINT, WPARAM, LPARAM);
+extern INT_PTR CALLBACK DialogProc(HWND, UINT, WPARAM, LPARAM);
 static int NSISCALL __ensuredata(int amount)
 {
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
@@ -562,5 +562,5 @@ BOOL NSISCALL ReadSelfFile(LPVOID lpBuffer, DWORD nNumberOfBytesToRead)
 
 DWORD NSISCALL SetSelfFilePointer(LONG lDistanceToMove)
 {
-  return SetFilePointer(g_db_hFile,lDistanceToMove,NULL,FILE_BEGIN);
+  return SetFilePointer(g_db_hFile,lDistanceToMove,NULL,FILE_BEGIN); // TODO: <benski> implement 64bit seeks?
 }
