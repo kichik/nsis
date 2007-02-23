@@ -89,7 +89,7 @@ char * NSISCALL skip_root(char *path);
 int NSISCALL is_valid_instpath(char *s);
 void NSISCALL validate_filename(char *fn);
 void NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew);
-void NSISCALL mini_memcpy(void *out, const void *in, int len);
+void NSISCALL mini_memcpy(void *out, const void *in, size_t len);
 void NSISCALL remove_ro_attr(char *file);
 
 void * NSISCALL myGetProcAddress(char *dll, char *func);

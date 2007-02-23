@@ -250,7 +250,7 @@ typedef struct
 
 // nsis blocks
 struct block_header {
-  int offset;
+  ptrdiff_t offset;
   int num;
 };
 

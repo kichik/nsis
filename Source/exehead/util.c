@@ -360,11 +360,11 @@ char * NSISCALL mystrstri(char *a, char *b)
   return NULL;
 }
 
-void NSISCALL mini_memcpy(void *out, const void *in, int len)
+void NSISCALL mini_memcpy(void *out, const void *in, size_t len)
 {
   char *c_out=(char*)out;
   char *c_in=(char *)in;
-  while (len-- > 0)
+  while (len-- != 0)
   {
     *c_out++=*c_in++;
   }
@@ -520,7 +520,7 @@ void NSISCALL myRegGetStr(HKEY root, const char *sub, const char *name, char *ou
   }
 }
 
-void NSISCALL myitoa(char *s, int d)
+void NSISCALL myitoa(char *s, intptr_t d)
 {
   static const char c[] = "%d";
   wsprintf(s,c,d);
