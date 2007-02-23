@@ -29,7 +29,7 @@ extern NSIS_STRING g_usrvars[1];
 #endif
 #define state_click_next          g_usrvars[28]
 
-extern char g_caption[NSIS_MAX_STRLEN*2];
+extern TCHAR g_caption[NSIS_MAX_STRLEN*2];
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
 extern HWND g_hwnd;
 extern HANDLE g_hInstance;

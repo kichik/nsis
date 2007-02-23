@@ -33,7 +33,7 @@
 extern HANDLE dbd_hFile;
 #endif
 
-char g_caption[NSIS_MAX_STRLEN*2];
+TCHAR g_caption[NSIS_MAX_STRLEN*2];
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
 HWND g_hwnd;
 HANDLE g_hInstance;
@@ -41,7 +41,7 @@ HANDLE g_hInstance;
 
 void NSISCALL CleanUp();
 
-char *ValidateTempDir()
+static TCHAR *ValidateTempDir()
 {
   validate_filename(state_temp_dir);
   if (!validpathspec(state_temp_dir))
@@ -55,13 +55,13 @@ char *ValidateTempDir()
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, int nCmdShow)
 {
   int ret = 0;
-  const char *m_Err = _LANG_ERRORWRITINGTEMP;
+  const TCHAR *m_Err = _LANG_ERRORWRITINGTEMP;
 
   int cl_flags = 0;
 
-  char *realcmds;
-  char seekchar=' ';
-  char *cmdline;
+  TCHAR *realcmds;
+  TCHAR seekchar=' ';
+  TCHAR *cmdline;
 
   InitCommonControls();
 
@@ -90,7 +90,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
     // of special folders (CSIDL_*).
 
     SHFILEINFO shfi;
-    SHGetFileInfo("", 0, &shfi, sizeof(SHFILEINFO), 0);
+    SHGetFileInfo(TEXT(""), 0, &shfi, sizeof(SHFILEINFO), 0);
   }
 
   mystrcpy(g_caption,_LANG_GENERIC_ERROR);
@@ -102,7 +102,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
 #endif//NSIS_CONFIG_VISIBLE_SUPPORT
 
   cmdline = state_command_line;
-  if (*cmdline == '\"') seekchar = *cmdline++;
+  if (*cmdline == TEXT('\"')) seekchar = *cmdline++;
 
   cmdline=findchar(cmdline, seekchar);
   cmdline=CharNext(cmdline);
@@ -111,34 +111,34 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
   while (*cmdline)
   {
     // skip over any spaces
-    while (*cmdline == ' ') cmdline++;
+    while (*cmdline == TEXT(' ')) cmdline++;
     
     // get char we should look for to get the next parm
-    seekchar = ' ';
-    if (cmdline[0] == '\"')
+    seekchar = TEXT(' ');
+    if (cmdline[0] == TEXT('\"'))
     {
       cmdline++;
-      seekchar = '\"';
+      seekchar = TEXT('\"');
     }
 
     // is it a switch?
-    if (cmdline[0] == '/')
+    if (cmdline[0] == TEXT('/'))
     {
       cmdline++;
 
 // this only works with spaces because they have just one bit on
-#define END_OF_ARG(c) (((c)|' ')==' ')
+#define END_OF_ARG(c) (((c)|TEXT(' '))==TEXT(' '))
 
 #if defined(NSIS_CONFIG_VISIBLE_SUPPORT) && defined(NSIS_CONFIG_SILENT_SUPPORT)
-      if (cmdline[0] == 'S' && END_OF_ARG(cmdline[1]))
+      if (cmdline[0] == TEXT('S') && END_OF_ARG(cmdline[1]))
         cl_flags |= FH_FLAGS_SILENT;
 #endif//NSIS_CONFIG_SILENT_SUPPORT && NSIS_CONFIG_VISIBLE_SUPPORT
 #ifdef NSIS_CONFIG_CRC_SUPPORT
-      if (*(LPDWORD)cmdline == CHAR4_TO_DWORD('N','C','R','C') && END_OF_ARG(cmdline[4]))
+      if (*(QTCHAR *)cmdline == CHAR4_TO_DWORD('N','C','R','C') && END_OF_ARG(cmdline[4]))
         cl_flags |= FH_FLAGS_NO_CRC;
 #endif//NSIS_CONFIG_CRC_SUPPORT
 
-      if (*(LPDWORD)(cmdline-2) == CHAR4_TO_DWORD(' ', '/', 'D','='))
+      if (*(QTCHAR *)(cmdline-2) == CHAR4_TO_DWORD(' ', '/', 'D','='))
       {
         cmdline[-2]=0; // keep this from being passed to uninstaller if necessary
         mystrcpy(state_install_directory,cmdline+2);
@@ -149,7 +149,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
     // skip over our parm
     cmdline = findchar(cmdline, seekchar);
     // skip the quote
-    if (*cmdline == '\"')
+    if (*cmdline == TEXT('\"'))
       cmdline++;
   }
 
@@ -157,7 +157,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
   if (!ValidateTempDir())
   {
     GetWindowsDirectory(state_temp_dir, NSIS_MAX_STRLEN - 5); // leave space for \Temp
-    mystrcat(state_temp_dir, "\\Temp");
+    mystrcat(state_temp_dir, TEXT("\\Temp"));
     if (!ValidateTempDir())
     {
       goto end;
@@ -171,11 +171,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
   if (g_is_uninstaller)
   {
-    char *p = findchar(state_command_line, 0);
+    TCHAR *p = findchar(state_command_line, 0);
 
     // state_command_line has state_install_directory right after it in memory, so reading
     // a bit over state_command_line won't do any harm
-    while (p >= state_command_line && *(LPDWORD)p != CHAR4_TO_DWORD(' ', '_', '?', '=')) p--;
+    while (p >= state_command_line && *(QTCHAR *)p != CHAR4_TO_DWORD(' ', '_', '?', '=')) p--;
 
     m_Err = _LANG_UNINSTINITERROR;
 
@@ -198,16 +198,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
     {
       int x;
 
-      mystrcat(state_temp_dir,"~nsu.tmp\\");
+      mystrcat(state_temp_dir,TEXT("~nsu.tmp\\"));
       CreateDirectory(state_temp_dir,NULL);
 
       for (x = 0; x < 26; x ++)
       {
-        static char s[]="Au_.exe";
-        static char buf2[NSIS_MAX_STRLEN*2];
-        static char ibuf[NSIS_MAX_STRLEN];
+        static TCHAR s[]=TEXT("Au_.exe");
+        static TCHAR buf2[NSIS_MAX_STRLEN*2];
+        static TCHAR ibuf[NSIS_MAX_STRLEN];
 
-        *(LPWORD)buf2=CHAR2_TO_WORD('\"',0);
+        *(DTCHAR *)buf2=CHAR2_TO_WORD('\"',0);
         mystrcat(buf2,state_temp_dir);
         mystrcat(buf2,s);
 
@@ -216,9 +216,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
         if (m_Err) // not done yet
         {
           // get current name
-          int l=GetModuleFileName(NULL,ibuf,sizeof(ibuf));
+          int l=GetModuleFileName(NULL,ibuf,sizeof(ibuf)/sizeof(*ibuf));
           // check if it is ?Au_.exe - if so, fuck it
-          if (!lstrcmpi(ibuf+l-(sizeof(s)-2),s+1)) break;
+          if (!lstrcmpi(ibuf+l-(sizeof(s)/sizeof(*s)-2),s+1)) break;
 
           // copy file
           if (CopyFile(ibuf,buf2+1,FALSE))
@@ -229,9 +229,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
 #endif
             if (state_install_directory[0]) mystrcpy(ibuf,state_install_directory);
             else trimslashtoend(ibuf);
-            mystrcat(buf2,"\" ");
+            mystrcat(buf2,TEXT("\" "));
             mystrcat(buf2,realcmds);
-            mystrcat(buf2," _?=");
+            mystrcat(buf2,TEXT(" _?="));
             mystrcat(buf2,ibuf);
             // add a trailing backslash to make sure is_valid_instpath will not fail when it shouldn't
             addtrailingslash(buf2);
@@ -280,9 +280,13 @@ end:
     BOOL (WINAPI *OPT)(HANDLE, DWORD,PHANDLE);
     BOOL (WINAPI *LPV)(LPCTSTR,LPCTSTR,PLUID);
     BOOL (WINAPI *ATP)(HANDLE,BOOL,PTOKEN_PRIVILEGES,DWORD,PTOKEN_PRIVILEGES,PDWORD);
-    OPT=myGetProcAddress("ADVAPI32.dll","OpenProcessToken");
+    OPT=myGetProcAddress(TEXT("ADVAPI32.dll"),"OpenProcessToken");
+#ifdef UNICODE
+		LPV=myGetProcAddress(L"ADVAPI32.dll","LookupPrivilegeValueW");
+#else
     LPV=myGetProcAddress("ADVAPI32.dll","LookupPrivilegeValueA");
-    ATP=myGetProcAddress("ADVAPI32.dll","AdjustTokenPrivileges");
+#endif
+    ATP=myGetProcAddress(TEXT("ADVAPI32.dll"),"AdjustTokenPrivileges");
     if (OPT && LPV && ATP)
     {
       HANDLE hToken;

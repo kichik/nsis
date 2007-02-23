@@ -20,28 +20,28 @@
 
 // generic startup strings (these will never be overridable)
 #ifdef NSIS_CONFIG_CRC_SUPPORT
-#define _LANG_INVALIDCRC	"The installer you are trying to use is corrupted or incomplete.\n"  \
-				"This could be the result of a damaged disk, a failed download or a virus.\n\n"  \
-				"You may want to contact the author of this installer to obtain a new copy.\n\n"  \
-				"It may be possible to skip this check using the /NCRC command line switch\n" \
-				"(NOT RECOMMENDED)."
+#define _LANG_INVALIDCRC	TEXT("The installer you are trying to use is corrupted or incomplete.\n")  \
+				TEXT("This could be the result of a damaged disk, a failed download or a virus.\n\n")  \
+				TEXT("You may want to contact the author of this installer to obtain a new copy.\n\n")  \
+				TEXT("It may be possible to skip this check using the /NCRC command line switch\n") \
+				TEXT("(NOT RECOMMENDED).")
 #else
-#define _LANG_INVALIDCRC	"The installer you are trying to use is corrupted or incomplete.\n"  \
-				"This could be the result of a damaged disk, a failed download or a virus.\n\n"  \
-				"You may want to contact the author of this installer to obtain a new copy."
+#define _LANG_INVALIDCRC	TEXT("The installer you are trying to use is corrupted or incomplete.\n")  \
+				TEXT("This could be the result of a damaged disk, a failed download or a virus.\n\n")  \
+				TEXT("You may want to contact the author of this installer to obtain a new copy.")
 #endif
 
-#define _LANG_ERRORWRITINGTEMP "Error writing temporary file. Make sure your temp folder is valid."
+#define _LANG_ERRORWRITINGTEMP TEXT("Error writing temporary file. Make sure your temp folder is valid.")
 
-#define _LANG_UNINSTINITERROR "Error launching installer"
+#define _LANG_UNINSTINITERROR TEXT("Error launching installer")
 
-#define _LANG_VERIFYINGINST "verifying installer: %d%%"
+#define _LANG_VERIFYINGINST TEXT("verifying installer: %d%%")
 
-#define _LANG_UNPACKING "unpacking data: %d%%"
+#define _LANG_UNPACKING TEXT("unpacking data: %d%%")
 
-#define _LANG_CANTOPENSELF "Error launching installer" // same as uninstiniterror for size
+#define _LANG_CANTOPENSELF TEXT("Error launching installer") // same as uninstiniterror for size
 
-#define _LANG_GENERIC_ERROR "NSIS Error"
+#define _LANG_GENERIC_ERROR TEXT("NSIS Error")
 
 #define LANG_STR_TAB(x)             cur_langtable[-((int)x+1)]
 

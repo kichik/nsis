@@ -26,7 +26,7 @@
 
 #ifdef NSIS_CONFIG_LOG
 #if !defined(NSIS_CONFIG_LOG_ODS) && !defined(NSIS_CONFIG_LOG_STDOUT)
-char g_log_file[1024];
+TCHAR g_log_file[1024];
 #endif
 #endif
 
@@ -60,7 +60,7 @@ void NSISCALL FreePIDL(LPITEMIDLIST idl)
   }
 }
 
-HANDLE NSISCALL myCreateProcess(char *cmd, char *dir)
+HANDLE NSISCALL myCreateProcess(TCHAR *cmd, TCHAR *dir)
 {
   DWORD d;
   PROCESS_INFORMATION ProcInfo;
@@ -80,20 +80,20 @@ HANDLE NSISCALL myCreateProcess(char *cmd, char *dir)
   return SendMessage(hWnd,WM_SETTEXT,0,(LPARAM)val);
 }*/
 
-BOOL NSISCALL my_SetDialogItemText(HWND dlg, UINT idx, const char *val)
+BOOL NSISCALL my_SetDialogItemText(HWND dlg, UINT idx, const TCHAR *val)
 {
   return SetDlgItemText(dlg,idx,val);
 //  return my_SetWindowText(GetDlgItem(dlg, idx), val);
 }
 
-int NSISCALL my_GetDialogItemText(UINT idx, char *val)
+int NSISCALL my_GetDialogItemText(UINT idx, TCHAR *val)
 {
   extern HWND m_curwnd;
   return GetDlgItemText(m_curwnd, idx, val, NSIS_MAX_STRLEN);
 //  return my_GetWindowText(GetDlgItem(m_curwnd, idx), val, NSIS_MAX_STRLEN);
 }
 
-int NSISCALL my_MessageBox(const char *text, UINT type) {
+int NSISCALL my_MessageBox(const TCHAR *text, UINT type) {
   int _type = type & 0x001FFFFF;
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
   // default for silent installers
@@ -106,13 +106,13 @@ int NSISCALL my_MessageBox(const char *text, UINT type) {
   return MessageBox(g_hwnd, text, g_caption, _type);
 }
 
-void NSISCALL myDelete(char *buf, int flags)
+void NSISCALL myDelete(TCHAR *buf, int flags)
 {
-  static char lbuf[NSIS_MAX_STRLEN];
+  static TCHAR lbuf[NSIS_MAX_STRLEN];
 
   HANDLE h;
   WIN32_FIND_DATA fd;
-  char *fn;
+  TCHAR *fn;
   int valid_dir=is_valid_instpath(buf);
 
   if ((flags & DEL_SIMPLE))
@@ -128,12 +128,12 @@ void NSISCALL myDelete(char *buf, int flags)
     mystrcpy(lbuf,buf);
 #ifdef NSIS_SUPPORT_RMDIR
     if (flags & DEL_DIR)
-      mystrcat(lbuf,"\\*.*");
+      mystrcat(lbuf, TEXT("\\*.*"));
     else
 #endif//NSIS_SUPPORT_RMDIR
       trimslashtoend(buf);
 
-    mystrcat(buf,"\\");
+    mystrcat(buf, TEXT("\\"));
 
     fn=buf+mystrlen(buf);
 
@@ -142,14 +142,14 @@ void NSISCALL myDelete(char *buf, int flags)
     {
       do
       {
-        char *fdfn = fd.cFileName;
-        if (*findchar(fdfn, '?') && *fd.cAlternateFileName)
+        TCHAR *fdfn = fd.cFileName;
+        if (*findchar(fdfn, TEXT('?')) && *fd.cAlternateFileName)
           // name contains unicode, use short name
           fdfn = fd.cAlternateFileName;
 
 #ifdef NSIS_SUPPORT_RMDIR
-        if (fdfn[0] == '.' && !fdfn[1]) continue;
-        if (fdfn[0] == '.' && fdfn[1] == '.' && !fdfn[2]) continue;
+        if (fdfn[0] == TEXT('.') && !fdfn[1]) continue;
+        if (fdfn[0] == TEXT('.') && fdfn[1] == TEXT('.') && !fdfn[2]) continue;
 #endif//NSIS_SUPPORT_RMDIR
         {
           mystrcpy(fn,fdfn);
@@ -164,21 +164,21 @@ void NSISCALL myDelete(char *buf, int flags)
           }
           else
           {
-            log_printf2("Delete: DeleteFile(\"%s\")",buf);
+            log_printf2(TEXT("Delete: DeleteFile(\"%s\")"),buf);
             remove_ro_attr(buf);
             if (!DeleteFile(buf))
             {
 #ifdef NSIS_SUPPORT_MOVEONREBOOT
               if (flags & DEL_REBOOT)
               {
-                log_printf2("Delete: DeleteFile on Reboot(\"%s\")",buf);
+                log_printf2(TEXT("Delete: DeleteFile on Reboot(\"%s\")"),buf);
                 update_status_text(LANG_DELETEONREBOOT,buf);
                 MoveFileOnReboot(buf,NULL);
               }
               else
 #endif//NSIS_SUPPORT_MOVEONREBOOT
               {
-                log_printf2("Delete: DeleteFile failed(\"%s\")",buf);
+                log_printf2(TEXT("Delete: DeleteFile failed(\"%s\")"),buf);
                 g_exec_flags.exec_error++;
               }
             }
@@ -201,27 +201,27 @@ void NSISCALL myDelete(char *buf, int flags)
   {
     if (!valid_dir)
     {
-      log_printf2("RMDir: RemoveDirectory invalid input(\"%s\")",buf);
+      log_printf2(TEXT("RMDir: RemoveDirectory invalid input(\"%s\")"),buf);
       g_exec_flags.exec_error++;
     }
     else if (file_exists(buf))
     {
       addtrailingslash(buf);
-      log_printf2("RMDir: RemoveDirectory(\"%s\")",buf);
+      log_printf2(TEXT("RMDir: RemoveDirectory(\"%s\")"),buf);
       remove_ro_attr(buf);
       if (!RemoveDirectory(buf))
       {
 #ifdef NSIS_SUPPORT_MOVEONREBOOT
         if (flags & DEL_REBOOT)
         {
-          log_printf2("RMDir: RemoveDirectory on Reboot(\"%s\")",buf);
+          log_printf2(TEXT("RMDir: RemoveDirectory on Reboot(\"%s\")"),buf);
           update_status_text(LANG_DELETEONREBOOT,buf);
           MoveFileOnReboot(buf,NULL);
         }
         else
 #endif//NSIS_SUPPORT_MOVEONREBOOT
         {
-          log_printf2("RMDir: RemoveDirectory failed(\"%s\")",buf);
+          log_printf2(TEXT("RMDir: RemoveDirectory failed(\"%s\")"),buf);
           g_exec_flags.exec_error++;
         }
       }
@@ -234,9 +234,9 @@ void NSISCALL myDelete(char *buf, int flags)
 #endif//NSIS_SUPPORT_RMDIR
 }
 
-char *NSISCALL addtrailingslash(char *str)
+TCHAR *NSISCALL addtrailingslash(TCHAR *str)
 {
-  if (lastchar(str)!='\\') mystrcat(str,"\\");
+  if (lastchar(str)!=TEXT('\\')) mystrcat(str,TEXT("\\"));
   return str;
 }
 
@@ -245,7 +245,7 @@ char *NSISCALL addtrailingslash(char *str)
   return *CharPrev(str,str+mystrlen(str));
 }*/
 
-char * NSISCALL findchar(char *str, char c)
+TCHAR * NSISCALL findchar(TCHAR *str, TCHAR c)
 {
   while (*str && *str != c)
   {
@@ -254,12 +254,12 @@ char * NSISCALL findchar(char *str, char c)
   return str;
 }
 
-void NSISCALL trimslashtoend(char *buf)
+void NSISCALL trimslashtoend(TCHAR *buf)
 {
-  char *p = buf + mystrlen(buf);
+  TCHAR *p = buf + mystrlen(buf);
   do
   {
-    if (*p == '\\')
+    if (*p == TEXT('\\'))
       break;
     p = CharPrev(buf, p);
   } while (p > buf);
@@ -267,28 +267,28 @@ void NSISCALL trimslashtoend(char *buf)
   *p = 0;
 }
 
-int NSISCALL validpathspec(char *ubuf)
+int NSISCALL validpathspec(TCHAR *ubuf)
 {
-  char dl = ubuf[0] | 0x20; // convert alleged drive letter to lower case
-  return ((*(WORD*)ubuf==CHAR2_TO_WORD('\\','\\')) || (dl >= 'a' && dl <= 'z' && ubuf[1]==':'));
+  TCHAR dl = ubuf[0] | 0x20; // convert alleged drive letter to lower case
+  return ((*(DTCHAR*)ubuf==CHAR2_TO_WORD(TEXT('\\'),TEXT('\\'))) || (dl >= TEXT('a') && dl <= TEXT('z') && ubuf[1]==TEXT(':')));
 }
 
-char * NSISCALL skip_root(char *path)
+TCHAR * NSISCALL skip_root(TCHAR *path)
 {
-  char *p = CharNext(path);
-  char *p2 = CharNext(p);
+  TCHAR *p = CharNext(path);
+  TCHAR *p2 = CharNext(p);
 
-  if (*path && *(WORD*)p == CHAR2_TO_WORD(':', '\\'))
+  if (*path && *(DTCHAR*)p == CHAR2_TO_WORD(TEXT(':'), TEXT('\\')))
   {
     return CharNext(p2);
   }
-  else if (*(WORD*)path == CHAR2_TO_WORD('\\','\\'))
+  else if (*(DTCHAR*)path == CHAR2_TO_WORD(TEXT('\\'),TEXT('\\')))
   {
     // skip host and share name
     int x = 2;
     while (x--)
     {
-      p2 = findchar(p2, '\\');
+      p2 = findchar(p2, TEXT('\\'));
       if (!*p2)
         return NULL;
       p2++; // skip backslash
@@ -300,10 +300,10 @@ char * NSISCALL skip_root(char *path)
     return NULL;
 }
 
-int NSISCALL is_valid_instpath(char *s)
+int NSISCALL is_valid_instpath(TCHAR *s)
 {
-  static char tmp[NSIS_MAX_STRLEN];
-  char *root;
+  static TCHAR tmp[NSIS_MAX_STRLEN];
+  TCHAR *root;
 
   mystrcpy(tmp, s);
 
@@ -342,12 +342,12 @@ int NSISCALL is_valid_instpath(char *s)
   return 1;
 }
 
-char * NSISCALL mystrstri(char *a, char *b)
+TCHAR * NSISCALL mystrstri(TCHAR *a, TCHAR *b)
 {
   int l = mystrlen(b);
   while (mystrlen(a) >= l)
   {
-    char c = a[l];
+    TCHAR c = a[l];
     a[l] = 0;
     if (!lstrcmpi(a, b))
     {
@@ -370,14 +370,14 @@ void NSISCALL mini_memcpy(void *out, const void *in, size_t len)
   }
 }
 
-void NSISCALL remove_ro_attr(char *file)
+void NSISCALL remove_ro_attr(TCHAR *file)
 {
   int attr = GetFileAttributes(file);
   if (attr != INVALID_FILE_ATTRIBUTES)
     SetFileAttributes(file,attr&(~FILE_ATTRIBUTE_READONLY));
 }
 
-HANDLE NSISCALL myOpenFile(const char *fn, DWORD da, DWORD cd)
+HANDLE NSISCALL myOpenFile(const TCHAR *fn, DWORD da, DWORD cd)
 {
   int attr = GetFileAttributes(fn);
   return CreateFile(
@@ -391,14 +391,14 @@ HANDLE NSISCALL myOpenFile(const char *fn, DWORD da, DWORD cd)
   );
 }
 
-char * NSISCALL my_GetTempFileName(char *buf, const char *dir)
+TCHAR * NSISCALL my_GetTempFileName(TCHAR *buf, const TCHAR *dir)
 {
   int n = 100;
   while (n--)
   {
-    char prefix[4];
-    *(LPDWORD)prefix = CHAR4_TO_DWORD('n', 's', 'a', 0);
-    prefix[2] += (char)(GetTickCount() % 26);
+    TCHAR prefix[4];
+    *(QTCHAR *)prefix = CHAR4_TO_DWORD(TEXT('n'), TEXT('s'), TEXT('a'), 0); 
+    prefix[2] += (TCHAR)(GetTickCount() % 26);
     if (GetTempFileName(dir, prefix, 0, buf))
       return buf;
   }
@@ -410,9 +410,13 @@ char * NSISCALL my_GetTempFileName(char *buf, const char *dir)
 void NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
 {
   BOOL fOk = 0;
-  typedef BOOL (WINAPI *mfea_t)(LPCSTR lpExistingFileName,LPCSTR lpNewFileName,DWORD dwFlags);
+  typedef BOOL (WINAPI *mfea_t)(LPCTSTR lpExistingFileName,LPCTSTR lpNewFileName,DWORD dwFlags);
   mfea_t mfea;
-  mfea=(mfea_t) myGetProcAddress("KERNEL32.dll","MoveFileExA");
+#ifdef UNICODE
+	mfea=(mfea_t) myGetProcAddress(TEXT("KERNEL32.dll"),"MoveFileExW");
+#else
+	mfea=(mfea_t) myGetProcAddress(TEXT("KERNEL32.dll"),"MoveFileExA");	
+#endif
   if (mfea)
   {
     fOk=mfea(pszExisting, pszNew, MOVEFILE_DELAY_UNTIL_REBOOT|MOVEFILE_REPLACE_EXISTING);
@@ -420,20 +424,20 @@ void NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
 
   if (!fOk)
   {
-    static char szRenameLine[1024];
-    static char wininit[1024];
-    static char tmpbuf[1024];
+    static TCHAR szRenameLine[1024];
+    static TCHAR wininit[1024];
+    static TCHAR tmpbuf[1024];
     int cchRenameLine;
-    char *szRenameSec = "[Rename]\r\n";
+    TCHAR *szRenameSec = TEXT("[Rename]\r\n");
     HANDLE hfile;
     DWORD dwFileSize;
     DWORD dwBytes;
     DWORD dwRenameLinePos;
-    char *pszWinInit;
+    TCHAR *pszWinInit;
 
     int spn;
 
-    *(DWORD*)tmpbuf = CHAR4_TO_DWORD('N', 'U', 'L', 0);
+    *(QTCHAR*)tmpbuf = CHAR4_TO_DWORD(TEXT('N'), TEXT('U'), TEXT('L'), 0);
 
     if (pszNew) {
       // create the file if it's not already there to prevent GetShortPathName from failing
@@ -446,10 +450,10 @@ void NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
     spn = GetShortPathName(pszExisting,wininit,1024);
     if (!spn || spn > 1024)
       return;
-    cchRenameLine = wsprintf(szRenameLine,"%s=%s\r\n",tmpbuf,wininit);
+    cchRenameLine = wsprintf(szRenameLine,TEXT("%s=%s\r\n"),tmpbuf,wininit);
 
     GetWindowsDirectory(wininit, 1024-16);
-    mystrcat(wininit, "\\wininit.ini");
+    mystrcat(wininit, TEXT("\\wininit.ini"));
     hfile = myOpenFile(wininit, GENERIC_READ | GENERIC_WRITE, OPEN_ALWAYS);
 
     if (hfile != INVALID_HANDLE_VALUE)
@@ -461,7 +465,7 @@ void NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
       {
         if (ReadFile(hfile, pszWinInit, dwFileSize, &dwBytes, NULL) && dwFileSize == dwBytes)
         {
-          LPSTR pszRenameSecInFile = mystrstri(pszWinInit, szRenameSec);
+          LPTSTR pszRenameSecInFile = mystrstri(pszWinInit, szRenameSec);
           if (pszRenameSecInFile == NULL)
           {
             mystrcpy(pszWinInit+dwFileSize, szRenameSec);
@@ -470,11 +474,11 @@ void NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
           }
           else
           {
-            char *pszFirstRenameLine = pszRenameSecInFile+10;
-            char *pszNextSec = mystrstri(pszFirstRenameLine,"\n[");
+            TCHAR *pszFirstRenameLine = pszRenameSecInFile+10;
+            TCHAR *pszNextSec = mystrstri(pszFirstRenameLine,TEXT("\n["));
             if (pszNextSec)
             {
-              char *p = ++pszNextSec;
+              TCHAR *p = ++pszNextSec;
               while (p < pszWinInit + dwFileSize) {
                 p[cchRenameLine] = *p;
                 p++;
@@ -506,7 +510,7 @@ void NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
 }
 #endif
 
-void NSISCALL myRegGetStr(HKEY root, const char *sub, const char *name, char *out)
+void NSISCALL myRegGetStr(HKEY root, const TCHAR *sub, const TCHAR *name, TCHAR *out)
 {
   HKEY hKey;
   *out=0;
@@ -514,40 +518,40 @@ void NSISCALL myRegGetStr(HKEY root, const char *sub, const char *name, char *ou
   {
     DWORD l = NSIS_MAX_STRLEN;
     DWORD t;
-    if (RegQueryValueEx(hKey,name,NULL,&t,out,&l ) != ERROR_SUCCESS || (t != REG_SZ && t != REG_EXPAND_SZ)) *out=0;
+    if (RegQueryValueEx(hKey,name,NULL,&t,(LPBYTE)out,&l ) != ERROR_SUCCESS || (t != REG_SZ && t != REG_EXPAND_SZ)) *out=0;
     out[NSIS_MAX_STRLEN-1]=0;
     RegCloseKey(hKey);
   }
 }
 
-void NSISCALL myitoa(char *s, intptr_t d)
+void NSISCALL myitoa(TCHAR *s, int d)
 {
-  static const char c[] = "%d";
+  static const TCHAR c[] = TEXT("%d");
   wsprintf(s,c,d);
 }
 
-int NSISCALL myatoi(char *s)
+int NSISCALL myatoi(TCHAR *s)
 {
   unsigned int v=0;
   int sign=1; // sign of positive
-  char m=10; // base of 10
-  char t='9'; // cap top of numbers at 9
+  TCHAR m=10; // base of 10
+  TCHAR t=TEXT('9'); // cap top of numbers at 9
 
-  if (*s == '-')
+  if (*s == TEXT('-'))
   {
     s++;  //skip over -
     sign=-1; // sign flip
   }
 
-  if (*s == '0')
+  if (*s == TEXT('0'))
   {
     s++; // skip over 0
-    if (s[0] >= '0' && s[0] <= '7')
+    if (s[0] >= TEXT('0') && s[0] <= TEXT('7'))
     {
       m=8; // base of 8
-      t='7'; // cap top at 7
+      t=TEXT('7'); // cap top at 7
     }
-    if ((s[0] & ~0x20) == 'X')
+    if ((s[0] & ~0x20) == TEXT('X'))
     {
       m=16; // base of 16
       s++; // advance over 'x'
@@ -557,8 +561,8 @@ int NSISCALL myatoi(char *s)
   for (;;)
   {
     int c=*s++;
-    if (c >= '0' && c <= t) c-='0';
-    else if (m==16 && (c & ~0x20) >= 'A' && (c & ~0x20) <= 'F') c = (c & 7) + 9;
+    if (c >= TEXT('0') && c <= t) c-=TEXT('0');
+    else if (m==16 && (c & ~0x20) >= TEXT('A') && (c & ~0x20) <= TEXT('F')) c = (c & 7) + 9;
     else break;
     v*=m;
     v+=c;
@@ -569,38 +573,38 @@ int NSISCALL myatoi(char *s)
 // Straight copies of selected shell functions.  Calling local functions
 // requires less code than DLL functions.  For the savings to outweigh the cost
 // of a new function there should be about a couple of dozen or so calls.
-char * NSISCALL mystrcpy(char *out, const char *in)
+TCHAR * NSISCALL mystrcpy(TCHAR *out, const TCHAR *in)
 {
   return lstrcpyn(out, in, NSIS_MAX_STRLEN);
 }
 
-int NSISCALL mystrlen(const char *in)
+int NSISCALL mystrlen(const TCHAR *in)
 {
   return lstrlen(in);
 }
 
-char * NSISCALL mystrcat(char *out, const char *concat)
+TCHAR * NSISCALL mystrcat(TCHAR *out, const TCHAR *concat)
 {
   return lstrcat(out, concat);
 }
 
-char ps_tmpbuf[NSIS_MAX_STRLEN*2];
+TCHAR ps_tmpbuf[NSIS_MAX_STRLEN*2];
 
-#define SYSREGKEY "Software\\Microsoft\\Windows\\CurrentVersion"
+#define SYSREGKEY TEXT("Software\\Microsoft\\Windows\\CurrentVersion")
 
 // Based on Dave Laundon's simplified process_string
-char * NSISCALL GetNSISString(char *outbuf, int strtab)
+TCHAR * NSISCALL GetNSISString(TCHAR *outbuf, int strtab)
 {
-  char *in = (char*)GetNSISStringNP(GetNSISTab(strtab));
-  char *out = ps_tmpbuf;
-  if ((unsigned int) (outbuf - ps_tmpbuf) < sizeof(ps_tmpbuf))
+  TCHAR *in = (TCHAR*)GetNSISStringNP(GetNSISTab(strtab));
+  TCHAR *out = ps_tmpbuf;
+  if ((unsigned int) (outbuf - ps_tmpbuf) < (sizeof(ps_tmpbuf)/sizeof(*ps_tmpbuf)))
   {
     out = outbuf;
     outbuf = 0;
   }
   while (*in && out - ps_tmpbuf < NSIS_MAX_STRLEN)
   {
-    unsigned char nVarIdx = (unsigned char)*in++;
+    unsigned char nVarIdx = (unsigned char)*in++; // TODO: <benski>
     int nData;
     int fldrs[4];
     if (nVarIdx > NS_CODES_START)
@@ -615,7 +619,7 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
       if (nVarIdx == NS_SHELL_CODE)
       {
         LPITEMIDLIST idl;
-        char *append = 0;
+        TCHAR *append = 0;
 
         int x = 2;
 
@@ -623,7 +627,7 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
         // for normal $APPDATA, it'd be CSIDL_APPDATA_COMMON
         if (fldrs[2] == CSIDL_APPDATA)
         {
-          append = "\\Microsoft\\Internet Explorer\\Quick Launch";
+          append = TEXT("\\Microsoft\\Internet Explorer\\Quick Launch");
         }
 
         if (g_exec_flags.all_user_var)
@@ -650,13 +654,13 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
         {
           if (fldrs[0] == CSIDL_PROGRAM_FILES_COMMON)
           {
-            myRegGetStr(HKEY_LOCAL_MACHINE, SYSREGKEY, "CommonFilesDir", out);
+            myRegGetStr(HKEY_LOCAL_MACHINE, SYSREGKEY, TEXT("CommonFilesDir"), out);
           }
           else if (fldrs[0] == CSIDL_PROGRAM_FILES)
           {
-            myRegGetStr(HKEY_LOCAL_MACHINE, SYSREGKEY, "ProgramFilesDir", out);
+            myRegGetStr(HKEY_LOCAL_MACHINE, SYSREGKEY, TEXT("ProgramFilesDir"), out);
             if (!*out)
-              mystrcpy(out, "C:\\Program Files");
+              mystrcpy(out, TEXT("C:\\Program Files"));
           }
           else if (fldrs[0] == CSIDL_SYSTEM)
           {
@@ -678,7 +682,7 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
       else if (nVarIdx == NS_VAR_CODE)
       {
         if (nData == 27) // HWNDPARENT
-          myitoa(out, (unsigned int) g_hwnd);
+          myitoa(out, (unsigned int) g_hwnd); // TODO: <benski> not 64bit compat
         else
           mystrcpy(out, g_usrvars[nData]);
         // validate the directory name
@@ -709,15 +713,15 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
   return ps_tmpbuf;
 }
 
-void NSISCALL validate_filename(char *in) {
-  char *nono = "*?|<>/\":";
-  char *out;
-  char *out_save;
+void NSISCALL validate_filename(TCHAR *in) {
+  TCHAR *nono = TEXT("*?|<>/\":");
+  TCHAR *out;
+  TCHAR *out_save;
 
   // ignoring spaces is wrong, " C:\blah" is invalid
   //while (*in == ' ') in = CharNext(in);
 
-  if (in[0] == '\\' && in[1] == '\\' && in[2] == '?' && in[3] == '\\')
+  if (in[0] == TEXT('\\') && in[1] == TEXT('\\') && in[2] == TEXT('?') && in[3] == TEXT('\\'))
   {
     // at least four bytes
     in += 4;
@@ -750,7 +754,7 @@ void NSISCALL validate_filename(char *in) {
 
 #ifdef NSIS_CONFIG_LOG
 int log_dolog;
-char log_text[2048]; // 1024 for each wsprintf
+TCHAR log_text[2048]; // 1024 for each wsprintf
 
 #if !defined(NSIS_CONFIG_LOG_ODS) && !defined(NSIS_CONFIG_LOG_STDOUT)
 void NSISCALL log_write(int close)
@@ -776,36 +780,36 @@ void NSISCALL log_write(int close)
     if (fp!=INVALID_HANDLE_VALUE)
     {
       DWORD d;
-      mystrcat(log_text,"\r\n");
-      WriteFile(fp,log_text,mystrlen(log_text),&d,NULL);
+      mystrcat(log_text,TEXT("\r\n"));
+      WriteFile(fp,log_text,mystrlen(log_text)*sizeof(TCHAR),&d,NULL);
     }
   }
 }
 #endif//!NSIS_CONFIG_LOG_ODS && !NSIS_CONFIG_LOG_STDOUT
 
-const char * _RegKeyHandleToName(HKEY hKey)
+const TCHAR * _RegKeyHandleToName(HKEY hKey)
 {
   if (hKey == HKEY_CLASSES_ROOT)
-    return "HKEY_CLASSES_ROOT";
+    return TEXT("HKEY_CLASSES_ROOT");
   else if (hKey == HKEY_CURRENT_USER)
-    return "HKEY_CURRENT_USER";
+    return TEXT("HKEY_CURRENT_USER");
   else if (hKey == HKEY_LOCAL_MACHINE)
-    return "HKEY_LOCAL_MACHINE";
+    return TEXT("HKEY_LOCAL_MACHINE");
   else if (hKey == HKEY_USERS)
-    return "HKEY_USERS";
+    return TEXT("HKEY_USERS");
   else if (hKey == HKEY_PERFORMANCE_DATA)
-    return "HKEY_PERFORMANCE_DATA";
+    return TEXT("HKEY_PERFORMANCE_DATA");
   else if (hKey == HKEY_CURRENT_CONFIG)
-    return "HKEY_CURRENT_CONFIG";
+    return TEXT("HKEY_CURRENT_CONFIG");
   else if (hKey == HKEY_DYN_DATA)
-    return "HKEY_DYN_DATA";
+    return TEXT("HKEY_DYN_DATA");
   else
-    return "invalid registry key";
+    return TEXT("invalid registry key");
 }
 
-void _LogData2Hex(char *buf, size_t buflen, unsigned char *data, size_t datalen)
+void _LogData2Hex(TCHAR *buf, size_t buflen, unsigned char *data, size_t datalen)
 {
-  char *p = buf;
+  TCHAR *p = buf;
 
   size_t i;
 
@@ -822,12 +826,12 @@ void _LogData2Hex(char *buf, size_t buflen, unsigned char *data, size_t datalen)
 
   for (i = 0; i < bufbytes; i++)
   {
-    wsprintf(p, "%02x%c", data[i], (i == bufbytes - 1) ? '\0' : ' ');
+    wsprintf(p, TEXT("%02x%c"), data[i], (i == bufbytes - 1) ? TEXT('\0') : TEXT(' '));
     p += 3;
   }
 
   if (dots)
-    mystrcat(buf, "...");
+    mystrcat(buf, TEXT("..."));
 }
 
 #ifdef NSIS_CONFIG_LOG_TIMESTAMP
@@ -841,12 +845,12 @@ void log_timestamp(char *buf)
 #  define log_timestamp(x)
 #endif//NSIS_CONFIG_LOG_TIMESTAMP
 
-void log_printf(char *format, ...)
+void log_printf(TCHAR *format, ...)
 {
   va_list val;
   va_start(val,format);
 
-  log_text[0] = '\0';
+  log_text[0] = TEXT('\0');
   log_timestamp(log_text);
   wvsprintf(log_text+mystrlen(log_text),format,val);
 
@@ -859,8 +863,8 @@ void log_printf(char *format, ...)
   if (log_dolog && GetStdHandle(STD_OUTPUT_HANDLE) != INVALID_HANDLE_VALUE)
   {
     DWORD dwBytes;
-    WriteFile(GetStdHandle(STD_OUTPUT_HANDLE), log_text, lstrlen(log_text), &dwBytes, NULL);
-    WriteFile(GetStdHandle(STD_OUTPUT_HANDLE), "\n", 1, &dwBytes, NULL);
+    WriteFile(GetStdHandle(STD_OUTPUT_HANDLE), log_text, lstrlen(log_text)*sizeof(TCHAR), &dwBytes, NULL);
+    WriteFile(GetStdHandle(STD_OUTPUT_HANDLE), TEXT("\n"), 1*sizeof(TCHAR), &dwBytes, NULL);
   }
 #endif
 #if !defined(NSIS_CONFIG_LOG_ODS) && !defined(NSIS_CONFIG_LOG_STDOUT)
@@ -869,7 +873,7 @@ void log_printf(char *format, ...)
 }
 #endif//NSIS_CONFIG_LOG
 
-WIN32_FIND_DATA * NSISCALL file_exists(char *buf)
+WIN32_FIND_DATA * NSISCALL file_exists(TCHAR *buf)
 {
   HANDLE h;
   static WIN32_FIND_DATA fd;
@@ -885,7 +889,7 @@ WIN32_FIND_DATA * NSISCALL file_exists(char *buf)
   return NULL;
 }
 
-void * NSISCALL myGetProcAddress(char *dll, char *func)
+void * NSISCALL myGetProcAddress(TCHAR *dll, char *func)
 {
   HMODULE hModule = GetModuleHandle(dll);
   if (!hModule)
