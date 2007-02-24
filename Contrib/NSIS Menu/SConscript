@@ -1,39 +1,25 @@
 target = "NSIS"
 
 files = Split("""
-	nsismenu.cpp
+	nsismenu/nsismenu.cpp
+	nsismenu/nslinks.cpp
 """)
 
 resources = Split("""
-	nsisicon.ico
+	nsismenu/nsisicon.ico
 """)
 
-rc = 'nsismenu.rc'
+rc = 'nsismenu/nsismenu.rc'
 
 libs = Split("""
-	user32
-	gdi32
 	advapi32
-	ole32
 	comctl32
-	comdlg32
-	uuid
-	rpcrt4
+	gdi32
 	shell32
-	wxbase26
-	wxbase26_net
-	wxbase26_xml
-	wxexpat
-	wxjpeg
-	wxmsw26_adv
-	wxmsw26_core
-	wxmsw26_html
-	wxmsw26_media
-	wxmsw26_xrc
-	wxpng
-	wxregex
-	wxtiff
-	wxzlib
+	user32
+	wxbase28
+	wxmsw28_core
+	wxmsw28_html
 """)
 
 html = Split("""
@@ -58,21 +44,42 @@ images = Split("""
 Import('BuildUtil env')
 
 import os
+from os.path import join
 
-#wxlib = [os.environ['WXWIN'] + os.sep + 'lib' + os.sep + 'vc_lib']
-#wxinc = [os.environ['WXWIN'] + os.sep + 'include', os.environ['WXWIN'] + os.sep + 'lib' + os.sep + 'vc_lib' + os.sep + 'msw']
+if os.environ.has_key('WXWIN'):
+	# directories
 
-#BuildUtil(target, files, libs, libpath = wxlib, cpppath = wxinc, res = rc, resources = resources, install = '', flags = ['/MD'])
+	wxlib = [join(os.environ['WXWIN'], 'lib', 'vc_libnsis')]
+	wxinc = [
+		join(os.environ['WXWIN'], 'include'),
+		join(os.environ['WXWIN'], 'lib', 'vc_libnsis', 'msw')
+	]
 
-# install pre-built NSIS.exe
-if env['PLATFORM'] == 'win32':
-	ins = env.DistributeBin('#NSIS.exe')
+	# build
+
+	BuildUtil(
+		target,
+		files,
+		libs,
+		res = rc,
+		resources = resources,
+		flags = ['/MD', '$EXCEPTION_FLAG'],
+		libpath = wxlib,
+		incpath = wxinc,
+		root_util = True
+	)
+
+	# install menu files
+
+	env.DistributeMenu(html, alias='install-utils')
+	env.DistributeMenu(images, path='images', alias='install-utils')
+
 else:
-	ins = env.DistributeW32Bin('#NSIS.exe')
+	
+	# no wxWidgets
+	def err(target, source, env):
+		print '*** error: WXWIN must be set to build NSIS Menu!'
+		return 1
 
-env.Alias('install-utils', ins)
-
-# install menu files
-
-env.DistributeMenu(html, alias='install-utils')
-env.DistributeMenu(images, path='images', alias='install-utils')
+	cmd = env.Command(target, files, Action(err, ''))
+	env.Alias('NSIS Menu', cmd)
