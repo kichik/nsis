@@ -3,7 +3,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx/wx.h".
-#include "wx/wxprec.h"
+#include <wx/wxprec.h>
 
 #ifdef __BORLANDC__
     #pragma hdrstop
@@ -12,12 +12,16 @@
 // for all others, include the necessary headers (this file is usually all you
 // need because it includes almost all "standard" wxWindows headers
 #ifndef WX_PRECOMP
-    #include "wx/wx.h"
+    #include <wx/wx.h>
 #endif
 
-#include "wx/image.h"
-#include "wx/html/htmlwin.h"
-#include "wx/html/htmlproc.h"
+#include <wx/event.h>
+#include <wx/filefn.h>
+#include <wx/image.h>
+#include <wx/html/htmlwin.h>
+#include <wx/html/htmlproc.h>
+#include <wx/stdpaths.h>
+#include <wx/utils.h>
 
 // ----------------------------------------------------------------------------
 // private classes
@@ -42,6 +46,9 @@ class MyFrame : public wxFrame
 public:
  // ctor(s)
     MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size);
+ // event handler(s)
+    void OnLink(wxHtmlLinkEvent& event);
+    void OnClose(wxCloseEvent& event);
 
 private:
      wxHtmlWindow *m_Html;
@@ -58,7 +65,7 @@ private:
    enum
    {
     // controls start here (the numbers are, of course, arbitrary)
-   Minimal_Text = 1000
+   HtmlControl = 1000
    };
 
 // ----------------------------------------------------------------------------
@@ -69,6 +76,7 @@ private:
 // handlers) which process them. It can be also done at run-time, but for the
 // simple menu events like this the static method is much simpler.
    BEGIN_EVENT_TABLE(MyFrame, wxFrame)
+     EVT_HTML_LINK_CLICKED(HtmlControl, OnLink)
    END_EVENT_TABLE()
    
    // Create a new application object: this macro will allow wxWindows to create
@@ -90,19 +98,19 @@ private:
    {
      wxInitAllImageHandlers();
 
-    // Create the main application window
-      MyFrame *frame = new MyFrame(_("NSIS Menu"),
-         wxPoint(50, 50), wxSize(612 + (GetSystemMetrics(SM_CXEDGE) * 2), 353 + GetSystemMetrics(SM_CYSIZE) + (GetSystemMetrics(SM_CXEDGE) * 2)));
+     // Create the main application window
+     MyFrame *frame = new MyFrame(_("NSIS Menu"),
+         wxPoint(50, 50), wxSize(600 + GetSystemMetrics(SM_CXDLGFRAME), 382 + GetSystemMetrics(SM_CYDLGFRAME)));
    
-    // Show it and tell the application that it's our main window
+     // Show it and tell the application that it's our main window
 
-      frame->Show(TRUE);
-      SetTopWindow(frame);
+     frame->Show(TRUE);
+     SetTopWindow(frame);
    
-    // success: wxApp::OnRun() will be called which will enter the main message
-    // loop and the application will run. If we returned FALSE here, the
-    // application would exit immediately.
-       return TRUE;
+     // success: wxApp::OnRun() will be called which will enter the main message
+     // loop and the application will run. If we returned FALSE here, the
+     // application would exit immediately.
+     return TRUE;
    }
 
 // ----------------------------------------------------------------------------
@@ -112,23 +120,54 @@ private:
 
 // frame constructor
    MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
-   : wxFrame((wxFrame *)NULL, -1, title, pos, size, wxMINIMIZE_BOX | wxSYSTEM_MENU | wxCAPTION,
+   : wxFrame((wxFrame *)NULL, -1, title, pos, size, wxCLOSE_BOX | wxMINIMIZE_BOX | wxSYSTEM_MENU | wxCAPTION,
              wxT("nsis_menu"))
    {  
-      m_Html = new wxHtmlWindow(this);
+      m_Html = new wxHtmlWindow(this, HtmlControl);
       m_Html->SetRelatedFrame(this, _("NSIS Menu"));
-	  m_Html->SetBorders(0);
-	  
-	  // Set font size
-	  wxWindow UnitConvert;
-	  wxSize DialogSize(1000, 1000);
-	  DialogSize = UnitConvert.ConvertDialogToPixels(DialogSize);
-	  int fonts[7] = {0, 0, 20000 / (DialogSize.GetWidth()), 25000 / (DialogSize.GetWidth()), 0, 0, 0};
-	  m_Html->SetFonts("", "", fonts);
-	  
-	  m_Html->LoadPage(wxT("Menu/index.html"));
-	  
-	  this->Centre(wxBOTH);
-	  this->SetIcon(wxICON(nsisicon));
-
+      m_Html->SetBorders(0);
+      m_Html->EnableScrolling(false, false);
+      
+      // Set font size
+      wxWindow UnitConvert;
+      wxSize DialogSize(1000, 1000);
+      DialogSize = UnitConvert.ConvertDialogToPixels(DialogSize);
+      int fonts[7] = {0, 0, 14000 / (DialogSize.GetWidth()), 19000 / (DialogSize.GetWidth()), 0, 0, 0};
+      m_Html->SetFonts("", "", fonts);
+      
+      m_Html->LoadPage(wxT("Menu/index.html"));
+      
+      this->Centre(wxBOTH);
+      this->SetIcon(wxICON(nsisicon));
    }
+
+// event handler
+
+void MyFrame::OnLink(wxHtmlLinkEvent& event)
+{
+  const wxMouseEvent *e = event.GetLinkInfo().GetEvent();
+  if (e == NULL || e->LeftUp())
+  {
+    const wxString href = event.GetLinkInfo().GetHref();
+    if (href.Left(3).IsSameAs("EX:", false))
+    {
+      wxString url = href.Mid(3);
+      if (url.Left(7).IsSameAs("http://", false) || url.Left(6).IsSameAs("irc://", false))
+      {
+        ::wxLaunchDefaultBrowser(url);
+      }
+      else
+      {
+        wxString exePath = wxStandardPaths::Get().GetExecutablePath();
+        wxString path = ::wxPathOnly(exePath);
+        path.Append(wxFileName::GetPathSeparators()[0]);
+        path.Append(url);
+        ::wxLaunchDefaultBrowser(path);
+      }
+    }
+    else
+    {
+      event.Skip();
+    }
+  }
+}

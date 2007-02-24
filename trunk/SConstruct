@@ -1,11 +1,3 @@
-## TODO
-#
-#   * Write SConscript for NSIS Menu
-#    - Use inheritance instead of current wxWidgets patches
-#    - Compile for POSIX too? wxWidgets is cross platform after all...
-#
-##
-
 EnsurePythonVersion(1,6)
 
 try:
@@ -510,11 +502,14 @@ def BuildUtil(target, source, libs, entry = None, res = None,
               resources = None, defines = None, flags = None,
               nodeflib = False, file_name = '', path='', contrib = False,
               examples = None, docs = None, cross_platform = False,
-							root_util = False):
+							root_util = False, libpath = [], incpath = []):
 	if not cross_platform:
 		env = util_env.Clone()
 	else:
 		env = cp_util_env.Clone()
+
+	env.Append(CPPPATH = incpath)
+	env.Append(LIBPATH = libpath)
 
 	AddEnvStandardFlags(env, defines, flags, entry, nodeflib)
 
