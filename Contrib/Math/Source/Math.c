@@ -100,6 +100,10 @@ void PlaceVariable(char *&vb, ParseInfo *pi)
     vb = pi->valbuf;
 }
 
+typedef double (*math_d2)(double, double);
+typedef double (*math_ddp)(double, double*);
+typedef double (*math_di)(double, int*);
+
 #define MATHFUNCNUM 29
 const MathFunction MathFunctions[MATHFUNCNUM] = {
     {{'s','i','n'}, ITF_MATH1 >> 8, sin},
@@ -119,9 +123,9 @@ const MathFunction MathFunctions[MATHFUNCNUM] = {
     {{'c','e','l'}, ITF_MATH1 >> 8, ceil},
     {{'f','l','r'}, ITF_MATH1 >> 8, floor},
 
-    {{'a','t','2'}, ITF_MATH2 >> 8, (Math1FuncPtr)atan2},
-    {{'p','o','w'}, ITF_MATH2 >> 8, (Math1FuncPtr)pow},
-    {{'f','m','d'}, ITF_MATH2 >> 8, (Math1FuncPtr)fmod},
+    {{'a','t','2'}, ITF_MATH2 >> 8, (Math1FuncPtr)(math_d2)atan2},
+    {{'p','o','w'}, ITF_MATH2 >> 8, (Math1FuncPtr)(math_d2)pow},
+    {{'f','m','d'}, ITF_MATH2 >> 8, (Math1FuncPtr)(math_d2)fmod},
 
     // type conversions
     {{'i',0,0}, ITF_TYPE >> 8, (Math1FuncPtr)ITC_INT},
@@ -134,8 +138,8 @@ const MathFunction MathFunctions[MATHFUNCNUM] = {
     {{'l',0,0}, ITF_TYPE >> 8, (Math1FuncPtr)FTT_LEN},
     {{'c',0,0}, ITF_TYPE >> 8, (Math1FuncPtr)FTT_CHAR},
 
-    {{'f','e','x'}, ITF_MATH2 >> 8, (Math1FuncPtr)frexp},
-    {{'m','d','f'}, ITF_MATH2 >> 8, (Math1FuncPtr)modf},
+    {{'f','e','x'}, ITF_MATH2 >> 8, (Math1FuncPtr)(math_di)frexp},
+    {{'m','d','f'}, ITF_MATH2 >> 8, (Math1FuncPtr)(math_ddp)modf},
 };
 
 void PlaceFunction(char *&vb, char *&sp, ParseInfo *pi, int redefine)
