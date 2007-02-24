@@ -1,5 +1,7 @@
 #include "decompress.h"
 
+#include <string.h> // for memset
+
 #define EXEHEAD
 #define NSIS_CONFIG_COMPRESSION_SUPPORT
 
