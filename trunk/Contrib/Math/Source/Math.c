@@ -3,6 +3,11 @@
 #include "Math.h"
 
 extern "C" int _fltused;
+
+#ifdef __MINGW32__
+int _fltused = 1;
+#endif
+
 ExpressionItem *stack;
 
 int UserVarsCount, UserFuncsCount;
@@ -1503,6 +1508,7 @@ void __declspec(dllexport) Script(HWND hwndParent, int string_size,
 }
 
 double _infinity;
+extern "C" void _fpreset();
 
 void CleanAll(int init)
 {
