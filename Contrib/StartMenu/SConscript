@@ -25,4 +25,4 @@ docs = Split("""
 
 Import('BuildPlugin')
 
-BuildPlugin(target, files, libs, examples, docs, res = resources, res_target = 'StartMenuRC')
+BuildPlugin(target, files, libs, examples, docs, res = resources)

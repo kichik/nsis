@@ -435,9 +435,10 @@ def AddEnvStandardFlags(env, defines, flags, entry, nodeflib):
 	if nodeflib:
 		env.Append(LINKFLAGS = '$NODEFLIBS_FLAG') # no default libraries
 
-def AppendRES(env, source, res, resources, target_name = None):
+def AppendRES(env, source, res, resources):
 	if res:
-		target_res = env.RES(target_name, res)
+		target = MakeFileList(res)[0].name.replace('.rc', '-rc')
+		target_res = env.RES(target, res)
 		if resources:
 			env.Depends(target_res, resources)
 		source.append(target_res)
@@ -456,9 +457,9 @@ def DistributeExtras(env, target, examples, docs):
 ######################################################################
 
 def BuildPlugin(target, source, libs, examples = None, docs = None,
-                entry = 'DllMain', res = None, res_target = None,
-                resources = None, defines = None, flags = None, 
-                nodeflib = True, cppused = False):
+                entry = 'DllMain', res = None, resources = None,
+                defines = None, flags = None, nodeflib = True,
+                cppused = False):
 	env = plugin_env.Clone()
 
 	if cppused and env['CPP_REQUIRES_STDLIB']:
@@ -466,7 +467,7 @@ def BuildPlugin(target, source, libs, examples = None, docs = None,
 
 	AddEnvStandardFlags(env, defines, flags, entry, nodeflib)
 
-	AppendRES(env, source, res, resources, res_target)
+	AppendRES(env, source, res, resources)
 
 	plugin = env.SharedLibrary(target, source, LIBS = libs)
 	defenv.Alias(target, plugin)
