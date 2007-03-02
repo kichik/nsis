@@ -63,7 +63,7 @@ if os.environ.has_key('WXWIN'):
 		libs,
 		res = rc,
 		resources = resources,
-		flags = ['/MD', '$EXCEPTION_FLAG'],
+		flags = ['$MSVCRT_FLAG', '$EXCEPTION_FLAG'],
 		libpath = wxlib,
 		incpath = wxinc,
 		root_util = True
