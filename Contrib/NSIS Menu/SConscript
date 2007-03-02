@@ -57,17 +57,20 @@ if os.environ.has_key('WXWIN'):
 
 	# build
 
-	BuildUtil(
+	nsis_menu = BuildUtil(
 		target,
 		files,
 		libs,
 		res = rc,
 		resources = resources,
 		flags = ['$MSVCRT_FLAG', '$EXCEPTION_FLAG'],
-		libpath = wxlib,
-		incpath = wxinc,
 		root_util = True
 	)
+
+	# set directories
+
+	nsis_menu[0].env.Append(LIBPATH = wxlib)
+	nsis_menu[0].env.Append(CPPPATH = wxinc)
 
 	# install menu files
 
