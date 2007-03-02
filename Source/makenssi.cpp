@@ -140,7 +140,11 @@ static void print_usage()
          "    " OPT_STR "Ddefine[=value] defines the symbol \"define\" for the script [to value]\n"
          "    " OPT_STR "Xscriptcmd executes scriptcmd in script (i.e. \"" OPT_STR "XOutFile poop.exe\")\n"
          "   parameters are processed by order (" OPT_STR "Ddef ins.nsi != ins.nsi " OPT_STR "Ddef)\n"
-         "   for script file name, you can use - to read from the standard input\n");
+         "   for script file name, you can use - to read from the standard input\n"
+#ifdef _WIN32	
+         "   you can also use - as an option character: -PAUSE as well as /PAUSE\n"
+#endif
+         "   you can use a double-dash to end options processing: makensis -- -ins.nsi\n");
   fflush(g_output);
 }
 
@@ -251,9 +255,7 @@ int main(int argc, char **argv)
   FILE *fp;
   int tmpargpos=1;
   int no_logo=0;
-#ifndef _WIN32
   int in_files=0;
-#endif
 
   try
   {
@@ -266,13 +268,13 @@ int main(int argc, char **argv)
     return 1;
   }
 
-  if (argc > 1 && !stricmp(argv[1], OPT_STR "VERSION"))
+  if (argc > 1 && IS_OPT(argv[1]) && !stricmp(&argv[1][1],"VERSION"))
   {
     fprintf(g_output,NSIS_VERSION);
     fflush(g_output);
     return 0;
   }
-  if (argc > 1 && argv[1][0]==OPT_C && (argv[1][1]=='v' || argv[1][1]=='V'))
+  if (argc > 1 && IS_OPT(argv[1]) && (argv[1][1]=='v' || argv[1][1]=='V'))
   {
     tmpargpos++;
     if (argv[1][2] <= '2' && argv[1][2] >= '0')
@@ -283,7 +285,7 @@ int main(int argc, char **argv)
   
   if (!no_logo)
   {
-    if (argc > tmpargpos && argv[tmpargpos][0]==OPT_C && (argv[tmpargpos][1]=='o' || argv[tmpargpos][1]=='O') && argv[tmpargpos][2])
+    if (argc > tmpargpos && IS_OPT(argv[tmpargpos]) && (argv[tmpargpos][1]=='o' || argv[tmpargpos][1]=='O') && argv[tmpargpos][2])
     {
       g_output=fopen(argv[tmpargpos]+2,"w");
       if (!g_output) 
@@ -301,13 +303,9 @@ int main(int argc, char **argv)
   if (!g_output) g_output=stdout;
   while (argpos < argc)
   {
-#ifndef _WIN32
     if (!strcmp(argv[argpos], "--"))
       in_files=1;
-    else if (argv[argpos][0] == OPT_C && strcmp(argv[argpos], "-") && !in_files)
-#else
-    if (argv[argpos][0] == OPT_C && strcmp(argv[argpos], "-"))
-#endif
+    else if (IS_OPT(argv[argpos]) && strcmp(argv[argpos], "-") && !in_files)
     {
       if ((argv[argpos][1]=='D' || argv[argpos][1]=='d') && argv[argpos][2])
       {
@@ -427,11 +425,7 @@ int main(int argc, char **argv)
     else
     {
       files_processed++;
-#ifndef _WIN32
       if (!strcmp(argv[argpos],"-") && !in_files)
-#else
-      if (!strcmp(argv[argpos],"-"))
-#endif
         g_dopause=0;
       if (!g_noconfig)
       {
@@ -466,11 +460,7 @@ int main(int argc, char **argv)
 
       {
         char sfile[1024];
-#ifndef _WIN32
         if (!strcmp(argv[argpos],"-") && !in_files)
-#else
-        if (!strcmp(argv[argpos],"-"))
-#endif
         {
           fp=stdin;
           strcpy(sfile,"stdin");
