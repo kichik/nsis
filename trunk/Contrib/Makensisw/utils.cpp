@@ -279,7 +279,7 @@ void CompileNSISScript() {
       lstrcpy(compressor,"");
     }
 
-    s = (char *)GlobalAlloc(GPTR, lstrlen(g_sdata.script)+lstrlen(symbols)+lstrlen(compressor)+sizeof(EXENAME)+sizeof(" /NOTIFYHWND  ")+20);
+    s = (char *)GlobalAlloc(GPTR, lstrlen(g_sdata.script)+lstrlen(symbols)+lstrlen(compressor)+sizeof(EXENAME)+sizeof(" /NOTIFYHWND  ")+23);
     wsprintf(s,"%s %s%s /NOTIFYHWND %d -- %s",EXENAME,compressor,symbols,g_sdata.hwnd,g_sdata.script);
     GlobalFree(symbols);
     if (g_sdata.script_alloced) GlobalFree(g_sdata.script);
