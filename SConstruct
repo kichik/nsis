@@ -123,8 +123,8 @@ opts.Add(ListOption('SKIPDOC', 'A list of doc files that will not be built/insta
 # build tools
 opts.Add(BoolOption('MSTOOLKIT', 'Use Microsoft Visual C++ Toolkit', 'no'))
 opts.Add(BoolOption('CHMDOCS', 'Build CHM documentation, requires hhc.exe', hhc))
-opts.Add(PathOption('CPPPATH', 'Path to search for include files', None))
-opts.Add(PathOption('LIBPATH', 'Path to search for libraries', None))
+opts.Add(PathOption('APPEND_CPPPATH', 'Additional paths to search for include files', None))
+opts.Add(PathOption('APPEND_LIBPATH', 'Additional paths to search for libraries', None))
 opts.Add(('APPEND_CCFLAGS', 'Additional C/C++ compiler flags'))
 opts.Add(('APPEND_LINKFLAGS', 'Additional linker flags'))
 # build options
@@ -300,6 +300,8 @@ if defenv['MSTOOLKIT']:
 
 defenv.Append(CCFLAGS = Split('$APPEND_CCFLAGS'))
 defenv.Append(LINKFLAGS = Split('$APPEND_LINKFLAGS'))
+defenv.Append(CPPPATH = Split('$APPEND_CPPPATH'))
+defenv.Append(LIBPATH = Split('$APPEND_LIBPATH'))
 
 defenv.Default('$BUILD_PREFIX')
 
