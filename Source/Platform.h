@@ -116,11 +116,13 @@ typedef DWORDLONG ULONGLONG,*PULONGLONG;
 #  define PLATFORM_PATH_SEPARATOR_C '\\'
 #  define OPT_STR "/"
 #  define OPT_C '/'
+#  define IS_OPT(a) (a[0]==OPT_C||a[0]=='-')
 #else
 #  define PLATFORM_PATH_SEPARATOR_STR "/"
 #  define PLATFORM_PATH_SEPARATOR_C '/'
 #  define OPT_STR "-"
 #  define OPT_C '-'
+#  define IS_OPT(a) (a[0]==OPT_C)
 #endif
 
 // attributes
