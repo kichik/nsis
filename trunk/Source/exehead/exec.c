@@ -618,21 +618,11 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       {
         char *p=var0;
         char *buf0=GetStringFromParm(0x01);
-        if (parm2)
+        if (!ExpandEnvironmentStrings(buf0,p,NSIS_MAX_STRLEN)
+            || (parm2 && !lstrcmp(buf0, p)))
         {
-          if (!GetEnvironmentVariable(buf0,p,NSIS_MAX_STRLEN))
-          {
-            exec_error++;
-            *p=0;
-          }
-        }
-        else
-        {
-          if (!ExpandEnvironmentStrings(buf0,p,NSIS_MAX_STRLEN))
-          {
-            exec_error++;
-            *p=0;
-          }
+          exec_error++;
+          *p=0;
         }
         p[NSIS_MAX_STRLEN-1]=0;
       }
