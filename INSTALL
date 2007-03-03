@@ -51,7 +51,7 @@ This is a trimmed version of Appendix "Building NSIS" of the documentation.
 
       This should only build makensis and install it to the directory where
       a precompiled package, such as the nightly build or a zipped release
-      version (nsis-x.xx.zip) is extracted.
+      version (nsis-x.xx.zip), is extracted.
 
     * Options for POSIX installs
 
