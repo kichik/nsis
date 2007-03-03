@@ -5239,7 +5239,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.which=EW_READENVSTR;
       ent.offsets[0]=GetUserVarIndex(line, 1);
       {
-        ent.offsets[1]=add_string(line.gettoken_str(2));
+        char str[NSIS_MAX_STRLEN];
+        strcpy(str, "%");
+        strcat(str, line.gettoken_str(2));
+        strcat(str, "%");
+        ent.offsets[1]=add_string(str);
         if (ent.offsets[0] < 0 || strlen(line.gettoken_str(2))<1) PRINTHELP()
       }
       ent.offsets[2]=1;
