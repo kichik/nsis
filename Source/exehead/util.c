@@ -448,8 +448,7 @@ void NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
       return;
     cchRenameLine = wsprintf(szRenameLine,"%s=%s\r\n",tmpbuf,wininit);
 
-    GetWindowsDirectory(wininit, 1024-16);
-    mystrcat(wininit, "\\wininit.ini");
+    GetNSISString(wininit, g_header->str_wininit);
     hfile = myOpenFile(wininit, GENERIC_READ | GENERIC_WRITE, OPEN_ALWAYS);
 
     if (hfile != INVALID_HANDLE_VALUE)
