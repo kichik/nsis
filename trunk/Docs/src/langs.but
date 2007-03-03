@@ -64,7 +64,7 @@ For an example of an installer with multiple languages, see \L{../Examples/langu
 
 When the installer starts up it goes through these steps to select the interface language:
 
-\n Get user's default Windows language
+\n Get user's default Windows UI language
 
 \n Find a perfect match for the language
 
