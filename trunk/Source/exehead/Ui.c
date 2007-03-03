@@ -242,12 +242,14 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
   }
   else
   {
+    static const char reg_9x_locale[]     = "Control Panel\\Desktop\\ResourceLocale";
+    static const char reg_nt_locale_key[] = ".DEFAULT\\Control Panel\\International";
+    const char       *reg_nt_locale_val   = &reg_9x_locale[30]; // = "Locale" with opt
+
     *(DWORD*)state_language = CHAR4_TO_DWORD('0', 'x', 0, 0);
 
     {
       // Windows 9x
-      static const char reg_9x_locale[] = "Control Panel\\Desktop\\ResourceLocale";
-
       myRegGetStr(HKEY_CURRENT_USER, reg_9x_locale, NULL, g_tmp);
     }
 
@@ -255,9 +257,6 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
     {
       // Windows NT
       // This key exists on 9x as well, so it's only read if ResourceLocale wasn't found
-      static const char reg_nt_locale_key[] = ".DEFAULT\\Control Panel\\International";
-      static const char reg_nt_locale_val[] = "Locale";
-
       myRegGetStr(HKEY_USERS, reg_nt_locale_key, reg_nt_locale_val, g_tmp);
     }
 
