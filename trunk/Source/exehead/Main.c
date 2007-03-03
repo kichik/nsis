@@ -232,7 +232,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
             MoveFileOnReboot(buf2,NULL);
             MoveFileOnReboot(state_temp_dir,NULL);
 #endif
-            GetNSISString(buf2,g_header->str_uninstcmd); // "$TEMP\$1" $0 _?=$INSTDIR\
+            GetNSISString(buf2,g_header->str_uninstcmd); // '"$TEMP\$1" $0 _?=$INSTDIR\'
             hProc=myCreateProcess(buf2,state_temp_dir);
             if (hProc)
             {
