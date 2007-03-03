@@ -244,6 +244,7 @@ class CEXEBuild {
     int AddVersionInfo();
     int ProcessPages();
     void PrepareInstTypes();
+    void AddStandardStrings();
     void PrepareHeaders(IGrowBuf *hdrbuf);
     int SetVarsSection();
     int SetManifest();
