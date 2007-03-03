@@ -329,6 +329,14 @@ typedef struct
 
   int install_directory_ptr; // default install dir.
   int install_directory_auto_append; // auto append part
+
+#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
+  int str_uninstchild;
+  int str_uninstcmd;
+#endif//NSIS_CONFIG_UNINSTALL_SUPPORT
+#ifdef NSIS_SUPPORT_MOVEONREBOOT
+  int str_wininit;
+#endif//NSIS_SUPPORT_MOVEONREBOOT
 } header;
 
 #ifdef NSIS_SUPPORT_CODECALLBACKS

@@ -2083,6 +2083,20 @@ void CEXEBuild::PrepareInstTypes()
 }
 #endif
 
+void CEXEBuild::AddStandardStrings()
+{
+#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
+  if (uninstall_mode)
+  {
+    cur_header->str_uninstchild = add_string("$TEMP\\$1");
+    cur_header->str_uninstcmd = add_string("\"$TEMP\\$1\" $0 _?=$INSTDIR\\");
+  }
+#endif//NSIS_CONFIG_UNINSTALL_SUPPORT
+#ifdef NSIS_SUPPORT_MOVEONREBOOT
+  cur_header->str_wininit = add_string("$WINDIR\\wininit.ini");
+#endif//NSIS_SUPPORT_MOVEONREBOOT
+}
+
 void CEXEBuild::PrepareHeaders(IGrowBuf *hdrbuf)
 {
   GrowBuf blocks_buf;
@@ -2236,13 +2250,20 @@ int CEXEBuild::prepare_uninstaller() {
     build_uninst.flags|=build_header.flags&(CH_FLAGS_PROGRESS_COLORED|CH_FLAGS_NO_ROOT_DIR);
 
     set_uninstall_mode(1);
+
     DefineInnerLangString(NLF_UCAPTION);
+
     if (resolve_coderefs("uninstall"))
       return PS_ERROR;
+
 #ifdef NSIS_CONFIG_COMPONENTPAGE
     // set sections to the first insttype
     PrepareInstTypes();
 #endif
+
+    // Add standard strings to string table
+    AddStandardStrings();
+
     set_uninstall_mode(0);
   }
   else if (uninstaller_writes_used)
@@ -2331,6 +2352,9 @@ int CEXEBuild::write_output(void)
 
   // Set XML manifest
   RET_UNLESS_OK( SetManifest() );
+
+  // Add standard strings to string table
+  AddStandardStrings();
 
   try {
     // Save all changes to the exe header

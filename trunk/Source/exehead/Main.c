@@ -197,45 +197,42 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
     else
     {
       int x;
+      char s[] = "Au_.exe";
 
-      mystrcat(state_temp_dir,"~nsu.tmp\\");
+      mystrcat(state_temp_dir,"~nsu.tmp");
       CreateDirectory(state_temp_dir,NULL);
+
+      if (!state_install_directory[0])
+        mystrcpy(state_install_directory,state_exe_directory);
+
+      mystrcpy(g_usrvars[0], realcmds);
+      mystrcpy(g_usrvars[1], s);
 
       for (x = 0; x < 26; x ++)
       {
-        static char s[]="Au_.exe";
-        static char buf2[NSIS_MAX_STRLEN*2];
+        static char buf2[NSIS_MAX_STRLEN];
         static char ibuf[NSIS_MAX_STRLEN];
 
-        *(LPWORD)buf2=CHAR2_TO_WORD('\"',0);
-        mystrcat(buf2,state_temp_dir);
-        mystrcat(buf2,s);
+        GetNSISString(buf2,g_header->str_uninstchild); // $TEMP\$1
 
-        DeleteFile(buf2+1); // clean up after all the other ones if they are there
+        DeleteFile(buf2); // clean up after all the other ones if they are there
 
         if (m_Err) // not done yet
         {
           // get current name
           int l=GetModuleFileName(NULL,ibuf,sizeof(ibuf));
-          // check if it is ?Au_.exe - if so, fuck it
+          // check if it is ?u_.exe - if so, fuck it
           if (!lstrcmpi(ibuf+l-(sizeof(s)-2),s+1)) break;
 
           // copy file
-          if (CopyFile(ibuf,buf2+1,TRUE))
+          if (CopyFile(ibuf,buf2,TRUE))
           {
             HANDLE hProc;
 #ifdef NSIS_SUPPORT_MOVEONREBOOT
-            MoveFileOnReboot(buf2+1,NULL);
+            MoveFileOnReboot(buf2,NULL);
             MoveFileOnReboot(state_temp_dir,NULL);
 #endif
-            if (state_install_directory[0]) mystrcpy(ibuf,state_install_directory);
-            else trimslashtoend(ibuf);
-            mystrcat(buf2,"\" ");
-            mystrcat(buf2,realcmds);
-            mystrcat(buf2," _?=");
-            mystrcat(buf2,ibuf);
-            // add a trailing backslash to make sure is_valid_instpath will not fail when it shouldn't
-            addtrailingslash(buf2);
+            GetNSISString(buf2,g_header->str_uninstcmd); // "$TEMP\$1" $0 _?=$INSTDIR\
             hProc=myCreateProcess(buf2,state_temp_dir);
             if (hProc)
             {
@@ -245,7 +242,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
             }
           }
         }
-        s[0]++;
+        g_usrvars[1][0]++;
       }
       goto end;
     }

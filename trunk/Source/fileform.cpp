@@ -95,6 +95,14 @@ void header_writer::write(const header *data)
 
   m_sink->write_int(data->install_directory_ptr);
   m_sink->write_int(data->install_directory_auto_append);
+
+#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
+  m_sink->write_int(data->str_uninstchild);
+  m_sink->write_int(data->str_uninstcmd);
+#endif//NSIS_CONFIG_UNINSTALL_SUPPORT
+#ifdef NSIS_SUPPORT_MOVEONREBOOT
+  m_sink->write_int(data->str_wininit);
+#endif//NSIS_SUPPORT_MOVEONREBOOT
 }
 
 void section_writer::write(const section *data)
