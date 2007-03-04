@@ -280,7 +280,6 @@ const char * NSISCALL loadHeaders(int cl_flags)
 
   if (GetCompressedDataFromDataBlockToMemory(-1, data, h.length_of_header) != h.length_of_header)
   {
-    GlobalFree((HGLOBAL)data);
     return _LANG_INVALIDCRC;
   }
 
