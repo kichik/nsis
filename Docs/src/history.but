@@ -88,7 +88,7 @@ Released on January 13th, 2007
 
 \b Fixed build failures on mingw32 (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1610773}{bug #1610773})
 
-\b Fixed build problems with MSVCTOOLKIT=yes
+\b Fixed build problems with MSTOOLKIT=yes
 
 \H{v2.22} 2.22
 
