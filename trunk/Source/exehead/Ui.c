@@ -951,7 +951,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       if (idlist)
       {
         // free idlist
-        FreePIDL(idlist);
+        CoTaskMemFree(idlist);
 
         addtrailingslash(dir);
 
