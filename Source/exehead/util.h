@@ -32,7 +32,6 @@ char * NSISCALL mystrcat(char *out, const char *concat);
 char * NSISCALL mystrstr(char *a, char *b);
 WIN32_FIND_DATA * NSISCALL file_exists(char *buf);
 char * NSISCALL my_GetTempFileName(char *buf, const char *dir);
-void NSISCALL FreePIDL(LPITEMIDLIST idl);
 
 //BOOL NSISCALL my_SetWindowText(HWND hWnd, const char *val);
 #define my_SetWindowText SetWindowText
