@@ -49,17 +49,6 @@ NSIS_STRING g_usrvars[1] __attribute__((section (NSIS_VARS_SECTION)));
 #  endif
 #endif
 
-void NSISCALL FreePIDL(LPITEMIDLIST idl)
-{
-  IMalloc *m;
-  SHGetMalloc(&m);
-  if (m)
-  {
-    m->lpVtbl->Free(m, idl);
-    m->lpVtbl->Release(m);
-  }
-}
-
 HANDLE NSISCALL myCreateProcess(char *cmd, char *dir)
 {
   DWORD d;
@@ -627,7 +616,7 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
           if (!SHGetSpecialFolderLocation(g_hwnd, fldrs[x], &idl))
           {
             BOOL res = SHGetPathFromIDList(idl, out);
-            FreePIDL(idl);
+            CoTaskMemFree(idl);
             if (res)
             {
               break;
