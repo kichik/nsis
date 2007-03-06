@@ -80,6 +80,8 @@ stub_env.Append(LINKFLAGS = '/opt:nowin98')      # 512 bytes align
 stub_env.Append(LINKFLAGS = '/entry:WinMain')    # entry point
 stub_env.Append(LINKFLAGS = '$NODEFLIBS_FLAG')   # no default libraries
 stub_env.Append(LINKFLAGS = '$MAP_FLAG')         # generate map file
+stub_env.Append(CCFLAGS = '/FAcs')               # full listing files
+stub_env.Append(CCFLAGS = '/Fa${TARGET}.lst')    # listing file name
 
 ### makensis environment
 
