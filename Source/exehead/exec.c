@@ -1210,11 +1210,19 @@ static int NSISCALL ExecuteEntry(entry *entry_)
             LogData2Hex(binbuf, sizeof(binbuf), data, size);
             log_printf5("WriteRegBin: \"%s\\%s\" \"%s\"=\"%s\"",rkn,buf1,buf0,binbuf);
           }
+          
           if (size >= 0 && RegSetValueEx(hKey,buf0,0,rtype,data,size) == ERROR_SUCCESS)
+          {
             exec_error--;
+          }
+          else
+          {
+            log_printf3("WriteReg: error writing into \"%s\\%s\" \"%s\"",rkn,buf1,buf0);
+          }
+
           RegCloseKey(hKey);
         }
-        else { log_printf3("WriteReg: error creating key \"%s\\%s\"",buf3,buf1); }
+        else { log_printf3("WriteReg: error creating key \"%s\\%s\"",rkn,buf1); }
       }
     break;
     case EW_READREGSTR: // read registry string
