@@ -2390,8 +2390,8 @@ Call functions:
 \c                  ;  input string
 \c                  ;
 \c "[options]"      ;[+|-][1|2|3|12|23|31][eng|rus]
-\c                  ;  +   : covert string to uppercase
-\c                  ;  -   : covert string to lowercase
+\c                  ;  +   : convert string to uppercase
+\c                  ;  -   : convert string to lowercase
 \c                  ;  1   : only Digits
 \c                  ;  2   : only Letters
 \c                  ;  3   : only Special
