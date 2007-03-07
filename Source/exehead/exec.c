@@ -1217,7 +1217,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           }
           else
           {
-            log_printf3("WriteReg: error writing into \"%s\\%s\" \"%s\"",rkn,buf1,buf0);
+            log_printf4("WriteReg: error writing into \"%s\\%s\" \"%s\"",rkn,buf1,buf0);
           }
 
           RegCloseKey(hKey);
