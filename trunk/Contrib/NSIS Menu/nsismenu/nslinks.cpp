@@ -2,7 +2,7 @@
 // Name:        src/html/m_links.cpp
 // Purpose:     wxHtml module for links & anchors
 // Author:      Vaclav Slavik
-// RCS-ID:      $Id: m_links.cpp,v 1.18 2006/04/18 08:11:25 ABX Exp $
+// RCS-ID:      $Id: nslinks.cpp,v 1.1 2007/02/24 18:57:09 kichik Exp $
 // Copyright:   (c) 1999 Vaclav Slavik
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -60,10 +60,10 @@ TAG_HANDLER_BEGIN(A, "A")
             wxColour colour = m_WParser->GetLinkColor();
             wxHtmlLinkInfo linkInfo(name, target);
 
-            if (name.Left(3).IsSameAs("EX:", false))
+            if (name.Left(3).IsSameAs((const wxChar*)"EX:", false))
             {
                 wxString url = name.Mid(3);
-                if (!url.Left(7).IsSameAs("http://", false) && !url.Left(6).IsSameAs("irc://", false))
+                if (!url.Left(7).IsSameAs((const wxChar*)"http://", false) && !url.Left(6).IsSameAs((const wxChar*)"irc://", false))
                 {
                     wxString exePath = wxStandardPaths::Get().GetExecutablePath();
                     wxString path = ::wxPathOnly(exePath);

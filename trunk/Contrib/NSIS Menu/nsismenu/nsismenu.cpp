@@ -100,7 +100,7 @@ private:
 
      // Create the main application window
      MyFrame *frame = new MyFrame(_("NSIS Menu"),
-         wxPoint(50, 50), wxSize(600 + GetSystemMetrics(SM_CXDLGFRAME), 382 + GetSystemMetrics(SM_CYDLGFRAME)));
+         wxPoint(50, 50), wxSize(600 + wxSystemSettings::GetMetric(wxSYS_FRAMESIZE_X), 382 + wxSystemSettings::GetMetric(wxSYS_FRAMESIZE_X)));
    
      // Show it and tell the application that it's our main window
 
@@ -133,7 +133,7 @@ private:
       wxSize DialogSize(1000, 1000);
       DialogSize = UnitConvert.ConvertDialogToPixels(DialogSize);
       int fonts[7] = {0, 0, 14000 / (DialogSize.GetWidth()), 19000 / (DialogSize.GetWidth()), 0, 0, 0};
-      m_Html->SetFonts("", "", fonts);
+      m_Html->SetFonts(wxString(), wxString(), fonts);
       
       m_Html->LoadPage(wxT("Menu/index.html"));
       
@@ -149,10 +149,10 @@ void MyFrame::OnLink(wxHtmlLinkEvent& event)
   if (e == NULL || e->LeftUp())
   {
     const wxString href = event.GetLinkInfo().GetHref();
-    if (href.Left(3).IsSameAs("EX:", false))
+    if (href.Left(3).IsSameAs((const wxChar*)"EX:", false))
     {
       wxString url = href.Mid(3);
-      if (url.Left(7).IsSameAs("http://", false) || url.Left(6).IsSameAs("irc://", false))
+      if (url.Left(7).IsSameAs((const wxChar*)"http://", false) || url.Left(6).IsSameAs((const wxChar*)"irc://", false))
       {
         ::wxLaunchDefaultBrowser(url);
       }
@@ -171,3 +171,4 @@ void MyFrame::OnLink(wxHtmlLinkEvent& event)
     }
   }
 }
+

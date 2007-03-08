@@ -46,16 +46,12 @@ Import('BuildUtil env')
 import os
 from os.path import join
 
-if os.environ.has_key('WXWIN'):
-	# directories
-
-	wxlib = [join(os.environ['WXWIN'], 'lib', 'vc_libnsis')]
-	wxinc = [
-		join(os.environ['WXWIN'], 'include'),
-		join(os.environ['WXWIN'], 'lib', 'vc_libnsis', 'msw')
-	]
+if env['PLATFORM'] != 'win32' or os.environ.has_key('WXWIN'):
 
 	# build
+	
+	if env['PLATFORM'] != 'win32':
+		rc = libs = []
 
 	nsis_menu = BuildUtil(
 		target,
@@ -64,13 +60,22 @@ if os.environ.has_key('WXWIN'):
 		res = rc,
 		resources = resources,
 		flags = ['$MSVCRT_FLAG', '$EXCEPTION_FLAG'],
-		root_util = True
+		root_util = True,
+		cross_platform = True
 	)
 
 	# set directories
 
-	nsis_menu[0].env.Append(LIBPATH = wxlib)
-	nsis_menu[0].env.Append(CPPPATH = wxinc)
+	if nsis_menu[0].env['PLATFORM'] == 'win32':
+		wxlib = [join(os.environ['WXWIN'], 'lib', 'vc_libnsis')]
+		wxinc = [
+			join(os.environ['WXWIN'], 'include'),
+			join(os.environ['WXWIN'], 'lib', 'vc_libnsis', 'msw')
+		]
+		nsis_menu[0].env.Append(LIBPATH = wxlib)
+		nsis_menu[0].env.Append(CPPPATH = wxinc)
+	else:
+		nsis_menu[0].env.ParseConfig('wx-config --cxxflags --libs')
 
 	# install menu files
 
