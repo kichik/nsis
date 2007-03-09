@@ -1,6 +1,6 @@
 if not exist "%WXWIN%\build\msw\makefile.vc" goto error
 set OLDCD=%CD%
-cd "%WXWIN%"
+cd "%WXWIN%\build\msw"
 copy /y "%WXWIN%\include\wx\msw\setup.h" "%OLDCD%\old_setup.h"
 copy /y "%OLDCD%\setup.h" "%WXWIN%\include\wx\msw\setup.h"
 rd /S ..\..\lib\vc_libnsis
