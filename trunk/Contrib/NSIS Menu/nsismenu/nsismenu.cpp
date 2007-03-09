@@ -100,7 +100,7 @@ private:
 
      // Create the main application window
      MyFrame *frame = new MyFrame(_("NSIS Menu"),
-         wxPoint(50, 50), wxSize(600 + wxSystemSettings::GetMetric(wxSYS_FRAMESIZE_X), 382 + wxSystemSettings::GetMetric(wxSYS_FRAMESIZE_X)));
+         wxPoint(50, 50), wxSize(600 + wxSystemSettings::GetMetric(wxSYS_FRAMESIZE_X), 365 + wxSystemSettings::GetMetric(wxSYS_FRAMESIZE_X)));
    
      // Show it and tell the application that it's our main window
 
@@ -127,6 +127,7 @@ private:
       m_Html->SetRelatedFrame(this, _("NSIS Menu"));
       m_Html->SetBorders(0);
       m_Html->EnableScrolling(false, false);
+      m_Html->SetSize(600, 365);
       
       // Set font size
       wxWindow UnitConvert;
