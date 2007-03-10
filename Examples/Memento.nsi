@@ -13,7 +13,7 @@ Page instfiles
 
 # settings
 
-!define MEMENTO_REGISTRY_ROOT HKLM
+!define MEMENTO_REGISTRY_ROOT HKCU
 !define MEMENTO_REGISTRY_KEY "Software\NSIS\Memento Test"
 
 # restore
@@ -22,13 +22,13 @@ Function .onInit
 
   ${If} ${Cmd} `MessageBox MB_YESNO "Would you like to load an example state?" IDYES`
     
-	DeleteRegKey  HKLM "Software\NSIS\Memento Test"
+	DeleteRegKey  HKCU "Software\NSIS\Memento Test"
 
-	WriteRegStr   HKLM "Software\NSIS\Memento Test" MementoSectionUsed ""
-	WriteRegDWORD HKLM "Software\NSIS\Memento Test" MementoSection_sec_horse   1
-	WriteRegDWORD HKLM "Software\NSIS\Memento Test" MementoSection_sec_chicken 1
-	WriteRegDWORD HKLM "Software\NSIS\Memento Test" MementoSection_sec_donkey  0
-	WriteRegDWORD HKLM "Software\NSIS\Memento Test" MementoSection_sec_croc    0
+	WriteRegStr   HKCU "Software\NSIS\Memento Test" MementoSectionUsed ""
+	WriteRegDWORD HKCU "Software\NSIS\Memento Test" MementoSection_sec_horse   1
+	WriteRegDWORD HKCU "Software\NSIS\Memento Test" MementoSection_sec_chicken 1
+	WriteRegDWORD HKCU "Software\NSIS\Memento Test" MementoSection_sec_donkey  0
+	WriteRegDWORD HKCU "Software\NSIS\Memento Test" MementoSection_sec_croc    0
 
   ${EndIf}
 
