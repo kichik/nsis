@@ -395,7 +395,7 @@ A usage example can be found in `Examples\Memento.nsi`.
     ${If} ${Errors}
 
       # use script defaults on first run
-      Return
+      Goto done
 
     ${EndIf}
 
@@ -436,7 +436,7 @@ A usage example can be found in `Examples\Memento.nsi`.
 
       ${ElseIf} ${Errors}
 
-        Goto done
+        Goto loop_end
 
       ${EndIf}
 
@@ -479,13 +479,15 @@ A usage example can be found in `Examples\Memento.nsi`.
       IntOp $0 $0 + 1
 
     Goto loop
-    done:
+    loop_end:
 
     # restore sections' status
 
     Call __MementoSectionRestoreStatus1
 
   # all done
+
+  done:
 
   Pop $3
   Pop $2
