@@ -61,7 +61,6 @@
 ;         ${SectionIsSectionGroupEnd} a; ${SectionIsBold} a;
 ;         ${SectionIsReadOnly} a; ${SectionIsExpanded} a;
 ;         ${SectionIsPartiallySelected} a
-;           - Requires a !define LOGICLIB_SECTIONCMP above !include LogicLib.nsh
 ;
 ; Examples:
 ;   See LogicLib.nsi in the Examples folder for lots of example usage.
