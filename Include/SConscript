@@ -3,6 +3,7 @@ includes = Split("""
 	FileFunc.nsh
 	Library.nsh
 	LogicLib.nsh
+	Memento.nsh
 	MUI.nsh
 	Sections.nsh
 	StrFunc.nsh

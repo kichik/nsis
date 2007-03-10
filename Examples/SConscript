@@ -11,6 +11,7 @@ examples = Split("""
 	LogicLib.nsi
 	makensis.ini
 	makensis.nsi
+	Memento.nsi
 	one-section.nsi
 	primes.nsi
 	rtest.nsi
