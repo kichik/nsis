@@ -39,7 +39,7 @@ A usage example can be found in `Examples\Memento.nsi`.
       !define MEMENTO_REGISTRY_KEY \
                 Software\Microsoft\Windows\CurrentVersion\Uninstall\MyProgram
 
-3. Replace Section with ${MementoSection} and SectionEnd with ${MementoSection}
+3. Replace Section with ${MementoSection} and SectionEnd with ${MementoSectionEnd}
    for sections that whose state should be remembered by Memento.
 
    For sections that should be unselected by default, use ${MementoSection}'s
