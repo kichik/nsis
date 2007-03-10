@@ -154,7 +154,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_RENAME,"Rename",2,1,"[/REBOOTOK] source_file destination_file",TP_CODE},
 {TOK_RET,"Return",0,0,"",TP_CODE},
 {TOK_RMDIR,"RMDir",1,2,"[/r] [/REBOOTOK] directory_name",TP_CODE},
-{TOK_SECTION,"Section",0,3,"[/0] [-][un.][section_name] [section index output]",TP_GLOBAL},
+{TOK_SECTION,"Section",0,3,"[/o] [-][un.][section_name] [section index output]",TP_GLOBAL},
 {TOK_SECTIONEND,"SectionEnd",0,0,"",TP_SEC},
 {TOK_SECTIONIN,"SectionIn",1,-1,"InstTypeIdx [InstTypeIdx [...]]",TP_SEC},
 {TOK_SUBSECTION,"SubSection",1,2,"deprecated - use SectionGroup",TP_GLOBAL},
