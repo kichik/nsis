@@ -187,7 +187,7 @@ params:
     DWORD dwExit = !STILL_ACTIVE;
     DWORD dwLastOutput;
     static char szBuf[1024];
-    HGLOBAL hUnusedBuf;
+    HGLOBAL hUnusedBuf = NULL;
     char *szUnusedBuf = 0;
 
     if (log) {
@@ -255,7 +255,7 @@ params:
           }
 
           if (!(log & 2)) {
-            while (p = my_strstr(p, "\t")) {
+            while ((p = my_strstr(p, "\t"))) {
               if ((int)(p - szUnusedBuf) > (int)(GlobalSize(hUnusedBuf) - TAB_REPLACE_SIZE - 1))
               {
                 *p++ = ' ';

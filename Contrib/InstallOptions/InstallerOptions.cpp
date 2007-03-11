@@ -731,7 +731,7 @@ BOOL CALLBACK ParentWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
   if (message == WM_NOTIFY_OUTER_NEXT && !bRes)
   {
     // if leave function didn't abort (bRes != 0 in that case)
-    if (wParam == -1)
+    if (wParam == (WPARAM)-1)
       g_is_back++;
     if (wParam == NOTIFY_BYE_BYE)
       g_is_cancel++;
@@ -1254,7 +1254,7 @@ int WINAPI createCfgDlg()
             FREE(pszList);
             if (pField->pszState) {
               if (pField->nFlags & (LBS_MULTIPLESEL|LBS_EXTENDEDSEL) && nFindMsg == LB_FINDSTRINGEXACT) {
-                mySendMessage(hwCtrl, LB_SETSEL, FALSE, -1);
+                mySendMessage(hwCtrl, LB_SETSEL, FALSE, (LPARAM)-1);
                 pszStart = pszEnd = pField->pszState;
                 for (;;) {
                   char c = *pszEnd;
@@ -1262,7 +1262,7 @@ int WINAPI createCfgDlg()
                     *pszEnd = '\0';
                     if (*pszStart)
                     {
-                      int nItem = mySendMessage(hwCtrl, LB_FINDSTRINGEXACT, -1, (LPARAM)pszStart);
+                      int nItem = mySendMessage(hwCtrl, LB_FINDSTRINGEXACT, (WPARAM)-1, (LPARAM)pszStart);
                       if (nItem != LB_ERR)
                         mySendMessage(hwCtrl, LB_SETSEL, TRUE, nItem);
                     }
@@ -1275,7 +1275,7 @@ int WINAPI createCfgDlg()
                 }
               }
               else {
-                int nItem = mySendMessage(hwCtrl, nFindMsg, -1, (LPARAM)pField->pszState);
+                int nItem = mySendMessage(hwCtrl, nFindMsg, (WPARAM)-1, (LPARAM)pField->pszState);
                 if (nItem != CB_ERR) { // CB_ERR == LB_ERR == -1
                   mySendMessage(hwCtrl, nSetSelMsg, nItem, 0);
                 }

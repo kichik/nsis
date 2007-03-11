@@ -117,7 +117,7 @@ NSISFunc(SetBg) {
 
     hWndImage = CreateWindowEx(
       WS_EX_TOOLWINDOW,
-      (LPSTR)atomClass,
+      (LPSTR)(DWORD)atomClass,
       0,
       WS_CLIPSIBLINGS|WS_POPUP,
       0,
@@ -225,7 +225,7 @@ NSISFunc(AddImage) {
   }
 
   newImg->iType = MIL_BITMAP;
-  newImg->cTransparent = -1;
+  newImg->cTransparent = (COLORREF)-1;
 
   popstring(szTemp);
   if (!lstrcmpi(szTemp, "/TRANSPARENT")) {
