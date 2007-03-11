@@ -356,7 +356,7 @@ __declspec(dllexport) void download (HWND   parent,
       get=new JNL_HTTPGet(JNL_CONNECTION_AUTODNS,16384,(p&&p[0])?p:NULL);
       int         st;
       int         has_printed_headers = 0;
-      int         cl;
+      int         cl = 0;
       int         len;
       int         sofar = 0;
       DWORD last_recv_time=start_time;

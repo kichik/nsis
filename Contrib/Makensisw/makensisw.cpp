@@ -103,7 +103,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
       SetClassLong(hwndDlg,GCL_HICON,(long)hIcon);
       // Altered by Darren Owen (DrO) on 29/9/2003
       // Added in receiving of mouse and key events from the richedit control
-      SendMessage(GetDlgItem(hwndDlg,IDC_LOGWIN),EM_SETEVENTMASK,NULL,ENM_SELCHANGE|ENM_MOUSEEVENTS|ENM_KEYEVENTS);
+      SendMessage(GetDlgItem(hwndDlg,IDC_LOGWIN),EM_SETEVENTMASK,(WPARAM)NULL,ENM_SELCHANGE|ENM_MOUSEEVENTS|ENM_KEYEVENTS);
       DragAcceptFiles(g_sdata.hwnd,FALSE);
       g_sdata.menu = GetMenu(g_sdata.hwnd);
       g_sdata.fileSubmenu = FindSubMenu(g_sdata.menu, IDM_FILE);
@@ -207,7 +207,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
     case WM_DROPFILES: {
       int num;
       char szTmp[MAX_PATH];
-      num = DragQueryFile((HDROP)wParam,-1,NULL,0);
+      num = DragQueryFile((HDROP)wParam,(UINT)-1,NULL,0);
       if (num==1) {
         DragQueryFile((HDROP)wParam,0,szTmp,MAX_PATH);
         if (lstrlen(szTmp)>0) {
@@ -295,14 +295,14 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 
             if(FileExists(temp_file_name)) {
               hPrev = CreateFile(temp_file_name,GENERIC_READ, FILE_SHARE_READ,
-                                 NULL, OPEN_EXISTING, NULL, NULL);
+                                 NULL, OPEN_EXISTING, (DWORD)NULL, NULL);
               if(hPrev != INVALID_HANDLE_VALUE) {
                 prevSize = GetFileSize(hPrev, 0);
                 CloseHandle(hPrev);
 
                 if(prevSize != INVALID_FILE_SIZE) {
                   hThis = CreateFile(g_sdata.output_exe,GENERIC_READ, FILE_SHARE_READ,
-                                     NULL, OPEN_EXISTING, NULL, NULL);
+                                     NULL, OPEN_EXISTING, (DWORD)NULL, NULL);
                   if(hThis != INVALID_HANDLE_VALUE) {
                     thisSize = GetFileSize(hThis, 0);
                     CloseHandle(hThis);
@@ -1177,10 +1177,10 @@ BOOL CALLBACK SymbolSetProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
           else {
             HWND hwndParent = GetParent(hwndDlg);
             if(g_symbol_set_mode == 1) { //Load
-              SendMessage(hwndParent, WM_MAKENSIS_LOADSYMBOLSET, (WPARAM)name, NULL);
+              SendMessage(hwndParent, WM_MAKENSIS_LOADSYMBOLSET, (WPARAM)name, (LPARAM)NULL);
             }
             else {
-              SendMessage(hwndParent, WM_MAKENSIS_SAVESYMBOLSET, (WPARAM)name, NULL);
+              SendMessage(hwndParent, WM_MAKENSIS_SAVESYMBOLSET, (WPARAM)name, (LPARAM)NULL);
             }
             EndDialog(hwndDlg, TRUE);
           }

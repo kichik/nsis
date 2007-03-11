@@ -180,7 +180,7 @@ int main( int argc, char * argv[] ) {
   // remove existing patch with sourceCRC
   TFileOffset fileCount = 0;
   while(true) {
-    TFileOffset previousPatchSize;
+    TFileOffset previousPatchSize = 0;
     try {
       previousPatchSize = POSIX::getFileSize(patchFileName.c_str());
     } catch(const char* s) {

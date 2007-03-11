@@ -656,7 +656,7 @@ char* BuildSymbols()
   }
   else {
     buf = (char *)GlobalAlloc(GPTR, sizeof(char));
-    buf[0] = NULL;
+    buf[0] = '\0';
   }
 
   return buf;

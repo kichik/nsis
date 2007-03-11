@@ -115,7 +115,7 @@ void __declspec(dllexport) Show(HWND hwndParent, int string_size, char *variable
   while (!g_done)
   {
     MSG msg;
-    int nResult = GetMessage(&msg, NULL, 0, 0);
+    GetMessage(&msg, NULL, 0, 0);
     if (!IsDialogMessage(hwStartMenuSelect,&msg) && !IsDialogMessage(hwndParent,&msg) && !TranslateMessage(&msg))
       DispatchMessage(&msg);
   }
