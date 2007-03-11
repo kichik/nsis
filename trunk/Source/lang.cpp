@@ -36,11 +36,13 @@ typedef enum {
   BOTH_STATIC = 3
 } STATICID;
 
-struct {
+struct NLFString {
   char *szLangStringName;
   char *szDefault;
   STATICID eStaticID;
-} NLFStrings[NLF_STRINGS] = {
+};
+
+NLFString NLFStrings[NLF_STRINGS] = {
   {"^Branding", "Nullsoft Install System %s", BOTH_STATIC},
   {"^SetupCaption", "$(^Name) Setup", INSTALL_STATIC},
   {"^UninstallCaption", "$(^Name) Uninstall", UNINSTALL_STATIC},
