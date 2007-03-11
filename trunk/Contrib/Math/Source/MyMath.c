@@ -276,7 +276,7 @@ void FloatFormatF(char *s, double value, int prec)
 
 void FloatFormatE(char *s, double fnum, int options)
 {
-    int fpower, fsign, fdigit, fprec = 0, prec, fzfill = 0;
+    int fpower, fsign, fdigit, fprec = 0, prec;
     double sfnum;
 
     prec = options & 0xF;

@@ -668,7 +668,7 @@ BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_DROPFILES:
     {
       char dropped_file[MAX_PATH]="";
-      if (DragQueryFile((HDROP)wParam,-1,NULL,0)==1)
+      if (DragQueryFile((HDROP)wParam,(UINT)-1,NULL,0)==1)
       {
         DragQueryFile((HDROP)wParam,0,dropped_file,MAX_PATH);
         if (lstrlen(dropped_file)>0)

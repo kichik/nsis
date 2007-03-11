@@ -216,7 +216,7 @@ void ShowToolbarDropdownMenu()
   RECT rect;
   GetWindowRect(g_toolbar.hwnd, (LPRECT) &rect);
   TrackPopupMenu(g_toolbar.dropdownmenu,
-                 NULL,
+                 (UINT)NULL,
                  rect.left + (int)(short)g_toolbar.dropdownpoint.x,
                  rect.top + (int)(short)g_toolbar.dropdownpoint.y,
                  0,

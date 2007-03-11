@@ -56,7 +56,7 @@ void __declspec(dllexport) GetAccountType(HWND hwndParent, int string_size,
         // to explicitly deallocate it. That happens automatically
         // when we exit this function.
 
-        if (ptg = GlobalAlloc(GPTR, cbTokenGroups))
+        if ((ptg = GlobalAlloc(GPTR, cbTokenGroups)))
         {
 
           // Now we ask for the group information again.
