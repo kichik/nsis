@@ -61,6 +61,7 @@ This is a trimmed version of Appendix "Building NSIS" of the documentation.
       PREFIX_DATA: Where to put the plugins, stubs, etc. Defaults to $PREFIX/share/nsis/
       PREFIX_DOC: Where to put the docs and examples. Defaults to $PREFIX/share/doc/nsis/
       PREFIX_DEST: The install root Useful for packagers. Defaults to the root directory.
+      PREFIX_INC_C: Where to put the C headers. Defaults to $PREFIX/include/nsis/
 
   - Problems
 
