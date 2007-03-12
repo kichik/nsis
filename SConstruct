@@ -45,7 +45,8 @@ misc = [
 	'Graphics',
 	'Language files',
 	'Modern UI',
-	'VPatch'
+	'VPatch',
+	'ExDLL'
 ]
 
 doc = [
@@ -91,6 +92,7 @@ install_dirs = {
 		'bin': '$PREFIX',
 		'data': '$PREFIX',
 		'doc': '$PREFIX',
+		'inc_c': '$PREFIX',
 	},
 	'static': {
 		'dest': '',
@@ -99,6 +101,7 @@ install_dirs = {
 		'bin': '$PREFIX/bin',
 		'data': '$PREFIX/share/nsis',
 		'doc': '$PREFIX/share/doc/nsis',
+		'inc_c': '$PREFIX/include/nsis',
 	}
 }
 
@@ -137,6 +140,7 @@ opts.Add(('PREFIX_CONF', 'Path to install nsisconf.nsh to', dirs['conf']))
 opts.Add(('PREFIX_BIN', 'Path to install native binaries to', dirs['bin']))
 opts.Add(('PREFIX_DATA', 'Path to install nsis data to (plugins, includes, stubs, contrib, win32 binaries)', dirs['data']))
 opts.Add(('PREFIX_DOC','Path to install nsis README / INSTALL / TODO files to.', dirs['doc']))
+opts.Add(('PREFIX_INC_C','Path to install nsis C header files to.', dirs['inc_c']))
 
 opts.Update(defenv)
 Help(opts.GenerateHelpText(defenv))
@@ -262,6 +266,9 @@ def DistributeDocs(files, names=[], path='', alias=None):
 def DistributeExamples(files, names=[], path='', alias=None):
 	return defenv.Distribute(files, names, 'doc', 'Examples', path, alias, 'examples')
 
+def DistributeIncC(files, names=[], path='', alias=None):
+	return defenv.Distribute(files, names, 'inc_c', '', path, alias, 'inc-c')
+
 def Sign(targets):
 	if defenv.has_key('CODESIGNER'):
 		for t in targets:
@@ -283,6 +290,7 @@ defenv.DistributeInclude = DistributeInclude
 defenv.DistributeDoc = DistributeDoc
 defenv.DistributeDocs = DistributeDocs
 defenv.DistributeExamples = DistributeExamples
+defenv.DistributeIncC = DistributeIncC
 defenv.Sign = Sign
 defenv.TestScript = TestScript
 
