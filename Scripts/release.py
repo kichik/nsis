@@ -29,6 +29,11 @@ RSH="C:\Program Files\PuTTY\plink.exe" -2 -l kichik nsis.sourceforge.net
 
 [wiki]
 UPDATE_URL=http://nsis.sourceforge.net/Special:Simpleupdate?action=raw
+
+[cvs2cl]
+CVS2CL=cvs2cl.pl
+CVS2CL_PERL="C:\Program Files\Perl\perl.exe"
+CVS2CL_OPTS=--FSF
 =========================
 
 7zatarbz2.bat:
@@ -81,6 +86,10 @@ RSH = cfg.get('rsh', 'RSH')
 
 PURGE_URL = cfg.get('wiki', 'PURGE_URL')
 UPDATE_URL = cfg.get('wiki', 'UPDATE_URL')
+
+CVS2CL = cfg.get('cvs2cl', 'CVS2CL')
+CVS2CL_PERL = cfg.get('cvs2cl', 'CVS2CL_PERL')
+CVS2CL_OPTS = cfg.get('cvs2cl', 'CVS2CL_OPTS')
 
 ### config env
 
@@ -220,6 +229,32 @@ def Export():
 		'export failed'
 	)
 
+def CreateChangeLog():
+	print 'generating ChangeLog...'
+	
+	# Assumes we are running in the Scripts directory
+	curdir = os.getcwd()
+	os.chdir('..')
+	
+	global CVS2CL
+	if not os.path.isfile(CVS2CL):
+		import urllib
+		CVS2CL = urllib.urlretrieve('http://www.red-bean.com/cvs2cl/cvs2cl.pl','cvs2cl.pl')[0]
+
+	changelog = os.path.join('Scripts',newverdir,'ChangeLog')
+
+	run(
+		'%s %s %s --show-tag %s --file %s' % (CVS2CL_PERL, CVS2CL, CVS2CL_OPTS, CVS_TAG, changelog),
+		'changelog',
+		'changelog failed'
+	)
+	
+	# Just in case the script is run twice or something
+	try: os.remove(changelog+'.bak')
+	except: pass
+
+	os.chdir(curdir)
+
 def CreateSourceTarball():
 	print 'creating source tarball...'
 
@@ -342,6 +377,7 @@ CommitMenuImage()
 TestInstaller()
 Tag()
 Export()
+CreateChangeLog()
 CreateSourceTarball()
 BuildRelease()
 CreateSpecialBuilds()
