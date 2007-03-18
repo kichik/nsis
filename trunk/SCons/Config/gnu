@@ -114,6 +114,7 @@ cp_util_env = defenv.Clone()
 if not defenv['DEBUG']:
 	cp_util_env.Append(CCFLAGS = '-O2')             # optimize
 cp_util_env.Append(CCFLAGS = '-Wall')             # all warnings
+cp_util_env.Append(CCFLAGS = '-fno-strict-aliasing') # not safe for strict aliasing
 
 conf = FlagsConfigure(cp_util_env)
 conf.CheckLinkFlag('$MAP_FLAG')                   # generate map file
