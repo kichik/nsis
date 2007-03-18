@@ -111,13 +111,21 @@ def exit(log_dir = '.'):
 	log('\nerror occurred, exiting', log_dir)
 	sys.exit(3)
 
-def run(command, log_name, err, wanted_ret = 0, log_dir = '.'):
+LOG_ERRORS  = 2
+LOG_ALL     = 1
+LOG_NOTHING = 0
+
+def run(command, log_level, err, wanted_ret = 0, log_dir = '.'):
 	log('\nrunning %s\n' % command, log_dir)
 
-	if log_name:
+	if log_level == LOG_ERRORS:
+		cmd = '%s 2>> %s\\release-%s.log' % (command, log_dir, VERSION)
+	elif log_level == LOG_ALL:
 		cmd = '%s >> %s\\release-%s.log 2>&1' % (command, log_dir, VERSION)
-	else:
+	elif log_level == LOG_NOTHING:
 		cmd = command
+	else:
+		raise ValueError
 
 	ret = os.system(cmd)
 
@@ -150,7 +158,7 @@ def RunTests():
 
 	run(
 		'scons -C .. test',
-		'test',
+		LOG_ALL,
 		'tests failed - see test.log for details'
 	)
 
@@ -183,7 +191,7 @@ def CommitMenuImage():
 
 	run(
 		'%s commit -m %s ..\\Menu\\images\\header.gif' % (CVS, VERSION),
-		'header.gif.commit',
+		LOG_ALL,
 		'failed committing header.gif'
 	)
 
@@ -194,19 +202,19 @@ def TestInstaller():
 
 	run(
 		'scons -C .. VERSION=test PREFIX=%s\\insttestscons install dist-installer' % os.getcwd(),
-		'inst',
+		LOG_ALL,
 		'installer creation failed'
 	)
 
 	run(
 		'..\\nsis-test-setup.exe /S /D=%s\\insttest' % os.getcwd(),
-		None,
+		LOG_NOTHING,
 		'installer failed'
 	)
 
 	run(
 		'diff -r insttest insttestscons | grep -v uninst-nsis.exe',
-		'diff',
+		LOG_ALL,
 		'scons and installer installations differ',
 		1
 	)
@@ -216,7 +224,7 @@ def Tag():
 
 	run(
 		'%s -z3 tag -R %s ..' % (CVS, CVS_TAG),
-		'tag',
+		LOG_ALL,
 		'failed creating tag %s' % CVS_TAG
 	)
 
@@ -225,7 +233,7 @@ def Export():
 
 	run(
 		'%s -z3 export -r %s -d %s NSIS' % (CVS, CVS_TAG, newverdir),
-		'export',
+		LOG_ALL,
 		'export failed'
 	)
 
@@ -240,8 +248,14 @@ def CreateChangeLog():
 	changelog = os.path.join(newverdir,'ChangeLog')
 
 	run(
-		'%s -x %s %s --show-tag %s --file %s ..' % (CVS2CL_PERL, CVS2CL, CVS2CL_OPTS, CVS_TAG, changelog),
-		'changelog',
+		'%s log > cvs.log' % CVS,
+		LOG_ERRORS,
+		'cvs log failed'
+	)
+
+	run(
+		'%s -x %s %s --show-tag %s --file %s --stdin < cvs.log' % (CVS2CL_PERL, CVS2CL, CVS2CL_OPTS, CVS_TAG, changelog),
+		LOG_ALL,
 		'changelog failed'
 	)
 	
@@ -254,7 +268,7 @@ def CreateSourceTarball():
 
 	run(
 		TAR_BZ2 % (newverdir + '.tar.bz2', newverdir),
-		'tarball',
+		LOG_ALL,
 		'source tarball creation failed'
 	)
 
@@ -263,7 +277,7 @@ def BuildRelease():
 
 	run(
 		scons_line + 'dist',
-		'dist',
+		LOG_ALL,
 		'creation of distribution files failed'
 	)
 
@@ -275,14 +289,14 @@ def CreateSpecialBuilds():
 
 		run(
 			scons_line + 'PREFIX=%s\\%s %s install-compiler install-stubs' % (os.getcwd(), name, option),
-			name,
+			LOG_ALL,
 			'creation of %s special build failed' % name
 		)
 
 		os.chdir(name)
 		run(
 			ZIP % ('..\\nsis-%s-%s.zip' % (VERSION, name), '*'),
-			'%s.zip' % name,
+			LOG_ALL,
 			'copmression of %s special build failed' % name,
 			log_dir = '..'
 		)
@@ -344,7 +358,7 @@ def UpdateWiki(release_id):
 def UpdateChangeLog():
 	run(
 		'%s touch /home/groups/n/ns/nsis/bin/cl.timestamp' % RSH,
-		'cl-timestamp',
+		LOG_ALL,
 		'change log start time modification failed'
 	)
 
