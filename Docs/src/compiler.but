@@ -276,7 +276,7 @@ Defined as the function name, without any prefixes, in \R{ffunction}{function} s
 
 \S2{} $\{__PAGEEX__\}
 
-Defined in \R{pageex}{PageEx} scope.
+Defined as the page type in \R{pageex}{PageEx} scope.
 
 \c !ifdef __PAGEEX__
 \c   !error "this shouldn't be here!"
@@ -286,6 +286,10 @@ Defined in \R{pageex}{PageEx} scope.
 \c 
 \c   !ifndef __PAGEEX__
 \c     !error "missing predefine!"
+\c   !endif
+\c
+\c   !if ${__PAGEEX__} != instfiles
+\c     !error "wrong page type"
 \c   !endif
 \c 
 \c PageExEnd
