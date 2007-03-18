@@ -202,10 +202,16 @@ FunctionEnd
 
 PageEx instfiles
 !insertmacro TEST_SCOPES "pageex" n n n y n
+!if ${__PAGEEX__} != instfiles
+  !error "invalid __PAGEEX__ value"
+!endif
 PageExEnd
 
 PageEx un.instfiles
 !insertmacro TEST_SCOPES "uninstall pageex" n n n y y
+!if ${__PAGEEX__} != instfiles
+  !error "invalid __PAGEEX__ value"
+!endif
 PageExEnd
 
 !insertmacro TEST_SCOPES "global" y n n n n

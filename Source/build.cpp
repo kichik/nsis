@@ -1544,26 +1544,27 @@ int CEXEBuild::add_page(int type)
   struct {
     int wndproc_id;
     int dlg_id;
+    char *name;
   } ids[] = {
-    {PWP_CUSTOM, 0}, // custom
+    {PWP_CUSTOM, 0, "custom"}, // custom
 #ifdef NSIS_CONFIG_LICENSEPAGE
-    {PWP_LICENSE, IDD_LICENSE}, // license
+    {PWP_LICENSE, IDD_LICENSE, "license"}, // license
 #else
-    {0, IDD_LICENSE}, // license
+    {0, IDD_LICENSE, "license"}, // license
 #endif
 #ifdef NSIS_CONFIG_COMPONENTPAGE
-    {PWP_SELCOM, IDD_SELCOM}, // components
+    {PWP_SELCOM, IDD_SELCOM, "components"}, // components
 #else
-    {0, IDD_SELCOM}, // components
+    {0, IDD_SELCOM, "components"}, // components
 #endif
-    {PWP_DIR, IDD_DIR}, // directory
-    {PWP_INSTFILES, IDD_INSTFILES}, // instfiles
+    {PWP_DIR, IDD_DIR, "directory"}, // directory
+    {PWP_INSTFILES, IDD_INSTFILES, "instfiles"}, // instfiles
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-    {PWP_UNINST, IDD_UNINST}, // uninstConfirm
+    {PWP_UNINST, IDD_UNINST, "uninstConfirm"}, // uninstConfirm
 #else
-    {0, IDD_UNINST}, // uninstConfirm
+    {0, IDD_UNINST, "uninstConfirm"}, // uninstConfirm
 #endif
-    {PWP_COMPLETED, -1} // completed
+    {PWP_COMPLETED, -1, NULL} // completed
   };
 
   pg.wndproc_id = ids[type].wndproc_id;
@@ -1575,7 +1576,7 @@ int CEXEBuild::add_page(int type)
 
   cur_page_type = type;
   
-  set_code_type_predefines();
+  set_code_type_predefines(ids[type].name);
   return PS_OK;
 }
 
@@ -3448,7 +3449,7 @@ void CEXEBuild::set_code_type_predefines(const char *value)
       definedlist.add("__FUNCTION__", value==NULL?"":value);
     break;
     case TP_PAGEEX:
-      definedlist.add("__PAGEEX__");
+      definedlist.add("__PAGEEX__", value==NULL?"":value);
     break;
     default:
       definedlist.add("__GLOBAL__");
