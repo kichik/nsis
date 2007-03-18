@@ -32,7 +32,7 @@ UPDATE_URL=http://nsis.sourceforge.net/Special:Simpleupdate?action=raw
 
 [cvs2cl]
 CVS2CL=cvs2cl.pl
-CVS2CL_PERL="C:\Program Files\Perl\perl.exe"
+CVS2CL_PERL="C:\Program Files\Perl\bin\perl.exe"
 CVS2CL_OPTS=--FSF
 =========================
 
@@ -231,20 +231,16 @@ def Export():
 
 def CreateChangeLog():
 	print 'generating ChangeLog...'
-	
-	# Assumes we are running in the Scripts directory
-	curdir = os.getcwd()
-	os.chdir('..')
-	
+
 	global CVS2CL
 	if not os.path.isfile(CVS2CL):
 		import urllib
 		CVS2CL = urllib.urlretrieve('http://www.red-bean.com/cvs2cl/cvs2cl.pl','cvs2cl.pl')[0]
 
-	changelog = os.path.join('Scripts',newverdir,'ChangeLog')
+	changelog = os.path.join(newverdir,'ChangeLog')
 
 	run(
-		'%s %s %s --show-tag %s --file %s' % (CVS2CL_PERL, CVS2CL, CVS2CL_OPTS, CVS_TAG, changelog),
+		'%s -x %s %s --show-tag %s --file %s ..' % (CVS2CL_PERL, CVS2CL, CVS2CL_OPTS, CVS_TAG, changelog),
 		'changelog',
 		'changelog failed'
 	)
@@ -252,8 +248,6 @@ def CreateChangeLog():
 	# Just in case the script is run twice or something
 	try: os.remove(changelog+'.bak')
 	except: pass
-
-	os.chdir(curdir)
 
 def CreateSourceTarball():
 	print 'creating source tarball...'
