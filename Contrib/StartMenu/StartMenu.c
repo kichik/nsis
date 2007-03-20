@@ -112,6 +112,11 @@ void __declspec(dllexport) Show(HWND hwndParent, int string_size, char *variable
 {
   HWND hwStartMenuSelect = g_hwStartMenuSelect;
 
+  if (!hwStartMenuSelect)
+  {
+    return;
+  }
+
   while (!g_done)
   {
     MSG msg;
