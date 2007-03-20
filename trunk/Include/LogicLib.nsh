@@ -42,7 +42,7 @@
 ;         a == b; a != b
 ;       Additional case-insensitive string tests (using System.dll):
 ;         a S< b; a S>= b; a S> b; a S<= b
-;       Case-sensitive string tests (using System.dll):
+;       Case-sensitive string tests:
 ;         a S== b; a S!= b
 ;       Standard (built-in) signed integer tests:
 ;         a = b; a <> b; a < b; a >= b; a > b; a <= b
