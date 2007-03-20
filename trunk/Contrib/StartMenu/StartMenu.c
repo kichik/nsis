@@ -398,20 +398,13 @@ void AddFolderFromReg(int nFolder)
   //DWORD idx;
   WIN32_FIND_DATA FileData;
   HANDLE hSearch;
+  LPITEMIDLIST ppidl;
 
-  LPMALLOC ppMalloc;
-  if (SHGetMalloc(&ppMalloc) == NOERROR)
+  buf[0] = 0;
+  if (SHGetSpecialFolderLocation(hwParent, nFolder, &ppidl) == S_OK)
   {
-    LPITEMIDLIST ppidl;
-
-    buf[0] = 0;
-    if (SHGetSpecialFolderLocation(hwParent, nFolder, &ppidl) == S_OK)
-    {
-      SHGetPathFromIDList(ppidl, buf);
-      ppMalloc->lpVtbl->Free(ppMalloc, ppidl);
-    }
-
-    ppMalloc->lpVtbl->Release(ppMalloc);
+    SHGetPathFromIDList(ppidl, buf);
+    CoTaskMemFree(ppidl);
   }
 
   if (!buf[0])
