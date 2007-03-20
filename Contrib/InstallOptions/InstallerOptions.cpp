@@ -683,10 +683,7 @@ LRESULT WINAPI WMCommandProc(HWND hWnd, UINT id, HWND hwndCtl, UINT codeNotify) 
         mySetWindowText(pField->hwnd, szBrowsePath);
       }
 
-      LPMALLOC pMalloc;
-      if (!SHGetMalloc(&pMalloc)) {
-        pMalloc->Free(pResult);
-      }
+      CoTaskMemFree(pResult);
 
       break;
     }
