@@ -355,6 +355,12 @@ BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         EnableWindow(hwDirList, bEnable);
         EnableWindow(hwLocation, bEnable);
       }
+      else if (LOWORD(wParam) == IDC_LOCATION && HIWORD(wParam) == EN_CHANGE)
+      {
+        GetWindowText(hwLocation, buf, MAX_PATH);
+        validate_filename(buf);
+        EnableWindow(GetDlgItem(hwParent, IDOK), *buf != '\0');
+      }
     break;
     case WM_USER+666:
       g_done = 1;
