@@ -412,9 +412,9 @@ DWORD WINAPI ThreadProc(LPVOID p) // thread that will start & monitor wwwinamp
     return 1;
   }
 
-  unsigned long exit=0;  //process exit code
-  unsigned long bread;   //bytes read
-  unsigned long avail;   //bytes available
+  DWORD exit=0;  //process exit code
+  DWORD bread;   //bytes read
+  DWORD avail;   //bytes available
 
   memset(buf,0,sizeof(buf));
   while (1)      //main program loop
