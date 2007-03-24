@@ -30,7 +30,7 @@ JNL_AsyncDNS::~JNL_AsyncDNS()
   }
 }
 
-unsigned long WINAPI JNL_AsyncDNS::_threadfunc(LPVOID _d)
+DWORD WINAPI JNL_AsyncDNS::_threadfunc(LPVOID _d)
 {
   JNL_AsyncDNS *_this=(JNL_AsyncDNS*)_d;
   int nowinsock=JNL::open_socketlib();

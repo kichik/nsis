@@ -31,7 +31,7 @@ private:
 
   volatile int m_thread_kill;
   HANDLE m_thread;
-  static unsigned long WINAPI _threadfunc(LPVOID _d);
+  static DWORD WINAPI _threadfunc(LPVOID _d);
 
 };
 
