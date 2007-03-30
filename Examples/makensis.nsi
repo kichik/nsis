@@ -117,8 +117,9 @@ ${MementoSection} "NSIS Core Files (required)" SecCore
   File ..\makensisw.exe
   File ..\COPYING
   File ..\NSIS.chm
-
   File ..\NSIS.exe
+  File /nonfatal ..\NSIS.exe.manifest
+
   IfFileExists $INSTDIR\nsisconf.nsi "" +2
   Rename $INSTDIR\nsisconf.nsi $INSTDIR\nsisconf.nsh
   SetOverwrite off
