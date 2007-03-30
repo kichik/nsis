@@ -1,4 +1,5 @@
 #include <windows.h>
+#include <stdio.h>
 #include "MyMath.h"
 #include "Math.h"
 
@@ -195,133 +196,12 @@ void itoa64(__int64 i, char *buffer)
     *buffer = 0;
 }
 
-#define _FLOAT_ROUND_ADJUST (double)5e-15
-extern "C"
-    int _ftol(double num);
-
-int _floatp10(double *fnum, int *fsign, int prec)
-{
-  int fpower, _d;
-  fcvt(*fnum, prec, &fpower, &_d);
-
-  if (*fnum < 0)
-    *fsign = -1;
-  else
-    *fsign = 1;
-
-  return fpower;
-}
-
 #define POS_INFINITY  "#INF"
 #define NEG_INFINITY "-#INF"
 
-void FloatFormatF(char *s, double value, int prec)
-{
-    int fpower, fsign, fdigit, fprec = 0, fzfill = 0;
-
-    fpower = _floatp10(&value, &fsign, prec);
-    if(fsign < 0) *s++ = '-';
-    if(fpower < 0)
-    {
-        *s++ = '0';
-        fpower++;
-        fzfill++;
-    } else {
-        while(fpower >= 0)
-        {
-           if(fprec < 16)
-           {
-                fdigit = (int)value;
-                *s++ = (char)((char)fdigit + (char)48);
-                value -= (double)fdigit;
-                value *= (double)10;
-                value += _FLOAT_ROUND_ADJUST;
-                fprec++;
-           } else {
-                *s++ = '0';
-           }
-           fpower--;
-        }
-        fpower = 0;
-    }
-    if(prec)
-    {
-            *s++ = '.';
-            while(prec)
-            {
-              if(fzfill && fpower < 0)
-              {
-                *s++ = '0';
-                fpower++;
-              } else {
-                if(fprec < 16)
-                {
-                  fdigit = (int)value;
-                  *s++ = (unsigned char)((unsigned char)fdigit +
-                                         (unsigned char)48);
-
-                  value -= (double)fdigit;
-                  value *= (double)10;
-                  value += _FLOAT_ROUND_ADJUST;
-                  fprec++;
-                } else {
-                  *s++ = '0';
-                }
-              }
-              prec--;
-            }
-    }
-    *s = '\0';
-}
-
-void FloatFormatE(char *s, double fnum, int options)
-{
-    int fpower, fsign, fdigit, fprec = 0, prec;
-    double sfnum;
-
-    prec = options & 0xF;
-
-    sfnum = fnum;
-    fpower = _floatp10(&sfnum, &fsign, -999);
-    fpower = _floatp10(&fnum, &fsign, prec - fpower);
-    if(fsign < 0) *s++ = '-';
-    fdigit = (int)fnum;
-    *s++ = (char)((char)fdigit + (char)48);
-    fnum -= (double)fdigit;
-    fnum *= (double)10;
-    fnum += _FLOAT_ROUND_ADJUST;
-    if(prec)
-    {
-        *s++ = '.';
-        while(prec)
-        {
-            if(fprec < 16)
-            {
-                fdigit = (int)fnum;
-                *s++ = (unsigned char)((unsigned char)fdigit +
-                    (unsigned char)48);
-                fnum -= (double)fdigit;
-                fnum *= (double)10;
-                fnum += _FLOAT_ROUND_ADJUST;
-                fprec++;
-            } else *s++ = '0';
-            prec--;
-        }
-    }
-    *s++ = ((options & FF_LEXP)?('E'):('e'));
-    if(fpower >= 0)
-    {
-        *s++ = '+';
-    } else {
-        *s++ = '-';
-        fpower = -fpower;
-    }
-    if(fpower < 10) *s++ = '0';
-    itoa64(fpower, s);
-}
-
 void FloatFormat(char *s, double value, int options)
 {
+    char format[128];
     int prec = options & 0xF;
 
     *s = 0;
@@ -335,37 +215,24 @@ void FloatFormat(char *s, double value, int options)
         return;
     }
 
-    int decpt, sign;
-
-    char *res = fcvt(value, prec, &decpt, &sign);
-
-    if (res)
+    if (options & FF_NOEXP)
     {
-        lstrcpyn(s, res, decpt + 1);
-        lstrcat(s, ".");
-        lstrcpy(s + decpt + 1, res + decpt);
+        sprintf(format, "%%.%df", prec);
+    }
+    else if (options & FF_EXP)
+    {
+        sprintf(format, "%%.%de", prec);
+    }
+    else if (options & FF_LEXP)
+    {
+        sprintf(format, "%%.%dE", prec);
+    }
+    else
+    {
+        sprintf(format, "%%.%dg", prec);
     }
 
-    /*if (options & FF_NOEXP) FloatFormatF(s, value, prec);
-    else
-    if (options & FF_EXP) FloatFormatE(s, value, options);
-    else
-    {
-        double sfnum = value;
-        int fsign, fpower;
-        fpower = _floatp10(&sfnum, &fsign, -999);
-        sfnum = value;
-        fpower = _floatp10(&sfnum, &fsign, prec - fpower);
-
-        if((value != 0.0) && ((fpower < -4) || (fpower >= prec)))
-            FloatFormatE(s, value, options);
-        else
-        {
-            prec -= (fpower + 1);
-            if(prec <= 0) prec = 1;
-            FloatFormatF(s, value, prec);
-        }
-    }*/
+    sprintf(s, format, value);
 }
 
 int lstrcmpn(char *s1, const char *s2, int chars)
