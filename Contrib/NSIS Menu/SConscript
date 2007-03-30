@@ -64,6 +64,13 @@ if env['PLATFORM'] != 'win32' or os.environ.has_key('WXWIN'):
 		cross_platform = True
 	)
 
+	# manifest
+
+	if env.has_key('MSVS_VERSION'):
+		if float(env['MSVS_VERSION'].replace('Exp','')) >= 8.0:
+			manifest = env.SideEffect('%s.exe.manifest' % target, nsis_menu)
+			env.DistributeBin(manifest, alias='install-utils')
+
 	# set directories
 
 	if nsis_menu[0].env['PLATFORM'] == 'win32':
