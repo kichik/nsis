@@ -1546,8 +1546,3 @@ BOOL WINAPI DllMain(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
     return TRUE;
 }
 
-// crt0.obj is linked in and requires this
-int main()
-{
-  return 0;
-}
