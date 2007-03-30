@@ -118,6 +118,12 @@ LIBRARY_COM
 
 \S1{} Example
 
+\S2{} Unshared DLL
+
+\c  !insertmacro InstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED dllname.dll $SYSDIR\dllname.dll $SYSDIR
+
+\S2{} Shared DLL
+
 \c  ;Add code here that sets $ALREADY_INSTALLED to a non-zero value if the application is
 \c  ;already installed. For example:
 \c
@@ -126,7 +132,6 @@ LIBRARY_COM
 \c  new_installation:
 \c
 \c  !insertmacro InstallLib REGDLL $ALREADY_INSTALLED REBOOT_NOTPROTECTED dllname.dll $SYSDIR\dllname.dll $SYSDIR
-
 
 \H{library_uninstall} Library Uninstallation
 
