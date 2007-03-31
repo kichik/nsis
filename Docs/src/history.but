@@ -1,5 +1,71 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.25} 2.25
+
+Released on March 31st, 2007
+
+\S1{v2.25-cl} Changelog
+
+\S2{} Major Changes
+
+\b Added \L{../Include/Memento.nsh}{Memento.nsh} for easy persistency of user selections across different runs of the installer (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373088&aid=1677624}{RFE #1677624})
+
+\b Fixed a bug introduced in 2.24 that allowed the license page to be skipped even with agreement check box or radio buttons (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1664428}{bug #1664428})
+
+\S2{} Minor Changes
+
+\b Added Vista manifest to StartMenu.nsi example to avoid backward compatibility mode that moves shortcuts (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1664957}{bug #1664957})
+
+\b Both dashes and slashes are supported as switch prefixes on makensis.exe (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1661503}{bug #1661503})
+
+\b Delete uninstaller temporary directory on reboot (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1660626}{patch #1660626})
+
+\b Distribute \L{../Examples/Plugin}{Plug-in example} with the NSIS package and not only with the source code
+
+\b Fixed lossy Unicode conversion of dialog template strings (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1662190}{bug #1662190})
+
+\b Fixed \L{../Include/Sections.nsh}{Sections.nsh} macros support for $0 as input (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1664648}{bug #1664648})
+
+\b Fixed uninstallers support for the /D= command line switch
+
+\b Improved logging of WriteReg commands
+
+\b Minor documentation updates and fixes (including  \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1662419}{patch #1662419})
+
+\S2{} New/Changed Commands
+
+\b Added bitwise operators support for \R{define}{!define} /math (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373088&aid=1669513}{RFE #1669513})
+
+\b \R{scopepredefines}{__PAGEEX__} contains the page type (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1644712}{patch #1644712})
+
+\S2{} Utilities and Plug-ins
+
+\b \L{../Docs/InstallOptions/Readme.html}{InstallOptions 2.46}: Use installer's name for message boxes (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1661677}{bug #1661677})
+
+\b \L{../Docs/makensisw/Readme.txt}{MakeNSISW}: Use Escape button to close (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373088&aid=1666501}{RFE #1666501})
+
+\b \L{../Docs/Math/Math.txt}{Math}: Removed mathcrt.lib
+
+\b \L{../Docs/StartMenu/Readme.txt}{StartMenu}: Refuse empty paths (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1684751}{bug #1684751})
+
+\S2{} Translations
+
+\b Fixed Galician language files (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1663795}{bug #1663795})
+
+\S2{} Build System
+
+\b Added APPEND_LIBPATH and APPEND_CPPATH instead of the malfunctioning CPPPATH and LIBPATH
+
+\b Added ChangeLog to source code package (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1680508}{patch #1680508})
+
+\b Avoid some warnings on VS2005 (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1667950}{patch #1667950})
+
+\b Fixed lzma test segfault on POSIX (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1666873}{bug #1666873})
+
+\b More strict-aliasing compatibility (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1635841}{bug #1635841})
+
+\b NSIS Menu finally built from source
+
 \H{v2.24} 2.24
 
 Released on February 17th, 2007
