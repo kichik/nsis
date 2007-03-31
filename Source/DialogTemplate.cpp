@@ -435,8 +435,12 @@ void CDialogTemplate::CTrimToString(WORD id, char *str, int margins) {
 void CDialogTemplate::ConvertToRTL() {
   for (unsigned int i = 0; i < m_vItems.size(); i++) {
     bool addExStyle = false;
-
-    char *szClass = winchar_toansi(m_vItems[i]->szClass);
+    char *szClass;
+    
+    if (IS_INTRESOURCE(m_vItems[i]->szClass))
+      szClass = (char *) m_vItems[i]->szClass;
+    else
+      szClass = winchar_toansi(m_vItems[i]->szClass);
 
     // Button
     if (long(m_vItems[i]->szClass) == 0x80) {
