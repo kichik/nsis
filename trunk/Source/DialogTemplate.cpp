@@ -491,7 +491,8 @@ void CDialogTemplate::ConvertToRTL() {
 
     m_vItems[i]->sX = m_sWidth - m_vItems[i]->sWidth - m_vItems[i]->sX;
 
-    delete [] szClass;
+    if (!IS_INTRESOURCE(m_vItems[i]->szClass))
+      delete [] szClass;
   }
   m_dwExtStyle |= WS_EX_RIGHT | WS_EX_RTLREADING | WS_EX_LEFTSCROLLBAR;
 }
