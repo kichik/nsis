@@ -17,7 +17,7 @@ VER_REVISION=0
 VER_BUILD=0
 
 [cvs]
-CVS="C:\Program Files\TortoiseCVS\cvs.exe"
+CVS="C:\Program Files\TortoiseCVS\cvs.exe" -z9
 CVS_EXT="C:\Program Files\PuTTY\plink.exe" -2 -l "%u" "%h"
 
 [compression]
@@ -223,7 +223,7 @@ def Tag():
 	print 'tagging...'
 
 	run(
-		'%s -z3 tag -R %s ..' % (CVS, CVS_TAG),
+		'%s tag -R %s ..' % (CVS, CVS_TAG),
 		LOG_ALL,
 		'failed creating tag %s' % CVS_TAG
 	)
