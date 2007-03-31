@@ -247,6 +247,18 @@ ${MementoSection} "Script Examples" SecExample
   File ..\Examples\WordFunc.nsi
   File ..\Examples\WordFunc.ini
   File ..\Examples\WordFuncTest.nsi
+  File ..\Examples\Memento.nsi
+
+  SetOutPath $INSTDIR\Contrib\Plugin
+  File ..\Contrib\ExDLL\exdll.c
+  File ..\Contrib\ExDLL\exdll.dpr
+  File ..\Contrib\ExDLL\exdll.dsp
+  File ..\Contrib\ExDLL\exdll.dsw
+  File ..\Contrib\ExDLL\exdll.h
+  File ..\Contrib\ExDLL\exdll_with_unit.dpr
+  File ..\Contrib\ExDLL\extdll.inc
+  File ..\Contrib\ExDLL\nsis.pas
+
 ${MementoSectionEnd}
 
 !ifndef NO_STARTMENUSHORTCUTS
