@@ -185,6 +185,9 @@ Version History
 2.2
 - Settings saved in HKCU instead of HKLM
 - Added menu accelerators to MRU list
+
+2.3
+- Escape button closes MakeNSISw
  
 Copyright Information
 ---------------------
