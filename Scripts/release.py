@@ -247,11 +247,14 @@ def CreateChangeLog():
 
 	changelog = os.path.join(newverdir,'ChangeLog')
 
+	os.chdir('..')
 	run(
-		'%s log .. > cvs.log' % CVS,
+		'%s log  > Scripts\cvs.log' % CVS,
 		LOG_ERRORS,
-		'cvs log failed'
+		'cvs log failed',
+		log_dir = 'Scripts'
 	)
+	os.chdir('Scripts')
 
 	run(
 		'%s -x %s %s --show-tag %s --file %s --stdin < cvs.log' % (CVS2CL_PERL, CVS2CL, CVS2CL_OPTS, CVS_TAG, changelog),
