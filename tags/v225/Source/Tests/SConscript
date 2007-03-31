@@ -1,0 +1,156 @@
+target = 'test'
+
+tests = Split("""
+	compression.cpp
+	decompress.cpp
+	DialogTemplate.cpp
+	endian.cpp
+	mmap.cpp
+	ResourceEditor.cpp
+	specmatch.cpp
+	textrunner.cpp
+	winchar.cpp
+""")
+
+required = Split("""
+	DialogTemplate.cpp
+	dirreader.cpp
+	growbuf.cpp
+	mmap.cpp
+	ResourceEditor.cpp
+	util.cpp
+	winchar.cpp
+""")
+
+required_exehead = Split("""
+	Tests/memcpy.c
+""")
+
+lzma_files = Split("""
+	clzma.cpp
+	7zip/7zGuids.cpp
+	7zip/7zip/Common/OutBuffer.cpp
+	7zip/7zip/Common/StreamUtils.cpp
+	7zip/7zip/Compress/LZ/LZInWindow.cpp
+	7zip/7zip/Compress/LZMA/LZMAEncoder.cpp
+	7zip/7zip/Compress/RangeCoder/RangeCoderBit.cpp
+	7zip/Common/Alloc.cpp
+	7zip/Common/CRC.cpp
+	7zip/LZMADecode.c
+""")
+
+required += lzma_files
+
+bzip2_files = Split("""
+	bzip2/blocksort.c
+	bzip2/bzlib.c
+	bzip2/compress.c
+	bzip2/huffman.c
+""")
+
+bzip2_exehead_files = Split("""
+	bzip2/bzlib.c
+	bzip2/decompress.c
+""")
+
+required += bzip2_files
+required_exehead += bzip2_exehead_files
+
+zlib_files = Split("""
+	zlib/deflate.c
+	zlib/trees.c
+""")
+
+zlib_exehead_files = Split("""
+	zlib/INFBLOCK.C
+""")
+
+required += zlib_files
+required_exehead += zlib_exehead_files
+
+cppunitlibs = Split("""
+	cppunit
+""")
+
+extralibs = Split("""
+	dl
+	gdi32
+	iconv
+	pthread
+	user32
+""")
+
+scripts = Split("""
+	preprocessor.nsi
+""")
+
+Import('env AddAvailableLibs')
+
+# Test scripts
+env.TestScript(scripts)
+
+# Use available libraries
+AddAvailableLibs(env, extralibs)
+
+# compile using msvcrt (that's how cppunit.lib is built)
+if 'msvc' in env['TOOLS'] or 'mstoolkit' in env['TOOLS']:
+	env.Append(CCFLAGS = ['/MD'])
+
+# uses exceptions
+env.Append(CCFLAGS = ['$EXCEPTION_FLAG'])
+
+# for lzma
+env.Append(CPPDEFINES = ['COMPRESS_MF_BT'])
+
+# test for CppUnit
+conf = env.Configure()
+cppunit = conf.CheckLibWithHeader(cppunitlibs, 'cppunit/extensions/HelperMacros.h', 'C++')
+conf.Finish()
+
+if cppunit:
+
+	# compile files from parent directory
+	required_obj = []
+
+	for i in required:
+		b = 'required/%s' % i.split('.')[0]
+		s = '#Source/%s' % i
+		o = env.Object(b, s)
+
+		required_obj.append(o)
+
+	# exehead files special treatment
+	exehead_env = env.Clone()
+	exehead_env.Append(CCFLAGS = ['$C_FLAG'])
+	exehead_env.Append(
+		CPPDEFINES = [
+			'EXEHEAD',
+			'NSIS_COMPRESS_USE_ZLIB' # just so config.h won't complain
+		]
+	)
+
+	for i in required_exehead:
+		b = 'required/exehead/%s' % i.split('.')[0]
+		s = '#Source/%s' % i
+		o = exehead_env.Object(b, s)
+
+		required_obj.append(o)
+
+	# build test program
+	tests = env.Program(target, tests + required_obj)
+
+	# alias running the test to 'test'
+	test = env.Alias('test-code', [tests], tests[0].abspath)
+
+	# always test when asked to
+	AlwaysBuild(test)
+
+else:
+	
+	# no CppUnit
+	def err(target, source, env):
+		print '*** error: CppUnit must be installed for testing!'
+		return 1
+
+	cmd = env.Command(target, [tests], Action(err, ''))
+	env.Alias('test-code', cmd)
