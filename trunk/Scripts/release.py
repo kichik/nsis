@@ -248,7 +248,7 @@ def CreateChangeLog():
 	changelog = os.path.join(newverdir,'ChangeLog')
 
 	run(
-		'%s log > cvs.log' % CVS,
+		'%s log .. > cvs.log' % CVS,
 		LOG_ERRORS,
 		'cvs log failed'
 	)
