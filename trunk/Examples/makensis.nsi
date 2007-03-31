@@ -249,15 +249,15 @@ ${MementoSection} "Script Examples" SecExample
   File ..\Examples\WordFuncTest.nsi
   File ..\Examples\Memento.nsi
 
-  SetOutPath $INSTDIR\Contrib\Plugin
-  File ..\Contrib\ExDLL\exdll.c
-  File ..\Contrib\ExDLL\exdll.dpr
-  File ..\Contrib\ExDLL\exdll.dsp
-  File ..\Contrib\ExDLL\exdll.dsw
-  File ..\Contrib\ExDLL\exdll.h
-  File ..\Contrib\ExDLL\exdll_with_unit.dpr
-  File ..\Contrib\ExDLL\extdll.inc
-  File ..\Contrib\ExDLL\nsis.pas
+  SetOutPath $INSTDIR\Examples\Plugin
+  File ..\Examples\Plugin\exdll.c
+  File ..\Examples\Plugin\exdll.dpr
+  File ..\Examples\Plugin\exdll.dsp
+  File ..\Examples\Plugin\exdll.dsw
+  File ..\Examples\Plugin\exdll.h
+  File ..\Examples\Plugin\exdll_with_unit.dpr
+  File ..\Examples\Plugin\extdll.inc
+  File ..\Examples\Plugin\nsis.pas
 
 ${MementoSectionEnd}
 
