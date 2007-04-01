@@ -19,7 +19,7 @@ public:
 
     for (int i = 0; i < kb; i++) {
       int r = rand();
-      for (int j = 0; j < 1024/sizeof(int); j++) {
+      for (size_t j = 0; j < 1024/sizeof(int); j++) {
         buf.add(&r, sizeof(int));
       }
     }

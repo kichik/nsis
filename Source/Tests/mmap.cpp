@@ -44,7 +44,7 @@ public:
       char *p2 = (char *) mmap.getmore(offset2, size2);
 
       int minsize = min(size1, size2);
-      for (size_t j = 0; j < minsize; j++) {
+      for (int j = 0; j < minsize; j++) {
         CPPUNIT_ASSERT_EQUAL( p1[j], p2[j] );
       }
 
