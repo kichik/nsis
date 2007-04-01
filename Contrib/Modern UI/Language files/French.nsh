@@ -11,22 +11,22 @@
   !define MUI_LANGNAME "Français" ;Use only ASCII characters (if this is not possible, use the English name)
 
   !define MUI_TEXT_WELCOME_INFO_TITLE "Bienvenue dans le programme d'installation de $(^NameDA)"
-  !define MUI_TEXT_WELCOME_INFO_TEXT "Vous êtes sur le point d'installer $(^NameDA) sur votre ordinateur.\r\n\r\nAvant de débuter l'installation, il est recommandé de fermer toutes les autres applications. Cela permettra de mettre à jour certains fichiers système sans redémarrer votre ordinateur.\r\n\r\n$_CLICK"
+  !define MUI_TEXT_WELCOME_INFO_TEXT "Vous êtes sur le point d'installer $(^NameDA) sur votre ordinateur.\r\n\r\nAvant de démarrer l'installation, il est recommandé de fermer toutes les autres applications. Cela permettra la mise à jour de certains fichiers système sans redémarrer votre ordinateur.\r\n\r\n$_CLICK"
 
   !define MUI_TEXT_LICENSE_TITLE "Licence utilisateur"
   !define MUI_TEXT_LICENSE_SUBTITLE "Veuillez examiner les termes de la licence avant d'installer $(^NameDA)."
   !define MUI_INNERTEXT_LICENSE_TOP "Appuyez sur Page Suivante pour lire le reste de la licence utilisateur."
-  !define MUI_INNERTEXT_LICENSE_BOTTOM "Si vous acceptez les termes de la licence utilisateur, cliquez sur J'accepte pour continuer. Vous devez accepter la licence utilisateur pour installer $(^NameDA)."
-  !define MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Si vous acceptez les termes de la licence utilisateur, cochez la case ci-dessous. Vous devez accepter la licence utilisateur pour installer $(^NameDA)."
-  !define MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Si vous acceptez les termes de la licence utilisateur, sélectionnez le premier choix ci-dessous. Vous devez accepter la licence utilisateur pour installer $(^NameDA)."
+  !define MUI_INNERTEXT_LICENSE_BOTTOM "Si vous acceptez les conditions de la licence utilisateur, cliquez sur J'accepte pour continuer. Vous devez accepter la licence utilisateur afin d'installer $(^NameDA)."
+  !define MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Si vous acceptez les conditions de la licence utilisateur, cochez la case ci-dessous. Vous devez accepter la licence utilisateur afin d'installer $(^NameDA)."
+  !define MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Si vous acceptez les conditions de la licence utilisateur, sélectionnez le premier choix ci-dessous. Vous devez accepter la licence utilisateur afin d'installer $(^NameDA)."
 
   !define MUI_TEXT_COMPONENTS_TITLE "Choisissez les composants"
   !define MUI_TEXT_COMPONENTS_SUBTITLE "Choisissez les composants de $(^NameDA) que vous souhaitez installer."
   !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Description"
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
-    !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Passer le curseur de votre souris sur un composant pour voir sa description."
+    !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Passez le curseur de votre souris sur un composant pour en voir la description."
   !else
-    !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Sélectionnez un composant pour voir sa description."
+    !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Sélectionnez un composant pour en voir la description."
   !endif
 
   !define MUI_TEXT_DIRECTORY_TITLE "Choisissez le dossier d'installation"
@@ -59,16 +59,16 @@
   
   
   !define MUI_UNTEXT_WELCOME_INFO_TITLE "Bienvenue dans le programme de désinstallation de $(^NameDA)"
-  !define MUI_UNTEXT_WELCOME_INFO_TEXT "Vous êtes sur le point de désinstaller $(^NameDA) de votre ordinateur.\r\n\r\nAvant de débuter la désinstallation, assurez-vous que $(^NameDA) ne soit pas en cours d'exécution.\r\n\r\n$_CLICK"
+  !define MUI_UNTEXT_WELCOME_INFO_TEXT "Vous êtes sur le point de désinstaller $(^NameDA) de votre ordinateur.\r\n\r\nAvant d'amorcer la désinstallation, assurez-vous que $(^NameDA) ne soit pas en cours d'exécution.\r\n\r\n$_CLICK"
 
   !define MUI_UNTEXT_CONFIRM_TITLE "Désinstaller $(^NameDA)"
   !define MUI_UNTEXT_CONFIRM_SUBTITLE "Supprimer $(^NameDA) de votre ordinateur."
 
   !define MUI_UNTEXT_LICENSE_TITLE "Licence utilisateur"
-  !define MUI_UNTEXT_LICENSE_SUBTITLE "Veuillez examiner les termes de la licence avant de désinstaller $(^NameDA)."
-  !define MUI_UNINNERTEXT_LICENSE_BOTTOM "Si vous acceptez les termes de la licence utilisateur, cliquez sur J'accepte pour continuer. Vous devez accepter la licence utilisateur pour désinstaller $(^NameDA)."
-  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Si vous acceptez les termes de la licence utilisateur, cochez la case ci-dessous. Vous devez accepter la licence utilisateur pour désintaller $(^NameDA)."
-  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Si vous acceptez les termes de la licence utilisateur, sélectionnez le premier choix ci-dessous. Vous devez accepter la licence utilisateur pour désinstaller $(^NameDA)."
+  !define MUI_UNTEXT_LICENSE_SUBTITLE "Veuillez examiner les conditions de la licence avant de désinstaller $(^NameDA)."
+  !define MUI_UNINNERTEXT_LICENSE_BOTTOM "Si vous acceptez les conditions de la licence utilisateur, cliquez sur J'accepte pour continuer. Vous devez accepter la licence utilisateur afin de désinstaller $(^NameDA)."
+  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Si vous acceptez les conditions de la licence utilisateur, cochez la case ci-dessous. Vous devez accepter la licence utilisateur afin de désintaller $(^NameDA)."
+  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Si vous acceptez les conditions de la licence utilisateur, sélectionnez le premier choix ci-dessous. Vous devez accepter la licence utilisateur afin de désinstaller $(^NameDA)."
 
   !define MUI_UNTEXT_UNINSTALLING_TITLE "Désinstallation en cours"
   !define MUI_UNTEXT_UNINSTALLING_SUBTITLE "Veuillez patienter pendant que $(^NameDA) est en train d'être supprimé de votre ordinateur."
