@@ -28,7 +28,7 @@ void __declspec(dllexport) GetAccountType(HWND hwndParent, int string_size,
     DWORD         cbTokenGroups;
     DWORD         i, j;
 
-    SID_IDENTIFIER_AUTHORITY SystemSidAuthority = SECURITY_NT_AUTHORITY;
+    SID_IDENTIFIER_AUTHORITY SystemSidAuthority = {SECURITY_NT_AUTHORITY};
 
     char *group = "";
 
