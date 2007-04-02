@@ -1090,7 +1090,7 @@ int WINAPI createCfgDlg()
 
 #undef DEFAULT_STYLES
 
-    if (pField->nType < 1 || pField->nType > (sizeof(ClassTable) / sizeof(ClassTable[0])))
+    if (pField->nType < 1 || pField->nType > (int)(sizeof(ClassTable) / sizeof(ClassTable[0])))
       continue;
 
     DWORD dwStyle, dwExStyle;
