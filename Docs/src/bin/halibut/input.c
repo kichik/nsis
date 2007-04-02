@@ -440,11 +440,11 @@ token get_token(input * in)
   int c;
   int nls;
   token ret;
-  ret.cmd = c__invalid;
-  ret.aux = FALSE;
   rdstring rs = { 0, 0, NULL };
   filepos cpos;
 
+  ret.cmd = c__invalid;
+  ret.aux = FALSE;
   ret.text = NULL;              /* default */
   c = get(in, &cpos);
   ret.pos = cpos;
