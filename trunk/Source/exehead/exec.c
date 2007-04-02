@@ -1144,7 +1144,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     case EW_DELREG:
       {
         long res=!ERROR_SUCCESS;
-        const char *rkn=RegKeyHandleToName((HKEY)parm1);
+        const char *rkn UNUSED=RegKeyHandleToName((HKEY)parm1);
         if (!parm4)
         {
           HKEY hKey=myRegOpenKey(KEY_SET_VALUE);
@@ -1174,7 +1174,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         int rtype=parm5;
         char *buf0=GetStringFromParm(0x02);
         char *buf1=GetStringFromParm(0x11);
-        const char *rkn=RegKeyHandleToName(rootkey);
+        const char *rkn UNUSED=RegKeyHandleToName(rootkey);
 
         exec_error++;
         if (RegCreateKeyEx(rootkey,buf1,0,0,REG_OPTION_NON_VOLATILE,KEY_SET_VALUE,0,&hKey,0) == ERROR_SUCCESS)

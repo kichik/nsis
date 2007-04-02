@@ -3,6 +3,12 @@
 
 #include <windows.h>
 
+#if defined(__GNUC__)
+#define UNUSED __attribute__((unused))
+#else
+#define UNUSED
+#endif
+
 // only include this file from one place in your DLL.
 // (it is all static, if you use it in two places it will fail)
 
@@ -26,8 +32,10 @@ static unsigned int g_stringsize;
 static stack_t **g_stacktop;
 static char *g_variables;
 
-static int __stdcall popstring(char *str); // 0 on success, 1 on empty stack
-static void __stdcall pushstring(const char *str);
+static int __stdcall popstring(char *str) UNUSED; // 0 on success, 1 on empty stack
+static void __stdcall pushstring(const char *str) UNUSED;
+static char * __stdcall getuservariable(const int varnum) UNUSED;
+static void __stdcall setuservariable(const int varnum, const char *var) UNUSED;
 
 enum
 {

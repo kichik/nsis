@@ -28,7 +28,7 @@
 NTOOLTIP g_tip;
 LRESULT CALLBACK TipHookProc(int nCode, WPARAM wParam, LPARAM lParam);
 
-char g_mru_list[MRU_LIST_SIZE][MAX_PATH] = { NULL, NULL, NULL, NULL, NULL };
+char g_mru_list[MRU_LIST_SIZE][MAX_PATH] = { "", "", "", "", "" };
 
 extern NSCRIPTDATA g_sdata;
 extern char *compressor_names[];
