@@ -212,6 +212,8 @@ Displays a MessageBox containing the text "messagebox_text". mb_option_list must
 
 \b \e{MB_ICONSTOP} - Display with stop icon
 
+\b \e{MB_USERICON} - Display with installer's icon
+
 \b \e{MB_TOPMOST} - Make messagebox topmost
 
 \b \e{MB_SETFOREGROUND} - Set foreground

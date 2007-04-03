@@ -23,6 +23,7 @@
 #include "fileform.h"
 #include "exec.h"
 #include "ui.h"
+#include "resource.h"
 
 #ifdef NSIS_CONFIG_LOG
 #if !defined(NSIS_CONFIG_LOG_ODS) && !defined(NSIS_CONFIG_LOG_STDOUT)
@@ -84,6 +85,19 @@ int NSISCALL my_GetDialogItemText(UINT idx, char *val)
 
 int NSISCALL my_MessageBox(const char *text, UINT type) {
   int _type = type & 0x001FFFFF;
+  static MSGBOXPARAMS mbp = {
+    sizeof(MSGBOXPARAMS),
+    0,
+    0,
+    0,
+    0,
+    0,
+    MAKEINTRESOURCE(IDI_ICON2),
+    0,
+    0,
+    0
+  };
+  
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
   // default for silent installers
   if (g_exec_flags.silent && type >> 21)
@@ -92,7 +106,14 @@ int NSISCALL my_MessageBox(const char *text, UINT type) {
   // no silent or no default, just show
   if (g_exec_flags.rtl)
     _type ^= MB_RIGHT | MB_RTLREADING;
-  return MessageBox(g_hwnd, text, g_caption, _type);
+
+  mbp.hwndOwner = g_hwnd;
+  mbp.hInstance = g_hInstance;
+  mbp.lpszText = text;
+  mbp.lpszCaption = g_caption;
+  mbp.dwStyle = _type;
+  
+  return MessageBoxIndirect(&mbp);
 }
 
 void NSISCALL myDelete(char *buf, int flags)
