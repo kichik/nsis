@@ -32,10 +32,33 @@
 !endif
 
 !include LogicLib.nsh
-!include FileFunc.nsh
 
-!insertmacro GetParent
-!insertmacro un.GetParent
+### GetParent macro, don't pass $1 or $2 as INTPUT or OUTPUT
+!macro __InstallLib_Helper_GetParent INPUT OUTPUT
+
+  # Copied from FileFunc.nsh
+
+  StrCpy ${OUTPUT} ${INPUT}
+
+  Push $1
+  Push $2
+
+  StrCpy $2 ${OUTPUT} 1 -1
+  StrCmp $2 '\' 0 +3
+  StrCpy ${OUTPUT} ${OUTPUT} -1
+  goto -3
+
+  StrCpy $1 0
+  IntOp $1 $1 - 1
+  StrCpy $2 ${OUTPUT} 1 $1
+  StrCmp $2 '\' +2
+  StrCmp $2 '' 0 -3
+  StrCpy ${OUTPUT} ${OUTPUT} $1
+
+  Pop $2
+  Pop $1
+
+!macroend
 
 ### Initialize session id (GUID)
 !macro __InstallLib_Helper_InitSession
@@ -694,11 +717,7 @@
           Delete $R0
 
           # Try moving to directory containing the file.
-          !ifndef __UNINSTALL__
-            ${GetParent} $R1 $R0
-          !else
-            ${un.GetParent} $R1 $R0
-          !endif
+          !insertmacro __InstallLib_Helper_GetParent $R1 $R0
           GetTempFileName $R0 $R0
           Delete $R0
           Rename $R1 $R0
