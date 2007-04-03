@@ -526,7 +526,7 @@ int WINAPI ReadSettings(void) {
 
     // Label Text - convert newline
     pField->pszText = myGetProfileStringDup("TEXT");
-    if (pField->nType == FIELD_LABEL)
+    if (pField->nType == FIELD_LABEL || pField->nType == FIELD_LINK)
       ConvertNewLines(pField->pszText);
 
     // Dir request - root folder
@@ -766,7 +766,7 @@ BOOL CALLBACK cfgDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       RECT rc = lpdis->rcItem;
 
       // Calculate needed size of the control
-      DrawText(lpdis->hDC, pField->pszText, -1, &rc, DT_VCENTER | DT_SINGLELINE | DT_CALCRECT);
+      DrawText(lpdis->hDC, pField->pszText, -1, &rc, DT_VCENTER | DT_WORDBREAK | DT_CALCRECT);
 
       // Make some more room so the focus rect won't cut letters off
       rc.right = min(rc.right + 2, lpdis->rcItem.right);
@@ -785,7 +785,7 @@ BOOL CALLBACK cfgDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
           SetTextColor(lpdis->hDC, (COLORREF) pField->hImage);
 
         // Draw the text
-        DrawText(lpdis->hDC, pField->pszText, -1, &rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE | (bRTL ? DT_RTLREADING : 0));
+        DrawText(lpdis->hDC, pField->pszText, -1, &rc, DT_CENTER | DT_VCENTER | DT_WORDBREAK | (bRTL ? DT_RTLREADING : 0));
       }
 
       // Draw the focus rect if needed
