@@ -91,7 +91,7 @@ void NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew);
 void NSISCALL mini_memcpy(void *out, const void *in, int len);
 void NSISCALL remove_ro_attr(char *file);
 
-void * NSISCALL myGetProcAddress(char *dll, char *func);
+void * NSISCALL myGetProcAddress(const char *dll, const char *func);
 void NSISCALL MessageLoop(UINT uCheckedMsg);
 
 // Turn a pair of chars into a word
