@@ -234,7 +234,7 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
   LANGID (WINAPI *GUDUIL)();
   static const char guduil[] = "GetUserDefaultUILanguage";
 
-  GUDUIL = myGetProcAddress("KERNEL32.dll", (char *) guduil);
+  GUDUIL = myGetProcAddress("KERNEL32.dll", guduil);
   if (GUDUIL)
   {
     // Windows ME/2000+
@@ -922,7 +922,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       SHAutoCompletePtr fSHAutoComplete;
       static const char shlwapi[] = "shlwapi.dll";
       static const char shac[] = "SHAutoComplete";
-      fSHAutoComplete = (SHAutoCompletePtr) myGetProcAddress((char *) shlwapi, (char *) shac);
+      fSHAutoComplete = (SHAutoCompletePtr) myGetProcAddress(shlwapi, shac);
       if (fSHAutoComplete)
       {
         fSHAutoComplete(hDir, SHACF_FILESYSTEM);
