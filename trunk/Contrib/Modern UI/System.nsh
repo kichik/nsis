@@ -209,8 +209,20 @@ Var /GLOBAL MUI_TEMP2
   !verbose push
   !verbose ${MUI_VERBOSE}
 
+  !ifdef MUI_HEADER_TRANSPARENT_TEXT
+
+    LockWindow on
+
+  !endif
+
   !insertmacro MUI_HEADER_TEXT_INTERNAL 1037 "${TEXT}"
   !insertmacro MUI_HEADER_TEXT_INTERNAL 1038 "${SUBTEXT}"
+
+  !ifdef MUI_HEADER_TRANSPARENT_TEXT
+
+    LockWindow off
+
+  !endif
 
   !verbose pop
 
