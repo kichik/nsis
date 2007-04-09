@@ -891,7 +891,7 @@ WIN32_FIND_DATA * NSISCALL file_exists(char *buf)
   return NULL;
 }
 
-void * NSISCALL myGetProcAddress(char *dll, char *func)
+void * NSISCALL myGetProcAddress(const char *dll, const char *func)
 {
   HMODULE hModule = GetModuleHandle(dll);
   if (!hModule)
