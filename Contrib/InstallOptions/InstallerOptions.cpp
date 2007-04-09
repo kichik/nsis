@@ -68,20 +68,22 @@ char *WINAPI STRDUP(const char *c)
 // NB - the order of this list is important - see below
 
 #define FIELD_INVALID      (0)
-#define FIELD_LABEL        (1)
-#define FIELD_ICON         (2)
-#define FIELD_BITMAP       (3)
-#define FIELD_BROWSEBUTTON (4)
-#define FIELD_LINK         (5)
-#define FIELD_BUTTON       (6)
-#define FIELD_GROUPBOX     (7)
-#define FIELD_CHECKBOX     (8)
-#define FIELD_RADIOBUTTON  (9)
-#define FIELD_TEXT         (10)
-#define FIELD_FILEREQUEST  (11)
-#define FIELD_DIRREQUEST   (12)
-#define FIELD_COMBOBOX     (13)
-#define FIELD_LISTBOX      (14)
+#define FIELD_HLINE        (1)
+#define FIELD_VLINE        (2)
+#define FIELD_LABEL        (3)
+#define FIELD_ICON         (4)
+#define FIELD_BITMAP       (5)
+#define FIELD_BROWSEBUTTON (6)
+#define FIELD_LINK         (7)
+#define FIELD_BUTTON       (8)
+#define FIELD_GROUPBOX     (9)
+#define FIELD_CHECKBOX     (10)
+#define FIELD_RADIOBUTTON  (11)
+#define FIELD_TEXT         (12)
+#define FIELD_FILEREQUEST  (13)
+#define FIELD_DIRREQUEST   (14)
+#define FIELD_COMBOBOX     (15)
+#define FIELD_LISTBOX      (16)
 
 #define FIELD_SETFOCUS     FIELD_CHECKBOX // First field that qualifies for having the initial keyboard focus
 #define FIELD_CHECKLEN     FIELD_TEXT     // First field to have length of state value checked against MinLen/MaxLen
@@ -457,6 +459,8 @@ int WINAPI ReadSettings(void) {
       { "LINK",        FIELD_LABEL       },
 #endif
       { "BUTTON",      FIELD_BUTTON      },
+      { "HLINE",       FIELD_HLINE       },
+      { "VLINE",       FIELD_VLINE       },
       { NULL,          0                 }
     };
     // Control flags
@@ -1014,6 +1018,16 @@ int WINAPI createCfgDlg()
       DWORD dwExStyle;
       DWORD dwRTLExStyle;
     } ClassTable[] = {
+      { "STATIC",       // FIELD_HLINE
+        DEFAULT_STYLES | SS_ETCHEDHORZ | SS_SUNKEN,
+        DEFAULT_STYLES | SS_ETCHEDHORZ | SS_SUNKEN,
+        WS_EX_TRANSPARENT,
+        WS_EX_TRANSPARENT | RTL_EX_STYLES },
+      { "STATIC",       // FIELD_VLINE
+        DEFAULT_STYLES | SS_ETCHEDVERT | SS_SUNKEN,
+        DEFAULT_STYLES | SS_ETCHEDVERT | SS_SUNKEN,
+        WS_EX_TRANSPARENT,
+        WS_EX_TRANSPARENT | RTL_EX_STYLES },
       { "STATIC",       // FIELD_LABEL
         DEFAULT_STYLES,
         DEFAULT_STYLES | SS_RIGHT,
