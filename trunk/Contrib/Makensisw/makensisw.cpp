@@ -76,11 +76,21 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmd
   return msg.wParam;
 }
 
-void SetScript(const char *script)
+void SetScript(const char *script, bool clearArgs = true)
 {
   if (g_sdata.script)
   {
     GlobalFree(g_sdata.script);
+  }
+
+  if (clearArgs)
+  {
+    if (g_sdata.script_cmd_args);
+    {
+      GlobalFree(g_sdata.script_cmd_args);
+    }
+
+    g_sdata.script_cmd_args = (char *) GlobalAlloc(GPTR, 1)
   }
 
   g_sdata.script = (char *) GlobalAlloc(GPTR, lstrlen(script) + 1);
@@ -144,7 +154,7 @@ void ProcessCommandLine()
       }
       else
       {
-        SetScript(argv[i]);
+        SetScript(argv[i], false);
       }
     }
 
@@ -182,7 +192,6 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
       RestoreCompressor();
       SetScript("");
       g_sdata.compressor = COMPRESSOR_NONE_SELECTED;
-      g_sdata.script_cmd_args = (char *) GlobalAlloc(GPTR, 1);
       g_sdata.userSelectCompressor = FALSE;
       
       ProcessCommandLine();
