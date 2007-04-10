@@ -43,7 +43,6 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmd
   my_memset(&g_resize,0,sizeof(NRESIZEDATA));
   my_memset(&g_find,0,sizeof(NFINDREPLACE));
   g_sdata.hInstance=GetModuleHandle(0);
-  g_sdata.script_alloced=false;
   g_sdata.symbols = NULL;
   g_sdata.sigint_event = CreateEvent(NULL, FALSE, FALSE, "makensis win32 signint event");
   RestoreSymbols();
@@ -70,20 +69,90 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmd
       }
     }
   }
-  if (g_sdata.script_alloced) GlobalFree(g_sdata.script);
+  if (g_sdata.script) GlobalFree(g_sdata.script);
   if (g_sdata.sigint_event) CloseHandle(g_sdata.sigint_event);
   FinalizeUpdate();
   ExitProcess(msg.wParam);
   return msg.wParam;
 }
 
+void SetScript(const char *script)
+{
+  if (g_sdata.script)
+  {
+    GlobalFree(g_sdata.script);
+  }
+
+  g_sdata.script = (char *) GlobalAlloc(GPTR, lstrlen(script) + 1);
+  lstrcpy(g_sdata.script, script);
+}
+
+void AddScriptCmdArgs(const char *arg)
+{
+  g_sdata.script_cmd_args = (char *) GlobalReAlloc(g_sdata.script_cmd_args,
+    GlobalSize(g_sdata.script_cmd_args) + 2 /* quotes */ + 1 /* space */,
+    0);
+
+  lstrcat(g_sdata.script_cmd_args, " \"");
+  lstrcat(g_sdata.script_cmd_args, arg);
+  lstrcat(g_sdata.script_cmd_args, "\"");
+}
+
 void ResetInputScript()
 {
   if(g_sdata.input_script) {
-    g_sdata.script_alloced = true;
-    g_sdata.script = (char *)GlobalAlloc(GPTR, (lstrlen(g_sdata.input_script)+3)*sizeof(char));
-    wsprintf(g_sdata.script,"\"%s\"",g_sdata.input_script);
+    SetScript(g_sdata.input_script);
   }
+}
+
+void ProcessCommandLine()
+{
+  int argc;
+  char **argv;
+  int i, j;
+  int argSpaceSize;
+
+  argSpaceSize = SetArgv((char *)GetCommandLine(), &argc, &argv);
+  if (argc > 1) {
+    for (i = 1; i < argc; i++)
+    {
+      if (!lstrncmpi(argv[i], "/XSetCompressor ", lstrlen("/XSetCompressor ")))
+      {
+        char *p = argv[i] + lstrlen("/XSetCompressor ");
+        if(!lstrncmpi(p,"/FINAL ", lstrlen("/FINAL ")))
+        {
+          p += lstrlen("/FINAL ");
+        }
+
+        while (*p == ' ') p++;
+
+        for (j = (int) COMPRESSOR_SCRIPT + 1; j < (int) COMPRESSOR_BEST; j++)
+        {
+          if (!lstrcmpi(p, compressor_names[j]))
+          {
+            SetCompressor((NCOMPRESSOR) j);
+          }
+        }
+      }
+      else if (!lstrcmpi(argv[i], "/ChooseCompressor"))
+      {
+        g_sdata.userSelectCompressor = TRUE;
+      }
+      else if (argv[i][0] == '-' || argv[i][0] == '/')
+      {
+        AddScriptCmdArgs(argv[i]);
+      }
+      else
+      {
+        SetScript(argv[i]);
+      }
+    }
+
+    PushMRUFile(g_sdata.script);
+  }
+
+  if (argSpaceSize)
+    GlobalFree(argv);
 }
 
 BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
@@ -92,12 +161,6 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
   switch (msg) {
     case WM_INITDIALOG:
     {
-      int argc;
-      char **argv;
-      int i, j;
-      int argSpaceSize;
-      bool chooseCompressor = false;
-
       g_sdata.hwnd=hwndDlg;
       HICON hIcon = LoadIcon(g_sdata.hInstance,MAKEINTRESOURCE(IDI_ICON));
       SetClassLong(hwndDlg,GCL_HICON,(long)hIcon);
@@ -118,56 +181,22 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
       RestoreWindowPos(g_sdata.hwnd);
       RestoreCompressor();
       g_sdata.compressor = COMPRESSOR_NONE_SELECTED;
-
-      argSpaceSize = SetArgv((char *)GetCommandLine(), &argc, &argv);
-      if(argc > 1) {
-        int n;
-
-        g_sdata.script_alloced = true;
-        g_sdata.script = (char *) GlobalAlloc(GPTR,argSpaceSize+2*(argc-1)*sizeof(char)+1);
-        lstrcpy(g_sdata.script,"");
-        for(i=1; i<argc; i++) {
-          if(!lstrncmpi(argv[i],"/XSetCompressor ",lstrlen("/XSetCompressor "))) {
-            char *p = argv[i]+lstrlen("/XSetCompressor ");
-            if(!lstrncmpi(p,"/FINAL ",lstrlen("/FINAL "))) {
-              p += lstrlen("/FINAL ");
-            }
-            while(*p == ' ') p++;
-            if(p && lstrlen(p)) {
-              for(j=(int)COMPRESSOR_SCRIPT+1; j < (int)COMPRESSOR_BEST; j++) {
-                if(!lstrcmpi(p,compressor_names[j])) {
-                  SetCompressor((NCOMPRESSOR)j);
-                }
-              }
-            }
-          }
-          else if(!lstrcmpi(argv[i],"/ChooseCompressor")) {
-            chooseCompressor = true;
-          }
-          else {
-            lstrcat(g_sdata.script,"\"");
-            lstrcat(g_sdata.script,argv[i]);
-            lstrcat(g_sdata.script,"\" ");
-          }
-        }
-        n = lstrlen(g_sdata.script);
-        if(n > 0) {
-          g_sdata.script[n-1] = '\0';
-        }
-        PushMRUFile(argv[argc-1]);
-      }
-      if (argSpaceSize)
-        GlobalFree(argv);
+      g_sdata.script_cmd_args = (char *) GlobalAlloc(GPTR, 1);
+      g_sdata.userSelectCompressor = FALSE;
+      
+      ProcessCommandLine();
 
       if(g_sdata.compressor == COMPRESSOR_NONE_SELECTED) {
         SetCompressor(g_sdata.default_compressor);
       }
-      if(chooseCompressor) {
+
+      if(g_sdata.userSelectCompressor) {
         if (DialogBox(g_sdata.hInstance,MAKEINTRESOURCE(DLG_COMPRESSOR),g_sdata.hwnd,(DLGPROC)CompressorProc)) {
           EnableItems(g_sdata.hwnd);
           return TRUE;
         }
       }
+
       CompileNSISScript();
       return TRUE;
     }
@@ -211,9 +240,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
       if (num==1) {
         DragQueryFile((HDROP)wParam,0,szTmp,MAX_PATH);
         if (lstrlen(szTmp)>0) {
-          g_sdata.script_alloced = true;
-          g_sdata.script = (char *)GlobalAlloc(GPTR,sizeof(szTmp)+7);
-          wsprintf(g_sdata.script,"\"%s\"",szTmp);
+          SetScript(szTmp);
           PushMRUFile(g_sdata.script);
           ResetObjects();
           CompileNSISScript();
@@ -500,8 +527,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
             l.Flags = OFN_HIDEREADONLY|OFN_EXPLORER|OFN_PATHMUSTEXIST|OFN_FILEMUSTEXIST;
             lstrcpy(buf,"");
             if (GetOpenFileName(&l)) {
-              g_sdata.script = (char *)GlobalAlloc(GPTR,lstrlen(buf)+3);
-              wsprintf(g_sdata.script,"\"%s\"",buf);
+              SetScript(buf);
               PushMRUFile(g_sdata.script);
               ResetObjects();
               CompileNSISScript();
