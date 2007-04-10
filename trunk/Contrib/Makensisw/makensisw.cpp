@@ -180,6 +180,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
       SendDlgItemMessage(hwndDlg,IDC_LOGWIN,WM_SETFONT,(WPARAM)hFont,0);
       RestoreWindowPos(g_sdata.hwnd);
       RestoreCompressor();
+      SetScript("");
       g_sdata.compressor = COMPRESSOR_NONE_SELECTED;
       g_sdata.script_cmd_args = (char *) GlobalAlloc(GPTR, 1);
       g_sdata.userSelectCompressor = FALSE;
