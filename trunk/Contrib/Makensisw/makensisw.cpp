@@ -76,7 +76,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmd
   return msg.wParam;
 }
 
-void SetScript(const char *script, bool clearArgs = true)
+void SetScript(const char *script, bool clearArgs /*= true*/)
 {
   if (g_sdata.script)
   {
@@ -85,12 +85,12 @@ void SetScript(const char *script, bool clearArgs = true)
 
   if (clearArgs)
   {
-    if (g_sdata.script_cmd_args);
+    if (g_sdata.script_cmd_args)
     {
       GlobalFree(g_sdata.script_cmd_args);
     }
 
-    g_sdata.script_cmd_args = (char *) GlobalAlloc(GPTR, 1)
+    g_sdata.script_cmd_args = (char *) GlobalAlloc(GPTR, 1);
   }
 
   g_sdata.script = (char *) GlobalAlloc(GPTR, lstrlen(script) + 1);
@@ -106,13 +106,6 @@ void AddScriptCmdArgs(const char *arg)
   lstrcat(g_sdata.script_cmd_args, " \"");
   lstrcat(g_sdata.script_cmd_args, arg);
   lstrcat(g_sdata.script_cmd_args, "\"");
-}
-
-void ResetInputScript()
-{
-  if(g_sdata.input_script) {
-    SetScript(g_sdata.input_script);
-  }
 }
 
 void ProcessCommandLine()
@@ -309,7 +302,6 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
             g_sdata.best_compressor_name = g_sdata.compressor_name;
             g_sdata.compressor_name = compressor_names[(int)COMPRESSOR_SCRIPT+2];
             ResetObjects();
-            ResetInputScript();
 
             CompileNSISScript();
             return TRUE;
@@ -360,8 +352,6 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
               char buf[1024];
 
               g_sdata.compressor_name = compressor_names[(int)COMPRESSOR_SCRIPT+1];
-              g_sdata.appended = false;
-              ResetInputScript();
 
               if(!lstrcmpi(g_sdata.best_compressor_name,compressor_names[this_compressor])) {
                 wsprintf(buf,COMPRESSOR_MESSAGE,g_sdata.best_compressor_name,thisSize);
@@ -374,13 +364,11 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
                 LogMessage(g_sdata.hwnd, g_sdata.compressor_stats);
               }
               DeleteFile(temp_file_name);
-              ResetInputScript();
               lstrcpy(g_sdata.compressor_stats,"");
             }
             else {
               g_sdata.compressor_name = compressor_names[this_compressor+1];
               ResetObjects();
-              ResetInputScript();
 
               CompileNSISScript();
               return TRUE;
@@ -738,9 +726,9 @@ DWORD WINAPI MakeNSISProc(LPVOID p) {
   si.hStdOutput = newstdout;
   si.hStdError = newstdout;
   si.hStdInput = newstdin;
-  if (!CreateProcess(NULL,g_sdata.script,NULL,NULL,TRUE,CREATE_NEW_CONSOLE,NULL,NULL,&si,&pi)) {
+  if (!CreateProcess(NULL,g_sdata.compile_command,NULL,NULL,TRUE,CREATE_NEW_CONSOLE,NULL,NULL,&si,&pi)) {
     char buf[MAX_STRING];
-    wsprintf(buf,"Could not execute:\r\n %s.",g_sdata.script);
+    wsprintf(buf,"Could not execute:\r\n %s.",g_sdata.compile_command);
     ErrorMessage(g_sdata.hwnd,buf);
     CloseHandle(newstdout);
     CloseHandle(read_stdout);
@@ -967,7 +955,6 @@ BOOL CALLBACK SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
         case IDOK:
         {
           ResetObjects();
-          ResetInputScript();
           ResetSymbols();
           g_sdata.symbols = GetSymbols(hwndDlg);
 
@@ -1300,7 +1287,6 @@ void SetCompressor(NCOMPRESSOR compressor)
     }
     CheckMenuItem(g_sdata.menu, command, MF_BYCOMMAND | MF_CHECKED);
     ResetObjects();
-    ResetInputScript();
   }
 }
 

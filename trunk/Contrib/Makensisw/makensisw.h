@@ -151,6 +151,7 @@ BOOL CALLBACK  AboutProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 BOOL CALLBACK  SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 BOOL CALLBACK  SymbolSetProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 BOOL CALLBACK  CompressorProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+void           SetScript(const char *script, bool clearArgs = true);
 void           CompileNSISScript();
 char*          BuildSymbols();
 void           SetCompressor(NCOMPRESSOR);
@@ -165,6 +166,7 @@ void           SaveMRUList();
 typedef struct NSISScriptData {
   char *script;
   char *script_cmd_args;
+  char *compile_command;
   char *output_exe;
   char *input_script;
   char *branding;
@@ -174,7 +176,6 @@ typedef struct NSISScriptData {
   BOOL userSelectCompressor;
   DWORD logLength;
   DWORD warnings;
-  BOOL appended;
   HINSTANCE hInstance;
   HWND hwnd;
   HMENU menu;
