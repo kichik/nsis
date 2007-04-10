@@ -33,9 +33,10 @@ char g_mru_list[MRU_LIST_SIZE][MAX_PATH] = { "", "", "", "", "" };
 extern NSCRIPTDATA g_sdata;
 extern char *compressor_names[];
 
-int SetArgv(char *cmdLine, int *argc, char ***argv)
+int SetArgv(const char *cmdLine, int *argc, char ***argv)
 {
-  char *p, *arg, *argSpace;
+  const char *p;
+  char *arg, *argSpace;
   int size, argSpaceSize, inquote, copy, slashes;
 
   size = 2;
@@ -280,10 +281,9 @@ void CompileNSISScript() {
     }
 
     s = (char *)GlobalAlloc(GPTR, lstrlen(g_sdata.script)+lstrlen(symbols)+lstrlen(compressor)+sizeof(EXENAME)+sizeof(" /NOTIFYHWND  ")+23);
-    wsprintf(s,"%s %s%s /NOTIFYHWND %d -- %s",EXENAME,compressor,symbols,g_sdata.hwnd,g_sdata.script);
+    wsprintf(s,"%s %s%s /NOTIFYHWND %d %s -- \"%s\"",EXENAME,compressor,symbols,g_sdata.hwnd,g_sdata.script_cmd_args,g_sdata.script);
     GlobalFree(symbols);
-    if (g_sdata.script_alloced) GlobalFree(g_sdata.script);
-    g_sdata.script_alloced = true;
+    if (g_sdata.script) GlobalFree(g_sdata.script);
     g_sdata.script = s;
     g_sdata.appended = TRUE;
   }
@@ -701,7 +701,6 @@ BOOL IsValidFile(char *fname)
 void PushMRUFile(char* fname)
 {
   int i;
-  char buf[MAX_PATH+1];
   DWORD   rv;
   char*  file_part;
   char full_file_name[MAX_PATH+1];
@@ -710,16 +709,8 @@ void PushMRUFile(char* fname)
     return;
   }
 
-  if(fname[0] == '"') {
-    fname++;
-  }
-
-  lstrcpy(buf,fname);
-  if(buf[lstrlen(buf)-1] == '"') {
-    buf[lstrlen(buf)-1] = '\0';
-  }
   my_memset(full_file_name,0,sizeof(full_file_name));
-  rv = GetFullPathName(buf,sizeof(full_file_name),full_file_name,&file_part);
+  rv = GetFullPathName(fname,sizeof(full_file_name),full_file_name,&file_part);
   if (rv == 0) {
     return;
   }

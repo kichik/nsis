@@ -163,14 +163,15 @@ void           RestoreMRUList();
 void           SaveMRUList();
 
 typedef struct NSISScriptData {
-  bool script_alloced;
   char *script;
+  char *script_cmd_args;
   char *output_exe;
   char *input_script;
   char *branding;
   char *brandingv;
   char **symbols;
   int retcode;
+  BOOL userSelectCompressor;
   DWORD logLength;
   DWORD warnings;
   BOOL appended;
