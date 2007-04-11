@@ -392,13 +392,6 @@ int generate_unicons_offsets(unsigned char* exeHeader, size_t exeHeaderSize, uns
 }
 #endif // NSIS_CONFIG_UNINSTALL_SUPPORT
 
-// returns the number of WCHARs in str including null charcter
-size_t WCStrLen(const WCHAR* szwStr) {
-  size_t i;
-  for (i = 0; szwStr[i]; i++);
-  return i+1;
-}
-
 #ifndef _WIN32
 char *CharPrev(const char *s, const char *p) {
   if (!s || !p || p < s)
