@@ -451,7 +451,7 @@ int WideCharToMultiByte(UINT CodePage, DWORD dwFlags, LPCWSTR lpWideCharStr,
   }
 
   if (cchWideChar < 0) {
-    cchWideChar = (int) WCStrLen(lpWideCharStr); // including null char
+    cchWideChar = (int) winchar_strlen(lpWideCharStr) + 1;
   }
 
   if (cbMultiByte == 0) {
