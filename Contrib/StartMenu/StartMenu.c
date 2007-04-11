@@ -433,7 +433,7 @@ void AddFolderFromReg(int nFolder)
         {
           if (*(WORD*)FileData.cFileName != *(WORD*)".." || FileData.cFileName[2])
           {
-            if (SendMessage(g_hwDirList, LB_FINDSTRINGEXACT, -1, (LPARAM)FileData.cFileName) == LB_ERR)
+            if (SendMessage(g_hwDirList, LB_FINDSTRINGEXACT, (WPARAM) -1, (LPARAM)FileData.cFileName) == LB_ERR)
               SendMessage(g_hwDirList, LB_ADDSTRING, 0, (LPARAM)FileData.cFileName);
             /*idx = */
             /*SendMessage(hwDirList, LB_SETITEMDATA, (WPARAM)idx,
