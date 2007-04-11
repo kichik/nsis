@@ -47,7 +47,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       }
       // select the current language
       if (selected_language)
-        SendDlgItemMessage(hwndDlg, IDC_LANGUAGE, CB_SELECTSTRING, -1, (LPARAM) selected_language);
+        SendDlgItemMessage(hwndDlg, IDC_LANGUAGE, CB_SELECTSTRING, (WPARAM) -1, (LPARAM) selected_language);
       else
         SendDlgItemMessage(hwndDlg, IDC_LANGUAGE, CB_SETCURSEL, 0, 0);
       // set texts
