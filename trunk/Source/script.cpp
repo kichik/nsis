@@ -4735,7 +4735,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             {
               // get VS_FIXEDFILEINFO from VS_VERSIONINFO
               WCHAR *szKey = (WCHAR *)(ver + sizeof(WORD) * 3);
-              int len = WCStrLen(szKey) * sizeof(WCHAR) + sizeof(WORD) * 3;
+              int len = (winchar_strlen(szKey) + 1) * sizeof(WCHAR) + sizeof(WORD) * 3;
               len = (len + 3) & ~3; // align on DWORD boundry
               VS_FIXEDFILEINFO *verinfo = (VS_FIXEDFILEINFO *)(ver + len);
               if (versize > len && verinfo->dwSignature == VS_FFI_SIGNATURE)
