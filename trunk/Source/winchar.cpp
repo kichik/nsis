@@ -82,7 +82,7 @@ WCHAR *winchar_strncpy(WCHAR *ws1, const WCHAR *ws2, size_t n)
   return ret;
 }
 
-size_t winchar_strlen(WCHAR *ws)
+size_t winchar_strlen(const WCHAR *ws)
 {
   size_t len = 0;
 
@@ -94,7 +94,7 @@ size_t winchar_strlen(WCHAR *ws)
   return len;
 }
 
-WCHAR *winchar_strdup(WCHAR *ws)
+WCHAR *winchar_strdup(const WCHAR *ws)
 {
   WCHAR *dup = new WCHAR[winchar_strlen(ws) + 1];
   winchar_strcpy(dup, ws);
