@@ -185,7 +185,7 @@ line sub[] = {
 };
 
 BOOL CALLBACK DialogProc(HWND hwndDlg,UINT uMsg,WPARAM wParam,LPARAM lParam) {
-	int i;
+	size_t i;
 	switch (uMsg) {
 	case WM_INITDIALOG:
 		SendMessage(hwndDlg, WM_SETICON, 0, 0);
