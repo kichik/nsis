@@ -53,12 +53,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
             {
               wsprintf(valname, "%u.mode", j);
               l = sizeof(mode);
-              if (FAILED(RegQueryValueEx(key, valname, NULL, &t, mode, &l)) || t != REG_SZ)
+              if (FAILED(RegQueryValueEx(key, valname, NULL, &t, (LPBYTE) mode, &l)) || t != REG_SZ)
                 continue;
 
               wsprintf(valname, "%u.file", j);
               l = STR_SIZE;
-              if (FAILED(RegQueryValueEx(key, valname, NULL, &t, file, &l)) || t != REG_SZ)
+              if (FAILED(RegQueryValueEx(key, valname, NULL, &t, (LPBYTE) file, &l)) || t != REG_SZ)
                 continue;
 
               RunSelf(mode[0], file);
