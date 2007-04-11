@@ -148,10 +148,10 @@ void ProcessCommandLine()
       else
       {
         SetScript(argv[i], false);
+        PushMRUFile(g_sdata.script);
+        break;
       }
     }
-
-    PushMRUFile(g_sdata.script);
   }
 
   if (argSpaceSize)
