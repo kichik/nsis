@@ -163,7 +163,7 @@ void CALLBACK TimeProc(UINT uID,
   // Transparency value aquired, and could be set...
   if ((call >= 0) && nt50)
     SetLayeredWindowAttributesProc((HWND) dwUser, keycolor,
-                                   call, alphaparam);
+                                   (BYTE) call, alphaparam);
 
   // Time is running out...
   timeleft--;
@@ -254,7 +254,7 @@ void __declspec(dllexport) show(HWND hwndParent, int string_size,
                                                                 "SetLayeredWindowAttributes");
           // Use win2k method
           SetLayeredWindowAttributesProc(myWnd, keycolor,
-                                         (fadein_val > 0) ? (0) : (255),
+                                         (BYTE) ((fadein_val > 0) ? (0) : (255)),
                                          alphaparam);
         } else if (keycolor != -1) {
           // transparency mode                                
