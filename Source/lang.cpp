@@ -518,7 +518,7 @@ int CEXEBuild::GenerateLangTables() {
         if (dlg) { \
           CDialogTemplate td(dlg); \
           res_editor->FreeResource(dlg); \
-          td.SetFont(build_font, build_font_size); \
+          td.SetFont(build_font, (WORD) build_font_size); \
           DWORD dwSize; \
           dlg = td.Save(dwSize); \
           res_editor->UpdateResourceA(RT_DIALOG, MAKEINTRESOURCE(id), NSIS_DEFAULT_LANG, dlg, dwSize); \
@@ -573,7 +573,7 @@ int CEXEBuild::GenerateLangTables() {
           if (dlg) { \
             CDialogTemplate td(dlg,lt[i].nlf.m_uCodePage); \
             res_editor->FreeResource(dlg); \
-            if (font) td.SetFont(font, lt[i].nlf.m_iFontSize); \
+            if (font) td.SetFont(font, (WORD) lt[i].nlf.m_iFontSize); \
             if (lt[i].nlf.m_bRTL) { \
               td.ConvertToRTL(); \
               DialogItemTemplate* dir = td.GetItem(IDC_DIR); \
@@ -619,7 +619,7 @@ int CEXEBuild::GenerateLangTables() {
 
   // Add all installer language strings
   int j, l, tabsset;
-  struct langstring* lang_strings;
+  struct langstring* lang_strings = NULL;
   TinyGrowBuf *string_ptrs = new TinyGrowBuf[num_lang_tables];
 
   tabsset = 1;
@@ -671,7 +671,7 @@ int CEXEBuild::GenerateLangTables() {
               sprintf(fn, "LangString %s", lsn);
               curfilename = fn;
               linecnt = lt[i].lang_id;
-              *ptr = add_string(str, lang_strings[j].process, lt[i].nlf.m_uCodePage);
+              *ptr = add_string(str, lang_strings[j].process, (WORD) lt[i].nlf.m_uCodePage);
               curfilename = 0;
               // Indicate that we should check again for any newly referenced language strings
               tabsset++;
@@ -783,7 +783,7 @@ int CEXEBuild::GenerateLangTables() {
               sprintf(fn, "LangString %s", lsn);
               curfilename = fn;
               linecnt = lt[i].lang_id;
-              *ptr = add_string(str, lang_strings[j].process, lt[i].nlf.m_uCodePage);
+              *ptr = add_string(str, lang_strings[j].process, (WORD) lt[i].nlf.m_uCodePage);
               curfilename = 0;
               // Indicate that we should check again for any newly referenced language strings
               tabsset++;
@@ -904,7 +904,7 @@ void CEXEBuild::FillLanguageTable(LanguageTable *table) {
           }
           else if (i == NLF_FONTSIZE)
           {
-            int font_size = *build_font ? build_font_size : table->nlf.m_iFontSize;
+            WORD font_size = *build_font ? (WORD) build_font_size : (WORD) table->nlf.m_iFontSize;
             if (font_size)
             {
               char temp[64];
@@ -923,7 +923,7 @@ void CEXEBuild::FillLanguageTable(LanguageTable *table) {
 }
 
 char SkipComments(FILE *f) {
-  char c;
+  int c;
   while ((c = fgetc(f))) {
     while (c == '\n' || c == '\r') {
       c = fgetc(f); // Skip empty lines
@@ -935,7 +935,7 @@ char SkipComments(FILE *f) {
     }
     else break;
   }
-  return c;
+  return (char) c;
 }
 
 #ifndef _WIN32
