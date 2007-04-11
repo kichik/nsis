@@ -307,11 +307,11 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
             return TRUE;
           }
           else {
-            int this_compressor;
+            int this_compressor=0;
             int last_compressor;
             int i;
             HANDLE hPrev, hThis;
-            DWORD prevSize, thisSize;
+            DWORD prevSize=0, thisSize=0;
 
 
             for(i=(int)COMPRESSOR_SCRIPT+2; i<(int)COMPRESSOR_BEST; i++) {
@@ -1057,7 +1057,7 @@ BOOL CALLBACK SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
         {
           int n = SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_GETSELCOUNT, 0, 0);
           int *items = (int *)GlobalAlloc(GPTR, n*sizeof(int));
-          int rv = SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_GETSELITEMS, (WPARAM)n, (LPARAM)items);
+          SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_GETSELITEMS, (WPARAM)n, (LPARAM)items);
           int i;
           for(i=n-1;i>=0;i--) {
             SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_DELETESTRING, (WPARAM)items[i], 0);

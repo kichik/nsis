@@ -168,7 +168,7 @@ void SaveVersionHeader (GrowBuf &strm, WORD wLength, WORD wValueLength, WORD wTy
     
     strm.add (&wValueLength, sizeof (wValueLength));
     strm.add (&wType, sizeof (wType));
-    keyLen = (winchar_strlen(key) + 1) * sizeof (WCHAR);
+    keyLen = WORD((winchar_strlen(key) + 1) * sizeof (WCHAR));
     strm.add ((void*)key, keyLen);
     
     PadStream(strm);
@@ -177,7 +177,7 @@ void SaveVersionHeader (GrowBuf &strm, WORD wLength, WORD wValueLength, WORD wTy
     {
         valueLen = wValueLength;
         if ( wType == 1 )
-            valueLen = valueLen * sizeof (WCHAR);
+            valueLen = valueLen * WORD(sizeof (WCHAR));
         strm.add (value, valueLen);
     }
 }
@@ -213,15 +213,15 @@ void CResourceVersionInfo::ExportToStream(GrowBuf &strm, int Index)
         p = stringInfoStream.getlen();
         KeyName = winchar_fromansi(pChildStrings->getname(i), codepage);
         KeyValue = winchar_fromansi(pChildStrings->getvalue(i), codepage);
-        SaveVersionHeader (stringInfoStream, 0, winchar_strlen(KeyValue) + 1, 1, KeyName, (void*)KeyValue);
+        SaveVersionHeader (stringInfoStream, 0, WORD(winchar_strlen(KeyValue) + 1), 1, KeyName, (void*)KeyValue);
         delete [] KeyName;
         delete [] KeyValue;
-        wSize = stringInfoStream.getlen() - p;
+        wSize = WORD(stringInfoStream.getlen() - p);
         
         *(WORD*)((PBYTE)stringInfoStream.get()+p)=wSize;
       }
       
-      wSize = stringInfoStream.getlen();
+      wSize = WORD(stringInfoStream.getlen());
       *(WORD*)((PBYTE)stringInfoStream.get())=wSize;
       
       PadStream (strm);
@@ -230,7 +230,7 @@ void CResourceVersionInfo::ExportToStream(GrowBuf &strm, int Index)
       SaveVersionHeader (strm, 0, 0, 0, KeyName, &ZEROS);
       delete [] KeyName;
       strm.add (stringInfoStream.get(), stringInfoStream.getlen());
-      wSize = strm.getlen() - p;
+      wSize = WORD(strm.getlen() - p);
       
       *(WORD*)((PBYTE)strm.get()+p)=wSize;
     }
@@ -263,17 +263,17 @@ void CResourceVersionInfo::ExportToStream(GrowBuf &strm, int Index)
         }
       }
       
-      wSize = strm.getlen() - p1;
+      wSize = WORD(strm.getlen() - p1);
       *(WORD*)((PBYTE)strm.get()+p1)=wSize;
-      wSize = sizeof (int) * m_ChildStringLists.getnum();
+      wSize = WORD(sizeof (int) * m_ChildStringLists.getnum());
       p1+=sizeof(WORD);
       *(WORD*)((PBYTE)strm.get()+p1)=wSize;
       
-      wSize = strm.getlen() - p;
+      wSize = WORD(strm.getlen() - p);
       *(WORD*)((PBYTE)strm.get()+p)=wSize;
     }
     
-    wSize = strm.getlen();
+    wSize = WORD(strm.getlen());
     *(WORD*)((PBYTE)strm.get())=wSize;
 }
 
