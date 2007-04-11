@@ -435,7 +435,7 @@ char** LoadSymbolSet(char *name)
       DWORD t;
       DWORD bufSize;
       DWORD i = 0;
-      HGLOBAL hMem;
+      HGLOBAL hMem = NULL;
 
       while(TRUE) {
         l = 0;
@@ -582,7 +582,6 @@ int InitBranding() {
     }
     char szBuf[1024];
     DWORD dwRead = 1;
-    DWORD dwExit = !STILL_ACTIVE;
     if (WaitForSingleObject(pi.hProcess,10000)!=WAIT_OBJECT_0) {
       return 0;
     }
