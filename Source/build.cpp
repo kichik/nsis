@@ -441,16 +441,16 @@ int CEXEBuild::preprocess_string(char *out, const char *in, WORD codepage/*=CP_A
       int l = np - p;
       while (l--)
       {
-        int i = (unsigned char)*p++;
+        unsigned char i = (unsigned char)*p++;
         if (i >= NS_CODES_START) {
           *out++ = (char)NS_SKIP_CODE;
         }
-        *out++=i;
+        *out++=(char)i;
       }
       continue;
     }
 
-    int i = (unsigned char)*p;
+    unsigned char i = (unsigned char)*p;
 
     p=np;
 
@@ -579,7 +579,7 @@ int CEXEBuild::preprocess_string(char *out, const char *in, WORD codepage/*=CP_A
         }
       }
     }
-    *out++=i;
+    *out++=(char)i;
   }
   *out=0;
   return 0;
