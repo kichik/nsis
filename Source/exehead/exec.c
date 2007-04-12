@@ -1064,6 +1064,19 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         char *buf0=GetStringFromParm(0x00);
         char *buf1=GetStringFromParm(0x11);
         log_printf3("CopyFiles \"%s\"->\"%s\"",buf0,buf1);
+
+        if (!file_exists(buf0))
+        {
+          // workaround for bug #774966
+          //
+          // on nt4, SHFileOperation silently fails if the source
+          // file doesn't exist. do a manual check instead.
+
+          update_status_text(LANG_COPYFAILED,0);
+          exec_error++;
+          break;
+        }
+
         op.hwnd=g_hwnd;
         op.wFunc=FO_COPY;
         buf0[mystrlen(buf0)+1]=0;
