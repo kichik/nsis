@@ -104,11 +104,23 @@ The Windows temp directory could be located on any volume, so you cannot use thi
 
 LIBRARY_SHELL_EXTENSION
 
-\b Define this before inserting InstallLib macro to call SHChangeNotify with SHCNE_ASSOCCHANGED after registration. Use this to refresh the shell when installing a shell extension or when changing file associations.
+\b Define this before inserting InstallLib macro to call SHChangeNotify with SHCNE_ASSOCCHANGED after registration.
+
+\b Use this to refresh the shell when installing a shell extension or when changing file associations.
 
 LIBRARY_COM
 
-\b Define this before inserting InstallLib macro to call CoFreeUnusedLibraries after registration. Use this for unloading all unnecessary libraries from memory when installing COM libraries.
+\b Define this before inserting InstallLib macro to call CoFreeUnusedLibraries after registration.
+
+\b Use this for unloading all unnecessary libraries from memory when installing COM libraries.
+
+LIBRARY_IGNORE_VERSION
+
+\b Define this before inserting InstallLib macro to ignore version information in the file and always install it, even if it already exists.
+
+\b Use this when an older or specific version is required.
+
+\b Not recommended for DLLs installed to $SYSDIR.
 
 \S1{} Notes
 
