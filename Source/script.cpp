@@ -5975,7 +5975,7 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int *total
 
       SCRIPT_MSG("%sFile: Descending to: \"%s\"\n", generatecode ? "" : "Reserve", new_spec.c_str());
 
-      if (do_add_file_create_dir(*dirs_itr, new_dir, attrib) != PS_OK) {
+      if (do_add_file_create_dir(dir + '\\' + *dirs_itr, new_dir, attrib) != PS_OK) {
         return PS_ERROR;
       }
 
@@ -6199,10 +6199,13 @@ int CEXEBuild::add_file(const string& dir, const string& file, int attrib, const
       ent.offsets[4]=0;
       ent.offsets[5]=0;
 
-      a=add_entry(&ent);
-      if (a != PS_OK)
+      if (ent.offsets[1] != INVALID_FILE_ATTRIBUTES)
       {
-        return a;
+        a=add_entry(&ent);
+        if (a != PS_OK)
+        {
+          return a;
+        }
       }
 #endif
     }
@@ -6233,8 +6236,12 @@ int CEXEBuild::do_add_file_create_dir(const string& local_dir, const string& dir
 
     DWORD attr = GetFileAttributes(local_dir.c_str());
 
-    if (add_entry_direct(EW_SETFILEATTRIBUTES, ndc, attr) != PS_OK) {
-      return PS_ERROR;
+    if (attr != INVALID_FILE_ATTRIBUTES)
+    {
+      if (add_entry_direct(EW_SETFILEATTRIBUTES, ndc, attr) != PS_OK)
+      {
+        return PS_ERROR;
+      }
     }
   }
 #endif
