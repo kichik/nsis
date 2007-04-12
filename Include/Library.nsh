@@ -256,100 +256,104 @@
   ;------------------------
   ;Get version information
 
-  !insertmacro __InstallLib_Helper_GetVersion D "${LOCALFILE}"
+  !ifndef LIBRARY_IGNORE_VERSION
 
-  !ifdef LIBRARY_VERSION_FILENOTFOUND
-    !error "InstallLib: The library ${LOCALFILE} could not be found."
-  !endif
+    !insertmacro __InstallLib_Helper_GetVersion D "${LOCALFILE}"
 
-  !ifndef LIBRARY_VERSION_NONE
+    !ifdef LIBRARY_VERSION_FILENOTFOUND
+      !error "InstallLib: The library ${LOCALFILE} could not be found."
+    !endif
 
-    !define LIBRARY_DEFINE_UPGRADE_LABEL
-    !define LIBRARY_DEFINE_REGISTER_LABEL
+    !ifndef LIBRARY_VERSION_NONE
 
-    StrCpy $R0 ${LIBRARY_VERSION_HIGH}
-    StrCpy $R1 ${LIBRARY_VERSION_LOW}
+      !define LIBRARY_DEFINE_UPGRADE_LABEL
+      !define LIBRARY_DEFINE_REGISTER_LABEL
 
-    GetDLLVersion $R4 $R2 $R3
+      StrCpy $R0 ${LIBRARY_VERSION_HIGH}
+      StrCpy $R1 ${LIBRARY_VERSION_LOW}
 
-    !undef LIBRARY_VERSION_HIGH
-    !undef LIBRARY_VERSION_LOW
+      GetDLLVersion $R4 $R2 $R3
 
-    !ifndef INSTALLLIB_LIBTYPE_TLB & INSTALLLIB_LIBTYPE_REGDLLTLB
+      !undef LIBRARY_VERSION_HIGH
+      !undef LIBRARY_VERSION_LOW
 
-      IntCmpU $R0 $R2 0 "installlib.register_${INSTALLLIB_UNIQUE}" "installlib.upgrade_${INSTALLLIB_UNIQUE}"
-      IntCmpU $R1 $R3 "installlib.register_${INSTALLLIB_UNIQUE}" "installlib.register_${INSTALLLIB_UNIQUE}" \
-        "installlib.upgrade_${INSTALLLIB_UNIQUE}"
-
-    !else
-
-      !insertmacro __InstallLib_Helper_GetVersion T "${LOCALFILE}"
-
-      !ifdef LIBRARY_VERSION_FILENOTFOUND
-        !error "InstallLib: The library ${LOCALFILE} could not be found."
-      !endif
-
-      !ifndef LIBRARY_VERSION_NONE
-
-        IntCmpU $R0 $R2 0 "installlib.register_${INSTALLLIB_UNIQUE}" "installlib.upgrade_${INSTALLLIB_UNIQUE}"
-        IntCmpU $R1 $R3 0 "installlib.register_${INSTALLLIB_UNIQUE}" \
-          "installlib.upgrade_${INSTALLLIB_UNIQUE}"
-
-      !else
+      !ifndef INSTALLLIB_LIBTYPE_TLB & INSTALLLIB_LIBTYPE_REGDLLTLB
 
         IntCmpU $R0 $R2 0 "installlib.register_${INSTALLLIB_UNIQUE}" "installlib.upgrade_${INSTALLLIB_UNIQUE}"
         IntCmpU $R1 $R3 "installlib.register_${INSTALLLIB_UNIQUE}" "installlib.register_${INSTALLLIB_UNIQUE}" \
           "installlib.upgrade_${INSTALLLIB_UNIQUE}"
 
-      !endif
+      !else
 
-    !endif
+        !insertmacro __InstallLib_Helper_GetVersion T "${LOCALFILE}"
 
-  !else
+        !ifdef LIBRARY_VERSION_FILENOTFOUND
+          !error "InstallLib: The library ${LOCALFILE} could not be found."
+        !endif
 
-    !undef LIBRARY_VERSION_NONE
+        !ifndef LIBRARY_VERSION_NONE
 
-    !ifdef INSTALLLIB_LIBTYPE_TLB | INSTALLLIB_LIBTYPE_REGDLLTLB
+          IntCmpU $R0 $R2 0 "installlib.register_${INSTALLLIB_UNIQUE}" "installlib.upgrade_${INSTALLLIB_UNIQUE}"
+          IntCmpU $R1 $R3 0 "installlib.register_${INSTALLLIB_UNIQUE}" \
+            "installlib.upgrade_${INSTALLLIB_UNIQUE}"
 
-      !insertmacro __InstallLib_Helper_GetVersion T "${LOCALFILE}"
+        !else
 
-    !endif
+          IntCmpU $R0 $R2 0 "installlib.register_${INSTALLLIB_UNIQUE}" "installlib.upgrade_${INSTALLLIB_UNIQUE}"
+          IntCmpU $R1 $R3 "installlib.register_${INSTALLLIB_UNIQUE}" "installlib.register_${INSTALLLIB_UNIQUE}" \
+            "installlib.upgrade_${INSTALLLIB_UNIQUE}"
 
-  !endif
-
-  !ifdef INSTALLLIB_LIBTYPE_TLB | INSTALLLIB_LIBTYPE_REGDLLTLB
-
-    !ifndef LIBRARY_VERSION_NONE
-
-      !ifndef LIBRARY_DEFINE_UPGRADE_LABEL
-
-        !define LIBRARY_DEFINE_UPGRADE_LABEL
+        !endif
 
       !endif
-
-      !ifndef LIBRARY_DEFINE_REGISTER_LABEL
-
-        !define LIBRARY_DEFINE_REGISTER_LABEL
-
-      !endif
-
-      StrCpy $R0 ${LIBRARY_VERSION_HIGH}
-      StrCpy $R1 ${LIBRARY_VERSION_LOW}
-
-      TypeLib::GetLibVersion $R4
-      Pop $R3
-      Pop $R2
-
-      IntCmpU $R0 $R2 0 "installlib.register_${INSTALLLIB_UNIQUE}" "installlib.upgrade_${INSTALLLIB_UNIQUE}"
-      IntCmpU $R1 $R3 "installlib.register_${INSTALLLIB_UNIQUE}" "installlib.register_${INSTALLLIB_UNIQUE}" \
-        "installlib.upgrade_${INSTALLLIB_UNIQUE}"
-
-      !undef LIBRARY_VERSION_HIGH
-      !undef LIBRARY_VERSION_LOW
 
     !else
 
       !undef LIBRARY_VERSION_NONE
+
+      !ifdef INSTALLLIB_LIBTYPE_TLB | INSTALLLIB_LIBTYPE_REGDLLTLB
+
+        !insertmacro __InstallLib_Helper_GetVersion T "${LOCALFILE}"
+
+      !endif
+
+    !endif
+
+    !ifdef INSTALLLIB_LIBTYPE_TLB | INSTALLLIB_LIBTYPE_REGDLLTLB
+
+      !ifndef LIBRARY_VERSION_NONE
+
+        !ifndef LIBRARY_DEFINE_UPGRADE_LABEL
+
+          !define LIBRARY_DEFINE_UPGRADE_LABEL
+
+        !endif
+
+        !ifndef LIBRARY_DEFINE_REGISTER_LABEL
+
+          !define LIBRARY_DEFINE_REGISTER_LABEL
+
+        !endif
+
+        StrCpy $R0 ${LIBRARY_VERSION_HIGH}
+        StrCpy $R1 ${LIBRARY_VERSION_LOW}
+
+        TypeLib::GetLibVersion $R4
+        Pop $R3
+        Pop $R2
+
+        IntCmpU $R0 $R2 0 "installlib.register_${INSTALLLIB_UNIQUE}" "installlib.upgrade_${INSTALLLIB_UNIQUE}"
+        IntCmpU $R1 $R3 "installlib.register_${INSTALLLIB_UNIQUE}" "installlib.register_${INSTALLLIB_UNIQUE}" \
+          "installlib.upgrade_${INSTALLLIB_UNIQUE}"
+
+        !undef LIBRARY_VERSION_HIGH
+        !undef LIBRARY_VERSION_LOW
+
+      !else
+
+        !undef LIBRARY_VERSION_NONE
+
+      !endif
 
     !endif
 
