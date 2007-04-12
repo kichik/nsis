@@ -100,6 +100,7 @@
   !insertmacro MUI_LANGUAGE "Irish"
   !insertmacro MUI_LANGUAGE "Uzbek"
   !insertmacro MUI_LANGUAGE "Galician"
+  !insertmacro MUI_LANGUAGE "Afrikaans"
 
 ;--------------------------------
 ;Reserve Files
