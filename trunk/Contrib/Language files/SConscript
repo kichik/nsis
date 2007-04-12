@@ -1,5 +1,6 @@
 languages = Split("""
 	Albanian.nlf
+	Afrikaans.nlf
 	Arabic.nlf
 	Basque.nlf
 	Belarusian.nlf
