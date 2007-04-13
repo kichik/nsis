@@ -22,6 +22,7 @@
 #include "exehead/fileform.h"
 #include "util.h"
 #include "strlist.h"
+#include "winchar.h"
 
 #ifndef _WIN32
 #  include <ctype.h>
