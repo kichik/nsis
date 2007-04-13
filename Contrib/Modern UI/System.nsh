@@ -1012,6 +1012,7 @@ Var /GLOBAL MUI_TEMP2
   !insertmacro MUI_UNSET MUI_FINISHPAGE_TEXT_REBOOT
   !insertmacro MUI_UNSET MUI_FINISHPAGE_TEXT_REBOOTNOW
   !insertmacro MUI_UNSET MUI_FINISHPAGE_TEXT_REBOOTLATER
+  !insertmacro MUI_UNSET MUI_FINISHPAGE_REBOOTLATER_DEFAULT
   !insertmacro MUI_UNSET MUI_FINISHPAGE_RUN
     !insertmacro MUI_UNSET MUI_FINISHPAGE_RUN_TEXT
     !insertmacro MUI_UNSET MUI_FINISHPAGE_RUN_PARAMETERS
@@ -1515,7 +1516,6 @@ Var /GLOBAL MUI_TEMP2
             !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "Bottom" "140"
           !endif
         !endif
-        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "State" "1"
         !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 5" "Type" "RadioButton"
         !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 5" "Text" "${MUI_FINISHPAGE_TEXT_REBOOTLATER}"
         !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 5" "Left" "120"
@@ -1526,6 +1526,11 @@ Var /GLOBAL MUI_TEMP2
         !else
           !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 5" "Top" "110"
           !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 5" "Bottom" "120"
+        !endif
+        !ifdef MUI_FINISHPAGE_REBOOTLATER_DEFAULT
+          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 5" "State" "1"
+        !else
+          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "State" "1"
         !endif
 
         Goto mui.finish_load
