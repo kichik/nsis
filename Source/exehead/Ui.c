@@ -543,6 +543,11 @@ nextPage:
       EnableNext(pflags & PF_NEXT_ENABLE);
       EnableWindow(m_hwndCancel, pflags & PF_CANCEL_ENABLE);
 
+      if (pflags & PF_CANCEL_ENABLE)
+        EnableMenuItem(GetSystemMenu(hwndDlg, FALSE), SC_CLOSE, MF_BYCOMMAND | MF_ENABLED);
+      else
+        EnableMenuItem(GetSystemMenu(hwndDlg, FALSE), SC_CLOSE, MF_BYCOMMAND | MF_GRAYED);
+
       SendMessage(hwndtmp, BM_SETSTYLE, BS_PUSHBUTTON, TRUE);
 
       if (g_exec_flags.abort)
@@ -635,14 +640,6 @@ skipPage:
   {
     SetWindowLong(hwndDlg, DWL_MSGRESULT, FALSE);
     return TRUE;
-  }
-  if (uMsg == WM_CLOSE && m_page == g_blocks[NB_PAGES].num - 1)
-  {
-    if (!IsWindowEnabled(m_hwndCancel))
-    {
-      uMsg = WM_COMMAND;
-      wParam = IDOK;
-    }
   }
   if (uMsg == WM_COMMAND)
   {
