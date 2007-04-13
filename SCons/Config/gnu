@@ -31,7 +31,6 @@ defenv['ALIGN_FLAG'] = '-Wl,--file-alignment,512'
 defenv['CPP_REQUIRES_STDLIB'] = 1
 defenv['SUBSYS_CON'] = '-Wl,--subsystem,console'
 defenv['MSVCRT_FLAG'] = ''
-defenv['IGNORE_VDTOR_WARN'] = '-Wno-non-virtual-dtor'
 
 ### helper functions
 
@@ -83,6 +82,7 @@ makensis_env = defenv.Clone()
 if not defenv['DEBUG']:
 	makensis_env.Append(CCFLAGS = '-O2')            # optimize
 makensis_env.Append(CCFLAGS = '-Wall')            # all warnings
+makensis_env.Append(CCFLAGS = '-Wno-non-virtual-dtor') # ignore virtual dtor warnings
 
 conf = FlagsConfigure(makensis_env)
 conf.CheckLinkFlag('-m32')                        # 
