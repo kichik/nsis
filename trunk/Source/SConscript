@@ -83,7 +83,6 @@ env.Append(CPPDEFINES = ['_WIN32_IE=0x0500'])
 
 lzma_env = env.Clone()
 lzma_env.Append(CPPDEFINES = ['COMPRESS_MF_BT'])
-lzma_env.Append(CCFLAGS = ['$IGNORE_VDTOR_WARN'])
 lzma_files = lzma_env.Object(lzma_files)
 
 ##### Compile makensis
