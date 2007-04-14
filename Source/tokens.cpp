@@ -194,6 +194,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_SETOVERWRITE,"SetOverwrite",1,0,"on|off|try|ifnewer|ifdiff",TP_ALL},
 {TOK_SETPLUGINUNLOAD,"SetPluginUnload",1,0,"(manual|alwaysoff)",TP_ALL},
 {TOK_SETREBOOTFLAG,"SetRebootFlag",1,0,"true|false",TP_CODE},
+{TOK_SETREGVIEW,"SetRegView",1,0,"32|64",TP_CODE},
 {TOK_SETSHELLVARCONTEXT,"SetShellVarContext",1,0,"all|current",TP_CODE},
 {TOK_SETSILENT,"SetSilent",1,0,"silent|normal",TP_CODE},
 {TOK_SHOWDETAILS,"ShowInstDetails",1,0,"(hide|show|nevershow)",TP_GLOBAL},
