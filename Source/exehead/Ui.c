@@ -234,7 +234,7 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
   LANGID (WINAPI *GUDUIL)();
   static const char guduil[] = "GetUserDefaultUILanguage";
 
-  GUDUIL = myGetProcAddress("KERNEL32.dll", guduil);
+  GUDUIL = myGetProcAddress("KERNEL32", guduil);
   if (GUDUIL)
   {
     // Windows ME/2000+
@@ -374,7 +374,7 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
 
 #ifdef NSIS_CONFIG_LICENSEPAGE
     { // load richedit DLL
-      static char str1[]="RichEd20.dll";
+      static char str1[]="RichEd20";
       static char str2[]="RichEdit20A";
       if (!LoadLibrary(str1))
       {
@@ -918,7 +918,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     {
       typedef HRESULT (WINAPI *SHAutoCompletePtr)(HWND, DWORD);
       SHAutoCompletePtr fSHAutoComplete;
-      static const char shlwapi[] = "shlwapi.dll";
+      static const char shlwapi[] = "shlwapi";
       static const char shac[] = "SHAutoComplete";
       fSHAutoComplete = (SHAutoCompletePtr) myGetProcAddress(shlwapi, shac);
       if (fSHAutoComplete)
@@ -994,7 +994,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     // Test for and use the GetDiskFreeSpaceEx API
     {
       BOOL (WINAPI *GDFSE)(LPCSTR, PULARGE_INTEGER, PULARGE_INTEGER, PULARGE_INTEGER) =
-          myGetProcAddress("KERNEL32.dll", "GetDiskFreeSpaceExA");
+          myGetProcAddress("KERNEL32", "GetDiskFreeSpaceExA");
       if (GDFSE)
       {
         ULARGE_INTEGER available64;

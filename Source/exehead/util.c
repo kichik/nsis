@@ -422,7 +422,7 @@ void NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
   BOOL fOk = 0;
   typedef BOOL (WINAPI *mfea_t)(LPCSTR lpExistingFileName,LPCSTR lpNewFileName,DWORD dwFlags);
   mfea_t mfea;
-  mfea=(mfea_t) myGetProcAddress("KERNEL32.dll","MoveFileExA");
+  mfea=(mfea_t) myGetProcAddress("KERNEL32","MoveFileExA");
   if (mfea)
   {
     fOk=mfea(pszExisting, pszNew, MOVEFILE_DELAY_UNTIL_REBOOT|MOVEFILE_REPLACE_EXISTING);
