@@ -23,7 +23,7 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab);
 #define GetNSISStringTT(strtab) GetNSISString(0, (strtab))
 #define GetNSISStringNP(strtab) ((const char *)g_blocks[NB_STRINGS].offset+(strtab))
 #define GetNSISTab(strtab) (strtab < 0 ? LANG_STR_TAB(strtab) : strtab)
-void NSISCALL myRegGetStr(HKEY root, const char *sub, const char *name, char *out);
+void NSISCALL myRegGetStr(HKEY root, const char *sub, const char *name, char *out, int x64);
 int NSISCALL myatoi(char *s);
 void NSISCALL myitoa(char *s, int d);
 char * NSISCALL mystrcpy(char *out, const char *in);

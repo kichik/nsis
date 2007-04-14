@@ -59,13 +59,13 @@ Constants can also be used in the \R{ainstalldir}{InstallDir} attribute.
 
 Note that some of the new constants will not work on every OS. For example, $CDBURN_AREA will only work on Windows XP and above. If it's used on Windows 98, it'll be empty. Unless mentioned otherwise, a constant should be available on every OS.
 
-\e{$PROGRAMFILES}
+\e{$PROGRAMFILES}, \e{$PROGRAMFILES32}, \e{$PROGRAMFILES64}
 
-The program files directory (usually C:\\Program Files but detected at runtime).
+The program files directory (usually C:\\Program Files but detected at runtime). On Windows x64, $PROGRAMFILES and $PROGRAMFILES32 point to \c{C:\\Program Files (x86)} while $PROGRAMFILES64 points to \c{C:\\Program Files}. Use $PROGRAMFILES64 when installing x64 applications.
 
-\e{$COMMONFILES}
+\e{$COMMONFILES}, \e{$COMMONFILES32}, \e{$COMMONFILES64}
 
-The common files directory. This is a directory for components that are shared across applications (usually C:\\Program Files\\Common Files but detected at runtime).
+The common files directory. This is a directory for components that are shared across applications (usually C:\\Program Files\\Common Files but detected at runtime). On Windows x64, $COMMONFILES and $COMMONFILES32 point to \c{C:\\Program Files (x86)\\Common Files} while $COMMONFILES64 points to \c{C:\\Program Files\\Common Files}. Use $COMMONFILES64 when installing x64 applications.
 
 \e{$DESKTOP}
 
