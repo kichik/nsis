@@ -125,13 +125,22 @@ static char * NSISCALL GetStringFromParm(int id_)
 }
 
 #ifdef NSIS_SUPPORT_REGISTRYFUNCTIONS
+REGSAM NSISCALL AlterRegistrySAM(REGSAM sam)
+{
+  if (g_exec_flags.alter_reg_view)
+  {
+    return sam | KEY_WOW64_64KEY;
+  }
+  return sam;
+}
+
 // based loosely on code from Tim Kosse
 // in win9x this isn't necessary (RegDeleteKey() can delete a tree of keys),
 // but in win2k you need to do this manually.
 static LONG NSISCALL myRegDeleteKeyEx(HKEY thiskey, LPCTSTR lpSubKey, int onlyifempty)
 {
   HKEY key;
-  int retval=RegOpenKeyEx(thiskey,lpSubKey,0,KEY_ENUMERATE_SUB_KEYS,&key);
+  int retval=RegOpenKeyEx(thiskey,lpSubKey,0,AlterRegistrySAM(KEY_ENUMERATE_SUB_KEYS),&key);
   if (retval==ERROR_SUCCESS)
   {
     // NB - don't change this to static (recursive function)
@@ -146,7 +155,16 @@ static LONG NSISCALL myRegDeleteKeyEx(HKEY thiskey, LPCTSTR lpSubKey, int onlyif
       if ((retval=myRegDeleteKeyEx(key,buffer,0)) != ERROR_SUCCESS) break;
     }
     RegCloseKey(key);
-    retval=RegDeleteKey(thiskey,lpSubKey);
+    {
+      typedef (WINAPI * RegDeleteKeyExAPtr)(HKEY, LPCTSTR, REGSAM, DWORD);
+      RegDeleteKeyExAPtr RDKE = (RegDeleteKeyExAPtr)
+        myGetProcAddress("ADVAPI32.dll","RegDeleteKeyExA");
+
+      if (RDKE)
+        retval=RDKE(thiskey,lpSubKey,AlterRegistrySAM(0),0);
+      else
+        retval=RegDeleteKey(thiskey,lpSubKey);
+    }
   }
   return retval;
 }
@@ -163,7 +181,7 @@ static HKEY NSISCALL GetRegRootKey(int hRootKey)
 static HKEY NSISCALL myRegOpenKey(REGSAM samDesired)
 {
   HKEY hKey;
-  if (RegOpenKeyEx(GetRegRootKey(parms[1]), GetStringFromParm(0x22), 0, samDesired, &hKey) == ERROR_SUCCESS)
+  if (RegOpenKeyEx(GetRegRootKey(parms[1]), GetStringFromParm(0x22), 0, AlterRegistrySAM(samDesired), &hKey) == ERROR_SUCCESS)
   {
     return hKey;
   }
@@ -1190,7 +1208,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         const char *rkn UNUSED=RegKeyHandleToName(rootkey);
 
         exec_error++;
-        if (RegCreateKeyEx(rootkey,buf1,0,0,REG_OPTION_NON_VOLATILE,KEY_SET_VALUE,0,&hKey,0) == ERROR_SUCCESS)
+        if (RegCreateKeyEx(rootkey,buf1,0,0,0,AlterRegistrySAM(KEY_SET_VALUE),0,&hKey,0) == ERROR_SUCCESS)
         {
           LPBYTE data = (LPBYTE) buf2;
           DWORD size = 0;

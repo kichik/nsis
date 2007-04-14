@@ -3555,6 +3555,17 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       if (process_jump(line,1,&ent.offsets[0])) PRINTHELP()
       SCRIPT_MSG("Goto: %s\n",line.gettoken_str(1));
     return add_entry(&ent);
+    case TOK_SETREGVIEW:
+    {
+      ent.which=EW_SETFLAG;
+      ent.offsets[0]=FLAG_OFFSET(alter_reg_view);
+      // "64" results in setting the flag to 1 which alters the view
+      int k=line.gettoken_enum(1,"32\0" "64\0");
+      if (k<0) PRINTHELP()
+      ent.offsets[1]=add_intstring(k);
+      SCRIPT_MSG("SetRegView: %s\n",line.gettoken_str(1));
+    }
+    return add_entry(&ent);
     case TOK_SETSHELLVARCONTEXT:
     {
       ent.which=EW_SETFLAG;
