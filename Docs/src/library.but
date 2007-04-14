@@ -102,25 +102,27 @@ The Windows temp directory could be located on any volume, so you cannot use thi
 
 \S1{} Options
 
-LIBRARY_X64
+\R{define}{Define} any of the following before inserting the InstallLib macro to modify its behavior as specified.
+
+\S2{} LIBRARY_X64
 
 \b Installs a DLL built for Windows x64.
 
 \b \\<b\\>Warning:\\</b\\> this resets \R{setregview}{RegSetView} and file system redirection.
 
-LIBRARY_SHELL_EXTENSION
+\S2{} LIBRARY_SHELL_EXTENSION
 
 \b Define this before inserting InstallLib macro to call SHChangeNotify with SHCNE_ASSOCCHANGED after registration.
 
 \b Use this to refresh the shell when installing a shell extension or when changing file associations.
 
-LIBRARY_COM
+\S2{} LIBRARY_COM
 
 \b Define this before inserting InstallLib macro to call CoFreeUnusedLibraries after registration.
 
 \b Use this for unloading all unnecessary libraries from memory when installing COM libraries.
 
-LIBRARY_IGNORE_VERSION
+\S2{} LIBRARY_IGNORE_VERSION
 
 \b Define this before inserting InstallLib macro to ignore version information in the file and always install it, even if it already exists.
 
@@ -219,17 +221,19 @@ Location of the library
 
 \S1{} Options
 
-LIBRARY_X64
+\R{define}{Define} any of the following before inserting the UnInstallLib macro to modify its behavior as specified.
+
+\S2{} LIBRARY_X64
 
 \b Uninstalls a DLL built for Windows x64.
 
 \b \\<b\\>Warning:\\</b\\> this resets \R{setregview}{RegSetView} and file system redirection.
 
-LIBRARY_SHELL_EXTENSION
+\S2{} LIBRARY_SHELL_EXTENSION
 
 \b Define this before inserting UninstallLib macro to call SHChangeNotify with SHCNE_ASSOCCHANGED after unregistration. Use this to refresh the shell when uninstalling a shell extension or when changing file associations.
 
-LIBRARY_COM
+\S2{} LIBRARY_COM
 
 \b Define this before inserting UninstallLib macro to call CoFreeUnusedLibraries after unregistration. Use this for unloading all unnecessary libraries from memory when uninstalling COM libraries.
 
