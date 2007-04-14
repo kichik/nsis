@@ -515,11 +515,11 @@ void NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
 }
 #endif
 
-void NSISCALL myRegGetStr(HKEY root, const char *sub, const char *name, char *out)
+void NSISCALL myRegGetStr(HKEY root, const char *sub, const char *name, char *out, int x64)
 {
   HKEY hKey;
   *out=0;
-  if (RegOpenKeyEx(root,sub,0,KEY_READ,&hKey) == ERROR_SUCCESS)
+  if (RegOpenKeyEx(root,sub,0,KEY_READ|(x64?KEY_WOW64_64KEY:0),&hKey) == ERROR_SUCCESS)
   {
     DWORD l = NSIS_MAX_STRLEN;
     DWORD t;
@@ -632,6 +632,24 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
           x = 4;
         }
 
+        if (fldrs[0] & 0x80)
+        {
+          myRegGetStr(HKEY_LOCAL_MACHINE, SYSREGKEY, GetNSISStringNP(fldrs[0] & 0x3F), out, fldrs[0] & 0x40);
+          if (!*out)
+            mystrcpy(out, GetNSISStringNP(fldrs[2]));
+          x = 0;
+        }
+        else if (fldrs[0] == CSIDL_SYSTEM)
+        {
+          GetSystemDirectory(out, NSIS_MAX_STRLEN);
+          x = 0;
+        }
+        else if (fldrs[0] == CSIDL_WINDOWS)
+        {
+          GetWindowsDirectory(out, NSIS_MAX_STRLEN);
+          x = 0;
+        }
+
         while (x--)
         {
           if (!SHGetSpecialFolderLocation(g_hwnd, fldrs[x], &idl))
@@ -644,29 +662,6 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
             }
           }
           *out=0;
-        }
-
-        // resort to old registry methods, only when CSIDL failed
-        if (!*out)
-        {
-          if (fldrs[0] == CSIDL_PROGRAM_FILES_COMMON)
-          {
-            myRegGetStr(HKEY_LOCAL_MACHINE, SYSREGKEY, "CommonFilesDir", out);
-          }
-          else if (fldrs[0] == CSIDL_PROGRAM_FILES)
-          {
-            myRegGetStr(HKEY_LOCAL_MACHINE, SYSREGKEY, "ProgramFilesDir", out);
-            if (!*out)
-              mystrcpy(out, "C:\\Program Files");
-          }
-          else if (fldrs[0] == CSIDL_SYSTEM)
-          {
-            GetSystemDirectory(out, NSIS_MAX_STRLEN);
-          }
-          else if (fldrs[0] == CSIDL_WINDOWS)
-          {
-            GetWindowsDirectory(out, NSIS_MAX_STRLEN);
-          }
         }
 
         if (*out)

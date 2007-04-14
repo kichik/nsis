@@ -250,14 +250,14 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
 
     {
       // Windows 9x
-      myRegGetStr(HKEY_CURRENT_USER, reg_9x_locale, NULL, g_tmp);
+      myRegGetStr(HKEY_CURRENT_USER, reg_9x_locale, NULL, g_tmp, 0);
     }
 
     if (!g_tmp[0])
     {
       // Windows NT
       // This key exists on 9x as well, so it's only read if ResourceLocale wasn't found
-      myRegGetStr(HKEY_USERS, reg_nt_locale_key, reg_nt_locale_val, g_tmp);
+      myRegGetStr(HKEY_USERS, reg_nt_locale_key, reg_nt_locale_val, g_tmp, 0);
     }
 
     mystrcat(state_language, g_tmp);
@@ -278,7 +278,8 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
         (HKEY)header->install_reg_rootkey,
         GetNSISStringNP(header->install_reg_key_ptr),
         GetNSISStringNP(header->install_reg_value_ptr),
-        ps_tmpbuf
+        ps_tmpbuf,
+        0
       );
       if (ps_tmpbuf[0])
       {

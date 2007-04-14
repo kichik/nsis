@@ -309,13 +309,11 @@ CEXEBuild::CEXEBuild() :
 
   m_ShellConstants.add("WINDIR",CSIDL_WINDOWS,CSIDL_WINDOWS);
   m_ShellConstants.add("SYSDIR",CSIDL_SYSTEM,CSIDL_SYSTEM);
-  m_ShellConstants.add("PROGRAMFILES",CSIDL_PROGRAM_FILES, CSIDL_PROGRAM_FILES);
   m_ShellConstants.add("SMPROGRAMS",CSIDL_PROGRAMS, CSIDL_COMMON_PROGRAMS);
   m_ShellConstants.add("SMSTARTUP",CSIDL_STARTUP, CSIDL_COMMON_STARTUP);
   m_ShellConstants.add("DESKTOP",CSIDL_DESKTOPDIRECTORY, CSIDL_COMMON_DESKTOPDIRECTORY);
   m_ShellConstants.add("STARTMENU",CSIDL_STARTMENU, CSIDL_COMMON_STARTMENU);
   m_ShellConstants.add("QUICKLAUNCH", CSIDL_APPDATA, CSIDL_APPDATA);
-  m_ShellConstants.add("COMMONFILES",CSIDL_PROGRAM_FILES_COMMON, CSIDL_PROGRAM_FILES_COMMON);
   m_ShellConstants.add("DOCUMENTS",CSIDL_PERSONAL, CSIDL_COMMON_DOCUMENTS);
   m_ShellConstants.add("SENDTO",CSIDL_SENDTO, CSIDL_SENDTO);
   m_ShellConstants.add("RECENT",CSIDL_RECENT, CSIDL_RECENT);
@@ -338,6 +336,27 @@ CEXEBuild::CEXEBuild() :
   m_ShellConstants.add("RESOURCES", CSIDL_RESOURCES, CSIDL_RESOURCES);
   m_ShellConstants.add("RESOURCES_LOCALIZED", CSIDL_RESOURCES_LOCALIZED, CSIDL_RESOURCES_LOCALIZED);
   m_ShellConstants.add("CDBURN_AREA", CSIDL_CDBURN_AREA, CSIDL_CDBURN_AREA);
+
+  unsigned int program_files = add_string("ProgramFilesDir");
+  unsigned int common_files = add_string("CommonFilesDir");
+  unsigned int program_files_def = add_string("C:\\Program Files");
+  unsigned int common_files_def = add_string("C:\\Program Files\\Common Files");
+
+  if ((program_files >= 0x40) || (common_files >= 0x40)
+       || (program_files_def > 0xFF) || (common_files_def > 0xFF))
+  {
+    // see Source\exehead\util.c for implementation details
+    // basically, it knows it needs to get folders from the registry when the 0x80 is on
+    ERROR_MSG("Internal compiler error: too many strings added to strings block before adding shell constants!\n");
+    throw out_of_range("Internal compiler error: too many strings added to strings block before adding shell constants!");
+  }
+
+  m_ShellConstants.add("PROGRAMFILES",   0x80 | program_files, program_files_def);
+  m_ShellConstants.add("PROGRAMFILES32", 0x80 | program_files, program_files_def);
+  m_ShellConstants.add("PROGRAMFILES64", 0xC0 | program_files, program_files_def);
+  m_ShellConstants.add("COMMONFILES",    0x80 | common_files,  common_files_def);
+  m_ShellConstants.add("COMMONFILES32",  0x80 | common_files,  common_files_def);
+  m_ShellConstants.add("COMMONFILES64",  0xC0 | common_files,  common_files_def);
 
   set_code_type_predefines();
 }
