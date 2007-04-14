@@ -18,13 +18,13 @@ int main(int argc, char* argv[])
 
   // Parse the command line
 
-	string cmdline;
+  string cmdline;
 
-	string mode;
-	string filename;
-	string filepath;
+  string mode;
+  string filename;
+  string filepath;
 
-	int filefound = 0;
+  int filefound = 0;
 
   if (argc != 4)
     return 1;
@@ -85,114 +85,114 @@ int main(int argc, char* argv[])
     filefound = 1;
     FindClose(hFind);
   }
-	
-	int versionfound = 0;
-	DWORD low = 0, high = 0;
+  
+  int versionfound = 0;
+  DWORD low = 0, high = 0;
 
-	if (filefound)
-	{
+  if (filefound)
+  {
 
-		// Get version
-		
-		// DLL
-		
-		if (mode.compare("D") == 0)
-		{
-			
-			DWORD versionsize;
-			DWORD temp;
-			  
-			versionsize = GetFileVersionInfoSize((char*)filepath.c_str(), &temp);
-			
-			if (versionsize)
-			{
-			  
-				void *buf;
-				buf = (void *)GlobalAlloc(GPTR, versionsize);
-			  
-				if (buf)
-				{
-				
-					UINT uLen;
-					VS_FIXEDFILEINFO *pvsf;
+    // Get version
+    
+    // DLL
+    
+    if (mode.compare("D") == 0)
+    {
+      
+      DWORD versionsize;
+      DWORD temp;
+        
+      versionsize = GetFileVersionInfoSize((char*)filepath.c_str(), &temp);
+      
+      if (versionsize)
+      {
+        
+        void *buf;
+        buf = (void *)GlobalAlloc(GPTR, versionsize);
+        
+        if (buf)
+        {
+        
+          UINT uLen;
+          VS_FIXEDFILEINFO *pvsf;
 
-					if (GetFileVersionInfo((char*)filepath.c_str(), 0, versionsize, buf) && VerQueryValue(buf, "\\", (void**)&pvsf,&uLen))
-					{
-						high = pvsf->dwFileVersionMS;
-						low = pvsf->dwFileVersionLS;
+          if (GetFileVersionInfo((char*)filepath.c_str(), 0, versionsize, buf) && VerQueryValue(buf, "\\", (void**)&pvsf,&uLen))
+          {
+            high = pvsf->dwFileVersionMS;
+            low = pvsf->dwFileVersionLS;
 
-						versionfound = 1;
-					} 
+            versionfound = 1;
+          } 
 
-					GlobalFree(buf);
+          GlobalFree(buf);
 
-				}
+        }
 
-			}
+      }
 
-		}
+    }
 
-		// TLB
-		
-		if (mode.compare("T") == 0)
-		{
-			
-			wchar_t ole_filename[1024];
-			MultiByteToWideChar(CP_ACP, 0, filepath.c_str(), filepath.length() + 1, ole_filename, 1024);
-			
-			ITypeLib* typeLib;
-			HRESULT hr;
-			
-			hr = LoadTypeLib(ole_filename, &typeLib);
-			
-			if (SUCCEEDED(hr)) {
+    // TLB
+    
+    if (mode.compare("T") == 0)
+    {
+      
+      wchar_t ole_filename[1024];
+      MultiByteToWideChar(CP_ACP, 0, filepath.c_str(), filepath.length() + 1, ole_filename, 1024);
+      
+      ITypeLib* typeLib;
+      HRESULT hr;
+      
+      hr = LoadTypeLib(ole_filename, &typeLib);
+      
+      if (SUCCEEDED(hr)) {
 
-				TLIBATTR* typelibAttr;
-				
-				hr = typeLib->GetLibAttr(&typelibAttr);
+        TLIBATTR* typelibAttr;
+        
+        hr = typeLib->GetLibAttr(&typelibAttr);
 
-				if (SUCCEEDED(hr)) {
-					
-					high = typelibAttr->wMajorVerNum;
-					low = typelibAttr->wMinorVerNum;
-					
-					versionfound = 1;
+        if (SUCCEEDED(hr)) {
+          
+          high = typelibAttr->wMajorVerNum;
+          low = typelibAttr->wMinorVerNum;
+          
+          versionfound = 1;
 
-				}
+        }
 
-				typeLib->Release();
+        typeLib->Release();
 
-			}
+      }
 
-		}
+    }
 
-	}
+  }
 
-	// Write the version to an NSIS header file
+  // Write the version to an NSIS header file
 
-	ofstream header(argv[3], ofstream::out);
-	
-	if (header)
-	{
+  ofstream header(argv[3], ofstream::out);
+  
+  if (header)
+  {
 
-		if (!filefound)
-		{
-			header << "!define LIBRARY_VERSION_FILENOTFOUND" << endl;
-		}
-		else if (!versionfound)
-		{
-			header << "!define LIBRARY_VERSION_NONE" << endl;
-		}
-		else
-		{
-			header << "!define LIBRARY_VERSION_HIGH " << high << endl;
-			header << "!define LIBRARY_VERSION_LOW " << low << endl;
-		}
-	  
-	  header.close();
+    if (!filefound)
+    {
+      header << "!define LIBRARY_VERSION_FILENOTFOUND" << endl;
+    }
+    else if (!versionfound)
+    {
+      header << "!define LIBRARY_VERSION_NONE" << endl;
+    }
+    else
+    {
+      header << "!define LIBRARY_VERSION_HIGH " << high << endl;
+      header << "!define LIBRARY_VERSION_LOW " << low << endl;
+    }
+    
+    header.close();
 
-	}
+  }
 
-	return 0;
+  return 0;
 
 }
