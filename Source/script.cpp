@@ -2735,10 +2735,14 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       // define LANG_LangName as "####" (lang id)
       // for example ${LANG_ENGLISH} = 1033
       char lang_id[16];
+      char lang_cp[16];
       char lang_name[1024];
       wsprintf(lang_name, "LANG_%s", table->nlf.m_szName);
       wsprintf(lang_id, "%u", table->lang_id);
+      wsprintf(lang_cp, "%u", table->nlf.m_uCodePage);
       definedlist.add(lang_name, lang_id);
+      wsprintf(lang_name, "LANG_%s_CP", table->nlf.m_szName);
+      definedlist.add(lang_name, lang_cp);
     }
     return PS_OK;
 
