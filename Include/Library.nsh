@@ -32,6 +32,7 @@
 !endif
 
 !include LogicLib.nsh
+!include x64.nsh
 
 ### GetParent macro, don't pass $1 or $2 as INTPUT or OUTPUT
 !macro __InstallLib_Helper_GetParent INPUT OUTPUT
@@ -208,6 +209,15 @@
   !endif
 
   ;------------------------
+  ;x64 settings
+
+  !ifdef LIBRARY_X64
+
+    ${DisableX64FSRedirection}
+
+  !endif
+
+  ;------------------------
   ;Copy the parameters used on run-time to a variable
   ;This allows the usage of variables as parameter
 
@@ -221,10 +231,22 @@
 
     StrCmp ${shared} "" 0 "installlib.noshareddllincrease_${INSTALLLIB_UNIQUE}"
 
+      !ifdef LIBRARY_X64
+
+        SetRegView 64
+
+      !endif
+
       ReadRegDword $R0 HKLM Software\Microsoft\Windows\CurrentVersion\SharedDLLs $R4
       ClearErrors
       IntOp $R0 $R0 + 1
       WriteRegDWORD HKLM Software\Microsoft\Windows\CurrentVersion\SharedDLLs $R4 $R0
+
+      !ifdef LIBRARY_X64
+
+        SetRegView 32
+
+      !endif
 
     "installlib.noshareddllincrease_${INSTALLLIB_UNIQUE}:"
 
@@ -456,7 +478,15 @@
 
     !ifdef INSTALLLIB_LIBTYPE_REGDLL | INSTALLLIB_LIBTYPE_REGDLLTLB
 
-      RegDll $R4
+      !ifndef LIBRARY_X64
+
+        RegDll $R4
+
+      !else
+
+        ExecWait '"$SYSDIR\regsvr32.exe" /s "$R4"'
+
+      !endif
 
     !endif
 
@@ -531,16 +561,15 @@
 
     "installlib.regonreboot_${INSTALLLIB_UNIQUE}:"
 
-      !ifdef INSTALLLIB_LIBTYPE_REGDLL
-        !insertmacro __InstallLib_Helper_AddRegToolEntry 'D' "$R4" "$R5"
+      !ifdef INSTALLLIB_LIBTYPE_REGDLL | INSTALLLIB_LIBTYPE_REGDLLTLB
+        !ifndef LIBRARY_X64
+          !insertmacro __InstallLib_Helper_AddRegToolEntry 'D' "$R4" "$R5"
+        !else
+          !insertmacro __InstallLib_Helper_AddRegToolEntry 'DX' "$R4" "$R5"
+        !endif
       !endif
 
-      !ifdef INSTALLLIB_LIBTYPE_TLB
-        !insertmacro __InstallLib_Helper_AddRegToolEntry 'T' "$R4" "$R5"
-      !endif
-
-      !ifdef INSTALLLIB_LIBTYPE_REGDLLTLB
-        !insertmacro __InstallLib_Helper_AddRegToolEntry 'D' "$R4" "$R5"
+      !ifdef INSTALLLIB_LIBTYPE_TLB | INSTALLLIB_LIBTYPE_REGDLLTLB
         !insertmacro __InstallLib_Helper_AddRegToolEntry 'T' "$R4" "$R5"
       !endif
 
@@ -552,6 +581,12 @@
   ;End label
 
   "installlib.end_${INSTALLLIB_UNIQUE}:"
+
+  !ifdef LIBRARY_X64
+
+    ${EnableX64FSRedirection}
+
+  !endif
 
   ;------------------------
   ;Undefine
@@ -609,6 +644,15 @@
   !endif
 
   ;------------------------
+  ;x64 settings
+
+  !ifdef LIBRARY_X64
+
+    ${DisableX64FSRedirection}
+
+  !endif
+
+  ;------------------------
   ;Copy the parameters used on run-time to a variable
   ;This allows the usage of variables as parameter
 
@@ -620,6 +664,12 @@
   !ifdef UNINSTALLLIB_SHARED_SHARED
 
     !define UNINSTALLLIB_DONE_LABEL
+
+    !ifdef LIBRARY_X64
+
+      SetRegView 64
+
+    !endif
 
     ReadRegDword $R0 HKLM Software\Microsoft\Windows\CurrentVersion\SharedDLLs $R1
     StrCmp $R0 "" "uninstalllib.shareddlldone_${UNINSTALLLIB_UNIQUE}"
@@ -636,9 +686,22 @@
 
     "uninstalllib.shareddllinuse_${UNINSTALLLIB_UNIQUE}:"
       WriteRegDWORD HKLM Software\Microsoft\Windows\CurrentVersion\SharedDLLs $R1 $R0
+
+        !ifdef LIBRARY_X64
+
+          SetRegView 32
+
+        !endif
+
       Goto "uninstalllib.done_${UNINSTALLLIB_UNIQUE}"
 
-  "uninstalllib.shareddlldone_${UNINSTALLLIB_UNIQUE}:"
+    "uninstalllib.shareddlldone_${UNINSTALLLIB_UNIQUE}:"
+
+    !ifdef LIBRARY_X64
+
+      SetRegView 32
+
+    !endif
 
   !endif
 
@@ -674,7 +737,15 @@
 
     !ifdef UNINSTALLLIB_LIBTYPE_REGDLL | UNINSTALLLIB_LIBTYPE_REGDLLTLB
 
-      UnRegDLL $R1
+      !ifndef LIBRARY_X64
+
+        UnRegDLL $R1
+
+      !else
+
+        ExecWait '"$SYSDIR\regsvr32.exe" /s /u "$R1"'
+
+      !endif
 
     !endif
 
@@ -751,6 +822,12 @@
     !undef UNINSTALLLIB_DONE_LABEL
 
     "uninstalllib.done_${UNINSTALLLIB_UNIQUE}:"
+
+  !endif
+
+  !ifdef LIBRARY_X64
+
+    ${EnableX64FSRedirection}
 
   !endif
 

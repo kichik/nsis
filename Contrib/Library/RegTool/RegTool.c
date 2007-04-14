@@ -2,7 +2,7 @@
 
 #define STR_SIZE 1024
 
-void RunSelf(char cmd, char *file);
+void RunSelf(char cmd, char *file, int x64);
 void RegDll(char *file);
 void RegTypeLib(char *file);
 void DeleteFileOnReboot(char *pszFile);
@@ -47,7 +47,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
           if (SUCCEEDED(RegQueryValueEx(key, "count", NULL, &t, (LPBYTE) &count, &l)) && t == REG_DWORD)
           {
             DWORD j;
-            char valname[128], mode[2], file[STR_SIZE];
+            char valname[128], mode[3], file[STR_SIZE];
 
             for (j = 1; j <= count; j++)
             {
@@ -61,7 +61,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
               if (FAILED(RegQueryValueEx(key, valname, NULL, &t, (LPBYTE) file, &l)) || t != REG_SZ)
                 continue;
 
-              RunSelf(mode[0], file);
+              RunSelf(mode[0], file, mode[1] == 'X');
             }
           }
 
@@ -104,20 +104,56 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
   return 0;
 }
 
-void RunSelf(char cmd, char *file)
+void SafeWow64EnableWow64FsRedirection(BOOL Wow64FsEnableRedirection)
+{
+  HMODULE kernel = GetModuleHandle("kernel32");
+  if (kernel)
+  {
+    FARPROC proc = GetProcAddress(kernel, "Wow64EnableWow64FsRedirection");
+    if (proc)
+    {
+      typedef BOOL (WINAPI *Wow64EnableWow64FsRedirectionPtr)(BOOL);
+      Wow64EnableWow64FsRedirectionPtr Wow64EnableWow64FsRedirectionFunc =
+        (Wow64EnableWow64FsRedirectionPtr) proc;
+
+      Wow64EnableWow64FsRedirectionFunc(Wow64FsEnableRedirection);
+    }
+  }
+}
+
+void RunSelf(char cmd, char *file, int x64)
 {
   char self[STR_SIZE];
   char cmdline[STR_SIZE];
 
+  int ready = 0;
+
   if (!*file || (cmd != 'D' && cmd != 'T'))
     return;
 
-  if (GetModuleFileName(GetModuleHandle(NULL), self, STR_SIZE))
+  if (!x64)
+  {
+    if (GetModuleFileName(GetModuleHandle(NULL), self, STR_SIZE))
+    {
+      wsprintf(cmdline, "\"%s\" /%c%s", self, cmd, file);
+      ready++;
+    }
+  }
+  else
+  {
+    if (GetSystemDirectory(self, STR_SIZE))
+    {
+      wsprintf(cmdline, "\"%s\\regsvr32.exe\" /s \"%s\"", self, file);
+      ready++;
+
+      SafeWow64EnableWow64FsRedirection(FALSE);
+    }
+  }
+
+  if (ready)
   {
     PROCESS_INFORMATION pi;
     STARTUPINFO si = { sizeof(STARTUPINFO) };
-
-    wsprintf(cmdline, "\"%s\" /%c%s", self, cmd, file);
 
     if (CreateProcess(NULL, cmdline, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi))
     {
@@ -127,6 +163,11 @@ void RunSelf(char cmd, char *file)
 
       CloseHandle(pi.hProcess);
     }
+  }
+
+  if (x64)
+  {
+    SafeWow64EnableWow64FsRedirection(TRUE);
   }
 }
 
