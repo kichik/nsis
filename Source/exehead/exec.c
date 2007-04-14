@@ -163,7 +163,7 @@ static LONG NSISCALL myRegDeleteKeyEx(HKEY thiskey, LPCTSTR lpSubKey, int onlyif
       if (RDKE)
         retval=RDKE(thiskey,lpSubKey,AlterRegistrySAM(0),0);
       else
-        retval=RegDeleteKey(thiskey,lpSubKey);
+        retval=g_exec_flags.alter_reg_view||RegDeleteKey(thiskey,lpSubKey);
     }
   }
   return retval;
