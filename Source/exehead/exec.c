@@ -156,7 +156,7 @@ static LONG NSISCALL myRegDeleteKeyEx(HKEY thiskey, LPCTSTR lpSubKey, int onlyif
     }
     RegCloseKey(key);
     {
-      typedef (WINAPI * RegDeleteKeyExAPtr)(HKEY, LPCTSTR, REGSAM, DWORD);
+      typedef LONG (WINAPI * RegDeleteKeyExAPtr)(HKEY, LPCTSTR, REGSAM, DWORD);
       RegDeleteKeyExAPtr RDKE = (RegDeleteKeyExAPtr)
         myGetProcAddress("ADVAPI32.dll","RegDeleteKeyExA");
 
