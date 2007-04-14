@@ -136,7 +136,8 @@ NLFString NLFStrings[NLF_STRINGS] = {
   {"^Giga", "G", BOTH_STATIC},
   {"^Font", "MS Shell Dlg", NONE_STATIC},
   {"^FontSize", "8", NONE_STATIC},
-  {"^RTL", "0", NONE_STATIC}
+  {"^RTL", "0", NONE_STATIC},
+  {"^Language", "English", NONE_STATIC}
 };
 
 // ==============
@@ -1011,6 +1012,9 @@ LanguageTable * CEXEBuild::LoadLangFile(char *filename) {
   if (nlf_version != NLF_VERSION) {
     warning_fl("%s language file version doesn't match. Using default English texts for missing strings.", nlf->m_szName);
   }
+
+  // set ^Language
+  nlf->m_szStrings[NLF_LANGUAGE] = strdup(nlf->m_szName);
 
   int temp;
 
