@@ -65,6 +65,29 @@ Sets the error level of the installer or uninstaller to \e{error_level}. See \R{
 \c IfRebootFlag 0 +2
 \c   SetErrorLevel 4
 
+\S2{setregview} SetRegView
+
+\c \\<b\\>32\\</b\\>|64
+
+Sets the registry view affected by \R{registry}{registry commands}. On Windows x64 there are two views. One for 32-bit applications and one for x64 applications. By default, 32-bit applications running on x64 systems under WOW64 have access only to the 32-bit view. Using \c{SetRegView 64} allows the installer to access keys in the x64 view of the registry.
+
+Affects \R{deleteregkey}{DeleteRegKey}, \R{deleteregvalue}{DeleteRegValue}, \R{enumregkey}{EnumRegKey}, \R{enumregvalue}{EnumRegValue}, \R{readregdword}{ReadRegDWORD}, \R{readregstr}{ReadRegStr}, \R{writeregbin}{WriteRegBin}, \R{writeregdword}{WriteRegDWORD}, \R{writeregstr}{WriteRegStr} and \R{writeregexpandstr}{WriteRegExpandStr}.
+
+Does not affect \R{ainstalldirregkey}{InstallDirRegKey}. Instead, the registry can be read using \R{readregstr}{ReadRegStr} in \R{oninit}{.onInit}.
+
+\c SetRegView 32
+\c ReadRegStr $0 HKLM Software\Microsoft\Windows\CurrentVersion ProgramFilesDir
+\c DetailPrit $0 # prints C:\Program Files (x86)
+\c SetRegView 64
+\c ReadRegStr $0 HKLM Software\Microsoft\Windows\CurrentVersion ProgramFilesDir
+\c DetailPrit $0 # prints C:\Program Files
+
+\c Function .onInit
+\c   SetRegView 64
+\c   ReadRegStr $INSTDIR HKLM Software\NSIS ""
+\c   SetRegView 32
+\c FunctionEnd
+
 \S2{setshellvarcontext} SetShellVarContext
 
 \c \\<b\\>current\\</b\\>|all
