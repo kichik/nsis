@@ -278,9 +278,9 @@ end:
     BOOL (WINAPI *OPT)(HANDLE, DWORD,PHANDLE);
     BOOL (WINAPI *LPV)(LPCTSTR,LPCTSTR,PLUID);
     BOOL (WINAPI *ATP)(HANDLE,BOOL,PTOKEN_PRIVILEGES,DWORD,PTOKEN_PRIVILEGES,PDWORD);
-    OPT=myGetProcAddress("ADVAPI32.dll","OpenProcessToken");
-    LPV=myGetProcAddress("ADVAPI32.dll","LookupPrivilegeValueA");
-    ATP=myGetProcAddress("ADVAPI32.dll","AdjustTokenPrivileges");
+    OPT=myGetProcAddress("ADVAPI32","OpenProcessToken");
+    LPV=myGetProcAddress("ADVAPI32","LookupPrivilegeValueA");
+    ATP=myGetProcAddress("ADVAPI32","AdjustTokenPrivileges");
     if (OPT && LPV && ATP)
     {
       HANDLE hToken;
