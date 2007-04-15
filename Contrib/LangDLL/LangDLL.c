@@ -52,6 +52,12 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
           selected_language = langs[i].name;
         }
       }
+      // empty list box?
+      if (SendDlgItemMessage(hwndDlg, IDC_LANGUAGE, CB_GETCOUNT, 0, 0) == 0) {
+        pushstring("no languages available");
+        EndDialog(hwndDlg, 0);
+        break;
+      }
       // select the current language
       if (selected_language)
         SendDlgItemMessage(hwndDlg, IDC_LANGUAGE, CB_SELECTSTRING, (WPARAM) -1, (LPARAM) selected_language);
