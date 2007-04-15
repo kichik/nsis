@@ -3391,7 +3391,7 @@ void CEXEBuild::VerifyDeclaredUserVarRefs(UserVarsStringList *pVarsStringList)
   {
     if (!pVarsStringList->get_reference(i))
     {
-      warning("Variable \"%s\" not referenced, wasting memory!", pVarsStringList->idx2name(i));
+      warning("Variable \"%s\" not referenced or never set, wasting memory!", pVarsStringList->idx2name(i));
     }
   }
 }
