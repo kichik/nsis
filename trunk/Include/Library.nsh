@@ -142,31 +142,27 @@
 ### Get library version
 !macro __InstallLib_Helper_GetVersion TYPE FILE
 
+  !tempfile LIBRARY_TEMP_NSH
+
   !ifdef NSIS_WIN32_MAKENSIS
 
-    !tempfile LIBRARY_TEMP_NSH
     !execute '"${NSISDIR}\Bin\LibraryLocal.exe" "${TYPE}" "${FILE}" "${LIBRARY_TEMP_NSH}"'
-    !include "${LIBRARY_TEMP_NSH}"
-    !delfile "${LIBRARY_TEMP_NSH}"
-    !undef LIBRARY_TEMP_NSH
 
   !else
 
-    !ifndef INSTALLLIB_GETVERSION_VARS_DEFINED
+    !execute 'LibraryLocal "${TYPE}" "${FILE}" "${LIBRARY_TEMP_NSH}"'
 
-      !define INSTALLLIB_GETVERSION_VARS_DEFINED
+    !if ${TYPE} == 'T'
 
-      Var /GLOBAL INSTALLLIB_VER_LOW
-      Var /GLOBAL INSTALLLIB_VER_HIGH
+      !warning "LibraryLocal currently supports TypeLibs version detection only on Windows"
 
     !endif
 
-    !define LIBRARY_VERSION_LOW $INSTALLLIB_VER_LOW
-    !define LIBRARY_VERSION_HIGH $INSTALLLIB_VER_HIGH
-
-    GetDLLVersionLocal "${FILE}" $INSTALLLIB_VER_HIGH $INSTALLLIB_VER_LOW
-
   !endif
+
+  !include "${LIBRARY_TEMP_NSH}"
+  !delfile "${LIBRARY_TEMP_NSH}"
+  !undef LIBRARY_TEMP_NSH
 
 !macroend
 
