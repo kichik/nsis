@@ -2,6 +2,8 @@ target = 'LibraryLocal'
 
 files = Split("""
 	LibraryLocal.cpp
+  #Source/ResourceEditor.cpp
+  #Source/winchar.cpp
 """)
 
 libs = Split("""

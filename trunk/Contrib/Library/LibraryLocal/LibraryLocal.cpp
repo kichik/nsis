@@ -11,7 +11,114 @@
 #include <iostream>
 #include <fstream>
 
+#include "../../../Source/ResourceEditor.h"
+#include "../../../Source/winchar.h"
+
 using namespace std;
+
+int GetDLLVersion(string& filepath, DWORD& high, DWORD & low)
+{
+  int found = 0;
+
+  FILE *fdll = fopen(filepath.c_str(), "rb");
+  if (!fdll)
+    return 0;
+
+  fseek(fdll, 0, SEEK_END);
+  unsigned int len = ftell(fdll);
+  fseek(fdll, 0, SEEK_SET);
+
+  LPBYTE dll = (LPBYTE) malloc(len);
+
+  if (!dll)
+  {
+    fclose(fdll);
+    return 0;
+  }
+
+  if (fread(dll, 1, len, fdll) != len)
+  {
+    fclose(fdll);
+    free(dll);
+    return 0;
+  }
+
+  try
+  {
+    CResourceEditor *dllre = new CResourceEditor(dll, len);
+    LPBYTE ver = dllre->GetResourceA(VS_FILE_INFO, MAKEINTRESOURCE(VS_VERSION_INFO), 0);
+    int versize = dllre->GetResourceSizeA(VS_FILE_INFO, MAKEINTRESOURCE(VS_VERSION_INFO), 0);
+
+    if (ver)
+    {
+      if ((size_t) versize > sizeof(WORD) * 3)
+      {
+        // get VS_FIXEDFILEINFO from VS_VERSIONINFO
+        WCHAR *szKey = (WCHAR *)(ver + sizeof(WORD) * 3);
+        int len = (winchar_strlen(szKey) + 1) * sizeof(WCHAR) + sizeof(WORD) * 3;
+        len = (len + 3) & ~3; // align on DWORD boundry
+        VS_FIXEDFILEINFO *verinfo = (VS_FIXEDFILEINFO *)(ver + len);
+        if (versize > len && verinfo->dwSignature == VS_FFI_SIGNATURE)
+        {
+          low = verinfo->dwFileVersionLS;
+          high = verinfo->dwFileVersionMS;
+          found = 1;
+        }
+      }
+      dllre->FreeResource(ver);
+    }
+
+    delete dllre;
+  }
+  catch (exception&)
+  {
+    return 0;
+  }
+
+  return found;
+}
+
+int GetTLBVersion(string& filepath, DWORD& high, DWORD & low)
+{
+#ifdef _WIN32
+
+  int found = 0;
+
+  wchar_t ole_filename[1024];
+  MultiByteToWideChar(CP_ACP, 0, filepath.c_str(), filepath.length() + 1, ole_filename, 1024);
+  
+  ITypeLib* typeLib;
+  HRESULT hr;
+  
+  hr = LoadTypeLib(ole_filename, &typeLib);
+  
+  if (SUCCEEDED(hr)) {
+
+    TLIBATTR* typelibAttr;
+    
+    hr = typeLib->GetLibAttr(&typelibAttr);
+
+    if (SUCCEEDED(hr)) {
+      
+      high = typelibAttr->wMajorVerNum;
+      low = typelibAttr->wMinorVerNum;
+      
+      found = 1;
+
+    }
+
+    typeLib->Release();
+
+  }
+
+  return found;
+
+#else
+
+  return 0;
+
+#endif
+}
 
 int main(int argc, char* argv[])
 {
@@ -99,36 +206,7 @@ int main(int argc, char* argv[])
     if (mode.compare("D") == 0)
     {
       
-      DWORD versionsize;
-      DWORD temp;
-        
-      versionsize = GetFileVersionInfoSize((char*)filepath.c_str(), &temp);
-      
-      if (versionsize)
-      {
-        
-        void *buf;
-        buf = (void *)GlobalAlloc(GPTR, versionsize);
-        
-        if (buf)
-        {
-        
-          UINT uLen;
-          VS_FIXEDFILEINFO *pvsf;
-
-          if (GetFileVersionInfo((char*)filepath.c_str(), 0, versionsize, buf) && VerQueryValue(buf, "\\", (void**)&pvsf,&uLen))
-          {
-            high = pvsf->dwFileVersionMS;
-            low = pvsf->dwFileVersionLS;
-
-            versionfound = 1;
-          } 
-
-          GlobalFree(buf);
-
-        }
-
-      }
+      versionfound = GetDLLVersion(filepath, high, low);
 
     }
 
@@ -137,32 +215,7 @@ int main(int argc, char* argv[])
     if (mode.compare("T") == 0)
     {
       
-      wchar_t ole_filename[1024];
-      MultiByteToWideChar(CP_ACP, 0, filepath.c_str(), filepath.length() + 1, ole_filename, 1024);
-      
-      ITypeLib* typeLib;
-      HRESULT hr;
-      
-      hr = LoadTypeLib(ole_filename, &typeLib);
-      
-      if (SUCCEEDED(hr)) {
-
-        TLIBATTR* typelibAttr;
-        
-        hr = typeLib->GetLibAttr(&typelibAttr);
-
-        if (SUCCEEDED(hr)) {
-          
-          high = typelibAttr->wMajorVerNum;
-          low = typelibAttr->wMinorVerNum;
-          
-          versionfound = 1;
-
-        }
-
-        typeLib->Release();
-
-      }
+      versionfound = GetTLBVersion(filepath, high, low);
 
     }
 
