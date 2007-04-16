@@ -70,6 +70,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmd
     }
   }
   if (g_sdata.script) GlobalFree(g_sdata.script);
+  if (g_sdata.script_cmd_args) GlobalFree(g_sdata.script_cmd_args);
   if (g_sdata.sigint_event) CloseHandle(g_sdata.sigint_event);
   FinalizeUpdate();
   ExitProcess(msg.wParam);
@@ -164,6 +165,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
   switch (msg) {
     case WM_INITDIALOG:
     {
+      memset(&g_sdata, 0, sizeof(NSCRIPTDATA));
       g_sdata.hwnd=hwndDlg;
       HICON hIcon = LoadIcon(g_sdata.hInstance,MAKEINTRESOURCE(IDI_ICON));
       SetClassLong(hwndDlg,GCL_HICON,(long)hIcon);
