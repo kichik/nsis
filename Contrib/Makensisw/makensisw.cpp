@@ -165,7 +165,6 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
   switch (msg) {
     case WM_INITDIALOG:
     {
-      memset(&g_sdata, 0, sizeof(NSCRIPTDATA));
       g_sdata.hwnd=hwndDlg;
       HICON hIcon = LoadIcon(g_sdata.hInstance,MAKEINTRESOURCE(IDI_ICON));
       SetClassLong(hwndDlg,GCL_HICON,(long)hIcon);
