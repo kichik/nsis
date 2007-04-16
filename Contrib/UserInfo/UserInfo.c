@@ -21,7 +21,7 @@ void __declspec(dllexport) GetName(HWND hwndParent, int string_size,
 
 char* GetAccountTypeHelper(BOOL CheckTokenForGroupDeny) 
 {
-  char  *group;
+  char  *group = NULL;
   HANDLE  hToken = NULL;
   struct group
   {
