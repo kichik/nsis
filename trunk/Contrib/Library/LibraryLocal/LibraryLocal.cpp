@@ -6,12 +6,15 @@
 
 */
 
-#include <windows.h>
+#include "../../../Source/Platform.h"
+
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
+#include <direct.h>
 
 #include "../../../Source/ResourceEditor.h"
+#include "../../../Source/ResourceVersionInfo.h"
 #include "../../../Source/winchar.h"
 
 using namespace std;
@@ -141,8 +144,8 @@ int main(int argc, char* argv[])
   mode = argv[1];
   filename = argv[2];
 
-  char buf[MAX_PATH];
-  GetCurrentDirectory(MAX_PATH, buf);
+  char buf[1024];
+  getcwd(buf, 1024);
   filepath = buf;
 
   if ((filename.substr(0, 1).compare("\\") != 0) && (filename.substr(1, 1).compare(":") != 0)) {
@@ -184,14 +187,15 @@ int main(int argc, char* argv[])
 
   // Validate filename
 
-  WIN32_FIND_DATA wfd;
-  HANDLE hFind = FindFirstFile(filepath.c_str(), &wfd);
+  ifstream fs(filepath.c_str());
   
-  if (hFind != INVALID_HANDLE_VALUE)
+  if (fs.is_open())
   {
     filefound = 1;
-    FindClose(hFind);
+    fs.close();
   }
+
+  // Work
   
   int versionfound = 0;
   DWORD low = 0, high = 0;
