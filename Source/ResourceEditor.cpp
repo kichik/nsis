@@ -431,7 +431,7 @@ DWORD CResourceEditor::Save(BYTE* pbBuf, DWORD &dwSize) {
 
   // Set the new BaseOfData if needed
   if (ntHeaders->OptionalHeader.Magic == IMAGE_NT_OPTIONAL_HDR32_MAGIC) {
-	DWORD* pdwBaseOfData = &((PIMAGE_OPTIONAL_HEADER32)&ntHeaders->OptionalHeader)->BaseOfData;
+    DWORD* pdwBaseOfData = &((PIMAGE_OPTIONAL_HEADER32)&ntHeaders->OptionalHeader)->BaseOfData;
     if (*pdwBaseOfData > m_dwResourceSectionVA)
       *pdwBaseOfData = AdjustVA(*pdwBaseOfData, dwVAAdjustment);
   }
