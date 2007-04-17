@@ -47,6 +47,8 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmd
   g_sdata.sigint_event = CreateEvent(NULL, FALSE, FALSE, "makensis win32 signint event");
   RestoreSymbols();
 
+  HINSTANCE hRichEditDLL = LoadLibrary("RichEd32.dll");
+
   if (!InitBranding()) {
     MessageBox(0,NSISERROR,"Error",MB_ICONEXCLAMATION|MB_OK);
     return 1;
@@ -72,6 +74,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmd
   if (g_sdata.script) GlobalFree(g_sdata.script);
   if (g_sdata.script_cmd_args) GlobalFree(g_sdata.script_cmd_args);
   if (g_sdata.sigint_event) CloseHandle(g_sdata.sigint_event);
+  FreeLibrary(hRichEditDLL);
   FinalizeUpdate();
   ExitProcess(msg.wParam);
   return msg.wParam;
@@ -160,8 +163,6 @@ void ProcessCommandLine()
 }
 
 BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
-  static HINSTANCE hRichEditDLL = 0;
-  if (!hRichEditDLL) hRichEditDLL= LoadLibrary("RichEd32.dll");
   switch (msg) {
     case WM_INITDIALOG:
     {
@@ -226,7 +227,6 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
       ImageList_Destroy(g_toolbar.imagelistd);
       ImageList_Destroy(g_toolbar.imagelisth);
       DestroyTooltips();
-      FreeLibrary(hRichEditDLL);
       PostQuitMessage(0);
       return TRUE;
     }
