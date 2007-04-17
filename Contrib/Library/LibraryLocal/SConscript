@@ -3,15 +3,17 @@ target = 'LibraryLocal'
 files = Split("""
 	LibraryLocal.cpp
 	#Source/ResourceEditor.cpp
+	#Source/util.cpp
 	#Source/winchar.cpp
 """)
 
 libs = Split("""
-	kernel32
 	oleaut32
-	version
 """)
 
-Import('BuildUtil')
+Import('BuildUtil env')
+
+if env['PLATFORM'] != 'win32':
+	libs = []
 
 BuildUtil(target, files, libs, flags = ['$EXCEPTION_FLAG'], cross_platform = True)
