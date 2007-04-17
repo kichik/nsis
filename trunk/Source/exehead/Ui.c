@@ -604,6 +604,8 @@ nextPage:
           SetWindowPos(m_curwnd,0,r.left,r.top,0,0,SWP_NOACTIVATE|SWP_NOSIZE|SWP_NOZORDER);
 #ifdef NSIS_SUPPORT_CODECALLBACKS
           ExecuteCodeSegment(this_page->showfunc,NULL);
+          if (g_quit_flag)
+            return FALSE;
 #endif //NSIS_SUPPORT_CODECALLBACKS
           ShowWindow(m_curwnd,SW_SHOWNA);
           NotifyCurWnd(WM_NOTIFY_START);
