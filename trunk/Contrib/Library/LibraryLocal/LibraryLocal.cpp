@@ -11,13 +11,16 @@
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
-#include <direct.h>
 
 #include "../../../Source/ResourceEditor.h"
 #include "../../../Source/ResourceVersionInfo.h"
 #include "../../../Source/winchar.h"
 
 using namespace std;
+
+int g_noconfig=0;
+int g_display_errors=1;
+FILE *g_output=stdout;
 
 int GetDLLVersion(string& filepath, DWORD& high, DWORD & low)
 {
@@ -87,8 +90,13 @@ int GetTLBVersion(string& filepath, DWORD& high, DWORD & low)
 
   int found = 0;
 
+  char fullpath[1024];
+  char *p;
+  if (!GetFullPathName(filepath.c_str(), sizeof(fullpath), fullpath, &p))
+    return 0;
+
   wchar_t ole_filename[1024];
-  MultiByteToWideChar(CP_ACP, 0, filepath.c_str(), filepath.length() + 1, ole_filename, 1024);
+  MultiByteToWideChar(CP_ACP, 0, fullpath, lstrlen(fullpath) + 1, ole_filename, 1024);
   
   ITypeLib* typeLib;
   HRESULT hr;
@@ -144,50 +152,9 @@ int main(int argc, char* argv[])
   mode = argv[1];
   filename = argv[2];
 
-  char buf[1024];
-  getcwd(buf, 1024);
-  filepath = buf;
-
-  if ((filename.substr(0, 1).compare("\\") != 0) && (filename.substr(1, 1).compare(":") != 0)) {
-    
-    // Path is relative
-
-    if (filepath.substr(filepath.length() - 1, 1).compare("\\") != 0)
-      filepath.append("\\");
-      
-    filepath.append(filename);
-
-  } else if ((filename.substr(0, 1).compare("\\") == 0) && (filename.substr(1, 1).compare("\\") != 0)) {
-
-    // Path is relative to current root
-
-    if (filepath.substr(1, 1).compare(":") == 0) {
-
-      // Standard path
-
-      filepath = filepath.substr(0, filepath.find('\\'));
-      filepath.append(filename);
-
-    } else {
-
-      // UNC path
-      
-      filepath = filepath.substr(0, filepath.find('\\', filepath.find('\\', 2) + 1));
-      filepath.append(filename);
-        
-    }
-
-  } else {
-    
-    // Absolute path
-
-    filepath = filename;
-
-  }
-
   // Validate filename
 
-  ifstream fs(filepath.c_str());
+  ifstream fs(filename.c_str());
   
   if (fs.is_open())
   {
@@ -210,7 +177,7 @@ int main(int argc, char* argv[])
     if (mode.compare("D") == 0)
     {
       
-      versionfound = GetDLLVersion(filepath, high, low);
+      versionfound = GetDLLVersion(filename, high, low);
 
     }
 
@@ -219,7 +186,7 @@ int main(int argc, char* argv[])
     if (mode.compare("T") == 0)
     {
       
-      versionfound = GetTLBVersion(filepath, high, low);
+      versionfound = GetTLBVersion(filename, high, low);
 
     }
 
