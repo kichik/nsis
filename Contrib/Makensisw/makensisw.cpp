@@ -101,7 +101,7 @@ void SetScript(const char *script, bool clearArgs /*= true*/)
 void AddScriptCmdArgs(const char *arg)
 {
   g_sdata.script_cmd_args = (char *) GlobalReAlloc(g_sdata.script_cmd_args,
-    GlobalSize(g_sdata.script_cmd_args) + 2 /* quotes */ + 1 /* space */,
+    GlobalSize(g_sdata.script_cmd_args) + lstrlen(arg) + 2 /* quotes */ + 1 /* space */,
     0);
 
   lstrcat(g_sdata.script_cmd_args, " \"");
@@ -217,23 +217,23 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
     }
     case WM_DESTROY:
     {
+      DragAcceptFiles(g_sdata.hwnd,FALSE);
       SaveSymbols();
       SaveCompressor();
       SaveMRUList();
       SaveWindowPos(g_sdata.hwnd);
+      ImageList_Destroy(g_toolbar.imagelist);
+      ImageList_Destroy(g_toolbar.imagelistd);
+      ImageList_Destroy(g_toolbar.imagelisth);
       DestroyTooltips();
+      FreeLibrary(hRichEditDLL);
       PostQuitMessage(0);
       return TRUE;
     }
     case WM_CLOSE:
     {
       if (!g_sdata.thread) {
-        DragAcceptFiles(g_sdata.hwnd,FALSE);
-        ImageList_Destroy(g_toolbar.imagelist);
-        ImageList_Destroy(g_toolbar.imagelistd);
-        ImageList_Destroy(g_toolbar.imagelisth);
         DestroyWindow(hwndDlg);
-        FreeLibrary(hRichEditDLL);
       }
       return TRUE;
     }
