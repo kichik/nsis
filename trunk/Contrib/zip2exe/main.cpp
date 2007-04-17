@@ -489,7 +489,6 @@ void makeEXE(HWND hwndDlg)
   if (g_compressor_solid == 1)
     fprintf(fp,"!define ZIP2EXE_COMPRESSOR_SOLID\n");
   GetDlgItemText(hwndDlg,IDC_INSTPATH,buf,sizeof(buf));
-  char *outpath = "$INSTDIR";
   int iswinamp=0;
   char *iswinampmode=NULL;
   if (!strcmp(buf,gp_poi)) lstrcpy(buf,"$EXEDIR");
@@ -732,8 +731,7 @@ BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
             ShowWindow(GetDlgItem(hwndDlg,IDC_TEST),SW_HIDE);
             ShowWindow(GetDlgItem(hwndDlg,IDC_OUTPUTTEXT),SW_HIDE);
             {
-              int x;
-              for (x = 0; x < sizeof(ids)/sizeof(ids[0]); x ++)
+              for (size_t x = 0; x < sizeof(ids)/sizeof(ids[0]); x ++)
                 ShowWindow(GetDlgItem(hwndDlg,ids[x]),SW_SHOWNA);
               SetDlgItemText(hwndDlg,IDOK,"&Generate");
               EnableWindow(GetDlgItem(hwndDlg,IDOK),1);
@@ -764,8 +762,7 @@ BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
                 g_compressor_solid = 0;
               g_mui=!IsDlgButtonChecked(hwndDlg,IDC_CLASSICUI);
               SetDlgItemText(g_hwnd, IDC_OUTPUTTEXT, "");
-              int x;
-              for (x = 0; x < sizeof(ids)/sizeof(ids[0]); x ++)
+              for (size_t x = 0; x < sizeof(ids)/sizeof(ids[0]); x ++)
                 ShowWindow(GetDlgItem(hwndDlg,ids[x]),SW_HIDE);
               ShowWindow(GetDlgItem(hwndDlg,IDC_OUTPUTTEXT),SW_SHOWNA);
               SetDlgItemText(hwndDlg,IDOK,"&Close");
