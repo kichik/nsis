@@ -165,7 +165,7 @@ void           SaveMRUList();
 
 typedef struct NSISScriptData {
   char *script;
-  char *script_cmd_args;
+  HGLOBAL script_cmd_args;
   char *compile_command;
   char *output_exe;
   char *input_script;
