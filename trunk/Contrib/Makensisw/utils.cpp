@@ -280,11 +280,13 @@ void CompileNSISScript() {
       lstrcpy(compressor,"");
     }
 
+    char *args = (char *) GlobalLock(g_sdata.script_cmd_args);
+
     g_sdata.compile_command = (char *) GlobalAlloc(
       GPTR,
       /* makensis.exe        */ sizeof(EXENAME)                   + /* space */ 1 +
       /* script path         */ lstrlen(g_sdata.script)           + /* space */ 1 +
-      /* script cmd args     */ lstrlen(g_sdata.script_cmd_args)  + /* space */ 1 +
+      /* script cmd args     */ lstrlen(args)  + /* space */ 1 +
       /* defines /Dblah=...  */ lstrlen(symbols)                  + /* space */ 1 +
       /* /XSetCompressor...  */ lstrlen(compressor)               + /* space */ 1 +
       /* /NOTTIFYHWND + HWND */ sizeof("/NOTIFYHWND -4294967295") + /* space */ 1
@@ -297,10 +299,11 @@ void CompileNSISScript() {
       compressor,
       symbols,
       g_sdata.hwnd,
-      g_sdata.script_cmd_args,
+      args,
       g_sdata.script
     );
 
+    GlobalUnlock(args);
     GlobalFree(symbols);
   }
   GlobalFree(g_sdata.input_script);

@@ -94,7 +94,7 @@ void SetScript(const char *script, bool clearArgs /*= true*/)
       GlobalFree(g_sdata.script_cmd_args);
     }
 
-    g_sdata.script_cmd_args = (char *) GlobalAlloc(GPTR, 1);
+    g_sdata.script_cmd_args = GlobalAlloc(GHND, 1);
   }
 
   g_sdata.script = (char *) GlobalAlloc(GPTR, lstrlen(script) + 1);
@@ -103,13 +103,17 @@ void SetScript(const char *script, bool clearArgs /*= true*/)
 
 void AddScriptCmdArgs(const char *arg)
 {
-  g_sdata.script_cmd_args = (char *) GlobalReAlloc(g_sdata.script_cmd_args,
+  g_sdata.script_cmd_args = GlobalReAlloc(g_sdata.script_cmd_args,
     GlobalSize(g_sdata.script_cmd_args) + lstrlen(arg) + 2 /* quotes */ + 1 /* space */,
     0);
 
-  lstrcat(g_sdata.script_cmd_args, " \"");
-  lstrcat(g_sdata.script_cmd_args, arg);
-  lstrcat(g_sdata.script_cmd_args, "\"");
+  char *args = (char *) GlobalLock(g_sdata.script_cmd_args);
+
+  lstrcat(args, " \"");
+  lstrcat(args, arg);
+  lstrcat(args, "\"");
+
+  GlobalUnlock(args);
 }
 
 void ProcessCommandLine()
