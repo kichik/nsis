@@ -72,7 +72,7 @@ extern char g_log_file[1024];
 #define LogData2Hex(x1,x2,x3,x4)
 #endif
 
-HANDLE NSISCALL myCreateProcess(char *cmd, char *dir);
+HANDLE NSISCALL myCreateProcess(char *cmd);
 int NSISCALL my_MessageBox(const char *text, UINT type);
 
 void NSISCALL myDelete(char *buf, int flags);
