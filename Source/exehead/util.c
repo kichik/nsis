@@ -50,16 +50,12 @@ NSIS_STRING g_usrvars[1] __attribute__((section (NSIS_VARS_SECTION)));
 #  endif
 #endif
 
-HANDLE NSISCALL myCreateProcess(char *cmd, char *dir)
+HANDLE NSISCALL myCreateProcess(char *cmd)
 {
-  DWORD d;
   PROCESS_INFORMATION ProcInfo;
   static STARTUPINFO StartUp;
   StartUp.cb=sizeof(StartUp);
-  d=GetFileAttributes(dir);
-  if (d == INVALID_FILE_ATTRIBUTES || !(d&FILE_ATTRIBUTE_DIRECTORY))
-    dir=0;
-  if (!CreateProcess(NULL, cmd, NULL, NULL, FALSE, 0, NULL, dir, &StartUp, &ProcInfo))
+  if (!CreateProcess(NULL, cmd, NULL, NULL, FALSE, 0, NULL, NULL, &StartUp, &ProcInfo))
     return NULL;
   CloseHandle(ProcInfo.hThread);
   return ProcInfo.hProcess;
