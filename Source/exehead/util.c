@@ -674,13 +674,13 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
       }
       else if (nVarIdx == NS_VAR_CODE)
       {
-        if (nData == 27) // HWNDPARENT
+        if (nData == 28) // HWNDPARENT
           myitoa(out, (unsigned int) g_hwnd);
         else
           mystrcpy(out, g_usrvars[nData]);
         // validate the directory name
-        if ((unsigned int)(nData - 21) < 6) {
-          // validate paths for $INSTDIR, $OUTDIR, $EXEDIR, $LANGUAGE, $TEMP and $PLUGINSDIR
+        if ((unsigned int)(nData - 21) < 7) {
+          // validate paths for $INSTDIR, $OUTDIR, $EXEDIR, $LANGUAGE, $TEMP, $PLUGINSDIR and $EXEPATH
           // $LANGUAGE is just a number anyway...
           validate_filename(out);
         }
