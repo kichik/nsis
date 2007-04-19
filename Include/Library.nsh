@@ -72,7 +72,7 @@
 
   !endif
 
-  !define __InstallLib_Helper_InitSession_Label "${__FILE__}${__LINE__}"
+  !define __InstallLib_Helper_InitSession_Label "Library_${__FILE__}${__LINE__}"
 
   StrCmp $__INSTALLLLIB_SESSIONGUID '' 0 "${__InstallLib_Helper_InitSession_Label}"
 
