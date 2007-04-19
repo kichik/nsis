@@ -27,8 +27,8 @@ extern NSIS_STRING g_usrvars[1];
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
 #  define state_plugins_dir       g_usrvars[26]
 #endif
-#define state_click_next          g_usrvars[28]
-#define state_exe_path            g_usrvars[30]
+#define state_exe_path            g_usrvars[27]
+#define state_click_next          g_usrvars[29]
 
 extern char g_caption[NSIS_MAX_STRLEN*2];
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
