@@ -201,6 +201,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
 
       mystrcat(state_temp_dir,"~nsu.tmp");
       CreateDirectory(state_temp_dir,NULL);
+      SetCurrentDirectory(state_temp_dir);
 
       if (!state_install_directory[0])
         mystrcpy(state_install_directory,state_exe_directory);
@@ -233,7 +234,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
             MoveFileOnReboot(state_temp_dir,NULL);
 #endif
             GetNSISString(buf2,g_header->str_uninstcmd); // '"$TEMP\$1" $0 _?=$INSTDIR\'
-            hProc=myCreateProcess(buf2,state_temp_dir);
+            hProc=myCreateProcess(buf2);
             if (hProc)
             {
               CloseHandle(hProc);
