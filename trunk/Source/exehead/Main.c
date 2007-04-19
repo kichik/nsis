@@ -200,6 +200,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
       char s[] = "Au_.exe";
 
       mystrcat(state_temp_dir,"~nsu.tmp");
+
+      // check if already running from uninstaller temp dir
+      // this prevents recursive uninstaller calls
+      if (!lstrcmpi(state_temp_dir,state_exe_directory))
+        goto end;
+
       CreateDirectory(state_temp_dir,NULL);
       SetCurrentDirectory(state_temp_dir);
 
@@ -212,7 +218,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
       for (x = 0; x < 26; x ++)
       {
         static char buf2[NSIS_MAX_STRLEN];
-        static char ibuf[NSIS_MAX_STRLEN];
 
         GetNSISString(buf2,g_header->str_uninstchild); // $TEMP\$1
 
@@ -220,13 +225,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
 
         if (m_Err) // not done yet
         {
-          // get current name
-          int l=GetModuleFileName(NULL,ibuf,sizeof(ibuf));
-          // check if it is ?u_.exe - if so, fuck it
-          if (!lstrcmpi(ibuf+l-(sizeof(s)-2),s+1)) break;
-
           // copy file
-          if (CopyFile(ibuf,buf2,TRUE))
+          if (CopyFile(state_exe_path,buf2,TRUE))
           {
             HANDLE hProc;
 #ifdef NSIS_SUPPORT_MOVEONREBOOT
