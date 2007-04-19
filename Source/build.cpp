@@ -338,12 +338,9 @@ CEXEBuild::CEXEBuild() :
   m_ShellConstants.add("CDBURN_AREA", CSIDL_CDBURN_AREA, CSIDL_CDBURN_AREA);
 
   unsigned int program_files = add_string("ProgramFilesDir");
-  unsigned int common_files = add_string("CommonFilesDir");
   unsigned int program_files_def = add_string("C:\\Program Files");
-  unsigned int common_files_def = add_string("C:\\Program Files\\Common Files");
 
-  if ((program_files >= 0x40) || (common_files >= 0x40)
-       || (program_files_def > 0xFF) || (common_files_def > 0xFF))
+  if ((program_files >= 0x40) || (program_files_def >= 0xFF))
   {
     // see Source\exehead\util.c for implementation details
     // basically, it knows it needs to get folders from the registry when the 0x80 is on
@@ -354,6 +351,16 @@ CEXEBuild::CEXEBuild() :
   m_ShellConstants.add("PROGRAMFILES",   0x80 | program_files, program_files_def);
   m_ShellConstants.add("PROGRAMFILES32", 0x80 | program_files, program_files_def);
   m_ShellConstants.add("PROGRAMFILES64", 0xC0 | program_files, program_files_def);
+
+  unsigned int common_files = add_string("CommonFilesDir");
+  unsigned int common_files_def = add_string("$PROGRAMFILES\\Common Files");
+
+  if ((common_files > 0x40) || (common_files_def > 0xFF))
+  {
+    ERROR_MSG("Internal compiler error: too many strings added to strings block before adding shell constants!\n");
+    throw out_of_range("Internal compiler error: too many strings added to strings block before adding shell constants!");
+  }
+
   m_ShellConstants.add("COMMONFILES",    0x80 | common_files,  common_files_def);
   m_ShellConstants.add("COMMONFILES32",  0x80 | common_files,  common_files_def);
   m_ShellConstants.add("COMMONFILES64",  0xC0 | common_files,  common_files_def);

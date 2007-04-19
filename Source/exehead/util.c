@@ -636,7 +636,7 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
         {
           myRegGetStr(HKEY_LOCAL_MACHINE, SYSREGKEY, GetNSISStringNP(fldrs[0] & 0x3F), out, fldrs[0] & 0x40);
           if (!*out)
-            mystrcpy(out, GetNSISStringNP(fldrs[2]));
+            GetNSISString(out, fldrs[2]);
           x = 0;
         }
         else if (fldrs[0] == CSIDL_SYSTEM)
