@@ -304,6 +304,7 @@ CEXEBuild::CEXEBuild() :
   m_UserVarNames.add("HWNDPARENT",-1);   // 27
   m_UserVarNames.add("_CLICK",-1);       // 28
   m_UserVarNames.add("_OUTDIR",1);       // 29
+  m_UserVarNames.add("EXEPATH",-1);      // 30
 
   m_iBaseVarsNum = m_UserVarNames.getnum();
 
