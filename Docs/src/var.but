@@ -73,7 +73,11 @@ The Windows desktop directory (usually \c{C:\\Windows\\Desktop} but detected at 
 
 \e{$EXEDIR}
 
-The location of the installer executable (technically you can modify this variable, but it is probably not a good idea).
+The directory containing the installer executable (technically you can modify this variable, but it is probably not a good idea).
+
+\e{$EXEPATH}
+
+The full path of the installer executable.
 
 \e{$\{NSISDIR\}}
 
