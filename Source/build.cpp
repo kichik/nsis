@@ -337,7 +337,7 @@ CEXEBuild::CEXEBuild() :
   m_ShellConstants.add("RESOURCES_LOCALIZED", CSIDL_RESOURCES_LOCALIZED, CSIDL_RESOURCES_LOCALIZED);
   m_ShellConstants.add("CDBURN_AREA", CSIDL_CDBURN_AREA, CSIDL_CDBURN_AREA);
 
-  unsigned int program_files = add_string("ProgramFilesDir");
+  unsigned int program_files = add_string("ProgramFilesDir", 0);
   unsigned int program_files_def = add_string("C:\\Program Files");
 
   if ((program_files >= 0x40) || (program_files_def >= 0xFF))
@@ -352,7 +352,7 @@ CEXEBuild::CEXEBuild() :
   m_ShellConstants.add("PROGRAMFILES32", 0x80 | program_files, program_files_def);
   m_ShellConstants.add("PROGRAMFILES64", 0xC0 | program_files, program_files_def);
 
-  unsigned int common_files = add_string("CommonFilesDir");
+  unsigned int common_files = add_string("CommonFilesDir", 0);
   unsigned int common_files_def = add_string("$PROGRAMFILES\\Common Files");
 
   if ((common_files > 0x40) || (common_files_def > 0xFF))
