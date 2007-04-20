@@ -4670,33 +4670,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #ifdef _WIN32
         DWORD s,d;
         int alloced=0;
-        char *path=line.gettoken_str(1);
-        if (!((*path == '\\' && path[1] == '\\') || (*path && path[1] == ':'))) {
-          size_t pathlen=strlen(path)+GetCurrentDirectory(0, buf)+2;
-          char *nrpath=(char *)malloc(pathlen);
-          alloced=1;
-          GetCurrentDirectory(pathlen, nrpath);
-          if (path[0] != '\\')
-            strcat(nrpath,"\\");
-          else if (nrpath[1] == ':') {
-            nrpath[2]=0;
-          }
-          else {
-            char *p=nrpath+2;
-            while (*p!='\\') p++;
-            *p=0;
-          }
-          strcat(nrpath,path);
-          FILE *f=FOPEN(nrpath, "r");
-          if (f) {
-            path=nrpath;
-            fclose(f);
-          }
-          else {
-            free(nrpath);
-            alloced=0;
-          }
-        }
+        char *upath=line.gettoken_str(1);
+        char path[1024];
+        char *name;
+        path[0] = 0;
+        GetFullPathName(upath, 1024, path, &name);
         s=GetFileVersionInfoSize(path,&d);
         if (s)
         {
@@ -4715,7 +4693,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             GlobalFree(buf);
           }
         }
-        if (alloced) free(path);
 #else
         FILE *fdll = FOPEN(line.gettoken_str(1), "rb");
         if (!fdll) {
