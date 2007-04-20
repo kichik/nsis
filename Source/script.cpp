@@ -4540,7 +4540,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       if (ent.offsets[1] < 0) PRINTHELP();
       switch (ent.offsets[1]) {
         case 0:
-          ent.offsets[1]=8;
+          ent.offsets[2]=1;
         break;
         case 1:
         case 2:
@@ -5794,8 +5794,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       // SetDetailsPrint lastused
       ent.which=EW_UPDATETEXT;
       ent.offsets[0]=0;
-      ent.offsets[1]=8; // lastused
-      ent.offsets[2]=0;
+      ent.offsets[1]=0;
+      ent.offsets[2]=1; // lastused
       ret=add_entry(&ent);
       if (ret != PS_OK) {
         return ret;
@@ -5866,7 +5866,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       // SetDetailsPrint lastused
       ent.which=EW_UPDATETEXT;
       ent.offsets[0]=0;
-      ent.offsets[1]=8; // lastused
+      ent.offsets[1]=0;
+      ent.offsets[2]=1; // lastused
       ret=add_entry(&ent);
       if (ret != PS_OK) return ret;
     }
