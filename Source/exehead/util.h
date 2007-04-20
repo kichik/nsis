@@ -14,6 +14,9 @@
  * warranty.
  */
 
+#ifndef ___NSIS_UTIL_H___
+#define ___NSIS_UTIL_H___
+
 #include "../Platform.h"
 #include "config.h"
 #include <shlobj.h>
@@ -91,7 +94,18 @@ void NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew);
 void NSISCALL mini_memcpy(void *out, const void *in, int len);
 void NSISCALL remove_ro_attr(char *file);
 
-void * NSISCALL myGetProcAddress(const char *dll, const char *func);
+enum myGetProcAddressFunctions {
+  MGA_GetDiskFreeSpaceExA,
+  MGA_MoveFileExA,
+  MGA_RegDeleteKeyExA,
+  MGA_OpenProcessToken,
+  MGA_LookupPrivilegeValueA,
+  MGA_AdjustTokenPrivileges,
+  MGA_GetUserDefaultUILanguage,
+  MGA_SHAutoComplete
+};
+
+void * NSISCALL myGetProcAddress(const enum myGetProcAddressFunctions func);
 void NSISCALL MessageLoop(UINT uCheckedMsg);
 
 // Turn a pair of chars into a word
@@ -103,3 +117,5 @@ void NSISCALL MessageLoop(UINT uCheckedMsg);
 #define CHAR2_TO_WORD(a,b) (((WORD)(a))|((b)<<8))
 #define CHAR4_TO_DWORD(a,b,c,d) (((DWORD)CHAR2_TO_WORD(a,b))|(CHAR2_TO_WORD(c,d)<<16))
 #endif
+
+#endif//!___NSIS_UTIL_H___
