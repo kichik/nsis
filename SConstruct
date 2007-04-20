@@ -514,17 +514,23 @@ for plugin in plugins:
 #######  Utilities                                                 ###
 ######################################################################
 
-def BuildUtil(target, source, libs, entry = None, res = None, 
-              resources = None, defines = None, flags = None,
-              nodeflib = False, file_name = '', path='', contrib = False,
-              examples = None, docs = None, cross_platform = False,
-							root_util = False):
+def BuildUtilEnv(defines = None, flags = None, entry = None,
+                 nodeflib = None, cross_platform = False):
 	if not cross_platform:
 		env = util_env.Clone()
 	else:
 		env = cp_util_env.Clone()
 
 	AddEnvStandardFlags(env, defines, flags, entry, nodeflib)
+
+	return env
+
+def BuildUtil(target, source, libs, entry = None, res = None, 
+              resources = None, defines = None, flags = None,
+              nodeflib = False, file_name = '', path='', contrib = False,
+              examples = None, docs = None, cross_platform = False,
+							root_util = False):
+	env = BuildUtilEnv(defines, flags, entry, nodeflib, cross_platform)
 
 	AppendRES(env, source, res, resources)
 
@@ -561,7 +567,7 @@ for util in utils:
 
 	path = 'Contrib/' + util
 	build_dir = '$BUILD_PREFIX/' + util
-	exports = {'BuildUtil' : BuildUtil, 'env' : util_env.Clone()}
+	exports = {'BuildUtil' : BuildUtil, 'BuildUtilEnv' : BuildUtilEnv, 'env' : util_env}
 
 	defenv.SConscript(dirs = path, build_dir = build_dir, duplicate = False, exports = exports)
 
