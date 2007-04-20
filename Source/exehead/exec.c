@@ -59,7 +59,14 @@ HRESULT g_hres;
 
 static int NSISCALL ExecuteEntry(entry *entry_);
 
-#define resolveaddr(v) ((v<0) ? myatoi(g_usrvars[-(v+1)]) : v)
+int NSISCALL resolveaddr(int v)
+{
+  if (v < 0)
+  {
+    return myatoi(g_usrvars[-(v+1)]);
+  }
+  return v;
+}
 
 int NSISCALL ExecuteCodeSegment(int pos, HWND hwndProgress)
 {
@@ -257,19 +264,23 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         return ExecuteCodeSegment(v,NULL);
       }
     case EW_UPDATETEXT:
-      if (parm1) {
-        static int old_st_updateflag=6;
-        if (parm1&8) ui_st_updateflag=old_st_updateflag;
-        else {
-          old_st_updateflag=ui_st_updateflag;
-          ui_st_updateflag=parm1;
-        }
+    {
+      static int old_st_updateflag=6;
+      if (parm2)
+      {
+        ui_st_updateflag=old_st_updateflag;
+      }
+      else if (parm1)
+      {
+        old_st_updateflag=ui_st_updateflag;
+        ui_st_updateflag=parm1;
       }
       else
       {
         log_printf2("detailprint: %s",GetStringFromParm(0x00));
         update_status_text(parm0,0);
       }
+    }
     break;
     case EW_SLEEP:
       {
@@ -923,8 +934,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         char *highout=var0;
         char *lowout=var1;
         DWORD s1;
-        DWORD t[4]; // our two members are the 3rd and 4th..
-        VS_FIXEDFILEINFO *pvsf1=(VS_FIXEDFILEINFO*)t;
+        VS_FIXEDFILEINFO *pvsf1;
         DWORD d;
         char *buf1=GetStringFromParm(-0x12);
         s1=GetFileVersionInfoSize(buf1,&d);
@@ -1277,12 +1287,12 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           {
             if (t==REG_DWORD)
             {
-              if (!parm4) exec_error++;
+              exec_error += !parm4;
               myitoa(p,*((DWORD*)p));
             }
             else
             {
-              if (parm4) exec_error++;
+              exec_error += parm4;
               p[l]=0;
             }
           }
