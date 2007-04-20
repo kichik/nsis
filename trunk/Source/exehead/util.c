@@ -348,7 +348,7 @@ int NSISCALL is_valid_instpath(char *s)
   return 1;
 }
 
-char * NSISCALL mystrstri(char *a, char *b)
+char * NSISCALL mystrstri(char *a, const char *b)
 {
   int l = mystrlen(b);
   while (mystrlen(a) >= l)
@@ -418,7 +418,7 @@ void NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
   BOOL fOk = 0;
   typedef BOOL (WINAPI *mfea_t)(LPCSTR lpExistingFileName,LPCSTR lpNewFileName,DWORD dwFlags);
   mfea_t mfea;
-  mfea=(mfea_t) myGetProcAddress("KERNEL32","MoveFileExA");
+  mfea=(mfea_t) myGetProcAddress(MGA_MoveFileExA);
   if (mfea)
   {
     fOk=mfea(pszExisting, pszNew, MOVEFILE_DELAY_UNTIL_REBOOT|MOVEFILE_REPLACE_EXISTING);
@@ -430,7 +430,7 @@ void NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
     static char wininit[1024];
     static char tmpbuf[1024];
     int cchRenameLine;
-    char *szRenameSec = "[Rename]\r\n";
+    static const char szRenameSec[] = "[Rename]\r\n";
     HANDLE hfile;
     DWORD dwFileSize;
     DWORD dwBytes;
@@ -591,7 +591,8 @@ char * NSISCALL mystrcat(char *out, const char *concat)
 
 char ps_tmpbuf[NSIS_MAX_STRLEN*2];
 
-#define SYSREGKEY "Software\\Microsoft\\Windows\\CurrentVersion"
+const char SYSREGKEY[]   = "Software\\Microsoft\\Windows\\CurrentVersion";
+const char QUICKLAUNCH[] = "\\Microsoft\\Internet Explorer\\Quick Launch";
 
 // Based on Dave Laundon's simplified process_string
 char * NSISCALL GetNSISString(char *outbuf, int strtab)
@@ -666,7 +667,7 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
           // for normal $APPDATA, it'd be CSIDL_APPDATA_COMMON
           if (fldrs[2] == CSIDL_APPDATA)
           {
-            mystrcat(out, "\\Microsoft\\Internet Explorer\\Quick Launch");
+            mystrcat(out, QUICKLAUNCH);
           }
         }
 
@@ -882,15 +883,32 @@ WIN32_FIND_DATA * NSISCALL file_exists(char *buf)
   return NULL;
 }
 
-void * NSISCALL myGetProcAddress(const char *dll, const char *func)
+struct MGA_FUNC
 {
-  HMODULE hModule = GetModuleHandle(dll);
+  const char *dll;
+  const char *func;
+};
+
+struct MGA_FUNC MGA_FUNCS[] = {
+  {"KERNEL32", "GetDiskFreeSpaceExA"},
+  {"KERNEL32", "MoveFileExA"},
+  {"ADVAPI32", "RegDeleteKeyExA"},
+  {"ADVAPI32", "OpenProcessToken"},
+  {"ADVAPI32", "LookupPrivilegeValueA"},
+  {"ADVAPI32", "AdjustTokenPrivileges"},
+  {"KERNEL32", "GetUserDefaultUILanguage"},
+  {"SHLWAPI",  "SHAutoComplete"}
+};
+
+void * NSISCALL myGetProcAddress(const enum myGetProcAddressFunctions func)
+{
+  HMODULE hModule = GetModuleHandle(MGA_FUNCS[func].dll);
   if (!hModule)
-    hModule = LoadLibrary(dll);
+    hModule = LoadLibrary(MGA_FUNCS[func].dll);
   if (!hModule)
     return NULL;
 
-  return GetProcAddress(hModule, func);
+  return GetProcAddress(hModule, MGA_FUNCS[func].func);
 }
 
 void NSISCALL MessageLoop(UINT uCheckedMsg)

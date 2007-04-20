@@ -197,7 +197,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
     else
     {
       int x;
-      char s[] = "Au_.exe";
 
       mystrcat(state_temp_dir,"~nsu.tmp");
 
@@ -213,13 +212,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
         mystrcpy(state_install_directory,state_exe_directory);
 
       mystrcpy(g_usrvars[0], realcmds);
-      mystrcpy(g_usrvars[1], s);
+      *(LPWORD)g_usrvars[1] = CHAR2_TO_WORD('A',0);
 
       for (x = 0; x < 26; x ++)
       {
         static char buf2[NSIS_MAX_STRLEN];
 
-        GetNSISString(buf2,g_header->str_uninstchild); // $TEMP\$1
+        GetNSISString(buf2,g_header->str_uninstchild); // $TEMP\$1u_.exe
 
         DeleteFile(buf2); // clean up after all the other ones if they are there
 
@@ -233,7 +232,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
             MoveFileOnReboot(buf2,NULL);
             MoveFileOnReboot(state_temp_dir,NULL);
 #endif
-            GetNSISString(buf2,g_header->str_uninstcmd); // '"$TEMP\$1" $0 _?=$INSTDIR\'
+            GetNSISString(buf2,g_header->str_uninstcmd); // '"$TEMP\$1u_.exe" $0 _?=$INSTDIR\'
             hProc=myCreateProcess(buf2);
             if (hProc)
             {
@@ -279,9 +278,9 @@ end:
     BOOL (WINAPI *OPT)(HANDLE, DWORD,PHANDLE);
     BOOL (WINAPI *LPV)(LPCTSTR,LPCTSTR,PLUID);
     BOOL (WINAPI *ATP)(HANDLE,BOOL,PTOKEN_PRIVILEGES,DWORD,PTOKEN_PRIVILEGES,PDWORD);
-    OPT=myGetProcAddress("ADVAPI32","OpenProcessToken");
-    LPV=myGetProcAddress("ADVAPI32","LookupPrivilegeValueA");
-    ATP=myGetProcAddress("ADVAPI32","AdjustTokenPrivileges");
+    OPT=myGetProcAddress(MGA_OpenProcessToken);
+    LPV=myGetProcAddress(MGA_LookupPrivilegeValueA);
+    ATP=myGetProcAddress(MGA_AdjustTokenPrivileges);
     if (OPT && LPV && ATP)
     {
       HANDLE hToken;

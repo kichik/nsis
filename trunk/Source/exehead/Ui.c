@@ -232,9 +232,8 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
   //   http://msdn.microsoft.com/library/default.asp?url=/library/en-us/intl/nls_0xrn.asp
 
   LANGID (WINAPI *GUDUIL)();
-  static const char guduil[] = "GetUserDefaultUILanguage";
 
-  GUDUIL = myGetProcAddress("KERNEL32", guduil);
+  GUDUIL = myGetProcAddress(MGA_GetUserDefaultUILanguage);
   if (GUDUIL)
   {
     // Windows ME/2000+
@@ -374,21 +373,20 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
 
 #ifdef NSIS_CONFIG_LICENSEPAGE
     { // load richedit DLL
-      static char str1[]="RichEd20";
-      static char str2[]="RichEdit20A";
-      if (!LoadLibrary(str1))
+      static const char riched20[]="RichEd20";
+      static const char riched32[]="RichEd32";
+      static const char richedit20a[]="RichEdit20A";
+      static const char richedit[]="RichEdit";
+      if (!LoadLibrary(riched20))
       {
-        *(WORD*)(str1+6) = CHAR2_TO_WORD('3','2');
-        LoadLibrary(str1);
+        LoadLibrary(riched32);
       }
 
       // make richedit20a point to RICHEDIT
-      if (!GetClassInfo(NULL,str2,&wc))
+      if (!GetClassInfo(NULL,richedit20a,&wc))
       {
-        str2[8]=0;
-        GetClassInfo(NULL,str2,&wc);
-        wc.lpszClassName = str2;
-        str2[8]='2';
+        GetClassInfo(NULL,richedit,&wc);
+        wc.lpszClassName = richedit20a;
         RegisterClass(&wc);
       }
     }
@@ -920,9 +918,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     {
       typedef HRESULT (WINAPI *SHAutoCompletePtr)(HWND, DWORD);
       SHAutoCompletePtr fSHAutoComplete;
-      static const char shlwapi[] = "shlwapi";
-      static const char shac[] = "SHAutoComplete";
-      fSHAutoComplete = (SHAutoCompletePtr) myGetProcAddress(shlwapi, shac);
+      fSHAutoComplete = (SHAutoCompletePtr) myGetProcAddress(MGA_SHAutoComplete);
       if (fSHAutoComplete)
       {
         fSHAutoComplete(hDir, SHACF_FILESYSTEM);
@@ -996,7 +992,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     // Test for and use the GetDiskFreeSpaceEx API
     {
       BOOL (WINAPI *GDFSE)(LPCSTR, PULARGE_INTEGER, PULARGE_INTEGER, PULARGE_INTEGER) =
-          myGetProcAddress("KERNEL32", "GetDiskFreeSpaceExA");
+          myGetProcAddress(MGA_GetDiskFreeSpaceExA);
       if (GDFSE)
       {
         ULARGE_INTEGER available64;
