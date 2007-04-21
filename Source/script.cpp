@@ -5799,6 +5799,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         ent.offsets[0]=add_string(line.gettoken_str(w));
         if (!strcmpi(line.gettoken_str(w), "/NOUNLOAD")) nounloadmisused=1;
         ent.offsets[1]=0;
+        ent.offsets[2]=0;
         ret=add_entry(&ent);
         if (ret != PS_OK) {
           return ret;
