@@ -5723,7 +5723,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       // DLL name on the user machine
       char tempDLL[NSIS_MAX_STRLEN];
       string dllName = get_file_name(dllPath);
-      wsprintf(tempDLL, "$PLUGINSDIR%c%s", PATH_SEPARATOR_C, dllName.c_str());
+      wsprintf(tempDLL, "$PLUGINSDIR\\%s", dllName.c_str());
 
       // Add the DLL to the installer
       if (data_handle == -1)
