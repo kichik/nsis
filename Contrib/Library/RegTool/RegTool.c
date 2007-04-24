@@ -163,11 +163,11 @@ void RunSelf(char cmd, char *file, int x64)
 
       CloseHandle(pi.hProcess);
     }
-  }
-
-  if (x64)
-  {
-    SafeWow64EnableWow64FsRedirection(TRUE);
+    
+    if (x64)
+    {
+      SafeWow64EnableWow64FsRedirection(TRUE);
+    }
   }
 }
 
