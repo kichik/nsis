@@ -12,8 +12,7 @@
 #include <iostream>
 #include <fstream>
 
-#include "../../../Source/ResourceEditor.h"
-#include "../../../Source/ResourceVersionInfo.h"
+#include "../../../Source/util.h"
 #include "../../../Source/winchar.h"
 
 using namespace std;
@@ -21,68 +20,6 @@ using namespace std;
 int g_noconfig=0;
 int g_display_errors=1;
 FILE *g_output=stdout;
-
-int GetDLLVersion(string& filepath, DWORD& high, DWORD & low)
-{
-  int found = 0;
-
-  FILE *fdll = fopen(filepath.c_str(), "rb");
-  if (!fdll)
-    return 0;
-
-  fseek(fdll, 0, SEEK_END);
-  unsigned int len = ftell(fdll);
-  fseek(fdll, 0, SEEK_SET);
-
-  LPBYTE dll = (LPBYTE) malloc(len);
-
-  if (!dll)
-  {
-    fclose(fdll);
-    return 0;
-  }
-
-  if (fread(dll, 1, len, fdll) != len)
-  {
-    fclose(fdll);
-    free(dll);
-    return 0;
-  }
-
-  try
-  {
-    CResourceEditor *dllre = new CResourceEditor(dll, len);
-    LPBYTE ver = dllre->GetResourceA(VS_FILE_INFO, MAKEINTRESOURCE(VS_VERSION_INFO), 0);
-    int versize = dllre->GetResourceSizeA(VS_FILE_INFO, MAKEINTRESOURCE(VS_VERSION_INFO), 0);
-
-    if (ver)
-    {
-      if ((size_t) versize > sizeof(WORD) * 3)
-      {
-        // get VS_FIXEDFILEINFO from VS_VERSIONINFO
-        WCHAR *szKey = (WCHAR *)(ver + sizeof(WORD) * 3);
-        int len = (winchar_strlen(szKey) + 1) * sizeof(WCHAR) + sizeof(WORD) * 3;
-        len = (len + 3) & ~3; // align on DWORD boundry
-        VS_FIXEDFILEINFO *verinfo = (VS_FIXEDFILEINFO *)(ver + len);
-        if (versize > len && verinfo->dwSignature == VS_FFI_SIGNATURE)
-        {
-          low = verinfo->dwFileVersionLS;
-          high = verinfo->dwFileVersionMS;
-          found = 1;
-        }
-      }
-      dllre->FreeResource(ver);
-    }
-
-    delete dllre;
-  }
-  catch (exception&)
-  {
-    return 0;
-  }
-
-  return found;
-}
 
 int GetTLBVersion(string& filepath, DWORD& high, DWORD & low)
 {
