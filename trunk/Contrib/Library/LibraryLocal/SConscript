@@ -12,6 +12,7 @@ required_files = Split("""
 
 libs = Split("""
 	oleaut32
+	version
 """)
 
 Import('BuildUtil BuildUtilEnv')
