@@ -4664,110 +4664,22 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return add_entry(&ent);
     case TOK_GETDLLVERSIONLOCAL:
       {
-        char buf[128];
-        DWORD low=0, high=0;
-        int flag=0;
-#ifdef _WIN32
-        DWORD s,d;
-        int alloced=0;
-        char *upath=line.gettoken_str(1);
-        char path[1024];
-        char *name;
-        path[0] = 0;
-        GetFullPathName(upath, 1024, path, &name);
-        s=GetFileVersionInfoSize(path,&d);
-        if (s)
-        {
-          void *buf;
-          buf=(void *)GlobalAlloc(GPTR,s);
-          if (buf)
-          {
-            UINT uLen;
-            VS_FIXEDFILEINFO *pvsf;
-            if (GetFileVersionInfo(path,0,s,buf) && VerQueryValue(buf,"\\",(void**)&pvsf,&uLen))
-            {
-              low=pvsf->dwFileVersionLS;
-              high=pvsf->dwFileVersionMS;
-              flag=1;
-            }
-            GlobalFree(buf);
-          }
-        }
-#else
-        FILE *fdll = FOPEN(line.gettoken_str(1), "rb");
-        if (!fdll) {
-          ERROR_MSG("Error: Can't open \"%s\"!\n", line.gettoken_str(1));
-          return PS_ERROR;
-        }
-        MANAGE_WITH(fdll, fclose);
-
-        fseek(fdll, 0, SEEK_END);
-        unsigned int len = ftell(fdll);
-        fseek(fdll, 0, SEEK_SET);
-        LPBYTE dll = (LPBYTE) malloc(len);
-        if (!dll) {
-          ERROR_MSG("Internal compiler error #12345: malloc(%d) failed\n", dll);
-          extern void quit(); quit();
-        }
-        MANAGE_WITH(dll, free);
-        if (fread(dll, 1, len, fdll) != len) {
-          ERROR_MSG("Error: Can't read \"%s\"!\n", line.gettoken_str(1));
-          return PS_ERROR;
-        }
-
-        try
-        {
-          CResourceEditor *dllre = new CResourceEditor(dll, len);
-          LPBYTE ver = dllre->GetResourceA(VS_FILE_INFO, MAKEINTRESOURCE(VS_VERSION_INFO), 0);
-          int versize = dllre->GetResourceSizeA(VS_FILE_INFO, MAKEINTRESOURCE(VS_VERSION_INFO), 0);
-
-          if (ver)
-          {
-            if ((size_t) versize > sizeof(WORD) * 3)
-            {
-              // get VS_FIXEDFILEINFO from VS_VERSIONINFO
-              WCHAR *szKey = (WCHAR *)(ver + sizeof(WORD) * 3);
-              int len = (winchar_strlen(szKey) + 1) * sizeof(WCHAR) + sizeof(WORD) * 3;
-              len = (len + 3) & ~3; // align on DWORD boundry
-              VS_FIXEDFILEINFO *verinfo = (VS_FIXEDFILEINFO *)(ver + len);
-              if (versize > len && verinfo->dwSignature == VS_FFI_SIGNATURE)
-              {
-                low = verinfo->dwFileVersionLS;
-                high = verinfo->dwFileVersionMS;
-                flag = 1;
-              }
-            }
-            dllre->FreeResource(ver);
-          }
-
-          delete dllre;
-        }
-        catch (exception& err) {
-          ERROR_MSG(
-            "GetDLLVersionLocal: error reading version info from \"%s\": %s\n",
-            line.gettoken_str(1),
-            err.what()
-          );
-          return PS_ERROR;
-        }
-#endif
-        if (!flag)
+        DWORD low, high;
+        if (!GetDLLVersion(line.gettoken_str(1),high,low))
         {
           ERROR_MSG("GetDLLVersionLocal: error reading version info from \"%s\"\n",line.gettoken_str(1));
           return PS_ERROR;
         }
         ent.which=EW_ASSIGNVAR;
         ent.offsets[0]=GetUserVarIndex(line, 2);
-        wsprintf(buf,"%u",high);
-        ent.offsets[1]=add_string(buf);
+        ent.offsets[1]=add_intstring(high);
         ent.offsets[2]=0;
         ent.offsets[3]=0;
         if (ent.offsets[0]<0) PRINTHELP()
         add_entry(&ent);
 
         ent.offsets[0]=GetUserVarIndex(line, 3);
-        wsprintf(buf,"%u",low);
-        ent.offsets[1]=add_string(buf);
+        ent.offsets[1]=add_intstring(low);
         ent.offsets[2]=0;
         ent.offsets[3]=0;
         if (ent.offsets[0]<0) PRINTHELP()
