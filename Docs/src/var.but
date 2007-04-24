@@ -75,6 +75,10 @@ The Windows desktop directory (usually \c{C:\\Windows\\Desktop} but detected at 
 
 The directory containing the installer executable (technically you can modify this variable, but it is probably not a good idea).
 
+\e{$EXEFILE}
+
+The base name of the installer executable.
+
 \e{$EXEPATH}
 
 The full path of the installer executable.

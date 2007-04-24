@@ -302,9 +302,10 @@ CEXEBuild::CEXEBuild() :
   m_UserVarNames.add("TEMP",-1);         // 25
   m_UserVarNames.add("PLUGINSDIR",-1);   // 26
   m_UserVarNames.add("EXEPATH",-1);      // 27
-  m_UserVarNames.add("HWNDPARENT",-1);   // 28
-  m_UserVarNames.add("_CLICK",-1);       // 29
-  m_UserVarNames.add("_OUTDIR",1);       // 30
+  m_UserVarNames.add("EXEFILE",-1);      // 28
+  m_UserVarNames.add("HWNDPARENT",-1);   // 29
+  m_UserVarNames.add("_CLICK",-1);       // 30
+  m_UserVarNames.add("_OUTDIR",1);       // 31
 
   m_iBaseVarsNum = m_UserVarNames.getnum();
 
