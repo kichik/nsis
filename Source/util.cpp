@@ -729,3 +729,109 @@ int sane_system(const char *command) {
 
 #endif
 }
+
+static bool GetDLLVersionUsingRE(const string& filepath, DWORD& high, DWORD & low)
+{
+  bool found = false;
+
+  FILE *fdll = FOPEN(filepath.c_str(), "rb");
+  if (!fdll)
+    return 0;
+
+  fseek(fdll, 0, SEEK_END);
+  unsigned int len = ftell(fdll);
+  fseek(fdll, 0, SEEK_SET);
+
+  LPBYTE dll = (LPBYTE) malloc(len);
+
+  if (!dll)
+  {
+    fclose(fdll);
+    return 0;
+  }
+
+  if (fread(dll, 1, len, fdll) != len)
+  {
+    fclose(fdll);
+    free(dll);
+    return 0;
+  }
+
+  try
+  {
+    CResourceEditor *dllre = new CResourceEditor(dll, len);
+    LPBYTE ver = dllre->GetResourceA(VS_FILE_INFO, MAKEINTRESOURCE(VS_VERSION_INFO), 0);
+    int versize = dllre->GetResourceSizeA(VS_FILE_INFO, MAKEINTRESOURCE(VS_VERSION_INFO), 0);
+
+    if (ver)
+    {
+      if ((size_t) versize > sizeof(WORD) * 3)
+      {
+        // get VS_FIXEDFILEINFO from VS_VERSIONINFO
+        WCHAR *szKey = (WCHAR *)(ver + sizeof(WORD) * 3);
+        int len = (winchar_strlen(szKey) + 1) * sizeof(WCHAR) + sizeof(WORD) * 3;
+        len = (len + 3) & ~3; // align on DWORD boundry
+        VS_FIXEDFILEINFO *verinfo = (VS_FIXEDFILEINFO *)(ver + len);
+        if (versize > len && verinfo->dwSignature == VS_FFI_SIGNATURE)
+        {
+          low = verinfo->dwFileVersionLS;
+          high = verinfo->dwFileVersionMS;
+          found = true;
+        }
+      }
+      dllre->FreeResource(ver);
+    }
+
+    delete dllre;
+  }
+  catch (exception&)
+  {
+  }
+
+  return found;
+}
+
+static bool GetDLLVersionUsingAPI(const string& filepath, DWORD& high, DWORD& low)
+{
+  bool found = false;
+
+#ifdef _WIN32
+  char path[1024];
+  char *name;
+  path[0] = 0;
+
+  GetFullPathName(filepath.c_str(), 1024, path, &name);
+
+  DWORD d;
+  DWORD verSize = GetFileVersionInfoSize(path, &d);
+  if (verSize)
+  {
+    void *buf = (void *) GlobalAlloc(GPTR, verSize);
+    if (buf)
+    {
+      UINT uLen;
+      VS_FIXEDFILEINFO *pvsf;
+      if (GetFileVersionInfo(path, 0, verSize, buf) && VerQueryValue(buf, "\\", (void**) &pvsf, &uLen))
+      {
+        low = pvsf->dwFileVersionLS;
+        high = pvsf->dwFileVersionMS;
+        found = true;
+      }
+      GlobalFree(buf);
+    }
+  }
+#endif
+
+  return found;
+}
+
+bool GetDLLVersion(const string& filepath, DWORD& high, DWORD& low)
+{
+  if (GetDLLVersionUsingAPI(filepath, high, low))
+    return true;
+
+  if (GetDLLVersionUsingRE(filepath, high, low))
+    return true;
+
+  return false;
+}

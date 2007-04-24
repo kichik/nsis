@@ -48,6 +48,8 @@ int generate_unicons_offsets(unsigned char* exeHeader, size_t exeHeaderSize, uns
 
 size_t my_strftime(char *s, size_t max, const char  *fmt, const struct tm *tm);
 
+bool GetDLLVersion(const std::string& filepath, DWORD& high, DWORD& low);
+
 std::string get_full_path(const std::string& path);
 std::string get_dir_name(const std::string& path);
 std::string get_file_name(const std::string& path);
