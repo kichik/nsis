@@ -138,9 +138,8 @@ const char * NSISCALL loadHeaders(int cl_flags)
     return _LANG_CANTOPENSELF;
   }
 
-  // make state_exe_directory point to dir.
   mystrcpy(state_exe_directory, state_exe_path);
-  trimslashtoend(state_exe_directory);
+  mystrcpy(state_exe_file, trimslashtoend(state_exe_directory));
 
   left = m_length = GetFileSize(db_hFile,NULL);
   while (left > 0)
