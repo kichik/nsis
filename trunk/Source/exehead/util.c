@@ -260,7 +260,7 @@ char * NSISCALL findchar(char *str, char c)
   return str;
 }
 
-void NSISCALL trimslashtoend(char *buf)
+char * NSISCALL trimslashtoend(char *buf)
 {
   char *p = buf + mystrlen(buf);
   do
@@ -271,6 +271,8 @@ void NSISCALL trimslashtoend(char *buf)
   } while (p > buf);
 
   *p = 0;
+
+  return p + 1;
 }
 
 int NSISCALL validpathspec(char *ubuf)
@@ -675,7 +677,7 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
       }
       else if (nVarIdx == NS_VAR_CODE)
       {
-        if (nData == 28) // HWNDPARENT
+        if (nData == 29) // $HWNDPARENT
           myitoa(out, (unsigned int) g_hwnd);
         else
           mystrcpy(out, g_usrvars[nData]);
