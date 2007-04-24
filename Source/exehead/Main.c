@@ -230,7 +230,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
             HANDLE hProc;
 #ifdef NSIS_SUPPORT_MOVEONREBOOT
             MoveFileOnReboot(buf2,NULL);
-            MoveFileOnReboot(state_temp_dir,NULL);
 #endif
             GetNSISString(buf2,g_header->str_uninstcmd); // '"$TEMP\$1u_.exe" $0 _?=$INSTDIR\'
             hProc=myCreateProcess(buf2);
@@ -244,6 +243,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
         }
         g_usrvars[1][0]++;
       }
+
+#ifdef NSIS_SUPPORT_MOVEONREBOOT
+      MoveFileOnReboot(state_temp_dir,NULL);
+#endif
+
       goto end;
     }
   }
