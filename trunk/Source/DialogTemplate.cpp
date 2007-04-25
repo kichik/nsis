@@ -292,7 +292,7 @@ void CDialogTemplate::SetFont(char* szFaceName, WORD wFontSize) {
   m_bCharset = DEFAULT_CHARSET;
   m_dwStyle |= DS_SETFONT;
   if (m_szFont) delete [] m_szFont;
-  m_szFont = winchar_fromansi(szFaceName);
+  m_szFont = winchar_fromansi(szFaceName, m_uCodePage);
   m_sFontSize = wFontSize;
 }
 
