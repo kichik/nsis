@@ -123,6 +123,7 @@ opts.Add(ListOption('SKIPPLUGINS', 'A list of plug-ins that will not be built', 
 opts.Add(ListOption('SKIPUTILS', 'A list of utilities that will not be built', 'none', utils))
 opts.Add(ListOption('SKIPMISC', 'A list of plug-ins that will not be built', 'none', misc))
 opts.Add(ListOption('SKIPDOC', 'A list of doc files that will not be built/installed', 'none', doc))
+opts.Add(('SKIPTESTS', 'A comma-separated list of test files that will not be ran', 'none'))
 # build tools
 opts.Add(BoolOption('MSTOOLKIT', 'Use Microsoft Visual C++ Toolkit', 'no'))
 opts.Add(BoolOption('CHMDOCS', 'Build CHM documentation, requires hhc.exe', hhc))
@@ -656,10 +657,17 @@ def test_scripts(target, source, env):
 
 	makensis = instdir + sep + 'makensis'
 
+	tdlen = len(env.subst('$TESTDISTDIR'))
+	skipped_tests = env['SKIPTESTS'].split(',')
+
 	for root, dirs, files in walk(instdir):
 		for file in files:
 			if file[-4:] == '.nsi':
 				nsi = root + sep + file
+
+				if nsi[tdlen + 1:] in skipped_tests:
+					continue
+
 				cmd = env.Command(None, nsi, '%s $SOURCE' % makensis)
 				AlwaysBuild(cmd)
 				env.Alias('test-scripts', cmd)
