@@ -849,6 +849,21 @@ typedef struct _IMAGE_EXPORT_DIRECTORY {
   DWORD AddressOfNames;
   DWORD AddressOfNameOrdinals;
 } IMAGE_EXPORT_DIRECTORY,*PIMAGE_EXPORT_DIRECTORY;
+typedef struct tagVS_FIXEDFILEINFO {
+  DWORD dwSignature;
+  DWORD dwStrucVersion;
+  DWORD dwFileVersionMS;
+  DWORD dwFileVersionLS;
+  DWORD dwProductVersionMS;
+  DWORD dwProductVersionLS;
+  DWORD dwFileFlagsMask;
+  DWORD dwFileFlags;
+  DWORD dwFileOS;
+  DWORD dwFileType;
+  DWORD dwFileSubtype;
+  DWORD dwFileDateMS;
+  DWORD dwFileDateLS;
+} VS_FIXEDFILEINFO;
 #  pragma pack()
 #endif
 
