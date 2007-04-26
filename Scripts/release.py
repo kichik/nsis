@@ -257,7 +257,7 @@ def CreateChangeLog():
 	os.chdir('Scripts')
 
 	run(
-		'%s -x %s %s --show-tag %s --file %s --stdin < cvs.log' % (CVS2CL_PERL, CVS2CL, CVS2CL_OPTS, CVS_TAG, changelog),
+		'%s -x %s %s --file %s --stdin < cvs.log' % (CVS2CL_PERL, CVS2CL, CVS2CL_OPTS, changelog),
 		LOG_ALL,
 		'changelog failed'
 	)
