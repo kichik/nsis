@@ -266,6 +266,7 @@ class CEXEBuild {
     int DefineInnerLangString(int id, int process=-1);
     int SetLangString(char *name, LANGID lang, char *string);
     int SetInnerString(int id, char *string);
+    int GenerateLangTable(LanguageTable *lt, int num_lang_tables);
     int GenerateLangTables();
     void FillLanguageTable(LanguageTable *table);
     int HasUserDefined(int id) {
