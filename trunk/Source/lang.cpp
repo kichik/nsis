@@ -482,6 +482,158 @@ int CEXEBuild::SetInnerString(int id, char *string) {
   return ret;
 }
 
+int CEXEBuild::GenerateLangTable(LanguageTable *lt, int num_lang_tables) {
+  // Add all installer language strings
+  int i, j, l, tabsset;
+  struct langstring* lang_strings = NULL;
+  TinyGrowBuf *string_ptrs = new TinyGrowBuf[num_lang_tables];
+
+  tabsset = 1;
+  while (tabsset)
+  {
+    tabsset = 0;
+    for (i = num_lang_tables; i--; )
+    {
+      // Fill in default values for all used language strings that we can
+      FillLanguageTable(&lt[i]);
+      // Make sure the string lists are large enough
+      string_ptrs[i].set_zeroing(1);
+      if (!uninstall_mode)
+        string_ptrs[i].resize(build_langstring_num * sizeof(int));
+      else
+        string_ptrs[i].resize(ubuild_langstring_num * sizeof(int));
+    }
+
+    // For all current language strings
+    if (!uninstall_mode)
+      lang_strings = build_langstrings.sort_index(&l);
+    else
+      lang_strings = build_langstrings.sort_uindex(&l);
+
+    for (j = 0; j < l; j++)
+    {
+      int lang_string_index;
+
+      if (!uninstall_mode)
+        lang_string_index = lang_strings[j].index;
+      else
+        lang_string_index = lang_strings[j].uindex;
+
+      // Is this language string used (in the installer)?
+      if (lang_string_index >= 0)
+      {
+        // For each language
+        for (i = num_lang_tables; i--; )
+        {
+          // Get the current string pointer
+          int *ptr = (int *)string_ptrs[i].get() + lang_string_index;
+          // Not already set?
+          if (!*ptr)
+          {
+            // Get the language string and its name
+            const char *str = lt[i].lang_strings->get(lang_strings[j].sn);
+            const char *lsn = build_langstrings.offset2name(lang_strings[j].name);
+            if (!str || !*str)
+            {
+              // No string is defined; give a warning (for user strings only)
+              if (lsn[0] != '^')
+              {
+                if (lt[i].nlf.m_bLoaded)
+                  warning("LangString \"%s\" is not set in language table of language %s", lsn, lt[i].nlf.m_szName);
+                else
+                  warning("LangString \"%s\" is not set in language table of language %d", lsn, lt[i].lang_id);
+              }
+            }
+            else
+            {
+              // Add the language string to the string data block
+              char fn[1024];
+              sprintf(fn, "LangString %s", lsn);
+              curfilename = fn;
+              linecnt = lt[i].lang_id;
+              *ptr = add_string(str, lang_strings[j].process, (WORD) lt[i].nlf.m_uCodePage);
+              curfilename = 0;
+              // Indicate that we should check again for any newly referenced language strings
+              tabsset++;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Optimize langstrings and check for recursion
+  for (i = num_lang_tables; i--; )
+  {
+    TinyGrowBuf rec;
+    int *lst = (int *)string_ptrs[i].get();
+
+    int langstring_num;
+
+    if (!uninstall_mode)
+      langstring_num = build_langstring_num;
+    else
+      langstring_num = ubuild_langstring_num;
+
+    for (j = 0; j < langstring_num; j++)
+    {
+      // Does this string reference another language string directly?
+      while (lst[j] < 0)
+      {
+        // Search through list of language string references
+        for (l = 0; (unsigned int)l < rec.getlen() / sizeof(int); l++)
+        {
+          if (((int*)rec.get())[l] == lst[j])
+          {
+            // We have the index of a recursive language string; now find the name
+            const char *name = "(unnamed)";
+            for (l = 0; l < langstring_num; l++)
+            {
+              int index;
+
+              if (!uninstall_mode)
+                index = lang_strings[l].index;
+              else
+                index = lang_strings[l].uindex;
+
+              if (lang_strings[l].index == j)
+              {
+                name = build_langstrings.offset2name(lang_strings[l].name);
+              }
+            }
+            ERROR_MSG("Error: LangString %s is recursive!\n", name);
+            delete [] string_ptrs;
+            return PS_ERROR;
+          }
+        }
+        // Add this reference to the list
+        rec.add(&lst[j], sizeof(int));
+        // and dereference it
+        lst[j] = lst[-lst[j] - 1];
+      }
+      rec.resize(0);
+    }
+  }
+
+  // Add language tables into their datablock
+  for (i = num_lang_tables; i--; )
+  {
+    cur_langtables->add(&lt[i].lang_id, sizeof(LANGID));
+    cur_langtables->add(&lt[i].dlg_offset, sizeof(int));
+    int rtl = lt[i].nlf.m_bRTL ? 1 : 0;
+    cur_langtables->add(&rtl, sizeof(int));
+    cur_langtables->add(string_ptrs[i].get(), string_ptrs[i].getlen());
+    string_ptrs[i].resize(0);
+  }
+
+  cur_header->blocks[NB_LANGTABLES].num = num_lang_tables;
+  cur_header->langtable_size = cur_langtables->getlen() / num_lang_tables;
+
+  delete [] string_ptrs;
+
+  return PS_OK;
+}
+
 int CEXEBuild::GenerateLangTables() {
   int i;
   LanguageTable *lt = (LanguageTable*)lang_tables.get();
@@ -618,237 +770,22 @@ int CEXEBuild::GenerateLangTables() {
     }
   }
 
-  // Add all installer language strings
-  int j, l, tabsset;
-  struct langstring* lang_strings = NULL;
-  TinyGrowBuf *string_ptrs = new TinyGrowBuf[num_lang_tables];
-
-  tabsset = 1;
-  while (tabsset)
-  {
-    tabsset = 0;
-    for (i = num_lang_tables; i--; )
-    {
-      // Fill in default values for all used language strings that we can
-      FillLanguageTable(&lt[i]);
-      // Make sure the string lists are large enough
-      string_ptrs[i].set_zeroing(1);
-      string_ptrs[i].resize(build_langstring_num * sizeof(int));
-    }
-
-    // For all current language strings
-    lang_strings = build_langstrings.sort_index(&l);
-    for (j = 0; j < l; j++)
-    {
-      // Is this language string used (in the installer)?
-      if (lang_strings[j].index >= 0)
-      {
-        // For each language
-        for (i = num_lang_tables; i--; )
-        {
-          // Get the current string pointer
-          int *ptr = (int *)string_ptrs[i].get() + lang_strings[j].index;
-          // Not already set?
-          if (!*ptr)
-          {
-            // Get the language string and its name
-            const char *str = lt[i].lang_strings->get(lang_strings[j].sn);
-            const char *lsn = build_langstrings.offset2name(lang_strings[j].name);
-            if (!str || !*str)
-            {
-              // No string is defined; give a warning (for user strings only)
-              if (lsn[0] != '^')
-              {
-                if (lt[i].nlf.m_bLoaded)
-                  warning("LangString \"%s\" is not set in language table of language %s", lsn, lt[i].nlf.m_szName);
-                else
-                  warning("LangString \"%s\" is not set in language table of language %d", lsn, lt[i].lang_id);
-              }
-            }
-            else
-            {
-              // Add the language string to the string data block
-              char fn[1024];
-              sprintf(fn, "LangString %s", lsn);
-              curfilename = fn;
-              linecnt = lt[i].lang_id;
-              *ptr = add_string(str, lang_strings[j].process, (WORD) lt[i].nlf.m_uCodePage);
-              curfilename = 0;
-              // Indicate that we should check again for any newly referenced language strings
-              tabsset++;
-            }
-          }
-        }
-      }
-    }
-  }
-
-  // Optimize langstrings and check for recursion
-  for (i = num_lang_tables; i--; )
-  {
-    TinyGrowBuf rec;
-    int *lst = (int *)string_ptrs[i].get();
-    for (j = 0; j < build_langstring_num; j++)
-    {
-      // Does this string reference another language string directly?
-      while (lst[j] < 0)
-      {
-        // Search through list of language string references
-        for (l = 0; (unsigned int)l < rec.getlen() / sizeof(int); l++)
-        {
-          if (((int*)rec.get())[l] == lst[j])
-          {
-            // We have the index of a recursive language string; now find the name
-            const char *name = "(unnamed)";
-            for (l = 0; l < build_langstring_num; l++)
-              if (lang_strings[l].index == j)
-                name = build_langstrings.offset2name(lang_strings[l].name);
-            ERROR_MSG("Error: LangString %s is recursive!\n", name);
-            delete [] string_ptrs;
-            return PS_ERROR;
-          }
-        }
-        // Add this reference to the list
-        rec.add(&lst[j], sizeof(int));
-        // and dereference it
-        lst[j] = lst[-lst[j] - 1];
-      }
-      rec.resize(0);
-    }
-  }
-
-  // Add language tables into their datablock
-  for (i = num_lang_tables; i--; )
-  {
-    build_langtables.add(&lt[i].lang_id, sizeof(LANGID));
-    build_langtables.add(&lt[i].dlg_offset, sizeof(int));
-    int rtl = lt[i].nlf.m_bRTL ? 1 : 0;
-    build_langtables.add(&rtl, sizeof(int));
-    build_langtables.add(string_ptrs[i].get(), string_ptrs[i].getlen());
-    string_ptrs[i].resize(0);
-  }
-
-  build_header.blocks[NB_LANGTABLES].num = num_lang_tables;
-  build_header.langtable_size = build_langtables.getlen() / num_lang_tables;
-
-#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-  // Now do it all again, this time for the uninstaller
-  set_uninstall_mode(1);
-
-  tabsset = 1;
-  while (tabsset)
-  {
-    tabsset = 0;
-    for (i = num_lang_tables; i--; )
-    {
-      // Fill in default values for all used language strings that we can
-      FillLanguageTable(&lt[i]);
-      // Make sure the string lists are large enough
-      string_ptrs[i].set_zeroing(1);
-      string_ptrs[i].resize(ubuild_langstring_num * sizeof(int));
-    }
-
-    // For all current language strings
-    lang_strings = build_langstrings.sort_uindex(&l);
-    for (j = 0; j < l; j++)
-    {
-      // Is this language string used (in the uninstaller)?
-      if (lang_strings[j].uindex >= 0)
-      {
-        // For each language
-        for (i = num_lang_tables; i--; )
-        {
-          // Get the current string pointer
-          int *ptr = (int *)string_ptrs[i].get() + lang_strings[j].uindex;
-          // Not already set?
-          if (!*ptr)
-          {
-            // Get the language string and its name
-            const char *str = lt[i].lang_strings->get(lang_strings[j].sn);
-            const char *lsn = build_langstrings.offset2name(lang_strings[j].name);
-            if (!str || !*str)
-            {
-              // No string is defined; give a warning (for user strings only)
-              if (lsn[0] != '^')
-              {
-                if (lt[i].nlf.m_bLoaded)
-                  warning("LangString \"%s\" is not set in language table of language %s", lsn, lt[i].nlf.m_szName);
-                else
-                  warning("LangString \"%s\" is not set in language table of language %d", lsn, lt[i].lang_id);
-              }
-            }
-            else
-            {
-              // Add the language string to the string data block
-              char fn[1024];
-              sprintf(fn, "LangString %s", lsn);
-              curfilename = fn;
-              linecnt = lt[i].lang_id;
-              *ptr = add_string(str, lang_strings[j].process, (WORD) lt[i].nlf.m_uCodePage);
-              curfilename = 0;
-              // Indicate that we should check again for any newly referenced language strings
-              tabsset++;
-            }
-          }
-        }
-      }
-    }
-  }
-
-  // Optimize langstrings and check for recursion
-  for (i = num_lang_tables; i--; )
-  {
-    TinyGrowBuf rec;
-    int *lst = (int *)string_ptrs[i].get();
-    for (j = 0; j < ubuild_langstring_num; j++)
-    {
-      // Does this string reference another language string directly?
-      while (lst[j] < 0)
-      {
-        // Search through list of language string references
-        for (l = 0; (unsigned int)l < rec.getlen() / sizeof(int); l++)
-        {
-          if (((int*)rec.get())[l] == lst[j])
-          {
-            // We have the index of a recursive language string; now find the name
-            const char *name = "(unnamed)";
-            for (l = 0; l < ubuild_langstring_num; l++)
-              if (lang_strings[l].uindex == j)
-                name = build_langstrings.offset2name(lang_strings[l].name);
-            ERROR_MSG("Error: LangString %s is recursive!\n", name);
-            delete [] string_ptrs;
-            return PS_ERROR;
-          }
-        }
-        // Add this reference to the list
-        rec.add(&lst[j], sizeof(int));
-        // and dereference it
-        lst[j] = lst[-lst[j] - 1];
-      }
-      rec.resize(0);
-    }
-  }
-
-  // Add language tables into their datablock
-  for (i = num_lang_tables; i--; )
-  {
-    ubuild_langtables.add(&lt[i].lang_id, sizeof(LANGID));
-    ubuild_langtables.add(&lt[i].dlg_offset, sizeof(int));
-    int rtl = lt[i].nlf.m_bRTL ? 1 : 0;
-    ubuild_langtables.add(&rtl, sizeof(int));
-    ubuild_langtables.add(string_ptrs[i].get(), string_ptrs[i].getlen());
-    string_ptrs[i].resize(0);
-  }
-
-  build_uninst.blocks[NB_LANGTABLES].num = num_lang_tables;
-  build_uninst.langtable_size = ubuild_langtables.getlen() / num_lang_tables;
+  int orig_uninstall_mode = uninstall_mode;
 
   set_uninstall_mode(0);
+  if (GenerateLangTable(lt, num_lang_tables) != PS_OK)
+    return PS_ERROR;
+
+#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
+  set_uninstall_mode(1);
+  if (GenerateLangTable(lt, num_lang_tables) != PS_OK)
+    return PS_ERROR;
 #endif
+
+  set_uninstall_mode(orig_uninstall_mode);
 
   SCRIPT_MSG("Done!\n");
 
-  delete [] string_ptrs;
   return PS_OK;
 }
 
