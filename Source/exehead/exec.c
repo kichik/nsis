@@ -132,14 +132,8 @@ static char * NSISCALL GetStringFromParm(int id_)
 }
 
 #ifdef NSIS_SUPPORT_REGISTRYFUNCTIONS
-REGSAM NSISCALL AlterRegistrySAM(REGSAM sam)
-{
-  if (g_exec_flags.alter_reg_view)
-  {
-    return sam | KEY_WOW64_64KEY;
-  }
-  return sam;
-}
+
+#define AlterRegistrySAM(sam) (sam | g_exec_flags.alter_reg_view)
 
 // based loosely on code from Tim Kosse
 // in win9x this isn't necessary (RegDeleteKey() can delete a tree of keys),
