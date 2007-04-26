@@ -904,9 +904,10 @@ struct MGA_FUNC MGA_FUNCS[] = {
 
 void * NSISCALL myGetProcAddress(const enum myGetProcAddressFunctions func)
 {
-  HMODULE hModule = GetModuleHandle(MGA_FUNCS[func].dll);
+  const char *dll = MGA_FUNCS[func].dll;
+  HMODULE hModule = GetModuleHandle(dll);
   if (!hModule)
-    hModule = LoadLibrary(MGA_FUNCS[func].dll);
+    hModule = LoadLibrary(dll);
   if (!hModule)
     return NULL;
 

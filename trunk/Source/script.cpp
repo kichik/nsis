@@ -3566,7 +3566,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       // "64" results in setting the flag to 1 which alters the view
       int k=line.gettoken_enum(1,"32\0" "64\0");
       if (k<0) PRINTHELP()
-      ent.offsets[1]=add_intstring(k);
+      if (k == 0) // 32
+        ent.offsets[1]=add_intstring(0);
+      else if (k == 1) // 64
+        ent.offsets[1]=add_intstring(KEY_WOW64_64KEY);
       SCRIPT_MSG("SetRegView: %s\n",line.gettoken_str(1));
     }
     return add_entry(&ent);
