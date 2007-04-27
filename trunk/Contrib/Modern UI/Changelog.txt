@@ -1,5 +1,12 @@
 NSIS Modern User Interface - VERSION HISTORY
 
+1.77 - April 27, 2007
+* Added MUI_FINISHPAGE_CANCEL_ENABLED
+* Added MUI_FINISHPAGE_REBOOTLATER_DEFAULT
+* Block unsupported languages in the language selection dialog
+* Cancel button no longer enabled by default on the finish page
+* Reduced flicker caused by MUI_HEADER_TRANSPARENT_TEXT
+
 1.76 - September 23, 2006
 * Added MUI_ABORTWARNING_CANCEL_DEFAULT
 
