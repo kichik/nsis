@@ -154,7 +154,7 @@
 
     !if ${TYPE} == 'T'
 
-      !warning "LibraryLocal currently supports TypeLibs version detection only on Windows"
+      !warning "LibraryLocal currently supports TypeLibs version detection on Windows only"
 
     !endif
 
