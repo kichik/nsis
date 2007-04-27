@@ -1,0 +1,191 @@
+# Header, don't edit
+NLF v6
+# Start editing here
+# Language ID
+1065
+# Font and size - dash (-) means default
+-
+-
+# Codepage - dash (-) means ANSI code page
+1256
+# RTL - anything else than RTL means LTR
+RTL
+# Translation By FzerorubigD - FzerorubigD@gmail.com - Thanx to all people help me in forum.persiantools.com
+# ^Branding
+”н” г д’» д«б ”«Ё  %s
+# ^SetupCaption
+д’» $(^Name) 
+# ^UninstallCaption
+Ќ–Ё $(^Name) 
+# ^LicenseSubCaption
+:  ж«Ёё д«ге д’»
+# ^ComponentsSubCaption
+: «д ќ«» Р—нде е«н д’»
+# ^DirSubCaption
+: Бж‘е д’»
+# ^InstallingSubCaption
+: ѕ— Ќ«б д’»
+# ^CompletedSubCaption
+: Б«н«д н«Ё 
+# ^UnComponentsSubCaption
+: «д ќ«» Р—нде е« »—«н Ќ–Ё
+# ^UnDirSubCaption
+: Бж‘е »—д«ге »—«н Ќ–Ё
+# ^ConfirmSubCaption
+:  «ннѕ
+# ^UninstallingSubCaption
+: ѕ— Ќ«б Ќ–Ё
+# ^UnCompletedSubCaption
+: Б«н«д н«Ё 
+# ^BackBtn
+&ё»бн 
+# ^NextBtn
+&»Џѕн
+# ^AgreeBtn
+&гж«Ёёг
+# ^AcceptBtn
+гд  г«г »дѕе«н  ж«Ёё д«ге —« ё»жб &ѕ«—г
+# ^DontAcceptBtn
+гд »дѕе«н  ж«Ёё д«ге —« ё»жб &дѕ«—г
+# ^InstallBtn
+&д’»
+# ^UninstallBtn
+&Ќ–Ё
+# ^CancelBtn
+бџж
+# ^CloseBtn
+&»” д
+# ^BrowseBtn
+¬ѕ—” &ѕен
+# ^ShowDetailsBtn
+дг«н‘ ћ“∆н« 
+# ^ClickNext
+ѕяге »Џѕн —« »—«н «ѕ«ге »Ё‘«—нѕ.
+# ^ClickInstall
+ѕяге д’» —« »—«н д’» »—д«ге »Ё‘«—нѕ.
+# ^ClickUninstall
+ѕяге Ќ–Ё —« »—«н Ќ–Ё »—д«ге »Ё‘«—нѕ.
+# ^Name
+д«г
+# ^Completed
+Б«н«д н«Ё .
+# ^LicenseText
+бЎЁ« ё»б «“ д’»  $(^NameDA) г д  ж«Ёё д«ге —« г—ж— яднѕ. «Р— ябне »дѕе«н ¬д —« ё»жб ѕ«—нѕ ѕяге гж«Ёёг —« »Ё‘«—нѕ
+# ^LicenseTextCB
+бЎЁ« ё»б «“ д’»  $(^NameDA) г д  ж«Ёёд«ге —« г—ж— яднѕ. «Р— ябне »дѕе«н ¬д —« ё»жб ѕ«—нѕ  ня —н“ —« »—днѕ. $_CLICK
+# ^LicenseTextRB
+бЎЁ« ё»б «“ д’»  $(^NameDA) г д  ж«Ёёд«ге —« г—ж— яднѕ. «Р— ябне »дѕе«н ¬д —« ё»жб ѕ«—нѕ Р“нде «жб —« «д ќ«» яднѕ. $_CLICK
+# ^UnLicenseText
+бЎЁ« ё»б «“ Ќ–Ё $(^NameDA) г д  ж«Ёё д«ге —« г—ж— яднѕ. «Р— ябне »дѕе«н ¬д —« ё»жб ѕ«—нѕ ѕяге гж«Ёёг —« »Ё‘«—нѕ
+# ^UnLicenseTextCB
+бЎЁ« ё»б «“ Ќ–Ё $(^NameDA) г д  ж«Ёёд«ге —« г—ж— яднѕ. «Р— ябне »дѕе«н ¬д —« ё»жб ѕ«—нѕ  ня —н“ —« »—днѕ. $_CLICK
+# ^UnLicenseTextRB
+бЎЁ« ё»б «“ Ќ–Ё $(^NameDA) г д  ж«Ёёд«ге —« г—ж— яднѕ. «Р— ябне »дѕе«н ¬д —« ё»жб ѕ«—нѕ Р“нде «жб —« «д ќ«» яднѕ. $_CLICK
+# ^Custom
+ѕбќж«е
+# ^ComponentsText
+«ћ“«н «“ »—д«ге —« яе гнќж«енѕ д’» яднѕ  ня »“днѕ ж ¬д «ћ“«нн яе дгнќж«енѕ —« «“ Ќ–Ё яднѕ. $_CLICK
+# ^ComponentsSubText1
+джЏ д’» —« г‘ќ’ яднѕ : 
+# ^ComponentsSubText2_NoInstTypes
+«ћ“«нн яе гнќж«енѕ д’» ‘ждѕ —« «д ќ«» яднѕ :
+# ^ComponentsSubText2
+н« «ћ“«н «ќ н«—н яе гнќж«енѕ д’» яднѕ —« «д ќ«» яднѕ : 
+# ^UnComponentsText
+«ћ“«нн «“ »—д«ге яе гнќж«еѕ Ќ–Ё яднѕ —«  ня »“днѕ ж «ћ“«нн яе гнќж«енѕ »«ён »г«ддѕ —« «д ќ«» дяднѕ. $_CLICK
+# ^UnComponentsSubText1
+джЏ Ќ–Ё —« «д ќ«» яднѕ : 
+# ^UnComponentsSubText2_NoInstTypes
+«ћ“«нн яе гнќж«енѕ Ќ–Ё яднѕ —« «д ќ«» яднѕ :
+# ^UnComponentsSubText2
+н« «ћ“«н «ќ н«—н яе гнќж«енѕ Ќ–Ё ‘ждѕ —« «д ќ«» яднѕ : 
+# ^DirText
+»—д«ге д’»° $(^NameDA) —« ѕ— Бж‘е “н— д’» гнядѕ. »—«н д’» ѕ— ня Бж‘е ѕнР— ѕяге ¬ѕ—” ѕен —« »Ё‘«—нѕ ж Бж‘е ѕнР—н —« «д ќ«» яднѕ. $_CLICK
+# ^DirSubText
+Бж‘е гё’ѕ :
+# ^DirBrowseText
+«д ќ«» Бж‘е »—«н д’» $(^NameDA) ѕ— ¬д
+# ^UnDirText
+»—д«ге Ќ–Ё° $(^NameDA) —« «“ Бж‘е “н— Ќ–Ё гнядѕ. »—«н Ќ–Ё «“ ня Бж‘е ѕнР— ѕяге ¬ѕ—” ѕен —« »Ё‘«—нѕ ж Бж‘е ѕнР—н —« «д ќ«» яднѕ. $_CLICK
+# ^UnDirSubText
+""
+# ^UnDirBrowseText
+«д ќ«» Бж‘е »—«н Ќ–Ё $(^NameDA)  «“ ¬д
+# ^SpaceAvailable
+"Ё÷«н гжћжѕ : "
+# ^SpaceRequired
+"Ё÷«н гж—ѕ дн«“ : "
+# ^UninstallingText
+$(^NameDA) «“ Бж‘е “н— Ќ–Ё ќж«еѕ ‘ѕ. $_CLICK
+# ^UninstallingSubText
+Ќ–Ё «“ : 
+# ^FileError
+ќЎ« едР«г »«“ я—ѕд Ё«нб »—«н дж‘ д: \r\n\r\n$0\r\n\n ѕяге Abort —« »—«н  жёЁ Џгбн«  \r\n ѕяге Retry »—«н  б«‘ гћѕѕ \r\nж Ignore —« »—«н Н‘гБж‘н «“ «нд Ё«нб »Ё‘«—нѕ.
+# ^FileError_NoIgnore
+ќЎ« едР«г »«“ я—ѕд Ё«нб »—«н дж‘ д: \r\n\r\n$0\r\n\n ѕяге Abort —« »—«н  жёЁ Џгбн«  \r\n ж ѕяге Retry »—«н  б«‘ гћѕѕ »Ё‘«—нѕ.
+# ^CantWrite
+"«гя«д дж‘ д дн”  : "
+# ^CopyFailed
+яБн д«гжЁё »жѕ.
+# ^CopyTo
+"яБн ѕ— : "
+# ^Registering
+"Ћ»  : "
+# ^Unregistering
+"Ќ–Ё : "
+# ^SymbolNotFound
+"”г»б Бнѕ« д‘ѕ : "
+# ^CouldNotLoad
+"«гя«д »«—Р–«—н дн”  : "
+# ^CreateFolder
+"«нћ«ѕ Бж‘е : "
+# ^CreateShortcut
+"«нћ«ѕ гн«д»— : "
+# ^CreatedUninstaller
+"«нћ«ѕ »—д«ге Ќ–Ё : "
+# ^Delete
+"Ќ–Ё Ё«нб : "
+# ^DeleteOnReboot
+"ќ–Ё »Џѕ «“ —«е «дѕ«“н ѕж»«—е : "
+# ^ErrorCreatingShortcut
+"ќЎ« едР«г «нћ«ѕ гн«д»— : "
+# ^ErrorCreating
+"ќЎ« едР«г «нћ«ѕ : "
+# ^ErrorDecompressing
+ќЎ« едР«г ѕягБ—” я—ѕд «Ўб«Џ« ! ¬н« »—д«ге д’» ќ—«» «” њњ
+# ^ErrorRegistering
+ќЎ« едР«г Ћ»  dll
+# ^ExecShell
+"«ћ—«н »—д«ге :  "
+# ^Exec
+"«ћ—« : "
+# ^Extract
+"ѕягБ—” :  "
+# ^ErrorWriting
+"ѕягБ—” : ќЎ« едР«г дж‘ д ѕ— Ё«нб"
+# ^InvalidOpcode
+»—д«ге д’» ќ—«» «”  : яѕ Џгбн« н д«‘д«”.
+# ^NoOLE
+"OLE жћжѕ дѕ«—ѕ : "
+# ^OutputFolder
+"Бж‘е ќ—жћн : "
+# ^RemoveFolder
+"Ќ–Ё Бж‘е: "
+# ^RenameOnReboot
+" џнн— д«г едР«г —«е «дѕ«“н ѕж»«—е : "
+# ^Rename
+" џнн— д«г: "
+# ^Skipped
+"Н‘г Бж‘н ‘ѕе: "
+# ^CopyDetails
+яБн я—ѕд ћ“∆н«  ѕ— ябнБ »—ѕ
+# ^LogInstall
+Р“«—‘ Рн—н «“ Џгбн«  д’»
+# ^Byte
+ »«н 
+# ^Kilo
+ янбж
+# ^Mega
+ гР«
+# ^Giga
+ РнР«
