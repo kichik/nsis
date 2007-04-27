@@ -1,3 +1,7 @@
+DLL version 2.47 (4/27/2007)
+* Line breaks support in Link control
+* Added HLine and VLine controls
+
 DLL version 2.46 (3/31/2007)
 * Use installer's name for message boxes
 
