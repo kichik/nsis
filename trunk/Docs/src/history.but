@@ -1,5 +1,93 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.26} 2.26
+
+Release on April 27th, 2007
+
+\S1{v2.26-rl} Release Notes
+
+\b Installation on x64 systems is now fully supported with $PROGRAMFILES64, \R{setregview}{SetRegView} and \R{library}{Library}'s LIBRARY_X64 option.
+
+\b finish page cancel is disabled
+
+\S1{v2.26-cl} Changelog
+
+\S2{} Major Changes
+
+\b Added LIBRARY_X64 option for \R{library_install}{InstallLib} and \R{library_uninstall}{UnInstallLib} for installing and uninstalling x64 libraries
+
+\b Added \R{varconstant}{$PROGRAMFILES32}, \R{varconstant}{$PROGRAMFILES64}, \R{varconstant}{$COMMONFILES32} and \R{varconstant}{$COMMONFILES64}
+
+\S2{} Minor Changes
+
+\b Added \R{varconstant}{$EXEPATH} and \R{varconstant}{$EXEFILE}
+
+\b Added $(^Language) language string which holds the language name (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373088&aid=1235616}{RFE #1235616})
+
+\b Added LIBRARY_IGNORE_VERSION option for \R{library_install}{InstallLib} (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1699435}{patch #1699435})
+
+\b Added VXD support for \R{getdllversionlocal}{GetDLLVersionLocal} on Windows NT/2000/XP/Vista (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1706624}{patch #1706624})
+
+\b Avoid \R{library}{Library} warning when UnInstallLib is unused (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1692761}{bug #1692761})
+
+\b Fixed error handling of \R{copyfiles}{CopyFiles} on Windows NT4 (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=774966}{bug #774966})
+
+\b Fixed font name encoding broken since 2.24
+
+\b Fixed \L{../Examples/LogicLib.nsi}{LogicLib} duplicate labels across included files
+
+\b Fixed preservation of folder attributes with \c{\R{file}{File} /a} (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1699474}{bug #1699474})
+
+\b Improved unused variable warning (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1701050}{bug #1701050})
+
+\b \R{library}{Library} macros no longer require version information for DLL files on POSIX
+
+\b Minor documentation improvements (including \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373088&aid=971467}{RFE #971467})
+
+\b \L{../Docs/Modern UI/Readme.html}{Modern UI}: added MUI_FINISHPAGE_CANCEL_ENABLED
+
+\b \L{../Docs/Modern UI/Readme.html}{Modern UI}: added MUI_FINISHPAGE_REBOOTLATER_DEFAULT (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373088&aid=1143843}{RFE #1143843})
+
+\b \L{../Docs/Modern UI/Readme.html}{Modern UI}: block unsupported languages in the language selection dialog (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373088&aid=1564986}{RFE #1564986})
+
+\b \L{../Docs/Modern UI/Readme.html}{Modern UI}: disable Cancel button on the finish page (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1267491}{bug #1267491})
+
+\b \L{../Docs/Modern UI/Readme.html}{Modern UI}: reduce flicker caused by MUI_HEADER_TRANSPARENT_TEXT (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1696610}{patch #1696610})
+
+\b Support \R{quit}{Quit} in \R{pagecallbacks_explain}{show page functions}
+
+\S2{} New/Changed Commands
+
+\b Added \R{setregview}{SetRegView} to allow access to the x64 registry view
+
+\b Installer icon support for \R{messagebox}{MessageBox} using MB_USERICON (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1682748}{patch #1682748}, \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373088&aid=1530388}{RFE #1530388})
+
+\S2{} Utilities and Plug-ins
+
+\b \L{../Docs/InstallOptions/Readme.html}{InstallOptions 2.47}: line breaks support in Link controls (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1683186}{patch #1683186}, \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373088&aid=1495949}{RFE #1495949}), added HLine and VLine controls (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1683189}{patch #1683189})
+
+\b \L{../Docs/makensisw/Readme.txt}{MakeNSISW}: fixed broken command line parameter handling introduced in the last version (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1696534}{bug #1696534})
+
+\b \L{../Examples/UserInfo/UserInfo.nsi}{UserInfo}: return effective user group on Vista, added GetOriginalAccountType (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1687456}{patch #1687456}, \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1684777}{bug #1684777})
+
+\S2{} Translations
+
+\b Added Afrikaans translation (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1699558}{patch #1699558})
+
+\b French corrections (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1676101}{patch #1676101})
+
+\b German corrections
+
+\S2{} Build System
+
+\b Added SKIPTESTS option
+
+\b Avoid a lot of code warnings (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1676243}{bug #1676243})
+
+\b Detect wxWidgets instead of assuming its existence on POSIX (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1672315}{bug #1672315})
+
+\b Fixed big-endian platform support broken since 2.24
+
 \H{v2.25} 2.25
 
 Released on March 31st, 2007
@@ -74,7 +162,7 @@ Released on February 17th, 2007
 
 \S2{} Major Changes
 
-\b Library uninstall-reinstall-reboot problems workaround (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1097642}{bug #1097642})
+\b \R{library}{Library} uninstall-reinstall-reboot problems workaround (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1097642}{bug #1097642})
 
 \b Minimized number of cases where an error message appears in silent mode
 
