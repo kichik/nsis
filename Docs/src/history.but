@@ -8,8 +8,6 @@ Release on April 27th, 2007
 
 \b Installation on x64 systems is now fully supported with $PROGRAMFILES64, \R{setregview}{SetRegView} and \R{library}{Library}'s LIBRARY_X64 option.
 
-\b finish page cancel is disabled
-
 \S1{v2.26-cl} Changelog
 
 \S2{} Major Changes
