@@ -158,8 +158,6 @@ void __declspec(dllexport) LangDialog(HWND hwndParent, int string_size,
         th = th->next;
       }
       if (!th) return;
-      if (dofont)
-        langs_num -= 2;
       if (docp)
         langs_num /= 3;
       else
