@@ -188,6 +188,9 @@ Version History
 
 2.3
 - Escape button closes MakeNSISw
+
+2.3.1
+- Fixed broken command line parameter handling
  
 Copyright Information
 ---------------------
