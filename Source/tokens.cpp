@@ -130,7 +130,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_LOGSET,"LogSet",1,0,"on|off",TP_CODE},
 {TOK_LOGTEXT,"LogText",1,0,"text",TP_CODE},
 {TOK_MESSAGEBOX,"MessageBox",2,6,"mode messagebox_text [/SD return] [return_check label_to_goto_if_equal [return_check2 label2]]\n    mode=modeflag[|modeflag[|modeflag[...]]]\n    "
-                                "modeflag=(MB_ABORTRETRYIGNORE|MB_OK|MB_OKCANCEL|MB_RETRYCANCEL|MB_YESNO|MB_YESNOCANCEL|MB_ICONEXCLAMATION|MB_ICONINFORMATION|MB_ICONQUESTION|MB_ICONSTOP|MB_TOPMOST|MB_SETFOREGROUND|MB_RIGHT",TP_CODE},
+                                "modeflag=(MB_ABORTRETRYIGNORE|MB_OK|MB_OKCANCEL|MB_RETRYCANCEL|MB_YESNO|MB_YESNOCANCEL|MB_ICONEXCLAMATION|MB_ICONINFORMATION|MB_ICONQUESTION|MB_ICONSTOP|MB_USERICON|MB_TOPMOST|MB_SETFOREGROUND|MB_RIGHT",TP_CODE},
 {TOK_NOP,"Nop",0,0,"",TP_CODE},
 {TOK_NAME,"Name",1,1,"installer_name installer_name_doubled_ampersands",TP_GLOBAL},
 {TOK_OUTFILE,"OutFile",1,0,"install_output.exe",TP_GLOBAL},
