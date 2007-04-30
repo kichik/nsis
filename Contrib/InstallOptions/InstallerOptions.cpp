@@ -968,7 +968,14 @@ int WINAPI createCfgDlg()
   mySetWindowText(hBackButton,pszBackButtonText);
 
   if (bBackEnabled!=-1) EnableWindow(hBackButton,bBackEnabled);
-  if (bCancelEnabled!=-1) EnableWindow(hCancelButton,bCancelEnabled);
+  if (bCancelEnabled!=-1)
+  {
+    EnableWindow(hCancelButton,bCancelEnabled);
+    if (bCancelEnabled)
+      EnableMenuItem(GetSystemMenu(mainwnd, FALSE), SC_CLOSE, MF_BYCOMMAND | MF_ENABLED);
+    else
+      EnableMenuItem(GetSystemMenu(mainwnd, FALSE), SC_CLOSE, MF_BYCOMMAND | MF_GRAYED);
+  }
   if (bCancelShow!=-1) old_cancel_visible=ShowWindow(hCancelButton,bCancelShow?SW_SHOWNA:SW_HIDE);
 
   HFONT hFont = (HFONT)mySendMessage(mainwnd, WM_GETFONT, 0, 0);
