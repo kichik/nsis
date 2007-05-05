@@ -399,12 +399,16 @@ __declspec(dllexport) void download (HWND   parent,
             // progressFunc ("Connecting ...", 0);
             if (last_recv_time+timeout_ms < GetTickCount())
               error = "Timed out on connecting.";
+            else
+              Sleep(10); // don't busy-loop while connecting
 
           } else if (get->get_status () == 1) {
 
             progress_callback("Reading headers", 0);
             if (last_recv_time+timeout_ms < GetTickCount())
               error = "Timed out on getting headers.";
+            else
+              Sleep(10); // don't busy-loop while reading headers
 
           } else if (get->get_status () == 2) {
 
