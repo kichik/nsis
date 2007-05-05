@@ -135,7 +135,7 @@ opts.Add(ListOption('SKIPMISC', 'A list of plug-ins that will not be built', 'no
 opts.Add(ListOption('SKIPDOC', 'A list of doc files that will not be built/installed', 'none', doc))
 opts.Add(('SKIPTESTS', 'A comma-separated list of test files that will not be ran', 'none'))
 # build tools
-opts.Add(('TOOLSET', 'A comma-separated list specific tools used for building instead of the default', None))
+opts.Add(('TOOLSET', 'A comma-separated list of specific tools used for building instead of the default', None))
 opts.Add(BoolOption('MSTOOLKIT', 'Use Microsoft Visual C++ Toolkit', 'no'))
 opts.Add(BoolOption('CHMDOCS', 'Build CHM documentation, requires hhc.exe', hhc))
 opts.Add(PathOption('APPEND_CPPPATH', 'Additional paths to search for include files', None))
