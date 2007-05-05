@@ -88,6 +88,7 @@ Currently, the System plug-in \W{http://forums.winamp.com/showthread.php?s=&thre
 \c scons SKIPPLUGINS=System
 
 To build a native version of NSIS Menu, install \W{http://www.wxwidgets.org/}{wxWidgets 2.8} and build as usual. \c{wx-config} must be in the path.
+
 \H{build_nightly} Nightly Builds
 
 There is no need to manually build the latest CVS version for Windows. A \W{http://nsis.sourceforge.net/nightly/nsis.zip}{nightly build} is available. The nightly build is automatically generated every night, using the latest version of the source code from CVS. There is no official nightly build for other platforms.
