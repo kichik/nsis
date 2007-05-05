@@ -13,6 +13,8 @@ This is a trimmed version of Appendix "Building NSIS" of the documentation.
 
    * HTML Help Workshop for CHM documentation (http://msdn.microsoft.com/)
    * Cross compiler on POSIX platforms, i.e. MinGW (http://www.mingw.org/)
+   * wxWidgets 2.8 for NSIS Menu (http://www.wxwidgets.org)
+     WXWIN environment variable must be set to wxWidgets directory on Windows
 
  - Installing
 
