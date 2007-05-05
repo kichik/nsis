@@ -1,8 +1,32 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.27} 2.27
+
+Released on May 5th, 2007
+
+\S1{v2.27-rl} Release Notes
+
+\b This is a quick-fix release that addresses a bug introduced in the last version, 2.26, that caused $PROGRAMFILES and $COMMONFILES to translate into random strings in the uninstaller.
+
+\S1{v2.27-cl} Changelog
+
+\S2{} Major Changes
+
+\b Fixed a bug introduced in 2.26 that made $PROGRAMFILES and $COMMONFILES unavailable in the uninstaller
+
+\S2{} Minor Changes
+
+\b Disable the X button on InstallOptions pages when CancelEnabled is 0
+
+\b Fixed incomplete MessageBox usage line (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1709460}{bug #1709460})
+
+\S2{} Build System
+
+\b Added \c{TOOLSET} option to allow selection of specific build tools (e.g. \c{scons TOOLSET=mingw})
+
 \H{v2.26} 2.26
 
-Release on April 27th, 2007
+Released on April 27th, 2007
 
 \S1{v2.26-rl} Release Notes
 
