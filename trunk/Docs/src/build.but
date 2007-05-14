@@ -83,7 +83,7 @@ If no cross-compiler is available, use the following:
 
 This should only build makensis and install it to the directory where a precompiled package, such as the \R{build_nightly}{nightly build} or a \W{http://sourceforge.net/project/showfiles.php?group_id=22049}{zipped release version} (nsis-x.xx.zip), is extracted. Note that the in order for this to work, the precompiled package must be compiled using the exact same sources as makensis. In particular, \c{Source\\exehead\\config.h}, the options passed to scons and \c{Source\\exehead\\fileform.h} must be identical. Nightly builds and zipped release versions are built with the default options.
 
-Currently, the System plug-in \W{http://forums.winamp.com/showthread.php?s=&threadid=227304}{can't be built} using a cross-compiler, but only with MSVC. When building with a cross compiler, always use at least the following flags:
+Currently, the Call, Get and Debug functions of the System plug-in \W{http://forums.winamp.com/showthread.php?s=&threadid=227304}{can't be built} using GCC, but only with MSVC. When building with GCC, either download a MSVC-compiled version or write your own plugin that calls the functions you need. You can skip building the System plugin using the following flags:
 
 \c scons SKIPPLUGINS=System
 

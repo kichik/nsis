@@ -5,7 +5,9 @@
 #include "Plugin.h"
 #include "Buffers.h"
 #include "System.h"
+#ifndef __GNUC__
 #include <crtdbg.h>
+#endif /* __GNUC__ */
 #include <objbase.h>
 
 // Parse Section Type 
@@ -38,6 +40,15 @@ HINSTANCE g_hInstance;
 // Return to callback caller with stack restore
 char retexpr[4];
 HANDLE retaddr;
+
+#ifndef __GNUC__
+
+/*
+FIXME:
+GCC cannot compile the inline assembly used by System::Call and
+System::Get, so those functions and their supporting functions
+are disabled when using GCC.
+*/
 
 char *GetResultStr(SystemProc *proc)
 {
@@ -250,6 +261,8 @@ PLUGINFUNCTION(Call)
         GlobalFree((HANDLE) proc); // No, free it
 } PLUGINFUNCTIONEND
 
+#endif /* __GNUC__ */
+
 PLUGINFUNCTIONSHORT(Int64Op)
 {
     __int64 i1, i2 = 0, i3, i4;
@@ -306,6 +319,8 @@ __int64 GetIntFromString(char **p)
     (*p)--; // We should point at last digit
     return myatoi(buffer);
 }
+
+#ifndef __GNUC__
 
 SystemProc *PrepareProc(BOOL NeedForCall)
 {
@@ -1369,6 +1384,8 @@ void CallStruct(SystemProc *proc)
     // Proc virtual return - pointer to memory struct
     proc->Params[0].Value = (int) proc->Proc;
 }
+
+#endif /* __GNUC__ */
 
 BOOL WINAPI _DllMainCRTStartup(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
 {
