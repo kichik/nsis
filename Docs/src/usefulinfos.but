@@ -70,6 +70,8 @@ If both NoModify and NoRepair are set to 1, the button displays "Remove" instead
 
 \H{useful_system_plugin} Calling an external DLL using the System.dll plug-in
 
+\\<b\\>Please note that the Call, Get and Debug functions cannot be compiled with GCC, so download the Windows version of NSIS and extract the System.dll plugin or write your own plugin that calls the functions you need.\\</b\\>
+
 Some install processes are required to call functions contained inside third party DLLs. A prime example of this is when installing a Palm(TM) conduit.
 
 \\<b\\>Some background about System.dll\\</b\\> \\<br\\>
