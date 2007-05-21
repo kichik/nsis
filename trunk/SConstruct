@@ -134,6 +134,7 @@ opts.Add(ListOption('SKIPUTILS', 'A list of utilities that will not be built', '
 opts.Add(ListOption('SKIPMISC', 'A list of plug-ins that will not be built', 'none', misc))
 opts.Add(ListOption('SKIPDOC', 'A list of doc files that will not be built/installed', 'none', doc))
 opts.Add(('SKIPTESTS', 'A comma-separated list of test files that will not be ran', 'none'))
+opts.Add(('IGNORETESTS', 'A comma-separated list of test files that will be ran but ignored', 'none'))
 # build tools
 opts.Add(('TOOLSET', 'A comma-separated list of specific tools used for building instead of the default', None))
 opts.Add(BoolOption('MSTOOLKIT', 'Use Microsoft Visual C++ Toolkit', 'no'))
@@ -670,16 +671,21 @@ def test_scripts(target, source, env):
 
 	tdlen = len(env.subst('$TESTDISTDIR'))
 	skipped_tests = env['SKIPTESTS'].split(',')
+	ignored_tests = env['IGNORETESTS'].split(',')
 
 	for root, dirs, files in walk(instdir):
 		for file in files:
 			if file[-4:] == '.nsi':
 				nsi = root + sep + file
+				nsif = nsi[tdlen + 1:]
 
-				if nsi[tdlen + 1:] in skipped_tests:
+				if nsif in skipped_tests:
 					continue
 
-				cmd = env.Command(None, nsi, '%s $SOURCE' % makensis)
+				if nsif in ignored_tests:
+					cmd = env.Command(None, nsi, '-%s $SOURCE' % makensis)
+				else:
+					cmd = env.Command(None, nsi, '%s $SOURCE' % makensis)
 				AlwaysBuild(cmd)
 				env.Alias('test-scripts', cmd)
 
