@@ -1,3 +1,4 @@
+if not exist setup.h goto setup_error
 if not exist "%WXWIN%\build\msw\makefile.vc" goto error
 set OLDCD=%CD%
 cd /D "%WXWIN%\build\msw"
@@ -11,4 +12,7 @@ cd /D "%OLDCD%"
 goto done
 :error
 echo WXWIN is not properly set
+goto done
+:setup_error
+echo setup.h cannot be found, wrong working directory?
 :done
