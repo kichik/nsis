@@ -2270,14 +2270,14 @@ int CEXEBuild::check_write_output_errors() const
 
   if (cur_page)
   {
-    ERROR_MSG("Error: PageEx still open at EOF, cannot proceed\n");
+    ERROR_MSG("Error: PageEx left open at EOF\n");
     return PS_ERROR;
   }
 
   // deal with functions, for both install and uninstall modes.
   if (build_cursection_isfunc)
   {
-    ERROR_MSG("Error: Function still open at EOF, cannot proceed\n");
+    ERROR_MSG("Error: Function left open at EOF\n");
     return PS_ERROR;
   }
 
