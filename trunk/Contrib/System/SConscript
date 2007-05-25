@@ -6,14 +6,6 @@ files = Split("""
 	Source/System.c
 """)
 
-objs = Split("""
-	Source/chkstk.obj
-	Source/vc7ldvrm.obj
-	Source/vc7lmul.obj
-	Source/vc7lshl.obj
-	Source/vc7lshr.obj
-""")
-
 libs = Split("""
 	kernel32
 	user32
