@@ -1576,6 +1576,7 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
       ShowWindow(insthwndbutton,SW_HIDE);
       if (!(g_flags&CH_FLAGS_DETAILS_NEVERSHOW)) ShowWindow(linsthwnd,SW_SHOWNA);
       else insthwndbutton=NULL;
+      SetActiveCtl(insthwnd2);
     }
 
     {
