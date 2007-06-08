@@ -1599,7 +1599,7 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
   {
     ShowWindow(insthwndbutton,SW_HIDE);
     ShowWindow(linsthwnd,SW_SHOWNA);
-    SetNextDef();
+    SetActiveCtl(linsthwnd);
   }
   if (uMsg == WM_NOTIFY_INSTPROC_DONE)
   {
