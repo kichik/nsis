@@ -1,0 +1,21 @@
+TODO
+----
+
+NSIS
+
+* Compiler plug-ins
+
+* Empty subsections should not show
+
+* Option to cancel the installation process
+
+EXAMPLES
+
+* Write an advanced paging example showing multiple components page with multiple
+  instfiles pages
+
+PLUG-INS
+
+* InstallOptions - custom class names so you can include whatever control you want
+
+* nsExec - live outputs
