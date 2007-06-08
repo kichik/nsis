@@ -1,5 +1,43 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.28} 2.28
+
+Released on June 8th, 2007
+
+\S1{v2.28-cl} Changelog
+
+\S2{} Major Changes
+
+\b Added a workaround for a Windows 2000 bug that caused infinite loops when hitting a key in the instilfes page (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1733692}{bug #1733692})
+
+\S2{} Minor Changes
+
+\b Improved compiler error strings (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1722147}{patch #1722147})
+
+\b \L{../Docs/Modern UI/Readme.html}{Modern UI}: added MUI_STARTMENUPAGE_BGCOLOR and MUI_DIRECTORYPAGE_BGCOLOR (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1706187}{patch #1706187})
+
+\b \L{../Docs/Modern UI/Readme.html}{Modern UI}: added MUI_LANGDLL_ALLLANGUAGES that forces the language selection dialog to display all languages (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1724876}{patch #1724876})
+
+\S2{} Utilities and Plug-ins
+
+\b \L{../Docs/InstallOptions/Readme.html}{InstallOptions}: corrected documentation of TxtColor (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1716614}{bug #1716614})
+
+\b \L{../Docs/NSISdl/ReadMe.txt}{NSISdl}: added compatibility with some buggy servers that don't close the connection (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1713562}{bug #1713562})
+
+\b \L{../Docs/NSISdl/ReadMe.txt}{NSISdl}: fixed 100% CPU usage during domain resolution (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1713560}{bug #1713560})
+
+\S2{} Translations
+
+\b Valencian and Catalan are no longer installed (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1558822}{patch #1558822})
+
+\S2{} Build System
+
+\b Added IGNORETESTS for ignoring certain test files
+
+\b Added wxWidgets to the requirement list
+
+\b \L{../Docs/System/System.html}{System} now builds with GCC, but without System::Get and System::Call (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1711089}{patch #1711089})
+
 \H{v2.27} 2.27
 
 Released on May 5th, 2007
