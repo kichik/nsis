@@ -873,10 +873,7 @@ WIN32_FIND_DATA * NSISCALL file_exists(char *buf)
 {
   HANDLE h;
   static WIN32_FIND_DATA fd;
-  // Avoid a "There is no disk in the drive" error box on empty removable drives
-  SetErrorMode(SEM_NOOPENFILEERRORBOX | SEM_FAILCRITICALERRORS);
   h = FindFirstFile(buf,&fd);
-  SetErrorMode(0);
   if (h != INVALID_HANDLE_VALUE)
   {
     FindClose(h);

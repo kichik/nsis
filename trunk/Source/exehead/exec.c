@@ -958,7 +958,6 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     case EW_REGISTERDLL:
       {
         exec_error++;
-        SetErrorMode(SEM_NOOPENFILEERRORBOX | SEM_FAILCRITICALERRORS);
         if (SUCCEEDED(g_hres))
         {
           HANDLE h=NULL;
@@ -1015,7 +1014,6 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           update_status_text_buf1(LANG_NOOLE);
           log_printf("Error registering DLL: Could not initialize OLE");
         }
-        SetErrorMode(0);
       }
     break;
 #endif
