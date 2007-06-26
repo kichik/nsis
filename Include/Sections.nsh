@@ -74,6 +74,7 @@
 
   Push $0
   Push $1
+    StrCpy $1 "${SECTION}"
     SectionGetFlags $1 $0
     IntOp $0 $0 ^ ${SF_SELECTED}
     SectionSetFlags $1 $0
