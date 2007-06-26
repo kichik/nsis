@@ -1330,9 +1330,11 @@ RefreshShellIcons
 
 			GetDllVersion '$0' $1 $2
 			IfErrors error
-			IntOp $3 $1 / 0x00010000
+			IntOp $3 $1 >> 16
+			IntOp $3 $3 & 0x0000FFFF
 			IntOp $4 $1 & 0x0000FFFF
-			IntOp $5 $2 / 0x00010000
+			IntOp $5 $2 >> 16
+			IntOp $5 $5 & 0x0000FFFF
 			IntOp $6 $2 & 0x0000FFFF
 			StrCpy $0 '$3.$4.$5.$6'
 			goto end
