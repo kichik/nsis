@@ -55,11 +55,24 @@ BOOL CALLBACK BannerProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
   return 0;
 }
 
+BOOL ProcessMessages()
+{
+  BOOL processed = FALSE;
+  MSG msg;
+
+  while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+  {
+    DispatchMessage(&msg);
+    processed = TRUE;
+  }
+
+  return processed;
+}
+
 DWORD WINAPI BannerThread(LPVOID lpParameter)
 {
   HWND hwndParent = (HWND) lpParameter;
   HWND lhwBanner;
-  MSG msg;
 
   lhwBanner = CreateDialog(
     GetModuleHandle(0),
@@ -75,11 +88,7 @@ DWORD WINAPI BannerThread(LPVOID lpParameter)
 
   while (IsWindow(lhwBanner))
   {
-    if (PeekMessage(&msg, lhwBanner, 0, 0, PM_REMOVE))
-    {
-      DispatchMessage(&msg);
-    }
-    else
+    if (!ProcessMessages())
     {
       hwBanner = lhwBanner;
       WaitMessage();
@@ -111,6 +120,7 @@ void __declspec(dllexport) show(HWND hwndParent, int string_size, char *variable
     // wait for the window to initalize and for the stack operations to finish
     while (hThread && !hwBanner && !bFailed)
     {
+      ProcessMessages();
       Sleep(10);
     }
 
@@ -142,7 +152,10 @@ void __declspec(dllexport) destroy(HWND hwndParent, int string_size, char *varia
 
   // Wait for the thread to finish
   while (hwBanner)
+  {
+    ProcessMessages();
     Sleep(25);
+  }
 }
 
 BOOL WINAPI DllMain(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
