@@ -525,9 +525,9 @@ __declspec(dllexport) void download (HWND   parent,
 
                   wsprintf (buf,
                         szProgress, //%dkB (%d%%) of %dkB @ %d.%01dkB/s
-                        int(sofar),
+                        int(sofar/1024),
                         MulDiv64(100, sofar, cl),
-                        int(cl),
+                        int(cl/1024),
                         bps/1024,((bps*10)/1024)%10
                         );
                   if (remain) wsprintf(buf+lstrlen(buf),szRemaining,
