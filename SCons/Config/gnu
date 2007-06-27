@@ -255,6 +255,13 @@ if conf.CheckBigEndian():
 	test_env.Append(CPPDEFINES = ['__BIG_ENDIAN__'])
 conf.Finish()
 
+if makensis_env['PLATFORM'] == 'hpux':
+	makensis_env.Append(CPPDEFINES = ['__ALLOW_UNALIGNED_DATA_ACCESS__'])
+	makensis_conf = makensis_env.Configure()
+	makensis_conf.CheckLib("unalign")
+	makensis_conf.CheckLib("hppa")
+	makensis_conf.Finish()
+
 ### return
 
 Return('stub_env makensis_env plugin_env util_env cp_util_env test_env')

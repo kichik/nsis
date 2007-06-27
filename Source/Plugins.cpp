@@ -69,7 +69,7 @@ size_t file_size(ifstream& file) {
   file.seekg(0, ios::end);
 
   ifstream::pos_type result = file.tellg();
-  assert(result >= 0);
+  assert(result >= (ifstream::pos_type)0);
 
   file.seekg(pos);
 

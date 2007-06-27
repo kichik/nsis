@@ -57,11 +57,17 @@ doc = [
 #######  Build Environment                                         ###
 ######################################################################
 
+path = ARGUMENTS.get('PATH', '')
 toolset = ARGUMENTS.get('TOOLSET', '')
 
-if toolset:
-	defenv = Environment(TOOLS = toolset.split(',') + ['zip'])
+if toolset and path:
+	defenv = Environment(ENV = {'PATH' : path}, TOOLS = toolset.split(',') + ['zip'])
 else:
+	if path:
+		defenv = Environment(ENV = {'PATH' : path})
+	if toolset:
+		defenv = Environment(TOOLS = toolset.split(',') + ['zip'])
+if not toolset and not path:
 	defenv = Environment()
 
 Export('defenv')
@@ -136,6 +142,7 @@ opts.Add(ListOption('SKIPDOC', 'A list of doc files that will not be built/insta
 opts.Add(('SKIPTESTS', 'A comma-separated list of test files that will not be ran', 'none'))
 opts.Add(('IGNORETESTS', 'A comma-separated list of test files that will be ran but ignored', 'none'))
 # build tools
+opts.Add(('PATH', 'A colon-separated list of system paths instead of the default - TEMPORARY AND MAY DEPRECATE', None))
 opts.Add(('TOOLSET', 'A comma-separated list of specific tools used for building instead of the default', None))
 opts.Add(BoolOption('MSTOOLKIT', 'Use Microsoft Visual C++ Toolkit', 'no'))
 opts.Add(BoolOption('CHMDOCS', 'Build CHM documentation, requires hhc.exe', hhc))
@@ -339,6 +346,8 @@ if 'msvc' in tools or 'mstoolkit' in tools:
 	envs = SConscript('SCons/Config/ms')
 elif 'gcc' in tools:
 	envs = SConscript('SCons/Config/gnu')
+elif 'hpc++' in tools:
+	envs = SConscript('SCons/Config/hpc++')
 else:
 	envs = SConscript('SCons/Config/default')
 
