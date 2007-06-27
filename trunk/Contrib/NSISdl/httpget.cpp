@@ -493,5 +493,5 @@ __int64 JNL_HTTPGet::content_length()
   // some buggy apache servers return negative values for sizes
   // over 2gb - fix it for them
   if (cl < 0)
-    return __int64(unsigned(cl));
+    return (__int64)((unsigned int)(cl));
 }
