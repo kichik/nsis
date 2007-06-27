@@ -780,6 +780,13 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
     //push button. When the user presses return ask the outer dialog to move
     //the installer onto the next page. MSDN docs say return non-zero if the
     //rich edit control should NOT process this message, hence the return 1.
+    //
+    //This is required because the RichEdit control is eating all the key hits.
+    //It does try to release some and convert VK_ESCAPE to WM_CLOSE, VK_ENTER
+    //to a push on the default button and VM_TAB to WM_NEXTDLGCTL. But sadly it
+    //it sends all of these messages to its parent instead of just letting the
+    //dialog manager handle them. Instead of properly handling WM_GETDLGCODE,
+    //it mimics the dialog manager.
     if (nmhdr->code==EN_MSGFILTER)
     {
       if (msgfilter->msg==WM_KEYDOWN)
