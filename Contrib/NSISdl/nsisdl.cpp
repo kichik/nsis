@@ -196,9 +196,24 @@ extern "C" BOOL APIENTRY DllMain(HINSTANCE _hModule, DWORD  ul_reason_for_call, 
   return TRUE;
 }
 
-static int g_file_size;
+#define INT32_MAX 0x7fffffff
+
+int MulDiv64(int nNumber, __int64 nNumerator, __int64 nDenominator)
+{
+    // ok, a complete implementation would handle negatives too, 
+    // but this method is probably not generally useful.
+    while (nNumerator > INT32_MAX || nDenominator > INT32_MAX)
+    {
+        nNumerator = Int64ShraMod32(nNumerator, 1);
+        nDenominator = Int64ShraMod32(nDenominator, 1);
+    }
+    return MulDiv(nNumber, (int)nNumerator, (int)nDenominator);
+}
+
+
+static __int64 g_file_size;
 static DWORD g_dwLastTick = 0;
-void progress_callback(char *msg, int read_bytes)
+void progress_callback(char *msg, __int64 read_bytes)
 {
   // flicker reduction by A. Schiffler
   DWORD dwLastTick = g_dwLastTick;
@@ -211,7 +226,7 @@ void progress_callback(char *msg, int read_bytes)
       dwLastTick = dwThisTick;
     }
     if (g_file_size)
-      SendMessage(g_hwndProgressBar, PBM_SETPOS, (WPARAM) MulDiv(read_bytes, 30000, g_file_size), 0);
+      SendMessage(g_hwndProgressBar, PBM_SETPOS, (WPARAM) MulDiv64(30000, read_bytes, g_file_size), 0);
     g_dwLastTick = dwLastTick;
   }
 }
@@ -235,22 +250,47 @@ __declspec(dllexport) void download (HWND   parent,
   int timeout_ms=30000;
   int getieproxy=1;
   int manualproxy=0;
+  int translation_version;
 
   char *error=NULL;
 
-  static char szDownloading[1024];//= "Downloading %s";
-  static char szConnecting[1024];//= "Connecting ...";
-  static char szSecond[1024];//= "second";
-  static char szMinute[1024];//= "minute";
-  static char szHour[1024];//= "hour";
-  static char szPlural[1024];//= "s";
-  static char szProgress[1024];//= "%dkB (%d%%) of %dkB @ %d.%01dkB/s";
-  static char szRemaining[1024];//= " (%d %s%s remaining)";
+  // translation version 2 & 1
+  static char szDownloading[1024]; // "Downloading %s"
+  static char szConnecting[1024];  // "Connecting ..."
+  static char szSecond[1024];      // " (1 second remaining)" for v2
+                                   // "second" for v1
+  static char szMinute[1024];      // " (1 minute remaining)" for v2
+                                   // "minute" for v1
+  static char szHour[1024];        // " (1 hour remaining)" for v2
+                                   // "hour" for v1
+  static char szProgress[1024];    // "%skB (%d%%) of %skB at %u.%01ukB/s" for v2
+                                   // "%dkB (%d%%) of %dkB at %d.%01dkB/s" for v1
+
+  // translation version 2 only
+  static char szSeconds[1024];     // " (%u seconds remaining)"
+  static char szMinutes[1024];     // " (%u minutes remaining)"
+  static char szHours[1024];       // " (%u hours remaining)"
+
+  // translation version 1 only
+  static char szPlural[1024];      // "s";
+  static char szRemaining[1024];   // " (%d %s%s remaining)";
 
   EXDLL_INIT();
 
   popstring(url);
-  if (!lstrcmpi(url, "/TRANSLATE")) {
+  if (!lstrcmpi(url, "/TRANSLATE2")) {
+    popstring(szDownloading);
+    popstring(szConnecting);
+    popstring(szSecond);
+    popstring(szMinute);
+    popstring(szHour);
+    popstring(szSeconds);
+    popstring(szMinutes);
+    popstring(szHours);
+    popstring(szProgress);
+    popstring(url);
+    translation_version=2;
+  } else if (!lstrcmpi(url, "/TRANSLATE")) {
     popstring(szDownloading);
     popstring(szConnecting);
     popstring(szSecond);
@@ -260,16 +300,18 @@ __declspec(dllexport) void download (HWND   parent,
     popstring(szProgress);
     popstring(szRemaining);
     popstring(url);
-  }
-  else {
+    translation_version=1;
+  } else {
     lstrcpy(szDownloading, "Downloading %s");
     lstrcpy(szConnecting, "Connecting ...");
-    lstrcpy(szSecond, "second");
-    lstrcpy(szMinute, "minute");
-    lstrcpy(szHour, "hour");
-    lstrcpy(szPlural, "s");
-    lstrcpy(szProgress, "%dkB (%d%%) of %dkB @ %d.%01dkB/s");
-    lstrcpy(szRemaining, " (%d %s%s remaining)");
+    lstrcpy(szSecond, " (1 second remaining)");
+    lstrcpy(szMinute, " (1 minute remaining)");
+    lstrcpy(szHour, " (1 hour remaining)");
+    lstrcpy(szSeconds, " (%u seconds remaining)");
+    lstrcpy(szMinutes, " (%u minutes remaining)");
+    lstrcpy(szHours, " (%u hours remaining)");
+    lstrcpy(szProgress, "%skB (%d%%) of %skB at %u.%01ukB/s");
+    translation_version=2;
   }
   lstrcpyn(buf, url, 10);
   if (!lstrcmpi(buf, "/TIMEOUT=")) {
@@ -356,9 +398,9 @@ __declspec(dllexport) void download (HWND   parent,
       get=new JNL_HTTPGet(JNL_CONNECTION_AUTODNS,16384,(p&&p[0])?p:NULL);
       int         st;
       int         has_printed_headers = 0;
-      int         cl = 0;
+      __int64     cl = 0;
       int         len;
-      int         sofar = 0;
+      __int64     sofar = 0;
       DWORD last_recv_time=start_time;
 
       get->addheader ("User-Agent: NSISDL/1.2 (Mozilla)");
@@ -437,31 +479,63 @@ __declspec(dllexport) void download (HWND   parent,
                 WriteFile(hFile,buf,len,&dw,NULL);
                 sofar += len;
                 int time_sofar=(GetTickCount()-start_time)/1000;
-                int bps=sofar/(time_sofar?time_sofar:1);
-                int remain=MulDiv(time_sofar,cl,sofar) - time_sofar;
-                char *rtext=szSecond;
-                if (remain >= 60)
-                {
-                  remain/=60;
-                  rtext=szMinute;
+                int bps = (int)(sofar/(time_sofar?time_sofar:1));
+                int remain = MulDiv64(time_sofar, cl, sofar) - time_sofar;
+
+                if (translation_version == 2) {
+                  char *rtext=remain==1?szSecond:szSeconds;;
                   if (remain >= 60)
                   {
                     remain/=60;
-                    rtext=szHour;
+                    rtext=remain==1?szMinute:szMinutes;
+                    if (remain >= 60)
+                    {
+                      remain/=60;
+                      rtext=remain==1?szHour:szHours;
+                    }
                   }
+
+                  char sofar_str[128];
+                  char cl_str[128];
+                  myitoa64(sofar/1024, sofar_str);
+                  myitoa64(cl/1024, cl_str);
+
+                  wsprintf (buf,
+                        szProgress, //%skB (%d%%) of %skB @ %u.%01ukB/s
+                        sofar_str,
+                        MulDiv64(100, sofar, cl),
+                        cl_str,
+                        bps/1024,((bps*10)/1024)%10
+                        );
+                  if (remain) wsprintf(buf+lstrlen(buf),rtext,
+                        remain
+                        );
+                } else if (translation_version == 1) {
+                  char *rtext=szSecond;
+                  if (remain >= 60)
+                  {
+                    remain/=60;
+                    rtext=szMinute;
+                    if (remain >= 60)
+                    {
+                      remain/=60;
+                      rtext=szHour;
+                    }
+                  }
+
+                  wsprintf (buf,
+                        szProgress, //%dkB (%d%%) of %dkB @ %d.%01dkB/s
+                        int(sofar),
+                        MulDiv64(100, sofar, cl),
+                        int(cl),
+                        bps/1024,((bps*10)/1024)%10
+                        );
+                  if (remain) wsprintf(buf+lstrlen(buf),szRemaining,
+                        remain,
+                        rtext,
+                        remain==1?"":szPlural
+                        );
                 }
-                wsprintf (buf,
-                      szProgress,
-                      sofar/1024,
-                      MulDiv(100,sofar,cl),
-                      cl/1024,
-                      bps/1024,((bps*10)/1024)%10
-                      );
-                if (remain) wsprintf(buf+lstrlen(buf),szRemaining,
-                      remain,
-                      rtext,
-                      remain==1?"":szPlural
-                      );
                 progress_callback(buf, sofar);
               } else {
                 if (sofar < cl)

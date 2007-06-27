@@ -43,6 +43,7 @@
 #define _HTTPGET_H_
 
 #include "connection.h"
+#include "util.h"
 
 class JNL_HTTPGet
 {
@@ -70,7 +71,7 @@ class JNL_HTTPGet
     int get_bytes(char *buf, int len);
     int peek_bytes(char *buf, int len);
 
-    int content_length() { char *p=getheader("content-length:"); if (p) return my_atoi(p); return 0; }
+    __int64 content_length() { char *p=getheader("content-length:"); if (p) return myatoi64(p); return 0; }
 
     JNL_Connection *get_con() { return m_con; }
 

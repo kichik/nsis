@@ -22,4 +22,9 @@ docs = Split("""
 
 Import('BuildPlugin')
 
-BuildPlugin(target, files, libs, docs = docs, cppused = True)
+BuildPlugin(
+	target, files, libs,
+	docs = docs,
+	cppused = True,
+	nodeflib = False,
+)
