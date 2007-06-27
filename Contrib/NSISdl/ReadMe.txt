@@ -59,6 +59,22 @@ TRANSLATE
 
 To translate NSISdl add the following values to the call line:
 
+/TRANSLATE2 downloading connecting second minute hour seconds minutes hours progress
+
+Default values are:
+ 
+  downloading - "Downloading %s"
+  connecting - "Connecting ..."
+  second - " (1 second remaining)"
+  minute - " (1 minute remaining)"
+  hour - " (1 hour remaining)"
+  seconds - " (%u seconds remaining)"
+  minutes - " (%u minutes remaining)"
+  hours - " (%u hours remaining)"
+  progress - "%skB (%d%%) of %skB @ %u.%01ukB/s"
+
+The old /TRANSLATE method still works for backward compatibility.
+
 /TRANSLATE downloading connecting second minute hour plural progress remianing
 
 Default values are:
@@ -69,7 +85,7 @@ Default values are:
   minute - "minute"
   hour - "hour"
   plural - "s"
-  progress - "%dkB (%d%%) of %dkB @ %d.%01dkB/s"
+  progress - "%dkB (%d%%) of %ukB @ %d.%01dkB/s"
   remaining -  " (%d %s%s remaining)"
 
-/TRANSLATE must come before /TIMEOUT.
+/TRANSLATE and /TRANSLATE2 must come before /TIMEOUT.

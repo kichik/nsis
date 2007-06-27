@@ -28,6 +28,8 @@
 #define _UTIL_H_
 
 int my_atoi(char *p);
+__int64 myatoi64(char *s);
+void myitoa64(__int64 i, char *buffer);
 void mini_memset(void *,char,int);
 void mini_memcpy(void *,void*,int);
 
