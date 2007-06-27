@@ -27,6 +27,12 @@ using namespace std;
 #define ALIGN(dwToAlign, dwAlignOn) dwToAlign = (dwToAlign%dwAlignOn == 0) ? dwToAlign : dwToAlign - (dwToAlign%dwAlignOn) + dwAlignOn
 #define RALIGN(dwToAlign, dwAlignOn) ((dwToAlign%dwAlignOn == 0) ? dwToAlign : dwToAlign - (dwToAlign%dwAlignOn) + dwAlignOn)
 
+#ifndef _WIN32
+static inline ULONG ConvertEndianness(ULONG u) {
+  return FIX_ENDIAN_INT32(u);
+}
+#endif
+
 static inline DWORD ConvertEndianness(DWORD d) {
   return FIX_ENDIAN_INT32(d);
 }

@@ -1,0 +1,113 @@
+print "Using hpc++ tools configuration"
+
+Import('defenv')
+
+### flags
+
+defenv['ENTRY_FLAG'] = lambda x: ''
+defenv['MAP_FLAG'] = ''
+defenv['EXCEPTION_FLAG'] = ''
+defenv['NODEFLIBS_FLAG'] = ''
+defenv['C_FLAG'] = ''
+defenv['CPP_FLAG'] = ''
+defenv['CPP_REQUIRES_STDLIB'] = 0
+defenv['SUBSYS_CON'] = ''
+defenv['MSVCRT_FLAG'] = ''
+
+### stub environment
+
+stub_env = defenv.Clone()
+
+### makensis environment
+
+makensis_env = defenv.Clone()
+
+### use "$CXX -Ae" as the "$CC" compiler to build makensis
+
+makensis_env['CC'] = makensis_env['CXX']
+makensis_env.Append(CFLAGS = '-Ae')
+
+### required to build makensis
+
+makensis_env.Append(LINKFLAGS = '+DD32')
+makensis_env.Append(LINKFLAGS = '-mt')
+
+makensis_env.Append(CCFLAGS = '+DD32')
+makensis_env.Append(CCFLAGS = '-mt')
+
+### debug for makensis
+
+if makensis_env['DEBUG']:
+	makensis_env.Append(CCFLAGS = '-g')
+	makensis_env.Append(LINKFLAGS = '-g')
+
+### strip for makensis
+
+if not makensis_env['DEBUG'] and makensis_env['STRIP']:
+	makensis_env.Append(LINKFLAGS = '-s')
+
+#
+# aCC defines _BIG_ENDIAN, but we use __BIG_ENDIAN__ so check and define as
+# needed (is there any HPUX that is NOT big endian?).
+#
+
+def check_big_endian(ctx):
+	ctx.Message('Checking for if this is a big endian host... ')
+	test = """
+		#define LITTLE_ENDIAN 0
+		#define BIG_ENDIAN 1
+		#define UNKNOWN 2
+		int main()
+		{
+			union {
+				short s;
+				char c[sizeof(short)];
+			} u;
+			u.s = 0x0102;
+			if (sizeof(short) == 2) {
+				if (u.c[0] == 1 && u.c[1] == 2)
+					return (BIG_ENDIAN);
+				else if (u.c[0] == 2 && u.c[1] == 1)
+					return (LITTLE_ENDIAN);
+				else
+					return(UNKNOWN);
+			} else {
+				return (sizeof(short));
+			}
+		}
+	"""
+	result = not ctx.TryRun(test, '.c')[0]
+	ctx.Result(result)
+	return result
+
+makensis_conf = makensis_env.Configure(custom_tests = { 'CheckBigEndian' : check_big_endian })
+
+if makensis_conf.CheckBigEndian():
+	makensis_env.Append(CPPDEFINES = ['__BIG_ENDIAN__'])
+
+if makensis_env['PLATFORM'] == 'hpux':
+	makensis_env.Append(CPPDEFINES = ['__ALLOW_UNALIGNED_DATA_ACCESS__'])
+	makensis_conf.CheckLib("unalign")
+	makensis_conf.CheckLib("hppa")
+
+makensis_conf.Finish()
+
+### plugin environment
+
+plugin_env = defenv.Clone(no_import_lib = 1)
+
+### util environment
+
+util_env = defenv.Clone()
+
+### cross-platform util environment
+
+cp_util_env = util_env.Clone()
+
+### test environment
+
+test_env = defenv.Clone()
+
+# return
+
+Return('stub_env makensis_env plugin_env util_env cp_util_env test_env')
