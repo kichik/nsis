@@ -70,6 +70,6 @@ Default values are:
   hour - "hour"
   plural - "s"
   progress - "%dkB (%d%%) of %dkB @ %d.%01dkB/s"
-  remaining -  "(%d %s%s remaining)"
+  remaining -  " (%d %s%s remaining)"
 
 /TRANSLATE must come before /TIMEOUT.
