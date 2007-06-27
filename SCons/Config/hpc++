@@ -86,7 +86,7 @@ if makensis_conf.CheckBigEndian():
 	makensis_env.Append(CPPDEFINES = ['__BIG_ENDIAN__'])
 
 if makensis_env['PLATFORM'] == 'hpux':
-	makensis_env.Append(CPPDEFINES = ['__ALLOW_UNALIGNED_DATA_ACCESS__'])
+	makensis_env.Append(CPPDEFINES = ['NSIS_HPUX_ALLOW_UNALIGNED_DATA_ACCESS'])
 	makensis_conf.CheckLib("unalign")
 	makensis_conf.CheckLib("hppa")
 
