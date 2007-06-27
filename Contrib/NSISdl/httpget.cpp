@@ -487,11 +487,13 @@ __int64 JNL_HTTPGet::content_length()
   char *p=getheader("content-length:");
   if (!p) return 0;
   __int64 cl = myatoi64(p);
-  if (cl >= 0) return cl;
+  if (cl > 0) return cl;
 
   // workaround for bug #1744091
   // some buggy apache servers return negative values for sizes
   // over 2gb - fix it for them
   if (cl < 0)
     return (__int64)((unsigned int)(cl));
+
+  return 0;
 }
