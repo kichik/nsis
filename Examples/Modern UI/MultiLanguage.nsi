@@ -80,7 +80,6 @@
   !insertmacro MUI_LANGUAGE "Estonian"
   !insertmacro MUI_LANGUAGE "Turkish"
   !insertmacro MUI_LANGUAGE "Lithuanian"
-  !insertmacro MUI_LANGUAGE "Catalan"
   !insertmacro MUI_LANGUAGE "Slovenian"
   !insertmacro MUI_LANGUAGE "Serbian"
   !insertmacro MUI_LANGUAGE "SerbianLatin"
