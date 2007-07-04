@@ -1,6 +1,25 @@
 \S1{flags} Compiler Flags
 
-The following commands change how the compiler generates code and compresses data. Unless otherwise noted, these commands are valid anywhere in the script, and effect every line below where each one is placed (until overridden by another command).
+The following commands affect how the compiler generates code and compresses data. Unless otherwise noted, these commands are valid anywhere in the script, and effect every line below where each one is placed (until overridden by another command). They cannot be jumped over using \R{flowcontrol}{flow control insutrctions}.
+
+For example, in the following script, blah.dat will never be overwritten.
+
+\c ${If} $0 == 0
+\c   SetOverwrite on
+\c ${Else}
+\c   SetOverwrite off
+\c ${EndIf}
+\c File blah.dat # overwrite is always off here!
+
+Instead, the following should be used.
+
+\c ${If} $0 == 0
+\c   SetOverwrite on
+\c   File blah.dat
+\c ${Else}
+\c   SetOverwrite off
+\c   File blah.dat
+\c ${EndIf}
 
 \S2{asetallowskipfiles} AllowSkipFiles
 
