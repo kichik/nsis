@@ -69,6 +69,7 @@ languages = Split("""
 	Slovak.nsh
 	Slovenian.nsh
 	Spanish.nsh
+	SpanishInternational.nsh
 	Swedish.nsh
 	Thai.nsh
 	TradChinese.nsh

@@ -3,10 +3,10 @@
 
 ;Language: Spanish (1034)
 ;By MoNKi & Joel
-
+;Updates & Review Darwin Toledo Cáceres
 ;--------------------------------
 
-!insertmacro MUI_LANGUAGEFILE_BEGIN "Spanish"
+!insertmacro MUI_LANGUAGEFILE_BEGIN "Spanish" ;Español - España (Alfabetización Tradicional)
 
   !define MUI_LANGNAME "Español" ;Use only ASCII characters (if this is not possible, use the English name)
 
@@ -23,8 +23,12 @@
   !define MUI_TEXT_COMPONENTS_TITLE "Selección de componentes"
   !define MUI_TEXT_COMPONENTS_SUBTITLE "Seleccione qué características de $(^NameDA) desea instalar."
   !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Descripción"
+  !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
   !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Sitúe el ratón encima de un componente para ver su descripción."
-  
+  !else
+    !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Seleccione un componente para ver su descripción."
+  !endif
+
   !define MUI_TEXT_DIRECTORY_TITLE "Elegir lugar de instalación"
   !define MUI_TEXT_DIRECTORY_SUBTITLE "Elija el directorio para instalar $(^NameDA)."
   
@@ -84,6 +88,7 @@
   !define MUI_UNTEXT_FINISH_INFO_TITLE "Completando el Asistente de Desinstalación de $(^NameDA)"
   !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) ha sido desinstalado de su sistema.\r\n\r\nPresione Terminar para cerrar este asistente."
   !define MUI_UNTEXT_FINISH_INFO_REBOOT "Su ordenador debe ser reiniciado para completar la desinstalación de $(^NameDA). ¿Desea reiniciar ahora?"
+
   !define MUI_UNTEXT_ABORTWARNING "¿Está seguro de que desea salir de la desinstalación de $(^Name)?"
 
 !insertmacro MUI_LANGUAGEFILE_END
