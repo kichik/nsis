@@ -3132,6 +3132,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
     return PS_OK;
     case TOK_WRITEUNINSTALLER:
+    {
       if (uninstall_mode)
       {
         ERROR_MSG("WriteUninstaller only valid from install, not from uninstall.\n");
@@ -3140,11 +3141,15 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       uninstaller_writes_used++;
       ent.which=EW_WRITEUNINSTALLER;
       ent.offsets[0]=add_string(line.gettoken_str(1));
+      string full = string("$INSTDIR\\") + string(line.gettoken_str(1));
+      ent.offsets[3]=add_string(full.c_str());
+      // ent.offsets[1] and ent.offsets[2] are set in CEXEBuild::uninstall_generate()
       if (!ent.offsets[0]) PRINTHELP()
       SCRIPT_MSG("WriteUninstaller: \"%s\"\n",line.gettoken_str(1));
 
       DefineInnerLangString(NLF_ERR_CREATING);
       DefineInnerLangString(NLF_CREATED_UNINST);
+    }
     return add_entry(&ent);
 #else//!NSIS_CONFIG_UNINSTALL_SUPPORT
     case TOK_WRITEUNINSTALLER:
@@ -3762,6 +3767,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (line.getnumtokens()!=a+2) PRINTHELP()
         ent.offsets[0]=add_string(line.gettoken_str(a));
         ent.offsets[1]=add_string(line.gettoken_str(a+1));
+        string print = string(line.gettoken_str(a)) + "->" + string(line.gettoken_str(a+1));
+        ent.offsets[3]=add_string(print.c_str());
         SCRIPT_MSG("Rename: %s%s->%s\n",ent.offsets[2]?"/REBOOTOK ":"",line.gettoken_str(a),line.gettoken_str(a+1));
 
         DefineInnerLangString(NLF_RENAME);
@@ -4438,6 +4445,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (line.getnumtokens() < a+2) PRINTHELP()
         ent.offsets[0]=add_string(line.gettoken_str(a));
         ent.offsets[1]=add_string(line.gettoken_str(a+1));
+        string copy_to = string("$(^CopyTo)") + line.gettoken_str(a+1);
+        ent.offsets[3]=add_string(copy_to.c_str());
         int s;
         int size_kb=line.gettoken_int(a+2,&s);
         if (!s && line.gettoken_str(a+2)[0]) PRINTHELP()

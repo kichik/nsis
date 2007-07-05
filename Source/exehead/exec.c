@@ -371,12 +371,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       {
         char *buf3=GetStringFromParm(-0x30);
         char *buf2=GetStringFromParm(-0x21);
-        mystrcpy(buf1,buf3);
-        if (mystrlen(buf3)+mystrlen(buf2) < NSIS_MAX_STRLEN-3)
-        {
-          mystrcat(buf1,"->");
-          mystrcat(buf1,buf2);
-        }
+        char *buf1=GetStringFromParm(0x13);
         log_printf2("Rename: %s",buf1);
         if (MoveFile(buf3,buf2))
         {
@@ -1083,6 +1078,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         SHFILEOPSTRUCT op;
         char *buf0=GetStringFromParm(0x00);
         char *buf1=GetStringFromParm(0x11);
+        char *buf2=GetStringFromParm(0x23); // LANG_COPYTO + buf1
         log_printf3("CopyFiles \"%s\"->\"%s\"",buf0,buf1);
 
         if (!file_exists(buf0))
@@ -1101,9 +1097,6 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         op.wFunc=FO_COPY;
         buf0[mystrlen(buf0)+1]=0;
         buf1[mystrlen(buf1)+1]=0;
-
-        GetNSISString(buf2,LANG_COPYTO);
-        mystrcat(buf2,buf1);
 
         op.pFrom=buf0;
         op.pTo=buf1;
@@ -1463,16 +1456,11 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       {
         int ret=-666;
         HANDLE hFile;
-        char *buf0=GetStringFromParm(0x00);
+        char *buf1=GetStringFromParm(0x10);
 
-        if (validpathspec(buf0))
-        {
-          mystrcpy(buf1,buf0);
-        }
-        else
-        {
-          mystrcat(addtrailingslash(mystrcpy(buf1,state_install_directory)),buf0);
-        }
+        if (!validpathspec(buf1))
+          GetStringFromParm(0x13);
+
         validate_filename(buf1);
 
         remove_ro_attr(buf1);
