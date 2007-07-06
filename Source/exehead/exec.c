@@ -842,7 +842,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         char *buf0=GetStringFromParm(0x00);
         char *buf3=GetStringFromParm(0x31);
         char *buf2=GetStringFromParm(0x22);
-        wsprintf(buf1,"%s %s",buf0,buf3);
+        char *buf1=GetStringFromParm(0x15);
         update_status_text_buf1(LANG_EXECSHELL);
         x=(int)ShellExecute(g_hwnd,buf0[0]?buf0:NULL,buf3,buf2[0]?buf2:NULL,state_output_directory,parm3);
         if (x < 33)
