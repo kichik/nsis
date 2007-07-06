@@ -742,10 +742,10 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     case EW_SENDMESSAGE:
       {
         int v;
-        int b3=(int)GetStringFromParm(0x33);
-        int b4=(int)GetStringFromParm(0x44);
-        if (!(parm5&1)) b3=myatoi((char*)b3);
-        if (!(parm5&2)) b4=myatoi((char*)b4);
+        int b3=GetIntFromParm(3);
+        int b4=GetIntFromParm(4);
+        if (parm5&1) b3=(int)GetStringFromParm(0x33);
+        if (parm5&2) b4=(int)GetStringFromParm(0x44);
 
         if (which == EW_SENDMESSAGE)
         {
