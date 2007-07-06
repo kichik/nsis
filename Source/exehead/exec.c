@@ -1050,9 +1050,8 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           if (SUCCEEDED(hres))
           {
              static WCHAR wsz[1024];
-             wsz[0]=0;
-             MultiByteToWideChar(CP_ACP, 0, buf1, -1, wsz, 1024);
-             hres=ppf->lpVtbl->Save(ppf,(const WCHAR*)wsz,TRUE);
+             if (MultiByteToWideChar(CP_ACP, 0, buf1, -1, wsz, 1024))
+              hres=ppf->lpVtbl->Save(ppf,(const WCHAR*)wsz,TRUE);
           }
           ppf->lpVtbl->Release(ppf);
         }
