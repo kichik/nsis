@@ -3684,6 +3684,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #endif//!NSIS_SUPPORT_EXECUTE
     case TOK_EXECSHELL: // this uses improvements of Andras Varga
 #ifdef NSIS_SUPPORT_SHELLEXECUTE
+    {
       ent.which=EW_SHELLEXEC;
       ent.offsets[0]=add_string(line.gettoken_str(1));
       ent.offsets[1]=add_string(line.gettoken_str(2));
@@ -3696,10 +3697,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (a < 0) PRINTHELP()
         ent.offsets[3]=tab[a];
       }
+      string detail=string(line.gettoken_str(1))+" "+string(line.gettoken_str(2));
+      ent.offsets[5]=add_string(detail.c_str());
       SCRIPT_MSG("ExecShell: %s: \"%s\" \"%s\" %s\n",line.gettoken_str(1),line.gettoken_str(2),
                                                  line.gettoken_str(3),line.gettoken_str(4));
 
       DefineInnerLangString(NLF_EXEC_SHELL);
+    }
     return add_entry(&ent);
 #else//!NSIS_SUPPORT_SHELLEXECUTE
       ERROR_MSG("Error: %s specified, NSIS_SUPPORT_SHELLEXECUTE not defined.\n",  line.gettoken_str(0));
