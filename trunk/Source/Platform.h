@@ -867,4 +867,11 @@ typedef struct tagVS_FIXEDFILEINFO {
 #  pragma pack()
 #endif
 
+// ShGetFolderPath
+typedef HRESULT (__stdcall * PFNSHGETFOLDERPATHA)(HWND, int, HANDLE, DWORD, LPSTR);
+
+#ifndef SHGFP_TYPE_CURRENT
+  #define SHGFP_TYPE_CURRENT 0
+#endif
+
 #endif

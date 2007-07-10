@@ -16,7 +16,6 @@
 
 #include "../Platform.h"
 #include <shellapi.h>
-#include <shfolder.h>
 #include "util.h"
 #include "state.h"
 #include "config.h"
@@ -628,9 +627,7 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
         int x = 2;
 
         // Use SHGetFolderPath when shfolder.dll is available
-        PFNSHGETFOLDERPATHA pSHGetFolderPath = 0;
-        HMODULE hDLL = LoadLibrary("shfolder");
-        if (hDLL) pSHGetFolderPath = (PFNSHGETFOLDERPATHA) myGetProcAddress(MGA_SHGetFolderPathA);
+        PFNSHGETFOLDERPATHA pSHGetFolderPath = (PFNSHGETFOLDERPATHA) myGetProcAddress(MGA_SHGetFolderPathA);
 
         if (g_exec_flags.all_user_var)
         {
@@ -680,9 +677,6 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
             mystrcat(out, QUICKLAUNCH);
           }
         }
-
-        if (hDLL) FreeLibrary(hDLL);
-
         validate_filename(out);
       }
       else if (nVarIdx == NS_VAR_CODE)
