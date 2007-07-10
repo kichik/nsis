@@ -16,6 +16,7 @@
 
 #include "../Platform.h"
 #include <shellapi.h>
+#include <shfolder.h>
 #include "util.h"
 #include "state.h"
 #include "config.h"
@@ -626,6 +627,11 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
 
         int x = 2;
 
+        // Use SHGetFolderPath when shfolder.dll is available
+        PFNSHGETFOLDERPATHA pSHGetFolderPath = 0;
+        HMODULE hDLL = LoadLibrary("shfolder");
+        if (hDLL) pSHGetFolderPath = (PFNSHGETFOLDERPATHA) myGetProcAddress(MGA_SHGetFolderPathA);
+
         if (g_exec_flags.all_user_var)
         {
           x = 4;
@@ -651,15 +657,17 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
 
         while (x--)
         {
+          if (pSHGetFolderPath) {
+            if (!pSHGetFolderPath(g_hwnd, fldrs[x], NULL, SHGFP_TYPE_CURRENT, out)) break;
+          }
+            
           if (!SHGetSpecialFolderLocation(g_hwnd, fldrs[x], &idl))
           {
             BOOL res = SHGetPathFromIDList(idl, out);
             CoTaskMemFree(idl);
-            if (res)
-            {
-              break;
-            }
+            if (res) break;
           }
+
           *out=0;
         }
 
@@ -672,6 +680,8 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
             mystrcat(out, QUICKLAUNCH);
           }
         }
+
+        if (hDLL) FreeLibrary(hDLL);
 
         validate_filename(out);
       }
@@ -896,7 +906,8 @@ struct MGA_FUNC MGA_FUNCS[] = {
   {"ADVAPI32", "LookupPrivilegeValueA"},
   {"ADVAPI32", "AdjustTokenPrivileges"},
   {"KERNEL32", "GetUserDefaultUILanguage"},
-  {"SHLWAPI",  "SHAutoComplete"}
+  {"SHLWAPI",  "SHAutoComplete"},
+  {"SHFOLDER", "SHGetFolderPathA"}
 };
 
 void * NSISCALL myGetProcAddress(const enum myGetProcAddressFunctions func)
