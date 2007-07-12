@@ -596,6 +596,8 @@ char ps_tmpbuf[NSIS_MAX_STRLEN*2];
 const char SYSREGKEY[]   = "Software\\Microsoft\\Windows\\CurrentVersion";
 const char QUICKLAUNCH[] = "\\Microsoft\\Internet Explorer\\Quick Launch";
 
+typedef HRESULT (__stdcall * PFNSHGETFOLDERPATHA)(HWND, int, HANDLE, DWORD, LPSTR);
+
 // Based on Dave Laundon's simplified process_string
 char * NSISCALL GetNSISString(char *outbuf, int strtab)
 {
