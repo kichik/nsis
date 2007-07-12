@@ -52,6 +52,8 @@ char *ValidateTempDir()
   return my_GetTempFileName(state_language, state_temp_dir);
 }
 
+void *g_SHGetFolderPath;
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, int nCmdShow)
 {
   int ret = 0;
@@ -73,6 +75,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
     g_hres=OleInitialize(NULL);
   }
 #endif
+
+  // load shfolder.dll before any script code is executed to avoid
+  // weird situations where SetOutPath or even the extraction of 
+  // shfolder.dll will cause unexpected behavior.
+  //
+  // this also prevents the following:
+  //
+  //  SetOutPath "C:\Program Files\NSIS" # maybe read from reg
+  //  File shfolder.dll
+  //  Delete $PROGRAMFILES\shfolder.dll # can't be deleted, as the
+  //                                    # new shfolder.dll is used
+  //                                    # to find its own path.
+  g_SHGetFolderPath = myGetProcAddress(MGA_SHGetFolderPathA);
 
   {
     // workaround for bug #1008632
