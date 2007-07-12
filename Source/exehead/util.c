@@ -597,6 +597,7 @@ const char SYSREGKEY[]   = "Software\\Microsoft\\Windows\\CurrentVersion";
 const char QUICKLAUNCH[] = "\\Microsoft\\Internet Explorer\\Quick Launch";
 
 typedef HRESULT (__stdcall * PFNSHGETFOLDERPATHA)(HWND, int, HANDLE, DWORD, LPSTR);
+extern void *g_SHGetFolderPath;
 
 // Based on Dave Laundon's simplified process_string
 char * NSISCALL GetNSISString(char *outbuf, int strtab)
@@ -628,9 +629,6 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
 
         int x = 2;
 
-        // Use SHGetFolderPath when shfolder.dll is available
-        PFNSHGETFOLDERPATHA pSHGetFolderPath = (PFNSHGETFOLDERPATHA) myGetProcAddress(MGA_SHGetFolderPathA);
-
         if (g_exec_flags.all_user_var)
         {
           x = 4;
@@ -656,8 +654,13 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
 
         while (x--)
         {
-          if (pSHGetFolderPath) {
-            if (!pSHGetFolderPath(g_hwnd, fldrs[x], NULL, SHGFP_TYPE_CURRENT, out)) break;
+          if (g_SHGetFolderPath)
+          {
+            PFNSHGETFOLDERPATHA SHGetFolderPathFunc = (PFNSHGETFOLDERPATHA) g_SHGetFolderPath;
+            if (!SHGetFolderPathFunc(g_hwnd, fldrs[x], NULL, SHGFP_TYPE_CURRENT, out))
+            {
+              break;
+            }
           }
             
           if (!SHGetSpecialFolderLocation(g_hwnd, fldrs[x], &idl))
