@@ -1,5 +1,49 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.29} 2.29
+
+Released on July 14th, 2007
+
+\S1{v2.29-rl} Release Notes
+
+\b The most notable addition in this release is nsDialogs - a faster and far more capable replacement for InstallOptions. It allows creating controls of any type directly from the script and removes the need to mess with slow INI files. It integrates directly into the script by calling functions for notification, including change notification for edit boxes. \W{http://nsis.sourceforge.net/Community}{Speak up} if you have any suggestions/comments/patches for it.
+
+\S1{v2.29-cl} Changelog
+
+\S2{} Major Changes
+
+\b Added \L{../Examples/nsDialogs}{nsDialogs} - a replacement for InstallOptions
+
+\S2{} Minor Changes
+
+\b Disable Windows error messages for the entire installer and not just for an incomplete list of fail-points (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1741061}{bug #1741061})
+
+\b Fixed incorrect large version handling of \R{getfileversion}{GetFileVersion} (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1742255}{bug #1742255}, \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1742562}{patch #1742562})
+
+\b Fixed the ReverseSection macro in Sections.nsh (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1742793}{bug #1742793})
+
+\b Minor documentation improvements
+
+\b Simplified \R{readreg_multi_sz}{REG_MULTI_SZ reader}
+
+\b Use SHGetFolderPath where available to better support all users' folders
+
+\S2{} Utilities and Plug-ins
+
+\b \L{../Docs/Banner/Readme.txt}{Banner}: Avoid possible hangs when called from page callbacks (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1743801}{bug #1743801})
+
+\b \L{../Docs/NSISdl/ReadMe.txt}{NSISdl}: added /TRANSLATE2 for more "translator-friendly" strings (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1656076}{patch #1656076})
+
+\b \L{../Docs/NSISdl/ReadMe.txt}{NSISdl}: support downloads over 2gb (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1723131}{patch #1723131})
+
+\S2{} Translations
+
+\b Added International Spanish
+
+\S2{} Build System
+
+\b Added support for HPUX (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1714416}{patch #1714416})
+
 \H{v2.28} 2.28
 
 Released on June 8th, 2007
