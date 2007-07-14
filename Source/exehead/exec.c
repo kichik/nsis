@@ -1456,12 +1456,10 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       {
         int ret=-666;
         HANDLE hFile;
-        char *buf1=GetStringFromParm(0x10);
+        char *buf1=GetStringFromParm(-0x10);
 
         if (!validpathspec(buf1))
-          GetStringFromParm(0x13);
-
-        validate_filename(buf1);
+          GetStringFromParm(-0x13);
 
         remove_ro_attr(buf1);
         hFile=myOpenFile(buf1,GENERIC_WRITE,CREATE_ALWAYS);
