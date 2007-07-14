@@ -1,0 +1,36 @@
+target = 'nsDialogs'
+
+files = Split("""
+	browse.c
+	input.c
+	nsDialogs.c
+	nsis.c
+""")
+
+resources = Split("""
+	dialog.rc
+""")
+
+libs = Split("""
+	kernel32
+	user32
+	gdi32
+	shell32
+	comdlg32
+	ole32
+""")
+
+examples = Split("""
+	example.nsi
+	InstallOptions.nsi
+	welcome.nsi
+""")
+
+includes = Split("""
+	nsDialogs.nsh
+""")
+
+Import('BuildPlugin env')
+
+BuildPlugin(target, files, libs, examples, res = resources)
+env.DistributeInclude(includes)

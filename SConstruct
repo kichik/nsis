@@ -21,6 +21,7 @@ plugins = [
 	'LangDLL',
 	'Library/TypeLib',
 	'Math',
+	'nsDialogs',
 	'nsExec',
 	'NSISdl',
 	'Splash',
