@@ -548,6 +548,24 @@ ${MementoSection} "InstallOptions" SecPluginsIO
   File ..\Examples\InstallOptions\testnotify.nsi
 ${MementoSectionEnd}
 
+${MementoSection} "nsDialogs" SecPluginsDialogs
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Plug-ins | nsDialogs..."
+  SetDetailsPrint listonly
+
+  SectionIn 1
+
+  SetOutPath $INSTDIR\Plugins
+  File ..\Plugins\nsDialogs.dll
+  SetOutPath $INSTDIR\Examples\nsDialogs
+  File ..\Examples\nsDialogs\example.nsi
+  File ..\Examples\nsDialogs\InstallOptions.nsi
+  File ..\Examples\nsDialogs\welcome.nsi
+  SetOutPath $INSTDIR\Include
+  File ..\Include\nsDialogs.nsh
+${MementoSectionEnd}
+
 ${MementoSection} "Math" SecPluginsMath
 
   SetDetailsPrint textonly
@@ -849,6 +867,7 @@ SectionEnd
   !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsMath} "Plugin that lets you evaluate complicated mathematical expressions"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsDialer} "Plugin that provides internet connection functions"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsIO} "Plugin that lets you add custom pages to an installer"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsDialogs} "Plugin that lets you add custom pages to an installer"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsStartMenu} "Plugin that lets the user select the start menu folder"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsBgImage} "Plugin that lets you show a persistent background image plugin and play sounds"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsUserInfo} "Plugin that that gives you the user name and the user account type"
