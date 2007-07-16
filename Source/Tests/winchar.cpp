@@ -4,6 +4,9 @@
 #include <time.h>
 #include <stdlib.h>
 
+// macro for fixing endianity
+#define _x(x) FIX_ENDIAN_INT16(WCHAR(x))
+
 class WinCharTest : public CppUnit::TestFixture {
 
   CPPUNIT_TEST_SUITE( WinCharTest );
@@ -19,7 +22,7 @@ class WinCharTest : public CppUnit::TestFixture {
 
 public:
   void testFromAnsi() {
-    WCHAR test[] = { 't', 'e', 's', 't', 0 };
+    WCHAR test[] = { _x('t'), _x('e'), _x('s'), _x('t'), 0 };
     WCHAR *dyn = winchar_fromansi("test");
 
     CPPUNIT_ASSERT_EQUAL( 0, memcmp(test, dyn, 5) );
@@ -28,7 +31,7 @@ public:
   }
 
   void testToAnsi() {
-    WCHAR test[] = { 't', 'e', 's', 't', 0 };
+    WCHAR test[] = { _x('t'), _x('e'), _x('s'), _x('t'), 0 };
     char *dyn = winchar_toansi(test);
 
     CPPUNIT_ASSERT_EQUAL( 0, strcmp("test", dyn) );
@@ -37,7 +40,7 @@ public:
   }
 
   void testStrCpy() {
-    WCHAR a[] = { 't', 'e', 's', 't', 0 };
+    WCHAR a[] = { _x('t'), _x('e'), _x('s'), _x('t'), 0 };
     WCHAR b[5];
 
     CPPUNIT_ASSERT_EQUAL( (WCHAR*) b, (WCHAR*) winchar_strcpy(b, a) );
@@ -45,13 +48,13 @@ public:
   }
 
   void testStrNCpy() {
-    WCHAR a1[] = { 't', 'e', 's', 't', 0 };
+    WCHAR a1[] = { _x('t'), _x('e'), _x('s'), _x('t'), 0 };
     WCHAR b[5];
 
     CPPUNIT_ASSERT_EQUAL( (WCHAR*) b, (WCHAR*) winchar_strncpy(b, a1, 5) );
     CPPUNIT_ASSERT_EQUAL( 0, memcmp(a1, b, 5 * sizeof(WCHAR)) );
 
-    WCHAR a2[] = { 't', 'e', 0, 0, 0 };
+    WCHAR a2[] = { _x('t'), _x('e'), 0, 0, 0 };
 
     CPPUNIT_ASSERT_EQUAL( (WCHAR*) b, (WCHAR*) winchar_strncpy(b, a2, 5) );
     CPPUNIT_ASSERT_EQUAL( 0, memcmp(a2, b, 5 * sizeof(WCHAR)) );
@@ -61,7 +64,7 @@ public:
   }
 
   void testStrLen() {
-    WCHAR test[] = { 't', 'e', 's', 't', 0 };
+    WCHAR test[] = { _x('t'), _x('e'), _x('s'), _x('t'), 0 };
 
     CPPUNIT_ASSERT_EQUAL( (size_t) 4, winchar_strlen(test) );
   }
@@ -76,9 +79,9 @@ public:
 
   void testStrCmp() {
     char a[] = "a";
-    WCHAR wa[] = { 'a', 0 };
+    WCHAR wa[] = { _x('a'), 0 };
     char b[] = "b";
-    WCHAR wb[] = { 'b', 0 };
+    WCHAR wb[] = { _x('b'), 0 };
     char empty[] = "";
     WCHAR wempty[] = { 0 };
 
@@ -98,7 +101,7 @@ public:
   }
 
   void testStrDup() {
-    WCHAR a[] = { 'a', 'b', 'c', 0 };
+    WCHAR a[] = { _x('a'), _x('b'), _x('c'), 0 };
 
     WCHAR *b = winchar_strdup(a);
 
