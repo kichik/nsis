@@ -243,11 +243,13 @@ static int change_to_script_dir(CEXEBuild& build, string& script)
   return 0;
 }
 
+#ifdef NSIS_HPUX_ALLOW_UNALIGNED_DATA_ACCESS
+extern "C" void allow_unaligned_data_access();
+#endif
+
 int main(int argc, char **argv)
 {
-
 #ifdef NSIS_HPUX_ALLOW_UNALIGNED_DATA_ACCESS
-  extern "C" void allow_unaligned_data_access();
   allow_unaligned_data_access();
 #endif
 
