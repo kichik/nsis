@@ -65,6 +65,7 @@ int sane_system(const char *command);
 #ifndef _WIN32
 char *CharPrev(const char *s, const char *p);
 char *CharNext(const char *s);
+char *CharNextExA(WORD codepage, const char *s, int flags);
 int wsprintf(char *s, const char *format, ...);
 int WideCharToMultiByte(UINT CodePage, DWORD dwFlags, LPCWSTR lpWideCharStr,
     int cchWideChar, LPSTR lpMultiByteStr, int cbMultiByte, LPCSTR lpDefaultChar,
