@@ -55,6 +55,7 @@ typedef const unsigned short *LPCWCH, *PCWCH, *LPCWSTR, *PCWSTR, *LPCOLESTR;
 typedef unsigned int UINT_PTR;
 // basic stuff
 typedef void * HANDLE;
+typedef HANDLE HWND;
 typedef unsigned long HKEY;
 // some gdi
 typedef unsigned long COLORREF;
