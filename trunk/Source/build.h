@@ -123,12 +123,8 @@ class CEXEBuild {
     char *curfilename;
     FILE *fp;
 
-#ifdef _WIN32
     HWND notify_hwnd;
     void notify(notify_e code, const char *data) const;
-#else
-    void notify(notify_e code, const char *data) const { }
-#endif
 
   private:
     int check_write_output_errors() const;
