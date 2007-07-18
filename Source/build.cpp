@@ -253,9 +253,7 @@ CEXEBuild::CEXEBuild() :
 
   disable_window_icon=0;
 
-#ifdef _WIN32
   notify_hwnd=0;
-#endif
 
 #ifdef NSIS_SUPPORT_BGBG
   bg_default_font.lfHeight=40;
@@ -451,12 +449,8 @@ int CEXEBuild::add_string(const char *string, int process/*=1*/, WORD codepage/*
 
 int CEXEBuild::add_intstring(const int i) // returns offset in stringblock
 {
-  char i_str[128];
-#ifdef _WIN32
+  char i_str[1024];
   wsprintf(i_str, "%d", i);
-#else
-  snprintf(i_str, 128, "%d", i);
-#endif
   return add_string(i_str);
 }
 
@@ -1151,12 +1145,8 @@ int CEXEBuild::add_section(const char *secname, const char *defname, int expand/
 
   if (defname[0])
   {
-    char buf[128];
-#ifdef _WIN32
+    char buf[1024];
     wsprintf(buf, "%d", cur_header->blocks[NB_SECTIONS].num);
-#else
-    snprintf(buf, 128, "%d", cur_header->blocks[NB_SECTIONS].num);
-#endif
     if (definedlist.add(defname, buf))
     {
       ERROR_MSG("Error: \"%s\" already defined, can't assign section index!\n", defname);
@@ -2588,11 +2578,7 @@ int CEXEBuild::write_output(void)
   {
     int total_out_size_estimate=
       m_exehead_size+sizeof(fh)+build_datablock.getlen()+(build_crcchk?sizeof(crc32_t):0);
-#ifdef _WIN32
-    int pc=MulDiv(db_opt_save,1000,db_opt_save+total_out_size_estimate);
-#else
-    int pc=(int)(((long long)db_opt_save*1000)/(db_opt_save+total_out_size_estimate));
-#endif
+    int pc=(int)(((INT64)db_opt_save*1000)/(db_opt_save+total_out_size_estimate));
     INFO_MSG("Datablock optimizer saved %d bytes (~%d.%d%%).\n",db_opt_save,
       pc/10,pc%10);
   }
@@ -3118,11 +3104,7 @@ void CEXEBuild::warning_fl(const char *s, ...)
 
 void CEXEBuild::ERROR_MSG(const char *s, ...) const
 {
-#ifdef _WIN32
   if (display_errors || notify_hwnd)
-#else
-  if (display_errors)
-#endif
   {
     char buf[NSIS_MAX_STRLEN*10];
     va_list val;
@@ -3181,16 +3163,16 @@ void CEXEBuild::print_warnings()
   fflush(g_output);
 }
 
-#ifdef _WIN32
 void CEXEBuild::notify(notify_e code, const char *data) const
 {
+#ifdef _WIN32
   if (notify_hwnd)
   {
     COPYDATASTRUCT cds = {(DWORD)code, strlen(data)+1, (void *) data};
     SendMessage(notify_hwnd, WM_COPYDATA, 0, (LPARAM)&cds);
   }
-}
 #endif
+}
 
 // Added by Ximon Eighteen 5th August 2002
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
