@@ -304,6 +304,9 @@ Function CreateDialogFromINI
 	nsDialogs::Create /NOUNLOAD $R0
 	Pop $R9
 
+	ReadINIStr $R0 $0 Settings RTL
+	nsDialogs::SetRTL /NOUNLOAD $R0
+
 	ReadINIStr $R0 $0 Settings NumFields
 
 	${DEBUG} "NumFields = $R0"

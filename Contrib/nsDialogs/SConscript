@@ -5,6 +5,7 @@ files = Split("""
 	input.c
 	nsDialogs.c
 	nsis.c
+	rtl.c
 """)
 
 resources = Split("""
