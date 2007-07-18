@@ -466,22 +466,7 @@ int CEXEBuild::preprocess_string(char *out, const char *in, WORD codepage/*=CP_A
   const char *p=in;
   while (*p)
   {
-    const char *np;
-#ifdef _WIN32
-    np = CharNextExA(codepage, p, 0);
-#else
-    {
-      char buf[1024];
-      snprintf(buf, 1024, "CP%d", codepage);
-      setlocale(LC_CTYPE, buf);
-      int len = mblen(p, strlen(p));
-      if (len > 0)
-        np = p + len;
-      else
-        np = p + 1;
-      setlocale(LC_CTYPE, "");
-    }
-#endif
+    const char *np = CharNextExA(codepage, p, 0);
     if (np - p > 1) // multibyte char
     {
       int l = np - p;

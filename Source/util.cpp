@@ -413,6 +413,23 @@ char *CharNext(const char *s) {
   return (char *) s + l;
 }
 
+char *CharNextExA(WORD codepage, const char *s, int flags) {
+  char buf[1024];
+  snprintf(buf, 1024, "CP%d", codepage);
+  setlocale(LC_CTYPE, buf);
+
+  const char* np;
+  int len = mblen(s, strlen(s));
+  if (len > 0)
+    np = s + len;
+  else
+    np = s + 1;
+
+  setlocale(LC_CTYPE, "");
+
+  return (char *) np;
+}
+
 int wsprintf(char *s, const char *format, ...) {
   va_list val;
   va_start(val, format);
