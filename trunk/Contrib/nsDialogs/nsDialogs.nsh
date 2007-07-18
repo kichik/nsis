@@ -248,6 +248,31 @@
 !insertmacro __NSD_DefineControl ComboBox
 !insertmacro __NSD_DefineControl ListBox
 
+!macro __NSD_OnEvent EVENT HWND FUNCTION
+
+	Push $0
+	Push $1
+
+	StrCpy $1 "${HWND}"
+
+	GetFunctionAddress $0 "${FUNCTION}"
+	nsDialogs::On${EVENT} /NOUNLOAD $1 $0
+
+	Pop $1
+	Pop $0
+
+!macroend
+
+!macro __NSD_DefineCallback EVENT
+
+	!define NSD_On${EVENT} `!insertmacro __NSD_OnEvent ${EVENT}`
+
+!macroend
+
+!insertmacro __NSD_DefineCallback Click
+!insertmacro __NSD_DefineCallback Change
+!insertmacro __NSD_DefineCallback Notify
+
 !define DEBUG `System::Call kernel32::OutputDebugString(ts)`
 
 !macro __NSD_ControlCase TYPE
@@ -338,8 +363,7 @@ Function FileRequest
 
 	WriteINIStr $0 "Field $R1" HWND2 $R8
 
-	GetFunctionAddress $R9 OnFileBrowseButton
-	nsDialogs::OnClick /NOUNLOAD $R8 $R9
+	${NSD_OnClick} $R8 OnFileBrowseButton
 
 	ReadINIStr $R9 $0 "Field $R1" State
 
@@ -360,8 +384,7 @@ Function DirRequest
 
 	WriteINIStr $0 "Field $R1" HWND2 $R8
 
-	GetFunctionAddress $R9 OnDirBrowseButton
-	nsDialogs::OnClick /NOUNLOAD $R8 $R9
+	${NSD_OnClick} $R8 OnDirBrowseButton
 
 	ReadINIStr $R9 $0 "Field $R1" State
 
