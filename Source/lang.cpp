@@ -876,14 +876,6 @@ char SkipComments(FILE *f) {
   return (char) c;
 }
 
-#ifndef _WIN32
-BOOL IsValidCodePage(UINT CodePage)
-{
-  // FIXME make a real check
-  return TRUE;
-}
-#endif
-
 // NSIS Language File parser
 LanguageTable * CEXEBuild::LoadLangFile(char *filename) {
   FILE *f = FOPEN(filename, "r");
