@@ -354,6 +354,24 @@ Function CreateDialogFromINI
 
 FunctionEnd
 
+Function UpdateINIState
+
+	${DEBUG} "Updating INI state"
+
+	ReadINIStr $R0 $0 Settings NumFields
+
+	${DEBUG} "NumField = $R0"
+
+	${For} $R1 1 $R0
+		ReadINIStr $R2 $0 "Field $R1" HWND
+		${DEBUG} "  HWND = $R2"
+		System::Call user32::GetWindowText(iR2,t.R2,i${NSIS_MAX_STRLEN})
+		${DEBUG} "  Window text = $R2"
+		WriteINIStr $0 "Field $R1" STATE $R2
+	${Next}
+
+FunctionEnd
+
 Function FileRequest
 
 	IntOp $R5 $R5 - 15
