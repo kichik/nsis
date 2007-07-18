@@ -528,6 +528,20 @@ int MultiByteToWideChar(UINT CodePage, DWORD dwFlags, LPCSTR lpMultiByteStr,
   return cchWideChar - (outbytes / sizeof (WCHAR));
 }
 
+BOOL IsValidCodePage(UINT CodePage)
+{
+  char cp[128];
+  create_code_page_string(cp, sizeof(cp), CodePage);
+
+  iconv_t cd = iconv_open("UCS-2LE", cp);
+  if (cd == (iconv_t) -1)
+    return FALSE;
+
+  iconv_close(cd);
+
+  return TRUE;
+}
+
 #define MY_ERROR_MSG(x) {if (g_display_errors) {fprintf(g_output,"%s", x);}}
 
 char *my_convert(const char *path)
