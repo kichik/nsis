@@ -3,6 +3,7 @@
 #include "input.h"
 #include "defs.h"
 #include "nsis.h"
+#include "rtl.h"
 
 extern struct nsDialog g_dialog;
 
@@ -72,6 +73,8 @@ int NSDFUNC PopPlacement(int *x, int *y, int *width, int *height)
     return 1;
 
   *height = ConvertPlacement(buf, dialogHeight, 1);
+
+  ConvertPosToRTL(x, *width, dialogWidth);
 
   return 0;
 }
