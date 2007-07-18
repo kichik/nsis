@@ -72,6 +72,7 @@ int WideCharToMultiByte(UINT CodePage, DWORD dwFlags, LPCWSTR lpWideCharStr,
     LPBOOL lpUsedDefaultChar);
 int MultiByteToWideChar(UINT CodePage, DWORD dwFlags, LPCSTR lpMultiByteStr,
     int cbMultiByte, LPWSTR lpWideCharStr, int cchWideChar);
+BOOL IsValidCodePage(UINT CodePage);
 
 char *my_convert(const char *path);
 void my_convert_free(char *converted_path);
