@@ -3,6 +3,7 @@
 #include "defs.h"
 #include "nsis.h"
 #include "input.h"
+#include "rtl.h"
 
 HINSTANCE g_hInstance;
 struct nsDialog g_dialog;
@@ -143,6 +144,8 @@ void __declspec(dllexport) Create(HWND hwndParent, int string_size, char *variab
 
   g_dialog.parentOriginalWndproc = (WNDPROC) SetWindowLong(hwndParent, DWL_DLGPROC, (long) ParentProc);
 
+  g_dialog.rtl = FALSE;
+
   g_dialog.controlCount = 0;
   g_dialog.controls = (struct nsControl*) HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, 0);
 
@@ -210,6 +213,10 @@ void __declspec(dllexport) CreateItem(HWND hwndParent, int string_size, char *va
     g_dialog.controls[id].type = NSCTL_STATIC;
   else
     g_dialog.controls[id].type = NSCTL_UNKNOWN;
+
+  // apply rtl to style
+
+  ConvertStyleToRTL(g_dialog.controls[id].type, &style, &exStyle);
 
   // create item's window
 

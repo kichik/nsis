@@ -16,7 +16,8 @@ enum nsControlType
   NSCTL_LISTBOX,
   NSCTL_RICHEDIT,
   NSCTL_RICHEDIT2,
-  NSCTL_STATIC
+  NSCTL_STATIC,
+  NSCTL_TREE
 };
 
 struct nsDialogCallbacks
@@ -51,6 +52,8 @@ struct nsDialog
   HWND hwParent;
 
   WNDPROC parentOriginalWndproc;
+
+  BOOL rtl;
 
   struct nsDialogCallbacks callbacks;
 
