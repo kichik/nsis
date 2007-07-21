@@ -272,6 +272,7 @@
 !insertmacro __NSD_DefineCallback Click
 !insertmacro __NSD_DefineCallback Change
 !insertmacro __NSD_DefineCallback Notify
+!insertmacro __NSD_DefineCallback Back
 
 !define DEBUG `System::Call kernel32::OutputDebugString(ts)`
 
