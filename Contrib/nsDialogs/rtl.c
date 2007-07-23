@@ -4,6 +4,22 @@
 #include "defs.h"
 #include "nsis.h"
 
+#ifndef WS_EX_RIGHT
+#  define WS_EX_RIGHT 0x1000
+#endif
+
+#ifndef WS_EX_RTLREADING
+#  define WS_EX_RTLREADING 0x2000
+#endif
+
+#ifndef WS_EX_LEFTSCROLLBAR
+#  define WS_EX_LEFTSCROLLBAR 0x4000
+#endif
+
+#ifndef TVS_RTLREADING
+#  define TVS_RTLREADING 64
+#endif
+
 extern struct nsDialog g_dialog;
 
 void __declspec(dllexport) SetRTL(HWND hwndParent, int string_size, char *variables, stack_t **stacktop, extra_parameters *extra)
