@@ -547,16 +547,16 @@ CResourceDirectory* CResourceEditor::ScanDirectory(PRESOURCE_DIRECTORY rdRoot, P
 
   for (int i = 0; i < entries; i++) {
     MY_IMAGE_RESOURCE_DIRECTORY_ENTRY rd = rdToScan->Entries[i];
-    rd.OffsetToData = ConvertEndianness(rd.OffsetToData);
-    rd.Name = ConvertEndianness(rd.Name);
+    rd.UOffset.OffsetToData = ConvertEndianness(rd.UOffset.OffsetToData);
+    rd.UName.Name = ConvertEndianness(rd.UName.Name);
 
     // If this entry points to data entry get a pointer to it
-    if (!rd.DirectoryOffset.DataIsDirectory)
-      rde = PIMAGE_RESOURCE_DATA_ENTRY(rd.OffsetToData + (BYTE*)rdRoot);
+    if (!rd.UOffset.DirectoryOffset.DataIsDirectory)
+      rde = PIMAGE_RESOURCE_DATA_ENTRY(rd.UOffset.OffsetToData + (BYTE*)rdRoot);
 
     // If this entry has a name, translate it from Unicode
-    if (rd.NameString.NameIsString) {
-      PIMAGE_RESOURCE_DIR_STRING_U rds = PIMAGE_RESOURCE_DIR_STRING_U(rd.NameString.NameOffset + (char*)rdRoot);
+    if (rd.UName.NameString.NameIsString) {
+      PIMAGE_RESOURCE_DIR_STRING_U rds = PIMAGE_RESOURCE_DIR_STRING_U(rd.UName.NameString.NameOffset + (char*)rdRoot);
 
       size_t nameSize = ConvertEndianness(rds->Length);
       szName = new WCHAR[nameSize+1];
@@ -565,15 +565,15 @@ CResourceDirectory* CResourceEditor::ScanDirectory(PRESOURCE_DIRECTORY rdRoot, P
     }
     // Else, set the name to this entry's id
     else
-      szName = MAKEINTRESOURCEW(ConvertEndianness(rdToScan->Entries[i].Id));
+      szName = MAKEINTRESOURCEW(ConvertEndianness(rdToScan->Entries[i].UName.Id));
 
-    if (rd.DirectoryOffset.DataIsDirectory)
+    if (rd.UOffset.DirectoryOffset.DataIsDirectory)
       rdc->AddEntry(
         new CResourceDirectoryEntry(
           szName,
           ScanDirectory(
             rdRoot,
-            PRESOURCE_DIRECTORY(rd.DirectoryOffset.OffsetToDirectory + (BYTE*)rdRoot)
+            PRESOURCE_DIRECTORY(rd.UOffset.DirectoryOffset.OffsetToDirectory + (BYTE*)rdRoot)
           )
         )
       );
@@ -632,10 +632,10 @@ void CResourceEditor::WriteRsrcSec(BYTE* pbRsrcSec) {
 
       MY_IMAGE_RESOURCE_DIRECTORY_ENTRY rDirE;
       ZeroMemory(&rDirE, sizeof(rDirE));
-      rDirE.DirectoryOffset.DataIsDirectory = crd->GetEntry(i)->IsDataDirectory();
-      rDirE.Id = crd->GetEntry(i)->HasName() ? 0 : crd->GetEntry(i)->GetId();
-      rDirE.Id = ConvertEndianness(rDirE.Id);
-      rDirE.NameString.NameIsString = (crd->GetEntry(i)->HasName()) ? 1 : 0;
+      rDirE.UOffset.DirectoryOffset.DataIsDirectory = crd->GetEntry(i)->IsDataDirectory();
+      rDirE.UName.Id = crd->GetEntry(i)->HasName() ? 0 : crd->GetEntry(i)->GetId();
+      rDirE.UName.Id = ConvertEndianness(rDirE.UName.Id);
+      rDirE.UName.NameString.NameIsString = (crd->GetEntry(i)->HasName()) ? 1 : 0;
 
       CopyMemory(seeker, &rDirE, sizeof(MY_IMAGE_RESOURCE_DIRECTORY_ENTRY));
       crd->GetEntry(i)->m_dwWrittenAt = DWORD(seeker);
@@ -666,7 +666,7 @@ void CResourceEditor::WriteRsrcSec(BYTE* pbRsrcSec) {
   while (!qStrings.empty()) {
     CResourceDirectoryEntry* cRDirE = qStrings.front();
 
-    PMY_IMAGE_RESOURCE_DIRECTORY_ENTRY(cRDirE->m_dwWrittenAt)->NameString.NameOffset = ConvertEndianness(DWORD(seeker) - DWORD(pbRsrcSec));
+    PMY_IMAGE_RESOURCE_DIRECTORY_ENTRY(cRDirE->m_dwWrittenAt)->UName.NameString.NameOffset = ConvertEndianness(DWORD(seeker) - DWORD(pbRsrcSec));
 
     WCHAR* szName = cRDirE->GetName();
     WORD iLen = winchar_strlen(szName) + 1;
@@ -705,13 +705,13 @@ void CResourceEditor::SetOffsets(CResourceDirectory* resDir, DWORD newResDirAt) 
   for (int i = 0; i < resDir->CountEntries(); i++) {
     PMY_IMAGE_RESOURCE_DIRECTORY_ENTRY rde = PMY_IMAGE_RESOURCE_DIRECTORY_ENTRY(resDir->GetEntry(i)->m_dwWrittenAt);
     if (resDir->GetEntry(i)->IsDataDirectory()) {
-      rde->DirectoryOffset.DataIsDirectory = 1;
-      rde->DirectoryOffset.OffsetToDirectory = resDir->GetEntry(i)->GetSubDirectory()->m_dwWrittenAt - newResDirAt;
-      rde->OffsetToData = ConvertEndianness(rde->OffsetToData);
+      rde->UOffset.DirectoryOffset.DataIsDirectory = 1;
+      rde->UOffset.DirectoryOffset.OffsetToDirectory = resDir->GetEntry(i)->GetSubDirectory()->m_dwWrittenAt - newResDirAt;
+      rde->UOffset.OffsetToData = ConvertEndianness(rde->UOffset.OffsetToData);
       SetOffsets(resDir->GetEntry(i)->GetSubDirectory(), newResDirAt);
     }
     else {
-      rde->OffsetToData = ConvertEndianness(resDir->GetEntry(i)->GetDataEntry()->m_dwWrittenAt - newResDirAt);
+      rde->UOffset.OffsetToData = ConvertEndianness(resDir->GetEntry(i)->GetDataEntry()->m_dwWrittenAt - newResDirAt);
     }
   }
 }

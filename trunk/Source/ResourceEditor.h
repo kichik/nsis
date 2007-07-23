@@ -72,7 +72,7 @@ typedef struct _MY_IMAGE_RESOURCE_DIRECTORY_ENTRY {
     } NameString;
     DWORD Name;
     WORD Id;
-  };
+  } UName;
   union {
     DWORD OffsetToData;
     struct {
@@ -84,7 +84,7 @@ typedef struct _MY_IMAGE_RESOURCE_DIRECTORY_ENTRY {
       DWORD OffsetToDirectory:31;
 #endif
     } DirectoryOffset;
-  };
+  } UOffset;
 } MY_IMAGE_RESOURCE_DIRECTORY_ENTRY,*PMY_IMAGE_RESOURCE_DIRECTORY_ENTRY;
 
 #pragma pack()

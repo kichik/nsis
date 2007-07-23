@@ -510,7 +510,7 @@ int CEXEBuild::preprocess_string(char *out, const char *in, WORD codepage/*=CP_A
                 // which is also memory wasting
                 // So the line below must be commented !??
                 //m_UserVarNames.inc_reference(idxUserVar);
-                *out++ = (unsigned int) NS_VAR_CODE; // Named user variable;
+                *out++ = (char) NS_VAR_CODE; // Named user variable;
                 WORD w = FIX_ENDIAN_INT16(CODE_SHORT(idxUserVar));
                 memcpy(out, &w, sizeof(WORD));
                 out += sizeof(WORD);
@@ -534,7 +534,7 @@ int CEXEBuild::preprocess_string(char *out, const char *in, WORD codepage/*=CP_A
               {
                 int CSIDL_Value_current = m_ShellConstants.get_value1(idxConst);
                 int CSIDL_Value_all = m_ShellConstants.get_value2(idxConst);
-                *out++=(unsigned int)NS_SHELL_CODE; // Constant code identifier
+                *out++=(char)NS_SHELL_CODE; // Constant code identifier
                 *out++=(char)CSIDL_Value_current;
                 *out++=(char)CSIDL_Value_all;
                 p = pShellConstName;
@@ -555,7 +555,7 @@ int CEXEBuild::preprocess_string(char *out, const char *in, WORD codepage/*=CP_A
               idx = DefineLangString(cp);
               if (idx < 0)
               {
-                *out++ = (unsigned int)NS_LANG_CODE; // Next word is lang-string Identifier
+                *out++ = (char)NS_LANG_CODE; // Next word is lang-string Identifier
                 WORD w = FIX_ENDIAN_INT16(CODE_SHORT(-idx-1));
                 memcpy(out, &w, sizeof(WORD));
                 out += sizeof(WORD);

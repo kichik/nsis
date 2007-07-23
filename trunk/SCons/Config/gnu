@@ -82,7 +82,7 @@ makensis_env = defenv.Clone()
 if not defenv['DEBUG']:
 	makensis_env.Append(CCFLAGS = '-O2')            # optimize
 makensis_env.Append(CCFLAGS = '-Wall')            # all warnings
-makensis_env.Append(CCFLAGS = '-Wno-non-virtual-dtor') # ignore virtual dtor warnings
+makensis_env.Append(CXXFLAGS = '-Wno-non-virtual-dtor') # ignore virtual dtor warnings
 
 conf = FlagsConfigure(makensis_env)
 conf.CheckLinkFlag('-m32')                        # 
