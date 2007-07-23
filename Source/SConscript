@@ -54,7 +54,6 @@ libs = Split("""
 	gdi32
 	user32
 	pthread
-	stdc++
 	iconv
 """)
 
