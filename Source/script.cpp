@@ -2772,7 +2772,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         datebuf[0]=0;
         size_t s=strftime(datebuf,sizeof(datebuf),value,localtime(&rawtime));
 
-        if (s < 0)
+        if (s == 0)
           datebuf[0]=0;
         else
           datebuf[max(s,sizeof(datebuf)-1)]=0;
@@ -5757,7 +5757,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
       return PS_OK;
     }
-    return PS_ERROR;
     case TOK_INITPLUGINSDIR:
     {
       int ret;

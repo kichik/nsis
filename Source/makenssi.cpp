@@ -152,11 +152,11 @@ static void print_stub_info(CEXEBuild& build)
 {
   if (build.display_info)
   {
-    fprintf(g_output,"Size of first header is %d bytes.\n",sizeof(firstheader));
-    fprintf(g_output,"Size of main header is %d bytes.\n",sizeof(header));
-    fprintf(g_output,"Size of each section is %d bytes.\n",sizeof(section));
-    fprintf(g_output,"Size of each page is %d bytes.\n",sizeof(page));
-    fprintf(g_output,"Size of each instruction is %d bytes.\n",sizeof(entry));
+    fprintf(g_output,"Size of first header is %lu bytes.\n",(unsigned long)sizeof(firstheader));
+    fprintf(g_output,"Size of main header is %lu bytes.\n",(unsigned long)sizeof(header));
+    fprintf(g_output,"Size of each section is %lu bytes.\n",(unsigned long)sizeof(section));
+    fprintf(g_output,"Size of each page is %lu bytes.\n",(unsigned long)sizeof(page));
+    fprintf(g_output,"Size of each instruction is %lu bytes.\n",(unsigned long)sizeof(entry));
     int x=build.definedlist.getnum();
     fprintf(g_output,"\nDefined symbols: ");
     for (int i=0; i<x; i++)

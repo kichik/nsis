@@ -72,7 +72,7 @@ class SortedStringList
         extern void quit();
         if (g_display_errors)
         {
-          fprintf(g_output,"\nInternal compiler error #12345: GrowBuf realloc/malloc(%d) failed.\n",strlen(name)+1);
+          fprintf(g_output,"\nInternal compiler error #12345: GrowBuf realloc/malloc(%lu) failed.\n",(unsigned long)strlen(name)+1);
           fflush(g_output);
         }
         quit();
