@@ -29,9 +29,11 @@ makensis_env.Append(CFLAGS = '-Ae')
 
 ### required to build makensis
 
+makensis_env.Append(LINKFLAGS = '-AA')
 makensis_env.Append(LINKFLAGS = '+DD32')
 makensis_env.Append(LINKFLAGS = '-mt')
 
+makensis_env.Append(CXXFLAGS = '-AA')
 makensis_env.Append(CCFLAGS = '+DD32')
 makensis_env.Append(CCFLAGS = '-mt')
 

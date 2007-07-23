@@ -125,7 +125,7 @@ int DefineList::add(const char *name, const char *value/*=""*/)
     extern void quit();
     if (g_display_errors)
     {
-      fprintf(g_output,"\nInternal compiler error #12345: GrowBuf realloc/malloc(%d) failed.\n",strlen(value)+1);
+      fprintf(g_output,"\nInternal compiler error #12345: GrowBuf realloc/malloc(%lu) failed.\n",(unsigned long)strlen(value)+1);
       fflush(g_output);
     }
     quit();

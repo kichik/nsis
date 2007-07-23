@@ -307,7 +307,7 @@ int find_in_dir(PRESOURCE_DIRECTORY rd, WORD id) {
   WORD l = i + FIX_ENDIAN_INT16(rd->Header.NumberOfIdEntries);
 
   for (; i < l; i++) {
-    if (FIX_ENDIAN_INT16(rd->Entries[i].Id) == id) {
+    if (FIX_ENDIAN_INT16(rd->Entries[i].UName.Id) == id) {
       return i;
     }
   }
@@ -326,10 +326,10 @@ int generate_unicons_offsets(unsigned char* exeHeader, size_t exeHeaderSize, uns
   int idx = find_in_dir(rdRoot, (WORD) (long) RT_ICON);
   MY_ASSERT(idx < 0, "no icons found");
   MY_IMAGE_RESOURCE_DIRECTORY_ENTRY rdEntry = rdRoot->Entries[idx];
-  FIX_ENDIAN_INT32_INPLACE(rdEntry.OffsetToData);
-  MY_ASSERT(!rdEntry.DirectoryOffset.DataIsDirectory, "bad resource directory");
+  FIX_ENDIAN_INT32_INPLACE(rdEntry.UOffset.OffsetToData);
+  MY_ASSERT(!rdEntry.UOffset.DirectoryOffset.DataIsDirectory, "bad resource directory");
 
-  PRESOURCE_DIRECTORY rdIcons = PRESOURCE_DIRECTORY(rdEntry.DirectoryOffset.OffsetToDirectory + DWORD(rdRoot));
+  PRESOURCE_DIRECTORY rdIcons = PRESOURCE_DIRECTORY(rdEntry.UOffset.DirectoryOffset.OffsetToDirectory + DWORD(rdRoot));
 
   MY_ASSERT((size_t)rdIcons - (size_t)exeHeader > exeHeaderSize, "corrupted EXE - invalid pointer");
 
@@ -339,19 +339,19 @@ int generate_unicons_offsets(unsigned char* exeHeader, size_t exeHeaderSize, uns
 
   for (WORD i = 0; i < wNumberOfEntries; i++) { // Icons dir can't have named entries
     MY_IMAGE_RESOURCE_DIRECTORY_ENTRY icoEntry = rdIcons->Entries[i];
-    FIX_ENDIAN_INT32_INPLACE(icoEntry.OffsetToData);
+    FIX_ENDIAN_INT32_INPLACE(icoEntry.UOffset.OffsetToData);
 
-    MY_ASSERT(!icoEntry.DirectoryOffset.DataIsDirectory, "bad resource directory");
-    PRESOURCE_DIRECTORY rd = PRESOURCE_DIRECTORY(icoEntry.DirectoryOffset.OffsetToDirectory + DWORD(rdRoot));
+    MY_ASSERT(!icoEntry.UOffset.DirectoryOffset.DataIsDirectory, "bad resource directory");
+    PRESOURCE_DIRECTORY rd = PRESOURCE_DIRECTORY(icoEntry.UOffset.DirectoryOffset.OffsetToDirectory + DWORD(rdRoot));
     
     MY_ASSERT((size_t)rd - (size_t)exeHeader > exeHeaderSize, "corrupted EXE - invalid pointer");
 
     MY_IMAGE_RESOURCE_DIRECTORY_ENTRY datEntry = rd->Entries[0];
-    FIX_ENDIAN_INT32_INPLACE(datEntry.OffsetToData);
+    FIX_ENDIAN_INT32_INPLACE(datEntry.UOffset.OffsetToData);
 
-    MY_ASSERT(datEntry.DirectoryOffset.DataIsDirectory, "bad resource directory");
+    MY_ASSERT(datEntry.UOffset.DirectoryOffset.DataIsDirectory, "bad resource directory");
     
-    PIMAGE_RESOURCE_DATA_ENTRY rde = PIMAGE_RESOURCE_DATA_ENTRY(datEntry.OffsetToData + DWORD(rdRoot));
+    PIMAGE_RESOURCE_DATA_ENTRY rde = PIMAGE_RESOURCE_DATA_ENTRY(datEntry.UOffset.OffsetToData + DWORD(rdRoot));
 
     MY_ASSERT((size_t)rde - (size_t)exeHeader > exeHeaderSize, "corrupted EXE - invalid pointer");
 
@@ -605,18 +605,18 @@ FILE *my_fopen(const char *path, const char *mode)
 }
 #endif//!_WIN32
 
-void *operator new(size_t size) {
+void *operator new(size_t size) throw(bad_alloc) {
   void *p = malloc(size);
   if (!p)
     throw bad_alloc();
   return p;
 }
 
-void operator delete(void *p) {
+void operator delete(void *p) throw() {
   if (p) free(p);
 }
 
-void operator delete [](void *p) {
+void operator delete [](void *p) throw() {
   if (p) free(p);
 }
 
@@ -695,7 +695,7 @@ string get_executable_path(const char* argv0) {
     char* pathtmp;
     char* path = NULL;
     size_t len = 100;
-    size_t nchars;
+    int nchars;
     while(1){
       pathtmp = (char*)realloc(path,len+1);
       if( pathtmp == NULL ){
@@ -704,11 +704,11 @@ string get_executable_path(const char* argv0) {
       }
       path = pathtmp;
       nchars = readlink("/proc/self/exe", path, len);
-      if( nchars < 0 ){
+      if( nchars == -1 ){
         free(path);
         return get_full_path(argv0);
       }
-      if( nchars < len ){
+      if( nchars < (int) len ){
         path[nchars] = '\0';
         string result(path);
         free(path);
