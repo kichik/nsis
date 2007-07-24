@@ -335,10 +335,12 @@ static int NSISCALL ExecuteEntry(entry *entry_)
             {
               if (GetLastError() != ERROR_ALREADY_EXISTS)
               {
+                log_printf3("CreateDirectory: can't create \"%s\" (err=%d)",buf,GetLastError());
                 exec_error++;
               }
               else if ((GetFileAttributes(buf1) & FILE_ATTRIBUTE_DIRECTORY) == 0)
               {
+                log_printf3("CreateDirectory: can't create \"%s\" - a file already exists",buf);
                 exec_error++;
               }
             }
