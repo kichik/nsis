@@ -507,6 +507,9 @@ Var /GLOBAL MUI_TEMP2
   !verbose ${MUI_VERBOSE}
 
     !insertmacro MUI_DESCRIPTION_END
+    !ifdef MUI_CUSTOMFUNCTION_ONMOUSEOVERSECTION
+      Call "${MUI_CUSTOMFUNCTION_ONMOUSEOVERSECTION}"
+    !endif
   FunctionEnd
 
   !verbose pop
@@ -531,6 +534,9 @@ Var /GLOBAL MUI_TEMP2
   !verbose ${MUI_VERBOSE}
 
     !insertmacro MUI_DESCRIPTION_END
+    !ifdef MUI_CUSTOMFUNCTION_UNONMOUSEOVERSECTION
+      Call "${MUI_CUSTOMFUNCTION_UNONMOUSEOVERSECTION}"
+    !endif
   FunctionEnd
 
   !verbose pop
