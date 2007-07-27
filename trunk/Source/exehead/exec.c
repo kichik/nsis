@@ -340,7 +340,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
               }
               else if ((GetFileAttributes(buf1) & FILE_ATTRIBUTE_DIRECTORY) == 0)
               {
-                log_printf3("CreateDirectory: can't create \"%s\" - a file already exists",buf);
+                log_printf2("CreateDirectory: can't create \"%s\" - a file already exists",buf);
                 exec_error++;
               }
             }
