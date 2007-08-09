@@ -314,7 +314,7 @@ Header file for creating custom installer pages with nsDialogs
   !insertmacro NSD_INIFILE un.
 !macroend
 
-!macro NSD_CREATEDIALOGFROMINI UNINSTALLER_FUNCPREFIX
+!macro NSD_INIFILE UNINSTALLER_FUNCPREFIX
 
   ;Functions to create dialogs based on old InstallOptions INI files
 
@@ -482,4 +482,4 @@ Header file for creating custom installer pages with nsDialogs
 
   FunctionEnd
   
-!endif
+!macroend
