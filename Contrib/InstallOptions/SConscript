@@ -33,6 +33,11 @@ docs = Split("""
 	Readme.html
 """)
 
-Import('BuildPlugin')
+includes = Split("""
+	InstallOptions.nsh
+""")
+
+Import('BuildPlugin env')
 
 BuildPlugin(target, files, libs, examples, docs, res = resources)
+env.DistributeInclude(includes)
