@@ -1,3 +1,10 @@
+/*
+
+nsDialogs.nsh
+Header file for creating custom installer pages with nsDialogs
+
+*/
+
 !include LogicLib.nsh
 !include WinMessages.nsh
 
@@ -108,6 +115,12 @@
 !define BS_NOTIFY            0x00004000
 !define BS_FLAT              0x00008000
 !define BS_RIGHTBUTTON       ${BS_LEFTTEXT}
+
+!define BST_CHECKED       1
+!define BST_FOCUS         8
+!define BST_INDETERMINATE 2
+!define BST_PUSHED        4
+!define BST_UNCHECKED     0
 
 !define CBS_SIMPLE            0x0001
 !define CBS_DROPDOWN          0x0002
@@ -293,7 +306,19 @@
 
 !macroend
 
-Function CreateDialogFromINI
+!macro NSD_FUNCTION_INIFILE
+  !insertmacro NSD_INIFILE ""
+!macroend
+
+!macro NSD_UNFUNCTION_INIFILE
+  !insertmacro NSD_INIFILE un.
+!macroend
+
+!macro NSD_CREATEDIALOGFROMINI UNINSTALLER_FUNCPREFIX
+
+  ;Functions to create dialogs based on old InstallOptions INI files
+
+  Function ${UNINSTALLER_FUNCPREFIX}CreateDialogFromINI
 
 	# $0 = ini
 
@@ -353,9 +378,9 @@ Function CreateDialogFromINI
 
 	nsDialogs::Show
 
-FunctionEnd
+  FunctionEnd
 
-Function UpdateINIState
+  Function ${UNINSTALLER_FUNCPREFIX}UpdateINIState
 
 	${DEBUG} "Updating INI state"
 
@@ -371,9 +396,9 @@ Function UpdateINIState
 		WriteINIStr $0 "Field $R1" STATE $R2
 	${Next}
 
-FunctionEnd
+  FunctionEnd
 
-Function FileRequest
+  Function ${UNINSTALLER_FUNCPREFIX}FileRequest
 
 	IntOp $R5 $R5 - 15
 	IntOp $R8 $R3 + $R5
@@ -392,9 +417,9 @@ Function FileRequest
 	${NSD_CreateFileRequest} $R3u $R4u $R5u $R6u $R9
 	Pop $R9
 
-FunctionEnd
+  FunctionEnd
 
-Function DirRequest
+  Function ${UNINSTALLER_FUNCPREFIX}DirRequest
 
 	IntOp $R5 $R5 - 15
 	IntOp $R8 $R3 + $R5
@@ -413,9 +438,9 @@ Function DirRequest
 	${NSD_CreateFileRequest} $R3u $R4u $R5u $R6u $R9
 	Pop $R9
 
-FunctionEnd
+  FunctionEnd
 
-Function OnFileBrowseButton
+  Function ${UNINSTALLER_FUNCPREFIX}OnFileBrowseButton
 
 	Pop $R0
 
@@ -434,9 +459,9 @@ Function OnFileBrowseButton
 		SendMessage $R2 ${WM_SETTEXT} 0 STR:$R3
 	${EndIf}
 
-FunctionEnd
+  FunctionEnd
 
-Function OnDirBrowseButton
+  Function ${UNINSTALLER_FUNCPREFIX}OnDirBrowseButton
 
 	Pop $R0
 
@@ -455,4 +480,6 @@ Function OnDirBrowseButton
 		SendMessage $R2 ${WM_SETTEXT} 0 STR:$R3
 	${EndIf}
 
-FunctionEnd
+  FunctionEnd
+  
+!endif
