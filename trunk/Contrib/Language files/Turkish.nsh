@@ -6,12 +6,12 @@
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "$(^NameDA) Kurulum sihirbazýna hoþ geldiniz"
-  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Bu sihirbaz size $(^NameDA) kurulumu boyunca rehberlik edecektir.$\r$\n$\r$\nKurulumu baþlatmadan önce çalýþan diðer programlari kapatmanýzý öneririz. Böylece bilgisayarýnýzý yeniden baþlatmadan bazý sistem dosyalarý sorunsuz kurulabilir.$\r$\n$\r$\n"
+  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Bu sihirbaz size $(^NameDA) kurulumu boyunca rehberlik edecektir.$\r$\n$\r$\nKurulumu baþlatmadan önce çalýþan diðer programlari kapatmanýzý öneririz. Böylece bilgisayarýnýzý yeniden baþlatmadan bazý sistem dosyalarý sorunsuz kurulabilir.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_UNWELCOMEPAGE
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "$(^NameDA) Programýný Kaldýrma Sihirbazýna Hoþ Geldiniz"
-  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Bu sihirbaz size $(^NameDA) programýnýn kadýrýlýmý boyunca rehberlik edecektir.$\r$\n$\r$\nKaldýrým iþlemeni baþlatmadan önce çalýþan diðer programlari kapatmanýzý öneririz. Böylece bilgisayarýnýzý yeniden baþlatmadan bazý sistem dosyalarý sorunsuz kaldýrýlabilir.$\r$\n$\r$\n"
+  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Bu sihirbaz size $(^NameDA) programýnýn kadýrýlýmý boyunca rehberlik edecektir.$\r$\n$\r$\nKaldýrým iþlemeni baþlatmadan önce çalýþan diðer programlari kapatmanýzý öneririz. Böylece bilgisayarýnýzý yeniden baþlatmadan bazý sistem dosyalarý sorunsuz kaldýrýlabilir.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
@@ -22,16 +22,16 @@
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Lisans Sözleþmesi"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Lütfen $(^NameDA) programýný kurmadan önce sözleþmeyi okuyunuz."
   ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM "Sözleþme koþullarýný kabul ediyorsanýz, 'Kabul Ediyorum'a basýnýz. $(^NameDA) programýný kurmak için sözleþme koþullarýný kabul etmelisiniz."
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Sözleþme koþullarýný kabul ediyorsanýz, aþaðýdaki onay kutusunu doldurunuz. $(^NameDA) programýný kurmak için sözleþme koþullarýný kabul etmelisiniz. "
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Sözleþme koþullarýný kabul ediyorsanýz, asagidaki onay düðmesini seçiniz. $(^NameDA) programýný kurmak için sözleþme koþullarýný kabul etmelisiniz. "
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Sözleþme koþullarýný kabul ediyorsanýz, aþaðýdaki onay kutusunu doldurunuz. $(^NameDA) programýný kurmak için sözleþme koþullarýný kabul etmelisiniz. $_CLICK"
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Sözleþme koþullarýný kabul ediyorsanýz, asagidaki onay düðmesini seçiniz. $(^NameDA) programýný kurmak için sözleþme koþullarýný kabul etmelisiniz. $_CLICK"
 !endif
 
 !ifdef MUI_UNLICENSEPAGE
   ${LangFileString} MUI_UNTEXT_LICENSE_TITLE "Lisans Sözleþmesi"
   ${LangFileString} MUI_UNTEXT_LICENSE_SUBTITLE "Lütfen $(^NameDA) programýný sisteminizden kaldýrmadan önce sözleþmeyi okuyunuz."
   ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "Sözleþme koþullarýný kabul ediyorsanýz, 'Kabul Ediyorum'a basýnýz. $(^NameDA) programýný sisteminizden kaldýrmak için sözleþme koþullarýný kabul etmelisiniz."
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Sözleþme koþullarýný kabul ediyorsanýz, aþaðýdaki onay kutusunu doldurunuz. $(^NameDA) programýný sisteminizden kaldýrmak için sözleþme koþullarýný kabul etmelisiniz. "
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Sözleþme koþullarýný kabul ediyorsanýz, asagidaki onay düðmesini seçiniz. $(^NameDA) programýný sisteminizden kaldýrmak için sözleþme koþullarýný kabul etmelisiniz. "
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Sözleþme koþullarýný kabul ediyorsanýz, aþaðýdaki onay kutusunu doldurunuz. $(^NameDA) programýný sisteminizden kaldýrmak için sözleþme koþullarýný kabul etmelisiniz. $_CLICK"
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Sözleþme koþullarýný kabul ediyorsanýz, asagidaki onay düðmesini seçiniz. $(^NameDA) programýný sisteminizden kaldýrmak için sözleþme koþullarýný kabul etmelisiniz. $_CLICK"
 !endif
 
 !ifdef MUI_LICENSEPAGE | MUI_UNLICENSEPAGE

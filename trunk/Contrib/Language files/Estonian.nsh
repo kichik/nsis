@@ -5,12 +5,12 @@
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "$(^NameDA) paigaldamine!"
-  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "See abiline aitab paigaldada $(^NameDA).$\r$\n$\r$\nEnne paigaldamise alustamist on soovitatav kõik teised programmid sulgeda, see võimaldab teatud süsteemifaile uuendada ilma arvutit taaskäivitamata.$\r$\n$\r$\n"
+  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "See abiline aitab paigaldada $(^NameDA).$\r$\n$\r$\nEnne paigaldamise alustamist on soovitatav kõik teised programmid sulgeda, see võimaldab teatud süsteemifaile uuendada ilma arvutit taaskäivitamata.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_UNWELCOMEPAGE
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "$(^NameDA) eemaldamine!"
-  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "See abiline aitab eemaldada $(^NameDA).$\r$\n$\r$\nEnne eemaldamist vaata, et $(^NameDA) oleks suletud.$\r$\n$\r$\n"
+  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "See abiline aitab eemaldada $(^NameDA).$\r$\n$\r$\nEnne eemaldamist vaata, et $(^NameDA) oleks suletud.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
@@ -21,16 +21,16 @@
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Litsentsileping"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Enne $(^NameDA) paigaldamist vaata palun litsentsileping üle."
   ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM "Kui sa oled lepingu tingimustega nõus, vali jätkamiseks Nõustun. $(^NameDA) paigaldamiseks pead sa lepinguga nõustuma."
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Kui nõustud lepingu tingimustega, vali allolev märkeruut. $(^NameDA) paigaldamiseks pead lepinguga nõustuma. "
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Kui nõustud lepingu tingimustega, märgi allpool esimene valik. $(^NameDA) paigaldamiseks pead lepinguga nõustuma. "
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Kui nõustud lepingu tingimustega, vali allolev märkeruut. $(^NameDA) paigaldamiseks pead lepinguga nõustuma. $_CLICK"
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Kui nõustud lepingu tingimustega, märgi allpool esimene valik. $(^NameDA) paigaldamiseks pead lepinguga nõustuma. $_CLICK"
 !endif
 
 !ifdef MUI_UNLICENSEPAGE
   ${LangFileString} MUI_UNTEXT_LICENSE_TITLE "Litsentsileping"
   ${LangFileString} MUI_UNTEXT_LICENSE_SUBTITLE "Enne $(^NameDA) eemaldamist vaata palun litsentsileping üle."
   ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "Kui sa oled lepingu tingimustega nõus, vali jätkamiseks Nõustun. $(^NameDA) eemaldamiseks pead sa lepinguga nõustuma."
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Kui nõustud lepingu tingimustega, vali allolev märkeruut. $(^NameDA) eemaldamiseks pead lepinguga nõustuma. "
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Kui nõustud lepingu tingimustega, märgi allpool esimene valik. $(^NameDA) eemaldamiseks pead lepinguga nõustuma. "
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Kui nõustud lepingu tingimustega, vali allolev märkeruut. $(^NameDA) eemaldamiseks pead lepinguga nõustuma. $_CLICK"
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Kui nõustud lepingu tingimustega, märgi allpool esimene valik. $(^NameDA) eemaldamiseks pead lepinguga nõustuma. $_CLICK"
 !endif
 
 !ifdef MUI_LICENSEPAGE | MUI_UNLICENSEPAGE

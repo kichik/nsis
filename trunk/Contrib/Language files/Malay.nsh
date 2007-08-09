@@ -5,12 +5,12 @@
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Assalamualaikum, Selamat datang ke $(^NameDA) Setup Wizard"
-  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Setup Wizard akan membantu anda untuk memasukkan $(^NameDA).$\r$\n$\r$\nSila tutup program aplikasi yang lain sebelum Setup ini dimulakan. Ini supaya tiada proses reboot komputer diperlukan.$\r$\n$\r$\n"
+  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Setup Wizard akan membantu anda untuk memasukkan $(^NameDA).$\r$\n$\r$\nSila tutup program aplikasi yang lain sebelum Setup ini dimulakan. Ini supaya tiada proses reboot komputer diperlukan.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_UNWELCOMEPAGE
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "Selamat datang ke $(^NameDA) Uninstall Wizard"
-  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Uninstall Wizard akan membantu anda pada proses membuang $(^NameDA).$\r$\n$\r$\nSebelum membuang, pastikan dulu $(^NameDA) dimatikan.$\r$\n$\r$\n"
+  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Uninstall Wizard akan membantu anda pada proses membuang $(^NameDA).$\r$\n$\r$\nSebelum membuang, pastikan dulu $(^NameDA) dimatikan.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
@@ -21,16 +21,16 @@
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Perlesenan"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Sila baca teks lesen berikut sebelum memasukkan $(^NameDA)."
   ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM "Jika anda bersetuju, klik Saya setuju untuk teruskan. Anda mesti setuju untuk sebelum aplikasi dapat dimasukkan $(^NameDA)."
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Jika anda bersetuju dengan syarat-syarat lesen, sila tanda dicheckbox. Anda mesti setuju sebelum memasukkan $(^NameDA). "
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Jika anda terima semua yang ada di lesen, pilihlah salah satu item dibawah ini. Anda mesti setuju sebelum memasukkan $(^NameDA). "
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Jika anda bersetuju dengan syarat-syarat lesen, sila tanda dicheckbox. Anda mesti setuju sebelum memasukkan $(^NameDA). $_CLICK"
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Jika anda terima semua yang ada di lesen, pilihlah salah satu item dibawah ini. Anda mesti setuju sebelum memasukkan $(^NameDA). $_CLICK"
 !endif
 
 !ifdef MUI_UNLICENSEPAGE
   ${LangFileString} MUI_UNTEXT_LICENSE_TITLE "Tentang Lesen"
   ${LangFileString} MUI_UNTEXT_LICENSE_SUBTITLE "Sila baca teks lesen sebelum membuang $(^NameDA)."
   ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "Jika anda menerima lesen, klik Saya setuju untuk teruskan. Anda mesti setuju untuk dapat membuang $(^NameDA)."
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Jika anda menerima semua yang ada di lesen, beri tanda dicheckbox. Anda mesti setuju untuk dapat membuang $(^NameDA). "
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Jika anda menerima semua yang ada di lesen, pilihlah salah satu item dibawah ini. Anda mesti setuju untuk dapat membuang $(^NameDA). "
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Jika anda menerima semua yang ada di lesen, beri tanda dicheckbox. Anda mesti setuju untuk dapat membuang $(^NameDA). $_CLICK"
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Jika anda menerima semua yang ada di lesen, pilihlah salah satu item dibawah ini. Anda mesti setuju untuk dapat membuang $(^NameDA). $_CLICK"
 !endif
 
 !ifdef MUI_LICENSEPAGE | MUI_UNLICENSEPAGE

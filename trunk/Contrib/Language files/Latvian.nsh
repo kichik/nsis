@@ -6,12 +6,12 @@
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Esiet sveicinâti '$(^NameDA)' uzstâdîðanas vednî"
-  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Ðis uzstâdîðanas vednis jums palîdzçs veikt '$(^NameDA)' uzstâdîðanu.$\r$\n$\r$\nÏoti ieteicams aizvçrt citas programmas pirms ðîs programmas uzstâdîðanas veikðanas. Tas ïaus atjaunot svarîgus sistçmas failus bez datora pârstartçðanas.$\r$\n$\r$\n"
+  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Ðis uzstâdîðanas vednis jums palîdzçs veikt '$(^NameDA)' uzstâdîðanu.$\r$\n$\r$\nÏoti ieteicams aizvçrt citas programmas pirms ðîs programmas uzstâdîðanas veikðanas. Tas ïaus atjaunot svarîgus sistçmas failus bez datora pârstartçðanas.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_UNWELCOMEPAGE
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "Esiet sveicinâti '$(^NameDA)' atinstalçðanas vednî"
-  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Ðis vednis jums palîdzçs veikt '$(^NameDA)' atinstalçðanu.$\r$\n$\r$\nPirms sâkt atinstalçðanas procesu, pârliecinieties, vai '$(^NameDA)' paðlaik nedarbojas.$\r$\n$\r$\n"
+  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Ðis vednis jums palîdzçs veikt '$(^NameDA)' atinstalçðanu.$\r$\n$\r$\nPirms sâkt atinstalçðanas procesu, pârliecinieties, vai '$(^NameDA)' paðlaik nedarbojas.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
@@ -22,16 +22,16 @@
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Licences lîgums"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Lûdzu izlasiet licences lîgumu pirms '$(^NameDA)' uzstâdîðanas."
   ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM "Ja piekrîtat licences lîguma noteikumiem, spiediet 'Piekrîtu', lai turpinâtu uzstâdîðanu. Jums ir jâpiekrît licences noteikumiem, lai uzstâdîtu '$(^NameDA)'."
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Ja piekrîtat licences lîguma noteikumiem, tad atzîmçjiet izvçles rûtiòu. Jums ir jâpiekrît licences noteikumiem, lai uzstâdîtu '$(^NameDA)'. "
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Ja piekrîtat licences lîguma noteikumiem, tad izvçlieties pirmo zemâkesoðo opciju. Jums ir jâpiekrît licences noteikumiem, lai uzstâdîtu '$(^NameDA)'. "
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Ja piekrîtat licences lîguma noteikumiem, tad atzîmçjiet izvçles rûtiòu. Jums ir jâpiekrît licences noteikumiem, lai uzstâdîtu '$(^NameDA)'. $_CLICK"
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Ja piekrîtat licences lîguma noteikumiem, tad izvçlieties pirmo zemâkesoðo opciju. Jums ir jâpiekrît licences noteikumiem, lai uzstâdîtu '$(^NameDA)'. $_CLICK"
 !endif
 
 !ifdef MUI_UNLICENSEPAGE
   ${LangFileString} MUI_UNTEXT_LICENSE_TITLE "Licences lîgums"
   ${LangFileString} MUI_UNTEXT_LICENSE_SUBTITLE "Lûdzu izlasiet licences lîgumu pirms '$(^NameDA)' atinstalçðanas."
   ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "Ja piekrîtat licences noteikumiem, spiediet 'Piekrîtu', lai turpinâtu. Jums ir jâpiekrît licences noteikumiem, lai atinstalçtu '$(^NameDA)'."
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Ja piekrîtat licences lîguma noteikumiem, tad iezîmçjiet izvçles rûtiòu. Jums ir jâpiekrît licences noteikumiem, lai atinstalçtu '$(^NameDA)'. "
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Ja piekrîtat licences lîguma noteikumiem, tad izvçlieties pirmo zemâkesoðo opciju. Jums ir jâpiekrît licences noteikumiem, lai atinstalçtu '$(^NameDA)'. "
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Ja piekrîtat licences lîguma noteikumiem, tad iezîmçjiet izvçles rûtiòu. Jums ir jâpiekrît licences noteikumiem, lai atinstalçtu '$(^NameDA)'. $_CLICK"
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Ja piekrîtat licences lîguma noteikumiem, tad izvçlieties pirmo zemâkesoðo opciju. Jums ir jâpiekrît licences noteikumiem, lai atinstalçtu '$(^NameDA)'. $_CLICK"
 !endif
 
 !ifdef MUI_LICENSEPAGE | MUI_UNLICENSEPAGE

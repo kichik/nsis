@@ -6,12 +6,12 @@
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "$(^NameDA) セットアップ ウィザードへようこそ"
-  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "このウィザードは、$(^NameDA)のインストールをガイドしていきます。\r\n\r\nセットアップを開始する前に、他のすべてのアプリケーションを終了することを推奨します。これによってセットアップがコンピュータを再起動せずに、システム ファイルを更新することが出来るようになります。\r\n\r\n"
+  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "このウィザードは、$(^NameDA)のインストールをガイドしていきます。\r\n\r\nセットアップを開始する前に、他のすべてのアプリケーションを終了することを推奨します。これによってセットアップがコンピュータを再起動せずに、システム ファイルを更新することが出来るようになります。\r\n\r\n$_CLICK"
 !endif
 
 !ifdef MUI_UNWELCOMEPAGE
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "$(^NameDA) アンインストール ウィザードへようこそ"
-  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "このウィザードは、$(^NameDA)のアンインストールをガイドしていきます。\r\n\r\nアンインストールを開始する前に、$(^NameDA)が起動していないことを確認して下さい。\r\n\r\n"
+  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "このウィザードは、$(^NameDA)のアンインストールをガイドしていきます。\r\n\r\nアンインストールを開始する前に、$(^NameDA)が起動していないことを確認して下さい。\r\n\r\n$_CLICK"
 !endif
 
 !ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
@@ -22,16 +22,16 @@
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "ライセンス契約書"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "$(^NameDA)をインストールする前に、ライセンス条件を確認してください。"
   ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM "契約書のすべての条件に同意するならば、[同意する] を選んでインストールを続けてください。$(^NameDA) をインストールするには、契約書に同意する必要があります。"
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "契約書のすべての条件に同意するならば、下のチェックボックスをクリックしてください。$(^NameDA) をインストールするには、契約書に同意する必要があります。 "
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "契約書のすべての条件に同意するならば、下に表示されているオプションのうち、最初のものを選んで下さい。$(^NameDA) をインストールするには、契約書に同意する必要があります。 "
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "契約書のすべての条件に同意するならば、下のチェックボックスをクリックしてください。$(^NameDA) をインストールするには、契約書に同意する必要があります。 $_CLICK"
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "契約書のすべての条件に同意するならば、下に表示されているオプションのうち、最初のものを選んで下さい。$(^NameDA) をインストールするには、契約書に同意する必要があります。 $_CLICK"
 !endif
 
 !ifdef MUI_UNLICENSEPAGE
   ${LangFileString} MUI_UNTEXT_LICENSE_TITLE "ライセンス契約書"
   ${LangFileString} MUI_UNTEXT_LICENSE_SUBTITLE "$(^NameDA)をアンインストールする前に、ライセンス条件を確認してください。"
   ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "契約書のすべての条件に同意するならば、[同意する] を選んでアンインストールを続けてください。$(^NameDA) をアンインストールするには、契約書に同意する必要があります。"
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "契約書のすべての条件に同意するならば、下のチェックボックスをクリックしてください。$(^NameDA) をアンインストールするには、契約書に同意する必要があります。 "
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "契約書のすべての条件に同意するならば、下に表示されているオプションのうち、最初のものを選んで下さい。$(^NameDA) をアンインストールするには、契約書に同意する必要があります。 "
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "契約書のすべての条件に同意するならば、下のチェックボックスをクリックしてください。$(^NameDA) をアンインストールするには、契約書に同意する必要があります。 $_CLICK"
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "契約書のすべての条件に同意するならば、下に表示されているオプションのうち、最初のものを選んで下さい。$(^NameDA) をアンインストールするには、契約書に同意する必要があります。 $_CLICK"
 !endif
 
 !ifdef MUI_LICENSEPAGE | MUI_UNLICENSEPAGE

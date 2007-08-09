@@ -5,12 +5,12 @@
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Dobrodošli u program za instalaciju $(^NameDA)"
-  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Ovaj program æe instalirati $(^NameDA) na Vaš sistem. $\r$\n$\r$\nPreporuèujemo da neizostavno zatvorite sve druge otvorene programe prije nego što definitivno zapoènete sa instaliranjem. To æe omoguæiti bolju nadogradnju odreðenih sistemskih datoteka bez potrebe da Vaš raèunar ponovo startujete. Instaliranje programa možete prekinuti pritiskom na dugme 'Odustani'.$\r$\n$\r$\n"
+  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Ovaj program æe instalirati $(^NameDA) na Vaš sistem. $\r$\n$\r$\nPreporuèujemo da neizostavno zatvorite sve druge otvorene programe prije nego što definitivno zapoènete sa instaliranjem. To æe omoguæiti bolju nadogradnju odreðenih sistemskih datoteka bez potrebe da Vaš raèunar ponovo startujete. Instaliranje programa možete prekinuti pritiskom na dugme 'Odustani'.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_UNWELCOMEPAGE
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "Dobrodošli u postupak uklanjanja programa $(^NameDA)"
-  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Ovaj æe Vas vodiè provesti kroz postupak uklanjanja programa $(^NameDA).$\r$\n$\r$\nPrije samog poèetka, molim zatvorite program $(^NameDA) ukoliko je sluèajno otvoren.$\r$\n$\r$\n"
+  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Ovaj æe Vas vodiè provesti kroz postupak uklanjanja programa $(^NameDA).$\r$\n$\r$\nPrije samog poèetka, molim zatvorite program $(^NameDA) ukoliko je sluèajno otvoren.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
@@ -21,16 +21,16 @@
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Licencni ugovor"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Molim proèitajte licencni ugovor $(^NameDA) prije instalacije programa."
   ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM "Ako prihvatate uslove licence, odaberite 'Prihvatam' za nastavak. Morate prihvatiti licencu za instalaciju programa $(^NameDA)."
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Ako prihvatate uslove licence, oznaèite donji kvadratiæ. Morate prihvatiti licencu za instalaciju programa $(^NameDA). "
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Ako prihvatate uslove licence, odaberite prvu donju opciju. Morate prihvatiti licencu za instalaciju programa $(^NameDA). "
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Ako prihvatate uslove licence, oznaèite donji kvadratiæ. Morate prihvatiti licencu za instalaciju programa $(^NameDA). $_CLICK"
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Ako prihvatate uslove licence, odaberite prvu donju opciju. Morate prihvatiti licencu za instalaciju programa $(^NameDA). $_CLICK"
 !endif
 
 !ifdef MUI_UNLICENSEPAGE
   ${LangFileString} MUI_UNTEXT_LICENSE_TITLE "Licencni ugovor o pravu korištenja"
   ${LangFileString} MUI_UNTEXT_LICENSE_SUBTITLE "Molim proèitajte licencu prije uklanjanja programa $(^NameDA)."
   ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "Ako prihvatate uslove licence, odaberite 'Prihvatam' za nastavak. Morate prihvatiti licencu za uklanjanje programa $(^NameDA)."
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Ako prihvatate uslove licence, oznaèite donji kvadratiæ. Morate prihvatiti licencu za uklanjanje programa $(^NameDA). "
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Ako prihvatate uslove licence, odaberite prvu donju opciju. Morate prihvatiti licencu za uklanjanje programa $(^NameDA). "
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Ako prihvatate uslove licence, oznaèite donji kvadratiæ. Morate prihvatiti licencu za uklanjanje programa $(^NameDA). $_CLICK"
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Ako prihvatate uslove licence, odaberite prvu donju opciju. Morate prihvatiti licencu za uklanjanje programa $(^NameDA). $_CLICK"
 !endif
 
 !ifdef MUI_LICENSEPAGE | MUI_UNLICENSEPAGE

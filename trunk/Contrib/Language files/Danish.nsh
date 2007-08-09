@@ -5,12 +5,12 @@
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Velkommen til installationsguiden for $(^NameDA)"
-  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Denne guide vil installere $(^NameDA) på din computer.$\r$\n$\r$\nDet anbefales, at du lukker alle kørende programmer inden start af installationsguiden. Dette vil tillade guiden at opdatere de nødvendige systemfiler uden at skulle genstarte computeren.$\r$\n$\r$\n"
+  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Denne guide vil installere $(^NameDA) på din computer.$\r$\n$\r$\nDet anbefales, at du lukker alle kørende programmer inden start af installationsguiden. Dette vil tillade guiden at opdatere de nødvendige systemfiler uden at skulle genstarte computeren.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_UNWELCOMEPAGE
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "Velkommen til $(^NameDA) afinstallationsguiden"
-  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Denne afinstallationsguide vil hjælpe dig gennem afinstallationen af $(^NameDA).$\r$\n$\r$\nFør start af afinstallationen skal du være sikker på at $(^NameDA) ikke kører.$\r$\n$\r$\n"
+  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Denne afinstallationsguide vil hjælpe dig gennem afinstallationen af $(^NameDA).$\r$\n$\r$\nFør start af afinstallationen skal du være sikker på at $(^NameDA) ikke kører.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
@@ -21,16 +21,16 @@
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Licensaftale"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Læs venligst licensaftalen før du installerer $(^NameDA)."
   ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM "Tryk 'Jeg accepterer' hvis du ønsker at accepterer alle vilkårene i aftalen og forsætte. Du skal acceptere vilkårene for at installere $(^NameDA)."
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Hvis du accepterer alle vilkårene i aftalen, skal du markere afkrydsningsfeltet nedenfor. Du skal acceptere vilkårene for at installere $(^NameDA). "
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Hvis du accepterer alle vilkårene i aftalen, skal du vælge den første mulighed nedenfor. Du skal acceptere vilkårene for at installere $(^NameDA). "
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Hvis du accepterer alle vilkårene i aftalen, skal du markere afkrydsningsfeltet nedenfor. Du skal acceptere vilkårene for at installere $(^NameDA). $_CLICK"
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Hvis du accepterer alle vilkårene i aftalen, skal du vælge den første mulighed nedenfor. Du skal acceptere vilkårene for at installere $(^NameDA). $_CLICK"
 !endif
 
 !ifdef MUI_UNLICENSEPAGE
   ${LangFileString} MUI_UNTEXT_LICENSE_TITLE "Licensaftale"
   ${LangFileString} MUI_UNTEXT_LICENSE_SUBTITLE "Læs venligst licensvilkårene før afinstalleringen af $(^NameDA)."
   ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "Hvis du accepterer vilkårene for aftalen, skal du trykke 'Jeg accepterer' for at fortsætte. Du skal acceptere aftalen for at afinstallere $(^NameDA)."
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Hvis du accepterer vilkårene for aftalen, skal du markere afkrydsningsfeltet nedenfor. Du skal acceptere aftalen for at afinstallere $(^NameDA). "
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Hvis du accepterer vilkårene for aftalen, skal du vælge den første mulighed nedenfor. Du skal acceptere aftalen for at afinstallere $(^NameDA). "
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Hvis du accepterer vilkårene for aftalen, skal du markere afkrydsningsfeltet nedenfor. Du skal acceptere aftalen for at afinstallere $(^NameDA). $_CLICK"
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Hvis du accepterer vilkårene for aftalen, skal du vælge den første mulighed nedenfor. Du skal acceptere aftalen for at afinstallere $(^NameDA). $_CLICK"
 !endif
 
 !ifdef MUI_LICENSEPAGE | MUI_UNLICENSEPAGE

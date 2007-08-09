@@ -5,12 +5,12 @@
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "ยินดีต้อนรับเข้าสู่การติดตั้งโปรแกรม $(^NameDA) "
-  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "ตัวติดตั้งอัติโนมัติจะนำคุณไปสู่การติดตั้งของ $(^NameDA).$\r$\n$\r$\nเราขอแนะนำให้ปิดโปรแกรมอื่นๆให้หมดก่อนที่จะเริ่มติดตั้ง, นี่จะเป็นการอัปเดทไฟล์ได้ง่ายขึ้นโดยคุณไม่จำเป็นต้องทำการรีบูทคอมพิวเตอร์ของคุณ$\r$\n$\r$\n"
+  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "ตัวติดตั้งอัติโนมัติจะนำคุณไปสู่การติดตั้งของ $(^NameDA).$\r$\n$\r$\nเราขอแนะนำให้ปิดโปรแกรมอื่นๆให้หมดก่อนที่จะเริ่มติดตั้ง, นี่จะเป็นการอัปเดทไฟล์ได้ง่ายขึ้นโดยคุณไม่จำเป็นต้องทำการรีบูทคอมพิวเตอร์ของคุณ$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_UNWELCOMEPAGE
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "ยินดีต้อนรับสู่การยกเลิกการติดตั้งอัติโนมัติของ $(^NameDA)"
-  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "ตัวติดตั้งอัติโนมัตินี้จะนำคุณไปสู่การยกเลิกการติดตั้งของ $(^NameDA).$\r$\n$\r$\nการจะเริ่มการยกเลิกการติดตั้งนี้, โปรดตรวจสอบว่า $(^NameDA) ไม่ได้ใช้อยู่$\r$\n$\r$\n"
+  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "ตัวติดตั้งอัติโนมัตินี้จะนำคุณไปสู่การยกเลิกการติดตั้งของ $(^NameDA).$\r$\n$\r$\nการจะเริ่มการยกเลิกการติดตั้งนี้, โปรดตรวจสอบว่า $(^NameDA) ไม่ได้ใช้อยู่$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
@@ -21,16 +21,16 @@
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "ข้อตกลงเรื่องลิขสิทธิ์"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "โปรดอ่านทวนลิขสิทธิ์ในหัวข้อต่างๆอีกครั้งก่อนที่คุณจะทำการติดตั้ง $(^NameDA)."
   ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM "ถ้าคุณยอมรับข้อตกลงเรื่องลิขสิทธิ์, กด ฉันยอมรับ เพื่อทำต่อไป, คุณต้องยอมรับในข้อตกลงลิขสิทธิ์เพื่อที่จะทำการติดตั้ง $(^NameDA)."
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "ถ้าคุณยอมรับข้อตกลงเรื่องลิขสิทธ, กดเลือกในกล่องข้างล่างนี้  คุณต้องยอมรับในข้อตกลงลิขสิทธิ์เพื่อที่จะทำการติดตั้ง $(^NameDA). "
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "ถ้าคุณยอมรับข้อตกลงเรื่องลิขสิทธ,  เลือกตัวเลือกแรกด้านล่างนี้ คุณต้องยอมรับในข้อตกลงลิขสิทธิ์เพื่อที่จะทำการติดตั้ง $(^NameDA). "
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "ถ้าคุณยอมรับข้อตกลงเรื่องลิขสิทธ, กดเลือกในกล่องข้างล่างนี้  คุณต้องยอมรับในข้อตกลงลิขสิทธิ์เพื่อที่จะทำการติดตั้ง $(^NameDA). $_CLICK"
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "ถ้าคุณยอมรับข้อตกลงเรื่องลิขสิทธ,  เลือกตัวเลือกแรกด้านล่างนี้ คุณต้องยอมรับในข้อตกลงลิขสิทธิ์เพื่อที่จะทำการติดตั้ง $(^NameDA). $_CLICK"
 !endif
 
 !ifdef MUI_UNLICENSEPAGE
   ${LangFileString} MUI_UNTEXT_LICENSE_TITLE "ข้อตกลงเรื่องลิขสิทธิ์"
   ${LangFileString} MUI_UNTEXT_LICENSE_SUBTITLE "กรุณาอ่านข้อตกลงด้านลิขสิทธิ์ก่อนติดตั้งโปรแกรม $(^NameDA)."
   ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "ถ้าคุณยอมรับในข้อตกลงนี้ กรุณากดปุ่ม ฉันยอมรับ และคุณจะต้องตกลงก่อนที่จะเริ่มการยกเลิกติดตั้งโปรแกรม $(^NameDA)."
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "ถ้าคุณยอมรับข้อตกลงเรื่องลิขสิทธิ์, กดเลือกในกล่องข้างล่างนี้ คุณต้องยอมรับในข้อตกลงลิขสิทธิ์เพื่อที่จะทำการติดตั้ง $(^NameDA). "
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "ถ้าคุณยอมรับข้อตกลงเรื่องลิขสิทธิ์, เลือกตัวเลือกแรกด้านล่างนี้ คุณต้องยอมรับในข้อตกลงลิขสิทธิ์เพื่อที่จะทำการติดตั้ง $(^NameDA). "
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "ถ้าคุณยอมรับข้อตกลงเรื่องลิขสิทธิ์, กดเลือกในกล่องข้างล่างนี้ คุณต้องยอมรับในข้อตกลงลิขสิทธิ์เพื่อที่จะทำการติดตั้ง $(^NameDA). $_CLICK"
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "ถ้าคุณยอมรับข้อตกลงเรื่องลิขสิทธิ์, เลือกตัวเลือกแรกด้านล่างนี้ คุณต้องยอมรับในข้อตกลงลิขสิทธิ์เพื่อที่จะทำการติดตั้ง $(^NameDA). $_CLICK"
 !endif
 
 !ifdef MUI_LICENSEPAGE | MUI_UNLICENSEPAGE

@@ -5,12 +5,12 @@
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Croeso i Ddewin Gosod $(^NameDA)"
-  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Bydd y dewin yn eich arwain drwy osodiad $(^NameDA).$\r$\n$\r$\nCaewch pob rhaglen cyn cychwyn y rhaglen osod. Bydd hyn yn ei gwneud yn bosibl i ddiweddaru'r ffeiliau system berthnasol heb fod angen ailgychwyn eich cyfrifiadur.$\r$\n$\r$\n"
+  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Bydd y dewin yn eich arwain drwy osodiad $(^NameDA).$\r$\n$\r$\nCaewch pob rhaglen cyn cychwyn y rhaglen osod. Bydd hyn yn ei gwneud yn bosibl i ddiweddaru'r ffeiliau system berthnasol heb fod angen ailgychwyn eich cyfrifiadur.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_UNWELCOMEPAGE
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "Croeso i Ddewin Dadosod $(^NameDA)"
-  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Bydd y dewin yn eich arwain drwy ddadosod $(^NameDA).$\r$\n$\r$\nCyn cychwyn dadosod, gwnewch yn siwr nad yw $(^NameDA) yn rhedeg.$\r$\n$\r$\n"
+  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Bydd y dewin yn eich arwain drwy ddadosod $(^NameDA).$\r$\n$\r$\nCyn cychwyn dadosod, gwnewch yn siwr nad yw $(^NameDA) yn rhedeg.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
@@ -21,16 +21,16 @@
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Cytundeb Trwyddedu"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Darllenwch amodau'r drwydded cyn gosod $(^NameDA)."
   ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM "Os ydych yn derbyn amodau'r cytundeb, cliciwch Cytuno i barhau. Mae'n rhaid i chi dderbyn amodau'r cytundeb er mwyn gosod $(^NameDA)."
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Os ydych yn derbyn amodau'r cytundeb, cliciwch y blwch ticio isod. Mae'n rhaid i chi dderbyn amodau'r cytundeb er mwyn gosod $(^NameDA). "
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Os ydych yn derbyn amodau'r cytundeb, cliciwch y dewis cyntaf isod. Mae'n rhaid i chi dderbyn amodau'r cytundeb er mwyn gosod $(^NameDA). "
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Os ydych yn derbyn amodau'r cytundeb, cliciwch y blwch ticio isod. Mae'n rhaid i chi dderbyn amodau'r cytundeb er mwyn gosod $(^NameDA). $_CLICK"
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Os ydych yn derbyn amodau'r cytundeb, cliciwch y dewis cyntaf isod. Mae'n rhaid i chi dderbyn amodau'r cytundeb er mwyn gosod $(^NameDA). $_CLICK"
 !endif
 
 !ifdef MUI_UNLICENSEPAGE
   ${LangFileString} MUI_UNTEXT_LICENSE_TITLE "Cytundeb Trwyddedu"
   ${LangFileString} MUI_UNTEXT_LICENSE_SUBTITLE "Darllenwch amodau'r drwydded cyn dadosod $(^NameDA)."
   ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "Os ydych yn derbyn amodau'r cytundeb, cliciwch Cytuno i barhau. Mae'n rhaid i chi dderbyn amodau'r cytundeb er mwyn dadosod  $(^NameDA)."
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Os ydych yn derbyn amodau'r cytundeb, cliciwch y blwch ticio isod. Mae'n rhaid i chi dderbyn amodau'r cytundeb er mwyn dadosod $(^NameDA). "
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Os ydych yn derbyn amodau'r cytundeb, cliciwch y dewis cyntaf isod. Mae'n rhaid i chi dderbyn amodau'r cytundeb er mwyn dadosod $(^NameDA). "
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Os ydych yn derbyn amodau'r cytundeb, cliciwch y blwch ticio isod. Mae'n rhaid i chi dderbyn amodau'r cytundeb er mwyn dadosod $(^NameDA). $_CLICK"
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Os ydych yn derbyn amodau'r cytundeb, cliciwch y dewis cyntaf isod. Mae'n rhaid i chi dderbyn amodau'r cytundeb er mwyn dadosod $(^NameDA). $_CLICK"
 !endif
 
 !ifdef MUI_LICENSEPAGE | MUI_UNLICENSEPAGE

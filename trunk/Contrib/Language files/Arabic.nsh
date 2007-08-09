@@ -6,12 +6,12 @@
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "דַָֽׁ ָß Ýם דׁװֿ ֵÚַֿֿ $(^NameDA)"
-  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "׃ם׃ַÚֿß ו׀ַ ַבדׁװֿ Ýם Êהױםָ $(^NameDA).$\r$\n$\r$\nדה ַבדÝײב ֵÛבַÞ ּדםÚ ַבַָׁדּ Þָב ַבÊהױםָ. ׃ם׃ַÚֿ ו׀ַ Ýם Êּֿםֿ דבÝַÊ ַבהÙַד ֿזה ַבַֹּֽ בֵÚַֹֿ ÊװÛםב ַבּוַׂ.$\r$\n$\r$\n"
+  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "׃ם׃ַÚֿß ו׀ַ ַבדׁװֿ Ýם Êהױםָ $(^NameDA).$\r$\n$\r$\nדה ַבדÝײב ֵÛבַÞ ּדםÚ ַבַָׁדּ Þָב ַבÊהױםָ. ׃ם׃ַÚֿ ו׀ַ Ýם Êּֿםֿ דבÝַÊ ַבהÙַד ֿזה ַבַֹּֽ בֵÚַֹֿ ÊװÛםב ַבּוַׂ.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_UNWELCOMEPAGE
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "דַָֽׁ ָß Ýם דׁװֿ ֵַׂבֹ $(^NameDA) "
-  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "ו׀ַ ַבדׁװֿ ׃םֿברß ֳֻהֱַ ֵַׂבֹ $(^NameDA).$\r$\n$\r$\n Þָב ַבֱָֿ ַָבֵַׂבֹ¡ םּׁל ַבÊֳßֿ דה ֳה $(^NameDA) Ûםׁ װÛרַב.$\r$\n$\r$\n"
+  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "ו׀ַ ַבדׁװֿ ׃םֿברß ֳֻהֱַ ֵַׂבֹ $(^NameDA).$\r$\n$\r$\n Þָב ַבֱָֿ ַָבֵַׂבֹ¡ םּׁל ַבÊֳßֿ דה ֳה $(^NameDA) Ûםׁ װÛרַב.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
@@ -22,16 +22,16 @@
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "ֵÊÝַÞםֹ‏ ַבÊׁ־םױ"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "ַבֱַּׁ דַּׁÚֹ ֵÊÝַÞםֹ‏ ַבÊׁ־םױ Þָב Êהױםָ $(^NameDA)."
   ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM "Úהֿ ַבדזַÝÞֹ Úבל װׁז״ ַבֵÊÝַÞםֹ‏¡ ֵײÛ״ ֳזַÝÞ בבדÊַָÚֹ. םָּ ַבדזַÝÞֹ Úבל ַבֵÊÝַÞםֹ‏ בÊהױםָ $(^NameDA)."
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Úהֿ ַבדזַÝÞֹ Úבל װׁז״ ַבֵÊÝַÞםֹ‏¡ Úברד דָׁÚ ַבÚבַדֹ ַבÊַבם. םָּ ַבדזַÝÞֹ Úבל ַבֵÊÝַÞםֹ‏ בÊהױםָ $(^NameDA). "
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Úהֿ ַבדזַÝÞֹ Úבל װׁז״ ַבֵÊÝַÞםֹ¡ ֵ־Êׁ ַב־םַׁ ַבֳזב דה ַבÊַבם. םָּ ַבדזַÝÞֹ Úבל ַבֵÊÝַÞםֹ בÊהױםָ $(^NameDA). "
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Úהֿ ַבדזַÝÞֹ Úבל װׁז״ ַבֵÊÝַÞםֹ‏¡ Úברד דָׁÚ ַבÚבַדֹ ַבÊַבם. םָּ ַבדזַÝÞֹ Úבל ַבֵÊÝַÞםֹ‏ בÊהױםָ $(^NameDA). $_CLICK"
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Úהֿ ַבדזַÝÞֹ Úבל װׁז״ ַבֵÊÝַÞםֹ¡ ֵ־Êׁ ַב־םַׁ ַבֳזב דה ַבÊַבם. םָּ ַבדזַÝÞֹ Úבל ַבֵÊÝַÞםֹ בÊהױםָ $(^NameDA). $_CLICK"
 !endif
 
 !ifdef MUI_UNLICENSEPAGE
   ${LangFileString} MUI_UNTEXT_LICENSE_TITLE "ֵÊÝַÞםֹ ַבÊׁ־םױ"
   ${LangFileString} MUI_UNTEXT_LICENSE_SUBTITLE "ַבֱַּׁ דַּׁÚֹ װׁז״ ַבÊׁ־םױ Þָב ֵַׂבֹ $(^NameDA)."
   ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "Úהֿ ַבדזַÝÞֹ Úבל װׁז״ ַבֵÊÝַÞםֹ¡ ֵײÛ״ Úבל דזַÝÞ. םָּ ַבדזַÝÞֹ Úבל ַבֵÊÝַÞםֹ בֵַׂבֹ $(^NameDA)."
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Úהֿ ַבדזַÝÞֹ Úבל װׁז״ ַבֵÊÝַÞםֹ¡ Úברד ַבדָׁÚ ַבÚבַדֹ ַבÊַבם. םָּ ַבדזַÝÞֹ Úבל ַבֵÊÝַÞםֹ בֵַׂבֹ $(^NameDA). "
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Úהֿ ַבדזַÝÞֹ Úבל װׁז״ ַבֵÊÝַÞםֹ¡ ֵ־Êׁ ַב־םַׁ ַבֳזב דה ַבÊַבם. םָּ ַבדזַÝÞֹ Úבל ַבֵÊÝַÞםֹ בֵַׂבֹ $(^NameDA). "
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Úהֿ ַבדזַÝÞֹ Úבל װׁז״ ַבֵÊÝַÞםֹ¡ Úברד ַבדָׁÚ ַבÚבַדֹ ַבÊַבם. םָּ ַבדזַÝÞֹ Úבל ַבֵÊÝַÞםֹ בֵַׂבֹ $(^NameDA). $_CLICK"
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Úהֿ ַבדזַÝÞֹ Úבל װׁז״ ַבֵÊÝַÞםֹ¡ ֵ־Êׁ ַב־םַׁ ַבֳזב דה ַבÊַבם. םָּ ַבדזַÝÞֹ Úבל ַבֵÊÝַÞםֹ בֵַׂבֹ $(^NameDA). $_CLICK"
 !endif
 
 !ifdef MUI_LICENSEPAGE | MUI_UNLICENSEPAGE

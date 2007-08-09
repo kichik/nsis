@@ -5,12 +5,12 @@
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Ongi etorri $(^NameDA) -ren instalazio programara"
-  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Programa honek $(^NameDA) zure ordenagailuan instalatuko du.$\r$\n$\r$\nAholkatzen da instalazioarekin hasi aurretik beste aplikazio guztiak ixtea. Honek sistemarekin erlazionatuta dauden fitxategien eguneratzea ahalbidetuko du, ordenagailua berrabiarazi beharrik izan gabe.$\r$\n$\r$\n"
+  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Programa honek $(^NameDA) zure ordenagailuan instalatuko du.$\r$\n$\r$\nAholkatzen da instalazioarekin hasi aurretik beste aplikazio guztiak ixtea. Honek sistemarekin erlazionatuta dauden fitxategien eguneratzea ahalbidetuko du, ordenagailua berrabiarazi beharrik izan gabe.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_UNWELCOMEPAGE
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "Ongi etorri $(^NameDA) -ren ezabaketa programara"
-  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Laguntzaile honek $(^NameDA)-ren ezabaketa prozesuan zehar gidatuko zaitu.$\r$\n$\r$\nEzabaketa hasi aurretik, ziurtatu $(^NameDA) martxan ez dagoela .$\r$\n$\r$\n"
+  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Laguntzaile honek $(^NameDA)-ren ezabaketa prozesuan zehar gidatuko zaitu.$\r$\n$\r$\nEzabaketa hasi aurretik, ziurtatu $(^NameDA) martxan ez dagoela .$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
@@ -21,16 +21,16 @@
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Lizentzia hitzarmena"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Mesedez aztertu lizentziaren baldintzak $(^NameDA) instalatu aurretik."
   ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM "Baldintzak onartzen badituzu, sakatu Onartu aurrera egiteko. Hitzarmena onartzea ezinbestekoa da $(^NameDA) instalatzeko."
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Baldintzak onartzen badituzu, nabarmendu azpiko laukitxoa. Hitzarmena onartzea ezinbestekoa da $(^NameDA) instalatzeko. "
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Baldintzak onartzen badituzu, hautatu azpian lehen aukera. Hitzarmena onartzea ezinbestekoa da $(^NameDA) instalatzeko. "
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Baldintzak onartzen badituzu, nabarmendu azpiko laukitxoa. Hitzarmena onartzea ezinbestekoa da $(^NameDA) instalatzeko. $_CLICK"
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Baldintzak onartzen badituzu, hautatu azpian lehen aukera. Hitzarmena onartzea ezinbestekoa da $(^NameDA) instalatzeko. $_CLICK"
 !endif
 
 !ifdef MUI_UNLICENSEPAGE
   ${LangFileString} MUI_UNTEXT_LICENSE_TITLE "Lizentzia hitzarmena"
   ${LangFileString} MUI_UNTEXT_LICENSE_SUBTITLE "Mesedez aztertu lizentziaren baldintzak $(^NameDA) ezabatu aurretik."
   ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "Baldintzak onartzen badituzu, sakatu Onartu aurrera egiteko. Hitzarmena onartzea ezinbestekoa da $(^NameDA) ezabatzeko."
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Baldintzak onartzen badituzu, nabarmendu azpiko laukitxoa. Hitzarmena onartzea ezinbestekoa da $(^NameDA) ezabatzeko. "
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Baldintzak onartzen badituzu, hautatu azpian lehen aukera. Hitzarmena onartzea ezinbestekoa da $(^NameDA) ezabatzeko. "
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Baldintzak onartzen badituzu, nabarmendu azpiko laukitxoa. Hitzarmena onartzea ezinbestekoa da $(^NameDA) ezabatzeko. $_CLICK"
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Baldintzak onartzen badituzu, hautatu azpian lehen aukera. Hitzarmena onartzea ezinbestekoa da $(^NameDA) ezabatzeko. $_CLICK"
 !endif
 
 !ifdef MUI_LICENSEPAGE | MUI_UNLICENSEPAGE
