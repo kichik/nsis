@@ -5,12 +5,12 @@
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Sizni o'rnatish dastur tabriklaydi $(^NameDA)"
-  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Bu dastur sizning komputeringizga $(^NameDA) dasturni o'rnatadi.$\r$\n$\r$\nO'rnatishdan oldin ishlayotgan barcha ilovalarni yopish tavsiya etiladi. Bu o'rnatuvchi dasturga kompyuterni qayta yuklamasdan sistemali fayllarni yangilash imkonini beradi.$\r$\n$\r$\n"
+  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Bu dastur sizning komputeringizga $(^NameDA) dasturni o'rnatadi.$\r$\n$\r$\nO'rnatishdan oldin ishlayotgan barcha ilovalarni yopish tavsiya etiladi. Bu o'rnatuvchi dasturga kompyuterni qayta yuklamasdan sistemali fayllarni yangilash imkonini beradi.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_UNWELCOMEPAGE
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "Sizni $(^NameDA)ni o'chirish dasturi tabriklaydi"
-  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Bu dastur $(^NameDA)ni sizning kompyuteringizdan o'chiradi.$\r$\n$\r$\nO'chirishdan oldin $(^NameDA) dasturni ishlamayotganligini aniqlang.$\r$\n$\r$\n"
+  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Bu dastur $(^NameDA)ni sizning kompyuteringizdan o'chiradi.$\r$\n$\r$\nO'chirishdan oldin $(^NameDA) dasturni ishlamayotganligini aniqlang.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
@@ -21,16 +21,16 @@
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Lisenzion kelishuv"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "$(^NameDA) dasturini o'rnatishdan oldin lisenzion kelishuv bilan tanishib chiking."
   ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM "Agar kelishuv shartlariga rozi bo'lsangiz $\"Qabul kilaman$\" tugmasini bosing.Dasturni o'rnatish uchun,kelishuv shartlarini qabul qilish kerak."
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Agar siz kelishuv shartlarini qabul kilsangiz,bayroqchani joylashtiring. Dasturni o'rnatish uchun kelisuv shartlarini qabul qilish kerak. "
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Kelishuv shartlarini qabul qilsangiz quida taklif etilganlardan birinchi variantni tanlang. Dasturni o'rnatish uchun kelisuv shartlarini qabul qilish kerak. "
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Agar siz kelishuv shartlarini qabul kilsangiz,bayroqchani joylashtiring. Dasturni o'rnatish uchun kelisuv shartlarini qabul qilish kerak. $_CLICK"
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Kelishuv shartlarini qabul qilsangiz quida taklif etilganlardan birinchi variantni tanlang. Dasturni o'rnatish uchun kelisuv shartlarini qabul qilish kerak. $_CLICK"
 !endif
 
 !ifdef MUI_UNLICENSEPAGE
   ${LangFileString} MUI_UNTEXT_LICENSE_TITLE "Lisenzion kelishuv"
   ${LangFileString} MUI_UNTEXT_LICENSE_SUBTITLE "$(^NameDA)ni o'chirishdan oldin lesinzion kelishuv bilan tanishing."
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "Agar siz kelishuv shartlariniqabul qilsangiz $\"Qabul qilaman$\" tugmasini bosing. O'chirish uchun kelishuv shartlarini qabul qilishingiz kerak. "
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Agar shartlarni qabul qilsangiz, bayroqchani o'rnating.O'chirish uchun kelishuv shartlarini qabul qilishingiz kerak. "
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Kelishuv shartlarini qabul qilsangiz, taklif etilganlardan birinchi variantni tanlang.O'chirish uchun kelishuv shartlarini qabul qilishingiz kerak. "
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "Agar siz kelishuv shartlariniqabul qilsangiz $\"Qabul qilaman$\" tugmasini bosing. O'chirish uchun kelishuv shartlarini qabul qilishingiz kerak. $_CLICK"
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Agar shartlarni qabul qilsangiz, bayroqchani o'rnating.O'chirish uchun kelishuv shartlarini qabul qilishingiz kerak. $_CLICK"
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Kelishuv shartlarini qabul qilsangiz, taklif etilganlardan birinchi variantni tanlang.O'chirish uchun kelishuv shartlarini qabul qilishingiz kerak. $_CLICK"
 !endif
 
 !ifdef MUI_LICENSEPAGE | MUI_UNLICENSEPAGE
@@ -92,7 +92,7 @@
 
 !ifdef MUI_UNFINISHPAGE
   ${LangFileString} MUI_UNTEXT_FINISH_INFO_TITLE "$(^NameDA)ni o'chirish dasturi o'z ishini tugatdi."
-  ${LangFileString} MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) dasturi kompyuteringizdan o'chirildi.$\r$\n$\r$\nO'chirish dasturidan chiqish uchun $\"Tayor$\" tugmasini bosing."
+  ${LangFileString} MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) dasturi kompyuteringizdan o'chirildi.$\r$\n$\r$\nO'chirish dasturidan chiqish uchun $\"Tayor$\"tugmasini bosing."
   ${LangFileString} MUI_UNTEXT_FINISH_INFO_REBOOT "$(^NameDA) dasturini o'chirishni tugatish uchun kompyuterni qayta yuklash kerak.shu ishni xozir bajarasizmi?"
 !endif
 
@@ -104,9 +104,9 @@
 !endif
 
 !ifdef MUI_STARTMENUPAGE
-  ${LangFileString} MUI_TEXT_STARTMENU_TITLE "Papka "象耜" menyusida"
-  ${LangFileString} MUI_TEXT_STARTMENU_SUBTITLE "Dastur belgilarini joylashtirish uchun "象耜" menyusidan papka tanlang."
-  ${LangFileString} MUI_INNERTEXT_STARTMENU_TOP ""象耜" menyusidan dastur belgilari joylashadigan papka tanlang. Siz papkaning boshqa ismini kiritishingiz mumkin"
+  ${LangFileString} MUI_TEXT_STARTMENU_TITLE "Papka $\"象耜$\" menyusida"
+  ${LangFileString} MUI_TEXT_STARTMENU_SUBTITLE "Dastur belgilarini joylashtirish uchun $\"象耜$\" menyusidan papka tanlang."
+  ${LangFileString} MUI_INNERTEXT_STARTMENU_TOP "$\"象耜$\" menyusidan dastur belgilari joylashadigan papka tanlang. Siz papkaning boshqa ismini kiritishingiz mumkin"
   ${LangFileString} MUI_INNERTEXT_STARTMENU_CHECKBOX "Belgilar yaratilmasin"
 !endif
 

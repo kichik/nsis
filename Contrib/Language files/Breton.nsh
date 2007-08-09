@@ -5,12 +5,12 @@
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Degemer mat e skoazeller staliañ $(^NameDA)"
-  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Sturiet e viot gant ar skoazeller-mañ evit staliañ $(^NameDA).$\r$\n$\r$\nGwelloc'h eo serriñ pep arload oberiant er reizhiad a-raok mont pelloc'h gant ar skoazeller-mañ. Evel-se e c'heller nevesaat ar restroù reizhiad hep rankout adloc'hañ hoc'h urzhiataer.$\r$\n$\r$\n"
+  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Sturiet e viot gant ar skoazeller-mañ evit staliañ $(^NameDA).$\r$\n$\r$\nGwelloc'h eo serriñ pep arload oberiant er reizhiad a-raok mont pelloc'h gant ar skoazeller-mañ. Evel-se e c'heller nevesaat ar restroù reizhiad hep rankout adloc'hañ hoc'h urzhiataer.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_UNWELCOMEPAGE
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "Degemer mat er skoazeller distaliañ $(^NameDA)"
-  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Sturiet e viot gant ar skoazeller-mañ a-benn distaliañ $(^NameDA).$\r$\n$\r$\nEn em asurit n'eo ket lañset $(^NameDA) a-raok mont pelloc'h gant an distaliañ.$\r$\n$\r$\n"
+  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Sturiet e viot gant ar skoazeller-mañ a-benn distaliañ $(^NameDA).$\r$\n$\r$\nEn em asurit n'eo ket lañset $(^NameDA) a-raok mont pelloc'h gant an distaliañ.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
@@ -21,16 +21,16 @@
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Lañvaz emglev"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Bezit aketus en ur lenn pep term eus al lañvaz a-raok staliañ $(^NameDA), mar plij."
   ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM "Mar degemerit pep term eus al lañvaz, klikit war « War-lerc'h ». Ret eo deoc'h degemer al lañvaz evit staliañ $(^NameDA)."
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Mar degemerit pep term eus al lañvaz, klikit war al log a-zindan. Ret eo deoc'h degemer al lañvaz a-benn staliañ $(^NameDA). "
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Mar degemerit pep term eus al lañvaz, diuzit an dibab kentañ a-zindan. Ret eo deoc'h degemer al lañvaz a-benn staliañ $(^NameDA). "
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Mar degemerit pep term eus al lañvaz, klikit war al log a-zindan. Ret eo deoc'h degemer al lañvaz a-benn staliañ $(^NameDA). $_CLICK"
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Mar degemerit pep term eus al lañvaz, diuzit an dibab kentañ a-zindan. Ret eo deoc'h degemer al lañvaz a-benn staliañ $(^NameDA). $_CLICK"
 !endif
 
 !ifdef MUI_UNLICENSEPAGE
   ${LangFileString} MUI_UNTEXT_LICENSE_TITLE "Lañvaz emglev"
   ${LangFileString} MUI_UNTEXT_LICENSE_SUBTITLE "Trugarez da lenn al lañvaz a-raok distaliañ $(^NameDA)."
   ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "Mar degemerit pep term eus al lañvaz, klikit war « A-du emaon » evit kenderc'hel. Ret eo deoc'h degemer al lañvaz evit distaliañ $(^NameDA)."
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Mar degemerit pep term eus al lañvaz, klikit war al log a-zindan. Ret eo deoc'h degemer al lañvaz evit distaliañ $(^NameDA). "
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Mar degemerit pep term eus al lañvaz, dizuit an dibab kentañ a-zindan. Ret eo deoc'h degemer al lañvaz evit distaliañ $(^NameDA). "
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Mar degemerit pep term eus al lañvaz, klikit war al log a-zindan. Ret eo deoc'h degemer al lañvaz evit distaliañ $(^NameDA). $_CLICK"
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Mar degemerit pep term eus al lañvaz, dizuit an dibab kentañ a-zindan. Ret eo deoc'h degemer al lañvaz evit distaliañ $(^NameDA). $_CLICK"
 !endif
 
 !ifdef MUI_LICENSEPAGE | MUI_UNLICENSEPAGE

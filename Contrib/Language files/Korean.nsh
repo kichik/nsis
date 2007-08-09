@@ -6,12 +6,12 @@
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "$(^NameDA) 설치를 시작합니다."
-  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "이 프로그램은 당신의 컴퓨터에 $(^NameDA)(을)를 설치할 것입니다.\r\n\r\n설치를 시작하기 전 가능한 한 모든 프로그램을 종료하여 주시기 바랍니다. 이는 재부팅을 하지 않고서도 시스템 파일을 수정할 수 있게 해줍니다.\r\n\r\n"
+  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "이 프로그램은 당신의 컴퓨터에 $(^NameDA)(을)를 설치할 것입니다.\r\n\r\n설치를 시작하기 전 가능한 한 모든 프로그램을 종료하여 주시기 바랍니다. 이는 재부팅을 하지 않고서도 시스템 파일을 수정할 수 있게 해줍니다.\r\n\r\n$_CLICK"
 !endif
 
 !ifdef MUI_UNWELCOMEPAGE
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "$(^NameDA) 제거를 시작합니다."
-  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "이 프로그램은 당신의 컴퓨터에서 $(^NameDA)(을)를 제거할 것입니다.\r\n\r\n제거를 시작하기 전에 $(^NameDA)(을)를 종료하여 주시기 바랍니다.\r\n\r\n"
+  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "이 프로그램은 당신의 컴퓨터에서 $(^NameDA)(을)를 제거할 것입니다.\r\n\r\n제거를 시작하기 전에 $(^NameDA)(을)를 종료하여 주시기 바랍니다.\r\n\r\n$_CLICK"
 !endif
 
 !ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
@@ -22,16 +22,16 @@
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "사용권 계약"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "$(^NameDA)(을)를 설치하시기 전에 사용권 계약 내용을 살펴보시기 바랍니다."
   ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM "내용에 동의하셨다면 '동의함'을 눌러 주세요. $(^NameDA)(을)를 설치하기 위해서는 반드시 내용에 동의하셔야 합니다."
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "내용에 동의하셨다면 아래 사항을 선택해 주세요. $(^NameDA)(을)를 설치하기 위해서는 반드시 내용에 동의하셔야 합니다. "
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "내용에 동의하셨다면 첫 번째 사항을 선택해 주세요. $(^NameDA)(을)를 설치하기 위해서는 반드시 내용에 동의하셔야 합니다. "
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "내용에 동의하셨다면 아래 사항을 선택해 주세요. $(^NameDA)(을)를 설치하기 위해서는 반드시 내용에 동의하셔야 합니다. $_CLICK"
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "내용에 동의하셨다면 첫 번째 사항을 선택해 주세요. $(^NameDA)(을)를 설치하기 위해서는 반드시 내용에 동의하셔야 합니다. $_CLICK"
 !endif
 
 !ifdef MUI_UNLICENSEPAGE
   ${LangFileString} MUI_UNTEXT_LICENSE_TITLE "사용권 계약 동의"
   ${LangFileString} MUI_UNTEXT_LICENSE_SUBTITLE "$(^NameDA)(을)를 제거하시기 전에 사용권 계약 내용을 살펴보시기 바랍니다."
   ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "내용에 동의하셨다면 '동의함'을 눌러 주세요. $(^NameDA)(을)를 제거하기 위해서는 반드시 내용에 동의하셔야 합니다."
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "내용에 동의하셨다면 아래 사항을 선택해 주세요. $(^NameDA)(을)를 제거하기 위해서는 반드시 내용에 동의하셔야 합니다. "
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "내용에 동의하셨다면 첫 번째 사항을 선택해 주세요. $(^NameDA)(을)를 제거하기 위해서는 반드시 내용에 동의하셔야 합니다. "
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "내용에 동의하셨다면 아래 사항을 선택해 주세요. $(^NameDA)(을)를 제거하기 위해서는 반드시 내용에 동의하셔야 합니다. $_CLICK"
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "내용에 동의하셨다면 첫 번째 사항을 선택해 주세요. $(^NameDA)(을)를 제거하기 위해서는 반드시 내용에 동의하셔야 합니다. $_CLICK"
 !endif
 
 !ifdef MUI_LICENSEPAGE | MUI_UNLICENSEPAGE

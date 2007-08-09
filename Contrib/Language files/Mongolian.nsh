@@ -5,12 +5,12 @@
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "$(^NameDA) Суулгацад тавтай морил"
-  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "$(^NameDA) суулгацын илбэчинг та шууд ашиглаж болно.$\r$\n$\r$\nЇїнийг суулгахын ємнє бусад бїх програмуудаа хаахыг зєвлєж байна. Системийн файлуудыг шинэчилбэл компьютерээ дахин ачаалахгїй байх боломжтой.$\r$\n$\r$\n"
+  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "$(^NameDA) суулгацын илбэчинг та шууд ашиглаж болно.$\r$\n$\r$\nЇїнийг суулгахын ємнє бусад бїх програмуудаа хаахыг зєвлєж байна. Системийн файлуудыг шинэчилбэл компьютерээ дахин ачаалахгїй байх боломжтой.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_UNWELCOMEPAGE
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "$(^NameDA) Суулгацыг устгах илбэчинд тавтай морил"
-  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "$(^NameDA) устгацын илбэчинг та шууд ашиглаж болно.$\r$\n$\r$\nУстгахын ємнє $(^NameDA) нь ажиллаагїй эсэхийг шалга.$\r$\n$\r$\n"
+  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "$(^NameDA) устгацын илбэчинг та шууд ашиглаж болно.$\r$\n$\r$\nУстгахын ємнє $(^NameDA) нь ажиллаагїй эсэхийг шалга.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
@@ -21,16 +21,16 @@
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Лицензийн зєвшєєрєл"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "$(^NameDA)-ыг суулгахынхаа ємнє зєвшилцлийн зїйлїїдийг уншина уу."
   ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM "Хэрэв зєвшилцлийн зїйлсийг зєвшєєрч байвал, Зєвшєєрлєє товчийг даран їргэлжлїїлнэ її. $(^NameDA)-ыг суулгахын тулд заавал зєвшєєрєх шаардлагатай."
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Хэрэв зєвшилцлийн зїйлсийг зєвшєєрч байвал, Зєвлєх хайрцгийг даран їргэлжлїїлнэ її. $(^NameDA)-ыг суулгахын тулд заавал зєвшєєрєх шаардлагатай. "
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Хэрэв зєвшилцлийн зїйлсийг зєвшєєрч байвал, доорхоос эхнийг нь сонгон їргэлжлїїлнэ її. $(^NameDA)-ыг суулгахын тулд заавал зєвшєєрєх шаардлагатай. "
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Хэрэв зєвшилцлийн зїйлсийг зєвшєєрч байвал, Зєвлєх хайрцгийг даран їргэлжлїїлнэ її. $(^NameDA)-ыг суулгахын тулд заавал зєвшєєрєх шаардлагатай. $_CLICK"
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Хэрэв зєвшилцлийн зїйлсийг зєвшєєрч байвал, доорхоос эхнийг нь сонгон їргэлжлїїлнэ її. $(^NameDA)-ыг суулгахын тулд заавал зєвшєєрєх шаардлагатай. $_CLICK"
 !endif
 
 !ifdef MUI_UNLICENSEPAGE
   ${LangFileString} MUI_UNTEXT_LICENSE_TITLE "Лицензийн зєвшєєрєл"
   ${LangFileString} MUI_UNTEXT_LICENSE_SUBTITLE "$(^NameDA) устгахын ємнє зєвшилцлийн зїйлсийг уншина уу."
   ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "Хэрэв зєвшилцлийн зїйлсийг зєвшєєрч байвал, Зєвшєєрлєє товчийг даран їргэлжлїїлнэ її. $(^NameDA)-ыг устгахын тулд заавал зєвшєєрєх шаардлагатай."
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Хэрэв зєвшилцлийн зїйлсийг зєвшєєрч байвал, Зєвлєх хайрцгийг даран їргэлжлїїлнэ її. $(^NameDA)-ыг устгахын тулд заавал зєвшєєрєх шаардлагатай. "
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Хэрэв зєвшилцлийн зїйлсийг зєвшєєрч байвал, доорхоос эхнийг нь сонгон їргэлжлїїлнэ її. $(^NameDA)-ыг устгахын тулд заавал зєвшєєрєх шаардлагатай. "
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Хэрэв зєвшилцлийн зїйлсийг зєвшєєрч байвал, Зєвлєх хайрцгийг даран їргэлжлїїлнэ її. $(^NameDA)-ыг устгахын тулд заавал зєвшєєрєх шаардлагатай. $_CLICK"
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Хэрэв зєвшилцлийн зїйлсийг зєвшєєрч байвал, доорхоос эхнийг нь сонгон їргэлжлїїлнэ її. $(^NameDA)-ыг устгахын тулд заавал зєвшєєрєх шаардлагатай. $_CLICK"
 !endif
 
 !ifdef MUI_LICENSEPAGE | MUI_UNLICENSEPAGE

@@ -5,12 +5,12 @@
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Vitajte v sprievodcovi inštaláciou programu $(^NameDA)"
-  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Tento sprievodca Vás prevedie inštaláciou $(^NameDA).$\r$\n$\r$\nPred zaèiatkom inštalácie sa odporúèa ukonèi všetky ostatné programy. Tım umoníte aktualizovanie systémovıch súborov bez potreby reštartovania Vášho poèítaèa.$\r$\n$\r$\n"
+  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Tento sprievodca Vás prevedie inštaláciou $(^NameDA).$\r$\n$\r$\nPred zaèiatkom inštalácie sa odporúèa ukonèi všetky ostatné programy. Tım umoníte aktualizovanie systémovıch súborov bez potreby reštartovania Vášho poèítaèa.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_UNWELCOMEPAGE
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "Vitajte v sprievodcovi odinštalovaním programu $(^NameDA)"
-  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Tento sprievodca Vás prevedie procesom odinštalovania programu $(^NameDA).$\r$\n$\r$\nPred spustením procesu odinštalovania sa uistite, e program $(^NameDA) nie je práve aktívny.$\r$\n$\r$\n"
+  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Tento sprievodca Vás prevedie procesom odinštalovania programu $(^NameDA).$\r$\n$\r$\nPred spustením procesu odinštalovania sa uistite, e program $(^NameDA) nie je práve aktívny.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
@@ -29,8 +29,8 @@
   ${LangFileString} MUI_UNTEXT_LICENSE_TITLE "Licenèná zmluva"
   ${LangFileString} MUI_UNTEXT_LICENSE_SUBTITLE "Pred odinštalovaním programu $(^NameDA) si prosím preèítajte licenèné podmienky."
   ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "Ak súhlasíte s podmienkami zmluvy, zvo¾te Súhlasím. Licenènú zmluvu musíte odsúhlasi, ak chcete v odinštalovávaní programu $(^NameDA) pokraèova."
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Ak súhlasíte s podmienkami zmluvy, zaškrtnite nišie uvedené políèko. Licenènú zmluvu musíte odsúhlasi, ak chcete pokraèova v odinštalovávaní programu $(^NameDA). "
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Ak súhlasíte s podmienkami licenènej zmluvy, oznaète prvú z nišie uvedenıch moností. Licenènú zmluvu musíte odsúhlasi, ak chcete pokraèova v odinštalovávaní programu $(^NameDA). "
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Ak súhlasíte s podmienkami zmluvy, zaškrtnite nišie uvedené políèko. Licenènú zmluvu musíte odsúhlasi, ak chcete pokraèova v odinštalovávaní programu $(^NameDA). $_CLICK"
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Ak súhlasíte s podmienkami licenènej zmluvy, oznaète prvú z nišie uvedenıch moností. Licenènú zmluvu musíte odsúhlasi, ak chcete pokraèova v odinštalovávaní programu $(^NameDA). $_CLICK"
 !endif
 
 !ifdef MUI_LICENSEPAGE | MUI_UNLICENSEPAGE

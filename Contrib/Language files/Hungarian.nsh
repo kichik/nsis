@@ -6,12 +6,12 @@
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Üdvözli a(z) $(^NameDA) Telepítõ Varázsló"
-  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "A(z) $(^NameDA) telepítése következik a számítógépre.$\r$\n$\r$\nJavasoljuk, hogy indítás elõtt zárja be a futó alkalmazásokat. Így a telepítõ a rendszer újraindítása nélkül tudja frissíteni a szükséges rendszerfájlokat.$\r$\n$\r$\n"
+  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "A(z) $(^NameDA) telepítése következik a számítógépre.$\r$\n$\r$\nJavasoljuk, hogy indítás elõtt zárja be a futó alkalmazásokat. Így a telepítõ a rendszer újraindítása nélkül tudja frissíteni a szükséges rendszerfájlokat.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_UNWELCOMEPAGE
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "Üdvözli a(z) $(^NameDA) Eltávolító Varázsló"
-  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Ez a varázsló segíti a(z) $(^NameDA) eltávolításában.$\r$\n$\r$\nMielõtt elkezdi az eltávilítást gyõzõdjön meg arról, hogy a(z) $(^NameDA) nem fut.$\r$\n$\r$\n"
+  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Ez a varázsló segíti a(z) $(^NameDA) eltávolításában.$\r$\n$\r$\nMielõtt elkezdi az eltávilítást gyõzõdjön meg arról, hogy a(z) $(^NameDA) nem fut.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
@@ -22,16 +22,16 @@
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Licencszerzõdés"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "A(z) $(^NameDA) telepítése elõtt tekintse át a szerzõdés feltételeit."
   ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM "Ha elfogadja a szerzõdés valamennyi feltételét, az Elfogadom gombbal folytathatja. El kell fogadnia a(z) $(^NameDA) telepítéséhez."
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Amennyiben elfogadja a feltételeket, jelölje be a jelölõnényzeten. A(z) $(^NameDA) telepítéséhez el kell fogadnia a feltételeket. "
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Amennyiben elfogadja a feltételeket, válassza az elsõ opciót. A(z) $(^NameDA) telepítéséhez el kell fogadnia a feltételeket. "
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Amennyiben elfogadja a feltételeket, jelölje be a jelölõnényzeten. A(z) $(^NameDA) telepítéséhez el kell fogadnia a feltételeket. $_CLICK"
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Amennyiben elfogadja a feltételeket, válassza az elsõ opciót. A(z) $(^NameDA) telepítéséhez el kell fogadnia a feltételeket. $_CLICK"
 !endif
 
 !ifdef MUI_UNLICENSEPAGE
   ${LangFileString} MUI_UNTEXT_LICENSE_TITLE "Licencszerzõdés"
   ${LangFileString} MUI_UNTEXT_LICENSE_SUBTITLE "A(z) $(^NameDA) eltávolítása elõtt tekintse át a szerzõdés feltételeit."
   ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "Ha elfogadja a szerzõdés valamennyi feltételét, az Elfogadom gombbal folytathatja. El kell fogadnia a(z) $(^NameDA) eltávolításához."
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Amennyiben elfogadja a feltételeket, jelölje be a jelölõnényzeten. A(z) $(^NameDA) eltávolításához el kell fogadnia a feltételeket. "
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Amennyiben elfogadja a feltételeket, válassza az elsõ opciót. A(z) $(^NameDA) eltávolításához el kell fogadnia a feltételeket. "
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Amennyiben elfogadja a feltételeket, jelölje be a jelölõnényzeten. A(z) $(^NameDA) eltávolításához el kell fogadnia a feltételeket. $_CLICK"
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Amennyiben elfogadja a feltételeket, válassza az elsõ opciót. A(z) $(^NameDA) eltávolításához el kell fogadnia a feltételeket. $_CLICK"
 !endif
 
 !ifdef MUI_LICENSEPAGE | MUI_UNLICENSEPAGE

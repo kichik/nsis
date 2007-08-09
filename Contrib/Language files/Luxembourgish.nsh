@@ -5,12 +5,12 @@
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Wëllkomm beim Installatiouns-$\r$\nAssistent vun $(^NameDA)"
-  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Dësen Assistent wärt dech duech d'Installatioun vun $(^NameDA) begleeden.$\r$\n$\r$\nEt gëtt ugeroden alleguer d'Programmer di am Moment lafen zouzemaan, datt bestëmmt Systemdateien ouni Neistart ersat kënne ginn.$\r$\n$\r$\n"
+  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Dësen Assistent wärt dech duech d'Installatioun vun $(^NameDA) begleeden.$\r$\n$\r$\nEt gëtt ugeroden alleguer d'Programmer di am Moment lafen zouzemaan, datt bestëmmt Systemdateien ouni Neistart ersat kënne ginn.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_UNWELCOMEPAGE
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "Wëllkomm am Desinstallatiouns-$\r$\n\Assistent fir $(^NameDA)"
-  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Desen Assistent begleet dech duech d'Desinstallatioun vun $(^NameDA).$\r$\n$\r$\nW.e.g. maach $(^NameDA) zu, ierts de mat der Desinstallatioun ufänks.$\r$\n$\r$\n"
+  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Desen Assistent begleet dech duech d'Desinstallatioun vun $(^NameDA).$\r$\n$\r$\nW.e.g. maach $(^NameDA) zu, ierts de mat der Desinstallatioun ufänks.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
@@ -21,16 +21,16 @@
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Lizenzofkommes"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "W.e.g. d'Lizenzoofkommes liesen, ierts de mat der Installatioun weiderfiers."
   ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM "Wanns de alleguer d'Bedengungen vum Ofkommes akzeptéiers, klick op Unhuelen. Du muss alleguer d'Fuerderungen unerkennen, fir $(^NameDA) installéieren ze kënnen."
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Wanns de alleguer d'Bedengungen vum Ofkommes akzeptéiers, aktivéier d'Këschtchen. Du muss alleguer d'Fuerderungen unerkennen, fir $(^NameDA) installéieren ze kënnen. "
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Wanns de alleguer d'Bedengungen vum Ofkommes akzeptéiers, wiel ënnen di entspriechend Äntwert aus. Du muss alleguer d'Fuerderungen unerkennen, fir $(^NameDA) installéieren ze kënnen. "
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Wanns de alleguer d'Bedengungen vum Ofkommes akzeptéiers, aktivéier d'Këschtchen. Du muss alleguer d'Fuerderungen unerkennen, fir $(^NameDA) installéieren ze kënnen. $_CLICK"
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Wanns de alleguer d'Bedengungen vum Ofkommes akzeptéiers, wiel ënnen di entspriechend Äntwert aus. Du muss alleguer d'Fuerderungen unerkennen, fir $(^NameDA) installéieren ze kënnen. $_CLICK"
 !endif
 
 !ifdef MUI_UNLICENSEPAGE
   ${LangFileString} MUI_UNTEXT_LICENSE_TITLE "Lizenzofkommes"
   ${LangFileString} MUI_UNTEXT_LICENSE_SUBTITLE "W.e.g. lies d'Lizenzofkommes duech ierts de mat der Desinstallatioun vun $(^NameDA) weiderfiers."
   ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "Wanns de d'Fuerderungen vum Ofkommes akzeptéiers, klick op unhuelen. Du muss d'Ofkommes akzeptéieren, fir $(^NameDA) kënnen ze desinstalléieren."
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Wanns de d'Fuerderungen vum Ofkommes akzeptéiers, aktivéier d'Këschtchen. Du muss d'Ofkommes akzeptéieren, fir $(^NameDA) kënnen ze desinstalléieren. "
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Wanns de d'Fuerderungen vum Ofkommes akzeptéiers, wiel ënnen di entspriechend Optioun. Du muss d'Oofkommes akzeptéieren, fir $(^NameDA) kennen ze desinstalléieren. "
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Wanns de d'Fuerderungen vum Ofkommes akzeptéiers, aktivéier d'Këschtchen. Du muss d'Ofkommes akzeptéieren, fir $(^NameDA) kënnen ze desinstalléieren. $_CLICK"
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Wanns de d'Fuerderungen vum Ofkommes akzeptéiers, wiel ënnen di entspriechend Optioun. Du muss d'Oofkommes akzeptéieren, fir $(^NameDA) kennen ze desinstalléieren. $_CLICK"
 !endif
 
 !ifdef MUI_LICENSEPAGE | MUI_UNLICENSEPAGE

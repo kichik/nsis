@@ -5,12 +5,12 @@
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Velkominn til $(^NameDA) uppsetningarhjálparinnar"
-  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Þessi hjálp mun leiða þig í gegnum uppsetninguna á $(^NameDA).$\r$\n$\r$\nMælt er með því að þú lokir öllum öðrum forritum áður en uppsetningin hefst. Þetta mun gera uppsetningarforritinu kleyft að uppfæra kerfiskrár án þess að endurræsa tölvuna.$\r$\n$\r$\n"
+  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Þessi hjálp mun leiða þig í gegnum uppsetninguna á $(^NameDA).$\r$\n$\r$\nMælt er með því að þú lokir öllum öðrum forritum áður en uppsetningin hefst. Þetta mun gera uppsetningarforritinu kleyft að uppfæra kerfiskrár án þess að endurræsa tölvuna.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_UNWELCOMEPAGE
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "Velkomin(n) til $(^NameDA) fjarlægingarhjálparinnar"
-  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Þessi hjálp mun leiða þig í gegnum fjarlæginguna á $(^NameDA).$\r$\n$\r$\nÁður en fjarlæging hefst skal ganga úr skugga um að $(^NameDA) sé ekki opið.$\r$\n$\r$\n"
+  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Þessi hjálp mun leiða þig í gegnum fjarlæginguna á $(^NameDA).$\r$\n$\r$\nÁður en fjarlæging hefst skal ganga úr skugga um að $(^NameDA) sé ekki opið.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
@@ -21,16 +21,16 @@
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Notandaleyfissamningur"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Vinsamlegast skoðaðu Notandaleyfissamninginn vel áður en uppsetning á $(^NameDA) hefst."
   ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM "Ef þú samþykkir skilmála samningsins, smelltu þá á 'Ég samþykki' til að halda áfram. Þú verður að samþykkja samninginn til þess að setja upp $(^NameDA)."
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Ef þú samþykkir skilmála samningsins, hakaðu þá í kassann hér að neðan. Þú verður að samþykkja samninginn til þess að setja upp $(^NameDA). "
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Ef þú samþykkir skilmála samningsins, veldu þá fyrsta valmöguleikann hér að neðan. Þú verður að samþykkja samninginn til þess að setja upp $(^NameDA). "
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Ef þú samþykkir skilmála samningsins, hakaðu þá í kassann hér að neðan. Þú verður að samþykkja samninginn til þess að setja upp $(^NameDA). $_CLICK"
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Ef þú samþykkir skilmála samningsins, veldu þá fyrsta valmöguleikann hér að neðan. Þú verður að samþykkja samninginn til þess að setja upp $(^NameDA). $_CLICK"
 !endif
 
 !ifdef MUI_UNLICENSEPAGE
   ${LangFileString} MUI_UNTEXT_LICENSE_TITLE "Leyfissamningur"
   ${LangFileString} MUI_UNTEXT_LICENSE_SUBTITLE "Vinsamlegast skoðaðu leyfissamninginn vel áður en fjarlæging á $(^NameDA) hefst."
   ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "Ef þú samþykkir skilmála samningsins, smelltu þá á 'Ég samþykki' til að halda áfram. Þú verður að samþykkja samninginn til þess að fjarlægja $(^NameDA)."
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Ef þú samþykkir skilmála samningsins, hakaðu þá í kassann hér að neðan. Þú verður að samþykkja samninginn til þess að fjarlægja $(^NameDA). "
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Ef þú samþykkir skilmála samningsins, veldu þá fyrsta valmöguleikann hér að neðan. Þú verður að samþykkja samninginn til þess að fjarlægja $(^NameDA). "
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Ef þú samþykkir skilmála samningsins, hakaðu þá í kassann hér að neðan. Þú verður að samþykkja samninginn til þess að fjarlægja $(^NameDA). $_CLICK"
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Ef þú samþykkir skilmála samningsins, veldu þá fyrsta valmöguleikann hér að neðan. Þú verður að samþykkja samninginn til þess að fjarlægja $(^NameDA). $_CLICK"
 !endif
 
 !ifdef MUI_LICENSEPAGE | MUI_UNLICENSEPAGE
