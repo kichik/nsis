@@ -1,4 +1,17 @@
-NSIS Modern User Interface - VERSION HISTORY
+NSIS Modern User Interface
+Version History
+
+1.8 - August 9, 2007
+* Uses the new language files
+* Updated documentation
+* Although MUI_DIRECTORYPAGE_BGCOLOR and MUI_STARTMENUPAGE_BGCOLOR are documented as interface
+  setttings that apply to every directory page or Start Menu folder page, they were actually
+  implemented as page specific settings. They have been changed to interface settings.
+* MUI_LANGDLL_DISPLAY now also reads a previously saved language from the registry if the
+  installation is silent.
+* InstallOptions macros have been moved to a separate header file (InstallOptions.nsh).
+  The MUI_INSTALLOPTIONS_* macros are still provided for backwards compatibility and insert the
+  equalivent INSTALLOPTIONS_* macros.
 
 1.78 - June 8, 2007
 * Added MUI_STARTMENUPAGE_BGCOLOR
@@ -67,7 +80,7 @@ NSIS Modern User Interface - VERSION HISTORY
 * Support for uninstaller components page
 * Support for multiple pages of the same type
 * New position for interface settings
-* Changed macro, setting names
+* Changed macro and setting names
 * Updated langauge system, new language files and settings
 * Removed MUI_BRANDINGTEXT. You can use the standard BrandingText instruction.
 * Removed MUI_PRODUCT and MUI VERSION. You can use the standard Name instruction.
