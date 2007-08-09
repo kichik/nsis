@@ -298,7 +298,11 @@ int CEXEBuild::doParse(const char *str)
   }
 
   // parse before checking if the line should be ignored, so block comments won't be missed
-  res=line.parse((char*)m_linebuild.get(),!strnicmp((char*)m_linebuild.get(),"!define",7));
+  
+  // escaped quotes should be ignored for compile time commands that set defines
+  // because defines can be inserted in commands at a later stage
+  bool ignore_escaping = (!strnicmp((char*)m_linebuild.get(),"!define",7) || !strnicmp((char*)m_linebuild.get(),"!insertmacro",12));
+  res=line.parse((char*)m_linebuild.get(), ignore_escaping);
 
   inside_comment = line.inCommentBlock();
 
