@@ -5,12 +5,12 @@
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Dobrodošli u vodiè za instalaciju programa $(^NameDA)"
-  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Biæete voðeni kroz proces instalacije programa $(^NameDA).$\r$\n$\r$\nPreporuèljivo je da iskljuèite sve druge programe pre poèetka instalacije. Ovo može omoguæiti ažuriranje sistemskih fajlova bez potrebe za ponovnim pokretanjem raèunara.$\r$\n$\r$\n"
+  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Biæete voðeni kroz proces instalacije programa $(^NameDA).$\r$\n$\r$\nPreporuèljivo je da iskljuèite sve druge programe pre poèetka instalacije. Ovo može omoguæiti ažuriranje sistemskih fajlova bez potrebe za ponovnim pokretanjem raèunara.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_UNWELCOMEPAGE
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "Dobrodošli u deinstalaciju programa $(^NameDA)"
-  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Biæete voðeni kroz proces deinstalacije programa $(^NameDA).$\r$\n$\r$\nPre poèetka deinstalacije, uverite se da je program $(^NameDA) iskljuèen. "
+  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Biæete voðeni kroz proces deinstalacije programa $(^NameDA).$\r$\n$\r$\nPre poèetka deinstalacije, uverite se da je program $(^NameDA) iskljuèen. $_CLICK"
 !endif
 
 !ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
@@ -21,16 +21,16 @@
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Dogovor o pravu korišæenja"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Pažljivo proèitajte dogovor o pravu korišæenja pre instalacije programa $(^NameDA)."
   ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM "Ako prihvatate sve uslove dogovora, pritisnite dugme „Prihvatam“ za nastavak. Morate prihvatiti dogovor da biste instalirali program $(^NameDA)."
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Ako prihvatate sve uslove dogovora, obeležite kvadratiæ ispod. Morate prihvatiti dogovor da biste instalirali program $(^NameDA). "
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Ako prihvatate sve uslove dogovora, izaberite prvu opciju ispod. Morate prihvatiti dogovor da biste instalirali program $(^NameDA). "
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Ako prihvatate sve uslove dogovora, obeležite kvadratiæ ispod. Morate prihvatiti dogovor da biste instalirali program $(^NameDA). $_CLICK"
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Ako prihvatate sve uslove dogovora, izaberite prvu opciju ispod. Morate prihvatiti dogovor da biste instalirali program $(^NameDA). $_CLICK"
 !endif
 
 !ifdef MUI_UNLICENSEPAGE
   ${LangFileString} MUI_UNTEXT_LICENSE_TITLE "Dogovor o pravu korišæenja"
   ${LangFileString} MUI_UNTEXT_LICENSE_SUBTITLE "Pažlivo proèitajte dogovor o pravu korišæenja pre deinstalacije programa $(^NameDA)."
   ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "Ako prihvatate sve uslove dogovora, pritisnite dugme „Prihvatam“ za nastavak. Morate prihvatiti dogovor da biste deinstalirali program $(^NameDA)."
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Ako prihvatate sve uslove dogovora, obeležite kvadratiæ ispod. Morate prihvatiti dogovor da biste deinstalirali program $(^NameDA). "
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Ako prihvatate sve uslove dogovora, izaberite prvu opciju ispod. Morate prihvatiti dogovor da biste deinstalirali program $(^NameDA). "
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Ako prihvatate sve uslove dogovora, obeležite kvadratiæ ispod. Morate prihvatiti dogovor da biste deinstalirali program $(^NameDA). $_CLICK"
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Ako prihvatate sve uslove dogovora, izaberite prvu opciju ispod. Morate prihvatiti dogovor da biste deinstalirali program $(^NameDA). $_CLICK"
 !endif
 
 !ifdef MUI_LICENSEPAGE | MUI_UNLICENSEPAGE

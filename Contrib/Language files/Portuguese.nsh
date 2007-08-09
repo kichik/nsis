@@ -5,12 +5,12 @@
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Bem vindo ao Assistente de Instalação do $(^NameDA)"
-  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Este assistente ajudá-lo-á durante a instalação do $(^NameDA).$\r$\n$\r$\nÉ recomendado que feche todas as outras aplicações antes de iniciar a Instalação. Isto permitirá que o Instalador actualize ficheiros relacionados com o sistema sem necessidade de reiniciar o computador.$\r$\n$\r$\n"
+  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Este assistente ajudá-lo-á durante a instalação do $(^NameDA).$\r$\n$\r$\nÉ recomendado que feche todas as outras aplicações antes de iniciar a Instalação. Isto permitirá que o Instalador actualize ficheiros relacionados com o sistema sem necessidade de reiniciar o computador.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_UNWELCOMEPAGE
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "Bem vindo ao Assistente de desinstalação do $(^NameDA)"
-  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Este assistente ajudá-lo-á durante a desinstalação do $(^NameDA).$\r$\n$\r$\nAntes de iniciar a desinstalação, certifique-se de que o $(^NameDA) não está em execução.$\r$\n$\r$\n"
+  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Este assistente ajudá-lo-á durante a desinstalação do $(^NameDA).$\r$\n$\r$\nAntes de iniciar a desinstalação, certifique-se de que o $(^NameDA) não está em execução.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
@@ -21,16 +21,16 @@
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Contrato de Licença"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Por favor, verifique os termos da licença antes de instalar o $(^NameDA)."
   ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM "Se aceitar os termos da licença, clique em 'Aceito' para continuar. Deverá aceitar o contrato para instalar o $(^NameDA)."
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Se aceitar os termos da licença, clique na caixa de seleção abaixo. Deverá aceitar o contrato para instalar o $(^NameDA). "
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Se aceitar os termos da licença, selecione a primeira opção abaixo. Você deve aceitar o contrato para instalar o $(^NameDA). "
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Se aceitar os termos da licença, clique na caixa de seleção abaixo. Deverá aceitar o contrato para instalar o $(^NameDA). $_CLICK"
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Se aceitar os termos da licença, selecione a primeira opção abaixo. Você deve aceitar o contrato para instalar o $(^NameDA). $_CLICK"
 !endif
 
 !ifdef MUI_UNLICENSEPAGE
   ${LangFileString} MUI_UNTEXT_LICENSE_TITLE "Contrato de Licença"
   ${LangFileString} MUI_UNTEXT_LICENSE_SUBTITLE "Por favor, verifique os termos da licença antes de desinstalar o $(^NameDA)."
   ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "Se aceitar os termos da licença, clique em 'Aceito' para continuar. Deverá aceitar o contrato para desinstalar o $(^NameDA)."
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Se aceitar os termos da licença, clique na caixa de seleção abaixo. Deverá aceitar o contrato para desinstalar o $(^NameDA). "
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Se aceitar os termos da licença, selecione a primeira opção abaixo. Você deve aceitar o contrato para desinstalar o $(^NameDA). "
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Se aceitar os termos da licença, clique na caixa de seleção abaixo. Deverá aceitar o contrato para desinstalar o $(^NameDA). $_CLICK"
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Se aceitar os termos da licença, selecione a primeira opção abaixo. Você deve aceitar o contrato para desinstalar o $(^NameDA). $_CLICK"
 !endif
 
 !ifdef MUI_LICENSEPAGE | MUI_UNLICENSEPAGE

@@ -5,12 +5,12 @@
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Benvinguts a l'auxiliar d'instal·lació de l'aplicació $(^NameDA)"
-  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Aquest auxiliar us guiarà durant el procés d'instal·lació de l'aplicació $(^NameDA).$\r$\n$\r$\nEs recomana tancar la resta d'aplicacions abans de començar la instal·lació. Això permetrà al programa d'instal·ació actualitzar fitxers del sistema rellevants sense haver de reiniciar l'ordinador.$\r$\n$\r$\n"
+  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Aquest auxiliar us guiarà durant el procés d'instal·lació de l'aplicació $(^NameDA).$\r$\n$\r$\nEs recomana tancar la resta d'aplicacions abans de començar la instal·lació. Això permetrà al programa d'instal·ació actualitzar fitxers del sistema rellevants sense haver de reiniciar l'ordinador.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_UNWELCOMEPAGE
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "Benvinguts a l'auxiliar de desinstal·lació de l'aplicació $(^NameDA)"
-  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Aquest auxiliar us guiarà a través de la desinstal·lació de l'aplicació $(^NameDA).$\r$\n\rAbans de començar la desinstal·lació, assegureu-vos que l'aplicació $(^NameDA) no s'està executant.$\r$\n$\r$\n"
+  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Aquest auxiliar us guiarà a través de la desinstal·lació de l'aplicació $(^NameDA).$\r$\n\rAbans de començar la desinstal·lació, assegureu-vos que l'aplicació $(^NameDA) no s'està executant.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
@@ -21,16 +21,16 @@
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Acord de Llicència"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Reviseu els termes de la llicència abans d'instal·lar l'aplicació $(^NameDA)."
   ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM "Si accepteu tots els termes de l'acord, premeu Hi estic d'acord per a continuar. Heu d'acceptar l'acord per a poder instal·lar l'aplicació $(^NameDA)."
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Si accepteu tots els termes de l'acord, activeu la casella de sota. Heu d'acceptar l'acord per poder instal·lar l'aplicació $(^NameDA). "
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Si accepteu tots els termes de l'acord, seleccioneu la primera opció de sota. Heu d'acceptar l'acord per a poder instal·lar $(^NameDA). "
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Si accepteu tots els termes de l'acord, activeu la casella de sota. Heu d'acceptar l'acord per poder instal·lar l'aplicació $(^NameDA). $_CLICK"
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Si accepteu tots els termes de l'acord, seleccioneu la primera opció de sota. Heu d'acceptar l'acord per a poder instal·lar $(^NameDA). $_CLICK"
 !endif
 
 !ifdef MUI_UNLICENSEPAGE
   ${LangFileString} MUI_UNTEXT_LICENSE_TITLE "Acord de llicència"
   ${LangFileString} MUI_UNTEXT_LICENSE_SUBTITLE "Reviseu els termes de la llicència abans de desinstal·lar l'aplicació $(^NameDA)."
   ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "Si accepteu tots els termes de l'acord, premeu Hi estic d'Acord per a continuar. Heu d'acceptar l'acord per a poder desinstal·lar l'aplicació $(^NameDA)."
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Si accepteu tots els termes de l'acord, activeu la casella de sota. Heu d'acceptar l'acord per a poder desinstal·lar l'aplicació $(^NameDA). "
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Si accepteu tots els termes de l'acord, seleccioneu la primera opció de sota. Heu d'acceptar l'acord per a poder desinstal·lar l'aplicació $(^NameDA). "
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Si accepteu tots els termes de l'acord, activeu la casella de sota. Heu d'acceptar l'acord per a poder desinstal·lar l'aplicació $(^NameDA). $_CLICK"
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Si accepteu tots els termes de l'acord, seleccioneu la primera opció de sota. Heu d'acceptar l'acord per a poder desinstal·lar l'aplicació $(^NameDA). $_CLICK"
 !endif
 
 !ifdef MUI_LICENSEPAGE | MUI_UNLICENSEPAGE

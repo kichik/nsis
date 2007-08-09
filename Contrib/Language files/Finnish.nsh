@@ -7,12 +7,12 @@
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Tervetuloa ohjelman $(^NameDA) asennukseen"
-  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "T‰m‰ avustaja ohjaa sinut ohjelman $(^NameDA) asennuksen l‰pi.$\r$\n$\r$\nOn suositeltavaa sulkea kaikki muut ohjelmat ennen asennuksen aloittamista, jotta asennus voisi p‰ivitt‰‰ tiettyj‰ j‰rjestelm‰tiedostoja k‰ynnist‰m‰tt‰ konetta uudelleen.$\r$\n$\r$\n"
+  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "T‰m‰ avustaja ohjaa sinut ohjelman $(^NameDA) asennuksen l‰pi.$\r$\n$\r$\nOn suositeltavaa sulkea kaikki muut ohjelmat ennen asennuksen aloittamista, jotta asennus voisi p‰ivitt‰‰ tiettyj‰ j‰rjestelm‰tiedostoja k‰ynnist‰m‰tt‰ konetta uudelleen.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_UNWELCOMEPAGE
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "Tervetuloa $(^NameDA) -ohjelmiston poisto-ohjelmaan"
-  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "T‰m‰ velho auttaa sinut l‰pi $(^NameDA) -ohjelmiston poistamisen.$\r$\n$\r$\nEnnen poisto-ohjelman aloitusta, varmista ettei $(^NameDA) ole k‰ynniss‰.$\r$\n$\r$\n"
+  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "T‰m‰ velho auttaa sinut l‰pi $(^NameDA) -ohjelmiston poistamisen.$\r$\n$\r$\nEnnen poisto-ohjelman aloitusta, varmista ettei $(^NameDA) ole k‰ynniss‰.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
@@ -23,16 +23,16 @@
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Lisenssisopimus"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Lue lisenssiehdot tarkasti ennen ohjelman $(^NameDA) asentamista."
   ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM "Jos hyv‰ksyt ehdot, valitse Hyv‰ksyn jatkaaksesi. Sinun pit‰‰ hyv‰ksy‰ ehdot asentaaksesi ohjelman $(^NameDA)."
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Jos hyv‰ksyt ehdot, laita rasti alla olevaan ruutuun. Sinun pit‰‰ hyv‰ksy‰ ehdot asentaaksesi ohjelman $(^NameDA). "
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Jos hyv‰ksyt ehdot, valitse ensimm‰inen vaihtoehto alapuolelta. Sinun pit‰‰ hyv‰ksy‰ ehdot asentaaksesi ohjelman $(^NameDA). "
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Jos hyv‰ksyt ehdot, laita rasti alla olevaan ruutuun. Sinun pit‰‰ hyv‰ksy‰ ehdot asentaaksesi ohjelman $(^NameDA). $_CLICK"
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Jos hyv‰ksyt ehdot, valitse ensimm‰inen vaihtoehto alapuolelta. Sinun pit‰‰ hyv‰ksy‰ ehdot asentaaksesi ohjelman $(^NameDA). $_CLICK"
 !endif
 
 !ifdef MUI_UNLICENSEPAGE
   ${LangFileString} MUI_UNTEXT_LICENSE_TITLE "Lisenssisopimus"
   ${LangFileString} MUI_UNTEXT_LICENSE_SUBTITLE "Lue huolellisesti lisenssiehdot ennen $(^NameDA) -ohjelmiston poistoa."
   ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "Jos hyv‰ksyt s‰‰nnˆt ja ehdot, paina Hyv‰ksyn -nappia jatkaakseni. Sinun t‰ytyy hyv‰ksy‰ ehdot poistaaksesi $(^NameDA) -ohjelmiston."
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Jos hyv‰ksyt ehdot, klikkaa valintaruutua alhaalla. Sinun t‰ytyy hyv‰ksy‰ ehdot poistaaksesi $(^NameDA) -ohjelmiston. "
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Jos hyv‰ksyt ehdot, valitse ensimm‰inen vaihtoehto alhaalta. Sinun t‰ytyy hyv‰ksy‰ ehdot poistaaksesi $(^NameDA) -ohjelmiston. "
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Jos hyv‰ksyt ehdot, klikkaa valintaruutua alhaalla. Sinun t‰ytyy hyv‰ksy‰ ehdot poistaaksesi $(^NameDA) -ohjelmiston. $_CLICK"
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Jos hyv‰ksyt ehdot, valitse ensimm‰inen vaihtoehto alhaalta. Sinun t‰ytyy hyv‰ksy‰ ehdot poistaaksesi $(^NameDA) -ohjelmiston. $_CLICK"
 !endif
 
 !ifdef MUI_LICENSEPAGE | MUI_UNLICENSEPAGE

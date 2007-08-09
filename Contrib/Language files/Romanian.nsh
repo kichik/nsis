@@ -7,12 +7,12 @@
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Bine ati venit la instalarea produsului $(^NameDA)"
-  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Aceasta aplicatie va instala produsului $(^NameDA).$\r$\n$\r$\nEste recomandat sa inchideti toate aplicatiile inainte de inceperea procesului de instalare. Aceasta va poate asigura un proces de instalare fara erori sau situatii neprevazute.$\r$\n$\r$\n"
+  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Aceasta aplicatie va instala produsului $(^NameDA).$\r$\n$\r$\nEste recomandat sa inchideti toate aplicatiile inainte de inceperea procesului de instalare. Aceasta va poate asigura un proces de instalare fara erori sau situatii neprevazute.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_UNWELCOMEPAGE
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "Bine ati venit la eliminarea produsului $(^NameDA)"
-  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Aceasta aplicatie va elimina produsului $(^NameDA).$\r$\n$\r$\nEste recomandat sa inchideti toate aplicatiile inainte de inceperea procesului de eliminare. Aceasta va poate asigura un proces de eliminare fara erori sau situatii neprevazute.$\r$\n$\r$\n"
+  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Aceasta aplicatie va elimina produsului $(^NameDA).$\r$\n$\r$\nEste recomandat sa inchideti toate aplicatiile inainte de inceperea procesului de eliminare. Aceasta va poate asigura un proces de eliminare fara erori sau situatii neprevazute.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
@@ -23,16 +23,16 @@
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Contract de licenta"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Cititi cu atentie termenii contractului de licenta inainte de a instala $(^NameDA)."
   ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM "Daca acceptati termenii contractului de licenta, apasati De Acord. Pentru a instala $(^NameDA) trebuie sa acceptati termenii din contractul de licenta."
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Daca acceptati termenii contractului de licenta, bifati caseta de mai jos. Pentru a instala $(^NameDA) trebuie sa acceptati termenii din contractul de licenta. "
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Daca acceptati termenii contractului de licenta, selectati prima optiune de mai jos. Pentru a instala $(^NameDA) trebuie sa acceptati termenii din contractul de licenta. "
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Daca acceptati termenii contractului de licenta, bifati caseta de mai jos. Pentru a instala $(^NameDA) trebuie sa acceptati termenii din contractul de licenta. $_CLICK"
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Daca acceptati termenii contractului de licenta, selectati prima optiune de mai jos. Pentru a instala $(^NameDA) trebuie sa acceptati termenii din contractul de licenta. $_CLICK"
 !endif
 
 !ifdef MUI_UNLICENSEPAGE
   ${LangFileString} MUI_UNTEXT_LICENSE_TITLE "Contract de licenta"
   ${LangFileString} MUI_UNTEXT_LICENSE_SUBTITLE "Cititi cu atentie termenii contractului de licenta inainte de a elimina $(^NameDA)."
   ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "Daca acceptati termenii contractului de licenta, apasati De Acord. Pentru a elimina $(^NameDA) trebuie sa acceptati termenii din contractul de licenta."
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Daca acceptati termenii contractului de licenta, bifati caseta de mai jos. Pentru a elimina $(^NameDA) trebuie sa acceptati termenii din contractul de licenta. "
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Daca acceptati termenii contractului de licenta, selectati prima optiune de mai jos. Pentru a elimina $(^NameDA) trebuie sa acceptati termenii din contractul de licenta. "
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Daca acceptati termenii contractului de licenta, bifati caseta de mai jos. Pentru a elimina $(^NameDA) trebuie sa acceptati termenii din contractul de licenta. $_CLICK"
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Daca acceptati termenii contractului de licenta, selectati prima optiune de mai jos. Pentru a elimina $(^NameDA) trebuie sa acceptati termenii din contractul de licenta. $_CLICK"
 !endif
 
 !ifdef MUI_LICENSEPAGE | MUI_UNLICENSEPAGE

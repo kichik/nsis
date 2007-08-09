@@ -5,12 +5,12 @@
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "»е »—д«ге д’»  $(^NameDA) ќж‘ ¬гѕнѕ."
-  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "«нд »—д«ге ‘г« —« ѕ— д’»  $(^NameDA) н«—н гнядѕ.$\r$\n$\r$\n ж’не гняднг ябне »—д«ге е«н ѕ— Ќ«б «ћ—« —« »»дѕнѕ. «нд »е »—д«ге д’» «ћ«“е гнѕеѕ яе Ё«нбе«н б«“г —« »ѕжд дн«“ »е —«е «дѕ«“н ѕж»«—е я«гБнж — ‘г« »е —ж“ ядѕ.$\r$\n$\r$\n"
+  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "«нд »—д«ге ‘г« —« ѕ— д’»  $(^NameDA) н«—н гнядѕ.$\r$\n$\r$\n ж’не гняднг ябне »—д«ге е«н ѕ— Ќ«б «ћ—« —« »»дѕнѕ. «нд »е »—д«ге д’» «ћ«“е гнѕеѕ яе Ё«нбе«н б«“г —« »ѕжд дн«“ »е —«е «дѕ«“н ѕж»«—е я«гБнж — ‘г« »е —ж“ ядѕ.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_UNWELCOMEPAGE
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "»е »—д«ге Ќ–Ё $(^NameDA) ќж‘ ¬гѕнѕ."
-  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT " «нд »—д«ге »—«н Ќ–Ё $(^NameDA) »е ‘г« ягя гнядѕ.$\r$\n$\r$\nё»б «“ Ќ–Ё  $(^NameDA) гЎг∆д ‘жнѕ «нд »—д«ге ѕ— Ќ«б «ћ—« д»«‘ѕ.$\r$\n$\r$\n"
+  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT " «нд »—д«ге »—«н Ќ–Ё $(^NameDA) »е ‘г« ягя гнядѕ.$\r$\n$\r$\nё»б «“ Ќ–Ё  $(^NameDA) гЎг∆д ‘жнѕ «нд »—д«ге ѕ— Ќ«б «ћ—« д»«‘ѕ.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
@@ -21,16 +21,16 @@
   ${LangFileString} MUI_TEXT_LICENSE_TITLE " ж«Ёёд«ге д’»"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "бЎЁ« Бн‘ «“ д’» $(^NameDA) гЁ«ѕ  ж«Ёёд«ге —« г—ж— яднѕ."
   ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM "«Р— ябне »дѕе«н  ж«Ёёд«ге —« ё»жб ѕ«—нѕ ѕяге гж«Ёёг —« »Ё‘«—нѕ. »—«н д’»  $(^NameDA) ‘г« »«н”  «нд  ж«Ёёд«ге —« ё»жб яднѕ."
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "«Р— ябне »дѕе«н  ж«Ёёд«ге —« ё»жб ѕ«—нѕ  ня “н— —« «д ќ«» яднѕ. »—«н д’»  $(^NameDA) ‘г« »«н”  «нд  ж«Ёёд«ге —« ё»жб яднѕ. "
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "«Р— ябне »дѕе«н  ж«Ёёд«ге —« ё»жб ѕ«—нѕ Р“нде «жб —« «д ќ«» яднѕ. »—«н д’»  $(^NameDA) ‘г« »«н”  «нд  ж«Ёёд«ге —« ё»жб яднѕ. "
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "«Р— ябне »дѕе«н  ж«Ёёд«ге —« ё»жб ѕ«—нѕ  ня “н— —« «д ќ«» яднѕ. »—«н д’»  $(^NameDA) ‘г« »«н”  «нд  ж«Ёёд«ге —« ё»жб яднѕ. $_CLICK"
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "«Р— ябне »дѕе«н  ж«Ёёд«ге —« ё»жб ѕ«—нѕ Р“нде «жб —« «д ќ«» яднѕ. »—«н д’»  $(^NameDA) ‘г« »«н”  «нд  ж«Ёёд«ге —« ё»жб яднѕ. $_CLICK"
 !endif
 
 !ifdef MUI_UNLICENSEPAGE
   ${LangFileString} MUI_UNTEXT_LICENSE_TITLE " ж«Ёёд«ге Ќ–Ё"
   ${LangFileString} MUI_UNTEXT_LICENSE_SUBTITLE "бЎЁ« ябне »дѕе«н «нд  ж«Ёёд«ге —« ё»б «— Ќ–Ё $(^NameDA) г—ж— яднѕ."
   ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "«Р— ябне »дѕе«н  ж«Ёёд«ге —« ё»жб ѕ«—нѕ ѕяге гж«Ёёг —« »Ё‘«—нѕ. »—«н Ќ–Ё $(^NameDA) ‘г« »«н”  «нд  ж«Ёёд«ге —« ё»жб яднѕ."
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "«Р— ябне »дѕе«н  ж«Ёёд«ге —« ё»жб ѕ«—нѕ  ня “н— —« «д ќ«» яднѕ. »—«н Ќ–Ё $(^NameDA) ‘г« »«н”  «нд  ж«Ёёд«ге — ё»жб яднѕ. "
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "«Р— ябне »дѕе«н  ж«Ёёд«ге —« ё»жб ѕ«—нѕ Р“нде «жб —« «д ќ«» яднѕ. »—«н Ќ–Ё $(^NameDA) ‘г« »«н”  «нд  ж«Ёёд«ге — ё»жб яднѕ. "
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "«Р— ябне »дѕе«н  ж«Ёёд«ге —« ё»жб ѕ«—нѕ  ня “н— —« «д ќ«» яднѕ. »—«н Ќ–Ё $(^NameDA) ‘г« »«н”  «нд  ж«Ёёд«ге — ё»жб яднѕ. $_CLICK"
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "«Р— ябне »дѕе«н  ж«Ёёд«ге —« ё»жб ѕ«—нѕ Р“нде «жб —« «д ќ«» яднѕ. »—«н Ќ–Ё $(^NameDA) ‘г« »«н”  «нд  ж«Ёёд«ге — ё»жб яднѕ. $_CLICK"
 !endif
 
 !ifdef MUI_LICENSEPAGE | MUI_UNLICENSEPAGE

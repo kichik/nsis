@@ -8,12 +8,12 @@
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Добре дошли в Съветника$\r$\nза инсталиране на$\r$\n$(^NameDA)!"
-  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Той ще инсталира $(^NameDA) на вашия компютър.$\r$\n$\r$\nПрепоръчва се да затворите всички други приложения, преди да продължите. Това ще позволи на програмата да обнови някои системни файлове, без да се рестартира компютъра.$\r$\n$\r$\n"
+  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Той ще инсталира $(^NameDA) на вашия компютър.$\r$\n$\r$\nПрепоръчва се да затворите всички други приложения, преди да продължите. Това ще позволи на програмата да обнови някои системни файлове, без да се рестартира компютъра.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_UNWELCOMEPAGE
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "Добре дошли в Съветника$\r$\nза изтриване на$\r$\n$(^NameDA)!"
-  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Той ще ви помогне да изтриете $(^NameDA) от вашия компютър.$\r$\n$\r$\nПреди да продължите, уверете се че $(^NameDA) не е стартирана в момента.$\r$\n$\r$\n"
+  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Той ще ви помогне да изтриете $(^NameDA) от вашия компютър.$\r$\n$\r$\nПреди да продължите, уверете се че $(^NameDA) не е стартирана в момента.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
@@ -24,16 +24,16 @@
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Лицензно споразумение"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Моля запознайте се Лицензното споразумение преди да продължите."
   ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM "Ако приемате условията на споразумението, натиснете $\"Съгласен$\", за да продължите. Трябва да приемете споразумението, за да инсталирате $(^NameDA)."
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Ако приемате условията на споразумението, сложете отметка в полето по-долу. Трябва да приемете споразумението, за да инсталирате $(^NameDA). "
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Ако приемате условията на споразумението, изберете първата опция по-долу. Трябва да приемете споразумението, за да инсталирате $(^NameDA) "
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Ако приемате условията на споразумението, сложете отметка в полето по-долу. Трябва да приемете споразумението, за да инсталирате $(^NameDA). $_CLICK"
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Ако приемате условията на споразумението, изберете първата опция по-долу. Трябва да приемете споразумението, за да инсталирате $(^NameDA) $_CLICK"
 !endif
 
 !ifdef MUI_UNLICENSEPAGE
   ${LangFileString} MUI_UNTEXT_LICENSE_TITLE "Лицензно споразумение"
   ${LangFileString} MUI_UNTEXT_LICENSE_SUBTITLE "Моля запознайте се лицензните условия преди да изтриете $(^NameDA)."
   ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "Ако приемате условията на споразуменито, натиснете $\"Съгласен$\" за да продължите. Трябва да приемете споразумението, за да изтриете $(^NameDA)."
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Ако приемате условията на споразумението, сложете отметка в полето по-долу. Трябва да приемете споразумението, за да изтриете $(^NameDA). "
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Ако приемате условията на споразуменито, изберете първата опция по-долу. Трябва да приемете споразумението, за да изтриете $(^NameDA). "
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Ако приемате условията на споразумението, сложете отметка в полето по-долу. Трябва да приемете споразумението, за да изтриете $(^NameDA). $_CLICK"
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Ако приемате условията на споразуменито, изберете първата опция по-долу. Трябва да приемете споразумението, за да изтриете $(^NameDA). $_CLICK"
 !endif
 
 !ifdef MUI_LICENSEPAGE | MUI_UNLICENSEPAGE
@@ -103,7 +103,7 @@
   ${LangFileString} MUI_TEXT_FINISH_REBOOTNOW "Да, рестартирай сега!"
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Не, ще рестартирам по-късно."
   ${LangFileString} MUI_TEXT_FINISH_RUN "Стартирай $(^NameDA)."
-  ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "Покажи файла "ReadMe"."
+  ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "Покажи файла $\"ReadMe$\"."
 !endif
 
 !ifdef MUI_STARTMENUPAGE

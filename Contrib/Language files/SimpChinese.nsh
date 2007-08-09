@@ -7,12 +7,12 @@
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "欢迎使用“$(^NameDA)”安装向导"
-  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "这个向导将指引你完成“$(^NameDA)”的安装进程。$\r$\n$\r$\n在开始安装之前，建议先关闭其他所有应用程序。这将允许“安装程序”更新指定的系统文件，而不需要重新启动你的计算机。$\r$\n$\r$\n"
+  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "这个向导将指引你完成“$(^NameDA)”的安装进程。$\r$\n$\r$\n在开始安装之前，建议先关闭其他所有应用程序。这将允许“安装程序”更新指定的系统文件，而不需要重新启动你的计算机。$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_UNWELCOMEPAGE
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "欢迎使用“$(^NameDA)”卸载向导"
-  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "这个向导将全程指引你“$(^NameDA)”的卸载进程。$\r$\n$\r$\n在开始卸载之前，确认“$(^NameDA)”并未运行当中。$\r$\n$\r$\n"
+  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "这个向导将全程指引你“$(^NameDA)”的卸载进程。$\r$\n$\r$\n在开始卸载之前，确认“$(^NameDA)”并未运行当中。$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
@@ -23,16 +23,16 @@
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "许可证协议"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "在安装“$(^NameDA)”之前，请阅读授权协议。"
   ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM "如果你接受协议中的条款，单击 [我同意(I)] 继续安装。如果你选定 [取消(C)] ，安装程序将会关闭。必须接受协议才能安装“$(^NameDA)”。"
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "如果你接受协议中的条款，单击下方的勾选框。必须要接受协议才能安装 $(^NameDA)。"
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "如果你接受协议中的条款，选择下方第一个选项。必须要接受协议才能安装 $(^NameDA)。"
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "如果你接受协议中的条款，单击下方的勾选框。必须要接受协议才能安装 $(^NameDA)。$_CLICK"
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "如果你接受协议中的条款，选择下方第一个选项。必须要接受协议才能安装 $(^NameDA)。$_CLICK"
 !endif
 
 !ifdef MUI_UNLICENSEPAGE
   ${LangFileString} MUI_UNTEXT_LICENSE_TITLE "许可证协议"
   ${LangFileString} MUI_UNTEXT_LICENSE_SUBTITLE "在卸载“$(^NameDA)”之前，请检阅授权条款。"
   ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "如果你接受协议中的条款，单击 [我同意(I)] 继续卸载。如果你选定 [取消(C)] ，安装程序将会关闭。必须要接受协议才能卸载“$(^NameDA)”。"
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "如果你接受协议中的条款，单击下方的勾选框。必须要接受协议才能卸载 $(^NameDA)。"
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "如果你接受协议中的条款，选择下方第一个选项。必须要接受协议才能卸载 $(^NameDA)。"
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "如果你接受协议中的条款，单击下方的勾选框。必须要接受协议才能卸载 $(^NameDA)。$_CLICK"
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "如果你接受协议中的条款，选择下方第一个选项。必须要接受协议才能卸载 $(^NameDA)。$_CLICK"
 !endif
 
 !ifdef MUI_LICENSEPAGE | MUI_UNLICENSEPAGE

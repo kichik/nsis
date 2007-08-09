@@ -5,12 +5,12 @@
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Velkommen til $(^NameDA) innstallasjonsvegvisar"
-  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Denne vegvisaren vil leie deg gjennom installeringa av $(^NameDA).\n\nDet er tilrådd at du avsluttar alle andre program før du held fram. Dette vil la installeringsprogrammet oppdatera systemfiler utan at du må starta datamaskinen på nytt.\n\n"
+  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Denne vegvisaren vil leie deg gjennom installeringa av $(^NameDA).\n\nDet er tilrådd at du avsluttar alle andre program før du held fram. Dette vil la installeringsprogrammet oppdatera systemfiler utan at du må starta datamaskinen på nytt.\n\n$_CLICK"
 !endif
 
 !ifdef MUI_UNWELCOMEPAGE
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "Velkommen til avinstallering av $(^NameDA)"
-  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Denne vegvisaren vil leie deg gjennom avinstalleringen av $(^NameDA).\n\nFør du fortsetter må du forsikre deg om at $(^NameDA) ikkje er opent.\n\n"
+  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Denne vegvisaren vil leie deg gjennom avinstalleringen av $(^NameDA).\n\nFør du fortsetter må du forsikre deg om at $(^NameDA) ikkje er opent.\n\n$_CLICK"
 !endif
 
 !ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
@@ -21,16 +21,16 @@
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Lisensavtale"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Les gjennom lisensavtalen før du startar installeringa av $(^NameDA)."
   ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM "Trykk på «Godta» dersom du godtar betingelsane i avtala. Du må godta avtala for å installere $(^NameDA)."
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Trykk på avkryssingsboksen nedanfor nedanfor dersom du godtar betingelsane i avtala. Du må godta avtala for å installere $(^NameDA). "
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Vel det første alternativet nedanfor dersom du godtek vilkåra i avtala. Du må godta avtala for å installera $(^NameDA). "
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Trykk på avkryssingsboksen nedanfor nedanfor dersom du godtar betingelsane i avtala. Du må godta avtala for å installere $(^NameDA). $_CLICK"
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Vel det første alternativet nedanfor dersom du godtek vilkåra i avtala. Du må godta avtala for å installera $(^NameDA). $_CLICK"
 !endif
 
 !ifdef MUI_UNLICENSEPAGE
   ${LangFileString} MUI_UNTEXT_LICENSE_TITLE "Lisensavtale"
   ${LangFileString} MUI_UNTEXT_LICENSE_SUBTITLE "Les gjennom lisensavtalen før du startar avinstalleringa av $(^NameDA)."
   ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "Trykk på «Godta» dersom du godtar betingelsane i avtala. Du må godta avtala for å avinstallera $(^NameDA)."
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Trykk på avkryssingsboksen nedanfor nedanfor dersom du godtar betingelsane i avtala. Du må godta avtala for å avinstallera $(^NameDA). "
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Vel det første alternativet nedanfor dersom du godtar betingelsane i avtala. Du må godta avtala for å avinstallera $(^NameDA). "
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Trykk på avkryssingsboksen nedanfor nedanfor dersom du godtar betingelsane i avtala. Du må godta avtala for å avinstallera $(^NameDA). $_CLICK"
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Vel det første alternativet nedanfor dersom du godtar betingelsane i avtala. Du må godta avtala for å avinstallera $(^NameDA). $_CLICK"
 !endif
 
 !ifdef MUI_LICENSEPAGE | MUI_UNLICENSEPAGE

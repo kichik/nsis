@@ -5,12 +5,12 @@
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Selamat datang di $(^NameDA) Setup Wizard"
-  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Setup Wizard akan membantu anda pada proses instalasi $(^NameDA).$\r$\n$\r$\nSangat disarankan untuk menutup program lainnya sebelum memulai Setup ini. Ini memungkinkan untuk merubah file yang dipakai oleh sistem tanpa harus me-reboot komputer anda.$\r$\n$\r$\n"
+  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Setup Wizard akan membantu anda pada proses instalasi $(^NameDA).$\r$\n$\r$\nSangat disarankan untuk menutup program lainnya sebelum memulai Setup ini. Ini memungkinkan untuk merubah file yang dipakai oleh sistem tanpa harus me-reboot komputer anda.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_UNWELCOMEPAGE
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "Selamat datang di $(^NameDA) Uninstall Wizard"
-  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Uninstall Wizard akan membantu anda pada proses uninstalasi $(^NameDA).$\r$\n$\r$\nSebelum memulai uninstalasi, pastikan dulu $(^NameDA) tidak sedang berjalan.$\r$\n$\r$\n"
+  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Uninstall Wizard akan membantu anda pada proses uninstalasi $(^NameDA).$\r$\n$\r$\nSebelum memulai uninstalasi, pastikan dulu $(^NameDA) tidak sedang berjalan.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
@@ -21,16 +21,16 @@
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Perihal Lisensi"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Silahkan membaca lisensi berikut sebelum menginstall $(^NameDA)."
   ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM "Jika anda menerima semua yang ada di lisensi, klik Saya setuju untuk melanjutkan. Anda harus setuju untuk dapat menginstall $(^NameDA)."
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Jika anda menerima semua yang ada di lisensi, beri tanda centang. Anda harus setuju untuk dapat menginstall $(^NameDA). "
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Jika anda menerima semua yang ada di lisensi, pilihlah salah satu item dibawah ini. Anda harus setuju untuk dapat menginstall $(^NameDA). "
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Jika anda menerima semua yang ada di lisensi, beri tanda centang. Anda harus setuju untuk dapat menginstall $(^NameDA). $_CLICK"
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Jika anda menerima semua yang ada di lisensi, pilihlah salah satu item dibawah ini. Anda harus setuju untuk dapat menginstall $(^NameDA). $_CLICK"
 !endif
 
 !ifdef MUI_UNLICENSEPAGE
   ${LangFileString} MUI_UNTEXT_LICENSE_TITLE "Perihal Lisensi"
   ${LangFileString} MUI_UNTEXT_LICENSE_SUBTITLE "Silahkan membaca lisensi berikut sebelum meng-uninstall $(^NameDA)."
   ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "Jika anda menerima semua yang ada di lisensi, klik Saya setuju untuk melanjutkan. Anda harus setuju untuk dapat meng-uninstall $(^NameDA)."
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Jika anda menerima semua yang ada di lisensi, beri tanda centang. Anda harus setuju untuk dapat meng-uninstall $(^NameDA). "
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Jika anda menerima semua yang ada di lisensi, pilihlah salah satu item dibawah ini. Anda harus setuju untuk dapat meng-uninstall $(^NameDA). "
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Jika anda menerima semua yang ada di lisensi, beri tanda centang. Anda harus setuju untuk dapat meng-uninstall $(^NameDA). $_CLICK"
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Jika anda menerima semua yang ada di lisensi, pilihlah salah satu item dibawah ini. Anda harus setuju untuk dapat meng-uninstall $(^NameDA). $_CLICK"
 !endif
 
 !ifdef MUI_LICENSEPAGE | MUI_UNLICENSEPAGE

@@ -5,12 +5,12 @@
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Welkom by die $(^NameDA) Installasieslimmerd"
-  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Hierdie slimmerd lei mens deur die installasie van $(^NameDA).$\r$\n$\r$\nDit word aanbeveel dat u alle ander programme afsluit voor die begin van die installasie. Dit maak dit moontlik om die relevante stelsellêers op te dateer sonder om die rekenaar te herlaai.$\r$\n$\r$\n"
+  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Hierdie slimmerd lei mens deur die installasie van $(^NameDA).$\r$\n$\r$\nDit word aanbeveel dat u alle ander programme afsluit voor die begin van die installasie. Dit maak dit moontlik om die relevante stelsellêers op te dateer sonder om die rekenaar te herlaai.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_UNWELCOMEPAGE
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "Welkom by die $(^NameDA) Verwyderingslimmerd"
-  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Hierdie slimmerd lei mens deur die verwydering van $(^NameDA).$\r$\n$\r$\nVoor die verwydering begin word, maak seker dat $(^NameDA) nie loop nie.$\r$\n$\r$\n"
+  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Hierdie slimmerd lei mens deur die verwydering van $(^NameDA).$\r$\n$\r$\nVoor die verwydering begin word, maak seker dat $(^NameDA) nie loop nie.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
@@ -21,8 +21,8 @@
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Lisensie-ooreenkoms"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Lees die lisensie-ooreenkoms voordat u $(^NameDA) installeer."
   ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM "Klik op Regso om verder te gaan as u die ooreenkoms aanvaar. U moet die ooreenkoms aanvaar om $(^NameDA) te installeer."
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Merk die blokkie hier onder as u die ooreenkoms aanvaar. U moet die ooreenkoms aanvaar om $(^NameDA) te installeer. "
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Kies die eerste keuse hieronder as u die ooreenkoms aanvaar. U moet die ooreenkoms aanvaar om $(^NameDA) te installeer. "
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Merk die blokkie hier onder as u die ooreenkoms aanvaar. U moet die ooreenkoms aanvaar om $(^NameDA) te installeer. $_CLICK"
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Kies die eerste keuse hieronder as u die ooreenkoms aanvaar. U moet die ooreenkoms aanvaar om $(^NameDA) te installeer. $_CLICK"
 !endif
 
 !ifdef MUI_UNLICENSEPAGE

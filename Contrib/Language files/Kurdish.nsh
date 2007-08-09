@@ -6,12 +6,12 @@
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "$(^NameDA) Tu bi xêr hatî sêrbaziya sazkirinê"
-  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Ev sêrbaz dê di dema sazkirina $(^NameDA) de rêberiya te bike.$\r$\n$\r$\nBerî tu dest bi sazkirinê bikî, em pêþniyar dikin tu hemû bernameyên vekirî bigirî. Bi vî rengî beyî tu komputera ji nû ve vekî dê hinek dosiyên pergalê bêpirsgirêk werin sazkirin.$\r$\n$\r$\n"
+  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Ev sêrbaz dê di dema sazkirina $(^NameDA) de rêberiya te bike.$\r$\n$\r$\nBerî tu dest bi sazkirinê bikî, em pêþniyar dikin tu hemû bernameyên vekirî bigirî. Bi vî rengî beyî tu komputera ji nû ve vekî dê hinek dosiyên pergalê bêpirsgirêk werin sazkirin.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_UNWELCOMEPAGE
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "Tu bi xêr hatî sêrbaziya rakirina bernameya $(^NameDA)"
-  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Ev sêrbaz ji bo rakirina bernameya $(^NameDA) dê alîkariya te bike.$\r$\n$\r$\nBerî tu dest bi rakirina bernameyê bikî, bernameyên vekirî hemûyan bigire. Bi vî rengî dû re tu mecbûr namînî ku komputera xwe bigirî û ji nû ve veki.$\r$\n$\r$\n"
+  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Ev sêrbaz ji bo rakirina bernameya $(^NameDA) dê alîkariya te bike.$\r$\n$\r$\nBerî tu dest bi rakirina bernameyê bikî, bernameyên vekirî hemûyan bigire. Bi vî rengî dû re tu mecbûr namînî ku komputera xwe bigirî û ji nû ve veki.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
@@ -22,16 +22,16 @@
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Peymana Lîsansê"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Ji kerema xwe re berî tu bernameya $(^NameDA) saz bikî, peymana lîsansê bixwîne."
   ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM "Heke tu þertên peymanê dipejirînî, 'Ez Dipejirînim'ê bitikîne. Ji bo sazkirina bernameya $(^NameDA) divê tu þertên peymanê bipejirînî."
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Heke tu þertên peymanê dipejirînî, zeviya piþtrastkirinê ya jêrîn dagire. Ji bo tu bikarî bernameya $(^NameDA) saz bikî divê tu þertên peymanê bipejirînî. "
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Heke tu þertên peymanê dipejirînî, biþkojka erêkirinê ya jêrîn bitikîne. Ji bo sazkirina bernameya $(^NameDA) divê tu þertên peymanê bipejirînî. "
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Heke tu þertên peymanê dipejirînî, zeviya piþtrastkirinê ya jêrîn dagire. Ji bo tu bikarî bernameya $(^NameDA) saz bikî divê tu þertên peymanê bipejirînî. $_CLICK"
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Heke tu þertên peymanê dipejirînî, biþkojka erêkirinê ya jêrîn bitikîne. Ji bo sazkirina bernameya $(^NameDA) divê tu þertên peymanê bipejirînî. $_CLICK"
 !endif
 
 !ifdef MUI_UNLICENSEPAGE
   ${LangFileString} MUI_UNTEXT_LICENSE_TITLE "Peymana Lîsansê"
   ${LangFileString} MUI_UNTEXT_LICENSE_SUBTITLE "Berî tu bernameya $(^NameDA) ji pergala xwe rakî peymanê bixwîne."
   ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "Heke tu þertên peymanê dipejirînî, 'Dipejirînim'ê bitikîne. Ji bo rakirina bernameya  $(^NameDA) divê tu þertên peymanê bipejirînî."
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Heke tu þertên peymanê dipejirînî, zeviya erêkirinê ya jêrîn dagire. Ji bo tu bernameya $(^NameDA) ji pergala xwe rakî divê tu peymanê bipejirînî. "
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Heke tu þertên peymanê dipejirînî, biþkojka erêkirinê ya jêrîn hilbijêre. Ji bo tu bernameya  $(^NameDA) ji pergala xwe rakî divê tu þertên peymanê bipejirînî. "
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Heke tu þertên peymanê dipejirînî, zeviya erêkirinê ya jêrîn dagire. Ji bo tu bernameya $(^NameDA) ji pergala xwe rakî divê tu peymanê bipejirînî. $_CLICK"
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Heke tu þertên peymanê dipejirînî, biþkojka erêkirinê ya jêrîn hilbijêre. Ji bo tu bernameya  $(^NameDA) ji pergala xwe rakî divê tu þertên peymanê bipejirînî. $_CLICK"
 !endif
 
 !ifdef MUI_LICENSEPAGE | MUI_UNLICENSEPAGE

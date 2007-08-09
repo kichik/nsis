@@ -5,12 +5,12 @@
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Добродошли у водич за инсталацију програма $(^NameDA)"
-  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Бићете вођени кроз процес инсталације програма $(^NameDA).$\r$\n$\r$\nПрепоручљиво је да искључите све друге програме пре почетка инсталације. Ово може омогућити ажурирање системских фајлова без потребе за поновним покретањем рачунара.$\r$\n$\r$\n"
+  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Бићете вођени кроз процес инсталације програма $(^NameDA).$\r$\n$\r$\nПрепоручљиво је да искључите све друге програме пре почетка инсталације. Ово може омогућити ажурирање системских фајлова без потребе за поновним покретањем рачунара.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_UNWELCOMEPAGE
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "Добродошли у деинсталацију програма $(^NameDA)"
-  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Бићете вођени кроз процес деинсталације програма $(^NameDA).$\r$\n$\r$\nПре почетка деинсталације, уверите се да је програм $(^NameDA) искључен. "
+  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Бићете вођени кроз процес деинсталације програма $(^NameDA).$\r$\n$\r$\nПре почетка деинсталације, уверите се да је програм $(^NameDA) искључен. $_CLICK"
 !endif
 
 !ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
@@ -21,16 +21,16 @@
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Договор о праву коришћења"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Пажљиво прочитајте договор о праву коришћења пре инсталације програма $(^NameDA)."
   ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM "Ако прихватате све услове договора, притисните дугме „Прихватам“ за наставак. Морате прихватити договор да бисте инсталирали програм $(^NameDA)."
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Ако прихватате све услове договора, обележите квадратић испод. Морате прихватити договор да бисте инсталирали програм $(^NameDA). "
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Ако прихватате све услове договора, изаберите прву опцију испод. Морате прихватити договор да бисте инсталирали програм $(^NameDA). "
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Ако прихватате све услове договора, обележите квадратић испод. Морате прихватити договор да бисте инсталирали програм $(^NameDA). $_CLICK"
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Ако прихватате све услове договора, изаберите прву опцију испод. Морате прихватити договор да бисте инсталирали програм $(^NameDA). $_CLICK"
 !endif
 
 !ifdef MUI_UNLICENSEPAGE
   ${LangFileString} MUI_UNTEXT_LICENSE_TITLE "Договор о праву коришћења"
   ${LangFileString} MUI_UNTEXT_LICENSE_SUBTITLE "Пажљиво прочитајте договор о праву коришћења пре деинсталације програма $(^NameDA)."
   ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "Ако прихватате све услове договора, притисните дугме „Прихватам“ за наставак. Морате прихватити договор да бисте деинсталирали програм $(^NameDA)."
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Ако прихватате све услове договора, обележите квадратић испод. Морате прихватити договор да бисте деинсталирали програм $(^NameDA). "
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Ако прихватате све услове договора, изаберите прву опцију испод. Морате прихватити договор да бисте деинсталирали програм $(^NameDA). "
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Ако прихватате све услове договора, обележите квадратић испод. Морате прихватити договор да бисте деинсталирали програм $(^NameDA). $_CLICK"
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Ако прихватате све услове договора, изаберите прву опцију испод. Морате прихватити договор да бисте деинсталирали програм $(^NameDA). $_CLICK"
 !endif
 
 !ifdef MUI_LICENSEPAGE | MUI_UNLICENSEPAGE
