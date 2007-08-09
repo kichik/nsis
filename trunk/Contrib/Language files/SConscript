@@ -55,6 +55,62 @@ languages = Split("""
 	Ukrainian.nlf
 	Uzbek.nlf
 	Welsh.nlf
+	Albanian.nsh
+	Afrikaans.nsh
+	Arabic.nsh
+	Basque.nsh
+	Belarusian.nsh
+	Bosnian.nsh
+	Breton.nsh
+	Bulgarian.nsh
+	Croatian.nsh
+	Czech.nsh
+	Danish.nsh
+	Dutch.nsh
+	English.nsh
+	Estonian.nsh
+	Farsi.nsh
+	Finnish.nsh
+	French.nsh
+	Galician.nsh
+	German.nsh
+	Greek.nsh
+	Hebrew.nsh
+	Hungarian.nsh
+	Icelandic.nsh
+	Indonesian.nsh
+	Irish.nsh
+	Italian.nsh
+	Japanese.nsh
+	Korean.nsh
+	Kurdish.nsh
+	Latvian.nsh
+	Lithuanian.nsh
+	Luxembourgish.nsh
+	Macedonian.nsh
+	Malay.nsh
+	Mongolian.nsh
+	Norwegian.nsh
+	NorwegianNynorsk.nsh
+	Polish.nsh
+	Portuguese.nsh
+	PortugueseBR.nsh
+	Romanian.nsh
+	Russian.nsh
+	Serbian.nsh
+	SerbianLatin.nsh
+	SimpChinese.nsh
+	Slovak.nsh
+	Slovenian.nsh
+	Spanish.nsh
+	SpanishInternational.nsh
+	Swedish.nsh
+	Thai.nsh
+	TradChinese.nsh
+	Turkish.nsh
+	Ukrainian.nsh
+	Uzbek.nsh
+	Welsh.nsh
 """)
 
 Import('defenv')
