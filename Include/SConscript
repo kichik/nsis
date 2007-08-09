@@ -1,6 +1,7 @@
 includes = Split("""
 	Colors.nsh
 	FileFunc.nsh
+	LangFile.nsh
 	Library.nsh
 	LogicLib.nsh
 	Memento.nsh
