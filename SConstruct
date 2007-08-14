@@ -127,6 +127,25 @@ if 'NSIS_CONFIG_CONST_DATA_PATH' in defenv['NSIS_CPPDEFINES']:
 else:
 	dirs = install_dirs['relocatable']
 
+if 'msvc' in defenv['TOOLS'] or 'mstoolkit' in defenv['TOOLS']:
+	ignore_tests = 'none'
+else:
+	ignore_tests = ','.join(Split("""
+Examples/System/System.nsi
+Examples/LogicLib.nsi
+Examples/StrFunc.nsi
+Examples/TextFunc.nsi
+Examples/TextFuncTest.nsi
+Examples/FileFunc.nsi
+Examples/FileFuncTest.nsi
+Examples/Library.nsi
+Examples/makensis.nsi
+Examples/gfx.nsi
+Examples/nsDialogs/example.nsi
+Examples/nsDialogs/InstallOptions.nsi
+Examples/nsDialogs/welcome.nsi
+"""))
+
 # version
 opts.Add(('VERSION', 'Version of NSIS', cvs_version))
 opts.Add(('VER_MAJOR', 'Major version of NSIS (recommended for dist-installer)', None))
@@ -141,7 +160,7 @@ opts.Add(ListOption('SKIPUTILS', 'A list of utilities that will not be built', '
 opts.Add(ListOption('SKIPMISC', 'A list of plug-ins that will not be built', 'none', misc))
 opts.Add(ListOption('SKIPDOC', 'A list of doc files that will not be built/installed', 'none', doc))
 opts.Add(('SKIPTESTS', 'A comma-separated list of test files that will not be ran', 'none'))
-opts.Add(('IGNORETESTS', 'A comma-separated list of test files that will be ran but ignored', 'none'))
+opts.Add(('IGNORETESTS', 'A comma-separated list of test files that will be ran but ignored', ignore_tests))
 # build tools
 opts.Add(('PATH', 'A colon-separated list of system paths instead of the default - TEMPORARY AND MAY DEPRECATE', None))
 opts.Add(('TOOLSET', 'A comma-separated list of specific tools used for building instead of the default', None))
