@@ -12,6 +12,7 @@ XPStyle on
 ShowInstDetails show
 
 !include nsDialogs.nsh
+!insertmacro NSD_FUNCTION_INIFILE
 
 Function nsDialogsIO
 
