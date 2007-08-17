@@ -152,7 +152,7 @@ void __declspec(dllexport) Create(HWND hwndParent, int string_size, char *variab
   pushint((int) g_dialog.hwDialog);
 }
 
-void __declspec(dllexport) CreateItem(HWND hwndParent, int string_size, char *variables, stack_t **stacktop, extra_parameters *extra)
+void __declspec(dllexport) CreateControl(HWND hwndParent, int string_size, char *variables, stack_t **stacktop, extra_parameters *extra)
 {
   char *className;
   char *text;
@@ -248,6 +248,12 @@ void __declspec(dllexport) CreateItem(HWND hwndParent, int string_size, char *va
   // done
 
   HeapFree(GetProcessHeap(), 0, className);
+}
+
+// for backward compatibility (2.29 had CreateItem)
+void __declspec(dllexport) CreateItem(HWND hwndParent, int string_size, char *variables, stack_t **stacktop, extra_parameters *extra)
+{
+  CreateControl(hwndParent, string_size, variables, stacktop, extra);
 }
 
 void __declspec(dllexport) SetUserData(HWND hwndParent, int string_size, char *variables, stack_t **stacktop, extra_parameters *extra)
