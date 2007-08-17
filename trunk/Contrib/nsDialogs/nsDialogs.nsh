@@ -240,7 +240,7 @@ Header file for creating custom installer pages with nsDialogs
 
 !macro __NSD_DefineControl NAME
 
-	!define NSD_Create${NAME} "nsDialogs::CreateItem /NOUNLOAD ${__NSD_${Name}_CLASS} ${__NSD_${Name}_STYLE} ${__NSD_${Name}_EXSTYLE}"
+	!define NSD_Create${NAME} "nsDialogs::CreateControl /NOUNLOAD ${__NSD_${Name}_CLASS} ${__NSD_${Name}_STYLE} ${__NSD_${Name}_EXSTYLE}"
 
 !macroend
 
