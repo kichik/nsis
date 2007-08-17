@@ -12,6 +12,7 @@ Version History
 * InstallOptions macros have been moved to a separate header file (InstallOptions.nsh).
   The MUI_INSTALLOPTIONS_* macros are still provided for backwards compatibility and insert the
   equalivent INSTALLOPTIONS_* macros.
+* Added MUI_CUSTOMFUNCTION_MOUSEOVERSECTION
 
 1.78 - June 8, 2007
 * Added MUI_STARTMENUPAGE_BGCOLOR
