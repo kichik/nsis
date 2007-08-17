@@ -200,7 +200,7 @@ Function nsDialogsWelcome
 	nsDialogs::Create /NOUNLOAD 1044
 	Pop $DIALOG
 
-	nsDialogs::CreateItem /NOUNLOAD STATIC ${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS}|${SS_BITMAP} 0 0 0 109u 193u ""
+	nsDialogs::CreateControl /NOUNLOAD STATIC ${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS}|${SS_BITMAP} 0 0 0 109u 193u ""
 	Pop $IMAGECTL
 
 	StrCpy $0 $PLUGINSDIR\welcome.bmp
@@ -209,12 +209,12 @@ Function nsDialogsWelcome
 	
 	SendMessage $IMAGECTL ${STM_SETIMAGE} ${IMAGE_BITMAP} $IMAGE
 
-	nsDialogs::CreateItem /NOUNLOAD STATIC ${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS} 0 120u 10u -130u 20u "Welcome to nsDialogs!"
+	nsDialogs::CreateControl /NOUNLOAD STATIC ${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS} 0 120u 10u -130u 20u "Welcome to nsDialogs!"
 	Pop $HEADLINE
 
 	SendMessage $HEADLINE ${WM_SETFONT} $HEADLINE_FONT 0
 
-	nsDialogs::CreateItem /NOUNLOAD STATIC ${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS} 0 120u 32u -130u -32u "nsDialogs is the next generation of user interfaces in NSIS. It gives the developer full control over custom pages. Some of the features include control text containing variables, callbacks directly into script functions and creation of any type of control. Create boring old edit boxes or load some external library and create custom controls with no need of creating your own plug-in.$\r$\n$\r$\nUnlike InstallOptions, nsDialogs doesn't use INI files to communicate with the script. By interacting directly with the script, nsDialogs can perform much faster without the need of costly, old and inefficient INI operations. Direct interaction also allows direct calls to functions defined in the script and removes the need of conversion functions like Io2Nsis.$\r$\n$\r$\nHit the Next button to see how it all fits into a mock directory page."
+	nsDialogs::CreateControl /NOUNLOAD STATIC ${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS} 0 120u 32u -130u -32u "nsDialogs is the next generation of user interfaces in NSIS. It gives the developer full control over custom pages. Some of the features include control text containing variables, callbacks directly into script functions and creation of any type of control. Create boring old edit boxes or load some external library and create custom controls with no need of creating your own plug-in.$\r$\n$\r$\nUnlike InstallOptions, nsDialogs doesn't use INI files to communicate with the script. By interacting directly with the script, nsDialogs can perform much faster without the need of costly, old and inefficient INI operations. Direct interaction also allows direct calls to functions defined in the script and removes the need of conversion functions like Io2Nsis.$\r$\n$\r$\nHit the Next button to see how it all fits into a mock directory page."
 	Pop $TEXT
 
 	SetCtlColors $DIALOG "" 0xffffff
@@ -243,15 +243,15 @@ Function nsDialogsDirectory
 	nsDialogs::Create /NOUNLOAD 1018
 	Pop $DIALOG
 
-	nsDialogs::CreateItem /NOUNLOAD STATIC ${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS}|${SS_CENTER} 0 0 0 100% 30 "Directory page"
+	nsDialogs::CreateControl /NOUNLOAD STATIC ${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS}|${SS_CENTER} 0 0 0 100% 30 "Directory page"
 	Pop $HEADLINE
 
 	SendMessage $HEADLINE ${WM_SETFONT} $HEADLINE_FONT 0
 
-	nsDialogs::CreateItem /NOUNLOAD STATIC ${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS} 0 0 30 100% 40 "Select the installation directory of NSIS to continue. $_CLICK"
+	nsDialogs::CreateControl /NOUNLOAD STATIC ${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS} 0 0 30 100% 40 "Select the installation directory of NSIS to continue. $_CLICK"
 	Pop $TEXT
 
-	nsDialogs::CreateItem /NOUNLOAD EDIT ${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS}|${ES_AUTOHSCROLL}|${WS_TABSTOP} ${WS_EX_CLIENTEDGE} 0 75 100% 12u ""
+	nsDialogs::CreateControl /NOUNLOAD EDIT ${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS}|${ES_AUTOHSCROLL}|${WS_TABSTOP} ${WS_EX_CLIENTEDGE} 0 75 100% 12u ""
 	Pop $DIRECTORY
 
 	SendMessage $HWNDPARENT ${WM_NEXTDLGCTL} $DIRECTORY 1
@@ -261,7 +261,7 @@ Function nsDialogsDirectory
 
 	System::Call shlwapi::SHAutoComplete(i$DIRECTORY,i${SHACF_FILESYSTEM})
 
-	nsDialogs::CreateItem /NOUNLOAD STATIC ${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS} 0 0 -10u 100% 10u ""
+	nsDialogs::CreateControl /NOUNLOAD STATIC ${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS} 0 0 -10u 100% 10u ""
 	Pop $FREESPACE
 
 	Call UpdateFreeSpace
