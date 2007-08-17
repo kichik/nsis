@@ -635,7 +635,7 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
           (fldrs[2] != CSIDL_COMMON_APPDATA) // not all users's appdata
         );
 
-        if (g_exec_flags.all_user_var && all_users_9x_capable)
+        if (g_exec_flags.all_user_var)
         {
           x = 4;
         }
@@ -660,7 +660,7 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
 
         while (x--)
         {
-          if (g_SHGetFolderPath)
+          if (g_SHGetFolderPath && all_users_9x_capable)
           {
             PFNSHGETFOLDERPATHA SHGetFolderPathFunc = (PFNSHGETFOLDERPATHA) g_SHGetFolderPath;
             if (!SHGetFolderPathFunc(g_hwnd, fldrs[x], NULL, SHGFP_TYPE_CURRENT, out))
