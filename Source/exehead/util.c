@@ -628,8 +628,14 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
         LPITEMIDLIST idl;
 
         int x = 2;
+        DWORD ver = GetVersion();
+        BOOL all_users_9x_capable = !(
+          (ver & 0x80000000) && // 9x
+          (LOWORD(ver) != 0x5A04) && // not ME
+          (fldrs[2] != CSIDL_COMMON_APPDATA) // not all users's appdata
+        );
 
-        if (g_exec_flags.all_user_var)
+        if (g_exec_flags.all_user_var && all_users_9x_capable)
         {
           x = 4;
         }
