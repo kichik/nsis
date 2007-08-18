@@ -629,10 +629,34 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
 
         int x = 2;
         DWORD ver = GetVersion();
-        BOOL all_users_9x_capable = !(
-          (ver & 0x80000000) && // 9x
-          (LOWORD(ver) != 0x5A04) && // not ME
-          (fldrs[2] != CSIDL_COMMON_APPDATA) // not all users's appdata
+
+		/*
+
+		SHGetFolderPath as provided by shfolder.dll is used to get special folders
+		unless the installer is running on Windows 95/98. For 95/98 shfolder.dll is
+		only used for the Application Data and Documents folder (if the DLL exists).
+        Oherwise, the old SHGetSpecialFolderLocation API is called.
+
+		There reason for not using shfolder.dll for all folders on 95/98 is that
+		some unsupported folders (such as the Start Menu folder for all users) are
+		simulated instead of returning an error so whe can fall back on the folder
+		for the current user.
+
+		SHGetFolderPath in shell32.dll could be called directly for Windows versions
+		later than 95/98 but there is no need to do so, because shfolder.dll is still
+		provided and calls shell32.dll.
+
+		*/
+
+        BOOL use_shfolder = (
+
+	      // Use shfolder if not on 95/98
+          !((ver & 0x80000000) && (LOWORD(ver) != 0x5A04)) ||
+
+		  // Unless the Application Data or Documents folder is requested
+          ((fldrs[2] == CSIDL_COMMON_APPDATA) ||
+          (fldrs[2] == CSIDL_COMMON_DOCUMENTS))
+
         );
 
         if (g_exec_flags.all_user_var)
@@ -660,7 +684,7 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
 
         while (x--)
         {
-          if (g_SHGetFolderPath && all_users_9x_capable)
+          if (g_SHGetFolderPath && use_shfolder)
           {
             PFNSHGETFOLDERPATHA SHGetFolderPathFunc = (PFNSHGETFOLDERPATHA) g_SHGetFolderPath;
             if (!SHGetFolderPathFunc(g_hwnd, fldrs[x], NULL, SHGFP_TYPE_CURRENT, out))
