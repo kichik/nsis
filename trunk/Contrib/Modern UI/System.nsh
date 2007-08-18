@@ -46,10 +46,7 @@ Var MUI_TEMP2
       !warning "The MUI_PRODUCT and MUI_VERSION defines have been removed. Use a normal Name command now."
     !endif
 
-    !ifndef MUI_INSERT_INTERFACE
-      !insertmacro MUI_INTERFACE
-      !define MUI_INSERT_INTERFACE
-    !endif
+    !insertmacro MUI_INTERFACE
 
     !insertmacro MUI_FUNCTION_GUIINIT
     !insertmacro MUI_FUNCTION_ABORTWARNING
@@ -114,78 +111,83 @@ Var MUI_TEMP2
 
 !macro MUI_INTERFACE
 
-  !ifdef MUI_INSERT_NSISCONF
-    !insertmacro MUI_NSISCONF
-  !endif
+  !ifndef MUI_INTERFACE
+    !define MUI_INTERFACE
 
-  !insertmacro MUI_DEFAULT MUI_UI "${NSISDIR}\Contrib\UIs\modern.exe"
-  !insertmacro MUI_DEFAULT MUI_UI_HEADERIMAGE "${NSISDIR}\Contrib\UIs\modern_headerbmp.exe"
-  !insertmacro MUI_DEFAULT MUI_UI_HEADERIMAGE_RIGHT "${NSISDIR}\Contrib\UIs\modern_headerbmpr.exe"
-  !insertmacro MUI_DEFAULT MUI_UI_COMPONENTSPAGE_SMALLDESC "${NSISDIR}\Contrib\UIs\modern_smalldesc.exe"
-  !insertmacro MUI_DEFAULT MUI_UI_COMPONENTSPAGE_NODESC "${NSISDIR}\Contrib\UIs\modern_nodesc.exe"
-  !insertmacro MUI_DEFAULT MUI_ICON "${NSISDIR}\Contrib\Graphics\Icons\modern-install.ico"
-  !insertmacro MUI_DEFAULT MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall.ico"
-  !insertmacro MUI_DEFAULT MUI_COMPONENTSPAGE_CHECKBITMAP "${NSISDIR}\Contrib\Graphics\Checks\modern.bmp"
-  !insertmacro MUI_DEFAULT MUI_LICENSEPAGE_BGCOLOR "/windows"
-  !insertmacro MUI_DEFAULT MUI_INSTFILESPAGE_COLORS "/windows"
-  !insertmacro MUI_DEFAULT MUI_INSTFILESPAGE_PROGRESSBAR "smooth"
-  !insertmacro MUI_DEFAULT MUI_BGCOLOR "FFFFFF"
-  !insertmacro MUI_DEFAULT MUI_WELCOMEFINISHPAGE_INI "${NSISDIR}\Contrib\Modern UI\ioSpecial.ini"
-  !insertmacro MUI_DEFAULT MUI_UNWELCOMEFINISHPAGE_INI "${NSISDIR}\Contrib\Modern UI\ioSpecial.ini"
-  !insertmacro MUI_DEFAULT MUI_WELCOMEFINISHPAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Wizard\win.bmp"
-  !insertmacro MUI_DEFAULT MUI_UNWELCOMEFINISHPAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Wizard\win.bmp"
-
-  !ifdef MUI_HEADERIMAGE
-
-    !insertmacro MUI_DEFAULT MUI_HEADERIMAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Header\nsis.bmp"
-
-    !ifndef MUI_HEADERIMAGE_UNBITMAP
-      !define MUI_HEADERIMAGE_UNBITMAP "${MUI_HEADERIMAGE_BITMAP}"
-      !ifdef MUI_HEADERIMAGE_BITMAP_NOSTRETCH
-        !insertmacro MUI_SET MUI_HEADERIMAGE_UNBITMAP_NOSTRETCH
-      !endif
+    !ifdef MUI_INSERT_NSISCONF
+      !insertmacro MUI_NSISCONF
     !endif
 
-    !ifdef MUI_HEADERIMAGE_BITMAP_RTL
-      !ifndef MUI_HEADERIMAGE_UNBITMAP_RTL
-        !define MUI_HEADERIMAGE_UNBITMAP_RTL "${MUI_HEADERIMAGE_BITMAP_RTL}"
-        !ifdef MUI_HEADERIMAGE_BITMAP_RTL_NOSTRETCH
-          !insertmacro MUI_SET MUI_HEADERIMAGE_UNBITMAP_RTL_NOSTRETCH
+    !insertmacro MUI_DEFAULT MUI_UI "${NSISDIR}\Contrib\UIs\modern.exe"
+    !insertmacro MUI_DEFAULT MUI_UI_HEADERIMAGE "${NSISDIR}\Contrib\UIs\modern_headerbmp.exe"
+    !insertmacro MUI_DEFAULT MUI_UI_HEADERIMAGE_RIGHT "${NSISDIR}\Contrib\UIs\modern_headerbmpr.exe"
+    !insertmacro MUI_DEFAULT MUI_UI_COMPONENTSPAGE_SMALLDESC "${NSISDIR}\Contrib\UIs\modern_smalldesc.exe"
+    !insertmacro MUI_DEFAULT MUI_UI_COMPONENTSPAGE_NODESC "${NSISDIR}\Contrib\UIs\modern_nodesc.exe"
+    !insertmacro MUI_DEFAULT MUI_ICON "${NSISDIR}\Contrib\Graphics\Icons\modern-install.ico"
+    !insertmacro MUI_DEFAULT MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall.ico"
+    !insertmacro MUI_DEFAULT MUI_COMPONENTSPAGE_CHECKBITMAP "${NSISDIR}\Contrib\Graphics\Checks\modern.bmp"
+    !insertmacro MUI_DEFAULT MUI_LICENSEPAGE_BGCOLOR "/windows"
+    !insertmacro MUI_DEFAULT MUI_INSTFILESPAGE_COLORS "/windows"
+    !insertmacro MUI_DEFAULT MUI_INSTFILESPAGE_PROGRESSBAR "smooth"
+    !insertmacro MUI_DEFAULT MUI_BGCOLOR "FFFFFF"
+    !insertmacro MUI_DEFAULT MUI_WELCOMEFINISHPAGE_INI "${NSISDIR}\Contrib\Modern UI\ioSpecial.ini"
+    !insertmacro MUI_DEFAULT MUI_UNWELCOMEFINISHPAGE_INI "${NSISDIR}\Contrib\Modern UI\ioSpecial.ini"
+    !insertmacro MUI_DEFAULT MUI_WELCOMEFINISHPAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Wizard\win.bmp"
+    !insertmacro MUI_DEFAULT MUI_UNWELCOMEFINISHPAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Wizard\win.bmp"
+
+    !ifdef MUI_HEADERIMAGE
+
+      !insertmacro MUI_DEFAULT MUI_HEADERIMAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Header\nsis.bmp"
+
+      !ifndef MUI_HEADERIMAGE_UNBITMAP
+        !define MUI_HEADERIMAGE_UNBITMAP "${MUI_HEADERIMAGE_BITMAP}"
+        !ifdef MUI_HEADERIMAGE_BITMAP_NOSTRETCH
+          !insertmacro MUI_SET MUI_HEADERIMAGE_UNBITMAP_NOSTRETCH
         !endif
       !endif
+
+      !ifdef MUI_HEADERIMAGE_BITMAP_RTL
+        !ifndef MUI_HEADERIMAGE_UNBITMAP_RTL
+          !define MUI_HEADERIMAGE_UNBITMAP_RTL "${MUI_HEADERIMAGE_BITMAP_RTL}"
+          !ifdef MUI_HEADERIMAGE_BITMAP_RTL_NOSTRETCH
+            !insertmacro MUI_SET MUI_HEADERIMAGE_UNBITMAP_RTL_NOSTRETCH
+          !endif
+        !endif
+      !endif
+
     !endif
 
-  !endif
+    XPStyle On
 
-  XPStyle On
-
-  ChangeUI all "${MUI_UI}"
-  !ifdef MUI_HEADERIMAGE
-    !ifndef MUI_HEADERIMAGE_RIGHT
-      ChangeUI IDD_INST "${MUI_UI_HEADERIMAGE}"
-    !else
-      ChangeUI IDD_INST "${MUI_UI_HEADERIMAGE_RIGHT}"
+    ChangeUI all "${MUI_UI}"
+    !ifdef MUI_HEADERIMAGE
+      !ifndef MUI_HEADERIMAGE_RIGHT
+        ChangeUI IDD_INST "${MUI_UI_HEADERIMAGE}"
+      !else
+        ChangeUI IDD_INST "${MUI_UI_HEADERIMAGE_RIGHT}"
+      !endif
     !endif
+    !ifdef MUI_COMPONENTSPAGE_SMALLDESC
+      ChangeUI IDD_SELCOM "${MUI_UI_COMPONENTSPAGE_SMALLDESC}"
+    !else ifdef MUI_COMPONENTSPAGE_NODESC
+       ChangeUI IDD_SELCOM "${MUI_UI_COMPONENTSPAGE_NODESC}"
+    !endif
+
+    Icon "${MUI_ICON}"
+    UninstallIcon "${MUI_UNICON}"
+
+    CheckBitmap "${MUI_COMPONENTSPAGE_CHECKBITMAP}"
+    LicenseBkColor "${MUI_LICENSEPAGE_BGCOLOR}"
+    InstallColors ${MUI_INSTFILESPAGE_COLORS}
+    InstProgressFlags ${MUI_INSTFILESPAGE_PROGRESSBAR}
+
+    SubCaption 4 " "
+    UninstallSubCaption 2 " "
+
+    !insertmacro MUI_DEFAULT MUI_ABORTWARNING_TEXT "$(MUI_TEXT_ABORTWARNING)"
+    !insertmacro MUI_DEFAULT MUI_UNABORTWARNING_TEXT "$(MUI_UNTEXT_ABORTWARNING)"
+
   !endif
-  !ifdef MUI_COMPONENTSPAGE_SMALLDESC
-    ChangeUI IDD_SELCOM "${MUI_UI_COMPONENTSPAGE_SMALLDESC}"
-  !else ifdef MUI_COMPONENTSPAGE_NODESC
-     ChangeUI IDD_SELCOM "${MUI_UI_COMPONENTSPAGE_NODESC}"
-  !endif
-
-  Icon "${MUI_ICON}"
-  UninstallIcon "${MUI_UNICON}"
-
-  CheckBitmap "${MUI_COMPONENTSPAGE_CHECKBITMAP}"
-  LicenseBkColor "${MUI_LICENSEPAGE_BGCOLOR}"
-  InstallColors ${MUI_INSTFILESPAGE_COLORS}
-  InstProgressFlags ${MUI_INSTFILESPAGE_PROGRESSBAR}
-
-  SubCaption 4 " "
-  UninstallSubCaption 2 " "
-
-  !insertmacro MUI_DEFAULT MUI_ABORTWARNING_TEXT "$(MUI_TEXT_ABORTWARNING)"
-  !insertmacro MUI_DEFAULT MUI_UNABORTWARNING_TEXT "$(MUI_UNTEXT_ABORTWARNING)"
 
 !macroend
 
@@ -693,10 +695,7 @@ Var MUI_TEMP2
 
 !macro MUI_PAGE_INIT
 
-  !ifndef MUI_INSERT_INTERFACE
-    !insertmacro MUI_INTERFACE
-    !define MUI_INSERT_INTERFACE
-  !endif
+  !insertmacro MUI_INTERFACE
 
   !insertmacro MUI_DEFAULT MUI_PAGE_UNINSTALLER_PREFIX ""
   !insertmacro MUI_DEFAULT MUI_PAGE_UNINSTALLER_FUNCPREFIX ""
