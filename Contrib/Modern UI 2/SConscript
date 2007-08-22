@@ -1,0 +1,35 @@
+target = 'Modern UI 2'
+
+docs = Split("""
+	License.txt
+	Readme.html
+""")
+
+
+contribs = Split("""
+	Interface.nsh
+	Localization.nsh
+	MUI2.nsh
+	Pages.nsh
+""")
+
+pages = Split("""
+	Components.nsh
+	Directory.nsh
+	Finish.nsh
+	InstallFiles.nsh
+	License.nsh
+	StartMenu.nsh
+	UninstallConfirm.nsh
+	Welcome.nsh
+""")
+
+Import('defenv')
+
+def join(prefix, list):
+	return map(lambda x: '%s/%s' % (prefix, x), list)
+
+defenv.DistributeDocs(docs, path=target)
+path = 'Pages'
+defenv.DistributeContrib(join(path,pages), path='%s/%s'%(target,path))
+defenv.DistributeContrib(contribs, path=target)

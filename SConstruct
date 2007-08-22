@@ -46,6 +46,7 @@ misc = [
 	'Graphics',
 	'Language files',
 	'Modern UI',
+	'Modern UI 2',
 	'VPatch',
 	'ExDLL'
 ]
