@@ -6,6 +6,7 @@ includes = Split("""
 	LogicLib.nsh
 	Memento.nsh
 	MUI.nsh
+	MUI2.nsh
 	Sections.nsh
 	StrFunc.nsh
 	TextFunc.nsh
