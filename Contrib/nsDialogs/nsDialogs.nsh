@@ -287,6 +287,15 @@ Header file for creating custom installer pages with nsDialogs
 !insertmacro __NSD_DefineCallback Notify
 !insertmacro __NSD_DefineCallback Back
 
+!macro __NSD_GetText CONTROL VAR
+
+	System::Call user32::GetWindowText(i${CONTROL},t.s,i${NSIS_MAX_STRLEN})
+	Pop ${VAR}
+
+!macroend
+
+!define NSD_GetText `!insertmacro __NSD_GetText`
+
 !define DEBUG `System::Call kernel32::OutputDebugString(ts)`
 
 !macro __NSD_ControlCase TYPE
