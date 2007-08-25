@@ -135,6 +135,8 @@ UDM     Up-down control
 !define CB_SETTOPINDEX              0x015c
 !define CB_SHOWDROPDOWN             0x014F
 
+!define CB_ERR                      -1
+
 #Edit Control Messages#
 !define EM_CANUNDO              0x00C6
 !define EM_CHARFROMPOS          0x00D7
@@ -219,6 +221,8 @@ UDM     Up-down control
 !define LB_SETSEL               0x0185
 !define LB_SETTABSTOPS          0x0192
 !define LB_SETTOPINDEX          0x0197
+
+!define LB_ERR                  -1
 
 #Window Messages#
 !define WM_ACTIVATE                     0x0006
