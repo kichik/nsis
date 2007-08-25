@@ -174,10 +174,14 @@ void __declspec(dllexport) CreateControl(HWND hwndParent, int string_size, char 
   text = &className[g_stringsize];
 
   if (!className)
+  {
+    pushstring("error");
     return;
+  }
 
   if (popstring(className, 0))
   {
+    pushstring("error");
     HeapFree(GetProcessHeap(), 0, className);
     return;
   }
@@ -189,6 +193,7 @@ void __declspec(dllexport) CreateControl(HWND hwndParent, int string_size, char 
 
   if (popstring(text, 0))
   {
+    pushstring("error");
     HeapFree(GetProcessHeap(), 0, className);
     return;
   }
