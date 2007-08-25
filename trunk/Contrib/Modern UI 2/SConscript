@@ -5,6 +5,13 @@ docs = Split("""
 	Readme.html
 """)
 
+doc_images = Split("""
+	closed.gif
+	header.gif
+	open.gif
+	screen1.png
+	screen2.png
+""")
 
 contribs = Split("""
 	Interface.nsh
@@ -30,6 +37,7 @@ def join(prefix, list):
 	return map(lambda x: '%s/%s' % (prefix, x), list)
 
 defenv.DistributeDocs(docs, path=target)
+defenv.DistributeDocs(join('../Modern UI/images',doc_images), path='%s/%s'%(target,'images'))
 path = 'Pages'
 defenv.DistributeContrib(join(path,pages), path='%s/%s'%(target,path))
 defenv.DistributeContrib(contribs, path=target)
