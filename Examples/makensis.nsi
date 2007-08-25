@@ -149,6 +149,8 @@ ${MementoSection} "NSIS Core Files (required)" SecCore
   File ..\Include\WinVer.nsh
   File ..\Include\x64.nsh
   File ..\Include\Memento.nsh
+  File ..\Include\LangFile.nsh
+  File ..\Include\InstallOptions.nsh
 
   SetOutPath $INSTDIR\Docs\StrFunc
   File ..\Docs\StrFunc\StrFunc.txt
@@ -342,6 +344,36 @@ ${MementoSection} "Modern User Interface" SecInterfacesModernUI
   SetOutPath $INSTDIR\Include
   File "..\Include\MUI.nsh"
 
+  SetOutPath "$INSTDIR\Contrib\Modern UI 2"
+  File "..\Contrib\Modern UI 2\Interface.nsh"
+  File "..\Contrib\Modern UI 2\Localization.nsh"
+  File "..\Contrib\Modern UI 2\MUI2.nsh"
+  File "..\Contrib\Modern UI 2\Pages.nsh"
+
+  SetOutPath "$INSTDIR\Contrib\Modern UI 2\Pages"
+  File "..\Contrib\Modern UI 2\Pages\Components.nsh"
+  File "..\Contrib\Modern UI 2\Pages\Directory.nsh"
+  File "..\Contrib\Modern UI 2\Pages\Finish.nsh"
+  File "..\Contrib\Modern UI 2\Pages\InstallFiles.nsh"
+  File "..\Contrib\Modern UI 2\Pages\License.nsh"
+  File "..\Contrib\Modern UI 2\Pages\StartMenu.nsh"
+  File "..\Contrib\Modern UI 2\Pages\UninstallConfirm.nsh"
+  File "..\Contrib\Modern UI 2\Pages\Welcome.nsh"
+
+  SetOutPath "$INSTDIR\Docs\Modern UI 2"
+  File "..\Docs\Modern UI 2\Readme.html"
+  File "..\Docs\Modern UI 2\License.txt"
+
+  SetOutPath "$INSTDIR\Docs\Modern UI 2\images"
+  File "..\Docs\Modern UI 2\images\header.gif"
+  File "..\Docs\Modern UI 2\images\screen1.png"
+  File "..\Docs\Modern UI 2\images\screen2.png"
+  File "..\Docs\Modern UI 2\images\open.gif"
+  File "..\Docs\Modern UI 2\images\closed.gif"
+
+  SetOutPath $INSTDIR\Include
+  File "..\Include\MUI2.nsh"
+
 ${MementoSectionEnd}
 
 ${MementoSection} "Default User Interface" SecInterfacesDefaultUI
@@ -404,8 +436,8 @@ ${MementoSection} "Language Files" SecLangFiles
 
   !insertmacro SectionFlagIsSet ${SecInterfacesModernUI} ${SF_SELECTED} mui nomui
   mui:
-    SetOutPath "$INSTDIR\Contrib\Modern UI\Language files"
-    File "..\Contrib\Modern UI\Language files\*.nsh"
+    SetOutPath "$INSTDIR\Contrib\Language files"
+    File "..\Contrib\Language files\*.nsh"
   nomui:
 
 ${MementoSectionEnd}
@@ -564,6 +596,8 @@ ${MementoSection} "nsDialogs" SecPluginsDialogs
   File ..\Examples\nsDialogs\welcome.nsi
   SetOutPath $INSTDIR\Include
   File ..\Include\nsDialogs.nsh
+  SetOutPath $INSTDIR\Docs\nsDialogs
+  File ..\Docs\nsDialogs\Readme.html
 ${MementoSectionEnd}
 
 ${MementoSection} "Math" SecPluginsMath
@@ -712,9 +746,8 @@ Section -post
 
       SetOutPath "$INSTDIR\Contrib\Language files"
       File "..\Contrib\Language files\English.nlf"
-      SetOutPath "$INSTDIR\Contrib\Modern UI\Language files"
-      File "..\Contrib\Modern UI\Language files\Default.nsh"
-      File "..\Contrib\Modern UI\Language files\English.nsh"
+      SetOutPath "$INSTDIR\Contrib\Language files"
+      File "..\Contrib\Language files\English.nsh"
 
     langfiles:
 
