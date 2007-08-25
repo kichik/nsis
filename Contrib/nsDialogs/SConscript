@@ -21,6 +21,10 @@ libs = Split("""
 	ole32
 """)
 
+docs = Split("""
+	Readme.html
+""")
+
 examples = Split("""
 	example.nsi
 	InstallOptions.nsi
@@ -33,5 +37,5 @@ includes = Split("""
 
 Import('BuildPlugin env')
 
-BuildPlugin(target, files, libs, examples, res = resources)
+BuildPlugin(target, files, libs, examples, docs, res = resources)
 env.DistributeInclude(includes)
