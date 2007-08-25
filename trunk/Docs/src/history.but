@@ -1,5 +1,59 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.30} 2.30
+
+\S1{v2.30-rl} Release Notes
+
+\b This release includes a beta of \L{../Docs/Modern UI 2/Readme.html}{Modern UI 2}. Please report any issues and suggestions.
+
+\b The format of Modern UI language files has been modified to better support external strings. Private language files should be converted (and submitted as a \W{http://sourceforge.net/tracker/?group_id=22049&atid=373087}{patch} in the spirit of open source).
+
+\S1{v2.30-cl} Changelog
+
+\S2{} Major Changes
+
+\b Fixed a bug introduced in version 2.29 that caused invalid $SMPROGRAMS value on Windows 98 (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1766268}{bug #1766268})
+
+\b \L{../Docs/Modern UI 2/Readme.html}{Modern UI 2 beta}: Simpler code, easier to extend and makes use of nsDialogs
+
+\S2{} Minor Changes
+
+\b Added InstallOptions.nsh with relevant usage macros, based on the old Modern UI macros
+
+\b Added LangFile.nsh allowing creation of langauge files that can be included with a single command with defaults for missing strings (when LANGFILE_DEFAULT is set)
+
+\b Added LB_ERR and CB_ERR to WinMessages.nsh (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1771644}{bug #1771644})
+
+\b Fixed \R{createdirectory}{CreateDirectory} logging (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1768584}{patch #1768584})
+
+\b Fixed escaping of quotes with $\\ in macros (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1713708}{bug #1713708})
+
+\b Minor documentation improvements
+
+\b \L{../Docs/Modern UI/Readme.html}{Modern UI 1.80}: New language files structure based on LangFile.nsh
+
+\b \L{../Docs/Modern UI/Readme.html}{Modern UI 1.80}: MUI_LANGDLL_DISPLAY now reads previous settings on silent installations as well
+
+\b \L{../Docs/Modern UI/Readme.html}{Modern UI 1.80}: Added MUI_CUSTOMFUNCTION_MOUSEOVERSECTION (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1762003}{patch #1762003})
+
+\S2{} Utilities and Plug-ins
+
+\b Various nsDialogs improvements including RTL support, more macros in nsDialogs.nsh and \L{../Docs/nsDialogs/Readme.html}{initial documentation}
+
+\S2{} Translations
+
+\b Catalan returns
+
+\b Danish corrections
+
+\b Slovak corrections (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1762627}{patch #1762627})
+
+\S2{} Build System
+
+\b More HPUX fixes (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1755148}{bug #1755148}, \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1753063}{bug #1753063}, \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1758873}{bug #1758873}, \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1758863}{patch #1758863})
+
+\b Ignore known failing tests by default on POSIX
+
 \H{v2.29} 2.29
 
 Released on July 14th, 2007
