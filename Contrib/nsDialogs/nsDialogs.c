@@ -132,6 +132,12 @@ void __declspec(dllexport) Create(HWND hwndParent, int string_size, char *variab
 
   g_dialog.hwDialog = CreateDialog(g_hInstance, MAKEINTRESOURCE(1), hwndParent, DialogProc);
 
+  if (g_dialog.hwDialog == NULL)
+  {
+    pushstring("error");
+    return;
+  }
+
   SetWindowPos(
     g_dialog.hwDialog,
     0,
