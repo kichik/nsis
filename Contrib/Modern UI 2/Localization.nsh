@@ -80,7 +80,7 @@ Localization
     
     ${if} $mui.LangDLL.RegistryLanguage != ""
       ;Set default langauge to registry language
-      StrCpy $LANGUAGE mui.LangDLL.RegistryLanguage
+      StrCpy $LANGUAGE $mui.LangDLL.RegistryLanguage
     ${endif}
 
   !endif
@@ -90,7 +90,7 @@ Localization
   !endif
 
   !ifndef MUI_LANGDLL_ALWAYSSHOW
-    ${if} $mui.LangDLL.RegistryLanguage != ""
+    ${if} $mui.LangDLL.RegistryLanguage == ""
   !endif
   
   ;Show langauge selection dialog
