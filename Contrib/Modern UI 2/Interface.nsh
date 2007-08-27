@@ -179,12 +179,11 @@ Var mui.Button.Back
 
 !macroend
 
-!macro MUI_GUIINIT_OUTERDIALOG
+!macro MUI_GUIINIT_OUTERDIALOG UNINSTALLER
 
   ;Initialize outer dialog (fonts & colors)
 
   ;Header
-
   GetDlgItem $mui.Header.Text $HWNDPARENT 1037
   CreateFont $mui.Header.Text.Font "$(^Font)" "$(^FontSize)" "700"
   SendMessage $mui.Header.Text ${WM_SETFONT} $mui.Header.Text.Font 0
@@ -198,6 +197,9 @@ Var mui.Button.Back
     SetCtlColors $mui.Header.Text "" "transparent"
     SetCtlColors $mui.Header.SubText "" "transparent"
   !endif
+  
+  ;Header image
+  !insertmacro MUI_HEADERIMAGE_INIT "${UNINSTALLER}"
 
   ;Header background
   GetDlgItem $mui.Header.Background $HWNDPARENT 1034
@@ -233,7 +235,7 @@ Var mui.Button.Back
 
   Function .onGUIInit
 
-    !insertmacro MUI_GUIINIT_OUTERDIALOG
+    !insertmacro MUI_GUIINIT_OUTERDIALOG ""
 
     !ifdef MUI_PAGE_FUNCTION_GUIINIT
       Call "${MUI_PAGE_FUNCTION_GUIINIT}"
@@ -251,7 +253,7 @@ Var mui.Button.Back
 
   Function un.onGUIInit  
 
-    !insertmacro MUI_GUIINIT_OUTERDIALOG
+    !insertmacro MUI_GUIINIT_OUTERDIALOG UN
     
     !ifdef MUI_UNPAGE_FUNCTION_GUIINIT
       Call "${MUI_UNPAGE_FUNCTION_GUIINIT}"
