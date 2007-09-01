@@ -17,8 +17,14 @@ Start Menu folder page
     Var mui.StartMenuPage.FolderList
 
     Var mui.StartMenuPage.Create
-    Var mui.StartMenuPage.RegistryLocation
     Var mui.StartMenuPage.ReturnValue
+  !endif
+
+  !ifdef MUI_STARTMENUPAGE_REGISTRY_ROOT & MUI_STARTMENUPAGE_REGISTRY_KEY & MUI_STARTMENUPAGE_REGISTRY_VALUENAME
+    !ifndef MUI_STARTMENUPAGE_REGISTRY_VARIABLES
+      !define MUI_STARTMENUPAGE_REGISTRY_VARIABLES
+        Var mui.StartMenuPage.RegistryLocation
+    !endif
   !endif
 
 !macroend
