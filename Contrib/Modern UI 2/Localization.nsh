@@ -10,12 +10,14 @@ Localization
 
 !macro MUI_LANGDLL_VARIABLES
 
-  !ifndef MUI_LANGDLL_VARIABLES
-    !define MUI_LANGDLL_VARIABLES
-    
-    ;/GLOBAL because the macros are included in a function
-    Var /GLOBAL mui.LangDLL.RegistryLanguage
-    
+  !ifdef MUI_LANGDLL_REGISTRY_ROOT & MUI_LANGDLL_REGISTRY_KEY & MUI_LANGDLL_REGISTRY_VALUENAME
+    !ifndef MUI_LANGDLL_REGISTRY_VARAIBLES
+      !define MUI_LANGDLL_REGISTRY_VARAIBLES
+
+      ;/GLOBAL because the macros are included in a function
+      Var /GLOBAL mui.LangDLL.RegistryLanguage
+
+    !endif
   !endif
 
 !macroend
