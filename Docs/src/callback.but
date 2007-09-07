@@ -189,6 +189,12 @@ Example:
 \c    MessageBox MB_OK|MB_ICONSTOP "Reboot failed. Please reboot manually." /SD IDOK
 \c  FunctionEnd
 
+\S3{unonselchange} un.onSelChange
+
+Called when the selection changes on the \R{pages}{component page}. Useful for using with \R{sectionsetflags}{SectionSetFlags} and \R{sectiongetflags}{SectionGetFlags}.
+
+Selection changes include both section selection and installation type change.
+
 \S3{unonuserabort} un.onUserAbort
 
 This callback is called when the user hits the 'cancel' button and the uninstall hasn't already failed. If this function calls Abort, the install will not be aborted.
