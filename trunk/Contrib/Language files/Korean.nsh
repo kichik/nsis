@@ -1,17 +1,16 @@
 ;Language: Korean (1042)
-;By linak linak@korea.com ( ~ V2.0 BETA3 )
-;By hardkoder@gmail.com(www.kipple.pe.kr) ( V2.0 BETA3 ~ ) (last update:2004/12/13)
+;By linak linak@korea.com ( ~ V2.0 BETA3 ) By kippler@gmail.com(www.kipple.pe.kr) ( V2.0 BETA3 ~ ) (last update:2007/09/05)
 
 !insertmacro LANGFILE "Korean" "Korean"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "$(^NameDA) 설치를 시작합니다."
-  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "이 프로그램은 당신의 컴퓨터에 $(^NameDA)(을)를 설치할 것입니다.\r\n\r\n설치를 시작하기 전 가능한 한 모든 프로그램을 종료하여 주시기 바랍니다. 이는 재부팅을 하지 않고서도 시스템 파일을 수정할 수 있게 해줍니다.\r\n\r\n$_CLICK"
+  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "이 프로그램은 당신의 컴퓨터에 $(^NameDA)(을)를 설치할 것입니다.$\r$\n$\r$\n설치를 시작하기 전 가능한 한 모든 프로그램을 종료하여 주시기 바랍니다. 이는 재부팅을 하지 않고서도 시스템 파일을 수정할 수 있게 해줍니다.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_UNWELCOMEPAGE
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "$(^NameDA) 제거를 시작합니다."
-  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "이 프로그램은 당신의 컴퓨터에서 $(^NameDA)(을)를 제거할 것입니다.\r\n\r\n제거를 시작하기 전에 $(^NameDA)(을)를 종료하여 주시기 바랍니다.\r\n\r\n$_CLICK"
+  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "이 프로그램은 당신의 컴퓨터에서 $(^NameDA)(을)를 제거할 것입니다.$\r$\n$\r$\n제거를 시작하기 전에 $(^NameDA)(을)를 종료하여 주시기 바랍니다.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
