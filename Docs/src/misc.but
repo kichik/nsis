@@ -67,7 +67,7 @@ Sets the error level of the installer or uninstaller to \e{error_level}. See \R{
 
 \S2{setregview} SetRegView
 
-\c \\<b\\>32\\</b\\>|64
+\c \\<b\\>32\\</b\\>|64|lastused
 
 Sets the registry view affected by \R{registry}{registry commands}. On Windows x64 there are two views. One for 32-bit applications and one for x64 applications. By default, 32-bit applications running on x64 systems under WOW64 have access only to the 32-bit view. Using \c{SetRegView 64} allows the installer to access keys in the x64 view of the registry.
 
