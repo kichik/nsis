@@ -240,7 +240,7 @@
 
       !ifdef LIBRARY_X64
 
-        SetRegView 32
+        SetRegView lastused
 
       !endif
 
@@ -685,7 +685,7 @@
 
         !ifdef LIBRARY_X64
 
-          SetRegView 32
+          SetRegView lastused
 
         !endif
 
@@ -695,7 +695,7 @@
 
     !ifdef LIBRARY_X64
 
-      SetRegView 32
+      SetRegView lastused
 
     !endif
 

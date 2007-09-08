@@ -108,7 +108,7 @@ The Windows temp directory could be located on any volume, so you cannot use thi
 
 \b Installs a DLL built for Windows x64.
 
-\b \\<b\\>Warning:\\</b\\> this resets \R{setregview}{RegSetView} and file system redirection.
+\b \\<b\\>Warning:\\</b\\> this resets file system redirection.
 
 \S2{} LIBRARY_SHELL_EXTENSION
 
