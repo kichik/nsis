@@ -262,6 +262,9 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
     mystrcat(state_language, g_tmp);
   }
 
+  // initialize status update (SetDetailsPrint) flag
+  g_exec_flags.status_update = 6;
+
   // set default language
   set_language();
 
@@ -1450,15 +1453,13 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
 #endif//NSIS_CONFIG_VISIBLE_SUPPORT
 
-int ui_st_updateflag=0x6;
-
 void NSISCALL update_status_text(int strtab, const char *text) {
   static char tmp[NSIS_MAX_STRLEN*2];
   LVITEM new_item;
   HWND linsthwnd = insthwnd;
   if (linsthwnd)
   {
-    int updateflag = ui_st_updateflag;
+    int updateflag = g_exec_flags.status_update;
     int tmplen;
 
     if (!(updateflag & 1))
