@@ -96,7 +96,7 @@ BOOL CALLBACK verProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
     }
 
 #ifdef NSIS_COMPRESS_WHOLE
-    if (ui_st_updateflag & 1)
+    if (g_exec_flags.status_update & 1)
     {
       wsprintf(bt, "... %d%%", percent);
       update_status_text(0, bt);
@@ -367,7 +367,7 @@ int NSISCALL _dodecomp(int offset, HANDLE hFileOut, char *outbuf, int outbuflen)
         u=(char*)g_inflate_stream.next_out - outbuffer;
 
         tc = GetTickCount();
-        if (ui_st_updateflag & 1 && (tc - ltc > 200 || !input_len))
+        if (g_exec_flags.status_update & 1 && (tc - ltc > 200 || !input_len))
         {
           wsprintf(progress, "... %d%%", MulDiv(input_len_total - input_len, 100, input_len_total));
           update_status_text(0, progress);

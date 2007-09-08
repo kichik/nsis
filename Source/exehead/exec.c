@@ -42,6 +42,7 @@ static stack_t *g_st;
 #endif
 
 exec_flags g_exec_flags;
+exec_flags g_exec_flags_last_used;
 
 struct {
   exec_flags *flags;
@@ -258,23 +259,8 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         return ExecuteCodeSegment(v,NULL);
       }
     case EW_UPDATETEXT:
-    {
-      static int old_st_updateflag=6;
-      if (parm2)
-      {
-        ui_st_updateflag=old_st_updateflag;
-      }
-      else if (parm1)
-      {
-        old_st_updateflag=ui_st_updateflag;
-        ui_st_updateflag=parm1;
-      }
-      else
-      {
-        log_printf2("detailprint: %s",GetStringFromParm(0x00));
-        update_status_text(parm0,0);
-      }
-    }
+      log_printf2("detailprint: %s",GetStringFromParm(0x00));
+      update_status_text(parm0,0);
     break;
     case EW_SLEEP:
       {
@@ -290,7 +276,15 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     break;
 #endif//NSIS_CONFIG_VISIBLE_SUPPORT
     case EW_SETFLAG:
-      FIELDN(g_exec_flags,parm0)=GetIntFromParm(1);
+      if (!parm2)
+      {
+        FIELDN(g_exec_flags_last_used,parm0)=FIELDN(g_exec_flags,parm0);
+        FIELDN(g_exec_flags,parm0)=GetIntFromParm(1);
+      }
+      else
+      {
+        FIELDN(g_exec_flags,parm0)=FIELDN(g_exec_flags_last_used,parm0);
+      }
     break;
     case EW_IFFLAG:
     {
@@ -513,9 +507,9 @@ static int NSISCALL ExecuteEntry(entry *entry_)
 
         update_status_text(LANG_EXTRACT,buf3);
         {
-          ui_st_updateflag++;
+          g_exec_flags.status_update++;
           ret=GetCompressedDataFromDataBlock(parm2,hOut);
-          ui_st_updateflag--;
+          g_exec_flags.status_update--;
         }
 
         log_printf3("File: wrote %d to \"%s\"",ret,buf0);
