@@ -3573,7 +3573,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.which=EW_SETFLAG;
       ent.offsets[0]=FLAG_OFFSET(alter_reg_view);
       // "64" results in setting the flag to 1 which alters the view
-      int k=line.gettoken_enum(1,"32\0" "64\0lastused");
+      int k=line.gettoken_enum(1,"32\0" "64\0lastused\0");
       if (k<0) PRINTHELP()
       if (k == 0) // 32
         ent.offsets[1]=add_intstring(0);
