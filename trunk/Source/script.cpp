@@ -4554,24 +4554,30 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
     return add_entry(&ent);
     case TOK_SETDETAILSPRINT:
-      ent.which=EW_UPDATETEXT;
-      ent.offsets[0] = 0;
-      ent.offsets[1] = line.gettoken_enum(1,"lastused\0listonly\0textonly\0both\0none\0");
-      if (ent.offsets[1] < 0) PRINTHELP();
-      switch (ent.offsets[1]) {
-        case 0:
-          ent.offsets[2]=1;
-        break;
-        case 1:
-        case 2:
-        case 3:
-          ent.offsets[1]<<=1;
-        break;
-        case 4:
-          ent.offsets[1]=16;
-        break;
+    {
+      ent.which=EW_SETFLAG;
+      ent.offsets[0]=FLAG_OFFSET(status_update);
+      int k=line.gettoken_enum(1,"lastused\0listonly\0textonly\0both\0none\0");
+      if (k<0) PRINTHELP()
+      if (k == 0)
+      {
+        ent.offsets[2]=1;
+      }
+      else
+      {
+        if (k == 4)
+        {
+          k = 16;
+        }
+        else
+        {
+          k <<= 1;
+        }
+
+        ent.offsets[1]=add_intstring(k);
       }
       SCRIPT_MSG("SetDetailsPrint: %s\n",line.gettoken_str(1));
+    }
     return add_entry(&ent);
     case TOK_SETAUTOCLOSE:
     {
