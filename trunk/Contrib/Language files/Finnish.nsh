@@ -15,10 +15,6 @@
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Tämä velho auttaa sinut läpi $(^NameDA) -ohjelmiston poistamisen.$\r$\n$\r$\nEnnen poisto-ohjelman aloitusta, varmista ettei $(^NameDA) ole käynnissä.$\r$\n$\r$\n$_CLICK"
 !endif
 
-!ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
-  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Valmis"
-!endif
-
 !ifdef MUI_LICENSEPAGE
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Lisenssisopimus"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Lue lisenssiehdot tarkasti ennen ohjelman $(^NameDA) asentamista."
@@ -103,6 +99,7 @@
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Käynnistän koneen myöhemmin uudelleen"
   ${LangFileString} MUI_TEXT_FINISH_RUN "Käynnistä $(^NameDA)"
   ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "Näytä LueMinut"
+  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Valmis"  
 !endif
 
 !ifdef MUI_STARTMENUPAGE

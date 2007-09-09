@@ -15,10 +15,6 @@
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Aceasta aplicatie va elimina produsului $(^NameDA).$\r$\n$\r$\nEste recomandat sa inchideti toate aplicatiile inainte de inceperea procesului de eliminare. Aceasta va poate asigura un proces de eliminare fara erori sau situatii neprevazute.$\r$\n$\r$\n$_CLICK"
 !endif
 
-!ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
-  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Terminare"
-!endif
-
 !ifdef MUI_LICENSEPAGE
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Contract de licenta"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Cititi cu atentie termenii contractului de licenta inainte de a instala $(^NameDA)."
@@ -103,6 +99,7 @@
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Repornesc eu mai tarziu"
   ${LangFileString} MUI_TEXT_FINISH_RUN "Executare $(^NameDA)"
   ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "Afisare fisierul cu informatii."
+  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Terminare"  
 !endif
 
 !ifdef MUI_STARTMENUPAGE

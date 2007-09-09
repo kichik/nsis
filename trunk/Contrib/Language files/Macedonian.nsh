@@ -13,10 +13,6 @@
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Овој програм ќе ве води низ деинсталацијата на $(^NameDA).$\r$\n$\r$\nПред да ја почнете деинсталацијата на $(^NameDA) проверете дали е исклучена програмата.$\r$\n$\r$\n$_CLICK"
 !endif
 
-!ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
-  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Крај"
-!endif
-
 !ifdef MUI_LICENSEPAGE
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Лиценцен Договор"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Ве молиме проверете ги лиценцните услови пред да го инсталирате $(^NameDA)."
@@ -101,6 +97,7 @@
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Ако сакате да го рестартирате подоцна"
   ${LangFileString} MUI_TEXT_FINISH_RUN "Пок&рени го $(^NameDA)"
   ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "Отвор&и 'Прочитај Ме'"
+  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Крај"  
 !endif
 
 !ifdef MUI_STARTMENUPAGE

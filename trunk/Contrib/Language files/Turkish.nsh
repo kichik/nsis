@@ -14,10 +14,6 @@
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Bu sihirbaz size $(^NameDA) programýnýn kadýrýlýmý boyunca rehberlik edecektir.$\r$\n$\r$\nKaldýrým iþlemeni baþlatmadan önce çalýþan diðer programlari kapatmanýzý öneririz. Böylece bilgisayarýnýzý yeniden baþlatmadan bazý sistem dosyalarý sorunsuz kaldýrýlabilir.$\r$\n$\r$\n$_CLICK"
 !endif
 
-!ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
-  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Bitir"
-!endif
-
 !ifdef MUI_LICENSEPAGE
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Lisans Sözleþmesi"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Lütfen $(^NameDA) programýný kurmadan önce sözleþmeyi okuyunuz."
@@ -102,6 +98,7 @@
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Bilgisayarýmý daha sonra baþlatacaðým."
   ${LangFileString} MUI_TEXT_FINISH_RUN "$(^NameDA) programýný çalýþtýr"
   ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "beni oku/readme dosyasýný &göster"
+  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Bitir"  
 !endif
 
 !ifdef MUI_STARTMENUPAGE

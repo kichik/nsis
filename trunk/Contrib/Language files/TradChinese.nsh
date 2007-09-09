@@ -14,10 +14,6 @@
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "這個精靈將全程指引你 $(^NameDA) 的解除安裝進程。$\r$\n$\r$\n在開始解除安裝之前，確認 $(^NameDA) 並未執行當中。$\r$\n$\r$\n$_CLICK"
 !endif
 
-!ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
-  ${LangFileString} MUI_BUTTONTEXT_FINISH "完成(&F)"
-!endif
-
 !ifdef MUI_LICENSEPAGE
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "授權協議"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "在安裝 $(^NameDA) 之前，請檢閱授權條款。"
@@ -102,6 +98,7 @@
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "否，我稍後再自行重新啟動(&N)"
   ${LangFileString} MUI_TEXT_FINISH_RUN "執行 $(^NameDA)(&R)"
   ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "顯示「讀我檔案」(&M)"
+  ${LangFileString} MUI_BUTTONTEXT_FINISH "完成(&F)"  
 !endif
 
 !ifdef MUI_STARTMENUPAGE

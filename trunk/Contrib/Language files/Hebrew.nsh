@@ -13,10 +13,6 @@
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "אשף זה ינחה אתכם במהלך ההסרה של $(^NameDA).$\r$\n$\r$\nמומלץ לסגור כל תוכנית אחרת לפני התחלת ההסרה. פעולה זו תאפשר לאשף לעדכן קבצי מערכת ללא איתחול המחשב.$\r$\n$\r$\n$_CLICK"
 !endif
 
-!ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
-  ${LangFileString} MUI_BUTTONTEXT_FINISH "&סיים"
-!endif
-
 !ifdef MUI_LICENSEPAGE
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "הסכם רישוי"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "נא עיין בתנאי הסכם הרישוי לפני התקנת $(^NameDA)."
@@ -101,6 +97,7 @@
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "ברצוני לאתחל ידנית מאוחר יותר"
   ${LangFileString} MUI_TEXT_FINISH_RUN "&הרץ את $(^NameDA)"
   ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "&הצג מסמך 'קרא אותי'"
+  ${LangFileString} MUI_BUTTONTEXT_FINISH "&סיים"  
 !endif
 
 !ifdef MUI_STARTMENUPAGE

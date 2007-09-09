@@ -15,10 +15,6 @@
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "这个向导将全程指引你“$(^NameDA)”的卸载进程。$\r$\n$\r$\n在开始卸载之前，确认“$(^NameDA)”并未运行当中。$\r$\n$\r$\n$_CLICK"
 !endif
 
-!ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
-  ${LangFileString} MUI_BUTTONTEXT_FINISH "完成(&F)"
-!endif
-
 !ifdef MUI_LICENSEPAGE
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "许可证协议"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "在安装“$(^NameDA)”之前，请阅读授权协议。"
@@ -103,6 +99,7 @@
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "否，我稍后再自行重新启动(&N)"
   ${LangFileString} MUI_TEXT_FINISH_RUN "运行 $(^NameDA)(&R)"
   ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "显示“自述文件”(&M)"
+  ${LangFileString} MUI_BUTTONTEXT_FINISH "完成(&F)"  
 !endif
 
 !ifdef MUI_STARTMENUPAGE

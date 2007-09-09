@@ -13,10 +13,6 @@
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Ο οδηγός αυτός θα σας καθοδηγήσει κατά τη διάρκεια της απεγκατάστασης του '$(^NameDA)'.$\r$\n$\r$\nΠριν ξεκινήσετε την απεγκατάσταση, βεβαιωθείτε ότι το '$(^NameDA)' δεν τρέχει.$\r$\n$\r$\n$_CLICK"
 !endif
 
-!ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
-  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Τέλος"
-!endif
-
 !ifdef MUI_LICENSEPAGE
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Συμφωνία Άδειας Χρήσης"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Ελέγξτε την άδεια χρήσης πριν εγκαταστήσετε το '$(^NameDA)'."
@@ -101,6 +97,7 @@
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Θα επανεκκινήσω τον υπολογιστή μου αργότερα"
   ${LangFileString} MUI_TEXT_FINISH_RUN "&Εκτέλεση του '$(^NameDA)'"
   ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "Εμφάνιση του &αρχείου Readme"
+  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Τέλος"  
 !endif
 
 !ifdef MUI_STARTMENUPAGE

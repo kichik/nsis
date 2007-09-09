@@ -13,10 +13,6 @@
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Aquest auxiliar us guiarà a través de la desinstal·lació de l'aplicació $(^NameDA).$\r$\n\rAbans de començar la desinstal·lació, assegureu-vos que l'aplicació $(^NameDA) no s'està executant.$\r$\n$\r$\n$_CLICK"
 !endif
 
-!ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
-  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Finalitza"
-!endif
-
 !ifdef MUI_LICENSEPAGE
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Acord de Llicència"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Reviseu els termes de la llicència abans d'instal·lar l'aplicació $(^NameDA)."
@@ -101,6 +97,7 @@
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Reinicia més tard manualment"
   ${LangFileString} MUI_TEXT_FINISH_RUN "Executa l'aplicació $(^NameDA)"
   ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "&Mostra el Llegeix-me"
+  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Finalitza"  
 !endif
 
 !ifdef MUI_STARTMENUPAGE
