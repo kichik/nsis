@@ -13,10 +13,6 @@
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Ovaj æe Vas vodiè provesti kroz postupak uklanjanja programa $(^NameDA).$\r$\n$\r$\nPrije samog poèetka, molim zatvorite program $(^NameDA) ukoliko je sluèajno otvoren.$\r$\n$\r$\n$_CLICK"
 !endif
 
-!ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
-  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Kraj"
-!endif
-
 !ifdef MUI_LICENSEPAGE
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Licencni ugovor"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Molim proèitajte licencni ugovor $(^NameDA) prije instalacije programa."
@@ -101,6 +97,7 @@
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Ponovno æu pokrenuti raèunar kasnije"
   ${LangFileString} MUI_TEXT_FINISH_RUN "&Pokreni program $(^NameDA)"
   ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "Prikaži datoteku &Readme"
+  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Kraj"  
 !endif
 
 !ifdef MUI_STARTMENUPAGE

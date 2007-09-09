@@ -13,10 +13,6 @@
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Bu dastur $(^NameDA)ni sizning kompyuteringizdan o'chiradi.$\r$\n$\r$\nO'chirishdan oldin $(^NameDA) dasturni ishlamayotganligini aniqlang.$\r$\n$\r$\n$_CLICK"
 !endif
 
-!ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
-  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Tayor"
-!endif
-
 !ifdef MUI_LICENSEPAGE
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Lisenzion kelishuv"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "$(^NameDA) dasturini o'rnatishdan oldin lisenzion kelishuv bilan tanishib chiking."
@@ -101,6 +97,7 @@
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Yo'q, bu ishni keyinroq bajaraman"
   ${LangFileString} MUI_TEXT_FINISH_RUN "$(^NameDA) &Ishga tushirilsin"
   ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "&Readme fayli ko'rsatilsin"
+  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Tayor"  
 !endif
 
 !ifdef MUI_STARTMENUPAGE

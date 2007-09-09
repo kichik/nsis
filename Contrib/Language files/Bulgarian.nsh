@@ -16,10 +16,6 @@
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Той ще ви помогне да изтриете $(^NameDA) от вашия компютър.$\r$\n$\r$\nПреди да продължите, уверете се че $(^NameDA) не е стартирана в момента.$\r$\n$\r$\n$_CLICK"
 !endif
 
-!ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
-  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Край"
-!endif
-
 !ifdef MUI_LICENSEPAGE
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Лицензно споразумение"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Моля запознайте се Лицензното споразумение преди да продължите."
@@ -104,6 +100,7 @@
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Не, ще рестартирам по-късно."
   ${LangFileString} MUI_TEXT_FINISH_RUN "Стартирай $(^NameDA)."
   ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "Покажи файла $\"ReadMe$\"."
+  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Край"  
 !endif
 
 !ifdef MUI_STARTMENUPAGE

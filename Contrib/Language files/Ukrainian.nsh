@@ -14,10 +14,6 @@
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Даний майстер доможе видалити $(^NameDA).$\r$\n$\r$\nПеред початком видалення, перевірте, чи не запущено $(^NameDA).$\r$\n$\r$\n$_CLICK"
 !endif
 
-!ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
-  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Кінець"
-!endif
-
 !ifdef MUI_LICENSEPAGE
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Ліцензійна Угода"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Будь-ласка перегляньте ліцензію перед встановленням $(^NameDA)."
@@ -102,6 +98,7 @@
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Я хочу перезавантажитися власноруч пізніше"
   ${LangFileString} MUI_TEXT_FINISH_RUN "&Запустити $(^NameDA)"
   ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "&Показати інформацію про програму"
+  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Кінець"  
 !endif
 
 !ifdef MUI_STARTMENUPAGE

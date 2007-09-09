@@ -13,10 +13,6 @@
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT " «Ì‰ »—‰«„Â »—«Ì Õ–› $(^NameDA) »Â ‘„« ﬂ„ﬂ „Ìﬂ‰œ.$\r$\n$\r$\nﬁ»· «“ Õ–›  $(^NameDA) „ÿ„∆‰ ‘ÊÌœ «Ì‰ »—‰«„Â œ— Õ«· «Ã—« ‰»«‘œ.$\r$\n$\r$\n$_CLICK"
 !endif
 
-!ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
-  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Å«Ì«‰"
-!endif
-
 !ifdef MUI_LICENSEPAGE
   ${LangFileString} MUI_TEXT_LICENSE_TITLE " Ê«›ﬁ‰«„Â ‰’»"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "·ÿ›« ÅÌ‘ «“ ‰’» $(^NameDA) „›«œ  Ê«›ﬁ‰«„Â —« „—Ê— ﬂ‰Ìœ."
@@ -101,6 +97,7 @@
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "„‰ ŒÊœ„ «Ì‰ ﬂ«— —« «‰Ã«„ ŒÊ«Â„ œ«œ."
   ${LangFileString} MUI_TEXT_FINISH_RUN "&«Ã—«Ì  $(^NameDA)"
   ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "&‰„«Ì‘ ›«Ì·  Ê÷ÌÕ« "
+  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Å«Ì«‰"  
 !endif
 
 !ifdef MUI_STARTMENUPAGE

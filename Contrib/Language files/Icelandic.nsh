@@ -13,10 +13,6 @@
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Þessi hjálp mun leiða þig í gegnum fjarlæginguna á $(^NameDA).$\r$\n$\r$\nÁður en fjarlæging hefst skal ganga úr skugga um að $(^NameDA) sé ekki opið.$\r$\n$\r$\n$_CLICK"
 !endif
 
-!ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
-  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Ljúka"
-!endif
-
 !ifdef MUI_LICENSEPAGE
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Notandaleyfissamningur"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Vinsamlegast skoðaðu Notandaleyfissamninginn vel áður en uppsetning á $(^NameDA) hefst."
@@ -101,6 +97,7 @@
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Ég vil endurræsa seinna"
   ${LangFileString} MUI_TEXT_FINISH_RUN "&Keyra $(^NameDA)"
   ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "&Skoða LestuMig"
+  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Ljúka"  
 !endif
 
 !ifdef MUI_STARTMENUPAGE

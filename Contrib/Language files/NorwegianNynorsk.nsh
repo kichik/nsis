@@ -13,10 +13,6 @@
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Denne vegvisaren vil leie deg gjennom avinstalleringen av $(^NameDA).\n\nFør du fortsetter må du forsikre deg om at $(^NameDA) ikkje er opent.\n\n$_CLICK"
 !endif
 
-!ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
-  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Fullfør"
-!endif
-
 !ifdef MUI_LICENSEPAGE
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Lisensavtale"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Les gjennom lisensavtalen før du startar installeringa av $(^NameDA)."
@@ -101,6 +97,7 @@
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Eg vil starta på nytt seinare"
   ${LangFileString} MUI_TEXT_FINISH_RUN "&Køyr $(^NameDA)"
   ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "&Syn lesmeg"
+  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Fullfør"  
 !endif
 
 !ifdef MUI_STARTMENUPAGE

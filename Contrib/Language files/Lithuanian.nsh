@@ -13,10 +13,6 @@
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Ði programa jums padës lengvai iðtrinti $(^NameDA).$\r$\n$\r$\nPrieð pradedant pasitikrinkite kad $(^NameDA) yra iðjungta.$\r$\n$\r$\n"
 !endif
 
-!ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
-  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Baigti"
-!endif
-
 !ifdef MUI_LICENSEPAGE
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Naudojimo sutartis"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Praðome perskaityti sutartá prieð ádiegdami $(^NameDA)."
@@ -101,6 +97,7 @@
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Að noriu perkrauti veliau pats"
   ${LangFileString} MUI_TEXT_FINISH_RUN "&Leisti $(^NameDA)"
   ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "&Parodyti dokumentacijà"
+  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Baigti"  
 !endif
 
 !ifdef MUI_STARTMENUPAGE

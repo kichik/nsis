@@ -13,10 +13,6 @@
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "$(^NameDA) устгацын илбэчинг та шууд ашиглаж болно.$\r$\n$\r$\nУстгахын ємнє $(^NameDA) нь ажиллаагїй эсэхийг шалга.$\r$\n$\r$\n$_CLICK"
 !endif
 
-!ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
-  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Тєгсгєл"
-!endif
-
 !ifdef MUI_LICENSEPAGE
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Лицензийн зєвшєєрєл"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "$(^NameDA)-ыг суулгахынхаа ємнє зєвшилцлийн зїйлїїдийг уншина уу."
@@ -101,6 +97,7 @@
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Би дараа д.ачаалахыг хїсэж байна."
   ${LangFileString} MUI_TEXT_FINISH_RUN "$(^NameDA) ажиллуулах"
   ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "&Readme харуулах"
+  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Тєгсгєл"  
 !endif
 
 !ifdef MUI_STARTMENUPAGE

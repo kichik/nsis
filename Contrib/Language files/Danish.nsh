@@ -13,10 +13,6 @@
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Denne afinstallationsguide vil hjælpe dig gennem afinstallationen af $(^NameDA).$\r$\n$\r$\nFør start af afinstallationen skal du være sikker på at $(^NameDA) ikke kører.$\r$\n$\r$\n$_CLICK"
 !endif
 
-!ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
-  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Afslut"
-!endif
-
 !ifdef MUI_LICENSEPAGE
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Licensaftale"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Læs venligst licensaftalen før du installerer $(^NameDA)."
@@ -101,6 +97,7 @@
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Jeg genstarter selv på et andet tidspunkt"
   ${LangFileString} MUI_TEXT_FINISH_RUN "&Start $(^NameDA)"
   ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "&Vis vigtig information"
+  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Afslut"  
 !endif
 
 !ifdef MUI_STARTMENUPAGE

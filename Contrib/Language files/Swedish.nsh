@@ -14,10 +14,6 @@
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Denna guide tar dig igenom avinstallationen av $(^NameDA).$\r$\n$\r$\nInnan du startar avinstallationen, försäkra dig om att $(^NameDA) inte körs.$\r$\n$\r$\n$_CLICK"
 !endif
 
-!ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
-  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Slutför"
-!endif
-
 !ifdef MUI_LICENSEPAGE
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Licensavtal"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Var vänlig läs igenom licensvillkoren innan du installerar $(^NameDA)."
@@ -102,6 +98,7 @@
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Jag vill starta om själv senare"
   ${LangFileString} MUI_TEXT_FINISH_RUN "&Kör $(^NameDA)"
   ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "&Visa Readme-filen"
+  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Slutför"  
 !endif
 
 !ifdef MUI_STARTMENUPAGE

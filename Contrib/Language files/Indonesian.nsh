@@ -13,10 +13,6 @@
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Uninstall Wizard akan membantu anda pada proses uninstalasi $(^NameDA).$\r$\n$\r$\nSebelum memulai uninstalasi, pastikan dulu $(^NameDA) tidak sedang berjalan.$\r$\n$\r$\n$_CLICK"
 !endif
 
-!ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
-  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Selesai"
-!endif
-
 !ifdef MUI_LICENSEPAGE
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Perihal Lisensi"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Silahkan membaca lisensi berikut sebelum menginstall $(^NameDA)."
@@ -101,6 +97,7 @@
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Reboot nanti saja"
   ${LangFileString} MUI_TEXT_FINISH_RUN "&Jalankan $(^NameDA)"
   ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "&Buka file Readme"
+  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Selesai"  
 !endif
 
 !ifdef MUI_STARTMENUPAGE

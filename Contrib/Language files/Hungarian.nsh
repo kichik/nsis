@@ -14,10 +14,6 @@
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Ez a varázsló segíti a(z) $(^NameDA) eltávolításában.$\r$\n$\r$\nMielõtt elkezdi az eltávilítást gyõzõdjön meg arról, hogy a(z) $(^NameDA) nem fut.$\r$\n$\r$\n$_CLICK"
 !endif
 
-!ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
-  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Befejezés"
-!endif
-
 !ifdef MUI_LICENSEPAGE
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Licencszerzõdés"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "A(z) $(^NameDA) telepítése elõtt tekintse át a szerzõdés feltételeit."
@@ -102,6 +98,7 @@
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Késõbb fogom újraindítani"
   ${LangFileString} MUI_TEXT_FINISH_RUN "$(^NameDA) futtatása"
   ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "OlvassEl fájl megjelenítése"
+  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Befejezés"  
 !endif
 
 !ifdef MUI_STARTMENUPAGE

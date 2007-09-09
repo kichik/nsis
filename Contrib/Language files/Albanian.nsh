@@ -13,10 +13,6 @@
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Ky do t'ju udhëheqë gjatë çinstalimit të $(^NameDA).$\r$\n$\r$\nPara nisjes së çinstalimit, sigurohuni që $(^NameDA) nuk është duke xhiruar.$\r$\n$\r$\n$_CLICK"
 !endif
 
-!ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
-  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Përfundo"
-!endif
-
 !ifdef MUI_LICENSEPAGE
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Marrëveshje License"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Ju lutem shqyrtoni kushtet e licensës përpara instalimit të $(^NameDA)."
@@ -101,6 +97,7 @@
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Dua ta rinis dorazi më vonë"
   ${LangFileString} MUI_TEXT_FINISH_RUN "&Nis $(^NameDA)"
   ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "&Shfaq Readme"
+  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Përfundo"  
 !endif
 
 !ifdef MUI_STARTMENUPAGE

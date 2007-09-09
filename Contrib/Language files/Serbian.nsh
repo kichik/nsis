@@ -13,10 +13,6 @@
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Бићете вођени кроз процес деинсталације програма $(^NameDA).$\r$\n$\r$\nПре почетка деинсталације, уверите се да је програм $(^NameDA) искључен. $_CLICK"
 !endif
 
-!ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
-  ${LangFileString} MUI_BUTTONTEXT_FINISH "Крај"
-!endif
-
 !ifdef MUI_LICENSEPAGE
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Договор о праву коришћења"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Пажљиво прочитајте договор о праву коришћења пре инсталације програма $(^NameDA)."
@@ -101,6 +97,7 @@
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Без поновног покретања"
   ${LangFileString} MUI_TEXT_FINISH_RUN "Покрени програм $(^NameDA)"
   ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "Прикажи ПрочитајМе фајл"
+  ${LangFileString} MUI_BUTTONTEXT_FINISH "Крај"  
 !endif
 
 !ifdef MUI_STARTMENUPAGE

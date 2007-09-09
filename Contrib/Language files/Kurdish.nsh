@@ -14,10 +14,6 @@
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Ev sêrbaz ji bo rakirina bernameya $(^NameDA) dê alîkariya te bike.$\r$\n$\r$\nBerî tu dest bi rakirina bernameyê bikî, bernameyên vekirî hemûyan bigire. Bi vî rengî dû re tu mecbûr namînî ku komputera xwe bigirî û ji nû ve veki.$\r$\n$\r$\n$_CLICK"
 !endif
 
-!ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
-  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Biqedîne"
-!endif
-
 !ifdef MUI_LICENSEPAGE
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Peymana Lîsansê"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Ji kerema xwe re berî tu bernameya $(^NameDA) saz bikî, peymana lîsansê bixwîne."
@@ -102,6 +98,7 @@
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Ezê paþê ji nû ve vekim."
   ${LangFileString} MUI_TEXT_FINISH_RUN "Bernameya $(^NameDA) bixebitîne"
   ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "Dosiya min bixwîne/readme &nîþan bide"
+  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Biqedîne"  
 !endif
 
 !ifdef MUI_STARTMENUPAGE

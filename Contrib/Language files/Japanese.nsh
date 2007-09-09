@@ -14,10 +14,6 @@
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "このウィザードは、$(^NameDA)のアンインストールをガイドしていきます。\r\n\r\nアンインストールを開始する前に、$(^NameDA)が起動していないことを確認して下さい。\r\n\r\n$_CLICK"
 !endif
 
-!ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
-  ${LangFileString} MUI_BUTTONTEXT_FINISH "完了(&F)"
-!endif
-
 !ifdef MUI_LICENSEPAGE
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "ライセンス契約書"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "$(^NameDA)をインストールする前に、ライセンス条件を確認してください。"
@@ -102,6 +98,7 @@
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "後で手動で再起動する"
   ${LangFileString} MUI_TEXT_FINISH_RUN "$(^NameDA)を実行(&R)"
   ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "Readme を表示する(&S)"
+  ${LangFileString} MUI_BUTTONTEXT_FINISH "完了(&F)"  
 !endif
 
 !ifdef MUI_STARTMENUPAGE
