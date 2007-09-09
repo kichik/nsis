@@ -13,10 +13,6 @@
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "ตัวติดตั้งอัติโนมัตินี้จะนำคุณไปสู่การยกเลิกการติดตั้งของ $(^NameDA).$\r$\n$\r$\nการจะเริ่มการยกเลิกการติดตั้งนี้, โปรดตรวจสอบว่า $(^NameDA) ไม่ได้ใช้อยู่$\r$\n$\r$\n$_CLICK"
 !endif
 
-!ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
-  ${LangFileString} MUI_BUTTONTEXT_FINISH "&เสร็จสิ้น"
-!endif
-
 !ifdef MUI_LICENSEPAGE
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "ข้อตกลงเรื่องลิขสิทธิ์"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "โปรดอ่านทวนลิขสิทธิ์ในหัวข้อต่างๆอีกครั้งก่อนที่คุณจะทำการติดตั้ง $(^NameDA)."
@@ -101,6 +97,7 @@
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "ฉันต้องการ รีบูทด้วยตนเอง ทีหลัง"
   ${LangFileString} MUI_TEXT_FINISH_RUN "&รัน $(^NameDA)"
   ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "&แสดงรายละเอียด"
+  ${LangFileString} MUI_BUTTONTEXT_FINISH "&เสร็จสิ้น"  
 !endif
 
 !ifdef MUI_STARTMENUPAGE

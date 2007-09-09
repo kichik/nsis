@@ -14,10 +14,6 @@
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Ðis vednis jums palîdzçs veikt '$(^NameDA)' atinstalçðanu.$\r$\n$\r$\nPirms sâkt atinstalçðanas procesu, pârliecinieties, vai '$(^NameDA)' paðlaik nedarbojas.$\r$\n$\r$\n$_CLICK"
 !endif
 
-!ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
-  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Pabeigt"
-!endif
-
 !ifdef MUI_LICENSEPAGE
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Licences lîgums"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Lûdzu izlasiet licences lîgumu pirms '$(^NameDA)' uzstâdîðanas."
@@ -102,6 +98,7 @@
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Es vçlos pârstartçt pats vçlâk"
   ${LangFileString} MUI_TEXT_FINISH_RUN "P&alaist '$(^NameDA)'"
   ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "Pa&râdît LasiMani failu"
+  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Pabeigt"  
 !endif
 
 !ifdef MUI_STARTMENUPAGE

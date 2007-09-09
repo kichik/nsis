@@ -15,10 +15,6 @@
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Questa procedura vi guiderà nella disinstallazione di $(^NameDA).$\r$\n$\r$\nPrima di iniziare la disinstallazione, assicuratevi che $(^Name) non sia in esecuzione.$\r$\n$\r$\n$_CLICK"
 !endif
 
-!ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
-  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Fine"
-!endif
-
 !ifdef MUI_LICENSEPAGE
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Licenza d'uso"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Prego leggere le condizioni della licenza d'uso prima di installare $(^NameDA)."
@@ -103,6 +99,7 @@
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Preferisco riavviarlo manualmente più tardi"
   ${LangFileString} MUI_TEXT_FINISH_RUN "Esegui $(^NameDA)"
   ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "Mostra il file Readme"
+  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Fine"  
 !endif
 
 !ifdef MUI_STARTMENUPAGE

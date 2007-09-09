@@ -13,10 +13,6 @@
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Desen Assistent begleet dech duech d'Desinstallatioun vun $(^NameDA).$\r$\n$\r$\nW.e.g. maach $(^NameDA) zu, ierts de mat der Desinstallatioun ufänks.$\r$\n$\r$\n$_CLICK"
 !endif
 
-!ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
-  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Färdeg man"
-!endif
-
 !ifdef MUI_LICENSEPAGE
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Lizenzofkommes"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "W.e.g. d'Lizenzoofkommes liesen, ierts de mat der Installatioun weiderfiers."
@@ -101,6 +97,7 @@
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Spéider manuell néi starten"
   ${LangFileString} MUI_TEXT_FINISH_RUN "$(^NameDA) op maan"
   ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "Liesmech op maan"
+  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Färdeg man"  
 !endif
 
 !ifdef MUI_STARTMENUPAGE

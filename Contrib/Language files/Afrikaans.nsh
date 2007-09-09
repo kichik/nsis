@@ -13,10 +13,6 @@
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Hierdie slimmerd lei mens deur die verwydering van $(^NameDA).$\r$\n$\r$\nVoor die verwydering begin word, maak seker dat $(^NameDA) nie loop nie.$\r$\n$\r$\n$_CLICK"
 !endif
 
-!ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
-  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Voltooi"
-!endif
-
 !ifdef MUI_LICENSEPAGE
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Lisensie-ooreenkoms"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Lees die lisensie-ooreenkoms voordat u $(^NameDA) installeer."
@@ -101,6 +97,7 @@
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Ek wil later self oorbegin"
   ${LangFileString} MUI_TEXT_FINISH_RUN "&Laat loop $(^NameDA)"
   ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "&Wys Leesmy-lêer"
+  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Voltooi"  
 !endif
 
 !ifdef MUI_STARTMENUPAGE

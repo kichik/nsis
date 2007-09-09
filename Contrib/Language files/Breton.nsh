@@ -13,10 +13,6 @@
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Sturiet e viot gant ar skoazeller-mañ a-benn distaliañ $(^NameDA).$\r$\n$\r$\nEn em asurit n'eo ket lañset $(^NameDA) a-raok mont pelloc'h gant an distaliañ.$\r$\n$\r$\n$_CLICK"
 !endif
 
-!ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
-  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Echuiñ"
-!endif
-
 !ifdef MUI_LICENSEPAGE
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Lañvaz emglev"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Bezit aketus en ur lenn pep term eus al lañvaz a-raok staliañ $(^NameDA), mar plij."
@@ -101,6 +97,7 @@
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Fellout a ra din adloc'hañ diwezatoc'h dre zorn"
   ${LangFileString} MUI_TEXT_FINISH_RUN "&Lañsañ $(^NameDA)"
   ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "&Diskouez ar restr Malennit"
+  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Echuiñ"  
 !endif
 
 !ifdef MUI_STARTMENUPAGE

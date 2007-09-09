@@ -13,10 +13,6 @@
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Tento sprievodca V·s prevedie procesom odinötalovania programu $(^NameDA).$\r$\n$\r$\nPred spustenÌm procesu odinötalovania sa uistite, ûe program $(^NameDA) nie je pr·ve aktÌvny.$\r$\n$\r$\n$_CLICK"
 !endif
 
-!ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
-  ${LangFileString} MUI_BUTTONTEXT_FINISH "&DokonËiù"
-!endif
-
 !ifdef MUI_LICENSEPAGE
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "LicenËn· zmluva"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Pred inötal·ciou $(^NameDA) si prosÌm preötudujte licenËnÈ podmienky."
@@ -101,6 +97,7 @@
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Reötartovaù neskÙr (manu·lne)"
   ${LangFileString} MUI_TEXT_FINISH_RUN "&Spustiù program $(^NameDA)"
   ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "&Zobraziù s˙bor s inform·ciami"
+  ${LangFileString} MUI_BUTTONTEXT_FINISH "&DokonËiù"  
 !endif
 
 !ifdef MUI_STARTMENUPAGE

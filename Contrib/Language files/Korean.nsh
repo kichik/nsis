@@ -13,10 +13,6 @@
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "이 프로그램은 당신의 컴퓨터에서 $(^NameDA)(을)를 제거할 것입니다.$\r$\n$\r$\n제거를 시작하기 전에 $(^NameDA)(을)를 종료하여 주시기 바랍니다.$\r$\n$\r$\n$_CLICK"
 !endif
 
-!ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
-  ${LangFileString} MUI_BUTTONTEXT_FINISH "마침"
-!endif
-
 !ifdef MUI_LICENSEPAGE
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "사용권 계약"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "$(^NameDA)(을)를 설치하시기 전에 사용권 계약 내용을 살펴보시기 바랍니다."
@@ -101,6 +97,7 @@
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "나중에 재부팅 하겠습니다."
   ${LangFileString} MUI_TEXT_FINISH_RUN "$(^NameDA) 실행하기(&R)"
   ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "Readme 파일 보기(&S)"
+  ${LangFileString} MUI_BUTTONTEXT_FINISH "마침"  
 !endif
 
 !ifdef MUI_STARTMENUPAGE

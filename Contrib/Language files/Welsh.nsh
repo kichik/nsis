@@ -13,10 +13,6 @@
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Bydd y dewin yn eich arwain drwy ddadosod $(^NameDA).$\r$\n$\r$\nCyn cychwyn dadosod, gwnewch yn siwr nad yw $(^NameDA) yn rhedeg.$\r$\n$\r$\n$_CLICK"
 !endif
 
-!ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
-  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Gorffen"
-!endif
-
 !ifdef MUI_LICENSEPAGE
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Cytundeb Trwyddedu"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Darllenwch amodau'r drwydded cyn gosod $(^NameDA)."
@@ -101,6 +97,7 @@
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Rwyf am ailgychwyn yn hwyrach"
   ${LangFileString} MUI_TEXT_FINISH_RUN "&Rhedeg $(^NameDA)"
   ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "&Dangos Darllenfi"
+  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Gorffen"  
 !endif
 
 !ifdef MUI_STARTMENUPAGE

@@ -13,10 +13,6 @@
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "See abiline aitab eemaldada $(^NameDA).$\r$\n$\r$\nEnne eemaldamist vaata, et $(^NameDA) oleks suletud.$\r$\n$\r$\n$_CLICK"
 !endif
 
-!ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
-  ${LangFileString} MUI_BUTTONTEXT_FINISH "Lõpeta"
-!endif
-
 !ifdef MUI_LICENSEPAGE
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Litsentsileping"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Enne $(^NameDA) paigaldamist vaata palun litsentsileping üle."
@@ -101,6 +97,7 @@
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Taaskäivitan hiljem käsitsi"
   ${LangFileString} MUI_TEXT_FINISH_RUN "Käivita $(^NameDA)"
   ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "Kuva Loemind"
+  ${LangFileString} MUI_BUTTONTEXT_FINISH "Lõpeta"  
 !endif
 
 !ifdef MUI_STARTMENUPAGE

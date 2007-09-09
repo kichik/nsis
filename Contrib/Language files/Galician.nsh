@@ -13,10 +13,6 @@
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Este asistente vai axudá-lo durante a desinstalación do $(^NameDA).$\r$\n$\r$\nAntes de iniciar a desinstalación, certifique-se de que o $(^NameDA) non está a executar-se.$\r$\n$\r$\n$_CLICK"
 !endif
 
-!ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
-  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Rematar"
-!endif
-
 !ifdef MUI_LICENSEPAGE
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Contrato de licenza"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Por favor, verifique os termos da licenza antes de instalar o $(^NameDA)."
@@ -101,6 +97,7 @@
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Prefiro reinicia-lo manualmente despois"
   ${LangFileString} MUI_TEXT_FINISH_RUN "&Executar $(^NameDA)"
   ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "&Mostrar Leame"
+  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Rematar"  
 !endif
 
 !ifdef MUI_STARTMENUPAGE

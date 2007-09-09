@@ -13,10 +13,6 @@
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Гэтая праграма выдаліць $(^NameDA) з Вашага кампутара.$\r$\n$\r$\nПерад пачаткам выдалення пераканайцеся ў тым, што праграма $(^NameDA) не выконваецца.$\r$\n$\r$\n$_CLICK"
 !endif
 
-!ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
-  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Гатова"
-!endif
-
 !ifdef MUI_LICENSEPAGE
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Лiцензiйнае пагадненне"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Калі ласка, прачытайце ўмовы Ліцэнзійнага пагаднення перад пачаткам устаноўкi $(^NameDA)."
@@ -101,6 +97,7 @@
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Не, перазагрузіць кампутар пазней"
   ${LangFileString} MUI_TEXT_FINISH_RUN "&Запусціць $(^NameDA)"
   ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "&Паказаць інфармацыю аб праграме"
+  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Гатова"  
 !endif
 
 !ifdef MUI_STARTMENUPAGE

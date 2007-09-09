@@ -13,10 +13,6 @@
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Déanfaidh an draoi seo treorú duit tríd an díshuiteáil de $(^NameDA).$\r$\n$\r$\nBí cinnte nach bhfuil $(^NameDA) ag rith sula dtosaíonn tú an díshuiteáil.$\r$\n$\r$\n$_CLICK"
 !endif
 
-!ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
-  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Críochnaigh"
-!endif
-
 !ifdef MUI_LICENSEPAGE
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Comhaontú um Cheadúnas"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Déan iniúchadh ar choinníollacha an cheadúnais sula suiteálann tú $(^NameDA)."
@@ -101,6 +97,7 @@
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Atosóidh mé de láimh níos déanaí"
   ${LangFileString} MUI_TEXT_FINISH_RUN "&Rith $(^NameDA)"
   ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "Tai&speáin comhad README"
+  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Críochnaigh"  
 !endif
 
 !ifdef MUI_STARTMENUPAGE
