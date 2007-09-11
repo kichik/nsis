@@ -97,6 +97,12 @@ UDM     Up-down control
 !define BM_SETSTATE        0x00F3
 !define BM_SETSTYLE        0x00F4
 
+!define BST_UNCHECKED      0x0000
+!define BST_CHECKED        0x0001
+!define BST_INDETERMINATE  0x0002
+!define BST_PUSHED         0x0004
+!define BST_FOCUS          0x0008
+
 #Combo Box Messages#
 !define CB_ADDSTRING                0x0143
 !define CB_DELETESTRING             0x0144
