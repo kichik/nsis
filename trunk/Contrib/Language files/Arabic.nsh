@@ -40,7 +40,7 @@
   ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "«·Ê’›"
 !endif
 
-!ifdef MUI_UNCOMPONENETSPAGE
+!ifdef MUI_UNCOMPONENTSPAGE
   ${LangFileString} MUI_UNTEXT_COMPONENTS_TITLE "≈Œ — «·„ﬂÊ‰« "
   ${LangFileString} MUI_UNTEXT_COMPONENTS_SUBTITLE "≈Œ — „Ì“«  $(^NameDA) «·„—«œ ≈“«· Â«."
 !endif

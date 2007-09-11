@@ -39,7 +39,7 @@
   ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "รายละเอียด"
 !endif
 
-!ifdef MUI_UNCOMPONENETSPAGE
+!ifdef MUI_UNCOMPONENTSPAGE
   ${LangFileString} MUI_UNTEXT_COMPONENTS_TITLE "เลือกส่วนประกอบ"
   ${LangFileString} MUI_UNTEXT_COMPONENTS_SUBTITLE "เลือกสิ่งที่คุณต้องการใช้งานจาก $(^NameDA) ที่คุณต้องยกเลิกการติดตั้ง"
 !endif

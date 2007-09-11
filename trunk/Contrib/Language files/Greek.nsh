@@ -39,7 +39,7 @@
   ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Περιγραφή"
 !endif
 
-!ifdef MUI_UNCOMPONENETSPAGE
+!ifdef MUI_UNCOMPONENTSPAGE
   ${LangFileString} MUI_UNTEXT_COMPONENTS_TITLE "Επιλογή Στοιχείων"
   ${LangFileString} MUI_UNTEXT_COMPONENTS_SUBTITLE "Επιλέξτε τα στοιχεία του '$(^NameDA)' που θέλετε να απεγκαταστήσετε."
 !endif

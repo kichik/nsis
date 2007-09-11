@@ -39,7 +39,7 @@
   ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "상세 설명"
 !endif
 
-!ifdef MUI_UNCOMPONENETSPAGE
+!ifdef MUI_UNCOMPONENTSPAGE
   ${LangFileString} MUI_UNTEXT_COMPONENTS_TITLE "구성 요소 선택"
   ${LangFileString} MUI_UNTEXT_COMPONENTS_SUBTITLE "제거하고자 하는 $(^NameDA)의 구성 요소를 선택해 주세요."
 !endif

@@ -39,7 +39,7 @@
   ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE " ж÷нЌ« "
 !endif
 
-!ifdef MUI_UNCOMPONENETSPAGE
+!ifdef MUI_UNCOMPONENTSPAGE
   ${LangFileString} MUI_UNTEXT_COMPONENTS_TITLE "«д ќ«» «ћ“«н »—д«ге"
   ${LangFileString} MUI_UNTEXT_COMPONENTS_SUBTITLE "«ћ“«нн «“ $(^NameDA) —« яе гнќж«енѕ Ќ–Ё яднѕ «д ќ«» яднѕ."
 !endif

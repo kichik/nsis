@@ -39,7 +39,7 @@
   ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Deskrivadenn"
 !endif
 
-!ifdef MUI_UNCOMPONENETSPAGE
+!ifdef MUI_UNCOMPONENTSPAGE
   ${LangFileString} MUI_UNTEXT_COMPONENTS_TITLE "Dibabit elfennoù"
   ${LangFileString} MUI_UNTEXT_COMPONENTS_SUBTITLE "Dibabit pe elfenn(où) $(^NameDA) a fell deoc'h distaliañ."
 !endif

@@ -39,7 +39,7 @@
   ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Beskrywing"
 !endif
 
-!ifdef MUI_UNCOMPONENETSPAGE
+!ifdef MUI_UNCOMPONENTSPAGE
   ${LangFileString} MUI_UNTEXT_COMPONENTS_TITLE "Kies komponente"
   ${LangFileString} MUI_UNTEXT_COMPONENTS_SUBTITLE "Kies watter komponente van $(^NameDA) verwyder moet word."
 !endif

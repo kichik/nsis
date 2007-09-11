@@ -40,7 +40,7 @@
   ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Dazanîn"
 !endif
 
-!ifdef MUI_UNCOMPONENETSPAGE
+!ifdef MUI_UNCOMPONENTSPAGE
   ${LangFileString} MUI_UNTEXT_COMPONENTS_TITLE "Hilbijartina Pareyan"
   ${LangFileString} MUI_UNTEXT_COMPONENTS_SUBTITLE "Pareya bernameya $(^NameDA) ku tu dixwazî rakî hilbijêre."
 !endif

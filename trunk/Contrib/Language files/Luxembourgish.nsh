@@ -39,7 +39,7 @@
   ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Beschreiwung"
 !endif
 
-!ifdef MUI_UNCOMPONENETSPAGE
+!ifdef MUI_UNCOMPONENTSPAGE
   ${LangFileString} MUI_UNTEXT_COMPONENTS_TITLE "Komponenten auswielen"
   ${LangFileString} MUI_UNTEXT_COMPONENTS_SUBTITLE "Wiel eng Komponent aus, déis de desinstalléieren wëlls."
 !endif

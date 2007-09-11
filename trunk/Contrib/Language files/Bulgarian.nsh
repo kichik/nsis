@@ -42,7 +42,7 @@
   ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Описание"
 !endif
 
-!ifdef MUI_UNCOMPONENETSPAGE
+!ifdef MUI_UNCOMPONENTSPAGE
   ${LangFileString} MUI_UNTEXT_COMPONENTS_TITLE "Избор на компоненти"
   ${LangFileString} MUI_UNTEXT_COMPONENTS_SUBTITLE "Изберете кои компоненти на $(^NameDA) искате да изтриете."
 !endif

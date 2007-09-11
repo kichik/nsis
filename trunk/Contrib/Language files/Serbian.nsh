@@ -39,7 +39,7 @@
   ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Опис"
 !endif
 
-!ifdef MUI_UNCOMPONENETSPAGE
+!ifdef MUI_UNCOMPONENTSPAGE
   ${LangFileString} MUI_UNTEXT_COMPONENTS_TITLE "Избор компоненти за деинсталацију"
   ${LangFileString} MUI_UNTEXT_COMPONENTS_SUBTITLE "Изаберите компоненте за деинсталацију. Деинсталирају се само означене компоненте."
 !endif

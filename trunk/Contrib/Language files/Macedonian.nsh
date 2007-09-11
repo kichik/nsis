@@ -39,7 +39,7 @@
   ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Објаснение"
 !endif
 
-!ifdef MUI_UNCOMPONENETSPAGE
+!ifdef MUI_UNCOMPONENTSPAGE
   ${LangFileString} MUI_UNTEXT_COMPONENTS_TITLE "Одберете Компоненти"
   ${LangFileString} MUI_UNTEXT_COMPONENTS_SUBTITLE "Одберете кои работи од $(^NameDA) сакате да се деинсталираат."
 !endif
