@@ -39,7 +39,7 @@
   ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Penerangan"
 !endif
 
-!ifdef MUI_UNCOMPONENETSPAGE
+!ifdef MUI_UNCOMPONENTSPAGE
   ${LangFileString} MUI_UNTEXT_COMPONENTS_TITLE "Pilih Komponen"
   ${LangFileString} MUI_UNTEXT_COMPONENTS_SUBTITLE "Pilih fungsi-fungsi $(^NameDA) yang ingin dibuang."
 !endif

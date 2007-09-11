@@ -39,7 +39,7 @@
   ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Lýsing"
 !endif
 
-!ifdef MUI_UNCOMPONENETSPAGE
+!ifdef MUI_UNCOMPONENTSPAGE
   ${LangFileString} MUI_UNTEXT_COMPONENTS_TITLE "Velja íhluti"
   ${LangFileString} MUI_UNTEXT_COMPONENTS_SUBTITLE "Velja hvaða $(^NameDA) íhluti þú vilt fjarlægja."
 !endif

@@ -39,7 +39,7 @@
   ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "תיאור"
 !endif
 
-!ifdef MUI_UNCOMPONENETSPAGE
+!ifdef MUI_UNCOMPONENTSPAGE
   ${LangFileString} MUI_UNTEXT_COMPONENTS_TITLE "בחר רכיבים"
   ${LangFileString} MUI_UNTEXT_COMPONENTS_SUBTITLE "בחר אילו תכונות של $(^NameDA) ברצונך להסיר."
 !endif

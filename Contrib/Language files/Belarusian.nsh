@@ -39,7 +39,7 @@
   ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Апісанне"
 !endif
 
-!ifdef MUI_UNCOMPONENETSPAGE
+!ifdef MUI_UNCOMPONENTSPAGE
   ${LangFileString} MUI_UNTEXT_COMPONENTS_TITLE "Кампаненты праграмы"
   ${LangFileString} MUI_UNTEXT_COMPONENTS_SUBTITLE "Вызначце кампаненты $(^NameDA), якія Вы жадаеце выдаліць."
 !endif

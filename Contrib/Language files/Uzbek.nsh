@@ -39,7 +39,7 @@
   ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Tasvir"
 !endif
 
-!ifdef MUI_UNCOMPONENETSPAGE
+!ifdef MUI_UNCOMPONENTSPAGE
   ${LangFileString} MUI_UNTEXT_COMPONENTS_TITLE "Dastur komponentlari"
   ${LangFileString} MUI_UNTEXT_COMPONENTS_SUBTITLE "$(^NameDA)ning o'chirish kerak bo'lgan komponentlarini tanlang."
 !endif

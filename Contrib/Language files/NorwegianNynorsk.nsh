@@ -39,7 +39,7 @@
   ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Beskriving"
 !endif
 
-!ifdef MUI_UNCOMPONENETSPAGE
+!ifdef MUI_UNCOMPONENTSPAGE
   ${LangFileString} MUI_UNTEXT_COMPONENTS_TITLE "Vel funksjonar"
   ${LangFileString} MUI_UNTEXT_COMPONENTS_SUBTITLE "Vel kva for funksjonar du vil avinstallera i $(^NameDA)."
 !endif

@@ -40,7 +40,7 @@
   ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "説明"
 !endif
 
-!ifdef MUI_UNCOMPONENETSPAGE
+!ifdef MUI_UNCOMPONENTSPAGE
   ${LangFileString} MUI_UNTEXT_COMPONENTS_TITLE "コンポーネントを選んでください。"
   ${LangFileString} MUI_UNTEXT_COMPONENTS_SUBTITLE "$(^NameDA)のアンインストール オプションを選んでください。"
 !endif

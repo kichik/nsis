@@ -41,7 +41,7 @@
   ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Descriere"
 !endif
 
-!ifdef MUI_UNCOMPONENETSPAGE
+!ifdef MUI_UNCOMPONENTSPAGE
   ${LangFileString} MUI_UNTEXT_COMPONENTS_TITLE "Selectare componente"
   ${LangFileString} MUI_UNTEXT_COMPONENTS_SUBTITLE "Selectati componentele produsului $(^NameDA) pe care doriti sa le eliminati."
 !endif

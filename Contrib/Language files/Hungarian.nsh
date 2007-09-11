@@ -40,7 +40,7 @@
   ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Leírás"
 !endif
 
-!ifdef MUI_UNCOMPONENETSPAGE
+!ifdef MUI_UNCOMPONENTSPAGE
   ${LangFileString} MUI_UNTEXT_COMPONENTS_TITLE "Összetevõk kiválasztása"
   ${LangFileString} MUI_UNTEXT_COMPONENTS_SUBTITLE "Válassza ki, hogy a(z) $(^NameDA) mely funkcióit kívánja eltávolítani."
 !endif

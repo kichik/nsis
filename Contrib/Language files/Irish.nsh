@@ -39,7 +39,7 @@
   ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Cur Síos"
 !endif
 
-!ifdef MUI_UNCOMPONENETSPAGE
+!ifdef MUI_UNCOMPONENTSPAGE
   ${LangFileString} MUI_UNTEXT_COMPONENTS_TITLE "Roghnaigh Comhpháirteanna"
   ${LangFileString} MUI_UNTEXT_COMPONENTS_SUBTITLE "Roghnaigh na gnéithe $(^NameDA) ba mhaith leat díshuiteáil."
 !endif
