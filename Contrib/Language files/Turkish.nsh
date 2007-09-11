@@ -40,7 +40,7 @@
   ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Açýklama"
 !endif
 
-!ifdef MUI_UNCOMPONENETSPAGE
+!ifdef MUI_UNCOMPONENTSPAGE
   ${LangFileString} MUI_UNTEXT_COMPONENTS_TITLE "Bileþen Þeçimi"
   ${LangFileString} MUI_UNTEXT_COMPONENTS_SUBTITLE "Lütfen kaldýrmak istediðiniz $(^NameDA) program bileþenini seçiniz."
 !endif

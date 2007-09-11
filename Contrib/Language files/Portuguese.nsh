@@ -39,7 +39,7 @@
   ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Descrição"
 !endif
 
-!ifdef MUI_UNCOMPONENETSPAGE
+!ifdef MUI_UNCOMPONENTSPAGE
   ${LangFileString} MUI_UNTEXT_COMPONENTS_TITLE "Escolher Componentes"
   ${LangFileString} MUI_UNTEXT_COMPONENTS_SUBTITLE "Escolha quais as características do $(^NameDA) que deseja desinstalar."
 !endif

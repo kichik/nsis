@@ -39,7 +39,7 @@
   ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Azalpena"
 !endif
 
-!ifdef MUI_UNCOMPONENETSPAGE
+!ifdef MUI_UNCOMPONENTSPAGE
   ${LangFileString} MUI_UNTEXT_COMPONENTS_TITLE "Osagaien hautatzea"
   ${LangFileString} MUI_UNTEXT_COMPONENTS_SUBTITLE "Hautatu $(^NameDA)-ren zein ezaugarri ezabatu nahi duzun."
 !endif

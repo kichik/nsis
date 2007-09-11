@@ -40,7 +40,7 @@
   ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Apraksts"
 !endif
 
-!ifdef MUI_UNCOMPONENETSPAGE
+!ifdef MUI_UNCOMPONENTSPAGE
   ${LangFileString} MUI_UNTEXT_COMPONENTS_TITLE "Izvçlieties komponentus"
   ${LangFileString} MUI_UNTEXT_COMPONENTS_SUBTITLE "Izvçlieties nepiecieðamâs '$(^NameDA)' sastâvdaïas, kuras atinstalçt."
 !endif

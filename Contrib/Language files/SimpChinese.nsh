@@ -41,7 +41,7 @@
   ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "描述"
 !endif
 
-!ifdef MUI_UNCOMPONENETSPAGE
+!ifdef MUI_UNCOMPONENTSPAGE
   ${LangFileString} MUI_UNTEXT_COMPONENTS_TITLE "选定组件"
   ${LangFileString} MUI_UNTEXT_COMPONENTS_SUBTITLE "选定“$(^NameDA)”当中你想要卸载的功能。"
 !endif
