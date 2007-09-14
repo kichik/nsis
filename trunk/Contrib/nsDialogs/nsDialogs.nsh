@@ -116,12 +116,6 @@ Header file for creating custom installer pages with nsDialogs
 !define BS_FLAT              0x00008000
 !define BS_RIGHTBUTTON       ${BS_LEFTTEXT}
 
-!define BST_CHECKED       1
-!define BST_FOCUS         8
-!define BST_INDETERMINATE 2
-!define BST_PUSHED        4
-!define BST_UNCHECKED     0
-
 !define CBS_SIMPLE            0x0001
 !define CBS_DROPDOWN          0x0002
 !define CBS_DROPDOWNLIST      0x0003
