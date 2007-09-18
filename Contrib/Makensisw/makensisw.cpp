@@ -113,7 +113,7 @@ void AddScriptCmdArgs(const char *arg)
   lstrcat(args, arg);
   lstrcat(args, "\"");
 
-  GlobalUnlock(args);
+  GlobalUnlock(g_sdata.script_cmd_args);
 }
 
 void ProcessCommandLine()

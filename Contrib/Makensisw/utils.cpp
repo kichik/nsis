@@ -303,7 +303,7 @@ void CompileNSISScript() {
       g_sdata.script
     );
 
-    GlobalUnlock(args);
+    GlobalUnlock(g_sdata.script_cmd_args);
     GlobalFree(symbols);
   }
   GlobalFree(g_sdata.input_script);
