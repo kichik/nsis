@@ -5709,11 +5709,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
 
       // SetDetailsPrint lastused
-      ent.which=EW_UPDATETEXT;
-      ent.offsets[0]=0;
-      ent.offsets[1]=0;
-      ent.offsets[2]=1; // lastused
-      ret=add_entry(&ent);
+      ret=add_entry_direct(EW_SETFLAG, FLAG_OFFSET(status_update), 0, 1);
       if (ret != PS_OK) {
         return ret;
       }
@@ -5781,11 +5777,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ret=add_entry(&ent);
       if (ret != PS_OK) return ret;
       // SetDetailsPrint lastused
-      ent.which=EW_UPDATETEXT;
-      ent.offsets[0]=0;
-      ent.offsets[1]=0;
-      ent.offsets[2]=1; // lastused
-      ret=add_entry(&ent);
+      ret=add_entry_direct(EW_SETFLAG, FLAG_OFFSET(status_update), 0, 1);
       if (ret != PS_OK) return ret;
     }
     return PS_OK;

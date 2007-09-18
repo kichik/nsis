@@ -18,6 +18,7 @@
 #define _EXEC_H_
 
 extern exec_flags g_exec_flags;
+extern exec_flags g_exec_flags_last_used;
 
 int NSISCALL ExecuteCodeSegment(int pos, HWND hwndProgress); // returns 0 on success
 int NSISCALL ExecuteCallbackFunction(int num); // returns 0 on success

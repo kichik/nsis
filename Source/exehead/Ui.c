@@ -264,6 +264,7 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
 
   // initialize status update (SetDetailsPrint) flag
   g_exec_flags.status_update = 6;
+  g_exec_flags_last_used.status_update = 6;
 
   // set default language
   set_language();
