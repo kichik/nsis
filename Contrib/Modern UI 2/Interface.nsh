@@ -58,7 +58,7 @@ Var mui.Button.Back
       !ifndef MUI_HEADERIMAGE_UNBITMAP
         !define MUI_HEADERIMAGE_UNBITMAP "${MUI_HEADERIMAGE_BITMAP}"
         !ifdef MUI_HEADERIMAGE_BITMAP_NOSTRETCH
-          !insertmacro MUI_SET MUI_HEADERIMAGE_UNBITMAP_NOSTRETCH
+          !insertmacro MUI_SET MUI_HEADERIMAGE_UNBITMAP_NOSTRETCH ""
         !endif
       !endif
 
@@ -66,7 +66,7 @@ Var mui.Button.Back
         !ifndef MUI_HEADERIMAGE_UNBITMAP_RTL
           !define MUI_HEADERIMAGE_UNBITMAP_RTL "${MUI_HEADERIMAGE_BITMAP_RTL}"
           !ifdef MUI_HEADERIMAGE_BITMAP_RTL_NOSTRETCH
-            !insertmacro MUI_SET MUI_HEADERIMAGE_UNBITMAP_RTL_NOSTRETCH
+            !insertmacro MUI_SET MUI_HEADERIMAGE_UNBITMAP_RTL_NOSTRETCH ""
           !endif
         !endif
       !endif
