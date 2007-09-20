@@ -99,10 +99,10 @@ InstallFiles page
 
     ;Get controls handles
     FindWindow $mui.InstFilesPage "#32770" "" $HWNDPARENT
-    GetDlgItem $mui.InstFilesPage.Text $mui.DirectoryPage 1006
-    GetDlgItem $mui.InstFilesPage.ProgressBar $mui.DirectoryPage 1004
-    GetDlgItem $mui.InstFilesPage.ShowLogButton $mui.DirectoryPage 1027    
-    GetDlgItem $mui.InstFilesPage.Log $mui.DirectoryPage 1016
+    GetDlgItem $mui.InstFilesPage.Text $mui.InstFilesPage 1006
+    GetDlgItem $mui.InstFilesPage.ProgressBar $mui.InstFilesPage 1004
+    GetDlgItem $mui.InstFilesPage.ShowLogButton $mui.InstFilesPage 1027    
+    GetDlgItem $mui.InstFilesPage.Log $mui.InstFilesPage 1016
 
     !insertmacro MUI_PAGE_FUNCTION_CUSTOM SHOW
 

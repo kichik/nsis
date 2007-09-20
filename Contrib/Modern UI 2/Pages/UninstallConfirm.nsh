@@ -79,9 +79,9 @@ Uninstall confirmation page
 
     ;Get controls handles
     FindWindow $mui.UnConfirmPage "#32770" "" $HWNDPARENT
-    GetDlgItem $mui.UnConfirmPage.Text $mui.DirectoryPage 1006
-    GetDlgItem $mui.UnConfirmPage.DirectoryText $mui.DirectoryPage 1029
-    GetDlgItem $mui.UnConfirmPage.Directory $mui.DirectoryPage 1000
+    GetDlgItem $mui.UnConfirmPage.Text $mui.UnConfirmPage 1006
+    GetDlgItem $mui.UnConfirmPage.DirectoryText $mui.UnConfirmPage 1029
+    GetDlgItem $mui.UnConfirmPage.Directory $mui.UnConfirmPage 1000
 
     !insertmacro MUI_PAGE_FUNCTION_CUSTOM SHOW
 
