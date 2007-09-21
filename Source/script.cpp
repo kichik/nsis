@@ -4559,24 +4559,19 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     {
       ent.which=EW_SETFLAG;
       ent.offsets[0]=FLAG_OFFSET(status_update);
-      int k=line.gettoken_enum(1,"lastused\0listonly\0textonly\0both\0none\0");
+      int k=line.gettoken_enum(1,"both\0textonly\0listonly\0none\0lastused\0");
       if (k<0) PRINTHELP()
-      if (k == 0)
+      if (k == 4)
       {
         ent.offsets[2]=1;
       }
       else
       {
-        if (k == 4)
-        {
-          k = 16;
-        }
-        else
-        {
-          k <<= 1;
-        }
-
-        ent.offsets[1]=add_intstring(k);
+        // both     0
+        // textonly 2
+        // listonly 4
+        // none     6
+        ent.offsets[1]=add_intstring(k*2);
       }
       SCRIPT_MSG("SetDetailsPrint: %s\n",line.gettoken_str(1));
     }

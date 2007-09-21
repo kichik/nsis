@@ -262,10 +262,6 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
     mystrcat(state_language, g_tmp);
   }
 
-  // initialize status update (SetDetailsPrint) flag
-  g_exec_flags.status_update = 6;
-  g_exec_flags_last_used.status_update = 6;
-
   // set default language
   set_language();
 
@@ -1474,8 +1470,8 @@ void NSISCALL update_status_text(int strtab, const char *text) {
       mystrcat(tmp, text);
     }
 
-    if ((updateflag & 4)) my_SetWindowText(insthwnd2, tmp);
-    if ((updateflag & 2))
+    if ((updateflag & 4) == 0) my_SetWindowText(insthwnd2, tmp);
+    if ((updateflag & 2) == 0)
     {
       new_item.mask = LVIF_TEXT;
       new_item.pszText = tmp;
