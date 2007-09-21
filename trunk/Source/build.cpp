@@ -3216,7 +3216,7 @@ again:
   zero_offset=add_string("$0");
 
   // SetDetailsPrint none
-  ret=add_entry_direct(EW_SETFLAG, FLAG_OFFSET(status_update), add_intstring(16));
+  ret=add_entry_direct(EW_SETFLAG, FLAG_OFFSET(status_update), add_intstring(6));
   if (ret != PS_OK) return ret;
 
   // StrCmp $PLUGINSDIR ""
