@@ -155,8 +155,6 @@ Var mui.Button.Back
           SetBrandingImage /IMGID=1046 "$PLUGINSDIR\modern-header.bmp"
         !endif
 
-        Goto mui.headerimageinit_done
-
       ${else}
 
     !endif
