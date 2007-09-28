@@ -407,7 +407,7 @@ Finish page (implemented using nsDialogs)
     ;Show page
     Call ${MUI_PAGE_UNINSTALLER_FUNCPREFIX}muiPageLoadFullWindow
     !insertmacro MUI_PAGE_FUNCTION_CUSTOM SHOW
-    nsDialogs::Show /NOUNLOAD
+    nsDialogs::Show
     Call ${MUI_PAGE_UNINSTALLER_FUNCPREFIX}muiPageUnloadFullWindow 
     
     !ifdef MUI_FINISHPAGE_CANCEL_ENABLED
