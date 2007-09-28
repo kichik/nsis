@@ -51,7 +51,7 @@ Var MUI_TEMP2
     !insertmacro MUI_FUNCTION_GUIINIT
     !insertmacro MUI_FUNCTION_ABORTWARNING
   
-    !ifdef MUI_WELCOMEPAGE | MUI_FINISHPAGE
+    !ifdef MUI_IOCONVERT_USED
       !insertmacro INSTALLOPTIONS_FUNCTION_WRITE_CONVERT
     !endif
 
@@ -59,7 +59,7 @@ Var MUI_TEMP2
       !insertmacro MUI_UNFUNCTION_GUIINIT
       !insertmacro MUI_FUNCTION_UNABORTWARNING
     
-      !ifdef MUI_UNWELCOMEPAGE | MUI_UNFINISHPAGE
+      !ifdef MUI_UNIOCONVERT_USED
         !insertmacro INSTALLOPTIONS_UNFUNCTION_WRITE_CONVERT
       !endif
     !endif
@@ -84,6 +84,7 @@ Var MUI_TEMP2
   !ifndef "${SYMBOL}"
     !define "${SYMBOL}" "${CONTENT}"
     !insertmacro MUI_SET "${SYMBOL}_DEFAULTSET"
+	!insertmacro MUI_SET "MUI_${MUI_PAGE_UNINSTALLER_PREFIX}IOCONVERT_USED"
   !else
     !insertmacro MUI_UNSET "${SYMBOL}_DEFAULTSET" 
   !endif
