@@ -5,6 +5,8 @@ Macros and conversion functions for InstallOptions
 
 */
 
+!include LogicLib.nsh
+
 !macro INSTALLOPTIONS_FUNCTION_READ_CONVERT
   !insertmacro INSTALLOPTIONS_FUNCTION_IO2NSIS ""
 !macroend
@@ -34,29 +36,30 @@ Macros and conversion functions for InstallOptions
     Exch $0 ; The source
     Push $1 ; The output
     Push $2 ; Temporary char
+    Push $3 ; Length
+    Push $4 ; Loop index
     StrCpy $1 "" ; Initialise the output
 
-  loop:
-    StrCpy $2 $0 1 ; Get the next source char
-    StrCmp $2 "" done ; Abort when none left
-      StrCpy $0 $0 "" 1 ; Remove it from the source
-      StrCmp $2 "\" "" +3 ; Back-slash?
-        StrCpy $1 "$1\\"
-        Goto loop
-      StrCmp $2 "$\r" "" +3 ; Carriage return?
-        StrCpy $1 "$1\r"
-        Goto loop
-      StrCmp $2 "$\n" "" +3 ; Line feed?
-        StrCpy $1 "$1\n"
-        Goto loop
-      StrCmp $2 "$\t" "" +3 ; Tab?
-        StrCpy $1 "$1\t"
-        Goto loop
-      StrCpy $1 "$1$2" ; Anything else
-      Goto loop
+    StrLen $3 $0
+    IntOp $3 $3 - 1
 
-  done:
+    ${For} $4 0 $3
+      StrCpy $2 $0 1 $4
+      ${If}     $2 == '\'
+        StrCpy $2 '\\'
+      ${ElseIf} $2 == '$\r'
+        StrCpy $2 '\r'
+      ${ElseIf} $2 == '$\n'
+        StrCpy $2 '\n'
+      ${ElseIf} $2 == '$\t'
+        StrCpy $2 '\t'
+      ${EndIf}
+      StrCpy $1 $1$2
+    ${Next}
+
     StrCpy $0 $1
+    Pop $4
+    Pop $3
     Pop $2
     Pop $1
     Exch $0
@@ -78,39 +81,40 @@ Macros and conversion functions for InstallOptions
     Exch $0 ; The source
     Push $1 ; The output
     Push $2 ; Temporary char
+    Push $3 ; Length
+    Push $4 ; Loop index
     StrCpy $1 "" ; Initialise the output
 
-  loop:
-    StrCpy $2 $0 1 ; Get the next source char
-    StrCmp $2 "" done ; Abort when none left
-      StrCpy $0 $0 "" 1 ; Remove it from the source
-      StrCmp $2 "\" +3 ; Escape character?
-        StrCpy $1 "$1$2" ; If not just output
-        Goto loop
-      StrCpy $2 $0 1 ; Get the next source char
-      StrCpy $0 $0 "" 1 ; Remove it from the source
-      StrCmp $2 "\" "" +3 ; Back-slash?
-        StrCpy $1 "$1\"
-        Goto loop
-      StrCmp $2 "r" "" +3 ; Carriage return?
-        StrCpy $1 "$1$\r"
-        Goto loop
-      StrCmp $2 "n" "" +3 ; Line feed?
-        StrCpy $1 "$1$\n"
-        Goto loop
-      StrCmp $2 "t" "" +3 ; Tab?
-        StrCpy $1 "$1$\t"
-        Goto loop
-      StrCpy $1 "$1$2" ; Anything else (should never get here)
-      Goto loop
+    StrLen $3 $0
+    IntOp $3 $3 - 1
 
-  done:
+    ${For} $4 0 $3
+      StrCpy $2 $0 2 $4
+      ${If}     $2 == '\\'
+        StrCpy $2 '\'
+        IntOp $4 $4 + 1
+      ${ElseIf} $2 == '\r'
+        StrCpy $2 '$\r'
+        IntOp $4 $4 + 1
+      ${ElseIf} $2 == '\n'
+        StrCpy $2 '$\n'
+        IntOp $4 $4 + 1
+      ${ElseIf} $2 == '\t'
+        StrCpy $2 '$\t'
+        IntOp $4 $4 + 1
+      ${EndIf}
+      StrCpy $2 $2 1
+      StrCpy $1 $1$2
+    ${Next}
+
     StrCpy $0 $1
+    Pop $4
+    Pop $3
     Pop $2
     Pop $1
     Exch $0
 
-FunctionEnd
+  FunctionEnd
 
 !macroend
 
