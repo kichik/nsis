@@ -425,8 +425,8 @@ Finish page (implemented using nsDialogs)
 
       ;Check whether the user has chosen to reboot the computer
       ${if} ${RebootFlag}
-        SendMessage $mui.FinishPage.RebootNow ${BM_SETCHECK} 0 0 $mui.FinishPage.ReturnValue
-        ${if} $mui.FinishPage.ReturnValue == ${BST_CHECKED}
+        SendMessage $mui.FinishPage.RebootNow ${BM_GETCHECK} 0 0 $mui.FinishPage.ReturnValue
+        ${if} $mui.FinishPage.ReturnValue = ${BST_CHECKED}
           Reboot
         ${else}
           Return
@@ -441,7 +441,7 @@ Finish page (implemented using nsDialogs)
     
       SendMessage $mui.FinishPage.Run ${BM_GETCHECK} 0 0 $mui.FinishPage.ReturnValue
 
-      ${if} $mui.FinishPage.ReturnValue == ${BST_CHECKED}
+      ${if} $mui.FinishPage.ReturnValue = ${BST_CHECKED}
         !ifndef MUI_FINISHPAGE_RUN_FUNCTION
           !ifndef MUI_FINISHPAGE_RUN_PARAMETERS
             Exec "$\"${MUI_FINISHPAGE_RUN}$\""
@@ -459,7 +459,7 @@ Finish page (implemented using nsDialogs)
 
       SendMessage $mui.FinishPage.ShowReadme ${BM_GETCHECK} 0 0 $mui.FinishPage.ReturnValue
 
-      ${if} $mui.FinishPage.ReturnValue == ${BST_CHECKED}
+      ${if} $mui.FinishPage.ReturnValue = ${BST_CHECKED}
         !ifndef MUI_FINISHPAGE_SHOWREADME_FUNCTION
           ExecShell open "${MUI_FINISHPAGE_SHOWREADME}"
         !else
