@@ -325,6 +325,18 @@ Finish page (implemented using nsDialogs)
     !ifndef MUI_FINISHPAGE_NOREBOOTSUPPORT
 
       ${if} ${RebootFlag}
+
+        ;Title text
+        ${NSD_CreateLabel} 120u 10u 195u ${MUI_FINISHPAGE_TITLE_HEIGHT}u "${MUI_FINISHPAGE_TITLE}"
+        Pop $mui.FinishPage.Title
+        SetCtlColors $mui.FinishPage.Title "" "${MUI_BGCOLOR}"
+        CreateFont $mui.FinishPage.Title.Font "$(^Font)" "12" "700"
+        SendMessage $mui.FinishPage.Title ${WM_SETFONT} $mui.FinishPage.Title.Font 0
+
+        ;Finish text
+        ${NSD_CreateLabel} 120u 45u 195u ${MUI_FINISHPAGE_TEXT_HEIGHT_BUTTONS}u "${MUI_FINISHPAGE_TEXT_REBOOT}"
+        Pop $mui.FinishPage.Text
+        SetCtlColors $mui.FinishPage.Text "" "${MUI_BGCOLOR}"
       
         ;Radio buttons for reboot page
         ${NSD_CreateRadioButton} 120u ${MUI_FINISHPAGE_REBOOTNOW_TOP}u 195u 10u "${MUI_FINISHPAGE_TEXT_REBOOTNOW}"
@@ -333,7 +345,7 @@ Finish page (implemented using nsDialogs)
         ${NSD_CreateRadioButton} 120u ${MUI_FINISHPAGE_REBOOTLATER_TOP}u 195u 10u "${MUI_FINISHPAGE_TEXT_REBOOTLATER}"
         Pop $mui.FinishPage.RebootLater
         SetCtlColors $mui.FinishPage.RebootLater "" "${MUI_BGCOLOR}"
-        
+
       ${else}
 
     !endif
