@@ -84,7 +84,7 @@ Var MUI_TEMP2
   !ifndef "${SYMBOL}"
     !define "${SYMBOL}" "${CONTENT}"
     !insertmacro MUI_SET "${SYMBOL}_DEFAULTSET"
-	!insertmacro MUI_SET "MUI_${MUI_PAGE_UNINSTALLER_PREFIX}IOCONVERT_USED"
+    !insertmacro MUI_SET "MUI_${MUI_PAGE_UNINSTALLER_PREFIX}IOCONVERT_USED"
   !else
     !insertmacro MUI_UNSET "${SYMBOL}_DEFAULTSET" 
   !endif
