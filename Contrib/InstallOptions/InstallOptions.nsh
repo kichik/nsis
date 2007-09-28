@@ -5,6 +5,9 @@ Macros and conversion functions for InstallOptions
 
 */
 
+!ifndef ___NSIS__INSTALL_OPTIONS__NSH___
+!define ___NSIS__INSTALL_OPTIONS__NSH___
+
 !include LogicLib.nsh
 
 !macro INSTALLOPTIONS_FUNCTION_READ_CONVERT
@@ -233,4 +236,5 @@ Macros and conversion functions for InstallOptions
   Pop $0
 
 !macroend
-  
+
+!endif # ___NSIS__INSTALL_OPTIONS__NSH___
