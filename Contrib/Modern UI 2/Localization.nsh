@@ -76,7 +76,7 @@ Localization
   !insertmacro MUI_DEFAULT MUI_LANGDLL_WINDOWTITLE "Installer Language"
   !insertmacro MUI_DEFAULT MUI_LANGDLL_INFO "Please select a language."
 
-  !ifdef MUI_LANGDLL_REGISTRY_ROOT & MUI_LANGDLL_REGISTRY_KEY & MUI_LANGDLL_REGISTRY_VALUENAME
+  !ifdef MUI_LANGDLL_REGISTRY_VARAIBLES
 
     ReadRegStr $mui.LangDLL.RegistryLanguage "${MUI_LANGDLL_REGISTRY_ROOT}" "${MUI_LANGDLL_REGISTRY_KEY}" "${MUI_LANGDLL_REGISTRY_VALUENAME}"
     
@@ -92,7 +92,9 @@ Localization
   !endif
 
   !ifndef MUI_LANGDLL_ALWAYSSHOW
+  !ifdef MUI_LANGDLL_REGISTRY_VARAIBLES
     ${if} $mui.LangDLL.RegistryLanguage == ""
+  !endif
   !endif
   
   ;Show langauge selection dialog
@@ -108,7 +110,9 @@ Localization
     ${endif}
   
   !ifndef MUI_LANGDLL_ALWAYSSHOW
+  !ifdef MUI_LANGDLL_REGISTRY_VARAIBLES
     ${endif}
+  !endif
   !endif
 
 
