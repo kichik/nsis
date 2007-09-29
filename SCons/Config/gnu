@@ -207,10 +207,31 @@ cenv = defenv.Clone()
 cross_env(cenv)
 conf = cenv.Configure(custom_tests = { 'CheckRequirement' : check_requirement })
 
-if conf.CheckRequirement('memcpy', 'struct s { char c[128]; } t = { "test" };'):
+memcpy_test = """
+struct s // gcc 3
+{
+  char c[128];
+} t = { "test" };
+char a[] = // gcc 4
+  {'/', 'F', 'I' ,'L', 'L', 'S', 'C', 'R', 'E', 'E', 'N', 0};
+int i;
+for (i = 0; i < 100; i++) // avoid a and t being optimized out
+{
+  i += a[i] ^ t.c[i];
+}
+return i;
+"""
+
+memset_test = """
+char c[128] = "test";
+c[0] = '6'; // avoid c being optimized out
+return c[1]; // avoid c being optimized out
+"""
+
+if conf.CheckRequirement('memcpy', memcpy_test):
 	add_file('memcpy.c')
 
-if conf.CheckRequirement('memset', 'char c[128] = "test";'):
+if conf.CheckRequirement('memset', memset_test):
 	add_file('memset.c')
 
 conf.Finish()
