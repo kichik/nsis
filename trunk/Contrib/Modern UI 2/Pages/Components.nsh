@@ -156,9 +156,9 @@ Components page
 
   ${if} $0 == -1
     ;No mouse hover over component in list
-    SendMessage $mui.ComponentsPage.Description ${WM_SETTEXT} 0 "STR:"
-    EnableWindow $mui.ComponentsPage.Description 0
-    SendMessage $mui.ComponentsPage.Description ${WM_SETTEXT} 0 "STR:$mui.ComponentsPage.DescriptionText.Info"
+    SendMessage $mui.ComponentsPage.DescriptionText ${WM_SETTEXT} 0 "STR:"
+    EnableWindow $mui.ComponentsPage.DescriptionText 0
+    SendMessage $mui.ComponentsPage.DescriptionText ${WM_SETTEXT} 0 "STR:$mui.ComponentsPage.DescriptionText.Info"
 
 !macroend
 
@@ -168,9 +168,9 @@ Components page
   !verbose ${MUI_VERBOSE}
 
   ${elseif} $0 == ${VAR}
-    SendMessage $mui.ComponentsPage.Description ${WM_SETTEXT} 0 "STR:"
-    EnableWindow $mui.ComponentsPage.Description 1
-    SendMessage $mui.ComponentsPage.Description ${WM_SETTEXT} 0 "STR:${TEXT}"
+    SendMessage $mui.ComponentsPage.DescriptionText ${WM_SETTEXT} 0 "STR:"
+    EnableWindow $mui.ComponentsPage.DescriptionText 1
+    SendMessage $mui.ComponentsPage.DescriptionText ${WM_SETTEXT} 0 "STR:${TEXT}"
 
   !verbose pop
 
