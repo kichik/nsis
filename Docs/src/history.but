@@ -1,5 +1,59 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.31} 2.31
+
+Released on September 29th, 2007
+
+\S1{v2.31-rl} Release Notes
+
+\b Please continue to report any issues and suggestions regarding \L{../Docs/Modern UI 2/Readme.html}{Modern UI 2}. Input for the previous version was very helpful in improving MUI2.
+
+\S1{v2.31-cl} Changelog
+
+\S2{} Minor Changes
+
+\b Added BST_* definitions to WinMessages.nsh (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1792422}{bug #1792422})
+
+\b Added \R{setregview}{SetRegView} \e{lastused}
+
+\b Minor documentation improvements
+
+\b \R{library}{Library} will now revert registry view settings (\R{setregview}{SetRegView}) after it's finished
+
+\b \L{../Docs/Modern UI/Readme.html}{Modern UI}: Fixed empty welcome page with Chinese (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1786899}{bug #1786899})
+
+\b \L{../Docs/Modern UI/Readme.html}{Modern UI}: Fixed finish button text (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1789492}{bug #1789492})
+
+\b \L{../Docs/Modern UI/Readme.html}{Modern UI}: Fixed uninstaller comportments page text (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1793811}{bug #1793811})
+
+\b \L{../Docs/Modern UI/Readme.html}{Modern UI}: Fixed unused function warnings
+
+\b \L{../Docs/Modern UI 2/Readme.html}{Modern UI 2 beta}: Fixed header bitmap issues, including NOSTRETCH and compilation errors
+
+\b \L{../Docs/Modern UI 2/Readme.html}{Modern UI 2 beta}: Fixed language selection dialog
+
+\b \L{../Docs/Modern UI 2/Readme.html}{Modern UI 2 beta}: Fixed reboot finish page
+
+\b \L{../Docs/Modern UI 2/Readme.html}{Modern UI 2 beta}: Fixed unloading of nsDialogs on finish page
+
+\b \L{../Docs/Modern UI 2/Readme.html}{Modern UI 2 beta}: Fixed unused variable warnings
+
+\S2{} Utilities and Plug-ins
+
+\b \L{../Docs/makensisw/Readme.txt}{MakeNSISW}: Fixed command line parsing error (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1796053}{bug #1796053})
+
+\S2{} Translations
+
+\b Korean corrections
+
+\b Persian improvements (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1776386}{patch #1776386})
+
+\b Romanian improvements (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1783853}{patch #1783853})
+
+\S2{} Build System
+
+\b Fixed build failures with MinGW's GCC 4 (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1800834}{bug #1800834})
+
 \H{v2.30} 2.30
 
 Released on August 25th, 2007
