@@ -146,13 +146,16 @@ Localization
 
   ;Get language from registry in uninstaller
 
-  !verbose pop
+  !verbose push
+  !verbose ${MUI_VERBOSE}
+
+  !insertmacro MUI_LANGDLL_VARIABLES
 
   !ifdef MUI_LANGDLL_REGISTRY_ROOT & MUI_LANGDLL_REGISTRY_KEY & MUI_LANGDLL_REGISTRY_VALUENAME
 
     ReadRegStr $mui.LangDLL.RegistryLanguage "${MUI_LANGDLL_REGISTRY_ROOT}" "${MUI_LANGDLL_REGISTRY_KEY}" "${MUI_LANGDLL_REGISTRY_VALUENAME}"
     
-    ${if} mui.LangDLL.RegistryLanguage = ""
+    ${if} $mui.LangDLL.RegistryLanguage = ""
 
   !endif
 
