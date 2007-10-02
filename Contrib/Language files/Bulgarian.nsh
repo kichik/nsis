@@ -17,17 +17,17 @@
 !endif
 
 !ifdef MUI_LICENSEPAGE
-  ${LangFileString} MUI_TEXT_LICENSE_TITLE "Лицензно споразумение"
-  ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Моля запознайте се Лицензното споразумение преди да продължите."
+  ${LangFileString} MUI_TEXT_LICENSE_TITLE "Лицензионно споразумение"
+  ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Моля запознайте се Лицензионното споразумение преди да продължите."
   ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM "Ако приемате условията на споразумението, натиснете $\"Съгласен$\", за да продължите. Трябва да приемете споразумението, за да инсталирате $(^NameDA)."
   ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Ако приемате условията на споразумението, сложете отметка в полето по-долу. Трябва да приемете споразумението, за да инсталирате $(^NameDA). $_CLICK"
   ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Ако приемате условията на споразумението, изберете първата опция по-долу. Трябва да приемете споразумението, за да инсталирате $(^NameDA) $_CLICK"
 !endif
 
 !ifdef MUI_UNLICENSEPAGE
-  ${LangFileString} MUI_UNTEXT_LICENSE_TITLE "Лицензно споразумение"
-  ${LangFileString} MUI_UNTEXT_LICENSE_SUBTITLE "Моля запознайте се лицензните условия преди да изтриете $(^NameDA)."
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "Ако приемате условията на споразуменито, натиснете $\"Съгласен$\" за да продължите. Трябва да приемете споразумението, за да изтриете $(^NameDA)."
+  ${LangFileString} MUI_UNTEXT_LICENSE_TITLE "Лицензионно споразумение"
+  ${LangFileString} MUI_UNTEXT_LICENSE_SUBTITLE "Моля запознайте се лицензионните условия преди да изтриете $(^NameDA)."
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "Ако приемате условията на споразуменито, натиснете $\"Съгласен$\" за да продължите. Трябва да приемете споразумението, за да изтриете $(^NameDA)." $_CLICK"
   ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Ако приемате условията на споразумението, сложете отметка в полето по-долу. Трябва да приемете споразумението, за да изтриете $(^NameDA). $_CLICK"
   ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Ако приемате условията на споразуменито, изберете първата опция по-долу. Трябва да приемете споразумението, за да изтриете $(^NameDA). $_CLICK"
 !endif
@@ -38,7 +38,7 @@
 
 !ifdef MUI_COMPONENTSPAGE
   ${LangFileString} MUI_TEXT_COMPONENTS_TITLE "Избор на компоненти"
-  ${LangFileString} MUI_TEXT_COMPONENTS_SUBTITLE "Изберете кои компоненти на $(^NameDA) искате да бъдат инсталирани."
+  ${LangFileString} MUI_TEXT_COMPONENTS_SUBTITLE "Изберете кои компоненти на $(^NameDA) искате да инсталирате."
   ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Описание"
 !endif
 
@@ -67,7 +67,7 @@
 
 !ifdef MUI_INSTFILESPAGE
   ${LangFileString} MUI_TEXT_INSTALLING_TITLE "Инсталиране"
-  ${LangFileString} MUI_TEXT_INSTALLING_SUBTITLE "Моля изчакайте, докато се инсталира $(^NameDA)."
+  ${LangFileString} MUI_TEXT_INSTALLING_SUBTITLE "Изчакайте, инсталират се файловете на $(^NameDA)."
   ${LangFileString} MUI_TEXT_FINISH_TITLE "Инсталирането завърши."
   ${LangFileString} MUI_TEXT_FINISH_SUBTITLE "Инсталирането завърши успешно."
   ${LangFileString} MUI_TEXT_ABORT_TITLE "Инсталирането прекратено."
@@ -76,7 +76,7 @@
 
 !ifdef MUI_UNINSTFILESPAGE
   ${LangFileString} MUI_UNTEXT_UNINSTALLING_TITLE "Изтриване"
-  ${LangFileString} MUI_UNTEXT_UNINSTALLING_SUBTITLE "Моля изчакайте, докато се изтрие $(^NameDA)."
+  ${LangFileString} MUI_UNTEXT_UNINSTALLING_SUBTITLE "Изчакайте, изтриват се файловете на $(^NameDA)."
   ${LangFileString} MUI_UNTEXT_FINISH_TITLE "Край"
   ${LangFileString} MUI_UNTEXT_FINISH_SUBTITLE "Изтриването завърши успешно."
   ${LangFileString} MUI_UNTEXT_ABORT_TITLE "Изтриването прекратено."
@@ -84,19 +84,19 @@
 !endif
 
 !ifdef MUI_FINISHPAGE
-  ${LangFileString} MUI_TEXT_FINISH_INFO_TITLE "Затваряне на Съветника за инсталиране на $(^NameDA)."
-  ${LangFileString} MUI_TEXT_FINISH_INFO_TEXT "$(^NameDA) е инсталирана на вашия компютър.$\r$\n\rНатиснете $\"Край$\", за да затворите Съветника."
+  ${LangFileString} MUI_TEXT_FINISH_INFO_TITLE "Приключване на Съветника за инсталиране на $(^NameDA)."
+  ${LangFileString} MUI_TEXT_FINISH_INFO_TEXT "Инсталирането на $(^NameDA) е завършено.$\r$\n$\r$Натиснете бутона $\"Край$\", за да затворите Съветника."
   ${LangFileString} MUI_TEXT_FINISH_INFO_REBOOT "Компютърът трябва да бъде рестартиран, за да завърши инсталирането на $(^NameDA). Искате ли да рестартирате сега?"
 !endif
 
 !ifdef MUI_UNFINISHPAGE
   ${LangFileString} MUI_UNTEXT_FINISH_INFO_TITLE "Приключване на Съветника за изтриване на $(^NameDA)."
-  ${LangFileString} MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) беше изтрита от вашия компютър.$\r$\n$\r$\nНатиснете $\"Край$\" за да затворите този Съветник."
+  ${LangFileString} MUI_UNTEXT_FINISH_INFO_TEXT "Програмата $(^NameDA) беше изтрита от вашия компютър.$\r$\n$\r$\nНатиснете $\"Край$\" за да затворите този Съветник."
   ${LangFileString} MUI_UNTEXT_FINISH_INFO_REBOOT "Компютърът ви трябва да се рестартира, за да приключи успешно изтриването на $(^NameDA). Искате ли да рестартирате сега?"
 !endif
 
 !ifdef MUI_FINISHPAGE | MUI_UNFINISHPAGE
-  ${LangFileString} MUI_TEXT_FINISH_REBOOTNOW "Да, рестартирай сега!"
+  ${LangFileString} MUI_TEXT_FINISH_REBOOTNOW "Да, рестартирай сега."
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Не, ще рестартирам по-късно."
   ${LangFileString} MUI_TEXT_FINISH_RUN "Стартирай $(^NameDA)."
   ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "Покажи файла $\"ReadMe$\"."
@@ -111,7 +111,7 @@
 !endif
 
 !ifdef MUI_UNCONFIRMPAGE
-  ${LangFileString} MUI_UNTEXT_CONFIRM_TITLE "Изтриване"
+  ${LangFileString} MUI_UNTEXT_CONFIRM_TITLE "Изтриване на $(^NameDA)"
   ${LangFileString} MUI_UNTEXT_CONFIRM_SUBTITLE "Изтриване на $(^NameDA) от вашия компютър."
 !endif
 
@@ -120,5 +120,5 @@
 !endif
 
 !ifdef MUI_UNABORTWARNING
-  ${LangFileString} MUI_UNTEXT_ABORTWARNING "Наистина ли искате да прекратите изтриването на $(^Name)?"
+  ${LangFileString} MUI_UNTEXT_ABORTWARNING "Сигурни ли сте, че искате да прекратите изтриването на $(^Name)?"
 !endif
