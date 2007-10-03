@@ -295,7 +295,7 @@ int generate_unicons_offsets(LPBYTE exeHeader, size_t exeHeaderSize, LPBYTE unin
 
     size = *(LPDWORD)seeker;
     seeker += sizeof(DWORD);
-    *(LPDWORD) seeker = offset;
+    *(LPDWORD) seeker = FIX_ENDIAN_INT32(offset);
     seeker += sizeof(DWORD);
 
     seeker += FIX_ENDIAN_INT32(size);
@@ -308,7 +308,7 @@ int generate_unicons_offsets(LPBYTE exeHeader, size_t exeHeaderSize, LPBYTE unin
 
       size = *(LPDWORD)seeker;
       seeker += sizeof(DWORD);
-      *(LPDWORD) seeker = offset;
+      *(LPDWORD) seeker = FIX_ENDIAN_INT32(offset);
       seeker += sizeof(DWORD);
 
       seeker += FIX_ENDIAN_INT32(size);
