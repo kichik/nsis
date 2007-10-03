@@ -378,7 +378,7 @@ DWORD CResourceEditor::GetResourceOffsetW(WCHAR* szType, WCHAR* szName, LANGID w
     return DWORD(-1);
 }
 
-int CResourceEditor::GetResourceOffsetA(char* szType, char* szName, LANGID wLanguage) {
+DWORD CResourceEditor::GetResourceOffsetA(char* szType, char* szName, LANGID wLanguage) {
   WCHAR* szwType = ResStringToUnicode(szType);
   WCHAR* szwName = ResStringToUnicode(szName);
 
