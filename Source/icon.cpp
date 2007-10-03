@@ -42,6 +42,45 @@ void free_loaded_icon(IconGroup icon)
   }
 }
 
+IconGroup load_icon_res(CResourceEditor* re, WORD id)
+{
+  IconGroupHeader* header;
+  IconGroup result;
+
+  LPBYTE group = re->GetResourceA(
+    RT_GROUP_ICON, MAKEINTRESOURCE(id), NSIS_DEFAULT_LANG);
+
+  if (!group)
+    throw runtime_error("can't find icon group");
+
+  header = (IconGroupHeader*) group;
+
+  for (WORD i = 0; i < header->wCount; i++)
+  {
+    Icon icon;
+    icon.index = i;
+
+    RsrcIconGroupEntry* entry = (RsrcIconGroupEntry*) (group
+      + sizeof(IconGroupHeader) + SIZEOF_RSRC_ICON_GROUP_ENTRY * i);
+
+    memcpy(&icon.meta, &entry->header, sizeof(IconGroupEntry));
+
+    WORD rsrc_id = FIX_ENDIAN_INT16(entry->wRsrcId);
+
+    icon.data = re->GetResourceA(RT_ICON, MAKEINTRESOURCE(rsrc_id), NSIS_DEFAULT_LANG);
+
+    if (!icon.data)
+    {
+      free_loaded_icon(result);
+      throw runtime_error("can't find icon");
+    }
+
+    result.push_back(icon);
+  }
+
+  return result;
+}
+
 IconGroup load_icon_file(const char* filename)
 {
   IconGroupHeader iconHeader;
@@ -49,7 +88,7 @@ IconGroup load_icon_file(const char* filename)
 
   FILE *file = open_icon(filename, iconHeader);
 
-  for (unsigned i = 0; i < iconHeader.wCount; i++)
+  for (WORD i = 0; i < iconHeader.wCount; i++)
   {
     Icon icon;
     icon.index = i;

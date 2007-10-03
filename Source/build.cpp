@@ -2376,6 +2376,13 @@ int CEXEBuild::write_output(void)
   AddStandardStrings();
 
   try {
+    // Load icon from exe, if needed
+    if (installer_icon.empty())
+    {
+      init_res_editor();
+      installer_icon = load_icon_res(res_editor, IDI_ICON2);
+    }
+
     // Set icon
     set_icon(res_editor, IDI_ICON2, installer_icon, uninstaller_icon);
 
