@@ -189,7 +189,7 @@ Accepts variables. If variables are used, they must be initialized before \R{fil
 
 \c [path\]icon.ico
 
-Sets the icon of the installer. Every icon in the icon file will be included in the installer. Note that if you use an uninstaller, each icon in the icon file must have the same size and color depth as its matching icon in the uninstaller icon file. The order of the icons in the icon file also matters. For example, if the installer icon file has three icons, first icon sized 32x32 pixels with 8bpp, second icon sized 16x16 pixels with 8bpp and third icon sized 8x8 with 8bpp; then the uninstaller icon file must have three icons with the same sizes and color depths, in the same order. Use \R{auninstallicon}{UninstallIcon} to set the uninstaller icon.
+Sets the icon of the installer. Every icon in the icon file will be included in the installer. Use \R{auninstallicon}{UninstallIcon} to set the uninstaller icon.
 
 \S2{ainstallbuttontext} InstallButtonText
 
@@ -395,7 +395,7 @@ Accepts variables. If variables are used, they must be initialized in \R{unonIni
 
 \c [path\]icon.ico
 
-Sets the icon of the uninstaller. This icon file \e{must} have the exact same structure as the installer icon file. See \R{aicon}{Icon} for more information about this limit.
+Sets the icon of the uninstaller.
 
 \S2{auninstallsubcaption} UninstallSubCaption
 
