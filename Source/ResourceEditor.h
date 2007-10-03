@@ -123,6 +123,8 @@ public:
   BYTE* GetResourceA(char* szType, char* szName, LANGID wLanguage);
   int   GetResourceSizeW(WCHAR* szType, WCHAR* szName, LANGID wLanguage);
   int   GetResourceSizeA(char* szType, char* szName, LANGID wLanguage);
+  DWORD GetResourceOffsetW(WCHAR* szType, WCHAR* szName, LANGID wLanguage);
+  DWORD GetResourceOffsetA(char* szType, char* szName, LANGID wLanguage);
   void  FreeResource(BYTE* pbResource);
 
   bool  AddExtraVirtualSize2PESection(const char* pszSectionName, int addsize);
@@ -217,7 +219,7 @@ private:
 
 class CResourceDataEntry {
 public:
-  CResourceDataEntry(BYTE* pbData, DWORD dwSize, DWORD dwCodePage = 0);
+  CResourceDataEntry(BYTE* pbData, DWORD dwSize, DWORD dwCodePage = 0, DWORD dwOffset = DWORD(-1));
   ~CResourceDataEntry();
 
   BYTE* GetData();
@@ -227,6 +229,7 @@ public:
 
   DWORD GetSize();
   DWORD GetCodePage();
+  DWORD GetOffset();
 
   DWORD m_dwWrittenAt;
 
@@ -234,6 +237,7 @@ private:
   BYTE* m_pbData;
   DWORD m_dwSize;
   DWORD m_dwCodePage;
+  DWORD m_dwOffset;
 };
 
 #endif // !defined(AFX_RESOURCEEDITOR_H__683BF710_E805_4093_975B_D5729186A89A__INCLUDED_)
