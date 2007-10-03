@@ -26,6 +26,7 @@
 #include "lang.h"
 #include "dirreader.h"
 #include "version.h"
+#include "icon.h"
 #include "exehead/resource.h"
 #include <cassert> // for assert(3)
 #include <time.h>

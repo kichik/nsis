@@ -36,16 +36,6 @@ extern void dopause(void);
 // If width or height are specified it will also make sure the bitmap is in that size
 int update_bitmap(CResourceEditor* re, WORD id, const char* filename, int width=0, int height=0, int maxbpp=0);
 
-// reads icon file filename and places its icons in the resource wIconId using resource editor re
-void replace_icon(CResourceEditor* re, WORD wIconId, const char* filename);
-
-#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-// returns the data of the uninstaller icon (inside filename) that should replace the installer icon data
-unsigned char* generate_uninstall_icon_data(const char* filename, size_t &size);
-// Fill the array of icons for uninstall with their offsets
-int generate_unicons_offsets(unsigned char* exeHeader, size_t exeHeaderSize, unsigned char* uninstIconData);
-#endif//NSIS_CONFIG_UNINSTALL_SUPPORT
-
 size_t my_strftime(char *s, size_t max, const char  *fmt, const struct tm *tm);
 
 bool GetDLLVersion(const std::string& filepath, DWORD& high, DWORD& low);
