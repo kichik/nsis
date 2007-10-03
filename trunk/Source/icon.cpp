@@ -55,7 +55,7 @@ IconGroup load_icon_res(CResourceEditor* re, WORD id)
 
   header = (IconGroupHeader*) group;
 
-  for (WORD i = 0; i < header->wCount; i++)
+  for (WORD i = 0; i < FIX_ENDIAN_INT16(header->wCount); i++)
   {
     Icon icon;
     icon.index = i;
@@ -95,22 +95,34 @@ IconGroup load_icon_file(const char* filename)
     icon.data = NULL;
 
     if (!fread(&icon.meta, sizeof(IconGroupEntry), 1, file))
+    {
+      free_loaded_icon(result);
       throw runtime_error("unable to read entry from file");
+    }
 
     DWORD size = FIX_ENDIAN_INT32(icon.meta.dwRawSize);
     if (size > 1048576) // magic numbers are great
+    {
+      free_loaded_icon(result);
       throw runtime_error("invalid icon file size");
+    }
 
     DWORD iconOffset;
 
     if (!fread(&iconOffset, sizeof(DWORD), 1, file))
+    {
+      free_loaded_icon(result);
       throw runtime_error("unable to read offset from file");
+    }
 
     fpos_t pos;
     fgetpos(file, &pos);
 
     if (fseek(file, iconOffset, SEEK_SET))
+    {
+      free_loaded_icon(result);
       throw runtime_error("corrupted icon file, too small");
+    }
 
     icon.data = new BYTE[size];
 
