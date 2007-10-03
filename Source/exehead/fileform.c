@@ -68,42 +68,83 @@ static int dbd_size, dbd_pos, dbd_srcpos, dbd_fulllen;
 static int m_length;
 static int m_pos;
 
+#ifdef NSIS_COMPRESS_WHOLE
+int NSISCALL calc_percent()
+{
+  return MulDiv(min(m_pos,m_length),100,m_length);
+}
+#else
+#define calc_percent() (MulDiv(min(m_pos,m_length),100,m_length))
+#endif
+
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
 #if defined(NSIS_CONFIG_CRC_SUPPORT) || defined(NSIS_COMPRESS_WHOLE)
 BOOL CALLBACK verProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  static char *msg;
   if (uMsg == WM_INITDIALOG)
   {
     SetTimer(hwndDlg,1,250,NULL);
-    msg = (char *) lParam;
     uMsg = WM_TIMER;
   }
   if (uMsg == WM_TIMER)
   {
-    static char bt[64];
-    int percent=MulDiv(min(m_pos,m_length),100,m_length);
+    char bt[64];
+    int percent=calc_percent();
 #ifdef NSIS_COMPRESS_WHOLE
-    if (msg)
+    char *msg=g_header?_LANG_UNPACKING:_LANG_VERIFYINGINST;
+#else
+    char *msg=_LANG_VERIFYINGINST;
 #endif
-    {
-      wsprintf(bt,msg,percent);
 
-      my_SetWindowText(hwndDlg,bt);
-      my_SetDialogItemText(hwndDlg,IDC_STR,bt);
+    wsprintf(bt,msg,percent);
 
-      ShowWindow(hwndDlg, SW_SHOW);
-    }
-
-#ifdef NSIS_COMPRESS_WHOLE
-    if (g_exec_flags.status_update & 1)
-    {
-      wsprintf(bt, "... %d%%", percent);
-      update_status_text(0, bt);
-    }
-#endif
+    my_SetWindowText(hwndDlg,bt);
+    my_SetDialogItemText(hwndDlg,IDC_STR,bt);
   }
   return 0;
+}
+
+DWORD verify_time;
+
+void handle_ver_dlg(BOOL kill)
+{
+  static HWND hwnd;
+
+  if (kill)
+  {
+    if (hwnd) DestroyWindow(hwnd);
+    hwnd = NULL;
+
+    return;
+  }
+
+  if (hwnd)
+  {
+    MessageLoop(0);
+  }
+  else if (GetTickCount() > verify_time)
+  {
+#ifdef NSIS_COMPRESS_WHOLE
+    if (g_hwnd)
+    {
+      if (g_exec_flags.status_update & 1)
+      {
+        char bt[64];
+        wsprintf(bt, "... %d%%", calc_percent());
+        update_status_text(0, bt);
+      }
+    }
+    else
+#endif
+    {
+      hwnd = CreateDialog(
+        g_hInstance,
+        MAKEINTRESOURCE(IDD_VERIFY),
+        0,
+        verProc
+      );
+    }
+  }
 }
 #endif//NSIS_CONFIG_CRC_SUPPORT || NSIS_COMPRESS_WHOLE
 #endif//NSIS_CONFIG_VISIBLE_SUPPORT
@@ -114,21 +155,23 @@ static z_stream g_inflate_stream;
 
 const char * NSISCALL loadHeaders(int cl_flags)
 {
+  int left;
 #ifdef NSIS_CONFIG_CRC_SUPPORT
-#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-  HWND hwnd = 0;
-  unsigned int verify_time = GetTickCount() + 1000;
-#endif
   crc32_t crc = 0;
   int do_crc = 0;
 #endif//NSIS_CONFIG_CRC_SUPPORT
-  int left;
 
   void *data;
   firstheader h;
   header *header;
 
   HANDLE db_hFile;
+
+#ifdef NSIS_CONFIG_CRC_SUPPORT
+#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
+  verify_time = GetTickCount() + 1000;
+#endif
+#endif//NSIS_CONFIG_CRC_SUPPORT
 
   GetModuleFileName(NULL, state_exe_path, NSIS_MAX_STRLEN);
 
@@ -149,7 +192,7 @@ const char * NSISCALL loadHeaders(int cl_flags)
     if (!ReadSelfFile(temp, l))
     {
 #if defined(NSIS_CONFIG_CRC_SUPPORT) && defined(NSIS_CONFIG_VISIBLE_SUPPORT)
-      if (hwnd) DestroyWindow(hwnd);
+      handle_ver_dlg(TRUE);
 #endif//NSIS_CONFIG_CRC_SUPPORT
       return _LANG_INVALIDCRC;
     }
@@ -210,18 +253,7 @@ const char * NSISCALL loadHeaders(int cl_flags)
     else if ((cl_flags & FH_FLAGS_SILENT) == 0)
 #endif//NSIS_CONFIG_SILENT_SUPPORT
     {
-      if (hwnd)
-      {
-        MessageLoop(0);
-      }
-      else if (GetTickCount() > verify_time)
-        hwnd = CreateDialogParam(
-          g_hInstance,
-          MAKEINTRESOURCE(IDD_VERIFY),
-          0,
-          verProc,
-          (LPARAM)_LANG_VERIFYINGINST
-        );
+      handle_ver_dlg(FALSE);
     }
 #endif//NSIS_CONFIG_VISIBLE_SUPPORT
 
@@ -236,10 +268,7 @@ const char * NSISCALL loadHeaders(int cl_flags)
   }
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
 #ifdef NSIS_CONFIG_CRC_SUPPORT
-  if (hwnd)
-  {
-    DestroyWindow(hwnd);
-  }
+  handle_ver_dlg(TRUE);
 #endif//NSIS_CONFIG_CRC_SUPPORT
 #endif//NSIS_CONFIG_VISIBLE_SUPPORT
   if (!g_filehdrsize)
@@ -429,11 +458,10 @@ extern BOOL CALLBACK verProc(HWND, UINT, WPARAM, LPARAM);
 extern BOOL CALLBACK DialogProc(HWND, UINT, WPARAM, LPARAM);
 static int NSISCALL __ensuredata(int amount)
 {
-#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-  HWND hwnd=NULL;
-  unsigned int verify_time=GetTickCount()+500;
-#endif
   int needed=amount-(dbd_size-dbd_pos);
+#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
+  verify_time=GetTickCount()+500;
+#endif
   if (needed>0)
   {
     SetSelfFilePointer(dbd_srcpos);
@@ -457,21 +485,9 @@ static int NSISCALL __ensuredata(int amount)
           if (!g_exec_flags.silent)
 #endif
           {
-            if (hwnd)
-            {
-              m_pos=m_length-(amount-(dbd_size-dbd_pos));
-              MessageLoop(0);
-            }
-            else if (GetTickCount() > verify_time)
-            {
-              hwnd = CreateDialogParam(
-                g_hInstance,
-                MAKEINTRESOURCE(IDD_VERIFY),
-                0,
-                verProc,
-                g_hwnd ? 0 : (LPARAM)_LANG_UNPACKING
-              );
-            }
+            m_pos=m_length-(amount-(dbd_size-dbd_pos));
+
+            handle_ver_dlg(FALSE);
           }
 #endif//NSIS_CONFIG_VISIBLE_SUPPORT
         g_inflate_stream.next_out=_outbuffer;
@@ -499,12 +515,7 @@ static int NSISCALL __ensuredata(int amount)
     SetFilePointer(dbd_hFile,dbd_pos,NULL,FILE_BEGIN);
   }
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-  if (hwnd)
-  {
-    m_pos=m_length;
-    SendMessage(hwnd,WM_TIMER,0,0);
-    DestroyWindow(hwnd);
-  }
+  handle_ver_dlg(TRUE);
 #endif//NSIS_CONFIG_VISIBLE_SUPPORT
   return 0;
 }
