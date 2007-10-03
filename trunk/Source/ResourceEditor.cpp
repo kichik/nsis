@@ -350,6 +350,46 @@ int CResourceEditor::GetResourceSizeA(char* szType, char* szName, LANGID wLangua
   return result;
 }
 
+// Returns the offset of the requested resource in the original PE
+// Returns -1 if the requested resource can't be found
+DWORD CResourceEditor::GetResourceOffsetW(WCHAR* szType, WCHAR* szName, LANGID wLanguage) {
+  CResourceDirectory* nameDir = 0;
+  CResourceDirectory* langDir = 0;
+  CResourceDataEntry* data = 0;
+
+  int i = m_cResDir->Find(szType);
+  if (i > -1) {
+    nameDir = m_cResDir->GetEntry(i)->GetSubDirectory();
+    i = nameDir->Find(szName);
+    if (i > -1) {
+      langDir = nameDir->GetEntry(i)->GetSubDirectory();
+      i = 0;
+      if (wLanguage)
+        i = langDir->Find(wLanguage);
+      if (i > -1) {
+        data = langDir->GetEntry(i)->GetDataEntry();
+      }
+    }
+  }
+
+  if (data)
+    return data->GetOffset();
+  else
+    return DWORD(-1);
+}
+
+int CResourceEditor::GetResourceOffsetA(char* szType, char* szName, LANGID wLanguage) {
+  WCHAR* szwType = ResStringToUnicode(szType);
+  WCHAR* szwName = ResStringToUnicode(szName);
+
+  DWORD result = GetResourceOffsetW(szwType, szwName, wLanguage);
+
+  FreeUnicodeResString(szwType);
+  FreeUnicodeResString(szwName);
+
+  return result;
+}
+
 void CResourceEditor::FreeResource(BYTE* pbResource)
 {
   if (pbResource)
@@ -568,26 +608,34 @@ CResourceDirectory* CResourceEditor::ScanDirectory(PRESOURCE_DIRECTORY rdRoot, P
       szName = MAKEINTRESOURCEW(ConvertEndianness(rdToScan->Entries[i].UName.Id));
 
     if (rd.UOffset.DirectoryOffset.DataIsDirectory)
+    {
       rdc->AddEntry(
         new CResourceDirectoryEntry(
           szName,
           ScanDirectory(
             rdRoot,
-            PRESOURCE_DIRECTORY(rd.UOffset.DirectoryOffset.OffsetToDirectory + (BYTE*)rdRoot)
+            PRESOURCE_DIRECTORY(rd.UOffset.DirectoryOffset.OffsetToDirectory + (LPBYTE)rdRoot)
           )
         )
       );
+    }
     else
+    {
+      LPBYTE pbData = (LPBYTE)rdRoot + ConvertEndianness(rde->OffsetToData) - m_dwResourceSectionVA;
+      DWORD dwOffset = DWORD(pbData - m_pbPE);
+
       rdc->AddEntry(
         new CResourceDirectoryEntry(
           szName,
           new CResourceDataEntry(
-            (BYTE*)rdRoot + ConvertEndianness(rde->OffsetToData) - m_dwResourceSectionVA,
+            pbData,
             ConvertEndianness(rde->Size),
-            ConvertEndianness(rde->CodePage)
+            ConvertEndianness(rde->CodePage),
+            dwOffset
           )
         )
       );
+    }
 
     // Delete the dynamicly allocated name if it is a name and not an id
     if (!IS_INTRESOURCE(szName))
@@ -978,9 +1026,10 @@ CResourceDataEntry* CResourceDirectoryEntry::GetDataEntry() {
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-CResourceDataEntry::CResourceDataEntry(BYTE* pbData, DWORD dwSize, DWORD dwCodePage) {
+CResourceDataEntry::CResourceDataEntry(BYTE* pbData, DWORD dwSize, DWORD dwCodePage, DWORD dwOffset) {
   m_pbData = 0;
   SetData(pbData, dwSize, dwCodePage);
+  m_dwOffset = dwOffset;
 }
 
 CResourceDataEntry::~CResourceDataEntry() {
@@ -1008,6 +1057,7 @@ void CResourceDataEntry::SetData(BYTE* pbData, DWORD dwSize, DWORD dwCodePage) {
   CopyMemory(m_pbData, pbData, dwSize);
   m_dwSize = dwSize;
   m_dwCodePage = dwCodePage;
+  m_dwOffset = DWORD(-1); // unset
 }
 
 DWORD CResourceDataEntry::GetSize() {
@@ -1016,4 +1066,8 @@ DWORD CResourceDataEntry::GetSize() {
 
 DWORD CResourceDataEntry::GetCodePage() {
   return m_dwCodePage;
+}
+
+DWORD CResourceDataEntry::GetOffset() {
+  return m_dwOffset;
 }
