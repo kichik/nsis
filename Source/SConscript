@@ -10,6 +10,7 @@ makensis_files = Split("""
 	dirreader.cpp
 	fileform.cpp
 	growbuf.cpp
+	icon.cpp
 	lang.cpp
 	lineparse.cpp
 	makenssi.cpp
