@@ -1,271 +1,326 @@
 #include "Platform.h"
+#include "icon.h"
 #include "util.h"
 #include "lang.h"
 
 #include <stdio.h>
 #include <stdexcept>
+#include <vector>
+#include <algorithm>
 
 using namespace std;
 
 extern int g_display_errors;
 extern FILE *g_output;
 
-// Icon editing structures
-typedef struct {
-  WORD wReserved;
-  WORD wIsIcon;
-  WORD wCount;
-} IconGroupHeader;
-
-typedef struct {
-  BYTE bWidth;
-  BYTE bHeight;
-  BYTE bPaletteEntries;
-  BYTE bReserved;
-  WORD wPlanes;
-  WORD wBitsPerPixel;
-  DWORD dwRawSize;
-  DWORD dwImageOffset;
-} FileIconGroupEntry;
-
-typedef struct {
-  BYTE bWidth;
-  BYTE bHeight;
-  BYTE bPaletteEntries;
-  BYTE bReserved;
-  WORD wPlanes;
-  WORD wBitsPerPixel;
-  DWORD dwRawSize;
-  WORD wRsrcId;
-} RsrcIconGroupEntry;
-
 #define SIZEOF_RSRC_ICON_GROUP_ENTRY 14
 
-static FILE * open_icon(const char* filename, IconGroupHeader *igh)
+static FILE * open_icon(const char* filename, IconGroupHeader& igh)
 {
   FILE* f = FOPEN(filename, "rb");
   if (!f)
     throw runtime_error("can't open file");
 
-  if (!fread(igh, sizeof(IconGroupHeader), 1, f))
-    throw runtime_error("unable to read file");
+  if (!fread(&igh, sizeof(IconGroupHeader), 1, f))
+    throw runtime_error("unable to read header from file");
 
-  FIX_ENDIAN_INT16_INPLACE(igh->wIsIcon);
-  FIX_ENDIAN_INT16_INPLACE(igh->wReserved);
-  FIX_ENDIAN_INT16_INPLACE(igh->wCount);
+  FIX_ENDIAN_INT16_INPLACE(igh.wIsIcon);
+  FIX_ENDIAN_INT16_INPLACE(igh.wReserved);
+  FIX_ENDIAN_INT16_INPLACE(igh.wCount);
 
-  if (igh->wIsIcon != 1 || igh->wReserved != 0)
+  if (igh.wIsIcon != 1 || igh.wReserved != 0)
     throw runtime_error("invalid icon file");
 
   return f;
 }
 
-// replace_icon, must get an initialized resource editor
-void replace_icon(CResourceEditor* re, WORD wIconId, const char* filename)
+void free_loaded_icon(IconGroup icon)
 {
-  IconGroupHeader igh, *new_igh;
-  FILE *f = open_icon(filename, &igh);
+  for (IconGroup::size_type i = 0; i < icon.size(); i++)
+  {
+    delete [] icon[i].data;
+  }
+}
 
-  BYTE* rsrcIconGroup = (BYTE*)malloc(sizeof(IconGroupHeader) + igh.wCount*SIZEOF_RSRC_ICON_GROUP_ENTRY);
-  if (!rsrcIconGroup) throw bad_alloc();
+IconGroup load_icon_file(const char* filename)
+{
+  IconGroupHeader iconHeader;
+  IconGroup result;
 
-  CopyMemory(rsrcIconGroup, &igh, sizeof(IconGroupHeader));
+  FILE *file = open_icon(filename, iconHeader);
 
-  new_igh = (IconGroupHeader *) rsrcIconGroup;
-  FIX_ENDIAN_INT16_INPLACE(new_igh->wIsIcon);
-  FIX_ENDIAN_INT16_INPLACE(new_igh->wReserved);
-  FIX_ENDIAN_INT16_INPLACE(new_igh->wCount);
+  for (unsigned i = 0; i < iconHeader.wCount; i++)
+  {
+    Icon icon;
+    icon.index = i;
+    icon.data = NULL;
 
-  RsrcIconGroupEntry* ige = (RsrcIconGroupEntry*)(rsrcIconGroup + sizeof(IconGroupHeader));
+    if (!fread(&icon.meta, sizeof(IconGroupEntry), 1, file))
+      throw runtime_error("unable to read entry from file");
 
-  int i = 1;
+    DWORD size = FIX_ENDIAN_INT32(icon.meta.dwRawSize);
+    if (size > 1048576) // magic numbers are great
+      throw runtime_error("invalid icon file size");
 
-  // Delete old icons
-  while (re->UpdateResourceA(RT_ICON, MAKEINTRESOURCE(i++), NSIS_DEFAULT_LANG, 0, 0));
+    DWORD iconOffset;
 
-  for (i = 0; i < igh.wCount; i++) {
-    fread(ige, sizeof(FileIconGroupEntry)-sizeof(DWORD), 1, f);
-
-    DWORD dwRawSize = FIX_ENDIAN_INT32(ige->dwRawSize);
-
-    ige->wRsrcId = FIX_ENDIAN_INT16(i + 1);
-
-    DWORD dwOffset;
-    fread(&dwOffset, sizeof(DWORD), 1, f);
-
-    FIX_ENDIAN_INT32_INPLACE(dwOffset);
+    if (!fread(&iconOffset, sizeof(DWORD), 1, file))
+      throw runtime_error("unable to read offset from file");
 
     fpos_t pos;
-    fgetpos(f, &pos);
+    fgetpos(file, &pos);
 
-    if (fseek(f, dwOffset, SEEK_SET)) {
-      free(rsrcIconGroup);
+    if (fseek(file, iconOffset, SEEK_SET))
       throw runtime_error("corrupted icon file, too small");
-    }
-    BYTE* iconData = (BYTE*)malloc(dwRawSize);
-    if (!iconData) {
-      free(rsrcIconGroup);
-      throw bad_alloc();
-    }
-    fread(iconData, sizeof(BYTE), dwRawSize, f);
-    re->UpdateResourceA(RT_ICON, MAKEINTRESOURCE(i+1), NSIS_DEFAULT_LANG, iconData, dwRawSize);
-    free(iconData);
 
-    fsetpos(f, &pos);
+    icon.data = new BYTE[size];
 
-    // Seems like the compiler refuses to increase the pointer by just 14.
-    // If you'll replace this line by ige++ you will get unwanted results.
-    ige = (RsrcIconGroupEntry*)((BYTE*)ige + SIZEOF_RSRC_ICON_GROUP_ENTRY);
+    if (!fread(icon.data, size, 1, file))
+    {
+      free_loaded_icon(result);
+      throw runtime_error("unable to read icon from file");
+    }
+
+    fsetpos(file, &pos);
+
+    result.push_back(icon);
   }
 
-  fclose(f);
+  return result;
+}
 
-  re->UpdateResourceA(RT_GROUP_ICON, MAKEINTRESOURCE(wIconId), NSIS_DEFAULT_LANG, rsrcIconGroup, sizeof(IconGroupHeader) + igh.wCount*SIZEOF_RSRC_ICON_GROUP_ENTRY);
+typedef struct
+{
+  unsigned index1;
+  unsigned index2;
+  DWORD size;
+} IconPair;
 
-  free(rsrcIconGroup);
+bool compare_icon(Icon a, Icon b)
+{
+  return FIX_ENDIAN_INT32(a.meta.dwRawSize) > FIX_ENDIAN_INT32(b.meta.dwRawSize);
+}
+
+static IconGroup sort_icon(IconGroup icon)
+{
+  IconGroup sorted = icon;
+  sort(sorted.begin(), sorted.end(), compare_icon);
+  return sorted;
+}
+
+static vector<IconPair> get_icon_order(IconGroup icon1, IconGroup icon2)
+{
+  IconGroup sorted_icons1 = sort_icon(icon1);
+  IconGroup sorted_icons2 = sort_icon(icon2);
+
+  IconGroup::size_type shared_count = min(sorted_icons1.size(), sorted_icons2.size());
+  IconGroup::size_type total_count = max(sorted_icons1.size(), sorted_icons2.size());
+
+  vector<IconPair> result;
+  IconGroup::size_type i;
+
+  for (i = 0; i < shared_count; i++)
+  {
+    IconPair pair;
+
+    pair.index1 = sorted_icons1[i].index;
+    pair.index2 = sorted_icons2[i].index;
+    pair.size = max(
+      FIX_ENDIAN_INT32(sorted_icons1[i].meta.dwRawSize),
+      FIX_ENDIAN_INT32(sorted_icons2[i].meta.dwRawSize)
+    );
+
+    result.push_back(pair);
+  }
+
+  for (; i < total_count; i++)
+  {
+    IconPair pair;
+
+    if (i < sorted_icons1.size())
+    {
+      pair.index1 = sorted_icons1[i].index;
+      pair.index2 = 0xffff;
+      pair.size = FIX_ENDIAN_INT32(sorted_icons1[i].meta.dwRawSize);
+    }
+
+    if (i < sorted_icons2.size())
+    {
+      pair.index2 = sorted_icons2[i].index;
+      pair.index1 = 0xffff;
+      pair.size = FIX_ENDIAN_INT32(sorted_icons2[i].meta.dwRawSize);
+    }
+
+    result.push_back(pair);
+  }
+
+  return result;
+}
+
+static LPBYTE generate_icon_group(IconGroup icon, vector<IconPair> order, bool first)
+{
+  LPBYTE group = new BYTE[
+    sizeof(IconGroupHeader) // header
+    + order.size() * SIZEOF_RSRC_ICON_GROUP_ENTRY // entries
+  ];
+
+  IconGroupHeader* header = (IconGroupHeader*) group;
+
+  header->wReserved = 0;
+  header->wIsIcon   = FIX_ENDIAN_INT16(1);
+  header->wCount    = FIX_ENDIAN_INT16(icon.size());
+
+  for (IconGroup::size_type i = 0; i < icon.size(); i++)
+  {
+    RsrcIconGroupEntry* entry = (RsrcIconGroupEntry*)
+      &group[sizeof(IconGroupHeader) + SIZEOF_RSRC_ICON_GROUP_ENTRY * i];
+    unsigned index = first ? order[i].index1 : order[i].index2;
+
+    memcpy(&entry->header, &icon[index].meta, sizeof(IconGroupEntry));
+    entry->wRsrcId = FIX_ENDIAN_INT16(i + 1);
+  }
+
+  return group;
+}
+
+// set_icon, must get an initialized resource editor
+void set_icon(CResourceEditor* re, WORD wIconId, IconGroup icon1, IconGroup icon2)
+{
+  vector<IconPair> order = get_icon_order(icon1, icon2);
+
+  // genreate group
+  LPBYTE group1 = generate_icon_group(icon1, order, true);
+
+  // set group
+  size_t group_size = sizeof(IconGroupHeader) // header
+    + order.size() * SIZEOF_RSRC_ICON_GROUP_ENTRY; // entries
+
+  re->UpdateResourceA(RT_GROUP_ICON, MAKEINTRESOURCE(wIconId), NSIS_DEFAULT_LANG, group1, group_size);
+
+  // delete old icons
+  unsigned i = 1;
+  while (re->UpdateResourceA(RT_ICON, MAKEINTRESOURCE(i++), NSIS_DEFAULT_LANG, 0, 0));
+
+  // set new icons
+  IconGroup::size_type order_index;
+  for (order_index = 0; order_index < order.size(); order_index++)
+  {
+    LPBYTE data = new BYTE[order[order_index].size];
+
+    if (order_index < icon1.size())
+    {
+      Icon* icon = &icon1[order[order_index].index1];
+      memcpy(data, icon->data, FIX_ENDIAN_INT32(icon->meta.dwRawSize));
+    }
+
+    re->UpdateResourceA(RT_ICON, MAKEINTRESOURCE(order_index + 1), NSIS_DEFAULT_LANG, data, order[order_index].size);
+
+    delete [] data;
+  }
 }
 
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
 // returns the data of the uninstaller icon that should replace the installer icon data
-unsigned char* generate_uninstall_icon_data(const char* filename, size_t &size)
+unsigned char* generate_uninstall_icon_data(IconGroup icon1, IconGroup icon2, size_t &data_size)
 {
-  int i;
+  IconGroup::size_type i;
+  vector<IconPair> order = get_icon_order(icon1, icon2);
 
-  IconGroupHeader igh;
-  FILE *f = open_icon(filename, &igh);
+  // genreate group
+  LPBYTE group = generate_icon_group(icon2, order, false);
 
-  int iNewIconSize = 0;
-  FileIconGroupEntry ige;
+  // calculate size
+  size_t group_size = sizeof(IconGroupHeader) // header
+    + order.size() * SIZEOF_RSRC_ICON_GROUP_ENTRY; // entries
 
-  DWORD* offsets = (DWORD*)malloc(sizeof(DWORD)*igh.wCount);
-  DWORD* rawSizes = (DWORD*)malloc(sizeof(DWORD)*igh.wCount);
-  if (!offsets || !rawSizes) throw bad_alloc();
+  data_size = group_size // group header
+    + sizeof(DWORD) * 2 // offset and size of group header
+    + (sizeof(DWORD) * 2) * icon2.size() // offset and size per entry
+    + sizeof(DWORD); // terminator
 
-  for (i = 0; i < igh.wCount; i++) {
-    if (!fread(&ige, sizeof(FileIconGroupEntry), 1, f)) throw runtime_error("unable to read file");
-    offsets[i] = ige.dwImageOffset;
-    rawSizes[i] = ige.dwRawSize;
-    iNewIconSize += FIX_ENDIAN_INT32(ige.dwRawSize);
+  for (i = 0; i < icon2.size(); i++)
+  {
+    // add icon sizes
+    data_size += FIX_ENDIAN_INT32(icon2[i].meta.dwRawSize);
   }
 
-  // Before each icon come two DWORDs, one for size and the other for offset (set later)
-  // The last size is 0, no offset
-  iNewIconSize += sizeof(DWORD)*(1 + igh.wCount*2);
+  // allocate memory
+  LPBYTE uninst_data = new BYTE[data_size];
+  LPBYTE seeker = uninst_data;
 
-  BYTE* pbUninstIcon = (BYTE*)malloc(iNewIconSize);
-  if (!pbUninstIcon) throw bad_alloc();
+  // fill group header
+  *(LPDWORD) seeker = FIX_ENDIAN_INT32(group_size);
+  seeker += sizeof(DWORD);
+  *(LPDWORD) seeker = 0;
+  seeker += sizeof(DWORD);
 
-  BYTE* seeker = pbUninstIcon;
+  memcpy(seeker, group, group_size);
+  seeker += group_size;
 
-  for (i = 0; i < igh.wCount; i++) {
-    *(DWORD*)seeker = rawSizes[i];
+  // fill entries
+  for (i = 0; i < icon2.size(); i++)
+  {
+    Icon* icon = &icon2[order[i].index2];
+    DWORD size = FIX_ENDIAN_INT32(icon->meta.dwRawSize);
+
+    *(LPDWORD) seeker = FIX_ENDIAN_INT32(size);
     seeker += sizeof(DWORD);
-    *(DWORD*)seeker = 0;
+    *(LPDWORD) seeker = 0;
     seeker += sizeof(DWORD);
-    fseek(f, FIX_ENDIAN_INT32(offsets[i]), SEEK_SET);
-    fread(seeker, 1, FIX_ENDIAN_INT32(rawSizes[i]), f);
-    seeker += FIX_ENDIAN_INT32(rawSizes[i]);
+
+    memcpy(seeker, icon->data, size);
+    seeker += size;
   }
 
-  // This is how we know there are no more icons (size = 0)
-  *(DWORD*)seeker = 0;
+  // add terminator
+  *(LPDWORD) seeker = 0;
 
-  free(offsets);
-  free(rawSizes);
-
-  size = iNewIconSize;
-
-  return pbUninstIcon;
-}
-
-// Added by Amir Szekely 11th July 2002
-#define MY_ASSERT(x, y) if (x) {if (g_display_errors) fprintf(g_output,"\nError finding icon resources: %s -- failing!\n", y);return 0;}
-
-int find_in_dir(PRESOURCE_DIRECTORY rd, WORD id) {
-  WORD i = FIX_ENDIAN_INT16(rd->Header.NumberOfNamedEntries);
-  WORD l = i + FIX_ENDIAN_INT16(rd->Header.NumberOfIdEntries);
-
-  for (; i < l; i++) {
-    if (FIX_ENDIAN_INT16(rd->Entries[i].UName.Id) == id) {
-      return i;
-    }
-  }
-
-  return -1;
+  // done
+  return uninst_data;
 }
 
 // Fill the array of icons for uninstall with their offsets
 // Returns zero on failure
-int generate_unicons_offsets(unsigned char* exeHeader, size_t exeHeaderSize, unsigned char* uninstIconData) {
-  DWORD dwResourceSectionVA;
+int generate_unicons_offsets(LPBYTE exeHeader, size_t exeHeaderSize, LPBYTE uninstIconData, WORD wIconId) {
+  try
+  {
+    DWORD offset;
+    DWORD size;
 
-  PIMAGE_NT_HEADERS ntHeaders = CResourceEditor::GetNTHeaders(exeHeader);
-  PRESOURCE_DIRECTORY rdRoot = CResourceEditor::GetResourceDirectory(exeHeader, exeHeaderSize, ntHeaders, &dwResourceSectionVA);
+    CResourceEditor re(exeHeader, exeHeaderSize);
 
-  int idx = find_in_dir(rdRoot, (WORD) (long) RT_ICON);
-  MY_ASSERT(idx < 0, "no icons found");
-  MY_IMAGE_RESOURCE_DIRECTORY_ENTRY rdEntry = rdRoot->Entries[idx];
-  FIX_ENDIAN_INT32_INPLACE(rdEntry.UOffset.OffsetToData);
-  MY_ASSERT(!rdEntry.UOffset.DirectoryOffset.DataIsDirectory, "bad resource directory");
-
-  PRESOURCE_DIRECTORY rdIcons = PRESOURCE_DIRECTORY(rdEntry.UOffset.DirectoryOffset.OffsetToDirectory + DWORD(rdRoot));
-
-  MY_ASSERT((size_t)rdIcons - (size_t)exeHeader > exeHeaderSize, "corrupted EXE - invalid pointer");
-
-  WORD wNumberOfEntries = FIX_ENDIAN_INT16(rdIcons->Header.NumberOfIdEntries);
-
-  MY_ASSERT(wNumberOfEntries == 0, "no icons found");
-
-  for (WORD i = 0; i < wNumberOfEntries; i++) { // Icons dir can't have named entries
-    MY_IMAGE_RESOURCE_DIRECTORY_ENTRY icoEntry = rdIcons->Entries[i];
-    FIX_ENDIAN_INT32_INPLACE(icoEntry.UOffset.OffsetToData);
-
-    MY_ASSERT(!icoEntry.UOffset.DirectoryOffset.DataIsDirectory, "bad resource directory");
-    PRESOURCE_DIRECTORY rd = PRESOURCE_DIRECTORY(icoEntry.UOffset.DirectoryOffset.OffsetToDirectory + DWORD(rdRoot));
-    
-    MY_ASSERT((size_t)rd - (size_t)exeHeader > exeHeaderSize, "corrupted EXE - invalid pointer");
-
-    MY_IMAGE_RESOURCE_DIRECTORY_ENTRY datEntry = rd->Entries[0];
-    FIX_ENDIAN_INT32_INPLACE(datEntry.UOffset.OffsetToData);
-
-    MY_ASSERT(datEntry.UOffset.DirectoryOffset.DataIsDirectory, "bad resource directory");
-    
-    PIMAGE_RESOURCE_DATA_ENTRY rde = PIMAGE_RESOURCE_DATA_ENTRY(datEntry.UOffset.OffsetToData + DWORD(rdRoot));
-
-    MY_ASSERT((size_t)rde - (size_t)exeHeader > exeHeaderSize, "corrupted EXE - invalid pointer");
-
-    // find icon to replace
     LPBYTE seeker = uninstIconData;
-    while (*seeker) {
-      DWORD dwSize = *(DWORD*)seeker;
+
+    offset = re.GetResourceOffsetA(RT_GROUP_ICON, MAKEINTRESOURCE(wIconId), NSIS_DEFAULT_LANG);
+
+    size = *(LPDWORD)seeker;
+    seeker += sizeof(DWORD);
+    *(LPDWORD) seeker = offset;
+    seeker += sizeof(DWORD);
+
+    seeker += FIX_ENDIAN_INT32(size);
+
+    WORD icon_index = 1;
+
+    while (*(LPDWORD)seeker)
+    {
+      offset = re.GetResourceOffsetA(RT_ICON, MAKEINTRESOURCE(icon_index), NSIS_DEFAULT_LANG);
+
+      size = *(LPDWORD)seeker;
       seeker += sizeof(DWORD);
-      DWORD dwOffset = *(DWORD*)seeker;
-      // if we haven't set the offset yet and the size is the same, it's a match
-      if (!dwOffset && dwSize == rde->Size)
-        break;
+      *(LPDWORD) seeker = offset;
+      seeker += sizeof(DWORD);
 
-      seeker += FIX_ENDIAN_INT32(dwSize) + sizeof(DWORD);
+      seeker += FIX_ENDIAN_INT32(size);
 
-      // reached the end of the list and no match
-      MY_ASSERT(!*seeker, "installer, uninstaller icon size mismatch - see the Icon instruction's documentation for more information");
+      icon_index++;
     }
-
-    // Set offset
-    DWORD dwOffset = FIX_ENDIAN_INT32(rde->OffsetToData) + DWORD(rdRoot) - dwResourceSectionVA - DWORD(exeHeader);
-    *(LPDWORD) seeker = FIX_ENDIAN_INT32(dwOffset);
-
-    MY_ASSERT(dwOffset > exeHeaderSize || dwOffset < (DWORD)rdRoot - (DWORD)exeHeader, "invalid data offset - icon resource probably compressed");
   }
-
-  LPBYTE seeker = uninstIconData;
-  while (*seeker) {
-    DWORD dwSize = *(DWORD*)seeker;
-    seeker += sizeof(DWORD);
-    DWORD dwOffset = *(DWORD*)seeker;
-    seeker += sizeof(DWORD);
-    // offset isn't set which means we found no match for this one
-    MY_ASSERT(!dwOffset, "installer, uninstaller number of icons doesn't match - see the Icon instruction's documentation for more information");
-    seeker += FIX_ENDIAN_INT32(dwSize);
+  catch (const exception& e)
+  {
+    if (g_display_errors)
+      fprintf(g_output, "\nError generating uninstaller icon: %s -- failing!\n", e.what());
+    return 0;
   }
 
   return 1;
