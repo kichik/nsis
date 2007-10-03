@@ -26,6 +26,7 @@
 #include "ShConstants.h"
 #include "mmap.h"
 #include "manifest.h"
+#include "icon.h"
 
 #include "exehead/fileform.h"
 #include "exehead/config.h"
@@ -392,7 +393,9 @@ class CEXEBuild {
 
     bool branding_image_found;
     WORD branding_image_id;
-    unsigned char *m_unicon_data;
+
+    IconGroup installer_icon;
+    IconGroup uninstaller_icon;
     size_t m_unicon_size;
 
 #ifdef NSIS_SUPPORT_BGBG

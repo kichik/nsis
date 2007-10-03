@@ -17,14 +17,59 @@
 #ifndef _ICON_H_
 #define _ICON_H_
 
-// reads icon file filename and places its icons in the resource wIconId using resource editor re
-void replace_icon(CResourceEditor* re, WORD wIconId, const char* filename);
+#include "ResourceEditor.h"
+
+#include <vector>
+
+typedef struct
+{
+  WORD wReserved;
+  WORD wIsIcon;
+  WORD wCount;
+} IconGroupHeader;
+
+typedef struct
+{
+  BYTE bWidth;
+  BYTE bHeight;
+  BYTE bPaletteEntries;
+  BYTE bReserved;
+  WORD wPlanes;
+  WORD wBitsPerPixel;
+  DWORD dwRawSize;
+} IconGroupEntry;
+
+typedef struct
+{
+  IconGroupEntry header;
+  DWORD dwImageOffset;
+} FileIconGroupEntry;
+
+typedef struct
+{
+  IconGroupEntry header;
+  WORD wRsrcId;
+} RsrcIconGroupEntry;
+
+typedef struct
+{
+  unsigned index;
+  IconGroupEntry meta;
+  LPBYTE data;
+} Icon;
+
+typedef std::vector<Icon> IconGroup;
+
+IconGroup load_icon_file(const char* filename);
+void free_loaded_icon(IconGroup icon);
+
+void set_icon(CResourceEditor* re, WORD wIconId, IconGroup icon1, IconGroup icon2);
 
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
 // returns the data of the uninstaller icon (inside filename) that should replace the installer icon data
-unsigned char* generate_uninstall_icon_data(const char* filename, size_t &size);
+LPBYTE generate_uninstall_icon_data(IconGroup icon1, IconGroup icon2, size_t &size);
 // Fill the array of icons for uninstall with their offsets
-int generate_unicons_offsets(unsigned char* exeHeader, size_t exeHeaderSize, unsigned char* uninstIconData);
+int generate_unicons_offsets(LPBYTE exeHeader, size_t exeHeaderSize, LPBYTE uninstIconData, WORD wIconId);
 #endif//NSIS_CONFIG_UNINSTALL_SUPPORT
 
 #endif//_ICON_H_
