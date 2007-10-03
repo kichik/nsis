@@ -26,6 +26,7 @@
 #include "writer.h"
 #include "crc32.h"
 #include "manifest.h"
+#include "icon.h"
 
 #include <stdexcept>
 
