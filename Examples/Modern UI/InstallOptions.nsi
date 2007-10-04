@@ -1,17 +1,18 @@
-;NSIS Modern User Interface version 1.70
+;NSIS Modern User Interface
 ;InstallOptions Example Script
 ;Written by Joost Verburg
 
 ;---------------------
-;Include Modern UI
+;Header files
 
   !include "MUI.nsh"
+  !include "InstallOptions.nsh"
 
 ;--------------------------------
 ;General
 
   ;Name and file
-  Name "Modern UI Test 1.70"
+  Name "Modern UI Test"
   OutFile "InstallOptions.exe"
 
   ;Default installation folder
@@ -51,15 +52,16 @@
   ;the actual installation should be stored first in the data block,
   ;because this will make your installer start faster.
   
+  ReserveFile "${NSISDIR}\Plugins\InstallOptions.dll"
+
   ReserveFile "ioA.ini"
   ReserveFile "ioB.ini"
   ReserveFile "ioC.ini"
-  !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
 
 ;--------------------------------
 ;Variables
 
-  Var INI_VALUE
+  Var IniValue
 
 ;--------------------------------
 ;Installer Sections
@@ -77,10 +79,10 @@ Section "Dummy Section" SecDummy
   WriteUninstaller "$INSTDIR\Uninstall.exe"
   
   ;Read a value from an InstallOptions INI file
-  !insertmacro MUI_INSTALLOPTIONS_READ $INI_VALUE "ioC.ini" "Field 2" "State"
+  !insertmacro INSTALLOPTIONS_READ $IniValue "ioC.ini" "Field 2" "State"
   
   ;Display a messagebox if check box was checked
-  StrCmp $INI_VALUE "1" "" +2
+  StrCmp $IniValue "1" "" +2
     MessageBox MB_OK "You checked the check box, here is the MessageBox..."
 
 SectionEnd
@@ -91,9 +93,9 @@ SectionEnd
 Function .onInit
 
   ;Extract InstallOptions INI files
-  !insertmacro MUI_INSTALLOPTIONS_EXTRACT "ioA.ini"
-  !insertmacro MUI_INSTALLOPTIONS_EXTRACT "ioB.ini"
-  !insertmacro MUI_INSTALLOPTIONS_EXTRACT "ioC.ini"
+  !insertmacro INSTALLOPTIONS_EXTRACT "ioA.ini"
+  !insertmacro INSTALLOPTIONS_EXTRACT "ioB.ini"
+  !insertmacro INSTALLOPTIONS_EXTRACT "ioC.ini"
   
 FunctionEnd
 
@@ -103,21 +105,21 @@ LangString TEXT_IO_SUBTITLE ${LANG_ENGLISH} "This is a page created using the In
 Function CustomPageA
 
   !insertmacro MUI_HEADER_TEXT "$(TEXT_IO_TITLE)" "$(TEXT_IO_SUBTITLE)"
-  !insertmacro MUI_INSTALLOPTIONS_DISPLAY "ioA.ini"
+  !insertmacro INSTALLOPTIONS_DISPLAY "ioA.ini"
 
 FunctionEnd
 
 Function CustomPageB
 
   !insertmacro MUI_HEADER_TEXT "$(TEXT_IO_TITLE)" "$(TEXT_IO_SUBTITLE)"
-  !insertmacro MUI_INSTALLOPTIONS_DISPLAY "ioB.ini"
+  !insertmacro INSTALLOPTIONS_DISPLAY "ioB.ini"
 
 FunctionEnd
 
 Function CustomPageC
 
   !insertmacro MUI_HEADER_TEXT "$(TEXT_IO_TITLE)" "$(TEXT_IO_SUBTITLE)"
-  !insertmacro MUI_INSTALLOPTIONS_DISPLAY "ioC.ini"
+  !insertmacro INSTALLOPTIONS_DISPLAY "ioC.ini"
 
 FunctionEnd
 
