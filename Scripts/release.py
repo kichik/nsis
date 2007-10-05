@@ -1,7 +1,7 @@
 """
 requires Python Image Library - http://www.pythonware.com/products/pil/
 requires grep and diff - http://www.mingw.org/msys.shtml
-requires command line cvs - http://tortoisecvs.sourceforge.net/
+requires command line svn - http://subversion.tigris.org/
 
 example release.cfg:
 =========================
@@ -16,9 +16,9 @@ VER_MINOR=1
 VER_REVISION=0
 VER_BUILD=0
 
-[cvs]
-CVS="C:\Program Files\TortoiseCVS\cvs.exe" -z9
-CVS_EXT="C:\Program Files\PuTTY\plink.exe" -2 -l "%u" "%h"
+[svn]
+SVN="C:\svn-win32\bin\svn.exe"
+SVNROOT=https://nsis.svn.sourceforge.net/svnroot/nsis/NSIS
 
 [compression]
 TAR_BZ2=7zatarbz2.bat %s %s
@@ -29,11 +29,6 @@ RSH="C:\Program Files\PuTTY\plink.exe" -2 -l kichik nsis.sourceforge.net
 
 [wiki]
 UPDATE_URL=http://nsis.sourceforge.net/Special:Simpleupdate?action=raw
-
-[cvs2cl]
-CVS2CL=cvs2cl.pl
-CVS2CL_PERL="C:\Program Files\Perl\bin\perl.exe"
-CVS2CL_OPTS=--FSF
 =========================
 
 7zatarbz2.bat:
@@ -76,8 +71,8 @@ VER_MINOR = cfg.get('version', 'VER_MINOR')
 VER_REVISION = cfg.get('version', 'VER_REVISION')
 VER_BUILD = cfg.get('version', 'VER_BUILD')
 
-CVS = cfg.get('cvs', 'CVS')
-CVS_EXT = cfg.get('cvs', 'CVS_EXT')
+SVN = cfg.get('svn', 'SVN')
+SVNROOT = cfg.get('svn', 'SVNROOT')
 
 TAR_BZ2 = cfg.get('compression', 'TAR_BZ2')
 ZIP = cfg.get('compression', 'ZIP')
@@ -87,16 +82,9 @@ RSH = cfg.get('rsh', 'RSH')
 PURGE_URL = cfg.get('wiki', 'PURGE_URL')
 UPDATE_URL = cfg.get('wiki', 'UPDATE_URL')
 
-CVS2CL = cfg.get('cvs2cl', 'CVS2CL')
-CVS2CL_PERL = cfg.get('cvs2cl', 'CVS2CL_PERL')
-CVS2CL_OPTS = cfg.get('cvs2cl', 'CVS2CL_OPTS')
-
 ### config env
 
-os.environ['CVS_EXT'] = CVS_EXT
-os.environ['CVSROOT'] = ':ext:%s@nsis.cvs.sourceforge.net:/cvsroot/nsis' % USER
-
-CVS_TAG = 'v' + ''.join(VERSION.split('.'))
+SVN_TAG = 'v' + ''.join(VERSION.split('.'))
 
 newverdir = 'nsis-%s-src' % VERSION
 scons_line = 'scons -C %s VERSION=%s VER_MAJOR=%s VER_MINOR=%s VER_REVISION=%s VER_BUILD=%s ' \
@@ -131,6 +119,7 @@ def run(command, log_level, err, wanted_ret = 0, log_dir = '.'):
 
 	# sleep because for some weird reason, running cvs.exe hugs
 	# the release log for some time after os.system returns
+	#    still needed for svn?
 	import time
 	time.sleep(5)
 
@@ -190,7 +179,7 @@ def CommitMenuImage():
 	print 'committing header.gif...'
 
 	run(
-		'%s commit -m %s ..\\Menu\\images\\header.gif' % (CVS, VERSION),
+		'%s commit -m %s ..\\Menu\\images\\header.gif' % (SVN, VERSION),
 		LOG_ALL,
 		'failed committing header.gif'
 	)
@@ -223,16 +212,16 @@ def Tag():
 	print 'tagging...'
 
 	run(
-		'%s tag -R %s ..' % (CVS, CVS_TAG),
+		'%s copy %s/trunk %s/tags/%s -m "Tagging for release %s"' % (SVN, SVNROOT, SVNROOT, SVN_TAG, VERSION),
 		LOG_ALL,
-		'failed creating tag %s' % CVS_TAG
+		'failed creating tag %s' % SVN_TAG
 	)
 
 def Export():
 	print 'exporting a fresh copy...'
 
 	run(
-		'%s -z3 export -r %s -d %s NSIS' % (CVS, CVS_TAG, newverdir),
+		'%s export %s/tags/%s %s' % (SVN, SVNROOT, SVN_TAG, newverdir),
 		LOG_ALL,
 		'export failed'
 	)
@@ -240,31 +229,13 @@ def Export():
 def CreateChangeLog():
 	print 'generating ChangeLog...'
 
-	global CVS2CL
-	if not os.path.isfile(CVS2CL):
-		import urllib
-		CVS2CL = urllib.urlretrieve('http://www.red-bean.com/cvs2cl/cvs2cl.pl','cvs2cl.pl')[0]
-
 	changelog = os.path.join(newverdir,'ChangeLog')
 
-	os.chdir('..')
 	run(
-		'%s log  > Scripts\cvs.log' % CVS,
+		'%s log --verbose %s > %s' % (SVN, SVNROOT, changelog),
 		LOG_ERRORS,
-		'cvs log failed',
-		log_dir = 'Scripts'
-	)
-	os.chdir('Scripts')
-
-	run(
-		'%s -x %s %s --file %s --stdin < cvs.log' % (CVS2CL_PERL, CVS2CL, CVS2CL_OPTS, changelog),
-		LOG_ALL,
 		'changelog failed'
 	)
-	
-	# Just in case the script is run twice or something
-	try: os.remove(changelog+'.bak')
-	except: pass
 
 def CreateSourceTarball():
 	print 'creating source tarball...'
