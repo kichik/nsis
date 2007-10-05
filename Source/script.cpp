@@ -5546,6 +5546,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       {
         a++;
       }
+      else if (line.getnumtokens() == 3)
+      {
+        PRINTHELP();
+      }
 
       if (build_cursection)
       {
