@@ -131,7 +131,7 @@ void Update() {
 
   if (my_strstr(g_sdata.brandingv,"cvs"))
   {
-    MessageBox(g_sdata.hwnd,"Cannot check for new version of CVS builds.  To update, download a new nightly build.","NSIS Update",MB_OK|MB_ICONSTOP);
+    MessageBox(g_sdata.hwnd,"Cannot check for new version of nightly builds.  To update, download a new nightly build.","NSIS Update",MB_OK|MB_ICONSTOP);
     return;
   }
 
