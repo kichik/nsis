@@ -29,6 +29,9 @@ RSH="C:\Program Files\PuTTY\plink.exe" -2 -l kichik nsis.sourceforge.net
 
 [wiki]
 UPDATE_URL=http://nsis.sourceforge.net/Special:Simpleupdate?action=raw
+
+[svn2cl]
+SVN2CL_XSL=svl2cl.xsl
 =========================
 
 7zatarbz2.bat:
@@ -81,6 +84,8 @@ RSH = cfg.get('rsh', 'RSH')
 
 PURGE_URL = cfg.get('wiki', 'PURGE_URL')
 UPDATE_URL = cfg.get('wiki', 'UPDATE_URL')
+
+SVN2CL_XSL = cfg.get('svn2cl', 'SVN2CL_XSL')
 
 ### config env
 
@@ -227,15 +232,28 @@ def Export():
 	)
 
 def CreateChangeLog():
+	import win32com.client
+	import codecs
+
 	print 'generating ChangeLog...'
 
 	changelog = os.path.join(newverdir,'ChangeLog')
 
 	run(
-		'%s log --verbose %s > %s' % (SVN, SVNROOT, changelog),
+		'%s log --xml --verbose %s > %s' % (SVN, SVNROOT, changelog),
 		LOG_ERRORS,
 		'changelog failed'
 	)
+
+	xmlo = win32com.client.Dispatch('Microsoft.XMLDOM')
+	xmlo.loadXML(file(changelog).read())
+	xmlo.preserveWhiteSpace = True
+	xslo = win32com.client.Dispatch('Microsoft.XMLDOM')
+	xslo.validateOnParse = False
+	xslo.preserveWhiteSpace = True
+	xslo.loadXML(file(SVN2CL_XSL).read())
+	transformed = xmlo.transformNode(xslo)
+	codecs.open(changelog, 'w', 'utf-8').write(transformed)
 
 def CreateSourceTarball():
 	print 'creating source tarball...'
