@@ -85,8 +85,8 @@ makensis_env.Append(CCFLAGS = '-Wall')            # all warnings
 makensis_env.Append(CXXFLAGS = '-Wno-non-virtual-dtor') # ignore virtual dtor warnings
 
 conf = FlagsConfigure(makensis_env)
-conf.CheckLinkFlag('-m32')                        # 
 conf.CheckCompileFlag('-m32')                     #
+conf.CheckLinkFlag('-m32')                        #
 conf.CheckLinkFlag('$MAP_FLAG')                   # generate map file
 if not defenv['DEBUG'] and defenv['STRIP']:
 	TestStrip(conf)                                 # strip
