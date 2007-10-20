@@ -239,19 +239,30 @@ def CreateChangeLog():
 
 	changelog = os.path.join(newverdir,'ChangeLog')
 
+	# generate changelog xml
 	run(
 		'%s log --xml --verbose %s > %s' % (SVN, SVNROOT, changelog),
 		LOG_ERRORS,
 		'changelog failed'
 	)
 
+	# load changelog xml
 	xmlo = win32com.client.Dispatch('Microsoft.XMLDOM')
 	xmlo.loadXML(file(changelog).read())
 	xmlo.preserveWhiteSpace = True
+
+	# load xsl
 	xslo = win32com.client.Dispatch('Microsoft.XMLDOM')
 	xslo.validateOnParse = False
 	xslo.preserveWhiteSpace = True
 	xslo.loadXML(file(SVN2CL_XSL).read())
+
+	# set strip-prefix to ''
+	for a in xslo.selectNodes("/xsl:stylesheet/xsl:param[@name = 'strip-prefix']")[0].attributes:
+		if a.name == 'select':
+			a.value = "''"
+
+	# transform
 	transformed = xmlo.transformNode(xslo)
 	codecs.open(changelog, 'w', 'utf-8').write(transformed)
 
