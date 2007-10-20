@@ -75,7 +75,7 @@
  <xsl:strip-space elements="*" />
 
  <!-- the prefix of pathnames to strip -->
- <xsl:param name="strip-prefix" select="''" />
+ <xsl:param name="strip-prefix" select="'/'" />
 
  <!-- the length of a line to wrap messages at -->
  <xsl:param name="linelen" select="75" />
