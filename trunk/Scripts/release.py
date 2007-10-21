@@ -235,6 +235,14 @@ def CreateChangeLog():
 	import win32com.client
 	import codecs
 
+	if not os.path.isfile(SVN2CL_XSL):
+
+		import urllib
+
+		print 'downloading svn2cl.xsl stylesheet...'
+
+		SVN2CL_XSL = urllib.urlretrieve('http://svn.collab.net/repos/svn/trunk/contrib/client-side/svn2cl/svn2cl.xsl','svn2cl.xsl')[0]
+
 	print 'generating ChangeLog...'
 
 	changelog = os.path.join(newverdir,'ChangeLog')
