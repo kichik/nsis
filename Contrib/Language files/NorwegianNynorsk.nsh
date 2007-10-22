@@ -5,12 +5,12 @@
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Velkommen til $(^NameDA) innstallasjonsvegvisar"
-  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Denne vegvisaren vil leie deg gjennom installeringa av $(^NameDA).\n\nDet er tilrådd at du avsluttar alle andre program før du held fram. Dette vil la installeringsprogrammet oppdatera systemfiler utan at du må starta datamaskinen på nytt.\n\n$_CLICK"
+  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Denne vegvisaren vil leie deg gjennom installeringa av $(^NameDA).$\n$\nDet er tilrådd at du avsluttar alle andre program før du held fram. Dette vil la installeringsprogrammet oppdatera systemfiler utan at du må starta datamaskinen på nytt.$\n$\n$_CLICK"
 !endif
 
 !ifdef MUI_UNWELCOMEPAGE
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "Velkommen til avinstallering av $(^NameDA)"
-  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Denne vegvisaren vil leie deg gjennom avinstalleringen av $(^NameDA).\n\nFør du fortsetter må du forsikre deg om at $(^NameDA) ikkje er opent.\n\n$_CLICK"
+  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Denne vegvisaren vil leie deg gjennom avinstalleringen av $(^NameDA).$\n$\nFør du fortsetter må du forsikre deg om at $(^NameDA) ikkje er opent.$\n$\n$_CLICK"
 !endif
 
 !ifdef MUI_LICENSEPAGE
@@ -82,13 +82,13 @@
 
 !ifdef MUI_FINISHPAGE
   ${LangFileString} MUI_TEXT_FINISH_INFO_TITLE "Installering fullført"
-  ${LangFileString} MUI_TEXT_FINISH_INFO_TEXT "$(^NameDA) er installert og klar til bruk.\n\nTrykk på «Fullfør» for å avslutte installeringa."
+  ${LangFileString} MUI_TEXT_FINISH_INFO_TEXT "$(^NameDA) er installert og klar til bruk.$\n$\nTrykk på «Fullfør» for å avslutte installeringa."
   ${LangFileString} MUI_TEXT_FINISH_INFO_REBOOT "Du må starta datamaskinen på nytt for å fullføra installeringa av $(^NameDA). Vil du starta på nytt no?"
 !endif
 
 !ifdef MUI_UNFINISHPAGE
   ${LangFileString} MUI_UNTEXT_FINISH_INFO_TITLE "Fullfører avinstalleringa av $(^NameDA)"
-  ${LangFileString} MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) er no avinstallert frå datamaskina di.\n\nTrykk på «Fullfør» for å avslutta denne vegvisaren."
+  ${LangFileString} MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) er no avinstallert frå datamaskina di.$\n$\nTrykk på «Fullfør» for å avslutta denne vegvisaren."
   ${LangFileString} MUI_UNTEXT_FINISH_INFO_REBOOT "Datamaskinen må starta på nytt for å fullføra avinstalleringa av $(^NameDA). Vil du starta datamaskina på nytt no?"
 !endif
 
