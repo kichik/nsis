@@ -6,12 +6,12 @@
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "$(^NameDA) セットアップ ウィザードへようこそ"
-  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "このウィザードは、$(^NameDA)のインストールをガイドしていきます。\r\n\r\nセットアップを開始する前に、他のすべてのアプリケーションを終了することを推奨します。これによってセットアップがコンピュータを再起動せずに、システム ファイルを更新することが出来るようになります。\r\n\r\n$_CLICK"
+  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "このウィザードは、$(^NameDA)のインストールをガイドしていきます。$\r$\n$\r$\nセットアップを開始する前に、他のすべてのアプリケーションを終了することを推奨します。これによってセットアップがコンピュータを再起動せずに、システム ファイルを更新することが出来るようになります。$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_UNWELCOMEPAGE
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "$(^NameDA) アンインストール ウィザードへようこそ"
-  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "このウィザードは、$(^NameDA)のアンインストールをガイドしていきます。\r\n\r\nアンインストールを開始する前に、$(^NameDA)が起動していないことを確認して下さい。\r\n\r\n$_CLICK"
+  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "このウィザードは、$(^NameDA)のアンインストールをガイドしていきます。$\r$\n$\r$\nアンインストールを開始する前に、$(^NameDA)が起動していないことを確認して下さい。$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_LICENSEPAGE
@@ -83,13 +83,13 @@
 
 !ifdef MUI_FINISHPAGE
   ${LangFileString} MUI_TEXT_FINISH_INFO_TITLE "$(^NameDA) セットアップ ウィザードは完了しました。"
-  ${LangFileString} MUI_TEXT_FINISH_INFO_TEXT "$(^NameDA)は、このコンピュータにインストールされました。\r\n\r\nウィザードを閉じるには [完了] を押してください。"
+  ${LangFileString} MUI_TEXT_FINISH_INFO_TEXT "$(^NameDA)は、このコンピュータにインストールされました。$\r$\n$\r$\nウィザードを閉じるには [完了] を押してください。"
   ${LangFileString} MUI_TEXT_FINISH_INFO_REBOOT "$(^NameDA) のインストールを完了するには、このコンピュータを再起動する必要があります。今すぐ再起動しますか？"
 !endif
 
 !ifdef MUI_UNFINISHPAGE
   ${LangFileString} MUI_UNTEXT_FINISH_INFO_TITLE "$(^NameDA) アンインストール ウィザードは完了しました。"
-  ${LangFileString} MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA)は、このコンピュータからアンインストールされました。\r\n\r\nウィザードを閉じるには [完了] を押してください。"
+  ${LangFileString} MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA)は、このコンピュータからアンインストールされました。$\r$\n$\r$\nウィザードを閉じるには [完了] を押してください。"
   ${LangFileString} MUI_UNTEXT_FINISH_INFO_REBOOT "$(^NameDA) のアンインストールを完了するには、このコンピュータを再起動する必要があります。今すぐ再起動しますか？"
 !endif
 
