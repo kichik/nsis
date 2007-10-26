@@ -120,38 +120,54 @@ Welcome page (implemented using nsDialogs)
     !insertmacro MUI_PAGE_FUNCTION_CUSTOM PRE  
 
     ;Create dialog
-	nsDialogs::Create /NOUNLOAD 1044
-	Pop $mui.WelcomePage
+    nsDialogs::Create /NOUNLOAD 1044
+    Pop $mui.WelcomePage
     nsDialogs::SetRTL /NOUNLOAD $(^RTL)
     SetCtlColors $mui.WelcomePage "" "${MUI_BGCOLOR}"    
 
     ;Image control
-	${NSD_CreateBitmap} 0u 0u 109u 193u ""
-	Pop $mui.WelcomePage.Image
-	System::Call 'user32::LoadImage(i 0, t "$PLUGINSDIR\modern-wizard.bmp", i ${IMAGE_BITMAP}, i 0, i 0, i ${LR_LOADFROMFILE}) i.s'
-	Pop $mui.WelcomePage.Image.Bitmap
-	SendMessage $mui.WelcomePage.Image ${STM_SETIMAGE} ${IMAGE_BITMAP} $mui.WelcomePage.Image.Bitmap
+    ${NSD_CreateBitmap} 0u 0u 109u 193u ""
+    Pop $mui.WelcomePage.Image
+    System::Call 'user32::LoadImage(i 0, t "$PLUGINSDIR\modern-wizard.bmp", i ${IMAGE_BITMAP}, i 0, i 0, i ${LR_LOADFROMFILE}) i.s'
+    Pop $mui.WelcomePage.Image.Bitmap
+    SendMessage $mui.WelcomePage.Image ${STM_SETIMAGE} ${IMAGE_BITMAP} $mui.WelcomePage.Image.Bitmap
+
+    ;Positiong of controls
+
+    ;Title    
+    !ifndef MUI_WELCOMEPAGE_TITLE_3LINES
+      !define MUI_WELCOMEPAGE_TITLE_HEIGHT 28
+    !else
+      !define MUI_WELCOMEPAGE_TITLE_HEIGHT 38
+    !endif
+    
+    ;Text
+    ;17 = 10 (top margin) + 7 (distance between texts)
+    !define /math MUI_WELCOMEPAGE_TEXT_TOP 17 + ${MUI_WELCOMEPAGE_TITLE_HEIGHT}
 
     ;Title
-	${NSD_CreateLabel} 120u 10u 195u 28u "${MUI_WELCOMEPAGE_TITLE}"
-	Pop $mui.WelcomePage.Title
+    ${NSD_CreateLabel} 120u 10u 195u ${MUI_WELCOMEPAGE_TITLE_HEIGHT}u "${MUI_WELCOMEPAGE_TITLE}"
+    Pop $mui.WelcomePage.Title
     SetCtlColors $mui.WelcomePage.Title "" "${MUI_BGCOLOR}"    
     CreateFont $mui.WelcomePage.Title.Font "$(^Font)" "12" "700"
-	SendMessage $mui.WelcomePage.Title ${WM_SETFONT} $mui.WelcomePage.Title.Font 0
+    SendMessage $mui.WelcomePage.Title ${WM_SETFONT} $mui.WelcomePage.Title.Font 0
 
     ;Welcome text
-	${NSD_CreateLabel} 120u 45u 195u 130u "${MUI_WELCOMEPAGE_TEXT}"
-	Pop $mui.WelcomePage.Text
+    ${NSD_CreateLabel} 120u ${MUI_WELCOMEPAGE_TEXT_TOP}u 195u 130u "${MUI_WELCOMEPAGE_TEXT}"
+    Pop $mui.WelcomePage.Text
     SetCtlColors $mui.WelcomePage.Text "" "${MUI_BGCOLOR}"
 
     ;Show page
     Call ${MUI_PAGE_UNINSTALLER_FUNCPREFIX}muiPageLoadFullWindow
     !insertmacro MUI_PAGE_FUNCTION_CUSTOM SHOW
-	nsDialogs::Show
+    nsDialogs::Show
     Call ${MUI_PAGE_UNINSTALLER_FUNCPREFIX}muiPageUnloadFullWindow    
 
     ;Delete image from memory
-	System::Call gdi32::DeleteObject(i$mui.WelcomePage.Image.Bitmap)
+    System::Call gdi32::DeleteObject(i$mui.WelcomePage.Image.Bitmap)
+
+    !insertmacro MUI_UNSET MUI_WELCOMEPAGE_TITLE_HEIGHT
+    !insertmacro MUI_UNSET MUI_WELCOMEPAGE_TEXT_TOP
     
   FunctionEnd
 
