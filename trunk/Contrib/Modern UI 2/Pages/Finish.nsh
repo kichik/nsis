@@ -359,9 +359,9 @@ Finish page (implemented using nsDialogs)
 
         ;Finish text
         !ifndef MUI_FINISHPAGE_RUN & MUI_FINISHPAGE_SHOWREADME
-          ${NSD_CreateLabel} 120u 45u 195u ${MUI_FINISHPAGE_TEXT_HEIGHT}u "${MUI_FINISHPAGE_TEXT}"
+          ${NSD_CreateLabel} 120u ${MUI_FINISHPAGE_TEXT_TOP}u 195u ${MUI_FINISHPAGE_TEXT_HEIGHT}u "${MUI_FINISHPAGE_TEXT}"
         !else
-          ${NSD_CreateLabel} 120u 45u 195u ${MUI_FINISHPAGE_TEXT_HEIGHT_BUTTONS}u "${MUI_FINISHPAGE_TEXT}"
+          ${NSD_CreateLabel} 120u ${MUI_FINISHPAGE_TEXT_TOP}u 195u ${MUI_FINISHPAGE_TEXT_HEIGHT_BUTTONS}u "${MUI_FINISHPAGE_TEXT}"
         !endif
         Pop $mui.FinishPage.Text
         SetCtlColors $mui.FinishPage.Text "" "${MUI_BGCOLOR}"
