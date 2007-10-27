@@ -310,203 +310,207 @@ Header file for creating custom installer pages with nsDialogs
 !macroend
 
 !macro NSD_FUNCTION_INIFILE
-  !insertmacro NSD_INIFILE ""
+
+	!insertmacro NSD_INIFILE ""
+
 !macroend
 
 !macro NSD_UNFUNCTION_INIFILE
-  !insertmacro NSD_INIFILE un.
+
+	!insertmacro NSD_INIFILE un.
+
 !macroend
 
 !macro NSD_INIFILE UNINSTALLER_FUNCPREFIX
 
-  ;Functions to create dialogs based on old InstallOptions INI files
+	;Functions to create dialogs based on old InstallOptions INI files
 
-  Function ${UNINSTALLER_FUNCPREFIX}CreateDialogFromINI
+	Function ${UNINSTALLER_FUNCPREFIX}CreateDialogFromINI
 
-	# $0 = ini
+		# $0 = ini
 
-	ReadINIStr $R0 $0 Settings RECT
-	${If} $R0 == ""
-		StrCpy $R0 1018
-	${EndIf}
+		ReadINIStr $R0 $0 Settings RECT
+		${If} $R0 == ""
+			StrCpy $R0 1018
+		${EndIf}
 
-	nsDialogs::Create /NOUNLOAD $R0
-	Pop $R9
+		nsDialogs::Create /NOUNLOAD $R0
+		Pop $R9
 
-	ReadINIStr $R0 $0 Settings RTL
-	nsDialogs::SetRTL /NOUNLOAD $R0
+		ReadINIStr $R0 $0 Settings RTL
+		nsDialogs::SetRTL /NOUNLOAD $R0
 
-	ReadINIStr $R0 $0 Settings NumFields
+		ReadINIStr $R0 $0 Settings NumFields
 
-	${DEBUG} "NumFields = $R0"
+		${DEBUG} "NumFields = $R0"
 
-	${For} $R1 1 $R0
-		${DEBUG} "Creating field $R1"
-		ReadINIStr $R2 $0 "Field $R1" Type
-		${DEBUG} "  Type = $R2"
-		ReadINIStr $R3 $0 "Field $R1" Left
-		${DEBUG} "  Left = $R3"
-		ReadINIStr $R4 $0 "Field $R1" Top
-		${DEBUG} "  Top = $R4"
-		ReadINIStr $R5 $0 "Field $R1" Right
-		${DEBUG} "  Right = $R5"
-		ReadINIStr $R6 $0 "Field $R1" Bottom
-		${DEBUG} "  Bottom = $R6"
-		IntOp $R5 $R5 - $R3
-		${DEBUG} "  Width = $R5"
-		IntOp $R6 $R6 - $R4
-		${DEBUG} "  Height = $R6"
-		ReadINIStr $R7 $0 "Field $R1" Text
-		${DEBUG} "  Text = $R7"
-		${Switch} $R2
-			!insertmacro __NSD_ControlCase   HLine
-			!insertmacro __NSD_ControlCase   VLine
-			!insertmacro __NSD_ControlCase   Label
-			!insertmacro __NSD_ControlCase   Icon
-			!insertmacro __NSD_ControlCase   Bitmap
-			!insertmacro __NSD_ControlCaseEx Link
-			!insertmacro __NSD_ControlCase   Button
-			!insertmacro __NSD_ControlCase   GroupBox
-			!insertmacro __NSD_ControlCase   CheckBox
-			!insertmacro __NSD_ControlCase   RadioButton
-			!insertmacro __NSD_ControlCase   Text
-			!insertmacro __NSD_ControlCaseEx FileRequest
-			!insertmacro __NSD_ControlCaseEx DirRequest
-			!insertmacro __NSD_ControlCase   ComboBox
-			!insertmacro __NSD_ControlCase   ListBox
-		${EndSwitch}
+		${For} $R1 1 $R0
+			${DEBUG} "Creating field $R1"
+			ReadINIStr $R2 $0 "Field $R1" Type
+			${DEBUG} "  Type = $R2"
+			ReadINIStr $R3 $0 "Field $R1" Left
+			${DEBUG} "  Left = $R3"
+			ReadINIStr $R4 $0 "Field $R1" Top
+			${DEBUG} "  Top = $R4"
+			ReadINIStr $R5 $0 "Field $R1" Right
+			${DEBUG} "  Right = $R5"
+			ReadINIStr $R6 $0 "Field $R1" Bottom
+			${DEBUG} "  Bottom = $R6"
+			IntOp $R5 $R5 - $R3
+			${DEBUG} "  Width = $R5"
+			IntOp $R6 $R6 - $R4
+			${DEBUG} "  Height = $R6"
+			ReadINIStr $R7 $0 "Field $R1" Text
+			${DEBUG} "  Text = $R7"
+			${Switch} $R2
+				!insertmacro __NSD_ControlCase   HLine
+				!insertmacro __NSD_ControlCase   VLine
+				!insertmacro __NSD_ControlCase   Label
+				!insertmacro __NSD_ControlCase   Icon
+				!insertmacro __NSD_ControlCase   Bitmap
+				!insertmacro __NSD_ControlCaseEx Link
+				!insertmacro __NSD_ControlCase   Button
+				!insertmacro __NSD_ControlCase   GroupBox
+				!insertmacro __NSD_ControlCase   CheckBox
+				!insertmacro __NSD_ControlCase   RadioButton
+				!insertmacro __NSD_ControlCase   Text
+				!insertmacro __NSD_ControlCaseEx FileRequest
+				!insertmacro __NSD_ControlCaseEx DirRequest
+				!insertmacro __NSD_ControlCase   ComboBox
+				!insertmacro __NSD_ControlCase   ListBox
+			${EndSwitch}
 
-		WriteINIStr $0 "Field $R1" HWND $R9
-	${Next}
+			WriteINIStr $0 "Field $R1" HWND $R9
+		${Next}
 
-	nsDialogs::Show
+		nsDialogs::Show
 
-  FunctionEnd
+	FunctionEnd
 
-  Function ${UNINSTALLER_FUNCPREFIX}UpdateINIState
+	Function ${UNINSTALLER_FUNCPREFIX}UpdateINIState
 
-	${DEBUG} "Updating INI state"
+		${DEBUG} "Updating INI state"
 
-	ReadINIStr $R0 $0 Settings NumFields
+		ReadINIStr $R0 $0 Settings NumFields
 
-	${DEBUG} "NumField = $R0"
+		${DEBUG} "NumField = $R0"
 
-	${For} $R1 1 $R0
+		${For} $R1 1 $R0
+			ReadINIStr $R2 $0 "Field $R1" HWND
+			${DEBUG} "  HWND = $R2"
+			System::Call user32::GetWindowText(iR2,t.R2,i${NSIS_MAX_STRLEN})
+			${DEBUG} "  Window text = $R2"
+			WriteINIStr $0 "Field $R1" STATE $R2
+		${Next}
+
+	FunctionEnd
+
+	Function ${UNINSTALLER_FUNCPREFIX}FileRequest
+
+		IntOp $R5 $R5 - 15
+		IntOp $R8 $R3 + $R5
+
+		${NSD_CreateBrowseButton} $R8u $R4u 15u $R6u ...
+		Pop $R8
+
+		nsDialogs::SetUserData /NOUNLOAD $R8 $R1 # remember field id
+
+		WriteINIStr $0 "Field $R1" HWND2 $R8
+
+		${NSD_OnClick} $R8 OnFileBrowseButton
+
+		ReadINIStr $R9 $0 "Field $R1" State
+
+		${NSD_CreateFileRequest} $R3u $R4u $R5u $R6u $R9
+		Pop $R9
+
+	FunctionEnd
+
+	Function ${UNINSTALLER_FUNCPREFIX}DirRequest
+
+		IntOp $R5 $R5 - 15
+		IntOp $R8 $R3 + $R5
+
+		${NSD_CreateBrowseButton} $R8u $R4u 15u $R6u ...
+		Pop $R8
+
+		nsDialogs::SetUserData /NOUNLOAD $R8 $R1 # remember field id
+
+		WriteINIStr $0 "Field $R1" HWND2 $R8
+
+		${NSD_OnClick} $R8 OnDirBrowseButton
+
+		ReadINIStr $R9 $0 "Field $R1" State
+
+		${NSD_CreateFileRequest} $R3u $R4u $R5u $R6u $R9
+		Pop $R9
+
+	FunctionEnd
+
+	Function ${UNINSTALLER_FUNCPREFIX}OnFileBrowseButton
+
+		Pop $R0
+
+		nsDialogs::GetUserData /NOUNLOAD $R0
+		Pop $R1
+
 		ReadINIStr $R2 $0 "Field $R1" HWND
-		${DEBUG} "  HWND = $R2"
-		System::Call user32::GetWindowText(iR2,t.R2,i${NSIS_MAX_STRLEN})
-		${DEBUG} "  Window text = $R2"
-		WriteINIStr $0 "Field $R1" STATE $R2
-	${Next}
+		ReadINIStr $R4 $0 "Field $R1" Filter
 
-  FunctionEnd
+		System::Call user32::GetWindowText(iR2,t.R3,i${NSIS_MAX_STRLEN})
 
-  Function ${UNINSTALLER_FUNCPREFIX}FileRequest
+		nsDialogs::SelectFileDialog /NOUNLOAD save $R3 $R4
+		Pop $R3
 
-	IntOp $R5 $R5 - 15
-	IntOp $R8 $R3 + $R5
+		${If} $R3 != ""
+			SendMessage $R2 ${WM_SETTEXT} 0 STR:$R3
+		${EndIf}
 
-	${NSD_CreateBrowseButton} $R8u $R4u 15u $R6u ...
-	Pop $R8
+	FunctionEnd
 
-	nsDialogs::SetUserData /NOUNLOAD $R8 $R1 # remember field id
+	Function ${UNINSTALLER_FUNCPREFIX}OnDirBrowseButton
 
-	WriteINIStr $0 "Field $R1" HWND2 $R8
+		Pop $R0
 
-	${NSD_OnClick} $R8 OnFileBrowseButton
+		nsDialogs::GetUserData /NOUNLOAD $R0
+		Pop $R1
 
-	ReadINIStr $R9 $0 "Field $R1" State
+		ReadINIStr $R2 $0 "Field $R1" HWND
+		ReadINIStr $R3 $0 "Field $R1" Text
 
-	${NSD_CreateFileRequest} $R3u $R4u $R5u $R6u $R9
-	Pop $R9
+		System::Call user32::GetWindowText(iR2,t.R4,i${NSIS_MAX_STRLEN})
 
-  FunctionEnd
+		nsDialogs::SelectFolderDialog /NOUNLOAD $R3 $R4
+		Pop $R3
 
-  Function ${UNINSTALLER_FUNCPREFIX}DirRequest
+		${If} $R3 != error
+			SendMessage $R2 ${WM_SETTEXT} 0 STR:$R3
+		${EndIf}
 
-	IntOp $R5 $R5 - 15
-	IntOp $R8 $R3 + $R5
+	FunctionEnd
 
-	${NSD_CreateBrowseButton} $R8u $R4u 15u $R6u ...
-	Pop $R8
+	Function ${UNINSTALLER_FUNCPREFIX}Link
 
-	nsDialogs::SetUserData /NOUNLOAD $R8 $R1 # remember field id
+		${NSD_CreateLink} $R3u $R4u $R5u $R6u $R7
+		Pop $R9
 
-	WriteINIStr $0 "Field $R1" HWND2 $R8
+		nsDialogs::SetUserData /NOUNLOAD $R9 $R1 # remember field id
 
-	${NSD_OnClick} $R8 OnDirBrowseButton
+		${NSD_OnClick} $R9 ${UNINSTALLER_FUNCPREFIX}OnLink
 
-	ReadINIStr $R9 $0 "Field $R1" State
+	FunctionEnd
 
-	${NSD_CreateFileRequest} $R3u $R4u $R5u $R6u $R9
-	Pop $R9
+	Function ${UNINSTALLER_FUNCPREFIX}OnLink
 
-  FunctionEnd
+		Pop $R0
 
-  Function ${UNINSTALLER_FUNCPREFIX}OnFileBrowseButton
+		nsDialogs::GetUserData /NOUNLOAD $R0
+		Pop $R1
 
-	Pop $R0
+		ReadINIStr $R1 $0 "Field $R1" STATE
 
-	nsDialogs::GetUserData /NOUNLOAD $R0
-	Pop $R1
+		ExecShell "" $R1
 
-	ReadINIStr $R2 $0 "Field $R1" HWND
-	ReadINIStr $R4 $0 "Field $R1" Filter
+	FunctionEnd
 
-	System::Call user32::GetWindowText(iR2,t.R3,i${NSIS_MAX_STRLEN})
-
-	nsDialogs::SelectFileDialog /NOUNLOAD save $R3 $R4
-	Pop $R3
-
-	${If} $R3 != ""
-		SendMessage $R2 ${WM_SETTEXT} 0 STR:$R3
-	${EndIf}
-
-  FunctionEnd
-
-  Function ${UNINSTALLER_FUNCPREFIX}OnDirBrowseButton
-
-	Pop $R0
-
-	nsDialogs::GetUserData /NOUNLOAD $R0
-	Pop $R1
-
-	ReadINIStr $R2 $0 "Field $R1" HWND
-	ReadINIStr $R3 $0 "Field $R1" Text
-
-	System::Call user32::GetWindowText(iR2,t.R4,i${NSIS_MAX_STRLEN})
-
-	nsDialogs::SelectFolderDialog /NOUNLOAD $R3 $R4
-	Pop $R3
-
-	${If} $R3 != error
-		SendMessage $R2 ${WM_SETTEXT} 0 STR:$R3
-	${EndIf}
-
-  FunctionEnd
-
-  Function ${UNINSTALLER_FUNCPREFIX}Link
-
-	${NSD_CreateLink} $R3u $R4u $R5u $R6u $R7
-	Pop $R9
-
-	nsDialogs::SetUserData /NOUNLOAD $R9 $R1 # remember field id
-
-	${NSD_OnClick} $R9 ${UNINSTALLER_FUNCPREFIX}OnLink
-
-  FunctionEnd
-
-  Function ${UNINSTALLER_FUNCPREFIX}OnLink
-
-	Pop $R0
-
-	nsDialogs::GetUserData /NOUNLOAD $R0
-	Pop $R1
-
-	ReadINIStr $R1 $0 "Field $R1" STATE
-
-	ExecShell "" $R1
-
-  FunctionEnd
-  
 !macroend
