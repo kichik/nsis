@@ -417,7 +417,7 @@ Header file for creating custom installer pages with nsDialogs
 
 		WriteINIStr $0 "Field $R1" HWND2 $R8
 
-		${NSD_OnClick} $R8 OnFileBrowseButton
+		${NSD_OnClick} $R8 ${UNINSTALLER_FUNCPREFIX}OnFileBrowseButton
 
 		ReadINIStr $R9 $0 "Field $R1" State
 
@@ -438,7 +438,7 @@ Header file for creating custom installer pages with nsDialogs
 
 		WriteINIStr $0 "Field $R1" HWND2 $R8
 
-		${NSD_OnClick} $R8 OnDirBrowseButton
+		${NSD_OnClick} $R8 ${UNINSTALLER_FUNCPREFIX}OnDirBrowseButton
 
 		ReadINIStr $R9 $0 "Field $R1" State
 
