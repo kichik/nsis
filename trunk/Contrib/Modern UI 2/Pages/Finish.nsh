@@ -60,7 +60,6 @@ Finish page (implemented using nsDialogs)
     !ifndef MUI_FINISHPAGE_LINK_VARIABLES
       !define MUI_FINISHPAGE_LINK_VARIABLES
       Var mui.FinishPage.Link
-      Var mui.FinishPage.Link.Label
     !endif
   !endif
   
@@ -386,11 +385,9 @@ Finish page (implemented using nsDialogs)
     
         ;Link
         !ifdef MUI_FINISHPAGE_LINK
-          ${NSD_CreateLabel} 120u 175u 195u 10u "${MUI_FINISHPAGE_LINK}"
-          Pop $mui.FinishPage.Link.Label
           ${NSD_CreateLink} 120u 175u 195u 10u "${MUI_FINISHPAGE_LINK}"
           Pop $mui.FinishPage.Link
-          SetCtlColors $mui.FinishPage.Link.Label "${MUI_FINISHPAGE_LINK_COLOR}" "${MUI_BGCOLOR}"
+          SetCtlColors $mui.FinishPage.Link "${MUI_FINISHPAGE_LINK_COLOR}" "${MUI_BGCOLOR}"
           ${NSD_OnClick} $mui.FinishPage.Link "${LINK}"
         !endif
         
