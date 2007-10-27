@@ -103,6 +103,58 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       g_pluginParms->ExecuteCodeSegment(ctl->callbacks.onNotify - 1, 0);
     }
 
+    // handle links
+    case WM_DRAWITEM:
+    {
+      DRAWITEMSTRUCT* lpdis = (DRAWITEMSTRUCT*)lParam;
+      RECT rc;
+      char text[1024];
+
+      struct nsControl* ctl = GetControl(lpdis->hwndItem);
+      if (ctl == NULL)
+        break;
+
+      // We need lpdis->rcItem later
+      rc = lpdis->rcItem;
+
+      // Get button's text
+      text[0] = '\0';
+      GetWindowText(lpdis->hwndItem, text, 1024);
+
+      // Calculate needed size of the control
+      DrawText(lpdis->hDC, text, -1, &rc, DT_VCENTER | DT_WORDBREAK | DT_CALCRECT);
+
+      // Make some more room so the focus rect won't cut letters off
+      rc.right = min(rc.right + 2, lpdis->rcItem.right);
+
+      // Move rect to right if in RTL mode
+      if (g_dialog.rtl)
+      {
+        rc.left += lpdis->rcItem.right - rc.right;
+        rc.right += lpdis->rcItem.right - rc.right;
+      }
+
+      if (lpdis->itemAction & ODA_DRAWENTIRE)
+      {
+        // Get TxtColor unless the user has set another using SetCtlColors
+        if (!GetWindowLong(lpdis->hwndItem, GWL_USERDATA))
+          SetTextColor(lpdis->hDC, RGB(0,0,255));
+
+        // Draw the text
+        DrawText(lpdis->hDC, text, -1, &rc, DT_CENTER | DT_VCENTER | DT_WORDBREAK | (g_dialog.rtl ? DT_RTLREADING : 0));
+      }
+
+      // Draw the focus rect if needed
+      if (((lpdis->itemState & ODS_FOCUS) && (lpdis->itemAction & ODA_DRAWENTIRE)) || (lpdis->itemAction & ODA_FOCUS))
+      {
+        // NB: when not in DRAWENTIRE mode, this will actually toggle the focus
+        // rectangle since it's drawn in a XOR way
+        DrawFocusRect(lpdis->hDC, &rc);
+      }
+
+      return TRUE;
+    }
+
     // handle colors
     case WM_CTLCOLORSTATIC:
     case WM_CTLCOLOREDIT:
