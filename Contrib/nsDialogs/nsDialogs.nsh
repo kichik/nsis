@@ -364,7 +364,7 @@ Header file for creating custom installer pages with nsDialogs
 			!insertmacro __NSD_ControlCase   Label
 			!insertmacro __NSD_ControlCase   Icon
 			!insertmacro __NSD_ControlCase   Bitmap
-			!insertmacro __NSD_ControlCase   Link
+			!insertmacro __NSD_ControlCaseEx Link
 			!insertmacro __NSD_ControlCase   Button
 			!insertmacro __NSD_ControlCase   GroupBox
 			!insertmacro __NSD_ControlCase   CheckBox
@@ -482,6 +482,30 @@ Header file for creating custom installer pages with nsDialogs
 	${If} $R3 != error
 		SendMessage $R2 ${WM_SETTEXT} 0 STR:$R3
 	${EndIf}
+
+  FunctionEnd
+
+  Function ${UNINSTALLER_FUNCPREFIX}Link
+
+	${NSD_CreateLink} $R3u $R4u $R5u $R6u $R7
+	Pop $R9
+
+	nsDialogs::SetUserData /NOUNLOAD $R9 $R1 # remember field id
+
+	${NSD_OnClick} $R9 ${UNINSTALLER_FUNCPREFIX}OnLink
+
+  FunctionEnd
+
+  Function ${UNINSTALLER_FUNCPREFIX}OnLink
+
+	Pop $R0
+
+	nsDialogs::GetUserData /NOUNLOAD $R0
+	Pop $R1
+
+	ReadINIStr $R1 $0 "Field $R1" STATE
+
+	ExecShell "" $R1
 
   FunctionEnd
   
