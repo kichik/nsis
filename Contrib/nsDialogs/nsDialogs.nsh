@@ -398,7 +398,7 @@ Header file for creating custom installer pages with nsDialogs
 		${For} $R1 1 $R0
 			ReadINIStr $R2 $0 "Field $R1" HWND
 			${DEBUG} "  HWND = $R2"
-			System::Call user32::GetWindowText(iR2,t.R2,i${NSIS_MAX_STRLEN})
+			${NSD_GetText} $R2 $R2
 			${DEBUG} "  Window text = $R2"
 			WriteINIStr $0 "Field $R1" STATE $R2
 		${Next}
@@ -457,7 +457,7 @@ Header file for creating custom installer pages with nsDialogs
 		ReadINIStr $R2 $0 "Field $R1" HWND
 		ReadINIStr $R4 $0 "Field $R1" Filter
 
-		System::Call user32::GetWindowText(iR2,t.R3,i${NSIS_MAX_STRLEN})
+		${NSD_GetText} $R2 $R3
 
 		nsDialogs::SelectFileDialog /NOUNLOAD save $R3 $R4
 		Pop $R3
@@ -478,7 +478,7 @@ Header file for creating custom installer pages with nsDialogs
 		ReadINIStr $R2 $0 "Field $R1" HWND
 		ReadINIStr $R3 $0 "Field $R1" Text
 
-		System::Call user32::GetWindowText(iR2,t.R4,i${NSIS_MAX_STRLEN})
+		${NSD_GetText} $R2 $R4
 
 		nsDialogs::SelectFolderDialog /NOUNLOAD $R3 $R4
 		Pop $R3
