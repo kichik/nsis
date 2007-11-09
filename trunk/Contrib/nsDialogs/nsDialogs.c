@@ -82,6 +82,11 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         pushint((int) hwCtl);
         g_pluginParms->ExecuteCodeSegment(ctl->callbacks.onChange - 1, 0);
       }
+      else if (HIWORD(wParam) == STN_CLICKED && ctl->type == NSCTL_STATIC)
+      {
+        pushint((int) hwCtl);
+        g_pluginParms->ExecuteCodeSegment(ctl->callbacks.onClick - 1, 0);
+      }
 
       break;
     }
