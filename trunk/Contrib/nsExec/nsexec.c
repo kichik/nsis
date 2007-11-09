@@ -446,8 +446,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     } while ( Ret == STILL_ACTIVE );
     CloseHandle (pi.hProcess);
     CloseHandle (pi.hThread);
-    return Ret;
+    ExitProcess(Ret);
   }
   else
-    return STATUS_ILLEGAL_INSTRUCTION;
+  {
+    ExitProcess(STATUS_ILLEGAL_INSTRUCTION);
+  }
+
+  return 0; // dummy
 }
