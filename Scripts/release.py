@@ -241,7 +241,7 @@ def CreateChangeLog():
 
 		print 'downloading svn2cl.xsl stylesheet...'
 
-		SVN2CL_XSL = urllib.urlretrieve('http://svn.collab.net/repos/svn/trunk/contrib/client-side/svn2cl/svn2cl.xsl','svn2cl.xsl')[0]
+		urllib.urlretrieve('http://svn.collab.net/repos/svn/trunk/contrib/client-side/svn2cl/svn2cl.xsl', SVN2CL_XSL)
 
 	print 'generating ChangeLog...'
 
