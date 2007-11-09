@@ -68,13 +68,14 @@ static int dbd_size, dbd_pos, dbd_srcpos, dbd_fulllen;
 static int m_length;
 static int m_pos;
 
+#define _calc_percent() (MulDiv(min(m_pos,m_length),100,m_length))
 #ifdef NSIS_COMPRESS_WHOLE
-int NSISCALL calc_percent()
+static int NSISCALL calc_percent()
 {
-  return MulDiv(min(m_pos,m_length),100,m_length);
+  return _calc_percent();
 }
 #else
-#define calc_percent() (MulDiv(min(m_pos,m_length),100,m_length))
+#define calc_percent() _calc_percent()
 #endif
 
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
