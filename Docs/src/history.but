@@ -1,5 +1,51 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.32} 2.32
+
+Released on November 9th, 2007
+
+\S1{v2.32-rl} Release Notes
+
+\b Vista PNG icons are now supported without the need for any special tricks.
+
+\S1{v2.32-cl} Changelog
+
+\S2{} Major Changes
+
+\b Added support for mismatching installer and uninstaller icons
+
+\b NSIS source code is now hosted on Subversion instead of CVS
+
+\S2{} Minor Changes
+
+\b Fixed synchronization that could allow the user to cause extraction errors in rare cases (reported in the \W{http://forums.winamp.com/showthread.php?s=&threadid=274333}{forum})
+
+\b Fixed syntax validation of \R{var}{Var}
+
+\b \L{../Docs/Modern UI 2/Readme.html}{Modern UI 2 beta}: Fixed 3-line title on welcome/finish page
+
+\b \L{../Docs/Modern UI 2/Readme.html}{Modern UI 2 beta}: Fixed components page description and lock
+
+\b \L{../Docs/Modern UI 2/Readme.html}{Modern UI 2 beta}: Fixed default language selection from registry
+
+\b \L{../Docs/Modern UI 2/Readme.html}{Modern UI 2 beta}: Fixed MUI_DIRECTORYPAGE_BGCOLOR
+
+\b Minor documentation improvements (including \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1811876}{bug #1811876}, \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1819946}{bug #1819946})
+
+\S2{} Utilities and Plug-ins
+
+\b \L{../Docs/nsDialogs/Readme.html}{nsDialogs}: Added link support
+
+\S2{} Translations
+
+\b Bulgarian corrections
+
+\b Fixed Japanese and Norwegian Nynorsk MUI line breaks (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1817289}{bug #1817289})
+
+\S2{} Build System
+
+\b Check compiler's \e{-m32} flag before the linker's to avoid gcc segfault
+
 \H{v2.31} 2.31
 
 Released on September 29th, 2007
