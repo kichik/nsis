@@ -368,9 +368,9 @@ def UpdateWiki(release_id):
 
 def UpdateChangeLog():
 	run(
-		'%s touch /home/groups/n/ns/nsis/bin/cl.timestamp' % RSH,
+		'%s /home/groups/n/ns/nsis/bin/touch_cl_tag.sh' % RSH,
 		LOG_ALL,
-		'change log start time modification failed'
+		'change log tag modification failed'
 	)
 
 def ToDo():
