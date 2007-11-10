@@ -4,19 +4,46 @@
 ; Library with macro for use with VPatch (DLL version) in NSIS 2.0.5+
 ; Created by Koen van de Sande
 
+!include LogicLib.nsh
+
 !macro VPatchFile PATCHDATA SOURCEFILE TEMPFILE
+
+  Push $1
+  Push $2
+  Push $3
+  Push $4
+
+  Push ${PATCHDATA}
+  Push ${SOURCEFILE}
+  Push ${TEMPFILE}
+
+  Pop $2 # temp file
+  Pop $3 # source file
+  Pop $4 # patch data
+
   InitPluginsDir
-  File /oname=$PLUGINSDIR\${PATCHDATA} ${PATCHDATA}
-  vpatch::vpatchfile "$PLUGINSDIR\${PATCHDATA}" "${SOURCEFILE}" "${TEMPFILE}"
+  GetTempFileName $1 $PLUGINSDIR
+  File /oname=$1 $4
+
+  vpatch::vpatchfile $1 $3 $2
+  Pop $4
+  DetailPrint $4
+
+  StrCpy $4 $4 2
+  ${Unless} $4 == "OK"
+    SetErrors
+  ${EndIf}
+
+  ${If} ${FileExists} $2
+    Delete $3
+    Rename /REBOOTOK $2 $3
+  ${EndIf}
+
+  Delete $1
+
+  Pop $4
+  Pop $3
+  Pop $2
   Pop $1
-  DetailPrint $1
-  StrCpy $1 $1 2
-  StrCmp $1 "OK" ok_${SOURCEFILE}
-  SetErrors
-ok_${SOURCEFILE}:
-  IfFileExists "${TEMPFILE}" +1 end_${SOURCEFILE}
-  Delete "${SOURCEFILE}"
-  Rename /REBOOTOK "${TEMPFILE}" "${SOURCEFILE}"
-end_${SOURCEFILE}:
-  Delete "$PLUGINSDIR\${PATCHDATA}"
+
 !macroend
