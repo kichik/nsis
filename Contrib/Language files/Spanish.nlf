@@ -10,7 +10,7 @@ NLF v6
 # RTL - anything else than RTL means LTR
 -
 # Translation by MoNKi & Joel
-# Review Darwin Rodrigo Toledo Cáceres (niwrad777@gmail.com) www.winamp-es.com
+# Review and minor corrections Darwin Rodrigo Toledo Cáceres (niwrad777@gmail.com) www.winamp-es.com
 # ^Branding
 Nullsoft Install System %s
 # ^SetupCaption
@@ -104,20 +104,20 @@ El programa de instalación instalará $(^NameDA) en el siguiente directorio. Para
 # ^DirSubText
 Directorio de Destino
 # ^DirBrowseText
-Seleccione el directorio en el que instalar $(^NameDA):
+Seleccione el directorio en el que instalará $(^NameDA):
 # ^UnDirText
 El programa de instalación desinstalará $(^NameDA) del siguiente directorio. Para desinstalar de un directorio diferente, presione Examinar y seleccione otro directorio. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
-Seleccione el directorio desde el cual desinstalar $(^NameDA):
+Seleccione el directorio desde el cual desinstalará $(^NameDA):
 # ^SpaceAvailable
 Espacio disponible: 
 # ^SpaceRequired
 Espacio requerido: 
 # ^UninstallingText
 $(^NameDA) será desinstalado del siguiente directorio. $_CLICK
-# ^UninstallingSubTex
+# ^UninstallingSubText
 Desinstalando desde:
 # ^FileError
 Error abriendo archivo para escritura: \r\n\t"$0"\r\nPresione abortar para anular la instalación,\r\nreintentar para volver a intentar escribir el archivo, u\r\nomitir para ignorar este archivo
