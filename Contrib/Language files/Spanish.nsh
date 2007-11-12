@@ -1,6 +1,6 @@
 ;Language: Spanish (1034)
 ;By MoNKi & Joel
-;Updates & Review Darwin Toledo Cáceres
+;Updates & Review Darwin Rodrigo Toledo Cáceres - www.winamp-es.com - niwrad777@gmail.com
 
 !insertmacro LANGFILE "Spanish" "Español"
 

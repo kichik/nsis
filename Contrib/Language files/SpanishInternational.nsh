@@ -1,4 +1,4 @@
-;Language: Spanish Modern (3082)
+;Language: Spanish International (3082)
 ;By Darwin Rodrigo Toledo Cáceres - www.winamp-es.com - niwrad777@gmail.com
 ;Base by Monki y Joel
 
@@ -25,9 +25,9 @@
 !ifdef MUI_UNLICENSEPAGE
   ${LangFileString} MUI_UNTEXT_LICENSE_TITLE "Acuerdo de licencia"
   ${LangFileString} MUI_UNTEXT_LICENSE_SUBTITLE "Por favor revise el acuerdo de licencia antes de desinstalar $(^NameDA)."
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "Si acepta todos las condiciones del acuerdo, seleccione Acepto para continuar. Debe aceptar el acuerdo para desinstalar $(^NameDA)."
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "Si acepta todas las condiciones del acuerdo, seleccione Acepto para continuar. Debe aceptar el acuerdo para desinstalar $(^NameDA)."
   ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Si acepta los términos del acuerdo, marque abajo la casilla. Debe aceptar los términos para desinstalar $(^NameDA). $_CLICK"
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "If you accept the terms of the agreement, select the first option below. You must accept the agreement to uninstall $(^NameDA). $_CLICK"
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Si acepta los términos del acuerdo, seleccione abajo la primera opción. Debe aceptar los términos para desinstalar $(^NameDA). $_CLICK"
 !endif
 
 !ifdef MUI_LICENSEPAGE | MUI_UNLICENSEPAGE
@@ -59,8 +59,8 @@
 !endif
 
 !ifdef MUI_UNDIRECTORYSPAGE
-  ${LangFileString} MUI_UNTEXT_DIRECTORY_TITLE "Choose Uninstall Location"
-  ${LangFileString} MUI_UNTEXT_DIRECTORY_SUBTITLE "Choose the folder from which to uninstall $(^NameDA)."
+  ${LangFileString} MUI_UNTEXT_DIRECTORY_TITLE "Elegir lugar de desinstalación"
+  ${LangFileString} MUI_UNTEXT_DIRECTORY_SUBTITLE "Elija la carpeta desde la cual desinstalará $(^NameDA)."
 !endif
 
 !ifdef MUI_INSTFILESPAGE
