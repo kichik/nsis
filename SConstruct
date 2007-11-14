@@ -175,6 +175,8 @@ opts.Add(('APPEND_LINKFLAGS', 'Additional linker flags'))
 opts.Add(BoolOption('DEBUG', 'Build executables with debugging information', 'no'))
 opts.Add(PathOption('CODESIGNER', 'A program used to sign executables', None))
 opts.Add(BoolOption('STRIP', 'Strips executables of any unrequired data such as symbols', 'yes'))
+opts.Add(BoolOption('STRIP_CP', 'Strips cross-platform executables of any unrequired data such as symbols', 'yes'))
+opts.Add(BoolOption('STRIP_W32', 'Strips Win32 executables of any unrequired data such as symbols', 'yes'))
 # path related build options
 opts.Add(('PREFIX_DEST', 'Intermediate installation prefix (extra install time prefix)', dirs['dest']))
 opts.Add(('PREFIX_CONF', 'Path to install nsisconf.nsh to', dirs['conf']))

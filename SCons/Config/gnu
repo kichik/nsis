@@ -67,7 +67,7 @@ stub_env.Append(CCFLAGS = '-Wall')                # all warnings
 stub_env.Append(CCFLAGS = '-x c')                 # force compile as c
 stub_env.Append(CCFLAGS = '-fno-strict-aliasing') # not safe for strict aliasing
 
-if not defenv['DEBUG'] and defenv['STRIP']:
+if not defenv['DEBUG'] and defenv['STRIP'] and defenv['STRIP_W32']:
 	stub_env.Append(LINKFLAGS = '-s')               # strip
 stub_env.Append(LINKFLAGS = '-mwindows')          # build windows executables
 stub_env.Append(LINKFLAGS = '$NODEFLIBS_FLAG')    # no standard libraries
@@ -88,7 +88,7 @@ conf = FlagsConfigure(makensis_env)
 conf.CheckCompileFlag('-m32')                     #
 conf.CheckLinkFlag('-m32')                        #
 conf.CheckLinkFlag('$MAP_FLAG')                   # generate map file
-if not defenv['DEBUG'] and defenv['STRIP']:
+if not defenv['DEBUG'] and defenv['STRIP'] and defenv['STRIP_CP']:
 	TestStrip(conf)                                 # strip
 conf.Finish()
 
@@ -102,7 +102,7 @@ if not defenv['DEBUG']:
 plugin_env.Append(CCFLAGS = '-Wall')              # level 3 warnings
 plugin_env.Append(CCFLAGS = '-fno-strict-aliasing') # not safe for strict aliasing
 
-if not defenv['DEBUG'] and defenv['STRIP']:
+if not defenv['DEBUG'] and defenv['STRIP'] and defenv['STRIP_W32']:
 	plugin_env.Append(LINKFLAGS = '-s')             # strip
 plugin_env.Append(LINKFLAGS = '-mwindows')        # build windows executables
 plugin_env.Append(LINKFLAGS = '$ALIGN_FLAG')      # 512 bytes align
@@ -119,8 +119,6 @@ cp_util_env.Append(CCFLAGS = '-fno-strict-aliasing') # not safe for strict alias
 
 conf = FlagsConfigure(cp_util_env)
 conf.CheckLinkFlag('$MAP_FLAG')                   # generate map file
-if not defenv['DEBUG'] and defenv['STRIP']:
-	TestStrip(conf)                                 # strip
 conf.Finish()
 
 ### util environment
@@ -130,6 +128,18 @@ cross_env(util_env)
 
 util_env.Append(LINKFLAGS = '-mwindows')          # build windows executables
 util_env.Append(LINKFLAGS = '$ALIGN_FLAG')        # 512 bytes align
+
+conf = FlagsConfigure(util_env)
+if not defenv['DEBUG'] and defenv['STRIP'] and defenv['STRIP_W32']:
+	util_env.Append(LINKFLAGS = '-s')                   # strip
+conf.Finish()
+
+### cross-platform util environment stripping
+
+conf = FlagsConfigure(cp_util_env)
+if not defenv['DEBUG'] and defenv['STRIP'] and defenv['STRIP_CP']:
+	TestStrip(conf)                                 # strip
+conf.Finish()
 
 ### test environment
 
