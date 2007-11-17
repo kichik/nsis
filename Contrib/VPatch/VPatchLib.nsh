@@ -13,17 +13,15 @@
   Push $3
   Push $4
 
-  Push ${PATCHDATA}
   Push ${SOURCEFILE}
   Push ${TEMPFILE}
 
   Pop $2 # temp file
   Pop $3 # source file
-  Pop $4 # patch data
 
   InitPluginsDir
   GetTempFileName $1 $PLUGINSDIR
-  File /oname=$1 $4
+  File /oname=$1 ${PATCHDATA}
 
   vpatch::vpatchfile $1 $3 $2
   Pop $4
