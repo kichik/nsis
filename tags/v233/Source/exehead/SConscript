@@ -1,0 +1,101 @@
+files = Split("""
+	bgbg.c
+	components.c
+	exec.c
+	fileform.c
+	Main.c
+	Ui.c
+	util.c
+	#Source/crc32.c
+""")
+
+resources = Split("""
+	resource.rc
+""")
+
+resource_files = Split("""
+	nsis.ico
+	uninst.ico
+	bitmap1.bmp
+""")
+
+bzip2_files = Split("""
+	#Source/bzip2/bzlib.c
+	#Source/bzip2/decompress.c
+	#Source/bzip2/huffman.c
+""")
+
+lzma_files = Split("""
+	#Source/7zip/LZMADecode.c
+""")
+
+zlib_files = Split("""
+	#Source/zlib/INFBLOCK.C
+""")
+
+libs = Split("""
+	kernel32
+	user32
+	gdi32
+	shell32
+	advapi32
+	comdlg32
+	comctl32
+	ole32
+	version
+	uuid
+""")
+
+Import('env compression solid_compression')
+
+### Defines
+
+env.Append(CPPDEFINES = ['EXEHEAD'])
+env.Append(CPPDEFINES = ['WIN32_LEAN_AND_MEAN'])
+env.Append(CPPDEFINES = ['_WIN32_IE=0x0500'])
+
+### Some other settings
+
+if 'NSIS_CONFIG_LOG_STDOUT' in env['NSIS_CPPDEFINES']:
+	env.Append(LINKFLAGS = env['SUBSYS_CON'])
+
+### Compression specific configuration
+
+if compression == 'bzip2':
+	env.Append(CPPDEFINES = ['NSIS_COMPRESS_USE_BZIP2'])
+	files += bzip2_files
+elif compression == 'lzma':
+	env.Append(CPPDEFINES = ['NSIS_COMPRESS_USE_LZMA'])
+	env.Append(CPPDEFINES = ['LZMACALL=__fastcall'])
+	files += lzma_files
+elif compression == 'zlib':
+	env.Append(CPPDEFINES = ['NSIS_COMPRESS_USE_ZLIB'])
+	env.Append(CPPDEFINES = ['ZEXPORT=__stdcall'])
+	files += zlib_files
+
+if solid_compression:
+	env.Append(CPPDEFINES = ['NSIS_COMPRESS_WHOLE'])
+
+### Build with no sub-build-directories
+
+objs = []
+
+def basename(file):
+	return file.split('/')[-1].split('.')[0]
+
+for file in files:
+	objs.append(env.Object(target = basename(file), source = file))
+
+### Resources
+
+res = env.RES(resources)
+env.Depends(res, resource_files)
+objs = objs + res
+
+### Build stub
+
+stub = env.Program(target = 'stub_' + compression, source = objs, LIBS = libs)
+
+### Return stub
+
+Return('stub')
