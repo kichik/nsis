@@ -1,5 +1,39 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.33} 2.33
+
+Released on November 17th, 2007
+
+\S1{v2.33-rl} Release Notes
+
+\b This is a quick fix release for a bug, introduced in 2.32, that prevented the welcome page to display properly on Windows 9x. The problem was caused by the move from CVS to Subversion that messed with the line-breaks format of the INI files.
+
+\S1{v2.33-cl} Changelog
+
+\S2{} Major Changes
+
+\b \L{../Docs/Modern UI/Readme.html}{Modern UI}: Fixed a bug, introduced in 2.32, that caused display problems for the welcome and finish pages on Windows 9x (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1831677}{bug #1831677})
+
+\S2{} Minor Changes
+
+\b \L{../Docs/Modern UI/Readme.html}{Modern UI}: Allow MUI_LANGDLL_ALLLANGUAGES to be defined after insertion of MUI_LANGUAGE macro
+
+\S2{} Utilities and Plug-ins
+
+\b Made \L{../Docs/nsExec/nsExec.txt}{nsExec}'s internal process always exit cleanly to avoid false return values and delays (reported in the \W{http://forums.winamp.com/showthread.php?threadid=279683}{forum})
+
+\b \L{../Docs/nsDialogs/Readme.html}{nsDialogs}: Added OnClick support for static controls
+
+\b \L{../Docs/VPatch/Readme.html}{VPatch}: Fixed VPatchFile macro path handling (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1829540}{bug #1829540})
+
+\S2{} Translations
+
+\b Spanish updates
+
+\S2{} Build System
+
+\b Separate strip options for win32 and cross-platform binaries
+
 \H{v2.32} 2.32
 
 Released on November 9th, 2007
