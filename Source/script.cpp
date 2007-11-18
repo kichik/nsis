@@ -285,16 +285,26 @@ int CEXEBuild::doParse(const char *str)
   if (m_linebuild.getlen()>1)
     m_linebuild.resize(m_linebuild.getlen()-2);
 
+  // warn of comment with line-continuation
+  if (m_linebuild.getlen())
+  {
+    LineParser prevline(inside_comment);
+    prevline.parse((char*)m_linebuild.get());
+    LineParser thisline(inside_comment);
+    thisline.parse((char*)str);
+
+    if (prevline.inComment() && !thisline.inComment())
+    {
+      warning_fl("comment contains line-continuation character, following line will be ignored");
+    }
+  }
+
+  // add new line to line buffer
   m_linebuild.add(str,strlen(str)+1);
 
   // keep waiting for more lines, if this line ends with a backslash
   if (str[0] && CharPrev(str,str+strlen(str))[0] == '\\')
   {
-    line.parse((char*)m_linebuild.get());
-    if (line.inComment())
-    {
-      warning_fl("comment contains line-continuation character, following line will be ignored");
-    }
     return PS_OK;
   }
 
