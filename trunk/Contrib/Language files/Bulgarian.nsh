@@ -7,12 +7,12 @@
 !insertmacro LANGFILE "Bulgarian" "Bulgarian"
 
 !ifdef MUI_WELCOMEPAGE
-  ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Добре дошли в Съветника$\r$\nза инсталиране на$\r$\n$(^NameDA)!"
+  ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Добре дошли в Съветника за инсталиране на $(^NameDA)!"
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Той ще инсталира $(^NameDA) на вашия компютър.$\r$\n$\r$\nПрепоръчва се да затворите всички други приложения, преди да продължите. Това ще позволи на програмата да обнови някои системни файлове, без да се рестартира компютъра.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_UNWELCOMEPAGE
-  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "Добре дошли в Съветника$\r$\nза изтриване на$\r$\n$(^NameDA)!"
+  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "Добре дошли в Съветника за изтриване на $(^NameDA)!"
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Той ще ви помогне да изтриете $(^NameDA) от вашия компютър.$\r$\n$\r$\nПреди да продължите, уверете се че $(^NameDA) не е стартирана в момента.$\r$\n$\r$\n$_CLICK"
 !endif
 
@@ -67,7 +67,7 @@
 
 !ifdef MUI_INSTFILESPAGE
   ${LangFileString} MUI_TEXT_INSTALLING_TITLE "Инсталиране"
-  ${LangFileString} MUI_TEXT_INSTALLING_SUBTITLE "Изчакайте, инсталират се файловете на $(^NameDA)."
+  ${LangFileString} MUI_TEXT_INSTALLING_SUBTITLE "Изчакайте, инсталират се файловете на $(^NameDA)..."
   ${LangFileString} MUI_TEXT_FINISH_TITLE "Инсталирането завърши."
   ${LangFileString} MUI_TEXT_FINISH_SUBTITLE "Инсталирането завърши успешно."
   ${LangFileString} MUI_TEXT_ABORT_TITLE "Инсталирането прекратено."
@@ -76,30 +76,30 @@
 
 !ifdef MUI_UNINSTFILESPAGE
   ${LangFileString} MUI_UNTEXT_UNINSTALLING_TITLE "Изтриване"
-  ${LangFileString} MUI_UNTEXT_UNINSTALLING_SUBTITLE "Изчакайте, изтриват се файловете на $(^NameDA)."
+  ${LangFileString} MUI_UNTEXT_UNINSTALLING_SUBTITLE "Изчакайте, изтриват се файловете на $(^NameDA)..."
   ${LangFileString} MUI_UNTEXT_FINISH_TITLE "Край"
   ${LangFileString} MUI_UNTEXT_FINISH_SUBTITLE "Изтриването завърши успешно."
   ${LangFileString} MUI_UNTEXT_ABORT_TITLE "Изтриването прекратено."
-  ${LangFileString} MUI_UNTEXT_ABORT_SUBTITLE "Изтриването не завърши успешно."
+  ${LangFileString} MUI_UNTEXT_ABORT_SUBTITLE "Изтриването не завърши напълно."
 !endif
 
 !ifdef MUI_FINISHPAGE
-  ${LangFileString} MUI_TEXT_FINISH_INFO_TITLE "Приключване на Съветника за инсталиране на $(^NameDA)."
-  ${LangFileString} MUI_TEXT_FINISH_INFO_TEXT "Инсталирането на $(^NameDA) е завършено.$\r$\n$\r$Натиснете бутона $\"Край$\", за да затворите Съветника."
+  ${LangFileString} MUI_TEXT_FINISH_INFO_TITLE "Приключване на Съветника за инсталиране на $(^NameDA)"
+  ${LangFileString} MUI_TEXT_FINISH_INFO_TEXT "Инсталирането на $(^NameDA) е завършено.$\r$\n$\r$\nНатиснете бутона $\"Край$\", за да затворите Съветника."
   ${LangFileString} MUI_TEXT_FINISH_INFO_REBOOT "Компютърът трябва да бъде рестартиран, за да завърши инсталирането на $(^NameDA). Искате ли да рестартирате сега?"
 !endif
 
 !ifdef MUI_UNFINISHPAGE
-  ${LangFileString} MUI_UNTEXT_FINISH_INFO_TITLE "Приключване на Съветника за изтриване на $(^NameDA)."
+  ${LangFileString} MUI_UNTEXT_FINISH_INFO_TITLE "Приключване на Съветника за изтриване на $(^NameDA)"
   ${LangFileString} MUI_UNTEXT_FINISH_INFO_TEXT "Програмата $(^NameDA) беше изтрита от вашия компютър.$\r$\n$\r$\nНатиснете $\"Край$\" за да затворите този Съветник."
   ${LangFileString} MUI_UNTEXT_FINISH_INFO_REBOOT "Компютърът ви трябва да се рестартира, за да приключи успешно изтриването на $(^NameDA). Искате ли да рестартирате сега?"
 !endif
 
 !ifdef MUI_FINISHPAGE | MUI_UNFINISHPAGE
-  ${LangFileString} MUI_TEXT_FINISH_REBOOTNOW "Да, рестартирай сега."
-  ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Не, ще рестартирам по-късно."
-  ${LangFileString} MUI_TEXT_FINISH_RUN "Стартирай $(^NameDA)."
-  ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "Покажи файла $\"ReadMe$\"."
+  ${LangFileString} MUI_TEXT_FINISH_REBOOTNOW "Да, рестартирай сега"
+  ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Не, ще рестартирам по-късно"
+  ${LangFileString} MUI_TEXT_FINISH_RUN "Стартирай $(^NameDA)"
+  ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "Покажи файла $\"ReadMe$\""
   ${LangFileString} MUI_BUTTONTEXT_FINISH "&Край"  
 !endif
 
