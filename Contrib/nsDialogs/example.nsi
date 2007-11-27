@@ -45,11 +45,15 @@ FunctionEnd
 
 Function OnClick
 
+	Pop $0 # HWND
+
 	MessageBox MB_OK clicky
 
 FunctionEnd
 
 Function OnChange
+
+	Pop $0 # HWND
 
 	System::Call user32::GetWindowText(i$EDIT,t.r0,i${NSIS_MAX_STRLEN})
 
@@ -67,6 +71,8 @@ Function OnBack
 FunctionEnd
 
 Function OnCheckbox
+
+	Pop $0 # HWND
 
 	MessageBox MB_OK "checkbox clicked"
 
