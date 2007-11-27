@@ -302,6 +302,8 @@ FunctionEnd
 
 Function DirChange
 
+	Pop $0 # dir hwnd
+
 	GetDlgItem $0 $HWNDPARENT 1
 
 	System::Call user32::GetWindowText(i$DIRECTORY,t.d,i${NSIS_MAX_STRLEN})
