@@ -435,6 +435,7 @@ void CDialogTemplate::CTrimToString(WORD id, char *str, int margins) {
 void CDialogTemplate::ConvertToRTL() {
   for (unsigned int i = 0; i < m_vItems.size(); i++) {
     bool addExStyle = false;
+    bool addExLeftScrollbar = true;
     char *szClass;
     
     if (IS_INTRESOURCE(m_vItems[i]->szClass))
@@ -480,14 +481,22 @@ void CDialogTemplate::ConvertToRTL() {
     }
     else if (!IS_INTRESOURCE(m_vItems[i]->szClass) && !stricmp(szClass, "SysTreeView32")) {
       m_vItems[i]->dwStyle |= TVS_RTLREADING;
+      m_vItems[i]->dwExtStyle |= WS_EX_LAYOUTRTL;
       addExStyle = true;
+      addExLeftScrollbar = false;
+    }
+    else if (!IS_INTRESOURCE(m_vItems[i]->szClass) && !stricmp(szClass, "SysListView32")) {
+      m_vItems[i]->dwExtStyle |= WS_EX_LAYOUTRTL;
+      addExLeftScrollbar = false;
     }
     else addExStyle = true;
 
     if (addExStyle)
       m_vItems[i]->dwExtStyle |= WS_EX_RIGHT;
+    if (addExLeftScrollbar)
+      m_vItems[i]->dwExtStyle |= WS_EX_LEFTSCROLLBAR;
 
-    m_vItems[i]->dwExtStyle |= WS_EX_RTLREADING | WS_EX_LEFTSCROLLBAR;
+    m_vItems[i]->dwExtStyle |= WS_EX_RTLREADING;
 
     m_vItems[i]->sX = m_sWidth - m_vItems[i]->sWidth - m_vItems[i]->sX;
 
