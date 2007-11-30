@@ -75,7 +75,7 @@ void NSDFUNC ConvertStyleToRTL(enum nsControlType type, LPDWORD style, LPDWORD e
 
   case NSCTL_TREE:
     *style |= TVS_RTLREADING;
-    *exStyle |= WS_EX_RIGHT;
+    *exStyle |= WS_EX_RIGHT | WS_EX_LAYOUTRTL;
     break;
 
   default:
