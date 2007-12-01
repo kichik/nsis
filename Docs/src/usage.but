@@ -83,7 +83,7 @@ Generated installers and uninstallers accept a few options on the command line. 
 
 \b /S runs the installer or uninstaller silently. See \k{silent} for more information.
 
-\b /D sets the default installation directory (\R{varother}{$INSTDIR}), overriding \R{ainstalldir}{InstallDir} and \R{ainstalldirregkey}{InstallDirRegKey}. It must be the last parameter used in the command line and must not contain any quotes, even if the path contains spaces.
+\b /D sets the default installation directory (\R{varother}{$INSTDIR}), overriding \R{ainstalldir}{InstallDir} and \R{ainstalldirregkey}{InstallDirRegKey}. It must be the last parameter used in the command line and must not contain any quotes, even if the path contains spaces. Only absolute paths are supported.
 
 \S1{} Uninstaller Specific Options
 
