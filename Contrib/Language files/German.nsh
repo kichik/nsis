@@ -88,7 +88,7 @@
 
 !ifdef MUI_UNFINISHPAGE
   ${LangFileString} MUI_UNTEXT_FINISH_INFO_TITLE "Die Deinstallation von $(^NameDA) wird abgeschlossen"
-  ${LangFileString} MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) ist von ihrem Computer entfernt worden.$\r$\n$\r$\nKlicken Sie auf Fertig stellen, um den Assistenten zu schließen."
+  ${LangFileString} MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) ist von Ihrem Computer entfernt worden.$\r$\n$\r$\nKlicken Sie auf Fertig stellen, um den Assistenten zu schließen."
   ${LangFileString} MUI_UNTEXT_FINISH_INFO_REBOOT "Windows muss neu gestartet werden, um die Deinstallation von $(^NameDA) zu vervollständigen. Möchten Sie Windows jetzt neu starten?"
 !endif
 
