@@ -35,6 +35,7 @@ code
 <li><a href="#step-add">Adding Controls</a></li>
 <li><a href="#step-state">Control State</a></li>
 <li><a href="#step-notify">Real-time Notification</a></li>
+<li><a href="#helpful-macros">Helpful macros</a></li>
 </ul>
 </li>
 <li>
@@ -241,6 +242,7 @@ SectionEnd</pre></blockquote>
 <li>CheckBox</li>
 <li>RadioButton</li>
 <li>Text</li>
+<li>Password</li>
 <li>FileRequest</li>
 <li>DirRequest</li>
 <li>ComboBox</li>
@@ -249,7 +251,7 @@ SectionEnd</pre></blockquote>
 
 <h3><a name="step-state"></a>Control State</h3>
 
-<p>Now that we have some controls that the user can interact with, it's time to see what the user actually does with them. For that, we'll first add a <i>leave callback</i> function to our page. In that function, we'll query the state of the text control we've created and display it to the user. To do so, we'll use the ${NSD_GetText} macro.</p>
+<p>Now that we have some controls that the user can interact with, it's time to see what the user actually does with them. For that, we'll first add a <i>leave callback</i> function to our page. In that function, we'll query the state of the text control we've created and display it to the user. To do so, we'll use the ${NSD_GetText} macro. Use the ${NSD_GetState} macro for RadioButton and CheckBox controls.</p>
 
 <p>Note that not all controls support ${NSD_GetText} and some require special handling with specific messages defined in WinMessages.nsh. For example, the ListBox control requires usage of <i>LB_GETCURSEL</i> and <i>LB_GETTEXT</i>. With time, the library of macros in nsDialogs.nsh will fill with more and more macros that'll handle more cases like this.</p>
 
@@ -370,6 +372,14 @@ Section
 
 SectionEnd</pre></blockquote>
 
+<h3><a name="helpful-macros"></a>Helpful macros</h3>
+
+<h4><a name="set-focus">Set focus to a control</h4>
+
+<p>Use the following syntax to set the focus to a specified control.</p>
+
+<p><code>${NSD_SetFocus} <i>hwnd_of_control</i></code></p>
+
 <h2><a name="ref"></a>Function Reference</h2>
 
 <h3><a name="ref-create"></a>Create</h3>
@@ -410,7 +420,7 @@ SectionEnd</pre></blockquote>
 
 <p>Displays a directory selection dialog to the user.</p>
 
-<p>Returns the selected directory on the stack or "error" in case the user canceled the operation or an error occured.</p>
+<p>Returns the selected directory on the stack or an empty string if the user canceled the operation.</p>
 
 <h3><a name="ref-setrtl"></a>SetRTL</h3>
 

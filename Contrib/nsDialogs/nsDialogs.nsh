@@ -216,6 +216,10 @@ Header file for creating custom installer pages with nsDialogs
 !define __NSD_Text_STYLE ${DEFAULT_STYLES}|${WS_TABSTOP}|${ES_AUTOHSCROLL}
 !define __NSD_Text_EXSTYLE ${WS_EX_WINDOWEDGE}|${WS_EX_CLIENTEDGE}
 
+!define __NSD_Password_CLASS EDIT
+!define __NSD_Password_STYLE ${DEFAULT_STYLES}|${WS_TABSTOP}|${ES_AUTOHSCROLL}|${ES_PASSWORD}
+!define __NSD_Password_EXSTYLE ${WS_EX_WINDOWEDGE}|${WS_EX_CLIENTEDGE}
+
 !define __NSD_FileRequest_CLASS EDIT
 !define __NSD_FileRequest_STYLE ${DEFAULT_STYLES}|${WS_TABSTOP}|${ES_AUTOHSCROLL}
 !define __NSD_FileRequest_EXSTYLE ${WS_EX_WINDOWEDGE}|${WS_EX_CLIENTEDGE}
@@ -250,6 +254,7 @@ Header file for creating custom installer pages with nsDialogs
 !insertmacro __NSD_DefineControl CheckBox
 !insertmacro __NSD_DefineControl RadioButton
 !insertmacro __NSD_DefineControl Text
+!insertmacro __NSD_DefineControl Password
 !insertmacro __NSD_DefineControl FileRequest
 !insertmacro __NSD_DefineControl DirRequest
 !insertmacro __NSD_DefineControl ComboBox
@@ -289,6 +294,22 @@ Header file for creating custom installer pages with nsDialogs
 !macroend
 
 !define NSD_GetText `!insertmacro __NSD_GetText`
+
+!macro __NSD_GetState CONTROL VAR
+
+	SendMessage ${CONTROL} ${BM_GETSTATE} 0 0 ${VAR}
+
+!macroend
+
+!define NSD_GetState `!insertmacro __NSD_GetState`
+
+!macro __NSD_SetFocus HWND
+
+	System::Call "user32::SetFocus(i${HWND})"
+  
+!macroend
+
+!define NSD_SetFocus `!insertmacro __NSD_SetFocus`
 
 !define DEBUG `System::Call kernel32::OutputDebugString(ts)`
 
@@ -374,6 +395,7 @@ Header file for creating custom installer pages with nsDialogs
 				!insertmacro __NSD_ControlCase   CheckBox
 				!insertmacro __NSD_ControlCase   RadioButton
 				!insertmacro __NSD_ControlCase   Text
+				!insertmacro __NSD_ControlCase   Password
 				!insertmacro __NSD_ControlCaseEx FileRequest
 				!insertmacro __NSD_ControlCaseEx DirRequest
 				!insertmacro __NSD_ControlCase   ComboBox
@@ -397,9 +419,20 @@ Header file for creating custom installer pages with nsDialogs
 
 		${For} $R1 1 $R0
 			ReadINIStr $R2 $0 "Field $R1" HWND
-			${DEBUG} "  HWND = $R2"
-			${NSD_GetText} $R2 $R2
-			${DEBUG} "  Window text = $R2"
+			ReadINIStr $R3 $0 "Field $R1" "Type"
+			${Switch} $R3
+				${Case} "CheckBox"
+				${Case} "RadioButton"
+					${DEBUG} "  HWND = $R2"
+					${NSD_GetState} $R2 $R2
+					${DEBUG} "  Window selection = $R2"
+				${Break}
+				${CaseElse}
+					${DEBUG} "  HWND = $R2"
+					${NSD_GetText} $R2 $R2
+					${DEBUG} "  Window text = $R2"
+				${Break}
+			${EndSwitch}
 			WriteINIStr $0 "Field $R1" STATE $R2
 		${Next}
 
