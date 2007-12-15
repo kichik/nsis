@@ -115,6 +115,8 @@ IconGroup load_icon_file(const char* filename)
       throw runtime_error("unable to read offset from file");
     }
 
+    FIX_ENDIAN_INT32_INPLACE(iconOffset);
+
     fpos_t pos;
     fgetpos(file, &pos);
 
