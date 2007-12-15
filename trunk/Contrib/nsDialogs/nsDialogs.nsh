@@ -229,8 +229,12 @@ Header file for creating custom installer pages with nsDialogs
 !define __NSD_DirRequest_EXSTYLE ${WS_EX_WINDOWEDGE}|${WS_EX_CLIENTEDGE}
 
 !define __NSD_ComboBox_CLASS COMBOBOX
-!define __NSD_ComboBox_STYLE ${DEFAULT_STYLES}|${WS_TABSTOP}|${WS_VSCROLL}|${WS_CLIPCHILDREN}|${CBS_AUTOHSCROLL}|${CBS_HASSTRINGS}
+!define __NSD_ComboBox_STYLE ${DEFAULT_STYLES}|${WS_TABSTOP}|${WS_VSCROLL}|${WS_CLIPCHILDREN}|${CBS_AUTOHSCROLL}|${CBS_HASSTRINGS}|${CBS_DROPDOWN}
 !define __NSD_ComboBox_EXSTYLE ${WS_EX_WINDOWEDGE}|${WS_EX_CLIENTEDGE}
+
+!define __NSD_DropList_CLASS COMBOBOX
+!define __NSD_DropList_STYLE ${DEFAULT_STYLES}|${WS_TABSTOP}|${WS_VSCROLL}|${WS_CLIPCHILDREN}|${CBS_AUTOHSCROLL}|${CBS_HASSTRINGS}|${CBS_DROPDOWNLIST}
+!define __NSD_DropList_EXSTYLE ${WS_EX_WINDOWEDGE}|${WS_EX_CLIENTEDGE}
 
 !define __NSD_ListBox_CLASS LISTBOX
 !define __NSD_ListBox_STYLE ${DEFAULT_STYLES}|${WS_TABSTOP}|${WS_VSCROLL}|${LBS_DISABLENOSCROLL}|${LBS_HASSTRINGS}|${LBS_NOINTEGRALHEIGHT}|${LBS_NOTIFY}
@@ -258,6 +262,7 @@ Header file for creating custom installer pages with nsDialogs
 !insertmacro __NSD_DefineControl FileRequest
 !insertmacro __NSD_DefineControl DirRequest
 !insertmacro __NSD_DefineControl ComboBox
+!insertmacro __NSD_DefineControl DropList
 !insertmacro __NSD_DefineControl ListBox
 
 !macro __NSD_OnEvent EVENT HWND FUNCTION
@@ -399,6 +404,7 @@ Header file for creating custom installer pages with nsDialogs
 				!insertmacro __NSD_ControlCaseEx FileRequest
 				!insertmacro __NSD_ControlCaseEx DirRequest
 				!insertmacro __NSD_ControlCase   ComboBox
+				!insertmacro __NSD_ControlCase   DropList
 				!insertmacro __NSD_ControlCase   ListBox
 			${EndSwitch}
 
