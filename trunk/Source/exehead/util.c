@@ -139,7 +139,9 @@ void NSISCALL myDelete(char *buf, int flags)
 #endif//NSIS_SUPPORT_RMDIR
       trimslashtoend(buf);
 
-    mystrcat(buf,"\\");
+    // only append backslash if the path isn't relative to the working directory [bug #1851273]
+    if (*buf)
+      mystrcat(buf,"\\");
 
     fn=buf+mystrlen(buf);
 
