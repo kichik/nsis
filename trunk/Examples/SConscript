@@ -9,7 +9,6 @@ examples = Split("""
 	languages.nsi
 	Library.nsi
 	LogicLib.nsi
-	makensis.ini
 	makensis.nsi
 	Memento.nsi
 	one-section.nsi
