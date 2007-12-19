@@ -28,7 +28,8 @@ RequestExecutionLevel admin
 ;--------------------------------
 ;Header Files
 
-!include "MUI.nsh"
+!include "MUI2.nsh"
+!include "InstallOptions.nsh"
 !include "Sections.nsh"
 !include "LogicLib.nsh"
 !include "Memento.nsh"
@@ -60,7 +61,7 @@ Caption "NSIS ${VERSION} Setup"
 
 ;Pages
 !define MUI_WELCOMEPAGE_TITLE "Welcome to the NSIS ${VERSION} Setup Wizard"
-!define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of NSIS (Nullsoft Scriptable Install System) ${VERSION}, the next generation of the Windows installer and uninstaller system that doesn't suck and isn't huge.\r\n\r\nNSIS 2 includes a new Modern User Interface, LZMA compression, support for multiple languages and an easy plug-in system.\r\n\r\n$_CLICK"
+!define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of NSIS (Nullsoft Scriptable Install System) ${VERSION}, the next generation of the Windows installer and uninstaller system that doesn't suck and isn't huge.$\r$\n$\r$\nNSIS 2 includes a new Modern User Interface, LZMA compression, support for multiple languages and an easy plug-in system.$\r$\n$\r$\n$_CLICK"
 
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_LICENSE "..\COPYING"
@@ -97,7 +98,7 @@ Page custom PageReinstall PageLeaveReinstall
   ;These files should be inserted before other files in the data block
 
   ReserveFile "makensis.ini"
-  !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
+  ReserveFile "${NSISDIR}\Plugins\InstallOptions.dll"
 
 ;--------------------------------
 ;Installer Sections
@@ -915,7 +916,7 @@ Function .onInit
 
 !ifdef VER_MAJOR & VER_MINOR & VER_REVISION & VER_BUILD
 
-  !insertmacro MUI_INSTALLOPTIONS_EXTRACT "makensis.ini"
+  !insertmacro INSTALLOPTIONS_EXTRACT "makensis.ini"
  
 !endif
   
@@ -947,39 +948,39 @@ Function PageReinstall
 
   new_version:
 
-   !insertmacro MUI_INSTALLOPTIONS_WRITE "makensis.ini" "Field 1" "Text" "An older version of NSIS is installed on your system. It's recommended that you uninstall the current version before installing. Select the operation you want to perform and click Next to continue."
-   !insertmacro MUI_INSTALLOPTIONS_WRITE "makensis.ini" "Field 2" "Text" "Uninstall before installing"
-   !insertmacro MUI_INSTALLOPTIONS_WRITE "makensis.ini" "Field 3" "Text" "Do not uninstall"
+   !insertmacro INSTALLOPTIONS_WRITE "makensis.ini" "Field 1" "Text" "An older version of NSIS is installed on your system. It's recommended that you uninstall the current version before installing. Select the operation you want to perform and click Next to continue."
+   !insertmacro INSTALLOPTIONS_WRITE "makensis.ini" "Field 2" "Text" "Uninstall before installing"
+   !insertmacro INSTALLOPTIONS_WRITE "makensis.ini" "Field 3" "Text" "Do not uninstall"
    !insertmacro MUI_HEADER_TEXT "Already Installed" "Choose how you want to install NSIS."
    StrCpy $R0 "1"
    Goto reinst_start
 
   older_version:
 
-   !insertmacro MUI_INSTALLOPTIONS_WRITE "makensis.ini" "Field 1" "Text" "A newer version of NSIS is already installed! It is not recommended that you install an older version. If you really want to install this older version, it's better to uninstall the current version first. Select the operation you want to perform and click Next to continue."
-   !insertmacro MUI_INSTALLOPTIONS_WRITE "makensis.ini" "Field 2" "Text" "Uninstall before installing"
-   !insertmacro MUI_INSTALLOPTIONS_WRITE "makensis.ini" "Field 3" "Text" "Do not uninstall"
+   !insertmacro INSTALLOPTIONS_WRITE "makensis.ini" "Field 1" "Text" "A newer version of NSIS is already installed! It is not recommended that you install an older version. If you really want to install this older version, it's better to uninstall the current version first. Select the operation you want to perform and click Next to continue."
+   !insertmacro INSTALLOPTIONS_WRITE "makensis.ini" "Field 2" "Text" "Uninstall before installing"
+   !insertmacro INSTALLOPTIONS_WRITE "makensis.ini" "Field 3" "Text" "Do not uninstall"
    !insertmacro MUI_HEADER_TEXT "Already Installed" "Choose how you want to install NSIS."
    StrCpy $R0 "1"
    Goto reinst_start
 
   same_version:
 
-   !insertmacro MUI_INSTALLOPTIONS_WRITE "makensis.ini" "Field 1" "Text" "NSIS ${VERSION} is already installed. Select the operation you want to perform and click Next to continue."
-   !insertmacro MUI_INSTALLOPTIONS_WRITE "makensis.ini" "Field 2" "Text" "Add/Reinstall components"
-   !insertmacro MUI_INSTALLOPTIONS_WRITE "makensis.ini" "Field 3" "Text" "Uninstall NSIS"
+   !insertmacro INSTALLOPTIONS_WRITE "makensis.ini" "Field 1" "Text" "NSIS ${VERSION} is already installed. Select the operation you want to perform and click Next to continue."
+   !insertmacro INSTALLOPTIONS_WRITE "makensis.ini" "Field 2" "Text" "Add/Reinstall components"
+   !insertmacro INSTALLOPTIONS_WRITE "makensis.ini" "Field 3" "Text" "Uninstall NSIS"
    !insertmacro MUI_HEADER_TEXT "Already Installed" "Choose the maintenance option to perform."
    StrCpy $R0 "2"
 
   reinst_start:
 
-  !insertmacro MUI_INSTALLOPTIONS_DISPLAY "makensis.ini"
+  !insertmacro INSTALLOPTIONS_DISPLAY "makensis.ini"
 
 FunctionEnd
 
 Function PageLeaveReinstall
 
-  !insertmacro MUI_INSTALLOPTIONS_READ $R1 "makensis.ini" "Field 2" "State"
+  !insertmacro INSTALLOPTIONS_READ $R1 "makensis.ini" "Field 2" "State"
 
   StrCmp $R0 "1" 0 +2
     StrCmp $R1 "1" reinst_uninstall reinst_done
