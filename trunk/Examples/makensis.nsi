@@ -32,6 +32,12 @@ RequestExecutionLevel admin
 !include "Sections.nsh"
 !include "LogicLib.nsh"
 !include "Memento.nsh"
+!include "WordFunc.nsh"
+
+;--------------------------------
+;Functions
+
+!insertmacro VersionCompare
 
 ;--------------------------------
 ;Definitions
@@ -916,49 +922,38 @@ Function PageReinstall
 
   ReadRegStr $R0 HKLM "Software\NSIS" ""
 
-  StrCmp $R0 "" 0 +2
+  ${If} $R0 == ""
     Abort
+  ${EndIf}
 
-  ;Detect version
-    ReadRegDWORD $R0 HKLM "Software\NSIS" "VersionMajor"
-    IntCmp $R0 ${VER_MAJOR} minor_check new_version older_version
-  minor_check:
-    ReadRegDWORD $R0 HKLM "Software\NSIS" "VersionMinor"
-    IntCmp $R0 ${VER_MINOR} revision_check new_version older_version
-  revision_check:
-    ReadRegDWORD $R0 HKLM "Software\NSIS" "VersionRevision"
-    IntCmp $R0 ${VER_REVISION} build_check new_version older_version
-  build_check:
-    ReadRegDWORD $R0 HKLM "Software\NSIS" "VersionBuild"
-    IntCmp $R0 ${VER_BUILD} same_version new_version older_version
+  ReadRegDWORD $R0 HKLM "Software\NSIS" "VersionMajor"
+  ReadRegDWORD $R1 HKLM "Software\NSIS" "VersionMinor"
+  ReadRegDWORD $R2 HKLM "Software\NSIS" "VersionRevision"
+  ReadRegDWORD $R3 HKLM "Software\NSIS" "VersionBuild"
+  StrCpy $R0 $R0.$R1.$R2.$R3
 
-  new_version:
-
-   StrCpy $R1 "An older version of NSIS is installed on your system. It's recommended that you uninstall the current version before installing. Select the operation you want to perform and click Next to continue."
-   StrCpy $R2 "Uninstall before installing"
-   StrCpy $R3 "Do not uninstall"
-   !insertmacro MUI_HEADER_TEXT "Already Installed" "Choose how you want to install NSIS."
-   StrCpy $R0 "1"
-   Goto reinst_start
-
-  older_version:
-
-   StrCpy $R1 "A newer version of NSIS is already installed! It is not recommended that you install an older version. If you really want to install this older version, it's better to uninstall the current version first. Select the operation you want to perform and click Next to continue."
-   StrCpy $R2 "Uninstall before installing"
-   StrCpy $R3 "Do not uninstall"
-   !insertmacro MUI_HEADER_TEXT "Already Installed" "Choose how you want to install NSIS."
-   StrCpy $R0 "1"
-   Goto reinst_start
-
-  same_version:
-
-   StrCpy $R1 "NSIS ${VERSION} is already installed. Select the operation you want to perform and click Next to continue."
-   StrCpy $R2 "Add/Reinstall components"
-   StrCpy $R3 "Uninstall NSIS"
-   !insertmacro MUI_HEADER_TEXT "Already Installed" "Choose the maintenance option to perform."
-   StrCpy $R0 "2"
-
-  reinst_start:
+  ${VersionCompare} ${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD} $R0 $R0
+  ${If} $R0 == 0
+    StrCpy $R1 "NSIS ${VERSION} is already installed. Select the operation you want to perform and click Next to continue."
+    StrCpy $R2 "Add/Reinstall components"
+    StrCpy $R3 "Uninstall NSIS"
+    !insertmacro MUI_HEADER_TEXT "Already Installed" "Choose the maintenance option to perform."
+    StrCpy $R0 "2"
+  ${ElseIf} $R0 == 1
+    StrCpy $R1 "An older version of NSIS is installed on your system. It's recommended that you uninstall the current version before installing. Select the operation you want to perform and click Next to continue."
+    StrCpy $R2 "Uninstall before installing"
+    StrCpy $R3 "Do not uninstall"
+    !insertmacro MUI_HEADER_TEXT "Already Installed" "Choose how you want to install NSIS."
+    StrCpy $R0 "1"
+  ${ElseIf} $R0 == 2
+    StrCpy $R1 "A newer version of NSIS is already installed! It is not recommended that you install an older version. If you really want to install this older version, it's better to uninstall the current version first. Select the operation you want to perform and click Next to continue."
+    StrCpy $R2 "Uninstall before installing"
+    StrCpy $R3 "Do not uninstall"
+    !insertmacro MUI_HEADER_TEXT "Already Installed" "Choose how you want to install NSIS."
+    StrCpy $R0 "1"
+  ${Else}
+    Abort
+  ${EndIf}
 
   nsDialogs::Create /NOUNLOAD 1018
 
