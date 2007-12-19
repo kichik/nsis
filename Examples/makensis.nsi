@@ -40,11 +40,6 @@ RequestExecutionLevel admin
 !define SHCNF_IDLIST 0
 
 ;--------------------------------
-;Variables
-
-Var ReinstallPageCheck
-
-;--------------------------------
 ;Configuration
 
 ;Names
@@ -915,6 +910,8 @@ FunctionEnd
 
 !ifdef VER_MAJOR & VER_MINOR & VER_REVISION & VER_BUILD
 
+Var ReinstallPageCheck
+
 Function PageReinstall
 
   ReadRegStr $R0 HKLM "Software\NSIS" ""
@@ -970,11 +967,11 @@ Function PageReinstall
 
   ${NSD_CreateRadioButton} 0 0 100% 24u $R2
   Pop $R2
-  ${NSD_OnClick} $R2 PageReinstall_UninstallRB
+  ${NSD_OnClick} $R2 PageReinstallUpdateSelection
 
   ${NSD_CreateRadioButton} 0 0 100% 24u $R3
   Pop $R3
-  ${NSD_OnClick} $R3 PageReinstall_UninstallRB
+  ${NSD_OnClick} $R3 PageReinstallUpdateSelection
 
   ${If} $ReinstallPageCheck == 1
     SendMessage $R2 ${BM_SETCHECK} ${BST_CHECKED} 0
@@ -986,9 +983,23 @@ Function PageReinstall
 
 FunctionEnd
 
+Function PageReinstallUpdateSelection
+
+  Pop $R1
+
+  ${NSD_GetState} $R2 $R1
+
+  ${If} $R1 == ${BST_CHECKED}
+    StrCpy $ReinstallPageCheck 1
+  ${Else}
+    StrCpy $ReinstallPageCheck 2
+  ${EndIf}
+
+FunctionEnd
+
 Function PageLeaveReinstall
 
-  SendMessage $R2 ${BM_GETCHECK} 0 0 $R1
+  ${NSD_GetState} $R2 $R1
 
   StrCmp $R0 "1" 0 +2
     StrCmp $R1 "1" reinst_uninstall reinst_done
