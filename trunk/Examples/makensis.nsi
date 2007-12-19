@@ -29,7 +29,6 @@ RequestExecutionLevel admin
 ;Header Files
 
 !include "MUI2.nsh"
-!include "InstallOptions.nsh"
 !include "Sections.nsh"
 !include "LogicLib.nsh"
 !include "Memento.nsh"
@@ -39,6 +38,11 @@ RequestExecutionLevel admin
 
 !define SHCNE_ASSOCCHANGED 0x8000000
 !define SHCNF_IDLIST 0
+
+;--------------------------------
+;Variables
+
+Var ReinstallPageCheck
 
 ;--------------------------------
 ;Configuration
@@ -91,14 +95,6 @@ Page custom PageReinstall PageLeaveReinstall
 ;Languages
 
 !insertmacro MUI_LANGUAGE "English"
-
-;--------------------------------
-;Reserve Files
-
-  ;These files should be inserted before other files in the data block
-
-  ReserveFile "makensis.ini"
-  ReserveFile "${NSISDIR}\Plugins\InstallOptions.dll"
 
 ;--------------------------------
 ;Installer Sections
@@ -224,7 +220,6 @@ ${MementoSection} "Script Examples" SecExample
   SectionIn 1 2
   SetOutPath $INSTDIR\Examples
   File ..\Examples\makensis.nsi
-  File ..\Examples\makensis.ini
   File ..\Examples\example1.nsi
   File ..\Examples\example2.nsi
   File ..\Examples\viewhtml.nsi
@@ -914,12 +909,6 @@ SectionEnd
 
 Function .onInit
 
-!ifdef VER_MAJOR & VER_MINOR & VER_REVISION & VER_BUILD
-
-  !insertmacro INSTALLOPTIONS_EXTRACT "makensis.ini"
- 
-!endif
-  
   ${MementoSectionRestore}
 
 FunctionEnd
@@ -948,39 +937,58 @@ Function PageReinstall
 
   new_version:
 
-   !insertmacro INSTALLOPTIONS_WRITE "makensis.ini" "Field 1" "Text" "An older version of NSIS is installed on your system. It's recommended that you uninstall the current version before installing. Select the operation you want to perform and click Next to continue."
-   !insertmacro INSTALLOPTIONS_WRITE "makensis.ini" "Field 2" "Text" "Uninstall before installing"
-   !insertmacro INSTALLOPTIONS_WRITE "makensis.ini" "Field 3" "Text" "Do not uninstall"
+   StrCpy $R1 "An older version of NSIS is installed on your system. It's recommended that you uninstall the current version before installing. Select the operation you want to perform and click Next to continue."
+   StrCpy $R2 "Uninstall before installing"
+   StrCpy $R3 "Do not uninstall"
    !insertmacro MUI_HEADER_TEXT "Already Installed" "Choose how you want to install NSIS."
    StrCpy $R0 "1"
    Goto reinst_start
 
   older_version:
 
-   !insertmacro INSTALLOPTIONS_WRITE "makensis.ini" "Field 1" "Text" "A newer version of NSIS is already installed! It is not recommended that you install an older version. If you really want to install this older version, it's better to uninstall the current version first. Select the operation you want to perform and click Next to continue."
-   !insertmacro INSTALLOPTIONS_WRITE "makensis.ini" "Field 2" "Text" "Uninstall before installing"
-   !insertmacro INSTALLOPTIONS_WRITE "makensis.ini" "Field 3" "Text" "Do not uninstall"
+   StrCpy $R1 "A newer version of NSIS is already installed! It is not recommended that you install an older version. If you really want to install this older version, it's better to uninstall the current version first. Select the operation you want to perform and click Next to continue."
+   StrCpy $R2 "Uninstall before installing"
+   StrCpy $R3 "Do not uninstall"
    !insertmacro MUI_HEADER_TEXT "Already Installed" "Choose how you want to install NSIS."
    StrCpy $R0 "1"
    Goto reinst_start
 
   same_version:
 
-   !insertmacro INSTALLOPTIONS_WRITE "makensis.ini" "Field 1" "Text" "NSIS ${VERSION} is already installed. Select the operation you want to perform and click Next to continue."
-   !insertmacro INSTALLOPTIONS_WRITE "makensis.ini" "Field 2" "Text" "Add/Reinstall components"
-   !insertmacro INSTALLOPTIONS_WRITE "makensis.ini" "Field 3" "Text" "Uninstall NSIS"
+   StrCpy $R1 "NSIS ${VERSION} is already installed. Select the operation you want to perform and click Next to continue."
+   StrCpy $R2 "Add/Reinstall components"
+   StrCpy $R3 "Uninstall NSIS"
    !insertmacro MUI_HEADER_TEXT "Already Installed" "Choose the maintenance option to perform."
    StrCpy $R0 "2"
 
   reinst_start:
 
-  !insertmacro INSTALLOPTIONS_DISPLAY "makensis.ini"
+  nsDialogs::Create /NOUNLOAD 1018
+
+  ${NSD_CreateLabel} 0 0 100% 24u $R1
+  Pop $R1
+
+  ${NSD_CreateRadioButton} 0 0 100% 24u $R2
+  Pop $R2
+  ${NSD_OnClick} $R2 PageReinstall_UninstallRB
+
+  ${NSD_CreateRadioButton} 0 0 100% 24u $R3
+  Pop $R3
+  ${NSD_OnClick} $R3 PageReinstall_UninstallRB
+
+  ${If} $ReinstallPageCheck == 1
+    SendMessage $R2 ${BM_SETCHECK} ${BST_CHECKED} 0
+  ${Else}
+    SendMessage $R3 ${BM_SETCHECK} ${BST_CHECKED} 0
+  ${EndIf}
+
+  nsDialogs::Show
 
 FunctionEnd
 
 Function PageLeaveReinstall
 
-  !insertmacro INSTALLOPTIONS_READ $R1 "makensis.ini" "Field 2" "State"
+  SendMessage $R2 ${BM_GETCHECK} 0 0 $R1
 
   StrCmp $R0 "1" 0 +2
     StrCmp $R1 "1" reinst_uninstall reinst_done
