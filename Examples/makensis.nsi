@@ -973,7 +973,7 @@ Function PageReinstall
   Pop $R3
   ${NSD_OnClick} $R3 PageReinstallUpdateSelection
 
-  ${If} $ReinstallPageCheck == 1
+  ${If} $ReinstallPageCheck != 2
     SendMessage $R2 ${BM_SETCHECK} ${BST_CHECKED} 0
   ${Else}
     SendMessage $R3 ${BM_SETCHECK} ${BST_CHECKED} 0
