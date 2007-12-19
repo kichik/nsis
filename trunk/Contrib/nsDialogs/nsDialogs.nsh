@@ -302,7 +302,7 @@ Header file for creating custom installer pages with nsDialogs
 
 !macro __NSD_GetState CONTROL VAR
 
-	SendMessage ${CONTROL} ${BM_GETSTATE} 0 0 ${VAR}
+	SendMessage ${CONTROL} ${BM_GETCHECK} 0 0 ${VAR}
 
 !macroend
 
