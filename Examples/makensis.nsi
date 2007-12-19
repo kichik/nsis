@@ -965,11 +965,11 @@ Function PageReinstall
   ${NSD_CreateLabel} 0 0 100% 24u $R1
   Pop $R1
 
-  ${NSD_CreateRadioButton} 0 0 100% 24u $R2
+  ${NSD_CreateRadioButton} 30u 50u -30u 8u $R2
   Pop $R2
   ${NSD_OnClick} $R2 PageReinstallUpdateSelection
 
-  ${NSD_CreateRadioButton} 0 0 100% 24u $R3
+  ${NSD_CreateRadioButton} 30u 70u -30u 8u $R3
   Pop $R3
   ${NSD_OnClick} $R3 PageReinstallUpdateSelection
 
