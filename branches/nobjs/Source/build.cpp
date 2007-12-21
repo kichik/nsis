@@ -1250,6 +1250,7 @@ int CEXEBuild::add_nobj_entry_parm(const nobj* parm)
   }
   else if (str)
   {
+    // TODO handle add_intstring()
     return add_string(str->get_string().c_str());
   }
   else
