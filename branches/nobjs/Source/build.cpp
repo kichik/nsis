@@ -1215,7 +1215,6 @@ int CEXEBuild::add_entry_direct(int which, int o0, int o1, int o2, int o3, int o
 
 int CEXEBuild::add_nobj_entry(const nobj_entry& ent)
 {
-  int i;
   nobjs parms = ent.dependencies();
 
   if (parms.size() > MAX_ENTRY_OFFSETS)
@@ -1224,7 +1223,7 @@ int CEXEBuild::add_nobj_entry(const nobj_entry& ent)
     return PS_ERROR;
   }
 
-  for (i = 0; i < MAX_ENTRY_OFFSETS - parms.size(); i++)
+  while (parms.size() < MAX_ENTRY_OFFSETS)
   {
     parms.push_back(new nobj_int(0));
   }
@@ -1232,7 +1231,7 @@ int CEXEBuild::add_nobj_entry(const nobj_entry& ent)
   entry st_ent;
   st_ent.which = ent.which();
 
-  for (i = 0; i < MAX_ENTRY_OFFSETS; i++)
+  for (int i = 0; i < MAX_ENTRY_OFFSETS; i++)
   {
     st_ent.offsets[i] = add_nobj_entry_parm(parms[i]);
   }
