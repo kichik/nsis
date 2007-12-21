@@ -78,6 +78,7 @@ public:
   void set_parm(int offset, const nobj* parm);
   void set_parm(int offset, const int parm);
   void set_parm(int offset, const char* parm);
+  void set_parm(int offset, std::string& parm);
 
   const int which() const;
 
