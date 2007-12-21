@@ -40,7 +40,8 @@ void nobj::add_dependency(const nobj& obj)
  * nobj_entry
  */
 
-nobj_entry::nobj_entry(const nobjs& parms)
+nobj_entry::nobj_entry(const int which, const nobjs& parms)
+  : m_which(which)
 {
   nobjs_const_iterator i = parms.begin();
 
@@ -49,6 +50,11 @@ nobj_entry::nobj_entry(const nobjs& parms)
     add_dependency(*i);
     i++;
   }
+}
+
+const int nobj_entry::which() const
+{
+  return m_which;
 }
 
 /**

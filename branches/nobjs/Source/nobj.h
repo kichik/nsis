@@ -61,7 +61,13 @@ class nobj_entry : public nobj
 
 public:
 
-  nobj_entry(const nobjs& parms);
+  nobj_entry(const int which, const nobjs& parms);
+
+  const int which() const;
+
+private:
+
+  int m_which;
 
 };
 
