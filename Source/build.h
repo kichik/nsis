@@ -240,6 +240,7 @@ class CEXEBuild {
     int datablock_optimize(int start_offset, int first_int);
     void printline(int l);
     int process_jump(LineParser &line, int wt, int *offs);
+    int process_jump_nobj(LineParser &line, int wt, nobj_entry& ent, int offs);
 
     int AddVersionInfo();
     int ProcessPages();
