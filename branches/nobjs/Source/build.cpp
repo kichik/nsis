@@ -1223,12 +1223,10 @@ int CEXEBuild::add_nobj_entry(const nobj_entry& ent)
     return PS_ERROR;
   }
 
-  parms.resize(MAX_ENTRY_OFFSETS);
-
-  entry st_ent;
+  entry st_ent={0,};
   st_ent.which = ent.which();
 
-  for (int i = 0; i < MAX_ENTRY_OFFSETS; i++)
+  for (int i = 0; i < parms.size(); i++)
   {
     st_ent.offsets[i] = add_nobj_entry_parm(parms[i]);
   }
