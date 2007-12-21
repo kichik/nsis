@@ -1225,7 +1225,7 @@ int CEXEBuild::add_nobj_entry(const nobj_entry& ent)
 
   while (parms.size() < MAX_ENTRY_OFFSETS)
   {
-    parms.push_back(new nobj_int(0));
+    parms.push_back(NULL);
   }
 
   entry st_ent;
