@@ -4872,7 +4872,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         ent.offsets[0]=add_string(line.gettoken_str(2+a));
         ent.offsets[1]=GetUserVarIndex(line, 1+a);
         ent.offsets[2]=!a;
-        if (ent.offsets[0]<0) PRINTHELP()
+        if (ent.offsets[1]<0) PRINTHELP()
         SCRIPT_MSG("GetFullPathName: %s->%s (%d)\n",
           line.gettoken_str(2+a),line.gettoken_str(1+a),a?"sfn":"lfn");
       }
