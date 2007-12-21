@@ -5492,7 +5492,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.offsets[1]=GetUserVarIndex(line,1);
       ent.offsets[2]=0;
       ent.offsets[3]=1;
-      if (line.gettoken_str(1)[0] && ent.offsets[0]<0) PRINTHELP()
+      if (line.gettoken_str(1)[0] && ent.offsets[1]<0) PRINTHELP()
       SCRIPT_MSG("GetCurInstType: %s\n",line.gettoken_str(1));
     return add_entry(&ent);
 #else//!NSIS_CONFIG_COMPONENTPAGE
