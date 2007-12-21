@@ -37,7 +37,7 @@ public:
   /**
    * Returns an ordered list of nobjs this nobj depends on.
    */
-  virtual const nobjs dependencies();
+  virtual const nobjs dependencies() const;
 
 protected:
 

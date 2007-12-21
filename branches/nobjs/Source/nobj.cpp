@@ -26,7 +26,7 @@ using std::length_error;
  * nobj
  */
 
-const nobjs nobj::dependencies()
+const nobjs nobj::dependencies() const
 {
   return m_dependencies;
 }
