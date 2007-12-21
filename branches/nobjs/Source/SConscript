@@ -16,6 +16,7 @@ makensis_files = Split("""
 	makenssi.cpp
 	manifest.cpp
 	mmap.cpp
+	nobj.cpp
 	Plugins.cpp
 	ResourceEditor.cpp
 	ResourceVersionInfo.cpp
