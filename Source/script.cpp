@@ -897,6 +897,19 @@ int CEXEBuild::process_jump(LineParser &line, int wt, int *offs)
   return 0;
 }
 
+int CEXEBuild::process_jump_nobj(LineParser &line, int wt, nobj_entry& ent, int offs)
+{
+  int jump_offset;
+  int ret = process_jump(line, wt, &jump_offset);
+  
+  if (!ret)
+  {
+    ent.set_parm(offs, jump_offset);
+  }
+
+  return ret;
+}
+
 #define FLAG_OFFSET(flag) (FIELD_OFFSET(exec_flags, flag)/sizeof(int))
 #define SECTION_FIELD_GET(field) (FIELD_OFFSET(section, field)/sizeof(int))
 #define SECTION_FIELD_SET(field) (-1 - (int)(FIELD_OFFSET(section, field)/sizeof(int)))
@@ -918,7 +931,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
   multiple_entries_instruction=0;
 
-  entry ent={0,};
   switch (which_token)
   {
     // macro shit
@@ -1714,10 +1726,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     }
     return PS_OK;
     case TOK_GETINSTDIRERROR:
-      ent.which = EW_GETFLAG;
-      ent.offsets[0] = GetUserVarIndex(line, 1);
-      ent.offsets[1] = FLAG_OFFSET(instdir_error);
-    return add_entry(&ent);
+    {
+      nobj_entry ent(EW_GETFLAG);
+      ent.set_parm(0, GetUserVarIndex(line, 1));
+      ent.set_parm(1, FLAG_OFFSET(instdir_error));
+      return add_nobj_entry(ent);
+    }
 #ifdef NSIS_CONFIG_COMPONENTPAGE
     case TOK_COMPTEXT:
       {
@@ -2031,23 +2045,25 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return PS_ERROR;
 #endif
     case TOK_IFSILENT:
-      ent.which=EW_IFFLAG;
-      if (process_jump(line,1,&ent.offsets[0]) ||
-          process_jump(line,2,&ent.offsets[1])) PRINTHELP()
-      ent.offsets[2]=FLAG_OFFSET(silent);
-      ent.offsets[3]=~0;//new value mask - keep flag
+    {
+      nobj_entry ent(EW_IFFLAG);
+      if (process_jump_nobj(line,1,ent,0) ||
+          process_jump_nobj(line,2,ent,1)) PRINTHELP()
+      ent.set_parm(2,FLAG_OFFSET(silent));
+      ent.set_parm(3,~0);//new value mask - keep flag
       SCRIPT_MSG("IfSilent ?%s:%s\n",line.gettoken_str(1),line.gettoken_str(2));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_SETSILENT:
     {
-      ent.which=EW_SETFLAG;
-      ent.offsets[0]=FLAG_OFFSET(silent);
+      nobj_entry ent(EW_SETFLAG);
+      ent.set_parm(0,FLAG_OFFSET(silent));
       int k=line.gettoken_enum(1,"normal\0silent\0");
-      if (k<0) PRINTHELP()
-      ent.offsets[1]=add_intstring(k);
+      if (k<0) PRINTHELP();
+      ent.set_parm(1,add_intstring(k));
       SCRIPT_MSG("SetSilent: %s\n",line.gettoken_str(1));
+      return add_nobj_entry(ent);
     }
-    return add_entry(&ent);
 #else//!NSIS_CONFIG_SILENT_SUPPORT
     case TOK_SILENTINST:
     case TOK_SILENTUNINST:
@@ -3153,19 +3169,27 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         ERROR_MSG("WriteUninstaller only valid from install, not from uninstall.\n");
         PRINTHELP()
       }
+
       uninstaller_writes_used++;
-      ent.which=EW_WRITEUNINSTALLER;
-      ent.offsets[0]=add_string(line.gettoken_str(1));
+
+      nobj_entry ent(EW_WRITEUNINSTALLER);
+
+      if (!strcmp(line.gettoken_str(1),""))
+      {
+        PRINTHELP();
+      }
+
+      ent.set_parm(0,line.gettoken_str(1));
       string full = string("$INSTDIR\\") + string(line.gettoken_str(1));
-      ent.offsets[3]=add_string(full.c_str());
+      ent.set_parm(3,full);
       // ent.offsets[1] and ent.offsets[2] are set in CEXEBuild::uninstall_generate()
-      if (!ent.offsets[0]) PRINTHELP()
       SCRIPT_MSG("WriteUninstaller: \"%s\"\n",line.gettoken_str(1));
 
       DefineInnerLangString(NLF_ERR_CREATING);
       DefineInnerLangString(NLF_CREATED_UNINST);
+
+      return add_nobj_entry(ent);
     }
-    return add_entry(&ent);
 #else//!NSIS_CONFIG_UNINSTALL_SUPPORT
     case TOK_WRITEUNINSTALLER:
     case TOK_UNINSTCAPTION:
@@ -3571,45 +3595,52 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     // instructions
     ///////////////////////////////////////////////////////////////////////////////
     case TOK_NOP:
+    {
       SCRIPT_MSG("Nop\n");
-      ent.which=EW_NOP;
-    return add_entry(&ent);
+      nobj_entry ent(EW_NOP);
+      return add_nobj_entry(ent);
+    }
     case TOK_GOTO:
-      ent.which=EW_NOP;
-      if (process_jump(line,1,&ent.offsets[0])) PRINTHELP()
+    {
+      nobj_entry ent(EW_NOP);
+      if (process_jump_nobj(line,1,ent,0)) PRINTHELP()
       SCRIPT_MSG("Goto: %s\n",line.gettoken_str(1));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_SETREGVIEW:
     {
-      ent.which=EW_SETFLAG;
-      ent.offsets[0]=FLAG_OFFSET(alter_reg_view);
+      nobj_entry ent(EW_SETFLAG);
+      ent.set_parm(0,FLAG_OFFSET(alter_reg_view));
       // "64" results in setting the flag to 1 which alters the view
       int k=line.gettoken_enum(1,"32\0" "64\0lastused\0");
       if (k<0) PRINTHELP()
       if (k == 0) // 32
-        ent.offsets[1]=add_intstring(0);
+        ent.set_parm(1,add_intstring(0));
       else if (k == 1) // 64
-        ent.offsets[1]=add_intstring(KEY_WOW64_64KEY);
+        ent.set_parm(1,add_intstring(KEY_WOW64_64KEY));
       else if (k == 2) // last used
-        ent.offsets[2]=1;
+        ent.set_parm(2,1);
       SCRIPT_MSG("SetRegView: %s\n",line.gettoken_str(1));
+      return add_nobj_entry(ent);
     }
-    return add_entry(&ent);
     case TOK_SETSHELLVARCONTEXT:
     {
-      ent.which=EW_SETFLAG;
-      ent.offsets[0]=FLAG_OFFSET(all_user_var);
+      nobj_entry ent(EW_SETFLAG);
+      ent.set_parm(0,FLAG_OFFSET(all_user_var));
       int k=line.gettoken_enum(1,"current\0all\0");
       if (k<0) PRINTHELP()
-      ent.offsets[1]=add_intstring(k);
+      ent.set_parm(1,add_intstring(k));
       SCRIPT_MSG("SetShellVarContext: %s\n",line.gettoken_str(1));
+      return add_nobj_entry(ent);
     }
-    return add_entry(&ent);
     case TOK_RET:
+    {
       SCRIPT_MSG("Return\n");
-      ent.which=EW_RET;
-    return add_entry(&ent);
+      nobj_entry ent(EW_RET);
+      return add_nobj_entry(ent);
+    }
     case TOK_CALL:
+    {
       if (!line.gettoken_str(1)[0] || (line.gettoken_str(1)[0]==':' && !line.gettoken_str(1)[1] )) PRINTHELP()
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
       if (uninstall_mode && strnicmp(line.gettoken_str(1),"un.",3)
@@ -3624,26 +3655,27 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         PRINTHELP()
       }
 #endif
-      ent.which=EW_CALL;
-      ent.offsets[1]=0;
+      nobj_entry ent(EW_CALL);
+      ent.set_parm(1,0);
       {
         int v;
         if ((v=GetUserVarIndex(line, 1))>=0)
         {
-          ent.offsets[0]=-v-2;
+          ent.set_parm(0,-v-2);
         }
         else
         {
           if (line.gettoken_str(1)[0] == ':')
           {
-            ent.offsets[1]=1;
-            ent.offsets[0]=ns_label.add(line.gettoken_str(1)+1,0);
+            ent.set_parm(1,1);
+            ent.set_parm(0,ns_label.add(line.gettoken_str(1)+1,0));
           }
-          else ent.offsets[0]=ns_func.add(line.gettoken_str(1),0);
+          else ent.set_parm(0,ns_func.add(line.gettoken_str(1),0));
         }
       }
       SCRIPT_MSG("Call \"%s\"\n",line.gettoken_str(1));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_SETOUTPATH:
       {
         char *op=line.gettoken_str(1);
@@ -3652,13 +3684,14 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           op="$INSTDIR";
         }
         SCRIPT_MSG("SetOutPath: \"%s\"\n",op);
-        ent.which=EW_CREATEDIR;
-        ent.offsets[0]=add_string(op);
-        ent.offsets[1]=1;
+        nobj_entry ent(EW_CREATEDIR);
+        ent.set_parm(0,op);
+        ent.set_parm(1,1);
 
         DefineInnerLangString(NLF_OUTPUT_DIR);
+
+        return add_nobj_entry(ent);
       }
-    return add_entry(&ent);
     case TOK_CREATEDIR:
       {
         char out_path[1024];
@@ -3673,28 +3706,33 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
         if (!*out_path) PRINTHELP()
         SCRIPT_MSG("CreateDirectory: \"%s\"\n",out_path);
-        ent.which=EW_CREATEDIR;
-        ent.offsets[0]=add_string(out_path);
+        nobj_entry ent(EW_CREATEDIR);
+        ent.set_parm(0,out_path);
 
         DefineInnerLangString(NLF_CREATE_DIR);
+
+        return add_nobj_entry(ent);
       }
-    return add_entry(&ent);
     case TOK_EXEC:
     case TOK_EXECWAIT:
+    {
 #ifdef NSIS_SUPPORT_EXECUTE
-      ent.which=EW_EXECUTE;
-      ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[2]=0;
+      nobj_entry ent(EW_EXECUTE);
+      ent.set_parm(0,line.gettoken_str(1));
+      ent.set_parm(2,0);
       if (which_token == TOK_EXECWAIT)
       {
-        ent.offsets[2]=1;
-        ent.offsets[1]=GetUserVarIndex(line, 2);
-        if (line.gettoken_str(2)[0] && ent.offsets[1]<0) PRINTHELP()
+        int var=GetUserVarIndex(line, 2);
+        ent.set_parm(2,1);
+        ent.set_parm(1,var);
+        if (line.gettoken_str(2)[0] && var<0) PRINTHELP()
       }
-      SCRIPT_MSG("%s: \"%s\" (->%s)\n",ent.offsets[2]?"ExecWait":"Exec",line.gettoken_str(1),line.gettoken_str(2));
+      SCRIPT_MSG("%s: \"%s\" (->%s)\n",which_token == TOK_EXECWAIT?"ExecWait":"Exec",line.gettoken_str(1),line.gettoken_str(2));
 
       DefineInnerLangString(NLF_EXEC);
-    return add_entry(&ent);
+
+      return add_nobj_entry(ent);
+    }
 #else//!NSIS_SUPPORT_EXECUTE
       ERROR_MSG("Error: %s specified, NSIS_SUPPORT_EXECUTE not defined.\n",  line.gettoken_str(0));
     return PS_ERROR;
@@ -3702,26 +3740,27 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_EXECSHELL: // this uses improvements of Andras Varga
 #ifdef NSIS_SUPPORT_SHELLEXECUTE
     {
-      ent.which=EW_SHELLEXEC;
-      ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[1]=add_string(line.gettoken_str(2));
-      ent.offsets[2]=add_string(line.gettoken_str(3));
-      ent.offsets[3]=SW_SHOWNORMAL;
+      nobj_entry ent(EW_SHELLEXEC);
+      ent.set_parm(0,line.gettoken_str(1));
+      ent.set_parm(1,line.gettoken_str(2));
+      ent.set_parm(2,line.gettoken_str(3));
+      ent.set_parm(3,SW_SHOWNORMAL);
       if (line.getnumtokens() > 4)
       {
         int tab[4]={SW_SHOWNORMAL,SW_SHOWMAXIMIZED,SW_SHOWMINIMIZED,SW_HIDE};
         int a=line.gettoken_enum(4,"SW_SHOWNORMAL\0SW_SHOWMAXIMIZED\0SW_SHOWMINIMIZED\0SW_HIDE\0");
         if (a < 0) PRINTHELP()
-        ent.offsets[3]=tab[a];
+        ent.set_parm(3,tab[a]);
       }
       string detail=string(line.gettoken_str(1))+" "+string(line.gettoken_str(2));
-      ent.offsets[5]=add_string(detail.c_str());
+      ent.set_parm(5,detail);
       SCRIPT_MSG("ExecShell: %s: \"%s\" \"%s\" %s\n",line.gettoken_str(1),line.gettoken_str(2),
                                                  line.gettoken_str(3),line.gettoken_str(4));
 
       DefineInnerLangString(NLF_EXEC_SHELL);
+
+      return add_nobj_entry(ent);
     }
-    return add_entry(&ent);
 #else//!NSIS_SUPPORT_SHELLEXECUTE
       ERROR_MSG("Error: %s specified, NSIS_SUPPORT_SHELLEXECUTE not defined.\n",  line.gettoken_str(0));
     return PS_ERROR;
@@ -3729,52 +3768,64 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_CALLINSTDLL:
     case TOK_REGDLL:
     case TOK_UNREGDLL:
+    {
 #ifndef NSIS_SUPPORT_ACTIVEXREG
       ERROR_MSG("%s: support not compiled in (NSIS_SUPPORT_ACTIVEXREG)\n",line.gettoken_str(0));
       return PS_ERROR;
 #else//NSIS_SUPPORT_ACTIVEXREG
-      ent.which=EW_REGISTERDLL;
-      ent.offsets[0]=add_string(line.gettoken_str(1));
+      nobj_entry ent(EW_REGISTERDLL);
+      ent.set_parm(0,line.gettoken_str(1));
+      int a = 2;
       if (which_token == TOK_UNREGDLL)
       {
-        ent.offsets[1]=add_string("DllUnregisterServer");
-        ent.offsets[2]=DefineInnerLangString(NLF_UNREGISTERING);
+        ent.set_parm(1,"DllUnregisterServer");
+        ent.set_parm(2,DefineInnerLangString(NLF_UNREGISTERING));
       }
       else if (which_token == TOK_CALLINSTDLL)
       {
-        int a = 2;
         if (!stricmp(line.gettoken_str(a), "/NOUNLOAD")) {
-          ent.offsets[3]=1;
+          ent.set_parm(3,1);
           a++;
         }
         if (a+1 != line.getnumtokens()) PRINTHELP();
-        ent.offsets[1]=add_string(line.gettoken_str(a));
-        if (!ent.offsets[1]) PRINTHELP()
-        ent.offsets[2]=0;
+        ent.set_parm(1,line.gettoken_str(a));
+        if (!strcmp(line.gettoken_str(a),"")) PRINTHELP();
+        ent.set_parm(2,0);
       }
       else // register
       {
-        ent.offsets[1] = add_string(line.gettoken_str(2));
-        if (!ent.offsets[1]) ent.offsets[1]=add_string("DllRegisterServer");
-        ent.offsets[2]=DefineInnerLangString(NLF_REGISTERING);
+        if (!strcmp(line.gettoken_str(2),""))
+        {
+          ent.set_parm(1,"DllRegisterServer");
+        }
+        else
+        {
+          ent.set_parm(1,line.gettoken_str(2));
+        }
+        ent.set_parm(2,DefineInnerLangString(NLF_REGISTERING));
       }
 
-      SCRIPT_MSG("%s: \"%s\" %s\n",line.gettoken_str(0),line.gettoken_str(1), line.gettoken_str(ent.offsets[3]?3:2));
+      // TODO verify printage
+      SCRIPT_MSG("%s: \"%s\" %s\n",line.gettoken_str(0),line.gettoken_str(1),line.gettoken_str(a));
 
       DefineInnerLangString(NLF_SYMBOL_NOT_FOUND);
       DefineInnerLangString(NLF_COULD_NOT_LOAD);
       DefineInnerLangString(NLF_NO_OLE);
       // not used anywhere - DefineInnerLangString(NLF_ERR_REG_DLL);
-    return add_entry(&ent);
+
+      return add_nobj_entry(ent);
+    }
 #endif//NSIS_SUPPORT_ACTIVEXREG
     case TOK_RENAME:
 #ifdef NSIS_SUPPORT_RENAME
       {
         int a=1;
-        ent.which=EW_RENAME;
+        int reboot=0;
+        nobj_entry ent(EW_RENAME);
         if (!stricmp(line.gettoken_str(1),"/REBOOTOK"))
         {
-          ent.offsets[2]=1;
+          ent.set_parm(2,1);
+          reboot++;
           a++;
 #ifndef NSIS_SUPPORT_MOVEONREBOOT
           ERROR_MSG("Error: /REBOOTOK specified, NSIS_SUPPORT_MOVEONREBOOT not defined\n");
@@ -3786,18 +3837,19 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           a=line.getnumtokens(); // cause usage to go here:
         }
         if (line.getnumtokens()!=a+2) PRINTHELP()
-        ent.offsets[0]=add_string(line.gettoken_str(a));
-        ent.offsets[1]=add_string(line.gettoken_str(a+1));
+        ent.set_parm(0,line.gettoken_str(a));
+        ent.set_parm(1,line.gettoken_str(a+1));
         string print = string(line.gettoken_str(a)) + "->" + string(line.gettoken_str(a+1));
-        ent.offsets[3]=add_string(print.c_str());
-        SCRIPT_MSG("Rename: %s%s->%s\n",ent.offsets[2]?"/REBOOTOK ":"",line.gettoken_str(a),line.gettoken_str(a+1));
+        ent.set_parm(3,print);
+        SCRIPT_MSG("Rename: %s%s->%s\n",reboot?"/REBOOTOK ":"",line.gettoken_str(a),line.gettoken_str(a+1));
 
         DefineInnerLangString(NLF_RENAME);
 #ifdef NSIS_SUPPORT_MOVEONREBOOT
         DefineInnerLangString(NLF_RENAME_ON_REBOOT);
 #endif
+
+        return add_nobj_entry(ent);
       }
-    return add_entry(&ent);
 #else//!NSIS_SUPPORT_RENAME
       ERROR_MSG("Error: %s specified, NSIS_SUPPORT_RENAME not defined.\n",  line.gettoken_str(0));
     return PS_ERROR;
@@ -3850,9 +3902,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           else PRINTHELP()
           p=np;
         }
-        ent.which=EW_MESSAGEBOX;
-        ent.offsets[0]=r;
-        ent.offsets[1]=add_string(line.gettoken_str(2));
+        nobj_entry ent(EW_MESSAGEBOX);
+        ent.set_parm(1,line.gettoken_str(2));
         int rettab[] =
         {
           0,IDABORT,IDCANCEL,IDIGNORE,IDNO,IDOK,IDRETRY,IDYES
@@ -3865,7 +3916,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           {
             int k=line.gettoken_enum(4,retstr);
             if (k <= 0) PRINTHELP();
-            ent.offsets[0]|=rettab[k]<<21;
+            r|=rettab[k]<<21;
             a=5;
           }
           else if (line.getnumtokens() > 7)
@@ -3873,42 +3924,44 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
           if (line.getnumtokens() > a)
           {
-            ent.offsets[2]=line.gettoken_enum(a,retstr);
-            if (ent.offsets[2] < 0)
-              PRINTHELP();
-            ent.offsets[2] = rettab[ent.offsets[2]];
-            if (process_jump(line,a+1,&ent.offsets[3]))
+            int retid=line.gettoken_enum(a,retstr);
+            if (retid < 0) PRINTHELP();
+            ent.set_parm(2,rettab[retid]);
+            if (process_jump_nobj(line,a+1,ent,3))
               PRINTHELP();
             if (line.getnumtokens() > a+2)
             {
               int v=line.gettoken_enum(a+2,retstr);
               if (v < 0)
                 PRINTHELP();
-              ent.offsets[4] = rettab[v];
-              if (process_jump(line,a+3,&ent.offsets[5]))
+              ent.set_parm(4,rettab[v]);
+              if (process_jump_nobj(line,a+3,ent,5))
                 PRINTHELP();
             }
           }
         }
+        ent.set_parm(0,r);
         SCRIPT_MSG("MessageBox: %d: \"%s\"",r,line.gettoken_str(2));
         if (line.getnumtokens()>a+1) SCRIPT_MSG(" (on %s goto %s)",line.gettoken_str(a),line.gettoken_str(a+1));
         SCRIPT_MSG("\n");
+
+        return add_nobj_entry(ent);
       }
-    return add_entry(&ent);
 #else//!NSIS_SUPPORT_MESSAGEBOX
       ERROR_MSG("Error: %s specified, NSIS_SUPPORT_MESSAGEBOX not defined.\n",  line.gettoken_str(0));
     return PS_ERROR;
 #endif//!NSIS_SUPPORT_MESSAGEBOX
     case TOK_CREATESHORTCUT:
+    {
 #ifdef NSIS_SUPPORT_CREATESHORTCUT
-      ent.which=EW_CREATESHORTCUT;
-      ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[1]=add_string(line.gettoken_str(2));
-      ent.offsets[2]=add_string(line.gettoken_str(3));
-      ent.offsets[3]=add_string(line.gettoken_str(4));
-      ent.offsets[5]=add_string(line.gettoken_str(8));
+      nobj_entry ent(EW_CREATESHORTCUT);
+      ent.set_parm(0,line.gettoken_str(1));
+      ent.set_parm(1,line.gettoken_str(2));
+      ent.set_parm(2,line.gettoken_str(3));
+      ent.set_parm(3,line.gettoken_str(4));
+      ent.set_parm(5,line.gettoken_str(8));
       int s;
-      ent.offsets[4]=line.gettoken_int(5,&s)&0xff;
+      int icon_flags=line.gettoken_int(5,&s)&0xff;
       if (!s)
       {
         if (line.getnumtokens() > 5 && *line.gettoken_str(5))
@@ -3916,7 +3969,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           ERROR_MSG("CreateShortCut: cannot interpret icon index\n");
           PRINTHELP()
         }
-        ent.offsets[4]=0;
+        ent.set_parm(4,0);
       }
       if (line.getnumtokens() > 6 && *line.gettoken_str(6))
       {
@@ -3927,7 +3980,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           ERROR_MSG("CreateShortCut: unknown show mode \"%s\"\n",line.gettoken_str(6));
           PRINTHELP()
         }
-        ent.offsets[4]|=tab[a]<<8;
+        icon_flags|=tab[a]<<8;
       }
       if (line.getnumtokens() > 7)
       {
@@ -3941,10 +3994,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (*s)
         {
           int c=0;
-          if (strstr(s,"ALT|")) ent.offsets[4]|=HOTKEYF_ALT << 24;
-          if (strstr(s,"CONTROL|")) ent.offsets[4]|=HOTKEYF_CONTROL << 24;
-          if (strstr(s,"EXT|")) ent.offsets[4]|=HOTKEYF_EXT << 24;
-          if (strstr(s,"SHIFT|")) ent.offsets[4]|=HOTKEYF_SHIFT << 24;
+          if (strstr(s,"ALT|")) icon_flags|=HOTKEYF_ALT << 24;
+          if (strstr(s,"CONTROL|")) icon_flags|=HOTKEYF_CONTROL << 24;
+          if (strstr(s,"EXT|")) icon_flags|=HOTKEYF_EXT << 24;
+          if (strstr(s,"SHIFT|")) icon_flags|=HOTKEYF_SHIFT << 24;
           while (strstr(s,"|"))
           {
             s=strstr(s,"|")+1;
@@ -3964,46 +4017,58 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             c=s[0];
             warning_fl("CreateShortCut: unrecognized hotkey \"%s\"",s);
           }
-          ent.offsets[4] |= (c) << 16;
+          icon_flags |= (c) << 16;
         }
       }
+
+      ent.set_parm(4,icon_flags);
+
       SCRIPT_MSG("CreateShortCut: \"%s\"->\"%s\" %s icon:%s,%d, showmode=0x%X, hotkey=0x%X, comment=%s\n",
         line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),
-        line.gettoken_str(4),ent.offsets[4]&0xff,(ent.offsets[4]>>8)&0xff,ent.offsets[4]>>16,line.gettoken_str(8));
+        line.gettoken_str(4),icon_flags&0xff,(icon_flags>>8)&0xff,icon_flags>>16,line.gettoken_str(8));
 
       DefineInnerLangString(NLF_CREATE_SHORTCUT);
       DefineInnerLangString(NLF_ERR_CREATING_SHORTCUT);
-    return add_entry(&ent);
+
+      return add_nobj_entry(ent);
+    }
 #else//!NSIS_SUPPORT_CREATESHORTCUT
       ERROR_MSG("Error: %s specified, NSIS_SUPPORT_CREATESHORTCUT not defined.\n",  line.gettoken_str(0));
     return PS_ERROR;
 #endif//NSIS_SUPPORT_CREATESHORTCUT
 #ifdef NSIS_SUPPORT_HWNDS
     case TOK_FINDWINDOW:
-      ent.which=EW_FINDWINDOW;
-      ent.offsets[0]=GetUserVarIndex(line, 1);
-      if (ent.offsets[0] < 0) PRINTHELP()
-      ent.offsets[1]=add_string(line.gettoken_str(2));
-      ent.offsets[2]=add_string(line.gettoken_str(3));
-      ent.offsets[3]=add_string(line.gettoken_str(4));
-      ent.offsets[4]=add_string(line.gettoken_str(5));
+    {
+      nobj_entry ent(EW_FINDWINDOW);
+      int var=GetUserVarIndex(line, 1);
+      ent.set_parm(0,var);
+      if (var < 0) PRINTHELP()
+      ent.set_parm(1,line.gettoken_str(2));
+      ent.set_parm(2,line.gettoken_str(3));
+      ent.set_parm(3,line.gettoken_str(4));
+      ent.set_parm(4,line.gettoken_str(5));
       SCRIPT_MSG("FindWindow: output=%s, class=\"%s\", text=\"%s\" hwndparent=\"%s\" hwndafter=\"%s\"\n",
         line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(4),line.gettoken_str(5));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_SENDMESSAGE:
-      ent.which=EW_SENDMESSAGE;
+    {
+      nobj_entry ent(EW_SENDMESSAGE);
 
       if (line.gettoken_str(1)[0] == '/' || line.gettoken_str(2)[0] == '/' ||
           line.gettoken_str(3)[0] == '/' || line.gettoken_str(4)[0] == '/')
       {
-        PRINTHELP()
+        PRINTHELP();
       }
+
+      int flags=0;
 
       SCRIPT_MSG("SendMessage:");
       {
         int a=5;
-        ent.offsets[0]=GetUserVarIndex(line, 5);
-        if (ent.offsets[0]>=0)
+        int var=GetUserVarIndex(line, 5);
+        ent.set_parm(0,var);
+        if (var>=0)
         {
           SCRIPT_MSG("(->%s)",line.gettoken_str(5));
           a++;
@@ -4011,8 +4076,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
         if (!strncmp(line.gettoken_str(a),"/TIMEOUT=",9))
         {
-          ent.offsets[5]|=atoi(line.gettoken_str(a)+9)<<2;
-          SCRIPT_MSG(" (timeout=%d)",ent.offsets[5]>>2);
+          flags|=atoi(line.gettoken_str(a)+9)<<2;
+          SCRIPT_MSG(" (timeout=%d)",flags>>2);
           a++;
         }
 
@@ -4024,44 +4089,52 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
       if (!strncmp(line.gettoken_str(3),"STR:",4))
       {
-        ent.offsets[5]|=1;
-        ent.offsets[3]=add_string(line.gettoken_str(3)+4);
+        flags|=1;
+        ent.set_parm(3,line.gettoken_str(3)+4);
       }
-      else ent.offsets[3]=add_string(line.gettoken_str(3));
+      else ent.set_parm(3,line.gettoken_str(3));
       if (!strncmp(line.gettoken_str(4),"STR:",4))
       {
-        ent.offsets[5]|=2;
-        ent.offsets[4]=add_string(line.gettoken_str(4)+4);
+        flags|=2;
+        ent.set_parm(4,line.gettoken_str(4)+4);
       }
-      else ent.offsets[4]=add_string(line.gettoken_str(4));
+      else ent.set_parm(4,line.gettoken_str(4));
 
-      ent.offsets[1]=add_string(line.gettoken_str(1));
-      ent.offsets[2]=add_string(line.gettoken_str(2));
+      ent.set_parm(1,line.gettoken_str(1));
+      ent.set_parm(2,line.gettoken_str(2));
+      ent.set_parm(5,flags);
 
       SCRIPT_MSG("(%s,%s,%s,%s)\n",line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(4));
-    return add_entry(&ent);
+
+      return add_nobj_entry(ent);
+    }
     case TOK_ISWINDOW:
-      ent.which=EW_ISWINDOW;
-      ent.offsets[0]=add_string(line.gettoken_str(1));
-      if (process_jump(line,2,&ent.offsets[1])||
-          process_jump(line,3,&ent.offsets[2])) PRINTHELP()
+    {
+      nobj_entry ent(EW_ISWINDOW);
+      ent.set_parm(0,line.gettoken_str(1));
+      if (process_jump_nobj(line,2,ent,1)||
+          process_jump_nobj(line,3,ent,2)) PRINTHELP()
       SCRIPT_MSG("IsWindow(%s): %s:%s\n",line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
 #ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
     case TOK_GETDLGITEM:
-      ent.which=EW_GETDLGITEM;
-      ent.offsets[0]=GetUserVarIndex(line, 1);
-      if (ent.offsets[0]<0) PRINTHELP();
-      ent.offsets[1]=add_string(line.gettoken_str(2));
-      ent.offsets[2]=add_string(line.gettoken_str(3));
+    {
+      nobj_entry ent(EW_GETDLGITEM);
+      int var=GetUserVarIndex(line, 1);
+      ent.set_parm(0,var);
+      if (var<0) PRINTHELP();
+      ent.set_parm(1,line.gettoken_str(2));
+      ent.set_parm(2,line.gettoken_str(3));
       SCRIPT_MSG("GetDlgItem: output=%s dialog=%s item=%s\n",line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_SETCTLCOLORS:
     {
       ctlcolors c={0, };
 
-      ent.which=EW_SETCTLCOLORS;
-      ent.offsets[0]=add_string(line.gettoken_str(1));
+      nobj_entry ent(EW_SETCTLCOLORS);
+      ent.set_parm(0,line.gettoken_str(1));
 
       int a = 2;
 
@@ -4123,21 +4196,23 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       int l=cur_ctlcolors->getlen()/sizeof(ctlcolors);
       for (i=0; i<l; i++) {
         if (!memcmp((ctlcolors*)cur_ctlcolors->get()+i,&c,sizeof(ctlcolors))) {
-          ent.offsets[1]=i*sizeof(ctlcolors);
+          ent.set_parm(1,i*sizeof(ctlcolors));
           break;
         }
       }
       if (i>=l) {
-        ent.offsets[1]=cur_ctlcolors->add(&c,sizeof(ctlcolors));
+        ent.set_parm(1,cur_ctlcolors->add(&c,sizeof(ctlcolors)));
       }
 
       SCRIPT_MSG("SetCtlColors: hwnd=%s %stext=%s background=%s\n",line.gettoken_str(1),a==2?"":"/BRANDING ",line.gettoken_str(a),line.gettoken_str(a+1));
+
+      return add_nobj_entry(ent);
     }
-    return add_entry(&ent);
     case TOK_CREATEFONT:
-      ent.which=EW_CREATEFONT;
-      ent.offsets[0]=GetUserVarIndex(line, 1);
-      ent.offsets[1]=add_string(line.gettoken_str(2));
+    {
+      nobj_entry ent(EW_CREATEFONT);
+      ent.set_parm(0,GetUserVarIndex(line, 1));
+      ent.set_parm(1,line.gettoken_str(2));
       SCRIPT_MSG("CreateFont: output=%s \"%s\"",line.gettoken_str(1),line.gettoken_str(2));
       {
         int height=0;
@@ -4178,46 +4253,57 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             }
           }
         }
-        ent.offsets[2]=height;
-        ent.offsets[3]=weight;
-        ent.offsets[4]=flags;
+        ent.set_parm(2,height);
+        ent.set_parm(3,weight);
+        ent.set_parm(4,flags);
       }
       SCRIPT_MSG("\n");
-    return add_entry(&ent);
+
+      return add_nobj_entry(ent);
+    }
     case TOK_ENABLEWINDOW:
-      ent.which=EW_SHOWWINDOW;
-      ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[1]=add_string(line.gettoken_str(2));
-      ent.offsets[3]=1;
+    {
+      nobj_entry ent(EW_SHOWWINDOW);
+      ent.set_parm(0,line.gettoken_str(1));
+      ent.set_parm(1,line.gettoken_str(2));
+      ent.set_parm(3,1);
       SCRIPT_MSG("EnableWindow: handle=%s enable=%s\n",line.gettoken_str(1),line.gettoken_str(2));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_SHOWWINDOW:
-      ent.which=EW_SHOWWINDOW;
-      ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[1]=add_string(line.gettoken_str(2));
+    {
+      nobj_entry ent(EW_SHOWWINDOW);
+      ent.set_parm(0,line.gettoken_str(1));
+      ent.set_parm(1,line.gettoken_str(2));
       SCRIPT_MSG("ShowWindow: handle=%s show state=%s\n",line.gettoken_str(1),line.gettoken_str(2));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_HIDEWINDOW:
-      ent.which=EW_SHOWWINDOW;
-      ent.offsets[0]=add_string("$HWNDPARENT");
-      ent.offsets[1]=add_string("0"/*SW_HIDE*/);
-      ent.offsets[2]=1;
+    {
+      nobj_entry ent(EW_SHOWWINDOW);
+      ent.set_parm(0,"$HWNDPARENT");
+      ent.set_parm(1,"0"/*SW_HIDE*/);
+      ent.set_parm(2,1);
       SCRIPT_MSG("HideWindow\n");
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_BRINGTOFRONT:
     {
-      int ret;
-      ent.which=EW_SHOWWINDOW;
-      ent.offsets[0]=add_string("$HWNDPARENT");
-      ent.offsets[1]=add_string("5"/*SW_SHOW*/);
-      ret = add_entry(&ent);
-      if (ret != PS_OK) return ret;
-      ent.which=EW_BRINGTOFRONT;
-      ent.offsets[0]=0;
-      ent.offsets[1]=0;
-      SCRIPT_MSG("BringToFront\n");
+      {
+        nobj_entry ent(EW_SHOWWINDOW);
+        ent.set_parm(0,"$HWNDPARENT");
+        ent.set_parm(1,"5"/*SW_SHOW*/);
+        int ret = add_nobj_entry(ent);
+        if (ret != PS_OK) return ret;
+      }
+      {
+        nobj_entry ent(EW_BRINGTOFRONT);
+        ent.set_parm(0,0);
+        ent.set_parm(1,0);
+        SCRIPT_MSG("BringToFront\n");
+        return add_nobj_entry(ent);
+      }
     }
-    return add_entry(&ent);
 #else//NSIS_CONFIG_ENHANCEDUI_SUPPORT
     case TOK_GETDLGITEM:
     case TOK_SETCTLCOLORS:
@@ -4247,11 +4333,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #ifdef NSIS_SUPPORT_DELETE
       {
         int a=1;
-        ent.which=EW_DELETEFILE;
+        int reboot=0;
+        nobj_entry ent(EW_DELETEFILE);
         if (!stricmp(line.gettoken_str(a),"/REBOOTOK"))
         {
           a++;
-          ent.offsets[1]=DEL_REBOOT;
+          reboot++;
+          ent.set_parm(1,DEL_REBOOT);
 #ifndef NSIS_SUPPORT_MOVEONREBOOT
           ERROR_MSG("Error: /REBOOTOK specified, NSIS_SUPPORT_MOVEONREBOOT not defined\n");
           PRINTHELP()
@@ -4262,15 +4350,16 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           a=line.getnumtokens();
         }
         if (line.getnumtokens() != a+1) PRINTHELP()
-        ent.offsets[0]=add_string(line.gettoken_str(a));
-        SCRIPT_MSG("Delete: %s\"%s\"\n",ent.offsets[1]?"/REBOOTOK ":"",line.gettoken_str(a));
+        ent.set_parm(0,line.gettoken_str(a));
+        SCRIPT_MSG("Delete: %s\"%s\"\n",reboot?"/REBOOTOK ":"",line.gettoken_str(a));
 
         DefineInnerLangString(NLF_DEL_FILE);
 #ifdef NSIS_SUPPORT_MOVEONREBOOT
         DefineInnerLangString(NLF_DEL_ON_REBOOT);
 #endif
+
+        return add_nobj_entry(ent);
       }
-    return add_entry(&ent);
 #else//!NSIS_SUPPORT_DELETE
       ERROR_MSG("Error: %s specified, NSIS_SUPPORT_DELETE not defined.\n",  line.gettoken_str(0));
     return PS_ERROR;
@@ -4279,26 +4368,27 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #ifdef NSIS_SUPPORT_RMDIR
       {
         int a=1;
-        ent.which=EW_RMDIR;
-        ent.offsets[1]=DEL_DIR;
+        int flags=DEL_DIR;
+        nobj_entry ent(EW_RMDIR);
         while (line.gettoken_str(a)[0]=='/')
         {
           if (!stricmp(line.gettoken_str(a),"/r"))
           {
             if (a == 3) PRINTHELP();
             a++;
-            ent.offsets[1]|=DEL_RECURSE;
+            flags|=DEL_RECURSE;
           }
           else if (!stricmp(line.gettoken_str(a),"/REBOOTOK"))
           {
             if (a == 3) PRINTHELP();
             a++;
-            ent.offsets[1]|=DEL_REBOOT;
+            flags|=DEL_REBOOT;
           }
           else PRINTHELP();
         }
         if (a < line.getnumtokens() - 1) PRINTHELP();
-        ent.offsets[0]=add_string(line.gettoken_str(a));
+        ent.set_parm(0,line.gettoken_str(a));
+        ent.set_parm(1,flags);
         SCRIPT_MSG("RMDir: ");
         if (a>1)
           SCRIPT_MSG("%s ",line.gettoken_str(1));
@@ -4311,8 +4401,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #ifdef NSIS_SUPPORT_MOVEONREBOOT
         DefineInnerLangString(NLF_DEL_ON_REBOOT);
 #endif
+
+        return add_nobj_entry(ent);
       }
-    return add_entry(&ent);
 #else//!NSIS_SUPPORT_RMDIR
       ERROR_MSG("Error: %s specified, NSIS_SUPPORT_RMDIR not defined.\n",  line.gettoken_str(0));
     return PS_ERROR;
@@ -4442,42 +4533,44 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #ifdef NSIS_SUPPORT_COPYFILES
     case TOK_COPYFILES:
       {
-        ent.which=EW_COPYFILES;
-        ent.offsets[2]=FOF_NOCONFIRMATION|FOF_NOCONFIRMMKDIR|FOF_NOERRORUI|FOF_SIMPLEPROGRESS;
+        nobj_entry ent(EW_COPYFILES);
 
         int a=1;
         int x;
+        int flags=FOF_NOCONFIRMATION|FOF_NOCONFIRMMKDIR|FOF_NOERRORUI|FOF_SIMPLEPROGRESS;
         for (x = 0; x < 2; x ++)
         {
           if (!stricmp(line.gettoken_str(a),"/SILENT"))
           {
             a++;
-            ent.offsets[2]&=~FOF_SIMPLEPROGRESS;
-            ent.offsets[2]|=FOF_SILENT;
+            flags&=~FOF_SIMPLEPROGRESS;
+            flags|=FOF_SILENT;
           }
           else if (!stricmp(line.gettoken_str(a),"/FILESONLY"))
           {
             a++;
-            ent.offsets[2]|=FOF_FILESONLY;
+            flags|=FOF_FILESONLY;
           }
           else if (line.gettoken_str(a)[0]=='/') PRINTHELP()
           else break;
         }
         if (line.getnumtokens() < a+2) PRINTHELP()
-        ent.offsets[0]=add_string(line.gettoken_str(a));
-        ent.offsets[1]=add_string(line.gettoken_str(a+1));
+        ent.set_parm(0,line.gettoken_str(a));
+        ent.set_parm(1,line.gettoken_str(a+1));
+        ent.set_parm(2,flags);
         string copy_to = string("$(^CopyTo)") + line.gettoken_str(a+1);
-        ent.offsets[3]=add_string(copy_to.c_str());
+        ent.set_parm(3,copy_to);
         int s;
         int size_kb=line.gettoken_int(a+2,&s);
         if (!s && line.gettoken_str(a+2)[0]) PRINTHELP()
         section_add_size_kb(size_kb);
-        SCRIPT_MSG("CopyFiles: %s\"%s\" -> \"%s\", size=%iKB\n",ent.offsets[2]&FOF_SILENT?"(silent) ":"", line.gettoken_str(a),line.gettoken_str(a+1),size_kb);
+        SCRIPT_MSG("CopyFiles: %s\"%s\" -> \"%s\", size=%iKB\n",flags&FOF_SILENT?"(silent) ":"", line.gettoken_str(a),line.gettoken_str(a+1),size_kb);
 
         DefineInnerLangString(NLF_COPY_FAILED);
         DefineInnerLangString(NLF_COPY_TO);
+
+        return add_nobj_entry(ent);
       }
-    return add_entry(&ent);
 #else//!NSIS_SUPPORT_COPYFILES
     case TOK_COPYFILES:
       ERROR_MSG("Error: %s specified, NSIS_SUPPORT_COPYFILES not defined.\n",  line.gettoken_str(0));
@@ -4528,53 +4621,60 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           else PRINTHELP()
           p=np;
         }
-        ent.which=EW_SETFILEATTRIBUTES;
-        ent.offsets[0]=add_string(line.gettoken_str(1));
-        ent.offsets[1]=r;
+        nobj_entry ent(EW_SETFILEATTRIBUTES);
+        ent.set_parm(0,line.gettoken_str(1));
+        ent.set_parm(1,r);
+
+        return add_nobj_entry(ent);
       }
-    return add_entry(&ent);
     case TOK_SLEEP:
       {
-        ent.which=EW_SLEEP;
-        ent.offsets[0]=add_string(line.gettoken_str(1));
+        nobj_entry ent(EW_SLEEP);
+        ent.set_parm(0,line.gettoken_str(1));
         SCRIPT_MSG("Sleep: %s ms\n",line.gettoken_str(1));
+        return add_nobj_entry(ent);
       }
-    return add_entry(&ent);
     case TOK_IFFILEEXISTS:
-      ent.which=EW_IFFILEEXISTS;
-      ent.offsets[0] = add_string(line.gettoken_str(1));
-      if (process_jump(line,2,&ent.offsets[1]) ||
-          process_jump(line,3,&ent.offsets[2])) PRINTHELP()
+    {
+      nobj_entry ent(EW_IFFILEEXISTS);
+      ent.set_parm(0,line.gettoken_str(1));
+      if (process_jump_nobj(line,2,ent,1) ||
+          process_jump_nobj(line,3,ent,2)) PRINTHELP()
       SCRIPT_MSG("IfFileExists: \"%s\" ? %s : %s\n",line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_QUIT:
-      ent.which=EW_QUIT;
+    {
+      nobj_entry ent(EW_QUIT);
       SCRIPT_MSG("Quit\n");
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_ABORT:
-      ent.which=EW_ABORT;
-      ent.offsets[0] = add_string(line.gettoken_str(1));
+    {
+      nobj_entry ent(EW_ABORT);
+      ent.set_parm(0,line.gettoken_str(1));
       SCRIPT_MSG("Abort: \"%s\"\n",line.gettoken_str(1));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_SETDETAILSVIEW:
       {
         int v=line.gettoken_enum(1,"hide\0show\0");
-        ent.which=EW_CHDETAILSVIEW;
+        nobj_entry ent(EW_CHDETAILSVIEW);
         if (v < 0) PRINTHELP()
-        ent.offsets[0] = v?SW_SHOWNA:SW_HIDE;
-        ent.offsets[1] = v?SW_HIDE:SW_SHOWNA;
+        ent.set_parm(0,v?SW_SHOWNA:SW_HIDE);
+        ent.set_parm(1,v?SW_HIDE:SW_SHOWNA);
         SCRIPT_MSG("SetDetailsView: %s\n",line.gettoken_str(1));
+        return add_nobj_entry(ent);
       }
-    return add_entry(&ent);
     case TOK_SETDETAILSPRINT:
     {
-      ent.which=EW_SETFLAG;
-      ent.offsets[0]=FLAG_OFFSET(status_update);
+      nobj_entry ent(EW_SETFLAG);
+      ent.set_parm(0,FLAG_OFFSET(status_update));
       int k=line.gettoken_enum(1,"both\0textonly\0listonly\0none\0lastused\0");
       if (k<0) PRINTHELP()
       if (k == 4)
       {
-        ent.offsets[2]=1;
+        ent.set_parm(2,1);
       }
       else
       {
@@ -4582,120 +4682,150 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         // textonly 2
         // listonly 4
         // none     6
-        ent.offsets[1]=add_intstring(k*2);
+        ent.set_parm(1,add_intstring(k*2));
       }
       SCRIPT_MSG("SetDetailsPrint: %s\n",line.gettoken_str(1));
+      return add_nobj_entry(ent);
     }
-    return add_entry(&ent);
     case TOK_SETAUTOCLOSE:
     {
-      ent.which=EW_SETFLAG;
-      ent.offsets[0]=FLAG_OFFSET(autoclose);
+      nobj_entry ent(EW_SETFLAG);
+      ent.set_parm(0,(int)FLAG_OFFSET(autoclose));
       int k=line.gettoken_enum(1,"false\0true\0");
       if (k < 0) PRINTHELP()
-      ent.offsets[1]=add_intstring(k);
+      ent.set_parm(1,add_intstring(k));
       SCRIPT_MSG("SetAutoClose: %s\n",line.gettoken_str(1));
+      return add_nobj_entry(ent);
     }
-    return add_entry(&ent);
     case TOK_IFERRORS:
-      ent.which=EW_IFFLAG;
-      if (process_jump(line,1,&ent.offsets[0]) ||
-          process_jump(line,2,&ent.offsets[1])) PRINTHELP()
-      ent.offsets[2]=FLAG_OFFSET(exec_error);
-      ent.offsets[3]=0;//new value mask - clean error
+    {
+      nobj_entry ent(EW_IFFLAG);
+      if (process_jump_nobj(line,1,ent,0) ||
+          process_jump_nobj(line,2,ent,1)) PRINTHELP()
+      ent.set_parm(2,FLAG_OFFSET(exec_error));
+      ent.set_parm(3,0);//new value mask - clean error
       SCRIPT_MSG("IfErrors ?%s:%s\n",line.gettoken_str(1),line.gettoken_str(2));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_IFABORT:
-      ent.which=EW_IFFLAG;
-      if (process_jump(line,1,&ent.offsets[0]) ||
-          process_jump(line,2,&ent.offsets[1])) PRINTHELP()
-      ent.offsets[2]=FLAG_OFFSET(abort);
-      ent.offsets[3]=~0;//new value mask - keep flag
+    {
+      nobj_entry ent(EW_IFFLAG);
+      if (process_jump_nobj(line,1,ent,0) ||
+          process_jump_nobj(line,2,ent,1)) PRINTHELP()
+      ent.set_parm(2,FLAG_OFFSET(abort));
+      ent.set_parm(3,~0);//new value mask - keep flag
       SCRIPT_MSG("IfAbort ?%s:%s\n",line.gettoken_str(1),line.gettoken_str(2));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_CLEARERRORS:
-      ent.which=EW_SETFLAG;
-      ent.offsets[0]=FLAG_OFFSET(exec_error);
-      ent.offsets[1]=add_intstring(0);
+    {
+      nobj_entry ent(EW_SETFLAG);
+      ent.set_parm(0,FLAG_OFFSET(exec_error));
+      ent.set_parm(1,add_intstring(0));
       SCRIPT_MSG("ClearErrors\n");
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_SETERRORS:
-      ent.which=EW_SETFLAG;
-      ent.offsets[0]=FLAG_OFFSET(exec_error);
-      ent.offsets[1]=add_intstring(1);
+    {
+      nobj_entry ent(EW_SETFLAG);
+      ent.set_parm(0,FLAG_OFFSET(exec_error));
+      ent.set_parm(1,add_intstring(1));
       SCRIPT_MSG("SetErrors\n");
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_SETERRORLEVEL:
-      ent.which=EW_SETFLAG;
-      ent.offsets[0]=FLAG_OFFSET(errlvl);
-      ent.offsets[1]=add_string(line.gettoken_str(1));
+    {
+      nobj_entry ent(EW_SETFLAG);
+      ent.set_parm(0,FLAG_OFFSET(errlvl));
+      ent.set_parm(1,line.gettoken_str(1));
       SCRIPT_MSG("SetErrorLevel: %s\n",line.gettoken_str(1));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_GETERRORLEVEL:
-      ent.which=EW_GETFLAG;
-      ent.offsets[0]=GetUserVarIndex(line, 1);
-      ent.offsets[1]=FLAG_OFFSET(errlvl);
-      if (line.gettoken_str(1)[0] && ent.offsets[0]<0) PRINTHELP()
+    {
+      nobj_entry ent(EW_GETFLAG);
+      int var=GetUserVarIndex(line, 1);
+      ent.set_parm(0,var);
+      ent.set_parm(1,FLAG_OFFSET(errlvl));
+      if (line.gettoken_str(1)[0] && var<0) PRINTHELP()
       SCRIPT_MSG("GetErrorLevel: %s\n",line.gettoken_str(1));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
 #ifdef NSIS_SUPPORT_STROPTS
     case TOK_STRLEN:
-      ent.which=EW_STRLEN;
-      ent.offsets[0]=GetUserVarIndex(line, 1);
-      ent.offsets[1]=add_string(line.gettoken_str(2));
-      if (ent.offsets[0] < 0) PRINTHELP()
+    {
+      nobj_entry ent(EW_STRLEN);
+      int var=GetUserVarIndex(line, 1);
+      ent.set_parm(0,var);
+      ent.set_parm(1,line.gettoken_str(2));
+      if (var < 0) PRINTHELP()
       SCRIPT_MSG("StrLen %s \"%s\"\n",line.gettoken_str(1),line.gettoken_str(2));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_STRCPY:
-      ent.which=EW_ASSIGNVAR;
-      ent.offsets[0]=GetUserVarIndex(line, 1);
-      ent.offsets[1]=add_string(line.gettoken_str(2));
-      ent.offsets[2]=add_string(line.gettoken_str(3));
-      ent.offsets[3]=add_string(line.gettoken_str(4));
+    {
+      nobj_entry ent(EW_ASSIGNVAR);
+      int var=GetUserVarIndex(line, 1);
+      ent.set_parm(0,var);
+      ent.set_parm(1,line.gettoken_str(2));
+      ent.set_parm(2,line.gettoken_str(3));
+      ent.set_parm(3,line.gettoken_str(4));
 
-      if (ent.offsets[0] < 0) PRINTHELP()
+      if (var < 0) PRINTHELP()
       SCRIPT_MSG("StrCpy %s \"%s\" (%s) (%s)\n",line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(4));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_GETFUNCTIONADDR:
-      ent.which=EW_GETFUNCTIONADDR;
-      ent.offsets[0]=GetUserVarIndex(line, 1);
-      ent.offsets[1]=ns_func.add(line.gettoken_str(2),0);
-      ent.offsets[2]=0;
-      ent.offsets[3]=0;
-      if (ent.offsets[0] < 0) PRINTHELP()
+    {
+      nobj_entry ent(EW_GETFUNCTIONADDR);
+      int var=GetUserVarIndex(line, 1);
+      ent.set_parm(0,var);
+      ent.set_parm(1,ns_func.add(line.gettoken_str(2),0));
+      ent.set_parm(2,0);
+      ent.set_parm(3,0);
+      if (var < 0) PRINTHELP()
       SCRIPT_MSG("GetFunctionAddress: %s %s",line.gettoken_str(1),line.gettoken_str(2));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_GETLABELADDR:
-      ent.which=EW_GETLABELADDR;
-      ent.offsets[0]=GetUserVarIndex(line, 1);
-      if (ent.offsets[0] < 0 || process_jump(line,2,&ent.offsets[1])) PRINTHELP()
-      ent.offsets[2]=0;
-      ent.offsets[3]=0;
+    {
+      nobj_entry ent(EW_GETLABELADDR);
+      int var=GetUserVarIndex(line, 1);
+      ent.set_parm(0,var);
+      if (var < 0 || process_jump_nobj(line,2,ent,1)) PRINTHELP()
+      ent.set_parm(2,0);
+      ent.set_parm(3,0);
       SCRIPT_MSG("GetLabelAddress: %s %s",line.gettoken_str(1),line.gettoken_str(2));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_GETCURRENTADDR:
-      ent.which=EW_ASSIGNVAR;
-      ent.offsets[0]=GetUserVarIndex(line, 1);
+    {
+      nobj_entry ent(EW_ASSIGNVAR);
+      int var=GetUserVarIndex(line, 1);
+      ent.set_parm(0,var);
       {
         char buf[32];
         wsprintf(buf,"%d",1+(cur_header->blocks[NB_ENTRIES].num));
-        ent.offsets[1]=add_string(buf);
+        ent.set_parm(1,buf);
       }
-      if (ent.offsets[0] < 0) PRINTHELP()
-      ent.offsets[2]=0;
-      ent.offsets[3]=0;
+      if (var < 0) PRINTHELP()
+      ent.set_parm(2,0);
+      ent.set_parm(3,0);
       SCRIPT_MSG("GetCurrentAddress: %s",line.gettoken_str(1));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_STRCMP:
     case TOK_STRCMPS:
-      ent.which=EW_STRCMP;
-      ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[1]=add_string(line.gettoken_str(2));
-      ent.offsets[4]=which_token == TOK_STRCMPS;
-      if (process_jump(line,3,&ent.offsets[2]) ||
-          process_jump(line,4,&ent.offsets[3])) PRINTHELP()
+    {
+      nobj_entry ent(EW_STRCMP);
+      ent.set_parm(0,line.gettoken_str(1));
+      ent.set_parm(1,line.gettoken_str(2));
+      ent.set_parm(4,which_token == TOK_STRCMPS);
+      if (process_jump_nobj(line,3,ent,2) ||
+          process_jump_nobj(line,4,ent,3)) PRINTHELP()
       SCRIPT_MSG("%s \"%s\" \"%s\" equal=%s, nonequal=%s\n",line.gettoken_str(0),line.gettoken_str(1),line.gettoken_str(2), line.gettoken_str(3),line.gettoken_str(4));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_GETDLLVERSIONLOCAL:
       {
         DWORD low, high;
@@ -4704,23 +4834,26 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           ERROR_MSG("GetDLLVersionLocal: error reading version info from \"%s\"\n",line.gettoken_str(1));
           return PS_ERROR;
         }
-        ent.which=EW_ASSIGNVAR;
-        ent.offsets[0]=GetUserVarIndex(line, 2);
-        ent.offsets[1]=add_intstring(high);
-        ent.offsets[2]=0;
-        ent.offsets[3]=0;
-        if (ent.offsets[0]<0) PRINTHELP()
-        add_entry(&ent);
+        nobj_entry ent(EW_ASSIGNVAR);
+        int var=GetUserVarIndex(line, 2);
+        ent.set_parm(0,var);
+        ent.set_parm(1,add_intstring(high));
+        ent.set_parm(2,0);
+        ent.set_parm(3,0);
+        if (var<0) PRINTHELP()
+        add_nobj_entry(ent);
 
-        ent.offsets[0]=GetUserVarIndex(line, 3);
-        ent.offsets[1]=add_intstring(low);
-        ent.offsets[2]=0;
-        ent.offsets[3]=0;
-        if (ent.offsets[0]<0) PRINTHELP()
+        var=GetUserVarIndex(line, 3);
+        ent.set_parm(0,var);
+        ent.set_parm(1,add_intstring(low));
+        ent.set_parm(2,0);
+        ent.set_parm(3,0);
+        if (var<0) PRINTHELP()
         SCRIPT_MSG("GetDLLVersionLocal: %s (%u,%u)->(%s,%s)\n",
           line.gettoken_str(1),high,low,line.gettoken_str(2),line.gettoken_str(3));
+
+        return add_nobj_entry(ent);
       }
-    return add_entry(&ent);
     case TOK_GETFILETIMELOCAL:
       {
         char buf[129];
@@ -4759,25 +4892,28 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
 #endif
 
-        ent.which=EW_ASSIGNVAR;
-        ent.offsets[0]=GetUserVarIndex(line, 2);
+        nobj_entry ent(EW_ASSIGNVAR);
+        int var=GetUserVarIndex(line, 2);
+        ent.set_parm(0,var);
         wsprintf(buf,"%u",high);
-        ent.offsets[1]=add_string(buf);
-        ent.offsets[2]=0;
-        ent.offsets[3]=0;
-        if (ent.offsets[0]<0) PRINTHELP()
-        add_entry(&ent);
+        ent.set_parm(1,buf);
+        ent.set_parm(2,0);
+        ent.set_parm(3,0);
+        if (var<0) PRINTHELP()
+        add_nobj_entry(ent);
 
-        ent.offsets[0]=GetUserVarIndex(line, 3);
+        var=GetUserVarIndex(line, 3);
+        ent.set_parm(0,var);
         wsprintf(buf,"%u",low);
-        ent.offsets[1]=add_string(buf);
-        ent.offsets[2]=0;
-        ent.offsets[3]=0;
-        if (ent.offsets[0]<0) PRINTHELP()
+        ent.set_parm(1,buf);
+        ent.set_parm(2,0);
+        ent.set_parm(3,0);
+        if (var<0) PRINTHELP()
         SCRIPT_MSG("GetFileTimeLocal: %s (%u,%u)->(%s,%s)\n",
           line.gettoken_str(1),high,low,line.gettoken_str(2),line.gettoken_str(3));
+
+        return add_nobj_entry(ent);
       }
-    return add_entry(&ent);
 
 #else//!NSIS_SUPPORT_STROPTS
     case TOK_GETDLLVERSIONLOCAL:
@@ -4798,45 +4934,53 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       {
         char *vname="";
         char *space="";
-        ent.which=EW_WRITEINI;
-        ent.offsets[0]=add_string(line.gettoken_str(2)); // section name
+        nobj_entry ent(EW_WRITEINI);
+        ent.set_parm(0,line.gettoken_str(2)); // section name
         if (line.getnumtokens() > 3)
         {
           vname=line.gettoken_str(3);
-          ent.offsets[1]=add_string(vname); // value name
+          ent.set_parm(1,vname); // value name
           space=" ";
         }
-        else ent.offsets[1]=0;
-        ent.offsets[2]=0;
-        ent.offsets[3]=add_string(line.gettoken_str(1));
+        else ent.set_parm(1,0);
+        ent.set_parm(2,0);
+        ent.set_parm(3,line.gettoken_str(1));
         SCRIPT_MSG("DeleteINI%s: [%s] %s%sin %s\n",*vname?"Str":"Sec",
           line.gettoken_str(2),vname,space,line.gettoken_str(1));
+
+        return add_nobj_entry(ent);
       }
-    return add_entry(&ent);
     case TOK_FLUSHINI:
-      ent.which=EW_WRITEINI;
-      ent.offsets[3]=add_string(line.gettoken_str(1));
+    {
+      nobj_entry ent(EW_WRITEINI);
+      ent.set_parm(3,line.gettoken_str(1));
       SCRIPT_MSG("FlushINI: %s\n",line.gettoken_str(1));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_WRITEINISTR:
-      ent.which=EW_WRITEINI;
-      ent.offsets[0]=add_string(line.gettoken_str(2));
-      ent.offsets[1]=add_string(line.gettoken_str(3));
-      ent.offsets[2]=add_string(line.gettoken_str(4));
-      ent.offsets[3]=add_string(line.gettoken_str(1));
-      ent.offsets[4]=1; // write
+    {
+      nobj_entry ent(EW_WRITEINI);
+      ent.set_parm(0,line.gettoken_str(2));
+      ent.set_parm(1,line.gettoken_str(3));
+      ent.set_parm(2,line.gettoken_str(4));
+      ent.set_parm(3,line.gettoken_str(1));
+      ent.set_parm(4,1); // write
       SCRIPT_MSG("WriteINIStr: [%s] %s=%s in %s\n",
         line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(4),line.gettoken_str(1));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_READINISTR:
-      ent.which=EW_READINISTR;
-      ent.offsets[0]=GetUserVarIndex(line, 1);
-      if (ent.offsets[0] < 0) PRINTHELP()
-      ent.offsets[1]=add_string(line.gettoken_str(3));
-      ent.offsets[2]=add_string(line.gettoken_str(4));
-      ent.offsets[3]=add_string(line.gettoken_str(2));
+    {
+      nobj_entry ent(EW_READINISTR);
+      int var=GetUserVarIndex(line, 1);
+      ent.set_parm(0,var);
+      if (var < 0) PRINTHELP()
+      ent.set_parm(1,line.gettoken_str(3));
+      ent.set_parm(2,line.gettoken_str(4));
+      ent.set_parm(3,line.gettoken_str(2));
       SCRIPT_MSG("ReadINIStr %s [%s]:%s from %s\n",line.gettoken_str(1),line.gettoken_str(3),line.gettoken_str(4),line.gettoken_str(2));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
 #else//!NSIS_SUPPORT_INIFILES
     case TOK_DELETEINISEC:
     case TOK_DELETEINISTR:
@@ -4847,43 +4991,53 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return PS_ERROR;
 #endif//!NSIS_SUPPORT_INIFILES
     case TOK_DETAILPRINT:
-      ent.which=EW_UPDATETEXT;
-      ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[1]=0;
+    {
+      nobj_entry ent(EW_UPDATETEXT);
+      ent.set_parm(0,line.gettoken_str(1));
+      ent.set_parm(1,0);
       SCRIPT_MSG("DetailPrint: \"%s\"\n",line.gettoken_str(1));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
 #ifdef NSIS_SUPPORT_FNUTIL
     case TOK_GETTEMPFILENAME:
-      ent.which=EW_GETTEMPFILENAME;
-      ent.offsets[0]=GetUserVarIndex(line, 1);
+    {
+      nobj_entry ent(EW_GETTEMPFILENAME);
+      int var=GetUserVarIndex(line, 1);
+      ent.set_parm(0,var);
       if (line.getnumtokens() == 3)
-        ent.offsets[1]=add_string(line.gettoken_str(2));
+        ent.set_parm(1,line.gettoken_str(2));
       else
-        ent.offsets[1]=add_string("$TEMP");
-      if (ent.offsets[0]<0) PRINTHELP()
+        ent.set_parm(1,"$TEMP");
+      if (var<0) PRINTHELP()
       SCRIPT_MSG("GetTempFileName -> %s\n",line.gettoken_str(1));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_GETFULLPATHNAME:
       {
         int a=0;
-        ent.which=EW_GETFULLPATHNAME;
+        nobj_entry ent(EW_GETFULLPATHNAME);
         if (line.getnumtokens()==4 && !stricmp(line.gettoken_str(1),"/SHORT")) a++;
         else if (line.getnumtokens()==4 || *line.gettoken_str(1)=='/') PRINTHELP()
-        ent.offsets[0]=add_string(line.gettoken_str(2+a));
-        ent.offsets[1]=GetUserVarIndex(line, 1+a);
-        ent.offsets[2]=!a;
-        if (ent.offsets[0]<0) PRINTHELP()
+        ent.set_parm(0,line.gettoken_str(2+a));
+        int var=GetUserVarIndex(line, 1+a);
+        ent.set_parm(1,var);
+        ent.set_parm(2,!a);
+        if (var<0) PRINTHELP()
         SCRIPT_MSG("GetFullPathName: %s->%s (%d)\n",
           line.gettoken_str(2+a),line.gettoken_str(1+a),a?"sfn":"lfn");
+
+        return add_nobj_entry(ent);
       }
-    return add_entry(&ent);
     case TOK_SEARCHPATH:
-      ent.which=EW_SEARCHPATH;
-      ent.offsets[0]=GetUserVarIndex(line, 1);
-      if (ent.offsets[0] < 0) PRINTHELP()
-      ent.offsets[1]=add_string(line.gettoken_str(2));
+    {
+      nobj_entry ent(EW_SEARCHPATH);
+      int var=GetUserVarIndex(line, 1);
+      ent.set_parm(0,var);
+      if (var < 0) PRINTHELP()
+      ent.set_parm(1,line.gettoken_str(2));
       SCRIPT_MSG("SearchPath %s %s\n",line.gettoken_str(1),line.gettoken_str(2));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
 #else
     case TOK_SEARCHPATH:
     case TOK_GETTEMPFILENAME:
@@ -4893,68 +5047,85 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #endif
     case TOK_GETDLLVERSION:
 #ifdef NSIS_SUPPORT_GETDLLVERSION
-      ent.which=EW_GETDLLVERSION;
-      ent.offsets[0]=GetUserVarIndex(line, 2);
-      ent.offsets[1]=GetUserVarIndex(line, 3);
-      ent.offsets[2]=add_string(line.gettoken_str(1));
-      if (ent.offsets[0]<0 || ent.offsets[1]<0) PRINTHELP()
+    {
+      nobj_entry ent(EW_GETDLLVERSION);
+      int var1=GetUserVarIndex(line, 2);
+      int var2=GetUserVarIndex(line, 3);
+      ent.set_parm(0,var1);
+      ent.set_parm(1,var2);
+      ent.set_parm(2,line.gettoken_str(1));
+      if (var1<0 || var2<0) PRINTHELP()
       SCRIPT_MSG("GetDLLVersion: %s->%s,%s\n",
         line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
 #else//!NSIS_SUPPORT_GETDLLVERSION
       ERROR_MSG("Error: %s specified, NSIS_SUPPORT_GETDLLVERSION not defined.\n",  line.gettoken_str(0));
       return PS_ERROR;
 #endif//!NSIS_SUPPORT_GETDLLVERSION
     case TOK_GETFILETIME:
 #ifdef NSIS_SUPPORT_GETFILETIME
-      ent.which=EW_GETFILETIME;
-      ent.offsets[0]=GetUserVarIndex(line, 2);
-      ent.offsets[1]=GetUserVarIndex(line, 3);
-      ent.offsets[2]=add_string(line.gettoken_str(1));
-      if (ent.offsets[0]<0 || ent.offsets[1]<0) PRINTHELP()
+    {
+      nobj_entry ent(EW_GETFILETIME);
+      int var1=GetUserVarIndex(line, 2);
+      int var2=GetUserVarIndex(line, 3);
+      ent.set_parm(0,var1);
+      ent.set_parm(1,var2);
+      ent.set_parm(2,line.gettoken_str(1));
+      if (var1<0 || var2<0) PRINTHELP()
       SCRIPT_MSG("GetFileTime: %s->%s,%s\n",
         line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
 #else//!NSIS_SUPPORT_GETFILETIME
       ERROR_MSG("Error: %s specified, NSIS_SUPPORT_GETFILETIME not defined.\n",  line.gettoken_str(0));
       return PS_ERROR;
 #endif//!NSIS_SUPPORT_GETFILETIME
 #ifdef NSIS_SUPPORT_INTOPTS
     case TOK_INTOP:
-      ent.which=EW_INTOP;
-      ent.offsets[0]=GetUserVarIndex(line, 1);
-      ent.offsets[3]=line.gettoken_enum(3,"+\0-\0*\0/\0|\0&\0^\0!\0||\0&&\0%\0<<\0>>\0~\0");
-      if (ent.offsets[0] < 0 || ent.offsets[3] < 0 ||
-        ((ent.offsets[3] == 7 || ent.offsets[3] == 13) && line.getnumtokens() > 4))
+    {
+      nobj_entry ent(EW_INTOP);
+      int var=GetUserVarIndex(line, 1);
+      ent.set_parm(0,var);
+      int k=line.gettoken_enum(3,"+\0-\0*\0/\0|\0&\0^\0!\0||\0&&\0%\0<<\0>>\0~\0");
+      ent.set_parm(3,k);
+      if (var < 0 || k < 0 ||
+        ((k == 7 || k == 13) && line.getnumtokens() > 4))
         PRINTHELP()
-      ent.offsets[1]=add_string(line.gettoken_str(2));
-      if (ent.offsets[3] != 7 && ent.offsets[3] != 13) ent.offsets[2]=add_string(line.gettoken_str(4));
-      if (ent.offsets[3] == 13) {
-        ent.offsets[3]=6;
-        ent.offsets[2]=add_string("0xFFFFFFFF");
+      ent.set_parm(1,line.gettoken_str(2));
+      if (k != 7 && k != 13) ent.set_parm(2,line.gettoken_str(4));
+      if (k == 13) {
+        ent.set_parm(3,6);
+        ent.set_parm(2,"0xFFFFFFFF");
       }
       SCRIPT_MSG("IntOp: %s=%s%s%s\n",line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(4));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_INTFMT:
-      ent.which=EW_INTFMT;
-      ent.offsets[0]=GetUserVarIndex(line, 1);
-      if (ent.offsets[0]<0) PRINTHELP()
-      ent.offsets[1]=add_string(line.gettoken_str(2));
-      ent.offsets[2]=add_string(line.gettoken_str(3));
+    {
+      nobj_entry ent(EW_INTFMT);
+      int var=GetUserVarIndex(line, 1);
+      ent.set_parm(0,var);
+      if (var<0) PRINTHELP()
+      ent.set_parm(1,line.gettoken_str(2));
+      ent.set_parm(2,line.gettoken_str(3));
       SCRIPT_MSG("IntFmt: %s->%s (fmt:%s)\n",line.gettoken_str(3),line.gettoken_str(1),line.gettoken_str(2));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_INTCMP:
     case TOK_INTCMPU:
-      ent.which=EW_INTCMP;
-      ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[1]=add_string(line.gettoken_str(2));
-      ent.offsets[5]=which_token == TOK_INTCMPU;
-      if (process_jump(line,3,&ent.offsets[2]) ||
-          process_jump(line,4,&ent.offsets[3]) ||
-          process_jump(line,5,&ent.offsets[4]))  PRINTHELP()
+    {
+      nobj_entry ent(EW_INTCMP);
+      ent.set_parm(0,line.gettoken_str(1));
+      ent.set_parm(1,line.gettoken_str(2));
+      ent.set_parm(5,which_token == TOK_INTCMPU);
+      if (process_jump_nobj(line,3,ent,2) ||
+          process_jump_nobj(line,4,ent,3) ||
+          process_jump_nobj(line,5,ent,4))  PRINTHELP()
       SCRIPT_MSG("%s %s:%s equal=%s, < %s, > %s\n",line.gettoken_str(0),
         line.gettoken_str(1),line.gettoken_str(2), line.gettoken_str(3),line.gettoken_str(4),line.gettoken_str(5));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
 #else//!NSIS_SUPPORT_INTOPTS
     case TOK_INTOP:
     case TOK_INTCMP:
@@ -4967,54 +5138,57 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_READREGSTR:
     case TOK_READREGDWORD:
       {
-        ent.which=EW_READREGSTR;
-        ent.offsets[0]=GetUserVarIndex(line, 1);
+        nobj_entry ent(EW_READREGSTR);
+        int var=GetUserVarIndex(line, 1);
+        ent.set_parm(0,var);
         int k=line.gettoken_enum(2,rootkeys[0]);
         if (k == -1) k=line.gettoken_enum(2,rootkeys[1]);
-        if (ent.offsets[0] == -1 || k == -1) PRINTHELP()
-        ent.offsets[1]=(int)rootkey_tab[k];
-        ent.offsets[2]=add_string(line.gettoken_str(3));
-        ent.offsets[3]=add_string(line.gettoken_str(4));
-        if (which_token == TOK_READREGDWORD) ent.offsets[4]=1;
-        else ent.offsets[4]=0;
+        if (var < 0 || k < 0) PRINTHELP();
+        ent.set_parm(1,(int)rootkey_tab[k]);
+        ent.set_parm(2,line.gettoken_str(3));
+        ent.set_parm(3,line.gettoken_str(4));
+        if (which_token == TOK_READREGDWORD) ent.set_parm(4,1);
+        else ent.set_parm(4,0);
         if (line.gettoken_str(3)[0] == '\\')
           warning_fl("%s: registry path name begins with \'\\\', may cause problems",line.gettoken_str(0));
 
         SCRIPT_MSG("%s %s %s\\%s\\%s\n",line.gettoken_str(0),
           line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(4));
+
+        return add_nobj_entry(ent);
       }
-    return add_entry(&ent);
     case TOK_DELETEREGVALUE:
     case TOK_DELETEREGKEY:
       {
+        nobj_entry ent(EW_DELREG);
         int a=1;
         if (which_token==TOK_DELETEREGKEY)
         {
-          ent.offsets[4]=1;
+          ent.set_parm(4,1);
           char *s=line.gettoken_str(a);
           if (s[0] == '/')
           {
             if (stricmp(s,"/ifempty")) PRINTHELP()
             a++;
-            ent.offsets[4]=3;
+            ent.set_parm(4,3);
           }
           if (line.gettoken_str(a+2)[0]) PRINTHELP()
         }
         int k=line.gettoken_enum(a,rootkeys[0]);
         if (k == -1) k=line.gettoken_enum(a,rootkeys[1]);
         if (k == -1) PRINTHELP()
-        ent.which=EW_DELREG;
-        ent.offsets[1]=(int)rootkey_tab[k];
-        ent.offsets[2]=add_string(line.gettoken_str(a+1));
-        ent.offsets[3]=(which_token==TOK_DELETEREGKEY)?0:add_string(line.gettoken_str(a+2));
+        ent.set_parm(1,(int)rootkey_tab[k]);
+        ent.set_parm(2,line.gettoken_str(a+1));
+        ent.set_parm(3,(which_token==TOK_DELETEREGKEY)?0:line.gettoken_str(a+2));
         if (line.gettoken_str(a+1)[0] == '\\')
           warning_fl("%s: registry path name begins with \'\\\', may cause problems",line.gettoken_str(0));
         if (which_token==TOK_DELETEREGKEY)
           SCRIPT_MSG("DeleteRegKey: %s\\%s\n",line.gettoken_str(a),line.gettoken_str(a+1));
         else
           SCRIPT_MSG("DeleteRegValue: %s\\%s\\%s\n",line.gettoken_str(a),line.gettoken_str(a+1),line.gettoken_str(a+2));
+
+        return add_nobj_entry(ent);
       }
-    return add_entry(&ent);
     case TOK_WRITEREGSTR:
     case TOK_WRITEREGEXPANDSTR:
     case TOK_WRITEREGBIN:
@@ -5023,21 +5197,22 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         int k=line.gettoken_enum(1,rootkeys[0]);
         if (k == -1) k=line.gettoken_enum(1,rootkeys[1]);
         if (k == -1) PRINTHELP()
-        ent.which=EW_WRITEREG;
-        ent.offsets[0]=(int)rootkey_tab[k];
-        ent.offsets[1]=add_string(line.gettoken_str(2));
+        nobj_entry ent(EW_WRITEREG);
+        ent.set_parm(0,(int)rootkey_tab[k]);
+        ent.set_parm(1,line.gettoken_str(2));
         if (line.gettoken_str(2)[0] == '\\')
           warning_fl("%s: registry path name begins with \'\\\', may cause problems",line.gettoken_str(0));
-        ent.offsets[2]=add_string(line.gettoken_str(3));
+        ent.set_parm(2,line.gettoken_str(3));
         if (which_token == TOK_WRITEREGSTR || which_token == TOK_WRITEREGEXPANDSTR)
         {
           SCRIPT_MSG("%s: %s\\%s\\%s=%s\n",
             line.gettoken_str(0),line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(4));
-          ent.offsets[3]=add_string(line.gettoken_str(4));
-          ent.offsets[4]=ent.offsets[5]=REG_SZ;
+          ent.set_parm(3,line.gettoken_str(4));
+          ent.set_parm(4,REG_SZ);
+          ent.set_parm(5,REG_SZ);
           if (which_token == TOK_WRITEREGEXPANDSTR)
           {
-            ent.offsets[5]=REG_EXPAND_SZ;
+            ent.set_parm(5,REG_EXPAND_SZ);
           }
         }
         if (which_token == TOK_WRITEREGBIN)
@@ -5071,37 +5246,42 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           if (*p) PRINTHELP()
           SCRIPT_MSG("WriteRegBin: %s\\%s\\%s=%s\n",
             line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(4));
-          ent.offsets[3]=add_db_data(data,data_len);
-          if (ent.offsets[3] < 0) return PS_ERROR;
-          ent.offsets[4]=ent.offsets[5]=REG_BINARY;
+          int dat=add_db_data(data,data_len);
+          ent.set_parm(3,dat);
+          if (dat < 0) return PS_ERROR;
+          ent.set_parm(4,REG_BINARY);
+          ent.set_parm(5,REG_BINARY);
         }
         if (which_token == TOK_WRITEREGDWORD)
         {
-          ent.offsets[3]=add_string(line.gettoken_str(4));
-          ent.offsets[4]=ent.offsets[5]=REG_DWORD;
+          ent.set_parm(3,line.gettoken_str(4));
+          ent.set_parm(4,REG_DWORD);
+          ent.set_parm(5,REG_DWORD);
 
           SCRIPT_MSG("WriteRegDWORD: %s\\%s\\%s=%s\n",
             line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(4));
         }
+
+        return add_nobj_entry(ent);
       }
-    return add_entry(&ent);
     case TOK_ENUMREGKEY:
     case TOK_ENUMREGVAL:
       {
-        ent.which=EW_REGENUM;
-        ent.offsets[0]=GetUserVarIndex(line, 1);
+        nobj_entry ent(EW_REGENUM);
+        int var=GetUserVarIndex(line, 1);
+        ent.set_parm(0,var);
         int k=line.gettoken_enum(2,rootkeys[0]);
-        if (k == -1) k=line.gettoken_enum(2,rootkeys[1]);
-        if (ent.offsets[0] == -1 || k == -1) PRINTHELP()
-        ent.offsets[1]=(int)rootkey_tab[k];
-        ent.offsets[2]=add_string(line.gettoken_str(3));
-        ent.offsets[3]=add_string(line.gettoken_str(4));
-        ent.offsets[4]=which_token == TOK_ENUMREGKEY;
+        if (k < 0) k=line.gettoken_enum(2,rootkeys[1]);
+        if (var < 0 || k < 0) PRINTHELP()
+        ent.set_parm(1,(int)rootkey_tab[k]);
+        ent.set_parm(2,line.gettoken_str(3));
+        ent.set_parm(3,line.gettoken_str(4));
+        ent.set_parm(4,which_token == TOK_ENUMREGKEY);
         if (line.gettoken_str(3)[0] == '\\') warning_fl("%s: registry path name begins with \'\\\', may cause problems",line.gettoken_str(0));
         SCRIPT_MSG("%s %s %s\\%s\\%s\n",which_token == TOK_ENUMREGKEY ? "EnumRegKey" : "EnumRegValue",
           line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(4));
+        return add_nobj_entry(ent);
       }
-    return add_entry(&ent);
 #else//!NSIS_SUPPORT_REGISTRYFUNCTIONS
     case TOK_READREGSTR:
     case TOK_READREGDWORD:
@@ -5121,7 +5301,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       {
         int swapitem=1;
         int save=GetUserVarIndex(line, 1);
-        ent.which=EW_PUSHPOP;
+        nobj_entry ent(EW_PUSHPOP);
         if (line.gettoken_str(1)[0] && save<0)
         {
           int s=0;
@@ -5131,41 +5311,47 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (save>=0)
         {
           SCRIPT_MSG("Exch(%s,0)\n",line.gettoken_str(1));
-          ent.offsets[0]=add_string(line.gettoken_str(1));
-          ent.offsets[1]=0;
-          ent.offsets[2]=0;
-          add_entry(&ent);
+          ent.set_parm(0,line.gettoken_str(1));
+          ent.set_parm(1,0);
+          ent.set_parm(2,0);
+          add_nobj_entry(ent);
         }
         else SCRIPT_MSG("Exch(st(%d),0)\n",swapitem);
 
-        ent.offsets[0]=0;
-        ent.offsets[1]=0;
-        ent.offsets[2]=swapitem;
+        ent.set_parm(0,0);
+        ent.set_parm(1,0);
+        ent.set_parm(2,swapitem);
 
         if (save>=0)
         {
-          add_entry(&ent);
-          ent.offsets[0]=save;
-          ent.offsets[1]=1;
-          ent.offsets[2]=0;
+          add_nobj_entry(ent);
+          ent.set_parm(0,save);
+          ent.set_parm(1,1);
+          ent.set_parm(2,0);
         }
 
         DefineInnerLangString(NLF_INST_CORRUPTED);
+
+        return add_nobj_entry(ent);
       }
-    return add_entry(&ent);
     case TOK_PUSH:
-      ent.which=EW_PUSHPOP;
-      ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[1]=0;
+    {
+      nobj_entry ent(EW_PUSHPOP);
+      ent.set_parm(0,line.gettoken_str(1));
+      ent.set_parm(1,0);
       SCRIPT_MSG("Push: %s\n",line.gettoken_str(1));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_POP:
-      ent.which=EW_PUSHPOP;
-      ent.offsets[0]=GetUserVarIndex(line, 1);
-      ent.offsets[1]=1;
-      if (ent.offsets[0] < 0) PRINTHELP()
+    {
+      nobj_entry ent(EW_PUSHPOP);
+      int var=GetUserVarIndex(line, 1);
+      ent.set_parm(0,var);
+      ent.set_parm(1,1);
+      if (var < 0) PRINTHELP()
       SCRIPT_MSG("Pop: %s\n",line.gettoken_str(1));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
 #else//!NSIS_SUPPORT_STACK
     case TOK_POP:
     case TOK_PUSH:
@@ -5175,27 +5361,33 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #endif//!NSIS_SUPPORT_STACK
 #ifdef NSIS_SUPPORT_ENVIRONMENT
     case TOK_READENVSTR:
-      ent.which=EW_READENVSTR;
-      ent.offsets[0]=GetUserVarIndex(line, 1);
+    {
+      nobj_entry ent(EW_READENVSTR);
+      int var=GetUserVarIndex(line, 1);
+      ent.set_parm(0,var);
       {
         char str[NSIS_MAX_STRLEN];
         strcpy(str, "%");
         strcat(str, line.gettoken_str(2));
         strcat(str, "%");
-        ent.offsets[1]=add_string(str);
-        if (ent.offsets[0] < 0 || strlen(line.gettoken_str(2))<1) PRINTHELP()
+        ent.set_parm(1,str);
+        if (var < 0 || strlen(line.gettoken_str(2))<1) PRINTHELP()
       }
-      ent.offsets[2]=1;
+      ent.set_parm(2,1);
       SCRIPT_MSG("ReadEnvStr: %s->%s\n",line.gettoken_str(2),line.gettoken_str(1));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_EXPANDENVSTRS:
-      ent.which=EW_READENVSTR;
-      ent.offsets[0]=GetUserVarIndex(line, 1);
-      ent.offsets[1]=add_string(line.gettoken_str(2));
-      ent.offsets[2]=0;
-      if (ent.offsets[0] < 0) PRINTHELP()
+    {
+      nobj_entry ent(EW_READENVSTR);
+      int var=GetUserVarIndex(line, 1);
+      ent.set_parm(0,var);
+      ent.set_parm(1,line.gettoken_str(2));
+      ent.set_parm(2,0);
+      if (var < 0) PRINTHELP()
       SCRIPT_MSG("ExpandEnvStrings: %s->%s\n",line.gettoken_str(2),line.gettoken_str(1));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
 #else//!NSIS_SUPPORT_ENVIRONMENT
     case TOK_EXPANDENVSTRS:
     case TOK_READENVSTR:
@@ -5204,26 +5396,37 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #endif//!NSIS_SUPPORT_ENVIRONMENT
 #ifdef NSIS_SUPPORT_FINDFIRST
     case TOK_FINDFIRST:
-      ent.which=EW_FINDFIRST;
-      ent.offsets[0]=GetUserVarIndex(line, 2); // out
-      ent.offsets[1]=GetUserVarIndex(line, 1); // handleout
-      ent.offsets[2]=add_string(line.gettoken_str(3)); // filespec
-      if (ent.offsets[0] < 0 || ent.offsets[1] < 0) PRINTHELP()
+    {
+      nobj_entry ent(EW_FINDFIRST);
+      int var1=GetUserVarIndex(line, 2);
+      int var2=GetUserVarIndex(line, 1);
+      ent.set_parm(0,var1); // out
+      ent.set_parm(1,var2); // handleout
+      ent.set_parm(2,line.gettoken_str(3)); // filespec
+      if (var1 < 0 || var2 < 0) PRINTHELP()
       SCRIPT_MSG("FindFirst: spec=\"%s\" handle=%s output=%s\n",line.gettoken_str(3),line.gettoken_str(1),line.gettoken_str(2));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_FINDNEXT:
-      ent.which=EW_FINDNEXT;
-      ent.offsets[0]=GetUserVarIndex(line, 2);
-      ent.offsets[1]=GetUserVarIndex(line, 1);
-      if (ent.offsets[0] < 0 || ent.offsets[1] < 0) PRINTHELP()
+    {
+      nobj_entry ent(EW_FINDNEXT);
+      int var1=GetUserVarIndex(line, 2);
+      int var2=GetUserVarIndex(line, 1);
+      ent.set_parm(0,var1);
+      ent.set_parm(1,var2);
+      if (var1 < 0 || var2 < 0) PRINTHELP()
       SCRIPT_MSG("FindNext: handle=%s output=%s\n",line.gettoken_str(1),line.gettoken_str(2));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_FINDCLOSE:
-      ent.which=EW_FINDCLOSE;
-      ent.offsets[0]=GetUserVarIndex(line, 1);
-      if (ent.offsets[0] < 0) PRINTHELP()
+    {
+      nobj_entry ent(EW_FINDCLOSE);
+      int var=GetUserVarIndex(line, 1);
+      ent.set_parm(0,var);
+      if (var < 0) PRINTHELP()
       SCRIPT_MSG("FindClose: %s\n",line.gettoken_str(1));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
 #else//!NSIS_SUPPORT_FINDFIRST
     case TOK_FINDCLOSE:
     case TOK_FINDNEXT:
@@ -5237,80 +5440,106 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #ifdef NSIS_SUPPORT_FILEFUNCTIONS
     case TOK_FILEOPEN:
       {
-        ent.which=EW_FOPEN;
-        ent.offsets[0]=GetUserVarIndex(line, 1); // file handle
-        ent.offsets[3]=add_string(line.gettoken_str(2));
-        ent.offsets[1]=0; //openmode
+        nobj_entry ent(EW_FOPEN);
+        int var=GetUserVarIndex(line, 1);
+        int mode=0;
+        ent.set_parm(0,var); // file handle
+        ent.set_parm(3,line.gettoken_str(2));
         if (!stricmp(line.gettoken_str(3),"r"))
         {
-          ent.offsets[1]=GENERIC_READ;
-          ent.offsets[2]=OPEN_EXISTING;
+          ent.set_parm(1,GENERIC_READ);
+          ent.set_parm(2,OPEN_EXISTING);
         }
         else if (!stricmp(line.gettoken_str(3),"w"))
         {
-          ent.offsets[1]=GENERIC_WRITE;
-          ent.offsets[2]=CREATE_ALWAYS;
+          ent.set_parm(1,GENERIC_WRITE);
+          ent.set_parm(2,CREATE_ALWAYS);
         }
         else if (!stricmp(line.gettoken_str(3),"a"))
         {
-          ent.offsets[1]=GENERIC_WRITE|GENERIC_READ;
-          ent.offsets[2]=OPEN_ALWAYS;
+          ent.set_parm(1,GENERIC_WRITE|GENERIC_READ);
+          ent.set_parm(2,OPEN_ALWAYS);
+        }
+        else
+        {
+          PRINTHELP();
         }
 
-        if (ent.offsets[0] < 0 || !ent.offsets[1]) PRINTHELP()
+        if (var < 0) PRINTHELP();
+
+        SCRIPT_MSG("FileOpen: %s as %s -> %s\n",line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(1));
+
+        return add_nobj_entry(ent);
       }
-      SCRIPT_MSG("FileOpen: %s as %s -> %s\n",line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(1));
-    return add_entry(&ent);
     case TOK_FILECLOSE:
-      ent.which=EW_FCLOSE;
-      ent.offsets[0]=GetUserVarIndex(line, 1); // file handle
-      if (ent.offsets[0] < 0) PRINTHELP()
+    {
+      nobj_entry ent(EW_FCLOSE);
+      int var=GetUserVarIndex(line, 1);
+      ent.set_parm(0,var); // file handle
+      if (var < 0) PRINTHELP()
       SCRIPT_MSG("FileClose: %s\n",line.gettoken_str(1));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_FILEREAD:
-      ent.which=EW_FGETS;
-      ent.offsets[0]=GetUserVarIndex(line, 1); // file handle
-      ent.offsets[1]=GetUserVarIndex(line, 2); // output string
+    {
+      nobj_entry ent(EW_FGETS);
+      int var1=GetUserVarIndex(line, 1);
+      int var2=GetUserVarIndex(line, 2);
+      ent.set_parm(0,var1); // file handle
+      ent.set_parm(1,var2); // output string
       if (line.gettoken_str(3)[0])
-        ent.offsets[2]=add_string(line.gettoken_str(3));
+        ent.set_parm(2,line.gettoken_str(3));
       else
-        ent.offsets[2]=add_intstring(NSIS_MAX_STRLEN-1);
-      if (ent.offsets[0]<0 || ent.offsets[1]<0) PRINTHELP()
+        ent.set_parm(2,add_intstring(NSIS_MAX_STRLEN-1));
+      if (var1<0 || var2<0) PRINTHELP()
       SCRIPT_MSG("FileRead: %s->%s (max:%s)\n",line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_FILEWRITE:
-      ent.which=EW_FPUTS;
-      ent.offsets[0]=GetUserVarIndex(line, 1); // file handle
-      ent.offsets[1]=add_string(line.gettoken_str(2));
-      if (ent.offsets[0]<0) PRINTHELP()
+    {
+      nobj_entry ent(EW_FPUTS);
+      int var=GetUserVarIndex(line, 1);
+      ent.set_parm(0,var); // file handle
+      ent.set_parm(1,line.gettoken_str(2));
+      if (var<0) PRINTHELP()
       SCRIPT_MSG("FileWrite: %s->%s\n",line.gettoken_str(2),line.gettoken_str(1));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_FILEREADBYTE:
-      ent.which=EW_FGETS;
-      ent.offsets[0]=GetUserVarIndex(line, 1); // file handle
-      ent.offsets[1]=GetUserVarIndex(line, 2); // output string
-      ent.offsets[2]=add_string("1");
-      ent.offsets[3]=1;
-      if (ent.offsets[0]<0 || ent.offsets[1]<0) PRINTHELP()
+    {
+      nobj_entry ent(EW_FGETS);
+      int var1=GetUserVarIndex(line, 1);
+      int var2=GetUserVarIndex(line, 2);
+      ent.set_parm(0,var1); // file handle
+      ent.set_parm(1,var2); // output string
+      ent.set_parm(2,"1");
+      ent.set_parm(3,1);
+      if (var1<0 || var2<0) PRINTHELP()
       SCRIPT_MSG("FileReadByte: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_FILEWRITEBYTE:
-      ent.which=EW_FPUTS;
-      ent.offsets[0]=GetUserVarIndex(line, 1); // file handle
-      ent.offsets[1]=add_string(line.gettoken_str(2));
-      ent.offsets[2]=1;
-      if (ent.offsets[0]<0) PRINTHELP()
+    {
+      nobj_entry ent(EW_FPUTS);
+      int var=GetUserVarIndex(line, 1);
+      ent.set_parm(0,var); // file handle
+      ent.set_parm(1,line.gettoken_str(2));
+      ent.set_parm(2,1);
+      if (var<0) PRINTHELP()
       SCRIPT_MSG("FileWriteByte: %s->%s\n",line.gettoken_str(2),line.gettoken_str(1));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_FILESEEK:
       {
         char *modestr;
         int tab[3]={FILE_BEGIN,FILE_CURRENT,FILE_END};
         int mode=line.gettoken_enum(3,"SET\0CUR\0END\0");
-        ent.which=EW_FSEEK;
-        ent.offsets[0]=GetUserVarIndex(line, 1);
-        ent.offsets[1]=GetUserVarIndex(line, 4);
-        ent.offsets[2]=add_string(line.gettoken_str(2));
+        nobj_entry ent(EW_FSEEK);
+        int var1=GetUserVarIndex(line, 1);
+        int var2=GetUserVarIndex(line, 4);
+        ent.set_parm(0,var1);
+        ent.set_parm(1,var2);
+        ent.set_parm(2,line.gettoken_str(2));
 
         if (mode<0 && !line.gettoken_str(3)[0])
         {
@@ -5319,16 +5548,17 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
         else modestr=line.gettoken_str(3);
 
-        if (mode<0 || ent.offsets[0] < 0 || (ent.offsets[1]<0 && line.gettoken_str(4)[0])) PRINTHELP()
-        ent.offsets[3]=tab[mode];
+        if (mode<0 || var1 < 0 || (var2<0 && line.gettoken_str(4)[0])) PRINTHELP()
+        ent.set_parm(3,tab[mode]);
         SCRIPT_MSG("FileSeek: fp=%s, ofs=%s, mode=%s, output=%s\n",
           line.gettoken_str(1),
           line.gettoken_str(2),
           modestr,
           line.gettoken_str(4));
+
+        return add_nobj_entry(ent);
       }
 
-    return add_entry(&ent);
 #else//!NSIS_SUPPORT_FILEFUNCTIONS
     case TOK_FILEOPEN:
     case TOK_FILECLOSE:
@@ -5356,22 +5586,24 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     }
     return PS_OK;
     case TOK_IFREBOOTFLAG:
-      ent.which=EW_IFFLAG;
-      if (process_jump(line,1,&ent.offsets[0]) ||
-          process_jump(line,2,&ent.offsets[1])) PRINTHELP()
-      ent.offsets[2]=FLAG_OFFSET(exec_reboot);
-      ent.offsets[3]=~0;//new value mask - keep flag
+    {
+      nobj_entry ent(EW_IFFLAG);
+      if (process_jump_nobj(line,1,ent,0) ||
+          process_jump_nobj(line,2,ent,1)) PRINTHELP()
+      ent.set_parm(2,FLAG_OFFSET(exec_reboot));
+      ent.set_parm(3,~0);//new value mask - keep flag
       SCRIPT_MSG("IfRebootFlag ?%s:%s\n",line.gettoken_str(1),line.gettoken_str(2));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_SETREBOOTFLAG:
     {
-      ent.which=EW_SETFLAG;
-      ent.offsets[0]=FLAG_OFFSET(exec_reboot);
+      nobj_entry ent(EW_SETFLAG);
+      ent.set_parm(0,FLAG_OFFSET(exec_reboot));
       int k=line.gettoken_enum(1,"false\0true\0");
       if (k < 0) PRINTHELP()
-      ent.offsets[1]=add_intstring(k);
+      ent.set_parm(1,add_intstring(k));
+      return add_nobj_entry(ent);
     }
-    return add_entry(&ent);
 #else//!NSIS_SUPPORT_REBOOT
     case TOK_REBOOT:
     case TOK_IFREBOOTFLAG:
@@ -5381,19 +5613,24 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #endif//!NSIS_SUPPORT_REBOOT
 #ifdef NSIS_CONFIG_LOG
     case TOK_LOGSET:
-      ent.which=EW_LOG;
-      ent.offsets[0]=1;
-      ent.offsets[1]=line.gettoken_enum(1,"off\0on\0");
-      if (ent.offsets[1]<0) PRINTHELP()
+    {
+      nobj_entry ent(EW_LOG);
+      ent.set_parm(0,1);
+      int k=line.gettoken_enum(1,"off\0on\0");
+      ent.set_parm(1,k);
+      if (k<0) PRINTHELP()
 
       SCRIPT_MSG("LogSet: %s\n",line.gettoken_str(1));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_LOGTEXT:
-      ent.which=EW_LOG;
-      ent.offsets[0]=0;
-      ent.offsets[1]=add_string(line.gettoken_str(1));
+    {
+      nobj_entry ent(EW_LOG);
+      ent.set_parm(0,0);
+      ent.set_parm(1,line.gettoken_str(1));
       SCRIPT_MSG("LogText \"%s\"\n",line.gettoken_str(1));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
 #else//!NSIS_CONFIG_LOG
 
     case TOK_LOGSET:
@@ -5403,98 +5640,128 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #endif//!NSIS_CONFIG_LOG
 #ifdef NSIS_CONFIG_COMPONENTPAGE
     case TOK_SECTIONSETTEXT:
-      ent.which=EW_SECTIONSET;
-      ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[2]=SECTION_FIELD_SET(name_ptr);
-      ent.offsets[4]=add_string(line.gettoken_str(2));
+    {
+      nobj_entry ent(EW_SECTIONSET);
+      ent.set_parm(0,line.gettoken_str(1));
+      ent.set_parm(2,SECTION_FIELD_SET(name_ptr));
+      ent.set_parm(4,line.gettoken_str(2));
       SCRIPT_MSG("SectionSetText: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_SECTIONGETTEXT:
-      ent.which=EW_SECTIONSET;
-      ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[1]=GetUserVarIndex(line, 2);
-      ent.offsets[2]=SECTION_FIELD_GET(name_ptr);
-      if (line.gettoken_str(2)[0] && ent.offsets[1]<0) PRINTHELP()
+    {
+      nobj_entry ent(EW_SECTIONSET);
+      ent.set_parm(0,line.gettoken_str(1));
+      int var=GetUserVarIndex(line, 2);
+      ent.set_parm(1,var);
+      ent.set_parm(2,(int)SECTION_FIELD_GET(name_ptr));
+      if (line.gettoken_str(2)[0] && var<0) PRINTHELP()
       SCRIPT_MSG("SectionGetText: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_SECTIONSETFLAGS:
-      ent.which=EW_SECTIONSET;
-      ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[1]=add_string(line.gettoken_str(2));
-      ent.offsets[2]=SECTION_FIELD_SET(flags);
-      ent.offsets[3]=1;
+    {
+      nobj_entry ent(EW_SECTIONSET);
+      ent.set_parm(0,line.gettoken_str(1));
+      ent.set_parm(1,line.gettoken_str(2));
+      ent.set_parm(2,SECTION_FIELD_SET(flags));
+      ent.set_parm(3,1);
       SCRIPT_MSG("SectionSetFlags: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_SECTIONGETFLAGS:
-      ent.which=EW_SECTIONSET;
-      ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[1]=GetUserVarIndex(line, 2);
-      ent.offsets[2]=SECTION_FIELD_GET(flags);
-      if (line.gettoken_str(2)[0] && ent.offsets[1]<0) PRINTHELP()
+    {
+      nobj_entry ent(EW_SECTIONSET);
+      ent.set_parm(0,line.gettoken_str(1));
+      int var=GetUserVarIndex(line, 2);
+      ent.set_parm(1,var);
+      ent.set_parm(2,SECTION_FIELD_GET(flags));
+      if (line.gettoken_str(2)[0] && var<0) PRINTHELP()
       SCRIPT_MSG("SectionGetFlags: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_INSTTYPESETTEXT:
-      ent.which=EW_INSTTYPESET;
-      ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[1]=add_string(line.gettoken_str(2));
-      ent.offsets[2]=1;
+    {
+      nobj_entry ent(EW_INSTTYPESET);
+      ent.set_parm(0,line.gettoken_str(1));
+      ent.set_parm(1,line.gettoken_str(2));
+      ent.set_parm(2,1);
       SCRIPT_MSG("InstTypeSetText: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_INSTTYPEGETTEXT:
-      ent.which=EW_INSTTYPESET;
-      ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[1]=GetUserVarIndex(line, 2);
-      ent.offsets[2]=0;
-      if (line.gettoken_str(1)[0] && ent.offsets[1]<0) PRINTHELP()
+    {
+      nobj_entry ent(EW_INSTTYPESET);
+      ent.set_parm(0,line.gettoken_str(1));
+      int var=GetUserVarIndex(line, 2);
+      ent.set_parm(1,var);
+      ent.set_parm(2,0);
+      if (line.gettoken_str(1)[0] && var<0) PRINTHELP()
       SCRIPT_MSG("InstTypeGetText: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_SECTIONSETINSTTYPES:
-      ent.which=EW_SECTIONSET;
-      ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[1]=add_string(line.gettoken_str(2));
-      ent.offsets[2]=SECTION_FIELD_SET(install_types);
+    {
+      nobj_entry ent(EW_SECTIONSET);
+      ent.set_parm(0,line.gettoken_str(1));
+      ent.set_parm(1,line.gettoken_str(2));
+      ent.set_parm(2,SECTION_FIELD_SET(install_types));
       SCRIPT_MSG("SectionSetInstTypes: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_SECTIONGETINSTTYPES:
-      ent.which=EW_SECTIONSET;
-      ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[1]=GetUserVarIndex(line, 2);
-      ent.offsets[2]=SECTION_FIELD_GET(install_types);
-      if (line.gettoken_str(2)[0] && ent.offsets[1]<0) PRINTHELP()
+    {
+      nobj_entry ent(EW_SECTIONSET);
+      ent.set_parm(0,line.gettoken_str(1));
+      int var=GetUserVarIndex(line, 2);
+      ent.set_parm(1,var);
+      ent.set_parm(2,SECTION_FIELD_GET(install_types));
+      if (line.gettoken_str(2)[0] && var<0) PRINTHELP()
       SCRIPT_MSG("SectionGetInstTypes: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_SECTIONSETSIZE:
-      ent.which=EW_SECTIONSET;
-      ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[1]=add_string(line.gettoken_str(2));
-      ent.offsets[2]=SECTION_FIELD_SET(size_kb);
+    {
+      nobj_entry ent(EW_SECTIONSET);
+      ent.set_parm(0,line.gettoken_str(1));
+      ent.set_parm(1,line.gettoken_str(2));
+      ent.set_parm(2,SECTION_FIELD_SET(size_kb));
       SCRIPT_MSG("SectionSetSize: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_SECTIONGETSIZE:
-      ent.which=EW_SECTIONSET;
-      ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[1]=GetUserVarIndex(line, 2);
-      ent.offsets[2]=SECTION_FIELD_GET(size_kb);
-      if (line.gettoken_str(2)[0] && ent.offsets[1]<0) PRINTHELP()
+    {
+      nobj_entry ent(EW_SECTIONSET);
+      ent.set_parm(0,line.gettoken_str(1));
+      int var=GetUserVarIndex(line, 2);
+      ent.set_parm(1,var);
+      ent.set_parm(2,SECTION_FIELD_GET(size_kb));
+      if (line.gettoken_str(2)[0] && var<0) PRINTHELP()
       SCRIPT_MSG("SectionGetSize: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_SETCURINSTTYPE:
-      ent.which=EW_INSTTYPESET;
-      ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[1]=0;
-      ent.offsets[2]=1;
-      ent.offsets[3]=1;
+    {
+      nobj_entry ent(EW_INSTTYPESET);
+      ent.set_parm(0,line.gettoken_str(1));
+      ent.set_parm(1,0);
+      ent.set_parm(2,1);
+      ent.set_parm(3,1);
       SCRIPT_MSG("SetCurInstType: %s\n",line.gettoken_str(1));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
     case TOK_GETCURINSTTYPE:
-      ent.which=EW_INSTTYPESET;
-      ent.offsets[0]=0;
-      ent.offsets[1]=GetUserVarIndex(line,1);
-      ent.offsets[2]=0;
-      ent.offsets[3]=1;
-      if (line.gettoken_str(1)[0] && ent.offsets[0]<0) PRINTHELP()
+    {
+      nobj_entry ent(EW_INSTTYPESET);
+      ent.set_parm(0,0);
+      int var=GetUserVarIndex(line,1);
+      ent.set_parm(1,var);
+      ent.set_parm(2,0);
+      ent.set_parm(3,1);
+      if (line.gettoken_str(1)[0] && var<0) PRINTHELP()
       SCRIPT_MSG("GetCurInstType: %s\n",line.gettoken_str(1));
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
 #else//!NSIS_CONFIG_COMPONENTPAGE
     case TOK_SECTIONSETTEXT:
     case TOK_SECTIONGETTEXT:
@@ -5517,18 +5784,22 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         ERROR_MSG("\nError: no branding image found in chosen UI!\n");
         return PS_ERROR;
       }
-      ent.which=EW_SETBRANDINGIMAGE;
+      nobj_entry ent(EW_SETBRANDINGIMAGE);
+      int image_set=0;
+      int imgid=branding_image_id;
       for (int i = 1; i < line.getnumtokens(); i++)
         if (!strnicmp(line.gettoken_str(i),"/IMGID=",7)) {
-          ent.offsets[1]=atoi(line.gettoken_str(i)+7);
-          SCRIPT_MSG("/IMGID=%d ",ent.offsets[1]);
+          imgid=atoi(line.gettoken_str(i)+7);
+          ent.set_parm(1,imgid);
+          SCRIPT_MSG("/IMGID=%d ",imgid);
         }
         else if (!stricmp(line.gettoken_str(i),"/RESIZETOFIT")) {
-          ent.offsets[2]=1; // must be 1 or 0
+          ent.set_parm(2,1); // must be 1 or 0
           SCRIPT_MSG("/RESIZETOFIT ");
         }
-        else if (!ent.offsets[0]) {
-          ent.offsets[0]=add_string(line.gettoken_str(i));
+        else if (!image_set) {
+          image_set++;
+          ent.set_parm(0,line.gettoken_str(i));
           SCRIPT_MSG("\"%s\" ", line.gettoken_str(i));
         }
         else {
@@ -5536,11 +5807,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           PRINTHELP();
         }
 
-      if (!ent.offsets[1])
-        ent.offsets[1]=branding_image_id;
+      ent.set_parm(1,imgid);
       SCRIPT_MSG("\n");
+
+      return add_nobj_entry(ent);
     }
-    return add_entry(&ent);
 #else//NSIS_CONFIG_ENHANCEDUI_SUPPORT
     case TOK_SETBRANDINGIMAGE:
       ERROR_MSG("Error: %s specified, NSIS_CONFIG_ENHANCEDUI_SUPPORT not defined.\n",line.gettoken_str(0));
@@ -5663,9 +5934,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       else plugin_used = true;
 
       // Initialize $PLUGINSDIR
-      ent.which=EW_CALL;
-      ent.offsets[0]=ns_func.add(uninstall_mode?"un.Initialize_____Plugins":"Initialize_____Plugins",0);
-      ret=add_entry(&ent);
+      nobj_entry ent(EW_CALL);
+      ent.set_parm(0,ns_func.add(uninstall_mode?"un.Initialize_____Plugins":"Initialize_____Plugins",0));
+      ret=add_nobj_entry(ent);
       if (ret != PS_OK) {
         return ret;
       }
@@ -5697,7 +5968,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
       else
       {
-        ent.which=EW_EXTRACTFILE;
+        nobj_entry ent(EW_EXTRACTFILE);
 
         DefineInnerLangString(NLF_SKIPPED);
         DefineInnerLangString(NLF_ERR_DECOMPRESSING);
@@ -5705,14 +5976,15 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         DefineInnerLangString(NLF_EXTRACT);
         DefineInnerLangString(NLF_CANT_WRITE);
 
-        ent.offsets[0]=1; // overwrite off
-        ent.offsets[0]|=(MB_RETRYCANCEL|MB_ICONSTOP|(IDCANCEL<<21))<<3;
-        ent.offsets[1]=add_string(tempDLL);
-        ent.offsets[2]=data_handle;
-        ent.offsets[3]=0xffffffff;
-        ent.offsets[4]=0xffffffff;
-        ent.offsets[5]=DefineInnerLangString(NLF_FILE_ERROR);
-        ret=add_entry(&ent);
+        int flags=1;// overwrite off
+        flags|=(MB_RETRYCANCEL|MB_ICONSTOP|(IDCANCEL<<21))<<3;
+        ent.set_parm(0,flags);
+        ent.set_parm(1,tempDLL);
+        ent.set_parm(2,data_handle);
+        ent.set_parm(3,0xffffffff);
+        ent.set_parm(4,0xffffffff);
+        ent.set_parm(5,DefineInnerLangString(NLF_FILE_ERROR));
+        ret=add_nobj_entry(ent);
         if (ret != PS_OK) {
           return ret;
         }
@@ -5741,12 +6013,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       int nounloadmisused=0;
       for (; i < line.getnumtokens(); i++) {
         int w=parmst + (line.getnumtokens()-i - 1);
-        ent.which=EW_PUSHPOP;
-        ent.offsets[0]=add_string(line.gettoken_str(w));
+        nobj_entry ent(EW_PUSHPOP);
+        ent.set_parm(0,line.gettoken_str(w));
         if (!strcmpi(line.gettoken_str(w), "/NOUNLOAD")) nounloadmisused=1;
-        ent.offsets[1]=0;
-        ent.offsets[2]=0;
-        ret=add_entry(&ent);
+        ent.set_parm(1,0);
+        ent.set_parm(2,0);
+        ret=add_nobj_entry(ent);
         if (ret != PS_OK) {
           return ret;
         }
@@ -5756,16 +6028,18 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       if (nounloadmisused)
         warning_fl("/NOUNLOAD must come first before any plugin parameter. Unless the plugin you are trying to use has a parameter /NOUNLOAD, you are doing something wrong");
 
-      // next, call it
-      ent.which=EW_REGISTERDLL;
-      ent.offsets[0]=add_string(tempDLL);;
-      ent.offsets[1]=add_string(funcname.c_str());
-      ent.offsets[2]=0;
-      ent.offsets[3]=nounload|build_plugin_unload;
-      ent.offsets[4]=1;
-      ret=add_entry(&ent);
-      if (ret != PS_OK) {
-        return ret;
+      {
+        // next, call it
+        nobj_entry ent(EW_REGISTERDLL);
+        ent.set_parm(0,tempDLL);;
+        ent.set_parm(1,funcname);
+        ent.set_parm(2,0);
+        ent.set_parm(3,nounload|build_plugin_unload);
+        ent.set_parm(4,1);
+        ret=add_nobj_entry(ent);
+        if (ret != PS_OK) {
+          return ret;
+        }
       }
 
       DefineInnerLangString(NLF_SYMBOL_NOT_FOUND);
@@ -5782,9 +6056,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       if (uninstall_mode) uninst_plugin_used = true;
       else plugin_used = true;
       // Call [un.]Initialize_____Plugins
-      ent.which=EW_CALL;
-      ent.offsets[0]=ns_func.add(uninstall_mode?"un.Initialize_____Plugins":"Initialize_____Plugins",0);
-      ret=add_entry(&ent);
+      nobj_entry ent(EW_CALL);
+      ent.set_parm(0,ns_func.add(uninstall_mode?"un.Initialize_____Plugins":"Initialize_____Plugins",0));
+      ret=add_nobj_entry(ent);
       if (ret != PS_OK) return ret;
       // SetDetailsPrint lastused
       ret=add_entry_direct(EW_SETFLAG, FLAG_OFFSET(status_update), 0, 1);
@@ -5803,12 +6077,15 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
 #ifdef NSIS_LOCKWINDOW_SUPPORT
     case TOK_LOCKWINDOW:
+    {
       SCRIPT_MSG("LockWindow: lock state=%d\n",line.gettoken_str(1));
-      ent.which=EW_LOCKWINDOW;
-      ent.offsets[0]=line.gettoken_enum(1,"on\0off\0");
-      if (ent.offsets[0] == -1)
+      nobj_entry ent(EW_LOCKWINDOW);
+      int k=line.gettoken_enum(1,"on\0off\0");
+      ent.set_parm(0,k);
+      if (k < -1)
         PRINTHELP();
-    return add_entry(&ent);
+      return add_nobj_entry(ent);
+    }
 #else
     case TOK_LOCKWINDOW:
     {
