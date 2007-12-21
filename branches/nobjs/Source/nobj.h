@@ -25,7 +25,7 @@
  */
 
 class nobj;
-typedef std::vector<nobj> nobjs;
+typedef std::vector<const nobj*> nobjs;
 typedef nobjs::iterator nobjs_iterator;
 typedef nobjs::const_iterator nobjs_const_iterator;
 
@@ -33,6 +33,12 @@ class nobj
 {
 
 public:
+
+  /**
+   * Deletes everyt dependency.
+   * XXX fix with reference or something better when really used.
+   */
+  virtual ~nobj();
 
   /**
    * Returns an ordered list of nobjs this nobj depends on.
@@ -44,12 +50,12 @@ protected:
   /**
    * Adds a nobj dependency.
    */
-  virtual void add_dependency(const nobj& obj);
+  virtual void add_dependency(const nobj* obj);
 
   /**
    * Sets a nobj dependency in a specific place.
    */
-  virtual void set_dependency(int offset, const nobj& obj);
+  virtual void set_dependency(int offset, const nobj* obj);
 
 private:
 
@@ -69,7 +75,7 @@ public:
   nobj_entry(const int which);
   nobj_entry(const int which, const nobjs& parms);
 
-  void set_parm(int offset, const nobj& parm);
+  void set_parm(int offset, const nobj* parm);
   void set_parm(int offset, const int parm);
   void set_parm(int offset, const char* parm);
 

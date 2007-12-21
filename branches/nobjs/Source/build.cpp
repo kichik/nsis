@@ -1226,7 +1226,7 @@ int CEXEBuild::add_nobj_entry(const nobj_entry& ent)
 
   for (i = 0; i < MAX_ENTRY_OFFSETS - parms.size(); i++)
   {
-    parms.push_back(nobj_int(0));
+    parms.push_back(new nobj_int(0));
   }
 
   entry st_ent;
@@ -1240,17 +1240,18 @@ int CEXEBuild::add_nobj_entry(const nobj_entry& ent)
   return add_entry(&st_ent);
 }
 
-int CEXEBuild::add_nobj_entry_parm(const nobj& parm)
+int CEXEBuild::add_nobj_entry_parm(const nobj* parm)
 {
-  if (typeid(parm) == typeid(nobj_int))
+  const nobj_int* i = dynamic_cast<const nobj_int*>(parm);
+  const nobj_string* str = dynamic_cast<const nobj_string*>(parm);
+
+  if (i)
   {
-    const nobj_int& i = dynamic_cast<const nobj_int&>(parm);
-    return i.get_int();
+    return i->get_int();
   }
-  else if (typeid(parm) == typeid(nobj_string))
+  else if (str)
   {
-    const nobj_string& str = dynamic_cast<const nobj_string&>(parm);
-    return add_string(str.get_string().c_str());
+    return add_string(str->get_string().c_str());
   }
   else
   {
