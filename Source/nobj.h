@@ -18,9 +18,10 @@
 #define ___MAKENSIS_NOBJS_H___
 
 #include <vector>
+#include <string>
 
 /**
- * nobj and nobj list declaration.
+ * nobj and nobj list declaration
  */
 
 class nobj;
@@ -46,6 +47,46 @@ protected:
 private:
 
   nobjs m_dependencies;
+
+};
+
+/**
+ * nobj_string
+ */
+
+class nobj_string : public nobj
+{
+
+public:
+
+  nobj_string(const std::string& str);
+  nobj_string(const char* str);
+  nobj_string(char* str);
+
+  const std::string get_string();
+
+private:
+
+  std::string m_string;
+
+};
+
+/**
+ * nobj_int
+ */
+
+class nobj_int : public nobj
+{
+
+public:
+
+  nobj_int(const int i);
+
+  const int get_int();
+
+private:
+
+  int m_int;
 
 };
 
