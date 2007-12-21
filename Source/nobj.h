@@ -84,7 +84,7 @@ public:
   nobj_string(const char* str);
   nobj_string(char* str);
 
-  const std::string get_string();
+  const std::string get_string() const;
 
 private:
 
@@ -103,7 +103,7 @@ public:
 
   nobj_int(const int i);
 
-  const int get_int();
+  const int get_int() const;
 
 private:
 
