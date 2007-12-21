@@ -17,6 +17,12 @@
 #include "nobj.h"
 #include "Platform.h"
 
+using std::string;
+
+/**
+ * nobj
+ */
+
 const nobjs nobj::dependencies()
 {
   return m_dependencies;
@@ -25,4 +31,38 @@ const nobjs nobj::dependencies()
 void nobj::add_dependency(nobj& obj)
 {
   m_dependencies.push_back(obj);
+}
+
+/**
+ * nobj_string
+ */
+
+nobj_string::nobj_string(const string& str)
+  : m_string(str)
+{}
+
+nobj_string::nobj_string(const char* str)
+  : m_string(str)
+{}
+
+nobj_string::nobj_string(char* str)
+  : m_string(str)
+{}
+
+const string nobj_string::get_string()
+{
+  return m_string;
+}
+
+/**
+ * nobj_int
+ */
+
+nobj_int::nobj_int(const int i)
+  : m_int(i)
+{}
+
+const int nobj_int::get_int()
+{
+  return m_int;
 }
