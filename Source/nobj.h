@@ -26,6 +26,8 @@
 
 class nobj;
 typedef std::vector<nobj> nobjs;
+typedef nobjs::iterator nobjs_iterator;
+typedef nobjs::const_iterator nobjs_const_iterator;
 
 class nobj
 {
@@ -42,11 +44,24 @@ protected:
   /**
    * Adds a nobj dependency.
    */
-  virtual void add_dependency(nobj& obj);
+  virtual void add_dependency(const nobj& obj);
 
 private:
 
   nobjs m_dependencies;
+
+};
+
+/**
+ * nobj_entry
+ */
+
+class nobj_entry : public nobj
+{
+
+public:
+
+  nobj_entry(const nobjs& parms);
 
 };
 

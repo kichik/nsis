@@ -17,7 +17,10 @@
 #include "nobj.h"
 #include "Platform.h"
 
+#include <stdexcept>
+
 using std::string;
+using std::length_error;
 
 /**
  * nobj
@@ -28,9 +31,24 @@ const nobjs nobj::dependencies()
   return m_dependencies;
 }
 
-void nobj::add_dependency(nobj& obj)
+void nobj::add_dependency(const nobj& obj)
 {
   m_dependencies.push_back(obj);
+}
+
+/**
+ * nobj_entry
+ */
+
+nobj_entry::nobj_entry(const nobjs& parms)
+{
+  nobjs_const_iterator i = parms.begin();
+
+  while (i != parms.end())
+  {
+    add_dependency(*i);
+    i++;
+  }
 }
 
 /**
