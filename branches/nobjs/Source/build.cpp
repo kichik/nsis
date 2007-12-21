@@ -1213,6 +1213,52 @@ int CEXEBuild::add_entry_direct(int which, int o0, int o1, int o2, int o3, int o
   return add_entry(&ent);
 }
 
+int CEXEBuild::add_nobj_entry(const nobj_entry& ent)
+{
+  int i;
+  nobjs parms = ent.dependencies();
+
+  if (parms.size() > MAX_ENTRY_OFFSETS)
+  {
+    ERROR_MSG("Error: Can't add entry, too many parameters.\n");
+    return PS_ERROR;
+  }
+
+  for (i = 0; i < MAX_ENTRY_OFFSETS - parms.size(); i++)
+  {
+    parms.push_back(nobj_int(0));
+  }
+
+  entry st_ent;
+  st_ent.which = ent.which();
+
+  for (i = 0; i < MAX_ENTRY_OFFSETS; i++)
+  {
+    st_ent.offsets[i] = add_nobj_entry_parm(parms[i]);
+  }
+
+  return add_entry(&st_ent);
+}
+
+int CEXEBuild::add_nobj_entry_parm(const nobj& parm)
+{
+  if (typeid(parm) == typeid(nobj_int))
+  {
+    const nobj_int& i = dynamic_cast<const nobj_int&>(parm);
+    return i.get_int();
+  }
+  else if (typeid(parm) == typeid(nobj_string))
+  {
+    const nobj_string& str = dynamic_cast<const nobj_string&>(parm);
+    return add_string(str.get_string().c_str());
+  }
+  else
+  {
+    ERROR_MSG("Error: unknown parameter type (internal error).\n");
+    return PS_ERROR;
+  }
+}
+
 int CEXEBuild::resolve_jump_int(const char *fn, int *a, int offs, int start, int end)
 {
   if (*a > 0)
