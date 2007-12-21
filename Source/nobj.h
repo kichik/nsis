@@ -46,6 +46,11 @@ protected:
    */
   virtual void add_dependency(const nobj& obj);
 
+  /**
+   * Sets a nobj dependency in a specific place.
+   */
+  virtual void set_dependency(int offset, const nobj& obj);
+
 private:
 
   nobjs m_dependencies;
@@ -61,7 +66,12 @@ class nobj_entry : public nobj
 
 public:
 
+  nobj_entry(const int which);
   nobj_entry(const int which, const nobjs& parms);
+
+  void set_parm(int offset, const nobj& parm);
+  void set_parm(int offset, const int parm);
+  void set_parm(int offset, const char* parm);
 
   const int which() const;
 
