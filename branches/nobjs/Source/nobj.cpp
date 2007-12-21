@@ -36,9 +36,23 @@ void nobj::add_dependency(const nobj& obj)
   m_dependencies.push_back(obj);
 }
 
+void nobj::set_dependency(int offset, const nobj& obj)
+{
+  if (m_dependencies.size() <= offset)
+  {
+    m_dependencies.resize(offset + 1);
+  }
+
+  m_dependencies[offset] = obj;
+}
+
 /**
  * nobj_entry
  */
+
+nobj_entry::nobj_entry(const int which)
+  : m_which(which)
+{}
 
 nobj_entry::nobj_entry(const int which, const nobjs& parms)
   : m_which(which)
@@ -47,9 +61,24 @@ nobj_entry::nobj_entry(const int which, const nobjs& parms)
 
   while (i != parms.end())
   {
-    add_dependency(*i);
+    nobj::add_dependency(*i);
     i++;
   }
+}
+
+void nobj_entry::set_parm(int offset, const nobj& parm)
+{
+  nobj::set_dependency(offset, parm);
+}
+
+void nobj_entry::set_parm(int offset, const int parm)
+{
+  nobj::set_dependency(offset, nobj_int(parm));
+}
+
+void nobj_entry::set_parm(int offset, const char* parm)
+{
+  nobj::set_dependency(offset, nobj_string(parm));
 }
 
 const int nobj_entry::which() const
