@@ -73,7 +73,7 @@ nobj_string::nobj_string(char* str)
   : m_string(str)
 {}
 
-const string nobj_string::get_string()
+const string nobj_string::get_string() const
 {
   return m_string;
 }
@@ -86,7 +86,7 @@ nobj_int::nobj_int(const int i)
   : m_int(i)
 {}
 
-const int nobj_int::get_int()
+const int nobj_int::get_int() const
 {
   return m_int;
 }
