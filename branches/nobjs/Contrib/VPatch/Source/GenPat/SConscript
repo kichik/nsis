@@ -1,0 +1,20 @@
+target = "GenPat"
+
+files = Split("""
+	adler32.cpp
+	Checksums.cpp
+	ChunkedFile.cpp
+	FileFormat1.cpp
+	GlobalTypes.cpp
+	main.cpp
+	md5.c
+	PatchGenerator.cpp
+	POSIXUtil.cpp
+""")
+
+libs = Split("""
+""")
+
+Import('BuildUtil')
+
+BuildUtil(target, files, libs, flags = ['$EXCEPTION_FLAG'], cross_platform = True)
