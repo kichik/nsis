@@ -97,6 +97,16 @@ void nobj_entry::set_parm(int offset, string& parm)
   nobj::set_dependency(offset, new nobj_string(parm));
 }
 
+void nobj_entry::set_parm_jump(int offset, const char* parm)
+{
+  nobj::set_dependency(offset, new nobj_jump(parm));
+}
+
+void nobj_entry::set_parm_jump(int offset, string& parm)
+{
+  nobj::set_dependency(offset, new nobj_jump(parm));
+}
+
 const int nobj_entry::which() const
 {
   return m_which;
