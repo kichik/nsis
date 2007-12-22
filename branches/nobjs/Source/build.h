@@ -299,6 +299,7 @@ class CEXEBuild {
     int disable_window_icon;
 
     // User variables stuff
+    bool is_valid_user_var(LineParser &line, int token);
     int GetUserVarIndex(const std::string& var_str);
     int GetUserVarIndex(LineParser &line, int token);
     // Added by ramon 3 jun 2003
