@@ -140,7 +140,7 @@ void NSISCALL myDelete(char *buf, int flags)
       trimslashtoend(buf);
 
     // only append backslash if the path isn't relative to the working directory [bug #1851273]
-    if (*buf)
+    if (*buf || *lbuf == '\\')
       mystrcat(buf,"\\");
 
     fn=buf+mystrlen(buf);
