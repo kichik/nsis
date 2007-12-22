@@ -37,7 +37,11 @@ RequestExecutionLevel admin
 ;--------------------------------
 ;Functions
 
-!insertmacro VersionCompare
+!ifdef VER_MAJOR & VER_MINOR & VER_REVISION & VER_BUILD
+
+  !insertmacro VersionCompare
+
+!endif
 
 ;--------------------------------
 ;Definitions
