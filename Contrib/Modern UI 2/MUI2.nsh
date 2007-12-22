@@ -1,18 +1,18 @@
 /*
 
-NSIS Modern User Interface - Version 2.0 beta
+NSIS Modern User Interface - Version 2.0
 Copyright © 2002-2008 Joost Verburg
 
 */
 
-!echo "NSIS Modern User Interface version 2.0 beta - © 2002-2008 Joost Verburg"
+!echo "NSIS Modern User Interface version 2.0 - © 2002-2008 Joost Verburg"
 
 ;--------------------------------
 
 !ifndef MUI_INCLUDED
 !define MUI_INCLUDED
 
-!define MUI_SYSVERSION "2.0beta"
+!define MUI_SYSVERSION "2.0"
 
 !verbose push
 
