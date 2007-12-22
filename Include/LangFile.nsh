@@ -8,7 +8,7 @@ included with a single command.
 When LANGFILE_DEFAULT is set, missing strings will
 automatically be loaded from a default file.
 
-Copyright © 2007 Joost Verburg
+Copyright © 2008 Joost Verburg
 
 */
 
