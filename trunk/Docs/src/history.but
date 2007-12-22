@@ -1,5 +1,63 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.34} 2.34
+
+Released on December 24th, 2007
+
+\S1{v2.34-rl} Release Notes
+
+\b Thanks to user input on \L{../Docs/Modern UI 2/Readme.html}{Modern UI 2}, it is now ready for mass usage. The installer for NSIS itself now exploits the wonders of MUI2 and \L{../Docs/nsDialogs/Readme.html}{nsDialogs} and so should you.
+
+\S1{v2.34-cl} Changelog
+
+\S2{} Major Changes
+
+\b \L{../Docs/Modern UI 2/Readme.html}{Modern UI 2}: Simpler code, easier to extend and makes use of the faster \L{../Docs/nsDialogs/Readme.html}{nsDialogs}
+
+\S2{} Minor Changes
+
+\b Added IfNot support for LogicLib (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1846785}{patch #1846785})
+
+\b Added some deprecation messages in MUI2 (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1784470}{bug #1784470})
+
+\b Allow overwrite of LANGFILE_*_NAME defines in new LangFile.nsh (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1848952}{bug #1848952})
+
+\b Better RTL support in instfiles and components page (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1841573}{bug #1841573})
+
+\b Fixed deletion of files with relative paths, a.k.a the EVE bug (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1851273}{bug #1851273})
+
+\b Fixed input verification of \R{sgetcurinsttype}{GetCurInstType} and \R{getfullpathname}{GetFullPathName}
+
+\b Fixed \R{wordfind}{WordFind} handling of MBCS characters (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1852141}{bug #1852141})
+
+\b Minor documentation improvements (including \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1842326}{bug #1842326})
+
+\b Use CRLF in examples (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1835866}{bug #1835866})
+
+\b Warn of comments containing line-continuation character, only when it really has an effect (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1701051}{bug #1701051}, \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373088&aid=1686589}{RFE #1686589})
+
+\S2{} Utilities and Plug-ins
+
+\b Added missing stack handling in \L{../Docs/nsDialogs/Readme.html}{nsDialogs} examples
+
+\b Added NSD_GetState for checkboxes and radio buttons, NSD_SetFocus, NSD_CreatePassword and NSD_CreateDropList (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1848940}{patch #1848940})
+
+\b Fixed documentation of \L{../Docs/nsDialogs/Readme.html}{nsDialogs}::SelectFolderDialog (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1841120}{bug #1841120})
+
+\b Fixed NSD_CreateComboBox so it'd work like InstallOptions (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1851136}{bug #1851136})
+
+\S2{} Translations
+
+\b Bulgarian updates
+
+\b German fixes
+
+\S2{} Build System
+
+\b Fixed build issues on Mac OS (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1851365}{bug #1851365})
+
+\b Fixed endianity issues introduced in version 2.32 (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1851365}{bug #1851365})
+
 \H{v2.33} 2.33
 
 Released on November 17th, 2007
