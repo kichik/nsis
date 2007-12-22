@@ -1228,7 +1228,15 @@ int CEXEBuild::add_nobj_entry(const nobj_entry& ent)
 
   for (int i = 0; i < parms.size(); i++)
   {
-    st_ent.offsets[i] = add_nobj_entry_parm(parms[i]);
+    try
+    {
+      st_ent.offsets[i] = add_nobj_entry_parm(parms[i]);
+    }
+    catch (const exception& e)
+    {
+      ERROR_MSG("Error: %s\n", e.what());
+      return PS_ERROR;
+    }
   }
 
   return add_entry(&st_ent);
@@ -1238,6 +1246,7 @@ int CEXEBuild::add_nobj_entry_parm(const nobj* parm)
 {
   const nobj_int* i = dynamic_cast<const nobj_int*>(parm);
   const nobj_string* str = dynamic_cast<const nobj_string*>(parm);
+  const nobj_jump* jump = dynamic_cast<const nobj_jump*>(parm);
 
   if (i)
   {
@@ -1248,10 +1257,22 @@ int CEXEBuild::add_nobj_entry_parm(const nobj* parm)
     // TODO handle add_intstring()
     return add_string(str->get_string().c_str());
   }
+  else if (jump)
+  {
+    int jump_offset;
+
+    if (process_jump(jump->get_jump(), &jump_offset))
+    {
+      // TODO catch this somewhere
+      // TODO also need to use PRINTHELP() along the road
+      throw invalid_argument("invalid jump");
+    }
+    
+    return jump_offset;
+  }
   else
   {
-    ERROR_MSG("Error: unknown parameter type (internal error).\n");
-    return PS_ERROR;
+    throw invalid_argument("unknown parameter type (internal error)");
   }
 }
 
@@ -3417,10 +3438,9 @@ int CEXEBuild::DeclaredUserVar(const char *szVarName)
   return PS_OK;
 }
 
-
-int CEXEBuild::GetUserVarIndex(LineParser &line, int token)
+int CEXEBuild::GetUserVarIndex(const string& var_str)
 {
-  char *p = line.gettoken_str(token);
+  const char *p = var_str.c_str();
   if ( *p == '$' && *(p+1) )
   {
     int idxUserVar = m_UserVarNames.get((char *)p+1);
@@ -3439,6 +3459,11 @@ int CEXEBuild::GetUserVarIndex(LineParser &line, int token)
     }
   }
   return -1;
+}
+
+int CEXEBuild::GetUserVarIndex(LineParser &line, int token)
+{
+  return GetUserVarIndex(line.gettoken_str(token));
 }
 
 void CEXEBuild::VerifyDeclaredUserVarRefs(UserVarsStringList *pVarsStringList)

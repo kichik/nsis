@@ -239,8 +239,7 @@ class CEXEBuild {
     // build.cpp functions used mostly within build.cpp
     int datablock_optimize(int start_offset, int first_int);
     void printline(int l);
-    int process_jump(LineParser &line, int wt, int *offs);
-    int process_jump_nobj(LineParser &line, int wt, nobj_entry& ent, int offs);
+    int process_jump(const std::string& jump, int *offs);
 
     int AddVersionInfo();
     int ProcessPages();
@@ -300,6 +299,7 @@ class CEXEBuild {
     int disable_window_icon;
 
     // User variables stuff
+    int GetUserVarIndex(const std::string& var_str);
     int GetUserVarIndex(LineParser &line, int token);
     // Added by ramon 3 jun 2003
     UserVarsStringList m_UserVarNames;
