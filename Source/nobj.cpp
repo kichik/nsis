@@ -135,3 +135,24 @@ const int nobj_int::get_int() const
 {
   return m_int;
 }
+
+/**
+ * nobj_jump
+ */
+
+nobj_jump::nobj_jump(const string& str)
+  : m_jump(str)
+{}
+
+nobj_jump::nobj_jump(const char* str)
+  : m_jump(str)
+{}
+
+nobj_jump::nobj_jump(char* str)
+  : m_jump(str)
+{}
+
+const string nobj_jump::get_jump() const
+{
+  return m_jump;
+}
