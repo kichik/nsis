@@ -342,6 +342,7 @@ ${MementoSection} "Modern User Interface" SecInterfacesModernUI
   File "..\Include\MUI.nsh"
 
   SetOutPath "$INSTDIR\Contrib\Modern UI 2"
+  File "..\Contrib\Modern UI 2\Deprecated.nsh"
   File "..\Contrib\Modern UI 2\Interface.nsh"
   File "..\Contrib\Modern UI 2\Localization.nsh"
   File "..\Contrib\Modern UI 2\MUI2.nsh"
