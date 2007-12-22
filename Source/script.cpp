@@ -870,13 +870,13 @@ int CEXEBuild::process_oneline(char *line, char *filename, int linenum)
   return ret;
 }
 
-int CEXEBuild::process_jump(LineParser &line, int wt, int *offs)
+int CEXEBuild::process_jump(const string& jump, int *offs)
 {
-  const char *s=line.gettoken_str(wt);
+  const char *s=jump.c_str();
   int v;
 
   if (!stricmp(s,"0") || !stricmp(s,"")) *offs=0;
-  else if ((v=GetUserVarIndex(line, wt))>=0)
+  else if ((v=GetUserVarIndex(s))>=0)
   {
     *offs=-v-1; // to jump to a user variable target, -variable_index-1 is stored.
   }
@@ -895,19 +895,6 @@ int CEXEBuild::process_jump(LineParser &line, int wt, int *offs)
     *offs=ns_label.add(s,0);
   }
   return 0;
-}
-
-int CEXEBuild::process_jump_nobj(LineParser &line, int wt, nobj_entry& ent, int offs)
-{
-  int jump_offset;
-  int ret = process_jump(line, wt, &jump_offset);
-  
-  if (!ret)
-  {
-    ent.set_parm(offs, jump_offset);
-  }
-
-  return ret;
 }
 
 #define FLAG_OFFSET(flag) (FIELD_OFFSET(exec_flags, flag)/sizeof(int))
@@ -2047,8 +2034,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_IFSILENT:
     {
       nobj_entry ent(EW_IFFLAG);
-      if (process_jump_nobj(line,1,ent,0) ||
-          process_jump_nobj(line,2,ent,1)) PRINTHELP()
+      ent.set_parm(0,new nobj_jump(line.gettoken_str(1)));
+      ent.set_parm(1,new nobj_jump(line.gettoken_str(2)));
       ent.set_parm(2,FLAG_OFFSET(silent));
       ent.set_parm(3,~0);//new value mask - keep flag
       SCRIPT_MSG("IfSilent ?%s:%s\n",line.gettoken_str(1),line.gettoken_str(2));
@@ -3603,7 +3590,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_GOTO:
     {
       nobj_entry ent(EW_NOP);
-      if (process_jump_nobj(line,1,ent,0)) PRINTHELP()
+      ent.set_parm(0,new nobj_jump(line.gettoken_str(1)));
       SCRIPT_MSG("Goto: %s\n",line.gettoken_str(1));
       return add_nobj_entry(ent);
     }
@@ -3927,16 +3914,14 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             int retid=line.gettoken_enum(a,retstr);
             if (retid < 0) PRINTHELP();
             ent.set_parm(2,rettab[retid]);
-            if (process_jump_nobj(line,a+1,ent,3))
-              PRINTHELP();
+            ent.set_parm(3,new nobj_jump(line.gettoken_str(a+1)));
             if (line.getnumtokens() > a+2)
             {
               int v=line.gettoken_enum(a+2,retstr);
               if (v < 0)
                 PRINTHELP();
               ent.set_parm(4,rettab[v]);
-              if (process_jump_nobj(line,a+3,ent,5))
-                PRINTHELP();
+              ent.set_parm(5,new nobj_jump(line.gettoken_str(a+3)));
             }
           }
         }
@@ -4112,8 +4097,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     {
       nobj_entry ent(EW_ISWINDOW);
       ent.set_parm(0,line.gettoken_str(1));
-      if (process_jump_nobj(line,2,ent,1)||
-          process_jump_nobj(line,3,ent,2)) PRINTHELP()
+      ent.set_parm(1,new nobj_jump(line.gettoken_str(2)));
+      ent.set_parm(2,new nobj_jump(line.gettoken_str(3)));
       SCRIPT_MSG("IsWindow(%s): %s:%s\n",line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3));
       return add_nobj_entry(ent);
     }
@@ -4638,8 +4623,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     {
       nobj_entry ent(EW_IFFILEEXISTS);
       ent.set_parm(0,line.gettoken_str(1));
-      if (process_jump_nobj(line,2,ent,1) ||
-          process_jump_nobj(line,3,ent,2)) PRINTHELP()
+      ent.set_parm(1,new nobj_jump(line.gettoken_str(2)));
+      ent.set_parm(2,new nobj_jump(line.gettoken_str(3)));
       SCRIPT_MSG("IfFileExists: \"%s\" ? %s : %s\n",line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3));
       return add_nobj_entry(ent);
     }
@@ -4700,8 +4685,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_IFERRORS:
     {
       nobj_entry ent(EW_IFFLAG);
-      if (process_jump_nobj(line,1,ent,0) ||
-          process_jump_nobj(line,2,ent,1)) PRINTHELP()
+      ent.set_parm(0,new nobj_jump(line.gettoken_str(1)));
+      ent.set_parm(1,new nobj_jump(line.gettoken_str(2)));
       ent.set_parm(2,FLAG_OFFSET(exec_error));
       ent.set_parm(3,0);//new value mask - clean error
       SCRIPT_MSG("IfErrors ?%s:%s\n",line.gettoken_str(1),line.gettoken_str(2));
@@ -4710,8 +4695,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_IFABORT:
     {
       nobj_entry ent(EW_IFFLAG);
-      if (process_jump_nobj(line,1,ent,0) ||
-          process_jump_nobj(line,2,ent,1)) PRINTHELP()
+      ent.set_parm(0,new nobj_jump(line.gettoken_str(1)));
+      ent.set_parm(1,new nobj_jump(line.gettoken_str(2)));
       ent.set_parm(2,FLAG_OFFSET(abort));
       ent.set_parm(3,~0);//new value mask - keep flag
       SCRIPT_MSG("IfAbort ?%s:%s\n",line.gettoken_str(1),line.gettoken_str(2));
@@ -4792,7 +4777,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       nobj_entry ent(EW_GETLABELADDR);
       int var=GetUserVarIndex(line, 1);
       ent.set_parm(0,var);
-      if (var < 0 || process_jump_nobj(line,2,ent,1)) PRINTHELP()
+      if (var < 0) PRINTHELP();
+      ent.set_parm(1,new nobj_jump(line.gettoken_str(2)));
       ent.set_parm(2,0);
       ent.set_parm(3,0);
       SCRIPT_MSG("GetLabelAddress: %s %s",line.gettoken_str(1),line.gettoken_str(2));
@@ -4820,9 +4806,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       nobj_entry ent(EW_STRCMP);
       ent.set_parm(0,line.gettoken_str(1));
       ent.set_parm(1,line.gettoken_str(2));
+      ent.set_parm(2,new nobj_jump(line.gettoken_str(3)));
+      ent.set_parm(3,new nobj_jump(line.gettoken_str(4)));
       ent.set_parm(4,which_token == TOK_STRCMPS);
-      if (process_jump_nobj(line,3,ent,2) ||
-          process_jump_nobj(line,4,ent,3)) PRINTHELP()
       SCRIPT_MSG("%s \"%s\" \"%s\" equal=%s, nonequal=%s\n",line.gettoken_str(0),line.gettoken_str(1),line.gettoken_str(2), line.gettoken_str(3),line.gettoken_str(4));
       return add_nobj_entry(ent);
     }
@@ -5118,10 +5104,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       nobj_entry ent(EW_INTCMP);
       ent.set_parm(0,line.gettoken_str(1));
       ent.set_parm(1,line.gettoken_str(2));
+      ent.set_parm(2,new nobj_jump(line.gettoken_str(3)));
+      ent.set_parm(3,new nobj_jump(line.gettoken_str(4)));
+      ent.set_parm(4,new nobj_jump(line.gettoken_str(5)));
       ent.set_parm(5,which_token == TOK_INTCMPU);
-      if (process_jump_nobj(line,3,ent,2) ||
-          process_jump_nobj(line,4,ent,3) ||
-          process_jump_nobj(line,5,ent,4))  PRINTHELP()
       SCRIPT_MSG("%s %s:%s equal=%s, < %s, > %s\n",line.gettoken_str(0),
         line.gettoken_str(1),line.gettoken_str(2), line.gettoken_str(3),line.gettoken_str(4),line.gettoken_str(5));
       return add_nobj_entry(ent);
@@ -5588,8 +5574,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_IFREBOOTFLAG:
     {
       nobj_entry ent(EW_IFFLAG);
-      if (process_jump_nobj(line,1,ent,0) ||
-          process_jump_nobj(line,2,ent,1)) PRINTHELP()
+      ent.set_parm(0,new nobj_jump(line.gettoken_str(1)));
+      ent.set_parm(1,new nobj_jump(line.gettoken_str(2)));
       ent.set_parm(2,FLAG_OFFSET(exec_reboot));
       ent.set_parm(3,~0);//new value mask - keep flag
       SCRIPT_MSG("IfRebootFlag ?%s:%s\n",line.gettoken_str(1),line.gettoken_str(2));
