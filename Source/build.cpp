@@ -1247,6 +1247,7 @@ int CEXEBuild::add_nobj_entry_parm(const nobj* parm)
   const nobj_int* i = dynamic_cast<const nobj_int*>(parm);
   const nobj_string* str = dynamic_cast<const nobj_string*>(parm);
   const nobj_jump* jump = dynamic_cast<const nobj_jump*>(parm);
+  const nobj_var* var = dynamic_cast<const nobj_var*>(parm);
 
   if (i)
   {
@@ -1270,10 +1271,21 @@ int CEXEBuild::add_nobj_entry_parm(const nobj* parm)
     
     return jump_offset;
   }
+  else if (var)
+  {
+    int v = GetUserVarIndex(var->get_var());
+
+    if (v < 0)
+    {
+      throw invalid_argument("invalid variable");
+    }
+  }
   else
   {
     throw invalid_argument("unknown parameter type (internal error)");
   }
+
+  return 0; // never reached
 }
 
 int CEXEBuild::resolve_jump_int(const char *fn, int *a, int offs, int start, int end)
@@ -3436,6 +3448,28 @@ int CEXEBuild::DeclaredUserVar(const char *szVarName)
     return PS_ERROR;
   }
   return PS_OK;
+}
+
+bool CEXEBuild::is_valid_user_var(LineParser &line, int token)
+{
+  const char *p = line.gettoken_str(token);
+  if ( *p == '$' && *(p+1) )
+  {
+    int idxUserVar = m_UserVarNames.get((char *)p+1);
+    if (idxUserVar >= 0 && m_UserVarNames.get_reference(idxUserVar) >= 0)
+    {
+      return true;
+    }
+    else
+    {
+      int idxConst = m_ShellConstants.get((char *)p+1);
+      if (idxConst >= 0)
+      {
+        ERROR_MSG("Error: cannot change constants : %s\n", p);
+      }
+    }
+  }
+  return false;
 }
 
 int CEXEBuild::GetUserVarIndex(const string& var_str)

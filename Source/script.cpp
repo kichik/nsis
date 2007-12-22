@@ -1715,7 +1715,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_GETINSTDIRERROR:
     {
       nobj_entry ent(EW_GETFLAG);
-      ent.set_parm(0, GetUserVarIndex(line, 1));
+      if (!is_valid_user_var(line, 1)) PRINTHELP();
+      ent.set_parm_var(0, line.gettoken_str(1));
       ent.set_parm(1, FLAG_OFFSET(instdir_error));
       return add_nobj_entry(ent);
     }
@@ -3631,7 +3632,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       if (!line.gettoken_str(1)[0] || (line.gettoken_str(1)[0]==':' && !line.gettoken_str(1)[1] )) PRINTHELP()
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
       if (uninstall_mode && strnicmp(line.gettoken_str(1),"un.",3)
-          && (GetUserVarIndex(line,1) < 0) && line.gettoken_str(1)[0]!=':')
+          && (!is_valid_user_var(line,1)) && line.gettoken_str(1)[0]!=':')
       {
         ERROR_MSG("Call must be used with function names starting with \"un.\" in the uninstall section.\n");
         PRINTHELP()
@@ -3646,6 +3647,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.set_parm(1,0);
       {
         int v;
+        // TODO this should become nobj_var somehow
         if ((v=GetUserVarIndex(line, 1))>=0)
         {
           ent.set_parm(0,-v-2);
@@ -3709,10 +3711,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.set_parm(2,0);
       if (which_token == TOK_EXECWAIT)
       {
-        int var=GetUserVarIndex(line, 2);
         ent.set_parm(2,1);
-        ent.set_parm(1,var);
-        if (line.gettoken_str(2)[0] && var<0) PRINTHELP()
+        ent.set_parm_var(1,line.gettoken_str(2));
+        if (line.gettoken_str(2)[0] && !is_valid_user_var(line,2)) PRINTHELP();
       }
       SCRIPT_MSG("%s: \"%s\" (->%s)\n",which_token == TOK_EXECWAIT?"ExecWait":"Exec",line.gettoken_str(1),line.gettoken_str(2));
 
@@ -4025,9 +4026,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_FINDWINDOW:
     {
       nobj_entry ent(EW_FINDWINDOW);
-      int var=GetUserVarIndex(line, 1);
-      ent.set_parm(0,var);
-      if (var < 0) PRINTHELP()
+      if (!is_valid_user_var(line, 1)) PRINTHELP();
+      ent.set_parm_var(0,line.gettoken_str(1));
       ent.set_parm(1,line.gettoken_str(2));
       ent.set_parm(2,line.gettoken_str(3));
       ent.set_parm(3,line.gettoken_str(4));
@@ -4051,9 +4051,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       SCRIPT_MSG("SendMessage:");
       {
         int a=5;
-        int var=GetUserVarIndex(line, 5);
-        ent.set_parm(0,var);
-        if (var>=0)
+        ent.set_parm_var(0,line.gettoken_str(5));
+        if (is_valid_user_var(line,5))
         {
           SCRIPT_MSG("(->%s)",line.gettoken_str(5));
           a++;
@@ -4106,9 +4105,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_GETDLGITEM:
     {
       nobj_entry ent(EW_GETDLGITEM);
-      int var=GetUserVarIndex(line, 1);
-      ent.set_parm(0,var);
-      if (var<0) PRINTHELP();
+      if (!is_valid_user_var(line, 1)) PRINTHELP();
+      ent.set_parm_var(0,line.gettoken_str(1));
       ent.set_parm(1,line.gettoken_str(2));
       ent.set_parm(2,line.gettoken_str(3));
       SCRIPT_MSG("GetDlgItem: output=%s dialog=%s item=%s\n",line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3));
@@ -4196,7 +4194,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_CREATEFONT:
     {
       nobj_entry ent(EW_CREATEFONT);
-      ent.set_parm(0,GetUserVarIndex(line, 1));
+      if (!is_valid_user_var(line, 1)) PRINTHELP();
+      ent.set_parm_var(0,line.gettoken_str(1));
       ent.set_parm(1,line.gettoken_str(2));
       SCRIPT_MSG("CreateFont: output=%s \"%s\"",line.gettoken_str(1),line.gettoken_str(2));
       {
@@ -4729,10 +4728,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_GETERRORLEVEL:
     {
       nobj_entry ent(EW_GETFLAG);
-      int var=GetUserVarIndex(line, 1);
-      ent.set_parm(0,var);
+      if (!is_valid_user_var(line, 1)) PRINTHELP();
+      ent.set_parm_var(0,line.gettoken_str(1));
       ent.set_parm(1,FLAG_OFFSET(errlvl));
-      if (line.gettoken_str(1)[0] && var<0) PRINTHELP()
       SCRIPT_MSG("GetErrorLevel: %s\n",line.gettoken_str(1));
       return add_nobj_entry(ent);
     }
@@ -4740,44 +4738,40 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_STRLEN:
     {
       nobj_entry ent(EW_STRLEN);
-      int var=GetUserVarIndex(line, 1);
-      ent.set_parm(0,var);
+      if (!is_valid_user_var(line, 1)) PRINTHELP();
+      ent.set_parm_var(0,line.gettoken_str(1));
       ent.set_parm(1,line.gettoken_str(2));
-      if (var < 0) PRINTHELP()
       SCRIPT_MSG("StrLen %s \"%s\"\n",line.gettoken_str(1),line.gettoken_str(2));
       return add_nobj_entry(ent);
     }
     case TOK_STRCPY:
     {
       nobj_entry ent(EW_ASSIGNVAR);
-      int var=GetUserVarIndex(line, 1);
-      ent.set_parm(0,var);
+      if (!is_valid_user_var(line, 1)) PRINTHELP();
+      ent.set_parm_var(0,line.gettoken_str(1));
       ent.set_parm(1,line.gettoken_str(2));
       ent.set_parm(2,line.gettoken_str(3));
       ent.set_parm(3,line.gettoken_str(4));
 
-      if (var < 0) PRINTHELP()
       SCRIPT_MSG("StrCpy %s \"%s\" (%s) (%s)\n",line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(4));
       return add_nobj_entry(ent);
     }
     case TOK_GETFUNCTIONADDR:
     {
       nobj_entry ent(EW_GETFUNCTIONADDR);
-      int var=GetUserVarIndex(line, 1);
-      ent.set_parm(0,var);
+      if (!is_valid_user_var(line, 1)) PRINTHELP();
+      ent.set_parm_var(0,line.gettoken_str(1));
       ent.set_parm(1,ns_func.add(line.gettoken_str(2),0));
       ent.set_parm(2,0);
       ent.set_parm(3,0);
-      if (var < 0) PRINTHELP()
       SCRIPT_MSG("GetFunctionAddress: %s %s",line.gettoken_str(1),line.gettoken_str(2));
       return add_nobj_entry(ent);
     }
     case TOK_GETLABELADDR:
     {
       nobj_entry ent(EW_GETLABELADDR);
-      int var=GetUserVarIndex(line, 1);
-      ent.set_parm(0,var);
-      if (var < 0) PRINTHELP();
+      if (!is_valid_user_var(line, 1)) PRINTHELP();
+      ent.set_parm_var(0,line.gettoken_str(1));
       ent.set_parm_jump(1,line.gettoken_str(2));
       ent.set_parm(2,0);
       ent.set_parm(3,0);
@@ -4787,14 +4781,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_GETCURRENTADDR:
     {
       nobj_entry ent(EW_ASSIGNVAR);
-      int var=GetUserVarIndex(line, 1);
-      ent.set_parm(0,var);
+      if (!is_valid_user_var(line, 1)) PRINTHELP();
+      ent.set_parm_var(0,line.gettoken_str(1));
       {
         char buf[32];
         wsprintf(buf,"%d",1+(cur_header->blocks[NB_ENTRIES].num));
         ent.set_parm(1,buf);
       }
-      if (var < 0) PRINTHELP()
       ent.set_parm(2,0);
       ent.set_parm(3,0);
       SCRIPT_MSG("GetCurrentAddress: %s",line.gettoken_str(1));
@@ -4821,20 +4814,18 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           return PS_ERROR;
         }
         nobj_entry ent(EW_ASSIGNVAR);
-        int var=GetUserVarIndex(line, 2);
-        ent.set_parm(0,var);
+        if (!is_valid_user_var(line, 2)) PRINTHELP();
+        ent.set_parm_var(0,line.gettoken_str(2));
         ent.set_parm(1,add_intstring(high));
         ent.set_parm(2,0);
         ent.set_parm(3,0);
-        if (var<0) PRINTHELP()
         add_nobj_entry(ent);
 
-        var=GetUserVarIndex(line, 3);
-        ent.set_parm(0,var);
+        if (!is_valid_user_var(line, 3)) PRINTHELP();
+        ent.set_parm_var(0,line.gettoken_str(3));
         ent.set_parm(1,add_intstring(low));
         ent.set_parm(2,0);
         ent.set_parm(3,0);
-        if (var<0) PRINTHELP()
         SCRIPT_MSG("GetDLLVersionLocal: %s (%u,%u)->(%s,%s)\n",
           line.gettoken_str(1),high,low,line.gettoken_str(2),line.gettoken_str(3));
 
@@ -4879,22 +4870,20 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #endif
 
         nobj_entry ent(EW_ASSIGNVAR);
-        int var=GetUserVarIndex(line, 2);
-        ent.set_parm(0,var);
+        if (!is_valid_user_var(line, 2)) PRINTHELP();
+        ent.set_parm_var(0,line.gettoken_str(2));
         wsprintf(buf,"%u",high);
         ent.set_parm(1,buf);
         ent.set_parm(2,0);
         ent.set_parm(3,0);
-        if (var<0) PRINTHELP()
         add_nobj_entry(ent);
 
-        var=GetUserVarIndex(line, 3);
-        ent.set_parm(0,var);
+        if (!is_valid_user_var(line, 3)) PRINTHELP();
+        ent.set_parm(0,line.gettoken_str(3));
         wsprintf(buf,"%u",low);
         ent.set_parm(1,buf);
         ent.set_parm(2,0);
         ent.set_parm(3,0);
-        if (var<0) PRINTHELP()
         SCRIPT_MSG("GetFileTimeLocal: %s (%u,%u)->(%s,%s)\n",
           line.gettoken_str(1),high,low,line.gettoken_str(2),line.gettoken_str(3));
 
@@ -4958,9 +4947,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_READINISTR:
     {
       nobj_entry ent(EW_READINISTR);
-      int var=GetUserVarIndex(line, 1);
-      ent.set_parm(0,var);
-      if (var < 0) PRINTHELP()
+      if (!is_valid_user_var(line, 1)) PRINTHELP();
+      ent.set_parm_var(0,line.gettoken_str(1));
       ent.set_parm(1,line.gettoken_str(3));
       ent.set_parm(2,line.gettoken_str(4));
       ent.set_parm(3,line.gettoken_str(2));
@@ -4988,13 +4976,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_GETTEMPFILENAME:
     {
       nobj_entry ent(EW_GETTEMPFILENAME);
-      int var=GetUserVarIndex(line, 1);
-      ent.set_parm(0,var);
+      if (!is_valid_user_var(line, 1)) PRINTHELP();
+      ent.set_parm_var(0,line.gettoken_str(1));
       if (line.getnumtokens() == 3)
         ent.set_parm(1,line.gettoken_str(2));
       else
         ent.set_parm(1,"$TEMP");
-      if (var<0) PRINTHELP()
       SCRIPT_MSG("GetTempFileName -> %s\n",line.gettoken_str(1));
       return add_nobj_entry(ent);
     }
@@ -5005,10 +4992,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (line.getnumtokens()==4 && !stricmp(line.gettoken_str(1),"/SHORT")) a++;
         else if (line.getnumtokens()==4 || *line.gettoken_str(1)=='/') PRINTHELP()
         ent.set_parm(0,line.gettoken_str(2+a));
-        int var=GetUserVarIndex(line, 1+a);
-        ent.set_parm(1,var);
+        if (!is_valid_user_var(line, 1+a)) PRINTHELP();
+        ent.set_parm_var(1,line.gettoken_str(1+a));
         ent.set_parm(2,!a);
-        if (var<0) PRINTHELP()
         SCRIPT_MSG("GetFullPathName: %s->%s (%d)\n",
           line.gettoken_str(2+a),line.gettoken_str(1+a),a?"sfn":"lfn");
 
@@ -5017,9 +5003,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_SEARCHPATH:
     {
       nobj_entry ent(EW_SEARCHPATH);
-      int var=GetUserVarIndex(line, 1);
-      ent.set_parm(0,var);
-      if (var < 0) PRINTHELP()
+      if (!is_valid_user_var(line, 1)) PRINTHELP();
+      ent.set_parm_var(0,line.gettoken_str(1));
       ent.set_parm(1,line.gettoken_str(2));
       SCRIPT_MSG("SearchPath %s %s\n",line.gettoken_str(1),line.gettoken_str(2));
       return add_nobj_entry(ent);
@@ -5035,12 +5020,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #ifdef NSIS_SUPPORT_GETDLLVERSION
     {
       nobj_entry ent(EW_GETDLLVERSION);
-      int var1=GetUserVarIndex(line, 2);
-      int var2=GetUserVarIndex(line, 3);
-      ent.set_parm(0,var1);
-      ent.set_parm(1,var2);
+      if (!is_valid_user_var(line, 2)) PRINTHELP();
+      if (!is_valid_user_var(line, 3)) PRINTHELP();
+      ent.set_parm_var(0,line.gettoken_str(2));
+      ent.set_parm_var(1,line.gettoken_str(3));
       ent.set_parm(2,line.gettoken_str(1));
-      if (var1<0 || var2<0) PRINTHELP()
       SCRIPT_MSG("GetDLLVersion: %s->%s,%s\n",
         line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3));
       return add_nobj_entry(ent);
@@ -5053,12 +5037,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #ifdef NSIS_SUPPORT_GETFILETIME
     {
       nobj_entry ent(EW_GETFILETIME);
-      int var1=GetUserVarIndex(line, 2);
-      int var2=GetUserVarIndex(line, 3);
-      ent.set_parm(0,var1);
-      ent.set_parm(1,var2);
+      if (!is_valid_user_var(line, 2)) PRINTHELP();
+      if (!is_valid_user_var(line, 3)) PRINTHELP();
+      ent.set_parm_var(0,line.gettoken_str(2));
+      ent.set_parm_var(1,line.gettoken_str(3));
       ent.set_parm(2,line.gettoken_str(1));
-      if (var1<0 || var2<0) PRINTHELP()
       SCRIPT_MSG("GetFileTime: %s->%s,%s\n",
         line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3));
       return add_nobj_entry(ent);
@@ -5071,11 +5054,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_INTOP:
     {
       nobj_entry ent(EW_INTOP);
-      int var=GetUserVarIndex(line, 1);
-      ent.set_parm(0,var);
+      ent.set_parm_var(0,line.gettoken_str(1));
       int k=line.gettoken_enum(3,"+\0-\0*\0/\0|\0&\0^\0!\0||\0&&\0%\0<<\0>>\0~\0");
       ent.set_parm(3,k);
-      if (var < 0 || k < 0 ||
+      if (!is_valid_user_var(line, 1) || k < 0 ||
         ((k == 7 || k == 13) && line.getnumtokens() > 4))
         PRINTHELP()
       ent.set_parm(1,line.gettoken_str(2));
@@ -5090,9 +5072,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_INTFMT:
     {
       nobj_entry ent(EW_INTFMT);
-      int var=GetUserVarIndex(line, 1);
-      ent.set_parm(0,var);
-      if (var<0) PRINTHELP()
+      if (!is_valid_user_var(line, 1)) PRINTHELP();
+      ent.set_parm_var(0,line.gettoken_str(1));
       ent.set_parm(1,line.gettoken_str(2));
       ent.set_parm(2,line.gettoken_str(3));
       SCRIPT_MSG("IntFmt: %s->%s (fmt:%s)\n",line.gettoken_str(3),line.gettoken_str(1),line.gettoken_str(2));
@@ -5125,11 +5106,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_READREGDWORD:
       {
         nobj_entry ent(EW_READREGSTR);
-        int var=GetUserVarIndex(line, 1);
-        ent.set_parm(0,var);
+        if (!is_valid_user_var(line, 1)) PRINTHELP();
+        ent.set_parm_var(0,line.gettoken_str(1));
         int k=line.gettoken_enum(2,rootkeys[0]);
         if (k == -1) k=line.gettoken_enum(2,rootkeys[1]);
-        if (var < 0 || k < 0) PRINTHELP();
+        if (k < 0) PRINTHELP();
         ent.set_parm(1,(int)rootkey_tab[k]);
         ent.set_parm(2,line.gettoken_str(3));
         ent.set_parm(3,line.gettoken_str(4));
@@ -5254,11 +5235,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_ENUMREGVAL:
       {
         nobj_entry ent(EW_REGENUM);
-        int var=GetUserVarIndex(line, 1);
-        ent.set_parm(0,var);
+        if (!is_valid_user_var(line, 1)) PRINTHELP();
+        ent.set_parm_var(0,line.gettoken_str(1));
         int k=line.gettoken_enum(2,rootkeys[0]);
         if (k < 0) k=line.gettoken_enum(2,rootkeys[1]);
-        if (var < 0 || k < 0) PRINTHELP()
+        if (k < 0) PRINTHELP()
         ent.set_parm(1,(int)rootkey_tab[k]);
         ent.set_parm(2,line.gettoken_str(3));
         ent.set_parm(3,line.gettoken_str(4));
@@ -5286,15 +5267,14 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_EXCH:
       {
         int swapitem=1;
-        int save=GetUserVarIndex(line, 1);
         nobj_entry ent(EW_PUSHPOP);
-        if (line.gettoken_str(1)[0] && save<0)
+        if (line.gettoken_str(1)[0] && !is_valid_user_var(line, 1))
         {
           int s=0;
           swapitem=line.gettoken_int(1,&s);
           if (!s || swapitem <= 0) PRINTHELP()
         }
-        if (save>=0)
+        if (is_valid_user_var(line, 1))
         {
           SCRIPT_MSG("Exch(%s,0)\n",line.gettoken_str(1));
           ent.set_parm(0,line.gettoken_str(1));
@@ -5308,10 +5288,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         ent.set_parm(1,0);
         ent.set_parm(2,swapitem);
 
-        if (save>=0)
+        if (is_valid_user_var(line, 1))
         {
           add_nobj_entry(ent);
-          ent.set_parm(0,save);
+          ent.set_parm_var(0,line.gettoken_str(1));
           ent.set_parm(1,1);
           ent.set_parm(2,0);
         }
@@ -5331,10 +5311,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_POP:
     {
       nobj_entry ent(EW_PUSHPOP);
-      int var=GetUserVarIndex(line, 1);
-      ent.set_parm(0,var);
+      if (!is_valid_user_var(line, 1)) PRINTHELP();
+      ent.set_parm_var(0,line.gettoken_str(1));
       ent.set_parm(1,1);
-      if (var < 0) PRINTHELP()
       SCRIPT_MSG("Pop: %s\n",line.gettoken_str(1));
       return add_nobj_entry(ent);
     }
@@ -5349,15 +5328,15 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_READENVSTR:
     {
       nobj_entry ent(EW_READENVSTR);
-      int var=GetUserVarIndex(line, 1);
-      ent.set_parm(0,var);
+      if (!is_valid_user_var(line, 1)) PRINTHELP();
+      ent.set_parm_var(0,line.gettoken_str(1));
       {
         char str[NSIS_MAX_STRLEN];
         strcpy(str, "%");
         strcat(str, line.gettoken_str(2));
         strcat(str, "%");
         ent.set_parm(1,str);
-        if (var < 0 || strlen(line.gettoken_str(2))<1) PRINTHELP()
+        if (strlen(line.gettoken_str(2))<1) PRINTHELP()
       }
       ent.set_parm(2,1);
       SCRIPT_MSG("ReadEnvStr: %s->%s\n",line.gettoken_str(2),line.gettoken_str(1));
@@ -5366,11 +5345,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_EXPANDENVSTRS:
     {
       nobj_entry ent(EW_READENVSTR);
-      int var=GetUserVarIndex(line, 1);
-      ent.set_parm(0,var);
+      if (!is_valid_user_var(line, 1)) PRINTHELP();
+      ent.set_parm_var(0,line.gettoken_str(1));
       ent.set_parm(1,line.gettoken_str(2));
       ent.set_parm(2,0);
-      if (var < 0) PRINTHELP()
       SCRIPT_MSG("ExpandEnvStrings: %s->%s\n",line.gettoken_str(2),line.gettoken_str(1));
       return add_nobj_entry(ent);
     }
@@ -5384,32 +5362,29 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_FINDFIRST:
     {
       nobj_entry ent(EW_FINDFIRST);
-      int var1=GetUserVarIndex(line, 2);
-      int var2=GetUserVarIndex(line, 1);
-      ent.set_parm(0,var1); // out
-      ent.set_parm(1,var2); // handleout
+      if (!is_valid_user_var(line, 1)) PRINTHELP();
+      if (!is_valid_user_var(line, 2)) PRINTHELP();
+      ent.set_parm_var(0,line.gettoken_str(2)); // out
+      ent.set_parm_var(1,line.gettoken_str(1)); // handleout
       ent.set_parm(2,line.gettoken_str(3)); // filespec
-      if (var1 < 0 || var2 < 0) PRINTHELP()
       SCRIPT_MSG("FindFirst: spec=\"%s\" handle=%s output=%s\n",line.gettoken_str(3),line.gettoken_str(1),line.gettoken_str(2));
       return add_nobj_entry(ent);
     }
     case TOK_FINDNEXT:
     {
       nobj_entry ent(EW_FINDNEXT);
-      int var1=GetUserVarIndex(line, 2);
-      int var2=GetUserVarIndex(line, 1);
-      ent.set_parm(0,var1);
-      ent.set_parm(1,var2);
-      if (var1 < 0 || var2 < 0) PRINTHELP()
+      if (!is_valid_user_var(line, 1)) PRINTHELP();
+      if (!is_valid_user_var(line, 2)) PRINTHELP();
+      ent.set_parm_var(0,line.gettoken_str(2));
+      ent.set_parm_var(1,line.gettoken_str(1));
       SCRIPT_MSG("FindNext: handle=%s output=%s\n",line.gettoken_str(1),line.gettoken_str(2));
       return add_nobj_entry(ent);
     }
     case TOK_FINDCLOSE:
     {
       nobj_entry ent(EW_FINDCLOSE);
-      int var=GetUserVarIndex(line, 1);
-      ent.set_parm(0,var);
-      if (var < 0) PRINTHELP()
+      if (!is_valid_user_var(line, 1)) PRINTHELP();
+      ent.set_parm_var(0,line.gettoken_str(1));
       SCRIPT_MSG("FindClose: %s\n",line.gettoken_str(1));
       return add_nobj_entry(ent);
     }
@@ -5427,9 +5402,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_FILEOPEN:
       {
         nobj_entry ent(EW_FOPEN);
-        int var=GetUserVarIndex(line, 1);
+        if (!is_valid_user_var(line, 1)) PRINTHELP();
+        ent.set_parm_var(0,line.gettoken_str(1)); // file handle
         int mode=0;
-        ent.set_parm(0,var); // file handle
         ent.set_parm(3,line.gettoken_str(2));
         if (!stricmp(line.gettoken_str(3),"r"))
         {
@@ -5451,8 +5426,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           PRINTHELP();
         }
 
-        if (var < 0) PRINTHELP();
-
         SCRIPT_MSG("FileOpen: %s as %s -> %s\n",line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(1));
 
         return add_nobj_entry(ent);
@@ -5460,58 +5433,53 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_FILECLOSE:
     {
       nobj_entry ent(EW_FCLOSE);
-      int var=GetUserVarIndex(line, 1);
-      ent.set_parm(0,var); // file handle
-      if (var < 0) PRINTHELP()
+      if (!is_valid_user_var(line, 1)) PRINTHELP();
+      ent.set_parm_var(0,line.gettoken_str(1)); // file handle
       SCRIPT_MSG("FileClose: %s\n",line.gettoken_str(1));
       return add_nobj_entry(ent);
     }
     case TOK_FILEREAD:
     {
       nobj_entry ent(EW_FGETS);
-      int var1=GetUserVarIndex(line, 1);
-      int var2=GetUserVarIndex(line, 2);
-      ent.set_parm(0,var1); // file handle
-      ent.set_parm(1,var2); // output string
+      if (!is_valid_user_var(line, 1)) PRINTHELP();
+      if (!is_valid_user_var(line, 2)) PRINTHELP();
+      ent.set_parm_var(0,line.gettoken_str(1)); // file handle
+      ent.set_parm_var(1,line.gettoken_str(2)); // output string
       if (line.gettoken_str(3)[0])
         ent.set_parm(2,line.gettoken_str(3));
       else
         ent.set_parm(2,add_intstring(NSIS_MAX_STRLEN-1));
-      if (var1<0 || var2<0) PRINTHELP()
       SCRIPT_MSG("FileRead: %s->%s (max:%s)\n",line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3));
       return add_nobj_entry(ent);
     }
     case TOK_FILEWRITE:
     {
       nobj_entry ent(EW_FPUTS);
-      int var=GetUserVarIndex(line, 1);
-      ent.set_parm(0,var); // file handle
+      if (!is_valid_user_var(line, 1)) PRINTHELP();
+      ent.set_parm_var(0,line.gettoken_str(1)); // file handle
       ent.set_parm(1,line.gettoken_str(2));
-      if (var<0) PRINTHELP()
       SCRIPT_MSG("FileWrite: %s->%s\n",line.gettoken_str(2),line.gettoken_str(1));
       return add_nobj_entry(ent);
     }
     case TOK_FILEREADBYTE:
     {
       nobj_entry ent(EW_FGETS);
-      int var1=GetUserVarIndex(line, 1);
-      int var2=GetUserVarIndex(line, 2);
-      ent.set_parm(0,var1); // file handle
-      ent.set_parm(1,var2); // output string
+      if (!is_valid_user_var(line, 1)) PRINTHELP();
+      if (!is_valid_user_var(line, 2)) PRINTHELP();
+      ent.set_parm_var(0,line.gettoken_str(1)); // file handle
+      ent.set_parm_var(1,line.gettoken_str(2)); // output string
       ent.set_parm(2,"1");
       ent.set_parm(3,1);
-      if (var1<0 || var2<0) PRINTHELP()
       SCRIPT_MSG("FileReadByte: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
       return add_nobj_entry(ent);
     }
     case TOK_FILEWRITEBYTE:
     {
       nobj_entry ent(EW_FPUTS);
-      int var=GetUserVarIndex(line, 1);
-      ent.set_parm(0,var); // file handle
+      if (!is_valid_user_var(line, 1)) PRINTHELP();
+      ent.set_parm_var(0,line.gettoken_str(1)); // file handle
       ent.set_parm(1,line.gettoken_str(2));
       ent.set_parm(2,1);
-      if (var<0) PRINTHELP()
       SCRIPT_MSG("FileWriteByte: %s->%s\n",line.gettoken_str(2),line.gettoken_str(1));
       return add_nobj_entry(ent);
     }
@@ -5521,10 +5489,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         int tab[3]={FILE_BEGIN,FILE_CURRENT,FILE_END};
         int mode=line.gettoken_enum(3,"SET\0CUR\0END\0");
         nobj_entry ent(EW_FSEEK);
-        int var1=GetUserVarIndex(line, 1);
-        int var2=GetUserVarIndex(line, 4);
-        ent.set_parm(0,var1);
-        ent.set_parm(1,var2);
+        ent.set_parm_var(0,line.gettoken_str(1));
+        ent.set_parm_var(1,line.gettoken_str(4));
         ent.set_parm(2,line.gettoken_str(2));
 
         if (mode<0 && !line.gettoken_str(3)[0])
@@ -5534,7 +5500,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
         else modestr=line.gettoken_str(3);
 
-        if (mode<0 || var1 < 0 || (var2<0 && line.gettoken_str(4)[0])) PRINTHELP()
+        if (mode<0 || !is_valid_user_var(line, 1) || (!is_valid_user_var(line, 4) && line.gettoken_str(4)[0])) PRINTHELP();
         ent.set_parm(3,tab[mode]);
         SCRIPT_MSG("FileSeek: fp=%s, ofs=%s, mode=%s, output=%s\n",
           line.gettoken_str(1),
@@ -5638,10 +5604,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     {
       nobj_entry ent(EW_SECTIONSET);
       ent.set_parm(0,line.gettoken_str(1));
-      int var=GetUserVarIndex(line, 2);
-      ent.set_parm(1,var);
+      if (!is_valid_user_var(line, 2)) PRINTHELP();
+      ent.set_parm_var(1,line.gettoken_str(2));
       ent.set_parm(2,(int)SECTION_FIELD_GET(name_ptr));
-      if (line.gettoken_str(2)[0] && var<0) PRINTHELP()
       SCRIPT_MSG("SectionGetText: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
       return add_nobj_entry(ent);
     }
@@ -5659,10 +5624,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     {
       nobj_entry ent(EW_SECTIONSET);
       ent.set_parm(0,line.gettoken_str(1));
-      int var=GetUserVarIndex(line, 2);
-      ent.set_parm(1,var);
+      if (!is_valid_user_var(line, 2)) PRINTHELP();
+      ent.set_parm_var(1,line.gettoken_str(2));
       ent.set_parm(2,SECTION_FIELD_GET(flags));
-      if (line.gettoken_str(2)[0] && var<0) PRINTHELP()
       SCRIPT_MSG("SectionGetFlags: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
       return add_nobj_entry(ent);
     }
@@ -5679,10 +5643,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     {
       nobj_entry ent(EW_INSTTYPESET);
       ent.set_parm(0,line.gettoken_str(1));
-      int var=GetUserVarIndex(line, 2);
-      ent.set_parm(1,var);
+      if (!is_valid_user_var(line, 2)) PRINTHELP();
+      ent.set_parm_var(1,line.gettoken_str(2));
       ent.set_parm(2,0);
-      if (line.gettoken_str(1)[0] && var<0) PRINTHELP()
       SCRIPT_MSG("InstTypeGetText: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
       return add_nobj_entry(ent);
     }
@@ -5699,10 +5662,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     {
       nobj_entry ent(EW_SECTIONSET);
       ent.set_parm(0,line.gettoken_str(1));
-      int var=GetUserVarIndex(line, 2);
-      ent.set_parm(1,var);
+      if (!is_valid_user_var(line, 2)) PRINTHELP();
+      ent.set_parm_var(1,line.gettoken_str(2));
       ent.set_parm(2,SECTION_FIELD_GET(install_types));
-      if (line.gettoken_str(2)[0] && var<0) PRINTHELP()
       SCRIPT_MSG("SectionGetInstTypes: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
       return add_nobj_entry(ent);
     }
@@ -5719,10 +5681,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     {
       nobj_entry ent(EW_SECTIONSET);
       ent.set_parm(0,line.gettoken_str(1));
-      int var=GetUserVarIndex(line, 2);
-      ent.set_parm(1,var);
+      if (!is_valid_user_var(line, 2)) PRINTHELP();
+      ent.set_parm_var(1,line.gettoken_str(2));
       ent.set_parm(2,SECTION_FIELD_GET(size_kb));
-      if (line.gettoken_str(2)[0] && var<0) PRINTHELP()
       SCRIPT_MSG("SectionGetSize: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
       return add_nobj_entry(ent);
     }
@@ -5740,11 +5701,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     {
       nobj_entry ent(EW_INSTTYPESET);
       ent.set_parm(0,0);
-      int var=GetUserVarIndex(line,1);
-      ent.set_parm(1,var);
+      if (!is_valid_user_var(line, 1)) PRINTHELP();
+      ent.set_parm_var(1,line.gettoken_str(1));
       ent.set_parm(2,0);
       ent.set_parm(3,1);
-      if (line.gettoken_str(1)[0] && var<0) PRINTHELP()
       SCRIPT_MSG("GetCurInstType: %s\n",line.gettoken_str(1));
       return add_nobj_entry(ent);
     }
