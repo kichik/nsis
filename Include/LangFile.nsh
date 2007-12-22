@@ -55,12 +55,11 @@ Copyright © 2008 Joost Verburg
       !undef LANGFILE_IDNAME
     !endif
 
-    !ifdef "LANGFILE_${IDNAME}_NAME"
-      !undef "LANGFILE_${IDNAME}_NAME"
-    !endif
-
     !define LANGFILE_IDNAME "${IDNAME}"
-    !define "LANGFILE_${IDNAME}_NAME" "${NAME}"  
+
+    !ifndef "LANGFILE_${IDNAME}_NAME"
+      !define "LANGFILE_${IDNAME}_NAME" "${NAME}"
+    !endif
 
   !endif
 
