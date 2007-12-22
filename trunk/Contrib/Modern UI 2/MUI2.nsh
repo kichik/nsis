@@ -72,6 +72,7 @@ Copyright © 2002-2008 Joost Verburg
 ;--------------------------------
 ;MUI interface
 
+!include "Deprecated.nsh"
 !include "Interface.nsh"
 !include "Localization.nsh"
 !include "Pages.nsh"
