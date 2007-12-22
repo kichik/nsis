@@ -81,6 +81,8 @@ public:
   void set_parm(int offset, std::string& parm);
   void set_parm_jump(int offset, const char* jump);
   void set_parm_jump(int offset, std::string& jump);
+  void set_parm_var(int offset, const char* var);
+  void set_parm_var(int offset, std::string& var);
 
   const int which() const;
 
@@ -148,6 +150,27 @@ public:
 private:
 
   std::string m_jump;
+
+};
+
+/**
+ * nobj_var
+ */
+
+class nobj_var : public nobj
+{
+
+public:
+
+  nobj_var(const std::string& str);
+  nobj_var(const char* str);
+  nobj_var(char* str);
+
+  const std::string get_var() const;
+
+private:
+
+  std::string m_var;
 
 };
 
