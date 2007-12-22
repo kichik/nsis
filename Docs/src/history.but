@@ -6,7 +6,7 @@ Released on December 24th, 2007
 
 \S1{v2.34-rl} Release Notes
 
-\b Thanks to user input on \L{../Docs/Modern UI 2/Readme.html}{Modern UI 2}, it is now ready for mass usage. The installer for NSIS itself now exploits the wonders of MUI2 and \L{../Docs/nsDialogs/Readme.html}{nsDialogs} and so should you.
+\b Thanks to user input on \L{../Docs/Modern UI 2/Readme.html}{Modern UI 2}, it is now ready for mass consumption at no better time than the holiday season. The installer for NSIS itself now exploits the wonders of MUI2 and \L{../Docs/nsDialogs/Readme.html}{nsDialogs} and so should you.
 
 \S1{v2.34-cl} Changelog
 
