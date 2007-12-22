@@ -2034,8 +2034,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_IFSILENT:
     {
       nobj_entry ent(EW_IFFLAG);
-      ent.set_parm(0,new nobj_jump(line.gettoken_str(1)));
-      ent.set_parm(1,new nobj_jump(line.gettoken_str(2)));
+      ent.set_parm_jump(0,line.gettoken_str(1));
+      ent.set_parm_jump(1,line.gettoken_str(2));
       ent.set_parm(2,FLAG_OFFSET(silent));
       ent.set_parm(3,~0);//new value mask - keep flag
       SCRIPT_MSG("IfSilent ?%s:%s\n",line.gettoken_str(1),line.gettoken_str(2));
@@ -3590,7 +3590,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_GOTO:
     {
       nobj_entry ent(EW_NOP);
-      ent.set_parm(0,new nobj_jump(line.gettoken_str(1)));
+      ent.set_parm_jump(0,line.gettoken_str(1));
       SCRIPT_MSG("Goto: %s\n",line.gettoken_str(1));
       return add_nobj_entry(ent);
     }
@@ -3914,14 +3914,14 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             int retid=line.gettoken_enum(a,retstr);
             if (retid < 0) PRINTHELP();
             ent.set_parm(2,rettab[retid]);
-            ent.set_parm(3,new nobj_jump(line.gettoken_str(a+1)));
+            ent.set_parm_jump(3,line.gettoken_str(a+1));
             if (line.getnumtokens() > a+2)
             {
               int v=line.gettoken_enum(a+2,retstr);
               if (v < 0)
                 PRINTHELP();
               ent.set_parm(4,rettab[v]);
-              ent.set_parm(5,new nobj_jump(line.gettoken_str(a+3)));
+              ent.set_parm_jump(5,line.gettoken_str(a+3));
             }
           }
         }
@@ -4097,8 +4097,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     {
       nobj_entry ent(EW_ISWINDOW);
       ent.set_parm(0,line.gettoken_str(1));
-      ent.set_parm(1,new nobj_jump(line.gettoken_str(2)));
-      ent.set_parm(2,new nobj_jump(line.gettoken_str(3)));
+      ent.set_parm_jump(1,line.gettoken_str(2));
+      ent.set_parm_jump(2,line.gettoken_str(3));
       SCRIPT_MSG("IsWindow(%s): %s:%s\n",line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3));
       return add_nobj_entry(ent);
     }
@@ -4623,8 +4623,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     {
       nobj_entry ent(EW_IFFILEEXISTS);
       ent.set_parm(0,line.gettoken_str(1));
-      ent.set_parm(1,new nobj_jump(line.gettoken_str(2)));
-      ent.set_parm(2,new nobj_jump(line.gettoken_str(3)));
+      ent.set_parm_jump(1,line.gettoken_str(2));
+      ent.set_parm_jump(2,line.gettoken_str(3));
       SCRIPT_MSG("IfFileExists: \"%s\" ? %s : %s\n",line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3));
       return add_nobj_entry(ent);
     }
@@ -4685,8 +4685,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_IFERRORS:
     {
       nobj_entry ent(EW_IFFLAG);
-      ent.set_parm(0,new nobj_jump(line.gettoken_str(1)));
-      ent.set_parm(1,new nobj_jump(line.gettoken_str(2)));
+      ent.set_parm_jump(0,line.gettoken_str(1));
+      ent.set_parm_jump(1,line.gettoken_str(2));
       ent.set_parm(2,FLAG_OFFSET(exec_error));
       ent.set_parm(3,0);//new value mask - clean error
       SCRIPT_MSG("IfErrors ?%s:%s\n",line.gettoken_str(1),line.gettoken_str(2));
@@ -4695,8 +4695,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_IFABORT:
     {
       nobj_entry ent(EW_IFFLAG);
-      ent.set_parm(0,new nobj_jump(line.gettoken_str(1)));
-      ent.set_parm(1,new nobj_jump(line.gettoken_str(2)));
+      ent.set_parm_jump(0,line.gettoken_str(1));
+      ent.set_parm_jump(1,line.gettoken_str(2));
       ent.set_parm(2,FLAG_OFFSET(abort));
       ent.set_parm(3,~0);//new value mask - keep flag
       SCRIPT_MSG("IfAbort ?%s:%s\n",line.gettoken_str(1),line.gettoken_str(2));
@@ -4778,7 +4778,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       int var=GetUserVarIndex(line, 1);
       ent.set_parm(0,var);
       if (var < 0) PRINTHELP();
-      ent.set_parm(1,new nobj_jump(line.gettoken_str(2)));
+      ent.set_parm_jump(1,line.gettoken_str(2));
       ent.set_parm(2,0);
       ent.set_parm(3,0);
       SCRIPT_MSG("GetLabelAddress: %s %s",line.gettoken_str(1),line.gettoken_str(2));
@@ -4806,8 +4806,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       nobj_entry ent(EW_STRCMP);
       ent.set_parm(0,line.gettoken_str(1));
       ent.set_parm(1,line.gettoken_str(2));
-      ent.set_parm(2,new nobj_jump(line.gettoken_str(3)));
-      ent.set_parm(3,new nobj_jump(line.gettoken_str(4)));
+      ent.set_parm_jump(2,line.gettoken_str(3));
+      ent.set_parm_jump(3,line.gettoken_str(4));
       ent.set_parm(4,which_token == TOK_STRCMPS);
       SCRIPT_MSG("%s \"%s\" \"%s\" equal=%s, nonequal=%s\n",line.gettoken_str(0),line.gettoken_str(1),line.gettoken_str(2), line.gettoken_str(3),line.gettoken_str(4));
       return add_nobj_entry(ent);
@@ -5104,9 +5104,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       nobj_entry ent(EW_INTCMP);
       ent.set_parm(0,line.gettoken_str(1));
       ent.set_parm(1,line.gettoken_str(2));
-      ent.set_parm(2,new nobj_jump(line.gettoken_str(3)));
-      ent.set_parm(3,new nobj_jump(line.gettoken_str(4)));
-      ent.set_parm(4,new nobj_jump(line.gettoken_str(5)));
+      ent.set_parm_jump(2,line.gettoken_str(3));
+      ent.set_parm_jump(3,line.gettoken_str(4));
+      ent.set_parm_jump(4,line.gettoken_str(5));
       ent.set_parm(5,which_token == TOK_INTCMPU);
       SCRIPT_MSG("%s %s:%s equal=%s, < %s, > %s\n",line.gettoken_str(0),
         line.gettoken_str(1),line.gettoken_str(2), line.gettoken_str(3),line.gettoken_str(4),line.gettoken_str(5));
@@ -5574,8 +5574,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_IFREBOOTFLAG:
     {
       nobj_entry ent(EW_IFFLAG);
-      ent.set_parm(0,new nobj_jump(line.gettoken_str(1)));
-      ent.set_parm(1,new nobj_jump(line.gettoken_str(2)));
+      ent.set_parm_jump(0,line.gettoken_str(1));
+      ent.set_parm_jump(1,line.gettoken_str(2));
       ent.set_parm(2,FLAG_OFFSET(exec_reboot));
       ent.set_parm(3,~0);//new value mask - keep flag
       SCRIPT_MSG("IfRebootFlag ?%s:%s\n",line.gettoken_str(1),line.gettoken_str(2));

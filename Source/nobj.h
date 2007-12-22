@@ -79,6 +79,8 @@ public:
   void set_parm(int offset, const int parm);
   void set_parm(int offset, const char* parm);
   void set_parm(int offset, std::string& parm);
+  void set_parm_jump(int offset, const char* jump);
+  void set_parm_jump(int offset, std::string& jump);
 
   const int which() const;
 
