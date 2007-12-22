@@ -1,11 +1,11 @@
 /*
 
 NSIS Modern User Interface - Version 2.0 beta
-Copyright © 2002-2007 Joost Verburg
+Copyright © 2002-2008 Joost Verburg
 
 */
 
-!echo "NSIS Modern User Interface version 2.0 beta - © 2002-2007 Joost Verburg"
+!echo "NSIS Modern User Interface version 2.0 beta - © 2002-2008 Joost Verburg"
 
 ;--------------------------------
 
