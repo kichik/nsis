@@ -128,4 +128,25 @@ private:
 
 };
 
+/**
+ * nobj_jump
+ */
+
+class nobj_jump : public nobj
+{
+
+public:
+
+  nobj_jump(const std::string& str);
+  nobj_jump(const char* str);
+  nobj_jump(char* str);
+
+  const std::string get_jump() const;
+
+private:
+
+  std::string m_jump;
+
+};
+
 #endif//!___MAKENSIS_NOBJS_H___
