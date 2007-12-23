@@ -26,6 +26,7 @@
 #include "ShConstants.h"
 #include "mmap.h"
 #include "manifest.h"
+#include "nobj/entry.h"
 #include "nobj/nobj.h"
 #include "icon.h"
 
