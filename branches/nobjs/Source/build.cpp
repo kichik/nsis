@@ -1182,7 +1182,7 @@ int CEXEBuild::add_section(const char *secname, const char *defname, int expand/
   return PS_OK;
 }
 
-int CEXEBuild::add_entry(const entry *ent)
+int CEXEBuild::add_entry_internal(const entry *ent)
 {
   if (!build_cursection && !uninstall_mode)
   {
@@ -1200,17 +1200,29 @@ int CEXEBuild::add_entry(const entry *ent)
   return PS_OK;
 }
 
+int CEXEBuild::add_entry(const entry *ent)
+{
+  return add_entry_direct(
+    ent->which,
+    ent->offsets[0],
+    ent->offsets[1],
+    ent->offsets[2],
+    ent->offsets[3],
+    ent->offsets[4],
+    ent->offsets[5]
+  );
+}
+
 int CEXEBuild::add_entry_direct(int which, int o0, int o1, int o2, int o3, int o4, int o5 /*o#=0*/)
 {
-  entry ent;
-  ent.which = which;
-  ent.offsets[0] = o0;
-  ent.offsets[1] = o1;
-  ent.offsets[2] = o2;
-  ent.offsets[3] = o3;
-  ent.offsets[4] = o4;
-  ent.offsets[5] = o5;
-  return add_entry(&ent);
+  nobj_entry ent(which);
+  ent.set_parm(0, o0);
+  ent.set_parm(1, o1);
+  ent.set_parm(2, o2);
+  ent.set_parm(3, o3);
+  ent.set_parm(4, o4);
+  ent.set_parm(5, o5);
+  return add_nobj_entry(ent);
 }
 
 int CEXEBuild::add_nobj_entry(const nobj_entry& ent)
@@ -1239,7 +1251,7 @@ int CEXEBuild::add_nobj_entry(const nobj_entry& ent)
     }
   }
 
-  return add_entry(&st_ent);
+  return add_entry_internal(&st_ent);
 }
 
 int CEXEBuild::add_nobj_entry_parm(const nobj* parm)
