@@ -1,5 +1,5 @@
 /*
- * nobjs.h
+ * nobj.h
  * 
  * This file is a part of NSIS.
  * 
@@ -14,8 +14,8 @@
  * warranty.
  */
 
-#ifndef ___MAKENSIS_NOBJS_H___
-#define ___MAKENSIS_NOBJS_H___
+#ifndef ___MAKENSIS_NOBJ_H___
+#define ___MAKENSIS_NOBJ_H___
 
 #include <vector>
 #include <string>
@@ -63,115 +63,4 @@ private:
 
 };
 
-/**
- * nobj_entry
- */
-
-class nobj_entry : public nobj
-{
-
-public:
-
-  nobj_entry(const int which);
-  nobj_entry(const int which, const nobjs& parms);
-
-  void set_parm(int offset, const nobj* parm);
-  void set_parm(int offset, const int parm);
-  void set_parm(int offset, const char* parm);
-  void set_parm(int offset, std::string& parm);
-  void set_parm_jump(int offset, const char* jump);
-  void set_parm_jump(int offset, std::string& jump);
-  void set_parm_var(int offset, const char* var);
-  void set_parm_var(int offset, std::string& var);
-
-  const int which() const;
-
-private:
-
-  int m_which;
-
-};
-
-/**
- * nobj_string
- */
-
-class nobj_string : public nobj
-{
-
-public:
-
-  nobj_string(const std::string& str);
-  nobj_string(const char* str);
-  nobj_string(char* str);
-
-  const std::string get_string() const;
-
-private:
-
-  std::string m_string;
-
-};
-
-/**
- * nobj_int
- */
-
-class nobj_int : public nobj
-{
-
-public:
-
-  nobj_int(const int i);
-
-  const int get_int() const;
-
-private:
-
-  int m_int;
-
-};
-
-/**
- * nobj_jump
- */
-
-class nobj_jump : public nobj
-{
-
-public:
-
-  nobj_jump(const std::string& str);
-  nobj_jump(const char* str);
-  nobj_jump(char* str);
-
-  const std::string get_jump() const;
-
-private:
-
-  std::string m_jump;
-
-};
-
-/**
- * nobj_var
- */
-
-class nobj_var : public nobj
-{
-
-public:
-
-  nobj_var(const std::string& str);
-  nobj_var(const char* str);
-  nobj_var(char* str);
-
-  const std::string get_var() const;
-
-private:
-
-  std::string m_var;
-
-};
-
-#endif//!___MAKENSIS_NOBJS_H___
+#endif//!___MAKENSIS_NOBJ_H___

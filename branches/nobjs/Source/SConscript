@@ -26,7 +26,12 @@ makensis_files = Split("""
 	util.cpp
 	winchar.cpp
 	writer.cpp
+	nobj/entry.cpp
+	nobj/int.cpp
+	nobj/jump.cpp
 	nobj/nobj.cpp
+	nobj/str.cpp
+	nobj/var.cpp
 """)
 
 bzip2_files = Split("""
