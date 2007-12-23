@@ -28,6 +28,12 @@
 #include "manifest.h"
 #include "icon.h"
 
+#include "nobj/entry.h"
+#include "nobj/int.h"
+#include "nobj/jump.h"
+#include "nobj/str.h"
+#include "nobj/var.h"
+
 #include <stdexcept>
 
 #include "exehead/resource.h"
