@@ -16,7 +16,6 @@ makensis_files = Split("""
 	makenssi.cpp
 	manifest.cpp
 	mmap.cpp
-	nobj.cpp
 	Plugins.cpp
 	ResourceEditor.cpp
 	ResourceVersionInfo.cpp
@@ -27,6 +26,7 @@ makensis_files = Split("""
 	util.cpp
 	winchar.cpp
 	writer.cpp
+	nobj/nobj.cpp
 """)
 
 bzip2_files = Split("""
