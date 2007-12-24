@@ -4051,9 +4051,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       SCRIPT_MSG("SendMessage:");
       {
         int a=5;
-        ent.set_parm_var(0,line.gettoken_str(5));
         if (is_valid_user_var(line,5))
         {
+          ent.set_parm_var(0,line.gettoken_str(5));
           SCRIPT_MSG("(->%s)",line.gettoken_str(5));
           a++;
         }
