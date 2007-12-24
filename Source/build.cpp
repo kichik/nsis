@@ -1262,6 +1262,11 @@ int CEXEBuild::add_nobj_entry(const nobj_entry& ent)
 
 int CEXEBuild::add_nobj_entry_parm(const nobj* parm)
 {
+  if (parm == NULL)
+  {
+    return 0;
+  }
+
   const nobj_int* i = dynamic_cast<const nobj_int*>(parm);
   const nobj_string* str = dynamic_cast<const nobj_string*>(parm);
   const nobj_jump* jump = dynamic_cast<const nobj_jump*>(parm);
