@@ -24,6 +24,8 @@ Released on December 24th, 2007
 
 \b Better RTL support in instfiles and components page (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1841573}{bug #1841573})
 
+\b Don't warn of comments containing line-continuation character when it has no effect (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1701051}{bug #1701051}, \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373088&aid=1686589}{RFE #1686589})
+
 \b Fixed deletion of files with relative paths, a.k.a the EVE bug (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1851273}{bug #1851273})
 
 \b Fixed input verification of \R{sgetcurinsttype}{GetCurInstType} and \R{getfullpathname}{GetFullPathName}
@@ -33,8 +35,6 @@ Released on December 24th, 2007
 \b Minor documentation improvements (including \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1842326}{bug #1842326})
 
 \b Use CRLF in examples (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1835866}{bug #1835866})
-
-\b Warn of comments containing line-continuation character, only when it really has an effect (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1701051}{bug #1701051}, \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373088&aid=1686589}{RFE #1686589})
 
 \S2{} Utilities and Plug-ins
 
