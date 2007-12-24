@@ -3712,8 +3712,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       if (which_token == TOK_EXECWAIT)
       {
         ent.set_parm(2,1);
-        ent.set_parm_var(1,line.gettoken_str(2));
-        if (line.gettoken_str(2)[0] && !is_valid_user_var(line,2)) PRINTHELP();
+        if (line.gettoken_str(2)[0])
+        {
+          if (!is_valid_user_var(line,2)) PRINTHELP();
+          ent.set_parm_var(1,line.gettoken_str(2));
+        }
       }
       SCRIPT_MSG("%s: \"%s\" (->%s)\n",which_token == TOK_EXECWAIT?"ExecWait":"Exec",line.gettoken_str(1),line.gettoken_str(2));
 
@@ -5054,12 +5057,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_INTOP:
     {
       nobj_entry ent(EW_INTOP);
+      if (!is_valid_user_var(line, 1)) PRINTHELP();
       ent.set_parm_var(0,line.gettoken_str(1));
       int k=line.gettoken_enum(3,"+\0-\0*\0/\0|\0&\0^\0!\0||\0&&\0%\0<<\0>>\0~\0");
       ent.set_parm(3,k);
-      if (!is_valid_user_var(line, 1) || k < 0 ||
-        ((k == 7 || k == 13) && line.getnumtokens() > 4))
-        PRINTHELP()
+      if (k < 0 || ((k == 7 || k == 13) && line.getnumtokens() > 4))
+        PRINTHELP();
       ent.set_parm(1,line.gettoken_str(2));
       if (k != 7 && k != 13) ent.set_parm(2,line.gettoken_str(4));
       if (k == 13) {
@@ -5489,8 +5492,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         int tab[3]={FILE_BEGIN,FILE_CURRENT,FILE_END};
         int mode=line.gettoken_enum(3,"SET\0CUR\0END\0");
         nobj_entry ent(EW_FSEEK);
+        if (!is_valid_user_var(line, 1)) PRINTHELP();
         ent.set_parm_var(0,line.gettoken_str(1));
-        ent.set_parm_var(1,line.gettoken_str(4));
+        if (line.gettoken_str(4)[0])
+        {
+          if (!is_valid_user_var(line, 4)) PRINTHELP();
+          ent.set_parm_var(1,line.gettoken_str(4));
+        }
         ent.set_parm(2,line.gettoken_str(2));
 
         if (mode<0 && !line.gettoken_str(3)[0])
@@ -5500,7 +5508,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
         else modestr=line.gettoken_str(3);
 
-        if (mode<0 || !is_valid_user_var(line, 1) || (!is_valid_user_var(line, 4) && line.gettoken_str(4)[0])) PRINTHELP();
+        if (mode<0) PRINTHELP();
         ent.set_parm(3,tab[mode]);
         SCRIPT_MSG("FileSeek: fp=%s, ofs=%s, mode=%s, output=%s\n",
           line.gettoken_str(1),
