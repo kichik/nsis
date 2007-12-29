@@ -27,6 +27,7 @@ makensis_files = Split("""
 	winchar.cpp
 	writer.cpp
 	nobj/entry.cpp
+	nobj/function.cpp
 	nobj/int.cpp
 	nobj/jump.cpp
 	nobj/nobj.cpp
