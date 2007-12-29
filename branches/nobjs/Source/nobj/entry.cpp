@@ -54,37 +54,37 @@ void nobj_entry::set_parm(int offset, const nobj* parm)
 
 void nobj_entry::set_parm(int offset, const int parm)
 {
-  nobj::set_dependency(offset, new nobj_int(parm));
+  set_parm(offset, new nobj_int(parm));
 }
 
 void nobj_entry::set_parm(int offset, const char* parm)
 {
-  nobj::set_dependency(offset, new nobj_string(parm));
+  set_parm(offset, new nobj_string(parm));
 }
 
 void nobj_entry::set_parm(int offset, string& parm)
 {
-  nobj::set_dependency(offset, new nobj_string(parm));
+  set_parm(offset, new nobj_string(parm));
 }
 
 void nobj_entry::set_parm_jump(int offset, const char* jump)
 {
-  nobj::set_dependency(offset, new nobj_jump(jump));
+  set_parm(offset, new nobj_jump(jump));
 }
 
 void nobj_entry::set_parm_jump(int offset, string& jump)
 {
-  nobj::set_dependency(offset, new nobj_jump(jump));
+  set_parm(offset, new nobj_jump(jump));
 }
 
 void nobj_entry::set_parm_var(int offset, const char* var)
 {
-  nobj::set_dependency(offset, new nobj_var(var));
+  set_parm(offset, new nobj_var(var));
 }
 
 void nobj_entry::set_parm_var(int offset, string& var)
 {
-  nobj::set_dependency(offset, new nobj_var(var));
+  set_parm(offset, new nobj_var(var));
 }
 
 const int nobj_entry::which() const
