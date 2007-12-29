@@ -164,6 +164,7 @@ CEXEBuild::CEXEBuild() :
   sectiongroup_open_cnt=0;
   build_cursection_isfunc=0;
   build_cursection=NULL;
+  build_cur_nobj_function=NULL;
   // init public data.
   build_packname[0]=build_packcmd[0]=build_output_filename[0]=0;
 
@@ -976,17 +977,10 @@ int CEXEBuild::add_function(const char *funname)
     }
   }
 
-  cur_functions->resize((n+1)*sizeof(section));
-  build_cursection=((section*)cur_functions->get())+n;
-  build_cursection_isfunc=1;
-  build_cursection->name_ptr=addr;
-  build_cursection->code=cur_entries->getlen()/sizeof(entry);
-  build_cursection->code_size=0;
-  build_cursection->install_types=0;
-  build_cursection->flags=0;
-  build_cursection->size_kb=0;
-  memset(build_cursection->name,0,sizeof(build_cursection->name));
-  
+  build_cursection_isfunc = 1;
+  build_cur_nobj_function = new nobj_function(addr, cur_entries->getlen()/sizeof(entry));
+  build_cursection = build_cur_nobj_function->get_function();
+
   if (uninstall_mode)
     set_code_type_predefines(funname+3);
   else
@@ -1005,8 +999,34 @@ int CEXEBuild::function_end()
   // add ret.
   add_entry_direct(EW_RET);
 
+  nobj_function* func = build_cur_nobj_function;
+  build_cur_nobj_function = NULL;
+
+  try
+  {
+    const nobjs entries = func->dependencies();
+    for (nobjs_const_iterator i = entries.begin(); i != entries.end(); i++)
+    {
+      int ret = add_nobj_entry(*dynamic_cast<const nobj_entry*>(*i));
+
+      if (ret != PS_OK)
+      {
+        return ret;
+      }
+    }
+  }
+  catch (const exception& e)
+  {
+    ERROR_MSG("Error: %s\n", e.what());
+    return PS_ERROR;
+  }
+
   build_cursection_isfunc=0;
   build_cursection=NULL;
+
+  int n=cur_functions->getlen()/sizeof(section);
+  cur_functions->resize((n+1)*sizeof(section));
+  memcpy(((section*)cur_functions->get())+n, func->get_function(), sizeof(section));
 
   set_uninstall_mode(0);
   
@@ -1242,6 +1262,12 @@ int CEXEBuild::add_nobj_entry(const nobj_entry& ent)
   {
     ERROR_MSG("Error: Can't add entry, too many parameters.\n");
     return PS_ERROR;
+  }
+
+  if (build_cur_nobj_function)
+  {
+    build_cur_nobj_function->add_entry(ent);
+    return PS_OK;
   }
 
   entry st_ent={0,};
