@@ -34,6 +34,8 @@ nobj_function::nobj_function(const int name_addr, const int code_addr)
   m_section.install_types = 0;
   m_section.flags         = 0;
   m_section.size_kb       = 0;
+
+  memset(m_section.name, 0, sizeof(m_section.name));
 }
 
 const section* nobj_function::get_function() const
