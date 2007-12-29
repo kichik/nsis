@@ -38,12 +38,12 @@ nobj_function::nobj_function(const int name_addr, const int code_addr)
   memset(m_section.name, 0, sizeof(m_section.name));
 }
 
-const section* nobj_function::get_function() const
+section* nobj_function::get_function()
 {
   return &m_section;
 }
 
-void nobj_function::add_entry(nobj_entry& entry)
+void nobj_function::add_entry(const nobj_entry& entry)
 {
   nobj::add_dependency(&entry);
 }

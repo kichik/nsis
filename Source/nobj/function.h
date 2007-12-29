@@ -33,9 +33,9 @@ public:
 
   nobj_function(const int name_addr, const int code_addr);
 
-  const section* get_function() const; // XXX pointer?
+  section* get_function(); // XXX pointer?
 
-  void add_entry(nobj_entry& entry);
+  void add_entry(const nobj_entry& entry);
 
 private:
 
