@@ -896,6 +896,9 @@ int CEXEBuild::add_label(const char *name)
     return PS_ERROR;
   }
 
+  // TODO label needs a father...
+  //      else it won't know which function's ref count to up
+
   int cs=build_cursection->code;
   int ce=cs+build_cursection->code_size;
 
