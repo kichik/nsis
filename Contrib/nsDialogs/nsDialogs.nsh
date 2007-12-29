@@ -5,6 +5,11 @@ Header file for creating custom installer pages with nsDialogs
 
 */
 
+!ifndef NSDIALOGS_INCLUDED
+!define NSDIALOGS_INCLUDED
+!verbose push
+!verbose 3
+
 !include LogicLib.nsh
 !include WinMessages.nsh
 
@@ -553,3 +558,6 @@ Header file for creating custom installer pages with nsDialogs
 	FunctionEnd
 
 !macroend
+
+!verbose pop
+!endif
