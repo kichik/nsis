@@ -45,5 +45,6 @@ section* nobj_function::get_function()
 
 void nobj_function::add_entry(const nobj_entry& entry)
 {
-  nobj::add_dependency(&entry);
+  nobj_entry* entryp = new nobj_entry(entry.which(), entry.dependencies());
+  nobj::add_dependency(entryp);
 }
