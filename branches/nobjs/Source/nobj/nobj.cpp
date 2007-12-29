@@ -32,7 +32,7 @@ nobj::~nobj()
 
   while (i != m_dependencies.end())
   {
-    delete *i;
+    //delete *i;
     i++;
   }
 }
