@@ -1,0 +1,14 @@
+target = 'MultiUser'
+
+docs = Split("""
+	Readme.html
+""")
+
+includes = Split("""
+	MultiUser.nsh
+""")
+
+Import('defenv')
+
+defenv.DistribeDocs(docs, path=target)
+defenv.DistributeInclude(includes)
