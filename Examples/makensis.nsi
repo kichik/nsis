@@ -167,11 +167,8 @@ ${MementoSection} "NSIS Core Files (required)" SecCore
   SetOutPath $INSTDIR\Menu
   File ..\Menu\*.html
   SetOutPath $INSTDIR\Menu\images
-  File ..\Menu\images\clear.gif
   File ..\Menu\images\header.gif
   File ..\Menu\images\line.gif
-  File ..\Menu\images\menu.gif
-  File ..\Menu\images\menud.gif
   File ..\Menu\images\site.gif
 
   Delete $INSTDIR\makensis.htm
