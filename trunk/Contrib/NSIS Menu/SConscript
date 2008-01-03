@@ -23,21 +23,12 @@ libs = Split("""
 """)
 
 html = Split("""
-	#Menu/compiler.html
-	#Menu/docs.html
 	#Menu/index.html
-	#Menu/intro.html
-	#Menu/notinstalled.html
-	#Menu/update.html
-	#Menu/websites.html
 """)
 
 images = Split("""
-	#Menu/images/clear.gif
 	#Menu/images/header.gif
 	#Menu/images/line.gif
-	#Menu/images/menu.gif
-	#Menu/images/menud.gif
 	#Menu/images/site.gif
 """)
 
