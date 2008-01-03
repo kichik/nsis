@@ -45,6 +45,7 @@ utils = [
 misc = [
 	'Graphics',
 	'Language files',
+	'MultiUser',
 	'Modern UI',
 	'Modern UI 2',
 	'VPatch',

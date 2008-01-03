@@ -153,9 +153,13 @@ ${MementoSection} "NSIS Core Files (required)" SecCore
   File ..\Include\Memento.nsh
   File ..\Include\LangFile.nsh
   File ..\Include\InstallOptions.nsh
+  File ..\Include\MultiUser.nsh
 
   SetOutPath $INSTDIR\Docs\StrFunc
   File ..\Docs\StrFunc\StrFunc.txt
+
+  SetOutPath $INSTDIR\Docs\MultiUser
+  File ..\Docs\MultiUser\Readme.html
 
   SetOutPath $INSTDIR\Docs\makensisw
   File ..\Docs\makensisw\*.txt
