@@ -10,5 +10,5 @@ includes = Split("""
 
 Import('defenv')
 
-defenv.DistribeDocs(docs, path=target)
+defenv.DistributeDocs(docs, path=target)
 defenv.DistributeInclude(includes)
