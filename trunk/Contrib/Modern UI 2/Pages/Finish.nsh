@@ -344,6 +344,11 @@ Finish page (implemented using nsDialogs)
         ${NSD_CreateRadioButton} 120u ${MUI_FINISHPAGE_REBOOTLATER_TOP}u 195u 10u "${MUI_FINISHPAGE_TEXT_REBOOTLATER}"
         Pop $mui.FinishPage.RebootLater
         SetCtlColors $mui.FinishPage.RebootLater "" "${MUI_BGCOLOR}"
+        !ifndef MUI_FINISHPAGE_REBOOTLATER_DEFAULT
+          SendMessage $mui.FinishPage.RebootNow ${BM_SETCHECK} ${BST_CHECKED} 0
+        !else
+          SendMessage $mui.FinishPage.RebootLater ${BM_SETCHECK} ${BST_CHECKED} 0
+        !endif
 
       ${else}
 
