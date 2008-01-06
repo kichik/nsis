@@ -174,7 +174,7 @@ Start Menu folder page
 
     ReadRegStr $mui.StartMenuPage.RegistryLocation "${MUI_STARTMENUPAGE_${ID}_REGISTRY_ROOT}" "${MUI_STARTMENUPAGE_${ID}_REGISTRY_KEY}" "${MUI_STARTMENUPAGE_${ID}_REGISTRY_VALUENAME}"
     
-    ${if} mui.StartMenuPage.RegistryLocation != ""
+    ${if} $mui.StartMenuPage.RegistryLocation != ""
       StrCpy "${VAR}" $mui.StartMenuPage.RegistryLocation
     ${else}
       StrCpy "${VAR}" "${MUI_STARTMENUPAGE_${ID}_DEFAULTFOLDER}"
