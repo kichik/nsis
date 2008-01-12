@@ -20,38 +20,16 @@ Since the directory page can not be shown on silent installers, the user has an 
 
 \c foo.exe /S /D=C:\Program Files\Foo
 
-If your installer/uninstaller requires some more information that can not be gathered when silent, you can allow the user to specify that information on the command line and process it in .onInit. You can use \R{getoptions}{GetOptions}, or a variant of the following example:
+If your installer/uninstaller requires some more information that can not be gathered when silent, you can allow the user to specify that information on the command line and process it in .onInit. You can use \R{getoptions}{GetOptions}.
 
+\c !include FileFunc.nsh
+\c !insertmacro GetParameters
+\c !insertmacro GetOptions
+\c
 \c Function .onInit
-\c   Call GetParameters
-\c   Pop $2
-\c   # search for quoted /USERNAME
-\c   StrCpy $1 '"'
-\c   Push $2
-\c   Push '"/USERNAME='
-\c   Call StrStr
-\c   Pop $0
-\c   StrCpy $0 $0 "" 1 # skip quote
-\c   StrCmp $0 "" "" next
-\c     # search for non quoted /USERNAME
-\c     StrCpy $1 ' '
-\c     Push $2
-\c     Push '/USERNAME='
-\c     Call StrStr
-\c     Pop $0
-\c next:
-\c   StrCmp $0 "" done
-\c     # copy the value after /USERNAME=
-\c     StrCpy $0 $0 "" 10
-\c   # search for the next parameter
-\c   Push $0
-\c   Push $1
-\c   Call StrStr
-\c   Pop $1
-\c   StrCmp $1 "" done
-\c   StrLen $1 $1
-\c   StrCpy $0 $0 -$1
-\c done:
+\c   ${GetParameters} $R0
+\c   ClearErrors
+\c   ${GetOptions} $R0 /USERNAME= $0
 \c FunctionEnd
 
 The above example will copy the value the user passes on after /USERNAME= into $0. This allows the user to specify the required information on the command line instead of using the interactive user interface. The user can use:
@@ -60,8 +38,10 @@ The above example will copy the value the user passes on after /USERNAME= into $
 
 or:
 
-\c foo.exe /S "/USERNAME=string with spaces" /D=C:\Program Files\Foo
+\c foo.exe /S /USERNAME=string with spaces /D=C:\Program Files\Foo
 
-\R{getparameters}{GetParameters} and \R{strstr}{StrStr} can be found in \k{usefulfunctions}.
+or:
+
+\c foo.exe /S /USERNAME="string with spaces" /D=C:\Program Files\Foo
 
 If your installer/uninstaller requires a lot of information and you want it to be able to be silent, you should allow the user to pass on a path to an answers file. This would be much more comfortable than writing all of the information on the command line.

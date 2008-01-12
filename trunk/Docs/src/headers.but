@@ -679,7 +679,7 @@ Call functions:
 \c 	; $R0="C:\ftp"
 \c SectionEnd
 
-\S1{headers_getparameters} GetParameters
+\S1{getparameters} GetParameters
 
 \b Get command line parameters.
 
@@ -770,7 +770,7 @@ Call functions:
 \c 	; $R0="\\SuperPimp\NSIS"
 \c SectionEnd
 
-\S1{headers_getparent} GetParent
+\S1{getparent} GetParent
 
 \b Get parent directory.
 
@@ -1620,7 +1620,7 @@ Call functions:
 \c 	${FileRecode} "C:\SCANDISK.LOG" "CharToOem"
 \c SectionEnd
 
-\S1{headers_trimnewlines} TrimNewLines
+\S1{trimnewlines} TrimNewLines
 
 \b Trim newlines in a string.
 
