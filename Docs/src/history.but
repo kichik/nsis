@@ -656,7 +656,7 @@ Released on October 20th, 2006
 
 \S2{} Minor Changes
 
-\b Added Vista support to \R{getwindowsversion}{GetWindowsVersion}
+\b Added Vista support to GetWindowsVersion
 
 \b Added \L{../Include/x64.nsh}{x64.nsh} including a few simple macros for handling x64 installations
 
@@ -1449,7 +1449,7 @@ Released on March 19th, 2005
 
 \b Added components.c to the Makefile (\W{http://sourceforge.net/tracker/index.php?func=detail&aid=1123154&group_id=22049&atid=373087}{patch #1123154})
 
-\b Added missing \R{clearerrors}{ClearErrors} in \R{getwindowsversion}{GetWindowsVersion} (\W{http://sourceforge.net/tracker/index.php?func=detail&aid=1155588&group_id=22049&atid=373085}{bug #1155588})
+\b Added missing \R{clearerrors}{ClearErrors} in GetWindowsVersion (\W{http://sourceforge.net/tracker/index.php?func=detail&aid=1155588&group_id=22049&atid=373085}{bug #1155588})
 
 \b Fixed a bug in install.sh that made it try to install a non existing directory
 
