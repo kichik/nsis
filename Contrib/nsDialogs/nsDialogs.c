@@ -171,6 +171,8 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       // Draw the focus rect if needed
       if (((lpdis->itemState & ODS_FOCUS) && (lpdis->itemAction & ODA_DRAWENTIRE)) || (lpdis->itemAction & ODA_FOCUS))
       {
+        // NB: when not in DRAWENTIRE mode, this will actually toggle the focus
+        // rectangle since it's drawn in a XOR way
         if (!hideFocus)
           DrawFocusRect(lpdis->hDC, &rc);
       }
