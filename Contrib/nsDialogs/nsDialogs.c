@@ -160,7 +160,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         if (hideAccel)
           xtraDrawStyle |= DT_HIDEPREFIX;
 
-        // Get TxtColor unless the user has set another using SetCtlColors
+        // Use blue unless the user has set another using SetCtlColors
         if (!GetWindowLong(lpdis->hwndItem, GWL_USERDATA))
           SetTextColor(lpdis->hDC, RGB(0,0,255));
 
