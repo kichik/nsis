@@ -270,9 +270,9 @@ Finish page (implemented using nsDialogs)
     ${NSD_CreateBitmap} 0u 0u 109u 193u ""
     Pop $mui.FinishPage.Image
     !ifndef MUI_${MUI_PAGE_UNINSTALLER_PREFIX}WELCOMEFINISHPAGE_BITMAP_NOSTRETCH
-      System::Call '*(i, i, i 109, i 193) i.s'
-      Pop $mui.FinishPage.Image.Rect 
-      System::Call 'user32::MapDialogRect(i $HWNDPARENT, i $mui.FinishPage.Image.Rect)'
+      System::Call '*(i, i, i, i) i.s'
+      Pop $mui.FinishPage.Image.Rect
+      System::Call 'user32::GetClientRect(i $mui.FinishPage.Image, i $mui.FinishPage.Image.Rect)'
       System::Call '*$mui.FinishPage.Image.Rect(i, i, i, i) i (, , .s, .s)'
       Pop $mui.FinishPage.Image.Width
       Pop $mui.FinishPage.Image.Height
