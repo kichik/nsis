@@ -3,8 +3,8 @@
 
 \H{library_intro} Introduction
 
-NSIS 2.01 features a new system for the installation and uninstallation of dynamic link libraries (DLL) and type libraries (TLB).
-Using this new system you can handle the complete setup with one single line of code:
+The Library header file can be used to setup dynamic link libraries (DLL) and type libraries (TLB).
+If necessary, the following actions will be performed:
 
 \b File copying
 
@@ -242,61 +242,36 @@ Location of the library
 \c  !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $SYSDIR\dllname.dll
 
 
-\H{library_vb6} Visual Basic 6 Runtimes
+\H{library_vb6} Visual Basic 6 Run-Time Files
 
-Add this code to your script to install and uninstall the VB6 runtimes.
+A new VB6.nsh header file is available for the setup of the VB6 run-time files.
+To obtain the latest run-time files, download \W{http://nsis.sourceforge.net/vb6runtime.zip} and extract this file.
 
-The correct version of the following files should be stored in your script folder
-(or modify the paths to the local files if you want to use another folder):
-
-\b  msvbvm60.dll
-
-\b  oleaut32.dll
-
-\b  olepro32.dll
-
-\b  oleaut32.dll
-
-\b  comcat.dll
-
-\b  asycfilt.dll
-
-\b  stdole2.tlb
-
-A \W{http://support.microsoft.com/default.aspx?scid=kb;en-us;290887}{Microsoft article} that explains how to obtain these files is available.
-
-To ask the user for a reboot, if required, use the Modern UI with a Finish page or use \R{ifrebootflag}{IfRebootFlag} and make your own page or message box.
-
-\c  !include Library.nsh
+\c  !include VB6RunTime.nsh
 \c
-\c  Var ALREADY_INSTALLED
+\c  Var AlreadyInstalled
 \c
-\c  Section "-Install VB6 runtimes"
+\c  Section "-Install VB6 run-time files"
 \c
-\c    ;Add code here that sets $ALREADY_INSTALLED to a non-zero value if the application is already installed. For example:
-\c
+\c    ;Add code here that sets $AlreadyInstalled to a non-zero value if the application is already installed. For example:
 \c    IfFileExists "$INSTDIR\MyApp.exe" 0 new_installation ;Replace MyApp.exe with your application filename
-\c      StrCpy $ALREADY_INSTALLED 1
+\c      StrCpy $AlreadyInstalled 1
 \c    new_installation:
 \c
-\c    !insertmacro InstallLib REGDLL $ALREADY_INSTALLED REBOOT_NOTPROTECTED "msvbvm60.dll" "$SYSDIR\msvbvm60.dll" "$SYSDIR"
-\c    !insertmacro InstallLib REGDLL $ALREADY_INSTALLED REBOOT_PROTECTED    "oleaut32.dll" "$SYSDIR\oleaut32.dll" "$SYSDIR"
-\c    !insertmacro InstallLib REGDLL $ALREADY_INSTALLED REBOOT_PROTECTED    "olepro32.dll" "$SYSDIR\olepro32.dll" "$SYSDIR"
-\c    !insertmacro InstallLib REGDLL $ALREADY_INSTALLED REBOOT_PROTECTED    "comcat.dll"   "$SYSDIR\comcat.dll"   "$SYSDIR"
-\c    !insertmacro InstallLib DLL    $ALREADY_INSTALLED REBOOT_PROTECTED    "asycfilt.dll" "$SYSDIR\asycfilt.dll" "$SYSDIR"
-\c    !insertmacro InstallLib TLB    $ALREADY_INSTALLED REBOOT_PROTECTED    "stdole2.tlb"  "$SYSDIR\stdole2.tlb"  "$SYSDIR"
+\c    !insertmacro VB6RunTimeInstall C:\vb6runtimes $AlreadyInstalled ;Replace C:\vb6runtimes with the location of the files
 \c
 \c  SectionEnd
 \c
-\c  Section "-un.Uninstall VB6 runtimes"
+\c  Section "-un.Uninstall VB6 run-time files"
 \c
-\c    !insertmacro UnInstallLib REGDLL SHARED NOREMOVE "$SYSDIR\msvbvm60.dll"
-\c    !insertmacro UnInstallLib REGDLL SHARED NOREMOVE "$SYSDIR\oleaut32.dll"
-\c    !insertmacro UnInstallLib REGDLL SHARED NOREMOVE "$SYSDIR\olepro32.dll"
-\c    !insertmacro UnInstallLib REGDLL SHARED NOREMOVE "$SYSDIR\comcat.dll"
-\c    !insertmacro UnInstallLib DLL    SHARED NOREMOVE "$SYSDIR\asycfilt.dll"
-\c    !insertmacro UnInstallLib TLB    SHARED NOREMOVE "$SYSDIR\stdole2.tlb"
+\c    !insertmacro VB6RunTimeUnInstall
 \c
 \c  SectionEnd
 
-You can use similar code to install common VB6 ActiveX controls (such as the controls for Windows Common Controls).
+Remarks:
+
+\b You may have to install additional files for such Visual Basic application to work, such as OCX files for user interface controls.
+  
+\b Installation of the run-time files requires Administrator or Power User privileges. Use the Multi-User header file to verify whether these privileges are available.
+
+\b Add a Modern UI finish page or another check (see \R{ifrebootflag}{IfRebootFlag}) to allow the user to restart the computer when necessary.
