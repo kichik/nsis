@@ -16,6 +16,9 @@ Finish page (implemented using nsDialogs)
         
     Var mui.FinishPage.Image
     Var mui.FinishPage.Image.Bitmap
+    Var mui.FinishPage.Image.Rect
+    Var mui.FinishPage.Image.Width
+    Var mui.FinishPage.Image.Height    
     
     Var mui.FinishPage.Title
     Var mui.FinishPage.Title.Font
@@ -266,7 +269,17 @@ Finish page (implemented using nsDialogs)
     ;Image control
     ${NSD_CreateBitmap} 0u 0u 109u 193u ""
     Pop $mui.FinishPage.Image
-    System::Call 'user32::LoadImage(i 0, t "$PLUGINSDIR\modern-wizard.bmp", i ${IMAGE_BITMAP}, i 0, i 0, i ${LR_LOADFROMFILE}) i.s'
+    !ifndef MUI_${MUI_PAGE_UNINSTALLER_PREFIX}WELCOMEFINISHPAGE_BITMAP_NOSTRETCH
+      System::Call '*(i, i, i 109, i 193) i.s'
+      Pop $mui.FinishPage.Image.Rect 
+      System::Call 'user32::MapDialogRect(i $HWNDPARENT, i $mui.FinishPage.Image.Rect)'
+      System::Call '*$mui.FinishPage.Image.Rect(i, i, i, i) i (, , .s, .s)'
+      Pop $mui.FinishPage.Image.Width
+      Pop $mui.FinishPage.Image.Height
+      System::Call 'user32::LoadImage(i 0, t "$PLUGINSDIR\modern-wizard.bmp", i ${IMAGE_BITMAP}, i $mui.FinishPage.Image.Width, i $mui.FinishPage.Image.Height, i ${LR_LOADFROMFILE}) i.s'
+    !else
+      System::Call 'user32::LoadImage(i 0, t "$PLUGINSDIR\modern-wizard.bmp", i ${IMAGE_BITMAP}, i 0, i 0, i ${LR_LOADFROMFILE}) i.s'
+    !endif    
     Pop $mui.FinishPage.Image.Bitmap
     SendMessage $mui.FinishPage.Image ${STM_SETIMAGE} ${IMAGE_BITMAP} $mui.FinishPage.Image.Bitmap
     
