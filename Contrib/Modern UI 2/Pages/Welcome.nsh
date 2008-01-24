@@ -16,6 +16,9 @@ Welcome page (implemented using nsDialogs)
         
     Var mui.WelcomePage.Image
     Var mui.WelcomePage.Image.Bitmap
+    Var mui.WelcomePage.Image.Rect
+    Var mui.WelcomePage.Image.Width
+    Var mui.WelcomePage.Image.Height
     
     Var mui.WelcomePage.Title
     Var mui.WelcomePage.Title.Font
@@ -128,7 +131,17 @@ Welcome page (implemented using nsDialogs)
     ;Image control
     ${NSD_CreateBitmap} 0u 0u 109u 193u ""
     Pop $mui.WelcomePage.Image
-    System::Call 'user32::LoadImage(i 0, t "$PLUGINSDIR\modern-wizard.bmp", i ${IMAGE_BITMAP}, i 0, i 0, i ${LR_LOADFROMFILE}) i.s'
+    !ifndef MUI_${MUI_PAGE_UNINSTALLER_PREFIX}WELCOMEFINISHPAGE_BITMAP_NOSTRETCH
+      System::Call '*(i, i, i 109, i 193) i.s'
+      Pop $mui.WelcomePage.Image.Rect 
+      System::Call 'user32::MapDialogRect(i $HWNDPARENT, i $mui.WelcomePage.Image.Rect)'
+      System::Call '*$mui.WelcomePage.Image.Rect(i, i, i, i) i (, , .s, .s)'
+      Pop $mui.WelcomePage.Image.Width
+      Pop $mui.WelcomePage.Image.Height
+      System::Call 'user32::LoadImage(i 0, t "$PLUGINSDIR\modern-wizard.bmp", i ${IMAGE_BITMAP}, i $mui.WelcomePage.Image.Width, i $mui.WelcomePage.Image.Height, i ${LR_LOADFROMFILE}) i.s'
+    !else
+      System::Call 'user32::LoadImage(i 0, t "$PLUGINSDIR\modern-wizard.bmp", i ${IMAGE_BITMAP}, i 0, i 0, i ${LR_LOADFROMFILE}) i.s'
+    !endif
     Pop $mui.WelcomePage.Image.Bitmap
     SendMessage $mui.WelcomePage.Image ${STM_SETIMAGE} ${IMAGE_BITMAP} $mui.WelcomePage.Image.Bitmap
 
