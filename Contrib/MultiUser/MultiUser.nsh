@@ -154,7 +154,7 @@ Installer/uninstaller initialization
 
 */
 
-!macro MULTIUSER_INIT_QUIT
+!macro MULTIUSER_INIT_QUIT UNINSTALLER_FUNCPREFIX
 
   !ifdef MULTIUSER_INIT_${UNINSTALLER_FUNCPREFIX}FUNCTIONQUIT
     Call "${MULTIUSER_INIT_${UNINSTALLER_FUNCPREFIX}FUCTIONQUIT}
@@ -193,7 +193,7 @@ Installer/uninstaller initialization
   
       ${if} $MultiUser.Privileges != "Admin"
         MessageBox MB_OK|MB_ICONSTOP "${MULTIUSER_INIT_TEXT_ADMINREQUIRED}"
-        !insertmacro MULTIUSER_INIT_QUIT ${UNINSTALLER_FUNCPREFIX}
+        !insertmacro MULTIUSER_INIT_QUIT "${UNINSTALLER_FUNCPREFIX}"
       ${endif}
   
     !else if "${MULTIUSER_EXECUTIONLEVEL}" == Power
@@ -205,7 +205,7 @@ Installer/uninstaller initialization
         ${else}
            MessageBox MB_OK|MB_ICONSTOP "${MULTIUSER_INIT_TEXT_ADMINREQUIRED}"
         ${endif}        
-        !insertmacro MULTIUSER_INIT_QUIT ${UNINSTALLER_FUNCPREFIX}
+        !insertmacro MULTIUSER_INIT_QUIT "${UNINSTALLER_FUNCPREFIX}"
       ${endif}
   
     !endif
