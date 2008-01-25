@@ -16,9 +16,12 @@ Welcome page (implemented using nsDialogs)
         
     Var mui.WelcomePage.Image
     Var mui.WelcomePage.Image.Bitmap
-    Var mui.WelcomePage.Image.Rect
-    Var mui.WelcomePage.Image.Width
-    Var mui.WelcomePage.Image.Height
+    
+    !ifndef MUI_${MUI_PAGE_UNINSTALLER_PREFIX}WELCOMEFINISHPAGE_BITMAP_NOSTRETCH
+      Var mui.WelcomePage.Image.Rect
+      Var mui.WelcomePage.Image.Width
+      Var mui.WelcomePage.Image.Height
+    !endif
     
     Var mui.WelcomePage.Title
     Var mui.WelcomePage.Title.Font
