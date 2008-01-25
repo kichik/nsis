@@ -16,9 +16,12 @@ Finish page (implemented using nsDialogs)
         
     Var mui.FinishPage.Image
     Var mui.FinishPage.Image.Bitmap
-    Var mui.FinishPage.Image.Rect
-    Var mui.FinishPage.Image.Width
-    Var mui.FinishPage.Image.Height    
+    
+    !ifndef MUI_${MUI_PAGE_UNINSTALLER_PREFIX}WELCOMEFINISHPAGE_BITMAP_NOSTRETCH
+      Var mui.FinishPage.Image.Rect
+      Var mui.FinishPage.Image.Width
+      Var mui.FinishPage.Image.Height
+    !endif
     
     Var mui.FinishPage.Title
     Var mui.FinishPage.Title.Font
