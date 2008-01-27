@@ -5,7 +5,7 @@
 ;--------------------------------
 ;Include Modern UI
 
-  !include "MUI.nsh"
+  !include "MUI2.nsh"
 
 ;--------------------------------
 ;General
