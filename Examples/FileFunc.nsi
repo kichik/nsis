@@ -9,6 +9,7 @@ Name "File Functions"
 OutFile "FileFunc.exe"
 Caption "$(^Name)"
 XPStyle on
+RequestExecutionLevel user
 
 !include "WinMessages.nsh"
 !include "FileFunc.nsh"

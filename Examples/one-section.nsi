@@ -14,6 +14,7 @@
 
 Name "One Section"
 OutFile "one-section.exe"
+RequestExecutionLevel user
 
 ;--------------------------------
 

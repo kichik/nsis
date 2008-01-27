@@ -12,6 +12,7 @@ Caption "Prime number generator"
 ShowInstDetails show
 AllowRootDirInstall true
 InstallDir "$EXEDIR"
+RequestExecutionLevel user
 
 DirText "Select a directory to write primes.txt. $_CLICK"
 

@@ -44,6 +44,9 @@ DirText "Lets make a third page!"
 ; Install dir
 InstallDir "${NSISDIR}\Examples"
 
+; Request application privileges for Windows Vista
+RequestExecutionLevel user
+
 ;--------------------------------
 
 ; Pages
