@@ -10,6 +10,7 @@ OutFile "TextFuncTest.exe"
 Caption "$(^Name)"
 ShowInstDetails show
 XPStyle on
+RequestExecutionLevel user
 
 Var FUNCTION
 Var TEMPFILE1

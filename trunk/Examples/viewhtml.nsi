@@ -15,6 +15,9 @@ SilentInstall silent
 ; The file to write
 OutFile "viewhtml.exe"
 
+; Request application privileges for Windows Vista
+RequestExecutionLevel user
+
 ;--------------------------------
 
 ; The stuff to install

@@ -35,6 +35,9 @@ AutoCloseWindow true
 ; hide the "show details" box
 ShowInstDetails nevershow
 
+; Request application privileges for Windows Vista
+RequestExecutionLevel admin
+
 ;--------------------------------
 
 ;Pages

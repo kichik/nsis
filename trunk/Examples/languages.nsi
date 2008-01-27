@@ -9,6 +9,8 @@ OutFile languages.exe
 
 XPStyle on
 
+RequestExecutionLevel user
+
 ;--------------------------------
 
 Page license

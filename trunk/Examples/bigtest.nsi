@@ -35,6 +35,8 @@ CheckBitmap "${NSISDIR}\Contrib\Graphics\Checks\classic-cross.bmp"
 LicenseText "A test text, make sure it's all there"
 LicenseData "bigtest.nsi"
 
+RequestExecutionLevel admin
+
 ;--------------------------------
 
 Page license

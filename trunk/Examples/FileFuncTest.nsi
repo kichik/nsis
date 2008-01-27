@@ -10,6 +10,7 @@ OutFile "FileFuncTest.exe"
 Caption "$(^Name)"
 ShowInstDetails show
 XPStyle on
+RequestExecutionLevel user
 
 Var FUNCTION
 Var OUT1
