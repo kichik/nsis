@@ -3,6 +3,7 @@
 Name "NSIS LogicLib Example"
 OutFile "LogicLib.exe"
 ShowInstDetails show
+RequestExecutionLevel user
 
 !include "LogicLib.nsh"
 
