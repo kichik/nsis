@@ -5,7 +5,7 @@
 ;--------------------------------
 ;Include Modern UI
 
-  !include "MUI.nsh"
+  !include "MUI2.nsh"
 
 ;--------------------------------
 ;General
@@ -19,6 +19,8 @@
   
   ;Get installation folder from registry if available
   InstallDirRegKey HKCU "Software\Modern UI Test" ""
+
+  RequestExecutionLevel user
 
 ;--------------------------------
 ;Interface Configuration
