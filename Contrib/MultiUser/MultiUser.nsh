@@ -13,6 +13,8 @@ Copyright © 2008 Joost Verburg
 !verbose push
 !verbose 3
 
+;Standard NSIS header files
+
 !ifdef MULTIUSER_MUI
   !include MUI2.nsh
 !endif
@@ -21,8 +23,12 @@ Copyright © 2008 Joost Verburg
 !include WinVer.nsh
 !include FileFunc.nsh
 
+;Variables
+
 Var MultiUser.Privileges
 Var MultiUser.InstallMode
+
+;Command line installation mode setting
 
 !ifdef MULTIUSER_INSTALLMODE_COMMANDLINE
   !insertmacro GetParameters
@@ -36,12 +42,20 @@ Var MultiUser.InstallMode
   !endif
   
   Var MultiUser.Parameters
-  Var MultiUser.Result  
+  Var MultiUser.Result
 !endif
+
+;Installation folder stored in registry
 
 !ifdef MULTIUSER_INSTALLMODE_INSTDIR_REGISTRY_KEY & MULTIUSER_INSTALLMODE_INSTDIR_REGISTRY_VALUENAME
   Var MultiUser.InstDir
 !endif
+
+!ifdef MULTIUSER_INSTALLMODE_DEFAULT_REGISTRY_KEY & MULTIUSER_INSTALLMODE_DEFAULT_REGISTRY_VALUENAME
+  Var MultiUser.DefaultKeyValue
+!endif
+
+;Windows Vista UAC setting
 
 !if "${MULTIUSER_EXECUTIONLEVEL}" == Admin
   RequestExecutionLevel admin
@@ -64,6 +78,8 @@ Install modes
 
 !macro MULTIUSER_INSTALLMODE_ALLUSERS UNINSTALLER_PREFIX UNINSTALLER_FUNCPREFIX
 
+  ;Install mode initialization - per-machine
+
   ${ifnot} ${IsNT}
     ${orif} $MultiUser.Privileges == "Admin"
     ${orif} $MultiUser.Privileges == "Power"
@@ -78,7 +94,7 @@ Install modes
   
     !ifdef MULTIUSER_INSTALLMODE_INSTDIR_REGISTRY_KEY & MULTIUSER_INSTALLMODE_INSTDIR_REGISTRY_VALUENAME
   
-      ReadRegStr $MultiUser.InstDir SHELL_CONTEXT "${MULTIUSER_INSTALLMODE_INSTDIR_REGISTRY_KEY}" "${MULTIUSER_INSTALLMODE_INSTDIR_REGISTRY_VALUENAME}"
+      ReadRegStr $MultiUser.InstDir HKLM "${MULTIUSER_INSTALLMODE_INSTDIR_REGISTRY_KEY}" "${MULTIUSER_INSTALLMODE_INSTDIR_REGISTRY_VALUENAME}"
   
       ${if} $MultiUser.InstDir != ""
         StrCpy $INSTDIR $MultiUser.InstDir
@@ -95,6 +111,8 @@ Install modes
 !macroend
 
 !macro MULTIUSER_INSTALLMODE_CURRENTUSER UNINSTALLER_PREFIX UNINSTALLER_FUNCPREFIX
+
+  ;Install mode initialization - per-user
   
   ${if} ${IsNT}  
   
@@ -112,7 +130,7 @@ Install modes
   
     !ifdef MULTIUSER_INSTALLMODE_INSTDIR_REGISTRY_KEY & MULTIUSER_INSTALLMODE_INSTDIR_REGISTRY_VALUENAME
   
-      ReadRegStr $MultiUser.InstDir SHELL_CONTEXT "${MULTIUSER_INSTALLMODE_INSTDIR_REGISTRY_KEY}" "${MULTIUSER_INSTALLMODE_INSTDIR_REGISTRY_VALUENAME}"
+      ReadRegStr $MultiUser.InstDir HKCU "${MULTIUSER_INSTALLMODE_INSTDIR_REGISTRY_KEY}" "${MULTIUSER_INSTALLMODE_INSTDIR_REGISTRY_VALUENAME}"
   
       ${if} $MultiUser.InstDir != ""
         StrCpy $INSTDIR $MultiUser.InstDir
@@ -182,12 +200,16 @@ Installer/uninstaller initialization
 
 !macro MULTIUSER_INIT_CHECKS UNINSTALLER_PREFIX UNINSTALLER_FUNCPREFIX
 
+  ;Installer initialization - check privileges and set install mode
+
   !insertmacro MULTIUSER_INIT_TEXTS
 
   UserInfo::GetAccountType
   Pop $MultiUser.Privileges
   
   ${if} ${IsNT}
+  
+    ;Check privileges
   
     !if "${MULTIUSER_EXECUTIONLEVEL}" == Admin
   
@@ -209,8 +231,10 @@ Installer/uninstaller initialization
       ${endif}
   
     !endif
-           
+    
     !ifdef MULTIUSER_EXECUTIONLEVEL_ALLUSERS
+    
+      ;Default to per-machine installation if possible
     
       ${if} $MultiUser.Privileges == "Admin"
         ${orif} $MultiUser.Privileges == "Power"
@@ -219,6 +243,31 @@ Installer/uninstaller initialization
         !else
           Call ${UNINSTALLER_FUNCPREFIX}MultiUser.InstallMode.CurrentUser
         !endif
+
+        !ifdef MULTIUSER_INSTALLMODE_DEFAULT_REGISTRY_KEY & MULTIUSER_INSTALLMODE_DEFAULT_REGISTRY_VALUENAME
+
+          ;Set installation mode to setting from a previous installation
+
+          !ifndef MULTIUSER_INSTALLMODE_DEFAULT_CURRENTUSER
+            ReadRegStr $MultiUser.DefaultKeyValue HKLM "${MULTIUSER_INSTALLMODE_DEFAULT_REGISTRY_KEY}" "${MULTIUSER_INSTALLMODE_DEFAULT_REGISTRY_VALUENAME}"
+            ${if} $MultiUser.DefaultKeyValue == ""
+              ReadRegStr $MultiUser.DefaultKeyValue HKCU "${MULTIUSER_INSTALLMODE_DEFAULT_REGISTRY_KEY}" "${MULTIUSER_INSTALLMODE_DEFAULT_REGISTRY_VALUENAME}"
+              ${if} $MultiUser.DefaultKeyValue != ""
+                Call ${UNINSTALLER_FUNCPREFIX}MultiUser.InstallMode.AllUsers
+              ${endif}
+            ${endif}
+          !else
+            ReadRegStr $MultiUser.DefaultKeyValue HKCU "${MULTIUSER_INSTALLMODE_DEFAULT_REGISTRY_KEY}" "${MULTIUSER_INSTALLMODE_DEFAULT_REGISTRY_VALUENAME}"
+            ${if} $MultiUser.DefaultKeyValue == ""
+              ReadRegStr $MultiUser.DefaultKeyValue HKLM "${MULTIUSER_INSTALLMODE_DEFAULT_REGISTRY_KEY}" "${MULTIUSER_INSTALLMODE_DEFAULT_REGISTRY_VALUENAME}"
+              ${if} $MultiUser.DefaultKeyValue != ""
+                Call ${UNINSTALLER_FUNCPREFIX}MultiUser.InstallMode.CurrentUser
+              ${endif}
+            ${endif}
+          !endif
+
+        !endif
+
       ${else}
         Call ${UNINSTALLER_FUNCPREFIX}MultiUser.InstallMode.CurrentUser
       ${endif}
@@ -227,9 +276,11 @@ Installer/uninstaller initialization
 
       Call ${UNINSTALLER_FUNCPREFIX}MultiUser.InstallMode.CurrentUser
 
-    !endif
+    !endif  
   
     !ifdef MULTIUSER_INSTALLMODE_COMMANDLINE
+    
+      ;Check for install mode setting on command line
 
       ${${UNINSTALLER_FUNCPREFIX}GetParameters} $MultiUser.Parameters
   
@@ -254,6 +305,8 @@ Installer/uninstaller initialization
     
   ${else}
   
+    ;Not running Windows NT, per-user installation not supported
+    
     Call ${UNINSTALLER_FUNCPREFIX}MultiUser.InstallMode.AllUsers
   
   ${endif}
@@ -333,6 +386,8 @@ Modern UI 2 page
 
 !macro MULTIUSER_PAGE_INSTALLMODE
 
+  ;Modern UI page for install mode
+
   !verbose push
   !verbose 3
   
@@ -348,6 +403,8 @@ Modern UI 2 page
 !macroend
 
 !macro MULTIUSER_FUNCTION_INSTALLMODEPAGE PRE LEAVE
+
+  ;Page functions of Modern UI page
 
   Function "${PRE}"
   

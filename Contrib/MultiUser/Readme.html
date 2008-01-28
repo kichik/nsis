@@ -145,7 +145,7 @@ FunctionEnd</pre>
         have the required privileges. After the macros are inserted, the variable $MultiUser.Privileges
         will contain the current execution level (Admin, Power, User or Guest).</p>
     <p>
-        The following additonal settings are available to customize the initialization:</p>
+        The following additional settings are available to customize the initialization:</p>
     <table>
         <tr>
             <td>
@@ -185,7 +185,8 @@ FunctionEnd</pre>
                 MULTIUSER_INIT_UNFUNCTIONQUIT
             </td>
             <td>
-                A custom fuction to be called when the installer is closed due to insufficient privileges.
+                A custom function to be called when the installer is closed due to insufficient
+                privileges.
             </td>
         </tr>
     </table>
@@ -202,27 +203,56 @@ FunctionEnd</pre>
         if Administrator or Power User rights are available (this is always the case if
         the execution level is set to Admin or Power, if Highest is set it depends on the
         user account). For the Standard execution level the installation will always be
-        for a single user. If you prefer the default to be a per-user installation even
-        though the rights for a per-machine installation are available, define MULTIUSER_INSTALLMODE_DEFAULT_CURRENTUSER
-        before including User.nsh. On Windows 95/98/Me installation for a single user is
-        not possible.</p>
-<p>
-        After initialization, the variable $MultiUser.InstallMode will contain the current installation
-        mode (AllUsers or CurrentUser).
-    </p>
-    <h3>
-        <a name="step-show"></a>Mixed-Mode Installation</h3>
+        for a single user. On Windows 95/98/Me installation for a single user is not possible.</p>
     <p>
-        For the Admin and Power levels, both a per-machine as well as a per-user installation
-        is possible. If the Highest level is set and the user is an Administrator or Power
-        User, both options are also available.</p>
-    <p>
-        Usually it's a good thing to give the user to choice between these options. For
-        users of the Modern UI version 2, a page is provided that asks the user for the
-        installation mode. To use this page, define MULTIUSER_MUI before including User.nsh.
-        Then, the MULTIUSER_PAGE_INSTALLMODE macro can be used just like a normal Modern
-        UI page (this page will automatically be skipped when running Windows 95/98/Me):</p>
-    <pre>!define MULTIUSER_EXECUTIONLEVEL Highest
+        The following settings are available to change the default installation mode:
+        <table>
+            <tr>
+                <td>
+                    <b>Setting</b>
+                </td>
+                <td>
+                    <b>Description</b>
+                </td>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    MULTIUSER_INSTALLMODE_DEFAULT_CURRENTUSER
+                </td>
+                <td>
+                    Set default to a per-user installation, even if the rights for a per-machine installation
+                    are available.
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    MULTIUSER_INSTALLMODE_DEFAULT_REGISTRY_KEY MULTIUSER_INSTALLMODE_DEFAULT_REGISTRY_VALUENAME
+                </td>
+                <td>
+                    Non-empty registry key that is created during the installation in either HKCU or
+                    HKLM. The default installation mode will automatically be set to the previously
+                    selected mode depending on the location of the key.
+                </td>
+            </tr>
+        </table>
+        <p>
+            After initialization, the variable $MultiUser.InstallMode will contain the current
+            installation mode (AllUsers or CurrentUser).
+        </p>
+        <h3>
+            Mixed-Mode Installation</h3>
+        <p>
+            For the Admin and Power levels, both a per-machine as well as a per-user installation
+            is possible. If the Highest level is set and the user is an Administrator or Power
+            User, both options are also available.</p>
+        <p>
+            Usually it's a good thing to give the user to choice between these options. For
+            users of the Modern UI version 2, a page is provided that asks the user for the
+            installation mode. To use this page, define MULTIUSER_MUI before including User.nsh.
+            Then, the MULTIUSER_PAGE_INSTALLMODE macro can be used just like a normal Modern
+            UI page (this page will automatically be skipped when running Windows 95/98/Me):</p>
+        <pre>!define MULTIUSER_EXECUTIONLEVEL Highest
 <b>!define MULTIUSER_MUI</b>
 !define MULTIUSER_INSTALLMODE_COMMANDLINE
 !include MultiUser.nsh
@@ -244,131 +274,131 @@ Function un.onInit
   !insertmacro MULTIUSER_UNINIT
 FunctionEnd
 </pre>
-    <p>
-        The MULTIUSER_INSTALLMODE_COMMANDLINE setting that also appears in this example
-        enables the installation mode to be set using the /AllUsers or /CurrentUser command
-        line parameters. This is especially useful for silent setup.</p>
-    <p>
-        The following settings can be used to customize the texts on the page (in addition
-        to the general Modern UI page settings):</p>
-    <table>
-        <tr>
-            <td>
-                <b>Setting</b>
-            </td>
-            <td>
-                <b>Description</b>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                MULTIUSER_INSTALLMODEPAGE_TEXT_TOP
-            </td>
-            <td>
-                Text to display on the top of the page.
-            </td>
-        </tr>
-        <tr>
-            <td>
-                MULTIUSER_INSTALLMODEPAGE_TEXT_ALLUSERS
-            </td>
-            <td>
-                Text to display on the combo button for a per-machine installation.
-            </td>
-        </tr>
-        <tr>
-            <td>
-                MULTIUSER_INSTALLMODEPAGE_TEXT_CURRENTUSER
-            </td>
-            <td>
-                Text to display on the combo button for a per-user installation.
-            </td>
-        </tr>
-    </table>
-    <h3>
-        Installation Mode Initalization</h3>
-    <p>
-        The SetShellVarContext flag (which determines the folders for e.g. shortcuts, like
-        $DESKTOP) is automatically set depending on the installation mode. In addition,
-        the following settings can be used to perform additional actions when the installation
-        mode is initialized:</p>
-    <table>
-        <tr>
-            <td>
-                <b>Setting</b>
-            </td>
-            <td>
-                <b>Description</b>
-            </td>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                MULTIUSER_INSTALLMODE_INSTDIR
-            </td>
-            <td>
-                Name of the folder in which to install the application, without a path. This folder
-                will be located in Program Files for a per-machine installation and in the local
-                Application Data folder for a per-user installation (if supported).
-            </td>
-        </tr>
-        <tr>
-            <td>
-                MULTIUSER_INSTALLMODE_INSTDIR_REGISTRY_KEY MULTIUSER_INSTALLMODE_INSTDIR_REGISTRY_VALUENAME
-            </td>
-            <td>
-                Registry key from which to obtain a previously stored installation folder. It will
-                be retrieved from HKCU for per-user and HKLM for per-machine.
-            </td>
-        </tr>
-        <tr>
-            <td>
-                MULTIUSER_INSTALLMODE_FUNCTION<br />
-                MULTIUSER_INSTALLMODE_UNFUNCTION
-            </td>
-            <td>
-                A custom fuction to be called during the initialization of the installation mode
-                to set additional installer settings that depend on the mode
-            </td>
-    </table>
-    <p>
-        To set the installation mode manually, call one of these four functions:</p>
-    <table>
-        <tr>
-            <td>
-                <b>Function name</b>
-            </td>
-            <td>
-                <b>Installation mode</b>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                MultiUser.InstallMode.AllUsers
-            </td>
-            <td>
-                Installer: Per-machine installation
-            </td>
-        </tr>
-        <tr>
-            <td>
-                MultiUser.InstallMode.CurrentUser
+        <p>
+            The MULTIUSER_INSTALLMODE_COMMANDLINE setting that also appears in this example
+            enables the installation mode to be set using the /AllUsers or /CurrentUser command
+            line parameters. This is especially useful for silent setup.</p>
+        <p>
+            The following settings can be used to customize the texts on the page (in addition
+            to the general Modern UI page settings):</p>
+        <table>
+            <tr>
                 <td>
-                    Installer: Per-user installation
+                    <b>Setting</b>
                 </td>
-        </tr>
-        <tr>
-            <td>
-                un.MultiUser.InstallMode.AllUsers<td>
-                    Uninstaller: Per-machine installation
+                <td>
+                    <b>Description</b>
                 </td>
-        </tr>
-        <tr>
-            <td>
-                un.MultiUser.InstallMode.CurrentUser<td>
-                    Uninstaller: Per-user installation
+            </tr>
+            <tr>
+                <td>
+                    MULTIUSER_INSTALLMODEPAGE_TEXT_TOP
                 </td>
-        </tr>
-    </table>
+                <td>
+                    Text to display on the top of the page.
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    MULTIUSER_INSTALLMODEPAGE_TEXT_ALLUSERS
+                </td>
+                <td>
+                    Text to display on the combo button for a per-machine installation.
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    MULTIUSER_INSTALLMODEPAGE_TEXT_CURRENTUSER
+                </td>
+                <td>
+                    Text to display on the combo button for a per-user installation.
+                </td>
+            </tr>
+        </table>
+        <h3>
+            Installation Mode Initalization</h3>
+        <p>
+            The SetShellVarContext flag (which determines the folders for e.g. shortcuts, like
+            $DESKTOP) is automatically set depending on the installation mode. In addition,
+            the following settings can be used to perform additional actions when the installation
+            mode is initialized:</p>
+        <table>
+            <tr>
+                <td>
+                    <b>Setting</b>
+                </td>
+                <td>
+                    <b>Description</b>
+                </td>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    MULTIUSER_INSTALLMODE_INSTDIR
+                </td>
+                <td>
+                    Name of the folder in which to install the application, without a path. This folder
+                    will be located in Program Files for a per-machine installation and in the local
+                    Application Data folder for a per-user installation (if supported).
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    MULTIUSER_INSTALLMODE_INSTDIR_REGISTRY_KEY MULTIUSER_INSTALLMODE_INSTDIR_REGISTRY_VALUENAME
+                </td>
+                <td>
+                    Registry key from which to obtain a previously stored installation folder. It will
+                    be retrieved from HKCU for per-user and HKLM for per-machine.
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    MULTIUSER_INSTALLMODE_FUNCTION<br />
+                    MULTIUSER_INSTALLMODE_UNFUNCTION
+                </td>
+                <td>
+                    A custom fuction to be called during the initialization of the installation mode
+                    to set additional installer settings that depend on the mode
+                </td>
+        </table>
+        <p>
+            To set the installation mode manually, call one of these four functions:</p>
+        <table>
+            <tr>
+                <td>
+                    <b>Function name</b>
+                </td>
+                <td>
+                    <b>Installation mode</b>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    MultiUser.InstallMode.AllUsers
+                </td>
+                <td>
+                    Installer: Per-machine installation
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    MultiUser.InstallMode.CurrentUser
+                    <td>
+                        Installer: Per-user installation
+                    </td>
+            </tr>
+            <tr>
+                <td>
+                    un.MultiUser.InstallMode.AllUsers<td>
+                        Uninstaller: Per-machine installation
+                    </td>
+            </tr>
+            <tr>
+                <td>
+                    un.MultiUser.InstallMode.CurrentUser<td>
+                        Uninstaller: Per-user installation
+                    </td>
+            </tr>
+        </table>
 </body>
 </html>
