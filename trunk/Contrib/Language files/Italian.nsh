@@ -121,3 +121,11 @@
 !ifdef MUI_UNABORTWARNING
   ${LangFileString} MUI_UNTEXT_ABORTWARNING "Sei sicuro di voler interrompere la disinstallazione di $(^Name)?"
 !endif
+
+!ifdef MULTIUSER_INSTALLMODEPAGE
+  ${LangFileString} MULTIUSER_TEXT_INSTALLMODE_TITLE "Scelta degli Utenti"
+  ${LangFileString} MULTIUSER_TEXT_INSTALLMODE_SUBTITLE "Scegliete per quali utenti volete installare $(^NameDA)."
+  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_TOP "Scegliete se volete installare $(^NameDA) solo per voi o per tutti gli utenti di questo sistema. $(^ClickNext)"
+  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_ALLUSERS "Installazione per tutti gli utenti"
+  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_CURRENTUSER "Installazione personale"
+!endif
