@@ -79,7 +79,7 @@ enum
   TOK_LANGSTRING,
   TOK_LANGSTRINGUP,
 
-  // comrpession stuff
+  // compression stuff
   TOK_SETCOMPRESS,
   TOK_DBOPTIMIZE,
   TOK_SETCOMPRESSOR,
