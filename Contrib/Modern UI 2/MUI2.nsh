@@ -32,8 +32,6 @@ Copyright © 2002-2008 Joost Verburg
 !include nsDialogs.nsh
 !include LangFile.nsh
 
-!define LANGFILE_DEFAULT "${NSISDIR}\Contrib\Language files\English.nsh"
-
 
 ;--------------------------------
 ;Macros for compile-time defines
