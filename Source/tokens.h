@@ -129,7 +129,7 @@ enum
   TOK_FUNCTIONEND,
   TOK_ADDSIZE,
 
-  // page oredering shit
+  // page ordering
   TOK_PAGE,
   TOK_UNINSTPAGE,
 
