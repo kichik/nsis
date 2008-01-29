@@ -29,8 +29,6 @@ Copyright © 2002-2008 Joost Verburg
 !include LangFile.nsh
 !include WinMessages.nsh
 
-!define LANGFILE_DEFAULT "${NSISDIR}\Contrib\Language files\English.nsh"
-
 Var MUI_TEMP1
 Var MUI_TEMP2
 
@@ -2078,8 +2076,24 @@ Var MUI_TEMP2
   !insertmacro MUI_INSERT
 
   LoadLanguageFile "${NSISDIR}\Contrib\Language files\${LANGUAGE}.nlf"
+
+  ;Set default language file for MUI and backup user setting
+  !ifdef LANGFILE_DEFAULT
+    !define MUI_LANGFILE_DEFAULT_TEMP "${LANGFILE_DEFAULT}"
+    !undef LANGFILE_DEFAULT
+  !endif
+  !define LANGFILE_DEFAULT "${NSISDIR}\Contrib\Language files\English.nsh"
+
+  ;Include language file
   !insertmacro LANGFILE_INCLUDE "${NSISDIR}\Contrib\Language files\${LANGUAGE}.nsh"
 
+  ;Restore user setting for default language file
+  !undef LANGFILE_DEFAULT
+  !ifdef MUI_LANGFILE_DEFAULT_TEMP
+    !define LANGFILE_DEFAULT "${MUI_LANGFILE_DEFAULT}"
+  !endif
+
+  ;Add language to list of languages for selection dialog  
   !ifndef MUI_LANGDLL_LANGUAGES
     !define MUI_LANGDLL_LANGUAGES "'${LANGFILE_${LANGUAGE}_NAME}' '${LANG_${LANGUAGE}}' "
     !define MUI_LANGDLL_LANGUAGES_CP "'${LANGFILE_${LANGUAGE}_NAME}' '${LANG_${LANGUAGE}}' '${LANG_${LANGUAGE}_CP}' "
