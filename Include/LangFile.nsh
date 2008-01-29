@@ -22,7 +22,7 @@ Copyright © 2008 Joost Verburg
 
   !define LangFileString "!insertmacro LANGFILE_SETSTRING"
 
-  !define LANGFILE_SETNAMES  
+  !define LANGFILE_SETNAMES
   !include "${FILENAME}"
   !undef LANGFILE_SETNAMES
 
@@ -47,7 +47,7 @@ Copyright © 2008 Joost Verburg
 
 !macro LANGFILE IDNAME NAME
 
-  ;Start of langauge file, set names
+  ;Start of standard NSIS language file
 
   !ifdef LANGFILE_SETNAMES
 
@@ -60,6 +60,22 @@ Copyright © 2008 Joost Verburg
     !ifndef "LANGFILE_${IDNAME}_NAME"
       !define "LANGFILE_${IDNAME}_NAME" "${NAME}"
     !endif
+
+  !endif
+
+!macroend
+
+!macro LANGFILE_EXT IDNAME
+
+  ;Start of installer language file
+  
+  !ifdef LANGFILE_SETNAMES
+
+    !ifdef LANGFILE_IDNAME
+      !undef LANGFILE_IDNAME
+    !endif
+
+    !define LANGFILE_IDNAME "${IDNAME}"
 
   !endif
 
