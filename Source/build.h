@@ -29,6 +29,7 @@
 #include "nobj/entry.h"
 #include "nobj/function.h"
 #include "nobj/nobj.h"
+#include "nobj/section.h"
 #include "icon.h"
 
 #include "exehead/fileform.h"
@@ -371,6 +372,7 @@ class CEXEBuild {
     int build_cursection_isfunc;
     section *build_cursection;
     nobj_function *build_cur_nobj_function;
+    nobj_section *build_cur_nobj_section;
     TinyGrowBuf build_sections, ubuild_sections, *cur_sections;
     GrowBuf build_entries,ubuild_entries, *cur_entries;
     GrowBuf build_instruction_entry_map,ubuild_instruction_entry_map, *cur_instruction_entry_map;
