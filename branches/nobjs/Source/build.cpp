@@ -902,7 +902,11 @@ int CEXEBuild::add_label(const char *name)
 
   int cs=build_cursection->code;
   int ce=cs+build_cursection->code_size;
-  int offs=ns_label.add(name,0);
+
+  char *p=strdup(name);
+  if (p[strlen(p)-1] == ':') p[strlen(p)-1]=0;
+  int offs=ns_label.add(p,0);
+  free(p);
 
   int n=cur_labels->getlen()/sizeof(section);
   if (n)
@@ -3422,13 +3426,13 @@ again:
   if (ret != PS_OK) return ret;
 
   // done
-  if (add_label("Initialize_____Plugins_done:")) return PS_ERROR;
+  if (add_label("Initialize_____Plugins_done")) return PS_ERROR;
   // Return
   ret=add_entry_direct(EW_RET);
   if (ret != PS_OK) return ret;
 
   // error
-  if (add_label("Initialize_____Plugins_error:")) return PS_ERROR;
+  if (add_label("Initialize_____Plugins_error")) return PS_ERROR;
   // error message box
   ret=add_entry_direct(EW_MESSAGEBOX, MB_OK|MB_ICONSTOP|(IDOK<<21), add_string("Error! Can't initialize plug-ins directory. Please try again later."));
   if (ret != PS_OK) return ret;
