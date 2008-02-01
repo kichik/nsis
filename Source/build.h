@@ -213,6 +213,7 @@ class CEXEBuild {
     int section_end();
     int add_function(const char *funname);
     int function_end();
+    int add_nobj_entries(const nobj* obj);
     void section_add_size_kb(int kb);
     int section_add_flags(int flags);
     int section_add_install_type(int inst_type);

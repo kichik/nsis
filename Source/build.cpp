@@ -1002,24 +1002,7 @@ int CEXEBuild::function_end()
   nobj_function* func = build_cur_nobj_function;
   build_cur_nobj_function = NULL;
 
-  try
-  {
-    const nobjs entries = func->dependencies();
-    for (nobjs_const_iterator i = entries.begin(); i != entries.end(); i++)
-    {
-      int ret = add_nobj_entry(*dynamic_cast<const nobj_entry*>(*i));
-
-      if (ret != PS_OK)
-      {
-        return ret;
-      }
-    }
-  }
-  catch (const exception& e)
-  {
-    ERROR_MSG("Error: %s\n", e.what());
-    return PS_ERROR;
-  }
+  add_nobj_entries(func);
 
   build_cursection_isfunc=0;
   build_cursection=NULL;
@@ -1084,24 +1067,7 @@ int CEXEBuild::section_end()
   nobj_section* sect = build_cur_nobj_section;
   build_cur_nobj_section = NULL;
 
-  try
-  {
-    const nobjs entries = sect->dependencies();
-    for (nobjs_const_iterator i = entries.begin(); i != entries.end(); i++)
-    {
-      int ret = add_nobj_entry(*dynamic_cast<const nobj_entry*>(*i));
-
-      if (ret != PS_OK)
-      {
-        return ret;
-      }
-    }
-  }
-  catch (const exception& e)
-  {
-    ERROR_MSG("Error: %s\n", e.what());
-    return PS_ERROR;
-  }
+  add_nobj_entries(sect);
 
   build_cursection->code_size--;
   build_cursection=NULL;
@@ -1230,6 +1196,30 @@ int CEXEBuild::add_section(const char *secname, const char *defname, int expand/
   
   set_code_type_predefines(name);
     
+  return PS_OK;
+}
+
+int CEXEBuild::add_nobj_entries(const nobj* obj)
+{
+  try
+  {
+    const nobjs entries = obj->dependencies();
+    for (nobjs_const_iterator i = entries.begin(); i != entries.end(); i++)
+    {
+      int ret = add_nobj_entry(*dynamic_cast<const nobj_entry*>(*i));
+
+      if (ret != PS_OK)
+      {
+        return ret;
+      }
+    }
+  }
+  catch (const exception& e)
+  {
+    ERROR_MSG("Error: %s\n", e.what());
+    return PS_ERROR;
+  }
+
   return PS_OK;
 }
 
