@@ -16,8 +16,7 @@ Start Menu folder page
     Var mui.StartMenuPage.Location
     Var mui.StartMenuPage.FolderList
 
-    Var mui.StartMenuPage.Create
-    Var mui.StartMenuPage.ReturnValue
+    Var mui.StartMenuPage.Temp
   !endif
 
   !ifdef MUI_STARTMENUPAGE_REGISTRY_ROOT & MUI_STARTMENUPAGE_REGISTRY_KEY & MUI_STARTMENUPAGE_REGISTRY_VALUENAME
@@ -143,8 +142,8 @@ Start Menu folder page
 
     StartMenu::Show
 
-    Pop $mui.StartMenuPage.ReturnValue
-    ${if} $mui.StartMenuPage.ReturnValue ==  "success"
+    Pop $mui.StartMenuPage.Temp
+    ${if} $mui.StartMenuPage.Temp ==  "success"
       Pop "${MUI_STARTMENUPAGE_VARIABLE}"
     ${endif}
 
@@ -200,10 +199,10 @@ Start Menu folder page
 
   !define MUI_STARTMENUPAGE_CURRENT_ID "${ID}"
 
-  StrCpy $mui.StartMenuPage.Create "${MUI_STARTMENUPAGE_${MUI_STARTMENUPAGE_CURRENT_ID}_VARIABLE}" 1
+  StrCpy $mui.StartMenuPage.Temp "${MUI_STARTMENUPAGE_${MUI_STARTMENUPAGE_CURRENT_ID}_VARIABLE}" 1
   
   ;If the folder start with >, the user has chosen not to create a shortcut
-  ${if} $mui.StartMenuPage.Create != ">"
+  ${if} $mui.StartMenuPage.Temp != ">"
 
     ${if} "${MUI_STARTMENUPAGE_${MUI_STARTMENUPAGE_CURRENT_ID}_VARIABLE}" == ""
       ;Get folder from registry if the variable doesn't contain anything
