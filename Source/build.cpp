@@ -1216,7 +1216,26 @@ int CEXEBuild::add_nobj_entries(const nobj* obj)
     const nobjs entries = obj->dependencies();
     for (nobjs_const_iterator i = entries.begin(); i != entries.end(); i++)
     {
-      int ret = add_nobj_entry(*dynamic_cast<const nobj_entry*>(*i));
+      const nobj_entry* ent = dynamic_cast<const nobj_entry*>(*i);
+      nobjs parms = ent->dependencies();
+
+      entry st_ent={0,};
+      st_ent.which = ent->which();
+
+      for (int i = 0; i < parms.size(); i++)
+      {
+        try
+        {
+          st_ent.offsets[i] = add_nobj_entry_parm(parms[i]);
+        }
+        catch (const exception& e)
+        {
+          ERROR_MSG("Error: %s\n", e.what());
+          return PS_ERROR;
+        }
+      }
+
+      int ret = add_entry_internal(&st_ent);
 
       if (ret != PS_OK)
       {
@@ -1298,23 +1317,7 @@ int CEXEBuild::add_nobj_entry(const nobj_entry& ent)
     return PS_OK;
   }
 
-  entry st_ent={0,};
-  st_ent.which = ent.which();
-
-  for (int i = 0; i < parms.size(); i++)
-  {
-    try
-    {
-      st_ent.offsets[i] = add_nobj_entry_parm(parms[i]);
-    }
-    catch (const exception& e)
-    {
-      ERROR_MSG("Error: %s\n", e.what());
-      return PS_ERROR;
-    }
-  }
-
-  return add_entry_internal(&st_ent);
+  return PS_ERROR;
 }
 
 int CEXEBuild::add_nobj_entry_parm(const nobj* parm)
