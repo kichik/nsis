@@ -17,10 +17,7 @@
 #include "function.h"
 #include "Platform.h"
 
-#include <stdexcept>
-
 using std::string;
-using std::length_error;
 
 /**
  * nobj_function
