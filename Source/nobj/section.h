@@ -37,6 +37,11 @@ public:
 
   void add_entry(const nobj_entry& entry);
 
+  void add_flags(int flags);
+  void remove_flags(int flags);
+  void add_inst_type(int inst_type);
+  void add_size(int size);
+
 private:
 
   section m_section;

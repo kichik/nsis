@@ -1020,33 +1020,43 @@ int CEXEBuild::function_end()
 
 int CEXEBuild::section_add_flags(int flags)
 {
-  if (!build_cursection || build_cursection_isfunc)
+  if (!build_cur_nobj_section)
   {
     ERROR_MSG("Error: can't modify flags when no section is open\n");
     return PS_ERROR;
   }
-  build_cursection->flags |= flags;
+  build_cur_nobj_section->add_flags(flags);
+  return PS_OK;
+}
+
+int CEXEBuild::section_remove_flags(int flags)
+{
+  if (!build_cur_nobj_section)
+  {
+    ERROR_MSG("Error: can't modify flags when no section is open\n");
+    return PS_ERROR;
+  }
+  build_cur_nobj_section->remove_flags(flags);
   return PS_OK;
 }
 
 int CEXEBuild::section_add_install_type(int inst_type)
 {
-  if (!build_cursection || build_cursection_isfunc)
+  if (!build_cur_nobj_section)
   {
     ERROR_MSG("Error: can't modify flags when no section is open\n");
     return PS_ERROR;
   }
-  if (build_cursection->install_types == ~0)
-    build_cursection->install_types = 0;
-  build_cursection->install_types |= inst_type;
+  build_cur_nobj_section->add_inst_type(inst_type);
   return PS_OK;
 }
 
 void CEXEBuild::section_add_size_kb(int kb)
 {
-  if (build_cursection)
+  // TODO this was build_cursection before which is true for functions as well...
+  if (build_cur_nobj_section)
   {
-    build_cursection->size_kb+=kb;
+    build_cur_nobj_section->add_size(kb);
   }
 }
 
