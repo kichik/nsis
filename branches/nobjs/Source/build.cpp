@@ -1080,8 +1080,36 @@ int CEXEBuild::section_end()
     return PS_ERROR;
   }
   add_entry_direct(EW_RET);
+
+  nobj_section* sect = build_cur_nobj_section;
+  build_cur_nobj_section = NULL;
+
+  try
+  {
+    const nobjs entries = sect->dependencies();
+    for (nobjs_const_iterator i = entries.begin(); i != entries.end(); i++)
+    {
+      int ret = add_nobj_entry(*dynamic_cast<const nobj_entry*>(*i));
+
+      if (ret != PS_OK)
+      {
+        return ret;
+      }
+    }
+  }
+  catch (const exception& e)
+  {
+    ERROR_MSG("Error: %s\n", e.what());
+    return PS_ERROR;
+  }
+
   build_cursection->code_size--;
   build_cursection=NULL;
+
+  int n=cur_sections->getlen()/sizeof(section);
+  cur_sections->resize((n+1)*sizeof(section));
+  memcpy(((section*)cur_sections->get())+n, sect->get_section(), sizeof(section));
+
   if (!sectiongroup_open_cnt)
     set_uninstall_mode(0);
   
@@ -1106,11 +1134,8 @@ int CEXEBuild::add_section(const char *secname, const char *defname, int expand/
     return PS_ERROR;
   }
 
-  section new_section;
-  new_section.flags = SF_SELECTED;
-  new_section.flags |= expand ? SF_EXPAND : 0;
-  new_section.code_size = 0;
-  new_section.size_kb = 0;
+  int flags = SF_SELECTED;
+  flags |= expand ? SF_EXPAND : 0;
 
   char *name = (char*)secname;
 
@@ -1118,17 +1143,17 @@ int CEXEBuild::add_section(const char *secname, const char *defname, int expand/
   {
     if (secname[1])
     {
-      new_section.flags |= SF_SECGRP;
+      flags |= SF_SECGRP;
       name++;
     }
     else
-      new_section.flags |= SF_SECGRPEND;
+      flags |= SF_SECGRPEND;
   }
 
   if (name[0] == '!')
   {
     name++;
-    new_section.flags |= SF_BOLD;
+    flags |= SF_BOLD;
   }
 
   int old_uninstall_mode = uninstall_mode;
@@ -1146,7 +1171,7 @@ int CEXEBuild::add_section(const char *secname, const char *defname, int expand/
     set_uninstall_mode(1);
   }
 
-  if ((new_section.flags & SF_SECGRPEND) && sectiongroup_open_cnt && old_uninstall_mode)
+  if ((flags & SF_SECGRPEND) && sectiongroup_open_cnt && old_uninstall_mode)
   {
     set_uninstall_mode(1);
   }
@@ -1160,14 +1185,11 @@ int CEXEBuild::add_section(const char *secname, const char *defname, int expand/
     }
   }
 
-  new_section.code = cur_entries->getlen() / sizeof(entry);
+  int install_types = *name ? 0 : ~0;
+  int addr = add_string(name);
 
-  new_section.install_types = *name ? 0 : ~0;
-  new_section.name_ptr = add_string(name);
-  memset(&new_section.name,0,sizeof(new_section.name));
-
-  cur_sections->add(&new_section, sizeof(section));
-  build_cursection = (section *) cur_sections->get() + cur_header->blocks[NB_SECTIONS].num;
+  build_cur_nobj_section = new nobj_section(addr, cur_entries->getlen()/sizeof(entry), install_types, flags);
+  build_cursection = build_cur_nobj_section->get_section();
 
   if (defname[0])
   {
@@ -1182,14 +1204,14 @@ int CEXEBuild::add_section(const char *secname, const char *defname, int expand/
 
   cur_header->blocks[NB_SECTIONS].num++;
 
-  if (new_section.flags & (SF_SECGRP | SF_SECGRPEND))
+  /*if (flags & (SF_SECGRP | SF_SECGRPEND))
   {
     add_entry_direct(EW_RET);
     build_cursection->code_size = 0;
 
     build_cursection = 0;
 
-    if (new_section.flags & SF_SECGRPEND)
+    if (flags & SF_SECGRPEND)
     {
       sectiongroup_open_cnt--;
       if (sectiongroup_open_cnt < 0)
@@ -1204,7 +1226,7 @@ int CEXEBuild::add_section(const char *secname, const char *defname, int expand/
     }
     else
       sectiongroup_open_cnt++;
-  }
+  }*/
   
   set_code_type_predefines(name);
     
@@ -1267,6 +1289,12 @@ int CEXEBuild::add_nobj_entry(const nobj_entry& ent)
   if (build_cur_nobj_function)
   {
     build_cur_nobj_function->add_entry(ent);
+    return PS_OK;
+  }
+
+  if (build_cur_nobj_section)
+  {
+    build_cur_nobj_section->add_entry(ent);
     return PS_OK;
   }
 
