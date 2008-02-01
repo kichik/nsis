@@ -216,6 +216,7 @@ class CEXEBuild {
     int add_nobj_entries(const nobj* obj);
     void section_add_size_kb(int kb);
     int section_add_flags(int flags);
+    int section_remove_flags(int flags);
     int section_add_install_type(int inst_type);
     int add_page(int type);
     int page_end();

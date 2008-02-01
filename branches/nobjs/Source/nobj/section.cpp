@@ -45,3 +45,27 @@ void nobj_section::add_entry(const nobj_entry& entry)
   nobj_entry* entryp = new nobj_entry(entry.which(), entry.dependencies());
   nobj::add_dependency(entryp);
 }
+
+void nobj_section::add_flags(int flags)
+{
+  m_section.flags |= flags;
+}
+
+void nobj_section::remove_flags(int flags)
+{
+  m_section.flags &= ~flags;
+}
+
+void nobj_section::add_inst_type(int inst_type)
+{
+  // TODO keep this is a flag "untouched section"...
+  if (m_section.install_types == ~0)
+    m_section.install_types = 0;
+
+  m_section.install_types |= inst_type;
+}
+
+void nobj_section::add_size(int size)
+{
+  m_section.size_kb += size;
+}
