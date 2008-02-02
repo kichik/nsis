@@ -19,6 +19,7 @@
 
 #include "nobj.h"
 #include "entry.h"
+#include "label.h"
 
 #include "../exehead/fileform.h" // TODO skip section structure
 
@@ -36,6 +37,7 @@ public:
   section* get_function(); // XXX pointer?
 
   void add_entry(const nobj_entry& entry);
+  void add_label(const nobj_label& label);
 
 private:
 

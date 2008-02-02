@@ -46,6 +46,12 @@ void nobj_section::add_entry(const nobj_entry& entry)
   nobj::add_dependency(entryp);
 }
 
+void nobj_section::add_label(const nobj_label& label)
+{
+  nobj_label* labelp = new nobj_label(label.get_label());
+  nobj::add_dependency(labelp);
+}
+
 void nobj_section::add_flags(int flags)
 {
   m_section.flags |= flags;

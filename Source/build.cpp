@@ -897,16 +897,41 @@ int CEXEBuild::add_label(const char *name)
     return PS_ERROR;
   }
 
+  nobj_label label(name);
+
+  if (build_cur_nobj_function)
+  {
+    build_cur_nobj_function->add_label(label);
+    return PS_OK;
+  }
+
+  if (build_cur_nobj_section)
+  {
+    build_cur_nobj_section->add_label(label);
+    return PS_OK;
+  }
+
+  return PS_ERROR;
+}
+
+int CEXEBuild::add_label_internal(const nobj_label* label)
+{
+  if (!build_cursection)
+  {
+    ERROR_MSG("Error: Label declaration not valid outside of function/section\n");
+    return PS_ERROR;
+  }
+
   // TODO label needs a father...
   //      else it won't know which function's ref count to up
 
   int cs=build_cursection->code;
   int ce=cs+build_cursection->code_size;
 
-  char *p=strdup(name);
-  if (p[strlen(p)-1] == ':') p[strlen(p)-1]=0;
-  int offs=ns_label.add(p,0);
-  free(p);
+  string name = label->get_label();
+  if (name[name.length() - 1] == ':')
+    name = name.substr(0, name.length() - 1);
+  int offs=ns_label.add(name.c_str(),0);
 
   int n=cur_labels->getlen()/sizeof(section);
   if (n)
@@ -914,16 +939,16 @@ int CEXEBuild::add_label(const char *name)
     section *t=(section*)cur_labels->get();
     while (n--)
     {
-      if ((*name == '.' || (t->code >= cs && t->code <= ce))  &&
+      if ((name[0] == '.' || (t->code >= cs && t->code <= ce))  &&
           t->name_ptr==offs)
       {
-        if (*name == '.') ERROR_MSG("Error: global label \"%s\" already declared\n",name);
+        if (name[0] == '.') ERROR_MSG("Error: global label \"%s\" already declared\n",name.c_str());
         else
         {
           char *t = "section";
           if (build_cursection_isfunc)
             t = "function";
-          ERROR_MSG("Error: label \"%s\" already declared in %s\n",name,t);
+          ERROR_MSG("Error: label \"%s\" already declared in %s\n",name.c_str(),t);
         }
         return PS_ERROR;
       }
@@ -1217,29 +1242,47 @@ int CEXEBuild::add_nobj_entries(const nobj* obj)
     for (nobjs_const_iterator i = entries.begin(); i != entries.end(); i++)
     {
       const nobj_entry* ent = dynamic_cast<const nobj_entry*>(*i);
-      nobjs parms = ent->dependencies();
+      const nobj_label* label = dynamic_cast<const nobj_label*>(*i);
 
-      entry st_ent={0,};
-      st_ent.which = ent->which();
-
-      for (int i = 0; i < parms.size(); i++)
+      if (ent)
       {
-        try
+        nobjs parms = ent->dependencies();
+
+        entry st_ent={0,};
+        st_ent.which = ent->which();
+
+        for (int i = 0; i < parms.size(); i++)
         {
-          st_ent.offsets[i] = add_nobj_entry_parm(parms[i]);
+          try
+          {
+            st_ent.offsets[i] = add_nobj_entry_parm(parms[i]);
+          }
+          catch (const exception& e)
+          {
+            ERROR_MSG("Error: %s\n", e.what());
+            return PS_ERROR;
+          }
         }
-        catch (const exception& e)
+
+        int ret = add_entry_internal(&st_ent);
+
+        if (ret != PS_OK)
         {
-          ERROR_MSG("Error: %s\n", e.what());
-          return PS_ERROR;
+          return ret;
         }
       }
-
-      int ret = add_entry_internal(&st_ent);
-
-      if (ret != PS_OK)
+      else if (label)
       {
-        return ret;
+        int ret = add_label_internal(label);
+        if (ret != PS_OK)
+        {
+          return ret;
+        }
+      }
+      else
+      {
+        ERROR_MSG("Invalid nobj!\n");
+        return PS_ERROR;
       }
     }
   }
