@@ -1027,7 +1027,8 @@ int CEXEBuild::function_end()
   nobj_function* func = build_cur_nobj_function;
   build_cur_nobj_function = NULL;
 
-  add_nobj_entries(func);
+  if (add_nobj_entries(func) != PS_OK)
+    return PS_ERROR;
 
   build_cursection_isfunc=0;
   build_cursection=NULL;
@@ -1102,7 +1103,8 @@ int CEXEBuild::section_end()
   nobj_section* sect = build_cur_nobj_section;
   build_cur_nobj_section = NULL;
 
-  add_nobj_entries(sect);
+  if (add_nobj_entries(sect) != PS_OK)
+    return PS_ERROR;
 
   build_cursection->code_size--;
   build_cursection=NULL;
