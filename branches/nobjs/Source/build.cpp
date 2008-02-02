@@ -1027,7 +1027,7 @@ int CEXEBuild::function_end()
   nobj_function* func = build_cur_nobj_function;
   build_cur_nobj_function = NULL;
 
-  if (add_nobj_entries(func) != PS_OK)
+  if (add_nobj_code_deps(func) != PS_OK)
     return PS_ERROR;
 
   build_cursection_isfunc=0;
@@ -1103,7 +1103,7 @@ int CEXEBuild::section_end()
   nobj_section* sect = build_cur_nobj_section;
   build_cur_nobj_section = NULL;
 
-  if (add_nobj_entries(sect) != PS_OK)
+  if (add_nobj_code_deps(sect) != PS_OK)
     return PS_ERROR;
 
   build_cursection->code_size--;
@@ -1236,7 +1236,7 @@ int CEXEBuild::add_section(const char *secname, const char *defname, int expand/
   return PS_OK;
 }
 
-int CEXEBuild::add_nobj_entries(const nobj* obj)
+int CEXEBuild::add_nobj_code_deps(const nobj_code* obj)
 {
   try
   {

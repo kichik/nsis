@@ -26,6 +26,7 @@
 #include "ShConstants.h"
 #include "mmap.h"
 #include "manifest.h"
+#include "nobj/code.h"
 #include "nobj/entry.h"
 #include "nobj/function.h"
 #include "nobj/label.h"
@@ -214,7 +215,7 @@ class CEXEBuild {
     int section_end();
     int add_function(const char *funname);
     int function_end();
-    int add_nobj_entries(const nobj* obj);
+    int add_nobj_code_deps(const nobj_code* obj);
     void section_add_size_kb(int kb);
     int section_add_flags(int flags);
     int section_remove_flags(int flags);
