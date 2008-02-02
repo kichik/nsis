@@ -225,6 +225,7 @@ class CEXEBuild {
     int add_label(const char *name);
     int add_label_internal(const nobj_label* label);
     int add_entry_internal(const entry *ent);
+    int add_nobj_entry_internal(const nobj_entry* ent);
     int add_entry(const entry *ent);
     int add_entry_direct(int which, int o0=0, int o1=0, int o2=0, int o3=0, int o4=0, int o5=0);
     int add_nobj_entry(const nobj_entry& ent);

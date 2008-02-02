@@ -1248,26 +1248,7 @@ int CEXEBuild::add_nobj_code_deps(const nobj_code* obj)
 
       if (ent)
       {
-        nobjs parms = ent->dependencies();
-
-        entry st_ent={0,};
-        st_ent.which = ent->which();
-
-        for (int i = 0; i < parms.size(); i++)
-        {
-          try
-          {
-            st_ent.offsets[i] = add_nobj_entry_parm(parms[i]);
-          }
-          catch (const exception& e)
-          {
-            ERROR_MSG("Error: %s\n", e.what());
-            return PS_ERROR;
-          }
-        }
-
-        int ret = add_entry_internal(&st_ent);
-
+        int ret = add_nobj_entry_internal(ent);
         if (ret != PS_OK)
         {
           return ret;
@@ -1295,6 +1276,29 @@ int CEXEBuild::add_nobj_code_deps(const nobj_code* obj)
   }
 
   return PS_OK;
+}
+
+int CEXEBuild::add_nobj_entry_internal(const nobj_entry* ent)
+{
+  nobjs parms = ent->dependencies();
+
+  entry st_ent={0,};
+  st_ent.which = ent->which();
+
+  for (int i = 0; i < parms.size(); i++)
+  {
+    try
+    {
+      st_ent.offsets[i] = add_nobj_entry_parm(parms[i]);
+    }
+    catch (const exception& e)
+    {
+      ERROR_MSG("Error: %s\n", e.what());
+      return PS_ERROR;
+    }
+  }
+
+  return add_entry_internal(&st_ent);
 }
 
 int CEXEBuild::add_entry_internal(const entry *ent)
