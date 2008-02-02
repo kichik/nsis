@@ -137,13 +137,16 @@ Welcome page (implemented using nsDialogs)
     !ifndef MUI_${MUI_PAGE_UNINSTALLER_PREFIX}WELCOMEFINISHPAGE_BITMAP_NOSTRETCH
       System::Call '*(i, i, i, i) i.s'
       Pop $mui.WelcomePage.Image.Rect
-      System::Call 'user32::GetClientRect(i $mui.WelcomePage.Image, i $mui.WelcomePage.Image.Rect)'
-      System::Call '*$mui.WelcomePage.Image.Rect(i, i, i, i) i (, , .s, .s)'
-      Pop $mui.WelcomePage.Image.Width
-      Pop $mui.WelcomePage.Image.Height
-      System::Call 'user32::LoadImage(i 0, t "$PLUGINSDIR\modern-wizard.bmp", i ${IMAGE_BITMAP}, i $mui.WelcomePage.Image.Width, i $mui.WelcomePage.Image.Height, i ${LR_LOADFROMFILE}) i.s'
+      ${If} $mui.WelcomePage.Image.Rect != 0
+        System::Call 'user32::GetClientRect(i $mui.WelcomePage.Image, i $mui.WelcomePage.Image.Rect)'
+        System::Call '*$mui.WelcomePage.Image.Rect(i, i, i .s, i .s)'
+        System::Free $mui.WelcomePage.Image.Rect
+        Pop $mui.WelcomePage.Image.Width
+        Pop $mui.WelcomePage.Image.Height
+      ${EndIf}
+      System::Call 'user32::LoadImage(i 0, t s, i ${IMAGE_BITMAP}, i $mui.WelcomePage.Image.Width, i $mui.WelcomePage.Image.Height, i ${LR_LOADFROMFILE}) i.s' "$PLUGINSDIR\modern-wizard.bmp"
     !else
-      System::Call 'user32::LoadImage(i 0, t "$PLUGINSDIR\modern-wizard.bmp", i ${IMAGE_BITMAP}, i 0, i 0, i ${LR_LOADFROMFILE}) i.s'
+      System::Call 'user32::LoadImage(i 0, t s, i ${IMAGE_BITMAP}, i 0, i 0, i ${LR_LOADFROMFILE}) i.s' "$PLUGINSDIR\modern-wizard.bmp"
     !endif
     Pop $mui.WelcomePage.Image.Bitmap
     SendMessage $mui.WelcomePage.Image ${STM_SETIMAGE} ${IMAGE_BITMAP} $mui.WelcomePage.Image.Bitmap
