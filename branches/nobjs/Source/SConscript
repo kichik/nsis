@@ -30,6 +30,7 @@ makensis_files = Split("""
 	nobj/function.cpp
 	nobj/int.cpp
 	nobj/jump.cpp
+	nobj/label.cpp
 	nobj/nobj.cpp
 	nobj/section.cpp
 	nobj/str.cpp

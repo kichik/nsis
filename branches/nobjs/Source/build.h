@@ -28,6 +28,7 @@
 #include "manifest.h"
 #include "nobj/entry.h"
 #include "nobj/function.h"
+#include "nobj/label.h"
 #include "nobj/nobj.h"
 #include "nobj/section.h"
 #include "icon.h"
@@ -221,6 +222,7 @@ class CEXEBuild {
     int add_page(int type);
     int page_end();
     int add_label(const char *name);
+    int add_label_internal(const nobj_label* label);
     int add_entry_internal(const entry *ent);
     int add_entry(const entry *ent);
     int add_entry_direct(int which, int o0=0, int o1=0, int o2=0, int o3=0, int o4=0, int o5=0);
