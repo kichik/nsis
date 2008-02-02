@@ -1,5 +1,5 @@
 /*
- * function.cpp
+ * code.cpp
  * 
  * This file is a part of NSIS.
  * 
@@ -14,28 +14,23 @@
  * warranty.
  */
 
-#include "function.h"
+#include "code.h"
 #include "Platform.h"
 
 using std::string;
 
 /**
- * nobj_function
+ * nobj_code
  */
 
-nobj_function::nobj_function(const int name_addr, const int code_addr)
+void nobj_code::add_entry(const nobj_entry& entry)
 {
-  m_section.name_ptr      = name_addr;
-  m_section.code          = code_addr;
-  m_section.code_size     = 0;
-  m_section.install_types = 0;
-  m_section.flags         = 0;
-  m_section.size_kb       = 0;
-
-  memset(m_section.name, 0, sizeof(m_section.name));
+  nobj_entry* entryp = new nobj_entry(entry.which(), entry.dependencies());
+  nobj::add_dependency(entryp);
 }
 
-section* nobj_function::get_function()
+void nobj_code::add_label(const nobj_label& label)
 {
-  return &m_section;
+  nobj_label* labelp = new nobj_label(label.get_label());
+  nobj::add_dependency(labelp);
 }
