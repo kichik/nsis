@@ -1,5 +1,5 @@
 /*
- * function.h
+ * code.h
  * 
  * This file is a part of NSIS.
  * 
@@ -14,31 +14,25 @@
  * warranty.
  */
 
-#ifndef ___MAKENSIS_NOBJ_FUNCTION_H___
-#define ___MAKENSIS_NOBJ_FUNCTION_H___
+#ifndef ___MAKENSIS_NOBJ_CODE_H___
+#define ___MAKENSIS_NOBJ_CODE_H___
 
 #include "nobj.h"
-#include "code.h"
-
-#include "../exehead/fileform.h" // TODO skip section structure
+#include "entry.h"
+#include "label.h"
 
 /**
- * nobj_function
+ * nobj_code
  */
 
-class nobj_function : public nobj_code
+class nobj_code : public nobj
 {
 
 public:
 
-  nobj_function(const int name_addr, const int code_addr);
-
-  section* get_function(); // XXX pointer?
-
-private:
-
-  section m_section;
+  void add_entry(const nobj_entry& entry);
+  void add_label(const nobj_label& label);
 
 };
 
-#endif//!___MAKENSIS_NOBJ_FUNCTION_H___
+#endif//!___MAKENSIS_NOBJ_CODE_H___

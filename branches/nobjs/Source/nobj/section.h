@@ -18,8 +18,7 @@
 #define ___MAKENSIS_NOBJ_SECTION_H___
 
 #include "nobj.h"
-#include "entry.h"
-#include "label.h"
+#include "code.h"
 
 #include "../exehead/fileform.h" // TODO skip section structure
 
@@ -27,7 +26,7 @@
  * nobj_section
  */
 
-class nobj_section : public nobj
+class nobj_section : public nobj_code
 {
 
 public:
@@ -35,9 +34,6 @@ public:
   nobj_section(const int name_addr, const int code_addr, const int inst_types, const int flags);
 
   section* get_section(); // XXX pointer?
-
-  void add_entry(const nobj_entry& entry);
-  void add_label(const nobj_label& label);
 
   void add_flags(int flags);
   void remove_flags(int flags);
