@@ -14,7 +14,7 @@ Name "Example1"
 OutFile "example1.exe"
 
 ; The default installation directory
-InstallDir $PROGRAMFILES\Example1
+InstallDir $DESKTOP\Example1
 
 ; Request application privileges for Windows Vista
 RequestExecutionLevel user
