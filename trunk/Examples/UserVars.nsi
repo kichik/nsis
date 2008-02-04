@@ -9,7 +9,7 @@
   
   InstallDir "$PROGRAMFILES\User Variables Test"
   
-  RequestExecutionLevel user  
+  RequestExecutionLevel admin
   
 ;--------------------------------
 
