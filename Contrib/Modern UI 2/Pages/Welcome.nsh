@@ -137,7 +137,7 @@ Welcome page (implemented using nsDialogs)
     !ifndef MUI_${MUI_PAGE_UNINSTALLER_PREFIX}WELCOMEFINISHPAGE_BITMAP_NOSTRETCH
       System::Call '*(i, i, i, i) i.s'
       Pop $mui.WelcomePage.Image.Rect
-      ${If} $mui.WelcomePage.Image.Rect != 0
+      ${If} $mui.WelcomePage.Image.Rect <> 0
         System::Call 'user32::GetClientRect(i $mui.WelcomePage.Image, i $mui.WelcomePage.Image.Rect)'
         System::Call '*$mui.WelcomePage.Image.Rect(i, i, i .s, i .s)'
         System::Free $mui.WelcomePage.Image.Rect
