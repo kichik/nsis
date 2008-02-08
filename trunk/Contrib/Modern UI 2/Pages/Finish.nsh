@@ -275,7 +275,7 @@ Finish page (implemented using nsDialogs)
     !ifndef MUI_${MUI_PAGE_UNINSTALLER_PREFIX}WELCOMEFINISHPAGE_BITMAP_NOSTRETCH
       System::Call '*(i, i, i, i) i.s'
       Pop $mui.FinishPage.Image.Rect
-      ${If} $mui.FinishPage.Image.Rect != 0
+      ${If} $mui.FinishPage.Image.Rect <> 0
         System::Call 'user32::GetClientRect(i $mui.FinishPage.Image, i $mui.FinishPage.Image.Rect)'
         System::Call '*$mui.FinishPage.Image.Rect(i, i, i .s, i .s)'
         System::Free $mui.FinishPage.Image.Rect
