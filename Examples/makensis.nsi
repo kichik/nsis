@@ -305,10 +305,6 @@ ${MementoSection} "Modern User Interface" SecInterfacesModernUI
   File "..\Examples\Modern UI\Basic.nsi"
   File "..\Examples\Modern UI\HeaderBitmap.nsi"
   File "..\Examples\Modern UI\MultiLanguage.nsi"
-  File "..\Examples\Modern UI\InstallOptions.nsi"
-  File "..\Examples\Modern UI\ioA.ini"
-  File "..\Examples\Modern UI\ioB.ini"
-  File "..\Examples\Modern UI\ioC.ini"
   File "..\Examples\Modern UI\StartMenu.nsi"
   File "..\Examples\Modern UI\WelcomeFinish.nsi"
 
