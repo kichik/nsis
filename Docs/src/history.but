@@ -1,5 +1,43 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.35} 2.35
+
+Released on February 8th, 2008
+
+\S1{v2.35-cl} Changelog
+
+\S2{} Major Changes
+
+\b Added \L{../Docs/MultiUser/Readme.html}{MultiUser} - installer configuration for multi-user Windows environments
+
+\b More user friendly corrupted installer message (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373088&aid=1795426}{RFE #1795426})
+
+\b Switched all examples to Modern UI 2
+
+\S2{} Minor Changes
+
+\b Fixed uninitialized memory leaking into resources (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1874297}{bug #1874297})
+
+\b Minor documentation improvements (including \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1861941}{bug #1861941}, \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1883917}{bug #1883917})
+
+\b \L{../Docs/Modern UI 2/Readme.html}{Modern UI 2}: Fit images in welcome/finish page by default and fix support for MUI_(UN)WELCOMEFINISHPAGE_BITMAP_NOSTRETCH (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1875945}{bug #1875945})
+
+\b \L{../Docs/Modern UI 2/Readme.html}{Modern UI 2}: Fixed default finish page reboot selection (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1864690}{bug #1864690})
+
+\b \L{../Docs/Modern UI 2/Readme.html}{Modern UI 2}: Fixed MUI_STARTMENU_GETFOLDER (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1864507}{bug #1864507})
+
+\b \L{../Docs/Modern UI 2/Readme.html}{Modern UI 2}: Fixed unreferenced mui.StartMenuPage.Create warning (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1861944}{bug #1861944})
+
+\b New simplified code for \R{library_vb6}{installation of VisualBasic 6 runtime}
+
+\b Simplified NSIS Menu providing easier access to all documentation
+
+\S2{} Utilities and Plug-ins
+
+\b Added keyboard cues support for LINK controls in \L{../Docs/nsDialogs/Readme.html}{nsDialogs} (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1871856}{patch #1871856})
+
+\b Fixed a rare nsDialogs crash on Windows 98 with non-standard builds of nsDialogs (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1889720}{bug #1889720})
+
 \H{v2.34} 2.34
 
 Released on December 24th, 2007
