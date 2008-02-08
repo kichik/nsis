@@ -245,7 +245,7 @@ Location of the library
 \H{library_vb6} Visual Basic 6 Run-Time Files
 
 A new VB6.nsh header file is available for the setup of the VB6 run-time files.
-To obtain the latest run-time files, download \W{http://nsis.sourceforge.net/vb6runtime.zip} and extract this file.
+To obtain the latest run-time files, download \W{http://nsis.sourceforge.net/vb6runtime.zip}{vb6runtime.zip} and extract this file.
 
 \c  !include VB6RunTime.nsh
 \c
