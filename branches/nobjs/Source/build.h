@@ -39,6 +39,7 @@
 
 #include <string>
 #include <set>
+#include <map>
 
 #ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
 // Added by Sunil Kamath 11 June 2003
@@ -382,7 +383,7 @@ class CEXEBuild {
     TinyGrowBuf build_sections, ubuild_sections, *cur_sections;
     GrowBuf build_entries,ubuild_entries, *cur_entries;
     GrowBuf build_instruction_entry_map,ubuild_instruction_entry_map, *cur_instruction_entry_map;
-    TinyGrowBuf build_functions, ubuild_functions, *cur_functions;
+    std::map<std::string, nobj_function*> build_functions, ubuild_functions, *cur_functions;
     TinyGrowBuf build_labels, ubuild_labels, *cur_labels;
     StringList build_strlist, ubuild_strlist, *cur_strlist;
     GrowBuf build_langtables, ubuild_langtables, *cur_langtables;

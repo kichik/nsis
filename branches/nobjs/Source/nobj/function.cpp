@@ -23,10 +23,10 @@ using std::string;
  * nobj_function
  */
 
-nobj_function::nobj_function(const int name_addr, const int code_addr)
+nobj_function::nobj_function()
 {
-  m_section.name_ptr      = name_addr;
-  m_section.code          = code_addr;
+  m_section.name_ptr      = 0;
+  m_section.code          = 0;
   m_section.code_size     = 0;
   m_section.install_types = 0;
   m_section.flags         = 0;

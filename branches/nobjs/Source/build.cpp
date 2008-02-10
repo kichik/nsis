@@ -989,27 +989,22 @@ int CEXEBuild::add_function(const char *funname)
 
   set_uninstall_mode(!strnicmp(funname,"un.",3));
 
-  int addr=ns_func.add(funname,0);
-  int x;
-  int n=cur_functions->getlen()/sizeof(section);
-  section *tmp=(section*)cur_functions->get();
-  for (x = 0; x < n; x ++)
+  if (cur_functions->find(funname) != cur_functions->end())
   {
-    if (tmp[x].name_ptr == addr)
-    {
-      ERROR_MSG("Error: Function named \"%s\" already exists.\n",funname);
-      return PS_ERROR;
-    }
+    ERROR_MSG("Error: Function named \"%s\" already exists.\n",funname);
+    return PS_ERROR;
   }
 
   build_cursection_isfunc = 1;
-  build_cur_nobj_function = new nobj_function(addr, cur_entries->getlen()/sizeof(entry));
+  build_cur_nobj_function = new nobj_function();
   build_cursection = build_cur_nobj_function->get_function();
 
   if (uninstall_mode)
     set_code_type_predefines(funname+3);
   else
     set_code_type_predefines(funname);
+
+  (*cur_functions)[funname] = build_cur_nobj_function;
   
   return PS_OK;
 }
@@ -1027,15 +1022,8 @@ int CEXEBuild::function_end()
   nobj_function* func = build_cur_nobj_function;
   build_cur_nobj_function = NULL;
 
-  if (add_nobj_code_deps(func) != PS_OK)
-    return PS_ERROR;
-
   build_cursection_isfunc=0;
   build_cursection=NULL;
-
-  int n=cur_functions->getlen()/sizeof(section);
-  cur_functions->resize((n+1)*sizeof(section));
-  memcpy(((section*)cur_functions->get())+n, func->get_function(), sizeof(section));
 
   set_uninstall_mode(0);
   
@@ -1478,21 +1466,54 @@ int CEXEBuild::resolve_jump_int(const char *fn, int *a, int offs, int start, int
 int CEXEBuild::resolve_call_int(const char *fn, const char *str, int fptr, int *ofs)
 {
   if (fptr < 0) return 0;
-  int nf=cur_functions->getlen()/sizeof(section);
-  section *sec=(section *)cur_functions->get();
-  while (nf-- > 0)
+
+  string func_name = string(ns_func.get() + fptr);
+
+  if (cur_functions->find(func_name) == cur_functions->end())
   {
-    if (sec->name_ptr>0 && sec->name_ptr == fptr)
-    {
-      ofs[0]=sec->code;
-      sec->flags++;
-      return 0;
-    }
-    sec++;
+    ERROR_MSG("Error: resolving %s function \"%s\" in %s\n",str,(char*)ns_func.get()+fptr,fn);
+    ERROR_MSG("Note: uninstall functions must begin with \"un.\", and install functions must not\n");
+    return 1;
   }
-  ERROR_MSG("Error: resolving %s function \"%s\" in %s\n",str,(char*)ns_func.get()+fptr,fn);
-  ERROR_MSG("Note: uninstall functions must begin with \"un.\", and install functions must not\n");
-  return 1;
+
+  nobj_function* func = (*cur_functions)[func_name];
+
+  if (!func->get_function()->flags)
+  {
+    if (func_name.substr(0, 3) == "un.")
+    {
+      set_uninstall_mode(1);
+    }
+
+    func->get_function()->code = cur_entries->getlen()/sizeof(entry);
+    build_cursection = func->get_function();
+    build_cursection_isfunc = 1;
+
+    if (add_nobj_code_deps(func) != PS_OK)
+      return 1;
+
+    build_cursection = NULL;
+    build_cursection_isfunc = 0;
+
+    set_uninstall_mode(0);
+
+    func->get_function()->flags++;
+
+    // TODO extract this to another method
+    //      the same thing is done for sections in resolve_coderefs
+    section *sec = func->get_function();
+    entry *w = (entry *) cur_entries->get();
+    for (int x = sec->code; x < sec->code + sec->code_size; x++)
+    {
+      char fname[1024];
+      wsprintf(fname,"function \"%s\"",func_name.c_str());
+      if (resolve_instruction(fname,str,w+x,x,sec->code,sec->code+sec->code_size)) return 1;
+    }
+  }
+
+  ofs[0] = func->get_function()->code;
+
+  return 0;
 }
 
 int CEXEBuild::resolve_instruction(const char *fn, const char *str, entry *w, int offs, int start, int end)
@@ -1584,24 +1605,10 @@ int CEXEBuild::resolve_coderefs(const char *str)
 {
   // resolve jumps&calls
   {
-    section *sec=(section *)cur_functions->get();
-    int l=cur_functions->getlen()/sizeof(section);
-    entry *w=(entry *)cur_entries->get();
-    while (l-- > 0)
-    {
-      int x;
-      for (x = sec->code; x < sec->code+sec->code_size; x ++)
-      {
-        char fname[1024];
-        wsprintf(fname,"function \"%s\"",ns_func.get()+sec->name_ptr);
-        if (resolve_instruction(fname,str,w+x,x,sec->code,sec->code+sec->code_size)) return 1;
-      }
-      sec++;
-    }
-
     int cnt=0;
-    sec=(section *)cur_sections->get();
-    l=cur_sections->getlen()/sizeof(section);
+    section *sec=(section *)cur_sections->get();
+    int l=cur_sections->getlen()/sizeof(section);
+    entry *w=(entry *)cur_entries->get();
     while (l-- > 0)
     {
       int x=sec->name_ptr;
@@ -1686,30 +1693,6 @@ int CEXEBuild::resolve_coderefs(const char *str)
     }
   }
 #endif//NSIS_SUPPORT_CODECALLBACKS
-
-  // optimize unused functions
-  {
-    section *sec=(section *)cur_functions->get();
-    int l=cur_functions->getlen()/sizeof(section);
-    entry *w=(entry*)cur_entries->get();
-    while (l-- > 0)
-    {
-      if (sec->name_ptr)
-      {
-        if (!sec->flags)
-        {
-          if (sec->code_size>0)
-          {
-            warning("%s function \"%s\" not referenced - zeroing code (%d-%d) out\n",str,
-              ns_func.get()+sec->name_ptr,
-              sec->code,sec->code+sec->code_size);
-            memset(w+sec->code,0,sec->code_size*sizeof(entry));
-          }
-        }
-      }
-      sec++;
-    }
-  }
 
   // give warnings on unused labels
   {
