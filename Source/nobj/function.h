@@ -31,7 +31,7 @@ class nobj_function : public nobj_code
 
 public:
 
-  nobj_function(const int name_addr, const int code_addr);
+  nobj_function();
 
   section* get_function(); // XXX pointer?
 
