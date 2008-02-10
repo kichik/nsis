@@ -1480,11 +1480,6 @@ int CEXEBuild::resolve_call_int(const char *fn, const char *str, int fptr, int *
 
   if (!func->get_function()->flags)
   {
-    if (func_name.substr(0, 3) == "un.")
-    {
-      set_uninstall_mode(1);
-    }
-
     func->get_function()->code = cur_entries->getlen()/sizeof(entry);
     build_cursection = func->get_function();
     build_cursection_isfunc = 1;
@@ -1494,8 +1489,6 @@ int CEXEBuild::resolve_call_int(const char *fn, const char *str, int fptr, int *
 
     build_cursection = NULL;
     build_cursection_isfunc = 0;
-
-    set_uninstall_mode(0);
 
     func->get_function()->flags++;
 
