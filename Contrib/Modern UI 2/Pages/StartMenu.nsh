@@ -106,7 +106,9 @@ Start Menu folder page
         ${if} $mui.StartMenuPage.RegistryLocation != ""
           StrCpy "${MUI_STARTMENUPAGE_VARIABLE}" $mui.StartMenuPage.RegistryLocation
         ${endif}
-          
+
+        ClearErrors
+
       ${endif}
 
     !endif
