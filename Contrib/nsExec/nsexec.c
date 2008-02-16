@@ -82,63 +82,92 @@ BOOL WINAPI DllMain(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved) {
 #define CHAR4_TO_DWORD(a,b,c,d)	(((DWORD)CHAR2_TO_WORD(a,b))|(CHAR2_TO_WORD(c,d)<<16))
 #endif
 
+BOOL IsWOW64() {
+  typedef BOOL (WINAPI *LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
+  BOOL wow64;
+  LPFN_ISWOW64PROCESS fnIsWow64Process;
+
+  fnIsWow64Process = (LPFN_ISWOW64PROCESS) GetProcAddress(
+    GetModuleHandle("kernel32"), "IsWow64Process");
+
+  if (fnIsWow64Process != NULL) {
+    if (fnIsWow64Process(GetCurrentProcess(), &wow64)) {
+      return wow64;
+    }
+  }
+
+  return FALSE;
+}
+
 void ExecScript(int log) {
   char szRet[128] = "";
-  char *pExec;
-  int nComSpecSize;
   char meDLLPath[MAX_PATH];    
-  char *p;
   char *executor;
   char *g_exec;
+  char *pExec;
   unsigned int g_to;
   BOOL bOEM;
 
-  nComSpecSize = GetModuleFileName(g_hInst, meDLLPath, MAX_PATH) + 2; // 2 chars for quotes
-  p = meDLLPath + nComSpecSize - 2; // point p at null char of meDLLPath
-  g_exec = (char *)GlobalAlloc(GPTR, sizeof(char)*g_stringsize+nComSpecSize+2); // 1 for space, 1 for null
-  *g_exec = '"';
-  executor = g_exec + 1;
+  if (IsWOW64()) {
+    char *p;
+    int nComSpecSize;
 
-  do
-  {
-    if (*p == '\\')
-      break;
-    p = CharPrev(meDLLPath, p);
-  }
-  while (p > meDLLPath);
-  if (p == meDLLPath)
-  {
-    // bad path
-    pushstring("error");
-    GlobalFree(g_exec);
-    return;
-  }
+    nComSpecSize = GetModuleFileName(g_hInst, meDLLPath, MAX_PATH) + 2; // 2 chars for quotes
+    g_exec = (char *)GlobalAlloc(GPTR, sizeof(char)*g_stringsize+nComSpecSize+2); // 1 for space, 1 for null
+    p = meDLLPath + nComSpecSize - 2; // point p at null char of meDLLPath
+    *g_exec = '"';
+    executor = g_exec + 1;
 
-  *p = 0;
-  GetTempFileName(meDLLPath, "ns", 0, executor);
-  *p = '\\';
-  if (CopyFile(meDLLPath, executor, FALSE))
-  {
-    HANDLE hFile, hMapping;
-    LPBYTE pMapView;
-    PIMAGE_NT_HEADERS pNTHeaders;
-    hFile = CreateFile(executor, GENERIC_READ|GENERIC_WRITE, 0, NULL, OPEN_EXISTING,0, 0);
-    hMapping = CreateFileMapping(hFile, NULL, PAGE_READWRITE, 0, 0, NULL);
-    pMapView = MapViewOfFile(hMapping, FILE_MAP_WRITE, 0, 0, 0);
-    if (pMapView)
+    do
     {
-      pNTHeaders = (PIMAGE_NT_HEADERS)(pMapView + ((PIMAGE_DOS_HEADER)pMapView)->e_lfanew);
-      pNTHeaders->FileHeader.Characteristics = IMAGE_FILE_32BIT_MACHINE | IMAGE_FILE_LOCAL_SYMS_STRIPPED | 
-        IMAGE_FILE_LINE_NUMS_STRIPPED | IMAGE_FILE_EXECUTABLE_IMAGE;
-      pNTHeaders->OptionalHeader.Subsystem = IMAGE_SUBSYSTEM_WINDOWS_CUI;
-      pNTHeaders->OptionalHeader.AddressOfEntryPoint = (DWORD)WinMain - (DWORD)g_hInst;  
-      UnmapViewOfFile(pMapView);
+      if (*p == '\\')
+        break;
+      p = CharPrev(meDLLPath, p);
     }
-    CloseHandle(hMapping);
-    CloseHandle(hFile);
-  }
+    while (p > meDLLPath);
+    if (p == meDLLPath)
+    {
+      // bad path
+      pushstring("error");
+      GlobalFree(g_exec);
+      return;
+    }
 
-  lstrcat(g_exec, "\"");
+    *p = 0;
+    GetTempFileName(meDLLPath, "ns", 0, executor);
+    *p = '\\';
+    if (CopyFile(meDLLPath, executor, FALSE))
+    {
+      HANDLE hFile, hMapping;
+      LPBYTE pMapView;
+      PIMAGE_NT_HEADERS pNTHeaders;
+      hFile = CreateFile(executor, GENERIC_READ|GENERIC_WRITE, 0, NULL, OPEN_EXISTING,0, 0);
+      hMapping = CreateFileMapping(hFile, NULL, PAGE_READWRITE, 0, 0, NULL);
+      pMapView = MapViewOfFile(hMapping, FILE_MAP_WRITE, 0, 0, 0);
+      if (pMapView)
+      {
+        pNTHeaders = (PIMAGE_NT_HEADERS)(pMapView + ((PIMAGE_DOS_HEADER)pMapView)->e_lfanew);
+        pNTHeaders->FileHeader.Characteristics = IMAGE_FILE_32BIT_MACHINE | IMAGE_FILE_LOCAL_SYMS_STRIPPED | 
+          IMAGE_FILE_LINE_NUMS_STRIPPED | IMAGE_FILE_EXECUTABLE_IMAGE;
+        pNTHeaders->OptionalHeader.Subsystem = IMAGE_SUBSYSTEM_WINDOWS_CUI;
+        pNTHeaders->OptionalHeader.AddressOfEntryPoint = (DWORD)WinMain - (DWORD)g_hInst;  
+        UnmapViewOfFile(pMapView);
+      }
+      CloseHandle(hMapping);
+      CloseHandle(hFile);
+    }
+
+    lstrcat(g_exec, "\"");
+
+    // add space
+    pExec = g_exec + lstrlen(g_exec);
+    *pExec = ' ';
+    pExec++;
+  } else {
+    executor = NULL;
+    g_exec = (char *)GlobalAlloc(GPTR, sizeof(char)*g_stringsize+1); // 1 for null
+    pExec = g_exec;
+  }
 
   g_to = 0;      // default is no timeout
   bOEM = FALSE;  // default is no OEM->ANSI conversion
@@ -146,11 +175,6 @@ void ExecScript(int log) {
   g_hwndList = NULL;
   if (g_hwndParent)
     g_hwndList = FindWindowEx(FindWindowEx(g_hwndParent,NULL,"#32770",NULL),NULL,"SysListView32",NULL);
-
-  // add space
-  pExec = g_exec + lstrlen(g_exec);
-  *pExec = ' ';
-  pExec++;
 
 params:
   popstring(pExec);
@@ -170,7 +194,7 @@ params:
   {
     pushstring("error");
     *(pExec-2) = '\0'; // skip space and quote
-    DeleteFile(executor);
+    if (executor) DeleteFile(executor);
     GlobalFree(g_exec);
     return;
   }
@@ -326,7 +350,7 @@ done:
     CloseHandle(newstdin);
     CloseHandle(read_stdin);
     *(pExec-2) = '\0'; // skip space and quote
-    DeleteFile(executor);
+    if (executor) DeleteFile(executor);
     GlobalFree(g_exec);
     if (log) {
       GlobalUnlock(hUnusedBuf);
