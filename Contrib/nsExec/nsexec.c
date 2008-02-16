@@ -108,7 +108,7 @@ void ExecScript(int log) {
   unsigned int g_to;
   BOOL bOEM;
 
-  if (IsWOW64()) {
+  if (!IsWOW64()) {
     char *p;
     int nComSpecSize;
 
