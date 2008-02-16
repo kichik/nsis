@@ -77,10 +77,10 @@ Does not affect \R{ainstalldirregkey}{InstallDirRegKey}. Instead, the registry c
 
 \c SetRegView 32
 \c ReadRegStr $0 HKLM Software\Microsoft\Windows\CurrentVersion ProgramFilesDir
-\c DetailPrit $0 # prints C:\Program Files (x86)
+\c DetailPrint $0 # prints C:\Program Files (x86)
 \c SetRegView 64
 \c ReadRegStr $0 HKLM Software\Microsoft\Windows\CurrentVersion ProgramFilesDir
-\c DetailPrit $0 # prints C:\Program Files
+\c DetailPrint $0 # prints C:\Program Files
 
 \c Function .onInit
 \c   SetRegView 64
