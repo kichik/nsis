@@ -1,5 +1,6 @@
 # Header, don't edit
 NLF v6
+# Start editing here
 # Language ID
 1045
 # Font and size - dash (-) means default
@@ -9,15 +10,16 @@ NLF v6
 1250
 # RTL - anything else than RTL means LTR
 -
-# Translation by Piotr Murawski & Rafa³ Lampe <ppiter@skrzynka.pl> - www.lomsel.prv.pl
-# Updated by cube, kubad(at)poczta.onet.pl and SYSTEMsoft Group, http://www.systemsoft-group.com
+# Translation by Piotr Murawski & Rafa³ Lampe
+# Updated by cube and SYSTEMsoft Group
 # Corrections by Marek Stepien <marcoos@aviary.pl> - http://www.aviary.pl/
+# Updated by Pawe³ Porwisz, http://www.pepesoft.tox.pl
 # ^Branding
 Nullsoft Install System %s
 # ^SetupCaption
 Instalator programu $(^Name)
 # ^UninstallCaption
-Deinstalator programu $(^Name) 
+Deinstalator programu $(^Name)
 # ^LicenseSubCaption
 : Umowa licencyjna
 # ^ComponentsSubCaption
@@ -53,7 +55,7 @@ Deinstalator programu $(^Name)
 # ^UninstallBtn
 &Odinstaluj
 # ^CancelBtn
-&Anuluj
+Anuluj
 # ^CloseBtn
 &Zamknij
 # ^BrowseBtn
@@ -113,35 +115,35 @@ Deinstalator usunie $(^NameDA) z nastêpuj¹cego folderu. Aby odinstalowaæ z inneg
 # ^UnDirBrowseText
 Wybierz folder, z którego zostanie odinstalowany program $(^NameDA):
 # ^SpaceAvailable
-Dostêpne miejsce: 
+"Dostêpne miejsce: "
 # ^SpaceRequired
-Wymagane miejsce: 
+"Wymagane miejsce: "
 # ^UninstallingText
-Ten kreator odinstaluje  $(^NameDA) z twojego komputera. $_CLICK
+Ten kreator odinstaluje $(^NameDA) z twojego komputera. $_CLICK
 # ^UninstallingSubText
 Deinstalacja z: 
 # ^FileError
-B³¹d otwarcia pliku do zapisu: \r\n\t"$0"\r\nWybierz Anuluj, aby przerwaæ instalacjê,\r\nPonów, aby ponowiæ zapis do pliku lub\r\nIgnoruj, aby pomin¹æ ten plik
+B³¹d otwarcia pliku do zapisu: \r\n\r\n$0\r\n\r\nWybierz Anuluj, aby przerwaæ instalacjê,\r\nPonów, aby ponowiæ zapis do pliku lub\r\nIgnoruj, aby pomin¹æ ten plik.
 # ^FileError_NoIgnore
-B³¹d otwarcia pliku do zapisu: \r\n\t"$0"\r\nWybierz Ponów, aby ponowiæ zapis do pliku lub\r\nAnuluj, aby przerwaæ instalacjê
+B³¹d otwarcia pliku do zapisu: \r\n\r\n$0\r\n\r\nWybierz Ponów, aby ponowiæ zapis do pliku lub\r\nAnuluj, aby przerwaæ instalacjê.
 # ^CantWrite
-Nie mo¿na zapisaæ:  
+"Nie mo¿na zapisaæ: "
 # ^CopyFailed
 B³¹d kopiowania
 # ^CopyTo
-"Kopiuj do"
+"Kopiuj do "
 # ^Registering 
 "Rejestrowanie: "
 # ^Unregistering
-"Odrejestrowywanie:"
+"Odrejestrowywanie: "
 # ^SymbolNotFound
 "Nie mo¿na odnaleŸæ symbolu: "
 # ^CouldNotLoad
 "Nie mo¿na wczytaæ: "
 #^CreateFolder
-"Utworzono folder: "
+"Utwórz folder: "
 # ^CreateShortcut
-"Utworzono skrót: "
+"Utwórz skrót: "
 # ^CreatedUninstaller
 "Utworzono deinstalator: "
 # ^Delete
