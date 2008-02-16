@@ -1,6 +1,7 @@
 ;Language: Polish (1045)
-;By Piotr Murawski & Rafa³ Lampe; www.lomsel.prv.pl mailto:ppiter@skrzynka.pl
-;Updated by cube, kubad(at)poczta.onet.pl and SYSTEMsoft Group, http://www.systemsoft-group.com
+;By Piotr Murawski & Rafa³ Lampe
+;Updated by cube and SYSTEMsoft Group
+;Updated by Pawe³ Porwisz, http://www.pepesoft.tox.pl
 
 !insertmacro LANGFILE "Polish" "Polski"
 
@@ -18,12 +19,12 @@
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Umowa licencyjna"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Przed instalacj¹ programu $(^NameDA) zapoznaj siê z warunkami licencji."
   ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM "Je¿eli akceptujesz warunki umowy, wybierz Zgadzam siê, aby kontynuowaæ. Musisz zaakceptowaæ warunki umowy, aby zainstalowaæ $(^NameDA)."
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Je¿eli akceptujesz warunki umowy, zaznacz pole wyboru poni¿ej, aby kontynuowaæ. Musisz zaakceptowaæ warunki umowy, aby zainstalowaæ $(^NameDA).  $_CLICK"
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Je¿eli akceptujesz warunki umowy, wybierz pierwsz¹ opcjê poni¿ej, aby kontynuowaæ. Musisz zaakceptowaæ warunki umowy, aby zainstalowaæ $(^NameDA).  $_CLICK"
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Je¿eli akceptujesz warunki umowy, zaznacz pole wyboru poni¿ej, aby kontynuowaæ. Musisz zaakceptowaæ warunki umowy, aby zainstalowaæ $(^NameDA). $_CLICK"
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Je¿eli akceptujesz warunki umowy, wybierz pierwsz¹ opcjê poni¿ej, aby kontynuowaæ. Musisz zaakceptowaæ warunki umowy, aby zainstalowaæ $(^NameDA). $_CLICK"
 !endif
 
 !ifdef MUI_UNLICENSEPAGE
-  ${LangFileString} MUI_UNTEXT_LICENSE_TITLE "Umowa Licencyjna."
+  ${LangFileString} MUI_UNTEXT_LICENSE_TITLE "Umowa licencyjna"
   ${LangFileString} MUI_UNTEXT_LICENSE_SUBTITLE "Przed deinstalacj¹ programu $(^NameDA) zapoznaj siê z warunkami licencji."
   ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "Je¿eli akceptujesz warunki umowy, wybierz Zgadzam siê, aby kontynuowaæ. Musisz zaakceptowaæ warunki umowy, aby odinstalowaæ $(^NameDA)."
   ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Je¿eli akceptujesz warunki umowy, zaznacz pole wyboru poni¿ej, aby kontynuowaæ. Musisz zaakceptowaæ warunki umowy, aby odinstalowaæ $(^NameDA). $_CLICK"
@@ -66,14 +67,14 @@
 !ifdef MUI_INSTFILESPAGE
   ${LangFileString} MUI_TEXT_INSTALLING_TITLE "Instalacja"
   ${LangFileString} MUI_TEXT_INSTALLING_SUBTITLE "Proszê czekaæ, podczas gdy $(^NameDA) jest instalowany."
-  ${LangFileString} MUI_TEXT_FINISH_TITLE "Zakoñczono"
+  ${LangFileString} MUI_TEXT_FINISH_TITLE "Zakoñczono instalacjê"
   ${LangFileString} MUI_TEXT_FINISH_SUBTITLE "Instalacja zakoñczona pomyœlnie."
   ${LangFileString} MUI_TEXT_ABORT_TITLE "Instalacja przerwana"
   ${LangFileString} MUI_TEXT_ABORT_SUBTITLE "Instalacja nie zosta³a zakoñczona pomyœlnie."
 !endif
 
 !ifdef MUI_UNINSTFILESPAGE
-  ${LangFileString} MUI_UNTEXT_UNINSTALLING_TITLE "Deinstalowanie"
+  ${LangFileString} MUI_UNTEXT_UNINSTALLING_TITLE "Deinstalacja"
   ${LangFileString} MUI_UNTEXT_UNINSTALLING_SUBTITLE "Proszê czekaæ, $(^NameDA) jest odinstalowywany."
   ${LangFileString} MUI_UNTEXT_FINISH_TITLE "Zakoñczono odinstalowanie"
   ${LangFileString} MUI_UNTEXT_FINISH_SUBTITLE "Odinstalowanie zakoñczone pomyœlnie."
@@ -83,21 +84,21 @@
 
 !ifdef MUI_FINISHPAGE
   ${LangFileString} MUI_TEXT_FINISH_INFO_TITLE "Koñczenie pracy kreatora instalacji $(^NameDA)"
-  ${LangFileString} MUI_TEXT_FINISH_INFO_TEXT "$(^NameDA) zosta³ pomyœlnie zainstalowany na Twoim komputerze.$\r$\n$\r$\nKliknij Zakoñcz, aby zakoñczyæ dzia³anie Kreatora."
-  ${LangFileString} MUI_TEXT_FINISH_INFO_REBOOT "Twój komputer musi zostaæ ponownie uruchomiony aby zakoñczyæ instalacjê programu $(^NameDA). Czy chcesz zrobiæ to teraz?"
+  ${LangFileString} MUI_TEXT_FINISH_INFO_TEXT "$(^NameDA) zosta³ pomyœlnie zainstalowany na Twoim komputerze.$\r$\n$\r$\nKliknij Zakoñcz, aby zakoñczyæ dzia³anie kreatora."
+  ${LangFileString} MUI_TEXT_FINISH_INFO_REBOOT "Twój komputer musi zostaæ ponownie uruchomiony, aby zakoñczyæ instalacjê programu $(^NameDA). Czy chcesz zrobiæ to teraz?"
 !endif
 
 !ifdef MUI_UNFINISHPAGE
-  ${LangFileString} MUI_UNTEXT_FINISH_INFO_TITLE "Koñczenie pracy kreatora deinstalacyjnego $(^NameDA)"
-  ${LangFileString} MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) zosta³ odinstalowany z Twojego komputera.$\r$\n$\r$\nKliknij Zakoñcz, aby zakoñczyæ dzia³anie Kreatora."
+  ${LangFileString} MUI_UNTEXT_FINISH_INFO_TITLE "Koñczenie pracy kreatora deinstalacji $(^NameDA)"
+  ${LangFileString} MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) zosta³ odinstalowany z Twojego komputera.$\r$\n$\r$\nKliknij Zakoñcz, aby zakoñczyæ dzia³anie kreatora."
   ${LangFileString} MUI_UNTEXT_FINISH_INFO_REBOOT "Twój komputer musi zostaæ ponownie uruchomiony w celu zakoñczenia deinstalacji programu $(^NameDA). Czy chcesz zrobiæ to teraz?"
 !endif
 
 !ifdef MUI_FINISHPAGE | MUI_UNFINISHPAGE
   ${LangFileString} MUI_TEXT_FINISH_REBOOTNOW "Uruchom ponownie teraz"
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Sam uruchomiê ponownie komputer póŸniej"
-  ${LangFileString} MUI_TEXT_FINISH_RUN "Uruchom program $(^NameDA)"
-  ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "Poka¿ plik ReadMe"
+  ${LangFileString} MUI_TEXT_FINISH_RUN "&Uruchom program $(^NameDA)"
+  ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "&Poka¿ plik ReadMe"
   ${LangFileString} MUI_BUTTONTEXT_FINISH "&Zakoñcz"  
 !endif
 
@@ -119,4 +120,12 @@
 
 !ifdef MUI_UNABORTWARNING
   ${LangFileString} MUI_UNTEXT_ABORTWARNING "Czy na pewno chcesz przerwaæ proces deinstalacji $(^Name)?"
+!endif
+
+!ifdef MULTIUSER_INSTALLMODEPAGE
+  ${LangFileString} MULTIUSER_TEXT_INSTALLMODE_TITLE "Wybierz u¿ytkowników"
+  ${LangFileString} MULTIUSER_TEXT_INSTALLMODE_SUBTITLE "Wybierz, dla których u¿ytkowników chcesz zainstalowaæ program $(^NameDA)."
+  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_TOP "Wybierz, czy chcesz zainstalowaæ program $(^NameDA) tylko dla siebie, czy dla wszystkich u¿ytkowników tego komputera. $(^ClickNext)"
+  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_ALLUSERS "Zainstaluj dla wszystkich u¿ytkowników tego komputera"
+  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_CURRENTUSER "Zainstaluj tylko dla mnie"
 !endif
