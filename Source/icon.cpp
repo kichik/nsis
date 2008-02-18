@@ -360,6 +360,11 @@ int generate_unicons_offsets(LPBYTE exeHeader, size_t exeHeaderSize, LPBYTE unin
     {
       offset = re.GetResourceOffsetA(RT_ICON, MAKEINTRESOURCE(icon_index), NSIS_DEFAULT_LANG);
 
+      if (offset > exeHeaderSize)
+      {
+        throw exception("invalid icon offset (possibly compressed icon)");
+      }
+
       size = *(LPDWORD)seeker;
       seeker += sizeof(DWORD);
       *(LPDWORD) seeker = FIX_ENDIAN_INT32(offset);
