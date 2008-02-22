@@ -305,6 +305,14 @@ Header file for creating custom installer pages with nsDialogs
 
 !define NSD_GetText `!insertmacro __NSD_GetText`
 
+!macro __NSD_SetText CONTROL TEXT
+
+	SendMessage $CONTROL ${WM_SETTEXT} 0 `STR:${TEXT}`
+
+!macroend
+
+!define NSD_SetText `!insertmacro __NSD_SetText`
+
 !macro __NSD_GetState CONTROL VAR
 
 	SendMessage ${CONTROL} ${BM_GETCHECK} 0 0 ${VAR}
@@ -312,6 +320,30 @@ Header file for creating custom installer pages with nsDialogs
 !macroend
 
 !define NSD_GetState `!insertmacro __NSD_GetState`
+
+!macro __NSD_SetState CONTROL STATE
+
+	SendMessage ${CONTROL} ${BM_SETCHECK} ${STATE} 0
+
+!macroend
+
+!define NSD_SetState `!insertmacro __NSD_SetState`
+
+!macro __NSD_Check CONTROL
+
+	${NSD_SetState} ${CONTROL} ${BST_CHECKED}
+
+!macroend
+
+!define NSD_Check `!insertmacro __NSD_Check`
+
+!macro __NSD_Uncheck CONTROL
+
+	${NSD_SetState} ${CONTROL} ${BST_UNCHECKED}
+
+!macroend
+
+!define NSD_Uncheck `!insertmacro __NSD_Uncheck`
 
 !macro __NSD_SetFocus HWND
 

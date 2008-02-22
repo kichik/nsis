@@ -35,6 +35,7 @@ code
 <li><a href="#step-add">Adding Controls</a></li>
 <li><a href="#step-state">Control State</a></li>
 <li><a href="#step-notify">Real-time Notification</a></li>
+<li><a href="#step-memory">Memory</a></li>
 <li><a href="#helpful-macros">Helpful macros</a></li>
 </ul>
 </li>
@@ -366,6 +367,76 @@ FunctionEnd
 	${EndIf}
 
 FunctionEnd</b>
+
+Section
+
+	DetailPrint "hello world"
+
+SectionEnd</pre></blockquote>
+
+<h3><a name="step-memory"></a>Memory</h3>
+
+<p>So far we have a page that has some basic input controls. But what happens when the user goes to the next page and comes back? With the current code, the user's input will not be remembered. To remember, we'll use the already present leave callback function to store the user's choice in variables and pass these values when creating the controls the next time. For a better example, we'll also add a checkbox to the page and use ${NSD_GetState} and ${NSD_SetState} to get and set its state.</p>
+
+<p>For clarity, we'll remove some of the notifications from the previous step.</p>
+
+<blockquote><pre>!include nsDialogs.nsh
+!include LogicLib.nsh
+
+Name nsDialogs
+OutFile nsDialogs.exe
+
+XPStyle on
+
+Var Dialog
+Var Label
+Var Text
+<b>Var Text_State
+Var Checkbox
+Var Checkbox_State</b>
+
+Page custom nsDialogsPage nsDialogsPageLeave
+<b>Page license</b>
+Page instfiles
+
+<b>Function .onInit
+
+	StrCpy $Text_State "Type something here..."
+
+FunctionEnd</b>
+
+Function nsDialogsPage
+
+	nsDialogs::Create /NOUNLOAD 1018
+	Pop $Dialog
+
+	${If} $Dialog == error
+		Abort
+	${EndIf}
+
+	${NSD_CreateLabel} 0 0 100% 12u "Hello, welcome to nsDialogs!"
+	Pop $Label
+
+	${NSD_CreateText} 0 13u 100% <b>12u $Text_State</b>
+	Pop $Text
+
+	<b>${NSD_CreateCheckbox} 0 30u 100% 10u "&amp;Something"
+	Pop $Checkbox
+
+	${If} $Checkbox_State == ${BST_CHECKED}
+		${NSD_Check} $Checkbox
+	${EndIf}</b>
+
+	nsDialogs::Show
+
+FunctionEnd
+
+Function nsDialogsPageLeave
+
+	${NSD_GetText} $Text <b>$Text_State</b>
+	<b>${NSD_GetState} $Checkbox $Checkbox_State</b>
+
+FunctionEnd
 
 Section
 
