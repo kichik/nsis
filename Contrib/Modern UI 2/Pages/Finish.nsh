@@ -17,12 +17,6 @@ Finish page (implemented using nsDialogs)
     Var mui.FinishPage.Image
     Var mui.FinishPage.Image.Bitmap
     
-    !ifndef MUI_${MUI_PAGE_UNINSTALLER_PREFIX}WELCOMEFINISHPAGE_BITMAP_NOSTRETCH
-      Var mui.FinishPage.Image.Rect
-      Var mui.FinishPage.Image.Width
-      Var mui.FinishPage.Image.Height
-    !endif
-    
     Var mui.FinishPage.Title
     Var mui.FinishPage.Title.Font
     
@@ -273,21 +267,10 @@ Finish page (implemented using nsDialogs)
     ${NSD_CreateBitmap} 0u 0u 109u 193u ""
     Pop $mui.FinishPage.Image
     !ifndef MUI_${MUI_PAGE_UNINSTALLER_PREFIX}WELCOMEFINISHPAGE_BITMAP_NOSTRETCH
-      System::Call '*(i, i, i, i) i.s'
-      Pop $mui.FinishPage.Image.Rect
-      ${If} $mui.FinishPage.Image.Rect <> 0
-        System::Call 'user32::GetClientRect(i $mui.FinishPage.Image, i $mui.FinishPage.Image.Rect)'
-        System::Call '*$mui.FinishPage.Image.Rect(i, i, i .s, i .s)'
-        System::Free $mui.FinishPage.Image.Rect
-        Pop $mui.FinishPage.Image.Width
-        Pop $mui.FinishPage.Image.Height
-      ${EndIf}
-      System::Call 'user32::LoadImage(i 0, t s, i ${IMAGE_BITMAP}, i $mui.FinishPage.Image.Width, i $mui.FinishPage.Image.Height, i ${LR_LOADFROMFILE}) i.s' "$PLUGINSDIR\modern-wizard.bmp"
+      ${NSD_SetStretchedImage} $mui.FinishPage.Image $PLUGINSDIR\modern-wizard.bmp $mui.FinishPage.Image.Bitmap
     !else
-      System::Call 'user32::LoadImage(i 0, t s, i ${IMAGE_BITMAP}, i 0, i 0, i ${LR_LOADFROMFILE}) i.s' "$PLUGINSDIR\modern-wizard.bmp"
+      ${NSD_SetImage} $mui.FinishPage.Image $PLUGINSDIR\modern-wizard.bmp $mui.FinishPage.Image.Bitmap
     !endif
-    Pop $mui.FinishPage.Image.Bitmap
-    SendMessage $mui.FinishPage.Image ${STM_SETIMAGE} ${IMAGE_BITMAP} $mui.FinishPage.Image.Bitmap
     
     ;Positiong of controls
 
@@ -436,7 +419,7 @@ Finish page (implemented using nsDialogs)
     !endif
     
     ;Delete image from memory
-    System::Call gdi32::DeleteObject(i$mui.FinishPage.Image.Bitmap)
+    ${NSD_FreeImage} $mui.FinishPage.Image.Bitmap
     
     !insertmacro MUI_UNSET MUI_FINISHPAGE_TITLE_HEIGHT
     !insertmacro MUI_UNSET MUI_FINISHPAGE_TEXT_TOP
