@@ -36,7 +36,6 @@ code
 <li><a href="#step-state">Control State</a></li>
 <li><a href="#step-notify">Real-time Notification</a></li>
 <li><a href="#step-memory">Memory</a></li>
-<li><a href="#helpful-macros">Helpful macros</a></li>
 </ul>
 </li>
 <li>
@@ -54,6 +53,23 @@ code
 <li><a href="#ref-onchange">OnChange</a></li>
 <li><a href="#ref-onclick">OnClick</a></li>
 <li><a href="#ref-onnotify">OnNotify</a></li>
+</ul>
+</li>
+<li>
+<a href="#mref">Macro Reference</a>
+<ul>
+<li><a href="#mref-create">NSD_Create*</a></li>
+<li><a href="#mref-onback">NSD_OnBack</a></li>
+<li><a href="#mref-onchange">NSD_OnChange</a></li>
+<li><a href="#mref-onclick">NSD_OnClick</a></li>
+<li><a href="#mref-onnotify">NSD_OnNotify</a></li>
+<li><a href="#mref-gettext">NSD_GetText</a></li>
+<li><a href="#mref-settext">NSD_SetText</a></li>
+<li><a href="#mref-getstate">NSD_GetState</a></li>
+<li><a href="#mref-setstate">NSD_SetState</a></li>
+<li><a href="#mref-check">NSD_Check</a></li>
+<li><a href="#mref-uncheck">NSD_Uncheck</a></li>
+<li><a href="#mref-setfocus">NSD_SetFocus</a></li>
 </ul>
 </li>
 <li><a href="#faq">FAQ</a></li>
@@ -182,7 +198,7 @@ SectionEnd</pre></blockquote>
 
 <h3><a name="step-add"></a>Adding Controls</h3>
 
-<p>Compiling the last script and running it results in an empty page which is not very useful. So now we'll add some controls to it to. To do so, we'll use ${NSD_Create*} macros from nsDialogs.nsh. Each of those macros takes 5 parameters - x, y, width, height and text. Each macro also returns one value on the stack, which is the new control's HWND. Like the dialogs HWND, it must be popped from the stack and saved.</p>
+<p>Compiling the last script and running it results in an empty page which is not very useful. So now we'll add some controls to it to. To do so, we'll use <a href="#mref-create">${NSD_Create*}</a> macros from nsDialogs.nsh. Each of those macros takes 5 parameters - x, y, width, height and text. Each macro also returns one value on the stack, which is the new control's HWND. Like the dialogs HWND, it must be popped from the stack and saved.</p>
 
 <p>Each of the measurements that the macros take can use one of three unit types - pixels, dialog units or percentage of the dialog's size. It can also be negative to indicate it should be measured from the end. To use dialog units, the measurement must be suffixed with the letter <i>u</i>. To use percentage, the measurement must be suffixed with the percentage sign - <i>%</i>. Any other suffix, or no suffix, means pixels.</p>
 
@@ -228,7 +244,7 @@ Section
 
 SectionEnd</pre></blockquote>
 
-<p>Available control types that can be created with ${NSD_Create*} are:</p>
+<p>Available control types that can be created with <a href="#mref-create">${NSD_Create*}</a> are:</p>
 
 <ul>
 <li>HLine</li>
@@ -253,9 +269,9 @@ SectionEnd</pre></blockquote>
 
 <h3><a name="step-state"></a>Control State</h3>
 
-<p>Now that we have some controls that the user can interact with, it's time to see what the user actually does with them. For that, we'll first add a <i>leave callback</i> function to our page. In that function, we'll query the state of the text control we've created and display it to the user. To do so, we'll use the ${NSD_GetText} macro. Use the ${NSD_GetState} macro for RadioButton and CheckBox controls.</p>
+<p>Now that we have some controls that the user can interact with, it's time to see what the user actually does with them. For that, we'll first add a <i>leave callback</i> function to our page. In that function, we'll query the state of the text control we've created and display it to the user. To do so, we'll use the <a href="#mref-gettext">${NSD_GetText}</a> macro. Use the <a href="#mref-getstate">${NSD_GetState}</a> macro for RadioButton and CheckBox controls.</p>
 
-<p>Note that not all controls support ${NSD_GetText} and some require special handling with specific messages defined in WinMessages.nsh. For example, the ListBox control requires usage of <i>LB_GETCURSEL</i> and <i>LB_GETTEXT</i>. With time, the library of macros in nsDialogs.nsh will fill with more and more macros that'll handle more cases like this.</p>
+<p>Note that not all controls support <a href="#mref-gettext">${NSD_GetText}</a> and some require special handling with specific messages defined in WinMessages.nsh. For example, the ListBox control requires usage of <i>LB_GETCURSEL</i> and <i>LB_GETTEXT</i>. With time, the library of macros in nsDialogs.nsh will fill with more and more macros that'll handle more cases like this.</p>
 
 <blockquote><pre>!include nsDialogs.nsh
 !include LogicLib.nsh
@@ -306,7 +322,7 @@ SectionEnd</pre></blockquote>
 
 <h3><a name="step-notify"></a>Real-time Notification</h3>
 
-<p>One of the more exciting new features of nsDialogs is callback function notification of changes to the dialog. nsDialogs can call a function defined in a script in response to a user action such as changing of a text field or click of a button. To make nsDialogs notify us of events, we'll use ${NSD_OnClick} and ${NSD_OnChange}. Not every control supports both of the events. For example, there's nothing to notify about labels.</p>
+<p>One of the more exciting new features of nsDialogs is callback function notification of changes to the dialog. nsDialogs can call a function defined in a script in response to a user action such as changing of a text field or click of a button. To make nsDialogs notify us of events, we'll use <a href="#mref-onclick">${NSD_OnClick}</a> and <a href="#mref-onchange">${NSD_OnChange}</a>. Not every control supports both of the events. For example, there's nothing to notify about labels.</p>
 
 <p>When the callback function is called, the control's HWND will be waiting on the stack and must be popped to prevent stack corruption. In this simple example, this is not so useful. But in case of a bigger script where several controls are associated with the same callback function, the HWND can shed some light on which control originated the event.</p>
 
@@ -376,7 +392,7 @@ SectionEnd</pre></blockquote>
 
 <h3><a name="step-memory"></a>Memory</h3>
 
-<p>So far we have a page that has some basic input controls. But what happens when the user goes to the next page and comes back? With the current code, the user's input will not be remembered. To remember, we'll use the already present leave callback function to store the user's choice in variables and pass these values when creating the controls the next time. For a better example, we'll also add a checkbox to the page and use ${NSD_GetState} and ${NSD_SetState} to get and set its state.</p>
+<p>So far we have a page that has some basic input controls. But what happens when the user goes to the next page and comes back? With the current code, the user's input will not be remembered. To remember, we'll use the already present leave callback function to store the user's choice in variables and pass these values when creating the controls the next time. For a better example, we'll also add a checkbox to the page and use <a href="#mref-getstate">${NSD_GetState}</a> and <a href="#mref-setstate">${NSD_SetState}</a> to get and set its state.</p>
 
 <p>For clarity, we'll remove some of the notifications from the previous step.</p>
 
@@ -425,7 +441,10 @@ Function nsDialogsPage
 
 	${If} $Checkbox_State == ${BST_CHECKED}
 		${NSD_Check} $Checkbox
-	${EndIf}</b>
+	${EndIf}
+	
+	# alternative for the above ${If}:
+	#${NSD_SetState} $Checkbox_State</b>
 
 	nsDialogs::Show
 
@@ -444,14 +463,6 @@ Section
 
 SectionEnd</pre></blockquote>
 
-<h3><a name="helpful-macros"></a>Helpful macros</h3>
-
-<h4><a name="set-focus">Set focus to a control</h4>
-
-<p>Use the following syntax to set the focus to a specified control.</p>
-
-<p><code>${NSD_SetFocus} <i>hwnd_of_control</i></code></p>
-
 <h2><a name="ref"></a>Function Reference</h2>
 
 <h3><a name="ref-create"></a>Create</h3>
@@ -464,7 +475,7 @@ SectionEnd</pre></blockquote>
 
 <h3><a name="ref-createcontrol"></a>CreateControl</h3>
 
-<p><code>nsDialogs::CreateControl /NOUNLOAD <i>class</i> <i>style</i> <i>extended_style</i> <i>x</i> <i>y</i> <i>width</i> <i>height</i> <i>text</i> </code></p>
+<p><code>nsDialogs::CreateControl /NOUNLOAD <i>class</i> <i>style</i> <i>extended_style</i> <i>x</i> <i>y</i> <i>width</i> <i>height</i> <i>text</i></code></p>
 
 <p>Create a new control in the current dialog. A dialog must exist for this to work, so nsDialogs::Create must be called prior to this function.</p>
 
@@ -555,6 +566,119 @@ SectionEnd</pre></blockquote>
 <p>Use GetFunctionAddress to get the address of the desired callback function.</p>
 
 <p>Returns nothing.</p>
+
+<h2><a name="mref"></a>Macro Reference</h2>
+
+<p>nsDialogs.nsh contains a lot of macros that can make nsDialogs usage a lot easier. Below is a description of each of those macros including purpose, syntax, input and output.</p>
+
+<h3><a name="mref-create">NSD_Create*</h3>
+
+<p><code>${NSD_Create*} <i>x</i> <i>y</i> <i>width</i> <i>height</i> <i>text</i></code></p>
+
+<p>Create a new control in the current dialog. A dialog must exist for this to work, so nsDialogs::Create must be called prior to this function.</p>
+
+<p>Available variants:</p>
+
+<ul>
+<li>${NSD_CreateHLine}</li>
+<li>${NSD_CreateVLine}</li>
+<li>${NSD_CreateLabel}</li>
+<li>${NSD_CreateIcon}</li>
+<li>${NSD_CreateBitmap}</li>
+<li>${NSD_CreateBrowseButton}</li>
+<li>${NSD_CreateLink}</li>
+<li>${NSD_CreateButton}</li>
+<li>${NSD_CreateGroupBox}</li>
+<li>${NSD_CreateCheckBox}</li>
+<li>${NSD_CreateRadioButton}</li>
+<li>${NSD_CreateText}</li>
+<li>${NSD_CreatePassword}</li>
+<li>${NSD_CreateFileRequest}</li>
+<li>${NSD_CreateDirRequest}</li>
+<li>${NSD_CreateComboBox}</li>
+<li>${NSD_CreateDropList}</li>
+<li>${NSD_CreateListBox}</li>
+</ul>
+
+<p>Returns the new dialog's HWND on the stack or error.</p>
+
+<h3><a name="mref-onback">NSD_OnBack</h3>
+
+<p><code>${NSD_OnBack} <i>function_address</i></code></p>
+
+<p>See <a href="#ref-onback">OnBack</a> for more details.</p>
+
+<p></p>
+
+<h3><a name="mref-onchange">NSD_OnChange</h3>
+
+<p><code>${NSD_OnChange} <i>function_address</i></code></p>
+
+<p>See <a href="#ref-onchange">OnChange</a> for more details.</p>
+
+<p>See <a href="#step-notify">Real-time Notification</a> for usage example.</p>
+
+<h3><a name="mref-onclick">NSD_OnClick</h3>
+
+<p><code>${NSD_OnClick} <i>function_address</i></code></p>
+
+<p>See <a href="#ref-onclick">OnClick</a> for more details.</p>
+
+<h3><a name="mref-onnotify">NSD_OnNotify</h3>
+
+<p><code>${NSD_OnNotify} <i>function_address</i></code></p>
+
+<p>See <a href="#ref-onnotify">OnNotify</a> for more details.</p>
+
+<h3><a name="mref-gettext">NSD_GetText</h3>
+
+<p><code>${NSD_GetText} <i>control_HWND</i> <i>output_variable</i></code></p>
+
+<p>Retrieves the text of a control and stores it into <i>output_variable</i>. Especially useful for textual controls.</p>
+
+<p>See <a href="#step-state">Control State</a> for usage example.</p>
+
+<h3><a name="mref-settext">NSD_SetText</h3>
+
+<p><code>${NSD_SetText} <i>control_HWND</i> <i>text</i></code></p>
+
+<p>Sets the text of a control.</p>
+
+<h3><a name="mref-getstate">NSD_GetState</h3>
+
+<p><code>${NSD_GetState} <i>control_HWND</i> <i>output_variable</i></code></p>
+
+<p>Retrieves the state of a check box or a radio button control. Possible outputs are ${BST_CHECKED} and ${BST_UNCHECKED}.</p>
+
+<p>See <a href="#step-memory">Memory</a> for usage example.</p>
+
+<h3><a name="mref-setstate">NSD_SetState</h3>
+
+<p><code>${NSD_SetState} <i>control_HWND</i> <i>state</i></code></p>
+
+<p>Sets the state of a check box or a radio button control. Possible values for <i>state</i> are ${BST_CHECKED} and ${BST_UNCHECKED}.</p>
+
+<p>See <a href="#step-memory">Memory</a> for usage example.</p>
+
+<h3><a name="mref-check">NSD_Check</h3>
+
+<p><code>${NSD_Check} <i>control_HWND</i></code></p>
+
+<p>Checks a check box or a radio button control. Same as calling ${NSD_SetState} with ${BST_CHECKED}.</p>
+
+<h3><a name="mref-uncheck">NSD_Uncheck</h3>
+
+<p><code>${NSD_Uncheck} <i>control_HWND</i></code></p>
+
+<p>Unchecks a check box or a radio button control. Same as calling ${NSD_SetState} with ${BST_UNCHECKED}.</p>
+
+<p>See <a href="#step-memory">Memory</a> for usage example.</p>
+
+<h3><a name="mref-setfocus">NSD_SetFocus</h3>
+
+<p><code>${NSD_SetFocus} <i>control_HWND</i></code></p>
+
+<p>Sets focus to a control.</p>
 
 <h2><a name="faq"></a>FAQ</h2>
 
