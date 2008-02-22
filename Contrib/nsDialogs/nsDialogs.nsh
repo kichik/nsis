@@ -353,6 +353,86 @@ Header file for creating custom installer pages with nsDialogs
 
 !define NSD_SetFocus `!insertmacro __NSD_SetFocus`
 
+!macro __NSD_SetImage CONTROL IMAGE HANDLE
+
+	Push $0
+	Push $R0
+
+	StrCpy $R0 ${CONTROL} # in case ${CONTROL} is $0
+
+	System::Call 'user32::LoadImage(i0, ts, i ${IMAGE_BITMAP}, i0, i0, i${LR_LOADFROMFILE}) i.s' "${IMAGE}"
+	Pop $0
+    SendMessage $R0 ${STM_SETIMAGE} ${IMAGE_BITMAP} $0
+
+	Pop $R0
+	Exch $0
+
+	Pop ${HANDLE}
+
+!macroend
+
+!define NSD_SetImage `!insertmacro __NSD_SetImage`
+
+!macro __NSD_SetStretchedImage CONTROL IMAGE HANDLE
+
+	Push $0
+	Push $1
+	Push $2
+	Push $R0
+
+	StrCpy $R0 ${CONTROL} # in case ${CONTROL} is $0
+
+	StrCpy $1 ""
+	StrCpy $2 ""
+
+	System::Call '*(i, i, i, i) i.s'
+	Pop $0
+
+	${If} $0 <> 0
+	
+		System::Call 'user32::GetClientRect(iR0, ir0)'
+		System::Call '*$0(i, i, i .s, i .s)'
+		System::Free $0
+		Pop $1
+		Pop $2
+
+	${EndIf}
+
+	System::Call 'user32::LoadImage(i0, ts, i ${IMAGE_BITMAP}, ir1, ir2, i${LR_LOADFROMFILE}) i.s' "${IMAGE}"
+	Pop $0
+    SendMessage $R0 ${STM_SETIMAGE} ${IMAGE_BITMAP} $0
+
+	Pop $R0
+	Pop $2
+	Pop $1
+	Exch $0
+
+	Pop ${HANDLE}
+
+!macroend
+
+!define NSD_SetStretchedImage `!insertmacro __NSD_SetStretchedImage`
+
+!macro __NSD_FreeImage IMAGE
+
+	${If} ${IMAGE} <> 0
+
+		System::Call gdi32::DeleteObject(is) ${IMAGE}
+
+	${EndIf}
+
+!macroend
+
+!define NSD_FreeImage `!insertmacro __NSD_FreeImage`
+
+!macro __NSD_ClearImage CONTROL
+
+	SendMessage ${CONTROL} ${STM_SETIMAGE} ${IMAGE_BITMAP} 0
+
+!macroend
+
+!define NSD_ClearImage `!insertmacro __NSD_ClearImage`
+
 !define DEBUG `System::Call kernel32::OutputDebugString(ts)`
 
 !macro __NSD_ControlCase TYPE
