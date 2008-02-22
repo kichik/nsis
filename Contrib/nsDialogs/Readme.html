@@ -1,9 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
 <title>nsDialogs</title>
-<meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
-<style>
+<meta http-equiv="Content-Type" content="text/html; charset=us-ascii">
+<style type="text/css">
 b
 {
 	color: red;
@@ -571,7 +571,7 @@ SectionEnd</pre></blockquote>
 
 <p>nsDialogs.nsh contains a lot of macros that can make nsDialogs usage a lot easier. Below is a description of each of those macros including purpose, syntax, input and output.</p>
 
-<h3><a name="mref-create">NSD_Create*</h3>
+<h3><a name="mref-create"></a>NSD_Create*</h3>
 
 <p><code>${NSD_Create*} <i>x</i> <i>y</i> <i>width</i> <i>height</i> <i>text</i></code></p>
 
@@ -602,7 +602,7 @@ SectionEnd</pre></blockquote>
 
 <p>Returns the new dialog's HWND on the stack or error.</p>
 
-<h3><a name="mref-onback">NSD_OnBack</h3>
+<h3><a name="mref-onback"></a>NSD_OnBack</h3>
 
 <p><code>${NSD_OnBack} <i>function_address</i></code></p>
 
@@ -610,7 +610,7 @@ SectionEnd</pre></blockquote>
 
 <p></p>
 
-<h3><a name="mref-onchange">NSD_OnChange</h3>
+<h3><a name="mref-onchange"></a>NSD_OnChange</h3>
 
 <p><code>${NSD_OnChange} <i>function_address</i></code></p>
 
@@ -618,19 +618,19 @@ SectionEnd</pre></blockquote>
 
 <p>See <a href="#step-notify">Real-time Notification</a> for usage example.</p>
 
-<h3><a name="mref-onclick">NSD_OnClick</h3>
+<h3><a name="mref-onclick"></a>NSD_OnClick</h3>
 
 <p><code>${NSD_OnClick} <i>function_address</i></code></p>
 
 <p>See <a href="#ref-onclick">OnClick</a> for more details.</p>
 
-<h3><a name="mref-onnotify">NSD_OnNotify</h3>
+<h3><a name="mref-onnotify"></a>NSD_OnNotify</h3>
 
 <p><code>${NSD_OnNotify} <i>function_address</i></code></p>
 
 <p>See <a href="#ref-onnotify">OnNotify</a> for more details.</p>
 
-<h3><a name="mref-gettext">NSD_GetText</h3>
+<h3><a name="mref-gettext"></a>NSD_GetText</h3>
 
 <p><code>${NSD_GetText} <i>control_HWND</i> <i>output_variable</i></code></p>
 
@@ -638,13 +638,13 @@ SectionEnd</pre></blockquote>
 
 <p>See <a href="#step-state">Control State</a> for usage example.</p>
 
-<h3><a name="mref-settext">NSD_SetText</h3>
+<h3><a name="mref-settext"></a>NSD_SetText</h3>
 
 <p><code>${NSD_SetText} <i>control_HWND</i> <i>text</i></code></p>
 
 <p>Sets the text of a control.</p>
 
-<h3><a name="mref-getstate">NSD_GetState</h3>
+<h3><a name="mref-getstate"></a>NSD_GetState</h3>
 
 <p><code>${NSD_GetState} <i>control_HWND</i> <i>output_variable</i></code></p>
 
@@ -652,7 +652,7 @@ SectionEnd</pre></blockquote>
 
 <p>See <a href="#step-memory">Memory</a> for usage example.</p>
 
-<h3><a name="mref-setstate">NSD_SetState</h3>
+<h3><a name="mref-setstate"></a>NSD_SetState</h3>
 
 <p><code>${NSD_SetState} <i>control_HWND</i> <i>state</i></code></p>
 
@@ -660,13 +660,13 @@ SectionEnd</pre></blockquote>
 
 <p>See <a href="#step-memory">Memory</a> for usage example.</p>
 
-<h3><a name="mref-check">NSD_Check</h3>
+<h3><a name="mref-check"></a>NSD_Check</h3>
 
 <p><code>${NSD_Check} <i>control_HWND</i></code></p>
 
 <p>Checks a check box or a radio button control. Same as calling ${NSD_SetState} with ${BST_CHECKED}.</p>
 
-<h3><a name="mref-uncheck">NSD_Uncheck</h3>
+<h3><a name="mref-uncheck"></a>NSD_Uncheck</h3>
 
 <p><code>${NSD_Uncheck} <i>control_HWND</i></code></p>
 
@@ -674,7 +674,7 @@ SectionEnd</pre></blockquote>
 
 <p>See <a href="#step-memory">Memory</a> for usage example.</p>
 
-<h3><a name="mref-setfocus">NSD_SetFocus</h3>
+<h3><a name="mref-setfocus"></a>NSD_SetFocus</h3>
 
 <p><code>${NSD_SetFocus} <i>control_HWND</i></code></p>
 
@@ -690,7 +690,7 @@ SectionEnd</pre></blockquote>
 <b>Q:</b> Can nsDialogs handle InstallOptions INI files?
 <blockquote>
 <p><b>A:</b> nsDialogs.nsh contains a function called <i>CreateDialogFromINI</i> that can create nsDialogs' dialog from an INI file. It can handle every type of control InstallOptions supports, but doesn't handle the flags or notification yet. <i>Examples\nsDialogs\InstallOptions.nsi</i> shows a usage example of this function.</p><p>In the future there'll also be a function that creates the script itself.
-
+</blockquote>
 </li>
 
 </ul>
