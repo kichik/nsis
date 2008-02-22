@@ -70,6 +70,10 @@ code
 <li><a href="#mref-check">NSD_Check</a></li>
 <li><a href="#mref-uncheck">NSD_Uncheck</a></li>
 <li><a href="#mref-setfocus">NSD_SetFocus</a></li>
+<li><a href="#mref-setimage">NSD_SetImage</a></li>
+<li><a href="#mref-setsimage">NSD_SetStretchedImage</a></li>
+<li><a href="#mref-clearimage">NSD_ClearImage</a></li>
+<li><a href="#mref-freeimage">NSD_FreeImage</a></li>
 </ul>
 </li>
 <li><a href="#faq">FAQ</a></li>
@@ -679,6 +683,75 @@ SectionEnd</pre></blockquote>
 <p><code>${NSD_SetFocus} <i>control_HWND</i></code></p>
 
 <p>Sets focus to a control.</p>
+
+<h3><a name="mref-setimage"></a>NSD_SetImage</h3>
+
+<p><code>${NSD_SetImage} <i>control_HWND</i> <i>image_path</i> <i>output_variable</i></code></p>
+
+<p>Loads a bitmap from <i>image_path</i> and displays it on <i>control_HWND</i> created by <a href="#mref-create">${NSD_CreateBitmap}</a>. The image handle is stored in <i>output_variable</i> and should be freed using <a href="#mref-freeimage">${NSD_FreeImage}</a> once no longer necessary.</p>
+
+<p>The image must be extracted to the user's computer prior to calling this macro. A good place to extract images is $PLUGINSDIR.</p>
+
+<blockquote><pre>!include nsDialogs.nsh
+
+Name nsDialogs
+OutFile nsDialogs.exe
+
+XPStyle on
+
+Page custom nsDialogsImage
+Page instfiles
+
+Var Dialog
+Var Image
+Var ImageHandle
+
+Function .onInit
+
+	InitPluginsDir
+	File /oname=$PLUGINSDIR\image.bmp "${NSISDIR}\Contrib\Graphics\Header\nsis-r.bmp"
+
+FunctionEnd
+
+Function nsDialogsImage
+
+	nsDialogs::Create /NOUNLOAD 1018
+	Pop $Dialog
+
+	${If} $Dialog == error
+		Abort
+	${EndIf}
+
+	${NSD_CreateBitmap} 0 0 100% 100% ""
+	Pop $Image
+	${NSD_SetImage} $Image $PLUGINSDIR\image.bmp $ImageHandle
+
+	nsDialogs::Show
+
+	${NSD_FreeImage} $ImageHandle
+
+FunctionEnd
+
+Section
+SectionEnd</pre></blockquote>
+
+<h3><a name="mref-setsimage"></a>NSD_SetStretchedImage</h3>
+
+<p><code>${NSD_SetStretchedImage} <i>control_HWND</i> <i>image_path</i> <i>output_variable</i></code></p>
+
+<p>Loads and displays a bitmap just like <a href="#mref-setimage">${NSD_SetImage}</a>, but stretched the image to fit the control.</p>
+
+<h3><a name="mref-clearimage"></a>NSD_ClearImage</h3>
+
+<p><code>${NSD_ClearImage} <i>control_HWND</i></code></p>
+
+<p>Clears an image from a control.</p>
+
+<h3><a name="mref-freeimage"></a>NSD_FreeImage</h3>
+
+<p><code>${NSD_FreeImage} <i>image_handle</i></code></p>
+
+<p>Frees an image handle previously loaded with <a href="#mref-setimage">${NSD_SetImage}</a> or <a href="#mref-setsimage">${NSD_SetStretchedImage}</a>.</p>
 
 <h2><a name="faq"></a>FAQ</h2>
 
