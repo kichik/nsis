@@ -362,7 +362,7 @@ int generate_unicons_offsets(LPBYTE exeHeader, size_t exeHeaderSize, LPBYTE unin
 
       if (offset > exeHeaderSize)
       {
-        throw exception("invalid icon offset (possibly compressed icon)");
+        throw runtime_error("invalid icon offset (possibly compressed icon)");
       }
 
       size = *(LPDWORD)seeker;
