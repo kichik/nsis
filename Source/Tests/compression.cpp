@@ -79,20 +79,20 @@ public:
 
     CPPUNIT_ASSERT_MESSAGE( "decompressed data is smaller", data.getlen() <= decompressed.getlen() );
     CPPUNIT_ASSERT_MESSAGE( "decompressed data is larger", data.getlen() >= decompressed.getlen() );
-    CPPUNIT_ASSERT_MESSAGE( "decompressed data is different", !memcmp(data.get(), decompressed.get(), data.getlen()) );
+    CPPUNIT_ASSERT_EQUAL_MESSAGE( "decompressed data is different", 0, memcmp(data.get(), decompressed.get(), data.getlen()) );
   }
 
   void testCompressDecompress(ICompressor &compressor, IDecompressor& decompressor) {
-    CPPUNIT_ASSERT( compressor.Init(9, 1 << 23) == C_OK );
+    CPPUNIT_ASSERT_EQUAL( C_OK, compressor.Init(9, 1 << 23) );
     testCompressDecompress(1, compressor, decompressor);
 
-    CPPUNIT_ASSERT( compressor.Init(9, 1 << 23) == C_OK );
+    CPPUNIT_ASSERT_EQUAL( C_OK, compressor.Init(9, 1 << 23) );
     testCompressDecompress(1024, compressor, decompressor);
 
-    CPPUNIT_ASSERT( compressor.Init(9, 1 << 23) == C_OK );
+    CPPUNIT_ASSERT_EQUAL( C_OK, compressor.Init(9, 1 << 23) );
     testCompressDecompress(8*1024, compressor, decompressor);
 
-    CPPUNIT_ASSERT( compressor.Init(9, 1 << 23) == C_OK );
+    CPPUNIT_ASSERT_EQUAL( C_OK, compressor.Init(9, 1 << 23) );
     testCompressDecompress(32*1024, compressor, decompressor);
   }
 
