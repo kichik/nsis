@@ -419,7 +419,6 @@ int NSISCALL _dodecomp(int offset, HANDLE hFileOut, char *outbuf, int outbuflen)
           retval+=u;
           outbuffer_len-=u;
           outbuffer=g_inflate_stream.next_out;
-          if (outbuffer_len < 1) return retval;
         }
         if (err==Z_STREAM_END) return retval;
       }
