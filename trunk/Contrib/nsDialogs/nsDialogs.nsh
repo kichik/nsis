@@ -307,7 +307,7 @@ Header file for creating custom installer pages with nsDialogs
 
 !macro __NSD_SetText CONTROL TEXT
 
-	SendMessage $CONTROL ${WM_SETTEXT} 0 `STR:${TEXT}`
+	SendMessage ${CONTROL} ${WM_SETTEXT} 0 `STR:${TEXT}`
 
 !macroend
 
