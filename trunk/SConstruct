@@ -147,6 +147,7 @@ Examples/nsDialogs/example.nsi
 Examples/nsDialogs/InstallOptions.nsi
 Examples/nsDialogs/welcome.nsi
 Examples/Modern UI/WelcomeFinish.nsi
+Examples/Modern UI/HeaderBitmap.nsi
 """.strip().split("\n"))
 
 # version
