@@ -374,7 +374,7 @@ string get_full_path(const string &path) {
 #ifdef PATH_MAX
   static char buffer[PATH_MAX];
 #else//PATH_MAX
-  int path_max = pathconf(path, _PC_PATH_MAX);
+  int path_max = pathconf(path.c_str(), _PC_PATH_MAX);
   if (path_max <= 0)
     path_max = 4096;
   char *buffer = (char *) malloc(path_max);
@@ -466,9 +466,14 @@ string remove_file_extension(const string& path) {
   return get_string_prefix(path, ".");
 }
 
+struct ToLower
+{
+  char operator() (char c) const  { return std::tolower(c); }
+};
+
 string lowercase(const string &str) {
   string result = str;
-  transform(str.begin(), str.end(), result.begin(), tolower);
+  transform(str.begin(), str.end(), result.begin(), ToLower());
   return result;
 }
 
