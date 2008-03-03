@@ -146,6 +146,7 @@ Examples/gfx.nsi
 Examples/nsDialogs/example.nsi
 Examples/nsDialogs/InstallOptions.nsi
 Examples/nsDialogs/welcome.nsi
+Examples/Modern UI/WelcomeFinish.nsi
 """.strip().split("\n"))
 
 # version
