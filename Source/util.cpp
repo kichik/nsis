@@ -468,7 +468,7 @@ string remove_file_extension(const string& path) {
 
 struct ToLower
 {
-  char operator() (char c) const  { return std::tolower(c); }
+  char operator() (char c) const  { return tolower(c); }
 };
 
 string lowercase(const string &str) {
