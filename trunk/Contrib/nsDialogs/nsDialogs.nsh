@@ -182,15 +182,15 @@ Header file for creating custom installer pages with nsDialogs
 !define __NSD_VLine_EXSTYLE ${WS_EX_TRANSPARENT}
 
 !define __NSD_Label_CLASS STATIC
-!define __NSD_Label_STYLE ${DEFAULT_STYLES}
+!define __NSD_Label_STYLE ${DEFAULT_STYLES}|${SS_NOTIFY}
 !define __NSD_Label_EXSTYLE ${WS_EX_TRANSPARENT}
 
 !define __NSD_Icon_CLASS STATIC
-!define __NSD_Icon_STYLE ${DEFAULT_STYLES}|${SS_ICON}
+!define __NSD_Icon_STYLE ${DEFAULT_STYLES}|${SS_ICON}|${SS_NOTIFY}
 !define __NSD_Icon_EXSTYLE 0
 
 !define __NSD_Bitmap_CLASS STATIC
-!define __NSD_Bitmap_STYLE ${DEFAULT_STYLES}|${SS_BITMAP}
+!define __NSD_Bitmap_STYLE ${DEFAULT_STYLES}|${SS_BITMAP}|${SS_NOTIFY}
 !define __NSD_Bitmap_EXSTYLE 0
 
 !define __NSD_BrowseButton_CLASS BUTTON
