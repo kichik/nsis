@@ -326,7 +326,7 @@ SectionEnd</pre></blockquote>
 
 <h3><a name="step-notify"></a>Real-time Notification</h3>
 
-<p>One of the more exciting new features of nsDialogs is callback function notification of changes to the dialog. nsDialogs can call a function defined in a script in response to a user action such as changing of a text field or click of a button. To make nsDialogs notify us of events, we'll use <a href="#mref-onclick">${NSD_OnClick}</a> and <a href="#mref-onchange">${NSD_OnChange}</a>. Not every control supports both of the events. For example, there's nothing to notify about labels.</p>
+<p>One of the more exciting new features of nsDialogs is callback function notification of changes to the dialog. nsDialogs can call a function defined in a script in response to a user action such as changing of a text field or click of a button. To make nsDialogs notify us of events, we'll use <a href="#mref-onclick">${NSD_OnClick}</a> and <a href="#mref-onchange">${NSD_OnChange}</a>. Not every control supports both of the events. For example, there is nothing to notify about label changes, only clicks.</p>
 
 <p>When the callback function is called, the control's HWND will be waiting on the stack and must be popped to prevent stack corruption. In this simple example, this is not so useful. But in case of a bigger script where several controls are associated with the same callback function, the HWND can shed some light on which control originated the event.</p>
 
