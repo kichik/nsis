@@ -169,7 +169,9 @@ def TestSubversionEOL():
     '.nsh' : 'native',
     '.nsi' : 'native',
     '.txt' : 'native',
-    '.ini' : 'CRLF'
+    '.ini' : 'CRLF',
+    '.dsp' : 'CRLF',
+    '.dsw' : 'CRLF'
   }
 
   exceptions = ['newfile.txt', 'oldfile.txt']
