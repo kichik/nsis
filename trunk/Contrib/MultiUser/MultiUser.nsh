@@ -253,7 +253,7 @@ Installer/uninstaller initialization
             ${if} $MultiUser.DefaultKeyValue == ""
               ReadRegStr $MultiUser.DefaultKeyValue HKCU "${MULTIUSER_INSTALLMODE_DEFAULT_REGISTRY_KEY}" "${MULTIUSER_INSTALLMODE_DEFAULT_REGISTRY_VALUENAME}"
               ${if} $MultiUser.DefaultKeyValue != ""
-                Call ${UNINSTALLER_FUNCPREFIX}MultiUser.InstallMode.AllUsers
+                Call ${UNINSTALLER_FUNCPREFIX}MultiUser.InstallMode.CurrentUser
               ${endif}
             ${endif}
           !else
@@ -261,7 +261,7 @@ Installer/uninstaller initialization
             ${if} $MultiUser.DefaultKeyValue == ""
               ReadRegStr $MultiUser.DefaultKeyValue HKLM "${MULTIUSER_INSTALLMODE_DEFAULT_REGISTRY_KEY}" "${MULTIUSER_INSTALLMODE_DEFAULT_REGISTRY_VALUENAME}"
               ${if} $MultiUser.DefaultKeyValue != ""
-                Call ${UNINSTALLER_FUNCPREFIX}MultiUser.InstallMode.CurrentUser
+                Call ${UNINSTALLER_FUNCPREFIX}MultiUser.InstallMode.AllUsers
               ${endif}
             ${endif}
           !endif
