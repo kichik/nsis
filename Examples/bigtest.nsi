@@ -28,7 +28,7 @@ InstallColors FF8080 000030
 XPStyle on
 
 InstallDir "$PROGRAMFILES\NSISTest\BigNSISTest"
-InstallDirRegKey HKLM "Software\NSISTest\BigNSISTest" ""
+InstallDirRegKey HKLM "Software\NSISTest\BigNSISTest" "Install_Dir"
 
 CheckBitmap "${NSISDIR}\Contrib\Graphics\Checks\classic-cross.bmp"
 
