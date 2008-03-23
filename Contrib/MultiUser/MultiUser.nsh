@@ -32,12 +32,12 @@ Var MultiUser.InstallMode
 
 !ifdef MULTIUSER_INSTALLMODE_COMMANDLINE
   !insertmacro GetParameters
-  !ifndef MULTIUSER_NOUNINSTALLER
+  !ifndef MULTIUSER_NOUNINSTALL
     !insertmacro un.GetParameters
   !endif
   !include StrFunc.nsh
   ${StrStr}
-  !ifndef MULTIUSER_NOUNINSTALLER
+  !ifndef MULTIUSER_NOUNINSTALL
     ${UnStrStr}
   !endif
   
