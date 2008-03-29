@@ -2077,21 +2077,8 @@ Var MUI_TEMP2
 
   LoadLanguageFile "${NSISDIR}\Contrib\Language files\${LANGUAGE}.nlf"
 
-  ;Set default language file for MUI and backup user setting
-  !ifdef LANGFILE_DEFAULT
-    !define MUI_LANGFILE_DEFAULT_TEMP "${LANGFILE_DEFAULT}"
-    !undef LANGFILE_DEFAULT
-  !endif
-  !define LANGFILE_DEFAULT "${NSISDIR}\Contrib\Language files\English.nsh"
-
   ;Include language file
-  !insertmacro LANGFILE_INCLUDE "${NSISDIR}\Contrib\Language files\${LANGUAGE}.nsh"
-
-  ;Restore user setting for default language file
-  !undef LANGFILE_DEFAULT
-  !ifdef MUI_LANGFILE_DEFAULT_TEMP
-    !define LANGFILE_DEFAULT "${MUI_LANGFILE_DEFAULT}"
-  !endif
+  !insertmacro LANGFILE_INCLUDE_WITHDEFAULT "${NSISDIR}\Contrib\Language files\${LANGUAGE}.nsh" "${NSISDIR}\Contrib\Language files\English.nsh"
 
   ;Add language to list of languages for selection dialog  
   !ifndef MUI_LANGDLL_LANGUAGES
