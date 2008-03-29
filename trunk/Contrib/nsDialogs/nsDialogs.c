@@ -85,7 +85,8 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         pushint((int) hwCtl);
         g_pluginParms->ExecuteCodeSegment(ctl->callbacks.onChange - 1, 0);
       }
-      else if (HIWORD(wParam) == CBN_SELCHANGE && ctl->type == NSCTL_COMBOBOX)
+      else if ((HIWORD(wParam) == CBN_EDITUPDATE || HIWORD(wParam) == CBN_SELCHANGE)
+                && ctl->type == NSCTL_COMBOBOX)
       {
         pushint((int) hwCtl);
         g_pluginParms->ExecuteCodeSegment(ctl->callbacks.onChange - 1, 0);
