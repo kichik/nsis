@@ -86,7 +86,7 @@ Personnalisée
 # ^ComponentsText
 Cochez les composants que vous désirez installer et décochez ceux que vous ne désirez pas installer. $_CLICK
 # ^ComponentsSubText1
-Sélectionnez le type d'installation :
+Type d'installation :
 # ^ComponentsSubText2_NoInstTypes
 Sélectionnez les composants à installer :
 # ^ComponentsSubText2
