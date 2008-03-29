@@ -171,6 +171,9 @@ Header file for creating custom installer pages with nsDialogs
 !define IMAGE_CURSOR        2
 !define IMAGE_ENHMETAFILE   3
 
+!define GWL_STYLE           -16
+!define GWL_EXSTYLE         -20
+
 !define DEFAULT_STYLES ${WS_CHILD}|${WS_VISIBLE}|${WS_CLIPSIBLINGS}
 
 !define __NSD_HLine_CLASS STATIC
@@ -301,6 +304,32 @@ Header file for creating custom installer pages with nsDialogs
 !insertmacro __NSD_DefineCallback Notify
 !insertmacro __NSD_DefineCallback Back
 
+!macro _NSD_AddStyle CONTROL STYLE
+
+	Push $0
+
+	System::Call "user32::GetWindowLong(i ${CONTROL}, i ${GWL_STYLE}) i .r0"
+	System::Call "user32::SetWindowLong(i ${CONTROL}, i ${GWL_STYLE}, i $0|${STYLE})"
+
+	Pop $0
+
+!macroend
+
+!define NSD_AddStyle "!insertmacro _NSD_AddStyle"
+
+!macro _NSD_AddExStyle CONTROL EXSTYLE
+
+	Push $0
+
+	System::Call "user32::GetWindowLong(i ${CONTROL}, i ${GWL_EXSTYLE}) i .r0"
+	System::Call "user32::SetWindowLong(i ${CONTROL}, i ${GWL_EXSTYLE}, i $0|${EXSTYLE})"
+
+	Pop $0
+
+!macroend
+
+!define NSD_AddExStyle "!insertmacro _NSD_AddExStyle"
+
 !macro __NSD_GetText CONTROL VAR
 
 	System::Call user32::GetWindowText(i${CONTROL},t.s,i${NSIS_MAX_STRLEN})
@@ -317,6 +346,14 @@ Header file for creating custom installer pages with nsDialogs
 !macroend
 
 !define NSD_SetText `!insertmacro __NSD_SetText`
+
+!macro _NSD_SetTextLimit CONTROL LIMIT
+
+	SendMessage ${CONTROL} ${EM_SETLIMITTEXT} ${LIMIT} 0
+
+!macroend
+
+!define NSD_SetTextLimit "!insertmacro _NSD_SetTextLimit"
 
 !macro __NSD_GetState CONTROL VAR
 
@@ -357,6 +394,38 @@ Header file for creating custom installer pages with nsDialogs
 !macroend
 
 !define NSD_SetFocus `!insertmacro __NSD_SetFocus`
+
+!macro _NSD_CB_AddString CONTROL STRING
+
+	SendMessage ${CONTROL} ${CB_ADDSTRING} 0 `STR:${STRING}`
+
+!macroend
+
+!define NSD_CB_AddString "!insertmacro _NSD_CB_AddString"
+
+!macro _NSD_CB_SelectString CONTROL STRING
+
+	SendMessage ${CONTROL} ${CB_SELECTSTRING} -1 `STR:${STRING}`
+
+!macroend
+
+!define NSD_CB_SelectString "!insertmacro _NSD_CB_SelectString"
+
+!macro _NSD_LB_AddString CONTROL STRING
+
+	SendMessage ${CONTROL} ${LB_ADDSTRING} 0 `STR:${STRING}`
+
+!macroend
+
+!define NSD_LB_AddString "!insertmacro _NSD_LB_AddString"
+
+!macro _NSD_LB_SelectString CONTROL STRING
+
+	SendMessage ${CONTROL} ${LB_SELECTSTRING} -1 `STR:${STRING}`
+
+!macroend
+
+!define NSD_LB_SelectString "!insertmacro _NSD_LB_SelectString"
 
 !macro __NSD_SetImage CONTROL IMAGE HANDLE
 
