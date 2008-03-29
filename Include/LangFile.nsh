@@ -2,15 +2,31 @@
 
 LangFile.nsh
 
-Header file to create langauge file that can be
+Header file to create langauge files that can be
 included with a single command.
-
-When LANGFILE_DEFAULT is set, missing strings will
-automatically be loaded from a default file.
 
 Copyright © 2008 Joost Verburg
 
+* Either LANGFILE_INCLUDE or LANGFILE_INCLUDE_WITHDEFAULT
+  can be called from the script to include a language
+  file.
+
+  - LANGFILE_INCLUDE takes the language file name as parameter.
+  - LANGFILE_INCLUDE_WITHDEFAULT takes as additional second
+    parameter the default language file to load missing strings
+    from.
+
+* A language file start with:
+  !insertmacro LANGFILE_EXT "English"
+  using the same name as the standard NSIS language file.
+
+* Language strings in the language file have the format:
+  ${LangFileString} LANGSTRING_NAME "Text"
+
 */
+
+!ifndef LANGFILE_INCLUDED
+!define LANGFILE_INCLUDED
 
 !macro LANGFILE_INCLUDE FILENAME
 
@@ -26,22 +42,36 @@ Copyright © 2008 Joost Verburg
   !include "${FILENAME}"
   !undef LANGFILE_SETNAMES
 
-  ;Include default language for missing strings
-
-  !ifdef LANGFILE_DEFAULT
-    !include "${LANGFILE_DEFAULT}"
-  !endif
-  
   ;Create language strings
 
   !undef LangFileString
   !define LangFileString "!insertmacro LANGFILE_LANGSTRING"
+  !include "${FILENAME}"
 
-  !ifdef LANGFILE_DEFAULT
-    !include "${LANGFILE_DEFAULT}"
-  !else
-    !include "${FILENAME}"
+!macroend
+
+!macro LANGFILE_INCLUDE_WITHDEFAULT FILENAME FILENAME_DEFAULT
+
+  ;Called from script: include a langauge file
+  ;Obtains missing strings from a default file
+
+  !ifdef LangFileString
+    !undef LangFileString
   !endif
+
+  !define LangFileString "!insertmacro LANGFILE_SETSTRING"
+
+  !define LANGFILE_SETNAMES
+  !include "${FILENAME}"
+  !undef LANGFILE_SETNAMES
+
+  ;Include default language for missing strings
+  !include "${FILENAME_DEFAULT}"
+  
+  ;Create language strings
+  !undef LangFileString
+  !define LangFileString "!insertmacro LANGFILE_LANGSTRING"
+  !include "${FILENAME_DEFAULT}"
 
 !macroend
 
@@ -99,3 +129,5 @@ Copyright © 2008 Joost Verburg
   !undef "${NAME}"
 
 !macroend
+
+!endif
