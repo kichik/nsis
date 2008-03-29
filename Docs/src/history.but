@@ -18,7 +18,7 @@ Released on March 29th, 2008
 
 \b Added missing MUI_UNFUNCTION_DESCRIPTION_BEGIN and MUI_UNFUNCTION_DESCRIPTION_END
 
-\b Fixed start enu page setting the error flag (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1891106}{bug #1891106})
+\b Fixed start menu page setting the error flag (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1891106}{bug #1891106})
 
 \S2{} nsDialogs
 
@@ -36,7 +36,7 @@ Released on March 29th, 2008
 
 \b OnClick support for labels (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1908732}{bug #1908732})
 
-\b Support for edit box change in combo box
+\b Support for edit box change notification in combo box
 
 \S2{} Minor Changes
 
