@@ -20,10 +20,10 @@ o-----------------------------------------------------------------------------o
 
 !include LogicLib.nsh
 
-!define FALSE 0
-!define TRUE 1
-
 !ifndef STRFUNC
+
+  !define FALSE 0
+  !define TRUE 1
 
   ;Header File Identification
 
