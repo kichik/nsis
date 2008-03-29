@@ -29,9 +29,6 @@
   ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Nëse pranoni kushtet e marrëveshjes, përzgjidhni mundësinë e parë më poshtë. Duhet të pranoni marrëveshjen për të çinstaluar $(^NameDA). $_CLICK"
 !endif
 
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "If you accept the terms of the agreement, select the first option below. You must accept the agreement to uninstall $(^NameDA). $_CLICK"
-!endif
-
 !ifdef MUI_LICENSEPAGE | MUI_UNLICENSEPAGE
   ${LangFileString} MUI_INNERTEXT_LICENSE_TOP "Shtypni Page Down për të parë pjesën e mbetur të marrëveshjes."
 !endif
