@@ -225,6 +225,10 @@ Header file for creating custom installer pages with nsDialogs
 !define __NSD_Password_STYLE ${DEFAULT_STYLES}|${WS_TABSTOP}|${ES_AUTOHSCROLL}|${ES_PASSWORD}
 !define __NSD_Password_EXSTYLE ${WS_EX_WINDOWEDGE}|${WS_EX_CLIENTEDGE}
 
+!define __NSD_Number_CLASS EDIT
+!define __NSD_Number_STYLE ${DEFAULT_STYLES}|${WS_TABSTOP}|${ES_AUTOHSCROLL}|${ES_NUMBER}
+!define __NSD_Number_EXSTYLE ${WS_EX_WINDOWEDGE}|${WS_EX_CLIENTEDGE}
+
 !define __NSD_FileRequest_CLASS EDIT
 !define __NSD_FileRequest_STYLE ${DEFAULT_STYLES}|${WS_TABSTOP}|${ES_AUTOHSCROLL}
 !define __NSD_FileRequest_EXSTYLE ${WS_EX_WINDOWEDGE}|${WS_EX_CLIENTEDGE}
@@ -264,6 +268,7 @@ Header file for creating custom installer pages with nsDialogs
 !insertmacro __NSD_DefineControl RadioButton
 !insertmacro __NSD_DefineControl Text
 !insertmacro __NSD_DefineControl Password
+!insertmacro __NSD_DefineControl Number
 !insertmacro __NSD_DefineControl FileRequest
 !insertmacro __NSD_DefineControl DirRequest
 !insertmacro __NSD_DefineControl ComboBox
