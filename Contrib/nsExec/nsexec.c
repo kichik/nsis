@@ -208,7 +208,8 @@ params:
     HANDLE newstdout=0,read_stdout=0;
     HANDLE newstdin=0,read_stdin=0;
     DWORD dwRead = 1;
-    DWORD dwExit = !STILL_ACTIVE;
+    DWORD dwExit = 0;
+    DWORD dwWait = WAIT_TIMEOUT;
     DWORD dwLastOutput;
     static char szBuf[1024];
     HGLOBAL hUnusedBuf = NULL;
@@ -254,7 +255,7 @@ params:
 
     dwLastOutput = GetTickCount();
 
-    while (dwExit == STILL_ACTIVE || dwRead) {
+    while (dwWait != WAIT_OBJECT_0 || dwRead) {
       PeekNamedPipe(read_stdout, 0, 0, 0, &dwRead, NULL);
       if (dwRead) {
         dwLastOutput = GetTickCount();
@@ -331,10 +332,10 @@ params:
         }
         else Sleep(LOOPTIMEOUT);
       }
+
+      dwWait = WaitForSingleObject(pi.hProcess, 0);
       GetExitCodeProcess(pi.hProcess, &dwExit);
-      if (dwExit != STILL_ACTIVE) {
-        PeekNamedPipe(read_stdout, 0, 0, 0, &dwRead, NULL);
-      }
+      PeekNamedPipe(read_stdout, 0, 0, 0, &dwRead, NULL);
     }
 done:
     if (log & 2) pushstring(szUnusedBuf);
