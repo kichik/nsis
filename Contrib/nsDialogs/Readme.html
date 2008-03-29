@@ -63,12 +63,19 @@ code
 <li><a href="#mref-onchange">NSD_OnChange</a></li>
 <li><a href="#mref-onclick">NSD_OnClick</a></li>
 <li><a href="#mref-onnotify">NSD_OnNotify</a></li>
+<li><a href="#mref-addstyle">NSD_AddStyle</a></li>
+<li><a href="#mref-addexstyle">NSD_AddExStyle</a></li>
 <li><a href="#mref-gettext">NSD_GetText</a></li>
 <li><a href="#mref-settext">NSD_SetText</a></li>
+<li><a href="#mref-settextlimit">NSD_SetTextLimit</a></li>
 <li><a href="#mref-getstate">NSD_GetState</a></li>
 <li><a href="#mref-setstate">NSD_SetState</a></li>
 <li><a href="#mref-check">NSD_Check</a></li>
 <li><a href="#mref-uncheck">NSD_Uncheck</a></li>
+<li><a href="#mref-cbaddstring">NSD_CB_AddString</a></li>
+<li><a href="#mref-cbselectstring">NSD_CB_SelectString</a></li>
+<li><a href="#mref-lbaddstring">NSD_LB_AddString</a></li>
+<li><a href="#mref-lbselectstring">NSD_LB_SelectString</a></li>
 <li><a href="#mref-setfocus">NSD_SetFocus</a></li>
 <li><a href="#mref-setimage">NSD_SetImage</a></li>
 <li><a href="#mref-setsimage">NSD_SetStretchedImage</a></li>
@@ -636,6 +643,22 @@ SectionEnd</pre></blockquote>
 
 <p>See <a href="#ref-onnotify">OnNotify</a> for more details.</p>
 
+<h3><a name="mref-addstyle"></a>NSD_AddStyle</h3>
+
+<p><code>${NSD_AddStyle} <i>control_HWND</i> <i>style</i></code></p>
+
+<p>Adds one or more window style to a control. Multiple styles should be separated with pipes `|'.</p>
+
+<p>See MSDN for style description.</p>
+
+<h3><a name="mref-addexstyle"></a>NSD_AddExStyle</h3>
+
+<p><code>${NSD_AddExStyle} <i>control_HWND</i> <i>style</i></code></p>
+
+<p>Adds one or more extended window style to a control. Multiple styles should be separated with pipes `|'.</p>
+
+<p>See MSDN for style description.</p>
+
 <h3><a name="mref-gettext"></a>NSD_GetText</h3>
 
 <p><code>${NSD_GetText} <i>control_HWND</i> <i>output_variable</i></code></p>
@@ -649,6 +672,12 @@ SectionEnd</pre></blockquote>
 <p><code>${NSD_SetText} <i>control_HWND</i> <i>text</i></code></p>
 
 <p>Sets the text of a control.</p>
+
+<h3><a name="mref-settextlimit"></a>NSD_SetTextLimit</h3>
+
+<p><code>${NSD_SetTextLimit} <i>control_HWND</i> <i>limit</i></code></p>
+
+<p>Sets input size limit for a text control.</p>
 
 <h3><a name="mref-getstate"></a>NSD_GetState</h3>
 
@@ -679,6 +708,30 @@ SectionEnd</pre></blockquote>
 <p>Unchecks a check box or a radio button control. Same as calling ${NSD_SetState} with ${BST_UNCHECKED}.</p>
 
 <p>See <a href="#step-memory">Memory</a> for usage example.</p>
+
+<h3><a name="mref-cbaddstring"></a>NSD_CB_AddString</h3>
+
+<p><code>${NSD_CB_AddString} <i>combo_HWND</i> <i>string</i></code></p>
+
+<p>Adds a string to a combo box.</p>
+
+<h3><a name="mref-cbselectstring"></a>NSD_CB_SelectString</h3>
+
+<p><code>${NSD_CB_SelectString} <i>combo_HWND</i> <i>string</i></code></p>
+
+<p>Selects a string in a combo box.</p>
+
+<h3><a name="mref-lbaddstring"></a>NSD_LB_AddString</h3>
+
+<p><code>${NSD_LB_AddString} <i>combo_HWND</i> <i>string</i></code></p>
+
+<p>Adds a string to a list box.</p>
+
+<h3><a name="mref-lbselectstring"></a>NSD_LB_SelectString</h3>
+
+<p><code>${NSD_LB_SelectString} <i>combo_HWND</i> <i>string</i></code></p>
+
+<p>Selects a string in a list box.</p>
 
 <h3><a name="mref-setfocus"></a>NSD_SetFocus</h3>
 
