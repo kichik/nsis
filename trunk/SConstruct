@@ -142,6 +142,7 @@ Examples/FileFuncTest.nsi
 Examples/Library.nsi
 Examples/makensis.nsi
 Examples/gfx.nsi
+Examples/System/System.nsi
 Examples/nsDialogs/example.nsi
 Examples/nsDialogs/InstallOptions.nsi
 Examples/nsDialogs/welcome.nsi""")
