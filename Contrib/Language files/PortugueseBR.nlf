@@ -10,7 +10,7 @@ NLF v6
 # RTL - anything else than RTL means LTR
 -
 # Translation by Diego Marcos
-# Corrections by Jeferson Hultmann
+# Corrections by Jeferson Hultmann and Felipe
 # ^Branding
 Sistema de instalação Nullsoft %s
 # ^SetupCaption
@@ -42,11 +42,11 @@ Desinstalação do $(^Name)
 # ^NextBtn
 &Avançar >
 # ^AgreeBtn
-&Concordo
+&Concordar
 # ^AcceptBtn
-&Eu aceito os termos do acordo de licença
+&Eu aceito os termos no acordo de licença
 # ^DontAcceptBtn
-Eu &não aceito os termos do acordo de licença
+Eu &não aceito os termos no acordo de licença
 # ^InstallBtn
 &Instalar
 # ^UninstallBtn
@@ -58,29 +58,29 @@ Cancelar
 # ^BrowseBtn
 &Procurar...
 # ^ShowDetailsBtn
-E&xibir detalhes
+Exibir &detalhes
 # ^ClickNext
-Clique em "Avançar" para continuar.
+Clique em Avançar para continuar.
 # ^ClickInstall
-Clique em "Instalar" para iniciar a instalação.
+Clique em Instalar para iniciar a instalação.
 # ^ClickUninstall
-Clique em "Desinstalar" para iniciar a desinstalação.
+Clique em Desinstalar para iniciar a desinstalação.
 # ^Name
 Nome
 # ^Completed
 Concluído
 # ^LicenseText
-Por favor, examine o acordo de licença antes de instalar o $(^NameDA). Se concordar com todos os termos da licença, clique em "Concordo".
+Por favor, examine o acordo de licença antes de instalar o $(^NameDA). Se concordar com todos os termos do acordo, clique em Concordar.
 # ^LicenseTextCB
-Por favor, examine o acordo de licença antes de instalar o $(^NameDA). Se concordar com todos os termos da licença, clique na caixa de seleção abaixo. $_CLICK
+Por favor, examine o acordo de licença antes de instalar o $(^NameDA). Se concordar com todos os termos do acordo, clique na caixa de seleção abaixo. $_CLICK
 # ^LicenseTextRB
-Por favor, examine o acordo de licença antes de instalar o $(^NameDA). Se concordar com todos os termos da licença, escolha a primeira opção abaixo. $_CLICK
+Por favor, examine o acordo de licença antes de instalar o $(^NameDA). Se concordar com todos os termos do acordo, escolha a primeira opção abaixo. $_CLICK
 # ^UnLicenseText
-Por favor, examine o acordo de licença antes de desinstalar o $(^NameDA). Se concordar com todos os termos da licença, clique em "Concordo".
+Por favor, examine o acordo de licença antes de desinstalar o $(^NameDA). Se concordar com todos os termos do acordo, clique em Concordar.
 # ^UnLicenseTextCB
-Por favor, examine o acordo de licença antes de desinstalar o $(^NameDA). Se concordar com todos os termos da licença, clique na caixa de seleção abaixo. $_CLICK
+Por favor, examine o acordo de licença antes de desinstalar o $(^NameDA). Se concordar com todos os termos do acordo, clique na caixa de seleção abaixo. $_CLICK
 # ^UnLicenseTextRB
-Por favor, examine o acordo de licença antes de desinstalar o $(^NameDA). Se concordar com todos os termos da licença, escolha a primeira opção abaixo. $_CLICK
+Por favor, examine o acordo de licença antes de desinstalar o $(^NameDA). Se concordar com todos os termos do acordo, escolha a primeira opção abaixo. $_CLICK
 # ^Custom
 Personalizado
 # ^ComponentsText
@@ -100,13 +100,13 @@ Selecione os componentes para desinstalar:
 # ^UnComponentsSubText2
 Ou selecione os componentes opcionais que gostaria de desinstalar:
 # ^DirText
-O $(^NameDA) será instalado nesta pasta. Para instalar em uma pasta diferente, clique em "Procurar..." e selecione outra pasta. $_CLICK
+O $(^NameDA) será instalado nesta pasta. Para instalar em uma pasta diferente, clique em Procurar e selecione outra pasta. $_CLICK
 # ^DirSubText
 Pasta de destino
 # ^DirBrowseText
 Selecione a pasta para instalar o $(^NameDA):
 # ^UnDirText
-O $(^NameDA) será desinstalado nesta pasta. Para desinstalar de uma pasta diferente, clique em "Procurar..." e selecione outra pasta. $_CLICK
+O $(^NameDA) será desinstalado nesta pasta. Para desinstalar de uma pasta diferente, clique em Procurar e selecione outra pasta. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
@@ -116,15 +116,15 @@ Selecione a pasta de onde será desinstalado o $(^NameDA):
 # ^SpaceRequired
 "Espaço necessário: "
 # ^UninstallingText
-O $(^NameDA) será desinstalado desta pasta: $_CLICK
+O $(^NameDA) será desinstalado da seguinte pasta. $_CLICK
 # ^UninstallingSubText
 Desinstalando de:
 # ^FileError
-Erro ao abrir arquivo para escrita: \r\n\t"$0"\r\nClique em Abortar para interromper a instalação,\r\nRepetir para tentar novamente a gravação do arquivo, ou\r\nIgnorar para passar para o próximo arquivo.
+Erro ao abrir arquivo para escrita: \r\n\t"$0"\r\nClique em Abortar para interromper a instalação,\r\nRepetir para tentar novamente, ou\r\nIgnorar para pular para o próximo arquivo.
 # ^FileError_NoIgnore
-Erro ao abrir arquivo para escrita: \r\n\t"$0"\r\nClique em Repetir para tentar novamente a gravação do arquivo, ou\r\nCancelar para interromper a instalação.
+Erro ao abrir arquivo para escrita: \r\n\t"$0"\r\nClique em Repetir para tentar novamente, ou\r\nCancelar para interromper a instalação.
 # ^CantWrite
-"Não foi possível escrever: "
+"Não pôde escrever: "
 # ^CopyFailed
 Falha ao copiar
 # ^CopyTo
@@ -132,11 +132,11 @@ Falha ao copiar
 # ^Registering
 "Registrando: "
 # ^Unregistering
-"Desregistrando: "
+"Desfazendo o registro: "
 # ^SymbolNotFound
-"Não foi encontrado símbolo: "
+"Não pôde encontrar símbolo: "
 # ^CouldNotLoad
-"Não foi possível carregar: "
+"Não pôde carregar: "
 # ^CreateFolder
 "Criando pasta: "
 # ^CreateShortcut
