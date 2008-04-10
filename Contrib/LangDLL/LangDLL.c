@@ -205,13 +205,17 @@ void __declspec(dllexport) LangDialog(HWND hwndParent, int string_size,
     }
 
     // start dialog
-    if (visible_langs_num > 0)
+    if (visible_langs_num > 1)
     {
       DialogBox(g_hInstance, MAKEINTRESOURCE(IDD_DIALOG), 0, DialogProc);
     }
-    else
+    else if (visible_langs_num == 0)
     {
       pushstring("");
+    }
+    else
+    {
+      pushstring(langs[0].id);
     }
 
     // free structs
