@@ -982,6 +982,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
   if (uMsg == WM_IN_UPDATEMSG || uMsg == WM_NOTIFY_START)
   {
     static char s[NSIS_MAX_STRLEN];
+    char *p;
     int error = 0;
     int available_set = 0;
     unsigned total, available = 0xFFFFFFFF;
@@ -991,6 +992,9 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       error = NSIS_INSTDIR_INVALID;
 
     mystrcpy(s,dir);
+    p=skip_root(s);
+    if (p)
+      *p=0;
 
     // Test for and use the GetDiskFreeSpaceEx API
     {
@@ -1016,12 +1020,6 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     {
       // GetDiskFreeSpaceEx is not available
       DWORD spc, bps, fc, tc;
-
-      // GetDiskFreeSpaceEx accepts any path, but GetDiskFreeSpace accepts only the root
-      char *p=skip_root(s);
-      if (p)
-        *p=0;
-
       if (GetDiskFreeSpace(s, &spc, &bps, &fc, &tc))
       {
         available = (int)MulDiv(bps * spc, fc, 1 << 10);
