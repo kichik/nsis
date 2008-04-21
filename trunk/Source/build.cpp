@@ -350,8 +350,17 @@ CEXEBuild::CEXEBuild() :
   }
 
   m_ShellConstants.add("PROGRAMFILES",   0x80 | program_files, program_files_def);
+
+  unsigned int program_files64_def = add_string("$PROGRAMFILES");
+
+  if (program_files64_def > 0xFF)
+  {
+    ERROR_MSG("Internal compiler error: too many strings added to strings block before adding shell constants!\n");
+    throw out_of_range("Internal compiler error: too many strings added to strings block before adding shell constants!");
+  }
+
   m_ShellConstants.add("PROGRAMFILES32", 0x80 | program_files, program_files_def);
-  m_ShellConstants.add("PROGRAMFILES64", 0xC0 | program_files, program_files_def);
+  m_ShellConstants.add("PROGRAMFILES64", 0xC0 | program_files, program_files64_def);
 
   unsigned int common_files = add_string("CommonFilesDir", 0);
   unsigned int common_files_def = add_string("$PROGRAMFILES\\Common Files");
@@ -363,20 +372,33 @@ CEXEBuild::CEXEBuild() :
   }
 
   m_ShellConstants.add("COMMONFILES",    0x80 | common_files,  common_files_def);
+
+  unsigned int common_files64_def = add_string("$COMMONFILES");
+
+  if (common_files64_def > 0xFF)
+  {
+    ERROR_MSG("Internal compiler error: too many strings added to strings block before adding shell constants!\n");
+    throw out_of_range("Internal compiler error: too many strings added to strings block before adding shell constants!");
+  }
+
   m_ShellConstants.add("COMMONFILES32",  0x80 | common_files,  common_files_def);
-  m_ShellConstants.add("COMMONFILES64",  0xC0 | common_files,  common_files_def);
+  m_ShellConstants.add("COMMONFILES64",  0xC0 | common_files,  common_files64_def);
 
   set_uninstall_mode(1);
 
   unsigned int uprogram_files = add_string("ProgramFilesDir", 0);
   unsigned int uprogram_files_def = add_string("C:\\Program Files");
+  unsigned int uprogram_files64_def = add_string("$PROGRAMFILES");
   unsigned int ucommon_files = add_string("CommonFilesDir", 0);
   unsigned int ucommon_files_def = add_string("$PROGRAMFILES\\Common Files");
+  unsigned int ucommon_files64_def = add_string("$COMMONFILES");
 
   if (uprogram_files != program_files
       || uprogram_files_def != program_files_def
+      || uprogram_files64_def != program_files64_def
       || ucommon_files != common_files
-      || ucommon_files_def != common_files_def)
+      || ucommon_files_def != common_files_def
+      || ucommon_files64_def != common_files64_def)
   {
     ERROR_MSG("Internal compiler error: installer's shell constants are different than uninstallers!\n");
     throw out_of_range("Internal compiler error: installer's shell constants are different than uninstallers!");
