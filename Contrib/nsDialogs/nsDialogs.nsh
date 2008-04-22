@@ -278,7 +278,7 @@ Header file for creating custom installer pages with nsDialogs
 !insertmacro __NSD_DefineControl DropList
 !insertmacro __NSD_DefineControl ListBox
 
-!macro __NSD_OnEvent EVENT HWND FUNCTION
+!macro __NSD_OnControlEvent EVENT HWND FUNCTION
 
 	Push $0
 	Push $1
@@ -293,16 +293,33 @@ Header file for creating custom installer pages with nsDialogs
 
 !macroend
 
-!macro __NSD_DefineCallback EVENT
+!macro __NSD_DefineControlCallback EVENT
 
-	!define NSD_On${EVENT} `!insertmacro __NSD_OnEvent ${EVENT}`
+	!define NSD_On${EVENT} `!insertmacro __NSD_OnControlEvent ${EVENT}`
 
 !macroend
 
-!insertmacro __NSD_DefineCallback Click
-!insertmacro __NSD_DefineCallback Change
-!insertmacro __NSD_DefineCallback Notify
-!insertmacro __NSD_DefineCallback Back
+!macro __NSD_OnDialogEvent EVENT FUNCTION
+
+	Push $0
+
+	GetFunctionAddress $0 "${FUNCTION}"
+	nsDialogs::On${EVENT} /NOUNLOAD $0
+
+	Pop $0
+
+!macroend
+
+!macro __NSD_DefineDialogCallback EVENT
+
+	!define NSD_On${EVENT} `!insertmacro __NSD_OnDialogEvent ${EVENT}`
+
+!macroend
+
+!insertmacro __NSD_DefineControlCallback Click
+!insertmacro __NSD_DefineControlCallback Change
+!insertmacro __NSD_DefineControlCallback Notify
+!insertmacro __NSD_DefineDialogCallback Back
 
 !macro _NSD_AddStyle CONTROL STYLE
 
