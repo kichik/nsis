@@ -81,6 +81,7 @@ typedef struct {
   int rtl;
   int errlvl;
   int alter_reg_view;
+  int status_update;
 } exec_flags_type;
 
 typedef struct {
