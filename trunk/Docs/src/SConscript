@@ -75,10 +75,6 @@ def fix_html(target, source, env):
 
 if build_chm:
 	hhc_action = Action(r'cd \ && hhc "%s\nsis.hhp"' % (build_dir))
-	execute = hhc_action.execute
-	def rexecute(*args):
-		return execute(*args) != 1 # hhc returns 1 on success
-	hhc_action.execute = rexecute
 
 	chm_builder = Builder(
 		action = [
@@ -92,6 +88,17 @@ if build_chm:
 
 	env.Append(BUILDERS = {'HalibutCHM' : chm_builder})
 
+	# fix hhc.exe reverse return value - UGLY
+	old_spawn = env['SPAWN']
+	def new_spawn(*args, **kw):
+		result = old_spawn(*args, **kw)
+		if 'hhc' in args[3]:
+			return not result
+		else:
+			return result
+	env['SPAWN'] = new_spawn
+
+	# build CHM
 	chm = env.HalibutCHM('NSIS.chm', [chm_config_but] + buts)
 	env.Depends(chm, halibut)
 	env.Depends(chm, '#Docs/style.css')
