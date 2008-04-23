@@ -15,7 +15,6 @@
  */
 
 #include "code.h"
-#include "Platform.h"
 
 using std::string;
 

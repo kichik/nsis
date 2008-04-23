@@ -15,7 +15,6 @@
  */
 
 #include "int.h"
-#include "Platform.h"
 
 #include <stdexcept>
 

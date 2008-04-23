@@ -15,7 +15,6 @@
  */
 
 #include "section.h"
-#include "Platform.h"
 
 using std::string;
 
