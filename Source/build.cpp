@@ -1189,7 +1189,10 @@ int CEXEBuild::add_section(const char *secname, const char *defname, int expand/
 
   cur_header->blocks[NB_SECTIONS].num++;
 
-  /*if (flags & (SF_SECGRP | SF_SECGRPEND))
+  /*
+  XXX TODO revive me!
+  
+  if (flags & (SF_SECGRP | SF_SECGRPEND))
   {
     add_entry_direct(EW_RET);
     build_cursection->code_size = 0;
