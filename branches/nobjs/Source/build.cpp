@@ -888,7 +888,7 @@ int CEXEBuild::add_data(const char *data, int length, IGrowBuf *dblock) // retur
 
 int CEXEBuild::add_label(const char *name)
 {
-  if (!build_cursection)
+  if (!build_cur_nobj_code)
   {
     ERROR_MSG("Error: Label declaration not valid outside of function/section\n");
     return PS_ERROR;
@@ -1002,7 +1002,7 @@ int CEXEBuild::add_function(const char *funname)
 
 int CEXEBuild::function_end()
 {
-  if (!build_cursection_isfunc)
+  if (!build_cur_nobj_function)
   {
     ERROR_MSG("Error: No function open, FunctionEnd called\n");
     return PS_ERROR;
@@ -1068,12 +1068,12 @@ void CEXEBuild::section_add_size_kb(int kb)
 
 int CEXEBuild::section_end()
 {
-  if (build_cursection_isfunc)
+  if (build_cur_nobj_function)
   {
     ERROR_MSG("Error: SectionEnd specified in function (not section)\n");
     return PS_ERROR;
   }
-  if (!build_cursection)
+  if (!build_cur_nobj_section)
   {
     ERROR_MSG("Error: SectionEnd specified and no sections open\n");
     return PS_ERROR;
@@ -1103,7 +1103,7 @@ int CEXEBuild::section_end()
 
 int CEXEBuild::add_section(const char *secname, const char *defname, int expand/*=0*/)
 {
-  if (build_cursection_isfunc)
+  if (build_cur_nobj_function)
   {
     ERROR_MSG("Error: Section can't create section (already in function, use FunctionEnd first)\n");
     return PS_ERROR;
@@ -1112,7 +1112,7 @@ int CEXEBuild::add_section(const char *secname, const char *defname, int expand/
     ERROR_MSG("Error: PageEx already open, call PageExEnd first\n");
     return PS_ERROR;
   }
-  if (build_cursection)
+  if (build_cur_nobj_section)
   {
     ERROR_MSG("Error: Section already open, call SectionEnd first\n");
     return PS_ERROR;
