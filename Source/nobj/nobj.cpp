@@ -15,7 +15,6 @@
  */
 
 #include "nobj.h"
-#include "Platform.h"
 
 #include <stdexcept>
 

@@ -15,7 +15,6 @@
  */
 
 #include "jump.h"
-#include "Platform.h"
 
 #include <stdexcept>
 

@@ -15,7 +15,6 @@
  */
 
 #include "label.h"
-#include "Platform.h"
 
 #include <stdexcept>
 

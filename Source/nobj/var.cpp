@@ -15,7 +15,6 @@
  */
 
 #include "var.h"
-#include "Platform.h"
 
 #include <stdexcept>
 
