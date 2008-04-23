@@ -3227,7 +3227,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       if (ret != PS_OK) return ret;
 
       if (unselected)
-        build_cursection->flags &= ~SF_SELECTED;
+      {
+        section_remove_flags(SF_SELECTED);
+      }
 
       return PS_OK;
     }
