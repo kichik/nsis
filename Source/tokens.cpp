@@ -322,20 +322,18 @@ int CEXEBuild::get_commandtoken(char *s, int *np, int *op, int *pos)
 
 int CEXEBuild::GetCurrentTokenPlace()
 {
-  if (build_cursection)
+  if (build_cur_nobj_section)
   {
-    if (build_cursection_isfunc)
-    {
-      return TP_FUNC;
-    }
-    else
-    {
-      return TP_SEC;
-    }
+    return TP_SEC;
   }
-
-  if (cur_page)
+  else if (build_cur_nobj_function)
+  {
+    return TP_FUNC;
+  }
+  else if (cur_page)
+  {
     return TP_PAGEEX;
+  }
 
   return TP_GLOBAL;
 }
