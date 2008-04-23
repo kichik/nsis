@@ -164,7 +164,9 @@ CEXEBuild::CEXEBuild() :
   sectiongroup_open_cnt=0;
   build_cursection_isfunc=0;
   build_cursection=NULL;
+  build_cur_nobj_section=NULL;
   build_cur_nobj_function=NULL;
+  build_cur_nobj_code=NULL;
   // init public data.
   build_packname[0]=build_packcmd[0]=build_output_filename[0]=0;
 
@@ -898,20 +900,8 @@ int CEXEBuild::add_label(const char *name)
   }
 
   nobj_label label(name);
-
-  if (build_cur_nobj_function)
-  {
-    build_cur_nobj_function->add_label(label);
-    return PS_OK;
-  }
-
-  if (build_cur_nobj_section)
-  {
-    build_cur_nobj_section->add_label(label);
-    return PS_OK;
-  }
-
-  return PS_ERROR;
+  build_cur_nobj_code->add_label(label);
+  return PS_OK;
 }
 
 int CEXEBuild::add_label_internal(const nobj_label* label)
@@ -997,6 +987,7 @@ int CEXEBuild::add_function(const char *funname)
 
   build_cursection_isfunc = 1;
   build_cur_nobj_function = new nobj_function();
+  build_cur_nobj_code = build_cur_nobj_function;
   build_cursection = build_cur_nobj_function->get_function();
 
   if (uninstall_mode)
@@ -1021,6 +1012,7 @@ int CEXEBuild::function_end()
 
   nobj_function* func = build_cur_nobj_function;
   build_cur_nobj_function = NULL;
+  build_cur_nobj_code = NULL;
 
   build_cursection_isfunc=0;
   build_cursection=NULL;
@@ -1090,6 +1082,7 @@ int CEXEBuild::section_end()
 
   nobj_section* sect = build_cur_nobj_section;
   build_cur_nobj_section = NULL;
+  build_cur_nobj_code = NULL;
 
   if (add_nobj_code_deps(sect) != PS_OK)
     return PS_ERROR;
@@ -1180,6 +1173,7 @@ int CEXEBuild::add_section(const char *secname, const char *defname, int expand/
   int addr = add_string(name);
 
   build_cur_nobj_section = new nobj_section(addr, cur_entries->getlen()/sizeof(entry), install_types, flags);
+  build_cur_nobj_code = build_cur_nobj_section;
   build_cursection = build_cur_nobj_section->get_section();
 
   if (defname[0])
@@ -1342,19 +1336,9 @@ int CEXEBuild::add_nobj_entry(const nobj_entry& ent)
     return PS_ERROR;
   }
 
-  if (build_cur_nobj_function)
-  {
-    build_cur_nobj_function->add_entry(ent);
-    return PS_OK;
-  }
+  build_cur_nobj_code->add_entry(ent);
 
-  if (build_cur_nobj_section)
-  {
-    build_cur_nobj_section->add_entry(ent);
-    return PS_OK;
-  }
-
-  return PS_ERROR;
+  return PS_OK;
 }
 
 int CEXEBuild::add_nobj_entry_parm(const nobj* parm)
