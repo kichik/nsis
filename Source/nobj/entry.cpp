@@ -15,7 +15,6 @@
  */
 
 #include "entry.h"
-#include "../Platform.h"
 
 #include "int.h"
 #include "jump.h"
