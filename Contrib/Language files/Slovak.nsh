@@ -5,7 +5,7 @@
 ;  Marián Hikaník (podnety@mojepreklady.net)
 ;  Ivan Masár <helix84@centrum.sk>, 2008.
 
-!insertmacro LANGFILE "Slovak" "slovenèina"
+!insertmacro LANGFILE "Slovak" "Slovensky"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Vitajte v sprievodcovi inštaláciou programu $(^NameDA)"
