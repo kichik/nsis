@@ -2,12 +2,13 @@
 ;By Piotr Murawski & Rafa³ Lampe
 ;Updated by cube and SYSTEMsoft Group
 ;Updated by Pawe³ Porwisz, http://www.pepesoft.tox.pl
+;Corrected by Mateusz Gola (aka Prozac) - http://www.videopedia.pl/avirecomp
 
 !insertmacro LANGFILE "Polish" "Polski"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Witamy w kreatorze instalacji programu $(^NameDA)"
-  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Ten kreator pomo¿e Ci zainstalowaæ program $(^NameDA).$\r$\n$\r$\nZalecane jest zamkniêcie wszystkich uruchomionych programów przed rozpoczêciem instalacji. To pozwoli na uaktualnienie niezbêdnych plików systemowych bez koniecznoœci ponownego uruchomienia komputera.$\r$\n$\r$\n$_CLICK"
+  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Kreator ten pomo¿e Ci zainstalowaæ program $(^NameDA).$\r$\n$\r$\nZalecane jest zamkniêcie wszystkich uruchomionych programów przed rozpoczêciem instalacji. Pozwoli to na uaktualnienie niezbêdnych plików systemowych bez koniecznoœci ponownego uruchamiania komputera.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_UNWELCOMEPAGE
@@ -104,14 +105,14 @@
 
 !ifdef MUI_STARTMENUPAGE
   ${LangFileString} MUI_TEXT_STARTMENU_TITLE "Wybierz folder w menu Start"
-  ${LangFileString} MUI_TEXT_STARTMENU_SUBTITLE "Wybierz folder menu Start w którym zostan¹ umieszczone skróty do programu"
-  ${LangFileString} MUI_INNERTEXT_STARTMENU_TOP "Wybierz folder w menu Start w którym chcia³byœ umieœciæ skróty do programu. Mo¿esz tak¿e utworzyæ nowy folder wpisuj¹c jego nazwê."
+  ${LangFileString} MUI_TEXT_STARTMENU_SUBTITLE "Wybierz folder menu Start, w którym zostan¹ umieszczone skróty do programu"
+  ${LangFileString} MUI_INNERTEXT_STARTMENU_TOP "Wybierz folder w menu Start, w którym chcia³byœ umieœciæ skróty do programu. Mo¿esz tak¿e utworzyæ nowy folder wpisuj¹c jego nazwê."
   ${LangFileString} MUI_INNERTEXT_STARTMENU_CHECKBOX "Nie twórz skrótów"
 !endif
 
 !ifdef MUI_UNCONFIRMPAGE
   ${LangFileString} MUI_UNTEXT_CONFIRM_TITLE "Odinstaluj $(^NameDA)"
-  ${LangFileString} MUI_UNTEXT_CONFIRM_SUBTITLE "Usuñ $(^NameDA) z twojego komputera."
+  ${LangFileString} MUI_UNTEXT_CONFIRM_SUBTITLE "Usuñ $(^NameDA) z Twojego komputera."
 !endif
 
 !ifdef MUI_ABORTWARNING
