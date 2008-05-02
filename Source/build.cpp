@@ -721,7 +721,10 @@ int CEXEBuild::add_db_data(IMMap *mmap) // returns offset
   {
     // grow datablock so that there is room to compress into
     int bufferlen = length + 1024 + length / 4; // give a nice 25% extra space
-    db->resize(st + bufferlen + sizeof(int));
+    if (bufferlen < 0) // too much data... try allocating as much as possible
+      db->resize(max(st, 0x7fffffff));
+    else
+      db->resize(st + bufferlen + sizeof(int));
 
     int n = compressor->Init(build_compress_level, build_compress_dict_size);
     if (n != C_OK)
