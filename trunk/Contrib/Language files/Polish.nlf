@@ -14,6 +14,7 @@ NLF v6
 # Updated by cube and SYSTEMsoft Group
 # Corrections by Marek Stepien <marcoos@aviary.pl> - http://www.aviary.pl/
 # Updated by Pawe³ Porwisz, http://www.pepesoft.tox.pl
+# Corrected by Mateusz Gola (aka Prozac) - http://www.videopedia.pl/avirecomp
 # ^Branding
 Nullsoft Install System %s
 # ^SetupCaption
@@ -87,7 +88,7 @@ Przed odinstalowaniem $(^NameDA) przeczytaj licencjê. Jeœli akceptujesz wszystki
 # ^Custom
 U¿ytkownika
 # ^ComponentsText
-Zaznacz komponenty, które chcesz zainstalowaæ i odznacz te, których nie chcesz zainstalowaæ. $_CLICK
+Zaznacz komponenty, które chcesz zainstalowaæ i odznacz te, których nie chcesz instalowaæ. $_CLICK
 # ^ComponentsSubText1
 Wybierz typ instalacji:
 # ^ComponentsSubText2_NoInstTypes
@@ -95,7 +96,7 @@ Wybierz komponenty do zainstalowania:
 # ^ComponentsSubText2
 Albo wybierz opcjonalne komponenty, które chcesz zainstalowaæ:
 # ^UnComponentsText
-Zaznacz komponenty, które chcesz odinstalowaæ, i odznacz te, których nie chcesz odinstalowaæ. $_CLICK
+Zaznacz komponenty, które chcesz odinstalowaæ i odznacz te, które nie zostan¹ odinstalowane. $_CLICK
 # ^UnComponentsSubText1
 Wybierz typ deinstalacji:
 # ^UnComponentsSubText2_NoInstTypes
@@ -119,7 +120,7 @@ Wybierz folder, z którego zostanie odinstalowany program $(^NameDA):
 # ^SpaceRequired
 "Wymagane miejsce: "
 # ^UninstallingText
-Ten kreator odinstaluje $(^NameDA) z twojego komputera. $_CLICK
+Ten kreator odinstaluje $(^NameDA) z Twojego komputera. $_CLICK
 # ^UninstallingSubText
 Deinstalacja z: 
 # ^FileError
