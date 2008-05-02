@@ -149,7 +149,9 @@ typedef struct
   DWORD size;
 } IconPair;
 
-bool compare_icon(Icon a, Icon b)
+typedef vector<IconPair> IconPairs;
+
+static bool compare_icon(Icon a, Icon b)
 {
   return FIX_ENDIAN_INT32(a.meta.dwRawSize) > FIX_ENDIAN_INT32(b.meta.dwRawSize);
 }
@@ -161,7 +163,7 @@ static IconGroup sort_icon(IconGroup icon)
   return sorted;
 }
 
-static vector<IconPair> get_icon_order(IconGroup icon1, IconGroup icon2)
+static IconPairs get_icon_order(IconGroup icon1, IconGroup icon2)
 {
   IconGroup sorted_icons1 = sort_icon(icon1);
   IconGroup sorted_icons2 = sort_icon(icon2);
@@ -169,7 +171,7 @@ static vector<IconPair> get_icon_order(IconGroup icon1, IconGroup icon2)
   IconGroup::size_type shared_count = min(sorted_icons1.size(), sorted_icons2.size());
   IconGroup::size_type total_count = max(sorted_icons1.size(), sorted_icons2.size());
 
-  vector<IconPair> result;
+  IconPairs result;
   IconGroup::size_type i;
 
   for (i = 0; i < shared_count; i++)
@@ -210,7 +212,7 @@ static vector<IconPair> get_icon_order(IconGroup icon1, IconGroup icon2)
   return result;
 }
 
-static LPBYTE generate_icon_group(IconGroup icon, vector<IconPair> order, bool first)
+static LPBYTE generate_icon_group(IconGroup icon, IconPairs order, bool first)
 {
   LPBYTE group = new BYTE[
     sizeof(IconGroupHeader) // header
@@ -239,7 +241,7 @@ static LPBYTE generate_icon_group(IconGroup icon, vector<IconPair> order, bool f
 // set_icon, must get an initialized resource editor
 void set_icon(CResourceEditor* re, WORD wIconId, IconGroup icon1, IconGroup icon2)
 {
-  vector<IconPair> order = get_icon_order(icon1, icon2);
+  IconPairs order = get_icon_order(icon1, icon2);
 
   // genreate group
   LPBYTE group1 = generate_icon_group(icon1, order, true);
@@ -278,7 +280,7 @@ void set_icon(CResourceEditor* re, WORD wIconId, IconGroup icon1, IconGroup icon
 unsigned char* generate_uninstall_icon_data(IconGroup icon1, IconGroup icon2, size_t &data_size)
 {
   IconGroup::size_type i;
-  vector<IconPair> order = get_icon_order(icon1, icon2);
+  IconPairs order = get_icon_order(icon1, icon2);
 
   // genreate group
   LPBYTE group = generate_icon_group(icon2, order, false);
