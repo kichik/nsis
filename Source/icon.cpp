@@ -147,6 +147,7 @@ typedef struct
   unsigned index1;
   unsigned index2;
   DWORD size;
+  unsigned size_index;
 } IconPair;
 
 typedef vector<IconPair> IconPairs;
@@ -160,6 +161,23 @@ static IconGroup sort_icon(IconGroup icon)
 {
   IconGroup sorted = icon;
   sort(sorted.begin(), sorted.end(), compare_icon);
+  return sorted;
+}
+
+static bool compare_pairs_index1(IconPair a, IconPair b)
+{
+  return a.index1 < b.index1;
+}
+
+static bool compare_pairs_index2(IconPair a, IconPair b)
+{
+  return a.index2 < b.index2;
+}
+
+static IconPairs sort_pairs(IconPairs pairs, bool first)
+{
+  IconPairs sorted = pairs;
+  sort(sorted.begin(), sorted.end(), first ? compare_pairs_index1 : compare_pairs_index2);
   return sorted;
 }
 
@@ -184,6 +202,7 @@ static IconPairs get_icon_order(IconGroup icon1, IconGroup icon2)
       FIX_ENDIAN_INT32(sorted_icons1[i].meta.dwRawSize),
       FIX_ENDIAN_INT32(sorted_icons2[i].meta.dwRawSize)
     );
+    pair.size_index = i;
 
     result.push_back(pair);
   }
@@ -197,6 +216,7 @@ static IconPairs get_icon_order(IconGroup icon1, IconGroup icon2)
       pair.index1 = sorted_icons1[i].index;
       pair.index2 = 0xffff;
       pair.size = FIX_ENDIAN_INT32(sorted_icons1[i].meta.dwRawSize);
+      pair.size_index = i;
     }
 
     if (i < sorted_icons2.size())
@@ -204,6 +224,7 @@ static IconPairs get_icon_order(IconGroup icon1, IconGroup icon2)
       pair.index2 = sorted_icons2[i].index;
       pair.index1 = 0xffff;
       pair.size = FIX_ENDIAN_INT32(sorted_icons2[i].meta.dwRawSize);
+      pair.size_index = i;
     }
 
     result.push_back(pair);
@@ -225,6 +246,8 @@ static LPBYTE generate_icon_group(IconGroup icon, IconPairs order, bool first)
   header->wIsIcon   = FIX_ENDIAN_INT16(1);
   header->wCount    = FIX_ENDIAN_INT16(icon.size());
 
+  order = sort_pairs(order, first);
+
   for (IconGroup::size_type i = 0; i < icon.size(); i++)
   {
     RsrcIconGroupEntry* entry = (RsrcIconGroupEntry*)
@@ -232,7 +255,7 @@ static LPBYTE generate_icon_group(IconGroup icon, IconPairs order, bool first)
     unsigned index = first ? order[i].index1 : order[i].index2;
 
     memcpy(&entry->header, &icon[index].meta, sizeof(IconGroupEntry));
-    entry->wRsrcId = FIX_ENDIAN_INT16(i + 1);
+    entry->wRsrcId = FIX_ENDIAN_INT16(order[i].size_index + 1);
   }
 
   return group;
@@ -260,8 +283,10 @@ void set_icon(CResourceEditor* re, WORD wIconId, IconGroup icon1, IconGroup icon
   IconGroup::size_type order_index;
   for (order_index = 0; order_index < order.size(); order_index++)
   {
-    LPBYTE data = new BYTE[order[order_index].size];
-    memset(data, 0, order[order_index].size);
+    DWORD size_index = order[order_index].size_index;
+    DWORD size = order[order_index].size;
+    LPBYTE data = new BYTE[size];
+    memset(data, 0, size);
 
     if (order_index < icon1.size())
     {
@@ -269,7 +294,7 @@ void set_icon(CResourceEditor* re, WORD wIconId, IconGroup icon1, IconGroup icon
       memcpy(data, icon->data, FIX_ENDIAN_INT32(icon->meta.dwRawSize));
     }
 
-    re->UpdateResourceA(RT_ICON, MAKEINTRESOURCE(order_index + 1), NSIS_DEFAULT_LANG, data, order[order_index].size);
+    re->UpdateResourceA(RT_ICON, MAKEINTRESOURCE(size_index + 1), NSIS_DEFAULT_LANG, data, size);
 
     delete [] data;
   }
@@ -367,8 +392,16 @@ int generate_unicons_offsets(LPBYTE exeHeader, size_t exeHeaderSize, LPBYTE unin
         throw runtime_error("invalid icon offset (possibly compressed icon)");
       }
 
+      DWORD real_size = re.GetResourceSizeA(RT_ICON, MAKEINTRESOURCE(icon_index), NSIS_DEFAULT_LANG);
+
       size = *(LPDWORD)seeker;
       seeker += sizeof(DWORD);
+
+      if (real_size < size)
+      {
+        throw runtime_error("invalid icon size (possibly compressed icon)");
+      }
+
       *(LPDWORD) seeker = FIX_ENDIAN_INT32(offset);
       seeker += sizeof(DWORD);
 
