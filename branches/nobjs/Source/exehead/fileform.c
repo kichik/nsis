@@ -3,7 +3,7 @@
  * 
  * This file is a part of NSIS.
  * 
- * Copyright (C) 1999-2007 Nullsoft and Contributors
+ * Copyright (C) 1999-2008 Nullsoft and Contributors
  * 
  * Licensed under the zlib/libpng license (the "License");
  * you may not use this file except in compliance with the License.
@@ -419,7 +419,6 @@ int NSISCALL _dodecomp(int offset, HANDLE hFileOut, char *outbuf, int outbuflen)
           retval+=u;
           outbuffer_len-=u;
           outbuffer=g_inflate_stream.next_out;
-          if (outbuffer_len < 1) return retval;
         }
         if (err==Z_STREAM_END) return retval;
       }

@@ -151,7 +151,7 @@ vpatch::vpatchfile "patch.pat" "oldfile.txt" "temporary_newfile.txt"
           <h3>Multiple patches in one file</h3>
           <div>
           <p>GenPat appends a patch to the file you specified. If there is already 
-            a patch for the same original file, with the same CRC, in the patch file,
+            a patch for the same original file, with the same CRC/MD5, in the patch file,
             the patch will be replaced. For example, if you want to be able to upgrade
             version 1 and 2 to version 3, you can put a 1 &gt; 3 and 2 &gt; 3 patch in 
             one file.</p>
@@ -218,13 +218,6 @@ vpatch::vpatchfile "patch.pat" "oldfile.txt" "temporary_newfile.txt"
             Borland Delphi 6 or higher (you can use the freely available Personal 
             edition), you will also need to install the <a href=
 "http://www.delphi-gems.com">VirtualTreeView</a> component by Mike Lischke.</p>
-          </div>
-          <h3>Test framework (Python)</h3>
-          <div>
-            <p>Run the <i>VPatch_tests.py</i> script (if you have <a href="http://www.python.org">Python</a> 
-              installed) to perform basic functionality tests on VPatch. The <i>testExtended</i> 
-              test is known to fail if a set of big test files is not installed, 
-              you can safely ignore this.</p>
           </div>
           </div>
           <h2>Version history</h2>

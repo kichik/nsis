@@ -330,10 +330,12 @@ NSISFunc(Clear) {
 
 NSISFunc(Destroy) {
   bgBitmap.bReady = FALSE;
-  if (IsWindow(hwndParent))
+  if (IsWindow(hwndParent) && oldProc)
     SetWindowLong(hwndParent, GWL_WNDPROC, (long)oldProc);
-  SendMessage(hWndImage, WM_CLOSE, 0, 0);
+  if (IsWindow(hWndImage))
+    SendMessage(hWndImage, WM_CLOSE, 0, 0);
   hWndImage = 0;
+  oldProc = NULL;
   Clear(0, 0, 0, 0);
   UnregisterClass("NSISBGImage", g_hInstance);
 }

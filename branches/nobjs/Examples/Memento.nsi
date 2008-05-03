@@ -11,6 +11,8 @@ ShowInstDetails show
 Page components
 Page instfiles
 
+RequestExecutionLevel user
+
 # settings
 
 !define MEMENTO_REGISTRY_ROOT HKCU

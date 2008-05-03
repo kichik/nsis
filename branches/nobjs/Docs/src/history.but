@@ -1,5 +1,183 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.36} 2.36
+
+Released on March 29th, 2008
+
+\S1{v2.36-rl} Release Notes
+
+\b nsDialogs is picking up its pace and offers lots of new macros in this release. Keep the patches and requests coming!
+
+\S1{v2.36-cl} Changelog
+
+\S2{} Major Changes
+
+\b \L{../Docs/nsExec/nsExec.txt}{nsExec}: Support for x64 disabled redirection (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373088&aid=1778973}{RFE #1778973}, \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1889317}{bug #1889317})
+
+\S2{} Modern UI
+
+\b Added missing MUI_UNFUNCTION_DESCRIPTION_BEGIN and MUI_UNFUNCTION_DESCRIPTION_END
+
+\b Fixed start menu page setting the error flag (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1891106}{bug #1891106})
+
+\S2{} nsDialogs
+
+\b NSD_AddStyle and NSD_AddExStyle for easy customization (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1900588}{patch #1900588})
+
+\b NSD_CB_AddString, NSD_CB_SelectString, NSD_LB_AddString and NSD_LB_SelectString for easier handling of combo and list boxes
+
+\b NSD_CreateNumber and NSD_SetTextLimit for limited input fields
+
+\b NSD_SetImage, NSD_SetStretchedImage, NSD_ClearImage and NSD_FreeImage for image handling
+
+\b NSD_SetState, NSD_GetState, NSD_Check and NSD_Uncheck for handling of check boxes and radio buttons (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1900588}{patch #1900588})
+
+\b NSD_SetText for easily setting control's text
+
+\b OnClick support for labels (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1908732}{bug #1908732})
+
+\b Support for edit box change notification in combo box
+
+\S2{} Minor Changes
+
+\b Fixed exception handling of UPX compressed icons (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1896500}{bug #1896500})
+
+\b Fixed InstallDirRegKey example in bigtest.nsi
+
+\b Fixed Memento's documentation to include $\{MementoSectionDone\}
+
+\b Fixed rare decompression error with 0x4001 bytes of compressed data (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1874297}{bug #1874297})
+
+\b LangFile.nsh: Added LANGFILE_INCLUDE_WITHDEFAULT to load language file with defaults being obtained from a default file. This replaces the LANGFILE_DEFAULT setting and makes it easier to use LangFile.nsh for multiple sets of languages file without having to care about the different LANGFILE_DEFAULT settings.
+
+\b Minor documentation improvements (including \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1891266}{bug #1891266}, \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1894033}{bug #1894033}, \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1896803}{bug #1896803})
+
+\b \L{../Docs/MultiUser/Readme.html}{MultiUser}: Fixed error when a custom installation mode initialization function is used only for the installer
+
+\b \L{../Docs/MultiUser/Readme.html}{MultiUser}: Fixed default installation mode based on registry key (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1913029}{bug #1913029})
+
+\b \L{../Docs/MultiUser/Readme.html}{MultiUser}: Fixed no uninstaller handling (MULTIUSER_NOUNINSTALL)
+
+\S2{} Utilities and Plug-ins
+
+\b \L{../Docs/makensisw/Readme.txt}{MakeNSISW}: Avoid opening executables with identical folder names when opening script's folder (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1891066}{bug #1891066})
+
+\b \L{../Docs/nsExec/nsExec.txt}{nsExec}: Fixed return code handling so 259 won't cause an infinite loop (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1909458}{bug #1909458})
+
+\b \L{../Docs/VPatch/Readme.html}{VPatch}: Added MD5 functions (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373088&aid=1900226}{RFE #1900226})
+
+\S2{} Translation
+
+\b Albanian updates (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1919360}{patch #1919360})
+
+\b French fixes (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1916564}{patch #1916564})
+
+\b Polish updates (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1894983}{patch #1894983})
+
+\S2{} Build System
+
+\b Fixed build of NSIS Menu with wxGTK (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1900233}{bug #1900233})
+
+\b Use CRLF for DSW and DSP files to avoid corruption messages
+
+\b Various build fixes for GCC 4.3, amd64 and Linux in general
+
+\H{v2.35} 2.35
+
+Released on February 8th, 2008
+
+\S1{v2.35-cl} Changelog
+
+\S2{} Major Changes
+
+\b Added \L{../Docs/MultiUser/Readme.html}{MultiUser} - installer configuration for multi-user Windows environments
+
+\b More user friendly corrupted installer message (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373088&aid=1795426}{RFE #1795426})
+
+\b Switched all examples to Modern UI 2
+
+\S2{} Minor Changes
+
+\b Fixed uninitialized memory leaking into resources (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1874297}{bug #1874297})
+
+\b Minor documentation improvements (including \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1861941}{bug #1861941}, \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1883917}{bug #1883917})
+
+\b \L{../Docs/Modern UI 2/Readme.html}{Modern UI 2}: Fit images in welcome/finish page by default and fix support for MUI_(UN)WELCOMEFINISHPAGE_BITMAP_NOSTRETCH (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1875945}{bug #1875945})
+
+\b \L{../Docs/Modern UI 2/Readme.html}{Modern UI 2}: Fixed default finish page reboot selection (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1864690}{bug #1864690})
+
+\b \L{../Docs/Modern UI 2/Readme.html}{Modern UI 2}: Fixed MUI_STARTMENU_GETFOLDER (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1864507}{bug #1864507})
+
+\b \L{../Docs/Modern UI 2/Readme.html}{Modern UI 2}: Fixed unreferenced mui.StartMenuPage.Create warning (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1861944}{bug #1861944})
+
+\b New simplified code for \R{library_vb6}{installation of VisualBasic 6 runtime}
+
+\b Simplified NSIS Menu providing easier access to all documentation
+
+\S2{} Utilities and Plug-ins
+
+\b Added keyboard cues support for LINK controls in \L{../Docs/nsDialogs/Readme.html}{nsDialogs} (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1871856}{patch #1871856})
+
+\b Fixed a rare nsDialogs crash on Windows 98 with non-standard builds of nsDialogs (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1889720}{bug #1889720})
+
+\H{v2.34} 2.34
+
+Released on December 24th, 2007
+
+\S1{v2.34-rl} Release Notes
+
+\b Thanks to user input on \L{../Docs/Modern UI 2/Readme.html}{Modern UI 2}, it is now ready for mass consumption at no better time than the holiday season. The installer for NSIS itself now exploits the wonders of MUI2 and \L{../Docs/nsDialogs/Readme.html}{nsDialogs} and so should you.
+
+\S1{v2.34-cl} Changelog
+
+\S2{} Major Changes
+
+\b \L{../Docs/Modern UI 2/Readme.html}{Modern UI 2}: Simpler code, easier to extend and makes use of the faster \L{../Docs/nsDialogs/Readme.html}{nsDialogs}
+
+\S2{} Minor Changes
+
+\b Added IfNot support for LogicLib (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1846785}{patch #1846785})
+
+\b Added some deprecation messages in MUI2 (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1784470}{bug #1784470})
+
+\b Allow overwrite of LANGFILE_*_NAME defines in new LangFile.nsh (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1848952}{bug #1848952})
+
+\b Better RTL support in instfiles and components page (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1841573}{bug #1841573})
+
+\b Don't warn of comments containing line-continuation character when it has no effect (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1701051}{bug #1701051}, \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373088&aid=1686589}{RFE #1686589})
+
+\b Fixed deletion of files with relative paths, a.k.a the EVE bug (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1851273}{bug #1851273})
+
+\b Fixed input verification of \R{sgetcurinsttype}{GetCurInstType} and \R{getfullpathname}{GetFullPathName}
+
+\b Fixed \R{wordfind}{WordFind} handling of MBCS characters (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1852141}{bug #1852141})
+
+\b Minor documentation improvements (including \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1842326}{bug #1842326})
+
+\b Use CRLF in examples (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1835866}{bug #1835866})
+
+\S2{} Utilities and Plug-ins
+
+\b Added missing stack handling in \L{../Docs/nsDialogs/Readme.html}{nsDialogs} examples
+
+\b Added NSD_GetState for checkboxes and radio buttons, NSD_SetFocus, NSD_CreatePassword and NSD_CreateDropList (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1848940}{patch #1848940})
+
+\b Fixed documentation of \L{../Docs/nsDialogs/Readme.html}{nsDialogs}::SelectFolderDialog (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1841120}{bug #1841120})
+
+\b Fixed NSD_CreateComboBox so it'd work like InstallOptions (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1851136}{bug #1851136})
+
+\S2{} Translations
+
+\b Bulgarian updates
+
+\b German fixes
+
+\S2{} Build System
+
+\b Fixed build issues on Mac OS (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1851365}{bug #1851365})
+
+\b Fixed endianity issues introduced in version 2.32 (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1851365}{bug #1851365})
+
 \H{v2.33} 2.33
 
 Released on November 17th, 2007
@@ -598,7 +776,7 @@ Released on October 20th, 2006
 
 \S2{} Minor Changes
 
-\b Added Vista support to \R{getwindowsversion}{GetWindowsVersion}
+\b Added Vista support to GetWindowsVersion
 
 \b Added \L{../Include/x64.nsh}{x64.nsh} including a few simple macros for handling x64 installations
 
@@ -1391,7 +1569,7 @@ Released on March 19th, 2005
 
 \b Added components.c to the Makefile (\W{http://sourceforge.net/tracker/index.php?func=detail&aid=1123154&group_id=22049&atid=373087}{patch #1123154})
 
-\b Added missing \R{clearerrors}{ClearErrors} in \R{getwindowsversion}{GetWindowsVersion} (\W{http://sourceforge.net/tracker/index.php?func=detail&aid=1155588&group_id=22049&atid=373085}{bug #1155588})
+\b Added missing \R{clearerrors}{ClearErrors} in GetWindowsVersion (\W{http://sourceforge.net/tracker/index.php?func=detail&aid=1155588&group_id=22049&atid=373085}{bug #1155588})
 
 \b Fixed a bug in install.sh that made it try to install a non existing directory
 

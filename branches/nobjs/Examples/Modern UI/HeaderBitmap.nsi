@@ -5,7 +5,7 @@
 ;--------------------------------
 ;Include Modern UI
 
-  !include "MUI.nsh"
+  !include "MUI2.nsh"
 
 ;--------------------------------
 ;General
@@ -15,10 +15,13 @@
   OutFile "HeaderBitmap.exe"
 
   ;Default installation folder
-  InstallDir "$PROGRAMFILES\Modern UI Test"
+  InstallDir "$LOCALAPPDATA\Modern UI Test"
   
   ;Get installation folder from registry if available
   InstallDirRegKey HKCU "Software\Modern UI Test" ""
+
+  ;Request application privileges for Windows Vista
+  RequestExecutionLevel user
 
 ;--------------------------------
 ;Interface Configuration

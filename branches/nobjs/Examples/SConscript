@@ -31,13 +31,9 @@ examples = Split("""
 mui_examples = [
 	'Modern UI/Basic.nsi',
 	'Modern UI/HeaderBitmap.nsi',
-	'Modern UI/InstallOptions.nsi',
 	'Modern UI/MultiLanguage.nsi',
 	'Modern UI/StartMenu.nsi',
-	'Modern UI/WelcomeFinish.nsi',
-	'Modern UI/ioA.ini',
-	'Modern UI/ioB.ini',
-	'Modern UI/ioC.ini'
+	'Modern UI/WelcomeFinish.nsi'
 ]
 
 Import('env')

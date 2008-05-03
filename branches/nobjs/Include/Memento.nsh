@@ -50,7 +50,9 @@ A usage example can be found in `Examples\Memento.nsi`.
    Section identifiers must stay the same across different versions of the
    installer or their state will be forgotten.
 
-4. Add a call to ${MementoSectionRestore} to .onInit to restore the state
+4. Use ${MementoSectionDone} after the last ${MementoSection}.
+
+5. Add a call to ${MementoSectionRestore} to .onInit to restore the state
    of all sections from the registry.
 
       Function .onInit
@@ -59,7 +61,7 @@ A usage example can be found in `Examples\Memento.nsi`.
 
       FunctionEnd
 
-5. Add a call to ${MementoSectionSave} to .onInstSuccess to save the state
+6. Add a call to ${MementoSectionSave} to .onInstSuccess to save the state
    of all sections to the registry.
 
       Function .onInstSuccess
@@ -68,7 +70,7 @@ A usage example can be found in `Examples\Memento.nsi`.
 
       FunctionEnd
 
-6. Tattoo the location of the chosen registry key on your arm.
+7. Tattoo the location of the chosen registry key on your arm.
 
 */
 

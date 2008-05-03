@@ -1,18 +1,18 @@
 /*
 
-NSIS Modern User Interface - Version 2.0 beta
-Copyright © 2002-2007 Joost Verburg
+NSIS Modern User Interface - Version 2.0
+Copyright © 2002-2008 Joost Verburg
 
 */
 
-!echo "NSIS Modern User Interface version 2.0 beta - © 2002-2007 Joost Verburg"
+!echo "NSIS Modern User Interface version 2.0 - © 2002-2008 Joost Verburg"
 
 ;--------------------------------
 
 !ifndef MUI_INCLUDED
 !define MUI_INCLUDED
 
-!define MUI_SYSVERSION "2.0beta"
+!define MUI_SYSVERSION "2.0"
 
 !verbose push
 
@@ -31,8 +31,6 @@ Copyright © 2002-2007 Joost Verburg
 !include LogicLib.nsh
 !include nsDialogs.nsh
 !include LangFile.nsh
-
-!define LANGFILE_DEFAULT "${NSISDIR}\Contrib\Language files\English.nsh"
 
 
 ;--------------------------------
@@ -72,6 +70,7 @@ Copyright © 2002-2007 Joost Verburg
 ;--------------------------------
 ;MUI interface
 
+!include "Deprecated.nsh"
 !include "Interface.nsh"
 !include "Localization.nsh"
 !include "Pages.nsh"

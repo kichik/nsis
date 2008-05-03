@@ -14,6 +14,8 @@ Page instfiles
 
 XPStyle on
 
+RequestExecutionLevel user
+
 !define TestDLL '"${NSISDIR}\Plugins\LangDLL.dll"'
 
 Section

@@ -3,7 +3,7 @@
  * 
  * This file is a part of NSIS.
  * 
- * Copyright (C) 1999-2007 Nullsoft and Contributors
+ * Copyright (C) 1999-2008 Nullsoft and Contributors
  * 
  * Licensed under the zlib/libpng license (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,7 +79,7 @@ enum
   TOK_LANGSTRING,
   TOK_LANGSTRINGUP,
 
-  // comrpession stuff
+  // compression stuff
   TOK_SETCOMPRESS,
   TOK_DBOPTIMIZE,
   TOK_SETCOMPRESSOR,
@@ -129,7 +129,7 @@ enum
   TOK_FUNCTIONEND,
   TOK_ADDSIZE,
 
-  // page oredering shit
+  // page ordering
   TOK_PAGE,
   TOK_UNINSTPAGE,
 

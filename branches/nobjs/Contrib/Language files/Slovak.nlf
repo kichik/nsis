@@ -9,7 +9,7 @@ NLF v6
 1250
 # RTL - anything else than RTL means LTR
 -
-# Translated by: Kypec, edited by: Marián Hikaník
+#Translated by: Kypec (peter.dzugas@mahe.sk); edited by: Marián Hikaník (podnety@mojepreklady.net), Ivan Masár <helix84@centrum.sk>, 2008.
 # ^Branding
 Nullsoft Install System %s
 # ^SetupCaption
@@ -33,7 +33,7 @@ Odinštalovanie programu $(^Name)
 # ^ConfirmSubCaption
 : Potvrdenie
 # ^UninstallingSubCaption
-: Odinštalováva sa
+: Prebieha odinštalácia
 # ^UnCompletedSubCaption
 : Hotovo
 # ^BackBtn
@@ -59,7 +59,7 @@ Zruši
 # ^ShowDetailsBtn
 &Podrobnosti
 # ^ClickNext
-Pre pokraèovanie v inštalácií kliknite na tlaèidlo Ïalej.
+V inštalácii pokraèujte kliknutím na tlaèidlo Ïalej.
 # ^ClickInstall
 Pre spustenie inštalácie kliknite na tlaèidlo Nainštalova.
 # ^ClickUninstall
@@ -99,39 +99,39 @@ Vyberte súèasti, ktoré chcete odinštalova:
 # ^UnComponentsSubText2
 Alebo oznaète volite¾né súèasti, ktoré chcete odinštalova:
 # ^DirText
-$(^NameDA) bude nainštalovanı do nasledujúceho prieèinka. Pre nainštalovanie do iného prieèinka, kliknite na tlaèidlo Preh¾adáva a vyberte inı prieèinok. $_CLICK
+$(^NameDA) bude nainštalovanı do nasledujúceho prieèinka. Inštalova do iného prieèinka môete po kliknutí na tlaèidlo Preh¾adáva a vybraní iného prieèinka. $_CLICK
 # ^DirSubText
 Cie¾ovı prieèinok
 # ^DirBrowseText
-Zvo¾te prieèinok, do ktorého bude program $(^NameDA) nainštalovanı:
+Zvo¾te prieèinok, do ktorého sa nainštaluje program $(^NameDA):
 # ^UnDirText
-Inštalátor odinštaluje program $(^NameDA) z nasledujúceho prieèinka. Pre odinštalovanie z iného prieèinka kliknite na tlaèidlo Preh¾adáva a vyberte inı prieèinok. $_CLICK
+Inštalátor odinštaluje program $(^NameDA) z nasledovného prieèinka. Ak ho chcete odinštalova z iného prieèinka, kliknite na tlaèidlo Preh¾adáva a vyberte inı prieèinok. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
-Zvo¾te prieèinok, z ktorého bude program $(^NameDA) odinštalovanı:
+Zvo¾te prieèinok, z ktorého sa odinštaluje program $(^NameDA):
 # ^SpaceAvailable
 "Vo¾né miesto na disku: "
 # ^SpaceRequired
-"Miesto potrebné na disku: "
+"Potrebné miesto na disku: "
 # ^UninstallingText
-Program $(^NameDA) bude odinštalovanı z nasledujúceho prieèinka. $_CLICK
+Program $(^NameDA) sa odinštaluje z nasledovného prieèinka. $_CLICK
 # ^UninstallingSubText
 Prebieha odinštalovanie z:
 # ^FileError
-Chyba pri otváraní súboru pre zápis: \r\n\r\n$0\r\n\r\n. Ak chcete inštaláciu ukonèi, kliknite na tlaèidlo Ukonèi,\r\ ak chcete zápis súboru zopakova, kliknite na tlaèidlo Opakova, alebo kliknite na tlaèidlo \r\nIgnorova, ak chcete inštaláciu tohto súboru vynecha.
+Chyba pri otváraní súboru na zápis: \r\n\r\n$0\r\n\r\n. Ak chcete inštaláciu ukonèi, kliknite na tlaèidlo Ukonèi,\r\ ak chcete zápis súboru zopakova, kliknite na tlaèidlo Opakova alebo kliknite na tlaèidlo \r\nIgnorova, ak chcete inštaláciu tohto súboru vynecha.
 # ^FileError_NoIgnore
-Chyba pri otváraní súboru pre zápis: \r\n\r\n$0\r\n\r\n. Ak chcete zopakova zápis súboru, kliknite na tlaèidlo Opakova, alebo kliknite na tlaèidlo \r\nZruši, v prípade, e chcete inštaláciu ukonèi.
+Chyba pri otváraní súboru na zápis: \r\n\r\n$0\r\n\r\n. Ak chcete zopakova zápis súboru, kliknite na tlaèidlo Opakova, alebo kliknite na tlaèidlo \r\nZruši, v prípade, e chcete inštaláciu ukonèi.
 # ^CantWrite
 "Nemono zapísa súbor: "
 # ^CopyFailed
-Kopírovanie nebolo úspešné.
+Kopírovanie zlyhalo.
 # ^CopyTo
 "Kopírova do "
 # ^Registering
 "Registruje sa: "
 # ^Unregistering
-"Vymazáva sa z registrov: "
+"Vymazáva sa z registra: "
 # ^SymbolNotFound
 "Nemono nájs symbol: "
 # ^CouldNotLoad
@@ -153,13 +153,13 @@ Kopírovanie nebolo úspešné.
 # ^ErrorDecompressing
 Chyba pri dekomprimovaní dát! Inštalátor je pravdepodobne poškodenı...
 # ^ErrorRegistering
-Chyba pri registrácií súèasti
+Chyba pri registrácii súèasti
 # ^ExecShell
 "Vykona príkaz: "
 # ^Exec
 "Spusti: "
 # ^Extract
-"Extrahova: "
+"Extrahuje sa: "
 # ^ErrorWriting
 "Chyba pri zápise do súboru "
 # ^InvalidOpcode

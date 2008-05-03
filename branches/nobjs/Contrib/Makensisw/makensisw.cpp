@@ -479,7 +479,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
             char str[MAX_PATH],*str2;
             lstrcpy(str,g_sdata.input_script);
             str2=my_strrchr(str,'\\');
-            if(str2!=NULL) *str2=0;
+            if(str2!=NULL) *(str2+1)=0;
             ShellExecute(g_sdata.hwnd,"open",str,NULL,NULL,SW_SHOWNORMAL);
           }
           return TRUE;

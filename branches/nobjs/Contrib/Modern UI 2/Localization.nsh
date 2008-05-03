@@ -35,9 +35,12 @@ Localization
 
   !insertmacro MUI_INSERT
 
-  LoadLanguageFile "${NSISDIR}\Contrib\Language files\${LANGUAGE}.nlf"  
-  !insertmacro LANGFILE_INCLUDE "${NSISDIR}\Contrib\Language files\${LANGUAGE}.nsh"
+  LoadLanguageFile "${NSISDIR}\Contrib\Language files\${LANGUAGE}.nlf"
 
+  ;Include language file
+  !insertmacro LANGFILE_INCLUDE_WITHDEFAULT "${NSISDIR}\Contrib\Language files\${LANGUAGE}.nsh" "${NSISDIR}\Contrib\Language files\English.nsh"
+
+  ;Add language to list of languages for selection dialog
   !ifndef MUI_LANGDLL_LANGUAGES
     !define MUI_LANGDLL_LANGUAGES "'${LANGFILE_${LANGUAGE}_NAME}' '${LANG_${LANGUAGE}}' "
     !define MUI_LANGDLL_LANGUAGES_CP "'${LANGFILE_${LANGUAGE}_NAME}' '${LANG_${LANGUAGE}}' '${LANG_${LANGUAGE}_CP}' "

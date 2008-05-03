@@ -3,6 +3,7 @@ OutFile "StrFunc.exe"
 ShowInstDetails show
 ShowUninstDetails show
 XPStyle on
+RequestExecutionLevel user
 
 !include "StrFunc.nsh"
 

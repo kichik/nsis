@@ -3,7 +3,7 @@
  * 
  * This file is a part of NSIS.
  * 
- * Copyright (C) 1999-2007 Nullsoft and Contributors
+ * Copyright (C) 1999-2008 Nullsoft and Contributors
  * 
  * Licensed under the zlib/libpng license (the "License");
  * you may not use this file except in compliance with the License.
@@ -359,8 +359,17 @@ CEXEBuild::CEXEBuild() :
   }
 
   m_ShellConstants.add("PROGRAMFILES",   0x80 | program_files, program_files_def);
+
+  unsigned int program_files64_def = add_string("$PROGRAMFILES");
+
+  if (program_files64_def > 0xFF)
+  {
+    ERROR_MSG("Internal compiler error: too many strings added to strings block before adding shell constants!\n");
+    throw out_of_range("Internal compiler error: too many strings added to strings block before adding shell constants!");
+  }
+
   m_ShellConstants.add("PROGRAMFILES32", 0x80 | program_files, program_files_def);
-  m_ShellConstants.add("PROGRAMFILES64", 0xC0 | program_files, program_files_def);
+  m_ShellConstants.add("PROGRAMFILES64", 0xC0 | program_files, program_files64_def);
 
   unsigned int common_files = add_string("CommonFilesDir", 0);
   unsigned int common_files_def = add_string("$PROGRAMFILES\\Common Files");
@@ -372,20 +381,33 @@ CEXEBuild::CEXEBuild() :
   }
 
   m_ShellConstants.add("COMMONFILES",    0x80 | common_files,  common_files_def);
+
+  unsigned int common_files64_def = add_string("$COMMONFILES");
+
+  if (common_files64_def > 0xFF)
+  {
+    ERROR_MSG("Internal compiler error: too many strings added to strings block before adding shell constants!\n");
+    throw out_of_range("Internal compiler error: too many strings added to strings block before adding shell constants!");
+  }
+
   m_ShellConstants.add("COMMONFILES32",  0x80 | common_files,  common_files_def);
-  m_ShellConstants.add("COMMONFILES64",  0xC0 | common_files,  common_files_def);
+  m_ShellConstants.add("COMMONFILES64",  0xC0 | common_files,  common_files64_def);
 
   set_uninstall_mode(1);
 
   unsigned int uprogram_files = add_string("ProgramFilesDir", 0);
   unsigned int uprogram_files_def = add_string("C:\\Program Files");
+  unsigned int uprogram_files64_def = add_string("$PROGRAMFILES");
   unsigned int ucommon_files = add_string("CommonFilesDir", 0);
   unsigned int ucommon_files_def = add_string("$PROGRAMFILES\\Common Files");
+  unsigned int ucommon_files64_def = add_string("$COMMONFILES");
 
   if (uprogram_files != program_files
       || uprogram_files_def != program_files_def
+      || uprogram_files64_def != program_files64_def
       || ucommon_files != common_files
-      || ucommon_files_def != common_files_def)
+      || ucommon_files_def != common_files_def
+      || ucommon_files64_def != common_files64_def)
   {
     ERROR_MSG("Internal compiler error: installer's shell constants are different than uninstallers!\n");
     throw out_of_range("Internal compiler error: installer's shell constants are different than uninstallers!");
@@ -708,7 +730,10 @@ int CEXEBuild::add_db_data(IMMap *mmap) // returns offset
   {
     // grow datablock so that there is room to compress into
     int bufferlen = length + 1024 + length / 4; // give a nice 25% extra space
-    db->resize(st + bufferlen + sizeof(int));
+    if (bufferlen < 0) // too much data... try allocating as much as possible
+      db->resize(max(st, 0x7fffffff));
+    else
+      db->resize(st + bufferlen + sizeof(int));
 
     int n = compressor->Init(build_compress_level, build_compress_dict_size);
     if (n != C_OK)

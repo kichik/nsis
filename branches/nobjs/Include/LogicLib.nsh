@@ -15,7 +15,7 @@
 ;       If|IfNot|Unless..{ElseIf|ElseIfNot|ElseUnless}..[Else]..EndIf|EndUnless
 ;         - Conditionally executes a block of statements, depending on the value
 ;           of an expression. IfNot and Unless are equivalent and
-;           interchangeable.
+;           interchangeable, as are ElseIfNot and ElseUnless.
 ;       AndIf|AndIfNot|AndUnless|OrIf|OrIfNot|OrUnless
 ;         - Adds any number of extra conditions to If, IfNot, Unless, ElseIf,
 ;           ElseIfNot and ElseUnless statements.

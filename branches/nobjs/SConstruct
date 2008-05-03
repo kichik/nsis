@@ -1,10 +1,4 @@
-EnsurePythonVersion(1,6)
-
-try:
-	EnsureSConsVersion(0,96,93)
-except TypeError: # EnsureSConsVersion in older versions took only two parameters
-	print 'SCons 0.96.93 or greater is required, but you have an older version'
-	Exit(2)
+EnsureSConsVersion(0,98)
 	
 stubs = [
 	'bzip2',
@@ -45,6 +39,7 @@ utils = [
 misc = [
 	'Graphics',
 	'Language files',
+	'MultiUser',
 	'Modern UI',
 	'Modern UI 2',
 	'VPatch',
@@ -132,7 +127,6 @@ if 'msvc' in defenv['TOOLS'] or 'mstoolkit' in defenv['TOOLS']:
 	ignore_tests = 'none'
 else:
 	ignore_tests = ','.join(Split("""
-Examples/System/System.nsi
 Examples/LogicLib.nsi
 Examples/StrFunc.nsi
 Examples/TextFunc.nsi
@@ -142,10 +136,12 @@ Examples/FileFuncTest.nsi
 Examples/Library.nsi
 Examples/makensis.nsi
 Examples/gfx.nsi
+Examples/System/System.nsi
 Examples/nsDialogs/example.nsi
 Examples/nsDialogs/InstallOptions.nsi
-Examples/nsDialogs/welcome.nsi
-"""))
+Examples/nsDialogs/welcome.nsi""")
+ + ['Examples/Modern UI/WelcomeFinish.nsi']
+ + ['Examples/Modern UI/HeaderBitmap.nsi'])
 
 # version
 opts.Add(('VERSION', 'Version of NSIS', cvs_version))

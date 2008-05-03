@@ -9,6 +9,7 @@ Name "Word Functions"
 OutFile "WordFunc.exe"
 Caption "$(^Name)"
 XPStyle on
+RequestExecutionLevel user
 
 Var INI
 Var HWND

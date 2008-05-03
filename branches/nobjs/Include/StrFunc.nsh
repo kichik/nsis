@@ -20,10 +20,10 @@ o-----------------------------------------------------------------------------o
 
 !include LogicLib.nsh
 
-!define FALSE 0
-!define TRUE 1
-
 !ifndef STRFUNC
+
+  !define FALSE 0
+  !define TRUE 1
 
   ;Header File Identification
 
@@ -85,12 +85,14 @@ o-----------------------------------------------------------------------------o
       !echo `${STRFUNC_FUNCMSGPRE}$ {Un${ShortName}} - © ${Credits}${STRFUNC_FUNCMSGPOST}`
       !verbose pop
       !define `Un${ShortName}` `!insertmacro FUNCTION_STRING_Un${ShortName}_Call`
+      !define `Un${ShortName}_INCLUDED`
       Function `un.${ShortName}`
     !else
       !echo `${STRFUNC_FUNCMSGPRE}$ {${ShortName}} - © ${Credits}${STRFUNC_FUNCMSGPOST}`
       !verbose pop
       !undef `${ShortName}`
       !define `${ShortName}` `!insertmacro FUNCTION_STRING_${ShortName}_Call`
+      !define `${ShortName}_INCLUDED`
       Function `${ShortName}`
     !endif
   !macroend

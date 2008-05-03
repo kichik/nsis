@@ -3,7 +3,7 @@
  * 
  * This file is a part of NSIS.
  * 
- * Copyright (C) 1999-2007 Nullsoft and Contributors
+ * Copyright (C) 1999-2008 Nullsoft and Contributors
  * 
  * Licensed under the zlib/libpng license (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,17 +19,11 @@
 
 
 // generic startup strings (these will never be overridable)
-#ifdef NSIS_CONFIG_CRC_SUPPORT
-#define _LANG_INVALIDCRC	"The installer you are trying to use is corrupted or incomplete.\n"  \
-				"This could be the result of a damaged disk, a failed download or a virus.\n\n"  \
-				"You may want to contact the author of this installer to obtain a new copy.\n\n"  \
-				"It may be possible to skip this check using the /NCRC command line switch\n" \
-				"(NOT RECOMMENDED)."
-#else
-#define _LANG_INVALIDCRC	"The installer you are trying to use is corrupted or incomplete.\n"  \
-				"This could be the result of a damaged disk, a failed download or a virus.\n\n"  \
-				"You may want to contact the author of this installer to obtain a new copy."
-#endif
+#define _LANG_INVALIDCRC "Installer integrity check has failed. Common causes include\n" \
+                         "incomplete download and damaged media. Contact the\n" \
+                         "installer's author to obtain a new copy.\n\n" \
+                         "More information at:\n" \
+                         "http://nsis.sf.net/NSIS_Error"
 
 #define _LANG_ERRORWRITINGTEMP "Error writing temporary file. Make sure your temp folder is valid."
 

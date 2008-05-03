@@ -73,7 +73,7 @@ TAG_HANDLER_BEGIN(A, "A")
                     if (!::wxFileExists(path) && !::wxDirExists(path))
                     {
                         colour = wxColour(0x80, 0x80, 0x80);
-                        linkInfo = wxHtmlLinkInfo("notinstalled.html", target);
+                        linkInfo = wxHtmlLinkInfo(wxT("notinstalled.html"), target);
                     }
                 }
             }

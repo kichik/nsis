@@ -10,6 +10,7 @@ OutFile "WordFuncTest.exe"
 Caption "$(^Name)"
 ShowInstDetails show
 XPStyle on
+RequestExecutionLevel user
 
 Var FUNCTION
 Var OUT

@@ -128,9 +128,11 @@ Welcome page (implemented using nsDialogs)
     ;Image control
     ${NSD_CreateBitmap} 0u 0u 109u 193u ""
     Pop $mui.WelcomePage.Image
-    System::Call 'user32::LoadImage(i 0, t "$PLUGINSDIR\modern-wizard.bmp", i ${IMAGE_BITMAP}, i 0, i 0, i ${LR_LOADFROMFILE}) i.s'
-    Pop $mui.WelcomePage.Image.Bitmap
-    SendMessage $mui.WelcomePage.Image ${STM_SETIMAGE} ${IMAGE_BITMAP} $mui.WelcomePage.Image.Bitmap
+    !ifndef MUI_${MUI_PAGE_UNINSTALLER_PREFIX}WELCOMEFINISHPAGE_BITMAP_NOSTRETCH
+      ${NSD_SetStretchedImage} $mui.WelcomePage.Image $PLUGINSDIR\modern-wizard.bmp $mui.WelcomePage.Image.Bitmap
+    !else
+      ${NSD_SetImage} $mui.WelcomePage.Image $PLUGINSDIR\modern-wizard.bmp $mui.WelcomePage.Image.Bitmap
+    !endif
 
     ;Positiong of controls
 
@@ -164,7 +166,7 @@ Welcome page (implemented using nsDialogs)
     Call ${MUI_PAGE_UNINSTALLER_FUNCPREFIX}muiPageUnloadFullWindow    
 
     ;Delete image from memory
-    System::Call gdi32::DeleteObject(i$mui.WelcomePage.Image.Bitmap)
+    ${NSD_FreeImage} $mui.WelcomePage.Image.Bitmap
 
     !insertmacro MUI_UNSET MUI_WELCOMEPAGE_TITLE_HEIGHT
     !insertmacro MUI_UNSET MUI_WELCOMEPAGE_TEXT_TOP

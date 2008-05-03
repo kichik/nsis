@@ -20,6 +20,9 @@ InstallDir $PROGRAMFILES\Example2
 ; overwrite the old one automatically)
 InstallDirRegKey HKLM "Software\NSIS_Example2" "Install_Dir"
 
+; Request application privileges for Windows Vista
+RequestExecutionLevel admin
+
 ;--------------------------------
 
 ; Pages

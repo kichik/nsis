@@ -3,7 +3,7 @@
  * 
  * This file is a part of NSIS.
  * 
- * Copyright (C) 1999-2007 Nullsoft and Contributors
+ * Copyright (C) 1999-2008 Nullsoft and Contributors
  * 
  * Licensed under the zlib/libpng license (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,20 +21,18 @@
 #define _FILEFORM_H_
 
 
-// * the installer is compsed of the following parts:
+// * the installer is composed of the following parts:
 // exehead (~34kb)
 // firstheader (struct firstheader)
 // * headers (compressed together):
-//   header (struct header)
-//   * nsis blocks (described in header->blocks)
+//   header (struct header - contains pointers to all blocks)
 //     pages (struct page)
 //     section headers (struct section)
 //     entries/instructions (struct entry)
 //     strings (null seperated)
 //     language tables (language id, dialog offset, language strings)
 //     colors (struct color)
-// data block (files and uninstaller data)
-// * not compressed
+// data block (compressed files and uninstaller data)
 // CRC (optional - 4 bytes)
 //
 // headers + datablock is at least 512 bytes if CRC enabled

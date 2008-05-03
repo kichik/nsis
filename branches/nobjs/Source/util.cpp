@@ -3,7 +3,7 @@
  * 
  * This file is a part of NSIS.
  * 
- * Copyright (C) 1999-2007 Nullsoft and Contributors
+ * Copyright (C) 1999-2008 Nullsoft and Contributors
  * 
  * Licensed under the zlib/libpng license (the "License");
  * you may not use this file except in compliance with the License.
@@ -374,7 +374,7 @@ string get_full_path(const string &path) {
 #ifdef PATH_MAX
   static char buffer[PATH_MAX];
 #else//PATH_MAX
-  int path_max = pathconf(path, _PC_PATH_MAX);
+  int path_max = pathconf(path.c_str(), _PC_PATH_MAX);
   if (path_max <= 0)
     path_max = 4096;
   char *buffer = (char *) malloc(path_max);
@@ -466,9 +466,14 @@ string remove_file_extension(const string& path) {
   return get_string_prefix(path, ".");
 }
 
+struct ToLower
+{
+  char operator() (char c) const  { return tolower(c); }
+};
+
 string lowercase(const string &str) {
   string result = str;
-  transform(str.begin(), str.end(), result.begin(), tolower);
+  transform(str.begin(), str.end(), result.begin(), ToLower());
   return result;
 }
 

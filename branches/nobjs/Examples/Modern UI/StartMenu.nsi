@@ -5,7 +5,7 @@
 ;--------------------------------
 ;Include Modern UI
 
-  !include "MUI.nsh"
+  !include "MUI2.nsh"
 
 ;--------------------------------
 ;General
@@ -15,19 +15,18 @@
   OutFile "StartMenu.exe"
 
   ;Default installation folder
-  InstallDir "$PROGRAMFILES\Modern UI Test"
+  InstallDir "$LOCALAPPDATA\Modern UI Test"
   
   ;Get installation folder from registry if available
   InstallDirRegKey HKCU "Software\Modern UI Test" ""
 
-  ;Vista redirects $SMPROGRAMS to all users without this
-  RequestExecutionLevel admin
+  ;Request application privileges for Windows Vista
+  RequestExecutionLevel user
 
 ;--------------------------------
 ;Variables
 
-  Var MUI_TEMP
-  Var STARTMENU_FOLDER
+  Var StartMenuFolder
 
 ;--------------------------------
 ;Interface Settings
@@ -46,7 +45,7 @@
   !define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\Modern UI Test" 
   !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
   
-  !insertmacro MUI_PAGE_STARTMENU Application $STARTMENU_FOLDER
+  !insertmacro MUI_PAGE_STARTMENU Application $StartMenuFolder
   
   !insertmacro MUI_PAGE_INSTFILES
   
@@ -76,8 +75,8 @@ Section "Dummy Section" SecDummy
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     
     ;Create shortcuts
-    CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
-    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
+    CreateDirectory "$SMPROGRAMS\$StartMenuFolder"
+    CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
   
   !insertmacro MUI_STARTMENU_WRITE_END
 
@@ -105,23 +104,11 @@ Section "Uninstall"
 
   RMDir "$INSTDIR"
   
-  !insertmacro MUI_STARTMENU_GETFOLDER Application $MUI_TEMP
+  !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuFolder
     
-  Delete "$SMPROGRAMS\$MUI_TEMP\Uninstall.lnk"
+  Delete "$SMPROGRAMS\$StartMenuFolder\Uninstall.lnk"
+  RMDir "$SMPROGRAMS\$StartMenuFolder"
   
-  ;Delete empty start menu parent diretories
-  StrCpy $MUI_TEMP "$SMPROGRAMS\$MUI_TEMP"
- 
-  startMenuDeleteLoop:
-	ClearErrors
-    RMDir $MUI_TEMP
-    GetFullPathName $MUI_TEMP "$MUI_TEMP\.."
-    
-    IfErrors startMenuDeleteLoopDone
-  
-    StrCmp $MUI_TEMP $SMPROGRAMS startMenuDeleteLoopDone startMenuDeleteLoop
-  startMenuDeleteLoopDone:
-
   DeleteRegKey /ifempty HKCU "Software\Modern UI Test"
 
 SectionEnd
