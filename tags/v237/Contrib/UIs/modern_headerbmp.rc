@@ -1,0 +1,28 @@
+#include "resource.h"
+
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+
+IDD_INST DIALOGEX 0, 0, 331, 222
+STYLE DS_FIXEDSYS | DS_CENTER | WS_MINIMIZEBOX | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
+FONT 8, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    PUSHBUTTON      "",3,166,201,50,14,WS_GROUP
+    PUSHBUTTON      "",1,216,201,50,14
+    PUSHBUTTON      "",2,273,201,50,14
+    CONTROL         "",IDC_CHILDRECT,"Static",SS_BLACKRECT | NOT WS_VISIBLE | 
+                    WS_GROUP,15,45,300,140
+    CONTROL         "",1044,"Static",SS_BLACKRECT | NOT WS_VISIBLE | 
+                    WS_GROUP,0,0,331,193
+    CONTROL         "",IDC_LICENSEDISAGREE,"Static",SS_ETCHEDHORZ | WS_GROUP,
+                    5,193,321,1
+    CONTROL         "",1036,"Static",SS_ETCHEDHORZ | WS_GROUP,0,35,340,1
+    CONTROL         "",1045,"Static",SS_ETCHEDHORZ | NOT WS_VISIBLE | 
+                    WS_GROUP,0,193,340,1
+    LTEXT           "",1256,5,188,322,8
+    LTEXT           "",IDC_VERSTR,5,188,322,8,WS_DISABLED
+    LTEXT           "",IDC_LICENSEAGREE,0,0,332,35
+    LTEXT           "",1037,105,5,215,10
+    LTEXT           "",1038,110,16,210,16
+    CONTROL         "",1046,"Static",SS_BITMAP,0,0,100,35
+END
