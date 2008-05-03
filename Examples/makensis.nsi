@@ -37,7 +37,11 @@ RequestExecutionLevel admin
 ;--------------------------------
 ;Functions
 
-!insertmacro VersionCompare
+!ifdef VER_MAJOR & VER_MINOR & VER_REVISION & VER_BUILD
+
+  !insertmacro VersionCompare
+
+!endif
 
 ;--------------------------------
 ;Definitions
@@ -149,9 +153,14 @@ ${MementoSection} "NSIS Core Files (required)" SecCore
   File ..\Include\Memento.nsh
   File ..\Include\LangFile.nsh
   File ..\Include\InstallOptions.nsh
+  File ..\Include\MultiUser.nsh
+  File ..\Include\VB6RunTime.nsh
 
   SetOutPath $INSTDIR\Docs\StrFunc
   File ..\Docs\StrFunc\StrFunc.txt
+
+  SetOutPath $INSTDIR\Docs\MultiUser
+  File ..\Docs\MultiUser\Readme.html
 
   SetOutPath $INSTDIR\Docs\makensisw
   File ..\Docs\makensisw\*.txt
@@ -159,11 +168,8 @@ ${MementoSection} "NSIS Core Files (required)" SecCore
   SetOutPath $INSTDIR\Menu
   File ..\Menu\*.html
   SetOutPath $INSTDIR\Menu\images
-  File ..\Menu\images\clear.gif
   File ..\Menu\images\header.gif
   File ..\Menu\images\line.gif
-  File ..\Menu\images\menu.gif
-  File ..\Menu\images\menud.gif
   File ..\Menu\images\site.gif
 
   Delete $INSTDIR\makensis.htm
@@ -278,19 +284,10 @@ ${MementoSection} "Desktop Shortcut" SecShortcuts
   SectionIn 1 2
   SetOutPath $INSTDIR
 !ifndef NO_STARTMENUSHORTCUTS
-  CreateDirectory $SMPROGRAMS\NSIS
-
-  CreateShortCut "$SMPROGRAMS\NSIS\NSIS Menu.lnk" "$INSTDIR\NSIS.exe" ""
-
-  CreateShortCut "$SMPROGRAMS\NSIS\MakeNSISW (Compiler GUI).lnk" "$INSTDIR\makensisw.exe"
-
-  CreateShortCut "$SMPROGRAMS\NSIS\NSIS Documentation.lnk" "$INSTDIR\NSIS.chm"
-  WriteINIStr "$SMPROGRAMS\NSIS\NSIS Site.url" "InternetShortcut" "URL" "http://nsis.sourceforge.net/"
-  CreateShortCut "$SMPROGRAMS\NSIS\Uninstall NSIS.lnk" "$INSTDIR\uninst-nsis.exe"
-
+  CreateShortCut "$SMPROGRAMS\NSIS.lnk" "$INSTDIR\NSIS.exe"
 !endif
 
-  CreateShortCut "$DESKTOP\Nullsoft Install System.lnk" "$INSTDIR\NSIS.exe"
+  CreateShortCut "$DESKTOP\NSIS.lnk" "$INSTDIR\NSIS.exe"
 
 ${MementoSectionEnd}
 
@@ -308,10 +305,6 @@ ${MementoSection} "Modern User Interface" SecInterfacesModernUI
   File "..\Examples\Modern UI\Basic.nsi"
   File "..\Examples\Modern UI\HeaderBitmap.nsi"
   File "..\Examples\Modern UI\MultiLanguage.nsi"
-  File "..\Examples\Modern UI\InstallOptions.nsi"
-  File "..\Examples\Modern UI\ioA.ini"
-  File "..\Examples\Modern UI\ioB.ini"
-  File "..\Examples\Modern UI\ioC.ini"
   File "..\Examples\Modern UI\StartMenu.nsi"
   File "..\Examples\Modern UI\WelcomeFinish.nsi"
 
@@ -342,6 +335,7 @@ ${MementoSection} "Modern User Interface" SecInterfacesModernUI
   File "..\Include\MUI.nsh"
 
   SetOutPath "$INSTDIR\Contrib\Modern UI 2"
+  File "..\Contrib\Modern UI 2\Deprecated.nsh"
   File "..\Contrib\Modern UI 2\Interface.nsh"
   File "..\Contrib\Modern UI 2\Localization.nsh"
   File "..\Contrib\Modern UI 2\MUI2.nsh"
@@ -795,75 +789,6 @@ Section -post
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "NoModify" "1"
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "NoRepair" "1"
 
-!ifndef NO_STARTMENUSHORTCUTS
-  IfFileExists $SMPROGRAMS\NSIS "" no_startshortcuts
-
-  SetDetailsPrint textonly
-  DetailPrint "Creating Shortcuts..."
-  SetDetailsPrint listonly
-
-  IfFileExists $INSTDIR\Examples 0 +2
-    CreateShortCut "$SMPROGRAMS\NSIS\NSIS Examples Directory.lnk" "$INSTDIR\Examples"
-
-  ; MakeNSISW
-  CreateDirectory $SMPROGRAMS\NSIS\Contrib
-    CreateShortCut "$SMPROGRAMS\NSIS\Contrib\MakeNSISw Readme.lnk" "$INSTDIR\Docs\makensisw\readme.txt"
-
-  ; ZIP2EXE
-  IfFileExists "$INSTDIR\Bin\zip2exe.exe" 0 +2
-    CreateShortCut "$SMPROGRAMS\NSIS\Contrib\zip2exe (Create SFX).lnk" "$INSTDIR\Bin\zip2exe.exe"
-
-  ; Modern UI
-  Push "Modern UI"
-  Call AddReadmeToStartMenu
-
-  ; Splash
-  Push Splash
-  Call AddReadmeToStartMenu
-
-  ; Advanced splash
-  Push AdvSplash
-  Call AddReadmeToStartMenu
-
-  ; Math
-  Push Math
-  Call AddReadmeToStartMenu
-
-  ; NSISdl
-  Push NSISdl
-  Call AddReadmeToStartMenu
-
-  ; nsExec
-  Push nsExec
-  Call AddReadmeToStartMenu
-
-  ; StartMenu
-  Push StartMenu
-  Call AddReadmeToStartMenu
-
-  ; BgImage
-  Push BgImage
-  Call AddReadmeToStartMenu
-
-  ; Banner
-  Push Banner
-  Call AddReadmeToStartMenu
-
-  ; System
-  Push System
-  Call AddReadmeToStartMenu
-
-  ; VPatch
-  Push VPatch
-  Call AddReadmeToStartMenu
-
-  ; InstallOptions
-  Push InstallOptions
-  Call AddReadmeToStartMenu
-
-  no_startshortcuts:
-!endif
-
   WriteUninstaller $INSTDIR\uninst-nsis.exe
 
   ${MementoSectionSave}
@@ -1030,27 +955,6 @@ FunctionEnd
 
 !endif # VER_MAJOR & VER_MINOR & VER_REVISION & VER_BUILD
 
-!ifndef NO_STARTMENUSHORTCUTS
-Function AddReadmeToStartMenu
-  Pop $0
-  StrCpy $1 "$0 Readme"
-  IfFileExists $INSTDIR\Docs\$0\$0.txt 0 +3
-    StrCpy $0 Docs\$0\$0.txt
-    Goto create
-  IfFileExists $INSTDIR\Docs\$0\$0.html 0 +3
-    StrCpy $0 Docs\$0\$0.html
-    Goto create
-  IfFileExists $INSTDIR\Docs\$0\Readme.txt 0 +3
-    StrCpy $0 Docs\$0\Readme.txt
-    Goto create
-  IfFileExists $INSTDIR\Docs\$0\Readme.html 0 done
-    StrCpy $0 Docs\$0\Readme.html
-  create:
-    CreateShortCut $SMPROGRAMS\NSIS\Contrib\$1.lnk $INSTDIR\$0
-  done:
-FunctionEnd
-!endif
-
 Function ShowReleaseNotes
   ${If} ${FileExists} $WINDIR\hh.exe
     StrCpy $0 $WINDIR\hh.exe
@@ -1103,8 +1007,8 @@ Section Uninstall
   DetailPrint "Deleting Files..."
   SetDetailsPrint listonly
 
-  RMDir /r $SMPROGRAMS\NSIS
-  Delete "$DESKTOP\Nullsoft Install System.lnk"
+  Delete $SMPROGRAMS\NSIS.lnk
+  Delete $DESKTOP\NSIS.lnk
   Delete $INSTDIR\makensis.exe
   Delete $INSTDIR\makensisw.exe
   Delete $INSTDIR\NSIS.exe

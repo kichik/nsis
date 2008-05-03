@@ -9,6 +9,7 @@ Name "Text Functions"
 OutFile "TextFunc.exe"
 Caption "$(^Name)"
 XPStyle on
+RequestExecutionLevel user
 
 !include "WinMessages.nsh"
 !include "TextFunc.nsh"

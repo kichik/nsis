@@ -76,7 +76,7 @@ private:
 // handlers) which process them. It can be also done at run-time, but for the
 // simple menu events like this the static method is much simpler.
    BEGIN_EVENT_TABLE(MyFrame, wxFrame)
-     EVT_HTML_LINK_CLICKED(HtmlControl, OnLink)
+     EVT_HTML_LINK_CLICKED(HtmlControl, MyFrame::OnLink)
    END_EVENT_TABLE()
    
    // Create a new application object: this macro will allow wxWindows to create
@@ -139,7 +139,9 @@ private:
       m_Html->LoadPage(wxT("Menu/index.html"));
       
       this->Centre(wxBOTH);
+#ifndef __WXGTK__
       this->SetIcon(wxICON(nsisicon));
+#endif
    }
 
 // event handler

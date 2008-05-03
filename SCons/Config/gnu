@@ -134,9 +134,11 @@ if not defenv['DEBUG'] and defenv['STRIP'] and defenv['STRIP_W32']:
 	util_env.Append(LINKFLAGS = '-s')                   # strip
 conf.Finish()
 
-### cross-platform util environment stripping
+### cross-platform util environment adjustments
 
 conf = FlagsConfigure(cp_util_env)
+conf.CheckCompileFlag('-m32')
+conf.CheckLinkFlag('-m32')
 if not defenv['DEBUG'] and defenv['STRIP'] and defenv['STRIP_CP']:
 	TestStrip(conf)                                 # strip
 conf.Finish()
@@ -144,6 +146,10 @@ conf.Finish()
 ### test environment
 
 test_env = defenv.Clone()
+conf = FlagsConfigure(test_env)
+conf.CheckCompileFlag('-m32')
+conf.CheckLinkFlag('-m32')
+conf.Finish()
 
 ### weird GCC requirements
 

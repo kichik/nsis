@@ -5,6 +5,14 @@
 #include "input.h"
 #include "rtl.h"
 
+#ifndef ODS_NOACCEL
+#define ODS_NOACCEL 0x0100
+#define ODS_NOFOCUSRECT 0x0200
+#endif
+#ifndef DT_HIDEPREFIX
+#define DT_HIDEPREFIX 0x00100000
+#endif
+
 HINSTANCE g_hInstance;
 struct nsDialog g_dialog;
 extra_parameters* g_pluginParms;
@@ -77,7 +85,8 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         pushint((int) hwCtl);
         g_pluginParms->ExecuteCodeSegment(ctl->callbacks.onChange - 1, 0);
       }
-      else if (HIWORD(wParam) == CBN_SELCHANGE && ctl->type == NSCTL_COMBOBOX)
+      else if ((HIWORD(wParam) == CBN_EDITUPDATE || HIWORD(wParam) == CBN_SELCHANGE)
+                && ctl->type == NSCTL_COMBOBOX)
       {
         pushint((int) hwCtl);
         g_pluginParms->ExecuteCodeSegment(ctl->callbacks.onChange - 1, 0);
@@ -115,6 +124,13 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       RECT rc;
       char text[1024];
 
+      // http://blogs.msdn.com/oldnewthing/archive/2005/05/03/414317.aspx#414357
+      // says we should call SystemParametersInfo(SPI_GETKEYBOARDCUES,...) to make
+      // sure, does not seem to be required, might be a win2k bug, or it might
+      // only apply to menus
+      BOOL hideFocus = (lpdis->itemState & ODS_NOFOCUSRECT);
+      BOOL hideAccel = (lpdis->itemState & ODS_NOACCEL);
+
       struct nsControl* ctl = GetControl(lpdis->hwndItem);
       if (ctl == NULL)
         break;
@@ -141,12 +157,16 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
       if (lpdis->itemAction & ODA_DRAWENTIRE)
       {
-        // Get TxtColor unless the user has set another using SetCtlColors
+        DWORD xtraDrawStyle = (g_dialog.rtl ? DT_RTLREADING : 0);
+        if (hideAccel)
+          xtraDrawStyle |= DT_HIDEPREFIX;
+
+        // Use blue unless the user has set another using SetCtlColors
         if (!GetWindowLong(lpdis->hwndItem, GWL_USERDATA))
           SetTextColor(lpdis->hDC, RGB(0,0,255));
 
         // Draw the text
-        DrawText(lpdis->hDC, text, -1, &rc, DT_CENTER | DT_VCENTER | DT_WORDBREAK | (g_dialog.rtl ? DT_RTLREADING : 0));
+        DrawText(lpdis->hDC, text, -1, &rc, xtraDrawStyle | DT_CENTER | DT_VCENTER | DT_WORDBREAK);
       }
 
       // Draw the focus rect if needed
@@ -154,7 +174,8 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       {
         // NB: when not in DRAWENTIRE mode, this will actually toggle the focus
         // rectangle since it's drawn in a XOR way
-        DrawFocusRect(lpdis->hDC, &rc);
+        if (!hideFocus)
+          DrawFocusRect(lpdis->hDC, &rc);
       }
 
       return TRUE;

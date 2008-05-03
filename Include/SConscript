@@ -11,6 +11,7 @@ includes = Split("""
 	StrFunc.nsh
 	TextFunc.nsh
 	UpgradeDLL.nsh
+	VB6RunTime.nsh
 	WinMessages.nsh
 	WinVer.nsh
 	WordFunc.nsh

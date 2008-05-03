@@ -26,6 +26,7 @@ static int NSDFUNC ConvertPlacement(char *str, int total, int height)
     RECT r;
 
     r.left = r.top = x;
+    r.right = r.bottom = 0;
 
     MapDialogRect(g_dialog.hwParent, &r);
 

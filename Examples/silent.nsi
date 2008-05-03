@@ -4,6 +4,7 @@
 
 Name "Silent"
 OutFile "silent.exe"
+RequestExecutionLevel user
 
 # uncomment the following line to make the installer silent by default.
 ; SilentInstall silent

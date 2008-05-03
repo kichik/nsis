@@ -1,11 +1,11 @@
 /*
 
 NSIS Modern User Interface - Version 1.8
-Copyright © 2002-2007 Joost Verburg
+Copyright © 2002-2008 Joost Verburg
 
 */
 
-!echo "NSIS Modern User Interface version 1.8 - © 2002-2007 Joost Verburg"
+!echo "NSIS Modern User Interface version 1.8 - © 2002-2008 Joost Verburg"
 
 ;--------------------------------
 
@@ -28,8 +28,6 @@ Copyright © 2002-2007 Joost Verburg
 !include InstallOptions.nsh
 !include LangFile.nsh
 !include WinMessages.nsh
-
-!define LANGFILE_DEFAULT "${NSISDIR}\Contrib\Language files\English.nsh"
 
 Var MUI_TEMP1
 Var MUI_TEMP2
@@ -2078,8 +2076,11 @@ Var MUI_TEMP2
   !insertmacro MUI_INSERT
 
   LoadLanguageFile "${NSISDIR}\Contrib\Language files\${LANGUAGE}.nlf"
-  !insertmacro LANGFILE_INCLUDE "${NSISDIR}\Contrib\Language files\${LANGUAGE}.nsh"
 
+  ;Include language file
+  !insertmacro LANGFILE_INCLUDE_WITHDEFAULT "${NSISDIR}\Contrib\Language files\${LANGUAGE}.nsh" "${NSISDIR}\Contrib\Language files\English.nsh"
+
+  ;Add language to list of languages for selection dialog  
   !ifndef MUI_LANGDLL_LANGUAGES
     !define MUI_LANGDLL_LANGUAGES "'${LANGFILE_${LANGUAGE}_NAME}' '${LANG_${LANGUAGE}}' "
     !define MUI_LANGDLL_LANGUAGES_CP "'${LANGFILE_${LANGUAGE}_NAME}' '${LANG_${LANGUAGE}}' '${LANG_${LANGUAGE}_CP}' "

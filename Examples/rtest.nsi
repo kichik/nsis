@@ -10,6 +10,8 @@ OutFile "rtest.exe"
 ComponentText "Select tests!"
 ShowInstDetails show
 
+RequestExecutionLevel user
+
 ;--------------------------------
 
 Section "Test 1"

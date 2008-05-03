@@ -266,9 +266,11 @@ Finish page (implemented using nsDialogs)
     ;Image control
     ${NSD_CreateBitmap} 0u 0u 109u 193u ""
     Pop $mui.FinishPage.Image
-    System::Call 'user32::LoadImage(i 0, t "$PLUGINSDIR\modern-wizard.bmp", i ${IMAGE_BITMAP}, i 0, i 0, i ${LR_LOADFROMFILE}) i.s'
-    Pop $mui.FinishPage.Image.Bitmap
-    SendMessage $mui.FinishPage.Image ${STM_SETIMAGE} ${IMAGE_BITMAP} $mui.FinishPage.Image.Bitmap
+    !ifndef MUI_${MUI_PAGE_UNINSTALLER_PREFIX}WELCOMEFINISHPAGE_BITMAP_NOSTRETCH
+      ${NSD_SetStretchedImage} $mui.FinishPage.Image $PLUGINSDIR\modern-wizard.bmp $mui.FinishPage.Image.Bitmap
+    !else
+      ${NSD_SetImage} $mui.FinishPage.Image $PLUGINSDIR\modern-wizard.bmp $mui.FinishPage.Image.Bitmap
+    !endif
     
     ;Positiong of controls
 
@@ -344,6 +346,11 @@ Finish page (implemented using nsDialogs)
         ${NSD_CreateRadioButton} 120u ${MUI_FINISHPAGE_REBOOTLATER_TOP}u 195u 10u "${MUI_FINISHPAGE_TEXT_REBOOTLATER}"
         Pop $mui.FinishPage.RebootLater
         SetCtlColors $mui.FinishPage.RebootLater "" "${MUI_BGCOLOR}"
+        !ifndef MUI_FINISHPAGE_REBOOTLATER_DEFAULT
+          SendMessage $mui.FinishPage.RebootNow ${BM_SETCHECK} ${BST_CHECKED} 0
+        !else
+          SendMessage $mui.FinishPage.RebootLater ${BM_SETCHECK} ${BST_CHECKED} 0
+        !endif
 
       ${else}
 
@@ -412,7 +419,7 @@ Finish page (implemented using nsDialogs)
     !endif
     
     ;Delete image from memory
-    System::Call gdi32::DeleteObject(i$mui.FinishPage.Image.Bitmap)
+    ${NSD_FreeImage} $mui.FinishPage.Image.Bitmap
     
     !insertmacro MUI_UNSET MUI_FINISHPAGE_TITLE_HEIGHT
     !insertmacro MUI_UNSET MUI_FINISHPAGE_TEXT_TOP

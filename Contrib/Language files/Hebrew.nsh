@@ -119,3 +119,11 @@
 !ifdef MUI_UNABORTWARNING
   ${LangFileString} MUI_UNTEXT_ABORTWARNING "האם אתה בטוח שברצונך לצאת מהסרת $(^Name)?"
 !endif
+
+!ifdef MULTIUSER_INSTALLMODEPAGE
+  ${LangFileString} MULTIUSER_TEXT_INSTALLMODE_TITLE "בחר משתמשים"
+  ${LangFileString} MULTIUSER_TEXT_INSTALLMODE_SUBTITLE "בחר לאילו משתמשים להתקין את $(^NameDA)."
+  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_TOP "בחר האם להתקין את $(^NameDA) לעצמך או לכל המשתמשים של המחשב. $(^ClickNext)"
+  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_ALLUSERS "התקן לכל משתמשי המחשב"
+  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_CURRENTUSER "התקן רק למשתמש שלי"
+!endif

@@ -206,6 +206,7 @@ VersionConvert
 			Push $8
 			Push $9
 			Push $R1
+			Push $R2
 			ClearErrors
 
 			StrCpy $9 ''
@@ -251,7 +252,8 @@ VersionConvert
 			loop:
 			StrCpy $8 $R0 $7 $6
 			StrCmp${_WORDFUNC_S} $8$5 0 error1
-			StrCmp${_WORDFUNC_S} $8 '' +2
+			StrLen $R2 $8
+			IntCmp $R2 0 +2
 			StrCmp${_WORDFUNC_S} $8 $0 +5 preloop
 			StrCmp${_WORDFUNC_S} $3 '{' minus
 			StrCmp${_WORDFUNC_S} $3 '}' minus
@@ -353,6 +355,7 @@ VersionConvert
 			end:
 			StrCpy $R0 $R1
 
+			Pop $R2
 			Pop $R1
 			Pop $9
 			Pop $8

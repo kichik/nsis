@@ -213,3 +213,30 @@ Components page
   !verbose pop
 
 !macroend
+
+!macro MUI_UNFUNCTION_DESCRIPTION_BEGIN
+
+  !verbose push
+  !verbose ${MUI_VERBOSE}
+
+  Function un.onMouseOverSection
+    !insertmacro MUI_DESCRIPTION_BEGIN
+
+  !verbose pop
+
+!macroend
+
+!macro MUI_UNFUNCTION_DESCRIPTION_END
+
+  !verbose push
+  !verbose ${MUI_VERBOSE}
+
+    !insertmacro MUI_DESCRIPTION_END
+    !ifdef MUI_CUSTOMFUNCTION_UNONMOUSEOVERSECTION
+      Call "${MUI_CUSTOMFUNCTION_UNONMOUSEOVERSECTION}"
+    !endif
+  FunctionEnd
+
+  !verbose pop
+
+!macroend

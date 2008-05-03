@@ -146,6 +146,10 @@ void __declspec(dllexport) SelectFileDialog(HWND hwndParent, int string_size, ch
       pushstring("");
     }
   }
+  else
+  {
+    pushstring("");
+  }
 
   // restore working dir
   // OFN_NOCHANGEDIR doesn't always work (see MSDN)
