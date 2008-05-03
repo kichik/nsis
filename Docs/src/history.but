@@ -1,5 +1,49 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.37} 2.37
+
+Released on May 3rd, 2008
+
+\S1{v2.37-cl} Changelog
+
+\S2{} Major Changes
+
+\b Fixed a bug introduced in 2.32 that caused blurry icons on Windows versions prior to XP (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1956350}{bug #1956350})
+
+\b Use $PROGRAMFILES as a default for $PROGRAMFILES64 instead of "C:\\Program Files" (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1947702}{bug #1947702})
+
+\S2{} Minor Changes
+
+\b Automatically select language in case there is only one available choice (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1939571}{bug #1939571})
+
+\b \L{../Docs/MultiUser/Readme.html}{MultiUser}: Fixed build errors with manual inclusion of StrFunc.nsh
+
+\b Support for compression of files up to 2GB (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1948700}{patch #1948700})
+
+\S2{} Utilities and Plug-ins
+
+\b Fixed $\{NSD_OnBack\} (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1947388}{bug #1947388})
+
+\b Fixed \L{../Docs/nsDialogs/Readme.html}{nsDialogs}::SelectFileDialog return value for user cancelation (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1955803}{bug #1955803})
+
+\b Fixed possible \L{../Docs/BgImage/BgImage.txt}{BgImage} crash when calling BgImage::Destroy more than once (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1951248}{patch #1951248})
+
+\b Minor documentation improvements
+
+\S2{} Translation
+
+\b Brazilian Portuguese updates
+
+\b Polish updates (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1927421}{patch #1927421})
+
+\b Slovak updates (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1939669}{patch #1939669})
+
+\b Spanish updates
+
+\S2{} Build System
+
+\b SCons requirement upgraded to 0.98
+
 \H{v2.36} 2.36
 
 Released on March 29th, 2008
