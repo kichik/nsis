@@ -2465,7 +2465,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
               }
             } else {
               char *szClass = winchar_toansi(dlgItem->szClass);
-              check = strcmp(szClass, "Static") == 0;
+              check = stricmp(szClass, "Static") == 0;
               delete [] szClass;
             }
 
