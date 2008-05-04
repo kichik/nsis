@@ -140,8 +140,7 @@ Examples/System/System.nsi
 Examples/nsDialogs/example.nsi
 Examples/nsDialogs/InstallOptions.nsi
 Examples/nsDialogs/welcome.nsi""")
- + ['Examples/Modern UI/WelcomeFinish.nsi']
- + ['Examples/Modern UI/HeaderBitmap.nsi'])
+ + ['Examples/Modern UI/WelcomeFinish.nsi'])
 
 # version
 opts.Add(('VERSION', 'Version of NSIS', cvs_version))
