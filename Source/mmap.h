@@ -74,8 +74,8 @@ class MMapFile : public IMMap
     int m_hFileDesc;
     int m_iMappedSize;
 #endif
-    void *m_pView;
-    int m_iSize;
+    mutable void *m_pView;
+    mutable int m_iSize;
     BOOL m_bReadOnly;
     BOOL m_bTempHandle;
 
