@@ -72,7 +72,7 @@ class MMapFile : public IMMap
 #else
     FILE *m_hFile;
     int m_hFileDesc;
-    int m_iMappedSize;
+    mutable int m_iMappedSize;
 #endif
     mutable void *m_pView;
     mutable int m_iSize;
