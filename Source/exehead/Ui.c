@@ -985,7 +985,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     char *root;
     int error = 0;
     int available_set = 0;
-    unsigned total, available = 0xFFFFFFFF;
+    unsigned total, available;
 
     GetUIText(IDC_DIR,dir);
     if (!is_valid_instpath(dir))
@@ -1059,7 +1059,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
     total = (unsigned) sumsecsfield(size_kb);
 
-    if (available < total)
+    if (available_set && available < total)
       error = NSIS_INSTDIR_NOT_ENOUGH_SPACE;
 
     if (LANG_STR_TAB(LANG_SPACE_REQ)) {
