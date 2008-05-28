@@ -92,8 +92,11 @@ Install modes
   
     SetShellVarContext all
   
-    !ifdef MULTIUSER_INSTALLMODE_INSTDIR
-      StrCpy $INSTDIR "$PROGRAMFILES\${MULTIUSER_INSTALLMODE_INSTDIR}"
+    !if "${UNINSTALLER_PREFIX}" != UN
+      ;Set default installation location for installer
+      !ifdef MULTIUSER_INSTALLMODE_INSTDIR
+        StrCpy $INSTDIR "$PROGRAMFILES\${MULTIUSER_INSTALLMODE_INSTDIR}"
+      !endif
     !endif
   
     !ifdef MULTIUSER_INSTALLMODE_INSTDIR_REGISTRY_KEY & MULTIUSER_INSTALLMODE_INSTDIR_REGISTRY_VALUENAME
@@ -124,12 +127,15 @@ Install modes
     
     SetShellVarContext current
   
-    !ifdef MULTIUSER_INSTALLMODE_INSTDIR
-      ${if} ${AtLeastWin2000}
-        StrCpy $INSTDIR "$LOCALAPPDATA\${MULTIUSER_INSTALLMODE_INSTDIR}"
-      ${else}
-        StrCpy $INSTDIR "$PROGRAMFILES\${MULTIUSER_INSTALLMODE_INSTDIR}"
-      ${endif}
+    !if "${UNINSTALLER_PREFIX}" != UN
+      ;Set default installation location for installer  
+      !ifdef MULTIUSER_INSTALLMODE_INSTDIR
+        ${if} ${AtLeastWin2000}
+          StrCpy $INSTDIR "$LOCALAPPDATA\${MULTIUSER_INSTALLMODE_INSTDIR}"
+        ${else}
+          StrCpy $INSTDIR "$PROGRAMFILES\${MULTIUSER_INSTALLMODE_INSTDIR}"
+        ${endif}
+      !endif
     !endif
   
     !ifdef MULTIUSER_INSTALLMODE_INSTDIR_REGISTRY_KEY & MULTIUSER_INSTALLMODE_INSTDIR_REGISTRY_VALUENAME
