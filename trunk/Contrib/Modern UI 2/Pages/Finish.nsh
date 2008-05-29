@@ -71,9 +71,7 @@ Finish page (implemented using nsDialogs)
     !endif
   !endif
 
-  !ifndef MUI_${MUI_PAGE_UNINSTALLER_PREFIX}WELCOMEFINISHPAGE_BITMAPS
-    !insertmacro MUI_DEFAULT MUI_${MUI_PAGE_UNINSTALLER_PREFIX}WELCOMEFINISHPAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Wizard\win.bmp"  
-  !endif
+  !insertmacro MUI_DEFAULT MUI_${MUI_PAGE_UNINSTALLER_PREFIX}WELCOMEFINISHPAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Wizard\win.bmp"  
 
 !macroend
 
@@ -254,7 +252,7 @@ Finish page (implemented using nsDialogs)
     
     ;Enable cancel button if set in script
     !ifdef MUI_FINISHPAGE_CANCEL_ENABLED
-      EnableWindow $mui.Button.Next 1
+      EnableWindow $mui.Button.Cancel 1
     !endif
     
     ;Create dialog
