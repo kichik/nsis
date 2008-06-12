@@ -1,7 +1,7 @@
 ;Language: French (1036)
 ;By Sébastien Delahaye <seb@delahaye.net>
 
-!insertmacro LANGFILE "French" "Français"
+!insertmacro LANGFILE "French" "French"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Bienvenue dans le programme d'installation de $(^NameDA)"
