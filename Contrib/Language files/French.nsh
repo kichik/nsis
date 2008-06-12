@@ -89,7 +89,7 @@
 !ifdef MUI_UNFINISHPAGE
   ${LangFileString} MUI_UNTEXT_FINISH_INFO_TITLE "Fin de la désinstallation de $(^NameDA)"
   ${LangFileString} MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) a été supprimé de votre ordinateur.$\r$\n$\r$\nCliquez sur Fermer pour quitter le programme d'installation."
-  ${LangFileString} MUI_UNTEXT_FINISH_INFO_REBOOT "Votre ordinateur doit être redémarré pour terminer l'installation de $(^NameDA). Souhaitez-vous redémarrer maintenant ?"
+  ${LangFileString} MUI_UNTEXT_FINISH_INFO_REBOOT "Votre ordinateur doit être redémarré pour terminer la désinstallation de $(^NameDA). Souhaitez-vous redémarrer maintenant ?"
 !endif
 
 !ifdef MUI_FINISHPAGE | MUI_UNFINISHPAGE
