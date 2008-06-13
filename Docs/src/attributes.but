@@ -333,13 +333,13 @@ There are two \R{langstring}{LangString}s named ^Font and ^FontSize which contai
 
 \c \\<b\\>hide\\</b\\>|show|nevershow
 
-Sets whether or not the details of the install are shown. Can be 'hide' to hide the details by default, allowing the user to view them, or 'show' to show them by default, or 'nevershow', to prevent the user from ever seeing them. Note that sections can override this using SetDetailsView.
+Sets whether or not the details of the install are shown. Can be 'hide' to hide the details by default, allowing the user to view them, or 'show' to show them by default, or 'nevershow', to prevent the user from ever seeing them. Note that sections can override this using \R{setdetailsview}{SetDetailsView}.
 
 \S2{ashowuninstdetails} ShowUninstDetails
 
 \c \\<b\\>hide\\</b\\>|show|nevershow
 
-Sets whether or not the details of the uninstall are shown. Can be 'hide' to hide the details by default, allowing the user to view them, or 'show' to show them by default, or 'nevershow', to prevent the user from ever seeing them. Note that sections can override this using SetDetailsView.
+Sets whether or not the details of the uninstall are shown. Can be 'hide' to hide the details by default, allowing the user to view them, or 'show' to show them by default, or 'nevershow', to prevent the user from ever seeing them. Note that sections can override this using \R{setdetailsview}{SetDetailsView}.
 
 \S2{asilentinstall} SilentInstall
 
