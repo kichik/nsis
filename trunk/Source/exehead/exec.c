@@ -338,6 +338,10 @@ static int NSISCALL ExecuteEntry(entry *entry_)
                 exec_error++;
               }
             }
+            else
+            {
+              log_printf2("CreateDirectory: \"%s\" created",buf1);
+            }
             *p++ = c;
           }
         }
