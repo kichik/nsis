@@ -304,7 +304,9 @@ Section /o "Run tests" TESTS
   StrCpy $R2 ""
   ${IfThen} $R1 = 1 ${|} StrCpy $R2 $R2A ${|}
   ${IfThen} $R1 = 2 ${|} StrCpy $R2 $R2B ${|}
-  ${If} $R2 == "A"
+  ${IfNotThen} $R1 = 1 ${|} StrCpy $R2 $R2C ${|}
+  ${IfNotThen} $R1 = 2 ${|} StrCpy $R2 $R2D ${|}
+  ${If} $R2 == "AD"
     DetailPrint "PASSED IfThen test"
   ${Else}
     DetailPrint "FAILED IfThen test"
