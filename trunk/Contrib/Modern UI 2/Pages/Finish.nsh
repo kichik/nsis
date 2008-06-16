@@ -22,8 +22,8 @@ Finish page (implemented using nsDialogs)
     
     Var mui.FinishPage.Text
   !endif
- 
-  !ifndef MUI_FINISHPAGE_NOREBOORTSUPPORT
+
+  !ifndef MUI_FINISHPAGE_NOREBOOTSUPPORT
     !ifndef MUI_FINISHPAGE_RETURNVALUE_VARIABLES
       !define MUI_FINISHPAGE_RETURNVALUE_VARIABLES
       Var mui.FinishPage.ReturnValue
