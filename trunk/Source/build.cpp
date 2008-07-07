@@ -129,11 +129,7 @@ CEXEBuild::CEXEBuild() :
 #endif
   build_compressor_set = false;
   build_compressor_final = false;
-#ifdef NSIS_ZLIB_COMPRESS_WHOLE
-  build_compress_whole = true;
-#else
   build_compress_whole = false;
-#endif
   build_compress=1;
   build_compress_level=9;
   build_compress_dict_size=1<<23;
