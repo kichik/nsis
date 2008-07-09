@@ -1542,23 +1542,28 @@ int CEXEBuild::resolve_call_int(const char *fn, const char *str, int fptr, int *
     if (add_nobj_code_deps(func) != PS_OK)
       return 1;
 
-    func->get_function()->code = cur_code_start;
-    func->get_function()->code_size = cur_code_size;
     func->get_function()->flags++;
 
-    // TODO extract this to another method
-    //      the same thing is done for sections in resolve_coderefs
-    section *sec = func->get_function();
-    entry *w = (entry *) cur_entries->get();
-    for (int x = sec->code; x < sec->code + sec->code_size; x++)
-    {
-      char fname[1024];
-      wsprintf(fname,"function \"%s\"",func_name.c_str());
-      if (resolve_instruction(fname,str,w+x,x,sec->code,sec->code+sec->code_size)) return 1;
-    }
+    string fname = string("function \"") + func_name + string("\"");
+    if (resolve_instructions(fname.c_str(), str, cur_code_start, cur_code_size))
+      return 1;
   }
 
-  ofs[0] = func->get_function()->code;
+  ofs[0] = cur_code_start;
+
+  return 0;
+}
+
+int CEXEBuild::resolve_instructions(const char *name, const char *str, int start, int size)
+{
+  entry *w = (entry *) cur_entries->get();
+  for (int x = start; x < start + size; x++)
+  {
+    if (resolve_instruction(name, str, w+x, x, start, start + size))
+    {
+      return 1;
+    }
+  }
 
   return 0;
 }
@@ -1655,7 +1660,6 @@ int CEXEBuild::resolve_coderefs(const char *str)
     int cnt=0;
     section *sec=(section *)cur_sections->get();
     int l=cur_sections->getlen()/sizeof(section);
-    entry *w=(entry *)cur_entries->get();
     while (l-- > 0)
     {
       int x=sec->name_ptr;
@@ -1673,11 +1677,10 @@ int CEXEBuild::resolve_coderefs(const char *str)
       }
       if (x) wsprintf(fname,"%s section \"%s\" (%d)",str,section_name,cnt);
       else wsprintf(fname,"unnamed %s section (%d)",str,cnt);
-      for (x = sec->code; x < sec->code+sec->code_size; x ++)
-      {
-        if (resolve_instruction(fname,str,w+x,x,sec->code,sec->code+sec->code_size))
-          return 1;
-      }
+
+      if (resolve_instructions(fname, str, sec->code, sec->code + sec->code_size))
+        return 1;
+
       sec++;
       cnt++;
     }
