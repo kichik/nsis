@@ -944,7 +944,7 @@ int CEXEBuild::add_label(const char *name)
     if (label_exists(name_s, build_cur_nobj_code))
     {
       char *t = "section";
-      if (build_cursection_isfunc)
+      if (build_cur_nobj_function)
         t = "function";
       ERROR_MSG("Error: label \"%s\" already declared in %s\n", name, t);
       return PS_ERROR;
@@ -1027,12 +1027,12 @@ int CEXEBuild::add_label_internal(const nobj_label* label)
 
 int CEXEBuild::add_function(const char *funname)
 {
-  if (build_cursection_isfunc)
+  if (build_cur_nobj_function)
   {
     ERROR_MSG("Error: Function open when creating function (use FunctionEnd first)\n");
     return PS_ERROR;
   }
-  if (build_cursection)
+  if (build_cur_nobj_section)
   {
     ERROR_MSG("Error: Section open when creating function (use SectionEnd first)\n");
     return PS_ERROR;
@@ -2452,6 +2452,8 @@ int CEXEBuild::SetManifest()
 
 int CEXEBuild::check_write_output_errors() const
 {
+  // TODO make sure all these tests still function with the new nobjs
+
   if (has_called_write_output)
   {
     ERROR_MSG("Error (write_output): write_output already called, can't continue\n");
@@ -2496,7 +2498,7 @@ int CEXEBuild::check_write_output_errors() const
   }
 
   // deal with functions, for both install and uninstall modes.
-  if (build_cur_nobj_function)
+  if (build_cursection_isfunc)
   {
     ERROR_MSG("Error: Function left open at EOF\n");
     return PS_ERROR;
