@@ -1534,7 +1534,7 @@ int CEXEBuild::resolve_call_int(const char *fn, const char *str, int fptr, int *
 
   nobj_function* func = (*cur_functions)[func_name];
 
-  if (!func->get_function()->flags)
+  if (!func->is_used())
   {
     cur_code_start = cur_entries->getlen()/sizeof(entry);
     cur_code_size = 0;
@@ -1542,7 +1542,7 @@ int CEXEBuild::resolve_call_int(const char *fn, const char *str, int fptr, int *
     if (add_nobj_code_deps(func) != PS_OK)
       return 1;
 
-    func->get_function()->flags++;
+    func->set_used();
 
     string fname = string("function \"") + func_name + string("\"");
     if (resolve_instructions(fname.c_str(), str, cur_code_start, cur_code_size))

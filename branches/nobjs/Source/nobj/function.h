@@ -20,8 +20,6 @@
 #include "nobj.h"
 #include "code.h"
 
-#include "../exehead/fileform.h" // TODO skip section structure
-
 /**
  * nobj_function
  */
@@ -31,13 +29,12 @@ class nobj_function : public nobj_code
 
 public:
 
-  nobj_function();
-
-  section* get_function(); // XXX pointer?
+  bool is_used();
+  void set_used();
 
 private:
 
-  section m_section;
+  bool m_used;
 
 };
 
