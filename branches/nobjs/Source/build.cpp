@@ -924,9 +924,57 @@ int CEXEBuild::add_label(const char *name)
     return PS_ERROR;
   }
 
-  nobj_label label(name);
+  string name_s(name);
+  if (name_s[name_s.length() - 1] == ':')
+    name_s = name_s.substr(0, name_s.length() - 1);
+
+  if (name_s[0] == '.')
+  {
+    // global label
+    /*if ()   // TODO - move check from add_label_internal() to here
+              // need to keep a list of section nobjs
+              // also, function nobjs are separated to install/uninstall
+    {
+      ERROR_MSG("Error: global label \"%s\" already declared\n",name.c_str());
+      return PS_ERROR;
+    }*/
+  }
+  else
+  {
+    // local label
+    if (label_exists(name_s, build_cur_nobj_code))
+    {
+      char *t = "section";
+      if (build_cursection_isfunc)
+        t = "function";
+      ERROR_MSG("Error: label \"%s\" already declared in %s\n", name, t);
+      return PS_ERROR;
+    }
+  }
+
+  nobj_label label(name_s);
   build_cur_nobj_code->add_label(label);
+
   return PS_OK;
+}
+
+bool CEXEBuild::label_exists(const string& name, const nobj_code* code)
+{
+  const nobjs labels = code->dependencies();
+  for (nobjs_const_iterator i = labels.begin(); i != labels.end(); i++)
+  {
+    const nobj_label* label = dynamic_cast<const nobj_label*>(*i);
+
+    if (label)
+    {
+      if (lowercase(label->get_label()) == lowercase(name))
+      {
+        return true;
+      }
+    }
+  }
+
+  return false;
 }
 
 int CEXEBuild::add_label_internal(const nobj_label* label)
@@ -954,17 +1002,9 @@ int CEXEBuild::add_label_internal(const nobj_label* label)
     section *t=(section*)cur_labels->get();
     while (n--)
     {
-      if ((name[0] == '.' || (t->code >= cs && t->code <= ce))  &&
-          t->name_ptr==offs)
+      if (name[0] == '.' && t->name_ptr==offs)
       {
-        if (name[0] == '.') ERROR_MSG("Error: global label \"%s\" already declared\n",name.c_str());
-        else
-        {
-          char *t = "section";
-          if (build_cursection_isfunc)
-            t = "function";
-          ERROR_MSG("Error: label \"%s\" already declared in %s\n",name.c_str(),t);
-        }
+        ERROR_MSG("Error: global label \"%s\" already declared\n",name.c_str());
         return PS_ERROR;
       }
       t++;
