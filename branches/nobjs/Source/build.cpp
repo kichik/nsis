@@ -151,6 +151,7 @@ CEXEBuild::CEXEBuild() :
   cur_functions=&build_functions;
   cur_labels=&build_labels;
   cur_sections=&build_sections;
+  cur_section_nobjs=&build_section_nobjs;
   cur_header=&build_header;
   cur_strlist=&build_strlist;
   cur_langtables=&build_langtables;
@@ -1143,21 +1144,12 @@ int CEXEBuild::section_end()
     ERROR_MSG("Error: SectionEnd specified and no sections open\n");
     return PS_ERROR;
   }
-  add_entry_direct(EW_RET);
-
-  nobj_section* sect = build_cur_nobj_section;
-  build_cur_nobj_section = NULL;
-  build_cur_nobj_code = NULL;
-
-  if (add_nobj_code_deps(sect) != PS_OK)
+  if (add_entry_direct(EW_RET) != PS_OK)
     return PS_ERROR;
 
-  build_cursection->code_size--;
-  build_cursection=NULL;
-
-  int n=cur_sections->getlen()/sizeof(section);
-  cur_sections->resize((n+1)*sizeof(section));
-  memcpy(((section*)cur_sections->get())+n, sect->get_section(), sizeof(section));
+  cur_section_nobjs->push_back(build_cur_nobj_section);
+  build_cur_nobj_section = NULL;
+  build_cur_nobj_code = NULL;
 
   if (!sectiongroup_open_cnt)
     set_uninstall_mode(0);
@@ -1239,7 +1231,6 @@ int CEXEBuild::add_section(const char *secname, const char *defname, int expand/
 
   build_cur_nobj_section = new nobj_section(addr, cur_entries->getlen()/sizeof(entry), install_types, flags);
   build_cur_nobj_code = build_cur_nobj_section;
-  build_cursection = build_cur_nobj_section->get_section();
 
   if (defname[0])
   {
@@ -1283,6 +1274,28 @@ int CEXEBuild::add_section(const char *secname, const char *defname, int expand/
   
   set_code_type_predefines(name);
     
+  return PS_OK;
+}
+
+int CEXEBuild::create_sections_from_nobjs()
+{
+  std::vector<nobj_section*>::const_iterator i;
+  for (i = cur_section_nobjs->begin(); i != cur_section_nobjs->end(); i++)
+  {
+    nobj_section* sect = *i;
+    build_cursection = sect->get_section();
+
+    if (add_nobj_code_deps(sect) != PS_OK)
+      return PS_ERROR;
+
+    build_cursection->code_size--;
+    build_cursection=NULL;
+
+    int n=cur_sections->getlen()/sizeof(section);
+    cur_sections->resize((n+1)*sizeof(section));
+    memcpy(((section*)cur_sections->get())+n, sect->get_section(), sizeof(section));
+  }
+
   return PS_OK;
 }
 
@@ -2451,17 +2464,18 @@ int CEXEBuild::check_write_output_errors() const
     return PS_ERROR;
   }
 
-  if (!build_sections.getlen())
+  if (build_section_nobjs.empty())
   {
     ERROR_MSG("Error: invalid script: no sections specified\n");
     return PS_ERROR;
   }
 
-  if (!build_entries.getlen())
+  // TODO revive?
+  /*if (!build_entries.getlen())
   {
     ERROR_MSG("Error: invalid script: no entries specified\n");
     return PS_ERROR;
-  }
+  }*/
 
   if (build_cursection)
   {
@@ -2506,6 +2520,8 @@ int CEXEBuild::prepare_uninstaller() {
     set_uninstall_mode(1);
 
     DefineInnerLangString(NLF_UCAPTION);
+
+    create_sections_from_nobjs();
 
     if (resolve_coderefs("uninstall"))
       return PS_ERROR;
@@ -2584,6 +2600,8 @@ int CEXEBuild::write_output(void)
 #endif //NSIS_SUPPORT_VERSION_INFO
 
   RET_UNLESS_OK( prepare_uninstaller() );
+
+  create_sections_from_nobjs();
 
   DefineInnerLangString(NLF_CAPTION);
   if (resolve_coderefs("install"))
@@ -3283,6 +3301,7 @@ void CEXEBuild::set_uninstall_mode(int un)
       cur_labels=&ubuild_labels;
       cur_pages=&ubuild_pages;
       cur_sections=&ubuild_sections;
+      cur_section_nobjs=&ubuild_section_nobjs;
       cur_header=&build_uninst;
       cur_strlist=&ubuild_strlist;
       cur_langtables=&ubuild_langtables;
@@ -3300,6 +3319,7 @@ void CEXEBuild::set_uninstall_mode(int un)
       cur_labels=&build_labels;
       cur_pages=&build_pages;
       cur_sections=&build_sections;
+      cur_section_nobjs=&build_section_nobjs;
       cur_header=&build_header;
       cur_strlist=&build_strlist;
       cur_langtables=&build_langtables;
