@@ -1681,7 +1681,7 @@ int CEXEBuild::resolve_coderefs(const char *str)
       if (x) wsprintf(fname,"%s section \"%s\" (%d)",str,section_name,cnt);
       else wsprintf(fname,"unnamed %s section (%d)",str,cnt);
 
-      if (resolve_instructions(fname, str, sec->code, sec->code + sec->code_size))
+      if (resolve_instructions(fname, str, sec->code, sec->code_size))
         return 1;
 
       sec++;
