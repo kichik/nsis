@@ -2468,12 +2468,11 @@ int CEXEBuild::check_write_output_errors() const
     return PS_ERROR;
   }*/
 
-  /* TODO find some other way to test this
-  if (build_cursection)
+  if (build_cur_nobj_section)
   {
     ERROR_MSG("Error: Section left open at EOF\n");
     return PS_ERROR;
-  }*/
+  }
 
   if (sectiongroup_open_cnt)
   {
@@ -2488,12 +2487,11 @@ int CEXEBuild::check_write_output_errors() const
   }
 
   // deal with functions, for both install and uninstall modes.
-  /* TODO find some other way to test this
-  if (build_cursection_isfunc)
+  if (build_cur_nobj_function)
   {
     ERROR_MSG("Error: Function left open at EOF\n");
     return PS_ERROR;
-  }*/
+  }
 
   return PS_OK;
 }
