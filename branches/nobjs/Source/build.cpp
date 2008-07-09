@@ -1056,10 +1056,8 @@ int CEXEBuild::add_function(const char *funname)
     return PS_ERROR;
   }
 
-  build_cursection_isfunc = 1;
   build_cur_nobj_function = new nobj_function();
   build_cur_nobj_code = build_cur_nobj_function;
-  build_cursection = build_cur_nobj_function->get_function();
 
   if (uninstall_mode)
     set_code_type_predefines(funname+3);
@@ -1084,9 +1082,6 @@ int CEXEBuild::function_end()
   nobj_function* func = build_cur_nobj_function;
   build_cur_nobj_function = NULL;
   build_cur_nobj_code = NULL;
-
-  build_cursection_isfunc=0;
-  build_cursection=NULL;
 
   set_uninstall_mode(0);
   
@@ -2501,7 +2496,7 @@ int CEXEBuild::check_write_output_errors() const
   }
 
   // deal with functions, for both install and uninstall modes.
-  if (build_cursection_isfunc)
+  if (build_cur_nobj_function)
   {
     ERROR_MSG("Error: Function left open at EOF\n");
     return PS_ERROR;
