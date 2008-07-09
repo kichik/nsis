@@ -264,6 +264,7 @@ class CEXEBuild {
 
     int resolve_jump_int(const char *fn, int *a, int offs, int start, int end);
     int resolve_call_int(const char *fn, const char *str, int fptr, int *ofs);
+    int resolve_instructions(const char *name, const char *str, int start, int size);
     int resolve_instruction(const char *fn, const char *str, entry *w, int offs, int start, int end);
 
     int create_sections_from_nobjs();
