@@ -1546,13 +1546,14 @@ int CEXEBuild::resolve_call_int(const char *fn, const char *str, int fptr, int *
       return 1;
 
     func->set_used();
+    func->set_offset(cur_code_start);
 
     string fname = string("function \"") + func_name + string("\"");
     if (resolve_instructions(fname.c_str(), str, cur_code_start, cur_code_size))
       return 1;
   }
 
-  ofs[0] = cur_code_start;
+  ofs[0] = func->get_offset();
 
   return 0;
 }

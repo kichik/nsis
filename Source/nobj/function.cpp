@@ -22,6 +22,11 @@ using std::string;
  * nobj_function
  */
 
+nobj_function::nobj_function()
+  : m_used(false), m_offset(0)
+{
+}
+
 bool nobj_function::is_used()
 {
   return m_used;
@@ -30,4 +35,14 @@ bool nobj_function::is_used()
 void nobj_function::set_used()
 {
   m_used = true;
+}
+
+int nobj_function::get_offset()
+{
+  return m_offset;
+}
+
+void nobj_function::set_offset(int offset)
+{
+  m_offset = offset;
 }

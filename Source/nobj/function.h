@@ -29,12 +29,18 @@ class nobj_function : public nobj_code
 
 public:
 
+  nobj_function();
+
   bool is_used();
   void set_used();
+
+  int get_offset();
+  void set_offset(int offset);
 
 private:
 
   bool m_used;
+  int m_offset;
 
 };
 
