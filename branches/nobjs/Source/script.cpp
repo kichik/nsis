@@ -5788,7 +5788,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         PRINTHELP();
       }
 
-      if (build_cursection)
+      if (build_cur_nobj_code)
       {
         if (a==1)
         {
