@@ -932,13 +932,11 @@ int CEXEBuild::add_label(const char *name)
   if (name_s[0] == '.')
   {
     // global label
-    /*if ()   // TODO - move check from add_label_internal() to here
-              // need to keep a list of section nobjs
-              // also, function nobjs are separated to install/uninstall
+    if (global_label_exists(name_s))
     {
-      ERROR_MSG("Error: global label \"%s\" already declared\n",name.c_str());
+      ERROR_MSG("Error: global label \"%s\" already declared\n", name);
       return PS_ERROR;
-    }*/
+    }
   }
   else
   {
@@ -978,6 +976,30 @@ bool CEXEBuild::label_exists(const string& name, const nobj_code* code)
   return false;
 }
 
+bool CEXEBuild::global_label_exists(const string& name)
+{
+  std::vector<nobj_section*>::const_iterator si;
+  for (si = cur_section_nobjs->begin(); si != cur_section_nobjs->end(); si++)
+  {
+    if (label_exists(name, *si))
+    {
+      return true;
+    }
+  }
+
+  // TODO check not only current but install and uninstall functions
+  std::map<std::string, nobj_function*>::const_iterator fi; // TODO typedef
+  for (fi = cur_functions->begin(); fi != cur_functions->end(); fi++)
+  {
+    if (label_exists(name, fi->second))
+    {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 int CEXEBuild::add_label_internal(const nobj_label* label)
 {
   if (!build_cursection)
@@ -993,24 +1015,7 @@ int CEXEBuild::add_label_internal(const nobj_label* label)
   int ce=cs+build_cursection->code_size;
 
   string name = label->get_label();
-  if (name[name.length() - 1] == ':')
-    name = name.substr(0, name.length() - 1);
   int offs=ns_label.add(name.c_str(),0);
-
-  int n=cur_labels->getlen()/sizeof(section);
-  if (n)
-  {
-    section *t=(section*)cur_labels->get();
-    while (n--)
-    {
-      if (name[0] == '.' && t->name_ptr==offs)
-      {
-        ERROR_MSG("Error: global label \"%s\" already declared\n",name.c_str());
-        return PS_ERROR;
-      }
-      t++;
-    }
-  }
 
   section s={0};
   s.name_ptr = offs;

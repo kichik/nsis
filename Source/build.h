@@ -225,6 +225,7 @@ class CEXEBuild {
     int page_end();
     int add_label(const char *name);
     bool label_exists(const std::string& name, const nobj_code* code);
+    bool global_label_exists(const std::string& name);
     int add_label_internal(const nobj_label* label);
     int add_entry_internal(const entry *ent);
     int add_nobj_entry_internal(const nobj_entry* ent);
