@@ -163,7 +163,6 @@ CEXEBuild::CEXEBuild() :
   build_filebuflen=32<<20; // 32mb
 
   sectiongroup_open_cnt=0;
-  build_cursection_isfunc=0;
   build_cursection=NULL;
   build_cur_nobj_section=NULL;
   build_cur_nobj_function=NULL;
@@ -1547,13 +1546,11 @@ int CEXEBuild::resolve_call_int(const char *fn, const char *str, int fptr, int *
   {
     func->get_function()->code = cur_entries->getlen()/sizeof(entry);
     build_cursection = func->get_function();
-    build_cursection_isfunc = 1;
 
     if (add_nobj_code_deps(func) != PS_OK)
       return 1;
 
     build_cursection = NULL;
-    build_cursection_isfunc = 0;
 
     func->get_function()->flags++;
 
@@ -2498,11 +2495,12 @@ int CEXEBuild::check_write_output_errors() const
   }
 
   // deal with functions, for both install and uninstall modes.
+  /* TODO find some other way to test this
   if (build_cursection_isfunc)
   {
     ERROR_MSG("Error: Function left open at EOF\n");
     return PS_ERROR;
-  }
+  }*/
 
   return PS_OK;
 }
