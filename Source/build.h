@@ -379,7 +379,6 @@ class CEXEBuild {
     StringList ns_func; // function namespace
     StringList ns_label; // label namespace
 
-    int build_cursection_isfunc;
     section *build_cursection;
     nobj_function *build_cur_nobj_function;
     nobj_section *build_cur_nobj_section;
