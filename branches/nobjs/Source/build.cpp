@@ -1001,12 +1001,6 @@ bool CEXEBuild::global_label_exists(const string& name)
 
 int CEXEBuild::add_label_internal(const nobj_label* label)
 {
-  if (!build_cursection)
-  {
-    ERROR_MSG("Error: Label declaration not valid outside of function/section\n");
-    return PS_ERROR;
-  }
-
   // TODO label needs a father...
   //      else it won't know which function's ref count to up
 
@@ -1365,12 +1359,6 @@ int CEXEBuild::add_nobj_entry_internal(const nobj_entry* ent)
 
 int CEXEBuild::add_entry_internal(const entry *ent)
 {
-  if (!build_cursection && !uninstall_mode)
-  {
-    ERROR_MSG("Error: Can't add entry, no section or function is open!\n");
-    return PS_ERROR;
-  }
-
   cur_entries->add(ent,sizeof(entry));
   cur_instruction_entry_map->add(&multiple_entries_instruction,sizeof(int));
   build_cursection->code_size++;
