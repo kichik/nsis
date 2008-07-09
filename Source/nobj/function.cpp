@@ -22,19 +22,12 @@ using std::string;
  * nobj_function
  */
 
-nobj_function::nobj_function()
+bool nobj_function::is_used()
 {
-  m_section.name_ptr      = 0;
-  m_section.code          = 0;
-  m_section.code_size     = 0;
-  m_section.install_types = 0;
-  m_section.flags         = 0;
-  m_section.size_kb       = 0;
-
-  memset(m_section.name, 0, sizeof(m_section.name));
+  return m_used;
 }
 
-section* nobj_function::get_function()
+void nobj_function::set_used()
 {
-  return &m_section;
+  m_used = true;
 }
