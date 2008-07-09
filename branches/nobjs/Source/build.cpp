@@ -1057,7 +1057,8 @@ int CEXEBuild::add_function(const char *funname)
     set_code_type_predefines(funname);
 
   (*cur_functions)[funname] = build_cur_nobj_function;
-  
+  ns_func.add(funname,0);
+
   return PS_OK;
 }
 
