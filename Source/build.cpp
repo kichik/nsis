@@ -163,7 +163,6 @@ CEXEBuild::CEXEBuild() :
   build_filebuflen=32<<20; // 32mb
 
   sectiongroup_open_cnt=0;
-  build_cursection=NULL;
   build_cur_nobj_section=NULL;
   build_cur_nobj_function=NULL;
   build_cur_nobj_code=NULL;
@@ -1004,8 +1003,8 @@ int CEXEBuild::add_label_internal(const nobj_label* label)
   // TODO label needs a father...
   //      else it won't know which function's ref count to up
 
-  int cs=build_cursection->code;
-  int ce=cs+build_cursection->code_size;
+  int cs=cur_code_start;
+  int ce=cs+cur_code_size;
 
   string name = label->get_label();
   int offs=ns_label.add(name.c_str(),0);
@@ -1276,17 +1275,22 @@ int CEXEBuild::create_sections_from_nobjs()
   for (i = cur_section_nobjs->begin(); i != cur_section_nobjs->end(); i++)
   {
     nobj_section* sect = *i;
-    build_cursection = sect->get_section();
+
+    cur_code_start = cur_entries->getlen()/sizeof(entry);
+    cur_code_size = 0;
 
     if (add_nobj_code_deps(sect) != PS_OK)
       return PS_ERROR;
 
-    build_cursection->code_size--;
-    build_cursection=NULL;
+    cur_code_size--; // for EW_RET
+
+    section *sec_binary = sect->get_section();
+    sec_binary->code = cur_code_start;
+    sec_binary->code_size = cur_code_size;
 
     int n=cur_sections->getlen()/sizeof(section);
     cur_sections->resize((n+1)*sizeof(section));
-    memcpy(((section*)cur_sections->get())+n, sect->get_section(), sizeof(section));
+    memcpy(((section*)cur_sections->get())+n, sec_binary, sizeof(section));
   }
 
   return PS_OK;
@@ -1361,7 +1365,7 @@ int CEXEBuild::add_entry_internal(const entry *ent)
 {
   cur_entries->add(ent,sizeof(entry));
   cur_instruction_entry_map->add(&multiple_entries_instruction,sizeof(int));
-  build_cursection->code_size++;
+  cur_code_size++;
   cur_header->blocks[NB_ENTRIES].num++;
 
   multiple_entries_instruction=1;
@@ -1532,14 +1536,14 @@ int CEXEBuild::resolve_call_int(const char *fn, const char *str, int fptr, int *
 
   if (!func->get_function()->flags)
   {
-    func->get_function()->code = cur_entries->getlen()/sizeof(entry);
-    build_cursection = func->get_function();
+    cur_code_start = cur_entries->getlen()/sizeof(entry);
+    cur_code_size = 0;
 
     if (add_nobj_code_deps(func) != PS_OK)
       return 1;
 
-    build_cursection = NULL;
-
+    func->get_function()->code = cur_code_start;
+    func->get_function()->code_size = cur_code_size;
     func->get_function()->flags++;
 
     // TODO extract this to another method
@@ -2464,11 +2468,12 @@ int CEXEBuild::check_write_output_errors() const
     return PS_ERROR;
   }*/
 
+  /* TODO find some other way to test this
   if (build_cursection)
   {
     ERROR_MSG("Error: Section left open at EOF\n");
     return PS_ERROR;
-  }
+  }*/
 
   if (sectiongroup_open_cnt)
   {
