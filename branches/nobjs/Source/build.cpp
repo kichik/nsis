@@ -1219,9 +1219,8 @@ int CEXEBuild::add_section(const char *secname, const char *defname, int expand/
   }
 
   int install_types = *name ? 0 : ~0;
-  int addr = add_string(name);
 
-  build_cur_nobj_section = new nobj_section(addr, cur_entries->getlen()/sizeof(entry), install_types, flags);
+  build_cur_nobj_section = new nobj_section(name, install_types, flags);
   build_cur_nobj_code = build_cur_nobj_section;
 
   if (defname[0])
@@ -1284,13 +1283,17 @@ int CEXEBuild::create_sections_from_nobjs()
 
     cur_code_size--; // for EW_RET
 
-    section *sec_binary = sect->get_section();
-    sec_binary->code = cur_code_start;
-    sec_binary->code_size = cur_code_size;
+    section sec_binary;
+    sec_binary.name_ptr      = add_string(sect->get_name().c_str());
+    sec_binary.code          = cur_code_start;
+    sec_binary.code_size     = cur_code_size;
+    sec_binary.install_types = sect->get_inst_types();
+    sec_binary.flags         = sect->get_flags();
+    sec_binary.size_kb       = sect->get_size();
 
     int n=cur_sections->getlen()/sizeof(section);
     cur_sections->resize((n+1)*sizeof(section));
-    memcpy(((section*)cur_sections->get())+n, sec_binary, sizeof(section));
+    memcpy(((section*)cur_sections->get())+n, &sec_binary, sizeof(section));
   }
 
   return PS_OK;
