@@ -22,43 +22,52 @@ using std::string;
  * nobj_section
  */
 
-nobj_section::nobj_section(const int name_addr, const int code_addr, const int inst_types, const int flags)
+nobj_section::nobj_section(const string& name, const int inst_types, const int flags)
+  : m_name(name), m_inst_types(inst_types), m_flags(flags)
 {
-  m_section.name_ptr      = name_addr;
-  m_section.code          = code_addr;
-  m_section.code_size     = 0;
-  m_section.install_types = inst_types;
-  m_section.flags         = flags;
-  m_section.size_kb       = 0;
-
-  memset(m_section.name, 0, sizeof(m_section.name));
-}
-
-section* nobj_section::get_section()
-{
-  return &m_section;
+  m_size = 0;
 }
 
 void nobj_section::add_flags(int flags)
 {
-  m_section.flags |= flags;
+  m_flags |= flags;
 }
 
 void nobj_section::remove_flags(int flags)
 {
-  m_section.flags &= ~flags;
+  m_flags &= ~flags;
 }
 
 void nobj_section::add_inst_type(int inst_type)
 {
   // TODO keep this is a flag "untouched section"...
-  if (m_section.install_types == ~0)
-    m_section.install_types = 0;
+  if (m_inst_types == ~0)
+    m_inst_types = 0;
 
-  m_section.install_types |= inst_type;
+  m_inst_types |= inst_type;
 }
 
 void nobj_section::add_size(int size)
 {
-  m_section.size_kb += size;
+  m_size += size;
+}
+
+const std::string& nobj_section::get_name()
+{
+  return m_name;
+}
+
+const int nobj_section::get_inst_types()
+{
+  return m_inst_types;
+}
+
+const int nobj_section::get_flags()
+{
+  return m_flags;
+}
+
+const int nobj_section::get_size()
+{
+  return m_size;
 }

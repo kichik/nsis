@@ -20,8 +20,6 @@
 #include "nobj.h"
 #include "code.h"
 
-#include "../exehead/fileform.h" // TODO skip section structure
-
 /**
  * nobj_section
  */
@@ -31,18 +29,24 @@ class nobj_section : public nobj_code
 
 public:
 
-  nobj_section(const int name_addr, const int code_addr, const int inst_types, const int flags);
-
-  section* get_section(); // XXX pointer?
+  nobj_section(const std::string& name, const int inst_types, const int flags);
 
   void add_flags(int flags);
   void remove_flags(int flags);
   void add_inst_type(int inst_type);
   void add_size(int size);
 
+  const std::string& get_name();
+  const int get_inst_types();
+  const int get_flags();
+  const int get_size();
+
 private:
 
-  section m_section;
+  const std::string m_name;
+  int m_inst_types;
+  int m_flags;
+  int m_size;
 
 };
 
