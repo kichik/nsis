@@ -265,6 +265,7 @@ class CEXEBuild {
     int resolve_call_int(const char *fn, const char *str, int fptr, int *ofs);
     int resolve_instruction(const char *fn, const char *str, entry *w, int offs, int start, int end);
 
+    int create_sections_from_nobjs();
     int resolve_coderefs(const char *str);
     void print_warnings();
     int uninstall_generate();
@@ -383,6 +384,7 @@ class CEXEBuild {
     nobj_section *build_cur_nobj_section;
     nobj_code *build_cur_nobj_code;
     TinyGrowBuf build_sections, ubuild_sections, *cur_sections;
+    std::vector<nobj_section*> build_section_nobjs, ubuild_section_nobjs, *cur_section_nobjs;
     GrowBuf build_entries,ubuild_entries, *cur_entries;
     GrowBuf build_instruction_entry_map,ubuild_instruction_entry_map, *cur_instruction_entry_map;
     std::map<std::string, nobj_function*> build_functions, ubuild_functions, *cur_functions;
