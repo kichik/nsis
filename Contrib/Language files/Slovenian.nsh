@@ -10,7 +10,7 @@
 
 !ifdef MUI_UNWELCOMEPAGE
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "Dobrodošli v èarovniku za odstranitev $(^NameDA)"
-  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Ta èarovnik vas bo vodil skozi odstranitev $(^NameDA).$\r$\n$\r$\nPreden priènete z odstranitvijo, se preprièajte, da aplikacija $(^NameDA) ni zagnana.$\r$\n$\r$\n$_CLICK"
+  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Ta èarovnik vas bo vodil skozi odstranitev $(^NameDA).$\r$\n$\r$\nPreden priènete z odstranitvijo, se preprièajte, da program $(^NameDA) ni zagnan.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_LICENSEPAGE
@@ -73,7 +73,7 @@
 
 !ifdef MUI_UNINSTFILESPAGE
   ${LangFileString} MUI_UNTEXT_UNINSTALLING_TITLE "Odstranjevanje poteka"
-  ${LangFileString} MUI_UNTEXT_UNINSTALLING_SUBTITLE "Prosimo, poèakajte, dokler se aplikacija $(^NameDA) odstranjuje."
+  ${LangFileString} MUI_UNTEXT_UNINSTALLING_SUBTITLE "Prosimo, poèakajte, dokler se program $(^NameDA) odstranjuje."
   ${LangFileString} MUI_UNTEXT_FINISH_TITLE "Odstranitev konèana"
   ${LangFileString} MUI_UNTEXT_FINISH_SUBTITLE "Odstranitev je uspešno konèana."
   ${LangFileString} MUI_UNTEXT_ABORT_TITLE "Odstranitev prekinjena"
@@ -82,19 +82,19 @@
 
 !ifdef MUI_FINISHPAGE
   ${LangFileString} MUI_TEXT_FINISH_INFO_TITLE "Zakljuèevanje namestitve $(^NameDA)"
-  ${LangFileString} MUI_TEXT_FINISH_INFO_TEXT "Aplikacija $(^NameDA) je bila namešèena na vaš raèunalnik.$\r$\n$\r$\nPritisnite Dokonèaj za zaprtje èarovnika."
+  ${LangFileString} MUI_TEXT_FINISH_INFO_TEXT "Program $(^NameDA) je bil namešèen na vaš raèunalnik.$\r$\n$\r$\nPritisnite Dokonèaj za zaprtje èarovnika."
   ${LangFileString} MUI_TEXT_FINISH_INFO_REBOOT "Za dokonèanje namestitve $(^NameDA) morate ponovno zagnati raèunalnik. Želite zdaj ponovno zagnati raèunalnik?"
 !endif
 
 !ifdef MUI_UNFINISHPAGE
   ${LangFileString} MUI_UNTEXT_FINISH_INFO_TITLE "Èarovnik za odstranitev $(^NameDA) se zakljuèuje"
-  ${LangFileString} MUI_UNTEXT_FINISH_INFO_TEXT "Aplikacija $(^NameDA) je odstranjena iz vašega raèunalnika.$\r$\n$\r$\nKliknite Dokonèaj, da zaprete èarovnika."
-  ${LangFileString} MUI_UNTEXT_FINISH_INFO_REBOOT "Da bi se $(^NameDA) namestitev dokonèala, morate ponovno zagnati raèunalnik. Želite zdaj ponovno zagnati raèunalnik?"
+  ${LangFileString} MUI_UNTEXT_FINISH_INFO_TEXT "Program $(^NameDA) je odstranjen z vašega raèunalnika.$\r$\n$\r$\nKliknite Dokonèaj, da zaprete èarovnika."
+  ${LangFileString} MUI_UNTEXT_FINISH_INFO_REBOOT "Da bi se namestitev $(^NameDA) dokonèala, morate ponovno zagnati raèunalnik. Želite zdaj znova zagnati raèunalnik?"
 !endif
 
 !ifdef MUI_FINISHPAGE | MUI_UNFINISHPAGE
   ${LangFileString} MUI_TEXT_FINISH_REBOOTNOW "Ponovni zagon"
-  ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Raèunalnik želim ponovno zagnati kasneje"
+  ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Raèunalnik želim znova zagnati kasneje"
   ${LangFileString} MUI_TEXT_FINISH_RUN "&Zaženi $(^NameDA)"
   ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "&Pokaži BeriMe"
   ${LangFileString} MUI_BUTTONTEXT_FINISH "Do&konèaj"  
@@ -109,7 +109,7 @@
 
 !ifdef MUI_UNCONFIRMPAGE
   ${LangFileString} MUI_UNTEXT_CONFIRM_TITLE "Odstranitev $(^NameDA)"
-  ${LangFileString} MUI_UNTEXT_CONFIRM_SUBTITLE "Odstrani $(^NameDA) iz vašega raèunalnika."
+  ${LangFileString} MUI_UNTEXT_CONFIRM_SUBTITLE "Odstrani $(^NameDA) z vašega raèunalnika."
 !endif
 
 !ifdef MUI_ABORTWARNING
@@ -118,4 +118,12 @@
 
 !ifdef MUI_UNABORTWARNING
   ${LangFileString} MUI_UNTEXT_ABORTWARNING "Ste preprièani, da želite zapustiti odstranitev $(^Name)?"
+!endif
+
+!ifdef MULTIUSER_INSTALLMODEPAGE
+  ${LangFileString} MULTIUSER_TEXT_INSTALLMODE_TITLE "Izberite uporabnike"
+  ${LangFileString} MULTIUSER_TEXT_INSTALLMODE_SUBTITLE "Izberite uporabnike, za katere želite namestiti $(^NameDA)."
+  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_TOP "Izberite, ali želite namestiti $(^NameDA) le zase ali za vse uporabnike tega raèunalnika. $(^ClickNext)"
+  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_ALLUSERS "Namesti za vse uporabnike tega raèunalnika"
+  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_CURRENTUSER "Namesti le zame"
 !endif
