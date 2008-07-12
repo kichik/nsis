@@ -1037,6 +1037,13 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
             // don't call trimslashtoend() which will destroy the string
             break;
           }
+
+          if (s[0] == '\0')
+          {
+            // trimslashtoend() was called one too many time for some reason
+            // bail out instead of looping infinitely...
+            break;
+          }
         }
       }
     }
