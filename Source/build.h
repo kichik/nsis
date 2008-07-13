@@ -198,6 +198,8 @@ class CEXEBuild {
     void SCRIPT_MSG(const char *s, ...) const;
     void INFO_MSG(const char *s, ...) const;
 
+    DefineList *searchParseString(const char *source_string, LineParser *line, int parmOffs, bool ignCase, bool noErrors);
+
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
     int add_plugins_dir_initializer(void);
 #endif //NSIS_CONFIG_PLUGIN_SUPPORT

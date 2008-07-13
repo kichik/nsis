@@ -117,6 +117,8 @@ enum
   TOK_P_DELFILE,
   TOK_P_APPENDFILE,
 
+  TOK_P_SEARCHPARSESTRING,
+
   // section/function shit
   TOK_SECTION,
   TOK_SECTIONEND,
