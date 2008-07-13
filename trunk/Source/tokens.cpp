@@ -238,7 +238,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_P_IFDEF,"!ifdef",1,-1,"symbol [| symbol2 [& symbol3 [...]]]",TP_ALL},
 {TOK_P_IFNDEF,"!ifndef",1,-1,"symbol [| symbol2 [& symbol3 [...]]]",TP_ALL},
 {TOK_P_ENDIF,"!endif",0,0,"",TP_ALL},
-{TOK_P_DEFINE,"!define",1,4,"([/date|/utcdate] symbol [value]) | (/math symbol val1 OP val2)\n    OP=(+ - * / % & | ^)",TP_ALL},
+{TOK_P_DEFINE,"!define",1,4,"([/date|/utcdate] symbol [value]) | (/file symbol filename) | (/math symbol val1 OP val2)\n    OP=(+ - * / % & | ^)",TP_ALL},
 {TOK_P_UNDEF,"!undef",1,1,"symbol [value]",TP_ALL},
 {TOK_P_ELSE,"!else",0,-1,"[if[macro][n][def] ...]",TP_ALL},
 {TOK_P_ECHO,"!echo",1,0,"message",TP_ALL},
@@ -256,6 +256,8 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_P_TEMPFILE,"!tempfile",1,0,"symbol",TP_ALL},
 {TOK_P_DELFILE,"!delfile",1,0,"file",TP_ALL},
 {TOK_P_APPENDFILE,"!appendfile",2,0,"file appended_line",TP_ALL},
+
+{TOK_P_SEARCHPARSESTRING,"!searchparse",3,-1,"[/ignorecase] [/noerrors] [/file] source_string substring OUTPUTSYM1 [substring [OUTPUTSYM2 [substring ...]]]",TP_ALL},
 
 {TOK_MISCBUTTONTEXT,"MiscButtonText",0,4,"[back button text] [next button text] [cancel button text] [close button text]",TP_GLOBAL},
 {TOK_DETAILSBUTTONTEXT,"DetailsButtonText",0,1,"[details button text]",TP_PG},
