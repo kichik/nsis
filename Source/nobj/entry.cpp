@@ -66,6 +66,11 @@ void nobj_entry::set_parm(int offset, string& parm)
   set_parm(offset, new nobj_string(parm));
 }
 
+void nobj_entry::set_parm_string(int offset, int i)
+{
+  set_parm(offset, new nobj_string(i));
+}
+
 void nobj_entry::set_parm_jump(int offset, const char* jump)
 {
   set_parm(offset, new nobj_jump(jump));
