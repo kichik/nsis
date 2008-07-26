@@ -2048,7 +2048,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.set_parm(0,FLAG_OFFSET(silent));
       int k=line.gettoken_enum(1,"normal\0silent\0");
       if (k<0) PRINTHELP();
-      ent.set_parm(1,add_intstring(k));
+      ent.set_parm_string(1,k);
       SCRIPT_MSG("SetSilent: %s\n",line.gettoken_str(1));
       return add_nobj_entry(ent);
     }
@@ -3756,9 +3756,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       int k=line.gettoken_enum(1,"32\0" "64\0lastused\0");
       if (k<0) PRINTHELP()
       if (k == 0) // 32
-        ent.set_parm(1,add_intstring(0));
+        ent.set_parm_string(1,0);
       else if (k == 1) // 64
-        ent.set_parm(1,add_intstring(KEY_WOW64_64KEY));
+        ent.set_parm_string(1,KEY_WOW64_64KEY);
       else if (k == 2) // last used
         ent.set_parm(2,1);
       SCRIPT_MSG("SetRegView: %s\n",line.gettoken_str(1));
@@ -3770,7 +3770,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.set_parm(0,FLAG_OFFSET(all_user_var));
       int k=line.gettoken_enum(1,"current\0all\0");
       if (k<0) PRINTHELP()
-      ent.set_parm(1,add_intstring(k));
+      ent.set_parm_string(1,k);
       SCRIPT_MSG("SetShellVarContext: %s\n",line.gettoken_str(1));
       return add_nobj_entry(ent);
     }
@@ -4822,7 +4822,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         // textonly 2
         // listonly 4
         // none     6
-        ent.set_parm(1,add_intstring(k*2));
+        ent.set_parm_string(1,k*2);
       }
       SCRIPT_MSG("SetDetailsPrint: %s\n",line.gettoken_str(1));
       return add_nobj_entry(ent);
@@ -4833,7 +4833,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.set_parm(0,(int)FLAG_OFFSET(autoclose));
       int k=line.gettoken_enum(1,"false\0true\0");
       if (k < 0) PRINTHELP()
-      ent.set_parm(1,add_intstring(k));
+      ent.set_parm_string(1,k);
       SCRIPT_MSG("SetAutoClose: %s\n",line.gettoken_str(1));
       return add_nobj_entry(ent);
     }
@@ -4861,7 +4861,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     {
       nobj_entry ent(EW_SETFLAG);
       ent.set_parm(0,FLAG_OFFSET(exec_error));
-      ent.set_parm(1,add_intstring(0));
+      ent.set_parm_string(1,0);
       SCRIPT_MSG("ClearErrors\n");
       return add_nobj_entry(ent);
     }
@@ -4869,7 +4869,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     {
       nobj_entry ent(EW_SETFLAG);
       ent.set_parm(0,FLAG_OFFSET(exec_error));
-      ent.set_parm(1,add_intstring(1));
+      ent.set_parm_string(1,1);
       SCRIPT_MSG("SetErrors\n");
       return add_nobj_entry(ent);
     }
@@ -4972,14 +4972,14 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         nobj_entry ent(EW_ASSIGNVAR);
         if (!is_valid_user_var(line, 2)) PRINTHELP();
         ent.set_parm_var(0,line.gettoken_str(2));
-        ent.set_parm(1,add_intstring(high));
+        ent.set_parm_string(1,high);
         ent.set_parm(2,0);
         ent.set_parm(3,0);
         add_nobj_entry(ent);
 
         if (!is_valid_user_var(line, 3)) PRINTHELP();
         ent.set_parm_var(0,line.gettoken_str(3));
-        ent.set_parm(1,add_intstring(low));
+        ent.set_parm_string(1,low);
         ent.set_parm(2,0);
         ent.set_parm(3,0);
         SCRIPT_MSG("GetDLLVersionLocal: %s (%u,%u)->(%s,%s)\n",
@@ -5604,7 +5604,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       if (line.gettoken_str(3)[0])
         ent.set_parm(2,line.gettoken_str(3));
       else
-        ent.set_parm(2,add_intstring(NSIS_MAX_STRLEN-1));
+        ent.set_parm_string(2,NSIS_MAX_STRLEN-1);
       SCRIPT_MSG("FileRead: %s->%s (max:%s)\n",line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3));
       return add_nobj_entry(ent);
     }
@@ -5714,7 +5714,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.set_parm(0,FLAG_OFFSET(exec_reboot));
       int k=line.gettoken_enum(1,"false\0true\0");
       if (k < 0) PRINTHELP()
-      ent.set_parm(1,add_intstring(k));
+      ent.set_parm_string(1,k);
       return add_nobj_entry(ent);
     }
 #else//!NSIS_SUPPORT_REBOOT
