@@ -283,6 +283,46 @@ CEXEBuild::CEXEBuild() :
 
   InitLangTables();
 
+  init_script_variables();
+  init_script_constants();
+
+  set_uninstall_mode(0);
+
+  set_code_type_predefines();
+}
+
+void CEXEBuild::initialize(const char *makensis_path)
+{
+  string nsis_dir;
+  const char *dir = getenv("NSISDIR");
+  if (dir) nsis_dir = dir;
+  else {
+#ifndef NSIS_CONFIG_CONST_DATA_PATH
+    nsis_dir = get_executable_dir(makensis_path);
+#else
+    nsis_dir = PREFIX_DATA;
+#endif
+  }
+  definedlist.add("NSISDIR", nsis_dir.c_str());
+
+  string includes_dir = nsis_dir;
+  includes_dir += PLATFORM_PATH_SEPARATOR_STR"Include";
+  include_dirs.add(includes_dir.c_str(),0);
+
+  stubs_dir = nsis_dir;
+  stubs_dir += PLATFORM_PATH_SEPARATOR_STR"Stubs";
+
+  if (set_compressor("zlib", false) != PS_OK)
+  {
+    throw runtime_error("error setting default stub");
+  }
+
+  string uninst = stubs_dir + PLATFORM_PATH_SEPARATOR_STR + "uninst";
+  uninstaller_icon = load_icon_file(uninst.c_str());
+}
+
+void CEXEBuild::init_script_variables()
+{
   // Register static user variables $0, $1 and so on
   // with ONE of reference count, to avoid warning on this vars
   char Aux[3];
@@ -311,7 +351,10 @@ CEXEBuild::CEXEBuild() :
   m_UserVarNames.add("_OUTDIR",1);       // 31
 
   m_iBaseVarsNum = m_UserVarNames.getnum();
+}
 
+void CEXEBuild::init_script_constants()
+{
   m_ShellConstants.add("WINDIR",CSIDL_WINDOWS,CSIDL_WINDOWS);
   m_ShellConstants.add("SYSDIR",CSIDL_SYSTEM,CSIDL_SYSTEM);
   m_ShellConstants.add("SMPROGRAMS",CSIDL_PROGRAMS, CSIDL_COMMON_PROGRAMS);
@@ -342,6 +385,11 @@ CEXEBuild::CEXEBuild() :
   m_ShellConstants.add("RESOURCES_LOCALIZED", CSIDL_RESOURCES_LOCALIZED, CSIDL_RESOURCES_LOCALIZED);
   m_ShellConstants.add("CDBURN_AREA", CSIDL_CDBURN_AREA, CSIDL_CDBURN_AREA);
 
+  init_script_constants_pf_cf();
+}
+
+void CEXEBuild::init_script_constants_pf_cf()
+{
   unsigned int program_files = add_string("ProgramFilesDir", 0);
   unsigned int program_files_def = add_string("C:\\Program Files");
 
@@ -407,40 +455,6 @@ CEXEBuild::CEXEBuild() :
     ERROR_MSG("Internal compiler error: installer's shell constants are different than uninstallers!\n");
     throw out_of_range("Internal compiler error: installer's shell constants are different than uninstallers!");
   }
-
-  set_uninstall_mode(0);
-
-  set_code_type_predefines();
-}
-
-void CEXEBuild::initialize(const char *makensis_path)
-{
-  string nsis_dir;
-  const char *dir = getenv("NSISDIR");
-  if (dir) nsis_dir = dir;
-  else {
-#ifndef NSIS_CONFIG_CONST_DATA_PATH
-    nsis_dir = get_executable_dir(makensis_path);
-#else
-    nsis_dir = PREFIX_DATA;
-#endif
-  }
-  definedlist.add("NSISDIR", nsis_dir.c_str());
-
-  string includes_dir = nsis_dir;
-  includes_dir += PLATFORM_PATH_SEPARATOR_STR"Include";
-  include_dirs.add(includes_dir.c_str(),0);
-
-  stubs_dir = nsis_dir;
-  stubs_dir += PLATFORM_PATH_SEPARATOR_STR"Stubs";
-
-  if (set_compressor("zlib", false) != PS_OK)
-  {
-    throw runtime_error("error setting default stub");
-  }
-
-  string uninst = stubs_dir + PLATFORM_PATH_SEPARATOR_STR + "uninst";
-  uninstaller_icon = load_icon_file(uninst.c_str());
 }
 
 
