@@ -1455,6 +1455,8 @@ int CEXEBuild::add_nobj_entry_parm(const nobj* parm)
     {
       throw invalid_argument("invalid variable");
     }
+
+    return v;
   }
   else
   {
