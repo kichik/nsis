@@ -59,11 +59,11 @@ Prebrsk&aj ...
 # ^ShowDetailsBtn
 &Podrobnosti
 # ^ClickNext
-Pritisnite tipko Naprej za nadaljevanje.
+Kliknite Naprej za nadaljevanje.
 # ^ClickInstall	
-Pritisnite tipko Namesti za zaèetek namestitve.
+Kliknite Namesti za zaèetek namestitve.
 # ^ClickUninstall	
-Pritisnite tipko Odstrani za odstranitev.
+Kliknite Odstrani za odstranitev.
 # ^NameIme
 Ime
 # ^Completed
@@ -71,13 +71,13 @@ Dokonèano
 # ^LicenseText
 Prosimo, da pred namestitvijo $(^NameDA) pregledate licenèno pogodbo. Èe se z njo strinjate, pritisnite Se strinjam.
 # ^LicenseTextCB
-Prosimo, da pred namestitvijo $(^NameDA) pregledate licenèno pogodbo. Èe sprejmete vse naštete pogoje, obkljukajte spodnje okence. $_CLICK
+Prosimo, da pred namestitvijo $(^NameDA) pregledate licenèno pogodbo. Èe sprejmete vse naštete pogoje, potrdite spodnje polje. $_CLICK
 # ^LicenseTextRB
 Prosimo, da pred namestitvijo $(^NameDA) pregledate licenèno pogodbo. Èe sprejmete vse naštete pogoje, izberite prvo spodaj podano možnost. $_CLICK
 # ^UnLicenseText
 Prosimo, da pred odstranitvijo $(^NameDA) pregledate licenèno pogodbo. Èe se z njo strinjate, pritisnite Se strinjam.
 # ^UnLicenseTextCB
-Prosimo, da pred odstranitvijo $(^NameDA) pregledate licenèno pogodbo. Èe sprejmete vse naštete pogoje, obkljukajte spodnje okence. $_CLICK
+Prosimo, da pred odstranitvijo $(^NameDA) pregledate licenèno pogodbo. Èe sprejmete vse naštete pogoje, potrdite spodnje polje. $_CLICK
 # ^UnLicenseTextRB
 Prosimo, da pred odstranitvijo $(^NameDA) pregledate licenèno pogodbo. Èe sprejmete vse naštete pogoje, izberite prvo spodaj podano možnost. $_CLICK
 # ^Custom
@@ -155,9 +155,9 @@ Napaka pri razširjanju podatkov! Je namestitvena datoteka okvarjena?
 # ^ErrorRegistering
 Napaka registracije DLL
 # ^ExecShell
-"Izvajanje ExecShell: "
+"Izvajanje v lupini: "
 # ^Exec
-"Izvajanje Execute: "
+"Izvajanje: "
 # ^Extract
 "Razširjanje: "
 # ^ErrorWriting
@@ -177,7 +177,7 @@ Namestitev neveljavna: napaèen ukaz
 # ^Skipped
 "Izpušèeno: "
 # ^CopyDetails
-Kopiraj podrobnosti v odlagališèe
+Kopiraj podrobnosti v odložišèe
 # ^LogInstall
 Shrani potek namestitve
 # ^Byte

@@ -1,5 +1,91 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.38} 2.38
+
+Released on July 12th, 2008
+
+\S1{v2.38-cl} Changelog
+
+\S2{} Major Changes
+
+\b Fixed a bug in nsDialogs that caused it to pollute the stack if callbacks are not set for each control (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=2013317}{bug #2013317})
+
+\S2{} Minor Changes
+
+\b Added IfNotThen support for LogicLib (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1990761}{patch #1990761})
+
+\b Added support for NTFS mounts points on the directory page (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1946112}{bug #1946112})
+
+\b Fixed branding image control detection on Debian, due to improper identification of static controls (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1951417}{bug #1951417})
+
+\b Log actual creation of directories and not just failures and final directory (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1992325}{patch #1992325})
+
+\b Made log close when \e{LogSet off} is used (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1986692}{patch #1986692})
+
+\b Minor documentation improvements (including \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1990955}{bug #1990955})
+
+\b \L{../Docs/MultiUser/Readme.html}{MultiUser}: Fixed MULTIUSER_INSTALLMODE_INSTDIR handling for the uninstaller
+
+\S2{} Modern UI
+
+\b Document page leave callback function (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1964719}{bug #1964719})
+
+\b Fixed MUI_FINISHPAGE_CANCEL_ENABLED
+
+\b Fixed wasted variable warnings (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1995024}{bug #1995024})
+
+\S2{} Translations
+
+\b Fixed French translation of MUI_UNTEXT_FINISH_INFO_REBOOT (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1967032}{patch #1967032})
+
+\b Removed non-ANSI characters from French display name (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1979491}{bug #1979491})
+
+\b Updated Slovenian (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=2014106}{patch #2014106})
+
+\H{v2.37} 2.37
+
+Released on May 3rd, 2008
+
+\S1{v2.37-cl} Changelog
+
+\S2{} Major Changes
+
+\b Fixed a bug introduced in 2.32 that caused blurry icons on Windows versions prior to XP (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1956350}{bug #1956350})
+
+\b Use $PROGRAMFILES as a default for $PROGRAMFILES64 instead of "C:\\Program Files" (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1947702}{bug #1947702})
+
+\S2{} Minor Changes
+
+\b Automatically select language in case there is only one available choice (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1939571}{bug #1939571})
+
+\b \L{../Docs/MultiUser/Readme.html}{MultiUser}: Fixed build errors with manual inclusion of StrFunc.nsh
+
+\b Support for compression of files up to 2GB (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1948700}{patch #1948700})
+
+\S2{} Utilities and Plug-ins
+
+\b Fixed $\{NSD_OnBack\} (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1947388}{bug #1947388})
+
+\b Fixed \L{../Docs/nsDialogs/Readme.html}{nsDialogs}::SelectFileDialog return value for user cancelation (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1955803}{bug #1955803})
+
+\b Fixed possible \L{../Docs/BgImage/BgImage.txt}{BgImage} crash when calling BgImage::Destroy more than once (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1951248}{patch #1951248})
+
+\b Minor documentation improvements
+
+\S2{} Translation
+
+\b Brazilian Portuguese updates
+
+\b Polish updates (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1927421}{patch #1927421})
+
+\b Slovak updates (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1939669}{patch #1939669})
+
+\b Spanish updates
+
+\S2{} Build System
+
+\b SCons requirement upgraded to 0.98
+
 \H{v2.36} 2.36
 
 Released on March 29th, 2008

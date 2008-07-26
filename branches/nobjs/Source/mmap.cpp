@@ -263,12 +263,10 @@ void *MMapFile::get(int offset, int *sizep) const
   size += offset - alignedoffset;
 
 #ifdef _WIN32
-  const_cast<MMapFile*>(this)->m_pView =
-    MapViewOfFile(m_hFileMap, m_bReadOnly ? FILE_MAP_READ : FILE_MAP_WRITE, 0, alignedoffset, size);
+  m_pView = MapViewOfFile(m_hFileMap, m_bReadOnly ? FILE_MAP_READ : FILE_MAP_WRITE, 0, alignedoffset, size);
 #else
-  const_cast<MMapFile*>(this)->m_pView =
-    mmap(0, size, m_bReadOnly ? PROT_READ : PROT_READ | PROT_WRITE, MAP_SHARED, m_hFileDesc, alignedoffset);
-  const_cast<MMapFile*>(this)->m_iMappedSize = *sizep = size;
+  m_pView = mmap(0, size, m_bReadOnly ? PROT_READ : PROT_READ | PROT_WRITE, MAP_SHARED, m_hFileDesc, alignedoffset);
+  m_iMappedSize = *sizep = size;
 #endif
 
 #ifdef _WIN32
@@ -297,11 +295,11 @@ void *MMapFile::getmore(int offset, int size) const
 #ifndef _WIN32
   int iMappedSizeBackup = m_iMappedSize;
 #endif
-  const_cast<MMapFile*>(this)->m_pView = 0;
+  m_pView = 0;
   pView = get(offset, size);
-  const_cast<MMapFile*>(this)->m_pView = pViewBackup;
+  m_pView = pViewBackup;
 #ifndef _WIN32
-  const_cast<MMapFile*>(this)->m_iMappedSize = iMappedSizeBackup;
+  m_iMappedSize = iMappedSizeBackup;
 #endif
   return pView;
 }

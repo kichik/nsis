@@ -120,6 +120,7 @@ void __declspec(dllexport) LangDialog(HWND hwndParent, int string_size,
 
   {
     int i;
+    int doauto = 0;
     BOOL pop_empty_string = FALSE;
 
     // get texts
@@ -134,13 +135,14 @@ void __declspec(dllexport) LangDialog(HWND hwndParent, int string_size,
       char *p=temp;
       while (*p)
       {
+        if (*p == 'A') doauto=1; // parse auto count flag
         if (*p == 'F') dofont=1; // parse font flag
         if (*p == 'C') docp=1;   // parse codepage flag
         p++;
       }
     }
  
-    if (*temp == 'A') {
+    if (doauto) {
       // automatic language count
       stack_t *th;
       langs_num=0;

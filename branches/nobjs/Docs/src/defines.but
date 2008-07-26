@@ -10,7 +10,7 @@ Define/conditional compilation related commands:
 
 \S1{define} !define
 
-\c ([/date|/utcdate] gflag [value]) | (/math gflag val1 OP val2)
+\c ([/date|/utcdate] gflag [value]) | (/math gflag val1 OP val2) | (/file gflag filename.txt)
 
 This command will add \e{gflag} to the global define list. This will have a similar effect as using the /D switch on the command line (only the define only becomes effective after the !define command).
 
@@ -18,11 +18,14 @@ If \e{/date} or \e{/utcdate} are used, \e{value} will be passed into strftime an
 
 If \e{/math} is used, the result of 'val1 OP val2', where OP may be +,-,*,&,|,^,/ or % , will be used as the value of \e{gflag}. Note that val1 AND val2 MUST be integer values!
 
+If \e{/file} is used, the entire text file specified (including whitespace and newlines) will be read and stuffed into \e{gflag}.
+
 \c !define USE_SOMETHING
 \c !define VERSION 1.2
 \c !define /date NOW "%H:%M:%S %d %b, %Y"
 \c !define /math RESULT 3 + 10
 \c !define /math REST 15 % ${RESULT}
+\c !define /file BUNCHASTUFF somesourcefile.cpp
 
 \S1{undef} !undef
 
@@ -131,3 +134,18 @@ Creates a macro named 'macro_name'. All lines between the !macro and the !macroe
 \S1{macroend} !macroend
 
 Ends a macro that was started with !macro.
+
+\S1{searchparse} !searchparse
+
+\c [/ignorecase] [/noerrors] [/file] source_string_or_file substring_start OUTPUTSYMBOL1 [substring [OUTPUTSYMBOL2 [substring ...]]]
+
+Parses \e{source_string_or_file} (which is treated as a string, or as a filename if \e{/file} is set), looking for \e{substring_start}. If \e{substring_start} is found, then \e{OUTPUTSYMBOL1} is defined to the rest of the string (minus any other \e{substring} that may be found). Any number of \e{OUTPUTSYMBOLx} may be specified, and the final \e{substring} is optional. 
+
+If \e{/noerrors} is specified, matching less than the full number of strings is allowed (all \e{OUTPUTSYMBOLx} after the not-found substring will be ignored).
+
+If \e{/file} is specified, the file is treated as a series of lines. The file is searched until all substrings are matched. If \e{/noerrors} is specified and not all strings are matched, the first line with the most symbols matched is used.
+
+\c # search filename.cpp for a line '#define APP_VERSION "2.5"' and set ${VER_MAJOR} to 2, ${VER_MINOR} to 5.
+\c !searchparse /file filename.cpp `#define APP_VERSION "` VER_MAJOR `.` VER_MINOR `"`
+
+

@@ -338,6 +338,10 @@ static int NSISCALL ExecuteEntry(entry *entry_)
                 exec_error++;
               }
             }
+            else
+            {
+              log_printf2("CreateDirectory: \"%s\" created",buf1);
+            }
             *p++ = c;
           }
         }
@@ -1514,7 +1518,10 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         log_dolog=parm1;
         log_printf2("logging set to %d",parm1);
 #if !defined(NSIS_CONFIG_LOG_ODS) && !defined(NSIS_CONFIG_LOG_STDOUT)
-        if (parm1) build_g_logfile();
+        if (parm1)
+          build_g_logfile();
+        else
+          log_write(1);
 #endif
       }
       else
