@@ -2469,7 +2469,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
               }
             } else {
               char *szClass = winchar_toansi(dlgItem->szClass);
-              check = strcmp(szClass, "Static") == 0;
+              check = stricmp(szClass, "Static") == 0;
               delete [] szClass;
             }
 
@@ -2771,6 +2771,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     {
       char *define=line.gettoken_str(1);
       char *value;
+      GrowBuf file_buf;
       char datebuf[256];
       char mathbuf[256];
 
@@ -2797,6 +2798,39 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           datebuf[max(s,sizeof(datebuf)-1)]=0;
 
         value=datebuf;
+      } else if (!stricmp(define,"/file") || !stricmp(define,"/file_noerr")) {
+        
+        if (line.getnumtokens()!=4) PRINTHELP()
+
+        define=line.gettoken_str(2);
+        const char *filename=line.gettoken_str(3);
+        FILE *fp=fopen(filename,"r");
+
+        if (!fp && stricmp(define,"/file_noerr")) {
+          ERROR_MSG("!define /file: file not found (\"%s\")\n",filename);
+          return PS_ERROR;
+        }
+
+        if (fp)  {
+          char str[MAX_LINELENGTH];
+          for (;;) {
+            char *p=str;
+            *p=0;
+            fgets(str,MAX_LINELENGTH,fp);
+            linecnt++;
+            if (feof(fp)&&!str[0]) break;
+
+            while (*p) p++;
+            if (p > str) p--;
+            while (p >= str && (*p == '\r' || *p == '\n')) p--;
+            *++p=0;
+            if (file_buf.getlen()) file_buf.add("\n",1);
+            file_buf.add(str,strlen(str));
+          }
+          fclose(fp);
+        }
+        file_buf.add("\0",1);
+        value = (char *)file_buf.get();
 
       } else if (!stricmp(define,"/math")) {
       
@@ -3045,6 +3079,123 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return PS_OK;
     case TOK_P_ECHO:
       SCRIPT_MSG("%s (%s:%d)\n", line.gettoken_str(1),curfilename,linecnt);
+    return PS_OK;
+    case TOK_P_SEARCHPARSESTRING:
+      {
+        bool ignCase=false;
+        bool noErrors=false;
+        bool isFile=false;
+        int parmOffs=1;
+        while (parmOffs < line.getnumtokens())
+        {
+          if (!stricmp(line.gettoken_str(parmOffs),"/ignorecase")) { ignCase=true; parmOffs++; }
+          else if (!stricmp(line.gettoken_str(parmOffs),"/noerrors")) { noErrors=true; parmOffs++; }
+          else if (!stricmp(line.gettoken_str(parmOffs),"/file")) { isFile=true; parmOffs++; }
+          else break;
+        }
+        if (parmOffs+3 > line.getnumtokens())
+        {
+          ERROR_MSG("!searchparse: not enough parameters\n");
+          return PS_ERROR;
+        }
+
+        const char *source_string = line.gettoken_str(parmOffs++);
+        DefineList *list=NULL;
+
+        if (isFile)
+        {
+          FILE *fp=fopen(source_string,"r");
+          if (!fp)
+          {
+            ERROR_MSG("!searchparse /file: error opening \"%s\"\n",source_string);
+            return PS_ERROR;
+          }
+
+          int req_parm = (line.getnumtokens() - parmOffs)/2;
+
+          GrowBuf tmpstr;
+          char str[MAX_LINELENGTH];
+          for (;;)
+          {
+            for (;;)
+            {
+              str[0]=0;
+              fgets(str,sizeof(str),fp);
+              if (!str[0]) break;
+
+              char *p=str;
+              while (*p) p++;
+              if (p > str) p--;
+              while (p >= str && (*p == '\r' || *p == '\n')) p--;
+              *++p=0;
+
+              bool endSlash = (str[0] && str[strlen(str)-1] == '\\');
+              if (tmpstr.getlen() || endSlash) tmpstr.add(str,strlen(str));
+
+              if (!endSlash) break;
+            }            
+
+            char *thisline=str;
+            if (tmpstr.getlen()) 
+            {
+              tmpstr.add("\0",1);
+              thisline=(char *)tmpstr.get();
+            }
+
+
+            DefineList *tlist = searchParseString(thisline,&line,parmOffs,ignCase,true);
+            if (tlist && tlist->getnum())
+            {
+              if (!list || tlist->getnum() > list->getnum())
+              {
+                delete list;
+                list=tlist;
+                if (tlist->getnum() >= req_parm) break; // success!
+              }
+              else delete list;
+            }
+            // parse line
+
+            tmpstr.resize(0);
+          }
+          fclose(fp);
+          if (!noErrors)
+          {
+            if (!list)  
+            {
+              ERROR_MSG("!searchparse: starting string \"%s\" not found in file!\n",line.gettoken_str(parmOffs));
+              return PS_ERROR;
+            }
+            else if (list->getnum() < req_parm)
+            {
+              char *p=line.gettoken_str(parmOffs + list->getnum()*2);
+              ERROR_MSG("!searchparse: failed search at string \"%s\" not found in file!\n",p?p:"(null)");
+              return PS_ERROR;
+            }
+          }
+        }
+        else
+        {
+          list=searchParseString(source_string,&line,parmOffs,ignCase,noErrors);
+          if (!list && !noErrors) return PS_ERROR;
+        }
+
+        if (list) // if we got our list, merge them defines in
+        {
+          int i;
+          for (i=0;i<list->getnum(); i ++)
+          {
+            char *def=list->getname(i);
+            char *val=list->getvalue(i);
+            if (def && val)
+            {
+              if (definedlist.find(def)) definedlist.del(def);
+              definedlist.add(def,val);
+            }
+          }
+        }
+        delete list;
+      }
     return PS_OK;
 
     case TOK_P_VERBOSE:
@@ -6417,3 +6568,70 @@ int CEXEBuild::do_add_file_create_dir(const string& local_dir, const string& dir
   return PS_OK;
 }
 #endif
+
+
+
+
+DefineList *CEXEBuild::searchParseString(const char *source_string, LineParser *line, int parmOffs, bool ignCase, bool noErrors)
+{
+  const char *tok = line->gettoken_str(parmOffs++);
+  if (tok && *tok)
+  {
+    int toklen = strlen(tok);
+    while (*source_string && (ignCase?strnicmp(source_string,tok,toklen):strncmp(source_string,tok,toklen))) source_string++;
+
+    if (!*source_string) 
+    {
+      if (!noErrors) ERROR_MSG("!searchparse: starting string \"%s\" not found, aborted search!\n",tok);
+      return NULL;
+    }
+    if (*source_string) source_string+=toklen;
+  }
+
+  DefineList *ret = NULL;
+
+  while (parmOffs < line->getnumtokens())
+  {
+    const char *defout = line->gettoken_str(parmOffs++);
+    if (parmOffs < line->getnumtokens()) tok=line->gettoken_str(parmOffs++);
+    else tok=NULL;
+
+
+    int maxlen=-1;
+    const char *src_start = source_string;
+    if (tok && *tok)
+    {
+      int toklen = strlen(tok);
+      while (*source_string && (ignCase?strnicmp(source_string,tok,toklen):strncmp(source_string,tok,toklen))) source_string++;
+
+      maxlen = source_string - src_start;
+
+      if (*source_string) source_string += toklen;
+      else if (!noErrors)
+      {
+        ERROR_MSG("!searchparse: string \"%s\" not found, aborted search!\n",tok);
+        delete ret;
+        return NULL;
+      }
+      
+    }          
+ 
+    if (defout && defout[0])
+    {
+      if (!ret) ret = new DefineList;
+
+      if (maxlen < 0) ret->add(defout,src_start);
+      else
+      {
+        char *p=strdup(src_start);
+        if (p)
+        {
+          p[maxlen]=0;
+          ret->add(defout,p);
+          free(p);
+        }
+      }
+    }
+  }
+  return ret;
+}

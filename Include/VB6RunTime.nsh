@@ -44,7 +44,7 @@ Remarks:
 
 !macro VB6RunTimeInstall FOLDER ALREADY_INSTALLED
 
-  !insertmacro InstallLib REGDLL "${ALREADY_INSTALLED}" REBOOT_NOTPROTECTED "${FOLDER}\msvbvm60.dll" "$SYSDIR\msvbvm60.dll" "$SYSDIR"
+  !insertmacro InstallLib REGDLL "${ALREADY_INSTALLED}" REBOOT_PROTECTED "${FOLDER}\msvbvm60.dll" "$SYSDIR\msvbvm60.dll" "$SYSDIR"
   
   ;The files below will only be installed on Win9x/NT4
   

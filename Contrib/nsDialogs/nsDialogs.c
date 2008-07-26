@@ -72,29 +72,44 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
       if (HIWORD(wParam) == BN_CLICKED && ctl->type == NSCTL_BUTTON)
       {
-        pushint((int) hwCtl);
-        g_pluginParms->ExecuteCodeSegment(ctl->callbacks.onClick - 1, 0);
+        if (ctl->callbacks.onClick)
+        {
+          pushint((int) hwCtl);
+          g_pluginParms->ExecuteCodeSegment(ctl->callbacks.onClick - 1, 0);
+        }
       }
       else if (HIWORD(wParam) == EN_CHANGE && ctl->type == NSCTL_EDIT)
       {
-        pushint((int) hwCtl);
-        g_pluginParms->ExecuteCodeSegment(ctl->callbacks.onChange - 1, 0);
+        if (ctl->callbacks.onChange)
+        {
+          pushint((int) hwCtl);
+          g_pluginParms->ExecuteCodeSegment(ctl->callbacks.onChange - 1, 0);
+        }
       }
       else if (HIWORD(wParam) == LBN_SELCHANGE && ctl->type == NSCTL_LISTBOX)
       {
-        pushint((int) hwCtl);
-        g_pluginParms->ExecuteCodeSegment(ctl->callbacks.onChange - 1, 0);
+        if (ctl->callbacks.onChange)
+        {
+          pushint((int) hwCtl);
+          g_pluginParms->ExecuteCodeSegment(ctl->callbacks.onChange - 1, 0);
+        }
       }
       else if ((HIWORD(wParam) == CBN_EDITUPDATE || HIWORD(wParam) == CBN_SELCHANGE)
                 && ctl->type == NSCTL_COMBOBOX)
       {
-        pushint((int) hwCtl);
-        g_pluginParms->ExecuteCodeSegment(ctl->callbacks.onChange - 1, 0);
+        if (ctl->callbacks.onChange)
+        {
+          pushint((int) hwCtl);
+          g_pluginParms->ExecuteCodeSegment(ctl->callbacks.onChange - 1, 0);
+        }
       }
       else if (HIWORD(wParam) == STN_CLICKED && ctl->type == NSCTL_STATIC)
       {
-        pushint((int) hwCtl);
-        g_pluginParms->ExecuteCodeSegment(ctl->callbacks.onClick - 1, 0);
+        if (ctl->callbacks.onClick)
+        {
+          pushint((int) hwCtl);
+          g_pluginParms->ExecuteCodeSegment(ctl->callbacks.onClick - 1, 0);
+        }
       }
 
       break;

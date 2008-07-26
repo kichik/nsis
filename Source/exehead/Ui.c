@@ -982,19 +982,33 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
   if (uMsg == WM_IN_UPDATEMSG || uMsg == WM_NOTIFY_START)
   {
     static char s[NSIS_MAX_STRLEN];
-    char *p;
     int error = 0;
     int available_set = 0;
-    unsigned total, available = 0xFFFFFFFF;
+    unsigned total, available;
 
     GetUIText(IDC_DIR,dir);
     if (!is_valid_instpath(dir))
       error = NSIS_INSTDIR_INVALID;
 
+    /**
+     * This part is tricky. We need to make sure a few things:
+     *
+     *   1. GetDiskFreeSpaceEx is always called at least once for large HD.
+     *        Even if skip_root() returned NULL (e.g. "C:").
+     *        Note that trimslashtoend() will nullify "C:".
+     *   2. GetDiskFreeSpaceEx is called with the deepest valid directory.
+     *        e.g. C:\drive when the user types C:\drive\folder1\folder2.
+     *        This makes sure NTFS mount points are treated properly (#1946112).
+     *   3. `s' stays valid after the loop for GetDiskFreeSpace.
+     *        This means there is no cutting beyond what skip_root() returns.
+     *        Or `s' could be recreated when GetDiskFreeSpace is called.
+     *   4. If GetDiskFreeSpaceEx doesn't exist, GetDiskFreeSpace is used.
+     *   5. Both functions require a trailing backslash
+     *   6. `dir' is never modified.
+     *
+     */
+
     mystrcpy(s,dir);
-    p=skip_root(s);
-    if (p)
-      *p=0;
 
     // Test for and use the GetDiskFreeSpaceEx API
     {
@@ -1004,22 +1018,44 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       {
         ULARGE_INTEGER available64;
         ULARGE_INTEGER a, b;
-        if (GDFSE(s, &available64, &a, &b))
+        char *p;
+        WORD *pw = NULL;
+        while ((char *) pw != s) // trimslashtoend() cut the entire string
         {
+          if (GDFSE(s, &available64, &a, &b))
+          {
 #ifndef _NSIS_NO_INT64_SHR
-          available = (int)(available64.QuadPart >> 10);
+            available = (int)(available64.QuadPart >> 10);
 #else
-          available = (int)(Int64ShrlMod32(available64.QuadPart, 10));
+            available = (int)(Int64ShrlMod32(available64.QuadPart, 10));
 #endif
-          available_set++;
+            available_set++;
+            break;
+          }
+
+          if (pw)
+            // if pw was set, remove the backslash so trimslashtoend() will cut a new one
+            *pw = 0;
+
+          p = trimslashtoend(s); // trim last backslash
+          pw = (LPWORD) (p - 1);
+          *pw = CHAR2_TO_WORD('\\', 0); // bring it back, but make the next char null
         }
       }
     }
 
     if (!available_set)
     {
-      // GetDiskFreeSpaceEx is not available
       DWORD spc, bps, fc, tc;
+      char *root;
+
+      // GetDiskFreeSpaceEx accepts any path, but GetDiskFreeSpace accepts only the root
+      mystrcpy(s,dir);
+      root=skip_root(s);
+      if (root)
+        *root=0;
+
+      // GetDiskFreeSpaceEx is not available
       if (GetDiskFreeSpace(s, &spc, &bps, &fc, &tc))
       {
         available = (int)MulDiv(bps * spc, fc, 1 << 10);
@@ -1029,7 +1065,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
     total = (unsigned) sumsecsfield(size_kb);
 
-    if (available < total)
+    if (available_set && available < total)
       error = NSIS_INSTDIR_NOT_ENOUGH_SPACE;
 
     if (LANG_STR_TAB(LANG_SPACE_REQ)) {
