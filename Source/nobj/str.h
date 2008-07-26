@@ -31,12 +31,15 @@ public:
   nobj_string(const std::string& str);
   nobj_string(const char* str);
   nobj_string(char* str);
+  nobj_string(int i);
 
   const std::string get_string() const;
 
 private:
 
   std::string m_string;
+
+  static std::string itoa(int i);
 
 };
 

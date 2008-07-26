@@ -17,9 +17,10 @@
 #include "str.h"
 
 #include <stdexcept>
+#include <sstream>
 
 using std::string;
-using std::length_error;
+using std::ostringstream;
 
 /**
  * nobj_string
@@ -37,7 +38,18 @@ nobj_string::nobj_string(char* str)
   : m_string(str)
 {}
 
+nobj_string::nobj_string(int i)
+  : m_string(itoa(i))
+{}
+
 const string nobj_string::get_string() const
 {
   return m_string;
+}
+
+string nobj_string::itoa(int i)
+{
+  ostringstream o;
+  o << i;
+  return o.str();
 }
