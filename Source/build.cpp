@@ -1462,8 +1462,6 @@ int CEXEBuild::add_nobj_entry_parm(const nobj* parm)
   {
     throw invalid_argument("unknown parameter type (internal error)");
   }
-
-  return 0; // never reached
 }
 
 int CEXEBuild::resolve_jump_int(const char *fn, int *a, int offs, int start, int end)
