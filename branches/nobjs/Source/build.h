@@ -325,6 +325,10 @@ class CEXEBuild {
     int DeclaredUserVar(const char *VarName);
     void VerifyDeclaredUserVarRefs(UserVarsStringList *pVarsStringList);
 
+    void init_script_variables();
+    void init_script_constants();
+    void init_script_constants_pf_cf();
+
     ConstantsStringList m_ShellConstants;
 
     // a whole bunch O data.
