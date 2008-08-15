@@ -41,7 +41,7 @@ struct nsControlCallbacks
 
 struct nsControl
 {
-  HWND               window;
+  HWND window;
   enum nsControlType type;
   char userData[USERDATA_SIZE];
   struct nsControlCallbacks callbacks;
