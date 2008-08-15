@@ -177,6 +177,21 @@
     ${If} $0 <> 0
       ; $2 = ($1)->wServicePackMajor
       System::Call /NOUNLOAD '*$1(&t148, &i2.r2)'
+    ${Else}
+      ; ($1)->dwOSVersionInfoSize = sizeof(OSVERSIONINFOA)
+      System::Call /NOUNLOAD '*$1(&i4 148)'
+      ; GetVersionEx($1)
+      System::Call /NOUNLOAD 'kernel32::GetVersionEx(i $1) i.r0'
+      ${If} $0 <> 0
+        ; $2 = ($1)->szCSDVersion
+        System::Call /NOUNLOAD '*$1(&t20, &t128.r2)'
+        StrCpy $0 $2 13
+        ${If} $0 == "Service Pack "
+          StrCpy $2 $2 "" 13
+        ${Else}
+          StrCpy $2 0
+        ${EndIf}
+      ${EndIf}
     ${EndIf}
     System::Free $1
   ${EndIf}
