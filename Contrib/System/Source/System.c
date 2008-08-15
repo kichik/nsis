@@ -520,6 +520,8 @@ SystemProc *PrepareProc(BOOL NeedForCall)
             case 'I': temp2 = PAT_INT; break;
             case 'l':
             case 'L': temp2 = PAT_LONG; break;
+            case 'm':
+            case 'M':
             case 't':
             case 'T': temp2 = PAT_STRING; break;
             case 'g':
