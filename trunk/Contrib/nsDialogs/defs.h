@@ -17,6 +17,7 @@ enum nsControlType
   NSCTL_RICHEDIT,
   NSCTL_RICHEDIT2,
   NSCTL_STATIC,
+  NSCTL_LINK,
   NSCTL_TREE
 };
 
@@ -44,6 +45,7 @@ struct nsControl
   enum nsControlType type;
   char userData[USERDATA_SIZE];
   struct nsControlCallbacks callbacks;
+  WNDPROC oldWndProc;
 };
 
 struct nsDialog

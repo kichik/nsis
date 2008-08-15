@@ -57,6 +57,22 @@ BOOL CALLBACK ParentProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
   return res;
 }
 
+LRESULT CALLBACK LinkWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+  struct nsControl* ctl = GetControl(hwnd);
+
+  if(ctl == NULL)
+    return 0;
+
+  if(message == WM_SETCURSOR)
+  {
+    SetCursor(LoadCursor(NULL, IDC_HAND));
+    return TRUE;
+  }
+
+  return CallWindowProc(ctl->oldWndProc, hwnd, message, wParam, lParam);
+}
+
 BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   switch (uMsg)
@@ -70,7 +86,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       if (ctl == NULL)
         break;
 
-      if (HIWORD(wParam) == BN_CLICKED && ctl->type == NSCTL_BUTTON)
+      if (HIWORD(wParam) == BN_CLICKED && (ctl->type == NSCTL_BUTTON || ctl->type == NSCTL_LINK))
       {
         if (ctl->callbacks.onClick)
         {
@@ -82,34 +98,34 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       {
         if (ctl->callbacks.onChange)
         {
-          pushint((int) hwCtl);
-          g_pluginParms->ExecuteCodeSegment(ctl->callbacks.onChange - 1, 0);
-        }
+        pushint((int) hwCtl);
+        g_pluginParms->ExecuteCodeSegment(ctl->callbacks.onChange - 1, 0);
+      }
       }
       else if (HIWORD(wParam) == LBN_SELCHANGE && ctl->type == NSCTL_LISTBOX)
       {
         if (ctl->callbacks.onChange)
         {
-          pushint((int) hwCtl);
-          g_pluginParms->ExecuteCodeSegment(ctl->callbacks.onChange - 1, 0);
-        }
+        pushint((int) hwCtl);
+        g_pluginParms->ExecuteCodeSegment(ctl->callbacks.onChange - 1, 0);
+      }
       }
       else if ((HIWORD(wParam) == CBN_EDITUPDATE || HIWORD(wParam) == CBN_SELCHANGE)
                 && ctl->type == NSCTL_COMBOBOX)
       {
         if (ctl->callbacks.onChange)
         {
-          pushint((int) hwCtl);
-          g_pluginParms->ExecuteCodeSegment(ctl->callbacks.onChange - 1, 0);
-        }
+        pushint((int) hwCtl);
+        g_pluginParms->ExecuteCodeSegment(ctl->callbacks.onChange - 1, 0);
+      }
       }
       else if (HIWORD(wParam) == STN_CLICKED && ctl->type == NSCTL_STATIC)
       {
         if (ctl->callbacks.onClick)
         {
-          pushint((int) hwCtl);
-          g_pluginParms->ExecuteCodeSegment(ctl->callbacks.onClick - 1, 0);
-        }
+        pushint((int) hwCtl);
+        g_pluginParms->ExecuteCodeSegment(ctl->callbacks.onClick - 1, 0);
+      }
       }
 
       break;
@@ -315,6 +331,8 @@ void __declspec(dllexport) CreateControl(HWND hwndParent, int string_size, char 
     g_dialog.controls[id].type = NSCTL_RICHEDIT2;
   else if (!lstrcmpi(className, "STATIC"))
     g_dialog.controls[id].type = NSCTL_STATIC;
+  else if (!lstrcmpi(className, "LINK"))
+    g_dialog.controls[id].type = NSCTL_LINK;
   else
     g_dialog.controls[id].type = NSCTL_UNKNOWN;
 
@@ -326,7 +344,7 @@ void __declspec(dllexport) CreateControl(HWND hwndParent, int string_size, char 
 
   hwItem = CreateWindowEx(
     exStyle,
-    className,
+    lstrcmpi(className, "LINK") ? className : "BUTTON",
     text,
     style,
     x, y, width, height,
@@ -344,6 +362,11 @@ void __declspec(dllexport) CreateControl(HWND hwndParent, int string_size, char 
   // set font
 
   SendMessage(hwItem, WM_SETFONT, SendMessage(g_dialog.hwParent, WM_GETFONT, 0, 0), TRUE);
+
+  // set the WndProc for the link control
+
+  if(g_dialog.controls[id].type == NSCTL_LINK)
+    g_dialog.controls[id].oldWndProc = (WNDPROC) SetWindowLong(hwItem, GWL_WNDPROC, (long) LinkWndProc);
 
   // push back result
 
