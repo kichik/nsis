@@ -2,7 +2,7 @@
 ;      WinVer.nsh
 ; ---------------------
 ;
-; LogicLib extensions for handling Windows versions.
+; LogicLib extensions for handling Windows versions and service packs.
 ;
 ; IsNT checks if the installer is running on Windows NT family (NT4, 2000, XP, etc.)
 ;
@@ -28,6 +28,10 @@
 ;   2003
 ;   Vista
 ;
+; AtLeastServicePack checks if the installer is running on Windows service pack version at least as specified.
+; IsServicePack checks if the installer is running on Windows service pack version exactly as specified.
+; AtMostServicePack checks if the installer is running on Windows service version pack at most as specified.
+;
 ; Usage examples:
 ;
 ;   ${If} ${IsNT}
@@ -43,6 +47,12 @@
 ;
 ;   ${If} ${IsWin2000}
 ;     DetailPrint "Running on 2000."
+;   ${EndIf}
+;
+;   ${If} ${IsWin2000}
+;   ${AndIf} ${AtLeastServicePack} 3
+;   ${OrIf} ${AtLeastWinXP}
+;     DetailPrint "Running Win2000 SP3 or above"
 ;   ${EndIf}
 ;
 ;   ${If} ${AtMostWinXP}
@@ -145,6 +155,58 @@
 !insertmacro __WinVer_DefineOSTests AtLeast
 !insertmacro __WinVer_DefineOSTests Is
 !insertmacro __WinVer_DefineOSTests AtMost
+
+
+!macro __GetWinServicePack
+  !insertmacro _LOGICLIB_TEMP
+
+  Push $0
+  Push $1
+  Push $2
+
+  StrCpy $2 0
+
+  ; $1 = malloc(sizeof(OSVERSIONINFOEXA))
+  System::Alloc 156
+  Pop $1
+  ${If} $1 <> 0
+    ; ($1)->dwOSVersionInfoSize = sizeof(OSVERSIONINFOEXA)
+    System::Call /NOUNLOAD '*$1(&i4 156)'
+    ; GetVersionEx($1)
+    System::Call /NOUNLOAD 'kernel32::GetVersionEx(i $1) i.r0'
+    ${If} $0 <> 0
+      ; $2 = ($1)->wServicePackMajor
+      System::Call /NOUNLOAD '*$1(&t148, &i2.r2)'
+    ${EndIf}
+    System::Free $1
+  ${EndIf}
+
+  StrCpy $_LOGICLIB_TEMP $2
+
+  Pop $2
+  Pop $1
+  Pop $0
+
+!macroend
+
+!define AtLeastServicePack `"" AtLeastServicePack`
+!macro _AtLeastServicePack _a _b _t _f
+  !insertmacro __GetWinServicePack
+  !insertmacro _>= $_LOGICLIB_TEMP `${_b}` `${_t}` `${_f}`
+!macroend
+
+!define AtMostServicePack `"" AtMostServicePack`
+!macro _AtMostServicePack _a _b _t _f
+  !insertmacro __GetWinServicePack
+  !insertmacro _<= $_LOGICLIB_TEMP `${_b}` `${_t}` `${_f}`
+!macroend
+
+!define IsServicePack `"" IsServicePack`
+!macro _IsServicePack _a _b _t _f
+  !insertmacro __GetWinServicePack
+  !insertmacro _= $_LOGICLIB_TEMP `${_b}` `${_t}` `${_f}`
+!macroend
+
 
 !endif # !___WINVER__NSH___
 
