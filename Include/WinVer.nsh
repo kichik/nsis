@@ -173,7 +173,7 @@
     ; ($1)->dwOSVersionInfoSize = sizeof(OSVERSIONINFOEXA)
     System::Call /NOUNLOAD '*$1(&i4 156)'
     ; GetVersionEx($1)
-    System::Call /NOUNLOAD 'kernel32::GetVersionEx(i $1) i.r0'
+    System::Call /NOUNLOAD 'kernel32::GetVersionEx(i r1) i.r0'
     ${If} $0 <> 0
       ; $2 = ($1)->wServicePackMajor
       System::Call /NOUNLOAD '*$1(&t148, &i2.r2)'
@@ -181,7 +181,7 @@
       ; ($1)->dwOSVersionInfoSize = sizeof(OSVERSIONINFOA)
       System::Call /NOUNLOAD '*$1(&i4 148)'
       ; GetVersionEx($1)
-      System::Call /NOUNLOAD 'kernel32::GetVersionEx(i $1) i.r0'
+      System::Call /NOUNLOAD 'kernel32::GetVersionEx(i r1) i.r0'
       ${If} $0 <> 0
         ; $2 = ($1)->szCSDVersion
         System::Call /NOUNLOAD '*$1(&t20, &t128.r2)'
