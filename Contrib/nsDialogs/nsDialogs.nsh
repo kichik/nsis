@@ -200,7 +200,7 @@ Header file for creating custom installer pages with nsDialogs
 !define __NSD_BrowseButton_STYLE ${DEFAULT_STYLES}|${WS_TABSTOP}
 !define __NSD_BrowseButton_EXSTYLE 0
 
-!define __NSD_Link_CLASS BUTTON
+!define __NSD_Link_CLASS LINK
 !define __NSD_Link_STYLE ${DEFAULT_STYLES}|${WS_TABSTOP}|${BS_OWNERDRAW}
 !define __NSD_Link_EXSTYLE 0
 
