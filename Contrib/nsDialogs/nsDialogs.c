@@ -220,6 +220,17 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_CTLCOLORLISTBOX:
       // let the NSIS window handle colors, it knows best
       return SendMessage(g_dialog.hwParent, uMsg, wParam, lParam);
+
+    // bye bye
+    case WM_DESTROY:
+    {
+      unsigned i;
+      for (i = 0; i < g_dialog.controlCount; i++)
+      {
+        RemoveProp(g_dialog.controls[i].window, NSCONTROL_ID_PROP);
+      }
+      break;
+    }
   }
 
   return FALSE;
