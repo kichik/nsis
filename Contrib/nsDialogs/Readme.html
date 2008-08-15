@@ -75,7 +75,11 @@ code
 <li><a href="#mref-cbaddstring">NSD_CB_AddString</a></li>
 <li><a href="#mref-cbselectstring">NSD_CB_SelectString</a></li>
 <li><a href="#mref-lbaddstring">NSD_LB_AddString</a></li>
+<li><a href="#mref-lbdelstring">NSD_LB_DelString</a></li>
+<li><a href="#mref-lbclear">NSD_LB_Clear</a></li>
+<li><a href="#mref-lbgetcount">NSD_LB_GetCount</a></li>
 <li><a href="#mref-lbselectstring">NSD_LB_SelectString</a></li>
+<li><a href="#mref-lbgetselection">NSD_LB_GetSelection</a></li>
 <li><a href="#mref-setfocus">NSD_SetFocus</a></li>
 <li><a href="#mref-setimage">NSD_SetImage</a></li>
 <li><a href="#mref-setsimage">NSD_SetStretchedImage</a></li>
@@ -727,11 +731,35 @@ SectionEnd</pre></blockquote>
 
 <p>Adds a string to a list box.</p>
 
+<h3><a name="mref-lbdelstring"></a>NSD_LB_DelString</h3>
+
+<p><code>${NSD_LB_DelString} <i>combo_HWND</i> <i>string</i></code></p>
+
+<p>Deletes a string from a list box.</p>
+
+<h3><a name="mref-lbcleqar">NSD_LB_Clear</a></h3>
+
+<p><code>${NSD_LB_Clear} <i>combo_HWND</i></code></p>
+
+<p>Deletes all strings from a list box.</p>
+
+<h3><a name="mref-lbgetcount">NSD_LB_GetCount</a></h3>
+
+<p><code>${NSD_LB_GetCount} <i>combo_HWND</i> <i>output_variable</i></code></p>
+
+<p>Retrieves the number of strings from a list box.</p>
+
 <h3><a name="mref-lbselectstring"></a>NSD_LB_SelectString</h3>
 
 <p><code>${NSD_LB_SelectString} <i>combo_HWND</i> <i>string</i></code></p>
 
 <p>Selects a string in a list box.</p>
+
+<h3><a name="mref-lbgetselection">NSD_LB_GetSelection</a></h3>
+
+<p><code>${NSD_LB_GetSelection} <i>combo_HWND</i> <i>output_variable</i></code></p>
+
+<p>Retrieves the selected stringed from a list box. Returns an empty string if no string is selected.</p>
 
 <h3><a name="mref-setfocus"></a>NSD_SetFocus</h3>
 
