@@ -147,6 +147,7 @@ UDM     Up-down control
 !define EM_CANUNDO              0x00C6
 !define EM_CHARFROMPOS          0x00D7
 !define EM_EMPTYUNDOBUFFER      0x00CD
+!define EM_EXLIMITTEXT          0x0435
 !define EM_FMTLINES             0x00C8
 !define EM_GETFIRSTVISIBLELINE  0x00CE
 !define EM_GETHANDLE            0x00BD
