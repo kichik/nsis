@@ -28,6 +28,9 @@ ZIP="C:\Program Files\7-zip\7za.exe" a -tzip %s -mx9 -mfb=255 -mpass=4 %s
 [rsh]
 RSH="C:\Program Files\PuTTY\plink.exe" -2 -l kichik nsis.sourceforge.net
 
+[sftp]
+SFTP="C:\Program Files\PuTTY\psftp.exe" -2 -l kichik -batch -b %s frs.sourceforge.net
+
 [wiki]
 UPDATE_URL=http://nsis.sourceforge.net/Special:Simpleupdate?action=raw
 
@@ -58,7 +61,6 @@ import sys
 import time
 import Image, ImageFont, ImageDraw
 from ConfigParser import ConfigParser
-from ftplib import FTP
 import time
 import pysvn
 
@@ -83,6 +85,8 @@ TAR_BZ2 = cfg.get('compression', 'TAR_BZ2')
 ZIP = cfg.get('compression', 'ZIP')
 
 RSH = cfg.get('rsh', 'RSH')
+
+SFTP = cfg.get('sftp', 'SFTP')
 
 PURGE_URL = cfg.get('wiki', 'PURGE_URL')
 UPDATE_URL = cfg.get('wiki', 'UPDATE_URL')
@@ -362,20 +366,21 @@ def CreateSpecialBuilds():
 def UploadFiles():
 	print 'uploading files to SourceForge...'
 
-	def upload(ftp, file):
-		print '  uploading %s...' % file
-		ftp.storbinary('STOR /incoming/%s' % file.split('\\')[-1], open(file, 'rb'))
+	sftpcmds = file('sftp-commands', 'wb')
+	sftpcmds.write('cd uploads')
+	sftpcmds.write('put %s.tar.bz2\n' % newverdir)
+	sftpcmds.write('put %s\\nsis-%s-setup.exe\n' % (newverdir, VERSION))
+	sftpcmds.write('put %s\\nsis-%s.zip\n' % (newverdir, VERSION))
+	sftpcmds.write('put nsis-%s-log.zip\n' % VERSION)
+	sftpcmds.write('put nsis-%s-strlen_8192.zip\n' % VERSION)
 
-	ftp = FTP('upload.sourceforge.net')
-	ftp.login()
+	run(
+		SFTP % 'sftp-commands',
+		LOG_ALL,
+		'upload failed'
+	)
 
-	upload(ftp, newverdir + '.tar.bz2')
-	upload(ftp, newverdir + '\\nsis-%s-setup.exe' % VERSION)
-	upload(ftp, newverdir + '\\nsis-%s.zip' % VERSION)
-	upload(ftp, 'nsis-%s-log.zip' % VERSION)
-	upload(ftp, 'nsis-%s-strlen_8192.zip' % VERSION)
-
-	ftp.quit()
+  os.unlink('sftp-commands')
 
 def ManualRelease():
 	print 'release url:'
