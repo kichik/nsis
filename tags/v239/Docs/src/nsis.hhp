@@ -1,0 +1,21 @@
+[OPTIONS]
+Compatibility=1.1 or later
+Compiled file=NSIS.chm
+Contents file=toc.hhc
+Default Window=Main
+Default topic=Contents.html
+Display compile progress=Yes
+Full-text search=Yes
+Index file=ind.hhk
+Language=0x409 English (United States)
+Title=NSIS Users Manual
+
+[WINDOWS]
+Main="NSIS User Manual","toc.hhc","ind.hhk","Contents.html","Contents.html",,,,,0x23520,,0x387e,,0xb0000,,,,,,0
+
+
+[FILES]
+Contents.html
+
+[INFOTYPES]
+
