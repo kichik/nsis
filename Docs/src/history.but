@@ -10,7 +10,7 @@ Released on August 16th, 2008
 
 \b Added \R{define}{!define} \e{/file} and \R{searchparse}{!searchparse} (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=2016254}{patch #2016254})
 
-\b Added service pack macros (AtLeastServicePack, IsServicePack, AtMostServicePack) for WinVer.nsh (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=2036802}{patch #2036802})
+\b Added service pack macros (AtLeastServicePack, IsServicePack, AtMostServicePack) to WinVer.nsh (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=2036802}{patch #2036802})
 
 \S2{} Minor Changes
 
