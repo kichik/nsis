@@ -1,5 +1,29 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.39} 2.39
+
+Released on August 16th, 2008
+
+\S1{v2.39-cl} Changelog
+
+\S2{} Major Changes
+
+\b Added \R{define}{!define} \e{/file} and \R{searchparse}{!searchparse} (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=2016254}{patch #2016254})
+
+\b Added service pack macros (AtLeastServicePack, IsServicePack, AtMostServicePack) for WinVer.nsh (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=2036802}{patch #2036802})
+
+\S2{} Minor Changes
+
+\b Added more \L{../Docs/nsDialogs/Readme.html}{nsDialogs} list box handling macros (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=2041919}{patch #2041919})
+
+\b Added Unicode version compatible \L{../Docs/System/System.html}{System} string type (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=2025721}{patch #2025721}, \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373088&aid=1961307}{RFE #1961307})
+
+\b Fixed \L{../Docs/nsDialogs/Readme.html}{nsDialogs} atom leak (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=2053522}{bug #2053522})
+
+\b Minor documentation improvements
+
+\b Show hand cursor for \L{../Docs/nsDialogs/Readme.html}{nsDialogs} links (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=2004129}{patch #2004129})
+
 \H{v2.38} 2.38
 
 Released on July 12th, 2008
