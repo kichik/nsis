@@ -163,45 +163,45 @@ def RunTests():
 	)
 
 def TestSubversionEOL():
-  print 'ensuring EOL...'
+	print 'ensuring EOL...'
 
-  from os import walk
-  from os.path import join
-  from os.path import splitext
-  
-  eoldict = {
-    '.nsh' : 'native',
-    '.nsi' : 'native',
-    '.txt' : 'native',
-    '.ini' : 'CRLF',
-    '.dsp' : 'CRLF',
-    '.dsw' : 'CRLF'
-  }
+	from os import walk
+	from os.path import join
+	from os.path import splitext
+	
+	eoldict = {
+		'.nsh' : 'native',
+		'.nsi' : 'native',
+		'.txt' : 'native',
+		'.ini' : 'CRLF',
+		'.dsp' : 'CRLF',
+		'.dsw' : 'CRLF'
+	}
 
-  exceptions = ['newfile.txt', 'oldfile.txt']
+	exceptions = ['newfile.txt', 'oldfile.txt']
 
-  svn = pysvn.Client()
+	svn = pysvn.Client()
 
-  for root, dirs, files in walk('..'):
-    if '.svn' not in dirs:
-      continue
+	for root, dirs, files in walk('..'):
+		if '.svn' not in dirs:
+			continue
 
-    def versioned(f):
-      s = svn.status(join(root, f))[0].text_status
-      return s != pysvn.wc_status_kind.unversioned
+		def versioned(f):
+			s = svn.status(join(root, f))[0].text_status
+			return s != pysvn.wc_status_kind.unversioned
 
-    svn_files = filter(versioned, files)
-    svn_files = filter(lambda x: x not in exceptions, svn_files)
+		svn_files = filter(versioned, files)
+		svn_files = filter(lambda x: x not in exceptions, svn_files)
 
-    for f in svn_files:
-      ext = splitext(f)[1]
-      if ext in eoldict.keys():
-        eol = eoldict[ext]
-        s = svn.propget('svn:eol-style', join(root, f)).values()
-        if not s or s[0] != eol:
-          print '*** %s has bad eol-style' % f
-          log('*** %s has bad eol-style' % f)
-          exit()
+		for f in svn_files:
+			ext = splitext(f)[1]
+			if ext in eoldict.keys():
+				eol = eoldict[ext]
+				s = svn.propget('svn:eol-style', join(root, f)).values()
+				if not s or s[0] != eol:
+					print '*** %s has bad eol-style' % f
+					log('*** %s has bad eol-style' % f)
+					exit()
 
 def CreateMenuImage():
 	print 'creating images...'
@@ -380,7 +380,7 @@ def UploadFiles():
 		'upload failed'
 	)
 
-  os.unlink('sftp-commands')
+	os.unlink('sftp-commands')
 
 def ManualRelease():
 	print 'release url:'
