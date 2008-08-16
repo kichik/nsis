@@ -366,8 +366,8 @@ def CreateSpecialBuilds():
 def UploadFiles():
 	print 'uploading files to SourceForge...'
 
-	sftpcmds = file('sftp-commands', 'wb')
-	sftpcmds.write('cd uploads')
+	sftpcmds = file('sftp-commands', 'w')
+	sftpcmds.write('cd uploads\n')
 	sftpcmds.write('put %s.tar.bz2\n' % newverdir)
 	sftpcmds.write('put %s\\nsis-%s-setup.exe\n' % (newverdir, VERSION))
 	sftpcmds.write('put %s\\nsis-%s.zip\n' % (newverdir, VERSION))
