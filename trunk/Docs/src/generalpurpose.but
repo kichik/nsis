@@ -47,7 +47,7 @@ The error flag is set if the shortcut cannot be created (i.e. either of the path
 \c CreateDirectory "$SMPROGRAMS\My Company"
 \c CreateShortCut "$SMPROGRAMS\My Company\My Program.lnk" "$INSTDIR\My Program.exe" \
 \c   "some command line parameters" "$INSTDIR\My Program.exe" 2 SW_SHOWNORMAL \
-\c   ALT|CTRL|SHIFT|F5 "a description"
+\c   ALT|CONTROL|SHIFT|F5 "a description"
 
 \S2{getdllversion} GetDLLVersion
 
