@@ -69,13 +69,13 @@ $(^Name) 解除安装
 # ^Completed
 已完成
 # ^LicenseText
-在安装 $(^NameDA) 之前请检阅许可证协议。如果你接受协议中所有条款，单击 [我同意(I)] 。
+在安装 $(^NameDA) 之前请检阅许可证协议。如果你接受协议中所有条款，单击 [我接受(I)] 。
 # ^LicenseTextCB
 在安装 $(^NameDA) 之前请检阅许可证协议。如果你接受协议中所有条款，单击下方的勾选框。 $_CLICK
 # ^LicenseTextRB
 在安装 $(^NameDA) 之前请检阅许可证协议。如果你接受协议中所有条款，选择下方的第一个选项。 $_CLICK
 # ^UnLicenseText
-在解除安装 $(^NameDA) 之前请检阅许可证协议。如果你接受协议中所有条款，单击 [我同意(I)] 。
+在解除安装 $(^NameDA) 之前请检阅许可证协议。如果你接受协议中所有条款，单击 [我接受(I)] 。
 # ^UnLicenseTextCB
 在解除安装 $(^NameDA) 之前请检阅许可证协议。如果你接受协议中所有条款，单击下方的勾选框。 $_CLICK
 # ^UnLicenseTextRB
