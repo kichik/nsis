@@ -169,38 +169,42 @@
   ; $1 = malloc(sizeof(OSVERSIONINFOEXA))
   System::Alloc 156
   Pop $1
-  ${If} $1 <> 0
+  StrCmp $1 0 Label_WinVer_ServicePack_End_${LOGICLIB_COUNTER}
     ; ($1)->dwOSVersionInfoSize = sizeof(OSVERSIONINFOEXA)
     System::Call /NOUNLOAD '*$1(&i4 156)'
     ; GetVersionEx($1)
     System::Call /NOUNLOAD 'kernel32::GetVersionEx(i r1) i.r0'
-    ${If} $0 <> 0
+    StrCmp $0 0 Label_WinVer_ServicePack_GetVersion_${LOGICLIB_COUNTER}
       ; $2 = ($1)->wServicePackMajor
       System::Call /NOUNLOAD '*$1(&t148, &i2.r2)'
-    ${Else}
+      Goto Label_WinVer_ServicePack_End_${LOGICLIB_COUNTER}
+
+Label_WinVer_ServicePack_GetVersion_${LOGICLIB_COUNTER}:
       ; ($1)->dwOSVersionInfoSize = sizeof(OSVERSIONINFOA)
       System::Call /NOUNLOAD '*$1(&i4 148)'
       ; GetVersionEx($1)
       System::Call /NOUNLOAD 'kernel32::GetVersionEx(i r1) i.r0'
-      ${If} $0 <> 0
+      StrCmp $0 0 Label_WinVer_ServicePack_End_${LOGICLIB_COUNTER}
         ; $2 = ($1)->szCSDVersion
         System::Call /NOUNLOAD '*$1(&t20, &t128.r2)'
         StrCpy $0 $2 13
-        ${If} $0 == "Service Pack "
+        StrCmp $0 "Service Pack " 0 +3
           StrCpy $2 $2 "" 13
-        ${Else}
-          StrCpy $2 0
-        ${EndIf}
-      ${EndIf}
-    ${EndIf}
-    System::Free $1
-  ${EndIf}
+          Goto +2
+        StrCpy $2 0
+
+Label_WinVer_ServicePack_End_${LOGICLIB_COUNTER}:
+    ; free($1)
+    StrCmp $1 0 +2
+      System::Free $1
 
   StrCpy $_LOGICLIB_TEMP $2
 
   Pop $2
   Pop $1
   Pop $0
+
+  !insertmacro _IncreaseCounter
 
 !macroend
 
