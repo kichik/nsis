@@ -349,6 +349,7 @@ Finish page (implemented using nsDialogs)
         !else
           SendMessage $mui.FinishPage.RebootLater ${BM_SETCHECK} ${BST_CHECKED} 0
         !endif
+        ${NSD_SetFocus} $mui.FinishPage.RebootNow
 
       ${else}
 
@@ -378,6 +379,7 @@ Finish page (implemented using nsDialogs)
           !ifndef MUI_FINISHPAGE_RUN_NOTCHECKED
             SendMessage $mui.FinishPage.Run ${BM_SETCHECK} ${BST_CHECKED} 0
           !endif
+          ${NSD_SetFocus} $mui.FinishPage.Run
         !endif
         !ifdef MUI_FINISHPAGE_SHOWREADME
           ${NSD_CreateCheckbox} 120u ${MUI_FINISHPAGE_SHOWREADME_TOP}u 195u 10u "${MUI_FINISHPAGE_SHOWREADME_TEXT}"
@@ -385,6 +387,9 @@ Finish page (implemented using nsDialogs)
           SetCtlColors $mui.FinishPage.ShowReadme "" "${MUI_BGCOLOR}"
           !ifndef MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
             SendMessage $mui.FinishPage.ShowReadme ${BM_SETCHECK} ${BST_CHECKED} 0
+          !endif
+          !ifndef MUI_FINISHPAGE_RUN
+            ${NSD_SetFocus} $mui.FinishPage.ShowReadme
           !endif
         !endif
     
