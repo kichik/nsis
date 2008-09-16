@@ -458,7 +458,7 @@ Function nsDialogsPage
 	${If} $Checkbox_State == ${BST_CHECKED}
 		${NSD_Check} $Checkbox
 	${EndIf}
-	
+
 	# alternative for the above ${If}:
 	#${NSD_SetState} $Checkbox_State</b>
 
@@ -510,6 +510,8 @@ SectionEnd</pre></blockquote>
 <p><code>nsDialogs::SelectFileDialog /NOUNLOAD <i>mode</i> <i>initial_selection</i> <i>filter</i></code></p>
 
 <p>Displays a file selection dialog to the user. If <i>mode</i> is set to <i>save</i>, displays a file save dialog. If <i>mode</i> is set to <i>open</i>, displays a file open dialog. <i>filter</i> is a list of available file filters separated by pipes. If an empty string is passed, the default is used - <i>All Files|*.*</i>.</p>
+
+<p><i>initial_selection</i> can be used to provide the user with a default file to look for and/or a default folder to look in. If <i>initial_selection</i> is empty no default filename will be provided for the user and the dialog will start in the current working directory. If <i>initial_selection</i> specifies just a filename, for example "test.exe", the dialog will be set up to look for a file called test.exe in the current working directory. If <i>initial_selection</i> specifies just a directory, for example "C:\Program Files", the dialog starts in the provided directory with no file name provided. If <i>initial_selection</i> specifies a directory and a filename, for example "C:\Windows\System32\calc.exe", the dialog will be set up to look for a file called calc.exe in the directory C:\Windows\System32.</p>
 
 <p>Returns the selected file on the stack or an empty string if the user canceled the operation.</p>
 
