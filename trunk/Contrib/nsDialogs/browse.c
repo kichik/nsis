@@ -84,9 +84,11 @@ void __declspec(dllexport) SelectFileDialog(HWND hwndParent, int string_size, ch
   OPENFILENAME ofn={0,}; // XXX WTF
   int save;
   char type[5];
-  char path[1024];
-  char filter[1024];
-  char currentDirectory[1024];
+  static char path[1024];
+  static char filter[1024];
+  static char currentDirectory[1024];
+  static char initialDir[1024];
+  DWORD gfa;
 
   EXDLL_INIT();
 
@@ -103,6 +105,16 @@ void __declspec(dllexport) SelectFileDialog(HWND hwndParent, int string_size, ch
   popstring(filter, sizeof(filter));
 
   save = !lstrcmpi(type, "save");
+
+  // Check if the path given is a folder. If it is we initialize the 
+  // ofn.lpstrInitialDir parameter
+  gfa = GetFileAttributes(path);
+  if ((gfa != INVALID_FILE_ATTRIBUTES) && (gfa & FILE_ATTRIBUTE_DIRECTORY))
+  {
+    lstrcpy(initialDir, path);
+    ofn.lpstrInitialDir = initialDir;
+    path[0] = '\0'; // disable initial file selection as path is actually a directory
+  }
 
   if (!filter[0])
   {
