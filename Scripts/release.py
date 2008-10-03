@@ -415,13 +415,6 @@ def UpdateWiki(release_id):
 	update_wiki_page('Template:NSISReleaseDate', time.strftime('%B %d, %Y'), 'new version')
 	update_wiki_page('Template:NSISReleaseID', release_id, 'new version')
 
-def UpdateChangeLog():
-	run(
-		'%s /home/groups/n/ns/nsis/bin/touch_cl_tag.sh' % RSH,
-		LOG_ALL,
-		'change log tag modification failed'
-	)
-
 def ToDo():
 	print 'automatic phase done\n'
 	print """
@@ -454,6 +447,5 @@ CreateSpecialBuilds()
 UploadFiles()
 release_id = ManualRelease()
 UpdateWiki(release_id)
-UpdateChangeLog()
 ToDo()
 CloseLog()
