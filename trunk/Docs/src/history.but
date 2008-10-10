@@ -1,5 +1,31 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.40} 2.40
+
+Released on October 10th, 2008
+
+\S1{v2.40-cl} Changelog
+
+\S2{} Major Changes
+
+\b Service pack macros added to WinVer in version 2.39 now work (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=2070708}{bug #2070708}, \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=2095363}{patch #2095363})
+
+\S2{} Minor Changes
+
+\b Added initial folder selection option for \L{../Docs/nsDialogs/Readme.html}{nsDialogs}::SelectFileDialog (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=2016003}{patch #2016003})
+
+\b Fixed \R{getparameters}{GetParameters} handling of MBCS characters (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=2067946}{bug #2067946})
+
+\b Fixed incorrect $\{NSD_OnBack\} documentation (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=2059651}{bug #2059651})
+
+\b \L{../Docs/Modern UI 2/Readme.html}{Modern UI 2}: Set focus to checkboxes on the finish page (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=2110357}{bug #2110357})
+
+\S2{} Translations
+
+\b Portuguese corrections (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=2086988}{bug #2086988})
+
+\b Simplified Chinese corrections (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=2056906}{patch #2056906})
+
 \H{v2.39} 2.39
 
 Released on August 16th, 2008
