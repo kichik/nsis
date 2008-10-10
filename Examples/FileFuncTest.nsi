@@ -22,6 +22,7 @@ Var OUT6
 Var OUT7
 
 !include "FileFunc.nsh"
+!include "LogicLib.nsh"
 
 !insertmacro Locate
 !insertmacro GetSize
@@ -240,7 +241,59 @@ SectionEnd
 Section GetParameters
 	${StackVerificationStart} GetParameters
 
+	# basic stuff
+
+	StrCpy $CMDLINE '"$PROGRAMFILES\Something\Hello.exe"'
 	${GetParameters} $OUT1
+	StrCpy $CMDLINE '"$PROGRAMFILES\Something\Hello.exe" test'
+	${GetParameters} $OUT2
+	StrCpy $CMDLINE '"$PROGRAMFILES\Something\Hello.exe" "test"'
+	${GetParameters} $OUT3
+	StrCpy $CMDLINE 'C:\Hello.exe'
+	${GetParameters} $OUT4
+	StrCpy $CMDLINE 'C:\Hello.exe test'
+	${GetParameters} $OUT5
+	StrCpy $CMDLINE 'C:\Hello.exe "test"'
+	${GetParameters} $OUT6
+	StrCpy $CMDLINE 'C:\Hello.exe       test test  '
+	${GetParameters} $OUT7
+
+	${If} $OUT1 != ""
+	${OrIf} $OUT2 != "test"
+	${OrIf} $OUT3 != '"test"'
+	${OrIf} $OUT4 != ""
+	${OrIf} $OUT5 != "test"
+	${OrIf} $OUT6 != '"test"'
+	${OrIf} $OUT7 != 'test test'
+		SetErrors
+	${EndIf}
+
+	# some corner cases
+
+	StrCpy $CMDLINE ''
+	${GetParameters} $OUT1
+	StrCpy $CMDLINE '"'
+	${GetParameters} $OUT2
+	StrCpy $CMDLINE '""'
+	${GetParameters} $OUT3
+	StrCpy $CMDLINE '"" test'
+	${GetParameters} $OUT4
+	StrCpy $CMDLINE ' test'
+	${GetParameters} $OUT5
+	StrCpy $CMDLINE '  test'
+	${GetParameters} $OUT6
+	StrCpy $CMDLINE ' '
+	${GetParameters} $OUT7
+
+	${If} $OUT1 != ""
+	${OrIf} $OUT2 != ""
+	${OrIf} $OUT3 != ""
+	${OrIf} $OUT4 != ""
+	${OrIf} $OUT5 != ""
+	${OrIf} $OUT6 != ""
+	${OrIf} $OUT7 != ""
+		SetErrors
+	${EndIf}
 
 	${StackVerificationEnd}
 SectionEnd
