@@ -1410,33 +1410,51 @@ RefreshShellIcons
 		!define ${_FILEFUNC_UN}GetParameters `!insertmacro ${_FILEFUNC_UN}GetParametersCall`
 
 		Function ${_FILEFUNC_UN}GetParameters
-			Push $0
-			Push $1
-			Push $2
+			;cmdline-check
+			StrCmp $CMDLINE "" 0 +3
+			Push ""
+			Return
 
-			StrCpy $1 1
-			StrCpy $0 $CMDLINE 1
-			StrCmp $0 '"' 0 +3
-			StrCpy $2 '"'
-			goto +2
-			StrCpy $2 ' '
+            ;vars
+			Push $0  ;tmp
+			Push $1  ;length
+			Push $2  ;parameter offset
+			Push $3  ;separator
 
-			IntOp $1 $1 + 1
-			StrCpy $0 $CMDLINE 1 $1
-			StrCmp $0 $2 +2
-			StrCmp $0 '' end -3
+			;length/offset
+			StrLen $1 $CMDLINE
+			StrCpy $2 2  ;start with third character
 
-			IntOp $1 $1 + 1
-			StrCpy $0 $CMDLINE 1 $1
-			StrCmp $0 ' ' -2
-			StrCpy $0 $CMDLINE '' $1
+			;separator
+			StrCpy $3 $CMDLINE 1 ;first character
+			StrCmp $3 '"' +2
+			StrCpy $3 ' '
 
+			token:  ;finding second separator
+			IntCmp $2 $1 strip 0 strip
+			StrCpy $0 $CMDLINE 1 $2
+			IntOp $2 $2 + 1
+			StrCmp $3 $0 0 token
+
+			strip:  ;strip white space
+			IntCmp $2 $1 copy 0 copy
+			StrCpy $0 $CMDLINE 1 $2
+			StrCmp $0 ' ' 0 copy
+			IntOp $2 $2 + 1
+			Goto strip
+
+			copy:
+			StrCpy $0 $CMDLINE "" $2
+
+			;strip white spaces from end
+			rstrip:
 			StrCpy $1 $0 1 -1
-			StrCmp $1 ' ' 0 +3
+			StrCmp $1 ' ' 0 done
 			StrCpy $0 $0 -1
-			goto -3
+			Goto rstrip
 
-			end:
+			done:
+			Pop $3
 			Pop $2
 			Pop $1
 			Exch $0
