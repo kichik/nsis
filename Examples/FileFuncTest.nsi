@@ -280,7 +280,8 @@ Section GetParameters
 	${GetParameters} $OUT4
 	StrCpy $CMDLINE ' test'
 	${GetParameters} $OUT5
-	StrCpy $CMDLINE '  test'
+	StrCpy $CMDLINE '  test' # left over bug(?) from old GetParameters
+	                         # it starts looking for ' ' from the third char
 	${GetParameters} $OUT6
 	StrCpy $CMDLINE ' '
 	${GetParameters} $OUT7
