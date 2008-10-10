@@ -82,6 +82,7 @@ extralibs = Split("""
 
 scripts = Split("""
 	preprocessor.nsi
+	winver.nsi
 """)
 
 Import('env AddAvailableLibs')
