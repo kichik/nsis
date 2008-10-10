@@ -1,0 +1,24 @@
+target = 'BgImage'
+
+files = Split("""
+	BgImage.cpp
+""")
+
+libs = Split("""
+	kernel32
+	user32
+	gdi32
+	winmm
+""")
+
+examples = Split("""
+	Example.nsi
+""")
+
+docs = Split("""
+	BgImage.txt
+""")
+
+Import('BuildPlugin')
+
+BuildPlugin(target, files, libs, examples, docs)

@@ -1,0 +1,28 @@
+\S0{jumps} Relative Jumps
+
+Unlike labels, relative jumps are, as the name suggests, relative to the place they are called from. You can use relative jumps wherever you can use labels. Relative jumps are marked by numbers. +1 jumps to the next instruction (the default advancement), +2 will skip one instruction and go to the second instruction from the current instruction, -2 will jump two instructions backward, and +10 will skip 9 instructions, jumping to the tenth instruction from the current instruction.
+
+An instruction is every command that is executed at run-time, when the installer is running. \R{messagebox}{MessageBox}, \R{goto}{Goto}, \R{getdllversion}{GetDLLVersion}, \R{FileRead}{FileRead}, \R{setshellvarcontext}{SetShellVarContext} are all instructions. \R{saddsize}{AddSize}, \R{ssection}{Section}, \R{ssectiongroup}{SectionGroup}, \R{ssectionend}{SectionEnd}, \R{asetoverwrite}{SetOverwrite} (and everything under \R{flags}{Compiler Flags}), \R{aname}{Name}, \R{asetfont}{SetFont}, \R{langstring}{LangString}, are not instructions because they are executed at compile time.
+
+Examples:
+
+\c  Goto +2
+\c    MessageBox MB_OK "You will never ever see this message box"
+\c  MessageBox MB_OK "The last message was skipped, this one should be shown"
+
+\c  Goto +4
+\c  MessageBox MB_OK "The following message will be skipped"
+\c  Goto +3
+\c  MessageBox MB_OK "You will never ever see this message box"
+\c  Goto -3
+\c  MessageBox MB_OK "Done"
+
+Note that \R{insertmacro}{macro insertion} is not considered as one instruction when it comes to relative jumps. The macro is expanded before relative jumps are applied, and so relative jumps can jump into code inside an inserted macro. The following code, for example, will not skip the macro. It will show a message box.
+
+\c !macro relative_jump_test
+\c   MessageBox MB_OK "first macro line"
+\c   MessageBox MB_OK "second macro line"
+\c !macroend
+\c 
+\c Goto +2
+\c !insertmacro relative_jump_test

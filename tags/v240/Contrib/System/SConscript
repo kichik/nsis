@@ -1,0 +1,38 @@
+target = 'System'
+
+files = Split("""
+	Source/Buffers.c
+	Source/Plugin.c
+	Source/System.c
+""")
+
+libs = Split("""
+	kernel32
+	user32
+	ole32
+""")
+
+examples = Split("""
+	Resource.dll
+	System.nsi
+	System.nsh
+	SysFunc.nsh
+""")
+
+docs = Split("""
+	System.html
+	WhatsNew.txt
+""")
+
+Import('BuildPlugin')
+
+BuildPlugin(
+	target,
+	files,
+	libs,
+	examples,
+	docs,
+	entry = '_DllMainCRTStartup',
+	nodeflib = False,
+	defines = ['SYSTEM_EXPORTS']
+)
