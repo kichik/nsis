@@ -36,3 +36,20 @@ BuildPlugin(
 	nodeflib = False,
 	defines = ['SYSTEM_EXPORTS']
 )
+
+Import('env')
+
+res = 'Resource/Resource.rc'
+
+res_obj = 'Resource/Resource-rc.o'
+
+res_target = env.RES(res_obj, res)
+
+resources = Split("""
+	Resource/Icon.ico
+	Resource/Resource.h
+""")
+
+env.Depends(res_target, resources)
+
+env.SharedLibrary('Resource', res_target)
