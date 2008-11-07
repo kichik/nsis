@@ -374,12 +374,12 @@ int generate_unicons_offsets(LPBYTE exeHeader, size_t exeHeaderSize, LPBYTE unin
 
     offset = re.GetResourceOffsetA(RT_GROUP_ICON, MAKEINTRESOURCE(wIconId), NSIS_DEFAULT_LANG);
 
-    size = *(LPDWORD)seeker;
+    size = FIX_ENDIAN_INT32(*(LPDWORD)seeker);
     seeker += sizeof(DWORD);
     *(LPDWORD) seeker = FIX_ENDIAN_INT32(offset);
     seeker += sizeof(DWORD);
 
-    seeker += FIX_ENDIAN_INT32(size);
+    seeker += size;
 
     WORD icon_index = 1;
 
@@ -394,7 +394,7 @@ int generate_unicons_offsets(LPBYTE exeHeader, size_t exeHeaderSize, LPBYTE unin
 
       DWORD real_size = re.GetResourceSizeA(RT_ICON, MAKEINTRESOURCE(icon_index), NSIS_DEFAULT_LANG);
 
-      size = *(LPDWORD)seeker;
+      size = FIX_ENDIAN_INT32(*(LPDWORD)seeker);
       seeker += sizeof(DWORD);
 
       if (real_size < size)
@@ -405,7 +405,7 @@ int generate_unicons_offsets(LPBYTE exeHeader, size_t exeHeaderSize, LPBYTE unin
       *(LPDWORD) seeker = FIX_ENDIAN_INT32(offset);
       seeker += sizeof(DWORD);
 
-      seeker += FIX_ENDIAN_INT32(size);
+      seeker += size;
 
       icon_index++;
     }
