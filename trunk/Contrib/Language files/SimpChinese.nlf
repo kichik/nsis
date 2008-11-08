@@ -15,7 +15,7 @@ Nullsoft Install System %s
 # ^SetupCaption
 $(^Name) ╟╡в╟
 # ^UninstallCaption
-$(^Name) ╫БЁЩ╟╡в╟
+$(^Name) п╤ть
 # ^LicenseSubCaption
 : пМ©иж╓п╜рИ
 # ^ComponentsSubCaption
@@ -27,13 +27,13 @@ $(^Name) ╫БЁЩ╟╡в╟
 # ^CompletedSubCaption
 : рямЙЁи
 # ^UnComponentsSubCaption
-: ╫БЁЩ╟╡в╟я║оН
+: п╤тья║оН
 # ^UnDirSubCaption
-: ╫БЁЩ╟╡в╟нд╪Ч╪п
+: п╤тьнд╪Ч╪п
 # ^ConfirmSubCaption
 : х╥хо
 # ^UninstallingSubCaption
-: уЩтз╫БЁЩ╟╡в╟
+: уЩтзп╤ть
 # ^UnCompletedSubCaption
 : мЙЁи
 # ^BackBtn
@@ -49,7 +49,7 @@ $(^Name) ╫БЁЩ╟╡в╟
 # ^InstallBtn
 ╟╡в╟(&I)
 # ^UninstallBtn
-рфЁЩ(&U)
+п╤ть(&U)
 # ^CancelBtn
 х║оШ(&C)
 # ^CloseBtn
@@ -63,7 +63,7 @@ $(^Name) ╫БЁЩ╟╡в╟
 # ^ClickInstall
 ╣╔╩В [╟╡в╟(I)] ©╙й╪╟╡в╟╫ЬЁл║ё
 # ^ClickUninstall
-╣╔╩В [╫БЁЩ╟╡в╟(U)] ©╙й╪╫БЁЩ╟╡в╟╫ЬЁл║ё
+╣╔╩В [п╤ть(U)] ©╙й╪╫БЁЩ╟╡в╟╫ЬЁл║ё
 # ^Name
 цШЁф
 # ^Completed
@@ -75,11 +75,11 @@ $(^Name) ╫БЁЩ╟╡в╟
 # ^LicenseTextRB
 тз╟╡в╟ $(^NameDA) ж╝г╟гК╪ЛтдпМ©иж╓п╜рИ║ёхГ╧ШдЦ╫сйэп╜рИжпкЫсплУ©Нё╛я║тЯоб╥╫╣д╣зр╩╦Жя║оН║ё $_CLICK
 # ^UnLicenseText
-тз╫БЁЩ╟╡в╟ $(^NameDA) ж╝г╟гК╪ЛтдпМ©иж╓п╜рИ║ёхГ╧ШдЦ╫сйэп╜рИжпкЫсплУ©Нё╛╣╔╩В [нр╫сйэ(I)] ║ё
+тзп╤ть $(^NameDA) ж╝г╟гК╪ЛтдпМ©иж╓п╜рИ║ёхГ╧ШдЦ╫сйэп╜рИжпкЫсплУ©Нё╛╣╔╩В [нр╫сйэ(I)] ║ё
 # ^UnLicenseTextCB
-тз╫БЁЩ╟╡в╟ $(^NameDA) ж╝г╟гК╪ЛтдпМ©иж╓п╜рИ║ёхГ╧ШдЦ╫сйэп╜рИжпкЫсплУ©Нё╛╣╔╩Воб╥╫╣д╧╢я║©Р║ё $_CLICK
+тзп╤ть $(^NameDA) ж╝г╟гК╪ЛтдпМ©иж╓п╜рИ║ёхГ╧ШдЦ╫сйэп╜рИжпкЫсплУ©Нё╛╣╔╩Воб╥╫╣д╧╢я║©Р║ё $_CLICK
 # ^UnLicenseTextRB
-тз╫БЁЩ╟╡в╟ $(^NameDA) ж╝г╟гК╪ЛтдпМ©иж╓п╜рИ║ёхГ╧ШдЦ╫сйэп╜рИжпкЫсплУ©Нё╛я║тЯоб╥╫╣д╣зр╩╦Жя║оН║ё $_CLICK
+тзп╤ть $(^NameDA) ж╝г╟гК╪ЛтдпМ©иж╓п╜рИ║ёхГ╧ШдЦ╫сйэп╜рИжпкЫсплУ©Нё╛я║тЯоб╥╫╣д╣зр╩╦Жя║оН║ё $_CLICK
 # ^Custom
 вт╤╗рЕ
 # ^ComponentsText
@@ -91,13 +91,13 @@ $(^Name) ╫БЁЩ╟╡в╟
 # ^ComponentsSubText2
 ╩Руъё╛вт╤╗рЕя║╤╗оК╟╡в╟╣двИ╪Ч: 
 # ^UnComponentsText
-╧╢я║дЦоКр╙╫БЁЩ╟╡в╟╣двИ╪Чё╛╡╒╫БЁЩ╧╢я║дЦ╡╩оёмШ╫БЁЩ╟╡в╟╣двИ╪Ч║ё $_CLICK
+╧╢я║дЦоКр╙п╤ть╣двИ╪Чё╛╡╒╫БЁЩ╧╢я║дЦ╡╩оёмШп╤ть╣двИ╪Ч║ё $_CLICK
 # ^UnComponentsSubText1
-я║тЯ╫БЁЩ╟╡в╟╣дюЮпм: 
+я║тЯп╤ть╣дюЮпм: 
 # ^UnComponentsSubText2_NoInstTypes
-я║тЯр╙╫БЁЩ╟╡в╟╣двИ╪Ч: 
+я║тЯр╙п╤ть╣двИ╪Ч: 
 # ^UnComponentsSubText2
-╩Рйгё╛я║тЯоКр╙╫БЁЩ╟╡в╟╣д©ия║оНвИ╪Ч: 
+╩Рйгё╛я║тЯоКр╙п╤ть╣д©ия║оНвИ╪Ч: 
 # ^DirText
 Setup ╫╚╟╡в╟ $(^NameDA) тзобапнд╪Ч╪п║ёр╙╟╡в╟╣╫╡╩м╛нд╪Ч╪пё╛╣╔╩В [Д╞юю(B)] ╡╒я║тЯфДкШ╣днд╪Ч╪п║ё $_CLICK
 # ^DirSubText
@@ -105,19 +105,19 @@ Setup ╫╚╟╡в╟ $(^NameDA) тзобапнд╪Ч╪п║ёр╙╟╡в╟╣╫╡╩м╛нд╪Ч╪пё╛╣╔╩В [Д╞юю(B)] ╡╒я║тЯф
 # ^DirBrowseText
 я║тЯр╙╟╡в╟ $(^NameDA) ╣днд╪Ч╪пн╩жц: 
 # ^UnDirText
-Setup ╫╚╫БЁЩ╟╡в╟ $(^NameDA) тзобапнд╪Ч╪п║ёр╙╫БЁЩ╟╡в╟╣╫╡╩м╛нд╪Ч╪пё╛╣╔╩В [Д╞юю(B)] ╡╒я║тЯфДкШ╣днд╪Ч╪п║ё $_CLICK
+Setup ╫╚п╤ть $(^NameDA) тзобапнд╪Ч╪п║ёр╙п╤ть╣╫╡╩м╛нд╪Ч╪пё╛╣╔╩В [Д╞юю(B)] ╡╒я║тЯфДкШ╣днд╪Ч╪п║ё $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
-я║тЯр╙╫БЁЩ╟╡в╟ $(^NameDA) ╣днд╪Ч╪пн╩жц: 
+я║тЯр╙п╤ть $(^NameDA) ╣днд╪Ч╪пн╩жц: 
 # ^SpaceAvailable
 "©исц©у╪Д: "
 # ^SpaceRequired
 "кЫпХ©у╪Д: "
 # ^UninstallingText
-уБ╦ЖоР╣╪╫╚╢сдЦ╣д╪фкЦ╩З╫БЁЩ╟╡в╟ $(^NameDA) ║ё $_CLICK
+уБ╦ЖоР╣╪╫╚╢сдЦ╣д╪фкЦ╩Зп╤ть $(^NameDA) ║ё $_CLICK
 # ^UninstallingSubText
-╫БЁЩ╟╡в╟д©б╪: 
+п╤тьд©б╪: 
 # ^FileError
 ╡╩дэ╢Р©╙р╙п╢хК╣днд╪Ч: \r\n\t"$0"\r\n╣╔╩В [Abort] ╥ефЗ╟╡в╟ё╛\r\n [Retry] жьпбЁ╒йтп╢хКнд╪Чё╛╩Р\r\n [Ignore] ╨ЖбтуБ╦Жнд╪Ч║ё
 # ^FileError_NoIgnore
@@ -141,7 +141,7 @@ Setup ╫╚╫БЁЩ╟╡в╟ $(^NameDA) тзобапнд╪Ч╪п║ёр╙╫БЁЩ╟╡в╟╣╫╡╩м╛нд╪Ч╪пё╛╣╔╩В [Д╞юю(B)]
 # ^CreateShortcut
 "╢╢╫╗©Л╫щ╥╫й╫: "
 # ^CreatedUninstaller
-"╢╢╫╗╫БЁЩ╟╡в╟ЁлпР: "
+"╢╢╫╗п╤тьЁлпР: "
 # ^Delete
 "и╬ЁЩнд╪Ч: "
 # ^DeleteOnReboot
