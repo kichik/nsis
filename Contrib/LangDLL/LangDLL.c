@@ -174,19 +174,19 @@ void __declspec(dllexport) LangDialog(HWND hwndParent, int string_size,
 
     // fill language struct
     for (i = 0; i < langs_num; i++) {
-      if (popstring(temp)) return;
+      if (popstring(temp)) { visible_langs_num = 0; break; }
       langs[visible_langs_num].name = GlobalAlloc(GPTR, lstrlen(temp)+1);
-      if (!langs[visible_langs_num].name) return;
+      if (!langs[visible_langs_num].name) { visible_langs_num = 0; break; }
       lstrcpy(langs[visible_langs_num].name, temp);
 
-      if (popstring(temp)) return;
+      if (popstring(temp)) { visible_langs_num = 0; break; }
       langs[visible_langs_num].id = GlobalAlloc(GPTR, lstrlen(temp)+1);
-      if (!langs[visible_langs_num].id) return;
+      if (!langs[visible_langs_num].id) { visible_langs_num = 0; break; }
       lstrcpy(langs[visible_langs_num].id, temp);
 
       if (docp)
       {
-        if (popstring(temp)) return;
+        if (popstring(temp)) { visible_langs_num = 0; break; }
         langs[visible_langs_num].cp = myatoi(temp);
       }
 
@@ -203,7 +203,9 @@ void __declspec(dllexport) LangDialog(HWND hwndParent, int string_size,
 
     // pop the empty string to keep the stack clean
     if (pop_empty_string) {
-      if (popstring(temp)) return;
+      if (popstring(temp)) {
+        visible_langs_num = 0;
+      }
     }
 
     // start dialog
@@ -222,8 +224,8 @@ void __declspec(dllexport) LangDialog(HWND hwndParent, int string_size,
 
     // free structs
     for (i = 0; i < visible_langs_num; i++) {
-      GlobalFree(langs[i].name);
-      GlobalFree(langs[i].id);
+      if (langs[i].name) GlobalFree(langs[i].name);
+      if (langs[i].id) GlobalFree(langs[i].id);
     }
     GlobalFree(langs);
   }
