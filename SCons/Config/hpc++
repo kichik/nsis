@@ -25,28 +25,28 @@ makensis_env = defenv.Clone()
 ### use "$CXX -Ae" as the "$CC" compiler to build makensis
 
 makensis_env['CC'] = makensis_env['CXX']
-makensis_env.Append(CFLAGS = '-Ae')
+makensis_env.Append(CFLAGS = ['-Ae'])
 
 ### required to build makensis
 
-makensis_env.Append(LINKFLAGS = '-AA')
-makensis_env.Append(LINKFLAGS = '+DD32')
-makensis_env.Append(LINKFLAGS = '-mt')
+makensis_env.Append(LINKFLAGS = ['-AA'])
+makensis_env.Append(LINKFLAGS = ['+DD32'])
+makensis_env.Append(LINKFLAGS = ['-mt'])
 
-makensis_env.Append(CXXFLAGS = '-AA')
-makensis_env.Append(CCFLAGS = '+DD32')
-makensis_env.Append(CCFLAGS = '-mt')
+makensis_env.Append(CXXFLAGS = ['-AA'])
+makensis_env.Append(CCFLAGS = ['+DD32'])
+makensis_env.Append(CCFLAGS = ['-mt'])
 
 ### debug for makensis
 
 if makensis_env['DEBUG']:
-	makensis_env.Append(CCFLAGS = '-g')
-	makensis_env.Append(LINKFLAGS = '-g')
+	makensis_env.Append(CCFLAGS = ['-g'])
+	makensis_env.Append(LINKFLAGS = ['-g'])
 
 ### strip for makensis
 
 if not makensis_env['DEBUG'] and makensis_env['STRIP']:
-	makensis_env.Append(LINKFLAGS = '-s')
+	makensis_env.Append(LINKFLAGS = ['-s'])
 
 #
 # aCC defines _BIG_ENDIAN, but we use __BIG_ENDIAN__ so check and define as
