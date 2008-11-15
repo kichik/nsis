@@ -17,7 +17,7 @@ def check_compile_flag(ctx, flag):
 	ctx.Message('Checking for compiler flag %s... ' % flag)
 
 	old_flags = ctx.env['CCFLAGS']
-	ctx.env.Append(CCFLAGS = flag)
+	ctx.env.Append(CCFLAGS = [flag])
 
 	test = """
 		int main() {
@@ -29,7 +29,7 @@ def check_compile_flag(ctx, flag):
 	ctx.Result(result)
 
 	if not result:
-		ctx.env.Replace(CCFLAGS = old_flags)
+		ctx.env.Replace(CCFLAGS = [old_flags])
 
 	return result
 
@@ -40,7 +40,7 @@ def check_link_flag(ctx, flag, run = 0, extension = '.c', code = None):
 	ctx.Message('Checking for linker flag %s... ' % flag)
 
 	old_flags = ctx.env['LINKFLAGS']
-	ctx.env.Append(LINKFLAGS = flag)
+	ctx.env.Append(LINKFLAGS = [flag])
 
 	if code:
 		test =  code
@@ -59,7 +59,7 @@ def check_link_flag(ctx, flag, run = 0, extension = '.c', code = None):
 	ctx.Result(result)
 
 	if not result:
-		ctx.env.Replace(LINKFLAGS = old_flags)
+		ctx.env.Replace(LINKFLAGS = [old_flags])
 
 	return result
 

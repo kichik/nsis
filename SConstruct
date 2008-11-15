@@ -485,10 +485,10 @@ def AddEnvStandardFlags(env, defines, flags, entry, nodeflib):
 		env.Append(CCFLAGS = flags)
 
 	if entry:
-		env.Append(LINKFLAGS = '${ENTRY_FLAG("%s")}' % entry)
+		env.Append(LINKFLAGS = ['${ENTRY_FLAG("%s")}' % entry])
 
 	if nodeflib:
-		env.Append(LINKFLAGS = '$NODEFLIBS_FLAG') # no default libraries
+		env.Append(LINKFLAGS = ['$NODEFLIBS_FLAG']) # no default libraries
 
 def AppendRES(env, source, res, resources):
 	if res:
