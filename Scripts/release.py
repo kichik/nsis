@@ -32,6 +32,7 @@ RSH="C:\Program Files\PuTTY\plink.exe" -2 -l kichik nsis.sourceforge.net
 SFTP="C:\Program Files\PuTTY\psftp.exe" -2 -l kichik -batch -b %s frs.sourceforge.net
 
 [wiki]
+PURGE_URL=http://nsis.sourceforge.net/%s?action=purge
 UPDATE_URL=http://nsis.sourceforge.net/Special:Simpleupdate?action=raw
 
 [svn2cl]
@@ -415,16 +416,17 @@ def UpdateWiki(release_id):
 	update_wiki_page('Template:NSISReleaseDate', time.strftime('%B %d, %Y'), 'new version')
 	update_wiki_page('Template:NSISReleaseID', release_id, 'new version')
 
+  os.system('start ' + PURGE_URL % 'Download')
+
 def ToDo():
 	print 'automatic phase done\n'
 	print """
- * %s
  * Edit update.php
  * Post news item
  * http://en.wikipedia.org/w/index.php?title=Nullsoft_Scriptable_Install_System&action=edit
  * Update Freshmeat
  * Update BetaNews
-	""" % (PURGE_URL % 'Download')
+	"""
 
 def CloseLog():
 	log('done')
