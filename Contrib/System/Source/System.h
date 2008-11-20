@@ -58,10 +58,6 @@ typedef struct
 {
 	int Type;
 	int Option; // -1 -> Pointer, 1-... -> Special+1
-
-    // if you'll change ProcParameter or SystemProc structure - update this value
-#define  SYSTEM_ZERO_PARAM_VALUE_OFFSET 0x820
-
 	int Value;	// it can hold any 4 byte value 
     int _value; // value buffer for structures > 4 bytes (I hope 8 bytes will be enough)
     int Size; // Value real size (should be either 1 or 2 (the number of pushes))

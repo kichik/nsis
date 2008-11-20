@@ -20,6 +20,8 @@ if float(defenv['MSVS_VERSION'].replace('Exp','')) >= 8.0:
 else:
 	defenv['EXCEPTION_FLAG'] = '/GX'
 
+defenv.Append(ASFLAGS = ['/coff'])
+
 ### debug
 
 if defenv['DEBUG']:
