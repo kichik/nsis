@@ -94,13 +94,26 @@
 !define WINVER_2003 0x502
 !define WINVER_VISTA 0x600
 
+!macro CallArtificialFunction NAME
+  Call :.${NAME}
+  !ifndef ${NAME}_DEFINED
+    Goto ${NAME}_DONE
+    !define ${NAME}_DEFINED
+    .${NAME}:
+      !insertmacro ${NAME}
+    Return
+    ${NAME}_DONE:
+  !endif
+!macroend
+!define CallArtificialFunction `!insertmacro CallArtificialFunction`
+
 !macro __GetWinVer
   !insertmacro _LOGICLIB_TEMP
   System::Call kernel32::GetVersion()i.s
   Pop $_LOGICLIB_TEMP
 !macroend
 
-!macro __ParseWinVer_
+!macro __ParseWinVer
   !insertmacro __GetWinVer
   Push $0
   IntOp $0 $_LOGICLIB_TEMP & 0xff
@@ -109,18 +122,6 @@
   IntOp $_LOGICLIB_TEMP $_LOGICLIB_TEMP >> 8
   IntOp $_LOGICLIB_TEMP $_LOGICLIB_TEMP | $0
   Pop $0
-!macroend
-
-!macro __ParseWinVer
-  Call :.__ParseWinVer
-  !ifndef __ParseWinVer_DEFINED
-    Goto __ParseWinVer_DONE
-    !define __ParseWinVer_DEFINED
-    .__ParseWinVer:
-      !insertmacro __ParseWinVer_
-    Return
-    __ParseWinVer_DONE:
-  !endif
 !macroend
 
 !macro _IsNT _a _b _t _f
@@ -150,17 +151,17 @@
 !macroend
 
 !macro _WinVerAtLeast _a _b _t _f
-  !insertmacro __ParseWinVer
+  ${CallArtificialFunction} __ParseWinVer
   !insertmacro _>= $_LOGICLIB_TEMP `${_b}` `${_t}` `${_f}`
 !macroend
 
 !macro _WinVerIs _a _b _t _f
-  !insertmacro __ParseWinVer
+  ${CallArtificialFunction} __ParseWinVer
   !insertmacro _= $_LOGICLIB_TEMP `${_b}` `${_t}` `${_f}`
 !macroend
 
 !macro _WinVerAtMost _a _b _t _f
-  !insertmacro __ParseWinVer
+  ${CallArtificialFunction} __ParseWinVer
   !insertmacro _<= $_LOGICLIB_TEMP `${_b}` `${_t}` `${_f}`
 !macroend
 
@@ -169,7 +170,7 @@
 !insertmacro __WinVer_DefineOSTests AtMost
 
 
-!macro __GetWinServicePack_
+!macro __GetWinServicePack
   !insertmacro _LOGICLIB_TEMP
 
   Push $0
@@ -220,33 +221,21 @@ Label_WinVer_ServicePack_End_${LOGICLIB_COUNTER}:
 
 !macroend
 
-!macro __GetWinServicePack
-  Call :.__GetWinServicePack
-  !ifndef __GetWinServicePack_DEFINED
-    Goto __GetWinServicePack_DONE
-    !define __GetWinServicePack_DEFINED
-    .__GetWinServicePack:
-      !insertmacro __GetWinServicePack_
-    Return
-    __GetWinServicePack_DONE:
-  !endif
-!macroend
-
 !define AtLeastServicePack `"" AtLeastServicePack`
 !macro _AtLeastServicePack _a _b _t _f
-  !insertmacro __GetWinServicePack
+  ${CallArtificialFunction} __GetWinServicePack
   !insertmacro _>= $_LOGICLIB_TEMP `${_b}` `${_t}` `${_f}`
 !macroend
 
 !define AtMostServicePack `"" AtMostServicePack`
 !macro _AtMostServicePack _a _b _t _f
-  !insertmacro __GetWinServicePack
+  ${CallArtificialFunction} __GetWinServicePack
   !insertmacro _<= $_LOGICLIB_TEMP `${_b}` `${_t}` `${_f}`
 !macroend
 
 !define IsServicePack `"" IsServicePack`
 !macro _IsServicePack _a _b _t _f
-  !insertmacro __GetWinServicePack
+  ${CallArtificialFunction} __GetWinServicePack
   !insertmacro _= $_LOGICLIB_TEMP `${_b}` `${_t}` `${_f}`
 !macroend
 
