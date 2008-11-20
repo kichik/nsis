@@ -378,7 +378,7 @@ def UploadFiles():
 
 	run(
 		SFTP % 'sftp-commands',
-		LOG_ALL,
+		LOG_ERRORS,
 		'upload failed'
 	)
 
