@@ -1,5 +1,31 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.41} 2.41
+
+Released on November 20th, 2008
+
+\S1{v2.41-cl} Changelog
+
+\S2{} Minor Changes
+
+\b Fixed LangDLL memory leaks for invalid input (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1939573}{bug #1939573})
+
+\b Fixed uninstaller generation on big-endian systems (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=2166401}{bug #2166401}, \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=2167958}{bug #2167958})
+
+\S2{} Translations
+
+\b Brazilian Portuguese corrections
+
+\b Consistency fixes for Simple Chinese (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=2189117}{patch #2189117})
+
+\S2{} Build System
+
+\b Added support for SCons 1.1.0
+
+\b Fixed directory and components page text issues on VC8 builds (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1982084}{patch #1982084})
+
+\b System's Resource.dll now built from source
+
 \H{v2.40} 2.40
 
 Released on October 10th, 2008
