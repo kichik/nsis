@@ -95,15 +95,21 @@
 !define WINVER_VISTA 0x600
 
 !macro CallArtificialFunction NAME
-  Call :.${NAME}
-  !ifndef ${NAME}_DEFINED
-    Goto ${NAME}_DONE
-    !define ${NAME}_DEFINED
-    .${NAME}:
+  !ifndef __UNINSTALL__
+    !define CallArtificialFunction_TYPE inst
+  !else
+    !define CallArtificialFunction_TYPE uninst
+  !endif
+  Call :.${NAME}${CallArtificialFunction_TYPE}
+  !ifndef ${NAME}${CallArtificialFunction_TYPE}_DEFINED
+    Goto ${NAME}${CallArtificialFunction_TYPE}_DONE
+    !define ${NAME}${CallArtificialFunction_TYPE}_DEFINED
+    .${NAME}${CallArtificialFunction_TYPE}:
       !insertmacro ${NAME}
     Return
-    ${NAME}_DONE:
+    ${NAME}${CallArtificialFunction_TYPE}_DONE:
   !endif
+  !undef CallArtificialFunction_TYPE
 !macroend
 !define CallArtificialFunction `!insertmacro CallArtificialFunction`
 
