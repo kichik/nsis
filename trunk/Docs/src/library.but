@@ -45,7 +45,8 @@ The type of the library
 
 DLL	-			Dynamic link library (DLL)\\<br\\>
 REGDLL -		DLL that has to be registered\\<br\\>
-TLB - 			Type library or DLL that contains a type LIBRARY\\<br\\>
+REGEXE -		EXE COM server that has to be registered using /regserver\\<br\\>
+TLB - 			Type library or DLL that contains a type library\\<br\\>
 REGDLLTLB -		DLL that has to be registered and contains a type library\\<br\\>
 
 
@@ -168,9 +169,10 @@ The UnInstallLib macro allows you to uninstall a library. It sets the error flag
 The type of the library
 
 DLL	-			Dynamic link library (DLL)\\<br\\>
-REGDLL -		DLL that has to be registered\\<br\\>
-TLB - 			Type library or DLL that contains a type LIBRARY\\<br\\>
-REGDLLTLB -		DLL that has to be registered and contains a type library\\<br\\>
+REGDLL -		DLL that has to be unregistered\\<br\\>
+REGEXE -		EXE COM server that has to be unregistered using /unregserver\\<br\\>
+TLB - 			Type library or DLL that contains a type library\\<br\\>
+REGDLLTLB -		DLL that has to be unregistered and contains a type library\\<br\\>
 
 
 \\<b\\>shared\\</b\\>

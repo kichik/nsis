@@ -109,7 +109,7 @@ int main(int argc, char* argv[])
 
     // Get version
     
-    // DLL
+    // DLL / EXE
     
     if (mode.compare("D") == 0)
     {

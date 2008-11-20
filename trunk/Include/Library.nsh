@@ -111,26 +111,26 @@
   ;Advance counter
 
   StrCpy $R0 0
-  ReadRegDWORD $R0 HKLM "Software\NSIS.Library.RegTool.v2\$__INSTALLLLIB_SESSIONGUID" "count"
+  ReadRegDWORD $R0 HKLM "Software\NSIS.Library.RegTool.v3\$__INSTALLLLIB_SESSIONGUID" "count"
   IntOp $R0 $R0 + 1
-  WriteRegDWORD HKLM "Software\NSIS.Library.RegTool.v2\$__INSTALLLLIB_SESSIONGUID" "count" "$R0"
+  WriteRegDWORD HKLM "Software\NSIS.Library.RegTool.v3\$__INSTALLLLIB_SESSIONGUID" "count" "$R0"
 
   ;------------------------
   ;Setup RegTool
 
-  ReadRegStr $R3 HKLM "Software\Microsoft\Windows\CurrentVersion\RunOnce" "NSIS.Library.RegTool.v2"
+  ReadRegStr $R3 HKLM "Software\Microsoft\Windows\CurrentVersion\RunOnce" "NSIS.Library.RegTool.v3"
   StrCpy $R3 $R3 -4 1
   IfFileExists $R3 +3
 
-    File /oname=$R2\NSIS.Library.RegTool.v2.$__INSTALLLLIB_SESSIONGUID.exe "${NSISDIR}\Bin\RegTool.bin"
+    File /oname=$R2\NSIS.Library.RegTool.v3.$__INSTALLLLIB_SESSIONGUID.exe "${NSISDIR}\Bin\RegTool.bin"
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\RunOnce" \
-      "NSIS.Library.RegTool.v2" '"$R2\NSIS.Library.RegTool.v2.$__INSTALLLLIB_SESSIONGUID.exe" /S'
+      "NSIS.Library.RegTool.v3" '"$R2\NSIS.Library.RegTool.v3.$__INSTALLLLIB_SESSIONGUID.exe" /S'
 
   ;------------------------
   ;Add RegTool entry
 
-  WriteRegStr HKLM "Software\NSIS.Library.RegTool.v2\$__INSTALLLLIB_SESSIONGUID" "$R0.file" "$R1"
-  WriteRegStr HKLM "Software\NSIS.Library.RegTool.v2\$__INSTALLLLIB_SESSIONGUID" "$R0.mode" "${mode}"
+  WriteRegStr HKLM "Software\NSIS.Library.RegTool.v3\$__INSTALLLLIB_SESSIONGUID" "$R0.file" "$R1"
+  WriteRegStr HKLM "Software\NSIS.Library.RegTool.v3\$__INSTALLLLIB_SESSIONGUID" "$R0.mode" "${mode}"
 
   Pop $R3
   Pop $R2
@@ -195,7 +195,7 @@
   ;Validate
 
   !ifndef INSTALLLIB_LIBTYPE_DLL & INSTALLLIB_LIBTYPE_REGDLL & INSTALLLIB_LIBTYPE_TLB & \
-    INSTALLLIB_LIBTYPE_REGDLLTLB
+    INSTALLLIB_LIBTYPE_REGDLLTLB & INSTALLLIB_LIBTYPE_REGEXE
     !error "InstallLib: Incorrect setting for parameter: libtype"
   !endif
 
@@ -452,7 +452,7 @@
 
   !endif
 
-  !ifdef INSTALLLIB_LIBTYPE_REGDLL | INSTALLLIB_LIBTYPE_TLB | INSTALLLIB_LIBTYPE_REGDLLTLB
+  !ifdef INSTALLLIB_LIBTYPE_REGDLL | INSTALLLIB_LIBTYPE_TLB | INSTALLLIB_LIBTYPE_REGDLLTLB | INSTALLLIB_LIBTYPE_REGEXE
 
     !ifdef INSTALLLIB_INSTALL_REBOOT_PROTECTED | INSTALLLIB_INSTALL_REBOOT_NOTPROTECTED
 
@@ -483,6 +483,12 @@
         ExecWait '"$SYSDIR\regsvr32.exe" /s "$R4"'
 
       !endif
+
+    !endif
+
+    !ifdef INSTALLLIB_LIBTYPE_REGEXE
+
+      ExecWait '"$R4" /regserver'
 
     !endif
 
@@ -569,6 +575,10 @@
         !insertmacro __InstallLib_Helper_AddRegToolEntry 'T' "$R4" "$R5"
       !endif
 
+      !ifdef INSTALLLIB_LIBTYPE_REGEXE
+        !insertmacro __InstallLib_Helper_AddRegToolEntry 'E' "$R4" "$R5"
+      !endif
+
       Return
 
   !endif
@@ -625,7 +635,7 @@
   ;Validate
 
   !ifndef UNINSTALLLIB_LIBTYPE_DLL & UNINSTALLLIB_LIBTYPE_REGDLL & UNINSTALLLIB_LIBTYPE_TLB & \
-    UNINSTALLLIB_LIBTYPE_REGDLLTLB
+    UNINSTALLLIB_LIBTYPE_REGDLLTLB & UNINSTALLLIB_LIBTYPE_REGEXE
     !error "UnInstallLib: Incorrect setting for parameter: libtype"
   !endif
 
@@ -742,6 +752,12 @@
         ExecWait '"$SYSDIR\regsvr32.exe" /s /u "$R1"'
 
       !endif
+
+    !endif
+
+    !ifdef UNINSTALLLIB_LIBTYPE_REGEXE
+
+      ExecWait '"$R1" /unregserver'
 
     !endif
 
