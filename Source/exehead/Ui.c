@@ -837,8 +837,14 @@ static void NSISCALL SetSizeText(int dlgItem, int prefix, unsigned kb)
   if (kb < (0xFFFFFFFF - ((1 << 20) / 20))) // check for overflow
     kb += (1 << sh) / 20; // round numbers for better display (e.g. 1.59 => 1.6)
 
+#if _MSC_VER == 1200 // patch #1982084
   wsprintf(
     GetNSISString(g_tmp, prefix) + mystrlen(g_tmp),
+#else
+  GetNSISString(g_tmp, prefix);
+  wsprintf(
+    g_tmp + mystrlen(g_tmp),
+#endif
     "%u.%u%s%s",
     kb >> sh,
     (((kb & 0x00FFFFFF) * 10) >> sh) % 10, // 0x00FFFFFF mask is used to
