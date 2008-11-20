@@ -1,0 +1,43 @@
+target = 'InstallOptions'
+
+files = Split("""
+	InstallerOptions.cpp
+""")
+
+resources = Split("""
+	ioptdll.rc
+""")
+
+libs = Split("""
+	kernel32
+	user32
+	gdi32
+	shell32
+	comdlg32
+	ole32
+""")
+
+examples = Split("""
+	test.nsi
+	test.ini
+	testimgs.nsi
+	testimgs.ini
+	testlink.nsi
+	testlink.ini
+	testnotify.nsi
+	testnotify.ini
+""")
+
+docs = Split("""
+	Changelog.txt
+	Readme.html
+""")
+
+includes = Split("""
+	InstallOptions.nsh
+""")
+
+Import('BuildPlugin env')
+
+BuildPlugin(target, files, libs, examples, docs, res = resources)
+env.DistributeInclude(includes)
