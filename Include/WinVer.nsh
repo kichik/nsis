@@ -100,7 +100,7 @@
   Pop $_LOGICLIB_TEMP
 !macroend
 
-!macro __ParseWinVer
+!macro __ParseWinVer_
   !insertmacro __GetWinVer
   Push $0
   IntOp $0 $_LOGICLIB_TEMP & 0xff
@@ -109,6 +109,18 @@
   IntOp $_LOGICLIB_TEMP $_LOGICLIB_TEMP >> 8
   IntOp $_LOGICLIB_TEMP $_LOGICLIB_TEMP | $0
   Pop $0
+!macroend
+
+!macro __ParseWinVer
+  Call :.__ParseWinVer
+  !ifndef __ParseWinVer_DEFINED
+    Goto __ParseWinVer_DONE
+    !define __ParseWinVer_DEFINED
+    .__ParseWinVer:
+      !insertmacro __ParseWinVer_
+    Return
+    __ParseWinVer_DONE:
+  !endif
 !macroend
 
 !macro _IsNT _a _b _t _f
@@ -157,7 +169,7 @@
 !insertmacro __WinVer_DefineOSTests AtMost
 
 
-!macro __GetWinServicePack
+!macro __GetWinServicePack_
   !insertmacro _LOGICLIB_TEMP
 
   Push $0
@@ -206,6 +218,18 @@ Label_WinVer_ServicePack_End_${LOGICLIB_COUNTER}:
 
   !insertmacro _IncreaseCounter
 
+!macroend
+
+!macro __GetWinServicePack
+  Call :.__GetWinServicePack
+  !ifndef __GetWinServicePack_DEFINED
+    Goto __GetWinServicePack_DONE
+    !define __GetWinServicePack_DEFINED
+    .__GetWinServicePack:
+      !insertmacro __GetWinServicePack_
+    Return
+    __GetWinServicePack_DONE:
+  !endif
 !macroend
 
 !define AtLeastServicePack `"" AtLeastServicePack`
