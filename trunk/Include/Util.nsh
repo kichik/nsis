@@ -30,6 +30,27 @@
 !macroend
 !define CallArtificialFunction `!insertmacro CallArtificialFunction`
 
+# for usage of artificial functions inside artificial functions
+# macro recursion is prohibited
+!macro CallArtificialFunction2 NAME
+  !ifndef __UNINSTALL__
+    !define CallArtificialFunction2_TYPE inst
+  !else
+    !define CallArtificialFunction2_TYPE uninst
+  !endif
+  Call :.${NAME}${CallArtificialFunction2_TYPE}
+  !ifndef ${NAME}${CallArtificialFunction2_TYPE}_DEFINED
+    Goto ${NAME}${CallArtificialFunction2_TYPE}_DONE
+    !define ${NAME}${CallArtificialFunction2_TYPE}_DEFINED
+    .${NAME}${CallArtificialFunction2_TYPE}:
+      !insertmacro ${NAME}
+    Return
+    ${NAME}${CallArtificialFunction2_TYPE}_DONE:
+  !endif
+  !undef CallArtificialFunction2_TYPE
+!macroend
+!define CallArtificialFunction2 `!insertmacro CallArtificialFunction2`
+
 !endif # !___UTIL__NSH___
 
 !verbose pop
