@@ -24,50 +24,6 @@ Var OUT7
 !include "FileFunc.nsh"
 !include "LogicLib.nsh"
 
-!insertmacro Locate
-!insertmacro GetSize
-!insertmacro DriveSpace
-!insertmacro GetDrives
-!insertmacro GetTime
-!insertmacro GetFileAttributes
-!insertmacro GetFileVersion
-!insertmacro GetExeName
-!insertmacro GetExePath
-!insertmacro GetParameters
-!insertmacro GetOptions
-!insertmacro GetOptionsS
-!insertmacro GetRoot
-!insertmacro GetParent
-!insertmacro GetFileName
-!insertmacro GetBaseName
-!insertmacro GetFileExt
-!insertmacro BannerTrimPath
-!insertmacro DirState
-!insertmacro RefreshShellIcons
-
-!insertmacro un.Locate
-!insertmacro un.GetSize
-!insertmacro un.GetDrives
-!insertmacro un.DriveSpace
-!insertmacro un.GetTime
-!insertmacro un.GetFileAttributes
-!insertmacro un.GetFileVersion
-!insertmacro un.GetExeName
-!insertmacro un.GetExePath
-!insertmacro un.GetParameters
-!insertmacro un.GetOptions
-!insertmacro un.GetOptionsS
-!insertmacro un.GetRoot
-!insertmacro un.GetParent
-!insertmacro un.GetFileName
-!insertmacro un.GetBaseName
-!insertmacro un.GetFileExt
-!insertmacro un.BannerTrimPath
-!insertmacro un.DirState
-!insertmacro un.RefreshShellIcons
-
-
-
 ;############### INSTALL ###############
 
 !define StackVerificationStart `!insertmacro StackVerificationStart`
@@ -585,26 +541,26 @@ SectionEnd
 ;############### UNINSTALL ###############
 
 Section un.Uninstall
-	${un.Locate} '$DOCUMENTS' '/L=FD /M=*.* /S=0B /G=0' 'un.LocateCallback'
-	${un.GetSize} '$WINDIR' '/M=Explorer.exe /S=0K /G=0' $OUT1 $OUT2 $OUT3
-	${un.DriveSpace} 'C:\' '/D=F /S=M' $OUT1
-	${un.GetDrives} 'FDD+CDROM' 'un.GetDrivesCallback'
-	${un.GetTime} '' 'L' $OUT1 $OUT2 $OUT3 $OUT4 $OUT5 $OUT6 $OUT7
-	${un.GetFileAttributes} '$WINDIR\explorer.exe' 'ALL' $OUT1
-	${un.GetFileVersion} '$WINDIR\explorer.exe' $OUT1
-	${un.GetExeName} $OUT1
-	${un.GetExePath} $OUT1
-	${un.GetParameters} $OUT1
-	${un.GetOptions} '/INSTDIR=C:\Program Files\Common Files /SILENT=yes' '/INSTDIR=' $OUT1
-	${un.GetOptionsS} '/INSTDIR=C:\Program Files\Common Files /SILENT=yes' '/INSTDIR=' $OUT1
-	${un.GetRoot} 'C:\Program Files\NSIS' $OUT1
-	${un.GetParent} 'C:\Program Files\Winamp\uninstwa.exe' $OUT1
-	${un.GetFileName} 'C:\Program Files\Winamp\uninstwa.exe' $OUT1
-	${un.GetBaseName} 'C:\Program Files\Winamp\uninstwa.exe' $OUT1
-	${un.GetFileExt} 'C:\Program Files\Winamp\uninstwa.exe' $OUT1
-	${un.BannerTrimPath} 'C:\Server\Documents\Terminal\license.htm' '35A' $OUT1
-	${un.DirState} '$TEMP' $OUT1
-	${un.RefreshShellIcons}
+	${Locate} '$DOCUMENTS' '/L=FD /M=*.* /S=0B /G=0' 'un.LocateCallback'
+	${GetSize} '$WINDIR' '/M=Explorer.exe /S=0K /G=0' $OUT1 $OUT2 $OUT3
+	${DriveSpace} 'C:\' '/D=F /S=M' $OUT1
+	${GetDrives} 'FDD+CDROM' 'un.GetDrivesCallback'
+	${GetTime} '' 'L' $OUT1 $OUT2 $OUT3 $OUT4 $OUT5 $OUT6 $OUT7
+	${GetFileAttributes} '$WINDIR\explorer.exe' 'ALL' $OUT1
+	${GetFileVersion} '$WINDIR\explorer.exe' $OUT1
+	${GetExeName} $OUT1
+	${GetExePath} $OUT1
+	${GetParameters} $OUT1
+	${GetOptions} '/INSTDIR=C:\Program Files\Common Files /SILENT=yes' '/INSTDIR=' $OUT1
+	${GetOptionsS} '/INSTDIR=C:\Program Files\Common Files /SILENT=yes' '/INSTDIR=' $OUT1
+	${GetRoot} 'C:\Program Files\NSIS' $OUT1
+	${GetParent} 'C:\Program Files\Winamp\uninstwa.exe' $OUT1
+	${GetFileName} 'C:\Program Files\Winamp\uninstwa.exe' $OUT1
+	${GetBaseName} 'C:\Program Files\Winamp\uninstwa.exe' $OUT1
+	${GetFileExt} 'C:\Program Files\Winamp\uninstwa.exe' $OUT1
+	${BannerTrimPath} 'C:\Server\Documents\Terminal\license.htm' '35A' $OUT1
+	${DirState} '$TEMP' $OUT1
+	${RefreshShellIcons}
 SectionEnd
 
 Function un.LocateCallback

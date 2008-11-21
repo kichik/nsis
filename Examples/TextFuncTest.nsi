@@ -21,36 +21,6 @@ Var OUT
 
 !include "TextFunc.nsh"
 
-!insertmacro LineFind
-!insertmacro LineRead
-!insertmacro FileReadFromEnd
-!insertmacro LineSum
-!insertmacro FileJoin
-!insertmacro TextCompare
-!insertmacro TextCompareS
-!insertmacro ConfigRead
-!insertmacro ConfigReadS
-!insertmacro ConfigWrite
-!insertmacro ConfigWriteS
-!insertmacro FileRecode
-!insertmacro TrimNewLines
-
-!insertmacro un.LineFind
-!insertmacro un.LineRead
-!insertmacro un.FileReadFromEnd
-!insertmacro un.LineSum
-!insertmacro un.FileJoin
-!insertmacro un.TextCompare
-!insertmacro un.TextCompareS
-!insertmacro un.ConfigRead
-!insertmacro un.ConfigReadS
-!insertmacro un.ConfigWrite
-!insertmacro un.ConfigWriteS
-!insertmacro un.FileRecode
-!insertmacro un.TrimNewLines
-
-
-
 ;############### INSTALL ###############
 
 !define StackVerificationStart `!insertmacro StackVerificationStart`
@@ -416,19 +386,19 @@ SectionEnd
 ;############### UNINSTALL ###############
 
 Section un.Uninstall
-	${un.LineFind} '$TEMPFILE1' '/NUL' '1:-1' 'un.LineFindCallback'
-	${un.LineRead} '$TEMPFILE1' '-1' $OUT
-	${un.FileReadFromEnd} '$TEMPFILE1' 'un.FileReadFromEndCallback'
-	${un.LineSum} '$TEMPFILE1' $OUT
-	${un.FileJoin} '$TEMPFILE1' '$TEMPFILE2' '$TEMPFILE3'
-	${un.TextCompare} '$TEMPFILE1' '$TEMPFILE2' 'FastDiff' 'un.TextCompareCallback'
-	${un.TextCompareS} '$TEMPFILE1' '$TEMPFILE2' 'FastDiff' 'un.TextCompareCallback'
-	${un.ConfigRead} '$TEMPFILE1' '3c=' $OUT
-	${un.ConfigReadS} '$TEMPFILE1' '3c=' $OUT
-	${un.ConfigWrite} '$TEMPFILE1' '5E=' 'e**' $OUT
-	${un.ConfigWriteS} '$TEMPFILE1' '5E=' 'e**' $OUT
-	${un.FileRecode} '$TEMPFILE1' 'CharToOem'
-	${un.TrimNewLines} 'Text Line$\r$\n' $OUT
+	${LineFind} '$TEMPFILE1' '/NUL' '1:-1' 'un.LineFindCallback'
+	${LineRead} '$TEMPFILE1' '-1' $OUT
+	${FileReadFromEnd} '$TEMPFILE1' 'un.FileReadFromEndCallback'
+	${LineSum} '$TEMPFILE1' $OUT
+	${FileJoin} '$TEMPFILE1' '$TEMPFILE2' '$TEMPFILE3'
+	${TextCompare} '$TEMPFILE1' '$TEMPFILE2' 'FastDiff' 'un.TextCompareCallback'
+	${TextCompareS} '$TEMPFILE1' '$TEMPFILE2' 'FastDiff' 'un.TextCompareCallback'
+	${ConfigRead} '$TEMPFILE1' '3c=' $OUT
+	${ConfigReadS} '$TEMPFILE1' '3c=' $OUT
+	${ConfigWrite} '$TEMPFILE1' '5E=' 'e**' $OUT
+	${ConfigWriteS} '$TEMPFILE1' '5E=' 'e**' $OUT
+	${FileRecode} '$TEMPFILE1' 'CharToOem'
+	${TrimNewLines} 'Text Line$\r$\n' $OUT
 SectionEnd
 
 Function un.LineFindCallback

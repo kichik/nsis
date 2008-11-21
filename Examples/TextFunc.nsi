@@ -14,15 +14,6 @@ RequestExecutionLevel user
 !include "WinMessages.nsh"
 !include "TextFunc.nsh"
 
-!insertmacro LineFind
-!insertmacro LineRead
-!insertmacro FileReadFromEnd
-!insertmacro LineSum
-!insertmacro FileJoin
-!insertmacro ConfigRead
-!insertmacro ConfigWrite
-!insertmacro FileRecode
-
 Var HWND
 Var INI
 Var LOG

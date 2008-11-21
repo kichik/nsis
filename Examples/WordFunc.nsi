@@ -18,15 +18,6 @@ Var STATE
 !include "WinMessages.nsh"
 !include "WordFunc.nsh"
 
-!insertmacro WordFind
-!insertmacro WordFind2X
-!insertmacro WordReplace
-!insertmacro WordAdd
-!insertmacro WordInsert
-!insertmacro StrFilter
-!insertmacro VersionCompare
-!insertmacro VersionConvert
-
 Page Custom ShowCustom LeaveCustom
 
 Function ShowCustom
