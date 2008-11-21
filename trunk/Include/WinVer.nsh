@@ -83,6 +83,7 @@
 !define ___WINVER__NSH___
 
 !include LogicLib.nsh
+!include Util.nsh
 
 !define WINVER_95 0x400
 !define WINVER_98 0x40A ;4.10
@@ -93,25 +94,6 @@
 !define WINVER_XP 0x501
 !define WINVER_2003 0x502
 !define WINVER_VISTA 0x600
-
-!macro CallArtificialFunction NAME
-  !ifndef __UNINSTALL__
-    !define CallArtificialFunction_TYPE inst
-  !else
-    !define CallArtificialFunction_TYPE uninst
-  !endif
-  Call :.${NAME}${CallArtificialFunction_TYPE}
-  !ifndef ${NAME}${CallArtificialFunction_TYPE}_DEFINED
-    Goto ${NAME}${CallArtificialFunction_TYPE}_DONE
-    !define ${NAME}${CallArtificialFunction_TYPE}_DEFINED
-    .${NAME}${CallArtificialFunction_TYPE}:
-      !insertmacro ${NAME}
-    Return
-    ${NAME}${CallArtificialFunction_TYPE}_DONE:
-  !endif
-  !undef CallArtificialFunction_TYPE
-!macroend
-!define CallArtificialFunction `!insertmacro CallArtificialFunction`
 
 !macro __GetWinVer
   !insertmacro _LOGICLIB_TEMP
