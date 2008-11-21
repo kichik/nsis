@@ -17,42 +17,6 @@ Var OUT
 
 !include "WordFunc.nsh"
 
-!insertmacro WordFind
-!insertmacro WordFindS
-!insertmacro WordFind2X
-!insertmacro WordFind2XS
-!insertmacro WordFind3X
-!insertmacro WordFind3XS
-!insertmacro WordReplace
-!insertmacro WordReplaceS
-!insertmacro WordAdd
-!insertmacro WordAddS
-!insertmacro WordInsert
-!insertmacro WordInsertS
-!insertmacro StrFilter
-!insertmacro StrFilterS
-!insertmacro VersionCompare
-!insertmacro VersionConvert
-
-!insertmacro un.WordFind
-!insertmacro un.WordFindS
-!insertmacro un.WordFind2X
-!insertmacro un.WordFind2XS
-!insertmacro un.WordFind3X
-!insertmacro un.WordFind3XS
-!insertmacro un.WordReplace
-!insertmacro un.WordReplaceS
-!insertmacro un.WordAdd
-!insertmacro un.WordAddS
-!insertmacro un.WordInsert
-!insertmacro un.WordInsertS
-!insertmacro un.StrFilter
-!insertmacro un.StrFilterS
-!insertmacro un.VersionCompare
-!insertmacro un.VersionConvert
-
-
-
 ;############### INSTALL ###############
 
 !define StackVerificationStart `!insertmacro StackVerificationStart`
@@ -627,20 +591,20 @@ SectionEnd
 ;############### UNINSTALL ###############
 
 Section un.Uninstall
-	${un.WordFind} 'C:\io.sys C:\Program Files C:\WINDOWS' ' C:\' '-02' $OUT
-	${un.WordFindS} 'C:\io.sys C:\Program Files C:\WINDOWS' ' C:\' '-02' $OUT
-	${un.WordFind2X} '[C:\io.sys];[C:\logo.sys];[C:\WINDOWS]' '[C:\' '];' '+2' $OUT
-	${un.WordFind2XS} '[C:\io.sys];[C:\logo.sys];[C:\WINDOWS]' '[C:\' '];' '+2' $OUT
-	${un.WordFind3X} '[1.AAB];[2.BAA];[3.BBB];' '[' 'AA' '];' '+1' $OUT
-	${un.WordFind3XS} '[1.AAB];[2.BAA];[3.BBB];' '[' 'AA' '];' '+1' $OUT
-	${un.WordReplace} 'C:\io.sys C:\logo.sys C:\WINDOWS' 'SYS' 'bmp' '+2' $OUT
-	${un.WordReplaceS} 'C:\io.sys C:\logo.sys C:\WINDOWS' 'SYS' 'bmp' '+2' $OUT
-	${un.WordAdd} 'C:\io.sys C:\WINDOWS' ' ' '+C:\WINDOWS C:\config.sys' $OUT
-	${un.WordAddS} 'C:\io.sys C:\WINDOWS' ' ' '+C:\WINDOWS C:\config.sys' $OUT
-	${un.WordInsert} 'C:\io.sys C:\WINDOWS' ' ' 'C:\logo.sys' '-2' $OUT
-	${un.WordInsertS} 'C:\io.sys C:\WINDOWS' ' ' 'C:\logo.sys' '-2' $OUT
-	${un.StrFilter} '123abc 456DEF 7890|%#' '+' '' '' $OUT
-	${un.StrFilterS} '123abc 456DEF 7890|%#' '+' '' '' $OUT
-	${un.VersionCompare} '1.1.1.9' '1.1.1.01' $OUT
-	${un.VersionConvert} '9.0a' '' $OUT
+	${WordFind} 'C:\io.sys C:\Program Files C:\WINDOWS' ' C:\' '-02' $OUT
+	${WordFindS} 'C:\io.sys C:\Program Files C:\WINDOWS' ' C:\' '-02' $OUT
+	${WordFind2X} '[C:\io.sys];[C:\logo.sys];[C:\WINDOWS]' '[C:\' '];' '+2' $OUT
+	${WordFind2XS} '[C:\io.sys];[C:\logo.sys];[C:\WINDOWS]' '[C:\' '];' '+2' $OUT
+	${WordFind3X} '[1.AAB];[2.BAA];[3.BBB];' '[' 'AA' '];' '+1' $OUT
+	${WordFind3XS} '[1.AAB];[2.BAA];[3.BBB];' '[' 'AA' '];' '+1' $OUT
+	${WordReplace} 'C:\io.sys C:\logo.sys C:\WINDOWS' 'SYS' 'bmp' '+2' $OUT
+	${WordReplaceS} 'C:\io.sys C:\logo.sys C:\WINDOWS' 'SYS' 'bmp' '+2' $OUT
+	${WordAdd} 'C:\io.sys C:\WINDOWS' ' ' '+C:\WINDOWS C:\config.sys' $OUT
+	${WordAddS} 'C:\io.sys C:\WINDOWS' ' ' '+C:\WINDOWS C:\config.sys' $OUT
+	${WordInsert} 'C:\io.sys C:\WINDOWS' ' ' 'C:\logo.sys' '-2' $OUT
+	${WordInsertS} 'C:\io.sys C:\WINDOWS' ' ' 'C:\logo.sys' '-2' $OUT
+	${StrFilter} '123abc 456DEF 7890|%#' '+' '' '' $OUT
+	${StrFilterS} '123abc 456DEF 7890|%#' '+' '' '' $OUT
+	${VersionCompare} '1.1.1.9' '1.1.1.01' $OUT
+	${VersionConvert} '9.0a' '' $OUT
 SectionEnd
