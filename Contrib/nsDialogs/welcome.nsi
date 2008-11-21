@@ -3,8 +3,6 @@
 !include WinMessages.nsh
 !include FileFunc.nsh
 
-!insertmacro GetRoot
-
 Name "nsDialogs Welcome"
 OutFile "nsDialogs Welcome.exe"
 
