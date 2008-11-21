@@ -343,7 +343,6 @@ FUNC_DECL _CallProc
   push        dword ptr [ebp+8]
   call        _GetGenStackOption
   cmp         eax,0
-  ;# Remove ebp from stack, no need to generate stack
   pop         eax
   jne         stack_expand_done
 
@@ -658,6 +657,7 @@ handling_error_option_done:
   ;# Return
   mov         eax,dword ptr [ebp+8]
   ;# Restore registers
+  pop         ebp
   pop         esi
   pop         edi
   pop         ebx
