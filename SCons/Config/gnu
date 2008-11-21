@@ -25,8 +25,8 @@ defenv['ENTRY_FLAG'] = entry
 defenv['MAP_FLAG'] = '-Wl,-Map,${TARGET.base}.map'
 defenv['EXCEPTION_FLAG'] = ''
 defenv['NODEFLIBS_FLAG'] = '-nostdlib -Wl,--exclude-libs,msvcrt.a'
-defenv['C_FLAG'] = '-x c'
-defenv['CPP_FLAG'] = '-x c++'
+defenv['C_FLAG'] = '-xc'
+defenv['CPP_FLAG'] = '-xc++'
 defenv['ALIGN_FLAG'] = '-Wl,--file-alignment,512'
 defenv['CPP_REQUIRES_STDLIB'] = 1
 defenv['SUBSYS_CON'] = '-Wl,--subsystem,console'
@@ -64,7 +64,7 @@ cross_env(stub_env)
 if not defenv['DEBUG']:
 	stub_env.Append(CCFLAGS = ['-Os'])                # optimize for size
 stub_env.Append(CCFLAGS = ['-Wall'])                # all warnings
-stub_env.Append(CCFLAGS = ['-x c'])                 # force compile as c
+stub_env.Append(CCFLAGS = ['-xc'])                  # force compile as c
 stub_env.Append(CCFLAGS = ['-fno-strict-aliasing']) # not safe for strict aliasing
 
 if not defenv['DEBUG'] and defenv['STRIP'] and defenv['STRIP_W32']:
