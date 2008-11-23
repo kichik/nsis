@@ -327,7 +327,6 @@ FUNC_DECL _CallProc
   push        ebx
   push        edi
   push        esi
-  push        ebp
 
   IFDEF SYSTEM_LOG_DEBUG
     SYSTEM_LOG_INIT
@@ -347,6 +346,7 @@ FUNC_DECL _CallProc
   jne         stack_expand_done
 
   ;# Save previous stack location
+  push        ebp
   mov         dword ptr [_LastStackReal],esp
   cmp         dword ptr [_LastStackPlace],0
   jne         stack_adjust
@@ -657,7 +657,6 @@ handling_error_option_done:
   ;# Return
   mov         eax,dword ptr [ebp+8]
   ;# Restore registers
-  pop         ebp
   pop         esi
   pop         edi
   pop         ebx
