@@ -104,23 +104,33 @@
 !define _WINVER_MASKVMIN 0x00FF0000
 
 !define _WINVER_NTBIT    0x80000000
+!define _WINVER_NTMASK   0x7FFFFFFF
 !define _WINVER_NTSRVBIT 0x40000000
 !define _WINVER_MASKVBLD 0x0000FFFF
 !define _WINVER_MASKSP   0x000F0000
 
 # possible variable values for different versions
 
+!define WINVER_95_NT     0x04000000 ;4.00.0950
 !define WINVER_95        0x04000000 ;4.00.0950
+!define WINVER_98_NT     0x040a0000 ;4.10.1998
 !define WINVER_98        0x040a0000 ;4.10.1998
 ;define WINVER_98SE      0x040a0000 ;4.10.2222
+!define WINVER_ME_NT     0x045a0000 ;4.90.3000
 !define WINVER_ME        0x045a0000 ;4.90.3000
 ;define WINVER_NT3d51               ;3.51.1057
+!define WINVER_NT4_NT    0x84000000 ;4.00.1381
 !define WINVER_NT4       0x04000000 ;4.00.1381
+!define WINVER_2000_NT   0x85000000 ;5.00.2195
 !define WINVER_2000      0x05000000 ;5.00.2195
+!define WINVER_XP_NT     0x85010000 ;5.01.2600
 !define WINVER_XP        0x05010000 ;5.01.2600
 ;define WINVER_XP64                 ;5.02.3790
+!define WINVER_2003_NT   0x85020000 ;5.02.3790
 !define WINVER_2003      0x05020000 ;5.02.3790
+!define WINVER_VISTA_NT  0x86000000 ;6.00.6000
 !define WINVER_VISTA     0x06000000 ;6.00.6000
+!define WINVER_2008_NT   0x86000001 ;6.00.6001
 !define WINVER_2008      0x06000001 ;6.00.6001
 
 # use this to make all nt > 9x
@@ -218,6 +228,7 @@
   # NT?
   IntCmp $0 ${VER_PLATFORM_WIN32_NT} "" _winver_notnt _winver_notnt
     IntOp $__WINVERSP $__WINVERSP | ${_WINVER_NTBIT}
+    IntOp $__WINVERV  $__WINVERV  | ${_WINVER_NTBIT}
   _winver_notnt:
 
   # get service pack information
@@ -338,37 +349,41 @@
 # version comparison LogicLib macros
 
 !macro _WinVerAtLeast _a _b _t _f
+  !insertmacro _LOGICLIB_TEMP
   ${CallArtificialFunction} __WinVer_InitVars
-  !insertmacro _>= $__WINVERV `${_b}` `${_t}` `${_f}`
+  IntOp $_LOGICLIB_TEMP $__WINVERV & ${_WINVER_NTMASK}
+  !insertmacro _>= $_LOGICLIB_TEMP `${_b}` `${_t}` `${_f}`
 !macroend
 !macro _WinVerIs _a _b _t _f
   ${CallArtificialFunction} __WinVer_InitVars
   !insertmacro _= $__WINVERV `${_b}` `${_t}` `${_f}`
 !macroend
 !macro _WinVerAtMost _a _b _t _f
+  !insertmacro _LOGICLIB_TEMP
   ${CallArtificialFunction} __WinVer_InitVars
-  !insertmacro _<= $__WINVERV `${_b}` `${_t}` `${_f}`
+  IntOp $_LOGICLIB_TEMP $__WINVERV & ${_WINVER_NTMASK}
+  !insertmacro _<= $_LOGICLIB_TEMP `${_b}` `${_t}` `${_f}`
 !macroend
 
-!macro __WinVer_DefineOSTest Test OS
-  !define ${Test}Win${OS} `"" WinVer${Test} ${WINVER_${OS}}`
+!macro __WinVer_DefineOSTest Test OS Suffix
+  !define ${Test}Win${OS} `"" WinVer${Test} ${WINVER_${OS}${Suffix}}`
 !macroend
 
-!macro __WinVer_DefineOSTests Test
-  !insertmacro __WinVer_DefineOSTest ${Test} 95
-  !insertmacro __WinVer_DefineOSTest ${Test} 98
-  !insertmacro __WinVer_DefineOSTest ${Test} ME
-  !insertmacro __WinVer_DefineOSTest ${Test} NT4
-  !insertmacro __WinVer_DefineOSTest ${Test} 2000
-  !insertmacro __WinVer_DefineOSTest ${Test} XP
-  !insertmacro __WinVer_DefineOSTest ${Test} 2003
-  !insertmacro __WinVer_DefineOSTest ${Test} VISTA
-  !insertmacro __WinVer_DefineOSTest ${Test} 2008
+!macro __WinVer_DefineOSTests Test Suffix
+  !insertmacro __WinVer_DefineOSTest ${Test} 95    '${Suffix}'
+  !insertmacro __WinVer_DefineOSTest ${Test} 98    '${Suffix}'
+  !insertmacro __WinVer_DefineOSTest ${Test} ME    '${Suffix}'
+  !insertmacro __WinVer_DefineOSTest ${Test} NT4   '${Suffix}'
+  !insertmacro __WinVer_DefineOSTest ${Test} 2000  '${Suffix}'
+  !insertmacro __WinVer_DefineOSTest ${Test} XP    '${Suffix}'
+  !insertmacro __WinVer_DefineOSTest ${Test} 2003  '${Suffix}'
+  !insertmacro __WinVer_DefineOSTest ${Test} VISTA '${Suffix}'
+  !insertmacro __WinVer_DefineOSTest ${Test} 2008  '${Suffix}'
 !macroend
 
-!insertmacro __WinVer_DefineOSTests AtLeast
-!insertmacro __WinVer_DefineOSTests Is
-!insertmacro __WinVer_DefineOSTests AtMost
+!insertmacro __WinVer_DefineOSTests AtLeast ""
+!insertmacro __WinVer_DefineOSTests Is _NT
+!insertmacro __WinVer_DefineOSTests AtMost ""
 
 # version feature LogicLib macros
 
