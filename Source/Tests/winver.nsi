@@ -72,23 +72,14 @@
 #
 #  EXPECTED RESULTS
 #
-#      Version detection failed for Windows 95 OSR B
-#         Expected: 95
-#         Got: NT4
-#      FAILURE Windows 95 OSR B
+#      SUCCESS Windows 95 OSR B
 #      SUCCESS Windows 98
 #      SUCCESS Windows ME
-#      Version detection failed for Windows NT4 SP1
-#         Expected: NT4
-#         Got: 95
 #      Server detection failed for Windows NT4 SP1
 #         Expected: server
 #         Got: client
 #      FAILURE Windows NT4 SP1
-#      Version detection failed for Windows NT4 SP6
-#         Expected: NT4
-#         Got: 95
-#      FAILURE Windows NT4 SP6
+#      SUCCESS Windows NT4 SP6
 #      SUCCESS Windows 2000
 #      SUCCESS Windows 2000 SP4
 #      SUCCESS Windows XP SP2
