@@ -12,6 +12,8 @@
 ;     DetailPrint "Not running on NT. Installing ANSI application."
 ;   ${EndIf}
 ;
+; IsServer checks if the installer is running on a server version of Windows (NT4, 2003, 2008, etc.)
+;
 ; AtLeastWin<version> checks if the installer is running on Windows version at least as specified.
 ; IsWin<version> checks if the installer is running on Windows version exactly as specified.
 ; AtMostWin<version> checks if the installer is running on Windows version at most as specified.
@@ -27,6 +29,7 @@
 ;   XP
 ;   2003
 ;   Vista
+;   2008
 ;
 ; AtLeastServicePack checks if the installer is running on Windows service pack version at least as specified.
 ; IsServicePack checks if the installer is running on Windows service pack version exactly as specified.
@@ -75,6 +78,15 @@
 ;         DetailPrint "Nope, not NT4. phew..."
 ;       ${EndIf}
 ;     ${EndIf}
+;
+;
+; Other useful extensions are:
+;
+;    * IsWin2003R2
+;    * IsStarterEdition
+;    * OSHasMediaCenter
+;    * OSHasTabletSupport
+;
 
 !verbose push
 !verbose 3
@@ -85,48 +97,264 @@
 !include LogicLib.nsh
 !include Util.nsh
 
-!define WINVER_95 0x400
-!define WINVER_98 0x40A ;4.10
-!define WINVER_ME 0x45A ;4.90
+# masks for our variables
 
-!define WINVER_NT4 0x400
-!define WINVER_2000 0x500
-!define WINVER_XP 0x501
-!define WINVER_2003 0x502
-!define WINVER_VISTA 0x600
+!define _WINVER_VERXBIT  0x00000001
+!define _WINVER_MASKVMAJ 0xFF000000
+!define _WINVER_MASKVMIN 0x00FF0000
 
-!macro __GetWinVer
-  !insertmacro _LOGICLIB_TEMP
-  System::Call kernel32::GetVersion()i.s
-  Pop $_LOGICLIB_TEMP
+!define _WINVER_NTBIT    0x80000000
+!define _WINVER_NTSRVBIT 0x40000000
+!define _WINVER_MASKVBLD 0x0000FFFF
+!define _WINVER_MASKSP   0x000F0000
+
+# possible variable values for different versions
+
+!define WINVER_95        0x04000000 ;4.00.0950
+!define WINVER_98        0x040a0000 ;4.10.1998
+;define WINVER_98SE      0x040a0000 ;4.10.2222
+!define WINVER_ME        0x045a0000 ;4.90.3000
+;define WINVER_NT3d51               ;3.51.1057
+!define WINVER_NT4       0x04000000 ;4.00.1381
+!define WINVER_2000      0x05000000 ;5.00.2195
+!define WINVER_XP        0x05010000 ;5.01.2600
+;define WINVER_XP64                 ;5.02.3790
+!define WINVER_2003      0x05020000 ;5.02.3790
+!define WINVER_VISTA     0x06000000 ;6.00.6000
+!define WINVER_2008      0x06000001 ;6.00.6001
+
+# use this to make all nt > 9x
+
+!ifdef WINVER_NT4_OVER_W95
+  !define __WINVERTMP ${WINVER_NT4}
+  !undef WINVER_NT4
+  !define /math WINVER_NT4 ${__WINVERTMP} | ${_WINVER_VERXBIT}
+  !undef __WINVERTMP
+!endif
+
+# some definitions from header files
+
+!define OSVERSIONINFOA_SIZE   148
+!define OSVERSIONINFOEXA_SIZE 156
+!define VER_PLATFORM_WIN32_NT 2
+!define VER_NT_WORKSTATION    1
+
+!define SM_TABLETPC    86
+!define SM_MEDIACENTER 87
+!define SM_STARTER     88
+!define SM_SERVERR2    89
+
+# variable declaration
+
+!macro __WinVer_DeclareVars
+
+  !ifndef __WINVER_VARS_DECLARED
+
+    !define __WINVER_VARS_DECLARED
+
+    Var /GLOBAL __WINVERV
+    Var /GLOBAL __WINVERSP
+
+  !endif
+
 !macroend
 
-!macro __ParseWinVer
-  !insertmacro __GetWinVer
+# lazy initialization macro
+
+!ifmacrondef __WinVer_Call_GetVersionEx
+
+  !macro __WinVer_Call_GetVersionEx STRUCT_SIZE
+
+    System::Call /NoUnload '*$0(i ${STRUCT_SIZE})'
+    System::Call /NoUnload kernel32::GetVersionEx(ir0)i.r3
+
+  !macroend
+
+!endif
+
+!macro __WinVer_InitVars
+  # variables
+  !insertmacro __WinVer_DeclareVars
+
+  # only calculate version once
+  StrCmp $__WINVERV "" _winver_noveryet
+    Return
+  _winver_noveryet:
+
+  # push used registers on the stack
   Push $0
-  IntOp $0 $_LOGICLIB_TEMP & 0xff
-  IntOp $0 $0 << 8
-  IntOp $_LOGICLIB_TEMP $_LOGICLIB_TEMP & 0xff00
-  IntOp $_LOGICLIB_TEMP $_LOGICLIB_TEMP >> 8
-  IntOp $_LOGICLIB_TEMP $_LOGICLIB_TEMP | $0
+  Push $1 ;maj
+  Push $2 ;min
+  Push $3 ;bld
+  Push $R0 ;temp
+
+  # allocate memory
+  System::Alloc /NoUnload ${OSVERSIONINFOEXA_SIZE}
   Pop $0
+
+  # use OSVERSIONINFOEX
+  !insertmacro __WinVer_Call_GetVersionEx ${OSVERSIONINFOEXA_SIZE}
+
+  IntCmp $3 0 "" _winver_ex _winver_ex
+    # OSVERSIONINFOEX not allowed (Win9x or NT4 w/SP < 6), use OSVERSIONINFO
+    !insertmacro __WinVer_Call_GetVersionEx ${OSVERSIONINFOA_SIZE}
+  _winver_ex:
+
+  # get results from struct
+  System::Call /NoUnload '*$0(i.s,i.r1,i.r2,i.r3,i.s,&t128.s,&i2.s,&i2,&i2,&i1.s,&i1)'
+
+  # free struct
+  System::Free $0
+
+  # win9x has major and minor info in high word of dwBuildNumber - remove it
+  IntOp $3 $3 & 0xFFFF
+
+  # get dwOSVersionInfoSize
+  Pop $R0
+
+  # get dwPlatformId
+  Pop $0
+
+  # NT?
+  IntCmp $0 ${VER_PLATFORM_WIN32_NT} "" _winver_notnt _winver_notnt
+    IntOp $__WINVERSP $__WINVERSP | ${_WINVER_NTBIT}
+  _winver_notnt:
+
+  # get service pack information
+  IntCmp $0 ${VER_PLATFORM_WIN32_NT} _winver_nt "" _winver_nt  # win9x
+
+    # get szCSDVersion
+    Pop $0
+
+    # skip first char
+    StrCpy $0 $0 "" 1
+
+    # discard invalid wServicePackMajor and wProductType
+    Pop $R0
+    Pop $R0
+
+    # switch
+    StrCmp $0 'A' "" +3
+      StrCpy $0 1
+      Goto _winver_sp_done
+    StrCmp $0 'B' "" +3
+      StrCpy $0 2
+      Goto _winver_sp_done
+    StrCmp $0 'C' "" +3
+      StrCpy $0 3
+      Goto _winver_sp_done
+    StrCpy $0 0
+    Goto _winver_sp_done
+
+  _winver_nt: # nt
+
+    IntCmp $R0 ${OSVERSIONINFOEXA_SIZE} "" _winver_sp_noex _winver_sp_noex
+
+      # discard szCSDVersion
+      Pop $0
+
+      # get wProductType
+      Exch
+      Pop $0
+
+      # is server?
+      IntCmp $0 ${VER_NT_WORKSTATION} _winver_noserver _winver_noserver ""
+        IntOp $__WINVERSP $__WINVERSP | ${_WINVER_NTSRVBIT}
+      _winver_noserver:
+
+      # get wServicePackMajor
+      Pop $0
+
+      # done with sp
+      Goto _winver_sp_done
+
+    _winver_sp_noex: # OSVERSIONINFO, not OSVERSIONINFOEX
+
+      ####  TODO
+      ## For IsServer to support < NT4SP6, we need to check the registry
+      ## here to see if we are a server and/or DC
+
+      # get szCSDVersion
+      Pop $0
+
+      # discard invalid wServicePackMajor and wProductType
+      Pop $R0
+      Pop $R0
+
+      # get service pack number from text
+      StrCpy $R0 $0 13
+      StrCmp $R0 "Service Pack " "" +3
+        StrCpy $0 $0 "" 13 # cut "Service Pack "
+        Goto +2
+        StrCpy $0 0 # no service pack
+
+!ifdef WINVER_NT4_OVER_W95
+      IntOp $__WINVERV $__WINVERV | ${_WINVER_VERXBIT}
+!endif
+
+  _winver_sp_done:
+
+  # store service pack
+  IntOp $0 $0 << 16
+  IntOp $__WINVERSP $__WINVERSP | $0
+
+  ### now for the version
+
+  # is server?
+  IntOp $0 $__WINVERSP & ${_WINVER_NTSRVBIT}
+
+  # windows xp x64?
+  IntCmp $0 0 "" _winver_not_xp_x64 _winver_not_xp_x64 # not server
+  IntCmp $1 5 "" _winver_not_xp_x64 _winver_not_xp_x64 # maj 5
+  IntCmp $2 2 "" _winver_not_xp_x64 _winver_not_xp_x64 # min 2
+    # change XP x64 from 5.2 to 5.1 so it's still XP
+    StrCpy $2 1
+  _winver_not_xp_x64:
+
+  # server 2008?
+  IntCmp $0 0 _winver_not_2008 # server
+  IntCmp $1 6 "" _winver_not_2008 _winver_not_2008 # maj 6
+  IntCmp $2 0 "" _winver_not_2008 _winver_not_2008 # min 0
+    # extra bit so Server 2008 comes after Vista SP1 that has the same minor version
+    IntOp $__WINVERV $__WINVERV | ${_WINVER_VERXBIT}
+  _winver_not_2008:
+
+  # pack version
+  IntOp $1 $1 << 24 # VerMajor
+  IntOp $__WINVERV $__WINVERV | $1
+  IntOp $0 $2 << 16
+  IntOp $__WINVERV $__WINVERV | $0 # VerMinor
+  IntOp $__WINVERSP $__WINVERSP | $3 # VerBuild
+
+  # restore registers
+  Pop $R0
+  Pop $3
+  Pop $2
+  Pop $1
+  Pop $0
+
 !macroend
 
-!macro _IsNT _a _b _t _f
-  !insertmacro __GetWinVer
-  IntOp $_LOGICLIB_TEMP $_LOGICLIB_TEMP & 0x80000000
-  !insertmacro _== $_LOGICLIB_TEMP 0 `${_t}` `${_f}`
+# version comparison LogicLib macros
+
+!macro _WinVerAtLeast _a _b _t _f
+  ${CallArtificialFunction} __WinVer_InitVars
+  !insertmacro _>= $__WINVERV `${_b}` `${_t}` `${_f}`
 !macroend
-!define IsNT `"" IsNT ""`
+!macro _WinVerIs _a _b _t _f
+  ${CallArtificialFunction} __WinVer_InitVars
+  !insertmacro _= $__WINVERV `${_b}` `${_t}` `${_f}`
+!macroend
+!macro _WinVerAtMost _a _b _t _f
+  ${CallArtificialFunction} __WinVer_InitVars
+  !insertmacro _<= $__WINVERV `${_b}` `${_t}` `${_f}`
+!macroend
 
 !macro __WinVer_DefineOSTest Test OS
-
   !define ${Test}Win${OS} `"" WinVer${Test} ${WINVER_${OS}}`
-
 !macroend
 
 !macro __WinVer_DefineOSTests Test
-
   !insertmacro __WinVer_DefineOSTest ${Test} 95
   !insertmacro __WinVer_DefineOSTest ${Test} 98
   !insertmacro __WinVer_DefineOSTest ${Test} ME
@@ -135,98 +363,72 @@
   !insertmacro __WinVer_DefineOSTest ${Test} XP
   !insertmacro __WinVer_DefineOSTest ${Test} 2003
   !insertmacro __WinVer_DefineOSTest ${Test} VISTA
-
-!macroend
-
-!macro _WinVerAtLeast _a _b _t _f
-  ${CallArtificialFunction} __ParseWinVer
-  !insertmacro _>= $_LOGICLIB_TEMP `${_b}` `${_t}` `${_f}`
-!macroend
-
-!macro _WinVerIs _a _b _t _f
-  ${CallArtificialFunction} __ParseWinVer
-  !insertmacro _= $_LOGICLIB_TEMP `${_b}` `${_t}` `${_f}`
-!macroend
-
-!macro _WinVerAtMost _a _b _t _f
-  ${CallArtificialFunction} __ParseWinVer
-  !insertmacro _<= $_LOGICLIB_TEMP `${_b}` `${_t}` `${_f}`
+  !insertmacro __WinVer_DefineOSTest ${Test} 2008
 !macroend
 
 !insertmacro __WinVer_DefineOSTests AtLeast
 !insertmacro __WinVer_DefineOSTests Is
 !insertmacro __WinVer_DefineOSTests AtMost
 
+# version feature LogicLib macros
 
-!macro __GetWinServicePack
+!macro _IsNT _a _b _t _f
   !insertmacro _LOGICLIB_TEMP
-
-  Push $0
-  Push $1
-  Push $2
-
-  StrCpy $2 0
-
-  ; $1 = malloc(sizeof(OSVERSIONINFOEXA))
-  System::Alloc 156
-  Pop $1
-  StrCmp $1 0 Label_WinVer_ServicePack_End_${LOGICLIB_COUNTER}
-    ; ($1)->dwOSVersionInfoSize = sizeof(OSVERSIONINFOEXA)
-    System::Call /NOUNLOAD '*$1(&i4 156)'
-    ; GetVersionEx($1)
-    System::Call /NOUNLOAD 'kernel32::GetVersionEx(i r1) i.r0'
-    StrCmp $0 0 Label_WinVer_ServicePack_GetVersion_${LOGICLIB_COUNTER}
-      ; $2 = ($1)->wServicePackMajor
-      System::Call /NOUNLOAD '*$1(&t148, &i2.r2)'
-      Goto Label_WinVer_ServicePack_End_${LOGICLIB_COUNTER}
-
-Label_WinVer_ServicePack_GetVersion_${LOGICLIB_COUNTER}:
-      ; ($1)->dwOSVersionInfoSize = sizeof(OSVERSIONINFOA)
-      System::Call /NOUNLOAD '*$1(&i4 148)'
-      ; GetVersionEx($1)
-      System::Call /NOUNLOAD 'kernel32::GetVersionEx(i r1) i.r0'
-      StrCmp $0 0 Label_WinVer_ServicePack_End_${LOGICLIB_COUNTER}
-        ; $2 = ($1)->szCSDVersion
-        System::Call /NOUNLOAD '*$1(&t20, &t128.r2)'
-        StrCpy $0 $2 13
-        StrCmp $0 "Service Pack " 0 +3
-          StrCpy $2 $2 "" 13
-          Goto +2
-        StrCpy $2 0
-
-Label_WinVer_ServicePack_End_${LOGICLIB_COUNTER}:
-    ; free($1)
-    StrCmp $1 0 +2
-      System::Free $1
-
-  StrCpy $_LOGICLIB_TEMP $2
-
-  Pop $2
-  Pop $1
-  Pop $0
-
-  !insertmacro _IncreaseCounter
-
+  ${CallArtificialFunction} __WinVer_InitVars
+  IntOp $_LOGICLIB_TEMP $__WINVERSP & ${_WINVER_NTBIT}
+  !insertmacro _!= $_LOGICLIB_TEMP 0 `${_t}` `${_f}`
 !macroend
+!define IsNT `"" IsNT ""`
 
-!define AtLeastServicePack `"" AtLeastServicePack`
+!macro _IsServerOS _a _b _t _f
+  !insertmacro _LOGICLIB_TEMP
+  ${CallArtificialFunction} __WinVer_InitVars
+  IntOp $_LOGICLIB_TEMP $__WINVERSP & ${_WINVER_NTSRVBIT}
+  !insertmacro _!= $_LOGICLIB_TEMP 0 `${_t}` `${_f}`
+!macroend
+!define IsServerOS `"" IsServerOS ""`
+
+# service pack macros
+
+!macro _WinVer_GetServicePackLevel outvar
+  !insertmacro _LOGICLIB_TEMP
+  ${CallArtificialFunction} __WinVer_InitVars
+  IntOp $_LOGICLIB_TEMP $__WINVERSP & ${_WINVER_MASKSP}
+  IntOp $_LOGICLIB_TEMP $_LOGICLIB_TEMP >> 16
+!macroend
+!define WinVerGetServicePackLevel '!insertmacro _WinVer_GetServicePackLevel '
+
 !macro _AtLeastServicePack _a _b _t _f
-  ${CallArtificialFunction} __GetWinServicePack
+  ${WinVerGetServicePackLevel} $_LOGICLIB_TEMP
   !insertmacro _>= $_LOGICLIB_TEMP `${_b}` `${_t}` `${_f}`
 !macroend
+!define AtLeastServicePack `"" AtLeastServicePack`
 
-!define AtMostServicePack `"" AtMostServicePack`
 !macro _AtMostServicePack _a _b _t _f
-  ${CallArtificialFunction} __GetWinServicePack
+  ${WinVerGetServicePackLevel} $_LOGICLIB_TEMP
   !insertmacro _<= $_LOGICLIB_TEMP `${_b}` `${_t}` `${_f}`
 !macroend
+!define AtMostServicePack `"" AtMostServicePack`
 
-!define IsServicePack `"" IsServicePack`
 !macro _IsServicePack _a _b _t _f
-  ${CallArtificialFunction} __GetWinServicePack
+  ${WinVerGetServicePackLevel} $_LOGICLIB_TEMP
   !insertmacro _= $_LOGICLIB_TEMP `${_b}` `${_t}` `${_f}`
 !macroend
+!define IsServicePack `"" IsServicePack`
 
+# special feature LogicLib macros
+
+!macro _WinVer_SysMetricCheck m _b _t _f
+  !insertmacro _LOGICLIB_TEMP
+  System::Call user32::GetSystemMetrics(i${m})i.s
+  pop $_LOGICLIB_TEMP
+  !insertmacro _!= $_LOGICLIB_TEMP 0 `${_t}` `${_f}`
+!macroend
+
+!define IsWin2003R2        `${SM_SERVERR2}    WinVer_SysMetricCheck ""`
+!define IsStarterEdition   `${SM_STARTER}     WinVer_SysMetricCheck ""`
+!define OSHasMediaCenter   `${SM_MEDIACENTER} WinVer_SysMetricCheck ""`
+!define OSHasTabletSupport `${SM_TABLETPC}    WinVer_SysMetricCheck ""`
 
 !endif # !___WINVER__NSH___
 
