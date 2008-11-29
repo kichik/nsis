@@ -53,6 +53,8 @@ code
 <li><a href="#ref-onchange">OnChange</a></li>
 <li><a href="#ref-onclick">OnClick</a></li>
 <li><a href="#ref-onnotify">OnNotify</a></li>
+<li><a href="#ref-ontimer">OnTimer</a></li>
+<li><a href="#ref-killtimer">KillTimer</a></li>
 </ul>
 </li>
 <li>
@@ -63,6 +65,8 @@ code
 <li><a href="#mref-onchange">NSD_OnChange</a></li>
 <li><a href="#mref-onclick">NSD_OnClick</a></li>
 <li><a href="#mref-onnotify">NSD_OnNotify</a></li>
+<li><a href="#mref-ontimer">NSD_OnTimer</a></li>
+<li><a href="#mref-killtimer">NSD_KillTimer</a></li>
 <li><a href="#mref-addstyle">NSD_AddStyle</a></li>
 <li><a href="#mref-addexstyle">NSD_AddExStyle</a></li>
 <li><a href="#mref-gettext">NSD_GetText</a></li>
@@ -281,6 +285,7 @@ SectionEnd</pre></blockquote>
 <li>ComboBox</li>
 <li>DropList</li>
 <li>ListBox</li>
+<li>ProgressBar</li>
 </ul>
 
 <h3><a name="step-state"></a>Control State</h3>
@@ -585,6 +590,26 @@ SectionEnd</pre></blockquote>
 
 <p>Returns nothing.</p>
 
+<h3><a name="ref-ontimer"></a>OnTimer</h3>
+
+<p><code>nsDialogs::OnTimer /NOUNLOAD <i>function_address</i> <i>timer_interval</i></code></p>
+
+<p>Sets a timer that'd call the callback function for the given control every in a constant interval. Interval times are specified in milliseconds.</p>
+
+<p>Use GetFunctionAddress to get the address of the desired callback function.</p>
+
+<p>Returns nothing.</p>
+
+<h3><a name="ref-killtimer"></a>KillTimer</h3>
+
+<p><code>nsDialogs::KillTimer /NOUNLOAD <i>function_address</i></code></p>
+
+<p>Kills a previously set timer.</p>
+
+<p>Use GetFunctionAddress to get the address of the desired callback function.</p>
+
+<p>Returns nothing.</p>
+
 <h2><a name="mref"></a>Macro Reference</h2>
 
 <p>nsDialogs.nsh contains a lot of macros that can make nsDialogs usage a lot easier. Below is a description of each of those macros including purpose, syntax, input and output.</p>
@@ -617,6 +642,7 @@ SectionEnd</pre></blockquote>
 <li>${NSD_CreateComboBox}</li>
 <li>${NSD_CreateDropList}</li>
 <li>${NSD_CreateListBox}</li>
+<li>${NSD_CreateProgressBar}</li>
 </ul>
 
 <p>Returns the new dialog's HWND on the stack or error.</p>
@@ -648,6 +674,18 @@ SectionEnd</pre></blockquote>
 <p><code>${NSD_OnNotify} <i>control_HWND</i> <i>function_address</i></code></p>
 
 <p>See <a href="#ref-onnotify">OnNotify</a> for more details.</p>
+
+<h3><a name="mref-ontimer"></a>NSD_OnTimer</h3>
+
+<p><code>${NSD_OnTimer} <i>function_address</i> <i>timer_interval</i></code></p>
+
+<p>See <a href="#ref-ontimer">OnTimer</a> for more details.</p>
+
+<h3><a name="mref-killtimer"></a>NSD_KillTimer</h3>
+
+<p><code>${NSD_KillTimer} <i>function_address</i></code></p>
+
+<p>See <a href="#ref-killtimer">KillTimer</a> for more details.</p>
 
 <h3><a name="mref-addstyle"></a>NSD_AddStyle</h3>
 
