@@ -17,6 +17,8 @@
 #
 #      Function PrintSysVersion
 #
+#        System::Alloc $1
+#        Pop $0
 #        System::Call *$0(ir1)
 #        System::Call kernel32::GetVersionEx(ir0)i.R0
 #
@@ -41,33 +43,25 @@
 #
 #        DetailPrint $R3
 #
+#        System::Free $0
+#
 #      FunctionEnd
 #
 #      Section
 #
-#        System::Alloc 156
-#        Pop $0
-#
 #        DetailPrint "# OSVERSIONINFOEX"
 #
-#        StrCpy $2 "$$OSVERSIONINFOEX"
 #        StrCpy $1 156
+#        StrCpy $2 "$$OSVERSIONINFOEX"
 #        Call PrintSysVersion
-#
-#        System::Free $0
 #
 #        DetailPrint ""
 #
-#        System::Alloc 156
-#        Pop $0
-#
 #        DetailPrint "# OSVERSIONINFO"
 #
-#        StrCpy $2 "$$OSVERSIONINFO"
 #        StrCpy $1 148
+#        StrCpy $2 "$$OSVERSIONINFO"
 #        Call PrintSysVersion
-#
-#        System::Free $0
 #
 #      SectionEnd
 #
