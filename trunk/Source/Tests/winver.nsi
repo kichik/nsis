@@ -17,7 +17,7 @@
 #
 #      Function PrintSysVersion
 #
-#        System::Alloc $1
+#        System::Alloc 156
 #        Pop $0
 #        System::Call *$0(ir1)
 #        System::Call kernel32::GetVersionEx(ir0)i.R0
