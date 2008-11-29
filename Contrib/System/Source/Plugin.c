@@ -166,6 +166,11 @@ HANDLE GlobalCopy(HANDLE Old)
     return copymem(GlobalAlloc(GPTR, size), Old, (int) size);
 }
 
+UINT_PTR NSISCallback(UINT msg)
+{
+  return (UINT_PTR) NULL;
+}
+
 #ifdef _DEBUG
 void main()
 {

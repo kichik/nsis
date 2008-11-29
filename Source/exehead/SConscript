@@ -4,6 +4,7 @@ files = Split("""
 	exec.c
 	fileform.c
 	Main.c
+	plugin.c
 	Ui.c
 	util.c
 	#Source/crc32.c

@@ -36,11 +36,23 @@ INST_LANG,      // $LANGUAGE
 __INST_LAST
 };
 
-#define PLUGINFUNCTION(name) void __declspec(dllexport) name(HWND hwndParent, int string_size, char *variables, stack_t **stacktop) { \
-/*  g_hwndParent=hwndParent; */\
+typedef UINT_PTR (*NSISPLUGINCALLBACK)(UINT);
+
+typedef struct {
+  void *exec_flags;
+  int (__stdcall *ExecuteCodeSegment)(int, HWND);
+  void (__stdcall *validate_filename)(char *);
+  BOOL (__stdcall *RegisterPluginCallback)(HMODULE, NSISPLUGINCALLBACK);
+} extra_parameters;
+
+#define PLUGINFUNCTION(name) \
+  void __declspec(dllexport) name( \
+    HWND hwndParent, int string_size, char *variables, stack_t **stacktop, extra_parameters *extra) { \
+  /*g_hwndParent=hwndParent;*/ \
   g_stringsize=string_size; \
   g_stacktop=stacktop; \
-  g_variables=variables; 
+  g_variables=variables; \
+  extra->RegisterPluginCallback(g_hInstance, NSISCallback);
 #define PLUGINFUNCTIONEND }
 
 #define PLUGINFUNCTIONSHORT(name) void __declspec(dllexport) name(HWND hwndParent, int string_size, char *variables, stack_t **stacktop) { \
@@ -61,9 +73,12 @@ extern void pushint(int value);
 extern HANDLE GlobalCopy(HANDLE Old);
 extern char *copymem(char *output, char *input, int size);
 
+extern UINT_PTR NSISCallback(UINT);
+
 extern HWND g_hwndParent;
 extern int g_stringsize;
 extern stack_t **g_stacktop;
 extern char *g_variables;
+extern HINSTANCE g_hInstance;
 
 #endif

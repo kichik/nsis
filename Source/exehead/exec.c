@@ -23,6 +23,7 @@
 #include "ui.h"
 #include "components.h"
 #include "exec.h"
+#include "plugin.h"
 #include "lang.h"
 #include "resource.h"
 
@@ -48,10 +49,12 @@ struct {
   exec_flags *flags;
   void *ExecuteCodeSegment;
   void *validate_filename;
+  void *RegisterPluginCallback;
 } plugin_extra_parameters = {
   &g_exec_flags,
   &ExecuteCodeSegment,
-  &validate_filename
+  &validate_filename,
+  &RegisterPluginCallback
 };
 
 #if defined(NSIS_SUPPORT_ACTIVEXREG) || defined(NSIS_SUPPORT_CREATESHORTCUT)
@@ -996,7 +999,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
               update_status_text(LANG_CANNOTFINDSYMBOL,buf0);
               log_printf3("Error registering DLL: %s not found in %s",buf0,buf1);
             }
-            if (!parm3) FreeLibrary(h);
+            if (!parm3 && Plugins_CanUnload(h)) FreeLibrary(h);
           }
           else
           {
