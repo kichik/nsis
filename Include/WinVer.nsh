@@ -100,7 +100,7 @@
 # masks for our variables
 
 !define _WINVER_VERXBIT  0x00000001
-!define _WINVER_MASKVMAJ 0xFF000000
+!define _WINVER_MASKVMAJ 0x7F000000
 !define _WINVER_MASKVMIN 0x00FF0000
 
 !define _WINVER_NTBIT    0x80000000
@@ -446,6 +446,26 @@
 !define IsStarterEdition   `${SM_STARTER}     WinVer_SysMetricCheck ""`
 !define OSHasMediaCenter   `${SM_MEDIACENTER} WinVer_SysMetricCheck ""`
 !define OSHasTabletSupport `${SM_TABLETPC}    WinVer_SysMetricCheck ""`
+
+# version retrieval macros
+
+!macro __WinVer_GetVer var rshift mask outvar
+  ${CallArtificialFunction} __WinVer_InitVars
+  !if "${mask}" != ""
+    IntOp ${outvar} ${var} & ${mask}
+    !if "${rshift}" != ""
+      IntOp ${outvar} ${outvar} >> ${rshift}
+    !endif
+  !else
+    IntOp ${outvar} ${var} >> ${rshift}
+  !endif
+!macroend
+
+!define WinVerGetMajor '!insertmacro __WinVer_GetVer $__WINVERV  24 ${_WINVER_MASKVMAJ}'
+!define WinVerGetMinor '!insertmacro __WinVer_GetVer $__WINVERV  16 ${_WINVER_MASKVMIN}'
+!define WinVerGetBuild '!insertmacro __WinVer_GetVer $__WINVERSP "" ${_WINVER_MASKVBLD}'
+
+# done
 
 !endif # !___WINVER__NSH___
 
