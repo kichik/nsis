@@ -10,6 +10,8 @@
 #
 #  To add a test for another version, use the following script.
 #
+#      !include LogicLib.nsh
+#
 #      OutFile WinVer.exe
 #      ShowInstDetails show
 #
