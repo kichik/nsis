@@ -232,22 +232,24 @@ Var OSVERSIONINFOEX_INIT
 
 	# test service pack equality
 
-	${IfNot} ${IsServicePack} ${SP}
+	IntOp $0 ${SP} - 1
+	IntOp $1 ${SP} + 1
 
-		!insertmacro _WinVer_GetServicePackLevel $0
+	${IfNot} ${IsServicePack} ${SP}
+	${OrIf} ${IsServicePack} $0
+	${OrIf} ${IsServicePack} $1
+
+		!insertmacro _WinVer_GetServicePackLevel
 
 		DetailPrint "Service pack detection failed for ${NAME}"
 		DetailPrint "   Expected: ${SP}"
-		DetailPrint "   Got: $0"
+		DetailPrint "   Got: $_LOGICLIB_TEMP"
 
 		StrCpy $R0 "FAILURE"
 
 	${EndIf}
 
 	# test service pack comparison
-
-	IntOp $0 ${SP} - 1
-	IntOp $1 ${SP} + 1
 
 	${IfNot} ${AtLeastServicePack} ${SP}
 	${OrIfNot} ${AtLeastServicePack} $0
