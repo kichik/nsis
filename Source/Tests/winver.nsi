@@ -91,7 +91,6 @@
 #
 #  FAILURES
 #
-#    * Windows 95 and NT4 have the same version number.
 #    * On NT4 below SP6, the registry has to be checked to figure out if it's
 #      a server or not. WinVer doesn't do that yet.
 #
