@@ -405,28 +405,30 @@
 
 # service pack macros
 
-!macro _WinVer_GetServicePackLevel
-  !insertmacro _LOGICLIB_TEMP
+!macro _WinVer_GetServicePackLevel OUTVAR
   ${CallArtificialFunction} __WinVer_InitVars
-  IntOp $_LOGICLIB_TEMP $__WINVERSP & ${_WINVER_MASKSP}
-  IntOp $_LOGICLIB_TEMP $_LOGICLIB_TEMP >> 16
+  IntOp ${OUTVAR} $__WINVERSP & ${_WINVER_MASKSP}
+  IntOp ${OUTVAR} ${OUTVAR} >> 16
 !macroend
 !define WinVerGetServicePackLevel '!insertmacro _WinVer_GetServicePackLevel '
 
 !macro _AtLeastServicePack _a _b _t _f
-  ${WinVerGetServicePackLevel}
+  !insertmacro _LOGICLIB_TEMP
+  ${WinVerGetServicePackLevel} $_LOGICLIB_TEMP
   !insertmacro _>= $_LOGICLIB_TEMP `${_b}` `${_t}` `${_f}`
 !macroend
 !define AtLeastServicePack `"" AtLeastServicePack`
 
 !macro _AtMostServicePack _a _b _t _f
-  ${WinVerGetServicePackLevel}
+  !insertmacro _LOGICLIB_TEMP
+  ${WinVerGetServicePackLevel} $_LOGICLIB_TEMP
   !insertmacro _<= $_LOGICLIB_TEMP `${_b}` `${_t}` `${_f}`
 !macroend
 !define AtMostServicePack `"" AtMostServicePack`
 
 !macro _IsServicePack _a _b _t _f
-  ${WinVerGetServicePackLevel}
+  !insertmacro _LOGICLIB_TEMP
+  ${WinVerGetServicePackLevel} $_LOGICLIB_TEMP
   !insertmacro _= $_LOGICLIB_TEMP `${_b}` `${_t}` `${_f}`
 !macroend
 !define IsServicePack `"" IsServicePack`

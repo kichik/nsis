@@ -239,11 +239,11 @@ Var OSVERSIONINFOEX_INIT
 	${OrIf} ${IsServicePack} $0
 	${OrIf} ${IsServicePack} $1
 
-		!insertmacro _WinVer_GetServicePackLevel
+		${WinVerGetServicePackLevel} $2
 
 		DetailPrint "Service pack detection failed for ${NAME}"
 		DetailPrint "   Expected: ${SP}"
-		DetailPrint "   Got: $_LOGICLIB_TEMP"
+		DetailPrint "   Got: $2"
 
 		StrCpy $R0 "FAILURE"
 
