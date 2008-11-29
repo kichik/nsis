@@ -414,19 +414,19 @@
 !define WinVerGetServicePackLevel '!insertmacro _WinVer_GetServicePackLevel '
 
 !macro _AtLeastServicePack _a _b _t _f
-  ${WinVerGetServicePackLevel} $_LOGICLIB_TEMP
+  ${WinVerGetServicePackLevel}
   !insertmacro _>= $_LOGICLIB_TEMP `${_b}` `${_t}` `${_f}`
 !macroend
 !define AtLeastServicePack `"" AtLeastServicePack`
 
 !macro _AtMostServicePack _a _b _t _f
-  ${WinVerGetServicePackLevel} $_LOGICLIB_TEMP
+  ${WinVerGetServicePackLevel}
   !insertmacro _<= $_LOGICLIB_TEMP `${_b}` `${_t}` `${_f}`
 !macroend
 !define AtMostServicePack `"" AtMostServicePack`
 
 !macro _IsServicePack _a _b _t _f
-  ${WinVerGetServicePackLevel} $_LOGICLIB_TEMP
+  ${WinVerGetServicePackLevel}
   !insertmacro _= $_LOGICLIB_TEMP `${_b}` `${_t}` `${_f}`
 !macroend
 !define IsServicePack `"" IsServicePack`
