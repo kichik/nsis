@@ -75,7 +75,7 @@ typedef struct {
   int exec_reboot;
   int reboot_called;
   int XXX_cur_insttype; // deprecated
-  int XXX_insttype_changed; // deprecated
+  int plugin_api_version; // used to be XXX_insttype_changed, but that was deprecated
   int silent;
   int instdir_error;
   int rtl;
@@ -84,10 +84,23 @@ typedef struct {
   int status_update;
 } exec_flags_type;
 
+// NSIS Plug-In Callback Messages
+enum NSPIM 
+{
+	NSPIM_UNLOAD,    // This is the last message a plugin gets, do final cleanup
+	NSPIM_GUIUNLOAD, // Called after .onGUIEnd
+};
+
+// Prototype for callbacks registered with extra_parameters->RegisterPluginCallback()
+// Return NULL for unknown messages
+// Should always be __cdecl for future expansion possibilities
+typedef UINT_PTR (*NSISPLUGINCALLBACK)(NSPIM);
+
 typedef struct {
   exec_flags_type *exec_flags;
   int (__stdcall *ExecuteCodeSegment)(int, HWND);
   void (__stdcall *validate_filename)(char *);
+  BOOL (__stdcall *RegisterPluginCallback)(HMODULE, NSISPLUGINCALLBACK);
 } extra_parameters;
 
 // utility functions (not required but often useful)
