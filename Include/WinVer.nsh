@@ -405,7 +405,7 @@
 
 # service pack macros
 
-!macro _WinVer_GetServicePackLevel outvar
+!macro _WinVer_GetServicePackLevel
   !insertmacro _LOGICLIB_TEMP
   ${CallArtificialFunction} __WinVer_InitVars
   IntOp $_LOGICLIB_TEMP $__WINVERSP & ${_WINVER_MASKSP}
