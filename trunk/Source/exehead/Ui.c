@@ -28,6 +28,7 @@
 #include "util.h"
 #include "ui.h"
 #include "exec.h"
+#include "plugin.h"
 #include "lang.h"
 #include "components.h"
 
@@ -268,6 +269,11 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
   // initialize auto close flag
   g_exec_flags.autoclose=g_flags&CH_FLAGS_AUTO_CLOSE;
 
+#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
+  // initialize plugin api
+  g_exec_flags.plugin_api_version=NSISPIAPIVER_CURR;
+#endif
+
   // read install directory from registry
   if (!is_valid_instpath(state_install_directory))
   {
@@ -396,6 +402,9 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
       int ret=DialogBox(g_hInstance,MAKEINTRESOURCE(IDD_INST+dlg_offset),0,DialogProc);
 #if defined(NSIS_SUPPORT_CODECALLBACKS) && defined(NSIS_CONFIG_ENHANCEDUI_SUPPORT)
       ExecuteCallbackFunction(CB_ONGUIEND);
+#endif
+#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
+      Plugins_SendMsgToAllPlugins(NSPIM_GUIUNLOAD);
 #endif
       return ret;
     }

@@ -498,7 +498,7 @@ typedef struct
   int __;
 #endif
   int XXX_cur_insttype; // depreacted
-  int XXX_insttype_changed; // deprecated
+  int plugin_api_version; // used to be XXX_insttype_changed, but that was deprecated
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
   int silent;
 #else
