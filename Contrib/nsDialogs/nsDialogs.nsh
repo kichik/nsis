@@ -252,6 +252,10 @@ Header file for creating custom installer pages with nsDialogs
 !define __NSD_ListBox_STYLE ${DEFAULT_STYLES}|${WS_TABSTOP}|${WS_VSCROLL}|${LBS_DISABLENOSCROLL}|${LBS_HASSTRINGS}|${LBS_NOINTEGRALHEIGHT}|${LBS_NOTIFY}
 !define __NSD_ListBox_EXSTYLE ${WS_EX_WINDOWEDGE}|${WS_EX_CLIENTEDGE}
 
+!define __NSD_ProgressBar_CLASS msctls_progress32
+!define __NSD_ProgressBar_STYLE ${DEFAULT_STYLES}
+!define __NSD_ProgressBar_EXSTYLE ${WS_EX_WINDOWEDGE}|${WS_EX_CLIENTEDGE}
+
 !macro __NSD_DefineControl NAME
 
 	!define NSD_Create${NAME} "nsDialogs::CreateControl /NOUNLOAD ${__NSD_${Name}_CLASS} ${__NSD_${Name}_STYLE} ${__NSD_${Name}_EXSTYLE}"
@@ -277,6 +281,7 @@ Header file for creating custom installer pages with nsDialogs
 !insertmacro __NSD_DefineControl ComboBox
 !insertmacro __NSD_DefineControl DropList
 !insertmacro __NSD_DefineControl ListBox
+!insertmacro __NSD_DefineControl ProgressBar
 
 !macro __NSD_OnControlEvent EVENT HWND FUNCTION
 
@@ -320,6 +325,32 @@ Header file for creating custom installer pages with nsDialogs
 !insertmacro __NSD_DefineControlCallback Change
 !insertmacro __NSD_DefineControlCallback Notify
 !insertmacro __NSD_DefineDialogCallback Back
+
+!macro _NSD_CreateTimer FUNCTION INTERVAL
+
+	Push $0
+
+	GetFunctionAddress $0 "${FUNCTION}"
+	nsDialogs::CreateTimer /NOUNLOAD $0 "${INTERVAL}"
+
+	Pop $0
+
+!macroend
+
+!define NSD_CreateTimer `!insertmacro _NSD_CreateTimer`
+
+!macro _NSD_KillTimer FUNCTION
+
+	Push $0
+
+	GetFunctionAddress $0 "${FUNCTION}"
+	nsDialogs::KillTimer /NOUNLOAD $0
+
+	Pop $0
+
+!macroend
+
+!define NSD_KillTimer `!insertmacro _NSD_KillTimer`
 
 !macro _NSD_AddStyle CONTROL STYLE
 

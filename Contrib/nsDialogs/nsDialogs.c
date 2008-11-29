@@ -451,6 +451,47 @@ void __declspec(dllexport) GetUserData(HWND hwndParent, int string_size, char *v
   pushstring(ctl->userData);
 }
 
+void CALLBACK TimerProc(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
+{
+  // we use a timer proc instead of WM_TIMER to make sure no one messes with the ids but us
+  g_pluginParms->ExecuteCodeSegment(idEvent - 1, 0);
+}
+
+void __declspec(dllexport) CreateTimer(HWND hwndParent, int string_size, char *variables, stack_t **stacktop, extra_parameters *extra)
+{
+  UINT callback;
+  UINT interval;
+
+  // get info from stack
+
+  callback = popint();
+  interval = popint();
+
+  if (!callback || !interval)
+    return;
+
+  // create timer
+
+  SetTimer(
+    g_dialog.hwDialog,
+    callback,
+    interval,
+    TimerProc);
+}
+
+void __declspec(dllexport) KillTimer(HWND hwndParent, int string_size, char *variables, stack_t **stacktop, extra_parameters *extra)
+{
+  UINT id;
+
+  // get timer id from stack
+
+  id = popint();
+
+  // kill timer
+
+  KillTimer(g_dialog.hwDialog, id);
+}
+
 void NSDFUNC SetControlCallback(size_t callbackIdx)
 {
   HWND hwCtl;
