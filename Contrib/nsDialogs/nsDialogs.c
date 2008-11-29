@@ -479,7 +479,7 @@ void __declspec(dllexport) CreateTimer(HWND hwndParent, int string_size, char *v
     TimerProc);
 }
 
-void __declspec(dllexport) KillTimer(HWND hwndParent, int string_size, char *variables, stack_t **stacktop, extra_parameters *extra)
+void nsdKillTimer(HWND hwndParent, int string_size, char *variables, stack_t **stacktop, extra_parameters *extra)
 {
   UINT id;
 
