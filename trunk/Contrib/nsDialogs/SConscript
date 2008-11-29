@@ -4,6 +4,7 @@ files = Split("""
 	browse.c
 	input.c
 	nsDialogs.c
+	nsDialogs.def
 	nsis.c
 	rtl.c
 """)
