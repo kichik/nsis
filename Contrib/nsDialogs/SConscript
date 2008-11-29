@@ -28,6 +28,7 @@ docs = Split("""
 examples = Split("""
 	example.nsi
 	InstallOptions.nsi
+	timer.nsi
 	welcome.nsi
 """)
 
