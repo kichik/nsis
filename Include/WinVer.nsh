@@ -237,8 +237,8 @@
     # get szCSDVersion
     Pop $0
 
-    # skip first char
-    StrCpy $0 $0 "" 1
+    # copy second char
+    StrCpy $0 $0 1 1
 
     # discard invalid wServicePackMajor and wProductType
     Pop $R0
