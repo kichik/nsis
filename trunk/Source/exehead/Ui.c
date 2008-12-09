@@ -31,6 +31,7 @@
 #include "plugin.h"
 #include "lang.h"
 #include "components.h"
+#include "api.h"
 
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
 HICON g_hIcon;
@@ -54,8 +55,6 @@ static char g_tmp[NSIS_MAX_STRLEN * 4];
 
 static int m_page=-1,m_retcode,m_delta;
 static page *g_this_page;
-
-#define NOTIFY_BYE_BYE 'x'
 
 static void NSISCALL outernotify(int delta) {
   if (delta==NOTIFY_BYE_BYE)

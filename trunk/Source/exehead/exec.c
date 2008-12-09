@@ -26,6 +26,7 @@
 #include "plugin.h"
 #include "lang.h"
 #include "resource.h"
+#include "api.h"
 
 #define EXEC_ERROR 0x7FFFFFFF
 
@@ -45,12 +46,7 @@ static stack_t *g_st;
 exec_flags g_exec_flags;
 exec_flags g_exec_flags_last_used;
 
-struct {
-  exec_flags *flags;
-  void *ExecuteCodeSegment;
-  void *validate_filename;
-  void *RegisterPluginCallback;
-} plugin_extra_parameters = {
+extra_parameters plugin_extra_parameters = {
   &g_exec_flags,
   &ExecuteCodeSegment,
   &validate_filename,
