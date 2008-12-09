@@ -56,6 +56,7 @@ typedef unsigned int UINT_PTR;
 // basic stuff
 typedef void * HANDLE;
 typedef HANDLE HWND;
+typedef HANDLE HMODULE;
 typedef unsigned long HKEY;
 // some gdi
 typedef unsigned long COLORREF;
