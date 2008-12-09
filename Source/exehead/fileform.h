@@ -16,6 +16,7 @@
 
 #include "config.h"
 #include "../Platform.h"
+#include "api.h"
 
 #ifndef _FILEFORM_H_
 #define _FILEFORM_H_
@@ -483,33 +484,6 @@ typedef struct {
 
 #define NSIS_INSTDIR_INVALID 1
 #define NSIS_INSTDIR_NOT_ENOUGH_SPACE 2
-
-typedef struct
-{
-  int autoclose;
-  int all_user_var;
-  int exec_error;
-  int abort;
-#ifdef NSIS_SUPPORT_REBOOT
-  int exec_reboot;
-  int reboot_called;
-#else
-  int _;
-  int __;
-#endif
-  int XXX_cur_insttype; // depreacted
-  int plugin_api_version; // used to be XXX_insttype_changed, but that was deprecated
-#ifdef NSIS_CONFIG_SILENT_SUPPORT
-  int silent;
-#else
-  int ___;
-#endif
-  int instdir_error;
-  int rtl;
-  int errlvl;
-  int alter_reg_view;
-  int status_update;
-} exec_flags;
 
 #define FIELDN(x, y) (((int *)&x)[y])
 
