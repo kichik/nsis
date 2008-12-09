@@ -12,6 +12,7 @@ defenv['CPP_FLAG'] = '/TP'
 defenv['CPP_REQUIRES_STDLIB'] = 0
 defenv['SUBSYS_CON'] = '/subsystem:console'
 defenv['MSVCRT_FLAG'] = '/MD'
+defenv['STDCALL'] = '__stdcall'
 
 if float(defenv['MSVS_VERSION'].replace('Exp','')) >= 8.0:
 	defenv['EXCEPTION_FLAG'] = '/EHsc'
@@ -19,6 +20,12 @@ if float(defenv['MSVS_VERSION'].replace('Exp','')) >= 8.0:
 	defenv.Append(CPPDEFINES = ['_CRT_SECURE_NO_WARNINGS', '_CRT_NONSTDC_NO_WARNINGS'])
 else:
 	defenv['EXCEPTION_FLAG'] = '/GX'
+
+### defines
+
+defenv.Append(CPPDEFINES = {'NSISCALL' : '$STDCALL'})
+
+### asm
 
 defenv.Append(ASFLAGS = ['/coff'])
 

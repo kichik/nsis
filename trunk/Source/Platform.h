@@ -142,27 +142,6 @@ typedef DWORDLONG ULONGLONG,*PULONGLONG;
 #  endif
 #endif
 
-// Added by Dave Laundon 19th August 2002
-// For all internal functions, use of stdcall calling convention moves the
-// responsibility for tidying the stack to callee from caller, reducing the code
-// involved considerably.  Gives an instant saving of 0.5K.
-// NB - the zlib and bzip2 portions have been given the same treatment, but with
-// project compiler-options settings and/or project-wide defines.
-// NB - safer for NSIS's routines to be defined explicitly to avoid problems
-// calling DLL functions.
-#if defined(_WIN32) && ((_MSC_VER >= 800) || defined(_STDCALL_SUPPORTED))
-#  define NSISCALL  __stdcall   // Ordinary functions
-#  define NSISCALLV __cdecl     // Variable-argument-list functions
-#else
-#  if defined(__GNUC__) && defined(__i386__)
-#    define NSISCALL  __attribute__((__stdcall__))   // Ordinary functions
-#    define NSISCALLV __attribute__((__cdecl__))     // Variable-argument-list functions
-#  else
-#    define NSISCALL
-#    define NSISCALLV
-#  endif
-#endif
-
 #if defined(__GNUC__)
 #define UNUSED __attribute__((unused))
 #else
