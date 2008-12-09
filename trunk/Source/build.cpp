@@ -3232,7 +3232,7 @@ void CEXEBuild::build_plugin_table(void)
   INFO_MSG("\n");
 }
 
-#define FLAG_OFFSET(flag) (FIELD_OFFSET(exec_flags, flag)/sizeof(int))
+#define FLAG_OFFSET(flag) (FIELD_OFFSET(exec_flags_t, flag)/sizeof(int))
 
 int CEXEBuild::add_plugins_dir_initializer(void)
 {
