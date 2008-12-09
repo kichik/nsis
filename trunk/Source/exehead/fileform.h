@@ -16,7 +16,6 @@
 
 #include "config.h"
 #include "../Platform.h"
-#include "api.h"
 
 #ifndef _FILEFORM_H_
 #define _FILEFORM_H_
