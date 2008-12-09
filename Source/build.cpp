@@ -28,9 +28,11 @@
 #include "manifest.h"
 #include "icon.h"
 
+#include "exehead/api.h"
+#include "exehead/resource.h"
+
 #include <stdexcept>
 
-#include "exehead/resource.h"
 #include "ResourceEditor.h"
 #include "DialogTemplate.h"
 #include "ResourceVersionInfo.h"
