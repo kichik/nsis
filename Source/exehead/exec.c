@@ -43,8 +43,8 @@ typedef struct _stack_t {
 static stack_t *g_st;
 #endif
 
-exec_flags g_exec_flags;
-exec_flags g_exec_flags_last_used;
+exec_flags_t g_exec_flags;
+exec_flags_t g_exec_flags_last_used;
 
 extra_parameters plugin_extra_parameters = {
   &g_exec_flags,
