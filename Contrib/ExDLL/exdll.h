@@ -2,6 +2,7 @@
 #define _EXDLL_H_
 
 #include <windows.h>
+#include "../../Source/exehead/api.h"
 
 #if defined(__GNUC__)
 #define UNUSED __attribute__((unused))
@@ -16,11 +17,6 @@
         g_stringsize=string_size; \
         g_stacktop=stacktop;      \
         g_variables=variables; }
-
-// For page showing plug-ins
-#define WM_NOTIFY_OUTER_NEXT (WM_USER+0x8)
-#define WM_NOTIFY_CUSTOM_READY (WM_USER+0xd)
-#define NOTIFY_BYE_BYE 'x'
 
 typedef struct _stack_t {
   struct _stack_t *next;
@@ -66,42 +62,6 @@ INST_EXEDIR,    // $EXEDIR
 INST_LANG,      // $LANGUAGE
 __INST_LAST
 };
-
-typedef struct {
-  int autoclose;
-  int all_user_var;
-  int exec_error;
-  int abort;
-  int exec_reboot;
-  int reboot_called;
-  int XXX_cur_insttype; // deprecated
-  int plugin_api_version; // used to be XXX_insttype_changed, but that was deprecated
-  int silent;
-  int instdir_error;
-  int rtl;
-  int errlvl;
-  int alter_reg_view;
-  int status_update;
-} exec_flags_type;
-
-// NSIS Plug-In Callback Messages
-enum NSPIM 
-{
-	NSPIM_UNLOAD,    // This is the last message a plugin gets, do final cleanup
-	NSPIM_GUIUNLOAD, // Called after .onGUIEnd
-};
-
-// Prototype for callbacks registered with extra_parameters->RegisterPluginCallback()
-// Return NULL for unknown messages
-// Should always be __cdecl for future expansion possibilities
-typedef UINT_PTR (*NSISPLUGINCALLBACK)(NSPIM);
-
-typedef struct {
-  exec_flags_type *exec_flags;
-  int (__stdcall *ExecuteCodeSegment)(int, HWND);
-  void (__stdcall *validate_filename)(char *);
-  BOOL (__stdcall *RegisterPluginCallback)(HMODULE, NSISPLUGINCALLBACK);
-} extra_parameters;
 
 // utility functions (not required but often useful)
 static int __stdcall popstring(char *str)
