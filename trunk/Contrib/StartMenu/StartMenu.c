@@ -16,10 +16,10 @@ char progname[1024];
 char lastused[1024];
 char checkbox[1024];
 
-int autoadd = 0;
-int g_done = 0;
-int noicon = 0;
-int rtl = 0;
+int autoadd;
+int g_done;
+int noicon;
+int rtl;
 
 void *lpWndProcOld;
 
@@ -45,6 +45,18 @@ void __declspec(dllexport) Init(HWND hwndParent, int string_size, char *variable
   EXDLL_INIT();
 
   extra->RegisterPluginCallback(g_hInstance, PluginCallback);
+
+  g_done = 0;
+  noicon = 0;
+  rtl = 0;
+  autoadd = 0;
+
+  text[0] = 0;
+  progname[0] = 0;
+  lastused[0] = 0;
+  checkbox[0] = 0;
+
+  g_hwStartMenuSelect = NULL;
 
   {
     hwChild = GetDlgItem(hwndParent, 1018);
