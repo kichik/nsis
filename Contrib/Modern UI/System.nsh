@@ -1570,9 +1570,11 @@ Var MUI_TEMP2
           !insertmacro INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 5" "Bottom" "120"
         !endif
         !ifdef MUI_FINISHPAGE_REBOOTLATER_DEFAULT
+		  !insertmacro INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "State" "0"
           !insertmacro INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 5" "State" "1"
         !else
           !insertmacro INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "State" "1"
+		  !insertmacro INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 5" "State" "0"
         !endif
 
         Goto mui.finish_load
