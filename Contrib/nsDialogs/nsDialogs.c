@@ -237,12 +237,19 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
   return FALSE;
 }
 
+static UINT_PTR PluginCallback(enum NSPIM msg)
+{
+  return 0;
+}
+
 void __declspec(dllexport) Create(HWND hwndParent, int string_size, char *variables, stack_t **stacktop, extra_parameters *extra)
 {
   HWND hwPlacementRect;
   RECT rcPlacement;
 
   EXDLL_INIT();
+
+  extra->RegisterPluginCallback(g_hInstance, PluginCallback);
 
   g_dialog.hwParent = hwndParent;
   g_pluginParms = extra;
