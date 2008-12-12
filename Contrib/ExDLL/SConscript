@@ -36,5 +36,8 @@ env.DistributeExamples(example + api_files + lib, path='Plugin')
 
 # make sure all the other plug-ins can use the library
 
-plugin_env.Append(LIBPATH = [lib[0].dir])
+env.Install('#$BUILD_PREFIX/api', api_files)
+
+plugin_env.Append(CPPPATH = ['#$BUILD_PREFIX/api'])
+plugin_env.Append(LIBPATH = ['#$BUILD_PREFIX/api'])
 plugin_env.Append(LIBS = [lib_target])
