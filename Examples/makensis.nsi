@@ -903,6 +903,8 @@ Function PageReinstall
     SendMessage $R3 ${BM_SETCHECK} ${BST_CHECKED} 0
   ${EndIf}
 
+  ${NSD_SetFocus} $R2
+
   nsDialogs::Show
 
 FunctionEnd
