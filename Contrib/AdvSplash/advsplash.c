@@ -3,7 +3,7 @@
 
 #include <windows.h>
 #include <windowsx.h>
-#include "../ExDLL/exdll.h"
+#include <plugin.h> // nsis plugin.h
 
 HINSTANCE g_hInstance;
 
