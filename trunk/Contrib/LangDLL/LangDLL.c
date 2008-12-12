@@ -12,8 +12,6 @@
 
 #include <plugin.h> // nsis plugin.h
 
-int myatoi(char *s);
-
 HINSTANCE g_hInstance;
 HWND g_hwndParent;
 
@@ -61,7 +59,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       SendDlgItemMessage(hwndDlg, IDC_APPICON, STM_SETICON, (LPARAM)LoadIcon(GetModuleHandle(0),MAKEINTRESOURCE(103)), 0);
       // set font
       if (dofont && !popstring(temp)) {
-        size = myatoi(temp);
+        size = myatou(temp);
         if (!popstring(temp)) {
           LOGFONT f = {0,};
           if (lstrcmp(temp, "MS Shell Dlg")) {
@@ -159,7 +157,7 @@ void __declspec(dllexport) LangDialog(HWND hwndParent, int string_size,
       pop_empty_string = TRUE;
     } else {
       // use counts languages
-      langs_num = myatoi(temp);
+      langs_num = myatou(temp);
     }
 
     // zero languages?
@@ -187,7 +185,7 @@ void __declspec(dllexport) LangDialog(HWND hwndParent, int string_size,
       if (docp)
       {
         if (popstring(temp)) { visible_langs_num = 0; break; }
-        langs[visible_langs_num].cp = myatoi(temp);
+        langs[visible_langs_num].cp = myatou(temp);
       }
 
       if (!docp || langs[visible_langs_num].cp == GetACP() || langs[visible_langs_num].cp == 0)
@@ -235,16 +233,4 @@ BOOL WINAPI DllMain(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
 {
   g_hInstance=hInst;
 	return TRUE;
-}
-
-int myatoi(char *s)
-{
-  unsigned int v=0;
-  for (;;) {
-    int c=*s++ - '0';
-    if (c < 0 || c > 9) break;
-    v*=10;
-    v+=c;
-  }
-  return (int)v;
 }
