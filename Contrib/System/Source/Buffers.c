@@ -14,12 +14,12 @@ TempStack *tempstack = NULL;
 PLUGINFUNCTIONSHORT(Alloc)
 {
     int size;
-    if ((size = popint()) == 0)
+    if ((size = popint64()) == 0)
     {
-        pushint(0);
+        system_pushint(0);
         return;
     }
-    pushint((int) GlobalAlloc(GPTR, size));
+    system_pushint((int) GlobalAlloc(GPTR, size));
 }
 PLUGINFUNCTIONEND
 
@@ -29,16 +29,16 @@ PLUGINFUNCTIONSHORT(Copy)
     HANDLE source, dest;
     char *str;
     // Get the string
-    if ((str = popstring()) == NULL) return;
+    if ((str = system_popstring()) == NULL) return;
 
     // Check for size option
     if (str[0] == '/')
     {
-        size = (int) myatoi(str+1);
-        dest = (HANDLE) popint();
+        size = (int) myatoi64(str+1);
+        dest = (HANDLE) popint64();
     }
-    else dest = (HANDLE) myatoi(str);
-    source = (HANDLE) popint();
+    else dest = (HANDLE) myatoi64(str);
+    source = (HANDLE) popint64();
 
     // Ok, check the size
     if (size == 0) size = (int) GlobalSize(source);
@@ -46,7 +46,7 @@ PLUGINFUNCTIONSHORT(Copy)
     if ((int) dest == 0) 
     {
         dest = GlobalAlloc((GPTR), size);
-        pushint((int) dest);
+        system_pushint((int) dest);
     }
 
     // COPY!
@@ -58,7 +58,7 @@ PLUGINFUNCTIONEND
 
 PLUGINFUNCTIONSHORT(Free)
 {
-    GlobalFree((HANDLE) popint());
+    GlobalFree((HANDLE) popint64());
 }
 PLUGINFUNCTIONEND
 
@@ -67,7 +67,7 @@ PLUGINFUNCTION(Store)
     TempStack *tmp;
     int size = ((INST_R9+1)*g_stringsize);    
 
-    char *command, *cmd = command = popstring();
+    char *command, *cmd = command = system_popstring();
     while (*cmd != 0)
     {
         switch (*(cmd++))
@@ -97,12 +97,12 @@ PLUGINFUNCTION(Store)
         case 'P':
             *cmd += 10;
         case 'p':
-            GlobalFree((HANDLE) pushstring(getuservariable(*(cmd++)-'0')));
+            GlobalFree((HANDLE) system_pushstring(system_getuservariable(*(cmd++)-'0')));
             break;
         case 'R':
             *cmd += 10;
         case 'r':
-            GlobalFree((HANDLE) setuservariable(*(cmd++)-'0', popstring()));
+            GlobalFree((HANDLE) system_setuservariable(*(cmd++)-'0', system_popstring()));
             break;
         }
     }
