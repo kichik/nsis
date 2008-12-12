@@ -1,6 +1,6 @@
 #include <windows.h>
 #include <shlobj.h>
-#include "../ExDLL/exdll.h"
+#include <plugin.h> // nsis plugin.h
 #include "resource.h"
 
 HINSTANCE g_hInstance;
