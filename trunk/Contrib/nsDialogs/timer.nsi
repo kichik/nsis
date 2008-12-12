@@ -67,7 +67,7 @@ FunctionEnd
 
 Function nsDialogsPage
 
-	nsDialogs::Create /NOUNLOAD 1018
+	nsDialogs::Create 1018
 	Pop $DIALOG
 
 	${NSD_CreateLabel} 0u 0u 100% 9u "nsDialogs timer example"
