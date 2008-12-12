@@ -1,6 +1,10 @@
 #ifndef ___NSIS_PLUGIN__H___
 #define ___NSIS_PLUGIN__H___
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "api.h"
 
 #ifndef NSISCALL
@@ -55,5 +59,9 @@ int NSISCALL popstring(char *str); // 0 on success, 1 on empty stack
 void NSISCALL pushstring(const char *str);
 char * NSISCALL getuservariable(const int varnum);
 void NSISCALL setuservariable(const int varnum, const char *var);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif//!___NSIS_PLUGIN__H___
