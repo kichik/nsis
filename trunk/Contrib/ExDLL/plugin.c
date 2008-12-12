@@ -12,7 +12,7 @@ int NSISCALL popstring(char *str)
   stack_t *th;
   if (!g_stacktop || !*g_stacktop) return 1;
   th=(*g_stacktop);
-  lstrcpyA(str,th->text);
+  if (str) lstrcpyA(str,th->text);
   *g_stacktop = th->next;
   GlobalFree((HGLOBAL)th);
   return 0;
