@@ -146,8 +146,6 @@ SectionEnd</pre></blockquote>
 
 <p>Now that the foundations are laid, it's time to use nsDialogs. The first call must always be to nsDialogs::Create. It will create a new dialog in the page and return its <i>HWND</i> on the stack. The result must be popped from the stack to prevent stack corruption. If the result is <i>error</i>, the dialog couldn't be created.</p>
 
-<p>nsDialogs::Create, like every other nsDialogs function but nsDialogs::Show, must always be called with /NOUNLOAD.</p>
-
 <p>nsDialogs::Create accepts one parameter. It has a very specific function, but to keep things simple for this tutorial, it must always be 1018.</p>
 
 <p><i>HWND</i> is a number that uniquely identifies the dialog and can be used with SendMessage, SetCtlColors and Win32 API.</p>
@@ -166,7 +164,7 @@ Page instfiles
 
 Function nsDialogsPage
 <b>
-	nsDialogs::Create /NOUNLOAD 1018
+	nsDialogs::Create 1018
 	Pop $Dialog
 
 	${If} $Dialog == error
@@ -198,7 +196,7 @@ Page custom nsDialogsPage
 Page instfiles
 
 Function nsDialogsPage
-	nsDialogs::Create /NOUNLOAD 1018
+	nsDialogs::Create 1018
 	Pop $Dialog
 
 	${If} $Dialog == error
@@ -240,7 +238,7 @@ Page instfiles
 
 Function nsDialogsPage
 
-	nsDialogs::Create /NOUNLOAD 1018
+	nsDialogs::Create 1018
 	Pop $Dialog
 
 	${If} $Dialog == error
@@ -311,7 +309,7 @@ Page instfiles
 
 Function nsDialogsPage
 
-	nsDialogs::Create /NOUNLOAD 1018
+	nsDialogs::Create 1018
 	Pop $Dialog
 
 	${If} $Dialog == error
@@ -366,7 +364,7 @@ Page instfiles
 
 Function nsDialogsPage
 
-	nsDialogs::Create /NOUNLOAD 1018
+	nsDialogs::Create 1018
 	Pop $Dialog
 
 	${If} $Dialog == error
@@ -444,7 +442,7 @@ FunctionEnd</b>
 
 Function nsDialogsPage
 
-	nsDialogs::Create /NOUNLOAD 1018
+	nsDialogs::Create 1018
 	Pop $Dialog
 
 	${If} $Dialog == error
@@ -488,7 +486,7 @@ SectionEnd</pre></blockquote>
 
 <h3><a name="ref-create"></a>Create</h3>
 
-<p><code>nsDialogs::Create /NOUNLOAD <i>rect</i></code></p>
+<p><code>nsDialogs::Create <i>rect</i></code></p>
 
 <p>Creates a new dialog. <i>rect</i> specific the identifier of the control whose location will be mimiced. This should usually be 1018, which is control mimiced for creation of built-in pages. The Modern UI also has control 1040 for the welcome and the finish page.</p>
 
@@ -496,7 +494,7 @@ SectionEnd</pre></blockquote>
 
 <h3><a name="ref-createcontrol"></a>CreateControl</h3>
 
-<p><code>nsDialogs::CreateControl /NOUNLOAD <i>class</i> <i>style</i> <i>extended_style</i> <i>x</i> <i>y</i> <i>width</i> <i>height</i> <i>text</i></code></p>
+<p><code>nsDialogs::CreateControl <i>class</i> <i>style</i> <i>extended_style</i> <i>x</i> <i>y</i> <i>width</i> <i>height</i> <i>text</i></code></p>
 
 <p>Create a new control in the current dialog. A dialog must exist for this to work, so nsDialogs::Create must be called prior to this function.</p>
 
@@ -512,7 +510,7 @@ SectionEnd</pre></blockquote>
 
 <h3><a name="ref-selectfiledialog"></a>SelectFileDialog</h3>
 
-<p><code>nsDialogs::SelectFileDialog /NOUNLOAD <i>mode</i> <i>initial_selection</i> <i>filter</i></code></p>
+<p><code>nsDialogs::SelectFileDialog <i>mode</i> <i>initial_selection</i> <i>filter</i></code></p>
 
 <p>Displays a file selection dialog to the user. If <i>mode</i> is set to <i>save</i>, displays a file save dialog. If <i>mode</i> is set to <i>open</i>, displays a file open dialog. <i>filter</i> is a list of available file filters separated by pipes. If an empty string is passed, the default is used - <i>All Files|*.*</i>.</p>
 
@@ -522,7 +520,7 @@ SectionEnd</pre></blockquote>
 
 <h3><a name="ref-selectfolderdialog"></a>SelectFolderDialog</h3>
 
-<p><code>nsDialogs::SelectFolderDialog /NOUNLOAD <i>title</i> <i>initial_selection</i></code></p>
+<p><code>nsDialogs::SelectFolderDialog <i>title</i> <i>initial_selection</i></code></p>
 
 <p>Displays a directory selection dialog to the user.</p>
 
@@ -530,7 +528,7 @@ SectionEnd</pre></blockquote>
 
 <h3><a name="ref-setrtl"></a>SetRTL</h3>
 
-<p><code>nsDialogs::SetRTL /NOUNLOAD <i>rtl_setting</i></code></p>
+<p><code>nsDialogs::SetRTL <i>rtl_setting</i></code></p>
 
 <p>Sets right-to-left mode on or off. If <i>rtl_setting</i> is 0, it's set to off. If <i>rtl_setting</i> is 1, it's set to on. This function must be called before any calls to nsDialogs::CreateControl.</p>
 
@@ -538,13 +536,13 @@ SectionEnd</pre></blockquote>
 
 <h3><a name="ref-getuserdata"></a>GetUserData</h3>
 
-<p><code>nsDialogs::GetUserData /NOUNLOAD <i>control_HWND</i></code></p>
+<p><code>nsDialogs::GetUserData <i>control_HWND</i></code></p>
 
 <p>Returns user data associated with the control on the stack.  Use nsDialogs::SetUserData to set this data.</p>
 
 <h3><a name="ref-setuserdata"></a>SetUserData</h3>
 
-<p><code>nsDialogs::SetUserData /NOUNLOAD <i>control_HWND</i> <i>data</i></code></p>
+<p><code>nsDialogs::SetUserData <i>control_HWND</i> <i>data</i></code></p>
 
 <p>Associates <i>data</i> with the control. Use nsDialogs::GetUserData to get this data.</p>
 
@@ -552,7 +550,7 @@ SectionEnd</pre></blockquote>
 
 <h3><a name="ref-onback"></a>OnBack</h3>
 
-<p><code>nsDialogs::OnBack /NOUNLOAD <i>function_address</i></code></p>
+<p><code>nsDialogs::OnBack <i>function_address</i></code></p>
 
 <p>Sets the callback function for the Back button. This function will be called when the user clicks the back button. Call Abort in this function to prevent the user from going back to the last page.</p>
 
@@ -562,7 +560,7 @@ SectionEnd</pre></blockquote>
 
 <h3><a name="ref-onchange"></a>OnChange</h3>
 
-<p><code>nsDialogs::OnChange /NOUNLOAD <i>control_HWND</i> <i>function_address</i></code></p>
+<p><code>nsDialogs::OnChange <i>control_HWND</i> <i>function_address</i></code></p>
 
 <p>Sets a change notification callback function for the given control. Whenever the control changes, the function will be called and the control's HWND will be waiting on its stack.</p>
 
@@ -572,7 +570,7 @@ SectionEnd</pre></blockquote>
 
 <h3><a name="ref-onclick"></a>OnClick</h3>
 
-<p><code>nsDialogs::OnClick /NOUNLOAD <i>control_HWND</i> <i>function_address</i></code></p>
+<p><code>nsDialogs::OnClick <i>control_HWND</i> <i>function_address</i></code></p>
 
 <p>Sets a click notification callback function for the given control. Whenever the control is clicked, the function will be called and the control's HWND will be waiting on its stack.</p>
 
@@ -582,7 +580,7 @@ SectionEnd</pre></blockquote>
 
 <h3><a name="ref-onnotify"></a>OnNotify</h3>
 
-<p><code>nsDialogs::OnNotify /NOUNLOAD <i>control_HWND</i> <i>function_address</i></code></p>
+<p><code>nsDialogs::OnNotify <i>control_HWND</i> <i>function_address</i></code></p>
 
 <p>Sets a notification callback function for the given control. Whenever the control receives the WM_NOTIFY message, the function will be called and the control's HWND, notification code and a pointer to the MNHDR structure will be waiting on its stack.</p>
 
@@ -592,7 +590,7 @@ SectionEnd</pre></blockquote>
 
 <h3><a name="ref-ontimer"></a>OnTimer</h3>
 
-<p><code>nsDialogs::OnTimer /NOUNLOAD <i>function_address</i> <i>timer_interval</i></code></p>
+<p><code>nsDialogs::OnTimer <i>function_address</i> <i>timer_interval</i></code></p>
 
 <p>Sets a timer that'd call the callback function for the given control every in a constant interval. Interval times are specified in milliseconds.</p>
 
@@ -602,7 +600,7 @@ SectionEnd</pre></blockquote>
 
 <h3><a name="ref-killtimer"></a>KillTimer</h3>
 
-<p><code>nsDialogs::KillTimer /NOUNLOAD <i>function_address</i></code></p>
+<p><code>nsDialogs::KillTimer <i>function_address</i></code></p>
 
 <p>Kills a previously set timer.</p>
 
@@ -838,7 +836,7 @@ FunctionEnd
 
 Function nsDialogsImage
 
-	nsDialogs::Create /NOUNLOAD 1018
+	nsDialogs::Create 1018
 	Pop $Dialog
 
 	${If} $Dialog == error
