@@ -6,6 +6,10 @@ stubs = [
 	'zlib'
 ]
 
+plugin_libs = [
+	'ExDLL'
+]
+
 plugins = [
 	'AdvSplash',
 	'Banner',
@@ -22,7 +26,7 @@ plugins = [
 	'StartMenu',
 	'System',
 	'UserInfo',
-	'VPatch/Source/Plugin'
+	'VPatch/Source/Plugin',
 ]
 
 utils = [
@@ -42,8 +46,7 @@ misc = [
 	'MultiUser',
 	'Modern UI',
 	'Modern UI 2',
-	'VPatch',
-	'ExDLL'
+	'VPatch'
 ]
 
 doc = [
@@ -104,8 +107,7 @@ install_dirs = {
 		'conf': '$PREFIX',
 		'bin': '$PREFIX',
 		'data': '$PREFIX',
-		'doc': '$PREFIX',
-		'inc_c': '$PREFIX',
+		'doc': '$PREFIX'
 	},
 	'static': {
 		'dest': '',
@@ -113,8 +115,7 @@ install_dirs = {
 		'conf': '$PREFIX/etc',
 		'bin': '$PREFIX/bin',
 		'data': '$PREFIX/share/nsis',
-		'doc': '$PREFIX/share/doc/nsis',
-		'inc_c': '$PREFIX/include/nsis',
+		'doc': '$PREFIX/share/doc/nsis'
 	}
 }
 
@@ -166,7 +167,6 @@ opts.Add(('PREFIX_CONF', 'Path to install nsisconf.nsh to', dirs['conf']))
 opts.Add(('PREFIX_BIN', 'Path to install native binaries to', dirs['bin']))
 opts.Add(('PREFIX_DATA', 'Path to install nsis data to (plugins, includes, stubs, contrib, win32 binaries)', dirs['data']))
 opts.Add(('PREFIX_DOC','Path to install nsis README / INSTALL / TODO files to.', dirs['doc']))
-opts.Add(('PREFIX_INC_C','Path to install nsis C header files to.', dirs['inc_c']))
 
 opts.Update(defenv)
 Help(opts.GenerateHelpText(defenv))
@@ -227,12 +227,7 @@ def SafeFile(f):
 	return f
 
 def MakeFileList(files):
-	from types import ListType, TupleType
-
-	if isinstance(files, (ListType, TupleType)):
-		return map(SafeFile, files)
-
-	return Flatten([SafeFile(files)])
+	return Flatten(File(files))
 
 def Distribute(files, names, component, path, subpath, alias, install_alias=None):
 	from types import StringType
@@ -297,9 +292,6 @@ def DistributeDocs(files, names=[], path='', alias=None):
 def DistributeExamples(files, names=[], path='', alias=None):
 	return defenv.Distribute(files, names, 'doc', 'Examples', path, alias, 'examples')
 
-def DistributeIncC(files, names=[], path='', alias=None):
-	return defenv.Distribute(files, names, 'inc_c', '', path, alias, 'inc-c')
-
 def Sign(targets):
 	if defenv.has_key('CODESIGNER'):
 		for t in targets:
@@ -321,7 +313,6 @@ defenv.DistributeInclude = DistributeInclude
 defenv.DistributeDoc = DistributeDoc
 defenv.DistributeDocs = DistributeDocs
 defenv.DistributeExamples = DistributeExamples
-defenv.DistributeIncC = DistributeIncC
 defenv.Sign = Sign
 defenv.TestScript = TestScript
 
@@ -363,6 +354,8 @@ plugin_env = envs[2]
 util_env = envs[3]
 cp_util_env = envs[4]
 test_env = envs[5]
+
+Export('stub_env makensis_env plugin_env util_env cp_util_env test_env')
 
 ######################################################################
 #######  Distribution                                              ###
@@ -466,11 +459,13 @@ ins = defenv.DistributeBin(makensis,alias='install-compiler')
 #######  Common Functions                                          ###
 ######################################################################
 
-def AddEnvStandardFlags(env, defines, flags, entry, nodeflib):
+def AddEnvStandardFlags(env, defines, flags, libs, entry, nodeflib):
 	if defines:
 		env.Append(CPPDEFINES = defines)
 	if flags:
 		env.Append(CCFLAGS = flags)
+	if libs:
+		env.Append(LIBS = libs)
 
 	if entry:
 		env.Append(LINKFLAGS = ['${ENTRY_FLAG("%s")}' % entry])
@@ -508,11 +503,11 @@ def BuildPlugin(target, source, libs, examples = None, docs = None,
 	if cppused and env['CPP_REQUIRES_STDLIB']:
 		nodeflib = False
 
-	AddEnvStandardFlags(env, defines, flags, entry, nodeflib)
+	AddEnvStandardFlags(env, defines, flags, libs, entry, nodeflib)
 
 	AppendRES(env, source, res, resources)
 
-	plugin = env.SharedLibrary(target, source, LIBS = libs)
+	plugin = env.SharedLibrary(target, source)
 	defenv.Alias(target, plugin)
 	defenv.Alias('plugins', plugin)
 
@@ -528,7 +523,7 @@ def BuildPlugin(target, source, libs, examples = None, docs = None,
 
 	DistributeExtras(env, target, examples, docs)
 
-for plugin in plugins:
+for plugin in plugin_libs + plugins:
 	if plugin in defenv['SKIPPLUGINS']:
 		continue
 
@@ -542,14 +537,15 @@ for plugin in plugins:
 #######  Utilities                                                 ###
 ######################################################################
 
-def BuildUtilEnv(defines = None, flags = None, entry = None,
-                 nodeflib = None, cross_platform = False):
+def BuildUtilEnv(defines = None, flags = None, libs = None,
+                 entry = None, nodeflib = None,
+                 cross_platform = False):
 	if not cross_platform:
 		env = util_env.Clone()
 	else:
 		env = cp_util_env.Clone()
 
-	AddEnvStandardFlags(env, defines, flags, entry, nodeflib)
+	AddEnvStandardFlags(env, defines, flags, libs, entry, nodeflib)
 
 	return env
 
@@ -558,7 +554,7 @@ def BuildUtil(target, source, libs, entry = None, res = None,
               nodeflib = False, file_name = '', path='', contrib = False,
               examples = None, docs = None, cross_platform = False,
 							root_util = False):
-	env = BuildUtilEnv(defines, flags, entry, nodeflib, cross_platform)
+	env = BuildUtilEnv(defines, flags, libs, entry, nodeflib, cross_platform)
 
 	AppendRES(env, source, res, resources)
 
@@ -570,7 +566,7 @@ def BuildUtil(target, source, libs, entry = None, res = None,
 		if '.' in target:
 			env['PROGSUFFIX'] = target[target.rindex('.'):]
 
-	util = env.Program(target, source, LIBS = libs)
+	util = env.Program(target, source)
 	defenv.Alias(target, util)
 	defenv.Alias('utils', util)
 
