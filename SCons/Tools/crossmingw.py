@@ -147,6 +147,8 @@ def generate(env):
     env.Append(SHLIBEMITTER = [shlib_emitter])
     env['LINK'] = mingw_prefix + 'g++'
     env['AS'] = mingw_prefix + 'as'
+    env['AR'] = mingw_prefix + 'ar'
+    env['RANLIB'] = mingw_prefix + 'ranlib'
     env['WIN32DEFPREFIX']        = ''
     env['WIN32DEFSUFFIX']        = '.def'
     env['SHOBJSUFFIX'] = '.o'
