@@ -99,6 +99,21 @@ int NSISCALL myatoi(const char *s)
   return v;
 }
 
+unsigned NSISCALL myatou(const char *s)
+{
+  unsigned int v=0;
+
+  for (;;)
+  {
+    unsigned int c=*s++;
+    if (c >= '0' && c <= '9') c-='0';
+    else break;
+    v*=10;
+    v+=c;
+  }
+  return v;
+}
+
 int NSISCALL myatoi_or(const char *s)
 {
   int v=0;

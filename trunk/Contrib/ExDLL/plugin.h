@@ -60,6 +60,7 @@ int NSISCALL popstringn(char *str, int maxlen); // with length limit, pass 0 for
 int NSISCALL popint(); // pops an integer
 int NSISCALL popint_or(); // with support for or'ing (2|4|8)
 int NSISCALL myatoi(const char *s); // converts a string to an integer
+unsigned NSISCALL myatou(const char *s); // converts a string to an unsigned integer, decimal only
 int NSISCALL myatoi_or(const char *s); // with support for or'ing (2|4|8)
 void NSISCALL pushstring(const char *str);
 void NSISCALL pushint(int value);
