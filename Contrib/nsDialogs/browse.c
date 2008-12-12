@@ -1,8 +1,9 @@
 #include <windows.h>
 #include <shlobj.h>
 
+#include <plugin.h> // nsis plugin.h
+
 #include "defs.h"
-#include "nsis.h"
 
 int CALLBACK BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lp, LPARAM pData) {
   if (uMsg == BFFM_INITIALIZED)
@@ -22,13 +23,13 @@ void __declspec(dllexport) SelectFolderDialog(HWND hwndParent, int string_size, 
 
   EXDLL_INIT();
 
-  if (popstring(title, sizeof(initial)))
+  if (popstringn(title, sizeof(initial)))
   {
     pushstring("error");
     return;
   }
 
-  if (popstring(initial, sizeof(title)))
+  if (popstringn(initial, sizeof(title)))
   {
     pushstring("error");
     return;
@@ -100,9 +101,9 @@ void __declspec(dllexport) SelectFileDialog(HWND hwndParent, int string_size, ch
   //ofn.Flags = pField->nFlags & (OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_CREATEPROMPT | OFN_EXPLORER);
   ofn.Flags = OFN_CREATEPROMPT | OFN_EXPLORER;
 
-  popstring(type, sizeof(type));
-  popstring(path, sizeof(path));
-  popstring(filter, sizeof(filter));
+  popstringn(type, sizeof(type));
+  popstringn(path, sizeof(path));
+  popstringn(filter, sizeof(filter));
 
   save = !lstrcmpi(type, "save");
 

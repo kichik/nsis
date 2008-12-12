@@ -1,7 +1,8 @@
 #include <windows.h>
 
+#include <plugin.h> // nsis plugin.h
+
 #include "defs.h"
-#include "nsis.h"
 #include "input.h"
 #include "rtl.h"
 
@@ -299,19 +300,19 @@ void __declspec(dllexport) CreateControl(HWND hwndParent, int string_size, char 
     return;
   }
 
-  if (popstring(className, 0))
+  if (popstringn(className, 0))
   {
     pushstring("error");
     HeapFree(GetProcessHeap(), 0, className);
     return;
   }
 
-  style = (DWORD) popint();
-  exStyle = (DWORD) popint();
+  style = (DWORD) popint_or();
+  exStyle = (DWORD) popint_or();
 
   PopPlacement(&x, &y, &width, &height);
 
-  if (popstring(text, 0))
+  if (popstringn(text, 0))
   {
     pushstring("error");
     HeapFree(GetProcessHeap(), 0, className);
@@ -418,7 +419,7 @@ void __declspec(dllexport) SetUserData(HWND hwndParent, int string_size, char *v
 
   // set user data
 
-  popstring(ctl->userData, USERDATA_SIZE);
+  popstringn(ctl->userData, USERDATA_SIZE);
 }
 
 void __declspec(dllexport) GetUserData(HWND hwndParent, int string_size, char *variables, stack_t **stacktop, extra_parameters *extra)
