@@ -1,7 +1,15 @@
 # FIXME: install assembly and pascal includes into the correct locations
 
-c_devel = Split("""
-	exdll.h
+lib_target = "plugin"
+
+lib_files = Split("""
+	plugin.c
+""")
+
+api_files = Split("""
+	plugin.h
+	plugin.lib
+	#Source/exehead/api.h
 """)
 
 example = Split("""
@@ -14,12 +22,19 @@ example = Split("""
 	extdll.inc
 """)
 
-Import('defenv')
+Import('env plugin_env')
 
-if defenv['PLATFORM'] == 'win32':
-	example += c_devel
-else:
-	defenv.DistributeIncC(c_devel)
+# build library
 
-defenv.DistributeExamples(example, path='Plugin')
+api_env = env.Clone()
+api_env.Append(CPPPATH = ['#Source/exehead'])
+lib = api_env.Library(lib_target, lib_files)
 
+# distribute library, files and examples
+
+env.DistributeExamples(example + api_files + lib, path='Plugin')
+
+# make sure all the other plug-ins can use the library
+
+plugin_env.Append(LIBPATH = [lib[0].dir])
+plugin_env.Append(LIBS = [lib_target])

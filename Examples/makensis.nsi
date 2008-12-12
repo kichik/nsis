@@ -259,10 +259,13 @@ ${MementoSection} "Script Examples" SecExample
   File ..\Examples\Plugin\exdll.dpr
   File ..\Examples\Plugin\exdll.dsp
   File ..\Examples\Plugin\exdll.dsw
-  File ..\Examples\Plugin\exdll.h
   File ..\Examples\Plugin\exdll_with_unit.dpr
   File ..\Examples\Plugin\extdll.inc
   File ..\Examples\Plugin\nsis.pas
+
+  File ..\Examples\Plugin\plugin.h
+  File ..\Examples\Plugin\plugin.lib
+  File ..\Examples\Plugin\api.h
 
 ${MementoSectionEnd}
 
