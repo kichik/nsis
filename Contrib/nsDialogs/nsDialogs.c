@@ -283,6 +283,8 @@ void __declspec(dllexport) Create(HWND hwndParent, int string_size, char *variab
   g_dialog.controlCount = 0;
   g_dialog.controls = (struct nsControl*) HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, 0);
 
+  g_dialog.callbacks.onBack = 0;
+
   pushint((int) g_dialog.hwDialog);
 }
 
