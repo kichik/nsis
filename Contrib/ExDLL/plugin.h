@@ -56,7 +56,13 @@ extern stack_t **g_stacktop;
 extern char *g_variables;
 
 int NSISCALL popstring(char *str); // 0 on success, 1 on empty stack
+int NSISCALL popstringn(char *str, int maxlen); // with length limit, pass 0 for g_stringsize
+int NSISCALL popint(); // pops an integer
+int NSISCALL popint_or(); // with support for or'ing (2|4|8)
+int NSISCALL myatoi(const char *s); // converts a string to an integer
+int NSISCALL myatoi_or(const char *s); // with support for or'ing (2|4|8)
 void NSISCALL pushstring(const char *str);
+void NSISCALL pushint(int value);
 char * NSISCALL getuservariable(const int varnum);
 void NSISCALL setuservariable(const int varnum, const char *var);
 
