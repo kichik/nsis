@@ -14,9 +14,7 @@
 #include "resource.h"
 #include "shellapi.h"
 
-#define popstring dontuseme
-#include "../ExDLL/exdll.h"
-#undef popstring
+#include <plugin.h> // nsis plugin.h
 
 // Use for functions only called from one place to possibly reduce some code
 // size.  Allows the source code to remain readable by leaving the function
@@ -29,18 +27,6 @@
 
 void *WINAPI MALLOC(int len) { return (void*)GlobalAlloc(GPTR,len); }
 void WINAPI FREE(void *d) { if (d) GlobalFree((HGLOBAL)d); }
-
-void WINAPI popstring(char *str)
-{
-  if (g_stacktop && *g_stacktop)
-  {
-    stack_t *th = *g_stacktop;
-    *g_stacktop = th->next;
-    if (str)
-      lstrcpy(str, th->text);
-    FREE(th);
-  }
-}
 
 #define strcpy(x,y) lstrcpy(x,y)
 //#define strncpy(x,y,z) lstrcpyn(x,y,z)
