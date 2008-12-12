@@ -7,10 +7,9 @@ twice before run :)
 
 New HOW TO USE: run the MathTest.Exe, and try yourself. After spending 
 some minutes your should be able to write your script by yourself.
-To include it to your NSIS script just insert that (don't forget /NOUNLOAD
-in case of multiple calls): 
-        Math::Script /NOUNLOAD "YourScript1"
-        Math::Script /NOUNLOAD "YourScript2"
+To include it to your NSIS script just insert that: 
+        Math::Script "YourScript1"
+        Math::Script "YourScript2"
         Math::Script "YourScriptFinal"
 
 How to use it? Simple:
@@ -104,8 +103,7 @@ other. All sub-expressions separated by (;) are the part of one expression,
 and the result of the last one of these sub-exprs gives you the result of 
 expression.
 
-All the shit (like variables and functions) will be saved between calls if 
-you'll use /NOUNLOAD or setpluginunload alwaysoff.
+All the shit (like variables and functions) will be saved between calls.
 
 Functions:
         type conversions:
@@ -173,7 +171,7 @@ declare as additional arguments, which will never be used. Example:
 No matter how many arguments will be passed to function, the values of all three 
 vars (a,b,c) will be saved. 
 Such variable-safe functions could be recursive:
-        Math::Script /NOUNLOAD 'rec(a) (#[a > 0, rec(a-1), 0]+a);'
+        Math::Script 'rec(a) (#[a > 0, rec(a-1), 0]+a);'
         Math::Script 'R1 = rec(10)'
 will set R1 to right result 55.
 Sometimes functions will need to return more than one value, in this case you
