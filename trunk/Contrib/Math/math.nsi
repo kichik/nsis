@@ -5,7 +5,6 @@
 
 Name "Math Plugin Example"
 OutFile "math.exe"
-SetPluginUnload  alwaysoff
 ShowInstDetails show
 XPStyle on
 
@@ -29,11 +28,6 @@ Section "ThisNameIsIgnoredSoWhyBother?"
     DetailPrint "'$R5'"
     DetailPrint "'$R6'"
     DetailPrint "'$R7'"
-
-    ; last plugin call must not have /NOUNLOAD so NSIS will be able to delete the temporary DLL
-    SetPluginUnload manual
-    ; do nothing
-    Math::Script ""
 SectionEnd 
 
 ; eof
