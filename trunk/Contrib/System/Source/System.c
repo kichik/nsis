@@ -92,7 +92,7 @@ void WriteToLog(char *buffer)
 PLUGINFUNCTION(Debug)
 {
     char *o1;
-    o1 = popstring();
+    o1 = system_popstring();
 
     if (logfile == NULL)
         if (lstrlen(o1) > 0)
@@ -141,7 +141,7 @@ PLUGINFUNCTION(Get)
     SystemProc *proc = PrepareProc(FALSE);
     if (proc == NULL)
     {
-      pushstring("error");
+      system_pushstring("error");
       return;
     }
 
@@ -154,20 +154,20 @@ PLUGINFUNCTION(Get)
     if ((proc->Options & POPT_ALWRETURN) != 0)
     {
         // Always return flag set -> return separate proc and result
-        pushint((int) proc);
-        GlobalFree(pushstring(GetResultStr(proc)));
+        system_pushint((int) proc);
+        GlobalFree(system_pushstring(GetResultStr(proc)));
     } else
     {
         if (proc->ProcResult != PR_OK)
         {
             // No always return flag and error result - return result
-            GlobalFree(pushstring(GetResultStr(proc)));
+            GlobalFree(system_pushstring(GetResultStr(proc)));
             // If proc is permanent?
             if ((proc->Options & POPT_PERMANENT) == 0)
                 GlobalFree((HANDLE) proc); // No, free it
         }
         else // Ok result, return proc
-            pushint((int) proc);
+            system_pushint((int) proc);
     }
 } PLUGINFUNCTIONEND
 
@@ -209,7 +209,7 @@ PLUGINFUNCTION(Call)
     {
         // Always return flag set - return separate return and result
         ParamsOut(proc);
-        GlobalFree(pushstring(GetResultStr(proc)));
+        GlobalFree(system_pushstring(GetResultStr(proc)));
     } else
     {
         if (proc->ProcResult != PR_OK)
@@ -242,7 +242,7 @@ PLUGINFUNCTION(Call)
             FreeLibrary(proc->Dll); // and unload it :)
 
         // In case of POPT_ERROR - first pop will be proc error
-        if ((proc->Options & POPT_ERROR) != 0) pushint(LastError);
+        if ((proc->Options & POPT_ERROR) != 0) system_pushint(LastError);
     }    
 
     // If proc is permanent?
@@ -257,13 +257,13 @@ PLUGINFUNCTIONSHORT(Int64Op)
     char buf[128];
 
     // Get strings
-    o1 = popstring(); op = popstring(); 
-    i1 = myatoi(o1); // convert first arg to int64
+    o1 = system_popstring(); op = system_popstring(); 
+    i1 = myatoi64(o1); // convert first arg to int64
     if ((*op != '~') && (*op != '!'))
     {
         // get second arg, convert it, free it
-        o2 = popstring();
-        i2 = myatoi(o2); 
+        o2 = system_popstring();
+        i2 = myatoi64(o2); 
         GlobalFree(o2);
     }
 
@@ -293,7 +293,7 @@ PLUGINFUNCTIONSHORT(Int64Op)
     
     // Output and freedom
     myitoa64(i1, buf);
-    pushstring(buf);
+    system_pushstring(buf);
     GlobalFree(o1); GlobalFree(op);
 } PLUGINFUNCTIONEND
 
@@ -304,7 +304,7 @@ __int64 GetIntFromString(char **p)
     while (((**p >= 'a') && (**p <= 'f')) || ((**p >= 'A') && (**p <= 'F')) || ((**p >= '0') && (**p <= '9')) || (**p == 'X') || (**p == '-') || (**p == 'x') || (**p == '|')) *(b++) = *((*p)++);
     *b = 0;
     (*p)--; // We should point at last digit
-    return myatoi(buffer);
+    return myatoi64(buffer);
 }
 
 SystemProc *PrepareProc(BOOL NeedForCall)
@@ -321,7 +321,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
     // Retrieve proc specs
     cb = (cbuf = AllocString()); // Current String buffer
     sbuf = AllocString(); // Safe String buffer
-    ib = ibuf = popstring(); // Input string
+    ib = ibuf = system_popstring(); // Input string
 
     // Parse the string
     while (SectionType != -1)
@@ -387,7 +387,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
 
                         if (proc != NULL) GlobalFree(proc);
                         // Get already defined proc                                      
-                        proc = (SystemProc *) INT_TO_POINTER(myatoi(cbuf));
+                        proc = (SystemProc *) INT_TO_POINTER(myatoi64(cbuf));
                         if (!proc) break;
 
                         // Find the last clone at proc queue
@@ -668,7 +668,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
                 // Use direct system proc address
                 int addr;
 
-                proc->Dll = (HANDLE) INT_TO_POINTER(myatoi(proc->DllName));
+                proc->Dll = (HANDLE) INT_TO_POINTER(myatoi64(proc->DllName));
   
                 if (proc->Dll == 0)
                 {
@@ -689,7 +689,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
                 addr = *((int *)addr);
                 // now addr contains the pointer to first item at VTABLE
                 // add the index of proc
-                addr = addr + (int)(myatoi(proc->ProcName)*4);
+                addr = addr + (int)(myatoi64(proc->ProcName)*4);
                 proc->Proc = *((HANDLE*)addr);
             }
             break;
@@ -697,7 +697,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
             if (*proc->DllName == 0)
             {
                 // Use direct system proc address
-                if ((proc->Proc = (HANDLE) INT_TO_POINTER(myatoi(proc->ProcName))) == 0)
+                if ((proc->Proc = (HANDLE) INT_TO_POINTER(myatoi64(proc->ProcName))) == 0)
                     proc->ProcResult = PR_ERROR;
             } else
             {
@@ -720,7 +720,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
             }
             break;
         case PT_STRUCT:
-            if (*(proc->ProcName) != 0) proc->Proc = (HANDLE) INT_TO_POINTER(myatoi(proc->ProcName));
+            if (*(proc->ProcName) != 0) proc->Proc = (HANDLE) INT_TO_POINTER(myatoi64(proc->ProcName));
             break;
         }
     }
@@ -752,9 +752,9 @@ void ParamsIn(SystemProc *proc)
         // Step 1: retrive value
         if ((par->Input == IOT_NONE) || (par->Input == IOT_INLINE)) 
             realbuf = AllocStr("");
-        else if (par->Input == IOT_STACK) realbuf = popstring();
+        else if (par->Input == IOT_STACK) realbuf = system_popstring();
         else if ((par->Input > 0) && (par->Input <= __INST_LAST)) 
-            realbuf = getuservariable(par->Input - 1);
+            realbuf = system_getuservariable(par->Input - 1);
         else 
         {
             // Inline input, will be freed as realbuf
@@ -776,10 +776,10 @@ void ParamsIn(SystemProc *proc)
             par->Value = 0;
             break;
         case PAT_INT:
-            *((int*) place) = (int) myatoi(realbuf);
+            *((int*) place) = (int) myatoi64(realbuf);
             break;
         case PAT_LONG:
-            *((__int64*) place) = myatoi(realbuf);
+            *((__int64*) place) = myatoi64(realbuf);
             break;
         case PAT_STRING:
 /*            if (par->Input == IOT_NONE) 
@@ -802,7 +802,7 @@ void ParamsIn(SystemProc *proc)
         case PAT_CALLBACK:
             // Generate new or use old callback
             if (lstrlen(realbuf) > 0)
-                par->Value = (int) CreateCallback((SystemProc*) INT_TO_POINTER(myatoi(realbuf)));
+                par->Value = (int) CreateCallback((SystemProc*) INT_TO_POINTER(myatoi64(realbuf)));
             break;
         }
         GlobalFree(realbuf);
@@ -863,7 +863,7 @@ void ParamsOut(SystemProc *proc)
             break;
         case PAT_STRING:
             {
-                int num = lstrlen(*((char**) place));
+                unsigned num = lstrlen(*((char**) place));
                 if (num >= g_stringsize) num = g_stringsize-1;
                 lstrcpyn(realbuf,*((char**) place), num+1);
                 realbuf[num] = 0;                
@@ -891,8 +891,8 @@ void ParamsOut(SystemProc *proc)
 
         // Step 2: place it
         if (proc->Params[i].Output == IOT_NONE);
-        else if (proc->Params[i].Output == IOT_STACK) pushstring(realbuf);
-        else if (proc->Params[i].Output > 0) setuservariable(proc->Params[i].Output - 1, realbuf);
+        else if (proc->Params[i].Output == IOT_STACK) system_pushstring(realbuf);
+        else if (proc->Params[i].Output > 0) system_setuservariable(proc->Params[i].Output - 1, realbuf);
 
         GlobalFree(realbuf);
 
