@@ -8,7 +8,7 @@
         g_stringsize=string_size; \
         g_stacktop=stacktop; }
 
-#define NSISFunc(name) extern "C" void __declspec(dllexport) name(HWND hwndParent, int string_size, char *variables, stack_t **stacktop)
+#define NSISFunc(name) extern "C" void __declspec(dllexport) name(HWND hwndParent, int string_size, char *variables, stack_t **stacktop, extra_parameters *extra)
 
 char szTemp[2048];
 HWND hWndImage, hWndParent;
@@ -61,10 +61,23 @@ HBITMAP __stdcall LoadBitmapFile(long right, long bottom, BITMAP *bBitmap);
 COLORREF GetColor();
 void __stdcall GetXY(LPPOINT lpPoint);
 
+NSISFunc(Destroy);
+
+static UINT_PTR PluginCallback(enum NSPIM msg)
+{
+  if (msg == NSPIM_GUIUNLOAD)
+  {
+    Destroy(0, 0, 0, 0, 0);
+  }
+  return 0;
+}
+
 BOOL bReturn;
 
 NSISFunc(SetReturn) {
   EXDLL_INIT();
+
+  extra->RegisterPluginCallback(g_hInstance, PluginCallback);
 
   popstring(szTemp);
   bReturn = !lstrcmpi(szTemp, "on");
@@ -82,6 +95,8 @@ static void __stdcall my_pushstring(char *str)
 
 NSISFunc(SetBg) {
   EXDLL_INIT();
+
+  extra->RegisterPluginCallback(g_hInstance, PluginCallback);
 
   ECS();
 
@@ -335,7 +350,7 @@ NSISFunc(Destroy) {
     SendMessage(hWndImage, WM_CLOSE, 0, 0);
   hWndImage = 0;
   oldProc = NULL;
-  Clear(0, 0, 0, 0);
+  Clear(0, 0, 0, 0, 0);
   UnregisterClass("NSISBGImage", g_hInstance);
 }
 

@@ -1508,11 +1508,18 @@ extern "C" void __declspec(dllexport) dialog(HWND hwndParent, int string_size,
   showCfgDlg();
 }
 
+static UINT_PTR PluginCallback(enum NSPIM msg)
+{
+  return 0;
+}
+
 extern "C" void __declspec(dllexport) initDialog(HWND hwndParent, int string_size,
-                                      char *variables, stack_t **stacktop)
+                                      char *variables, stack_t **stacktop,
+                                      extra_parameters *extra)
 {
   hMainWindow=hwndParent;
   EXDLL_INIT();
+  extra->RegisterPluginCallback(m_hInstance, PluginCallback);
   if (initCalled) {
     pushstring("error");
     return;

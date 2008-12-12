@@ -98,9 +98,16 @@ DWORD WINAPI BannerThread(LPVOID lpParameter)
   return 0;
 }
 
-void __declspec(dllexport) show(HWND hwndParent, int string_size, char *variables, stack_t **stacktop)
+static UINT_PTR PluginCallback(enum NSPIM msg)
+{
+  return 0;
+}
+
+void __declspec(dllexport) show(HWND hwndParent, int string_size, char *variables, stack_t **stacktop, extra_parameters *extra)
 {
   EXDLL_INIT();
+
+  extra->RegisterPluginCallback(hInstance, PluginCallback);
 
   {
     DWORD dwThreadId;

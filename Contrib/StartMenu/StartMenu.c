@@ -29,6 +29,11 @@ BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 static BOOL CALLBACK ParentWndProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 void AddFolderFromReg(int nFolder);
 
+static UINT_PTR PluginCallback(enum NSPIM msg)
+{
+  return 0;
+}
+
 void __declspec(dllexport) Init(HWND hwndParent, int string_size, char *variables, stack_t **stacktop, extra_parameters *extra)
 {
   HWND hwStartMenuSelect;
@@ -38,6 +43,8 @@ void __declspec(dllexport) Init(HWND hwndParent, int string_size, char *variable
   validate_filename = extra->validate_filename;
 
   EXDLL_INIT();
+
+  extra->RegisterPluginCallback(g_hInstance, PluginCallback);
 
   {
     hwChild = GetDlgItem(hwndParent, 1018);
