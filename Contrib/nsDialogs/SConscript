@@ -5,7 +5,6 @@ files = Split("""
 	input.c
 	nsDialogs.c
 	nsDialogs.def
-	nsis.c
 	rtl.c
 """)
 
