@@ -19,8 +19,6 @@ BOOL bFailed;
 
 char buf[1024];
 
-unsigned int myatoi(char *s);
-
 BOOL CALLBACK BannerProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   if (uMsg == WM_INITDIALOG)
@@ -32,7 +30,7 @@ BOOL CALLBACK BannerProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
       unsigned int id;
       popstring(buf);
-      id = myatoi(buf);
+      id = myatou(buf);
       popstring(buf);
       SetDlgItemText(hwndDlg, id, buf);
       popstring(buf);
@@ -166,19 +164,4 @@ BOOL WINAPI DllMain(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
     destroy(0, 0, 0, 0);
   }
   return TRUE;
-}
-
-unsigned int myatoi(char *s)
-{
-  unsigned int v=0;
-
-  for (;;)
-  {
-    unsigned int c=*s++;
-    if (c >= '0' && c <= '9') c-='0';
-    else break;
-    v*=10;
-    v+=c;
-  }
-  return v;
 }
