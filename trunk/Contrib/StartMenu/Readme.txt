@@ -33,7 +33,7 @@ To set properties of the controls on the page, such as colors and fonts use Init
 and Show instead of Select. Init will push the HWND of the page on the stack,
 or an error string. For example:
 
-StartMenu::Init /NOUNLOAD "Test"
+StartMenu::Init "Test"
 Pop $0
 IntCmp $0 0 failed
 GetDlgItem $0 $0 1003

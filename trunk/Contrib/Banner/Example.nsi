@@ -9,9 +9,9 @@ OutFile "Banner Test.exe"
 ShowInstDetails show
 
 Function .onInit
-	Banner::show /NOUNLOAD "Calculating important stuff..."
+	Banner::show "Calculating important stuff..."
 
-	Banner::getWindow /NOUNLOAD
+	Banner::getWindow
 	Pop $1
 
 	again:
