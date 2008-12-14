@@ -35,7 +35,7 @@ defenv['STDCALL'] = '__attribute__((__stdcall__))'
 
 ### defines
 
-defenv.Append(CPPDEFINES = {'NSISCALL' : ' $STDCALL'})
+defenv.Append(CPPDEFINES = [('NSISCALL', '$STDCALL')])
 
 ### helper functions
 

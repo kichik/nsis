@@ -23,7 +23,7 @@ else:
 
 ### defines
 
-defenv.Append(CPPDEFINES = {'NSISCALL' : '$STDCALL'})
+defenv.Append(CPPDEFINES = [('NSISCALL', '$STDCALL')])
 
 ### asm
 
