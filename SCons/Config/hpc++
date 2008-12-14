@@ -17,7 +17,7 @@ defenv['STDCALL'] = ''
 
 ### defines
 
-defenv.Append(CPPDEFINES = {'NSISCALL' : '$STDCALL'})
+defenv.Append(CPPDEFINES = [('NSISCALL', '$STDCALL')])
 
 ### stub environment
 
