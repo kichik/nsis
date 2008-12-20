@@ -1,7 +1,7 @@
 #ifndef ___PLUGIN__H___
 #define ___PLUGIN__H___
 
-#include <plugin.h> // nsis plug-in...
+#include <pluginapi.h> // nsis plugin
 
 #define PLUGINFUNCTION(name) \
   void __declspec(dllexport) name( \

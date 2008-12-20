@@ -10,7 +10,7 @@
 //  LangDLL:LangDialog "Language Selection" "Choose a language" 2F French 1036 English 1033 12 Garamond
 
 
-#include <plugin.h> // nsis plugin.h
+#include <pluginapi.h> // nsis plugin
 
 HINSTANCE g_hInstance;
 HWND g_hwndParent;

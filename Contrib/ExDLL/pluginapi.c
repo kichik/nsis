@@ -1,6 +1,6 @@
 #include <windows.h>
 
-#include "plugin.h"
+#include "pluginapi.h"
 
 unsigned int g_stringsize;
 stack_t **g_stacktop;
