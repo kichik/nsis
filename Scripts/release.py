@@ -416,7 +416,7 @@ def UpdateWiki(release_id):
 	update_wiki_page('Template:NSISReleaseDate', time.strftime('%B %d, %Y'), 'new version')
 	update_wiki_page('Template:NSISReleaseID', release_id, 'new version')
 
-  os.system('start ' + PURGE_URL % 'Download')
+	os.system('start ' + PURGE_URL % 'Download')
 
 def ToDo():
 	print 'automatic phase done\n'
