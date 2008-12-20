@@ -1,5 +1,53 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.42} 2.42
+
+Released on December 20th, 2008
+
+\S1{v2.42-rl} Release Notes
+
+\b Merry Christmas and a happy Hanukkah!
+
+\b Plug-in developers should check out the new plug-in API in Examples\\Plugin and convert their plug-ins, especially in case they require staying loaded.
+
+\S1{v2.42-cl} Changelog
+
+\S2{} Major Changes
+
+\b Deprecated /NOUNLOAD and SetPluginsUnload to make scripts simpler and safer (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1912699}{patch #1912699})
+
+\b \R{headers}{Useful header functions} no longer require usage declaration and different syntax for uninstaller functions
+
+\b Revamped plug-in API now comes in the form of pluginapi.lib, API version information and more common functions (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=2359978}{patch #2359978})
+
+\S2{} Minor Changes
+
+\b Added \R{searchreplace}{!searchreplace} preprocessor command for compiletime text search/replaces
+
+\b Added support for \R{library}{registration} of EXE COM servers (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373088&aid=2315740}{RFE #2315740})
+
+\b Minor documentation improvements (including \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=2386821}{bug #2386821})
+
+\b \L{../Docs/nsDialogs/Readme.html}{nsDialogs}: Added timer support (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=2135855}{patch #2135855})
+
+\b \L{../Docs/nsDialogs/Readme.html}{nsDialogs}: Added progress bar support
+
+\b \L{../Include/WinVer.nsh}{WinVer.nsh}: Added IsServer, IsWin2003R2, IsStarterEdition, OSHasMediaCenter and OSHasTabletSupport (patch by Anders)
+
+\b \L{../Include/WinVer.nsh}{WinVer.nsh}: Fixed 95/NT4 ambiguity (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=2053642}{bug #2053642})
+
+\b \L{../Include/WinVer.nsh}{WinVer.nsh}: Proper Windows XP x64 detection (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=2053700}{bug #2053700})
+
+\b \L{../Include/WinVer.nsh}{WinVer.nsh}: Windows 2008 detection support (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373088&aid=1949260}{RFE #1949260})
+
+\S2{} Translations
+
+\b Minor English grammar improvements (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=2323452}{bug #2323452})
+
+\S2{} Build System
+
+\b Full \L{../Docs/System/System.html}{System} compatibility with GCC (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=2193442}{patch #2193442})
+
 \H{v2.41} 2.41
 
 Released on November 20th, 2008
