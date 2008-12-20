@@ -1,14 +1,14 @@
 # FIXME: install assembly and pascal includes into the correct locations
 
-lib_target = "plugin"
+lib_target = "pluginapi"
 
 lib_files = Split("""
-	plugin.c
+	pluginapi.c
 """)
 
 api_files = Split("""
-	plugin.h
-	plugin.lib
+	pluginapi.h
+	pluginapi.lib
 	#Source/exehead/api.h
 """)
 

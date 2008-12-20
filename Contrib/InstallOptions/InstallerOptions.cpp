@@ -14,7 +14,7 @@
 #include "resource.h"
 #include "shellapi.h"
 
-#include <plugin.h> // nsis plugin.h
+#include <pluginapi.h> // nsis plugin
 
 // Use for functions only called from one place to possibly reduce some code
 // size.  Allows the source code to remain readable by leaving the function

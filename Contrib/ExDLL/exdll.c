@@ -1,5 +1,5 @@
 #include <windows.h>
-#include <plugin.h> // nsis plugin.h
+#include <pluginapi.h> // nsis plugin
 
 HINSTANCE g_hInstance;
 

@@ -1,5 +1,5 @@
 #include <windows.h>
-#include <plugin.h> // nsis plugin library
+#include <pluginapi.h> // nsis plugin
 #include "MyMath.h"
 #include "Math.h"
 

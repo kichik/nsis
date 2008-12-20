@@ -1,6 +1,6 @@
 #include <windows.h>
 #include <mmsystem.h>
-#include <plugin.h> // nsis plugin.h
+#include <pluginapi.h> // nsis plugin
 
 #undef EXDLL_INIT
 
