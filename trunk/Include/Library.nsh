@@ -31,6 +31,9 @@
   !define SHCNF_IDLIST 0x0000
 !endif
 
+!define REGTOOL_VERSION v3
+!define REGTOOL_KEY NSIS.Library.RegTool.${REGTOOL_VERSION}
+
 !include LogicLib.nsh
 !include x64.nsh
 
@@ -111,26 +114,26 @@
   ;Advance counter
 
   StrCpy $R0 0
-  ReadRegDWORD $R0 HKLM "Software\NSIS.Library.RegTool.v3\$__INSTALLLLIB_SESSIONGUID" "count"
+  ReadRegDWORD $R0 HKLM "Software\${REGTOOL_KEY}\$__INSTALLLLIB_SESSIONGUID" "count"
   IntOp $R0 $R0 + 1
-  WriteRegDWORD HKLM "Software\NSIS.Library.RegTool.v3\$__INSTALLLLIB_SESSIONGUID" "count" "$R0"
+  WriteRegDWORD HKLM "Software\${REGTOOL_KEY}\$__INSTALLLLIB_SESSIONGUID" "count" "$R0"
 
   ;------------------------
   ;Setup RegTool
 
-  ReadRegStr $R3 HKLM "Software\Microsoft\Windows\CurrentVersion\RunOnce" "NSIS.Library.RegTool.v3"
+  ReadRegStr $R3 HKLM "Software\Microsoft\Windows\CurrentVersion\RunOnce" "${REGTOOL_KEY}"
   StrCpy $R3 $R3 -4 1
   IfFileExists $R3 +3
 
-    File /oname=$R2\NSIS.Library.RegTool.v3.$__INSTALLLLIB_SESSIONGUID.exe "${NSISDIR}\Bin\RegTool.bin"
+    File /oname=$R2\${REGTOOL_KEY}.$__INSTALLLLIB_SESSIONGUID.exe "${NSISDIR}\Bin\RegTool.bin"
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\RunOnce" \
-      "NSIS.Library.RegTool.v3" '"$R2\NSIS.Library.RegTool.v3.$__INSTALLLLIB_SESSIONGUID.exe" /S'
+      "${REGTOOL_KEY}" '"$R2\${REGTOOL_KEY}.$__INSTALLLLIB_SESSIONGUID.exe" /S'
 
   ;------------------------
   ;Add RegTool entry
 
-  WriteRegStr HKLM "Software\NSIS.Library.RegTool.v3\$__INSTALLLLIB_SESSIONGUID" "$R0.file" "$R1"
-  WriteRegStr HKLM "Software\NSIS.Library.RegTool.v3\$__INSTALLLLIB_SESSIONGUID" "$R0.mode" "${mode}"
+  WriteRegStr HKLM "Software\${REGTOOL_KEY}\$__INSTALLLLIB_SESSIONGUID" "$R0.file" "$R1"
+  WriteRegStr HKLM "Software\${REGTOOL_KEY}\$__INSTALLLLIB_SESSIONGUID" "$R0.mode" "${mode}"
 
   Pop $R3
   Pop $R2
