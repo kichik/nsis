@@ -3194,6 +3194,49 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         delete list;
       }
     return PS_OK;
+    case TOK_P_SEARCHREPLACESTRING:
+      {
+        int ignoreCase=!stricmp(line.gettoken_str(1),"/ignorecase");
+        if (line.getnumtokens()!=5+ignoreCase) PRINTHELP()
+
+        char *define=line.gettoken_str(1+ignoreCase);
+        char *src = line.gettoken_str(2+ignoreCase);
+        char *search = line.gettoken_str(3+ignoreCase);
+        char *replace = line.gettoken_str(4+ignoreCase);
+        int searchlen=strlen(search);
+        int replacelen=strlen(replace);
+        if (!searchlen)
+        {
+          ERROR_MSG("!searchreplace: search string must not be empty for search/replace!\n");
+          return PS_ERROR;
+        }
+
+        GrowBuf valout;
+
+        while (*src)
+        {
+          if (ignoreCase ? strnicmp(src,search,searchlen) : strncmp(src,search,searchlen)) 
+            valout.add(src++,1);           
+          else
+          {
+            valout.add(replace,replacelen);
+            src+=searchlen;
+          }
+        }
+
+        valout.add("",1);
+       
+        definedlist.del(define); // allow changing variables since we'll often use this in series
+
+        if (definedlist.add(define,(char*)valout.get()))
+        {
+          ERROR_MSG("!searchreplace: error defining \"%s\"!\n",define);
+          return PS_ERROR;
+        }
+        SCRIPT_MSG("!searchreplace: \"%s\"=\"%s\"\n",define,(char*)valout.get());
+
+      }
+    return PS_OK;
 
     case TOK_P_VERBOSE:
     {

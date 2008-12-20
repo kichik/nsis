@@ -118,6 +118,7 @@ enum
   TOK_P_APPENDFILE,
 
   TOK_P_SEARCHPARSESTRING,
+  TOK_P_SEARCHREPLACESTRING,
 
   // section/function shit
   TOK_SECTION,

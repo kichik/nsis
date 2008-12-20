@@ -258,6 +258,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_P_APPENDFILE,"!appendfile",2,0,"file appended_line",TP_ALL},
 
 {TOK_P_SEARCHPARSESTRING,"!searchparse",3,-1,"[/ignorecase] [/noerrors] [/file] source_string substring OUTPUTSYM1 [substring [OUTPUTSYM2 [substring ...]]]",TP_ALL},
+{TOK_P_SEARCHREPLACESTRING,"!searchreplace",4,1,"[/ignorecase] output_name source_string substring replacestring", TP_ALL},
 
 {TOK_MISCBUTTONTEXT,"MiscButtonText",0,4,"[back button text] [next button text] [cancel button text] [close button text]",TP_GLOBAL},
 {TOK_DETAILSBUTTONTEXT,"DetailsButtonText",0,1,"[details button text]",TP_PG},
