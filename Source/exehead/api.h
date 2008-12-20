@@ -57,6 +57,10 @@ typedef struct
   int status_update;
 } exec_flags_t;
 
+#ifndef NSISCALL
+#  define NSISCALL __stdcall
+#endif
+
 typedef struct {
   exec_flags_t *exec_flags;
   int (NSISCALL *ExecuteCodeSegment)(int, HWND);
