@@ -408,7 +408,7 @@ def UpdateWiki(release_id):
 		post += '&su_data=' + urllib.quote(data)
 		post += '&su_summary=' + urllib.quote(summary)
 		
-		if urllib.urlopen(UPDATE_URL, post).read() != 'success':
+		if urllib.urlopen(UPDATE_URL, post).read().strip() != 'success':
 			log('*** failed updating `%s` wiki page' % page)
 			print '	*** failed updating `%s` wiki page' % page
 
