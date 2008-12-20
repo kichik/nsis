@@ -263,8 +263,8 @@ ${MementoSection} "Script Examples" SecExample
   File ..\Examples\Plugin\extdll.inc
   File ..\Examples\Plugin\nsis.pas
 
-  File ..\Examples\Plugin\plugin.h
-  File ..\Examples\Plugin\plugin.lib
+  File ..\Examples\Plugin\pluginapi.h
+  File ..\Examples\Plugin\pluginapi.lib
   File ..\Examples\Plugin\api.h
 
 ${MementoSectionEnd}
