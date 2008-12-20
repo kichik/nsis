@@ -79,7 +79,7 @@ BOOL NSISCALL RegisterPluginCallback(HMODULE pluginHandle, NSISPLUGINCALLBACK pr
     return FALSE;
   }
 	
-	p = (loaded_plugin*) GlobalAlloc(LPTR, sizeof(loaded_plugin));
+	p = (loaded_plugin*) GlobalAlloc(GPTR, sizeof(loaded_plugin));
 	if (p)
 	{
 		p->proc   = proc;
