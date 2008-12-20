@@ -883,7 +883,7 @@ Function PageReinstall
     Abort
   ${EndIf}
 
-  nsDialogs::Create /NOUNLOAD 1018
+  nsDialogs::Create 1018
   Pop $R4
 
   ${NSD_CreateLabel} 0 0 100% 24u $R1

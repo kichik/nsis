@@ -863,8 +863,8 @@ Call functions:
 \c !include "FileFunc.nsh"
 \c 
 \c Section
-\c 	Banner::show /NOUNLOAD "Starting..."
-\c 	Banner::getWindow /NOUNLOAD
+\c 	Banner::show "Starting..."
+\c 	Banner::getWindow
 \c 	Pop $R1
 \c 	${Locate} "$WINDIR" "/L=F /M=*.* /B=1" "LocateCallback"
 \c 	Banner::destroy

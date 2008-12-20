@@ -21,7 +21,7 @@ Var STATE
 Page Custom ShowCustom LeaveCustom
 
 Function ShowCustom
-	InstallOptions::initDialog /NOUNLOAD "$INI"
+	InstallOptions::initDialog "$INI"
 	Pop $hwnd
 	InstallOptions::show
 	Pop $0
