@@ -1,0 +1,33 @@
+target = 'LibraryLocal'
+
+files = Split("""
+	LibraryLocal.cpp
+""")
+
+required_files = Split("""
+	#Source/ResourceEditor.cpp
+	#Source/util.cpp
+	#Source/winchar.cpp
+""")
+
+libs = Split("""
+	oleaut32
+	version
+""")
+
+Import('BuildUtil BuildUtilEnv')
+
+env = BuildUtilEnv(flags = ['$EXCEPTION_FLAG'], cross_platform = True)
+
+import os.path
+
+for s in required_files:
+	fn = os.path.split(s)[-1]
+	bn = os.path.splitext(fn)[0]
+	o = env.Object(bn, s)
+	files.append(o)
+
+if env['PLATFORM'] != 'win32':
+	libs = []
+
+BuildUtil(target, files, libs, flags = ['$EXCEPTION_FLAG'], cross_platform = True)
