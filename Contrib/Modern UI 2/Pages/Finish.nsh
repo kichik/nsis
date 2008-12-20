@@ -256,9 +256,9 @@ Finish page (implemented using nsDialogs)
     !endif
     
     ;Create dialog
-    nsDialogs::Create /NOUNLOAD 1044
+    nsDialogs::Create 1044
     Pop $mui.FinishPage
-    nsDialogs::SetRTL /NOUNLOAD $(^RTL)
+    nsDialogs::SetRTL $(^RTL)
     SetCtlColors $mui.FinishPage "" "${MUI_BGCOLOR}"
 
     ;Image control

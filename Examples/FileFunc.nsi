@@ -48,7 +48,7 @@ Var DIRSTATE1
 Page Custom ShowCustom LeaveCustom
 
 Function ShowCustom
-	InstallOptions::initDialog /NOUNLOAD "$INI"
+	InstallOptions::initDialog "$INI"
 	Pop $hwnd
 	GetDlgItem $1 $HWND 1201
 	ShowWindow $1 0

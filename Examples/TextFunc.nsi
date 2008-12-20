@@ -45,7 +45,7 @@ Var FILERECODE2
 Page Custom ShowCustom LeaveCustom
 
 Function ShowCustom
-	InstallOptions::initDialog /NOUNLOAD "$INI"
+	InstallOptions::initDialog "$INI"
 	Pop $hwnd
 	GetDlgItem $0 $HWND 1206
 	ShowWindow $0 0

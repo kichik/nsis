@@ -118,9 +118,9 @@ Welcome page (implemented using nsDialogs)
     !insertmacro MUI_PAGE_FUNCTION_CUSTOM PRE  
 
     ;Create dialog
-    nsDialogs::Create /NOUNLOAD 1044
+    nsDialogs::Create 1044
     Pop $mui.WelcomePage
-    nsDialogs::SetRTL /NOUNLOAD $(^RTL)
+    nsDialogs::SetRTL $(^RTL)
     SetCtlColors $mui.WelcomePage "" "${MUI_BGCOLOR}"    
 
     ;Image control
