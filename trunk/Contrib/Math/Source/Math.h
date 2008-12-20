@@ -1,6 +1,6 @@
 #pragma once
 
-#include <plugin.h> // nsis plugin api
+#include <pluginapi.h> // nsis plugin
 
 #ifdef _DEBUG
 //#define _DEBUG_LEAKS

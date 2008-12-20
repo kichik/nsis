@@ -101,7 +101,7 @@ SOURCE=.\exdll.c
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
-SOURCE=.\plugin.h
+SOURCE=.\pluginapi.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"

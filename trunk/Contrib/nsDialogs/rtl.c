@@ -1,7 +1,7 @@
 #include <windows.h>
 #include <commctrl.h>
 
-#include <plugin.h> // nsis plugin.h
+#include <pluginapi.h> // nsis plugin
 
 #include "defs.h"
 

@@ -21,7 +21,7 @@ freely, subject to the following restrictions:
 #include <windows.h>
 #include <commctrl.h>
 #include <winnt.h>
-#include <plugin.h> // nsis plugin.h
+#include <pluginapi.h> // nsis plugin
 
 #ifndef true
 #define true TRUE
