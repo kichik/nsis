@@ -148,4 +148,13 @@ If \e{/file} is specified, the file is treated as a series of lines. The file is
 \c # search filename.cpp for a line '#define APP_VERSION "2.5"' and set ${VER_MAJOR} to 2, ${VER_MINOR} to 5.
 \c !searchparse /file filename.cpp `#define APP_VERSION "` VER_MAJOR `.` VER_MINOR `"`
 
+\S1{searchreplace} !searchreplace
+
+\c [/ignorecase] symbol_out source_string searchfor replacewith
+
+Searches \e{source_string}, looking for \e{searchfor} and replacing all instances of it with \e{replacewith}. Unlike !define, !searchreplace allows you to redefine \e{symbol_out} without warning or error.
+
+\c # defines ${blah} to "i like ponies"
+\c !searchreplace blah "i love ponies" "love" "like"
+
 
