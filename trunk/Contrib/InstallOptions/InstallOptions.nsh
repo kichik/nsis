@@ -158,7 +158,7 @@ Macros and conversion functions for InstallOptions
 
 !macro INSTALLOPTIONS_INITDIALOG FILE
 
-  InstallOptions::initDialog /NOUNLOAD "$PLUGINSDIR\${FILE}"
+  InstallOptions::initDialog "$PLUGINSDIR\${FILE}"
 
 !macroend
 

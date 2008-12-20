@@ -175,8 +175,8 @@
 
   !macro __WinVer_Call_GetVersionEx STRUCT_SIZE
 
-    System::Call /NoUnload '*$0(i ${STRUCT_SIZE})'
-    System::Call /NoUnload kernel32::GetVersionEx(ir0)i.r3
+    System::Call '*$0(i ${STRUCT_SIZE})'
+    System::Call kernel32::GetVersionEx(ir0)i.r3
 
   !macroend
 
@@ -199,7 +199,7 @@
   Push $R0 ;temp
 
   # allocate memory
-  System::Alloc /NoUnload ${OSVERSIONINFOEXA_SIZE}
+  System::Alloc ${OSVERSIONINFOEXA_SIZE}
   Pop $0
 
   # use OSVERSIONINFOEX
@@ -211,7 +211,7 @@
   _winver_ex:
 
   # get results from struct
-  System::Call /NoUnload '*$0(i.s,i.r1,i.r2,i.r3,i.s,&t128.s,&i2.s,&i2,&i2,&i1.s,&i1)'
+  System::Call '*$0(i.s,i.r1,i.r2,i.r3,i.s,&t128.s,&i2.s,&i2,&i2,&i1.s,&i1)'
 
   # free struct
   System::Free $0

@@ -30,7 +30,7 @@ Function ShowCustom
   ; Initialise the dialog but don't show it yet
   MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "Test the right-to-left version?" IDNO +2
     WriteINIStr "$PLUGINSDIR\test.ini" "Settings" "RTL" "1"
-  InstallOptions::initDialog /NOUNLOAD "$PLUGINSDIR\test.ini"
+  InstallOptions::initDialog "$PLUGINSDIR\test.ini"
   ; In this mode InstallOptions returns the window handle so we can use it
   Pop $0
   ; Now show the dialog and wait for it to finish
