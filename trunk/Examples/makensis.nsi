@@ -588,6 +588,7 @@ ${MementoSection} "nsDialogs" SecPluginsDialogs
   SetOutPath $INSTDIR\Examples\nsDialogs
   File ..\Examples\nsDialogs\example.nsi
   File ..\Examples\nsDialogs\InstallOptions.nsi
+  File ..\Examples\nsDialogs\timer.nsi
   File ..\Examples\nsDialogs\welcome.nsi
   SetOutPath $INSTDIR\Include
   File ..\Include\nsDialogs.nsh
