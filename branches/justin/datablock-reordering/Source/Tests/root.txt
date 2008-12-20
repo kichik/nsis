@@ -1,0 +1,6 @@
+this is a list of bugs related to root directories, which can not yet be tested automatically
+
+* bug #1331292 - browsing for root network directory disables next button
+
+* root with space after it, without AllowRootDirInstall
+  http://forums.winamp.com/showthread.php?threadid=222727

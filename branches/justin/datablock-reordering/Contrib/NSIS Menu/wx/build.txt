@@ -1,0 +1,4 @@
+1. Install wxWidgets 2.8
+2. Set WXWIN environment variable
+3. Run wxbuild.bat
+4. Build NSIS happily
