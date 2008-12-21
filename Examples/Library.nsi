@@ -17,7 +17,7 @@ XPStyle on
 RequestExecutionLevel user
 
 !define TestDLL '"${NSISDIR}\Plugins\LangDLL.dll"'
-!define TestEXE '"${NSISDIR}\makensis.exe"'
+!define TestEXE '"${NSISDIR}\Contrib\UIs\default.exe"'
 
 Section
 
