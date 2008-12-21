@@ -23,7 +23,7 @@
 
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
 
-extern BOOL NSISCALL RegisterPluginCallback(HMODULE pluginHandle, NSISPLUGINCALLBACK proc);
+extern int NSISCALL RegisterPluginCallback(HMODULE pluginHandle, NSISPLUGINCALLBACK proc);
 
 extern void NSISCALL Plugins_SendMsgToAllPlugins(int msg);
 extern void NSISCALL Plugins_UnloadAll();
