@@ -69,14 +69,14 @@ BOOL NSISCALL Plugins_CanUnload(HANDLE pluginHandle)
 	return TRUE;
 }
 
-BOOL NSISCALL RegisterPluginCallback(HMODULE pluginHandle, NSISPLUGINCALLBACK proc)
+int NSISCALL RegisterPluginCallback(HMODULE pluginHandle, NSISPLUGINCALLBACK proc)
 {
 	loaded_plugin* p;
 
 	if (!Plugins_CanUnload(pluginHandle))
   {
     // already registered
-    return FALSE;
+    return 1;
   }
 	
 	p = (loaded_plugin*) GlobalAlloc(GPTR, sizeof(loaded_plugin));
@@ -88,10 +88,10 @@ BOOL NSISCALL RegisterPluginCallback(HMODULE pluginHandle, NSISPLUGINCALLBACK pr
 
 		g_plugins = p;
 
-		return TRUE;
+		return 0;
 	}
 
-	return FALSE;
+	return -1;
 }
 
 #endif /* #ifdef NSIS_CONFIG_PLUGIN_SUPPORT */

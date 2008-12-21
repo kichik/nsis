@@ -65,7 +65,7 @@ typedef struct {
   exec_flags_t *exec_flags;
   int (NSISCALL *ExecuteCodeSegment)(int, HWND);
   void (NSISCALL *validate_filename)(char *);
-  BOOL (NSISCALL *RegisterPluginCallback)(HMODULE, NSISPLUGINCALLBACK);
+  int (NSISCALL *RegisterPluginCallback)(HMODULE, NSISPLUGINCALLBACK); // returns 0 on success, 1 if already registered and < 0 on errors
 } extra_parameters;
 
 // Definitions for page showing plug-ins
