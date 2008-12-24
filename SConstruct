@@ -90,7 +90,7 @@ if defenv.WhereIs('hhc', os.environ['PATH']):
 from time import strftime, gmtime
 cvs_version = strftime('%d-%b-%Y.cvs', gmtime())
 
-opts = Options()
+opts = Variables()
 
 # load configuration options
 #  it's important this will be done here so NSIS_CONFIG_CONST_DATA_PATH
@@ -139,28 +139,28 @@ opts.Add(('VER_REVISION', 'Revision of NSIS (recommended for dist-installer)', N
 opts.Add(('VER_BUILD', 'Build version of NSIS (recommended for dist-installer)', None))
 # installation
 opts.Add(('PREFIX', 'Installation prefix', dirs['prefix']))
-opts.Add(ListOption('SKIPSTUBS', 'A list of stubs that will not be built', 'none', stubs))
-opts.Add(ListOption('SKIPPLUGINS', 'A list of plug-ins that will not be built', 'none', plugins))
-opts.Add(ListOption('SKIPUTILS', 'A list of utilities that will not be built', 'none', utils))
-opts.Add(ListOption('SKIPMISC', 'A list of plug-ins that will not be built', 'none', misc))
-opts.Add(ListOption('SKIPDOC', 'A list of doc files that will not be built/installed', 'none', doc))
+opts.Add(ListVariable('SKIPSTUBS', 'A list of stubs that will not be built', 'none', stubs))
+opts.Add(ListVariable('SKIPPLUGINS', 'A list of plug-ins that will not be built', 'none', plugins))
+opts.Add(ListVariable('SKIPUTILS', 'A list of utilities that will not be built', 'none', utils))
+opts.Add(ListVariable('SKIPMISC', 'A list of plug-ins that will not be built', 'none', misc))
+opts.Add(ListVariable('SKIPDOC', 'A list of doc files that will not be built/installed', 'none', doc))
 opts.Add(('SKIPTESTS', 'A comma-separated list of test files that will not be ran', 'none'))
 opts.Add(('IGNORETESTS', 'A comma-separated list of test files that will be ran but ignored', ignore_tests))
 # build tools
 opts.Add(('PATH', 'A colon-separated list of system paths instead of the default - TEMPORARY AND MAY DEPRECATE', None))
 opts.Add(('TOOLSET', 'A comma-separated list of specific tools used for building instead of the default', None))
-opts.Add(BoolOption('MSTOOLKIT', 'Use Microsoft Visual C++ Toolkit', 'no'))
-opts.Add(BoolOption('CHMDOCS', 'Build CHM documentation, requires hhc.exe', hhc))
-opts.Add(PathOption('APPEND_CPPPATH', 'Additional paths to search for include files', None))
-opts.Add(PathOption('APPEND_LIBPATH', 'Additional paths to search for libraries', None))
+opts.Add(BoolVariable('MSTOOLKIT', 'Use Microsoft Visual C++ Toolkit', 'no'))
+opts.Add(BoolVariable('CHMDOCS', 'Build CHM documentation, requires hhc.exe', hhc))
+opts.Add(PathVariable('APPEND_CPPPATH', 'Additional paths to search for include files', None))
+opts.Add(PathVariable('APPEND_LIBPATH', 'Additional paths to search for libraries', None))
 opts.Add(('APPEND_CCFLAGS', 'Additional C/C++ compiler flags'))
 opts.Add(('APPEND_LINKFLAGS', 'Additional linker flags'))
 # build options
-opts.Add(BoolOption('DEBUG', 'Build executables with debugging information', 'no'))
-opts.Add(PathOption('CODESIGNER', 'A program used to sign executables', None))
-opts.Add(BoolOption('STRIP', 'Strips executables of any unrequired data such as symbols', 'yes'))
-opts.Add(BoolOption('STRIP_CP', 'Strips cross-platform executables of any unrequired data such as symbols', 'yes'))
-opts.Add(BoolOption('STRIP_W32', 'Strips Win32 executables of any unrequired data such as symbols', 'yes'))
+opts.Add(BoolVariable('DEBUG', 'Build executables with debugging information', 'no'))
+opts.Add(PathVariable('CODESIGNER', 'A program used to sign executables', None))
+opts.Add(BoolVariable('STRIP', 'Strips executables of any unrequired data such as symbols', 'yes'))
+opts.Add(BoolVariable('STRIP_CP', 'Strips cross-platform executables of any unrequired data such as symbols', 'yes'))
+opts.Add(BoolVariable('STRIP_W32', 'Strips Win32 executables of any unrequired data such as symbols', 'yes'))
 # path related build options
 opts.Add(('PREFIX_DEST', 'Intermediate installation prefix (extra install time prefix)', dirs['dest']))
 opts.Add(('PREFIX_CONF', 'Path to install nsisconf.nsh to', dirs['conf']))
