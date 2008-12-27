@@ -13,13 +13,22 @@ includes = Split("""
 	UpgradeDLL.nsh
 	Util.nsh
 	VB6RunTime.nsh
+	WinDef.nsh
 	WinMessages.nsh
 	WinVer.nsh
 	WordFunc.nsh
 	x64.nsh
 """)
 
+includesWin = [
+	'Win/WinDef.nsh',
+	'Win/WinError.nsh',
+	'Win/WinNT.nsh',
+	'Win/WinUser.nsh'
+]
+
 Import('env')
 
 env.DistributeInclude(includes)
+env.DistributeInclude(includesWin, path='Win')
 env.DistributeDocs('StrFunc.txt', path='StrFunc')
