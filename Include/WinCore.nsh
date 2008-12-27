@@ -210,10 +210,5 @@ ShlObj.h
 
 
 
-
-
-/**************************************************
-EOF EOF EOF EOF EOF EOF EOF EOF EOF EOF EOF EOF EOF
-**************************************************/
 !verbose pop
 !endif /* __WIN_WINDOWS__INC */
