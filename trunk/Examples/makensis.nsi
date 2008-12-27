@@ -156,6 +156,13 @@ ${MementoSection} "NSIS Core Files (required)" SecCore
   File ..\Include\MultiUser.nsh
   File ..\Include\VB6RunTime.nsh
   File ..\Include\Util.nsh
+  File ..\Include\WinDef.nsh
+
+  SetOutPath $INSTDIR\Include\Win
+  File ..\Include\Win\WinDef.nsh
+  File ..\Include\Win\WinError.nsh
+  File ..\Include\Win\WinNT.nsh
+  File ..\Include\Win\WinUser.nsh
 
   SetOutPath $INSTDIR\Docs\StrFunc
   File ..\Docs\StrFunc\StrFunc.txt
