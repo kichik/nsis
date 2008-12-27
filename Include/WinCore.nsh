@@ -1,6 +1,6 @@
 /*
 
-WinDef.nsh & Win\*.nsh - Collection of common windows defines
+WinCore.nsh & Win\*.nsh - Collection of common windows defines
 
 !define __WIN_NOINC_xxx to exclude a windows header file
 !define __WIN_MS_xxx to exclude specific things (The original #ifdef xxx checks can be found in the official Microsoft headers)
