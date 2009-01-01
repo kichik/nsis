@@ -13,7 +13,7 @@ includes = Split("""
 	UpgradeDLL.nsh
 	Util.nsh
 	VB6RunTime.nsh
-	WinDef.nsh
+	WinCore.nsh
 	WinMessages.nsh
 	WinVer.nsh
 	WordFunc.nsh
