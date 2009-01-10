@@ -11,6 +11,22 @@ def AddAvailableLibs(env, libs):
 	conf.Finish()
 
 """
+Scans through a list list of libraries and adds
+available libraries to the environment.
+"""
+def GetAvailableLibs(env, libs):
+	conf = env.Configure()
+	avail_libs = []
+
+	for lib in libs:
+		if conf.CheckLib(lib):
+			avail_libs.append(lib)
+
+	conf.Finish()
+
+	return avail_libs
+
+"""
 Checks if a compiler flag is valid.
 """
 def check_compile_flag(ctx, flag):
@@ -71,4 +87,4 @@ Wrapper for env.Configure which adds two new tests:
 def FlagsConfigure(env):
 	return env.Configure(custom_tests = { 'CheckCompileFlag' : check_compile_flag, 'CheckLinkFlag': check_link_flag })
 
-Export('AddAvailableLibs FlagsConfigure')
+Export('AddAvailableLibs FlagsConfigure GetAvailableLibs')
