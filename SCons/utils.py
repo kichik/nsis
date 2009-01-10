@@ -1,8 +1,8 @@
-"""
-Scans through a list list of libraries and adds
-available libraries to the environment.
-"""
 def AddAvailableLibs(env, libs):
+	"""
+	Scans through a list list of libraries and adds
+	available libraries to the environment.
+	"""
 	conf = env.Configure()
 
 	for lib in libs:
@@ -10,11 +10,11 @@ def AddAvailableLibs(env, libs):
 
 	conf.Finish()
 
-"""
-Scans through a list list of libraries and adds
-available libraries to the environment.
-"""
 def GetAvailableLibs(env, libs):
+	"""
+	Scans through a list list of libraries and adds
+	available libraries to the environment.
+	"""
 	conf = env.Configure()
 	avail_libs = []
 
@@ -26,10 +26,10 @@ def GetAvailableLibs(env, libs):
 
 	return avail_libs
 
-"""
-Checks if a compiler flag is valid.
-"""
 def check_compile_flag(ctx, flag):
+	"""
+	Checks if a compiler flag is valid.
+	"""
 	ctx.Message('Checking for compiler flag %s... ' % flag)
 
 	old_flags = ctx.env['CCFLAGS']
@@ -49,10 +49,10 @@ def check_compile_flag(ctx, flag):
 
 	return result
 
-"""
-Checks if a linker flag is valid.
-"""
 def check_link_flag(ctx, flag, run = 0, extension = '.c', code = None):
+	"""
+	Checks if a linker flag is valid.
+	"""
 	ctx.Message('Checking for linker flag %s... ' % flag)
 
 	old_flags = ctx.env['LINKFLAGS']
@@ -79,12 +79,12 @@ def check_link_flag(ctx, flag, run = 0, extension = '.c', code = None):
 
 	return result
 
-"""
-Wrapper for env.Configure which adds two new tests:
-  CheckCompileFlag - checks for a compiler flag
-	CheckLinkFlag    - checks for a linker flag
-"""
 def FlagsConfigure(env):
+	"""
+	Wrapper for env.Configure which adds two new tests:
+	  CheckCompileFlag - checks for a compiler flag
+		CheckLinkFlag    - checks for a linker flag
+	"""
 	return env.Configure(custom_tests = { 'CheckCompileFlag' : check_compile_flag, 'CheckLinkFlag': check_link_flag })
 
 Export('AddAvailableLibs FlagsConfigure GetAvailableLibs')
