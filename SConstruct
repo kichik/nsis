@@ -167,6 +167,8 @@ opts.Add(('PREFIX_CONF', 'Path to install nsisconf.nsh to', dirs['conf']))
 opts.Add(('PREFIX_BIN', 'Path to install native binaries to', dirs['bin']))
 opts.Add(('PREFIX_DATA', 'Path to install nsis data to (plugins, includes, stubs, contrib, win32 binaries)', dirs['data']))
 opts.Add(('PREFIX_DOC','Path to install nsis README / INSTALL / TODO files to.', dirs['doc']))
+opts.Add(('PREFIX_PLUGINAPI_INC','Path to install plugin API headers to.', None))
+opts.Add(('PREFIX_PLUGINAPI_LIB','Path to install plugin static library to.', None))
 
 opts.Update(defenv)
 Help(opts.GenerateHelpText(defenv))
