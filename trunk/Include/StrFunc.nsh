@@ -49,7 +49,7 @@ o-----------------------------------------------------------------------------o
 
   !verbose push
   !verbose 4
-  !echo `${STRFUNC_INITMSGPRE}NSIS ${STRFUNC} ${STRFUNC_VER} - © ${STRFUNC_CREDITS}${STRFUNC_INITMSGPOST}`
+  !echo `${STRFUNC_INITMSGPRE}NSIS ${STRFUNC} ${STRFUNC_VER} - Copyright ${STRFUNC_CREDITS}${STRFUNC_INITMSGPOST}`
   !verbose pop
 
   ;Header File Function Init Message Prefix and Postfix
@@ -82,13 +82,13 @@ o-----------------------------------------------------------------------------o
     !verbose 4
 
     !ifndef `Un${ShortName}`
-      !echo `${STRFUNC_FUNCMSGPRE}$ {Un${ShortName}} - © ${Credits}${STRFUNC_FUNCMSGPOST}`
+      !echo `${STRFUNC_FUNCMSGPRE}$ {Un${ShortName}} - Copyright ${Credits}${STRFUNC_FUNCMSGPOST}`
       !verbose pop
       !define `Un${ShortName}` `!insertmacro FUNCTION_STRING_Un${ShortName}_Call`
       !define `Un${ShortName}_INCLUDED`
       Function `un.${ShortName}`
     !else
-      !echo `${STRFUNC_FUNCMSGPRE}$ {${ShortName}} - © ${Credits}${STRFUNC_FUNCMSGPOST}`
+      !echo `${STRFUNC_FUNCMSGPRE}$ {${ShortName}} - Copyright ${Credits}${STRFUNC_FUNCMSGPOST}`
       !verbose pop
       !undef `${ShortName}`
       !define `${ShortName}` `!insertmacro FUNCTION_STRING_${ShortName}_Call`
