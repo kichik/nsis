@@ -128,12 +128,12 @@ SectionIn 1 4 3
   INIDelSuccess:
 
   ClearErrors
-  ReadRegStr $1 HKCR "software\microsoft" xyz_¢¢_does_not_exist
+  ReadRegStr $1 HKCR "software\microsoft" xyz_cc_does_not_exist
   IfErrors 0 NoError
-    MessageBox MB_OK "could not read from HKCR\software\microsoft\xyz_¢¢_does_not_exist"
+    MessageBox MB_OK "could not read from HKCR\software\microsoft\xyz_cc_does_not_exist"
     Goto ErrorYay
   NoError:
-    MessageBox MB_OK "read '$1' from HKCR\software\microsoft\xyz_¢¢_does_not_exist"
+    MessageBox MB_OK "read '$1' from HKCR\software\microsoft\xyz_cc_does_not_exist"
   ErrorYay:
   
 SectionEnd
