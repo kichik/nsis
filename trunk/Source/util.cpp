@@ -33,9 +33,10 @@
 
 #ifdef __APPLE__
 namespace Apple { // defines struct section
-#  define ENUM_DYLD_BOOL // for TRUE/FALSE, bug #1851365
 #  include <mach-o/dyld.h> // for _NSGetExecutablePath
 };
+#  define FALSE 0 // bugs #1851365, #2497290
+#  define TRUE 1
 #  include <sys/param.h> // for MAXPATHLEN
 #endif
 
