@@ -22,6 +22,7 @@
 
 #ifndef _WIN32
 #include <cstdio> // for FILE*
+#include <fstream> // (some systems have FILE* in here)
 #endif
 
 class IMMap
