@@ -19,6 +19,7 @@
 
 #include "Platform.h"
 #include <cstdio>
+#include <fstream>
 #include "growbuf.h"
 
 class StringList
