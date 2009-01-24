@@ -510,16 +510,21 @@ Header file for creating custom installer pages with nsDialogs
 !define NSD_LB_GetSelection `!insertmacro __NSD_LB_GetSelection`
 
 
-!macro __NSD_SetImage CONTROL IMAGE HANDLE
-
+!macro __NSD_LoadAndSetImage _LIHINSTMODE _IMGTYPE _LIHINSTSRC _LIFLAGS CONTROL IMAGE HANDLE
+	
 	Push $0
 	Push $R0
 
 	StrCpy $R0 ${CONTROL} # in case ${CONTROL} is $0
-
-	System::Call 'user32::LoadImage(i0, ts, i ${IMAGE_BITMAP}, i0, i0, i${LR_LOADFROMFILE}) i.s' "${IMAGE}"
-	Pop $0
-    SendMessage $R0 ${STM_SETIMAGE} ${IMAGE_BITMAP} $0
+	
+	!if "${_LIHINSTMODE}" == "exeresource"
+		System::Call 'kernel32::GetModuleHandle(i0) i.r0'
+		!undef _LIHINSTSRC
+		!define _LIHINSTSRC r0
+	!endif
+	
+	System::Call 'user32::LoadImage(i ${_LIHINSTSRC}, ts, i ${_IMGTYPE}, i0, i0, i${_LIFLAGS}) i.r0' "${IMAGE}"
+	SendMessage $R0 ${STM_SETIMAGE} ${_IMGTYPE} $0
 
 	Pop $R0
 	Exch $0
@@ -528,7 +533,21 @@ Header file for creating custom installer pages with nsDialogs
 
 !macroend
 
-!define NSD_SetImage `!insertmacro __NSD_SetImage`
+!macro __NSD_SetIconFromExeResource CONTROL IMAGE HANDLE
+	!insertmacro __NSD_LoadAndSetImage exeresource ${IMAGE_ICON} 0 ${LR_DEFAULTSIZE} "${CONTROL}" "${IMAGE}" ${HANDLE}
+!macroend
+
+!macro __NSD_SetIconFromInstaller CONTROL HANDLE
+	!insertmacro __NSD_SetIconFromExeResource "${CONTROL}" "#103" ${HANDLE}
+!macroend
+
+!define NSD_SetImage `!insertmacro __NSD_LoadAndSetImage file ${IMAGE_BITMAP} 0 "${LR_LOADFROMFILE}"`
+!define NSD_SetBitmap `${NSD_SetImage}`
+
+!define NSD_SetIcon `!insertmacro __NSD_LoadAndSetImage file ${IMAGE_ICON} 0 "${LR_LOADFROMFILE}|${LR_DEFAULTSIZE}"`
+!define NSD_SetIconFromExeResource `!insertmacro __NSD_SetIconFromExeResource`
+!define NSD_SetIconFromInstaller `!insertmacro __NSD_SetIconFromInstaller`
+
 
 !macro __NSD_SetStretchedImage CONTROL IMAGE HANDLE
 
@@ -581,14 +600,23 @@ Header file for creating custom installer pages with nsDialogs
 !macroend
 
 !define NSD_FreeImage `!insertmacro __NSD_FreeImage`
+!define NSD_FreeBitmap `${NSD_FreeImage}`
 
-!macro __NSD_ClearImage CONTROL
+!macro __NSD_FreeIcon IMAGE
+	System::Call user32::DestroyIcon(is) ${IMAGE}
+!macroend
 
-	SendMessage ${CONTROL} ${STM_SETIMAGE} ${IMAGE_BITMAP} 0
+!define NSD_FreeIcon `!insertmacro __NSD_FreeIcon`
+
+!macro __NSD_ClearImage _IMGTYPE CONTROL
+
+	SendMessage ${CONTROL} ${STM_SETIMAGE} ${_IMGTYPE} 0
 
 !macroend
 
-!define NSD_ClearImage `!insertmacro __NSD_ClearImage`
+!define NSD_ClearImage `!insertmacro __NSD_ClearImage ${IMAGE_BITMAP}`
+!define NSD_ClearIcon  `!insertmacro __NSD_ClearImage ${IMAGE_ICON}`
+
 
 !define DEBUG `System::Call kernel32::OutputDebugString(ts)`
 
