@@ -87,8 +87,12 @@ code
 <li><a href="#mref-setfocus">NSD_SetFocus</a></li>
 <li><a href="#mref-setimage">NSD_SetImage</a></li>
 <li><a href="#mref-setsimage">NSD_SetStretchedImage</a></li>
+<li><a href="#mref-seticon">NSD_SetIcon</a></li>
+<li><a href="#mref-seticonfrominstaller">NSD_SetIconFromInstaller</a></li>
 <li><a href="#mref-clearimage">NSD_ClearImage</a></li>
+<li><a href="#mref-clearicon">NSD_ClearIcon</a></li>
 <li><a href="#mref-freeimage">NSD_FreeImage</a></li>
+<li><a href="#mref-freeicon">NSD_FreeIcon</a></li>
 </ul>
 </li>
 <li><a href="#faq">FAQ</a></li>
@@ -862,17 +866,42 @@ SectionEnd</pre></blockquote>
 
 <p>Loads and displays a bitmap just like <a href="#mref-setimage">${NSD_SetImage}</a>, but stretched the image to fit the control.</p>
 
+<h3><a name="mref-seticon"></a>NSD_SetIcon</h3>
+
+<p><code>${NSD_SetIcon} <i>control_HWND</i> <i>image_path</i> <i>output_variable</i></code></p>
+
+<p>Same as <a href="#mref-setimage">${NSD_SetImage}</a>, but used for loading and setting an icon in a control created by <a href="#mref-create">${NSD_CreateIcon}</a>. The image handle is stored in <i>output_variable</i> and should be freed using <a href="#mref-freeicon">${NSD_FreeIcon}</a> once no longer necessary.</p>
+
+<h3><a name="mref-seticonfrominstaller"></a>NSD_SetIconFromInstaller</h3>
+
+<p><code>${NSD_SetIconFromInstaller} <i>control_HWND</i> <i>output_variable</i></code></p>
+
+<p>Loads the icon used in the isntaller and displays it on <i>control_HWND</i> created by <a href="#mref-create">${NSD_CreateIcon}</a>. The image handle is stored in <i>output_variable</i> and should be freed using <a href="#mref-freeicon">${NSD_FreeIcon}</a> once no longer necessary.</p>
+
 <h3><a name="mref-clearimage"></a>NSD_ClearImage</h3>
 
 <p><code>${NSD_ClearImage} <i>control_HWND</i></code></p>
 
 <p>Clears an image from a control.</p>
 
+<h3><a name="mref-clearicon"></a>NSD_ClearIcon</h3>
+
+<p><code>${NSD_ClearIcon} <i>control_HWND</i></code></p>
+
+<p>Clears an icon from a control.</p>
+
 <h3><a name="mref-freeimage"></a>NSD_FreeImage</h3>
 
 <p><code>${NSD_FreeImage} <i>image_handle</i></code></p>
 
 <p>Frees an image handle previously loaded with <a href="#mref-setimage">${NSD_SetImage}</a> or <a href="#mref-setsimage">${NSD_SetStretchedImage}</a>.</p>
+
+<h3><a name="mref-freeicon"></a>NSD_FreeIcon</h3>
+
+<p><code>${NSD_FreeIcon} <i>icon_handle</i></code></p>
+
+<p>Frees an icon handle previously loaded with <a href="#mref-seticon">${NSD_SetIcon}</a> or <a href="#mref-seticonfrominstaller">${NSD_SetIconFromInstaller}</a>.</p>
+
 
 <h2><a name="faq"></a>FAQ</h2>
 
