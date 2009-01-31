@@ -13,6 +13,7 @@ languages = Split("""
 	Danish.nlf
 	Dutch.nlf
 	English.nlf
+	Esperanto.nlf
 	Estonian.nlf
 	Farsi.nlf
 	Finnish.nlf
@@ -70,6 +71,7 @@ languages = Split("""
 	Danish.nsh
 	Dutch.nsh
 	English.nsh
+	Esperanto.nsh
 	Estonian.nsh
 	Farsi.nsh
 	Finnish.nsh
