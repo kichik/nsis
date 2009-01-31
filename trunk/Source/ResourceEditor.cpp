@@ -125,10 +125,11 @@ PRESOURCE_DIRECTORY CResourceEditor::GetResourceDirectory(
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-CResourceEditor::CResourceEditor(BYTE* pbPE, int iSize) {
+CResourceEditor::CResourceEditor(BYTE* pbPE, int iSize, bool bKeepData /*=true*/) {
   // Copy the data pointer
   m_pbPE = pbPE;
   m_iSize = iSize;
+  m_bKeepData = bKeepData;
 
   // Get NT headers
   m_ntHeaders = GetNTHeaders(m_pbPE);
@@ -270,6 +271,9 @@ bool CResourceEditor::UpdateResource(WORD szType, WORD szName, LANGID wLanguage,
 // Returns a copy of the requested resource
 // Returns 0 if the requested resource can't be found
 BYTE* CResourceEditor::GetResourceW(WCHAR* szType, WCHAR* szName, LANGID wLanguage) {
+  if (!m_bKeepData)
+    throw runtime_error("Can't GetResource() when bKeepData is false");
+
   CResourceDirectory* nameDir = 0;
   CResourceDirectory* langDir = 0;
   CResourceDataEntry* data = 0;
@@ -398,6 +402,9 @@ void CResourceEditor::FreeResource(BYTE* pbResource)
 
 // Saves the edited PE into a buffer and returns it.
 DWORD CResourceEditor::Save(BYTE* pbBuf, DWORD &dwSize) {
+  if (!m_bKeepData)
+    throw runtime_error("Can't Save() when bKeepData is false");
+
   unsigned int i;
   DWORD dwReqSize;
 
@@ -623,6 +630,18 @@ CResourceDirectory* CResourceEditor::ScanDirectory(PRESOURCE_DIRECTORY rdRoot, P
     {
       LPBYTE pbData = (LPBYTE)rdRoot + ConvertEndianness(rde->OffsetToData) - m_dwResourceSectionVA;
       DWORD dwOffset = DWORD(pbData - m_pbPE);
+
+      if (m_bKeepData)
+      {
+        if (dwOffset > m_iSize)
+        {
+          throw runtime_error("Invalid resource entry data pointer, possibly compressed resources");
+        }
+      }
+      else
+      {
+        pbData = m_pbPE; // dummy pointer to "nothing"
+      }
 
       rdc->AddEntry(
         new CResourceDirectoryEntry(

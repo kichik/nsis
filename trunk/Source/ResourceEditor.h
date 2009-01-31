@@ -109,7 +109,7 @@ typedef struct RESOURCE_DIRECTORY {
     )
 class CResourceEditor {
 public:
-  CResourceEditor(BYTE* pbPE, int iSize);
+  CResourceEditor(BYTE* pbPE, int iSize, bool bKeepData = true);
   virtual ~CResourceEditor();
 
   bool  UpdateResource(WORD szType, WORD szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize);
@@ -144,6 +144,7 @@ public:
 private:
   BYTE* m_pbPE;
   int   m_iSize;
+  bool  m_bKeepData;
 
   PIMAGE_NT_HEADERS m_ntHeaders;
 

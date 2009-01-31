@@ -368,7 +368,7 @@ int generate_unicons_offsets(LPBYTE exeHeader, size_t exeHeaderSize, LPBYTE unin
     DWORD offset;
     DWORD size;
 
-    CResourceEditor re(exeHeader, exeHeaderSize);
+    CResourceEditor re(exeHeader, exeHeaderSize, false);
 
     LPBYTE seeker = uninstIconData;
 
@@ -397,7 +397,7 @@ int generate_unicons_offsets(LPBYTE exeHeader, size_t exeHeaderSize, LPBYTE unin
       size = FIX_ENDIAN_INT32(*(LPDWORD)seeker);
       seeker += sizeof(DWORD);
 
-      if (real_size < size)
+      if (real_size != size)
       {
         throw runtime_error("invalid icon size (possibly compressed icon)");
       }
