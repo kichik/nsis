@@ -105,6 +105,7 @@
   !insertmacro MUI_LANGUAGE "Galician"
   !insertmacro MUI_LANGUAGE "Afrikaans"
   !insertmacro MUI_LANGUAGE "Catalan"
+  !insertmacro MUI_LANGUAGE "Esperanto"
 
 ;--------------------------------
 ;Reserve Files
