@@ -144,6 +144,7 @@ void handle_ver_dlg(BOOL kill)
         0,
         verProc
       );
+      ShowWindow(hwnd, SW_SHOW);
     }
   }
 }
