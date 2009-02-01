@@ -72,6 +72,19 @@ DWORD WINAPI BannerThread(LPVOID lpParameter)
   HWND hwndParent = (HWND) lpParameter;
   HWND lhwBanner;
 
+  // This right here is the mother of all evils when it comes to
+  // foreground windows. The dialog is created in another thread
+  // and there can only be one thread holding the right to set the
+  // foreground window. So long as this thread exists and has an
+  // active window, another thread from the same process can steal
+  // its thunder. But if the window and the thread are destroyed,
+  // the foreground rights pass on to another process. To avoid
+  // this situation that could cause the installer to show up on
+  // the background if Banner is used in .onInit, we don't let
+  // CreateDialog show the window and instead do this in the
+  // original thread. This is done by not specifying WS_VISIBLE
+  // for IDD_VERIFY.
+
   lhwBanner = CreateDialog(
     GetModuleHandle(0),
     MAKEINTRESOURCE(IDD_VERIFY),
