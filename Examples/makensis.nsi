@@ -268,6 +268,8 @@ ${MementoSection} "Script Examples" SecExample
   File ..\Examples\Plugin\exdll.dsp
   File ..\Examples\Plugin\exdll.dsw
   File ..\Examples\Plugin\exdll_with_unit.dpr
+  File ..\Examples\Plugin\exdll-vs2008.sln
+  File ..\Examples\Plugin\exdll-vs2008.vcproj
   File ..\Examples\Plugin\extdll.inc
   File ..\Examples\Plugin\nsis.pas
 
