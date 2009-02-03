@@ -1,6 +1,6 @@
 #include <windows.h>
 #include <shlobj.h>
-#include "../ExDLL/exdll.h"
+#include <pluginapi.h> // nsis plugin
 #include "resource.h"
 
 HINSTANCE g_hInstance;
@@ -16,10 +16,10 @@ char progname[1024];
 char lastused[1024];
 char checkbox[1024];
 
-int autoadd = 0;
-int g_done = 0;
-int noicon = 0;
-int rtl = 0;
+int autoadd;
+int g_done;
+int noicon;
+int rtl;
 
 void *lpWndProcOld;
 
@@ -28,6 +28,11 @@ void (__stdcall *validate_filename)(char *);
 BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 static BOOL CALLBACK ParentWndProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 void AddFolderFromReg(int nFolder);
+
+static UINT_PTR PluginCallback(enum NSPIM msg)
+{
+  return 0;
+}
 
 void __declspec(dllexport) Init(HWND hwndParent, int string_size, char *variables, stack_t **stacktop, extra_parameters *extra)
 {
@@ -38,6 +43,20 @@ void __declspec(dllexport) Init(HWND hwndParent, int string_size, char *variable
   validate_filename = extra->validate_filename;
 
   EXDLL_INIT();
+
+  extra->RegisterPluginCallback(g_hInstance, PluginCallback);
+
+  g_done = 0;
+  noicon = 0;
+  rtl = 0;
+  autoadd = 0;
+
+  text[0] = 0;
+  progname[0] = 0;
+  lastused[0] = 0;
+  checkbox[0] = 0;
+
+  g_hwStartMenuSelect = NULL;
 
   {
     hwChild = GetDlgItem(hwndParent, 1018);

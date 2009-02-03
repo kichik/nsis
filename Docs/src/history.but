@@ -1,5 +1,129 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.42} 2.42
+
+Released on December 20th, 2008
+
+\S1{v2.42-rl} Release Notes
+
+\b Merry Christmas and a happy Hanukkah!
+
+\b Plug-in developers should check out the new plug-in API in Examples\\Plugin and convert their plug-ins, especially in case they require staying loaded.
+
+\S1{v2.42-cl} Changelog
+
+\S2{} Major Changes
+
+\b Deprecated /NOUNLOAD and SetPluginsUnload to make scripts simpler and safer (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1912699}{patch #1912699})
+
+\b \R{headers}{Useful header functions} no longer require usage declaration and different syntax for uninstaller functions
+
+\b Revamped plug-in API now comes in the form of pluginapi.lib, API version information and more common functions (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=2359978}{patch #2359978})
+
+\S2{} Minor Changes
+
+\b Added \R{searchreplace}{!searchreplace} preprocessor command for compiletime text search/replaces
+
+\b Added support for \R{library}{registration} of EXE COM servers (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373088&aid=2315740}{RFE #2315740})
+
+\b Minor documentation improvements (including \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=2386821}{bug #2386821})
+
+\b \L{../Docs/nsDialogs/Readme.html}{nsDialogs}: Added timer support (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=2135855}{patch #2135855})
+
+\b \L{../Docs/nsDialogs/Readme.html}{nsDialogs}: Added progress bar support
+
+\b \L{../Include/WinVer.nsh}{WinVer.nsh}: Added IsServer, IsWin2003R2, IsStarterEdition, OSHasMediaCenter and OSHasTabletSupport (patch by Anders)
+
+\b \L{../Include/WinVer.nsh}{WinVer.nsh}: Fixed 95/NT4 ambiguity (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=2053642}{bug #2053642})
+
+\b \L{../Include/WinVer.nsh}{WinVer.nsh}: Proper Windows XP x64 detection (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=2053700}{bug #2053700})
+
+\b \L{../Include/WinVer.nsh}{WinVer.nsh}: Windows 2008 detection support (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373088&aid=1949260}{RFE #1949260})
+
+\S2{} Translations
+
+\b Minor English grammar improvements (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=2323452}{bug #2323452})
+
+\S2{} Build System
+
+\b Full \L{../Docs/System/System.html}{System} compatibility with GCC (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=2193442}{patch #2193442})
+
+\H{v2.41} 2.41
+
+Released on November 20th, 2008
+
+\S1{v2.41-cl} Changelog
+
+\S2{} Minor Changes
+
+\b Fixed LangDLL memory leaks for invalid input (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1939573}{bug #1939573})
+
+\b Fixed uninstaller generation on big-endian systems (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=2166401}{bug #2166401}, \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=2167958}{bug #2167958})
+
+\S2{} Translations
+
+\b Brazilian Portuguese corrections
+
+\b Consistency fixes for Simple Chinese (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=2189117}{patch #2189117})
+
+\S2{} Build System
+
+\b Added support for SCons 1.1.0
+
+\b Fixed directory and components page text issues on VC8 builds (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1982084}{patch #1982084})
+
+\b System's Resource.dll now built from source
+
+\H{v2.40} 2.40
+
+Released on October 10th, 2008
+
+\S1{v2.40-cl} Changelog
+
+\S2{} Major Changes
+
+\b Service pack macros added to WinVer in version 2.39 now work (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=2070708}{bug #2070708}, \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=2095363}{patch #2095363})
+
+\S2{} Minor Changes
+
+\b Added initial folder selection option for \L{../Docs/nsDialogs/Readme.html}{nsDialogs}::SelectFileDialog (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=2016003}{patch #2016003})
+
+\b Fixed \R{getparameters}{GetParameters} handling of MBCS characters (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=2067946}{bug #2067946})
+
+\b Fixed incorrect $\{NSD_OnBack\} documentation (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=2059651}{bug #2059651})
+
+\b \L{../Docs/Modern UI 2/Readme.html}{Modern UI 2}: Set focus to checkboxes on the finish page (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=2110357}{bug #2110357})
+
+\S2{} Translations
+
+\b Portuguese corrections (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=2086988}{bug #2086988})
+
+\b Simplified Chinese corrections (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=2056906}{patch #2056906})
+
+\H{v2.39} 2.39
+
+Released on August 16th, 2008
+
+\S1{v2.39-cl} Changelog
+
+\S2{} Major Changes
+
+\b Added \R{define}{!define} \e{/file} and \R{searchparse}{!searchparse} (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=2016254}{patch #2016254})
+
+\b Added service pack macros (AtLeastServicePack, IsServicePack, AtMostServicePack) to WinVer.nsh (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=2036802}{patch #2036802})
+
+\S2{} Minor Changes
+
+\b Added more \L{../Docs/nsDialogs/Readme.html}{nsDialogs} list box handling macros (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=2041919}{patch #2041919})
+
+\b Added Unicode version compatible \L{../Docs/System/System.html}{System} string type (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=2025721}{patch #2025721}, \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373088&aid=1961307}{RFE #1961307})
+
+\b Fixed \L{../Docs/nsDialogs/Readme.html}{nsDialogs} atom leak (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=2053522}{bug #2053522})
+
+\b Minor documentation improvements
+
+\b Show hand cursor for \L{../Docs/nsDialogs/Readme.html}{nsDialogs} links (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=2004129}{patch #2004129})
+
 \H{v2.38} 2.38
 
 Released on July 12th, 2008
@@ -2017,7 +2141,7 @@ Released on February 7th, 2004
 
 \b New and improved utilities: \L{../Docs/makensisw/Readme.txt}{MakeNSISw}, NSIS Menu (NSIS.exe), NSIS Update (Bin\\NSIS Update.exe) and zip2exe (Bin\\zip2exe.exe)
 
-\b New commands: \R{addplugindir}{!addplugindir}, \R{echo}{!echo}, \R{ifmacrodef}{!ifmacrodef}, \R{ifmacrondef}{!ifmacrondef}, \R{verbose}{!verbose}, \R{aaddbrandingimage}{AddBrandingImage}, \R{asetallowskipfiles}{AllowSkipFiles}, \R{achangeui}{ChangeUI}, \R{acheckbitmap}{CheckBitmap}, \R{createfont}{CreateFont}, \R{adirvar}{DirVar}, \R{adirverify}{DirVerify}, \R{enablewindow}{EnableWindow}, \R{afilebufsize}{FileBufSize}, \R{flushini}{FlushINI}, \R{sgetcurinsttype}{GetCurInstType}, \R{getdlgitem}{GetDlgItem}, \R{getinstdirerror}{GetInstDirError}, \R{ifabort}{IfAbort}, \R{ifsilent}{IfSilent}, \R{initpluginsdir}{InitPluginsDir}, \R{sinsttypegettext}{InstTypeGetText}, \R{sinsttypesettext}{InstTypeSetText}, \R{langstring}{LangString}, \R{alicensebkcolor}{LicenseBkColor}, \R{alicenseforceselection}{LicenseForceSelection}, \R{licenselangstring}{LicenseLangString}, \R{loadlanguagefile}{LoadLanguageFile}, LockWindow, \R{page}{Page}, \R{pageex}{PageEx}, \R{reservefile}{ReserveFile}, \R{sectiongetinsttypes}{SectionGetInstTypes}, \R{ssectiongetsize}{SectionGetSize}, \R{sectionsetinsttypes}{SectionSetInstTypes}, \R{ssectionsetsize}{SectionSetSize}, \R{setbrandingimage}{SetBrandingImage}, SetCompressionLevel, \R{asetcompressor}{SetCompressor}, \R{asetcompressordictsize}{SetCompressorDictSize}, \R{setctlcolors}{SetCtlColors}, \R{ssetcurinsttype}{SetCurInstType}, \R{setpluginunload}{SetPluginUnload}, \R{setsilent}{SetSilent}, \R{showwindow}{ShowWindow}, SubSection (replaced by \R{ssectiongroup}{SectionGroup}), SubSectionEnd (replaced by \R{ssectiongroupend}{SectionGroupEnd}), \R{var}{Var}, \R{viaddversionkey}{VIAddVersionKey}, \R{viproductversion}{VIProductVersion} and \R{axpstyle}{XPStyle}
+\b New commands: \R{addplugindir}{!addplugindir}, \R{echo}{!echo}, \R{ifmacrodef}{!ifmacrodef}, \R{ifmacrondef}{!ifmacrondef}, \R{verbose}{!verbose}, \R{aaddbrandingimage}{AddBrandingImage}, \R{asetallowskipfiles}{AllowSkipFiles}, \R{achangeui}{ChangeUI}, \R{acheckbitmap}{CheckBitmap}, \R{createfont}{CreateFont}, \R{adirvar}{DirVar}, \R{adirverify}{DirVerify}, \R{enablewindow}{EnableWindow}, \R{afilebufsize}{FileBufSize}, \R{flushini}{FlushINI}, \R{sgetcurinsttype}{GetCurInstType}, \R{getdlgitem}{GetDlgItem}, \R{getinstdirerror}{GetInstDirError}, \R{ifabort}{IfAbort}, \R{ifsilent}{IfSilent}, \R{initpluginsdir}{InitPluginsDir}, \R{sinsttypegettext}{InstTypeGetText}, \R{sinsttypesettext}{InstTypeSetText}, \R{langstring}{LangString}, \R{alicensebkcolor}{LicenseBkColor}, \R{alicenseforceselection}{LicenseForceSelection}, \R{licenselangstring}{LicenseLangString}, \R{loadlanguagefile}{LoadLanguageFile}, LockWindow, \R{page}{Page}, \R{pageex}{PageEx}, \R{reservefile}{ReserveFile}, \R{sectiongetinsttypes}{SectionGetInstTypes}, \R{ssectiongetsize}{SectionGetSize}, \R{sectionsetinsttypes}{SectionSetInstTypes}, \R{ssectionsetsize}{SectionSetSize}, \R{setbrandingimage}{SetBrandingImage}, SetCompressionLevel, \R{asetcompressor}{SetCompressor}, \R{asetcompressordictsize}{SetCompressorDictSize}, \R{setctlcolors}{SetCtlColors}, \R{ssetcurinsttype}{SetCurInstType}, SetPluginUnload, \R{setsilent}{SetSilent}, \R{showwindow}{ShowWindow}, SubSection (replaced by \R{ssectiongroup}{SectionGroup}), SubSectionEnd (replaced by \R{ssectiongroupend}{SectionGroupEnd}), \R{var}{Var}, \R{viaddversionkey}{VIAddVersionKey}, \R{viproductversion}{VIProductVersion} and \R{axpstyle}{XPStyle}
 
 \b Removed commands: DirShow, DisabledBitmap, EnabledBitmap and SectionDivider
 

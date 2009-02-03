@@ -3,7 +3,7 @@
  * 
  * This file is a part of NSIS.
  * 
- * Copyright (C) 1999-2008 Nullsoft, Jeff Doozan and Contributors
+ * Copyright (C) 1999-2009 Nullsoft, Jeff Doozan and Contributors
  * 
  * Licensed under the zlib/libpng license (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,8 +28,10 @@
 #include "util.h"
 #include "ui.h"
 #include "exec.h"
+#include "plugin.h"
 #include "lang.h"
 #include "components.h"
+#include "api.h"
 
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
 HICON g_hIcon;
@@ -53,8 +55,6 @@ static char g_tmp[NSIS_MAX_STRLEN * 4];
 
 static int m_page=-1,m_retcode,m_delta;
 static page *g_this_page;
-
-#define NOTIFY_BYE_BYE 'x'
 
 static void NSISCALL outernotify(int delta) {
   if (delta==NOTIFY_BYE_BYE)
@@ -268,6 +268,11 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
   // initialize auto close flag
   g_exec_flags.autoclose=g_flags&CH_FLAGS_AUTO_CLOSE;
 
+#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
+  // initialize plugin api
+  g_exec_flags.plugin_api_version=NSISPIAPIVER_CURR;
+#endif
+
   // read install directory from registry
   if (!is_valid_instpath(state_install_directory))
   {
@@ -396,6 +401,9 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
       int ret=DialogBox(g_hInstance,MAKEINTRESOURCE(IDD_INST+dlg_offset),0,DialogProc);
 #if defined(NSIS_SUPPORT_CODECALLBACKS) && defined(NSIS_CONFIG_ENHANCEDUI_SUPPORT)
       ExecuteCallbackFunction(CB_ONGUIEND);
+#endif
+#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
+      Plugins_SendMsgToAllPlugins(NSPIM_GUIUNLOAD);
 #endif
       return ret;
     }
@@ -837,8 +845,14 @@ static void NSISCALL SetSizeText(int dlgItem, int prefix, unsigned kb)
   if (kb < (0xFFFFFFFF - ((1 << 20) / 20))) // check for overflow
     kb += (1 << sh) / 20; // round numbers for better display (e.g. 1.59 => 1.6)
 
+#if _MSC_VER == 1200 // patch #1982084
   wsprintf(
     GetNSISString(g_tmp, prefix) + mystrlen(g_tmp),
+#else
+  GetNSISString(g_tmp, prefix);
+  wsprintf(
+    g_tmp + mystrlen(g_tmp),
+#endif
     "%u.%u%s%s",
     kb >> sh,
     (((kb & 0x00FFFFFF) * 10) >> sh) % 10, // 0x00FFFFFF mask is used to

@@ -155,6 +155,14 @@ ${MementoSection} "NSIS Core Files (required)" SecCore
   File ..\Include\InstallOptions.nsh
   File ..\Include\MultiUser.nsh
   File ..\Include\VB6RunTime.nsh
+  File ..\Include\Util.nsh
+  File ..\Include\WinDef.nsh
+
+  SetOutPath $INSTDIR\Include\Win
+  File ..\Include\Win\WinDef.nsh
+  File ..\Include\Win\WinError.nsh
+  File ..\Include\Win\WinNT.nsh
+  File ..\Include\Win\WinUser.nsh
 
   SetOutPath $INSTDIR\Docs\StrFunc
   File ..\Docs\StrFunc\StrFunc.txt
@@ -259,10 +267,15 @@ ${MementoSection} "Script Examples" SecExample
   File ..\Examples\Plugin\exdll.dpr
   File ..\Examples\Plugin\exdll.dsp
   File ..\Examples\Plugin\exdll.dsw
-  File ..\Examples\Plugin\exdll.h
   File ..\Examples\Plugin\exdll_with_unit.dpr
+  File ..\Examples\Plugin\exdll-vs2008.sln
+  File ..\Examples\Plugin\exdll-vs2008.vcproj
   File ..\Examples\Plugin\extdll.inc
   File ..\Examples\Plugin\nsis.pas
+
+  File ..\Examples\Plugin\pluginapi.h
+  File ..\Examples\Plugin\pluginapi.lib
+  File ..\Examples\Plugin\api.h
 
 ${MementoSectionEnd}
 
@@ -584,6 +597,7 @@ ${MementoSection} "nsDialogs" SecPluginsDialogs
   SetOutPath $INSTDIR\Examples\nsDialogs
   File ..\Examples\nsDialogs\example.nsi
   File ..\Examples\nsDialogs\InstallOptions.nsi
+  File ..\Examples\nsDialogs\timer.nsi
   File ..\Examples\nsDialogs\welcome.nsi
   SetOutPath $INSTDIR\Include
   File ..\Include\nsDialogs.nsh
@@ -880,7 +894,7 @@ Function PageReinstall
     Abort
   ${EndIf}
 
-  nsDialogs::Create /NOUNLOAD 1018
+  nsDialogs::Create 1018
   Pop $R4
 
   ${NSD_CreateLabel} 0 0 100% 24u $R1
@@ -899,6 +913,8 @@ Function PageReinstall
   ${Else}
     SendMessage $R3 ${BM_SETCHECK} ${BST_CHECKED} 0
   ${EndIf}
+
+  ${NSD_SetFocus} $R2
 
   nsDialogs::Show
 

@@ -3,7 +3,7 @@
  * 
  * This file is a part of NSIS.
  * 
- * Copyright (C) 1999-2008 Nullsoft and Contributors
+ * Copyright (C) 1999-2009 Nullsoft and Contributors
  * 
  * Licensed under the zlib/libpng license (the "License");
  * you may not use this file except in compliance with the License.
@@ -312,7 +312,7 @@ void MMapFile::release()
 #ifdef _WIN32
   UnmapViewOfFile(m_pView);
 #else
-  munmap(m_pView, m_iMappedSize);
+  munmap((char *)m_pView, m_iMappedSize);
 #endif
   m_pView = NULL;
 }
@@ -328,7 +328,7 @@ void MMapFile::release(void *pView, int size)
 #ifdef _WIN32
   UnmapViewOfFile(pView);
 #else
-  munmap(pView, size);
+  munmap((char *)pView, size);
 #endif
 }
 
@@ -338,7 +338,7 @@ void MMapFile::flush(int num)
 #ifdef _WIN32
     FlushViewOfFile(m_pView, num);
 #else
-    msync(m_pView, num, MS_SYNC);
+    msync((char *)m_pView, num, MS_SYNC);
 #endif
 }
 

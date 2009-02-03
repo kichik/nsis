@@ -3,7 +3,7 @@
  * 
  * This file is a part of NSIS.
  * 
- * Copyright (C) 1999-2008 Nullsoft and Contributors
+ * Copyright (C) 1999-2009 Nullsoft and Contributors
  * 
  * Licensed under the zlib/libpng license (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,13 +29,15 @@
 #  include <unistd.h> // for close(2)
 #  include <fcntl.h> // for open(2)
 #  include <iconv.h>
+#  include <locale.h>
 #endif
 
 #ifdef __APPLE__
 namespace Apple { // defines struct section
-#  define ENUM_DYLD_BOOL // for TRUE/FALSE, bug #1851365
 #  include <mach-o/dyld.h> // for _NSGetExecutablePath
 };
+#  define FALSE 0 // bugs #1851365, #2497290
+#  define TRUE 1
 #  include <sys/param.h> // for MAXPATHLEN
 #endif
 
@@ -178,7 +180,7 @@ int wsprintf(char *s, const char *format, ...) {
 
 // iconv const inconsistency workaround by Alexandre Oliva
 template <typename T>
-inline size_t __iconv_adaptor
+inline size_t nsis_iconv_adaptor
   (size_t (*iconv_func)(iconv_t, T, size_t *, char**,size_t*),
   iconv_t cd, char **inbuf, size_t *inbytesleft,
   char **outbuf, size_t *outbytesleft)
@@ -220,7 +222,7 @@ int WideCharToMultiByte(UINT CodePage, DWORD dwFlags, LPCWSTR lpWideCharStr,
   size_t inbytes = cchWideChar * sizeof(WCHAR);
   size_t outbytes = cbMultiByte;
 
-  if (__iconv_adaptor(iconv, cd, &in, &inbytes, &out, &outbytes) == (size_t) -1) {
+  if (nsis_iconv_adaptor(iconv, cd, &in, &inbytes, &out, &outbytes) == (size_t) -1) {
     iconv_close(cd);
     return 0;
   }
@@ -256,7 +258,7 @@ int MultiByteToWideChar(UINT CodePage, DWORD dwFlags, LPCSTR lpMultiByteStr,
   size_t inbytes = cbMultiByte;
   size_t outbytes = cchWideChar * sizeof(WCHAR);
 
-  if (__iconv_adaptor(iconv, cd, &in, &inbytes, &out, &outbytes) == (size_t) -1) {
+  if (nsis_iconv_adaptor(iconv, cd, &in, &inbytes, &out, &outbytes) == (size_t) -1) {
     iconv_close(cd);
     return 0;
   }

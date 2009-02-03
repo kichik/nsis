@@ -1055,8 +1055,12 @@ FunctionEnd
                                 <strong>MUI_CUSTOMFUNCTION_UNGUIINIT</strong> <span class="parameter">function</span><br />
                                 <strong>MUI_CUSTOMFUNCTION_ABORT</strong> <span class="parameter">function</span><br />
                                 <strong>MUI_CUSTOMFUNCTION_UNABORT</strong> <span class="parameter">function</span><br />
-                                <strong>MUI_CUSTOMFUNCTION_MOUSEOVERSECTION</strong> <span class="parameter">function</span><br />
-                                <strong>MUI_CUSTOMFUNCTION_UNMOUSEOVERSECTION</strong> <span class="parameter">function</span></p>
+                                <strong>MUI_CUSTOMFUNCTION_ONMOUSEOVERSECTION</strong> <span class="parameter">function</span><br />
+                                <strong>MUI_CUSTOMFUNCTION_UNONMOUSEOVERSECTION</strong> <span class="parameter">function</span></p>
+							<p>
+                                Mouse over functions are only available when the description macros
+								(MUI_FUNCTION_DESCRIPTION_BEGIN) are used. When component page descriptions are not
+								used, regular .onMouseOverSection and un.onMouseOverSection must be used.</p>
                         </div>
                         <h3>
                             <img class="trigger" alt="Open/Close section" id="trigger_cfpg" src="images/closed.gif"
@@ -1122,7 +1126,7 @@ FunctionEnd
                             License Terms</h3>
                         <div class="toggle" id="toggle_lic">
                             <pre>
-Copyright &copy; 2002-2008 Joost Verburg
+Copyright &copy; 2002-2009 Joost Verburg
 
 This software is provided 'as-is', without any express or implied
 warranty. In no event will the authors be held liable for any damages

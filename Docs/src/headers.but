@@ -10,13 +10,6 @@ Include header:
 
 \c !include "FileFunc.nsh"
 
-
-Include function "GetFileExt" for install and "GetParent" for uninstall:
-
-\c !insertmacro GetFileExt
-\c !insertmacro un.GetParent
-
-
 Call functions:
 
 \c Section Install
@@ -25,7 +18,7 @@ Call functions:
 \c SectionEnd
 
 \c Section un.Install
-\c      ${un.GetParent} "C:\My Downloads\Index.html" $R0
+\c      ${GetParent} "C:\My Downloads\Index.html" $R0
 \c      ; $R0="C:\My Downloads"
 \c SectionEnd
 
@@ -868,11 +861,10 @@ Call functions:
 
 \c !include "WinMessages.nsh"
 \c !include "FileFunc.nsh"
-\c !insertmacro Locate
 \c 
 \c Section
-\c 	Banner::show /NOUNLOAD "Starting..."
-\c 	Banner::getWindow /NOUNLOAD
+\c 	Banner::show "Starting..."
+\c 	Banner::getWindow
 \c 	Pop $R1
 \c 	${Locate} "$WINDIR" "/L=F /M=*.* /B=1" "LocateCallback"
 \c 	Banner::destroy
@@ -896,7 +888,6 @@ Call functions:
 \\<b\\>Example (\W{http://nsis.sourceforge.net/Nxs_plug-in}{NxS plugin}):\\</b\\>
 
 \c !include "FileFunc.nsh"
-\c !insertmacro Locate
 \c 
 \c Section
 \c 	nxs::Show /NOUNLOAD `$(^Name) Setup`\
@@ -972,13 +963,6 @@ Include header:
 
 \c !include "TextFunc.nsh"
 
-
-Include function "LineRead" for install and "TrimNewLines" for uninstall:
-
-\c !insertmacro LineRead
-\c !insertmacro un.TrimNewLines
-
-
 Call functions:
 
 \c Section Install
@@ -987,7 +971,7 @@ Call functions:
 \c SectionEnd
 
 \c Section un.Install
-\c 	${un.TrimNewLines} "Last line$\r$\n" $R0
+\c 	${TrimNewLines} "Last line$\r$\n" $R0
 \c 	; $R0="Last line"
 \c SectionEnd
 
@@ -1105,7 +1089,6 @@ Call functions:
 \\<b\\>Example5 (replace in file with count of changes - "WordFunc.nsh" required):\\</b\\>
 
 \c !include "WordFunc.nsh"
-\c !insertmacro WordReplace
 \c 
 \c Section
 \c 	StrCpy $R0 0
@@ -1648,13 +1631,6 @@ Include header:
 
 \c !include "WordFunc.nsh"
 
-
-Include function "WordFind" for install and "WordReplace" for uninstall:
-
-\c !insertmacro WordFind
-\c !insertmacro un.WordReplace
-
-
 Call functions:
 
 \c Section Install
@@ -1663,7 +1639,7 @@ Call functions:
 \c SectionEnd
 
 \c Section un.Install
-\c 	${un.WordReplace} "A--H---S" "-" "x" "+3*" $R0
+\c 	${WordReplace} "A--H---S" "-" "x" "+3*" $R0
 \c 	; $R0="A--HxS"
 \c SectionEnd
 

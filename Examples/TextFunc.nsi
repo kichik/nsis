@@ -14,15 +14,6 @@ RequestExecutionLevel user
 !include "WinMessages.nsh"
 !include "TextFunc.nsh"
 
-!insertmacro LineFind
-!insertmacro LineRead
-!insertmacro FileReadFromEnd
-!insertmacro LineSum
-!insertmacro FileJoin
-!insertmacro ConfigRead
-!insertmacro ConfigWrite
-!insertmacro FileRecode
-
 Var HWND
 Var INI
 Var LOG
@@ -54,7 +45,7 @@ Var FILERECODE2
 Page Custom ShowCustom LeaveCustom
 
 Function ShowCustom
-	InstallOptions::initDialog /NOUNLOAD "$INI"
+	InstallOptions::initDialog "$INI"
 	Pop $hwnd
 	GetDlgItem $0 $HWND 1206
 	ShowWindow $0 0

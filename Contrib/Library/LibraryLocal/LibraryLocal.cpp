@@ -32,8 +32,7 @@ int GetTLBVersion(string& filepath, DWORD& high, DWORD & low)
   if (!GetFullPathName(filepath.c_str(), sizeof(fullpath), fullpath, &p))
     return 0;
 
-  wchar_t ole_filename[1024];
-  MultiByteToWideChar(CP_ACP, 0, fullpath, lstrlen(fullpath) + 1, ole_filename, 1024);
+  WCHAR *ole_filename = winchar_fromansi(fullpath);
   
   ITypeLib* typeLib;
   HRESULT hr;
@@ -109,7 +108,7 @@ int main(int argc, char* argv[])
 
     // Get version
     
-    // DLL
+    // DLL / EXE
     
     if (mode.compare("D") == 0)
     {

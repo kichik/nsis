@@ -5,7 +5,6 @@
 
 Name "System Plugin Example"
 OutFile "System.exe"
-SetPluginUnload  alwaysoff
 
 !include "SysFunc.nsh"
 
@@ -131,11 +130,6 @@ enumex: ; End of drives or user cancel
      ; Display splash result
      pop $0
      MessageBox MB_OK "Splash (callbacks) demo result $R0"
-
-     ; last plugin call must not have /NOUNLOAD so NSIS will be able to delete the temporary DLL
-     SetPluginUnload manual
-     ; do nothing
-     System::Free 0
 
 SectionEnd 
 

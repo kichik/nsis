@@ -1,7 +1,14 @@
 # FIXME: install assembly and pascal includes into the correct locations
 
-c_devel = Split("""
-	exdll.h
+lib_target = "pluginapi"
+
+lib_files = Split("""
+	pluginapi.c
+""")
+
+api_files = Split("""
+	pluginapi.h
+	#Source/exehead/api.h
 """)
 
 example = Split("""
@@ -10,16 +17,42 @@ example = Split("""
 	exdll.dsp
 	exdll.dsw
 	exdll_with_unit.dpr
+	exdll-vs2008.sln
+ 	exdll-vs2008.vcproj
 	nsis.pas
 	extdll.inc
 """)
 
-Import('defenv')
+Import('env plugin_env')
 
-if defenv['PLATFORM'] == 'win32':
-	example += c_devel
+# build library
+
+api_env = env.Clone()
+api_env.Append(CPPPATH = ['#Source/exehead'])
+lib = api_env.Library(lib_target, lib_files)
+
+# distribute library, files and examples
+
+example += api_files
+
+if env['PLATFORM'] == 'win32':
+	example += lib
+
 else:
-	defenv.DistributeIncC(c_devel)
+	example += lib_files
 
-defenv.DistributeExamples(example, path='Plugin')
+	if env.has_key('PREFIX_PLUGINAPI_INC'):
+		env.Distribute(api_files, None, 'pluginapi_inc', '', '', 'pluginapi', 'pluginapi')
 
+	if env.has_key('PREFIX_PLUGINAPI_LIB'):
+		env.Distribute(lib, None, 'pluginapi_lib', '', '', 'pluginapi', 'pluginapi')
+
+env.DistributeExamples(example, path='Plugin')
+
+# make sure all the other plug-ins can use the library
+
+env.Install('#$BUILD_PREFIX/api', api_files + lib)
+
+plugin_env.Append(CPPPATH = ['#$BUILD_PREFIX/api'])
+plugin_env.Append(LIBPATH = ['#$BUILD_PREFIX/api'])
+plugin_env.Append(LIBS = [lib_target])

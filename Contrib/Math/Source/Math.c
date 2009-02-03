@@ -1,4 +1,5 @@
 #include <windows.h>
+#include <pluginapi.h> // nsis plugin
 #include "MyMath.h"
 #include "Math.h"
 
@@ -1480,13 +1481,24 @@ void RunTree(ExpressionItem *from, ExpressionItem* &result, int options)
     }
 }
 
+static UINT_PTR PluginCallback(enum NSPIM msg)
+{
+  return 0;
+}
+
+HINSTANCE g_hInstance;
+
 extern "C"
 void __declspec(dllexport) Script(HWND hwndParent, int string_size,
-                                      char *variables, stack_t **stacktop)
+                                      char *variables, stack_t **stacktop,
+                                      extra_parameters *extra)
 {
-  Math_INIT();
+  EXDLL_INIT();
   char *buffer = AllocString(), *buf = buffer;
   ExpressionItem *root = NULL; // root of current tree
+
+  // keep loaded to save user defined variables
+  extra->RegisterPluginCallback(g_hInstance, PluginCallback);
 
   // pop script string
   popstring(buffer);
@@ -1540,8 +1552,9 @@ void CleanAll(int init)
   }
 }
 
-BOOL WINAPI DllMain(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
+BOOL WINAPI DllMain(HINSTANCE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
 {
+    g_hInstance = hInst;
     CleanAll(ul_reason_for_call == DLL_PROCESS_ATTACH);
     return TRUE;
 }

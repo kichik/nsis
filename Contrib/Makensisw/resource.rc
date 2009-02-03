@@ -88,7 +88,7 @@ BEGIN
         MENUITEM "&Recompile\tCtrl+R",          IDM_RECOMPILE
         MENUITEM "Test &Installer\tCtrl+T",     IDM_TEST
         MENUITEM "Reco&mpile and Test\tCtrl+M", IDM_RECOMPILE_TEST
-        MENUITEM "C&ancel compilation",         IDM_CANCEL
+        MENUITEM "C&ancel compilation\tCtrl+K", IDM_CANCEL
         MENUITEM "", -1, MFT_SEPARATOR
         POPUP "Set &Compressor", IDM_COMPRESSOR_SUBMENU
         BEGIN
@@ -144,6 +144,7 @@ BEGIN
     VK_F1,          IDM_DOCS,               VIRTKEY, NOINVERT
     "W",            IDM_CLEARLOG,           VIRTKEY, CONTROL, NOINVERT
     "X",            IDM_EXIT,               VIRTKEY, ALT, NOINVERT
+    "K",            IDM_CANCEL,             VIRTKEY, CONTROL, NOINVERT
 END
 
 

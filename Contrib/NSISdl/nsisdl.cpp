@@ -25,7 +25,8 @@
 #include "netinc.h"
 #include "util.h"
 #include "httpget.h"
-#include "../ExDLL/exdll.h"
+
+#include <pluginapi.h> // nsis plugin
 
 void *operator new( unsigned int num_bytes )
 {

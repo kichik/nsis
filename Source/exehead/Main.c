@@ -3,7 +3,7 @@
  * 
  * This file is a part of NSIS.
  * 
- * Copyright (C) 1999-2008 Nullsoft and Contributors
+ * Copyright (C) 1999-2009 Nullsoft and Contributors
  * 
  * Licensed under the zlib/libpng license (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@
 #include "lang.h"
 #include "state.h"
 #include "exec.h"
+#include "plugin.h"
 
 #if !defined(NSIS_CONFIG_VISIBLE_SUPPORT) && !defined(NSIS_CONFIG_SILENT_SUPPORT)
 #error One of NSIS_CONFIG_SILENT_SUPPORT or NSIS_CONFIG_VISIBLE_SUPPORT must be defined.
@@ -341,6 +342,8 @@ void NSISCALL CleanUp()
     dbd_hFile = INVALID_HANDLE_VALUE;
   }
 #endif
+  // Notify plugins that we are about to unload
+  Plugins_UnloadAll();
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
   // Clean up after plug-ins
   myDelete(state_plugins_dir, DEL_DIR | DEL_RECURSE | DEL_REBOOT);

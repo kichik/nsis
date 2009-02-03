@@ -54,6 +54,10 @@ prefixes = SCons.Util.Split("""
     i486-mingw32msvc-
     i586-mingw32msvc-
     i686-mingw32msvc-
+    i386-pc-mingw32-
+    i486-pc-mingw32-
+    i586-pc-mingw32-
+    i686-pc-mingw32-
 """)
 
 def find(env):
@@ -147,6 +151,8 @@ def generate(env):
     env.Append(SHLIBEMITTER = [shlib_emitter])
     env['LINK'] = mingw_prefix + 'g++'
     env['AS'] = mingw_prefix + 'as'
+    env['AR'] = mingw_prefix + 'ar'
+    env['RANLIB'] = mingw_prefix + 'ranlib'
     env['WIN32DEFPREFIX']        = ''
     env['WIN32DEFSUFFIX']        = '.def'
     env['SHOBJSUFFIX'] = '.o'
@@ -166,8 +172,6 @@ def generate(env):
     env['SHOBJSUFFIX']    = '$OBJSUFFIX'
     env['PROGPREFIX']     = ''
     env['PROGSUFFIX']     = '.exe'
-    env['LIBPREFIX']      = ''
-    env['LIBSUFFIX']      = '.lib'
     env['SHLIBPREFIX']    = ''
     env['SHLIBSUFFIX']    = '.dll'
     env['LIBPREFIXES']    = [ '$LIBPREFIX' ]

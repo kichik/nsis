@@ -17,6 +17,7 @@ XPStyle on
 RequestExecutionLevel user
 
 !define TestDLL '"${NSISDIR}\Plugins\LangDLL.dll"'
+!define TestEXE '"${NSISDIR}\Contrib\UIs\default.exe"'
 
 Section
 
@@ -59,6 +60,11 @@ Section
 !insertmacro InstallLib REGDLLTLB $0        NOREBOOT_PROTECTED    ${TestDLL} $INSTDIR\test.dll $INSTDIR
 !insertmacro InstallLib REGDLLTLB $0        REBOOT_NOTPROTECTED   ${TestDLL} $INSTDIR\test.dll $INSTDIR
 !insertmacro InstallLib REGDLLTLB $0        NOREBOOT_NOTPROTECTED ${TestDLL} $INSTDIR\test.dll $INSTDIR
+
+!insertmacro InstallLib REGEXE    $0        REBOOT_PROTECTED      ${TestEXE} $INSTDIR\test.exe $INSTDIR
+!insertmacro InstallLib REGEXE    $0        NOREBOOT_PROTECTED    ${TestEXE} $INSTDIR\test.exe $INSTDIR
+!insertmacro InstallLib REGEXE    $0        REBOOT_NOTPROTECTED   ${TestEXE} $INSTDIR\test.exe $INSTDIR
+!insertmacro InstallLib REGEXE    $0        NOREBOOT_NOTPROTECTED ${TestEXE} $INSTDIR\test.exe $INSTDIR
 
 WriteUninstaller $INSTDIR\uninstall.exe
 
@@ -113,5 +119,11 @@ Section uninstall
 !insertmacro UninstallLib REGDLLTLB SHARED    NOREBOOT_PROTECTED     $INSTDIR\test.dll
 !insertmacro UninstallLib REGDLLTLB SHARED    REBOOT_NOTPROTECTED    $INSTDIR\test.dll
 !insertmacro UninstallLib REGDLLTLB SHARED    NOREBOOT_NOTPROTECTED  $INSTDIR\test.dll
+
+!insertmacro UninstallLib REGEXE    SHARED    NOREMOVE               $INSTDIR\test.exe
+!insertmacro UninstallLib REGEXE    SHARED    REBOOT_PROTECTED       $INSTDIR\test.exe
+!insertmacro UninstallLib REGEXE    SHARED    NOREBOOT_PROTECTED     $INSTDIR\test.exe
+!insertmacro UninstallLib REGEXE    SHARED    REBOOT_NOTPROTECTED    $INSTDIR\test.exe
+!insertmacro UninstallLib REGEXE    SHARED    NOREBOOT_NOTPROTECTED  $INSTDIR\test.exe
 
 SectionEnd

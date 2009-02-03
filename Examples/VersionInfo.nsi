@@ -18,7 +18,7 @@ LoadLanguageFile "${NSISDIR}\Contrib\Language files\English.nlf"
   VIAddVersionKey /LANG=${LANG_ENGLISH} "Comments" "A test comment"
   VIAddVersionKey /LANG=${LANG_ENGLISH} "CompanyName" "Fake company"
   VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalTrademarks" "Test Application is a trademark of Fake company"
-  VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalCopyright" "© Fake company"
+  VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalCopyright" "Copyright Fake company"
   VIAddVersionKey /LANG=${LANG_ENGLISH} "FileDescription" "Test Application"
   VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "1.2.3"
 

@@ -3,7 +3,7 @@
  * 
  * This file is a part of NSIS.
  * 
- * Copyright (C) 1999-2008 Nullsoft and Contributors
+ * Copyright (C) 1999-2009 Nullsoft and Contributors
  * 
  * Licensed under the zlib/libpng license (the "License");
  * you may not use this file except in compliance with the License.
@@ -118,6 +118,7 @@ enum
   TOK_P_APPENDFILE,
 
   TOK_P_SEARCHPARSESTRING,
+  TOK_P_SEARCHREPLACESTRING,
 
   // section/function shit
   TOK_SECTION,

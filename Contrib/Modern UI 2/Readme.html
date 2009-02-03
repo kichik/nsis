@@ -1069,8 +1069,12 @@ FunctionEnd</pre>
                                 <strong>MUI_CUSTOMFUNCTION_UNGUIINIT</strong> <span class="parameter">function</span><br />
                                 <strong>MUI_CUSTOMFUNCTION_ABORT</strong> <span class="parameter">function</span><br />
                                 <strong>MUI_CUSTOMFUNCTION_UNABORT</strong> <span class="parameter">function</span><br />
-                                <strong>MUI_CUSTOMFUNCTION_MOUSEOVERSECTION</strong> <span class="parameter">function</span><br />
-                                <strong>MUI_CUSTOMFUNCTION_UNMOUSEOVERSECTION</strong> <span class="parameter">function</span></p>
+                                <strong>MUI_CUSTOMFUNCTION_ONMOUSEOVERSECTION</strong> <span class="parameter">function</span><br />
+                                <strong>MUI_CUSTOMFUNCTION_UNONMOUSEOVERSECTION</strong> <span class="parameter">function</span></p>
+							<p>
+                                Mouse over functions are only available when the description macros
+								(MUI_FUNCTION_DESCRIPTION_BEGIN) are used. When component page descriptions are not
+								used, regular .onMouseOverSection and un.onMouseOverSection must be used.</p>
                         </div>
                         <h3>
                             <img class="trigger" alt="Open/Close section" id="trigger_cfpg" src="images/closed.gif"
@@ -1086,9 +1090,9 @@ FunctionEnd</pre>
                             </p>
                             <p>
                                 The pre function is called first and allows you to initalize variables or decide
-                                wehther the page should be skipped. Then, the shown function is called, which can
-                                be used to customize the interface. Finally, the user input can be validated leave
-                                function. The NSIS Users Manual provides more information about these funtions.</p>
+                                whether the page should be skipped. Then, the show function is called, which can
+                                be used to customize the interface. Finally, the user input can be validated in the
+								leave function. The NSIS Users Manual provides more information about these functions.</p>
                             <p>
                                 In the show function, the window handles of all controls on the page can be retrieved
                                 from a Modern UI variable. A list of the variables names is not yet available. For
@@ -1125,7 +1129,7 @@ FunctionEnd</pre>
                             License Terms</h3>
                         <div class="toggle" id="toggle_lic">
                             <pre>
-Copyright &copy; 2002-2008 Joost Verburg
+Copyright &copy; 2002-2009 Joost Verburg
 
 This software is provided 'as-is', without any express or implied
 warranty. In no event will the authors be held liable for any damages

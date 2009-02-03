@@ -14,26 +14,6 @@ RequestExecutionLevel user
 !include "WinMessages.nsh"
 !include "FileFunc.nsh"
 
-!insertmacro Locate
-!insertmacro GetSize
-!insertmacro DriveSpace
-!insertmacro GetDrives
-!insertmacro GetTime
-!insertmacro GetFileAttributes
-!insertmacro GetFileVersion
-!insertmacro GetExeName
-!insertmacro GetExePath
-!insertmacro GetParameters
-!insertmacro GetOptions
-!insertmacro GetRoot
-!insertmacro GetParent
-!insertmacro GetFileName
-!insertmacro GetBaseName
-!insertmacro GetFileExt
-!insertmacro BannerTrimPath
-!insertmacro DirState
-!insertmacro RefreshShellIcons
-
 Var INI
 Var HWND
 Var STATE
@@ -68,7 +48,7 @@ Var DIRSTATE1
 Page Custom ShowCustom LeaveCustom
 
 Function ShowCustom
-	InstallOptions::initDialog /NOUNLOAD "$INI"
+	InstallOptions::initDialog "$INI"
 	Pop $hwnd
 	GetDlgItem $1 $HWND 1201
 	ShowWindow $1 0

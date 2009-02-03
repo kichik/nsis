@@ -28,7 +28,11 @@ ZIP="C:\Program Files\7-zip\7za.exe" a -tzip %s -mx9 -mfb=255 -mpass=4 %s
 [rsh]
 RSH="C:\Program Files\PuTTY\plink.exe" -2 -l kichik nsis.sourceforge.net
 
+[sftp]
+SFTP="C:\Program Files\PuTTY\psftp.exe" -2 -l kichik -batch -b %s frs.sourceforge.net
+
 [wiki]
+PURGE_URL=http://nsis.sourceforge.net/%s?action=purge
 UPDATE_URL=http://nsis.sourceforge.net/Special:Simpleupdate?action=raw
 
 [svn2cl]
@@ -58,7 +62,6 @@ import sys
 import time
 import Image, ImageFont, ImageDraw
 from ConfigParser import ConfigParser
-from ftplib import FTP
 import time
 import pysvn
 
@@ -83,6 +86,8 @@ TAR_BZ2 = cfg.get('compression', 'TAR_BZ2')
 ZIP = cfg.get('compression', 'ZIP')
 
 RSH = cfg.get('rsh', 'RSH')
+
+SFTP = cfg.get('sftp', 'SFTP')
 
 PURGE_URL = cfg.get('wiki', 'PURGE_URL')
 UPDATE_URL = cfg.get('wiki', 'UPDATE_URL')
@@ -159,45 +164,45 @@ def RunTests():
 	)
 
 def TestSubversionEOL():
-  print 'ensuring EOL...'
+	print 'ensuring EOL...'
 
-  from os import walk
-  from os.path import join
-  from os.path import splitext
-  
-  eoldict = {
-    '.nsh' : 'native',
-    '.nsi' : 'native',
-    '.txt' : 'native',
-    '.ini' : 'CRLF',
-    '.dsp' : 'CRLF',
-    '.dsw' : 'CRLF'
-  }
+	from os import walk
+	from os.path import join
+	from os.path import splitext
+	
+	eoldict = {
+		'.nsh' : 'native',
+		'.nsi' : 'native',
+		'.txt' : 'native',
+		'.ini' : 'CRLF',
+		'.dsp' : 'CRLF',
+		'.dsw' : 'CRLF'
+	}
 
-  exceptions = ['newfile.txt', 'oldfile.txt']
+	exceptions = ['newfile.txt', 'oldfile.txt']
 
-  svn = pysvn.Client()
+	svn = pysvn.Client()
 
-  for root, dirs, files in walk('..'):
-    if '.svn' not in dirs:
-      continue
+	for root, dirs, files in walk('..'):
+		if '.svn' not in dirs:
+			continue
 
-    def versioned(f):
-      s = svn.status(join(root, f))[0].text_status
-      return s != pysvn.wc_status_kind.unversioned
+		def versioned(f):
+			s = svn.status(join(root, f))[0].text_status
+			return s != pysvn.wc_status_kind.unversioned
 
-    svn_files = filter(versioned, files)
-    svn_files = filter(lambda x: x not in exceptions, svn_files)
+		svn_files = filter(versioned, files)
+		svn_files = filter(lambda x: x not in exceptions, svn_files)
 
-    for f in svn_files:
-      ext = splitext(f)[1]
-      if ext in eoldict.keys():
-        eol = eoldict[ext]
-        s = svn.propget('svn:eol-style', join(root, f)).values()
-        if not s or s[0] != eol:
-          print '*** %s has bad eol-style' % f
-          log('*** %s has bad eol-style' % f)
-          exit()
+		for f in svn_files:
+			ext = splitext(f)[1]
+			if ext in eoldict.keys():
+				eol = eoldict[ext]
+				s = svn.propget('svn:eol-style', join(root, f)).values()
+				if not s or s[0] != eol:
+					print '*** %s has bad eol-style' % f
+					log('*** %s has bad eol-style' % f)
+					exit()
 
 def CreateMenuImage():
 	print 'creating images...'
@@ -362,24 +367,26 @@ def CreateSpecialBuilds():
 def UploadFiles():
 	print 'uploading files to SourceForge...'
 
-	def upload(ftp, file):
-		print '  uploading %s...' % file
-		ftp.storbinary('STOR /incoming/%s' % file.split('\\')[-1], open(file, 'rb'))
+	sftpcmds = file('sftp-commands', 'w')
+	sftpcmds.write('cd uploads\n')
+	sftpcmds.write('put %s.tar.bz2\n' % newverdir)
+	sftpcmds.write('put %s\\nsis-%s-setup.exe\n' % (newverdir, VERSION))
+	sftpcmds.write('put %s\\nsis-%s.zip\n' % (newverdir, VERSION))
+	sftpcmds.write('put nsis-%s-log.zip\n' % VERSION)
+	sftpcmds.write('put nsis-%s-strlen_8192.zip\n' % VERSION)
+	sftpcmds.close()
 
-	ftp = FTP('upload.sourceforge.net')
-	ftp.login()
+	run(
+		SFTP % 'sftp-commands',
+		LOG_ERRORS,
+		'upload failed'
+	)
 
-	upload(ftp, newverdir + '.tar.bz2')
-	upload(ftp, newverdir + '\\nsis-%s-setup.exe' % VERSION)
-	upload(ftp, newverdir + '\\nsis-%s.zip' % VERSION)
-	upload(ftp, 'nsis-%s-log.zip' % VERSION)
-	upload(ftp, 'nsis-%s-strlen_8192.zip' % VERSION)
-
-	ftp.quit()
+	os.unlink('sftp-commands')
 
 def ManualRelease():
 	print 'release url:'
-	print '  http://sourceforge.net/project/admin/qrs.php?package_id=0&group_id=22049'
+	print '  http://nsis.sf.net/rn/new'
 	print
 
 	sys.stdout.write('What\'s the SF release id of the new version? ')
@@ -401,7 +408,7 @@ def UpdateWiki(release_id):
 		post += '&su_data=' + urllib.quote(data)
 		post += '&su_summary=' + urllib.quote(summary)
 		
-		if urllib.urlopen(UPDATE_URL, post).read() != 'success':
+		if urllib.urlopen(UPDATE_URL, post).read().strip() != 'success':
 			log('*** failed updating `%s` wiki page' % page)
 			print '	*** failed updating `%s` wiki page' % page
 
@@ -409,23 +416,17 @@ def UpdateWiki(release_id):
 	update_wiki_page('Template:NSISReleaseDate', time.strftime('%B %d, %Y'), 'new version')
 	update_wiki_page('Template:NSISReleaseID', release_id, 'new version')
 
-def UpdateChangeLog():
-	run(
-		'%s /home/groups/n/ns/nsis/bin/touch_cl_tag.sh' % RSH,
-		LOG_ALL,
-		'change log tag modification failed'
-	)
+	os.system('start ' + PURGE_URL % 'Download')
 
 def ToDo():
 	print 'automatic phase done\n'
 	print """
- * %s
  * Edit update.php
  * Post news item
  * http://en.wikipedia.org/w/index.php?title=Nullsoft_Scriptable_Install_System&action=edit
  * Update Freshmeat
  * Update BetaNews
-	""" % (PURGE_URL % 'Download')
+	"""
 
 def CloseLog():
 	log('done')
@@ -448,6 +449,5 @@ CreateSpecialBuilds()
 UploadFiles()
 release_id = ManualRelease()
 UpdateWiki(release_id)
-UpdateChangeLog()
 ToDo()
 CloseLog()
