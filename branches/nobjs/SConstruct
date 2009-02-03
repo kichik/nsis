@@ -6,6 +6,10 @@ stubs = [
 	'zlib'
 ]
 
+plugin_libs = [
+	'ExDLL'
+]
+
 plugins = [
 	'AdvSplash',
 	'Banner',
@@ -22,7 +26,7 @@ plugins = [
 	'StartMenu',
 	'System',
 	'UserInfo',
-	'VPatch/Source/Plugin'
+	'VPatch/Source/Plugin',
 ]
 
 utils = [
@@ -42,8 +46,7 @@ misc = [
 	'MultiUser',
 	'Modern UI',
 	'Modern UI 2',
-	'VPatch',
-	'ExDLL'
+	'VPatch'
 ]
 
 doc = [
@@ -87,7 +90,7 @@ if defenv.WhereIs('hhc', os.environ['PATH']):
 from time import strftime, gmtime
 cvs_version = strftime('%d-%b-%Y.cvs', gmtime())
 
-opts = Options()
+opts = Variables()
 
 # load configuration options
 #  it's important this will be done here so NSIS_CONFIG_CONST_DATA_PATH
@@ -104,8 +107,7 @@ install_dirs = {
 		'conf': '$PREFIX',
 		'bin': '$PREFIX',
 		'data': '$PREFIX',
-		'doc': '$PREFIX',
-		'inc_c': '$PREFIX',
+		'doc': '$PREFIX'
 	},
 	'static': {
 		'dest': '',
@@ -113,8 +115,7 @@ install_dirs = {
 		'conf': '$PREFIX/etc',
 		'bin': '$PREFIX/bin',
 		'data': '$PREFIX/share/nsis',
-		'doc': '$PREFIX/share/doc/nsis',
-		'inc_c': '$PREFIX/include/nsis',
+		'doc': '$PREFIX/share/doc/nsis'
 	}
 }
 
@@ -127,20 +128,8 @@ if 'msvc' in defenv['TOOLS'] or 'mstoolkit' in defenv['TOOLS']:
 	ignore_tests = 'none'
 else:
 	ignore_tests = ','.join(Split("""
-Examples/LogicLib.nsi
-Examples/StrFunc.nsi
-Examples/TextFunc.nsi
-Examples/TextFuncTest.nsi
-Examples/FileFunc.nsi
-Examples/FileFuncTest.nsi
-Examples/Library.nsi
 Examples/makensis.nsi
-Examples/gfx.nsi
-Examples/System/System.nsi
-Examples/nsDialogs/example.nsi
-Examples/nsDialogs/InstallOptions.nsi
-Examples/nsDialogs/welcome.nsi""")
- + ['Examples/Modern UI/WelcomeFinish.nsi'])
+Examples/gfx.nsi"""))
 
 # version
 opts.Add(('VERSION', 'Version of NSIS', cvs_version))
@@ -150,35 +139,36 @@ opts.Add(('VER_REVISION', 'Revision of NSIS (recommended for dist-installer)', N
 opts.Add(('VER_BUILD', 'Build version of NSIS (recommended for dist-installer)', None))
 # installation
 opts.Add(('PREFIX', 'Installation prefix', dirs['prefix']))
-opts.Add(ListOption('SKIPSTUBS', 'A list of stubs that will not be built', 'none', stubs))
-opts.Add(ListOption('SKIPPLUGINS', 'A list of plug-ins that will not be built', 'none', plugins))
-opts.Add(ListOption('SKIPUTILS', 'A list of utilities that will not be built', 'none', utils))
-opts.Add(ListOption('SKIPMISC', 'A list of plug-ins that will not be built', 'none', misc))
-opts.Add(ListOption('SKIPDOC', 'A list of doc files that will not be built/installed', 'none', doc))
+opts.Add(ListVariable('SKIPSTUBS', 'A list of stubs that will not be built', 'none', stubs))
+opts.Add(ListVariable('SKIPPLUGINS', 'A list of plug-ins that will not be built', 'none', plugins))
+opts.Add(ListVariable('SKIPUTILS', 'A list of utilities that will not be built', 'none', utils))
+opts.Add(ListVariable('SKIPMISC', 'A list of plug-ins that will not be built', 'none', misc))
+opts.Add(ListVariable('SKIPDOC', 'A list of doc files that will not be built/installed', 'none', doc))
 opts.Add(('SKIPTESTS', 'A comma-separated list of test files that will not be ran', 'none'))
 opts.Add(('IGNORETESTS', 'A comma-separated list of test files that will be ran but ignored', ignore_tests))
 # build tools
 opts.Add(('PATH', 'A colon-separated list of system paths instead of the default - TEMPORARY AND MAY DEPRECATE', None))
 opts.Add(('TOOLSET', 'A comma-separated list of specific tools used for building instead of the default', None))
-opts.Add(BoolOption('MSTOOLKIT', 'Use Microsoft Visual C++ Toolkit', 'no'))
-opts.Add(BoolOption('CHMDOCS', 'Build CHM documentation, requires hhc.exe', hhc))
-opts.Add(PathOption('APPEND_CPPPATH', 'Additional paths to search for include files', None))
-opts.Add(PathOption('APPEND_LIBPATH', 'Additional paths to search for libraries', None))
+opts.Add(BoolVariable('MSTOOLKIT', 'Use Microsoft Visual C++ Toolkit', 'no'))
+opts.Add(BoolVariable('CHMDOCS', 'Build CHM documentation, requires hhc.exe', hhc))
+opts.Add(PathVariable('APPEND_CPPPATH', 'Additional paths to search for include files', None))
+opts.Add(PathVariable('APPEND_LIBPATH', 'Additional paths to search for libraries', None))
 opts.Add(('APPEND_CCFLAGS', 'Additional C/C++ compiler flags'))
 opts.Add(('APPEND_LINKFLAGS', 'Additional linker flags'))
 # build options
-opts.Add(BoolOption('DEBUG', 'Build executables with debugging information', 'no'))
-opts.Add(PathOption('CODESIGNER', 'A program used to sign executables', None))
-opts.Add(BoolOption('STRIP', 'Strips executables of any unrequired data such as symbols', 'yes'))
-opts.Add(BoolOption('STRIP_CP', 'Strips cross-platform executables of any unrequired data such as symbols', 'yes'))
-opts.Add(BoolOption('STRIP_W32', 'Strips Win32 executables of any unrequired data such as symbols', 'yes'))
+opts.Add(BoolVariable('DEBUG', 'Build executables with debugging information', 'no'))
+opts.Add(PathVariable('CODESIGNER', 'A program used to sign executables', None))
+opts.Add(BoolVariable('STRIP', 'Strips executables of any unrequired data such as symbols', 'yes'))
+opts.Add(BoolVariable('STRIP_CP', 'Strips cross-platform executables of any unrequired data such as symbols', 'yes'))
+opts.Add(BoolVariable('STRIP_W32', 'Strips Win32 executables of any unrequired data such as symbols', 'yes'))
 # path related build options
 opts.Add(('PREFIX_DEST', 'Intermediate installation prefix (extra install time prefix)', dirs['dest']))
 opts.Add(('PREFIX_CONF', 'Path to install nsisconf.nsh to', dirs['conf']))
 opts.Add(('PREFIX_BIN', 'Path to install native binaries to', dirs['bin']))
 opts.Add(('PREFIX_DATA', 'Path to install nsis data to (plugins, includes, stubs, contrib, win32 binaries)', dirs['data']))
 opts.Add(('PREFIX_DOC','Path to install nsis README / INSTALL / TODO files to.', dirs['doc']))
-opts.Add(('PREFIX_INC_C','Path to install nsis C header files to.', dirs['inc_c']))
+opts.Add(('PREFIX_PLUGINAPI_INC','Path to install plugin API headers to.', None))
+opts.Add(('PREFIX_PLUGINAPI_LIB','Path to install plugin static library to.', None))
 
 opts.Update(defenv)
 Help(opts.GenerateHelpText(defenv))
@@ -239,12 +229,7 @@ def SafeFile(f):
 	return f
 
 def MakeFileList(files):
-	from types import ListType, TupleType
-
-	if isinstance(files, (ListType, TupleType)):
-		return map(SafeFile, files)
-
-	return Flatten([SafeFile(files)])
+	return Flatten(File(files))
 
 def Distribute(files, names, component, path, subpath, alias, install_alias=None):
 	from types import StringType
@@ -309,9 +294,6 @@ def DistributeDocs(files, names=[], path='', alias=None):
 def DistributeExamples(files, names=[], path='', alias=None):
 	return defenv.Distribute(files, names, 'doc', 'Examples', path, alias, 'examples')
 
-def DistributeIncC(files, names=[], path='', alias=None):
-	return defenv.Distribute(files, names, 'inc_c', '', path, alias, 'inc-c')
-
 def Sign(targets):
 	if defenv.has_key('CODESIGNER'):
 		for t in targets:
@@ -333,7 +315,6 @@ defenv.DistributeInclude = DistributeInclude
 defenv.DistributeDoc = DistributeDoc
 defenv.DistributeDocs = DistributeDocs
 defenv.DistributeExamples = DistributeExamples
-defenv.DistributeIncC = DistributeIncC
 defenv.Sign = Sign
 defenv.TestScript = TestScript
 
@@ -375,6 +356,8 @@ plugin_env = envs[2]
 util_env = envs[3]
 cp_util_env = envs[4]
 test_env = envs[5]
+
+Export('stub_env makensis_env plugin_env util_env cp_util_env test_env')
 
 ######################################################################
 #######  Distribution                                              ###
@@ -478,17 +461,19 @@ ins = defenv.DistributeBin(makensis,alias='install-compiler')
 #######  Common Functions                                          ###
 ######################################################################
 
-def AddEnvStandardFlags(env, defines, flags, entry, nodeflib):
+def AddEnvStandardFlags(env, defines, flags, libs, entry, nodeflib):
 	if defines:
 		env.Append(CPPDEFINES = defines)
 	if flags:
 		env.Append(CCFLAGS = flags)
+	if libs:
+		env.Append(LIBS = libs)
 
 	if entry:
-		env.Append(LINKFLAGS = '${ENTRY_FLAG("%s")}' % entry)
+		env.Append(LINKFLAGS = ['${ENTRY_FLAG("%s")}' % entry])
 
 	if nodeflib:
-		env.Append(LINKFLAGS = '$NODEFLIBS_FLAG') # no default libraries
+		env.Append(LINKFLAGS = ['$NODEFLIBS_FLAG']) # no default libraries
 
 def AppendRES(env, source, res, resources):
 	if res:
@@ -520,11 +505,11 @@ def BuildPlugin(target, source, libs, examples = None, docs = None,
 	if cppused and env['CPP_REQUIRES_STDLIB']:
 		nodeflib = False
 
-	AddEnvStandardFlags(env, defines, flags, entry, nodeflib)
+	AddEnvStandardFlags(env, defines, flags, libs, entry, nodeflib)
 
 	AppendRES(env, source, res, resources)
 
-	plugin = env.SharedLibrary(target, source, LIBS = libs)
+	plugin = env.SharedLibrary(target, source)
 	defenv.Alias(target, plugin)
 	defenv.Alias('plugins', plugin)
 
@@ -540,7 +525,7 @@ def BuildPlugin(target, source, libs, examples = None, docs = None,
 
 	DistributeExtras(env, target, examples, docs)
 
-for plugin in plugins:
+for plugin in plugin_libs + plugins:
 	if plugin in defenv['SKIPPLUGINS']:
 		continue
 
@@ -554,14 +539,15 @@ for plugin in plugins:
 #######  Utilities                                                 ###
 ######################################################################
 
-def BuildUtilEnv(defines = None, flags = None, entry = None,
-                 nodeflib = None, cross_platform = False):
+def BuildUtilEnv(defines = None, flags = None, libs = None,
+                 entry = None, nodeflib = None,
+                 cross_platform = False):
 	if not cross_platform:
 		env = util_env.Clone()
 	else:
 		env = cp_util_env.Clone()
 
-	AddEnvStandardFlags(env, defines, flags, entry, nodeflib)
+	AddEnvStandardFlags(env, defines, flags, libs, entry, nodeflib)
 
 	return env
 
@@ -570,7 +556,7 @@ def BuildUtil(target, source, libs, entry = None, res = None,
               nodeflib = False, file_name = '', path='', contrib = False,
               examples = None, docs = None, cross_platform = False,
 							root_util = False):
-	env = BuildUtilEnv(defines, flags, entry, nodeflib, cross_platform)
+	env = BuildUtilEnv(defines, flags, libs, entry, nodeflib, cross_platform)
 
 	AppendRES(env, source, res, resources)
 
@@ -582,7 +568,7 @@ def BuildUtil(target, source, libs, entry = None, res = None,
 		if '.' in target:
 			env['PROGSUFFIX'] = target[target.rindex('.'):]
 
-	util = env.Program(target, source, LIBS = libs)
+	util = env.Program(target, source)
 	defenv.Alias(target, util)
 	defenv.Alias('utils', util)
 

@@ -2,6 +2,7 @@ target = 'System'
 
 files = Split("""
 	Source/Buffers.c
+	Source/Call.S
 	Source/Plugin.c
 	Source/System.c
 """)
@@ -32,7 +33,23 @@ BuildPlugin(
 	libs,
 	examples,
 	docs,
-	entry = '_DllMainCRTStartup',
 	nodeflib = False,
 	defines = ['SYSTEM_EXPORTS']
 )
+
+Import('env')
+
+res = 'Resource/Resource.rc'
+res_obj = 'Resource/Resource-rc.o'
+res_target = env.RES(res_obj, res)
+
+res_main = env.Object('Resource/Main.c')
+
+resources = Split("""
+	Resource/Icon.ico
+	Resource/Resource.h
+""")
+
+env.Depends(res_target, resources)
+
+env.SharedLibrary('Resource', res_target + res_main)

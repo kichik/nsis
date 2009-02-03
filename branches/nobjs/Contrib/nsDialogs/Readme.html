@@ -53,6 +53,8 @@ code
 <li><a href="#ref-onchange">OnChange</a></li>
 <li><a href="#ref-onclick">OnClick</a></li>
 <li><a href="#ref-onnotify">OnNotify</a></li>
+<li><a href="#ref-ontimer">OnTimer</a></li>
+<li><a href="#ref-killtimer">KillTimer</a></li>
 </ul>
 </li>
 <li>
@@ -63,6 +65,8 @@ code
 <li><a href="#mref-onchange">NSD_OnChange</a></li>
 <li><a href="#mref-onclick">NSD_OnClick</a></li>
 <li><a href="#mref-onnotify">NSD_OnNotify</a></li>
+<li><a href="#mref-ontimer">NSD_OnTimer</a></li>
+<li><a href="#mref-killtimer">NSD_KillTimer</a></li>
 <li><a href="#mref-addstyle">NSD_AddStyle</a></li>
 <li><a href="#mref-addexstyle">NSD_AddExStyle</a></li>
 <li><a href="#mref-gettext">NSD_GetText</a></li>
@@ -75,12 +79,20 @@ code
 <li><a href="#mref-cbaddstring">NSD_CB_AddString</a></li>
 <li><a href="#mref-cbselectstring">NSD_CB_SelectString</a></li>
 <li><a href="#mref-lbaddstring">NSD_LB_AddString</a></li>
+<li><a href="#mref-lbdelstring">NSD_LB_DelString</a></li>
+<li><a href="#mref-lbclear">NSD_LB_Clear</a></li>
+<li><a href="#mref-lbgetcount">NSD_LB_GetCount</a></li>
 <li><a href="#mref-lbselectstring">NSD_LB_SelectString</a></li>
+<li><a href="#mref-lbgetselection">NSD_LB_GetSelection</a></li>
 <li><a href="#mref-setfocus">NSD_SetFocus</a></li>
 <li><a href="#mref-setimage">NSD_SetImage</a></li>
 <li><a href="#mref-setsimage">NSD_SetStretchedImage</a></li>
+<li><a href="#mref-seticon">NSD_SetIcon</a></li>
+<li><a href="#mref-seticonfrominstaller">NSD_SetIconFromInstaller</a></li>
 <li><a href="#mref-clearimage">NSD_ClearImage</a></li>
+<li><a href="#mref-clearicon">NSD_ClearIcon</a></li>
 <li><a href="#mref-freeimage">NSD_FreeImage</a></li>
+<li><a href="#mref-freeicon">NSD_FreeIcon</a></li>
 </ul>
 </li>
 <li><a href="#faq">FAQ</a></li>
@@ -138,8 +150,6 @@ SectionEnd</pre></blockquote>
 
 <p>Now that the foundations are laid, it's time to use nsDialogs. The first call must always be to nsDialogs::Create. It will create a new dialog in the page and return its <i>HWND</i> on the stack. The result must be popped from the stack to prevent stack corruption. If the result is <i>error</i>, the dialog couldn't be created.</p>
 
-<p>nsDialogs::Create, like every other nsDialogs function but nsDialogs::Show, must always be called with /NOUNLOAD.</p>
-
 <p>nsDialogs::Create accepts one parameter. It has a very specific function, but to keep things simple for this tutorial, it must always be 1018.</p>
 
 <p><i>HWND</i> is a number that uniquely identifies the dialog and can be used with SendMessage, SetCtlColors and Win32 API.</p>
@@ -158,7 +168,7 @@ Page instfiles
 
 Function nsDialogsPage
 <b>
-	nsDialogs::Create /NOUNLOAD 1018
+	nsDialogs::Create 1018
 	Pop $Dialog
 
 	${If} $Dialog == error
@@ -190,7 +200,7 @@ Page custom nsDialogsPage
 Page instfiles
 
 Function nsDialogsPage
-	nsDialogs::Create /NOUNLOAD 1018
+	nsDialogs::Create 1018
 	Pop $Dialog
 
 	${If} $Dialog == error
@@ -232,7 +242,7 @@ Page instfiles
 
 Function nsDialogsPage
 
-	nsDialogs::Create /NOUNLOAD 1018
+	nsDialogs::Create 1018
 	Pop $Dialog
 
 	${If} $Dialog == error
@@ -277,6 +287,7 @@ SectionEnd</pre></blockquote>
 <li>ComboBox</li>
 <li>DropList</li>
 <li>ListBox</li>
+<li>ProgressBar</li>
 </ul>
 
 <h3><a name="step-state"></a>Control State</h3>
@@ -302,7 +313,7 @@ Page instfiles
 
 Function nsDialogsPage
 
-	nsDialogs::Create /NOUNLOAD 1018
+	nsDialogs::Create 1018
 	Pop $Dialog
 
 	${If} $Dialog == error
@@ -357,7 +368,7 @@ Page instfiles
 
 Function nsDialogsPage
 
-	nsDialogs::Create /NOUNLOAD 1018
+	nsDialogs::Create 1018
 	Pop $Dialog
 
 	${If} $Dialog == error
@@ -435,7 +446,7 @@ FunctionEnd</b>
 
 Function nsDialogsPage
 
-	nsDialogs::Create /NOUNLOAD 1018
+	nsDialogs::Create 1018
 	Pop $Dialog
 
 	${If} $Dialog == error
@@ -454,7 +465,7 @@ Function nsDialogsPage
 	${If} $Checkbox_State == ${BST_CHECKED}
 		${NSD_Check} $Checkbox
 	${EndIf}
-	
+
 	# alternative for the above ${If}:
 	#${NSD_SetState} $Checkbox_State</b>
 
@@ -479,7 +490,7 @@ SectionEnd</pre></blockquote>
 
 <h3><a name="ref-create"></a>Create</h3>
 
-<p><code>nsDialogs::Create /NOUNLOAD <i>rect</i></code></p>
+<p><code>nsDialogs::Create <i>rect</i></code></p>
 
 <p>Creates a new dialog. <i>rect</i> specific the identifier of the control whose location will be mimiced. This should usually be 1018, which is control mimiced for creation of built-in pages. The Modern UI also has control 1040 for the welcome and the finish page.</p>
 
@@ -487,7 +498,7 @@ SectionEnd</pre></blockquote>
 
 <h3><a name="ref-createcontrol"></a>CreateControl</h3>
 
-<p><code>nsDialogs::CreateControl /NOUNLOAD <i>class</i> <i>style</i> <i>extended_style</i> <i>x</i> <i>y</i> <i>width</i> <i>height</i> <i>text</i></code></p>
+<p><code>nsDialogs::CreateControl <i>class</i> <i>style</i> <i>extended_style</i> <i>x</i> <i>y</i> <i>width</i> <i>height</i> <i>text</i></code></p>
 
 <p>Create a new control in the current dialog. A dialog must exist for this to work, so nsDialogs::Create must be called prior to this function.</p>
 
@@ -503,15 +514,17 @@ SectionEnd</pre></blockquote>
 
 <h3><a name="ref-selectfiledialog"></a>SelectFileDialog</h3>
 
-<p><code>nsDialogs::SelectFileDialog /NOUNLOAD <i>mode</i> <i>initial_selection</i> <i>filter</i></code></p>
+<p><code>nsDialogs::SelectFileDialog <i>mode</i> <i>initial_selection</i> <i>filter</i></code></p>
 
 <p>Displays a file selection dialog to the user. If <i>mode</i> is set to <i>save</i>, displays a file save dialog. If <i>mode</i> is set to <i>open</i>, displays a file open dialog. <i>filter</i> is a list of available file filters separated by pipes. If an empty string is passed, the default is used - <i>All Files|*.*</i>.</p>
+
+<p><i>initial_selection</i> can be used to provide the user with a default file to look for and/or a default folder to look in. If <i>initial_selection</i> is empty no default filename will be provided for the user and the dialog will start in the current working directory. If <i>initial_selection</i> specifies just a filename, for example "test.exe", the dialog will be set up to look for a file called test.exe in the current working directory. If <i>initial_selection</i> specifies just a directory, for example "C:\Program Files", the dialog starts in the provided directory with no file name provided. If <i>initial_selection</i> specifies a directory and a filename, for example "C:\Windows\System32\calc.exe", the dialog will be set up to look for a file called calc.exe in the directory C:\Windows\System32.</p>
 
 <p>Returns the selected file on the stack or an empty string if the user canceled the operation.</p>
 
 <h3><a name="ref-selectfolderdialog"></a>SelectFolderDialog</h3>
 
-<p><code>nsDialogs::SelectFolderDialog /NOUNLOAD <i>title</i> <i>initial_selection</i></code></p>
+<p><code>nsDialogs::SelectFolderDialog <i>title</i> <i>initial_selection</i></code></p>
 
 <p>Displays a directory selection dialog to the user.</p>
 
@@ -519,7 +532,7 @@ SectionEnd</pre></blockquote>
 
 <h3><a name="ref-setrtl"></a>SetRTL</h3>
 
-<p><code>nsDialogs::SetRTL /NOUNLOAD <i>rtl_setting</i></code></p>
+<p><code>nsDialogs::SetRTL <i>rtl_setting</i></code></p>
 
 <p>Sets right-to-left mode on or off. If <i>rtl_setting</i> is 0, it's set to off. If <i>rtl_setting</i> is 1, it's set to on. This function must be called before any calls to nsDialogs::CreateControl.</p>
 
@@ -527,13 +540,13 @@ SectionEnd</pre></blockquote>
 
 <h3><a name="ref-getuserdata"></a>GetUserData</h3>
 
-<p><code>nsDialogs::GetUserData /NOUNLOAD <i>control_HWND</i></code></p>
+<p><code>nsDialogs::GetUserData <i>control_HWND</i></code></p>
 
 <p>Returns user data associated with the control on the stack.  Use nsDialogs::SetUserData to set this data.</p>
 
 <h3><a name="ref-setuserdata"></a>SetUserData</h3>
 
-<p><code>nsDialogs::SetUserData /NOUNLOAD <i>control_HWND</i> <i>data</i></code></p>
+<p><code>nsDialogs::SetUserData <i>control_HWND</i> <i>data</i></code></p>
 
 <p>Associates <i>data</i> with the control. Use nsDialogs::GetUserData to get this data.</p>
 
@@ -541,7 +554,7 @@ SectionEnd</pre></blockquote>
 
 <h3><a name="ref-onback"></a>OnBack</h3>
 
-<p><code>nsDialogs::OnBack /NOUNLOAD <i>function_address</i></code></p>
+<p><code>nsDialogs::OnBack <i>function_address</i></code></p>
 
 <p>Sets the callback function for the Back button. This function will be called when the user clicks the back button. Call Abort in this function to prevent the user from going back to the last page.</p>
 
@@ -551,7 +564,7 @@ SectionEnd</pre></blockquote>
 
 <h3><a name="ref-onchange"></a>OnChange</h3>
 
-<p><code>nsDialogs::OnChange /NOUNLOAD <i>control_HWND</i> <i>function_address</i></code></p>
+<p><code>nsDialogs::OnChange <i>control_HWND</i> <i>function_address</i></code></p>
 
 <p>Sets a change notification callback function for the given control. Whenever the control changes, the function will be called and the control's HWND will be waiting on its stack.</p>
 
@@ -561,7 +574,7 @@ SectionEnd</pre></blockquote>
 
 <h3><a name="ref-onclick"></a>OnClick</h3>
 
-<p><code>nsDialogs::OnClick /NOUNLOAD <i>control_HWND</i> <i>function_address</i></code></p>
+<p><code>nsDialogs::OnClick <i>control_HWND</i> <i>function_address</i></code></p>
 
 <p>Sets a click notification callback function for the given control. Whenever the control is clicked, the function will be called and the control's HWND will be waiting on its stack.</p>
 
@@ -571,9 +584,29 @@ SectionEnd</pre></blockquote>
 
 <h3><a name="ref-onnotify"></a>OnNotify</h3>
 
-<p><code>nsDialogs::OnNotify /NOUNLOAD <i>control_HWND</i> <i>function_address</i></code></p>
+<p><code>nsDialogs::OnNotify <i>control_HWND</i> <i>function_address</i></code></p>
 
 <p>Sets a notification callback function for the given control. Whenever the control receives the WM_NOTIFY message, the function will be called and the control's HWND, notification code and a pointer to the MNHDR structure will be waiting on its stack.</p>
+
+<p>Use GetFunctionAddress to get the address of the desired callback function.</p>
+
+<p>Returns nothing.</p>
+
+<h3><a name="ref-ontimer"></a>OnTimer</h3>
+
+<p><code>nsDialogs::OnTimer <i>function_address</i> <i>timer_interval</i></code></p>
+
+<p>Sets a timer that'd call the callback function for the given control every in a constant interval. Interval times are specified in milliseconds.</p>
+
+<p>Use GetFunctionAddress to get the address of the desired callback function.</p>
+
+<p>Returns nothing.</p>
+
+<h3><a name="ref-killtimer"></a>KillTimer</h3>
+
+<p><code>nsDialogs::KillTimer <i>function_address</i></code></p>
+
+<p>Kills a previously set timer.</p>
 
 <p>Use GetFunctionAddress to get the address of the desired callback function.</p>
 
@@ -611,13 +644,14 @@ SectionEnd</pre></blockquote>
 <li>${NSD_CreateComboBox}</li>
 <li>${NSD_CreateDropList}</li>
 <li>${NSD_CreateListBox}</li>
+<li>${NSD_CreateProgressBar}</li>
 </ul>
 
 <p>Returns the new dialog's HWND on the stack or error.</p>
 
 <h3><a name="mref-onback"></a>NSD_OnBack</h3>
 
-<p><code>${NSD_OnBack} <i>control_HWND</i> <i>function_address</i></code></p>
+<p><code>${NSD_OnBack} <i>function_address</i></code></p>
 
 <p>See <a href="#ref-onback">OnBack</a> for more details.</p>
 
@@ -642,6 +676,18 @@ SectionEnd</pre></blockquote>
 <p><code>${NSD_OnNotify} <i>control_HWND</i> <i>function_address</i></code></p>
 
 <p>See <a href="#ref-onnotify">OnNotify</a> for more details.</p>
+
+<h3><a name="mref-ontimer"></a>NSD_OnTimer</h3>
+
+<p><code>${NSD_OnTimer} <i>function_address</i> <i>timer_interval</i></code></p>
+
+<p>See <a href="#ref-ontimer">OnTimer</a> for more details.</p>
+
+<h3><a name="mref-killtimer"></a>NSD_KillTimer</h3>
+
+<p><code>${NSD_KillTimer} <i>function_address</i></code></p>
+
+<p>See <a href="#ref-killtimer">KillTimer</a> for more details.</p>
 
 <h3><a name="mref-addstyle"></a>NSD_AddStyle</h3>
 
@@ -723,15 +769,39 @@ SectionEnd</pre></blockquote>
 
 <h3><a name="mref-lbaddstring"></a>NSD_LB_AddString</h3>
 
-<p><code>${NSD_LB_AddString} <i>combo_HWND</i> <i>string</i></code></p>
+<p><code>${NSD_LB_AddString} <i>listbox_HWND</i> <i>string</i></code></p>
 
 <p>Adds a string to a list box.</p>
 
+<h3><a name="mref-lbdelstring"></a>NSD_LB_DelString</h3>
+
+<p><code>${NSD_LB_DelString} <i>listbox_HWND</i> <i>string</i></code></p>
+
+<p>Deletes a string from a list box.</p>
+
+<h3><a name="mref-lbcleqar">NSD_LB_Clear</a></h3>
+
+<p><code>${NSD_LB_Clear} <i>listbox_HWND</i></code></p>
+
+<p>Deletes all strings from a list box.</p>
+
+<h3><a name="mref-lbgetcount">NSD_LB_GetCount</a></h3>
+
+<p><code>${NSD_LB_GetCount} <i>listbox_HWND</i> <i>output_variable</i></code></p>
+
+<p>Retrieves the number of strings from a list box.</p>
+
 <h3><a name="mref-lbselectstring"></a>NSD_LB_SelectString</h3>
 
-<p><code>${NSD_LB_SelectString} <i>combo_HWND</i> <i>string</i></code></p>
+<p><code>${NSD_LB_SelectString} <i>listbox_HWND</i> <i>string</i></code></p>
 
 <p>Selects a string in a list box.</p>
+
+<h3><a name="mref-lbgetselection">NSD_LB_GetSelection</a></h3>
+
+<p><code>${NSD_LB_GetSelection} <i>listbox_HWND</i> <i>output_variable</i></code></p>
+
+<p>Retrieves the selected stringed from a list box. Returns an empty string if no string is selected.</p>
 
 <h3><a name="mref-setfocus"></a>NSD_SetFocus</h3>
 
@@ -770,7 +840,7 @@ FunctionEnd
 
 Function nsDialogsImage
 
-	nsDialogs::Create /NOUNLOAD 1018
+	nsDialogs::Create 1018
 	Pop $Dialog
 
 	${If} $Dialog == error
@@ -796,17 +866,42 @@ SectionEnd</pre></blockquote>
 
 <p>Loads and displays a bitmap just like <a href="#mref-setimage">${NSD_SetImage}</a>, but stretched the image to fit the control.</p>
 
+<h3><a name="mref-seticon"></a>NSD_SetIcon</h3>
+
+<p><code>${NSD_SetIcon} <i>control_HWND</i> <i>image_path</i> <i>output_variable</i></code></p>
+
+<p>Same as <a href="#mref-setimage">${NSD_SetImage}</a>, but used for loading and setting an icon in a control created by <a href="#mref-create">${NSD_CreateIcon}</a>. The image handle is stored in <i>output_variable</i> and should be freed using <a href="#mref-freeicon">${NSD_FreeIcon}</a> once no longer necessary.</p>
+
+<h3><a name="mref-seticonfrominstaller"></a>NSD_SetIconFromInstaller</h3>
+
+<p><code>${NSD_SetIconFromInstaller} <i>control_HWND</i> <i>output_variable</i></code></p>
+
+<p>Loads the icon used in the isntaller and displays it on <i>control_HWND</i> created by <a href="#mref-create">${NSD_CreateIcon}</a>. The image handle is stored in <i>output_variable</i> and should be freed using <a href="#mref-freeicon">${NSD_FreeIcon}</a> once no longer necessary.</p>
+
 <h3><a name="mref-clearimage"></a>NSD_ClearImage</h3>
 
 <p><code>${NSD_ClearImage} <i>control_HWND</i></code></p>
 
 <p>Clears an image from a control.</p>
 
+<h3><a name="mref-clearicon"></a>NSD_ClearIcon</h3>
+
+<p><code>${NSD_ClearIcon} <i>control_HWND</i></code></p>
+
+<p>Clears an icon from a control.</p>
+
 <h3><a name="mref-freeimage"></a>NSD_FreeImage</h3>
 
 <p><code>${NSD_FreeImage} <i>image_handle</i></code></p>
 
 <p>Frees an image handle previously loaded with <a href="#mref-setimage">${NSD_SetImage}</a> or <a href="#mref-setsimage">${NSD_SetStretchedImage}</a>.</p>
+
+<h3><a name="mref-freeicon"></a>NSD_FreeIcon</h3>
+
+<p><code>${NSD_FreeIcon} <i>icon_handle</i></code></p>
+
+<p>Frees an icon handle previously loaded with <a href="#mref-seticon">${NSD_SetIcon}</a> or <a href="#mref-seticonfrominstaller">${NSD_SetIconFromInstaller}</a>.</p>
+
 
 <h2><a name="faq"></a>FAQ</h2>
 

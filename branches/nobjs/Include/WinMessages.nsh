@@ -39,6 +39,7 @@ SB      Status bar window
 SBM     Scroll bar control
 STM     Static control
 TCM     Tab control
+PBM     Progress bar
 -----------------------------------
 
 NOT included messages (WM_USER + X)
@@ -50,7 +51,6 @@ DTM     Date and time picker control
 HKM     Hot key control
 IPM     IP address control
 MCM     Month calendar control
-PBM     Progress bar
 PGM     Pager control
 PSM     Property sheet
 RB      Rebar control
@@ -147,6 +147,7 @@ UDM     Up-down control
 !define EM_CANUNDO              0x00C6
 !define EM_CHARFROMPOS          0x00D7
 !define EM_EMPTYUNDOBUFFER      0x00CD
+!define EM_EXLIMITTEXT          0x0435
 !define EM_FMTLINES             0x00C8
 !define EM_GETFIRSTVISIBLELINE  0x00CE
 !define EM_GETHANDLE            0x00BD
@@ -577,6 +578,15 @@ UDM     Up-down control
 
 #Tab control#
 !define TCM_FIRST                   0x1300
+
+#Progress bar control#
+!define PBM_SETRANGE   0x0401
+!define PBM_SETPOS     0x0402
+!define PBM_DELTAPOS   0x0403
+!define PBM_SETSTEP    0x0404
+!define PBM_STEPIT     0x0405
+!define PBM_GETPOS     0x0408
+!define PBM_SETMARQUEE 0x040a
 
 !verbose pop
 !endif

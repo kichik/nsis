@@ -87,12 +87,6 @@ This command sets the overwrite flag which is used by the \R{file}{File} command
 \c File program.cfg # config file we don't want to overwrite
 \c SetOverwrite on
 
-\S2{setpluginunload} SetPluginUnload
-
-\c \\<b\\>manual\\</b\\>|alwaysoff
-
-This command sets the unload plug-in flag which is by \R{callinstdll}{CallInstDLL} and \R{plugindlls}{plug-in calls}. Setting this to always off will behave as if you have added the /NOUNLOAD to every CallInstDLL and plug-in call. Setting this to manual will only not unload if you specifically use /NOUNLOAD.
-
 \S1{versioninfo} Version Information
 
 \S2{viaddversionkey} VIAddVersionKey

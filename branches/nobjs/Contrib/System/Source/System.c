@@ -6,9 +6,17 @@
 #include "Buffers.h"
 #include "System.h"
 #ifndef __GNUC__
+#define _DECL_DLLMAIN   /* enable prototypes for DllMain and _CRT_INIT */
+#include <process.h>
 #include <crtdbg.h>
+#else
+#define _RPT0(type, msg)
+#define _CRT_WARN           0
 #endif /* __GNUC__ */
 #include <objbase.h>
+
+// Type conversion macro
+#define INT_TO_POINTER(i) ((void *) (int) (i))
 
 // Parse Section Type 
 #define PST_PROC    0
@@ -29,7 +37,6 @@ const int ParamSizeByType[7] = {0, // PAT_VOID (Size will be equal to 1)
     1, // PAT_GUID
     0}; // PAT_CALLBACK (Size will be equal to 1)
 
-int z1, z2; // I've made them static for easier use at callback procs
 int LastStackPlace;
 int LastStackReal;
 DWORD LastError;
@@ -40,15 +47,6 @@ HINSTANCE g_hInstance;
 // Return to callback caller with stack restore
 char retexpr[4];
 HANDLE retaddr;
-
-#ifndef __GNUC__
-
-/*
-FIXME:
-GCC cannot compile the inline assembly used by System::Call and
-System::Get, so those functions and their supporting functions
-are disabled when using GCC.
-*/
 
 char *GetResultStr(SystemProc *proc)
 {
@@ -61,14 +59,13 @@ char *GetResultStr(SystemProc *proc)
 
 #ifdef SYSTEM_LOG_DEBUG
 
-// System log debuggin turned on
-#define SYSTEM_EVENT(a)  { _asm { mov logespsave, esp }; LogEvent(a); }
-#define SYSTEM_LOG_ADD(a)  { lstrcat(syslogbuf, a); }
-#define SYSTEM_LOG_POST     { lstrcat(syslogbuf, "\n"); WriteToLog(syslogbuf); *syslogbuf = 0; }
+// System log debugging turned on
+#define SYSTEM_LOG_ADD(a)  { register int _len = lstrlen(syslogbuf); lstrcpyn(syslogbuf + _len, a, sizeof(syslogbuf) - _len); }
+#define SYSTEM_LOG_POST     { SYSTEM_LOG_ADD("\n"); WriteToLog(syslogbuf); *syslogbuf = 0; }
 
 HANDLE logfile = NULL;
 char syslogbuf[4096] = "";
-int logop = 0, logespsave;
+int logop = 0;
 
 void WriteToLog(char *buffer)
 {
@@ -92,18 +89,10 @@ void WriteToLog(char *buffer)
 //    FlushFileBuffers(logfile);
 }
 
-void LogEvent(char *a)
-{
-    char buffer[1024];
-    wsprintf(buffer, "%s  ESP = 0x%08X  Stack = 0x%08X  Real = 0x%08X", a, 
-        logespsave, LastStackPlace, LastStackReal);
-    SYSTEM_LOG_ADD(buffer);
-}
-
 PLUGINFUNCTION(Debug)
 {
     char *o1;
-    o1 = popstring();
+    o1 = system_popstring();
 
     if (logfile == NULL)
         if (lstrlen(o1) > 0)
@@ -152,7 +141,7 @@ PLUGINFUNCTION(Get)
     SystemProc *proc = PrepareProc(FALSE);
     if (proc == NULL)
     {
-      pushstring("error");
+      system_pushstring("error");
       return;
     }
 
@@ -165,20 +154,20 @@ PLUGINFUNCTION(Get)
     if ((proc->Options & POPT_ALWRETURN) != 0)
     {
         // Always return flag set -> return separate proc and result
-        pushint((int) proc);
-        GlobalFree(pushstring(GetResultStr(proc)));
+        system_pushint((int) proc);
+        GlobalFree(system_pushstring(GetResultStr(proc)));
     } else
     {
         if (proc->ProcResult != PR_OK)
         {
             // No always return flag and error result - return result
-            GlobalFree(pushstring(GetResultStr(proc)));
+            GlobalFree(system_pushstring(GetResultStr(proc)));
             // If proc is permanent?
             if ((proc->Options & POPT_PERMANENT) == 0)
                 GlobalFree((HANDLE) proc); // No, free it
         }
         else // Ok result, return proc
-            pushint((int) proc);
+            system_pushint((int) proc);
     }
 } PLUGINFUNCTIONEND
 
@@ -220,7 +209,7 @@ PLUGINFUNCTION(Call)
     {
         // Always return flag set - return separate return and result
         ParamsOut(proc);
-        GlobalFree(pushstring(GetResultStr(proc)));
+        GlobalFree(system_pushstring(GetResultStr(proc)));
     } else
     {
         if (proc->ProcResult != PR_OK)
@@ -253,15 +242,13 @@ PLUGINFUNCTION(Call)
             FreeLibrary(proc->Dll); // and unload it :)
 
         // In case of POPT_ERROR - first pop will be proc error
-        if ((proc->Options & POPT_ERROR) != 0) pushint(LastError);
+        if ((proc->Options & POPT_ERROR) != 0) system_pushint(LastError);
     }    
 
     // If proc is permanent?
     if ((proc->Options & POPT_PERMANENT) == 0)
         GlobalFree((HANDLE) proc); // No, free it
 } PLUGINFUNCTIONEND
-
-#endif /* __GNUC__ */
 
 PLUGINFUNCTIONSHORT(Int64Op)
 {
@@ -270,13 +257,13 @@ PLUGINFUNCTIONSHORT(Int64Op)
     char buf[128];
 
     // Get strings
-    o1 = popstring(); op = popstring(); 
-    i1 = myatoi(o1); // convert first arg to int64
+    o1 = system_popstring(); op = system_popstring(); 
+    i1 = myatoi64(o1); // convert first arg to int64
     if ((*op != '~') && (*op != '!'))
     {
         // get second arg, convert it, free it
-        o2 = popstring();
-        i2 = myatoi(o2); 
+        o2 = system_popstring();
+        i2 = myatoi64(o2); 
         GlobalFree(o2);
     }
 
@@ -306,7 +293,7 @@ PLUGINFUNCTIONSHORT(Int64Op)
     
     // Output and freedom
     myitoa64(i1, buf);
-    pushstring(buf);
+    system_pushstring(buf);
     GlobalFree(o1); GlobalFree(op);
 } PLUGINFUNCTIONEND
 
@@ -317,10 +304,8 @@ __int64 GetIntFromString(char **p)
     while (((**p >= 'a') && (**p <= 'f')) || ((**p >= 'A') && (**p <= 'F')) || ((**p >= '0') && (**p <= '9')) || (**p == 'X') || (**p == '-') || (**p == 'x') || (**p == '|')) *(b++) = *((*p)++);
     *b = 0;
     (*p)--; // We should point at last digit
-    return myatoi(buffer);
+    return myatoi64(buffer);
 }
-
-#ifndef __GNUC__
 
 SystemProc *PrepareProc(BOOL NeedForCall)
 {
@@ -336,7 +321,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
     // Retrieve proc specs
     cb = (cbuf = AllocString()); // Current String buffer
     sbuf = AllocString(); // Safe String buffer
-    ib = ibuf = popstring(); // Input string
+    ib = ibuf = system_popstring(); // Input string
 
     // Parse the string
     while (SectionType != -1)
@@ -402,7 +387,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
 
                         if (proc != NULL) GlobalFree(proc);
                         // Get already defined proc                                      
-                        proc = (SystemProc *) myatoi(cbuf);
+                        proc = (SystemProc *) INT_TO_POINTER(myatoi64(cbuf));
                         if (!proc) break;
 
                         // Find the last clone at proc queue
@@ -520,6 +505,8 @@ SystemProc *PrepareProc(BOOL NeedForCall)
             case 'I': temp2 = PAT_INT; break;
             case 'l':
             case 'L': temp2 = PAT_LONG; break;
+            case 'm':
+            case 'M':
             case 't':
             case 'T': temp2 = PAT_STRING; break;
             case 'g':
@@ -681,7 +668,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
                 // Use direct system proc address
                 int addr;
 
-                proc->Dll = (HANDLE) myatoi(proc->DllName);
+                proc->Dll = (HANDLE) INT_TO_POINTER(myatoi64(proc->DllName));
   
                 if (proc->Dll == 0)
                 {
@@ -702,7 +689,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
                 addr = *((int *)addr);
                 // now addr contains the pointer to first item at VTABLE
                 // add the index of proc
-                addr = addr + (int)(myatoi(proc->ProcName)*4);
+                addr = addr + (int)(myatoi64(proc->ProcName)*4);
                 proc->Proc = *((HANDLE*)addr);
             }
             break;
@@ -710,7 +697,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
             if (*proc->DllName == 0)
             {
                 // Use direct system proc address
-                if ((proc->Proc = (HANDLE) myatoi(proc->ProcName)) == 0)
+                if ((proc->Proc = (HANDLE) INT_TO_POINTER(myatoi64(proc->ProcName))) == 0)
                     proc->ProcResult = PR_ERROR;
             } else
             {
@@ -733,7 +720,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
             }
             break;
         case PT_STRUCT:
-            if (*(proc->ProcName) != 0) proc->Proc = (HANDLE) myatoi(proc->ProcName);
+            if (*(proc->ProcName) != 0) proc->Proc = (HANDLE) INT_TO_POINTER(myatoi64(proc->ProcName));
             break;
         }
     }
@@ -765,9 +752,9 @@ void ParamsIn(SystemProc *proc)
         // Step 1: retrive value
         if ((par->Input == IOT_NONE) || (par->Input == IOT_INLINE)) 
             realbuf = AllocStr("");
-        else if (par->Input == IOT_STACK) realbuf = popstring();
+        else if (par->Input == IOT_STACK) realbuf = system_popstring();
         else if ((par->Input > 0) && (par->Input <= __INST_LAST)) 
-            realbuf = getuservariable(par->Input - 1);
+            realbuf = system_getuservariable(par->Input - 1);
         else 
         {
             // Inline input, will be freed as realbuf
@@ -789,10 +776,10 @@ void ParamsIn(SystemProc *proc)
             par->Value = 0;
             break;
         case PAT_INT:
-            *((int*) place) = (int) myatoi(realbuf);
+            *((int*) place) = (int) myatoi64(realbuf);
             break;
         case PAT_LONG:
-            *((__int64*) place) = myatoi(realbuf);
+            *((__int64*) place) = myatoi64(realbuf);
             break;
         case PAT_STRING:
 /*            if (par->Input == IOT_NONE) 
@@ -815,7 +802,7 @@ void ParamsIn(SystemProc *proc)
         case PAT_CALLBACK:
             // Generate new or use old callback
             if (lstrlen(realbuf) > 0)
-                par->Value = (int) CreateCallback((SystemProc*) myatoi(realbuf));
+                par->Value = (int) CreateCallback((SystemProc*) INT_TO_POINTER(myatoi64(realbuf)));
             break;
         }
         GlobalFree(realbuf);
@@ -876,7 +863,7 @@ void ParamsOut(SystemProc *proc)
             break;
         case PAT_STRING:
             {
-                int num = lstrlen(*((char**) place));
+                unsigned num = lstrlen(*((char**) place));
                 if (num >= g_stringsize) num = g_stringsize-1;
                 lstrcpyn(realbuf,*((char**) place), num+1);
                 realbuf[num] = 0;                
@@ -904,376 +891,14 @@ void ParamsOut(SystemProc *proc)
 
         // Step 2: place it
         if (proc->Params[i].Output == IOT_NONE);
-        else if (proc->Params[i].Output == IOT_STACK) pushstring(realbuf);
-        else if (proc->Params[i].Output > 0) setuservariable(proc->Params[i].Output - 1, realbuf);
+        else if (proc->Params[i].Output == IOT_STACK) system_pushstring(realbuf);
+        else if (proc->Params[i].Output > 0) system_setuservariable(proc->Params[i].Output - 1, realbuf);
 
         GlobalFree(realbuf);
 
         i--;
     } 
     while (i >= 0);
-}
-
-void _alloca_probe();
-
-SystemProc __declspec(naked) *CallProc(SystemProc *proc)
-{
-    int z3;
-
-    _asm
-    {
-        // Save stack
-        push    ebp
-        mov     ebp, esp
-        // Stack space for local variables
-        sub     esp, __LOCAL_SIZE   
-        // Save all usable registers to free our hands
-        push    ebx
-        push    edi
-        push    esi
-    }
-
-    SYSTEM_LOG_ADD("\t\tCall:\n");
-    SYSTEM_EVENT("\t\t\tBefore call        ")
-
-    if (CallbackIndex && (!(proc->Options & POPT_GENSTACK)))
-    {
-        _asm
-        {
-            push    ebp
-            // Save previous stack location
-            mov     LastStackReal, esp
-        }
-
-        if (LastStackPlace == 0)
-        {
-            _asm
-            {
-                // Create new stack
-                mov     eax, NEW_STACK_SIZE
-                call    _alloca_probe
-                mov     LastStackPlace, esp
-            }
-        } else
-            _asm
-            {
-                // Move stack pointer
-                mov     esp, LastStackPlace
-            }
-    }
-
-    // Push arguments to stack
-    for (z1 = proc->ParamCount; z1 > 0; z1--)
-    {
-        // Long types
-        if (proc->Params[z1].Size == 2)
-        {
-            z2 = proc->Params[z1]._value;
-            _asm    push    z2;
-        }
-        // Default
-        z2 = proc->Params[z1].Value;
-        _asm    push    z2;
-    }
-
-    // Call the proc and save return
-    z1 = (int) proc->Proc;
-
-    // Save proc
-    proc->Clone = (SystemProc *) LastProc;
-    _asm 
-    {
-        mov eax, proc
-        mov LastProc, eax
-    }
-    //LastProc = proc;
-
-    SYSTEM_EVENT("\n\t\t\tNear call          ")
-    SYSTEM_LOG_POST;
-
-    // workaround for bug #1535007
-    // http://sf.net/tracker/index.php?func=detail&aid=1535007&group_id=22049&atid=373085
-    //
-    // If a function returns short and doesn't clear eax in the process,
-    // it will only set 2 bytes of eax, and the other 2 bytes remain
-    // "random". In this case, they'll be part of the proc pointer.
-    //
-    // To avoid this, eax is cleared before the function is called. This
-    // makes sure the value eax will contain is only what the function
-    // actually sets.
-    _asm xor eax, eax
-
-    _asm
-    {
-        // Call
-        call    z1
-        // Return
-        mov     z1, eax
-        mov     z2, edx
-    }
-
-    SYSTEM_LOG_ADD("Back from ");
-    SYSTEM_LOG_ADD(LastProc->ProcName);
-    SYSTEM_EVENT("\n\t\t\tShort-After call   ")
-
-    if ((CallbackIndex) && (!(LastProc->Options & POPT_GENSTACK)))
-    {
-        _asm
-        {
-            // Restore real stack location
-            mov     LastStackPlace, esp
-            mov     esp, LastStackReal
-            pop     ebp
-        }
-    }
-
-    // Restore proc
-    _asm 
-    {
-       mov eax, LastProc
-       mov proc, eax
-    }
-//    proc = LastProc;
-    LastProc = proc->Clone;
-
-    // In case of cdecl convention we should clear stack
-    if ((proc->Options & POPT_CDECL) != 0)
-    {
-        if ((CallbackIndex > 0) && ((proc->Options & POPT_GENSTACK) == 0))
-        {
-            // In case of temporary stack
-            for (z3 = 1; z3 <= proc->ParamCount; z3++)
-                LastStackPlace += 4*proc->Params[z3].Size;
-        } else
-        {
-            // in case of real stack
-            for (z3 = 1; z3 <= proc->ParamCount; z3++)
-            {   
-                if (proc->Params[z3].Size == 2) 
-                    _asm    pop    edx;
-                _asm    pop    edx;
-            }
-        }
-    }
-
-    // In case of cleared call-proc-queue -> clear allocated stack place (more flexible)
-    if (LastProc == NULL) LastStackPlace = (int) NULL;
-
-    // Save return
-    proc->Params[0].Value = z1;
-//    if (proc->Params[0].Size == 2) 
-        proc->Params[0]._value = z2;
-    // Proc result: OK
-    proc->ProcResult = PR_OK;
-
-    // In case of POPT_ERROR -> GetLastError
-    if ((proc->Options & POPT_ERROR) != 0)
-    {
-        LastError = GetLastError();
-    }
-
-    SYSTEM_EVENT("\n\t\t\tAfter call         ")
-#ifdef SYSTEM_LOG_DEBUG
-    {
-        char buf[1024];
-        wsprintf(buf, "\n\t\t\tReturn              0x%08X    0x%08X", z1, z2);
-        SYSTEM_LOG_ADD(buf);
-    }
-#endif
-    SYSTEM_LOG_POST;
-
-    _asm 
-    {
-        // Return
-        mov     eax, proc
-        // Restore registers
-        pop     esi
-        pop     edi
-        pop     ebx
-        // Restore stack pointer
-        mov     esp, ebp
-        pop     ebp
-        // Return
-        ret
-    }
-}
-
-SystemProc __declspec(naked) *RealCallBack()
-{
-    SystemProc *proc;
-    
-    _asm 
-    {
-        // Save stack
-        push    ebp
-        mov     ebp, esp
-        // Stack space for local variables
-        sub     esp, __LOCAL_SIZE   
-        // Save all usable registers to free our hands
-        push    ebx
-        push    edi
-        push    esi
-
-        // Arguments pointer
-        mov     z2, esp    // 1-st arg - 4*4 (pushes) - 4 (return) - __LOCAL_SIZE
-        add     z2, __LOCAL_SIZE
-        add     z2, 5*4
-        // Our callback proc
-        mov     proc, eax
-    }
-
-    SYSTEM_LOG_ADD("Called callback from ");
-    SYSTEM_LOG_ADD(LastProc->ProcName);
-    SYSTEM_EVENT("\n\t\t\tShort-After call   ")
-    SYSTEM_LOG_POST;
-
-    // Find last unused clone
-    while ((proc->Clone != NULL)) proc = proc->Clone;
-    // 2. Create new clone
-    proc = (proc->Clone = GlobalCopy(proc));
-    // 3. Set clone option
-    proc->Options |= POPT_CLONE;
-
-    // Read arguments
-    proc->ArgsSize = 0;
-    for (z1 = 1; z1 <= proc->ParamCount; z1++)
-    {
-        // Default
-        proc->Params[z1].Value = *(((int*)z2)++);
-        proc->ArgsSize += 4;
-        // Long only
-        if (proc->Params[z1].Size == 2)
-        {
-            proc->Params[z1]._value = *(((int*)z2)++);
-            proc->ArgsSize += 4;
-        }
-    }
-    proc->ProcResult = PR_CALLBACK;
-
-    _asm
-    {
-        // Return
-        mov     eax, proc
-
-        // Save temporary stack info
-        push    ebp
-//        push    LastStackPlace
-        mov     LastStackPlace, esp
-        // Restore real stack
-        mov     esp, LastStackReal
-        pop     ebp
-//        pop     LastStackReal
-    }
-
-    _asm
-    {
-        // Fake return from System::Call
-
-        // Restore registers
-        pop     esi
-        pop     edi
-        pop     ebx
-        // Restore stack pointer
-        mov     esp, ebp
-        pop     ebp
-        // Return
-        ret
-    }
-}
-
-
-SystemProc __declspec(naked) *CallBack(SystemProc *proc)
-{
-    _asm 
-    {
-        // Save stack
-        push    ebp
-        mov     ebp, esp
-        // Stack space for local variables
-        sub     esp, __LOCAL_SIZE
-        // Save all usable registers to free our hands
-        push    ebx
-        push    edi
-        push    esi
-    }
-
-  // MessageBox(NULL, "cool1", "Cool", MB_OK);
-
-    SYSTEM_LOG_ADD("\t\tReturn from callback:\n");
-    SYSTEM_EVENT("\t\t\tBefore call-back   ");
-    SYSTEM_LOG_POST;
-
-    //z1 = proc->Params[0].Value;
-    //z2 = proc->Params[0]._value;
-    //z1 = &(proc->Params[0].Value);
-    _asm
-    {
-        mov eax, proc
-        add eax, SYSTEM_ZERO_PARAM_VALUE_OFFSET
-        push [eax]
-        push [eax+4]
-    }
-    
-    // Adjust return statement
-    if ((proc->Options & POPT_CDECL) == 0) retexpr[1] = proc->ArgsSize;
-    else retexpr[1] = 0x0;
-
-    // Right return statement address
-    retaddr = (HANDLE) retexpr;
-
-    // Remove unneeded callback proc
-    GlobalFree((HANDLE) proc);
-
-//    MessageBox(NULL, "cool2", "Cool", MB_OK);
-
-    _asm
-    {
-        // Prepare return
-        // callback proc result
-        pop edx
-        pop eax
-
-        // Restore temporary stack and return
-
-        // Save real stack info
-        // Save previous stack location
-//        push    LastStackReal
-        push    ebp
-        mov     LastStackReal, esp
-        // Move stack pointer
-        mov     esp, LastStackPlace
-//        pop     LastStackPlace
-        pop     ebp        
-    }
-        
-#ifdef SYSTEM_LOG_DEBUG
-    _asm
-    {
-        push eax
-        push edx
-    }
-    SYSTEM_EVENT("\n\t\t\tSh-Before call-back");
-    SYSTEM_LOG_POST;        
-    _asm
-    {
-        // callback proc result
-        pop edx
-        pop eax
-    }
-#endif
-
-    // Fake return from Callback
-    _asm {
-        // Restore registers
-        pop     esi
-        pop     edi
-        pop     ebx
-        // Restore stack pointer
-        mov     esp, ebp
-        pop     ebp
-        // Return
-        jmp     retaddr
-    }
 }
 
 HANDLE CreateCallback(SystemProc *cbproc)
@@ -1288,7 +913,8 @@ HANDLE CreateCallback(SystemProc *cbproc)
 
         mem = (char *) (cbproc->Proc = VirtualAlloc(NULL, 10, MEM_COMMIT, PAGE_EXECUTE_READWRITE));
         *(mem++) = (char) 0xB8; // Mov eax, const
-        *(((int *)mem)++) = (int) cbproc;
+        *((int *)mem) = (int) cbproc;
+        mem += sizeof(int);
         *(mem++) = (char) 0xe9; // Jmp relative
         *((int *)mem) = (int) RealCallBack;
         *((int *)mem) -= ((int) mem) + 4;
@@ -1385,16 +1011,25 @@ void CallStruct(SystemProc *proc)
     proc->Params[0].Value = (int) proc->Proc;
 }
 
-#endif /* __GNUC__ */
+/*
+Use of system _DllMainCRTStartup to avoid endless recursion for the debug
+report macro _RPT0. 
 
-BOOL WINAPI _DllMainCRTStartup(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
+The system _DllMainCRTStartup initializes the C runtime environment. 
+In particular the value for _osplatform is initialized. In the function 
+_get_winmajor called in the execution of the _RPT0 macro an assertion 
+failure is raised if _osplatform is not set. The assertion is reported by 
+the same means as used for the _RPT0 macro. This leads to an endless recursion.
+*/
+
+BOOL WINAPI DllMain(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
 {
         g_hInstance=hInst;
         
         if (ul_reason_for_call == DLL_PROCESS_ATTACH)
         {
             // change the protection of return command
-            VirtualProtect(&retexpr, sizeof(retexpr), PAGE_EXECUTE_READWRITE, &LastStackPlace);
+            VirtualProtect(&retexpr, sizeof(retexpr), PAGE_EXECUTE_READWRITE, (PDWORD)&LastStackPlace);
 
             // initialize some variables
             LastStackPlace = 0;
@@ -1409,3 +1044,139 @@ BOOL WINAPI _DllMainCRTStartup(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lp
         return TRUE;
 }
 
+/*
+Returns size by which the stack should be expanded
+*/
+unsigned int GetNewStackSize(void)
+{
+		return NEW_STACK_SIZE;
+}
+
+/*
+Returns non-zero value if GENSTACK option is set
+*/
+unsigned int GetGenStackOption(SystemProc *proc)
+{
+		return (proc->Options & POPT_GENSTACK);
+}
+
+/*
+Returns non-zero value if CDECL option is set
+*/
+unsigned int GetCDeclOption(SystemProc *proc)
+{
+		return (proc->Options & POPT_CDECL);
+}
+
+/*
+Returns non-zero value if Error option is set
+*/
+unsigned int GetErrorOption(SystemProc *proc)
+{
+		return (proc->Options & POPT_ERROR);
+}
+
+/*
+Returns offset for element Proc of SystemProc structure
+*/
+unsigned int GetProcOffset(void)
+{
+		return (unsigned int)(&(((SystemProc *)0)->Proc));
+}
+
+/*
+Returns offset for element Clone of SystemProc structure
+*/
+unsigned int GetCloneOffset(void)
+{
+		return (unsigned int)(&(((SystemProc *)0)->Clone));
+}
+
+/*
+Returns offset for element ProcName of SystemProc structure
+*/
+unsigned int GetProcNameOffset(void)
+{
+		return (unsigned int)(&(((SystemProc *)0)->ProcName));
+}
+
+/*
+Returns offset for element ArgsSize of SystemProc structure
+*/
+unsigned int GetArgsSizeOffset(void)
+{
+		return (unsigned int)(&(((SystemProc *)0)->ArgsSize));
+}
+
+/*
+Returns number of parameters
+*/
+unsigned int GetParamCount(SystemProc *proc)
+{
+		return proc->ParamCount;
+}
+
+/*
+Returns offset for element Params of SystemProc structure
+*/
+unsigned int GetParamsOffset(void)
+{
+		return (unsigned int)(&(((SystemProc *)0)->Params));
+}
+
+/*
+Returns size of ProcParameter structure
+*/
+unsigned int GetSizeOfProcParam(void)
+{
+		return (sizeof(ProcParameter));
+}
+
+
+/*
+Returns offset for element Size of ProcParameter structure
+*/
+unsigned int GetSizeOffsetParam(void)
+{
+		return (unsigned int)(&(((ProcParameter *)0)->Size));
+}
+
+/*
+Returns offset for element Value of ProcParameter structure
+*/
+unsigned int GetValueOffsetParam(void)
+{
+		return (unsigned int)(&(((ProcParameter *)0)->Value));
+}
+
+/*
+Returns offset for element _value of ProcParameter structure
+*/
+unsigned int Get_valueOffsetParam(void)
+{
+		return (unsigned int)(&(((ProcParameter *)0)->_value));
+}
+
+/*
+Sets "CLONE" option
+*/
+void SetCloneOption(SystemProc *proc)
+{
+	proc->Options |= POPT_CLONE;
+}
+
+/*
+Sets Result of procedure call to be "OK"
+*/
+void SetProcResultOk(SystemProc *proc)
+{
+	proc->ProcResult = PR_OK;
+}
+
+/*
+Sets Result of procedure call to be "CALLBACK"
+*/
+void SetProcResultCallback(SystemProc *proc)
+{
+	proc->ProcResult = PR_CALLBACK;
+}

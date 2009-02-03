@@ -3,7 +3,7 @@
  * 
  * This file is a part of NSIS.
  * 
- * Copyright (C) 1999-2008 Nullsoft and Contributors
+ * Copyright (C) 1999-2009 Nullsoft and Contributors
  * 
  * Licensed under the zlib/libpng license (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,8 +59,8 @@ NLFString NLFStrings[NLF_STRINGS] = {
   {"^BackBtn", "< &Back", NONE_STATIC},
   {"^NextBtn", "&Next >", NONE_STATIC},
   {"^AgreeBtn", "I &Agree", NONE_STATIC},
-  {"^AcceptBtn", "I &accept the terms in the License Agreement", NONE_STATIC},
-  {"^DontAcceptBtn", "I &do not accept the terms in the License Agreement", NONE_STATIC},
+  {"^AcceptBtn", "I &accept the terms of the License Agreement", NONE_STATIC},
+  {"^DontAcceptBtn", "I &do not accept the terms of the License Agreement", NONE_STATIC},
   {"^InstallBtn", "&Install", NONE_STATIC},
   {"^UninstallBtn", "&Uninstall", NONE_STATIC},
   {"^CancelBtn", "Cancel", NONE_STATIC},

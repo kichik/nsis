@@ -10,9 +10,7 @@
 //  LangDLL:LangDialog "Language Selection" "Choose a language" 2F French 1036 English 1033 12 Garamond
 
 
-#include "../ExDLL/exdll.h"
-
-int myatoi(char *s);
+#include <pluginapi.h> // nsis plugin
 
 HINSTANCE g_hInstance;
 HWND g_hwndParent;
@@ -61,7 +59,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       SendDlgItemMessage(hwndDlg, IDC_APPICON, STM_SETICON, (LPARAM)LoadIcon(GetModuleHandle(0),MAKEINTRESOURCE(103)), 0);
       // set font
       if (dofont && !popstring(temp)) {
-        size = myatoi(temp);
+        size = myatou(temp);
         if (!popstring(temp)) {
           LOGFONT f = {0,};
           if (lstrcmp(temp, "MS Shell Dlg")) {
@@ -159,7 +157,7 @@ void __declspec(dllexport) LangDialog(HWND hwndParent, int string_size,
       pop_empty_string = TRUE;
     } else {
       // use counts languages
-      langs_num = myatoi(temp);
+      langs_num = myatou(temp);
     }
 
     // zero languages?
@@ -174,20 +172,20 @@ void __declspec(dllexport) LangDialog(HWND hwndParent, int string_size,
 
     // fill language struct
     for (i = 0; i < langs_num; i++) {
-      if (popstring(temp)) return;
+      if (popstring(temp)) { visible_langs_num = 0; break; }
       langs[visible_langs_num].name = GlobalAlloc(GPTR, lstrlen(temp)+1);
-      if (!langs[visible_langs_num].name) return;
+      if (!langs[visible_langs_num].name) { visible_langs_num = 0; break; }
       lstrcpy(langs[visible_langs_num].name, temp);
 
-      if (popstring(temp)) return;
+      if (popstring(temp)) { visible_langs_num = 0; break; }
       langs[visible_langs_num].id = GlobalAlloc(GPTR, lstrlen(temp)+1);
-      if (!langs[visible_langs_num].id) return;
+      if (!langs[visible_langs_num].id) { visible_langs_num = 0; break; }
       lstrcpy(langs[visible_langs_num].id, temp);
 
       if (docp)
       {
-        if (popstring(temp)) return;
-        langs[visible_langs_num].cp = myatoi(temp);
+        if (popstring(temp)) { visible_langs_num = 0; break; }
+        langs[visible_langs_num].cp = myatou(temp);
       }
 
       if (!docp || langs[visible_langs_num].cp == GetACP() || langs[visible_langs_num].cp == 0)
@@ -203,7 +201,9 @@ void __declspec(dllexport) LangDialog(HWND hwndParent, int string_size,
 
     // pop the empty string to keep the stack clean
     if (pop_empty_string) {
-      if (popstring(temp)) return;
+      if (popstring(temp)) {
+        visible_langs_num = 0;
+      }
     }
 
     // start dialog
@@ -222,8 +222,8 @@ void __declspec(dllexport) LangDialog(HWND hwndParent, int string_size,
 
     // free structs
     for (i = 0; i < visible_langs_num; i++) {
-      GlobalFree(langs[i].name);
-      GlobalFree(langs[i].id);
+      if (langs[i].name) GlobalFree(langs[i].name);
+      if (langs[i].id) GlobalFree(langs[i].id);
     }
     GlobalFree(langs);
   }
@@ -233,16 +233,4 @@ BOOL WINAPI DllMain(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
 {
   g_hInstance=hInst;
 	return TRUE;
-}
-
-int myatoi(char *s)
-{
-  unsigned int v=0;
-  for (;;) {
-    int c=*s++ - '0';
-    if (c < 0 || c > 9) break;
-    v*=10;
-    v+=c;
-  }
-  return (int)v;
 }

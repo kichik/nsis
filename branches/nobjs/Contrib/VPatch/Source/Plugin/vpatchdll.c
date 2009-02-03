@@ -25,9 +25,9 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include <pluginapi.h> // nsis plugin
 #include "apply_patch.h"
 #include "checksum.h"
-#include "../../../ExDLL/exdll.h"
 
 /* ------------------------ Plug-in code ------------------------- */
 

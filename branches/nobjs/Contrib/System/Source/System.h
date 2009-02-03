@@ -28,18 +28,18 @@
 #define PR_CALLBACK     1
 
 // Real world argument types
-#define	PAT_VOID		0
-#define PAT_INT		    1
-#define	PAT_LONG		2
-#define PAT_STRING	    3
-#define PAT_WSTRING	    4
-#define PAT_GUID	    5
+#define PAT_VOID        0
+#define PAT_INT         1
+#define PAT_LONG        2
+#define PAT_STRING      3
+#define PAT_WSTRING     4
+#define PAT_GUID        5
 #define PAT_CALLBACK    6
 
 // Input/Output Source/Destination
-#define	IOT_NONE    0
-#define	IOT_STACK	-1
-#define	IOT_REG		1
+#define IOT_NONE    0
+#define IOT_STACK   -1
+#define IOT_REG     1
 #define IOT_INLINE  (__INST_LAST+1) // should replace pointer to inline input
 // #define INLINE_INPUT -> any other value, will contain pointer to input string
 
@@ -56,17 +56,13 @@
 // Our single proc parameter
 typedef struct
 {
-	int Type;
-	int Option; // -1 -> Pointer, 1-... -> Special+1
-
-    // if you'll change ProcParameter or SystemProc structure - update this value
-#define  SYSTEM_ZERO_PARAM_VALUE_OFFSET 0x820
-
-	int Value;	// it can hold any 4 byte value 
+    int Type;
+    int Option; // -1 -> Pointer, 1-... -> Special+1
+    int Value;  // it can hold any 4 byte value 
     int _value; // value buffer for structures > 4 bytes (I hope 8 bytes will be enough)
     int Size; // Value real size (should be either 1 or 2 (the number of pushes))
     int Input;
-	int Output;
+    int Output;
     HGLOBAL allocatedBlock; // block allocated for passing string, wstring or guid param
 } ProcParameter;
 
@@ -75,16 +71,16 @@ typedef struct
 typedef struct tag_SystemProc SystemProc;
 struct tag_SystemProc
 {
-	int ProcType;
+    int ProcType;
     int ProcResult;
     char DllName[1024];
     char ProcName[1024];
-	HANDLE Dll;
-	HANDLE Proc;
+    HANDLE Dll;
+    HANDLE Proc;
     int Options;
-	int ParamCount;
+    int ParamCount;
     // if you'll change ProcParameter or SystemProc structure - update SYSTEM_ZERO_PARAM_VALUE_OFFSET value
-	ProcParameter Params[100];	// I hope nobody will use more than 100 params
+    ProcParameter Params[100];  // I hope nobody will use more than 100 params
 
     // Callback specific
     int CallbackIndex;

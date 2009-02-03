@@ -1,5 +1,5 @@
 #include <windows.h>
-#include "../ExDLL/exdll.h"
+#include <pluginapi.h> // nsis plugin
 typedef BOOL (WINAPI*CHECKTOKENMEMBERSHIP)(HANDLE TokenHandle,PSID SidToCheck,PBOOL IsMember);
 CHECKTOKENMEMBERSHIP _CheckTokenMembership=NULL;
 

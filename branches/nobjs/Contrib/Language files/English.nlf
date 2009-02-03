@@ -44,9 +44,9 @@ $(^Name) Uninstall
 # ^AgreeBtn
 I &Agree
 # ^AcceptBtn
-I &accept the terms in the License Agreement
+I &accept the terms of the License Agreement
 # ^DontAcceptBtn
-I &do not accept the terms in the License Agreement
+I &do not accept the terms of the License Agreement
 # ^InstallBtn
 &Install
 # ^UninstallBtn

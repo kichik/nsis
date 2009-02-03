@@ -3,7 +3,7 @@
  * 
  * This file is a part of NSIS.
  * 
- * Copyright (C) 1999-2008 Nullsoft and Contributors
+ * Copyright (C) 1999-2009 Nullsoft and Contributors
  * 
  * Licensed under the zlib/libpng license (the "License");
  * you may not use this file except in compliance with the License.
@@ -483,33 +483,6 @@ typedef struct {
 
 #define NSIS_INSTDIR_INVALID 1
 #define NSIS_INSTDIR_NOT_ENOUGH_SPACE 2
-
-typedef struct
-{
-  int autoclose;
-  int all_user_var;
-  int exec_error;
-  int abort;
-#ifdef NSIS_SUPPORT_REBOOT
-  int exec_reboot;
-  int reboot_called;
-#else
-  int _;
-  int __;
-#endif
-  int XXX_cur_insttype; // depreacted
-  int XXX_insttype_changed; // deprecated
-#ifdef NSIS_CONFIG_SILENT_SUPPORT
-  int silent;
-#else
-  int ___;
-#endif
-  int instdir_error;
-  int rtl;
-  int errlvl;
-  int alter_reg_view;
-  int status_update;
-} exec_flags;
 
 #define FIELDN(x, y) (((int *)&x)[y])
 

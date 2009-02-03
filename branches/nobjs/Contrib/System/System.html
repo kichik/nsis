@@ -128,7 +128,6 @@ System::<b>Free</b> $0
 <li>To push $0-$9 and $R0-$R9 to System's private stack, use s or S.</li>
 <li>To pop $0-$9 and $R0-$R9 from System's private stack, use l or L.</li>
 </ul>
-<p>Note that the System's private stack will be lost when the System plug-in is unloaded from NSIS. If you want to use it, you must keep the System plug-in loaded into NSIS. To do that, use SetPluginUnload or the /NOUNLOAD flag in the NSIS script.</p>
 <h4>Usage Examples</h4>
 <blockquote><pre>
 StrCpy $0 "test"
@@ -143,7 +142,7 @@ DetailPrint "$2 = $R2"
 </pre></blockquote>
 <blockquote><pre>
 StrCpy $3 "test"
-System::<b>Store</b> /NOUNLOAD "s"
+System::<b>Store</b> "s"
 StrCpy $3 "another test"
 System::<b>Store</b> "l"
 DetailPrint $3
@@ -247,8 +246,12 @@ DetailPrint $4
 <td>large integer, int64</td>
 </tr>
 <tr>
+<th>m</th>
+<td>ANSI text, string. (FYI: 'm' for multibyte string or 'w' flipped over.)</td>
+</tr>
+<tr>
 <th>t</th>
-<td>text, string (pointer to first character)</td>
+<td>text, string (pointer to first character). <i>Like TCHAR*, it is a Unicode string in Unicode NSIS.</i></td>
 </tr>
 <tr>
 <th>w</th>
@@ -376,8 +379,7 @@ DetailPrint "UseCallback passed ($0, $1) to the callback"
 
 <p>After you've processed the callback call, you should use <a href="#callfuncs">Call</a>, passing it the value returned by <a href="#callfuncs">Get</a> - the callback. This tells System to return from the callback. Destination of the return "parameter" must be cleared prior to calling a function, to avoid false detection of a callback call. If you've specified a source for the return "parameter" when the callback was created, you should fill that source with the appropriate return value. Callbacks are not automatically freed, don't forget to free it after you've finished using it.</p>
 
-<blockquote><pre>SetPluginUnload alwaysoff
-System::Get "(i .r0, i .r1) isR0"
+<blockquote><pre>System::Get "(i .r0, i .r1) isR0"
 Pop $0
 System::Call "dll::UseCallback(k r0)"
 loop:
@@ -388,7 +390,6 @@ loop:
 	System::Call $0 # tell system to return from the callback
 	Goto loop
 done:
-SetPluginUnload manual
 System::Free $0
 </pre></blockquote>
 
@@ -401,7 +402,6 @@ System::Free $0
 <blockquote>
 <ul>
 <li>To find out the index of a member in a COM interface, you need to search for the definition of this COM interface in the header files that come with Visual C/C++ or the Platform SDK. Remember the index is zero based.</li>
-<li>Always remember to use NSIS's /NOUNLOAD switch or SetPluginUnload when working with callbacks. The System plug-in will not be able to process the callback calls right if it's unloaded.</li>
 <li>If a function can't be found, an `A' will be appended to its name and it will be looked up again. This is done because a lot of Windows API functions have two versions, one for ANSI strings and one for Unicode strings. The ANSI version of the function is marked with `A' and the Unicode version is marked with `W'. For example: lstrcpyA and lstrcpyW.</li>
 </ul>
 </blockquote>
@@ -508,8 +508,7 @@ System::<b>Call</b> "MyDLL::MyFunc(i 5) ? u"
 Delete $PLUGINSDIR\MyDLL.dll
 </pre></blockquote>
 <blockquote><pre>
-<a name="callback"></a>SetPluginUnload alwaysoff
-System::<b>Get</b> "(i.r1, i) iss"
+<a name="callback"></a>System::<b>Get</b> "(i.r1, i) iss"
 Pop $R0
 System::<b>Call</b> "user32::EnumChildWindows(i $HWNDPARENT, k R0, i) i.s"
 loop:
@@ -523,7 +522,6 @@ loop:
 	System::<b>Call</b> "$R0"
 	Goto loop
 done:
-SetPluginUnload manual
 System::Free $R0
 </pre></blockquote>
 <blockquote><pre>

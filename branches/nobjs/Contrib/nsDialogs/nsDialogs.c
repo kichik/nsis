@@ -1,7 +1,8 @@
 #include <windows.h>
 
+#include <pluginapi.h> // nsis plugin
+
 #include "defs.h"
-#include "nsis.h"
 #include "input.h"
 #include "rtl.h"
 
@@ -57,6 +58,22 @@ BOOL CALLBACK ParentProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
   return res;
 }
 
+LRESULT CALLBACK LinkWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+  struct nsControl* ctl = GetControl(hwnd);
+
+  if(ctl == NULL)
+    return 0;
+
+  if(message == WM_SETCURSOR)
+  {
+    SetCursor(LoadCursor(NULL, IDC_HAND));
+    return TRUE;
+  }
+
+  return CallWindowProc(ctl->oldWndProc, hwnd, message, wParam, lParam);
+}
+
 BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   switch (uMsg)
@@ -70,7 +87,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       if (ctl == NULL)
         break;
 
-      if (HIWORD(wParam) == BN_CLICKED && ctl->type == NSCTL_BUTTON)
+      if (HIWORD(wParam) == BN_CLICKED && (ctl->type == NSCTL_BUTTON || ctl->type == NSCTL_LINK))
       {
         if (ctl->callbacks.onClick)
         {
@@ -82,34 +99,34 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       {
         if (ctl->callbacks.onChange)
         {
-          pushint((int) hwCtl);
-          g_pluginParms->ExecuteCodeSegment(ctl->callbacks.onChange - 1, 0);
-        }
+        pushint((int) hwCtl);
+        g_pluginParms->ExecuteCodeSegment(ctl->callbacks.onChange - 1, 0);
+      }
       }
       else if (HIWORD(wParam) == LBN_SELCHANGE && ctl->type == NSCTL_LISTBOX)
       {
         if (ctl->callbacks.onChange)
         {
-          pushint((int) hwCtl);
-          g_pluginParms->ExecuteCodeSegment(ctl->callbacks.onChange - 1, 0);
-        }
+        pushint((int) hwCtl);
+        g_pluginParms->ExecuteCodeSegment(ctl->callbacks.onChange - 1, 0);
+      }
       }
       else if ((HIWORD(wParam) == CBN_EDITUPDATE || HIWORD(wParam) == CBN_SELCHANGE)
                 && ctl->type == NSCTL_COMBOBOX)
       {
         if (ctl->callbacks.onChange)
         {
-          pushint((int) hwCtl);
-          g_pluginParms->ExecuteCodeSegment(ctl->callbacks.onChange - 1, 0);
-        }
+        pushint((int) hwCtl);
+        g_pluginParms->ExecuteCodeSegment(ctl->callbacks.onChange - 1, 0);
+      }
       }
       else if (HIWORD(wParam) == STN_CLICKED && ctl->type == NSCTL_STATIC)
       {
         if (ctl->callbacks.onClick)
         {
-          pushint((int) hwCtl);
-          g_pluginParms->ExecuteCodeSegment(ctl->callbacks.onClick - 1, 0);
-        }
+        pushint((int) hwCtl);
+        g_pluginParms->ExecuteCodeSegment(ctl->callbacks.onClick - 1, 0);
+      }
       }
 
       break;
@@ -204,9 +221,25 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_CTLCOLORLISTBOX:
       // let the NSIS window handle colors, it knows best
       return SendMessage(g_dialog.hwParent, uMsg, wParam, lParam);
+
+    // bye bye
+    case WM_DESTROY:
+    {
+      unsigned i;
+      for (i = 0; i < g_dialog.controlCount; i++)
+      {
+        RemoveProp(g_dialog.controls[i].window, NSCONTROL_ID_PROP);
+      }
+      break;
+    }
   }
 
   return FALSE;
+}
+
+static UINT_PTR PluginCallback(enum NSPIM msg)
+{
+  return 0;
 }
 
 void __declspec(dllexport) Create(HWND hwndParent, int string_size, char *variables, stack_t **stacktop, extra_parameters *extra)
@@ -215,6 +248,8 @@ void __declspec(dllexport) Create(HWND hwndParent, int string_size, char *variab
   RECT rcPlacement;
 
   EXDLL_INIT();
+
+  extra->RegisterPluginCallback(g_hInstance, PluginCallback);
 
   g_dialog.hwParent = hwndParent;
   g_pluginParms = extra;
@@ -248,6 +283,8 @@ void __declspec(dllexport) Create(HWND hwndParent, int string_size, char *variab
   g_dialog.controlCount = 0;
   g_dialog.controls = (struct nsControl*) HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, 0);
 
+  g_dialog.callbacks.onBack = 0;
+
   pushint((int) g_dialog.hwDialog);
 }
 
@@ -272,19 +309,19 @@ void __declspec(dllexport) CreateControl(HWND hwndParent, int string_size, char 
     return;
   }
 
-  if (popstring(className, 0))
+  if (popstringn(className, 0))
   {
     pushstring("error");
     HeapFree(GetProcessHeap(), 0, className);
     return;
   }
 
-  style = (DWORD) popint();
-  exStyle = (DWORD) popint();
+  style = (DWORD) popint_or();
+  exStyle = (DWORD) popint_or();
 
   PopPlacement(&x, &y, &width, &height);
 
-  if (popstring(text, 0))
+  if (popstringn(text, 0))
   {
     pushstring("error");
     HeapFree(GetProcessHeap(), 0, className);
@@ -315,6 +352,8 @@ void __declspec(dllexport) CreateControl(HWND hwndParent, int string_size, char 
     g_dialog.controls[id].type = NSCTL_RICHEDIT2;
   else if (!lstrcmpi(className, "STATIC"))
     g_dialog.controls[id].type = NSCTL_STATIC;
+  else if (!lstrcmpi(className, "LINK"))
+    g_dialog.controls[id].type = NSCTL_LINK;
   else
     g_dialog.controls[id].type = NSCTL_UNKNOWN;
 
@@ -326,7 +365,7 @@ void __declspec(dllexport) CreateControl(HWND hwndParent, int string_size, char 
 
   hwItem = CreateWindowEx(
     exStyle,
-    className,
+    lstrcmpi(className, "LINK") ? className : "BUTTON",
     text,
     style,
     x, y, width, height,
@@ -344,6 +383,11 @@ void __declspec(dllexport) CreateControl(HWND hwndParent, int string_size, char 
   // set font
 
   SendMessage(hwItem, WM_SETFONT, SendMessage(g_dialog.hwParent, WM_GETFONT, 0, 0), TRUE);
+
+  // set the WndProc for the link control
+
+  if(g_dialog.controls[id].type == NSCTL_LINK)
+    g_dialog.controls[id].oldWndProc = (WNDPROC) SetWindowLong(hwItem, GWL_WNDPROC, (long) LinkWndProc);
 
   // push back result
 
@@ -384,7 +428,7 @@ void __declspec(dllexport) SetUserData(HWND hwndParent, int string_size, char *v
 
   // set user data
 
-  popstring(ctl->userData, USERDATA_SIZE);
+  popstringn(ctl->userData, USERDATA_SIZE);
 }
 
 void __declspec(dllexport) GetUserData(HWND hwndParent, int string_size, char *variables, stack_t **stacktop, extra_parameters *extra)
@@ -415,6 +459,47 @@ void __declspec(dllexport) GetUserData(HWND hwndParent, int string_size, char *v
   // return user data
 
   pushstring(ctl->userData);
+}
+
+void CALLBACK TimerProc(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
+{
+  // we use a timer proc instead of WM_TIMER to make sure no one messes with the ids but us
+  g_pluginParms->ExecuteCodeSegment(idEvent - 1, 0);
+}
+
+void __declspec(dllexport) CreateTimer(HWND hwndParent, int string_size, char *variables, stack_t **stacktop, extra_parameters *extra)
+{
+  UINT callback;
+  UINT interval;
+
+  // get info from stack
+
+  callback = popint();
+  interval = popint();
+
+  if (!callback || !interval)
+    return;
+
+  // create timer
+
+  SetTimer(
+    g_dialog.hwDialog,
+    callback,
+    interval,
+    TimerProc);
+}
+
+void nsdKillTimer(HWND hwndParent, int string_size, char *variables, stack_t **stacktop, extra_parameters *extra)
+{
+  UINT id;
+
+  // get timer id from stack
+
+  id = popint();
+
+  // kill timer
+
+  KillTimer(g_dialog.hwDialog, id);
 }
 
 void NSDFUNC SetControlCallback(size_t callbackIdx)

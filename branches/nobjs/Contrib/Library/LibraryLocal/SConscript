@@ -15,7 +15,11 @@ libs = Split("""
 	version
 """)
 
-Import('BuildUtil BuildUtilEnv')
+libs_posix = Split("""
+	iconv
+""")
+
+Import('BuildUtil BuildUtilEnv GetAvailableLibs')
 
 env = BuildUtilEnv(flags = ['$EXCEPTION_FLAG'], cross_platform = True)
 
@@ -28,6 +32,6 @@ for s in required_files:
 	files.append(o)
 
 if env['PLATFORM'] != 'win32':
-	libs = []
+	libs = GetAvailableLibs(env, libs_posix)
 
 BuildUtil(target, files, libs, flags = ['$EXCEPTION_FLAG'], cross_platform = True)

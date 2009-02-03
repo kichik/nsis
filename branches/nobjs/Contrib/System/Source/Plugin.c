@@ -4,9 +4,6 @@
 #include "System.h"
 
 HWND g_hwndParent;
-int g_stringsize;
-stack_t **g_stacktop;
-char *g_variables;
 
 char *AllocString()
 {
@@ -18,7 +15,7 @@ char *AllocStr(char *str)
     return lstrcpy(AllocString(), str);
 }
 
-char* popstring()
+char* system_popstring()
 {
         char *str;
         stack_t *th;
@@ -34,7 +31,7 @@ char* popstring()
         return str;
 }
 
-char *pushstring(char *str)
+char *system_pushstring(char *str)
 {
         stack_t *th;
         if (!g_stacktop) return str;
@@ -45,13 +42,13 @@ char *pushstring(char *str)
         return str;
 }
 
-char *getuservariable(int varnum)
+char *system_getuservariable(int varnum)
 {
         if (varnum < 0 || varnum >= __INST_LAST) return AllocString();
         return AllocStr(g_variables+varnum*g_stringsize);
 }
 
-char *setuservariable(int varnum, char *var)
+char *system_setuservariable(int varnum, char *var)
 {
         if (var != NULL && varnum >= 0 && varnum < __INST_LAST) {
                 lstrcpy (g_variables + varnum*g_stringsize, var);
@@ -60,7 +57,7 @@ char *setuservariable(int varnum, char *var)
 }
 
 // Updated for int64 and simple bitwise operations
-__int64 myatoi(char *s)
+__int64 myatoi64(char *s)
 {
   __int64 v=0;
   // Check for right input
@@ -107,7 +104,7 @@ __int64 myatoi(char *s)
   // Support for simple ORed expressions
   if (*s == '|') 
   {
-      v |= myatoi(s+1);
+      v |= myatoi64(s+1);
   }
 
   return v;
@@ -135,21 +132,21 @@ void myitoa64(__int64 i, char *buffer)
     *buffer = 0;
 }
 
-int popint()
+int popint64()
 {
     int value;
 	char *str;
-	if ((str = popstring()) == NULL) return -1;
-	value = (int) myatoi(str);
+	if ((str = system_popstring()) == NULL) return -1;
+	value = (int) myatoi64(str);
     GlobalFree(str);
 	return value;
 }
 
-void pushint(int value)
+void system_pushint(int value)
 {
 	char buffer[1024];
 	wsprintf(buffer, "%d", value);
-	pushstring(buffer);
+	system_pushstring(buffer);
 }
 
 char *copymem(char *output, char *input, int size)
@@ -164,6 +161,11 @@ HANDLE GlobalCopy(HANDLE Old)
 {
 	SIZE_T size = GlobalSize(Old);
     return copymem(GlobalAlloc(GPTR, size), Old, (int) size);
+}
+
+UINT_PTR NSISCallback(enum NSPIM msg)
+{
+  return 0;
 }
 
 #ifdef _DEBUG

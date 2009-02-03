@@ -1,8 +1,9 @@
 #include <windows.h>
 #include <commctrl.h>
 
+#include <pluginapi.h> // nsis plugin
+
 #include "defs.h"
-#include "nsis.h"
 
 #ifndef WS_EX_RIGHT
 #  define WS_EX_RIGHT 0x1000
@@ -34,6 +35,7 @@ void NSDFUNC ConvertStyleToRTL(enum nsControlType type, LPDWORD style, LPDWORD e
 
   switch (type)
   {
+  case NSCTL_LINK:
   case NSCTL_BUTTON:
     *style ^= BS_LEFTTEXT | BS_RIGHT | BS_LEFT;
 

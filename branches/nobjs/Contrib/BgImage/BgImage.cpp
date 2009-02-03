@@ -1,6 +1,6 @@
 #include <windows.h>
 #include <mmsystem.h>
-#include "../ExDLL/exdll.h"
+#include <pluginapi.h> // nsis plugin
 
 #undef EXDLL_INIT
 
@@ -8,7 +8,7 @@
         g_stringsize=string_size; \
         g_stacktop=stacktop; }
 
-#define NSISFunc(name) extern "C" void __declspec(dllexport) name(HWND hwndParent, int string_size, char *variables, stack_t **stacktop)
+#define NSISFunc(name) extern "C" void __declspec(dllexport) name(HWND hwndParent, int string_size, char *variables, stack_t **stacktop, extra_parameters *extra)
 
 char szTemp[2048];
 HWND hWndImage, hWndParent;
@@ -58,14 +58,26 @@ unsigned int uWndWidth, uWndHeight;
 void *oldProc;
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 HBITMAP __stdcall LoadBitmapFile(long right, long bottom, BITMAP *bBitmap);
-int __stdcall myatoi(char *s);
 COLORREF GetColor();
 void __stdcall GetXY(LPPOINT lpPoint);
+
+NSISFunc(Destroy);
+
+static UINT_PTR PluginCallback(enum NSPIM msg)
+{
+  if (msg == NSPIM_GUIUNLOAD)
+  {
+    Destroy(0, 0, 0, 0, 0);
+  }
+  return 0;
+}
 
 BOOL bReturn;
 
 NSISFunc(SetReturn) {
   EXDLL_INIT();
+
+  extra->RegisterPluginCallback(g_hInstance, PluginCallback);
 
   popstring(szTemp);
   bReturn = !lstrcmpi(szTemp, "on");
@@ -83,6 +95,8 @@ static void __stdcall my_pushstring(char *str)
 
 NSISFunc(SetBg) {
   EXDLL_INIT();
+
+  extra->RegisterPluginCallback(g_hInstance, PluginCallback);
 
   ECS();
 
@@ -336,7 +350,7 @@ NSISFunc(Destroy) {
     SendMessage(hWndImage, WM_CLOSE, 0, 0);
   hWndImage = 0;
   oldProc = NULL;
-  Clear(0, 0, 0, 0);
+  Clear(0, 0, 0, 0, 0);
   UnregisterClass("NSISBGImage", g_hInstance);
 }
 
@@ -592,51 +606,6 @@ void __stdcall GetXY(LPPOINT lpPoint) {
   iPosTemp = myatoi(szTemp);
   if (iPosTemp < 0) iPosTemp = iPosTemp + (int)uWndHeight;
   lpPoint->y = (unsigned int)iPosTemp;
-}
-
-int __stdcall myatoi(char *s)
-{
-  unsigned int v=0;
-  if (*s == '0' && (s[1] == 'x' || s[1] == 'X'))
-  {
-    s+=2;
-    for (;;)
-    {
-      int c=*s++;
-      if (c >= '0' && c <= '9') c-='0';
-      else if (c >= 'a' && c <= 'f') c-='a'-10;
-      else if (c >= 'A' && c <= 'F') c-='A'-10;
-      else break;
-      v<<=4;
-      v+=c;
-    }
-  }
-  else if (*s == '0' && s[1] <= '7' && s[1] >= '0')
-  {
-    s++;
-    for (;;)
-    {
-      int c=*s++;
-      if (c >= '0' && c <= '7') c-='0';
-      else break;
-      v<<=3;
-      v+=c;
-    }
-  }
-  else
-  {
-    int sign=0;
-    if (*s == '-') { s++; sign++; }
-    for (;;)
-    {
-      int c=*s++ - '0';
-      if (c < 0 || c > 9) break;
-      v*=10;
-      v+=c;
-    }
-    if (sign) return -(int) v;
-  }
-  return (int)v;
 }
 
 extern "C" BOOL WINAPI DllMain(HINSTANCE hInst, ULONG ul_reason_for_call, LPVOID lpReserved) {

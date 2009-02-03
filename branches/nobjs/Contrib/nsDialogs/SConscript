@@ -4,7 +4,7 @@ files = Split("""
 	browse.c
 	input.c
 	nsDialogs.c
-	nsis.c
+	nsDialogs.def
 	rtl.c
 """)
 
@@ -28,6 +28,7 @@ docs = Split("""
 examples = Split("""
 	example.nsi
 	InstallOptions.nsi
+	timer.nsi
 	welcome.nsi
 """)
 

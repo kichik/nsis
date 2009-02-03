@@ -2,7 +2,7 @@
 
 #define STR_SIZE 1024
 
-void RunSelf(char cmd, char *file, int x64);
+void RegFile(char cmd, char *file, int x64);
 void RegDll(char *file);
 void RegTypeLib(char *file);
 void DeleteFileOnReboot(char *pszFile);
@@ -32,7 +32,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
   {
     HKEY rootkey;
 
-    if (SUCCEEDED(RegOpenKeyEx(HKEY_LOCAL_MACHINE, "Software\\NSIS.Library.RegTool.v2", 0, KEY_READ, &rootkey)))
+    if (SUCCEEDED(RegOpenKeyEx(HKEY_LOCAL_MACHINE, "Software\\NSIS.Library.RegTool.v3", 0, KEY_READ, &rootkey)))
     {
       char keyname[STR_SIZE];
 
@@ -61,7 +61,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
               if (FAILED(RegQueryValueEx(key, valname, NULL, &t, (LPBYTE) file, &l)) || t != REG_SZ)
                 continue;
 
-              RunSelf(mode[0], file, mode[1] == 'X');
+              RegFile(mode[0], file, mode[1] == 'X');
             }
           }
 
@@ -71,7 +71,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
       }
 
       RegCloseKey(rootkey);
-      RegDeleteKey(HKEY_LOCAL_MACHINE, "Software\\NSIS.Library.RegTool.v2");
+      RegDeleteKey(HKEY_LOCAL_MACHINE, "Software\\NSIS.Library.RegTool.v3");
     }
 
     {
@@ -121,17 +121,22 @@ void SafeWow64EnableWow64FsRedirection(BOOL Wow64FsEnableRedirection)
   }
 }
 
-void RunSelf(char cmd, char *file, int x64)
+void RegFile(char cmd, char *file, int x64)
 {
   char self[STR_SIZE];
   char cmdline[STR_SIZE];
 
   int ready = 0;
 
-  if (!*file || (cmd != 'D' && cmd != 'T'))
+  if (!*file || (cmd != 'D' && cmd != 'T' && cmd != 'E'))
     return;
 
-  if (!x64)
+  if (cmd == 'E')
+  {
+    wsprintf(cmdline, "\"%s\" /regserver", file);
+    ready++;
+  }
+  else if (!x64)
   {
     if (GetModuleFileName(GetModuleHandle(NULL), self, STR_SIZE))
     {

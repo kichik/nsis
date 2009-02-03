@@ -15,7 +15,7 @@ Nullsoft Install System %s
 # ^SetupCaption
 $(^Name) °²×°
 # ^UninstallCaption
-$(^Name) ½â³ý°²×°
+$(^Name) Ð¶ÔØ
 # ^LicenseSubCaption
 : Ðí¿ÉÖ¤Ð­Òé
 # ^ComponentsSubCaption
@@ -27,13 +27,13 @@ $(^Name) ½â³ý°²×°
 # ^CompletedSubCaption
 : ÒÑÍê³É
 # ^UnComponentsSubCaption
-: ½â³ý°²×°Ñ¡Ïî
+: Ð¶ÔØÑ¡Ïî
 # ^UnDirSubCaption
-: ½â³ý°²×°ÎÄ¼þ¼Ð
+: Ð¶ÔØÎÄ¼þ¼Ð
 # ^ConfirmSubCaption
 : È·ÈÏ
 # ^UninstallingSubCaption
-: ÕýÔÚ½â³ý°²×°
+: ÕýÔÚÐ¶ÔØ
 # ^UnCompletedSubCaption
 : Íê³É
 # ^BackBtn
@@ -49,7 +49,7 @@ $(^Name) ½â³ý°²×°
 # ^InstallBtn
 °²×°(&I)
 # ^UninstallBtn
-ÒÆ³ý(&U)
+Ð¶ÔØ(&U)
 # ^CancelBtn
 È¡Ïû(&C)
 # ^CloseBtn
@@ -63,23 +63,23 @@ $(^Name) ½â³ý°²×°
 # ^ClickInstall
 µ¥»÷ [°²×°(I)] ¿ªÊ¼°²×°½ø³Ì¡£
 # ^ClickUninstall
-µ¥»÷ [½â³ý°²×°(U)] ¿ªÊ¼½â³ý°²×°½ø³Ì¡£
+µ¥»÷ [Ð¶ÔØ(U)] ¿ªÊ¼½â³ý°²×°½ø³Ì¡£
 # ^Name
 Ãû³Æ
 # ^Completed
 ÒÑÍê³É
 # ^LicenseText
-ÔÚ°²×° $(^NameDA) Ö®Ç°Çë¼ìÔÄÐí¿ÉÖ¤Ð­Òé¡£Èç¹ûÄã½ÓÊÜÐ­ÒéÖÐËùÓÐÌõ¿î£¬µ¥»÷ [ÎÒÍ¬Òâ(I)] ¡£
+ÔÚ°²×° $(^NameDA) Ö®Ç°Çë¼ìÔÄÐí¿ÉÖ¤Ð­Òé¡£Èç¹ûÄã½ÓÊÜÐ­ÒéÖÐËùÓÐÌõ¿î£¬µ¥»÷ [ÎÒ½ÓÊÜ(I)] ¡£
 # ^LicenseTextCB
 ÔÚ°²×° $(^NameDA) Ö®Ç°Çë¼ìÔÄÐí¿ÉÖ¤Ð­Òé¡£Èç¹ûÄã½ÓÊÜÐ­ÒéÖÐËùÓÐÌõ¿î£¬µ¥»÷ÏÂ·½µÄ¹´Ñ¡¿ò¡£ $_CLICK
 # ^LicenseTextRB
 ÔÚ°²×° $(^NameDA) Ö®Ç°Çë¼ìÔÄÐí¿ÉÖ¤Ð­Òé¡£Èç¹ûÄã½ÓÊÜÐ­ÒéÖÐËùÓÐÌõ¿î£¬Ñ¡ÔñÏÂ·½µÄµÚÒ»¸öÑ¡Ïî¡£ $_CLICK
 # ^UnLicenseText
-ÔÚ½â³ý°²×° $(^NameDA) Ö®Ç°Çë¼ìÔÄÐí¿ÉÖ¤Ð­Òé¡£Èç¹ûÄã½ÓÊÜÐ­ÒéÖÐËùÓÐÌõ¿î£¬µ¥»÷ [ÎÒÍ¬Òâ(I)] ¡£
+ÔÚÐ¶ÔØ $(^NameDA) Ö®Ç°Çë¼ìÔÄÐí¿ÉÖ¤Ð­Òé¡£Èç¹ûÄã½ÓÊÜÐ­ÒéÖÐËùÓÐÌõ¿î£¬µ¥»÷ [ÎÒ½ÓÊÜ(I)] ¡£
 # ^UnLicenseTextCB
-ÔÚ½â³ý°²×° $(^NameDA) Ö®Ç°Çë¼ìÔÄÐí¿ÉÖ¤Ð­Òé¡£Èç¹ûÄã½ÓÊÜÐ­ÒéÖÐËùÓÐÌõ¿î£¬µ¥»÷ÏÂ·½µÄ¹´Ñ¡¿ò¡£ $_CLICK
+ÔÚÐ¶ÔØ $(^NameDA) Ö®Ç°Çë¼ìÔÄÐí¿ÉÖ¤Ð­Òé¡£Èç¹ûÄã½ÓÊÜÐ­ÒéÖÐËùÓÐÌõ¿î£¬µ¥»÷ÏÂ·½µÄ¹´Ñ¡¿ò¡£ $_CLICK
 # ^UnLicenseTextRB
-ÔÚ½â³ý°²×° $(^NameDA) Ö®Ç°Çë¼ìÔÄÐí¿ÉÖ¤Ð­Òé¡£Èç¹ûÄã½ÓÊÜÐ­ÒéÖÐËùÓÐÌõ¿î£¬Ñ¡ÔñÏÂ·½µÄµÚÒ»¸öÑ¡Ïî¡£ $_CLICK
+ÔÚÐ¶ÔØ $(^NameDA) Ö®Ç°Çë¼ìÔÄÐí¿ÉÖ¤Ð­Òé¡£Èç¹ûÄã½ÓÊÜÐ­ÒéÖÐËùÓÐÌõ¿î£¬Ñ¡ÔñÏÂ·½µÄµÚÒ»¸öÑ¡Ïî¡£ $_CLICK
 # ^Custom
 ×Ô¶¨Òå
 # ^ComponentsText
@@ -91,13 +91,13 @@ $(^Name) ½â³ý°²×°
 # ^ComponentsSubText2
 »òÕß£¬×Ô¶¨ÒåÑ¡¶¨Ïë°²×°µÄ×é¼þ: 
 # ^UnComponentsText
-¹´Ñ¡ÄãÏëÒª½â³ý°²×°µÄ×é¼þ£¬²¢½â³ý¹´Ñ¡Äã²»Ï£Íû½â³ý°²×°µÄ×é¼þ¡£ $_CLICK
+¹´Ñ¡ÄãÏëÒªÐ¶ÔØµÄ×é¼þ£¬²¢½â³ý¹´Ñ¡Äã²»Ï£ÍûÐ¶ÔØµÄ×é¼þ¡£ $_CLICK
 # ^UnComponentsSubText1
-Ñ¡Ôñ½â³ý°²×°µÄÀàÐÍ: 
+Ñ¡ÔñÐ¶ÔØµÄÀàÐÍ: 
 # ^UnComponentsSubText2_NoInstTypes
-Ñ¡ÔñÒª½â³ý°²×°µÄ×é¼þ: 
+Ñ¡ÔñÒªÐ¶ÔØµÄ×é¼þ: 
 # ^UnComponentsSubText2
-»òÊÇ£¬Ñ¡ÔñÏëÒª½â³ý°²×°µÄ¿ÉÑ¡Ïî×é¼þ: 
+»òÊÇ£¬Ñ¡ÔñÏëÒªÐ¶ÔØµÄ¿ÉÑ¡Ïî×é¼þ: 
 # ^DirText
 Setup ½«°²×° $(^NameDA) ÔÚÏÂÁÐÎÄ¼þ¼Ð¡£Òª°²×°µ½²»Í¬ÎÄ¼þ¼Ð£¬µ¥»÷ [ä¯ÀÀ(B)] ²¢Ñ¡ÔñÆäËûµÄÎÄ¼þ¼Ð¡£ $_CLICK
 # ^DirSubText
@@ -105,19 +105,19 @@ Setup ½«°²×° $(^NameDA) ÔÚÏÂÁÐÎÄ¼þ¼Ð¡£Òª°²×°µ½²»Í¬ÎÄ¼þ¼Ð£¬µ¥»÷ [ä¯ÀÀ(B)] ²¢Ñ¡ÔñÆ
 # ^DirBrowseText
 Ñ¡ÔñÒª°²×° $(^NameDA) µÄÎÄ¼þ¼ÐÎ»ÖÃ: 
 # ^UnDirText
-Setup ½«½â³ý°²×° $(^NameDA) ÔÚÏÂÁÐÎÄ¼þ¼Ð¡£Òª½â³ý°²×°µ½²»Í¬ÎÄ¼þ¼Ð£¬µ¥»÷ [ä¯ÀÀ(B)] ²¢Ñ¡ÔñÆäËûµÄÎÄ¼þ¼Ð¡£ $_CLICK
+Setup ½«Ð¶ÔØ $(^NameDA) ÔÚÏÂÁÐÎÄ¼þ¼Ð¡£ÒªÐ¶ÔØµ½²»Í¬ÎÄ¼þ¼Ð£¬µ¥»÷ [ä¯ÀÀ(B)] ²¢Ñ¡ÔñÆäËûµÄÎÄ¼þ¼Ð¡£ $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
-Ñ¡ÔñÒª½â³ý°²×° $(^NameDA) µÄÎÄ¼þ¼ÐÎ»ÖÃ: 
+Ñ¡ÔñÒªÐ¶ÔØ $(^NameDA) µÄÎÄ¼þ¼ÐÎ»ÖÃ: 
 # ^SpaceAvailable
 "¿ÉÓÃ¿Õ¼ä: "
 # ^SpaceRequired
 "ËùÐè¿Õ¼ä: "
 # ^UninstallingText
-Õâ¸öÏòµ¼½«´ÓÄãµÄ¼ÆËã»ú½â³ý°²×° $(^NameDA) ¡£ $_CLICK
+Õâ¸öÏòµ¼½«´ÓÄãµÄ¼ÆËã»úÐ¶ÔØ $(^NameDA) ¡£ $_CLICK
 # ^UninstallingSubText
-½â³ý°²×°Ä¿Â¼: 
+Ð¶ÔØÄ¿Â¼: 
 # ^FileError
 ²»ÄÜ´ò¿ªÒªÐ´ÈëµÄÎÄ¼þ: \r\n\t"$0"\r\nµ¥»÷ [Abort] ·ÅÆú°²×°£¬\r\n [Retry] ÖØÐÂ³¢ÊÔÐ´ÈëÎÄ¼þ£¬»ò\r\n [Ignore] ºöÂÔÕâ¸öÎÄ¼þ¡£
 # ^FileError_NoIgnore
@@ -141,7 +141,7 @@ Setup ½«½â³ý°²×° $(^NameDA) ÔÚÏÂÁÐÎÄ¼þ¼Ð¡£Òª½â³ý°²×°µ½²»Í¬ÎÄ¼þ¼Ð£¬µ¥»÷ [ä¯ÀÀ(B)]
 # ^CreateShortcut
 "´´½¨¿ì½Ý·½Ê½: "
 # ^CreatedUninstaller
-"´´½¨½â³ý°²×°³ÌÐò: "
+"´´½¨Ð¶ÔØ³ÌÐò: "
 # ^Delete
 "É¾³ýÎÄ¼þ: "
 # ^DeleteOnReboot

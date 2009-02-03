@@ -27,7 +27,7 @@
 !ifdef MUI_UNLICENSEPAGE
   ${LangFileString} MUI_UNTEXT_LICENSE_TITLE "Лицензионно споразумение"
   ${LangFileString} MUI_UNTEXT_LICENSE_SUBTITLE "Моля запознайте се лицензионните условия преди да изтриете $(^NameDA)."
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "Ако приемате условията на споразуменито, натиснете $\"Съгласен$\" за да продължите. Трябва да приемете споразумението, за да изтриете $(^NameDA)." $_CLICK"
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "Ако приемате условията на споразуменито, натиснете $\"Съгласен$\" за да продължите. Трябва да приемете споразумението, за да изтриете $(^NameDA). $_CLICK"
   ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Ако приемате условията на споразумението, сложете отметка в полето по-долу. Трябва да приемете споразумението, за да изтриете $(^NameDA). $_CLICK"
   ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Ако приемате условията на споразуменито, изберете първата опция по-долу. Трябва да приемете споразумението, за да изтриете $(^NameDA). $_CLICK"
 !endif

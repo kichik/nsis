@@ -4,7 +4,7 @@ MultiUser.nsh
 
 Installer configuration for multi-user Windows environments
 
-Copyright © 2008 Joost Verburg
+Copyright 2008-2009 Joost Verburg
 
 */
 
@@ -31,10 +31,6 @@ Var MultiUser.InstallMode
 ;Command line installation mode setting
 
 !ifdef MULTIUSER_INSTALLMODE_COMMANDLINE
-  !insertmacro GetParameters
-  !ifndef MULTIUSER_NOUNINSTALL
-    !insertmacro un.GetParameters
-  !endif
   !include StrFunc.nsh
   !ifndef StrStr_INCLUDED
     ${StrStr}
@@ -430,7 +426,7 @@ Modern UI 2 page
     !insertmacro MUI_PAGE_FUNCTION_CUSTOM PRE
     !insertmacro MUI_HEADER_TEXT_PAGE $(MULTIUSER_TEXT_INSTALLMODE_TITLE) $(MULTIUSER_TEXT_INSTALLMODE_SUBTITLE)
     
-    nsDialogs::Create /NOUNLOAD 1018
+    nsDialogs::Create 1018
     Pop $MultiUser.InstallModePage
 
     ${NSD_CreateLabel} 0u 0u 300u 20u "${MULTIUSER_INSTALLMODEPAGE_TEXT_TOP}"

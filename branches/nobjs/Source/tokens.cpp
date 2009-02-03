@@ -3,7 +3,7 @@
  * 
  * This file is a part of NSIS.
  * 
- * Copyright (C) 1999-2008 Nullsoft and Contributors
+ * Copyright (C) 1999-2009 Nullsoft and Contributors
  * 
  * Licensed under the zlib/libpng license (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_BRANDINGTEXT,"BrandingText",1,1,"[/TRIM(LEFT|RIGHT|CENTER)] installer_text",TP_GLOBAL},
 {TOK_BRINGTOFRONT,"BringToFront",0,0,"",TP_CODE},
 {TOK_CALL,"Call",1,0,"function_name | [:label_name]",TP_CODE},
-{TOK_CALLINSTDLL,"CallInstDLL",2,1,"dll_path_on_target.dll [/NOUNLOAD] function",TP_CODE},
+{TOK_CALLINSTDLL,"CallInstDLL",2,1,"dll_path_on_target.dll function",TP_CODE},
 {TOK_CAPTION,"Caption",1,0,"installer_caption",TP_GLOBAL|TP_PAGEEX},
 {TOK_CHANGEUI,"ChangeUI",2,0,"(all|dlg_id) ui_file.exe",TP_GLOBAL},
 {TOK_CLEARERRORS,"ClearErrors",0,0,"",TP_CODE},
@@ -192,7 +192,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_SETFONT,"SetFont",2,1,"[/LANG=lang_id] font_face_name font_size",TP_GLOBAL},
 {TOK_SETOUTPATH,"SetOutPath",1,0,"output_path",TP_CODE},
 {TOK_SETOVERWRITE,"SetOverwrite",1,0,"on|off|try|ifnewer|ifdiff",TP_ALL},
-{TOK_SETPLUGINUNLOAD,"SetPluginUnload",1,0,"(manual|alwaysoff)",TP_ALL},
+{TOK_SETPLUGINUNLOAD,"SetPluginUnload",1,0,"deprecated - plug-ins should handle this on their own",TP_ALL},
 {TOK_SETREBOOTFLAG,"SetRebootFlag",1,0,"true|false",TP_CODE},
 {TOK_SETREGVIEW,"SetRegView",1,0,"32|64|lastused",TP_CODE},
 {TOK_SETSHELLVARCONTEXT,"SetShellVarContext",1,0,"all|current",TP_CODE},
@@ -258,6 +258,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_P_APPENDFILE,"!appendfile",2,0,"file appended_line",TP_ALL},
 
 {TOK_P_SEARCHPARSESTRING,"!searchparse",3,-1,"[/ignorecase] [/noerrors] [/file] source_string substring OUTPUTSYM1 [substring [OUTPUTSYM2 [substring ...]]]",TP_ALL},
+{TOK_P_SEARCHREPLACESTRING,"!searchreplace",4,1,"[/ignorecase] output_name source_string substring replacestring", TP_ALL},
 
 {TOK_MISCBUTTONTEXT,"MiscButtonText",0,4,"[back button text] [next button text] [cancel button text] [close button text]",TP_GLOBAL},
 {TOK_DETAILSBUTTONTEXT,"DetailsButtonText",0,1,"[details button text]",TP_PG},
