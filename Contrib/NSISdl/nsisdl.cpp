@@ -26,7 +26,7 @@
 #include "util.h"
 #include "httpget.h"
 
-#include <pluginapi.h> // nsis plugin
+#include <nsis/pluginapi.h> // nsis plugin
 
 void *operator new( unsigned int num_bytes )
 {

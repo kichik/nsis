@@ -5,7 +5,7 @@
 #define _EXDLL_H_
 
 #include <windows.h>
-#include <pluginapi.h> // nsis plugin
+#include <nsis/pluginapi.h> // nsis plugin
 
 // this may not work if /NODEFAULTLIB is used
 #ifdef _MSC_VER
