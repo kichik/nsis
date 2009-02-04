@@ -27,7 +27,7 @@
 #include "build.h"
 #include "util.h"
 
-#include "version.h"
+#include <nsis-version.h>
 
 using namespace std;
 

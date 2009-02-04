@@ -23,9 +23,13 @@ defenv.Append(CPPDEFINES = [('NSISCALL', '$STDCALL')])
 
 stub_env = defenv.Clone()
 
+stub_env.Append(CPPPATH = ['#$BUILD_CONFIG'])
+
 ### makensis environment
 
 makensis_env = defenv.Clone()
+
+makensis_env.Append(CPPPATH = ['#$BUILD_CONFIG'])
 
 ### use "$CXX -Ae" as the "$CC" compiler to build makensis
 
@@ -111,9 +115,13 @@ util_env = defenv.Clone()
 
 cp_util_env = util_env.Clone()
 
+cp_util_env.Append(CPPPATH = ['#$BUILD_CONFIG'])
+
 ### test environment
 
 test_env = defenv.Clone()
+
+test_env.Append(CPPPATH = ['#$BUILD_CONFIG'])
 
 # return
 

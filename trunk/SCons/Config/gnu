@@ -10,7 +10,7 @@ Import('FlagsConfigure')
 
 def cross_env(env):
 	if env['PLATFORM'] != 'win32':
-		env.Tool('crossmingw', toolpath = ['../Tools'])
+		env.Tool('crossmingw', toolpath = [Dir('../Tools').rdir()])
 
 ### flags
 
@@ -66,6 +66,8 @@ if defenv['DEBUG']:
 stub_env = defenv.Clone()
 cross_env(stub_env)
 
+stub_env.Append(CPPPATH = ['#$BUILD_CONFIG'])
+
 if not defenv['DEBUG']:
 	stub_env.Append(CCFLAGS = ['-Os'])                # optimize for size
 stub_env.Append(CCFLAGS = ['-Wall'])                # all warnings
@@ -83,6 +85,8 @@ stub_env.Append(LINKFLAGS = ['$MAP_FLAG'])          # generate map file
 ### makensis environment
 
 makensis_env = defenv.Clone()
+
+makensis_env.Append(CPPPATH = ['#$BUILD_CONFIG'])
 
 if not defenv['DEBUG']:
 	makensis_env.Append(CCFLAGS = ['-O2'])            # optimize
@@ -116,6 +120,8 @@ plugin_env.Append(LINKFLAGS = ['$MAP_FLAG'])        # generate map file
 ### cross-platform util environment
 
 cp_util_env = defenv.Clone()
+
+cp_util_env.Append(CPPPATH = ['#$BUILD_CONFIG'])
 
 if not defenv['DEBUG']:
 	cp_util_env.Append(CCFLAGS = ['-O2'])             # optimize
@@ -151,6 +157,7 @@ conf.Finish()
 ### test environment
 
 test_env = defenv.Clone()
+test_env.Append(CPPPATH = ['#$BUILD_CONFIG'])
 conf = FlagsConfigure(test_env)
 conf.CheckCompileFlag('-m32')
 conf.CheckLinkFlag('-m32')
@@ -168,7 +175,7 @@ conf.Finish()
 # sure the sections will be written in the correct order.
 #
 
-stub_env.Append(LINKFLAGS = '-T %s' % File('linker_script').abspath)
+stub_env.Append(LINKFLAGS = ['-T', File('linker_script').rfile()])
 
 #
 # GCC requires some functions from the CRT to be present, if certain

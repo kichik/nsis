@@ -25,7 +25,7 @@
 #include "DialogTemplate.h"
 #include "lang.h"
 #include "dirreader.h"
-#include "version.h"
+#include <nsis-version.h>
 #include "icon.h"
 #include "exehead/api.h"
 #include "exehead/resource.h"
