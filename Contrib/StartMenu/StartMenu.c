@@ -1,6 +1,6 @@
 #include <windows.h>
 #include <shlobj.h>
-#include <pluginapi.h> // nsis plugin
+#include <nsis/pluginapi.h> // nsis plugin
 #include "resource.h"
 
 HINSTANCE g_hInstance;

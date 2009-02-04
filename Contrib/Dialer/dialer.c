@@ -2,7 +2,7 @@
 #include <windows.h>
 #include <wininet.h>
 
-#include <pluginapi.h> // nsis plugin
+#include <nsis/pluginapi.h> // nsis plugin
 
 #define NSISFunction(funcname) void __declspec(dllexport) funcname(HWND hwndParent, int string_size, char *variables, stack_t **stacktop, extra_parameters *extra)
 

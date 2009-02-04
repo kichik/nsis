@@ -1,5 +1,5 @@
 #include <windows.h>
-#include <pluginapi.h> // nsis plugin
+#include <nsis/pluginapi.h> // nsis plugin
 #include "../../Source/exehead/resource.h"
 
 // Turn a pair of chars into a word

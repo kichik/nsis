@@ -3,7 +3,7 @@
 
 #include <windows.h>
 #include <windowsx.h>
-#include <pluginapi.h> // nsis plugin
+#include <nsis/pluginapi.h> // nsis plugin
 
 HINSTANCE g_hInstance;
 
