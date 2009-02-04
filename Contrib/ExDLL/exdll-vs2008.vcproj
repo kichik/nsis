@@ -76,7 +76,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib pluginapi.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib nsis\pluginapi.lib"
 				OutputFile=".\Release/exdll.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -175,7 +175,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib pluginapi.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib nsis\pluginapi.lib"
 				OutputFile=".\Debug/exdll.dll"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
@@ -249,7 +249,7 @@
 			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
-				RelativePath="pluginapi.h"
+				RelativePath="nsis\pluginapi.h"
 				>
 			</File>
 		</Filter>
