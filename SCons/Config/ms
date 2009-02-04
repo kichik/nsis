@@ -81,6 +81,8 @@ conf.Finish()
 
 stub_env = defenv.Clone()
 
+stub_env.Append(CPPPATH = ['#$BUILD_CONFIG'])
+
 if not defenv['DEBUG']:
 	stub_env.Append(CCFLAGS = ['/O1'])               # optimize for size
 stub_env.Append(CCFLAGS = ['/W3'])                 # level 3 warnings
@@ -95,6 +97,8 @@ stub_env.Append(CCFLAGS = ['/Fa${TARGET}.lst'])    # listing file name
 ### makensis environment
 
 makensis_env = defenv.Clone()
+
+makensis_env.Append(CPPPATH = ['#$BUILD_CONFIG'])
 
 if not defenv['DEBUG']:
 	makensis_env.Append(CCFLAGS = ['/O2'])           # optimize for speed
@@ -130,9 +134,13 @@ util_env.Append(LINKFLAGS = ['$MAP_FLAG'])      # generate map file
 
 cp_util_env = util_env.Clone()
 
+cp_util_env.Append(CPPPATH = ['#$BUILD_CONFIG'])
+
 ### test environment
 
 test_env = defenv.Clone()
+
+test_env.Append(CPPPATH = ['#$BUILD_CONFIG'])
 
 ### weird compiler requirements
 

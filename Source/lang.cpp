@@ -21,7 +21,7 @@
 #include "util.h"
 #include "DialogTemplate.h"
 #include "exehead/resource.h"
-#include "version.h"
+#include <nsis-version.h>
 
 using namespace std;
 

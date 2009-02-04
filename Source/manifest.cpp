@@ -16,7 +16,7 @@
 
 #include "Platform.h"
 #include "manifest.h"
-#include "version.h"
+#include <nsis-version.h>
 
 namespace manifest
 {

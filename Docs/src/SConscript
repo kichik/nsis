@@ -81,7 +81,7 @@ if build_chm:
 			Copy(build_dir, '${SOURCE.dir}/../style.css'),
 			Copy(build_dir, '${SOURCE.dir}/chmlink.js'),
 			Copy(build_dir, '${SOURCE.dir}/nsis.hhp'),
-			Action('cd "%s" && "%s" ${SOURCES.abspath}' % (build_dir, halibut[0].abspath)),
+			Action('cd "%s" && "%s" ${SOURCES.abspath}' % (build_dir, halibut[0].rfile())),
 			hhc_action
 		]
 	)
@@ -110,7 +110,7 @@ else:
 	html_builder = Builder(
 		action = [
 			Copy(build_dir, '${SOURCE.dir}/../style.css'),
-			Action('cd "%s" && "%s" ${SOURCES.abspath}' % (build_dir, halibut[0].abspath))
+			Action('cd "%s" && "%s" ${SOURCES.abspath}' % (build_dir, halibut[0].rfile()))
 		]
 	)
 	

@@ -18,7 +18,7 @@
 #include <stdio.h>
 #include "exehead/config.h"
 
-#include "version.h"
+#include <nsis-version.h>
 
 #include "build.h"
 #include "util.h"
@@ -112,7 +112,7 @@ CEXEBuild::CEXEBuild() :
   definedlist.add("NSIS_VERSION", NSIS_VERSION);
 
   // automatically generated header file containing all defines
-#include "defines.h"
+#include <nsis-defines.h>
 
   // no longer optional
   definedlist.add("NSIS_SUPPORT_STANDARD_PREDEFINES");
