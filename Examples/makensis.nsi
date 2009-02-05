@@ -156,7 +156,7 @@ ${MementoSection} "NSIS Core Files (required)" SecCore
   File ..\Include\MultiUser.nsh
   File ..\Include\VB6RunTime.nsh
   File ..\Include\Util.nsh
-  File ..\Include\WinDef.nsh
+  File ..\Include\WinCore.nsh
 
   SetOutPath $INSTDIR\Include\Win
   File ..\Include\Win\WinDef.nsh
@@ -273,9 +273,10 @@ ${MementoSection} "Script Examples" SecExample
   File ..\Examples\Plugin\extdll.inc
   File ..\Examples\Plugin\nsis.pas
 
-  File ..\Examples\Plugin\pluginapi.h
-  File ..\Examples\Plugin\pluginapi.lib
-  File ..\Examples\Plugin\api.h
+  SetOutPath $INSTDIR\Examples\Plugin\nsis
+  File ..\Examples\Plugin\nsis\pluginapi.h
+  File ..\Examples\Plugin\nsis\pluginapi.lib
+  File ..\Examples\Plugin\nsis\api.h
 
 ${MementoSectionEnd}
 
