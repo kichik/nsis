@@ -633,7 +633,7 @@ CResourceDirectory* CResourceEditor::ScanDirectory(PRESOURCE_DIRECTORY rdRoot, P
 
       if (m_bKeepData)
       {
-        if (dwOffset > m_iSize)
+        if (dwOffset > DWORD(m_iSize))
         {
           throw runtime_error("Invalid resource entry data pointer, possibly compressed resources");
         }
