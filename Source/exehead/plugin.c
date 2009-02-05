@@ -20,9 +20,9 @@
 
 typedef struct _loaded_plugin
 {
-	struct _loaded_plugin* next;
-	NSISPLUGINCALLBACK proc;
-	HMODULE dll;
+  struct _loaded_plugin* next;
+  NSISPLUGINCALLBACK proc;
+  HMODULE dll;
 }
 loaded_plugin;
 
@@ -32,66 +32,66 @@ void NSISCALL Plugins_SendMsgToAllPlugins(int msg)
 {
   loaded_plugin* p;
 
-	for (p = g_plugins; p; p = p->next)
+  for (p = g_plugins; p; p = p->next)
   {
-		p->proc(msg);
+    p->proc(msg);
   }
 }
 
 void NSISCALL Plugins_UnloadAll() 
 {
-	loaded_plugin* p = g_plugins;
+  loaded_plugin* p = g_plugins;
 
-	Plugins_SendMsgToAllPlugins(NSPIM_UNLOAD);
+  Plugins_SendMsgToAllPlugins(NSPIM_UNLOAD);
 
-	while (p)
-	{
-		loaded_plugin* oldp = p;
+  while (p)
+  {
+    loaded_plugin* oldp = p;
     p = oldp->next;
-		FreeLibrary(oldp->dll);
-		GlobalFree(oldp);
-	}
+    FreeLibrary(oldp->dll);
+    GlobalFree(oldp);
+  }
 
-	g_plugins = NULL;
+  g_plugins = NULL;
 }
 
 BOOL NSISCALL Plugins_CanUnload(HANDLE pluginHandle)
 {
   loaded_plugin* p;
 
-	for (p = g_plugins; p; p = p->next)
+  for (p = g_plugins; p; p = p->next)
   {
     if (p->dll == pluginHandle)
     {
       return FALSE;
     }
   }
-	return TRUE;
+  return TRUE;
 }
 
 int NSISCALL RegisterPluginCallback(HMODULE pluginHandle, NSISPLUGINCALLBACK proc)
 {
-	loaded_plugin* p;
+  loaded_plugin* p;
 
-	if (!Plugins_CanUnload(pluginHandle))
+  if (!Plugins_CanUnload(pluginHandle))
   {
     // already registered
     return 1;
   }
-	
-	p = (loaded_plugin*) GlobalAlloc(GPTR, sizeof(loaded_plugin));
-	if (p)
-	{
-		p->proc   = proc;
-		p->dll    = pluginHandle;
-		p->next   = g_plugins;
+  
+  p = (loaded_plugin*) GlobalAlloc(GPTR, sizeof(loaded_plugin));
+  if (p)
+  {
+    p->proc   = proc;
+    p->dll    = pluginHandle;
+    p->next   = g_plugins;
 
-		g_plugins = p;
+    g_plugins = p;
 
-		return 0;
-	}
+    return 0;
+  }
 
-	return -1;
+  return -1;
 }
 
 #endif /* #ifdef NSIS_CONFIG_PLUGIN_SUPPORT */
