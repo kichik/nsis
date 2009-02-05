@@ -680,13 +680,12 @@ defenv.Ignore('$BUILD_PREFIX', '$BUILD_PREFIX/tests')
 test_scripts_env = defenv.Clone(ENV = os.environ) # env needed for some scripts
 test_scripts_env['ENV']['NSISDIR'] = os.path.abspath(str(defenv['TESTDISTDIR']))
 test_scripts_env['ENV']['NSISCONFDIR'] = os.path.abspath(str(defenv['TESTDISTDIR']))
+test_scripts_env.PrependENVPath('PATH', os.path.abspath(str(defenv['TESTDISTDIR'])))
 
 def test_scripts(target, source, env):
 	from os import walk, sep
 
 	instdir = source[0].path
-
-	makensis = instdir + sep + 'makensis'
 
 	tdlen = len(env.subst('$TESTDISTDIR'))
 	skipped_tests = env['SKIPTESTS'].split(',')
@@ -702,9 +701,9 @@ def test_scripts(target, source, env):
 					continue
 
 				if nsif in ignored_tests:
-					cmd = env.Command(None, nsi, '-%s $SOURCE' % makensis)
+					cmd = env.Command(None, nsi, '-makensis $SOURCE')
 				else:
-					cmd = env.Command(None, nsi, '%s $SOURCE' % makensis)
+					cmd = env.Command(None, nsi, 'makensis $SOURCE')
 				AlwaysBuild(cmd)
 				env.Alias('test-scripts', cmd)
 
