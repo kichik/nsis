@@ -1,5 +1,59 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.43} 2.43
+
+Released on February 5th, 2009
+
+\S1{v2.43-rl} Release Notes
+
+\b A few minor changes were made to the new plug-in API that break backward compatibility. Header and library paths were changed and RegisterPluginCallback has changed its return value.
+
+\S1{v2.43-cl} Changelog
+
+\S2{} Minor Changes
+
+\b Added WinCore.nsh, WinDef.nsh, WinError.nsh, WinNT.nsh and WinUser.nsh for more useful Windows definitions
+
+\b Fixed a crash caused by \R{packhdr}{!packhdr} compressing resources (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=2533431}{bug #2533431})
+
+\b Minor documentation improvements (including \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=2564005}{bug #2564005})
+
+\b \L{../Docs/Modern UI 2/Readme.html}{Modern UI 2}: Fixed MUI_DIRECTORYPAGE_BGCOLOR (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=2494528}{bug #2494528})
+
+\S2{} Utilities and Plug-ins
+
+\b \L{../Docs/Banner/Readme.txt}{Banner}: Fixed installer showing on the background when Banner was used in .onInit
+
+\b \L{../Docs/makensisw/Readme.txt}{MakeNSISW}: Added Ctrl+K hotkey for build cancelation (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373088&aid=2557392}{RFE #2557392})
+
+\b \L{../Docs/nsDialogs/Readme.html}{nsDialogs}: Added NSD_SetIcon (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=2500960}{patch #2500960})
+
+\S2{} Translations
+
+\b Added Esperanto
+
+\b Bulgarian fixes
+
+\S2{} Plug-in API
+
+\b Added VS2008 project files
+
+\b Better installation of header and library files under POSIX - see INSTALL file for more information
+
+\b Header and library files were moved to a subdirectory named \e{nsis} to prevent collisions
+
+\b \e{RegisterPluginCallback} now returns \e{int} instead of \e{BOOL} for a wider range of error reporting
+
+\S2{} Build System
+
+\b Added fink's mingw prefixes (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=2495138}{bug #2495138})
+
+\b Fixed BOOL build issue on OS X (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=2497290}{bug #2497290})
+
+\b Fixed iconv dependency detection on OS X (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=2494539}{bug #2494539})
+
+\b Fixed Solaris builds (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=2497172}{patch #2497172})
+
 \H{v2.42} 2.42
 
 Released on December 20th, 2008
