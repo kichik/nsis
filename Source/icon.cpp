@@ -397,7 +397,7 @@ int generate_unicons_offsets(LPBYTE exeHeader, size_t exeHeaderSize, LPBYTE unin
       size = FIX_ENDIAN_INT32(*(LPDWORD)seeker);
       seeker += sizeof(DWORD);
 
-      if (real_size != size)
+      if (real_size < size) // uninst icon could be smaller, in case we don't have perfect matches
       {
         throw runtime_error("invalid icon size (possibly compressed icon)");
       }
