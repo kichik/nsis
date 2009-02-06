@@ -81,6 +81,8 @@ extralibs = Split("""
 """)
 
 scripts = Split("""
+	icon1.nsi
+	icon2.nsi
 	preprocessor.nsi
 	winver.nsi
 """)
