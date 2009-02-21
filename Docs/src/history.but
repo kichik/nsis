@@ -1,5 +1,21 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.44} 2.44
+
+Released on February 21st, 2009
+
+\S1{v2.44-cl} Changelog
+
+\S2{} Major Changes
+
+\b Fixed a bug introduced in 2.43 causing script build issues with some icons (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=2572035}{bug #2572035})
+
+\S2{} Minor Changes
+
+\b Fixed nsDialogs CreateTimer documentation (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=2595565}{bug #2595565})
+
+\b Global labels didn't work when declared in unused functions (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=2593369}{bug #2593369})
+
 \H{v2.43} 2.43
 
 Released on February 5th, 2009
