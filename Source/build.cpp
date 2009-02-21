@@ -1275,6 +1275,25 @@ int CEXEBuild::resolve_jump_int(const char *fn, int *a, int offs, int start, int
         {
           *a = s->code+1;     // jumps are to the absolute position, +1 (to differentiate between no jump, and jumping to offset 0)
           s->flags++;
+          if (*lname == '.')
+          {
+            // bug #2593369 - mark functions with used global labels as used
+            // XXX this puts another hole in function reference counting
+            //     a recursive function, for example, will never be optimized
+            int nf=cur_functions->getlen()/sizeof(section);
+            section *func=(section *)cur_functions->get();
+            while (nf-- > 0)
+            {
+              int fstart = func->code;
+              int fend = func->code + func->code_size;
+              if (s->code >= fstart && s->code <= fend)
+              {
+                func->flags++;
+                break;
+              }
+              func++;
+            }
+          }
           return 0;
         }
         s++;
