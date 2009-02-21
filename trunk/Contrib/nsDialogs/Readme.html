@@ -53,7 +53,7 @@ code
 <li><a href="#ref-onchange">OnChange</a></li>
 <li><a href="#ref-onclick">OnClick</a></li>
 <li><a href="#ref-onnotify">OnNotify</a></li>
-<li><a href="#ref-ontimer">OnTimer</a></li>
+<li><a href="#ref-createtimer">CreateTimer</a></li>
 <li><a href="#ref-killtimer">KillTimer</a></li>
 </ul>
 </li>
@@ -65,7 +65,7 @@ code
 <li><a href="#mref-onchange">NSD_OnChange</a></li>
 <li><a href="#mref-onclick">NSD_OnClick</a></li>
 <li><a href="#mref-onnotify">NSD_OnNotify</a></li>
-<li><a href="#mref-ontimer">NSD_OnTimer</a></li>
+<li><a href="#mref-createtimer">NSD_CreateTimer</a></li>
 <li><a href="#mref-killtimer">NSD_KillTimer</a></li>
 <li><a href="#mref-addstyle">NSD_AddStyle</a></li>
 <li><a href="#mref-addexstyle">NSD_AddExStyle</a></li>
@@ -592,9 +592,9 @@ SectionEnd</pre></blockquote>
 
 <p>Returns nothing.</p>
 
-<h3><a name="ref-ontimer"></a>OnTimer</h3>
+<h3><a name="ref-createtimer"></a>CreateTimer</h3>
 
-<p><code>nsDialogs::OnTimer <i>function_address</i> <i>timer_interval</i></code></p>
+<p><code>nsDialogs::CreateTimer <i>function_address</i> <i>timer_interval</i></code></p>
 
 <p>Sets a timer that'd call the callback function for the given control every in a constant interval. Interval times are specified in milliseconds.</p>
 
@@ -677,11 +677,11 @@ SectionEnd</pre></blockquote>
 
 <p>See <a href="#ref-onnotify">OnNotify</a> for more details.</p>
 
-<h3><a name="mref-ontimer"></a>NSD_OnTimer</h3>
+<h3><a name="mref-createtimer"></a>NSD_CreateTimer</h3>
 
-<p><code>${NSD_OnTimer} <i>function_address</i> <i>timer_interval</i></code></p>
+<p><code>${NSD_CreateTimer} <i>function_address</i> <i>timer_interval</i></code></p>
 
-<p>See <a href="#ref-ontimer">OnTimer</a> for more details.</p>
+<p>See <a href="#ref-createtimer">CreateTimer</a> for more details.</p>
 
 <h3><a name="mref-killtimer"></a>NSD_KillTimer</h3>
 
