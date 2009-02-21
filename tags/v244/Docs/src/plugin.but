@@ -1,0 +1,19 @@
+\S0{plugindlls} Plug-in DLLs
+
+The abilities of the NSIS scripting language can be extended by utilising functionality provided in a DLL file. Probably the best known example of this is the InstallOptions.dll bundled with every NSIS release.
+
+When the NSIS compiler starts it scans the plug-ins directory for DLLs and makes a list of the plug-ins found and their exported functions. During compilation if a sequence such as fred::flintstone is encountered where the compiler expected to find a language keyword the compiler will look through this list. If a list entry specifies that fred.dll exports function flintstone NSIS will pack the fred.dll file into the created installer binary.
+
+During execution of a plug-in command NSIS will unpack the necessary DLL to a temporary folder ($PLUGINSDIR), push all of the arguments specified (right-to-left order), and then execute the DLL function.
+
+\S1{usingplug} Using Plug-in Commands
+
+A plug-in call looks like this:
+
+\c InstallOptions::dialog "ini_file_location.ini"
+
+All parameters are pushed onto the stack (in this case, the plug-in function only needs one parameter). Some plug-in commands may not need any parameters on the stack, others might require more of them. To use a plug-in command you will need to read the documentation for the plug-in so that you know what parameters its functions require.
+
+\S1{calldiskplug} Calling plug-ins manually
+
+If you want to call a plug-in that is stored on user's hard drive or somewhere else, use \R{callinstdll}{CallInstDLL}. Almost all plug-ins provide installer functionality, so using plug-in commands is way easier. Using \R{callinstdll}{CallInstDLL} can be useful when you have created plug-ins that should be linked to a certain version of your application and are being copied to the installation folder.

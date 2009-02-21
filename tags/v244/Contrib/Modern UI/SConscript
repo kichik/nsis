@@ -1,0 +1,31 @@
+target = 'Modern UI'
+
+docs = Split("""
+	Changelog.txt
+	License.txt
+	Readme.html
+""")
+
+doc_images = Split("""
+	closed.gif
+	header.gif
+	open.gif
+	screen1.png
+	screen2.png
+""")
+
+contribs = Split("""
+	ioSpecial.ini
+	System.nsh
+""")
+
+
+Import('defenv')
+
+def join(prefix, list):
+	return map(lambda x: '%s/%s' % (prefix, x), list)
+
+defenv.DistributeDocs(docs, path=target)
+path = 'images'
+defenv.DistributeDocs(join(path,doc_images), path='%s/%s'%(target,path))
+defenv.DistributeContrib(contribs, path=target)
