@@ -3114,6 +3114,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           char str[MAX_LINELENGTH];
           for (;;)
           {
+            tmpstr.resize(0);
             for (;;)
             {
               str[0]=0;
@@ -3130,7 +3131,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
               if (tmpstr.getlen() || endSlash) tmpstr.add(str,strlen(str));
 
               if (!endSlash) break;
-            }            
+            }
+
+            if (!str[0] && !tmpstr.getlen()) break; // failed
 
             char *thisline=str;
             if (tmpstr.getlen()) 
@@ -3152,8 +3155,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
               else delete list;
             }
             // parse line
-
-            tmpstr.resize(0);
           }
           fclose(fp);
           if (!noErrors)
