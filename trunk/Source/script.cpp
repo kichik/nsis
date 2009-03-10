@@ -6382,7 +6382,6 @@ int CEXEBuild::do_add_file_create_dir(const string& local_dir, const string& dir
 
 
 
-
 DefineList *CEXEBuild::searchParseString(const char *source_string, LineParser *line, int parmOffs, bool ignCase, bool noErrors)
 {
   const char *tok = line->gettoken_str(parmOffs++);
@@ -6425,7 +6424,7 @@ DefineList *CEXEBuild::searchParseString(const char *source_string, LineParser *
         return NULL;
       }
       
-    }          
+    }
  
     if (defout && defout[0])
     {
