@@ -57,7 +57,7 @@
   ${LangFileString} MUI_TEXT_DIRECTORY_SUBTITLE "Aukeratu $(^NameDA) instalatzeko karpeta."
 !endif
 
-!ifdef MUI_UNDIRECTORYSPAGE
+!ifdef MUI_UNDIRECTORYPAGE
   ${LangFileString} MUI_UNTEXT_DIRECTORY_TITLE "Aukeratu ezabatuko den karpeta"
   ${LangFileString} MUI_UNTEXT_DIRECTORY_SUBTITLE "Aukeratu $(^NameDA) zein karpetatik ezabatuko den."
 !endif

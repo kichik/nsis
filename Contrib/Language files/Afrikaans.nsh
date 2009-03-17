@@ -57,7 +57,7 @@
   ${LangFileString} MUI_TEXT_DIRECTORY_SUBTITLE "Kies die gids waarin u $(^NameDA) wil installeer."
 !endif
 
-!ifdef MUI_UNDIRECTORYSPAGE
+!ifdef MUI_UNDIRECTORYPAGE
   ${LangFileString} MUI_UNTEXT_DIRECTORY_TITLE "Kies verwyderinggids"
   ${LangFileString} MUI_UNTEXT_DIRECTORY_SUBTITLE "Kies die gids waaruit u $(^NameDA) wil verwyder."
 !endif

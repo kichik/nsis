@@ -57,7 +57,7 @@
   ${LangFileString} MUI_TEXT_DIRECTORY_SUBTITLE "Pilih folder untuk memasukkan $(^NameDA)."
 !endif
 
-!ifdef MUI_UNDIRECTORYSPAGE
+!ifdef MUI_UNDIRECTORYPAGE
   ${LangFileString} MUI_UNTEXT_DIRECTORY_TITLE "Pilih Lokasi Uninstall"
   ${LangFileString} MUI_UNTEXT_DIRECTORY_SUBTITLE "Pilih folder untuk meng-uninstall $(^NameDA)."
 !endif

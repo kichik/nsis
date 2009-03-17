@@ -57,7 +57,7 @@
   ${LangFileString} MUI_TEXT_DIRECTORY_SUBTITLE "Выберите папку для установки $(^NameDA)."
 !endif
 
-!ifdef MUI_UNDIRECTORYSPAGE
+!ifdef MUI_UNDIRECTORYPAGE
   ${LangFileString} MUI_UNTEXT_DIRECTORY_TITLE "Выбор папки для удаления"
   ${LangFileString} MUI_UNTEXT_DIRECTORY_SUBTITLE "Укажите папку, из которой нужно удалить $(^NameDA)."
 !endif

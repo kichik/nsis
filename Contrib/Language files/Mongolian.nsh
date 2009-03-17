@@ -57,7 +57,7 @@
   ${LangFileString} MUI_TEXT_DIRECTORY_SUBTITLE "$(^NameDA) суулгацын суулгах замыг сонго."
 !endif
 
-!ifdef MUI_UNDIRECTORYSPAGE
+!ifdef MUI_UNDIRECTORYPAGE
   ${LangFileString} MUI_UNTEXT_DIRECTORY_TITLE "Устгацын байрлалыг сонгох"
   ${LangFileString} MUI_UNTEXT_DIRECTORY_SUBTITLE "$(^NameDA)-ыг устгах хавтсыг сонгох."
 !endif

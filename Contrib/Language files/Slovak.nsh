@@ -61,7 +61,7 @@
   ${LangFileString} MUI_TEXT_DIRECTORY_SUBTITLE "Vyberte si prieËinok, do ktorÈho chcete nainötalovaù program $(^NameDA)."
 !endif
 
-!ifdef MUI_UNDIRECTORYSPAGE
+!ifdef MUI_UNDIRECTORYPAGE
   ${LangFileString} MUI_UNTEXT_DIRECTORY_TITLE "Umiestenie programu pre odinötalovanie"
   ${LangFileString} MUI_UNTEXT_DIRECTORY_SUBTITLE "Vyberte si prieËinok, z ktorÈho chcete odinötalovaù program $(^NameDA)."
 !endif

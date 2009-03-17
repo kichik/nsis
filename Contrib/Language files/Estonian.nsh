@@ -57,7 +57,7 @@
   ${LangFileString} MUI_TEXT_DIRECTORY_SUBTITLE "Vali kaust kuhu paigaldada $(^NameDA)."
 !endif
 
-!ifdef MUI_UNDIRECTORYSPAGE
+!ifdef MUI_UNDIRECTORYPAGE
   ${LangFileString} MUI_UNTEXT_DIRECTORY_TITLE "Vali asukoht"
   ${LangFileString} MUI_UNTEXT_DIRECTORY_SUBTITLE "Vali kaust kust $(^NameDA) eemaldada."
 !endif

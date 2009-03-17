@@ -58,7 +58,7 @@
   ${LangFileString} MUI_TEXT_DIRECTORY_SUBTITLE "$(^NameDA)をインストールするフォルダを選んでください。"
 !endif
 
-!ifdef MUI_UNDIRECTORYSPAGE
+!ifdef MUI_UNDIRECTORYPAGE
   ${LangFileString} MUI_UNTEXT_DIRECTORY_TITLE "アンインストール元を選んでください。"
   ${LangFileString} MUI_UNTEXT_DIRECTORY_SUBTITLE "$(^NameDA)をアンインストールするフォルダを選んでください。"
 !endif

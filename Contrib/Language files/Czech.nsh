@@ -58,7 +58,7 @@
   ${LangFileString} MUI_TEXT_DIRECTORY_SUBTITLE "Zvolte složku, do které bude program $(^NameDA) nainstalován."
 !endif
 
-!ifdef MUI_UNDIRECTORYSPAGE
+!ifdef MUI_UNDIRECTORYPAGE
   ${LangFileString} MUI_UNTEXT_DIRECTORY_TITLE "Zvolte umístìní odinstalace"
   ${LangFileString} MUI_UNTEXT_DIRECTORY_SUBTITLE "Zvolte složku, ze které bude program $(^NameDA) odinstalován."
 !endif
