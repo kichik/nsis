@@ -57,7 +57,7 @@
   ${LangFileString} MUI_TEXT_DIRECTORY_SUBTITLE "Velg hvilken mappe du vil installere $(^NameDA) i."
 !endif
 
-!ifdef MUI_UNDIRECTORYSPAGE
+!ifdef MUI_UNDIRECTORYPAGE
   ${LangFileString} MUI_UNTEXT_DIRECTORY_TITLE "Velg mappe for avinstallasjon"
   ${LangFileString} MUI_UNTEXT_DIRECTORY_SUBTITLE "Velg mappen du vil avinstallere $(^NameDA) fra."
 !endif

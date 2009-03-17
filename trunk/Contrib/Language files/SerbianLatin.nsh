@@ -57,7 +57,7 @@
   ${LangFileString} MUI_TEXT_DIRECTORY_SUBTITLE "Izaberite folder u koji æete instalirati program $(^NameDA)."
 !endif
 
-!ifdef MUI_UNDIRECTORYSPAGE
+!ifdef MUI_UNDIRECTORYPAGE
   ${LangFileString} MUI_UNTEXT_DIRECTORY_TITLE "Izbor foldera za deinstalaciju"
   ${LangFileString} MUI_UNTEXT_DIRECTORY_SUBTITLE "Izaberite folder iz koga æete deinstalirati program $(^NameDA)."
 !endif

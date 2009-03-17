@@ -57,7 +57,7 @@
   ${LangFileString} MUI_TEXT_DIRECTORY_SUBTITLE "Veldu það skráarsafn sem þú vilt setja $(^NameDA) upp í."
 !endif
 
-!ifdef MUI_UNDIRECTORYSPAGE
+!ifdef MUI_UNDIRECTORYPAGE
   ${LangFileString} MUI_UNTEXT_DIRECTORY_TITLE "Velja fjarlægingarskáarsafn"
   ${LangFileString} MUI_UNTEXT_DIRECTORY_SUBTITLE "Veldu það skráarsafn sem þú vilt fjarlægja $(^NameDA) úr."
 !endif

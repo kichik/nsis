@@ -58,7 +58,7 @@
   ${LangFileString} MUI_TEXT_DIRECTORY_SUBTITLE "選取 $(^NameDA) 要安裝的資料夾。"
 !endif
 
-!ifdef MUI_UNDIRECTORYSPAGE
+!ifdef MUI_UNDIRECTORYPAGE
   ${LangFileString} MUI_UNTEXT_DIRECTORY_TITLE "選取解除安裝位置"
   ${LangFileString} MUI_UNTEXT_DIRECTORY_SUBTITLE "選取 $(^NameDA) 要解除安裝的資料夾。"
 !endif

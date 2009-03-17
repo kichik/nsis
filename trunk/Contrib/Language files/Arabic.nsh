@@ -58,7 +58,7 @@
   ${LangFileString} MUI_TEXT_DIRECTORY_SUBTITLE "≈Œ — «·„Ã·œ «·„—«œ  ‰’Ì» $(^NameDA) ›ÌÂ."
 !endif
 
-!ifdef MUI_UNDIRECTORYSPAGE
+!ifdef MUI_UNDIRECTORYPAGE
   ${LangFileString} MUI_UNTEXT_DIRECTORY_TITLE "≈Œ — „Êﬁ⁄ «·„“Ì·"
   ${LangFileString} MUI_UNTEXT_DIRECTORY_SUBTITLE "≈Œ — «·„Ã·œ «·–Ì ”Ì“«· „‰Â $(^NameDA)."
 !endif

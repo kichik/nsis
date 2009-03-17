@@ -67,7 +67,7 @@
   ${LangFileString} MUI_TEXT_DIRECTORY_SUBTITLE "Selectaþi directorul în care doriþi sã instalaþi $(^NameDA)."
 !endif
 
-!ifdef MUI_UNDIRECTORYSPAGE
+!ifdef MUI_UNDIRECTORYPAGE
   ${LangFileString} MUI_UNTEXT_DIRECTORY_TITLE "Selectare director de dezinstalat"
   ${LangFileString} MUI_UNTEXT_DIRECTORY_SUBTITLE "Selectaþi directorul din care doriþi sã dezinstalaþi $(^NameDA)."
 !endif

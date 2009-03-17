@@ -59,7 +59,7 @@
   ${LangFileString} MUI_TEXT_DIRECTORY_SUBTITLE "选择“$(^NameDA)”的安装文件夹。"
 !endif
 
-!ifdef MUI_UNDIRECTORYSPAGE
+!ifdef MUI_UNDIRECTORYPAGE
   ${LangFileString} MUI_UNTEXT_DIRECTORY_TITLE "选定卸载位置"
   ${LangFileString} MUI_UNTEXT_DIRECTORY_SUBTITLE "选定“$(^NameDA)”要卸载的文件夹。"
 !endif

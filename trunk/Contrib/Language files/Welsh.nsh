@@ -57,7 +57,7 @@
   ${LangFileString} MUI_TEXT_DIRECTORY_SUBTITLE "Dewis y ffolder i osod $(^NameDA)."
 !endif
 
-!ifdef MUI_UNDIRECTORYSPAGE
+!ifdef MUI_UNDIRECTORYPAGE
   ${LangFileString} MUI_UNTEXT_DIRECTORY_TITLE "Dewis Lleoliad Dadosod"
   ${LangFileString} MUI_UNTEXT_DIRECTORY_SUBTITLE "Dewis y ffolder i ddadosod $(^NameDA)."
 !endif
