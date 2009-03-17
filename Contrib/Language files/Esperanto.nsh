@@ -57,7 +57,7 @@
   ${LangFileString} MUI_TEXT_DIRECTORY_SUBTITLE "Elektu la dosierujon en kiun vi deziras instali la programon $(^NameDA)."
 !endif
 
-!ifdef MUI_UNDIRECTORYSPAGE
+!ifdef MUI_UNDIRECTORYPAGE
   ${LangFileString} MUI_UNTEXT_DIRECTORY_TITLE "Elekto de la Malinstalada Loko"
   ${LangFileString} MUI_UNTEXT_DIRECTORY_SUBTITLE "Elektu la dosierujon el kiu vi deziras malinstali la programon $(^NameDA)."
 !endif

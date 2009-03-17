@@ -57,7 +57,7 @@
   ${LangFileString} MUI_TEXT_DIRECTORY_SUBTITLE "Trieu la carpeta on instal·lar-hi l'aplicació $(^NameDA)."
 !endif
 
-!ifdef MUI_UNDIRECTORYSPAGE
+!ifdef MUI_UNDIRECTORYPAGE
   ${LangFileString} MUI_UNTEXT_DIRECTORY_TITLE "Trieu la ubicació de desinstal·lació"
   ${LangFileString} MUI_UNTEXT_DIRECTORY_SUBTITLE "Trieu la carpeta d'on desinstal·lar l'aplicació $(^NameDA)."
 !endif

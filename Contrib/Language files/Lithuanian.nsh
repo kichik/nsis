@@ -57,7 +57,7 @@
   ${LangFileString} MUI_TEXT_DIRECTORY_SUBTITLE "Pasirinkite katalogà á kûri ádiegsite $(^NameDA)."
 !endif
 
-!ifdef MUI_UNDIRECTORYSPAGE
+!ifdef MUI_UNDIRECTORYPAGE
   ${LangFileString} MUI_UNTEXT_DIRECTORY_TITLE "Pasirinkite iðtrinimo vietà"
   ${LangFileString} MUI_UNTEXT_DIRECTORY_SUBTITLE "Pasirinkite katalogà ið kurio iðtrinsite $(^NameDA)."
 !endif

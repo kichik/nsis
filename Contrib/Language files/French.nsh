@@ -57,7 +57,7 @@
   ${LangFileString} MUI_TEXT_DIRECTORY_SUBTITLE "Choisissez le dossier dans lequel installer $(^NameDA)."
 !endif
 
-!ifdef MUI_UNDIRECTORYSPAGE
+!ifdef MUI_UNDIRECTORYPAGE
   ${LangFileString} MUI_UNTEXT_DIRECTORY_TITLE "Choisissez le dossier de désinstallation"
   ${LangFileString} MUI_UNTEXT_DIRECTORY_SUBTITLE "Choisissez le dossier à partir duquel vous voulez désinstaller $(^NameDA)."
 !endif

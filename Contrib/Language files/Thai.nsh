@@ -57,7 +57,7 @@
   ${LangFileString} MUI_TEXT_DIRECTORY_SUBTITLE "เลือกแผ้มที่ต้องการติดตั้ง $(^NameDA)."
 !endif
 
-!ifdef MUI_UNDIRECTORYSPAGE
+!ifdef MUI_UNDIRECTORYPAGE
   ${LangFileString} MUI_UNTEXT_DIRECTORY_TITLE "เลือกแฟ้มที่ต้องการยกเลิกการติดตั้ง"
   ${LangFileString} MUI_UNTEXT_DIRECTORY_SUBTITLE "เลือกแฟ้มที่คุณต้องการยกเลิกการติดตั้งของ $(^NameDA)."
 !endif

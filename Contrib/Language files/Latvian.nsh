@@ -58,7 +58,7 @@
   ${LangFileString} MUI_TEXT_DIRECTORY_SUBTITLE "Izvçlieties mapi, kurâ uzstâdît '$(^NameDA)'."
 !endif
 
-!ifdef MUI_UNDIRECTORYSPAGE
+!ifdef MUI_UNDIRECTORYPAGE
   ${LangFileString} MUI_UNTEXT_DIRECTORY_TITLE "Izvçlieties atinstalçðanas mapi"
   ${LangFileString} MUI_UNTEXT_DIRECTORY_SUBTITLE "Izvçlieties mapi, no kuras notiks '$(^NameDA)' atinstalçðana."
 !endif

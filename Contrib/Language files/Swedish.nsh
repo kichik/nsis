@@ -58,7 +58,7 @@
   ${LangFileString} MUI_TEXT_DIRECTORY_SUBTITLE "Välj katalog att installera $(^NameDA) i."
 !endif
 
-!ifdef MUI_UNDIRECTORYSPAGE
+!ifdef MUI_UNDIRECTORYPAGE
   ${LangFileString} MUI_UNTEXT_DIRECTORY_TITLE "Välj avinstallationsväg"
   ${LangFileString} MUI_UNTEXT_DIRECTORY_SUBTITLE "Välj katalog att avinstallera $(^NameDA) från."
 !endif

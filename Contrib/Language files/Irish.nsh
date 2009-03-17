@@ -57,7 +57,7 @@
   ${LangFileString} MUI_TEXT_DIRECTORY_SUBTITLE "Roghnaigh an fillteán inar mian leat $(^NameDA) a shuiteáil."
 !endif
 
-!ifdef MUI_UNDIRECTORYSPAGE
+!ifdef MUI_UNDIRECTORYPAGE
   ${LangFileString} MUI_UNTEXT_DIRECTORY_TITLE "Roghnaigh Suíomh na Díshuiteála"
   ${LangFileString} MUI_UNTEXT_DIRECTORY_SUBTITLE "Roghnaigh an fillteán ar mian leat $(^NameDA) a dhíshuiteáil as."
 !endif

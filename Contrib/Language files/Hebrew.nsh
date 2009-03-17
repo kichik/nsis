@@ -57,7 +57,7 @@
   ${LangFileString} MUI_TEXT_DIRECTORY_SUBTITLE "בחר את התיקייה בה אתה מעוניין להתקין את $(^NameDA)."
 !endif
 
-!ifdef MUI_UNDIRECTORYSPAGE
+!ifdef MUI_UNDIRECTORYPAGE
   ${LangFileString} MUI_UNTEXT_DIRECTORY_TITLE "בחר מיקום להסרה"
   ${LangFileString} MUI_UNTEXT_DIRECTORY_SUBTITLE "בחר את התיקייה ממנה אתה מעוניין להסיר את $(^NameDA)."
 !endif

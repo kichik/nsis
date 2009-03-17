@@ -58,7 +58,7 @@
   ${LangFileString} MUI_TEXT_DIRECTORY_SUBTITLE "Válassza ki a(z) $(^NameDA) telepítésének mappáját."
 !endif
 
-!ifdef MUI_UNDIRECTORYSPAGE
+!ifdef MUI_UNDIRECTORYPAGE
   ${LangFileString} MUI_UNTEXT_DIRECTORY_TITLE "Telepítési hely kiválasztása"
   ${LangFileString} MUI_UNTEXT_DIRECTORY_SUBTITLE "Válassza ki a(z) $(^NameDA) telepítésének mappáját."
 !endif

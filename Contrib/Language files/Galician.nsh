@@ -57,7 +57,7 @@
   ${LangFileString} MUI_TEXT_DIRECTORY_SUBTITLE "Escolla a directória na cal desexa instalar o $(^NameDA)."
 !endif
 
-!ifdef MUI_UNDIRECTORYSPAGE
+!ifdef MUI_UNDIRECTORYPAGE
   ${LangFileString} MUI_UNTEXT_DIRECTORY_TITLE "Escolla o Local de desinstalación"
   ${LangFileString} MUI_UNTEXT_DIRECTORY_SUBTITLE "Escolla a directória de onde pretende desinstalar o $(^NameDA)."
 !endif
