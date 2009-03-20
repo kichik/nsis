@@ -247,6 +247,7 @@ class CEXEBuild {
     void PrepareHeaders(IGrowBuf *hdrbuf);
     int SetVarsSection();
     int SetManifest();
+    int UpdatePEHeader();
 
     int resolve_jump_int(const char *fn, int *a, int offs, int start, int end);
     int resolve_call_int(const char *fn, const char *str, int fptr, int *ofs);
