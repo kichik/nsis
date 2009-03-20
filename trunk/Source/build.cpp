@@ -2237,7 +2237,22 @@ int CEXEBuild::SetManifest()
     res_editor->UpdateResourceA(MAKEINTRESOURCE(24), MAKEINTRESOURCE(1), NSIS_DEFAULT_LANG, (LPBYTE) manifest.c_str(), manifest.length());
   }
   catch (exception& err) {
-    ERROR_MSG("Error while setting manifest: %s\n", err.what());
+    ERROR_MSG("Error setting manifest: %s\n", err.what());
+    return PS_ERROR;
+  }
+
+  return PS_OK;
+}
+
+int CEXEBuild::UpdatePEHeader()
+{
+  try {
+    PIMAGE_NT_HEADERS headers = CResourceEditor::GetNTHeaders(m_exehead);
+    // workaround for bug #2697027
+    headers->OptionalHeader.MajorImageVersion = 6;
+    headers->OptionalHeader.MinorImageVersion = 0;
+  } catch (std::runtime_error& err) {
+    ERROR_MSG("Error updating PE headers: %s\n", err.what());
     return PS_ERROR;
   }
 
@@ -2435,6 +2450,9 @@ int CEXEBuild::write_output(void)
     ERROR_MSG("\nError: %s\n", err.what());
     return PS_ERROR;
   }
+
+  // Final PE touch-ups
+  RET_UNLESS_OK( UpdatePEHeader() );
 
   RET_UNLESS_OK( pack_exe_header() );
 
