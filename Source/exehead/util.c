@@ -637,12 +637,12 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
         SHGetFolderPath as provided by shfolder.dll is used to get special folders
         unless the installer is running on Windows 95/98. For 95/98 shfolder.dll is
         only used for the Application Data and Documents folder (if the DLL exists).
-        Oherwise, the old SHGetSpecialFolderLocation API is called.
+        Otherwise, the old SHGetSpecialFolderLocation API is called.
 
-        There reason for not using shfolder.dll for all folders on 95/98 is that
-        some unsupported folders (such as the Start Menu folder for all users) are
-        simulated instead of returning an error so whe can fall back on the folder
-        for the current user.
+        The reason for not using shfolder.dll for all folders on 95/98 is that some
+        unsupported folders (such as the Start Menu folder for all users) are
+        simulated instead of returning an error so we can fall back on the current
+        user folder.
 
         SHGetFolderPath in shell32.dll could be called directly for Windows versions
         later than 95/98 but there is no need to do so, because shfolder.dll is still
