@@ -619,10 +619,10 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
     if (nVarIdx > NS_CODES_START)
     {
       nData = ((in[1] & 0x7F) << 7) | (in[0] & 0x7F);
-      fldrs[0] = in[0]; // current user
-      fldrs[1] = in[0] | CSIDL_FLAG_CREATE;
-      fldrs[2] = in[1]; // all users
-      fldrs[3] = in[1] | CSIDL_FLAG_CREATE;
+      fldrs[0] = in[0] | CSIDL_FLAG_CREATE; // current user
+      fldrs[1] = in[0];
+      fldrs[2] = in[1] | CSIDL_FLAG_CREATE; // all users
+      fldrs[3] = in[1];
       in += 2;
 
       if (nVarIdx == NS_SHELL_CODE)
@@ -656,8 +656,8 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
 
           // Unless the Application Data or Documents folder is requested
           (
-            (fldrs[2] == CSIDL_COMMON_APPDATA) ||
-            (fldrs[2] == CSIDL_COMMON_DOCUMENTS)
+            (fldrs[3] == CSIDL_COMMON_APPDATA) ||
+            (fldrs[3] == CSIDL_COMMON_DOCUMENTS)
           );
 
         /* Carry on... shfolder stuff is over. */
@@ -667,19 +667,19 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
           x = 4;
         }
 
-        if (fldrs[0] & 0x80)
+        if (fldrs[1] & 0x80)
         {
-          myRegGetStr(HKEY_LOCAL_MACHINE, SYSREGKEY, GetNSISStringNP(fldrs[0] & 0x3F), out, fldrs[0] & 0x40);
+          myRegGetStr(HKEY_LOCAL_MACHINE, SYSREGKEY, GetNSISStringNP(fldrs[1] & 0x3F), out, fldrs[1] & 0x40);
           if (!*out)
-            GetNSISString(out, fldrs[2]);
+            GetNSISString(out, fldrs[3]);
           x = 0;
         }
-        else if (fldrs[0] == CSIDL_SYSTEM)
+        else if (fldrs[1] == CSIDL_SYSTEM)
         {
           GetSystemDirectory(out, NSIS_MAX_STRLEN);
           x = 0;
         }
-        else if (fldrs[0] == CSIDL_WINDOWS)
+        else if (fldrs[1] == CSIDL_WINDOWS)
         {
           GetWindowsDirectory(out, NSIS_MAX_STRLEN);
           x = 0;
@@ -710,7 +710,7 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
         {
           // all users' version is CSIDL_APPDATA only for $QUICKLAUNCH
           // for normal $APPDATA, it'd be CSIDL_APPDATA_COMMON
-          if (fldrs[2] == CSIDL_APPDATA)
+          if (fldrs[3] == CSIDL_APPDATA)
           {
             mystrcat(out, QUICKLAUNCH);
           }
