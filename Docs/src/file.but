@@ -104,6 +104,7 @@ Performs a search for 'filespec', placing the first file found in filename_outpu
 \c   FindNext $0 $1
 \c   Goto loop
 \c done:
+\c FindClose $0
 
 \S2{FindNext} FindNext
 
