@@ -74,8 +74,12 @@ FILE *my_fopen(const char *path, const char *mode);
 
 #else
 
+#define my_convert(x) (x)
+#define my_convert_free(x)
+
 #define FOPEN(a, b) fopen(a, b)
 #define OPEN(a, b) open(a, b)
+
 #endif
 
 // round a value up to be a multiple of 512
@@ -142,5 +146,13 @@ RM_DEFINE_FREEFUNC(close);
 RM_DEFINE_FREEFUNC(CloseHandle);
 RM_DEFINE_FREEFUNC(fclose);
 RM_DEFINE_FREEFUNC(free);
+RM_DEFINE_FREEFUNC(my_convert_free);
+
+// Auto path conversion
+#ifndef _WIN32
+#  define PATH_CONVERT(x) x = my_convert(x); MANAGE_WITH(x, my_convert_free);
+#else
+#  define PATH_CONVERT(x)
+#endif
 
 #endif //_UTIL_H_

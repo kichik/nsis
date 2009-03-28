@@ -328,19 +328,15 @@ void my_convert_free(char *converted_path)
 
 int my_open(const char *pathname, int flags)
 {
-  char *converted_pathname = my_convert(pathname);
-
-  int result = open(converted_pathname, flags);
-  my_convert_free(converted_pathname);
+  PATH_CONVERT(pathname);
+  int result = open(pathname, flags);
   return result;
 }
 
 FILE *my_fopen(const char *path, const char *mode)
 {
-  char *converted_path = my_convert(path);
-
-  FILE *result = fopen(converted_path, mode);
-  my_convert_free(converted_path);
+  PATH_CONVERT(path);
+  FILE *result = fopen(path, mode);
   return result;
 }
 #endif//!_WIN32

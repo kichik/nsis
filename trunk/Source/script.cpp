@@ -1166,13 +1166,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_P_DELFILE:
       {
         char *file = line.gettoken_str(1);
-#ifndef _WIN32
-        file = my_convert(file);
-#endif
+        PATH_CONVERT(file);
         int result = unlink(file);
-#ifndef _WIN32
-        my_convert_free(file);
-#endif
         if (result == -1) {
           ERROR_MSG("!delfile: \"%s\" couldn't be deleted.\n", line.gettoken_str(1));
           return PS_ERROR;
@@ -2911,9 +2906,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #ifdef _WIN32
         int ret=sane_system(exec);
 #else
-        char *execfixed = my_convert(exec);
-        int ret=system(execfixed);
-        my_convert_free(execfixed);
+        PATH_CONVERT(exec);
+        int ret=system(exec);
 #endif
         if (comp == 0 && ret < cmpv);
         else if (comp == 1 && ret > cmpv);
@@ -2948,16 +2942,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         SCRIPT_MSG("!execute: \"%s\"\n",exec);
       }
     case TOK_P_ADDINCLUDEDIR:
-#ifdef _WIN32
-      include_dirs.add(line.gettoken_str(1),0);
-#else
       {
         char *f = line.gettoken_str(1);
-        char *fc = my_convert(f);
-        include_dirs.add(fc,0);
-        my_convert_free(fc);
+        PATH_CONVERT(f);
+        include_dirs.add(f,0);
       }
-#endif
     return PS_OK;
     case TOK_P_INCLUDE:
       {
@@ -2975,11 +2964,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           PRINTHELP();
         }
         
-#ifdef _WIN32
-        char *fc = f;
-#else
         char *fc = my_convert(f);
-#endif
         int included = 0;
 
         string dir = get_dir_name(fc);
@@ -2991,9 +2976,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           basedir = "";
         }
 
-#ifndef _WIN32
         my_convert_free(fc);
-#endif
 
         // search working directory
           boost::scoped_ptr<dir_reader> dr( new_dir_reader() );
@@ -4550,13 +4533,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           }
 
           int tf=0;
-#ifdef _WIN32
-          int v=do_add_file(line.gettoken_str(a), attrib, 0, &tf, on);
-#else
-          char *fn = my_convert(line.gettoken_str(a));
+          char *fn = line.gettoken_str(a);
+          PATH_CONVERT(fn);
           int v=do_add_file(fn, attrib, 0, &tf, on);
-          my_convert_free(fn);
-#endif
           if (v != PS_OK) return v;
           if (tf > 1) PRINTHELP()
           if (!tf)
@@ -4608,13 +4587,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             t=buf;
           }
           int tf=0;
-#ifdef _WIN32
-          int v=do_add_file(t, attrib, rec, &tf, NULL, which_token == TOK_FILE, NULL, excluded);
-#else
           char *fn = my_convert(t);
           int v=do_add_file(fn, attrib, rec, &tf, NULL, which_token == TOK_FILE, NULL, excluded);
           my_convert_free(fn);
-#endif
           if (v != PS_OK) return v;
           if (!tf)
           {
@@ -5836,13 +5811,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       if (line.getnumtokens() == 2)
       {
         SCRIPT_MSG("PluginDir: \"%s\"\n",line.gettoken_str(1));
-#ifdef _WIN32
-        m_plugins.FindCommands(line.gettoken_str(1), display_info?true:false);
-#else
-        char *converted_path = my_convert(line.gettoken_str(1));
-        m_plugins.FindCommands(converted_path, display_info?true:false);
-        my_convert_free(converted_path);
-#endif
+        char *path = line.gettoken_str(1);
+        PATH_CONVERT(path);
+        m_plugins.FindCommands(path, display_info?true:false);
         return PS_OK;
       }
     }
