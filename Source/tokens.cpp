@@ -24,10 +24,10 @@
 typedef struct 
 {
   int id;
-  char *name;
+  const char *name;
   int num_parms; // minimum number of parameters
   int opt_parms; // optional parmaters, usually 0, can be -1 for unlimited.
-  char *usage_str;
+  const char *usage_str;
   int placement; // where the token can be placed
 } tokenType;
 
