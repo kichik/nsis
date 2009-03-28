@@ -478,7 +478,7 @@ typedef struct {
 #define NS_LANG_CODE 255
 #define NS_CODES_START NS_SKIP_CODE
 
-#define CODE_SHORT(x) (WORD)((((WORD)x & 0x7F) | (((WORD)x & 0x3F80) << 1) | 0x8080))
+#define CODE_SHORT(x) (WORD)((((WORD)(x) & 0x7F) | (((WORD)(x) & 0x3F80) << 1) | 0x8080))
 #define MAX_CODED 16383
 
 #define NSIS_INSTDIR_INVALID 1

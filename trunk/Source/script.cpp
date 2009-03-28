@@ -52,7 +52,7 @@ using namespace std;
 
 #ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
 // Added by Sunil Kamath 11 June 2003
-char *CEXEBuild::set_file_predefine(char *filename)
+char *CEXEBuild::set_file_predefine(const char *filename)
 {
   char *oldfilename = definedlist.find("__FILE__");
   if(oldfilename)
@@ -60,7 +60,7 @@ char *CEXEBuild::set_file_predefine(char *filename)
     oldfilename = strdup(oldfilename);
     definedlist.del("__FILE__");
   }
-  char *p = strrchr(filename,'\\');
+  const char *p = strrchr(filename,'\\');
   if(p) {
     p++;
   }
@@ -81,7 +81,7 @@ void CEXEBuild::restore_file_predefine(char *oldfilename)
   }
 }
 
-char *CEXEBuild::set_timestamp_predefine(char *filename)
+char *CEXEBuild::set_timestamp_predefine(const char *filename)
 {
   char *oldtimestamp = definedlist.find("__TIMESTAMP__");
   if(oldtimestamp) {
@@ -200,7 +200,7 @@ void CEXEBuild::del_date_time_predefines()
 }
 #endif
 
-int CEXEBuild::process_script(FILE *filepointer, char *filename)
+int CEXEBuild::process_script(FILE *filepointer, const char *filename)
 {
   linecnt = 0;
   fp = filepointer;
@@ -762,7 +762,7 @@ int CEXEBuild::includeScript(char *f)
 
   int last_linecnt=linecnt;
   linecnt=0;
-  char *last_filename=curfilename;
+  const char *last_filename=curfilename;
   curfilename=f;
   FILE *last_fp=fp;
   fp=incfp;
@@ -823,9 +823,9 @@ int CEXEBuild::MacroExists(const char *macroname)
   return 0;
 }
 
-int CEXEBuild::process_oneline(char *line, char *filename, int linenum)
+int CEXEBuild::process_oneline(char *line, const char *filename, int linenum)
 {
-  char *last_filename=curfilename;
+  const char *last_filename=curfilename;
   curfilename=filename;
   int last_linecnt=linecnt;
   linecnt=linenum;
@@ -3825,7 +3825,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return add_entry(&ent);
     case TOK_SETOUTPATH:
       {
-        char *op=line.gettoken_str(1);
+        const char *op=line.gettoken_str(1);
         if (!strcmp(op,"-"))
         {
           op="$INSTDIR";
@@ -3988,7 +3988,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         struct
         {
           int id;
-          char *str;
+          const char *str;
         } list[]=
         {
           MBD(MB_ABORTRETRYIGNORE)
@@ -4661,7 +4661,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         struct
         {
           int id;
-          char *str;
+          const char *str;
         } list[]=
         {
           MBD(FILE_ATTRIBUTE_NORMAL)
@@ -4967,8 +4967,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_DELETEINISEC:
     case TOK_DELETEINISTR:
       {
-        char *vname="";
-        char *space="";
+        const char *vname="";
+        const char *space="";
         ent.which=EW_WRITEINI;
         ent.offsets[0]=add_string(line.gettoken_str(2)); // section name
         if (line.getnumtokens() > 3)
@@ -5475,7 +5475,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return add_entry(&ent);
     case TOK_FILESEEK:
       {
-        char *modestr;
+        const char *modestr;
         int tab[3]={FILE_BEGIN,FILE_CURRENT,FILE_END};
         int mode=line.gettoken_enum(3,"SET\0CUR\0END\0");
         ent.which=EW_FSEEK;
@@ -5774,7 +5774,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           warning_fl("%s: %s language not loaded, using default \"1033-English\"", line.gettoken_str(0), line.gettoken_str(1));
 
         unsigned int codepage;
-        char *lang_name = GetLangNameAndCP(LangID, &codepage);
+        const char *lang_name = GetLangNameAndCP(LangID, &codepage);
 
         if ( rVersionInfo.SetKeyValue(LangID, codepage, pKey, pValue) )
         {

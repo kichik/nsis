@@ -933,7 +933,7 @@ int CEXEBuild::add_label(const char *name)
         if (*name == '.') ERROR_MSG("Error: global label \"%s\" already declared\n",name);
         else
         {
-          char *t = "section";
+          const char *t = "section";
           if (build_cursection_isfunc)
             t = "function";
           ERROR_MSG("Error: label \"%s\" already declared in %s\n",name,t);
@@ -1485,7 +1485,7 @@ int CEXEBuild::resolve_coderefs(const char *str)
   // resolve callbacks
   {
     struct {
-      char *name;
+      const char *name;
       int *p;
     } callbacks[] = {
       {"%s.onInit", &cur_header->code_onInit},
@@ -1604,7 +1604,7 @@ int CEXEBuild::add_page(int type)
   struct {
     int wndproc_id;
     int dlg_id;
-    char *name;
+    const char *name;
   } ids[] = {
     {PWP_CUSTOM, 0, "custom"}, // custom
 #ifdef NSIS_CONFIG_LICENSEPAGE
@@ -1680,7 +1680,7 @@ int CEXEBuild::AddVersionInfo()
           LANGID lang_id = rVersionInfo.GetLangID(i);
           int code_page = rVersionInfo.GetCodePage(i);
 
-          char *lang_name = GetLangNameAndCP(lang_id);
+          const char *lang_name = GetLangNameAndCP(lang_id);
 
           if ( !rVersionInfo.FindKey(lang_id, code_page, "FileVersion") )
             warning("Generating version information for language \"%04d-%s\" without standard key \"FileVersion\"", lang_id, lang_name);

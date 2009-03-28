@@ -37,8 +37,8 @@ typedef enum {
 } STATICID;
 
 struct NLFString {
-  char *szLangStringName;
-  char *szDefault;
+  const char *szLangStringName;
+  const char *szDefault;
   STATICID eStaticID;
 };
 
@@ -163,7 +163,7 @@ int LangStringList::add(const char *name, int *sn/*=0*/)
   return pos;
 }
 
-int LangStringList::get(char *name, int *sn/*=0*/, int *index/*=0*/, int *uindex/*=0*/, int *process/*=0*/)
+int LangStringList::get(const char *name, int *sn/*=0*/, int *index/*=0*/, int *uindex/*=0*/, int *process/*=0*/)
 {
   if (index) *index = -1;
   if (uindex) *uindex = -1;
@@ -192,7 +192,7 @@ void LangStringList::set(int pos, int index/*=-1*/, int uindex/*=-1*/, int proce
     data[pos].process = process;
 }
 
-void LangStringList::set(char *name, int index, int uindex/*=-1*/, int process/*=-1*/)
+void LangStringList::set(const char *name, int index, int uindex/*=-1*/, int process/*=-1*/)
 {
   set(get(name), index, uindex, process);
 }
@@ -272,7 +272,7 @@ void StringsArray::resize(int num)
   offsets.resize(num * sizeof(int));
 }
 
-int StringsArray::set(int idx, char *str)
+int StringsArray::set(int idx, const char *str)
 {
   if (idx < 0)
     return 0;
@@ -363,7 +363,7 @@ LanguageTable* CEXEBuild::GetLangTable(LANGID &lang, bool create/*=true*/) {
   return table;
 }
 
-char *CEXEBuild::GetLangNameAndCP(LANGID lang, unsigned int *codepage/*=NULL*/) {
+const char *CEXEBuild::GetLangNameAndCP(LANGID lang, unsigned int *codepage/*=NULL*/) {
   LanguageTable *table = GetLangTable(lang, false);
 
   if (table && table->nlf.m_bLoaded) {
@@ -383,7 +383,7 @@ char *CEXEBuild::GetLangNameAndCP(LANGID lang, unsigned int *codepage/*=NULL*/) 
   }
 }
 
-int CEXEBuild::DefineLangString(char *name, int process/*=-1*/) {
+int CEXEBuild::DefineLangString(const char *name, int process/*=-1*/) {
   int index, uindex, pos, ret, sn;
   pos = build_langstrings.get(name, &sn, &index, &uindex);
   if (pos < 0) {
@@ -822,7 +822,7 @@ void CEXEBuild::FillLanguageTable(LanguageTable *table) {
           table->lang_strings->set(sn, (char *) us);
         }
         else {
-          char *dstr = table->nlf.m_szStrings[i] ? table->nlf.m_szStrings[i] : NLFStrings[i].szDefault;
+          const char *dstr = table->nlf.m_szStrings[i] ? table->nlf.m_szStrings[i] : NLFStrings[i].szDefault;
           if (!dstr)
             continue;
           if (i == NLF_BRANDING) {

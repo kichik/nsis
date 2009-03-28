@@ -50,7 +50,7 @@ class UserVarsStringList : public SortedStringListND<struct uservarstring>
       return temp;
     }
 
-    int get(char *name, int n_chars = -1)
+    int get(const char *name, int n_chars = -1)
     {
       int v=SortedStringListND<struct uservarstring>::find(name, n_chars);
       if (v==-1) return -1;

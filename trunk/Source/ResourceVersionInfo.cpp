@@ -304,7 +304,7 @@ int CResourceVersionInfo::GetCodePage(int Index)
   return m_ChildStringLists.get_codepage(Index);
 }
 
-char *CResourceVersionInfo::FindKey(LANGID LangID, int codepage, char *pKeyName)
+char *CResourceVersionInfo::FindKey(LANGID LangID, int codepage, const char *pKeyName)
 {
   int pos = m_ChildStringLists.find(LangID, codepage);
   if ( pos == -1 )
