@@ -59,7 +59,7 @@ public:
   int GetStringTablesCount();
   LANGID GetLangID(int Index);
   int GetCodePage(int Index);
-  char *FindKey(LANGID LangID, int codepage, char *pKeyName);
+  char *FindKey(LANGID LangID, int codepage, const char *pKeyName);
 };
 
 #endif

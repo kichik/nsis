@@ -40,9 +40,9 @@ class LangStringList : public SortedStringListND<struct langstring>
     LangStringList();
 
     int add(const char *name, int *sn=0);
-    int get(char *name, int *sn=0, int *index=0, int *uindex=0, int *process=0);
+    int get(const char *name, int *sn=0, int *index=0, int *uindex=0, int *process=0);
     void set(int pos, int index=-1, int uindex=-1, int process=-1);
-    void set(char *name, int index, int uindex=-1, int process=-1);
+    void set(const char *name, int index, int uindex=-1, int process=-1);
     const char *pos2name(int pos);
     const char *offset2name(int name);
     int getnum();
@@ -62,7 +62,7 @@ class StringsArray
     StringsArray();
 
     void resize(int num);
-    int set(int idx, char *str);
+    int set(int idx, const char *str);
     const char *get(int idx);
 
   private:

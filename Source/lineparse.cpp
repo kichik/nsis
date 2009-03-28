@@ -113,7 +113,7 @@ int LineParser::gettoken_int(int token, int *success/*=0*/)
 char* LineParser::gettoken_str(int token)
 {
   token+=m_eat;
-  if (token < 0 || token >= m_nt) return "";
+  if (token < 0 || token >= m_nt) return (char*)"";
   return m_tokens[token];
 }
 
