@@ -105,8 +105,8 @@ class CEXEBuild {
 
     // process a script (you can process as many scripts as you want,
     // it is as if they are concatenated)
-    int process_script(FILE *fp, char *curfilename);
-    int process_oneline(char *line, char *curfilename, int lineptr);
+    int process_script(FILE *fp, const char *curfilename);
+    int process_oneline(char *line, const char *curfilename, int lineptr);
     
     // you only get to call write_output once, so use it wisely.
     int write_output(void);
@@ -121,7 +121,7 @@ class CEXEBuild {
     int display_info;
 
     int linecnt;
-    char *curfilename;
+    const char *curfilename;
     FILE *fp;
 
     HWND notify_hwnd;
@@ -145,9 +145,9 @@ class CEXEBuild {
     // script.cpp
 #ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
   // Added by Sunil Kamath 11 June 2003
-    char* set_file_predefine(char *);
+    char* set_file_predefine(const char *);
     void restore_file_predefine(char *);
-    char* set_timestamp_predefine(char *);
+    char* set_timestamp_predefine(const char *);
     void restore_timestamp_predefine(char *);
     char* set_line_predefine(int, BOOL);
     void restore_line_predefine(char *);
@@ -261,8 +261,8 @@ class CEXEBuild {
     // lang.cpp functions and variables
     void InitLangTables();
     LanguageTable *GetLangTable(LANGID &lang, bool create = true);
-    char *GetLangNameAndCP(LANGID lang, unsigned int *codepage = NULL);
-    int DefineLangString(char *name, int process=-1);
+    const char *GetLangNameAndCP(LANGID lang, unsigned int *codepage = NULL);
+    int DefineLangString(const char *name, int process=-1);
     int DefineInnerLangString(int id, int process=-1);
     int SetLangString(char *name, LANGID lang, char *string);
     int SetInnerString(int id, char *string);
