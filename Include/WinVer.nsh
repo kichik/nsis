@@ -30,6 +30,8 @@
 ;   2003
 ;   Vista
 ;   2008
+;	7
+;	2008R2
 ;
 ; AtLeastServicePack checks if the installer is running on Windows service pack version at least as specified.
 ; IsServicePack checks if the installer is running on Windows service pack version exactly as specified.
@@ -132,6 +134,11 @@
 !define WINVER_VISTA     0x06000000 ;6.00.6000
 !define WINVER_2008_NT   0x86000001 ;6.00.6001
 !define WINVER_2008      0x06000001 ;6.00.6001
+!define WINVER_7_NT      0x86010000 ;6.01.????
+!define WINVER_7         0x06010000 ;6.01.????
+!define WINVER_2008R2_NT 0x86010000 ;6.01.????
+!define WINVER_2008R2    0x06010000 ;6.01.????
+
 
 # use this to make all nt > 9x
 
@@ -323,12 +330,11 @@
   _winver_not_xp_x64:
 
   # server 2008?
-  IntCmp $0 0 _winver_not_2008 # server
-  IntCmp $1 6 "" _winver_not_2008 _winver_not_2008 # maj 6
-  IntCmp $2 0 "" _winver_not_2008 _winver_not_2008 # min 0
-    # extra bit so Server 2008 comes after Vista SP1 that has the same minor version
+  IntCmp $0 0 _winver_not_ntserver # server
+  IntCmp 6 $1 "" "" _winver_not_ntserver # maj 6
+    # extra bit so Server 2008 comes after Vista SP1 that has the same minor version, same for Win7 vs 2008R2
     IntOp $__WINVERV $__WINVERV | ${_WINVER_VERXBIT}
-  _winver_not_2008:
+  _winver_not_ntserver:
 
   # pack version
   IntOp $1 $1 << 24 # VerMajor
@@ -370,15 +376,17 @@
 !macroend
 
 !macro __WinVer_DefineOSTests Test Suffix
-  !insertmacro __WinVer_DefineOSTest ${Test} 95    '${Suffix}'
-  !insertmacro __WinVer_DefineOSTest ${Test} 98    '${Suffix}'
-  !insertmacro __WinVer_DefineOSTest ${Test} ME    '${Suffix}'
-  !insertmacro __WinVer_DefineOSTest ${Test} NT4   '${Suffix}'
-  !insertmacro __WinVer_DefineOSTest ${Test} 2000  '${Suffix}'
-  !insertmacro __WinVer_DefineOSTest ${Test} XP    '${Suffix}'
-  !insertmacro __WinVer_DefineOSTest ${Test} 2003  '${Suffix}'
-  !insertmacro __WinVer_DefineOSTest ${Test} VISTA '${Suffix}'
-  !insertmacro __WinVer_DefineOSTest ${Test} 2008  '${Suffix}'
+  !insertmacro __WinVer_DefineOSTest ${Test} 95     '${Suffix}'
+  !insertmacro __WinVer_DefineOSTest ${Test} 98     '${Suffix}'
+  !insertmacro __WinVer_DefineOSTest ${Test} ME     '${Suffix}'
+  !insertmacro __WinVer_DefineOSTest ${Test} NT4    '${Suffix}'
+  !insertmacro __WinVer_DefineOSTest ${Test} 2000   '${Suffix}'
+  !insertmacro __WinVer_DefineOSTest ${Test} XP     '${Suffix}'
+  !insertmacro __WinVer_DefineOSTest ${Test} 2003   '${Suffix}'
+  !insertmacro __WinVer_DefineOSTest ${Test} VISTA  '${Suffix}'
+  !insertmacro __WinVer_DefineOSTest ${Test} 2008   '${Suffix}'
+  !insertmacro __WinVer_DefineOSTest ${Test} 7      '${Suffix}'
+  !insertmacro __WinVer_DefineOSTest ${Test} 2008R2 '${Suffix}'
 !macroend
 
 !insertmacro __WinVer_DefineOSTests AtLeast ""
