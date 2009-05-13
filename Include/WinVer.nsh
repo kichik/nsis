@@ -136,8 +136,8 @@
 !define WINVER_2008      0x06000001 ;6.00.6001
 !define WINVER_7_NT      0x86010000 ;6.01.????
 !define WINVER_7         0x06010000 ;6.01.????
-!define WINVER_2008R2_NT 0x86010000 ;6.01.????
-!define WINVER_2008R2    0x06010000 ;6.01.????
+!define WINVER_2008R2_NT 0x86010001 ;6.01.????
+!define WINVER_2008R2    0x06010001 ;6.01.????
 
 
 # use this to make all nt > 9x
