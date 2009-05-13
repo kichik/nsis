@@ -181,7 +181,7 @@ If `DirVerify leave' is used, the Next button will not be disabled if the instal
 
 \c file error text
 
-Replaces the default text that comes up when a file cannot be written to. This string can contain a reference to $0, which is the filename ($0 is temporarily changed to this value). Example: "Can not write to file $\\r$\\n$0$\\r$\\ngood luck, bitch.".
+Replaces the default text that comes up when a file cannot be written to. This string can contain a reference to $0, which is the filename ($0 is temporarily changed to this value). Example: "Can not write to file $\\r$\\n$0$\\r$\\ngood luck.".
 
 Accepts variables. If variables are used, they must be initialized before \R{file}{File} is used.
 
