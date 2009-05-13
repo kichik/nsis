@@ -30,8 +30,8 @@
 ;   2003
 ;   Vista
 ;   2008
-;	7
-;	2008R2
+;   7
+;   2008R2
 ;
 ; AtLeastServicePack checks if the installer is running on Windows service pack version at least as specified.
 ; IsServicePack checks if the installer is running on Windows service pack version exactly as specified.
