@@ -147,15 +147,17 @@ Var OSVERSIONINFOEX_INIT
 
 !macroend
 
-!define ORDER_95    0
-!define ORDER_NT4   0
-!define ORDER_98    1
-!define ORDER_ME    2
-!define ORDER_2000  3
-!define ORDER_XP    4
-!define ORDER_2003  5
-!define ORDER_Vista 6
-!define ORDER_2008  7
+!define ORDER_95     0
+!define ORDER_NT4    0
+!define ORDER_98     1
+!define ORDER_ME     2
+!define ORDER_2000   3
+!define ORDER_XP     4
+!define ORDER_2003   5
+!define ORDER_Vista  6
+!define ORDER_2008   7
+!define ORDER_7      8
+!define ORDER_2008R2 9
 
 !macro TestWinVerOrder NAME VER V_
 
@@ -217,6 +219,8 @@ Var OSVERSIONINFOEX_INIT
 	!insertmacro TestWinVerDiff "${NAME}" ${VER} 2003
 	!insertmacro TestWinVerDiff "${NAME}" ${VER} Vista
 	!insertmacro TestWinVerDiff "${NAME}" ${VER} 2008
+	!insertmacro TestWinVerDiff "${NAME}" ${VER} 7
+	!insertmacro TestWinVerDiff "${NAME}" ${VER} 2008R2
 
 	# test version comparison
 
@@ -229,6 +233,8 @@ Var OSVERSIONINFOEX_INIT
 	!insertmacro TestWinVerOrder "${NAME}" ${VER} 2003
 	!insertmacro TestWinVerOrder "${NAME}" ${VER} Vista
 	!insertmacro TestWinVerOrder "${NAME}" ${VER} 2008
+	!insertmacro TestWinVerOrder "${NAME}" ${VER} 7
+	!insertmacro TestWinVerOrder "${NAME}" ${VER} 2008R2
 
 	# test service pack equality
 
