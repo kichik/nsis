@@ -136,7 +136,9 @@ private:
       int fonts[7] = {0, 0, 14000 / (DialogSize.GetWidth()), 19000 / (DialogSize.GetWidth()), 0, 0, 0};
       m_Html->SetFonts(wxString(), wxString(), fonts);
       
-      m_Html->LoadPage(wxT("Menu/index.html"));
+      wxString exePath = wxStandardPaths::Get().GetExecutablePath();
+      wxString path = ::wxPathOnly(exePath);
+      m_Html->LoadPage(path + wxT("\\Menu\\index.html"));
       
       this->Centre(wxBOTH);
 #ifndef __WXGTK__
