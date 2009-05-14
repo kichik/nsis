@@ -36,7 +36,6 @@
 !ifdef MUI_COMPONENTSPAGE
   ${LangFileString} MUI_TEXT_COMPONENTS_TITLE "เลือกส่วนประกอบ"
   ${LangFileString} MUI_TEXT_COMPONENTS_SUBTITLE "เลือกสิ่งที่คุณต้องการใช้งานจาก $(^NameDA) ที่คุณต้องการติดตั้ง"
-  ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "รายละเอียด"
 !endif
 
 !ifdef MUI_UNCOMPONENTSPAGE
@@ -45,6 +44,7 @@
 !endif
 
 !ifdef MUI_COMPONENTSPAGE | MUI_UNCOMPONENTSPAGE
+  ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "รายละเอียด"
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "ขยับเมาส์ของคุณเหนือส่วนประกอบเพื่อดูรายละเอียด"
   !else

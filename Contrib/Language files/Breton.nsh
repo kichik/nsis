@@ -36,7 +36,6 @@
 !ifdef MUI_COMPONENTSPAGE
   ${LangFileString} MUI_TEXT_COMPONENTS_TITLE "Dibab elfennoù"
   ${LangFileString} MUI_TEXT_COMPONENTS_SUBTITLE "Dibabit pe elfenn(où) $(^NameDA) a fell deoc'h staliañ."
-  ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Deskrivadenn"
 !endif
 
 !ifdef MUI_UNCOMPONENTSPAGE
@@ -45,6 +44,7 @@
 !endif
 
 !ifdef MUI_COMPONENTSPAGE | MUI_UNCOMPONENTSPAGE
+  ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Deskrivadenn"
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Lakait ho logodenn a-zioc'h an elfenn evit gwelout he deskrivadenn."
   !else

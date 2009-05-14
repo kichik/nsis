@@ -36,7 +36,6 @@
 !ifdef MUI_COMPONENTSPAGE
   ${LangFileString} MUI_TEXT_COMPONENTS_TITLE "Elekto de Konsisteroj"
   ${LangFileString} MUI_TEXT_COMPONENTS_SUBTITLE "Elektu kiujn funkciojn de $(^NameDA) vi deziras instali."
-  ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Priskribo"
 !endif
 
 !ifdef MUI_UNCOMPONENTSPAGE
@@ -45,6 +44,7 @@
 !endif
 
 !ifdef MUI_COMPONENTSPAGE | MUI_UNCOMPONENTSPAGE
+  ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Priskribo"
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Poziciu la muson sur konsistero por rigardi ties priskribon."
   !else

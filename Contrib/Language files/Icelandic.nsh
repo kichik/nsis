@@ -36,7 +36,6 @@
 !ifdef MUI_COMPONENTSPAGE
   ${LangFileString} MUI_TEXT_COMPONENTS_TITLE "Velja íhluti"
   ${LangFileString} MUI_TEXT_COMPONENTS_SUBTITLE "Veldu hvaða $(^NameDA) íhluti þú vilt setja upp."
-  ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Lýsing"
 !endif
 
 !ifdef MUI_UNCOMPONENTSPAGE
@@ -45,6 +44,7 @@
 !endif
 
 !ifdef MUI_COMPONENTSPAGE | MUI_UNCOMPONENTSPAGE
+  ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Lýsing"
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Færðu músina yfir íhlut til að fá lýsinguna á honum."
   !else

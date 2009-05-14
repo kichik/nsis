@@ -40,7 +40,6 @@
 !ifdef MUI_COMPONENTSPAGE
   ${LangFileString} MUI_TEXT_COMPONENTS_TITLE "Voæba s˙ËastÌ programu"
   ${LangFileString} MUI_TEXT_COMPONENTS_SUBTITLE "Zvoæte si tie s˙Ëasti programu $(^NameDA), ktorÈ chcete nainötalovaù."
-  ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Popis"
 !endif
 
 !ifdef MUI_UNCOMPONENTSPAGE
@@ -49,6 +48,7 @@
 !endif
 
 !ifdef MUI_COMPONENTSPAGE | MUI_UNCOMPONENTSPAGE
+  ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Popis"
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Pri prejdenÌ kurzorom myöi nad n·zvom s˙Ëasti sa zobrazÌ jej popis."
   !else

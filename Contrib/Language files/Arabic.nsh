@@ -37,7 +37,6 @@
 !ifdef MUI_COMPONENTSPAGE
   ${LangFileString} MUI_TEXT_COMPONENTS_TITLE "≈Œ — «·„ﬂÊ‰« "
   ${LangFileString} MUI_TEXT_COMPONENTS_SUBTITLE "≈Œ — „Ì“«  $(^NameDA) «·„—«œ  ‰’Ì»Â«."
-  ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "«·Ê’›"
 !endif
 
 !ifdef MUI_UNCOMPONENTSPAGE
@@ -46,6 +45,7 @@
 !endif
 
 !ifdef MUI_COMPONENTSPAGE | MUI_UNCOMPONENTSPAGE
+  ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "«·Ê’›"
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "√‘— »«·›√—… ›Êﬁ √Õœ «·„ﬂÊ‰«  ·—ƒÌ… «·Ê’›"
   !else
