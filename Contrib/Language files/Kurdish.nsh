@@ -37,7 +37,6 @@
 !ifdef MUI_COMPONENTSPAGE
   ${LangFileString} MUI_TEXT_COMPONENTS_TITLE "Hilbijartina pareyan"
   ${LangFileString} MUI_TEXT_COMPONENTS_SUBTITLE "Ji bo sazkirina $(^NameDA) pareyên tu dixwazî hilbijêre."
-  ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Dazanîn"
 !endif
 
 !ifdef MUI_UNCOMPONENTSPAGE
@@ -46,6 +45,7 @@
 !endif
 
 !ifdef MUI_COMPONENTSPAGE | MUI_UNCOMPONENTSPAGE
+  ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Dazanîn"
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Ji bo tu der barê pareyan de agahiyan bistînî nîþanekê bibe ser pareyekê."
   !else

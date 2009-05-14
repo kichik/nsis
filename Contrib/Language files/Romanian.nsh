@@ -46,7 +46,6 @@
 !ifdef MUI_COMPONENTSPAGE
   ${LangFileString} MUI_TEXT_COMPONENTS_TITLE "Selectare componente"
   ${LangFileString} MUI_TEXT_COMPONENTS_SUBTITLE "Selectaþi componentele $(^NameDA) pe care doriþi sã le instalaþi."
-  ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Descriere"
 !endif
 
 !ifdef MUI_UNCOMPONENTSPAGE
@@ -55,6 +54,7 @@
 !endif
 
 !ifdef MUI_COMPONENTSPAGE | MUI_UNCOMPONENTSPAGE
+  ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Descriere"
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Aºezaþi mouse-ul deasupra fiecãrei componente pentru a vizualiza descrierea acesteia."
   !else

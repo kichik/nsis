@@ -37,7 +37,6 @@
 !ifdef MUI_COMPONENTSPAGE
   ${LangFileString} MUI_TEXT_COMPONENTS_TITLE "Volba souèástí"
   ${LangFileString} MUI_TEXT_COMPONENTS_SUBTITLE "Zvolte souèásti programu $(^NameDA), které chcete nainstalovat."
-  ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Popis"
 !endif
 
 !ifdef MUI_UNCOMPONENTSPAGE
@@ -46,6 +45,7 @@
 !endif
 
 !ifdef MUI_COMPONENTSPAGE | MUI_UNCOMPONENTSPAGE
+  ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Popis"
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Pøi pohybu myší nad instalátorem programu se zobrazí její popis."
   !else
