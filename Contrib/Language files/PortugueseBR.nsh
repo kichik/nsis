@@ -113,11 +113,11 @@
 !endif
 
 !ifdef MUI_ABORTWARNING
-  ${LangFileString} MUI_TEXT_ABORTWARNING "Você tem certeza que você quer sair do Instalador do $(^Name)?"
+  ${LangFileString} MUI_TEXT_ABORTWARNING "Você tem certeza de que quer sair do Instalador do $(^Name)?"
 !endif
 
 !ifdef MUI_UNABORTWARNING
-  ${LangFileString} MUI_UNTEXT_ABORTWARNING "Você tem certeza que você quer sair da Desinstalação do $(^Name)?"
+  ${LangFileString} MUI_UNTEXT_ABORTWARNING "Você tem certeza de que quer sair da Desinstalação do $(^Name)?"
 !endif
 
 !ifdef MULTIUSER_INSTALLMODEPAGE
