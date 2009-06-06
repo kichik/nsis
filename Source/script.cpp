@@ -3165,7 +3165,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
               thisline=(char *)tmpstr.get();
             }
 
-
             DefineList *tlist = searchParseString(thisline,&line,parmOffs,ignCase,true);
             if (tlist && tlist->getnum())
             {
