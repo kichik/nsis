@@ -3019,21 +3019,21 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         my_convert_free(fc);
 
         // search working directory
-          boost::scoped_ptr<dir_reader> dr( new_dir_reader() );
-          dr->read(dir);
+        boost::scoped_ptr<dir_reader> dr( new_dir_reader() );
+        dr->read(dir);
 
-          for (dir_reader::iterator files_itr = dr->files().begin();
-               files_itr != dr->files().end();
-               files_itr++)
-          {
-            if (!dir_reader::matches(*files_itr, spec))
-              continue;
+        for (dir_reader::iterator files_itr = dr->files().begin();
+             files_itr != dr->files().end();
+             files_itr++)
+        {
+          if (!dir_reader::matches(*files_itr, spec))
+            continue;
 
-            string incfile = basedir + *files_itr;
+          string incfile = basedir + *files_itr;
 
-            if (includeScript((char *) incfile.c_str()) != PS_OK) {
-              return PS_ERROR;
-            }
+          if (includeScript((char *) incfile.c_str()) != PS_OK) {
+            return PS_ERROR;
+          }
 
           included++;
         }
