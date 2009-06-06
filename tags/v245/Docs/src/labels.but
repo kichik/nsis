@@ -1,0 +1,8 @@
+\S0{labels} Labels
+
+Labels are the targets of Goto instructions, or of the various branching instructions (such as \R{iferrors}{IfErrors}, \R{messagebox}{MessageBox}, \R{iffileexists}{IfFileExists}, and \R{strcmp}{StrCmp}). Labels must be within a Section or a Function. Labels are local in scope, meaning they are only accessible from within the Section or Function that they reside in.
+To declare a label, simply use:
+
+\e{MyLabel:}
+
+Labels cannot begin with a -, +, !, $, or 0-9. When specifying labels for the various instructions that require them, remember that both an empty string ("") and 0 both represent the next instruction (meaning no Goto will occur). Labels beginning with a period (.) are global, meaning you can jump to them from any function or section (though you cannot jump to an uninstall global label from the installer, and vice versa).
