@@ -405,8 +405,6 @@ Finish page (implemented using nsDialogs)
       ${endif}
     !endif
 
-    !insertmacro MUI_PAGE_FUNCTION_CUSTOM SHOW
-
     !ifdef MUI_FINISHPAGE_CANCEL_ENABLED
       StrCpy $mui.FinishPage.DisableAbortWarning "1"
     !endif
