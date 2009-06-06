@@ -547,6 +547,8 @@ typedef DWORDLONG ULONGLONG,*PULONGLONG;
 #  define SW_SHOWNOACTIVATE 4
 #  define SW_SHOWMINNOACTIVE 7
 #  define SW_SHOWNA 8
+#  define SW_RESTORE 9
+#  define SW_SHOWDEFAULT 10
 #endif
 
 // hotkeys
