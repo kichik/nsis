@@ -2248,9 +2248,9 @@ int CEXEBuild::UpdatePEHeader()
 {
   try {
     PIMAGE_NT_HEADERS headers = CResourceEditor::GetNTHeaders(m_exehead);
-    // workaround for bug #2697027
+    // workaround for bug #2697027, #2725883
     headers->OptionalHeader.MajorImageVersion = 6;
-    headers->OptionalHeader.MinorImageVersion = 0;
+    headers->OptionalHeader.MinorImageVersion = 1;
   } catch (std::runtime_error& err) {
     ERROR_MSG("Error updating PE headers: %s\n", err.what());
     return PS_ERROR;

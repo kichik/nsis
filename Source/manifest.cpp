@@ -57,6 +57,7 @@ string generate(comctl comctl_selection, exec_level exec_level_selection)
     xml += "<trustInfo xmlns=\"urn:schemas-microsoft-com:asm.v3\"><security><requestedPrivileges><requestedExecutionLevel level=\"";
     xml += level;
     xml += "\" uiAccess=\"false\"/></requestedPrivileges></security></trustInfo>";
+    xml += "<compatibility xmlns=\"urn:schemas-microsoft-com:compatibility.v1\"><application><supportedOS Id=\"{35138b9a-5d96-4fbd-8e2d-a2440225f93a}\"/><supportedOS Id=\"{e2011457-1546-43c5-a5fe-008deee3d3f0}\"/></application></compatibility>";
   }
 
   xml += "</assembly>";
