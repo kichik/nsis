@@ -9,39 +9,39 @@ NLF v6
 -
 # RTL - anything else than RTL means LTR
 -
-# Translation ariel825010106@yahoo.com [visit www.ariel106.cjb.net]
+# Translation ariel825010106@yahoo.com modified and completed by was.uthm@gmail.com in April 2009
 # ^Branding
 Nullsoft Install System %s
 # ^SetupCaption
-Setup $(^Name)
+Instalasi Program $(^Name)
 # ^UninstallCaption
-Uninstall $(^Name)
+Penghapusan Program $(^Name)
 # ^LicenseSubCaption
 : Perihal Lisensi
 # ^ComponentsSubCaption
-: Options Instalasi
+: Pilihan Instalasi
 # ^DirSubCaption
-: Folder Instalasi
+: Lokasi Instalasi
 # ^InstallingSubCaption
-: Menginstall
+: Proses Instalasi
 # ^CompletedSubCaption
 : Selesai
 # ^UnComponentsSubCaption
-: Options Uninstal
+: Pilihan Penghapusan
 # ^UnDirSubCaption
-: Folder Uninstal
+: Berkas Lokasi yang dihapus
 # ^ConfirmSubCaption
 : Konfirmasi
 # ^UninstallingSubCaption
-: Meng-uninstall
+: Proses Penghapusan
 # ^UnCompletedSubCaption
-: Selsai
+: Selesai
 # ^BackBtn
 < &Mundur
 # ^NextBtn
-&Maju >
+&Lanjut >
 # ^AgreeBtn
-Saya &setuju
+Saya &Setuju
 # ^AcceptBtn
 Saya s&etuju dengan Perihal Lisensi
 # ^DontAcceptBtn
@@ -49,135 +49,135 @@ Saya &tidak setuju dengan Perihal Lisensi
 # ^InstallBtn
 &Instal
 # ^UninstallBtn
-&Uninstal
+&Hapus
 # ^CancelBtn
-Cancel
+Batalkan
 # ^CloseBtn
 &Tutup
 # ^BrowseBtn
-B&rowse...
+Ca&ri...
 # ^ShowDetailsBtn
-Buka &lagi
+Lihat &perincian
 # ^ClickNext
-Klik Maju untuk melanjutkan.
+Tekan tombol Lanjut untuk melanjutkan.
 # ^ClickInstall
-Klik Instal untuk memulai instalasi.
+Tekan tombol Instal untuk memulai instalasi.
 # ^ClickUninstall
-Klik Uninstall untuk memulai uninstalasi.
+Tekan tombol Hapus untuk memulai penghapusan.
 # ^Name
 Nama
 # ^Completed
 Selesai
 # ^LicenseText
-Silahkan membaca lisensi berikut sebelum menginstall $(^NameDA). Jika anda menerima semua yang ada di lisensi, klik Saya setuju.
+Silahkan membaca lisensi berikut sebelum memulai instalasi $(^NameDA). Jika anda menyetujui dan menerima semua pernyataan, tekan tombol Saya Setuju.
 # ^LicenseTextCB
-Silahkan membaca linsensi berikut sebelum menginstall $(^NameDA). Jika anda menerima semua yang ada di lisensi, beri tanda centang. $_CLICK
+Silahkan membaca lisensi berikut sebelum memulai instalasi $(^NameDA). Jika anda menyetujui dan menerima semua pernyataan, beri tanda centang. $_CLICK
 # ^LicenseTextRB
-Silahkan membaca linsensi berikut sebelum menginstall $(^NameDA). Jika anda menerima semua yang ada di lisensi, pilihlah salah satu item dibawah ini. $_CLICK
+Silahkan membaca lisensi berikut sebelum memulai instalasi $(^NameDA). Jika anda menyetujui dan menerima semua pernyataan, pilihlah salah satu item dibawah ini. $_CLICK
 # ^UnLicenseText
-Silahkan membaca linsensi berikut sebelum meng-uninstall $(^NameDA). Jika anda menerima semua yang ada di lisensi, klik Saya setuju.
+Silahkan membaca lisensi berikut sebelum mulai menghapus $(^NameDA). Jika anda menyetujui dan menerima semua pernyataan, tekan tombol Saya Setuju.
 # ^UnLicenseTextCB
-Silahkan membaca linsensi berikut sebelum meng-uninstall $(^NameDA). Jika anda menerima semua yang ada di lisensi, beri tanda centang. $_CLICK
+Silahkan membaca lisensi berikut sebelum mulai menghapus $(^NameDA). Jika anda menyetujui dan menerima semua pernyataan, beri tanda centang. $_CLICK
 # ^UnLicenseTextRB
-Silahkan membaca linsensi berikut sebelum meng-uninstall $(^NameDA). Jika anda menerima semua yang ada di lisensi, pilihlah salah satu item dibawah ini. $_CLICK
+Silahkan membaca lisensi berikut sebelum mulai menghapus $(^NameDA). Jika anda menyetujui dan menerima semua pernyataan, pilihlah salah satu item dibawah ini. $_CLICK
 # ^Custom
-Custom
+Tentukan Sendiri
 # ^ComponentsText
-Beri tanda centang pada komponen yang mau di install and hilangkan tanda centang pada komponen yang tidak perlu di install. $_CLICK
+Beri tanda centang pada komponen yang akan di instal and hilangkan tanda centang pada komponen yang tidak perlu di instal. $_CLICK
 # ^ComponentsSubText1
 Pilih tipe instalasi:
 # ^ComponentsSubText2_NoInstTypes
-Pilih komponen-komponen untuk di install:
+Pilih komponen-komponen yang akan di instal:
 # ^ComponentsSubText2
-Atau, pilih komponen berikut untuk di install:
+Atau, pilih komponen tambahan yang akan di instal:
 # ^UnComponentsText
-Beri tanda centang pada komponen yang mau di uninstall and hilangkan tanda centang pada komponen yang tidak perlu di uninstall. $_CLICK
+Beri tanda centang pada komponen yang akan dihapus and hilangkan tanda centang pada komponen yang tidak ingin dihapus. $_CLICK
 # ^UnComponentsSubText1
-Pilih tipe un-instalasi:
+Pilih tipe penghapusan:
 # ^UnComponentsSubText2_NoInstTypes
-Pilih komponen-komponen untuk di un-install:
+Pilih komponen-komponen yang ingin dihapus:
 # ^UnComponentsSubText2
-Atau, pilih komponen berikut untuk di un-install:
+Atau, pilih komponen tambahan yang ingin dihapus:
 # ^DirText
-Setup akan menginstall $(^NameDA) pada folder berikut. Untuk memilih folder lainnya, klik Browse dan pilih folder pilihan anda. $_CLICK
+Program $(^NameDA) akan di instal pada lokasi berikut. Untuk memilih lokasi, tekan tombol Cari kemudian pilih lokasi yang anda kehendaki. $_CLICK
 # ^DirSubText
-Folder tujuan
+Lokasi instalasi
 # ^DirBrowseText
-Pilih folder untuk menginstall $(^NameDA):
+Pilih lokasi instalasi program $(^NameDA):
 # ^UnDirText
-Setup akan meng-uninstall $(^NameDA) dari folder berikut. Untuk memilih folder lainnya, klik Browse dan pilih folder pilihan anda. $_CLICK
+Proses penghapusan program $(^NameDA) dari lokasi instalasi berikut. Untuk memilih lokasi lainnya, tekan tombol Cari kemudian pilih lokasi yang anda kehendaki. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
-Pilih folder untuk meng-uninstall $(^NameDA):
+Pilih lokasi instalasi program $(^NameDA) yang akan dihapus:
 # ^SpaceAvailable
-"Ruang disk yang tersedia: "
+"Ruang yang tersedia:   "
 # ^SpaceRequired
-"Ruang disk yang dibutuhkan: "
+"Ruang yang dibutuhkan: "
 # ^UninstallingText
-$(^NameDA) akan di-uninstall dari folder berikut. $_CLICK
+$(^NameDA) akan dihapus dari lokasi berikut. $_CLICK
 # ^UninstallingSubText
-Meng-uninstall:
+Proses penghapusan dari:
 # ^FileError
-Tidak dapat menulis pada file: \r\n\t"$0"\r\nKlik abort untuk membatalkan instalasi,\r\nretry untuk mencoba lagi, atau\r\nignore untuk mengacuhkan file ini.
+Tidak dapat membuka berkas untuk menulis: \r\n\t"$0"\r\nTekan tombol Abort untuk membatalkan instalasi,\r\nRetry untuk mencoba lagi, atau\r\nIgnore untuk melewati file ini.
 # ^FileError_NoIgnore
-Tidak dapat menulis pada file: \r\n\t"$0"\r\nKlik retry untuk mencoba lagi, atau\r\ncancel untuk membatalkan instalasi
+Tidak dapat membuka berkas untuk menulis: \r\n\t"$0"\r\nTekan tombol Retry untuk mencoba lagi, atau\r\nCancel untuk membatalkan instalasi.
 # ^CantWrite
-"Tidak bisa menulis pada: "
+"Tidak bisa menulis pada berkas: "
 # ^CopyFailed
-Gagal meng-copy
+Gagal menyalin berkas
 # ^CopyTo
-"Meng-copy ke "
+"Menyalin ke "
 # ^Registering
-"Mendaftarkan modul: "
+"Memasukkan dalam daftar: "
 # ^Unregistering
-"Melepas modul: "
+"Menghapus dari daftar: "
 # ^SymbolNotFound
-"Tidak dapat menemukan : "
+"Tidak dapat menemukan simbol: "
 # ^CouldNotLoad
-"Tidak dapat membuka: "
+"Tidak dapat memuat: "
 # ^CreateFolder
-"Membuat folder: "
+"Membuat tempat menyimpan berkas: "
 # ^CreateShortcut
 "Membuat shortcut: "
 # ^CreatedUninstaller
-"Membuat program unistall: "
+"Program penghapusan yang dibuat: "
 # ^Delete
-"Menghapus file: "
+"Menghapus berkas: "
 # ^DeleteOnReboot
-"Akan dihapus pada reboot: "
+"Akan dihapus saat reboot: "
 # ^ErrorCreatingShortcut
 "Tidak dapat membuat shortcut: "
 # ^ErrorCreating
-"Error creating: "
+"Ada kesalahan saat membuat: "
 # ^ErrorDecompressing
-Error pada saat membuka data! Program Installer rusak
+Ada kesalahan saat membuka data! Program Instalasi tidak lengkap?
 # ^ErrorRegistering
-Error mendaftarkan modul DLL
+Ada kesalahan ketika mendaftarkan modul DLL
 # ^ExecShell
-"ExecShell: "
+"Perintah: "
 # ^Exec
 "Menjalankan: "
 # ^Extract
-"Meng-ekstrak: "
+"Proses ekstraksi berkas: "
 # ^ErrorWriting
-"Ekstrak: error pada saat menulis ke file "
+"Ekstraksi: ada kesalahan saat menulis ke berkas "
 # ^InvalidOpcode
-Installer rusak: opcode tidak lengkap
+Program instalasi rusak: kode program tidak lengkap
 # ^NoOLE
 "OLE tidak ditemukan: "
 # ^OutputFolder
-"Folder tujuan: "
+"Lokasi tujuan: "
 # ^RemoveFolder
-"Menghapus folder: "
+"Menghapus lokasi penyimpanan: "
 # ^RenameOnReboot
-"Akan di-Rename pada reboot: "
+"Memberi nama baru saat reboot: "
 # ^Rename
-"Rename: "
+"Memberi nama baru: "
 # ^Skipped
 "Dilewati: "
 # ^CopyDetails
-Copy Details ke Clipboard
+Salin perincian ke Clipboard
 # ^LogInstall
 Catat proses instalasi
 # ^Byte
