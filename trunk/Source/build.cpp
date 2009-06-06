@@ -2251,6 +2251,8 @@ int CEXEBuild::UpdatePEHeader()
     // workaround for bug #2697027, #2725883
     headers->OptionalHeader.MajorImageVersion = 6;
     headers->OptionalHeader.MinorImageVersion = 1;
+    // terminal services aware
+    headers->OptionalHeader.DllCharacteristics |= IMAGE_DLLCHARACTERISTICS_TERMINAL_SERVER_AWARE;
   } catch (std::runtime_error& err) {
     ERROR_MSG("Error updating PE headers: %s\n", err.what());
     return PS_ERROR;
