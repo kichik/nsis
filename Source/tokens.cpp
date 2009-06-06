@@ -254,7 +254,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_P_IFMACRONDEF,"!ifmacrondef",1,-1,"macro [| macro2 [& macro3 [...]]]",TP_ALL},
 
 {TOK_P_TEMPFILE,"!tempfile",1,0,"symbol",TP_ALL},
-{TOK_P_DELFILE,"!delfile",1,0,"file",TP_ALL},
+{TOK_P_DELFILE,"!delfile",1,1,"[/nonfatal] file",TP_ALL},
 {TOK_P_APPENDFILE,"!appendfile",2,0,"file appended_line",TP_ALL},
 
 {TOK_P_SEARCHPARSESTRING,"!searchparse",3,-1,"[/ignorecase] [/noerrors] [/file] source_string substring OUTPUTSYM1 [substring [OUTPUTSYM2 [substring ...]]]",TP_ALL},

@@ -1165,15 +1165,55 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
     case TOK_P_DELFILE:
       {
-        char *file = line.gettoken_str(1);
-        PATH_CONVERT(file);
-        int result = unlink(file);
-        if (result == -1) {
-          ERROR_MSG("!delfile: \"%s\" couldn't be deleted.\n", line.gettoken_str(1));
-          return PS_ERROR;
+        int fatal = 1;
+        int a = 1;
+        char *fc = line.gettoken_str(a);
+        if (line.getnumtokens()==3)
+        {
+          if(!stricmp(fc,"/nonfatal"))
+          {
+            fatal = 0;
+            fc = line.gettoken_str(++a);
+          }
+          else PRINTHELP();
         }
 
-        SCRIPT_MSG("!delfile: \"%s\"\n", line.gettoken_str(1));
+        SCRIPT_MSG("!delfile: \"%s\"\n", line.gettoken_str(a));
+
+        string dir = get_dir_name(fc);
+        string spec = get_file_name(fc);
+        string basedir = dir + PLATFORM_PATH_SEPARATOR_STR;
+        if (dir == spec) {
+          // no path, just file name
+          dir = ".";
+          basedir = "";
+        }
+
+        boost::scoped_ptr<dir_reader> dr( new_dir_reader() );
+        dr->read(dir);
+
+        for (dir_reader::iterator files_itr = dr->files().begin();
+             files_itr != dr->files().end();
+             files_itr++)
+        {
+          if (!dir_reader::matches(*files_itr, spec))
+            continue;
+
+          string file = basedir + *files_itr;
+
+          int result = unlink(file.c_str());
+          if (result == -1) {
+            ERROR_MSG("!delfile: \"%s\" couldn't be deleted.\n", file.c_str());
+            if (fatal)
+            {
+              return PS_ERROR;
+            }
+          }
+          else
+          {
+            SCRIPT_MSG("!delfile: deleted \"%s\"\n", file.c_str());
+          }
+        }
       }
     return PS_OK;
 
