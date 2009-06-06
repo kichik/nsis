@@ -4316,6 +4316,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_CREATEFONT:
       ent.which=EW_CREATEFONT;
       ent.offsets[0]=GetUserVarIndex(line, 1);
+      if (ent.offsets[0] < 0) PRINTHELP()
       ent.offsets[1]=add_string(line.gettoken_str(2));
       SCRIPT_MSG("CreateFont: output=%s \"%s\"",line.gettoken_str(1),line.gettoken_str(2));
       {
