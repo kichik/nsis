@@ -1,5 +1,61 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.45} 2.45
+
+Released on June 6th, 2009
+
+\S1{v2.45-rl} Release Notes
+
+\b Support for Microsoft's upcoming release of Windows 7 has been added based on RC1 testing and documentation. Please report any related issues and don't forget to use \R{requestexecutionlevel}{RequestExecutionLevel}.
+
+\S1{v2.45-cl} Changelog
+
+\S2{} Major Changes
+
+\b Added support for Windows 7 installers - use \R{requestexecutionlevel}{RequestExecutionLevel}, just like with Vista (\W{http://sourceforge.net/support/tracker.php?aid=2725883}{bug #2725883})
+
+\b Added WinVer.nsh Windows 7 and Windows 2008 R2 support
+
+\b Installers now identify as Terminal Services aware (IMAGE_DLLCHARACTERISTICS_TERMINAL_SERVER_AWARE) so $WINDIR will no longer be under the user's profile when installing on Terminal Services
+
+\b Less UAC annoyance in Add/Remove control panel (\W{http://sourceforge.net/support/tracker.php?aid=2697027}{bug #2697027})
+
+\S2{} Minor Changes
+
+\b Added wildcard and /nonfatal suppport for \R{delfile}{!delfile} (\W{http://sourceforge.net/support/tracker.php?aid=1505425}{RFE #1505425})
+
+\b Fixed \R{searchparse}{!searchparse} (\W{http://sourceforge.net/support/tracker.php?aid=2680110}{bug #2680110})
+
+\b Fixed input validation for \R{createfont}{CreateFont} (\W{http://sourceforge.net/support/tracker.php?aid=2801024}{bug #2801024})
+
+\b Fixed NSIS Menu handling of working directory (\W{http://sourceforge.net/support/tracker.php?aid=2781948}{bug #2781948})
+
+\b Fixed Vista issues with shell folders ($DOCUMENTS, $PROFILE, etc.) on root directories (\W{http://sourceforge.net/support/tracker.php?aid=2138075}{bug #2138075})
+
+\b Minor documentation improvements (including \W{http://sourceforge.net/support/tracker.php?aid=2705878}{bug #2705878}, \W{http://sourceforge.net/support/tracker.php?aid=2606525}{bug #2606525})
+
+\b Use SW_SHOWDEFAULT for \R{execshell}{ExecShell} by default (\W{http://sourceforge.net/support/tracker.php?aid=2796189}{bug #2796189})
+
+\S2{} Modern UI
+
+\b Call finish page show function only after the page is fully initialized (\W{http://sourceforge.net/support/tracker.php?aid=2720968}{bug #2720968})
+
+\b Fixed translation of uninstaller directory page (\W{http://sourceforge.net/support/tracker.php?aid=2690112}{bug #2690112})
+
+\b Fixed installation type text position in components page (\W{http://sourceforge.net/support/tracker.php?aid=2801317}{patch #2801317})
+
+\b Fixed missing MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE  (\W{http://sourceforge.net/support/tracker.php?aid=2788620}{bug #2788620})
+
+\S2{} Translations
+
+\b Updated Indonesian (\W{http://sourceforge.net/support/tracker.php?aid=2790571}{patch #2790571})
+
+\b Update Portuguese BR (\W{http://sourceforge.net/support/tracker.php?aid=2642542}{patch #2642542})
+
+\S2{} Build System
+
+\b Fixed some GCC warnings
+
 \H{v2.44} 2.44
 
 Released on February 21st, 2009
@@ -1705,7 +1761,7 @@ Released on July 23rd, 2005
 \b Added per-user nsisconf.nsh file in %APPDATA% or $HOME, depending on the platform (\W{http://sourceforge.net/support/tracker.php?aid=1223041}{patch #1223041})
 
 \b Documentation improvements and fixes (including \W{http://sourceforge.net/support/tracker.php?aid=1202495}{bug #1202495}, \W{http://sourceforge.net/support/tracker.php?aid=1227610}{bug #1227610}, 
-\W{http://sourceforge.net/support/tracker.php?aid=1238686}{bug #1238686}, \W{http://sourceforge.net/support/tracker.php?aid=1225167}{patch #1225167}, \W{http://sourceforge.net/tracker/?group_id=22049&atid=373088&func=detail&aid=1240601}{RFE #1240601})
+\W{http://sourceforge.net/support/tracker.php?aid=1238686}{bug #1238686}, \W{http://sourceforge.net/support/tracker.php?aid=1225167}{patch #1225167}, \W{http://sourceforge.net/support/tracker.php?aid=1240601}{RFE #1240601})
 
 \b Fixed _?= being ignored, if the uninstaller path is not quoted and is separated with only space from _?=
 
