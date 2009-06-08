@@ -2248,9 +2248,9 @@ int CEXEBuild::UpdatePEHeader()
 {
   try {
     PIMAGE_NT_HEADERS headers = CResourceEditor::GetNTHeaders(m_exehead);
-    // workaround for bug #2697027, #2725883
+    // workaround for bug #2697027, #2725883, #2803097
     headers->OptionalHeader.MajorImageVersion = 6;
-    headers->OptionalHeader.MinorImageVersion = 1;
+    headers->OptionalHeader.MinorImageVersion = 0;
     // terminal services aware
     headers->OptionalHeader.DllCharacteristics |= IMAGE_DLLCHARACTERISTICS_TERMINAL_SERVER_AWARE;
   } catch (std::runtime_error& err) {
