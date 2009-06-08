@@ -12,13 +12,12 @@
     functions as needed
 }
 
-
 unit nsis;
 
 interface
 
 uses
-  windows;
+  windows, CommCtrl, SysUtils;
 
 type
   VarConstants = (
@@ -50,6 +49,37 @@ type
     __INST_LAST
     );
   TVariableList = INST_0..__INST_LAST;
+
+  TExecuteCodeSegment = function (const funct_id: Integer; const parent: HWND): Integer;  stdcall;
+  Tvalidate_filename = procedure (const filename: PChar); cdecl;
+  TRegisterPluginCallback = function (const unknow: Integer; const uknown2: Integer): Integer; cdecl;
+
+  pexec_flags_t = ^exec_flags_t;
+  exec_flags_t = record
+    autoclose: Integer;
+    all_user_var: Integer;
+    exec_error: Integer;
+    abort: Integer;
+    exec_reboot: Integer;
+    reboot_called: Integer;
+    XXX_cur_insttype: Integer;
+    plugin_api_version: Integer;
+    silent: Integer;
+    instdir_error: Integer;
+    rtl: Integer;
+    errlvl: Integer;
+    alter_reg_view: Integer;
+    status_update: Integer;
+  end;
+
+  pextrap_t = ^extrap_t;
+  extrap_t = record
+    exec_flags: Pointer; // exec_flags_t;
+    exec_code_segment: Pointer; //  TFarProc;
+    validate_filename: Pointer; // Tvalidate_filename;
+    RegisterPluginCallback: Pointer; //TRegisterPluginCallback;
+  end;
+
   pstack_t = ^stack_t;
   stack_t = record
     next: pstack_t;
@@ -61,8 +91,17 @@ var
   g_stacktop: ^pstack_t;
   g_variables: PChar;
   g_hwndParent: HWND;
+  g_hwndList: HWND;
+  g_hwndLogList: HWND;
 
-procedure Init(const hwndParent: HWND; const string_size: integer; const variables: PChar; const stacktop: pointer);
+  g_extraparameters: pextrap_t;
+  func : TExecuteCodeSegment;
+  extrap : extrap_t;
+
+procedure Init(const hwndParent: HWND; const string_size: integer; const variables: PChar; const stacktop: pointer; const extraparameters: pointer = nil);
+
+function LogMessage(Msg : String): BOOL;
+function Call(NSIS_func : String) : Integer;
 function PopString(): string;
 procedure PushString(const str: string='');
 function GetUserVariable(const varnum: TVariableList): string;
@@ -71,12 +110,46 @@ procedure NSISDialog(const text, caption: string; const buttons: integer);
 
 implementation
 
-procedure Init(const hwndParent: HWND; const string_size: integer; const variables: PChar; const stacktop: pointer);
+procedure Init(const hwndParent: HWND; const string_size: integer; const variables: PChar; const stacktop: pointer; const extraparameters: pointer = nil);
 begin
   g_stringsize := string_size;
   g_hwndParent := hwndParent;
   g_stacktop   := stacktop;
   g_variables  := variables;
+  g_hwndList := 0;
+  g_hwndList := FindWindowEx(FindWindowEx(g_hwndParent, 0, '#32770', nil), 0,'SysListView32', nil);
+  g_extraparameters := extraparameters;
+  extrap := g_extraparameters^;
+end;
+
+function Call(NSIS_func : String) : Integer;
+var
+  NSISFun: Integer; //The ID of nsis function
+begin
+  Result := 0;
+  NSISFun := StrToIntDef(NSIS_func, 0);
+  if (NSISFun <> 0) and (g_extraparameters <> nil) then
+    begin
+    @func := extrap.exec_code_segment;
+    NSISFun := NSISFun - 1;
+    Result := func(NSISFun, g_hwndParent);
+    end;
+end;
+
+function LogMessage(Msg : String): BOOL;
+var
+  ItemCount : Integer;
+  item: TLVItem;
+begin
+  Result := FAlse;
+  if g_hwndList = 0 then exit;
+  FillChar( item, sizeof(item), 0 );
+  ItemCount := SendMessage(g_hwndList, LVM_GETITEMCOUNT, 0, 0);
+  item.iItem := ItemCount;
+  item.mask := LVIF_TEXT;
+  item.pszText := PAnsiChar(Msg);
+  ListView_InsertItem(g_hwndList, item );
+  ListView_EnsureVisible(g_hwndList, ItemCount, TRUE);
 end;
 
 function PopString(): string;
@@ -123,4 +196,6 @@ begin
 end;
 
 begin
+
 end.
+
