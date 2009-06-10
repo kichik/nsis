@@ -3142,7 +3142,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             {
               str[0]=0;
               fgets(str,sizeof(str),fp);
-              if (!str[0]) break;
+              if (!str[0]) break; // eof
 
               char *p=str;
               while (*p) p++;
@@ -3153,10 +3153,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
               bool endSlash = (str[0] && str[strlen(str)-1] == '\\');
               if (tmpstr.getlen() || endSlash) tmpstr.add(str,strlen(str));
 
-              if (!endSlash) break;
+              // if we have valid contents and not ending on slash, then done
+              if (!endSlash && (str[0] || tmpstr.getlen())) break;
             }
 
-            if (!str[0] && !tmpstr.getlen()) break; // failed
+            if (!str[0] && !tmpstr.getlen()) break; // reached eof
 
             char *thisline=str;
             if (tmpstr.getlen()) 
