@@ -100,7 +100,7 @@ private:
 
      // Create the main application window
      MyFrame *frame = new MyFrame(_("NSIS Menu"),
-         wxPoint(50, 50), wxSize(600 + wxSystemSettings::GetMetric(wxSYS_FRAMESIZE_X), 365 + wxSystemSettings::GetMetric(wxSYS_FRAMESIZE_X)));
+         wxPoint(50, 50), wxSize(600 + wxSystemSettings::GetMetric(wxSYS_FRAMESIZE_X), 355 + wxSystemSettings::GetMetric(wxSYS_FRAMESIZE_X)));
    
      // Show it and tell the application that it's our main window
 
