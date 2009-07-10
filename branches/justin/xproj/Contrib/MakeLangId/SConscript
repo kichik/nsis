@@ -1,0 +1,24 @@
+target = "MakeLangId"
+
+files = Split("""
+	MakeLangId.cpp
+""")
+
+res = Split("""
+	resource.rc
+""")
+
+resources = Split("""
+	MakeLangId.xml
+""")
+
+libs = Split("""
+	kernel32
+	user32
+	comctl32
+""")
+
+Import('BuildUtil')
+
+BuildUtil(target, files, libs, res = res, resources = resources, entry = 'WinMain')
+

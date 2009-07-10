@@ -1,0 +1,58 @@
+# FIXME: install assembly and pascal includes into the correct locations
+
+lib_target = "pluginapi"
+
+lib_files = Split("""
+	pluginapi.c
+""")
+
+api_files = Split("""
+	pluginapi.h
+	#Source/exehead/api.h
+""")
+
+example = Split("""
+	exdll.c
+	exdll.dpr
+	exdll.dsp
+	exdll.dsw
+	exdll_with_unit.dpr
+	exdll-vs2008.sln
+ 	exdll-vs2008.vcproj
+	nsis.pas
+	extdll.inc
+""")
+
+Import('env plugin_env')
+
+# build library
+
+api_env = env.Clone()
+api_env.Append(CPPPATH = ['#Source/exehead'])
+lib = api_env.Library(lib_target, lib_files)
+
+# distribute library, files and examples
+
+env.DistributeExamples(api_files, path='Plugin/nsis')
+
+if env['PLATFORM'] == 'win32':
+	env.DistributeExamples(lib, path='Plugin/nsis')
+
+else:
+	example += lib_files
+
+	if env.has_key('PREFIX_PLUGINAPI_INC'):
+		env.Distribute(api_files, None, 'pluginapi_inc', '', 'nsis', 'pluginapi', 'pluginapi')
+
+	if env.has_key('PREFIX_PLUGINAPI_LIB'):
+		env.Distribute(lib, None, 'pluginapi_lib', '', 'nsis', 'pluginapi', 'pluginapi')
+
+env.DistributeExamples(example, path='Plugin')
+
+# make sure all the other plug-ins can use the library
+
+env.Install('#$BUILD_PREFIX/api/nsis', api_files + lib)
+
+plugin_env.Append(CPPPATH = ['#$BUILD_PREFIX/api'])
+plugin_env.Append(LIBPATH = ['#$BUILD_PREFIX/api/nsis'])
+plugin_env.Append(LIBS = [lib_target])
