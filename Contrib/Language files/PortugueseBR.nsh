@@ -94,7 +94,7 @@
 
 !ifdef MUI_FINISHPAGE | MUI_UNFINISHPAGE
   ${LangFileString} MUI_TEXT_FINISH_REBOOTNOW "Reiniciar agora"
-  ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Eu quer reiniciar manualmente depois"
+  ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Eu quero reiniciar manualmente depois"
   ${LangFileString} MUI_TEXT_FINISH_RUN "&Executar $(^NameDA)"
   ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "&Mostrar o Readme"
   ${LangFileString} MUI_BUTTONTEXT_FINISH "&Terminar"
