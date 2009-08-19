@@ -1552,7 +1552,7 @@ void CleanAll(int init)
   }
 }
 
-BOOL WINAPI DllMain(HINSTANCE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
+extern "C" BOOL WINAPI DllMain(HINSTANCE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
 {
     g_hInstance = hInst;
     CleanAll(ul_reason_for_call == DLL_PROCESS_ATTACH);
