@@ -1,0 +1,19 @@
+target = 'LangDLL'
+
+files = Split("""
+	LangDLL.c
+""")
+
+resources = Split("""
+	resource.rc
+""")
+
+libs = Split("""
+	kernel32
+	user32
+	gdi32
+""")
+
+Import('BuildPlugin')
+
+BuildPlugin(target, files, libs, res = resources)

@@ -1,0 +1,34 @@
+includes = Split("""
+	Colors.nsh
+	FileFunc.nsh
+	LangFile.nsh
+	Library.nsh
+	LogicLib.nsh
+	Memento.nsh
+	MUI.nsh
+	MUI2.nsh
+	Sections.nsh
+	StrFunc.nsh
+	TextFunc.nsh
+	UpgradeDLL.nsh
+	Util.nsh
+	VB6RunTime.nsh
+	WinCore.nsh
+	WinMessages.nsh
+	WinVer.nsh
+	WordFunc.nsh
+	x64.nsh
+""")
+
+includesWin = [
+	'Win/WinDef.nsh',
+	'Win/WinError.nsh',
+	'Win/WinNT.nsh',
+	'Win/WinUser.nsh'
+]
+
+Import('env')
+
+env.DistributeInclude(includes)
+env.DistributeInclude(includesWin, path='Win')
+env.DistributeDocs('StrFunc.txt', path='StrFunc')
