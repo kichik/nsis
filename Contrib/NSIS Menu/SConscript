@@ -38,7 +38,7 @@ import os
 from os.path import join
 
 if env['PLATFORM'] != 'win32' and WhereIs('wx-config') or \
-   env['PLATFORM'] == 'win32' and os.environ.has_key('WXWIN'):
+   env['PLATFORM'] == 'win32' and env.get('WXWIN'):
 
 	# build
 
@@ -66,10 +66,10 @@ if env['PLATFORM'] != 'win32' and WhereIs('wx-config') or \
 	# set directories
 
 	if nsis_menu[0].env['PLATFORM'] == 'win32':
-		wxlib = [join(os.environ['WXWIN'], 'lib', 'vc_libnsis')]
+		wxlib = [join(env['WXWIN'], 'lib', 'vc_libnsis')]
 		wxinc = [
-			join(os.environ['WXWIN'], 'include'),
-			join(os.environ['WXWIN'], 'lib', 'vc_libnsis', 'msw')
+			join(env['WXWIN'], 'include'),
+			join(env['WXWIN'], 'lib', 'vc_libnsis', 'msw')
 		]
 		nsis_menu[0].env.Append(LIBPATH = wxlib)
 		nsis_menu[0].env.Append(CPPPATH = wxinc)
