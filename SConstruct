@@ -155,6 +155,7 @@ opts.Add(PathVariable('APPEND_CPPPATH', 'Additional paths to search for include 
 opts.Add(PathVariable('APPEND_LIBPATH', 'Additional paths to search for libraries', None))
 opts.Add(('APPEND_CCFLAGS', 'Additional C/C++ compiler flags'))
 opts.Add(('APPEND_LINKFLAGS', 'Additional linker flags'))
+opts.Add(PathVariable('WXWIN', 'Path to wxWindows library folder (e.g. C:\\Dev\\wxWidgets-2.8.10)', os.environ.get('WXWIN')))
 # build options
 opts.Add(BoolVariable('DEBUG', 'Build executables with debugging information', 'no'))
 opts.Add(PathVariable('CODESIGNER', 'A program used to sign executables', None))
