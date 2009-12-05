@@ -3,7 +3,7 @@
 ** Copyright (C) 2000-2001 Nullsoft, Inc.
 ** Author: Justin Frankel
 ** File: connection.h - JNL TCP connection interface
-** License: see jnetlib.h
+** License: zlib
 **
 ** Usage:
 **   1. Create a JNL_Connection object, optionally specifying a JNL_AsyncDNS

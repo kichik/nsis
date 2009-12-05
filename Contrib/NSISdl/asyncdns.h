@@ -3,7 +3,7 @@
 ** Copyright (C) 2000-2001 Nullsoft, Inc.
 ** Author: Justin Frankel
 ** File: asyncdns.h - JNL portable asynchronous DNS interface
-** License: see jnetlib.h
+** License: see License.txt
 **
 ** Usage:
 **   1. Create JNL_AsyncDNS object, optionally with the number of cache entries.
