@@ -368,10 +368,14 @@ BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_COMMAND:
       if (LOWORD(wParam) == IDC_DIRLIST && HIWORD(wParam) == LBN_SELCHANGE)
       {
-        SendMessage(hwDirList, LB_GETTEXT, SendMessage(hwDirList, LB_GETCURSEL, 0, 0), (WPARAM)buf);
-        if (autoadd)
-          lstrcat(lstrcat(buf, "\\"), progname);
-        SetWindowText(hwLocation, buf);
+        LRESULT selection = SendMessage(hwDirList, LB_GETCURSEL, 0, 0);
+        if (selection != LB_ERR)
+        {
+          SendMessage(hwDirList, LB_GETTEXT, selection, (WPARAM)buf);
+          if (autoadd)
+            lstrcat(lstrcat(buf, "\\"), progname);
+          SetWindowText(hwLocation, buf);
+        }
       }
       else if (LOWORD(wParam) == IDC_CHECK && HIWORD(wParam) == BN_CLICKED)
       {
