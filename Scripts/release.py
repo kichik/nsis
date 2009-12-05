@@ -29,7 +29,7 @@ ZIP="C:\Program Files\7-zip\7za.exe" a -tzip %s -mx9 -mfb=255 -mpass=4 %s
 RSH="C:\Program Files\PuTTY\plink.exe" -2 -l kichik nsis.sourceforge.net
 
 [sftp]
-SFTP="C:\Program Files\PuTTY\psftp.exe" -2 -l kichik -batch -b %s frs.sourceforge.net
+SFTP="C:\Program Files\PuTTY\psftp.exe" -2 -l kichik,nsis -batch -b %s frs.sourceforge.net
 
 [wiki]
 PURGE_URL=http://nsis.sourceforge.net/%s?action=purge
@@ -368,7 +368,8 @@ def UploadFiles():
 	print 'uploading files to SourceForge...'
 
 	sftpcmds = file('sftp-commands', 'w')
-	sftpcmds.write('cd uploads\n')
+	sftpcmds.write('mkdir "/home/frs/project/n/ns/nsis/NSIS 2/%s"\n' % VERSION)
+	sftpcmds.write('cd "/home/frs/project/n/ns/nsis/NSIS 2/%s"\n' % VERSION)
 	sftpcmds.write('put %s.tar.bz2\n' % newverdir)
 	sftpcmds.write('put %s\\nsis-%s-setup.exe\n' % (newverdir, VERSION))
 	sftpcmds.write('put %s\\nsis-%s.zip\n' % (newverdir, VERSION))
@@ -385,16 +386,13 @@ def UploadFiles():
 	os.unlink('sftp-commands')
 
 def ManualRelease():
-	print 'release url:'
+	print 'go fix release notes...'
 	print '  http://nsis.sf.net/rn/new'
 	print
 
-	sys.stdout.write('What\'s the SF release id of the new version? ')
-	release_id = raw_input()
+	raw_input()
 
-	return release_id
-
-def UpdateWiki(release_id):
+def UpdateWiki():
 	print 'updating wiki...'
 
 	def update_wiki_page(page, data, summary):
@@ -414,7 +412,6 @@ def UpdateWiki(release_id):
 
 	update_wiki_page('Template:NSISVersion', VERSION, 'new version')
 	update_wiki_page('Template:NSISReleaseDate', time.strftime('%B %d, %Y'), 'new version')
-	update_wiki_page('Template:NSISReleaseID', release_id, 'new version')
 
 	os.system('start ' + PURGE_URL % 'Download')
 
@@ -447,7 +444,7 @@ CreateSourceTarball()
 BuildRelease()
 CreateSpecialBuilds()
 UploadFiles()
-release_id = ManualRelease()
-UpdateWiki(release_id)
+ManualRelease()
+UpdateWiki()
 ToDo()
 CloseLog()
