@@ -3,7 +3,7 @@
 ** Copyright (C) 2000-2001 Nullsoft, Inc.
 ** Author: Justin Frankel
 ** File: connection.cpp - JNL TCP connection implementation
-** License: see jnetlib.h
+** License: see License.txt
 */
 
 #include "netinc.h"

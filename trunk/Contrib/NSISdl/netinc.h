@@ -3,7 +3,7 @@
 ** Copyright (C) 2000-2001 Nullsoft, Inc.
 ** Author: Justin Frankel
 ** File: netinc.h - network includes and portability defines (used internally)
-** License: see jnetlib.h
+** License: see License.txt
 */
 
 #ifndef _NETINC_H_
