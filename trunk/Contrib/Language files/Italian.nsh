@@ -7,7 +7,7 @@
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Benvenuti nel programma di installazione di $(^NameDA)"
-  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Questo programma installerà $(^NameDA) nel vostro computer.$\r$\n$\r$\nSi raccomanda di chiudere tutte le altre applicazioni prima di iniziare l'installazione. Questo permetterà al programma di installazione di aggiornare i file di  sistema senza dover riavviare il computer.$\r$\n$\r$\n$_CLICK"
+  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Questo programma installerà $(^NameDA) nel vostro computer.$\r$\n$\r$\nSi raccomanda di chiudere tutte le altre applicazioni prima di iniziare l'installazione. Questo permetterà al programma di installazione di aggiornare i file di sistema senza dover riavviare il computer.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_UNWELCOMEPAGE
@@ -66,7 +66,7 @@
 
 !ifdef MUI_INSTFILESPAGE
   ${LangFileString} MUI_TEXT_INSTALLING_TITLE "Installazione in corso"
-  ${LangFileString} MUI_TEXT_INSTALLING_SUBTITLE "Prego attendere mentre $(^NameDA)  viene installato."
+  ${LangFileString} MUI_TEXT_INSTALLING_SUBTITLE "Prego attendere mentre $(^NameDA) viene installato."
   ${LangFileString} MUI_TEXT_FINISH_TITLE "Installazione completata"
   ${LangFileString} MUI_TEXT_FINISH_SUBTITLE "L'installazione è stata completata con successo."
   ${LangFileString} MUI_TEXT_ABORT_TITLE "Installazione interrotta"
@@ -99,7 +99,7 @@
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Preferisco riavviarlo manualmente più tardi"
   ${LangFileString} MUI_TEXT_FINISH_RUN "Esegui $(^NameDA)"
   ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "Mostra il file Readme"
-  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Fine"  
+  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Fine"
 !endif
 
 !ifdef MUI_STARTMENUPAGE
