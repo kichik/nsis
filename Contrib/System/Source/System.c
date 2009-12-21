@@ -42,6 +42,7 @@ int LastStackReal;
 DWORD LastError;
 volatile SystemProc *LastProc;
 int CallbackIndex;
+CallbackThunk* CallbackThunkListHead;
 HINSTANCE g_hInstance;
 
 // Return to callback caller with stack restore
@@ -135,6 +136,36 @@ PLUGINFUNCTION(Debug)
 #define SYSTEM_LOG_POST
 
 #endif
+
+PLUGINFUNCTIONSHORT(Free)
+{
+    HANDLE memtofree = (HANDLE)popint64();
+
+    if (CallbackThunkListHead)
+    {
+        CallbackThunk *pCb=CallbackThunkListHead,*pPrev=NULL;
+        do 
+        {
+            if (GetAssociatedSysProcFromCallbackThunkPtr(pCb) == (SystemProc*)memtofree) 
+            {
+                if (pPrev)
+                    pPrev->pNext=pCb->pNext;
+                else
+                    CallbackThunkListHead=pCb->pNext;
+
+                --(CallbackIndex);
+                VirtualFree(pCb,0,MEM_RELEASE);
+                break;
+            }
+            pPrev=pCb;
+            pCb=pCb->pNext;
+        }
+        while( pCb != NULL );
+    }
+
+    GlobalFree(memtofree);
+}
+PLUGINFUNCTIONEND
 
 PLUGINFUNCTION(Get)
 {
@@ -917,13 +948,22 @@ HANDLE CreateCallback(SystemProc *cbproc)
         cbproc->CallbackIndex = ++(CallbackIndex);
         cbproc->Options |= POPT_PERMANENT;
 
-        mem = (char *) (cbproc->Proc = VirtualAlloc(NULL, 10, MEM_COMMIT, PAGE_EXECUTE_READWRITE));
+        mem = (char *) (cbproc->Proc = VirtualAlloc(NULL, sizeof(CallbackThunk), MEM_COMMIT, PAGE_EXECUTE_READWRITE));
+
+        ((CallbackThunk*)mem)->pNext=CallbackThunkListHead;
+        CallbackThunkListHead=(CallbackThunk*)mem;
+
+#ifdef SYSTEM_X86
         *(mem++) = (char) 0xB8; // Mov eax, const
         *((int *)mem) = (int) cbproc;
         mem += sizeof(int);
         *(mem++) = (char) 0xe9; // Jmp relative
         *((int *)mem) = (int) RealCallBack;
         *((int *)mem) -= ((int) mem) + 4;
+#else
+#error "Asm thunk not implemeted for this architecture!"
+#endif
+
     }
 
     // Return proc address
@@ -1043,6 +1083,7 @@ BOOL WINAPI DllMain(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
             LastError = 0;
             LastProc = NULL;
             CallbackIndex = 0;
+            CallbackThunkListHead = NULL;
             retexpr[0] = (char) 0xC2;
             retexpr[2] = 0x00;
         }
