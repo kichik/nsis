@@ -1,6 +1,18 @@
 #ifndef ___SYSTEM__H___
 #define ___SYSTEM__H___
 
+// This should probably be moved to platform.h at some point
+
+#if defined(_M_X64) || defined(__amd64__)
+#    define SYSTEM_X64
+#elif defined(_M_IX86) || defined(__i386__) || defined(_X86_)
+#    define SYSTEM_X86
+#else
+#    error "Unknown architecture!"
+#endif
+
+
+
 // The following ifdef block is the standard way of creating macros which make exporting 
 // from a DLL simpler. All files within this DLL are compiled with the SYSTEM_EXPORTS
 // symbol defined on the command line. this symbol should not be defined on any project

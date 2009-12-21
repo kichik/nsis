@@ -501,6 +501,12 @@ SystemProc *PrepareProc(BOOL NeedForCall)
             // Types
             case 'v':
             case 'V': temp2 = PAT_VOID; break;
+
+            #if !defined(SYSTEM_X86)
+                #error "TODO: handle p"
+            #else
+                case 'p':
+            #endif
             case 'i':
             case 'I': temp2 = PAT_INT; break;
             case 'l':
