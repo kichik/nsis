@@ -72,7 +72,7 @@ System::Free $0
 <h4>Usage example</h4>
 <blockquote><pre>
 # allocate a buffer and put 'test string' and an int in it
-System::Call "*(&amp;t1024 'test string', i 5) i .s"
+System::Call "*(&amp;t1024 'test string', i 5) p .s"
 Pop $0
 # copy to an automatically created buffer
 System::<b>Copy</b> 0 $0
@@ -294,7 +294,7 @@ DetailPrint $4
 <td><i>N</i> bytes of GUID (structures only)</td>
 </tr>
 </table>
-<p>Additionally, each type can be prefixed with an asterisk to denote a pointer. When using an asterisk, the System plug-in still expects the value of the parameter, rather than the pointer's address. To pass a direct address, use `i' with no asterisk. A <a href="#pointer">usage example</a> is available. <a href="#memfuncs">Alloc</a> returns addresses and its return value should therefore be used with `i', without an asterisk.</p>
+<p>Additionally, each type can be prefixed with an asterisk to denote a pointer. When using an asterisk, the System plug-in still expects the value of the parameter, rather than the pointer's address. To pass a direct address, use `p' with no asterisk. A <a href="#pointer">usage example</a> is available. <a href="#memfuncs">Alloc</a> returns addresses and its return value should therefore be used with `p', without an asterisk.</p>
 </blockquote>
 
 <h4>Available Sources and Destinations</h4>
@@ -449,20 +449,20 @@ System::Free $0
 <h4>Usage Examples</h4>
 
 <blockquote><pre>
-<a name="func"></a>System::<b>Call</b> "user32::MessageBox(i $HWNDPARENT, t 'NSIS System Plug-in', t 'Test', i 0)"
+<a name="func"></a>System::<b>Call</b> "user32::MessageBox(p $HWNDPARENT, t 'NSIS System Plug-in', t 'Test', i 0)"
 </pre></blockquote>
 <blockquote><pre>
-<a name="funcaddr"></a>System::<b>Call</b> "kernel32::GetModuleHandle(t 'user32.dll') i .s"
-System::<b>Call</b> "kernel32::GetProcAddress(i s, t 'MessageBoxA') i .r0"
-System::<b>Call</b> "::$0(i $HWNDPARENT, t 'GetProcAddress test', t 'NSIS System Plug-in', i 0)"
+<a name="funcaddr"></a>System::<b>Call</b> "kernel32::GetModuleHandle(t 'user32.dll') p .s"
+System::<b>Call</b> "kernel32::GetProcAddress(p s, t 'MessageBoxA') p .r0"
+System::<b>Call</b> "::$0(p $HWNDPARENT, t 'GetProcAddress test', t 'NSIS System Plug-in', i 0)"
 </pre></blockquote>
 <blockquote><pre>
-<a name="get"></a>System::<b>Get</b> "user32::MessageBox(i $HWNDPARENT, t 'This is a default text', t 'Default', i 0)"
+<a name="get"></a>System::<b>Get</b> "user32::MessageBox(p $HWNDPARENT, t 'This is a default text', t 'Default', i 0)"
 Pop $0
 System::<b>Call</b> "$0"
 </pre></blockquote>
 <blockquote><pre>
-System::<b>Get</b> "user32::MessageBox(i $HWNDPARENT, t 'This is a default text', \
+System::<b>Get</b> "user32::MessageBox(p $HWNDPARENT, t 'This is a default text', \
 	t 'Default', i 0x1|0x10)"
 Pop $0
 System::<b>Call</b> "$0(, 'This is a System::Get test', 'NSIS System Plug-in',)"
@@ -481,7 +481,7 @@ System::<b>Call</b> "*$0(i .r1)"
 DetailPrint $1
 </pre></blockquote>
 <blockquote><pre>
-<a name="newstruct"></a>System::<b>Call</b> "*(i 5) i .r0"
+<a name="newstruct"></a>System::<b>Call</b> "*(i 5) p .r0"
 System::<b>Call</b> "*$0(i .r1)"
 DetailPrint $1
 </pre></blockquote>
@@ -492,9 +492,9 @@ DetailPrint $1
 !define IID_IActiveDesktop {F490EB00-1240-11D1-9888-006097DEACF9}
 # create IActiveDesktop interface
 System::<b>Call</b> "ole32::CoCreateInstance( \
-	g '${CLSID_ActiveDesktop}', i 0, \
+	g '${CLSID_ActiveDesktop}', p 0, \
 	i ${CLSCTX_INPROC_SERVER}, \
-	g '${IID_IActiveDesktop}', *i .r0) i.r1"
+	g '${IID_IActiveDesktop}', *p .r0) i.r1"
 StrCmp $1 0 0 end
 # call IActiveDesktop->GetWallpaper
 System::<b>Call</b> "$0->4(w .r2, i ${NSIS_MAX_STRLEN}, i 0)"
@@ -512,14 +512,14 @@ System::<b>Call</b> "MyDLL::MyFunc(i 5) ? u"
 Delete $PLUGINSDIR\MyDLL.dll
 </pre></blockquote>
 <blockquote><pre>
-<a name="callback"></a>System::<b>Get</b> "(i.r1, i) iss"
+<a name="callback"></a>System::<b>Get</b> "(p.r1, p) iss"
 Pop $R0
-System::<b>Call</b> "user32::EnumChildWindows(i $HWNDPARENT, k R0, i) i.s"
+System::<b>Call</b> "user32::EnumChildWindows(p $HWNDPARENT, k R0, p) i.s"
 loop:
 	Pop $0
 	StrCmp $0 "callback1" 0 done
-	System::<b>Call</b> "user32::GetWindowText(ir1,t.r2,i${NSIS_MAX_STRLEN})"
-	System::<b>Call</b> "user32::GetClassName(ir1,t.r3,i${NSIS_MAX_STRLEN})"
+	System::<b>Call</b> "user32::GetWindowText(pr1,t.r2,i${NSIS_MAX_STRLEN})"
+	System::<b>Call</b> "user32::GetClassName(pr1,t.r3,i${NSIS_MAX_STRLEN})"
 	IntFmt $1 "0x%X" $1
 	DetailPrint "$1 - [$3] $2"
 	Push 1 # callback's return value
@@ -529,13 +529,13 @@ done:
 System::Free $R0
 </pre></blockquote>
 <blockquote><pre>
-<a name="repeat"></a>!define MB "user32::MessageBox(i$HWNDPARENT,t,t'NSIS System Plug-in',i0)"
+<a name="repeat"></a>!define MB "user32::MessageBox(p$HWNDPARENT,t,t'NSIS System Plug-in',i0)"
 System::<b>Call</b> "${MB}(,'my message',,)"
 System::<b>Call</b> "${MB}(,'another message',,) i.r0"
 MessageBox MB_OK "last call returned $0"
 </pre></blockquote>
 <blockquote><pre>
-System::<b>Call</b> "user32::SendMessage(i $HWNDPARENT, t 'test', t 'test', i 0) i.s ? \
+System::<b>Call</b> "user32::SendMessage(p $HWNDPARENT, t 'test', t 'test', p 0) p.s ? \
 	e (,t'test replacement',,) i.r0 ? !e #user32::MessageBox"
 DetailPrint $0
 ClearErrors
@@ -699,7 +699,7 @@ System::Alloc 16
 </pre></blockquote>
 
 <blockquote><pre>
-System::Call "*(i, i, i, t)i.s"
+System::Call "*(i, i, i, t)p.s"
 </pre></blockquote>
 
 </blockquote>
@@ -709,7 +709,7 @@ System::Call "*(i, i, i, t)i.s"
 <blockquote><p>Setting data can be done using <a href="#callfuncs">Call</a>. It can be done in the allocation stage, or in another stage using the struct handling syntax.</p>
 
 <blockquote><pre>
-System::Call "*(i 5, i 2, i 513, t 'test')i.s"
+System::Call "*(i 5, i 2, i 513, t 'test')p.s"
 </pre></blockquote>
 
 <blockquote><pre>
@@ -763,9 +763,9 @@ System::Free $0
 System::Alloc 32
 Pop $1
 # call
-System::Call "Kernel32::GlobalMemoryStatus(i r1)"
+System::Call "Kernel32::GlobalMemoryStatus(p r1)"
 # get
-System::Call "*$1(i.r2, i.r3, i.r4, i.r5, i.r6, i.r7, i.r8, i.r9)"
+System::Call "*$1(i.r2, i.r3, p.r4, p.r5, p.r6, p.r7, p.r8, p.r9)"
 # free
 System::Free $1
 # print

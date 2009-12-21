@@ -319,17 +319,17 @@ Function systemSplash
    System::Store "s r8r9"
 
    ; Get module instance
-   System::Call "${sysGetModuleHandle} (i) .r7"
+   System::Call "${sysGetModuleHandle} (p) .r7"
 
    ; Get arrow cursor
-   System::Call "${sysLoadCursor} (0, i ${IDC_ARROW}) .R9" 
+   System::Call "${sysLoadCursor} (0, p ${IDC_ARROW}) .R9" 
 
    ; Get callback
    System::Get "${sysWNDPROC}"
    Pop $3
 
    ; Create window class
-   System::Call "*${stWNDCLASS} (0,r3,0,0,r7,0,R9,0,i 0,'_sp') .R9"
+   System::Call "*${stWNDCLASS} (0,r3,0,0,r7,0,R9,0,p 0,'_sp') .R9"
 
    ; Register window class
    System::Call "${sysRegisterClass} (R9) .R9"
@@ -347,7 +347,7 @@ Function systemSplash
    !insertmacro SINGLE_CALLBACK 1 $5 1 _systemSplashWndCB
 
    ; Create MSG struct
-   System::Call "*${stMSG} (_) i.R9"
+   System::Call "*${stMSG} (_) p.R9"
 
    ; -------------------------
 repeat:
@@ -371,7 +371,7 @@ repeat:
 
 finish:
    ; Stop the sound
-   System::Call "${sysPlaySound} (i 0, i 0, i 0)"
+   System::Call "${sysPlaySound} (p 0, p 0, i 0)"
 
    ; Delete bitmap object
    System::Call "${sysDeleteObject} (r6)"
