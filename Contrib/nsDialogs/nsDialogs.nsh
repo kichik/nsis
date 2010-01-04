@@ -469,7 +469,12 @@ Header file for creating custom installer pages with nsDialogs
 
 !macro __NSD_LB_DelString CONTROL STRING
 
-	SendMessage ${CONTROL} ${LB_DELETESTRING} 0 `STR:${STRING}`
+	Push $0
+
+	SendMessage ${CONTROL} ${LB_FINDSTRINGEXACT} -1 `STR:${STRING}` $0
+	SendMessage ${CONTROL} ${LB_DELETESTRING} $0 0
+
+	Pop $0
 
 !macroend
 
