@@ -1,5 +1,5 @@
 ;Language: German (1031)
-;By L.King, changes by K. Windszus & R. Bisswanger & M. Simmack & D. Weiß
+;By L.King, changes by K. Windszus & R. Bisswanger & M. Simmack & D. Weiß & Frederik Schwarzer
 
 !insertmacro LANGFILE "German" "Deutsch"
 
@@ -30,7 +30,7 @@
 !endif
 
 !ifdef MUI_LICENSEPAGE | MUI_UNLICENSEPAGE
-  ${LangFileString} MUI_INNERTEXT_LICENSE_TOP "Drücken Sie die Bild-nach-unten Taste, um den Rest des Abkommens zu sehen."
+  ${LangFileString} MUI_INNERTEXT_LICENSE_TOP "Drücken Sie die Bild-Runter-Taste, um den Rest des Abkommens zu sehen."
 !endif
 
 !ifdef MUI_COMPONENTSPAGE
@@ -63,7 +63,7 @@
 !endif
 
 !ifdef MUI_INSTFILESPAGE
-  ${LangFileString} MUI_TEXT_INSTALLING_TITLE "Installiere..."
+  ${LangFileString} MUI_TEXT_INSTALLING_TITLE "Wird installiert ..."
   ${LangFileString} MUI_TEXT_INSTALLING_SUBTITLE "Bitte warten Sie, während $(^NameDA) installiert wird."
   ${LangFileString} MUI_TEXT_FINISH_TITLE "Die Installation ist vollständig"
   ${LangFileString} MUI_TEXT_FINISH_SUBTITLE "Die Installation wurde erfolgreich abgeschlossen."
@@ -72,7 +72,7 @@
 !endif
 
 !ifdef MUI_UNINSTFILESPAGE
-  ${LangFileString} MUI_UNTEXT_UNINSTALLING_TITLE "Deinstalliere..."
+  ${LangFileString} MUI_UNTEXT_UNINSTALLING_TITLE "Wird deinstalliert ..."
   ${LangFileString} MUI_UNTEXT_UNINSTALLING_SUBTITLE "Bitte warten Sie, während $(^NameDA) entfernt wird."
   ${LangFileString} MUI_UNTEXT_FINISH_TITLE "Die Deinstallation ist vollständig"
   ${LangFileString} MUI_UNTEXT_FINISH_SUBTITLE "Die Deinstallation wurde erfolgreich abgeschlossen."
@@ -82,13 +82,13 @@
 
 !ifdef MUI_FINISHPAGE
   ${LangFileString} MUI_TEXT_FINISH_INFO_TITLE "Die Installation von $(^NameDA) wird abgeschlossen"
-  ${LangFileString} MUI_TEXT_FINISH_INFO_TEXT "$(^NameDA) wurde auf Ihrem Computer installiert.$\r$\n$\r$\nKlicken Sie auf Fertig stellen, um den Installations-Assistenten zu schließen."
+  ${LangFileString} MUI_TEXT_FINISH_INFO_TEXT "$(^NameDA) wurde auf Ihrem Computer installiert.$\r$\n$\r$\nKlicken Sie auf Fertigstellen, um den Installations-Assistenten zu schließen."
   ${LangFileString} MUI_TEXT_FINISH_INFO_REBOOT "Windows muss neu gestartet werden, um die Installation von $(^NameDA) zu vervollständigen. Möchten Sie Windows jetzt neu starten?"
 !endif
 
 !ifdef MUI_UNFINISHPAGE
   ${LangFileString} MUI_UNTEXT_FINISH_INFO_TITLE "Die Deinstallation von $(^NameDA) wird abgeschlossen"
-  ${LangFileString} MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) ist von Ihrem Computer entfernt worden.$\r$\n$\r$\nKlicken Sie auf Fertig stellen, um den Assistenten zu schließen."
+  ${LangFileString} MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) ist von Ihrem Computer entfernt worden.$\r$\n$\r$\nKlicken Sie auf Fertigstellen, um den Assistenten zu schließen."
   ${LangFileString} MUI_UNTEXT_FINISH_INFO_REBOOT "Windows muss neu gestartet werden, um die Deinstallation von $(^NameDA) zu vervollständigen. Möchten Sie Windows jetzt neu starten?"
 !endif
 
@@ -96,8 +96,8 @@
   ${LangFileString} MUI_TEXT_FINISH_REBOOTNOW "Jetzt neu starten"
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Windows später selbst neu starten"
   ${LangFileString} MUI_TEXT_FINISH_RUN "$(^NameDA) ausführen"
-  ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "Liesmich anzeigen"
-  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Fertig stellen"  
+  ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "Liesmich-Datei anzeigen"
+  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Fertigstellen"
 !endif
 
 !ifdef MUI_STARTMENUPAGE
@@ -113,7 +113,7 @@
 !endif
 
 !ifdef MUI_ABORTWARNING
-  ${LangFileString} MUI_TEXT_ABORTWARNING "Sind Sie sicher, dass Sie die Installation von $(^Name) abbrechen wollen?"
+  ${LangFileString} MUI_TEXT_ABORTWARNING "Sind Sie sicher, dass Sie die Installation von $(^Name) abbrechen möchten?"
 !endif
 
 !ifdef MUI_UNABORTWARNING
@@ -122,7 +122,7 @@
 
 !ifdef MULTIUSER_INSTALLMODEPAGE
   ${LangFileString} MULTIUSER_TEXT_INSTALLMODE_TITLE "Benutzer auswählen"
-  ${LangFileString} MULTIUSER_TEXT_INSTALLMODE_SUBTITLE "Wählen Sie die Benutzer aus, für die Sie $(^NameDA) installieren wollen."
+  ${LangFileString} MULTIUSER_TEXT_INSTALLMODE_SUBTITLE "Wählen Sie die Benutzer aus, für die Sie $(^NameDA) installieren möchten."
   ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_TOP "Wählen Sie aus, ob Sie $(^NameDA) nur für den eigenen Gebrauch oder für die Nutzung durch alle Benutzer dieses Systems installieren möchten. $(^ClickNext)"
   ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_ALLUSERS "Installation für alle Benutzer dieses Computers"
   ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_CURRENTUSER "Installation nur für mich"

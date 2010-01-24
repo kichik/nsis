@@ -9,13 +9,13 @@ NLF v6
 1252
 # RTL - anything else than RTL means LTR
 -
-# Translation by L.King, changes by R. Bisswanger, Tim Kosse
+# Translation by L.King, changes by R. Bisswanger, Tim Kosse, Frederik Schwarzer
 # ^Branding
-Nullsoft Install System %s
+Nullsoft Installationssystem %s
 # ^SetupCaption
-$(^Name) Installation
+Installation von $(^Name)
 # ^UninstallCaption
-$(^Name) Deinstallation
+Deinstallation von $(^Name)
 # ^LicenseSubCaption
 : Lizenzabkommen
 # ^ComponentsSubCaption
@@ -23,7 +23,7 @@ $(^Name) Deinstallation
 # ^DirSubCaption
 : Zielverzeichnis
 # ^InstallingSubCaption
-: Installiere
+: Wird installiert
 # ^CompletedSubCaption
 : Fertig
 # ^UnComponentsSubCaption
@@ -33,7 +33,7 @@ $(^Name) Deinstallation
 # ^ConfirmSubCaption
 : Bestätigung
 # ^UninstallingSubCaption
-: Entferne
+: Wird entfernt
 # ^UnCompletedSubCaption
 : Fertig
 # ^BackBtn
@@ -43,9 +43,9 @@ $(^Name) Deinstallation
 # ^AgreeBtn
 &Annehmen
 # ^AcceptBtn
-Ich &akzeptiere das Lizenzabkommen.
+Lizenzabkommen &akzeptieren
 # ^DontAcceptBtn
-Ich &lehne das Lizenzabkommen ab.
+Lizenzabkommen ab&lehnen
 # ^InstallBtn
 &Installieren
 # ^UninstallBtn
@@ -55,7 +55,7 @@ Abbrechen
 # ^CloseBtn
 &Beenden
 # ^BrowseBtn
-&Durchsuchen...
+&Durchsuchen ...
 # ^ShowDetailsBtn
 &Details anzeigen
 # ^ClickNext
@@ -83,7 +83,7 @@ Bitte lesen Sie das Lizenzabkommen, bevor Sie $(^NameDA) entfernen. Wenn Sie all
 # ^Custom
 Benutzerdefiniert
 # ^ComponentsText
-Wählen Sie die Komponenten aus, die Sie installieren möchten und wählen Sie diejenigen ab, die Sie nicht installieren wollen. $_CLICK
+Wählen Sie die Komponenten aus, die Sie installieren möchten und wählen Sie diejenigen ab, die nicht installiert werden sollen. $_CLICK
 # ^ComponentsSubText1
 Installations-Typ bestimmen:
 # ^ComponentsSubText2_NoInstTypes
@@ -91,7 +91,7 @@ Wählen Sie die Komponenten aus, die Sie installieren möchten:
 # ^ComponentsSubText2
 oder wählen Sie zusätzliche Komponenten aus, die Sie installieren möchten:
 # ^UnComponentsText
-Wählen Sie die Komponenten aus, die Sie entfernen möchten und wählen Sie diejenigen ab, die Sie nicht entfernen wollen. $_CLICK
+Wählen Sie die Komponenten aus, die Sie entfernen möchten und wählen Sie diejenigen ab, die nicht entfernt werden sollen. $_CLICK
 # ^UnComponentsSubText1
 Deinstallations-Typ bestimmen:
 # ^UnComponentsSubText2_NoInstTypes
@@ -117,7 +117,7 @@ Wählen Sie das Verzeichnis aus, in dem sich $(^NameDA) befindet:
 # ^UninstallingText
 $(^NameDA) wird aus dem unten angegebenen Verzeichnis entfernt. $_CLICK
 # ^UninstallingSubText
-Entferne aus:
+Wird entfernt aus:
 # ^FileError
 Fehler beim Überschreiben der Datei: \r\n\t"$0"\r\nKlicken Sie auf Abbrechen, um abzubrechen,\r\nauf Wiederholen, um den Schreibvorgang erneut zu versuchen\r\noder auf Ignorieren, um diese Datei zu überspringen.
 # ^FileError_NoIgnore
@@ -127,41 +127,41 @@ Fehler beim Überschreiben der Datei: \r\n\t"$0"\r\nKlicken Sie auf Wiederholen, 
 # ^CopyFailed
 Kopieren fehlgeschlagen
 # ^CopyTo
-"Kopiere nach "
+"Wird kopiert nach "
 # ^Registering
-"Registriere: "
+"Wird registriert: "
 # ^Unregistering
-"Deregistriere: "
+"Wird deregistriert: "
 # ^SymbolNotFound
 "Symbol ist nicht vorhanden: "
 # ^CouldNotLoad
 "Fehler beim Laden von "
 # ^CreateFolder
-"Erstelle Verzeichnis: "
+"Verzeichnis wird erstellt: "
 # ^CreateShortcut
-"Erstelle Verknüpfung: "
+"Verknüpfung wird erstellt: "
 # ^CreatedUninstaller
-"Erstelle Deinstallations-Programm: "
+"Deinstallations-Programm wird erstellt: "
 # ^Delete
-"Lösche Datei: "
+"Datei wird gelöscht: "
 # ^DeleteOnReboot
-"Lösche Datei nach Neustart: "
+"Datei wird nach Neustart gelöscht: "
 # ^ErrorCreatingShortcut
 "Fehler beim Erstellen der Verknüpfung: "
 # ^ErrorCreating
 "Fehler beim Erstellen: "
 # ^ErrorDecompressing
-Fehler beim Dekomprimieren. Beschädigtes Installations-Programm?
+Fehler beim Entpacken. Ist das Installations-Programm beschädigt?
 # ^ErrorRegistering
 Fehler beim Registrieren der DLL
 # ^ExecShell
 "ExecShell: "
 # ^Exec
-"Starte: "
+"Wird gestartet: "
 # ^Extract
-"Dekomprimiere: "
+"Wird entpackt: "
 # ^ErrorWriting
-"Dekomprimierung: Fehler beim Schreiben der Datei "
+"Entpacken: Fehler beim Schreiben der Datei "
 # ^InvalidOpcode
 Beschädigtes Installations-Programm: ungültiger Befehlscode
 # ^NoOLE
@@ -169,7 +169,7 @@ Beschädigtes Installations-Programm: ungültiger Befehlscode
 # ^OutputFolder
 "Zielverzeichnis: "
 # ^RemoveFolder
-"Entferne Verzeichnis: "
+"Verzeichnis wird entfernt: "
 # ^RenameOnReboot
 "Umbenennen nach Neustart: "
 # ^Rename
