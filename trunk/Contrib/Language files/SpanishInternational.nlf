@@ -138,11 +138,11 @@ Copia fallida
 # ^CouldNotLoad
 "No pudo cargarse: "
 # ^CreateFolder
-"Crear carpeta: "
+"Creando carpeta: "
 # ^CreateShortcut
-"Crear acceso directo: "
+"Creando acceso directo: "
 # ^CreatedUninstaller
-"Crear desinstalador: "
+"Creando desinstalador: "
 # ^Delete
 "Borrar archivo: "
 # ^DeleteOnReboot
@@ -156,13 +156,13 @@ Copia fallida
 # ^ErrorRegistering
 Error registrando DLL
 # ^ExecShell
-"Ejecutar comando: "
+"Ejecutando comando: "
 # ^Exec
-"Ejecutar: "
+"Ejecutando: "
 # ^Extract
-"Extraer: "
+"Extrayendo: "
 # ^ErrorWriting
-"Extraer: error escribiendo al archivo "
+"Extrayendo: error escribiendo al archivo "
 # ^InvalidOpcode
 Instalador corrupto: código de operación no válido
 # ^NoOLE
