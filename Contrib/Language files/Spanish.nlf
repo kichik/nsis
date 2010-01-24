@@ -138,11 +138,11 @@ Falló la copia
 # ^CouldNotLoad
 "No pudo cargarse: "
 # ^CreateFolder
-"Crear directorio: "
+"Creando directorio: "
 # ^CreateShortcut
-"Crear acceso directo: "
+"Creando acceso directo: "
 # ^CreatedUninstaller
-"Crear desinstalador: "
+"Creando desinstalador: "
 # ^Delete
 "Borrar archivo: "
 # ^DeleteOnReboot
@@ -156,9 +156,9 @@ Falló la copia
 # ^ErrorRegistering
 Error registrando DLL
 # ^ExecShell
-"Ejecutar comando: "
+"Extrayendo  comando: "
 # ^Exec
-"Ejecutar: "
+"Extrayendo : "
 # ^Extract
 "Extraer: "
 # ^ErrorWriting
@@ -189,3 +189,4 @@ K
 M
 # ^Giga
 G
+ 	  	 
