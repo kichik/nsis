@@ -121,9 +121,9 @@
 !endif
 
 !ifdef MULTIUSER_INSTALLMODEPAGE
-  ${LangFileString} MULTIUSER_TEXT_INSTALLMODE_TITLE "Выбор пользователя"
-  ${LangFileString} MULTIUSER_TEXT_INSTALLMODE_SUBTITLE "Укажите, для какого пользователя установить $(^NameDA)."
-  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_TOP "Желаете установить $(^NameDA) только для себя или для всех пользователей этого компьютера? $(^ClickNext)"
+  ${LangFileString} MULTIUSER_TEXT_INSTALLMODE_TITLE "Режим установки"
+  ${LangFileString} MULTIUSER_TEXT_INSTALLMODE_SUBTITLE "Выберите, для каких пользователей вы хотите установить $(^NameDA)."
+  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_TOP "Выберите, будете ли вы устанавливать $(^NameDA) только для себя или для всех пользователей данного компьютера. $(^ClickNext)"
   ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_ALLUSERS "Установить для всех пользователей"
-  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_CURRENTUSER "Установить только для себя"
+  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_CURRENTUSER "Установить только для текущего пользователя"
 !endif
