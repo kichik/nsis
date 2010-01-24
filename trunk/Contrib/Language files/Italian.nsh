@@ -32,7 +32,7 @@
 !endif
 
 !ifdef MUI_LICENSEPAGE | MUI_UNLICENSEPAGE
-  ${LangFileString} MUI_INNERTEXT_LICENSE_TOP "Premere Page Down per vedere il resto della licenza d'uso."
+  ${LangFileString} MUI_INNERTEXT_LICENSE_TOP "Premere Pag giù per vedere il resto della licenza d'uso."
 !endif
 
 !ifdef MUI_COMPONENTSPAGE
