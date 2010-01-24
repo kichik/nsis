@@ -119,3 +119,11 @@
 !ifdef MUI_UNABORTWARNING
   ${LangFileString} MUI_UNTEXT_ABORTWARNING "Вы действительно хотите отменить удаление $(^Name)?"
 !endif
+
+!ifdef MULTIUSER_INSTALLMODEPAGE
+  ${LangFileString} MULTIUSER_TEXT_INSTALLMODE_TITLE "Выбор пользователя"
+  ${LangFileString} MULTIUSER_TEXT_INSTALLMODE_SUBTITLE "Укажите, для какого пользователя установить $(^NameDA)."
+  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_TOP "Желаете установить $(^NameDA) только для себя или для всех пользователей этого компьютера? $(^ClickNext)"
+  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_ALLUSERS "Установить для всех пользователей"
+  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_CURRENTUSER "Установить только для себя"
+!endif
