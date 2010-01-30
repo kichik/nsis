@@ -382,11 +382,17 @@ BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         BOOL bEnable = IsDlgButtonChecked(hwndDlg, IDC_CHECK) != BST_CHECKED;
         EnableWindow(hwDirList, bEnable);
         EnableWindow(hwLocation, bEnable);
+        if (bEnable)
+          goto ValidateLocation;
+        *buf = '!'; //This only needs to be != 0, actual value does not matter
+        goto SetOkBtn;
       }
       else if (LOWORD(wParam) == IDC_LOCATION && HIWORD(wParam) == EN_CHANGE)
       {
+        ValidateLocation:
         GetWindowText(hwLocation, buf, MAX_PATH);
         validate_filename(buf);
+        SetOkBtn:
         EnableWindow(GetDlgItem(hwParent, IDOK), *buf != '\0');
       }
     break;
