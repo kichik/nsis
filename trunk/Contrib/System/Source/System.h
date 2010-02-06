@@ -113,7 +113,7 @@ struct tag_CallbackThunk
         int realprocaddr;
         #pragma pack(pop)
         */
-        char asm[10];
+        char asm_code[10];
     #else
         #error "Asm thunk not implemeted for this architecture!"
     #endif
