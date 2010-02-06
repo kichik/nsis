@@ -349,7 +349,11 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       {
         update_status_text_buf1(LANG_OUTPUTDIR);
         mystrcpy(state_output_directory,buf1);
-        SetCurrentDirectory(buf1);
+        if (!SetCurrentDirectory(buf1))
+        {
+            log_printf3("SetCurrentDirectory(%s) failed (%d)",buf1,GetLastError());
+            exec_error++;
+        }
       }
       else update_status_text_buf1(LANG_CREATEDIR);
     }
