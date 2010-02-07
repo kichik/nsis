@@ -46,11 +46,6 @@ lzma_files = Split("""
 	7zip/Common/CRC.cpp
 """)
 
-zlib_files = Split("""
-	zlib/deflate.c
-	zlib/trees.c
-""")
-
 libs = Split("""
 	gdi32
 	user32
@@ -58,7 +53,7 @@ libs = Split("""
 	iconv
 """)
 
-Import('env AddAvailableLibs')
+Import('env AddAvailableLibs AddZLib')
 
 ##### Use available libraries
 
@@ -68,6 +63,7 @@ if env['PLATFORM'] == 'win32':
 	libs += ['version']
 
 AddAvailableLibs(env, libs)
+AddZLib(env, env['PLATFORM'], 'install-compiler')
 
 ##### Defines
 
@@ -87,7 +83,7 @@ lzma_files = lzma_env.Object(lzma_files)
 
 ##### Compile makensis
 
-files = makensis_files + bzip2_files + lzma_files + zlib_files
+files = makensis_files + bzip2_files + lzma_files
 
 makensis = env.Program(target, files)
 

@@ -442,7 +442,7 @@ int main(int argc, char **argv)
         char* env_var = getenv("NSISCONFDIR");
         if(env_var == NULL)
 #ifndef NSIS_CONFIG_CONST_DATA_PATH
-          main_conf = get_executable_dir(argv[0]);
+          main_conf = get_dir_name(get_executable_dir(argv[0]));
 #else
           main_conf = PREFIX_CONF;
 #endif

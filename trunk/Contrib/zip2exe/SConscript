@@ -2,14 +2,8 @@ target = "zip2exe"
 
 files = Split("""
 	main.cpp
-	zlib/adler32.c
-	zlib/crc32.c
-	zlib/inffast.c
-	zlib/inflate.c
-	zlib/inftrees.c
 	zlib/ioapi.c
 	zlib/unzip.c
-	zlib/zutil.c
 """)
 
 resources = Split("""
@@ -26,6 +20,7 @@ libs = Split("""
 	comdlg32
 	advapi32
 	shell32
+	z
 """)
 
 headers = Split("""
