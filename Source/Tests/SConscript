@@ -56,16 +56,10 @@ bzip2_exehead_files = Split("""
 required += bzip2_files
 required_exehead += bzip2_exehead_files
 
-zlib_files = Split("""
-	zlib/deflate.c
-	zlib/trees.c
-""")
-
 zlib_exehead_files = Split("""
 	zlib/INFBLOCK.C
 """)
 
-required += zlib_files
 required_exehead += zlib_exehead_files
 
 cppunitlibs = Split("""
@@ -87,7 +81,7 @@ scripts = Split("""
 	winver.nsi
 """)
 
-Import('env AddAvailableLibs')
+Import('env AddAvailableLibs AddZLib')
 
 # Test scripts
 env.TestScript(scripts)
@@ -99,6 +93,7 @@ if env['PLATFORM'] == 'win32':
 	extralibs += ['version']
 
 AddAvailableLibs(env, extralibs)
+AddZLib(env, env['PLATFORM'])
 
 # compile using msvcrt (that's how cppunit.lib is built)
 if 'msvc' in env['TOOLS'] or 'mstoolkit' in env['TOOLS']:
@@ -146,6 +141,11 @@ if cppunit:
 
 	# build test program
 	tests = env.Program(target, tests + required_obj)
+	if env['PLATFORM'] == 'win32' and 'ZLIB_W32_DLL' in env:
+		import os.path
+		env.Depends(tests, env.InstallAs(
+			os.path.basename(str(env['ZLIB_W32_DLL'])), 
+			env['ZLIB_W32_DLL']))
 
 	# alias running the test to 'test'
 	test = env.Alias('test-code', [tests], tests[0].abspath)
