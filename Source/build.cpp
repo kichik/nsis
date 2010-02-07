@@ -414,7 +414,7 @@ void CEXEBuild::initialize(const char *makensis_path)
   if (dir) nsis_dir = dir;
   else {
 #ifndef NSIS_CONFIG_CONST_DATA_PATH
-    nsis_dir = get_executable_dir(makensis_path);
+    nsis_dir = get_dir_name(get_executable_dir(makensis_path));
 #else
     nsis_dir = PREFIX_DATA;
 #endif

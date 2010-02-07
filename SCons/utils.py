@@ -1,6 +1,6 @@
 def AddAvailableLibs(env, libs):
 	"""
-	Scans through a list list of libraries and adds
+	Scans through a list of libraries and adds
 	available libraries to the environment.
 	"""
 	conf = env.Configure()
@@ -9,6 +9,32 @@ def AddAvailableLibs(env, libs):
 		conf.CheckLib(lib)
 
 	conf.Finish()
+
+def AddZLib(env, platform, alias='install-utils'):
+	"""
+	Checks for platform specific zlib and adds the 
+	appropriate compiler and linker options to the environment
+	"""
+	zlib = 'z'
+	if platform == 'win32':
+		if 'ZLIB_W32' in env:
+			# Add include and library path of zlib for Win32
+			env.Append(CPPPATH = env['ZLIB_W32_INC'])
+			env.Append(LIBPATH = env['ZLIB_W32_LIB'])
+			zlib = ['zdll', 'z']
+			if 'ZLIB_W32_DLL' in env:
+				env.DistributeW32Bin(env['ZLIB_W32_DLL'], alias=alias)
+		else:
+			print 'Please specify folder of zlib for Win32 via ZLIB_W32'
+			Exit(1)
+
+	conf = env.Configure()
+	if not conf.CheckLibWithHeader(zlib, 'zlib.h', 'c'):
+		print 'zlib (%s) is missing!' % (platform)
+		Exit(1)
+
+	env = conf.Finish()
+
 
 def GetAvailableLibs(env, libs):
 	"""
@@ -87,4 +113,4 @@ def FlagsConfigure(env):
 	"""
 	return env.Configure(custom_tests = { 'CheckCompileFlag' : check_compile_flag, 'CheckLinkFlag': check_link_flag })
 
-Export('AddAvailableLibs FlagsConfigure GetAvailableLibs')
+Export('AddAvailableLibs AddZLib FlagsConfigure GetAvailableLibs')
