@@ -484,10 +484,6 @@ defenv.Alias('makensis', makensis)
 
 if defenv['PLATFORM'] == 'win32': 
 	ins = defenv.DistributeW32Bin(makensis, alias='install-compiler')
-	for d in ('$ZIPDISTDIR', '$INSTDISTDIR', '$TESTDISTDIR'):
-		ins = defenv.InstallAs(os.path.join(d, 'makensis.exe'),
-			os.path.join(d, 'Bin', 'substart.exe'))
-		defenv.Alias('install-compiler', ins)
 else:
 	ins = defenv.DistributeBin(makensis, alias='install-compiler')
 
