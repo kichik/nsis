@@ -229,7 +229,7 @@ Location of the library
 
 \b Uninstalls a DLL built for Windows x64.
 
-\b \\<b\\>Warning:\\</b\\> this resets \R{setregview}{RegSetView} and file system redirection.
+\b \\<b\\>Warning:\\</b\\> this resets \R{setregview}{SetRegView} and file system redirection.
 
 \S2{} LIBRARY_SHELL_EXTENSION
 
