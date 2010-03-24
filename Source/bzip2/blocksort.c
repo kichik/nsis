@@ -11,6 +11,8 @@
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty.
+ *
+ * Reviewed for Unicode support by Jim Park -- 08/27/2007
  */
 
 #include "bzlib.h"
@@ -217,7 +219,7 @@ void fallbackQSort3 ( UInt32* fmap,
          fswap(fmap[unLo], fmap[unHi]); unLo++; unHi--;
       }
 
-      AssertD ( unHi == unLo-1, "fallbackQSort3(2)" );
+      AssertD ( unHi == unLo-1, _T("fallbackQSort3(2)") );
 
       if (gtHi < ltLo) continue;
 
@@ -400,7 +402,7 @@ static Bool mainGtU ( UInt32  i1,
    UChar  c1, c2;
    UInt16 s1, s2;
 
-   AssertD ( i1 != i2, "mainGtU" );
+   AssertD ( i1 != i2, _T("mainGtU") );
    /* 1 */
    c1 = block[i1]; c2 = block[i2];
    if (c1 != c2) return (c1 > c2);
@@ -730,7 +732,7 @@ void mainQSort3 ( UInt32* ptr,
          mswap(ptr[unLo], ptr[unHi]); unLo++; unHi--;
       }
 
-      AssertD ( unHi == unLo-1, "mainQSort3(2)" );
+      AssertD ( unHi == unLo-1, _T("mainQSort3(2)") );
 
       if (gtHi < ltLo) {
          mpush(lo, hi, d+1 );
@@ -751,8 +753,8 @@ void mainQSort3 ( UInt32* ptr,
       if (mnextsize(1) < mnextsize(2)) mnextswap(1,2);
       if (mnextsize(0) < mnextsize(1)) mnextswap(0,1);
 
-      AssertD (mnextsize(0) >= mnextsize(1), "mainQSort3(8)" );
-      AssertD (mnextsize(1) >= mnextsize(2), "mainQSort3(9)" );
+      AssertD (mnextsize(0) >= mnextsize(1), _T("mainQSort3(8)") );
+      AssertD (mnextsize(1) >= mnextsize(2), _T("mainQSort3(9)") );
 
       mpush (nextLo[0], nextHi[0], nextD[0]);
       mpush (nextLo[1], nextHi[1], nextD[1]);

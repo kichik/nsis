@@ -12,6 +12,8 @@
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty.
+ *
+ * Unicode support by Jim Park -- 08/13/2007
  */
 
 #include "../Platform.h"
@@ -23,6 +25,7 @@
 #include "ui.h"
 #include "exec.h"
 #include "../crc32.h"
+#include "../tchar.h"
 
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
 #ifdef NSIS_COMPRESS_USE_ZLIB
@@ -89,12 +92,12 @@ BOOL CALLBACK verProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
   }
   if (uMsg == WM_TIMER)
   {
-    char bt[64];
+    TCHAR bt[64];
     int percent=calc_percent();
 #ifdef NSIS_COMPRESS_WHOLE
-    char *msg=g_header?_LANG_UNPACKING:_LANG_VERIFYINGINST;
+    TCHAR *msg=g_header?_LANG_UNPACKING:_LANG_VERIFYINGINST;
 #else
-    char *msg=_LANG_VERIFYINGINST;
+    TCHAR *msg=_LANG_VERIFYINGINST;
 #endif
 
     wsprintf(bt,msg,percent);
@@ -130,8 +133,8 @@ void handle_ver_dlg(BOOL kill)
     {
       if (g_exec_flags.status_update & 1)
       {
-        char bt[64];
-        wsprintf(bt, "... %d%%", calc_percent());
+        TCHAR bt[64];
+        wsprintf(bt, _T("... %d%%"), calc_percent());
         update_status_text(0, bt);
       }
     }
@@ -148,6 +151,7 @@ void handle_ver_dlg(BOOL kill)
     }
   }
 }
+
 #endif//NSIS_CONFIG_CRC_SUPPORT || NSIS_COMPRESS_WHOLE
 #endif//NSIS_CONFIG_VISIBLE_SUPPORT
 
@@ -155,7 +159,7 @@ void handle_ver_dlg(BOOL kill)
 static z_stream g_inflate_stream;
 #endif
 
-const char * NSISCALL loadHeaders(int cl_flags)
+const TCHAR * NSISCALL loadHeaders(int cl_flags)
 {
   int left;
 #ifdef NSIS_CONFIG_CRC_SUPPORT
@@ -234,7 +238,7 @@ const char * NSISCALL loadHeaders(int cl_flags)
 
 #ifndef NSIS_CONFIG_CRC_ANAL
         left = h.length_of_all_following_data - 4;
-        // end crc checking at crc :) this means you can tack shit on the end and it'll still work.
+        // end crc checking at crc :) this means you can tack stuff on the end and it'll still work.
 #else //!NSIS_CONFIG_CRC_ANAL
         left -= 4;
 #endif//NSIS_CONFIG_CRC_ANAL
@@ -292,7 +296,7 @@ const char * NSISCALL loadHeaders(int cl_flags)
   inflateReset(&g_inflate_stream);
 
   {
-    char fno[MAX_PATH];
+    TCHAR fno[MAX_PATH];
     my_GetTempFileName(fno, state_temp_dir);
     dbd_hFile=CreateFile(fno,GENERIC_WRITE|GENERIC_READ,0,NULL,CREATE_ALWAYS,FILE_ATTRIBUTE_TEMPORARY|FILE_FLAG_DELETE_ON_CLOSE,NULL);
     if (dbd_hFile == INVALID_HANDLE_VALUE)
@@ -345,6 +349,7 @@ const char * NSISCALL loadHeaders(int cl_flags)
 
 #if !defined(NSIS_COMPRESS_WHOLE) || !defined(NSIS_CONFIG_COMPRESSION_SUPPORT)
 
+// Decompress data.
 int NSISCALL _dodecomp(int offset, HANDLE hFileOut, char *outbuf, int outbuflen)
 {
   static char inbuffer[IBUFSIZE+OBUFSIZE];
@@ -365,7 +370,7 @@ int NSISCALL _dodecomp(int offset, HANDLE hFileOut, char *outbuf, int outbuflen)
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
   if (input_len & 0x80000000) // compressed
   {
-    char progress[64];
+    TCHAR progress[64];
     int input_len_total;
     DWORD ltc = GetTickCount(), tc;
 
@@ -400,7 +405,7 @@ int NSISCALL _dodecomp(int offset, HANDLE hFileOut, char *outbuf, int outbuflen)
         tc = GetTickCount();
         if (g_exec_flags.status_update & 1 && (tc - ltc > 200 || !input_len))
         {
-          wsprintf(progress, "... %d%%", MulDiv(input_len_total - input_len, 100, input_len_total));
+          wsprintf(progress, _T("... %d%%"), MulDiv(input_len_total - input_len, 100, input_len_total));
           update_status_text(0, progress);
           ltc = tc;
         }

@@ -1,10 +1,12 @@
+// Unicode support by Jim Park -- 08/22/2007
+
 #include <windows.h>
 #include <stdio.h>
 #include "MyMath.h"
 #include "Math.h"
 
 // Converts String to Int (Dec, Hex) or Float value
-void StringToItem(char *&s, ExpressionItem *item, int options)
+void StringToItem(TCHAR *&s, ExpressionItem *item, int options)
 {
   item->type = IT_CONST | ITC_INT;
   __int64 &v=*((__int64*)&(item->param1));
@@ -14,19 +16,19 @@ void StringToItem(char *&s, ExpressionItem *item, int options)
   if (!s) return;
 
   // String-value
-  if ((((options & (STI_FLOAT | STI_INT)) == 0) || *s == '\'' || *s == '\"' || *s == '`' ||
-      ((*s != '+') && (*s != '-') && ((*s < '0') || (*s > '9'))))
+  if ((((options & (STI_FLOAT | STI_INT)) == 0) || *s == _T('\'') || *s == _T('\"') || *s == _T('`') ||
+      ((*s != _T('+')) && (*s != _T('-')) && ((*s < _T('0')) || (*s > _T('9')))))
       && (options & STI_STRING))
   {
       // end of string char
-      char eol = 0;
-      if (*s == '\'' || *s == '\"' || *s == '`') eol = *s;
+      TCHAR eol = 0;
+      if (*s == _T('\'') || *s == _T('\"') || *s == _T('`')) eol = *s;
       else s--;
 
       item->type = IT_CONST | ITC_STRING;
       // allocate memory buffer for string
-      char *sp;
-      sp = *((char**)&(item->param1)) = AllocString();
+      TCHAR *sp;
+      sp = *((TCHAR**)&(item->param1)) = AllocString();
       while (*(++s) && (*s != eol))
       {
         *(sp++) = *s;
@@ -36,18 +38,18 @@ void StringToItem(char *&s, ExpressionItem *item, int options)
   } else
   {
       // strip leading spaces and tabs
-      while ((*s == ' ') || (*s == '\t')) s++;
+      while ((*s == _T(' ')) || (*s == _T('\t'))) s++;
   // Hex-value
-  if ((options & STI_INT) && *s == '0' && (s[1] == 'x' || s[1] == 'X'))
+  if ((options & STI_INT) && *s == _T('0') && (s[1] == _T('x') || s[1] == _T('X')))
   {
     s++;
-    while (*(s+1) == '0') *s++;
+    while (*(s+1) == _T('0')) *s++;
     for (;;)
     {
       int c=*(++s);
-      if (c >= '0' && c <= '9') c-='0';
-      else if (c >= 'a' && c <= 'f') c-='a'-10;
-      else if (c >= 'A' && c <= 'F') c-='A'-10;
+      if (c >= _T('0') && c <= _T('9')) c-=_T('0');
+      else if (c >= _T('a') && c <= _T('f')) c-=_T('a')-10;
+      else if (c >= _T('A') && c <= _T('F')) c-=_T('A')-10;
       else break;
       v<<=4;
       v+=c;
@@ -57,13 +59,13 @@ void StringToItem(char *&s, ExpressionItem *item, int options)
   else
   {
     int sign=0, numsignif = 0;
-    if (*s == '-') sign++; else s--;
-    while (*(s+1) == '0') *s++;
+    if (*s == _T('-')) sign++; else s--;
+    while (*(s+1) == _T('0')) *s++;
     for (;;)
     {
-      int c=*(++s) - '0'; numsignif++;
+      int c=*(++s) - _T('0'); numsignif++;
       if ((options & STI_FLOAT) &&
-          ((c == ('e'-'0')) || (c==('E'-'0')) || (c==('.'-'0'))
+          ((c == (_T('e')-_T('0'))) || (c==(_T('E')-_T('0'))) || (c==(_T('.')-_T('0')))
           || (numsignif > 18)))
       {
           // Switch to floating point conversion rountine
@@ -74,16 +76,16 @@ void StringToItem(char *&s, ExpressionItem *item, int options)
           while ((c >= 0) && (c <= 9))
           {
               d = d*10.0 + (double) c;
-              c=*(++s) - '0';
+              c=*(++s) - _T('0');
           }
 
           // sub-decimal part
-          if (c == ('.'-'0'))
+          if (c == (_T('.')-_T('0')))
           {
             double pwr = 1.0, dec = 0.0;
             for (;;)
             {
-              c=*(++s) - '0';
+              c=*(++s) - _T('0');
               if ((c < 0) || (c > 9)) break;
               dec = dec*10.0 + (double) c;
               pwr *= 10.0;
@@ -91,19 +93,19 @@ void StringToItem(char *&s, ExpressionItem *item, int options)
             d += dec/pwr;
           }
           // exponental part
-          if ((c == ('E'-'0')) || (c == ('e'-'0')))
+          if ((c == (_T('E')-_T('0'))) || (c == (_T('e')-_T('0'))))
           {
               int expc = 0, esign = 0;
               s++;
               // detect exponential sign
-              if ((*s == '+') || (*s == '-'))
-                  esign = (*s == '-');
+              if ((*s == _T('+')) || (*s == _T('-')))
+                  esign = (*s == _T('-'));
               else s--;
 
               // detect exp value
               for (;;)
               {
-                c=*(++s) - '0';
+                c=*(++s) - _T('0');
                 if ((c < 0) || (c > 9)) break;
                 expc = expc*10 + c;
               }
@@ -139,7 +141,7 @@ void StringToItem(char *&s, ExpressionItem *item, int options)
   }
 }
 
-void ItemToString(char *sbuf, ExpressionItem *item)
+void ItemToString(TCHAR *sbuf, ExpressionItem *item)
 {
     if ((item == NULL) || ((item->type & ITEMTYPE) != IT_CONST))
     {
@@ -151,7 +153,7 @@ void ItemToString(char *sbuf, ExpressionItem *item)
     {
     case ITC_STRING:
         {
-        char *ptr = *((char**)&(item->param1));
+        TCHAR *ptr = *((TCHAR**)&(item->param1));
         while (*(sbuf++) = *(ptr++));
         }
         break;
@@ -161,7 +163,7 @@ void ItemToString(char *sbuf, ExpressionItem *item)
             for (int index = 0; index < ad->count; index++)
                 if ((ad->array[index]) &&
                     ((ad->array[index]->type & (ITEMTYPE|ITEMSUBTYPE)) == (IT_CONST | ITC_INT)))
-                    if ((*(sbuf++) = (char) *((__int64*)&(ad->array[index]->param1))) == 0)
+                    if ((*(sbuf++) = (TCHAR) *((__int64*)&(ad->array[index]->param1))) == 0)
                         break;
         }
         break;
@@ -174,21 +176,21 @@ void ItemToString(char *sbuf, ExpressionItem *item)
     }
 }
 
-void itoa64(__int64 i, char *buffer)
+void itoa64(__int64 i, TCHAR *buffer)
 {
-    char buf[128], *b = buf;
+    TCHAR buf[128], *b = buf;
 
     if (i < 0)
     {
-        *(buffer++) = '-';
+        *(buffer++) = _T('-');
         i = -i;
     }
-    if (i == 0) *(buffer++) = '0';
+    if (i == 0) *(buffer++) = _T('0');
     else
     {
         while (i > 0)
         {
-            *(b++) = '0' + ((char) (i%10));
+            *(b++) = _T('0') + ((TCHAR) (i%10));
             i /= 10;
         }
         while (b > buf) *(buffer++) = *(--b);
@@ -196,12 +198,12 @@ void itoa64(__int64 i, char *buffer)
     *buffer = 0;
 }
 
-#define POS_INFINITY  "#INF"
-#define NEG_INFINITY "-#INF"
+#define POS_INFINITY  _T("#INF")
+#define NEG_INFINITY  _T("-#INF")
 
-void FloatFormat(char *s, double value, int options)
+void FloatFormat(TCHAR *s, double value, int options)
 {
-    char format[128];
+    TCHAR format[128];
     int prec = options & 0xF;
 
     *s = 0;
@@ -217,25 +219,25 @@ void FloatFormat(char *s, double value, int options)
 
     if (options & FF_NOEXP)
     {
-        sprintf(format, "%%.%df", prec);
+        _stprintf(format, _T("%%.%df"), prec);
     }
     else if (options & FF_EXP)
     {
-        sprintf(format, "%%.%de", prec);
+        _stprintf(format, _T("%%.%de"), prec);
     }
     else if (options & FF_LEXP)
     {
-        sprintf(format, "%%.%dE", prec);
+        _stprintf(format, _T("%%.%dE"), prec);
     }
     else
     {
-        sprintf(format, "%%.%dg", prec);
+        _stprintf(format, _T("%%.%dg"), prec);
     }
 
-    sprintf(s, format, value);
+    _stprintf(s, format, value);
 }
 
-int lstrcmpn(char *s1, const char *s2, int chars)
+int lstrcmpn(TCHAR *s1, const TCHAR *s2, int chars)
 {
     while ((chars > 0) && (*s1) && (*s2) && (*(s1) == *(s2))) chars--, s1++, s2++;
     if ((chars == 0) || (*s1 == *s2)) return 0;

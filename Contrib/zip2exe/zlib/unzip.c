@@ -4,6 +4,9 @@
    Copyright (C) 1998-2005 Gilles Vollant
 
    Read unzip.h for more info
+
+   Unicode support by Jim Park -- 08/28/2007
+   (Unicode ZIP file name, but not the files in the archive itself.)
 */
 
 /* Decryption code comes from crypt.c by Info-ZIP but has been greatly reduced in terms of
@@ -395,7 +398,7 @@ local uLong unzlocal_SearchCentralDir(pzlib_filefunc_def,filestream)
        of this unzip package.
 */
 extern unzFile ZEXPORT unzOpen2 (path, pzlib_filefunc_def)
-    const char *path;
+    const TCHAR *path;
     zlib_filefunc_def* pzlib_filefunc_def;
 {
     unz_s us;
@@ -498,7 +501,7 @@ extern unzFile ZEXPORT unzOpen2 (path, pzlib_filefunc_def)
 
 
 extern unzFile ZEXPORT unzOpen (path)
-    const char *path;
+    const TCHAR *path;
 {
     return unzOpen2(path, NULL);
 }

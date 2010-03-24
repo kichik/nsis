@@ -10,11 +10,11 @@ HWND hwChild;
 HWND g_hwStartMenuSelect;
 HWND g_hwDirList;
 
-char buf[1024];
-char text[1024];
-char progname[1024];
-char lastused[1024];
-char checkbox[1024];
+TCHAR buf[1024];
+TCHAR text[1024];
+TCHAR progname[1024];
+TCHAR lastused[1024];
+TCHAR checkbox[1024];
 
 int autoadd;
 int g_done;
@@ -23,7 +23,7 @@ int rtl;
 
 void *lpWndProcOld;
 
-void (__stdcall *validate_filename)(char *);
+void (__stdcall *validate_filename)(TCHAR *);
 
 BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 static BOOL CALLBACK ParentWndProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -34,7 +34,7 @@ static UINT_PTR PluginCallback(enum NSPIM msg)
   return 0;
 }
 
-void __declspec(dllexport) Init(HWND hwndParent, int string_size, char *variables, stack_t **stacktop, extra_parameters *extra)
+void __declspec(dllexport) Init(HWND hwndParent, int string_size, TCHAR *variables, stack_t **stacktop, extra_parameters *extra)
 {
   HWND hwStartMenuSelect;
 
@@ -62,35 +62,35 @@ void __declspec(dllexport) Init(HWND hwndParent, int string_size, char *variable
     hwChild = GetDlgItem(hwndParent, 1018);
     if (!hwChild)
     {
-      pushstring("error finding childwnd");
+      pushstring(_T("error finding childwnd"));
       return;
     }
 
     popstring(buf);
 
-    while (buf[0] == '/')
+    while (buf[0] == _T('/'))
     {
-      if (!lstrcmpi(buf+1, "noicon"))
+      if (!lstrcmpi(buf+1, _T("noicon")))
       {
         noicon = 1;
       }
-      else if (!lstrcmpi(buf+1, "rtl"))
+      else if (!lstrcmpi(buf+1, _T("rtl")))
       {
         rtl = 1;
       }
-      else if (!lstrcmpi(buf+1, "text"))
+      else if (!lstrcmpi(buf+1, _T("text")))
       {
         popstring(text);
       }
-      else if (!lstrcmpi(buf+1, "autoadd"))
+      else if (!lstrcmpi(buf+1, _T("autoadd")))
       {
         autoadd = 1;
       }
-      else if (!lstrcmpi(buf+1, "lastused"))
+      else if (!lstrcmpi(buf+1, _T("lastused")))
       {
         popstring(lastused);
       }
-      else if (!lstrcmpi(buf+1, "checknoshortcuts"))
+      else if (!lstrcmpi(buf+1, _T("checknoshortcuts")))
       {
         popstring(checkbox);
       }
@@ -107,7 +107,7 @@ void __declspec(dllexport) Init(HWND hwndParent, int string_size, char *variable
     }
     else
     {
-      pushstring("error reading parameters");
+      pushstring(_T("error reading parameters"));
       return;
     }
 
@@ -115,19 +115,19 @@ void __declspec(dllexport) Init(HWND hwndParent, int string_size, char *variable
     g_hwStartMenuSelect = hwStartMenuSelect;
     if (!hwStartMenuSelect)
     {
-      pushstring("error creating dialog");
+      pushstring(_T("error creating dialog"));
       return;
     }
     else
     {
       lpWndProcOld = (void *) SetWindowLong(hwndParent, DWL_DLGPROC, (long) ParentWndProc);
-      wsprintf(buf, "%u", hwStartMenuSelect);
+      wsprintf(buf, _T("%u"), hwStartMenuSelect);
       pushstring(buf);
     }
   }
 }
 
-void __declspec(dllexport) Show(HWND hwndParent, int string_size, char *variables, stack_t **stacktop)
+void __declspec(dllexport) Show(HWND hwndParent, int string_size, TCHAR *variables, stack_t **stacktop)
 {
   HWND hwStartMenuSelect = g_hwStartMenuSelect;
 
@@ -148,7 +148,7 @@ void __declspec(dllexport) Show(HWND hwndParent, int string_size, char *variable
   SetWindowLong(hwndParent, DWL_DLGPROC, (long) lpWndProcOld);
 }
 
-void __declspec(dllexport) Select(HWND hwndParent, int string_size, char *variables, stack_t **stacktop, extra_parameters *extra)
+void __declspec(dllexport) Select(HWND hwndParent, int string_size, TCHAR *variables, stack_t **stacktop, extra_parameters *extra)
 {
   Init(hwndParent, string_size, variables, stacktop, extra);
   if (g_hwStartMenuSelect)
@@ -312,7 +312,7 @@ BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         );
       }
 
-      SetWindowText(hwText, *text ? text : "Select the Start Menu folder in which you would like to create the program's shortcuts:");
+      SetWindowText(hwText, *text ? text : _T("Select the Start Menu folder in which you would like to create the program's shortcuts:"));
 
       ProgressiveSetWindowPos(
         hwLocation,
@@ -321,7 +321,7 @@ BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         MulDiv(12, baseUnitY, 8)
       );
 
-      if (*lastused == '>')
+      if (*lastused == _T('>'))
       {
         CheckDlgButton(hwndDlg, IDC_CHECK, BST_CHECKED);
         lstrcpy(lastused, lstrcpy(buf, lastused) + 1);
@@ -370,7 +370,7 @@ BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       {
         SendMessage(hwDirList, LB_GETTEXT, SendMessage(hwDirList, LB_GETCURSEL, 0, 0), (WPARAM)buf);
         if (autoadd)
-          lstrcat(lstrcat(buf, "\\"), progname);
+          lstrcat(lstrcat(buf, _T("\\")), progname);
         SetWindowText(hwLocation, buf);
       }
       else if (LOWORD(wParam) == IDC_CHECK && HIWORD(wParam) == BN_CLICKED)
@@ -383,27 +383,27 @@ BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       {
         GetWindowText(hwLocation, buf, MAX_PATH);
         validate_filename(buf);
-        EnableWindow(GetDlgItem(hwParent, IDOK), *buf != '\0');
+        EnableWindow(GetDlgItem(hwParent, IDOK), *buf != _T('\0'));
       }
     break;
     case WM_USER+666:
       g_done = 1;
       if (wParam == NOTIFY_BYE_BYE)
-        pushstring("cancel");
+        pushstring(_T("cancel"));
       else
       {
         GetWindowText(hwLocation, buf + 1, MAX_PATH);
         validate_filename(buf);
         if (IsDlgButtonChecked(hwndDlg, IDC_CHECK) == BST_CHECKED)
         {
-          buf[0] = '>';
+          buf[0] = _T('>');
           pushstring(buf);
         }
         else
         {
           pushstring(buf + 1);
         }
-        pushstring("success");
+        pushstring(_T("success"));
       }
     case WM_CTLCOLORSTATIC:
     case WM_CTLCOLOREDIT:
@@ -440,7 +440,7 @@ void AddFolderFromReg(int nFolder)
   if (!buf[0])
     return;
 
-  lstrcat(buf, "\\*.*");
+  lstrcat(buf, _T("\\*.*"));
   hSearch = FindFirstFile(buf, &FileData);
   if (hSearch != INVALID_HANDLE_VALUE) 
   {
@@ -448,9 +448,9 @@ void AddFolderFromReg(int nFolder)
     {
       if (FileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
       {
-        if (*(WORD*)FileData.cFileName != *(WORD*)".")
+        if (*(WORD*)FileData.cFileName != *(WORD*)_T("."))
         {
-          if (*(WORD*)FileData.cFileName != *(WORD*)".." || FileData.cFileName[2])
+          if (*(WORD*)FileData.cFileName != *(WORD*)_T("..") || FileData.cFileName[2])
           {
             if (SendMessage(g_hwDirList, LB_FINDSTRINGEXACT, (WPARAM) -1, (LPARAM)FileData.cFileName) == LB_ERR)
               SendMessage(g_hwDirList, LB_ADDSTRING, 0, (LPARAM)FileData.cFileName);

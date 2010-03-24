@@ -4,6 +4,8 @@
 ** Author: Justin Frankel
 ** File: netinc.h - network includes and portability defines (used internally)
 ** License: see jnetlib.h
+**
+** Unicode support by Jim Park -- 08/24/2007
 */
 
 #ifndef _NETINC_H_
@@ -19,10 +21,12 @@
 #define EINPROGRESS WSAEWOULDBLOCK
 #define memset mini_memset
 #define memcpy mini_memcpy
-#define strcpy lstrcpy
-#define strncpy lstrcpyn
-#define strcat lstrcat
-#define strlen lstrlen
+// Jim Park: For Unicode support, we need to distinguish whether we are working on
+// Unicode or ANSI.
+#define strcpy lstrcpyA
+#define strncpy lstrcpynA
+#define strcat lstrcatA
+#define strlen lstrlenA
 #define malloc(x) (new char[x])
 #define free(x) {delete [] x;}
 typedef int socklen_t;

@@ -9,6 +9,8 @@
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty.
+ *
+ * Unicode support by Jim Park -- 08/27/2007
  */
 
 /* zlib.h -- interface of the 'zlib' general purpose compression library
@@ -175,7 +177,7 @@ typedef struct z_stream_s {
     uLong    total_out; /* total nb of bytes output so far */
 #endif
 
-//    char     *msg;      /* last error message, NULL if no error */
+//    TCHAR     *msg;      /* last error message, NULL if no error */
     //struct internal_state FAR *state; /* not visible by applications */
 #ifdef EXEHEAD
     struct inflate_blocks_state blocks;            /* current inflate_blocks state */
@@ -278,16 +280,16 @@ ZEXTERN int ZEXPORT deflateReset OF((z_streamp strm));
  * and the compiler's view of z_stream:
  */
 ZEXTERN int ZEXPORT deflateInit_ OF((z_streamp strm, int level,
-                                     const char *version, int stream_size));
+                                     const TCHAR *version, int stream_size));
 //ZEXTERN int ZEXPORT inflateInit_ OF((z_streamp strm,
-  //                                   const char *version, int stream_size));
+  //                                   const TCHAR *version, int stream_size));
 ZEXTERN int ZEXPORT deflateInit2_ OF((z_streamp strm, int  level, int  method,
                                       int windowBits, int memLevel,
-                                      int strategy, const char *version,
+                                      int strategy, const TCHAR *version,
                                       int stream_size));
 
 #define deflateInit(strm, level) \
-        deflateInit_((strm), (level),       "", sizeof(z_stream))
+        deflateInit_((strm), (level),       _T(""), sizeof(z_stream))
 
 
 #ifdef __cplusplus

@@ -18,6 +18,8 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 
+  Unicode support by Jim Park -- 08/20/2007
+
 */
 #define TOOLBAR_CPP
 
@@ -25,6 +27,7 @@
 #include "resource.h"
 #include "noclib.h"
 #include "toolbar.h"
+#include "../ExDLL/nsis_tchar.h"
 
 NTOOLBAR g_toolbar;
 extern NSCRIPTDATA g_sdata;
@@ -65,7 +68,7 @@ void CreateToolBar()
   g_toolbar.hwnd = CreateWindowEx (
     0L,
     TOOLBARCLASSNAME,
-    "",
+    _T(""),
     WS_CHILD | WS_VISIBLE | TBSTYLE_TRANSPARENT | TBSTYLE_FLAT,
     0, 0, 0, 30,
     g_sdata.hwnd,
@@ -77,7 +80,7 @@ void CreateToolBar()
   SendMessage(g_toolbar.hwnd, TB_ADDBUTTONS, BUTTONCOUNT, (LONG) &tbButton);
 
   // For Comctl32.dll version detection
-  HMODULE hMod = GetModuleHandle("comctl32.dll");
+  HMODULE hMod = GetModuleHandle(_T("comctl32.dll"));
 
   if (GetProcAddress(hMod, "InitCommonControlsEx")) { // Version 4.70
     // Modern toolbar, 24-bit bitmaps
@@ -120,8 +123,8 @@ void UpdateToolBarCompressorButton()
 {
   int iBitmap;
   int iString;
-  char   szBuffer[64];
-  char   temp[32];
+  TCHAR   szBuffer[64];
+  TCHAR   temp[32];
   TOOLINFO ti;
 
   my_memset(&ti, 0, sizeof(TOOLINFO));
@@ -139,13 +142,13 @@ void UpdateToolBarCompressorButton()
              sizeof(temp));
   my_memset(szBuffer, 0, sizeof(szBuffer));
   lstrcat(szBuffer,temp);
-  lstrcat(szBuffer," [");
+  lstrcat(szBuffer,_T(" ["));
   LoadString(g_sdata.hInstance,
              iString,
              temp,
              sizeof(temp));
   lstrcat(szBuffer,temp);
-  lstrcat(szBuffer,"]");
+  lstrcat(szBuffer,_T("]"));
 
   SendMessage(g_toolbar.hwnd, TB_CHANGEBITMAP, (WPARAM) IDM_COMPRESSOR, (LPARAM) MAKELPARAM(iBitmap, 0));
 
@@ -155,14 +158,14 @@ void UpdateToolBarCompressorButton()
   ti.hwnd = g_toolbar.hwnd;
   ti.uId = (UINT)TBB_COMPRESSOR;
   SendMessage(g_tip.tip, TTM_GETTOOLINFO, 0, (LPARAM) (LPTOOLINFO) &ti);
-  ti.lpszText = (LPSTR)szBuffer;
+  ti.lpszText = (LPTSTR)szBuffer;
   SendMessage(g_tip.tip, TTM_SETTOOLINFO, 0, (LPARAM) (LPTOOLINFO) &ti);
 }
 
 void AddToolBarButtonTooltip(int id, int iString)
 {
   TOOLINFO ti;
-  char   szBuffer[64];
+  TCHAR   szBuffer[64];
   RECT rect;
 
   my_memset(&ti, 0, sizeof(TOOLINFO));
@@ -179,7 +182,7 @@ void AddToolBarButtonTooltip(int id, int iString)
              iString,
              szBuffer,
              sizeof(szBuffer));
-  ti.lpszText = (LPSTR) szBuffer;
+  ti.lpszText = (LPTSTR) szBuffer;
   ti.rect.left =rect.left;
   ti.rect.top = rect.top;
   ti.rect.right = rect.right;

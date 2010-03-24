@@ -22,6 +22,8 @@
 // 2. Altered source versions must be plainly marked as such, and must not be
 //    misrepresented as being the original software.
 // 3. This notice may not be removed or altered from any source distribution.
+//
+// Unicode support by Jim Park -- 08/29/2007
 
 #ifdef __BORLANDC__
   #pragma argsused
@@ -31,10 +33,12 @@
   #include <unistd.h>
 #endif
 
+#include "tchar.h"
+
 #ifdef __WIN32__
-  #define OPT_CHAR '/'
+  #define OPT_CHAR _T('/')
 #else
-  #define OPT_CHAR '-'
+  #define OPT_CHAR _T('-')
 #endif
 
 #include "GlobalTypes.h"
@@ -46,14 +50,14 @@
 #include <fstream>
 #include <sstream>
 
-int main( int argc, char * argv[] ) {
-  cout << "GenPat v3.1\n";
-  cout << "===========\n\n(c) 2001-2005 Van de Sande Productions\n";
-  cout << "Website: http://www.tibed.net/vpatch\n\n";
+int _tmain( int argc, TCHAR * argv[] ) {
+  tout << _T("GenPat v3.1\n");
+  tout << _T("===========\n\n(c) 2001-2005 Van de Sande Productions\n");
+  tout << _T("Website: http://www.tibed.net/vpatch\n\n");
 
-  string sourceFileName;
-  string targetFileName;
-  string patchFileName;
+  tstring sourceFileName;
+  tstring targetFileName;
+  tstring patchFileName;
 
   bool showHelp = true;
 
@@ -65,30 +69,30 @@ int main( int argc, char * argv[] ) {
   int fileNameArgument = 0;
   if(argc > 1) {
     for(int i = 1; i < argc; i++) {
-      string s(argv[i]);
+      tstring s(argv[i]);
       if(s.size() > 0) {
         if(s[0] == OPT_CHAR) {
           if(s.size() > 1) {
-            if((s[1] == 'v') || (s[1] == 'V')) {
+            if((s[1] == _T('v')) || (s[1] == _T('V'))) {
               beVerbose = true;
             }
-            if((s[1] == 'o') || (s[1] == 'O')) {
+            if((s[1] == _T('o')) || (s[1] == _T('O'))) {
               beOptimal = true;
             }
-            if((s[1] == 'r') || (s[1] == 'R')) {
+            if((s[1] == _T('r')) || (s[1] == _T('R'))) {
               existanceIsError = false;
             }
           }
           if(s.size() > 2) {
-            if((s[1] == 'b') || (s[1] == 'B')) {
-              if(s[2] == '=') {
-                istringstream ss(s.substr(3));
+            if((s[1] == _T('b')) || (s[1] == _T('B'))) {
+              if(s[2] == _T('=')) {
+                tistringstream ss(s.substr(3));
                 ss >> blockSize;
               }
             }
-            if((s[1] == 'a') || (s[1] == 'A')) {
-              if(s[2] == '=') {
-                istringstream ss(s.substr(3));
+            if((s[1] == _T('a')) || (s[1] == _T('A'))) {
+              if(s[2] == _T('=')) {
+                tistringstream ss(s.substr(3));
                 ss >> maxMatches;
               }
             }
@@ -106,7 +110,7 @@ int main( int argc, char * argv[] ) {
               showHelp = false;
               break;
             default:
-              cerr << "WARNING: extra filename argument not used: " << s << "\n";
+              terr << _T("WARNING: extra filename argument not used: ") << s << _T("\n");
           }
           fileNameArgument++;
         }
@@ -117,45 +121,45 @@ int main( int argc, char * argv[] ) {
     maxMatches = 0;
   }
   if(showHelp) {
-    cout << "This program will take (sourcefile) as input and create a (patchfile).\n";
-    cout << "With this patchfile, you can convert a (sourcefile) into (targetfile).\n\n";
-    cout << "Command line info:\n";
-    cout << "  GENPAT (sourcefile) (targetfile) (patchfile)\n\n";
+    tout << _T("This program will take (sourcefile) as input and create a (patchfile).\n");
+    tout << _T("With this patchfile, you can convert a (sourcefile) into (targetfile).\n\n");
+    tout << _T("Command line info:\n");
+    tout << _T("  GENPAT (sourcefile) (targetfile) (patchfile)\n\n");
 
-    cout << "Command line option (optional):\n";
-    cout << OPT_CHAR << "R        Replace a patch with same contents as source silently if it\n          already exists.\n";
-    cout << OPT_CHAR << "B=64     Set blocksize (default=64), multiple of 2 is required.\n";
-    cout << OPT_CHAR << "V        More verbose information during patch creation.\n";
-    cout << OPT_CHAR << "O        Deactivate match limit of the " << OPT_CHAR << "A switch (sometimes smaller patches).\n";
-    cout << OPT_CHAR << "A=500    Maximum number of block matches per block (improves performance).\n";
-    cout << "          Default is 500, larger is slower. Use " << OPT_CHAR << "V to see the cut-off aborts.\n\n";
-    cout << "Note: filenames should never start with " << OPT_CHAR << " character!\n\n";
-    cout << "Possible exit codes:\n";
-    cout << "  0  Success\n";
-    cout << "  1  Arguments missing\n";
-    cout << "  2  Other error\n";
-    cout << "  3  Source file already has a patch in specified patch file (=error)\n";
+    tout << _T("Command line option (optional):\n");
+    tout << OPT_CHAR << _T("R        Replace a patch with same contents as source silently if it\n          already exists.\n");
+    tout << OPT_CHAR << _T("B=64     Set blocksize (default=64), multiple of 2 is required.\n");
+    tout << OPT_CHAR << _T("V        More verbose information during patch creation.\n");
+    tout << OPT_CHAR << _T("O        Deactivate match limit of the ") << OPT_CHAR << _T("A switch (sometimes smaller patches).\n");
+    tout << OPT_CHAR << _T("A=500    Maximum number of block matches per block (improves performance).\n");
+    tout << _T("          Default is 500, larger is slower. Use ") << OPT_CHAR << _T("V to see the cut-off aborts.\n\n");
+    tout << _T("Note: filenames should never start with ") << OPT_CHAR << _T(" character!\n\n");
+    tout << _T("Possible exit codes:\n");
+    tout << _T("  0  Success\n");
+    tout << _T("  1  Arguments missing\n");
+    tout << _T("  2  Other error\n");
+    tout << _T("  3  Source file already has a patch in specified patch file (=error)\n");
     return 1;
   }
 
-  cout << "[Source] " << sourceFileName.c_str() << "\n";
-  cout << "[Target] " << targetFileName.c_str() << "\n[PatchFile] " << patchFileName.c_str() << "\n";
+  tout << _T("[Source] ") << sourceFileName.c_str() << _T("\n");
+  tout << _T("[Target] ") << targetFileName.c_str() << _T("\n[PatchFile] ") << patchFileName.c_str() << _T("\n");
 
   // get the file sizes
   TFileOffset sourceSize = 0;
   try {
     sourceSize = POSIX::getFileSize(sourceFileName.c_str());
   }
-  catch(char* s) {
-    cerr << "Source file size reading failed: " << s << "\n";
+  catch(TCHAR* s) {
+    terr << _T("Source file size reading failed: ") << s << _T("\n");
     return 2;
   }
   TFileOffset targetSize;
   try {
     targetSize = POSIX::getFileSize(targetFileName.c_str());
   }
-  catch(const char* s) {
-    cerr << "Target file size reading failed: " << s << "\n";
+  catch(const TCHAR* s) {
+    terr << _T("Target file size reading failed: ") << s << _T("\n");
     return 2;
   }
 
@@ -165,8 +169,8 @@ int main( int argc, char * argv[] ) {
   TChecksum* targetCRC = new TChecksum(targetFileName);
   targetCRC->mode = TChecksum::MD5;  // default
 
-  string tempFileName = POSIX::getTempFile();
-  if (tempFileName == "")
+  tstring tempFileName = POSIX::getTempFile();
+  if (tempFileName == _T(""))
     return 2;
 
   // open the files
@@ -183,8 +187,8 @@ int main( int argc, char * argv[] ) {
     TFileOffset previousPatchSize = 0;
     try {
       previousPatchSize = POSIX::getFileSize(patchFileName.c_str());
-    } catch(const char* s) {
-      cout << "Patch file does not yet exist: " << s << ", it will be created.\n";
+    } catch(const TCHAR* s) {
+      tout << _T("Patch file does not yet exist: ") << s << _T(", it will be created.\n");
       std::ofstream newfile;
       newfile.open(patchFileName.c_str(), std::ios_base::binary | std::ios_base::out);
       newfile.close();
@@ -195,8 +199,8 @@ int main( int argc, char * argv[] ) {
     try {
       // this will copy the contents of previousPatch to patch, but without sourceCRC
       fileCount = FileFormat1::removeExistingPatch(previousPatch,previousPatchSize,patch,sourceCRC,existanceIsError);
-    } catch(const char* s) {
-      cerr << "ERROR: " << s << "\n";
+    } catch(const TCHAR* s) {
+      terr << _T("ERROR: ") << s << _T("\n");
       patch.close();
       unlink(tempFileName.c_str());
       return 3;
@@ -204,9 +208,9 @@ int main( int argc, char * argv[] ) {
 
     // set them to the same checksum mode
     targetCRC->mode = sourceCRC->mode;
-    cout << "[Checksum] Kind of checksums used: ";
-    if(targetCRC->mode == TChecksum::MD5) cout  << "MD5\n";
-    if(targetCRC->mode == TChecksum::CRC32) cout  << "CRC32\n";
+    tout << _T("[Checksum] Kind of checksums used: ");
+    if(targetCRC->mode == TChecksum::MD5) tout  << _T("MD5\n");
+    if(targetCRC->mode == TChecksum::CRC32) tout  << _T("CRC32\n");
     break;
   }
 
@@ -227,26 +231,26 @@ int main( int argc, char * argv[] ) {
       }
       if((blockSize >> 1) == orgBlockSize) blockSize = orgBlockSize;
       if(blockSize != orgBlockSize) {
-        cout << "[BlockSizeFix] Your blocksize had to be fixed since it is not a multiple of 2\n";
+        tout << _T("[BlockSizeFix] Your blocksize had to be fixed since it is not a multiple of 2\n");
       }
       if(blockSize < 16) {
         blockSize = 16;
-        cout << "[BlockSizeFix] Your blocksize had to be fixed since it is smaller than 16\n";
+        tout << _T("[BlockSizeFix] Your blocksize had to be fixed since it is smaller than 16\n");
       }
 
       gen->blockSize = blockSize;
-      cout << "[BlockSize] " << static_cast<unsigned int>(gen->blockSize) << " bytes\n";
+      tout << _T("[BlockSize] ") << static_cast<unsigned int>(gen->blockSize) << _T(" bytes\n");
 
       gen->maxMatches = maxMatches;
       if(gen->maxMatches == 0) {
-        cout << "[FindBlockMatchLimit] Unlimited matches\n";
+        tout << _T("[FindBlockMatchLimit] Unlimited matches\n");
       } else {
-        cout << "[FindBlockMatchLimit] " << gen->maxMatches << " matches\n";
+        tout << _T("[FindBlockMatchLimit] ") << gen->maxMatches << _T(" matches\n");
       }
 
       gen->beVerbose = beVerbose;
       if(beVerbose) {
-        cout << "[Debug] Verbose output during patch generation activated.\n";
+        tout << _T("[Debug] Verbose output during patch generation activated.\n");
       }
 
       // create sameBlock storage
@@ -279,20 +283,20 @@ int main( int argc, char * argv[] ) {
       std::ofstream clearF;
       clearF.open(tempFileName.c_str(), std::ios_base::binary | std::ios_base::out);
     }
-    catch(string s) {
-      cerr << "Error thrown: " << s.c_str();
+    catch(tstring s) {
+      terr << _T("Error thrown: ") << s.c_str();
       return 2;
     }
-    catch(const char* s) {
-      cerr << "Error thrown: " << s;
+    catch(const TCHAR* s) {
+      terr << _T("Error thrown: ") << s;
       return 2;
     }
   } else {
-    cerr << "There was a problem opening the files.\n";
+    terr << _T("There was a problem opening the files.\n");
     return 2;
   }
   if(*sourceCRC == *targetCRC)
-    cerr << "WARNING: source and target file have equal CRCs!";
+    terr << _T("WARNING: source and target file have equal CRCs!");
   delete sourceCRC;
   delete targetCRC;
   unlink(tempFileName.c_str());
