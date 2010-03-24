@@ -12,44 +12,46 @@
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty.
+ *
+ * Unicode support by Jim Park -- 08/23/2007
  */
 
 #include "Platform.h"
-#include <string>
+#include "tstring.h"
 #include <set>
 
 class dir_reader {
 public:
 
-  typedef std::set<std::string>::const_iterator iterator;
+  typedef std::set<tstring>::const_iterator iterator;
 
   dir_reader();
   virtual ~dir_reader() {}
 
-  virtual void read(const std::string& dir) = 0;
+  virtual void read(const tstring& dir) = 0;
 
-  virtual const std::set<std::string>& files();
-  virtual const std::set<std::string>& dirs();
+  virtual const std::set<tstring>& files();
+  virtual const std::set<tstring>& dirs();
 
-  virtual void exclude(const std::string& spec);
-  virtual void exclude(const std::set<std::string>& specs);
+  virtual void exclude(const tstring& spec);
+  virtual void exclude(const std::set<tstring>& specs);
 
-  static bool matches(const std::string& name, const std::string& spec);
+  static bool matches(const tstring& name, const tstring& spec);
 
 protected:
 
-  virtual void add_file(const std::string& file);
-  virtual void add_dir(const std::string& dir);
+  virtual void add_file(const tstring& file);
+  virtual void add_dir(const tstring& dir);
 
-  virtual bool is_excluded(const std::string& name) const;
+  virtual bool is_excluded(const tstring& name) const;
 
 private:
 
-  std::set<std::string> m_excluded;
-  std::set<std::string> m_wildcard_excluded;
+  std::set<tstring> m_excluded;
+  std::set<tstring> m_wildcard_excluded;
 
-  std::set<std::string> m_files;
-  std::set<std::string> m_dirs;
+  std::set<tstring> m_files;
+  std::set<tstring> m_dirs;
 
 };
 

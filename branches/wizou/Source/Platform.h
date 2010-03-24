@@ -12,6 +12,8 @@
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty.
+ *
+ * Unicode support by Jim Park -- 08/13/2007
  */
 
 #ifndef ___PLATFORM__H___
@@ -22,9 +24,10 @@
 // includes
 
 #ifdef _WIN32
-#  include <windows.h>
-#  include <commctrl.h>
-#  include <shellapi.h>
+#include <windows.h>
+#include <commctrl.h>
+#include <shellapi.h>
+#include "tchar.h"
 #else
 #  ifndef EXEHEAD
 #    include <string.h>
@@ -109,22 +112,22 @@ typedef DWORDLONG ULONGLONG,*PULONGLONG;
 
 // script path separator
 
-#  define PATH_SEPARATOR_STR "\\"
-#  define PATH_SEPARATOR_C '\\'
+#  define PATH_SEPARATOR_STR _T("\\")
+#  define PATH_SEPARATOR_C _T('\\')
 
 // system specific characters
 
 #ifdef _WIN32
-#  define PLATFORM_PATH_SEPARATOR_STR "\\"
-#  define PLATFORM_PATH_SEPARATOR_C '\\'
-#  define OPT_STR "/"
-#  define OPT_C '/'
-#  define IS_OPT(a) (a[0]==OPT_C||a[0]=='-')
+#  define PLATFORM_PATH_SEPARATOR_STR _T("\\")
+#  define PLATFORM_PATH_SEPARATOR_C _T('\\')
+#  define OPT_STR _T("/")
+#  define OPT_C _T('/')
+#  define IS_OPT(a) (a[0]==OPT_C||a[0]==_T('-'))
 #else
-#  define PLATFORM_PATH_SEPARATOR_STR "/"
-#  define PLATFORM_PATH_SEPARATOR_C '/'
-#  define OPT_STR "-"
-#  define OPT_C '-'
+#  define PLATFORM_PATH_SEPARATOR_STR _T("/")
+#  define PLATFORM_PATH_SEPARATOR_C _T('/')
+#  define OPT_STR _T("-")
+#  define OPT_C _T('-')
 #  define IS_OPT(a) (a[0]==OPT_C)
 #endif
 
@@ -183,6 +186,8 @@ typedef DWORDLONG ULONGLONG,*PULONGLONG;
 
 // functions
 
+// Jim Park: These str functions will probably never be encountered with all my
+// Unicode changes.  And if they were used, these would probably be wrong.
 #ifndef _WIN32
 #  define stricmp strcasecmp
 #  define strcmpi strcasecmp
@@ -227,10 +232,10 @@ typedef DWORDLONG ULONGLONG,*PULONGLONG;
 
 #ifndef EXEHEAD
 #  ifndef SF_TEXT
-#    define SF_TEXT 1
+#    define SF_TEXT 0x0001
 #  endif
 #  ifndef SF_RTF
-#    define SF_RTF 2
+#    define SF_RTF 0x0002
 #  endif
 #endif
 
@@ -683,7 +688,7 @@ typedef struct _LOGFONT {
   BYTE lfClipPrecision;
   BYTE lfQuality;
   BYTE lfPitchAndFamily;
-  CHAR lfFaceName[LF_FACESIZE];
+  TCHAR lfFaceName[LF_FACESIZE];
 } LOGFONT;
 #  pragma pack(2)
 typedef struct _IMAGE_DOS_HEADER {

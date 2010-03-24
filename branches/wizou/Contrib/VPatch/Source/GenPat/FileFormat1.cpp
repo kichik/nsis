@@ -22,6 +22,8 @@
 // 2. Altered source versions must be plainly marked as such, and must not be
 //    misrepresented as being the original software.
 // 3. This notice may not be removed or altered from any source distribution.
+//
+// Reviewed for Unicode support by Jim Park -- 08/29/2007
 
 #include "FileFormat1.h"
 #include "GlobalTypes.h"
@@ -126,7 +128,7 @@ namespace FileFormat1 {
       TFileOffset endOffset = in.tellg();
       if(sourceChecksum == *removeCRC) {
         if(existanceIsError) {
-          throw "Source file with the exact same contents already exists in patch!\nUse /R option (replace) to replace it with this patch!";
+          throw _T("Source file with the exact same contents already exists in patch!\nUse /R option (replace) to replace it with this patch!");
         }
         fileCount--;
       } else {
@@ -192,7 +194,7 @@ namespace FileFormat1 {
       // calculate area inbetween this block and the next
       TFileOffset notFoundStart = current->targetOffset+current->size;
       if(notFoundStart > next->targetOffset) {
-        throw "makeBinaryPatch input problem: there was overlap";
+        throw _T("makeBinaryPatch input problem: there was overlap");
       }
       TFileOffset notFoundSize = next->targetOffset - notFoundStart;
       if(notFoundSize > 0) {

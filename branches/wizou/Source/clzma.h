@@ -12,6 +12,8 @@
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty.
+ *
+ * Unicode support by Jim Park -- 08/24/2007
  */
 
 #ifndef __CLZMA_H__
@@ -95,9 +97,9 @@ public:
   virtual char *GetNextOut();
   virtual unsigned int GetAvailIn();
   virtual unsigned int GetAvailOut();
-  virtual const char *GetName();
+  virtual const TCHAR *GetName();
 
-  virtual const char* GetErrStr(int err);
+  virtual const TCHAR* GetErrStr(int err);
 };
 
 #endif

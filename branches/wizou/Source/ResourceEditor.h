@@ -12,6 +12,8 @@
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty.
+ *
+ * Reviewed for Unicode support by Jim Park -- 08/21/2007
  */
 
 #if !defined(AFX_RESOURCEEDITOR_H__683BF710_E805_4093_975B_D5729186A89A__INCLUDED_)
@@ -27,7 +29,7 @@
 
 #include "Platform.h"
 #ifdef _WIN32
-#  include <WinNT.h>
+#include <WinNT.h>
 #else
 // all definitions for non Win32 platforms were taken from MinGW's free Win32 library
 #  define IMAGE_DIRECTORY_ENTRY_RESOURCE  2
@@ -127,6 +129,7 @@ public:
   DWORD GetResourceOffsetA(char* szType, char* szName, LANGID wLanguage);
   void  FreeResource(BYTE* pbResource);
 
+  // The section name must be in ASCII.
   bool  AddExtraVirtualSize2PESection(const char* pszSectionName, int addsize);
   DWORD Save(BYTE* pbBuf, DWORD &dwSize);
 

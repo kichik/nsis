@@ -19,9 +19,11 @@
 **    gives you the integer representation of a ip address in dotted 
 **    decimal form.
 **
-**  JNL::addr_to_ipstr(unsigned long addr, char *host, int maxhostlen);
+**   JNL::addr_to_ipstr(unsigned long addr, char *host, int maxhostlen);
 **    gives you the dotted decimal notation of an integer ip address.
 **
+** Reviewed for Unicode support by Jim Park -- 08/24/2007
+**   Keep the functions here strictly ANSI.
 */
 
 #ifndef _UTIL_H_

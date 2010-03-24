@@ -3,7 +3,7 @@
  * 
  * This file is a part of NSIS.
  * 
- * Copyright (C) 1999-2008 Nullsoft and Contributors
+ * Copyright (C) 1999-2009 Nullsoft and Contributors
  * 
  * Licensed under the zlib/libpng license (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,6 +12,8 @@
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty.
+ *
+ * Unicode support by Jim Park -- 08/10/2007
  */
 
 #ifndef _BUILD_H_
@@ -31,7 +33,7 @@
 #include "exehead/fileform.h"
 #include "exehead/config.h"
 
-#include <string>
+#include "tstring.h"
 #include <set>
 
 #ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
@@ -85,16 +87,16 @@ enum notify_e {
 class CEXEBuild {
   public:
     CEXEBuild();
-    void initialize(const char *makensis_path);
+    void initialize(const TCHAR *makensis_path);
     ~CEXEBuild();
 
     // to add a warning to the compiler's warning list.
-    void warning(const char *s, ...);
+    void warning(const TCHAR *s, ...);
     // warning with file name and line count
-    void warning_fl(const char *s, ...);
+    void warning_fl(const TCHAR *s, ...);
 
     // to add a defined thing.
-    void define(const char *p, const char *v="");
+    void define(const TCHAR *p, const TCHAR *v=TEXT(""));
 
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
     // Added by Ximon Eighteen 5th August 2002
@@ -105,15 +107,16 @@ class CEXEBuild {
 
     // process a script (you can process as many scripts as you want,
     // it is as if they are concatenated)
-    int process_script(FILE *fp, const char *curfilename);
-    int process_oneline(char *line, const char *curfilename, int lineptr);
+    int process_script(FILE *fp, const TCHAR *curfilename);
+    int process_oneline(TCHAR *line, const TCHAR *curfilename, int lineptr);
     
     // you only get to call write_output once, so use it wisely.
     int write_output(void);
 
-    void print_help(char *commandname=NULL);
+    void print_help(TCHAR *commandname=NULL);
 
-    DefineList definedlist;
+    DefineList definedlist; // List of identifiers marked as "defined" like
+                            // C++ macro definitions such as _UNICODE.
 
     int display_errors;
     int display_script;
@@ -121,57 +124,63 @@ class CEXEBuild {
     int display_info;
 
     int linecnt;
-    const char *curfilename;
+    const TCHAR *curfilename;
     FILE *fp;
 
     HWND notify_hwnd;
-    void notify(notify_e code, const char *data) const;
+    void notify(notify_e code, const TCHAR *data) const;
 
   private:
     int check_write_output_errors() const;
     int prepare_uninstaller();
     int pack_exe_header();
 
-    int set_compressor(const std::string& compressor, const bool solid);
-    int update_exehead(const std::string& file, size_t *size=NULL);
+    int set_compressor(const tstring& compressor, const bool solid);
+    int update_exehead(const tstring& file, size_t *size=NULL);
     void update_exehead(const unsigned char *new_exehead, size_t new_size);
 
     // tokens.cpp
-    bool is_valid_token(char *s);
-    int get_commandtoken(char *s, int *np, int *op, int *pos);
+    bool is_valid_token(TCHAR *s);
+    int get_commandtoken(TCHAR *s, int *np, int *op, int *pos);
+
+    /**
+     * Returns the current "state" by looking at whether it is in a
+     * section/function/pagex or global.
+     * @return TP_FUNC, TP_SEC, TP_PAGEEX, TP_GLOBAL.
+     */
     int GetCurrentTokenPlace();
-    int IsTokenPlacedRight(int pos, char *tok);
+    int IsTokenPlacedRight(int pos, TCHAR *tok);
 
     // script.cpp
 #ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
   // Added by Sunil Kamath 11 June 2003
-    char* set_file_predefine(const char *);
-    void restore_file_predefine(char *);
-    char* set_timestamp_predefine(const char *);
-    void restore_timestamp_predefine(char *);
-    char* set_line_predefine(int, BOOL);
-    void restore_line_predefine(char *);
+    TCHAR* set_file_predefine(const TCHAR *);
+    void restore_file_predefine(TCHAR *);
+    TCHAR* set_timestamp_predefine(const TCHAR *);
+    void restore_timestamp_predefine(TCHAR *);
+    TCHAR* set_line_predefine(int, BOOL);
+    void restore_line_predefine(TCHAR *);
     void set_date_time_predefines();
     void del_date_time_predefines();
 #endif
     int parseScript();
-    int includeScript(char *f);
-    int MacroExists(const char *macroname);
+    int includeScript(TCHAR *f);
+    int MacroExists(const TCHAR *macroname);
 #ifdef NSIS_FIX_DEFINES_IN_STRINGS
-    void ps_addtoline(const char *str, GrowBuf &linedata, StringList &hist, bool bIgnoreDefines = false);
+    void ps_addtoline(const TCHAR *str, GrowBuf &linedata, StringList &hist, bool bIgnoreDefines = false);
 #else
-    void ps_addtoline(const char *str, GrowBuf &linedata, StringList &hist);
+    void ps_addtoline(const TCHAR *str, GrowBuf &linedata, StringList &hist);
 #endif
-    int doParse(const char *str);
+    int doParse(const TCHAR *str);
     int doCommand(int which_token, LineParser &line);
 
-    int do_add_file(const char *lgss, int attrib, int recurse, int *total_files, const char 
+    int do_add_file(const TCHAR *lgss, int attrib, int recurse, int *total_files, const TCHAR 
       *name_override=0, int generatecode=1, int *data_handle=0, 
-      const std::set<std::string>& excluded=std::set<std::string>(), 
-      const std::string& basedir=std::string(""), bool dir_created=false);
-    int add_file(const std::string& dir, const std::string& file, int attrib, const char 
+      const std::set<tstring>& excluded=std::set<tstring>(), 
+      const tstring& basedir=tstring(_T("")), bool dir_created=false);
+    int add_file(const tstring& dir, const tstring& file, int attrib, const TCHAR 
       *name_override, int generatecode, int *data_handle);
-    int do_add_file_create_dir(const std::string& local_dir, const std::string& dir, int attrib=0);
+    int do_add_file_create_dir(const tstring& local_dir, const tstring& dir, int attrib=0);
 
     GrowBuf m_linebuild; // used for concatenating lines
 
@@ -192,40 +201,40 @@ class CEXEBuild {
 
     int last_line_had_slash;
     bool inside_comment;
-    int multiple_entries_instruction;
+    int multiple_entries_instruction;  // 1 (true) or 0 (false)
 
-    void ERROR_MSG(const char *s, ...) const;
-    void SCRIPT_MSG(const char *s, ...) const;
-    void INFO_MSG(const char *s, ...) const;
+    void ERROR_MSG(const TCHAR *s, ...) const;
+    void SCRIPT_MSG(const TCHAR *s, ...) const;
+    void INFO_MSG(const TCHAR *s, ...) const;
 
-    DefineList *searchParseString(const char *source_string, LineParser *line, int parmOffs, bool ignCase, bool noErrors);
+    DefineList *searchParseString(const TCHAR *source_string, LineParser *line, int parmOffs, bool ignCase, bool noErrors);
 
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
     int add_plugins_dir_initializer(void);
 #endif //NSIS_CONFIG_PLUGIN_SUPPORT
 
     // build.cpp functions used mostly by script.cpp
-    void set_code_type_predefines(const char *value = NULL);
+    void set_code_type_predefines(const TCHAR *value = NULL);
     int getcurdbsize();
-    int add_section(const char *secname, const char *defname, int expand=0);
+    int add_section(const TCHAR *secname, const TCHAR *defname, int expand=0);
     int section_end();
-    int add_function(const char *funname);
+    int add_function(const TCHAR *funname);
     int function_end();
     void section_add_size_kb(int kb);
     int section_add_flags(int flags);
     int section_add_install_type(int inst_type);
     int add_page(int type);
     int page_end();
-    int add_label(const char *name);
+    int add_label(const TCHAR *name);
     int add_entry(const entry *ent);
     int add_entry_direct(int which, int o0=0, int o1=0, int o2=0, int o3=0, int o4=0, int o5=0);
     int add_db_data(IMMap *map); // returns offset
     int add_db_data(const char *data, int length); // returns offset
     int add_data(const char *data, int length, IGrowBuf *dblock); // returns offset
-    int add_string(const char *string, int process=1, WORD codepage=CP_ACP); // returns offset (in string table)
+    int add_string(const TCHAR *string, int process=1, WORD codepage=CP_ACP); // returns offset (in string table)
     int add_intstring(const int i); // returns offset in stringblock
 
-    int preprocess_string(char *out, const char *in, WORD codepage=CP_ACP);
+    int preprocess_string(TCHAR *out, const TCHAR *in, WORD codepage=CP_ACP);
 
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
     // Added by Ximon Eighteen 5th August 2002
@@ -249,32 +258,86 @@ class CEXEBuild {
     int SetManifest();
     int UpdatePEHeader();
 
-    int resolve_jump_int(const char *fn, int *a, int offs, int start, int end);
-    int resolve_call_int(const char *fn, const char *str, int fptr, int *ofs);
-    int resolve_instruction(const char *fn, const char *str, entry *w, int offs, int start, int end);
+    int resolve_jump_int(const TCHAR *fn, int *a, int offs, int start, int end);
+    int resolve_call_int(const TCHAR *fn, const TCHAR *str, int fptr, int *ofs);
+    int resolve_instruction(const TCHAR *fn, const TCHAR *str, entry *w, int offs, int start, int end);
 
-    int resolve_coderefs(const char *str);
+    int resolve_coderefs(const TCHAR *str);
     void print_warnings();
     int uninstall_generate();
+
+    /** Are we defining an uninstall version of the code?
+     * @param un Use like a boolean to define whether in uninstall mode.
+     */
     void set_uninstall_mode(int un);
 
     // lang.cpp functions and variables
     void InitLangTables();
+
+    /**
+     * This function gets a LanguageTable structure for the specified language
+     * via LANGID.  If create == true, it will create a new LanguageTable if
+     * the appropriate one cannot be found.  If lang is LANG_NEUTRAL (0), then
+     * it will get the LanguageTable of the last used language or more
+     * correctly, the last Language ID that generated a valid return value
+     * (not NULL).
+	  *
+     * @param lang [in/out] Language ID reference.  If LANG_NEUTRAL, it gets
+     * set to thelast used language ID.
+     * @param create Create a new LanguageTable?  Default = true.
+     * @return Appropriate LanguagTable* if exists, otherwise NULL.
+     */
     LanguageTable *GetLangTable(LANGID &lang, bool create = true);
-    const char *GetLangNameAndCP(LANGID lang, unsigned int *codepage = NULL);
-    int DefineLangString(const char *name, int process=-1);
+
+	 /**
+	  * Get the language name as a TCHAR* and the code page value via an
+	  * out parameter.  It will look for a LanguageTable to get the values.
+	  * If not found, then it will set the codepage to English for ANSI
+	  * or Unicode for Unicode version of NSIS.  The language name is looked
+	  * up via the LanguageTable if it exists, otherwise, it calls
+	  * GetLocaleInfo() with the LANGID to get the string.
+	  *
+	  * This function is not thread-safe!  For a thread-safe version, the
+	  * parameter must include the buffer to write to.
+	  *
+	  * @param lang The language ID
+	  * @param codepage [out] The code page referred to by the language ID.
+	  * @return The language string in English.
+	  */
+    const TCHAR *GetLangNameAndCP(LANGID lang, unsigned int *codepage = NULL);
+
+    int DefineLangString(const TCHAR *name, int process=-1);
     int DefineInnerLangString(int id, int process=-1);
-    int SetLangString(char *name, LANGID lang, char *string);
-    int SetInnerString(int id, char *string);
+
+    /**
+     * A LangString is a string variable that varies in value depending on what
+     * language is being used.  This function sets the string value for the
+     * variable 'name' for a given language ID.
+     * 
+     * @return If the language id, the variable name or string is invalid, it will
+     * return aPS_ERROR.  If this function call is overwriting a set user string,
+     * this will return a PS_WARNING.
+     */
+    int SetLangString(TCHAR *name, LANGID lang, TCHAR *str);
+
+    /**
+     * Sets the user string to the specific NLF_STRINGS id.
+     *
+     * @return If the id is invalid or the string is not valid, it will return
+     * aPS_ERROR.  If this function call is overwriting a set user string,
+     * this will return a PS_WARNING.
+     */
+    int SetInnerString(int id, TCHAR *str);
+
     int GenerateLangTable(LanguageTable *lt, int num_lang_tables);
     int GenerateLangTables();
     void FillLanguageTable(LanguageTable *table);
     int HasUserDefined(int id) {
-      const char *us = UserInnerStrings.get(id);
+      const TCHAR *us = UserInnerStrings.get(id);
       return us && *us;
     };
 
-    LanguageTable *LoadLangFile(char *filename);
+    LanguageTable *LoadLangFile(TCHAR *filename);
     void DeleteLangTable(LanguageTable *table);
 
     NLFRef NLFRefs[NLF_STRINGS];
@@ -284,15 +347,16 @@ class CEXEBuild {
     GrowBuf lang_tables;
     LANGID last_used_lang;
     LangStringList build_langstrings;
+
     int build_langstring_num, ubuild_langstring_num;
-    char build_font[1024];
+    TCHAR build_font[1024];
     int build_font_size;
 
     unsigned int uDefCodePage;
 
     // pages stuff
     int license_res_id;
-    page *cur_page;
+    page *cur_page;  // Current page we are defining, NULL if not.
     int cur_page_type;
     int enable_last_page_cancel, uenable_last_page_cancel;
 
@@ -303,14 +367,14 @@ class CEXEBuild {
     // Added by ramon 3 jun 2003
     UserVarsStringList m_UserVarNames;
     int m_iBaseVarsNum;
-    int DeclaredUserVar(const char *VarName);
+    int DeclaredUserVar(const TCHAR *VarName);
     void VerifyDeclaredUserVarRefs(UserVarsStringList *pVarsStringList);
 
     ConstantsStringList m_ShellConstants;
 
     // a whole bunch O data.
 
-    std::string stubs_dir;
+    tstring stubs_dir;
 
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
     ICompressor *compressor;
@@ -329,24 +393,24 @@ class CEXEBuild {
 
     bool has_called_write_output;
 
-    char build_packname[1024], build_packcmd[1024];
+    TCHAR build_packname[1024], build_packcmd[1024];
     int build_overwrite, build_last_overwrite, build_crcchk,
         build_datesave, build_optimize_datablock,
         build_allowskipfiles; // Added by ramon 23 May 2003
 
     header build_header, build_uninst, *cur_header;
-    int uninstall_mode;
+    int uninstall_mode; // Are we in uinstall mode?  Acts like a bool.
     int uninstall_size,uninstall_size_full;
     int uninstaller_writes_used;
 
-    char build_output_filename[1024];
+    TCHAR build_output_filename[1024];
 
     int build_include_depth;
 
     // Added by ramon 6 jun 2003
 #ifdef NSIS_SUPPORT_VERSION_INFO
     CResourceVersionInfo rVersionInfo;
-    char version_product_v[1024];
+    TCHAR version_product_v[1024];
 #endif
 
     int sectiongroup_open_cnt;
@@ -363,8 +427,14 @@ class CEXEBuild {
     StringList ns_func; // function namespace
     StringList ns_label; // label namespace
 
-    int build_cursection_isfunc;
-    section *build_cursection;
+    int build_cursection_isfunc; // Are we in the middle of func definition?
+    section *build_cursection;   // The section we are defining, NULL if not in section.
+                                 // This could be a function or a section.
+
+    // The ubuild prefixed objects / variables are for the uinstall versions
+    // of the code.  The cur prefix objects are what the current objects that
+    // need to be referenced should be.  What is pointed to by the cur* objects
+    // are determined by whether or not we are in uninstall mode or not.
     TinyGrowBuf build_sections, ubuild_sections, *cur_sections;
     GrowBuf build_entries,ubuild_entries, *cur_entries;
     GrowBuf build_instruction_entry_map,ubuild_instruction_entry_map, *cur_instruction_entry_map;

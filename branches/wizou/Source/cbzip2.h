@@ -12,6 +12,8 @@
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty.
+ * 
+ * Unicode support by Jim Park -- 08/24/2007
  */
 
 #ifndef __CBZIP2_H__
@@ -71,23 +73,23 @@ class CBzip2 : public ICompressor {
       return stream->avail_out;
     }
 
-    const char* GetName() {
-      return "bzip2";
+    const TCHAR* GetName() {
+      return _T("bzip2");
     }
 
-    const char* GetErrStr(int err) {
+    const TCHAR* GetErrStr(int err) {
       switch (err)
       {
       case BZ_SEQUENCE_ERROR:
-        return "sequence error - bad call";
+        return _T("sequence error - bad call");
       case BZ_PARAM_ERROR:
-        return "parameter error - bad call";
+        return _T("parameter error - bad call");
       case BZ_MEM_ERROR:
-        return "not enough memory";
+        return _T("not enough memory");
       case BZ_CONFIG_ERROR:
-        return "config error";
+        return _T("config error");
       default:
-        return "unknown error";
+        return _T("unknown error");
       }
     }
 

@@ -1,3 +1,5 @@
+// Unicode support by Jim Park -- 11/16/2007
+
 #include "Platform.h"
 #include "icon.h"
 #include "util.h"
@@ -15,9 +17,9 @@ extern FILE *g_output;
 
 #define SIZEOF_RSRC_ICON_GROUP_ENTRY 14
 
-static FILE * open_icon(const char* filename, IconGroupHeader& igh)
+static FILE * open_icon(const TCHAR* filename, IconGroupHeader& igh)
 {
-  FILE* f = FOPEN(filename, "rb");
+  FILE* f = FOPEN(filename, _T("rb"));
   if (!f)
     throw runtime_error("can't open file");
 
@@ -81,7 +83,7 @@ IconGroup load_icon_res(CResourceEditor* re, WORD id)
   return result;
 }
 
-IconGroup load_icon_file(const char* filename)
+IconGroup load_icon_file(const TCHAR* filename)
 {
   IconGroupHeader iconHeader;
   IconGroup result;
@@ -149,6 +151,7 @@ typedef struct
   DWORD size;
   unsigned size_index;
 } IconPair;
+
 
 typedef vector<IconPair> IconPairs;
 
@@ -389,7 +392,7 @@ int generate_unicons_offsets(LPBYTE exeHeader, size_t exeHeaderSize, LPBYTE unin
 
       if (offset > exeHeaderSize)
       {
-        throw runtime_error("invalid icon offset (possibly compressed icon)");
+        throw runtime_error(_T("invalid icon offset (possibly compressed icon)"));
       }
 
       DWORD real_size = re.GetResourceSizeA(RT_ICON, MAKEINTRESOURCE(icon_index), NSIS_DEFAULT_LANG);
@@ -413,7 +416,7 @@ int generate_unicons_offsets(LPBYTE exeHeader, size_t exeHeaderSize, LPBYTE unin
   catch (const exception& e)
   {
     if (g_display_errors)
-      fprintf(g_output, "\nError generating uninstaller icon: %s -- failing!\n", e.what());
+      fprintf(g_output, _T("\nError generating uninstaller icon: %s -- failing!\n"), e.what());
     return 0;
   }
 

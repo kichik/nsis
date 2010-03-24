@@ -12,6 +12,8 @@
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty.
+ *
+ * Unicode support by Jim Park -- 08/10/2007
  */
 
 #include <windowsx.h>
@@ -48,9 +50,9 @@ int g_quit_flag; // set when Quit has been called (meaning bail out ASAP)
 int progress_bar_pos, progress_bar_len;
 
 #if NSIS_MAX_STRLEN < 1024
-static char g_tmp[4096];
+static TCHAR g_tmp[4096];
 #else
-static char g_tmp[NSIS_MAX_STRLEN * 4];
+static TCHAR g_tmp[NSIS_MAX_STRLEN * 4];
 #endif
 
 static int m_page=-1,m_retcode,m_delta;
@@ -162,7 +164,7 @@ static BOOL NSISCALL _HandleStaticBkColor(UINT uMsg, WPARAM wParam, LPARAM lPara
 #if !defined(NSIS_CONFIG_LOG_ODS) && !defined(NSIS_CONFIG_LOG_STDOUT)
 void NSISCALL build_g_logfile()
 {
-  mystrcat(addtrailingslash(mystrcpy(g_log_file,state_install_directory)),"install.log");
+  mystrcat(addtrailingslash(mystrcpy(g_log_file,state_install_directory)),_T("install.log"));
 }
 #endif
 #endif
@@ -177,6 +179,8 @@ static void NSISCALL set_language()
   int lang_num;
   int *selected_langtable=0;
 
+  // Jim Park: We are doing byte offsets to get to various data structures so
+  // no TCHARs here.
 lang_again:
   lang_num=g_blocks[NB_LANGTABLES].num;
   while (lang_num--) {
@@ -200,7 +204,7 @@ lang_again:
 
   myitoa(state_language, *(LANGID*)language_table);
   {
-    char *caption = GetNSISString(g_caption,LANG_CAPTION);
+    TCHAR *caption = GetNSISString(g_caption,LANG_CAPTION);
 #ifdef NSIS_SUPPORT_BGBG
     my_SetWindowText(m_bgwnd, caption);
 #endif
@@ -241,11 +245,11 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
   }
   else
   {
-    static const char reg_9x_locale[]     = "Control Panel\\Desktop\\ResourceLocale";
-    static const char reg_nt_locale_key[] = ".DEFAULT\\Control Panel\\International";
-    const char       *reg_nt_locale_val   = &reg_9x_locale[30]; // = "Locale" with opt
+    static const TCHAR reg_9x_locale[]     = _T("Control Panel\\Desktop\\ResourceLocale");
+    static const TCHAR reg_nt_locale_key[] = _T(".DEFAULT\\Control Panel\\International");
+    const TCHAR       *reg_nt_locale_val   = &reg_9x_locale[30]; // = _T("Locale") with opt
 
-    *(DWORD*)state_language = CHAR4_TO_DWORD('0', 'x', 0, 0);
+    *(DWORD*)state_language = CHAR4_TO_DWORD(_T('0'), _T('x'), 0, 0);
 
     {
       // Windows 9x
@@ -287,13 +291,13 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
       );
       if (ps_tmpbuf[0])
       {
-        char *p=ps_tmpbuf;
-        char *e;
-        if (p[0]=='\"')
+        TCHAR *p=ps_tmpbuf;
+        TCHAR *e;
+        if (p[0]==_T('\"'))
         {
-          char *p2;
+          TCHAR *p2;
           p++;
-          p2 = findchar(p, '"');
+          p2 = findchar(p, _T('"'));
           *p2 = 0;
         }
         // p is the path now, check for .exe extension
@@ -302,7 +306,7 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
         if (e > p)
         {
           // if filename ends in .exe, and is not a directory, remove the filename
-          if (!lstrcmpi(e, ".exe")) // check extension
+          if (!lstrcmpi(e, _T(".exe"))) // check extension
           {
             DWORD d;
             d=GetFileAttributes(p);
@@ -339,20 +343,20 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
 #ifdef NSIS_SUPPORT_BGBG
   if (header->bg_color1 != -1)
   {
-    DWORD cn = CHAR4_TO_DWORD('_', 'N', 'b', 0);
+    DWORD cn = CHAR4_TO_DWORD(_T('_'), _T('N'), _T('b'), 0);
     RECT vp;
     extern LRESULT CALLBACK BG_WndProc(HWND, UINT, WPARAM, LPARAM);
     wc.lpfnWndProc = BG_WndProc;
     wc.hInstance = g_hInstance;
     wc.hIcon = g_hIcon;
     //wc.hCursor = LoadCursor(NULL,IDC_ARROW);
-    wc.lpszClassName = (LPCSTR)&cn;
+    wc.lpszClassName = (LPCTSTR)&cn;
 
     if (!RegisterClass(&wc)) return 0;
 
     SystemParametersInfo(SPI_GETWORKAREA, 0, &vp, 0);
 
-    m_bgwnd = CreateWindowEx(WS_EX_TOOLWINDOW,(LPCSTR)&cn,0,WS_POPUP,
+    m_bgwnd = CreateWindowEx(WS_EX_TOOLWINDOW,(LPCTSTR)&cn,0,WS_POPUP,
       vp.left,vp.top,vp.right-vp.left,vp.bottom-vp.top,0,NULL,g_hInstance,NULL);
   }
 
@@ -378,10 +382,10 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
 
 #ifdef NSIS_CONFIG_LICENSEPAGE
     { // load richedit DLL
-      static const char riched20[]="RichEd20";
-      static const char riched32[]="RichEd32";
-      static const char richedit20a[]="RichEdit20A";
-      static const char richedit[]="RichEdit";
+      static const TCHAR riched20[]=_T("RichEd20");
+      static const TCHAR riched32[]=_T("RichEd32");
+      static const TCHAR richedit20a[]=_T("RichEdit20A");
+      static const TCHAR richedit[]=_T("RichEdit");
       if (!LoadLibrary(riched20))
       {
         LoadLibrary(riched32);
@@ -434,9 +438,10 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
 static int CALLBACK WINAPI BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData)
 {
+  // lpData has the TCHAR* to 'dir'.
   if (uMsg==BFFM_INITIALIZED)
   {
-    my_GetDialogItemText(IDC_DIR,(char*)lpData);
+    my_GetDialogItemText(IDC_DIR,(TCHAR*)lpData);
     SendMessage(hwnd,BFFM_SETSELECTION,(WPARAM)1,lpData);
   }
   if (uMsg==BFFM_SELCHANGED)
@@ -445,7 +450,7 @@ static int CALLBACK WINAPI BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lPara
       hwnd,
       BFFM_ENABLEOK,
       0,
-      SHGetPathFromIDList((LPITEMIDLIST)lParam,(char*)lpData)
+      SHGetPathFromIDList((LPITEMIDLIST)lParam,(TCHAR*)lpData)
 #ifdef NSIS_SUPPORT_CODECALLBACKS
       && !ExecuteCallbackFunction(CB_ONVERIFYINSTDIR)
 #endif
@@ -710,7 +715,7 @@ skipPage:
 static DWORD dwRead;
 DWORD CALLBACK StreamLicense(DWORD dwCookie, LPBYTE pbBuff, LONG cb, LONG *pcb)
 {
-  lstrcpyn(pbBuff,(char*)dwCookie+dwRead,cb);
+  lstrcpyn(pbBuff,(TCHAR*)dwCookie+dwRead,cb);
   *pcb=mystrlen(pbBuff);
   dwRead+=*pcb;
   return 0;
@@ -724,7 +729,7 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
 
   if (uMsg == WM_INITDIALOG)
   {
-    char *l = (char *)GetNSISStringNP(GetNSISTab(this_page->parms[1]));
+    TCHAR *l = (TCHAR *)GetNSISStringNP(GetNSISTab(this_page->parms[1]));
     int lt = *l;
     EDITSTREAM es = {
       (DWORD)(++l),
@@ -778,7 +783,7 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
         if (tr.chrg.cpMax-tr.chrg.cpMin < sizeof(ps_tmpbuf)) {
           SendMessage(hwLicense,EM_GETTEXTRANGE,0,(LPARAM)&tr);
           SetCursor(LoadCursor(0, IDC_WAIT));
-          ShellExecute(hwndDlg,"open",tr.lpstrText,NULL,NULL,SW_SHOWNORMAL);
+          ShellExecute(hwndDlg,_T("open"),tr.lpstrText,NULL,NULL,SW_SHOWNORMAL);
           SetCursor(LoadCursor(0, IDC_ARROW));
         }
       }
@@ -835,7 +840,7 @@ static BOOL CALLBACK UninstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 
 static void NSISCALL SetSizeText(int dlgItem, int prefix, unsigned kb)
 {
-  char scalestr[32], byte[32];
+  TCHAR scalestr[32], byte[32];
   unsigned sh = 20;
   int scale = LANG_GIGA;
 
@@ -853,7 +858,7 @@ static void NSISCALL SetSizeText(int dlgItem, int prefix, unsigned kb)
   wsprintf(
     g_tmp + mystrlen(g_tmp),
 #endif
-    "%u.%u%s%s",
+    _T("%u.%u%s%s"),
     kb >> sh,
     (((kb & 0x00FFFFFF) * 10) >> sh) % 10, // 0x00FFFFFF mask is used to
                                            // prevent overflow that causes
@@ -887,7 +892,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 {
   static int dontsetdefstyle;
   page *thispage = g_this_page;
-  char *dir = g_usrvars[thispage->parms[4]];
+  TCHAR *dir = g_usrvars[thispage->parms[4]];
   int browse_text = thispage->parms[3];
   if (uMsg == WM_NOTIFY_INIGO_MONTOYA)
   {
@@ -955,7 +960,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     }
     if (id == IDC_BROWSE)
     {
-      static char bt[NSIS_MAX_STRLEN];
+      static TCHAR bt[NSIS_MAX_STRLEN];
       BROWSEINFO bi = {0,};
       ITEMIDLIST *idlist;
       bi.hwndOwner = hwndDlg;
@@ -975,7 +980,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
         if (g_header->install_directory_auto_append &&
           dir == state_install_directory) // only append to $INSTDIR (bug #1174184)
         {
-          const char *post_str = ps_tmpbuf;
+          const TCHAR *post_str = ps_tmpbuf;
           GetNSISStringTT(g_header->install_directory_auto_append);
           // display name gives just the folder name
           if (lstrcmpi(post_str, g_tmp))
@@ -995,7 +1000,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
   }
   if (uMsg == WM_IN_UPDATEMSG || uMsg == WM_NOTIFY_START)
   {
-    static char s[NSIS_MAX_STRLEN];
+    static TCHAR s[NSIS_MAX_STRLEN];
     int error = 0;
     int available_set = 0;
     unsigned total, available;
@@ -1026,15 +1031,15 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
     // Test for and use the GetDiskFreeSpaceEx API
     {
-      BOOL (WINAPI *GDFSE)(LPCSTR, PULARGE_INTEGER, PULARGE_INTEGER, PULARGE_INTEGER) =
-          myGetProcAddress(MGA_GetDiskFreeSpaceExA);
+      BOOL (WINAPI *GDFSE)(LPCTSTR, PULARGE_INTEGER, PULARGE_INTEGER, PULARGE_INTEGER) =
+          myGetProcAddress(MGA_GetDiskFreeSpaceEx);
       if (GDFSE)
       {
         ULARGE_INTEGER available64;
         ULARGE_INTEGER a, b;
-        char *p;
+        TCHAR *p;
         WORD *pw = NULL;
-        while ((char *) pw != s) // trimslashtoend() cut the entire string
+        while ((TCHAR *) pw != s) // trimslashtoend() cut the entire string
         {
           if (GDFSE(s, &available64, &a, &b))
           {
@@ -1053,7 +1058,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
           p = trimslashtoend(s); // trim last backslash
           pw = (LPWORD) (p - 1);
-          *pw = CHAR2_TO_WORD('\\', 0); // bring it back, but make the next char null
+          *pw = CHAR2_TO_WORD(_T('\\'), 0); // bring it back, but make the next TCHAR null
         }
       }
     }
@@ -1061,7 +1066,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     if (!available_set)
     {
       DWORD spc, bps, fc, tc;
-      char *root;
+      TCHAR *root;
 
       // GetDiskFreeSpaceEx accepts any path, but GetDiskFreeSpace accepts only the root
       mystrcpy(s,dir);
@@ -1087,7 +1092,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       if (available_set)
         SetSizeText(IDC_SPACEAVAILABLE,LANG_SPACE_AVAIL,available);
       else
-        SetUITextNT(IDC_SPACEAVAILABLE,"");
+        SetUITextNT(IDC_SPACEAVAILABLE,_T(""));
     }
 
     g_exec_flags.instdir_error = error;
@@ -1500,8 +1505,8 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
 #endif//NSIS_CONFIG_VISIBLE_SUPPORT
 
-void NSISCALL update_status_text(int strtab, const char *text) {
-  static char tmp[NSIS_MAX_STRLEN*2];
+void NSISCALL update_status_text(int strtab, const TCHAR *text) {
+  static TCHAR tmp[NSIS_MAX_STRLEN*2];
   LVITEM new_item;
   HWND linsthwnd = insthwnd;
   if (linsthwnd)
@@ -1567,7 +1572,7 @@ static DWORD WINAPI install_thread(LPVOID p)
     if (s->flags&SF_SELECTED)
 #endif
     {
-      log_printf2("Section: \"%s\"",s->name);
+      log_printf2(_T("Section: \"%s\""),s->name);
       if (ExecuteCodeSegment(s->code,progresswnd))
       {
         g_exec_flags.abort++;
@@ -1577,7 +1582,7 @@ static DWORD WINAPI install_thread(LPVOID p)
 #ifdef NSIS_CONFIG_COMPONENTPAGE
     else
     {
-      log_printf2("Skipping section: \"%s\"",s->name);
+      log_printf2(_T("Skipping section: \"%s\""),s->name);
     }
 #endif
     s++;
@@ -1611,7 +1616,7 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
     progress_bar_len=sumsecsfield(code_size);
     progress_bar_pos=0;
 
-    log_printf3("New install of \"%s\" to \"%s\"",GetNSISStringTT(LANG_NAME),state_install_directory);
+    log_printf3(_T("New install of \"%s\" to \"%s\""),GetNSISStringTT(LANG_NAME),state_install_directory);
 
     GetClientRect(linsthwnd, &r);
     lvc.cx = r.right - GetSystemMetrics(SM_CXHSCROLL);
@@ -1718,14 +1723,14 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
         // Clipboard MSDN docs say mem must be GMEM_MOVEABLE
         OpenClipboard(0);
         EmptyClipboard();
-        memory = GlobalAlloc(GHND,total);
+        memory = GlobalAlloc(GHND,total*sizeof(TCHAR));
         ptr = GlobalLock(memory);
         //endPtr = ptr+total-2; // -2 to allow for CR/LF
         i = 0;
         do {
           item.pszText = ptr;
           ptr += SendMessage(linsthwnd,LVM_GETITEMTEXT,i,(LPARAM)&item);
-          *(WORD*)ptr = CHAR2_TO_WORD('\r','\n');
+          *(WORD*)ptr = CHAR2_TO_WORD(_T('\r'),_T('\n'));
           ptr+=2;
         } while (++i < count);
         // memory is auto zeroed when allocated with GHND - *ptr = 0;

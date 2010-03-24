@@ -23,7 +23,7 @@
 
 extern struct nsDialog g_dialog;
 
-void __declspec(dllexport) SetRTL(HWND hwndParent, int string_size, char *variables, stack_t **stacktop, extra_parameters *extra)
+void __declspec(dllexport) SetRTL(HWND hwndParent, int string_size, TCHAR *variables, stack_t **stacktop, extra_parameters *extra)
 {
   g_dialog.rtl = (BOOL) popint();
 }

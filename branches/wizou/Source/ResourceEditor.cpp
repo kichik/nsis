@@ -12,12 +12,15 @@
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty.
+ *
+ * Reviewed for Unicode support by Jim Park -- 08/21/2007
  */
 
 #include "ResourceEditor.h"
 #include "util.h"
 #include "winchar.h"
 #include <queue>
+#include "tchar.h"
 using namespace std;
 
 //////////////////////////////////////////////////////////////////////
@@ -541,6 +544,7 @@ DWORD CResourceEditor::Save(BYTE* pbBuf, DWORD &dwSize) {
 
 // This function scans exe sections and after find a match with given name
 // increments it's virtual size (auto fixes image size based on section alignment, etc)
+// Jim Park: The section name must be ASCII code.  Do not TCHAR this stuff.
 bool CResourceEditor::AddExtraVirtualSize2PESection(const char* pszSectionName, int addsize)
 {
   PIMAGE_SECTION_HEADER sectionHeadersArray = IMAGE_FIRST_SECTION(m_ntHeaders);
@@ -889,7 +893,7 @@ int CResourceDirectory::Find(WCHAR* szName) {
   if (IS_INTRESOURCE(szName))
     return Find((WORD) (DWORD) szName);
   else
-    if (szName[0] == '#')
+    if (szName[0] == L'#')
       return Find(WORD(winchar_stoi(szName + 1)));
 
   for (unsigned int i = 0; i < m_vEntries.size(); i++) {

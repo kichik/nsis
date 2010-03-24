@@ -12,6 +12,8 @@
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty.
+ *
+ * Unicode support by Jim Park -- 08/22/2007
  */
 
 #include "../Platform.h"
@@ -34,7 +36,7 @@
 extern HANDLE dbd_hFile;
 #endif
 
-char g_caption[NSIS_MAX_STRLEN*2];
+TCHAR g_caption[NSIS_MAX_STRLEN*2];
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
 HWND g_hwnd;
 HANDLE g_hInstance;
@@ -42,7 +44,7 @@ HANDLE g_hInstance;
 
 void NSISCALL CleanUp();
 
-char *ValidateTempDir()
+TCHAR *ValidateTempDir()
 {
   validate_filename(state_temp_dir);
   if (!validpathspec(state_temp_dir))
@@ -55,16 +57,16 @@ char *ValidateTempDir()
 
 void *g_SHGetFolderPath;
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, int nCmdShow)
+int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPTSTR lpszCmdParam, int nCmdShow)
 {
   int ret = 0;
-  const char *m_Err = _LANG_ERRORWRITINGTEMP;
+  const TCHAR *m_Err = _LANG_ERRORWRITINGTEMP;
 
   int cl_flags = 0;
 
-  char *realcmds;
-  char seekchar=' ';
-  char *cmdline;
+  TCHAR *realcmds;
+  TCHAR seekchar=_T(' ');
+  TCHAR *cmdline;
 
   InitCommonControls();
 
@@ -88,7 +90,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
   //  Delete $PROGRAMFILES\shfolder.dll # can't be deleted, as the
   //                                    # new shfolder.dll is used
   //                                    # to find its own path.
-  g_SHGetFolderPath = myGetProcAddress(MGA_SHGetFolderPathA);
+  g_SHGetFolderPath = myGetProcAddress(MGA_SHGetFolderPath);
 
   {
     // workaround for bug #1008632
@@ -108,7 +110,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
     // of special folders (CSIDL_*).
 
     SHFILEINFO shfi;
-    SHGetFileInfo("", 0, &shfi, sizeof(SHFILEINFO), 0);
+    SHGetFileInfo(_T(""), 0, &shfi, sizeof(SHFILEINFO), 0);
   }
 
   mystrcpy(g_caption,_LANG_GENERIC_ERROR);
@@ -120,7 +122,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
 #endif//NSIS_CONFIG_VISIBLE_SUPPORT
 
   cmdline = state_command_line;
-  if (*cmdline == '\"') seekchar = *cmdline++;
+  if (*cmdline == _T('\"')) seekchar = *cmdline++;
 
   cmdline=findchar(cmdline, seekchar);
   cmdline=CharNext(cmdline);
@@ -129,34 +131,34 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
   while (*cmdline)
   {
     // skip over any spaces
-    while (*cmdline == ' ') cmdline++;
+    while (*cmdline == _T(' ')) cmdline++;
     
     // get char we should look for to get the next parm
-    seekchar = ' ';
-    if (cmdline[0] == '\"')
+    seekchar = _T(' ');
+    if (cmdline[0] == _T('\"'))
     {
       cmdline++;
-      seekchar = '\"';
+      seekchar = _T('\"');
     }
 
     // is it a switch?
-    if (cmdline[0] == '/')
+    if (cmdline[0] == _T('/'))
     {
       cmdline++;
 
 // this only works with spaces because they have just one bit on
-#define END_OF_ARG(c) (((c)|' ')==' ')
+#define END_OF_ARG(c) (((c)|_T(' '))==_T(' '))
 
 #if defined(NSIS_CONFIG_VISIBLE_SUPPORT) && defined(NSIS_CONFIG_SILENT_SUPPORT)
-      if (cmdline[0] == 'S' && END_OF_ARG(cmdline[1]))
+      if (cmdline[0] == _T('S') && END_OF_ARG(cmdline[1]))
         cl_flags |= FH_FLAGS_SILENT;
 #endif//NSIS_CONFIG_SILENT_SUPPORT && NSIS_CONFIG_VISIBLE_SUPPORT
 #ifdef NSIS_CONFIG_CRC_SUPPORT
-      if (*(LPDWORD)cmdline == CHAR4_TO_DWORD('N','C','R','C') && END_OF_ARG(cmdline[4]))
+      if (*(LPDWORD)cmdline == CHAR4_TO_DWORD(_T('N'),_T('C'),_T('R'),_T('C')) && END_OF_ARG(cmdline[4]))
         cl_flags |= FH_FLAGS_NO_CRC;
 #endif//NSIS_CONFIG_CRC_SUPPORT
 
-      if (*(LPDWORD)(cmdline-2) == CHAR4_TO_DWORD(' ', '/', 'D','='))
+      if (*(LPDWORD)(cmdline-2) == CHAR4_TO_DWORD(_T(' '), _T('/'), _T('D'),_T('=')))
       {
         *(LPDWORD)(cmdline-2)=0; // keep this from being passed to uninstaller if necessary
         mystrcpy(state_install_directory,cmdline+2);
@@ -167,7 +169,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
     // skip over our parm
     cmdline = findchar(cmdline, seekchar);
     // skip the quote
-    if (*cmdline == '\"')
+    if (*cmdline == _T('\"'))
       cmdline++;
   }
 
@@ -175,7 +177,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
   if (!ValidateTempDir())
   {
     GetWindowsDirectory(state_temp_dir, NSIS_MAX_STRLEN - 5); // leave space for \Temp
-    mystrcat(state_temp_dir, "\\Temp");
+    mystrcat(state_temp_dir, _T("\\Temp"));
     if (!ValidateTempDir())
     {
       goto end;
@@ -189,11 +191,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
   if (g_is_uninstaller)
   {
-    char *p = findchar(state_command_line, 0);
+    TCHAR *p = findchar(state_command_line, 0);
 
     // state_command_line has state_install_directory right after it in memory, so reading
     // a bit over state_command_line won't do any harm
-    while (p >= state_command_line && *(LPDWORD)p != CHAR4_TO_DWORD(' ', '_', '?', '=')) p--;
+    while (p >= state_command_line && *(LPDWORD)p != CHAR4_TO_DWORD(_T(' '), _T('_'), _T('?'), _T('='))) p--;
 
     m_Err = _LANG_UNINSTINITERROR;
 
@@ -216,7 +218,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
     {
       int x;
 
-      mystrcat(state_temp_dir,"~nsu.tmp");
+      mystrcat(state_temp_dir,_T("~nsu.tmp"));
 
       // check if already running from uninstaller temp dir
       // this prevents recursive uninstaller calls
@@ -230,11 +232,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
         mystrcpy(state_install_directory,state_exe_directory);
 
       mystrcpy(g_usrvars[0], realcmds);
-      *(LPWORD)g_usrvars[1] = CHAR2_TO_WORD('A',0);
+      *(LPWORD)g_usrvars[1] = CHAR2_TO_WORD(_T('A'),0);
 
       for (x = 0; x < 26; x ++)
       {
-        static char buf2[NSIS_MAX_STRLEN];
+        static TCHAR buf2[NSIS_MAX_STRLEN];
 
         GetNSISString(buf2,g_header->str_uninstchild); // $TEMP\$1u_.exe
 
@@ -301,7 +303,7 @@ end:
     BOOL (WINAPI *LPV)(LPCTSTR,LPCTSTR,PLUID);
     BOOL (WINAPI *ATP)(HANDLE,BOOL,PTOKEN_PRIVILEGES,DWORD,PTOKEN_PRIVILEGES,PDWORD);
     OPT=myGetProcAddress(MGA_OpenProcessToken);
-    LPV=myGetProcAddress(MGA_LookupPrivilegeValueA);
+    LPV=myGetProcAddress(MGA_LookupPrivilegeValue);
     ATP=myGetProcAddress(MGA_AdjustTokenPrivileges);
     if (OPT && LPV && ATP)
     {

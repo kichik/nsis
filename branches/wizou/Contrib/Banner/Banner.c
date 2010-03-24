@@ -2,6 +2,8 @@
 #include <nsis/pluginapi.h> // nsis plugin
 #include "../../Source/exehead/resource.h"
 
+// Unicode support added by Jim Park -- 08/02/2007
+
 // Turn a pair of chars into a word
 // Turn four chars into a dword
 #ifdef __BIG_ENDIAN__ // Not very likely, but, still...
@@ -17,7 +19,7 @@ HWND hwBanner;
 HANDLE hThread;
 BOOL bFailed;
 
-char buf[1024];
+TCHAR buf[1024];
 
 BOOL CALLBACK BannerProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -116,7 +118,7 @@ static UINT_PTR PluginCallback(enum NSPIM msg)
   return 0;
 }
 
-void __declspec(dllexport) show(HWND hwndParent, int string_size, char *variables, stack_t **stacktop, extra_parameters *extra)
+void __declspec(dllexport) show(HWND hwndParent, int string_size, TCHAR *variables, stack_t **stacktop, extra_parameters *extra)
 {
   EXDLL_INIT();
 
@@ -155,13 +157,13 @@ void __declspec(dllexport) show(HWND hwndParent, int string_size, char *variable
   }
 }
 
-void __declspec(dllexport) getWindow(HWND hwndParent, int string_size, char *variables, stack_t **stacktop)
+void __declspec(dllexport) getWindow(HWND hwndParent, int string_size, TCHAR *variables, stack_t **stacktop)
 {
-  wsprintf(buf, "%u", hwBanner);
+  wsprintf(buf, _T("%u"), hwBanner);
   pushstring(buf);
 }
 
-void __declspec(dllexport) destroy(HWND hwndParent, int string_size, char *variables, stack_t **stacktop)
+void __declspec(dllexport) destroy(HWND hwndParent, int string_size, TCHAR *variables, stack_t **stacktop)
 {
   if (!hwBanner)
     return;

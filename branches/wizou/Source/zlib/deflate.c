@@ -9,6 +9,10 @@
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty.
+ *
+ * Unicode support by Jim Park -- 08/27/2007
+ * All messages and true strings turned into TCHARs for when we
+ * create viewable messages.
  */
 
 /* deflate.c -- compress data using the deflation algorithm
@@ -19,8 +23,8 @@
 
 #include "DEFLATE.H"
 
-const char deflate_copyright[] =
-   " deflate 1.1.3 Copyright 1995-1998 Jean-loup Gailly ";
+const TCHAR deflate_copyright[] =
+   _T(" deflate 1.1.3 Copyright 1995-1998 Jean-loup Gailly ");
 /*
   If you use the zlib library in a product, an acknowledgment is welcome
   in the documentation of your product. If for some reason you cannot
@@ -113,7 +117,7 @@ struct static_tree_desc_s {int dummy;}; /* for buggy compilers */
 int ZEXPORT deflateInit_(strm, level, version, stream_size)
     z_streamp strm;
     int level;
-    const char *version;
+    const TCHAR *version;
     int stream_size;
 {
     return deflateInit2_(strm, level, Z_DEFLATED, -MAX_WBITS, DEF_MEM_LEVEL,
@@ -130,7 +134,7 @@ int ZEXPORT deflateInit2_(strm, level, method, windowBits, memLevel, strategy,
     int  windowBits;
     int  memLevel;
     int  strategy;
-    const char *version;
+    const TCHAR *version;
     int stream_size;
 {
     deflate_state *s;
@@ -185,7 +189,7 @@ int ZEXPORT deflateInit2_(strm, level, method, windowBits, memLevel, strategy,
 
     if (s->window == Z_NULL || s->prev == Z_NULL || s->head == Z_NULL ||
         s->pending_buf == Z_NULL) {
-//        strm->msg = (char*)ERR_MSG(Z_MEM_ERROR);
+//        strm->msg = (TCHAR*)ERR_MSG(Z_MEM_ERROR);
         deflateEnd (strm);
         return Z_MEM_ERROR;
     }
@@ -420,7 +424,7 @@ int ZEXPORT deflate (strm, flush)
             }
         }
     }
-    Assert(strm->avail_out > 0, "bug2");
+    Assert(strm->avail_out > 0, _T("bug2"));
 
     if (flush != Z_FINISH) return Z_OK;
     if (s->noheader) return Z_STREAM_END;
@@ -546,7 +550,7 @@ local uInt longest_match(s, cur_match)
     /* The code is optimized for HASH_BITS >= 8 and MAX_MATCH-2 multiple of 16.
      * It is easy to get rid of this optimization if necessary.
      */
-    Assert(s->hash_bits >= 8 && MAX_MATCH == 258, "Code too clever");
+    Assert(s->hash_bits >= 8 && MAX_MATCH == 258, _T("Code too clever"));
 
     /* Do not waste too much time if we already have a good match: */
     if (s->prev_length >= s->good_match) {
@@ -557,10 +561,10 @@ local uInt longest_match(s, cur_match)
      */
     if ((uInt)nice_match > s->lookahead) nice_match = s->lookahead;
 
-    Assert((ulg)s->strstart <= s->window_size-MIN_LOOKAHEAD, "need lookahead");
+    Assert((ulg)s->strstart <= s->window_size-MIN_LOOKAHEAD, _T("need lookahead"));
 
     do {
-        Assert(cur_match < s->strstart, "no future");
+        Assert(cur_match < s->strstart, _T("no future"));
         match = s->window + cur_match;
 
         /* Skip to next match if the match length cannot increase
@@ -573,7 +577,7 @@ local uInt longest_match(s, cur_match)
         if (*(ushf*)(match+best_len-1) != scan_end ||
             *(ushf*)match != scan_start) continue;
 
-        Assert(scan[2] == match[2], "scan[2]?");
+        Assert(scan[2] == match[2], _T("scan[2]?"));
         scan++, match++;
         do {
         } while (*(ushf*)(scan+=2) == *(ushf*)(match+=2) &&
@@ -584,7 +588,7 @@ local uInt longest_match(s, cur_match)
         /* The funny "do {}" generates better code on most compilers */
 
         /* Here, scan <= window+strstart+257 */
-        Assert(scan <= s->window+(unsigned)(s->window_size-1), "wild scan");
+        Assert(scan <= s->window+(unsigned)(s->window_size-1), _T("wild scan"));
         if (*scan == *match) scan++;
 
         len = (MAX_MATCH - 1) - (int)(strend-scan);
@@ -598,7 +602,7 @@ local uInt longest_match(s, cur_match)
             *++match          != scan[1])      continue;
 
         scan += 2, match++;
-        Assert(*scan == *match, "match[2]?");
+        Assert(*scan == *match, _T("match[2]?"));
         do {
         } while (*++scan == *++match && *++scan == *++match &&
                  *++scan == *++match && *++scan == *++match &&
@@ -606,7 +610,7 @@ local uInt longest_match(s, cur_match)
                  *++scan == *++match && *++scan == *++match &&
                  scan < strend);
 
-        Assert(scan <= s->window+(unsigned)(s->window_size-1), "wild scan");
+        Assert(scan <= s->window+(unsigned)(s->window_size-1), _T("wild scan"));
 
         len = MAX_MATCH - (int)(strend - scan);
         scan = strend - MAX_MATCH;
@@ -644,11 +648,11 @@ local uInt longest_match(s, cur_match)
     register int len;                           /* length of current match */
     register Bytef *strend = s->window + s->strstart + MAX_MATCH;
 
-    Assert(s->hash_bits >= 8 && MAX_MATCH == 258, "Code too clever");
+    Assert(s->hash_bits >= 8 && MAX_MATCH == 258, _T("Code too clever"));
 
-    Assert((ulg)s->strstart <= s->window_size-MIN_LOOKAHEAD, "need lookahead");
+    Assert((ulg)s->strstart <= s->window_size-MIN_LOOKAHEAD, _T("need lookahead"));
 
-    Assert(cur_match < s->strstart, "no future");
+    Assert(cur_match < s->strstart, _T("no future"));
 
     match = s->window + cur_match;
 
@@ -656,7 +660,7 @@ local uInt longest_match(s, cur_match)
      */
     if (match[0] != scan[0] || match[1] != scan[1]) return MIN_MATCH-1;
     scan += 2, match += 2;
-    Assert(*scan == *match, "match[2]?");
+    Assert(*scan == *match, _T("match[2]?"));
 
     do {
     } while (*++scan == *++match && *++scan == *++match &&
@@ -665,7 +669,7 @@ local uInt longest_match(s, cur_match)
        *++scan == *++match && *++scan == *++match &&
        scan < strend);
 
-    Assert(scan <= s->window+(unsigned)(s->window_size-1), "wild scan");
+    Assert(scan <= s->window+(unsigned)(s->window_size-1), _T("wild scan"));
 
     len = MAX_MATCH - (int)(strend - scan);
 
@@ -731,7 +735,7 @@ local void fill_window(s)
             more += wsize;
         }
         if (s->strm->avail_in == 0) return;
-        Assert(more >= 2, "more < 2");
+        Assert(more >= 2, _T("more < 2"));
 
         n = read_buf(s->strm, s->window + s->strstart + s->lookahead, more);
         s->lookahead += n;
@@ -756,7 +760,7 @@ local void fill_window(s)
                    (eof)); \
    s->block_start = s->strstart; \
    flush_pending(s->strm); \
-   Tracev((stderr,"[FLUSH]")); \
+   Tracev((stderr,_T("[FLUSH]"))); \
 }
 
 /* Same but force premature exit if necessary. */
@@ -829,7 +833,7 @@ local block_state deflate_slow(s, flush)
             if (bflush) FLUSH_BLOCK(s, 0);
 
         } else if (s->match_available) {
-            Tracevv((stderr,"%c", s->window[s->strstart-1]));
+            Tracevv((stderr,_T("%c"), s->window[s->strstart-1]));
             _tr_tally_lit(s, s->window[s->strstart-1], bflush);
             if (bflush) {
                 FLUSH_BLOCK_ONLY(s, 0);
@@ -846,9 +850,9 @@ local block_state deflate_slow(s, flush)
             s->lookahead--;
         }
     }
-    Assert (flush != Z_NO_FLUSH, "no flush?");
+    Assert (flush != Z_NO_FLUSH, _T("no flush?"));
     if (s->match_available) {
-        Tracevv((stderr,"%c", s->window[s->strstart-1]));
+        Tracevv((stderr,_T("%c"), s->window[s->strstart-1]));
         _tr_tally_lit(s, s->window[s->strstart-1], bflush);
         s->match_available = 0;
     }

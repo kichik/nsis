@@ -8,7 +8,7 @@ FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     ICON            103,IDC_ULICON,0,0,20,20
     LTEXT           "",IDC_INTROTEXT,25,0,241,23,NOT WS_GROUP
-    CONTROL         "",IDC_EDIT1,"RichEdit20A",WS_BORDER | WS_VSCROLL | 
+    CONTROL         "",IDC_EDIT1,RICHEDIT_CLASS,WS_BORDER | WS_VSCROLL | 
                     WS_TABSTOP | 0x804,0,24,266,47
 END
 
@@ -91,7 +91,7 @@ FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     ICON            103,IDC_ULICON,0,0,20,20
     LTEXT           "",IDC_INTROTEXT,25,0,241,23,NOT WS_GROUP
-    CONTROL         "",IDC_EDIT1,"RichEdit20A",WS_BORDER | WS_VSCROLL | 
+    CONTROL         "",IDC_EDIT1,RICHEDIT_CLASS,WS_BORDER | WS_VSCROLL | 
                     WS_TABSTOP | 0x804,0,24,266,27
     CONTROL         "",IDC_LICENSEAGREE,"Button",BS_AUTORADIOBUTTON | 
                     WS_TABSTOP,0,50,266,9
@@ -105,7 +105,7 @@ FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     ICON            103,IDC_ULICON,0,0,20,20
     LTEXT           "",IDC_INTROTEXT,25,0,241,23,NOT WS_GROUP
-    CONTROL         "",IDC_EDIT1,"RichEdit20A",WS_BORDER | WS_VSCROLL | 
+    CONTROL         "",IDC_EDIT1,RICHEDIT_CLASS,WS_BORDER | WS_VSCROLL | 
                     WS_TABSTOP | 0x804,0,24,266,37
     CONTROL         "",IDC_LICENSEAGREE,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,0,60,266,9

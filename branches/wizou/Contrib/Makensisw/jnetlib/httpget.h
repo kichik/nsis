@@ -37,6 +37,12 @@
 **   note that user, pass, port, and /requestwhatever are all optional :)
 **   note that also, http:// is really not important. if you do poo://
 **   or even leave out the http:// altogether, it will still work.
+**
+** Reviewed for Unicode Support by Jim Park -- 08/17/2007
+** Note: The functions that work on char's should be explicitely set to use the
+** ANSI versions.  Some of the functions like wprintf() are #defined to be
+** the wide-char versions when _UNICODE is defined.  So these must be explictly
+** set to use the ANSI versions.
 */
 
 #ifndef _HTTPGET_H_
