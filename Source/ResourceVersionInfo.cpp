@@ -12,6 +12,8 @@
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty.
+ * 
+ * Modified for Unicode support by Jim Park -- 08/21/2007
  */
 
 #include "ResourceVersionInfo.h"
@@ -54,8 +56,8 @@ CVersionStrigList::~CVersionStrigList()
 
 int CVersionStrigList::add(LANGID langid, int codepage)
 {
-  char Buff[10];
-  sprintf(Buff, "%04x", langid);
+  TCHAR Buff[10];
+  sprintf(Buff, _T("%04x"), langid);
   int pos = SortedStringListND<struct version_string_list>::add(Buff);
   if (pos == -1) return false;
   ((struct version_string_list*)gr.get())[pos].pChildStrings = new DefineList;
@@ -84,8 +86,8 @@ DefineList* CVersionStrigList::get_strings(int idx)
 
 int CVersionStrigList::find(LANGID lang_id, int codepage)
 {
-  char Buff[10];
-  sprintf(Buff, "%04x", lang_id);
+  TCHAR Buff[10];
+  sprintf(Buff, _T("%04x"), lang_id);
   return SortedStringListND<struct version_string_list>::find(Buff);
 }
 
@@ -132,6 +134,7 @@ void CResourceVersionInfo::SetProductVersion(int HighPart, int LowPart)
     m_FixedInfo.dwProductVersionMS = HighPart;
 }
 
+// Jim Park: Not sure where this is used.
 int GetVersionHeader (LPSTR &p, WORD &wLength, WORD &wValueLength, WORD &wType)
 {
     WCHAR *szKey;
@@ -159,6 +162,14 @@ void PadStream (GrowBuf &strm)
         strm.add (&ZEROS, 4 - (strm.getlen() % 4));
 }
 
+// Helper function only used by CResourceVersionInfo::ExportToStream
+// Cannot handle anything longer than 65K objects.
+//
+// @param wLength Size in bytes of the entire object we are storing.
+// @param wValueLength The value length in bytes.
+// @param wType If type is 1, it's a wchar_t string, so save value length appropriately.
+// @param key The string key
+// @param value The value mapped to string key.
 void SaveVersionHeader (GrowBuf &strm, WORD wLength, WORD wValueLength, WORD wType, const WCHAR *key, void *value)
 {
     WORD valueLen;
@@ -190,7 +201,7 @@ void CResourceVersionInfo::ExportToStream(GrowBuf &strm, int Index)
     WCHAR *KeyName, *KeyValue;
 
     strm.resize(0);
-    KeyName = winchar_fromansi("VS_VERSION_INFO");
+    KeyName = winchar_fromansi(_T("VS_VERSION_INFO"));
     SaveVersionHeader (strm, 0, sizeof (VS_FIXEDFILEINFO), 0, KeyName, &m_FixedInfo);
     delete [] KeyName;
     
@@ -200,8 +211,8 @@ void CResourceVersionInfo::ExportToStream(GrowBuf &strm, int Index)
       GrowBuf stringInfoStream;
       int codepage = m_ChildStringLists.get_codepage(Index);
       LANGID langid = m_ChildStringLists.get_lang(Index);
-      char Buff[16];
-      sprintf(Buff, "%04x%04x", langid, codepage);
+      TCHAR Buff[16];
+      sprintf(Buff, _T("%04x%04x"), langid, codepage);
       KeyName = winchar_fromansi(Buff, CP_ACP);
       SaveVersionHeader (stringInfoStream, 0, 0, 0, KeyName, &ZEROS);
       delete [] KeyName;
@@ -226,7 +237,7 @@ void CResourceVersionInfo::ExportToStream(GrowBuf &strm, int Index)
       
       PadStream (strm);
       p = strm.getlen();
-      KeyName = winchar_fromansi("StringFileInfo", CP_ACP);
+      KeyName = winchar_fromansi(_T("StringFileInfo"), CP_ACP);
       SaveVersionHeader (strm, 0, 0, 0, KeyName, &ZEROS);
       delete [] KeyName;
       strm.add (stringInfoStream.get(), stringInfoStream.getlen());
@@ -240,13 +251,13 @@ void CResourceVersionInfo::ExportToStream(GrowBuf &strm, int Index)
     {
       PadStream (strm);
       p = strm.getlen();
-      KeyName = winchar_fromansi("VarFileInfo", CP_ACP);
+      KeyName = winchar_fromansi(_T("VarFileInfo"), CP_ACP);
       SaveVersionHeader (strm, 0, 0, 0, KeyName, &ZEROS);
       delete [] KeyName;
       PadStream (strm);
       
       p1 = strm.getlen();
-      KeyName = winchar_fromansi("Translation", CP_ACP);
+      KeyName = winchar_fromansi(_T("Translation"), CP_ACP);
       SaveVersionHeader (strm, 0, 0, 0, KeyName, &ZEROS);
       delete [] KeyName;
       
@@ -278,7 +289,7 @@ void CResourceVersionInfo::ExportToStream(GrowBuf &strm, int Index)
 }
 
 // Returns 0 if success, 1 if already defined
-int CResourceVersionInfo::SetKeyValue(LANGID lang_id, int codepage, char* AKeyName, char* AValue)
+int CResourceVersionInfo::SetKeyValue(LANGID lang_id, int codepage, TCHAR* AKeyName, TCHAR* AValue)
 {
   int pos = m_ChildStringLists.find(lang_id, codepage);
   if ( pos == -1 )
@@ -304,7 +315,7 @@ int CResourceVersionInfo::GetCodePage(int Index)
   return m_ChildStringLists.get_codepage(Index);
 }
 
-char *CResourceVersionInfo::FindKey(LANGID LangID, int codepage, const char *pKeyName)
+TCHAR *CResourceVersionInfo::FindKey(LANGID LangID, int codepage, const TCHAR *pKeyName)
 {
   int pos = m_ChildStringLists.find(LangID, codepage);
   if ( pos == -1 )

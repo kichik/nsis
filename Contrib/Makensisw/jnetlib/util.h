@@ -22,6 +22,11 @@
 **  JNL::addr_to_ipstr(unsigned long addr, char *host, int maxhostlen);
 **    gives you the dotted decimal notation of an integer ip address.
 **
+** Reviewed for Unicode Support by Jim Park -- 08/17/2007
+** Note: The functions that work on char's should be explicitely set to use the
+** ANSI versions.  Some of the functions like wprintf() are #defined to be
+** the wide-char versions when _UNICODE is defined.  So these must be explictly
+** set to use the ANSI versions.
 */
 
 #ifndef _UTIL_H_

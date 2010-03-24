@@ -4,6 +4,8 @@
  *
  *  See Readme.html for documentation and license
  *
+ *  Unicode support by Jim Park -- 08/01/2007
+ *
  *********************************************************/
 
 #include <windows.h>
@@ -34,9 +36,9 @@ void WINAPI FREE(void *d) { if (d) GlobalFree((HGLOBAL)d); }
 #define stricmp(x,y) lstrcmpi(x,y)
 //#define abs(x) ((x) < 0 ? -(x) : (x))
 
-char *WINAPI STRDUP(const char *c)
+TCHAR *WINAPI STRDUP(const TCHAR *c)
 {
-  char *t=(char*)MALLOC(lstrlen(c)+1);
+  TCHAR *t=(TCHAR*)MALLOC((lstrlen(c)+1)*sizeof(TCHAR));
   return lstrcpy(t,c);
 }
 
@@ -111,27 +113,27 @@ char *WINAPI STRDUP(const char *c)
 #define FLAG_FOCUS         0x10000000 // Controls that can receive focus
 
 struct TableEntry {
-  char *pszName;
+  TCHAR *pszName;
   int   nValue;
 };
 
-int WINAPI LookupToken(TableEntry*, char*);
-int WINAPI LookupTokens(TableEntry*, char*);
+int WINAPI LookupToken(TableEntry*, TCHAR*);
+int WINAPI LookupTokens(TableEntry*, TCHAR*);
 
-void WINAPI ConvertNewLines(char *str);
+void WINAPI ConvertNewLines(TCHAR *str);
 
 // all allocated buffers must be first in the struct
 // when adding more allocated buffers to FieldType, don't forget to change this define
 #define FIELD_BUFFERS 6
 struct FieldType {
-  char  *pszText;
-  char  *pszState;
-  char  *pszRoot;
+  TCHAR  *pszText;
+  TCHAR  *pszState;
+  TCHAR  *pszRoot;
 
-  char  *pszListItems;
-  char  *pszFilter;
+  TCHAR  *pszListItems;
+  TCHAR  *pszFilter;
 
-  char   *pszValidateText;
+  TCHAR  *pszValidateText;
   int    nMinLength;
   int    nMaxLength;
 
@@ -147,7 +149,7 @@ struct FieldType {
   HANDLE hImage; // this is used by image/icon field to save the handle to the image
 
   int    nField; // field number in INI file
-  char  *pszHwndEntry; // "HWND" or "HWND2"
+  TCHAR  *pszHwndEntry; // "HWND" or "HWND2"
 
   long   wndProc; 
 };
@@ -156,7 +158,7 @@ struct FieldType {
 // use a value larger than MAX_PATH to prevent need for excessive growing.
 #define BUFFER_SIZE 8192 // 8kb of mem is max char count in multiedit
 
-char szBrowseButtonCaption[] = "...";
+TCHAR szBrowseButtonCaption[] = _T("...");
 
 HWND hConfigWindow    = NULL;
 HWND hMainWindow      = NULL;
@@ -168,11 +170,11 @@ HINSTANCE m_hInstance = NULL;
 
 struct _stack_t *pFilenameStackEntry = NULL;
 
-char *pszFilename         = NULL;
-char *pszTitle            = NULL;
-char *pszCancelButtonText = NULL;
-char *pszNextButtonText   = NULL;
-char *pszBackButtonText   = NULL;
+TCHAR *pszFilename         = NULL;
+TCHAR *pszTitle            = NULL;
+TCHAR *pszCancelButtonText = NULL;
+TCHAR *pszNextButtonText   = NULL;
+TCHAR *pszBackButtonText   = NULL;
 
 int bBackEnabled   = FALSE;
 int bCancelEnabled = FALSE;   // by ORTIM: 13-August-2002
@@ -237,8 +239,8 @@ bool INLINE ValidateFields() {
       if (((pField->nMaxLength > 0) && (nLength > pField->nMaxLength)) ||
          ((pField->nMinLength > 0) && (nLength < pField->nMinLength))) {
         if (pField->pszValidateText) {
-          char szTitle[1024];
-          GetWindowText(hMainWindow, szTitle, sizeof(szTitle));
+          TCHAR szTitle[1024];
+          GetWindowText(hMainWindow, szTitle, _countof(szTitle));
           MessageBox(hConfigWindow, pField->pszValidateText, szTitle, MB_OK|MB_ICONWARNING);
         }
         mySetFocus(pField->hwnd);
@@ -251,9 +253,9 @@ bool INLINE ValidateFields() {
 }
 
 bool WINAPI SaveSettings(void) {
-  static char szField[25];
+  static TCHAR szField[25];
   int nBufLen = BUFFER_SIZE;
-  char *pszBuffer = (char*)MALLOC(nBufLen);
+  TCHAR *pszBuffer = (TCHAR*)MALLOC(nBufLen*sizeof(TCHAR));
   if (!pszBuffer) return false;
 
   int nIdx;
@@ -271,7 +273,7 @@ bool WINAPI SaveSettings(void) {
 
       case FIELD_CHECKBOX:
       case FIELD_RADIOBUTTON:
-        wsprintf(pszBuffer, "%d", !!mySendMessage(hwnd, BM_GETCHECK, 0, 0));
+        wsprintf(pszBuffer, _T("%d"), !!mySendMessage(hwnd, BM_GETCHECK, 0, 0));
         break;
 
       case FIELD_LISTBOX:
@@ -285,17 +287,17 @@ bool WINAPI SaveSettings(void) {
         if (nLength > nBufLen) {
           FREE(pszBuffer);
           nBufLen = nLength;
-          pszBuffer = (char*)MALLOC(nBufLen);
+          pszBuffer = (TCHAR*)MALLOC(nBufLen*sizeof(TCHAR));
           if (!pszBuffer) return false;
         }
-        char *pszItem = (char*)MALLOC(nBufLen);
+        TCHAR *pszItem = (TCHAR*)MALLOC(nBufLen*sizeof(TCHAR));
         if (!pszItem) return false;
 
-        *pszBuffer = '\0';
+        *pszBuffer = _T('\0');
         int nNumItems = mySendMessage(hwnd, LB_GETCOUNT, 0, 0);
         for (int nIdx2 = 0; nIdx2 < nNumItems; nIdx2++) {
           if (mySendMessage(hwnd, LB_GETSEL, nIdx2, 0) > 0) {
-            if (*pszBuffer) lstrcat(pszBuffer, "|");
+            if (*pszBuffer) lstrcat(pszBuffer, _T("|"));
             mySendMessage(hwnd, LB_GETTEXT, (WPARAM)nIdx2, (LPARAM)pszItem);
             lstrcat(pszBuffer, pszItem);
           }
@@ -315,35 +317,38 @@ bool WINAPI SaveSettings(void) {
           FREE(pszBuffer);
           // add a bit extra so we do this less often
           nBufLen = nLength + 20;
-          pszBuffer = (char*)MALLOC(nBufLen);
+          pszBuffer = (TCHAR*)MALLOC(nBufLen*sizeof(TCHAR));
           if (!pszBuffer) return false;
         }
-        *pszBuffer='"';
+        *pszBuffer=_T('"');
         GetWindowText(hwnd, pszBuffer+1, nBufLen-1);
-        pszBuffer[nLength+1]='"';
-        pszBuffer[nLength+2]='\0';
+        pszBuffer[nLength+1]=_T('"');
+        pszBuffer[nLength+2]=_T('\0');
 
         if (pField->nType == FIELD_TEXT && (pField->nFlags & FLAG_MULTILINE))
         {
-          char *pszBuf2 = (char*)MALLOC(nBufLen*2); // double the size, consider the worst case, all chars are \r\n
-          char *p1, *p2;
+          TCHAR *pszBuf2 = (TCHAR*)MALLOC(nBufLen*2*sizeof(TCHAR)); // double the size, consider the worst case, all chars are \r\n
+          TCHAR *p1, *p2;
           for (p1 = pszBuffer, p2 = pszBuf2; *p1; p1 = CharNext(p1), p2 = CharNext(p2))
           {
             switch (*p1) {
-              case '\t':
+              case _T('\t'):
                 *(LPWORD)p2 = CHAR2_TO_WORD('\\', 't');
                 p2++;
                 break;
-              case '\n':
+              case _T('\n'):
                 *(LPWORD)p2 = CHAR2_TO_WORD('\\', 'n');
                 p2++;
                 break;
-              case '\r':
+              case _T('\r'):
                 *(LPWORD)p2 = CHAR2_TO_WORD('\\', 'r');
                 p2++;
                 break;
-              case '\\':
+              case _T('\\'):
                 *p2++ = '\\';
+                // Jim Park: used to be p2++ but that's a bug that works because
+                // CharNext()'s behavior at terminating null char.  But still
+                // definitely, unsafe.
               default:
                 lstrcpyn(p2, p1, CharNext(p1) - p1 + 1);
                 break;
@@ -357,13 +362,13 @@ bool WINAPI SaveSettings(void) {
         break;
       }
     }
-    wsprintf(szField, "Field %d", CurrField);
-    WritePrivateProfileString(szField, "State", pszBuffer, pszFilename);
+    wsprintf(szField, _T("Field %d"), CurrField);
+    WritePrivateProfileString(szField, _T("State"), pszBuffer, pszFilename);
   }
 
   // Tell NSIS which control was activated, if any
-  wsprintf(pszBuffer, "%d", g_NotifyField);
-  WritePrivateProfileString("Settings", "State", pszBuffer, pszFilename);
+  wsprintf(pszBuffer, _T("%d"), g_NotifyField);
+  WritePrivateProfileString(_T("Settings"), _T("State"), pszBuffer, pszFilename);
 
   FREE(pszBuffer);
 
@@ -372,20 +377,20 @@ bool WINAPI SaveSettings(void) {
 
 #define BROWSE_WIDTH 15
 
-static char szResult[BUFFER_SIZE];
-char *pszAppName;
+static TCHAR szResult[BUFFER_SIZE];
+TCHAR *pszAppName;
 
 DWORD WINAPI myGetProfileString(LPCTSTR lpKeyName)
 {
-  *szResult = '\0';
-  return GetPrivateProfileString(pszAppName, lpKeyName, "", szResult, BUFFER_SIZE, pszFilename);
+  *szResult = _T('\0');
+  return GetPrivateProfileString(pszAppName, lpKeyName, _T(""), szResult, BUFFER_SIZE, pszFilename);
 }
 
-char * WINAPI myGetProfileStringDup(LPCTSTR lpKeyName)
+TCHAR * WINAPI myGetProfileStringDup(LPCTSTR lpKeyName)
 {
   int nSize = myGetProfileString(lpKeyName);
   if (nSize)
-    return strdup(szResult);
+    return strdup(szResult);  // uses STRDUP
   else
     return NULL;
 }
@@ -396,25 +401,25 @@ UINT WINAPI myGetProfileInt(LPCTSTR lpKeyName, INT nDefault)
 }
 
 int WINAPI ReadSettings(void) {
-  static char szField[25];
+  static TCHAR szField[25];
   int nIdx, nCtrlIdx;
 
-  pszAppName = "Settings";
-  pszTitle = myGetProfileStringDup("Title");
-  pszCancelButtonText = myGetProfileStringDup("CancelButtonText");
-  pszNextButtonText = myGetProfileStringDup("NextButtonText");
-  pszBackButtonText = myGetProfileStringDup("BackButtonText");
+  pszAppName = _T("Settings");
+  pszTitle = myGetProfileStringDup(_T("Title"));
+  pszCancelButtonText = myGetProfileStringDup(_T("CancelButtonText"));
+  pszNextButtonText = myGetProfileStringDup(_T("NextButtonText"));
+  pszBackButtonText = myGetProfileStringDup(_T("BackButtonText"));
 
-  nNumFields = myGetProfileInt("NumFields", 0);
+  nNumFields = myGetProfileInt(_T("NumFields"), 0);
 
-  nRectId = myGetProfileInt("Rect", DEFAULT_RECT);
+  nRectId = myGetProfileInt(_T("Rect"), DEFAULT_RECT);
 
-  bBackEnabled = myGetProfileInt("BackEnabled", -1);
+  bBackEnabled = myGetProfileInt(_T("BackEnabled"), -1);
   // by ORTIM: 13-August-2002
-  bCancelEnabled = myGetProfileInt("CancelEnabled", -1);
-  bCancelShow = myGetProfileInt("CancelShow", -1);
+  bCancelEnabled = myGetProfileInt(_T("CancelEnabled"), -1);
+  bCancelShow = myGetProfileInt(_T("CancelShow"), -1);
 
-  bRTL = myGetProfileInt("RTL", 0);
+  bRTL = myGetProfileInt(_T("RTL"), 0);
 
   if (nNumFields > 0) {
     // make this twice as large for the worst case that every control is a browse button.
@@ -426,117 +431,117 @@ int WINAPI ReadSettings(void) {
   for (nIdx = 0, nCtrlIdx = 0; nCtrlIdx < nNumFields; nCtrlIdx++, nIdx++) {
     // Control types
     static TableEntry TypeTable[] = {
-      { "LABEL",       FIELD_LABEL       },
-      { "TEXT",        FIELD_TEXT        },
-      { "PASSWORD",    FIELD_TEXT        },
-      { "LISTBOX",     FIELD_LISTBOX     },
-      { "COMBOBOX",    FIELD_COMBOBOX    },
-      { "DROPLIST",    FIELD_COMBOBOX    },
-      { "FILEREQUEST", FIELD_FILEREQUEST },
-      { "DIRREQUEST",  FIELD_DIRREQUEST  },
-      { "CHECKBOX",    FIELD_CHECKBOX    },
-      { "RADIOBUTTON", FIELD_RADIOBUTTON },
-      { "ICON",        FIELD_ICON        },
-      { "BITMAP",      FIELD_BITMAP      },
-      { "GROUPBOX",    FIELD_GROUPBOX    },
+      { _T("LABEL"),       FIELD_LABEL       },
+      { _T("TEXT"),        FIELD_TEXT        },
+      { _T("PASSWORD"),    FIELD_TEXT        },
+      { _T("LISTBOX"),     FIELD_LISTBOX     },
+      { _T("COMBOBOX"),    FIELD_COMBOBOX    },
+      { _T("DROPLIST"),    FIELD_COMBOBOX    },
+      { _T("FILEREQUEST"), FIELD_FILEREQUEST },
+      { _T("DIRREQUEST"),  FIELD_DIRREQUEST  },
+      { _T("CHECKBOX"),    FIELD_CHECKBOX    },
+      { _T("RADIOBUTTON"), FIELD_RADIOBUTTON },
+      { _T("ICON"),        FIELD_ICON        },
+      { _T("BITMAP"),      FIELD_BITMAP      },
+      { _T("GROUPBOX"),    FIELD_GROUPBOX    },
 #ifdef IO_ENABLE_LINK
-      { "LINK",        FIELD_LINK        },
+      { _T("LINK"),        FIELD_LINK        },
 #else
-      { "LINK",        FIELD_LABEL       },
+      { _T("LINK"),        FIELD_LABEL       },
 #endif
-      { "BUTTON",      FIELD_BUTTON      },
-      { "HLINE",       FIELD_HLINE       },
-      { "VLINE",       FIELD_VLINE       },
-      { NULL,          0                 }
+      { _T("BUTTON"),      FIELD_BUTTON      },
+      { _T("HLINE"),       FIELD_HLINE       },
+      { _T("VLINE"),       FIELD_VLINE       },
+      { NULL,              0                 }
     };
     // Control flags
     static TableEntry FlagTable[] = {
-      { "NOTIFY",            LBS_NOTIFY          },
-      { "WARN_IF_EXIST",     OFN_OVERWRITEPROMPT },
-      { "FILE_HIDEREADONLY", OFN_HIDEREADONLY    },
-      { "MULTISELECT",       LBS_MULTIPLESEL     },
-      { "READONLY",          FLAG_READONLY       },
-      { "RIGHT",             BS_LEFTTEXT         },
-      { "PASSWORD",          FLAG_PASSWORD       },
-      { "ONLY_NUMBERS",      FLAG_ONLYNUMBERS    },
-      { "MULTILINE",         FLAG_MULTILINE      },
-      { "NOWORDWRAP",        FLAG_NOWORDWRAP     },
-      { "WANTRETURN",        FLAG_WANTRETURN     },
-      { "EXTENDEDSELCT",     LBS_EXTENDEDSEL     },
-      { "PATH_MUST_EXIST",   OFN_PATHMUSTEXIST   },
-      { "FILE_MUST_EXIST",   OFN_FILEMUSTEXIST   },
-      { "PROMPT_CREATE",     OFN_CREATEPROMPT    },
-      { "DROPLIST",          FLAG_DROPLIST       },
-      { "RESIZETOFIT",       FLAG_RESIZETOFIT    },
-      { "NOTABSTOP",         WS_TABSTOP          },
-      { "GROUP",             WS_GROUP            },
-      { "REQ_SAVE",          FLAG_SAVEAS         },
-      { "FILE_EXPLORER",     OFN_EXPLORER        },
-      { "HSCROLL",           WS_HSCROLL          },
-      { "VSCROLL",           WS_VSCROLL          },
-      { "DISABLED",          WS_DISABLED         },
-      { "TRANSPARENT",       TRANSPARENT_BMP     },
-      { "FOCUS",             FLAG_FOCUS          },
-      { NULL,                0                   }
+      { _T("NOTIFY"),            LBS_NOTIFY          },
+      { _T("WARN_IF_EXIST"),     OFN_OVERWRITEPROMPT },
+      { _T("FILE_HIDEREADONLY"), OFN_HIDEREADONLY    },
+      { _T("MULTISELECT"),       LBS_MULTIPLESEL     },
+      { _T("READONLY"),          FLAG_READONLY       },
+      { _T("RIGHT"),             BS_LEFTTEXT         },
+      { _T("PASSWORD"),          FLAG_PASSWORD       },
+      { _T("ONLY_NUMBERS"),      FLAG_ONLYNUMBERS    },
+      { _T("MULTILINE"),         FLAG_MULTILINE      },
+      { _T("NOWORDWRAP"),        FLAG_NOWORDWRAP     },
+      { _T("WANTRETURN"),        FLAG_WANTRETURN     },
+      { _T("EXTENDEDSELCT"),     LBS_EXTENDEDSEL     },
+      { _T("PATH_MUST_EXIST"),   OFN_PATHMUSTEXIST   },
+      { _T("FILE_MUST_EXIST"),   OFN_FILEMUSTEXIST   },
+      { _T("PROMPT_CREATE"),     OFN_CREATEPROMPT    },
+      { _T("DROPLIST"),          FLAG_DROPLIST       },
+      { _T("RESIZETOFIT"),       FLAG_RESIZETOFIT    },
+      { _T("NOTABSTOP"),         WS_TABSTOP          },
+      { _T("GROUP"),             WS_GROUP            },
+      { _T("REQ_SAVE"),          FLAG_SAVEAS         },
+      { _T("FILE_EXPLORER"),     OFN_EXPLORER        },
+      { _T("HSCROLL"),           WS_HSCROLL          },
+      { _T("VSCROLL"),           WS_VSCROLL          },
+      { _T("DISABLED"),          WS_DISABLED         },
+      { _T("TRANSPARENT"),       TRANSPARENT_BMP     },
+      { _T("FOCUS"),             FLAG_FOCUS          },
+      { NULL,                    0                   }
     };
     FieldType *pField = pFields + nIdx;
 
     pField->nField = nCtrlIdx + 1;
-    pField->pszHwndEntry = "HWND";
+    pField->pszHwndEntry = _T("HWND");
 
-    wsprintf(szField, "Field %d", nCtrlIdx + 1);
+    wsprintf(szField, _T("Field %d"), nCtrlIdx + 1);
     pszAppName = szField;
 
     // Get the control type
-    myGetProfileString("TYPE");
+    myGetProfileString(_T("TYPE"));
     pField->nType = LookupToken(TypeTable, szResult);
     if (pField->nType == FIELD_INVALID)
       continue;
 
     // Lookup flags associated with the control type
     pField->nFlags = LookupToken(FlagTable, szResult);
-    myGetProfileString("Flags");
+    myGetProfileString(_T("Flags"));
     pField->nFlags |= LookupTokens(FlagTable, szResult);
 
     // pszState must not be NULL!
-    myGetProfileString("State");
-    pField->pszState = strdup(szResult);
+    myGetProfileString(_T("State"));
+    pField->pszState = strdup(szResult); // uses STRDUP
 
     // ListBox items list
     {
-      int nResult = myGetProfileString("ListItems");
+      int nResult = myGetProfileString(_T("ListItems"));
       if (nResult) {
         // add an extra | character to the end to simplify the loop where we add the items.
-        pField->pszListItems = (char*)MALLOC(nResult + 2);
-        strcpy(pField->pszListItems, szResult);
-        pField->pszListItems[nResult] = '|';
-        pField->pszListItems[nResult + 1] = '\0';
+        pField->pszListItems = (TCHAR*)MALLOC((nResult + 2)*sizeof(TCHAR));
+        lstrcpy(pField->pszListItems, szResult);
+        pField->pszListItems[nResult] = _T('|');
+        pField->pszListItems[nResult + 1] = _T('\0');
       }
     }
 
     // Label Text - convert newline
-    pField->pszText = myGetProfileStringDup("TEXT");
+    pField->pszText = myGetProfileStringDup(_T("TEXT"));
     if (pField->nType == FIELD_LABEL || pField->nType == FIELD_LINK)
       ConvertNewLines(pField->pszText);
 
     // Dir request - root folder
-    pField->pszRoot = myGetProfileStringDup("ROOT");
+    pField->pszRoot = myGetProfileStringDup(_T("ROOT"));
 
     // ValidateText - convert newline
-    pField->pszValidateText = myGetProfileStringDup("ValidateText");
+    pField->pszValidateText = myGetProfileStringDup(_T("ValidateText"));
     ConvertNewLines(pField->pszValidateText);
 
     {
-      int nResult = GetPrivateProfileString(szField, "Filter", "All Files|*.*", szResult, sizeof(szResult), pszFilename);
+      int nResult = GetPrivateProfileString(szField, _T("Filter"), _T("All Files|*.*"), szResult, _countof(szResult), pszFilename);
       if (nResult) {
         // Convert the filter to the format required by Windows: NULL after each
         // item followed by a terminating NULL
-        pField->pszFilter = (char*)MALLOC(nResult + 2);
-        strcpy(pField->pszFilter, szResult);
-        char *pszPos = pField->pszFilter;
+        pField->pszFilter = (TCHAR*)MALLOC((nResult + 2)*sizeof(TCHAR));
+        lstrcpy(pField->pszFilter, szResult);
+        TCHAR *pszPos = pField->pszFilter;
         while (*pszPos)
         {
-          if (*pszPos == '|')
+          if (*pszPos == _T('|'))
             *pszPos++ = 0;
           else
             pszPos = CharNext(pszPos);
@@ -544,15 +549,15 @@ int WINAPI ReadSettings(void) {
       }
     }
 
-    pField->rect.left = myGetProfileInt("LEFT", 0);
-    pField->rect.top = myGetProfileInt("TOP", 0);
-    pField->rect.right = myGetProfileInt("RIGHT", 0);
-    pField->rect.bottom = myGetProfileInt("BOTTOM", 0);
-    pField->nMinLength = myGetProfileInt("MinLen", 0);
-    pField->nMaxLength = myGetProfileInt("MaxLen", 0);
+    pField->rect.left = myGetProfileInt(_T("LEFT"), 0);
+    pField->rect.top = myGetProfileInt(_T("TOP"), 0);
+    pField->rect.right = myGetProfileInt(_T("RIGHT"), 0);
+    pField->rect.bottom = myGetProfileInt(_T("BOTTOM"), 0);
+    pField->nMinLength = myGetProfileInt(_T("MinLen"), 0);
+    pField->nMaxLength = myGetProfileInt(_T("MaxLen"), 0);
 
     // Text color for LINK control, default is pure blue
-    pField->hImage = (HANDLE)myGetProfileInt("TxtColor", RGB(0,0,255));
+    pField->hImage = (HANDLE)myGetProfileInt(_T("TxtColor"), RGB(0,0,255));
 
     pField->nControlID = 1200 + nIdx;
     if (pField->nType == FIELD_FILEREQUEST || pField->nType == FIELD_DIRREQUEST)
@@ -568,7 +573,7 @@ int WINAPI ReadSettings(void) {
       pNewField->rect.top    = pField->rect.top;
       pField->rect.right = pNewField->rect.left - 3;
       pNewField->nField = nCtrlIdx + 1;
-      pNewField->pszHwndEntry = "HWND2";
+      pNewField->pszHwndEntry = _T("HWND2");
       nNumFields++;
       nIdx++;
     }
@@ -605,7 +610,7 @@ LRESULT WINAPI WMCommandProc(HWND hWnd, UINT id, HWND hwndCtl, UINT codeNotify) 
 
   FieldType *pField = pFields + nIdx;
 
-  char szBrowsePath[MAX_PATH];
+  TCHAR szBrowsePath[MAX_PATH];
 
   switch (pField->nType) {
     case FIELD_FILEREQUEST: {
@@ -615,10 +620,10 @@ LRESULT WINAPI WMCommandProc(HWND hWnd, UINT id, HWND hwndCtl, UINT codeNotify) 
       ofn.hwndOwner = hConfigWindow;
       ofn.lpstrFilter = pField->pszFilter;
       ofn.lpstrFile = szBrowsePath;
-      ofn.nMaxFile  = sizeof(szBrowsePath);
+      ofn.nMaxFile  = _countof(szBrowsePath);
       ofn.Flags = pField->nFlags & (OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_CREATEPROMPT | OFN_EXPLORER);
 
-      GetWindowText(pField->hwnd, szBrowsePath, sizeof(szBrowsePath));
+      GetWindowText(pField->hwnd, szBrowsePath, _countof(szBrowsePath));
 
     tryagain:
       GetCurrentDirectory(BUFFER_SIZE, szResult); // save working dir
@@ -629,7 +634,7 @@ LRESULT WINAPI WMCommandProc(HWND hWnd, UINT id, HWND hwndCtl, UINT codeNotify) 
         break;
       }
       else if (szBrowsePath[0] && CommDlgExtendedError() == FNERR_INVALIDFILENAME) {
-        szBrowsePath[0] = '\0';
+        szBrowsePath[0] = _T('\0');
         goto tryagain;
       }
 
@@ -880,17 +885,17 @@ int WINAPI NumbersOnlyPasteWndProc(HWND hWin, UINT uMsg, WPARAM wParam, LPARAM l
       
       if (hData)
       {
-        char *lpData = (char *) GlobalLock(hData);
+        TCHAR *lpData = (TCHAR *) GlobalLock(hData);
         if (lpData)
         {
           int iLen = lstrlen(lpData);
-          char *lpFilteredData = (char *) MALLOC(iLen + 1);
+          TCHAR *lpFilteredData = (TCHAR *) MALLOC((iLen + 1)*sizeof(TCHAR));
 
           if (lpFilteredData)
           {
             for (int i = 0, j = 0; i < iLen; i++)
             {
-              if (lpData[i] >= '0' && lpData[i] <= '9')
+              if (lpData[i] >= _T('0') && lpData[i] <= _T('9'))
               {
                 lpFilteredData[j] = lpData[i];
                 j++;
@@ -926,14 +931,14 @@ int WINAPI createCfgDlg()
   if (!mainwnd)
   {
     popstring(NULL);
-    pushstring("error finding mainwnd");
+    pushstring(_T("error finding mainwnd"));
     return 1; // cannot be used in silent mode unfortunately.
   }
 
   if (!g_stacktop || !*g_stacktop || !(pszFilename = (*g_stacktop)->text) || !pszFilename[0] || !ReadSettings())
   {
     popstring(NULL);
-    pushstring("error finding config");
+    pushstring(_T("error finding config"));
     return 1;
   }
 
@@ -941,7 +946,7 @@ int WINAPI createCfgDlg()
   if (!childwnd)
   {
     popstring(NULL);
-    pushstring("error finding childwnd");
+    pushstring(_T("error finding childwnd"));
     return 1;
   }
 
@@ -993,7 +998,7 @@ int WINAPI createCfgDlg()
   else
   {
     popstring(NULL);
-    pushstring("error creating dialog");
+    pushstring(_T("error creating dialog"));
     return 1;
   }
 
@@ -1005,88 +1010,88 @@ int WINAPI createCfgDlg()
 
   for (int nIdx = 0; nIdx < nNumFields; nIdx++) {
     static struct {
-      char* pszClass;
+      TCHAR* pszClass;
       DWORD dwStyle;
       DWORD dwRTLStyle;
       DWORD dwExStyle;
       DWORD dwRTLExStyle;
     } ClassTable[] = {
-      { "STATIC",       // FIELD_HLINE
+      { _T("STATIC"),       // FIELD_HLINE
         DEFAULT_STYLES | SS_ETCHEDHORZ | SS_SUNKEN,
         DEFAULT_STYLES | SS_ETCHEDHORZ | SS_SUNKEN,
         WS_EX_TRANSPARENT,
         WS_EX_TRANSPARENT | RTL_EX_STYLES },
-      { "STATIC",       // FIELD_VLINE
+      { _T("STATIC"),       // FIELD_VLINE
         DEFAULT_STYLES | SS_ETCHEDVERT | SS_SUNKEN,
         DEFAULT_STYLES | SS_ETCHEDVERT | SS_SUNKEN,
         WS_EX_TRANSPARENT,
         WS_EX_TRANSPARENT | RTL_EX_STYLES },
-      { "STATIC",       // FIELD_LABEL
+      { _T("STATIC"),       // FIELD_LABEL
         DEFAULT_STYLES,
         DEFAULT_STYLES | SS_RIGHT,
         WS_EX_TRANSPARENT,
         WS_EX_TRANSPARENT | RTL_EX_STYLES },
-      { "STATIC",       // FIELD_ICON
+      { _T("STATIC"),       // FIELD_ICON
         DEFAULT_STYLES | SS_ICON,
         DEFAULT_STYLES | SS_ICON,
         0,
         RTL_EX_STYLES },
-      { "STATIC",       // FIELD_BITMAP
+      { _T("STATIC"),       // FIELD_BITMAP
         DEFAULT_STYLES | SS_BITMAP,
         DEFAULT_STYLES | SS_BITMAP,
         0,
         RTL_EX_STYLES },
-      { "BUTTON",       // FIELD_BROWSEBUTTON
+      { _T("BUTTON"),       // FIELD_BROWSEBUTTON
         DEFAULT_STYLES | WS_TABSTOP,
         DEFAULT_STYLES | WS_TABSTOP,
         0,
         RTL_EX_STYLES },
-      { "BUTTON",       // FIELD_LINK
+      { _T("BUTTON"),       // FIELD_LINK
         DEFAULT_STYLES | WS_TABSTOP | BS_OWNERDRAW,
         DEFAULT_STYLES | WS_TABSTOP | BS_OWNERDRAW | BS_RIGHT,
         0,
         RTL_EX_STYLES },
-      { "BUTTON",       // FIELD_BUTTON
+      { _T("BUTTON"),       // FIELD_BUTTON
         DEFAULT_STYLES | WS_TABSTOP,
         DEFAULT_STYLES | WS_TABSTOP,
         0,
         RTL_EX_STYLES },
-      { "BUTTON",       // FIELD_GROUPBOX
+      { _T("BUTTON"),       // FIELD_GROUPBOX
         DEFAULT_STYLES | BS_GROUPBOX,
         DEFAULT_STYLES | BS_GROUPBOX | BS_RIGHT,
         WS_EX_TRANSPARENT,
         WS_EX_TRANSPARENT | RTL_EX_STYLES },
-      { "BUTTON",       // FIELD_CHECKBOX
+      { _T("BUTTON"),       // FIELD_CHECKBOX
         DEFAULT_STYLES | WS_TABSTOP | BS_TEXT | BS_VCENTER | BS_AUTOCHECKBOX | BS_MULTILINE,
         DEFAULT_STYLES | WS_TABSTOP | BS_TEXT | BS_VCENTER | BS_AUTOCHECKBOX | BS_MULTILINE | BS_RIGHT | BS_LEFTTEXT,
         0,
         RTL_EX_STYLES },
-      { "BUTTON",       // FIELD_RADIOBUTTON
+      { _T("BUTTON"),       // FIELD_RADIOBUTTON
         DEFAULT_STYLES | WS_TABSTOP | BS_TEXT | BS_VCENTER | BS_AUTORADIOBUTTON | BS_MULTILINE,
         DEFAULT_STYLES | WS_TABSTOP | BS_TEXT | BS_VCENTER | BS_AUTORADIOBUTTON | BS_MULTILINE | BS_RIGHT | BS_LEFTTEXT,
         0,
         RTL_EX_STYLES },
-      { "EDIT",         // FIELD_TEXT
+      { _T("EDIT"),         // FIELD_TEXT
         DEFAULT_STYLES | WS_TABSTOP | ES_AUTOHSCROLL,
         DEFAULT_STYLES | WS_TABSTOP | ES_AUTOHSCROLL | ES_RIGHT,
         WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE,
         WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE | RTL_EX_STYLES },
-      { "EDIT",         // FIELD_FILEREQUEST
+      { _T("EDIT"),         // FIELD_FILEREQUEST
         DEFAULT_STYLES | WS_TABSTOP | ES_AUTOHSCROLL,
         DEFAULT_STYLES | WS_TABSTOP | ES_AUTOHSCROLL | ES_RIGHT,
         WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE,
         WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE | RTL_EX_STYLES },
-      { "EDIT",         // FIELD_DIRREQUEST
+      { _T("EDIT"),         // FIELD_DIRREQUEST
         DEFAULT_STYLES | WS_TABSTOP | ES_AUTOHSCROLL,
         DEFAULT_STYLES | WS_TABSTOP | ES_AUTOHSCROLL | ES_RIGHT,
         WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE,
         WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE | RTL_EX_STYLES },
-      { "COMBOBOX",     // FIELD_COMBOBOX
+      { _T("COMBOBOX"),     // FIELD_COMBOBOX
         DEFAULT_STYLES | WS_TABSTOP | WS_VSCROLL | WS_CLIPCHILDREN | CBS_AUTOHSCROLL | CBS_HASSTRINGS,
         DEFAULT_STYLES | WS_TABSTOP | WS_VSCROLL | WS_CLIPCHILDREN | CBS_AUTOHSCROLL | CBS_HASSTRINGS,
         WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE,
         WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE | WS_EX_RIGHT | RTL_EX_STYLES },
-      { "LISTBOX",      // FIELD_LISTBOX
+      { _T("LISTBOX"),      // FIELD_LISTBOX
         DEFAULT_STYLES | WS_TABSTOP | WS_VSCROLL | LBS_DISABLENOSCROLL | LBS_HASSTRINGS | LBS_NOINTEGRALHEIGHT,
         DEFAULT_STYLES | WS_TABSTOP | WS_VSCROLL | LBS_DISABLENOSCROLL | LBS_HASSTRINGS | LBS_NOINTEGRALHEIGHT,
         WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE,
@@ -1133,7 +1138,7 @@ int WINAPI createCfgDlg()
       rect.left = mainWndWidth - right;
     }
 
-    char *title = pField->pszText;
+    TCHAR *title = pField->pszText;
     switch (pField->nType) {
       case FIELD_ICON:
       case FIELD_BITMAP:
@@ -1198,10 +1203,10 @@ int WINAPI createCfgDlg()
     );
 
     {
-      char szField[64];
-      char szHwnd[64];
-      wsprintf(szField, "Field %d", pField->nField);
-      wsprintf(szHwnd, "%d", hwCtrl);
+      TCHAR szField[64];
+      TCHAR szHwnd[64];
+      wsprintf(szField, _T("Field %d"), pField->nField);
+      wsprintf(szHwnd, _T("%d"), hwCtrl);
       WritePrivateProfileString(szField, pField->pszHwndEntry, szHwnd, pszFilename);
     }
 
@@ -1223,7 +1228,7 @@ int WINAPI createCfgDlg()
 
         case FIELD_CHECKBOX:
         case FIELD_RADIOBUTTON:
-          if (pField->pszState[0] == '1')
+          if (pField->pszState[0] == _T('1'))
             mySendMessage(hwCtrl, BM_SETCHECK, (WPARAM)BST_CHECKED, 0);
           break;
 
@@ -1242,12 +1247,12 @@ int WINAPI createCfgDlg()
               nFindMsg = LB_FINDSTRINGEXACT;
               nSetSelMsg = LB_SETCURSEL;
             }
-            char *pszStart, *pszEnd, *pszList;
+            TCHAR *pszStart, *pszEnd, *pszList;
             pszStart = pszEnd = pszList = STRDUP(pField->pszListItems);
             // pszListItems has a trailing pipe
             while (*pszEnd) {
-              if (*pszEnd == '|') {
-                *pszEnd = '\0';
+              if (*pszEnd == _T('|')) {
+                *pszEnd = _T('\0');
                 if (*pszStart)
                   mySendMessage(hwCtrl, nAddMsg, 0, (LPARAM) pszStart);
                 pszStart = ++pszEnd;
@@ -1261,9 +1266,9 @@ int WINAPI createCfgDlg()
                 mySendMessage(hwCtrl, LB_SETSEL, FALSE, (LPARAM)-1);
                 pszStart = pszEnd = pField->pszState;
                 for (;;) {
-                  char c = *pszEnd;
-                  if (c == '|' || c == '\0') {
-                    *pszEnd = '\0';
+                  TCHAR c = *pszEnd;
+                  if (c == _T('|') || c == _T('\0')) {
+                    *pszEnd = _T('\0');
                     if (*pszStart)
                     {
                       int nItem = mySendMessage(hwCtrl, LB_FINDSTRINGEXACT, (WPARAM)-1, (LPARAM)pszStart);
@@ -1429,8 +1434,8 @@ int WINAPI createCfgDlg()
   mySetWindowText(mainwnd,pszTitle);
   pFilenameStackEntry = *g_stacktop;
   *g_stacktop = (*g_stacktop)->next;
-  static char tmp[32];
-  wsprintf(tmp,"%d",hConfigWindow);
+  static TCHAR tmp[32];
+  wsprintf(tmp,_T("%d"),hConfigWindow);
   pushstring(tmp);
   return 0;
 }
@@ -1477,7 +1482,7 @@ void WINAPI showCfgDlg()
 
     int j = FIELD_BUFFERS;
     while (j--)
-      FREE(((char **) pField)[j]);
+      FREE(((TCHAR **) pField)[j]);
 
     if (pField->nType == FIELD_BITMAP) {
       DeleteObject(pField->hImage);
@@ -1488,18 +1493,18 @@ void WINAPI showCfgDlg()
   }
   FREE(pFields);
 
-  pushstring(g_is_cancel?"cancel":g_is_back?"back":"success");
+  pushstring(g_is_cancel?_T("cancel"):g_is_back?_T("back"):_T("success"));
 }
 
 int initCalled;
 
 extern "C" void __declspec(dllexport) dialog(HWND hwndParent, int string_size,
-                                      char *variables, stack_t **stacktop)
+                                      TCHAR *variables, stack_t **stacktop)
 {
   hMainWindow=hwndParent;
   EXDLL_INIT();
   if (initCalled) {
-    pushstring("error");
+    pushstring(_T("error"));
     return;
   }
   if (createCfgDlg())
@@ -1514,14 +1519,16 @@ static UINT_PTR PluginCallback(enum NSPIM msg)
 }
 
 extern "C" void __declspec(dllexport) initDialog(HWND hwndParent, int string_size,
-                                      char *variables, stack_t **stacktop,
+                                      TCHAR *variables, stack_t **stacktop,
                                       extra_parameters *extra)
 {
   hMainWindow=hwndParent;
   EXDLL_INIT();
+
   extra->RegisterPluginCallback(m_hInstance, PluginCallback);
+
   if (initCalled) {
-    pushstring("error");
+    pushstring(_T("error"));
     return;
   }
   if (createCfgDlg())
@@ -1530,11 +1537,11 @@ extern "C" void __declspec(dllexport) initDialog(HWND hwndParent, int string_siz
 }
 
 extern "C" void __declspec(dllexport) show(HWND hwndParent, int string_size,
-                                      char *variables, stack_t **stacktop)
+                                      TCHAR *variables, stack_t **stacktop)
 {
   EXDLL_INIT();
   if (!initCalled) {
-    pushstring("error");
+    pushstring(_T("error"));
     return;
   }
   initCalled--;
@@ -1548,23 +1555,41 @@ extern "C" BOOL WINAPI DllMain(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lp
 }
 
 
-int WINAPI LookupToken(TableEntry* psTable_, char* pszToken_)
+/**
+ * Looks up a single token in the psTable_ and returns its mapped numerical value.
+ *
+ * @param psTable_ The lookup table.
+ * @param pszToken_ The token to lookup.
+ * @return The integer value related to the token, otherwise 0.
+ */
+int WINAPI LookupToken(TableEntry* psTable_, TCHAR* pszToken_)
 {
   for (int i = 0; psTable_[i].pszName; i++)
-    if (!stricmp(pszToken_, psTable_[i].pszName))
+    if (!lstrcmpi(pszToken_, psTable_[i].pszName))
       return psTable_[i].nValue;
   return 0;
 }
 
-int WINAPI LookupTokens(TableEntry* psTable_, char* pszTokens_)
+/**
+ * In a string of tokens separated by vertical bars '|', look them up in the
+ * Lookup Table psTable and return their logical OR of their subsequent
+ * integer values.
+ * 
+ * @param psTable_ The lookup table to search in.
+ * @param pszToken String of tokens separated by '|' whose values are to be
+ * ORed together.
+ * @return The ORed value of the token values.  If no tokens were found, it
+ * will return 0.
+ */
+int WINAPI LookupTokens(TableEntry* psTable_, TCHAR* pszTokens_)
 {
   int n = 0;
-  char *pszStart = pszTokens_;
-  char *pszEnd = pszTokens_;
+  TCHAR *pszStart = pszTokens_;
+  TCHAR *pszEnd = pszTokens_;
   for (;;) {
-    char c = *pszEnd;
-    if (c == '|' || c == '\0') {
-      *pszEnd = '\0';
+    TCHAR c = *pszEnd;
+    if (c == _T('|') || c == _T('\0')) {
+      *pszEnd = _T('\0');
       n |= LookupToken(psTable_, pszStart);
       *pszEnd = c;
       if (!c)
@@ -1577,8 +1602,15 @@ int WINAPI LookupTokens(TableEntry* psTable_, char* pszTokens_)
   return n;
 }
 
-void WINAPI ConvertNewLines(char *str) {
-  char *p1, *p2, *p3;
+/**
+ * ConvertNewLines takes a string and turns escape sequences written
+ * as separate chars e.g. "\\t" into the special char they represent
+ * '\t'.  The transformation is done in place.
+ *
+ * @param str [in/out] The string to convert.
+ */
+void WINAPI ConvertNewLines(TCHAR *str) {
+  TCHAR *p1, *p2, *p3;
 
   if (!str)
     return;
@@ -1589,23 +1621,23 @@ void WINAPI ConvertNewLines(char *str) {
   {
     switch (*(LPWORD)p1)
     {
-    case CHAR2_TO_WORD('\\', 't'):
-      *p2 = '\t';
+    case CHAR2_TO_WORD(_T('\\'), _T('t')):
+      *p2 = _T('\t');
       p1 += 2;
       p2++;
       break;
-    case CHAR2_TO_WORD('\\', 'n'):
-      *p2 = '\n';
+    case CHAR2_TO_WORD(_T('\\'), _T('n')):
+      *p2 = _T('\n');
       p1 += 2;
       p2++;
       break;
-    case CHAR2_TO_WORD('\\', 'r'):
-      *p2 = '\r';
+    case CHAR2_TO_WORD(_T('\\'), _T('r')):
+      *p2 = _T('\r');
       p1 += 2;
       p2++;
       break;
-    case CHAR2_TO_WORD('\\', '\\'):
-      *p2 = '\\';
+    case CHAR2_TO_WORD(_T('\\'), _T('\\')):
+      *p2 = _T('\\');
       p1 += 2;
       p2++;
       break;

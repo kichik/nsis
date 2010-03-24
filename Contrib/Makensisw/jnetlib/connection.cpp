@@ -4,6 +4,8 @@
 ** Author: Justin Frankel
 ** File: connection.cpp - JNL TCP connection implementation
 ** License: see jnetlib.h
+**
+** Reviewed for Unicode support by Jim Park -- 08/17/2007
 */
 
 #include "netinc.h"

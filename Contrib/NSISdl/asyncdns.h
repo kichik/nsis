@@ -12,7 +12,11 @@
 **      try calling resolve() with the same hostname in a few hundred milliseconds 
 **      or so), or -1 on error (i.e. the host can't resolve).
 **   4. enjoy.
+**
+** Unicode support by Jim Park -- 08/24/2007
 */
+
+// Jim Park: Inet host name is strictly ANSI, no UNICODE for now.
 
 #ifndef _ASYNCDNS_H_
 #define _ASYNCDNS_H_

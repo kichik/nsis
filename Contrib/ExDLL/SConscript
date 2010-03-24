@@ -8,6 +8,7 @@ lib_files = Split("""
 
 api_files = Split("""
 	pluginapi.h
+	nsis_tchar.h
 	#Source/exehead/api.h
 """)
 
@@ -18,7 +19,7 @@ example = Split("""
 	exdll.dsw
 	exdll_with_unit.dpr
 	exdll-vs2008.sln
- 	exdll-vs2008.vcproj
+	exdll-vs2008.vcproj
 	nsis.pas
 	extdll.inc
 """)

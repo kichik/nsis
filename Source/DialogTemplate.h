@@ -12,6 +12,8 @@
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty.
+ *
+ * Reviewed for Unicode support by Jim Park -- 08/21/2007
  */
 
 #if !defined(AFX_DIALOGTEMPLATE_H__C5A973AF_0F56_4BEC_814A_79318E2EB4AC__INCLUDED_)
@@ -113,7 +115,7 @@ public:
   DialogItemTemplate* GetItem(WORD wId);
   DialogItemTemplate* GetItemByIdx(DWORD i);
   int   RemoveItem(WORD wId);
-  void  SetFont(char* szFaceName, WORD wFontSize);
+  void  SetFont(TCHAR* szFaceName, WORD wFontSize);
   void  AddItem(DialogItemTemplate item);
 #ifdef _WIN32
   HWND  CreateDummyDialog();
@@ -123,10 +125,10 @@ public:
 #ifdef _WIN32
   void  PixelsToDlgUnits(short& x, short& y);
   void  DlgUnitsToPixels(short& x, short& y);
-  SIZE  GetStringSize(WORD id, char *str);
-  void  RTrimToString(WORD id, char *str, int margins);
-  void  LTrimToString(WORD id, char *str, int margins);
-  void  CTrimToString(WORD id, char *str, int margins);
+  SIZE  GetStringSize(WORD id, TCHAR *str);
+  void  RTrimToString(WORD id, TCHAR *str, int margins);
+  void  LTrimToString(WORD id, TCHAR *str, int margins);
+  void  CTrimToString(WORD id, TCHAR *str, int margins);
 #endif
   void  ConvertToRTL();
   BYTE* Save(DWORD& dwSize);

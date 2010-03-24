@@ -17,6 +17,8 @@
   2. Altered source versions must be plainly marked as such, and must not be
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
+
+  Unicode support by Jim Park -- 08/24/2007
 */
 #include <windows.h>
 #include <stdio.h>
@@ -56,7 +58,7 @@ static LRESULT CALLBACK ParentWndProc(HWND hwnd, UINT message, WPARAM wParam, LP
 
     if (wParam)
     {
-      childwnd = FindWindowEx((HWND) lParam, NULL, "#32770", NULL);
+      childwnd = FindWindowEx((HWND) lParam, NULL, _T("#32770"), NULL);
       hwndL = GetDlgItem(childwnd, 1016);
       hwndB = GetDlgItem(childwnd, 1027);
       HWND hwndP = GetDlgItem(childwnd, 1004);
@@ -84,8 +86,8 @@ static LRESULT CALLBACK ParentWndProc(HWND hwnd, UINT message, WPARAM wParam, LP
         GetWindowRect(hwndS, &ctlRect);
 
         HWND s = g_hwndStatic = CreateWindow(
-          "STATIC",
-          "",
+          _T("STATIC"),
+          _T(""),
           WS_CHILD | WS_CLIPSIBLINGS | SS_CENTER,
           0,
           wndRect.bottom / 2 - (ctlRect.bottom - ctlRect.top) / 2,
@@ -103,8 +105,8 @@ static LRESULT CALLBACK ParentWndProc(HWND hwnd, UINT message, WPARAM wParam, LP
         GetWindowRect(hwndP, &ctlRect);
 
         HWND pb = g_hwndProgressBar = CreateWindow(
-          "msctls_progress32",
-          "",
+          _T("msctls_progress32"),
+          _T(""),
           dwStyle,
           0,
           wndRect.bottom / 2 + (ctlRect.bottom - ctlRect.top) / 2,
@@ -223,7 +225,7 @@ void progress_callback(char *msg, __int64 read_bytes)
   {
     if (dwThisTick - dwLastTick > 500)
     {
-      SetWindowText(g_hwndStatic, msg);
+      SetWindowTextA(g_hwndStatic, msg);
       dwLastTick = dwThisTick;
     }
     if (g_file_size)
@@ -240,7 +242,7 @@ extern "C"
 
 __declspec(dllexport) void download (HWND   parent,
               int    string_size,
-              char   *variables,
+              TCHAR   *variables,
               stack_t **stacktop)
 {
   char buf[1024];
@@ -278,71 +280,71 @@ __declspec(dllexport) void download (HWND   parent,
 
   EXDLL_INIT();
 
-  popstring(url);
-  if (!lstrcmpi(url, "/TRANSLATE2")) {
-    popstring(szDownloading);
-    popstring(szConnecting);
-    popstring(szSecond);
-    popstring(szMinute);
-    popstring(szHour);
-    popstring(szSeconds);
-    popstring(szMinutes);
-    popstring(szHours);
-    popstring(szProgress);
-    popstring(url);
+  PopStringA(url);
+  if (!lstrcmpiA(url, "/TRANSLATE2")) {
+    PopStringA(szDownloading);
+    PopStringA(szConnecting);
+    PopStringA(szSecond);
+    PopStringA(szMinute);
+    PopStringA(szHour);
+    PopStringA(szSeconds);
+    PopStringA(szMinutes);
+    PopStringA(szHours);
+    PopStringA(szProgress);
+    PopStringA(url);
     translation_version=2;
-  } else if (!lstrcmpi(url, "/TRANSLATE")) {
-    popstring(szDownloading);
-    popstring(szConnecting);
-    popstring(szSecond);
-    popstring(szMinute);
-    popstring(szHour);
-    popstring(szPlural);
-    popstring(szProgress);
-    popstring(szRemaining);
-    popstring(url);
+  } else if (!lstrcmpiA(url, "/TRANSLATE")) {
+    PopStringA(szDownloading);
+    PopStringA(szConnecting);
+    PopStringA(szSecond);
+    PopStringA(szMinute);
+    PopStringA(szHour);
+    PopStringA(szPlural);
+    PopStringA(szProgress);
+    PopStringA(szRemaining);
+    PopStringA(url);
     translation_version=1;
   } else {
-    lstrcpy(szDownloading, "Downloading %s");
-    lstrcpy(szConnecting, "Connecting ...");
-    lstrcpy(szSecond, " (1 second remaining)");
-    lstrcpy(szMinute, " (1 minute remaining)");
-    lstrcpy(szHour, " (1 hour remaining)");
-    lstrcpy(szSeconds, " (%u seconds remaining)");
-    lstrcpy(szMinutes, " (%u minutes remaining)");
-    lstrcpy(szHours, " (%u hours remaining)");
-    lstrcpy(szProgress, "%skB (%d%%) of %skB at %u.%01ukB/s");
+    lstrcpyA(szDownloading, "Downloading %s");
+    lstrcpyA(szConnecting, "Connecting ...");
+    lstrcpyA(szSecond, " (1 second remaining)");
+    lstrcpyA(szMinute, " (1 minute remaining)");
+    lstrcpyA(szHour, " (1 hour remaining)");
+    lstrcpyA(szSeconds, " (%u seconds remaining)");
+    lstrcpyA(szMinutes, " (%u minutes remaining)");
+    lstrcpyA(szHours, " (%u hours remaining)");
+    lstrcpyA(szProgress, "%skB (%d%%) of %skB at %u.%01ukB/s");
     translation_version=2;
   }
-  lstrcpyn(buf, url, 10);
-  if (!lstrcmpi(buf, "/TIMEOUT=")) {
+  lstrcpynA(buf, url, 10);
+  if (!lstrcmpiA(buf, "/TIMEOUT=")) {
     timeout_ms=my_atoi(url+9);
-    popstring(url);
+    PopStringA(url);
   }
-  if (!lstrcmpi(url, "/PROXY")) {
+  if (!lstrcmpiA(url, "/PROXY")) {
     getieproxy=0;
     manualproxy=1;
-    popstring(proxy);
-    popstring(url);
+    PopStringA(proxy);
+    PopStringA(url);
   }
-  if (!lstrcmpi(url, "/NOIEPROXY")) {
+  if (!lstrcmpiA(url, "/NOIEPROXY")) {
     getieproxy=0;
-    popstring(url);
+    PopStringA(url);
   }
-  popstring(filename);
+  PopStringA(filename);
 
-  HANDLE hFile = CreateFile(filename,GENERIC_WRITE,FILE_SHARE_READ,NULL,CREATE_ALWAYS,0,NULL);
+  HANDLE hFile = CreateFileA(filename,GENERIC_WRITE,FILE_SHARE_READ,NULL,CREATE_ALWAYS,0,NULL);
 
   if (hFile == INVALID_HANDLE_VALUE)
   {
-    wsprintf(buf, "Unable to open %s", filename);
+    wsprintfA(buf, "Unable to open %s", filename);
     error = buf;
   }
   else
   {
     if (parent)
     {
-      uMsgCreate = RegisterWindowMessage("nsisdl create");
+      uMsgCreate = RegisterWindowMessage(_T("nsisdl create"));
 
       lpWndProcOld = (void *)SetWindowLong(parent,GWL_WNDPROC,(long)ParentWndProc);
 
@@ -351,10 +353,10 @@ __declspec(dllexport) void download (HWND   parent,
       // set initial text
       char *p = filename;
       while (*p) p++;
-      while (*p != '\\' && p != filename) p = CharPrev(filename, p);
-      wsprintf(buf, szDownloading, p != filename ? p + 1 : p);
-      SetDlgItemText(childwnd, 1006, buf);
-      SetWindowText(g_hwndStatic, szConnecting);
+      while (*p !='\\' && p != filename) p = CharPrevA(filename, p);
+      wsprintfA(buf, szDownloading, p != filename ? p + 1 : p);
+      SetDlgItemTextA(childwnd, 1006, buf);
+      SetWindowTextA(g_hwndStatic, szConnecting);
     }
     {
       WSADATA wsaData;
@@ -367,15 +369,15 @@ __declspec(dllexport) void download (HWND   parent,
       char *p=NULL;
 
       HKEY hKey;
-      if (getieproxy && RegOpenKeyEx(HKEY_CURRENT_USER,"Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings",0,KEY_READ,&hKey) == ERROR_SUCCESS)
+      if (getieproxy && RegOpenKeyExA(HKEY_CURRENT_USER,"Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings",0,KEY_READ,&hKey) == ERROR_SUCCESS)
       {
         DWORD l = 4;
         DWORD t;
         DWORD v;
-        if (RegQueryValueEx(hKey,"ProxyEnable",NULL,&t,(unsigned char *)&v,&l) == ERROR_SUCCESS && t == REG_DWORD && v)
+        if (RegQueryValueExA(hKey,"ProxyEnable",NULL,&t,(unsigned char*)&v,&l) == ERROR_SUCCESS && t == REG_DWORD && v)
         {
           l=8192;
-          if (RegQueryValueEx(hKey,"ProxyServer",NULL,&t,(unsigned char *)buf,&l ) == ERROR_SUCCESS && t == REG_SZ)
+          if (RegQueryValueExA(hKey,"ProxyServer",NULL,&t,(unsigned char *)buf,&l ) == ERROR_SUCCESS && t == REG_SZ)
           {
             p=strstr(buf,"http=");
             if (!p) p=buf;
@@ -426,7 +428,7 @@ __declspec(dllexport) void download (HWND   parent,
         st = get->run ();
 
         if (st == -1) {
-          lstrcpyn(url, get->geterrorstr(), sizeof(url));
+          lstrcpynA(url, get->geterrorstr(), sizeof(url));
           error = url;
         } else if (st == 1) {
           if (sofar < cl || get->get_status () != 2)
@@ -501,14 +503,14 @@ __declspec(dllexport) void download (HWND   parent,
                   myitoa64(sofar/1024, sofar_str);
                   myitoa64(cl/1024, cl_str);
 
-                  wsprintf (buf,
+                  wsprintfA (buf,
                         szProgress, //%skB (%d%%) of %skB @ %u.%01ukB/s
                         sofar_str,
                         MulDiv64(100, sofar, cl),
                         cl_str,
                         bps/1024,((bps*10)/1024)%10
                         );
-                  if (remain) wsprintf(buf+lstrlen(buf),rtext,
+                  if (remain) wsprintfA(buf+lstrlenA(buf),rtext,
                         remain
                         );
                 } else if (translation_version == 1) {
@@ -524,14 +526,14 @@ __declspec(dllexport) void download (HWND   parent,
                     }
                   }
 
-                  wsprintf (buf,
+                  wsprintfA (buf,
                         szProgress, //%dkB (%d%%) of %dkB @ %d.%01dkB/s
                         int(sofar/1024),
                         MulDiv64(100, sofar, cl),
                         int(cl/1024),
                         bps/1024,((bps*10)/1024)%10
                         );
-                  if (remain) wsprintf(buf+lstrlen(buf),szRemaining,
+                  if (remain) wsprintfA(buf+lstrlenA(buf),szRemaining,
                         remain,
                         rtext,
                         remain==1?"":szPlural
@@ -578,16 +580,16 @@ __declspec(dllexport) void download (HWND   parent,
   }
 
   if (g_cancelled || !bSuccess) {
-    DeleteFile(filename);
+    DeleteFileA(filename);
   }
 
-  pushstring(error);
+  PushStringA(error);
 }
 
 
 __declspec(dllexport) void download_quiet(HWND   parent,
               int    stringsize,
-              char   *variables,
+              TCHAR   *variables,
               stack_t **stacktop)
 {
   g_hwndProgressBar=0;

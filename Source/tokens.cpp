@@ -12,6 +12,8 @@
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty.
+ *
+ * Unicode support by Jim Park -- 08/10/2007
  */
 
 #include "Platform.h"
@@ -24,284 +26,284 @@
 typedef struct 
 {
   int id;
-  const char *name;
+  const TCHAR *name;
   int num_parms; // minimum number of parameters
   int opt_parms; // optional parmaters, usually 0, can be -1 for unlimited.
-  const char *usage_str;
+  const TCHAR *usage_str;
   int placement; // where the token can be placed
 } tokenType;
 
 
 static tokenType tokenlist[TOK__LAST] =
 {
-{TOK_ABORT,"Abort",0,1,"[message]",TP_CODE},
-{TOK_ADDBRANDINGIMAGE,"AddBrandingImage",2,1,"(top|left|bottom|right) (height|width) [padding]",TP_GLOBAL},
-{TOK_ADDSIZE,"AddSize",1,0,"size_to_add_to_section_in_kb",TP_SEC},
-{TOK_AUTOCLOSE,"AutoCloseWindow",1,0,"(false|true)",TP_GLOBAL},
-{TOK_BGFONT,"BGFont",0,6,"[font_face [height [wieght] [/ITALIC] [/UNDERLINE] [/STRIKE]]]",TP_GLOBAL},
-{TOK_BGGRADIENT,"BGGradient",0,3,"(off | [top_color [bottom_color [text_color]]])",TP_GLOBAL},
-{TOK_BRANDINGTEXT,"BrandingText",1,1,"[/TRIM(LEFT|RIGHT|CENTER)] installer_text",TP_GLOBAL},
-{TOK_BRINGTOFRONT,"BringToFront",0,0,"",TP_CODE},
-{TOK_CALL,"Call",1,0,"function_name | [:label_name]",TP_CODE},
-{TOK_CALLINSTDLL,"CallInstDLL",2,1,"dll_path_on_target.dll function",TP_CODE},
-{TOK_CAPTION,"Caption",1,0,"installer_caption",TP_GLOBAL|TP_PAGEEX},
-{TOK_CHANGEUI,"ChangeUI",2,0,"(all|dlg_id) ui_file.exe",TP_GLOBAL},
-{TOK_CLEARERRORS,"ClearErrors",0,0,"",TP_CODE},
-{TOK_COMPTEXT,"ComponentText",0,3,"[component_page_description] [component_subtext1] [component_subtext2]",TP_PG},
-{TOK_GETDLLVERSION,"GetDLLVersion",3,0,"filename $(user_var: high output) $(user_var: low output)",TP_CODE},
-{TOK_GETDLLVERSIONLOCAL,"GetDLLVersionLocal",3,0,"localfilename $(user_var: high output) $(user_var: low output)",TP_CODE},
-{TOK_GETFILETIME,"GetFileTime",3,0,"file $(user_var: high output) $(user_var: low output)",TP_CODE},
-{TOK_GETFILETIMELOCAL,"GetFileTimeLocal",3,0,"localfile $(user_var: high output) $(user_var: low output)",TP_CODE},
-{TOK_COPYFILES,"CopyFiles",2,3,"[/SILENT] [/FILESONLY] source_path destination_path [total_size_in_kb]",TP_CODE},
-{TOK_CRCCHECK,"CRCCheck",1,0,"(on|force|off)",TP_GLOBAL},
-{TOK_CREATEDIR,"CreateDirectory",1,0,"directory_name",TP_CODE},
-{TOK_CREATEFONT,"CreateFont",2,5,"$(user_var: handle output) face_name [height wieght /ITALIC /UNDERLINE /STRIKE]",TP_CODE},
-{TOK_CREATESHORTCUT,"CreateShortCut",2,6,"shortcut_name.lnk shortcut_target [parameters [icon_file [icon index [showmode [hotkey [comment]]]]]]\n    showmode=(SW_SHOWNORMAL|SW_SHOWMAXIMIZED|SW_SHOWMINIMIZED)\n    hotkey=(ALT|CONTROL|EXT|SHIFT)|(F1-F24|A-Z)",TP_CODE},
-{TOK_DBOPTIMIZE,"SetDatablockOptimize",1,0,"(off|on)",TP_ALL},
-{TOK_DELETEINISEC,"DeleteINISec",2,0,"ini_file section_name",TP_CODE},
-{TOK_DELETEINISTR,"DeleteINIStr",3,0,"ini_file section_name entry_name",TP_CODE},
-{TOK_DELETEREGKEY,"DeleteRegKey",2,1,"[/ifempty] root_key subkey\n    root_key=(HKCR|HKLM|HKCU|HKU|HKCC|HKDD|HKPD|SHCTX)",TP_CODE},
-{TOK_DELETEREGVALUE,"DeleteRegValue",3,0,"root_key subkey entry_name\n    root_key=(HKCR|HKLM|HKCU|HKU|HKCC|HKDD|HKPD|SHCTX)",TP_CODE},
-{TOK_DELETE,"Delete",1,1,"[/REBOOTOK] filespec",TP_CODE},
-{TOK_DETAILPRINT,"DetailPrint",1,0,"message",TP_CODE},
-{TOK_DIRTEXT,"DirText",0,4,"[directory_page_description] [directory_page_subtext] [browse_button_text] [browse_dlg_text]",TP_PG},
-//{TOK_DIRSHOW,"DirShow",1,0,"(show|hide)",TP_PG},
-{TOK_DIRSHOW,"DirShow",0,0,"doesn't currently work",TP_ALL},
-{TOK_DIRVAR,"DirVar",1,0,"$(user_var: dir in/out))",TP_PAGEEX},
-{TOK_DIRVERIFY,"DirVerify",1,0,"auto|leave",TP_PAGEEX},
-{TOK_GETINSTDIRERROR,"GetInstDirError",1,0,"$(user_var: error output)",TP_CODE},
-{TOK_ROOTDIRINST,"AllowRootDirInstall",1,0,"(true|false)",TP_GLOBAL},
-{TOK_CHECKBITMAP,"CheckBitmap",1,0,"local_bitmap.bmp",TP_GLOBAL},
-{TOK_ENABLEWINDOW,"EnableWindow",2,0,"hwnd (1|0)",TP_CODE},
-{TOK_ENUMREGKEY,"EnumRegKey",4,0,"$(user_var: output) rootkey subkey index\n    root_key=(HKCR|HKLM|HKCU|HKU|HKCC|HKDD|HKPD|SHCTX)",TP_CODE},
-{TOK_ENUMREGVAL,"EnumRegValue",4,0,"$(user_var: output) rootkey subkey index\n    root_key=(HKCR|HKLM|HKCU|HKU|HKCC|HKDD|HKPD|SHCTX)",TP_CODE},
-{TOK_EXCH,"Exch",0,1,"[$(user_var)] | [stack_item_index]",TP_CODE},
-{TOK_EXEC,"Exec",1,0,"command_line",TP_CODE},
-{TOK_EXECWAIT,"ExecWait",1,1,"command_line [$(user_var: return value)]",TP_CODE},
-{TOK_EXECSHELL,"ExecShell",2,2,"(open|print|etc) command_line [parameters [showmode]]\n   showmode=(SW_SHOWNORMAL|SW_SHOWMAXIMIZED|SW_SHOWMINIMIZED|SW_HIDE)",TP_CODE},
-{TOK_EXPANDENVSTRS,"ExpandEnvStrings",2,0,"$(user_var: output) string",TP_CODE},
-{TOK_FINDWINDOW,"FindWindow",2,3,"$(user_var: handle output) WindowClass [WindowTitle] [Window_Parent] [Child_After]",TP_CODE},
-{TOK_FINDCLOSE,"FindClose",1,0,"$(user_var: handle input)",TP_CODE},
-{TOK_FINDFIRST,"FindFirst",3,0,"$(user_var: handle output) $(user_var: filename output) filespec",TP_CODE},
-{TOK_FINDNEXT,"FindNext",2,0,"$(user_var: handle input) $(user_var: filename output)",TP_CODE},
-{TOK_FILE,"File",1,-1,"[/nonfatal] [/a] ([/r] [/x filespec [...]] filespec [...] |\n   /oname=outfile one_file_only)",TP_CODE},
-{TOK_FILEBUFSIZE,"FileBufSize",1,0,"buf_size_mb",TP_ALL},
-{TOK_FLUSHINI,"FlushINI",1,0,"ini_file",TP_CODE},
-{TOK_RESERVEFILE,"ReserveFile",1,-1,"[/nonfatal] [/r] [/x filespec [...]] file [file...]",TP_ALL},
-{TOK_FILECLOSE,"FileClose",1,0,"$(user_var: handle input)",TP_CODE},
-{TOK_FILEERRORTEXT,"FileErrorText",0,2,"[text (can contain $0)] [text without ignore (can contain $0)]",TP_GLOBAL},
-{TOK_FILEOPEN,"FileOpen",3,0,"$(user_var: handle output) filename openmode\n   openmode=r|w|a",TP_CODE},
-{TOK_FILEREAD,"FileRead",2,1,"$(user_var: handle input) $(user_var: text output) [maxlen]",TP_CODE},
-{TOK_FILEWRITE,"FileWrite",2,0,"$(user_var: handle input) text",TP_CODE},
-{TOK_FILEREADBYTE,"FileReadByte",2,0,"$(user_var: handle input) $(user_var: bytevalue output)",TP_CODE},
-{TOK_FILEWRITEBYTE,"FileWriteByte",2,0,"$(user_var: handle input) bytevalue",TP_CODE},
-{TOK_FILESEEK,"FileSeek",2,2,"$(user_var: handle input) offset [mode] [$(user_var: new position output)]\n    mode=SET|CUR|END",TP_CODE},
-{TOK_FUNCTION,"Function",1,0,"function_name",TP_GLOBAL},
-{TOK_FUNCTIONEND,"FunctionEnd",0,0,"",TP_FUNC},
-{TOK_GETDLGITEM,"GetDlgItem",3,0,"$(user_var: handle output) dialog item_id",TP_CODE},
-{TOK_GETFULLPATHNAME,"GetFullPathName",2,1,"[/SHORT] $(user_var: result) path_or_file",TP_CODE},
-{TOK_GETTEMPFILENAME,"GetTempFileName",1,1,"$(user_var: name output) [base_dir]",TP_CODE},
-{TOK_HIDEWINDOW,"HideWindow",0,0,"",TP_CODE},
-{TOK_ICON,"Icon",1,0,"local_icon.ico",TP_GLOBAL},
-{TOK_IFABORT,"IfAbort",1,1,"label_to_goto_if_abort [label_to_goto_if_no_abort]",TP_CODE},
-{TOK_IFERRORS,"IfErrors",1,1,"label_to_goto_if_errors [label_to_goto_if_no_errors]",TP_CODE},
-{TOK_IFFILEEXISTS,"IfFileExists",2,1,"filename label_to_goto_if_file_exists [label_to_goto_otherwise]",TP_CODE},
-{TOK_IFREBOOTFLAG,"IfRebootFlag",1,1,"jump_if_set [jump_if_not_set]",TP_CODE},
-{TOK_IFSILENT,"IfSilent",1,1,"jump_if_silent [jump_if_not_silent]",TP_CODE},
-{TOK_INSTALLDIRREGKEY,"InstallDirRegKey",3,0,"root_key subkey entry_name\n    root_key=(HKCR|HKLM|HKCU|HKU|HKCC|HKDD|HKPD)",TP_GLOBAL},
-{TOK_INSTCOLORS,"InstallColors",1,1,"(/windows | (foreground_color background_color))",TP_GLOBAL},
-{TOK_INSTDIR,"InstallDir",1,0,"default_install_directory",TP_GLOBAL},
-{TOK_INSTPROGRESSFLAGS,"InstProgressFlags",0,-1,"[flag [...]]\n    flag={smooth|colored}",TP_GLOBAL},
-{TOK_INSTTYPE,"InstType",1,0,"[un.]install_type_name | /NOCUSTOM | /CUSTOMSTRING=str | /COMPONENTSONLYONCUSTOM",TP_GLOBAL},
-{TOK_INTOP,"IntOp",3,1,"$(user_var: result) val1 OP [val2]\n    OP=(+ - * / % | & ^ ~ ! || && << >>)",TP_CODE},
-{TOK_INTCMP,"IntCmp",3,2,"val1 val2 jump_if_equal [jump_if_val1_less] [jump_if_val1_more]",TP_CODE},
-{TOK_INTCMPU,"IntCmpU",3,2,"val1 val2 jump_if_equal [jump_if_val1_less] [jump_if_val1_more]",TP_CODE},
-{TOK_INTFMT,"IntFmt",3,0,"$(user_var: output) format_string input",TP_CODE},
-{TOK_ISWINDOW,"IsWindow",2,1,"hwnd jump_if_window [jump_if_not_window]",TP_CODE},
-{TOK_GOTO,"Goto",1,0,"label",TP_CODE},
-{TOK_LANGSTRING,"LangString",3,0,"[un.]name lang_id string",TP_GLOBAL},
-{TOK_LANGSTRINGUP,"LangStringUP",0,0,"obsolete, use LangString.",TP_ALL},
-{TOK_LICENSEDATA,"LicenseData",1,0,"local_file_that_has_license_text | license_lang_string",TP_PG},
-{TOK_LICENSEFORCESELECTION,"LicenseForceSelection",1,2,"(checkbox [accept_text] | radiobuttons [accept_text] [decline_text] | off)",TP_PG},
-{TOK_LICENSELANGSTRING,"LicenseLangString",3,0,"name lang_id license_path",TP_GLOBAL},
-{TOK_LICENSETEXT,"LicenseText",1,1,"license_page_description [license_button_text]",TP_PG},
-{TOK_LICENSEBKCOLOR,"LicenseBkColor",1,0,"background_color",TP_GLOBAL},
-{TOK_LOADNLF,"LoadLanguageFile",1,0,"language.nlf",TP_GLOBAL},
-{TOK_LOGSET,"LogSet",1,0,"on|off",TP_CODE},
-{TOK_LOGTEXT,"LogText",1,0,"text",TP_CODE},
-{TOK_MESSAGEBOX,"MessageBox",2,6,"mode messagebox_text [/SD return] [return_check label_to_goto_if_equal [return_check2 label2]]\n    mode=modeflag[|modeflag[|modeflag[...]]]\n    "
-                                "modeflag=(MB_ABORTRETRYIGNORE|MB_OK|MB_OKCANCEL|MB_RETRYCANCEL|MB_YESNO|MB_YESNOCANCEL|MB_ICONEXCLAMATION|MB_ICONINFORMATION|MB_ICONQUESTION|MB_ICONSTOP|MB_USERICON|MB_TOPMOST|MB_SETFOREGROUND|MB_RIGHT",TP_CODE},
-{TOK_NOP,"Nop",0,0,"",TP_CODE},
-{TOK_NAME,"Name",1,1,"installer_name installer_name_doubled_ampersands",TP_GLOBAL},
-{TOK_OUTFILE,"OutFile",1,0,"install_output.exe",TP_GLOBAL},
+{TOK_ABORT,_T("Abort"),0,1,_T("[message]"),TP_CODE},
+{TOK_ADDBRANDINGIMAGE,_T("AddBrandingImage"),2,1,_T("(top|left|bottom|right) (height|width) [padding]"),TP_GLOBAL},
+{TOK_ADDSIZE,_T("AddSize"),1,0,_T("size_to_add_to_section_in_kb"),TP_SEC},
+{TOK_AUTOCLOSE,_T("AutoCloseWindow"),1,0,_T("(false|true)"),TP_GLOBAL},
+{TOK_BGFONT,_T("BGFont"),0,6,_T("[font_face [height [wieght] [/ITALIC] [/UNDERLINE] [/STRIKE]]]"),TP_GLOBAL},
+{TOK_BGGRADIENT,_T("BGGradient"),0,3,_T("(off | [top_color [bottom_color [text_color]]])"),TP_GLOBAL},
+{TOK_BRANDINGTEXT,_T("BrandingText"),1,1,_T("[/TRIM(LEFT|RIGHT|CENTER)] installer_text"),TP_GLOBAL},
+{TOK_BRINGTOFRONT,_T("BringToFront"),0,0,_T(""),TP_CODE},
+{TOK_CALL,_T("Call"),1,0,_T("function_name | [:label_name]"),TP_CODE},
+{TOK_CALLINSTDLL,_T("CallInstDLL"),2,1,_T("dll_path_on_target.dll function"),TP_CODE},
+{TOK_CAPTION,_T("Caption"),1,0,_T("installer_caption"),TP_GLOBAL|TP_PAGEEX},
+{TOK_CHANGEUI,_T("ChangeUI"),2,0,_T("(all|dlg_id) ui_file.exe"),TP_GLOBAL},
+{TOK_CLEARERRORS,_T("ClearErrors"),0,0,_T(""),TP_CODE},
+{TOK_COMPTEXT,_T("ComponentText"),0,3,_T("[component_page_description] [component_subtext1] [component_subtext2]"),TP_PG},
+{TOK_GETDLLVERSION,_T("GetDLLVersion"),3,0,_T("filename $(user_var: high output) $(user_var: low output)"),TP_CODE},
+{TOK_GETDLLVERSIONLOCAL,_T("GetDLLVersionLocal"),3,0,_T("localfilename $(user_var: high output) $(user_var: low output)"),TP_CODE},
+{TOK_GETFILETIME,_T("GetFileTime"),3,0,_T("file $(user_var: high output) $(user_var: low output)"),TP_CODE},
+{TOK_GETFILETIMELOCAL,_T("GetFileTimeLocal"),3,0,_T("localfile $(user_var: high output) $(user_var: low output)"),TP_CODE},
+{TOK_COPYFILES,_T("CopyFiles"),2,3,_T("[/SILENT] [/FILESONLY] source_path destination_path [total_size_in_kb]"),TP_CODE},
+{TOK_CRCCHECK,_T("CRCCheck"),1,0,_T("(on|force|off)"),TP_GLOBAL},
+{TOK_CREATEDIR,_T("CreateDirectory"),1,0,_T("directory_name"),TP_CODE},
+{TOK_CREATEFONT,_T("CreateFont"),2,5,_T("$(user_var: handle output) face_name [height wieght /ITALIC /UNDERLINE /STRIKE]"),TP_CODE},
+{TOK_CREATESHORTCUT,_T("CreateShortCut"),2,6,_T("shortcut_name.lnk shortcut_target [parameters [icon_file [icon index [showmode [hotkey [comment]]]]]]\n    showmode=(SW_SHOWNORMAL|SW_SHOWMAXIMIZED|SW_SHOWMINIMIZED)\n    hotkey=(ALT|CONTROL|EXT|SHIFT)|(F1-F24|A-Z)"),TP_CODE},
+{TOK_DBOPTIMIZE,_T("SetDatablockOptimize"),1,0,_T("(off|on)"),TP_ALL},
+{TOK_DELETEINISEC,_T("DeleteINISec"),2,0,_T("ini_file section_name"),TP_CODE},
+{TOK_DELETEINISTR,_T("DeleteINIStr"),3,0,_T("ini_file section_name entry_name"),TP_CODE},
+{TOK_DELETEREGKEY,_T("DeleteRegKey"),2,1,_T("[/ifempty] root_key subkey\n    root_key=(HKCR|HKLM|HKCU|HKU|HKCC|HKDD|HKPD|SHCTX)"),TP_CODE},
+{TOK_DELETEREGVALUE,_T("DeleteRegValue"),3,0,_T("root_key subkey entry_name\n    root_key=(HKCR|HKLM|HKCU|HKU|HKCC|HKDD|HKPD|SHCTX)"),TP_CODE},
+{TOK_DELETE,_T("Delete"),1,1,_T("[/REBOOTOK] filespec"),TP_CODE},
+{TOK_DETAILPRINT,_T("DetailPrint"),1,0,_T("message"),TP_CODE},
+{TOK_DIRTEXT,_T("DirText"),0,4,_T("[directory_page_description] [directory_page_subtext] [browse_button_text] [browse_dlg_text]"),TP_PG},
+//{TOK_DIRSHOW,_T("DirShow"),1,0,_T("(show|hide)"),TP_PG},
+{TOK_DIRSHOW,_T("DirShow"),0,0,_T("doesn't currently work"),TP_ALL},
+{TOK_DIRVAR,_T("DirVar"),1,0,_T("$(user_var: dir in/out))"),TP_PAGEEX},
+{TOK_DIRVERIFY,_T("DirVerify"),1,0,_T("auto|leave"),TP_PAGEEX},
+{TOK_GETINSTDIRERROR,_T("GetInstDirError"),1,0,_T("$(user_var: error output)"),TP_CODE},
+{TOK_ROOTDIRINST,_T("AllowRootDirInstall"),1,0,_T("(true|false)"),TP_GLOBAL},
+{TOK_CHECKBITMAP,_T("CheckBitmap"),1,0,_T("local_bitmap.bmp"),TP_GLOBAL},
+{TOK_ENABLEWINDOW,_T("EnableWindow"),2,0,_T("hwnd (1|0)"),TP_CODE},
+{TOK_ENUMREGKEY,_T("EnumRegKey"),4,0,_T("$(user_var: output) rootkey subkey index\n    root_key=(HKCR|HKLM|HKCU|HKU|HKCC|HKDD|HKPD|SHCTX)"),TP_CODE},
+{TOK_ENUMREGVAL,_T("EnumRegValue"),4,0,_T("$(user_var: output) rootkey subkey index\n    root_key=(HKCR|HKLM|HKCU|HKU|HKCC|HKDD|HKPD|SHCTX)"),TP_CODE},
+{TOK_EXCH,_T("Exch"),0,1,_T("[$(user_var)] | [stack_item_index]"),TP_CODE},
+{TOK_EXEC,_T("Exec"),1,0,_T("command_line"),TP_CODE},
+{TOK_EXECWAIT,_T("ExecWait"),1,1,_T("command_line [$(user_var: return value)]"),TP_CODE},
+{TOK_EXECSHELL,_T("ExecShell"),2,2,_T("(open|print|etc) command_line [parameters [showmode]]\n   showmode=(SW_SHOWNORMAL|SW_SHOWMAXIMIZED|SW_SHOWMINIMIZED|SW_HIDE)"),TP_CODE},
+{TOK_EXPANDENVSTRS,_T("ExpandEnvStrings"),2,0,_T("$(user_var: output) string"),TP_CODE},
+{TOK_FINDWINDOW,_T("FindWindow"),2,3,_T("$(user_var: handle output) WindowClass [WindowTitle] [Window_Parent] [Child_After]"),TP_CODE},
+{TOK_FINDCLOSE,_T("FindClose"),1,0,_T("$(user_var: handle input)"),TP_CODE},
+{TOK_FINDFIRST,_T("FindFirst"),3,0,_T("$(user_var: handle output) $(user_var: filename output) filespec"),TP_CODE},
+{TOK_FINDNEXT,_T("FindNext"),2,0,_T("$(user_var: handle input) $(user_var: filename output)"),TP_CODE},
+{TOK_FILE,_T("File"),1,-1,_T("[/nonfatal] [/a] ([/r] [/x filespec [...]] filespec [...] |\n   /oname=outfile one_file_only)"),TP_CODE},
+{TOK_FILEBUFSIZE,_T("FileBufSize"),1,0,_T("buf_size_mb"),TP_ALL},
+{TOK_FLUSHINI,_T("FlushINI"),1,0,_T("ini_file"),TP_CODE},
+{TOK_RESERVEFILE,_T("ReserveFile"),1,-1,_T("[/nonfatal] [/r] [/x filespec [...]] file [file...]"),TP_ALL},
+{TOK_FILECLOSE,_T("FileClose"),1,0,_T("$(user_var: handle input)"),TP_CODE},
+{TOK_FILEERRORTEXT,_T("FileErrorText"),0,2,_T("[text (can contain $0)] [text without ignore (can contain $0)]"),TP_GLOBAL},
+{TOK_FILEOPEN,_T("FileOpen"),3,0,_T("$(user_var: handle output) filename openmode\n   openmode=r|w|a"),TP_CODE},
+{TOK_FILEREAD,_T("FileRead"),2,1,_T("$(user_var: handle input) $(user_var: text output) [maxlen]"),TP_CODE},
+{TOK_FILEWRITE,_T("FileWrite"),2,0,_T("$(user_var: handle input) text"),TP_CODE},
+{TOK_FILEREADBYTE,_T("FileReadByte"),2,0,_T("$(user_var: handle input) $(user_var: bytevalue output)"),TP_CODE},
+{TOK_FILEWRITEBYTE,_T("FileWriteByte"),2,0,_T("$(user_var: handle input) bytevalue"),TP_CODE},
+{TOK_FILESEEK,_T("FileSeek"),2,2,_T("$(user_var: handle input) offset [mode] [$(user_var: new position output)]\n    mode=SET|CUR|END"),TP_CODE},
+{TOK_FUNCTION,_T("Function"),1,0,_T("function_name"),TP_GLOBAL},
+{TOK_FUNCTIONEND,_T("FunctionEnd"),0,0,_T(""),TP_FUNC},
+{TOK_GETDLGITEM,_T("GetDlgItem"),3,0,_T("$(user_var: handle output) dialog item_id"),TP_CODE},
+{TOK_GETFULLPATHNAME,_T("GetFullPathName"),2,1,_T("[/SHORT] $(user_var: result) path_or_file"),TP_CODE},
+{TOK_GETTEMPFILENAME,_T("GetTempFileName"),1,1,_T("$(user_var: name output) [base_dir]"),TP_CODE},
+{TOK_HIDEWINDOW,_T("HideWindow"),0,0,_T(""),TP_CODE},
+{TOK_ICON,_T("Icon"),1,0,_T("local_icon.ico"),TP_GLOBAL},
+{TOK_IFABORT,_T("IfAbort"),1,1,_T("label_to_goto_if_abort [label_to_goto_if_no_abort]"),TP_CODE},
+{TOK_IFERRORS,_T("IfErrors"),1,1,_T("label_to_goto_if_errors [label_to_goto_if_no_errors]"),TP_CODE},
+{TOK_IFFILEEXISTS,_T("IfFileExists"),2,1,_T("filename label_to_goto_if_file_exists [label_to_goto_otherwise]"),TP_CODE},
+{TOK_IFREBOOTFLAG,_T("IfRebootFlag"),1,1,_T("jump_if_set [jump_if_not_set]"),TP_CODE},
+{TOK_IFSILENT,_T("IfSilent"),1,1,_T("jump_if_silent [jump_if_not_silent]"),TP_CODE},
+{TOK_INSTALLDIRREGKEY,_T("InstallDirRegKey"),3,0,_T("root_key subkey entry_name\n    root_key=(HKCR|HKLM|HKCU|HKU|HKCC|HKDD|HKPD)"),TP_GLOBAL},
+{TOK_INSTCOLORS,_T("InstallColors"),1,1,_T("(/windows | (foreground_color background_color))"),TP_GLOBAL},
+{TOK_INSTDIR,_T("InstallDir"),1,0,_T("default_install_directory"),TP_GLOBAL},
+{TOK_INSTPROGRESSFLAGS,_T("InstProgressFlags"),0,-1,_T("[flag [...]]\n    flag={smooth|colored}"),TP_GLOBAL},
+{TOK_INSTTYPE,_T("InstType"),1,0,_T("[un.]install_type_name | /NOCUSTOM | /CUSTOMSTRING=str | /COMPONENTSONLYONCUSTOM"),TP_GLOBAL},
+{TOK_INTOP,_T("IntOp"),3,1,_T("$(user_var: result) val1 OP [val2]\n    OP=(+ - * / % | & ^ ~ ! || && << >>)"),TP_CODE},
+{TOK_INTCMP,_T("IntCmp"),3,2,_T("val1 val2 jump_if_equal [jump_if_val1_less] [jump_if_val1_more]"),TP_CODE},
+{TOK_INTCMPU,_T("IntCmpU"),3,2,_T("val1 val2 jump_if_equal [jump_if_val1_less] [jump_if_val1_more]"),TP_CODE},
+{TOK_INTFMT,_T("IntFmt"),3,0,_T("$(user_var: output) format_string input"),TP_CODE},
+{TOK_ISWINDOW,_T("IsWindow"),2,1,_T("hwnd jump_if_window [jump_if_not_window]"),TP_CODE},
+{TOK_GOTO,_T("Goto"),1,0,_T("label"),TP_CODE},
+{TOK_LANGSTRING,_T("LangString"),3,0,_T("[un.]name lang_id string"),TP_GLOBAL},
+{TOK_LANGSTRINGUP,_T("LangStringUP"),0,0,_T("obsolete, use LangString."),TP_ALL},
+{TOK_LICENSEDATA,_T("LicenseData"),1,0,_T("local_file_that_has_license_text | license_lang_string"),TP_PG},
+{TOK_LICENSEFORCESELECTION,_T("LicenseForceSelection"),1,2,_T("(checkbox [accept_text] | radiobuttons [accept_text] [decline_text] | off)"),TP_PG},
+{TOK_LICENSELANGSTRING,_T("LicenseLangString"),3,0,_T("name lang_id license_path"),TP_GLOBAL},
+{TOK_LICENSETEXT,_T("LicenseText"),1,1,_T("license_page_description [license_button_text]"),TP_PG},
+{TOK_LICENSEBKCOLOR,_T("LicenseBkColor"),1,0,_T("background_color"),TP_GLOBAL},
+{TOK_LOADNLF,_T("LoadLanguageFile"),1,0,_T("language.nlf"),TP_GLOBAL},
+{TOK_LOGSET,_T("LogSet"),1,0,_T("on|off"),TP_CODE},
+{TOK_LOGTEXT,_T("LogText"),1,0,_T("text"),TP_CODE},
+{TOK_MESSAGEBOX,_T("MessageBox"),2,6,_T("mode messagebox_text [/SD return] [return_check label_to_goto_if_equal [return_check2 label2]]\n    mode=modeflag[|modeflag[|modeflag[...]]]\n    ")
+                                _T("modeflag=(MB_ABORTRETRYIGNORE|MB_OK|MB_OKCANCEL|MB_RETRYCANCEL|MB_YESNO|MB_YESNOCANCEL|MB_ICONEXCLAMATION|MB_ICONINFORMATION|MB_ICONQUESTION|MB_ICONSTOP|MB_USERICON|MB_TOPMOST|MB_SETFOREGROUND|MB_RIGHT"),TP_CODE},
+{TOK_NOP,_T("Nop"),0,0,_T(""),TP_CODE},
+{TOK_NAME,_T("Name"),1,1,_T("installer_name installer_name_doubled_ampersands"),TP_GLOBAL},
+{TOK_OUTFILE,_T("OutFile"),1,0,_T("install_output.exe"),TP_GLOBAL},
 #ifdef NSIS_SUPPORT_CODECALLBACKS
-{TOK_PAGE,"Page",1,4,"((custom [creator_function] [leave_function] [caption]) | ((license|components|directory|instfiles|uninstConfirm) [pre_function] [show_function] [leave_function])) [/ENABLECANCEL]",TP_GLOBAL},
+{TOK_PAGE,_T("Page"),1,4,_T("((custom [creator_function] [leave_function] [caption]) | ((license|components|directory|instfiles|uninstConfirm) [pre_function] [show_function] [leave_function])) [/ENABLECANCEL]"),TP_GLOBAL},
 #else
-{TOK_PAGE,"Page",1,1,"license|components|directory|instfiles|uninstConfirm [/ENABLECANCEL]",TP_GLOBAL},
+{TOK_PAGE,_T("Page"),1,1,_T("license|components|directory|instfiles|uninstConfirm [/ENABLECANCEL]"),TP_GLOBAL},
 #endif
-{TOK_PAGECALLBACKS,"PageCallbacks",0,3,"([creator_function] [leave_function]) | ([pre_function] [show_function] [leave_function])",TP_PAGEEX},
-{TOK_PAGEEX,"PageEx",1,0,"[un.](custom|uninstConfirm|license|components|directory|instfiles)",TP_GLOBAL},
-{TOK_PAGEEXEND,"PageExEnd",0,0,"",TP_PAGEEX},
-{TOK_POP,"Pop",1,0,"$(user_var: output)",TP_CODE},
-{TOK_PUSH,"Push",1,0,"string",TP_CODE},
-{TOK_QUIT,"Quit",0,0,"",TP_CODE},
-{TOK_READINISTR,"ReadINIStr",4,0,"$(user_var: output) ini_file section entry_name",TP_CODE},
-{TOK_READREGDWORD,"ReadRegDWORD",4,0,"$(user_var: output) rootkey subkey entry\n   root_key=(HKCR|HKLM|HKCU|HKU|HKCC|HKDD|HKPD|SHCTX)",TP_CODE},
-{TOK_READREGSTR,"ReadRegStr",4,0,"$(user_var: output) rootkey subkey entry\n   root_key=(HKCR|HKLM|HKCU|HKU|HKCC|HKDD|HKPD|SHCTX)",TP_CODE},
-{TOK_READENVSTR,"ReadEnvStr",2,0,"$(user_var: output) name",TP_CODE},
-{TOK_REBOOT,"Reboot",0,0,"",TP_CODE},
-{TOK_REGDLL,"RegDLL",1,1,"dll_path_on_target.dll [entrypoint_symbol]",TP_CODE},
-{TOK_RENAME,"Rename",2,1,"[/REBOOTOK] source_file destination_file",TP_CODE},
-{TOK_RET,"Return",0,0,"",TP_CODE},
-{TOK_RMDIR,"RMDir",1,2,"[/r] [/REBOOTOK] directory_name",TP_CODE},
-{TOK_SECTION,"Section",0,3,"[/o] [-][un.][section_name] [section index output]",TP_GLOBAL},
-{TOK_SECTIONEND,"SectionEnd",0,0,"",TP_SEC},
-{TOK_SECTIONIN,"SectionIn",1,-1,"InstTypeIdx [InstTypeIdx [...]]",TP_SEC},
-{TOK_SUBSECTION,"SubSection",1,2,"deprecated - use SectionGroup",TP_GLOBAL},
-{TOK_SECTIONGROUP,"SectionGroup",1,2,"[/e] [un.]section_group_name [section index output]",TP_GLOBAL},
-{TOK_SUBSECTIONEND,"SubSectionEnd",0,0,"deprecated - use SectionGroupEnd",TP_GLOBAL},
-{TOK_SECTIONGROUPEND,"SectionGroupEnd",0,0,"",TP_GLOBAL},
-{TOK_SEARCHPATH,"SearchPath",2,0,"$(user_var: result) filename",TP_CODE},
-{TOK_SECTIONSETFLAGS,"SectionSetFlags",2,0,"section_index flags",TP_CODE},
-{TOK_SECTIONGETFLAGS,"SectionGetFlags",2,0,"section_index $(user_var: output flags)",TP_CODE},
-{TOK_SECTIONSETINSTTYPES,"SectionSetInstTypes",2,0,"section_index inst_types",TP_CODE},
-{TOK_SECTIONGETINSTTYPES,"SectionGetInstTypes",2,0,"section_index $(user_var: output inst_types)",TP_CODE},
-{TOK_SECTIONGETTEXT,"SectionGetText",2,0,"section_index $(user_var: output text)",TP_CODE},
-{TOK_SECTIONSETTEXT,"SectionSetText",2,0,"section_index text_string",TP_CODE},
-{TOK_SECTIONGETSIZE,"SectionGetSize",2,0,"section_index $(user_var: output size)",TP_CODE},
-{TOK_SECTIONSETSIZE,"SectionSetSize",2,0,"section_index new_size",TP_CODE},
-{TOK_GETCURINSTTYPE,"GetCurInstType",1,0,"$(user_var: output inst_type_idx)",TP_CODE},
-{TOK_SETCURINSTTYPE,"SetCurInstType",1,0,"inst_type_idx",TP_CODE},
-{TOK_INSTTYPESETTEXT,"InstTypeSetText",2,0,"insttype_index flags",TP_CODE},
-{TOK_INSTTYPEGETTEXT,"InstTypeGetText",2,0,"insttype_index $(user_var: output flags)",TP_CODE},
-{TOK_SENDMESSAGE,"SendMessage",4,2,"hwnd message [wparam|STR:wParam] [lparam|STR:lParam] [$(user_var: return value)] [/TIMEOUT=X]",TP_CODE},
-{TOK_SETAUTOCLOSE,"SetAutoClose",1,0,"(false|true)",TP_CODE},
-{TOK_SETCTLCOLORS,"SetCtlColors",2,2,"hwnd [/BRANDING] [text_color] [transparent|bg_color]",TP_CODE},
-{TOK_SETBRANDINGIMAGE,"SetBrandingImage",1,2,"[/IMGID=image_item_id_in_dialog] [/RESIZETOFIT] bitmap.bmp",TP_CODE},
-{TOK_SETCOMPRESS,"SetCompress",1,0,"(off|auto|force)",TP_ALL},
-{TOK_SETCOMPRESSOR,"SetCompressor",1,2,"[/FINAL] [/SOLID] (zlib|bzip2|lzma)",TP_GLOBAL},
-{TOK_SETCOMPRESSORDICTSIZE,"SetCompressorDictSize",1,0,"dict_size_mb",TP_ALL},
-{TOK_SETCOMPRESSIONLEVEL,"SetCompressionLevel",1,0,"level_0-9",TP_ALL},
-{TOK_SETDATESAVE,"SetDateSave",1,0,"(off|on)",TP_ALL},
-{TOK_SETDETAILSVIEW,"SetDetailsView",1,0,"(hide|show)",TP_CODE},
-{TOK_SETDETAILSPRINT,"SetDetailsPrint",1,0,"(none|listonly|textonly|both)",TP_CODE},
-{TOK_SETERRORS,"SetErrors",0,0,"",TP_CODE},
-{TOK_SETERRORLEVEL,"SetErrorLevel",1,0,"error_level",TP_CODE},
-{TOK_GETERRORLEVEL,"GetErrorLevel",1,0,"$(user_var: output)",TP_CODE},
-{TOK_SETFILEATTRIBUTES,"SetFileAttributes",2,0,"file attribute[|attribute[...]]\n    attribute=(NORMAL|ARCHIVE|HIDDEN|OFFLINE|READONLY|SYSTEM|TEMPORARY|0)",TP_CODE},
-{TOK_SETFONT,"SetFont",2,1,"[/LANG=lang_id] font_face_name font_size",TP_GLOBAL},
-{TOK_SETOUTPATH,"SetOutPath",1,0,"output_path",TP_CODE},
-{TOK_SETOVERWRITE,"SetOverwrite",1,0,"on|off|try|ifnewer|ifdiff",TP_ALL},
-{TOK_SETPLUGINUNLOAD,"SetPluginUnload",1,0,"deprecated - plug-ins should handle this on their own",TP_ALL},
-{TOK_SETREBOOTFLAG,"SetRebootFlag",1,0,"true|false",TP_CODE},
-{TOK_SETREGVIEW,"SetRegView",1,0,"32|64|lastused",TP_CODE},
-{TOK_SETSHELLVARCONTEXT,"SetShellVarContext",1,0,"all|current",TP_CODE},
-{TOK_SETSILENT,"SetSilent",1,0,"silent|normal",TP_CODE},
-{TOK_SHOWDETAILS,"ShowInstDetails",1,0,"(hide|show|nevershow)",TP_GLOBAL},
-{TOK_SHOWDETAILSUNINST,"ShowUninstDetails",1,0,"(hide|show|nevershow)",TP_GLOBAL},
-{TOK_SHOWWINDOW,"ShowWindow",2,0,"hwnd show_state",TP_CODE},
-{TOK_SILENTINST,"SilentInstall",1,0,"(normal|silent|silentlog)",TP_GLOBAL},
-{TOK_SILENTUNINST,"SilentUnInstall",1,0,"(normal|silent)",TP_GLOBAL},
-{TOK_SLEEP,"Sleep",1,0,"sleep_time_in_ms",TP_CODE},
-{TOK_STRCMP,"StrCmp",3,1,"str1 str2 label_to_goto_if_equal [label_to_goto_if_not]",TP_CODE},
-{TOK_STRCMPS,"StrCmpS",3,1,"str1 str2 label_to_goto_if_equal [label_to_goto_if_not]",TP_CODE},
-{TOK_STRCPY,"StrCpy",2,2,"$(user_var: output) str [maxlen] [startoffset]",TP_CODE},
-{TOK_STRLEN,"StrLen",2,0,"$(user_var: length output) str",TP_CODE},
-{TOK_SUBCAPTION,"SubCaption",2,0,"page_number(0-4) new_subcaption",TP_GLOBAL},
-{TOK_UNINSTALLEXENAME,"UninstallExeName",0,0,"no longer supported, use WriteUninstaller from section.",TP_ALL},
-{TOK_UNINSTCAPTION,"UninstallCaption",1,0,"uninstaller_caption",TP_GLOBAL},
-{TOK_UNINSTICON,"UninstallIcon",1,0,"icon_on_local_system.ico",TP_GLOBAL},
+{TOK_PAGECALLBACKS,_T("PageCallbacks"),0,3,_T("([creator_function] [leave_function]) | ([pre_function] [show_function] [leave_function])"),TP_PAGEEX},
+{TOK_PAGEEX,_T("PageEx"),1,0,_T("[un.](custom|uninstConfirm|license|components|directory|instfiles)"),TP_GLOBAL},
+{TOK_PAGEEXEND,_T("PageExEnd"),0,0,_T(""),TP_PAGEEX},
+{TOK_POP,_T("Pop"),1,0,_T("$(user_var: output)"),TP_CODE},
+{TOK_PUSH,_T("Push"),1,0,_T("string"),TP_CODE},
+{TOK_QUIT,_T("Quit"),0,0,_T(""),TP_CODE},
+{TOK_READINISTR,_T("ReadINIStr"),4,0,_T("$(user_var: output) ini_file section entry_name"),TP_CODE},
+{TOK_READREGDWORD,_T("ReadRegDWORD"),4,0,_T("$(user_var: output) rootkey subkey entry\n   root_key=(HKCR|HKLM|HKCU|HKU|HKCC|HKDD|HKPD|SHCTX)"),TP_CODE},
+{TOK_READREGSTR,_T("ReadRegStr"),4,0,_T("$(user_var: output) rootkey subkey entry\n   root_key=(HKCR|HKLM|HKCU|HKU|HKCC|HKDD|HKPD|SHCTX)"),TP_CODE},
+{TOK_READENVSTR,_T("ReadEnvStr"),2,0,_T("$(user_var: output) name"),TP_CODE},
+{TOK_REBOOT,_T("Reboot"),0,0,_T(""),TP_CODE},
+{TOK_REGDLL,_T("RegDLL"),1,1,_T("dll_path_on_target.dll [entrypoint_symbol]"),TP_CODE},
+{TOK_RENAME,_T("Rename"),2,1,_T("[/REBOOTOK] source_file destination_file"),TP_CODE},
+{TOK_RET,_T("Return"),0,0,_T(""),TP_CODE},
+{TOK_RMDIR,_T("RMDir"),1,2,_T("[/r] [/REBOOTOK] directory_name"),TP_CODE},
+{TOK_SECTION,_T("Section"),0,3,_T("[/o] [-][un.][section_name] [section index output]"),TP_GLOBAL},
+{TOK_SECTIONEND,_T("SectionEnd"),0,0,_T(""),TP_SEC},
+{TOK_SECTIONIN,_T("SectionIn"),1,-1,_T("InstTypeIdx [InstTypeIdx [...]]"),TP_SEC},
+{TOK_SUBSECTION,_T("SubSection"),1,2,_T("deprecated - use SectionGroup"),TP_GLOBAL},
+{TOK_SECTIONGROUP,_T("SectionGroup"),1,2,_T("[/e] [un.]section_group_name [section index output]"),TP_GLOBAL},
+{TOK_SUBSECTIONEND,_T("SubSectionEnd"),0,0,_T("deprecated - use SectionGroupEnd"),TP_GLOBAL},
+{TOK_SECTIONGROUPEND,_T("SectionGroupEnd"),0,0,_T(""),TP_GLOBAL},
+{TOK_SEARCHPATH,_T("SearchPath"),2,0,_T("$(user_var: result) filename"),TP_CODE},
+{TOK_SECTIONSETFLAGS,_T("SectionSetFlags"),2,0,_T("section_index flags"),TP_CODE},
+{TOK_SECTIONGETFLAGS,_T("SectionGetFlags"),2,0,_T("section_index $(user_var: output flags)"),TP_CODE},
+{TOK_SECTIONSETINSTTYPES,_T("SectionSetInstTypes"),2,0,_T("section_index inst_types"),TP_CODE},
+{TOK_SECTIONGETINSTTYPES,_T("SectionGetInstTypes"),2,0,_T("section_index $(user_var: output inst_types)"),TP_CODE},
+{TOK_SECTIONGETTEXT,_T("SectionGetText"),2,0,_T("section_index $(user_var: output text)"),TP_CODE},
+{TOK_SECTIONSETTEXT,_T("SectionSetText"),2,0,_T("section_index text_string"),TP_CODE},
+{TOK_SECTIONGETSIZE,_T("SectionGetSize"),2,0,_T("section_index $(user_var: output size)"),TP_CODE},
+{TOK_SECTIONSETSIZE,_T("SectionSetSize"),2,0,_T("section_index new_size"),TP_CODE},
+{TOK_GETCURINSTTYPE,_T("GetCurInstType"),1,0,_T("$(user_var: output inst_type_idx)"),TP_CODE},
+{TOK_SETCURINSTTYPE,_T("SetCurInstType"),1,0,_T("inst_type_idx"),TP_CODE},
+{TOK_INSTTYPESETTEXT,_T("InstTypeSetText"),2,0,_T("insttype_index flags"),TP_CODE},
+{TOK_INSTTYPEGETTEXT,_T("InstTypeGetText"),2,0,_T("insttype_index $(user_var: output flags)"),TP_CODE},
+{TOK_SENDMESSAGE,_T("SendMessage"),4,2,_T("hwnd message [wparam|STR:wParam] [lparam|STR:lParam] [$(user_var: return value)] [/TIMEOUT=X]"),TP_CODE},
+{TOK_SETAUTOCLOSE,_T("SetAutoClose"),1,0,_T("(false|true)"),TP_CODE},
+{TOK_SETCTLCOLORS,_T("SetCtlColors"),2,2,_T("hwnd [/BRANDING] [text_color] [transparent|bg_color]"),TP_CODE},
+{TOK_SETBRANDINGIMAGE,_T("SetBrandingImage"),1,2,_T("[/IMGID=image_item_id_in_dialog] [/RESIZETOFIT] bitmap.bmp"),TP_CODE},
+{TOK_SETCOMPRESS,_T("SetCompress"),1,0,_T("(off|auto|force)"),TP_ALL},
+{TOK_SETCOMPRESSOR,_T("SetCompressor"),1,2,_T("[/FINAL] [/SOLID] (zlib|bzip2|lzma)"),TP_GLOBAL},
+{TOK_SETCOMPRESSORDICTSIZE,_T("SetCompressorDictSize"),1,0,_T("dict_size_mb"),TP_ALL},
+{TOK_SETCOMPRESSIONLEVEL,_T("SetCompressionLevel"),1,0,_T("level_0-9"),TP_ALL},
+{TOK_SETDATESAVE,_T("SetDateSave"),1,0,_T("(off|on)"),TP_ALL},
+{TOK_SETDETAILSVIEW,_T("SetDetailsView"),1,0,_T("(hide|show)"),TP_CODE},
+{TOK_SETDETAILSPRINT,_T("SetDetailsPrint"),1,0,_T("(none|listonly|textonly|both)"),TP_CODE},
+{TOK_SETERRORS,_T("SetErrors"),0,0,_T(""),TP_CODE},
+{TOK_SETERRORLEVEL,_T("SetErrorLevel"),1,0,_T("error_level"),TP_CODE},
+{TOK_GETERRORLEVEL,_T("GetErrorLevel"),1,0,_T("$(user_var: output)"),TP_CODE},
+{TOK_SETFILEATTRIBUTES,_T("SetFileAttributes"),2,0,_T("file attribute[|attribute[...]]\n    attribute=(NORMAL|ARCHIVE|HIDDEN|OFFLINE|READONLY|SYSTEM|TEMPORARY|0)"),TP_CODE},
+{TOK_SETFONT,_T("SetFont"),2,1,_T("[/LANG=lang_id] font_face_name font_size"),TP_GLOBAL},
+{TOK_SETOUTPATH,_T("SetOutPath"),1,0,_T("output_path"),TP_CODE},
+{TOK_SETOVERWRITE,_T("SetOverwrite"),1,0,_T("on|off|try|ifnewer|ifdiff"),TP_ALL},
+{TOK_SETPLUGINUNLOAD,_T("SetPluginUnload"),1,0,_T("deprecated - plug-ins should handle this on their own"),TP_ALL},
+{TOK_SETREBOOTFLAG,_T("SetRebootFlag"),1,0,_T("true|false"),TP_CODE},
+{TOK_SETREGVIEW,_T("SetRegView"),1,0,_T("32|64|lastused"),TP_CODE},
+{TOK_SETSHELLVARCONTEXT,_T("SetShellVarContext"),1,0,_T("all|current"),TP_CODE},
+{TOK_SETSILENT,_T("SetSilent"),1,0,_T("silent|normal"),TP_CODE},
+{TOK_SHOWDETAILS,_T("ShowInstDetails"),1,0,_T("(hide|show|nevershow)"),TP_GLOBAL},
+{TOK_SHOWDETAILSUNINST,_T("ShowUninstDetails"),1,0,_T("(hide|show|nevershow)"),TP_GLOBAL},
+{TOK_SHOWWINDOW,_T("ShowWindow"),2,0,_T("hwnd show_state"),TP_CODE},
+{TOK_SILENTINST,_T("SilentInstall"),1,0,_T("(normal|silent|silentlog)"),TP_GLOBAL},
+{TOK_SILENTUNINST,_T("SilentUnInstall"),1,0,_T("(normal|silent)"),TP_GLOBAL},
+{TOK_SLEEP,_T("Sleep"),1,0,_T("sleep_time_in_ms"),TP_CODE},
+{TOK_STRCMP,_T("StrCmp"),3,1,_T("str1 str2 label_to_goto_if_equal [label_to_goto_if_not]"),TP_CODE},
+{TOK_STRCMPS,_T("StrCmpS"),3,1,_T("str1 str2 label_to_goto_if_equal [label_to_goto_if_not]"),TP_CODE},
+{TOK_STRCPY,_T("StrCpy"),2,2,_T("$(user_var: output) str [maxlen] [startoffset]"),TP_CODE},
+{TOK_STRLEN,_T("StrLen"),2,0,_T("$(user_var: length output) str"),TP_CODE},
+{TOK_SUBCAPTION,_T("SubCaption"),2,0,_T("page_number(0-4) new_subcaption"),TP_GLOBAL},
+{TOK_UNINSTALLEXENAME,_T("UninstallExeName"),0,0,_T("no longer supported, use WriteUninstaller from section."),TP_ALL},
+{TOK_UNINSTCAPTION,_T("UninstallCaption"),1,0,_T("uninstaller_caption"),TP_GLOBAL},
+{TOK_UNINSTICON,_T("UninstallIcon"),1,0,_T("icon_on_local_system.ico"),TP_GLOBAL},
 #ifdef NSIS_SUPPORT_CODECALLBACKS
-{TOK_UNINSTPAGE,"UninstPage",1,4,"((custom [creator_function] [leave_function] [caption]) | ((license|components|directory|instfiles|uninstConfirm) [pre_function] [show_function] [leave_function])) [/ENABLECANCEL]",TP_GLOBAL},
+{TOK_UNINSTPAGE,_T("UninstPage"),1,4,_T("((custom [creator_function] [leave_function] [caption]) | ((license|components|directory|instfiles|uninstConfirm) [pre_function] [show_function] [leave_function])) [/ENABLECANCEL]"),TP_GLOBAL},
 #else
-{TOK_UNINSTPAGE,"UninstPage",1,1,"license|components|directory|instfiles|uninstConfirm [/ENABLECANCEL]",TP_GLOBAL},
+{TOK_UNINSTPAGE,_T("UninstPage"),1,1,_T("license|components|directory|instfiles|uninstConfirm [/ENABLECANCEL]"),TP_GLOBAL},
 #endif
-{TOK_UNINSTTEXT,"UninstallText",1,1,"Text_to_go_on_uninstall_page [subtext]",TP_PG},
-{TOK_UNINSTSUBCAPTION,"UninstallSubCaption",2,0,"page_number(0-2) new_subcaption",TP_GLOBAL},
-{TOK_UNREGDLL,"UnRegDLL",1,0,"dll_path_on_target.dll",TP_CODE},
-{TOK_WINDOWICON,"WindowIcon",1,0,"on|off",TP_GLOBAL},
-{TOK_WRITEINISTR,"WriteINIStr",4,0,"ini_file section_name entry_name new_value",TP_CODE},
-{TOK_WRITEREGBIN,"WriteRegBin",4,0,"rootkey subkey entry_name hex_string_like_12848412AB\n    root_key=(HKCR|HKLM|HKCU|HKU|HKCC|HKDD|HKPD|SHCTX)",TP_CODE},
-{TOK_WRITEREGDWORD,"WriteRegDWORD",4,0,"rootkey subkey entry_name new_value_dword\n    root_key=(HKCR|HKLM|HKCU|HKU|HKCC|HKDD|HKPD|SHCTX)",TP_CODE},
-{TOK_WRITEREGSTR,"WriteRegStr",4,0,"rootkey subkey entry_name new_value_string\n    root_key=(HKCR|HKLM|HKCU|HKU|HKCC|HKDD|HKPD|SHCTX)",TP_CODE},
-{TOK_WRITEREGEXPANDSTR,"WriteRegExpandStr",4,0,"rootkey subkey entry_name new_value_string\n    root_key=(HKCR|HKLM|HKCU|HKU|HKCC|HKDD|HKPD|SHCTX)",TP_CODE},
-{TOK_WRITEUNINSTALLER,"WriteUninstaller",1,0,"uninstall_exe_name",TP_CODE},
-{TOK_XPSTYLE, "XPStyle",1,0,"(on|off)",TP_GLOBAL},
-{TOK_REQEXECLEVEL, "RequestExecutionLevel",1,0,"none|user|highest|admin",TP_GLOBAL},
-{TOK_P_PACKEXEHEADER,"!packhdr",2,0,"temp_file_name command_line_to_compress_that_temp_file",TP_ALL},
-{TOK_P_SYSTEMEXEC,"!system",1,2,"command [<|>|<>|=) retval]",TP_ALL},
-{TOK_P_EXECUTE,"!execute",1,0,"command",TP_ALL},
-{TOK_P_ADDINCLUDEDIR,"!AddIncludeDir",1,0,"dir",TP_ALL},
-{TOK_P_INCLUDE,"!include",1,1,"[/NONFATAL] filename.nsh",TP_ALL},
-{TOK_P_CD,"!cd",1,0,"absolute_or_relative_new_directory",TP_ALL},
-{TOK_P_IF,"!if",1,3,"[!] value [(==,!=,<=,<,>,>=,&&,||) value2] [...]",TP_ALL},
-{TOK_P_IFDEF,"!ifdef",1,-1,"symbol [| symbol2 [& symbol3 [...]]]",TP_ALL},
-{TOK_P_IFNDEF,"!ifndef",1,-1,"symbol [| symbol2 [& symbol3 [...]]]",TP_ALL},
-{TOK_P_ENDIF,"!endif",0,0,"",TP_ALL},
-{TOK_P_DEFINE,"!define",1,4,"([/date|/utcdate] symbol [value]) | (/file symbol filename) | (/math symbol val1 OP val2)\n    OP=(+ - * / % & | ^)",TP_ALL},
-{TOK_P_UNDEF,"!undef",1,1,"symbol [value]",TP_ALL},
-{TOK_P_ELSE,"!else",0,-1,"[if[macro][n][def] ...]",TP_ALL},
-{TOK_P_ECHO,"!echo",1,0,"message",TP_ALL},
-{TOK_P_WARNING,"!warning",0,1,"[warning_message]",TP_ALL},
-{TOK_P_ERROR,"!error",0,1,"[error_message]",TP_ALL},
+{TOK_UNINSTTEXT,_T("UninstallText"),1,1,_T("Text_to_go_on_uninstall_page [subtext]"),TP_PG},
+{TOK_UNINSTSUBCAPTION,_T("UninstallSubCaption"),2,0,_T("page_number(0-2) new_subcaption"),TP_GLOBAL},
+{TOK_UNREGDLL,_T("UnRegDLL"),1,0,_T("dll_path_on_target.dll"),TP_CODE},
+{TOK_WINDOWICON,_T("WindowIcon"),1,0,_T("on|off"),TP_GLOBAL},
+{TOK_WRITEINISTR,_T("WriteINIStr"),4,0,_T("ini_file section_name entry_name new_value"),TP_CODE},
+{TOK_WRITEREGBIN,_T("WriteRegBin"),4,0,_T("rootkey subkey entry_name hex_string_like_12848412AB\n    root_key=(HKCR|HKLM|HKCU|HKU|HKCC|HKDD|HKPD|SHCTX)"),TP_CODE},
+{TOK_WRITEREGDWORD,_T("WriteRegDWORD"),4,0,_T("rootkey subkey entry_name new_value_dword\n    root_key=(HKCR|HKLM|HKCU|HKU|HKCC|HKDD|HKPD|SHCTX)"),TP_CODE},
+{TOK_WRITEREGSTR,_T("WriteRegStr"),4,0,_T("rootkey subkey entry_name new_value_string\n    root_key=(HKCR|HKLM|HKCU|HKU|HKCC|HKDD|HKPD|SHCTX)"),TP_CODE},
+{TOK_WRITEREGEXPANDSTR,_T("WriteRegExpandStr"),4,0,_T("rootkey subkey entry_name new_value_string\n    root_key=(HKCR|HKLM|HKCU|HKU|HKCC|HKDD|HKPD|SHCTX)"),TP_CODE},
+{TOK_WRITEUNINSTALLER,_T("WriteUninstaller"),1,0,_T("uninstall_exe_name"),TP_CODE},
+{TOK_XPSTYLE, _T("XPStyle"),1,0,_T("(on|off)"),TP_GLOBAL},
+{TOK_REQEXECLEVEL, _T("RequestExecutionLevel"),1,0,_T("none|user|highest|admin"),TP_GLOBAL},
+{TOK_P_PACKEXEHEADER,_T("!packhdr"),2,0,_T("temp_file_name command_line_to_compress_that_temp_file"),TP_ALL},
+{TOK_P_SYSTEMEXEC,_T("!system"),1,2,_T("command [<|>|<>|=) retval]"),TP_ALL},
+{TOK_P_EXECUTE,_T("!execute"),1,0,_T("command"),TP_ALL},
+{TOK_P_ADDINCLUDEDIR,_T("!AddIncludeDir"),1,0,_T("dir"),TP_ALL},
+{TOK_P_INCLUDE,_T("!include"),1,1,_T("[/NONFATAL] filename.nsh"),TP_ALL},
+{TOK_P_CD,_T("!cd"),1,0,_T("absolute_or_relative_new_directory"),TP_ALL},
+{TOK_P_IF,_T("!if"),1,3,_T("[!] value [(==,!=,<=,<,>,>=,&&,||) value2] [...]"),TP_ALL},
+{TOK_P_IFDEF,_T("!ifdef"),1,-1,_T("symbol [| symbol2 [& symbol3 [...]]]"),TP_ALL},
+{TOK_P_IFNDEF,_T("!ifndef"),1,-1,_T("symbol [| symbol2 [& symbol3 [...]]]"),TP_ALL},
+{TOK_P_ENDIF,_T("!endif"),0,0,_T(""),TP_ALL},
+{TOK_P_DEFINE,_T("!define"),1,4,_T("([/date|/utcdate] symbol [value]) | (/file symbol filename) | (/math symbol val1 OP val2)\n    OP=(+ - * / % & | ^)"),TP_ALL},
+{TOK_P_UNDEF,_T("!undef"),1,1,_T("symbol [value]"),TP_ALL},
+{TOK_P_ELSE,_T("!else"),0,-1,_T("[if[macro][n][def] ...]"),TP_ALL},
+{TOK_P_ECHO,_T("!echo"),1,0,_T("message"),TP_ALL},
+{TOK_P_WARNING,_T("!warning"),0,1,_T("[warning_message]"),TP_ALL},
+{TOK_P_ERROR,_T("!error"),0,1,_T("[error_message]"),TP_ALL},
 
-{TOK_P_VERBOSE,"!verbose",1,0,"verbose_level | push | pop",TP_ALL},
+{TOK_P_VERBOSE,_T("!verbose"),1,0,_T("verbose_level | push | pop"),TP_ALL},
 
-{TOK_P_MACRO,"!macro",1,-1,"macroname [parms ...]",TP_ALL},
-{TOK_P_MACROEND,"!macroend",0,0,"",TP_ALL},
-{TOK_P_INSERTMACRO,"!insertmacro",1,-1,"macroname [parms ...]",TP_ALL},
-{TOK_P_IFMACRODEF,"!ifmacrodef",1,-1,"macro [| macro2 [& macro3 [...]]]",TP_ALL},
-{TOK_P_IFMACRONDEF,"!ifmacrondef",1,-1,"macro [| macro2 [& macro3 [...]]]",TP_ALL},
+{TOK_P_MACRO,_T("!macro"),1,-1,_T("macroname [parms ...]"),TP_ALL},
+{TOK_P_MACROEND,_T("!macroend"),0,0,_T(""),TP_ALL},
+{TOK_P_INSERTMACRO,_T("!insertmacro"),1,-1,_T("macroname [parms ...]"),TP_ALL},
+{TOK_P_IFMACRODEF,_T("!ifmacrodef"),1,-1,_T("macro [| macro2 [& macro3 [...]]]"),TP_ALL},
+{TOK_P_IFMACRONDEF,_T("!ifmacrondef"),1,-1,_T("macro [| macro2 [& macro3 [...]]]"),TP_ALL},
 
-{TOK_P_TEMPFILE,"!tempfile",1,0,"symbol",TP_ALL},
-{TOK_P_DELFILE,"!delfile",1,1,"[/nonfatal] file",TP_ALL},
-{TOK_P_APPENDFILE,"!appendfile",2,0,"file appended_line",TP_ALL},
+{TOK_P_TEMPFILE,_T("!tempfile"),1,0,_T("symbol"),TP_ALL},
+{TOK_P_DELFILE,_T("!delfile"),1,1,_T("[/nonfatal] file"),TP_ALL},
+{TOK_P_APPENDFILE,_T("!appendfile"),2,0,_T("file appended_line"),TP_ALL},
 
-{TOK_P_SEARCHPARSESTRING,"!searchparse",3,-1,"[/ignorecase] [/noerrors] [/file] source_string substring OUTPUTSYM1 [substring [OUTPUTSYM2 [substring ...]]]",TP_ALL},
-{TOK_P_SEARCHREPLACESTRING,"!searchreplace",4,1,"[/ignorecase] output_name source_string substring replacestring", TP_ALL},
+{TOK_P_SEARCHPARSESTRING,_T("!searchparse"),3,-1,_T("[/ignorecase] [/noerrors] [/file] source_string substring OUTPUTSYM1 [substring [OUTPUTSYM2 [substring ...]]]"),TP_ALL},
+{TOK_P_SEARCHREPLACESTRING,_T("!searchreplace"),4,1,_T("[/ignorecase] output_name source_string substring replacestring"), TP_ALL},
 
-{TOK_MISCBUTTONTEXT,"MiscButtonText",0,4,"[back button text] [next button text] [cancel button text] [close button text]",TP_GLOBAL},
-{TOK_DETAILSBUTTONTEXT,"DetailsButtonText",0,1,"[details button text]",TP_PG},
-{TOK_UNINSTBUTTONTEXT,"UninstallButtonText",0,1,"[uninstall button text]",TP_GLOBAL},
-{TOK_INSTBUTTONTEXT,"InstallButtonText",0,1,"[install button text]",TP_GLOBAL},
-{TOK_SPACETEXTS,"SpaceTexts",0,2,"none | ([space required text] [space available text])",TP_GLOBAL},
-{TOK_COMPLETEDTEXT,"CompletedText",0,1,"[completed text]",TP_PG},
+{TOK_MISCBUTTONTEXT,_T("MiscButtonText"),0,4,_T("[back button text] [next button text] [cancel button text] [close button text]"),TP_GLOBAL},
+{TOK_DETAILSBUTTONTEXT,_T("DetailsButtonText"),0,1,_T("[details button text]"),TP_PG},
+{TOK_UNINSTBUTTONTEXT,_T("UninstallButtonText"),0,1,_T("[uninstall button text]"),TP_GLOBAL},
+{TOK_INSTBUTTONTEXT,_T("InstallButtonText"),0,1,_T("[install button text]"),TP_GLOBAL},
+{TOK_SPACETEXTS,_T("SpaceTexts"),0,2,_T("none | ([space required text] [space available text])"),TP_GLOBAL},
+{TOK_COMPLETEDTEXT,_T("CompletedText"),0,1,_T("[completed text]"),TP_PG},
 
-{TOK_GETFUNCTIONADDR,"GetFunctionAddress",2,0,"output function",TP_CODE},
-{TOK_GETLABELADDR,"GetLabelAddress",2,0,"output label",TP_CODE},
-{TOK_GETCURRENTADDR,"GetCurrentAddress",1,0,"output",TP_CODE},
+{TOK_GETFUNCTIONADDR,_T("GetFunctionAddress"),2,0,_T("output function"),TP_CODE},
+{TOK_GETLABELADDR,_T("GetLabelAddress"),2,0,_T("output label"),TP_CODE},
+{TOK_GETCURRENTADDR,_T("GetCurrentAddress"),1,0,_T("output"),TP_CODE},
 
-{TOK_PLUGINDIR,"!AddPluginDir",1,0,"new_plugin_directory",TP_ALL},
-{TOK_INITPLUGINSDIR,"InitPluginsDir",0,0,"",TP_CODE},
+{TOK_PLUGINDIR,_T("!AddPluginDir"),1,0,_T("new_plugin_directory"),TP_ALL},
+{TOK_INITPLUGINSDIR,_T("InitPluginsDir"),0,0,_T(""),TP_CODE},
 // Added by ramon 23 May 2003
-{TOK_ALLOWSKIPFILES,"AllowSkipFiles",1,0,"(off|on)",TP_ALL},
+{TOK_ALLOWSKIPFILES,_T("AllowSkipFiles"),1,0,_T("(off|on)"),TP_ALL},
 // Added by ramon 3 jun 2003
-{TOK_DEFVAR,"Var",1,1,"[/GLOBAL] var_name",TP_ALL},
+{TOK_DEFVAR,_T("Var"),1,1,_T("[/GLOBAL] var_name"),TP_ALL},
 // Added by ramon 6 jun 2003
-{TOK_VI_ADDKEY,"VIAddVersionKey",2,1,"/LANG=lang_id keyname value",TP_GLOBAL},
-{TOK_VI_SETPRODUCTVERSION,"VIProductVersion",1,0,"[version_string_X.X.X.X]",TP_GLOBAL},
-{TOK_LOCKWINDOW,"LockWindow",1,0,"(on|off)",TP_CODE},
+{TOK_VI_ADDKEY,_T("VIAddVersionKey"),2,1,_T("/LANG=lang_id keyname value"),TP_GLOBAL},
+{TOK_VI_SETPRODUCTVERSION,_T("VIProductVersion"),1,0,_T("[version_string_X.X.X.X]"),TP_GLOBAL},
+{TOK_LOCKWINDOW,_T("LockWindow"),1,0,_T("(on|off)"),TP_CODE},
 };
 
-void CEXEBuild::print_help(char *commandname)
+void CEXEBuild::print_help(TCHAR *commandname)
 {
   int x;
   for (x = 0; x < TOK__LAST; x ++)
   {
     if (!commandname || !stricmp(tokenlist[x].name,commandname))
     {
-      ERROR_MSG("%s%s %s\n",commandname?"Usage: ":"",tokenlist[x].name,tokenlist[x].usage_str);
+      ERROR_MSG(_T("%s%s %s\n"),commandname?_T("Usage: "):_T(""),tokenlist[x].name,tokenlist[x].usage_str);
       if (commandname) break;
     }
   }
   if (x == TOK__LAST && commandname)
   {
-    ERROR_MSG("Invalid command \"%s\"\n",commandname);
+    ERROR_MSG(_T("Invalid command \"%s\"\n"),commandname);
   }
 
 }
 
-bool CEXEBuild::is_valid_token(char *s)
+bool CEXEBuild::is_valid_token(TCHAR *s)
 {
   for (int x = 0; x < TOK__LAST; x ++)
     if (!stricmp(tokenlist[x].name,s)) 
@@ -309,7 +311,7 @@ bool CEXEBuild::is_valid_token(char *s)
   return false;
 }
 
-int CEXEBuild::get_commandtoken(char *s, int *np, int *op, int *pos)
+int CEXEBuild::get_commandtoken(TCHAR *s, int *np, int *op, int *pos)
 {
   int x;
   for (x = 0; x < TOK__LAST; x ++)
@@ -343,7 +345,7 @@ int CEXEBuild::GetCurrentTokenPlace()
   return TP_GLOBAL;
 }
 
-int CEXEBuild::IsTokenPlacedRight(int pos, char *tok)
+int CEXEBuild::IsTokenPlacedRight(int pos, TCHAR *tok)
 {
   if ((unsigned int) pos > (sizeof(tokenlist) / sizeof(tokenType)))
     return PS_OK;
@@ -354,45 +356,45 @@ int CEXEBuild::IsTokenPlacedRight(int pos, char *tok)
     return PS_OK;
   }
   else {
-    char err[1024];
+    TCHAR err[1024];
     if (cp == TP_SEC) {
-      strcpy(err, "Error: command %s not valid in Section\n");
+      _tcscpy(err, _T("Error: command %s not valid in Section\n"));
     }
     else if (cp == TP_FUNC) {
-      strcpy(err, "Error: command %s not valid in Function\n");
+      _tcscpy(err, _T("Error: command %s not valid in Function\n"));
     }
     else if (cp == TP_PAGEEX) {
-      strcpy(err, "Error: command %s not valid in PageEx\n");
+      _tcscpy(err, _T("Error: command %s not valid in PageEx\n"));
     }
     else
     {
-      strcpy(err, "Error: command %s not valid outside ");
+      _tcscpy(err, _T("Error: command %s not valid outside "));
       if (tp & TP_SEC)
-        strcat(err, "Section");
+        _tcscat(err, _T("Section"));
       if (tp & TP_FUNC)
       {
         if (tp & TP_SEC)
         {
           if (tp & TP_PAGEEX)
           {
-            strcat(err, ", ");
+            _tcscat(err, _T(", "));
           }
           else
           {
-            strcat(err, " or ");
+            _tcscat(err, _T(" or "));
           }
         }
-        strcat(err, "Function");
+        _tcscat(err, _T("Function"));
       }
       if (tp & TP_PAGEEX)
       {
         if (tp & TP_CODE)
         {
-          strcat(err, " or ");
+          _tcscat(err, _T(" or "));
         }
-        strcat(err, "PageEx");
+        _tcscat(err, _T("PageEx"));
       }
-      strcat(err, "\n");
+      _tcscat(err, _T("\n"));
     }
     ERROR_MSG(err, tok);
     return PS_ERROR;

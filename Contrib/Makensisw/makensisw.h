@@ -18,6 +18,7 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 
+  Unicode support by Jim Park -- 08/10/2007
 */
 #ifndef MAKENSIS_H
 #define MAKENSIS_H
@@ -25,6 +26,7 @@
 #define _WIN32_IE 0x0400
 #include <windows.h>
 #include <commctrl.h>
+#include "../ExDLL/nsis_tchar.h"
 #include "utils.h"
 #define _RICHEDIT_VER 0x0200
 #include <richedit.h>
@@ -35,39 +37,39 @@
 #define NSIS_FOR     "http://forums.winamp.com/forumdisplay.php?forumid=65"
 #define NSIS_UPDATE  "http://nsis.sourceforge.net/update.php?version="
 #define NSIS_DL_URL  "http://nsis.sourceforge.net/download/"
-#define USAGE        "Usage:\r\n\r\n - File | Load Script...\r\n - Drag the .nsi file into this window\r\n - Right click the .nsi file and choose \"Compile NSIS Script\""
-#define COPYRIGHT    "Copyright © 2002 Robert Rainwater"
-#define CONTRIB      "Fritz Elfert, Justin Frankel, Amir Szekely, Sunil Kamath, Joost Verburg"
+#define USAGE        _T("Usage:\r\n\r\n - File | Load Script...\r\n - Drag the .nsi file into this window\r\n - Right click the .nsi file and choose \"Compile NSIS Script\"")
+#define COPYRIGHT    _T("Copyright © 2002 Robert Rainwater")
+#define CONTRIB      _T("Fritz Elfert, Justin Frankel, Amir Szekely, Sunil Kamath, Joost Verburg")
 #define DOCPATH      "http://nsis.sourceforge.net/Docs/"
-#define LOCALDOCS    "\\NSIS.chm"
-#define NSISERROR    "Unable to intialize MakeNSIS.  Please verify that makensis.exe is in the same directory as makensisw.exe."
-#define DLGERROR     "Unable to intialize MakeNSISW."
-#define SYMBOLSERROR "Symbol cannot contain whitespace characters"
-#define MULTIDROPERROR "Dropping more than one script at a time is not supported"
-#define NSISUPDATEPROMPT "Running NSIS Update will close MakeNSISW.\nContinue?"
+#define LOCALDOCS    _T("\\NSIS.chm")
+#define NSISERROR    _T("Unable to intialize MakeNSIS.  Please verify that makensis.exe is in the same directory as makensisw.exe.")
+#define DLGERROR     _T("Unable to intialize MakeNSISW.")
+#define SYMBOLSERROR _T("Symbol cannot contain whitespace characters")
+#define MULTIDROPERROR _T("Dropping more than one script at a time is not supported")
+#define NSISUPDATEPROMPT _T("Running NSIS Update will close MakeNSISW.\nContinue?")
 #define REGSEC       HKEY_CURRENT_USER
 #define REGSECDEF    HKEY_LOCAL_MACHINE
-#define REGKEY       "Software\\NSIS"
-#define REGLOC       "MakeNSISWPlacement"
-#define REGCOMPRESSOR "MakeNSISWCompressor"
-#define REGSYMSUBKEY "Symbols"
-#define REGMRUSUBKEY "MRU"
-#define EXENAME      "makensis.exe"
+#define REGKEY       _T("Software\\NSIS")
+#define REGLOC       _T("MakeNSISWPlacement")
+#define REGCOMPRESSOR _T("MakeNSISWCompressor")
+#define REGSYMSUBKEY _T("Symbols")
+#define REGMRUSUBKEY _T("MRU")
+#define EXENAME      _T("makensis.exe")
 #define MAX_STRING   256
 #define TIMEOUT      100
 #define MINWIDTH     350
 #define MINHEIGHT    180
-#define COMPRESSOR_MESSAGE "\n\nThe %s compressor created the smallest installer (%d bytes)."
-#define RESTORED_COMPRESSOR_MESSAGE "\n\nThe %s compressor created the smallest installer (%d bytes)."
-#define EXE_HEADER_COMPRESSOR_STAT "EXE header size:"
-#define TOTAL_SIZE_COMPRESSOR_STAT "Total size:"
+#define COMPRESSOR_MESSAGE _T("\n\nThe %s compressor created the smallest installer (%d bytes).")
+#define RESTORED_COMPRESSOR_MESSAGE _T("\n\nThe %s compressor created the smallest installer (%d bytes).")
+#define EXE_HEADER_COMPRESSOR_STAT _T("EXE header size:")
+#define TOTAL_SIZE_COMPRESSOR_STAT _T("Total size:")
 #define SYMBOL_SET_NAME_MAXLEN 40
-#define LOAD_SYMBOL_SET_DLG_NAME "Load Symbol Definitions Set"
-#define SAVE_SYMBOL_SET_DLG_NAME "Save Symbol Definitions Set"
-#define LOAD_BUTTON_TEXT "Load"
-#define SAVE_BUTTON_TEXT "Save"
-#define LOAD_SYMBOL_SET_MESSAGE "Please select a name for the Symbol Definitions Set to load."
-#define SAVE_SYMBOL_SET_MESSAGE "Please enter or select a name for the Symbol Definitions Set to save."
+#define LOAD_SYMBOL_SET_DLG_NAME _T("Load Symbol Definitions Set")
+#define SAVE_SYMBOL_SET_DLG_NAME _T("Save Symbol Definitions Set")
+#define LOAD_BUTTON_TEXT _T("Load")
+#define SAVE_BUTTON_TEXT _T("Save")
+#define LOAD_SYMBOL_SET_MESSAGE _T("Please select a name for the Symbol Definitions Set to load.")
+#define SAVE_SYMBOL_SET_MESSAGE _T("Please enter or select a name for the Symbol Definitions Set to save.")
 
 #define WM_MAKENSIS_PROCESSCOMPLETE (WM_USER+1001)
 #define WM_MAKENSIS_LOADSYMBOLSET (WM_USER+1002)
@@ -93,22 +95,22 @@ typedef enum {
 } NCOMPRESSOR;
 
 #ifdef MAKENSISW_CPP
-char *compressor_names[] = {"",
-                            "zlib",
-                            "/SOLID zlib",
-                            "bzip2",
-                            "/SOLID bzip2",
-                            "lzma",
-                            "/SOLID lzma",
-                            "Best"};
-char *compressor_display_names[] = {"Defined in Script/Compiler Default",
-                            "ZLIB",
-                            "ZLIB (solid)",
-                            "BZIP2",
-                            "BZIP2 (solid)",
-                            "LZMA",
-                            "LZMA (solid)",
-                            "Best Compressor"};
+TCHAR *compressor_names[] = {_T(""),
+                            _T("zlib"),
+                            _T("/SOLID zlib"),
+                            _T("bzip2"),
+                            _T("/SOLID bzip2"),
+                            _T("lzma"),
+                            _T("/SOLID lzma"),
+                            _T("Best")};
+TCHAR *compressor_display_names[] = {_T("Defined in Script/Compiler Default"),
+                            _T("ZLIB"),
+                            _T("ZLIB (solid)"),
+                            _T("BZIP2"),
+                            _T("BZIP2 (solid)"),
+                            _T("LZMA"),
+                            _T("LZMA (solid)"),
+                            _T("Best Compressor")};
 WORD compressor_commands[] = {IDM_COMPRESSOR_SCRIPT,
                               IDM_ZLIB,
                               IDM_ZLIB_SOLID,
@@ -140,9 +142,9 @@ int compressor_strings[] = {IDS_SCRIPT,
 
 // Extern Variables
 
-extern const char* NSISW_VERSION;
+extern const TCHAR* NSISW_VERSION;
 
-int WINAPI     WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmdShow);
+int WINAPI     _tWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, TCHAR *cmdParam, int cmdShow);
 BOOL           CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 DWORD WINAPI   MakeNSISProc(LPVOID p);
 BOOL CALLBACK  DialogResize(HWND hWnd, LPARAM /* unused*/);
@@ -151,27 +153,27 @@ BOOL CALLBACK  AboutProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 BOOL CALLBACK  SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 BOOL CALLBACK  SymbolSetProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 BOOL CALLBACK  CompressorProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
-void           SetScript(const char *script, bool clearArgs = true);
+void           SetScript(const TCHAR *script, bool clearArgs = true);
 void           CompileNSISScript();
-char*          BuildSymbols();
+TCHAR*         BuildSymbols();
 void           SetCompressor(NCOMPRESSOR);
 void           RestoreSymbols();
 void           SaveSymbols();
-void           DeleteSymbolSet(char *);
-char**         LoadSymbolSet(char *);
-void           SaveSymbolSet(char *, char **);
+void           DeleteSymbolSet(TCHAR *);
+TCHAR**        LoadSymbolSet(TCHAR *);
+void           SaveSymbolSet(TCHAR *, TCHAR **);
 void           RestoreMRUList();
 void           SaveMRUList();
 
 typedef struct NSISScriptData {
-  char *script;
+  TCHAR *script;
   HGLOBAL script_cmd_args;
-  char *compile_command;
-  char *output_exe;
-  char *input_script;
-  char *branding;
-  char *brandingv;
-  char **symbols;
+  TCHAR *compile_command;
+  TCHAR *output_exe;
+  TCHAR *input_script;
+  TCHAR *branding;
+  TCHAR *brandingv;
+  TCHAR **symbols;
   int retcode;
   BOOL userSelectCompressor;
   DWORD logLength;
@@ -188,9 +190,9 @@ typedef struct NSISScriptData {
   CHARRANGE textrange;
   NCOMPRESSOR default_compressor;
   NCOMPRESSOR compressor;
-  char *compressor_name;
-  char compressor_stats[512];
-  char *best_compressor_name;
+  TCHAR *compressor_name;
+  TCHAR compressor_stats[512];
+  TCHAR *best_compressor_name;
   // Added by Darren Owen (DrO) on 1/10/2003
   int recompile_test;
 } NSCRIPTDATA;

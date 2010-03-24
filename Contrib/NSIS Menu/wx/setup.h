@@ -7,6 +7,9 @@
 // RCS-ID:      $Id: setup0.h,v 1.246 2006/11/09 00:54:51 VZ Exp $
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
+//
+// Reviewed for Unicode support by Jim Park -- 08/01/2007
+// (This one is the ANSI version.)
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_SETUP_H_

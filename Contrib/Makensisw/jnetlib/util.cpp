@@ -4,6 +4,12 @@
 ** Author: Justin Frankel
 ** File: util.cpp - JNL implementation of basic network utilities
 ** License: see jnetlib.h
+**
+** Reviewed for Unicode Support by Jim Park -- 08/17/2007
+** Note: The functions that work on char's should be explicitely set to use the
+** ANSI versions.  Some of the functions like wprintf() are #defined to be
+** the wide-char versions when _UNICODE is defined.  So these must be explictly
+** set to use the ANSI versions.
 */
 
 #include "netinc.h"

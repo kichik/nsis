@@ -1,3 +1,5 @@
+// Reviewed for Unicode support by Jim Park -- 08/24/2007
+
 #ifndef __NS_DIALOGS__INPUT_H__
 #define __NS_DIALOGS__INPUT_H__
 

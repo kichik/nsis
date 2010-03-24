@@ -84,10 +84,14 @@ scripts = Split("""
 	icon1.nsi
 	icon2.nsi
 	preprocessor.nsi
-	winver.nsi
 """)
 
 Import('env AddAvailableLibs')
+
+if env['UNICODE']:
+   scripts.append('Unicode/winver.nsi')
+else:
+   scripts.append('ANSI/winver.nsi')
 
 # Test scripts
 env.TestScript(scripts)

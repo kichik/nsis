@@ -7,7 +7,7 @@ typedef struct tagTempStack TempStack;
 struct tagTempStack
 {
     TempStack *Next;
-    char Data[0];
+    TCHAR Data[0];
 };
 TempStack *tempstack = NULL;
 
@@ -27,12 +27,12 @@ PLUGINFUNCTIONSHORT(Copy)
 {
     int size = 0;
     HANDLE source, dest;
-    char *str;
+    TCHAR *str;
     // Get the string
     if ((str = system_popstring()) == NULL) return;
 
     // Check for size option
-    if (str[0] == '/')
+    if (str[0] == _T('/'))
     {
         size = (int) myatoi64(str+1);
         dest = (HANDLE) popint64();
@@ -65,15 +65,15 @@ PLUGINFUNCTIONEND
 PLUGINFUNCTION(Store)
 {
     TempStack *tmp;
-    int size = ((INST_R9+1)*g_stringsize);    
+    int size = ((INST_R9+1)*g_stringsize*sizeof(TCHAR));
 
-    char *command, *cmd = command = system_popstring();
+    TCHAR *command, *cmd = command = system_popstring();
     while (*cmd != 0)
     {
         switch (*(cmd++))
         {
-        case 's':
-        case 'S':
+        case _T('s'):
+        case _T('S'):
             // Store the whole variables range
             tmp = (TempStack*) GlobalAlloc(GPTR, sizeof(TempStack)+size);
             tmp->Next = tempstack;
@@ -82,8 +82,8 @@ PLUGINFUNCTION(Store)
             // Fill with data
             copymem(tempstack->Data, g_variables, size);
             break;
-        case 'l':
-        case 'L':
+        case _T('l'):
+        case _T('L'):
             if (tempstack == NULL) break;
 
             // Fill with data
@@ -94,15 +94,15 @@ PLUGINFUNCTION(Store)
             GlobalFree((HANDLE) tempstack);
             tempstack = tmp;
             break;
-        case 'P':
+        case _T('P'):
             *cmd += 10;
-        case 'p':
-            GlobalFree((HANDLE) system_pushstring(system_getuservariable(*(cmd++)-'0')));
+        case _T('p'):
+            GlobalFree((HANDLE) system_pushstring(system_getuservariable(*(cmd++)-_T('0'))));
             break;
-        case 'R':
+        case _T('R'):
             *cmd += 10;
-        case 'r':
-            GlobalFree((HANDLE) system_setuservariable(*(cmd++)-'0', system_popstring()));
+        case _T('r'):
+            GlobalFree((HANDLE) system_setuservariable(*(cmd++)-_T('0'), system_popstring()));
             break;
         }
     }

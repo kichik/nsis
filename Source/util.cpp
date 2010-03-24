@@ -13,17 +13,17 @@
  * This software is provided 'as-is', without any express or implied
  * warranty.
  */
-
+/* Unicode support by Jim Park -- 07/23/2007 */
 #include "Platform.h"
 #include <stdio.h>
 #include <stdarg.h>
 #include <time.h>
 #include <string.h>
+#include "tchar.h"
 #include "exehead/fileform.h"
 #include "util.h"
 #include "strlist.h"
 #include "winchar.h"
-
 #ifndef _WIN32
 #  include <ctype.h>
 #  include <unistd.h> // for close(2)
@@ -55,10 +55,10 @@ void dopause(void)
 {
   if (g_dopause)
   {
-    if (g_display_errors) fprintf(g_output,"MakeNSIS done - hit enter to close...");
+    if (g_display_errors) _ftprintf(g_output,_T("MakeNSIS done - hit enter to close..."));
     fflush(stdout);
     int a;
-    while ((a=getchar()) != '\r' && a != '\n' && a != 27/*esc*/);
+    while ((a=_gettchar()) != _T('\r') && a != _T('\n') && a != 27/*esc*/);
   }
 }
 
@@ -67,8 +67,8 @@ void dopause(void)
 // Returns -2 if the file is an invalid bitmap
 // Returns -3 if the size doesn't match
 // Returns -4 if the bpp doesn't match
-int update_bitmap(CResourceEditor* re, WORD id, const char* filename, int width/*=0*/, int height/*=0*/, int maxbpp/*=0*/) {
-  FILE *f = FOPEN(filename, "rb");
+int update_bitmap(CResourceEditor* re, WORD id, const TCHAR* filename, int width/*=0*/, int height/*=0*/, int maxbpp/*=0*/) {
+  FILE *f = FOPEN(filename, _T("rb"));
   if (!f) return -1;
 
   if (fgetc(f) != 'B' || fgetc(f) != 'M') {
@@ -134,23 +134,23 @@ int update_bitmap(CResourceEditor* re, WORD id, const char* filename, int width/
 }
 
 #ifndef _WIN32
-char *CharPrev(const char *s, const char *p) {
+TCHAR *CharPrev(const TCHAR *s, const TCHAR *p) {
   if (!s || !p || p < s)
     return NULL;
   while (*s) {
-    char *n = CharNext(s);
+    TCHAR *n = CharNext(s);
     if (n >= p)
       break;
     s = n;
   }
-  return (char *) s;
+  return (TCHAR *) s;
 }
 
-char *CharNext(const char *s) {
+TCHAR *CharNext(const TCHAR *s) {
   int l = 0;
   if (s && *s)
     l = max(1, mblen(s, MB_CUR_MAX));
-  return (char *) s + l;
+  return (TCHAR *) s + l;
 }
 
 char *CharNextExA(WORD codepage, const char *s, int flags) {
@@ -170,10 +170,10 @@ char *CharNextExA(WORD codepage, const char *s, int flags) {
   return (char *) np;
 }
 
-int wsprintf(char *s, const char *format, ...) {
+int wsprintf(TCHAR *s, const TCHAR *format, ...) {
   va_list val;
   va_start(val, format);
-  int res = vsnprintf(s, 1024, format, val);
+  int res = _vsntprintf(s, 1024, format, val);
   va_end(val);
   return res;
 }
@@ -181,18 +181,18 @@ int wsprintf(char *s, const char *format, ...) {
 // iconv const inconsistency workaround by Alexandre Oliva
 template <typename T>
 inline size_t nsis_iconv_adaptor
-  (size_t (*iconv_func)(iconv_t, T, size_t *, char**,size_t*),
-  iconv_t cd, char **inbuf, size_t *inbytesleft,
-  char **outbuf, size_t *outbytesleft)
+  (size_t (*iconv_func)(iconv_t, T, size_t *, TCHAR**,size_t*),
+  iconv_t cd, TCHAR **inbuf, size_t *inbytesleft,
+  TCHAR **outbuf, size_t *outbytesleft)
 {
   return iconv_func (cd, (T)inbuf, inbytesleft, outbuf, outbytesleft);
 }
 
-void static create_code_page_string(char *buf, size_t len, UINT code_page) {
+void static create_code_page_string(TCHAR *buf, size_t len, UINT code_page) {
   if (code_page == CP_ACP)
     code_page = 1252;
 
-  snprintf(buf, len, "CP%d", code_page);
+  _sntprintf(buf, len, _T("CP%d"), code_page);
 }
 
 int WideCharToMultiByte(UINT CodePage, DWORD dwFlags, LPCWSTR lpWideCharStr,
@@ -270,10 +270,10 @@ int MultiByteToWideChar(UINT CodePage, DWORD dwFlags, LPCSTR lpMultiByteStr,
 
 BOOL IsValidCodePage(UINT CodePage)
 {
-  char cp[128];
+  TCHAR cp[128];
   create_code_page_string(cp, sizeof(cp), CodePage);
 
-  iconv_t cd = iconv_open("UCS-2LE", cp);
+  iconv_t cd = iconv_open(_T("UCS-2LE"), cp);
   if (cd == (iconv_t) -1)
     return FALSE;
 
@@ -282,37 +282,37 @@ BOOL IsValidCodePage(UINT CodePage)
   return TRUE;
 }
 
-#define MY_ERROR_MSG(x) {if (g_display_errors) {fprintf(g_output,"%s", x);}}
+#define MY_ERROR_MSG(x) {if (g_display_errors) {_ftprintf(g_output,_T("%s"), x);}}
 
-char *my_convert(const char *path)
+TCHAR *my_convert(const TCHAR *path)
 {
   // TODO: (orip) ref. this func. to use std::string?
-  char *converted_path = strdup(path);
-  size_t len = strlen(path);
+  TCHAR *converted_path = _tcsdup(path);
+  size_t len = _tcsclen(path);
 
   if(!converted_path)
   {
-    MY_ERROR_MSG("Error: could not allocate memory in my_convert()\n");
-    return (char*) path; /* dirty */
+    MY_ERROR_MSG(_T("Error: could not allocate memory in my_convert()\n"));
+    return (TCHAR*) path; /* dirty */
   }
 
   /* Replace drive letter X: by /X */
   if(len >= 2)
   {
-    if (path[1] == ':')
+    if (path[1] == _T(':'))
     {
-      converted_path[0] = '/';
-      converted_path[1] = (char) tolower((int) path[0]);
+      converted_path[0] = _T('/');
+      converted_path[1] = (TCHAR) tolower((int) path[0]);
     }
   }
 
-  char *p = converted_path;
+  TCHAR *p = converted_path;
 
   do
   {
-    if (*p == '\\')
+    if (*p == _T('\\'))
     {
-      *p = '/';
+      *p = _T('/');
     }
     p = CharNext(p);
   }
@@ -321,25 +321,25 @@ char *my_convert(const char *path)
   return converted_path;
 }
 
-void my_convert_free(char *converted_path)
+void my_convert_free(TCHAR *converted_path)
 {
   free(converted_path);
 }
 
-int my_open(const char *pathname, int flags)
+int my_open(const TCHAR *pathname, int flags)
 {
-  char *converted_pathname = my_convert(pathname);
+  TCHAR *converted_pathname = my_convert(pathname);
 
   int result = open(converted_pathname, flags);
   my_convert_free(converted_pathname);
   return result;
 }
 
-FILE *my_fopen(const char *path, const char *mode)
+FILE *my_fopen(const TCHAR *path, const TCHAR *mode)
 {
-  char *converted_path = my_convert(path);
+  TCHAR *converted_path = my_convert(path);
 
-  FILE *result = fopen(converted_path, mode);
+  FILE *result = _tfopen(converted_path, mode);
   my_convert_free(converted_path);
   return result;
 }
@@ -360,32 +360,32 @@ void operator delete [](void *p) throw() {
   if (p) free(p);
 }
 
-size_t my_strftime(char *s, size_t max, const char  *fmt, const struct tm *tm) {
-  return strftime(s, max, fmt, tm);
+size_t my_strftime(TCHAR *s, size_t max, const TCHAR  *fmt, const struct tm *tm) {
+  return _tcsftime(s, max, fmt, tm);
 }
 
-string get_full_path(const string &path) {
+tstring get_full_path(const tstring &path) {
 #ifdef _WIN32
-  char *throwaway;
-  char real_path[1024];
+  TCHAR *throwaway;
+  TCHAR real_path[1024];
   int rc = GetFullPathName(path.c_str(),1024,real_path,&throwaway);
   assert(rc <= 1024); // path size is limited by MAX_PATH (260)
   assert(rc != 0); // rc==0 in case of error
-  return string(real_path);
+  return tstring(real_path);
 #else//_WIN32
 #ifdef PATH_MAX
-  static char buffer[PATH_MAX];
+  static TCHAR buffer[PATH_MAX];
 #else//PATH_MAX
   int path_max = pathconf(path.c_str(), _PC_PATH_MAX);
   if (path_max <= 0)
     path_max = 4096;
-  char *buffer = (char *) malloc(path_max);
+  TCHAR *buffer = (TCHAR *) malloc(path_max*sizeof(TCHAR));
   if (!buffer)
-    return string(path);
+    return tstring(path);
 #endif//PATH_MAX
   if (!realpath(path.c_str(), buffer))
-    strcpy(buffer, path.c_str());
-  string result(buffer);
+    _tcscpy(buffer, path.c_str());
+  tstring result(buffer);
 #ifndef PATH_MAX
   free(buffer);
 #endif//!PATH_MAX
@@ -393,63 +393,63 @@ string get_full_path(const string &path) {
 #endif//_WIN32
 }
 
-string get_string_prefix(const string& str, const string& separator) {
-  const string::size_type last_separator_pos = str.rfind(separator);
+tstring get_string_prefix(const tstring& str, const tstring& separator) {
+  const tstring::size_type last_separator_pos = str.rfind(separator);
   if (last_separator_pos == string::npos)
     return str;
   return str.substr(0, last_separator_pos);
 }
 
-string get_string_suffix(const string& str, const string& separator) {
-  const string::size_type last_separator_pos = str.rfind(separator);
-  if (last_separator_pos == string::npos)
+tstring get_string_suffix(const tstring& str, const tstring& separator) {
+  const tstring::size_type last_separator_pos = str.rfind(separator);
+  if (last_separator_pos == tstring::npos)
     return str;
-  return str.substr(last_separator_pos + separator.size(), string::npos);
+  return str.substr(last_separator_pos + separator.size(), tstring::npos);
 }
 
-string get_dir_name(const string& path) {
+tstring get_dir_name(const tstring& path) {
   return get_string_prefix(path, PLATFORM_PATH_SEPARATOR_STR);
 }
 
-string get_file_name(const string& path) {
+tstring get_file_name(const tstring& path) {
   return get_string_suffix(path, PLATFORM_PATH_SEPARATOR_STR);
 }
 
-string get_executable_path(const char* argv0) {
+tstring get_executable_path(const TCHAR* argv0) {
 #ifdef _WIN32
-  char temp_buf[MAX_PATH+1];
-  temp_buf[0] = '\0';
+  TCHAR temp_buf[MAX_PATH+1];
+  temp_buf[0] = _T('\0');
   int rc = GetModuleFileName(NULL,temp_buf,MAX_PATH);
   assert(rc != 0);
-  return string(temp_buf);
+  return tstring(temp_buf);
 #elif __APPLE__
-  char temp_buf[MAXPATHLEN+1];
+  TCHAR temp_buf[MAXPATHLEN+1];
   unsigned int buf_len = MAXPATHLEN;
   int rc = Apple::_NSGetExecutablePath(temp_buf, &buf_len);
   assert(rc == 0);
-  return string(temp_buf);
+  return tstring(temp_buf);
 #else /* Linux/BSD/POSIX/etc */
-  const char *envpath = getenv("_");
+  const TCHAR *envpath = _tgetenv(_T("_"));
   if( envpath != NULL ) return get_full_path( envpath );
   else {
-    char* pathtmp;
-    char* path = NULL;
+    TCHAR* pathtmp;
+    TCHAR* path = NULL;
     size_t len = 100;
     int nchars;
     while(1){
-      pathtmp = (char*)realloc(path,len+1);
+      pathtmp = (TCHAR*)realloc(path,len+1);
       if( pathtmp == NULL ){
         free(path);
         return get_full_path(argv0);
       }
       path = pathtmp;
-      nchars = readlink("/proc/self/exe", path, len);
+      nchars = readlink(_T("/proc/self/exe"), path, len);
       if( nchars == -1 ){
         free(path);
         return get_full_path(argv0);
       }
       if( nchars < (int) len ){
-        path[nchars] = '\0';
+        path[nchars] = _T('\0');
         string result(path);
         free(path);
         return result;
@@ -460,26 +460,26 @@ string get_executable_path(const char* argv0) {
 #endif
 }
 
-string get_executable_dir(const char *argv0) {
+tstring get_executable_dir(const TCHAR *argv0) {
   return get_dir_name(get_executable_path(argv0));
 }
 
-string remove_file_extension(const string& path) {
-  return get_string_prefix(path, ".");
+tstring remove_file_extension(const tstring& path) {
+  return get_string_prefix(path, _T("."));
 }
 
 struct ToLower
 {
-  char operator() (char c) const  { return tolower(c); }
+   TCHAR operator() (TCHAR c) const { return _totlower(c); }
 };
 
-string lowercase(const string &str) {
-  string result = str;
+tstring lowercase(const tstring &str) {
+  tstring result = str;
   transform(str.begin(), str.end(), result.begin(), ToLower());
   return result;
 }
 
-int sane_system(const char *command) {
+int sane_system(const TCHAR *command) {
 #ifdef _WIN32
 
   // workaround for bug #1509909
@@ -494,23 +494,21 @@ int sane_system(const char *command) {
   //
   // to avoid the stripping, a harmless string is prefixed
   // to the command line.
-
-  string command_s = "IF 1==1 ";
+  tstring command_s = _T("IF 1==1 ");
   command_s += command;
-  return system(command_s.c_str());
+  return _tsystem(command_s.c_str());
 
 #else
-
-  return system(command);
-
+  return _tsystem(command);
 #endif
 }
 
-static bool GetDLLVersionUsingRE(const string& filepath, DWORD& high, DWORD & low)
+
+static bool GetDLLVersionUsingRE(const tstring& filepath, DWORD& high, DWORD & low)
 {
   bool found = false;
 
-  FILE *fdll = FOPEN(filepath.c_str(), "rb");
+  FILE *fdll = FOPEN(filepath.c_str(), _T("rb"));
   if (!fdll)
     return 0;
 
@@ -567,13 +565,13 @@ static bool GetDLLVersionUsingRE(const string& filepath, DWORD& high, DWORD & lo
   return found;
 }
 
-static bool GetDLLVersionUsingAPI(const string& filepath, DWORD& high, DWORD& low)
+static bool GetDLLVersionUsingAPI(const tstring& filepath, DWORD& high, DWORD& low)
 {
   bool found = false;
 
 #ifdef _WIN32
-  char path[1024];
-  char *name;
+  TCHAR path[1024];
+  TCHAR *name;
   path[0] = 0;
 
   GetFullPathName(filepath.c_str(), 1024, path, &name);
@@ -587,7 +585,7 @@ static bool GetDLLVersionUsingAPI(const string& filepath, DWORD& high, DWORD& lo
     {
       UINT uLen;
       VS_FIXEDFILEINFO *pvsf;
-      if (GetFileVersionInfo(path, 0, verSize, buf) && VerQueryValue(buf, "\\", (void**) &pvsf, &uLen))
+      if (GetFileVersionInfo(path, 0, verSize, buf) && VerQueryValue(buf, _T("\\"), (void**) &pvsf, &uLen))
       {
         low = pvsf->dwFileVersionLS;
         high = pvsf->dwFileVersionMS;
@@ -606,9 +604,9 @@ static bool GetDLLVersionUsingAPI(const string& filepath, DWORD& high, DWORD& lo
 // the following structure must be byte-aligned.
 #pragma pack( push, pre_vxd_ver, 1 )
 typedef struct _VXD_VERSION_RESOURCE {
-  char  cType;
+  char  cType;				// Should not be converted to TCHAR (JP)
   WORD  wID;
-  char  cName;
+  char  cName;				// Should not be converted to TCHAR (JP)
   WORD  wOrdinal;
   WORD  wFlags;
   DWORD dwResSize;
@@ -616,7 +614,7 @@ typedef struct _VXD_VERSION_RESOURCE {
 } VXD_VERSION_RESOURCE, *PVXD_VERSION_RESOURCE;
 #pragma pack( pop, pre_vxd_ver )
 
-static BOOL GetVxdVersion( LPCSTR szFile, LPDWORD lpdwLen, LPVOID lpData ) 
+static BOOL GetVxdVersion( LPCTSTR szFile, LPDWORD lpdwLen, LPVOID lpData ) 
 {
 
   HANDLE hFile        = NULL;
@@ -769,7 +767,7 @@ static BOOL GetVxdVersion( LPCSTR szFile, LPDWORD lpdwLen, LPVOID lpData )
   return TRUE;
 }
 
-static DWORD GetVxdVersionInfoSize( LPCSTR szFile ) 
+static DWORD GetVxdVersionInfoSize( LPCTSTR szFile ) 
 {
   DWORD dwResult = 0;
 
@@ -791,14 +789,14 @@ static DWORD GetVxdVersionInfoSize( LPCSTR szFile )
   return 0;
 }
 
-static BOOL GetVxdVersionInfo( LPCSTR szFile, DWORD dwLen, LPVOID lpData ) 
+static BOOL GetVxdVersionInfo( LPCTSTR szFile, DWORD dwLen, LPVOID lpData ) 
 {
   return GetVxdVersion( szFile, &dwLen, lpData );
 }
 
 #endif //_WIN32
 
-static bool GetDLLVersionFromVXD(const string& filepath, DWORD& high, DWORD& low)
+static bool GetDLLVersionFromVXD(const tstring& filepath, DWORD& high, DWORD& low)
 {
   bool found = false;
 
@@ -811,7 +809,7 @@ static bool GetDLLVersionFromVXD(const string& filepath, DWORD& high, DWORD& low
     {
       UINT uLen;
       VS_FIXEDFILEINFO *pvsf;
-      if (GetVxdVersionInfo(filepath.c_str(), verSize, buf) && VerQueryValue(buf, "\\", (void**) &pvsf, &uLen))
+      if (GetVxdVersionInfo(filepath.c_str(), verSize, buf) && VerQueryValue(buf, _T("\\"), (void**) &pvsf, &uLen))
       {
         low = pvsf->dwFileVersionLS;
         high = pvsf->dwFileVersionMS;
@@ -825,7 +823,7 @@ static bool GetDLLVersionFromVXD(const string& filepath, DWORD& high, DWORD& low
   return found;
 }
 
-bool GetDLLVersion(const string& filepath, DWORD& high, DWORD& low)
+bool GetDLLVersion(const tstring& filepath, DWORD& high, DWORD& low)
 {
   if (GetDLLVersionUsingAPI(filepath, high, low))
     return true;

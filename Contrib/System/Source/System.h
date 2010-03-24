@@ -73,8 +73,8 @@ struct tag_SystemProc
 {
     int ProcType;
     int ProcResult;
-    char DllName[1024];
-    char ProcName[1024];
+    TCHAR DllName[1024];
+    TCHAR ProcName[1024];
     HANDLE Dll;
     HANDLE Proc;
     int Options;

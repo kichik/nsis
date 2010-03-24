@@ -12,6 +12,8 @@
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty.
+ *
+ * Unicode support by Jim Park -- 08/22/2007
  */
 
 #include "fileform.h"
@@ -31,7 +33,7 @@ extern NSIS_STRING g_usrvars[1];
 #define state_exe_file            g_usrvars[28]
 #define state_click_next          g_usrvars[30]
 
-extern char g_caption[NSIS_MAX_STRLEN*2];
+extern TCHAR g_caption[NSIS_MAX_STRLEN*2];
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
 extern HWND g_hwnd;
 extern HANDLE g_hInstance;

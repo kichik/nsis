@@ -12,11 +12,16 @@
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty.
+ *
+ * Unicode support by Jim Park -- 08/22/2007 
  */
 
 #include "Platform.h"
 #include "manifest.h"
 #include <nsis-version.h>
+#include "tstring.h"
+
+// Jim Park: The manifest must stay UTF-8.  Do not convert.
 
 namespace manifest
 {

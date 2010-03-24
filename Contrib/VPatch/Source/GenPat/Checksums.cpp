@@ -22,6 +22,8 @@
 // 2. Altered source versions must be plainly marked as such, and must not be
 //    misrepresented as being the original software.
 // 3. This notice may not be removed or altered from any source distribution.
+// 
+// Unicode support by Jim Park -- 08/29/2007
 
 #include "Checksums.h"
 
@@ -82,7 +84,8 @@ void streamMD5(bistream& data, md5_byte_t digest[16]) {
   md5_finish(&state, digest);
 }
 
-TChecksum::TChecksum(std::string& fileName) : mode(MD5) {
+// Jim Park: string -> tstring.
+TChecksum::TChecksum(tstring& fileName) : mode(MD5) {
   bifstream data;
   data.open(fileName.c_str(), ios::binary | ios::in);
   data.seekg(0, ios::beg);

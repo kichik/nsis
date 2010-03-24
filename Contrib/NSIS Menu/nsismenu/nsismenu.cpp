@@ -1,5 +1,8 @@
 /////////////////////////////////////////////////////////////////////////////
 // NSIS MENU
+//
+// Reviewed for Unicode support by Jim Park -- 08/23/2007
+// Basically, compiling wxWidgets as Unicode should do it.
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx/wx.h".
@@ -100,7 +103,7 @@ private:
 
      // Create the main application window
      MyFrame *frame = new MyFrame(_("NSIS Menu"),
-         wxPoint(50, 50), wxSize(600 + wxSystemSettings::GetMetric(wxSYS_FRAMESIZE_X), 355 + wxSystemSettings::GetMetric(wxSYS_FRAMESIZE_X)));
+         wxPoint(50, 50), wxSize(600 + wxSystemSettings::GetMetric(wxSYS_FRAMESIZE_X), 365 + wxSystemSettings::GetMetric(wxSYS_FRAMESIZE_X)));
    
      // Show it and tell the application that it's our main window
 
@@ -154,10 +157,10 @@ void MyFrame::OnLink(wxHtmlLinkEvent& event)
   if (e == NULL || e->LeftUp())
   {
     const wxString href = event.GetLinkInfo().GetHref();
-    if (href.Left(3).IsSameAs((const wxChar*)"EX:", false))
+    if (href.Left(3).IsSameAs((const wxChar*) wxT("EX:"), false))
     {
       wxString url = href.Mid(3);
-      if (url.Left(7).IsSameAs((const wxChar*)"http://", false) || url.Left(6).IsSameAs((const wxChar*)"irc://", false))
+      if (url.Left(7).IsSameAs((const wxChar*) wxT("http://"), false) || url.Left(6).IsSameAs((const wxChar*) wxT("irc://"), false))
       {
         ::wxLaunchDefaultBrowser(url);
       }

@@ -5,8 +5,11 @@ HINSTANCE g_hInstance;
 
 HWND g_hwndParent;
 
+// To work with Unicode version of NSIS, please use TCHAR-type
+// functions for accessing the variables and the stack.
+
 void __declspec(dllexport) myFunction(HWND hwndParent, int string_size, 
-                                      char *variables, stack_t **stacktop,
+                                      TCHAR *variables, stack_t **stacktop,
                                       extra_parameters *extra)
 {
   g_hwndParent=hwndParent;
@@ -23,8 +26,8 @@ void __declspec(dllexport) myFunction(HWND hwndParent, int string_size,
 
   // do your stuff here
   {
-    char buf[1024];
-    wsprintf(buf,"$0=%s\n",getuservariable(INST_0));
+    TCHAR buf[1024];
+    wsprintf(buf,_T("$0=%s\n"),getuservariable(INST_0));
     MessageBox(g_hwndParent,buf,0,MB_OK);
   }
 }

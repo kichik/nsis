@@ -1,3 +1,5 @@
+// Unicode support by Jim Park -- 08/13/2007
+//
 #include <cppunit/extensions/HelperMacros.h>
 #include "../mmap.h"
 
@@ -11,7 +13,7 @@ int g_display_errors = 1;
 FILE *g_output = stderr;
 
 void quit() {
-  fprintf(g_output, "MMap quit\n");
+  _ftprintf(g_output, _T("MMap quit\n"));
 }
 
 class MMapTest : public CppUnit::TestFixture {
