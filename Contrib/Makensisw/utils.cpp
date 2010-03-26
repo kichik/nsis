@@ -18,6 +18,8 @@
    misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 
+  Unicode support by Jim Park -- 08/20/2007
+
 */
 
 #include "makensisw.h"
@@ -28,46 +30,46 @@
 NTOOLTIP g_tip;
 LRESULT CALLBACK TipHookProc(int nCode, WPARAM wParam, LPARAM lParam);
 
-char g_mru_list[MRU_LIST_SIZE][MAX_PATH] = { "", "", "", "", "" };
+TCHAR g_mru_list[MRU_LIST_SIZE][MAX_PATH] = { _T(""), _T(""), _T(""), _T(""), _T("") };
 
 extern NSCRIPTDATA g_sdata;
-extern char *compressor_names[];
+extern TCHAR *compressor_names[];
 
-int SetArgv(const char *cmdLine, int *argc, char ***argv)
+int SetArgv(const TCHAR *cmdLine, int *argc, TCHAR ***argv)
 {
-  const char *p;
-  char *arg, *argSpace;
+  const TCHAR *p;
+  TCHAR *arg, *argSpace;
   int size, argSpaceSize, inquote, copy, slashes;
 
   size = 2;
-  for (p = cmdLine; *p != '\0'; p++) {
-    if ((*p == ' ') || (*p == '\t')) {
+  for (p = cmdLine; *p != _T('\0'); p++) {
+    if ((*p == _T(' ')) || (*p == _T('\t'))) {
       size++;
-      while ((*p == ' ') || (*p == '\t')) {
+      while ((*p == _T(' ')) || (*p == _T('\t'))) {
         p++;
       }
-      if (*p == '\0') {
+      if (*p == _T('\0')) {
         break;
       }
     }
   }
 
-  argSpaceSize = size * sizeof(char *) + lstrlen(cmdLine) + 1;
-  argSpace = (char *) GlobalAlloc(GMEM_FIXED, argSpaceSize);
+  argSpaceSize = size * sizeof(TCHAR *) + lstrlen(cmdLine) + 1;
+  argSpace = (TCHAR *) GlobalAlloc(GMEM_FIXED, argSpaceSize);
   if (!argSpace)
     return 0;
 
-  *argv = (char **) argSpace;
-  argSpace += size * sizeof(char *);
+  *argv = (TCHAR **) argSpace;
+  argSpace += size * sizeof(TCHAR *);
   size--;
 
   p = cmdLine;
   for (*argc = 0; *argc < size; (*argc)++) {
     (*argv)[*argc] = arg = argSpace;
-    while ((*p == ' ') || (*p == '\t')) {
+    while ((*p == _T(' ')) || (*p == _T('\t'))) {
       p++;
     }
-    if (*p == '\0') {
+    if (*p == _T('\0')) {
       break;
     }
 
@@ -75,14 +77,14 @@ int SetArgv(const char *cmdLine, int *argc, char ***argv)
     slashes = 0;
     while (1) {
       copy = 1;
-      while (*p == '\\') {
+      while (*p == _T('\\')) {
         slashes++;
         p++;
       }
-      if (*p == '"') {
+      if (*p == _T('"')) {
         if ((slashes & 1) == 0) {
           copy = 0;
-          if ((inquote) && (p[1] == '"')) {
+          if ((inquote) && (p[1] == _T('"'))) {
             p++;
             copy = 1;
           }
@@ -94,12 +96,12 @@ int SetArgv(const char *cmdLine, int *argc, char ***argv)
       }
 
       while (slashes) {
-        *arg = '\\';
+        *arg = _T('\\');
         arg++;
         slashes--;
       }
 
-      if ((*p == '\0') || (!inquote && ((*p == ' ') || (*p == '\t')))) {
+      if ((*p == _T('\0')) || (!inquote && ((*p == _T(' ')) || (*p == _T('\t'))))) {
         break;
       }
       if (copy != 0) {
@@ -108,7 +110,7 @@ int SetArgv(const char *cmdLine, int *argc, char ***argv)
       }
       p++;
     }
-    *arg = '\0';
+    *arg = _T('\0');
     argSpace = arg + 1;
   }
   (*argv)[*argc] = NULL;
@@ -116,10 +118,10 @@ int SetArgv(const char *cmdLine, int *argc, char ***argv)
   return argSpaceSize;
 }
 
-void SetTitle(HWND hwnd,char *substr) {
-  char title[64];
-  if (substr==NULL) wsprintf(title,"MakeNSISW");
-  else wsprintf(title,"MakeNSISW - %s",substr);
+void SetTitle(HWND hwnd,TCHAR *substr) {
+  TCHAR title[64];
+  if (substr==NULL) wsprintf(title,_T("MakeNSISW"));
+  else wsprintf(title,_T("MakeNSISW - %s"),substr); 
   SetWindowText(hwnd,title);
 }
 
@@ -130,9 +132,9 @@ void SetBranding(HWND hwnd) {
 void CopyToClipboard(HWND hwnd) {
   if (!hwnd||!OpenClipboard(hwnd)) return;
   int len=SendDlgItemMessage(hwnd,IDC_LOGWIN,WM_GETTEXTLENGTH,0,0);
-  HGLOBAL mem = GlobalAlloc(GMEM_MOVEABLE,len+1);
+  HGLOBAL mem = GlobalAlloc(GMEM_MOVEABLE,(len+1)*sizeof(TCHAR));
   if (!mem) { CloseClipboard(); return; }
-  char *existing_text = (char *)GlobalLock(mem);
+  TCHAR *existing_text = (TCHAR *)GlobalLock(mem);
   if (!existing_text) { CloseClipboard(); return; }
   EmptyClipboard();
   existing_text[0]=0;
@@ -143,20 +145,20 @@ void CopyToClipboard(HWND hwnd) {
 }
 
 void ClearLog(HWND hwnd) {
-  SetDlgItemText(hwnd, IDC_LOGWIN, "");
+  SetDlgItemText(hwnd, IDC_LOGWIN, _T(""));
 }
 
-void LogMessage(HWND hwnd,const char *str) {
+void LogMessage(HWND hwnd,const TCHAR *str) {
   SendDlgItemMessage(hwnd, IDC_LOGWIN, EM_SETSEL, g_sdata.logLength, g_sdata.logLength);
   g_sdata.logLength += lstrlen(str);
-  SendDlgItemMessage(hwnd, IDC_LOGWIN, EM_REPLACESEL, 0, (WPARAM)str);
+  SendDlgItemMessage(hwnd, IDC_LOGWIN, EM_REPLACESEL, 0, (LPARAM)str);
   SendDlgItemMessage(hwnd, IDC_LOGWIN, EM_SCROLLCARET, 0, 0);
 }
 
-void ErrorMessage(HWND hwnd,const char *str) {
+void ErrorMessage(HWND hwnd,const TCHAR *str) {
   if (!str) return;
-  char buf[1028];
-  wsprintf(buf,"[Error] %s\r\n",str);
+  TCHAR buf[1028];
+  wsprintf(buf,_T("[Error] %s\r\n"),str);
   LogMessage(hwnd,buf);
 }
 
@@ -218,7 +220,7 @@ void Items(HWND hwnd, int on){
 void SetCompressorStats()
 {
   DWORD line_count, i;
-  char buf[1024];
+  TCHAR buf[1024];
   bool found = false;
 
   line_count = SendDlgItemMessage(g_sdata.hwnd, IDC_LOGWIN, EM_GETLINECOUNT, 0, 0);
@@ -237,7 +239,7 @@ void SetCompressorStats()
       DWORD len = lstrlen(EXE_HEADER_COMPRESSOR_STAT);
       if(!lstrncmp(buf,EXE_HEADER_COMPRESSOR_STAT,len)) {
         found = true;
-        lstrcpy(g_sdata.compressor_stats,"\n\n");
+        lstrcpy(g_sdata.compressor_stats,_T("\n\n"));
         lstrcat(g_sdata.compressor_stats,buf);
       }
     }
@@ -245,7 +247,7 @@ void SetCompressorStats()
 }
 
 void CompileNSISScript() {
-  static char *s;
+  static TCHAR *s;
   DragAcceptFiles(g_sdata.hwnd,FALSE);
   ClearLog(g_sdata.hwnd);
   SetTitle(g_sdata.hwnd,NULL);
@@ -270,31 +272,31 @@ void CompileNSISScript() {
   }
   if (!g_sdata.compile_command) {
     if (s) GlobalFree(s);
-    char *symbols = BuildSymbols();
+    TCHAR *symbols = BuildSymbols();
     
-    char compressor[40];
+    TCHAR compressor[40];
     if(lstrlen(g_sdata.compressor_name)) {
-      wsprintf(compressor,"/X\"SetCompressor /FINAL %s\"",g_sdata.compressor_name);
+      wsprintf(compressor,_T("/X\"SetCompressor /FINAL %s\""),g_sdata.compressor_name);
     }
     else {
-      lstrcpy(compressor,"");
+      lstrcpy(compressor,_T(""));
     }
 
-    char *args = (char *) GlobalLock(g_sdata.script_cmd_args);
+    TCHAR *args = (TCHAR *) GlobalLock(g_sdata.script_cmd_args);
 
     g_sdata.compile_command = (char *) GlobalAlloc(
       GPTR,
-      /* makensis.exe        */ sizeof(EXENAME)                   + /* space */ 1 +
+      /* makensis.exe        */ _countof(EXENAME)                 + /* space */ 1 +
       /* script path         */ lstrlen(g_sdata.script)           + /* space */ 1 +
       /* script cmd args     */ lstrlen(args)  + /* space */ 1 +
       /* defines /Dblah=...  */ lstrlen(symbols)                  + /* space */ 1 +
       /* /XSetCompressor...  */ lstrlen(compressor)               + /* space */ 1 +
-      /* /NOTTIFYHWND + HWND */ sizeof("/NOTIFYHWND -4294967295") + /* space */ 1
-    );
+      /* /NOTTIFYHWND + HWND */ _countof(_T("/NOTIFYHWND -4294967295")) + /* space */ 1
+      );
 
     wsprintf(
       g_sdata.compile_command,
-      "%s %s %s /NOTIFYHWND %d %s -- \"%s\"",
+      _T("%s %s %s /NOTIFYHWND %d %s -- \"%s\""),
       EXENAME,
       compressor,
       symbols,
@@ -343,7 +345,7 @@ void RestoreWindowPos(HWND hwnd) {
   if (OpenRegSettingsKey(hKey)) {
     DWORD l = sizeof(p);
     DWORD t;
-    if ((RegQueryValueEx(hKey,REGLOC,NULL,&t,(unsigned char*)&p,&l)==ERROR_SUCCESS)&&(t == REG_BINARY)&&(l==sizeof(p))) {
+    if ((RegQueryValueEx(hKey,REGLOC,NULL,&t,(LPBYTE)&p,&l)==ERROR_SUCCESS)&&(t == REG_BINARY)&&(l==sizeof(p))) {
       int width, height;
       int windowWidth, windowHeight;
 
@@ -391,7 +393,7 @@ void SaveWindowPos(HWND hwnd) {
   p.length = sizeof(p);
   GetWindowPlacement(hwnd, &p);
   if (OpenRegSettingsKey(hKey, true)) {
-    RegSetValueEx(hKey,REGLOC,0,REG_BINARY,(unsigned char*)&p,sizeof(p));
+    RegSetValueEx(hKey,REGLOC,0,REG_BINARY,(LPBYTE)&p,sizeof(p));
     RegCloseKey(hKey);
   }
 }
@@ -406,34 +408,34 @@ void SaveSymbols()
   SaveSymbolSet(NULL, g_sdata.symbols);
 }
 
-void DeleteSymbolSet(char *name)
+void DeleteSymbolSet(TCHAR *name)
 {
   if(name) {
     HKEY hKey;
     if (OpenRegSettingsKey(hKey)) {
-      char subkey[1024];
-      wsprintf(subkey,"%s\\%s",REGSYMSUBKEY,name);
+      TCHAR subkey[1024];
+      wsprintf(subkey,_T("%s\\%s"),REGSYMSUBKEY,name);
       RegDeleteKey(hKey,subkey);
       RegCloseKey(hKey);
     }
   }
 }
 
-char** LoadSymbolSet(char *name)
+TCHAR** LoadSymbolSet(TCHAR *name)
 {
   HKEY hKey;
   HKEY hSubKey;
-  char **symbols = NULL;
+  TCHAR **symbols = NULL;
   if (OpenRegSettingsKey(hKey)) {
-    char subkey[1024];
+    TCHAR subkey[1024];
     if(name) {
-      wsprintf(subkey,"%s\\%s",REGSYMSUBKEY,name);
+      wsprintf(subkey,_T("%s\\%s"),REGSYMSUBKEY,name);
     }
     else {
       lstrcpy(subkey,REGSYMSUBKEY);
     }
     if (RegCreateKey(hKey,subkey,&hSubKey) == ERROR_SUCCESS) {
-      char buf[8];
+      TCHAR buf[8];
       DWORD l;
       DWORD t;
       DWORD bufSize;
@@ -446,16 +448,16 @@ char** LoadSymbolSet(char *name)
         if ((RegEnumValue(hSubKey,i, buf, &bufSize,NULL,&t,NULL,&l)==ERROR_SUCCESS)&&(t == REG_SZ)) {
           if(symbols) {
             GlobalUnlock(hMem);
-            hMem = GlobalReAlloc(hMem, (i+2)*sizeof(char *), GMEM_MOVEABLE|GMEM_ZEROINIT);
-            symbols = (char **)GlobalLock(hMem);
+            hMem = GlobalReAlloc(hMem, (i+2)*sizeof(TCHAR *), GMEM_MOVEABLE|GMEM_ZEROINIT);
+            symbols = (TCHAR **)GlobalLock(hMem);
           }
           else {
-            hMem = GlobalAlloc(GMEM_MOVEABLE|GMEM_ZEROINIT, (i+2)*sizeof(char *));
-            symbols = (char **)GlobalLock(hMem);
+            hMem = GlobalAlloc(GMEM_MOVEABLE|GMEM_ZEROINIT, (i+2)*sizeof(TCHAR *));
+            symbols = (TCHAR **)GlobalLock(hMem);
           }
           if(symbols) {
             l++;
-            symbols[i] = (char *)GlobalAlloc(GPTR, l*sizeof(char));
+            symbols[i] = (TCHAR *)GlobalAlloc(GPTR, l*sizeof(TCHAR));
             if (symbols[i]) {
               RegQueryValueEx(hSubKey,buf,NULL,&t,(unsigned char*)symbols[i],&l);
             }
@@ -481,22 +483,22 @@ char** LoadSymbolSet(char *name)
   return symbols;
 }
 
-void SaveSymbolSet(char *name, char **symbols)
+void SaveSymbolSet(TCHAR *name, TCHAR **symbols)
 {
   HKEY hKey;
   HKEY hSubKey;
   int n = 0;
   if (OpenRegSettingsKey(hKey, true)) {
-    char subkey[1024];
+    TCHAR subkey[1024];
     if(name) {
-      wsprintf(subkey,"%s\\%s",REGSYMSUBKEY,name);
+      wsprintf(subkey,_T("%s\\%s"),REGSYMSUBKEY,name);
     }
     else {
       lstrcpy(subkey,REGSYMSUBKEY);
     }
 
     if (RegOpenKey(hKey,subkey,&hSubKey) == ERROR_SUCCESS) {
-      char buf[8];
+      TCHAR buf[8];
       DWORD l;
       while(TRUE) {
         l = sizeof(buf);
@@ -511,11 +513,11 @@ void SaveSymbolSet(char *name, char **symbols)
     }
     if(symbols) {
       if (RegCreateKey(hKey,subkey,&hSubKey) == ERROR_SUCCESS) {
-        char buf[8];
+        TCHAR buf[8];
         n = 0;
         while(symbols[n]) {
-          wsprintf(buf,"%d",n);
-          RegSetValueEx(hSubKey,buf,0,REG_SZ,(CONST BYTE *)symbols[n],lstrlen(symbols[n])+1);
+          wsprintf(buf,_T("%d"),n);
+          RegSetValueEx(hSubKey,buf,0,REG_SZ,(CONST BYTE *)symbols[n],(lstrlen(symbols[n])+1)*sizeof(TCHAR));
           n++;
         }
         RegCloseKey(hSubKey);
@@ -551,9 +553,9 @@ void ResetSymbols() {
 }
 
 int InitBranding() {
-  char *s;
-  s = (char *)GlobalAlloc(GPTR,lstrlen(EXENAME)+10);
-  wsprintf(s,"%s /version",EXENAME);
+  TCHAR *s;
+  s = (TCHAR *)GlobalAlloc(GPTR,lstrlen(EXENAME)+10);
+  wsprintf(s,_T("%s /version"),EXENAME);
   {
     STARTUPINFO si={sizeof(si),};
     SECURITY_ATTRIBUTES sa={sizeof(sa),};
@@ -583,7 +585,7 @@ int InitBranding() {
       CloseHandle(read_stdout);
       return 0;
     }
-    char szBuf[1024];
+    TCHAR szBuf[1024];
     DWORD dwRead = 1;
     if (WaitForSingleObject(pi.hProcess,10000)!=WAIT_OBJECT_0) {
       return 0;
@@ -591,9 +593,9 @@ int InitBranding() {
     ReadFile(read_stdout, szBuf, sizeof(szBuf)-1, &dwRead, NULL);
     szBuf[dwRead] = 0;
     if (lstrlen(szBuf)==0) return 0;
-    g_sdata.branding = (char *)GlobalAlloc(GPTR,lstrlen(szBuf)+6);
-    wsprintf(g_sdata.branding,"NSIS %s",szBuf);
-    g_sdata.brandingv = (char *)GlobalAlloc(GPTR,lstrlen(szBuf)+1);
+    g_sdata.branding = (TCHAR *)GlobalAlloc(GPTR,(lstrlen(szBuf)+6)*sizeof(TCHAR));
+    wsprintf(g_sdata.branding,_T("NSIS %s"),szBuf);
+    g_sdata.brandingv = (TCHAR *)GlobalAlloc(GPTR,(lstrlen(szBuf)+1)*sizeof(TCHAR));
     lstrcpy(g_sdata.brandingv,szBuf);
     GlobalFree(s);
   }
@@ -613,8 +615,8 @@ void InitTooltips(HWND h) {
   g_tip.tip = CreateWindowEx(dwExStyle,TOOLTIPS_CLASS,NULL,dwStyle,0,0,0,0,h,NULL,GetModuleHandle(NULL),NULL);
   if (!g_tip.tip) return;
   g_tip.hook = SetWindowsHookEx(WH_GETMESSAGE,TipHookProc,NULL, GetCurrentThreadId());
-  AddTip(GetDlgItem(h,IDCANCEL),TEXT("Close MakeNSISW"));
-  AddTip(GetDlgItem(h,IDC_TEST),TEXT("Test the installer generated by MakeNSISW"));
+  AddTip(GetDlgItem(h,IDCANCEL),_T("Close MakeNSISW"));
+  AddTip(GetDlgItem(h,IDC_TEST),_T("Test the installer generated by MakeNSISW"));
   AddToolBarTooltips();
 }
 
@@ -622,7 +624,7 @@ void DestroyTooltips() {
   UnhookWindowsHookEx(g_tip.hook);
 }
 
-void AddTip(HWND hWnd,LPSTR lpszToolTip) {
+void AddTip(HWND hWnd,LPTSTR lpszToolTip) {
   TOOLINFO ti;
   ti.cbSize = sizeof(TOOLINFO);
   ti.uFlags = TTF_IDISHWND;
@@ -646,44 +648,44 @@ LRESULT CALLBACK TipHookProc(int nCode, WPARAM wParam, LPARAM lParam) {
 }
 
 void ShowDocs() {
-  char pathf[MAX_PATH],*path;
+  TCHAR pathf[MAX_PATH],*path;
   GetModuleFileName(NULL,pathf,sizeof(pathf));
-  path=my_strrchr(pathf,'\\');
+  path=my_strrchr(pathf,_T('\\'));
   if(path!=NULL) *path=0;
   lstrcat(pathf,LOCALDOCS);
-  if ((int)ShellExecute(g_sdata.hwnd,"open",pathf,NULL,NULL,SW_SHOWNORMAL)<=32) 
-  ShellExecute(g_sdata.hwnd,"open",DOCPATH,NULL,NULL,SW_SHOWNORMAL);
+  if ((int)ShellExecute(g_sdata.hwnd,_T("open"),pathf,NULL,NULL,SW_SHOWNORMAL)<=32) 
+  ShellExecuteA(g_sdata.hwnd,"open",DOCPATH,NULL,NULL,SW_SHOWNORMAL);
 }
 
-char* BuildSymbols()
+TCHAR* BuildSymbols()
 {
-  char *buf = NULL;
+  TCHAR *buf = NULL;
 
   if(g_sdata.symbols) {
     int i=0;
     while(g_sdata.symbols[i]) {
       if(buf) {
-        char *buf3 = (char *)GlobalAlloc(GPTR,(lstrlen(buf)+lstrlen(g_sdata.symbols[i])+6)*sizeof(char));
-        wsprintf(buf3,"%s \"/D%s\"",buf,g_sdata.symbols[i]);
+        TCHAR *buf3 = (TCHAR *)GlobalAlloc(GPTR,(lstrlen(buf)+lstrlen(g_sdata.symbols[i])+6)*sizeof(TCHAR));
+        wsprintf(buf3,_T("%s \"/D%s\""),buf,g_sdata.symbols[i]);
         GlobalFree(buf);
         buf = buf3;
       }
       else {
-        buf = (char *)GlobalAlloc(GPTR,(lstrlen(g_sdata.symbols[i])+5)*sizeof(char));
-        wsprintf(buf,"\"/D%s\"",g_sdata.symbols[i]);
+        buf = (TCHAR *)GlobalAlloc(GPTR,(lstrlen(g_sdata.symbols[i])+5)*sizeof(TCHAR));
+        wsprintf(buf,_T("\"/D%s\""),g_sdata.symbols[i]);
       }
       i++;
     }
   }
   else {
-    buf = (char *)GlobalAlloc(GPTR, sizeof(char));
-    buf[0] = '\0';
+    buf = (TCHAR *)GlobalAlloc(GPTR, sizeof(TCHAR));
+    buf[0] = _T('\0');
   }
 
   return buf;
 }
 
-BOOL PopMRUFile(char* fname)
+BOOL PopMRUFile(TCHAR* fname)
 {
   int i;
 
@@ -698,7 +700,7 @@ BOOL PopMRUFile(char* fname)
     for(j = i; j < MRU_LIST_SIZE-1; j++) {
       lstrcpy(g_mru_list[j],g_mru_list[j+1]);
     }
-    g_mru_list[MRU_LIST_SIZE-1][0]='\0';
+    g_mru_list[MRU_LIST_SIZE-1][0]=_T('\0');
     return TRUE;
   }
   else {
@@ -706,7 +708,7 @@ BOOL PopMRUFile(char* fname)
   }
 }
 
-BOOL IsValidFile(char *fname)
+BOOL IsValidFile(TCHAR *fname)
 {
   WIN32_FIND_DATA wfd;
   HANDLE h;
@@ -719,19 +721,19 @@ BOOL IsValidFile(char *fname)
   return false;
 }
 
-void PushMRUFile(char* fname)
+void PushMRUFile(TCHAR* fname)
 {
   int i;
   DWORD   rv;
-  char*  file_part;
-  char full_file_name[MAX_PATH+1];
+  TCHAR*  file_part;
+  TCHAR full_file_name[MAX_PATH+1];
 
-  if(!fname || fname[0] == '\0' || fname[0] == '/' || fname[0] == '-') {
+  if(!fname || fname[0] == _T('\0') || fname[0] == _T('/') || fname[0] == _T('-')) {
     return;
   }
 
   my_memset(full_file_name,0,sizeof(full_file_name));
-  rv = GetFullPathName(fname,sizeof(full_file_name),full_file_name,&file_part);
+  rv = GetFullPathName(fname,_countof(full_file_name),full_file_name,&file_part);
   if (rv == 0) {
     return;
   }
@@ -751,9 +753,9 @@ void BuildMRUMenus()
   HMENU hMenu = g_sdata.fileSubmenu;
   int i;
   MENUITEMINFO mii;
-  char buf[MRU_DISPLAY_LENGTH + 5/*number*/ + 1/*null*/];
-  char buf2[MRU_DISPLAY_LENGTH - 6];
-  char buf3[MRU_DISPLAY_LENGTH + 1];
+  TCHAR buf[MRU_DISPLAY_LENGTH + 5/*number*/ + 1/*null*/];
+  TCHAR buf2[MRU_DISPLAY_LENGTH - 6];
+  TCHAR buf3[MRU_DISPLAY_LENGTH + 1];
   int n;
 
   for(i = 0; i < MRU_LIST_SIZE; i++) {
@@ -770,32 +772,32 @@ void BuildMRUMenus()
       mii.fMask = MIIM_ID | MIIM_TYPE | MIIM_STATE;
       mii.wID = IDM_MRU_FILE+i;
       mii.fType = MFT_STRING;
-      wsprintf(buf, "&%d ", i + 1);
+      wsprintf(buf, _T("&%d "), i + 1);
       if(lstrlen(g_mru_list[i]) > MRU_DISPLAY_LENGTH) {
-        char *p = my_strrchr(g_mru_list[i],'\\');
+        TCHAR *p = my_strrchr(g_mru_list[i],_T('\\'));
         if(p) {
           p++;
           if(lstrlen(p) > MRU_DISPLAY_LENGTH - 7) {
             my_memset(buf2,0,sizeof(buf2));
             lstrcpyn(buf2,p,MRU_DISPLAY_LENGTH - 9);
-            lstrcat(buf2,"...");
+            lstrcat(buf2,_T("..."));
 
             lstrcpyn(buf3,g_mru_list[i],4);
             lstrcat(buf,buf3);
-            lstrcat(buf,"...\\");
+            lstrcat(buf,_T("...\\"));
             lstrcat(buf,buf2);
           }
           else {
             lstrcpyn(buf3,g_mru_list[i],(MRU_DISPLAY_LENGTH - lstrlen(p) - 3));
             lstrcat(buf,buf3);
-            lstrcat(buf,"...\\");
+            lstrcat(buf,_T("...\\"));
             lstrcat(buf,p);
           }
         }
         else {
           lstrcpyn(buf3,g_mru_list[i],(MRU_DISPLAY_LENGTH-2));
           lstrcat(buf,buf3);
-          lstrcat(buf,"...");
+          lstrcat(buf,_T("..."));
         }
       }
       else {
@@ -852,13 +854,13 @@ void RestoreMRUList()
   int i;
   if (OpenRegSettingsKey(hKey)) {
     if (RegCreateKey(hKey,REGMRUSUBKEY,&hSubKey) == ERROR_SUCCESS) {
-      char buf[8];
+      TCHAR buf[8];
       DWORD l;
       for(int i=0; i<MRU_LIST_SIZE; i++) {
-        wsprintf(buf,"%d",i);
+        wsprintf(buf,_T("%d"),i);
         l = sizeof(g_mru_list[n]);
-        RegQueryValueEx(hSubKey,buf,NULL,NULL,(unsigned char*)g_mru_list[n],&l);
-        if(g_mru_list[n][0] != '\0') {
+        RegQueryValueEx(hSubKey,buf,NULL,NULL,(LPBYTE)g_mru_list[n],&l);
+        if(g_mru_list[n][0] != _T('\0')) {
           n++;
         }
       }
@@ -867,7 +869,7 @@ void RestoreMRUList()
     RegCloseKey(hKey);
   }
   for(i = n; i < MRU_LIST_SIZE; i++) {
-    g_mru_list[i][0] = '\0';
+    g_mru_list[i][0] = _T('\0');
   }
 
   BuildMRUMenus();
@@ -880,10 +882,11 @@ void SaveMRUList()
   int i = 0;
   if (OpenRegSettingsKey(hKey, true)) {
     if (RegCreateKey(hKey,REGMRUSUBKEY,&hSubKey) == ERROR_SUCCESS) {
-      char buf[8];
+      TCHAR buf[8];
       for(i = 0; i < MRU_LIST_SIZE; i++) {
-        wsprintf(buf,"%d",i);
-        RegSetValueEx(hSubKey,buf,0,REG_SZ,(const unsigned char *)g_mru_list[i],lstrlen(g_mru_list[i]));
+        wsprintf(buf,_T("%d"),i);
+        // cbData must include the size of the terminating null character.
+        RegSetValueEx(hSubKey,buf,0,REG_SZ,(const BYTE*)g_mru_list[i],(lstrlen(g_mru_list[i]))*sizeof(TCHAR));
       }
       RegCloseKey(hSubKey);
     }
@@ -895,7 +898,7 @@ void ClearMRUList()
 {
   int i;
   for(i=0; i<MRU_LIST_SIZE; i++) {
-    g_mru_list[i][0] = '\0';
+    g_mru_list[i][0] = _T('\0');
   }
 
   BuildMRUMenus();
@@ -906,11 +909,11 @@ void RestoreCompressor()
   HKEY hKey;
   NCOMPRESSOR v = COMPRESSOR_SCRIPT;
   if (OpenRegSettingsKey(hKey)) {
-    char compressor_name[32];
+    TCHAR compressor_name[32];
     DWORD l = sizeof(compressor_name);
     DWORD t;
 
-    if (RegQueryValueEx(hKey,REGCOMPRESSOR,NULL,&t,(unsigned char*)compressor_name,&l)==ERROR_SUCCESS) {
+    if (RegQueryValueEx(hKey,REGCOMPRESSOR,NULL,&t,(LPBYTE)compressor_name,&l)==ERROR_SUCCESS) {
       int i;
       for(i=(int)COMPRESSOR_SCRIPT; i<= (int)COMPRESSOR_BEST; i++) {
         if(!lstrcmpi(compressor_names[i],compressor_name)) {
@@ -935,13 +938,14 @@ void SaveCompressor()
   }
 
   if (OpenRegSettingsKey(hKey, true)) {
-    RegSetValueEx(hKey,REGCOMPRESSOR,0,REG_SZ,(unsigned char*)compressor_names[n],
-                  lstrlen(compressor_names[n]));
+    // compressor_names, even if Unicode is saved as BYTE* data.
+    RegSetValueEx(hKey,REGCOMPRESSOR,0,REG_SZ,(const BYTE*)compressor_names[n],
+                  lstrlen(compressor_names[n])*sizeof(TCHAR));
     RegCloseKey(hKey);
   }
 }
 
-BOOL FileExists(char *fname)
+BOOL FileExists(TCHAR *fname)
 {
   WIN32_FIND_DATA wfd;
   HANDLE h;

@@ -14,6 +14,9 @@
 **   4. enjoy.
 */
 
+// Reviewed for Unicode support by Jim Park -- 08/16/2007
+// Note: Inet host name is strictly ANSI, no UNICODE for now.
+
 #ifndef _ASYNCDNS_H_
 #define _ASYNCDNS_H_
 

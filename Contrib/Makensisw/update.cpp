@@ -1,8 +1,11 @@
+// Unicode support by Jim Park -- 08/20/2007
+
 #include "makensisw.h"
 #include "update.h"
 #include "noclib.h"
 
 #include "jnetlib/httpget.h"
+#include "../ExDLL/nsis_tchar.h"
 
 static BOOL update_initialized = FALSE;
 
@@ -28,12 +31,12 @@ void FinalizeUpdate() {
 int getProxyInfo(char *out) {
   DWORD v=0;
   HKEY hKey;
-  if (RegOpenKeyEx(HKEY_CURRENT_USER,"Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings",0,KEY_READ,&hKey) == ERROR_SUCCESS) {
+  if (RegOpenKeyExA(HKEY_CURRENT_USER,"Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings",0,KEY_READ,&hKey) == ERROR_SUCCESS) {
     DWORD l = 4;
     DWORD t;
-    if (RegQueryValueEx(hKey,"ProxyEnable",NULL,&t,(unsigned char *)&v,&l) == ERROR_SUCCESS && t == REG_DWORD) {
+    if (RegQueryValueExA(hKey,"ProxyEnable",NULL,&t,(unsigned char *)&v,&l) == ERROR_SUCCESS && t == REG_DWORD) {
       l=8192;
-      if (RegQueryValueEx(hKey,"ProxyServer",NULL,&t,(unsigned char *)out,&l ) != ERROR_SUCCESS || t != REG_SZ) { 
+      if (RegQueryValueExA(hKey,"ProxyServer",NULL,&t,(unsigned char *)out,&l ) != ERROR_SUCCESS || t != REG_SZ) { 
         v=0; 
         *out=0; 
       }
@@ -53,6 +56,7 @@ DWORD CALLBACK UpdateThread(LPVOID v) {
   char url[300];
   BOOL error = FALSE;
   static char pbuf[8192];
+  static char ansiBuf[1024];
   char *p=NULL;
   *response = 0;
 
@@ -72,9 +76,16 @@ DWORD CALLBACK UpdateThread(LPVOID v) {
   InitializeUpdate();
 
   JNL_HTTPGet *get = new JNL_HTTPGet(g_dns,8192,(p&&p[0])?p:NULL);;
-  lstrcpy(url,NSIS_UPDATE);
-  lstrcat(url,g_sdata.brandingv);
-  lstrcpy(response,"");
+  lstrcpyA(url,NSIS_UPDATE);
+
+#ifdef _UNICODE
+  WideCharToMultiByte(CP_ACP, 0, g_sdata.brandingv, -1, ansiBuf, sizeof(ansiBuf), NULL, NULL);
+  lstrcatA(url,ansiBuf);
+#else
+  lstrcatA(url,g_sdata.brandingv);
+#endif
+
+  lstrcpyA(response,"");
   get->addheader("User-Agent: MakeNSISw (jnetlib)");
   get->addheader("Accept:*/*");
   get->connect(url);
@@ -85,10 +96,10 @@ DWORD CALLBACK UpdateThread(LPVOID v) {
       while(len=get->bytes_available()) {
         char b[RSZ];
         if (len>RSZ) len=RSZ;
-        if (lstrlen(response)+len>RSZ) break;
+        if (lstrlenA(response)+len>RSZ) break;
         len=get->get_bytes(b,len);
         b[len]=0;
-        lstrcat(response,b);
+        lstrcatA(response,b);
       }
     }
     if (st==1) break; //closed
@@ -100,26 +111,26 @@ DWORD CALLBACK UpdateThread(LPVOID v) {
   }
   if (error) {
     char buf[1000];
-    wsprintf(buf,"There was a problem checking for an update.  Please try again later.\n\nError: %s",get->geterrorstr());
-    MessageBox(g_sdata.hwnd,buf,"NSIS Update",MB_OK|MB_ICONINFORMATION);
+    wsprintfA(buf, "There was a problem checking for an update.  Please try again later.\n\nError: %s",get->geterrorstr());
+    MessageBoxA(g_sdata.hwnd,buf,"NSIS Update",MB_OK|MB_ICONINFORMATION);
   }
-  else if (*response=='1'&&lstrlen(response)>2) {
+  else if (*response=='1'&&lstrlenA(response)>2) {
     char buf[200];
     response+=2;
-    wsprintf(buf,"NSIS %s is now available.  Would you like to download it now?",response);
-    if (MessageBox(g_sdata.hwnd,buf,"NSIS Update",MB_YESNO|MB_ICONINFORMATION)==IDYES) {
-      ShellExecute(g_sdata.hwnd,"open",NSIS_DL_URL,NULL,NULL,SW_SHOWNORMAL);
+    wsprintfA(buf, "NSIS %s is now available.  Would you like to download it now?",response);
+    if (MessageBoxA(g_sdata.hwnd,buf,"NSIS Update",MB_YESNO|MB_ICONINFORMATION)==IDYES) {
+      ShellExecuteA(g_sdata.hwnd,"open",NSIS_DL_URL,NULL,NULL,SW_SHOWNORMAL);
     }
   }
-  else if (*response=='2'&&lstrlen(response)>2) {
+  else if (*response=='2'&&lstrlenA(response)>2) {
     char buf[200];
     response+=2;
-    wsprintf(buf,"NSIS %s is now available.  Would you like to download this preview release now?",response);
-    if (MessageBox(g_sdata.hwnd,buf,"NSIS Update",MB_YESNO|MB_ICONINFORMATION)==IDYES) {
-      ShellExecute(g_sdata.hwnd,"open",NSIS_DL_URL,NULL,NULL,SW_SHOWNORMAL);
+    wsprintfA(buf,"NSIS %s is now available.  Would you like to download this preview release now?",response);
+    if (MessageBoxA(g_sdata.hwnd,buf,"NSIS Update",MB_YESNO|MB_ICONINFORMATION)==IDYES) {
+      ShellExecuteA(g_sdata.hwnd,"open",NSIS_DL_URL,NULL,NULL,SW_SHOWNORMAL);
     }
   }
-  else MessageBox(g_sdata.hwnd,"There is no update available for NSIS at this time.","NSIS Update",MB_OK|MB_ICONINFORMATION);
+  else MessageBoxA(g_sdata.hwnd,"There is no update available for NSIS at this time.","NSIS Update",MB_OK|MB_ICONINFORMATION);
   GlobalFree(response);
   delete get;
   EnableMenuItem(g_sdata.menu,IDM_NSISUPDATE,MF_ENABLED);
@@ -129,9 +140,9 @@ DWORD CALLBACK UpdateThread(LPVOID v) {
 void Update() {
   DWORD dwThreadId;
 
-  if (my_strstr(g_sdata.brandingv,"cvs"))
+  if (my_strstr(g_sdata.brandingv,_T("cvs")))
   {
-    MessageBox(g_sdata.hwnd,"Cannot check for new version of nightly builds.  To update, download a new nightly build.","NSIS Update",MB_OK|MB_ICONSTOP);
+    MessageBox(g_sdata.hwnd,_T("Cannot check for new version of nightly builds.  To update, download a new nightly build."),_T("NSIS Update"),MB_OK|MB_ICONSTOP);
     return;
   }
 

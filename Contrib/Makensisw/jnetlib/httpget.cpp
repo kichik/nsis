@@ -4,6 +4,12 @@
 ** Author: Justin Frankel
 ** File: httpget.cpp - JNL HTTP GET implementation
 ** License: zlib
+**
+** Reviewed for Unicode Support by Jim Park -- 08/17/2007
+** Note: The functions that work on char's should be explicitely set to use the
+** ANSI versions.  Some of the functions like wprintf() are #defined to be
+** the wide-char versions when _UNICODE is defined.  So these must be explictly
+** set to use the ANSI versions.
 */
 
 #include "netinc.h"
@@ -181,14 +187,14 @@ void JNL_HTTPGet::connect(char *url)
 
   if (!m_http_proxyhost || !m_http_proxyhost[0])
   {
-    wsprintf(str,"GET %s HTTP/1.0\r\n",m_http_request);
+    wsprintfA(str,"GET %s HTTP/1.0\r\n",m_http_request);
   }
   else
   {
-    wsprintf(str,"GET %s HTTP/1.0\r\n",m_http_url);
+    wsprintfA(str,"GET %s HTTP/1.0\r\n",m_http_url);
   }
 
-  wsprintf(str+strlen(str),"Host: %s\r\n",m_http_host);
+  wsprintfA(str+strlen(str),"Host: %s\r\n",m_http_host);
 
   if (m_http_lpinfo&&m_http_lpinfo[0])
   {

@@ -32,6 +32,10 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 
+  Unicode support by Jim Park -- 08/28/2007
+  (Support of the archive file name being Unicode but not the files in
+  the archive itself.  That requires modifying the ZLIB lib not just
+  here but the user's zlib-based tool.)
 
 */
 
@@ -132,7 +136,7 @@ extern int ZEXPORT unzStringFileNameCompare OF ((const char* fileName1,
 */
 
 
-extern unzFile ZEXPORT unzOpen OF((const char *path));
+extern unzFile ZEXPORT unzOpen OF((const TCHAR *path));
 /*
   Open a Zip file. path contain the full pathname (by example,
      on a Windows XP computer "c:\\zlib\\zlib113.zip" or on an Unix computer
@@ -143,7 +147,7 @@ extern unzFile ZEXPORT unzOpen OF((const char *path));
        of this unzip package.
 */
 
-extern unzFile ZEXPORT unzOpen2 OF((const char *path,
+extern unzFile ZEXPORT unzOpen2 OF((const TCHAR *path,
                                     zlib_filefunc_def* pzlib_filefunc_def));
 /*
    Open a Zip file, like unzOpen, but provide a set of file low level API

@@ -6,6 +6,7 @@ extern "C" {
 #endif
 
 #include "api.h"
+#include "nsis_tchar.h"
 
 #ifndef NSISCALL
 #  define NSISCALL __stdcall
@@ -18,7 +19,7 @@ extern "C" {
 
 typedef struct _stack_t {
   struct _stack_t *next;
-  char text[1]; // this should be the length of string_size
+  TCHAR text[1]; // this should be the length of string_size
 } stack_t;
 
 enum
@@ -53,19 +54,25 @@ __INST_LAST
 
 extern unsigned int g_stringsize;
 extern stack_t **g_stacktop;
-extern char *g_variables;
+extern TCHAR *g_variables;
 
-int NSISCALL popstring(char *str); // 0 on success, 1 on empty stack
-int NSISCALL popstringn(char *str, int maxlen); // with length limit, pass 0 for g_stringsize
+int NSISCALL popstring(TCHAR *str); // 0 on success, 1 on empty stack
+int NSISCALL popstringn(TCHAR *str, int maxlen); // with length limit, pass 0 for g_stringsize
 int NSISCALL popint(); // pops an integer
 int NSISCALL popint_or(); // with support for or'ing (2|4|8)
-int NSISCALL myatoi(const char *s); // converts a string to an integer
-unsigned NSISCALL myatou(const char *s); // converts a string to an unsigned integer, decimal only
-int NSISCALL myatoi_or(const char *s); // with support for or'ing (2|4|8)
-void NSISCALL pushstring(const char *str);
+int NSISCALL myatoi(const TCHAR *s); // converts a string to an integer
+unsigned NSISCALL myatou(const TCHAR *s); // converts a string to an unsigned integer, decimal only
+int NSISCALL myatoi_or(const TCHAR *s); // with support for or'ing (2|4|8)
+void NSISCALL pushstring(const TCHAR *str);
 void NSISCALL pushint(int value);
-char * NSISCALL getuservariable(const int varnum);
-void NSISCALL setuservariable(const int varnum, const char *var);
+TCHAR * NSISCALL getuservariable(const int varnum);
+void NSISCALL setuservariable(const int varnum, const TCHAR *var);
+
+// ANSI defs
+
+#define PopStringA(x) popstring(x)
+#define PushStringA(x) pushstring(x)
+#define SetUserVariableA(x,y) setuservariable(x,y)
 
 #ifdef __cplusplus
 }

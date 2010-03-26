@@ -46,15 +46,15 @@ CallbackThunk* CallbackThunkListHead;
 HINSTANCE g_hInstance;
 
 // Return to callback caller with stack restore
-char retexpr[4];
+TCHAR retexpr[4];
 HANDLE retaddr;
 
-char *GetResultStr(SystemProc *proc)
+TCHAR *GetResultStr(SystemProc *proc)
 {
-    char *buf = AllocString();
-    if (proc->ProcResult == PR_OK) lstrcpy(buf, "ok");
-    else if (proc->ProcResult == PR_ERROR) lstrcpy(buf, "error");
-    else if (proc->ProcResult == PR_CALLBACK) wsprintf(buf, "callback%d", proc->CallbackIndex);
+    TCHAR *buf = AllocString();
+    if (proc->ProcResult == PR_OK) lstrcpy(buf, _T("ok"));
+    else if (proc->ProcResult == PR_ERROR) lstrcpy(buf, _T("error"));
+    else if (proc->ProcResult == PR_CALLBACK) wsprintf(buf, _T("callback%d"), proc->CallbackIndex);
     return buf;
 }
 
@@ -62,16 +62,16 @@ char *GetResultStr(SystemProc *proc)
 
 // System log debugging turned on
 #define SYSTEM_LOG_ADD(a)  { register int _len = lstrlen(syslogbuf); lstrcpyn(syslogbuf + _len, a, sizeof(syslogbuf) - _len); }
-#define SYSTEM_LOG_POST     { SYSTEM_LOG_ADD("\n"); WriteToLog(syslogbuf); *syslogbuf = 0; }
+#define SYSTEM_LOG_POST     { SYSTEM_LOG_ADD(_T("\n")); WriteToLog(syslogbuf); *syslogbuf = 0; }
 
 HANDLE logfile = NULL;
-char syslogbuf[4096] = "";
+TCHAR syslogbuf[4096] = _T("");
 int logop = 0;
 
-void WriteToLog(char *buffer)
+void WriteToLog(TCHAR *buffer)
 {
     DWORD written;
-    char timebuffer[128];
+    TCHAR timebuffer[128];
 
     GetTickCount();
 
@@ -79,7 +79,7 @@ void WriteToLog(char *buffer)
 
     SetFilePointer(logfile, 0, 0, FILE_END);
 
-    wsprintf(timebuffer, "%04d  %04d.%03d    ", (++logop)%10000, (GetTickCount() / 1000) % 10000,
+    wsprintf(timebuffer, _T("%04d  %04d.%03d    "), (++logop)%10000, (GetTickCount() / 1000) % 10000,
         GetTickCount() % 1000);
 
     _RPT0(_CRT_WARN, timebuffer);
@@ -92,14 +92,14 @@ void WriteToLog(char *buffer)
 
 PLUGINFUNCTION(Debug)
 {
-    char *o1;
+    TCHAR *o1;
     o1 = system_popstring();
 
     if (logfile == NULL)
         if (lstrlen(o1) > 0)
         {
             SYSTEMTIME t;
-            char buffer[1024], buftime[1024], bufdate[1024];
+            TCHAR buffer[1024], buftime[1024], bufdate[1024];
 
             // Init debugging
             logfile = CreateFile(o1, GENERIC_READ|GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, 
@@ -111,7 +111,7 @@ PLUGINFUNCTION(Debug)
             GetLocalTime(&t);
             GetTimeFormat(LOCALE_SYSTEM_DEFAULT, LOCALE_NOUSEROVERRIDE, &t, NULL, buftime, 1024);
             GetDateFormat(LOCALE_SYSTEM_DEFAULT, LOCALE_NOUSEROVERRIDE, &t, NULL, bufdate, 1024);
-            wsprintf(buffer, "System, %s %s [build "__TIME__" "__DATE__"]\n", buftime, bufdate);
+            wsprintf(buffer, _T("System, %s %s [build "__TIME__" ")__DATE___T("]\n"), buftime, bufdate);
             WriteToLog(buffer);
         } else ;
     else
@@ -122,7 +122,7 @@ PLUGINFUNCTION(Debug)
     } else
     {
         // Stop debugging
-        WriteToLog("Debug stopped.\n\n\n");
+        WriteToLog(_T("Debug stopped.\n\n\n"));
         CloseHandle(logfile);
         logfile = NULL;
     }
@@ -172,15 +172,15 @@ PLUGINFUNCTION(Get)
     SystemProc *proc = PrepareProc(FALSE);
     if (proc == NULL)
     {
-      system_pushstring("error");
+      system_pushstring(_T("error"));
       return;
     }
 
-    SYSTEM_LOG_ADD("Get ");
+    SYSTEM_LOG_ADD(_T("Get "));
     SYSTEM_LOG_ADD(proc->DllName);
-    SYSTEM_LOG_ADD("::");
+    SYSTEM_LOG_ADD(_T("::"));
     SYSTEM_LOG_ADD(proc->ProcName);
-    SYSTEM_LOG_ADD("\n");
+    SYSTEM_LOG_ADD(_T("\n"));
     SYSTEM_LOG_POST;
     if ((proc->Options & POPT_ALWRETURN) != 0)
     {
@@ -209,11 +209,11 @@ PLUGINFUNCTION(Call)
     if (proc == NULL)
       return;
 
-    SYSTEM_LOG_ADD("Call ");
+    SYSTEM_LOG_ADD(_T("Call "));
     SYSTEM_LOG_ADD(proc->DllName);
-    SYSTEM_LOG_ADD("::");
+    SYSTEM_LOG_ADD(_T("::"));
     SYSTEM_LOG_ADD(proc->ProcName);
-    SYSTEM_LOG_ADD("\n");
+    SYSTEM_LOG_ADD(_T("\n"));
     if (proc->ProcResult != PR_CALLBACK)
         ParamAllocate(proc);
     ParamsIn(proc);
@@ -284,13 +284,13 @@ PLUGINFUNCTION(Call)
 PLUGINFUNCTIONSHORT(Int64Op)
 {
     __int64 i1, i2 = 0, i3, i4;
-    char *op, *o1, *o2;
-    char buf[128];
+    TCHAR *op, *o1, *o2;
+    TCHAR buf[128];
 
     // Get strings
     o1 = system_popstring(); op = system_popstring(); 
     i1 = myatoi64(o1); // convert first arg to int64
-    if ((*op != '~') && (*op != '!'))
+    if ((*op != _T('~')) && (*op != _T('!')))
     {
         // get second arg, convert it, free it
         o2 = system_popstring();
@@ -301,25 +301,25 @@ PLUGINFUNCTIONSHORT(Int64Op)
     // operation
     switch (*op)
     {
-    case '+': i1 += i2; break;
-    case '-': i1 -= i2; break;
-    case '*': i1 *= i2; break;
-    case '/': 
-    case '%': 
+    case _T('+'): i1 += i2; break;
+    case _T('-'): i1 -= i2; break;
+    case _T('*'): i1 *= i2; break;
+    case _T('/'): 
+    case _T('%'): 
         // It's unclear, but in this case compiler will use DivMod rountine
         // instead of two separate Div and Mod rountines.
         if (i2 == 0) { i3 = 0; i4 = i1; }
         else {i3 = i1 / i2; i4 = i1 % i2; }
-        if (*op == '/') i1 = i3; else i1 = i4; 
+        if (*op == _T('/')) i1 = i3; else i1 = i4; 
         break;
-    case '|': if (op[1] == '|') i1 = i1 || i2; else i1 |= i2; break;
-    case '&': if (op[1] == '&') i1 = i1 && i2; else i1 &= i2; break;
-    case '^': i1 ^= i2; break;
-    case '~': i1 = ~i1; break;
-    case '!': i1 = !i1; break;
-    case '<': if (op[1] == '<') i1 = i1 << i2; else i1 = i1 < i2; break;
-    case '>': if (op[1] == '>') i1 = i1 >> i2; else i1 = i1 > i2; break;
-    case '=': i1 = (i1 == i2); break;
+    case _T('|'): if (op[1] == _T('|')) i1 = i1 || i2; else i1 |= i2; break;
+    case _T('&'): if (op[1] == _T('&')) i1 = i1 && i2; else i1 &= i2; break;
+    case _T('^'): i1 ^= i2; break;
+    case _T('~'): i1 = ~i1; break;
+    case _T('!'): i1 = !i1; break;
+    case _T('<'): if (op[1] == _T('<')) i1 = i1 << i2; else i1 = i1 < i2; break;
+    case _T('>'): if (op[1] == _T('>')) i1 = i1 >> i2; else i1 = i1 > i2; break;
+    case _T('='): i1 = (i1 == i2); break;
     }
     
     // Output and freedom
@@ -328,11 +328,11 @@ PLUGINFUNCTIONSHORT(Int64Op)
     GlobalFree(o1); GlobalFree(op);
 } PLUGINFUNCTIONEND
 
-__int64 GetIntFromString(char **p)
+__int64 GetIntFromString(TCHAR **p)
 {
-    char buffer[128], *b = buffer;
+    TCHAR buffer[128], *b = buffer;
     (*p)++; // First character should be skipped
-    while (((**p >= 'a') && (**p <= 'f')) || ((**p >= 'A') && (**p <= 'F')) || ((**p >= '0') && (**p <= '9')) || (**p == 'X') || (**p == '-') || (**p == 'x') || (**p == '|')) *(b++) = *((*p)++);
+    while (((**p >= _T('a')) && (**p <= _T('f'))) || ((**p >= _T('A')) && (**p <= _T('F'))) || ((**p >= _T('0')) && (**p <= _T('9'))) || (**p == _T('X')) || (**p == _T('-')) || (**p == _T('x')) || (**p == _T('|'))) *(b++) = *((*p)++);
     *b = 0;
     (*p)--; // We should point at last digit
     return myatoi64(buffer);
@@ -347,7 +347,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
         temp = 0, temp2, temp3, temp4;
     BOOL param_defined = FALSE;
     SystemProc *proc = NULL;
-    char *ibuf, *ib, *sbuf, *cbuf, *cb;
+    TCHAR *ibuf, *ib, *sbuf, *cbuf, *cb;
 
     // Retrieve proc specs
     cb = (cbuf = AllocString()); // Current String buffer
@@ -370,16 +370,16 @@ SystemProc *PrepareProc(BOOL NeedForCall)
         switch (*ib)
         {
         case 0x0: SectionType = -1; break;
-        case '#': SectionType = PST_PROC; ProcType = PT_NOTHING; break;
-        case '(': 
+        case _T('#'): SectionType = PST_PROC; ProcType = PT_NOTHING; break;
+        case _T('('): 
             SectionType = PST_PARAMS; 
             // fake-real parameter: for COM interfaces first param is Interface Pointer
             ParamIndex = ((ProcType == PT_VTABLEPROC)?(2):(1)); 
             temp3 = temp = 0;
             param_defined = FALSE;
             break;
-        case ')': SectionType = PST_RETURN; temp3 = temp = 0; break;
-        case '?': SectionType = PST_OPTIONS; temp = 1; break;
+        case _T(')'): SectionType = PST_RETURN; temp3 = temp = 0; break;
+        case _T('?'): SectionType = PST_OPTIONS; temp = 1; break;
         default:
             changed = FALSE;
         }
@@ -468,15 +468,15 @@ SystemProc *PrepareProc(BOOL NeedForCall)
         case PST_PROC:
             switch (*ib)
             {
-            case ':':
-            case '-':
+            case _T(':'):
+            case _T('-'):
                 // Is it '::'
-                if ((*(ib) == '-') && (*(ib+1) == '>'))
+                if ((*(ib) == _T('-')) && (*(ib+1) == _T('>')))
                 {
                     ProcType = PT_VTABLEPROC;    
                 } else
                 {
-                    if ((*(ib+1) != ':') || (*(ib) == '-')) break;
+                    if ((*(ib+1) != _T(':')) || (*(ib) == _T('-'))) break;
                     ProcType = PT_PROC;
                 }
                 ib++; // Skip next ':'
@@ -490,7 +490,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
                 // Ok
                 ChangesDone = PCD_DONE;
                 break;
-            case '*':
+            case _T('*'):
                 // Structure defenition
                 ProcType = PT_STRUCT;
                 ChangesDone = PCD_DONE;
@@ -505,9 +505,9 @@ SystemProc *PrepareProc(BOOL NeedForCall)
             temp2 = -1; temp4 = 0; // Our type placeholder
             switch (*ib)
             {
-            case ' ':
+            case _T(' '):
                 break;
-            case '_': // No param cutting specifier
+            case _T('_'): // No param cutting specifier
                 if (proc->ParamCount > ParamIndex) ParamIndex = proc->ParamCount;
                 temp3 = temp = 0; // Clear parameter options
                 if (proc->ParamCount != ((ProcType == PT_VTABLEPROC) ? 1 : 0))
@@ -519,65 +519,65 @@ SystemProc *PrepareProc(BOOL NeedForCall)
                   param_defined = TRUE;
                 }
                 break;
-            case ',': // Next param
+            case _T(','): // Next param
                 temp3 = temp = 0; // Clear parameter options
                 ParamIndex++;
                 param_defined = TRUE;
                 break;
-            case '&':
+            case _T('&'):
                 temp = 1; break; // Special parameter option
-            case '*':
+            case _T('*'):
                 temp = -1; break; // Pointer parameter option
 
             // Types
-            case 'v':
-            case 'V': temp2 = PAT_VOID; break;
+            case _T('v'):
+            case _T('V'): temp2 = PAT_VOID; break;
 
             #if !defined(SYSTEM_X86)
                 #error "TODO: handle p"
             #else
-                case 'p':
+                case _T('p'):
             #endif
-            case 'i':
-            case 'I': temp2 = PAT_INT; break;
-            case 'l':
-            case 'L': temp2 = PAT_LONG; break;
-            case 'm':
-            case 'M':
-            case 't':
-            case 'T': temp2 = PAT_STRING; break;
-            case 'g':
-            case 'G': temp2 = PAT_GUID; break;
-            case 'w':
-            case 'W': temp2 = PAT_WSTRING; break;
-            case 'k':
-            case 'K': temp2 = PAT_CALLBACK; break;
+            case _T('i'):
+            case _T('I'): temp2 = PAT_INT; break;
+            case _T('l'):
+            case _T('L'): temp2 = PAT_LONG; break;
+            case _T('m'):
+            case _T('M'):
+            case _T('t'):
+            case _T('T'): temp2 = PAT_STRING; break;
+            case _T('g'):
+            case _T('G'): temp2 = PAT_GUID; break;
+            case _T('w'):
+            case _T('W'): temp2 = PAT_WSTRING; break;
+            case _T('k'):
+            case _T('K'): temp2 = PAT_CALLBACK; break;
 
             // Input output specifiers
-            case '.': temp3++; break; // skip specifier
+            case _T('.'): temp3++; break; // skip specifier
 
-            case 'R':
+            case _T('R'):
                 temp4 = ((int) GetIntFromString(&ib))+1;
                 if (temp4 < 11) temp4 += 10; 
                 break;
-            case 'r': temp4 = ((int) GetIntFromString(&ib))+1; break; // Register
+            case _T('r'): temp4 = ((int) GetIntFromString(&ib))+1; break; // Register
 
-            case '-':
-            case '0': case '1': case '2': case '3': case '4':
-            case '5': case '6': case '7': case '8': case '9':
+            case _T('-'):
+            case _T('0'): case _T('1'): case _T('2'): case _T('3'): case _T('4'):
+            case _T('5'): case _T('6'): case _T('7'): case _T('8'): case _T('9'):
                 // Numeric inline
                 if (temp3 == 0)
                 {
                     ib--;
                     // It's stupid, I know, but I'm too laze to do another thing
-                    myitoa64(GetIntFromString(&(ib)),(char *)(temp4 = (int) AllocString()));
+                    myitoa64(GetIntFromString(&(ib)),(TCHAR *)(temp4 = (int) AllocString()));
                 }
                 break;
 
-            case '\"': case '\'': case '`':
+            case _T('\"'): case _T('\''): case _T('`'):
                 // Character inline
                 {
-                    char start = *ib;
+                    TCHAR start = *ib;
                     cb = cbuf;
                     // copy inline
                     while (!((*(++ib) == start) && (*(ib+1) != start)) && (*ib))
@@ -591,18 +591,18 @@ SystemProc *PrepareProc(BOOL NeedForCall)
                 }
                 break;
 
-            case 's':
-            case 'S': temp4 = -1; break;    // Stack
-            case 'c':
-            case 'C': temp4 = INST_CMDLINE+1; break;
-            case 'd':
-            case 'D': temp4 = INST_INSTDIR+1; break;
-            case 'o':
-            case 'O': temp4 = INST_OUTDIR+1; break;
-            case 'e':
-            case 'E': temp4 = INST_EXEDIR+1; break;
-            case 'a':
-            case 'A': temp4 = INST_LANG+1; break;
+            case _T('s'):
+            case _T('S'): temp4 = -1; break;    // Stack
+            case _T('c'):
+            case _T('C'): temp4 = INST_CMDLINE+1; break;
+            case _T('d'):
+            case _T('D'): temp4 = INST_INSTDIR+1; break;
+            case _T('o'):
+            case _T('O'): temp4 = INST_OUTDIR+1; break;
+            case _T('e'):
+            case _T('E'): temp4 = INST_EXEDIR+1; break;
+            case _T('a'):
+            case _T('A'): temp4 = INST_LANG+1; break;
             }
 
             // Param type changed?
@@ -645,25 +645,25 @@ SystemProc *PrepareProc(BOOL NeedForCall)
             temp2 = 0;
             switch (*ib)
             {
-            case ' ':
+            case _T(' '):
                 break;
-            case '!': temp = -temp; break;
-            case 'c':
+            case _T('!'): temp = -temp; break;
+            case _T('c'):
                 temp2 = POPT_CDECL;
                 break;
-            case 'r':
+            case _T('r'):
                 temp2 = POPT_ALWRETURN;
                 break;
-            case 'n':
+            case _T('n'):
                 temp2 = POPT_NEVERREDEF;
                 break;
-            case 's':
+            case _T('s'):
                 temp2 = POPT_GENSTACK;
                 break;
-            case 'e':
+            case _T('e'):
                 temp2 = POPT_ERROR;
                 break;
-            case 'u':
+            case _T('u'):
                 temp2 = POPT_UNLOAD;
                 break;
             }
@@ -750,7 +750,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
                 if ((proc->Proc = GetProcAddress(proc->Dll, proc->ProcName)) == NULL)
                 {
                     // automatic A discover
-                    lstrcat(proc->ProcName, "A");
+                    lstrcat(proc->ProcName, _T("A"));
                     if ((proc->Proc = GetProcAddress(proc->Dll, proc->ProcName)) == NULL)
                         proc->ProcResult = PR_ERROR;                            
                 }                    
@@ -779,7 +779,7 @@ void ParamAllocate(SystemProc *proc)
 void ParamsIn(SystemProc *proc)
 {
     int i, *place;
-    char *realbuf;
+    TCHAR *realbuf;
     LPWSTR wstr;
 
     i = (proc->ParamCount > 0)?(1):(0);
@@ -788,14 +788,14 @@ void ParamsIn(SystemProc *proc)
         ProcParameter *par = &proc->Params[i];
         // Step 1: retrive value
         if ((par->Input == IOT_NONE) || (par->Input == IOT_INLINE)) 
-            realbuf = AllocStr("");
+            realbuf = AllocStr(_T(""));
         else if (par->Input == IOT_STACK) realbuf = system_popstring();
         else if ((par->Input > 0) && (par->Input <= __INST_LAST)) 
             realbuf = system_getuservariable(par->Input - 1);
         else 
         {
             // Inline input, will be freed as realbuf
-            realbuf = (char*) par->Input;
+            realbuf = (TCHAR*) par->Input;
             par->Input = IOT_INLINE;
         }
 
@@ -846,8 +846,8 @@ void ParamsIn(SystemProc *proc)
 
 #ifdef SYSTEM_LOG_DEBUG
         {
-            char buf[1024];
-            wsprintf(buf, "\t\t\tParam In %d:    type %d value 0x%08X value2 0x%08X\n", i, 
+            TCHAR buf[1024];
+            wsprintf(buf, _T("\t\t\tParam In %d:    type %d value 0x%08X value2 0x%08X\n"), i, 
                 par->Type, par->Value, par->_value);
             SYSTEM_LOG_ADD(buf);
         }
@@ -874,7 +874,7 @@ void ParamsDeAllocate(SystemProc *proc)
 void ParamsOut(SystemProc *proc)
 {
     int i, *place;
-    char *realbuf;
+    TCHAR *realbuf;
     LPWSTR wstr;
 
     i = proc->ParamCount;
@@ -890,19 +890,19 @@ void ParamsOut(SystemProc *proc)
         switch (proc->Params[i].Type)
         {
         case PAT_VOID:
-            lstrcpy(realbuf,"");
+            lstrcpy(realbuf,_T(""));
             break;
         case PAT_INT:
-            wsprintf(realbuf, "%d", *((int*) place));
+            wsprintf(realbuf, _T("%d"), *((int*) place));
             break;
         case PAT_LONG:
             myitoa64(*((__int64*) place), realbuf);
             break;
         case PAT_STRING:
             {
-                unsigned num = lstrlen(*((char**) place));
+                unsigned num = lstrlen(*((TCHAR**) place));
                 if (num >= g_stringsize) num = g_stringsize-1;
-                lstrcpyn(realbuf,*((char**) place), num+1);
+                lstrcpyn(realbuf,*((TCHAR**) place), num+1);
                 realbuf[num] = 0;                
             }
             break;
@@ -917,7 +917,7 @@ void ParamsOut(SystemProc *proc)
             WideCharToMultiByte(CP_ACP, 0, wstr, g_stringsize, realbuf, g_stringsize, NULL, NULL);             
             break;
         case PAT_CALLBACK:
-            wsprintf(realbuf, "%d", proc->Params[i].Value);
+            wsprintf(realbuf, _T("%d"), proc->Params[i].Value);
             break;
         }
 
@@ -941,6 +941,7 @@ void ParamsOut(SystemProc *proc)
 HANDLE CreateCallback(SystemProc *cbproc)
 {
     char *mem;
+
 
     if (cbproc->Proc == NULL)
     {
@@ -974,9 +975,9 @@ void CallStruct(SystemProc *proc)
 {
     BOOL ssflag;
     int i, structsize = 0, size = 0;
-    char *st, *ptr;
+    TCHAR *st, *ptr;
 
-    SYSTEM_LOG_ADD("\t\tStruct...");
+    SYSTEM_LOG_ADD(_T("\t\tStruct..."));
 
     // Calculate the structure size 
     for (i = 1; i <= proc->ParamCount; i++)
@@ -993,7 +994,7 @@ void CallStruct(SystemProc *proc)
         if (structsize == 0) structsize = (int) GlobalSize((HANDLE) proc->Proc);
     
     // Pointer to current data
-    st = (char*) proc->Proc;
+    st = (TCHAR*) proc->Proc;
 
     for (i = 1; i <= proc->ParamCount; i++)
     {
@@ -1004,7 +1005,7 @@ void CallStruct(SystemProc *proc)
         {
             // Normal
             size = proc->Params[i].Size*4;
-            ptr = (char*) &(proc->Params[i].Value);
+            ptr = (TCHAR*) &(proc->Params[i].Value);
         }
         else
         {
@@ -1025,13 +1026,13 @@ void CallStruct(SystemProc *proc)
                 // clear unused value bits
                 proc->Params[i].Value &= intmask[((size >= 0) && (size < 4))?(size):(0)];
                 // pointer
-                ptr = (char*) &(proc->Params[i].Value); 
+                ptr = (TCHAR*) &(proc->Params[i].Value); 
                 break;
 
             case PAT_STRING: 
             case PAT_GUID: 
             case PAT_WSTRING: 
-                ptr = (char*) proc->Params[i].Value; break;
+                ptr = (TCHAR*) proc->Params[i].Value; break;
             }
         }
 
@@ -1083,6 +1084,7 @@ BOOL WINAPI DllMain(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
             LastError = 0;
             LastProc = NULL;
             CallbackIndex = 0;
+            retexpr[0] = (char) 0xC2;
             CallbackThunkListHead = NULL;
             retexpr[0] = (char) 0xC2;
             retexpr[2] = 0x00;

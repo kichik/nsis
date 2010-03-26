@@ -4,10 +4,14 @@
    Version 1.01e, February 12th, 2005
 
    Copyright (C) 1998-2005 Gilles Vollant
+
+   Unicode support by Jim Park -- 08/28/2007
 */
 
 #ifndef _ZLIBIOAPI_H
 #define _ZLIBIOAPI_H
+
+#include "../../ExDLL/nsis_tchar.h"
 
 
 #define ZLIB_FILEFUNC_SEEK_CUR (1)
@@ -35,7 +39,7 @@
 extern "C" {
 #endif
 
-typedef voidpf (ZCALLBACK *open_file_func) OF((voidpf opaque, const char* filename, int mode));
+typedef voidpf (ZCALLBACK *open_file_func) OF((voidpf opaque, const TCHAR* filename, int mode));
 typedef uLong  (ZCALLBACK *read_file_func) OF((voidpf opaque, voidpf stream, void* buf, uLong size));
 typedef uLong  (ZCALLBACK *write_file_func) OF((voidpf opaque, voidpf stream, const void* buf, uLong size));
 typedef long   (ZCALLBACK *tell_file_func) OF((voidpf opaque, voidpf stream));

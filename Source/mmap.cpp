@@ -15,9 +15,9 @@
  */
 
 #include "mmap.h"
-
 #include <cstdio> // for f*
 #include <cassert> // for assert
+#include "tchar.h"
 #ifndef _WIN32
 #  include <sys/types.h> // for freebsd
 #  include <sys/mman.h>
@@ -146,10 +146,10 @@ void MMapFile::resize(int newsize)
 #ifdef _WIN32
     if (m_hFile == INVALID_HANDLE_VALUE)
     {
-      char buf[MAX_PATH], buf2[MAX_PATH];
+      TCHAR buf[MAX_PATH], buf2[MAX_PATH];
 
       GetTempPath(MAX_PATH, buf);
-      GetTempFileName(buf, "nsd", 0, buf2);
+      GetTempFileName(buf, _T("nsd"), 0, buf2);
 
       m_hFile = CreateFile(
         buf2,
@@ -219,7 +219,7 @@ void MMapFile::resize(int newsize)
       extern void quit(); extern int g_display_errors;
       if (g_display_errors)
       {
-        fprintf(g_output,"\nInternal compiler error #12345: error creating mmap the size of %d.\n", m_iSize);
+        _ftprintf(g_output,_T("\nInternal compiler error #12345: error creating mmap the size of %d.\n"), m_iSize);
         fflush(g_output);
       }
       quit();
@@ -252,7 +252,7 @@ void *MMapFile::get(int offset, int *sizep) const
     extern void quit(); extern int g_display_errors;
     if (g_display_errors) 
     {
-      fprintf(g_output,"\nInternal compiler error #12345: error mmapping file (%d, %d) is out of range.\n", offset, size);
+      _ftprintf(g_output,_T("\nInternal compiler error #12345: error mmapping file (%d, %d) is out of range.\n"), offset, size);
       fflush(g_output);
     }
     quit();
@@ -279,7 +279,7 @@ void *MMapFile::get(int offset, int *sizep) const
     extern void quit(); extern int g_display_errors;
     if (g_display_errors) 
     {
-      fprintf(g_output,"\nInternal compiler error #12345: error mmapping datablock to %d.\n", size);
+      _ftprintf(g_output,_T("\nInternal compiler error #12345: error mmapping datablock to %d.\n"), size);
       fflush(g_output);
     }
     quit();

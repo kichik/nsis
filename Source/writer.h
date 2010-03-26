@@ -12,6 +12,8 @@
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty.
+ *
+ * Unicode support by Jim Park -- 08/13/2007
  */
 
 #ifndef ___WRITER__H___
@@ -21,6 +23,7 @@
 #include "growbuf.h"
 #include "crc32.h"
 #include <stdio.h>
+#include "tchar.h"
 
 class writer_sink {
 public:
@@ -31,8 +34,8 @@ public:
   virtual void write_short(const short s);
   virtual void write_int(const int i);
   virtual void write_int_array(const int i[], const size_t len);
-  virtual void write_string(const char *s);
-  virtual void write_string(const char *s, const size_t size);
+  virtual void write_string(const TCHAR *s);
+  virtual void write_string(const TCHAR *s, const size_t size);
   virtual void write_growbuf(const IGrowBuf *b);
 
   virtual void write_data(const void *data, const size_t size) = 0;

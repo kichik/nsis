@@ -411,7 +411,7 @@ o-----------------------------------------------------------------------------o
         System::Call 'kernel32::GlobalLock(i r2) i.r3'
 
         ;Step 4: Copy the text to locked clipboard buffer
-        System::Call 'kernel32::lstrcpyA(i r3, t r0)'
+        System::Call 'kernel32::lstrcpy(i r3, t r0)'
 
         ;Step 5: Unlock the handle again
         System::Call 'kernel32::GlobalUnlock(i r2)'
@@ -455,7 +455,7 @@ o-----------------------------------------------------------------------------o
         System::Call 'kernel32::GlobalLock(i r2) i.r3'
 
         ;Step 7: Copy the text to locked clipboard buffer
-        System::Call 'kernel32::lstrcpyA(i r3, t r0)'
+        System::Call 'kernel32::lstrcpy(i r3, t r0)'
 
         ;Step 8: Unlock the handle again
         System::Call 'kernel32::GlobalUnlock(i r2)'
@@ -1192,7 +1192,7 @@ o-----------------------------------------------------------------------------o
         ; variable because it won't be used anymore
 
         ${If} $6 == 1
-          System::Call `kernel32::lstrcmpA(ts, ts) i.s` `$R3` `$1`
+          System::Call `kernel32::lstrcmp(ts, ts) i.s` `$R3` `$1`
           Pop $R3
           ${If} $R3 = 0
             StrCpy $R3 1 ; Continue

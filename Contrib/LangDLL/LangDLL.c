@@ -1,5 +1,6 @@
 #include <windows.h>
 #include "resource.h"
+#include <nsis/nsis_tchar.h>
 
 // JF> updated usage
 // call like this:
@@ -8,6 +9,8 @@
 //  LangDLL:LangDialog "Language Selection" "Choose a language" 2 French 1036 English 1033
 // or (the F after the 2 means we're supplying font information)
 //  LangDLL:LangDialog "Language Selection" "Choose a language" 2F French 1036 English 1033 12 Garamond
+//
+// Unicode support added by Jim Park -- 07/27/2007
 
 
 #include <nsis/pluginapi.h> // nsis plugin
@@ -15,8 +18,8 @@
 HINSTANCE g_hInstance;
 HWND g_hwndParent;
 
-char temp[1024];
-char g_wndtitle[1024], g_wndtext[1024];
+TCHAR temp[1024];
+TCHAR g_wndtitle[1024], g_wndtext[1024];
 int dofont;
 int docp;
 
@@ -24,15 +27,15 @@ int langs_num;
 int visible_langs_num;
 
 struct lang {
-  char *name;
-  char *id;
+  TCHAR *name;
+  TCHAR *id;
   UINT cp;
 } *langs;
 
 BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   int i, size;
-  char *selected_language = NULL;
+  TCHAR *selected_language = NULL;
   static HFONT font;
   switch (uMsg) {
   	case WM_INITDIALOG:
@@ -62,7 +65,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         size = myatou(temp);
         if (!popstring(temp)) {
           LOGFONT f = {0,};
-          if (lstrcmp(temp, "MS Shell Dlg")) {
+          if (lstrcmp(temp, _T("MS Shell Dlg"))) {
             f.lfHeight = -MulDiv(size, GetDeviceCaps(GetDC(hwndDlg), LOGPIXELSY), 72);
             lstrcpy(f.lfFaceName, temp);
             font = CreateFontIndirect(&f);
@@ -84,17 +87,17 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
           i = SendDlgItemMessage(hwndDlg, IDC_LANGUAGE, CB_GETCURSEL, 0, 0);
           i = SendDlgItemMessage(hwndDlg, IDC_LANGUAGE, CB_GETITEMDATA, i, 0);
           if (i != CB_ERR && i) {
-            pushstring((char *) i);
+            pushstring((TCHAR *) i);
           } else {
             // ?!
-            pushstring("cancel");
+            pushstring(_T("cancel"));
           }
           // end dialog
           EndDialog(hwndDlg, 0);
           break;
         case IDCANCEL:
           // push "cancel" on the stack
-          pushstring("cancel");
+          pushstring(_T("cancel"));
           // end dialog
           EndDialog(hwndDlg, 0);
           break;
@@ -111,7 +114,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 }
 
 void __declspec(dllexport) LangDialog(HWND hwndParent, int string_size, 
-                                      char *variables, stack_t **stacktop)
+                                      TCHAR *variables, stack_t **stacktop)
 {
   g_hwndParent=hwndParent;
   EXDLL_INIT();
@@ -130,12 +133,12 @@ void __declspec(dllexport) LangDialog(HWND hwndParent, int string_size,
 
     // parse flags
     {
-      char *p=temp;
+      TCHAR *p=temp;
       while (*p)
       {
-        if (*p == 'A') doauto=1; // parse auto count flag
-        if (*p == 'F') dofont=1; // parse font flag
-        if (*p == 'C') docp=1;   // parse codepage flag
+        if (*p == _T('A')) doauto=1; // parse auto count flag
+        if (*p == _T('F')) dofont=1; // parse font flag
+        if (*p == _T('C')) docp=1;   // parse codepage flag
         p++;
       }
     }
@@ -173,12 +176,12 @@ void __declspec(dllexport) LangDialog(HWND hwndParent, int string_size,
     // fill language struct
     for (i = 0; i < langs_num; i++) {
       if (popstring(temp)) { visible_langs_num = 0; break; }
-      langs[visible_langs_num].name = GlobalAlloc(GPTR, lstrlen(temp)+1);
+      langs[visible_langs_num].name = (TCHAR*) GlobalAlloc(GPTR, (lstrlen(temp)+1)*sizeof(TCHAR));
       if (!langs[visible_langs_num].name) { visible_langs_num = 0; break; }
       lstrcpy(langs[visible_langs_num].name, temp);
 
       if (popstring(temp)) { visible_langs_num = 0; break; }
-      langs[visible_langs_num].id = GlobalAlloc(GPTR, lstrlen(temp)+1);
+      langs[visible_langs_num].id = (TCHAR*) GlobalAlloc(GPTR, (lstrlen(temp)+1)*sizeof(TCHAR));
       if (!langs[visible_langs_num].id) { visible_langs_num = 0; break; }
       lstrcpy(langs[visible_langs_num].id, temp);
 
@@ -188,6 +191,10 @@ void __declspec(dllexport) LangDialog(HWND hwndParent, int string_size,
         langs[visible_langs_num].cp = myatou(temp);
       }
 
+      // If Unicode, show everything.
+#ifdef _UNICODE
+      visible_langs_num++;
+#else
       if (!docp || langs[visible_langs_num].cp == GetACP() || langs[visible_langs_num].cp == 0)
       {
         visible_langs_num++;
@@ -197,6 +204,7 @@ void __declspec(dllexport) LangDialog(HWND hwndParent, int string_size,
         GlobalFree(langs[visible_langs_num].name);
         GlobalFree(langs[visible_langs_num].id);
       }
+#endif
     }
 
     // pop the empty string to keep the stack clean
@@ -213,7 +221,7 @@ void __declspec(dllexport) LangDialog(HWND hwndParent, int string_size,
     }
     else if (visible_langs_num == 0)
     {
-      pushstring("");
+      pushstring(_T(""));
     }
     else
     {

@@ -4,6 +4,12 @@
 ** Author: Justin Frankel
 ** File: netinc.h - network includes and portability defines (used internally)
 ** License: zlib
+**
+** Reviewed for Unicode Support by Jim Park -- 08/17/2007
+** Note: The functions that work on char's should be explicitely set to use the
+** ANSI versions.  Some of the functions like lstrcpy() are #defined to be
+** the wide-char versions when _UNICODE is defined.  So these must be explictly
+** set to use the ANSI versions.
 */
 
 #ifndef _NETINC_H_
@@ -72,10 +78,10 @@ extern void mini_memset(void *,char,int);
 extern void mini_memcpy(void *,void*,int);
 #define memset mini_memset
 #define memcpy mini_memcpy
-#define strcpy lstrcpy
-#define strncpy lstrcpyn
-#define strcat lstrcat
-#define strlen lstrlen
+#define strcpy lstrcpyA
+#define strncpy lstrcpynA
+#define strcat lstrcatA
+#define strlen lstrlenA
 #define malloc(x) GlobalAlloc(GPTR,(x))
 #define free(x) { if (x) GlobalFree(x); }
 

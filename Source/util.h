@@ -12,12 +12,14 @@
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty.
+ *
+ * Unicode support by Jim Park -- 08/10/2007
  */
 
 #ifndef _UTIL_H_
 #define _UTIL_H_
 
-#include <string> // for std::string
+#include "tstring.h" // for std::string
 
 #include "boost/scoped_ptr.hpp" // for boost::scoped_ptr
 #include "ResourceEditor.h"
@@ -28,35 +30,35 @@
 #endif
 
 
-// these are the standard pause-before-quit shit.
+// these are the standard pause-before-quit stuff.
 extern int g_dopause;
 extern void dopause(void);
 
 // Adds the bitmap in filename using resource editor re as id id.
 // If width or height are specified it will also make sure the bitmap is in that size
-int update_bitmap(CResourceEditor* re, WORD id, const char* filename, int width=0, int height=0, int maxbpp=0);
+int update_bitmap(CResourceEditor* re, WORD id, const TCHAR* filename, int width=0, int height=0, int maxbpp=0);
 
-size_t my_strftime(char *s, size_t max, const char  *fmt, const struct tm *tm);
+size_t my_strftime(TCHAR *s, size_t max, const TCHAR  *fmt, const struct tm *tm);
 
-bool GetDLLVersion(const std::string& filepath, DWORD& high, DWORD& low);
+bool GetDLLVersion(const tstring& filepath, DWORD& high, DWORD& low);
 
-std::string get_full_path(const std::string& path);
-std::string get_dir_name(const std::string& path);
-std::string get_file_name(const std::string& path);
-std::string get_executable_dir(const char *argv0);
-std::string remove_file_extension(const std::string& path);
-std::string lowercase(const std::string&);
+tstring get_full_path(const tstring& path);
+tstring get_dir_name(const tstring& path);
+tstring get_file_name(const tstring& path);
+tstring get_executable_dir(const TCHAR *argv0);
+tstring remove_file_extension(const tstring& path);
+tstring lowercase(const tstring&);
 
-std::string get_string_prefix(const std::string& str, const std::string& separator);
-std::string get_string_suffix(const std::string& str, const std::string& separator);
+tstring get_string_prefix(const tstring& str, const tstring& separator);
+tstring get_string_suffix(const tstring& str, const tstring& separator);
 
-int sane_system(const char *command);
+int sane_system(const TCHAR *command);
 
 #ifndef _WIN32
-char *CharPrev(const char *s, const char *p);
-char *CharNext(const char *s);
+TCHAR *CharPrev(const TCHAR *s, const TCHAR *p);
+TCHAR *CharNext(const TCHAR *s);
 char *CharNextExA(WORD codepage, const char *s, int flags);
-int wsprintf(char *s, const char *format, ...);
+int wsprintf(TCHAR *s, const TCHAR *format, ...);
 int WideCharToMultiByte(UINT CodePage, DWORD dwFlags, LPCWSTR lpWideCharStr,
     int cchWideChar, LPSTR lpMultiByteStr, int cbMultiByte, LPCSTR lpDefaultChar,
     LPBOOL lpUsedDefaultChar);
@@ -64,10 +66,10 @@ int MultiByteToWideChar(UINT CodePage, DWORD dwFlags, LPCSTR lpMultiByteStr,
     int cbMultiByte, LPWSTR lpWideCharStr, int cchWideChar);
 BOOL IsValidCodePage(UINT CodePage);
 
-char *my_convert(const char *path);
-void my_convert_free(char *converted_path);
-int my_open(const char *pathname, int flags);
-FILE *my_fopen(const char *path, const char *mode);
+TCHAR *my_convert(const TCHAR *path);
+void my_convert_free(TCHAR *converted_path);
+int my_open(const TCHAR *pathname, int flags);
+FILE *my_fopen(const TCHAR *path, const TCHAR *mode);
 
 #define FOPEN(a, b) my_fopen(a, b)
 #define OPEN(a, b) my_open(a, b)
@@ -77,8 +79,8 @@ FILE *my_fopen(const char *path, const char *mode);
 #define my_convert(x) (x)
 #define my_convert_free(x)
 
-#define FOPEN(a, b) fopen(a, b)
-#define OPEN(a, b) open(a, b)
+#define FOPEN(a, b) _tfopen(a, b)
+#define OPEN(a, b) _topen(a, b)
 
 #endif
 

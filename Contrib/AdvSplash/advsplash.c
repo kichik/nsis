@@ -1,3 +1,4 @@
+// Unicode support by Jim Park -- 08/22/2007
 // For layered windows
 #define _WIN32_WINNT 0x0500
 
@@ -15,7 +16,7 @@ int g_rv;
 int resolution;
 int sleep_val, fadein_val, fadeout_val, state, timeleft, keycolor, nt50,
     alphaparam;
-const char classname[4] = "_sp";
+const TCHAR classname[4] = _T("_sp");
 
 typedef BOOL(_stdcall * _tSetLayeredWindowAttributesProc) (HWND hwnd,      // handle to the layered window
                                                            COLORREF crKey, // specifies the color key
@@ -170,11 +171,11 @@ void CALLBACK TimeProc(UINT uID,
 }
 
 void __declspec(dllexport) show(HWND hwndParent, int string_size,
-                                char *variables, stack_t ** stacktop)
+                                TCHAR *variables, stack_t ** stacktop)
 {
   DEVMODE dm;
-  char fn[MAX_PATH];
-  char temp[64];
+  TCHAR fn[MAX_PATH];
+  TCHAR temp[64];
 
   g_rv = -1;
   resolution = RESOLUTION;
@@ -223,10 +224,10 @@ void __declspec(dllexport) show(HWND hwndParent, int string_size,
     wc.hCursor = LoadCursor(NULL, IDC_ARROW);
     wc.lpszClassName = classname;
     if (RegisterClass(&wc)) {
-      char fn2[MAX_PATH];
+      TCHAR fn2[MAX_PATH];
       lstrcpy(fn2, fn);
-      lstrcat(fn, ".bmp");
-      lstrcat(fn2, ".wav");
+      lstrcat(fn, _T(".bmp"));
+      lstrcat(fn2, _T(".wav"));
       g_hbm =
           LoadImage(NULL, fn, IMAGE_BITMAP, 0, 0,
                     LR_CREATEDIBSECTION | LR_LOADFROMFILE);
@@ -235,7 +236,7 @@ void __declspec(dllexport) show(HWND hwndParent, int string_size,
         UINT timerEvent;
 
         // Get Bitmap Information
-        GetObject(g_hbm, sizeof(bm), (LPSTR) & bm);
+        GetObject(g_hbm, sizeof(bm), & bm);
 
         myWnd =
             CreateWindowEx(WS_EX_TOOLWINDOW |
@@ -246,7 +247,7 @@ void __declspec(dllexport) show(HWND hwndParent, int string_size,
         // Set transparency / key color
         if (nt50) {
           // Get blending proc address
-          HANDLE user32 = GetModuleHandle("user32");
+          HANDLE user32 = GetModuleHandle(_T("user32"));
           SetLayeredWindowAttributesProc =
               (_tSetLayeredWindowAttributesProc) GetProcAddress(user32,
                                                                 "SetLayeredWindowAttributes");
@@ -283,6 +284,6 @@ void __declspec(dllexport) show(HWND hwndParent, int string_size,
       UnregisterClass(wc.lpszClassName, g_hInstance);
     }
   }
-  wsprintf(temp, "%d", g_rv);
+  wsprintf(temp, _T("%d"), g_rv);
   pushstring(temp);
 }

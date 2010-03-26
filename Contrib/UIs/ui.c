@@ -1,14 +1,16 @@
 // ui.cpp : Defines the entry point for the application.
 //
+// Unicode support by Jim Park -- 08/10/2007
 
 #include <windows.h>
 #include <commctrl.h>
+#include "../ExDLL/nsis_tchar.h"
 #include "resource.h"
 
 HINSTANCE g_hInstance;
 HWND m_curwnd;
 
-char* windows[] = {
+TCHAR* windows[] = {
   MAKEINTRESOURCE(IDD_LICENSE),
   MAKEINTRESOURCE(IDD_SELCOM),
   MAKEINTRESOURCE(IDD_DIR),
@@ -34,11 +36,11 @@ BOOL CALLBACK DialogProc(HWND hwndDlg,UINT uMsg,WPARAM wParam,LPARAM lParam) {
   static int i = -1;
 	switch (uMsg) {
 	case WM_INITDIALOG:
-		SetWindowText(hwndDlg, "NSIS User Interface - Testing");
-		SetWindowText(GetDlgItem(hwndDlg, IDC_VERSTR), "NSIS version");
-		SetWindowText(GetDlgItem(hwndDlg, IDC_BACK), "< Back");
-		SetWindowText(GetDlgItem(hwndDlg, IDOK), "Next >");
-		SetWindowText(GetDlgItem(hwndDlg, IDCANCEL), "Cancel");
+		SetWindowText(hwndDlg, _T("NSIS User Interface - Testing"));
+		SetWindowText(GetDlgItem(hwndDlg, IDC_VERSTR), _T("NSIS version"));
+		SetWindowText(GetDlgItem(hwndDlg, IDC_BACK), _T("< Back"));
+		SetWindowText(GetDlgItem(hwndDlg, IDOK), _T("Next >"));
+		SetWindowText(GetDlgItem(hwndDlg, IDCANCEL), _T("Cancel"));
 		ShowWindow(GetDlgItem(hwndDlg, IDC_BACK), SW_SHOW);
 		ShowWindow(GetDlgItem(hwndDlg, IDC_CHILDRECT), SW_SHOW);
     SendMessage(hwndDlg, WM_COMMAND, MAKEWORD(IDOK, 0), 0);
@@ -53,7 +55,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg,UINT uMsg,WPARAM wParam,LPARAM lParam) {
         i++;
         break;
       }
-      if (i >= (int)sizeof(windows)/sizeof(char*)) {
+      if (i >= (int)sizeof(windows)/sizeof(TCHAR*)) {
         i--;
         break;
       }
@@ -78,14 +80,14 @@ BOOL CALLBACK DialogProc(HWND hwndDlg,UINT uMsg,WPARAM wParam,LPARAM lParam) {
 	return 0;
 }
 
-int APIENTRY WinMain(HINSTANCE hInstance,
+int APIENTRY _tWinMain(HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
-                     LPSTR     lpCmdLine,
+                     LPTSTR    lpCmdLine,
                      int       nCmdShow)
 {
   InitCommonControls();
 
-  LoadLibrary("RichEd32.dll");
+  LoadLibrary(_T("RichEd32.dll"));
 
   g_hInstance = GetModuleHandle(0);
 

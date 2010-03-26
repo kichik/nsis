@@ -13,7 +13,7 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
   {
  	  BITMAP bm;
     RECT vp;
-    GetObject(g_hbm, sizeof(bm), (LPSTR)&bm);
+    GetObject(g_hbm, sizeof(bm), (LPTSTR)&bm);
     SystemParametersInfo(SPI_GETWORKAREA, 0, &vp, 0);
     SetWindowLong(hwnd,GWL_STYLE,0);
     SetWindowPos(hwnd,NULL,
@@ -55,11 +55,11 @@ BOOL WINAPI DllMain(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
 	return TRUE;
 }
 
-void __declspec(dllexport) show(HWND hwndParent, int string_size, char *variables, stack_t **stacktop)
+void __declspec(dllexport) show(HWND hwndParent, int string_size, TCHAR *variables, stack_t **stacktop)
 {
-  char fn[MAX_PATH];
-  char temp[64];
-  char *sleep=temp;
+  TCHAR fn[MAX_PATH];
+  TCHAR temp[64];
+  TCHAR *sleep=temp;
 
  
   EXDLL_INIT();
@@ -68,16 +68,16 @@ void __declspec(dllexport) show(HWND hwndParent, int string_size, char *variable
   popstring(fn);
 
   sleep_val=0;
-  while (*sleep >= '0' && *sleep <= '9')
+  while (*sleep >= _T('0') && *sleep <= _T('9'))
   {
     sleep_val*=10;
-    sleep_val+=*sleep++-'0';
+    sleep_val+=*sleep++-_T('0');
   }
 
   if (fn[0] && sleep_val>0)
   {
     MSG msg;
-    char classname[4]="_sp";
+    TCHAR classname[4]=_T("_sp");
     static WNDCLASS wc;
     wc.lpfnWndProc = WndProc;
     wc.hInstance = g_hInstance;
@@ -85,10 +85,10 @@ void __declspec(dllexport) show(HWND hwndParent, int string_size, char *variable
     wc.lpszClassName = classname;
     if (RegisterClass(&wc)) 
     {
-      char fn2[MAX_PATH];
+      TCHAR fn2[MAX_PATH];
       lstrcpy(fn2,fn);
-      lstrcat(fn,".bmp");
-      lstrcat(fn2,".wav");
+      lstrcat(fn,_T(".bmp"));
+      lstrcat(fn2,_T(".wav"));
       g_hbm=LoadImage(NULL,fn,IMAGE_BITMAP,0,0,LR_CREATEDIBSECTION|LR_LOADFROMFILE);
       if (g_hbm) 
       {
@@ -114,6 +114,6 @@ void __declspec(dllexport) show(HWND hwndParent, int string_size, char *variable
       }
     }
   }
-  wsprintf(temp,"%d",g_rv);
+  wsprintf(temp,_T("%d"),g_rv);
   pushstring(temp);
 }

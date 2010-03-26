@@ -2,9 +2,12 @@
 // Name:        src/html/m_links.cpp
 // Purpose:     wxHtml module for links & anchors
 // Author:      Vaclav Slavik
-// RCS-ID:      $Id: nslinks.cpp,v 1.1 2007/02/24 18:57:09 kichik Exp $
+// RCS-ID:      $Id: nslinks.cpp,v 1.2 2007/03/08 01:47:14 pabs3 Exp $
 // Copyright:   (c) 1999 Vaclav Slavik
 // Licence:     wxWindows licence
+//
+// Reviewed for Unicode support by Jim Park -- 08/23/2007
+// Basically, compiling wxWidgets as Unicode should do it.
 /////////////////////////////////////////////////////////////////////////////
 
 #include "wx/wxprec.h"
@@ -60,10 +63,10 @@ TAG_HANDLER_BEGIN(A, "A")
             wxColour colour = m_WParser->GetLinkColor();
             wxHtmlLinkInfo linkInfo(name, target);
 
-            if (name.Left(3).IsSameAs((const wxChar*)"EX:", false))
+            if (name.Left(3).IsSameAs((const wxChar*) wxT("EX:"), false))
             {
                 wxString url = name.Mid(3);
-                if (!url.Left(7).IsSameAs((const wxChar*)"http://", false) && !url.Left(6).IsSameAs((const wxChar*)"irc://", false))
+                if (!url.Left(7).IsSameAs((const wxChar*) wxT("http://"), false) && !url.Left(6).IsSameAs((const wxChar*) wxT("irc://"), false))
                 {
                     wxString exePath = wxStandardPaths::Get().GetExecutablePath();
                     wxString path = ::wxPathOnly(exePath);

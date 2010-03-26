@@ -12,6 +12,8 @@
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty.
+ *
+ * Unicode support by Jim Park -- 08/24/2007
  */
 
 #ifndef ___CONSTANTS___H_____
@@ -32,12 +34,12 @@ class ConstantsStringList : public SortedStringListND<struct constantstring>
   public:
     ConstantsStringList();
 
-    int add(const char *name, int value1, int value2);
-    int get(char *name, int n_chars = -1);
+    int add(const TCHAR *name, int value1, int value2);
+    int get(TCHAR *name, int n_chars = -1);
     int getnum();
     int get_value1(int idx);
     int get_value2(int idx);
-    char *idx2name(int idx);
+    TCHAR *idx2name(int idx);
 
   private:
     int index;
