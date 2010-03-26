@@ -22,7 +22,10 @@
 // 2. Altered source versions must be plainly marked as such, and must not be
 //    misrepresented as being the original software.
 // 3. This notice may not be removed or altered from any source distribution.
+//
+// Unicode support by Jim Park -- 08/29/2007
 
+#include "tchar.h"
 #include "PatchGenerator.h"
 #include <algorithm>
 
@@ -85,12 +88,12 @@ void PatchGenerator::execute(vector<SameBlock*>& sameBlocks) {
       }
 
       // we need to update the memory cache of target
-      cout << "[CacheReload] File position = " << static_cast<unsigned int>(targetCDataBaseOffset) << "\n";
+      tout << _T("[CacheReload] File position = ") << static_cast<unsigned int>(targetCDataBaseOffset) << _T("\n");
 
       target.seekg(targetCDataBaseOffset,ios::beg);
       target.read(reinterpret_cast<char*>(targetCData),targetCDataSize);
     }
-    //cout << currentOffset << " ";
+    //tout << currentOffset << _T(" ");
 
     SameBlock* currentSameBlock = findBlock(sourceTree,currentOffset);
 
@@ -108,9 +111,9 @@ void PatchGenerator::execute(vector<SameBlock*>& sameBlocks) {
 
       // debug info
       if(beVerbose) {
-        cout << "Block found: " << static_cast<unsigned int>(currentSameBlock->targetOffset)
-             << " " << static_cast<unsigned int>(currentSameBlock->size)
-             << " (source offset=" << static_cast<unsigned int>(currentSameBlock->sourceOffset) << ")\n";
+        tout << _T("Block found: ") << static_cast<unsigned int>(currentSameBlock->targetOffset)
+             << _T(" ") << static_cast<unsigned int>(currentSameBlock->size)
+             << _T(" (source offset=") << static_cast<unsigned int>(currentSameBlock->sourceOffset) << _T(")\n");
       }
 
       currentOffset = currentSameBlock->targetOffset + currentSameBlock->size;
@@ -172,8 +175,8 @@ SameBlock* PatchGenerator::findBlock(ChunkedFile* sourceTree,
     if(beVerbose) {
       if(maxMatches != 0) {
         if(matchCount == maxMatches) {
-          cout << "[FindBlock] Abort due to >" << static_cast<unsigned int>(maxMatches)
-               << " matches; file position = " << static_cast<unsigned int>(targetFileStartOffset) << "\n";
+          tout << _T("[FindBlock] Abort due to >") << static_cast<unsigned int>(maxMatches)
+               << _T(" matches; file position = ") << static_cast<unsigned int>(targetFileStartOffset) << _T("\n");
         }
       }
     }

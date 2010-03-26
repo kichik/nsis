@@ -3,10 +3,12 @@
   LibraryLocal - used by the Library.nsh macros
   Get the version of local DLL and TLB files
   Written by Joost Verburg
+  Unicode support by Jim Park -- 07/27/2007
 
 */
 
 #include "../../../Source/Platform.h"
+#include "../../../Source/tstring.h"
 
 #include <stdio.h>
 #include <iostream>
@@ -21,23 +23,27 @@ int g_noconfig=0;
 int g_display_errors=1;
 FILE *g_output=stdout;
 
-int GetTLBVersion(string& filepath, DWORD& high, DWORD & low)
+int GetTLBVersion(tstring& filepath, DWORD& high, DWORD & low)
 {
 #ifdef _WIN32
 
   int found = 0;
 
-  char fullpath[1024];
-  char *p;
-  if (!GetFullPathName(filepath.c_str(), sizeof(fullpath), fullpath, &p))
+  TCHAR fullpath[1024];
+  TCHAR *p;
+  if (!GetFullPathName(filepath.c_str(), _countof(fullpath), fullpath, &p))
     return 0;
 
-  WCHAR *ole_filename = winchar_fromansi(fullpath);
-  
   ITypeLib* typeLib;
   HRESULT hr;
-  
+
+#ifdef _UNICODE
+  hr = LoadTypeLib(fullpath, &typeLib);
+#else
+  // If built without UNICODE, we still need to convert this string to a Unicode string.
+  WCHAR *ole_filename = winchar_fromansi(fullpath);
   hr = LoadTypeLib(ole_filename, &typeLib);
+#endif
   
   if (SUCCEEDED(hr)) {
 
@@ -67,16 +73,16 @@ int GetTLBVersion(string& filepath, DWORD& high, DWORD & low)
 #endif
 }
 
-int main(int argc, char* argv[])
+int _tmain(int argc, TCHAR* argv[])
 {
 
   // Parse the command line
 
-  string cmdline;
+  tstring cmdline;
 
-  string mode;
-  string filename;
-  string filepath;
+  tstring mode;
+  tstring filename;
+  tstring filepath;
 
   int filefound = 0;
 
@@ -90,7 +96,7 @@ int main(int argc, char* argv[])
 
   // Validate filename
 
-  ifstream fs(filename.c_str());
+  tifstream fs(filename.c_str());
   
   if (fs.is_open())
   {
@@ -110,7 +116,7 @@ int main(int argc, char* argv[])
     
     // DLL / EXE
     
-    if (mode.compare("D") == 0)
+    if (mode.compare(_T("D")) == 0)
     {
       
       versionfound = GetDLLVersion(filename, high, low);
@@ -119,7 +125,7 @@ int main(int argc, char* argv[])
 
     // TLB
     
-    if (mode.compare("T") == 0)
+    if (mode.compare(_T("T")) == 0)
     {
       
       versionfound = GetTLBVersion(filename, high, low);
@@ -130,23 +136,23 @@ int main(int argc, char* argv[])
 
   // Write the version to an NSIS header file
 
-  ofstream header(argv[3], ofstream::out);
+  tofstream header(argv[3], tofstream::out);
   
   if (header)
   {
 
     if (!filefound)
     {
-      header << "!define LIBRARY_VERSION_FILENOTFOUND" << endl;
+      header << _T("!define LIBRARY_VERSION_FILENOTFOUND") << endl;
     }
     else if (!versionfound)
     {
-      header << "!define LIBRARY_VERSION_NONE" << endl;
+      header << _T("!define LIBRARY_VERSION_NONE") << endl;
     }
     else
     {
-      header << "!define LIBRARY_VERSION_HIGH " << high << endl;
-      header << "!define LIBRARY_VERSION_LOW " << low << endl;
+      header << _T("!define LIBRARY_VERSION_HIGH ") << high << endl;
+      header << _T("!define LIBRARY_VERSION_LOW ") << low << endl;
     }
     
     header.close();

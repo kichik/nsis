@@ -18,7 +18,7 @@
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
 
 #include <map>
-#include <string>
+#include "tstring.h"
 #include <fstream>
 
 #include "Plugins.h"
@@ -40,7 +40,7 @@ using namespace std;
 
 extern FILE *g_output;
 
-void Plugins::FindCommands(const string &path, bool displayInfo)
+void Plugins::FindCommands(const tstring &path, bool displayInfo)
 {
   boost::scoped_ptr<dir_reader> dr( new_dir_reader() );
   dr->read(path);
@@ -49,10 +49,10 @@ void Plugins::FindCommands(const string &path, bool displayInfo)
        files_itr != dr->files().end();
        files_itr++)
   {
-    if (!dir_reader::matches(*files_itr, "*.dll"))
+    if (!dir_reader::matches(*files_itr, _T("*.dll")))
       continue;
 
-    const string plugin = path + PLATFORM_PATH_SEPARATOR_C + *files_itr;
+    const tstring plugin = path + PLATFORM_PATH_SEPARATOR_C + *files_itr;
     GetExports(plugin, displayInfo);
   }
 }
@@ -89,7 +89,7 @@ vector<unsigned char> read_file(const string& filename) {
   vector<unsigned char> result;
   result.resize(filesize);
 
-  file.read(reinterpret_cast<char*>(&result[0]), filesize);
+  file.read(reinterpret_cast<TCHAR*>(&result[0]), filesize);
 
   if (size_t(file.tellg()) != filesize) { // ifstream::eof doesn't return true here
     throw NSISException("Couldn't read entire file '" + filename + "'");
@@ -99,7 +99,7 @@ vector<unsigned char> read_file(const string& filename) {
 }
 }
 
-void Plugins::GetExports(const string &pathToDll, bool displayInfo)
+void Plugins::GetExports(const tstring &pathToDll, bool displayInfo)
 {
   vector<unsigned char> dlldata;
   PIMAGE_NT_HEADERS NTHeaders;
@@ -110,7 +110,7 @@ void Plugins::GetExports(const string &pathToDll, bool displayInfo)
     return;
   }
 
-  const string dllName = remove_file_extension(get_file_name(pathToDll));
+  const tstring dllName = remove_file_extension(get_file_name(pathToDll));
 
   FIX_ENDIAN_INT16_INPLACE(NTHeaders->FileHeader.Characteristics);
   if (NTHeaders->FileHeader.Characteristics & IMAGE_FILE_DLL)
@@ -140,12 +140,12 @@ void Plugins::GetExports(const string &pathToDll, bool displayInfo)
         for (unsigned long j = 0; j < FIX_ENDIAN_INT32(exports->NumberOfNames); j++)
         {
           const string name = string((char*)exports + FIX_ENDIAN_INT32(names[j]) - ExportDirVA);
-          const string signature = dllName + "::" + name;
-          const string lcsig = lowercase(signature);
+          const tstring signature = dllName + _T("::") + name;
+          const tstring lcsig = lowercase(signature);
           m_command_to_path[lcsig] = pathToDll;
           m_command_lowercase_to_command[lcsig] = signature;
           if (displayInfo)
-            fprintf(g_output, " - %s\n", signature.c_str());
+            _ftprintf(g_output, _T(" - %s\n"), signature.c_str());
         }
         break;
       }
@@ -153,7 +153,7 @@ void Plugins::GetExports(const string &pathToDll, bool displayInfo)
   }
 }
 
-bool Plugins::IsPluginCommand(const string& token) const {
+bool Plugins::IsPluginCommand(const tstring& token) const {
   return m_command_to_path.find(lowercase(token)) != m_command_to_path.end();
 }
 
@@ -177,11 +177,11 @@ Value get_value(const map<Key, Value>& the_map,
 }
 }
 
-string Plugins::NormalizedCommand(const string& command) const {
+tstring Plugins::NormalizedCommand(const tstring& command) const {
   return get_value(m_command_lowercase_to_command, lowercase(command));
 }
 
-int Plugins::GetPluginHandle(bool uninst, const string& command) const {
+int Plugins::GetPluginHandle(bool uninst, const tstring& command) const {
   if (uninst) {
     return get_value(m_command_to_uninstall_data_handle, command, -1);
   }
@@ -190,11 +190,11 @@ int Plugins::GetPluginHandle(bool uninst, const string& command) const {
   }
 }
 
-string Plugins::GetPluginPath(const string& command) const {
+tstring Plugins::GetPluginPath(const tstring& command) const {
   return get_value(m_command_to_path, lowercase(command));
 }
 
-void Plugins::SetDllDataHandle(bool uninst, const string& command, int dataHandle)
+void Plugins::SetDllDataHandle(bool uninst, const tstring& command, int dataHandle)
 {
   if (uninst) {
     m_command_to_uninstall_data_handle[command] = dataHandle;

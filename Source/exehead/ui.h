@@ -12,6 +12,8 @@
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty.
+ *
+ * Unicode support by Jim Park -- 08/13/2007
  */
 
 
@@ -21,7 +23,7 @@
 extern int *cur_langtable;
 
 extern int NSISCALL ui_doinstall(void);
-void NSISCALL update_status_text(int strtab, const char *text2);
+void NSISCALL update_status_text(int strtab, const TCHAR *text2);
 
 extern int ui_dlg_visible;
 extern HWND m_curwnd;

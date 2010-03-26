@@ -13,6 +13,8 @@
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty.
+ *
+ * Reviewed for Unicode support by Jim Park -- 08/28/2007
  */
 
 #ifndef __COMMON_CRC_H

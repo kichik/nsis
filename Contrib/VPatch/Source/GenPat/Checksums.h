@@ -22,6 +22,8 @@
 // 2. Altered source versions must be plainly marked as such, and must not be
 //    misrepresented as being the original software.
 // 3. This notice may not be removed or altered from any source distribution.
+//
+// Unicode support by Jim Park -- 08/29/2007
 
 #if !defined(Checksums_H)
   #define Checksums_H
@@ -29,6 +31,7 @@
   #include "md5.h"
   #include <string>
   #include "GlobalTypes.h"
+  #include "tchar.h"
 
   typedef uint32_t crc32_t;
 
@@ -39,7 +42,7 @@
     enum { CRC32, MD5 } mode;
 
     TChecksum() : mode(MD5) { }
-    TChecksum(std::string& fileName);
+    TChecksum(tstring& fileName);
 
     void loadMD5(md5_byte_t newdigest[16]);
     void loadCRC32(crc32_t newcrc);

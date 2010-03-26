@@ -1,12 +1,15 @@
+// Unicode support by Jim Park -- 08/23/2007
+
 #include <windows.h>
 #include <commctrl.h>
+#include "../ExDLL/nsis_tchar.h"
 #include "resource.h"
 
-#define CBL(x) {x,#x}
+#define CBL(x) {x,_T(#x)}
 
 struct line {
 	unsigned short id;
-	char *name;
+	TCHAR *name;
 };
 
 line primary[] = {
@@ -201,17 +204,17 @@ BOOL CALLBACK DialogProc(HWND hwndDlg,UINT uMsg,WPARAM wParam,LPARAM lParam) {
 		}
 		else if (HIWORD(wParam) == CBN_SELCHANGE) {
 			if (SendDlgItemMessage(hwndDlg, IDC_PRIMARY, CB_GETCURSEL, 0, 0) != CB_ERR && SendDlgItemMessage(hwndDlg, IDC_SUB, CB_GETCURSEL, 0, 0) != CB_ERR) {
-				char lang[512];
-				wsprintf(lang, "Language ID: %d", MAKELANGID(primary[SendDlgItemMessage(hwndDlg, IDC_PRIMARY, CB_GETCURSEL, 0, 0)].id, sub[SendDlgItemMessage(hwndDlg, IDC_SUB, CB_GETCURSEL, 0, 0)].id));
+				TCHAR lang[512];
+				wsprintf(lang, _T("Language ID: %d"), MAKELANGID(primary[SendDlgItemMessage(hwndDlg, IDC_PRIMARY, CB_GETCURSEL, 0, 0)].id, sub[SendDlgItemMessage(hwndDlg, IDC_SUB, CB_GETCURSEL, 0, 0)].id));
 				SetDlgItemText(hwndDlg, IDC_RESULT, lang);
 			}
 		}
 		else if (LOWORD(wParam) == IDOK) {
 			if (SendDlgItemMessage(hwndDlg, IDC_PRIMARY, CB_GETCURSEL, 0, 0) != CB_ERR && SendDlgItemMessage(hwndDlg, IDC_SUB, CB_GETCURSEL, 0, 0) != CB_ERR) {
-				HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE, 16);
+				HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE, 16*sizeof(TCHAR));
 				if (!hMem) return 0;
-				char *lang_id = (char *)GlobalLock(hMem);
-				wsprintf(lang_id, "%u", MAKELANGID(primary[SendDlgItemMessage(hwndDlg, IDC_PRIMARY, CB_GETCURSEL, 0, 0)].id, sub[SendDlgItemMessage(hwndDlg, IDC_SUB, CB_GETCURSEL, 0, 0)].id));
+				TCHAR *lang_id = (TCHAR *)GlobalLock(hMem);
+				wsprintf(lang_id, _T("%u"), MAKELANGID(primary[SendDlgItemMessage(hwndDlg, IDC_PRIMARY, CB_GETCURSEL, 0, 0)].id, sub[SendDlgItemMessage(hwndDlg, IDC_SUB, CB_GETCURSEL, 0, 0)].id));
 				GlobalUnlock(hMem);
 				if (!OpenClipboard(hwndDlg)) return 0;
 				EmptyClipboard();
@@ -224,9 +227,9 @@ BOOL CALLBACK DialogProc(HWND hwndDlg,UINT uMsg,WPARAM wParam,LPARAM lParam) {
 	return 0;
 }
 
-int APIENTRY WinMain(HINSTANCE hInstance,
+int APIENTRY _tWinMain(HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
-                     LPSTR     lpCmdLine,
+                     LPTSTR     lpCmdLine,
                      int       nCmdShow)
 {
 	InitCommonControls();

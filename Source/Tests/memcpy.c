@@ -1,3 +1,5 @@
+// Reviewed for Unicode support by Jim Park -- 08/24/2007
+
 #include "../Platform.h"
 
 void NSISCALL mini_memcpy(void *out, const void *in, int len)

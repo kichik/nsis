@@ -12,6 +12,8 @@
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty.
+ *
+ * Unicode support by Jim Park -- 08/13/2007
  */
 
 #ifndef __MMAP_H_
@@ -51,20 +53,108 @@ class MMapFile : public IMMap
     MMapFile();
     virtual ~MMapFile();
 
+    /**
+     * Closes the memory map and the file handle.
+     */
     void clear();
+
+    /**
+     * Set read-only.
+     * @param bRO Boolean value to set read-only.
+     */
     void setro(BOOL bRO);
+
+    /**
+     * Creates the memory mapping object of the file with a mapping size.
+     *
+     * @param hFile The handle to the opened file.
+     * @param dwSize The size of the memory mapped object.  You cannot set
+     * this value to zero like with CreateFileMapping() because it will
+     * immediately return.  Most likely, you want to set it to the size
+     * of the file unless you want to only map a part of the file on
+     * purpose.
+     * @return Returns 1 on success, 0 on failure.
+     */
 #ifdef _WIN32
     int  setfile(HANDLE hFile, DWORD dwSize);
 #else
     int  setfile(int hFile, DWORD dwSize);
 #endif
+
+   /**
+    * Resize the memory mapping of the file.  Used when the filesize has
+    * changed.  When setfile has not been called previously, then it will
+    * create a temporary file and use it to create a memory map.  This is
+    * what's used by MMapBuf to create a Memory Mapped Buffer.
+    * 
+    * @param newsize The new size of the file.  Limited to 32-bits.
+    */
     void resize(int newsize);
+
+    /**
+     * Size of the memory map object.
+     */
     int  getsize() const;
+
+    /**
+     * Set the memory map to a particular offset in the file and return the
+     * memory mapped pointer to it.  Internally it may have to align to a
+     * certain page size.
+     * 
+     * @param offset The offset from the beginning of the file.
+     * @param size The size of the memory map window.
+     */
     void *get(int offset, int size) const;
+
+    /**
+     * Set the memory map to a particular offset in the file and return the
+     * memory mapped pointer to it.  Internally it may have to align to a
+     * certain page size.
+     * 
+     * @param offset The offset from the beginning of the file.
+     * @param sizep [in/out] The size of the memory map window.  (In non-Win32
+     * systems, the new size is written back out.)
+     */
     void *get(int offset, int *sizep) const;
+
+    /**
+     * This function sets memory map and just hands you the pointer and
+     * it expects you to manage it.  So you need to call release(pView, size)
+     * yourself or you will leak memory.
+     *
+     * Warning: This breaks encapsulation.  The user should probably just
+     * create a new map.
+     *
+     * @param offset The offset from the beginning of the file.
+     * @param size The size of the memory map window.
+     */
     void *getmore(int offset, int size) const;
+
+    /**
+     * Releases the memory map currently being used.  Calls UnMapViewOfFile().
+     */
     void release();
+
+    /**
+     * Releases the memory map pointed to by pView.  In Win32 systems
+     * eventually calls UnmapViewOfFile().  Interestingly, the function
+     * tries to align the pointer value back to the beginning of the
+     * paged memory which is necessary because of the way get() works.
+     *
+     * This looks like it should only be used in conjunction with
+     * getmore().  Otherwise, just call release().
+     *
+     * @param pView The pointer to somewhere in a MemMapped object.
+     * @param size The size of the object.  Used only in non-Win32 systems.
+     */
     void release(void *pView, int size);
+
+    /**
+     * Flushes the contents of the current memory map to disk.  Set size to 0
+     * if you want to flush everything.
+     *
+     * @param num The number of bytes to flush.  0 for everything.
+     */
     void flush(int num);
 
   private:
@@ -109,6 +199,15 @@ class MMapFake : public IMMap
     int m_iSize;
 };
 
+/**
+ * A data structure that can be used to create a scratch file to do
+ * work in.  When it's smaller than 16mb, it's all in memory using the
+ * GrowBuf class.  But when it gets biggered than 16mb, then it uses
+ * the MMapFile class to create a memory map to a temporary file and
+ * then uses it.  This reduces memory overhead of the installer.
+ *
+ * This is sort of our virtual memory manager.
+ */
 class MMapBuf : public IGrowBuf, public IMMap
 {
   private: // don't copy instances

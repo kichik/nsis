@@ -109,6 +109,7 @@
 ; UINT_PTR SetTimer(HWND hWnd, UINT_PTR nIDEvent, UINT uElapse, TIMERPROC lpTimerFunc);
 !define sysSetTimer "user32::SetTimer(i, i, i, k) i"
 
+; DWORD GetLogicalDriveStrings(DWORD nBufferLength, LPTSTR LpBuffer);
 !define sysGetLogicalDriveStrings 'kernel32::GetLogicalDriveStringsA(i, i) i'
 
 !define sysGetDiskFreeSpaceEx 'kernel32::GetDiskFreeSpaceExA(t, *l, *l, *l) i'

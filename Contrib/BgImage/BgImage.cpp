@@ -1,3 +1,5 @@
+// Unicode support by Jim Park -- 08/22/2007
+
 #include <windows.h>
 #include <mmsystem.h>
 #include <nsis/pluginapi.h> // nsis plugin
@@ -8,9 +10,9 @@
         g_stringsize=string_size; \
         g_stacktop=stacktop; }
 
-#define NSISFunc(name) extern "C" void __declspec(dllexport) name(HWND hwndParent, int string_size, char *variables, stack_t **stacktop, extra_parameters *extra)
+#define NSISFunc(name) extern "C" void __declspec(dllexport) name(HWND hwndParent, int string_size, TCHAR *variables, stack_t **stacktop, extra_parameters *extra)
 
-char szTemp[2048];
+TCHAR szTemp[2048];
 HWND hWndImage, hWndParent;
 
 HINSTANCE g_hInstance;
@@ -37,7 +39,7 @@ struct myImageList {
   BYTE iType;
   union {
     HBITMAP hBitmap;
-    char *szText;
+    TCHAR *szText;
     COLORREF cGradientFrom;
   };
   RECT rPos;
@@ -80,14 +82,14 @@ NSISFunc(SetReturn) {
   extra->RegisterPluginCallback(g_hInstance, PluginCallback);
 
   popstring(szTemp);
-  bReturn = !lstrcmpi(szTemp, "on");
+  bReturn = !lstrcmpi(szTemp, _T("on"));
 }
 
-static void __stdcall my_pushstring(char *str)
+static void __stdcall my_pushstring(TCHAR *str)
 {
   stack_t *th;
   if (!g_stacktop || !bReturn) return;
-  th=(stack_t*)GlobalAlloc(GPTR,sizeof(stack_t)+g_stringsize);
+  th=(stack_t*)GlobalAlloc(GPTR,sizeof(stack_t)+(g_stringsize*sizeof(TCHAR)));
   lstrcpyn(th->text,str,g_stringsize);
   th->next=*g_stacktop;
   *g_stacktop=th;
@@ -104,7 +106,7 @@ NSISFunc(SetBg) {
     hWndParent = hwndParent;
 
     if (!hwndParent) {
-      my_pushstring("can't find parent window");
+      my_pushstring(_T("can't find parent window"));
       LCS();
       return;
     }
@@ -120,18 +122,18 @@ NSISFunc(SetBg) {
       LoadCursor(0, IDC_ARROW),
       0,
       0,
-      "NSISBGImage",
+      _T("NSISBGImage"),
       0
     };
     ATOM atomClass = RegisterClassEx(&wc);
     if (!atomClass) {
-      my_pushstring("can't create window");
+      my_pushstring(_T("can't create window"));
       return;
     }
 
     hWndImage = CreateWindowEx(
       WS_EX_TOOLWINDOW,
-      (LPSTR)(DWORD)atomClass,
+      (LPTSTR)(DWORD)atomClass,
       0,
       WS_CLIPSIBLINGS|WS_POPUP,
       0,
@@ -144,7 +146,7 @@ NSISFunc(SetBg) {
       0
     );
     if (!hWndImage) {
-      my_pushstring("can't create window");
+      my_pushstring(_T("can't create window"));
       LCS();
       return;
     }
@@ -225,7 +227,7 @@ done:
     );
   }
 
-  my_pushstring("success");
+  my_pushstring(_T("success"));
 }
 
 NSISFunc(AddImage) {
@@ -233,7 +235,7 @@ NSISFunc(AddImage) {
 
   myImageList *newImg = (myImageList *)GlobalAlloc(GPTR, sizeof(myImageList));
   if (!newImg) {
-    my_pushstring("memory allocation error");
+    my_pushstring(_T("memory allocation error"));
     LCS();
     return;
   }
@@ -242,7 +244,7 @@ NSISFunc(AddImage) {
   newImg->cTransparent = (COLORREF)-1;
 
   popstring(szTemp);
-  if (!lstrcmpi(szTemp, "/TRANSPARENT")) {
+  if (!lstrcmpi(szTemp, _T("/TRANSPARENT"))) {
     newImg->iType = MIL_TRANSPARENT_BITMAP;
     newImg->cTransparent = GetColor();
     popstring(szTemp);
@@ -265,7 +267,7 @@ NSISFunc(AddImage) {
   while (img->next) img = img->next;
   img->next = newImg;
 
-  my_pushstring("success");
+  my_pushstring(_T("success"));
 
   LCS();
 }
@@ -275,7 +277,7 @@ NSISFunc(AddText) {
 
   myImageList *newImg = (myImageList *)GlobalAlloc(GPTR, sizeof(myImageList));
   if (!newImg) {
-    my_pushstring("memory allocation error");
+    my_pushstring(_T("memory allocation error"));
     LCS();
     return;
   }
@@ -283,9 +285,9 @@ NSISFunc(AddText) {
   newImg->iType = MIL_TEXT;
 
   popstring(szTemp);
-  newImg->szText = (char *)GlobalAlloc(GPTR, lstrlen(szTemp)+1);
+  newImg->szText = (TCHAR *)GlobalAlloc(GPTR, (lstrlen(szTemp)+1)*sizeof(TCHAR));
   if (!newImg->szText) {
-    my_pushstring("memory allocation error");
+    my_pushstring(_T("memory allocation error"));
     GlobalFree(newImg);
     LCS();
     return;
@@ -303,7 +305,7 @@ NSISFunc(AddText) {
   while (img->next) img = img->next;
   img->next = newImg;
 
-  my_pushstring("success");
+  my_pushstring(_T("success"));
 
   LCS();
 }
@@ -351,7 +353,7 @@ NSISFunc(Destroy) {
   hWndImage = 0;
   oldProc = NULL;
   Clear(0, 0, 0, 0, 0);
-  UnregisterClass("NSISBGImage", g_hInstance);
+  UnregisterClass(_T("NSISBGImage"), g_hInstance);
 }
 
 NSISFunc(Sound) {
@@ -576,7 +578,7 @@ HBITMAP __stdcall LoadBitmapFile(long right, long bottom, BITMAP *bBitmap)
 {
   HBITMAP hBitmap = (HBITMAP)LoadImage(0, szTemp, IMAGE_BITMAP, right, bottom, LR_LOADFROMFILE);
   if (!hBitmap || !GetObject(hBitmap, sizeof(BITMAP), (void *)bBitmap)) {
-    my_pushstring("can't load bitmap");
+    my_pushstring(_T("can't load bitmap"));
     if (hBitmap)
       DeleteObject(hBitmap);
     LCS();

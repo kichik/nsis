@@ -1,7 +1,10 @@
+// Unicode support by Jim Park -- 08/10/2007
+
 #include <windows.h>
 #include <shlobj.h>
 
 #include <nsis/pluginapi.h> // nsis plugin
+#include <nsis/nsis_tchar.h>
 
 #include "defs.h"
 
@@ -12,26 +15,26 @@ int CALLBACK BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lp, LPARAM pData) {
   return 0;
 }
 
-void __declspec(dllexport) SelectFolderDialog(HWND hwndParent, int string_size, char *variables, stack_t **stacktop, extra_parameters *extra)
+void __declspec(dllexport) SelectFolderDialog(HWND hwndParent, int string_size, TCHAR *variables, stack_t **stacktop, extra_parameters *extra)
 {
   BROWSEINFO bi;
 
-  char result[MAX_PATH];
-  char initial[MAX_PATH];
-  char title[1024];
+  TCHAR result[MAX_PATH];
+  TCHAR initial[MAX_PATH];
+  TCHAR title[1024];
   LPITEMIDLIST resultPIDL;
 
   EXDLL_INIT();
 
-  if (popstringn(title, sizeof(initial)))
+  if (popstringn(title, _countof(initial)))
   {
-    pushstring("error");
+    pushstring(_T("error"));
     return;
   }
 
-  if (popstringn(initial, sizeof(title)))
+  if (popstringn(initial, _countof(title)))
   {
-    pushstring("error");
+    pushstring(_T("error"));
     return;
   }
 
@@ -64,7 +67,7 @@ void __declspec(dllexport) SelectFolderDialog(HWND hwndParent, int string_size, 
   resultPIDL = SHBrowseForFolder(&bi);
   if (!resultPIDL)
   {
-    pushstring("error");
+    pushstring(_T("error"));
     return;
   }
 
@@ -74,21 +77,21 @@ void __declspec(dllexport) SelectFolderDialog(HWND hwndParent, int string_size, 
   }
   else
   {
-    pushstring("error");
+    pushstring(_T("error"));
   }
 
   CoTaskMemFree(resultPIDL);
 }
 
-void __declspec(dllexport) SelectFileDialog(HWND hwndParent, int string_size, char *variables, stack_t **stacktop, extra_parameters *extra)
+void __declspec(dllexport) SelectFileDialog(HWND hwndParent, int string_size, TCHAR *variables, stack_t **stacktop, extra_parameters *extra)
 {
   OPENFILENAME ofn={0,}; // XXX WTF
   int save;
-  char type[5];
-  static char path[1024];
-  static char filter[1024];
-  static char currentDirectory[1024];
-  static char initialDir[1024];
+  TCHAR type[5];
+  static TCHAR path[1024];
+  static TCHAR filter[1024];
+  static TCHAR currentDirectory[1024];
+  static TCHAR initialDir[1024];
   DWORD gfa;
 
   EXDLL_INIT();
@@ -105,7 +108,7 @@ void __declspec(dllexport) SelectFileDialog(HWND hwndParent, int string_size, ch
   popstringn(path, sizeof(path));
   popstringn(filter, sizeof(filter));
 
-  save = !lstrcmpi(type, "save");
+  save = !lstrcmpi(type, _T("save"));
 
   // Check if the path given is a folder. If it is we initialize the 
   // ofn.lpstrInitialDir parameter
@@ -114,21 +117,21 @@ void __declspec(dllexport) SelectFileDialog(HWND hwndParent, int string_size, ch
   {
     lstrcpy(initialDir, path);
     ofn.lpstrInitialDir = initialDir;
-    path[0] = '\0'; // disable initial file selection as path is actually a directory
+    path[0] = _T('\0'); // disable initial file selection as path is actually a directory
   }
 
   if (!filter[0])
   {
-    lstrcpy(filter, "All Files|*.*");
+    lstrcpy(filter, _T("All Files|*.*"));
   }
 
   {
     // Convert the filter to the format required by Windows: NULL after each
     // item followed by a terminating NULL
-    char *p = filter;
+    TCHAR *p = filter;
     while (*p) // XXX take care for 1024
     {
-      if (*p == '|')
+      if (*p == _T('|'))
       {
         *p++ = 0;
       }
@@ -149,19 +152,19 @@ void __declspec(dllexport) SelectFileDialog(HWND hwndParent, int string_size, ch
   }
   else if (CommDlgExtendedError() == FNERR_INVALIDFILENAME)
   {
-    *path = '\0';
+    *path = _T('\0');
     if ((save ? GetSaveFileName(&ofn) : GetOpenFileName(&ofn)))
     {
       pushstring(path);
     }
     else
     {
-      pushstring("");
+      pushstring(_T(""));
     }
   }
   else
   {
-    pushstring("");
+    pushstring(_T(""));
   }
 
   // restore working dir

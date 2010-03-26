@@ -37,6 +37,10 @@
 **   note that user, pass, port, and /requestwhatever are all optional :)
 **   note that also, http:// is really not important. if you do poo://
 **   or even leave out the http:// altogether, it will still work.
+**
+** Reviewed for Unicode support by Jim Park -- 08/24/2004
+**   Everything remains ANSI.  Made sure all TCHAR style functions were
+**   changed to strictly ANSI.
 */
 
 #ifndef _HTTPGET_H_

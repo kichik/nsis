@@ -12,6 +12,8 @@
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty.
+ *
+ * Unicode support by Jim Park -- 08/13/2007
  */
 
 #include "config.h"
@@ -271,7 +273,7 @@ enum {
 
 // nsis strings
 
-typedef char NSIS_STRING[NSIS_MAX_STRLEN];
+typedef TCHAR NSIS_STRING[NSIS_MAX_STRLEN];
 
 // Settings common to both installers and uninstallers
 typedef struct
@@ -333,7 +335,7 @@ typedef struct
   int str_uninstcmd;
 #endif//NSIS_CONFIG_UNINSTALL_SUPPORT
 #ifdef NSIS_SUPPORT_MOVEONREBOOT
-  int str_wininit;
+  int str_wininit;   // Points to the path of wininit.ini
 #endif//NSIS_SUPPORT_MOVEONREBOOT
 } header;
 
@@ -376,18 +378,22 @@ typedef struct
   int name_ptr; // initial name pointer
   int install_types; // bits set for each of the different install_types, if any.
   int flags; // SF_* - defined above
-  int code;
-  int code_size;
+             // for labels, it looks like it's only used to track how often it is used.
+  int code;       // The "address" of the start of the code in count of struct entries.
+  int code_size;  // The size of the code in num of entries?
   int size_kb;
-  char name[NSIS_MAX_STRLEN]; // '' for invisible sections
+  TCHAR name[NSIS_MAX_STRLEN]; // '' for invisible sections
 } section;
 
 #define SECTION_OFFSET(field) (FIELD_OFFSET(section, field)/sizeof(int))
 
 typedef struct
 {
-  int which;
+  int which;   // EW_* enum.  Look at the enum values to see what offsets mean.
   int offsets[MAX_ENTRY_OFFSETS]; // count and meaning of offsets depend on 'which'
+                                  // sometimes they are just straight int values or bool
+                                  // values and sometimes they are indices into string
+                                  // tables.
 } entry;
 
 // page window proc
@@ -478,8 +484,10 @@ typedef struct {
 #define NS_LANG_CODE 255
 #define NS_CODES_START NS_SKIP_CODE
 
+// We are doing this to store an integer value into a char string and we
+// don't want false end of string values so we shift then OR with 0x8080
 #define CODE_SHORT(x) (WORD)((((WORD)(x) & 0x7F) | (((WORD)(x) & 0x3F80) << 1) | 0x8080))
-#define MAX_CODED 16383
+#define MAX_CODED 16383 // 0x3FFF
 
 #define NSIS_INSTDIR_INVALID 1
 #define NSIS_INSTDIR_NOT_ENOUGH_SPACE 2
@@ -496,7 +504,7 @@ int NSISCALL isheader(firstheader *h); // returns 0 on not header, length_of_dat
 // returns 0 on success
 // on success, m_header will be set to a pointer that should eventually be GlobalFree()'d.
 // (or m_uninstheader)
-const char * NSISCALL loadHeaders(int cl_flags);
+const TCHAR * NSISCALL loadHeaders(int cl_flags);
 
 int NSISCALL _dodecomp(int offset, HANDLE hFileOut, char *outbuf, int outbuflen);
 

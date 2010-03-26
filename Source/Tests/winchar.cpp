@@ -1,3 +1,4 @@
+// Reviewed for Unicode support by Jim Park -- 08/13/2007
 #include <cppunit/extensions/HelperMacros.h>
 #include "../winchar.h"
 

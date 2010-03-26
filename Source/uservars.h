@@ -35,7 +35,7 @@ class UserVarsStringList : public SortedStringListND<struct uservarstring>
     }
     ~UserVarsStringList() { }
 
-    int add(const char *name, int ref_count = 0 )
+    int add(const TCHAR *name, int ref_count = 0 )
     {
       int pos=SortedStringListND<struct uservarstring>::add(name);
       if (pos == -1) return -1;
@@ -50,18 +50,38 @@ class UserVarsStringList : public SortedStringListND<struct uservarstring>
       return temp;
     }
 
-    int get(const char *name, int n_chars = -1)
+	 /**
+	  * Get the index of the string that matches 'name.'
+	  *
+	  * @param name The name of the string to search for.
+	  * @param n_chars If -1, match entire string, otherwise compare only
+	  * n_chars worth of characters.
+	  * @return The index position of the structure where structure.name ==
+	  * name.
+	  */
+    int get(const TCHAR *name, int n_chars = -1)
     {
       int v=SortedStringListND<struct uservarstring>::find(name, n_chars);
       if (v==-1) return -1;
       return (((struct uservarstring*)gr.get())[v].index);
     }
 
+	 /**
+	  * Get count of strings.
+	  *
+	  * @return The count of strings.
+	  */
     int getnum()
     {
       return index;
     }
 
+	 /**
+	  * Given the index of the structure, return the reference count.
+	  *
+	  * @return The reference count of the nth uservarstring structure.
+	  * If not found, returns -1.
+	  */
     int get_reference(int idx)
     {
       int pos=get_internal_idx(idx);
@@ -69,6 +89,12 @@ class UserVarsStringList : public SortedStringListND<struct uservarstring>
       return (((struct uservarstring*)gr.get())[pos].reference);
     }
 
+	 /**
+	  * Given the index of the structure, increment the reference count.
+	  *
+	  * @return The previous reference count (before the increment).
+	  * If not found, returns -1.
+	  */
     int inc_reference(int idx)
     {
       int pos=get_internal_idx(idx);
@@ -76,12 +102,12 @@ class UserVarsStringList : public SortedStringListND<struct uservarstring>
       return (((struct uservarstring*)gr.get())[pos].reference)-1;
     }
 
-    char *idx2name(int idx)
+    TCHAR *idx2name(int idx)
     {
       int pos=get_internal_idx(idx);
       if (pos==-1) return NULL;
       struct uservarstring *data=(struct uservarstring *)gr.get();      
-      return ((char*)strings.get() + data[pos].name);
+      return ((TCHAR*)strings.get() + data[pos].name);
     }
 
   private:

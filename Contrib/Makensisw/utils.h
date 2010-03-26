@@ -19,6 +19,8 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 
+  Unicode support by Jim Park -- 08/20/2007
+
 */
 #ifndef UTILS_H
 #define UTILS_H
@@ -28,13 +30,13 @@
 #define MRU_LIST_SIZE 5
 #define MRU_DISPLAY_LENGTH 40
 
-int SetArgv(const char *cmdLine, int *argc, char ***argv);
-void SetTitle(HWND hwnd,char *substr);
+int SetArgv(const TCHAR *cmdLine, int *argc, TCHAR ***argv);
+void SetTitle(HWND hwnd,TCHAR *substr);
 void SetBranding(HWND hwnd);
 void CopyToClipboard(HWND hwnd);
 void ClearLog(HWND hwnd);
-void LogMessage(HWND hwnd,const char *str);
-void ErrorMessage(HWND hwnd,const char *str);
+void LogMessage(HWND hwnd,const TCHAR *str);
+void ErrorMessage(HWND hwnd,const TCHAR *str);
 #define DisableItems(hwnd) Items(hwnd, 0)
 #define EnableItems(hwnd) Items(hwnd, 1)
 void Items(HWND hwnd, int on);
@@ -48,19 +50,19 @@ void ResetSymbols();
 int InitBranding();
 void InitTooltips(HWND h);
 void DestroyTooltips();
-void AddTip(HWND hWnd,LPSTR lpszToolTip);
+void AddTip(HWND hWnd,LPTSTR lpszToolTip);
 void ShowDocs();
 void RestoreCompressor();
 void SaveCompressor();
 void SetCompressorStats();
 
-BOOL PopMRUFile(char* fname);
-void PushMRUFile(char* fname);
+BOOL PopMRUFile(TCHAR* fname);
+void PushMRUFile(TCHAR* fname);
 void BuildMRUMenus();
 void LoadMRUFile(int position);
 void ClearMRUList();
 
-BOOL FileExists(char *fname);
+BOOL FileExists(TCHAR *fname);
 
 HMENU FindSubMenu(HMENU hMenu, UINT uId);
 #endif

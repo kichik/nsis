@@ -22,9 +22,12 @@
 // 2. Altered source versions must be plainly marked as such, and must not be
 //    misrepresented as being the original software.
 // 3. This notice may not be removed or altered from any source distribution.
+//
+// Unicode support by Jim Park -- 08/29/2007
 
 
 #include "ChunkedFile.h"
+#include "tchar.h"
 
 using namespace std;
 
@@ -32,15 +35,15 @@ using namespace std;
         chunks(NULL) {
 
         chunkCount = fSize / chunkSize;
-        cout << "[ChunkedFile] Filesize of " << static_cast<unsigned int>(fSize) << " gives " << static_cast<unsigned int>(chunkCount) << " chunks.\n";
+        tout << _T("[ChunkedFile] Filesize of ") << static_cast<unsigned int>(fSize) << _T(" gives ") << static_cast<unsigned int>(chunkCount) << _T(" chunks.\n");
 
-        cout << "[ChunkedFile] Memory to be used by those chunks: " << sizeof(FileChunk) * chunkCount << " bytes...";
+        tout << _T("[ChunkedFile] Memory to be used by those chunks: ") << sizeof(FileChunk) * chunkCount << _T(" bytes...");
         if(chunkCount == 0) {
           chunks = NULL;
           return;
         }
         chunks = new FileChunk[chunkCount];
-        cout << " allocated.\n";
+        tout << _T(" allocated.\n");
 
         unsigned char* data = new unsigned char[chunkSize];
         for(TFileOffset i = 0; i < chunkCount; i++) {
@@ -50,9 +53,9 @@ using namespace std;
         }
         delete[] data;
 
-        cout << "[ChunkedFile] Sorting chunks... ";
+        tout << _T("[ChunkedFile] Sorting chunks... ");
         std::sort(chunks,chunks + chunkCount);
-        cout << "done.\n";
+        tout << _T("done.\n");
       }
 
 

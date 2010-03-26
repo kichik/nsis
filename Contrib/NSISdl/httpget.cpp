@@ -4,6 +4,8 @@
 ** Author: Justin Frankel
 ** File: httpget.cpp - JNL HTTP GET implementation
 ** License: see License.txt
+**
+** Unicode support by Jim Park -- 08/24/2007
 */
 
 #include "netinc.h"
@@ -179,14 +181,14 @@ void JNL_HTTPGet::connect(char *url)
 
   if (!m_http_proxyhost || !m_http_proxyhost[0])
   {
-    wsprintf(str,"GET %s HTTP/1.0\r\n",m_http_request);
+    wsprintfA(str,"GET %s HTTP/1.0\r\n",m_http_request);
   }
   else
   {
-    wsprintf(str,"GET %s HTTP/1.0\r\n",m_http_url);
+    wsprintfA(str,"GET %s HTTP/1.0\r\n",m_http_url);
   }
 
-  wsprintf(str+strlen(str),"Host: %s\r\n",m_http_host);
+  wsprintfA(str+strlen(str),"Host: %s\r\n",m_http_host);
 
   if (m_http_lpinfo&&m_http_lpinfo[0])
   {

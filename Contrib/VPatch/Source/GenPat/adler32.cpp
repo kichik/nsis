@@ -21,6 +21,8 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 
+  Reviewed for Unicode support by Jim Park -- 08/29/2007
+  (nothing changed.)
  */
 
 #include "adler32.h"

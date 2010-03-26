@@ -12,10 +12,14 @@
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty.
+ *
+ * Unicode support by Jim Park -- 08/24/2007
  */
 
 #ifndef __COMPRESSOR_H__
 #define __COMPRESSOR_H__
+
+#include "tchar.h"
 
 #define C_OK 0
 #define C_FINISHED 1
@@ -38,9 +42,9 @@ class ICompressor {
     virtual unsigned int GetAvailIn() = 0;
     virtual unsigned int GetAvailOut() = 0;
 
-    virtual const char* GetName() = 0;
+    virtual const TCHAR* GetName() = 0;
 
-    virtual const char* GetErrStr(int err) = 0;
+    virtual const TCHAR* GetErrStr(int err) = 0;
 };
 
 #endif

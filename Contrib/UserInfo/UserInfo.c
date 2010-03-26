@@ -1,10 +1,12 @@
+// Unicode support by Jim Park -- 08/23/2007
+
 #include <windows.h>
 #include <nsis/pluginapi.h> // nsis plugin
 typedef BOOL (WINAPI*CHECKTOKENMEMBERSHIP)(HANDLE TokenHandle,PSID SidToCheck,PBOOL IsMember);
 CHECKTOKENMEMBERSHIP _CheckTokenMembership=NULL;
 
 void __declspec(dllexport) GetName(HWND hwndParent, int string_size, 
-                                   char *variables, stack_t **stacktop)
+                                   TCHAR *variables, stack_t **stacktop)
 {
   EXDLL_INIT();
 
@@ -12,35 +14,35 @@ void __declspec(dllexport) GetName(HWND hwndParent, int string_size,
     DWORD dwStringSize = g_stringsize;
     stack_t *th;
     if (!g_stacktop) return;
-    th = (stack_t*) GlobalAlloc(GPTR, sizeof(stack_t) + g_stringsize);
+    th = (stack_t*) GlobalAlloc(GPTR, sizeof(stack_t) + g_stringsize*sizeof(TCHAR));
     GetUserName(th->text, &dwStringSize);
     th->next = *g_stacktop;
     *g_stacktop = th;
   }
 }
 
-char* GetAccountTypeHelper(BOOL CheckTokenForGroupDeny) 
+TCHAR* GetAccountTypeHelper(BOOL CheckTokenForGroupDeny) 
 {
-  char  *group = NULL;
+  TCHAR  *group = NULL;
   HANDLE  hToken = NULL;
-  struct group
-  {
-    DWORD auth_id;
-    char *name;
-  };
+struct group
+{
+ DWORD auth_id;
+ TCHAR *name;
+};
 
-  struct group groups[] = 
-  {
-    {DOMAIN_ALIAS_RID_USERS, "User"},
-    // every user belongs to the users group, hence users come before guests
-    {DOMAIN_ALIAS_RID_GUESTS, "Guest"},
-    {DOMAIN_ALIAS_RID_POWER_USERS, "Power"},
-    {DOMAIN_ALIAS_RID_ADMINS, "Admin"}
-  };
+struct group groups[] = 
+{
+ {DOMAIN_ALIAS_RID_USERS, _T("User")},
+ // every user belongs to the users group, hence users come before guests
+ {DOMAIN_ALIAS_RID_GUESTS, _T("Guest")},
+ {DOMAIN_ALIAS_RID_POWER_USERS, _T("Power")},
+ {DOMAIN_ALIAS_RID_ADMINS, _T("Admin")}
+};
 
   if (GetVersion() & 0x80000000) // Not NT
   {
-    return "Admin";
+    return _T("Admin");
   }
 
   // First we must open a handle to the access token for this thread.
@@ -58,7 +60,7 @@ char* GetAccountTypeHelper(BOOL CheckTokenForGroupDeny)
       // GetUserName is in advapi32.dll so we can avoid Load/Freelibrary
       _CheckTokenMembership=
         (CHECKTOKENMEMBERSHIP) GetProcAddress(
-          GetModuleHandle("ADVAPI32"), "CheckTokenMembership");
+          GetModuleHandle(_T("ADVAPI32")), "CheckTokenMembership");
     
     // Use "old school" membership check?
     if (!CheckTokenForGroupDeny || _CheckTokenMembership == NULL)
@@ -121,18 +123,18 @@ char* GetAccountTypeHelper(BOOL CheckTokenForGroupDeny)
     return group;
   }
 
-  return "";
+  return _T("");
 }
 
 void __declspec(dllexport) GetAccountType(HWND hwndParent, int string_size, 
-                                          char *variables, stack_t **stacktop)
+                                          TCHAR *variables, stack_t **stacktop)
 {
   EXDLL_INIT();
   pushstring(GetAccountTypeHelper(TRUE));
 }
 
 void __declspec(dllexport) GetOriginalAccountType(HWND hwndParent, int string_size, 
-                                                  char *variables, stack_t **stacktop)
+                                                  TCHAR *variables, stack_t **stacktop)
 {
   EXDLL_INIT();
   pushstring(GetAccountTypeHelper(FALSE));

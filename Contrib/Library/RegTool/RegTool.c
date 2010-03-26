@@ -1,40 +1,41 @@
 #include <windows.h>
+#include "../../ExDll/nsis_tchar.h"
 
 #define STR_SIZE 1024
 
-void RegFile(char cmd, char *file, int x64);
-void RegDll(char *file);
-void RegTypeLib(char *file);
-void DeleteFileOnReboot(char *pszFile);
+void RegFile(TCHAR cmd, TCHAR *file, int x64);
+void RegDll(TCHAR *file);
+void RegTypeLib(TCHAR *file);
+void DeleteFileOnReboot(TCHAR *pszFile);
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
 {
-  char *cmdline;
-  char seekchar = ' ';
+  TCHAR *cmdline;
+  TCHAR seekchar = _T(' ');
 
   cmdline = GetCommandLine();
-  if (*cmdline == '\"')
+  if (*cmdline == _T('\"'))
     seekchar = *cmdline++;
 
   while (*cmdline && *cmdline != seekchar)
     cmdline = CharNext(cmdline);
   cmdline = CharNext(cmdline);
-  while (*cmdline == ' ')
+  while (*cmdline == _T(' '))
     cmdline++;
 
-  if (*cmdline++ != '/')
+  if (*cmdline++ != _T('/'))
   {
     ExitProcess(1);
     return 0;
   }
 
-  if (*cmdline == 'S')
+  if (*cmdline == _T('S'))
   {
     HKEY rootkey;
 
-    if (SUCCEEDED(RegOpenKeyEx(HKEY_LOCAL_MACHINE, "Software\\NSIS.Library.RegTool.v3", 0, KEY_READ, &rootkey)))
+    if (SUCCEEDED(RegOpenKeyEx(HKEY_LOCAL_MACHINE, _T("Software\\NSIS.Library.RegTool.v3"), 0, KEY_READ, &rootkey)))
     {
-      char keyname[STR_SIZE];
+      TCHAR keyname[STR_SIZE];
 
       while (RegEnumKey(rootkey, 0, keyname, STR_SIZE) == ERROR_SUCCESS)
       {
@@ -44,24 +45,24 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         {
           DWORD t, count, l = sizeof(DWORD);
 
-          if (SUCCEEDED(RegQueryValueEx(key, "count", NULL, &t, (LPBYTE) &count, &l)) && t == REG_DWORD)
+          if (SUCCEEDED(RegQueryValueEx(key, _T("count"), NULL, &t, (LPBYTE) &count, &l)) && t == REG_DWORD)
           {
             DWORD j;
-            char valname[128], mode[3], file[STR_SIZE];
+            TCHAR valname[128], mode[3], file[STR_SIZE];
 
             for (j = 1; j <= count; j++)
             {
-              wsprintf(valname, "%u.mode", j);
+              wsprintf(valname, _T("%u.mode"), j);
               l = sizeof(mode);
               if (FAILED(RegQueryValueEx(key, valname, NULL, &t, (LPBYTE) mode, &l)) || t != REG_SZ)
                 continue;
 
-              wsprintf(valname, "%u.file", j);
+              wsprintf(valname, _T("%u.file"), j);
               l = STR_SIZE;
               if (FAILED(RegQueryValueEx(key, valname, NULL, &t, (LPBYTE) file, &l)) || t != REG_SZ)
                 continue;
 
-              RegFile(mode[0], file, mode[1] == 'X');
+              RegFile(mode[0], file, mode[1] == _T('X'));
             }
           }
 
@@ -71,11 +72,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
       }
 
       RegCloseKey(rootkey);
-      RegDeleteKey(HKEY_LOCAL_MACHINE, "Software\\NSIS.Library.RegTool.v3");
+      RegDeleteKey(HKEY_LOCAL_MACHINE, _T("Software\\NSIS.Library.RegTool.v3"));
     }
 
     {
-      char file[STR_SIZE];
+      TCHAR file[STR_SIZE];
       if (GetModuleFileName(GetModuleHandle(NULL), file, STR_SIZE))
       {
         DeleteFileOnReboot(file);
@@ -87,11 +88,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     SetErrorMode(SEM_NOOPENFILEERRORBOX | SEM_FAILCRITICALERRORS);
     OleInitialize(NULL);
 
-    if (*cmdline == 'D')
+    if (*cmdline == _T('D'))
     {
       RegDll(cmdline + 1);
     }
-    else if (*cmdline == 'T')
+    else if (*cmdline == _T('T'))
     {
       RegTypeLib(cmdline + 1);
     }
@@ -106,7 +107,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 void SafeWow64EnableWow64FsRedirection(BOOL Wow64FsEnableRedirection)
 {
-  HMODULE kernel = GetModuleHandle("kernel32");
+  HMODULE kernel = GetModuleHandle(_T("kernel32"));
   if (kernel)
   {
     FARPROC proc = GetProcAddress(kernel, "Wow64EnableWow64FsRedirection");
@@ -121,26 +122,26 @@ void SafeWow64EnableWow64FsRedirection(BOOL Wow64FsEnableRedirection)
   }
 }
 
-void RegFile(char cmd, char *file, int x64)
+void RegFile(TCHAR cmd, TCHAR *file, int x64)
 {
-  char self[STR_SIZE];
-  char cmdline[STR_SIZE];
+  TCHAR self[STR_SIZE];
+  TCHAR cmdline[STR_SIZE];
 
   int ready = 0;
 
-  if (!*file || (cmd != 'D' && cmd != 'T' && cmd != 'E'))
+  if (!*file || (cmd != _T('D') && cmd != _T('T') && cmd != _T('E')))
     return;
 
-  if (cmd == 'E')
+  if (cmd == _T('E'))
   {
-    wsprintf(cmdline, "\"%s\" /regserver", file);
+    wsprintf(cmdline, _T("\"%s\" /regserver"), file);
     ready++;
   }
   else if (!x64)
   {
     if (GetModuleFileName(GetModuleHandle(NULL), self, STR_SIZE))
     {
-      wsprintf(cmdline, "\"%s\" /%c%s", self, cmd, file);
+      wsprintf(cmdline, _T("\"%s\" /%c%s"), self, cmd, file);
       ready++;
     }
   }
@@ -148,7 +149,7 @@ void RegFile(char cmd, char *file, int x64)
   {
     if (GetSystemDirectory(self, STR_SIZE))
     {
-      wsprintf(cmdline, "\"%s\\regsvr32.exe\" /s \"%s\"", self, file);
+      wsprintf(cmdline, _T("\"%s\\regsvr32.exe\" /s \"%s\""), self, file);
       ready++;
 
       SafeWow64EnableWow64FsRedirection(FALSE);
@@ -176,7 +177,7 @@ void RegFile(char cmd, char *file, int x64)
   }
 }
 
-void RegDll(char *file)
+void RegDll(TCHAR *file)
 {
   HMODULE mod = LoadLibraryEx(file, NULL, LOAD_WITH_ALTERED_SEARCH_PATH);
   if (mod)
@@ -188,7 +189,7 @@ void RegDll(char *file)
   }
 }
 
-void RegTypeLib(char *file)
+void RegTypeLib(TCHAR *file)
 {
   WCHAR wfile[STR_SIZE];
 
@@ -202,12 +203,12 @@ void RegTypeLib(char *file)
   }
 }
 
-char *mystrstri(char *a, char *b)
+TCHAR *mystrstri(TCHAR *a, TCHAR *b)
 {
   int l = lstrlen(b);
   while (lstrlen(a) >= l)
   {
-    char c = a[l];
+    TCHAR c = a[l];
     a[l] = 0;
     if (!lstrcmpi(a, b))
     {
@@ -222,23 +223,23 @@ char *mystrstri(char *a, char *b)
 
 void mini_memcpy(void *out, const void *in, int len)
 {
-  char *c_out=(char*)out;
-  char *c_in=(char *)in;
+  TCHAR *c_out=(TCHAR*)out;
+  TCHAR *c_in=(TCHAR *)in;
   while (len-- > 0)
   {
     *c_out++=*c_in++;
   }
 }
 
-void DeleteFileOnReboot(char *pszFile)
+void DeleteFileOnReboot(TCHAR *pszFile)
 {
   BOOL fOk = 0;
-  HMODULE hLib=GetModuleHandle("KERNEL32.dll");
+  HMODULE hLib=GetModuleHandle(_T("KERNEL32.dll"));
   if (hLib)
   {
-    typedef BOOL (WINAPI *mfea_t)(LPCSTR lpExistingFileName,LPCSTR lpNewFileName,DWORD dwFlags);
+    typedef BOOL (WINAPI *mfea_t)(LPCTSTR lpExistingFileName,LPCTSTR lpNewFileName,DWORD dwFlags);
     mfea_t mfea;
-    mfea=(mfea_t) GetProcAddress(hLib,"MoveFileExA");
+    mfea=(mfea_t) GetProcAddress(hLib,_CRT_STRINGIZE(MoveFileEx));
     if (mfea)
     {
       fOk=mfea(pszFile, NULL, MOVEFILE_DELAY_UNTIL_REBOOT);
@@ -247,10 +248,10 @@ void DeleteFileOnReboot(char *pszFile)
 
   if (!fOk)
   {
-    static char szRenameLine[1024];
-    static char wininit[1024];
+    static TCHAR szRenameLine[1024];
+    static TCHAR wininit[1024];
     int cchRenameLine;
-    char *szRenameSec = "[Rename]\r\n";
+    TCHAR *szRenameSec = _T("[Rename]\r\n");
     HANDLE hfile, hfilemap;
     DWORD dwFileSize, dwRenameLinePos;
 
@@ -260,10 +261,10 @@ void DeleteFileOnReboot(char *pszFile)
     spn = GetShortPathName(pszFile,wininit,1024);
     if (!spn || spn > 1024)
       return;
-    cchRenameLine = wsprintf(szRenameLine,"NUL=%s\r\n",wininit);
+    cchRenameLine = wsprintf(szRenameLine,_T("NUL=%s\r\n"),wininit);
 
     GetWindowsDirectory(wininit, 1024-16);
-    lstrcat(wininit, "\\wininit.ini");
+    lstrcat(wininit, _T("\\wininit.ini"));
     hfile = CreateFile(wininit,
         GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_ALWAYS,
         FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, NULL);
@@ -275,11 +276,11 @@ void DeleteFileOnReboot(char *pszFile)
 
       if (hfilemap != NULL)
       {
-        LPSTR pszWinInit = (LPSTR) MapViewOfFile(hfilemap, FILE_MAP_WRITE, 0, 0, 0);
+        LPTSTR pszWinInit = (LPTSTR) MapViewOfFile(hfilemap, FILE_MAP_WRITE, 0, 0, 0);
 
         if (pszWinInit != NULL)
         {
-          LPSTR pszRenameSecInFile = mystrstri(pszWinInit, szRenameSec);
+          LPTSTR pszRenameSecInFile = mystrstri(pszWinInit, szRenameSec);
           if (pszRenameSecInFile == NULL)
           {
             lstrcpy(pszWinInit+dwFileSize, szRenameSec);
@@ -288,11 +289,11 @@ void DeleteFileOnReboot(char *pszFile)
           }
           else
           {
-            char *pszFirstRenameLine = pszRenameSecInFile+10;
-            char *pszNextSec = mystrstri(pszFirstRenameLine,"\n[");
+            TCHAR *pszFirstRenameLine = pszRenameSecInFile+10;
+            TCHAR *pszNextSec = mystrstri(pszFirstRenameLine,_T("\n["));
             if (pszNextSec)
             {
-              char *p = ++pszNextSec;
+              TCHAR *p = ++pszNextSec;
               while (p < pszWinInit + dwFileSize) {
                 p[cchRenameLine] = *p;
                 p++;
