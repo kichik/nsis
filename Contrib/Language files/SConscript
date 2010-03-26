@@ -2,6 +2,7 @@ languages = Split("""
 	Albanian
 	Afrikaans
 	Arabic
+	Asturian
 	Basque
 	Belarusian
 	Bosnian
@@ -56,6 +57,7 @@ languages = Split("""
 	Turkish
 	Ukrainian
 	Uzbek
+	Vietnamese
 	Welsh
 """)
 

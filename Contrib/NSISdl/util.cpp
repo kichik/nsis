@@ -3,7 +3,7 @@
 ** Copyright (C) 2000-2001 Nullsoft, Inc.
 ** Author: Justin Frankel
 ** File: util.cpp - JNL implementation of basic network utilities
-** License: see jnetlib.h
+** License: see License.txt
 **
 ** Unicode support by Jim Park -- 08/24/2007
 **   Keep everything here strictly ANSI.  No TCHAR style stuff.

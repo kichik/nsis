@@ -1,6 +1,18 @@
 #ifndef ___SYSTEM__H___
 #define ___SYSTEM__H___
 
+// This should probably be moved to platform.h at some point
+
+#if defined(_M_X64) || defined(__amd64__)
+#    define SYSTEM_X64
+#elif defined(_M_IX86) || defined(__i386__) || defined(_X86_)
+#    define SYSTEM_X86
+#else
+#    error "Unknown architecture!"
+#endif
+
+
+
 // The following ifdef block is the standard way of creating macros which make exporting 
 // from a DLL simpler. All files within this DLL are compiled with the SYSTEM_EXPORTS
 // symbol defined on the command line. this symbol should not be defined on any project
@@ -88,6 +100,34 @@ struct tag_SystemProc
     // Clone of current element (used for multi-level callbacks)
     SystemProc *Clone;
 };
+
+typedef struct tag_CallbackThunk CallbackThunk;
+struct tag_CallbackThunk
+{
+    #ifdef SYSTEM_X86
+        /*
+        #pragma pack(push,1)
+        char mov_eax_imm;
+        int sysprocptr;
+        char reljmp_imm;
+        int realprocaddr;
+        #pragma pack(pop)
+        */
+        char asm_code[10];
+    #else
+        #error "Asm thunk not implemeted for this architecture!"
+    #endif
+
+    CallbackThunk* pNext;
+};
+
+// Free() only knows about pNext in CallbackThunk, it does not know anything about the assembly, that is where this helper comes in...
+#ifdef SYSTEM_X86
+#   define GetAssociatedSysProcFromCallbackThunkPtr(pCbT) ( (SystemProc*)  *(unsigned int*) (((char*)(pCbT))+1) )
+#else
+#   error "GetAssociatedSysProcFromCallbackThunkPtr not defined for the current architecture!"
+#endif
+
 
 extern const int ParamSizeByType[];   // Size of every parameter type (*4 bytes)
 

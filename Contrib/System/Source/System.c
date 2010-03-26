@@ -42,6 +42,7 @@ int LastStackReal;
 DWORD LastError;
 volatile SystemProc *LastProc;
 int CallbackIndex;
+CallbackThunk* CallbackThunkListHead;
 HINSTANCE g_hInstance;
 
 // Return to callback caller with stack restore
@@ -135,6 +136,36 @@ PLUGINFUNCTION(Debug)
 #define SYSTEM_LOG_POST
 
 #endif
+
+PLUGINFUNCTIONSHORT(Free)
+{
+    HANDLE memtofree = (HANDLE)popint64();
+
+    if (CallbackThunkListHead)
+    {
+        CallbackThunk *pCb=CallbackThunkListHead,*pPrev=NULL;
+        do 
+        {
+            if (GetAssociatedSysProcFromCallbackThunkPtr(pCb) == (SystemProc*)memtofree) 
+            {
+                if (pPrev)
+                    pPrev->pNext=pCb->pNext;
+                else
+                    CallbackThunkListHead=pCb->pNext;
+
+                --(CallbackIndex);
+                VirtualFree(pCb,0,MEM_RELEASE);
+                break;
+            }
+            pPrev=pCb;
+            pCb=pCb->pNext;
+        }
+        while( pCb != NULL );
+    }
+
+    GlobalFree(memtofree);
+}
+PLUGINFUNCTIONEND
 
 PLUGINFUNCTION(Get)
 {
@@ -448,7 +479,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
                     if ((*(ib+1) != _T(':')) || (*(ib) == _T('-'))) break;
                     ProcType = PT_PROC;
                 }
-                ib++; // Skip next _T(':')
+                ib++; // Skip next ':'
 
                 if (cb > cbuf)
                 {
@@ -501,6 +532,12 @@ SystemProc *PrepareProc(BOOL NeedForCall)
             // Types
             case _T('v'):
             case _T('V'): temp2 = PAT_VOID; break;
+
+            #if !defined(SYSTEM_X86)
+                #error "TODO: handle p"
+            #else
+                case _T('p'):
+            #endif
             case _T('i'):
             case _T('I'): temp2 = PAT_INT; break;
             case _T('l'):
@@ -903,7 +940,8 @@ void ParamsOut(SystemProc *proc)
 
 HANDLE CreateCallback(SystemProc *cbproc)
 {
-    TCHAR *mem;
+    char *mem;
+
 
     if (cbproc->Proc == NULL)
     {
@@ -911,13 +949,22 @@ HANDLE CreateCallback(SystemProc *cbproc)
         cbproc->CallbackIndex = ++(CallbackIndex);
         cbproc->Options |= POPT_PERMANENT;
 
-        mem = (TCHAR *) (cbproc->Proc = VirtualAlloc(NULL, 10, MEM_COMMIT, PAGE_EXECUTE_READWRITE));
-        *(mem++) = (TCHAR) 0xB8; // Mov eax, const
+        mem = (char *) (cbproc->Proc = VirtualAlloc(NULL, sizeof(CallbackThunk), MEM_COMMIT, PAGE_EXECUTE_READWRITE));
+
+        ((CallbackThunk*)mem)->pNext=CallbackThunkListHead;
+        CallbackThunkListHead=(CallbackThunk*)mem;
+
+#ifdef SYSTEM_X86
+        *(mem++) = (char) 0xB8; // Mov eax, const
         *((int *)mem) = (int) cbproc;
         mem += sizeof(int);
-        *(mem++) = (TCHAR) 0xe9; // Jmp relative
+        *(mem++) = (char) 0xe9; // Jmp relative
         *((int *)mem) = (int) RealCallBack;
         *((int *)mem) -= ((int) mem) + 4;
+#else
+#error "Asm thunk not implemeted for this architecture!"
+#endif
+
     }
 
     // Return proc address
@@ -1037,7 +1084,9 @@ BOOL WINAPI DllMain(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
             LastError = 0;
             LastProc = NULL;
             CallbackIndex = 0;
-            retexpr[0] = (TCHAR) 0xC2;
+            retexpr[0] = (char) 0xC2;
+            CallbackThunkListHead = NULL;
+            retexpr[0] = (char) 0xC2;
             retexpr[2] = 0x00;
         }
 
@@ -1158,7 +1207,7 @@ unsigned int Get_valueOffsetParam(void)
 }
 
 /*
-Sets _T("CLONE") option
+Sets "CLONE" option
 */
 void SetCloneOption(SystemProc *proc)
 {
@@ -1166,7 +1215,7 @@ void SetCloneOption(SystemProc *proc)
 }
 
 /*
-Sets Result of procedure call to be _T("OK")
+Sets Result of procedure call to be "OK"
 */
 void SetProcResultOk(SystemProc *proc)
 {
@@ -1174,7 +1223,7 @@ void SetProcResultOk(SystemProc *proc)
 }
 
 /*
-Sets Result of procedure call to be _T("CALLBACK")
+Sets Result of procedure call to be "CALLBACK"
 */
 void SetProcResultCallback(SystemProc *proc)
 {

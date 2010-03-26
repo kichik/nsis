@@ -3,7 +3,7 @@
 ** Copyright (C) 2000-2001 Nullsoft, Inc.
 ** Author: Justin Frankel
 ** File: httpget.h - JNL interface for doing HTTP GETs.
-** License: see jnetlib.h
+** License: see License.txt
 **
 ** Usage:
 **   1. Create a JNL_HTTPGet object, optionally specifying a JNL_AsyncDNS

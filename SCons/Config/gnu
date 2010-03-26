@@ -117,6 +117,7 @@ if not defenv['DEBUG'] and defenv['STRIP'] and defenv['STRIP_W32']:
 plugin_env.Append(LINKFLAGS = ['-mwindows'])        # build windows executables
 plugin_env.Append(LINKFLAGS = ['$ALIGN_FLAG'])      # 512 bytes align
 plugin_env.Append(LINKFLAGS = ['$MAP_FLAG'])        # generate map file
+plugin_env.Append(LINKFLAGS = ['-static-libgcc'])   # remove libgcc*.dll dependency
 
 ### cross-platform util environment
 

@@ -469,7 +469,12 @@ Header file for creating custom installer pages with nsDialogs
 
 !macro __NSD_LB_DelString CONTROL STRING
 
-	SendMessage ${CONTROL} ${LB_DELETESTRING} 0 `STR:${STRING}`
+	Push $0
+
+	SendMessage ${CONTROL} ${LB_FINDSTRINGEXACT} -1 `STR:${STRING}` $0
+	SendMessage ${CONTROL} ${LB_DELETESTRING} $0 0
+
+	Pop $0
 
 !macroend
 
@@ -618,7 +623,7 @@ Header file for creating custom installer pages with nsDialogs
 !define NSD_ClearIcon  `!insertmacro __NSD_ClearImage ${IMAGE_ICON}`
 
 
-!define DEBUG `System::Call kernel32::OutputDebugString(ts)`
+!define NSD_Debug `System::Call kernel32::OutputDebugString(ts)`
 
 !macro __NSD_ControlCase TYPE
 
@@ -670,26 +675,26 @@ Header file for creating custom installer pages with nsDialogs
 
 		ReadINIStr $R0 $0 Settings NumFields
 
-		${DEBUG} "NumFields = $R0"
+		${NSD_Debug} "NumFields = $R0"
 
 		${For} $R1 1 $R0
-			${DEBUG} "Creating field $R1"
+			${NSD_Debug} "Creating field $R1"
 			ReadINIStr $R2 $0 "Field $R1" Type
-			${DEBUG} "  Type = $R2"
+			${NSD_Debug} "  Type = $R2"
 			ReadINIStr $R3 $0 "Field $R1" Left
-			${DEBUG} "  Left = $R3"
+			${NSD_Debug} "  Left = $R3"
 			ReadINIStr $R4 $0 "Field $R1" Top
-			${DEBUG} "  Top = $R4"
+			${NSD_Debug} "  Top = $R4"
 			ReadINIStr $R5 $0 "Field $R1" Right
-			${DEBUG} "  Right = $R5"
+			${NSD_Debug} "  Right = $R5"
 			ReadINIStr $R6 $0 "Field $R1" Bottom
-			${DEBUG} "  Bottom = $R6"
+			${NSD_Debug} "  Bottom = $R6"
 			IntOp $R5 $R5 - $R3
-			${DEBUG} "  Width = $R5"
+			${NSD_Debug} "  Width = $R5"
 			IntOp $R6 $R6 - $R4
-			${DEBUG} "  Height = $R6"
+			${NSD_Debug} "  Height = $R6"
 			ReadINIStr $R7 $0 "Field $R1" Text
-			${DEBUG} "  Text = $R7"
+			${NSD_Debug} "  Text = $R7"
 			${Switch} $R2
 				!insertmacro __NSD_ControlCase   HLine
 				!insertmacro __NSD_ControlCase   VLine
@@ -719,11 +724,11 @@ Header file for creating custom installer pages with nsDialogs
 
 	Function ${UNINSTALLER_FUNCPREFIX}UpdateINIState
 
-		${DEBUG} "Updating INI state"
+		${NSD_Debug} "Updating INI state"
 
 		ReadINIStr $R0 $0 Settings NumFields
 
-		${DEBUG} "NumField = $R0"
+		${NSD_Debug} "NumField = $R0"
 
 		${For} $R1 1 $R0
 			ReadINIStr $R2 $0 "Field $R1" HWND
@@ -731,14 +736,14 @@ Header file for creating custom installer pages with nsDialogs
 			${Switch} $R3
 				${Case} "CheckBox"
 				${Case} "RadioButton"
-					${DEBUG} "  HWND = $R2"
+					${NSD_Debug} "  HWND = $R2"
 					${NSD_GetState} $R2 $R2
-					${DEBUG} "  Window selection = $R2"
+					${NSD_Debug} "  Window selection = $R2"
 				${Break}
 				${CaseElse}
-					${DEBUG} "  HWND = $R2"
+					${NSD_Debug} "  HWND = $R2"
 					${NSD_GetText} $R2 $R2
-					${DEBUG} "  Window text = $R2"
+					${NSD_Debug} "  Window text = $R2"
 				${Break}
 			${EndSwitch}
 			WriteINIStr $0 "Field $R1" STATE $R2

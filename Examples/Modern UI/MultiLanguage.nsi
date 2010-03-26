@@ -28,6 +28,9 @@
 
   !define MUI_ABORTWARNING
 
+  ;Show all languages, despite user's codepage
+  !define MUI_LANGDLL_ALLLANGUAGES
+
 ;--------------------------------
 ;Language Selection Dialog Settings
 
@@ -106,6 +109,7 @@
   !insertmacro MUI_LANGUAGE "Afrikaans"
   !insertmacro MUI_LANGUAGE "Catalan"
   !insertmacro MUI_LANGUAGE "Esperanto"
+  !insertmacro MUI_LANGUAGE "Asturian"
 
 ;--------------------------------
 ;Reserve Files
