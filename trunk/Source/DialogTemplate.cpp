@@ -280,8 +280,8 @@ int CDialogTemplate::RemoveItem(WORD wId) {
 }
 
 // Sets the font of the dialog
-void CDialogTemplate::SetFont(char* szFaceName, WORD wFontSize) {
-  if (strcmp(szFaceName, "MS Shell Dlg")) {
+void CDialogTemplate::SetFont(TCHAR* szFaceName, WORD wFontSize) {
+  if (_tcscmp(szFaceName, _T("MS Shell Dlg"))) {
      // not MS Shell Dlg
     m_dwStyle &= ~DS_SHELLFONT;
   }
@@ -364,7 +364,7 @@ void CDialogTemplate::DlgUnitsToPixels(short& x, short& y) {
 }
 
 // Returns the size of a string in the dialog (in dialog units)
-SIZE CDialogTemplate::GetStringSize(WORD id, char *str) {
+SIZE CDialogTemplate::GetStringSize(WORD id, TCHAR *str) {
   HWND hDlg = CreateDummyDialog();
 
   LOGFONT f;
@@ -375,7 +375,7 @@ SIZE CDialogTemplate::GetStringSize(WORD id, char *str) {
   SelectObject(memDC, font);
 
   SIZE size;
-  GetTextExtentPoint32(memDC, str, strlen(str), &size);
+  GetTextExtentPoint32(memDC, str, _tcsclen(str), &size);
 
   DestroyWindow(hDlg);
   DeleteObject(font);
@@ -387,7 +387,7 @@ SIZE CDialogTemplate::GetStringSize(WORD id, char *str) {
 }
 
 // Trims the right margins of a control to fit a given text string size.
-void CDialogTemplate::RTrimToString(WORD id, char *str, int margins) {
+void CDialogTemplate::RTrimToString(WORD id, TCHAR *str, int margins) {
   DialogItemTemplate* item = GetItem(id);
   if (!item) return;
 
@@ -401,7 +401,7 @@ void CDialogTemplate::RTrimToString(WORD id, char *str, int margins) {
 }
 
 // Trims the left margins of a control to fit a given text string size.
-void CDialogTemplate::LTrimToString(WORD id, char *str, int margins) {
+void CDialogTemplate::LTrimToString(WORD id, TCHAR *str, int margins) {
   DialogItemTemplate* item = GetItem(id);
   if (!item) return;
 
@@ -416,7 +416,7 @@ void CDialogTemplate::LTrimToString(WORD id, char *str, int margins) {
 }
 
 // Trims the left and right margins of a control to fit a given text string size.
-void CDialogTemplate::CTrimToString(WORD id, char *str, int margins) {
+void CDialogTemplate::CTrimToString(WORD id, TCHAR *str, int margins) {
   DialogItemTemplate* item = GetItem(id);
   if (!item) return;
 

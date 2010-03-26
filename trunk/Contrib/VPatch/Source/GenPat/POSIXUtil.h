@@ -22,11 +22,14 @@
 // 2. Altered source versions must be plainly marked as such, and must not be
 //    misrepresented as being the original software.
 // 3. This notice may not be removed or altered from any source distribution.
+//
+// Unicode support by Jim Park -- 08/29/2007
 
 #if !defined(POSIXUtil_H)
   #define POSIXUtil_H
   #include "GlobalTypes.h"
   #include <string>
+  #include "tchar.h"
 
   using namespace std;
 
@@ -36,9 +39,9 @@
       uint32_t dwHighDateTime;
     } ALT_FILETIME;
 
-    ALT_FILETIME getFileTime(const char* sFileName);
-    uint32_t getFileSize(const char* sFileName);
-    string getTempFile();
+    ALT_FILETIME getFileTime(const TCHAR* sFileName);
+    uint32_t getFileSize(const TCHAR* sFileName);
+    tstring getTempFile();
   }
 
 #endif // POSIXUtil_H

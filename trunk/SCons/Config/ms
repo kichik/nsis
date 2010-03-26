@@ -17,7 +17,7 @@ defenv['STDCALL'] = '__stdcall'
 if float(defenv['MSVS_VERSION'].replace('Exp','')) >= 8.0:
 	defenv['EXCEPTION_FLAG'] = '/EHsc'
 	defenv.Append(CCFLAGS = ['/GS-'])
-	defenv.Append(CPPDEFINES = ['_CRT_SECURE_NO_WARNINGS', '_CRT_NONSTDC_NO_WARNINGS'])
+	defenv.Append(CPPDEFINES = ['_CRT_SECURE_NO_WARNINGS', '_CRT_NONSTDC_NO_WARNINGS', '_CRT_SECURE_NO_DEPRECATE', '_CRT_NON_CONFORMING_SWPRINTFS'])
 else:
 	defenv['EXCEPTION_FLAG'] = '/GX'
 
@@ -36,6 +36,10 @@ if defenv['DEBUG']:
 	defenv.Append(CCFLAGS = ['/Fd${TARGET.dir}\\${TARGET.dir.file}.pdb'])
 	defenv.Append(LINKFLAGS = ['/debug'])
 
+### unicode
+if defenv['UNICODE']:
+	defenv.Append(CPPDEFINES = ['_UNICODE', 'UNICODE'])
+
 ### workarounds
 
 # Some Platform SDK version includes a bad version of libcp.lib.
@@ -45,37 +49,41 @@ if defenv['DEBUG']:
 confenv = defenv.Clone()
 conf = confenv.Configure()
 
-libcptest = """
-#include <fstream>
-int main() {
-  // %s
-  std::ofstream header("test", std::ofstream::out);
-  return 0;
-}
-"""
+# For VS 2005 and up, the single threaded version of C runtime
+# need not be explicitly linked.
+if float(defenv['MSVS_VERSION'].replace('Exp','')) < 8.0:
+  libcptest = """
+  #include <fstream>
+  int main() {
+    // %s
+    std::ofstream header("test", std::ofstream::out);
+    return 0;
+  }
+  """
 
-conf.env.PrependENVPath('LIB', Dir('#/.sconf_temp').abspath)
-conf.env.Append(CCFLAGS = ['$EXCEPTION_FLAG'])
+  conf.env.PrependENVPath('LIB', Dir('#/.sconf_temp').abspath)
+  conf.env.Append(CCFLAGS = ['$EXCEPTION_FLAG'])
 
-if not conf.TryLink(libcptest % 'no change', '.cpp'):
-  import os, shutil
+  if not conf.TryLink(libcptest % 'no change', '.cpp'):
+    import os, shutil
 
-  libdirs = defenv['ENV']['LIB'].split(os.pathsep)
+    libdirs = defenv['ENV']['LIB'].split(os.pathsep)
 
-  for libdir in libdirs:
-    try:
-      libcp = r'%s\libcp.lib' % libdir
-      shutil.copy(libcp, Dir('#/.sconf_temp').abspath)
-      if conf.TryLink(libcptest % (r'using %s' % libcp), '.cpp'):
-        defenv.PrependENVPath('LIB', Dir('#/.sconf_temp').abspath)
-        break
-    except IOError:
-      continue
-  else:
-    print "*** Couldn't find a good version of libcp.lib"
-    Exit(2)
+    for libdir in libdirs:
+      try:
+        libcp = r'%s\libcp.lib' % libdir
+        shutil.copy(libcp, Dir('#/.sconf_temp').abspath)
+        if conf.TryLink(libcptest % (r'using %s' % libcp), '.cpp'):
+          defenv.PrependENVPath('LIB', Dir('#/.sconf_temp').abspath)
+          break
+      except IOError:
+        continue
+    else:
+      print "*** Couldn't find a good version of libcp.lib"
+      Exit(2)
 
 conf.Finish()
+
 
 ### stub environment
 
@@ -88,7 +96,12 @@ if not defenv['DEBUG']:
 stub_env.Append(CCFLAGS = ['/W3'])                 # level 3 warnings
 
 stub_env.Append(LINKFLAGS = ['/opt:nowin98'])      # 512 bytes align
-stub_env.Append(LINKFLAGS = ['/entry:WinMain'])    # entry point
+
+if defenv['UNICODE']:
+	stub_env.Append(LINKFLAGS = ['/entry:wWinMain'])   # Unicode entry point
+else:
+	stub_env.Append(LINKFLAGS = ['/entry:WinMain'])    # ANSI entry point
+
 stub_env.Append(LINKFLAGS = ['$NODEFLIBS_FLAG'])   # no default libraries
 stub_env.Append(LINKFLAGS = ['$MAP_FLAG'])         # generate map file
 stub_env.Append(CCFLAGS = ['/FAcs'])               # full listing files
@@ -104,6 +117,8 @@ if not defenv['DEBUG']:
 	makensis_env.Append(CCFLAGS = ['/O2'])           # optimize for speed
 makensis_env.Append(CCFLAGS = ['$EXCEPTION_FLAG']) # enable exceptions
 makensis_env.Append(CCFLAGS = ['/W3'])             # level 3 warnings
+makensis_env.Append(CCFLAGS = ['/FAcs'])               # full listing files
+makensis_env.Append(CCFLAGS = ['/Fa${TARGET}.lst'])    # listing file name
 
 makensis_env.Append(LINKFLAGS = ['/opt:nowin98'])  # 512 bytes align
 makensis_env.Append(LINKFLAGS = ['$MAP_FLAG'])     # generate map file
@@ -200,13 +215,22 @@ def add_file(file):
 
 conf = stub_env.Configure()
 
-int64test = """
-#include <windows.h>
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, int nCmdShow) {
-	ULARGE_INTEGER *i = 0;
-	return (int)(i->QuadPart >> 10);
-}
-"""
+if defenv['UNICODE']:
+	int64test = """
+	#include <windows.h>
+	int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPTSTR lpszCmdParam, int nCmdShow) {
+		ULARGE_INTEGER *i = 0;
+		return (int)(i->QuadPart >> 10);
+	}
+	"""
+else:
+	int64test = """
+	#include <windows.h>
+	int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, int nCmdShow) {
+		ULARGE_INTEGER *i = 0;
+		return (int)(i->QuadPart >> 10);
+	}
+	"""
 
 if not conf.TryLink(int64test, '.c'):
 	stub_env.Append(CPPDEFINES = ['_NSIS_NO_INT64_SHR'])

@@ -14,6 +14,8 @@
  * warranty.
  */
 
+/* Unicode support by Jim Park -- 11/16/2007 */
+
 #ifndef _ICON_H_
 #define _ICON_H_
 
@@ -60,7 +62,7 @@ typedef struct
 
 typedef std::vector<Icon> IconGroup;
 
-IconGroup load_icon_file(const char* filename);
+IconGroup load_icon_file(const TCHAR* filename);
 IconGroup load_icon_res(CResourceEditor* re, WORD id);
 void free_loaded_icon(IconGroup icon);
 

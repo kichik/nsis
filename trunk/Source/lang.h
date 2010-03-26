@@ -12,6 +12,8 @@
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty.
+ * 
+ * Unicode support and Doxygen comments by Jim Park -- 07/30/2007
  */
 
 #ifndef ___NLF___H_____
@@ -37,18 +39,116 @@ struct langstring {
 class LangStringList : public SortedStringListND<struct langstring>
 {
   public:
+	 /* Default constructor */
     LangStringList();
 
-    int add(const char *name, int *sn=0);
-    int get(const char *name, int *sn=0, int *index=0, int *uindex=0, int *process=0);
+    /**
+     * Adds a langstring struct with the string name of 'name' into this
+     * structure.
+     *
+     * @param name The string to use as key.
+     * @param sn [out] The string number.
+     * @return Returns the position where T was stored.
+     */
+    int add(const TCHAR *name, int *sn=0);
+
+	 /**
+     * Gets the values in the langstring struct that is mapped to the string
+     * 'name'.  Sets sn, index, and uindex to -1 before looking for the
+     * 'name'.  If not found, -1 is returned.  If found, then the values
+     * associated with 'name' are set to the sn, index, uindex, process
+     * variables.
+     * 
+     * TODO: Need better documentation here.
+     * @param sn [out] Set to string ID number.
+     * @param index [out] Set to index value in langstring.
+     * @param uindex [out] Set to uindex value in langstring.
+     * @param process [out] Set to process value in langstring.
+	  * @return The index into langstring array.  -1 if not found.
+	  */
+    int get(const TCHAR *name, int *sn=0, int *index=0, int *uindex=0, int *process=0);
+
+	 /**
+	  * Sets the values in the langstring struct that is in the position 'pos'.
+	  *
+	  * @param pos The langstring index into m_gr.
+	  * @param index Value to set langstring[pos].index.
+	  * @param uindex Value to set langstring[pos].uindex.
+	  * @param process Value to set langstring[pos].process.
+	  */ 
     void set(int pos, int index=-1, int uindex=-1, int process=-1);
-    void set(const char *name, int index, int uindex=-1, int process=-1);
-    const char *pos2name(int pos);
-    const char *offset2name(int name);
+
+	 /**
+	  * Sets the values in the langstring struct that is mapped to the string
+	  * 'name'.
+	  *
+	  * @param name The string key to lookup langstring.
+	  * @param index Value to set langstring[pos].index.
+	  * @param uindex Value to set langstring[pos].uindex.
+	  * @param process Value to set langstring[pos].process.
+	  */ 
+    void set(const TCHAR *name, int index, int uindex=-1, int process=-1);
+
+	 /**
+	  * From the position index, get the pointer to the key string.
+	  * Basically, get the string referenced by langstring[pos].name.
+	  *
+	  * @param pos The position index.
+	  * @return The TCHAR* to the string referenced by pos.
+	  */
+    const TCHAR *pos2name(int pos);
+
+	 /**
+	  * From the index into the strings, get the pointer to the
+	  * key string.  Note: the positional index into the storage of
+	  * key strings probably should not be exposed to the outside.
+	  *
+	  * @param name Index into the m_strings array.
+	  * @return The TCHAR* to the string referenced by name.
+	  */
+    const TCHAR *offset2name(int name);
+
+	 /**
+	  * Get the number of entries.
+	  *
+	  * @return The number of langstring entries.
+	  */
     int getnum();
+
+	 /**
+	  * Compare two langstring structs pointed by item1 and item2 by looking at
+	  * their .index values via their difference (item1->index - item2->index).
+	  *
+	  * @return 0 if equal, negative value if item1 is smaller, positive value
+	  * if item1 is bigger.
+	  */
     static int compare_index(const void *item1, const void *item2);
+
+	 /**
+	  * Sorts the langstrings by their index.  Then return the sorted array
+	  * via m_sortbuf.  Warning: This function is not thread-safe!
+	  *
+	  * @param num [out] Set to the size of langstring items in the array.
+	  * @return The sorted langstring array via m_sortbuf.
+	  */
     langstring *sort_index(int *num);
+
+	 /**
+	  * Compare two langstring structs pointed by item1 and item2 by looking at
+	  * their .uindex values via their difference (item1->uindex - item2->uindex).
+	  *
+	  * @return 0 if equal, negative value if item1 is smaller, positive value
+	  * if item1 is bigger.
+	  */
     static int compare_uindex(const void *item1, const void *item2);
+
+	 /**
+	  * Sorts the langstrings by their index.  Then return the sorted array
+	  * via m_sortbuf.  Warning: This function is not thread-safe!
+	  *
+	  * @param num [out] Set to the size of langstring items in the array.
+	  * @return The sorted langstring array via m_sortbuf.
+	  */
     langstring *sort_uindex(int *num);
 
   private:
@@ -56,14 +156,43 @@ class LangStringList : public SortedStringListND<struct langstring>
     TinyGrowBuf sortbuf;
 };
 
+/**
+ * This class implements an array of C-style strings in a flat buffer.
+ *
+ * Implementation: Resetting the string at a particular index does not delete
+ * the old string.  Instead a new string is added to the end of m_strings and
+ * the old string can no longer be looked up.
+ */
 class StringsArray
 {
   public:
     StringsArray();
 
+	 /**
+	  * Resizes the m_offsets so that the index num is valid.
+	  *
+	  * @param num New size.
+	  */
     void resize(int num);
-    int set(int idx, const char *str);
-    const char *get(int idx);
+
+	 /**
+     * Set the string 'str' at index idx.  This class cannot really delete
+     * strings.  It can "overwrite" them in the sense that the string is no
+     * longer referenceable via the index but they are never gone.
+	  *
+	  * @param idx The index position to set the string to.
+	  * @param str The string value to set.
+	  * @return If overwriting, the position in m_strings of the old string.
+	  */
+    int set(int idx, const TCHAR *str);
+
+	 /**
+	  * Get the string at index 'idx'.
+	  *
+	  * @param idx The logical index to the string.
+	  * @return Returns the TCHAR* to the string.
+	  */
+    const TCHAR *get(int idx);
 
   private:
     TinyGrowBuf offsets;
@@ -176,18 +305,26 @@ enum {
 };
 
 struct NLF {
-    bool          m_bLoaded;
-    char         *m_szName;
-    char         *m_szFont;
+    bool          m_bLoaded;	 /* Is the table loaded? */
+    TCHAR         *m_szName;	 /* The language name */
+    TCHAR         *m_szFont;
     int           m_iFontSize;
-    unsigned int  m_uCodePage;
-    bool          m_bRTL;
+    unsigned int  m_uCodePage; /* Code page associated with language.  When
+										  * using Unicode, this value will be 1200.
+										  */
+	
+    bool          m_bRTL;		 /* Is this a right-to-left language like
+											 Hebrew? */
 
-    char         *m_szStrings[NLF_STRINGS];
+    TCHAR         *m_szStrings[NLF_STRINGS];
 };
 
+/**
+ * LanguageTable stores within the lang_strings, all the user strings and
+ * variables for that specific language.
+ */
 struct LanguageTable {
-  LANGID lang_id;
+  LANGID lang_id;	/* Windows Language ID identifier */
 
   int dlg_offset;
 

@@ -12,6 +12,8 @@
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty.
+ *
+ * Unicode support by Jim Park -- 08/24/2007
  */
 
 #include "ShConstants.h"
@@ -21,7 +23,7 @@ ConstantsStringList::ConstantsStringList()
   index = 0;
 }
 
-int ConstantsStringList::add(const char *name, int value1, int value2)
+int ConstantsStringList::add(const TCHAR *name, int value1, int value2)
 {
   int pos=SortedStringListND<struct constantstring>::add(name);
   if (pos == -1) return -1;
@@ -37,7 +39,7 @@ int ConstantsStringList::add(const char *name, int value1, int value2)
   return temp;
 }
 
-int ConstantsStringList::get(char *name, int n_chars /*= -1*/)
+int ConstantsStringList::get(TCHAR *name, int n_chars /*= -1*/)
 {
   int v=SortedStringListND<struct constantstring>::find(name, n_chars);
   if (v==-1) return -1;
@@ -63,12 +65,12 @@ int ConstantsStringList::get_value2(int idx)
   return (((struct constantstring*)gr.get())[pos].value2);
 }
 
-char* ConstantsStringList::idx2name(int idx)
+TCHAR* ConstantsStringList::idx2name(int idx)
 {
   int pos=get_internal_idx(idx);
   if (pos==-1) return NULL;
   struct constantstring *data=(struct constantstring *)gr.get();      
-  return ((char*)strings.get() + data[pos].name);
+  return ((TCHAR*)strings.get() + data[pos].name);
 }
 
 int ConstantsStringList::get_internal_idx(int idx)

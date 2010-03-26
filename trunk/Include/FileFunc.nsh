@@ -910,7 +910,7 @@ RefreshShellIcons
 	StrCpy $6 1073741824
 
 	FileFunc_DriveSpace_getspace:
-	System::Call 'kernel32::GetDiskFreeSpaceExA(t, *l, *l, *l)i(r0,.r2,.r3,.)'
+	System::Call 'kernel32::GetDiskFreeSpaceEx(t, *l, *l, *l)i(r0,.r2,.r3,.)'
 
 	StrCmp $5 T 0 +3
 	StrCpy $0 $3
@@ -970,7 +970,7 @@ RefreshShellIcons
 
 	System::Alloc 1024
 	Pop $2
-	System::Call 'kernel32::GetLogicalDriveStringsA(i,i) i(1024, r2)'
+	System::Call 'kernel32::GetLogicalDriveStrings(i,i) i(1024, r2)'
 
 	StrCmp $0 ALL FileFunc_GetDrives_drivestring
 	StrCmp $0 '' 0 FileFunc_GetDrives_typeset
@@ -1007,10 +1007,10 @@ RefreshShellIcons
 	StrCpy $3 $2
 
 	FileFunc_GetDrives_enumok:
-	System::Call 'kernel32::lstrlenA(t) i(i r3) .r4'
+	System::Call 'kernel32::lstrlen(t) i(i r3) .r4'
 	StrCmp $4$0 '0ALL' FileFunc_GetDrives_enumex
 	StrCmp $4 0 FileFunc_GetDrives_typeset
-	System::Call 'kernel32::GetDriveTypeA(t) i(i r3) .r5'
+	System::Call 'kernel32::GetDriveType(t) i(i r3) .r5'
 
 	StrCmp $0 ALL +2
 	StrCmp $5 $6 FileFunc_GetDrives_letter FileFunc_GetDrives_enumnext
@@ -1111,7 +1111,7 @@ RefreshShellIcons
 	FileFunc_GetTime_getfile:
 	IfFileExists $0 0 FileFunc_GetTime_error
 	System::Call '*(i,l,l,l,i,i,i,i,&t260,&t14) i .r6'
-	System::Call 'kernel32::FindFirstFileA(t,i)i(r0,r6) .r2'
+	System::Call 'kernel32::FindFirstFile(t,i)i(r0,r6) .r2'
 	System::Call 'kernel32::FindClose(i)i(r2)'
 
 	FileFunc_GetTime_gettime:
@@ -1401,8 +1401,8 @@ RefreshShellIcons
 	Push $0
 	Push $1
 	Push $2
-	System::Call 'kernel32::GetModuleFileNameA(i 0, t .r0, i 1024)'
-	System::Call 'kernel32::GetLongPathNameA(t r0, t .r1, i 1024)i .r2'
+	System::Call 'kernel32::GetModuleFileName(i 0, t .r0, i 1024)'
+	System::Call 'kernel32::GetLongPathName(t r0, t .r1, i 1024)i .r2'
 	StrCmp $2 error +2
 	StrCpy $0 $1
 	Pop $2
@@ -1429,7 +1429,7 @@ RefreshShellIcons
 	Push $1
 	Push $2
 	StrCpy $0 $EXEDIR
-	System::Call 'kernel32::GetLongPathNameA(t r0, t .r1, i 1024)i .r2'
+	System::Call 'kernel32::GetLongPathName(t r0, t .r1, i 1024)i .r2'
 	StrCmp $2 error +2
 	StrCpy $0 $1
 	Pop $2

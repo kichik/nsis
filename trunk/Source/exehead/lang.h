@@ -12,6 +12,8 @@
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty.
+ *
+ * Unicode support by Jim Park -- 08/13/2007
  */
 
 #ifndef _NSIS_LANG_H_
@@ -19,24 +21,27 @@
 
 
 // generic startup strings (these will never be overridable)
-#define _LANG_INVALIDCRC "Installer integrity check has failed. Common causes include\n" \
-                         "incomplete download and damaged media. Contact the\n" \
-                         "installer's author to obtain a new copy.\n\n" \
-                         "More information at:\n" \
-                         "http://nsis.sf.net/NSIS_Error"
+#define _LANG_INVALIDCRC _T("Installer integrity check has failed. Common causes include\n") \
+                         _T("incomplete download and damaged media. Contact the\n") \
+                         _T("installer's author to obtain a new copy.\n\n") \
+                         _T("More information at:\n") \
+                         _T("http://nsis.sf.net/NSIS_Error")
 
-#define _LANG_ERRORWRITINGTEMP "Error writing temporary file. Make sure your temp folder is valid."
+#define _LANG_ERRORWRITINGTEMP _T("Error writing temporary file. Make sure your temp folder is valid.")
 
-#define _LANG_UNINSTINITERROR "Error launching installer"
+#define _LANG_UNINSTINITERROR _T("Error launching installer")
 
-#define _LANG_VERIFYINGINST "verifying installer: %d%%"
+#define _LANG_VERIFYINGINST _T("verifying installer: %d%%")
 
-#define _LANG_UNPACKING "unpacking data: %d%%"
+#define _LANG_UNPACKING _T("unpacking data: %d%%")
 
-#define _LANG_CANTOPENSELF "Error launching installer" // same as uninstiniterror for size
+#define _LANG_CANTOPENSELF _T("Error launching installer") // same as uninstiniterror for size
 
-#define _LANG_GENERIC_ERROR "NSIS Error"
+#define _LANG_GENERIC_ERROR _T("NSIS Error")
 
+// We store index to the current language table as a negative
+// index value - 1.  So this macro, undoes that into a valid
+// index.
 #define LANG_STR_TAB(x)             cur_langtable[-((int)x+1)]
 
 #define LANG_BRANDING               -1

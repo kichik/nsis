@@ -9,6 +9,8 @@
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty.
+ *
+ * Reviewed for Unicode support by Jim Park -- 08/27/2007
  */
 
 /* zconf.h -- configuration of the zlib compression library
@@ -16,7 +18,7 @@
  * For conditions of distribution and use, see copyright notice in zlib.h 
  */
 
-/* @(#) $Id: ZCONF.H,v 1.2 2006/10/28 19:45:02 joostverburg Exp $ */
+/* @(#) $Id: ZCONF.H,v 1.3 2007/01/13 17:28:23 kichik Exp $ */
 
 #ifndef _ZCONF_H
 #define _ZCONF_H

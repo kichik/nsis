@@ -20,8 +20,10 @@
   L. Peter Deutsch
   ghost@aladdin.com
 
+  Reviewed for Unicode support by Jim Park -- 08/29/2007
+
  */
-/* $Id: md5.h,v 1.4 2002/04/13 19:20:28 lpd Exp $ */
+/* $Id: md5.h,v 1.1 2005/09/17 09:25:44 kichik Exp $ */
 /*
   Independent implementation of MD5 (RFC 1321).
 

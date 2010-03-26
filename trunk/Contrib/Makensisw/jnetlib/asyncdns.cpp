@@ -6,6 +6,9 @@
 ** License: zlib
 */
 
+// Reviewed for Unicode support by Jim Park -- 08/16/2007
+// Note: For Unicode Support, all string functions must explicitly use
+// ANSI versions if UNICODE is defined.
 
 #include "netinc.h"
 #include "util.h"
@@ -57,14 +60,14 @@ int JNL_AsyncDNS::resolve(char *hostname, unsigned long *addr)
     return 0;
   }
 
-  if (lstrcmpi(m_hostname,hostname)) m_addr=0;
+  if (lstrcmpiA(m_hostname,hostname)) m_addr=0;
   else if (m_addr == INADDR_NONE) return -1;
   else if (m_addr)
   {
     *addr=m_addr;
     return 0;
   }
-  lstrcpy(m_hostname,hostname);
+  lstrcpyA(m_hostname,hostname);
 
   if (m_thread_kill)
   {

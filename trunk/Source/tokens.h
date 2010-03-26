@@ -120,7 +120,7 @@ enum
   TOK_P_SEARCHPARSESTRING,
   TOK_P_SEARCHREPLACESTRING,
 
-  // section/function shit
+  // section/function stuff
   TOK_SECTION,
   TOK_SECTIONEND,
   TOK_SECTIONIN,

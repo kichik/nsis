@@ -50,6 +50,8 @@
 **      make the socket close after sending all the data sent. 
 **  
 **   8. delete ye' ol' object.
+**
+**   Reviewed for Unicode Support by Jim Park -- 08/17/2007
 */
 
 #ifndef _CONNECTION_H_

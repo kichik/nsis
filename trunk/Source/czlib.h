@@ -12,6 +12,8 @@
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty.
+ *
+ * Unicode support by Jim Park -- 08/24/2007
  */
 
 #ifndef __CZLIB_H__
@@ -68,25 +70,25 @@ class CZlib : public ICompressor {
       return stream->avail_out;
     }
 
-    const char* GetName() {
-      return "zlib";
+    const TCHAR* GetName() {
+      return _T("zlib");
     }
 
-    const char* GetErrStr(int err) {
+    const TCHAR* GetErrStr(int err) {
       switch (err)
       {
       case Z_STREAM_ERROR:
-        return "invalid stream - bad call";
+        return _T("invalid stream - bad call");
       case Z_DATA_ERROR:
-        return "data error";
+        return _T("data error");
       case Z_MEM_ERROR:
-        return "not enough memory";
+        return _T("not enough memory");
       case Z_BUF_ERROR:
-        return "buffer error - bad call";
+        return _T("buffer error - bad call");
       case Z_VERSION_ERROR:
-        return "version error";
+        return _T("version error");
       default:
-        return "unknown error";
+        return _T("unknown error");
       }
     }
 

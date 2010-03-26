@@ -151,8 +151,13 @@
 
 # some definitions from header files
 
-!define OSVERSIONINFOA_SIZE   148
-!define OSVERSIONINFOEXA_SIZE 156
+!ifdef NSIS_UNICODE
+!define OSVERSIONINFO_SIZE   276	; OSVERSIONINFOW
+!define OSVERSIONINFOEX_SIZE 284	; OSVERSIONINFOEXW
+!else
+!define OSVERSIONINFO_SIZE   148	; OSVERSIONINFOA
+!define OSVERSIONINFOEX_SIZE 156	; OSVERSIONINFOEXA
+!endif
 !define VER_PLATFORM_WIN32_NT 2
 !define VER_NT_WORKSTATION    1
 
@@ -206,15 +211,15 @@
   Push $R0 ;temp
 
   # allocate memory
-  System::Alloc ${OSVERSIONINFOEXA_SIZE}
+  System::Alloc ${OSVERSIONINFOEX_SIZE}
   Pop $0
 
   # use OSVERSIONINFOEX
-  !insertmacro __WinVer_Call_GetVersionEx ${OSVERSIONINFOEXA_SIZE}
+  !insertmacro __WinVer_Call_GetVersionEx ${OSVERSIONINFOEX_SIZE}
 
   IntCmp $3 0 "" _winver_ex _winver_ex
     # OSVERSIONINFOEX not allowed (Win9x or NT4 w/SP < 6), use OSVERSIONINFO
-    !insertmacro __WinVer_Call_GetVersionEx ${OSVERSIONINFOA_SIZE}
+    !insertmacro __WinVer_Call_GetVersionEx ${OSVERSIONINFO_SIZE}
   _winver_ex:
 
   # get results from struct
@@ -266,7 +271,7 @@
 
   _winver_nt: # nt
 
-    IntCmp $R0 ${OSVERSIONINFOEXA_SIZE} "" _winver_sp_noex _winver_sp_noex
+    IntCmp $R0 ${OSVERSIONINFOEX_SIZE} "" _winver_sp_noex _winver_sp_noex
 
       # discard szCSDVersion
       Pop $0

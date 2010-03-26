@@ -12,6 +12,8 @@
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty.
+ *
+ * Unicode support by Jim Park -- 08/13/2007
  */
 
 #include "exehead/config.h"
@@ -21,6 +23,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdexcept>
+#include "tchar.h"
 
 void writer_sink::write_byte(const unsigned char b)
 {
@@ -52,6 +55,7 @@ void writer_sink::write_string(const char *s)
   write_data(s, strlen(s) + 1);
 }
 
+// size in this case is the length of the string to write.
 void writer_sink::write_string(const char *s, const size_t size)
 {
   char *wb = new char[size];

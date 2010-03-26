@@ -3,18 +3,19 @@
   NSIS plug-in for Type Library Registration/UnRegistration
   Written by Joost Verburg
 
+  Unicode support by Jim Park -- 08/23/2007
+
 */
 
 #include <windows.h>
 #include <nsis/pluginapi.h> // nsis plugin
+#include <nsis/nsis_tchar.h>
 
-#define NSISFunction(funcname) extern "C" void __declspec(dllexport) funcname(HWND hwndParent, int string_size, char *variables, stack_t **stacktop)
+#define NSISFunction(funcname) extern "C" void __declspec(dllexport) funcname(HWND hwndParent, int string_size, TCHAR *variables, stack_t **stacktop)
 
 extern "C" BOOL WINAPI DllMain(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved) {
   return TRUE;
 }
-
-// Functions
 
 NSISFunction(Register) {
 
@@ -107,11 +108,11 @@ NSISFunction(GetLibVersion) {
     if (SUCCEEDED(hr))
     {
 
-      char buf[33];
+      TCHAR buf[33];
 
-      wsprintf(buf, "%d", typelibAttr->wMajorVerNum);
+      wsprintf(buf, _T("%d"), typelibAttr->wMajorVerNum);
       pushstring(buf);
-      wsprintf(buf, "%d", typelibAttr->wMinorVerNum);
+      wsprintf(buf, _T("%d"), typelibAttr->wMinorVerNum);
       pushstring(buf);
 
       typeLib->ReleaseTLibAttr(typelibAttr);
@@ -119,8 +120,8 @@ NSISFunction(GetLibVersion) {
     }
     else
     {
-      pushstring("0");
-      pushstring("0");
+      pushstring(_T("0"));
+      pushstring(_T("0"));
     }
 
     typeLib->Release();
@@ -128,8 +129,8 @@ NSISFunction(GetLibVersion) {
   }
   else
   {
-    pushstring("0");
-    pushstring("0");
+    pushstring(_T("0"));
+    pushstring(_T("0"));
   }
 
 }

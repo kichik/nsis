@@ -155,7 +155,7 @@
   ; Extra string tests (cannot do these case-sensitively - I tried and lstrcmp still ignored the case)
   !macro _StrCmpI _a _b _e _l _m
     !insertmacro _LOGICLIB_TEMP
-    System::Call `kernel32::lstrcmpiA(ts, ts) i.s` `${_a}` `${_b}`
+    System::Call `kernel32::lstrcmpi(ts, ts) i.s` `${_a}` `${_b}`
     Pop $_LOGICLIB_TEMP
     IntCmp $_LOGICLIB_TEMP 0 `${_e}` `${_l}` `${_m}`
   !macroend

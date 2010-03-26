@@ -11,6 +11,8 @@
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty.
+ *
+ * Reviewed for Unicode support by Jim Park -- 08/27/2007
  */
 
 /*-------------------------------------------------------------*/
@@ -218,10 +220,10 @@ void generateMTFValues ( EState* s )
 
    for (i = 0; i < s->nblock; i++) {
       UChar ll_i;
-      AssertD ( wr <= i, "generateMTFValues(1)" );
+      AssertD ( wr <= i, _T("generateMTFValues(1)") );
       j = ptr[i]-1; if (j < 0) j += s->nblock;
       ll_i = s->unseqToSeq[block[j]];
-      AssertD ( ll_i < s->nInUse, "generateMTFValues(2a)" );
+      AssertD ( ll_i < s->nInUse, _T("generateMTFValues(2a)") );
 
       if (yy[0] == ll_i) { 
          zPend++;
