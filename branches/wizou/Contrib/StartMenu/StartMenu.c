@@ -368,21 +368,31 @@ BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_COMMAND:
       if (LOWORD(wParam) == IDC_DIRLIST && HIWORD(wParam) == LBN_SELCHANGE)
       {
-        SendMessage(hwDirList, LB_GETTEXT, SendMessage(hwDirList, LB_GETCURSEL, 0, 0), (WPARAM)buf);
-        if (autoadd)
-          lstrcat(lstrcat(buf, _T("\\")), progname);
-        SetWindowText(hwLocation, buf);
+        LRESULT selection = SendMessage(hwDirList, LB_GETCURSEL, 0, 0);
+        if (selection != LB_ERR)
+        {
+          SendMessage(hwDirList, LB_GETTEXT, selection, (WPARAM)buf);
+          if (autoadd)
+            lstrcat(lstrcat(buf, _T("\\")), progname);
+          SetWindowText(hwLocation, buf);
+        }
       }
       else if (LOWORD(wParam) == IDC_CHECK && HIWORD(wParam) == BN_CLICKED)
       {
         BOOL bEnable = IsDlgButtonChecked(hwndDlg, IDC_CHECK) != BST_CHECKED;
         EnableWindow(hwDirList, bEnable);
         EnableWindow(hwLocation, bEnable);
+        if (bEnable)
+          goto ValidateLocation;
+        *buf = _T('!'); //This only needs to be != 0, actual value does not matter
+        goto SetOkBtn;
       }
       else if (LOWORD(wParam) == IDC_LOCATION && HIWORD(wParam) == EN_CHANGE)
       {
+        ValidateLocation:
         GetWindowText(hwLocation, buf, MAX_PATH);
         validate_filename(buf);
+        SetOkBtn:
         EnableWindow(GetDlgItem(hwParent, IDOK), *buf != _T('\0'));
       }
     break;

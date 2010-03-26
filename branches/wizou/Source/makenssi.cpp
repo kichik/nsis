@@ -445,7 +445,7 @@ int _tmain(int argc, TCHAR **argv)
         TCHAR* env_var = _tgetenv(_T("NSISCONFDIR"));
         if(env_var == NULL)
 #ifndef NSIS_CONFIG_CONST_DATA_PATH
-          main_conf = get_executable_dir(argv[0]);
+          main_conf = get_dir_name(get_executable_dir(argv[0]));
 #else
           main_conf = PREFIX_CONF;
 #endif

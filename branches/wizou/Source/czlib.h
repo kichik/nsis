@@ -20,7 +20,7 @@
 #define __CZLIB_H__
 
 #include "compressor.h"
-#include "zlib/ZLIB.H"
+#include <zlib.h>
 
 class CZlib : public ICompressor {
   public:
@@ -29,7 +29,13 @@ class CZlib : public ICompressor {
     int Init(int level, unsigned int dict_size) {
       stream = new z_stream;
       if (!stream) return Z_MEM_ERROR;
-      return deflateInit(stream, level);
+
+      stream->zalloc = (alloc_func)Z_NULL;
+      stream->zfree = (free_func)Z_NULL;
+      stream->opaque = (voidpf)Z_NULL;
+
+      return deflateInit2(stream, level,
+        Z_DEFLATED, -MAX_WBITS, MAX_MEM_LEVEL, Z_DEFAULT_STRATEGY);
     }
 
     int End() {

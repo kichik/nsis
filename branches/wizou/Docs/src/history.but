@@ -1,5 +1,33 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.46} 2.46
+
+Released on December 6th, 2009
+
+\S1{v2.46-cl} Changelog
+
+\S2{} Minor Changes
+
+\b Fixed \R{searchparse}{!searchparse} (\W{http://sourceforge.net/support/tracker.php?aid=2803622}{bug #2803622})
+
+\b Fixed Vista error message when canceling uninstaller (\W{http://sourceforge.net/support/tracker.php?aid=2803097}{bug #2803097})
+
+\b Resolve warning for LogicLib's endless Do..Loop (\W{http://sourceforge.net/support/tracker.php?aid=2849872}{bug #2849872})
+
+\b \L{../Docs/StartMenu/Readme.txt}{StartMenu}: fixed random number prefixes when clicking on an empty spot (\W{http://sourceforge.net/support/tracker.php?aid=2810188}{bug #2810188})
+
+\b Updates to NSIS.pas for plug-in development (\W{http://sourceforge.net/support/tracker.php?aid=2802794}{patch #2802794})
+
+\S2{} Translations
+
+\b PortugueseBR typo (\W{http://sourceforge.net/support/tracker.php?aid=2826598}{patch #2826598})
+
+\b Removed double spaces in Italian (\W{http://sourceforge.net/support/tracker.php?aid=2873598}{bug #2873598})
+
+\S2{} Build System
+
+\b Fixed mingw builds of \L{../Docs/Math/Math.txt}{Math} plug-in (\W{http://sourceforge.net/support/tracker.php?aid=2835731}{patch #2835731})
+
 \H{v2.45} 2.45
 
 Released on June 6th, 2009

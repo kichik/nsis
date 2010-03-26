@@ -36,6 +36,7 @@ utils = [
 	'Makensisw',
 	'NSIS Menu',
 	'UIs',
+	'SubStart',
 	'VPatch/Source/GenPat',
 	'zip2exe'
 ]
@@ -155,6 +156,8 @@ opts.Add(PathVariable('APPEND_CPPPATH', 'Additional paths to search for include 
 opts.Add(PathVariable('APPEND_LIBPATH', 'Additional paths to search for libraries', None))
 opts.Add(('APPEND_CCFLAGS', 'Additional C/C++ compiler flags'))
 opts.Add(('APPEND_LINKFLAGS', 'Additional linker flags'))
+opts.Add(PathVariable('WXWIN', 'Path to wxWindows library folder (e.g. C:\\Dev\\wxWidgets-2.8.10)', os.environ.get('WXWIN')))
+opts.Add(PathVariable('ZLIB_W32', 'Path to Win32 zlib library folder (e.g. C:\\Dev\\zlib-1.2.3)', os.environ.get('ZLIB_W32')))
 # build options
 opts.Add(BoolVariable('UNICODE', 'Build the Unicode version of the executable', 'no'))
 opts.Add(BoolVariable('DEBUG', 'Build executables with debugging information', 'no'))
@@ -326,6 +329,14 @@ def DistributeDocs(files, names=[], path='', alias=None):
 def DistributeExamples(files, names=[], path='', alias=None):
 	return defenv.Distribute(files, names, 'doc', 'Examples', path, alias, 'examples')
 
+def FindMakeNSIS(env, path):
+	exename = 'makensis_not_found'
+	file = env.FindFile('makensis$PROGSUFFIX', 
+		[os.path.join(path, '.'), os.path.join(path, 'Bin')])
+	if file:
+		exename = str(file)
+	return exename
+
 def Sign(targets):
 	if defenv.has_key('CODESIGNER'):
 		for t in targets:
@@ -363,6 +374,12 @@ defenv.Append(CPPPATH = Split('$APPEND_CPPPATH'))
 defenv.Append(LIBPATH = Split('$APPEND_LIBPATH'))
 
 defenv.Default('$BUILD_PREFIX')
+
+if 'ZLIB_W32' in defenv:
+	defenv['ZLIB_W32_INC'] = os.path.join(defenv['ZLIB_W32'], 'include')
+	defenv['ZLIB_W32_LIB'] = os.path.join(defenv['ZLIB_W32'], 'lib')
+	defenv['ZLIB_W32_DLL'] = defenv.FindFile('zlib1.dll', 
+		[defenv['ZLIB_W32'], defenv['ZLIB_W32_LIB']])
 
 tools = defenv['TOOLS']
 
@@ -413,18 +430,20 @@ inst_env = {}
 inst_env['NSISDIR'] = os.path.abspath(str(defenv['INSTDISTDIR']))
 inst_env['NSISCONFDIR'] = os.path.abspath(str(defenv['INSTDISTDIR']))
 
+def build_installer(target, source, env):
+	cmdline = FindMakeNSIS(env, str(env['INSTDISTDIR'])) + ' %sDOUTFILE=%s %s' % (optchar, target[0].abspath, env['INSTVER'])
+	cmd = env.Command(None, source, cmdline + ' $SOURCE')
+	AlwaysBuild(cmd)
+	AlwaysBuild(env.AddPostAction(cmd, Delete('$INSTDISTDIR')))
+	env.Alias('dist-installer', cmd)
+
 installer_target = defenv.Command('nsis-${VERSION}-setup${DISTSUFFIX}.exe',
-                                  '$INSTDISTDIR' + os.sep + 'Examples' + os.sep + 'makensis.nsi',
-                                  '$INSTDISTDIR' + os.sep + 'makensis$PROGSUFFIX ' +
-                                  '%sDOUTFILE=$TARGET.abspath $INSTVER $SOURCE' % optchar,
+                                  os.path.join('$INSTDISTDIR', 'Examples', 'makensis.nsi'),
+                                  build_installer,
                                   ENV = inst_env)
 defenv.Depends(installer_target, '$INSTDISTDIR')
 defenv.Sign(installer_target)
 defenv.Alias('dist-installer', installer_target)
-
-# Comment out the following if you want to see the installation directory
-# after the build is finished.
-#AlwaysBuild(defenv.AddPostAction(installer_target, Delete('$INSTDISTDIR')))
 
 defenv.Alias('dist', ['dist-zip', 'dist-installer'])
 
@@ -490,7 +509,10 @@ makensis_env.SideEffect('%s/makensis.map' % build_dir, makensis)
 
 defenv.Alias('makensis', makensis)
 
-ins = defenv.DistributeBin(makensis,alias='install-compiler')
+if defenv['PLATFORM'] == 'win32': 
+	ins = defenv.DistributeW32Bin(makensis, alias='install-compiler')
+else:
+	ins = defenv.DistributeBin(makensis, alias='install-compiler')
 
 ######################################################################
 #######  Common Functions                                          ###
@@ -574,13 +596,21 @@ for plugin in plugin_libs + plugins:
 #######  Utilities                                                 ###
 ######################################################################
 
+Import('AddZLib')
+
 def BuildUtilEnv(defines = None, flags = None, libs = None,
                  entry = None, nodeflib = None,
                  cross_platform = False):
 	if not cross_platform:
 		env = util_env.Clone()
+		platform = 'win32'
 	else:
 		env = cp_util_env.Clone()
+		platform = env['PLATFORM']
+
+	if libs and 'z' in libs:
+		libs.remove('z')
+		AddZLib(env, platform)
 
 	AddEnvStandardFlags(env, defines, flags, libs, entry, nodeflib)
 
@@ -720,6 +750,8 @@ def test_scripts(target, source, env):
 	skipped_tests = env['SKIPTESTS'].split(',')
 	ignored_tests = env['IGNORETESTS'].split(',')
 
+	compiler = FindMakeNSIS(env, env.subst('$TESTDISTDIR'))
+
 	for root, dirs, files in walk(instdir):
 		for file in files:
 			if file[-4:] == '.nsi':
@@ -730,9 +762,9 @@ def test_scripts(target, source, env):
 					continue
 
 				if nsif in ignored_tests:
-					cmd = env.Command(None, nsi, '-makensis $SOURCE')
+					cmd = env.Command(None, nsi, '-' + compiler + ' $SOURCE')
 				else:
-					cmd = env.Command(None, nsi, 'makensis $SOURCE')
+					cmd = env.Command(None, nsi, compiler + ' $SOURCE')
 				AlwaysBuild(cmd)
 				env.Alias('test-scripts', cmd)
 

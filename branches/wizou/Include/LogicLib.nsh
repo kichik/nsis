@@ -576,6 +576,7 @@
     !endif
     !undef _c=${_c}
     Goto ${_Continue}                                     ; Just to ensure it is referenced at least once
+	Goto ${_Exit${_n}}                                    ; Just to ensure it is referenced at least once
     ${_Exit${_n}}:                                        ; Place the loop exit point
     !undef ${_Logic}Condition
     !insertmacro _PopScope Continue

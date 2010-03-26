@@ -3,7 +3,7 @@
 ** Copyright (C) 2000-2001 Nullsoft, Inc.
 ** Author: Justin Frankel
 ** File: util.cpp - JNL implementation of basic network utilities
-** License: see jnetlib.h
+** License: zlib
 **
 ** Reviewed for Unicode Support by Jim Park -- 08/17/2007
 ** Note: The functions that work on char's should be explicitely set to use the

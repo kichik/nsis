@@ -3,7 +3,7 @@
 ** Copyright (C) 2000-2001 Nullsoft, Inc.
 ** Author: Justin Frankel
 ** File: util.h - JNL interface for basic network utilities
-** License: see jnetlib.h
+** License: see License.txt
 **
 ** routines you may be interested in:
 **   JNL::open_socketlib(); 

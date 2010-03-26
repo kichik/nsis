@@ -115,12 +115,15 @@ ${MementoSection} "NSIS Core Files (required)" SecCore
   RMDir /r $SMPROGRAMS\NSIS
 
   SetOverwrite on
-  File ..\makensis.exe
+  File /oname=makensis.exe ..\Bin\substart.exe
   File ..\makensisw.exe
   File ..\COPYING
   File ..\NSIS.chm
   File ..\NSIS.exe
   File /nonfatal ..\NSIS.exe.manifest
+  SetOutPath $INSTDIR\Bin
+  File ..\Bin\makensis.exe
+  File ..\Bin\zlib1.dll
 
   IfFileExists $INSTDIR\nsisconf.nsi "" +2
   Rename $INSTDIR\nsisconf.nsi $INSTDIR\nsisconf.nsh
@@ -955,7 +958,7 @@ Function PageLeaveReinstall
     ExecWait '$R1 _?=$INSTDIR'
 
     IfErrors no_remove_uninstaller
-    IfFileExists "$INSTDIR\makensis.exe" no_remove_uninstaller
+    IfFileExists "$INSTDIR\Bin\makensis.exe" no_remove_uninstaller
 
       Delete $R1
       RMDir $INSTDIR
@@ -996,7 +999,7 @@ Section Uninstall
   DetailPrint "Uninstalling NSI Development Shell Extensions..."
   SetDetailsPrint listonly
 
-  IfFileExists $INSTDIR\makensis.exe nsis_installed
+  IfFileExists $INSTDIR\Bin\makensis.exe nsis_installed
     MessageBox MB_YESNO "It does not appear that NSIS is installed in the directory '$INSTDIR'.$\r$\nContinue anyway (not recommended)?" IDYES nsis_installed
     Abort "Uninstall aborted by user"
   nsis_installed:
@@ -1030,6 +1033,7 @@ Section Uninstall
   Delete $INSTDIR\makensis.exe
   Delete $INSTDIR\makensisw.exe
   Delete $INSTDIR\NSIS.exe
+  Delete $INSTDIR\NSIS.exe.manifest
   Delete $INSTDIR\license.txt
   Delete $INSTDIR\COPYING
   Delete $INSTDIR\uninst-nsis.exe

@@ -440,6 +440,15 @@ Section /o "Run tests" TESTS
     DetailPrint "FAILED For[Each]..Next test"
   ${EndIf}
 
+  ; do..loop
+  StrCpy $R1 0
+  Call DoLoop
+  ${If} $R1 == 5
+    DetailPrint "PASSED Do..Loop test"
+  ${Else}
+    DetailPrint "FAILED Do..Loop test"
+  ${EndIf}
+
   ; do..exitdo..loop
   StrCpy $R1 0
   StrCpy $R2 ""
@@ -594,6 +603,17 @@ Function ComponentsLeave
     MessageBox MB_OK "Please select the component"
     Abort
   ${EndIf}
+FunctionEnd
+
+Function DoLoop
+
+  ${Do}
+    IntOp $R1 $R1 + 1
+    ${If} $R1 == 5
+      Return
+    ${EndIf}
+  ${Loop}
+
 FunctionEnd
 
 !verbose 3
