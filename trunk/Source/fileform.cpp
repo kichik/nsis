@@ -151,7 +151,7 @@ void ctlcolors_writer::write(const ctlcolors *data)
   m_sink->write_int(data->text);
   m_sink->write_int(data->bkc);
   m_sink->write_int(data->lbStyle);
-  m_sink->write_int((int) data->bkb);
+  m_sink->write_int((INT_PTR) data->bkb);
   m_sink->write_int(data->bkmode);
   m_sink->write_int(data->flags);
 }

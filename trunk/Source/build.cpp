@@ -16,7 +16,6 @@
  * Unicode support added by Jim Park -- 08/07/2007
  */
 
-#include "tchar.h"
 #include "Platform.h"
 #include <stdio.h>
 #include "exehead/config.h"

@@ -30,18 +30,8 @@ using namespace std;
 #define ALIGN(dwToAlign, dwAlignOn) dwToAlign = (dwToAlign%dwAlignOn == 0) ? dwToAlign : dwToAlign - (dwToAlign%dwAlignOn) + dwAlignOn
 #define RALIGN(dwToAlign, dwAlignOn) ((dwToAlign%dwAlignOn == 0) ? dwToAlign : dwToAlign - (dwToAlign%dwAlignOn) + dwAlignOn)
 
-#ifndef _WIN32
-static inline ULONG ConvertEndianness(ULONG u) {
-  return FIX_ENDIAN_INT32(u);
-}
-#endif
-
 static inline DWORD ConvertEndianness(DWORD d) {
   return FIX_ENDIAN_INT32(d);
-}
-
-static inline LONG ConvertEndianness(LONG l) {
-  return FIX_ENDIAN_INT32(l);
 }
 
 static inline WORD ConvertEndianness(WORD w) {
@@ -55,7 +45,7 @@ PIMAGE_NT_HEADERS CResourceEditor::GetNTHeaders(BYTE* pbPE) {
     throw runtime_error("PE file contains invalid DOS header");
 
   // Get NT headers
-  PIMAGE_NT_HEADERS ntHeaders = (PIMAGE_NT_HEADERS)(pbPE + ConvertEndianness(dosHeader->e_lfanew));
+  PIMAGE_NT_HEADERS ntHeaders = (PIMAGE_NT_HEADERS)(pbPE + ConvertEndianness((DWORD)dosHeader->e_lfanew));
   if (ntHeaders->Signature != IMAGE_NT_SIGNATURE)
     throw runtime_error("PE file missing NT signature");
 
@@ -688,7 +678,7 @@ void CResourceEditor::WriteRsrcSec(BYTE* pbRsrcSec) {
     rdDir.NumberOfIdEntries = ConvertEndianness(rdDir.NumberOfIdEntries);
 
     CopyMemory(seeker, &rdDir, sizeof(IMAGE_RESOURCE_DIRECTORY));
-    crd->m_dwWrittenAt = DWORD(seeker);
+    crd->m_ulWrittenAt = (ULONG_PTR)(seeker);
     seeker += sizeof(IMAGE_RESOURCE_DIRECTORY);
 
     for (int i = 0; i < crd->CountEntries(); i++) {
@@ -709,7 +699,7 @@ void CResourceEditor::WriteRsrcSec(BYTE* pbRsrcSec) {
       rDirE.UName.NameString.NameIsString = (crd->GetEntry(i)->HasName()) ? 1 : 0;
 
       CopyMemory(seeker, &rDirE, sizeof(MY_IMAGE_RESOURCE_DIRECTORY_ENTRY));
-      crd->GetEntry(i)->m_dwWrittenAt = DWORD(seeker);
+      crd->GetEntry(i)->m_ulWrittenAt = (ULONG_PTR)(seeker);
       seeker += sizeof(MY_IMAGE_RESOURCE_DIRECTORY_ENTRY);
     }
     qDirs.pop();
@@ -725,7 +715,7 @@ void CResourceEditor::WriteRsrcSec(BYTE* pbRsrcSec) {
     rDataE.Size = ConvertEndianness(cRDataE->GetSize());
 
     CopyMemory(seeker, &rDataE, sizeof(IMAGE_RESOURCE_DATA_ENTRY));
-    cRDataE->m_dwWrittenAt = DWORD(seeker);
+    cRDataE->m_ulWrittenAt = (ULONG_PTR)(seeker);
     seeker += sizeof(IMAGE_RESOURCE_DATA_ENTRY);
 
     qDataEntries.pop();
@@ -737,7 +727,7 @@ void CResourceEditor::WriteRsrcSec(BYTE* pbRsrcSec) {
   while (!qStrings.empty()) {
     CResourceDirectoryEntry* cRDirE = qStrings.front();
 
-    PMY_IMAGE_RESOURCE_DIRECTORY_ENTRY(cRDirE->m_dwWrittenAt)->UName.NameString.NameOffset = ConvertEndianness(DWORD(seeker) - DWORD(pbRsrcSec));
+    PMY_IMAGE_RESOURCE_DIRECTORY_ENTRY(cRDirE->m_ulWrittenAt)->UName.NameString.NameOffset = ConvertEndianness((DWORD) (seeker - pbRsrcSec));
 
     WCHAR* szName = cRDirE->GetName();
     WORD iLen = winchar_strlen(szName) + 1;
@@ -758,7 +748,7 @@ void CResourceEditor::WriteRsrcSec(BYTE* pbRsrcSec) {
   while (!qDataEntries2.empty()) {
     CResourceDataEntry* cRDataE = qDataEntries2.front();
     CopyMemory(seeker, cRDataE->GetData(), cRDataE->GetSize());
-    PIMAGE_RESOURCE_DATA_ENTRY(cRDataE->m_dwWrittenAt)->OffsetToData = ConvertEndianness(seeker - pbRsrcSec + m_dwResourceSectionVA);
+    PIMAGE_RESOURCE_DATA_ENTRY(cRDataE->m_ulWrittenAt)->OffsetToData = ConvertEndianness((DWORD)(seeker - pbRsrcSec) + m_dwResourceSectionVA);
 
     seeker += RALIGN(cRDataE->GetSize(), 8);
 
@@ -768,21 +758,21 @@ void CResourceEditor::WriteRsrcSec(BYTE* pbRsrcSec) {
   /*
    * Set all of the directory entries offsets.
    */
-  SetOffsets(m_cResDir, DWORD(pbRsrcSec));
+  SetOffsets(m_cResDir, (ULONG_PTR)(pbRsrcSec));
 }
 
 // Sets the offsets in directory entries
-void CResourceEditor::SetOffsets(CResourceDirectory* resDir, DWORD newResDirAt) {
+void CResourceEditor::SetOffsets(CResourceDirectory* resDir, ULONG_PTR newResDirAt) {
   for (int i = 0; i < resDir->CountEntries(); i++) {
-    PMY_IMAGE_RESOURCE_DIRECTORY_ENTRY rde = PMY_IMAGE_RESOURCE_DIRECTORY_ENTRY(resDir->GetEntry(i)->m_dwWrittenAt);
+    PMY_IMAGE_RESOURCE_DIRECTORY_ENTRY rde = PMY_IMAGE_RESOURCE_DIRECTORY_ENTRY(resDir->GetEntry(i)->m_ulWrittenAt);
     if (resDir->GetEntry(i)->IsDataDirectory()) {
       rde->UOffset.DirectoryOffset.DataIsDirectory = 1;
-      rde->UOffset.DirectoryOffset.OffsetToDirectory = resDir->GetEntry(i)->GetSubDirectory()->m_dwWrittenAt - newResDirAt;
+      rde->UOffset.DirectoryOffset.OffsetToDirectory = resDir->GetEntry(i)->GetSubDirectory()->m_ulWrittenAt - newResDirAt;
       rde->UOffset.OffsetToData = ConvertEndianness(rde->UOffset.OffsetToData);
       SetOffsets(resDir->GetEntry(i)->GetSubDirectory(), newResDirAt);
     }
     else {
-      rde->UOffset.OffsetToData = ConvertEndianness(resDir->GetEntry(i)->GetDataEntry()->m_dwWrittenAt - newResDirAt);
+      rde->UOffset.OffsetToData = ConvertEndianness((DWORD)(resDir->GetEntry(i)->GetDataEntry()->m_ulWrittenAt - newResDirAt));
     }
   }
 }
@@ -891,7 +881,7 @@ int CResourceDirectory::CountEntries() {
 // Returns -1 if can not be found
 int CResourceDirectory::Find(WCHAR* szName) {
   if (IS_INTRESOURCE(szName))
-    return Find((WORD) (DWORD) szName);
+    return Find((WORD) (ULONG_PTR) szName);
   else
     if (szName[0] == L'#')
       return Find(WORD(winchar_stoi(szName + 1)));
@@ -969,7 +959,7 @@ CResourceDirectoryEntry::CResourceDirectoryEntry(WCHAR* szName, CResourceDirecto
   if (IS_INTRESOURCE(szName)) {
     m_bHasName = false;
     m_szName = 0;
-    m_wId = (WORD) (DWORD) szName;
+    m_wId = (WORD) (ULONG_PTR) szName;
   }
   else {
     m_bHasName = true;
@@ -983,7 +973,7 @@ CResourceDirectoryEntry::CResourceDirectoryEntry(WCHAR* szName, CResourceDataEnt
   if (IS_INTRESOURCE(szName)) {
     m_bHasName = false;
     m_szName = 0;
-    m_wId = (WORD) (DWORD) szName;
+    m_wId = (WORD) (ULONG_PTR) szName;
   }
   else {
     m_bHasName = true;

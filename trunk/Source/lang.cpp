@@ -19,7 +19,6 @@
 #include "Platform.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "tchar.h"
 #include "build.h"
 #include "util.h"
 #include "DialogTemplate.h"

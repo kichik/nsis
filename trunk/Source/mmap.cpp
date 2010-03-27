@@ -322,7 +322,7 @@ void MMapFile::release(void *pView, int size)
   if (!pView)
     return;
 
-  unsigned int alignment = ((unsigned int)pView) % m_iAllocationGranularity;
+  unsigned int alignment = ((ULONG_PTR)pView) % m_iAllocationGranularity;
   pView = (char *)pView - alignment;
   size += alignment;
 #ifdef _WIN32

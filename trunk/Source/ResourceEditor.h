@@ -29,7 +29,7 @@
 
 #include "Platform.h"
 #ifdef _WIN32
-#include <WinNT.h>
+#include <winnt.h>
 #else
 // all definitions for non Win32 platforms were taken from MinGW's free Win32 library
 #  define IMAGE_DIRECTORY_ENTRY_RESOURCE  2
@@ -159,7 +159,7 @@ private:
   CResourceDirectory* ScanDirectory(PRESOURCE_DIRECTORY rdRoot, PRESOURCE_DIRECTORY rdToScan);
 
   void WriteRsrcSec(BYTE* pbRsrcSec);
-  void SetOffsets(CResourceDirectory* resDir, DWORD newResDirAt);
+  void SetOffsets(CResourceDirectory* resDir, ULONG_PTR newResDirAt);
 
   DWORD AdjustVA(DWORD dwVirtualAddress, DWORD dwAdjustment);
   DWORD AlignVA(DWORD dwVirtualAddress);
@@ -183,7 +183,7 @@ public:
 
   void Destroy();
 
-  DWORD m_dwWrittenAt;
+  ULONG_PTR m_ulWrittenAt;
 
 private:
   IMAGE_RESOURCE_DIRECTORY m_rdDir;
@@ -207,7 +207,7 @@ public:
 
   CResourceDataEntry* GetDataEntry();
 
-  DWORD m_dwWrittenAt;
+  ULONG_PTR m_ulWrittenAt;
 
 private:
   bool m_bHasName;
@@ -235,7 +235,7 @@ public:
   DWORD GetCodePage();
   DWORD GetOffset();
 
-  DWORD m_dwWrittenAt;
+  ULONG_PTR m_ulWrittenAt;
 
 private:
   BYTE* m_pbData;
