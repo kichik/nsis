@@ -376,8 +376,26 @@ defenv.Append(LIBPATH = Split('$APPEND_LIBPATH'))
 defenv.Default('$BUILD_PREFIX')
 
 if 'ZLIB_W32' in defenv:
-	defenv['ZLIB_W32_INC'] = os.path.join(defenv['ZLIB_W32'], 'include')
-	defenv['ZLIB_W32_LIB'] = os.path.join(defenv['ZLIB_W32'], 'lib')
+	defenv['ZLIB_W32_INC'] = os.path.dirname(str(
+		defenv.FindFile('zlib.h', 
+			[
+				defenv['ZLIB_W32'], 
+				os.path.join(defenv['ZLIB_W32'], 'include')
+			]
+		)
+	))
+	# Search for import library of zlib for VisualC or mingw
+	for importlib in ['zdll.lib', 'libzdll.a']:
+		defenv['ZLIB_W32_LIB'] = os.path.dirname(str(
+			defenv.FindFile(importlib, 
+				[
+					defenv['ZLIB_W32'], 
+					os.path.join(defenv['ZLIB_W32'], 'lib')
+				]
+			)
+		))
+		if defenv['ZLIB_W32_LIB']:
+			break
 	defenv['ZLIB_W32_DLL'] = defenv.FindFile('zlib1.dll', 
 		[defenv['ZLIB_W32'], defenv['ZLIB_W32_LIB']])
 
