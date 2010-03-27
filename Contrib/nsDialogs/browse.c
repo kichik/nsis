@@ -8,6 +8,17 @@
 
 #include "defs.h"
 
+#ifndef _countof
+#ifndef __cplusplus
+#define _countof(_Array) (sizeof(_Array) / sizeof(_Array[0]))
+#else
+  extern "C++" {
+    template <typename _CountofType,size_t _SizeOfArray> char (*__countof_helper(UNALIGNED _CountofType (&_Array)[_SizeOfArray]))[_SizeOfArray];
+#define _countof(_Array) sizeof(*__countof_helper(_Array))
+  }
+#endif
+#endif
+
 int CALLBACK BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lp, LPARAM pData) {
   if (uMsg == BFFM_INITIALIZED)
     SendMessage(hwnd, BFFM_SETSELECTION, TRUE, pData);

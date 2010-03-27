@@ -77,9 +77,9 @@ int update_bitmap(CResourceEditor* re, WORD id, const TCHAR* filename, int width
   }
 
   if (width != 0) {
-    LONG biWidth;
+    INT32 biWidth;
     fseek(f, 18, SEEK_SET); // Seek to the width member of the header
-    fread(&biWidth, sizeof(LONG), 1, f);
+    fread(&biWidth, sizeof(INT32), 1, f);
     FIX_ENDIAN_INT32_INPLACE(biWidth);
     if (width != biWidth) {
       fclose(f);
@@ -88,9 +88,9 @@ int update_bitmap(CResourceEditor* re, WORD id, const TCHAR* filename, int width
   }
 
   if (height != 0) {
-    LONG biHeight;
+    INT32 biHeight;
     fseek(f, 22, SEEK_SET); // Seek to the height member of the header
-    fread(&biHeight, sizeof(LONG), 1, f);
+    fread(&biHeight, sizeof(INT32), 1, f);
     FIX_ENDIAN_INT32_INPLACE(biHeight);
     // Bitmap height can be negative too...
     if (height != abs(biHeight)) {
@@ -687,8 +687,8 @@ static BOOL GetVxdVersion( LPCTSTR szFile, LPDWORD lpdwLen, LPVOID lpData )
   }
 
   // Find the beginning of the NT header at offset e_lfanew.
-  pNtExeHdr = (PIMAGE_NT_HEADERS) ( (DWORD) pView
-       + (DWORD) pDosExeHdr->e_lfanew );
+  pNtExeHdr = (PIMAGE_NT_HEADERS) ( (ULONG_PTR) pView
+       + pDosExeHdr->e_lfanew );
 
   // Check to make sure the file is a VxD.
   if ( (DWORD) pNtExeHdr->Signature != IMAGE_VXD_SIGNATURE ) 
@@ -726,8 +726,8 @@ static BOOL GetVxdVersion( LPCTSTR szFile, LPDWORD lpdwLen, LPVOID lpData )
   }
 
   // e32_winresoff contains the offset of the resource in the VxD.
-  pVerRes = (VXD_VERSION_RESOURCE *) ( (DWORD) pView
-       + (DWORD) pLEHdr->e32_winresoff );
+  pVerRes = (VXD_VERSION_RESOURCE *) ( (ULONG_PTR) pView
+       + pLEHdr->e32_winresoff );
   dwSize = pVerRes->dwResSize;
   pRawRes = &(pVerRes->bVerData);
 
@@ -778,7 +778,7 @@ static DWORD GetVxdVersionInfoSize( LPCTSTR szFile )
 
     // GetVxdVersion() will fail with ERROR_INSUFFICIENT_BUFFER and
     // the required buffer size will be returned in dwResult.
-    if ( GetLastError() == ERROR_INSUFFICIENT_BUFFER ) 
+    if ( dwError == ERROR_INSUFFICIENT_BUFFER ) 
     {
       SetLastError( 0 );
       return dwResult;

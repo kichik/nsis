@@ -95,8 +95,6 @@ makensis_env.Append(CXXFLAGS = ['-Wno-non-virtual-dtor']) # ignore virtual dtor 
 makensis_env.Append(CXXFLAGS = ['-Wall'])                 # all warnings
 
 conf = FlagsConfigure(makensis_env)
-conf.CheckCompileFlag('-m32')                     #
-conf.CheckLinkFlag('-m32')                        #
 conf.CheckLinkFlag('$MAP_FLAG')                   # generate map file
 if not defenv['DEBUG'] and defenv['STRIP'] and defenv['STRIP_CP']:
 	TestStrip(conf)                                 # strip
@@ -150,8 +148,6 @@ conf.Finish()
 ### cross-platform util environment adjustments
 
 conf = FlagsConfigure(cp_util_env)
-conf.CheckCompileFlag('-m32')
-conf.CheckLinkFlag('-m32')
 if not defenv['DEBUG'] and defenv['STRIP'] and defenv['STRIP_CP']:
 	TestStrip(conf)                                 # strip
 conf.Finish()
@@ -161,8 +157,6 @@ conf.Finish()
 test_env = defenv.Clone()
 test_env.Append(CPPPATH = ['#$BUILD_CONFIG'])
 conf = FlagsConfigure(test_env)
-conf.CheckCompileFlag('-m32')
-conf.CheckLinkFlag('-m32')
 conf.Finish()
 
 ### weird GCC requirements

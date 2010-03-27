@@ -149,7 +149,7 @@ int GetVersionHeader (LPSTR &p, WORD &wLength, WORD &wValueLength, WORD &wType)
     p += sizeof(WORD);
     szKey = (WCHAR*)p;
     p += (winchar_strlen(szKey) + 1) * sizeof (WCHAR);
-    while ( ((long)p % 4) != 0 )
+    while ( ((ULONG_PTR)p % 4) != 0 )
         p++;
     return p - baseP;    
 }
