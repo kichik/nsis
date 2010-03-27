@@ -74,7 +74,7 @@ void ReadVarLenArr(LPBYTE &seeker, WCHAR* &readInto, unsigned int uCodePage) {
     if (IS_INTRESOURCE(x)) { \
       *(WORD*)seeker = 0xFFFF; \
       seeker += sizeof(WORD); \
-      *(WORD*)seeker = ConvertEndianness(WORD(DWORD(x))); \
+      *(WORD*)seeker = ConvertEndianness(WORD((ULONG_PTR)(x))); \
       seeker += sizeof(WORD); \
     } \
     else { \
@@ -444,7 +444,7 @@ void CDialogTemplate::ConvertToRTL() {
       szClass = winchar_toansi(m_vItems[i]->szClass);
 
     // Button
-    if (long(m_vItems[i]->szClass) == 0x80) {
+    if ((ULONG_PTR)(m_vItems[i]->szClass) == 0x80) {
       m_vItems[i]->dwStyle ^= BS_LEFTTEXT;
       m_vItems[i]->dwStyle ^= BS_RIGHT;
       m_vItems[i]->dwStyle ^= BS_LEFT;
@@ -458,13 +458,13 @@ void CDialogTemplate::ConvertToRTL() {
       }
     }
     // Edit
-    else if (long(m_vItems[i]->szClass) == 0x81) {
+    else if ((ULONG_PTR)(m_vItems[i]->szClass) == 0x81) {
       if ((m_vItems[i]->dwStyle & ES_CENTER) == 0) {
         m_vItems[i]->dwStyle ^= ES_RIGHT;
       }
     }
     // Static
-    else if (long(m_vItems[i]->szClass) == 0x82) {
+    else if ((ULONG_PTR)(m_vItems[i]->szClass) == 0x82) {
       if ((m_vItems[i]->dwStyle & SS_TYPEMASK) == SS_LEFT || (m_vItems[i]->dwStyle & SS_TYPEMASK) == SS_LEFTNOWORDWRAP)
       {
         m_vItems[i]->dwStyle &= ~SS_TYPEMASK;
@@ -571,7 +571,7 @@ BYTE* CDialogTemplate::Save(DWORD& dwSize) {
   // Write all of the items
   for (unsigned int i = 0; i < m_vItems.size(); i++) {
     // DLGITEMTEMPLATE[EX]s must be aligned on DWORD boundary
-    if (DWORD(seeker - pbDlg) % sizeof(DWORD))
+    if ((seeker - pbDlg) % sizeof(DWORD))
       seeker += sizeof(WORD);
 
     if (m_bExtended) {
@@ -622,7 +622,7 @@ BYTE* CDialogTemplate::Save(DWORD& dwSize) {
     }
   }
 
-  assert((DWORD) seeker - (DWORD) pbDlg == dwSize);
+  assert((DWORD)(seeker - pbDlg) == dwSize);
 
   // DONE!
   return pbDlg;

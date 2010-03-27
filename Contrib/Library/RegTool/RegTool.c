@@ -1,5 +1,10 @@
 #include <windows.h>
-#include "../../ExDll/nsis_tchar.h"
+#include <tchar.h>
+
+#ifndef _CRT_STRINGIZE
+#define __CRT_STRINGIZE(_Value) #_Value
+#define _CRT_STRINGIZE(_Value) __CRT_STRINGIZE(_Value)
+#endif /* _CRT_STRINGIZE */
 
 #define STR_SIZE 1024
 

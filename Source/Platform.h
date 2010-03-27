@@ -56,6 +56,18 @@ typedef unsigned char UCHAR;
 typedef const char *LPCCH, *PCSTR, *LPCSTR;
 typedef unsigned short WCHAR, OLECHAR, *PWCHAR, *LPWCH, *PWCH, *NWPSTR, *LPWSTR, *PWSTR, *BSTR;
 typedef const unsigned short *LPCWCH, *PCWCH, *LPCWSTR, *PCWSTR, *LPCOLESTR;
+#ifdef  _UNICODE
+typedef WCHAR   TCHAR;
+#define _T(x)   L##x
+#define TEXT(x) L##x
+#define _tctime _wctime
+#else
+typedef CHAR    TCHAR;
+#define _T(x)   x
+#define TEXT(x) x
+#define _tctime ctime
+#endif
+typedef int INT_PTR;
 typedef unsigned int UINT_PTR;
 // basic stuff
 typedef void * HANDLE;
@@ -63,8 +75,8 @@ typedef HANDLE HWND;
 typedef HANDLE HMODULE;
 typedef unsigned long HKEY;
 // some gdi
-typedef unsigned long COLORREF;
-typedef unsigned long HBRUSH;
+typedef DWORD COLORREF;
+typedef UINT32 HBRUSH;
 // bool
 #  define FALSE 0
 #  define TRUE 1
@@ -88,6 +100,11 @@ typedef double LONGLONG,DWORDLONG;
 typedef LONGLONG *PLONGLONG;
 typedef DWORDLONG *PDWORDLONG;
 typedef DWORDLONG ULONGLONG,*PULONGLONG;
+
+// function mapping
+#define _strdup strdup
+#define _snprintf snprintf
+#define _vsnprintf vsnprintf
 #endif
 
 #ifndef __BIG_ENDIAN__
@@ -169,7 +186,7 @@ typedef DWORDLONG ULONGLONG,*PULONGLONG;
 #    define MAKEINTRESOURCE MAKEINTRESOURCEA
 #  endif
 #  ifndef IMAGE_FIRST_SECTION
-#    define IMAGE_FIRST_SECTION(h) ( PIMAGE_SECTION_HEADER( (DWORD) h + \
+#    define IMAGE_FIRST_SECTION(h) ( PIMAGE_SECTION_HEADER( (ULONG_PTR) h + \
                                      FIELD_OFFSET(IMAGE_NT_HEADERS, OptionalHeader) + \
                                      FIX_ENDIAN_INT16(PIMAGE_NT_HEADERS(h)->FileHeader.SizeOfOptionalHeader) ) )
 #  endif
@@ -177,7 +194,7 @@ typedef DWORDLONG ULONGLONG,*PULONGLONG;
 #    define RGB(r,g,b) ((DWORD)(((BYTE)(r)|((WORD)(g)<<8))|(((DWORD)(BYTE)(b))<<16)))
 #  endif
 #  ifndef MAKELONG
-#    define MAKELONG(a,b) ((LONG)(((WORD)(a))|(((DWORD)((WORD)(b)))<<16)))
+#    define MAKELONG(a,b) ((DWORD)(((WORD)(a))|(((DWORD)((WORD)(b)))<<16)))
 #  endif
 #endif
 #ifndef IS_INTRESOURCE
@@ -202,8 +219,10 @@ typedef DWORDLONG ULONGLONG,*PULONGLONG;
 #  define FOF_NOERRORUI 0x0400
 #endif
 
-#ifndef ULONG_PTR
-#  define ULONG_PTR DWORD
+// mingw32 and w64-mingw32 do not define ULONG_PTR
+// but rather declare ULONG_PTR via typedef (see basetsd.h)
+#if !defined(__MINGW32__) && !defined(ULONG_PTR)
+#  define ULONG_PTR unsigned long
 #endif
 
 #ifndef IDC_HAND
@@ -243,7 +262,7 @@ typedef DWORDLONG ULONGLONG,*PULONGLONG;
 #  undef INVALID_FILE_ATTRIBUTES
 #endif
 #ifndef INVALID_FILE_ATTRIBUTES
-#  define INVALID_FILE_ATTRIBUTES ((unsigned long) -1)
+#  define INVALID_FILE_ATTRIBUTES ((DWORD) -1)
 #endif
 
 // shell folders

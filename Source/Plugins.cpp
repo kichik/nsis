@@ -29,7 +29,7 @@
 #include "dirreader.h"
 
 #ifdef _WIN32
-#  include <WinNT.h>
+#  include <winnt.h>
 #else
 #  include <sys/stat.h>
 #endif
@@ -136,8 +136,8 @@ void Plugins::GetExports(const tstring &pathToDll, bool displayInfo)
         DWORD prd = FIX_ENDIAN_INT32(sections[i].PointerToRawData);
         PIMAGE_EXPORT_DIRECTORY exports = PIMAGE_EXPORT_DIRECTORY(&dlldata[0] + prd + ExportDirVA - va);
         DWORD na = FIX_ENDIAN_INT32(exports->AddressOfNames);
-        unsigned long *names = (unsigned long*)((unsigned long) exports + (char *) na - ExportDirVA);
-        for (unsigned long j = 0; j < FIX_ENDIAN_INT32(exports->NumberOfNames); j++)
+        LPDWORD names = (LPDWORD)((ULONG_PTR)exports + na - ExportDirVA);
+        for (DWORD j = 0; j < FIX_ENDIAN_INT32(exports->NumberOfNames); j++)
         {
           const string name = string((char*)exports + FIX_ENDIAN_INT32(names[j]) - ExportDirVA);
           const tstring signature = dllName + _T("::") + name;

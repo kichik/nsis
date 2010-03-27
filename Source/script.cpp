@@ -2129,7 +2129,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         int k=line.gettoken_enum(1,rootkeys[0]);
         if (k == -1) k=line.gettoken_enum(1,rootkeys[1]);
         if (k == -1) PRINTHELP()
-        build_header.install_reg_rootkey=(int)rootkey_tab[k];
+        build_header.install_reg_rootkey=(INT_PTR)rootkey_tab[k];
         if (!build_header.install_reg_rootkey) PRINTHELP() // SHCTX is invalid here
         build_header.install_reg_key_ptr = add_string(line.gettoken_str(2),0);
         if (line.gettoken_str(2)[0] == _T('\\'))
@@ -5184,7 +5184,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         int k=line.gettoken_enum(2,rootkeys[0]);
         if (k == -1) k=line.gettoken_enum(2,rootkeys[1]);
         if (ent.offsets[0] == -1 || k == -1) PRINTHELP()
-        ent.offsets[1]=(int)rootkey_tab[k];
+        ent.offsets[1]=(INT_PTR)rootkey_tab[k];
         ent.offsets[2]=add_string(line.gettoken_str(3));
         ent.offsets[3]=add_string(line.gettoken_str(4));
         if (which_token == TOK_READREGDWORD) ent.offsets[4]=1;
@@ -5216,7 +5216,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (k == -1) k=line.gettoken_enum(a,rootkeys[1]);
         if (k == -1) PRINTHELP()
         ent.which=EW_DELREG;
-        ent.offsets[1]=(int)rootkey_tab[k];
+        ent.offsets[1]=(INT_PTR)rootkey_tab[k];
         ent.offsets[2]=add_string(line.gettoken_str(a+1));
         ent.offsets[3]=(which_token==TOK_DELETEREGKEY)?0:add_string(line.gettoken_str(a+2));
         if (line.gettoken_str(a+1)[0] == _T('\\'))
@@ -5236,7 +5236,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (k == -1) k=line.gettoken_enum(1,rootkeys[1]);
         if (k == -1) PRINTHELP()
         ent.which=EW_WRITEREG;
-        ent.offsets[0]=(int)rootkey_tab[k];
+        ent.offsets[0]=(INT_PTR)rootkey_tab[k];
         ent.offsets[1]=add_string(line.gettoken_str(2));
         if (line.gettoken_str(2)[0] == _T('\\'))
           warning_fl(_T("%s: registry path name begins with \'\\\', may cause problems"),line.gettoken_str(0));
@@ -5305,7 +5305,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         int k=line.gettoken_enum(2,rootkeys[0]);
         if (k == -1) k=line.gettoken_enum(2,rootkeys[1]);
         if (ent.offsets[0] == -1 || k == -1) PRINTHELP()
-        ent.offsets[1]=(int)rootkey_tab[k];
+        ent.offsets[1]=(INT_PTR)rootkey_tab[k];
         ent.offsets[2]=add_string(line.gettoken_str(3));
         ent.offsets[3]=add_string(line.gettoken_str(4));
         ent.offsets[4]=which_token == TOK_ENUMREGKEY;
