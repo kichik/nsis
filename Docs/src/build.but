@@ -8,19 +8,30 @@ Source code is available in \W{http://nsis.svn.sourceforge.net/viewvc/nsis/}{SVN
 
 To build NSIS \W{http://www.python.org/}{Python}, \W{http://www.scons.org/}{SCons} must be installed. Currently, the supported version of SCons is version 0.98. Any version of Python above 1.6 is supported.
 
-NSIS uses the \W{http://www.zlib.org}{zlib} compression library. As a
+NSIS uses the \W{http://zlib.net}{zlib} compression library. As a
 consequence the header and library files of zlib must be installed. 
 
 In case these zlib development files aren't present then they could be
 installed via a package manager (apt-get, aptitude, rpm, yum) on POSIX
 platforms. Another option is to build zlib from scratch and install it.
 
-For Windows it is recommended to download \W{http://www.zlib.org}{zlib} from
-\W{http://downloads.sourceforge.net/project/libpng/zlib/1.2.3/zlib123-dll.zip}{http://downloads.sourceforge.net/project/libpng/zlib/1.2.3/zlib123-dll.zip}.
+For Windows it is recommended to download \W{http://zlib.net}{zlib} from
+\W{http://prdownloads.sourceforge.net/libpng/zlib124-dll.zip?download}{http://prdownloads.sourceforge.net/libpng/zlib124-dll.zip?download}.
 Extract the contents of this zip archive to a folder of your choice, e.g.
-\c{C:\\Dev\\zlib-1.2.3} and set an environment variable named \c{ZLIB_W32} containing
-this path. Alternatively the command line option ZLIB_W32 specifying the path
+\c{C:\\dev\\zlib-1.2.4} and set an environment variable named \c{ZLIB_W32} 
+containingt his path. 
+
+\c C:\>set ZLIB_W32=C:\dev\zlib-1.2.4
+
+Alternatively the command line option ZLIB_W32 specifying the path
 could be passed with scons instead of the environment variable.
+
+\c C:\dev\nsis>scons ZLIB_W32=C:\dev\zlib-1.2.4
+
+The header and library files are assumed to be in %ZLIB_W32%. In addition
+scons checks for zlib header files in %ZLIB_W32%\\include, the
+import library zdll.lib in %ZLIB_W32%\\lib and the dynamic link library
+zlib1.dll in %ZLIB_W32% respectively %ZLIB_W32%\\lib.
 
 To build, open a console, change the working directory to the root directory of NSIS and type \c{scons}. That's it. For example:
 
