@@ -301,7 +301,8 @@ class SortedStringListND // no delete - can be placed in GrowBuf
 
       if (pos==-1) return alwaysreturnpos ? where : -1;
 
-      // Note that .name is set with the TCHAR* offset into m_strings.      newstruct.name=strings.add(name,strlen(name)+1);
+      // Note that .name is set with the TCHAR* offset into m_strings.
+      newstruct.name=strings.add(name,strlen(name)+1);
 
       gr.add(&newstruct,sizeof(T));
       T *s=(T*)gr.get();
