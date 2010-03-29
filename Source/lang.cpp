@@ -19,6 +19,7 @@
 #include "Platform.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "tchar.h"
 #include "build.h"
 #include "util.h"
 #include "DialogTemplate.h"
@@ -727,7 +728,7 @@ int CEXEBuild::GenerateLangTables() {
 #undef ADD_FONT
     }
     catch (exception& err) {
-      ERROR_MSG(_T("\nError while applying font: %s\n"), err.what());
+      ERROR_MSG(_T("\nError while applying font: %s\n"), CtoTString(err.what()));
       return PS_ERROR;
     }
   }
@@ -790,7 +791,7 @@ int CEXEBuild::GenerateLangTables() {
 #undef ADD_FONT
       }
       catch (exception& err) {
-        ERROR_MSG(_T("\nError while applying NLF font/RTL: %s\n"), err.what());
+        ERROR_MSG(_T("\nError while applying NLF font/RTL: %s\n"), CtoTString(err.what()));
         return PS_ERROR;
       }
 
@@ -906,7 +907,7 @@ TCHAR SkipComments(FILE *f) {
 
 // NSIS Language File parser
 LanguageTable * CEXEBuild::LoadLangFile(TCHAR *filename) {
-  FILE *f = FOPEN(filename, _T("r"));
+  FILE *f = FOPENTEXT(filename, _T("r"));
   if (!f) {
     ERROR_MSG(_T("Error: Can't open language file - \"%s\"!\n"),filename);
     return 0;
@@ -971,7 +972,7 @@ LanguageTable * CEXEBuild::LoadLangFile(TCHAR *filename) {
   }
 
   // set ^Language
-  nlf->m_szStrings[NLF_LANGUAGE] = strdup(nlf->m_szName);
+  nlf->m_szStrings[NLF_LANGUAGE] = _tcsdup(nlf->m_szName);
 
   int temp;
 

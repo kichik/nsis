@@ -300,7 +300,8 @@ class SortedStringListND // no delete - can be placed in GrowBuf
       int pos=find(name,-1,case_sensitive,1,&where);
 
       if (pos==-1) return alwaysreturnpos ? where : -1;
-      newstruct.name=strings.add(name,strlen(name)+1);
+
+      // Note that .name is set with the TCHAR* offset into m_strings.      newstruct.name=strings.add(name,strlen(name)+1);
 
       gr.add(&newstruct,sizeof(T));
       T *s=(T*)gr.get();
@@ -357,6 +358,7 @@ class SortedStringListND // no delete - can be placed in GrowBuf
       int ll=0;
       int nextpos=(ul+ll)/2;
 
+      // Do binary search on m_gr which is sorted. m_strings is NOT sorted.
       while (ul > ll)
       {
         int res;
@@ -366,21 +368,32 @@ class SortedStringListND // no delete - can be placed in GrowBuf
           if (case_sensitive)
             res = _tcscmp(str, pCurr);
           else
-            res = stricmp(str, pCurr);
+            res = _tcsicmp(str, pCurr);
         }
         else
         {
+          unsigned int pCurr_len = _tcslen(pCurr);
           if (case_sensitive)
-            res=strncmp(str, pCurr, mymin((unsigned int) n_chars, strlen(pCurr)));
+            res = _tcsncmp(str, pCurr, mymin((unsigned int) n_chars, pCurr_len));
           else
-            res=strnicmp(str, pCurr, mymin((unsigned int) n_chars, strlen(pCurr)));
-          if (res == 0 && n_chars != -1 && (unsigned int) n_chars != strlen(pCurr))
-            res = n_chars - strlen(pCurr);
+            res = _tcsncicmp(str, pCurr, mymin((unsigned int) n_chars, pCurr_len));
+
+          // If there is a match and we are looking for a partial match and
+          // n_chars is NOT the length of the current string, then the
+          // comparison result is determined by the length comparison.
+          if (res == 0 && n_chars != -1 && (unsigned int) n_chars != pCurr_len)
+            res = n_chars - pCurr_len;
         }
 
+        // Found!
         if (res==0)
         {
+          // Return where we found it in *where.
           if (where) *where = nextpos;
+
+          // If returnbestpos, then we should return -1, otherwise where
+          // we found it.  But if (returnbestpos && case_sensitive == -1)
+          // returns nextpos.
           return returnbestpos ? (case_sensitive!=-1 ? -1 : nextpos) : nextpos;
         }
         if (res<0) ul=nextpos;

@@ -2825,7 +2825,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (s == 0)
           datebuf[0]=0;
         else
-          datebuf[max(s,sizeof(datebuf)-1)]=0;
+          datebuf[max(s,_countof(datebuf)-1)]=0;
 
         value=datebuf;
       } else if (!_tcsicmp(define,_T("/file")) || !_tcsicmp(define,_T("/file_noerr"))) {
@@ -3139,7 +3139,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             for (;;)
             {
               str[0]=0;
-              fgets(str,sizeof(str),fp);
+              _fgetts(str,_countof(str),fp);
               if (!str[0]) break; // eof
 
               TCHAR *p=str;
