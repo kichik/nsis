@@ -21,8 +21,6 @@
 
 #include "tchar.h"
 #include <string>
-//#include <windows.h>
-//#include <fstream>
 
 /* Abstract string type as well. */
 #ifdef _UNICODE

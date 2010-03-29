@@ -490,7 +490,7 @@ int CEXEBuild::preprocess_string(TCHAR *out, const TCHAR *in, WORD codepage/*=CP
   {
     const TCHAR *np;
 #ifdef _UNICODE
-	np = CharNext(p);
+    np = CharNext(p);
 #else
     np = CharNextExA(codepage, p, 0);
 #endif
