@@ -368,14 +368,10 @@ BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_COMMAND:
       if (LOWORD(wParam) == IDC_DIRLIST && HIWORD(wParam) == LBN_SELCHANGE)
       {
-        LRESULT selection = SendMessage(hwDirList, LB_GETCURSEL, 0, 0);
-        if (selection != LB_ERR)
-        {
-          SendMessage(hwDirList, LB_GETTEXT, selection, (WPARAM)buf);
-          if (autoadd)
-            lstrcat(lstrcat(buf, _T("\\")), progname);
-          SetWindowText(hwLocation, buf);
-        }
+        SendMessage(hwDirList, LB_GETTEXT, SendMessage(hwDirList, LB_GETCURSEL, 0, 0), (WPARAM)buf);
+        if (autoadd)
+          lstrcat(lstrcat(buf, _T("\\")), progname);
+        SetWindowText(hwLocation, buf);
       }
       else if (LOWORD(wParam) == IDC_CHECK && HIWORD(wParam) == BN_CLICKED)
       {
@@ -458,9 +454,9 @@ void AddFolderFromReg(int nFolder)
     {
       if (FileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
       {
-        if (*(WORD*)FileData.cFileName != *(WORD*)_T("."))
+        if (lstrcmp(FileData.cFileName, _T(".")) != 0)
         {
-          if (*(WORD*)FileData.cFileName != *(WORD*)_T("..") || FileData.cFileName[2])
+          if (lstrcmp(FileData.cFileName, _T("..")) != 0)
           {
             if (SendMessage(g_hwDirList, LB_FINDSTRINGEXACT, (WPARAM) -1, (LPARAM)FileData.cFileName) == LB_ERR)
               SendMessage(g_hwDirList, LB_ADDSTRING, 0, (LPARAM)FileData.cFileName);

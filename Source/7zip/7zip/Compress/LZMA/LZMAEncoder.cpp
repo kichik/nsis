@@ -351,7 +351,7 @@ HRESULT CEncoder::Create()
 
 static int FindMatchFinder(const wchar_t *s)
 {
-  for (int m = 0; m < (int)(sizeof(kMatchFinderIDs) / sizeof(kMatchFinderIDs[0])); m++)
+  for (int m = 0; m < (int)(_countof(kMatchFinderIDs)); m++)
     if (AreStringsEqual(kMatchFinderIDs[m], s))
       return m;
   return -1;

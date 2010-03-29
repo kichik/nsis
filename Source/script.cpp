@@ -57,7 +57,7 @@ TCHAR *CEXEBuild::set_file_predefine(const TCHAR *filename)
   TCHAR *oldfilename = definedlist.find(_T("__FILE__"));
   if(oldfilename)
   {
-    oldfilename = strdup(oldfilename);
+    oldfilename = _tcsdup(oldfilename);
     definedlist.del(_T("__FILE__"));
   }
   const TCHAR *p = _tcsrchr(filename,_T('\\'));
@@ -85,7 +85,7 @@ TCHAR *CEXEBuild::set_timestamp_predefine(const TCHAR *filename)
 {
   TCHAR *oldtimestamp = definedlist.find(_T("__TIMESTAMP__"));
   if(oldtimestamp) {
-    oldtimestamp = strdup(oldtimestamp);
+    oldtimestamp = _tcsdup(oldtimestamp);
     definedlist.del(_T("__TIMESTAMP__"));
   }
 
@@ -105,8 +105,8 @@ TCHAR *CEXEBuild::set_timestamp_predefine(const TCHAR *filename)
     FileTimeToLocalFileTime(&fd.ftLastWriteTime, &floctime);
     FileTimeToSystemTime(&floctime, &stime);
 
-    GetDateFormat(LOCALE_USER_DEFAULT, DATE_LONGDATE, &stime, NULL, datebuf, sizeof(datebuf)/sizeof(datebuf[0]));
-    GetTimeFormat(LOCALE_USER_DEFAULT, 0, &stime, NULL, timebuf, sizeof(timebuf)/sizeof(timebuf[0]));
+    GetDateFormat(LOCALE_USER_DEFAULT, DATE_LONGDATE, &stime, NULL, datebuf, _countof(datebuf));
+    GetTimeFormat(LOCALE_USER_DEFAULT, 0, &stime, NULL, timebuf, _countof(timebuf));
     wsprintf(timestampbuf,_T("%s %s"),datebuf,timebuf);
 
     definedlist.add(_T("__TIMESTAMP__"),timestampbuf);
@@ -139,7 +139,7 @@ TCHAR *CEXEBuild::set_line_predefine(int linecnt, BOOL is_macro)
 
   TCHAR *oldline = definedlist.find(_T("__LINE__"));
   if(oldline) {
-    oldline = strdup(oldline);
+    oldline = _tcsdup(oldline);
     definedlist.del(_T("__LINE__"));
   }
   if(is_macro && oldline) {
@@ -147,7 +147,7 @@ TCHAR *CEXEBuild::set_line_predefine(int linecnt, BOOL is_macro)
     _stprintf(linebuf,_T("%s.%s"),oldline,temp);
   }
   else {
-    linebuf = strdup(temp);
+    linebuf = _tcsdup(temp);
   }
   definedlist.add(_T("__LINE__"),linebuf);
 
@@ -313,7 +313,7 @@ int CEXEBuild::doParse(const TCHAR *str)
   
   // escaped quotes should be ignored for compile time commands that set defines
   // because defines can be inserted in commands at a later stage
-  bool ignore_escaping = (!strnicmp((TCHAR*)m_linebuild.get(),_T("!define"),7) || !strnicmp((TCHAR*)m_linebuild.get(),_T("!insertmacro"),12));
+  bool ignore_escaping = (!_tcsncicmp((TCHAR*)m_linebuild.get(),_T("!define"),7) || !_tcsncicmp((TCHAR*)m_linebuild.get(),_T("!insertmacro"),12));
   res=line.parse((TCHAR*)m_linebuild.get(), ignore_escaping);
 
   inside_comment = line.inCommentBlock();
@@ -467,9 +467,9 @@ parse_again:
         switch(mod) {
           case 0:
           case 1:
-            istrue = stricmp(line.gettoken_str(1),line.gettoken_str(3)) == 0; break;
+            istrue = _tcsicmp(line.gettoken_str(1),line.gettoken_str(3)) == 0; break;
           case 2:
-            istrue = stricmp(line.gettoken_str(1),line.gettoken_str(3)) != 0; break;
+            istrue = _tcsicmp(line.gettoken_str(1),line.gettoken_str(3)) != 0; break;
           case 3:
             istrue = line.gettoken_float(1) <= line.gettoken_float(3); break;
           case 4:
@@ -595,7 +595,7 @@ void CEXEBuild::ps_addtoline(const TCHAR *str, GrowBuf &linedata, StringList &hi
       }
       else if (in[0] == _T('{'))
       {
-        TCHAR *s=strdup(in+1);
+        TCHAR *s=_tcsdup(in+1);
         MANAGE_WITH(s, free);
         TCHAR *t=s;
         unsigned int bn = 0;
@@ -633,7 +633,7 @@ void CEXEBuild::ps_addtoline(const TCHAR *str, GrowBuf &linedata, StringList &hi
       }
       else if (in[0] == _T('%'))
       {
-        TCHAR *s=strdup(in+1);
+        TCHAR *s=_tcsdup(in+1);
         MANAGE_WITH(s, free);
         TCHAR *t=s;
         while (*t)
@@ -668,7 +668,7 @@ void CEXEBuild::ps_addtoline(const TCHAR *str, GrowBuf &linedata, StringList &hi
       {
         if (in[1] == _T('{')) // Found $$ before - Don't replace this define
         {
-          TCHAR *s=strdup(in+2);
+          TCHAR *s=_tcsdup(in+2);
           MANAGE_WITH(s, free);
           TCHAR *t=s;
           unsigned int bn = 0;
@@ -743,7 +743,7 @@ int CEXEBuild::parseScript()
 int CEXEBuild::includeScript(TCHAR *f)
 {
   SCRIPT_MSG(_T("!include: \"%s\"\n"),f);
-  FILE *incfp=FOPEN(f,_T("rt"));
+  FILE *incfp=FOPENTEXT(f,_T("rt"));
   if (!incfp)
   {
     ERROR_MSG(_T("!include: could not open file: \"%s\"\n"),f);
@@ -805,7 +805,7 @@ int CEXEBuild::MacroExists(const TCHAR *macroname)
   while (m && *m)
   {
     // check if macroname matches
-    if (!stricmp(m, macroname))
+    if (!_tcsicmp(m, macroname))
       return 1;
 
     // skip macro name
@@ -876,7 +876,7 @@ int CEXEBuild::process_jump(LineParser &line, int wt, int *offs)
   const TCHAR *s=line.gettoken_str(wt);
   int v;
 
-  if (!stricmp(s,_T("0")) || !stricmp(s,_T(""))) *offs=0;
+  if (!_tcsicmp(s,_T("0")) || !_tcsicmp(s,_T(""))) *offs=0;
   else if ((v=GetUserVarIndex(line, wt))>=0)
   {
     *offs=-v-1; // to jump to a user variable target, -variable_index-1 is stored.
@@ -930,7 +930,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         TCHAR *t=(TCHAR *)m_macros.get();
         while (t && *t)
         {
-          if (!stricmp(t,line.gettoken_str(1))) break;
+          if (!_tcsicmp(t,line.gettoken_str(1))) break;
           t+=_tcsclen(t)+1;
 
           // advance over parameters
@@ -961,7 +961,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           int a;
           for (a=2; a < pc; a ++)
           {
-            if (!stricmp(line.gettoken_str(pc),line.gettoken_str(a)))
+            if (!_tcsicmp(line.gettoken_str(pc),line.gettoken_str(a)))
             {
               ERROR_MSG(_T("!macro: macro parameter named %s is used multiple times!\n"),
                 line.gettoken_str(pc));
@@ -992,12 +992,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           LineParser l2(false);
           if (!l2.parse(str))
           {
-            if (!stricmp(l2.gettoken_str(0),_T("!macroend")))
+            if (!_tcsicmp(l2.gettoken_str(0),_T("!macroend")))
             {
               linecnt++;
               break;
             }
-            if (!stricmp(l2.gettoken_str(0),_T("!macro")))
+            if (!_tcsicmp(l2.gettoken_str(0),_T("!macro")))
             {
               ERROR_MSG(_T("Error: can't define a macro inside a macro!\n"));
               return PS_ERROR;
@@ -1020,7 +1020,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         TCHAR *m=t;
         while (t && *t)
         {
-          if (!stricmp(t,line.gettoken_str(1))) break;
+          if (!_tcsicmp(t,line.gettoken_str(1))) break;
           t+=_tcsclen(t)+1;
 
           // advance over parms
@@ -1170,7 +1170,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         TCHAR *fc = line.gettoken_str(a);
         if (line.getnumtokens()==3)
         {
-          if(!stricmp(fc,_T("/nonfatal")))
+          if(!_tcsicmp(fc,_T("/nonfatal")))
           {
             fatal = 0;
             fc = line.gettoken_str(++a);
@@ -1201,7 +1201,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
           tstring file = basedir + *files_itr;
 
-          int result = unlink(file.c_str());
+          int result = _tunlink(file.c_str());
           if (result == -1) {
             ERROR_MSG(_T("!delfile: \"%s\" couldn't be deleted.\n"), file.c_str());
             if (fatal)
@@ -1222,7 +1222,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         TCHAR *file = line.gettoken_str(1);
         TCHAR *text = line.gettoken_str(2);
 
-        FILE *fp = FOPEN(file, _T("a"));
+        FILE *fp = FOPENTEXT(file, _T("a"));
         if (!fp)
         {
           ERROR_MSG(_T("!appendfile: \"%s\" couldn't be opened.\n"), file);
@@ -1250,12 +1250,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       {
         if (!uninstall_mode) {
           enable_last_page_cancel = 0;
-          if (!stricmp(line.gettoken_str(line.getnumtokens()-1),_T("/ENABLECANCEL")))
+          if (!_tcsicmp(line.gettoken_str(line.getnumtokens()-1),_T("/ENABLECANCEL")))
             enable_last_page_cancel = 1;
         }
         else {
           uenable_last_page_cancel = 0;
-          if (!stricmp(line.gettoken_str(line.getnumtokens()-1),_T("/ENABLECANCEL")))
+          if (!_tcsicmp(line.gettoken_str(line.getnumtokens()-1),_T("/ENABLECANCEL")))
             uenable_last_page_cancel = 1;
         }
 
@@ -1395,7 +1395,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           {
             if (*line.gettoken_str(2))
             {
-              if (strnicmp(line.gettoken_str(2), _T("un."), 3))
+              if (_tcsncicmp(line.gettoken_str(2), _T("un."), 3))
               {
                 if (uninstall_mode)
                 {
@@ -1418,7 +1418,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           {
             if (*line.gettoken_str(1))
             {
-              if (strnicmp(line.gettoken_str(1), _T("un."), 3))
+              if (_tcsncicmp(line.gettoken_str(1), _T("un."), 3))
               {
                 if (uninstall_mode)
                 {
@@ -1447,7 +1447,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           {
             if (*line.gettoken_str(3))
             {
-              if (strnicmp(line.gettoken_str(3), _T("un."), 3))
+              if (_tcsncicmp(line.gettoken_str(3), _T("un."), 3))
               {
                 if (uninstall_mode)
                 {
@@ -1470,7 +1470,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           {
             if (*line.gettoken_str(2))
             {
-              if (strnicmp(line.gettoken_str(2), _T("un."), 3))
+              if (_tcsncicmp(line.gettoken_str(2), _T("un."), 3))
               {
                 if (uninstall_mode)
                 {
@@ -1493,7 +1493,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           {
             if (*line.gettoken_str(1))
             {
-              if (strnicmp(line.gettoken_str(1), _T("un."), 3))
+              if (_tcsncicmp(line.gettoken_str(1), _T("un."), 3))
               {
                 if (uninstall_mode)
                 {
@@ -1652,7 +1652,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         installer_icon = load_icon_file(line.gettoken_str(1));
       }
       catch (exception& err) {
-        ERROR_MSG(_T("Error while loading icon from \"%s\": %s\n"), line.gettoken_str(1), err.what());
+        ERROR_MSG(_T("Error while loading icon from \"%s\": %s\n"), line.gettoken_str(1), CtoTString(err.what()));
         return PS_ERROR;
       }
     return PS_OK;
@@ -1681,7 +1681,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
       }
       catch (exception& err) {
-        ERROR_MSG(_T("Error while replacing bitmap: %s\n"), err.what());
+        ERROR_MSG(_T("Error while replacing bitmap: %s\n"), CtoTString(err.what()));
         return PS_ERROR;
       }
     return PS_OK;
@@ -1783,17 +1783,17 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       {
         int x;
 
-        if (!stricmp(line.gettoken_str(1),_T("/NOCUSTOM")))
+        if (!_tcsicmp(line.gettoken_str(1),_T("/NOCUSTOM")))
         {
           build_header.flags|=CH_FLAGS_NO_CUSTOM;
           SCRIPT_MSG(_T("InstType: disabling custom install type\n"));
         }
-        else if (!stricmp(line.gettoken_str(1),_T("/COMPONENTSONLYONCUSTOM")))
+        else if (!_tcsicmp(line.gettoken_str(1),_T("/COMPONENTSONLYONCUSTOM")))
         {
           build_header.flags|=CH_FLAGS_COMP_ONLY_ON_CUSTOM;
           SCRIPT_MSG(_T("InstType: making components viewable only on custom install type\n"));
         }
-        else if (!strnicmp(line.gettoken_str(1),_T("/CUSTOMSTRING="),14))
+        else if (!_tcsncicmp(line.gettoken_str(1),_T("/CUSTOMSTRING="),14))
         {
           SCRIPT_MSG(_T("InstType: setting custom text to: \"%s\"\n"),line.gettoken_str(1)+14);
           if (SetInnerString(NLF_COMP_CUSTOM,line.gettoken_str(1)+14) == PS_WARNING)
@@ -1807,7 +1807,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         {
           TCHAR *itname = line.gettoken_str(1);
 
-          if (!strnicmp(itname, _T("un."), 3)) {
+          if (!_tcsncicmp(itname, _T("un."), 3)) {
             set_uninstall_mode(1);
             itname += 3;
           }
@@ -1864,7 +1864,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
         if (file[0] == _T('$') && file[1] == _T('('))
         {
-          TCHAR *cp = strdup(file+2);
+          TCHAR *cp = _tcsdup(file+2);
           MANAGE_WITH(cp, free);
           TCHAR *p = _tcschr(cp, _T(')'));
           if (p && p[1] == 0) { // if string is only a language str identifier
@@ -1994,12 +1994,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_LICENSEBKCOLOR:
       {
         TCHAR *p = line.gettoken_str(1);
-        if (!strcmpi(p,_T("/windows")))
+        if (!_tcsicmp(p,_T("/windows")))
         {
           build_header.license_bg=-COLOR_WINDOW;
           SCRIPT_MSG(_T("LicenseBkColor: /windows\n"));
         }
-        else if (!strcmpi(p,_T("/grey")) || !strcmpi(p,_T("/gray")))
+        else if (!_tcsicmp(p,_T("/grey")) || !_tcsicmp(p,_T("/gray")))
         {
           build_header.license_bg=-COLOR_BTNFACE;
           SCRIPT_MSG(_T("LicenseBkColor: /grey\n"));
@@ -2150,8 +2150,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         build_header.flags&=~CH_FLAGS_PROGRESS_COLORED;
         for (x = 1; x < line.getnumtokens(); x ++)
         {
-          if (!stricmp(line.gettoken_str(x),_T("smooth"))) smooth=1;
-          else if (!stricmp(line.gettoken_str(x),_T("colored"))) build_header.flags|=CH_FLAGS_PROGRESS_COLORED;
+          if (!_tcsicmp(line.gettoken_str(x),_T("smooth"))) smooth=1;
+          else if (!_tcsicmp(line.gettoken_str(x),_T("colored"))) build_header.flags|=CH_FLAGS_PROGRESS_COLORED;
           else PRINTHELP()
         }
         try {
@@ -2177,7 +2177,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           delete [] dlg;
         }
         catch (exception& err) {
-          ERROR_MSG(_T("Error setting smooth progress bar: %s\n"), err.what());
+          ERROR_MSG(_T("Error setting smooth progress bar: %s\n"), CtoTString(err.what()));
           return PS_ERROR;
         }
         SCRIPT_MSG(_T("InstProgressFlags: smooth=%d, colored=%d\n"),smooth,
@@ -2294,15 +2294,15 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         for (int i = 2; i < line.getnumtokens(); i++) {
           TCHAR *tok=line.gettoken_str(i);
           if (tok[0]==_T('/')) {
-            if (!strcmpi(tok,_T("/ITALIC"))) {
+            if (!_tcsicmp(tok,_T("/ITALIC"))) {
               SCRIPT_MSG(_T(" /ITALIC"));
               newfont.lfItalic=TRUE;
             }
-            else if (!strcmpi(tok,_T("/UNDERLINE"))) {
+            else if (!_tcsicmp(tok,_T("/UNDERLINE"))) {
               SCRIPT_MSG(_T(" /UNDERLINE"));
               newfont.lfUnderline=TRUE;
             }
-            else if (!strcmpi(tok,_T("/STRIKE"))) {
+            else if (!_tcsicmp(tok,_T("/STRIKE"))) {
               SCRIPT_MSG(_T(" /STRIKE"));
               newfont.lfStrikeOut=TRUE;
             }
@@ -2344,7 +2344,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         build_header.bg_color1=0;
         build_header.bg_color2=RGB(0,0,255);
       }
-      else if (!stricmp(line.gettoken_str(1),_T("off")))
+      else if (!_tcsicmp(line.gettoken_str(1),_T("off")))
       {
         build_header.bg_color1=build_header.bg_color2=build_header.bg_textcolor=-1;
         SCRIPT_MSG(_T("BGGradient: off\n"));
@@ -2363,7 +2363,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         p=line.gettoken_str(3);
         if (*p)
         {
-          if (!stricmp(p,_T("notext"))) build_header.bg_textcolor=-1;
+          if (!_tcsicmp(p,_T("notext"))) build_header.bg_textcolor=-1;
           else
           {
             v3=_tcstoul(p,&p,16);
@@ -2387,7 +2387,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       TCHAR *p = line.gettoken_str(1);
       if (p[0]==_T('/'))
       {
-        if (stricmp(p,_T("/windows")) || line.getnumtokens()!=2) PRINTHELP()
+        if (_tcsicmp(p,_T("/windows")) || line.getnumtokens()!=2) PRINTHELP()
         build_header.lb_fg=build_header.lb_bg=-1;
         SCRIPT_MSG(_T("InstallColors: windows default colors\n"));
       }
@@ -2500,9 +2500,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
                 check = true;
               }
             } else {
-              TCHAR *szClass = winchar_toansi(dlgItem->szClass);
-              check = stricmp(szClass, _T("Static")) == 0;
-              delete [] szClass;
+              check = _wcsicmp(dlgItem->szClass, L"Static") == 0;
             }
 
             if (check) {
@@ -2557,7 +2555,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         SCRIPT_MSG(_T("ChangeUI: %s %s%s\n"), line.gettoken_str(1), line.gettoken_str(2), branding_image_found?_T(" (branding image holder found)"):_T(""));
       }
       catch (exception& err) {
-        ERROR_MSG(_T("Error while changing UI: %s\n"), err.what());
+        ERROR_MSG(_T("Error while changing UI: %s\n"), CtoTString(err.what()));
         return PS_ERROR;
       }
     return PS_OK;
@@ -2631,7 +2629,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         branding_image_id = IDC_BRANDIMAGE;
       }
       catch (exception& err) {
-        ERROR_MSG(_T("Error while adding image branding support: %s\n"), err.what());
+        ERROR_MSG(_T("Error while adding image branding support: %s\n"), CtoTString(err.what()));
         return PS_ERROR;
       }
     return PS_OK;
@@ -2641,7 +2639,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #endif
     case TOK_SETFONT:
     {
-      if (!strnicmp(line.gettoken_str(1), _T("/LANG="), 6))
+      if (!_tcsncicmp(line.gettoken_str(1), _T("/LANG="), 6))
       {
         LANGID lang_id = _ttoi(line.gettoken_str(1) + 6);
         LanguageTable *table = GetLangTable(lang_id);
@@ -2653,7 +2651,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
       else
       {
-        _tcsnccpy(build_font, line.gettoken_str(1), sizeof(build_font)/sizeof(TCHAR));
+        _tcsnccpy(build_font, line.gettoken_str(1), _countof(build_font));
         build_font_size = line.gettoken_int(2);
 
         SCRIPT_MSG(_T("SetFont: \"%s\" %s\n"), line.gettoken_str(1), line.gettoken_str(2));
@@ -2714,12 +2712,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
       while (line.gettoken_str(a)[0] == _T('/'))
       {
-        if (!strcmpi(line.gettoken_str(a),_T("/FINAL")))
+        if (!_tcsicmp(line.gettoken_str(a),_T("/FINAL")))
         {
           build_compressor_final = true;
           a++;
         }
-        else if (!strcmpi(line.gettoken_str(a),_T("/SOLID")))
+        else if (!_tcsicmp(line.gettoken_str(a),_T("/SOLID")))
         {
           build_compress_whole = true;
           a++;
@@ -2807,7 +2805,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       TCHAR datebuf[256];
       TCHAR mathbuf[256];
 
-      if (!stricmp(define,_T("/date")) || !stricmp(define,_T("/utcdate"))) {
+      if (!_tcsicmp(define,_T("/date")) || !_tcsicmp(define,_T("/utcdate"))) {
         if (line.getnumtokens()!=4) PRINTHELP()
 
         TCHAR *date_type = define;
@@ -2818,11 +2816,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         time_t rawtime;
         time(&rawtime);
 
-        if (!stricmp(date_type,_T("/utcdate")))
+        if (!_tcsicmp(date_type,_T("/utcdate")))
           rawtime = mktime(gmtime(&rawtime));
 
         datebuf[0]=0;
-        size_t s=strftime(datebuf,sizeof(datebuf),value,localtime(&rawtime));
+        size_t s=_tcsftime(datebuf,_countof(datebuf),value,localtime(&rawtime));
 
         if (s == 0)
           datebuf[0]=0;
@@ -2830,15 +2828,15 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           datebuf[max(s,sizeof(datebuf)-1)]=0;
 
         value=datebuf;
-      } else if (!stricmp(define,_T("/file")) || !stricmp(define,_T("/file_noerr"))) {
+      } else if (!_tcsicmp(define,_T("/file")) || !_tcsicmp(define,_T("/file_noerr"))) {
         
         if (line.getnumtokens()!=4) PRINTHELP()
 
         define=line.gettoken_str(2);
         const TCHAR *filename=line.gettoken_str(3);
-        FILE *fp=fopen(filename,_T("r"));
+        FILE *fp=FOPENTEXT(filename,_T("r"));
 
-        if (!fp && stricmp(define,_T("/file_noerr"))) {
+        if (!fp && _tcsicmp(define,_T("/file_noerr"))) {
           ERROR_MSG(_T("!define /file: file not found (\"%s\")\n"),filename);
           return PS_ERROR;
         }
@@ -2857,14 +2855,14 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             while (p >= str && (*p == _T('\r') || *p == _T('\n'))) p--;
             *++p=0;
             if (file_buf.getlen()) file_buf.add(_T("\n"),1);
-            file_buf.add(str,strlen(str));
+            file_buf.add(str,_tcsclen(str));
           }
           fclose(fp);
         }
         file_buf.add(_T("\0"),1);
         value = (TCHAR *)file_buf.get();
 
-      } else if (!stricmp(define,_T("/math"))) {
+      } else if (!_tcsicmp(define,_T("/math"))) {
       
         int value1;
         int value2;
@@ -2927,8 +2925,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       SCRIPT_MSG(_T("!undef: \"%s\"\n"),line.gettoken_str(1));
     return PS_OK;
     case TOK_P_PACKEXEHEADER:
-      _tcsnccpy(build_packname,line.gettoken_str(1),sizeof(build_packname)/sizeof(TCHAR)-1);
-      _tcsnccpy(build_packcmd,line.gettoken_str(2),sizeof(build_packcmd)/sizeof(TCHAR)-1);
+      _tcsnccpy(build_packname,line.gettoken_str(1),_countof(build_packname)-1);
+      _tcsnccpy(build_packcmd,line.gettoken_str(2),_countof(build_packcmd)-1);
       SCRIPT_MSG(_T("!packhdr: filename=\"%s\", command=\"%s\"\n"),
         build_packname, build_packcmd);
     return PS_OK;
@@ -2994,7 +2992,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
         TCHAR *f = line.gettoken_str(1);
         
-        if(!stricmp(f,_T("/nonfatal"))) {
+        if(!_tcsicmp(f,_T("/nonfatal"))) {
           if (line.getnumtokens()!=3)
             PRINTHELP();
         
@@ -3085,7 +3083,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
     return PS_OK;
     case TOK_P_CD:
-      if (!line.gettoken_str(1)[0] || chdir(line.gettoken_str(1)))
+      if (!line.gettoken_str(1)[0] || _tchdir(line.gettoken_str(1)))
       {
         ERROR_MSG(_T("!cd: error changing to: \"%s\"\n"),line.gettoken_str(1));
         return PS_ERROR;
@@ -3108,9 +3106,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         int parmOffs=1;
         while (parmOffs < line.getnumtokens())
         {
-          if (!stricmp(line.gettoken_str(parmOffs),_T("/ignorecase"))) { ignCase=true; parmOffs++; }
-          else if (!stricmp(line.gettoken_str(parmOffs),_T("/noerrors"))) { noErrors=true; parmOffs++; }
-          else if (!stricmp(line.gettoken_str(parmOffs),_T("/file"))) { isFile=true; parmOffs++; }
+          if (!_tcsicmp(line.gettoken_str(parmOffs),_T("/ignorecase"))) { ignCase=true; parmOffs++; }
+          else if (!_tcsicmp(line.gettoken_str(parmOffs),_T("/noerrors"))) { noErrors=true; parmOffs++; }
+          else if (!_tcsicmp(line.gettoken_str(parmOffs),_T("/file"))) { isFile=true; parmOffs++; }
           else break;
         }
         if (parmOffs+3 > line.getnumtokens())
@@ -3124,7 +3122,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
         if (isFile)
         {
-          FILE *fp=fopen(source_string,_T("r"));
+          FILE *fp=FOPENTEXT(source_string,_T("r"));
           if (!fp)
           {
             ERROR_MSG(_T("!searchparse /file: error opening \"%s\"\n"),source_string);
@@ -3150,8 +3148,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
               while (p >= str && (*p == _T('\r') || *p == _T('\n'))) p--;
               *++p=0;
 
-              bool endSlash = (str[0] && str[strlen(str)-1] == _T('\\'));
-              if (tmpstr.getlen() || endSlash) tmpstr.add(str,strlen(str));
+              bool endSlash = (str[0] && str[_tcsclen(str)-1] == _T('\\'));
+              if (tmpstr.getlen() || endSlash) tmpstr.add(str,_tcsclen(str));
 
               // if we have valid contents and not ending on slash, then done
               if (!endSlash && (str[0] || tmpstr.getlen())) break;
@@ -3220,7 +3218,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return PS_OK;
     case TOK_P_SEARCHREPLACESTRING:
       {
-        int ignoreCase=!stricmp(line.gettoken_str(1),_T("/ignorecase"));
+        int ignoreCase=!_tcsicmp(line.gettoken_str(1),_T("/ignorecase"));
         if (line.getnumtokens()!=5+ignoreCase) PRINTHELP()
 
         TCHAR *define=line.gettoken_str(1+ignoreCase);
@@ -3239,7 +3237,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
         while (*src)
         {
-          if (ignoreCase ? strnicmp(src,search,searchlen) : _tcsncmp(src,search,searchlen)) 
+          if (ignoreCase ? _tcsncicmp(src,search,searchlen) : _tcsncmp(src,search,searchlen)) 
             valout.add(src++,1);           
           else
           {
@@ -3334,7 +3332,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         uninstaller_icon = load_icon_file(line.gettoken_str(1));
       }
       catch (exception& err) {
-        ERROR_MSG(_T("Error while loading icon from \"%s\": %s\n"), line.gettoken_str(1), err.what());
+        ERROR_MSG(_T("Error while loading icon from \"%s\": %s\n"), line.gettoken_str(1), CtoTString(err.what()));
         return PS_ERROR;
       }
     return PS_OK;
@@ -3403,7 +3401,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_SECTION:
     {
       int a=1,unselected = 0;
-      if (!strcmpi(line.gettoken_str(1),_T("/o")))
+      if (!_tcsicmp(line.gettoken_str(1),_T("/o")))
       {
         unselected = 1;
         a++;
@@ -3414,7 +3412,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       if (line.gettoken_str(a+1)[0]) SCRIPT_MSG(_T(" ->(%s)"),line.gettoken_str(a+1));
       SCRIPT_MSG(_T("\n"));
 #ifndef NSIS_CONFIG_UNINSTALL_SUPPORT
-      if (!stricmp(line.gettoken_str(a),_T("uninstall")))
+      if (!_tcsicmp(line.gettoken_str(a),_T("uninstall")))
       {
         ERROR_MSG(_T("Error: Uninstall section declared, no NSIS_CONFIG_UNINSTALL_SUPPORT\n"));
         return PS_ERROR;
@@ -3425,7 +3423,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
       if (line.gettoken_str(a)[0]==_T('-'))
       {
-        if (!strnicmp(line.gettoken_str(a)+1,_T("un."),3))
+        if (!_tcsncicmp(line.gettoken_str(a)+1,_T("un."),3))
           ret=add_section(_T("un."),line.gettoken_str(a+1));
         else
           ret=add_section(_T(""),line.gettoken_str(a+1));
@@ -3448,7 +3446,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         for (wt = 1; wt < line.getnumtokens(); wt ++)
         {
           TCHAR *p=line.gettoken_str(wt);
-          if (!stricmp(p, _T("RO")))
+          if (!_tcsicmp(p, _T("RO")))
           {
             if (section_add_flags(SF_RO) != PS_OK) return PS_ERROR;
             SCRIPT_MSG(_T("[RO] "));
@@ -3483,7 +3481,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     {
       TCHAR buf[1024];
       int a=1,ex = 0;
-      if (!strcmpi(line.gettoken_str(1),_T("/e")))
+      if (!_tcsicmp(line.gettoken_str(1),_T("/e")))
       {
         ex = 1;
         a++;
@@ -3492,7 +3490,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       if (which_token == TOK_SECTIONGROUP || which_token == TOK_SUBSECTION)
       {
         TCHAR *s = line.gettoken_str(a);
-        if (!s[0] || (!strcmpi(s, _T("un.")) && !s[3]))
+        if (!s[0] || (!_tcsicmp(s, _T("un.")) && !s[3]))
           PRINTHELP();
       }
 
@@ -3510,7 +3508,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
       SCRIPT_MSG(_T("Function: \"%s\"\n"),line.gettoken_str(1));
 #ifndef NSIS_CONFIG_UNINSTALL_SUPPORT
-      if (!strnicmp(line.gettoken_str(1),_T("un."),3))
+      if (!_tcsncicmp(line.gettoken_str(1),_T("un."),3))
       {
         ERROR_MSG(_T("Error: Uninstall function declared, no NSIS_CONFIG_UNINSTALL_SUPPORT\n"));
         return PS_ERROR;
@@ -3654,10 +3652,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         int a = 1;
         int trim = 0;
         while (line.gettoken_str(a)[0] == _T('/')) {
-          if (!strnicmp(line.gettoken_str(a),_T("/TRIM"),5)) {
-            if (!stricmp(line.gettoken_str(a)+5,_T("LEFT"))) trim = 1;
-            else if (!stricmp(line.gettoken_str(a)+5,_T("RIGHT"))) trim = 2;
-            else if (!stricmp(line.gettoken_str(a)+5,_T("CENTER"))) trim = 3;
+          if (!_tcsncicmp(line.gettoken_str(a),_T("/TRIM"),5)) {
+            if (!_tcsicmp(line.gettoken_str(a)+5,_T("LEFT"))) trim = 1;
+            else if (!_tcsicmp(line.gettoken_str(a)+5,_T("RIGHT"))) trim = 2;
+            else if (!_tcsicmp(line.gettoken_str(a)+5,_T("CENTER"))) trim = 3;
             else PRINTHELP();
             a++;
           }
@@ -3677,7 +3675,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           if (trim) {
             TCHAR str[512];
             if (line.getnumtokens()==a+1 && line.gettoken_str(a)[0])
-              strcpy(str, line.gettoken_str(a));
+              _tcscpy(str, line.gettoken_str(a));
             else
               wsprintf(str, _T("Nullsoft Install System %s"), NSIS_VERSION);
 
@@ -3701,7 +3699,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           res_editor->FreeResource(dlg);
         }
         catch (exception& err) {
-          ERROR_MSG(_T("Error while triming branding text control: %s\n"), err.what());
+          ERROR_MSG(_T("Error while triming branding text control: %s\n"), CtoTString(err.what()));
           return PS_ERROR;
         }
 #else
@@ -3725,7 +3723,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return PS_OK;
     case TOK_SPACETEXTS:
       {
-        if (!strcmpi(line.gettoken_str(1), _T("none"))) {
+        if (!_tcsicmp(line.gettoken_str(1), _T("none"))) {
           no_space_texts=true;
           SCRIPT_MSG(_T("SpaceTexts: none\n"));
         }
@@ -3831,13 +3829,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_CALL:
       if (!line.gettoken_str(1)[0] || (line.gettoken_str(1)[0]==_T(':') && !line.gettoken_str(1)[1] )) PRINTHELP()
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-      if (uninstall_mode && strnicmp(line.gettoken_str(1),_T("un."),3)
+      if (uninstall_mode && _tcsncicmp(line.gettoken_str(1),_T("un."),3)
           && (GetUserVarIndex(line,1) < 0) && line.gettoken_str(1)[0]!=_T(':'))
       {
         ERROR_MSG(_T("Call must be used with function names starting with \"un.\" in the uninstall section.\n"));
         PRINTHELP()
       }
-      if (!uninstall_mode && !strnicmp(line.gettoken_str(1),_T("un."),3))
+      if (!uninstall_mode && !_tcsncicmp(line.gettoken_str(1),_T("un."),3))
       {
         ERROR_MSG(_T("Call must not be used with functions starting with \"un.\" in the non-uninstall sections.\n"));
         PRINTHELP()
@@ -3886,9 +3884,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         else
         {
           if (p[0] == _T('\\') && p[1] != _T('\\')) p++;
-          strncpy(out_path,p,1024-1);
-          if (*CharPrev(out_path,out_path+strlen(out_path))==_T('\\'))
-            *CharPrev(out_path,out_path+strlen(out_path))=0; // remove trailing slash
+          _tcsnccpy(out_path,p,1024-1);
+          if (*CharPrev(out_path,out_path+_tcsclen(out_path))==_T('\\'))
+            *CharPrev(out_path,out_path+_tcsclen(out_path))=0; // remove trailing slash
         }
         if (!*out_path) PRINTHELP()
         SCRIPT_MSG(_T("CreateDirectory: \"%s\"\n"),out_path);
@@ -3962,7 +3960,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       else if (which_token == TOK_CALLINSTDLL)
       {
         int a = 2;
-        if (!stricmp(line.gettoken_str(a), _T("/NOUNLOAD"))) {
+        if (!_tcsicmp(line.gettoken_str(a), _T("/NOUNLOAD"))) {
           ent.offsets[3]=1;
           a++;
         }
@@ -3991,7 +3989,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       {
         int a=1;
         ent.which=EW_RENAME;
-        if (!stricmp(line.gettoken_str(1),_T("/REBOOTOK")))
+        if (!_tcsicmp(line.gettoken_str(1),_T("/REBOOTOK")))
         {
           ent.offsets[2]=1;
           a++;
@@ -4061,8 +4059,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           TCHAR *np=p;
           while (*np && *np != _T('|')) np++;
           if (*np) *np++=0;
-          for (x = 0 ; (unsigned) x < sizeof(list) / sizeof(list[0]) && strcmpi(list[x].str, p); x++);
-          if ((unsigned) x < sizeof(list) / sizeof(list[0]))
+          for (x = 0 ; (unsigned) x < _countof(list) && _tcsicmp(list[x].str, p); x++);
+          if ((unsigned) x < _countof(list))
           {
             r|=list[x].id;
           }
@@ -4080,7 +4078,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         int a=3;
         if (line.getnumtokens() > 3)
         {
-          if (!strcmpi(line.gettoken_str(3),_T("/SD")))
+          if (!_tcsicmp(line.gettoken_str(3),_T("/SD")))
           {
             int k=line.gettoken_enum(4,retstr);
             if (k <= 0) PRINTHELP();
@@ -4153,9 +4151,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         TCHAR *s=(line.gettoken_str(7));
 
         TCHAR b[255];
-        for (unsigned int spos=0; (spos <= strlen(s)) && (spos <= 255); spos++)
-          b[spos]=toupper(*(s+spos));
-        strcpy(s,b);
+        for (unsigned int spos=0; (spos <= _tcsclen(s)) && (spos <= 255); spos++)
+          b[spos]=_totupper(*(s+spos));
+        _tcscpy(s,b);
 
         if (*s)
         {
@@ -4284,7 +4282,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
       int a = 2;
 
-      if (!strcmpi(line.gettoken_str(2),_T("/BRANDING")))
+      if (!_tcsicmp(line.gettoken_str(2),_T("/BRANDING")))
         a++;
 
       {
@@ -4295,7 +4293,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           return PS_ERROR;
         }
 
-        if (!strcmpi(line.gettoken_str(a+1),_T("transparent"))) {
+        if (!_tcsicmp(line.gettoken_str(a+1),_T("transparent"))) {
           c.flags|=CC_BKB;
           c.lbStyle=BS_NULL;
           c.bkmode=TRANSPARENT;
@@ -4366,15 +4364,15 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         for (int i = 3; i < line.getnumtokens(); i++) {
           TCHAR *tok=line.gettoken_str(i);
           if (tok[0]=='/') {
-            if (!strcmpi(tok,_T("/ITALIC"))) {
+            if (!_tcsicmp(tok,_T("/ITALIC"))) {
               SCRIPT_MSG(_T(" /ITALIC"));
               flags|=1;
             }
-            else if (!strcmpi(tok,_T("/UNDERLINE"))) {
+            else if (!_tcsicmp(tok,_T("/UNDERLINE"))) {
               SCRIPT_MSG(_T(" /UNDERLINE"));
               flags|=2;
             }
-            else if (!strcmpi(tok,_T("/STRIKE"))) {
+            else if (!_tcsicmp(tok,_T("/STRIKE"))) {
               SCRIPT_MSG(_T(" /STRIKE"));
               flags|=4;
             }
@@ -4468,7 +4466,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       {
         int a=1;
         ent.which=EW_DELETEFILE;
-        if (!stricmp(line.gettoken_str(a),_T("/REBOOTOK")))
+        if (!_tcsicmp(line.gettoken_str(a),_T("/REBOOTOK")))
         {
           a++;
           ent.offsets[1]=DEL_REBOOT;
@@ -4503,13 +4501,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         ent.offsets[1]=DEL_DIR;
         while (line.gettoken_str(a)[0]==_T('/'))
         {
-          if (!stricmp(line.gettoken_str(a),_T("/r")))
+          if (!_tcsicmp(line.gettoken_str(a),_T("/r")))
           {
             if (a == 3) PRINTHELP();
             a++;
             ent.offsets[1]|=DEL_RECURSE;
           }
-          else if (!stricmp(line.gettoken_str(a),_T("/REBOOTOK")))
+          else if (!_tcsicmp(line.gettoken_str(a),_T("/REBOOTOK")))
           {
             if (a == 3) PRINTHELP();
             a++;
@@ -4543,11 +4541,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       {
         set<tstring> excluded;
         int a=1,attrib=0,rec=0,fatal=1;
-        if (!stricmp(line.gettoken_str(a),_T("/nonfatal"))) {
+        if (!_tcsicmp(line.gettoken_str(a),_T("/nonfatal"))) {
           fatal=0;
           a++;
         }
-        if (which_token == TOK_FILE && !stricmp(line.gettoken_str(a),_T("/a")))
+        if (which_token == TOK_FILE && !_tcsicmp(line.gettoken_str(a),_T("/a")))
         {
 #ifdef _WIN32
           attrib=1;
@@ -4556,12 +4554,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #endif
           a++;
         }
-        if (!stricmp(line.gettoken_str(a),_T("/r")))
+        if (!_tcsicmp(line.gettoken_str(a),_T("/r")))
         {
           rec=1;
           a++;
         }
-        else if (which_token == TOK_FILE && !strnicmp(line.gettoken_str(a),_T("/oname="),7))
+        else if (which_token == TOK_FILE && !_tcsncicmp(line.gettoken_str(a),_T("/oname="),7))
         {
           TCHAR *on=line.gettoken_str(a)+7;
           a++;
@@ -4598,9 +4596,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
           return PS_OK;
         }
-        if (!strnicmp(line.gettoken_str(a),_T("/x"),2))
+        if (!_tcsncicmp(line.gettoken_str(a),_T("/x"),2))
         {
-          while (!strnicmp(line.gettoken_str(a),_T("/x"),2))
+          while (!_tcsncicmp(line.gettoken_str(a),_T("/x"),2))
           {
             a++;
 
@@ -4661,13 +4659,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         int x;
         for (x = 0; x < 2; x ++)
         {
-          if (!stricmp(line.gettoken_str(a),_T("/SILENT")))
+          if (!_tcsicmp(line.gettoken_str(a),_T("/SILENT")))
           {
             a++;
             ent.offsets[2]&=~FOF_SIMPLEPROGRESS;
             ent.offsets[2]|=FOF_SILENT;
           }
-          else if (!stricmp(line.gettoken_str(a),_T("/FILESONLY")))
+          else if (!_tcsicmp(line.gettoken_str(a),_T("/FILESONLY")))
           {
             a++;
             ent.offsets[2]|=FOF_FILESONLY;
@@ -4731,9 +4729,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           TCHAR *np=p;
           while (*np && *np != _T('|')) np++;
           if (*np) *np++=0;
-          for (x = 0 ; (unsigned) x < sizeof(list)/sizeof(list[0]) && stricmp(list[x].str,p); x ++);
+          for (x = 0 ; (unsigned) x < _countof(list) && _tcsicmp(list[x].str,p); x ++);
 
-          if ((unsigned) x < sizeof(list)/sizeof(list[0]))
+          if ((unsigned) x < _countof(list))
           {
             r|=list[x].id;
           }
@@ -5079,7 +5077,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       {
         int a=0;
         ent.which=EW_GETFULLPATHNAME;
-        if (line.getnumtokens()==4 && !stricmp(line.gettoken_str(1),_T("/SHORT"))) a++;
+        if (line.getnumtokens()==4 && !_tcsicmp(line.gettoken_str(1),_T("/SHORT"))) a++;
         else if (line.getnumtokens()==4 || *line.gettoken_str(1)==_T('/')) PRINTHELP()
         ent.offsets[0]=add_string(line.gettoken_str(2+a));
         ent.offsets[1]=GetUserVarIndex(line, 1+a);
@@ -5206,7 +5204,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           TCHAR *s=line.gettoken_str(a);
           if (s[0] == _T('/'))
           {
-            if (stricmp(s,_T("/ifempty"))) PRINTHELP()
+            if (_tcsicmp(s,_T("/ifempty"))) PRINTHELP()
             a++;
             ent.offsets[4]=3;
           }
@@ -5391,9 +5389,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.offsets[0]=GetUserVarIndex(line, 1);
       {
         TCHAR str[NSIS_MAX_STRLEN];
-        strcpy(str, _T("%"));
-        strcat(str, line.gettoken_str(2));
-        strcat(str, _T("%"));
+        _tcscpy(str, _T("%"));
+        _tcscat(str, line.gettoken_str(2));
+        _tcscat(str, _T("%"));
         ent.offsets[1]=add_string(str);
         if (ent.offsets[0] < 0 || _tcsclen(line.gettoken_str(2))<1) PRINTHELP()
       }
@@ -5453,17 +5451,17 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         ent.offsets[0]=GetUserVarIndex(line, 1); // file handle
         ent.offsets[3]=add_string(line.gettoken_str(2));
         ent.offsets[1]=0; //openmode
-        if (!stricmp(line.gettoken_str(3),_T("r")))
+        if (!_tcsicmp(line.gettoken_str(3),_T("r")))
         {
           ent.offsets[1]=GENERIC_READ;
           ent.offsets[2]=OPEN_EXISTING;
         }
-        else if (!stricmp(line.gettoken_str(3),_T("w")))
+        else if (!_tcsicmp(line.gettoken_str(3),_T("w")))
         {
           ent.offsets[1]=GENERIC_WRITE;
           ent.offsets[2]=CREATE_ALWAYS;
         }
-        else if (!stricmp(line.gettoken_str(3),_T("a")))
+        else if (!_tcsicmp(line.gettoken_str(3),_T("a")))
         {
           ent.offsets[1]=GENERIC_WRITE|GENERIC_READ;
           ent.offsets[2]=OPEN_ALWAYS;
@@ -5731,11 +5729,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
       ent.which=EW_SETBRANDINGIMAGE;
       for (int i = 1; i < line.getnumtokens(); i++)
-        if (!strnicmp(line.gettoken_str(i),_T("/IMGID="),7)) {
+        if (!_tcsncicmp(line.gettoken_str(i),_T("/IMGID="),7)) {
           ent.offsets[1]=_ttoi(line.gettoken_str(i)+7);
           SCRIPT_MSG(_T("/IMGID=%d "),ent.offsets[1]);
         }
-        else if (!stricmp(line.gettoken_str(i),_T("/RESIZETOFIT"))) {
+        else if (!_tcsicmp(line.gettoken_str(i),_T("/RESIZETOFIT"))) {
           ent.offsets[2]=1; // must be 1 or 0
           SCRIPT_MSG(_T("/RESIZETOFIT "));
         }
@@ -5764,7 +5762,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     {
       int a=1;
 
-      if (!strcmpi(line.gettoken_str(1),_T("/GLOBAL")))
+      if (!_tcsicmp(line.gettoken_str(1),_T("/GLOBAL")))
       {
         a++;
       }
@@ -5797,7 +5795,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     {
       LANGID LangID=0;
       int a = 1;
-      if (!strnicmp(line.gettoken_str(a),_T("/LANG="),6))
+      if (!_tcsncicmp(line.gettoken_str(a),_T("/LANG="),6))
         LangID=_ttoi(line.gettoken_str(a++)+6);
       if (line.getnumtokens()!=a+2) PRINTHELP();
       TCHAR *pKey = line.gettoken_str(a);
@@ -5938,7 +5936,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
       int i = 1;
       int nounload = 0;
-      if (!strcmpi(line.gettoken_str(i), _T("/NOUNLOAD"))) {
+      if (!_tcsicmp(line.gettoken_str(i), _T("/NOUNLOAD"))) {
         i++;
         nounload++;
       }
@@ -5951,7 +5949,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         int w=parmst + (line.getnumtokens()-i - 1);
         ent.which=EW_PUSHPOP;
         ent.offsets[0]=add_string(line.gettoken_str(w));
-        if (!strcmpi(line.gettoken_str(w), _T("/NOUNLOAD"))) nounloadmisused=1;
+        if (!_tcsicmp(line.gettoken_str(w), _T("/NOUNLOAD"))) nounloadmisused=1;
         ent.offsets[1]=0;
         ent.offsets[2]=0;
         ret=add_entry(&ent);
@@ -6401,7 +6399,7 @@ DefineList *CEXEBuild::searchParseString(const TCHAR *source_string, LineParser 
   if (tok && *tok)
   {
     int toklen = _tcsclen(tok);
-    while (*source_string && (ignCase?strnicmp(source_string,tok,toklen):_tcsncmp(source_string,tok,toklen))) source_string++;
+    while (*source_string && (ignCase?_tcsncicmp(source_string,tok,toklen):_tcsncmp(source_string,tok,toklen))) source_string++;
 
     if (!*source_string) 
     {
@@ -6425,7 +6423,7 @@ DefineList *CEXEBuild::searchParseString(const TCHAR *source_string, LineParser 
     if (tok && *tok)
     {
       int toklen = _tcsclen(tok);
-      while (*source_string && (ignCase?strnicmp(source_string,tok,toklen):_tcsncmp(source_string,tok,toklen))) source_string++;
+      while (*source_string && (ignCase?_tcsncicmp(source_string,tok,toklen):_tcsncmp(source_string,tok,toklen))) source_string++;
 
       maxlen = source_string - src_start;
 
@@ -6446,7 +6444,7 @@ DefineList *CEXEBuild::searchParseString(const TCHAR *source_string, LineParser 
       if (maxlen < 0) ret->add(defout,src_start);
       else
       {
-        TCHAR *p=strdup(src_start);
+        TCHAR *p=_tcsdup(src_start);
         if (p)
         {
           p[maxlen]=0;

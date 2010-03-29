@@ -16,6 +16,7 @@
  * Unicode support added by Jim Park -- 08/07/2007
  */
 
+#include "tchar.h"
 #include "Platform.h"
 #include <stdio.h>
 #include "exehead/config.h"
@@ -113,6 +114,13 @@ CEXEBuild::CEXEBuild() :
   ns_label.add(_T(""),0);
 
   definedlist.add(_T("NSIS_VERSION"), NSIS_VERSION);
+
+#ifdef _UNICODE
+  definedlist.add(_T("NSIS_UNICODE"));
+  definedlist.add(_T("NSIS_CHAR_SIZE"), _T("2"));
+#else
+  definedlist.add(_T("NSIS_CHAR_SIZE"), _T("1"));
+#endif
 
   // automatically generated header file containing all defines
 #include <nsis-defines.h>
@@ -286,12 +294,12 @@ CEXEBuild::CEXEBuild() :
   int i;
   for (i = 0; i < 10; i++)    // 0 - 9
   {
-    sprintf(Aux, _T("%d"), i);
+    wsprintf(Aux, _T("%d"), i);
     m_UserVarNames.add(Aux,1);
   }
   for (i = 0; i < 10; i++)        // 10 - 19
   {
-    sprintf(Aux, _T("R%d"), i);
+    wsprintf(Aux, _T("R%d"), i);
     m_UserVarNames.add(Aux,1);
   }
   m_UserVarNames.add(_T("CMDLINE"),1);       // 20 everything before here doesn't have trailing slash removal
@@ -450,7 +458,7 @@ int CEXEBuild::add_string(const TCHAR *string, int process/*=1*/, WORD codepage/
 
   if (*string == _T('$') && *(string+1) == _T('(')) {
     int idx = 0;
-    TCHAR *cp = strdup(string+2);
+    TCHAR *cp = _tcsdup(string+2);
     TCHAR *p = _tcschr(cp, _T(')'));
     if (p && p[1] == _T('\0') ) { // if string is only a language str identifier
       *p = 0;
@@ -480,14 +488,19 @@ int CEXEBuild::preprocess_string(TCHAR *out, const TCHAR *in, WORD codepage/*=CP
   const TCHAR *p=in;
   while (*p)
   {
-    const TCHAR *np = CharNextExA(codepage, p, 0);
+    const TCHAR *np;
+#ifdef _UNICODE
+	np = CharNext(p);
+#else
+    np = CharNextExA(codepage, p, 0);
+#endif
     if (np - p > 1) // multibyte TCHAR
     {
       int l = np - p;
       while (l--)
       {
         _TUCHAR i = (_TUCHAR)*p++;
-        if (i >= NS_CODES_START) {
+        if (NS_IS_CODE(i)) {
           *out++ = (TCHAR)NS_SKIP_CODE;
         }
         *out++=(TCHAR)i;
@@ -500,7 +513,7 @@ int CEXEBuild::preprocess_string(TCHAR *out, const TCHAR *in, WORD codepage/*=CP
     p=np; // increment p.
 
     // Test for characters extending into the variable codes
-    if (i >= NS_CODES_START) {
+    if (NS_IS_CODE(i)) {
       *out++ = (TCHAR)NS_SKIP_CODE;
       // out does get the NS_CODE as well because of
       // "*out++=(TCHAR)i" at the end.
@@ -584,7 +597,7 @@ int CEXEBuild::preprocess_string(TCHAR *out, const TCHAR *in, WORD codepage/*=CP
           if ( !bProceced && *p == _T('(') )
           {
             int idx = -1;
-            TCHAR *cp = strdup(p+1); // JP: Bad... should avoid memory alloc.
+            TCHAR *cp = _tcsdup(p+1); // JP: Bad... should avoid memory alloc.
             TCHAR *pos = _tcschr(cp, _T(')'));
             if (pos)
             {
@@ -625,7 +638,7 @@ int CEXEBuild::preprocess_string(TCHAR *out, const TCHAR *in, WORD codepage/*=CP
               if (_tcschr(tbuf,cBracket)) (_tcschr(tbuf,cBracket)+1)[0]=0;
               if ( tbuf[0] == _T('{') && tbuf[_tcsclen(tbuf)-1] == _T('}') )
               {
-                TCHAR *tstIfDefine = strdup(tbuf+1);
+                TCHAR *tstIfDefine = _tcsdup(tbuf+1);
                 tstIfDefine[_tcsclen(tstIfDefine)-1] = _T('\0');
                 bDoWarning = definedlist.find(tstIfDefine) == NULL;
                 // If it's a defined identifier, then don't warn.
@@ -941,7 +954,7 @@ int CEXEBuild::add_label(const TCHAR *name)
   int cs=build_cursection->code;
   int ce=cs+build_cursection->code_size;
 
-  TCHAR *p=strdup(name);
+  TCHAR *p=_tcsdup(name);
   if (p[_tcsclen(p)-1] == _T(':')) p[_tcsclen(p)-1]=0;
   int offs=ns_label.add(p,0);
   free(p);
@@ -961,10 +974,10 @@ int CEXEBuild::add_label(const TCHAR *name)
         if (*name == _T('.')) ERROR_MSG(_T("Error: global label \"%s\" already declared\n"),name);
         else
         {
-          const TCHAR *t = _T("section");
+          const TCHAR *szType = _T("section");
           if (build_cursection_isfunc)
-            t = _T("function");
-          ERROR_MSG(_T("Error: label \"%s\" already declared in %s\n"),name,t);
+            szType = _T("function");
+          ERROR_MSG(_T("Error: label \"%s\" already declared in %s\n"),name,szType);
         }
         return PS_ERROR;
       }
@@ -1003,7 +1016,7 @@ int CEXEBuild::add_function(const TCHAR *funname)
     return PS_ERROR;
   }
 
-  set_uninstall_mode(!strnicmp(funname,_T("un."),3));
+  set_uninstall_mode(!_tcsncicmp(funname,_T("un."),3));
 
   // ns_func contains all the function names defined.
   int addr=ns_func.add(funname,0);
@@ -1159,13 +1172,13 @@ int CEXEBuild::add_section(const TCHAR *secname, const TCHAR *defname, int expan
 
   set_uninstall_mode(0);
 
-  if (!strnicmp(name, _T("un."), 3))
+  if (!_tcsncicmp(name, _T("un."), 3))
   {
     set_uninstall_mode(1);
     name += 3;
   }
 
-  if (!stricmp(name, _T("uninstall")))
+  if (!_tcsicmp(name, _T("uninstall")))
   {
     set_uninstall_mode(1);
   }
@@ -1724,7 +1737,7 @@ int CEXEBuild::AddVersionInfo()
         }
       }
       catch (exception& err) {
-        ERROR_MSG(_T("Error adding version information: %s\n"), err.what());
+        ERROR_MSG(_T("Error adding version information: %s\n"), CtoTString(err.what()));
         return PS_ERROR;
       }
     }
@@ -1735,6 +1748,7 @@ int CEXEBuild::AddVersionInfo()
 #endif // NSIS_SUPPORT_VERSION_INFO
 
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
+
 int CEXEBuild::ProcessPages()
 {
   SCRIPT_MSG(_T("Processing pages... "));
@@ -2130,7 +2144,7 @@ again:
     SCRIPT_MSG(_T("Done!\n"));
   }
   catch (exception& err) {
-    ERROR_MSG(_T("\nError: %s\n"), err.what());
+    ERROR_MSG(_T("\nError: %s\n"), CtoTString(err.what()));
     return PS_ERROR;
   }
 
@@ -2247,7 +2261,7 @@ int CEXEBuild::SetVarsSection()
     }
   }
   catch (exception& err) {
-    ERROR_MSG(_T("\nError: %s\n"), err.what());
+    ERROR_MSG(_T("\nError: %s\n"), CtoTString(err.what()));
     return PS_ERROR;
   }
 
@@ -2264,10 +2278,11 @@ int CEXEBuild::SetManifest()
     if (manifest == "")
       return PS_OK;
 
+    // Saved directly as binary into the exe.
     res_editor->UpdateResourceA(MAKEINTRESOURCE(24), MAKEINTRESOURCE(1), NSIS_DEFAULT_LANG, (LPBYTE) manifest.c_str(), manifest.length());
   }
   catch (exception& err) {
-    ERROR_MSG(_T("Error setting manifest: %s\n"), err.what());
+    ERROR_MSG(_T("Error setting manifest: %s\n"), CtoTString(err.what()));
     return PS_ERROR;
   }
 
@@ -2284,7 +2299,7 @@ int CEXEBuild::UpdatePEHeader()
     // terminal services aware
     headers->OptionalHeader.DllCharacteristics |= IMAGE_DLLCHARACTERISTICS_TERMINAL_SERVER_AWARE;
   } catch (std::runtime_error& err) {
-    ERROR_MSG(_T("Error updating PE headers: %s\n"), err.what());
+    ERROR_MSG(_T("Error updating PE headers: %s\n"), CtoTString(err.what()));
     return PS_ERROR;
   }
 
@@ -2479,7 +2494,7 @@ int CEXEBuild::write_output(void)
     close_res_editor();
   }
   catch (exception& err) {
-    ERROR_MSG(_T("\nError: %s\n"), err.what());
+    ERROR_MSG(_T("\nError: %s\n"), CtoTString(err.what()));
     return PS_ERROR;
   }
 
@@ -3192,6 +3207,7 @@ void CEXEBuild::warning(const TCHAR *s, ...)
   _vsntprintf(buf,NSIS_MAX_STRLEN*10,s,val);
 #endif
   va_end(val);
+
   m_warnings.add(buf,0);
   notify(MAKENSIS_NOTIFY_WARNING,buf);
   if (display_warnings)

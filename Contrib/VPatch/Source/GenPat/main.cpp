@@ -202,7 +202,7 @@ int _tmain( int argc, TCHAR * argv[] ) {
     } catch(const TCHAR* s) {
       terr << _T("ERROR: ") << s << _T("\n");
       patch.close();
-      unlink(tempFileName.c_str());
+      _tunlink(tempFileName.c_str());
       return 3;
     }
 
@@ -299,6 +299,6 @@ int _tmain( int argc, TCHAR * argv[] ) {
     terr << _T("WARNING: source and target file have equal CRCs!");
   delete sourceCRC;
   delete targetCRC;
-  unlink(tempFileName.c_str());
+  _tunlink(tempFileName.c_str());
   return 0;
 }

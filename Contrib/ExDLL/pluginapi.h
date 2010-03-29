@@ -68,11 +68,31 @@ void NSISCALL pushint(int value);
 TCHAR * NSISCALL getuservariable(const int varnum);
 void NSISCALL setuservariable(const int varnum, const TCHAR *var);
 
+#ifdef _UNICODE
+#define PopStringW(x) popstring(x)
+#define PushStringW(x) pushstring(x)
+#define SetUserVariableW(x,y) setuservariable(x,y)
+
+int  NSISCALL PopStringA(char* ansiStr);
+void NSISCALL PushStringA(const char* ansiStr);
+void NSISCALL GetUserVariableW(const int varnum, wchar_t* wideStr);
+void NSISCALL GetUserVariableA(const int varnum, char* ansiStr);
+void NSISCALL SetUserVariableA(const int varnum, const char* ansiStr);
+
+#else
 // ANSI defs
 
 #define PopStringA(x) popstring(x)
 #define PushStringA(x) pushstring(x)
 #define SetUserVariableA(x,y) setuservariable(x,y)
+
+int  NSISCALL PopStringW(wchar_t* wideStr);
+void NSISCALL PushStringW(wchar_t* wideStr);
+void NSISCALL GetUserVariableW(const int varnum, wchar_t* wideStr);
+void NSISCALL GetUserVariableA(const int varnum, char* ansiStr);
+void NSISCALL SetUserVariableW(const int varnum, const wchar_t* wideStr);
+
+#endif
 
 #ifdef __cplusplus
 }

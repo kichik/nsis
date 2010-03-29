@@ -13,7 +13,9 @@
  * This software is provided 'as-is', without any express or implied
  * warranty.
  */
+
 /* Unicode support by Jim Park -- 07/23/2007 */
+
 #include "Platform.h"
 #include <stdio.h>
 #include <stdarg.h>
@@ -24,6 +26,7 @@
 #include "util.h"
 #include "strlist.h"
 #include "winchar.h"
+
 #ifndef _WIN32
 #  include <ctype.h>
 #  include <unistd.h> // for close(2)

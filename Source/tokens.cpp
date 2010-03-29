@@ -290,7 +290,7 @@ void CEXEBuild::print_help(TCHAR *commandname)
   int x;
   for (x = 0; x < TOK__LAST; x ++)
   {
-    if (!commandname || !stricmp(tokenlist[x].name,commandname))
+    if (!commandname || !_tcsicmp(tokenlist[x].name,commandname))
     {
       ERROR_MSG(_T("%s%s %s\n"),commandname?_T("Usage: "):_T(""),tokenlist[x].name,tokenlist[x].usage_str);
       if (commandname) break;
@@ -306,7 +306,7 @@ void CEXEBuild::print_help(TCHAR *commandname)
 bool CEXEBuild::is_valid_token(TCHAR *s)
 {
   for (int x = 0; x < TOK__LAST; x ++)
-    if (!stricmp(tokenlist[x].name,s)) 
+    if (!_tcsicmp(tokenlist[x].name,s)) 
       return true;
   return false;
 }
@@ -315,7 +315,7 @@ int CEXEBuild::get_commandtoken(TCHAR *s, int *np, int *op, int *pos)
 {
   int x;
   for (x = 0; x < TOK__LAST; x ++)
-    if (!stricmp(tokenlist[x].name,s)) 
+    if (!_tcsicmp(tokenlist[x].name,s)) 
     {
       *np=tokenlist[x].num_parms;
       *op=tokenlist[x].opt_parms;

@@ -21,7 +21,7 @@
 #include "tchar.h"
 #include <cstdlib>
 #include <cstring>
-//#include "tstring.h"
+#include "tstring.h"
 
 LineParser::LineParser(bool bCommentBlock)
 {
@@ -126,7 +126,7 @@ int LineParser::gettoken_enum(int token, const TCHAR *strlist) // null seperated
   TCHAR *tt=gettoken_str(token);
   if (tt && *tt) while (*strlist)
   {
-    if (!stricmp(tt,strlist)) return x;
+    if (!_tcsicmp(tt,strlist)) return x;
     strlist+=_tcsclen(strlist)+1;
     x++;
   }

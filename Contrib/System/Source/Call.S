@@ -87,6 +87,11 @@ IF 0
 .set SYSTEM_LOG_DEBUG,1
 #endif
 
+#ifdef _UNICODE
+#undef _UNICODE
+.set _UNICODE,1
+#endif
+
 #define IFDEF            .ifdef
 #define ELSE             .else
 #define ENDIF            .endif
@@ -99,6 +104,7 @@ IF 0
 #define DATA_SUFFIX      :
 #define BYTE             .byte
 #define DWORD            .int
+#define WORD             .word
 #define ASCII            .ascii
 
 #define MACRO_DECL       .macro
@@ -140,7 +146,12 @@ EXTERN    __alloca_probe         : PROC
 
 EXTERN	  __imp__GlobalFree@4    : PROC
 EXTERN    __imp__GetLastError@0  : PROC
+
+IFDEF _UNICODE
+EXTERN    __imp__wsprintfW       : PROC
+ELSE
 EXTERN    __imp__wsprintfA       : PROC
+ENDIF
 
 EXTERN    _GlobalCopy            : PROC
 
@@ -181,54 +192,130 @@ SECTION_DATA
 
 IFDEF SYSTEM_LOG_DEBUG
 
-  LogStack DATA_SUFFIX ASCII "%s  ESP = 0x%08X  Stack = 0x%08X  Real = 0x%08X"
-                 BYTE 0
+  IFDEF _UNICODE
+    LogStack DATA_SUFFIX
+      BYTE '%', 0, 's', 0, ' ', 0, ' ', 0, 'E', 0, 'S', 0, 'P', 0, ' ', 0
+      BYTE ' ', 0, '0', 0, 'x', 0, '%', 0, '0', 0, '8', 0, 'X', 0, ' ', 0
+      BYTE 'S', 0, 't', 0, 'a', 0, 'c', 0, 'k', 0, ' ', 0, '=', 0, ' ', 0
+      BYTE 'x', 0, '%', 0, '0', 0, '8', 0, 'X', 0, ' ', 0, ' ', 0, 'R', 0
+      BYTE 'a', 0, 'l', 0, ' ', 0, '=', 0, ' ', 0, '0', 0, 'x', 0, '%', 0
+      BYTE '8', 0, 'X', 0
+      WORD 0
 
-  LogCall DATA_SUFFIX  BYTE 9,9
-                 ASCII "Call:"
-                 BYTE 10,0
+    LogCall DATA_SUFFIX WORD 9,9
+      BYTE 'C', 0, 'a', 0, 'l', 0, 'l', 0, ':', 0
+      WORD 10,0
 
-  LogBeforeCall DATA_SUFFIX BYTE 9,9,9
-                 ASCII "Before call        "
-                 BYTE 0
+    LogBeforeCall DATA_SUFFIX WORD 9,9,9
+      BYTE 'B', 0, 'e', 0, 'f', 0, 'o', 0, 'r', 0, 'e', 0, ' ', 0, 'c', 0
+      BYTE 'l', 0, 'l', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0
+      BYTE ' ', 0
+      WORD 0
 
-  LogNearCall DATA_SUFFIX BYTE 10,9,9,9
-                 ASCII "Near call          "
-                 BYTE 0
+    LogNearCall DATA_SUFFIX WORD 10,9,9,9
+      BYTE 'N', 0, 'e', 0, 'a', 0, 'r', 0, ' ', 0, 'c', 0, 'a', 0, 'l', 0
+      BYTE ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0
+      BYTE ' ', 0
+      WORD 0
 
-  LogBackFrom DATA_SUFFIX BYTE 9
-                 ASCII "Back from "
-                 BYTE 0
+    LogBackFrom DATA_SUFFIX WORD 9
+      BYTE 'B', 0, 'a', 0, 'c', 0, 'k', 0, ' ', 0, 'f', 0, 'r', 0, 'o', 0
+      BYTE ' ', 0
+      WORD 0
 
-  LogAfterCall DATA_SUFFIX BYTE 10,9,9,9
-                 ASCII "After call         "
-                 BYTE 0
+    LogAfterCall DATA_SUFFIX WORD 10,9,9,9
+      BYTE 'A', 0, 'f', 0, 't', 0, 'e', 0, 'r', 0, ' ', 0, 'c', 0, 'a', 0
+      BYTE 'l', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0
+      BYTE ' ', 0
+      WORD 0
 
-  LogReturnAfter DATA_SUFFIX BYTE 10,9,9,9
-                 ASCII "Return               0x%08X    0x%08X"
-                 BYTE 0
+    LogReturnAfter DATA_SUFFIX WORD 10,9,9,9
+      BYTE 'R', 0, 'e', 0, 't', 0, 'u', 0, 'r', 0, 'n', 0, ' ', 0, ' ', 0
+      BYTE ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0, ' ', 0
+      BYTE ' ', 0, ' ', 0, ' ', 0, '0', 0, 'x', 0, '%', 0, '0', 0, '8', 0
+      BYTE ' ', 0, ' ', 0, ' ', 0, ' ', 0, '0', 0, 'x', 0, '%', 0, '0', 0
+      BYTE 'X', 0
+      WORD 0
 
-  LogCalled DATA_SUFFIX ASCII "Called callback from "
-                 BYTE 0
+    LogCalled DATA_SUFFIX
+      BYTE 'C', 0, 'a', 0, 'l', 0, 'l', 0, 'e', 0, 'd', 0, ' ', 0, 'c', 0
+      BYTE 'l', 0, 'l', 0, 'b', 0, 'a', 0, 'c', 0, 'k', 0, ' ', 0, 'f', 0
+      BYTE 'o', 0, 'm', 0, ' ', 0
+      WORD 0
 
-  LogShortAfter DATA_SUFFIX BYTE 10,9,9,9
-                 ASCII "Short-After call   "
-                 BYTE 0
+    LogShortAfter DATA_SUFFIX WORD 10,9,9,9
+      BYTE 'S', 0, 'h', 0, 'o', 0, 'r', 0, 't', 0, '-', 0, 'A', 0, 'f', 0
+      BYTE 'e', 0, 'r', 0, ' ', 0, 'c', 0, 'a', 0, 'l', 0, 'l', 0, ' ', 0
+      BYTE ' ', 0
+      WORD 0
 
-  LogReturn DATA_SUFFIX BYTE 9,9
-                 ASCII "Return from callback:"
-                 BYTE 10,0
+    LogReturn DATA_SUFFIX WORD 9,9
+      BYTE 'R', 0, 'e', 0, 't', 0, 'u', 0, 'r', 0, 'n', 0, ' ', 0, 'f', 0
+      BYTE 'o', 0, 'm', 0, ' ', 0, 'c', 0, 'a', 0, 'l', 0, 'l', 0, 'b', 0
+      BYTE 'c', 0, 'k', 0, ':', 0
+      WORD 10,0
 
-  LogBefore DATA_SUFFIX BYTE 9,9,9
-                 ASCII "Before call-back   "
-                 BYTE 0
+    LogBefore DATA_SUFFIX WORD 9,9,9
+      BYTE 'B', 0, 'e', 0, 'f', 0, 'o', 0, 'r', 0, 'e', 0, ' ', 0, 'c', 0
+      BYTE 'l', 0, 'l', 0, '-', 0, 'b', 0, 'a', 0, 'c', 0, 'k', 0, ' ', 0
+      BYTE ' ', 0
+      WORD 0
 
-  LogShortBefore DATA_SUFFIX BYTE 10,9,9,9
-                 ASCII "Sh-Before call-back"
-                 BYTE 0
+    LogShortBefore DATA_SUFFIX WORD 10,9,9,9
+      BYTE 'S', 0, 'h', 0, '-', 0, 'B', 0, 'e', 0, 'f', 0, 'o', 0, 'r', 0
+      BYTE ' ', 0, 'c', 0, 'a', 0, 'l', 0, 'l', 0, '-', 0, 'b', 0, 'a', 0
+      BYTE 'k', 0
+      WORD 0
+    LogLF DATA_SUFFIX WORD 10,0
+  ELSE
+    LogStack DATA_SUFFIX ASCII "%s  ESP = 0x%08X  Stack = 0x%08X  Real = 0x%08X"
+                    BYTE 0
 
-  LogLF DATA_SUFFIX BYTE 10,0
+    LogCall DATA_SUFFIX  BYTE 9,9
+                    ASCII "Call:"
+                    BYTE 10,0
 
+    LogBeforeCall DATA_SUFFIX BYTE 9,9,9
+                    ASCII "Before call        "
+                    BYTE 0
+
+    LogNearCall DATA_SUFFIX BYTE 10,9,9,9
+                    ASCII "Near call          "
+                    BYTE 0
+
+    LogBackFrom DATA_SUFFIX BYTE 9
+                    ASCII "Back from "
+                    BYTE 0
+
+    LogAfterCall DATA_SUFFIX BYTE 10,9,9,9
+                    ASCII "After call         "
+                    BYTE 0
+
+    LogReturnAfter DATA_SUFFIX BYTE 10,9,9,9
+                    ASCII "Return               0x%08X    0x%08X"
+                    BYTE 0
+
+    LogCalled DATA_SUFFIX ASCII "Called callback from "
+                    BYTE 0
+
+    LogShortAfter DATA_SUFFIX BYTE 10,9,9,9
+                    ASCII "Short-After call   "
+                    BYTE 0
+
+    LogReturn DATA_SUFFIX BYTE 9,9
+                    ASCII "Return from callback:"
+                    BYTE 10,0
+
+    LogBefore DATA_SUFFIX BYTE 9,9,9
+                    ASCII "Before call-back   "
+                    BYTE 0
+
+    LogShortBefore DATA_SUFFIX BYTE 10,9,9,9
+                    ASCII "Sh-Before call-back"
+                    BYTE 0
+
+    LogLF DATA_SUFFIX BYTE 10,0
+  ENDIF
 ENDIF
 
 SECTION_CODE
@@ -263,7 +350,11 @@ ELSE
 ENDIF
   ;# Log buffer
   push        edi
+IFDEF _UNICODE
+  call        dword ptr [__imp__wsprintfW]
+ELSE
   call        dword ptr [__imp__wsprintfA]
+ENDIF
   ;# If wsprintf succeeds then advance edi by number of bytes
   ;# written to buffer
   cmp         eax,0

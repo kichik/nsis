@@ -483,6 +483,7 @@ typedef struct {
 #define NS_SHELL_CODE 254
 #define NS_LANG_CODE 255
 #define NS_CODES_START NS_SKIP_CODE
+#define NS_IS_CODE(x) ((x) >= NS_SKIP_CODE)
 
 // We are doing this to store an integer value into a char string and we
 // don't want false end of string values so we shift then OR with 0x8080

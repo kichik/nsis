@@ -199,7 +199,7 @@ int CLZMA::Init(int level, unsigned int dicSize)
     NCoderPropID::kDictionarySize,
     NCoderPropID::kNumFastBytes
   };
-  const int kNumProps = sizeof(propdIDs) / sizeof(propdIDs[0]);
+  const int kNumProps = _countof(propdIDs);
   PROPVARIANT props[kNumProps];
   // NCoderPropID::kAlgorithm
   props[0].vt = VT_UI4;

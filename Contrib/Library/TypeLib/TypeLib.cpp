@@ -21,11 +21,8 @@ NSISFunction(Register) {
 
   EXDLL_INIT();
 
-  char filename[1024];
-  popstring(filename);
-
   wchar_t ole_filename[1024];
-  MultiByteToWideChar(CP_ACP, 0, filename, 1024, ole_filename, 1024);
+  PopStringW(ole_filename);
 
   ITypeLib* typeLib;
   HRESULT hr;
@@ -46,11 +43,8 @@ NSISFunction(UnRegister) {
 
   EXDLL_INIT();
 
-  char filename[1024];
-  popstring(filename);
-
   wchar_t ole_filename[1024];
-  MultiByteToWideChar(CP_ACP, 0, filename, 1024, ole_filename, 1024);
+  PopStringW(ole_filename);
 
   ITypeLib* typeLib;
   HRESULT hr;
@@ -87,11 +81,8 @@ NSISFunction(GetLibVersion) {
 
   EXDLL_INIT();
 
-  char filename[1024];
-  popstring(filename);
-
   wchar_t ole_filename[1024];
-  MultiByteToWideChar(CP_ACP, 0, filename, 1024, ole_filename, 1024);
+  PopStringW(ole_filename);
 
   ITypeLib* typeLib;
   HRESULT hr;

@@ -87,11 +87,10 @@ struct tag_SystemProc
     int ProcResult;
     TCHAR DllName[1024];
     TCHAR ProcName[1024];
-    HANDLE Dll;
-    HANDLE Proc;
+    HMODULE Dll;
+    HANDLE  Proc;
     int Options;
     int ParamCount;
-    // if you'll change ProcParameter or SystemProc structure - update SYSTEM_ZERO_PARAM_VALUE_OFFSET value
     ProcParameter Params[100];  // I hope nobody will use more than 100 params
 
     // Callback specific

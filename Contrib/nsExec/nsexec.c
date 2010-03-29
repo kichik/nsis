@@ -156,6 +156,10 @@ void ExecScript(int log) {
           IMAGE_FILE_LINE_NUMS_STRIPPED | IMAGE_FILE_EXECUTABLE_IMAGE;
         // Windows character-mode user interface (CUI) subsystem.
         pNTHeaders->OptionalHeader.Subsystem = IMAGE_SUBSYSTEM_WINDOWS_CUI;
+        // g_hInst is assumed to be the very base of the DLL in memory.
+        // WinMain will have the address of the WinMain function in memory.
+        // Getting the difference gets you the relative location of the
+        // WinMain function.
         pNTHeaders->OptionalHeader.AddressOfEntryPoint = (DWORD)_tWinMain - (DWORD)g_hInst;  
         UnmapViewOfFile(pMapView);
       }
@@ -278,10 +282,10 @@ params:
         szBuf[dwRead] = 0;
         if (log) {
           TCHAR *p, *p2;
-          SIZE_T iReqLen = lstrlen(szBuf) + lstrlen(szUnusedBuf);
-          if (GlobalSize(hUnusedBuf) < iReqLen && (iReqLen < g_stringsize || !(log & 2))) {
+          SIZE_T iReqLen = lstrlen(szBuf) + lstrlen(szUnusedBuf) + 1;
+          if (GlobalSize(hUnusedBuf) < iReqLen*sizeof(TCHAR) && (iReqLen < g_stringsize || !(log & 2))) {
             GlobalUnlock(hUnusedBuf);
-            hUnusedBuf = GlobalReAlloc(hUnusedBuf, iReqLen+sizeof(szBuf), GHND);
+            hUnusedBuf = GlobalReAlloc(hUnusedBuf, iReqLen*sizeof(TCHAR)+sizeof(szBuf), GHND);
             if (!hUnusedBuf) {
               lstrcpy(szRet, _T("error"));
               break;
@@ -289,14 +293,16 @@ params:
             szUnusedBuf = (TCHAR *)GlobalLock(hUnusedBuf);
           }
           p = szUnusedBuf; // get the old left overs
-          if (iReqLen < g_stringsize || !(log & 2)) lstrcat(p, szBuf);
+          if (iReqLen < g_stringsize || !(log & 2)) {
+             lstrcat(p, szBuf);
+          }
           else {
             lstrcpyn(p + lstrlen(p), szBuf, g_stringsize - lstrlen(p));
           }
 
           if (!(log & 2)) {
             while ((p = my_strstr(p, _T("\t")))) {
-              if ((int)(p - szUnusedBuf) > (int)(GlobalSize(hUnusedBuf) - TAB_REPLACE_SIZE - 1))
+              if ((int)(p - szUnusedBuf) > (int)(GlobalSize(hUnusedBuf)/sizeof(TCHAR) - TAB_REPLACE_SIZE - 1))
               {
                 *p++ = _T(' ');
               }
@@ -381,7 +387,9 @@ void LogMessage(const TCHAR *pStr, BOOL bOEM) {
   int nItemCount;
   if (!g_hwndList) return;
   //if (!lstrlen(pStr)) return;
-  if (bOEM == TRUE) OemToCharBuff(pStr, (TCHAR *)pStr, lstrlen(pStr));
+#ifndef _UNICODE
+  if (bOEM == TRUE) OemToCharBuff(pStr, (char*)pStr, lstrlen(pStr));
+#endif
   nItemCount=SendMessage(g_hwndList, LVM_GETITEMCOUNT, 0, 0);
   item.mask=LVIF_TEXT;
   item.pszText=(TCHAR *)pStr;
