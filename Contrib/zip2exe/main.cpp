@@ -71,7 +71,6 @@ TCHAR *g_options=_T("");//_T("/V3");
 
 static BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-
 int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
                    LPTSTR lpszCmdParam, int nCmdShow)
 {
@@ -752,7 +751,7 @@ BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
             ShowWindow(GetDlgItem(hwndDlg,IDC_TEST),SW_HIDE);
             ShowWindow(GetDlgItem(hwndDlg,IDC_OUTPUTTEXT),SW_HIDE);
             {
-              for (size_t x = 0; x < sizeof(ids)/sizeof(ids[0]); x ++)
+              for (size_t x = 0; x < _countof(ids); x ++)
                 ShowWindow(GetDlgItem(hwndDlg,ids[x]),SW_SHOWNA);
               SetDlgItemText(hwndDlg,IDOK,_T("&Generate"));
               EnableWindow(GetDlgItem(hwndDlg,IDOK),1);
@@ -783,7 +782,7 @@ BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
                 g_compressor_solid = 0;
               g_mui=!IsDlgButtonChecked(hwndDlg,IDC_CLASSICUI);
               SetDlgItemText(g_hwnd, IDC_OUTPUTTEXT, _T(""));
-              for (size_t x = 0; x < sizeof(ids)/sizeof(ids[0]); x ++)
+              for (size_t x = 0; x < _countof(ids); x ++)
                 ShowWindow(GetDlgItem(hwndDlg,ids[x]),SW_HIDE);
               ShowWindow(GetDlgItem(hwndDlg,IDC_OUTPUTTEXT),SW_SHOWNA);
               SetDlgItemText(hwndDlg,IDOK,_T("&Close"));

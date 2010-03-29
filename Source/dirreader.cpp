@@ -145,7 +145,7 @@ bool dir_reader::is_excluded(const tstring& name) const {
   iterator e = m_excluded.end();
 
   for (; i != e; i++) {
-    if (!::stricmp(name.c_str(), i->c_str())) {
+    if (!::_tcsicmp(name.c_str(), i->c_str())) {
       return true;
     }
   }

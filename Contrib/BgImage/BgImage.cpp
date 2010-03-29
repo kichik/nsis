@@ -168,9 +168,9 @@ NSISFunc(SetBg) {
   uWndWidth = uScrWidth;
   uWndHeight = uScrHeight;
 
-  char szGradient[] = {'/', 'G', 'R', 'A', 'D', 'I', 'E', 'N', 'T', 0};
-  char szFillScreen[] = {'/', 'F', 'I' ,'L', 'L', 'S', 'C', 'R', 'E', 'E', 'N', 0};
-  char szTiled[] = {'/', 'T', 'I', 'L', 'E', 'D', 0};
+  LPCTSTR szGradient = _T("/GRADIENT");
+  LPCTSTR szFillScreen = _T("/FILLSCREEN");
+  LPCTSTR szTiled = _T("/TILED");
 
   popstring(szTemp);
   if (!lstrcmpi(szTemp, szGradient)) {
@@ -357,9 +357,9 @@ NSISFunc(Destroy) {
 }
 
 NSISFunc(Sound) {
-  char szLoop[] = {'/', 'L', 'O', 'O', 'P', 0};
-  char szWait[] = {'/', 'W', 'A', 'I', 'T', 0};
-  char szStop[] = {'/', 'S', 'T', 'O', 'P', 0};
+  LPCTSTR szLoop = _T("/LOOP");
+  LPCTSTR szWait = _T("/WAIT");
+  LPCTSTR szStop = _T("/STOP");
 
   DWORD flags = SND_FILENAME | SND_NODEFAULT;
   

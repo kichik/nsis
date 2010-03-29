@@ -151,7 +151,11 @@ void CopyToClipboard(HWND hwnd) {
   existing_text[0]=0;
   GetDlgItemText(hwnd, IDC_LOGWIN, existing_text, len+1);
   GlobalUnlock(mem);
+#ifdef _UNICODE
+  SetClipboardData(CF_UNICODETEXT,mem);
+#else
   SetClipboardData(CF_TEXT,mem);
+#endif
   CloseClipboard();
 }
 
@@ -295,15 +299,16 @@ void CompileNSISScript() {
 
     TCHAR *args = (TCHAR *) GlobalLock(g_sdata.script_cmd_args);
 
-    g_sdata.compile_command = (char *) GlobalAlloc(
-      GPTR,
-      /* makensis.exe        */ _countof(EXENAME)                 + /* space */ 1 +
+    size_t byteSize = sizeof(TCHAR)*(
+      /* makensis.exe        */ lstrlen(EXENAME)                  + /* space */ 1 +
       /* script path         */ lstrlen(g_sdata.script)           + /* space */ 1 +
       /* script cmd args     */ lstrlen(args)  + /* space */ 1 +
       /* defines /Dblah=...  */ lstrlen(symbols)                  + /* space */ 1 +
       /* /XSetCompressor...  */ lstrlen(compressor)               + /* space */ 1 +
       /* /NOTTIFYHWND + HWND */ _countof(_T("/NOTIFYHWND -4294967295")) + /* space */ 1
-      );
+      +6); /* for -- \"\" and NULL */
+      
+    g_sdata.compile_command = (TCHAR *) GlobalAlloc(GPTR, byteSize);
 
     wsprintf(
       g_sdata.compile_command,
@@ -468,9 +473,10 @@ TCHAR** LoadSymbolSet(TCHAR *name)
           }
           if(symbols) {
             l++;
-            symbols[i] = (TCHAR *)GlobalAlloc(GPTR, l*sizeof(TCHAR));
+            DWORD bytes = sizeof(TCHAR) * l;
+            symbols[i] = (TCHAR *)GlobalAlloc(GPTR, bytes);
             if (symbols[i]) {
-              RegQueryValueEx(hSubKey,buf,NULL,&t,(unsigned char*)symbols[i],&l);
+              RegQueryValueEx(hSubKey,buf,NULL,&t,(unsigned char*)symbols[i],&bytes);
             }
             else {
               break;
@@ -540,7 +546,10 @@ void SaveSymbolSet(TCHAR *name, TCHAR **symbols)
 
 void ResetObjects() {
   if (g_sdata.compile_command)
+  {
     GlobalFree(g_sdata.compile_command);
+    g_sdata.compile_command = 0;
+  }
 
   g_sdata.warnings = FALSE;
   g_sdata.retcode = -1;
@@ -565,8 +574,10 @@ void ResetSymbols() {
 
 int InitBranding() {
   TCHAR *s;
-  s = (TCHAR *)GlobalAlloc(GPTR,lstrlen(EXENAME)+10);
-  wsprintf(s,_T("%s /version"),EXENAME);
+  TCHAR opt[] = _T(" /version");
+  s = (TCHAR *)GlobalAlloc(GPTR,(lstrlen(EXENAME)+lstrlen(opt)+1)*sizeof(TCHAR));
+  lstrcpy(s, EXENAME);
+  lstrcat(s, opt);
   {
     STARTUPINFO si={sizeof(si),};
     SECURITY_ATTRIBUTES sa={sizeof(sa),};
@@ -601,8 +612,8 @@ int InitBranding() {
     if (WaitForSingleObject(pi.hProcess,10000)!=WAIT_OBJECT_0) {
       return 0;
     }
-    ReadFile(read_stdout, szBuf, sizeof(szBuf)-1, &dwRead, NULL);
-    szBuf[dwRead] = 0;
+    ReadFile(read_stdout, szBuf, sizeof(szBuf)-sizeof(TCHAR), &dwRead, NULL);
+    szBuf[dwRead/sizeof(TCHAR)] = 0;
     if (lstrlen(szBuf)==0) return 0;
     g_sdata.branding = (TCHAR *)GlobalAlloc(GPTR,(lstrlen(szBuf)+6)*sizeof(TCHAR));
     wsprintf(g_sdata.branding,_T("NSIS %s"),szBuf);
@@ -612,6 +623,7 @@ int InitBranding() {
   }
   return 1;
 }
+
 
 void InitTooltips(HWND h) {
   if (h == NULL)  return;
@@ -736,7 +748,6 @@ void PushMRUFile(TCHAR* fname)
 {
   int i;
   DWORD   rv;
-  TCHAR*  file_part;
   TCHAR full_file_name[MAX_PATH+1];
 
   if(!fname || fname[0] == _T('\0') || fname[0] == _T('/') || fname[0] == _T('-')) {
@@ -744,7 +755,7 @@ void PushMRUFile(TCHAR* fname)
   }
 
   my_memset(full_file_name,0,sizeof(full_file_name));
-  rv = GetFullPathName(fname,_countof(full_file_name),full_file_name,&file_part);
+  rv = GetFullPathName(fname,_countof(full_file_name),full_file_name,NULL);
   if (rv == 0) {
     return;
   }
@@ -897,7 +908,7 @@ void SaveMRUList()
       for(i = 0; i < MRU_LIST_SIZE; i++) {
         wsprintf(buf,_T("%d"),i);
         // cbData must include the size of the terminating null character.
-        RegSetValueEx(hSubKey,buf,0,REG_SZ,(const BYTE*)g_mru_list[i],(lstrlen(g_mru_list[i]))*sizeof(TCHAR));
+        RegSetValueEx(hSubKey,buf,0,REG_SZ,(const BYTE*)g_mru_list[i],(lstrlen(g_mru_list[i])+1)*sizeof(TCHAR));
       }
       RegCloseKey(hSubKey);
     }

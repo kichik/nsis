@@ -201,9 +201,7 @@ void CResourceVersionInfo::ExportToStream(GrowBuf &strm, int Index)
     WCHAR *KeyName, *KeyValue;
 
     strm.resize(0);
-    KeyName = winchar_fromansi(_T("VS_VERSION_INFO"));
-    SaveVersionHeader (strm, 0, sizeof (VS_FIXEDFILEINFO), 0, KeyName, &m_FixedInfo);
-    delete [] KeyName;
+    SaveVersionHeader (strm, 0, sizeof (VS_FIXEDFILEINFO), 0, L"VS_VERSION_INFO", &m_FixedInfo);
     
     DefineList *pChildStrings = m_ChildStringLists.get_strings(Index);
     if ( pChildStrings->getnum() > 0 )
@@ -211,11 +209,9 @@ void CResourceVersionInfo::ExportToStream(GrowBuf &strm, int Index)
       GrowBuf stringInfoStream;
       int codepage = m_ChildStringLists.get_codepage(Index);
       LANGID langid = m_ChildStringLists.get_lang(Index);
-      TCHAR Buff[16];
-      sprintf(Buff, _T("%04x%04x"), langid, codepage);
-      KeyName = winchar_fromansi(Buff, CP_ACP);
-      SaveVersionHeader (stringInfoStream, 0, 0, 0, KeyName, &ZEROS);
-      delete [] KeyName;
+      WCHAR Buff[16];
+      swprintf(Buff, _countof(Buff), L"%04x%04x", langid, codepage);
+      SaveVersionHeader (stringInfoStream, 0, 0, 0, Buff, &ZEROS);
       
       for ( int i = 0; i < pChildStrings->getnum(); i++ )
       {
@@ -237,9 +233,7 @@ void CResourceVersionInfo::ExportToStream(GrowBuf &strm, int Index)
       
       PadStream (strm);
       p = strm.getlen();
-      KeyName = winchar_fromansi(_T("StringFileInfo"), CP_ACP);
-      SaveVersionHeader (strm, 0, 0, 0, KeyName, &ZEROS);
-      delete [] KeyName;
+      SaveVersionHeader (strm, 0, 0, 0, L"StringFileInfo", &ZEROS);
       strm.add (stringInfoStream.get(), stringInfoStream.getlen());
       wSize = WORD(strm.getlen() - p);
       
@@ -251,15 +245,11 @@ void CResourceVersionInfo::ExportToStream(GrowBuf &strm, int Index)
     {
       PadStream (strm);
       p = strm.getlen();
-      KeyName = winchar_fromansi(_T("VarFileInfo"), CP_ACP);
-      SaveVersionHeader (strm, 0, 0, 0, KeyName, &ZEROS);
-      delete [] KeyName;
+      SaveVersionHeader (strm, 0, 0, 0, L"VarFileInfo", &ZEROS);
       PadStream (strm);
       
       p1 = strm.getlen();
-      KeyName = winchar_fromansi(_T("Translation"), CP_ACP);
-      SaveVersionHeader (strm, 0, 0, 0, KeyName, &ZEROS);
-      delete [] KeyName;
+      SaveVersionHeader (strm, 0, 0, 0, L"Translation", &ZEROS);
       
       // First add selected code language translation
       v = MAKELONG(m_ChildStringLists.get_lang(Index), m_ChildStringLists.get_codepage(Index));

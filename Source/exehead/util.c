@@ -285,7 +285,8 @@ TCHAR * NSISCALL trimslashtoend(TCHAR *buf)
 int NSISCALL validpathspec(TCHAR *ubuf)
 {
   TCHAR dl = ubuf[0] | 0x20; // convert alleged drive letter to lower case
-  return ((*(WORD*)ubuf==CHAR2_TO_WORD(_T('\\'),_T('\\'))) || (dl >= _T('a') && dl <= _T('z') && ubuf[1]==_T(':')));
+  return ((ubuf[0] == _T('\\') && ubuf[1] == _T('\\')) ||
+          (dl >= _T('a') && dl <= _T('z') && ubuf[1] == _T(':')));
 }
 
 TCHAR * NSISCALL skip_root(TCHAR *path)
@@ -293,11 +294,11 @@ TCHAR * NSISCALL skip_root(TCHAR *path)
   TCHAR *p = CharNext(path);
   TCHAR *p2 = CharNext(p);
 
-  if (*path && *(WORD*)p == CHAR2_TO_WORD(_T(':'), _T('\\')))
+  if (*path && p[0] == _T(':') && p[1] == _T('\\'))
   {
     return CharNext(p2);
   }
-  else if (*(WORD*)path == CHAR2_TO_WORD(_T('\\'),_T('\\')))
+  else if (path[0] == _T('\\') && path[1] == _T('\\'))
   {
     // skip host and share name
     int x = 2;
@@ -357,20 +358,21 @@ int NSISCALL is_valid_instpath(TCHAR *s)
   return 1;
 }
 
-TCHAR * NSISCALL mystrstri(TCHAR *a, const TCHAR *b)
+// Used strictly for the wininit.ini file which is an ASCII file.
+char * NSISCALL mystrstriA(char *a, const char *b)
 {
-  int l = mystrlen(b);
-  while (mystrlen(a) >= l)
+  int l = lstrlenA(b);
+  while (lstrlenA(a) >= l)
   {
-    TCHAR c = a[l];
+    char c = a[l];
     a[l] = 0;
-    if (!lstrcmpi(a, b))
+    if (!lstrcmpiA(a, b))
     {
       a[l] = c;
       return a;
     }
     a[l] = c;
-    a = CharNext(a);
+    a = CharNextA(a);
   }
   return NULL;
 }
@@ -413,8 +415,7 @@ TCHAR * NSISCALL my_GetTempFileName(TCHAR *buf, const TCHAR *dir)
   int n = 100;
   while (n--)
   {
-    TCHAR prefix[4];
-    *(LPDWORD)prefix = CHAR4_TO_DWORD(_T('n'), _T('s'), _T('a'), 0);
+    TCHAR prefix[4] = _T("nsa");
     prefix[2] += (TCHAR)(GetTickCount() % 26);
     if (GetTempFileName(dir, prefix, 0, buf))
       return buf;
@@ -424,6 +425,106 @@ TCHAR * NSISCALL my_GetTempFileName(TCHAR *buf, const TCHAR *dir)
 }
 
 #ifdef NSIS_SUPPORT_MOVEONREBOOT
+/** Modifies the wininit.ini file to rename / delete a file.
+ *
+ * @param prevName The previous / current name of the file.
+ * @param newName The new name to move the file to.  If NULL, the current file
+ * will be deleted.
+ */
+void RenameViaWininit(const TCHAR* prevName, const TCHAR* newName)
+{
+  static char szRenameLine[1024];
+  static TCHAR wininit[1024];
+  static TCHAR tmpbuf[1024];
+
+  int cchRenameLine;
+  LPCSTR szRenameSec = "[Rename]\r\n"; // rename section marker
+  HANDLE hfile;
+  DWORD dwFileSize;
+  DWORD dwBytes;
+  DWORD dwRenameLinePos;
+  char *pszWinInit;   // Contains the file contents of wininit.ini
+
+  int spn;   // length of the short path name in TCHARs.
+
+  lstrcpy(tmpbuf, _T("NUL"));
+
+  if (newName) {
+    // create the file if it's not already there to prevent GetShortPathName from failing
+    CloseHandle(myOpenFile(newName,0,CREATE_NEW));
+    spn = GetShortPathName(newName,tmpbuf,1024);
+    if (!spn || spn > 1024)
+      return;
+  }
+  // wininit is used as a temporary here
+  spn = GetShortPathName(prevName,wininit,1024);
+  if (!spn || spn > 1024)
+    return;
+  cchRenameLine = wsprintfA(szRenameLine, "%s=%s\r\n", tmpbuf, wininit);
+  // Get the path to the wininit.ini file.
+  GetNSISString(wininit, g_header->str_wininit);
+
+  hfile = myOpenFile(wininit, GENERIC_READ | GENERIC_WRITE, OPEN_ALWAYS);
+
+  if (hfile != INVALID_HANDLE_VALUE)
+  {
+    // We are now working on the Windows wininit file
+    dwFileSize = GetFileSize(hfile, NULL);
+    pszWinInit = (char*) GlobalAlloc(GPTR, dwFileSize + cchRenameLine + 10);
+
+    if (pszWinInit != NULL)
+    {
+      if (ReadFile(hfile, pszWinInit, dwFileSize, &dwBytes, NULL) && dwFileSize == dwBytes)
+      {
+        // Look for the rename section in the current file.
+        LPSTR pszRenameSecInFile = mystrstriA(pszWinInit, szRenameSec);
+        if (pszRenameSecInFile == NULL)
+        {
+          // No rename section.  So we add it to the end of file.
+          lstrcpyA(pszWinInit+dwFileSize, szRenameSec);
+          dwFileSize += 10;
+          dwRenameLinePos = dwFileSize;
+        }
+        else
+        {
+          // There is a rename section, but is there another section after it?
+          char *pszFirstRenameLine = pszRenameSecInFile+10;
+          char *pszNextSec = mystrstriA(pszFirstRenameLine,"\n[");
+          if (pszNextSec)
+          {
+            TCHAR *p = ++pszNextSec;
+            while (p < pszWinInit + dwFileSize) {
+              p[cchRenameLine] = *p;
+              p++;
+            }
+
+            dwRenameLinePos = pszNextSec - pszWinInit;
+          }
+          // rename section is last, stick item at end of file
+          else dwRenameLinePos = dwFileSize;
+        }
+
+        mini_memcpy(&pszWinInit[dwRenameLinePos], szRenameLine, cchRenameLine);
+        dwFileSize += cchRenameLine;
+
+        SetFilePointer(hfile, 0, NULL, FILE_BEGIN);
+        WriteFile(hfile, pszWinInit, dwFileSize, &dwBytes, NULL);
+
+        GlobalFree(pszWinInit);
+      }
+    }
+    
+    CloseHandle(hfile);
+  }
+}
+
+/**
+ * MoveFileOnReboot tries to move a file by the name of pszExisting to the
+ * name pszNew.
+ *
+ * @param pszExisting The old name of the file.
+ * @param pszNew The new name of the file.
+ */
 void NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
 {
   BOOL fOk = 0;
@@ -434,86 +535,10 @@ void NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
   {
     fOk=mfea(pszExisting, pszNew, MOVEFILE_DELAY_UNTIL_REBOOT|MOVEFILE_REPLACE_EXISTING);
   }
-
+  
   if (!fOk)
   {
-    static TCHAR szRenameLine[1024];
-    static TCHAR wininit[1024];
-    static TCHAR tmpbuf[1024];
-    int cchRenameLine;
-    static const TCHAR szRenameSec[] = _T("[Rename]\r\n");
-    HANDLE hfile;
-    DWORD dwFileSize;
-    DWORD dwBytes;
-    DWORD dwRenameLinePos;
-    TCHAR *pszWinInit;
-
-    int spn;
-
-    *(DWORD*)tmpbuf = CHAR4_TO_DWORD(_T('N'), _T('U'), _T('L'), 0);
-
-    if (pszNew) {
-      // create the file if it's not already there to prevent GetShortPathName from failing
-      CloseHandle(myOpenFile(pszNew,0,CREATE_NEW));
-      spn = GetShortPathName(pszNew,tmpbuf,1024);
-      if (!spn || spn > 1024)
-        return;
-    }
-    // wininit is used as a temporary here
-    spn = GetShortPathName(pszExisting,wininit,1024);
-    if (!spn || spn > 1024)
-      return;
-    cchRenameLine = wsprintf(szRenameLine,_T("%s=%s\r\n"),tmpbuf,wininit);
-
-    GetNSISString(wininit, g_header->str_wininit);
-    hfile = myOpenFile(wininit, GENERIC_READ | GENERIC_WRITE, OPEN_ALWAYS);
-
-    if (hfile != INVALID_HANDLE_VALUE)
-    {
-      dwFileSize = GetFileSize(hfile, NULL);
-      pszWinInit = GlobalAlloc(GPTR, dwFileSize + cchRenameLine + 10);
-
-      if (pszWinInit != NULL)
-      {
-        if (ReadFile(hfile, pszWinInit, dwFileSize, &dwBytes, NULL) && dwFileSize == dwBytes)
-        {
-          LPTSTR pszRenameSecInFile = mystrstri(pszWinInit, szRenameSec);
-          if (pszRenameSecInFile == NULL)
-          {
-            mystrcpy(pszWinInit+dwFileSize, szRenameSec);
-            dwFileSize += 10;
-            dwRenameLinePos = dwFileSize;
-          }
-          else
-          {
-            TCHAR *pszFirstRenameLine = pszRenameSecInFile+10;
-            TCHAR *pszNextSec = mystrstri(pszFirstRenameLine,_T("\n["));
-            if (pszNextSec)
-            {
-              TCHAR *p = ++pszNextSec;
-              while (p < pszWinInit + dwFileSize) {
-                p[cchRenameLine] = *p;
-                p++;
-              }
-
-              dwRenameLinePos = pszNextSec - pszWinInit;
-            }
-            // rename section is last, stick item at end of file
-            else dwRenameLinePos = dwFileSize;
-          }
-
-          mini_memcpy(&pszWinInit[dwRenameLinePos], szRenameLine, cchRenameLine);
-          dwFileSize += cchRenameLine;
-
-          SetFilePointer(hfile, 0, NULL, FILE_BEGIN);
-          WriteFile(hfile, pszWinInit, dwFileSize, &dwBytes, NULL);
-
-          GlobalFree(pszWinInit);
-        }
-      }
-      
-      CloseHandle(hfile);
-    }
+    RenameViaWininit(pszExisting, pszNew);
   }
 
 #ifdef NSIS_SUPPORT_REBOOT
@@ -622,11 +647,16 @@ TCHAR * NSISCALL GetNSISString(TCHAR *outbuf, int strtab)
   // indexes into the language
   TCHAR *in = (TCHAR*)GetNSISStringNP(GetNSISTab(strtab));
   TCHAR *out = ps_tmpbuf;
-  if ((unsigned int) (outbuf - ps_tmpbuf) < sizeof(ps_tmpbuf))
+  
+  // Still working within ps_tmpbuf, so set out to the
+  // current position that is passed in.
+  if (outbuf >= ps_tmpbuf && 
+     (size_t) (outbuf - ps_tmpbuf) < _countof(ps_tmpbuf))
   {
     out = outbuf;
     outbuf = 0;
   }
+
   while (*in && out - ps_tmpbuf < NSIS_MAX_STRLEN)
   {
     _TUCHAR nVarIdx = (_TUCHAR)*in++;
@@ -949,6 +979,19 @@ struct MGA_FUNC
   const char *func;
 };
 
+#ifdef _UNICODE
+struct MGA_FUNC MGA_FUNCS[] = {
+  {"KERNEL32", "GetDiskFreeSpaceExW"},
+  {"KERNEL32", "MoveFileExW"},
+  {"ADVAPI32", "RegDeleteKeyExW"},
+  {"ADVAPI32", "OpenProcessToken"},
+  {"ADVAPI32", "LookupPrivilegeValueW"},
+  {"ADVAPI32", "AdjustTokenPrivileges"},
+  {"KERNEL32", "GetUserDefaultUILanguage"},
+  {"SHLWAPI",  "SHAutoComplete"},
+  {"SHFOLDER", "SHGetFolderPathW"}
+};
+#else
 struct MGA_FUNC MGA_FUNCS[] = {
   {"KERNEL32", "GetDiskFreeSpaceExA"},
   {"KERNEL32", "MoveFileExA"},
@@ -960,6 +1003,7 @@ struct MGA_FUNC MGA_FUNCS[] = {
   {"SHLWAPI",  "SHAutoComplete"},
   {"SHFOLDER", "SHGetFolderPathA"}
 };
+#endif
 
 /**
  * Given a function enum, it will load the appropriate DLL and get the

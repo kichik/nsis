@@ -76,7 +76,9 @@ size_t file_size(ifstream& file) {
   return (size_t)result;
 }
 
-vector<unsigned char> read_file(const string& filename) {
+// This function slurps the whole file into the vector.
+// Modified so the huge vector isn't returned by value.
+void read_file(const tstring& filename, vector<unsigned char>& data) {
   ifstream file(filename.c_str(), ios::binary);
 
   if (!file) {
@@ -86,16 +88,13 @@ vector<unsigned char> read_file(const string& filename) {
   // get the file size
   size_t filesize = file_size(file);
 
-  vector<unsigned char> result;
-  result.resize(filesize);
+  data.resize(filesize);
 
-  file.read(reinterpret_cast<TCHAR*>(&result[0]), filesize);
+  file.read(reinterpret_cast<char*>(&data[0]), filesize);
 
   if (size_t(file.tellg()) != filesize) { // ifstream::eof doesn't return true here
     throw NSISException("Couldn't read entire file '" + filename + "'");
   }
-
-  return result;
 }
 }
 
@@ -104,7 +103,7 @@ void Plugins::GetExports(const tstring &pathToDll, bool displayInfo)
   vector<unsigned char> dlldata;
   PIMAGE_NT_HEADERS NTHeaders;
   try {
-    dlldata = read_file(pathToDll);
+    read_file(pathToDll, dlldata);
     NTHeaders = CResourceEditor::GetNTHeaders(&dlldata[0]);
   } catch (std::runtime_error&) {
     return;

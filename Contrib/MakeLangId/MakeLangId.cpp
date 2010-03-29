@@ -218,7 +218,11 @@ BOOL CALLBACK DialogProc(HWND hwndDlg,UINT uMsg,WPARAM wParam,LPARAM lParam) {
 				GlobalUnlock(hMem);
 				if (!OpenClipboard(hwndDlg)) return 0;
 				EmptyClipboard();
+#ifdef _UNICODE
+				SetClipboardData(CF_UNICODETEXT,hMem);
+#else
 				SetClipboardData(CF_TEXT,hMem);
+#endif
 				CloseClipboard();
 			}
 		}

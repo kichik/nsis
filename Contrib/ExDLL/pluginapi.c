@@ -13,7 +13,7 @@ int NSISCALL popstring(TCHAR *str)
   stack_t *th;
   if (!g_stacktop || !*g_stacktop) return 1;
   th=(*g_stacktop);
-  if (str) lstrcpyA(str,th->text);
+  if (str) lstrcpy(str,th->text);
   *g_stacktop = th->next;
   GlobalFree((HGLOBAL)th);
   return 0;
@@ -24,7 +24,7 @@ int NSISCALL popstringn(TCHAR *str, int maxlen)
   stack_t *th;
   if (!g_stacktop || !*g_stacktop) return 1;
   th=(*g_stacktop);
-  if (str) lstrcpynA(str,th->text,maxlen?maxlen:g_stringsize);
+  if (str) lstrcpyn(str,th->text,maxlen?maxlen:g_stringsize);
   *g_stacktop = th->next;
   GlobalFree((HGLOBAL)th);
   return 0;
@@ -34,8 +34,8 @@ void NSISCALL pushstring(const TCHAR *str)
 {
   stack_t *th;
   if (!g_stacktop) return;
-  th=(stack_t*)GlobalAlloc(GPTR,sizeof(stack_t)+g_stringsize);
-  lstrcpynA(th->text,str,g_stringsize);
+  th=(stack_t*)GlobalAlloc(GPTR,(sizeof(stack_t)+(g_stringsize)*sizeof(TCHAR)));
+  lstrcpyn(th->text,str,g_stringsize);
   th->next=*g_stacktop;
   *g_stacktop=th;
 }
@@ -49,8 +49,107 @@ TCHAR * NSISCALL getuservariable(const int varnum)
 void NSISCALL setuservariable(const int varnum, const TCHAR *var)
 {
 	if (var != NULL && varnum >= 0 && varnum < __INST_LAST) 
-		lstrcpyA(g_variables + varnum*g_stringsize, var);
+		lstrcpy(g_variables + varnum*g_stringsize, var);
 }
+
+#ifdef _UNICODE
+int NSISCALL PopStringA(char* ansiStr)
+{
+   wchar_t* wideStr = (wchar_t*) GlobalAlloc(GPTR, g_stringsize*sizeof(wchar_t));
+   int rval = popstring(wideStr);
+   WideCharToMultiByte(CP_ACP, 0, wideStr, -1, ansiStr, g_stringsize, NULL, NULL);
+   GlobalFree((HGLOBAL)wideStr);
+   return rval;
+}
+
+int NSISCALL PopStringNA(char* ansiStr, int maxlen)
+{
+   int realLen = maxlen ? maxlen : g_stringsize;
+   wchar_t* wideStr = (wchar_t*) GlobalAlloc(GPTR, realLen*sizeof(wchar_t));
+   int rval = popstringn(wideStr, realLen);
+   WideCharToMultiByte(CP_ACP, 0, wideStr, -1, ansiStr, realLen, NULL, NULL);
+   GlobalFree((HGLOBAL)wideStr);
+   return rval;
+}
+
+void NSISCALL PushStringA(const char* ansiStr)
+{
+   wchar_t* wideStr = (wchar_t*) GlobalAlloc(GPTR, g_stringsize*sizeof(wchar_t));
+   MultiByteToWideChar(CP_ACP, 0, ansiStr, -1, wideStr, g_stringsize);
+   pushstring(wideStr);
+   GlobalFree((HGLOBAL)wideStr);
+   return;
+}
+
+void NSISCALL GetUserVariableW(const int varnum, wchar_t* wideStr)
+{
+   lstrcpyW(wideStr, getuservariable(varnum));
+}
+
+void NSISCALL GetUserVariableA(const int varnum, char* ansiStr)
+{
+   wchar_t* wideStr = getuservariable(varnum);
+   WideCharToMultiByte(CP_ACP, 0, wideStr, -1, ansiStr, g_stringsize, NULL, NULL);
+}
+
+void NSISCALL SetUserVariableA(const int varnum, const char* ansiStr)
+{
+   if (ansiStr != NULL && varnum >= 0 && varnum < __INST_LAST)
+   {
+      wchar_t* wideStr = g_variables + varnum * g_stringsize;
+      MultiByteToWideChar(CP_ACP, 0, ansiStr, -1, wideStr, g_stringsize);
+   }
+}
+
+#else
+// ANSI defs
+int NSISCALL PopStringW(wchar_t* wideStr)
+{
+   char* ansiStr = (char*) GlobalAlloc(GPTR, g_stringsize);
+   int rval = popstring(ansiStr);
+   MultiByteToWideChar(CP_ACP, 0, ansiStr, -1, wideStr, g_stringsize);
+   GlobalFree((HGLOBAL)ansiStr);
+   return rval;
+}
+
+int NSISCALL PopStringNW(wchar_t* wideStr, int maxlen)
+{
+   int realLen = maxlen ? maxlen : g_stringsize;
+   char* ansiStr = (char*) GlobalAlloc(GPTR, realLen);
+   int rval = popstringn(ansiStr, realLen);
+   MultiByteToWideChar(CP_ACP, 0, ansiStr, -1, wideStr, realLen);
+   GlobalFree((HGLOBAL)ansiStr);
+   return rval;
+}
+
+void NSISCALL PushStringW(wchar_t* wideStr)
+{
+   char* ansiStr = (char*) GlobalAlloc(GPTR, g_stringsize);
+   WideCharToMultiByte(CP_ACP, 0, wideStr, -1, ansiStr, g_stringsize, NULL, NULL);
+   pushstring(ansiStr);
+   GlobalFree((HGLOBAL)ansiStr);
+}
+
+void NSISCALL GetUserVariableW(const int varnum, wchar_t* wideStr)
+{
+   char* ansiStr = getuservariable(varnum);
+   MultiByteToWideChar(CP_ACP, 0, ansiStr, -1, wideStr, g_stringsize);
+}
+
+void NSISCALL GetUserVariableA(const int varnum, char* ansiStr)
+{
+   lstrcpyA(ansiStr, getuservariable(varnum));
+}
+
+void NSISCALL SetUserVariableW(const int varnum, const wchar_t* wideStr)
+{
+   if (wideStr != NULL && varnum >= 0 && varnum < __INST_LAST)
+   {
+      char* ansiStr = g_variables + varnum * g_stringsize;
+      WideCharToMultiByte(CP_ACP, 0, wideStr, -1, ansiStr, g_stringsize, NULL, NULL);
+   }
+}
+#endif
 
 // playing with integers
 
@@ -168,7 +267,7 @@ int NSISCALL myatoi_or(const TCHAR *s)
 int NSISCALL popint()
 {
   TCHAR buf[128];
-  if (popstringn(buf,sizeof(buf)))
+  if (popstringn(buf,_countof(buf)))
     return 0;
 
   return myatoi(buf);
@@ -177,7 +276,7 @@ int NSISCALL popint()
 int NSISCALL popint_or()
 {
   TCHAR buf[128];
-  if (popstringn(buf,sizeof(buf)))
+  if (popstringn(buf,_countof(buf)))
     return 0;
 
   return myatoi_or(buf);

@@ -151,18 +151,21 @@ void system_pushint(int value)
 	system_pushstring(buffer);
 }
 
-TCHAR *copymem(TCHAR *output, TCHAR *input, int size)
+void *copymem(void *output, void *input, size_t cbSize)
 {
-    TCHAR *out = output;
-    if ((input != NULL) && (output != NULL))
-        while (size-- > 0) *(out++) = *(input++);
-    return output;
+  BYTE *out = (BYTE*) output;
+  BYTE *in = (BYTE*) input;
+  if ((input != NULL) && (output != NULL))
+  {
+    while (cbSize-- > 0) *(out++) = *(in++);
+  }
+  return output;
 }
 
 HANDLE GlobalCopy(HANDLE Old)
 {
-	SIZE_T size = GlobalSize(Old);
-    return copymem(GlobalAlloc(GPTR, size), Old, (int) size);
+	size_t size = GlobalSize(Old);
+    return copymem(GlobalAlloc(GPTR, size), Old, size);
 }
 
 UINT_PTR NSISCallback(enum NSPIM msg)

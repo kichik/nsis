@@ -189,7 +189,7 @@ static tstring get_home()
 
 static int process_config(CEXEBuild& build, tstring& conf)
 {
-  FILE *cfg=fopen(conf.c_str(),_T("rt"));
+  FILE *cfg=FOPENTEXT(conf.c_str(),_T("rt"));
   if (cfg)
   {
     if (build.display_script) 
@@ -227,7 +227,7 @@ static int change_to_script_dir(CEXEBuild& build, tstring& script)
       _ftprintf(g_output,_T("Changing directory to: \"%s\"\n"),dir.c_str());
       fflush(g_output);
     }
-    if (chdir(dir.c_str()))
+    if (_tchdir(dir.c_str()))
     {
       if (build.display_errors)
       {
@@ -274,34 +274,34 @@ int _tmain(int argc, TCHAR **argv)
   }
   catch (exception& err)
   {
-    fprintf(g_output, _T("Error initalizing CEXEBuild: %s\n"), err.what());
+    _ftprintf(g_output, _T("Error initalizing CEXEBuild: %s\n"), CtoTString(err.what()));
     fflush(g_output);
     return 1;
   }
 
-  if (argc > 1 && IS_OPT(argv[1]) && !stricmp(&argv[1][1],_T("VERSION")))
+  if (argc > 1 && IS_OPT(argv[tmpargpos]) && !_tcsicmp(&argv[tmpargpos][1],_T("VERSION")))
   {
-    fprintf(g_output,NSIS_VERSION);
+    _ftprintf(g_output,NSIS_VERSION);
     fflush(g_output);
     return 0;
   }
-  if (argc > 1 && IS_OPT(argv[1]) && (argv[1][1]==_T('v') || argv[1][1]==_T('V')))
+  if (argc > 1 && IS_OPT(argv[tmpargpos]) && (argv[tmpargpos][1]==_T('v') || argv[tmpargpos][1]==_T('V')))
   {
-    tmpargpos++;
-    if (argv[1][2] <= _T('2') && argv[1][2] >= _T('0'))
+    if (argv[tmpargpos][2] <= _T('2') && argv[tmpargpos][2] >= _T('0'))
     {
       no_logo=1;
     }
+   tmpargpos++;
   }
   
   if (!no_logo)
   {
     if (argc > tmpargpos && IS_OPT(argv[tmpargpos]) && (argv[tmpargpos][1]==_T('o') || argv[tmpargpos][1]==_T('O')) && argv[tmpargpos][2])
     {
-      g_output=fopen(argv[tmpargpos]+2,_T("w"));
+      g_output=FOPENTEXT(argv[tmpargpos]+2,_T("w"));
       if (!g_output) 
       {
-        printf(_T("Error opening output log for writing. Using stdout.\n"));
+        _tprintf(_T("Error opening output log for writing. Using stdout.\n"));
         g_output=stdout;
       }
       outputtried=1;
@@ -321,7 +321,7 @@ int _tmain(int argc, TCHAR **argv)
       if ((argv[argpos][1]==_T('D') || argv[argpos][1]==_T('d')) && argv[argpos][2])
       {
         TCHAR *p=argv[argpos]+2;
-        TCHAR *s=strdup(p),*v;
+        TCHAR *s=_tcsdup(p),*v;
         if (build.display_script) 
         {
           _ftprintf(g_output,_T("Command line defined: \"%s\"\n"),p);
@@ -344,7 +344,7 @@ int _tmain(int argc, TCHAR **argv)
       {
         if (!outputtried)
         {
-          g_output=fopen(argv[argpos]+2,_T("w"));
+          g_output=FOPENTEXT(argv[argpos]+2,_T("w"));
           if (!g_output) 
           {
             if (build.display_errors) _tprintf(_T("Error opening output log for writing. Using stdout.\n"));
@@ -353,7 +353,7 @@ int _tmain(int argc, TCHAR **argv)
           outputtried=1;
         }
       }
-      else if (!stricmp(&argv[argpos][1],_T("NOCD"))) do_cd=0;
+      else if (!_tcsicmp(&argv[argpos][1],_T("NOCD"))) do_cd=0;
       else if ((argv[argpos][1] == _T('V') || argv[argpos][1] == _T('v')) && 
                argv[argpos][2] >= _T('0') && argv[argpos][2] <= _T('4') && !argv[argpos][3])
       {
@@ -364,9 +364,9 @@ int _tmain(int argc, TCHAR **argv)
         build.display_errors=v>0;
         g_display_errors=build.display_errors;
       }
-      else if (!stricmp(&argv[argpos][1],_T("NOCONFIG"))) g_noconfig=1;
-      else if (!stricmp(&argv[argpos][1],_T("PAUSE"))) g_dopause=1;
-      else if (!stricmp(&argv[argpos][1],_T("LICENSE"))) 
+      else if (!_tcsicmp(&argv[argpos][1],_T("NOCONFIG"))) g_noconfig=1;
+      else if (!_tcsicmp(&argv[argpos][1],_T("PAUSE"))) g_dopause=1;
+      else if (!_tcsicmp(&argv[argpos][1],_T("LICENSE"))) 
       {
         if (build.display_info) 
         {
@@ -374,7 +374,7 @@ int _tmain(int argc, TCHAR **argv)
         }
         nousage++;
       }
-      else if (!stricmp(&argv[argpos][1],_T("CMDHELP")))
+      else if (!_tcsicmp(&argv[argpos][1],_T("CMDHELP")))
       {
         if (argpos < argc-1)
           build.print_help(argv[++argpos]);
@@ -382,7 +382,7 @@ int _tmain(int argc, TCHAR **argv)
           build.print_help(NULL);
         nousage++;
       }
-      else if (!stricmp(&argv[argpos][1],_T("NOTIFYHWND")))
+      else if (!_tcsicmp(&argv[argpos][1],_T("NOTIFYHWND")))
       {
 #ifdef _WIN32
         build.notify_hwnd=(HWND)_ttol(argv[++argpos]);
@@ -393,7 +393,7 @@ int _tmain(int argc, TCHAR **argv)
         build.warning(OPT_STR _T("NOTIFYHWND is disabled for non Win32 platforms."));
 #endif
       }
-      else if (!stricmp(&argv[argpos][1],_T("HDRINFO")))
+      else if (!_tcsicmp(&argv[argpos][1],_T("HDRINFO")))
       {
         print_stub_info(build);
         nousage++;
@@ -479,11 +479,11 @@ int _tmain(int argc, TCHAR **argv)
         else
         {
           _tcscpy(sfile,argv[argpos]);
-          fp=fopen(sfile,_T("rt"));
+          fp=FOPENTEXT(sfile,_T("rt"));
           if (!fp)
           {
             _stprintf(sfile,_T("%s.nsi"),argv[argpos]);
-            fp=fopen(sfile,_T("rt"));
+            fp=FOPENTEXT(sfile,_T("rt"));
             if (!fp)
             {
               if (build.display_errors) 

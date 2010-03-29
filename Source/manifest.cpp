@@ -33,7 +33,9 @@ string generate(comctl comctl_selection, exec_level exec_level_selection)
   if (comctl_selection == comctl_old && exec_level_selection == exec_level_none)
     return "";
 
-  string xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><assembly xmlns=\"urn:schemas-microsoft-com:asm.v1\" manifestVersion=\"1.0\"><assemblyIdentity version=\"1.0.0.0\" processorArchitecture=\"X86\" name=\"Nullsoft.NSIS.exehead\" type=\"win32\"/><description>Nullsoft Install System " NSIS_VERSION "</description>";
+  string xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><assembly xmlns=\"urn:schemas-microsoft-com:asm.v1\" manifestVersion=\"1.0\"><assemblyIdentity version=\"1.0.0.0\" processorArchitecture=\"X86\" name=\"Nullsoft.NSIS.exehead\" type=\"win32\"/><description>Nullsoft Install System ";
+  xml += TtoCString(NSIS_VERSION);
+  xml += "</description>";
 
   if (comctl_selection == comctl_xp)
   {

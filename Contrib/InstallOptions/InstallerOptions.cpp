@@ -344,19 +344,19 @@ bool WINAPI SaveSettings(void) {
           {
             switch (*p1) {
               case _T('\t'):
-                *(LPWORD)p2 = CHAR2_TO_WORD('\\', 't');
-                p2++;
+                *p2++ = _T('\\');
+                *p2   = _T('t');
                 break;
               case _T('\n'):
-                *(LPWORD)p2 = CHAR2_TO_WORD('\\', 'n');
-                p2++;
+                *p2++ = _T('\\');
+                *p2   = _T('n');
                 break;
               case _T('\r'):
-                *(LPWORD)p2 = CHAR2_TO_WORD('\\', 'r');
-                p2++;
+                *p2++ = _T('\\');
+                *p2   = _T('n');
                 break;
               case _T('\\'):
-                *p2++ = '\\';
+                *p2 = _T('\\');
                 // Jim Park: used to be p2++ but that's a bug that works because
                 // CharNext()'s behavior at terminating null char.  But still
                 // definitely, unsafe.
@@ -672,13 +672,17 @@ LRESULT WINAPI WMCommandProc(HWND hWnd, UINT id, HWND hwndCtl, UINT codeNotify) 
         ULONG eaten;
         LPITEMIDLIST root;
         int ccRoot = (lstrlen(pField->pszRoot) * 2) + 2;
+        SHGetDesktopFolder(&sf);
+#ifdef _UNICODE
+        sf->ParseDisplayName(hConfigWindow, NULL, pField->pszRoot, &eaten, &root, NULL);
+#else
         LPWSTR pwszRoot = (LPWSTR) MALLOC(ccRoot);
         MultiByteToWideChar(CP_ACP, 0, pField->pszRoot, -1, pwszRoot, ccRoot);
-        SHGetDesktopFolder(&sf);
         sf->ParseDisplayName(hConfigWindow, NULL, pwszRoot, &eaten, &root, NULL);
+        FREE(pwszRoot);
+#endif
         bi.pidlRoot = root;
         sf->Release();
-        FREE(pwszRoot);
       }
       //CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);
       LPITEMIDLIST pResult = SHBrowseForFolder(&bi);
@@ -892,7 +896,11 @@ int WINAPI NumbersOnlyPasteWndProc(HWND hWin, UINT uMsg, WPARAM wParam, LPARAM l
   {
     if (OpenClipboard(hWin))
     {
+#ifdef _UNICODE
+      HGLOBAL hData = GetClipboardData(CF_UNICODETEXT);
+#else
       HGLOBAL hData = GetClipboardData(CF_TEXT);
+#endif
       
       if (hData)
       {
@@ -1113,7 +1121,7 @@ int WINAPI createCfgDlg()
 
 #undef DEFAULT_STYLES
 
-    if (pField->nType < 1 || pField->nType > (int)(sizeof(ClassTable) / sizeof(ClassTable[0])))
+    if (pField->nType < 1 || pField->nType > (int)(_countof(ClassTable)))
       continue;
 
     DWORD dwStyle, dwExStyle;
@@ -1622,41 +1630,38 @@ int WINAPI LookupTokens(TableEntry* psTable_, TCHAR* pszTokens_)
  */
 void WINAPI ConvertNewLines(TCHAR *str) {
   TCHAR *p1, *p2, *p3;
+  TCHAR tch0, tch1, nch;
 
   if (!str)
     return;
 
   p1 = p2 = str;
 
-  while (*p1)
+  while ((tch0 = *p1) != 0)
   {
-    switch (*(LPWORD)p1)
+    nch = 0;  // new translated char
+    if (tch0 == _T('\\'))
     {
-    case CHAR2_TO_WORD(_T('\\'), _T('t')):
-      *p2 = _T('\t');
-      p1 += 2;
-      p2++;
-      break;
-    case CHAR2_TO_WORD(_T('\\'), _T('n')):
-      *p2 = _T('\n');
-      p1 += 2;
-      p2++;
-      break;
-    case CHAR2_TO_WORD(_T('\\'), _T('r')):
-      *p2 = _T('\r');
-      p1 += 2;
-      p2++;
-      break;
-    case CHAR2_TO_WORD(_T('\\'), _T('\\')):
-      *p2 = _T('\\');
-      p1 += 2;
-      p2++;
-      break;
-    default:
+      tch1 = *(p1+1);
+      
+      if      (tch1 == _T('t'))  nch = _T('\t');
+      else if (tch1 == _T('n'))  nch = _T('\n');
+      else if (tch1 == _T('r'))  nch = _T('\r');
+      else if (tch1 == _T('\\')) nch = _T('\\');
+    }
+
+    // Was it a special char?
+    if (nch)
+    {
+      *p2++ = nch;
+      p1   += 2;
+    }
+    else
+    {
+      // For MBCS
       p3 = CharNext(p1);
       while (p1 < p3)
         *p2++ = *p1++;
-      break;
     }
   }
 

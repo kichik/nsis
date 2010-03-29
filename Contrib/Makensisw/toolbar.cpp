@@ -123,8 +123,8 @@ void UpdateToolBarCompressorButton()
 {
   int iBitmap;
   int iString;
-  TCHAR   szBuffer[64];
-  TCHAR   temp[32];
+  TCHAR   szBuffer[124]; // increased to 124 for good measure, also.
+  TCHAR   temp[64]; // increased to 64.  Hit limit 08/20/2007 -- Jim Park.
   TOOLINFO ti;
 
   my_memset(&ti, 0, sizeof(TOOLINFO));
@@ -139,14 +139,14 @@ void UpdateToolBarCompressorButton()
   LoadString(g_sdata.hInstance,
              IDS_COMPRESSOR,
              temp,
-             sizeof(temp));
+             _countof(temp));
   my_memset(szBuffer, 0, sizeof(szBuffer));
   lstrcat(szBuffer,temp);
   lstrcat(szBuffer,_T(" ["));
   LoadString(g_sdata.hInstance,
              iString,
              temp,
-             sizeof(temp));
+             _countof(temp));
   lstrcat(szBuffer,temp);
   lstrcat(szBuffer,_T("]"));
 
@@ -181,7 +181,7 @@ void AddToolBarButtonTooltip(int id, int iString)
   LoadString(g_sdata.hInstance,
              iString,
              szBuffer,
-             sizeof(szBuffer));
+             _countof(szBuffer));
   ti.lpszText = (LPTSTR) szBuffer;
   ti.rect.left =rect.left;
   ti.rect.top = rect.top;
