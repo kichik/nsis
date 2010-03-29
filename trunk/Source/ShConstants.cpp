@@ -76,6 +76,8 @@ TCHAR* ConstantsStringList::idx2name(int idx)
 int ConstantsStringList::get_internal_idx(int idx)
 {
   struct constantstring *data=(struct constantstring *)gr.get();      
+
+  // We do a linear search because the strings are sorted.
   for (int i = 0; i < index; i++)
   {
     if (data[i].index == idx)

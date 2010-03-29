@@ -28,7 +28,7 @@ BOOL CALLBACK BannerProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
     int iMainStringSet = 0;
 
     popstring(buf);
-    while (*(int*)buf == CHAR4_TO_DWORD('/','s','e','t') && !buf[4])
+    while (lstrcmp(buf, _T("/set")) == 0)
     {
       unsigned int id;
       popstring(buf);

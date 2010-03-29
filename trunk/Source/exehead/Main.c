@@ -146,8 +146,7 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPTSTR lpszCmdPara
     {
       cmdline++;
 
-// this only works with spaces because they have just one bit on
-#define END_OF_ARG(c) (((c)|_T(' '))==_T(' '))
+#define END_OF_ARG(c) (c == _T(' ') || c == _T('\0'))
 
 #if defined(NSIS_CONFIG_VISIBLE_SUPPORT) && defined(NSIS_CONFIG_SILENT_SUPPORT)
       if (cmdline[0] == _T('S') && END_OF_ARG(cmdline[1]))

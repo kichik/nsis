@@ -46,7 +46,7 @@ CallbackThunk* CallbackThunkListHead;
 HINSTANCE g_hInstance;
 
 // Return to callback caller with stack restore
-TCHAR retexpr[4];
+char retexpr[4];
 HANDLE retaddr;
 
 TCHAR *GetResultStr(SystemProc *proc)
@@ -61,7 +61,7 @@ TCHAR *GetResultStr(SystemProc *proc)
 #ifdef SYSTEM_LOG_DEBUG
 
 // System log debugging turned on
-#define SYSTEM_LOG_ADD(a)  { register int _len = lstrlen(syslogbuf); lstrcpyn(syslogbuf + _len, a, sizeof(syslogbuf) - _len); }
+#define SYSTEM_LOG_ADD(a)  { register int _len = lstrlen(syslogbuf); lstrcpyn(syslogbuf + _len, a, _countof(syslogbuf) - _len); }
 #define SYSTEM_LOG_POST     { SYSTEM_LOG_ADD(_T("\n")); WriteToLog(syslogbuf); *syslogbuf = 0; }
 
 HANDLE logfile = NULL;
@@ -82,11 +82,18 @@ void WriteToLog(TCHAR *buffer)
     wsprintf(timebuffer, _T("%04d  %04d.%03d    "), (++logop)%10000, (GetTickCount() / 1000) % 10000,
         GetTickCount() % 1000);
 
+#ifdef _UNICODE
+#ifdef _RPTW0
+    _RPTW0(_CRT_WARN, timebuffer);
+    _RPTW0(_CRT_WARN, buffer);
+#endif
+#else
     _RPT0(_CRT_WARN, timebuffer);
     _RPT0(_CRT_WARN, buffer);
+#endif
 
-    WriteFile(logfile, timebuffer, lstrlen(timebuffer), &written, NULL);
-    WriteFile(logfile, buffer, lstrlen(buffer), &written, NULL);
+    WriteFile(logfile, timebuffer, lstrlen(timebuffer)*sizeof(TCHAR), &written, NULL);
+    WriteFile(logfile, buffer, lstrlen(buffer)*sizeof(TCHAR), &written, NULL);
 //    FlushFileBuffers(logfile);
 }
 
@@ -108,10 +115,17 @@ PLUGINFUNCTION(Debug)
             SetFilePointer(logfile, 0, 0, FILE_END);
 
             logop = 0;
+#ifdef _UNICODE
+            {   // write Unicode Byte-Order Mark
+                DWORD written;
+                unsigned short bom = 0xfeff;
+                WriteFile(logfile, &bom, 2, &written, NULL);
+            }
+#endif
             GetLocalTime(&t);
             GetTimeFormat(LOCALE_SYSTEM_DEFAULT, LOCALE_NOUSEROVERRIDE, &t, NULL, buftime, 1024);
             GetDateFormat(LOCALE_SYSTEM_DEFAULT, LOCALE_NOUSEROVERRIDE, &t, NULL, bufdate, 1024);
-            wsprintf(buffer, _T("System, %s %s [build "__TIME__" ")__DATE___T("]\n"), buftime, bufdate);
+            wsprintf(buffer, _T("System, %s %s [build ") __TTIME__ _T(" ") __TDATE__ _T("]\n"), buftime, bufdate);
             WriteToLog(buffer);
         } else ;
     else
@@ -543,9 +557,9 @@ SystemProc *PrepareProc(BOOL NeedForCall)
             case _T('l'):
             case _T('L'): temp2 = PAT_LONG; break;
             case _T('m'):
-            case _T('M'):
+            case _T('M'): temp2 = PAT_STRING; break;
             case _T('t'):
-            case _T('T'): temp2 = PAT_STRING; break;
+            case _T('T'): temp2 = PAT_STRING; break; // will be PAT_WSTRING for Unicode NSIS
             case _T('g'):
             case _T('G'): temp2 = PAT_GUID; break;
             case _T('w'):
@@ -705,7 +719,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
                 // Use direct system proc address
                 int addr;
 
-                proc->Dll = (HANDLE) INT_TO_POINTER(myatoi64(proc->DllName));
+                proc->Dll = (HMODULE) INT_TO_POINTER(myatoi64(proc->DllName));
   
                 if (proc->Dll == 0)
                 {
@@ -749,8 +763,13 @@ SystemProc *PrepareProc(BOOL NeedForCall)
                 // Get proc address
                 if ((proc->Proc = GetProcAddress(proc->Dll, proc->ProcName)) == NULL)
                 {
+#ifdef _UNICODE
+                    // automatic W discover
+                    lstrcat(proc->ProcName, _T("W"));
+#else
                     // automatic A discover
-                    lstrcat(proc->ProcName, _T("A"));
+                    lstrcat(proc->ProcName, "A");
+#endif
                     if ((proc->Proc = GetProcAddress(proc->Dll, proc->ProcName)) == NULL)
                         proc->ProcResult = PR_ERROR;                            
                 }                    
@@ -826,7 +845,7 @@ void ParamsIn(SystemProc *proc)
             break;
         case PAT_WSTRING:
         case PAT_GUID:
-            wstr = (LPWSTR) (par->allocatedBlock = GlobalAlloc(GPTR, g_stringsize*2));
+            wstr = (LPWSTR) (par->allocatedBlock = GlobalAlloc(GPTR, g_stringsize*sizeof(WCHAR)));
             MultiByteToWideChar(CP_ACP, 0, realbuf, g_stringsize, wstr, g_stringsize);
             if (par->Type == PAT_GUID)
             {
@@ -900,7 +919,7 @@ void ParamsOut(SystemProc *proc)
             break;
         case PAT_STRING:
             {
-                unsigned num = lstrlen(*((TCHAR**) place));
+                unsigned int num = lstrlen(*((TCHAR**) place));
                 if (num >= g_stringsize) num = g_stringsize-1;
                 lstrcpyn(realbuf,*((TCHAR**) place), num+1);
                 realbuf[num] = 0;                
@@ -908,7 +927,7 @@ void ParamsOut(SystemProc *proc)
             break;
         case PAT_GUID:
             wstr = (LPWSTR) GlobalAlloc(GPTR, g_stringsize*2);
-            StringFromGUID2(*((REFGUID*)place), wstr, g_stringsize*2);
+            StringFromGUID2(*((REFGUID*)place), wstr, g_stringsize);
             WideCharToMultiByte(CP_ACP, 0, wstr, g_stringsize, realbuf, g_stringsize, NULL, NULL); 
             GlobalFree((HGLOBAL)wstr);
             break;
@@ -942,7 +961,6 @@ HANDLE CreateCallback(SystemProc *cbproc)
 {
     char *mem;
 
-
     if (cbproc->Proc == NULL)
     {
         // Set callback index
@@ -975,7 +993,7 @@ void CallStruct(SystemProc *proc)
 {
     BOOL ssflag;
     int i, structsize = 0, size = 0;
-    TCHAR *st, *ptr;
+    char *st, *ptr;
 
     SYSTEM_LOG_ADD(_T("\t\tStruct..."));
 
@@ -994,7 +1012,7 @@ void CallStruct(SystemProc *proc)
         if (structsize == 0) structsize = (int) GlobalSize((HANDLE) proc->Proc);
     
     // Pointer to current data
-    st = (TCHAR*) proc->Proc;
+    st = (char*) proc->Proc;
 
     for (i = 1; i <= proc->ParamCount; i++)
     {
@@ -1005,7 +1023,7 @@ void CallStruct(SystemProc *proc)
         {
             // Normal
             size = proc->Params[i].Size*4;
-            ptr = (TCHAR*) &(proc->Params[i].Value);
+            ptr = (char*) &(proc->Params[i].Value);
         }
         else
         {
@@ -1026,13 +1044,14 @@ void CallStruct(SystemProc *proc)
                 // clear unused value bits
                 proc->Params[i].Value &= intmask[((size >= 0) && (size < 4))?(size):(0)];
                 // pointer
-                ptr = (TCHAR*) &(proc->Params[i].Value); 
+                ptr = (char*) &(proc->Params[i].Value); 
                 break;
 
             case PAT_STRING: 
             case PAT_GUID: 
             case PAT_WSTRING: 
-                ptr = (TCHAR*) proc->Params[i].Value; break;
+                // Jim Park: Pointer for memcopy, so keep as char*
+                ptr = (char*) proc->Params[i].Value; break;
             }
         }
 
@@ -1071,7 +1090,7 @@ the same means as used for the _RPT0 macro. This leads to an endless recursion.
 
 BOOL WINAPI DllMain(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
 {
-        g_hInstance=hInst;
+        g_hInstance=(HINSTANCE)hInst;
         
         if (ul_reason_for_call == DLL_PROCESS_ATTACH)
         {
@@ -1084,7 +1103,6 @@ BOOL WINAPI DllMain(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
             LastError = 0;
             LastProc = NULL;
             CallbackIndex = 0;
-            retexpr[0] = (char) 0xC2;
             CallbackThunkListHead = NULL;
             retexpr[0] = (char) 0xC2;
             retexpr[2] = 0x00;
@@ -1180,7 +1198,6 @@ unsigned int GetSizeOfProcParam(void)
 {
 		return (sizeof(ProcParameter));
 }
-
 
 /*
 Returns offset for element Size of ProcParameter structure

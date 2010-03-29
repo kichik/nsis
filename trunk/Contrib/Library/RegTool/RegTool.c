@@ -63,11 +63,13 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
                 continue;
 
               wsprintf(valname, _T("%u.file"), j);
-              l = STR_SIZE;
+              l = (lstrlen(file)+1)*sizeof(TCHAR);
               if (FAILED(RegQueryValueEx(key, valname, NULL, &t, (LPBYTE) file, &l)) || t != REG_SZ)
                 continue;
 
-              RegFile(mode[0], file, mode[1] == _T('X'));
+              // JP: Note, if this mode[1] is used as anything but a boolean later on,
+              // we'll need to consider the next line carefully.
+              RegFile(mode[0], file, mode[1] == 'X');
             }
           }
 
@@ -208,31 +210,139 @@ void RegTypeLib(TCHAR *file)
   }
 }
 
-TCHAR *mystrstri(TCHAR *a, TCHAR *b)
+char *mystrstriA(char *a, const char *b)
 {
-  int l = lstrlen(b);
-  while (lstrlen(a) >= l)
+  int l = lstrlenA(b);
+  while (lstrlenA(a) >= l)
   {
-    TCHAR c = a[l];
+    char c = a[l];
     a[l] = 0;
-    if (!lstrcmpi(a, b))
+    if (!lstrcmpiA(a, b))
     {
       a[l] = c;
       return a;
     }
     a[l] = c;
-    a = CharNext(a);
+    a = CharNextA(a);
   }
   return NULL;
 }
 
 void mini_memcpy(void *out, const void *in, int len)
 {
-  TCHAR *c_out=(TCHAR*)out;
-  TCHAR *c_in=(TCHAR *)in;
+  char *c_out=(char*)out;
+  char *c_in=(char *)in;
   while (len-- > 0)
   {
     *c_out++=*c_in++;
+  }
+}
+
+HANDLE myOpenFile(const TCHAR *fn, DWORD da, DWORD cd)
+{
+  int attr = GetFileAttributes(fn);
+  return CreateFile(
+    fn,
+    da,
+    FILE_SHARE_READ,
+    NULL,
+    cd,
+    attr == INVALID_FILE_ATTRIBUTES ? 0 : attr,
+    NULL
+  );
+}
+
+/** Modifies the wininit.ini file to rename / delete a file.
+ *
+ * @param prevName The previous / current name of the file.
+ * @param newName The new name to move the file to.  If NULL, the current file
+ * will be deleted.
+ */
+void RenameViaWininit(const TCHAR* prevName, const TCHAR* newName)
+{
+  static char szRenameLine[1024];
+  static TCHAR wininit[1024];
+  static TCHAR tmpbuf[1024];
+
+  int cchRenameLine;
+  LPCSTR szRenameSec = "[Rename]\r\n"; // rename section marker
+  HANDLE hfile;
+  DWORD dwFileSize;
+  DWORD dwBytes;
+  DWORD dwRenameLinePos;
+  char *pszWinInit;   // Contains the file contents of wininit.ini
+
+  int spn;   // length of the short path name in TCHARs.
+
+  lstrcpy(tmpbuf, _T("NUL"));
+
+  if (newName) {
+    // create the file if it's not already there to prevent GetShortPathName from failing
+    CloseHandle(myOpenFile(newName,0,CREATE_NEW));
+    spn = GetShortPathName(newName,tmpbuf,1024);
+    if (!spn || spn > 1024)
+      return;
+  }
+  // wininit is used as a temporary here
+  spn = GetShortPathName(prevName,wininit,1024);
+  if (!spn || spn > 1024)
+    return;
+  cchRenameLine = wsprintfA(szRenameLine, "%s=%s\r\n", tmpbuf, wininit);
+  // Get the path to the wininit.ini file.
+  GetWindowsDirectory(wininit, 1024-16);
+  lstrcat(wininit, _T("\\wininit.ini"));
+
+  hfile = myOpenFile(wininit, GENERIC_READ | GENERIC_WRITE, OPEN_ALWAYS);
+
+  if (hfile != INVALID_HANDLE_VALUE)
+  {
+    // We are now working on the Windows wininit file
+    dwFileSize = GetFileSize(hfile, NULL);
+    pszWinInit = (char*) GlobalAlloc(GPTR, dwFileSize + cchRenameLine + 10);
+
+    if (pszWinInit != NULL)
+    {
+      if (ReadFile(hfile, pszWinInit, dwFileSize, &dwBytes, NULL) && dwFileSize == dwBytes)
+      {
+        // Look for the rename section in the current file.
+        LPSTR pszRenameSecInFile = mystrstriA(pszWinInit, szRenameSec);
+        if (pszRenameSecInFile == NULL)
+        {
+          // No rename section.  So we add it to the end of file.
+          lstrcpyA(pszWinInit+dwFileSize, szRenameSec);
+          dwFileSize += 10;
+          dwRenameLinePos = dwFileSize;
+        }
+        else
+        {
+          // There is a rename section, but is there another section after it?
+          char *pszFirstRenameLine = pszRenameSecInFile+10;
+          char *pszNextSec = mystrstriA(pszFirstRenameLine,"\n[");
+          if (pszNextSec)
+          {
+            TCHAR *p = ++pszNextSec;
+            while (p < pszWinInit + dwFileSize) {
+              p[cchRenameLine] = *p;
+              p++;
+            }
+
+            dwRenameLinePos = pszNextSec - pszWinInit;
+          }
+          // rename section is last, stick item at end of file
+          else dwRenameLinePos = dwFileSize;
+        }
+
+        mini_memcpy(&pszWinInit[dwRenameLinePos], szRenameLine, cchRenameLine);
+        dwFileSize += cchRenameLine;
+
+        SetFilePointer(hfile, 0, NULL, FILE_BEGIN);
+        WriteFile(hfile, pszWinInit, dwFileSize, &dwBytes, NULL);
+
+        GlobalFree(pszWinInit);
+      }
+    }
+    
+    CloseHandle(hfile);
   }
 }
 
@@ -253,73 +363,6 @@ void DeleteFileOnReboot(TCHAR *pszFile)
 
   if (!fOk)
   {
-    static TCHAR szRenameLine[1024];
-    static TCHAR wininit[1024];
-    int cchRenameLine;
-    TCHAR *szRenameSec = _T("[Rename]\r\n");
-    HANDLE hfile, hfilemap;
-    DWORD dwFileSize, dwRenameLinePos;
-
-    int spn;
-
-    // wininit is used as a temporary here
-    spn = GetShortPathName(pszFile,wininit,1024);
-    if (!spn || spn > 1024)
-      return;
-    cchRenameLine = wsprintf(szRenameLine,_T("NUL=%s\r\n"),wininit);
-
-    GetWindowsDirectory(wininit, 1024-16);
-    lstrcat(wininit, _T("\\wininit.ini"));
-    hfile = CreateFile(wininit,
-        GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_ALWAYS,
-        FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, NULL);
-
-    if (hfile != INVALID_HANDLE_VALUE)
-    {
-      dwFileSize = GetFileSize(hfile, NULL);
-      hfilemap = CreateFileMapping(hfile, NULL, PAGE_READWRITE, 0, dwFileSize + cchRenameLine + 10, NULL);
-
-      if (hfilemap != NULL)
-      {
-        LPTSTR pszWinInit = (LPTSTR) MapViewOfFile(hfilemap, FILE_MAP_WRITE, 0, 0, 0);
-
-        if (pszWinInit != NULL)
-        {
-          LPTSTR pszRenameSecInFile = mystrstri(pszWinInit, szRenameSec);
-          if (pszRenameSecInFile == NULL)
-          {
-            lstrcpy(pszWinInit+dwFileSize, szRenameSec);
-            dwFileSize += 10;
-            dwRenameLinePos = dwFileSize;
-          }
-          else
-          {
-            TCHAR *pszFirstRenameLine = pszRenameSecInFile+10;
-            TCHAR *pszNextSec = mystrstri(pszFirstRenameLine,_T("\n["));
-            if (pszNextSec)
-            {
-              TCHAR *p = ++pszNextSec;
-              while (p < pszWinInit + dwFileSize) {
-                p[cchRenameLine] = *p;
-                p++;
-              }
-
-              dwRenameLinePos = pszNextSec - pszWinInit;
-            }
-            // rename section is last, stick item at end of file
-            else dwRenameLinePos = dwFileSize;
-          }
-
-          mini_memcpy(&pszWinInit[dwRenameLinePos], szRenameLine, cchRenameLine);
-          dwFileSize += cchRenameLine;
-
-          UnmapViewOfFile(pszWinInit);
-        }
-        CloseHandle(hfilemap);
-      }
-      SetFilePointer(hfile, dwFileSize, NULL, FILE_BEGIN);
-      SetEndOfFile(hfile);
-      CloseHandle(hfile);
-    }
+    RenameViaWininit(pszFile, NULL);
   }
 }

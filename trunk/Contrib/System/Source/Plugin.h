@@ -27,7 +27,7 @@ extern int popint64();  // -1 -> stack empty
 extern void system_pushint(int value);
 
 extern HANDLE GlobalCopy(HANDLE Old);
-extern TCHAR *copymem(TCHAR *output, TCHAR *input, int size);
+extern void *copymem(void *output, void *input, size_t cbSize);
 
 extern UINT_PTR NSISCallback(enum NSPIM);
 

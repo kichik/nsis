@@ -436,12 +436,6 @@ void CDialogTemplate::ConvertToRTL() {
   for (unsigned int i = 0; i < m_vItems.size(); i++) {
     bool addExStyle = false;
     bool addExLeftScrollbar = true;
-    char *szClass;
-    
-    if (IS_INTRESOURCE(m_vItems[i]->szClass))
-      szClass = (char *) m_vItems[i]->szClass;
-    else
-      szClass = winchar_toansi(m_vItems[i]->szClass);
 
     // Button
     if ((ULONG_PTR)(m_vItems[i]->szClass) == 0x80) {
@@ -474,18 +468,18 @@ void CDialogTemplate::ConvertToRTL() {
         m_vItems[i]->dwStyle |= SS_CENTERIMAGE;
       }
     }
-    else if (!IS_INTRESOURCE(m_vItems[i]->szClass) && !stricmp(szClass, "RichEdit20A")) {
+    else if (!IS_INTRESOURCE(m_vItems[i]->szClass) && !_wcsicmp(m_vItems[i]->szClass, L"RichEdit20A")) {
       if ((m_vItems[i]->dwStyle & ES_CENTER) == 0) {
         m_vItems[i]->dwStyle ^= ES_RIGHT;
       }
     }
-    else if (!IS_INTRESOURCE(m_vItems[i]->szClass) && !stricmp(szClass, "SysTreeView32")) {
+    else if (!IS_INTRESOURCE(m_vItems[i]->szClass) && !_wcsicmp(m_vItems[i]->szClass, L"SysTreeView32")) {
       m_vItems[i]->dwStyle |= TVS_RTLREADING;
       m_vItems[i]->dwExtStyle |= WS_EX_LAYOUTRTL;
       addExStyle = true;
       addExLeftScrollbar = false;
     }
-    else if (!IS_INTRESOURCE(m_vItems[i]->szClass) && !stricmp(szClass, "SysListView32")) {
+    else if (!IS_INTRESOURCE(m_vItems[i]->szClass) && !_wcsicmp(m_vItems[i]->szClass, L"SysListView32")) {
       m_vItems[i]->dwExtStyle |= WS_EX_LAYOUTRTL;
       addExLeftScrollbar = false;
     }
@@ -499,9 +493,6 @@ void CDialogTemplate::ConvertToRTL() {
     m_vItems[i]->dwExtStyle |= WS_EX_RTLREADING;
 
     m_vItems[i]->sX = m_sWidth - m_vItems[i]->sWidth - m_vItems[i]->sX;
-
-    if (!IS_INTRESOURCE(m_vItems[i]->szClass))
-      delete [] szClass;
   }
   m_dwExtStyle |= WS_EX_RIGHT | WS_EX_RTLREADING | WS_EX_LEFTSCROLLBAR;
 }

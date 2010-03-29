@@ -13,7 +13,7 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
   {
  	  BITMAP bm;
     RECT vp;
-    GetObject(g_hbm, sizeof(bm), (LPTSTR)&bm);
+    GetObject(g_hbm, sizeof(bm), &bm);
     SystemParametersInfo(SPI_GETWORKAREA, 0, &vp, 0);
     SetWindowLong(hwnd,GWL_STYLE,0);
     SetWindowPos(hwnd,NULL,

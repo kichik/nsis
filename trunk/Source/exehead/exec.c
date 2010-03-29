@@ -1067,10 +1067,14 @@ static int NSISCALL ExecuteEntry(entry *entry_)
 
           if (SUCCEEDED(hres))
           {
-             static WCHAR wsz[1024];
-             hres=E_FAIL;
-             if (MultiByteToWideChar(CP_ACP, 0, buf1, -1, wsz, 1024))
-               hres=ppf->lpVtbl->Save(ppf,(const WCHAR*)wsz,TRUE);
+#ifdef _UNICODE
+            hres=ppf->lpVtbl->Save(ppf,(const WCHAR*)buf1,TRUE);
+#else
+            static WCHAR wsz[1024];
+            hres=E_FAIL;
+            if (MultiByteToWideChar(CP_ACP, 0, buf1, -1, wsz, 1024))
+              hres=ppf->lpVtbl->Save(ppf,(const WCHAR*)wsz,TRUE);
+#endif
           }
           ppf->lpVtbl->Release(ppf);
         }

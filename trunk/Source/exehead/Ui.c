@@ -249,7 +249,9 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
     static const TCHAR reg_nt_locale_key[] = _T(".DEFAULT\\Control Panel\\International");
     const TCHAR       *reg_nt_locale_val   = &reg_9x_locale[30]; // = _T("Locale") with opt
 
-    *(DWORD*)state_language = CHAR4_TO_DWORD(_T('0'), _T('x'), 0, 0);
+    state_language[0] = _T('0');
+    state_language[1] = _T('x');
+    state_language[2] =     0;
 
     {
       // Windows 9x
@@ -318,7 +320,6 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
             }
           }
         }
-
         mystrcpy(state_install_directory,addtrailingslash(p));
       }
     }
@@ -343,20 +344,20 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
 #ifdef NSIS_SUPPORT_BGBG
   if (header->bg_color1 != -1)
   {
-    DWORD cn = CHAR4_TO_DWORD(_T('_'), _T('N'), _T('b'), 0);
+    LPCTSTR cn = _T("_Nb");
     RECT vp;
     extern LRESULT CALLBACK BG_WndProc(HWND, UINT, WPARAM, LPARAM);
     wc.lpfnWndProc = BG_WndProc;
     wc.hInstance = g_hInstance;
     wc.hIcon = g_hIcon;
     //wc.hCursor = LoadCursor(NULL,IDC_ARROW);
-    wc.lpszClassName = (LPCTSTR)&cn;
+    wc.lpszClassName = cn;
 
     if (!RegisterClass(&wc)) return 0;
 
     SystemParametersInfo(SPI_GETWORKAREA, 0, &vp, 0);
 
-    m_bgwnd = CreateWindowEx(WS_EX_TOOLWINDOW,(LPCTSTR)&cn,0,WS_POPUP,
+    m_bgwnd = CreateWindowEx(WS_EX_TOOLWINDOW,cn,0,WS_POPUP,
       vp.left,vp.top,vp.right-vp.left,vp.bottom-vp.top,0,NULL,g_hInstance,NULL);
   }
 
@@ -399,6 +400,7 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
         RegisterClass(&wc);
       }
     }
+
 #endif
 
     {
@@ -433,7 +435,6 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
   }
 #endif//NSIS_CONFIG_SILENT_SUPPORT
 }
-
 
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
 static int CALLBACK WINAPI BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData)
@@ -894,6 +895,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
   page *thispage = g_this_page;
   TCHAR *dir = g_usrvars[thispage->parms[4]];
   int browse_text = thispage->parms[3];
+
   if (uMsg == WM_NOTIFY_INIGO_MONTOYA)
   {
     GetUIText(IDC_DIR,dir);
@@ -1026,7 +1028,6 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
      *   6. `dir' is never modified.
      *
      */
-
     mystrcpy(s,dir);
 
     // Test for and use the GetDiskFreeSpaceEx API
@@ -1038,8 +1039,8 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
         ULARGE_INTEGER available64;
         ULARGE_INTEGER a, b;
         TCHAR *p;
-        WORD *pw = NULL;
-        while ((TCHAR *) pw != s) // trimslashtoend() cut the entire string
+        TCHAR *pw = NULL;
+        while (pw != s) // trimslashtoend() cut the entire string
         {
           if (GDFSE(s, &available64, &a, &b))
           {
@@ -1057,8 +1058,11 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
             *pw = 0;
 
           p = trimslashtoend(s); // trim last backslash
-          pw = (LPWORD) (p - 1);
-          *pw = CHAR2_TO_WORD(_T('\\'), 0); // bring it back, but make the next TCHAR null
+          // bring it back, but make the next char null
+          pw = p;
+          *pw = 0;
+          --pw;
+          *pw = _T('\\'); 
         }
       }
     }
@@ -1730,12 +1734,16 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
         do {
           item.pszText = ptr;
           ptr += SendMessage(linsthwnd,LVM_GETITEMTEXT,i,(LPARAM)&item);
-          *(WORD*)ptr = CHAR2_TO_WORD(_T('\r'),_T('\n'));
-          ptr+=2;
+          *ptr++ = _T('\r');
+          *ptr++ = _T('\n');
         } while (++i < count);
         // memory is auto zeroed when allocated with GHND - *ptr = 0;
         GlobalUnlock(memory);
+#ifdef _UNICODE
+        SetClipboardData(CF_UNICODETEXT,memory);
+#else
         SetClipboardData(CF_TEXT,memory);
+#endif
         CloseClipboard();
       }
     }
