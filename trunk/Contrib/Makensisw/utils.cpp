@@ -27,15 +27,10 @@
 #include "toolbar.h"
 #include "noclib.h"
 
-#ifndef _countof
-#ifndef __cplusplus
-#define _countof(_Array) (sizeof(_Array) / sizeof(_Array[0]))
+#ifdef _countof
+#define COUNTOF _countof
 #else
-  extern "C++" {
-    template <typename _CountofType,size_t _SizeOfArray> char (*__countof_helper(UNALIGNED _CountofType (&_Array)[_SizeOfArray]))[_SizeOfArray];
-#define _countof(_Array) sizeof(*__countof_helper(_Array))
-  }
-#endif
+#define COUNTOF(a) (sizeof(a)/sizeof(a[0]))
 #endif
 
 NTOOLTIP g_tip;
@@ -305,7 +300,7 @@ void CompileNSISScript() {
       /* script cmd args     */ lstrlen(args)  + /* space */ 1 +
       /* defines /Dblah=...  */ lstrlen(symbols)                  + /* space */ 1 +
       /* /XSetCompressor...  */ lstrlen(compressor)               + /* space */ 1 +
-      /* /NOTTIFYHWND + HWND */ _countof(_T("/NOTIFYHWND -4294967295")) + /* space */ 1
+      /* /NOTTIFYHWND + HWND */ COUNTOF(_T("/NOTIFYHWND -4294967295")) + /* space */ 1
       +6); /* for -- \"\" and NULL */
       
     g_sdata.compile_command = (TCHAR *) GlobalAlloc(GPTR, byteSize);
@@ -755,7 +750,7 @@ void PushMRUFile(TCHAR* fname)
   }
 
   my_memset(full_file_name,0,sizeof(full_file_name));
-  rv = GetFullPathName(fname,_countof(full_file_name),full_file_name,NULL);
+  rv = GetFullPathName(fname,COUNTOF(full_file_name),full_file_name,NULL);
   if (rv == 0) {
     return;
   }

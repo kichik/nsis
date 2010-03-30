@@ -107,6 +107,14 @@ typedef DWORDLONG ULONGLONG,*PULONGLONG;
 #define _vsnprintf vsnprintf
 #endif
 
+
+
+#ifdef _countof
+#define COUNTOF _countof
+#else
+#define COUNTOF(a) (sizeof(a)/sizeof(a[0]))
+#endif
+
 #ifndef __BIG_ENDIAN__
 # define FIX_ENDIAN_INT32_INPLACE(x) ((void)(x))
 # define FIX_ENDIAN_INT32(x) (x)
@@ -202,6 +210,11 @@ typedef DWORDLONG ULONGLONG,*PULONGLONG;
 #endif
 
 // functions
+
+// Anders: MSVC's swprintf is non standard, use _snwprintf when you really mean swprintf
+#if !defined(_MSC_VER) && !defined(_snwprintf)
+#define _snwprintf swprintf
+#endif
 
 // Jim Park: These str functions will probably never be encountered with all my
 // Unicode changes.  And if they were used, these would probably be wrong.
