@@ -18,15 +18,10 @@
 
 #include <nsis/pluginapi.h> // nsis plugin
 
-#ifndef _countof
-#ifndef __cplusplus
-#define _countof(_Array) (sizeof(_Array) / sizeof(_Array[0]))
+#ifdef _countof
+#define COUNTOF _countof
 #else
-  extern "C++" {
-    template <typename _CountofType,size_t _SizeOfArray> char (*__countof_helper(UNALIGNED _CountofType (&_Array)[_SizeOfArray]))[_SizeOfArray];
-#define _countof(_Array) sizeof(*__countof_helper(_Array))
-  }
-#endif
+#define COUNTOF(a) (sizeof(a)/sizeof(a[0]))
 #endif
 
 // Use for functions only called from one place to possibly reduce some code
@@ -251,7 +246,7 @@ bool INLINE ValidateFields() {
          ((pField->nMinLength > 0) && (nLength < pField->nMinLength))) {
         if (pField->pszValidateText) {
           TCHAR szTitle[1024];
-          GetWindowText(hMainWindow, szTitle, _countof(szTitle));
+          GetWindowText(hMainWindow, szTitle, COUNTOF(szTitle));
           MessageBox(hConfigWindow, pField->pszValidateText, szTitle, MB_OK|MB_ICONWARNING);
         }
         mySetFocus(pField->hwnd);
@@ -543,7 +538,7 @@ int WINAPI ReadSettings(void) {
     ConvertNewLines(pField->pszValidateText);
 
     {
-      int nResult = GetPrivateProfileString(szField, _T("Filter"), _T("All Files|*.*"), szResult, _countof(szResult), pszFilename);
+      int nResult = GetPrivateProfileString(szField, _T("Filter"), _T("All Files|*.*"), szResult, COUNTOF(szResult), pszFilename);
       if (nResult) {
         // Convert the filter to the format required by Windows: NULL after each
         // item followed by a terminating NULL
@@ -631,10 +626,10 @@ LRESULT WINAPI WMCommandProc(HWND hWnd, UINT id, HWND hwndCtl, UINT codeNotify) 
       ofn.hwndOwner = hConfigWindow;
       ofn.lpstrFilter = pField->pszFilter;
       ofn.lpstrFile = szBrowsePath;
-      ofn.nMaxFile  = _countof(szBrowsePath);
+      ofn.nMaxFile  = COUNTOF(szBrowsePath);
       ofn.Flags = pField->nFlags & (OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_CREATEPROMPT | OFN_EXPLORER);
 
-      GetWindowText(pField->hwnd, szBrowsePath, _countof(szBrowsePath));
+      GetWindowText(pField->hwnd, szBrowsePath, COUNTOF(szBrowsePath));
 
     tryagain:
       GetCurrentDirectory(BUFFER_SIZE, szResult); // save working dir
@@ -1121,7 +1116,7 @@ int WINAPI createCfgDlg()
 
 #undef DEFAULT_STYLES
 
-    if (pField->nType < 1 || pField->nType > (int)(_countof(ClassTable)))
+    if (pField->nType < 1 || pField->nType > (int)(COUNTOF(ClassTable)))
       continue;
 
     DWORD dwStyle, dwExStyle;

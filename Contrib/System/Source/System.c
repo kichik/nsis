@@ -61,7 +61,7 @@ TCHAR *GetResultStr(SystemProc *proc)
 #ifdef SYSTEM_LOG_DEBUG
 
 // System log debugging turned on
-#define SYSTEM_LOG_ADD(a)  { register int _len = lstrlen(syslogbuf); lstrcpyn(syslogbuf + _len, a, _countof(syslogbuf) - _len); }
+#define SYSTEM_LOG_ADD(a)  { register int _len = lstrlen(syslogbuf); lstrcpyn(syslogbuf + _len, a, COUNTOF(syslogbuf) - _len); }
 #define SYSTEM_LOG_POST     { SYSTEM_LOG_ADD(_T("\n")); WriteToLog(syslogbuf); *syslogbuf = 0; }
 
 HANDLE logfile = NULL;

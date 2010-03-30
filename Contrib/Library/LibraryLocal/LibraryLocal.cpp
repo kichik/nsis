@@ -27,22 +27,17 @@ int GetTLBVersion(tstring& filepath, DWORD& high, DWORD & low)
 {
 #ifdef _WIN32
 
-#ifndef _countof
-#ifndef __cplusplus
-#define _countof(_Array) (sizeof(_Array) / sizeof(_Array[0]))
+#ifdef _countof
+#define COUNTOF _countof
 #else
-  extern "C++" {
-    template <typename _CountofType,size_t _SizeOfArray> char (*__countof_helper(UNALIGNED _CountofType (&_Array)[_SizeOfArray]))[_SizeOfArray];
-#define _countof(_Array) sizeof(*__countof_helper(_Array))
-  }
-#endif
+#define COUNTOF(a) (sizeof(a)/sizeof(a[0]))
 #endif
 
   int found = 0;
 
   TCHAR fullpath[1024];
   TCHAR *p;
-  if (!GetFullPathName(filepath.c_str(), _countof(fullpath), fullpath, &p))
+  if (!GetFullPathName(filepath.c_str(), COUNTOF(fullpath), fullpath, &p))
     return 0;
 
   ITypeLib* typeLib;

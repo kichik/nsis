@@ -651,7 +651,7 @@ TCHAR * NSISCALL GetNSISString(TCHAR *outbuf, int strtab)
   // Still working within ps_tmpbuf, so set out to the
   // current position that is passed in.
   if (outbuf >= ps_tmpbuf && 
-     (size_t) (outbuf - ps_tmpbuf) < _countof(ps_tmpbuf))
+     (size_t) (outbuf - ps_tmpbuf) < COUNTOF(ps_tmpbuf))
   {
     out = outbuf;
     outbuf = 0;

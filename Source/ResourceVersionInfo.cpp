@@ -210,7 +210,7 @@ void CResourceVersionInfo::ExportToStream(GrowBuf &strm, int Index)
       int codepage = m_ChildStringLists.get_codepage(Index);
       LANGID langid = m_ChildStringLists.get_lang(Index);
       WCHAR Buff[16];
-      swprintf(Buff, _countof(Buff), L"%04x%04x", langid, codepage);
+      _snwprintf(Buff, COUNTOF(Buff), L"%04x%04x", langid, codepage);
       SaveVersionHeader (stringInfoStream, 0, 0, 0, Buff, &ZEROS);
       
       for ( int i = 0; i < pChildStrings->getnum(); i++ )

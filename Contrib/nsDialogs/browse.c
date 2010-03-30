@@ -8,15 +8,10 @@
 
 #include "defs.h"
 
-#ifndef _countof
-#ifndef __cplusplus
-#define _countof(_Array) (sizeof(_Array) / sizeof(_Array[0]))
+#ifdef _countof
+#define COUNTOF _countof
 #else
-  extern "C++" {
-    template <typename _CountofType,size_t _SizeOfArray> char (*__countof_helper(UNALIGNED _CountofType (&_Array)[_SizeOfArray]))[_SizeOfArray];
-#define _countof(_Array) sizeof(*__countof_helper(_Array))
-  }
-#endif
+#define COUNTOF(a) (sizeof(a)/sizeof(a[0]))
 #endif
 
 int CALLBACK BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lp, LPARAM pData) {
@@ -37,13 +32,13 @@ void __declspec(dllexport) SelectFolderDialog(HWND hwndParent, int string_size, 
 
   EXDLL_INIT();
 
-  if (popstringn(title, _countof(initial)))
+  if (popstringn(title, COUNTOF(initial)))
   {
     pushstring(_T("error"));
     return;
   }
 
-  if (popstringn(initial, _countof(title)))
+  if (popstringn(initial, COUNTOF(title)))
   {
     pushstring(_T("error"));
     return;
