@@ -105,8 +105,8 @@ TCHAR *CEXEBuild::set_timestamp_predefine(const TCHAR *filename)
     FileTimeToLocalFileTime(&fd.ftLastWriteTime, &floctime);
     FileTimeToSystemTime(&floctime, &stime);
 
-    GetDateFormat(LOCALE_USER_DEFAULT, DATE_LONGDATE, &stime, NULL, datebuf, _countof(datebuf));
-    GetTimeFormat(LOCALE_USER_DEFAULT, 0, &stime, NULL, timebuf, _countof(timebuf));
+    GetDateFormat(LOCALE_USER_DEFAULT, DATE_LONGDATE, &stime, NULL, datebuf, COUNTOF(datebuf));
+    GetTimeFormat(LOCALE_USER_DEFAULT, 0, &stime, NULL, timebuf, COUNTOF(timebuf));
     wsprintf(timestampbuf,_T("%s %s"),datebuf,timebuf);
 
     definedlist.add(_T("__TIMESTAMP__"),timestampbuf);
@@ -2651,7 +2651,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
       else
       {
-        _tcsnccpy(build_font, line.gettoken_str(1), _countof(build_font));
+        _tcsnccpy(build_font, line.gettoken_str(1), COUNTOF(build_font));
         build_font_size = line.gettoken_int(2);
 
         SCRIPT_MSG(_T("SetFont: \"%s\" %s\n"), line.gettoken_str(1), line.gettoken_str(2));
@@ -2820,12 +2820,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           rawtime = mktime(gmtime(&rawtime));
 
         datebuf[0]=0;
-        size_t s=_tcsftime(datebuf,_countof(datebuf),value,localtime(&rawtime));
+        size_t s=_tcsftime(datebuf,COUNTOF(datebuf),value,localtime(&rawtime));
 
         if (s == 0)
           datebuf[0]=0;
         else
-          datebuf[max(s,_countof(datebuf)-1)]=0;
+          datebuf[max(s,COUNTOF(datebuf)-1)]=0;
 
         value=datebuf;
       } else if (!_tcsicmp(define,_T("/file")) || !_tcsicmp(define,_T("/file_noerr"))) {
@@ -2925,8 +2925,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       SCRIPT_MSG(_T("!undef: \"%s\"\n"),line.gettoken_str(1));
     return PS_OK;
     case TOK_P_PACKEXEHEADER:
-      _tcsnccpy(build_packname,line.gettoken_str(1),_countof(build_packname)-1);
-      _tcsnccpy(build_packcmd,line.gettoken_str(2),_countof(build_packcmd)-1);
+      _tcsnccpy(build_packname,line.gettoken_str(1),COUNTOF(build_packname)-1);
+      _tcsnccpy(build_packcmd,line.gettoken_str(2),COUNTOF(build_packcmd)-1);
       SCRIPT_MSG(_T("!packhdr: filename=\"%s\", command=\"%s\"\n"),
         build_packname, build_packcmd);
     return PS_OK;
@@ -3139,7 +3139,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             for (;;)
             {
               str[0]=0;
-              _fgetts(str,_countof(str),fp);
+              _fgetts(str,COUNTOF(str),fp);
               if (!str[0]) break; // eof
 
               TCHAR *p=str;
@@ -4059,8 +4059,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           TCHAR *np=p;
           while (*np && *np != _T('|')) np++;
           if (*np) *np++=0;
-          for (x = 0 ; (unsigned) x < _countof(list) && _tcsicmp(list[x].str, p); x++);
-          if ((unsigned) x < _countof(list))
+          for (x = 0 ; (unsigned) x < COUNTOF(list) && _tcsicmp(list[x].str, p); x++);
+          if ((unsigned) x < COUNTOF(list))
           {
             r|=list[x].id;
           }
@@ -4729,9 +4729,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           TCHAR *np=p;
           while (*np && *np != _T('|')) np++;
           if (*np) *np++=0;
-          for (x = 0 ; (unsigned) x < _countof(list) && _tcsicmp(list[x].str,p); x ++);
+          for (x = 0 ; (unsigned) x < COUNTOF(list) && _tcsicmp(list[x].str,p); x ++);
 
-          if ((unsigned) x < _countof(list))
+          if ((unsigned) x < COUNTOF(list))
           {
             r|=list[x].id;
           }

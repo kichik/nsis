@@ -2,6 +2,12 @@
 
 #include "pluginapi.h"
 
+#ifdef _countof
+#define COUNTOF _countof
+#else
+#define COUNTOF(a) (sizeof(a)/sizeof(a[0]))
+#endif
+
 unsigned int g_stringsize;
 stack_t **g_stacktop;
 TCHAR *g_variables;
@@ -267,7 +273,7 @@ int NSISCALL myatoi_or(const TCHAR *s)
 int NSISCALL popint()
 {
   TCHAR buf[128];
-  if (popstringn(buf,_countof(buf)))
+  if (popstringn(buf,COUNTOF(buf)))
     return 0;
 
   return myatoi(buf);
@@ -276,7 +282,7 @@ int NSISCALL popint()
 int NSISCALL popint_or()
 {
   TCHAR buf[128];
-  if (popstringn(buf,_countof(buf)))
+  if (popstringn(buf,COUNTOF(buf)))
     return 0;
 
   return myatoi_or(buf);

@@ -139,14 +139,14 @@ void UpdateToolBarCompressorButton()
   LoadString(g_sdata.hInstance,
              IDS_COMPRESSOR,
              temp,
-             _countof(temp));
+             COUNTOF(temp));
   my_memset(szBuffer, 0, sizeof(szBuffer));
   lstrcat(szBuffer,temp);
   lstrcat(szBuffer,_T(" ["));
   LoadString(g_sdata.hInstance,
              iString,
              temp,
-             _countof(temp));
+             COUNTOF(temp));
   lstrcat(szBuffer,temp);
   lstrcat(szBuffer,_T("]"));
 
@@ -181,7 +181,7 @@ void AddToolBarButtonTooltip(int id, int iString)
   LoadString(g_sdata.hInstance,
              iString,
              szBuffer,
-             _countof(szBuffer));
+             COUNTOF(szBuffer));
   ti.lpszText = (LPTSTR) szBuffer;
   ti.rect.left =rect.left;
   ti.rect.top = rect.top;

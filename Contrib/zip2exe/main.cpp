@@ -4,15 +4,10 @@
 #include <ctype.h>
 #include <commctrl.h>
 
-#ifndef _countof
-#ifndef __cplusplus
-#define _countof(_Array) (sizeof(_Array) / sizeof(_Array[0]))
+#ifdef _countof
+#define COUNTOF _countof
 #else
-  extern "C++" {
-    template <typename _CountofType,size_t _SizeOfArray> char (*__countof_helper(UNALIGNED _CountofType (&_Array)[_SizeOfArray]))[_SizeOfArray];
-#define _countof(_Array) sizeof(*__countof_helper(_Array))
-  }
-#endif
+#define COUNTOF(a) (sizeof(a)/sizeof(a[0]))
 #endif
 
 /*
@@ -751,7 +746,7 @@ BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
             ShowWindow(GetDlgItem(hwndDlg,IDC_TEST),SW_HIDE);
             ShowWindow(GetDlgItem(hwndDlg,IDC_OUTPUTTEXT),SW_HIDE);
             {
-              for (size_t x = 0; x < _countof(ids); x ++)
+              for (size_t x = 0; x < COUNTOF(ids); x ++)
                 ShowWindow(GetDlgItem(hwndDlg,ids[x]),SW_SHOWNA);
               SetDlgItemText(hwndDlg,IDOK,_T("&Generate"));
               EnableWindow(GetDlgItem(hwndDlg,IDOK),1);
@@ -761,7 +756,7 @@ BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         case IDC_TEST:
           if (!g_hThread) {
             TCHAR buf[1024];
-            GetDlgItemText(hwndDlg,IDC_OUTFILE,buf,_countof(buf));
+            GetDlgItemText(hwndDlg,IDC_OUTFILE,buf,COUNTOF(buf));
             ShellExecute(hwndDlg,_T("open"),buf,_T(""),_T(""),SW_SHOW);
           }
         break;
@@ -782,7 +777,7 @@ BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
                 g_compressor_solid = 0;
               g_mui=!IsDlgButtonChecked(hwndDlg,IDC_CLASSICUI);
               SetDlgItemText(g_hwnd, IDC_OUTPUTTEXT, _T(""));
-              for (size_t x = 0; x < _countof(ids); x ++)
+              for (size_t x = 0; x < COUNTOF(ids); x ++)
                 ShowWindow(GetDlgItem(hwndDlg,ids[x]),SW_HIDE);
               ShowWindow(GetDlgItem(hwndDlg,IDC_OUTPUTTEXT),SW_SHOWNA);
               SetDlgItemText(hwndDlg,IDOK,_T("&Close"));
