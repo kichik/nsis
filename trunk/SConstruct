@@ -1,4 +1,4 @@
-EnsureSConsVersion(0,98)
+EnsureSConsVersion(1,2)
 	
 stubs = [
 	'bzip2',

@@ -6,7 +6,7 @@ This is a trimmed version of Appendix "Building NSIS" of the documentation.
  - Requirements
 
    * Python version 1.6 and above (http://www.python.org/)
-   * SCons version 0.98 and above (http://www.scons.org/)
+   * SCons version 1.2.0 and above (http://www.scons.org/)
    * zlib version 1.2.3 and above (http://www.zlib.net/)
    * C compiler
 
