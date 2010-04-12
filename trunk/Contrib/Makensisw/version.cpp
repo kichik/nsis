@@ -21,11 +21,12 @@
 
   Unicode support by Jim Park -- 08/17/2007
 */
+#include "makensisw.h"
 #define REALSTR(x) #x
 #define STR(x) REALSTR(x)
 
 #ifdef RELEASE
-     const char *NSISW_VERSION = "MakeNSISW " STR(RELEASE) " (NSIS Compiler Interface)";
+     const TCHAR *NSISW_VERSION = _T("MakeNSISW ") _T(STR(RELEASE)) _T(" (NSIS Compiler Interface)");
 #else
-     const char *NSISW_VERSION = "MakeNSISW " __DATE__;
+     const TCHAR *NSISW_VERSION = _T("MakeNSISW ") __TDATE__;
 #endif

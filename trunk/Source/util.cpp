@@ -129,7 +129,7 @@ int update_bitmap(CResourceEditor* re, WORD id, const TCHAR* filename, int width
   }
   fclose(f);
 
-  re->UpdateResourceA(RT_BITMAP, MAKEINTRESOURCE(id), NSIS_DEFAULT_LANG, bitmap, dwSize);
+  re->UpdateResource(RT_BITMAP, id, NSIS_DEFAULT_LANG, bitmap, dwSize);
 
   free(bitmap);
 
@@ -537,8 +537,8 @@ static bool GetDLLVersionUsingRE(const tstring& filepath, DWORD& high, DWORD & l
   try
   {
     CResourceEditor *dllre = new CResourceEditor(dll, len);
-    LPBYTE ver = dllre->GetResourceA(VS_FILE_INFO, MAKEINTRESOURCE(VS_VERSION_INFO), 0);
-    int versize = dllre->GetResourceSizeA(VS_FILE_INFO, MAKEINTRESOURCE(VS_VERSION_INFO), 0);
+    LPBYTE ver = dllre->GetResource(VS_FILE_INFO, VS_VERSION_INFO, 0);
+    int versize = dllre->GetResourceSize(VS_FILE_INFO, VS_VERSION_INFO, 0);
 
     if (ver)
     {

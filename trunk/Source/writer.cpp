@@ -50,19 +50,29 @@ void writer_sink::write_int_array(const int i[], const size_t len)
   }
 }
 
-void writer_sink::write_string(const char *s)
-{
-  write_data(s, strlen(s) + 1);
-}
-
 // size in this case is the length of the string to write.
-void writer_sink::write_string(const char *s, const size_t size)
+void writer_sink::write_string(const TCHAR *s, size_t size)
 {
+#ifdef _UNICODE
+  bool strEnd = false;
+  TCHAR ch;
+  for (; size ; size--)
+  {
+    if (!strEnd)
+    {
+      ch = *s++;
+      if (ch == _T('\0'))
+        strEnd = true;
+    }
+    write_short(ch);
+  }
+#else
   char *wb = new char[size];
   memset(wb, 0, size);
   strncpy(wb, s, size);
   write_data(wb, size);
   delete [] wb;
+#endif
 }
 
 void writer_sink::write_growbuf(const IGrowBuf *b)

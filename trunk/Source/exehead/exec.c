@@ -1174,13 +1174,13 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     break;
     case EW_READINISTR:
       {
-        DWORD errstr = CHAR4_TO_DWORD(_T('!'), _T('N'), _T('~'), 0);
+        TCHAR errstr[] = _T("!N~");
         TCHAR *p=var0;
         TCHAR *buf0=GetStringFromParm(0x01);
         TCHAR *buf1=GetStringFromParm(0x12);
         TCHAR *buf2=GetStringFromParm(-0x23);
-        GetPrivateProfileString(buf0,buf1,(LPCTSTR)&errstr,p,NSIS_MAX_STRLEN-1,buf2);
-        if (*(DWORD*)p == errstr)
+        GetPrivateProfileString(buf0,buf1,errstr,p,NSIS_MAX_STRLEN-1,buf2);
+        if (lstrcmp(p, errstr) == 0)
         {
           exec_error++;
           p[0]=0;

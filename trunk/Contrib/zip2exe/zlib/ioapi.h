@@ -11,7 +11,7 @@
 #ifndef _ZLIBIOAPI_H
 #define _ZLIBIOAPI_H
 
-#include "../../ExDLL/nsis_tchar.h"
+#include <tchar.h>
 
 
 #define ZLIB_FILEFUNC_SEEK_CUR (1)

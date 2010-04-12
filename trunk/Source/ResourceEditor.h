@@ -114,19 +114,10 @@ public:
   CResourceEditor(BYTE* pbPE, int iSize, bool bKeepData = true);
   virtual ~CResourceEditor();
 
-  bool  UpdateResource(WORD szType, WORD szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize);
-  bool  UpdateResourceW(WCHAR* szType, WCHAR* szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize);
-  bool  UpdateResourceW(WORD szType, WCHAR* szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize);
-  bool  UpdateResourceW(WCHAR* szType, WORD szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize);
-  bool  UpdateResourceA(char* szType, char* szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize);
-  bool  UpdateResourceA(WORD szType, char* szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize);
-  bool  UpdateResourceA(char* szType, WORD szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize);
-  BYTE* GetResourceW(WCHAR* szType, WCHAR* szName, LANGID wLanguage);
-  BYTE* GetResourceA(char* szType, char* szName, LANGID wLanguage);
-  int   GetResourceSizeW(WCHAR* szType, WCHAR* szName, LANGID wLanguage);
-  int   GetResourceSizeA(char* szType, char* szName, LANGID wLanguage);
-  DWORD GetResourceOffsetW(WCHAR* szType, WCHAR* szName, LANGID wLanguage);
-  DWORD GetResourceOffsetA(char* szType, char* szName, LANGID wLanguage);
+  bool  UpdateResource   (TCHAR* szType, WORD szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize);
+  BYTE* GetResource      (TCHAR* szType, WORD szName, LANGID wLanguage);
+  int   GetResourceSize  (TCHAR* szType, WORD szName, LANGID wLanguage);
+  DWORD GetResourceOffset(TCHAR* szType, WORD szName, LANGID wLanguage);
   void  FreeResource(BYTE* pbResource);
 
   // The section name must be in ASCII.
@@ -143,6 +134,11 @@ public:
     DWORD *pdwResSecVA = NULL,
     DWORD *pdwSectionIndex = NULL
   );
+private:
+  bool  UpdateResourceW(WCHAR* szType, WCHAR* szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize);
+  BYTE* GetResourceW(WCHAR* szType, WCHAR* szName, LANGID wLanguage);
+  int   GetResourceSizeW(WCHAR* szType, WCHAR* szName, LANGID wLanguage);
+  DWORD GetResourceOffsetW(WCHAR* szType, WCHAR* szName, LANGID wLanguage);
 
 private:
   BYTE* m_pbPE;

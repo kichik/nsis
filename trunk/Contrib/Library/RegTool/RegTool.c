@@ -37,11 +37,12 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
   if (*cmdline == _T('S'))
   {
     HKEY rootkey;
+    TCHAR *keyname, *file; // These are turned into heap memory to avoid _chkstk
+    keyname = (TCHAR*) GlobalAlloc(GPTR, STR_SIZE*sizeof(TCHAR));
+    file    = (TCHAR*) GlobalAlloc(GPTR, STR_SIZE*sizeof(TCHAR));
 
     if (SUCCEEDED(RegOpenKeyEx(HKEY_LOCAL_MACHINE, _T("Software\\NSIS.Library.RegTool.v3"), 0, KEY_READ, &rootkey)))
     {
-      TCHAR keyname[STR_SIZE];
-
       while (RegEnumKey(rootkey, 0, keyname, STR_SIZE) == ERROR_SUCCESS)
       {
         HKEY key;
@@ -53,7 +54,7 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
           if (SUCCEEDED(RegQueryValueEx(key, _T("count"), NULL, &t, (LPBYTE) &count, &l)) && t == REG_DWORD)
           {
             DWORD j;
-            TCHAR valname[128], mode[3], file[STR_SIZE];
+            TCHAR valname[128], mode[3];
 
             for (j = 1; j <= count; j++)
             {
@@ -83,12 +84,13 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
     }
 
     {
-      TCHAR file[STR_SIZE];
       if (GetModuleFileName(GetModuleHandle(NULL), file, STR_SIZE))
       {
         DeleteFileOnReboot(file);
       }
     }
+    GlobalFree(keyname);
+    GlobalFree(file);
   }
   else
   {
@@ -131,13 +133,16 @@ void SafeWow64EnableWow64FsRedirection(BOOL Wow64FsEnableRedirection)
 
 void RegFile(TCHAR cmd, TCHAR *file, int x64)
 {
-  TCHAR self[STR_SIZE];
-  TCHAR cmdline[STR_SIZE];
+  TCHAR* self; // These are turned into heap memory to avoid _chkstk
+  TCHAR* cmdline;
 
   int ready = 0;
 
   if (!*file || (cmd != _T('D') && cmd != _T('T') && cmd != _T('E')))
     return;
+
+  self = (TCHAR*) GlobalAlloc(GPTR, sizeof(TCHAR)*STR_SIZE);
+  cmdline = (TCHAR*) GlobalAlloc(GPTR, sizeof(TCHAR)*STR_SIZE);
 
   if (cmd == _T('E'))
   {
@@ -182,6 +187,9 @@ void RegFile(TCHAR cmd, TCHAR *file, int x64)
       SafeWow64EnableWow64FsRedirection(TRUE);
     }
   }
+
+  GlobalFree(self);
+  GlobalFree(cmdline);
 }
 
 void RegDll(TCHAR *file)
@@ -198,9 +206,13 @@ void RegDll(TCHAR *file)
 
 void RegTypeLib(TCHAR *file)
 {
+#ifdef _UNICODE
+  WCHAR* wfile = file;
+#else
   WCHAR wfile[STR_SIZE];
-
-  if (MultiByteToWideChar(CP_ACP, 0, file, -1, wfile, STR_SIZE) != 0)
+  if (MultiByteToWideChar(CP_ACP, 0, file, -1, wfile, STR_SIZE) == 0)
+    return;
+#endif
   {
     ITypeLib* tlib;
     if (SUCCEEDED(LoadTypeLib(wfile, &tlib))) {
@@ -320,7 +332,7 @@ void RenameViaWininit(const TCHAR* prevName, const TCHAR* newName)
           char *pszNextSec = mystrstriA(pszFirstRenameLine,"\n[");
           if (pszNextSec)
           {
-            TCHAR *p = ++pszNextSec;
+            char *p = ++pszNextSec;
             while (p < pszWinInit + dwFileSize) {
               p[cchRenameLine] = *p;
               p++;

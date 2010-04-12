@@ -11,31 +11,20 @@
 class WinCharTest : public CppUnit::TestFixture {
 
   CPPUNIT_TEST_SUITE( WinCharTest );
-  CPPUNIT_TEST( testFromAnsi );
-  CPPUNIT_TEST( testToAnsi );
+  CPPUNIT_TEST( testFromTchar );
   CPPUNIT_TEST( testStrCpy );
   CPPUNIT_TEST( testStrNCpy );
   CPPUNIT_TEST( testStrLen );
   CPPUNIT_TEST( testStrCmp );
   CPPUNIT_TEST( testStrDup );
-  CPPUNIT_TEST( testStoi );
   CPPUNIT_TEST_SUITE_END();
 
 public:
-  void testFromAnsi() {
+  void testFromTchar() {
     WCHAR test[] = { _x('t'), _x('e'), _x('s'), _x('t'), 0 };
-    WCHAR *dyn = winchar_fromansi("test");
+    WCHAR *dyn = winchar_fromTchar("test");
 
     CPPUNIT_ASSERT_EQUAL( 0, memcmp(test, dyn, 5) );
-
-    delete [] dyn;
-  }
-
-  void testToAnsi() {
-    WCHAR test[] = { _x('t'), _x('e'), _x('s'), _x('t'), 0 };
-    char *dyn = winchar_toansi(test);
-
-    CPPUNIT_ASSERT_EQUAL( 0, strcmp("test", dyn) );
 
     delete [] dyn;
   }
@@ -109,20 +98,6 @@ public:
     CPPUNIT_ASSERT_EQUAL( 0, winchar_strcmp(a, b) );
 
     delete [] b;
-  }
-
-  void testStoi() {
-    srand(time(0));
-
-    for (int i = 0; i < 1000; i++)
-    {
-      int r = rand();
-      char s[128];
-      sprintf(s, "%d", r);
-      WCHAR *ws = winchar_fromansi(s);
-      CPPUNIT_ASSERT_EQUAL( r, winchar_stoi(ws) );
-      delete [] ws;
-    }
   }
 
 };

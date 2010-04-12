@@ -34,8 +34,7 @@ public:
   virtual void write_short(const short s);
   virtual void write_int(const int i);
   virtual void write_int_array(const int i[], const size_t len);
-  virtual void write_string(const TCHAR *s);
-  virtual void write_string(const TCHAR *s, const size_t size);
+  virtual void write_string(const TCHAR *s, size_t size);
   virtual void write_growbuf(const IGrowBuf *b);
 
   virtual void write_data(const void *data, const size_t size) = 0;
