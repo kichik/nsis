@@ -19,6 +19,7 @@ libs = Split("""
 """)
 
 Import('BuildUtil')
+Import('_tWinMain')
 
-BuildUtil(target, files, libs, res = res, resources = resources, entry = 'WinMain')
+BuildUtil(target, files, libs, res = res, resources = resources, entry = _tWinMain)
 

@@ -1733,7 +1733,7 @@ int CEXEBuild::AddVersionInfo()
             warning(_T("Generating version information for language \"%04d-%s\" without standard key \"LegalCopyright\""), lang_id, lang_name);
 
           rVersionInfo.ExportToStream(VerInfoStream, i);
-          res_editor->UpdateResourceA(RT_VERSION, 1, lang_id, (BYTE*)VerInfoStream.get(), VerInfoStream.getlen());
+          res_editor->UpdateResource(RT_VERSION, 1, lang_id, (BYTE*)VerInfoStream.get(), VerInfoStream.getlen());
         }
       }
       catch (exception& err) {
@@ -2073,7 +2073,7 @@ again:
   SCRIPT_MSG(_T("Done!\n"));
 
 #define REMOVE_ICON(id) if (disable_window_icon) { \
-    BYTE* dlg = res_editor->GetResourceA(RT_DIALOG, MAKEINTRESOURCE(id), NSIS_DEFAULT_LANG); \
+    BYTE* dlg = res_editor->GetResource(RT_DIALOG, id, NSIS_DEFAULT_LANG); \
     if (dlg) { \
       CDialogTemplate dt(dlg,uDefCodePage); \
       res_editor->FreeResource(dlg); \
@@ -2091,7 +2091,7 @@ again:
          \
         DWORD dwSize; \
         dlg = dt.Save(dwSize); \
-        res_editor->UpdateResourceA(RT_DIALOG, MAKEINTRESOURCE(id), NSIS_DEFAULT_LANG, dlg, dwSize); \
+        res_editor->UpdateResource(RT_DIALOG, id, NSIS_DEFAULT_LANG, dlg, dwSize); \
         delete [] dlg; \
       } \
     } \
@@ -2102,43 +2102,43 @@ again:
     init_res_editor();
 #ifdef NSIS_CONFIG_LICENSEPAGE
     if (!license_normal) {
-      res_editor->UpdateResourceA(RT_DIALOG, IDD_LICENSE, NSIS_DEFAULT_LANG, 0, 0);
+      res_editor->UpdateResource(RT_DIALOG, IDD_LICENSE, NSIS_DEFAULT_LANG, 0, 0);
     }
     else REMOVE_ICON(IDD_LICENSE);
     if (!license_fsrb) {
-      res_editor->UpdateResourceA(RT_DIALOG, IDD_LICENSE_FSRB, NSIS_DEFAULT_LANG, 0, 0);
+      res_editor->UpdateResource(RT_DIALOG, IDD_LICENSE_FSRB, NSIS_DEFAULT_LANG, 0, 0);
     }
     else REMOVE_ICON(IDD_LICENSE_FSRB);
     if (!license_fscb) {
-      res_editor->UpdateResourceA(RT_DIALOG, IDD_LICENSE_FSCB, NSIS_DEFAULT_LANG, 0, 0);
+      res_editor->UpdateResource(RT_DIALOG, IDD_LICENSE_FSCB, NSIS_DEFAULT_LANG, 0, 0);
     }
     else REMOVE_ICON(IDD_LICENSE_FSCB);
 #endif // NSIS_CONFIG_LICENSEPAGE
 #ifdef NSIS_CONFIG_COMPONENTPAGE
     if (!selcom) {
-      res_editor->UpdateResourceA(RT_DIALOG, IDD_SELCOM, NSIS_DEFAULT_LANG, 0, 0);
-      res_editor->UpdateResourceA(RT_BITMAP, IDB_BITMAP1, NSIS_DEFAULT_LANG, 0, 0);
+      res_editor->UpdateResource(RT_DIALOG, IDD_SELCOM, NSIS_DEFAULT_LANG, 0, 0);
+      res_editor->UpdateResource(RT_BITMAP, IDB_BITMAP1, NSIS_DEFAULT_LANG, 0, 0);
     }
     else REMOVE_ICON(IDD_SELCOM);
 #endif // NSIS_CONFIG_COMPONENTPAGE
     if (!dir) {
-      res_editor->UpdateResourceA(RT_DIALOG, IDD_DIR, NSIS_DEFAULT_LANG, 0, 0);
+      res_editor->UpdateResource(RT_DIALOG, IDD_DIR, NSIS_DEFAULT_LANG, 0, 0);
     }
     else REMOVE_ICON(IDD_DIR);
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
     if (!uninstconfirm) {
-      res_editor->UpdateResourceA(RT_DIALOG, IDD_UNINST, NSIS_DEFAULT_LANG, 0, 0);
+      res_editor->UpdateResource(RT_DIALOG, IDD_UNINST, NSIS_DEFAULT_LANG, 0, 0);
     }
     else REMOVE_ICON(IDD_UNINST);
 #endif // NSIS_CONFIG_UNINSTALL_SUPPORT
     if (!instlog) {
-      res_editor->UpdateResourceA(RT_DIALOG, IDD_INSTFILES, NSIS_DEFAULT_LANG, 0, 0);
+      res_editor->UpdateResource(RT_DIALOG, IDD_INSTFILES, NSIS_DEFAULT_LANG, 0, 0);
     }
     else REMOVE_ICON(IDD_INSTFILES);
     if (!main) {
-      res_editor->UpdateResourceA(RT_DIALOG, IDD_INST, NSIS_DEFAULT_LANG, 0, 0);
+      res_editor->UpdateResource(RT_DIALOG, IDD_INST, NSIS_DEFAULT_LANG, 0, 0);
       if (!build_compress_whole && !build_crcchk)
-        res_editor->UpdateResourceA(RT_DIALOG, IDD_VERIFY, NSIS_DEFAULT_LANG, 0, 0);
+        res_editor->UpdateResource(RT_DIALOG, IDD_VERIFY, NSIS_DEFAULT_LANG, 0, 0);
     }
 
     SCRIPT_MSG(_T("Done!\n"));
@@ -2279,7 +2279,7 @@ int CEXEBuild::SetManifest()
       return PS_OK;
 
     // Saved directly as binary into the exe.
-    res_editor->UpdateResourceA(MAKEINTRESOURCE(24), MAKEINTRESOURCE(1), NSIS_DEFAULT_LANG, (LPBYTE) manifest.c_str(), manifest.length());
+    res_editor->UpdateResource(MAKEINTRESOURCE(24), 1, NSIS_DEFAULT_LANG, (LPBYTE) manifest.c_str(), manifest.length());
   }
   catch (exception& err) {
     ERROR_MSG(_T("Error setting manifest: %s\n"), CtoTString(err.what()));

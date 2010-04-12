@@ -25,7 +25,7 @@
 #include "makensisw.h"
 #include "resource.h"
 #include "toolbar.h"
-#include "noclib.h"
+#include <shlwapi.h>
 
 #ifdef _countof
 #define COUNTOF _countof
@@ -60,13 +60,13 @@ int SetArgv(const TCHAR *cmdLine, int *argc, TCHAR ***argv)
     }
   }
 
-  argSpaceSize = size * sizeof(TCHAR *) + lstrlen(cmdLine) + 1;
+  argSpaceSize = size * sizeof(TCHAR *) + (lstrlen(cmdLine) + 1) * sizeof(TCHAR);
   argSpace = (TCHAR *) GlobalAlloc(GMEM_FIXED, argSpaceSize);
   if (!argSpace)
     return 0;
 
   *argv = (TCHAR **) argSpace;
-  argSpace += size * sizeof(TCHAR *);
+  argSpace = (TCHAR *) ((*argv)+size);
   size--;
 
   p = cmdLine;
@@ -241,13 +241,13 @@ void SetCompressorStats()
       DWORD len = lstrlen(TOTAL_SIZE_COMPRESSOR_STAT);
       lstrcat(g_sdata.compressor_stats,buf);
 
-      if(!lstrncmp(buf,TOTAL_SIZE_COMPRESSOR_STAT,len)) {
+      if(!StrCmpN(buf,TOTAL_SIZE_COMPRESSOR_STAT,len)) {
         break;
       }
     }
     else {
       DWORD len = lstrlen(EXE_HEADER_COMPRESSOR_STAT);
-      if(!lstrncmp(buf,EXE_HEADER_COMPRESSOR_STAT,len)) {
+      if(!StrCmpN(buf,EXE_HEADER_COMPRESSOR_STAT,len)) {
         found = true;
         lstrcpy(g_sdata.compressor_stats,_T("\n\n"));
         lstrcat(g_sdata.compressor_stats,buf);
@@ -622,7 +622,7 @@ int InitBranding() {
 
 void InitTooltips(HWND h) {
   if (h == NULL)  return;
-  my_memset(&g_tip,0,sizeof(NTOOLTIP));
+  memset(&g_tip,0,sizeof(NTOOLTIP));
   g_tip.tip_p = h;
   INITCOMMONCONTROLSEX icx;
   icx.dwSize  = sizeof(icx);
@@ -668,7 +668,7 @@ LRESULT CALLBACK TipHookProc(int nCode, WPARAM wParam, LPARAM lParam) {
 void ShowDocs() {
   TCHAR pathf[MAX_PATH],*path;
   GetModuleFileName(NULL,pathf,sizeof(pathf));
-  path=my_strrchr(pathf,_T('\\'));
+  path=_tcsrchr(pathf,_T('\\'));
   if(path!=NULL) *path=0;
   lstrcat(pathf,LOCALDOCS);
   if ((int)ShellExecute(g_sdata.hwnd,_T("open"),pathf,NULL,NULL,SW_SHOWNORMAL)<=32) 
@@ -749,7 +749,7 @@ void PushMRUFile(TCHAR* fname)
     return;
   }
 
-  my_memset(full_file_name,0,sizeof(full_file_name));
+  memset(full_file_name,0,sizeof(full_file_name));
   rv = GetFullPathName(fname,COUNTOF(full_file_name),full_file_name,NULL);
   if (rv == 0) {
     return;
@@ -783,19 +783,19 @@ void BuildMRUMenus()
 
   for(i = 0; i < MRU_LIST_SIZE; i++) {
     if(g_mru_list[i][0]) {
-      my_memset(buf,0,sizeof(buf));
-      my_memset(&mii, 0, sizeof(mii));
+      memset(buf,0,sizeof(buf));
+      memset(&mii, 0, sizeof(mii));
       mii.cbSize = sizeof(mii);
       mii.fMask = MIIM_ID | MIIM_TYPE | MIIM_STATE;
       mii.wID = IDM_MRU_FILE+i;
       mii.fType = MFT_STRING;
       wsprintf(buf, _T("&%d "), i + 1);
       if(lstrlen(g_mru_list[i]) > MRU_DISPLAY_LENGTH) {
-        TCHAR *p = my_strrchr(g_mru_list[i],_T('\\'));
+        TCHAR *p = _tcsrchr(g_mru_list[i],_T('\\'));
         if(p) {
           p++;
           if(lstrlen(p) > MRU_DISPLAY_LENGTH - 7) {
-            my_memset(buf2,0,sizeof(buf2));
+            memset(buf2,0,sizeof(buf2));
             lstrcpyn(buf2,p,MRU_DISPLAY_LENGTH - 9);
             lstrcat(buf2,_T("..."));
 
@@ -833,7 +833,7 @@ void BuildMRUMenus()
   }
 
   hMenu = g_sdata.toolsSubmenu;
-  my_memset(&mii, 0, sizeof(mii));
+  memset(&mii, 0, sizeof(mii));
   mii.cbSize = sizeof(mii);
   mii.fMask = MIIM_STATE;
 

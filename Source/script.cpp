@@ -2157,7 +2157,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         try {
           init_res_editor();
 
-          BYTE* dlg = res_editor->GetResourceA(RT_DIALOG, MAKEINTRESOURCE(IDD_INSTFILES), NSIS_DEFAULT_LANG);
+          BYTE* dlg = res_editor->GetResource(RT_DIALOG, IDD_INSTFILES, NSIS_DEFAULT_LANG);
           if (!dlg) throw runtime_error("IDD_INSTFILES doesn't exist!");
           CDialogTemplate dt(dlg,uDefCodePage);
           free(dlg);
@@ -2173,7 +2173,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
           DWORD dwSize;
           dlg = dt.Save(dwSize);
-          res_editor->UpdateResourceA(RT_DIALOG, MAKEINTRESOURCE(IDD_INSTFILES), NSIS_DEFAULT_LANG, dlg, dwSize);
+          res_editor->UpdateResource(RT_DIALOG, IDD_INSTFILES, NSIS_DEFAULT_LANG, dlg, dwSize);
           delete [] dlg;
         }
         catch (exception& err) {
@@ -2452,9 +2452,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         init_res_editor();
 
         // Search for required items
-        #define GET(x) dlg = uire->GetResourceA(RT_DIALOG, MAKEINTRESOURCE(x), 0); if (!dlg) return PS_ERROR; CDialogTemplate UIDlg(dlg, uDefCodePage);
-        #define SEARCH(x) if (!UIDlg.GetItem(x)) {ERROR_MSG("Error: Can't find %s (%u) in the custom UI!\n", #x, x);delete [] dlg;delete uire;return PS_ERROR;}
-        #define SAVE(x) dwSize = UIDlg.GetSize(); res_editor->UpdateResourceA(RT_DIALOG, x, NSIS_DEFAULT_LANG, dlg, dwSize); delete [] dlg;
+        #define GET(x) dlg = uire->GetResource(RT_DIALOG, x, 0); if (!dlg) return PS_ERROR; CDialogTemplate UIDlg(dlg, uDefCodePage);
+        #define SEARCH(x) if (!UIDlg.GetItem(x)) {ERROR_MSG(_T("Error: Can't find %s (%u) in the custom UI!\n"), _T(#x), x);delete [] dlg;delete uire;return PS_ERROR;}
+        #define SAVE(x) dwSize = UIDlg.GetSize(); res_editor->UpdateResource(RT_DIALOG, x, NSIS_DEFAULT_LANG, dlg, dwSize); delete [] dlg;
 
         LPBYTE dlg = NULL;
 
@@ -2570,7 +2570,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           padding = line.gettoken_int(3);
 
         init_res_editor();
-        BYTE* dlg = res_editor->GetResourceA(RT_DIALOG, MAKEINTRESOURCE(IDD_INST), NSIS_DEFAULT_LANG);
+        BYTE* dlg = res_editor->GetResource(RT_DIALOG, IDD_INST, NSIS_DEFAULT_LANG);
 
         CDialogTemplate dt(dlg, uDefCodePage);
 
@@ -2618,7 +2618,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         DWORD dwDlgSize;
         dlg = dt.Save(dwDlgSize);
 
-        res_editor->UpdateResourceA(RT_DIALOG, IDD_INST, NSIS_DEFAULT_LANG, dlg, dwDlgSize);
+        res_editor->UpdateResource(RT_DIALOG, IDD_INST, NSIS_DEFAULT_LANG, dlg, dwDlgSize);
 
         delete [] dlg;
 
@@ -2846,7 +2846,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           for (;;) {
             TCHAR *p=str;
             *p=0;
-            fgets(str,MAX_LINELENGTH,fp);
+            _fgetts(str,MAX_LINELENGTH,fp);
             linecnt++;
             if (feof(fp)&&!str[0]) break;
 
@@ -3668,7 +3668,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (trim) try {
           init_res_editor();
 
-          BYTE* dlg = res_editor->GetResourceA(RT_DIALOG, MAKEINTRESOURCE(IDD_INST), NSIS_DEFAULT_LANG);
+          BYTE* dlg = res_editor->GetResource(RT_DIALOG, IDD_INST, NSIS_DEFAULT_LANG);
           CDialogTemplate td(dlg,uDefCodePage);
           free(dlg);
 
@@ -3695,7 +3695,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
           DWORD dwSize;
           dlg = td.Save(dwSize);
-          res_editor->UpdateResourceA(RT_DIALOG, MAKEINTRESOURCE(IDD_INST), NSIS_DEFAULT_LANG, dlg, dwSize);
+          res_editor->UpdateResource(RT_DIALOG, IDD_INST, NSIS_DEFAULT_LANG, dlg, dwSize);
           res_editor->FreeResource(dlg);
         }
         catch (exception& err) {

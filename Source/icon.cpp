@@ -49,8 +49,8 @@ IconGroup load_icon_res(CResourceEditor* re, WORD id)
   IconGroupHeader* header;
   IconGroup result;
 
-  LPBYTE group = re->GetResourceA(
-    RT_GROUP_ICON, MAKEINTRESOURCE(id), NSIS_DEFAULT_LANG);
+  LPBYTE group = re->GetResource(
+    RT_GROUP_ICON, id, NSIS_DEFAULT_LANG);
 
   if (!group)
     throw runtime_error("can't find icon group");
@@ -69,7 +69,7 @@ IconGroup load_icon_res(CResourceEditor* re, WORD id)
 
     WORD rsrc_id = FIX_ENDIAN_INT16(entry->wRsrcId);
 
-    icon.data = re->GetResourceA(RT_ICON, MAKEINTRESOURCE(rsrc_id), NSIS_DEFAULT_LANG);
+    icon.data = re->GetResource(RT_ICON, rsrc_id, NSIS_DEFAULT_LANG);
 
     if (!icon.data)
     {
@@ -276,17 +276,17 @@ void set_icon(CResourceEditor* re, WORD wIconId, IconGroup icon1, IconGroup icon
   size_t group_size = sizeof(IconGroupHeader) // header
     + order.size() * SIZEOF_RSRC_ICON_GROUP_ENTRY; // entries
 
-  re->UpdateResourceA(RT_GROUP_ICON, MAKEINTRESOURCE(wIconId), NSIS_DEFAULT_LANG, group1, group_size);
+  re->UpdateResource(RT_GROUP_ICON, wIconId, NSIS_DEFAULT_LANG, group1, group_size);
 
   // delete old icons
   unsigned i = 1;
-  while (re->UpdateResourceA(RT_ICON, MAKEINTRESOURCE(i++), NSIS_DEFAULT_LANG, 0, 0));
+  while (re->UpdateResource(RT_ICON, i++, NSIS_DEFAULT_LANG, 0, 0));
 
   // set new icons
   IconGroup::size_type order_index;
   for (order_index = 0; order_index < order.size(); order_index++)
   {
-    DWORD size_index = order[order_index].size_index;
+    WORD size_index = order[order_index].size_index;
     DWORD size = order[order_index].size;
     LPBYTE data = new BYTE[size];
     memset(data, 0, size);
@@ -297,7 +297,7 @@ void set_icon(CResourceEditor* re, WORD wIconId, IconGroup icon1, IconGroup icon
       memcpy(data, icon->data, FIX_ENDIAN_INT32(icon->meta.dwRawSize));
     }
 
-    re->UpdateResourceA(RT_ICON, MAKEINTRESOURCE(size_index + 1), NSIS_DEFAULT_LANG, data, size);
+    re->UpdateResource(RT_ICON, size_index + 1, NSIS_DEFAULT_LANG, data, size);
 
     delete [] data;
   }
@@ -375,7 +375,7 @@ int generate_unicons_offsets(LPBYTE exeHeader, size_t exeHeaderSize, LPBYTE unin
 
     LPBYTE seeker = uninstIconData;
 
-    offset = re.GetResourceOffsetA(RT_GROUP_ICON, MAKEINTRESOURCE(wIconId), NSIS_DEFAULT_LANG);
+    offset = re.GetResourceOffset(RT_GROUP_ICON, wIconId, NSIS_DEFAULT_LANG);
 
     size = FIX_ENDIAN_INT32(*(LPDWORD)seeker);
     seeker += sizeof(DWORD);
@@ -388,14 +388,14 @@ int generate_unicons_offsets(LPBYTE exeHeader, size_t exeHeaderSize, LPBYTE unin
 
     while (*(LPDWORD)seeker)
     {
-      offset = re.GetResourceOffsetA(RT_ICON, MAKEINTRESOURCE(icon_index), NSIS_DEFAULT_LANG);
+      offset = re.GetResourceOffset(RT_ICON, icon_index, NSIS_DEFAULT_LANG);
 
       if (offset > exeHeaderSize)
       {
-        throw runtime_error(_T("invalid icon offset (possibly compressed icon)"));
+        throw runtime_error("invalid icon offset (possibly compressed icon)");
       }
 
-      DWORD real_size = re.GetResourceSizeA(RT_ICON, MAKEINTRESOURCE(icon_index), NSIS_DEFAULT_LANG);
+      DWORD real_size = re.GetResourceSize(RT_ICON, icon_index, NSIS_DEFAULT_LANG);
 
       size = FIX_ENDIAN_INT32(*(LPDWORD)seeker);
       seeker += sizeof(DWORD);

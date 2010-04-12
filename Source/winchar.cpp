@@ -24,8 +24,11 @@
 
 using std::runtime_error;
 
-WCHAR *winchar_fromansi(const char* s, unsigned int codepage/*=CP_ACP*/)
+WCHAR *winchar_fromTchar(const TCHAR* s, unsigned int codepage/*=CP_ACP*/)
 {
+#ifdef _UNICODE
+  return _wcsdup(s); // codepage is not used in this mode
+#else
   int l = MultiByteToWideChar(codepage, 0, s, -1, 0, 0);
   if (l == 0)
     throw runtime_error("Unicode conversion failed");
@@ -36,20 +39,7 @@ WCHAR *winchar_fromansi(const char* s, unsigned int codepage/*=CP_ACP*/)
     throw runtime_error("Unicode conversion failed");
 
   return ws;
-}
-
-char *winchar_toansi(const WCHAR* ws, unsigned int codepage/*=CP_ACP*/)
-{
-  int l = WideCharToMultiByte(codepage, 0, ws, -1, 0, 0, 0, 0);
-  if (l == 0)
-    throw runtime_error("Unicode conversion failed");
-
-  char *s = new char[l + 1];
-
-  if (WideCharToMultiByte(codepage, 0, ws, -1, s, l + 1, 0, 0) == 0)
-    throw runtime_error("Unicode conversion failed");
-
-  return s;
+#endif
 }
 
 WCHAR *winchar_strcpy(WCHAR *ws1, const WCHAR *ws2)
@@ -114,15 +104,4 @@ int winchar_strcmp(const WCHAR *ws1, const WCHAR *ws2)
   while (*ws1++ && *ws2++ && !diff);
 
   return diff;
-}
-
-int winchar_stoi(const WCHAR *ws)
-{
-  char *s = winchar_toansi(ws);
-
-  int ret = atoi(s);
-
-  delete [] s;
-
-  return ret;
 }

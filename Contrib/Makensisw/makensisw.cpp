@@ -24,9 +24,9 @@
 
 #include "makensisw.h"
 #include <windowsx.h>
+#include <shlwapi.h>
 #include <stdio.h>
 #include "resource.h"
-#include "noclib.h"
 #include "toolbar.h"
 #include "update.h"
 
@@ -41,9 +41,9 @@ int WINAPI _tWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, TCHAR *cmdParam, int 
   int status;
   HACCEL haccel;
 
-  my_memset(&g_sdata,0,sizeof(NSCRIPTDATA));
-  my_memset(&g_resize,0,sizeof(NRESIZEDATA));
-  my_memset(&g_find,0,sizeof(NFINDREPLACE));
+  memset(&g_sdata,0,sizeof(NSCRIPTDATA));
+  memset(&g_resize,0,sizeof(NRESIZEDATA));
+  memset(&g_find,0,sizeof(NFINDREPLACE));
   g_sdata.hInstance=GetModuleHandle(0);
   g_sdata.symbols = NULL;
   g_sdata.sigint_event = CreateEvent(NULL, FALSE, FALSE, _T("makensis win32 signint event"));
@@ -130,10 +130,10 @@ void ProcessCommandLine()
   if (argc > 1) {
     for (i = 1; i < argc; i++)
     {
-      if (!lstrncmpi(argv[i], _T("/XSetCompressor "), lstrlen(_T("/XSetCompressor "))))
+      if (!StrCmpNI(argv[i], _T("/XSetCompressor "), lstrlen(_T("/XSetCompressor "))))
       {
         TCHAR *p = argv[i] + lstrlen(_T("/XSetCompressor "));
-        if(!lstrncmpi(p,_T("/FINAL "), lstrlen(_T("/FINAL "))))
+        if(!StrCmpNI(p,_T("/FINAL "), lstrlen(_T("/FINAL "))))
         {
           p += lstrlen(_T("/FINAL "));
         }
@@ -481,7 +481,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
           if (g_sdata.input_script) {
             TCHAR str[MAX_PATH],*str2;
             lstrcpy(str,g_sdata.input_script);
-            str2=my_strrchr(str,_T('\\'));
+            str2=_tcsrchr(str,_T('\\'));
             if(str2!=NULL) *(str2+1)=0;
             ShellExecute(g_sdata.hwnd,_T("open"),str,NULL,NULL,SW_SHOWNORMAL);
           }
@@ -656,7 +656,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
         case IDM_FIND:
         {
           if (!g_find.uFindReplaceMsg) g_find.uFindReplaceMsg = RegisterWindowMessage(FINDMSGSTRING);
-          my_memset(&g_find.fr, 0, sizeof(FINDREPLACE));
+          memset(&g_find.fr, 0, sizeof(FINDREPLACE));
           g_find.fr.lStructSize = sizeof(FINDREPLACE);
           g_find.fr.hwndOwner = hwndDlg;
           g_find.fr.Flags = FR_NOUPDOWN;
@@ -743,7 +743,7 @@ DWORD WINAPI MakeNSISProc(LPVOID p) {
     PostMessage(g_sdata.hwnd,WM_MAKENSIS_PROCESSCOMPLETE,0,0);
     return 1;
   }
-  char szBuf[1024];
+  TCHAR szBuf[1024];
   DWORD dwRead = 1;
   DWORD dwExit = !STILL_ACTIVE;
   while (dwExit == STILL_ACTIVE || dwRead) {
@@ -986,7 +986,7 @@ BOOL CALLBACK SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
           if(n > 0) {
             TCHAR *buf = (TCHAR *)GlobalAlloc(GPTR, (n+1)*sizeof(TCHAR));
             SendDlgItemMessage(hwndDlg, IDC_SYMBOL, WM_GETTEXT, n+1, (LPARAM)buf);
-            if(my_strstr(buf,_T(" ")) || my_strstr(buf,_T("\t"))) {
+            if(_tcsstr(buf,_T(" ")) || _tcsstr(buf,_T("\t"))) {
               MessageBox(hwndDlg,SYMBOLSERROR,_T("Error"),MB_OK|MB_ICONSTOP);
               GlobalFree(buf);
               break;
@@ -1028,7 +1028,7 @@ BOOL CALLBACK SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
             if(n > 0) {
               TCHAR *buf = (TCHAR *)GlobalAlloc(GPTR, (n+1)*sizeof(TCHAR));
               SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_GETTEXT, (WPARAM)index, (LPARAM)buf);
-              TCHAR *p = my_strstr(buf,_T("="));
+              TCHAR *p = _tcsstr(buf,_T("="));
               if(p) {
                 SendDlgItemMessage(hwndDlg, IDC_VALUE, WM_SETTEXT, 0, (LPARAM)(p+1));
                 *p=0;

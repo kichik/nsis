@@ -2,7 +2,6 @@
 
 #include "makensisw.h"
 #include "update.h"
-#include "noclib.h"
 
 #include "jnetlib/httpget.h"
 #include "../ExDLL/nsis_tchar.h"
@@ -62,14 +61,14 @@ DWORD CALLBACK UpdateThread(LPVOID v) {
 
   if (getProxyInfo(pbuf))
   {
-    p=my_strstr(pbuf,"http=");
+    p=strstr(pbuf,"http=");
     if (!p) p=pbuf;
     else {
       p+=5;
     }
-    char *tp=my_strstr(p,";");
+    char *tp=strstr(p,";");
     if (tp) *tp=0;
-    char *p2=my_strstr(p,"=");
+    char *p2=strstr(p,"=");
     if (p2) p=0; // we found the wrong proxy
   }
 
@@ -140,7 +139,7 @@ DWORD CALLBACK UpdateThread(LPVOID v) {
 void Update() {
   DWORD dwThreadId;
 
-  if (my_strstr(g_sdata.brandingv,_T("cvs")))
+  if (_tcsstr(g_sdata.brandingv,_T("cvs")))
   {
     MessageBox(g_sdata.hwnd,_T("Cannot check for new version of nightly builds.  To update, download a new nightly build."),_T("NSIS Update"),MB_OK|MB_ICONSTOP);
     return;

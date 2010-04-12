@@ -272,7 +272,6 @@ enum {
 };
 
 // nsis strings
-
 typedef TCHAR NSIS_STRING[NSIS_MAX_STRLEN];
 
 // Settings common to both installers and uninstallers

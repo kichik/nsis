@@ -59,7 +59,7 @@ void Plugins::FindCommands(const tstring &path, bool displayInfo)
 
 struct NSISException : public std::runtime_error
 {
-  NSISException(const string& msg) : std::runtime_error(msg) {}
+    NSISException(const tstring& msg) : std::runtime_error(string(TtoCString(msg))) {}
 };
 
 namespace {
@@ -82,7 +82,7 @@ void read_file(const tstring& filename, vector<unsigned char>& data) {
   ifstream file(filename.c_str(), ios::binary);
 
   if (!file) {
-    throw NSISException("Can't open file '" + filename + "'");
+    throw NSISException(_T("Can't open file '") + filename + _T("'"));
   }
 
   // get the file size
@@ -93,7 +93,7 @@ void read_file(const tstring& filename, vector<unsigned char>& data) {
   file.read(reinterpret_cast<char*>(&data[0]), filesize);
 
   if (size_t(file.tellg()) != filesize) { // ifstream::eof doesn't return true here
-    throw NSISException("Couldn't read entire file '" + filename + "'");
+    throw NSISException(_T("Couldn't read entire file '") + filename + _T("'"));
   }
 }
 }
@@ -139,7 +139,7 @@ void Plugins::GetExports(const tstring &pathToDll, bool displayInfo)
         for (DWORD j = 0; j < FIX_ENDIAN_INT32(exports->NumberOfNames); j++)
         {
           const string name = string((char*)exports + FIX_ENDIAN_INT32(names[j]) - ExportDirVA);
-          const tstring signature = dllName + _T("::") + name;
+          const tstring signature = dllName + _T("::") + tstring(CtoTString(name));
           const tstring lcsig = lowercase(signature);
           m_command_to_path[lcsig] = pathToDll;
           m_command_lowercase_to_command[lcsig] = signature;

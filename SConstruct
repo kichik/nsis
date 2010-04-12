@@ -185,11 +185,13 @@ if 'NSIS_CONFIG_CONST_DATA_PATH' in defenv['NSIS_CPPDEFINES']:
 # Need this early for the config header files to be placed in
 
 if defenv['UNICODE']:
+   _tWinMain = 'wWinMain'
    if defenv['DEBUG']:
    	defenv.Replace(BUILD_PREFIX = 'build/udebug')
    else:
    	defenv.Replace(BUILD_PREFIX = 'build/urelease')
 else:
+   _tWinMain = 'WinMain'
    if defenv['DEBUG']:
    	defenv.Replace(BUILD_PREFIX = 'build/debug')
    else:
@@ -454,7 +456,7 @@ def build_installer(target, source, env):
 	AlwaysBuild(cmd)
 	# Comment out the following if you want to see the installation directory
 	# after the build is finished.
-	AlwaysBuild(env.AddPostAction(cmd, Delete('$INSTDISTDIR')))
+	#AlwaysBuild(env.AddPostAction(cmd, Delete('$INSTDISTDIR')))
 	env.Alias('dist-installer', cmd)
 
 installer_target = defenv.Command('nsis-${VERSION}-setup${DISTSUFFIX}.exe',
@@ -474,15 +476,9 @@ defenv.Alias('dist', ['dist-zip', 'dist-installer'])
 for d in doc:
 	if d in defenv['SKIPDOC']:
 		continue
-	if defenv['UNICODE']:
-		defenv.DistributeDoc('Unicode/' + d)
-	else:
-		defenv.DistributeDoc(d)
+	defenv.DistributeDoc(d)
 
-if defenv['UNICODE']:
-	defenv.DistributeConf('Unicode/nsisconf.nsh')
-else:
-	defenv.DistributeConf('nsisconf.nsh')
+defenv.DistributeConf('nsisconf.nsh')
 
 ######################################################################
 #######  Stubs                                                     ###
@@ -678,7 +674,7 @@ for util in utils:
 
 	path = 'Contrib/' + util
 	build_dir = '$BUILD_PREFIX/' + util
-	exports = {'BuildUtil' : BuildUtil, 'BuildUtilEnv' : BuildUtilEnv, 'env' : util_env}
+	exports = {'BuildUtil' : BuildUtil, 'BuildUtilEnv' : BuildUtilEnv, 'env' : util_env, '_tWinMain' : _tWinMain}
 
 	defenv.SConscript(dirs = path, build_dir = build_dir, duplicate = False, exports = exports)
 

@@ -210,7 +210,7 @@ class SortedStringList
         if (case_sensitive)
           res=_tcscmp(str, data[nextpos].name);
         else
-          res=stricmp(str, data[nextpos].name);
+          res=_tcsicmp(str, data[nextpos].name);
         if (res==0) return returnbestpos ? -1 : nextpos;
         if (res<0) ul=nextpos;
         else ll=nextpos+1;
@@ -302,7 +302,7 @@ class SortedStringListND // no delete - can be placed in GrowBuf
       if (pos==-1) return alwaysreturnpos ? where : -1;
 
       // Note that .name is set with the TCHAR* offset into m_strings.
-      newstruct.name=strings.add(name,strlen(name)+1);
+      newstruct.name=strings.add(name,(_tcsclen(name)+1)*sizeof(TCHAR))/sizeof(TCHAR);
 
       gr.add(&newstruct,sizeof(T));
       T *s=(T*)gr.get();

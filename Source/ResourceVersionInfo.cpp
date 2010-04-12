@@ -57,7 +57,7 @@ CVersionStrigList::~CVersionStrigList()
 int CVersionStrigList::add(LANGID langid, int codepage)
 {
   TCHAR Buff[10];
-  sprintf(Buff, _T("%04x"), langid);
+  _stprintf(Buff, _T("%04x"), langid);
   int pos = SortedStringListND<struct version_string_list>::add(Buff);
   if (pos == -1) return false;
   ((struct version_string_list*)gr.get())[pos].pChildStrings = new DefineList;
@@ -87,7 +87,7 @@ DefineList* CVersionStrigList::get_strings(int idx)
 int CVersionStrigList::find(LANGID lang_id, int codepage)
 {
   TCHAR Buff[10];
-  sprintf(Buff, _T("%04x"), lang_id);
+  _stprintf(Buff, _T("%04x"), lang_id);
   return SortedStringListND<struct version_string_list>::find(Buff);
 }
 
@@ -218,8 +218,8 @@ void CResourceVersionInfo::ExportToStream(GrowBuf &strm, int Index)
         PadStream (stringInfoStream);
         
         p = stringInfoStream.getlen();
-        KeyName = winchar_fromansi(pChildStrings->getname(i), codepage);
-        KeyValue = winchar_fromansi(pChildStrings->getvalue(i), codepage);
+        KeyName = winchar_fromTchar(pChildStrings->getname(i), codepage);
+        KeyValue = winchar_fromTchar(pChildStrings->getvalue(i), codepage);
         SaveVersionHeader (stringInfoStream, 0, WORD(winchar_strlen(KeyValue) + 1), 1, KeyName, (void*)KeyValue);
         delete [] KeyName;
         delete [] KeyValue;
