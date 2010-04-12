@@ -188,16 +188,29 @@ int tempzip_make(HWND hwndDlg, TCHAR *fn)
   int nf=0, nkb=0;
   g_extracting=1;
   do {
-    TCHAR filename[MAX_PATH];
+    char filenameA[MAX_PATH];
     unz_file_info info;
 
-    unzGetCurrentFileInfo(f,&info,filename,sizeof(filename),NULL,0,NULL,0);
+    // ZREAD uses byte size, not TCHAR length.
+    unzGetCurrentFileInfo(f,&info,filenameA,sizeof(filenameA),NULL,0,NULL,0);
 
     // was zip created on MS-DOS/Windows?
     if ((info.version & 0xFF00) == 0)
     {
-      OemToCharBuff(filename, filename, strlen(filename));
+      OemToCharBuffA(filenameA, filenameA, strlen(filenameA));
     }
+
+#ifdef _UNICODE
+    TCHAR filename[MAX_PATH];
+    if (MultiByteToWideChar(CP_ACP, 0, filenameA, -1, filename, MAX_PATH) == 0)
+    {
+      if (f) unzClose(f);
+      MessageBox(hwndDlg,_T("Error converting filename to Unicode"), g_errcaption, MB_OK|MB_ICONSTOP);
+      return 1;
+    }
+#else
+    char* filename = filenameA;
+#endif
 
     if (filename[0] &&
         filename[_tcsclen(filename)-1] != _T('\\') &&
@@ -485,7 +498,11 @@ void makeEXE(HWND hwndDlg)
   TCHAR buf[2048];
   GetTempPath(MAX_PATH,buf);
   GetTempFileName(buf,_T("zne"),0,nsifilename);
-  FILE *fp=fopen(nsifilename,_T("w"));
+#ifdef _UNICODE
+  FILE *fp=_tfopen(nsifilename,_T("w, ccs=UNICODE")); // generate a Unicode .NSI file
+#else
+  FILE *fp=_tfopen(nsifilename,_T("w"));
+#endif
   if (!fp)
   {
     MessageBox(hwndDlg,_T("Error writing .NSI file"),g_errcaption,MB_OK|MB_ICONSTOP);

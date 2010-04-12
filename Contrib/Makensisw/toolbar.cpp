@@ -25,7 +25,6 @@
 
 #include "makensisw.h"
 #include "resource.h"
-#include "noclib.h"
 #include "toolbar.h"
 #include "../ExDLL/nsis_tchar.h"
 
@@ -133,7 +132,7 @@ void UpdateToolBarCompressorButton()
   TCHAR   temp[64]; // increased to 64.  Hit limit 08/20/2007 -- Jim Park.
   TOOLINFO ti;
 
-  my_memset(&ti, 0, sizeof(TOOLINFO));
+  memset(&ti, 0, sizeof(TOOLINFO));
 
   if(g_sdata.compressor >= COMPRESSOR_SCRIPT && g_sdata.compressor <= COMPRESSOR_BEST) {
     iBitmap = compressor_bitmaps[(int)g_sdata.compressor];
@@ -146,7 +145,7 @@ void UpdateToolBarCompressorButton()
              IDS_COMPRESSOR,
              temp,
              COUNTOF(temp));
-  my_memset(szBuffer, 0, sizeof(szBuffer));
+  memset(szBuffer, 0, sizeof(szBuffer));
   lstrcat(szBuffer,temp);
   lstrcat(szBuffer,_T(" ["));
   LoadString(g_sdata.hInstance,
@@ -174,7 +173,7 @@ void AddToolBarButtonTooltip(int id, int iString)
   TCHAR   szBuffer[64];
   RECT rect;
 
-  my_memset(&ti, 0, sizeof(TOOLINFO));
+  memset(&ti, 0, sizeof(TOOLINFO));
 
   SendMessage(g_toolbar.hwnd, TB_GETITEMRECT, id, (LPARAM) (LPRECT) &rect);
 

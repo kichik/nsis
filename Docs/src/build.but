@@ -94,7 +94,7 @@ To compile the documentation as a CHM file, hhc.exe must be in the PATH. It is a
 
 To build NSIS Menu, install \W{http://www.wxwidgets.org/}{wxWidgets 2.8}, create an environment variable named \c{WXWIN} containing the path to the installation directory of wxWidgets, run \c{Contrib\\NSIS Menu\\wx\\wxbuild.bat} and build NSIS as usual.
 
-\\<b\\>Important notes for Microsoft Visual C++ 6.0 users:\\</b\\> The latest \W{http://www.microsoft.com/msdownload/platformsdk/sdkupdate/}{Platform SDK} must be installed before building. Because of flaws in the libraries distributed with Microsoft Visual C++ 6.0, not installing the Platform SDK will result in crashes when using the \R{copyfiles}{CopyFiles} command. See \W{http://forums.winamp.com/showthread.php?s=&threadid=131964}{this forum topic} for more information. Installing the \W{http://msdn.microsoft.com/vstudio/aa718349.aspx}{Processor Pack} is highly recommended xto decrease the size of the installer overhead.
+\\<b\\>Important notes for Microsoft Visual C++ 6.0 users:\\</b\\> The latest \W{http://www.microsoft.com/msdownload/platformsdk/sdkupdate/}{Platform SDK} must be installed before building. Because of flaws in the libraries distributed with Microsoft Visual C++ 6.0, not installing the Platform SDK will result in crashes when using the \R{copyfiles}{CopyFiles} command. See \W{http://forums.winamp.com/showthread.php?s=&threadid=131964}{this forum topic} for more information. Installing the \W{http://msdn.microsoft.com/vstudio/aa718349.aspx}{Processor Pack} is highly recommended to decrease the size of the installer overhead.
 
 \H{build_posix} Building on POSIX
 

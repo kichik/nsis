@@ -217,48 +217,30 @@ bool CResourceEditor::UpdateResourceW(WCHAR* szType, WCHAR* szName, LANGID wLang
   return true;
 }
 
+#ifndef _UNICODE
 static WCHAR* ResStringToUnicode(const char *szString) {
   if (IS_INTRESOURCE(szString))
     return MAKEINTRESOURCEW((ULONG_PTR)szString);
   else
-    return winchar_fromansi(szString);
+    return winchar_fromTchar(szString);
 }
+#endif
 
 static void FreeUnicodeResString(WCHAR* szwString) {
   if (!IS_INTRESOURCE(szwString))
     delete [] szwString;
 }
 
-bool CResourceEditor::UpdateResourceW(WORD szType, WCHAR* szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize) {
-  return UpdateResourceW(MAKEINTRESOURCEW(szType), szName, wLanguage, lpData, dwSize);
-}
 
-bool CResourceEditor::UpdateResourceW(WCHAR* szType, WORD szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize) {
+bool CResourceEditor::UpdateResource(TCHAR* szType, WORD szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize) {
+#ifdef _UNICODE
   return UpdateResourceW(szType, MAKEINTRESOURCEW(szName), wLanguage, lpData, dwSize);
-}
-
-bool CResourceEditor::UpdateResourceA(char* szType, char* szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize) {
-  WCHAR* szwType = ResStringToUnicode(szType);
-  WCHAR* szwName = ResStringToUnicode(szName);
-
-  bool result = UpdateResourceW(szwType, szwName, wLanguage, lpData, dwSize);
-
+#else
+  WCHAR* szwType = ResStringToUnicode(szType); 
+  bool result = UpdateResourceW(szwType, MAKEINTRESOURCEW(szName), wLanguage, lpData, dwSize);
   FreeUnicodeResString(szwType);
-  FreeUnicodeResString(szwName);
-
   return result;
-}
-
-bool CResourceEditor::UpdateResourceA(WORD szType, char* szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize) {
-  return UpdateResourceA(MAKEINTRESOURCE(szType), szName, wLanguage, lpData, dwSize);
-}
-
-bool CResourceEditor::UpdateResourceA(char* szType, WORD szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize) {
-  return UpdateResourceA(szType, MAKEINTRESOURCE(szName), wLanguage, lpData, dwSize);
-}
-
-bool CResourceEditor::UpdateResource(WORD szType, WORD szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize) {
-  return UpdateResourceW(MAKEINTRESOURCEW(szType), MAKEINTRESOURCEW(szName), wLanguage, lpData, dwSize);
+#endif
 }
 
 // Returns a copy of the requested resource
@@ -295,16 +277,15 @@ BYTE* CResourceEditor::GetResourceW(WCHAR* szType, WCHAR* szName, LANGID wLangua
     return NULL;
 }
 
-BYTE* CResourceEditor::GetResourceA(char* szType, char* szName, LANGID wLanguage) {
+BYTE* CResourceEditor::GetResource(TCHAR* szType, WORD szName, LANGID wLanguage) {
+#ifdef _UNICODE
+  return GetResourceW(szType, MAKEINTRESOURCEW(szName), wLanguage);
+#else
   WCHAR* szwType = ResStringToUnicode(szType);
-  WCHAR* szwName = ResStringToUnicode(szName);
-
-  BYTE* result = GetResourceW(szwType, szwName, wLanguage);
-
+  BYTE* result = GetResourceW(szwType, MAKEINTRESOURCEW(szName), wLanguage);
   FreeUnicodeResString(szwType);
-  FreeUnicodeResString(szwName);
-
   return result;
+#endif
 }
 
 // Returns the size of the requested resource
@@ -335,16 +316,15 @@ int CResourceEditor::GetResourceSizeW(WCHAR* szType, WCHAR* szName, LANGID wLang
     return -1;
 }
 
-int CResourceEditor::GetResourceSizeA(char* szType, char* szName, LANGID wLanguage) {
+int CResourceEditor::GetResourceSize(TCHAR* szType, WORD szName, LANGID wLanguage) {
+#ifdef _UNICODE
+  return GetResourceSizeW(szType, MAKEINTRESOURCEW(szName), wLanguage);
+#else
   WCHAR* szwType = ResStringToUnicode(szType);
-  WCHAR* szwName = ResStringToUnicode(szName);
-
-  int result = GetResourceSizeW(szwType, szwName, wLanguage);
-
+  int result = GetResourceSizeW(szwType, MAKEINTRESOURCEW(szName), wLanguage);
   FreeUnicodeResString(szwType);
-  FreeUnicodeResString(szwName);
-
   return result;
+#endif
 }
 
 // Returns the offset of the requested resource in the original PE
@@ -375,16 +355,15 @@ DWORD CResourceEditor::GetResourceOffsetW(WCHAR* szType, WCHAR* szName, LANGID w
     return DWORD(-1);
 }
 
-DWORD CResourceEditor::GetResourceOffsetA(char* szType, char* szName, LANGID wLanguage) {
+DWORD CResourceEditor::GetResourceOffset(TCHAR* szType, WORD szName, LANGID wLanguage) {
+#ifdef _UNICODE
+  return GetResourceOffsetW(szType, MAKEINTRESOURCEW(szName), wLanguage);
+#else
   WCHAR* szwType = ResStringToUnicode(szType);
-  WCHAR* szwName = ResStringToUnicode(szName);
-
-  DWORD result = GetResourceOffsetW(szwType, szwName, wLanguage);
-
+  DWORD result = GetResourceOffsetW(szwType, MAKEINTRESOURCEW(szName), wLanguage);
   FreeUnicodeResString(szwType);
-  FreeUnicodeResString(szwName);
-
   return result;
+#endif
 }
 
 void CResourceEditor::FreeResource(BYTE* pbResource)
@@ -884,7 +863,7 @@ int CResourceDirectory::Find(WCHAR* szName) {
     return Find((WORD) (ULONG_PTR) szName);
   else
     if (szName[0] == L'#')
-      return Find(WORD(winchar_stoi(szName + 1)));
+      return Find(WORD(_wtoi(szName + 1)));
 
   for (unsigned int i = 0; i < m_vEntries.size(); i++) {
     if (!m_vEntries[i]->HasName())

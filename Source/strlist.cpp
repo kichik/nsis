@@ -20,7 +20,7 @@ int StringList::add(const TCHAR *str, int case_sensitive)
 {
   int a=find(str,case_sensitive);
   if (a >= 0 && case_sensitive!=-1) return a;
-  return gr.add(str,strlen(str)+1);
+  return gr.add(str,(_tcsclen(str)+1)*sizeof(TCHAR))/sizeof(TCHAR);
 }
 
 // use 2 for case sensitive end-of-string matches too
@@ -32,18 +32,18 @@ int StringList::find(const TCHAR *str, int case_sensitive, int *idx/*=NULL*/) co
   if (idx) *idx=0;
   while (offs < ml)
   {
-    if ((case_sensitive && !strcmp(s+offs,str)) ||
-        (!case_sensitive && !stricmp(s+offs,str)))
+    if ((case_sensitive && !_tcscmp(s+offs,str)) ||
+        (!case_sensitive && !_tcsicmp(s+offs,str)))
     {
       return offs;
     }
     if (case_sensitive==2 &&
-        strlen(str) < strlen(s+offs) &&  // check for end of string
-        !strcmp(s+offs+strlen(s+offs)-strlen(str),str))
+        _tcslen(str) < _tcslen(s+offs) &&  // check for end of string
+        !_tcscmp(s+offs+_tcslen(s+offs)-_tcslen(str),str))
     {
-      return offs+strlen(s+offs)-strlen(str);
+      return offs+_tcslen(s+offs)-_tcslen(str);
     }
-    offs+=strlen(s+offs)+1;
+    offs+=_tcslen(s+offs)+1;
     if (idx) (*idx)++;
   }
   return -1;
@@ -52,7 +52,7 @@ int StringList::find(const TCHAR *str, int case_sensitive, int *idx/*=NULL*/) co
 void StringList::delbypos(int pos)
 {
   TCHAR *s=(TCHAR*)gr.get();
-  int len=strlen(s+pos)+1;
+  int len=_tcslen(s+pos)+1;
   if (pos+len < gr.getlen()) memcpy(s+pos,s+pos+len,gr.getlen()-(pos+len));
   gr.resize(gr.getlen()-len);
 }
@@ -65,7 +65,7 @@ int StringList::idx2pos(int idx) const
   if (idx>=0) while (offs < gr.getlen())
   {
     if (cnt++ == idx) return offs;
-    offs+=strlen(s+offs)+1;
+    offs+=_tcslen(s+offs)+1;
   }
   return -1;
 }
@@ -78,7 +78,7 @@ int StringList::getnum() const
   int idx=0;
   while (offs < ml)
   {
-    offs+=strlen(s+offs)+1;
+    offs+=_tcslen(s+offs)+1;
     idx++;
   }
   return idx;
@@ -117,7 +117,8 @@ int DefineList::add(const TCHAR *name, const TCHAR *value/*=_T("")*/)
   }
 
   TCHAR **newvalue=&(((struct define*)gr.get())[pos].value);
-  *newvalue=(TCHAR*)malloc(strlen(value)+1);
+  size_t size_in_bytes = (_tcslen(value) + 1) * sizeof(TCHAR);
+  *newvalue=(TCHAR*)malloc(size_in_bytes);
   if (!(*newvalue))
   {
     extern FILE *g_output;
@@ -125,12 +126,12 @@ int DefineList::add(const TCHAR *name, const TCHAR *value/*=_T("")*/)
     extern void quit();
     if (g_display_errors)
     {
-      fprintf(g_output,_T("\nInternal compiler error #12345: GrowBuf realloc/malloc(%lu) failed.\n"),(unsigned long)strlen(value)+1);
+      _ftprintf(g_output,_T("\nInternal compiler error #12345: GrowBuf realloc/malloc(%lu) failed.\n"), (unsigned long) size_in_bytes);
       fflush(g_output);
     }
     quit();
   }
-  strcpy(*newvalue,value);
+  _tcscpy(*newvalue,value);
   return 0;
 }
 
