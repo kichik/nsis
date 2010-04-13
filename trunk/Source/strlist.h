@@ -102,7 +102,7 @@ public:
 
   /**
 	* Get the buffer straight as a const TCHAR pointer.  Very unwise to use.
-	* @return gr.m_s cast as a TCHAR*.
+	* @return m_gr.m_s cast as a TCHAR*.
 	*/
   const TCHAR *get() const;
 
@@ -113,7 +113,7 @@ public:
   int getlen() const;
 
 private:
-  GrowBuf gr;
+  GrowBuf m_gr;
 };
 
 /**
@@ -135,8 +135,8 @@ class SortedStringList
 	  */
     virtual ~SortedStringList()
     {
-      T *s=(T*)gr.get();
-      size_t num=gr.getlen()/sizeof(T);
+      T *s=(T*) m_gr.get();
+      size_t num = m_gr.getlen()/sizeof(T);
 
       for (size_t i=0; i<num; i++) {
         free(s[i].name);
@@ -172,10 +172,10 @@ class SortedStringList
         quit();
       }
       _tcscpy(newstruct.name,name);
-      gr.add(&newstruct,sizeof(T));
+      m_gr.add(&newstruct,sizeof(T));
 
-      T *s=(T*)gr.get();
-      memmove(s+pos+1,s+pos,gr.getlen()-((pos+1)*sizeof(T)));
+      T *s=(T*) m_gr.get();
+      memmove(s+pos+1,s+pos, m_gr.getlen()-((pos+1)*sizeof(T)));
       memcpy(s+pos,&newstruct,sizeof(T));
 
       return pos;
@@ -199,8 +199,8 @@ class SortedStringList
 	  */
     int find(const TCHAR *str, int case_sensitive=0, int returnbestpos=0)
     {
-      T *data=(T *)gr.get();
-      int ul=gr.getlen()/sizeof(T);
+      T *data=(T *) m_gr.get();
+      int ul= m_gr.getlen()/sizeof(T);
       int ll=0;
       int nextpos=(ul+ll)/2;
 
@@ -244,14 +244,14 @@ class SortedStringList
 	  */
     void delbypos(int pos)
     {
-      T *db=(T *)gr.get();
+      T *db=(T *) m_gr.get();
       free(db[pos].name);
-      memmove(db+pos,db+pos+1,gr.getlen()-(pos*sizeof(T))-sizeof(T));
-      gr.resize(gr.getlen()-sizeof(T));
+      memmove(db+pos,db+pos+1, m_gr.getlen()-(pos*sizeof(T))-sizeof(T));
+      m_gr.resize(m_gr.getlen()-sizeof(T));
     }
 
   protected:
-    TinyGrowBuf gr;
+    TinyGrowBuf m_gr;
 };
 
 #define mymin(x, y) ((x < y) ? x : y)
@@ -302,12 +302,12 @@ class SortedStringListND // no delete - can be placed in GrowBuf
       if (pos==-1) return alwaysreturnpos ? where : -1;
 
       // Note that .name is set with the TCHAR* offset into m_strings.
-      newstruct.name=strings.add(name,(_tcsclen(name)+1)*sizeof(TCHAR))/sizeof(TCHAR);
+      newstruct.name=m_strings.add(name,(_tcsclen(name)+1)*sizeof(TCHAR))/sizeof(TCHAR);
 
-      gr.add(&newstruct,sizeof(T));
-      T *s=(T*)gr.get();
-      memmove(s+pos+1,s+pos,gr.getlen()-((pos+1)*sizeof(T)));
-      memcpy(s+pos,&newstruct,sizeof(T));
+      m_gr.add(&newstruct,sizeof(T));
+      T *s=(T*) m_gr.get();
+      memmove(s+pos+1, s+pos, m_gr.getlen()-((pos+1)*sizeof(T)));
+      memcpy(s+pos, &newstruct, sizeof(T));
 
       return pos;
     }
@@ -354,16 +354,16 @@ class SortedStringListND // no delete - can be placed in GrowBuf
 		 int*				where=0				/* */
     )
     {
-      T *data=(T *)gr.get();
-      int ul=gr.getlen()/sizeof(T);
-      int ll=0;
-      int nextpos=(ul+ll)/2;
+      T *data=(T *) m_gr.get();
+      int ul = m_gr.getlen()/sizeof(T);
+      int ll = 0;
+      int nextpos = (ul+ll)/2;
 
-      // Do binary search on m_gr which is sorted. m_strings is NOT sorted.
+		// Do binary search on m_gr which is sorted. m_strings is NOT sorted.
       while (ul > ll)
       {
         int res;
-        const TCHAR *pCurr = (TCHAR*)strings.get() + data[nextpos].name;
+        const TCHAR *pCurr = (TCHAR*) m_strings.get() + data[nextpos].name;
         if (n_chars < 0)
         {
           if (case_sensitive)
@@ -406,8 +406,9 @@ class SortedStringListND // no delete - can be placed in GrowBuf
     }
 
   protected:
-    TinyGrowBuf gr;
-    GrowBuf strings;
+    TinyGrowBuf m_gr;			// Sorted array of Ts
+    GrowBuf     m_strings;		// Unsorted array of TCHAR strings
+	 									//  (contains the .names)
 };
 
 /**

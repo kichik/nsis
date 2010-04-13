@@ -12,6 +12,8 @@
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty.
+ *
+ * Doxygen comments by Jim Park -- 08/01/2007
  */
 
 #include "strlist.h"
@@ -20,7 +22,7 @@ int StringList::add(const TCHAR *str, int case_sensitive)
 {
   int a=find(str,case_sensitive);
   if (a >= 0 && case_sensitive!=-1) return a;
-  return gr.add(str,(_tcsclen(str)+1)*sizeof(TCHAR))/sizeof(TCHAR);
+  return m_gr.add(str,(_tcsclen(str)+1)*sizeof(TCHAR))/sizeof(TCHAR);
 }
 
 // use 2 for case sensitive end-of-string matches too
@@ -29,14 +31,18 @@ int StringList::find(const TCHAR *str, int case_sensitive, int *idx/*=NULL*/) co
   const TCHAR *s=get();
   int ml=getlen();
   int offs=0;
+
   if (idx) *idx=0;
   while (offs < ml)
   {
+    // Check if the whole string matches str.
     if ((case_sensitive && !_tcscmp(s+offs,str)) ||
         (!case_sensitive && !_tcsicmp(s+offs,str)))
     {
       return offs;
     }
+
+    // Check if just the end of the string matches str.
     if (case_sensitive==2 &&
         _tcslen(str) < _tcslen(s+offs) &&  // check for end of string
         !_tcscmp(s+offs+_tcslen(s+offs)-_tcslen(str),str))
@@ -44,25 +50,33 @@ int StringList::find(const TCHAR *str, int case_sensitive, int *idx/*=NULL*/) co
       return offs+_tcslen(s+offs)-_tcslen(str);
     }
     offs+=_tcslen(s+offs)+1;
+
     if (idx) (*idx)++;
   }
   return -1;
 }
 
+// pos is the position in TCHARs, not bytes.
 void StringList::delbypos(int pos)
 {
-  TCHAR *s=(TCHAR*)gr.get();
+  TCHAR *s=(TCHAR*) m_gr.get();
   int len=_tcslen(s+pos)+1;
-  if (pos+len < gr.getlen()) memcpy(s+pos,s+pos+len,gr.getlen()-(pos+len));
-  gr.resize(gr.getlen()-len);
+
+  if (pos+len < m_gr.getlen()) 
+  {
+	  // Move everything after the string position to the current position.
+      memcpy(s+pos,s+pos+len,m_gr.getlen()-(pos+len));
+  }
+  m_gr.resize(m_gr.getlen()-len);
 }
 
+// idx corresponds to the nth string in the list.
 int StringList::idx2pos(int idx) const
 {
-  TCHAR *s=(TCHAR*)gr.get();
+  TCHAR *s=(TCHAR*) m_gr.get();
   int offs=0;
   int cnt=0;
-  if (idx>=0) while (offs < gr.getlen())
+  if (idx>=0) while (offs < m_gr.getlen())
   {
     if (cnt++ == idx) return offs;
     offs+=_tcslen(s+offs)+1;
@@ -72,8 +86,8 @@ int StringList::idx2pos(int idx) const
 
 int StringList::getnum() const
 {
-  TCHAR *s=(TCHAR*)gr.get();
-  int ml=gr.getlen();
+  TCHAR *s=(TCHAR*) m_gr.get();
+  int ml=m_gr.getlen();
   int offs=0;
   int idx=0;
   while (offs < ml)
@@ -86,22 +100,26 @@ int StringList::getnum() const
 
 const TCHAR *StringList::get() const
 {
-  return (const TCHAR*)gr.get();
+  return (const TCHAR*) m_gr.get();
 }
 
 int StringList::getlen() const
 {
-  return gr.getlen();
+  return m_gr.getlen();
 }
 
 // ==========
 // DefineList
 // ==========
 
+/** 
+ * Since the SortedStringList base class handles the memory for .name values,
+ * this destructor handles all the .value values in struct define.
+ */
 DefineList::~DefineList()
 {
-  struct define *s=(struct define*)gr.get();
-  int num=gr.getlen()/sizeof(struct define);
+  struct define *s=(struct define*) m_gr.get();
+  int num=m_gr.getlen()/sizeof(struct define);
 
   for (int i=0; i<num; i++) {
     free(s[i].value);
@@ -116,9 +134,11 @@ int DefineList::add(const TCHAR *name, const TCHAR *value/*=_T("")*/)
     return 1;
   }
 
-  TCHAR **newvalue=&(((struct define*)gr.get())[pos].value);
+  TCHAR **newvalue=&(((struct define*) m_gr.get())[pos].value);
   size_t size_in_bytes = (_tcslen(value) + 1) * sizeof(TCHAR);
+
   *newvalue=(TCHAR*)malloc(size_in_bytes);
+
   if (!(*newvalue))
   {
     extern FILE *g_output;
@@ -142,7 +162,7 @@ TCHAR *DefineList::find(const TCHAR *name)
   {
     return NULL;
   }
-  return ((struct define*)gr.get())[v].value;
+  return ((struct define*) m_gr.get())[v].value;
 }
 
 // returns 0 on success, 1 otherwise
@@ -151,7 +171,7 @@ int DefineList::del(const TCHAR *str)
   int pos=SortedStringList<struct define>::find(str);
   if (pos==-1) return 1;
 
-  struct define *db=(struct define *)gr.get();
+  struct define *db=(struct define *) m_gr.get();
   free(db[pos].value);
   delbypos(pos);
 
@@ -160,21 +180,21 @@ int DefineList::del(const TCHAR *str)
 
 int DefineList::getnum()
 {
-  return gr.getlen()/sizeof(define);
+  return m_gr.getlen()/sizeof(define);
 }
 
 TCHAR *DefineList::getname(int num)
 {
   if ((unsigned int)getnum() <= (unsigned int)num)
     return 0;
-  return ((struct define*)gr.get())[num].name;
+  return ((struct define*) m_gr.get())[num].name;
 }
 
 TCHAR *DefineList::getvalue(int num)
 {
   if ((unsigned int)getnum() <= (unsigned int)num)
     return 0;
-  return ((struct define*)gr.get())[num].value;
+  return ((struct define*) m_gr.get())[num].value;
 }
 
 // ==============
@@ -185,21 +205,21 @@ int FastStringList::add(const TCHAR *name, int case_sensitive/*=0*/)
 {
   int pos = SortedStringListND<struct string_t>::add(name, case_sensitive);
   if (pos == -1) return -1;
-  return ((struct string_t*)gr.get())[pos].name;
+  return ((struct string_t*) m_gr.get())[pos].name;
 }
 
 TCHAR *FastStringList::get() const
 {
-  return (TCHAR*)strings.get();
+  return (TCHAR*)m_strings.get();
 }
 
 int FastStringList::getlen() const
 {
-  return strings.getlen();
+  return m_strings.getlen();
 }
 
 int FastStringList::getnum() const
 {
-  return gr.getlen()/sizeof(struct string_t);
+  return m_gr.getlen()/sizeof(struct string_t);
 }
 

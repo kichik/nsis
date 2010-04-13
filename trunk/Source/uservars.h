@@ -12,6 +12,8 @@
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty.
+ * 
+ * Doxygen comments by Jim Park -- 07/25/2007
  */
 
 #ifndef ___USERVARS___H_____
@@ -29,23 +31,33 @@ struct uservarstring {
 class UserVarsStringList : public SortedStringListND<struct uservarstring>
 {
   public:
+	 /* Default constructor */
     UserVarsStringList()
     {
-      index = 0;
+      m_index = 0;
     }
+	 /* Destructor */
     ~UserVarsStringList() { }
 
+	 /**
+	  * Adds a name to the UserVarsStringList.  Sets reference count to
+	  * ref_count.
+	  *
+	  * @param name The User variable string to store.
+	  * @param ref_count The reference count to store.  Default is 0.
+	  * @return The index of the added variable string.
+	  */
     int add(const TCHAR *name, int ref_count = 0 )
     {
       int pos=SortedStringListND<struct uservarstring>::add(name);
       if (pos == -1) return -1;
 
-      ((struct uservarstring*)gr.get())[pos].index = index;
-      ((struct uservarstring*)gr.get())[pos].pos = pos;
-      ((struct uservarstring*)gr.get())[pos].reference = ref_count;
+      ((struct uservarstring*)m_gr.get())[pos].index = m_index;
+      ((struct uservarstring*)m_gr.get())[pos].pos = pos;
+      ((struct uservarstring*)m_gr.get())[pos].reference = ref_count;
 
-      int temp = index;
-      index++;
+      int temp = m_index;
+      m_index++;
 
       return temp;
     }
@@ -61,9 +73,9 @@ class UserVarsStringList : public SortedStringListND<struct uservarstring>
 	  */
     int get(const TCHAR *name, int n_chars = -1)
     {
-      int v=SortedStringListND<struct uservarstring>::find(name, n_chars);
-      if (v==-1) return -1;
-      return (((struct uservarstring*)gr.get())[v].index);
+      int v = SortedStringListND<struct uservarstring>::find(name, n_chars);
+      if (v == -1) return -1;
+      return (((struct uservarstring*) m_gr.get())[v].index);
     }
 
 	 /**
@@ -73,7 +85,7 @@ class UserVarsStringList : public SortedStringListND<struct uservarstring>
 	  */
     int getnum()
     {
-      return index;
+       return m_index;
     }
 
 	 /**
@@ -86,7 +98,7 @@ class UserVarsStringList : public SortedStringListND<struct uservarstring>
     {
       int pos=get_internal_idx(idx);
       if (pos==-1) return -1;
-      return (((struct uservarstring*)gr.get())[pos].reference);
+      return (((struct uservarstring*) m_gr.get())[pos].reference);
     }
 
 	 /**
@@ -98,24 +110,32 @@ class UserVarsStringList : public SortedStringListND<struct uservarstring>
     int inc_reference(int idx)
     {
       int pos=get_internal_idx(idx);
-      ((struct uservarstring*)gr.get())[pos].reference++;
-      return (((struct uservarstring*)gr.get())[pos].reference)-1;
+      ((struct uservarstring*)m_gr.get())[pos].reference++;
+      return (((struct uservarstring*)m_gr.get())[pos].reference)-1;
     }
 
+	 /**
+	  * Given the index of the structure, return the string value
+	  * of the name.
+	  *
+	  * @return String value of the name as TCHAR*.
+	  * If not found, returns NULL.
+	  */
     TCHAR *idx2name(int idx)
     {
       int pos=get_internal_idx(idx);
       if (pos==-1) return NULL;
-      struct uservarstring *data=(struct uservarstring *)gr.get();      
-      return ((TCHAR*)strings.get() + data[pos].name);
+      struct uservarstring *data=(struct uservarstring *) m_gr.get();      
+      return ((TCHAR*) m_strings.get() + data[pos].name);
     }
 
   private:
-    int index;
+    int m_index;
+
     int get_internal_idx(int idx)
     {
-      struct uservarstring *data=(struct uservarstring *)gr.get();      
-      for (int i = 0; i < index; i++)
+      struct uservarstring *data=(struct uservarstring *) m_gr.get();
+      for (int i = 0; i < m_index; i++)
       {
         if (data[i].index == idx)
         {

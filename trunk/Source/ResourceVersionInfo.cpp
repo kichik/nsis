@@ -45,8 +45,8 @@ struct version_string_list
 
 CVersionStrigList::~CVersionStrigList()
 {
-  struct version_string_list *itr = (struct version_string_list *) gr.get();
-  int i = gr.getlen() / sizeof(struct version_string_list);
+  struct version_string_list *itr = (struct version_string_list *) m_gr.get();
+  int i = m_gr.getlen() / sizeof(struct version_string_list);
 
   while (i--)
   {
@@ -60,27 +60,27 @@ int CVersionStrigList::add(LANGID langid, int codepage)
   _stprintf(Buff, _T("%04x"), langid);
   int pos = SortedStringListND<struct version_string_list>::add(Buff);
   if (pos == -1) return false;
-  ((struct version_string_list*)gr.get())[pos].pChildStrings = new DefineList;
-  ((struct version_string_list*)gr.get())[pos].codepage = codepage;
-  ((struct version_string_list*)gr.get())[pos].lang_id = langid;
+  ((struct version_string_list*)m_gr.get())[pos].pChildStrings = new DefineList;
+  ((struct version_string_list*)m_gr.get())[pos].codepage = codepage;
+  ((struct version_string_list*)m_gr.get())[pos].lang_id = langid;
   return pos;
 }
 
 LANGID CVersionStrigList::get_lang(int idx)
 {
-  version_string_list *data=(version_string_list *)gr.get();
+  version_string_list *data=(version_string_list *)m_gr.get();
   return data[idx].lang_id;
 }
 
 int CVersionStrigList::get_codepage(int idx)
 {
-  version_string_list *data=(version_string_list *)gr.get();
+  version_string_list *data=(version_string_list *)m_gr.get();
   return data[idx].codepage;
 }
 
 DefineList* CVersionStrigList::get_strings(int idx)
 {
-  version_string_list *data=(version_string_list *)gr.get();
+  version_string_list *data=(version_string_list *)m_gr.get();
   return data[idx].pChildStrings;
 }
 
@@ -93,12 +93,12 @@ int CVersionStrigList::find(LANGID lang_id, int codepage)
 
 int CVersionStrigList::getlen()
 {
-  return strings.getlen();
+  return m_strings.getlen();
 }
 
 int CVersionStrigList::getnum()
 {
-  return gr.getlen()/sizeof(struct version_string_list);
+  return m_gr.getlen()/sizeof(struct version_string_list);
 }
 
 //////////////////////////////////////////////////////////////////////
