@@ -42,7 +42,7 @@ class ConstantsStringList : public SortedStringListND<struct constantstring>
     TCHAR *idx2name(int idx);
 
   private:
-    int index;
+    int m_index;
     int get_internal_idx(int idx);
 };
 
