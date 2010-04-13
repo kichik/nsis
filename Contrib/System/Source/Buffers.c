@@ -1,3 +1,5 @@
+// Unicode support by Jim Park -- 08/23/2007
+
 #include "stdafx.h"
 #include "Plugin.h"
 #include "System.h"
@@ -20,6 +22,18 @@ PLUGINFUNCTIONSHORT(Alloc)
         return;
     }
     system_pushint((int) GlobalAlloc(GPTR, size));
+}
+PLUGINFUNCTIONEND
+
+PLUGINFUNCTIONSHORT(StrAlloc)
+{
+    int size;
+    if ((size = popint64()) == 0)
+    {
+        system_pushint(0);
+        return;
+    }
+    system_pushint((int) GlobalAlloc(GPTR, size * sizeof(TCHAR)));
 }
 PLUGINFUNCTIONEND
 

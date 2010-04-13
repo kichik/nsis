@@ -64,7 +64,19 @@ System::Free $0
 </pre></blockquote>
 </blockquote>
 </li>
-
+<li>
+<b>StrAlloc</b> <i>SIZE</i>
+<blockquote>
+<p>Allocates a string buffer for <i>SIZE</i> <b>TCHARs</b> and returns a memory address on the stack.  This is extremely useful if you want to write an NSI script that will work for both ANSI and Unicode NSIS.</p>
+<h4>Usage Example</h4>
+<blockquote><pre>
+System::<b>StrAlloc</b> 64 ; String buffer for 63 characters and \0 termination.
+Pop $0
+DetailPrint "A string buffer for 64 characters allocated at $0"
+System::Free $0
+</pre></blockquote>
+</blockquote>
+</li>
 <li>
 <b>Copy</b> [/<i>SIZE</i>] <i>DESTINATION</i> <i>SOURCE</i>
 <blockquote>
@@ -283,11 +295,15 @@ DetailPrint $4
 </tr>
 <tr>
 <th>&amp;t<i>N</i></th>
-<td><i>N</i> bytes of text (structures only)</td>
+<td>array of <i>N</i> text characters TCHAR (structures only)</td>
+</tr>
+<tr>
+<th>&amp;m<i>N</i></th>
+<td>array of <i>N</i> ANSI characters CHAR (structures only)</td>
 </tr>
 <tr>
 <th>&amp;w<i>N</i></th>
-<td><i>N</i> bytes of Unicode text (structures only)</td>
+<td>array of <i>N</i> Unicode characters WCHAR (structures only)</td>
 </tr>
 <tr>
 <th>&amp;g<i>N</i></th>
