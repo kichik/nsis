@@ -983,7 +983,10 @@ static int NSISCALL ExecuteEntry(entry *entry_)
             h=LoadLibraryEx(buf1, NULL, LOAD_WITH_ALTERED_SEARCH_PATH);
           if (h)
           {
-            FARPROC funke = GetProcAddress(h,buf0);
+            // Jim Park: Need to use our special NSISGetProcAddress to convert
+            // buf0 to char before calling GetProcAddress() which only takes 
+            // chars.
+            FARPROC funke = NSISGetProcAddress(h,buf0);
             if (funke)
             {
               exec_error--;
@@ -1281,10 +1284,12 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         p[0]=0;
         if (hKey)
         {
-          DWORD l = NSIS_MAX_STRLEN - 1;
+          DWORD l = NSIS_MAX_STRLEN*sizeof(TCHAR);
           DWORD t;
 
-          if (RegQueryValueEx(hKey,buf3,NULL,&t,p,&l) != ERROR_SUCCESS ||
+          // Jim Park: If plain text in p or binary data in p,
+          // user must be careful in accessing p correctly.
+          if (RegQueryValueEx(hKey,buf3,NULL,&t,(LPBYTE)p,&l) != ERROR_SUCCESS ||
               (t != REG_DWORD && t != REG_SZ && t != REG_EXPAND_SZ))
           {
             p[0]=0;
@@ -1300,7 +1305,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
             else
             {
               exec_error += parm4;
-              p[l]=0;
+              p[NSIS_MAX_STRLEN-1]=0; // RegQueryValueEx adds a null terminator, UNLESS the value is NSIS_MAX_STRLEN long
             }
           }
           RegCloseKey(hKey);
@@ -1360,16 +1365,16 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         DWORD dw;
         int l;
         TCHAR *t=var0;
-        if (parm2) // WriteByte
+        if (parm2)
         {
-          ((unsigned char *)buf1)[0]=GetIntFromParm(1)&0xff;
+          ((_TUCHAR *)buf1)[0]=(_TUCHAR) GetIntFromParm(1);
           l=1;
         }
         else
         {
           l=mystrlen(GetStringFromParm(0x11));
         }
-        if (!*t || !WriteFile((HANDLE)myatoi(t),buf1,l,&dw,NULL))
+        if (!*t || !WriteFile((HANDLE)myatoi(t),buf1,l*sizeof(TCHAR),&dw,NULL))
         {
           exec_error++;
         }
@@ -1377,29 +1382,29 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     break;
     case EW_FGETS:
       {
-        char *textout=var1;
+        TCHAR *textout=var1;
         DWORD dw;
         int rpos=0;
-        char *hptr=var0;
+        TCHAR *hptr=var0;
         int maxlen=GetIntFromParm(2);
         if (maxlen<1) break;
         if (maxlen > NSIS_MAX_STRLEN-1) maxlen=NSIS_MAX_STRLEN-1;
         if (*hptr)
         {
-          char lc=0;
+          TCHAR lc=0;
           HANDLE h=(HANDLE)myatoi(hptr);
           while (rpos<maxlen)
           {
-            char c;
+            TCHAR c;
             if (!ReadFile(h,&c,sizeof(c),&dw,NULL) || dw != sizeof(c)) break;
             if (parm3)
             {
-              myitoa(textout,(unsigned int)(unsigned char)c);
+              myitoa(textout,(unsigned int)(_TUCHAR)c);
               return 0;
             }
-            if (lc == '\r' || lc == '\n')
+            if (lc == _T('\r') || lc == _T('\n'))
             {
-              if (lc == c || (c != '\r' && c != '\n')) SetFilePointer(h,-((int)(sizeof(c))),NULL,FILE_CURRENT);
+              if (lc == c || (c != _T('\r') && c != _T('\n'))) SetFilePointer(h,-((int)(sizeof(c))),NULL,FILE_CURRENT);
               else textout[rpos++]=c;
               break;
             }
