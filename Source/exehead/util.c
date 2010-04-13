@@ -492,7 +492,7 @@ void RenameViaWininit(const TCHAR* prevName, const TCHAR* newName)
           char *pszNextSec = mystrstriA(pszFirstRenameLine,"\n[");
           if (pszNextSec)
           {
-            TCHAR *p = ++pszNextSec;
+            char *p = ++pszNextSec;
             while (p < pszWinInit + dwFileSize) {
               p[cchRenameLine] = *p;
               p++;
@@ -1030,4 +1030,26 @@ void NSISCALL MessageLoop(UINT uCheckedMsg)
   MSG msg;
   while (PeekMessage(&msg, NULL, uCheckedMsg, uCheckedMsg, PM_REMOVE))
     DispatchMessage(&msg);
+}
+
+/**
+ * This function is useful for Unicode support.  Since the Windows
+ * GetProcAddress function always takes a char*, this function wraps
+ * the windows call and does the appropriate translation when
+ * appropriate.
+ *
+ * @param dllHandle Handle to the DLL loaded by LoadLibraryEx.
+ * @param funcName The name of the function to get the address of.
+ * @return The pointer to the function.  Null if failure.
+ */
+void * NSISCALL NSISGetProcAddress(HANDLE dllHandle, TCHAR* funcName)
+{
+#ifdef _UNICODE
+  char ansiName[NSIS_MAX_STRLEN];
+  if (WideCharToMultiByte(CP_ACP, 0, funcName, -1, ansiName, NSIS_MAX_STRLEN, NULL, NULL) != 0)
+    return GetProcAddress(dllHandle, ansiName);
+  return NULL;
+#else
+  return GetProcAddress(dllHandle, funcName);
+#endif
 }

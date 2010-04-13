@@ -716,8 +716,8 @@ skipPage:
 static DWORD dwRead;
 DWORD CALLBACK StreamLicense(DWORD dwCookie, LPBYTE pbBuff, LONG cb, LONG *pcb)
 {
-  lstrcpyn(pbBuff,(TCHAR*)dwCookie+dwRead,cb);
-  *pcb=mystrlen(pbBuff);
+  lstrcpynA(pbBuff,(char*)dwCookie+dwRead,cb);
+  *pcb=lstrlenA(pbBuff);
   dwRead+=*pcb;
   return 0;
 }
