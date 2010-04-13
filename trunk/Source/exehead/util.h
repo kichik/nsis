@@ -124,6 +124,18 @@ enum myGetProcAddressFunctions {
 void * NSISCALL myGetProcAddress(const enum myGetProcAddressFunctions func);
 void NSISCALL MessageLoop(UINT uCheckedMsg);
 
+/**
+ * This function is useful for Unicode support.  Since the Windows
+ * GetProcAddress function always takes a char*, this function wraps
+ * the windows call and does the appropriate translation when
+ * appropriate.
+ *
+ * @param dllHandle Handle to the DLL loaded by LoadLibraryEx.
+ * @param funcName The name of the function to get the address of.
+ * @return The pointer to the function.  Null if failure.
+ */
+void * NSISCALL NSISGetProcAddress(HANDLE dllHandle, TCHAR* funcName);
+
 // Turn a pair of chars into a word
 // Turn four chars into a dword
 #ifdef __BIG_ENDIAN__ // Not very likely, but, still...
