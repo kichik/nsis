@@ -1,6 +1,8 @@
 // System.cpp : Defines the entry point for the DLL application.
 //
 
+// Unicode support by Jim Park & Olivier Marcoux
+
 #include "stdafx.h"
 #include "Plugin.h"
 #include "Buffers.h"
@@ -37,6 +39,16 @@ const int ParamSizeByType[7] = {0, // PAT_VOID (Size will be equal to 1)
     1, // PAT_GUID
     0}; // PAT_CALLBACK (Size will be equal to 1)
 
+// Thomas needs to look at this.
+const int ByteSizeByType[7] = {
+    1, // PAT_VOID
+    1, // PAT_INT
+    1, // PAT_LONG
+    1, // PAT_STRING
+    2, // PAT_WSTRING (special case for &wN notation: N is a number of WCHAR, not a number of bytes)
+    1, // PAT_GUID
+    1}; // PAT_CALLBACK
+    
 int LastStackPlace;
 int LastStackReal;
 DWORD LastError;
@@ -150,6 +162,34 @@ PLUGINFUNCTION(Debug)
 #define SYSTEM_LOG_POST
 
 #endif
+
+/**
+ * This function is useful for Unicode support.  Since the Windows
+ * GetProcAddress function always takes a char*, this function wraps
+ * the windows call and does the appropriate translation when
+ * appropriate.
+ *
+ * @param dllHandle Handle to the DLL loaded by LoadLibraryEx.
+ * @param funcName The name of the function to get the address of.
+ * @return The pointer to the function.  Null if failure.
+ */
+void * NSISGetProcAddress(HMODULE dllHandle, TCHAR* funcName)
+{
+#ifdef _UNICODE
+  char* ansiName = NULL;
+  int   len;
+  void* funcPtr = NULL;
+
+  len = WideCharToMultiByte(CP_ACP, 0, funcName, -1, ansiName, 0, NULL, NULL);
+  ansiName = (char*) GlobalAlloc(GPTR, len);
+  WideCharToMultiByte(CP_ACP, 0, funcName, -1, ansiName, len, NULL, NULL);
+  funcPtr = GetProcAddress(dllHandle, ansiName);
+  GlobalFree(ansiName);
+  return funcPtr;
+#else
+  return GetProcAddress(dllHandle, funcName);
+#endif
+}
 
 PLUGINFUNCTIONSHORT(Free)
 {
@@ -265,7 +305,7 @@ PLUGINFUNCTION(Call)
 
             // Return result instead of return value
             proc->Params[0].Value = (int) GetResultStr(proc);
-            proc->Params[0].Type = PAT_STRING;
+            proc->Params[0].Type = PAT_TSTRING;
             // Return all params
             ParamsOut(proc);
 
@@ -559,7 +599,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
             case _T('m'):
             case _T('M'): temp2 = PAT_STRING; break;
             case _T('t'):
-            case _T('T'): temp2 = PAT_STRING; break; // will be PAT_WSTRING for Unicode NSIS
+            case _T('T'): temp2 = PAT_TSTRING; break;
             case _T('g'):
             case _T('G'): temp2 = PAT_GUID; break;
             case _T('w'):
@@ -761,7 +801,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
                     }
 
                 // Get proc address
-                if ((proc->Proc = GetProcAddress(proc->Dll, proc->ProcName)) == NULL)
+                if ((proc->Proc = NSISGetProcAddress(proc->Dll, proc->ProcName)) == NULL)
                 {
 #ifdef _UNICODE
                     // automatic W discover
@@ -770,7 +810,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
                     // automatic A discover
                     lstrcat(proc->ProcName, "A");
 #endif
-                    if ((proc->Proc = GetProcAddress(proc->Dll, proc->ProcName)) == NULL)
+                    if ((proc->Proc = NSISGetProcAddress(proc->Dll, proc->ProcName)) == NULL)
                         proc->ProcResult = PR_ERROR;                            
                 }                    
             }
@@ -797,7 +837,8 @@ void ParamAllocate(SystemProc *proc)
 
 void ParamsIn(SystemProc *proc)
 {
-    int i, *place;
+    int i;
+    HGLOBAL* place;
     TCHAR *realbuf;
     LPWSTR wstr;
 
@@ -819,8 +860,8 @@ void ParamsIn(SystemProc *proc)
         }
 
         // Retreive pointer to place
-        if (par->Option == -1) place = (int*) par->Value;
-        else place = (int*) &(par->Value);
+        if (par->Option == -1) place = (HGLOBAL*) par->Value;
+        else place = (HGLOBAL*) &(par->Value);
 
         // by default no blocks are allocated
         par->allocatedBlock = NULL;
@@ -832,29 +873,40 @@ void ParamsIn(SystemProc *proc)
             par->Value = 0;
             break;
         case PAT_INT:
-            *((int*) place) = (int) myatoi64(realbuf);
+            *(int*)place = (int) myatoi64(realbuf);
             break;
         case PAT_LONG:
-            *((__int64*) place) = myatoi64(realbuf);
+            *(__int64*)place = myatoi64(realbuf);
             break;
-        case PAT_STRING:
+        case PAT_TSTRING:
 /*            if (par->Input == IOT_NONE) 
                 *((int*) place) = (int) NULL;
             else*/
-            *((int*) place) = (int) (par->allocatedBlock = AllocStr(realbuf));
+            *place = par->allocatedBlock = AllocStr(realbuf);
             break;
+#ifdef _UNICODE
+        case PAT_STRING:
+            *place = par->allocatedBlock = GlobalAlloc(GPTR, g_stringsize);
+            WideCharToMultiByte(CP_ACP, 0, realbuf, g_stringsize, *(LPSTR*)place, g_stringsize, NULL, NULL);
+            break;
+        case PAT_GUID:
+            *place = par->allocatedBlock = GlobalAlloc(GPTR, 16);
+            CLSIDFromString(realbuf, *(LPCLSID*)place);
+            break;
+#else
         case PAT_WSTRING:
         case PAT_GUID:
-            wstr = (LPWSTR) (par->allocatedBlock = GlobalAlloc(GPTR, g_stringsize*sizeof(WCHAR)));
+            wstr = (LPWSTR) GlobalAlloc(GPTR, g_stringsize*sizeof(WCHAR));
             MultiByteToWideChar(CP_ACP, 0, realbuf, g_stringsize, wstr, g_stringsize);
             if (par->Type == PAT_GUID)
             {
-                *((HGLOBAL*)place) = (par->allocatedBlock = GlobalAlloc(GPTR, 16));
-                CLSIDFromString(wstr, *((LPCLSID*)place));
+                *place = par->allocatedBlock = GlobalAlloc(GPTR, 16);
+                CLSIDFromString(wstr, *(LPCLSID*)place);
                 GlobalFree((HGLOBAL) wstr);
             } else
-                *((LPWSTR*)place) = wstr;
+                *place = par->allocatedBlock = (HGLOBAL)wstr;
             break;
+#endif
         case PAT_CALLBACK:
             // Generate new or use old callback
             if (lstrlen(realbuf) > 0)
@@ -918,22 +970,31 @@ void ParamsOut(SystemProc *proc)
             myitoa64(*((__int64*) place), realbuf);
             break;
         case PAT_STRING:
-            {
-                unsigned int num = lstrlen(*((TCHAR**) place));
-                if (num >= g_stringsize) num = g_stringsize-1;
-                lstrcpyn(realbuf,*((TCHAR**) place), num+1);
-                realbuf[num] = 0;                
-            }
+#ifdef _UNICODE
+            MultiByteToWideChar(CP_ACP, 0, *((char**) place), g_stringsize, realbuf, g_stringsize-1);
+            realbuf[g_stringsize-1] = _T('\0'); // make sure we have a null terminator
+#else
+            lstrcpyn(realbuf,*((TCHAR**) place), g_stringsize); // note: lstrcpyn always include a null terminator (unlike strncpy)
+#endif
             break;
         case PAT_GUID:
+#ifdef _UNICODE
+            StringFromGUID2(*((REFGUID*)place), realbuf, g_stringsize);
+#else
             wstr = (LPWSTR) GlobalAlloc(GPTR, g_stringsize*2);
             StringFromGUID2(*((REFGUID*)place), wstr, g_stringsize);
             WideCharToMultiByte(CP_ACP, 0, wstr, g_stringsize, realbuf, g_stringsize, NULL, NULL); 
             GlobalFree((HGLOBAL)wstr);
+#endif
             break;
         case PAT_WSTRING:
             wstr = *((LPWSTR*)place);
-            WideCharToMultiByte(CP_ACP, 0, wstr, g_stringsize, realbuf, g_stringsize, NULL, NULL);             
+#ifdef _UNICODE
+            lstrcpyn(realbuf, wstr, g_stringsize); // note: lstrcpyn always include a null terminator (unlike strncpy)
+#else
+            WideCharToMultiByte(CP_ACP, 0, wstr, g_stringsize, realbuf, g_stringsize-1, NULL, NULL);
+            realbuf[g_stringsize-1] = _T('\0'); // make sure we have a null terminator
+#endif
             break;
         case PAT_CALLBACK:
             wsprintf(realbuf, _T("%d"), proc->Params[i].Value);
@@ -1002,7 +1063,7 @@ void CallStruct(SystemProc *proc)
         if (proc->Params[i].Option < 1)
             structsize += proc->Params[i].Size * 4;
         else
-            structsize += proc->Params[i].Option-1;
+            structsize += ByteSizeByType[proc->Params[i].Type] * (proc->Params[i].Option - 1);
     
     // Struct exists?
     if (proc->Proc == NULL)
@@ -1030,7 +1091,7 @@ void CallStruct(SystemProc *proc)
             int intmask[4] = {0xFFFFFFFF, 0x000000FF, 0x0000FFFF, 0x00FFFFFF};
 
             // Special
-            size = proc->Params[i].Option-1;
+            size = (proc->Params[i].Option-1) * ByteSizeByType[proc->Params[i].Type];
 
             switch (proc->Params[i].Type)
             {

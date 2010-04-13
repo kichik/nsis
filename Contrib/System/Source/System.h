@@ -47,6 +47,11 @@
 #define PAT_WSTRING     4
 #define PAT_GUID        5
 #define PAT_CALLBACK    6
+#ifdef _UNICODE
+#define PAT_TSTRING     PAT_WSTRING
+#else
+#define PAT_TSTRING     PAT_STRING
+#endif
 
 // Input/Output Source/Destination
 #define IOT_NONE    0

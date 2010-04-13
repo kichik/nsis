@@ -14,7 +14,7 @@ TCHAR *AllocString()
 
 TCHAR *AllocStr(TCHAR *str)
 {
-    return lstrcpy(AllocString(), str);
+    return lstrcpyn(AllocString(), str, g_stringsize);
 }
 
 TCHAR* system_popstring()
