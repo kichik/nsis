@@ -609,7 +609,7 @@ int CEXEBuild::preprocess_string(TCHAR *out, const TCHAR *in, WORD codepage/*=CP
                 WORD w = FIX_ENDIAN_INT16(CODE_SHORT(-idx-1));
                 memcpy(out, &w, sizeof(WORD));
                 out += sizeof(WORD)/sizeof(TCHAR);
-                p += _tcsclen(cp) + 2;
+                p += _tcslen(cp) + 2;
                 bProceced = true;
               }
             }
@@ -636,10 +636,10 @@ int CEXEBuild::preprocess_string(TCHAR *out, const TCHAR *in, WORD codepage/*=CP
             if ( cBracket != 0 )
             {
               if (_tcschr(tbuf,cBracket)) (_tcschr(tbuf,cBracket)+1)[0]=0;
-              if ( tbuf[0] == _T('{') && tbuf[_tcsclen(tbuf)-1] == _T('}') )
+              if ( tbuf[0] == _T('{') && tbuf[_tcslen(tbuf)-1] == _T('}') )
               {
                 TCHAR *tstIfDefine = _tcsdup(tbuf+1);
-                tstIfDefine[_tcsclen(tstIfDefine)-1] = _T('\0');
+                tstIfDefine[_tcslen(tstIfDefine)-1] = _T('\0');
                 bDoWarning = definedlist.find(tstIfDefine) == NULL;
                 // If it's a defined identifier, then don't warn.
               }
@@ -955,7 +955,7 @@ int CEXEBuild::add_label(const TCHAR *name)
   int ce=cs+build_cursection->code_size;
 
   TCHAR *p=_tcsdup(name);
-  if (p[_tcsclen(p)-1] == _T(':')) p[_tcsclen(p)-1]=0;
+  if (p[_tcslen(p)-1] == _T(':')) p[_tcslen(p)-1]=0;
   int offs=ns_label.add(p,0);
   free(p);
 
@@ -1016,7 +1016,7 @@ int CEXEBuild::add_function(const TCHAR *funname)
     return PS_ERROR;
   }
 
-  set_uninstall_mode(!_tcsncicmp(funname,_T("un."),3));
+  set_uninstall_mode(!_tcsnicmp(funname,_T("un."),3));
 
   // ns_func contains all the function names defined.
   int addr=ns_func.add(funname,0);
@@ -1172,7 +1172,7 @@ int CEXEBuild::add_section(const TCHAR *secname, const TCHAR *defname, int expan
 
   set_uninstall_mode(0);
 
-  if (!_tcsncicmp(name, _T("un."), 3))
+  if (!_tcsnicmp(name, _T("un."), 3))
   {
     set_uninstall_mode(1);
     name += 3;
@@ -3228,7 +3228,7 @@ void CEXEBuild::warning_fl(const TCHAR *s, ...)
   _vsntprintf(buf,NSIS_MAX_STRLEN*10,s,val);
 #endif
   va_end(val);
-  _stprintf(buf+_tcsclen(buf),_T(" (%s:%d)"),curfilename,linecnt);
+  _stprintf(buf+_tcslen(buf),_T(" (%s:%d)"),curfilename,linecnt);
 
   m_warnings.add(buf,0);
   notify(MAKENSIS_NOTIFY_WARNING,buf);
@@ -3295,7 +3295,7 @@ void CEXEBuild::print_warnings()
   for (x = 0; x < nw; x ++)
   {
     _ftprintf(g_output,_T("  %s\n"),p);
-    p+=_tcsclen(p)+1;
+    p+=_tcslen(p)+1;
   }
   fflush(g_output);
 }
@@ -3305,7 +3305,7 @@ void CEXEBuild::notify(notify_e code, const TCHAR *data) const
 #ifdef _WIN32
   if (notify_hwnd)
   {
-    COPYDATASTRUCT cds = {(DWORD)code, (_tcsclen(data)+1)*sizeof(TCHAR), (void *) data};
+    COPYDATASTRUCT cds = {(DWORD)code, (_tcslen(data)+1)*sizeof(TCHAR), (void *) data};
     SendMessage(notify_hwnd, WM_COPYDATA, 0, (LPARAM)&cds);
   }
 #endif
@@ -3458,7 +3458,7 @@ int CEXEBuild::DeclaredUserVar(const TCHAR *szVarName)
     return PS_ERROR;
   }
   const TCHAR *pVarName = szVarName;
-  int iVarLen = _tcsclen(szVarName);
+  int iVarLen = _tcslen(szVarName);
 
   if (iVarLen > 60)
   {

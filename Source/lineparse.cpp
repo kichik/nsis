@@ -127,7 +127,7 @@ int LineParser::gettoken_enum(int token, const TCHAR *strlist) // null seperated
   if (tt && *tt) while (*strlist)
   {
     if (!_tcsicmp(tt,strlist)) return x;
-    strlist+=_tcsclen(strlist)+1;
+    strlist+=_tcslen(strlist)+1;
     x++;
   }
   return -1;

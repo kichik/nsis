@@ -143,7 +143,7 @@ TCHAR *CEXEBuild::set_line_predefine(int linecnt, BOOL is_macro)
     definedlist.del(_T("__LINE__"));
   }
   if(is_macro && oldline) {
-    linebuf = (TCHAR *)malloc((_tcsclen(oldline)+_tcsclen(temp)+2)*sizeof(TCHAR));
+    linebuf = (TCHAR *)malloc((_tcslen(oldline)+_tcslen(temp)+2)*sizeof(TCHAR));
     _stprintf(linebuf,_T("%s.%s"),oldline,temp);
   }
   else {
@@ -301,10 +301,10 @@ int CEXEBuild::doParse(const TCHAR *str)
   }
 
   // add new line to line buffer
-  m_linebuild.add(str,(_tcsclen(str)+1)*sizeof(TCHAR));
+  m_linebuild.add(str,(_tcslen(str)+1)*sizeof(TCHAR));
 
   // keep waiting for more lines, if this line ends with a backslash
-  if (str[0] && CharPrev(str,str+_tcsclen(str))[0] == _T('\\'))
+  if (str[0] && CharPrev(str,str+_tcslen(str))[0] == _T('\\'))
   {
     return PS_OK;
   }
@@ -313,7 +313,7 @@ int CEXEBuild::doParse(const TCHAR *str)
   
   // escaped quotes should be ignored for compile time commands that set defines
   // because defines can be inserted in commands at a later stage
-  bool ignore_escaping = (!_tcsncicmp((TCHAR*)m_linebuild.get(),_T("!define"),7) || !_tcsncicmp((TCHAR*)m_linebuild.get(),_T("!insertmacro"),12));
+  bool ignore_escaping = (!_tcsnicmp((TCHAR*)m_linebuild.get(),_T("!define"),7) || !_tcsncicmp((TCHAR*)m_linebuild.get(),_T("!insertmacro"),12));
   res=line.parse((TCHAR*)m_linebuild.get(), ignore_escaping);
 
   inside_comment = line.inCommentBlock();
@@ -346,7 +346,7 @@ parse_again:
   if (tkid == -1)
   {
     TCHAR *p=line.gettoken_str(0);
-    if (p[0] && p[_tcsclen(p)-1]==_T(':'))
+    if (p[0] && p[_tcslen(p)-1]==_T(':'))
     {
       if (p[0] == _T('!') || (p[0] >= _T('0') && p[0] <= _T('9')) || p[0] == _T('$') || p[0] == _T('-') || p[0] == _T('+'))
       {
@@ -619,7 +619,7 @@ void CEXEBuild::ps_addtoline(const TCHAR *str, GrowBuf &linedata, StringList &hi
           t=definedlist.find((TCHAR*)defname.get());
           if (t && hist.find((TCHAR*)defname.get(),0)<0)
           {
-            in+=_tcsclen(s)+2;
+            in+=_tcslen(s)+2;
             add=0;
             hist.add((TCHAR*)defname.get(),0);
 #ifdef NSIS_FIX_DEFINES_IN_STRINGS
@@ -651,7 +651,7 @@ void CEXEBuild::ps_addtoline(const TCHAR *str, GrowBuf &linedata, StringList &hi
           t=_tgetenv((TCHAR*)defname.get());
           if (t && hist.find((TCHAR*)defname.get(),0)<0)
           {
-            in+=_tcsclen(s)+2;
+            in+=_tcslen(s)+2;
             add=0;
             hist.add((TCHAR*)defname.get(),0);
 #ifdef NSIS_FIX_DEFINES_IN_STRINGS
@@ -809,14 +809,14 @@ int CEXEBuild::MacroExists(const TCHAR *macroname)
       return 1;
 
     // skip macro name
-    m += _tcsclen(m) + 1;
+    m += _tcslen(m) + 1;
 
     // skip params
-    while (*m) m += _tcsclen(m) + 1;
+    while (*m) m += _tcslen(m) + 1;
     m++;
 
     // skip data
-    while (*m) m += _tcsclen(m) + 1;
+    while (*m) m += _tcslen(m) + 1;
     if (m - (TCHAR *) m_macros.get() >= m_macros.getlen() - 1) break;
     m++;
   }
@@ -839,7 +839,7 @@ int CEXEBuild::process_oneline(TCHAR *line, const TCHAR *filename, int linenum)
   TCHAR *oldtimestamp = NULL;
   TCHAR *oldline = NULL;
   BOOL is_commandline = !_tcscmp(filename,_T("command line"));
-  BOOL is_macro = !_tcsncmp(filename,_T("macro:"),_tcsclen(_T("macro:")));
+  BOOL is_macro = !_tcsncmp(filename,_T("macro:"),_tcslen(_T("macro:"))); //TODO: isn't it supposed to be a && ?
 
   if(!is_commandline) { // Don't set the predefines for command line /X option
     if(!is_macro) {
@@ -931,14 +931,14 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         while (t && *t)
         {
           if (!_tcsicmp(t,line.gettoken_str(1))) break;
-          t+=_tcsclen(t)+1;
+          t+=_tcslen(t)+1;
 
           // advance over parameters
-          while (*t) t+=_tcsclen(t)+1;
+          while (*t) t+=_tcslen(t)+1;
           t++;
 
           // advance over data
-          while (*t) t+=_tcsclen(t)+1;
+          while (*t) t+=_tcslen(t)+1;
           if (t-(TCHAR *)m_macros.get() >= m_macros.getlen()-1)
             break;
           t++;
@@ -948,7 +948,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           ERROR_MSG(_T("!macro: macro named \"%s\" already found!\n"),line.gettoken_str(1));
           return PS_ERROR;
         }
-        m_macros.add(line.gettoken_str(1),(_tcsclen(line.gettoken_str(1))+1)*sizeof(TCHAR));
+        m_macros.add(line.gettoken_str(1),(_tcslen(line.gettoken_str(1))+1)*sizeof(TCHAR));
 
         int pc;
         for (pc=2; pc < line.getnumtokens(); pc ++)
@@ -968,7 +968,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
               return PS_ERROR;
             }
           }
-          m_macros.add(line.gettoken_str(pc),(_tcsclen(line.gettoken_str(pc))+1)*sizeof(TCHAR));
+          m_macros.add(line.gettoken_str(pc),(_tcslen(line.gettoken_str(pc))+1)*sizeof(TCHAR));
         }
         m_macros.add(_T(""),sizeof(_T("")));
 
@@ -978,7 +978,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           TCHAR *p=str;
           str[0]=0;
           _fgetts(str,MAX_LINELENGTH,fp);
-          //SCRIPT_MSG(_T("%s%s"), str, str[_tcsclen(str)-1]==_T('\n')?_T(""):_T("\n"));
+          //SCRIPT_MSG(_T("%s%s"), str, str[_tcslen(str)-1]==_T('\n')?_T(""):_T("\n"));
           if (feof(fp) && !str[0])
           {
             ERROR_MSG(_T("!macro \"%s\": unterminated (no !macroend found in file)!\n"),line.gettoken_str(1));
@@ -1003,7 +1003,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
               return PS_ERROR;
             }
           }
-          if (str[0]) m_macros.add(str,(_tcsclen(str)+1)*sizeof(TCHAR));
+          if (str[0]) m_macros.add(str,(_tcslen(str)+1)*sizeof(TCHAR));
           else m_macros.add(_T(" "),sizeof(_T(" ")));
           linecnt++;
         }
@@ -1021,14 +1021,14 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         while (t && *t)
         {
           if (!_tcsicmp(t,line.gettoken_str(1))) break;
-          t+=_tcsclen(t)+1;
+          t+=_tcslen(t)+1;
 
           // advance over parms
-          while (*t) t+=_tcsclen(t)+1;
+          while (*t) t+=_tcslen(t)+1;
           t++;
 
           // advance over data
-          while (*t) t+=_tcsclen(t)+1;
+          while (*t) t+=_tcslen(t)+1;
           if (t-(TCHAR *)m_macros.get() >= m_macros.getlen()-1)
             break;
           t++;
@@ -1039,7 +1039,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           ERROR_MSG(_T("!insertmacro: macro named \"%s\" not found!\n"),line.gettoken_str(1));
           return PS_ERROR;
         }
-        t+=_tcsclen(t)+1;
+        t+=_tcslen(t)+1;
 
 
         GrowBuf l_define_names;
@@ -1054,11 +1054,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             l_define_saves.add(t,v);
             definedlist.del(t);
           }
-          l_define_names.add(t,(_tcsclen(t)+1)*sizeof(TCHAR));
+          l_define_names.add(t,(_tcslen(t)+1)*sizeof(TCHAR));
           definedlist.add(t,line.gettoken_str(npr+2));
 
           npr++;
-          t+=_tcsclen(t)+1;
+          t+=_tcslen(t)+1;
         }
         l_define_names.add(_T(""),sizeof(_T("")));
         t++;
@@ -1100,7 +1100,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
               m = nm;
             }
           }
-          t+=_tcsclen(t)+1;
+          t+=_tcslen(t)+1;
         }
         m_macro_entry.delbypos(npos);
         {
@@ -1110,7 +1110,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             definedlist.del(p);
             TCHAR *v;
             if ((v=l_define_saves.find(p))) definedlist.add(p,v);
-            p+=_tcsclen(p)+1;
+            p+=_tcslen(p)+1;
           }
         }
         SCRIPT_MSG(_T("!insertmacro: end of %s\n"),line.gettoken_str(1));
@@ -1395,7 +1395,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           {
             if (*line.gettoken_str(2))
             {
-              if (_tcsncicmp(line.gettoken_str(2), _T("un."), 3))
+              if (_tcsnicmp(line.gettoken_str(2), _T("un."), 3))
               {
                 if (uninstall_mode)
                 {
@@ -1418,7 +1418,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           {
             if (*line.gettoken_str(1))
             {
-              if (_tcsncicmp(line.gettoken_str(1), _T("un."), 3))
+              if (_tcsnicmp(line.gettoken_str(1), _T("un."), 3))
               {
                 if (uninstall_mode)
                 {
@@ -1447,7 +1447,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           {
             if (*line.gettoken_str(3))
             {
-              if (_tcsncicmp(line.gettoken_str(3), _T("un."), 3))
+              if (_tcsnicmp(line.gettoken_str(3), _T("un."), 3))
               {
                 if (uninstall_mode)
                 {
@@ -1470,7 +1470,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           {
             if (*line.gettoken_str(2))
             {
-              if (_tcsncicmp(line.gettoken_str(2), _T("un."), 3))
+              if (_tcsnicmp(line.gettoken_str(2), _T("un."), 3))
               {
                 if (uninstall_mode)
                 {
@@ -1493,7 +1493,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           {
             if (*line.gettoken_str(1))
             {
-              if (_tcsncicmp(line.gettoken_str(1), _T("un."), 3))
+              if (_tcsnicmp(line.gettoken_str(1), _T("un."), 3))
               {
                 if (uninstall_mode)
                 {
@@ -1793,7 +1793,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           build_header.flags|=CH_FLAGS_COMP_ONLY_ON_CUSTOM;
           SCRIPT_MSG(_T("InstType: making components viewable only on custom install type\n"));
         }
-        else if (!_tcsncicmp(line.gettoken_str(1),_T("/CUSTOMSTRING="),14))
+        else if (!_tcsnicmp(line.gettoken_str(1),_T("/CUSTOMSTRING="),14))
         {
           SCRIPT_MSG(_T("InstType: setting custom text to: \"%s\"\n"),line.gettoken_str(1)+14);
           if (SetInnerString(NLF_COMP_CUSTOM,line.gettoken_str(1)+14) == PS_WARNING)
@@ -1807,7 +1807,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         {
           TCHAR *itname = line.gettoken_str(1);
 
-          if (!_tcsncicmp(itname, _T("un."), 3)) {
+          if (!_tcsnicmp(itname, _T("un."), 3)) {
             set_uninstall_mode(1);
             itname += 3;
           }
@@ -2105,7 +2105,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
       build_header.install_directory_ptr = add_string(p);
       build_header.install_directory_auto_append = 0;
-      TCHAR *p2 = p + _tcsclen(p);
+      TCHAR *p2 = p + _tcslen(p);
       if (*p && *CharPrev(p, p2) != _T('\\'))
       {
         // we risk hitting $\r or something like $(bla\ad) or ${bla\ad} here, but it's better
@@ -2639,11 +2639,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #endif
     case TOK_SETFONT:
     {
-      if (!_tcsncicmp(line.gettoken_str(1), _T("/LANG="), 6))
+      if (!_tcsnicmp(line.gettoken_str(1), _T("/LANG="), 6))
       {
         LANGID lang_id = _ttoi(line.gettoken_str(1) + 6);
         LanguageTable *table = GetLangTable(lang_id);
-        table->nlf.m_szFont = (TCHAR*)malloc((_tcsclen(line.gettoken_str(2))+1)*sizeof(TCHAR));
+        table->nlf.m_szFont = (TCHAR*)malloc((_tcslen(line.gettoken_str(2))+1)*sizeof(TCHAR));
         _tcscpy(table->nlf.m_szFont, line.gettoken_str(2));
         table->nlf.m_iFontSize = line.gettoken_int(3);
 
@@ -2855,7 +2855,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             while (p >= str && (*p == _T('\r') || *p == _T('\n'))) p--;
             *++p=0;
             if (file_buf.getlen()) file_buf.add(_T("\n"),1);
-            file_buf.add(str,_tcsclen(str));
+            file_buf.add(str,_tcslen(str));
           }
           fclose(fp);
         }
@@ -3043,7 +3043,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         TCHAR *incdir = include_dirs.get();
         int incdirs = include_dirs.getnum();
 
-        for (int i = 0; i < incdirs; i++, incdir += _tcsclen(incdir) + 1) {
+        for (int i = 0; i < incdirs; i++, incdir += _tcslen(incdir) + 1) {
           tstring curincdir = tstring(incdir) + PLATFORM_PATH_SEPARATOR_STR + dir;
 
           boost::scoped_ptr<dir_reader> dr( new_dir_reader() );
@@ -3148,8 +3148,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
               while (p >= str && (*p == _T('\r') || *p == _T('\n'))) p--;
               *++p=0;
 
-              bool endSlash = (str[0] && str[_tcsclen(str)-1] == _T('\\'));
-              if (tmpstr.getlen() || endSlash) tmpstr.add(str,_tcsclen(str));
+              bool endSlash = (str[0] && str[_tcslen(str)-1] == _T('\\'));
+              if (tmpstr.getlen() || endSlash) tmpstr.add(str,_tcslen(str));
 
               // if we have valid contents and not ending on slash, then done
               if (!endSlash && (str[0] || tmpstr.getlen())) break;
@@ -3225,8 +3225,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         TCHAR *src = line.gettoken_str(2+ignoreCase);
         TCHAR *search = line.gettoken_str(3+ignoreCase);
         TCHAR *replace = line.gettoken_str(4+ignoreCase);
-        int searchlen=_tcsclen(search);
-        int replacelen=_tcsclen(replace);
+        int searchlen=_tcslen(search);
+        int replacelen=_tcslen(replace);
         if (!searchlen)
         {
           ERROR_MSG(_T("!searchreplace: search string must not be empty for search/replace!\n"));
@@ -3237,7 +3237,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
         while (*src)
         {
-          if (ignoreCase ? _tcsncicmp(src,search,searchlen) : _tcsncmp(src,search,searchlen)) 
+          if (ignoreCase ? _tcsnicmp(src,search,searchlen) : _tcsncmp(src,search,searchlen)) 
             valout.add(src++,1);           
           else
           {
@@ -3423,7 +3423,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
       if (line.gettoken_str(a)[0]==_T('-'))
       {
-        if (!_tcsncicmp(line.gettoken_str(a)+1,_T("un."),3))
+        if (!_tcsnicmp(line.gettoken_str(a)+1,_T("un."),3))
           ret=add_section(_T("un."),line.gettoken_str(a+1));
         else
           ret=add_section(_T(""),line.gettoken_str(a+1));
@@ -3508,7 +3508,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
       SCRIPT_MSG(_T("Function: \"%s\"\n"),line.gettoken_str(1));
 #ifndef NSIS_CONFIG_UNINSTALL_SUPPORT
-      if (!_tcsncicmp(line.gettoken_str(1),_T("un."),3))
+      if (!_tcsnicmp(line.gettoken_str(1),_T("un."),3))
       {
         ERROR_MSG(_T("Error: Uninstall function declared, no NSIS_CONFIG_UNINSTALL_SUPPORT\n"));
         return PS_ERROR;
@@ -3652,7 +3652,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         int a = 1;
         int trim = 0;
         while (line.gettoken_str(a)[0] == _T('/')) {
-          if (!_tcsncicmp(line.gettoken_str(a),_T("/TRIM"),5)) {
+          if (!_tcsnicmp(line.gettoken_str(a),_T("/TRIM"),5)) {
             if (!_tcsicmp(line.gettoken_str(a)+5,_T("LEFT"))) trim = 1;
             else if (!_tcsicmp(line.gettoken_str(a)+5,_T("RIGHT"))) trim = 2;
             else if (!_tcsicmp(line.gettoken_str(a)+5,_T("CENTER"))) trim = 3;
@@ -3829,13 +3829,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_CALL:
       if (!line.gettoken_str(1)[0] || (line.gettoken_str(1)[0]==_T(':') && !line.gettoken_str(1)[1] )) PRINTHELP()
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-      if (uninstall_mode && _tcsncicmp(line.gettoken_str(1),_T("un."),3)
+      if (uninstall_mode && _tcsnicmp(line.gettoken_str(1),_T("un."),3)
           && (GetUserVarIndex(line,1) < 0) && line.gettoken_str(1)[0]!=_T(':'))
       {
         ERROR_MSG(_T("Call must be used with function names starting with \"un.\" in the uninstall section.\n"));
         PRINTHELP()
       }
-      if (!uninstall_mode && !_tcsncicmp(line.gettoken_str(1),_T("un."),3))
+      if (!uninstall_mode && !_tcsnicmp(line.gettoken_str(1),_T("un."),3))
       {
         ERROR_MSG(_T("Call must not be used with functions starting with \"un.\" in the non-uninstall sections.\n"));
         PRINTHELP()
@@ -3885,8 +3885,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         {
           if (p[0] == _T('\\') && p[1] != _T('\\')) p++;
           _tcsnccpy(out_path,p,1024-1);
-          if (*CharPrev(out_path,out_path+_tcsclen(out_path))==_T('\\'))
-            *CharPrev(out_path,out_path+_tcsclen(out_path))=0; // remove trailing slash
+          if (*CharPrev(out_path,out_path+_tcslen(out_path))==_T('\\'))
+            *CharPrev(out_path,out_path+_tcslen(out_path))=0; // remove trailing slash
         }
         if (!*out_path) PRINTHELP()
         SCRIPT_MSG(_T("CreateDirectory: \"%s\"\n"),out_path);
@@ -4151,7 +4151,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         TCHAR *s=(line.gettoken_str(7));
 
         TCHAR b[255];
-        for (unsigned int spos=0; (spos <= _tcsclen(s)) && (spos <= 255); spos++)
+        for (unsigned int spos=0; (spos <= _tcslen(s)) && (spos <= 255); spos++)
           b[spos]=_totupper(*(s+spos));
         _tcscpy(s,b);
 
@@ -4559,7 +4559,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           rec=1;
           a++;
         }
-        else if (which_token == TOK_FILE && !_tcsncicmp(line.gettoken_str(a),_T("/oname="),7))
+        else if (which_token == TOK_FILE && !_tcsnicmp(line.gettoken_str(a),_T("/oname="),7))
         {
           TCHAR *on=line.gettoken_str(a)+7;
           a++;
@@ -4596,9 +4596,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
           return PS_OK;
         }
-        if (!_tcsncicmp(line.gettoken_str(a),_T("/x"),2))
+        if (!_tcsnicmp(line.gettoken_str(a),_T("/x"),2))
         {
-          while (!_tcsncicmp(line.gettoken_str(a),_T("/x"),2))
+          while (!_tcsnicmp(line.gettoken_str(a),_T("/x"),2))
           {
             a++;
 
@@ -5393,7 +5393,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         _tcscat(str, line.gettoken_str(2));
         _tcscat(str, _T("%"));
         ent.offsets[1]=add_string(str);
-        if (ent.offsets[0] < 0 || _tcsclen(line.gettoken_str(2))<1) PRINTHELP()
+        if (ent.offsets[0] < 0 || _tcslen(line.gettoken_str(2))<1) PRINTHELP()
       }
       ent.offsets[2]=1;
       SCRIPT_MSG(_T("ReadEnvStr: %s->%s\n"),line.gettoken_str(2),line.gettoken_str(1));
@@ -5729,7 +5729,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
       ent.which=EW_SETBRANDINGIMAGE;
       for (int i = 1; i < line.getnumtokens(); i++)
-        if (!_tcsncicmp(line.gettoken_str(i),_T("/IMGID="),7)) {
+        if (!_tcsnicmp(line.gettoken_str(i),_T("/IMGID="),7)) {
           ent.offsets[1]=_ttoi(line.gettoken_str(i)+7);
           SCRIPT_MSG(_T("/IMGID=%d "),ent.offsets[1]);
         }
@@ -5795,7 +5795,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     {
       LANGID LangID=0;
       int a = 1;
-      if (!_tcsncicmp(line.gettoken_str(a),_T("/LANG="),6))
+      if (!_tcsnicmp(line.gettoken_str(a),_T("/LANG="),6))
         LangID=_ttoi(line.gettoken_str(a++)+6);
       if (line.getnumtokens()!=a+2) PRINTHELP();
       TCHAR *pKey = line.gettoken_str(a);
@@ -6398,8 +6398,8 @@ DefineList *CEXEBuild::searchParseString(const TCHAR *source_string, LineParser 
   const TCHAR *tok = line->gettoken_str(parmOffs++);
   if (tok && *tok)
   {
-    int toklen = _tcsclen(tok);
-    while (*source_string && (ignCase?_tcsncicmp(source_string,tok,toklen):_tcsncmp(source_string,tok,toklen))) source_string++;
+    int toklen = _tcslen(tok);
+    while (*source_string && (ignCase?_tcsnicmp(source_string,tok,toklen):_tcsncmp(source_string,tok,toklen))) source_string++;
 
     if (!*source_string) 
     {
@@ -6422,8 +6422,8 @@ DefineList *CEXEBuild::searchParseString(const TCHAR *source_string, LineParser 
     const TCHAR *src_start = source_string;
     if (tok && *tok)
     {
-      int toklen = _tcsclen(tok);
-      while (*source_string && (ignCase?_tcsncicmp(source_string,tok,toklen):_tcsncmp(source_string,tok,toklen))) source_string++;
+      int toklen = _tcslen(tok);
+      while (*source_string && (ignCase?_tcsnicmp(source_string,tok,toklen):_tcsncmp(source_string,tok,toklen))) source_string++;
 
       maxlen = source_string - src_start;
 
