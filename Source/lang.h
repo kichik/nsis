@@ -152,8 +152,8 @@ class LangStringList : public SortedStringListND<struct langstring>
     langstring *sort_uindex(int *num);
 
   private:
-    int count;
-    TinyGrowBuf sortbuf;
+    int m_count;           // Used to set string number (sn)
+    TinyGrowBuf m_sortbuf; // Used only to sort.
 };
 
 /**
@@ -195,8 +195,8 @@ class StringsArray
     const TCHAR *get(int idx);
 
   private:
-    TinyGrowBuf offsets;
-    GrowBuf strings;
+    TinyGrowBuf m_offsets; /* Positional offsets of the stored string. */
+    GrowBuf     m_strings; /* Storage of the actual strings. */
 };
 
 #define NLF_VERSION 6

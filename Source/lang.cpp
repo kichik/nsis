@@ -149,7 +149,7 @@ NLFString NLFStrings[NLF_STRINGS] = {
 // ==============
 
 LangStringList::LangStringList() {
-  count = 0;
+  m_count = 0;
 }
 
 int LangStringList::add(const TCHAR *name, int *sn/*=0*/)
@@ -157,12 +157,12 @@ int LangStringList::add(const TCHAR *name, int *sn/*=0*/)
   int pos = SortedStringListND<struct langstring>::add(name);
   if (pos == -1) return -1;
 
-  ((struct langstring*)gr.get())[pos].sn = count;
-  if (sn) *sn = count;
-  count++;
-  ((struct langstring*)gr.get())[pos].index = -1;
-  ((struct langstring*)gr.get())[pos].uindex = -1;
-  ((struct langstring*)gr.get())[pos].process = 1;
+  ((struct langstring*)m_gr.get())[pos].sn = m_count;
+  if (sn) *sn = m_count;
+  m_count++;
+  ((struct langstring*)m_gr.get())[pos].index = -1;
+  ((struct langstring*)m_gr.get())[pos].uindex = -1;
+  ((struct langstring*)m_gr.get())[pos].process = 1;
 
   return pos;
 }
@@ -174,19 +174,19 @@ int LangStringList::get(const TCHAR *name, int *sn/*=0*/, int *index/*=0*/, int 
   if (sn) *sn = -1;
   int v=find(name);
   if (v==-1) return -1;
-  if (index) *index = ((struct langstring*)gr.get())[v].index;
-  if (uindex) *uindex = ((struct langstring*)gr.get())[v].uindex;
-  if (sn) *sn = ((struct langstring*)gr.get())[v].sn;
-  if (process) *process = ((struct langstring*)gr.get())[v].process;
+  if (index) *index = ((struct langstring*)m_gr.get())[v].index;
+  if (uindex) *uindex = ((struct langstring*)m_gr.get())[v].uindex;
+  if (sn) *sn = ((struct langstring*)m_gr.get())[v].sn;
+  if (process) *process = ((struct langstring*)m_gr.get())[v].process;
   return v;
 }
 
 void LangStringList::set(int pos, int index/*=-1*/, int uindex/*=-1*/, int process/*=-1*/)
 {
-  if ((unsigned int)pos > (gr.getlen() / sizeof(struct langstring)))
+  if ((unsigned int)pos > (m_gr.getlen() / sizeof(struct langstring)))
     return;
 
-  struct langstring *data=(struct langstring *)gr.get();
+  struct langstring *data=(struct langstring *)m_gr.get();
 
   if (index >= 0)
     data[pos].index = index;
@@ -203,25 +203,25 @@ void LangStringList::set(const TCHAR *name, int index, int uindex/*=-1*/, int pr
 
 const TCHAR* LangStringList::pos2name(int pos)
 {
-  struct langstring *data=(struct langstring *)gr.get();
+  struct langstring *data=(struct langstring *) m_gr.get();
 
-  if ((unsigned int)pos > (gr.getlen() / sizeof(struct langstring)))
+  if ((unsigned int)pos > (m_gr.getlen() / sizeof(struct langstring)))
     return 0;
 
-  return ((const TCHAR*)strings.get() + data[pos].name);
+  return ((const TCHAR*) m_strings.get() + data[pos].name);
 }
 
 const TCHAR* LangStringList::offset2name(int name)
 {
-  if ((unsigned int)name > (unsigned int)strings.getlen())
+  if ((unsigned int)name > (unsigned int)m_strings.getlen())
     return 0;
 
-  return (const TCHAR*)strings.get() + name;
+  return (const TCHAR*) m_strings.get() + name;
 }
 
 int LangStringList::getnum()
 {
-  return gr.getlen() / sizeof(struct langstring);
+  return m_gr.getlen() / sizeof(struct langstring);
 }
 
 int LangStringList::compare_index(const void *item1, const void *item2)
@@ -235,11 +235,11 @@ int LangStringList::compare_index(const void *item1, const void *item2)
 langstring* LangStringList::sort_index(int *num)
 {
   if (!num) return 0;
-  sortbuf.resize(0);
-  sortbuf.add(gr.get(), gr.getlen());
-  *num = sortbuf.getlen() / sizeof(struct langstring);
-  qsort(sortbuf.get(), *num, sizeof(struct langstring), compare_index);
-  return (struct langstring*) sortbuf.get();
+  m_sortbuf.resize(0);
+  m_sortbuf.add(m_gr.get(), m_gr.getlen());
+  *num = m_sortbuf.getlen() / sizeof(struct langstring);
+  qsort(m_sortbuf.get(), *num, sizeof(struct langstring), compare_index);
+  return (struct langstring*) m_sortbuf.get();
 }
 
 int LangStringList::compare_uindex(const void *item1, const void *item2)
@@ -253,11 +253,11 @@ int LangStringList::compare_uindex(const void *item1, const void *item2)
 langstring* LangStringList::sort_uindex(int *num)
 {
   if (!num) return 0;
-  sortbuf.resize(0);
-  sortbuf.add(gr.get(), gr.getlen());
-  *num = sortbuf.getlen() / sizeof(struct langstring);
-  qsort(sortbuf.get(), *num, sizeof(struct langstring), compare_uindex);
-  return (struct langstring*) sortbuf.get();
+  m_sortbuf.resize(0);
+  m_sortbuf.add(m_gr.get(), m_gr.getlen());
+  *num = m_sortbuf.getlen() / sizeof(struct langstring);
+  qsort(m_sortbuf.get(), *num, sizeof(struct langstring), compare_uindex);
+  return (struct langstring*) m_sortbuf.get();
 }
 
 // ============
@@ -266,14 +266,15 @@ langstring* LangStringList::sort_uindex(int *num)
 
 StringsArray::StringsArray()
 {
-  offsets.set_zeroing(1);
+  // We make zero an invalid index.  Using 0 will get back an empty string.
+  m_offsets.set_zeroing(1);
 
-  strings.add(_T(""), sizeof(_T("")));
+  m_strings.add(_T(""), sizeof(_T("")));
 }
 
 void StringsArray::resize(int num)
 {
-  offsets.resize(num * sizeof(int));
+  m_offsets.resize(num * sizeof(int));
 }
 
 int StringsArray::set(int idx, const TCHAR *str)
@@ -281,22 +282,23 @@ int StringsArray::set(int idx, const TCHAR *str)
   if (idx < 0)
     return 0;
 
-  if (idx >= (int)(offsets.getlen() / sizeof(int)))
+  if (idx >= (int)(m_offsets.getlen() / sizeof(int)))
     resize(idx+1);
 
-  int old = ((int*)offsets.get())[idx];
+  int old = ((int*) m_offsets.get())[idx];
 
-  ((int*)offsets.get())[idx] = strings.add(str, (_tcsclen(str)+1)*sizeof(TCHAR))/sizeof(TCHAR);
+  // Need to store the TCHAR index so we divide the return value of add by sizeof(TCHAR).
+  ((int*)m_offsets.get())[idx] = m_strings.add(str, (_tcsclen(str)+1)*sizeof(TCHAR))/sizeof(TCHAR);
 
   return old;
 }
 
 const TCHAR* StringsArray::get(int idx)
 {
-  if ((unsigned int)idx >= (offsets.getlen() / sizeof(int)))
+  if ((unsigned int)idx >= (m_offsets.getlen() / sizeof(int)))
     return 0;
 
-  return (const TCHAR *)strings.get() + ((int*)offsets.get())[idx];
+  return (const TCHAR *) m_strings.get() + ((int*) m_offsets.get())[idx];
 }
 
 // =========
