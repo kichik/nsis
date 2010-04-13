@@ -22,7 +22,7 @@ int StringList::add(const TCHAR *str, int case_sensitive)
 {
   int a=find(str,case_sensitive);
   if (a >= 0 && case_sensitive!=-1) return a;
-  return m_gr.add(str,(_tcsclen(str)+1)*sizeof(TCHAR))/sizeof(TCHAR);
+  return m_gr.add(str,(_tcslen(str)+1)*sizeof(TCHAR))/sizeof(TCHAR);
 }
 
 // use 2 for case sensitive end-of-string matches too

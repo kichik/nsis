@@ -375,7 +375,7 @@ SIZE CDialogTemplate::GetStringSize(WORD id, TCHAR *str) {
   SelectObject(memDC, font);
 
   SIZE size;
-  GetTextExtentPoint32(memDC, str, _tcsclen(str), &size);
+  GetTextExtentPoint32(memDC, str, _tcslen(str), &size);
 
   DestroyWindow(hDlg);
   DeleteObject(font);

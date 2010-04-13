@@ -158,7 +158,7 @@ class SortedStringList
       T newstruct={0,};
       int pos=find(name,case_sensitive,1);
       if (pos==-1) return -1;
-      newstruct.name=(TCHAR*)malloc((_tcsclen(name)+1)*sizeof(TCHAR));
+      newstruct.name=(TCHAR*)malloc((_tcslen(name)+1)*sizeof(TCHAR));
       if (!newstruct.name)
       {
         extern FILE *g_output;
@@ -166,7 +166,7 @@ class SortedStringList
         extern void quit();
         if (g_display_errors)
         {
-          _ftprintf(g_output,_T("\nInternal compiler error #12345: GrowBuf realloc/malloc(%lu) failed.\n"),(unsigned long)((_tcsclen(name)+1)*sizeof(TCHAR)));
+          _ftprintf(g_output,_T("\nInternal compiler error #12345: GrowBuf realloc/malloc(%lu) failed.\n"),(unsigned long)((_tcslen(name)+1)*sizeof(TCHAR)));
           fflush(g_output);
         }
         quit();
@@ -302,7 +302,7 @@ class SortedStringListND // no delete - can be placed in GrowBuf
       if (pos==-1) return alwaysreturnpos ? where : -1;
 
       // Note that .name is set with the TCHAR* offset into m_strings.
-      newstruct.name=m_strings.add(name,(_tcsclen(name)+1)*sizeof(TCHAR))/sizeof(TCHAR);
+      newstruct.name=m_strings.add(name,(_tcslen(name)+1)*sizeof(TCHAR))/sizeof(TCHAR);
 
       m_gr.add(&newstruct,sizeof(T));
       T *s=(T*) m_gr.get();
@@ -377,7 +377,7 @@ class SortedStringListND // no delete - can be placed in GrowBuf
           if (case_sensitive)
             res = _tcsncmp(str, pCurr, mymin((unsigned int) n_chars, pCurr_len));
           else
-            res = _tcsncicmp(str, pCurr, mymin((unsigned int) n_chars, pCurr_len));
+            res = _tcsnicmp(str, pCurr, mymin((unsigned int) n_chars, pCurr_len));
 
           // If there is a match and we are looking for a partial match and
           // n_chars is NOT the length of the current string, then the

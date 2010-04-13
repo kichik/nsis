@@ -213,8 +213,8 @@ int tempzip_make(HWND hwndDlg, TCHAR *fn)
 #endif
 
     if (filename[0] &&
-        filename[_tcsclen(filename)-1] != _T('\\') &&
-        filename[_tcsclen(filename)-1] != _T('/'))
+        filename[_tcslen(filename)-1] != _T('\\') &&
+        filename[_tcslen(filename)-1] != _T('/'))
     {
       TCHAR *pfn=filename;
       while (*pfn)
@@ -234,7 +234,7 @@ int tempzip_make(HWND hwndDlg, TCHAR *fn)
       {
         TCHAR buf[1024];
         lstrcpy(buf,out_filename);
-        TCHAR *p=buf+_tcsclen(buf);
+        TCHAR *p=buf+_tcslen(buf);
         while (p > buf && *p != _T('\\')) p--;
         *p=0;
         if (buf[0]) doMKDir(buf);
@@ -338,7 +338,7 @@ void wnd_printf(const TCHAR *str)
   TCHAR existing_text[32000];
   existing_text[0]=0;
   UINT l=GetDlgItemText(g_hwnd, IDC_OUTPUTTEXT, existing_text, 32000);
-  l+=_tcsclen(str);
+  l+=_tcslen(str);
 
   TCHAR *p=existing_text;
   existing_text[31000]=0;
