@@ -488,7 +488,7 @@ int _tmain(int argc, TCHAR **argv)
             {
               if (build.display_errors) 
               {
-                sfile[_tcsclen(sfile)-4]=0;
+                sfile[_tcslen(sfile)-4]=0;
                 _ftprintf(g_output,_T("Can't open script \"%s\"\n"),sfile);
                 fflush(g_output);
               }

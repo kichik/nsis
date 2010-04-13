@@ -288,7 +288,7 @@ int StringsArray::set(int idx, const TCHAR *str)
   int old = ((int*) m_offsets.get())[idx];
 
   // Need to store the TCHAR index so we divide the return value of add by sizeof(TCHAR).
-  ((int*)m_offsets.get())[idx] = m_strings.add(str, (_tcsclen(str)+1)*sizeof(TCHAR))/sizeof(TCHAR);
+  ((int*)m_offsets.get())[idx] = m_strings.add(str, (_tcslen(str)+1)*sizeof(TCHAR))/sizeof(TCHAR);
 
   return old;
 }
@@ -960,11 +960,11 @@ LanguageTable * CEXEBuild::LoadLangFile(TCHAR *filename) {
   p2 = _tcsrchr(filename, _T('\\'));
   if (p2) {
     p2++;
-    nlf->m_szName = (TCHAR*)malloc((_tcsclen(p2)+1)*sizeof(TCHAR));
+    nlf->m_szName = (TCHAR*)malloc((_tcslen(p2)+1)*sizeof(TCHAR));
     _tcscpy(nlf->m_szName, p2);
   }
   else {
-    nlf->m_szName = (TCHAR*)malloc((_tcsclen(filename)+1)*sizeof(TCHAR));
+    nlf->m_szName = (TCHAR*)malloc((_tcslen(filename)+1)*sizeof(TCHAR));
     _tcscpy(nlf->m_szName, filename);
   }
   if (p) *p = t;
@@ -982,13 +982,13 @@ LanguageTable * CEXEBuild::LoadLangFile(TCHAR *filename) {
   buf[0] = SkipComments(f);
   _fgetts(buf+1, NSIS_MAX_STRLEN, f);
   if (!nlf->m_szFont) {
-    temp=_tcsclen(buf);
+    temp=_tcslen(buf);
     while (buf[temp-1] == _T('\n') || buf[temp-1] == _T('\r')) {
       buf[temp-1] = 0;
       temp--;
     }
     if (buf[0] != _T('-') || buf[1] != 0) {
-      nlf->m_szFont = (TCHAR*)malloc((_tcsclen(buf)+1)*sizeof(TCHAR));
+      nlf->m_szFont = (TCHAR*)malloc((_tcslen(buf)+1)*sizeof(TCHAR));
       _tcscpy(nlf->m_szFont, buf);
     }
   }
@@ -1077,11 +1077,11 @@ LanguageTable * CEXEBuild::LoadLangFile(TCHAR *filename) {
     buf[0] = SkipComments(f);
 
     _fgetts(buf+1, NSIS_MAX_STRLEN, f);
-    if (_tcsclen(buf) == NSIS_MAX_STRLEN-1) {
+    if (_tcslen(buf) == NSIS_MAX_STRLEN-1) {
       ERROR_MSG(_T("Error: String too long (string #%d - \"%s\")"), i, NLFStrings[i].szLangStringName);
       return 0;
     }
-    temp=_tcsclen(buf);
+    temp=_tcslen(buf);
 
     while (buf[temp-1] == _T('\n') || buf[temp-1] == _T('\r')) {
       buf[--temp] = 0;
