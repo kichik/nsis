@@ -32,12 +32,10 @@ class UserVarsStringList : public SortedStringListND<struct uservarstring>
 {
   public:
 	 /* Default constructor */
-    UserVarsStringList()
-    {
-      m_index = 0;
-    }
+    UserVarsStringList() : m_index(0) {}
+
 	 /* Destructor */
-    ~UserVarsStringList() { }
+    virtual ~UserVarsStringList() {}
 
 	 /**
 	  * Adds a name to the UserVarsStringList.  Sets reference count to
@@ -52,9 +50,10 @@ class UserVarsStringList : public SortedStringListND<struct uservarstring>
       int pos=SortedStringListND<struct uservarstring>::add(name);
       if (pos == -1) return -1;
 
-      ((struct uservarstring*)m_gr.get())[pos].index = m_index;
-      ((struct uservarstring*)m_gr.get())[pos].pos = pos;
-      ((struct uservarstring*)m_gr.get())[pos].reference = ref_count;
+      uservarstring* ustr = ((uservarstring*) m_gr.get()) + pos;
+      ustr->index     = m_index;
+      ustr->pos       = pos;
+      ustr->reference = ref_count;
 
       int temp = m_index;
       m_index++;
@@ -110,8 +109,7 @@ class UserVarsStringList : public SortedStringListND<struct uservarstring>
     int inc_reference(int idx)
     {
       int pos=get_internal_idx(idx);
-      ((struct uservarstring*)m_gr.get())[pos].reference++;
-      return (((struct uservarstring*)m_gr.get())[pos].reference)-1;
+      return ((struct uservarstring*) m_gr.get())[pos].reference++;
     }
 
 	 /**

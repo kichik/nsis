@@ -148,21 +148,19 @@ NLFString NLFStrings[NLF_STRINGS] = {
 // LangStringList
 // ==============
 
-LangStringList::LangStringList() {
-  m_count = 0;
-}
 
 int LangStringList::add(const TCHAR *name, int *sn/*=0*/)
 {
   int pos = SortedStringListND<struct langstring>::add(name);
   if (pos == -1) return -1;
 
-  ((struct langstring*)m_gr.get())[pos].sn = m_count;
+  langstring* lstrPtr = (langstring*)(m_gr.get()) + pos;
+  lstrPtr->sn = m_count;
   if (sn) *sn = m_count;
   m_count++;
-  ((struct langstring*)m_gr.get())[pos].index = -1;
-  ((struct langstring*)m_gr.get())[pos].uindex = -1;
-  ((struct langstring*)m_gr.get())[pos].process = 1;
+  lstrPtr->index   = -1;
+  lstrPtr->uindex  = -1;
+  lstrPtr->process = 1;
 
   return pos;
 }
@@ -174,10 +172,11 @@ int LangStringList::get(const TCHAR *name, int *sn/*=0*/, int *index/*=0*/, int 
   if (sn) *sn = -1;
   int v=find(name);
   if (v==-1) return -1;
-  if (index) *index = ((struct langstring*)m_gr.get())[v].index;
-  if (uindex) *uindex = ((struct langstring*)m_gr.get())[v].uindex;
-  if (sn) *sn = ((struct langstring*)m_gr.get())[v].sn;
-  if (process) *process = ((struct langstring*)m_gr.get())[v].process;
+  langstring* lstrPtr = (langstring*)(m_gr.get()) + v;
+  if (index) *index     = lstrPtr->index;
+  if (uindex) *uindex   = lstrPtr->uindex;
+  if (sn) *sn           = lstrPtr->sn;
+  if (process) *process = lstrPtr->process;
   return v;
 }
 
@@ -186,14 +185,11 @@ void LangStringList::set(int pos, int index/*=-1*/, int uindex/*=-1*/, int proce
   if ((unsigned int)pos > (m_gr.getlen() / sizeof(struct langstring)))
     return;
 
-  struct langstring *data=(struct langstring *)m_gr.get();
+  struct langstring *data=((struct langstring *) m_gr.get()) + pos;
 
-  if (index >= 0)
-    data[pos].index = index;
-  if (uindex >= 0)
-    data[pos].uindex = uindex;
-  if (process >= 0)
-    data[pos].process = process;
+  if (index >= 0)   data->index   = index;
+  if (uindex >= 0)  data->uindex  = uindex;
+  if (process >= 0) data->process = process;
 }
 
 void LangStringList::set(const TCHAR *name, int index, int uindex/*=-1*/, int process/*=-1*/)
@@ -213,7 +209,7 @@ const TCHAR* LangStringList::pos2name(int pos)
 
 const TCHAR* LangStringList::offset2name(int name)
 {
-  if ((unsigned int)name > (unsigned int)m_strings.getlen())
+  if ((unsigned int)name > m_strings.getlen()/sizeof(TCHAR))
     return 0;
 
   return (const TCHAR*) m_strings.get() + name;
