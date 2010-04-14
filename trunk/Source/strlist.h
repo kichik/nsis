@@ -107,10 +107,10 @@ public:
   const TCHAR *get() const;
 
   /**
-	* Get the buffer size in bytes.
-	* @return The buffer size in bytes.
+	* Get the buffer size (number of TCHARs).
+	* @return The buffer size (number of TCHARs).
 	*/
-  int getlen() const;
+  int getcount() const;
 
 private:
   GrowBuf m_gr;
@@ -538,11 +538,11 @@ class FastStringList : public SortedStringListND<struct string_t>
     TCHAR *get() const;
 
 	 /**
-	  * The size of the collection of m_strings as bytes.
+	  * The size of the collection of m_strings as a count of TCHARs.
 	  *
-	  * @return The size of m_strings in bytes.
+	  * @return the size of m_strings as count of TCHARs.
 	  */
-    int getlen() const;
+	int getcount() const;
 
 	 /**
 	  * The number of strings stored in the sorted array.

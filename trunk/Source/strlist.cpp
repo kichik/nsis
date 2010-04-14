@@ -13,7 +13,7 @@
  * This software is provided 'as-is', without any express or implied
  * warranty.
  *
- * Doxygen comments by Jim Park -- 08/01/2007
+ * Unicode support and Doxygen comments by Jim Park -- 08/01/2007
  */
 
 #include "strlist.h"
@@ -29,8 +29,11 @@ int StringList::add(const TCHAR *str, int case_sensitive)
 int StringList::find(const TCHAR *str, int case_sensitive, int *idx/*=NULL*/) const // returns -1 if not found
 {
   const TCHAR *s=get();
-  int ml=getlen();
+  int ml=getcount();
   int offs=0;
+
+  size_t str_slen = _tcslen(str);
+  size_t offs_slen;
 
   if (idx) *idx=0;
   while (offs < ml)
@@ -42,14 +45,16 @@ int StringList::find(const TCHAR *str, int case_sensitive, int *idx/*=NULL*/) co
       return offs;
     }
 
+    offs_slen = _tcslen(s+offs);
+
     // Check if just the end of the string matches str.
     if (case_sensitive==2 &&
-        _tcslen(str) < _tcslen(s+offs) &&  // check for end of string
-        !_tcscmp(s+offs+_tcslen(s+offs)-_tcslen(str),str))
+        str_slen < offs_slen &&  // check for end of string
+        !_tcscmp(s + offs + offs_slen - str_slen,str))
     {
-      return offs+_tcslen(s+offs)-_tcslen(str);
+      return offs + offs_slen - str_slen;
     }
-    offs+=_tcslen(s+offs)+1;
+    offs += offs_slen + 1;
 
     if (idx) (*idx)++;
   }
@@ -62,12 +67,12 @@ void StringList::delbypos(int pos)
   TCHAR *s=(TCHAR*) m_gr.get();
   int len=_tcslen(s+pos)+1;
 
-  if (pos+len < m_gr.getlen()) 
+  if (pos+len < getcount()) 
   {
 	  // Move everything after the string position to the current position.
-      memcpy(s+pos,s+pos+len,m_gr.getlen()-(pos+len));
+	  memcpy(s+pos,s+pos+len, (getcount()-pos+len)*sizeof(TCHAR));
   }
-  m_gr.resize(m_gr.getlen()-len);
+  m_gr.resize(m_gr.getlen()-len*sizeof(TCHAR));
 }
 
 // idx corresponds to the nth string in the list.
@@ -75,8 +80,8 @@ int StringList::idx2pos(int idx) const
 {
   TCHAR *s=(TCHAR*) m_gr.get();
   int offs=0;
-  int cnt=0;
-  if (idx>=0) while (offs < m_gr.getlen())
+  size_t cnt=0;
+  if (idx>=0) while (offs < getcount())
   {
     if (cnt++ == idx) return offs;
     offs+=_tcslen(s+offs)+1;
@@ -87,7 +92,7 @@ int StringList::idx2pos(int idx) const
 int StringList::getnum() const
 {
   TCHAR *s=(TCHAR*) m_gr.get();
-  int ml=m_gr.getlen();
+  int ml=getcount();
   int offs=0;
   int idx=0;
   while (offs < ml)
@@ -103,9 +108,9 @@ const TCHAR *StringList::get() const
   return (const TCHAR*) m_gr.get();
 }
 
-int StringList::getlen() const
+int StringList::getcount() const
 {
-  return m_gr.getlen();
+	return m_gr.getlen() / sizeof(TCHAR);
 }
 
 // ==========
@@ -213,9 +218,9 @@ TCHAR *FastStringList::get() const
   return (TCHAR*)m_strings.get();
 }
 
-int FastStringList::getlen() const
+int FastStringList::getcount() const
 {
-  return m_strings.getlen();
+  return m_strings.getlen()/sizeof(TCHAR);
 }
 
 int FastStringList::getnum() const

@@ -40,7 +40,7 @@ class LangStringList : public SortedStringListND<struct langstring>
 {
   public:
 	 /* Default constructor */
-    LangStringList();
+    LangStringList() : m_count(0) {}
 
     /**
      * Adds a langstring struct with the string name of 'name' into this

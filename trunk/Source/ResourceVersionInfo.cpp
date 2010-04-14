@@ -60,9 +60,11 @@ int CVersionStrigList::add(LANGID langid, int codepage)
   _stprintf(Buff, _T("%04x"), langid);
   int pos = SortedStringListND<struct version_string_list>::add(Buff);
   if (pos == -1) return false;
-  ((struct version_string_list*)m_gr.get())[pos].pChildStrings = new DefineList;
-  ((struct version_string_list*)m_gr.get())[pos].codepage = codepage;
-  ((struct version_string_list*)m_gr.get())[pos].lang_id = langid;
+  
+  version_string_list *data = ((version_string_list *)m_gr.get())+ pos;
+  data->pChildStrings = new DefineList;
+  data->codepage      = codepage;
+  data->lang_id       = langid;
   return pos;
 }
 

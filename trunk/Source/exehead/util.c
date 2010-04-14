@@ -664,11 +664,13 @@ TCHAR * NSISCALL GetNSISString(TCHAR *outbuf, int strtab)
     int fldrs[4];
     if (nVarIdx > NS_CODES_START)
     {
-      nData = ((in[1] & 0x7F) << 7) | (in[0] & 0x7F);
+      // the next 2 BYTEs in the string might be coding either a value 0..MAX_CODED (nData), or 2 CSIDL of Special folders (for NS_SHELL_CODE)
+      nData = DECODE_SHORT(in);
       fldrs[0] = in[0] | CSIDL_FLAG_CREATE; // current user
       fldrs[1] = in[0];
       fldrs[2] = in[1] | CSIDL_FLAG_CREATE; // all users
       fldrs[3] = in[1];
+      //TODO: are fldrs[1] and fldrs[3] really useful? why not force folder creation directly?
       in += sizeof(SHORT)/sizeof(TCHAR);
 
       if (nVarIdx == NS_SHELL_CODE)
@@ -758,7 +760,7 @@ TCHAR * NSISCALL GetNSISString(TCHAR *outbuf, int strtab)
           // for normal $APPDATA, it'd be CSIDL_APPDATA_COMMON
           if (fldrs[3] == CSIDL_APPDATA)
           {
-            mystrcat(out, QUICKLAUNCH);
+            mystrcat(out, QUICKLAUNCH); // append suffix path for $QUICKLAUNCH
           }
         }
         validate_filename(out);
