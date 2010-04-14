@@ -5252,6 +5252,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
         if (which_token == TOK_WRITEREGBIN)
         {
+          // Jim Park: Keep the data as char / 8 bits
           char data[3*NSIS_MAX_STRLEN];
           TCHAR *p=line.gettoken_str(4);
           int data_len=0;

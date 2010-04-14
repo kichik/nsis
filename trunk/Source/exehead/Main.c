@@ -18,7 +18,6 @@
 
 #include "../Platform.h"
 #include <shlobj.h>
-#include <shellapi.h>
 #include "resource.h"
 #include "util.h"
 #include "fileform.h"
