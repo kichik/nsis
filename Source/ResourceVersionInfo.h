@@ -68,11 +68,6 @@ public:
   int find(LANGID lang_id, int codepage);
 
   /**
-	* Get the length of the buffer of strings in count of TCHARs.
-	*/
-  int getlen();
-
-  /**
 	* Get the number of version_string_list objects stored in this list.
 	*/
   int getnum();
