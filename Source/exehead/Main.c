@@ -159,7 +159,7 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPTSTR lpszCmdPara
 
       if (CMP4CHAR(cmdline-2, _T(" /D=")))
       {
-        *(LPDWORD)(cmdline-2)=0; // keep this from being passed to uninstaller if necessary
+        *(cmdline-2)=_T('\0'); // keep this from being passed to uninstaller if necessary
         mystrcpy(state_install_directory,cmdline+2);
         break; // /D= must always be last
       }

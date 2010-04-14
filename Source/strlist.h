@@ -121,9 +121,6 @@ private:
  * is assumed to be a string (TCHAR*).  So it's really sort of a 
  * map<TCHAR*, X> where X is whatever else is defined in T.  But T must define
  * a TCHAR* name.
- *
- * The T struct should have the 'name' as the first element in its list of
- * members.  Otherwise, all kinds of bad things will happen.
  */
 template <class T>
 class SortedStringList
@@ -261,9 +258,6 @@ class SortedStringList
  * is assumed to be an index into m_strings.  So it's really sort of a 
  * map<TCHAR*, X> where X is whatever else is defined in T.  But T must define
  * a int name.
- *
- * The T struct should have the 'name' as the first element in its list of
- * members.  Otherwise, all kinds of bad things will happen.
  *
  * This version does not have a delete function, hence the ND designation.
  * Also, because nothing is malloc'ed and free'd, this structure can be

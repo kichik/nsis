@@ -662,14 +662,21 @@ TCHAR * NSISCALL GetNSISString(TCHAR *outbuf, int strtab)
     _TUCHAR nVarIdx = (_TUCHAR)*in++;
     int nData;
     int fldrs[4];
-    if (nVarIdx > NS_CODES_START)
+    if (nVarIdx < NS_SKIP_CODE)
     {
       // the next 2 BYTEs in the string might be coding either a value 0..MAX_CODED (nData), or 2 CSIDL of Special folders (for NS_SHELL_CODE)
       nData = DECODE_SHORT(in);
+#ifdef _UNICODE
+      fldrs[1] = LOBYTE(*in); // current user
+      fldrs[0] = fldrs[1] | CSIDL_FLAG_CREATE;
+      fldrs[3] = HIBYTE(*in); // all users
+      fldrs[2] = fldrs[3] | CSIDL_FLAG_CREATE;
+#else
       fldrs[0] = in[0] | CSIDL_FLAG_CREATE; // current user
       fldrs[1] = in[0];
       fldrs[2] = in[1] | CSIDL_FLAG_CREATE; // all users
       fldrs[3] = in[1];
+#endif
       //TODO: are fldrs[1] and fldrs[3] really useful? why not force folder creation directly?
       in += sizeof(SHORT)/sizeof(TCHAR);
 
@@ -828,6 +835,7 @@ void NSISCALL validate_filename(TCHAR *in) {
     in = CharNext(in);
   }
   *out = 0;
+  // now trim rightmost backslashes & spaces
   do
   {
     out = CharPrev(out_save, out);

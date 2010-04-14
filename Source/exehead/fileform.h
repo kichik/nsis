@@ -475,21 +475,26 @@ typedef struct {
 #define DEL_REBOOT 4
 #define DEL_SIMPLE 8
 
-// $0..$9, $INSTDIR, etc are encoded as ASCII bytes starting from this value.
-// Added by ramon 3 jun 2003
-#define NS_SKIP_CODE 252
-#define NS_VAR_CODE 253
-#define NS_SHELL_CODE 254
-#define NS_LANG_CODE 255
-#define NS_CODES_START NS_SKIP_CODE
-#define NS_IS_CODE(x) ((x) >= NS_SKIP_CODE)
+// special escape characters used in strings: (we use control codes in order to minimize conflicts with normal characters)
+#define NS_LANG_CODE  _T('\x01')    // for a langstring
+#define NS_SHELL_CODE _T('\x02')    // for a shell folder path
+#define NS_VAR_CODE   _T('\x03')    // for a variable
+#define NS_SKIP_CODE  _T('\x04')    // to consider next character as a normal character
+#define NS_IS_CODE(x) ((x) <= NS_SKIP_CODE) // NS_SKIP_CODE must always be the higher code
 
 // We are doing this to store an integer value into a char string and we
-// don't want false end of string values so we shift then OR with 0x8080
+// don't want false end of string values
+#if _UNICODE
+#define CODE_SHORT(x) ((WORD)x + 1)
+#define MAX_CODED 0xFFFE
+// This macro takes a pointer to WCHAR
+#define DECODE_SHORT(c) (c[0]-1)
+#else
 #define CODE_SHORT(x) (WORD)((((WORD)(x) & 0x7F) | (((WORD)(x) & 0x3F80) << 1) | 0x8080))
-#define MAX_CODED 16383 // 0x3FFF
-// This macro takes a pointer to char
+#define MAX_CODED 0x3FFF
+// This macro takes a pointer to CHAR
 #define DECODE_SHORT(c) (((c[1] & 0x7F) << 7) | (c[0] & 0x7F))
+#endif
 
 #define NSIS_INSTDIR_INVALID 1
 #define NSIS_INSTDIR_NOT_ENOUGH_SPACE 2
