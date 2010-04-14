@@ -582,8 +582,12 @@ int CEXEBuild::preprocess_string(TCHAR *out, const TCHAR *in, WORD codepage/*=CP
                 int CSIDL_Value_current = m_ShellConstants.get_value1(idxConst);
                 int CSIDL_Value_all = m_ShellConstants.get_value2(idxConst);
                 *out++=(TCHAR)NS_SHELL_CODE; // Constant code identifier
+#ifdef _UNICODE
+                *out++=MAKEWORD(CSIDL_Value_current, CSIDL_Value_all);
+#else
                 *out++=(TCHAR)CSIDL_Value_current;
                 *out++=(TCHAR)CSIDL_Value_all;
+#endif
                 p = pShellConstName; // zip past the shell constant string.
                 bProceced = true;
                 break;

@@ -93,11 +93,6 @@ int CVersionStrigList::find(LANGID lang_id, int codepage)
   return SortedStringListND<struct version_string_list>::find(Buff);
 }
 
-int CVersionStrigList::getlen()
-{
-  return m_strings.getlen();
-}
-
 int CVersionStrigList::getnum()
 {
   return m_gr.getlen()/sizeof(struct version_string_list);
