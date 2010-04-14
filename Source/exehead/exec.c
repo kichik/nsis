@@ -1177,13 +1177,15 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     break;
     case EW_READINISTR:
       {
-        TCHAR errstr[] = _T("!N~");
+        // GetPrivateProfileString can't read CR & LF characters inside values from INI files
+        // so we use "\n" as a detection system to see if we did succesfully read a value
+        const TCHAR errstr[] = _T("\n");
         TCHAR *p=var0;
         TCHAR *buf0=GetStringFromParm(0x01);
         TCHAR *buf1=GetStringFromParm(0x12);
         TCHAR *buf2=GetStringFromParm(-0x23);
         GetPrivateProfileString(buf0,buf1,errstr,p,NSIS_MAX_STRLEN-1,buf2);
-        if (lstrcmp(p, errstr) == 0)
+        if (p[0] == _T('\n')) // we got the default string "\n" instead of a real value
         {
           exec_error++;
           p[0]=0;
