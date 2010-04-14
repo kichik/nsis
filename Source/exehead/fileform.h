@@ -28,6 +28,7 @@
 // firstheader (struct firstheader)
 // * headers (compressed together):
 //   header (struct header - contains pointers to all blocks)
+//   * nsis blocks (described in header->blocks)
 //     pages (struct page)
 //     section headers (struct section)
 //     entries/instructions (struct entry)
