@@ -28,10 +28,11 @@ int ConstantsStringList::add(const TCHAR *name, int value1, int value2)
   int pos=SortedStringListND<struct constantstring>::add(name);
   if (pos == -1) return -1;
 
-  ((struct constantstring*)m_gr.get())[pos].index = m_index;
-  ((struct constantstring*)m_gr.get())[pos].pos = pos;
-  ((struct constantstring*)m_gr.get())[pos].value1 = value1;
-  ((struct constantstring*)m_gr.get())[pos].value2 = value2;
+  constantstring *ptr = ((constantstring*) m_gr.get()) + pos;
+  ptr->index = m_index;
+  ptr->pos = pos;
+  ptr->value1 = value1;
+  ptr->value2 = value2;
 
   int temp = m_index;
   m_index++;

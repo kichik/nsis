@@ -2219,7 +2219,7 @@ void CEXEBuild::PrepareHeaders(IGrowBuf *hdrbuf)
   entry_writer::write_block(cur_entries, &sink);
 
   cur_header->blocks[NB_STRINGS].offset = sizeof(header) + blocks_buf.getlen();
-  blocks_buf.add(cur_strlist->get(), cur_strlist->getlen());
+  blocks_buf.add(cur_strlist->get(), cur_strlist->getcount()*sizeof(TCHAR));
 
   cur_header->blocks[NB_LANGTABLES].offset = sizeof(header) + blocks_buf.getlen();
   lang_table_writer::write_block(cur_langtables, &sink, cur_header->langtable_size);
@@ -2653,7 +2653,7 @@ int CEXEBuild::write_output(void)
   int ne=build_header.blocks[NB_ENTRIES].num;
   INFO_MSG(_T("%d instruction%s (%d bytes), "),ne,ne==1?_T(""):_T("s"),ne*sizeof(entry));
   int ns=build_strlist.getnum();
-  INFO_MSG(_T("%d string%s (%d bytes), "),ns,ns==1?_T(""):_T("s"),build_strlist.getlen());
+  INFO_MSG(_T("%d string%s (%d bytes), "),ns,ns==1?_T(""):_T("s"),build_strlist.getcount()*sizeof(TCHAR));
   int nlt=build_header.blocks[NB_LANGTABLES].num;
   INFO_MSG(_T("%d language table%s (%d bytes).\n"),nlt,nlt==1?_T(""):_T("s"),build_langtables.getlen());
   if (ubuild_entries.getlen())
@@ -2682,7 +2682,7 @@ int CEXEBuild::write_output(void)
     ne=build_uninst.blocks[NB_ENTRIES].num;
     INFO_MSG(_T("%d instruction%s (%d bytes), "),ne,ne==1?_T(""):_T("s"),ubuild_entries.getlen());
     ns=ubuild_strlist.getnum();
-    INFO_MSG(_T("%d string%s (%d bytes), "),ns,ns==1?_T(""):_T("s"),ubuild_strlist.getlen());
+    INFO_MSG(_T("%d string%s (%d bytes), "),ns,ns==1?_T(""):_T("s"),ubuild_strlist.getcount()*sizeof(TCHAR));
     nlt=build_uninst.blocks[NB_LANGTABLES].num;
     INFO_MSG(_T("%d language table%s (%d bytes).\n"),nlt,nlt==1?_T(""):_T("s"),ubuild_langtables.getlen());
   }
@@ -3287,7 +3287,7 @@ void CEXEBuild::INFO_MSG(const TCHAR *s, ...) const
 
 void CEXEBuild::print_warnings()
 {
-  int nw=0,x=m_warnings.getlen();
+  int nw=0,x=m_warnings.getcount();
   if (!x || !display_warnings) return;
   TCHAR *p=m_warnings.get();
   while (x>0) if (!p[--x]) nw++;

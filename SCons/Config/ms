@@ -122,6 +122,8 @@ makensis_env.Append(CCFLAGS = ['/Fa${TARGET}.lst'])    # listing file name
 
 makensis_env.Append(LINKFLAGS = ['/opt:nowin98'])  # 512 bytes align
 makensis_env.Append(LINKFLAGS = ['$MAP_FLAG'])     # generate map file
+if defenv['UNICODE']:
+	makensis_env.Append(LINKFLAGS = ['/stack:2097152'])  # need 2 MB of stack in Unicode (default is 1 MB)
 
 ### plugin environment
 

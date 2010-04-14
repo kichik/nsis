@@ -488,6 +488,8 @@ typedef struct {
 // don't want false end of string values so we shift then OR with 0x8080
 #define CODE_SHORT(x) (WORD)((((WORD)(x) & 0x7F) | (((WORD)(x) & 0x3F80) << 1) | 0x8080))
 #define MAX_CODED 16383 // 0x3FFF
+// This macro takes a pointer to char
+#define DECODE_SHORT(c) (((c[1] & 0x7F) << 7) | (c[0] & 0x7F))
 
 #define NSIS_INSTDIR_INVALID 1
 #define NSIS_INSTDIR_NOT_ENOUGH_SPACE 2
