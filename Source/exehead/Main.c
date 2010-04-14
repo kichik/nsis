@@ -153,11 +153,11 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPTSTR lpszCmdPara
         cl_flags |= FH_FLAGS_SILENT;
 #endif//NSIS_CONFIG_SILENT_SUPPORT && NSIS_CONFIG_VISIBLE_SUPPORT
 #ifdef NSIS_CONFIG_CRC_SUPPORT
-      if (*(LPDWORD)cmdline == CHAR4_TO_DWORD(_T('N'),_T('C'),_T('R'),_T('C')) && END_OF_ARG(cmdline[4]))
+      if (CMP4CHAR(cmdline, _T("NCRC")) && END_OF_ARG(cmdline[4]))
         cl_flags |= FH_FLAGS_NO_CRC;
 #endif//NSIS_CONFIG_CRC_SUPPORT
 
-      if (*(LPDWORD)(cmdline-2) == CHAR4_TO_DWORD(_T(' '), _T('/'), _T('D'),_T('=')))
+      if (CMP4CHAR(cmdline-2, _T(" /D=")))
       {
         *(LPDWORD)(cmdline-2)=0; // keep this from being passed to uninstaller if necessary
         mystrcpy(state_install_directory,cmdline+2);
@@ -194,7 +194,7 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPTSTR lpszCmdPara
 
     // state_command_line has state_install_directory right after it in memory, so reading
     // a bit over state_command_line won't do any harm
-    while (p >= state_command_line && *(LPDWORD)p != CHAR4_TO_DWORD(_T(' '), _T('_'), _T('?'), _T('='))) p--;
+    while (p >= state_command_line && !CMP4CHAR(p, _T(" _?="))) p--;
 
     m_Err = _LANG_UNINSTINITERROR;
 
@@ -231,7 +231,7 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPTSTR lpszCmdPara
         mystrcpy(state_install_directory,state_exe_directory);
 
       mystrcpy(g_usrvars[0], realcmds);
-      *(LPWORD)g_usrvars[1] = CHAR2_TO_WORD(_T('A'),0);
+      SET2CHAR(g_usrvars[1], _T("A\0"));
 
       for (x = 0; x < 26; x ++)
       {

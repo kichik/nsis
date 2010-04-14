@@ -139,11 +139,29 @@ void * NSISCALL NSISGetProcAddress(HANDLE dllHandle, TCHAR* funcName);
 // Turn a pair of chars into a word
 // Turn four chars into a dword
 #ifdef __BIG_ENDIAN__ // Not very likely, but, still...
-#define CHAR2_TO_WORD(a,b) (((WORD)(b))|((a)<<8))
-#define CHAR4_TO_DWORD(a,b,c,d) (((DWORD)CHAR2_TO_WORD(c,d))|(CHAR2_TO_WORD(a,b)<<16))
+#ifdef _UNICODE
+#ifdef _NSIS_NO_INT64_SHR
+#define CMP4CHAR(mem, const4) ((((LPDWORD)(mem))[0] == (const4[3]|const4[2]<<16)) && (((LPDWORD)(mem))[1] == (const4[1]|const4[0]<<16)))
 #else
-#define CHAR2_TO_WORD(a,b) (((WORD)(a))|((b)<<8))
-#define CHAR4_TO_DWORD(a,b,c,d) (((DWORD)CHAR2_TO_WORD(a,b))|(CHAR2_TO_WORD(c,d)<<16))
+#define CMP4CHAR(mem, const4) (*(PDWORD64)(mem) == (const4[3]|const4[2]<<16|(DWORD64)const4[1]<<32|(DWORD64)const4[0]<<48))
+#endif
+#define SET2CHAR(mem, const2) (*(LPDWORD)(mem) = (const2[1]|const2[0]<<16))
+#else
+#define CMP4CHAR(mem, const4) (*(LPDWORD)(mem) == (const4[3]|const4[2]<<8|const4[1]<<16|const4[0]<<24))
+#define SET2CHAR(mem, const2) (*(LPWORD)(mem) = (const2[1]|const2[0]<<8))
+#endif
+#else
+#ifdef _UNICODE
+#ifdef _NSIS_NO_INT64_SHR
+#define CMP4CHAR(mem, const4) ((((LPDWORD)(mem))[0] == (const4[0]|const4[1]<<16)) && (((LPDWORD)(mem))[1] == (const4[2]|const4[3]<<16)))
+#else
+#define CMP4CHAR(mem, const4) (*(PDWORD64)(mem) == (const4[0]|const4[1]<<16|(DWORD64)const4[2]<<32|(DWORD64)const4[3]<<48))
+#endif
+#define SET2CHAR(mem, const2) (*(LPDWORD)(mem) = (const2[0]|const2[1]<<16))
+#else
+#define CMP4CHAR(mem, const4) (*(LPDWORD)(mem) == (const4[0]|const4[1]<<8|const4[2]<<16|const4[3]<<24))
+#define SET2CHAR(mem, const2) (*(LPWORD)(mem) = (const2[0]|const2[1]<<8))
+#endif
 #endif
 
 #endif//!___NSIS_UTIL_H___
