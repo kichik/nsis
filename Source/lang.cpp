@@ -194,14 +194,14 @@ void LangStringList::set(int pos, int index/*=-1*/, int uindex/*=-1*/, int proce
 
 void LangStringList::set(const TCHAR *name, int index, int uindex/*=-1*/, int process/*=-1*/)
 {
-  set(get(name), index, uindex, process);
+  set(find(name), index, uindex, process);
 }
 
 const TCHAR* LangStringList::pos2name(int pos)
 {
   struct langstring *data=(struct langstring *) m_gr.get();
 
-  if ((unsigned int)pos > (m_gr.getlen() / sizeof(struct langstring)))
+  if (pos < 0 || (unsigned int)pos > (m_gr.getlen() / sizeof(struct langstring)))
     return 0;
 
   return ((const TCHAR*) m_strings.get() + data[pos].name);
@@ -209,7 +209,7 @@ const TCHAR* LangStringList::pos2name(int pos)
 
 const TCHAR* LangStringList::offset2name(int name)
 {
-  if ((unsigned int)name > m_strings.getlen()/sizeof(TCHAR))
+  if (name < 0 || (unsigned int)name > m_strings.getlen()/sizeof(TCHAR))
     return 0;
 
   return (const TCHAR*) m_strings.get() + name;
@@ -291,7 +291,7 @@ int StringsArray::set(int idx, const TCHAR *str)
 
 const TCHAR* StringsArray::get(int idx)
 {
-  if ((unsigned int)idx >= (m_offsets.getlen() / sizeof(int)))
+  if (idx < 0 || (unsigned int)idx >= (m_offsets.getlen() / sizeof(int)))
     return 0;
 
   return (const TCHAR *) m_strings.get() + ((int*) m_offsets.get())[idx];

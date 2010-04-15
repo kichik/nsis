@@ -5892,6 +5892,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         build_overwrite=1; // off
         int old_build_datesave=build_datesave;
         build_datesave=0; // off
+        
+        // Jim Park: While the code looks as if the same DLL is added multiple
+        // times for each command in the DLL, this is actually not the case
+        // because of CEXEBuild::datablock_optimize() that tries to discover
+        // duplicates and reuse them.
         ret=do_add_file(dllPath.c_str(),0,0,&files_added,tempDLL,2,&data_handle); // 2 means no size add
         if (ret != PS_OK) {
           return ret;
