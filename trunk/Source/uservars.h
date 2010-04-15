@@ -109,6 +109,7 @@ class UserVarsStringList : public SortedStringListND<struct uservarstring>
     int inc_reference(int idx)
     {
       int pos=get_internal_idx(idx);
+      if (pos==-1) return -1;
       return ((struct uservarstring*) m_gr.get())[pos].reference++;
     }
 

@@ -114,11 +114,6 @@ CResourceVersionInfo::~CResourceVersionInfo()
     
 }
 
-void CResourceVersionInfo::SetFileFlags(int Value)
-{
-    m_FixedInfo.dwFileFlags = (m_FixedInfo.dwFileFlags & ~(m_FixedInfo.dwFileFlagsMask)) || Value;    
-}
-
 void CResourceVersionInfo::SetFileVersion(int HighPart, int LowPart)
 {
     m_FixedInfo.dwFileVersionLS = LowPart;
