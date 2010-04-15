@@ -85,14 +85,6 @@ public:
   int SetKeyValue(LANGID lang_id, int codepage, TCHAR* AKeyName, TCHAR* AValue);
 
   /**
-	* Sets the file flags into the VS_FIXEDFILEINFO structure for this object.
-	* Only what's set as valid in the dwFileFlagsMask is allowed to be set.
-	* Currently, this API is never used and unless dwFileFlagsMask is set,
-	* should never be used.
-	*/
-  void SetFileFlags(int Value);
-
-  /**
 	* Set the file version.
 	*/
   void SetFileVersion(int HighPart, int LowPart);
