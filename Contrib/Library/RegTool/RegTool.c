@@ -1,3 +1,5 @@
+// Unicode support by Jim Park & Olivier Marcoux
+
 #include <windows.h>
 #include <tchar.h>
 
@@ -299,7 +301,11 @@ void RenameViaWininit(const TCHAR* prevName, const TCHAR* newName)
   spn = GetShortPathName(prevName,wininit,1024);
   if (!spn || spn > 1024)
     return;
+#ifdef _UNICODE
+  cchRenameLine = wsprintfA(szRenameLine, "%ls=l%s\r\n", tmpbuf, wininit);
+#else
   cchRenameLine = wsprintfA(szRenameLine, "%s=%s\r\n", tmpbuf, wininit);
+#endif
   // Get the path to the wininit.ini file.
   GetWindowsDirectory(wininit, 1024-16);
   lstrcat(wininit, _T("\\wininit.ini"));
@@ -332,13 +338,15 @@ void RenameViaWininit(const TCHAR* prevName, const TCHAR* newName)
           char *pszNextSec = mystrstriA(pszFirstRenameLine,"\n[");
           if (pszNextSec)
           {
-            char *p = ++pszNextSec;
-            while (p < pszWinInit + dwFileSize) {
-              p[cchRenameLine] = *p;
-              p++;
+            char *p = pszWinInit + dwFileSize;
+            char *pEnd = pszWinInit + dwFileSize + cchRenameLine;
+
+            while (p > pszNextSec)
+            {
+              *pEnd-- = *p--;
             }
 
-            dwRenameLinePos = pszNextSec - pszWinInit;
+            dwRenameLinePos = pszNextSec - pszWinInit + 1; // +1 for the \n
           }
           // rename section is last, stick item at end of file
           else dwRenameLinePos = dwFileSize;
