@@ -80,14 +80,17 @@ int main( int argc, char *argv[] )
 
             ZeroMemory( &si, sizeof(si) );
             si.cb = sizeof(si);
-            ZeroMemory( &pi, sizeof(pi) );
 
-            /* Start a subprocess running the executable of the 
-               sub folder of the cuand wait for its completion */
+            /* Start and wait for a process with the same filename as
+               ourself located in SUBFOLDER.
+               
+               WARNING: The subprocess can't parse GetCommandLine()
+               to find its own path since we pass the wrong path! */
             if ( CreateProcess( szPath, GetCommandLine(), NULL, NULL,
                 FALSE, 0, NULL, NULL, &si, &pi ) )
             {
                 WaitForSingleObject( pi.hProcess, INFINITE );
+                GetExitCodeProcess( pi.hProcess, &err );
                 CloseHandle( pi.hProcess );
                 CloseHandle( pi.hThread );
             }
