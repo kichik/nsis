@@ -1,3 +1,5 @@
+Import('env')
+
 target = "substart"
 
 files = Split("""
@@ -9,4 +11,6 @@ libs = Split("""
 
 Import('BuildUtil')
 
-BuildUtil(target, files, libs)
+substart = BuildUtil(target, files, libs)
+
+env.DistributeBin(substart, names=['makensis.exe'], alias='install-compiler') # install as makensis
