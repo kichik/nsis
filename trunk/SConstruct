@@ -526,9 +526,9 @@ makensis_env.SideEffect('%s/makensis.map' % build_dir, makensis)
 defenv.Alias('makensis', makensis)
 
 if defenv['PLATFORM'] == 'win32': 
-	ins = defenv.DistributeW32Bin(makensis, alias='install-compiler')
+	defenv.DistributeW32Bin(makensis, alias='install-compiler')
 else:
-	ins = defenv.DistributeBin(makensis, alias='install-compiler')
+	defenv.DistributeBin(makensis, alias='install-compiler')
 
 ######################################################################
 #######  Common Functions                                          ###
