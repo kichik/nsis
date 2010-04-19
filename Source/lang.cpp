@@ -381,8 +381,15 @@ const TCHAR *CEXEBuild::GetLangNameAndCP(LANGID lang, unsigned int *codepage/*=N
     return table->nlf.m_szName;
   }
   else {
+	 // If the language table does not exist, then we default to Unicode in the
+	 // Unicode version and English in the ANSI version.
+#ifdef _UNICODE
     if (codepage)
-      *codepage = 1252; // English US
+      *codepage = 1200; // Unicode
+#else
+    if (codepage)
+      *codepage = 1252; // ANSI CP1252
+#endif
 
     if (lang == 1033)
       return _T("English");
