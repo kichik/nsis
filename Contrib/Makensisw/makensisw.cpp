@@ -121,12 +121,9 @@ void AddScriptCmdArgs(const TCHAR *arg)
 
 void ProcessCommandLine()
 {
-  int argc;
   TCHAR **argv;
   int i, j;
-  int argSpaceSize;
-
-  argSpaceSize = SetArgv((TCHAR *)GetCommandLine(), &argc, &argv);
+  int argc = SetArgv((TCHAR *)GetCommandLine(), &argv);
   if (argc > 1) {
     for (i = 1; i < argc; i++)
     {
@@ -165,7 +162,7 @@ void ProcessCommandLine()
     }
   }
 
-  if (argSpaceSize)
+  if (argv)
     GlobalFree(argv);
 }
 
