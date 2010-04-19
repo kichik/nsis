@@ -41,7 +41,7 @@ TCHAR g_mru_list[MRU_LIST_SIZE][MAX_PATH] = { _T(""), _T(""), _T(""), _T(""), _T
 extern NSCRIPTDATA g_sdata;
 extern TCHAR *compressor_names[];
 
-int SetArgv(const TCHAR *cmdLine, int *argc, TCHAR ***argv)
+int SetArgv(const TCHAR *cmdLine, TCHAR ***argv)
 {
   const TCHAR *p;
   TCHAR *arg, *argSpace;
@@ -60,18 +60,19 @@ int SetArgv(const TCHAR *cmdLine, int *argc, TCHAR ***argv)
     }
   }
 
-  argSpaceSize = size * sizeof(TCHAR *) + (lstrlen(cmdLine) + 1) * sizeof(TCHAR);
+  argSpaceSize = (size+1) * sizeof(TCHAR *) + (lstrlen(cmdLine) + 1) * sizeof(TCHAR);
   argSpace = (TCHAR *) GlobalAlloc(GMEM_FIXED, argSpaceSize);
+  *argv = (TCHAR **) argSpace;
   if (!argSpace)
     return 0;
 
-  *argv = (TCHAR **) argSpace;
   argSpace = (TCHAR *) ((*argv)+size);
   size--;
 
   p = cmdLine;
-  for (*argc = 0; *argc < size; (*argc)++) {
-    (*argv)[*argc] = arg = argSpace;
+  int argc;
+  for (argc = 0; argc < size; argc++) {
+    (*argv)[argc] = arg = argSpace;
     while ((*p == _T(' ')) || (*p == _T('\t'))) {
       p++;
     }
@@ -119,9 +120,9 @@ int SetArgv(const TCHAR *cmdLine, int *argc, TCHAR ***argv)
     *arg = _T('\0');
     argSpace = arg + 1;
   }
-  (*argv)[*argc] = NULL;
+  (*argv)[argc] = NULL;
 
-  return argSpaceSize;
+  return argc;
 }
 
 void SetTitle(HWND hwnd,TCHAR *substr) {
@@ -300,7 +301,7 @@ void CompileNSISScript() {
       /* script cmd args     */ lstrlen(args)  + /* space */ 1 +
       /* defines /Dblah=...  */ lstrlen(symbols)                  + /* space */ 1 +
       /* /XSetCompressor...  */ lstrlen(compressor)               + /* space */ 1 +
-      /* /NOTTIFYHWND + HWND */ COUNTOF(_T("/NOTIFYHWND -4294967295")) + /* space */ 1
+      /* /NOTIFYHWND + HWND  */ COUNTOF(_T("/NOTIFYHWND -4294967295")) + /* space */ 1
       +6); /* for -- \"\" and NULL */
       
     g_sdata.compile_command = (TCHAR *) GlobalAlloc(GPTR, byteSize);
