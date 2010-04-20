@@ -75,8 +75,6 @@ FILE* FileOpenUnicodeText(const TCHAR* file, const TCHAR* mode)
 				   case CValidateUnicode::UTF_8:
 				   case CValidateUnicode::UTF_16LE:
 				   case CValidateUnicode::UTF_16BE:
-					   //_ftprintf(g_output, _T("File '%s' has a BOM marked as %s.\n"),
-					   //   file, CValidateUnicode::TypeToName(ftype));
 					   break;
 				   case CValidateUnicode::UTF_32LE:
 				   case CValidateUnicode::UTF_32BE:
@@ -86,15 +84,12 @@ FILE* FileOpenUnicodeText(const TCHAR* file, const TCHAR* mode)
 					   break;
 				   case CValidateUnicode::UNKNOWN:
 					   // If unknown, let's see if it's not just UTF_8 without a BOM.
-					   if (CValidateUnicode::ValidateUTF8(&buffer[0], buffer.size()))
+					   if (CValidateUnicode::ValidateUTF8(&buffer[0], buffer.size()) == 2)
 					   {
-						   ftype = CValidateUnicode::UTF_8;
+                           // contains UTF-8 characters sequences
 						   _ftprintf(g_output, _T("File '%s' has no BOM but seems to be UTF-8.\n"), file);
-					   }
-					   else
-					   {
-						   _ftprintf(g_output, _T("File '%s' has no BOM and does not validate as UTF-8.\n"), file);
-					   }
+						   ftype = CValidateUnicode::UTF_8;
+                       }
 					   break;
 				   default:
 					   _ftprintf(g_output, _T("CValidateUnicode::CheckBOM() for file '%s' returned an unknown return value: %d\n"),
@@ -102,7 +97,7 @@ FILE* FileOpenUnicodeText(const TCHAR* file, const TCHAR* mode)
 					   exit(-1);
 					   break;
 			   }
-         }			   
+			}			   
 		}
 	}
 
@@ -112,16 +107,13 @@ FILE* FileOpenUnicodeText(const TCHAR* file, const TCHAR* mode)
 	{
 		case CValidateUnicode::UTF_8:
 			strMode.append(_T(", ccs=UTF-8"));
-			_ftprintf(g_output, _T("Opening '%s' as UTF-8.\n"), file);
 			break;
 		case CValidateUnicode::UTF_16LE:
 			strMode.append(_T(", ccs=UTF-16LE"));
-			_ftprintf(g_output, _T("Opening '%s' as UTF-16LE.\n"), file);
 			break;
 		default:
 			// Looks like fopen() doesn't support other encodings of Unicode.
 			strMode.append(_T(", ccs=UNICODE"));
-			_ftprintf(g_output, _T("Opening '%s' as ANSI.\n"), file);
 			break;
 	}
 

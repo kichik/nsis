@@ -34,7 +34,7 @@ class CValidateUnicode
 		};
 
 		// Make sure that the buffer contains valid UTF-8 encoding.
-		static bool ValidateUTF8(unsigned char* buf, size_t characters);
+		static int ValidateUTF8(unsigned char* buf, size_t characters);
 
 		// Make sure that the buffer contains valid UTF-16LE encoding.
 		static bool ValidateUTF16LE(unsigned char* buf, size_t bytes);
