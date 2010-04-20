@@ -18,76 +18,41 @@
 #include "validateunicode.h"
 #include <vector>
 
-// anonymous namespace
-namespace
+int CValidateUnicode::ValidateUTF8(unsigned char* buf, size_t characters)
 {
-	struct CUTF8BytesToFollow
-	{
-		unsigned char m_rShift;
-		unsigned char m_result;
-		unsigned char m_bytesToFollow;
-	};
-
-	const CUTF8BytesToFollow g_utf8BytesToFollow[] =
-	{
-		 /* r-shift, result, length */
-		{ 7,  0x0, 0},
-		{ 5,  0x6, 1},
-		{ 4,  0xe, 2},
-		{ 3, 0x1e, 3},
-		{ 2, 0x3e, 4},
-		{ 1, 0x7e, 5}
-	};
-};
-
-bool CValidateUnicode::ValidateUTF8(unsigned char* buf, size_t characters)
-{
-	bool valid = true;
+	bool hasNonAscii = false;
 	int bytesToFollow = 0;
 
-	while (valid && characters > 0)
+	for ( ; characters != 0 ; --characters)
 	{
-		// Last character may be 0.
-		if (*buf == 0 && characters != 1)
-		{
-			valid = false;
-		}
-		else
-		{
-			bytesToFollow = GetBytesToFollow(*buf);
-			if (bytesToFollow > 0)
-			{
-				while (bytesToFollow)
-				{
-					++buf;
-					--characters;
-					if (*buf >> 6 != 0x2)
-					{
-						valid = false;
-					}
-					--bytesToFollow;
-				}
-			}
-		}
-		++buf;
-		--characters;
+        unsigned char ch = *buf++;
+        if (bytesToFollow != 0) // in the middle of a multi-byte sequence?
+        {
+            if ((ch & 0xC0) != 0x80)
+		    	return 0; // we expected a continuation byte
+            hasNonAscii = true;
+            --bytesToFollow;
+        }
+        else if (ch & 0x80)
+        {
+            if ((ch & 0xC0) == 0x80)
+		    	return 0; // continuation byte outside multi-byte sequence
+            else if ((ch & 0xE0) == 0xC0)
+		    	bytesToFollow = 1;
+            else if ((ch & 0xF0) == 0xE0)
+		    	bytesToFollow = 2;
+            else if ((ch & 0xF8) == 0xF0)
+		    	bytesToFollow = 3;
+            else
+                return 0; // byte is invalid UTF-8 (outside RFC 3629)
+
+        }
+        else if (ch == 0 && characters != 1)
+	        return 0; // NUL character in the middle of the buffer
 	}
-
-	return valid;
-}
-
-int CValidateUnicode::GetBytesToFollow(unsigned char ch)
-{
-	int result = -1;
-	for (int i = 0; i < sizeof(g_utf8BytesToFollow)/sizeof(CUTF8BytesToFollow); ++i)
-	{
-		if (ch >> g_utf8BytesToFollow[i].m_rShift == g_utf8BytesToFollow[i].m_result)
-		{
-			result = g_utf8BytesToFollow[i].m_bytesToFollow;
-		}
-	}
-
-	return result;
+    if (bytesToFollow != 0)
+        return 0; // end of buffer in the middle of a multi-byte sequence
+    return hasNonAscii ? 2 : 1;
 }
 
 bool CValidateUnicode::ValidateUTF16LE(unsigned char* buf, size_t bytes)
