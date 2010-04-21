@@ -118,9 +118,9 @@ ${MementoSection} "NSIS Core Files (required)" SecCore
   File /oname=makensis.exe ..\Bin\substart.exe
   File ..\makensisw.exe
   File ..\COPYING
-  File ..\NSIS.chm
-  File ..\NSIS.exe
-  File /nonfatal ..\NSIS.exe.manifest
+  ;File ..\NSIS.chm
+  ;File ..\NSIS.exe
+  ;File /nonfatal ..\NSIS.exe.manifest
   SetOutPath $INSTDIR\Bin
   File ..\Bin\makensis.exe
   File ..\Bin\zlib1.dll
@@ -177,11 +177,11 @@ ${MementoSection} "NSIS Core Files (required)" SecCore
   File ..\Docs\makensisw\*.txt
 
   SetOutPath $INSTDIR\Menu
-  File ..\Menu\*.html
+  ;File ..\Menu\*.html
   SetOutPath $INSTDIR\Menu\images
-  File ..\Menu\images\header.gif
-  File ..\Menu\images\line.gif
-  File ..\Menu\images\site.gif
+  ;File ..\Menu\images\header.gif
+  ;File ..\Menu\images\line.gif
+  ;File ..\Menu\images\site.gif
 
   Delete $INSTDIR\makensis.htm
   Delete $INSTDIR\Docs\*.html
