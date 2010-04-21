@@ -280,6 +280,7 @@ ${MementoSection} "Script Examples" SecExample
   File ..\Examples\Plugin\nsis\pluginapi.h
   File ..\Examples\Plugin\nsis\pluginapi.lib
   File ..\Examples\Plugin\nsis\api.h
+  File ..\Examples\Plugin\nsis\nsis_tchar.h
 
 ${MementoSectionEnd}
 
@@ -793,19 +794,19 @@ Section -post
   WriteRegDword HKLM "Software\NSIS" "VersionBuild" "${VER_BUILD}"
 !endif
 
-  WriteRegExpandStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "UninstallString" '"$INSTDIR\uninst-nsis.exe"'
-  WriteRegExpandStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "InstallLocation" "$INSTDIR"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "DisplayName" "Nullsoft Install System"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "DisplayIcon" "$INSTDIR\NSIS.exe,0"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "DisplayVersion" "${VERSION}"
+  WriteRegExpandStr HKLM "${MEMENTO_REGISTRY_KEY}" "UninstallString" '"$INSTDIR\uninst-nsis.exe"'
+  WriteRegExpandStr HKLM "${MEMENTO_REGISTRY_KEY}" "InstallLocation" "$INSTDIR"
+  WriteRegStr HKLM "${MEMENTO_REGISTRY_KEY}" "DisplayName" "Nullsoft Install System"
+  WriteRegStr HKLM "${MEMENTO_REGISTRY_KEY}" "DisplayIcon" "$INSTDIR\NSIS.exe,0"
+  WriteRegStr HKLM "${MEMENTO_REGISTRY_KEY}" "DisplayVersion" "${VERSION}"
 !ifdef VER_MAJOR & VER_MINOR & VER_REVISION & VER_BUILD
-  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "VersionMajor" "${VER_MAJOR}"
-  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "VersionMinor" "${VER_MINOR}.${VER_REVISION}"
+  WriteRegDWORD HKLM "${MEMENTO_REGISTRY_KEY}" "VersionMajor" "${VER_MAJOR}"
+  WriteRegDWORD HKLM "${MEMENTO_REGISTRY_KEY}" "VersionMinor" "${VER_MINOR}.${VER_REVISION}"
 !endif
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "URLInfoAbout" "http://nsis.sourceforge.net/"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "HelpLink" "http://nsis.sourceforge.net/Support"
-  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "NoModify" "1"
-  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "NoRepair" "1"
+  WriteRegStr HKLM "${MEMENTO_REGISTRY_KEY}" "URLInfoAbout" "http://nsis.sourceforge.net/"
+  WriteRegStr HKLM "${MEMENTO_REGISTRY_KEY}" "HelpLink" "http://nsis.sourceforge.net/Support"
+  WriteRegDWORD HKLM "${MEMENTO_REGISTRY_KEY}" "NoModify" "1"
+  WriteRegDWORD HKLM "${MEMENTO_REGISTRY_KEY}" "NoRepair" "1"
 
   WriteUninstaller $INSTDIR\uninst-nsis.exe
 
@@ -949,7 +950,7 @@ Function PageLeaveReinstall
     StrCmp $R1 "1" reinst_done reinst_uninstall
 
   reinst_uninstall:
-  ReadRegStr $R1 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "UninstallString"
+  ReadRegStr $R1 HKLM "${MEMENTO_REGISTRY_KEY}" "UninstallString"
 
   ;Run uninstaller
   HideWindow
@@ -1021,7 +1022,7 @@ Section Uninstall
 
   System::Call 'Shell32::SHChangeNotify(i ${SHCNE_ASSOCCHANGED}, i ${SHCNF_IDLIST}, i 0, i 0)'
 
-  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS"
+  DeleteRegKey HKLM "${MEMENTO_REGISTRY_KEY}"
   DeleteRegKey HKLM "Software\NSIS"
 
   SetDetailsPrint textonly
