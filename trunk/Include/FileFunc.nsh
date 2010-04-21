@@ -968,7 +968,7 @@ RefreshShellIcons
 	Push $8
 	Push $9
 
-	System::Alloc 1024
+	System::StrAlloc 1024
 	Pop $2
 	System::Call 'kernel32::GetLogicalDriveStrings(i,i) i(1024, r2)'
 
@@ -1053,8 +1053,9 @@ RefreshShellIcons
 	StrCmp $9 'StopGetDrives' FileFunc_GetDrives_enumex
 
 	FileFunc_GetDrives_enumnext:
+	IntOp $4 $4 * ${NSIS_CHAR_SIZE}
 	IntOp $3 $3 + $4
-	IntOp $3 $3 + 1
+	IntOp $3 $3 + ${NSIS_CHAR_SIZE}
 	goto FileFunc_GetDrives_enumok
 
 	FileFunc_GetDrives_enumex:
