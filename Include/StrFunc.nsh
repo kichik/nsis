@@ -405,6 +405,7 @@ o-----------------------------------------------------------------------------o
         ;Step 2: Allocate global heap
         StrLen $2 $0
         IntOp $2 $2 + 1
+		IntOp $2 $2 * ${NSIS_CHAR_SIZE}
         System::Call 'kernel32::GlobalAlloc(i 2, i r2) i.r2'
 
         ;Step 3: Lock the handle
@@ -449,6 +450,7 @@ o-----------------------------------------------------------------------------o
         ;Step 5: Allocate global heap
         StrLen $2 $0
         IntOp $2 $2 + 1
+		IntOp $2 $2 * ${NSIS_CHAR_SIZE}
         System::Call 'kernel32::GlobalAlloc(i 2, i r2) i.r2'
 
         ;Step 6: Lock the handle

@@ -15,46 +15,46 @@
 !define sysWNDPROC "(i.s, i.s, i.s, i.s) iss"
 
 ; LRESULT DefWindowProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
-!define sysDefWindowProc "user32::DefWindowProcA(i, i, i, i) i"
+!define sysDefWindowProc "user32::DefWindowProc(i, i, i, i) i"
 
-!define sysMessageBox "user32::MessageBoxA(i, t, t, i) i"
+!define sysMessageBox "user32::MessageBox(i, t, t, i) i"
 
 !define sysMessageBeep "user32::MessageBeep(i) i"
 
-!define sysMessageBoxIndirect 'user32::MessageBoxIndirectA(i) i'
+!define sysMessageBoxIndirect 'user32::MessageBoxIndirect(i) i'
 
 ; HMODULE GetModuleHandle(LPCTSTR lpModuleName); 
-!define sysGetModuleHandle "kernel32::GetModuleHandleA(t) i"
+!define sysGetModuleHandle "kernel32::GetModuleHandle(t) i"
 
 ; HMODULE LoadLibrary(LPCTSTR lpFileName);
-!define sysLoadLibrary "kernel32::LoadLibraryA(t) i"
+!define sysLoadLibrary "kernel32::LoadLibrary(t) i"
 
 ; BOOL FreeLibrary(HMODULE hModule);
 !define sysFreeLibrary "kernel32::FreeLibrary(i) i"
 
 ; HCURSOR LoadCursor(HINSTANCE hInstance, LPCTSTR lpCursorName);
-!define sysLoadCursor "user32::LoadCursorA(i, t) i"
+!define sysLoadCursor "user32::LoadCursor(i, t) i"
 
 ; ATOM RegisterClass(CONST WNDCLASS *lpWndClass);
-!define sysRegisterClass "user32::RegisterClassA(i) i"
+!define sysRegisterClass "user32::RegisterClass(i) i"
 
 ; HANDLE LoadImage(HINSTANCE hinst, LPCTSTR lpszName, UINT uType,
 ;       int cxDesired, int cyDesired, UINT fuLoad);
-!define sysLoadImage "user32::LoadImageA(i, t, i, i, i, i) i"
+!define sysLoadImage "user32::LoadImage(i, t, i, i, i, i) i"
 
 ; BOOL PlaySound(LPCSTR pszSound, HMODULE hmod, DWORD fdwSound);
-!define sysPlaySound "winmm.dll::PlaySoundA(t, i, i) i"
+!define sysPlaySound "winmm.dll::PlaySound(t, i, i) i"
 
 ; HWND CreateWindowEx(DWORD dwExStyle, LPCTSTR lpClassName, LPCTSTR lpWindowName,
 ;       DWORD dwStyle, int x, int y, int nWidth, int nHeight, HWND hWndParent,
 ;       HMENU hMenu, HINSTANCE hInstance, LPVOID lpParam);
-!define sysCreateWindowEx "user32::CreateWindowExA(i, t, t, i, i, i, i, i, i, i, i, i) i"
+!define sysCreateWindowEx "user32::CreateWindowEx(i, t, t, i, i, i, i, i, i, i, i, i) i"
 
 ; BOOL IsWindow(HWND hWnd);
 !define sysIsWindow "user32::IsWindow(i) i"
 
 ; LONG SetWindowLong(HWND hWnd, int nIndex, LONG dwNewLong);
-!define sysSetWindowLong "user32::SetWindowLongA(i, i, i) i"
+!define sysSetWindowLong "user32::SetWindowLong(i, i, i) i"
 
 ; BOOL SetWindowPos(HWND hWnd, HWND hWndInsertAfter, int X, int Y, int cx, int cy, UINT uFlags);
 !define sysSetWindowPos "user32::SetWindowPos(i, i, i, i, i, i, i) i"
@@ -69,16 +69,16 @@
 !define sysGetClientRect "user32::GetClientRect(i, i) i"
 
 ; BOOL GetMessage(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilterMax);
-!define sysGetMessage "user32::GetMessageA(i, i, i, i) i"
+!define sysGetMessage "user32::GetMessage(i, i, i, i) i"
 
 ; LRESULT DispatchMessage(CONST MSG *lpmsg);
-!define sysDispatchMessage "user32::DispatchMessageA(i) i"
+!define sysDispatchMessage "user32::DispatchMessage(i) i"
 
 ; BOOL DeleteObject(HGDIOBJ hObject);
 !define sysDeleteObject "gdi32::DeleteObject(i) i"
 
 ; int GetObject(HGDIOBJ hgdiobj, int cbBuffer, LPVOID lpvObject);
-!define sysGetObject "gdi32::GetObjectA(i, i, i) i"
+!define sysGetObject "gdi32::GetObject(i, i, i) i"
 
 ; HGDIOBJ SelectObject(HDC hdc, HGDIOBJ hgdiobj);
 !define sysSelectObject "gdi32::SelectObject(i, i) i"
@@ -95,7 +95,7 @@
 
 ; proposed by abgandar
 ; int AddFontResource(LPCTSTR lpszFilename);
-!define sysAddFontResource "gdi32::AddFontResourceA(t) i"
+!define sysAddFontResource "gdi32::AddFontResource(t) i"
 
 ; HDC BeginPaint(HWND hwnd, LPPAINTSTRUCT lpPaint);
 !define sysBeginPaint "user32::BeginPaint(i, i) i"
@@ -104,21 +104,21 @@
 !define sysEndPaint "user32::EndPaint(i, i) i"
 
 ; BOOL SystemParametersInfo(UINT uiAction, UINT uiParam, PVOID pvParam, UINT fWinIni);
-!define sysSystemParametersInfo "user32::SystemParametersInfoA(i, i, i, i) i"
+!define sysSystemParametersInfo "user32::SystemParametersInfo(i, i, i, i) i"
 
 ; UINT_PTR SetTimer(HWND hWnd, UINT_PTR nIDEvent, UINT uElapse, TIMERPROC lpTimerFunc);
 !define sysSetTimer "user32::SetTimer(i, i, i, k) i"
 
 ; DWORD GetLogicalDriveStrings(DWORD nBufferLength, LPTSTR LpBuffer);
-!define sysGetLogicalDriveStrings 'kernel32::GetLogicalDriveStringsA(i, i) i'
+!define sysGetLogicalDriveStrings 'kernel32::GetLogicalDriveStrings(i, i) i'
 
-!define sysGetDiskFreeSpaceEx 'kernel32::GetDiskFreeSpaceExA(t, *l, *l, *l) i'
+!define sysGetDiskFreeSpaceEx 'kernel32::GetDiskFreeSpaceEx(t, *l, *l, *l) i'
 
 ; UINT GetDriveType(LPCTSTR lpRootPathName);
-!define sysGetDriveType 'kernel32::GetDriveTypeA(t) i'
+!define sysGetDriveType 'kernel32::GetDriveType(t) i'
 
 ; HANDLE FindFirstFile(LPCTSTR lpFileName,LPWIN32_FIND_DATA lpFindFileData);
-!define sysFindFirstFile 'kernel32::FindFirstFileA(t, i) i'
+!define sysFindFirstFile 'kernel32::FindFirstFile(t, i) i'
 
 ; BOOL FindClose(HANDLE hFindFile);
 !define sysFindClose 'kernel32::FindClose(i) i'
@@ -136,10 +136,10 @@
 ; LPSYSTEMTIME lpUniversalTime, LPSYSTEMTIME lpLocalTime);
 !define sysSystemTimeToTzSpecificLocalTime 'kernel32::SystemTimeToTzSpecificLocalTime(i, i, i) i'
 
-!define syslstrlen 'kernel32::lstrlenA(t) i'
+!define syslstrlen 'kernel32::lstrlen(t) i'
 
 ; int wsprintf(LPTSTR lpOut, LPCTSTR lpFmt, ...);
-!define syswsprintf "user32::wsprintfA(t, t) i ? c" 
+!define syswsprintf "user32::wsprintf(t, t) i ? c" 
 
 ; ------------- Structures --------------
 
