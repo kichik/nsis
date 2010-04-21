@@ -49,7 +49,7 @@ int WINAPI _tWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, TCHAR *cmdParam, int 
   g_sdata.sigint_event = CreateEvent(NULL, FALSE, FALSE, _T("makensis win32 signint event"));
   RestoreSymbols();
 
-  HINSTANCE hRichEditDLL = LoadLibrary(_T("RichEd32.dll"));
+  HINSTANCE hRichEditDLL = LoadLibrary(_T("RichEd20.dll"));
 
   if (!InitBranding()) {
     MessageBox(0,NSISERROR,_T("Error"),MB_ICONEXCLAMATION|MB_OK);
