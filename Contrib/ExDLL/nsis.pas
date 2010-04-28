@@ -51,8 +51,8 @@ type
   TVariableList = INST_0..__INST_LAST;
 
   TExecuteCodeSegment = function (const funct_id: Integer; const parent: HWND): Integer;  stdcall;
-  Tvalidate_filename = procedure (const filename: PChar); cdecl;
-  TRegisterPluginCallback = function (const unknow: Integer; const uknown2: Integer): Integer; cdecl;
+  Tvalidate_filename = procedure (const filename: PChar); stdcall;
+  TRegisterPluginCallback = function (const unknow: Integer; const uknown2: Integer): Integer; stdcall;
 
   pexec_flags_t = ^exec_flags_t;
   exec_flags_t = record
