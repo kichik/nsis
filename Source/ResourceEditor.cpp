@@ -222,13 +222,13 @@ static WCHAR* ResStringToUnicode(const char *szString) {
   if (IS_INTRESOURCE(szString))
     return MAKEINTRESOURCEW((ULONG_PTR)szString);
   else
-    return winchar_fromTchar(szString);
+    return wcsdup_fromTchar(szString, CP_ACP);
 }
 #endif
 
 static void FreeUnicodeResString(WCHAR* szwString) {
   if (!IS_INTRESOURCE(szwString))
-    delete [] szwString;
+    free(szwString);
 }
 
 
@@ -580,7 +580,7 @@ CResourceDirectory* CResourceEditor::ScanDirectory(PRESOURCE_DIRECTORY rdRoot, P
 
       size_t nameSize = ConvertEndianness(rds->Length);
       szName = new WCHAR[nameSize+1];
-      winchar_strncpy(szName, rds->NameString, nameSize);
+      wcsncpy(szName, rds->NameString, nameSize);
       szName[nameSize] = 0;
     }
     // Else, set the name to this entry's id
@@ -709,7 +709,7 @@ void CResourceEditor::WriteRsrcSec(BYTE* pbRsrcSec) {
     PMY_IMAGE_RESOURCE_DIRECTORY_ENTRY(cRDirE->m_ulWrittenAt)->UName.NameString.NameOffset = ConvertEndianness((DWORD) (seeker - pbRsrcSec));
 
     WCHAR* szName = cRDirE->GetName();
-    WORD iLen = winchar_strlen(szName) + 1;
+    WORD iLen = wcslen(szName) + 1;
 
     *(WORD*)seeker = ConvertEndianness(iLen);
     CopyMemory(seeker + sizeof(WORD), szName, iLen*sizeof(WCHAR));
@@ -818,7 +818,7 @@ void CResourceDirectory::AddEntry(CResourceDirectoryEntry* entry) {
     WCHAR* szEntName = entry->GetName();
     for (i = 0; i < m_rdDir.NumberOfNamedEntries; i++) {
       WCHAR* szName = m_vEntries[i]->GetName();
-      int cmp = winchar_strcmp(szName, szEntName);
+      int cmp = wcscmp(szName, szEntName);
       delete [] szName;
       if (cmp == 0) {
         delete [] szEntName;
@@ -870,7 +870,7 @@ int CResourceDirectory::Find(WCHAR* szName) {
       continue;
 
     WCHAR* szEntName = m_vEntries[i]->GetName();
-    int cmp = winchar_strcmp(szName, szEntName);
+    int cmp = wcscmp(szName, szEntName);
     delete [] szEntName;
 
     if (!cmp)
@@ -942,7 +942,7 @@ CResourceDirectoryEntry::CResourceDirectoryEntry(WCHAR* szName, CResourceDirecto
   }
   else {
     m_bHasName = true;
-    m_szName = winchar_strdup(szName);
+    m_szName = _wcsdup(szName);
   }
   m_bIsDataDirectory = true;
   m_rdSubDir = rdSubDir;
@@ -956,7 +956,7 @@ CResourceDirectoryEntry::CResourceDirectoryEntry(WCHAR* szName, CResourceDataEnt
   }
   else {
     m_bHasName = true;
-    m_szName = winchar_strdup(szName);
+    m_szName = _wcsdup(szName);
   }
   m_bIsDataDirectory = false;
   m_rdeData = rdeData;
@@ -979,11 +979,11 @@ bool CResourceDirectoryEntry::HasName() {
 WCHAR* CResourceDirectoryEntry::GetName() {
   if (!m_bHasName)
     return 0;
-  return winchar_strdup(m_szName);
+  return _wcsdup(m_szName);
 }
 
 int CResourceDirectoryEntry::GetNameLength() {
-  return winchar_strlen(m_szName);
+  return wcslen(m_szName);
 }
 
 WORD CResourceDirectoryEntry::GetId() {

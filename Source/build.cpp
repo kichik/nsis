@@ -477,7 +477,7 @@ int CEXEBuild::add_string(const TCHAR *string, int process/*=1*/, WORD codepage/
 
 int CEXEBuild::add_intstring(const int i) // returns offset in stringblock
 {
-  TCHAR i_str[1024];
+  TCHAR i_str[32];
   wsprintf(i_str, _T("%d"), i);
   return add_string(i_str);
 }

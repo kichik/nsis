@@ -212,7 +212,7 @@ int WideCharToMultiByte(UINT CodePage, DWORD dwFlags, LPCWSTR lpWideCharStr,
   }
 
   if (cchWideChar < 0) {
-    cchWideChar = (int) winchar_strlen(lpWideCharStr) + 1;
+    cchWideChar = (int) _wcslen(lpWideCharStr) + 1;
   }
 
   if (cbMultiByte == 0) {
@@ -546,7 +546,7 @@ static bool GetDLLVersionUsingRE(const tstring& filepath, DWORD& high, DWORD & l
       {
         // get VS_FIXEDFILEINFO from VS_VERSIONINFO
         WCHAR *szKey = (WCHAR *)(ver + sizeof(WORD) * 3);
-        int len = (winchar_strlen(szKey) + 1) * sizeof(WCHAR) + sizeof(WORD) * 3;
+        int len = (wcslen(szKey) + 1) * sizeof(WCHAR) + sizeof(WORD) * 3;
         len = (len + 3) & ~3; // align on DWORD boundry
         VS_FIXEDFILEINFO *verinfo = (VS_FIXEDFILEINFO *)(ver + len);
         if (versize > len && verinfo->dwSignature == VS_FFI_SIGNATURE)
