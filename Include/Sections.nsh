@@ -116,12 +116,12 @@
 
 ; A radio button
 
-!macro RadioButton SECTION
+!macro RadioButton SECTION_NAME
 
-  SectionGetFlags "${SECTION}" $R0
+  SectionGetFlags ${SECTION_NAME} $R0
   IntOp $R0 $R0 & ${SF_SELECTED}
   IntCmp $R0 ${SF_SELECTED} 0 +2 +2
-  StrCpy "${StartRadioButtons_Var}" "${SECTION}"
+  StrCpy "${StartRadioButtons_Var}" ${SECTION_NAME}
 
 !macroend
 
@@ -185,25 +185,31 @@
 !define INSTTYPE_31 1073741824
 !define INSTTYPE_32 2147483648
 
-!macro SetSectionInInstType SECTION WANTED_INSTTYPE
+!macro SetSectionInInstType SECTION_NAME WANTED_INSTTYPE
 
   Push $0
-    SectionGetInstTypes "${SECTION}" $0
+  Push $1
+    StrCpy $1 "${SECTION_NAME}"
+    SectionGetInstTypes $1 $0
     IntOp $0 $0 | ${WANTED_INSTTYPE}
-    SectionSetInstTypes "${SECTION}" $0
+    SectionSetInstTypes $1 $0
+  Pop $1
   Pop $0
 
 !macroend
 
-!macro ClearSectionInInstType SECTION WANTED_INSTTYPE
+!macro ClearSectionInInstType SECTION_NAME WANTED_INSTTYPE
 
   Push $0
   Push $1
-    SectionGetInstTypes "${SECTION}" $0
+  Push $2
+    StrCpy $2 "${SECTION_NAME}"
+    SectionGetInstTypes $2 $0
     StrCpy $1 ${WANTED_INSTTYPE}
     IntOp $1 $1 ~
     IntOp $0 $0 & $1
-    SectionSetInstTypes "${SECTION}" $0
+    SectionSetInstTypes $2 $0
+  Pop $2
   Pop $1
   Pop $0
 
@@ -219,9 +225,12 @@
 !macro SetSectionFlag SECTION BITS
 
   Push $R0
-    SectionGetFlags "${SECTION}" $R0
+  Push $R1
+    StrCpy $R1 "${SECTION}"
+    SectionGetFlags $R1 $R0
     IntOp $R0 $R0 | "${BITS}"
-    SectionSetFlags "${SECTION}" $R0
+    SectionSetFlags $R1 $R0
+  Pop $R1
   Pop $R0
  
 !macroend
@@ -232,10 +241,13 @@
 
   Push $R0
   Push $R1
-    SectionGetFlags "${SECTION}" $R0
+  Push $R2
+    StrCpy $R2 "${SECTION}"
+    SectionGetFlags $R2 $R0
     IntOp $R1 "${BITS}" ~
     IntOp $R0 $R0 & $R1
-    SectionSetFlags "${SECTION}" $R0
+    SectionSetFlags $R2 $R0
+  Pop $R2
   Pop $R1
   Pop $R0
 
@@ -263,10 +275,13 @@
 !macro RemoveSection SECTION
 
   Push $R0
-    SectionGetFlags `${SECTION}` $R0
+  Push $R1
+    StrCpy $R1 `${SECTION}`
+    SectionGetFlags $R1 $R0
     IntOp $R0 $R0 & ${SECTION_OFF}
-    SectionSetFlags `${SECTION}` $R0
-    SectionSetText `${SECTION}` ``
+    SectionSetFlags $R1 $R0
+    SectionSetText $R1 ``
+  Pop $R1
   Pop $R0
 
 !macroend
@@ -276,14 +291,20 @@
 !macro UnremoveSection SECTION SECTION_TEXT
 
   Push $R0
-    SectionGetFlags `${SECTION}` $R0
+  Push $R1
+  Push $R2
+    StrCpy $R1 `${SECTION}`
+    StrCpy $R2 `${SECTION_TEXT}`
+    SectionGetFlags $R1 $R0
     IntOp $R0 $R0 | ${SF_SELECTED}
-    SectionSetFlags `${SECTION}` $R0
-    SectionSetText `${SECTION}` `${SECTION_TEXT}`
+    SectionSetFlags $R1 $R0
+    SectionSetText $R1 $R2
+  Pop $R2
+  Pop $R1
   Pop $R0
 
 !macroend
 
-!endif
-
 ;--------------------------------
+
+!endif
