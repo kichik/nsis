@@ -1603,7 +1603,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         return PS_ERROR;
       }
       ldata[datalen]='\0';
-      if (!memcmp(ldata,"{\\rtf",6))
+      if (!memcmp(ldata,"{\\rtf",5))
         *data = SF_RTF;
       else
         *data = SF_TEXT;
