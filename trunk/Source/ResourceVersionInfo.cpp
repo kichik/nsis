@@ -140,7 +140,7 @@ int GetVersionHeader (LPSTR &p, WORD &wLength, WORD &wValueLength, WORD &wType)
     wType = *(WORD*)p;
     p += sizeof(WORD);
     szKey = (WCHAR*)p;
-    p += (winchar_strlen(szKey) + 1) * sizeof (WCHAR);
+    p += (wcslen(szKey) + 1) * sizeof (WCHAR);
     while ( ((ULONG_PTR)p % 4) != 0 )
         p++;
     return p - baseP;    
@@ -171,7 +171,7 @@ void SaveVersionHeader (GrowBuf &strm, WORD wLength, WORD wValueLength, WORD wTy
     
     strm.add (&wValueLength, sizeof (wValueLength));
     strm.add (&wType, sizeof (wType));
-    keyLen = WORD((winchar_strlen(key) + 1) * sizeof (WCHAR));
+    keyLen = WORD((wcslen(key) + 1) * sizeof (WCHAR));
     strm.add ((void*)key, keyLen);
     
     PadStream(strm);
@@ -210,11 +210,11 @@ void CResourceVersionInfo::ExportToStream(GrowBuf &strm, int Index)
         PadStream (stringInfoStream);
         
         p = stringInfoStream.getlen();
-        KeyName = winchar_fromTchar(pChildStrings->getname(i), codepage);
-        KeyValue = winchar_fromTchar(pChildStrings->getvalue(i), codepage);
-        SaveVersionHeader (stringInfoStream, 0, WORD(winchar_strlen(KeyValue) + 1), 1, KeyName, (void*)KeyValue);
-        delete [] KeyName;
-        delete [] KeyValue;
+        KeyName = wcsdup_fromTchar(pChildStrings->getname(i), codepage);
+        KeyValue = wcsdup_fromTchar(pChildStrings->getvalue(i), codepage);
+        SaveVersionHeader (stringInfoStream, 0, WORD(wcslen(KeyValue) + 1), 1, KeyName, (void*)KeyValue);
+        free(KeyName);
+        free(KeyValue);
         wSize = WORD(stringInfoStream.getlen() - p);
         
         *(WORD*)((PBYTE)stringInfoStream.get()+p)=wSize;

@@ -22,18 +22,18 @@ class WinCharTest : public CppUnit::TestFixture {
 public:
   void testFromTchar() {
     WCHAR test[] = { _x('t'), _x('e'), _x('s'), _x('t'), 0 };
-    WCHAR *dyn = winchar_fromTchar("test");
+    WCHAR *dyn = wcsdup_fromansi("test");
 
     CPPUNIT_ASSERT_EQUAL( 0, memcmp(test, dyn, 5) );
 
-    delete [] dyn;
+    free(dyn);
   }
 
   void testStrCpy() {
     WCHAR a[] = { _x('t'), _x('e'), _x('s'), _x('t'), 0 };
     WCHAR b[5];
 
-    CPPUNIT_ASSERT_EQUAL( (WCHAR*) b, (WCHAR*) winchar_strcpy(b, a) );
+    CPPUNIT_ASSERT_EQUAL( (WCHAR*) b, (WCHAR*) wcscpy(b, a) );
     CPPUNIT_ASSERT_EQUAL( 0, memcmp(a, b, 5) );
   }
 
@@ -41,22 +41,22 @@ public:
     WCHAR a1[] = { _x('t'), _x('e'), _x('s'), _x('t'), 0 };
     WCHAR b[5];
 
-    CPPUNIT_ASSERT_EQUAL( (WCHAR*) b, (WCHAR*) winchar_strncpy(b, a1, 5) );
+    CPPUNIT_ASSERT_EQUAL( (WCHAR*) b, (WCHAR*) wcsncpy(b, a1, 5) );
     CPPUNIT_ASSERT_EQUAL( 0, memcmp(a1, b, 5 * sizeof(WCHAR)) );
 
     WCHAR a2[] = { _x('t'), _x('e'), 0, 0, 0 };
 
-    CPPUNIT_ASSERT_EQUAL( (WCHAR*) b, (WCHAR*) winchar_strncpy(b, a2, 5) );
+    CPPUNIT_ASSERT_EQUAL( (WCHAR*) b, (WCHAR*) wcsncpy(b, a2, 5) );
     CPPUNIT_ASSERT_EQUAL( 0, memcmp(a2, b, 5 * sizeof(WCHAR)) );
 
-    CPPUNIT_ASSERT_EQUAL( (WCHAR*) b, (WCHAR*) winchar_strncpy(b, a1, 2) );
+    CPPUNIT_ASSERT_EQUAL( (WCHAR*) b, (WCHAR*) wcsncpy(b, a1, 2) );
     CPPUNIT_ASSERT_EQUAL( 0, memcmp(a2, b, 5 * sizeof(WCHAR)) );
   }
 
   void testStrLen() {
     WCHAR test[] = { _x('t'), _x('e'), _x('s'), _x('t'), 0 };
 
-    CPPUNIT_ASSERT_EQUAL( (size_t) 4, winchar_strlen(test) );
+    CPPUNIT_ASSERT_EQUAL( (size_t) 4, wcslen(test) );
   }
 
   static int simplifyNumber(int n) {
@@ -78,7 +78,7 @@ public:
     #define TEST_STR_CMP(x, y) \
       CPPUNIT_ASSERT_EQUAL(\
         simplifyNumber(strcmp(x, y)), \
-        simplifyNumber(winchar_strcmp(w##x, w##y)) \
+        simplifyNumber(wcscmp(w##x, w##y)) \
       )
 
     TEST_STR_CMP(a, b);
@@ -93,9 +93,9 @@ public:
   void testStrDup() {
     WCHAR a[] = { _x('a'), _x('b'), _x('c'), 0 };
 
-    WCHAR *b = winchar_strdup(a);
+    WCHAR *b = _wcsdup(a);
 
-    CPPUNIT_ASSERT_EQUAL( 0, winchar_strcmp(a, b) );
+    CPPUNIT_ASSERT_EQUAL( 0, wcscmp(a, b) );
 
     delete [] b;
   }

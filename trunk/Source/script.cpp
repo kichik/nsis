@@ -1589,26 +1589,26 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         return PS_ERROR;
       }
       rewind(fp);
-      TCHAR *data=(TCHAR*)malloc(datalen+2*sizeof(TCHAR));
+      char *data=(char*)malloc(datalen+2);
       if (!data)
       {
         ERROR_MSG(_T("Internal compiler error #12345: LicenseData malloc(%d) failed.\n"), datalen+2);
         return PS_ERROR;
       }
       MANAGE_WITH(data, free);
-      TCHAR *ldata=data+1;
+      char *ldata=data+1;
       if (fread((void*)ldata,1,datalen,fp) != datalen)
       {
         ERROR_MSG(_T("LicenseLangString: can't read file.\n"));
         return PS_ERROR;
       }
-      ldata[datalen/sizeof(TCHAR)]=0;
-      if (!strncmp((char*)ldata,"{\\rtf",sizeof("{\\rtf")-1))
+      ldata[datalen]='\0';
+      if (!memcmp(ldata,"{\\rtf",6))
         *data = SF_RTF;
       else
         *data = SF_TEXT;
 
-      int ret = SetLangString(name, lang, data);
+      int ret = SetLangString(name, lang, (TCHAR*) data);
       if (ret == PS_WARNING)
         warning_fl(_T("LicenseLangString \"%s\" set multiple times for %d, wasting space"), name, lang);
       else if (ret == PS_ERROR)
@@ -4886,11 +4886,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_GETCURRENTADDR:
       ent.which=EW_ASSIGNVAR;
       ent.offsets[0]=GetUserVarIndex(line, 1);
-      {
-        TCHAR buf[32];
-        wsprintf(buf,_T("%d"),1+(cur_header->blocks[NB_ENTRIES].num));
-        ent.offsets[1]=add_string(buf);
-      }
+      ent.offsets[1]=add_intstring(1+(cur_header->blocks[NB_ENTRIES].num));
       if (ent.offsets[0] < 0) PRINTHELP()
       ent.offsets[2]=0;
       ent.offsets[3]=0;
@@ -5970,7 +5966,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
       // next, call it
       ent.which=EW_REGISTERDLL;
-      ent.offsets[0]=add_string(tempDLL);;
+      ent.offsets[0]=add_string(tempDLL);
       ent.offsets[1]=add_string(funcname.c_str());
       ent.offsets[2]=0;
       ent.offsets[3]=nounload|build_plugin_unload;
