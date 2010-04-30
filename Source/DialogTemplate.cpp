@@ -59,7 +59,7 @@ void ReadVarLenArr(LPBYTE &seeker, WCHAR* &readInto, unsigned int uCodePage) {
     break;
   default:
     {
-      readInto = winchar_strdup((WCHAR *) arr);
+      readInto = wcsdup((WCHAR *) arr);
       PWCHAR wseeker = PWCHAR(seeker);
       while (*wseeker++);
       seeker = LPBYTE(wseeker);
@@ -78,14 +78,14 @@ void ReadVarLenArr(LPBYTE &seeker, WCHAR* &readInto, unsigned int uCodePage) {
       seeker += sizeof(WORD); \
     } \
     else { \
-      winchar_strcpy((WCHAR *) seeker, x); \
-      seeker += winchar_strlen((WCHAR *) seeker) * sizeof(WCHAR) + sizeof(WCHAR); \
+      wcscpy((WCHAR *) seeker, x); \
+      seeker += wcslen((WCHAR *) seeker) * sizeof(WCHAR) + sizeof(WCHAR); \
     } \
   else \
     seeker += sizeof(WORD);
 
 // A macro that adds the size of x (which can be a string a number, or nothing) to dwSize
-#define AddStringOrIdSize(x) dwSize += x ? (IS_INTRESOURCE(x) ? sizeof(DWORD) : (winchar_strlen(x) + 1) * sizeof(WCHAR)) : sizeof(WORD)
+#define AddStringOrIdSize(x) dwSize += x ? (IS_INTRESOURCE(x) ? sizeof(DWORD) : (wcslen(x) + 1) * sizeof(WCHAR)) : sizeof(WORD)
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -227,7 +227,7 @@ CDialogTemplate::~CDialogTemplate() {
   if (m_szTitle)
     delete [] m_szTitle;
   if (m_szFont)
-    delete [] m_szFont;
+    free(m_szFont);
 
   for (unsigned int i = 0; i < m_vItems.size(); i++) {
     if (m_vItems[i]->szClass && !IS_INTRESOURCE(m_vItems[i]->szClass))
@@ -291,8 +291,8 @@ void CDialogTemplate::SetFont(TCHAR* szFaceName, WORD wFontSize) {
   }
   m_bCharset = DEFAULT_CHARSET;
   m_dwStyle |= DS_SETFONT;
-  if (m_szFont) delete [] m_szFont;
-  m_szFont = winchar_fromTchar(szFaceName, m_uCodePage);
+  if (m_szFont) free(m_szFont);
+  m_szFont = wcsdup_fromTchar(szFaceName, m_uCodePage);
   m_sFontSize = wFontSize;
 }
 
@@ -302,10 +302,10 @@ void CDialogTemplate::AddItem(DialogItemTemplate item) {
   CopyMemory(newItem, &item, sizeof(DialogItemTemplate));
 
   if (item.szClass && !IS_INTRESOURCE(item.szClass)) {
-    newItem->szClass = winchar_strdup(item.szClass);
+    newItem->szClass = _wcsdup(item.szClass);
   }
   if (item.szTitle && !IS_INTRESOURCE(item.szTitle)) {
-    newItem->szTitle = winchar_strdup(item.szTitle);
+    newItem->szTitle = _wcsdup(item.szTitle);
   }
   if (item.wCreateDataSize) {
     newItem->szCreationData = new char[item.wCreateDataSize];

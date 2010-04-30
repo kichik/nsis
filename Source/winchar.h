@@ -18,9 +18,17 @@
 
 #include "Platform.h"
 
-WCHAR *winchar_fromTchar(const TCHAR* s, unsigned int codepage = CP_ACP);
-WCHAR *winchar_strcpy(WCHAR *ws1, const WCHAR *ws2);
-WCHAR *winchar_strncpy(WCHAR *ws1, const WCHAR *ws2, size_t n);
-size_t winchar_strlen(const WCHAR *ws);
-WCHAR *winchar_strdup(const WCHAR *ws);
-int winchar_strcmp(const WCHAR *ws1, const WCHAR *ws2);
+WCHAR *wcsdup_fromansi(const char* s, unsigned int codepage = CP_ACP);
+#ifdef _UNICODE
+#define wcsdup_fromTchar(s, codepage) _wcsdup(s)      // codepage is not used in this mode
+#else
+#define wcsdup_fromTchar(s, codepage) wcsdup_fromansi(s, codepage)
+#endif
+
+#if 0 // Needed by some RTL missing wchar string functions ?
+WCHAR *wcscpy(WCHAR *ws1, const WCHAR *ws2);
+WCHAR *wcsncpy(WCHAR *ws1, const WCHAR *ws2, size_t n);
+size_t wcslen(const WCHAR *ws);
+WCHAR *_wcsdup(const WCHAR *ws);
+int wcscmp(const WCHAR *ws1, const WCHAR *ws2);
+#endif

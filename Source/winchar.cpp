@@ -24,11 +24,8 @@
 
 using std::runtime_error;
 
-WCHAR *winchar_fromTchar(const TCHAR* s, unsigned int codepage/*=CP_ACP*/)
+WCHAR *wcsdup_fromansi(const char* s, unsigned int codepage/* = CP_ACP*/)
 {
-#ifdef _UNICODE
-  return _wcsdup(s); // codepage is not used in this mode
-#else
   int l = MultiByteToWideChar(codepage, 0, s, -1, 0, 0);
   if (l == 0)
     throw runtime_error("Unicode conversion failed");
@@ -39,10 +36,10 @@ WCHAR *winchar_fromTchar(const TCHAR* s, unsigned int codepage/*=CP_ACP*/)
     throw runtime_error("Unicode conversion failed");
 
   return ws;
-#endif
 }
 
-WCHAR *winchar_strcpy(WCHAR *ws1, const WCHAR *ws2)
+#if 0 // Needed by some RTL missing wchar string functions ?
+WCHAR *wcscpy(WCHAR *ws1, const WCHAR *ws2)
 {
   WCHAR *ret = ws1;
 
@@ -56,7 +53,7 @@ WCHAR *winchar_strcpy(WCHAR *ws1, const WCHAR *ws2)
   return ret;
 }
 
-WCHAR *winchar_strncpy(WCHAR *ws1, const WCHAR *ws2, size_t n)
+WCHAR *wcsncpy(WCHAR *ws1, const WCHAR *ws2, size_t n)
 {
   WCHAR *ret = ws1;
 
@@ -74,7 +71,7 @@ WCHAR *winchar_strncpy(WCHAR *ws1, const WCHAR *ws2, size_t n)
   return ret;
 }
 
-size_t winchar_strlen(const WCHAR *ws)
+size_t wcslen(const WCHAR *ws)
 {
   size_t len = 0;
 
@@ -86,14 +83,14 @@ size_t winchar_strlen(const WCHAR *ws)
   return len;
 }
 
-WCHAR *winchar_strdup(const WCHAR *ws)
+WCHAR *_wcsdup(const WCHAR *ws)
 {
-  WCHAR *dup = new WCHAR[winchar_strlen(ws) + 1];
-  winchar_strcpy(dup, ws);
+  WCHAR *dup = (WCHAR*) malloc(sizeof(WCHAR)*(wcslen(ws)+1)];
+  wcscpy(dup, ws);
   return dup;
 }
 
-int winchar_strcmp(const WCHAR *ws1, const WCHAR *ws2)
+int wcscmp(const WCHAR *ws1, const WCHAR *ws2)
 {
   int diff = 0;
 
@@ -105,3 +102,4 @@ int winchar_strcmp(const WCHAR *ws1, const WCHAR *ws2)
 
   return diff;
 }
+#endif
