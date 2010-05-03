@@ -166,6 +166,7 @@ class CEXEBuild {
     int parseScript();
     int includeScript(TCHAR *f);
     int MacroExists(const TCHAR *macroname);
+    int LoadLicenseFile(TCHAR *file, TCHAR** pdata, LineParser &line);
 #ifdef NSIS_FIX_DEFINES_IN_STRINGS
     void ps_addtoline(const TCHAR *str, GrowBuf &linedata, StringList &hist, bool bIgnoreDefines = false);
 #else

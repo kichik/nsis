@@ -823,6 +823,45 @@ int CEXEBuild::MacroExists(const TCHAR *macroname)
   return 0;
 }
 
+int CEXEBuild::LoadLicenseFile(TCHAR *file, TCHAR** pdata, LineParser &line) // caller must free *pdata, even on error result
+{
+  unsigned int datalen;
+  FILE *fp=FOPEN(file,_T("rb"));
+  if (!fp)
+  {
+    ERROR_MSG(_T("%s: open failed \"%s\"\n"),line.gettoken_str(0),file);
+    PRINTHELP()
+  }
+  MANAGE_WITH(fp, fclose);
+  fseek(fp,0,SEEK_END);
+  datalen=ftell(fp);
+  if (!datalen)
+  {
+    ERROR_MSG(_T("%s: empty license file \"%s\"\n"),line.gettoken_str(0),file);
+    return PS_ERROR;
+  }
+  rewind(fp);
+  TCHAR *data=(TCHAR*)malloc(datalen+2); //TODO: review this for Unicode support
+  if (!data)
+  {
+    ERROR_MSG(_T("Internal compiler error #12345: %s malloc(%d) failed.\n"),line.gettoken_str(0),datalen+2);
+    return PS_ERROR;
+  }
+  *pdata = data; // memory will be released by caller
+  TCHAR *ldata=data+1;
+  if (fread((void*)ldata,1,datalen,fp) != datalen)
+  {
+    ERROR_MSG(_T("%s: can't read file.\n"),line.gettoken_str(0));
+    return PS_ERROR;
+  }
+  ldata[datalen]='\0';
+  if (!memcmp(ldata,"{\\rtf",5))
+    *data = SF_RTF;
+  else
+    *data = SF_TEXT;
+  return PS_OK;
+}
+
 int CEXEBuild::process_oneline(TCHAR *line, const TCHAR *filename, int linenum)
 {
   const TCHAR *last_filename=curfilename;
@@ -839,7 +878,7 @@ int CEXEBuild::process_oneline(TCHAR *line, const TCHAR *filename, int linenum)
   TCHAR *oldtimestamp = NULL;
   TCHAR *oldline = NULL;
   BOOL is_commandline = !_tcscmp(filename,_T("command line"));
-  BOOL is_macro = !_tcsncmp(filename,_T("macro:"),_tcslen(_T("macro:"))); //TODO: isn't it supposed to be a && ?
+  BOOL is_macro = !_tcsncmp(filename,_T("macro:"),_tcslen(_T("macro:")));
 
   if(!is_commandline) { // Don't set the predefines for command line /X option
     if(!is_macro) {
@@ -1572,43 +1611,14 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       LANGID lang = line.gettoken_int(2);
       TCHAR *file = line.gettoken_str(3);
 
-      FILE *fp;
-      unsigned int datalen;
-      fp=FOPEN(file,_T("rb"));
-      if (!fp)
-      {
-        ERROR_MSG(_T("LicenseLangString: open failed \"%s\"\n"),file);
-        PRINTHELP()
-      }
-      MANAGE_WITH(fp, fclose);
-      fseek(fp,0,SEEK_END);
-      datalen=ftell(fp);
-      if (!datalen)
-      {
-        ERROR_MSG(_T("LicenseLangString: empty license file \"%s\"\n"),file);
-        return PS_ERROR;
-      }
-      rewind(fp);
-      char *data=(char*)malloc(datalen+2);
-      if (!data)
-      {
-        ERROR_MSG(_T("Internal compiler error #12345: LicenseData malloc(%d) failed.\n"), datalen+2);
-        return PS_ERROR;
-      }
+      TCHAR *data = NULL;
       MANAGE_WITH(data, free);
-      char *ldata=data+1;
-      if (fread((void*)ldata,1,datalen,fp) != datalen)
-      {
-        ERROR_MSG(_T("LicenseLangString: can't read file.\n"));
-        return PS_ERROR;
-      }
-      ldata[datalen]='\0';
-      if (!memcmp(ldata,"{\\rtf",5))
-        *data = SF_RTF;
-      else
-        *data = SF_TEXT;
 
-      int ret = SetLangString(name, lang, (TCHAR*) data);
+      int ret = LoadLicenseFile(file, &data, line);
+      if (ret != PS_OK)
+          return ret;
+
+      ret = SetLangString(name, lang, data);
       if (ret == PS_WARNING)
         warning_fl(_T("LicenseLangString \"%s\" set multiple times for %d, wasting space"), name, lang);
       else if (ret == PS_ERROR)
@@ -1861,6 +1871,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         int idx = 0;
         TCHAR *file = line.gettoken_str(1);
         TCHAR *data = NULL;
+        TCHAR *filedata = NULL;
+        MANAGE_WITH(filedata, free);
 
         if (file[0] == _T('$') && file[1] == _T('('))
         {
@@ -1876,40 +1888,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
         if (!idx)
         {
-          unsigned int datalen;
-          FILE *fp=FOPEN(file,_T("rb"));
-          if (!fp)
-          {
-            ERROR_MSG(_T("LicenseData: open failed \"%s\"\n"),file);
-            PRINTHELP()
-          }
-          MANAGE_WITH(fp, fclose);
-          fseek(fp,0,SEEK_END);
-          datalen=ftell(fp);
-          if (!datalen)
-          {
-            ERROR_MSG(_T("LicenseData: empty license file \"%s\"\n"),file);
-            return PS_ERROR;
-          }
-          rewind(fp);
-          data=(TCHAR*)malloc(datalen+2*sizeof(TCHAR));
-          if (!data)
-          {
-            ERROR_MSG(_T("Internal compiler error #12345: LicenseData malloc(%d) failed.\n"), (datalen+2)*sizeof(TCHAR));
-            return PS_ERROR;
-          }
-          //MANAGE_WITH(data, free);
-          TCHAR* ldata=(TCHAR*)data+1;
-          if (fread((void*)ldata,1,datalen,fp) != datalen) {
-            ERROR_MSG(_T("LicenseData: can't read file.\n"));
-            free(data); // TODO: fix later (orip)
-            return PS_ERROR;
-          }
-          ldata[datalen/sizeof(TCHAR)]=0;
-          if (!strncmp((char*)ldata,"{\\rtf",sizeof("{\\rtf")-1))
-            *data = SF_RTF;
-          else
-            *data = SF_TEXT;
+          int ret = LoadLicenseFile(file, &filedata, line);
+          if (ret != PS_OK)
+              return ret;
+          data = filedata;
         }
 
         if (!cur_page) {
@@ -1924,8 +1906,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
           cur_page->parms[1] = add_string(data, 0);
         }
-
-        if (!idx) free(data); // TODO: fix later (orip)
 
         SCRIPT_MSG(_T("LicenseData: \"%s\"\n"),file);
       }
