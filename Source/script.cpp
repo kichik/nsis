@@ -743,7 +743,7 @@ int CEXEBuild::parseScript()
 int CEXEBuild::includeScript(TCHAR *f)
 {
   SCRIPT_MSG(_T("!include: \"%s\"\n"),f);
-  FILE *incfp=FOPENTEXT(f,_T("rt"));
+  FILE *incfp=FOPENTEXT(f,"rt");
   if (!incfp)
   {
     ERROR_MSG(_T("!include: could not open file: \"%s\"\n"),f);
@@ -1222,7 +1222,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         TCHAR *file = line.gettoken_str(1);
         TCHAR *text = line.gettoken_str(2);
 
-        FILE *fp = FOPENTEXT(file, _T("a"));
+        FILE *fp = FOPENTEXT(file, "a");
         if (!fp)
         {
           ERROR_MSG(_T("!appendfile: \"%s\" couldn't be opened.\n"), file);
@@ -2834,7 +2834,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
         define=line.gettoken_str(2);
         const TCHAR *filename=line.gettoken_str(3);
-        FILE *fp=FOPENTEXT(filename,_T("r"));
+        FILE *fp=FOPENTEXT(filename,"r");
 
         if (!fp && _tcsicmp(define,_T("/file_noerr"))) {
           ERROR_MSG(_T("!define /file: file not found (\"%s\")\n"),filename);
@@ -3122,7 +3122,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
         if (isFile)
         {
-          FILE *fp=FOPENTEXT(source_string,_T("r"));
+          FILE *fp=FOPENTEXT(source_string,"r");
           if (!fp)
           {
             ERROR_MSG(_T("!searchparse /file: error opening \"%s\"\n"),source_string);

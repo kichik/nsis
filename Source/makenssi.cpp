@@ -189,7 +189,7 @@ static tstring get_home()
 
 static int process_config(CEXEBuild& build, tstring& conf)
 {
-  FILE *cfg=FOPENTEXT(conf.c_str(),_T("rt"));
+  FILE *cfg=FOPENTEXT(conf.c_str(),"rt");
   if (cfg)
   {
     if (build.display_script) 
@@ -298,7 +298,7 @@ int _tmain(int argc, TCHAR **argv)
   {
     if (argc > tmpargpos && IS_OPT(argv[tmpargpos]) && (argv[tmpargpos][1]==_T('o') || argv[tmpargpos][1]==_T('O')) && argv[tmpargpos][2])
     {
-      g_output=FOPENTEXT(argv[tmpargpos]+2,_T("w"));
+      g_output=FOPENTEXT(argv[tmpargpos]+2,"w");
       if (!g_output) 
       {
         _tprintf(_T("Error opening output log for writing. Using stdout.\n"));
@@ -344,7 +344,7 @@ int _tmain(int argc, TCHAR **argv)
       {
         if (!outputtried)
         {
-          g_output=FOPENTEXT(argv[argpos]+2,_T("w"));
+          g_output=FOPENTEXT(argv[argpos]+2,"w");
           if (!g_output) 
           {
             if (build.display_errors) _tprintf(_T("Error opening output log for writing. Using stdout.\n"));
@@ -479,11 +479,11 @@ int _tmain(int argc, TCHAR **argv)
         else
         {
           _tcscpy(sfile,argv[argpos]);
-          fp=FOPENTEXT(sfile,_T("rt"));
+          fp=FOPENTEXT(sfile,"rt");
           if (!fp)
           {
             _stprintf(sfile,_T("%s.nsi"),argv[argpos]);
-            fp=FOPENTEXT(sfile,_T("rt"));
+            fp=FOPENTEXT(sfile,"rt");
             if (!fp)
             {
               if (build.display_errors) 
