@@ -912,7 +912,7 @@ TCHAR SkipComments(FILE *f) {
 
 // NSIS Language File parser
 LanguageTable * CEXEBuild::LoadLangFile(TCHAR *filename) {
-  FILE *f = FOPENTEXT(filename, _T("r"));
+  FILE *f = FOPENTEXT(filename, "r");
   if (!f) {
     ERROR_MSG(_T("Error: Can't open language file - \"%s\"!\n"),filename);
     return 0;

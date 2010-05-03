@@ -16,30 +16,8 @@
 
 #include "tstring.h"
 #include "validateunicode.h"
+#include "util.h"
 #include <vector>
-
-// Simple RAII for C-styled FILE pointers.
-class ScopedFile
-{
-	public:
-		ScopedFile(FILE* file) : m_file(file) {}
-
-		~ScopedFile()
-		{
-			if (this->m_file != NULL)
-			{
-				fflush(this->m_file);
-				fclose(this->m_file);
-			}
-		}
-
-		operator FILE*(){ return this->m_file; }
-
-		operator bool() { return this->m_file != NULL; }
-
-	private:
-		FILE* m_file;
-};
 
 FILE* FileOpenUnicodeText(const TCHAR* file, const TCHAR* mode)
 {
@@ -51,10 +29,11 @@ FILE* FileOpenUnicodeText(const TCHAR* file, const TCHAR* mode)
 	if (_tcsstr(mode, _T("w+")) ||
 	    _tcsstr(mode, _T("r")))
 	{
-		ScopedFile fp(_tfopen(file, _T("rb")));
+		FILE* fp = _tfopen(file, _T("rb"));
 
 		if (fp)
 		{
+            MANAGE_WITH(fp, fclose);
 			fseek(fp, 0, SEEK_END);
 			size_t fileSize = ftell(fp);
 			if (fileSize == 0)
