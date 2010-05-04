@@ -725,7 +725,7 @@ DWORD CALLBACK StreamLicense(DWORD dwCookie, LPBYTE pbBuff, LONG cb, LONG *pcb)
 // on-the-fly conversion of Unicode to ANSI (because Windows don't recognize Unicode RTF data)
 DWORD CALLBACK StreamLicenseRTF(DWORD dwCookie, LPBYTE pbBuff, LONG cb, LONG *pcb)
 {
-  LONG len = lstrlen(((LPWSTR) dwCookie)+dwRead);
+  size_t len = lstrlen(((LPWSTR) dwCookie)+dwRead);
   len = min(len, cb/sizeof(WCHAR));
   *pcb=WideCharToMultiByte(CP_ACP,0,((LPWSTR) dwCookie)+dwRead,len,pbBuff,cb,NULL,NULL);
   // RTF uses only ASCII characters, so we can assume "number of output bytes" = "number of source WChar consumed"
