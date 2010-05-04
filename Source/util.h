@@ -34,6 +34,8 @@
 extern int g_dopause;
 extern void dopause(void);
 
+extern double my_wtof(const wchar_t *str);
+
 // Adds the bitmap in filename using resource editor re as id id.
 // If width or height are specified it will also make sure the bitmap is in that size
 int update_bitmap(CResourceEditor* re, WORD id, const TCHAR* filename, int width=0, int height=0, int maxbpp=0);
