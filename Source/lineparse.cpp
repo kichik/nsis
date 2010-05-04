@@ -22,6 +22,7 @@
 #include <cstdlib>
 #include <cstring>
 #include "tstring.h"
+#include "util.h"
 
 LineParser::LineParser(bool bCommentBlock)
 {
