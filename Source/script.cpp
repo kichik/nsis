@@ -825,40 +825,45 @@ int CEXEBuild::MacroExists(const TCHAR *macroname)
 
 int CEXEBuild::LoadLicenseFile(TCHAR *file, TCHAR** pdata, LineParser &line) // caller must free *pdata, even on error result
 {
-  unsigned int datalen;
-  FILE *fp=FOPEN(file,_T("rb"));
+  FILE *fp=FOPENTEXT(file,"rt");
   if (!fp)
   {
     ERROR_MSG(_T("%s: open failed \"%s\"\n"),line.gettoken_str(0),file);
     PRINTHELP()
   }
   MANAGE_WITH(fp, fclose);
+  unsigned int beginning=ftell(fp); // (we might be positionned after a BOM)
   fseek(fp,0,SEEK_END);
-  datalen=ftell(fp);
+  unsigned int datalen=ftell(fp)-beginning; // size of file in bytes! not a number of character
   if (!datalen)
   {
     ERROR_MSG(_T("%s: empty license file \"%s\"\n"),line.gettoken_str(0),file);
     return PS_ERROR;
   }
-  rewind(fp);
-  TCHAR *data=(TCHAR*)malloc(datalen+2); //TODO: review this for Unicode support
+  fseek(fp,beginning,SEEK_SET);
+  TCHAR *data=(TCHAR*)malloc((datalen+2)*sizeof(TCHAR)); // alloc enough for worst-case scenario (ANSI/UTF8 characters read in WCHARs)
   if (!data)
   {
-    ERROR_MSG(_T("Internal compiler error #12345: %s malloc(%d) failed.\n"),line.gettoken_str(0),datalen+2);
+    ERROR_MSG(_T("Internal compiler error #12345: %s malloc(%d) failed.\n"),line.gettoken_str(0),(datalen+2)*sizeof(TCHAR));
     return PS_ERROR;
   }
   *pdata = data; // memory will be released by caller
   TCHAR *ldata=data+1;
-  if (fread((void*)ldata,1,datalen,fp) != datalen)
+  while (_fgetts(ldata, data+datalen+2-ldata, fp)) // _fgetts translate ANSI/UTF8 characters to TCHAR
+      ldata += _tcslen(ldata);
+  if (ferror(fp))
   {
     ERROR_MSG(_T("%s: can't read file.\n"),line.gettoken_str(0));
     return PS_ERROR;
   }
-  ldata[datalen]='\0';
-  if (!memcmp(ldata,"{\\rtf",5))
+  if (!memcmp(data+1,_T("{\\rtf"),5*sizeof(TCHAR)))
     *data = SF_RTF;
   else
+#ifdef _UNICODE
+    *data = SF_TEXT|SF_UNICODE;
+#else
     *data = SF_TEXT;
+#endif
   return PS_OK;
 }
 
