@@ -716,11 +716,23 @@ skipPage:
 static DWORD dwRead;
 DWORD CALLBACK StreamLicense(DWORD dwCookie, LPBYTE pbBuff, LONG cb, LONG *pcb)
 {
-  lstrcpynA(pbBuff,(char*)dwCookie+dwRead,cb);
-  *pcb=lstrlenA(pbBuff);
+  lstrcpyn((LPTSTR)pbBuff,(LPTSTR)(dwCookie+dwRead),cb/sizeof(TCHAR));
+  *pcb=lstrlen((LPTSTR)pbBuff)*sizeof(TCHAR);
   dwRead+=*pcb;
   return 0;
 }
+#ifdef _UNICODE
+// on-the-fly conversion of Unicode to ANSI (because Windows don't recognize Unicode RTF data)
+DWORD CALLBACK StreamLicenseRTF(DWORD dwCookie, LPBYTE pbBuff, LONG cb, LONG *pcb)
+{
+  LONG len = lstrlen(((LPWSTR) dwCookie)+dwRead);
+  len = min(len, cb/sizeof(WCHAR));
+  *pcb=WideCharToMultiByte(CP_ACP,0,((LPWSTR) dwCookie)+dwRead,len,pbBuff,cb,NULL,NULL);
+  // RTF uses only ASCII characters, so we can assume "number of output bytes" = "number of source WChar consumed"
+  dwRead+=*pcb;
+  return 0;
+}
+#endif
 
 static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -733,9 +745,13 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
     TCHAR *l = (TCHAR *)GetNSISStringNP(GetNSISTab(this_page->parms[1]));
     int lt = *l;
     EDITSTREAM es = {
-      (DWORD)(++l),
+      (DWORD_PTR)(++l),
       0,
+#ifdef _UNICODE
+      lt==SF_RTF?StreamLicenseRTF:StreamLicense
+#else
       StreamLicense
+#endif
     };
 
     int selected = (this_page->flags & PF_LICENSE_SELECTED) | !(this_page->flags & PF_LICENSE_FORCE_SELECTION);

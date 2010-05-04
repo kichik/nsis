@@ -269,6 +269,9 @@ typedef DWORDLONG ULONGLONG,*PULONGLONG;
 #  ifndef SF_RTF
 #    define SF_RTF 0x0002
 #  endif
+#  ifndef SF_UNICODE
+#    define SF_UNICODE 0x0010
+#  endif
 #endif
 
 #ifdef __GNUC__
