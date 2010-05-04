@@ -65,6 +65,14 @@ void dopause(void)
   }
 }
 
+double my_wtof(const wchar_t *str) 
+{
+	char buf[100];
+	WideCharToMultiByte(0,0,str,-1,buf,100,0,0);
+	return atof(buf);
+}
+
+
 // Returns 0 if everything is OK
 // Returns -1 if can't find the file
 // Returns -2 if the file is an invalid bitmap

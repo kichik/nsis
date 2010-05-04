@@ -22,8 +22,13 @@
 #define _T(x)    __T(x)
 #define _TEXT(x) __T(x)
 #endif
+#if defined(_MSC_VER) && (_MSC_VER<=1200)
+typedef unsigned short TCHAR;
+typedef unsigned short _TUCHAR;
+#else
 typedef wchar_t TCHAR;
 typedef wchar_t _TUCHAR;
+#endif
 
 // program
 #define _tmain      wmain
@@ -34,11 +39,19 @@ typedef wchar_t _TUCHAR;
 // printfs
 #define _ftprintf   fwprintf
 #define _sntprintf  _snwprintf
-#define _stprintf   _swprintf
+#if defined(_MSC_VER) && (_MSC_VER<=1200)
+#	define _stprintf   swprintf
+#else
+#	define _stprintf   _swprintf
+#endif
 #define _tprintf    wprintf
 #define _vftprintf  vfwprintf
 #define _vsntprintf _vsnwprintf
-#define _vstprintf  _vswprintf
+#if defined(_MSC_VER) && (_MSC_VER<=1200)
+#	define _vstprintf  vswprintf
+#else
+#	define _vstprintf  _vswprintf
+#endif
 
 // scanfs
 #define _tscanf     wscanf
@@ -74,7 +87,11 @@ typedef wchar_t _TUCHAR;
 #define _tcstoi64   _wcstoi64
 #define _tcstol     wcstol
 #define _tcstoul    wcstoul
-#define _tstof      _wtof
+#if defined(_MSC_VER) && (_MSC_VER<=1200)
+#	define _tstof      my_wtof
+#else
+#	define _tstof      _wtof
+#endif
 #define _tstoi      _wtoi
 #define _tstoi64    _wtoi64
 #define _ttoi       _wtoi
