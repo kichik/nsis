@@ -30,6 +30,12 @@
 #include "toolbar.h"
 #include "update.h"
 
+#ifdef _countof
+#define COUNTOF _countof
+#else
+#define COUNTOF(a) (sizeof(a)/sizeof(a[0]))
+#endif
+
 NSCRIPTDATA g_sdata;
 NRESIZEDATA g_resize;
 NFINDREPLACE g_find;
@@ -740,7 +746,7 @@ DWORD WINAPI MakeNSISProc(LPVOID p) {
     PostMessage(g_sdata.hwnd,WM_MAKENSIS_PROCESSCOMPLETE,0,0);
     return 1;
   }
-  TCHAR szBuf[1024];
+  char szBuf[1024];
   DWORD dwRead = 1;
   DWORD dwExit = !STILL_ACTIVE;
   while (dwExit == STILL_ACTIVE || dwRead) {
@@ -748,7 +754,13 @@ DWORD WINAPI MakeNSISProc(LPVOID p) {
     if (dwRead) {
       ReadFile(read_stdout, szBuf, sizeof(szBuf)-sizeof(TCHAR), &dwRead, NULL);
       szBuf[dwRead] = 0;
+#ifdef _UNICODE
+      TCHAR wideBuf[1024];
+      MultiByteToWideChar(CP_UTF8,0,szBuf,-1,wideBuf,COUNTOF(wideBuf));
+      LogMessage(g_sdata.hwnd, wideBuf);
+#else
       LogMessage(g_sdata.hwnd, szBuf);
+#endif
     }
     else Sleep(TIMEOUT);
     GetExitCodeProcess(pi.hProcess, &dwExit);

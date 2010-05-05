@@ -55,7 +55,6 @@ DWORD CALLBACK UpdateThread(LPVOID v) {
   char url[300];
   BOOL error = FALSE;
   static char pbuf[8192];
-  static char ansiBuf[1024];
   char *p=NULL;
   *response = 0;
 
@@ -76,13 +75,7 @@ DWORD CALLBACK UpdateThread(LPVOID v) {
 
   JNL_HTTPGet *get = new JNL_HTTPGet(g_dns,8192,(p&&p[0])?p:NULL);;
   lstrcpyA(url,NSIS_UPDATE);
-
-#ifdef _UNICODE
-  WideCharToMultiByte(CP_ACP, 0, g_sdata.brandingv, -1, ansiBuf, sizeof(ansiBuf), NULL, NULL);
-  lstrcatA(url,ansiBuf);
-#else
   lstrcatA(url,g_sdata.brandingv);
-#endif
 
   lstrcpyA(response,"");
   get->addheader("User-Agent: MakeNSISw (jnetlib)");
@@ -139,7 +132,7 @@ DWORD CALLBACK UpdateThread(LPVOID v) {
 void Update() {
   DWORD dwThreadId;
 
-  if (_tcsstr(g_sdata.brandingv,_T("cvs")))
+  if (strstr(g_sdata.brandingv,"cvs"))
   {
     MessageBox(g_sdata.hwnd,_T("Cannot check for new version of nightly builds.  To update, download a new nightly build."),_T("NSIS Update"),MB_OK|MB_ICONSTOP);
     return;
