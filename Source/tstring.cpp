@@ -22,7 +22,7 @@
 FILE* FileOpenUnicodeText(const TCHAR* file, const TCHAR* mode)
 {
 	extern FILE *g_output;
-	CValidateUnicode::FILE_TYPE ftype = CValidateUnicode::UTF_16LE;
+	CValidateUnicode::FILE_TYPE ftype = CValidateUnicode::UTF_8; // default file format is UTF-8
 
 	// If we are reading an existing file, check to see what type of file it
 	// is first.

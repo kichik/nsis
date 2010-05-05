@@ -603,18 +603,19 @@ int InitBranding() {
       CloseHandle(read_stdout);
       return 0;
     }
-    TCHAR szBuf[1024];
+    char szBuf[1024];
     DWORD dwRead = 1;
     if (WaitForSingleObject(pi.hProcess,10000)!=WAIT_OBJECT_0) {
       return 0;
     }
-    ReadFile(read_stdout, szBuf, sizeof(szBuf)-sizeof(TCHAR), &dwRead, NULL);
-    szBuf[dwRead/sizeof(TCHAR)] = 0;
-    if (lstrlen(szBuf)==0) return 0;
-    g_sdata.branding = (TCHAR *)GlobalAlloc(GPTR,(lstrlen(szBuf)+6)*sizeof(TCHAR));
-    wsprintf(g_sdata.branding,_T("NSIS %s"),szBuf);
-    g_sdata.brandingv = (TCHAR *)GlobalAlloc(GPTR,(lstrlen(szBuf)+1)*sizeof(TCHAR));
-    lstrcpy(g_sdata.brandingv,szBuf);
+    ReadFile(read_stdout, szBuf, sizeof(szBuf)-1, &dwRead, NULL);
+    szBuf[dwRead] = 0;
+    int len = lstrlenA(szBuf);
+    if (len==0) return 0;
+    g_sdata.branding = (TCHAR *)GlobalAlloc(GPTR,(len+6)*sizeof(TCHAR));
+    wsprintf(g_sdata.branding,_T("NSIS %hs"),szBuf);
+    g_sdata.brandingv = (char *)GlobalAlloc(GPTR,len+1);
+    lstrcpyA(g_sdata.brandingv,szBuf);
     GlobalFree(s);
   }
   return 1;

@@ -172,7 +172,7 @@ typedef struct NSISScriptData {
   TCHAR *output_exe;
   TCHAR *input_script;
   TCHAR *branding;
-  TCHAR *brandingv;
+  char  *brandingv;
   TCHAR **symbols;
   int retcode;
   BOOL userSelectCompressor;

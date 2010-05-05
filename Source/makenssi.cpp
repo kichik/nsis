@@ -30,6 +30,8 @@
 #include "util.h"
 
 #include <nsis-version.h>
+#include <fcntl.h>
+#include <io.h>
 
 using namespace std;
 
@@ -268,6 +270,9 @@ int _tmain(int argc, TCHAR **argv)
   int no_logo=0;
   int in_files=0;
 
+#ifdef _UNICODE
+  _setmode(_fileno(stdout), _O_U8TEXT); // set console output as UTF-8
+#endif
   try
   {
     build.initialize(argv[0]);
