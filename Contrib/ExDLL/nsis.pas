@@ -2,7 +2,7 @@
     Original Code from
     (C) 2001 - Peter Windridge
 
-    Code in seperate unit and some changes
+    Code in separate unit and some changes
     2003 by Bernhard Mayer
 
     Fixed and formatted by Brett Dever
@@ -50,9 +50,18 @@ type
     );
   TVariableList = INST_0..__INST_LAST;
 
+type
+  PluginCallbackMessages = (
+    NSPIM_UNLOAD,    // This is the last message a plugin gets, do final cleanup
+    NSPIM_GUIUNLOAD, // Called after .onGUIEnd
+    );
+  TNSPIM = NSPIM_UNLOAD..NSPIM_GUIUNLOAD;
+
+  //TPluginCallback = function (const NSPIM: Integer): Pointer;
+
   TExecuteCodeSegment = function (const funct_id: Integer; const parent: HWND): Integer;  stdcall;
   Tvalidate_filename = procedure (const filename: PChar); stdcall;
-  TRegisterPluginCallback = function (const unknow: Integer; const uknown2: Integer): Integer; stdcall;
+  TRegisterPluginCallback = function (const DllInstance: HMODULE; const CallbackFunction: Pointer): Integer; stdcall;
 
   pexec_flags_t = ^exec_flags_t;
   exec_flags_t = record
