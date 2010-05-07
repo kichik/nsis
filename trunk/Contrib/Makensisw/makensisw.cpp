@@ -706,6 +706,8 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 }
 
 DWORD WINAPI MakeNSISProc(LPVOID p) {
+  TCHAR buf[1024];
+  char iobuf[1024];           //i/o buffer
   STARTUPINFO si={sizeof(si),};
   SECURITY_ATTRIBUTES sa={sizeof(sa),};
   SECURITY_DESCRIPTOR sd={0,};
@@ -746,34 +748,40 @@ DWORD WINAPI MakeNSISProc(LPVOID p) {
     PostMessage(g_sdata.hwnd,WM_MAKENSIS_PROCESSCOMPLETE,0,0);
     return 1;
   }
-  char szBuf[1024];
-  DWORD dwRead = 1;
-  DWORD dwExit = !STILL_ACTIVE;
-  while (dwExit == STILL_ACTIVE || dwRead) {
-    PeekNamedPipe(read_stdout, 0, 0, 0, &dwRead, NULL);
-    if (dwRead) {
-      ReadFile(read_stdout, szBuf, sizeof(szBuf)-sizeof(TCHAR), &dwRead, NULL);
-      szBuf[dwRead] = 0;
+  CloseHandle(newstdout); // close this handle (duplicated in subprocess) now so we get ERROR_BROKEN_PIPE
+  DWORD dwLeft = 0, dwRead = 0;
+  while (ReadFile(read_stdout, iobuf+dwLeft, sizeof(iobuf)-dwLeft-1, &dwRead, NULL)) //wait for buffer, or fails with ERROR_BROKEN_PIPE when subprocess exits
+  {
+    dwRead += dwLeft;
+    iobuf[dwRead] = '\0';
 #ifdef _UNICODE
-      TCHAR wideBuf[1024];
-      MultiByteToWideChar(CP_UTF8,0,szBuf,-1,wideBuf,COUNTOF(wideBuf));
-      LogMessage(g_sdata.hwnd, wideBuf);
+    // this tweak is to prevent LogMessage from cutting in the middle of an UTF-8 sequence
+    // we print only up to the latest \n of the buffer, and keep the remaining for the next loop
+    char* lastLF = strrchr(iobuf,'\n');
+    if (lastLF == NULL) lastLF = iobuf+dwRead-1;
+    char ch = *++lastLF;
+    *lastLF = '\0';
+    MultiByteToWideChar(CP_UTF8,0,iobuf,lastLF+1-iobuf,buf,COUNTOF(buf));
+    LogMessage(g_sdata.hwnd, buf);
+    *lastLF = ch;
+    dwLeft = iobuf+dwRead-lastLF;
+    memmove(iobuf, lastLF, dwLeft);
 #else
-      LogMessage(g_sdata.hwnd, szBuf);
+    LogMessage(g_sdata.hwnd, iobuf);
 #endif
-    }
-    else Sleep(TIMEOUT);
-    GetExitCodeProcess(pi.hProcess, &dwExit);
-    // Make sure we have no data before killing getting out of the loop
-    if (dwExit != STILL_ACTIVE) {
-      PeekNamedPipe(read_stdout, 0, 0, 0, &dwRead, NULL);
-    }
   }
-
+#ifdef _UNICODE
+  // because of UTF-8 tweak, in rare case there can be some data remaining
+  dwRead += dwLeft;
+  iobuf[dwRead] = 0;
+  MultiByteToWideChar(CP_UTF8,0,iobuf,dwRead+1,buf,COUNTOF(buf));
+  LogMessage(g_sdata.hwnd, buf);
+#endif
+  DWORD dwExit;
+  GetExitCodeProcess(pi.hProcess, &dwExit);
   g_sdata.retcode = dwExit;
   CloseHandle(pi.hThread);
   CloseHandle(pi.hProcess);
-  CloseHandle(newstdout);
   CloseHandle(read_stdout);
   CloseHandle(newstdin);
   CloseHandle(read_stdin);
