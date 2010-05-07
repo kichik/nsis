@@ -271,7 +271,8 @@ int _tmain(int argc, TCHAR **argv)
   int in_files=0;
 
 #ifdef _UNICODE
-  _setmode(_fileno(stdout), _O_U8TEXT); // set console output as UTF-8
+  _setmode(_fileno(stdout), _O_U8TEXT); // set stdout to UTF-8
+  SetConsoleOutputCP(CP_UTF8); // set console output to UTF-8 (especially useful for subprocesses like !system)
 #endif
   try
   {
