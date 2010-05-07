@@ -38,6 +38,9 @@ using namespace std;
 int g_noconfig=0;
 int g_display_errors=1;
 FILE *g_output=stdout;
+#ifdef _UNICODE
+UINT g_initialCodepage;
+#endif
 
 void quit()
 {
@@ -54,6 +57,9 @@ static void myatexit()
 {
   dopause();
   if (g_output != stdout && g_output) fclose(g_output);
+#ifdef _UNICODE
+  SetConsoleOutputCP(g_initialCodepage);
+#endif
 }
 
 static void sigint(int sig)
@@ -272,6 +278,7 @@ int _tmain(int argc, TCHAR **argv)
 
 #ifdef _UNICODE
   _setmode(_fileno(stdout), _O_U8TEXT); // set stdout to UTF-8
+  g_initialCodepage = GetConsoleOutputCP();
   SetConsoleOutputCP(CP_UTF8); // set console output to UTF-8 (especially useful for subprocesses like !system)
 #endif
   try
