@@ -386,7 +386,8 @@ void ErrorMessage(TCHAR *str)  //display detailed error info
 
 DWORD WINAPI ThreadProc(LPVOID p) // thread that will start & monitor makensis
 {
-  TCHAR buf[1024];           //i/o buffer
+  TCHAR buf[1024];
+  char iobuf[1024];           //i/o buffer
   STARTUPINFO si={sizeof(si),};
   SECURITY_ATTRIBUTES sa={sizeof(sa),};
   SECURITY_DESCRIPTOR sd={0,};               //security information for pipes
@@ -436,48 +437,37 @@ DWORD WINAPI ThreadProc(LPVOID p) // thread that will start & monitor makensis
     PostMessage(g_hwnd,WM_USER+1203,0,1);
     return 1;
   }
-
-  DWORD exit=0;  //process exit code
-  DWORD bread;   //bytes read
-  DWORD avail;   //bytes available
-
-  // Number of bytes available in the buffer.
-  const int bufBytesAvail = sizeof(buf)-sizeof(TCHAR);
-
-  memset(buf,0,sizeof(buf));
-  while (1)      //main program loop
+  CloseHandle(newstdout); // close this handle (duplicated in subprocess) now so we get ERROR_BROKEN_PIPE
+  DWORD dwLeft = 0, dwRead = 0;
+  while (ReadFile(read_stdout, iobuf+dwLeft, sizeof(iobuf)-dwLeft-1, &dwRead, NULL)) //wait for buffer, or fails with ERROR_BROKEN_PIPE when subprocess exits
   {
-    PeekNamedPipe(read_stdout,buf,bufBytesAvail,&bread,&avail,NULL);
-
-    //check to see if there is any data to read from stdout
-    if (bread != 0)
-    {
-      memset(buf,0,sizeof(buf));
-      if (avail > bufBytesAvail)
-      {
-        while (bread >= bufBytesAvail)
-        {
-          ReadFile(read_stdout,buf,bufBytesAvail,&bread,NULL);  //read the stdout pipe
-          wnd_printf(buf);
-          memset(buf,0,sizeof(buf));
-        }
-      }
-      else
-      {
-        ReadFile(read_stdout,buf,bufBytesAvail,&bread,NULL);
-        wnd_printf(buf);
-      }
-    }
-
-    GetExitCodeProcess(pi.hProcess,&exit);      //while the process is running
-    if (exit != STILL_ACTIVE)
-      break;
-
-    Sleep(100);
+    dwRead += dwLeft;
+    iobuf[dwRead] = '\0';
+#ifdef _UNICODE
+    // this tweak is to prevent LogMessage from cutting in the middle of an UTF-8 sequence
+    // we print only up to the latest \n of the buffer, and keep the remaining for the next loop
+    char* lastLF = strrchr(iobuf,'\n');
+    if (lastLF == NULL) lastLF = iobuf+dwRead-1;
+    char ch = *++lastLF;
+    *lastLF = '\0';
+    MultiByteToWideChar(CP_UTF8,0,iobuf,lastLF+1-iobuf,buf,COUNTOF(buf));
+    wnd_printf(buf);
+    *lastLF = ch;
+    dwLeft = iobuf+dwRead-lastLF;
+    memmove(iobuf, lastLF, dwLeft);
+#else
+    wnd_printf(iobuf);
+#endif
   }
+#ifdef _UNICODE
+  // because of UTF-8 tweak, in rare case there can be some data remaining
+  dwRead += dwLeft;
+  iobuf[dwRead] = 0;
+  MultiByteToWideChar(CP_UTF8,0,iobuf,dwRead+1,buf,COUNTOF(buf));
+  wnd_printf(buf);
+#endif
   CloseHandle(pi.hThread);
   CloseHandle(pi.hProcess);
-  CloseHandle(newstdout);
   CloseHandle(read_stdout);
 
 
