@@ -428,7 +428,7 @@ int ZEXPORT inflate(z_streamp z)
       }
       break;
     case LENS:
-      NEEDBITS(16)
+      NEEDBITS(32)
       s->sub.left = (uInt)b & 0xffff;
       b = k = 0;                      /* dump bits */
       Tracev((stderr, _T("inflate:       stored length %u\n"), s->sub.left));
