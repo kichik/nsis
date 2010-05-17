@@ -97,6 +97,12 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_FILEWRITE,_T("FileWrite"),2,0,_T("$(user_var: handle input) text"),TP_CODE},
 {TOK_FILEREADBYTE,_T("FileReadByte"),2,0,_T("$(user_var: handle input) $(user_var: bytevalue output)"),TP_CODE},
 {TOK_FILEWRITEBYTE,_T("FileWriteByte"),2,0,_T("$(user_var: handle input) bytevalue"),TP_CODE},
+#ifdef _UNICODE
+{TOK_FILEREADUTF16LE,_T("FileReadUTF16LE"),2,1,_T("$(user_var: handle input) $(user_var: text output) [maxlen]"),TP_CODE},
+{TOK_FILEWRITEUTF16LE,_T("FileWriteUTF16LE"),2,0,_T("$(user_var: handle input) text"),TP_CODE},
+{TOK_FILEREADWORD,_T("FileReadWord"),2,0,_T("$(user_var: handle input) $(user_var: wordvalue output)"),TP_CODE},
+{TOK_FILEWRITEWORD,_T("FileWriteWord"),2,0,_T("$(user_var: handle input) wordvalue"),TP_CODE},
+#endif
 {TOK_FILESEEK,_T("FileSeek"),2,2,_T("$(user_var: handle input) offset [mode] [$(user_var: new position output)]\n    mode=SET|CUR|END"),TP_CODE},
 {TOK_FUNCTION,_T("Function"),1,0,_T("function_name"),TP_GLOBAL},
 {TOK_FUNCTIONEND,_T("FunctionEnd"),0,0,_T(""),TP_FUNC},

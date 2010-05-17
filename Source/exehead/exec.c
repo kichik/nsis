@@ -1362,26 +1362,43 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       }
     break;
     case EW_FPUTS:
+#ifdef _UNICODE
+    case EW_FPUTWS:
+      // Jim Park/Wizou: in Unicode version of NSIS, EW_FPUTS still deals with ANSI files (conversion is done). We add EW_FPUTWS to deal with Unicode files.
+#endif
       {
         DWORD dw;
-        int l;
+        int l; // number of bytes to write
         TCHAR *t=var0;
-        if (parm2)
+        if (parm2) // FileWriteByte or FileWriteWord
         {
-          ((_TUCHAR *)buf1)[0]=(_TUCHAR) GetIntFromParm(1);
-          l=1;
+          // Note: In Unicode version, we put a WORD in buf1[0] and will write 1 or 2 bytes, depending on FileWriteByte/Word.
+          ((_TUCHAR *)buf1)[0]=(_TUCHAR) GetIntFromParm(1); // FIX_ENDIAN_INT16 needed?
+          l=(which==EW_FPUTS)?1:sizeof(TCHAR);              // Note: This is optimized by the compiler into l=1 for ANSI compilation
         }
+#ifdef _UNICODE
+        else if (which==EW_FPUTS)
+        {
+          GetStringFromParm(0x21); // load string in buf2, convert it to ANSI in buf1
+          WideCharToMultiByte(CP_ACP, 0, buf2, -1, (LPSTR) buf1, NSIS_MAX_STRLEN, NULL, NULL);
+          l=lstrlenA((LPCSTR)buf1);
+        }
+#endif
         else
         {
-          l=mystrlen(GetStringFromParm(0x11));
+          l=mystrlen(GetStringFromParm(0x11))*sizeof(TCHAR);
         }
-        if (!*t || !WriteFile((HANDLE)myatoi(t),buf1,l*sizeof(TCHAR),&dw,NULL))
+        if (!*t || !WriteFile((HANDLE)myatoi(t),buf1,l,&dw,NULL))
         {
           exec_error++;
         }
       }
     break;
     case EW_FGETS:
+#ifdef _UNICODE
+    case EW_FGETWS:
+      // Jim Park/Wizou: in Unicode version of NSIS, EW_FGETS still deals with ANSI files (conversion is done). We add EW_FGETWS to deal with Unicode files.
+#endif
       {
         TCHAR *textout=var1;
         DWORD dw;
@@ -1397,6 +1414,15 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           while (rpos<maxlen)
           {
             TCHAR c;
+#ifdef _UNICODE
+            if (which==EW_FGETS)
+            {
+                char tmpc;
+                if (!ReadFile(h,&tmpc,1,&dw,NULL) || dw != 1) break;
+                MultiByteToWideChar(CP_ACP, 0, &tmpc, 1, &c, 1);
+            }
+            else
+#endif
             if (!ReadFile(h,&c,sizeof(c),&dw,NULL) || dw != sizeof(c)) break;
             if (parm3)
             {

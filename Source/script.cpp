@@ -12,6 +12,8 @@
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty.
+ *
+ * Unicode support by Jim Park -- 08/09/2007
  */
 
 #include "Platform.h"
@@ -5494,6 +5496,43 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       if (ent.offsets[0]<0) PRINTHELP()
       SCRIPT_MSG(_T("FileWriteByte: %s->%s\n"),line.gettoken_str(2),line.gettoken_str(1));
     return add_entry(&ent);
+#ifdef _UNICODE
+    case TOK_FILEREADUTF16LE:
+      ent.which=EW_FGETWS;
+      ent.offsets[0]=GetUserVarIndex(line, 1); // file handle
+      ent.offsets[1]=GetUserVarIndex(line, 2); // output string
+      if (line.gettoken_str(3)[0])
+        ent.offsets[2]=add_string(line.gettoken_str(3));
+      else
+        ent.offsets[2]=add_intstring(NSIS_MAX_STRLEN-1);
+      if (ent.offsets[0]<0 || ent.offsets[1]<0) PRINTHELP()
+      SCRIPT_MSG(_T("FileReadUTF16LE: %s->%s (max:%s)\n"),line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3));
+    return add_entry(&ent);
+    case TOK_FILEWRITEUTF16LE:
+      ent.which=EW_FPUTWS;
+      ent.offsets[0]=GetUserVarIndex(line, 1); // file handle
+      ent.offsets[1]=add_string(line.gettoken_str(2));
+      if (ent.offsets[0]<0) PRINTHELP()
+      SCRIPT_MSG(_T("FileWriteUTF16LE: %s->%s\n"),line.gettoken_str(2),line.gettoken_str(1));
+    return add_entry(&ent);
+    case TOK_FILEREADWORD:
+      ent.which=EW_FGETWS;
+      ent.offsets[0]=GetUserVarIndex(line, 1); // file handle
+      ent.offsets[1]=GetUserVarIndex(line, 2); // output string
+      ent.offsets[2]=add_string(_T("1"));
+      ent.offsets[3]=1;
+      if (ent.offsets[0]<0 || ent.offsets[1]<0) PRINTHELP()
+      SCRIPT_MSG(_T("FileReadWord: %s->%s\n"),line.gettoken_str(1),line.gettoken_str(2));
+    return add_entry(&ent);
+    case TOK_FILEWRITEWORD:
+      ent.which=EW_FPUTWS;
+      ent.offsets[0]=GetUserVarIndex(line, 1); // file handle
+      ent.offsets[1]=add_string(line.gettoken_str(2));
+      ent.offsets[2]=1;
+      if (ent.offsets[0]<0) PRINTHELP()
+      SCRIPT_MSG(_T("FileWriteWord: %s->%s\n"),line.gettoken_str(2),line.gettoken_str(1));
+    return add_entry(&ent);
+#endif
     case TOK_FILESEEK:
       {
         const TCHAR *modestr;
@@ -5529,6 +5568,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_FILEWRITE:
     case TOK_FILEREADBYTE:
     case TOK_FILEWRITEBYTE:
+#ifdef _UNICODE
+    case TOK_FILEREADUTF16LE:
+    case TOK_FILEWRITEUTF16LE:
+    case TOK_FILEREADWORD:
+    case TOK_FILEWRITEWORD:
+#endif
       ERROR_MSG(_T("Error: %s specified, NSIS_SUPPORT_FILEFUNCTIONS not defined.\n"),  line.gettoken_str(0));
     return PS_ERROR;
 
