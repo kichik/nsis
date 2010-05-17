@@ -12,6 +12,8 @@
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty.
+ *
+ * Added commands for Unicode support by Jim Park -- 08/21/2007
  */
 
 #ifndef _TOKENS_H_
@@ -236,6 +238,12 @@ enum
   TOK_FILEWRITE,
   TOK_FILEREADBYTE,
   TOK_FILEWRITEBYTE,
+#ifdef _UNICODE
+  TOK_FILEREADUTF16LE,
+  TOK_FILEWRITEUTF16LE,
+  TOK_FILEREADWORD,
+  TOK_FILEWRITEWORD,
+#endif
   TOK_FILESEEK,
   TOK_GETFULLPATHNAME,
   TOK_REBOOT,
