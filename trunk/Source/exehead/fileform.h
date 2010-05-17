@@ -167,6 +167,10 @@ enum
   EW_FOPEN,             // FileOpen: 4  [name, openmode, createmode, outputhandle]
   EW_FPUTS,             // FileWrite: 3 [handle, string, ?int:string]
   EW_FGETS,             // FileRead: 4  [handle, output, maxlen, ?getchar:gets]
+#ifdef _UNICODE
+  EW_FPUTWS,            // FileWriteUTF16LE: 3 [handle, string, ?int:string]
+  EW_FGETWS,            // FileReadUTF16LE: 4 [handle, output, maxlen, ?getchar:gets]
+#endif
   EW_FSEEK,             // FileSeek: 4  [handle, offset, mode, >=0?positionoutput]
 #endif//NSIS_SUPPORT_FILEFUNCTIONS
 
