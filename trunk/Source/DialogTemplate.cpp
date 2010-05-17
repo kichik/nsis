@@ -468,7 +468,7 @@ void CDialogTemplate::ConvertToRTL() {
         m_vItems[i]->dwStyle |= SS_CENTERIMAGE;
       }
     }
-    else if (!IS_INTRESOURCE(m_vItems[i]->szClass) && !_wcsicmp(m_vItems[i]->szClass, L"RichEdit20A")) {
+    else if (!IS_INTRESOURCE(m_vItems[i]->szClass) && !_wcsnicmp(m_vItems[i]->szClass, L"RichEdit20", 10)) {
       if ((m_vItems[i]->dwStyle & ES_CENTER) == 0) {
         m_vItems[i]->dwStyle ^= ES_RIGHT;
       }
@@ -596,7 +596,12 @@ BYTE* CDialogTemplate::Save(DWORD& dwSize) {
     }
 
     // Write class variant length array
-    WriteStringOrId(m_vItems[i]->szClass);
+    WCHAR *szClass = m_vItems[i]->szClass;
+#ifdef _UNICODE
+    if (!IS_INTRESOURCE(szClass) && !_wcsicmp(szClass, L"RichEdit20A"))
+        szClass = L"RichEdit20W"; // transmute ANSI RichEdit control into Unicode RichEdit
+#endif
+    WriteStringOrId(szClass);
     // Write title variant length array
     WriteStringOrId(m_vItems[i]->szTitle);
 
