@@ -224,7 +224,7 @@ params:
     TCHAR *szUnusedBuf = 0;
 
     if (log) {
-      hUnusedBuf = GlobalAlloc(GHND, log & 2 ? (g_stringsize*sizeof(TCHAR)) : sizeof(szBuf)*4);
+      hUnusedBuf = GlobalAlloc(GHND, log & 2 ? (g_stringsize*sizeof(TCHAR)) : sizeof(szBuf)*4); // Note: will not grow if (log & 2)
       if (!hUnusedBuf) {
         lstrcpy(szRet, _T("error"));
         goto done;
@@ -269,28 +269,25 @@ params:
       if (dwRead) {
         dwLastOutput = GetTickCount();
         ReadFile(read_stdout, szBuf, sizeof(szBuf)-1, &dwRead, NULL);
-        szBuf[dwRead] = 0;
+        szBuf[dwRead] = '\0';
         if (log) {
-          TCHAR *p, *p2;
-          SIZE_T iReqLen = lstrlen(szBuf) + lstrlen(szUnusedBuf) + 1;
-          if (GlobalSize(hUnusedBuf) < iReqLen*sizeof(TCHAR) && (iReqLen < g_stringsize || !(log & 2))) {
-            GlobalUnlock(hUnusedBuf);
-            hUnusedBuf = GlobalReAlloc(hUnusedBuf, iReqLen*sizeof(TCHAR)+sizeof(szBuf), GHND);
-            if (!hUnusedBuf) {
-              lstrcpy(szRet, _T("error"));
-              break;
-            }
-            szUnusedBuf = (TCHAR *)GlobalLock(hUnusedBuf);
-          }
-          p = szUnusedBuf; // get the old left overs
-          if (iReqLen < g_stringsize || !(log & 2)) {
-             lstrcat(p, szBuf);
+          if (log & 2) {
+            lstrcpyn(szUnusedBuf + lstrlen(szUnusedBuf), szBuf, g_stringsize - lstrlen(szUnusedBuf));
           }
           else {
-            lstrcpyn(p + lstrlen(p), szBuf, g_stringsize - lstrlen(p));
-          }
-
-          if (!(log & 2)) {
+            TCHAR *p, *p2;
+            SIZE_T iReqLen = lstrlen(szBuf) + lstrlen(szUnusedBuf) + 1;
+            if (GlobalSize(hUnusedBuf) < iReqLen*sizeof(TCHAR)) {
+              GlobalUnlock(hUnusedBuf);
+              hUnusedBuf = GlobalReAlloc(hUnusedBuf, iReqLen*sizeof(TCHAR)+sizeof(szBuf), GHND);
+              if (!hUnusedBuf) {
+                lstrcpy(szRet, _T("error"));
+                break;
+              }
+              szUnusedBuf = (TCHAR *)GlobalLock(hUnusedBuf);
+            }
+            p = szUnusedBuf; // get the old left overs
+            lstrcat(p, szBuf);
             while ((p = my_strstr(p, _T("\t")))) {
               if ((int)(p - szUnusedBuf) > (int)(GlobalSize(hUnusedBuf)/sizeof(TCHAR) - TAB_REPLACE_SIZE - 1))
               {
