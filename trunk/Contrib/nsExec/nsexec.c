@@ -92,6 +92,32 @@ BOOL IsWOW64() {
   return FALSE;
 }
 
+/**
+ * Convert the ansiStr if storing ANSI strings, otherwise, assume that the
+ * string is wide and don't convert, but straight copy.
+ * @param ansiStr [in]  the suspected ANSI string.
+ * @param wideBuf [out] the buffer to write to.
+ * @param cnt     [in]  the size of widebuf in wchar_t's.
+ * @return true, if ASCII, false if suspected as wide.
+ */
+BOOL WideConvertIfASCII(const char* ansiStr, int strLen, WCHAR* wideBuf, int cnt)
+{
+   BOOL rval = FALSE;
+   wideBuf[0] = 0;
+   if (lstrlenA(ansiStr) == strLen)
+   {
+      MultiByteToWideChar(CP_ACP, 0, ansiStr, -1, wideBuf, cnt);
+      rval = TRUE;
+   }
+   else
+   {
+      // Going to assume that it's a wide char array.
+      lstrcpyW(wideBuf, (const WCHAR*) ansiStr);
+   }
+
+   return rval;
+}
+
 void ExecScript(int log) {
   TCHAR szRet[128] = _T("");
   TCHAR meDLLPath[MAX_PATH];    
@@ -220,6 +246,9 @@ params:
     DWORD dwWait = WAIT_TIMEOUT;
     DWORD dwLastOutput;
     static TCHAR szBuf[1024];
+#ifdef _UNICODE
+    static char ansiBuf[1024];
+#endif
     HGLOBAL hUnusedBuf = NULL;
     TCHAR *szUnusedBuf = 0;
 
@@ -268,8 +297,14 @@ params:
       PeekNamedPipe(read_stdout, 0, 0, 0, &dwRead, NULL);
       if (dwRead) {
         dwLastOutput = GetTickCount();
+#ifdef _UNICODE
+        ReadFile(read_stdout, ansiBuf, sizeof(ansiBuf)-1, &dwRead, NULL);
+        ansiBuf[dwRead] = 0;
+        WideConvertIfASCII(ansiBuf, dwRead, szBuf, sizeof(szBuf)/sizeof(szBuf[0]));
+#else
         ReadFile(read_stdout, szBuf, sizeof(szBuf)-1, &dwRead, NULL);
         szBuf[dwRead] = '\0';
+#endif
         if (log) {
           if (log & 2) {
             lstrcpyn(szUnusedBuf + lstrlen(szUnusedBuf), szBuf, g_stringsize - lstrlen(szUnusedBuf));
