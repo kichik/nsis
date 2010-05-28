@@ -3144,7 +3144,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
               *++p=0;
 
               bool endSlash = (str[0] && str[_tcslen(str)-1] == _T('\\'));
-              if (tmpstr.getlen() || endSlash) tmpstr.add(str,_tcslen(str));
+              if (tmpstr.getlen() || endSlash) tmpstr.add(str,sizeof(TCHAR)*_tcslen(str));
 
               // if we have valid contents and not ending on slash, then done
               if (!endSlash && (str[0] || tmpstr.getlen())) break;
@@ -3155,7 +3155,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             TCHAR *thisline=str;
             if (tmpstr.getlen()) 
             {
-              tmpstr.add(_T("\0"),1);
+              tmpstr.add(_T("\0"),sizeof(TCHAR));
               thisline=(TCHAR *)tmpstr.get();
             }
 
@@ -3233,15 +3233,15 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         while (*src)
         {
           if (ignoreCase ? _tcsnicmp(src,search,searchlen) : _tcsncmp(src,search,searchlen)) 
-            valout.add(src++,1);           
+            valout.add(src++,sizeof(TCHAR));
           else
           {
-            valout.add(replace,replacelen);
+            valout.add(replace,sizeof(TCHAR)*replacelen);
             src+=searchlen;
           }
         }
 
-        valout.add(_T(""),1);
+        valout.add(_T(""),sizeof(TCHAR));
        
         definedlist.del(define); // allow changing variables since we'll often use this in series
 

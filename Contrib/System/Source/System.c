@@ -801,7 +801,26 @@ SystemProc *PrepareProc(BOOL NeedForCall)
                     }
 
                 // Get proc address
-                if ((proc->Proc = NSISGetProcAddress(proc->Dll, proc->ProcName)) == NULL)
+                proc->Proc = NSISGetProcAddress(proc->Dll, proc->ProcName);
+#ifdef _UNICODE
+                if ((proc->Proc != NULL) &&
+                    (proc->ProcName[0] == _T('l') &&
+                     proc->ProcName[1] == _T('s') &&
+                     proc->ProcName[2] == _T('t') &&
+                     proc->ProcName[3] == _T('r')) &&
+                	(lstrcmpi(_T("kernel32"), proc->DllName) == 0 || lstrcmpi(_T("kernel32.dll"), proc->DllName) == 0))
+                {
+                    int lastCharIdx = lstrlen(proc->ProcName) - 1;
+
+                    if (lastCharIdx > 1 &&
+                        proc->ProcName[lastCharIdx] != _T('A') && 
+                        proc->ProcName[lastCharIdx] != _T('W'))
+                    {
+                        proc->Proc = NULL; // force using W variant
+                    }
+                }
+#endif
+                if (proc->Proc == NULL)
                 {
 #ifdef _UNICODE
                     // automatic W discover

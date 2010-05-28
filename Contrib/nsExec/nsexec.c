@@ -225,7 +225,8 @@ params:
   if (!pExec[0]) 
   {
     pushstring(_T("error"));
-    *(pExec-2) = _T('\0'); // skip space and quote
+    if (pExec-2 >= g_exec)
+      *(pExec-2) = _T('\0'); // skip space and quote
     if (executor) DeleteFile(executor);
     GlobalFree(g_exec);
     return;
@@ -393,7 +394,8 @@ done:
     CloseHandle(read_stdout);
     CloseHandle(newstdin);
     CloseHandle(read_stdin);
-    *(pExec-2) = _T('\0'); // skip space and quote
+    if (pExec-2 >= g_exec)
+      *(pExec-2) = _T('\0'); // skip space and quote
     if (executor) DeleteFile(executor);
     GlobalFree(g_exec);
     if (log) {
