@@ -125,6 +125,9 @@ Macros and conversion functions for InstallOptions
 
   InitPluginsDir
   File "/oname=$PLUGINSDIR\${FILE}" "${FILE}"
+!ifdef NSIS_UNICODE
+  InstallOptions::make_unicode "$PLUGINSDIR\${FILE}"
+!endif
   !insertmacro INSTALLOPTIONS_WRITE "${FILE}" "Settings" "RTL" "$(^RTL)"
 
   !verbose pop
@@ -135,6 +138,9 @@ Macros and conversion functions for InstallOptions
 
   InitPluginsDir
   File "/oname=$PLUGINSDIR\${FILENAME}" "${FILE}"
+!ifdef NSIS_UNICODE
+  InstallOptions::make_unicode "$PLUGINSDIR\${FILENAME}"
+!endif
   !insertmacro INSTALLOPTIONS_WRITE "${FILENAME}" "Settings" "RTL" "$(^RTL)"
 
 !macroend

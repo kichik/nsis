@@ -1502,6 +1502,46 @@ void WINAPI showCfgDlg()
 
 int initCalled;
 
+#ifdef _UNICODE
+// convert ini file to Unicode so that WritePrivateProfileString can write Unicode strings in it
+extern "C" void __declspec(dllexport) make_unicode(HWND hwndParent, int string_size,
+                                      TCHAR *variables, stack_t **stacktop)
+{
+  EXDLL_INIT();
+  TCHAR filename[MAX_PATH];
+  popstring(filename);
+  HANDLE hFile = CreateFile(filename, GENERIC_READ|GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
+  if (hFile != INVALID_HANDLE_VALUE)
+  {
+    DWORD fSize = GetFileSize(hFile, NULL);
+    LPSTR lpBuffer = (LPSTR) MALLOC(fSize);
+    if (lpBuffer)
+    {
+        DWORD bytes;
+        ReadFile(hFile, lpBuffer, fSize, &bytes, NULL);
+        if ((bytes < 2) || (lpBuffer[0] != '\xFF') || (lpBuffer[1] != '\xFE')) // file is not already Unicode
+        {
+            LPWSTR lpWide = (LPWSTR) MALLOC((bytes+1)*2);
+            if (lpWide)
+            {
+                int cch = MultiByteToWideChar(CP_ACP, 0, lpBuffer, bytes, lpWide, bytes+1);
+                if (cch)
+                {
+                    SetFilePointer(hFile, 0, NULL, FILE_BEGIN);
+                    WriteFile(hFile, "\xFF\xFE", 2, &bytes, NULL); // write Unicode BOM
+                    WriteFile(hFile, lpWide, cch*2, &bytes, NULL);
+                    SetEndOfFile(hFile);
+                }
+                FREE(lpWide);
+            }
+        }
+        FREE(lpBuffer);
+    }
+    CloseHandle(hFile);
+  }
+}
+#endif
+
 extern "C" void __declspec(dllexport) dialog(HWND hwndParent, int string_size,
                                       TCHAR *variables, stack_t **stacktop)
 {
