@@ -202,11 +202,12 @@ void CEXEBuild::del_date_time_predefines()
 }
 #endif
 
-int CEXEBuild::process_script(FILE *filepointer, const TCHAR *filename)
+int CEXEBuild::process_script(FILE *filepointer, const TCHAR *filename, BOOL unicode)
 {
   linecnt = 0;
   fp = filepointer;
   curfilename = filename;
+  curfile_unicode = unicode;
 
   if (has_called_write_output)
   {
@@ -232,6 +233,7 @@ int CEXEBuild::process_script(FILE *filepointer, const TCHAR *filename)
 
   fp = 0;
   curfilename = 0;
+  curfile_unicode = FALSE;
 
   if (m_linebuild.getlen())
   {
@@ -745,7 +747,8 @@ int CEXEBuild::parseScript()
 int CEXEBuild::includeScript(TCHAR *f)
 {
   SCRIPT_MSG(_T("!include: \"%s\"\n"),f);
-  FILE *incfp=FOPENTEXT(f,"rt");
+  BOOL unicode;
+  FILE *incfp=FOPENTEXT2(f,"rt",&unicode);
   if (!incfp)
   {
     ERROR_MSG(_T("!include: could not open file: \"%s\"\n"),f);
@@ -765,7 +768,9 @@ int CEXEBuild::includeScript(TCHAR *f)
   int last_linecnt=linecnt;
   linecnt=0;
   const TCHAR *last_filename=curfilename;
+  BOOL last_unicode=curfile_unicode;
   curfilename=f;
+  curfile_unicode=unicode;
   FILE *last_fp=fp;
   fp=incfp;
 
@@ -787,6 +792,7 @@ int CEXEBuild::includeScript(TCHAR *f)
 
   linecnt=last_linecnt;
   curfilename=last_filename;
+  curfile_unicode=last_unicode;
   fp=last_fp;
 
   build_include_depth--;
@@ -825,9 +831,9 @@ int CEXEBuild::MacroExists(const TCHAR *macroname)
   return 0;
 }
 
-int CEXEBuild::LoadLicenseFile(TCHAR *file, TCHAR** pdata, LineParser &line) // caller must free *pdata, even on error result
+int CEXEBuild::LoadLicenseFile(TCHAR *file, TCHAR** pdata, LineParser &line, BOOL* unicode) // caller must free *pdata, even on error result
 {
-  FILE *fp=FOPENTEXT(file,"rt");
+  FILE *fp=FOPENTEXT2(file,"rt",unicode);
   if (!fp)
   {
     ERROR_MSG(_T("%s: open failed \"%s\"\n"),line.gettoken_str(0),file);
@@ -1593,7 +1599,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       TCHAR *name = line.gettoken_str(1);
       LANGID lang = line.gettoken_int(2);
       TCHAR *str = line.gettoken_str(3);
-      int ret = SetLangString(name, lang, str);
+      int ret = SetLangString(name, lang, str, curfile_unicode);
       if (ret == PS_WARNING)
         warning_fl(_T("LangString \"%s\" set multiple times for %d, wasting space"), name, lang);
       else if (ret == PS_ERROR) {
@@ -1620,12 +1626,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
       TCHAR *data = NULL;
       MANAGE_WITH(data, free);
+      BOOL unicode;
 
-      int ret = LoadLicenseFile(file, &data, line);
+      int ret = LoadLicenseFile(file, &data, line, &unicode);
       if (ret != PS_OK)
           return ret;
 
-      ret = SetLangString(name, lang, data);
+      ret = SetLangString(name, lang, data, unicode);
       if (ret == PS_WARNING)
         warning_fl(_T("LicenseLangString \"%s\" set multiple times for %d, wasting space"), name, lang);
       else if (ret == PS_ERROR)
@@ -1895,7 +1902,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
         if (!idx)
         {
-          int ret = LoadLicenseFile(file, &filedata, line);
+          BOOL unicode;
+          int ret = LoadLicenseFile(file, &filedata, line, &unicode);
           if (ret != PS_OK)
               return ret;
           data = filedata;

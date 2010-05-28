@@ -29,20 +29,24 @@ typedef std::wstring     tstring;
 typedef std::wofstream   tofstream;
 typedef std::wifstream   tifstream;
 // Use the following macros to open text files.
-FILE* FileOpenUnicodeText(const TCHAR* file, const TCHAR* mode);
-#define FOPENTEXT(file, mode) FileOpenUnicodeText(file, _T(mode))
+FILE* FileOpenUnicodeText(const TCHAR* file, const TCHAR* mode, BOOL* unicode);
+#define FOPENTEXT(file, mode)           FileOpenUnicodeText(file, _T(mode), NULL)
+#define FOPENTEXT2(file, mode, unicode) FileOpenUnicodeText(file, _T(mode), unicode)
 #else
 typedef std::string      tstring;
 typedef std::ofstream    tofstream;
 typedef std::ifstream    tifstream;
 // Use the following macros to open text files.
-#define FOPENTEXT(file, mode) fopen(file, mode)
+#define FOPENTEXT(file, mode)           fopen(file, mode)
+#define FOPENTEXT2(file, mode, unicode) *unicode=FALSE, fopen(file, mode)
 #endif
 
 #ifndef _UNICODE
 #define CtoTString(str) (str)
+#define CtoTString2(str,cp) (str)
 #define TtoCString(str) (str)
 #else
+#define CtoTString2(str,cp) CtoTString(str,cp)
 
 // This is a helpful little function for converting exceptions or
 // other system type things that come back ANSI and must be
@@ -55,6 +59,12 @@ public:
     int len = MultiByteToWideChar(CP_ACP, 0, str, -1, NULL, 0);
     m_wStr = (wchar_t*) GlobalAlloc(GPTR, len*sizeof(wchar_t));
     MultiByteToWideChar(CP_ACP, 0, str, -1, m_wStr, len);
+  }
+  CtoTString(const char* str, UINT cp)
+  {
+    int len = MultiByteToWideChar(cp, 0, str, -1, NULL, 0);
+    m_wStr = (wchar_t*) GlobalAlloc(GPTR, len*sizeof(wchar_t));
+    MultiByteToWideChar(cp, 0, str, -1, m_wStr, len);
   }
   CtoTString(const std::string& str)
   {
