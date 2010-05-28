@@ -38,7 +38,7 @@ typedef std::ofstream    tofstream;
 typedef std::ifstream    tifstream;
 // Use the following macros to open text files.
 #define FOPENTEXT(file, mode)           fopen(file, mode)
-#define FOPENTEXT2(file, mode, unicode) *unicode=FALSE, fopen(file, mode)
+#define FOPENTEXT2(file, mode, unicode) (*unicode=FALSE, fopen(file, mode))
 #endif
 
 #ifndef _UNICODE
