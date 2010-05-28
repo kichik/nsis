@@ -25,6 +25,11 @@ This is a trimmed version of Appendix "Building NSIS" of the documentation.
 
        set ZLIB_W32=C:\Dev\zlib-1.2.4
 
+ - For Unicode version of NSIS
+
+   * type:
+       scons UNICODE=yes
+
  - Installing
 
    * type:

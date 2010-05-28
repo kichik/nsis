@@ -19,10 +19,11 @@
 #include "util.h"
 #include <vector>
 
-FILE* FileOpenUnicodeText(const TCHAR* file, const TCHAR* mode)
+FILE* FileOpenUnicodeText(const TCHAR* file, const TCHAR* mode, BOOL* unicode)
 {
 	extern FILE *g_output;
 	CValidateUnicode::FILE_TYPE ftype = CValidateUnicode::UTF_8; // default file format is UTF-8
+    if (unicode) *unicode = TRUE;
 
 	// If we are reading an existing file, check to see what type of file it
 	// is first.
@@ -92,7 +93,7 @@ FILE* FileOpenUnicodeText(const TCHAR* file, const TCHAR* mode)
 			break;
 		default:
 			// Looks like fopen() doesn't support other encodings of Unicode.
-			strMode.append(_T(", ccs=UNICODE"));
+            if (unicode) *unicode = FALSE;
 			break;
 	}
 

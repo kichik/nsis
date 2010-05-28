@@ -197,7 +197,8 @@ static tstring get_home()
 
 static int process_config(CEXEBuild& build, tstring& conf)
 {
-  FILE *cfg=FOPENTEXT(conf.c_str(),"rt");
+  BOOL unicode;
+  FILE *cfg=FOPENTEXT2(conf.c_str(),"rt",&unicode);
   if (cfg)
   {
     if (build.display_script) 
@@ -205,7 +206,7 @@ static int process_config(CEXEBuild& build, tstring& conf)
       _ftprintf(g_output,_T("Processing config: \n"));
       fflush(g_output);
     }
-    int ret=build.process_script(cfg,(TCHAR*)conf.c_str());
+    int ret=build.process_script(cfg,(TCHAR*)conf.c_str(),unicode);
     fclose(cfg);
     if (ret != PS_OK && ret != PS_EOF)
     {
@@ -484,6 +485,7 @@ int _tmain(int argc, TCHAR **argv)
 
       {
         TCHAR sfile[1024];
+        BOOL unicode=FALSE;
         if (!_tcscmp(argv[argpos],_T("-")) && !in_files)
         {
           fp=stdin;
@@ -492,11 +494,11 @@ int _tmain(int argc, TCHAR **argv)
         else
         {
           _tcscpy(sfile,argv[argpos]);
-          fp=FOPENTEXT(sfile,"rt");
+          fp=FOPENTEXT2(sfile,"rt",&unicode);
           if (!fp)
           {
             _stprintf(sfile,_T("%s.nsi"),argv[argpos]);
-            fp=FOPENTEXT(sfile,"rt");
+            fp=FOPENTEXT2(sfile,"rt",&unicode);
             if (!fp)
             {
               if (build.display_errors) 
@@ -522,7 +524,7 @@ int _tmain(int argc, TCHAR **argv)
           _ftprintf(g_output,_T("Processing script file: \"%s\"\n"),sfile);
           fflush(g_output);
         }
-        int ret=build.process_script(fp,sfile);
+        int ret=build.process_script(fp,sfile,unicode);
         if (fp != stdin) fclose(fp);
 
         if (ret != PS_EOF && ret != PS_OK)

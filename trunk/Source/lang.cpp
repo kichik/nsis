@@ -478,7 +478,7 @@ int CEXEBuild::DefineInnerLangString(int id, int process/*=-1*/) {
 // @return If the language id, the variable name or string is invalid, it will
 // return a PS_ERROR.  If this function call is overwriting a set user string,
 // this will return a PS_WARNING.
-int CEXEBuild::SetLangString(TCHAR *name, LANGID lang, TCHAR *str) {
+int CEXEBuild::SetLangString(TCHAR *name, LANGID lang, TCHAR *str, BOOL unicode) {
   if (!str || !name) return PS_ERROR;
 
   LanguageTable *table = GetLangTable(lang);
@@ -490,7 +490,7 @@ int CEXEBuild::SetLangString(TCHAR *name, LANGID lang, TCHAR *str) {
   if (pos < 0)
     pos = build_langstrings.add(name, &sn);
 
-  if (table->lang_strings->set(sn, str))
+  if (table->lang_strings->set(sn, unicode ? str : CtoTString2(TtoCString(str),table->nlf.m_uCodePage)))
     return PS_WARNING;
 
   return PS_OK;
@@ -912,7 +912,8 @@ TCHAR SkipComments(FILE *f) {
 
 // NSIS Language File parser
 LanguageTable * CEXEBuild::LoadLangFile(TCHAR *filename) {
-  FILE *f = FOPENTEXT(filename, "r");
+  BOOL unicode;
+  FILE *f = FOPENTEXT2(filename, "r", &unicode);
   if (!f) {
     ERROR_MSG(_T("Error: Can't open language file - \"%s\"!\n"),filename);
     return 0;
@@ -1013,6 +1014,15 @@ LanguageTable * CEXEBuild::LoadLangFile(TCHAR *filename) {
     if (!IsValidCodePage(nlf->m_uCodePage))
       nlf->m_uCodePage = CP_ACP;
   }
+
+#ifdef _UNICODE
+  if (!unicode) // convert font name from ANSI to Unicode now that we know the language codepage
+  {
+    TCHAR* str = nlf->m_szFont;
+    nlf->m_szFont = _tcsdup(CtoTString2(TtoCString(str),table->nlf.m_uCodePage));
+    free(str);
+  }
+#endif
 
   // Get RTL setting
   nlf->m_szStrings[NLF_RTL] = (TCHAR *)malloc(2*sizeof(TCHAR));
@@ -1121,6 +1131,14 @@ LanguageTable * CEXEBuild::LoadLangFile(TCHAR *filename) {
       else *out = *in;
     }
     *out = 0;
+#ifdef _UNICODE
+    if (!unicode)
+    {
+        TCHAR* str = nlf->m_szStrings[i];
+        nlf->m_szStrings[i] = _tcsdup(CtoTString2(TtoCString(str),table->nlf.m_uCodePage));
+        free(str);
+    }
+#endif
   }
   fclose(f);
 
