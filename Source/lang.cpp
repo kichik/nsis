@@ -1016,7 +1016,7 @@ LanguageTable * CEXEBuild::LoadLangFile(TCHAR *filename) {
   }
 
 #ifdef _UNICODE
-  if (!unicode) // convert font name from ANSI to Unicode now that we know the language codepage
+  if (!unicode && nlf->m_szFont) // convert font name from ANSI to Unicode now that we know the language codepage
   {
     TCHAR* str = nlf->m_szFont;
     nlf->m_szFont = _tcsdup(CtoTString2(TtoCString(str),table->nlf.m_uCodePage));
