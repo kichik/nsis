@@ -95,6 +95,7 @@ CEXEBuild::CEXEBuild() :
   linecnt = 0;
   fp = 0;
   curfilename = 0;
+  curfile_unicode = FALSE;
 
   display_info=1;
   display_script=1;

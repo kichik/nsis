@@ -107,7 +107,7 @@ class CEXEBuild {
 
     // process a script (you can process as many scripts as you want,
     // it is as if they are concatenated)
-    int process_script(FILE *fp, const TCHAR *curfilename);
+    int process_script(FILE *filepointer, const TCHAR *filename, BOOL unicode);
     int process_oneline(TCHAR *line, const TCHAR *curfilename, int lineptr);
     
     // you only get to call write_output once, so use it wisely.
@@ -125,6 +125,7 @@ class CEXEBuild {
 
     int linecnt;
     const TCHAR *curfilename;
+    BOOL curfile_unicode;
     FILE *fp;
 
     HWND notify_hwnd;
@@ -166,7 +167,7 @@ class CEXEBuild {
     int parseScript();
     int includeScript(TCHAR *f);
     int MacroExists(const TCHAR *macroname);
-    int LoadLicenseFile(TCHAR *file, TCHAR** pdata, LineParser &line);
+    int LoadLicenseFile(TCHAR *file, TCHAR** pdata, LineParser &line, BOOL* unicode);
 #ifdef NSIS_FIX_DEFINES_IN_STRINGS
     void ps_addtoline(const TCHAR *str, GrowBuf &linedata, StringList &hist, bool bIgnoreDefines = false);
 #else
@@ -319,7 +320,7 @@ class CEXEBuild {
      * return aPS_ERROR.  If this function call is overwriting a set user string,
      * this will return a PS_WARNING.
      */
-    int SetLangString(TCHAR *name, LANGID lang, TCHAR *str);
+    int SetLangString(TCHAR *name, LANGID lang, TCHAR *str, BOOL unicode);
 
     /**
      * Sets the user string to the specific NLF_STRINGS id.
