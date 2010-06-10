@@ -12,7 +12,7 @@ Define/conditional compilation related commands:
 
 \c [/ifndef | /redef] ([/date|/utcdate] gflag [value]) | (/math gflag val1 OP val2) | (/file gflag filename.txt)
 
-This command will add \e{gflag} to the global define list. This will have a similar effect as using the /D switch on the command line (only the define only becomes effective after the !define command).
+This command will add \e{gflag} to the global define list. This will have a similar effect as using the /D switch on the command line (the define only becomes effective after the !define command).
 
 If \e{/date} or \e{/utcdate} are used, \e{value} will be passed into strftime and the result will be used as the value of \e{gflag}. strftime converts special symbols into certain parts of the current time or date. For example, %H will be converted into the current hour in 24-hour format. For a complete list of available symbols, search for strftime on \W{http://msdn.microsoft.com/}{MSDN}. On POSIX, you can get the list by using \c{man strftime}.
 
