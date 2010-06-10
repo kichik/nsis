@@ -2799,6 +2799,21 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       GrowBuf file_buf;
       TCHAR datebuf[256];
       TCHAR mathbuf[256];
+      int dupemode=0;
+
+
+      if (!_tcsicmp(define,_T("/ifndef")))
+        dupemode=1;
+      else if (!_tcsicmp(define,_T("/redef")))
+        dupemode=2;
+
+      if (dupemode!=0)
+      {
+        line.eattoken();
+        define=line.gettoken_str(1);
+        if (dupemode==1 && definedlist.find(define))return PS_OK;
+      }
+
 
       if (!_tcsicmp(define,_T("/date")) || !_tcsicmp(define,_T("/utcdate"))) {
         if (line.getnumtokens()!=4) PRINTHELP()
@@ -2903,6 +2918,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         value=line.gettoken_str(2);
       }
 
+      if (dupemode==2)definedlist.del(define);
       if (definedlist.add(define,value))
       {
         ERROR_MSG(_T("!define: \"%s\" already defined!\n"),define);

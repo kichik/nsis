@@ -10,7 +10,7 @@ Define/conditional compilation related commands:
 
 \S1{define} !define
 
-\c ([/date|/utcdate] gflag [value]) | (/math gflag val1 OP val2) | (/file gflag filename.txt)
+\c [/ifndef | /redef] ([/date|/utcdate] gflag [value]) | (/math gflag val1 OP val2) | (/file gflag filename.txt)
 
 This command will add \e{gflag} to the global define list. This will have a similar effect as using the /D switch on the command line (only the define only becomes effective after the !define command).
 
@@ -26,6 +26,7 @@ If \e{/file} is used, the entire text file specified (including whitespace and n
 \c !define /math RESULT 3 + 10
 \c !define /math REST 15 % ${RESULT}
 \c !define /file BUNCHASTUFF somesourcefile.cpp
+\c !define /redef USE_SOMETHING ${RESULT} ;redefine USE_SOMETHING
 
 \S1{undef} !undef
 
