@@ -246,7 +246,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_P_IFDEF,_T("!ifdef"),1,-1,_T("symbol [| symbol2 [& symbol3 [...]]]"),TP_ALL},
 {TOK_P_IFNDEF,_T("!ifndef"),1,-1,_T("symbol [| symbol2 [& symbol3 [...]]]"),TP_ALL},
 {TOK_P_ENDIF,_T("!endif"),0,0,_T(""),TP_ALL},
-{TOK_P_DEFINE,_T("!define"),1,4,_T("([/date|/utcdate] symbol [value]) | (/file symbol filename) | (/math symbol val1 OP val2)\n    OP=(+ - * / % & | ^)"),TP_ALL},
+{TOK_P_DEFINE,_T("!define"),1,5,_T("[/ifndef | /redef] ([/date|/utcdate] symbol [value]) | (/file symbol filename) | (/math symbol val1 OP val2)\n    OP=(+ - * / % & | ^)"),TP_ALL},
 {TOK_P_UNDEF,_T("!undef"),1,1,_T("symbol [value]"),TP_ALL},
 {TOK_P_ELSE,_T("!else"),0,-1,_T("[if[macro][n][def] ...]"),TP_ALL},
 {TOK_P_ECHO,_T("!echo"),1,0,_T("message"),TP_ALL},
