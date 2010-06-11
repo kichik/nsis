@@ -242,7 +242,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_P_ADDINCLUDEDIR,_T("!AddIncludeDir"),1,0,_T("dir"),TP_ALL},
 {TOK_P_INCLUDE,_T("!include"),1,1,_T("[/NONFATAL] filename.nsh"),TP_ALL},
 {TOK_P_CD,_T("!cd"),1,0,_T("absolute_or_relative_new_directory"),TP_ALL},
-{TOK_P_IF,_T("!if"),1,3,_T("[!] value [(==,!=,<=,<,>,>=,&&,||) value2] [...]"),TP_ALL},
+{TOK_P_IF,_T("!if"),1,3,_T("[!] value [(==,!=,<=,<,>,>=,&,&&,||) value2] [...]"),TP_ALL},
 {TOK_P_IFDEF,_T("!ifdef"),1,-1,_T("symbol [| symbol2 [& symbol3 [...]]]"),TP_ALL},
 {TOK_P_IFNDEF,_T("!ifndef"),1,-1,_T("symbol [| symbol2 [& symbol3 [...]]]"),TP_ALL},
 {TOK_P_ENDIF,_T("!endif"),0,0,_T(""),TP_ALL},
