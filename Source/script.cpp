@@ -483,6 +483,7 @@ parse_again:
           case 6:
             istrue = line.gettoken_float(1) >= line.gettoken_float(3); break;
           case 7:
+            istrue = (line.gettoken_int(1) & line.gettoken_int(3)) != 0; break;
           case 8:
             istrue = line.gettoken_int(1) && line.gettoken_int(3); break;
           case 9:
