@@ -57,6 +57,12 @@
     return rc; \
 } while (false)
 
+const LONG available_stub_variants[] =
+{
+    0x00000000,     // classic ANSI stub
+    0x00050000      // Unicode stub for Windows 2000 and more recent (5.0+)
+};
+
 using namespace std;
 
 namespace { // begin anonymous namespace
@@ -116,8 +122,9 @@ CEXEBuild::CEXEBuild() :
 
   definedlist.add(_T("NSIS_VERSION"), NSIS_VERSION);
 
+  target_minimal_OS=0;
   build_unicode=false;
-  definedlist.add(_T("NSIS_CHAR_SIZE"), _T("1"));   // this can change after a UnicodeInstaller instruction is found
+  definedlist.add(_T("NSIS_CHAR_SIZE"), _T("1"));   // this can change after a TargetMinimalOS instruction is found
 
   // automatically generated header file containing all defines
 #include <nsis-defines.h>
@@ -3564,12 +3571,13 @@ void CEXEBuild::VerifyDeclaredUserVarRefs(UserVarsStringList *pVarsStringList)
 }
 
 #ifdef _UNICODE
-int CEXEBuild::set_build_unicode(bool unicode_installer)
+int CEXEBuild::set_target_minimal_OS(int major, int minor)
 {
-  build_unicode = unicode_installer;
+  target_minimal_OS = MAKELONG(minor,major);
+  build_unicode = major>=5;
   definedlist.del(_T("NSIS_UNICODE"));
   definedlist.del(_T("NSIS_CHAR_SIZE"));
-  if (unicode_installer) // update defines depending on target installer type
+  if (build_unicode) // update defines depending on target installer type
   {
     definedlist.add(_T("NSIS_UNICODE"));
     definedlist.add(_T("NSIS_CHAR_SIZE"), _T("2"));
@@ -3589,14 +3597,26 @@ int CEXEBuild::set_compressor(const tstring& compressor, const bool solid) {
   return load_stub();
 }
 
+tstring CEXEBuild::get_stub_variant_suffix()
+{
+    LONG variant = 0;
+    for (int index = 0; index < COUNTOF(available_stub_variants); index++)
+    {
+        if (target_minimal_OS >= available_stub_variants[index])
+            variant = available_stub_variants[index];
+        else
+            break;
+    }
+    if (variant == 0)
+        return tstring();
+    TCHAR buf[32];
+    _stprintf(buf, _T(".%d_%d"), HIWORD(variant), LOWORD(variant));
+    return tstring(buf);
+}
+
 int CEXEBuild::load_stub()
 {
-#ifdef _UNICODE
-  if (build_unicode)
-    return update_exehead(stub_filename+_T('W'), &m_exehead_original_size);
-  else
-#endif
-    return update_exehead(stub_filename, &m_exehead_original_size);
+    return update_exehead(stub_filename+get_stub_variant_suffix(), &m_exehead_original_size);
 }
 
 int CEXEBuild::update_exehead(const tstring& file, size_t *size/*=NULL*/) {
