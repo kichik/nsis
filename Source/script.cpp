@@ -2686,20 +2686,21 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return PS_OK;
 
 #ifdef _UNICODE
-    case TOK_UNICODEINSTALLER:
+    case TOK_TARGETMINIMALOS:
     {
       if (build_compressor_set) {
-        ERROR_MSG(_T("Error: can't change type of installer after data already got compressed or header already changed!\n"));
+        ERROR_MSG(_T("Error: can't change target minimal OS version after data already got compressed or header already changed!\n"));
         return PS_ERROR;
       }
-      int param=line.gettoken_enum(1,_T("off\0on\0"));
-      if (param==-1) PRINTHELP()
-      SCRIPT_MSG(_T("UnicodeInstaller: %s\n"),line.gettoken_str(1));
-      if (set_build_unicode(param != 0) != PS_OK)
+      int major = 0, minor = 0;
+      if (_stscanf(line.gettoken_str(1), _T("%d.%d"), &major, &minor) == 0)
+        PRINTHELP()
+      if (set_target_minimal_OS(major,minor) != PS_OK)   // Windows 5.0 or more recent requested? => Unicode support
       {
-        ERROR_MSG(_T("Error: error while setting type of installer! (stub not found?)\n"));
+        ERROR_MSG(_T("Error: error while setting target minimal OS! (adequate stub not found?)\n"));
         return PS_ERROR;
       }
+      SCRIPT_MSG(_T("TargetMinimalOS: %d.%d %s\n"),major,minor,build_unicode?_T("(Unicode installer)"):_T(""));
     }
     return PS_OK;
 #endif
