@@ -136,8 +136,9 @@ class CEXEBuild {
     int prepare_uninstaller();
     int pack_exe_header();
 
-    int set_build_unicode(bool unicode_installer);
+    int set_target_minimal_OS(int major, int minor);
     int set_compressor(const tstring& compressor, const bool solid);
+    tstring get_stub_variant_suffix();
     int load_stub();
     int update_exehead(const tstring& file, size_t *size=NULL);
     void update_exehead(const unsigned char *new_exehead, size_t new_size);
@@ -395,6 +396,7 @@ class CEXEBuild {
     int build_compress_dict_size;
 
     bool no_space_texts;
+    LONG target_minimal_OS;
     bool build_unicode;
 
     bool has_called_write_output;

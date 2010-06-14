@@ -492,7 +492,7 @@ def BuildStub(compression, solid, unicode):
 	if solid:
 		suffix = '_solid'
 	if unicode:
-		suffix += 'W'
+		suffix += '.5_0'
 		env = stub_uenv.Clone()
 	else:
 		env = stub_env.Clone()
