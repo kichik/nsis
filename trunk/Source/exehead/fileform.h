@@ -167,10 +167,6 @@ enum
   EW_FOPEN,             // FileOpen: 4  [name, openmode, createmode, outputhandle]
   EW_FPUTS,             // FileWrite: 3 [handle, string, ?int:string]
   EW_FGETS,             // FileRead: 4  [handle, output, maxlen, ?getchar:gets]
-#ifdef _UNICODE
-  EW_FPUTWS,            // FileWriteUTF16LE: 3 [handle, string, ?int:string]
-  EW_FGETWS,            // FileReadUTF16LE: 4 [handle, output, maxlen, ?getchar:gets]
-#endif
   EW_FSEEK,             // FileSeek: 4  [handle, offset, mode, >=0?positionoutput]
 #endif//NSIS_SUPPORT_FILEFUNCTIONS
 
@@ -203,6 +199,13 @@ enum
 
 #ifdef NSIS_LOCKWINDOW_SUPPORT
   EW_LOCKWINDOW,
+#endif
+
+#ifdef _UNICODE     // opcodes available only in Unicode installers must be at the end of the enumeration
+#ifdef NSIS_SUPPORT_FILEFUNCTIONS
+  EW_FPUTWS,            // FileWriteUTF16LE: 3 [handle, string, ?int:string]
+  EW_FGETWS,            // FileReadUTF16LE: 4 [handle, output, maxlen, ?getchar:gets]
+#endif//NSIS_SUPPORT_FILEFUNCTIONS
 #endif
 };
 
