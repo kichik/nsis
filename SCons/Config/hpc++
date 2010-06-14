@@ -125,4 +125,4 @@ test_env.Append(CPPPATH = ['#$BUILD_CONFIG'])
 
 # return
 
-Return('stub_env makensis_env plugin_env util_env cp_util_env test_env')
+Return('stub_env makensis_env plugin_env util_env cp_util_env test_env stub_env plugin_env')

@@ -722,7 +722,7 @@ DWORD CALLBACK StreamLicense(DWORD dwCookie, LPBYTE pbBuff, LONG cb, LONG *pcb)
   return 0;
 }
 #ifdef _UNICODE
-// on-the-fly conversion of Unicode to ANSI (because Windows don't recognize Unicode RTF data)
+// on-the-fly conversion of Unicode to ANSI (because Windows doesn't recognize Unicode RTF data)
 DWORD CALLBACK StreamLicenseRTF(DWORD dwCookie, LPBYTE pbBuff, LONG cb, LONG *pcb)
 {
   size_t len = lstrlen(((LPWSTR) dwCookie)+dwRead);

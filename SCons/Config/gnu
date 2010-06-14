@@ -309,4 +309,4 @@ if makensis_env['PLATFORM'] == 'hpux':
 
 ### return
 
-Return('stub_env makensis_env plugin_env util_env cp_util_env test_env')
+Return('stub_env makensis_env plugin_env util_env cp_util_env test_env stub_env plugin_env')

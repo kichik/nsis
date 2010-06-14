@@ -420,8 +420,10 @@ plugin_env = envs[2]
 util_env = envs[3]
 cp_util_env = envs[4]
 test_env = envs[5]
+stub_uenv = envs[6]
+plugin_uenv = envs[7]
 
-Export('stub_env makensis_env plugin_env util_env cp_util_env test_env')
+Export('stub_env makensis_env plugin_env plugin_uenv util_env cp_util_env test_env')
 
 ######################################################################
 #######  Distribution                                              ###
@@ -484,12 +486,17 @@ defenv.DistributeConf('nsisconf.nsh')
 #######  Stubs                                                     ###
 ######################################################################
 
-def BuildStub(compression, solid):
-	env = stub_env.Clone()
+def BuildStub(compression, solid, unicode):
 
 	suffix = ''
 	if solid:
 		suffix = '_solid'
+	if unicode:
+		suffix += 'W'
+		env = stub_uenv.Clone()
+	else:
+		env = stub_env.Clone()
+
 
 	build_dir = '$BUILD_PREFIX/stub_%s%s' % (compression, suffix)
 
@@ -507,8 +514,12 @@ for stub in stubs:
 	if stub in defenv['SKIPSTUBS']:
 		continue
 
-	BuildStub(stub, False)
-	BuildStub(stub, True)
+	if defenv['UNICODE']:
+		BuildStub(stub, False, True)
+		BuildStub(stub, True, True)
+	
+	BuildStub(stub, False, False)
+	BuildStub(stub, True, False)
 
 defenv.DistributeStubs('Source/exehead/uninst.ico',names='uninst')
 
@@ -569,11 +580,25 @@ def DistributeExtras(env, target, examples, docs):
 #######  Plug-ins                                                  ###
 ######################################################################
 
-def BuildPlugin(target, source, libs, examples = None, docs = None,
+def BuildPluginBoth(target, source, libs, examples = None, docs = None,
                 entry = 'DllMain', res = None, resources = None,
                 defines = None, flags = None, nodeflib = True,
                 cppused = False):
-	env = plugin_env.Clone()
+	# this function should build the ANSI & Unicode variant of the DLL, but I can't get it to work... help!!! [Wizou]
+	if defenv['UNICODE']:
+		#VariantDir('$BUILD_PREFIX/' + plugin + 'W', path)
+		BuildPlugin(target, source, libs, examples, docs, entry, res, resources, defines, flags, nodeflib, cppused, True)
+	else:
+		BuildPlugin(target, source, libs, examples, docs, entry, res, resources, defines, flags, nodeflib, cppused, False)
+	
+def BuildPlugin(target, source, libs, examples = None, docs = None,
+                entry = 'DllMain', res = None, resources = None,
+                defines = None, flags = None, nodeflib = True,
+                cppused = False, unicode = False):
+	if unicode:
+		env = plugin_uenv.Clone()
+	else:
+		env = plugin_env.Clone()
 
 	if cppused and env['CPP_REQUIRES_STDLIB']:
 		nodeflib = False
@@ -595,7 +620,10 @@ def BuildPlugin(target, source, libs, examples = None, docs = None,
 			plugin = i
 			break
 	env.DistributePlugin(plugin)
+	if unicode:
+		env.DistributePlugin(plugin, str(plugin)[:-4]+"W.dll")		# tweak to generate both plugin.dll & pluginW.dll (until we get to build really both variant)
 
+	#if not unicode:	# distribute extras only for ANSI builds
 	DistributeExtras(env, target, examples, docs)
 
 for plugin in plugin_libs + plugins:
@@ -604,8 +632,10 @@ for plugin in plugin_libs + plugins:
 
 	path = 'Contrib/' + plugin
 	build_dir = '$BUILD_PREFIX/' + plugin
-	exports = {'BuildPlugin' : BuildPlugin, 'env' : plugin_env.Clone()}
-
+	if defenv['UNICODE']:
+		exports = {'BuildPlugin' : BuildPluginBoth, 'env' : plugin_uenv.Clone()}
+	else:
+		exports = {'BuildPlugin' : BuildPlugin, 'env' : plugin_env.Clone()}
 	defenv.SConscript(dirs = path, build_dir = build_dir, duplicate = False, exports = exports)
 
 ######################################################################

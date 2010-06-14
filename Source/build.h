@@ -136,7 +136,9 @@ class CEXEBuild {
     int prepare_uninstaller();
     int pack_exe_header();
 
+    int set_build_unicode(bool unicode_installer);
     int set_compressor(const tstring& compressor, const bool solid);
+    int load_stub();
     int update_exehead(const tstring& file, size_t *size=NULL);
     void update_exehead(const unsigned char *new_exehead, size_t new_size);
 
@@ -377,6 +379,7 @@ class CEXEBuild {
     // a whole bunch O data.
 
     tstring stubs_dir;
+    tstring stub_filename;
 
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
     ICompressor *compressor;
@@ -392,6 +395,7 @@ class CEXEBuild {
     int build_compress_dict_size;
 
     bool no_space_texts;
+    bool build_unicode;
 
     bool has_called_write_output;
 
@@ -442,7 +446,7 @@ class CEXEBuild {
     GrowBuf build_instruction_entry_map,ubuild_instruction_entry_map, *cur_instruction_entry_map;
     TinyGrowBuf build_functions, ubuild_functions, *cur_functions;
     TinyGrowBuf build_labels, ubuild_labels, *cur_labels;
-    StringList build_strlist, ubuild_strlist, *cur_strlist;
+    MLStringList build_strlist, ubuild_strlist, *cur_strlist;
     GrowBuf build_langtables, ubuild_langtables, *cur_langtables;
     TinyGrowBuf build_pages, ubuild_pages, *cur_pages;
     TinyGrowBuf build_ctlcolors, ubuild_ctlcolors, *cur_ctlcolors;

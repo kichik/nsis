@@ -706,7 +706,9 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 }
 
 DWORD WINAPI MakeNSISProc(LPVOID p) {
+#ifdef _UNICODE
   TCHAR buf[1024];
+#endif
   char iobuf[1024];           //i/o buffer
   STARTUPINFO si={sizeof(si),};
   SECURITY_ATTRIBUTES sa={sizeof(sa),};

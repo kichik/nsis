@@ -116,12 +116,8 @@ CEXEBuild::CEXEBuild() :
 
   definedlist.add(_T("NSIS_VERSION"), NSIS_VERSION);
 
-#ifdef _UNICODE
-  definedlist.add(_T("NSIS_UNICODE"));
-  definedlist.add(_T("NSIS_CHAR_SIZE"), _T("2"));
-#else
-  definedlist.add(_T("NSIS_CHAR_SIZE"), _T("1"));
-#endif
+  build_unicode=false;
+  definedlist.add(_T("NSIS_CHAR_SIZE"), _T("1"));   // this can change after a UnicodeInstaller instruction is found
 
   // automatically generated header file containing all defines
 #include <nsis-defines.h>
@@ -230,8 +226,8 @@ CEXEBuild::CEXEBuild() :
 
   uninstaller_writes_used=0;
 
-  build_strlist.add(_T(""),0);
-  ubuild_strlist.add(_T(""),0);
+  build_strlist.add(_T(""), CP_ACP, false, build_unicode);
+  ubuild_strlist.add(_T(""), CP_ACP, false, build_unicode);
 
   build_langstring_num=0;
   ubuild_langstring_num=0;
@@ -469,11 +465,11 @@ int CEXEBuild::add_string(const TCHAR *string, int process/*=1*/, WORD codepage/
     if (idx < 0) return idx;
   }
 
-  if (!process) return cur_strlist->add(string,2);
+  if (!process) return cur_strlist->add(string, codepage, false, build_unicode);
 
   TCHAR buf[NSIS_MAX_STRLEN*4];
   preprocess_string(buf,string,codepage);
-  return cur_strlist->add(buf,2);
+  return cur_strlist->add(buf,codepage, true, build_unicode);
 }
 
 int CEXEBuild::add_intstring(const int i) // returns offset in stringblock
@@ -482,6 +478,35 @@ int CEXEBuild::add_intstring(const int i) // returns offset in stringblock
   wsprintf(i_str, _T("%d"), i);
   return add_string(i_str);
 }
+
+#ifdef _UNICODE
+char* convert_processed_string_to_ansi(char *out, const TCHAR *in, WORD codepage)
+{
+    const TCHAR *p=in;
+    for (;;)
+    {
+        _TUCHAR i = (_TUCHAR)*p++;
+        if (NS_IS_CODE(i)) // Note: this include '\0'
+        {
+            // convert all character up to, and including this code
+            int cb = WideCharToMultiByte(codepage, 0, in, p-in, out, (p-in)*2, NULL, NULL);
+            out += cb;
+            if (i == _T('\0'))
+                break;
+            else if (i == NS_SKIP_CODE)
+                *out++ = (char) *in++; // simply copy escaped code (01..04)
+            else
+            {
+                WORD w = *p++; // special NSIS code is following by a WORD we need to output unchanged
+                *out++ = LOBYTE(w);
+                *out++ = HIBYTE(w);
+            }
+            in = p;
+        }
+    }
+    return out;
+}
+#endif
 
 // based on Dave Laundon's code
 int CEXEBuild::preprocess_string(TCHAR *out, const TCHAR *in, WORD codepage/*=CP_ACP*/)
@@ -1498,7 +1523,7 @@ int CEXEBuild::resolve_coderefs(const TCHAR *str)
       else
       {
         // normal string
-        section_name = cur_strlist->get() + x;
+        section_name = cur_strlist->getTchar() + x;
       }
       if (x) wsprintf(fname,_T("%s section \"%s\" (%d)"),str,section_name,cnt);
       else wsprintf(fname,_T("unnamed %s section (%d)"),str,cnt);
@@ -2080,7 +2105,7 @@ again:
 #define REMOVE_ICON(id) if (disable_window_icon) { \
     BYTE* dlg = res_editor->GetResource(RT_DIALOG, id, NSIS_DEFAULT_LANG); \
     if (dlg) { \
-      CDialogTemplate dt(dlg,uDefCodePage); \
+      CDialogTemplate dt(dlg,build_unicode,uDefCodePage); \
       res_editor->FreeResource(dlg); \
       if (dt.RemoveItem(IDC_ULICON)) { \
         DialogItemTemplate* text = dt.GetItem(IDC_INTROTEXT); \
@@ -2210,7 +2235,7 @@ void CEXEBuild::AddStandardStrings()
 void CEXEBuild::PrepareHeaders(IGrowBuf *hdrbuf)
 {
   GrowBuf blocks_buf;
-  growbuf_writer_sink sink(&blocks_buf);
+  growbuf_writer_sink sink(&blocks_buf, build_unicode);
 
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
   cur_header->blocks[NB_PAGES].offset = sizeof(header) + blocks_buf.getlen();
@@ -2224,7 +2249,12 @@ void CEXEBuild::PrepareHeaders(IGrowBuf *hdrbuf)
   entry_writer::write_block(cur_entries, &sink);
 
   cur_header->blocks[NB_STRINGS].offset = sizeof(header) + blocks_buf.getlen();
-  blocks_buf.add(cur_strlist->get(), cur_strlist->getcount()*sizeof(TCHAR));
+#ifdef _UNICODE
+  if (!build_unicode)
+      blocks_buf.add(cur_strlist->getAnsi(), cur_strlist->getcount());
+  else
+#endif
+    blocks_buf.add(cur_strlist->getTchar(), cur_strlist->getcount()*sizeof(TCHAR));
 
   cur_header->blocks[NB_LANGTABLES].offset = sizeof(header) + blocks_buf.getlen();
   lang_table_writer::write_block(cur_langtables, &sink, cur_header->langtable_size);
@@ -2244,7 +2274,7 @@ void CEXEBuild::PrepareHeaders(IGrowBuf *hdrbuf)
   }
 #endif
 
-  growbuf_writer_sink sink2(hdrbuf);
+  growbuf_writer_sink sink2(hdrbuf, build_unicode);
   header_writer header(&sink2);
   header.write(cur_header);
 
@@ -2259,7 +2289,8 @@ int CEXEBuild::SetVarsSection()
     VerifyDeclaredUserVarRefs(&m_UserVarNames);
     int MaxUserVars = m_UserVarNames.getnum();
     // -1 because the default size is 1
-    if (!res_editor->AddExtraVirtualSize2PESection(NSIS_VARS_SECTION, (MaxUserVars - 1) * sizeof(NSIS_STRING)))
+    int stringSize = NSIS_MAX_STRLEN*(build_unicode?sizeof(TCHAR):sizeof(char));
+    if (!res_editor->AddExtraVirtualSize2PESection(NSIS_VARS_SECTION, (MaxUserVars - 1) * stringSize))
     {
       ERROR_MSG(_T("Internal compiler error #12346: invalid exehead cannot find section \"%s\"!\n"), _T(NSIS_VARS_SECTION));
       return PS_ERROR;
@@ -2658,7 +2689,7 @@ int CEXEBuild::write_output(void)
   int ne=build_header.blocks[NB_ENTRIES].num;
   INFO_MSG(_T("%d instruction%s (%d bytes), "),ne,ne==1?_T(""):_T("s"),ne*sizeof(entry));
   int ns=build_strlist.getnum();
-  INFO_MSG(_T("%d string%s (%d bytes), "),ns,ns==1?_T(""):_T("s"),build_strlist.getcount()*sizeof(TCHAR));
+  INFO_MSG(_T("%d string%s (%d bytes), "),ns,ns==1?_T(""):_T("s"),build_strlist.getcount()*(build_unicode ? sizeof(CHAR) : sizeof(TCHAR)));
   int nlt=build_header.blocks[NB_LANGTABLES].num;
   INFO_MSG(_T("%d language table%s (%d bytes).\n"),nlt,nlt==1?_T(""):_T("s"),build_langtables.getlen());
   if (ubuild_entries.getlen())
@@ -2687,7 +2718,7 @@ int CEXEBuild::write_output(void)
     ne=build_uninst.blocks[NB_ENTRIES].num;
     INFO_MSG(_T("%d instruction%s (%d bytes), "),ne,ne==1?_T(""):_T("s"),ubuild_entries.getlen());
     ns=ubuild_strlist.getnum();
-    INFO_MSG(_T("%d string%s (%d bytes), "),ns,ns==1?_T(""):_T("s"),ubuild_strlist.getcount()*sizeof(TCHAR));
+    INFO_MSG(_T("%d string%s (%d bytes), "),ns,ns==1?_T(""):_T("s"),ubuild_strlist.getcount()*(build_unicode ? sizeof(CHAR) : sizeof(TCHAR)));
     nlt=build_uninst.blocks[NB_LANGTABLES].num;
     INFO_MSG(_T("%d language table%s (%d bytes).\n"),nlt,nlt==1?_T(""):_T("s"),ubuild_langtables.getlen());
   }
@@ -3014,7 +3045,7 @@ int CEXEBuild::uninstall_generate()
     MMapBuf udata;
 
     {
-      growbuf_writer_sink sink(&udata);
+      growbuf_writer_sink sink(&udata, build_unicode);
       firstheader_writer w(&sink);
       w.write(&fh);
     }
@@ -3532,12 +3563,40 @@ void CEXEBuild::VerifyDeclaredUserVarRefs(UserVarsStringList *pVarsStringList)
   }
 }
 
-int CEXEBuild::set_compressor(const tstring& compressor, const bool solid) {
-  tstring stub = stubs_dir + PLATFORM_PATH_SEPARATOR_STR + compressor;
-  if (solid)
-    stub += _T("_solid");
+#ifdef _UNICODE
+int CEXEBuild::set_build_unicode(bool unicode_installer)
+{
+  build_unicode = unicode_installer;
+  definedlist.del(_T("NSIS_UNICODE"));
+  definedlist.del(_T("NSIS_CHAR_SIZE"));
+  if (unicode_installer) // update defines depending on target installer type
+  {
+    definedlist.add(_T("NSIS_UNICODE"));
+    definedlist.add(_T("NSIS_CHAR_SIZE"), _T("2"));
+  }
+  else
+  {
+    definedlist.add(_T("NSIS_CHAR_SIZE"), _T("1"));
+  }
+  return load_stub();
+}
+#endif
 
-  return update_exehead(stub, &m_exehead_original_size);
+int CEXEBuild::set_compressor(const tstring& compressor, const bool solid) {
+  stub_filename = stubs_dir + PLATFORM_PATH_SEPARATOR_STR + compressor;
+  if (solid)
+    stub_filename += _T("_solid");
+  return load_stub();
+}
+
+int CEXEBuild::load_stub()
+{
+#ifdef _UNICODE
+  if (build_unicode)
+    return update_exehead(stub_filename+_T('W'), &m_exehead_original_size);
+  else
+#endif
+    return update_exehead(stub_filename, &m_exehead_original_size);
 }
 
 int CEXEBuild::update_exehead(const tstring& file, size_t *size/*=NULL*/) {

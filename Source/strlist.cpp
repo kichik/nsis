@@ -18,6 +18,97 @@
 
 #include "strlist.h"
 
+MLStringList::MLStringList()
+{
+    m_gr.set_zeroing(1);
+#ifdef _UNICODE
+    m_grAnsi.set_zeroing(1);
+#endif
+}
+
+#ifdef _UNICODE
+char* convert_processed_string_to_ansi(char *out, const TCHAR *in, WORD codepage); // defined in build.cpp
+
+// use 2 for case sensitive end-of-string matches too
+int MLStringList::findAnsi(const char *str, int case_sensitive) const // returns -1 if not found
+{
+  const char *s=(const char*) m_grAnsi.get();
+  int ml=getcount();
+  int offs=0;
+
+  size_t str_slen = strlen(str);
+  size_t offs_slen;
+
+  while (offs < ml)
+  {
+    // Check if the whole string matches str.
+    if ((case_sensitive && !strcmp(s+offs,str)) ||
+        (!case_sensitive && !stricmp(s+offs,str)))
+    {
+      return offs;
+    }
+
+    offs_slen = strlen(s+offs);
+
+    // Check if just the end of the string matches str.
+    if (case_sensitive==2 &&
+        str_slen < offs_slen &&  // check for end of string
+        !strcmp(s + offs + offs_slen - str_slen,str))
+    {
+      return offs + offs_slen - str_slen;
+    }
+    offs += offs_slen + 1;
+  }
+  return -1;
+}
+#endif
+
+int MLStringList::add(const TCHAR *str, WORD codepage /*= CP_ACP*/, bool processed, bool build_unicode)
+{
+#ifndef _UNICODE
+  int a=find(str,2);
+  if (a >= 0)
+      return a;
+  int len = _tcslen(str)+1;
+  return m_gr.add(str,len*sizeof(TCHAR))/sizeof(TCHAR);
+#else
+  if (build_unicode)
+  {
+    int a=find(str,2);
+    if (a >= 0)
+      return a;
+  }
+  // convert to ANSI
+  int len = _tcslen(str)+1;
+  char* ansiBuf = new char[len*2];
+  int cbMultiByte;
+  if (processed)
+    cbMultiByte = convert_processed_string_to_ansi(ansiBuf, str, codepage)-ansiBuf;
+  else
+    cbMultiByte = WideCharToMultiByte(codepage, 0, str, len, ansiBuf, len*2, NULL, NULL);
+  if (!build_unicode)
+  {
+    int a=findAnsi(ansiBuf,2);
+    if (a >= 0)
+    {
+      delete[] ansiBuf;
+      return a;
+    }
+  }
+  // string not found, add it
+  int a=m_gr.add(str,len*sizeof(TCHAR))/sizeof(TCHAR);
+  m_grAnsi.add(ansiBuf,cbMultiByte);
+  delete[] ansiBuf;
+  if (len != cbMultiByte)
+  { // resize buffers to align future strings on same offsets
+    len = a+max(len,cbMultiByte);
+    m_gr.resize(len*sizeof(TCHAR));
+    m_grAnsi.resize(len);
+  }
+  return a;
+#endif
+}
+
 int StringList::add(const TCHAR *str, int case_sensitive)
 {
   int a=find(str,case_sensitive);
@@ -103,15 +194,6 @@ int StringList::getnum() const
   return idx;
 }
 
-const TCHAR *StringList::get() const
-{
-  return (const TCHAR*) m_gr.get();
-}
-
-int StringList::getcount() const
-{
-	return m_gr.getlen() / sizeof(TCHAR);
-}
 
 // ==========
 // DefineList

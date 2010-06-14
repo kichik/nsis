@@ -489,17 +489,10 @@ typedef struct {
 
 // We are doing this to store an integer value into a char string and we
 // don't want false end of string values
-#if _UNICODE
-#define CODE_SHORT(x) ((WORD)x + 1)
-#define MAX_CODED 0xFFFE
-// This macro takes a pointer to WCHAR
-#define DECODE_SHORT(c) (c[0]-1)
-#else
 #define CODE_SHORT(x) (WORD)((((WORD)(x) & 0x7F) | (((WORD)(x) & 0x3F80) << 1) | 0x8080))
 #define MAX_CODED 0x3FFF
 // This macro takes a pointer to CHAR
-#define DECODE_SHORT(c) (((c[1] & 0x7F) << 7) | (c[0] & 0x7F))
-#endif
+#define DECODE_SHORT(c) (((((char*)c)[1] & 0x7F) << 7) | (((char*)c)[0] & 0x7F))
 
 #define NSIS_INSTDIR_INVALID 1
 #define NSIS_INSTDIR_NOT_ENOUGH_SPACE 2

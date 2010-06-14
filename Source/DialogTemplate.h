@@ -107,7 +107,7 @@ typedef struct {
 
 class CDialogTemplate {
 public:
-  CDialogTemplate(BYTE* pbData, unsigned int uCodePage=CP_ACP);
+  CDialogTemplate(BYTE* pbData, bool build_unicode, unsigned int uCodePage=CP_ACP);
   virtual ~CDialogTemplate();
 
   short GetWidth();
@@ -136,6 +136,7 @@ public:
 
 private:
   bool  m_bExtended;
+  bool  m_build_unicode;
 
   DWORD m_dwHelpId; // Extended only
 
