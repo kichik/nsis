@@ -24,19 +24,27 @@ example = Split("""
 	extdll.inc
 """)
 
-Import('env plugin_env')
+Import('env plugin_env plugin_uenv')
 
 # build library
-
-api_env = env.Clone()
-api_env.Append(CPPPATH = ['#Source/exehead'])
-lib = api_env.Library(lib_target, lib_files)
+# in Unicode compilation, we should really build both variants but I can't get it to work [Wizou]
+if env['UNICODE']:
+	api_uenv = plugin_uenv.Clone()
+	api_uenv.Append(CPPPATH = ['#Source/exehead'])
+	libW = api_uenv.Library(lib_target+'W', lib_files)
+	lib = libW
+else:
+	api_env = plugin_env.Clone()
+	api_env.Append(CPPPATH = ['#Source/exehead'])
+	lib = api_env.Library(lib_target, lib_files)
 
 # distribute library, files and examples
 
 env.DistributeExamples(api_files, path='Plugin/nsis')
 
 if env['PLATFORM'] == 'win32':
+	if env['UNICODE']:
+		env.DistributeExamples(libW, lib_target+".lib", path='Plugin/nsis')
 	env.DistributeExamples(lib, path='Plugin/nsis')
 
 else:
@@ -57,3 +65,6 @@ env.Install('#$BUILD_PREFIX/api/nsis', api_files + lib)
 plugin_env.Append(CPPPATH = ['#$BUILD_PREFIX/api'])
 plugin_env.Append(LIBPATH = ['#$BUILD_PREFIX/api/nsis'])
 plugin_env.Append(LIBS = [lib_target])
+plugin_uenv.Append(CPPPATH = ['#$BUILD_PREFIX/api'])
+plugin_uenv.Append(LIBPATH = ['#$BUILD_PREFIX/api/nsis'])
+plugin_uenv.Append(LIBS = [lib_target+'W'])

@@ -867,12 +867,10 @@ int CEXEBuild::LoadLicenseFile(TCHAR *file, TCHAR** pdata, LineParser &line, BOO
   }
   if (!memcmp(data+1,_T("{\\rtf"),5*sizeof(TCHAR)))
     *data = SF_RTF;
-  else
-#ifdef _UNICODE
+  else if (unicode)
     *data = SF_TEXT|SF_UNICODE;
-#else
+  else
     *data = SF_TEXT;
-#endif
   return PS_OK;
 }
 
@@ -2155,7 +2153,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
           BYTE* dlg = res_editor->GetResource(RT_DIALOG, IDD_INSTFILES, NSIS_DEFAULT_LANG);
           if (!dlg) throw runtime_error("IDD_INSTFILES doesn't exist!");
-          CDialogTemplate dt(dlg,uDefCodePage);
+          CDialogTemplate dt(dlg,build_unicode,uDefCodePage);
           free(dlg);
           DialogItemTemplate* progress = dt.GetItem(IDC_PROGRESS);
           if (!progress) {
@@ -2448,7 +2446,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         init_res_editor();
 
         // Search for required items
-        #define GET(x) dlg = uire->GetResource(RT_DIALOG, x, 0); if (!dlg) return PS_ERROR; CDialogTemplate UIDlg(dlg, uDefCodePage);
+        #define GET(x) dlg = uire->GetResource(RT_DIALOG, x, 0); if (!dlg) return PS_ERROR; CDialogTemplate UIDlg(dlg, build_unicode, uDefCodePage);
         #define SEARCH(x) if (!UIDlg.GetItem(x)) {ERROR_MSG(_T("Error: Can't find %s (%u) in the custom UI!\n"), _T(#x), x);delete [] dlg;delete uire;return PS_ERROR;}
         #define SAVE(x) dwSize = UIDlg.GetSize(); res_editor->UpdateResource(RT_DIALOG, x, NSIS_DEFAULT_LANG, dlg, dwSize); delete [] dlg;
 
@@ -2568,7 +2566,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         init_res_editor();
         BYTE* dlg = res_editor->GetResource(RT_DIALOG, IDD_INST, NSIS_DEFAULT_LANG);
 
-        CDialogTemplate dt(dlg, uDefCodePage);
+        CDialogTemplate dt(dlg, build_unicode, uDefCodePage);
 
         res_editor->FreeResource(dlg);
 
@@ -2686,6 +2684,25 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
     }
     return PS_OK;
+
+#ifdef _UNICODE
+    case TOK_UNICODEINSTALLER:
+    {
+      if (build_compressor_set) {
+        ERROR_MSG(_T("Error: can't change type of installer after data already got compressed or header already changed!\n"));
+        return PS_ERROR;
+      }
+      int param=line.gettoken_enum(1,_T("off\0on\0"));
+      if (param==-1) PRINTHELP()
+      SCRIPT_MSG(_T("UnicodeInstaller: %s\n"),line.gettoken_str(1));
+      if (set_build_unicode(param != 0) != PS_OK)
+      {
+        ERROR_MSG(_T("Error: error while setting type of installer! (stub not found?)\n"));
+        return PS_ERROR;
+      }
+    }
+    return PS_OK;
+#endif
 
     // Ability to change compression methods from within the script
     case TOK_SETCOMPRESSOR:
@@ -3681,7 +3698,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           init_res_editor();
 
           BYTE* dlg = res_editor->GetResource(RT_DIALOG, IDD_INST, NSIS_DEFAULT_LANG);
-          CDialogTemplate td(dlg,uDefCodePage);
+          CDialogTemplate td(dlg,build_unicode,uDefCodePage);
           free(dlg);
 
           if (trim) {
@@ -5913,8 +5930,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     {
       int ret;
 
-      const tstring command = m_plugins.NormalizedCommand(line.gettoken_str(0));
-      const tstring dllPath = m_plugins.GetPluginPath(command);
+      tstring command = m_plugins.NormalizedCommand(line.gettoken_str(0));
+#ifdef _UNICODE
+      if (build_unicode)
+        command = m_plugins.UseUnicodeVariant(command);
+#endif
+      tstring dllPath = m_plugins.GetPluginPath(command);
+      tstring dllName = get_file_name(dllPath);
       int data_handle = m_plugins.GetPluginHandle(uninstall_mode?true:false, command);
 
       if (uninstall_mode) uninst_plugin_used = true;
@@ -5930,7 +5952,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
       // DLL name on the user machine
       TCHAR tempDLL[NSIS_MAX_STRLEN];
-      tstring dllName = get_file_name(dllPath);
       wsprintf(tempDLL, _T("$PLUGINSDIR\\%s"), dllName.c_str());
 
       // Add the DLL to the installer

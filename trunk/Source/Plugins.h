@@ -30,6 +30,7 @@ class Plugins
     tstring NormalizedCommand(const tstring& command) const;
     int GetPluginHandle(bool uninst, const tstring& command) const;
     tstring GetPluginPath(const tstring& command) const;
+    tstring UseUnicodeVariant(const tstring& lcsig) const;
     void SetDllDataHandle(bool uninst, const tstring& command, int dataHandle);
 
   private: // methods
@@ -38,6 +39,7 @@ class Plugins
   private: // data members
     std::map<tstring, tstring> m_command_lowercase_to_command;
     std::map<tstring, tstring> m_command_to_path;
+    std::map<tstring, tstring> m_unicode_variant;
     std::map<tstring, int> m_command_to_data_handle;
     std::map<tstring, int> m_command_to_uninstall_data_handle;
 };

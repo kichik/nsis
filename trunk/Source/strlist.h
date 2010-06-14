@@ -104,16 +104,41 @@ public:
 	* Get the buffer straight as a const TCHAR pointer.  Very unwise to use.
 	* @return m_gr.m_s cast as a TCHAR*.
 	*/
-  const TCHAR *get() const;
+  const TCHAR *get() const { return (const TCHAR*) m_gr.get(); }
 
   /**
 	* Get the buffer size (number of TCHARs).
 	* @return The buffer size (number of TCHARs).
 	*/
-  int getcount() const;
+  int getcount() const { return m_gr.getlen() / sizeof(TCHAR); }
 
-private:
+protected:
   GrowBuf m_gr;
+};
+
+/**
+ * Similar to StringList with case_sensitive=2, but stores strings as both Unicode AND ANSI (codepaged)
+ */
+class MLStringList : private StringList
+{
+private: // don't copy instances
+  MLStringList(const MLStringList&);
+  void operator=(const MLStringList&);
+
+public:
+  MLStringList();
+  ~MLStringList() {}
+
+  int add(const TCHAR *str, WORD codepage, bool processed, bool build_unicode);
+  int getnum() const                { return StringList::getnum(); }
+  int getcount() const              { return StringList::getcount(); }
+  const TCHAR *getTchar() const     { return (const TCHAR*) m_gr.get(); }
+#ifdef _UNICODE
+  const char *getAnsi() const       { return (const char*) m_grAnsi.get(); }
+  int findAnsi(const char *str, int case_sensitive) const;
+private:
+  GrowBuf m_grAnsi;
+#endif
 };
 
 /**
