@@ -91,8 +91,9 @@ void ReadVarLenArr(LPBYTE &seeker, WCHAR* &readInto, unsigned int uCodePage) {
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-CDialogTemplate::CDialogTemplate(BYTE* pbData, unsigned int uCodePage) {
+CDialogTemplate::CDialogTemplate(BYTE* pbData, bool build_unicode, unsigned int uCodePage) {
   m_uCodePage = uCodePage;
+  m_build_unicode = build_unicode;
 
   m_dwHelpId = 0;
   m_szClass = 0;
@@ -598,7 +599,7 @@ BYTE* CDialogTemplate::Save(DWORD& dwSize) {
     // Write class variant length array
     WCHAR *szClass = m_vItems[i]->szClass;
 #ifdef _UNICODE
-    if (!IS_INTRESOURCE(szClass) && !_wcsicmp(szClass, L"RichEdit20A"))
+    if (!IS_INTRESOURCE(szClass) && m_build_unicode && !_wcsicmp(szClass, L"RichEdit20A"))
         szClass = L"RichEdit20W"; // transmute ANSI RichEdit control into Unicode RichEdit
 #endif
     WriteStringOrId(szClass);

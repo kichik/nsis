@@ -54,18 +54,29 @@ void writer_sink::write_int_array(const int i[], const size_t len)
 void writer_sink::write_string(const TCHAR *s, size_t size)
 {
 #ifdef _UNICODE
-  bool strEnd = false;
-  TCHAR ch;
-  for (; size ; size--)
+  if (m_build_unicode)
   {
-    if (!strEnd)
+    bool strEnd = false;
+    TCHAR ch;
+    for (; size ; size--)
     {
-      ch = *s++;
-      if (ch == _T('\0'))
-        strEnd = true;
+      if (!strEnd)
+      {
+        ch = *s++;
+        if (ch == _T('\0'))
+          strEnd = true;
+      }
+      write_short(ch);
     }
-    write_short(ch);
   }
+  else
+  {
+    char *wb = new char[size];
+    memset(wb, 0, size);
+    WideCharToMultiByte(CP_ACP, 0, s, -1, wb, size, NULL, NULL);
+    write_data(wb, size);
+    delete [] wb;
+ }
 #else
   char *wb = new char[size];
   memset(wb, 0, size);

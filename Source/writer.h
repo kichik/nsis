@@ -27,7 +27,7 @@
 
 class writer_sink {
 public:
-  writer_sink() {}
+  writer_sink() : m_build_unicode(false) {}
   virtual ~writer_sink() {}
 
   virtual void write_byte(const unsigned char b);
@@ -38,7 +38,8 @@ public:
   virtual void write_growbuf(const IGrowBuf *b);
 
   virtual void write_data(const void *data, const size_t size) = 0;
-
+protected:
+  bool m_build_unicode;
 };
 
 class writer {
@@ -53,7 +54,7 @@ protected:
 
 class growbuf_writer_sink : public writer_sink {
 public:
-  growbuf_writer_sink(IGrowBuf *buf) : m_buf(buf) {}
+  growbuf_writer_sink(IGrowBuf *buf, bool build_unicode) : m_buf(buf) { m_build_unicode=build_unicode; }
 
   virtual void write_data(const void *data, const size_t size);
 

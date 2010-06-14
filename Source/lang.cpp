@@ -381,15 +381,10 @@ const TCHAR *CEXEBuild::GetLangNameAndCP(LANGID lang, unsigned int *codepage/*=N
     return table->nlf.m_szName;
   }
   else {
-	 // If the language table does not exist, then we default to Unicode in the
-	 // Unicode version and English in the ANSI version.
-#ifdef _UNICODE
+	 // If the language table does not exist, then we default to Unicode or ANSI
+	 // depending on the target installer type
     if (codepage)
-      *codepage = 1200; // Unicode
-#else
-    if (codepage)
-      *codepage = 1252; // ANSI CP1252
-#endif
+      *codepage = build_unicode ? 1200 : 1252; // Unicode or CP1252
 
     if (lang == 1033)
       return _T("English");
@@ -703,7 +698,7 @@ int CEXEBuild::GenerateLangTables() {
 #define ADD_FONT(id) { \
         BYTE* dlg = res_editor->GetResource(RT_DIALOG, id, NSIS_DEFAULT_LANG); \
         if (dlg) { \
-          CDialogTemplate td(dlg); \
+          CDialogTemplate td(dlg,build_unicode); \
           res_editor->FreeResource(dlg); \
           td.SetFont(build_font, (WORD) build_font_size); \
           DWORD dwSize; \
@@ -758,7 +753,7 @@ int CEXEBuild::GenerateLangTables() {
 #define ADD_FONT(id) { \
           BYTE* dlg = res_editor->GetResource(RT_DIALOG, id, NSIS_DEFAULT_LANG); \
           if (dlg) { \
-            CDialogTemplate td(dlg,lt[i].nlf.m_uCodePage); \
+            CDialogTemplate td(dlg,build_unicode,lt[i].nlf.m_uCodePage); \
             res_editor->FreeResource(dlg); \
             if (font) td.SetFont(font, (WORD) lt[i].nlf.m_iFontSize); \
             if (lt[i].nlf.m_bRTL) { \

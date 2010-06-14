@@ -47,7 +47,7 @@ void Plugins::FindCommands(const tstring &path, bool displayInfo)
 
   for (dir_reader::iterator files_itr = dr->files().begin();
        files_itr != dr->files().end();
-       files_itr++)
+       files_itr++) // note: files are listed alphabetically, so plugin.dll will be listed before pluginW.dll
   {
     if (!dir_reader::matches(*files_itr, _T("*.dll")))
       continue;
@@ -109,7 +109,10 @@ void Plugins::GetExports(const tstring &pathToDll, bool displayInfo)
     return;
   }
 
-  const tstring dllName = remove_file_extension(get_file_name(pathToDll));
+  tstring dllName = remove_file_extension(get_file_name(pathToDll));
+#ifdef _UNICODE
+  bool unicodeDll = dllName[dllName.size()-1] == 'W';
+#endif
 
   FIX_ENDIAN_INT16_INPLACE(NTHeaders->FileHeader.Characteristics);
   if (NTHeaders->FileHeader.Characteristics & IMAGE_FILE_DLL)
@@ -143,6 +146,12 @@ void Plugins::GetExports(const tstring &pathToDll, bool displayInfo)
           const tstring lcsig = lowercase(signature);
           m_command_to_path[lcsig] = pathToDll;
           m_command_lowercase_to_command[lcsig] = signature;
+#ifdef _UNICODE
+          const tstring lcsigA = lowercase(dllName.substr(0,dllName.size()-1) + _T("::") + tstring(CtoTString(name)));
+          if (unicodeDll && m_command_to_path.find(lcsigA) != m_command_to_path.end())
+            m_unicode_variant[lcsigA] = signature;
+          else
+#endif
           if (displayInfo)
             _ftprintf(g_output, _T(" - %s\n"), signature.c_str());
         }
@@ -178,6 +187,10 @@ Value get_value(const map<Key, Value>& the_map,
 
 tstring Plugins::NormalizedCommand(const tstring& command) const {
   return get_value(m_command_lowercase_to_command, lowercase(command));
+}
+
+tstring Plugins::UseUnicodeVariant(const tstring& command) const {
+  return get_value(m_unicode_variant, lowercase(command), command);
 }
 
 int Plugins::GetPluginHandle(bool uninst, const tstring& command) const {

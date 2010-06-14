@@ -41,8 +41,9 @@ if defenv['DEBUG']:
 	defenv.Append(LINKFLAGS = ['/debug'])
 
 ### unicode
-if defenv['UNICODE']:
-	defenv.Append(CPPDEFINES = ['_UNICODE', 'UNICODE'])
+tdefenv = defenv.Clone()
+if tdefenv['UNICODE']:
+	tdefenv.Append(CPPDEFINES = ['_UNICODE', 'UNICODE'])
 
 ### workarounds
 
@@ -101,19 +102,19 @@ stub_env.Append(CCFLAGS = ['/W3'])                 # level 3 warnings
 
 stub_env.Append(LINKFLAGS = ['/opt:nowin98'])      # 512 bytes align
 
-if defenv['UNICODE']:
-	stub_env.Append(LINKFLAGS = ['/entry:wWinMain'])   # Unicode entry point
-else:
-	stub_env.Append(LINKFLAGS = ['/entry:WinMain'])    # ANSI entry point
-
 stub_env.Append(LINKFLAGS = ['$NODEFLIBS_FLAG'])   # no default libraries
 stub_env.Append(LINKFLAGS = ['$MAP_FLAG'])         # generate map file
 stub_env.Append(CCFLAGS = ['/FAcs'])               # full listing files
 stub_env.Append(CCFLAGS = ['/Fa${TARGET}.lst'])    # listing file name
 
+stub_uenv = stub_env.Clone()
+stub_uenv.Append(LINKFLAGS = ['/entry:wWinMain'])  # Unicode entry point
+stub_uenv.Append(CPPDEFINES = ['_UNICODE', 'UNICODE'])
+stub_env.Append(LINKFLAGS = ['/entry:WinMain'])    # ANSI entry point
+
 ### makensis environment
 
-makensis_env = defenv.Clone()
+makensis_env = tdefenv.Clone()
 
 makensis_env.Append(CPPPATH = ['#$BUILD_CONFIG'])
 
@@ -140,9 +141,12 @@ plugin_env.Append(CCFLAGS = ['/W3'])               # level 3 warnings
 plugin_env.Append(LINKFLAGS = ['/opt:nowin98'])    # 512 bytes align
 plugin_env.Append(LINKFLAGS = ['$MAP_FLAG'])       # generate map file
 
+plugin_uenv = plugin_env.Clone()
+plugin_uenv.Append(CPPDEFINES = ['_UNICODE', 'UNICODE'])
+
 ### util environment
 
-util_env = defenv.Clone()
+util_env = tdefenv.Clone()
 
 if not defenv['DEBUG']:
 	util_env.Append(CCFLAGS = ['/O1'])            # optimize for speed
@@ -209,8 +213,10 @@ def add_file_to_emitter(env, emitter_name, file):
 def add_file(file):
 	file = File(file)
 	add_file_to_emitter(stub_env, 'PROGEMITTER', file)
+	add_file_to_emitter(stub_uenv, 'PROGEMITTER', file)
 	add_file_to_emitter(util_env, 'PROGEMITTER', file)
 	add_file_to_emitter(plugin_env, 'SHLIBEMITTER', file)
+	add_file_to_emitter(plugin_uenv, 'SHLIBEMITTER', file)
 
 #
 # MSVC 6 SP6 doesn't like direct shifting of 64-bit integers.
@@ -240,6 +246,7 @@ else:
 
 if not conf.TryLink(int64test, '.c'):
 	stub_env.Append(CPPDEFINES = ['_NSIS_NO_INT64_SHR'])
+	stub_uenv.Append(CPPDEFINES = ['_NSIS_NO_INT64_SHR'])
 
 conf.Finish()	
 
@@ -256,4 +263,4 @@ conf.Finish()
 
 ### return
 
-Return('stub_env makensis_env plugin_env util_env cp_util_env test_env')
+Return('stub_env makensis_env plugin_env util_env cp_util_env test_env stub_uenv plugin_uenv')
