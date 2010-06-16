@@ -101,6 +101,14 @@ This option makes the compiler use an external EXE packer (such as \W{http://www
 
 \c !packhdr "$%TEMP%\exehead.tmp" '"C:\Program Files\UPX\upx.exe" "$%TEMP%\exehead.tmp"'
 
+\S1{packhdr} !finalize
+
+\c command
+
+This option will execute 'command' using a call to system() after the output EXE has been generated. You can typically use it to sign (Authenticode) your installer. If 'command' contains a '%1' it will be replaced by the executable filename.
+
+\c !finalize 'sign.bat "%1" "Product Installer" http://example.com'
+
 \S1{system} !system
 
 \c command [compare comparevalue]
