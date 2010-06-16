@@ -240,6 +240,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_XPSTYLE, _T("XPStyle"),1,0,_T("(on|off)"),TP_GLOBAL},
 {TOK_REQEXECLEVEL, _T("RequestExecutionLevel"),1,0,_T("none|user|highest|admin"),TP_GLOBAL},
 {TOK_P_PACKEXEHEADER,_T("!packhdr"),2,0,_T("temp_file_name command_line_to_compress_that_temp_file"),TP_ALL},
+{TOK_P_FINALIZE,_T("!finalize"),1,0,_T("command_with_%1"),TP_ALL},
 {TOK_P_SYSTEMEXEC,_T("!system"),1,2,_T("command [<|>|<>|=) retval]"),TP_ALL},
 {TOK_P_EXECUTE,_T("!execute"),1,0,_T("command"),TP_ALL},
 {TOK_P_ADDINCLUDEDIR,_T("!AddIncludeDir"),1,0,_T("dir"),TP_ALL},

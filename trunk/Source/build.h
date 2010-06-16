@@ -402,6 +402,7 @@ class CEXEBuild {
     bool has_called_write_output;
 
     TCHAR build_packname[1024], build_packcmd[1024];
+    TCHAR postbuild_cmd[1024];
     int build_overwrite, build_last_overwrite, build_crcchk,
         build_datesave, build_optimize_datablock,
         build_allowskipfiles; // Added by ramon 23 May 2003
