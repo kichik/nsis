@@ -3457,14 +3457,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
       int ret;
 
-      if (line.gettoken_str(a)[0]==_T('-'))
-      {
-        if (!_tcsnicmp(line.gettoken_str(a)+1,_T("un."),3))
-          ret=add_section(_T("un."),line.gettoken_str(a+1));
-        else
-          ret=add_section(_T(""),line.gettoken_str(a+1));
-      }
-      else ret=add_section(line.gettoken_str(a),line.gettoken_str(a+1));
+      ret=add_section(line.gettoken_str(a),line.gettoken_str(a+1));
       if (ret != PS_OK) return ret;
 
       if (unselected)
@@ -3522,7 +3515,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         ex = 1;
         a++;
       }
-      wsprintf(buf,_T("-%s"),line.gettoken_str(a));
+      wsprintf(buf,_T("\x1F%s"),line.gettoken_str(a));
       if (which_token == TOK_SECTIONGROUP || which_token == TOK_SUBSECTION)
       {
         TCHAR *s = line.gettoken_str(a);

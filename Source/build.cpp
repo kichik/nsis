@@ -1187,10 +1187,9 @@ int CEXEBuild::add_section(const TCHAR *secname, const TCHAR *defname, int expan
 
   TCHAR *name = (TCHAR*)secname;
 
-  // Is it a hidden section?
-  if (secname[0] == _T('-'))
+  if (name[0] == _T('\x1F'))    // SectionGroup/SectionGroupEnd
   {
-    if (secname[1])
+    if (name[1])
     {
       new_section.flags |= SF_SECGRP;
       name++;
@@ -1199,6 +1198,10 @@ int CEXEBuild::add_section(const TCHAR *secname, const TCHAR *defname, int expan
       new_section.flags |= SF_SECGRPEND;
   }
 
+  int hidden = (name[0] == _T('-'));
+  if (hidden)
+    name++;
+  
   if (name[0] == _T('!'))
   {
     name++;
@@ -1236,8 +1239,8 @@ int CEXEBuild::add_section(const TCHAR *secname, const TCHAR *defname, int expan
 
   new_section.code = cur_entries->getlen() / sizeof(entry);
 
-  new_section.install_types = *name ? 0 : ~0;
-  new_section.name_ptr = add_string(name);
+  new_section.install_types = (!hidden && *name) ? 0 : ~0;
+  new_section.name_ptr = hidden ? 0 : add_string(name);
   memset(&new_section.name,0,sizeof(new_section.name));
 
   cur_sections->add(&new_section, sizeof(section));
