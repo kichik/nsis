@@ -2960,6 +2960,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       SCRIPT_MSG(_T("!packhdr: filename=\"%s\", command=\"%s\"\n"),
         build_packname, build_packcmd);
     return PS_OK;
+    case TOK_P_FINALIZE:
+      if (postbuild_cmd[0])
+          warning_fl(_T("Several !finalize instructions encountered. Only last one was executed"));
+      _tcsnccpy(postbuild_cmd,line.gettoken_str(1),COUNTOF(postbuild_cmd)-1);
+      SCRIPT_MSG(_T("!finalize: \"%s\"\n"),postbuild_cmd);
+    return PS_OK;
     case TOK_P_SYSTEMEXEC:
       {
         TCHAR *exec=line.gettoken_str(1);

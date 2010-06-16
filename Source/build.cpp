@@ -172,7 +172,7 @@ CEXEBuild::CEXEBuild() :
   build_cursection_isfunc=0;
   build_cursection=NULL;
   // init public data.
-  build_packname[0]=build_packcmd[0]=build_output_filename[0]=0;
+  build_packname[0]=build_packcmd[0]=build_output_filename[0]=postbuild_cmd[0]=0;
 
   // Added by ramon 23 May 2003
   build_allowskipfiles=1;
@@ -2898,6 +2898,24 @@ int CEXEBuild::write_output(void)
       ftell(fp),total_usize,pc/10,pc%10);
   }
   fclose(fp);
+  if (postbuild_cmd[0])
+  {
+    LPTSTR arg = _tcsstr(postbuild_cmd, _T("%1"));
+    if (arg)    // if found, replace %1 by build_output_filename
+    {
+        memmove(arg+_tcslen(build_output_filename), arg+2, (_tcslen(arg+2)+1)*sizeof(TCHAR));
+        memmove(arg, build_output_filename, _tcslen(build_output_filename)*sizeof(TCHAR));
+    }
+    SCRIPT_MSG(_T("\nFinalize command: %s\n"),postbuild_cmd);
+#ifdef _WIN32
+    int ret=sane_system(postbuild_cmd);
+#else
+    PATH_CONVERT(postbuild_cmd);
+    int ret=system(postbuild_cmd);
+#endif
+    if (ret != 0)
+      INFO_MSG(_T("Finalize command returned %d\n"),ret);
+  }
   print_warnings();
   return PS_OK;
 }
