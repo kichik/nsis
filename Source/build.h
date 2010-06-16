@@ -105,6 +105,8 @@ class CEXEBuild {
 #endif //NSIS_CONFIG_PLUGIN_SUPPORT
 
 
+    void set_default_output_filename(const tstring& filename);
+
     // process a script (you can process as many scripts as you want,
     // it is as if they are concatenated)
     int process_script(FILE *filepointer, const TCHAR *filename, BOOL unicode);

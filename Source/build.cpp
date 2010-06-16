@@ -2349,6 +2349,12 @@ int CEXEBuild::UpdatePEHeader()
   return PS_OK;
 }
 
+void CEXEBuild::set_default_output_filename(const tstring& filename)
+{
+    if (build_output_filename[0] == 0)
+        _tcsnccpy(build_output_filename,filename.c_str(),1024-1);
+}
+
 int CEXEBuild::check_write_output_errors() const
 {
   if (has_called_write_output)
