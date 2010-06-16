@@ -516,6 +516,7 @@ int _tmain(int argc, TCHAR **argv)
             if (change_to_script_dir(build, script_file))
               return 1;
           }
+          build.set_default_output_filename(remove_file_extension(sfile)+_T(".exe"));
         }
 
         if (build.display_script) 
