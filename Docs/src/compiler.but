@@ -170,6 +170,10 @@ You can use these standard predefines to automatically add the build time to the
 
 Current script name.
 
+\S1{prefile} $\{__FILEDIR__\}
+
+Current script directory.
+
 \S1{preline} $\{__LINE__\}
 
 Current line number.

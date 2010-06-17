@@ -27,6 +27,8 @@
 #include <windows.h>
 #include <commctrl.h>
 #include <shellapi.h>
+#include <shlwapi.h>
+#pragma comment(lib, "shlwapi.lib")
 #include "tchar.h"
 #else
 #  ifndef EXEHEAD

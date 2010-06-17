@@ -56,30 +56,52 @@ using namespace std;
 // Added by Sunil Kamath 11 June 2003
 TCHAR *CEXEBuild::set_file_predefine(const TCHAR *filename)
 {
+  TCHAR *oldfileinfo = NULL;
   TCHAR *oldfilename = definedlist.find(_T("__FILE__"));
-  if(oldfilename)
+  TCHAR *oldfiledir = definedlist.find(_T("__FILEDIR__"));
+  if(oldfilename && oldfiledir)
   {
-    oldfilename = _tcsdup(oldfilename);
+    oldfileinfo = new TCHAR[_tcslen(oldfilename)+_tcslen(oldfiledir)+2];
+    _tcscpy(oldfileinfo, oldfilename);
+    _tcscat(oldfileinfo, _T("|"));
+    _tcscat(oldfileinfo, oldfiledir);
     definedlist.del(_T("__FILE__"));
+    definedlist.del(_T("__FILEDIR__"));
   }
   const TCHAR *p = _tcsrchr(filename,_T('\\'));
   if(p) {
     p++;
   }
   else {
-    p = curfilename;
+    p = filename;
   }
   definedlist.add(_T("__FILE__"),p);
+  TCHAR dir[MAX_PATH];
+#ifdef _WIN32
+  LPTSTR lpFilePart;
+  GetFullPathName(filename, COUNTOF(dir), dir, &lpFilePart);
+  PathRemoveFileSpec(dir);
+#else
+  if (p == filename)
+    _tcscpy(dir, _T("."));
+  else
+    _tcsncpy(dir, filename, p-filename-1);
+#endif
+  definedlist.add(_T("__FILEDIR__"),dir);
 
-  return oldfilename;
+  return oldfileinfo;
 }
 
 void CEXEBuild::restore_file_predefine(TCHAR *oldfilename)
 {
+  definedlist.del(_T("__FILEDIR__"));
   definedlist.del(_T("__FILE__"));
   if(oldfilename) {
+      TCHAR *oldfiledir = _tcschr(oldfilename, _T('|'));
+      definedlist.add(_T("__FILEDIR__"),oldfiledir+1);
+      *oldfiledir = '\0';
       definedlist.add(_T("__FILE__"),oldfilename);
-      free(oldfilename);
+      delete[] oldfilename;
   }
 }
 
