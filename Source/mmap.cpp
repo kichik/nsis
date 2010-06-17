@@ -336,7 +336,7 @@ void MMapFile::flush(int num)
 {
   if (m_pView)
 #ifdef _WIN32
-    FlushViewOfFile(m_pView, num);
+  {} // improving performance by commenting: FlushViewOfFile(m_pView, num);
 #else
     msync((char *)m_pView, num, MS_SYNC);
 #endif
@@ -431,6 +431,8 @@ void MMapBuf::resize(int newlen)
   if (newlen > m_alloc)
   {
     m_alloc = newlen + (16 << 20); // add 16mb to top of mapping
+    if (m_alloc < 0) // we've hit a signed integer overflow
+        m_alloc = INT_MAX;
 
     m_fm.resize(m_alloc);
 
