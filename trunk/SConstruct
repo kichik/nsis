@@ -151,6 +151,7 @@ opts.Add(('IGNORETESTS', 'A comma-separated list of test files that will be ran 
 opts.Add(('PATH', 'A colon-separated list of system paths instead of the default - TEMPORARY AND MAY DEPRECATE', None))
 opts.Add(('TOOLSET', 'A comma-separated list of specific tools used for building instead of the default', None))
 opts.Add(BoolVariable('MSTOOLKIT', 'Use Microsoft Visual C++ Toolkit', 'no'))
+opts.Add(EnumVariable('MSVS_VERSION', 'MS Visual C++ version', os.environ.get('MSVS_VERSION'), allowed_values=('6.0', '7.0', '7.1', '8.0', '8.0Exp', '9.0', '9.0Exp', '10.0', '10.0Exp')))
 opts.Add(BoolVariable('CHMDOCS', 'Build CHM documentation, requires hhc.exe', hhc))
 opts.Add(PathVariable('APPEND_CPPPATH', 'Additional paths to search for include files', None))
 opts.Add(PathVariable('APPEND_LIBPATH', 'Additional paths to search for libraries', None))
@@ -176,6 +177,7 @@ opts.Add(('PREFIX_PLUGINAPI_LIB','Path to install plugin static library to.', No
 
 opts.Update(defenv)
 Help(opts.GenerateHelpText(defenv))
+Tool("msvc")(defenv)
 
 # add prefixes defines
 if 'NSIS_CONFIG_CONST_DATA_PATH' in defenv['NSIS_CPPDEFINES']:
