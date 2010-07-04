@@ -153,13 +153,13 @@ void * NSISCALL NSISGetProcAddress(HANDLE dllHandle, TCHAR* funcName);
 #else
 #ifdef _UNICODE
 #ifdef _NSIS_NO_INT64_SHR
-#define CMP4CHAR(mem, const4) ((((LPDWORD)(mem))[0] == (const4[0]|const4[1]<<16)) && (((LPDWORD)(mem))[1] == (const4[2]|const4[3]<<16)))
+#define CMP4CHAR(mem, const4) ((((LPDWORD)(mem))[0] == (DWORD)(const4[0]|const4[1]<<16)) && (((LPDWORD)(mem))[1] == (DWORD)(const4[2]|const4[3]<<16)))
 #else
-#define CMP4CHAR(mem, const4) (*(PDWORD64)(mem) == (const4[0]|const4[1]<<16|(DWORD64)const4[2]<<32|(DWORD64)const4[3]<<48))
+#define CMP4CHAR(mem, const4) (*(PDWORD64)(mem) == (DWORD64)(const4[0]|const4[1]<<16|(DWORD64)const4[2]<<32|(DWORD64)const4[3]<<48))
 #endif
 #define SET2CHAR(mem, const2) (*(LPDWORD)(mem) = (const2[0]|const2[1]<<16))
 #else
-#define CMP4CHAR(mem, const4) (*(LPDWORD)(mem) == (const4[0]|const4[1]<<8|const4[2]<<16|const4[3]<<24))
+#define CMP4CHAR(mem, const4) (*(LPDWORD)(mem) == (DWORD)(const4[0]|const4[1]<<8|const4[2]<<16|const4[3]<<24))
 #define SET2CHAR(mem, const2) (*(LPWORD)(mem) = (const2[0]|const2[1]<<8))
 #endif
 #endif
