@@ -18,6 +18,7 @@
 #include <cstdio> // for f*
 #include <cassert> // for assert
 #include "tchar.h"
+#include <limits.h>
 #ifndef _WIN32
 #  include <sys/types.h> // for freebsd
 #  include <sys/mman.h>
