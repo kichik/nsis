@@ -325,7 +325,7 @@ class CEXEBuild {
      * return aPS_ERROR.  If this function call is overwriting a set user string,
      * this will return a PS_WARNING.
      */
-    int SetLangString(TCHAR *name, LANGID lang, TCHAR *str, BOOL unicode);
+    int SetLangString(TCHAR *name, LANGID lang, const TCHAR *str, BOOL unicode);
 
     /**
      * Sets the user string to the specific NLF_STRINGS id.
