@@ -473,7 +473,7 @@ int CEXEBuild::DefineInnerLangString(int id, int process/*=-1*/) {
 // @return If the language id, the variable name or string is invalid, it will
 // return a PS_ERROR.  If this function call is overwriting a set user string,
 // this will return a PS_WARNING.
-int CEXEBuild::SetLangString(TCHAR *name, LANGID lang, TCHAR *str, BOOL unicode) {
+int CEXEBuild::SetLangString(TCHAR *name, LANGID lang, const TCHAR *str, BOOL unicode) {
   if (!str || !name) return PS_ERROR;
 
   LanguageTable *table = GetLangTable(lang);
