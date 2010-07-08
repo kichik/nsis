@@ -1,0 +1,162 @@
+\A{usefulfunctions} Useful Scripts
+
+\H{getieversion} Get Internet Explorer version
+
+\c  ; GetIEVersion
+\c  ;
+\c  ; Based on Yazno's function, http://yazno.tripod.com/powerpimpit/
+\c  ; Returns on top of stack
+\c  ; 1-6 (Installed IE Version)
+\c  ; or
+\c  ; '' (IE is not installed)
+\c  ;
+\c  ; Usage:
+\c  ;   Call GetIEVersion
+\c  ;   Pop $R0
+\c  ;   ; at this point $R0 is "5" or whatnot
+\c
+\c  Function GetIEVersion
+\c  Push $R0
+\c    ClearErrors
+\c    ReadRegStr $R0 HKLM "Software\Microsoft\Internet Explorer" "Version"
+\c    IfErrors lbl_123 lbl_456
+\c
+\c    lbl_456: ; ie 4+
+\c      Strcpy $R0 $R0 1
+\c    Goto lbl_done
+\c
+\c    lbl_123: ; older ie version
+\c      ClearErrors
+\c      ReadRegStr $R0 HKLM "Software\Microsoft\Internet Explorer" "IVer"
+\c      IfErrors lbl_error
+\c
+\c        StrCpy $R0 $R0 3
+\c        StrCmp $R0 '100' lbl_ie1
+\c        StrCmp $R0 '101' lbl_ie2
+\c        StrCmp $R0 '102' lbl_ie2
+\c
+\c        StrCpy $R0 '3' ; default to ie3 if not 100, 101, or 102.
+\c        Goto lbl_done
+\c          lbl_ie1:
+\c            StrCpy $R0 '1'
+\c          Goto lbl_done
+\c          lbl_ie2:
+\c            StrCpy $R0 '2'
+\c          Goto lbl_done
+\c      lbl_error:
+\c        StrCpy $R0 ''
+\c    lbl_done:
+\c    Exch $R0
+\c  FunctionEnd
+
+\H{detect.netframework} Is .NET Framework installed?
+
+\c  ; IsDotNETInstalled
+\c  ;
+\c  ; Based on GetDotNETVersion
+\c  ;   http://nsis.sourceforge.net/Get_.NET_Version
+\c  ;
+\c  ; Usage:
+\c  ;   Call IsDotNETInstalled
+\c  ;   Pop $0
+\c  ;   StrCmp $0 1 found.NETFramework no.NETFramework
+\c
+\c  Function IsDotNETInstalled
+\c    Push $0
+\c    Push $1
+\c
+\c    StrCpy $0 1
+\c    System::Call "mscoree::GetCORVersion(w, i ${NSIS_MAX_STRLEN}, *i) i .r1"
+\c    StrCmp $1 0 +2
+\c      StrCpy $0 0
+\c
+\c    Pop $1
+\c    Exch $0
+\c  FunctionEnd
+
+\H{isflashinstalled} Is Macromedia Flash Player installed?
+
+\c  ; IsFlashInstalled
+\c  ;
+\c  ; By Yazno, http://yazno.tripod.com/powerpimpit/
+\c  ; Returns on top of stack
+\c  ; 0 (Flash is not installed)
+\c  ; or
+\c  ; 1 (Flash is installed)
+\c  ;
+\c  ; Usage:
+\c  ;   Call IsFlashInstalled
+\c  ;   Pop $R0
+\c  ;   ; $R0 at this point is "1" or "0"
+\c
+\c  Function IsFlashInstalled
+\c   Push $R0
+\c   ClearErrors
+\c   ReadRegStr $R0 HKCR "CLSID\{D27CDB6E-AE6D-11cf-96B8-444553540000}" ""
+\c   IfErrors lbl_na
+\c     StrCpy $R0 1
+\c   Goto lbl_end
+\c   lbl_na:
+\c     StrCpy $R0 0
+\c   lbl_end:
+\c   Exch $R0
+\c  FunctionEnd
+
+\H{connectinternet} Connect to the Internet
+
+\c  ; ConnectInternet (uses Dialer plug-in)
+\c  ; Written by Joost Verburg 
+\c  ;
+\c  ; This function attempts to make a connection to the internet if there is no
+\c  ; connection available. If you are not sure that a system using the installer
+\c  ; has an active internet connection, call this function before downloading
+\c  ; files with NSISdl.
+\c  ; 
+\c  ; The function requires Internet Explorer 3, but asks to connect manually if
+\c  ; IE3 is not installed.
+\c  
+\c  Function ConnectInternet
+\c  
+\c    Push $R0
+\c      
+\c      ClearErrors
+\c      Dialer::AttemptConnect
+\c      IfErrors noie3
+\c      
+\c      Pop $R0
+\c      StrCmp $R0 "online" connected
+\c        MessageBox MB_OK|MB_ICONSTOP "Cannot connect to the internet."
+\c        Quit ;This will quit the installer. You might want to add your own error handling.
+\c      
+\c      noie3:
+\c    
+\c      ; IE3 not installed
+\c      MessageBox MB_OK|MB_ICONINFORMATION "Please connect to the internet now."
+\c      
+\c      connected:
+\c    
+\c    Pop $R0
+\c    
+\c  FunctionEnd
+
+\H{installerfilename} Get Installer Filename
+
+\c  System::Call 'kernel32::GetModuleFileNameA(i 0, t .R0, i 1024) i r1'
+\c  ;$R0 will contain the installer filename
+
+\H{multipleinstances} Prevent Multiple Instances
+
+Put the following code in your \R{oninit}{.onInit function}:
+
+\c  System::Call 'kernel32::CreateMutexA(i 0, i 0, t "myMutex") i .r1 ?e'
+\c  Pop $R0
+\c  
+\c  StrCmp $R0 0 +3
+\c    MessageBox MB_OK|MB_ICONEXCLAMATION "The installer is already running."
+\c    Abort
+
+'myMutex' should be replaced by a unique value. 
+
+\H{morefuncs} More
+
+You can find more useful scripts at \W{http://nsis.sourceforge.net/wiki/}{the NSIS Wiki}, \W{http://forums.winamp.com/forumdisplay.php?s=&forumid=65}{the NSIS forum} and \W{http://nsis.sourceforge.net/}{NSIS development page}.
