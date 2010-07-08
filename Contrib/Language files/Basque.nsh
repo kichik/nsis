@@ -1,5 +1,5 @@
-;Language: Basque (1069)
-;By Iñaki San Vicente
+ï»¿;Language: Basque (1069)
+;By IÃ±aki San Vicente
 
 !insertmacro LANGFILE "Basque" "Euskera"
 
@@ -30,7 +30,7 @@
 !endif
 
 !ifdef MUI_LICENSEPAGE | MUI_UNLICENSEPAGE
-  ${LangFileString} MUI_INNERTEXT_LICENSE_TOP "Sakatu Av Pág hitzarmenaren gainontzeko atalak ikusteko."
+  ${LangFileString} MUI_INNERTEXT_LICENSE_TOP "Sakatu Av PÃ¡g hitzarmenaren gainontzeko atalak ikusteko."
 !endif
 
 !ifdef MUI_COMPONENTSPAGE

@@ -1,4 +1,4 @@
-;Language: Esperanto (0)
+﻿;Language: Esperanto (0)
 ;By Felipe Castro <fefcas@gmail.com>
 
 !insertmacro LANGFILE "Esperanto" "Esperanto"

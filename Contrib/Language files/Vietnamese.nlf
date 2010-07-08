@@ -1,4 +1,4 @@
-# Header, don't edit
+ï»¿# Header, don't edit
 NLF v6
 # Start editing here
 # Language ID
@@ -10,177 +10,177 @@ NLF v6
 1258
 # RTL - anything else than RTL means LTR
 -
-# Translation by NGUYÊŞN Maònh HuÌng <loveleeyoungae@yahoo.com>
+# Translation by NGUYÃŠÌƒN MaÌ£nh HuÌ€ng <loveleeyoungae@yahoo.com>
 # ^Branding
 Nullsoft Install System %s
 # ^SetupCaption
-CaÌi ğãòt $(^Name)
+CaÌ€i Ä‘ÄƒÌ£t $(^Name)
 # ^UninstallCaption
-GõŞ boÒ $(^Name)
+GÆ¡Ìƒ boÌ‰ $(^Name)
 # ^LicenseSubCaption
-: ThoÒa thuâòn Giâìy pheìp
+: ThoÌ‰a thuÃ¢Ì£n GiÃ¢Ìy pheÌp
 # ^ComponentsSubCaption
-: TuÌy choòn CaÌi ğãòt
+: TuÌ€y choÌ£n CaÌ€i Ä‘ÄƒÌ£t
 # ^DirSubCaption
-: Thı muòc CaÌi ğãòt
+: ThÆ° muÌ£c CaÌ€i Ä‘ÄƒÌ£t
 # ^InstallingSubCaption
-: CaÌi ğãòt
+: CaÌ€i Ä‘ÄƒÌ£t
 # ^CompletedSubCaption
-: HoaÌn thaÌnh
+: HoaÌ€n thaÌ€nh
 # ^UnComponentsSubCaption
-: TuÌy choòn GõŞ boÒ
+: TuÌ€y choÌ£n GÆ¡Ìƒ boÌ‰
 # ^UnDirSubCaption
-: Thı muòc GõŞ boÒ
+: ThÆ° muÌ£c GÆ¡Ìƒ boÌ‰
 # ^ConfirmSubCaption
-: Xaìc nhâòn
+: XaÌc nhÃ¢Ì£n
 # ^UninstallingSubCaption
-: GõŞ boÒ
+: GÆ¡Ìƒ boÌ‰
 # ^UnCompletedSubCaption
-: HoaÌn thaÌnh
+: HoaÌ€n thaÌ€nh
 # ^BackBtn
-< &LuÌi
+< &LuÌ€i
 # ^NextBtn
-&Tiêìn >
+&TiÃªÌn >
 # ^AgreeBtn
-Tô&i ğôÌng yì
+TÃ´&i Ä‘Ã´Ì€ng yÌ
 # ^AcceptBtn
-Tô&i châìp thuâòn caìc ğiêÌu khoaÒn cuÒa ThoÒa thuâòn Giâìy pheìp
+TÃ´&i chÃ¢Ìp thuÃ¢Ì£n caÌc Ä‘iÃªÌ€u khoaÌ‰n cuÌ‰a ThoÌ‰a thuÃ¢Ì£n GiÃ¢Ìy pheÌp
 # ^DontAcceptBtn
-Tôi &không châìp thuâòn caìc ğiêÌu khoaÒn cuÒa ThoÒa thuâòn Giâìy pheìp
+TÃ´i &khÃ´ng chÃ¢Ìp thuÃ¢Ì£n caÌc Ä‘iÃªÌ€u khoaÌ‰n cuÌ‰a ThoÌ‰a thuÃ¢Ì£n GiÃ¢Ìy pheÌp
 # ^InstallBtn
-&CaÌi ğãòt
+&CaÌ€i Ä‘ÄƒÌ£t
 # ^UninstallBtn
-&GõŞ boÒ
+&GÆ¡Ìƒ boÌ‰
 # ^CancelBtn
-HuÒy boÒ
+HuÌ‰y boÌ‰
 # ^CloseBtn
-Ğoìn&g
+ÄoÌn&g
 # ^BrowseBtn
-Du&yêòt...
+Du&yÃªÌ£t...
 # ^ShowDetailsBtn
-&Hiêòn chi tiêìt
+&HiÃªÌ£n chi tiÃªÌt
 # ^ClickNext
-Nhâìn Tiêìn ğêÒ tiêìp tuòc.
+NhÃ¢Ìn TiÃªÌn Ä‘ÃªÌ‰ tiÃªÌp tuÌ£c.
 # ^ClickInstall
-Nhâìn “CaÌi ğãòt” ğêÒ bãìt ğâÌu viêòc caÌi ğãòt.
+NhÃ¢Ìn â€œCaÌ€i Ä‘ÄƒÌ£tâ€ Ä‘ÃªÌ‰ bÄƒÌt Ä‘Ã¢Ì€u viÃªÌ£c caÌ€i Ä‘ÄƒÌ£t.
 # ^ClickUninstall
-Nhâìn “GõŞ boÒ” ğêÒ bãìt ğâÌu viêòc gõŞ boÒ.
+NhÃ¢Ìn â€œGÆ¡Ìƒ boÌ‰â€ Ä‘ÃªÌ‰ bÄƒÌt Ä‘Ã¢Ì€u viÃªÌ£c gÆ¡Ìƒ boÌ‰.
 # ^Name
-Tên
+TÃªn
 # ^Completed
-HoaÌn thaÌnh
+HoaÌ€n thaÌ€nh
 # ^LicenseText
-Vui loÌng xem xeìt thoÒa thuâòn giâìy pheìp trıõìc khi caÌi ğãòt $(^NameDA). Nêìu baòn châìp thuâòn tâìt caÒ caìc ğiêÌu khoaÒn cuÒa thoÒa thuâòn, haŞy nhâìn “Tôi ğôÌng yì”.
+Vui loÌ€ng xem xeÌt thoÌ‰a thuÃ¢Ì£n giÃ¢Ìy pheÌp trÆ°Æ¡Ìc khi caÌ€i Ä‘ÄƒÌ£t $(^NameDA). NÃªÌu baÌ£n chÃ¢Ìp thuÃ¢Ì£n tÃ¢Ìt caÌ‰ caÌc Ä‘iÃªÌ€u khoaÌ‰n cuÌ‰a thoÌ‰a thuÃ¢Ì£n, haÌƒy nhÃ¢Ìn â€œTÃ´i Ä‘Ã´Ì€ng yÌâ€.
 # ^LicenseTextCB
-Vui loÌng xem xeìt thoÒa thuâòn giâìy pheìp trıõìc khi caÌi ğãòt $(^NameDA). Nêìu baòn châìp thuâòn tâìt caÒ caìc ğiêÌu khoaÒn cuÒa thoÒa thuâòn, haŞy nhâìn ô bên dıõìi. $_CLICK
+Vui loÌ€ng xem xeÌt thoÌ‰a thuÃ¢Ì£n giÃ¢Ìy pheÌp trÆ°Æ¡Ìc khi caÌ€i Ä‘ÄƒÌ£t $(^NameDA). NÃªÌu baÌ£n chÃ¢Ìp thuÃ¢Ì£n tÃ¢Ìt caÌ‰ caÌc Ä‘iÃªÌ€u khoaÌ‰n cuÌ‰a thoÌ‰a thuÃ¢Ì£n, haÌƒy nhÃ¢Ìn Ã´ bÃªn dÆ°Æ¡Ìi. $_CLICK
 # ^LicenseTextRB
-Vui loÌng xem xeìt thoÒa thuâòn giâìy pheìp trıõìc khi caÌi ğãòt $(^NameDA). Nêìu baòn châìp thuâòn tâìt caÒ caìc ğiêÌu khoaÒn cuÒa thoÒa thuâòn, haŞy choòn ô ğâÌu tiên bên dıõìi. $_CLICK
+Vui loÌ€ng xem xeÌt thoÌ‰a thuÃ¢Ì£n giÃ¢Ìy pheÌp trÆ°Æ¡Ìc khi caÌ€i Ä‘ÄƒÌ£t $(^NameDA). NÃªÌu baÌ£n chÃ¢Ìp thuÃ¢Ì£n tÃ¢Ìt caÌ‰ caÌc Ä‘iÃªÌ€u khoaÌ‰n cuÌ‰a thoÌ‰a thuÃ¢Ì£n, haÌƒy choÌ£n Ã´ Ä‘Ã¢Ì€u tiÃªn bÃªn dÆ°Æ¡Ìi. $_CLICK
 # ^UnLicenseText
-Vui loÌng xem xeìt thoÒa thuâòn giâìy pheìp trıõìc khi gõŞ boÒ $(^NameDA). Nêìu baòn châìp thuâòn tâìt caÒ caìc ğiêÌu khoaÒn cuÒa thoÒa thuâòn, haŞy nhâìn “Tôi ğôÌng yì”.
+Vui loÌ€ng xem xeÌt thoÌ‰a thuÃ¢Ì£n giÃ¢Ìy pheÌp trÆ°Æ¡Ìc khi gÆ¡Ìƒ boÌ‰ $(^NameDA). NÃªÌu baÌ£n chÃ¢Ìp thuÃ¢Ì£n tÃ¢Ìt caÌ‰ caÌc Ä‘iÃªÌ€u khoaÌ‰n cuÌ‰a thoÌ‰a thuÃ¢Ì£n, haÌƒy nhÃ¢Ìn â€œTÃ´i Ä‘Ã´Ì€ng yÌâ€.
 # ^UnLicenseTextCB
-Vui loÌng xem xeìt thoÒa thuâòn giâìy pheìp trıõìc khi gõŞ boÒ $(^NameDA). Nêìu baòn châìp thuâòn tâìt caÒ caìc ğiêÌu khoaÒn cuÒa thoÒa thuâòn, haŞy nhâìn ô bên dıõìi. $_CLICK
+Vui loÌ€ng xem xeÌt thoÌ‰a thuÃ¢Ì£n giÃ¢Ìy pheÌp trÆ°Æ¡Ìc khi gÆ¡Ìƒ boÌ‰ $(^NameDA). NÃªÌu baÌ£n chÃ¢Ìp thuÃ¢Ì£n tÃ¢Ìt caÌ‰ caÌc Ä‘iÃªÌ€u khoaÌ‰n cuÌ‰a thoÌ‰a thuÃ¢Ì£n, haÌƒy nhÃ¢Ìn Ã´ bÃªn dÆ°Æ¡Ìi. $_CLICK
 # ^UnLicenseTextRB
-Vui loÌng xem xeìt thoÒa thuâòn giâìy pheìp trıõìc khi gõŞ boÒ $(^NameDA). Nêìu baòn châìp thuâòn tâìt caÒ caìc ğiêÌu khoaÒn cuÒa thoÒa thuâòn, haŞy choòn ô ğâÌu tiên bên dıõìi. $_CLICK
+Vui loÌ€ng xem xeÌt thoÌ‰a thuÃ¢Ì£n giÃ¢Ìy pheÌp trÆ°Æ¡Ìc khi gÆ¡Ìƒ boÌ‰ $(^NameDA). NÃªÌu baÌ£n chÃ¢Ìp thuÃ¢Ì£n tÃ¢Ìt caÌ‰ caÌc Ä‘iÃªÌ€u khoaÌ‰n cuÌ‰a thoÌ‰a thuÃ¢Ì£n, haÌƒy choÌ£n Ã´ Ä‘Ã¢Ì€u tiÃªn bÃªn dÆ°Æ¡Ìi. $_CLICK
 # ^Custom
-TuÌy biêìn
+TuÌ€y biÃªÌn
 # ^ComponentsText
-Choòn thaÌnh phâÌn maÌ baòn muôìn caÌi ğãòt vaÌ không choòn caìc thaÌnh phâÌn maÌ baòn không muôìn caÌi ğãòt. $_CLICK
+ChoÌ£n thaÌ€nh phÃ¢Ì€n maÌ€ baÌ£n muÃ´Ìn caÌ€i Ä‘ÄƒÌ£t vaÌ€ khÃ´ng choÌ£n caÌc thaÌ€nh phÃ¢Ì€n maÌ€ baÌ£n khÃ´ng muÃ´Ìn caÌ€i Ä‘ÄƒÌ£t. $_CLICK
 # ^ComponentsSubText1
-Choòn kiêÒu caÌi ğãòt:
+ChoÌ£n kiÃªÌ‰u caÌ€i Ä‘ÄƒÌ£t:
 # ^ComponentsSubText2_NoInstTypes
-Choòn thaÌnh phâÌn ğêÒ caÌi ğãòt:
+ChoÌ£n thaÌ€nh phÃ¢Ì€n Ä‘ÃªÌ‰ caÌ€i Ä‘ÄƒÌ£t:
 # ^ComponentsSubText2
-Hoãòc, choòn thaÌnh phâÌn phuò maÌ baòn muôìn caÌi ğãòt:
+HoÄƒÌ£c, choÌ£n thaÌ€nh phÃ¢Ì€n phuÌ£ maÌ€ baÌ£n muÃ´Ìn caÌ€i Ä‘ÄƒÌ£t:
 # ^UnComponentsText
-Choòn thaÌnh phâÌn maÌ baòn muôìn gõŞ boÒ vaÌ không choòn caìc thaÌnh phâÌn maÌ baòn không muôìn gõŞ boÒ. $_CLICK
+ChoÌ£n thaÌ€nh phÃ¢Ì€n maÌ€ baÌ£n muÃ´Ìn gÆ¡Ìƒ boÌ‰ vaÌ€ khÃ´ng choÌ£n caÌc thaÌ€nh phÃ¢Ì€n maÌ€ baÌ£n khÃ´ng muÃ´Ìn gÆ¡Ìƒ boÌ‰. $_CLICK
 # ^UnComponentsSubText1
-Choòn kiêÒu gõŞ boÒ:
+ChoÌ£n kiÃªÌ‰u gÆ¡Ìƒ boÌ‰:
 # ^UnComponentsSubText2_NoInstTypes
-Choòn thaÌnh phâÌn ğêÒ gõŞ boÒ:
+ChoÌ£n thaÌ€nh phÃ¢Ì€n Ä‘ÃªÌ‰ gÆ¡Ìƒ boÌ‰:
 # ^UnComponentsSubText2
-Hoãòc, choòn thaÌnh phâÌn phuò maÌ baòn muôìn gõŞ boÒ:
+HoÄƒÌ£c, choÌ£n thaÌ€nh phÃ¢Ì€n phuÌ£ maÌ€ baÌ£n muÃ´Ìn gÆ¡Ìƒ boÌ‰:
 # ^DirText
-TriÌnh trõò liì seŞ caÌi ğãòt $(^NameDA) vaÌo thı muòc sau. ĞêÒ caÌi ğãòt vaÌo môòt thı muòc khaìc, haŞy nhâìn Duyêòt ğêÒ choòn thı muòc. $_CLICK
+TriÌ€nh trÆ¡Ì£ liÌ seÌƒ caÌ€i Ä‘ÄƒÌ£t $(^NameDA) vaÌ€o thÆ° muÌ£c sau. ÄÃªÌ‰ caÌ€i Ä‘ÄƒÌ£t vaÌ€o mÃ´Ì£t thÆ° muÌ£c khaÌc, haÌƒy nhÃ¢Ìn DuyÃªÌ£t Ä‘ÃªÌ‰ choÌ£n thÆ° muÌ£c. $_CLICK
 # ^DirSubText
-Thı muòc ğiìch
+ThÆ° muÌ£c Ä‘iÌch
 # ^DirBrowseText
-Choòn thı muòc ğêÒ caÌi ğãòt $(^NameDA):
+ChoÌ£n thÆ° muÌ£c Ä‘ÃªÌ‰ caÌ€i Ä‘ÄƒÌ£t $(^NameDA):
 # ^UnDirText
-TriÌnh trõò liì seŞ gõŞ boÒ $(^NameDA) khoÒi thı muòc sau. ĞêÒ gõŞ boÒ khoÒi môòt thı muòc khaìc, haŞy nhâìn Duyêòt ğêÒ choòn thı muòc. $_CLICK
+TriÌ€nh trÆ¡Ì£ liÌ seÌƒ gÆ¡Ìƒ boÌ‰ $(^NameDA) khoÌ‰i thÆ° muÌ£c sau. ÄÃªÌ‰ gÆ¡Ìƒ boÌ‰ khoÌ‰i mÃ´Ì£t thÆ° muÌ£c khaÌc, haÌƒy nhÃ¢Ìn DuyÃªÌ£t Ä‘ÃªÌ‰ choÌ£n thÆ° muÌ£c. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
-Choòn thı muòc ğêÒ gõŞ boÒ $(^NameDA):
+ChoÌ£n thÆ° muÌ£c Ä‘ÃªÌ‰ gÆ¡Ìƒ boÌ‰ $(^NameDA):
 # ^SpaceAvailable
-"Dung lıõòng hiêòn coì: "
+"Dung lÆ°Æ¡Ì£ng hiÃªÌ£n coÌ: "
 # ^SpaceRequired
-"Dung lıõòng yêu câÌu: "
+"Dung lÆ°Æ¡Ì£ng yÃªu cÃ¢Ì€u: "
 # ^UninstallingText
-$(^NameDA) seŞ biò gõŞ boÒ khoÒi thı muòc sau. $_CLICK
+$(^NameDA) seÌƒ biÌ£ gÆ¡Ìƒ boÌ‰ khoÌ‰i thÆ° muÌ£c sau. $_CLICK
 # ^UninstallingSubText
-Ğang gõŞ boÒ khoÒi:
+Äang gÆ¡Ìƒ boÌ‰ khoÌ‰i:
 # ^FileError
-LôŞi khi mõÒ tâòp tin ğêÒ ghi: \r\n\r\n$0\r\n\r\nNhâìn “HuÒy boÒ” ğêÒ ngıÌng viêòc caÌi ğãòt,\r\n“ThıÒ laòi” ğêÒ thıÒ lâÌn nıŞa, hoãòc\r\n“BoÒ qua” ğêÒ boÒ qua tâòp tin naÌy.
+LÃ´Ìƒi khi mÆ¡Ì‰ tÃ¢Ì£p tin Ä‘ÃªÌ‰ ghi: \r\n\r\n$0\r\n\r\nNhÃ¢Ìn â€œHuÌ‰y boÌ‰â€ Ä‘ÃªÌ‰ ngÆ°Ì€ng viÃªÌ£c caÌ€i Ä‘ÄƒÌ£t,\r\nâ€œThÆ°Ì‰ laÌ£iâ€ Ä‘ÃªÌ‰ thÆ°Ì‰ lÃ¢Ì€n nÆ°Ìƒa, hoÄƒÌ£c\r\nâ€œBoÌ‰ quaâ€ Ä‘ÃªÌ‰ boÌ‰ qua tÃ¢Ì£p tin naÌ€y.
 # ^FileError_NoIgnore
-LôŞi khi mõÒ tâòp tin ğêÒ ghi: \r\n\r\n$0\r\n\r\nNhâìn “ThıÒ laòi” ğêÒ thıÒ lâÌn nıŞa, hoãòc\r\n“HuÒy boÒ” ğêÒ ngıÌng viêòc caÌi ğãòt.
+LÃ´Ìƒi khi mÆ¡Ì‰ tÃ¢Ì£p tin Ä‘ÃªÌ‰ ghi: \r\n\r\n$0\r\n\r\nNhÃ¢Ìn â€œThÆ°Ì‰ laÌ£iâ€ Ä‘ÃªÌ‰ thÆ°Ì‰ lÃ¢Ì€n nÆ°Ìƒa, hoÄƒÌ£c\r\nâ€œHuÌ‰y boÌ‰â€ Ä‘ÃªÌ‰ ngÆ°Ì€ng viÃªÌ£c caÌ€i Ä‘ÄƒÌ£t.
 # ^CantWrite
-"Không thêÒ ghi: "
+"KhÃ´ng thÃªÌ‰ ghi: "
 # ^CopyFailed
-Sao cheìp biò thâìt baòi
+Sao cheÌp biÌ£ thÃ¢Ìt baÌ£i
 # ^CopyTo
-"Sao cheìp vaÌo "
+"Sao cheÌp vaÌ€o "
 # ^Registering
-"Ğang ğãng kiì: "
+"Äang Ä‘Äƒng kiÌ: "
 # ^Unregistering
-"Ğang huÒy ğãng kiì: "
+"Äang huÌ‰y Ä‘Äƒng kiÌ: "
 # ^SymbolNotFound
-"Không thêÒ tiÌm thâìy biêÒu tıõòng: "
+"KhÃ´ng thÃªÌ‰ tiÌ€m thÃ¢Ìy biÃªÌ‰u tÆ°Æ¡Ì£ng: "
 # ^CouldNotLoad
-"Không thêÒ naòp: "
+"KhÃ´ng thÃªÌ‰ naÌ£p: "
 # ^CreateFolder
-"Taòo thı muòc: "
+"TaÌ£o thÆ° muÌ£c: "
 # ^CreateShortcut
-"Taòo lôìi tãìt: "
+"TaÌ£o lÃ´Ìi tÄƒÌt: "
 # ^CreatedUninstaller
-"Taòo triÌnh gõŞ boÒ: "
+"TaÌ£o triÌ€nh gÆ¡Ìƒ boÌ‰: "
 # ^Delete
-"Xoìa tâòp tin: "
+"XoÌa tÃ¢Ì£p tin: "
 # ^DeleteOnReboot
-"Xoìa khi khõÒi ğôòng laòi: "
+"XoÌa khi khÆ¡Ì‰i Ä‘Ã´Ì£ng laÌ£i: "
 # ^ErrorCreatingShortcut
-"LôŞi khi taòo lôìi tãìt: "
+"LÃ´Ìƒi khi taÌ£o lÃ´Ìi tÄƒÌt: "
 # ^ErrorCreating
-"LôŞi khi taòo: "
+"LÃ´Ìƒi khi taÌ£o: "
 # ^ErrorDecompressing
-LôŞi khi giaÒi neìn dıŞ liêòu! Coì thêÒ triÌnh caÌi ğãòt ğaŞ biò hoÒng?
+LÃ´Ìƒi khi giaÌ‰i neÌn dÆ°Ìƒ liÃªÌ£u! CoÌ thÃªÌ‰ triÌ€nh caÌ€i Ä‘ÄƒÌ£t Ä‘aÌƒ biÌ£ hoÌ‰ng?
 # ^ErrorRegistering
-LôŞi khi ğãng kiì DLL
+LÃ´Ìƒi khi Ä‘Äƒng kiÌ DLL
 # ^ExecShell
 "ExecShell: "
 # ^Exec
-"Thıòc thi: "
+"ThÆ°Ì£c thi: "
 # ^Extract
-"Triìch xuâìt: "
+"TriÌch xuÃ¢Ìt: "
 # ^ErrorWriting
-"Triìch xuâìt: lôi khi ghi vaÌo tâòp tin "
+"TriÌch xuÃ¢Ìt: lÃ´i khi ghi vaÌ€o tÃ¢Ì£p tin "
 # ^InvalidOpcode
-TriÌnh caÌi ğãòt biò hoÒng: maŞ taìc vuò bâìt hõòp lêò
+TriÌ€nh caÌ€i Ä‘ÄƒÌ£t biÌ£ hoÌ‰ng: maÌƒ taÌc vuÌ£ bÃ¢Ìt hÆ¡Ì£p lÃªÌ£
 # ^NoOLE
-"Không coì OLE cho: "
+"KhÃ´ng coÌ OLE cho: "
 # ^OutputFolder
-"Thı muòc ğâÌu ra: "
+"ThÆ° muÌ£c Ä‘Ã¢Ì€u ra: "
 # ^RemoveFolder
-"Xoìa thı muòc: "
+"XoÌa thÆ° muÌ£c: "
 # ^RenameOnReboot
-"ĞôÒi tên khi khõÒi ğôòng laòi: "
+"ÄÃ´Ì‰i tÃªn khi khÆ¡Ì‰i Ä‘Ã´Ì£ng laÌ£i: "
 # ^Rename
-"ĞôÒi tên: "
+"ÄÃ´Ì‰i tÃªn: "
 # ^Skipped
-"ĞaŞ boÒ qua: "
+"ÄaÌƒ boÌ‰ qua: "
 # ^CopyDetails
-Sao cheìp Chi tiêìt vaÌo Clipboard
+Sao cheÌp Chi tiÃªÌt vaÌ€o Clipboard
 # ^LogInstall
-Lıu kiì quaì triÌnh caÌi ğãòt
+LÆ°u kiÌ quaÌ triÌ€nh caÌ€i Ä‘ÄƒÌ£t
 # ^Byte
 B
 # ^Kilo

@@ -1,122 +1,122 @@
-;Language: Czech (1029)
+ï»¿;Language: Czech (1029)
 ;By SELiCE (ls@selice.cz - http://ls.selice.cz)
-;Corrected by Ondøej Vaniš - http://www.vanis.cz/ondra
+;Corrected by OndÅ™ej VaniÅ¡ - http://www.vanis.cz/ondra
 
 !insertmacro LANGFILE "Czech" "Cesky"
 
 !ifdef MUI_WELCOMEPAGE
-  ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Vítejte v prùvodci instalace programu $(^NameDA)"
-  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Tento prùvodce Vás provede instalací $(^NameDA).$\r$\n$\r$\nPøed zaèátkem instalace je doporuèeno zavøít všechny ostatní aplikace. Toto umoní aktualizovat dùleité systémové soubory bez restartování Vašeho poèítaèe.$\r$\n$\r$\n$_CLICK"
+  ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "VÃ­tejte v prÅ¯vodci instalace programu $(^NameDA)"
+  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Tento prÅ¯vodce VÃ¡s provede instalacÃ­ $(^NameDA).$\r$\n$\r$\nPÅ™ed zaÄÃ¡tkem instalace je doporuÄeno zavÅ™Ã­t vÅ¡echny ostatnÃ­ aplikace. Toto umoÅ¾nÃ­ aktualizovat dÅ¯leÅ¾itÃ© systÃ©movÃ© soubory bez restartovÃ¡nÃ­ VaÅ¡eho poÄÃ­taÄe.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_UNWELCOMEPAGE
-  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "Vítejte v $(^NameDA) odinstalaèním prùvodci"
-  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Tento prùvodce Vás provede odinstalací $(^NameDA).$\r$\n$\r$\nPøed zaèátkem odinstalace, se pøesvìdète, e $(^NameDA) není spuštìn.$\r$\n$\r$\n$_CLICK"
+  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "VÃ­tejte v $(^NameDA) odinstalaÄnÃ­m prÅ¯vodci"
+  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Tento prÅ¯vodce VÃ¡s provede odinstalacÃ­ $(^NameDA).$\r$\n$\r$\nPÅ™ed zaÄÃ¡tkem odinstalace, se pÅ™esvÄ›dÄte, Å¾e $(^NameDA) nenÃ­ spuÅ¡tÄ›n.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_LICENSEPAGE
-  ${LangFileString} MUI_TEXT_LICENSE_TITLE "Licenèní ujednání"
-  ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Pøed instalací programu $(^NameDA) si prosím prostudujte licenèní podmínky."
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM "Jestlie souhlasíte se všemi podmínkami ujednání, zvolte 'Souhlasím' pro pokraèování. Pro instalaci programu $(^NameDA) je nutné souhlasit s licenèním ujednáním."
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Jestlie souhlasíte se všemi podmínkami ujednání, zaškrtnìte níe uvedenou volbu. Pro instalaci programu $(^NameDA) je nutné souhlasit s licenèním ujednáním. $_CLICK"
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Jestlie souhlasíte se všemi podmínkami ujednání, zvolte první z moností uvedenıch níe. Pro instalaci programu $(^NameDA) je nutné souhlasit s licenèním ujednáním. $_CLICK"
+  ${LangFileString} MUI_TEXT_LICENSE_TITLE "LicenÄnÃ­ ujednÃ¡nÃ­"
+  ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "PÅ™ed instalacÃ­ programu $(^NameDA) si prosÃ­m prostudujte licenÄnÃ­ podmÃ­nky."
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM "JestliÅ¾e souhlasÃ­te se vÅ¡emi podmÃ­nkami ujednÃ¡nÃ­, zvolte 'SouhlasÃ­m' pro pokraÄovÃ¡nÃ­. Pro instalaci programu $(^NameDA) je nutnÃ© souhlasit s licenÄnÃ­m ujednÃ¡nÃ­m."
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "JestliÅ¾e souhlasÃ­te se vÅ¡emi podmÃ­nkami ujednÃ¡nÃ­, zaÅ¡krtnÄ›te nÃ­Å¾e uvedenou volbu. Pro instalaci programu $(^NameDA) je nutnÃ© souhlasit s licenÄnÃ­m ujednÃ¡nÃ­m. $_CLICK"
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "JestliÅ¾e souhlasÃ­te se vÅ¡emi podmÃ­nkami ujednÃ¡nÃ­, zvolte prvnÃ­ z moÅ¾nostÃ­ uvedenÃ½ch nÃ­Å¾e. Pro instalaci programu $(^NameDA) je nutnÃ© souhlasit s licenÄnÃ­m ujednÃ¡nÃ­m. $_CLICK"
 !endif
 
 !ifdef MUI_UNLICENSEPAGE
-  ${LangFileString} MUI_UNTEXT_LICENSE_TITLE "Licenèní ujednání"
-  ${LangFileString} MUI_UNTEXT_LICENSE_SUBTITLE "Pøed odinstalováním programu $(^NameDA) si prosím prostudujte licenèní podmínky."
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "Jestlie souhlasíte se všemi podmínkami ujednání, zvolte 'Souhlasím' pro pokraèování. Pro odinstalování programu $(^NameDA) je nutné souhlasit s licenèním ujednáním."
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Jestlie souhlasíte se všemi podmínkami ujednání, zaškrtnìte níe uvedenou volbu. Pro odinstalování programu $(^NameDA) je nutné souhlasit s licenèním ujednáním. $_CLICK"
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Jestlie souhlasíte se všemi podmínkami ujednání, zvolte první z níe uvedenıch moností. Pro odinstalování programu $(^NameDA) je nutné souhlasit s licenèním ujednáním. $_CLICK"
+  ${LangFileString} MUI_UNTEXT_LICENSE_TITLE "LicenÄnÃ­ ujednÃ¡nÃ­"
+  ${LangFileString} MUI_UNTEXT_LICENSE_SUBTITLE "PÅ™ed odinstalovÃ¡nÃ­m programu $(^NameDA) si prosÃ­m prostudujte licenÄnÃ­ podmÃ­nky."
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "JestliÅ¾e souhlasÃ­te se vÅ¡emi podmÃ­nkami ujednÃ¡nÃ­, zvolte 'SouhlasÃ­m' pro pokraÄovÃ¡nÃ­. Pro odinstalovÃ¡nÃ­ programu $(^NameDA) je nutnÃ© souhlasit s licenÄnÃ­m ujednÃ¡nÃ­m."
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "JestliÅ¾e souhlasÃ­te se vÅ¡emi podmÃ­nkami ujednÃ¡nÃ­, zaÅ¡krtnÄ›te nÃ­Å¾e uvedenou volbu. Pro odinstalovÃ¡nÃ­ programu $(^NameDA) je nutnÃ© souhlasit s licenÄnÃ­m ujednÃ¡nÃ­m. $_CLICK"
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "JestliÅ¾e souhlasÃ­te se vÅ¡emi podmÃ­nkami ujednÃ¡nÃ­, zvolte prvnÃ­ z nÃ­Å¾e uvedenÃ½ch moÅ¾nostÃ­. Pro odinstalovÃ¡nÃ­ programu $(^NameDA) je nutnÃ© souhlasit s licenÄnÃ­m ujednÃ¡nÃ­m. $_CLICK"
 !endif
 
 !ifdef MUI_LICENSEPAGE | MUI_UNLICENSEPAGE
-  ${LangFileString} MUI_INNERTEXT_LICENSE_TOP "Stisknutím klávesy Page Down posunete text licenèního ujednání."
+  ${LangFileString} MUI_INNERTEXT_LICENSE_TOP "StisknutÃ­m klÃ¡vesy Page Down posunete text licenÄnÃ­ho ujednÃ¡nÃ­."
 !endif
 
 !ifdef MUI_COMPONENTSPAGE
-  ${LangFileString} MUI_TEXT_COMPONENTS_TITLE "Volba souèástí"
-  ${LangFileString} MUI_TEXT_COMPONENTS_SUBTITLE "Zvolte souèásti programu $(^NameDA), které chcete nainstalovat."
+  ${LangFileString} MUI_TEXT_COMPONENTS_TITLE "Volba souÄÃ¡stÃ­"
+  ${LangFileString} MUI_TEXT_COMPONENTS_SUBTITLE "Zvolte souÄÃ¡sti programu $(^NameDA), kterÃ© chcete nainstalovat."
 !endif
 
 !ifdef MUI_UNCOMPONENTSPAGE
-  ${LangFileString} MUI_UNTEXT_COMPONENTS_TITLE "Volba souèástí"
-  ${LangFileString} MUI_UNTEXT_COMPONENTS_SUBTITLE "Zvolte souèásti programu $(^NameDA), které chcete odinstalovat."
+  ${LangFileString} MUI_UNTEXT_COMPONENTS_TITLE "Volba souÄÃ¡stÃ­"
+  ${LangFileString} MUI_UNTEXT_COMPONENTS_SUBTITLE "Zvolte souÄÃ¡sti programu $(^NameDA), kterÃ© chcete odinstalovat."
 !endif
 
 !ifdef MUI_COMPONENTSPAGE | MUI_UNCOMPONENTSPAGE
   ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Popis"
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
-    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Pøi pohybu myší nad instalátorem programu se zobrazí její popis."
+    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "PÅ™i pohybu myÅ¡Ã­ nad instalÃ¡torem programu se zobrazÃ­ jejÃ­ popis."
   !else
-    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Pøi pohybu myší nad instalátorem programu se zobrazí její popis."
+    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "PÅ™i pohybu myÅ¡Ã­ nad instalÃ¡torem programu se zobrazÃ­ jejÃ­ popis."
   !endif
 !endif
 
 !ifdef MUI_DIRECTORYPAGE
-  ${LangFileString} MUI_TEXT_DIRECTORY_TITLE "Zvolte umístìní instalace"
-  ${LangFileString} MUI_TEXT_DIRECTORY_SUBTITLE "Zvolte sloku, do které bude program $(^NameDA) nainstalován."
+  ${LangFileString} MUI_TEXT_DIRECTORY_TITLE "Zvolte umÃ­stÄ›nÃ­ instalace"
+  ${LangFileString} MUI_TEXT_DIRECTORY_SUBTITLE "Zvolte sloÅ¾ku, do kterÃ© bude program $(^NameDA) nainstalovÃ¡n."
 !endif
 
 !ifdef MUI_UNDIRECTORYPAGE
-  ${LangFileString} MUI_UNTEXT_DIRECTORY_TITLE "Zvolte umístìní odinstalace"
-  ${LangFileString} MUI_UNTEXT_DIRECTORY_SUBTITLE "Zvolte sloku, ze které bude program $(^NameDA) odinstalován."
+  ${LangFileString} MUI_UNTEXT_DIRECTORY_TITLE "Zvolte umÃ­stÄ›nÃ­ odinstalace"
+  ${LangFileString} MUI_UNTEXT_DIRECTORY_SUBTITLE "Zvolte sloÅ¾ku, ze kterÃ© bude program $(^NameDA) odinstalovÃ¡n."
 !endif
 
 !ifdef MUI_INSTFILESPAGE
   ${LangFileString} MUI_TEXT_INSTALLING_TITLE "Instalace"
-  ${LangFileString} MUI_TEXT_INSTALLING_SUBTITLE "Vyèkejte, prosím, na dokonèení instalace programu $(^NameDA)."
-  ${LangFileString} MUI_TEXT_FINISH_TITLE "Instalace dokonèena"
-  ${LangFileString} MUI_TEXT_FINISH_SUBTITLE "Instalace probìhla v poøádku."
-  ${LangFileString} MUI_TEXT_ABORT_TITLE "Instalace pøerušena"
-  ${LangFileString} MUI_TEXT_ABORT_SUBTITLE "Instalace nebyla dokonèena."
+  ${LangFileString} MUI_TEXT_INSTALLING_SUBTITLE "VyÄkejte, prosÃ­m, na dokonÄenÃ­ instalace programu $(^NameDA)."
+  ${LangFileString} MUI_TEXT_FINISH_TITLE "Instalace dokonÄena"
+  ${LangFileString} MUI_TEXT_FINISH_SUBTITLE "Instalace probÄ›hla v poÅ™Ã¡dku."
+  ${LangFileString} MUI_TEXT_ABORT_TITLE "Instalace pÅ™eruÅ¡ena"
+  ${LangFileString} MUI_TEXT_ABORT_SUBTITLE "Instalace nebyla dokonÄena."
 !endif
 
 !ifdef MUI_UNINSTFILESPAGE
   ${LangFileString} MUI_UNTEXT_UNINSTALLING_TITLE "Odinstalace"
-  ${LangFileString} MUI_UNTEXT_UNINSTALLING_SUBTITLE "Vyèkejte, prosím, na dokonèení odinstalace programu $(^NameDA)."
-  ${LangFileString} MUI_UNTEXT_FINISH_TITLE "Odinstalace dokonèena"
-  ${LangFileString} MUI_UNTEXT_FINISH_SUBTITLE "Odinstalace probìhla v poøádku."
-  ${LangFileString} MUI_UNTEXT_ABORT_TITLE "Odinstalace pøerušena"
-  ${LangFileString} MUI_UNTEXT_ABORT_SUBTITLE "Odinstalace nebyla dokonèena."
+  ${LangFileString} MUI_UNTEXT_UNINSTALLING_SUBTITLE "VyÄkejte, prosÃ­m, na dokonÄenÃ­ odinstalace programu $(^NameDA)."
+  ${LangFileString} MUI_UNTEXT_FINISH_TITLE "Odinstalace dokonÄena"
+  ${LangFileString} MUI_UNTEXT_FINISH_SUBTITLE "Odinstalace probÄ›hla v poÅ™Ã¡dku."
+  ${LangFileString} MUI_UNTEXT_ABORT_TITLE "Odinstalace pÅ™eruÅ¡ena"
+  ${LangFileString} MUI_UNTEXT_ABORT_SUBTITLE "Odinstalace nebyla dokonÄena."
 !endif
 
 !ifdef MUI_FINISHPAGE
-  ${LangFileString} MUI_TEXT_FINISH_INFO_TITLE "Dokonèení prùvodce programu $(^NameDA)"
-  ${LangFileString} MUI_TEXT_FINISH_INFO_TEXT "Program $(^NameDA) byl nainstalován na Váš poèítaè.$\r$\n$\r$\nKliknìte 'Dokonèit' pro ukonèení prùvodce."
-  ${LangFileString} MUI_TEXT_FINISH_INFO_REBOOT "Pro dokonèení instalace programu $(^NameDA) je nutno restartovat poèítaè. Chcete restatovat nyní?"
+  ${LangFileString} MUI_TEXT_FINISH_INFO_TITLE "DokonÄenÃ­ prÅ¯vodce programu $(^NameDA)"
+  ${LangFileString} MUI_TEXT_FINISH_INFO_TEXT "Program $(^NameDA) byl nainstalovÃ¡n na VÃ¡Å¡ poÄÃ­taÄ.$\r$\n$\r$\nKliknÄ›te 'DokonÄit' pro ukonÄenÃ­ prÅ¯vodce."
+  ${LangFileString} MUI_TEXT_FINISH_INFO_REBOOT "Pro dokonÄenÃ­ instalace programu $(^NameDA) je nutno restartovat poÄÃ­taÄ. Chcete restatovat nynÃ­?"
 !endif
 
 !ifdef MUI_UNFINISHPAGE
-  ${LangFileString} MUI_UNTEXT_FINISH_INFO_TITLE "Dokonèuji odinstalaèního prùvodce $(^NameDA)"
-  ${LangFileString} MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) byl odinstalován z Vašeho poèítaèe.$\r$\n$\r$\nKliknìte na 'Dokonèit' pro ukonèení tohoto prùvodce."
-  ${LangFileString} MUI_UNTEXT_FINISH_INFO_REBOOT "Pro dokonèení odinstalace $(^NameDA) musí bıt Váš poèítaè restartován. Chcete restartovat nyní?"
+  ${LangFileString} MUI_UNTEXT_FINISH_INFO_TITLE "DokonÄuji odinstalaÄnÃ­ho prÅ¯vodce $(^NameDA)"
+  ${LangFileString} MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) byl odinstalovÃ¡n z VaÅ¡eho poÄÃ­taÄe.$\r$\n$\r$\nKliknÄ›te na 'DokonÄit' pro ukonÄenÃ­ tohoto prÅ¯vodce."
+  ${LangFileString} MUI_UNTEXT_FINISH_INFO_REBOOT "Pro dokonÄenÃ­ odinstalace $(^NameDA) musÃ­ bÃ½t VÃ¡Å¡ poÄÃ­taÄ restartovÃ¡n. Chcete restartovat nynÃ­?"
 !endif
 
 !ifdef MUI_FINISHPAGE | MUI_UNFINISHPAGE
-  ${LangFileString} MUI_TEXT_FINISH_REBOOTNOW "Restartovat nyní"
-  ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Restartovat ruènì pozdìji"
+  ${LangFileString} MUI_TEXT_FINISH_REBOOTNOW "Restartovat nynÃ­"
+  ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Restartovat ruÄnÄ› pozdÄ›ji"
   ${LangFileString} MUI_TEXT_FINISH_RUN "&Spustit program $(^NameDA)"
-  ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "&Zobrazit Èti-mne"
-  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Dokonèit"  
+  ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "&Zobrazit ÄŒti-mne"
+  ${LangFileString} MUI_BUTTONTEXT_FINISH "&DokonÄit"  
 !endif
 
 !ifdef MUI_STARTMENUPAGE
-  ${LangFileString} MUI_TEXT_STARTMENU_TITLE "Zvolte sloku v Nabídce Start"
-  ${LangFileString} MUI_TEXT_STARTMENU_SUBTITLE "Zvolte sloku v Nabídce Start pro zástupce programu $(^NameDA)."
-  ${LangFileString} MUI_INNERTEXT_STARTMENU_TOP "Zvolte sloku v Nabídce Start, ve které chcete vytvoøit zástupce programu. Mùete také zadat nové jméno pro vytvoøení nové sloky."
-  ${LangFileString} MUI_INNERTEXT_STARTMENU_CHECKBOX "Nevytváøet zástupce"
+  ${LangFileString} MUI_TEXT_STARTMENU_TITLE "Zvolte sloÅ¾ku v NabÃ­dce Start"
+  ${LangFileString} MUI_TEXT_STARTMENU_SUBTITLE "Zvolte sloÅ¾ku v NabÃ­dce Start pro zÃ¡stupce programu $(^NameDA)."
+  ${LangFileString} MUI_INNERTEXT_STARTMENU_TOP "Zvolte sloÅ¾ku v NabÃ­dce Start, ve kterÃ© chcete vytvoÅ™it zÃ¡stupce programu. MÅ¯Å¾ete takÃ© zadat novÃ© jmÃ©no pro vytvoÅ™enÃ­ novÃ© sloÅ¾ky."
+  ${LangFileString} MUI_INNERTEXT_STARTMENU_CHECKBOX "NevytvÃ¡Å™et zÃ¡stupce"
 !endif
 
 !ifdef MUI_UNCONFIRMPAGE
   ${LangFileString} MUI_UNTEXT_CONFIRM_TITLE "Odinstalovat program $(^NameDA)"
-  ${LangFileString} MUI_UNTEXT_CONFIRM_SUBTITLE "Odebrat program $(^NameDA) z Vašeho poèítaèe."
+  ${LangFileString} MUI_UNTEXT_CONFIRM_SUBTITLE "Odebrat program $(^NameDA) z VaÅ¡eho poÄÃ­taÄe."
 !endif
 
 !ifdef MUI_ABORTWARNING
-  ${LangFileString} MUI_TEXT_ABORTWARNING "Opravdu chcete ukonèit instalaci programu $(^Name)?"
+  ${LangFileString} MUI_TEXT_ABORTWARNING "Opravdu chcete ukonÄit instalaci programu $(^Name)?"
 !endif
 
 !ifdef MUI_UNABORTWARNING
-  ${LangFileString} MUI_UNTEXT_ABORTWARNING "Skuteènì chcete ukonèit odinstalaci $(^Name)?"
+  ${LangFileString} MUI_UNTEXT_ABORTWARNING "SkuteÄnÄ› chcete ukonÄit odinstalaci $(^Name)?"
 !endif
