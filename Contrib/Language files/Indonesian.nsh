@@ -1,4 +1,4 @@
-;Language: Indonesian (1057)
+﻿;Language: Indonesian (1057)
 ;By Ariel825010106@yahoo.com modified by was.uthm@gmail.com in April 2009
 
 !insertmacro LANGFILE "Indonesian" "Indonesian"

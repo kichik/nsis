@@ -1,4 +1,4 @@
-# Header, don't edit
+Ôªø# Header, don't edit
 NLF v6
 # Language ID
 1040
@@ -101,13 +101,13 @@ Selezionare i componenti da disinstallare:
 # ^UnComponentsSubText2
 Oppure, selezionare i componenti opzionali che si desidera disinstallare :
 # ^DirText
-Questa procedura installer‡ $(^NameDA) nella cartella seguente. Per installare in una cartella diversa, selezionare Sfoglia e sceglierne un'altra. $_CLICK
+Questa procedura installer√† $(^NameDA) nella cartella seguente. Per installare in una cartella diversa, selezionare Sfoglia e sceglierne un'altra. $_CLICK
 # ^DirSubText
 Cartella di destinazione
 # ^DirBrowseText
 Selezionare la cartella dove installare $(^NameDA):
 # ^UnDirText
-Questa procedura disinstaller‡ $(^NameDA) nella cartella seguente. Per disinstallare da una cartella diversa, selezionare Sfoglia e sceglierene un'altra. $_CLICK
+Questa procedura disinstaller√† $(^NameDA) nella cartella seguente. Per disinstallare da una cartella diversa, selezionare Sfoglia e sceglierene un'altra. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
@@ -117,7 +117,7 @@ Selezionare la cartella dalla quale disinstallare $(^NameDA):
 # ^SpaceRequired
 "Spazio richiesto: "
 # ^UninstallingText
-$(^NameDA) verr‡ disinstallato dalla cartella seguente. $_CLICK
+$(^NameDA) verr√† disinstallato dalla cartella seguente. $_CLICK
 # ^UninstallingSubText
 Rimozione da:
 # ^FileError

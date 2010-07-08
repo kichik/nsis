@@ -1,4 +1,4 @@
-;Language: English (1033)
+﻿;Language: English (1033)
 ;By Joost Verburg
 
 !insertmacro LANGFILE "English" "English"

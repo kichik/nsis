@@ -1,4 +1,4 @@
-;Language: Uzbek (1091)
+Ôªø;Language: Uzbek (1091)
 ;Translation updated by Emil Garipov [emil.garipov@gmail.com] 
 
 !insertmacro LANGFILE "Uzbek" "Uzbek"
@@ -101,9 +101,9 @@
 !endif
 
 !ifdef MUI_STARTMENUPAGE
-  ${LangFileString} MUI_TEXT_STARTMENU_TITLE "Papka $\"œÛÒÍ$\" menyusida"
-  ${LangFileString} MUI_TEXT_STARTMENU_SUBTITLE "Dastur belgilarini joylashtirish uchun $\"œÛÒÍ$\" menyusidan papka tanlang."
-  ${LangFileString} MUI_INNERTEXT_STARTMENU_TOP "$\"œÛÒÍ$\" menyusidan dastur belgilari joylashadigan papka tanlang. Siz papkaning boshqa ismini kiritishingiz mumkin"
+  ${LangFileString} MUI_TEXT_STARTMENU_TITLE "Papka $\"√è√≥√±√™$\" menyusida"
+  ${LangFileString} MUI_TEXT_STARTMENU_SUBTITLE "Dastur belgilarini joylashtirish uchun $\"√è√≥√±√™$\" menyusidan papka tanlang."
+  ${LangFileString} MUI_INNERTEXT_STARTMENU_TOP "$\"√è√≥√±√™$\" menyusidan dastur belgilari joylashadigan papka tanlang. Siz papkaning boshqa ismini kiritishingiz mumkin"
   ${LangFileString} MUI_INNERTEXT_STARTMENU_CHECKBOX "Belgilar yaratilmasin"
 !endif
 
