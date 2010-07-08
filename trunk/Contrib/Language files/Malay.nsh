@@ -1,4 +1,4 @@
-;Language: Malay (1086)
+﻿;Language: Malay (1086)
 ;By muhammadazwa@yahoo.com
 
 !insertmacro LANGFILE "Malay" "Malay"

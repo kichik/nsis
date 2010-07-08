@@ -1,4 +1,4 @@
-# Header, don't edit
+Ôªø# Header, don't edit
 NLF v6
 # Start editing here
 # Language ID
@@ -13,27 +13,27 @@ NLF v6
 # Translation by Diego Marcos
 # Corrections by Felipe
 # ^Branding
-Sistema de InstalaÁ„o Nullsoft %s
+Sistema de Instala√ß√£o Nullsoft %s
 # ^SetupCaption
-InstalaÁ„o do $(^Name)
+Instala√ß√£o do $(^Name)
 # ^UninstallCaption
-DesinstalaÁ„o do $(^Name)
+Desinstala√ß√£o do $(^Name)
 # ^LicenseSubCaption
-: Acordo da LicenÁa
+: Acordo da Licen√ßa
 # ^ComponentsSubCaption
-: OpÁıes da InstalaÁ„o
+: Op√ß√µes da Instala√ß√£o
 # ^DirSubCaption
-: Pasta da InstalaÁ„o
+: Pasta da Instala√ß√£o
 # ^InstallingSubCaption
 : Instalando
 # ^CompletedSubCaption
 : Completado
 # ^UnComponentsSubCaption
-: OpÁıes da DesinstalaÁ„o
+: Op√ß√µes da Desinstala√ß√£o
 # ^UnDirSubCaption
-: Pasta da DesinstalaÁ„o
+: Pasta da Desinstala√ß√£o
 # ^ConfirmSubCaption
-: ConfirmaÁ„o
+: Confirma√ß√£o
 # ^UninstallingSubCaption
 : Desinstalando
 # ^UnCompletedSubCaption
@@ -41,13 +41,13 @@ DesinstalaÁ„o do $(^Name)
 # ^BackBtn
 < &Voltar
 # ^NextBtn
-&PrÛximo >
+&Pr√≥ximo >
 # ^AgreeBtn
 Eu &Concordo
 # ^AcceptBtn
-Eu &aceito os termos no Acordo da LicenÁa
+Eu &aceito os termos no Acordo da Licen√ßa
 # ^DontAcceptBtn
-Eu &n„o aceito os termos no Acordo da LicenÁa
+Eu &n√£o aceito os termos no Acordo da Licen√ßa
 # ^InstallBtn
 &Instalar
 # ^UninstallBtn
@@ -61,71 +61,71 @@ P&rocurar...
 # ^ShowDetailsBtn
 Mostrar &detalhes
 # ^ClickNext
-Clique em PrÛximo para continuar.
+Clique em Pr√≥ximo para continuar.
 # ^ClickInstall
-Clique em Instalar para iniciar a instalaÁ„o.
+Clique em Instalar para iniciar a instala√ß√£o.
 # ^ClickUninstall
-Clique em Desinstalar para iniciar a desinstalaÁ„o.
+Clique em Desinstalar para iniciar a desinstala√ß√£o.
 # ^Name
 Nome
 # ^Completed
 Completado
 # ^LicenseText
-Por favor reveja o acordo da licenÁa antes de instalar o $(^NameDA). Se vocÍ aceita todos os termos do acordo, clique em Eu Concordo.
+Por favor reveja o acordo da licen√ßa antes de instalar o $(^NameDA). Se voc√™ aceita todos os termos do acordo, clique em Eu Concordo.
 # ^LicenseTextCB
-Por favor reveja o acordo da licenÁa antes de instalar o $(^NameDA). Se vocÍ aceita todos os termos do acordo, clique na caixa de seleÁ„o abaixo. $_CLICK
+Por favor reveja o acordo da licen√ßa antes de instalar o $(^NameDA). Se voc√™ aceita todos os termos do acordo, clique na caixa de sele√ß√£o abaixo. $_CLICK
 # ^LicenseTextRB
-Por favor reveja o acordo da licenÁa antes de instalar o $(^NameDA). Se vocÍ aceita todos os termos do acordo, selecione a primeira opÁ„o abaixo. $_CLICK
+Por favor reveja o acordo da licen√ßa antes de instalar o $(^NameDA). Se voc√™ aceita todos os termos do acordo, selecione a primeira op√ß√£o abaixo. $_CLICK
 # ^UnLicenseText
-Por favor reveja o acordo da licenÁa antes de desinstalar o $(^NameDA). Se vocÍ aceita todos os termos do acordo, clique em Eu Concordo.
+Por favor reveja o acordo da licen√ßa antes de desinstalar o $(^NameDA). Se voc√™ aceita todos os termos do acordo, clique em Eu Concordo.
 # ^UnLicenseTextCB
-Por favor reveja o acordo da licenÁa antes de desinstalar o $(^NameDA). Se vocÍ aceita todos os termos do acordo, clique na caixa de seleÁ„o abaixo. $_CLICK
+Por favor reveja o acordo da licen√ßa antes de desinstalar o $(^NameDA). Se voc√™ aceita todos os termos do acordo, clique na caixa de sele√ß√£o abaixo. $_CLICK
 # ^UnLicenseTextRB
-Por favor reveja o acordo da licenÁa antes de desinstalar o $(^NameDA). Se vocÍ aceita todos os termos do acordo, selecione a primeira opÁ„o abaixo. $_CLICK
+Por favor reveja o acordo da licen√ßa antes de desinstalar o $(^NameDA). Se voc√™ aceita todos os termos do acordo, selecione a primeira op√ß√£o abaixo. $_CLICK
 # ^Custom
 Personalizado
 # ^ComponentsText
-Marque os componentes que vocÍ quer instalar e desmarque os componentes que vocÍ n„o quer instalar. $_CLICK
+Marque os componentes que voc√™ quer instalar e desmarque os componentes que voc√™ n√£o quer instalar. $_CLICK
 # ^ComponentsSubText1
-Selecione o tipo de instalaÁ„o:
+Selecione o tipo de instala√ß√£o:
 # ^ComponentsSubText2_NoInstTypes
 Selecione os componentes a instalar:
 # ^ComponentsSubText2
-Ou, selecione os componentes opcionais que vocÍ deseja instalar:
+Ou, selecione os componentes opcionais que voc√™ deseja instalar:
 # ^UnComponentsText
-Marque os componentes que vocÍ quer desinstalar e desmarque os componentes que vocÍ n„o quer desinstalar. $_CLICK
+Marque os componentes que voc√™ quer desinstalar e desmarque os componentes que voc√™ n√£o quer desinstalar. $_CLICK
 # ^UnComponentsSubText1
-Selecione o tipo de desinstalaÁ„o:
+Selecione o tipo de desinstala√ß√£o:
 # ^UnComponentsSubText2_NoInstTypes
 Selecione os componentes a desinstalar:
 # ^UnComponentsSubText2
-Ou, selecione os componentes opcionais que vocÍ deseja desinstalar:
+Ou, selecione os componentes opcionais que voc√™ deseja desinstalar:
 # ^DirText
-O Instalador instalar· o $(^NameDA) na seguinte pasta. Para instalar em uma pasta diferente, clique em Procurar e selecione outra pasta. $_CLICK
+O Instalador instalar√° o $(^NameDA) na seguinte pasta. Para instalar em uma pasta diferente, clique em Procurar e selecione outra pasta. $_CLICK
 # ^DirSubText
 Pasta Destino
 # ^DirBrowseText
 Selecione a pasta para instalar o $(^NameDA):
 # ^UnDirText
-O Instalador desinstalar· o $(^NameDA) da seguinte pasta. Para desinstalar de uma pasta diferente, clique em Procurar e selecione outra pasta. $_CLICK
+O Instalador desinstalar√° o $(^NameDA) da seguinte pasta. Para desinstalar de uma pasta diferente, clique em Procurar e selecione outra pasta. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
 Selecione a pasta de onde desinstalar o $(^NameDA):
 # ^SpaceAvailable
-"EspaÁo disponÌvel: "
+"Espa√ßo dispon√≠vel: "
 # ^SpaceRequired
-"EspaÁo requerido: "
+"Espa√ßo requerido: "
 # ^UninstallingText
-O $(^NameDA) ser· desinstalado da seguinte pasta. $_CLICK
+O $(^NameDA) ser√° desinstalado da seguinte pasta. $_CLICK
 # ^UninstallingSubText
 Desinstalando de:
 # ^FileError
-Erro ao abrir o arquivo para a gravaÁ„o: \r\n\r\n$0\r\n\r\nClique em Abortar para parar a instalaÁ„o,\r\nRepetir para tentar de novo, ou\r\nIgnorar para pular este arquivo.
+Erro ao abrir o arquivo para a grava√ß√£o: \r\n\r\n$0\r\n\r\nClique em Abortar para parar a instala√ß√£o,\r\nRepetir para tentar de novo, ou\r\nIgnorar para pular este arquivo.
 # ^FileError_NoIgnore
-Erro ao abrir o arquivo para a gravaÁ„o: \r\n\r\n$0\r\n\r\nClique em Repetir para tentar de novo, ou\r\nCancelar para parar a instalaÁ„o.
+Erro ao abrir o arquivo para a grava√ß√£o: \r\n\r\n$0\r\n\r\nClique em Repetir para tentar de novo, ou\r\nCancelar para parar a instala√ß√£o.
 # ^CantWrite
-"N„o pode escrever: "
+"N√£o pode escrever: "
 # ^CopyFailed
 Falhou em copiar
 # ^CopyTo
@@ -135,9 +135,9 @@ Falhou em copiar
 # ^Unregistering
 "Desfazendo o registro: "
 # ^SymbolNotFound
-"N„o pÙde achar o sÌmbolo: "
+"N√£o p√¥de achar o s√≠mbolo: "
 # ^CouldNotLoad
-"N„o pÙde carregar: "
+"N√£o p√¥de carregar: "
 # ^CreateFolder
 "Criar pasta: "
 # ^CreateShortcut
@@ -165,11 +165,11 @@ Erro ao registar a DLL
 # ^ErrorWriting
 "Extrair: erro ao gravar o arquivo "
 # ^InvalidOpcode
-Instalador corrompido: opcode inv·lido
+Instalador corrompido: opcode inv√°lido
 # ^NoOLE
 "Sem OLE para: "
 # ^OutputFolder
-"Pasta de saÌda: "
+"Pasta de sa√≠da: "
 # ^RemoveFolder
 "Remover a pasta: "
 # ^RenameOnReboot
@@ -179,9 +179,9 @@ Instalador corrompido: opcode inv·lido
 # ^Skipped
 "Ignorado: "
 # ^CopyDetails
-Copiar os Detalhes para a ¡rea de TransferÍncia
+Copiar os Detalhes para a √Årea de Transfer√™ncia
 # ^LogInstall
-PÙr no Log o processo de instalaÁ„o
+P√¥r no Log o processo de instala√ß√£o
 # ^Byte
 B
 # ^Kilo

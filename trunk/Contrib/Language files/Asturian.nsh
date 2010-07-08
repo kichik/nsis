@@ -1,109 +1,109 @@
-;Language: Asturian (1150)
+ï»¿;Language: Asturian (1150)
 ;By Marcos (marcoscostales@gmail.com).
 
 !insertmacro LANGFILE "Asturian" "Asturies"
 
 !ifdef MUI_WELCOMEPAGE
-  ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Bienveníu al Asistente d'Instalación de $(^NameDA)"
-  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Esti programa instalará $(^NameDA) nel to ordenador.$\r$\n$\r$\nEncamiéntase que zarres toles demás aplicaciones enantes d'aniciar la instalación. Esto faerá posible anovar ficheros rellacionaos col sistema ensin tener que reaniciar el to ordenador.$\r$\n$\r$\n$_CLICK"
+  ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "BienvenÃ­u al Asistente d'InstalaciÃ³n de $(^NameDA)"
+  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Esti programa instalarÃ¡ $(^NameDA) nel to ordenador.$\r$\n$\r$\nEncamiÃ©ntase que zarres toles demÃ¡s aplicaciones enantes d'aniciar la instalaciÃ³n. Esto faerÃ¡ posible anovar ficheros rellacionaos col sistema ensin tener que reaniciar el to ordenador.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_UNWELCOMEPAGE
-  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "Bienveníu al Asistente de Desinstalación de $(^NameDA)"
-  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Esti asistente guiaráte durante la desinstalación de $(^NameDA).$\r$\n$\r$\nEnantes d'aniciar la desinstalación, asegúrate de que $(^NameDA) nun se ta executando.$\r$\n$\r$\n$_CLICK"
+  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "BienvenÃ­u al Asistente de DesinstalaciÃ³n de $(^NameDA)"
+  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Esti asistente guiarÃ¡te durante la desinstalaciÃ³n de $(^NameDA).$\r$\n$\r$\nEnantes d'aniciar la desinstalaciÃ³n, asegÃºrate de que $(^NameDA) nun se ta executando.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_LICENSEPAGE
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Alcuerdu de llicencia"
-  ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Por favor revisa los términos de la llicencia enantes d'instalar $(^NameDA)."
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM "Si aceutes tolos términos del alcuerdu, seleiciona Aceuto pa siguir. Tienes d'aceutar l'alcuerdu pa instalar $(^NameDA)."
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Si aceutes los términos del alcuerdu, conseña embaxo la caxella. Tienes d'aceutar los términos pa instalar $(^NameDA). $_CLICK"
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Si aceutes los términos del alcuerdu, seleiciona embaxo la primer opción. Tienes d'aceutar los términos pa instalar $(^NameDA). $_CLICK"
+  ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Por favor revisa los tÃ©rminos de la llicencia enantes d'instalar $(^NameDA)."
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM "Si aceutes tolos tÃ©rminos del alcuerdu, seleiciona Aceuto pa siguir. Tienes d'aceutar l'alcuerdu pa instalar $(^NameDA)."
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Si aceutes los tÃ©rminos del alcuerdu, conseÃ±a embaxo la caxella. Tienes d'aceutar los tÃ©rminos pa instalar $(^NameDA). $_CLICK"
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Si aceutes los tÃ©rminos del alcuerdu, seleiciona embaxo la primer opciÃ³n. Tienes d'aceutar los tÃ©rminos pa instalar $(^NameDA). $_CLICK"
 !endif
 
 !ifdef MUI_UNLICENSEPAGE
   ${LangFileString} MUI_UNTEXT_LICENSE_TITLE "Alcuerdu de llicencia"
-  ${LangFileString} MUI_UNTEXT_LICENSE_SUBTITLE "Por favor revisa los términos de la llicencia enantes de desinstalar $(^NameDA)."
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "Si aceutes tolos términos del alcuerdu, seleiciona Aceuto pa siguir. Tienes d'aceutar l'alcuerdu pa desinstalar $(^NameDA)."
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Si aceutes los términos del alcuerdu, conseña embaxu la caxella. Tienes d'aceutar los términos pa desinstalar $(^NameDA). $_CLICK"
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Si aceutes los términos del alcuerdu, seleccione embaxu la primer opción. Tienes d'aceutar los términos pa desinstalar $(^NameDA). $_CLICK"
+  ${LangFileString} MUI_UNTEXT_LICENSE_SUBTITLE "Por favor revisa los tÃ©rminos de la llicencia enantes de desinstalar $(^NameDA)."
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "Si aceutes tolos tÃ©rminos del alcuerdu, seleiciona Aceuto pa siguir. Tienes d'aceutar l'alcuerdu pa desinstalar $(^NameDA)."
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Si aceutes los tÃ©rminos del alcuerdu, conseÃ±a embaxu la caxella. Tienes d'aceutar los tÃ©rminos pa desinstalar $(^NameDA). $_CLICK"
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Si aceutes los tÃ©rminos del alcuerdu, seleccione embaxu la primer opciÃ³n. Tienes d'aceutar los tÃ©rminos pa desinstalar $(^NameDA). $_CLICK"
 !endif
 
 !ifdef MUI_LICENSEPAGE | MUI_UNLICENSEPAGE
-  ${LangFileString} MUI_INNERTEXT_LICENSE_TOP "Calca Avanzar Páxina pa ver el restu del alcuerdu."
+  ${LangFileString} MUI_INNERTEXT_LICENSE_TOP "Calca Avanzar PÃ¡xina pa ver el restu del alcuerdu."
 !endif
 
 !ifdef MUI_COMPONENTSPAGE
-  ${LangFileString} MUI_TEXT_COMPONENTS_TITLE "Seleición de componentes"
-  ${LangFileString} MUI_TEXT_COMPONENTS_SUBTITLE "Seleicione qué carauterístiques de $(^NameDA) deseyes instalar."
-  ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Descripción"
+  ${LangFileString} MUI_TEXT_COMPONENTS_TITLE "SeleiciÃ³n de componentes"
+  ${LangFileString} MUI_TEXT_COMPONENTS_SUBTITLE "Seleicione quÃ© carauterÃ­stiques de $(^NameDA) deseyes instalar."
+  ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "DescripciÃ³n"
 !endif
 
 !ifdef MUI_UNCOMPONENTSPAGE
-  ${LangFileString} MUI_UNTEXT_COMPONENTS_TITLE "Seleición de componentes"
-  ${LangFileString} MUI_UNTEXT_COMPONENTS_SUBTITLE "Seleicione qué carauterístiques de $(^NameDA) quies desinstalar."
+  ${LangFileString} MUI_UNTEXT_COMPONENTS_TITLE "SeleiciÃ³n de componentes"
+  ${LangFileString} MUI_UNTEXT_COMPONENTS_SUBTITLE "Seleicione quÃ© carauterÃ­stiques de $(^NameDA) quies desinstalar."
 !endif
 
 !ifdef MUI_COMPONENTSPAGE | MUI_UNCOMPONENTSPAGE
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
-    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Allugue'l mur enriba d'un componente pa ver la so descripción."
+    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Allugue'l mur enriba d'un componente pa ver la so descripciÃ³n."
   !else
-    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Allugue'l mur enriba d'un componente pa ver la so descripción."
+    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Allugue'l mur enriba d'un componente pa ver la so descripciÃ³n."
   !endif
 !endif
 
 !ifdef MUI_DIRECTORYPAGE
-  ${LangFileString} MUI_TEXT_DIRECTORY_TITLE "Escoyer llugar d'instalación"
+  ${LangFileString} MUI_TEXT_DIRECTORY_TITLE "Escoyer llugar d'instalaciÃ³n"
   ${LangFileString} MUI_TEXT_DIRECTORY_SUBTITLE "Escueye'l direutoriu pa instalar $(^NameDA)."
 !endif
 
 !ifdef MUI_UNDIRECTORYPAGE
-  ${LangFileString} MUI_UNTEXT_DIRECTORY_TITLE "Escoyer llugar de desinstalación"
-  ${LangFileString} MUI_UNTEXT_DIRECTORY_SUBTITLE "Escueye'l direutoriu dende'l cual se desinstalará $(^NameDA)."
+  ${LangFileString} MUI_UNTEXT_DIRECTORY_TITLE "Escoyer llugar de desinstalaciÃ³n"
+  ${LangFileString} MUI_UNTEXT_DIRECTORY_SUBTITLE "Escueye'l direutoriu dende'l cual se desinstalarÃ¡ $(^NameDA)."
 !endif
 
 !ifdef MUI_INSTFILESPAGE
   ${LangFileString} MUI_TEXT_INSTALLING_TITLE "Instalando"
   ${LangFileString} MUI_TEXT_INSTALLING_SUBTITLE "Por favor espera mientres $(^NameDA) s'instala."
-  ${LangFileString} MUI_TEXT_FINISH_TITLE "Instalación Completada"
-  ${LangFileString} MUI_TEXT_FINISH_SUBTITLE "La instalación completóse correutamente."
-  ${LangFileString} MUI_TEXT_ABORT_TITLE "Instalación Desaniciada"
-  ${LangFileString} MUI_TEXT_ABORT_SUBTITLE "La instalación nun se completó correutamente."
+  ${LangFileString} MUI_TEXT_FINISH_TITLE "InstalaciÃ³n Completada"
+  ${LangFileString} MUI_TEXT_FINISH_SUBTITLE "La instalaciÃ³n completÃ³se correutamente."
+  ${LangFileString} MUI_TEXT_ABORT_TITLE "InstalaciÃ³n Desaniciada"
+  ${LangFileString} MUI_TEXT_ABORT_SUBTITLE "La instalaciÃ³n nun se completÃ³ correutamente."
 !endif
 
 !ifdef MUI_UNINSTFILESPAGE
   ${LangFileString} MUI_UNTEXT_UNINSTALLING_TITLE "Desinstalando"
   ${LangFileString} MUI_UNTEXT_UNINSTALLING_SUBTITLE "Por favor espera mientres $(^NameDA) se desinstala."
-  ${LangFileString} MUI_UNTEXT_FINISH_TITLE "Desinstalación Completada"
-  ${LangFileString} MUI_UNTEXT_FINISH_SUBTITLE "La desinstalación completóse correutamente."
-  ${LangFileString} MUI_UNTEXT_ABORT_TITLE "Desinstalación Desaniciada"
-  ${LangFileString} MUI_UNTEXT_ABORT_SUBTITLE "La desinstalación nun se completó correutamente."
+  ${LangFileString} MUI_UNTEXT_FINISH_TITLE "DesinstalaciÃ³n Completada"
+  ${LangFileString} MUI_UNTEXT_FINISH_SUBTITLE "La desinstalaciÃ³n completÃ³se correutamente."
+  ${LangFileString} MUI_UNTEXT_ABORT_TITLE "DesinstalaciÃ³n Desaniciada"
+  ${LangFileString} MUI_UNTEXT_ABORT_SUBTITLE "La desinstalaciÃ³n nun se completÃ³ correutamente."
 !endif
 
 !ifdef MUI_FINISHPAGE
-  ${LangFileString} MUI_TEXT_FINISH_INFO_TITLE "Completando l'Asistente d'Instalación de $(^NameDA)"
-  ${LangFileString} MUI_TEXT_FINISH_INFO_TEXT "$(^NameDA) foi instaláu nel to sistema.$\r$\n$\r$\nCalca Finar pa zarrar esti asistente."
-  ${LangFileString} MUI_TEXT_FINISH_INFO_REBOOT "El to sistema tien de reaniciase pa que pueda completase la instalación de $(^NameDA). ¿Quies reaniciar agora?"
+  ${LangFileString} MUI_TEXT_FINISH_INFO_TITLE "Completando l'Asistente d'InstalaciÃ³n de $(^NameDA)"
+  ${LangFileString} MUI_TEXT_FINISH_INFO_TEXT "$(^NameDA) foi instalÃ¡u nel to sistema.$\r$\n$\r$\nCalca Finar pa zarrar esti asistente."
+  ${LangFileString} MUI_TEXT_FINISH_INFO_REBOOT "El to sistema tien de reaniciase pa que pueda completase la instalaciÃ³n de $(^NameDA). Â¿Quies reaniciar agora?"
 !endif
 
 !ifdef MUI_UNFINISHPAGE
-  ${LangFileString} MUI_UNTEXT_FINISH_INFO_TITLE "Completando l'Asistente de Desinstalación de $(^NameDA)"
-  ${LangFileString} MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) foi desinstaláu del to sistema.$\r$\n$\r$\nCalca Finar pa zarrar esti asistente."
-  ${LangFileString} MUI_UNTEXT_FINISH_INFO_REBOOT "El to ordenador tien que reaniciar pa finar la desinstalación de $(^NameDA). ¿Quies reiniciar agora?"
+  ${LangFileString} MUI_UNTEXT_FINISH_INFO_TITLE "Completando l'Asistente de DesinstalaciÃ³n de $(^NameDA)"
+  ${LangFileString} MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) foi desinstalÃ¡u del to sistema.$\r$\n$\r$\nCalca Finar pa zarrar esti asistente."
+  ${LangFileString} MUI_UNTEXT_FINISH_INFO_REBOOT "El to ordenador tien que reaniciar pa finar la desinstalaciÃ³n de $(^NameDA). Â¿Quies reiniciar agora?"
 !endif
 
 !ifdef MUI_FINISHPAGE | MUI_UNFINISHPAGE
   ${LangFileString} MUI_TEXT_FINISH_REBOOTNOW "Reaniciar agora"
-  ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Deseo reaniciar manualmente más sero"
+  ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Deseo reaniciar manualmente mÃ¡s sero"
   ${LangFileString} MUI_TEXT_FINISH_RUN "&Executar $(^NameDA)"
-  ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "&Ver Lléame"
+  ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "&Ver LlÃ©ame"
   ${LangFileString} MUI_BUTTONTEXT_FINISH "&Finar"  
 !endif
 
 !ifdef MUI_STARTMENUPAGE
-  ${LangFileString} MUI_TEXT_STARTMENU_TITLE "Escoyer Carpeta del Menú Aniciu"
-  ${LangFileString} MUI_TEXT_STARTMENU_SUBTITLE "Escueye una Carpeta del Menú Aniciu pa los accesos direutos de $(^NameDA)."
-  ${LangFileString} MUI_INNERTEXT_STARTMENU_TOP "Seleiciona una carpeta del Menú Aniciu na que quieras criar los accesos direutos del programa. Tamién puedes introducir un nome pa criar una nueva carpeta."
+  ${LangFileString} MUI_TEXT_STARTMENU_TITLE "Escoyer Carpeta del MenÃº Aniciu"
+  ${LangFileString} MUI_TEXT_STARTMENU_SUBTITLE "Escueye una Carpeta del MenÃº Aniciu pa los accesos direutos de $(^NameDA)."
+  ${LangFileString} MUI_INNERTEXT_STARTMENU_TOP "Seleiciona una carpeta del MenÃº Aniciu na que quieras criar los accesos direutos del programa. TamiÃ©n puedes introducir un nome pa criar una nueva carpeta."
   ${LangFileString} MUI_INNERTEXT_STARTMENU_CHECKBOX "Non criar accesos direutos"
 !endif
 
@@ -113,17 +113,17 @@
 !endif
 
 !ifdef MUI_ABORTWARNING
-  ${LangFileString} MUI_TEXT_ABORTWARNING "¿De xuru que quies colar de la instalación de $(^Name)?"
+  ${LangFileString} MUI_TEXT_ABORTWARNING "Â¿De xuru que quies colar de la instalaciÃ³n de $(^Name)?"
 !endif
 
 !ifdef MUI_UNABORTWARNING
-  ${LangFileString} MUI_UNTEXT_ABORTWARNING "¿De xuru que quies colar de la desinstalación de $(^Name)?"
+  ${LangFileString} MUI_UNTEXT_ABORTWARNING "Â¿De xuru que quies colar de la desinstalaciÃ³n de $(^Name)?"
 !endif
 
 !ifdef MULTIUSER_INSTALLMODEPAGE
   ${LangFileString} MULTIUSER_TEXT_INSTALLMODE_TITLE "Escoyer Usuarios"
   ${LangFileString} MULTIUSER_TEXT_INSTALLMODE_SUBTITLE "Escueye los usuarios pa los cuales quies instalar $(^NameDA)."
-  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_TOP "Seleiciona si quies instalar $(^NameDA) namái pa tí o pa tolos usuarios d'esti Ordenador.$(^ClickNext)"
-  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_ALLUSERS "Instalación pa cualisquier usuariu d'esti ordenador"
-  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_CURRENTUSER "Instalación namái pa mí"
+  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_TOP "Seleiciona si quies instalar $(^NameDA) namÃ¡i pa tÃ­ o pa tolos usuarios d'esti Ordenador.$(^ClickNext)"
+  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_ALLUSERS "InstalaciÃ³n pa cualisquier usuariu d'esti ordenador"
+  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_CURRENTUSER "InstalaciÃ³n namÃ¡i pa mÃ­"
 !endif

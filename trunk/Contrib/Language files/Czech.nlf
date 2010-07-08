@@ -1,4 +1,4 @@
-# Header, don't edit
+ï»¿# Header, don't edit
 NLF v6
 # Language ID
 1029
@@ -17,35 +17,35 @@ Instalovat $(^Name)
 # ^UninstallCaption
 Odinstalovat $(^Name)
 # ^LicenseSubCaption
-: Licenèní ujednání
+: LicenÄnÃ­ ujednÃ¡nÃ­
 # ^ComponentsSubCaption
-: Monosti instalace
+: MoÅ¾nosti instalace
 # ^DirSubCaption
-: Umístìní instalace
+: UmÃ­stÄ›nÃ­ instalace
 # ^InstallingSubCaption
 : Instaluje se
 # ^CompletedSubCaption
-: Dokonèeno
+: DokonÄeno
 # ^UnComponentsSubCaption
-: Monosti odinstalace
+: MoÅ¾nosti odinstalace
 # ^UnDirSubCaption
-: Odinstalovat adresáø
+: Odinstalovat adresÃ¡Å™
 # ^ConfirmSubCaption
-: Potvrzení
+: PotvrzenÃ­
 # ^UninstallingSubCaption
-: Odinstalování
+: OdinstalovÃ¡nÃ­
 # ^UnCompletedSubCaption
-: Dokonèeno
+: DokonÄeno
 # ^BackBtn
-< &Zpìt
+< &ZpÄ›t
 # ^NextBtn
-&Další >
+&DalÅ¡Ã­ >
 # ^AgreeBtn
-Souhl&asím
+Souhl&asÃ­m
 # ^AcceptBtn
-Souhl&asím s podmínkami Licenèního ujednání
+Souhl&asÃ­m s podmÃ­nkami LicenÄnÃ­ho ujednÃ¡nÃ­
 # ^DontAcceptBtn
-&Nesouhlasím s podmínkami Licenèního ujednání
+&NesouhlasÃ­m s podmÃ­nkami LicenÄnÃ­ho ujednÃ¡nÃ­
 # ^InstallBtn
 &Instalovat
 # ^UninstallBtn
@@ -53,107 +53,107 @@ Souhl&asím s podmínkami Licenèního ujednání
 # ^CancelBtn
 Storno
 # ^CloseBtn
-&Zavøít
+&ZavÅ™Ã­t
 # ^BrowseBtn
-P&rocházet...
+P&rochÃ¡zet...
 # ^ShowDetailsBtn
 Zobrazit &detaily
 # ^ClickNext
-Pro pokraèování kliknìte na 'Další'.
+Pro pokraÄovÃ¡nÃ­ kliknÄ›te na 'DalÅ¡Ã­'.
 # ^ClickInstall
-Kliknìte na 'Instalovat' pro zahájení instalace.
+KliknÄ›te na 'Instalovat' pro zahÃ¡jenÃ­ instalace.
 # ^ClickUninstall
-Kliknìte na 'Odinstalovat' pro zahájení odinstalace.
+KliknÄ›te na 'Odinstalovat' pro zahÃ¡jenÃ­ odinstalace.
 # ^Name
-Název
+NÃ¡zev
 # ^Completed
-Dokonèeno
+DokonÄeno
 # ^LicenseText
-Pøed instalací $(^NameDA) si prosím pøeètìte licenèní ujednání. Jestlie souhlasíte se všema podmínkama ujednání, kliknìte 'Souhlasím'.
+PÅ™ed instalacÃ­ $(^NameDA) si prosÃ­m pÅ™eÄtÄ›te licenÄnÃ­ ujednÃ¡nÃ­. JestliÅ¾e souhlasÃ­te se vÅ¡ema podmÃ­nkama ujednÃ¡nÃ­, kliknÄ›te 'SouhlasÃ­m'.
 # ^LicenseTextCB
-Pøed instalací $(^NameDA) si prosím pøeètìte licenèní ujednání. Jestlie souhlasíte se všema podmínkama ujednání, zaškrtnìte políèko dole. $_CLICK
+PÅ™ed instalacÃ­ $(^NameDA) si prosÃ­m pÅ™eÄtÄ›te licenÄnÃ­ ujednÃ¡nÃ­. JestliÅ¾e souhlasÃ­te se vÅ¡ema podmÃ­nkama ujednÃ¡nÃ­, zaÅ¡krtnÄ›te polÃ­Äko dole. $_CLICK
 # ^LicenseTextRB
-Pøed instalací $(^NameDA) si prosím pøeètìte licenèní ujednání. Jestlie souhlasíte se všema podmínkama ujednání, zaškrtnìte níe první monost. $_CLICK
+PÅ™ed instalacÃ­ $(^NameDA) si prosÃ­m pÅ™eÄtÄ›te licenÄnÃ­ ujednÃ¡nÃ­. JestliÅ¾e souhlasÃ­te se vÅ¡ema podmÃ­nkama ujednÃ¡nÃ­, zaÅ¡krtnÄ›te nÃ­Å¾e prvnÃ­ moÅ¾nost. $_CLICK
 # ^UnLicenseText
-Pøed odinstalování $(^NameDA) si prosím pøeètìte licenèní ujednání. Jestlie souhlasíte se všema podmínkama ujednání, kliknìte 'Souhlasím'.
+PÅ™ed odinstalovÃ¡nÃ­ $(^NameDA) si prosÃ­m pÅ™eÄtÄ›te licenÄnÃ­ ujednÃ¡nÃ­. JestliÅ¾e souhlasÃ­te se vÅ¡ema podmÃ­nkama ujednÃ¡nÃ­, kliknÄ›te 'SouhlasÃ­m'.
 # ^UnLicenseTextCB
-Pøed odinstalování $(^NameDA) si prosím pøeètìte licenèní ujednání. Jestlie souhlasíte se všema podmínkama ujednání, zaškrtnìte políèko dole. $_CLICK
+PÅ™ed odinstalovÃ¡nÃ­ $(^NameDA) si prosÃ­m pÅ™eÄtÄ›te licenÄnÃ­ ujednÃ¡nÃ­. JestliÅ¾e souhlasÃ­te se vÅ¡ema podmÃ­nkama ujednÃ¡nÃ­, zaÅ¡krtnÄ›te polÃ­Äko dole. $_CLICK
 # ^UnLicenseTextRB
-Pøed odinstalování $(^NameDA) si prosím pøeètìte licenèní ujednání. Jestlie souhlasíte se všema podmínkama ujednání, zaškrtnìte níe první monost. $_CLICK
+PÅ™ed odinstalovÃ¡nÃ­ $(^NameDA) si prosÃ­m pÅ™eÄtÄ›te licenÄnÃ­ ujednÃ¡nÃ­. JestliÅ¾e souhlasÃ­te se vÅ¡ema podmÃ­nkama ujednÃ¡nÃ­, zaÅ¡krtnÄ›te nÃ­Å¾e prvnÃ­ moÅ¾nost. $_CLICK
 # ^Custom
-Vlastní
+VlastnÃ­
 # ^ComponentsText
-Zvolte souèásti, které chcete nainstalovat a nezatrhnìte souèásti, které instalovat nechcete. $_CLICK
+Zvolte souÄÃ¡sti, kterÃ© chcete nainstalovat a nezatrhnÄ›te souÄÃ¡sti, kterÃ© instalovat nechcete. $_CLICK
 # ^ComponentsSubText1
-Zvolte zpùsob instalace:
+Zvolte zpÅ¯sob instalace:
 # ^ComponentsSubText2_NoInstTypes
-Zvolte souèásti k instalaci:
+Zvolte souÄÃ¡sti k instalaci:
 # ^ComponentsSubText2
-Nebo zvolte volitelné souèásti, které chcete nainstalovat:
+Nebo zvolte volitelnÃ© souÄÃ¡sti, kterÃ© chcete nainstalovat:
 # ^UnComponentsText
-Zatrhnìte souèásti, které chcete odinstalovat a nezatrhnìte souèásti, které odinstalovat nechcete. $_CLICK
+ZatrhnÄ›te souÄÃ¡sti, kterÃ© chcete odinstalovat a nezatrhnÄ›te souÄÃ¡sti, kterÃ© odinstalovat nechcete. $_CLICK
 # ^UnComponentsSubText1
-Zvolte zpùsob odinstalace:
+Zvolte zpÅ¯sob odinstalace:
 # ^UnComponentsSubText2_NoInstTypes
-Zvolte souèásti pro odinstalaci:
+Zvolte souÄÃ¡sti pro odinstalaci:
 # ^UnComponentsSubText2
-Nebo zvolte jednotlivé souèásti, které chcete odinstalovat:
+Nebo zvolte jednotlivÃ© souÄÃ¡sti, kterÃ© chcete odinstalovat:
 # ^DirText
-Setup nyní nainstaluje program $(^NameDA) do následující sloky. Pro instalaci do jiné sloky zvolte 'Procházet' a vyberte jinou sloku. $_CLICK
+Setup nynÃ­ nainstaluje program $(^NameDA) do nÃ¡sledujÃ­cÃ­ sloÅ¾ky. Pro instalaci do jinÃ© sloÅ¾ky zvolte 'ProchÃ¡zet' a vyberte jinou sloÅ¾ku. $_CLICK
 # ^DirSubText
-Cílová sloka
+CÃ­lovÃ¡ sloÅ¾ka
 # ^DirBrowseText
-Zvolte sloku kam instalovat program $(^NameDA):
+Zvolte sloÅ¾ku kam instalovat program $(^NameDA):
 # ^UnDirText
-Setup nyní odinstaluje program $(^NameDA) z následující sloky. Pro odinstalaci z jiné sloky zvolte 'Procházet' a vyberte jinou sloku. $_CLICK
+Setup nynÃ­ odinstaluje program $(^NameDA) z nÃ¡sledujÃ­cÃ­ sloÅ¾ky. Pro odinstalaci z jinÃ© sloÅ¾ky zvolte 'ProchÃ¡zet' a vyberte jinou sloÅ¾ku. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
-Zvolte adresáø pro odinstalaci $(^NameDA) z:
+Zvolte adresÃ¡Å™ pro odinstalaci $(^NameDA) z:
 # ^SpaceAvailable
-"Volné místo: "
+"VolnÃ© mÃ­sto: "
 # ^SpaceRequired
-"Potøebné místo: "
+"PotÅ™ebnÃ© mÃ­sto: "
 # ^UninstallingText
-Tento prùvodce z Vašeho poèítaèe odinstaluje $(^NameDA). $_CLICK
+Tento prÅ¯vodce z VaÅ¡eho poÄÃ­taÄe odinstaluje $(^NameDA). $_CLICK
 # ^UninstallingSubText
 Odinstalovat z:
 # ^FileError
-Nelze otevøít soubor pro zápis: \r\n\t"$0"\r\nStisknìte 'Pøerušit' pro ukonèení instalace\r\nnebo 'Znovu' pro další pokus nebo\r\n'Ignorovat' pro pøeskoèení souboru
+Nelze otevÅ™Ã­t soubor pro zÃ¡pis: \r\n\t"$0"\r\nStisknÄ›te 'PÅ™eruÅ¡it' pro ukonÄenÃ­ instalace\r\nnebo 'Znovu' pro dalÅ¡Ã­ pokus nebo\r\n'Ignorovat' pro pÅ™eskoÄenÃ­ souboru
 # ^FileError_NoIgnore
-Nelze otevøít soubor pro zápis: \r\n\t"$0"\r\nStisknìte 'Znovu' pro další pokus nebo\r\n*Storno* pro ukonèení instalace
+Nelze otevÅ™Ã­t soubor pro zÃ¡pis: \r\n\t"$0"\r\nStisknÄ›te 'Znovu' pro dalÅ¡Ã­ pokus nebo\r\n*Storno* pro ukonÄenÃ­ instalace
 # ^CantWrite
 "Nelze zapsat: "
 # ^CopyFailed
-Kopírování selhalo
+KopÃ­rovÃ¡nÃ­ selhalo
 # ^CopyTo
-"Zkopírovat do "
+"ZkopÃ­rovat do "
 # ^Registering
-"Registrování: "
+"RegistrovÃ¡nÃ­: "
 # ^Unregistering
-"Odregistrování: "
+"OdregistrovÃ¡nÃ­: "
 # ^SymbolNotFound
-"Nelze najít znak: "
+"Nelze najÃ­t znak: "
 # ^CouldNotLoad
-"Nelze naèíst: "
+"Nelze naÄÃ­st: "
 # ^CreateFolder
-"Vytvoøen adresáø: "
+"VytvoÅ™en adresÃ¡Å™: "
 # ^CreateShortcut
-"Vytvoøen zástupce: "
+"VytvoÅ™en zÃ¡stupce: "
 # ^CreatedUninstaller
-"Vytvoøen odinstalátor: "
+"VytvoÅ™en odinstalÃ¡tor: "
 # ^Delete
 "Smazat soubor: "
 # ^DeleteOnReboot
 "Smazat po restartu: "
 # ^ErrorCreatingShortcut
-"Chyba pøi vytváøení zástupce: "
+"Chyba pÅ™i vytvÃ¡Å™enÃ­ zÃ¡stupce: "
 # ^ErrorCreating
-"Chyba pøi vytváøení: "
+"Chyba pÅ™i vytvÃ¡Å™enÃ­: "
 # ^ErrorDecompressing
-Chyba pøi rozbalování dat! Poškozenı instalátor?
+Chyba pÅ™i rozbalovÃ¡nÃ­ dat! PoÅ¡kozenÃ½ instalÃ¡tor?
 # ^ErrorRegistering
-Chyba pøi registrování DLL
+Chyba pÅ™i registrovÃ¡nÃ­ DLL
 # ^ExecShell
 "Spustit shell: "
 # ^Exec
@@ -161,25 +161,25 @@ Chyba pøi registrování DLL
 # ^Extract
 "Rozbalit: "
 # ^ErrorWriting
-"Rozbalit: chyba pøi zápisu do souboru "
+"Rozbalit: chyba pÅ™i zÃ¡pisu do souboru "
 # ^InvalidOpcode
-Instalátor je poškozen: nesprávnı kontrolní kód
+InstalÃ¡tor je poÅ¡kozen: nesprÃ¡vnÃ½ kontrolnÃ­ kÃ³d
 # ^NoOLE
-"Nedostupné OLE pro: "
+"NedostupnÃ© OLE pro: "
 # ^OutputFolder
-"Vıstupní sloka: "
+"VÃ½stupnÃ­ sloÅ¾ka: "
 # ^RemoveFolder
-"Odstranit sloku: "
+"Odstranit sloÅ¾ku: "
 # ^RenameOnReboot
-"Pøejmenovat pøi restartu: "
+"PÅ™ejmenovat pÅ™i restartu: "
 # ^Rename
-"Pøejmenováno: "
+"PÅ™ejmenovÃ¡no: "
 # ^Skipped
-"Pøeskoèeno: "
+"PÅ™eskoÄeno: "
 # ^CopyDetails
-Zkopírovat podrobnosti do schránky
+ZkopÃ­rovat podrobnosti do schrÃ¡nky
 # ^LogInstall
-Zaznamenat prùbìh instalace
+Zaznamenat prÅ¯bÄ›h instalace
 # ^Byte
 B
 # ^Kilo
