@@ -1,7 +1,7 @@
 ﻿;Language: Catalan (1027)
 ;By falanko, corrections by Toni Hermoso Pulido
 
-!insertmacro LANGFILE "Catalan" "Català"
+!insertmacro LANGFILE "Catalan" "Catala" "Català"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Benvinguts a l'auxiliar d'instal·lació de l'aplicació $(^NameDA)"

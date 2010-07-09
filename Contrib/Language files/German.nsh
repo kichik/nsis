@@ -1,7 +1,7 @@
 ﻿;Language: German (1031)
 ;By L.King, changes by K. Windszus & R. Bisswanger & M. Simmack & D. Weiß & Frederik Schwarzer
 
-!insertmacro LANGFILE "German" "Deutsch"
+!insertmacro LANGFILE "German" "Deutsch" "Deutsch"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Willkommen beim Installations-$\r$\nAssistenten für $(^NameDA)"

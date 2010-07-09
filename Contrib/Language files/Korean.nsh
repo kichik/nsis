@@ -1,7 +1,7 @@
 ﻿;Language: Korean (1042)
 ;By linak linak@korea.com ( ~ V2.0 BETA3 ) By kippler@gmail.com(www.kipple.pe.kr) ( V2.0 BETA3 ~ ) (last update:2007/09/05)
 
-!insertmacro LANGFILE "Korean" "Korean"
+!insertmacro LANGFILE "Korean" "Korean" "한국어"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "$(^NameDA) 설치를 시작합니다."

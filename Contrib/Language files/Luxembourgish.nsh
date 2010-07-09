@@ -1,7 +1,7 @@
 ﻿;Language: Luxembourgish (1031)
 ;By Snowloard, changes by Philo
 
-!insertmacro LANGFILE "Luxembourgish" "Lëtzebuergesch"
+!insertmacro LANGFILE "Luxembourgish" "Letzebuergesch" "Lëtzebuergesch"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Wëllkomm beim Installatiouns-$\r$\nAssistent vun $(^NameDA)"

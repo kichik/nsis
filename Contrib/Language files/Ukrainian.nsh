@@ -2,7 +2,7 @@
 ;By Yuri Holubow, http://www.Nash-Soft.com
 ;Correct by Osidach Vitaly (Vit_Os2)
 
-!insertmacro LANGFILE "Ukrainian" "Ukrainian"
+!insertmacro LANGFILE "Ukrainian" "Ukrainian" "Українська"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Ласкаво просимо до Майстра Встановлення $(^NameDA)"

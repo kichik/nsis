@@ -2,7 +2,7 @@
 ;By SELiCE (ls@selice.cz - http://ls.selice.cz)
 ;Corrected by Ondřej Vaniš - http://www.vanis.cz/ondra
 
-!insertmacro LANGFILE "Czech" "Cesky"
+!insertmacro LANGFILE "Czech" "Cestina" "Čeština"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Vítejte v průvodci instalace programu $(^NameDA)"

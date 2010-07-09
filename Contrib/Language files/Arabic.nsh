@@ -2,7 +2,7 @@
 ;Translation by asdfuae@msn.com
 ;updated by Rami Kattan
 
-!insertmacro LANGFILE "Arabic" "Arabic"
+!insertmacro LANGFILE "Arabic" "Arabic" "العربية"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "مرحبا بك في مرشد إعداد $(^NameDA)"
