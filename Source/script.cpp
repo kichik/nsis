@@ -5562,6 +5562,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return add_entry(&ent);
 #ifdef _UNICODE
     case TOK_FILEREADUTF16LE:
+      if (!build_unicode)
+      {
+        ERROR_MSG(_T("Error: %s is only available when building a Unicode installer\n"),  line.gettoken_str(0));
+        return PS_ERROR;
+      }
       ent.which=EW_FGETWS;
       ent.offsets[0]=GetUserVarIndex(line, 1); // file handle
       ent.offsets[1]=GetUserVarIndex(line, 2); // output string
@@ -5573,6 +5578,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       SCRIPT_MSG(_T("FileReadUTF16LE: %s->%s (max:%s)\n"),line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3));
     return add_entry(&ent);
     case TOK_FILEWRITEUTF16LE:
+      if (!build_unicode)
+      {
+        ERROR_MSG(_T("Error: %s is only available when building a Unicode installer\n"),  line.gettoken_str(0));
+        return PS_ERROR;
+      }
       ent.which=EW_FPUTWS;
       ent.offsets[0]=GetUserVarIndex(line, 1); // file handle
       ent.offsets[1]=add_string(line.gettoken_str(2));
@@ -5580,6 +5590,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       SCRIPT_MSG(_T("FileWriteUTF16LE: %s->%s\n"),line.gettoken_str(2),line.gettoken_str(1));
     return add_entry(&ent);
     case TOK_FILEREADWORD:
+      if (!build_unicode)
+      {
+        ERROR_MSG(_T("Error: %s is only available when building a Unicode installer\n"),  line.gettoken_str(0));
+        return PS_ERROR;
+      }
       ent.which=EW_FGETWS;
       ent.offsets[0]=GetUserVarIndex(line, 1); // file handle
       ent.offsets[1]=GetUserVarIndex(line, 2); // output string
@@ -5589,6 +5604,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       SCRIPT_MSG(_T("FileReadWord: %s->%s\n"),line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_FILEWRITEWORD:
+      if (!build_unicode)
+      {
+        ERROR_MSG(_T("Error: %s is only available when building a Unicode installer\n"),  line.gettoken_str(0));
+        return PS_ERROR;
+      }
       ent.which=EW_FPUTWS;
       ent.offsets[0]=GetUserVarIndex(line, 1); // file handle
       ent.offsets[1]=add_string(line.gettoken_str(2));

@@ -87,6 +87,23 @@ This command sets the overwrite flag which is used by the \R{file}{File} command
 \c File program.cfg # config file we don't want to overwrite
 \c SetOverwrite on
 
+\S2{atargetminimalos} TargetMinimalOS
+
+\c X.Y
+
+This command sets the minimal OS version of the target Windows system required in order to run the installer. This will NOT make the installer test for OS compatibility, but it will indicate which Windows APIs will be available for use by the installer program. The installer will not be able to execute on older systems.
+
+In particular, if you indicate a minimal OS of 5.0 or more, MakeNSIS will generate a \R{intro-unicode}{Unicode installer} (as Windows 2000 and more recent are Unicode fully-compatible OSes).
+
+\c TargetMinimalOS 4.1    ; target Windows 9x or more recent
+\c TargetMinimalOS 4.2    ; target Windows NT4 or more recent
+\c TargetMinimalOS 5.0    ; target Windows 2000 or more recent  / make a Unicode installer
+\c TargetMinimalOS 5.1    ; target Windows XP or more recent    / make a Unicode installer
+\c TargetMinimalOS 6.0    ; target Windows Vista or more recent / make a Unicode installer
+\c TargetMinimalOS 6.1    ; target Windows Seven or more recent / make a Unicode installer
+
+Check the various \W{http://msdn.microsoft.com/en-us/library/ms724833.aspx}{version numbers of Windows}.
+
 \S1{versioninfo} Version Information
 
 \S2{viaddversionkey} VIAddVersionKey

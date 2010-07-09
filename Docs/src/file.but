@@ -21,12 +21,30 @@ If no absolute path is specified the current folder will be used. The current fo
 
 \c handle user_var(output) [maxlen]
 
-Reads a string from a file opened with FileOpen. The string is read until either a newline (or carriage return newline pair) occurs, or until a null byte is read, or until maxlen is met (if specified). By default, strings are limited to 1024 characters (a special build with larger NSIS_MAX_STRLEN can be compiled or downloaded). If the end of file is read and no more data is available, the output string will be empty, and the error flag will be set.
+Reads a string (ANSI characters) from a file opened with FileOpen. The string is read until either a newline (or carriage return newline pair) occurs, or until a null byte is read, or until maxlen is met (if specified). By default, strings are limited to 1024 characters (a special build with larger NSIS_MAX_STRLEN can be compiled or downloaded). If the end of file is read and no more data is available, the output string will be empty, and the error flag will be set.
+
+(If you are building a \R{intro-unicode}{Unicode installer}, the function reads an ANSI string and makes the adequate conversion)
 
 \c ClearErrors
 \c FileOpen $0 $INSTDIR\file.dat r
 \c IfErrors done
 \c FileRead $0 $1
+\c DetailPrint $1
+\c FileClose $0
+\c done:
+
+\S2{FileReadUTF16LE} FileReadUTF16LE
+
+\c handle user_var(output) [maxlen]
+
+This function is only available when building a \R{intro-unicode}{Unicode installer}.
+
+Reads a string (UTF-16LE characters) from a file opened with FileOpen. The string is read until either a newline (or carriage return newline pair) occurs, or until a null wide-character is read, or until maxlen is met (if specified). By default, strings are limited to 1024 characters (a special build with larger NSIS_MAX_STRLEN can be compiled or downloaded). If the end of file is read and no more data is available, the output string will be empty, and the error flag will be set.
+
+\c ClearErrors
+\c FileOpen $0 $INSTDIR\file.dat r
+\c IfErrors done
+\c FileReadUTF16LE $0 $1
 \c DetailPrint $1
 \c FileClose $0
 \c done:
@@ -42,6 +60,23 @@ Reads a byte from a file opened with FileOpen. The byte is stored in the output 
 \c IfErrors done
 \c FileReadByte $0 $1
 \c FileReadByte $0 $2
+\c DetailPrint "$1 $2"
+\c FileClose $0
+\c done:
+
+\S2{FileReadWord} FileReadWord
+
+\c handle user_var(output)
+
+This function is only available when building a \R{intro-unicode}{Unicode installer}.
+
+Reads a word (2-bytes) from a file opened with FileOpen. The word is stored in the output as an integer (0-65535). If the end of file is read and no more data is available, the output will be empty, and the error flag will be set.
+
+\c ClearErrors
+\c FileOpen $0 $INSTDIR\file.dat r
+\c IfErrors done
+\c FileReadWord $0 $1
+\c FileReadWord $0 $2
 \c DetailPrint "$1 $2"
 \c FileClose $0
 \c done:
@@ -65,12 +100,29 @@ Seeks a file opened with FileOpen. If mode is omitted or specified as SET, the f
 
 \c handle string
 
-Writes a string to a file opened with FileOpen. If an error occurs writing, the error flag will be set.
+Writes an ANSI string to a file opened with FileOpen. If an error occurs writing, the error flag will be set.
+
+(If you are building a \R{intro-unicode}{Unicode installer}, the function makes the adequate conversion and writes an ANSI string)
 
 \c ClearErrors
 \c FileOpen $0 $INSTDIR\file.dat w
 \c IfErrors done
 \c FileWrite $0 "some text"
+\c FileClose $0
+\c done:
+
+\S2{FileWriteUTF16LE} FileWriteUTF16LE
+
+\c handle string
+
+This function is only available when building a \R{intro-unicode}{Unicode installer}.
+
+Writes a Unicode (UTF-16LE) string to a file opened with FileOpen. If an error occurs writing, the error flag will be set.
+
+\c ClearErrors
+\c FileOpen $0 $INSTDIR\file.dat w
+\c IfErrors done
+\c FileWriteUTF16LE $0 "some text"
 \c FileClose $0
 \c done:
 
@@ -84,6 +136,19 @@ Writes the integer interpretation of 'string' to a file opened with FileOpen. Of
 \c FileWriteByte file_handle "10"
 
 If an error occurs while writing, the error flag will be set. Note that the low byte of the integer is used, i.e. writing 256 is the same as writing 0, etc.
+
+\S2{FileWriteWord} FileWriteWord
+
+\c handle string
+
+This function is only available when building a \R{intro-unicode}{Unicode installer}.
+
+Writes the integer interpretation of 'string' as a WORD (2-bytes, range: 0-65535) to a file opened with FileOpen. Of course you can enter the integer value directly. The following code writes a "Carriage Return / Line Feed" - Enter to the file.
+
+\c FileWriteWord file_handle "13"
+\c FileWriteWord file_handle "10"
+
+If an error occurs while writing, the error flag will be set. Note that the low WORD of the integer is used, i.e. writing 65536 is the same as writing 0, etc.
 
 \S2{FindClose} FindClose
 
