@@ -43,9 +43,9 @@ $(^Name) Rakirin
 # ^AgreeBtn
 &Ez Dipejirînim
 # ^AcceptBtn
-Þertên Peymanê &Dipejirînim
+Şertên Peymanê &Dipejirînim
 # ^DontAcceptBtn
-Þertên Peymanê Napejirînim
+Şertên Peymanê Napejirînim
 # ^InstallBtn
 &Saz Bike
 # ^UninstallBtn
@@ -57,7 +57,7 @@ Betal
 # ^BrowseBtn
 &Çavlêgerîn...
 # ^ShowDetailsBtn
-Hûragahiyan &Nîþan Bide
+Hûragahiyan &Nîşan Bide
 # ^ClickNext
 Ji bo berdewamê 'Bidomîne'yê bitikîne.
 # ^ClickInstall
@@ -69,35 +69,35 @@ nav
 # ^Completed
 Qediya
 # ^LicenseText
-Ji kerema xwe re berî tu bernameya $(^NameDA) saz bikî, çavekî li peymana lîsansê bigerîne. Heke tu hemû þertên peymanê dipejirînî, 'Ez Dipejirînim'ê bitikîne.
+Ji kerema xwe re berî tu bernameya $(^NameDA) saz bikî, çavekî li peymana lîsansê bigerîne. Heke tu hemû şertên peymanê dipejirînî, 'Ez Dipejirînim'ê bitikîne.
 # ^LicenseTextCB
-Ji kerema xwe re berî tu bernameya $(^NameDA) saz bikî, çavekî li peymana lîsansê bigerîne. Heke tu hemû þertan dipejirînî, zeviya erêkirinê ya jêrîn dagire. $_CLICK
+Ji kerema xwe re berî tu bernameya $(^NameDA) saz bikî, çavekî li peymana lîsansê bigerîne. Heke tu hemû şertan dipejirînî, zeviya erêkirinê ya jêrîn dagire. $_CLICK
 # ^LicenseTextRB
-Ji kerema xwe re berî tu bernameya $(^NameDA) saz bikî çavekî li peymana lîsansê bigerîne. Heke tu hemû þertên peymanê dipejirînî, zeviya vebijêrkê ya jêrîn dagire. $_CLICK
+Ji kerema xwe re berî tu bernameya $(^NameDA) saz bikî çavekî li peymana lîsansê bigerîne. Heke tu hemû şertên peymanê dipejirînî, zeviya vebijêrkê ya jêrîn dagire. $_CLICK
 # ^UnLicenseText
-Ji kerema xwe re berî tu bernameya $(^NameDA) rakî, çavekî li peymana lîsansê bigerîne. Heke tu hemû þertên peymanê dipejirînî, 'Ez Dipejirînim'ê bitikîn.
+Ji kerema xwe re berî tu bernameya $(^NameDA) rakî, çavekî li peymana lîsansê bigerîne. Heke tu hemû şertên peymanê dipejirînî, 'Ez Dipejirînim'ê bitikîn.
 # ^UnLicenseTextCB
-Ji kerema xwe re berî tu bernameya $(^NameDA) ji pergala xwe rakî, çavekî li peymana lîsansê bigerîne. Heke tu hemû þertên peymanê dipejirînî, zeviya jêrîn a erêkirinê dagire. $_CLICK
+Ji kerema xwe re berî tu bernameya $(^NameDA) ji pergala xwe rakî, çavekî li peymana lîsansê bigerîne. Heke tu hemû şertên peymanê dipejirînî, zeviya jêrîn a erêkirinê dagire. $_CLICK
 # ^UnLicenseTextRB
-Ji kerema xwe re berî tu bernameya $(^NameDA) ji pergala xwe rakî, çavekî li peymana lîsansê bigerîne. Heke tu hemû þertên peymanê dipejirînî, zeviya vebijêrkê ya jêrîn dagire. $_CLICK
+Ji kerema xwe re berî tu bernameya $(^NameDA) ji pergala xwe rakî, çavekî li peymana lîsansê bigerîne. Heke tu hemû şertên peymanê dipejirînî, zeviya vebijêrkê ya jêrîn dagire. $_CLICK
 # ^Custom
 Taybet
 # ^ComponentsText
-Beþên tu dixwazî saz bikî hilbijêre û niqirên 'check' beþên tu naxwazî werin sazkirin rake. $_CLICK
+Beşên tu dixwazî saz bikî hilbijêre û niqirên 'check' beşên tu naxwazî werin sazkirin rake. $_CLICK
 # ^ComponentsSubText1
 Awayê sazkirinê hilbijêre:
 # ^ComponentsSubText2_NoInstTypes
-Beþên dê werin sazkirin hilbijêre:
+Beşên dê werin sazkirin hilbijêre:
 # ^ComponentsSubText2
-an jî, beþên beþên tu dixwazî werin sazkirin hilbijêre:
+an jî, beşên beşên tu dixwazî werin sazkirin hilbijêre:
 # ^UnComponentsText
-Beþên tu dixwazî rakî hilbijêre, an jî niqira 'check'a ber beþên tu daxwazî were rakirin, rake. $_CLICK
+Beşên tu dixwazî rakî hilbijêre, an jî niqira 'check'a ber beşên tu daxwazî were rakirin, rake. $_CLICK
 # ^UnComponentsSubText1
 Awayê rakirinê hilbijêre:
 # ^UnComponentsSubText2_NoInstTypes
-Beþên dê werin rakirin hilbijêre:
+Beşên dê werin rakirin hilbijêre:
 # ^UnComponentsSubText2
-an jî beþên tu dixwazî werin rakirin hilbijêre:
+an jî beşên tu dixwazî werin rakirin hilbijêre:
 # ^DirText
 $(^NameDA) dê ji aliyê sazkirinê ve li peldanka jêrîn were sazkirin. Ji bo tu li peldankeke din saz bikî 'Çavlêgerîn'ê bitikîne û peldankeke din hilbijêre. $_CLICK
 # ^DirSubText
@@ -179,7 +179,7 @@ Sazkirina Xirabe: koda nerast pêkanînê
 # ^CopyDetails
 Hûragahiyan li Pano'yê binivîse
 # ^LogInstall
-Pêkanîna sazkirinê li lênûska rewþê binivîse
+Pêkanîna sazkirinê li lênûska rewşê binivîse
 # ^Byte
 B
 # ^Kilo
