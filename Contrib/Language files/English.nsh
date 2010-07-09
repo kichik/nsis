@@ -4,13 +4,13 @@
 !insertmacro LANGFILE "English" "English" "English"
 
 !ifdef MUI_WELCOMEPAGE
-  ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Welcome to the $(^NameDA) Setup Wizard"
-  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "This wizard will guide you through the installation of $(^NameDA).$\r$\n$\r$\nIt is recommended that you close all other applications before starting Setup. This will make it possible to update relevant system files without having to reboot your computer.$\r$\n$\r$\n$_CLICK"
+  ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Welcome to $(^NameDA) Setup"
+  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Setup will guide you through the installation of $(^NameDA).$\r$\n$\r$\nIt is recommended that you close all other applications before starting Setup. This will make it possible to update relevant system files without having to reboot your computer.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_UNWELCOMEPAGE
-  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "Welcome to the $(^NameDA) Uninstall Wizard"
-  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "This wizard will guide you through the uninstallation of $(^NameDA).$\r$\n$\r$\nBefore starting the uninstallation, make sure $(^NameDA) is not running.$\r$\n$\r$\n$_CLICK"
+  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "Welcome to $(^NameDA) Uninstall"
+  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Setup will guide you through the uninstallation of $(^NameDA).$\r$\n$\r$\nBefore starting the uninstallation, make sure $(^NameDA) is not running.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_LICENSEPAGE
@@ -81,14 +81,14 @@
 !endif
 
 !ifdef MUI_FINISHPAGE
-  ${LangFileString} MUI_TEXT_FINISH_INFO_TITLE "Completing the $(^NameDA) Setup Wizard"
-  ${LangFileString} MUI_TEXT_FINISH_INFO_TEXT "$(^NameDA) has been installed on your computer.$\r$\n$\r$\nClick Finish to close this wizard."
+  ${LangFileString} MUI_TEXT_FINISH_INFO_TITLE "Completing $(^NameDA) Setup"
+  ${LangFileString} MUI_TEXT_FINISH_INFO_TEXT "$(^NameDA) has been installed on your computer.$\r$\n$\r$\nClick Finish to close Setup."
   ${LangFileString} MUI_TEXT_FINISH_INFO_REBOOT "Your computer must be restarted in order to complete the installation of $(^NameDA). Do you want to reboot now?"
 !endif
 
 !ifdef MUI_UNFINISHPAGE
-  ${LangFileString} MUI_UNTEXT_FINISH_INFO_TITLE "Completing the $(^NameDA) Uninstall Wizard"
-  ${LangFileString} MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) has been uninstalled from your computer.$\r$\n$\r$\nClick Finish to close this wizard."
+  ${LangFileString} MUI_UNTEXT_FINISH_INFO_TITLE "Completing $(^NameDA) Uninstall"
+  ${LangFileString} MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) has been uninstalled from your computer.$\r$\n$\r$\nClick Finish to close Setup."
   ${LangFileString} MUI_UNTEXT_FINISH_INFO_REBOOT "Your computer must be restarted in order to complete the uninstallation of $(^NameDA). Do you want to reboot now?"
 !endif
 

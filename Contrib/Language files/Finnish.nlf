@@ -12,12 +12,13 @@ NLF v6
 -
 # Translation by Eclipser (Jonne Lehtinen) <Eclipser at pilvikaupunki dot net>
 # Corrections by the Mozilla.fi crew
+# Upd 11/08 by WTLib Team
 # ^Branding
 Nullsoftin asennusjärjestelmä %s
 # ^SetupCaption
-$(^Name) Asennus
+$(^Name) -ohjelman asennus
 # ^UninstallCaption
-$(^Name) Poisto
+$(^Name) -ohjelman poisto
 # ^LicenseSubCaption
 : Lisenssisopimus
 # ^ComponentsSubCaption
@@ -101,13 +102,13 @@ Valitse poistettavat komponentit:
 # ^UnComponentsSubText2
 Tai, valitse valinnaiset komponentit, jotka haluat poistaa
 # ^DirText
-Asennus asentaa ohjelman $(^NameDA) seuraavaan kansioon. Jos haluat asentaa sen johonkin muuhun kansioon, valitse Selaa, ja valitse toinen kansio. $_CLICK
+$(^NameDA) -ohjelma asennetaan seuraavaan kansioon. Jos haluat asentaa sen johonkin muuhun kansioon, valitse Selaa, ja valitse toinen kansio. $_CLICK
 # ^DirSubText
 Kohdekansio
 # ^DirBrowseText
 Valitse kansio, johon haluat asentaa ohjelman $(^NameDA):
 # ^UnDirText
-Asennus poistaa ohjelman $(^NameDA) seuraavasta kansiosta. Jos haluat poistaa sen jostakin muusta kansiosta, valitse Selaa, ja valitse toinen kansio. $_CLICK
+Poistetaan ohjelman $(^NameDA) seuraavasta kansiosta. Jos haluat poistaa sen jostakin muusta kansiosta, valitse Selaa, ja valitse toinen kansio. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText

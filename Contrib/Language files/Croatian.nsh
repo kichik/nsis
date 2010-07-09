@@ -14,23 +14,23 @@
 !endif
 
 !ifdef MUI_LICENSEPAGE
-  ${LangFileString} MUI_TEXT_LICENSE_TITLE "Licenčni ugovor"
-  ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Molim pročitajte licencu prije instalacije programa $(^NameDA)."
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM "Ukoliko prihvaćate uvjete licence, odaberite 'Prihvaćam' za nastavak. Morate prihvatiti licencu za instalaciju programa $(^NameDA)."
+  ${LangFileString} MUI_TEXT_LICENSE_TITLE "Ugovor o licenci"
+  ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Pročitajte licencu prije instalacije programa $(^NameDA)."
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM "Ako prihvaćate uvjete licence, pritisnite 'Prihvaćam' za nastavak. Da biste instalirali program $(^NameDA), morate prihvatiti licencu."
   ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Ukoliko prihvaćate uvjete licence, označite donji kvadratić. Morate prihvatiti licencu za instalaciju programa $(^NameDA). $_CLICK"
   ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Ukoliko prihvaćate uvjete licence, odaberite prvu donju opciju. Morate prihvatiti licencu za instalaciju programa $(^NameDA). $_CLICK"
 !endif
 
 !ifdef MUI_UNLICENSEPAGE
-  ${LangFileString} MUI_UNTEXT_LICENSE_TITLE "Licenčni ugovor"
-  ${LangFileString} MUI_UNTEXT_LICENSE_SUBTITLE "Molim pročitajte licencu prije uklanjanja programa $(^NameDA)."
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "Ukoliko prihvaćate uvjete licence, odaberite 'Prihvaćam' za nastavak. Morate prihvatiti licencu za uklanjanje programa $(^NameDA)."
+  ${LangFileString} MUI_UNTEXT_LICENSE_TITLE "Ugovor o licenci"
+  ${LangFileString} MUI_UNTEXT_LICENSE_SUBTITLE "Pročitajte licencu prije uklanjanja programa $(^NameDA)."
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "Ako prihvaćate uvjete licence, pritisnite 'Prihvaćam' za nastavak. Da biste instalirali program $(^NameDA), morate prihvatiti licencu."
   ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Ukoliko prihvaćate uvjete licence, označite donji kvadratić. Morate prihvatiti licencu za uklanjanje programa $(^NameDA). $_CLICK"
   ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Ukoliko prihvaćate uvjete licence, odaberite prvu donju opciju. Morate prihvatiti licencu za uklanjanje programa $(^NameDA). $_CLICK"
 !endif
 
 !ifdef MUI_LICENSEPAGE | MUI_UNLICENSEPAGE
-  ${LangFileString} MUI_INNERTEXT_LICENSE_TOP "'Page Down' za ostatak licence."
+  ${LangFileString} MUI_INNERTEXT_LICENSE_TOP "Služite se tipkom 'Page Down' da biste vidjeli ostatak licence."
 !endif
 
 !ifdef MUI_COMPONENTSPAGE
@@ -63,8 +63,8 @@
 !endif
 
 !ifdef MUI_INSTFILESPAGE
-  ${LangFileString} MUI_TEXT_INSTALLING_TITLE "Instaliranje"
-  ${LangFileString} MUI_TEXT_INSTALLING_SUBTITLE "Molim pričekajte na završetak instalacije programa $(^NameDA)."
+  ${LangFileString} MUI_TEXT_INSTALLING_TITLE "Instalacija u tijeku..."
+  ${LangFileString} MUI_TEXT_INSTALLING_SUBTITLE "Pričekajte završetak instalacije programa $(^NameDA)."
   ${LangFileString} MUI_TEXT_FINISH_TITLE "Kraj instalacije"
   ${LangFileString} MUI_TEXT_FINISH_SUBTITLE "Instalacija je u potpunosti završila uspješno."
   ${LangFileString} MUI_TEXT_ABORT_TITLE "Instalacija je prekinuta"
@@ -72,8 +72,8 @@
 !endif
 
 !ifdef MUI_UNINSTFILESPAGE
-  ${LangFileString} MUI_UNTEXT_UNINSTALLING_TITLE "Uklanjanje"
-  ${LangFileString} MUI_UNTEXT_UNINSTALLING_SUBTITLE "Molim pričekajte na završetak uklanjanja programa $(^NameDA)."
+  ${LangFileString} MUI_UNTEXT_UNINSTALLING_TITLE "Uklanjanje u tijeku..."
+  ${LangFileString} MUI_UNTEXT_UNINSTALLING_SUBTITLE "Pričekajte završetak uklanjanja programa $(^NameDA)."
   ${LangFileString} MUI_UNTEXT_FINISH_TITLE "Uklanjanje završeno"
   ${LangFileString} MUI_UNTEXT_FINISH_SUBTITLE "Uklanjanje je u potpunosti završilo uspješno."
   ${LangFileString} MUI_UNTEXT_ABORT_TITLE "Uklanjanje je prekinuto"
@@ -81,35 +81,35 @@
 !endif
 
 !ifdef MUI_FINISHPAGE
-  ${LangFileString} MUI_TEXT_FINISH_INFO_TITLE "Dovršenje instalacije programa $(^NameDA)"
-  ${LangFileString} MUI_TEXT_FINISH_INFO_TEXT "Program $(^NameDA) je instaliran na Vaše računalo.$\r$\n$\r$\nOdaberite 'Kraj' za završetak."
-  ${LangFileString} MUI_TEXT_FINISH_INFO_REBOOT "Vaše računalo treba ponovno pokrenuti za dovršenje instalacije programa $(^NameDA). Želite li to učiniti sada?"
+  ${LangFileString} MUI_TEXT_FINISH_INFO_TITLE "Dovršetak instalacije programa $(^NameDA)"
+  ${LangFileString} MUI_TEXT_FINISH_INFO_TEXT "Program $(^NameDA) upravo je instaliran.$\r$\n$\r$\nOdaberite 'Kraj' za završetak."
+  ${LangFileString} MUI_TEXT_FINISH_INFO_REBOOT "Da bi se dovršila instalacija programa $(^NameDA), trebate ponovno pokrenuti računalo. Želite li to učiniti sada?"
 !endif
 
 !ifdef MUI_UNFINISHPAGE
   ${LangFileString} MUI_UNTEXT_FINISH_INFO_TITLE "Završetak uklanjanja programa $(^NameDA)"
-  ${LangFileString} MUI_UNTEXT_FINISH_INFO_TEXT "Program $(^NameDA) je uklonjen s Vašeg računala.$\r$\n$\r$\nOdaberite 'Kraj' za zatvaranje ovog čarobnjaka."
-  ${LangFileString} MUI_UNTEXT_FINISH_INFO_REBOOT "Vaše računalo treba ponovno pokrenuti za dovršenje postupka uklanjanja programa $(^NameDA). Želite li to učiniti sada?"
+  ${LangFileString} MUI_UNTEXT_FINISH_INFO_TEXT "Program $(^NameDA) uklonjen je s Vašeg računala.$\r$\n$\r$\nOdaberite 'Kraj' za zatvaranje ovog čarobnjaka."
+  ${LangFileString} MUI_UNTEXT_FINISH_INFO_REBOOT "Da bi se dovršio postupka uklanjanja programa $(^NameDA), trebate ponovno pokrenuti računalo. Želite li to učiniti sada?"
 !endif
 
 !ifdef MUI_FINISHPAGE | MUI_UNFINISHPAGE
   ${LangFileString} MUI_TEXT_FINISH_REBOOTNOW "Ponovno pokreni računalo sada"
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Ponovno ću pokrenuti računalo kasnije"
   ${LangFileString} MUI_TEXT_FINISH_RUN "&Pokreni program $(^NameDA)"
-  ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "Prikaži &Readme"
+  ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "Otvori datoteku '&Readme'"
   ${LangFileString} MUI_BUTTONTEXT_FINISH "&Kraj"  
 !endif
 
 !ifdef MUI_STARTMENUPAGE
-  ${LangFileString} MUI_TEXT_STARTMENU_TITLE "Izbor mape u Start meniju"
-  ${LangFileString} MUI_TEXT_STARTMENU_SUBTITLE "Odaberite ime za programsku mapu unutar Start menija."
-  ${LangFileString} MUI_INNERTEXT_STARTMENU_TOP "Program će pripadati odabranoj programskoj mapi u Start meniju. Možete odrediti novo ime za mapu ili odabrati već postojeću."
+  ${LangFileString} MUI_TEXT_STARTMENU_TITLE "Izbor mape u izborniku 'Start'"
+  ${LangFileString} MUI_TEXT_STARTMENU_SUBTITLE "Odaberite ime za programsku mapu unutar izbornika 'Start'."
+  ${LangFileString} MUI_INNERTEXT_STARTMENU_TOP "Program će pripadati odabranoj programskoj mapi u izborniku 'Start'. Možete odrediti novo ime za mapu ili odabrati već postojeću."
   ${LangFileString} MUI_INNERTEXT_STARTMENU_CHECKBOX "Nemoj napraviti prečace"
 !endif
 
 !ifdef MUI_UNCONFIRMPAGE
   ${LangFileString} MUI_UNTEXT_CONFIRM_TITLE "Uklanjanje programa $(^NameDA)"
-  ${LangFileString} MUI_UNTEXT_CONFIRM_SUBTITLE "Program $(^NameDA) će biti uklonjen s Vašeg računala."
+  ${LangFileString} MUI_UNTEXT_CONFIRM_SUBTITLE "Program $(^NameDA) bit će uklonjen s Vašeg računala."
 !endif
 
 !ifdef MUI_ABORTWARNING
