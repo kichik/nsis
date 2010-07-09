@@ -14,6 +14,8 @@ Because it's based on script files, you can fully control every part of your ins
 The script language supports variables, functions, string manipulation, just like a normal programming language - but designed for the creation of installers.
 Even with all these features, NSIS is still the smallest installer system available. With the default options, it has an overhead of only 34 KB.
 
+Now you can also create \R{intro-unicode}{Unicode installers}, targeting all the languages supported by the OS without display issues.
+
 \H{intro-features} Main Features
 
 \\<b\\>Small overhead size\\</b\\>
@@ -34,7 +36,7 @@ Unlike other systems that can only generate installers based on a list of files 
 
 \\<b\\>Multiple languages in one installer\\</b\\>
 
-One installer can support multiple interface languages. More than 40 translations are already included, but you can also create your own language files. RTL (right-to-left) languages such as Arabic and Hebrew are fully supported.
+One installer can support multiple interface languages. More than 60 translations are already included, but you can also create your own language files. RTL (right-to-left) languages such as Arabic and Hebrew are fully supported. Creating Unicode native installer is also possible for even more supported languages.
 
 \\<b\\>Many features and checks for the target system\\</b\\>
 
@@ -72,7 +74,7 @@ The NSIS script format and the format used for interface dialogs are easy, docum
 
 \b Classic and Modern wizard interface
 
-\b Fully multilingual, support for multiple languages in one installer. More than 40 translations are available, but you can also create your own 
+\b Fully multilingual, support for multiple languages in one installer. More than 60 translations are available, but you can also create your own. Unicode support allowing even more languages.
 
 \b Page system: You can add standard wizard pages or custom pages 
 
@@ -147,3 +149,11 @@ The NSIS script format and the format used for interface dialogs are easy, docum
 \b Completely free for any use. See \R{license}{license}.
 
 \b More
+
+\H{intro-unicode} Unicode installers
+
+Starting with MakeNSIS v2.50, you can choose create Unicode installers by using \R{atargetminimalos}{TargetMinimalOS} with value greater than or equal to 5.0.
+These installers will work only under Windows 2000 or more recent (depending on the value you chose), but they will allow you to display your installer in any Unicode language supported by the OS.
+
+When building a Unicode installer, NSIS variables can hold Unicode characters (0000-FFFF). There should be no need to modify your existing scripts.
+If you want to read/write Unicode files, specific instructions have been added to read/write UTF-16LE strings from/to disk.
