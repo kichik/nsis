@@ -15,9 +15,9 @@ NLF v6
 # ^Branding
 Sistema de Instalação Nullsoft %s
 # ^SetupCaption
-Instalação do $(^Name)
+Instalação da $(^Name)
 # ^UninstallCaption
-Desinstalação do $(^Name)
+Desinstalação da $(^Name)
 # ^LicenseSubCaption
 : Acordo da Licença
 # ^ComponentsSubCaption
@@ -71,17 +71,17 @@ Nome
 # ^Completed
 Completado
 # ^LicenseText
-Por favor reveja o acordo da licença antes de instalar o $(^NameDA). Se você aceita todos os termos do acordo, clique em Eu Concordo.
+Por favor reveja o acordo da licença antes de instalar a $(^NameDA). Se você aceita todos os termos do acordo, clique em Eu Concordo.
 # ^LicenseTextCB
-Por favor reveja o acordo da licença antes de instalar o $(^NameDA). Se você aceita todos os termos do acordo, clique na caixa de seleção abaixo. $_CLICK
+Por favor reveja o acordo da licença antes de instalar a $(^NameDA). Se você aceita todos os termos do acordo, clique na caixa de seleção abaixo. $_CLICK
 # ^LicenseTextRB
-Por favor reveja o acordo da licença antes de instalar o $(^NameDA). Se você aceita todos os termos do acordo, selecione a primeira opção abaixo. $_CLICK
+Por favor reveja o acordo da licença antes de instalar a $(^NameDA). Se você aceita todos os termos do acordo, selecione a primeira opção abaixo. $_CLICK
 # ^UnLicenseText
-Por favor reveja o acordo da licença antes de desinstalar o $(^NameDA). Se você aceita todos os termos do acordo, clique em Eu Concordo.
+Por favor reveja o acordo da licença antes de desinstalar a $(^NameDA). Se você aceita todos os termos do acordo, clique em Eu Concordo.
 # ^UnLicenseTextCB
-Por favor reveja o acordo da licença antes de desinstalar o $(^NameDA). Se você aceita todos os termos do acordo, clique na caixa de seleção abaixo. $_CLICK
+Por favor reveja o acordo da licença antes de desinstalar a $(^NameDA). Se você aceita todos os termos do acordo, clique na caixa de seleção abaixo. $_CLICK
 # ^UnLicenseTextRB
-Por favor reveja o acordo da licença antes de desinstalar o $(^NameDA). Se você aceita todos os termos do acordo, selecione a primeira opção abaixo. $_CLICK
+Por favor reveja o acordo da licença antes de desinstalar a $(^NameDA). Se você aceita todos os termos do acordo, selecione a primeira opção abaixo. $_CLICK
 # ^Custom
 Personalizado
 # ^ComponentsText
@@ -101,23 +101,23 @@ Selecione os componentes a desinstalar:
 # ^UnComponentsSubText2
 Ou, selecione os componentes opcionais que você deseja desinstalar:
 # ^DirText
-O Instalador instalará o $(^NameDA) na seguinte pasta. Para instalar em uma pasta diferente, clique em Procurar e selecione outra pasta. $_CLICK
+A $(^NameDA) será instalada na seguinte pasta. Para instalar em uma pasta diferente, clique em Procurar e selecione outra pasta. $_CLICK
 # ^DirSubText
 Pasta Destino
 # ^DirBrowseText
-Selecione a pasta para instalar o $(^NameDA):
+Selecione a pasta para instalar a $(^NameDA):
 # ^UnDirText
-O Instalador desinstalará o $(^NameDA) da seguinte pasta. Para desinstalar de uma pasta diferente, clique em Procurar e selecione outra pasta. $_CLICK
+A $(^NameDA) será desinstalada da seguinte pasta. Para desinstalar de uma pasta diferente, clique em Procurar e selecione outra pasta. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
-Selecione a pasta de onde desinstalar o $(^NameDA):
+Selecione a pasta de onde desinstalar a $(^NameDA):
 # ^SpaceAvailable
 "Espaço disponível: "
 # ^SpaceRequired
 "Espaço requerido: "
 # ^UninstallingText
-O $(^NameDA) será desinstalado da seguinte pasta. $_CLICK
+A $(^NameDA) será desinstalada da seguinte pasta. $_CLICK
 # ^UninstallingSubText
 Desinstalando de:
 # ^FileError

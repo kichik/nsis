@@ -12,8 +12,8 @@
 !endif
 
 !ifdef MUI_UNWELCOMEPAGE
-  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "Witamy w kreatorze deinstalacji $(^NameDA)"
-  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Kreator poprowadzi Cię przez proces deinstalacji $(^NameDA).$\r$\n$\r$\nPrzed rozpoczęciem deinstalacji programu, upewnij się, czy $(^NameDA) NIE jest właśnie uruchomiony.$\r$\n$\r$\n$_CLICK"
+  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "Witamy w deinstalatorze $(^NameDA)"
+  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Deinstalator poprowadzi Cię przez proces deinstalacji $(^NameDA).$\r$\n$\r$\nPrzed rozpoczęciem deinstalacji programu, upewnij się, czy $(^NameDA) NIE jest właśnie uruchomiony.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_LICENSEPAGE
@@ -33,7 +33,7 @@
 !endif
 
 !ifdef MUI_LICENSEPAGE | MUI_UNLICENSEPAGE
-  ${LangFileString} MUI_INNERTEXT_LICENSE_TOP "Naciśnij klawisz Page Down, aby zobaczyć resztę umowy."
+  ${LangFileString} MUI_INNERTEXT_LICENSE_TOP "Naciśnij klawisz Page Down, aby zobaczyć dalszą część umowy."
 !endif
 
 !ifdef MUI_COMPONENTSPAGE
@@ -84,14 +84,14 @@
 !endif
 
 !ifdef MUI_FINISHPAGE
-  ${LangFileString} MUI_TEXT_FINISH_INFO_TITLE "Kończenie pracy kreatora instalacji $(^NameDA)"
-  ${LangFileString} MUI_TEXT_FINISH_INFO_TEXT "$(^NameDA) został pomyślnie zainstalowany na Twoim komputerze.$\r$\n$\r$\nKliknij Zakończ, aby zakończyć działanie kreatora."
+  ${LangFileString} MUI_TEXT_FINISH_INFO_TITLE "Kończenie pracy instalatora $(^NameDA)"
+  ${LangFileString} MUI_TEXT_FINISH_INFO_TEXT "$(^NameDA) został pomyślnie zainstalowany na Twoim komputerze.$\r$\n$\r$\nKliknij Zakończ, aby zakończyć działanie instalatora."
   ${LangFileString} MUI_TEXT_FINISH_INFO_REBOOT "Twój komputer musi zostać ponownie uruchomiony, aby zakończyć instalację programu $(^NameDA). Czy chcesz zrobić to teraz?"
 !endif
 
 !ifdef MUI_UNFINISHPAGE
-  ${LangFileString} MUI_UNTEXT_FINISH_INFO_TITLE "Kończenie pracy kreatora deinstalacji $(^NameDA)"
-  ${LangFileString} MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) został odinstalowany z Twojego komputera.$\r$\n$\r$\nKliknij Zakończ, aby zakończyć działanie kreatora."
+  ${LangFileString} MUI_UNTEXT_FINISH_INFO_TITLE "Kończenie pracy deinstalatora $(^NameDA)"
+  ${LangFileString} MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) został odinstalowany z Twojego komputera.$\r$\n$\r$\nKliknij Zakończ, aby zakończyć działanie deinstalatora."
   ${LangFileString} MUI_UNTEXT_FINISH_INFO_REBOOT "Twój komputer musi zostać ponownie uruchomiony w celu zakończenia deinstalacji programu $(^NameDA). Czy chcesz zrobić to teraz?"
 !endif
 

@@ -104,7 +104,7 @@ Wybierz komponenty do odinstalowania:
 # ^UnComponentsSubText2
 Albo wybierz opcjonalne komponenty, które chcesz odinstalować:
 # ^DirText
-Instalator zainstaluje program $(^NameDA) w następującym folderze. Aby zainstalować w innym folderze, kliknij Przeglądaj i wybierz folder. $_CLICK
+Instalator zainstaluje program $(^NameDA) w podanym niżej folderze. (Możesz także kliknąć przycisk ... i wybrać inny folder). $_CLICK
 # ^DirSubText
 Folder docelowy
 # ^DirBrowseText
