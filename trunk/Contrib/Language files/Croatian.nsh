@@ -1,7 +1,7 @@
 ﻿;Language: Croatian (1050)
 ;By Igor Ostriz
 
-!insertmacro LANGFILE "Croatian" "Hrvatski"
+!insertmacro LANGFILE "Croatian" "Hrvatski" "Hrvatski"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Dobrodošli u instalaciju programa $(^NameDA)"

@@ -1,7 +1,7 @@
 ﻿;Language: Norwegian (2068)
 ;By Jonas Lindsrøm (jonasc_88@hotmail.com) Reviewed and fixed by Jan Ivar Beddari, d0der at online.no
 
-!insertmacro LANGFILE "Norwegian" "Norwegian"
+!insertmacro LANGFILE "Norwegian" "Norwegian" "Norwegian"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Velkommen til veiviseren for installasjon av $(^NameDA) "

@@ -3,7 +3,7 @@
 ;By Eclipser (Jonne Lehtinen) <Eclipser at pilvikaupunki dot com>
 ;Updated by Puuhis (puuhis@puuhis.net)
 
-!insertmacro LANGFILE "Finnish" "Suomi"
+!insertmacro LANGFILE "Finnish" "Suomi" "Suomi"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Tervetuloa ohjelman $(^NameDA) asennukseen"

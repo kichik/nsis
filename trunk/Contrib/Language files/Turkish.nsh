@@ -2,7 +2,7 @@
 ;By Çagatay Dilsiz(Chagy)
 ;Updated by Fatih BOY (fatih_boy@yahoo.com)
 
-!insertmacro LANGFILE "Turkish" "Türkçe"
+!insertmacro LANGFILE "Turkish" "Turkce" "Türkçe"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "$(^NameDA) Kurulum sihirbazına hoş geldiniz"

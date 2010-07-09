@@ -1,7 +1,7 @@
 ﻿;Language: Breton (1150)
 ;By KAD-Korvigelloù An Drouizig
 
-!insertmacro LANGFILE "Breton" "Brezhoneg"
+!insertmacro LANGFILE "Breton" "Brezhoneg" "Brezhoneg"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Degemer mat e skoazeller staliañ $(^NameDA)"

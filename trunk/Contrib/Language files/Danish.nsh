@@ -1,7 +1,7 @@
 ﻿;Language: Danish (1030)
 ;By Claus Futtrup
 
-!insertmacro LANGFILE "Danish" "Dansk"
+!insertmacro LANGFILE "Danish" "Dansk" "Dansk"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Velkommen til installationsguiden for $(^NameDA)"

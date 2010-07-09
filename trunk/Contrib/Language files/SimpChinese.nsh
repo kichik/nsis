@@ -3,7 +3,7 @@
 ;Revision date: 2004-12-15
 ;Verified by: QFox <qfox99@gmail.com>
 
-!insertmacro LANGFILE "SimpChinese" "Chinese (Simplified)"
+!insertmacro LANGFILE "SimpChinese" "Chinese (Simplified)" "简化字"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "欢迎使用“$(^NameDA)”安装向导"

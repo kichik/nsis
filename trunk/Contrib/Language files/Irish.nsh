@@ -1,7 +1,7 @@
 ﻿;Language: Irish (2108)
 ;By Kevin P. Scannell < scannell at slu dot edu >
 
-!insertmacro LANGFILE "Irish" "Irish"
+!insertmacro LANGFILE "Irish" "Gaeilge" "Gaeilge"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Fáilte go dtí Draoi Suiteála $(^NameDA)"

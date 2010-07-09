@@ -1,7 +1,7 @@
 ﻿;Language: Russian (1049)
 ;Translation updated by Dmitry Yerokhin [erodim@mail.ru] (050424)
 
-!insertmacro LANGFILE "Russian" "Russian"
+!insertmacro LANGFILE "Russian" "Russian" "Русский"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Вас приветствует мастер установки $(^NameDA)"

@@ -4,7 +4,7 @@
 ;Updated by Paweł Porwisz, http://www.pepesoft.tox.pl
 ;Corrected by Mateusz Gola (aka Prozac) - http://www.videopedia.pl/avirecomp
 
-!insertmacro LANGFILE "Polish" "Polski"
+!insertmacro LANGFILE "Polish" "Polski" "Polski"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Witamy w kreatorze instalacji programu $(^NameDA)"

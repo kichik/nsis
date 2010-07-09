@@ -1,7 +1,7 @@
 ﻿;Language: Indonesian (1057)
 ;By Ariel825010106@yahoo.com modified by was.uthm@gmail.com in April 2009
 
-!insertmacro LANGFILE "Indonesian" "Indonesian"
+!insertmacro LANGFILE "Indonesian" "Bahasa Indonesia" "Bahasa Indonesia"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Selamat datang di program instalasi $(^NameDA)"

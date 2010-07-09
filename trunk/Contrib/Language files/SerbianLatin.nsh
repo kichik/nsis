@@ -1,7 +1,7 @@
 ﻿;Language: Serbian Latin (2074)
 ;Translation by Srđan Obućina <obucina@srpskijezik.edu.yu>
 
-!insertmacro LANGFILE "SerbianLatin" "Serbian Latin"
+!insertmacro LANGFILE "SerbianLatin" "Srpski" "Srpski"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Dobrodošli u vodič za instalaciju programa $(^NameDA)"

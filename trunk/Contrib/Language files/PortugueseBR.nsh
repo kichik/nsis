@@ -1,7 +1,7 @@
 ﻿;Language: Brazilian Portuguese (1046)
 ;By Felipe
 
-!insertmacro LANGFILE "PortugueseBR" "Português Brasileiro"
+!insertmacro LANGFILE "PortugueseBR" "Portugues Brasileiro" "Português Brasileiro"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Bem-vindo ao Assistente de Instalação do $(^NameDA)"

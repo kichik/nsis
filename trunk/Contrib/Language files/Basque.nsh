@@ -1,7 +1,7 @@
 ﻿;Language: Basque (1069)
 ;By Iñaki San Vicente
 
-!insertmacro LANGFILE "Basque" "Euskera"
+!insertmacro LANGFILE "Basque" "Euskera" "Euskera"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Ongi etorri $(^NameDA) -ren instalazio programara"
