@@ -6,7 +6,7 @@
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "$(^NameDA) Tu bi xêr hatî sêrbaziya sazkirinê"
-  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Ev sêrbaz dê di dema sazkirina $(^NameDA) de rêberiya te bike.$\r$\n$\r$\nBerî tu dest bi sazkirinê bikî, em pêþniyar dikin tu hemû bernameyên vekirî bigirî. Bi vî rengî beyî tu komputera ji nû ve vekî dê hinek dosiyên pergalê bêpirsgirêk werin sazkirin.$\r$\n$\r$\n$_CLICK"
+  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Ev sêrbaz dê di dema sazkirina $(^NameDA) de rêberiya te bike.$\r$\n$\r$\nBerî tu dest bi sazkirinê bikî, em pêşniyar dikin tu hemû bernameyên vekirî bigirî. Bi vî rengî beyî tu komputera ji nû ve vekî dê hinek dosiyên pergalê bêpirsgirêk werin sazkirin.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_UNWELCOMEPAGE
@@ -17,21 +17,21 @@
 !ifdef MUI_LICENSEPAGE
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Peymana Lîsansê"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Ji kerema xwe re berî tu bernameya $(^NameDA) saz bikî, peymana lîsansê bixwîne."
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM "Heke tu þertên peymanê dipejirînî, 'Ez Dipejirînim'ê bitikîne. Ji bo sazkirina bernameya $(^NameDA) divê tu þertên peymanê bipejirînî."
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Heke tu þertên peymanê dipejirînî, zeviya piþtrastkirinê ya jêrîn dagire. Ji bo tu bikarî bernameya $(^NameDA) saz bikî divê tu þertên peymanê bipejirînî. $_CLICK"
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Heke tu þertên peymanê dipejirînî, biþkojka erêkirinê ya jêrîn bitikîne. Ji bo sazkirina bernameya $(^NameDA) divê tu þertên peymanê bipejirînî. $_CLICK"
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM "Heke tu şertên peymanê dipejirînî, 'Ez Dipejirînim'ê bitikîne. Ji bo sazkirina bernameya $(^NameDA) divê tu şertên peymanê bipejirînî."
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Heke tu şertên peymanê dipejirînî, zeviya piştrastkirinê ya jêrîn dagire. Ji bo tu bikarî bernameya $(^NameDA) saz bikî divê tu şertên peymanê bipejirînî. $_CLICK"
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Heke tu şertên peymanê dipejirînî, bişkojka erêkirinê ya jêrîn bitikîne. Ji bo sazkirina bernameya $(^NameDA) divê tu şertên peymanê bipejirînî. $_CLICK"
 !endif
 
 !ifdef MUI_UNLICENSEPAGE
   ${LangFileString} MUI_UNTEXT_LICENSE_TITLE "Peymana Lîsansê"
   ${LangFileString} MUI_UNTEXT_LICENSE_SUBTITLE "Berî tu bernameya $(^NameDA) ji pergala xwe rakî peymanê bixwîne."
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "Heke tu þertên peymanê dipejirînî, 'Dipejirînim'ê bitikîne. Ji bo rakirina bernameya  $(^NameDA) divê tu þertên peymanê bipejirînî."
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Heke tu þertên peymanê dipejirînî, zeviya erêkirinê ya jêrîn dagire. Ji bo tu bernameya $(^NameDA) ji pergala xwe rakî divê tu peymanê bipejirînî. $_CLICK"
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Heke tu þertên peymanê dipejirînî, biþkojka erêkirinê ya jêrîn hilbijêre. Ji bo tu bernameya  $(^NameDA) ji pergala xwe rakî divê tu þertên peymanê bipejirînî. $_CLICK"
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "Heke tu şertên peymanê dipejirînî, 'Dipejirînim'ê bitikîne. Ji bo rakirina bernameya  $(^NameDA) divê tu şertên peymanê bipejirînî."
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Heke tu şertên peymanê dipejirînî, zeviya erêkirinê ya jêrîn dagire. Ji bo tu bernameya $(^NameDA) ji pergala xwe rakî divê tu peymanê bipejirînî. $_CLICK"
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Heke tu şertên peymanê dipejirînî, bişkojka erêkirinê ya jêrîn hilbijêre. Ji bo tu bernameya  $(^NameDA) ji pergala xwe rakî divê tu şertên peymanê bipejirînî. $_CLICK"
 !endif
 
 !ifdef MUI_LICENSEPAGE | MUI_UNLICENSEPAGE
-  ${LangFileString} MUI_INNERTEXT_LICENSE_TOP "Ji bo dûmahîka peymanê biþkojka 'page down' bitikîne."
+  ${LangFileString} MUI_INNERTEXT_LICENSE_TOP "Ji bo dûmahîka peymanê bişkojka 'page down' bitikîne."
 !endif
 
 !ifdef MUI_COMPONENTSPAGE
@@ -47,9 +47,9 @@
 !ifdef MUI_COMPONENTSPAGE | MUI_UNCOMPONENTSPAGE
   ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Dazanîn"
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
-    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Ji bo tu der barê pareyan de agahiyan bistînî nîþanekê bibe ser pareyekê."
+    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Ji bo tu der barê pareyan de agahiyan bistînî nîşanekê bibe ser pareyekê."
   !else
-    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Ji bo tu der barê pareyan de agahiyan bistînî nîþanekê bibe ser pareyekê."
+    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Ji bo tu der barê pareyan de agahiyan bistînî nîşanekê bibe ser pareyekê."
   !endif
 !endif
 
@@ -95,16 +95,16 @@
 
 !ifdef MUI_FINISHPAGE | MUI_UNFINISHPAGE
   ${LangFileString} MUI_TEXT_FINISH_REBOOTNOW "Ji nû ve veke"
-  ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Ezê paþê ji nû ve vekim."
+  ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Ezê paşê ji nû ve vekim."
   ${LangFileString} MUI_TEXT_FINISH_RUN "Bernameya $(^NameDA) bixebitîne"
-  ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "Dosiya min bixwîne/readme &nîþan bide"
+  ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "Dosiya min bixwîne/readme &nîşan bide"
   ${LangFileString} MUI_BUTTONTEXT_FINISH "&Biqedîne"  
 !endif
 
 !ifdef MUI_STARTMENUPAGE
-  ${LangFileString} MUI_TEXT_STARTMENU_TITLE "Hilbijartina Peldanka Pêþeka Destpêkê"
-  ${LangFileString} MUI_TEXT_STARTMENU_SUBTITLE "Peldanka pêþeka destpêkê ya ku dê kineriya $(^NameDA) tê de were bikaranîn hilbijêre."
-  ${LangFileString} MUI_INNERTEXT_STARTMENU_TOP "Peldanka pêþeka destpêkê ya ku dê kineriya bernameyê tê de were bicihkirin hilbijêre.  Tu dikarî bi navekî nû peldankeke nû ava bikî."
+  ${LangFileString} MUI_TEXT_STARTMENU_TITLE "Hilbijartina Peldanka Pêşeka Destpêkê"
+  ${LangFileString} MUI_TEXT_STARTMENU_SUBTITLE "Peldanka pêşeka destpêkê ya ku dê kineriya $(^NameDA) tê de were bikaranîn hilbijêre."
+  ${LangFileString} MUI_INNERTEXT_STARTMENU_TOP "Peldanka pêşeka destpêkê ya ku dê kineriya bernameyê tê de were bicihkirin hilbijêre.  Tu dikarî bi navekî nû peldankeke nû ava bikî."
   ${LangFileString} MUI_INNERTEXT_STARTMENU_CHECKBOX "Bêyî çêkirina kineriyê bidomîne"
 !endif
 
