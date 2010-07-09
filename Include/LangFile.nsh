@@ -75,7 +75,7 @@ Copyright 2008-2009 Joost Verburg
 
 !macroend
 
-!macro LANGFILE IDNAME NAME
+!macro LANGFILE IDNAME ASCIINAME LOCNAME
 
   ;Start of standard NSIS language file
 
@@ -88,7 +88,13 @@ Copyright 2008-2009 Joost Verburg
     !define LANGFILE_IDNAME "${IDNAME}"
 
     !ifndef "LANGFILE_${IDNAME}_NAME"
-      !define "LANGFILE_${IDNAME}_NAME" "${NAME}"
+      !ifndef MUI_LANGDLL_ALLLANGUAGES
+        !define "LANGFILE_${IDNAME}_NAME" "${LOCNAME}"
+      !else ifdef NSIS_UNICODE
+        !define "LANGFILE_${IDNAME}_NAME" "${LOCNAME}"
+      !else
+        !define "LANGFILE_${IDNAME}_NAME" "${ASCIINAME}"
+      !endif
     !endif
 
   !endif

@@ -7,7 +7,7 @@
 ;	- ".. produsului" removed as unnecessary
 ;	- "Elimină" related terms replaced with more appropiate "Dezinstalează"
 ;	- Misc language tweaks
-!insertmacro LANGFILE "Romanian" "Romana"
+!insertmacro LANGFILE "Romanian" "Romana" "Română"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Bine aţi venit la instalarea $(^NameDA)"

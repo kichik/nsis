@@ -1,7 +1,7 @@
 ﻿;Language: Icelandic (15)
 ;By Gretar Orri Kristinsson
 
-!insertmacro LANGFILE "Icelandic" "Icelandic"
+!insertmacro LANGFILE "Icelandic" "Islenska" "Íslenska"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Velkominn til $(^NameDA) uppsetningarhjálparinnar"

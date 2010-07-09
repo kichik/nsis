@@ -1,7 +1,7 @@
 ﻿;Language: Asturian (1150)
 ;By Marcos (marcoscostales@gmail.com).
 
-!insertmacro LANGFILE "Asturian" "Asturies"
+!insertmacro LANGFILE "Asturian" "Asturies" "Asturies"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Bienveníu al Asistente d'Instalación de $(^NameDA)"

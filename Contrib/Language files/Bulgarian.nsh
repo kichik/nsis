@@ -4,7 +4,7 @@
 ;Updated by Кирил Кирилов (DumpeR) [dumper@data.bg]
 ;
 
-!insertmacro LANGFILE "Bulgarian" "Bulgarian"
+!insertmacro LANGFILE "Bulgarian" "Bulgarian" "Български"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Добре дошли в Съветника за инсталиране на $(^NameDA)!"

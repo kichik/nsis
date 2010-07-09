@@ -1,7 +1,7 @@
 ﻿;Language: Greek (1032)
 ;By Makidis N. Michael - http://dias.aueb.gr/~p3010094/
 
-!insertmacro LANGFILE "Greek" "Greek"
+!insertmacro LANGFILE "Greek" "Greek" "Ελληνικά"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Καλώς ήλθατε στην Εγκατάσταση του '$(^NameDA)'"

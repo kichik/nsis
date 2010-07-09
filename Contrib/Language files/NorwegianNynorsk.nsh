@@ -1,7 +1,7 @@
 ﻿;Language: Norwegian nynorsk (2068)
 ;By Vebjoern Sture and Håvard Mork (www.firefox.no)
 
-!insertmacro LANGFILE "NorwegianNynorsk" "Norwegian nynorsk"
+!insertmacro LANGFILE "NorwegianNynorsk" "Norwegian nynorsk" "Norwegian nynorsk"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Velkommen til $(^NameDA) innstallasjonsvegvisar"

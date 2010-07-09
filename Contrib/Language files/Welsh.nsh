@@ -1,7 +1,7 @@
 ﻿;Language: Welsh (1106)
 ;By Rhoslyn Prys, Meddal.com
 
-!insertmacro LANGFILE "Welsh" "Welsh"
+!insertmacro LANGFILE "Welsh" "Cymraeg" "Cymraeg"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Croeso i Ddewin Gosod $(^NameDA)"

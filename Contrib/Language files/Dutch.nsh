@@ -1,7 +1,7 @@
 ﻿;Language: Dutch (1043)
 ;By Joost Verburg
 
-!insertmacro LANGFILE "Dutch" "Nederlands"
+!insertmacro LANGFILE "Dutch" "Nederlands" "Nederlands"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Welkom bij de $(^NameDA)-installatiewizard"

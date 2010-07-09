@@ -1,7 +1,7 @@
 ﻿;Language: Mongolian (1104)
 ;By Bayarsaikhan Enkhtaivan
 
-!insertmacro LANGFILE "Mongolian" "Mongolian"
+!insertmacro LANGFILE "Mongolian" "Mongolian" "Монгол"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "$(^NameDA) Суулгацад тавтай морил"

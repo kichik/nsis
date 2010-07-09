@@ -2,7 +2,7 @@
 ;By Valdis Griķis
 ;Corrections by Kristaps Meņģelis / x-f (x-f 'AT' inbox.lv)
 
-!insertmacro LANGFILE "Latvian" "Latviešu"
+!insertmacro LANGFILE "Latvian" "Latviesu" "Latviešu"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Esiet sveicināti '$(^NameDA)' uzstādīšanas vednī"

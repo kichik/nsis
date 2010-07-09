@@ -1,7 +1,7 @@
 ﻿;Language: Albanian (1052)
 ;Translation Besnik Bleta, besnik@programeshqip.org
 
-!insertmacro LANGFILE "Albanian" "Albanian"
+!insertmacro LANGFILE "Albanian" "Shqip" "Shqip"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Mirësevini te Rregullimi i $(^NameDA)"

@@ -1,7 +1,7 @@
 ﻿;Language: Malay (1086)
 ;By muhammadazwa@yahoo.com
 
-!insertmacro LANGFILE "Malay" "Malay"
+!insertmacro LANGFILE "Malay" "Malay" "Malay"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Assalamualaikum, Selamat datang ke $(^NameDA) Setup Wizard"
