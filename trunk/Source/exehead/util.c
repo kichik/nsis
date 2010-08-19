@@ -1005,7 +1005,8 @@ struct MGA_FUNC MGA_FUNCS[] = {
   {"ADVAPI32", "AdjustTokenPrivileges"},
   {"KERNEL32", "GetUserDefaultUILanguage"},
   {"SHLWAPI",  "SHAutoComplete"},
-  {"SHFOLDER", "SHGetFolderPathW"}
+  {"SHFOLDER", "SHGetFolderPathW"},
+  {"SHELL32", "SHGetKnownFolderPath"}
 };
 #else
 struct MGA_FUNC MGA_FUNCS[] = {
@@ -1017,7 +1018,8 @@ struct MGA_FUNC MGA_FUNCS[] = {
   {"ADVAPI32", "AdjustTokenPrivileges"},
   {"KERNEL32", "GetUserDefaultUILanguage"},
   {"SHLWAPI",  "SHAutoComplete"},
-  {"SHFOLDER", "SHGetFolderPathA"}
+  {"SHFOLDER", "SHGetFolderPathA"},
+  {"SHELL32", "SHGetKnownFolderPath"}
 };
 #endif
 
