@@ -115,9 +115,31 @@ int NSISCALL my_MessageBox(const TCHAR *text, UINT type) {
   return MessageBoxIndirect(&mbp);
 }
 
+BOOL NSISCALL delete_with_ro_attr_handling(LPCTSTR fileordir,int flags) 
+{
+  const DWORD attr=remove_ro_attr(fileordir);
+  if (attr != INVALID_FILE_ATTRIBUTES) 
+  {
+    if (flags & DEL_DIR)
+    {
+      if (RemoveDirectory(fileordir)) return TRUE;
+    }
+    else
+    {
+      if (DeleteFile(fileordir)) return TRUE;
+    }
+
+    // Not sure if wininit.ini and MoveFileEx handle RO attr in the same 
+    // way so we just play it safe
+    if (!(flags & DEL_REBOOT)) SetFileAttributes(fileordir,attr);
+  }
+  return FALSE;
+}
+
 void NSISCALL myDelete(TCHAR *buf, int flags)
 {
   static TCHAR lbuf[NSIS_MAX_STRLEN];
+  const int rebootflag=(flags & DEL_REBOOT);
 
   HANDLE h;
   WIN32_FIND_DATA fd;
@@ -176,11 +198,11 @@ void NSISCALL myDelete(TCHAR *buf, int flags)
           else
           {
             log_printf2(_T("Delete: DeleteFile(\"%s\")"),buf);
-            remove_ro_attr(buf);
-            if (!DeleteFile(buf))
+            
+            if (!delete_with_ro_attr_handling(buf,rebootflag))
             {
 #ifdef NSIS_SUPPORT_MOVEONREBOOT
-              if (flags & DEL_REBOOT)
+              if (rebootflag)
               {
                 log_printf2(_T("Delete: DeleteFile on Reboot(\"%s\")"),buf);
                 update_status_text(LANG_DELETEONREBOOT,buf);
@@ -219,11 +241,10 @@ void NSISCALL myDelete(TCHAR *buf, int flags)
     {
       addtrailingslash(buf);
       log_printf2(_T("RMDir: RemoveDirectory(\"%s\")"),buf);
-      remove_ro_attr(buf);
-      if (!RemoveDirectory(buf))
+      if (!delete_with_ro_attr_handling(buf,DEL_DIR|rebootflag))
       {
 #ifdef NSIS_SUPPORT_MOVEONREBOOT
-        if (flags & DEL_REBOOT)
+        if (rebootflag)
         {
           log_printf2(_T("RMDir: RemoveDirectory on Reboot(\"%s\")"),buf);
           update_status_text(LANG_DELETEONREBOOT,buf);
@@ -389,11 +410,12 @@ void NSISCALL mini_memcpy(void *out, const void *in, int len)
   }
 }
 
-void NSISCALL remove_ro_attr(TCHAR *file)
+DWORD NSISCALL remove_ro_attr(TCHAR *file)
 {
-  int attr = GetFileAttributes(file);
+  const DWORD attr = GetFileAttributes(file);
   if (attr != INVALID_FILE_ATTRIBUTES)
     SetFileAttributes(file,attr&(~FILE_ATTRIBUTE_READONLY));
+  return attr;
 }
 
 HANDLE NSISCALL myOpenFile(const TCHAR *fn, DWORD da, DWORD cd)
