@@ -107,7 +107,7 @@ void NSISCALL validate_filename(TCHAR *fn);
 void NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew);
 
 void NSISCALL mini_memcpy(void *out, const void *in, int len);
-void NSISCALL remove_ro_attr(TCHAR *file);
+DWORD NSISCALL remove_ro_attr(TCHAR *file);
 
 enum myGetProcAddressFunctions {
   MGA_GetDiskFreeSpaceEx,
