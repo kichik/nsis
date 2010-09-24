@@ -410,7 +410,7 @@ void NSISCALL mini_memcpy(void *out, const void *in, int len)
   }
 }
 
-DWORD NSISCALL remove_ro_attr(TCHAR *file)
+DWORD NSISCALL remove_ro_attr(LPCTSTR file)
 {
   const DWORD attr = GetFileAttributes(file);
   if (attr != INVALID_FILE_ATTRIBUTES)
