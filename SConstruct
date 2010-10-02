@@ -504,7 +504,7 @@ def BuildStub(compression, solid, unicode):
 
 	exports = { 'env' : env, 'compression' : compression, 'solid_compression' : solid }
 
-	target = defenv.SConscript(dirs = 'Source/exehead', build_dir = build_dir, duplicate = False, exports = exports)
+	target = defenv.SConscript(dirs = 'Source/exehead', variant_dir = build_dir, duplicate = False, exports = exports)
 	env.SideEffect('%s/stub_%s.map' % (build_dir, stub), target)
 
 	env.DistributeStubs(target, names=compression+suffix)
@@ -532,7 +532,7 @@ defenv.DistributeStubs('Source/exehead/uninst.ico',names='uninst')
 build_dir = '$BUILD_PREFIX/makensis'
 exports = { 'env' : makensis_env }
 
-makensis = defenv.SConscript(dirs = 'Source', build_dir = build_dir, duplicate = False, exports = exports)
+makensis = defenv.SConscript(dirs = 'Source', variant_dir = build_dir, duplicate = False, exports = exports)
 
 makensis_env.SideEffect('%s/makensis.map' % build_dir, makensis)
 
@@ -638,7 +638,7 @@ for plugin in plugin_libs + plugins:
 		exports = {'BuildPlugin' : BuildPluginBoth, 'env' : plugin_uenv.Clone()}
 	else:
 		exports = {'BuildPlugin' : BuildPlugin, 'env' : plugin_env.Clone()}
-	defenv.SConscript(dirs = path, build_dir = build_dir, duplicate = False, exports = exports)
+	defenv.SConscript(dirs = path, variant_dir = build_dir, duplicate = False, exports = exports)
 
 ######################################################################
 #######  Utilities                                                 ###
@@ -708,7 +708,7 @@ for util in utils:
 	build_dir = '$BUILD_PREFIX/' + util
 	exports = {'BuildUtil' : BuildUtil, 'BuildUtilEnv' : BuildUtilEnv, 'env' : util_env, '_tWinMain' : _tWinMain}
 
-	defenv.SConscript(dirs = path, build_dir = build_dir, duplicate = False, exports = exports)
+	defenv.SConscript(dirs = path, variant_dir = build_dir, duplicate = False, exports = exports)
 
 ######################################################################
 #######  Documentation                                             ###
@@ -716,7 +716,7 @@ for util in utils:
 
 halibut = defenv.SConscript(
 	dirs = 'Docs/src/bin/halibut',
-	build_dir = '$BUILD_PREFIX/halibut',
+	variant_dir = '$BUILD_PREFIX/halibut',
 	duplicate = False,
 	exports = {'env' : defenv.Clone()}
 )
@@ -724,14 +724,14 @@ halibut = defenv.SConscript(
 if defenv['CHMDOCS']:
 	defenv.SConscript(
 		dirs = 'Docs/src',
-		build_dir = '$BUILD_PREFIX/Docs/chm',
+		variant_dir = '$BUILD_PREFIX/Docs/chm',
 		duplicate = False,
 		exports = {'halibut' : halibut, 'env' : defenv.Clone(), 'build_chm' : True}
 	)
 else:
 	defenv.SConscript(
 		dirs = 'Docs/src',
-		build_dir = '$BUILD_PREFIX/Docs/html',
+		variant_dir = '$BUILD_PREFIX/Docs/html',
 		duplicate = False,
 		exports = {'halibut' : halibut, 'env' : defenv.Clone(), 'build_chm' : False}
 	)
@@ -777,7 +777,7 @@ defenv.SConscript(
 	dirs = 'Source/Tests',
 	duplicate = False,
 	exports = exports,
-	build_dir = build_dir
+	variant_dir = build_dir
 )
 
 defenv.Ignore('$BUILD_PREFIX', '$BUILD_PREFIX/tests')
