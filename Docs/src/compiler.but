@@ -101,7 +101,7 @@ This option makes the compiler use an external EXE packer (such as \W{http://www
 
 \c !packhdr "$%TEMP%\exehead.tmp" '"C:\Program Files\UPX\upx.exe" "$%TEMP%\exehead.tmp"'
 
-\S1{packhdr} !finalize
+\S1{finalize} !finalize
 
 \c command
 
@@ -170,7 +170,7 @@ You can use these standard predefines to automatically add the build time to the
 
 Current script name.
 
-\S1{prefile} $\{__FILEDIR__\}
+\S1{prefiledir} $\{__FILEDIR__\}
 
 Current script directory.
 
