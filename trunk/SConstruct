@@ -177,7 +177,6 @@ opts.Add(('PREFIX_PLUGINAPI_LIB','Path to install plugin static library to.', No
 
 opts.Update(defenv)
 Help(opts.GenerateHelpText(defenv))
-Tool("msvc")(defenv)
 
 # add prefixes defines
 if 'NSIS_CONFIG_CONST_DATA_PATH' in defenv['NSIS_CPPDEFINES']:
