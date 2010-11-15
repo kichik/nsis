@@ -73,7 +73,7 @@ TCHAR *GetResultStr(SystemProc *proc)
 #ifdef SYSTEM_LOG_DEBUG
 
 #ifndef COUNTOF
-#define COUNTOF(a) ( sizeof(a) / (a[0]) )
+#define COUNTOF(a) ( sizeof(a) / sizeof(a[0]) )
 #endif
 
 // System log debugging turned on
