@@ -57,8 +57,10 @@ static void myatexit()
 {
   dopause();
   if (g_output != stdout && g_output) fclose(g_output);
+#ifdef _WIN32
 #ifdef _UNICODE
   SetConsoleOutputCP(g_initialCodepage);
+#endif
 #endif
 }
 
@@ -279,8 +281,10 @@ int _tmain(int argc, TCHAR **argv)
 
 #ifdef _UNICODE
   _setmode(_fileno(stdout), _O_U8TEXT); // set stdout to UTF-8
+#ifdef _WIN32
   g_initialCodepage = GetConsoleOutputCP();
   SetConsoleOutputCP(CP_UTF8); // set console output to UTF-8 (especially useful for subprocesses like !system)
+#endif
 #endif
   try
   {
