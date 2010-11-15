@@ -469,7 +469,7 @@ System::Free $0
 </pre></blockquote>
 <blockquote><pre>
 <a name="funcaddr"></a>System::<b>Call</b> "kernel32::GetModuleHandle(t 'user32.dll') p .s"
-System::<b>Call</b> "kernel32::GetProcAddress(p s, t 'MessageBoxA') p .r0"
+System::<b>Call</b> "kernel32::GetProcAddress(p s, m 'MessageBoxA') p .r0"
 System::<b>Call</b> "::$0(p $HWNDPARENT, t 'GetProcAddress test', t 'NSIS System Plug-in', i 0)"
 </pre></blockquote>
 <blockquote><pre>
