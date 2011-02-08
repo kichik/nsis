@@ -1,5 +1,5 @@
 /*
- * str.h
+ * container.h
  * 
  * This file is a part of NSIS.
  * 
@@ -14,33 +14,31 @@
  * warranty.
  */
 
-#ifndef ___MAKENSIS_NOBJ_STR_H___
-#define ___MAKENSIS_NOBJ_STR_H___
+#ifndef ___MAKENSIS_NOBJ_CONTAINERS_CONTAINER_H___
+#define ___MAKENSIS_NOBJ_CONTAINERS_CONTAINER_H___
 
-#include "nobj.h"
+#include "../nobj.h"
+
+#include <vector>
 
 /**
- * nobj_string
+ * nobj_container
  */
 
-class nobj_string : public nobj
+class nobj_container
 {
 
 public:
 
-  nobj_string(const std::string& str);
-  nobj_string(int i);
+  void add(nobj* obj);
+  void add_recursively(nobj* obj);
 
-  const std::string& get_string() const;
-
-  bool operator<(const nobj_string& other) const;
+  nobjs_iterator get();
 
 private:
 
-  const std::string m_string;
-
-  static std::string itoa(int i);
+  nobjs m_nobjs;
 
 };
 
-#endif//!___MAKENSIS_NOBJ_STR_H___
+#endif//!___MAKENSIS_NOBJ_CONTAINERS_CONTAINER_H___

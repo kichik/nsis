@@ -17,8 +17,9 @@
 #ifndef ___MAKENSIS_NOBJ_H___
 #define ___MAKENSIS_NOBJ_H___
 
-#include <vector>
+#include <set>
 #include <string>
+#include <vector>
 
 /**
  * nobj and nobj list declaration
