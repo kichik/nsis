@@ -1060,7 +1060,7 @@ int CEXEBuild::add_function(const char *funname)
     return PS_ERROR;
   }
 
-  build_cur_nobj_function = new nobj_function();
+  build_cur_nobj_function = new nobj_function(funname);
   build_cur_nobj_code = build_cur_nobj_function;
 
   if (uninstall_mode)

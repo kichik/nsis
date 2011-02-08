@@ -30,19 +30,11 @@ nobj_string::nobj_string(const string& str)
   : m_string(str)
 {}
 
-nobj_string::nobj_string(const char* str)
-  : m_string(str)
-{}
-
-nobj_string::nobj_string(char* str)
-  : m_string(str)
-{}
-
 nobj_string::nobj_string(int i)
   : m_string(itoa(i))
 {}
 
-const string nobj_string::get_string() const
+const string& nobj_string::get_string() const
 {
   return m_string;
 }
@@ -52,4 +44,9 @@ string nobj_string::itoa(int i)
   ostringstream o;
   o << i;
   return o.str();
+}
+
+bool nobj_string::operator<(const nobj_string& other) const
+{
+  return get_string() < other.get_string();
 }

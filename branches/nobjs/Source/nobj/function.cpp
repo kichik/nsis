@@ -22,8 +22,8 @@ using std::string;
  * nobj_function
  */
 
-nobj_function::nobj_function()
-  : m_used(false), m_offset(0)
+nobj_function::nobj_function(const string& name)
+  : m_name(name), m_used(false), m_offset(0)
 {
 }
 
@@ -45,4 +45,13 @@ int nobj_function::get_offset()
 void nobj_function::set_offset(int offset)
 {
   m_offset = offset;
+}
+
+const string& nobj_function::get_name() const {
+  return m_name;
+}
+
+bool nobj_function::operator<(const nobj_function& other) const
+{
+  return get_name() < other.get_name();
 }

@@ -1,5 +1,5 @@
 /*
- * str.h
+ * file.h
  * 
  * This file is a part of NSIS.
  * 
@@ -14,33 +14,29 @@
  * warranty.
  */
 
-#ifndef ___MAKENSIS_NOBJ_STR_H___
-#define ___MAKENSIS_NOBJ_STR_H___
+#ifndef ___MAKENSIS_NOBJ_FILE_H___
+#define ___MAKENSIS_NOBJ_FILE_H___
 
 #include "nobj.h"
 
 /**
- * nobj_string
+ * nobj_file
  */
 
-class nobj_string : public nobj
+class nobj_file : public nobj
 {
 
 public:
 
-  nobj_string(const std::string& str);
-  nobj_string(int i);
+  nobj_file(const std::string& path);
+  nobj_file(const char* path);
 
-  const std::string& get_string() const;
-
-  bool operator<(const nobj_string& other) const;
+  const std::string get_path() const;
 
 private:
 
-  const std::string m_string;
-
-  static std::string itoa(int i);
+  std::string m_path;
 
 };
 
-#endif//!___MAKENSIS_NOBJ_STR_H___
+#endif//!___MAKENSIS_NOBJ_FILE_H___

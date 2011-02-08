@@ -29,7 +29,7 @@ class nobj_function : public nobj_code
 
 public:
 
-  nobj_function();
+  nobj_function(const std::string& name);
 
   bool is_used();
   void set_used();
@@ -37,7 +37,13 @@ public:
   int get_offset();
   void set_offset(int offset);
 
+  const std::string& get_name() const;
+
+  virtual bool operator<(const nobj_function& other) const;
+
 private:
+
+  const std::string m_name;
 
   bool m_used;
   int m_offset;
