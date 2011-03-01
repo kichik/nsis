@@ -107,9 +107,15 @@ typedef DWORDLONG ULONGLONG,*PULONGLONG;
 #define _strdup strdup
 #define _snprintf snprintf
 #define _vsnprintf vsnprintf
+
 #endif
 
 
+// mingw32 and w64-mingw32 do not define ULONG_PTR
+// but rather declare ULONG_PTR via typedef (see basetsd.h)
+#if !defined(__MINGW32__) && !defined(ULONG_PTR)
+#  define ULONG_PTR unsigned long
+#endif
 
 #ifdef _countof
 #define COUNTOF _countof
@@ -229,16 +235,6 @@ typedef DWORDLONG ULONGLONG,*PULONGLONG;
 #endif
 
 // defines
-
-#ifndef FOF_NOERRORUI
-#  define FOF_NOERRORUI 0x0400
-#endif
-
-// mingw32 and w64-mingw32 do not define ULONG_PTR
-// but rather declare ULONG_PTR via typedef (see basetsd.h)
-#if !defined(__MINGW32__) && !defined(ULONG_PTR)
-#  define ULONG_PTR unsigned long
-#endif
 
 #ifndef IDC_HAND
 #  define IDC_HAND MAKEINTRESOURCE(32649)
@@ -426,6 +422,10 @@ typedef DWORDLONG ULONGLONG,*PULONGLONG;
 #  define CSIDL_CDBURN_AREA 0x3B
 #endif
 
+#ifndef SHGFP_TYPE_CURRENT
+  #define SHGFP_TYPE_CURRENT 0
+#endif
+
 // other shell stuff
 
 #ifndef SHACF_FILESYSTEM
@@ -579,6 +579,13 @@ typedef DWORDLONG ULONGLONG,*PULONGLONG;
 #  define KEY_WOW64_64KEY 0x100
 #endif
 
+#ifndef REG_SZ
+#  define REG_SZ 1
+#  define REG_EXPAND_SZ 2
+#  define REG_BINARY 3
+#  define REG_DWORD 4
+#endif
+
 // show modes
 
 #ifndef SW_SHOWNORMAL
@@ -649,6 +656,9 @@ typedef DWORDLONG ULONGLONG,*PULONGLONG;
 #  define FOF_SIMPLEPROGRESS 256
 #  define FOF_NOCONFIRMMKDIR 512
 #endif
+#ifndef FOF_NOERRORUI
+#  define FOF_NOERRORUI 0x0400
+#endif
 
 // file attribs
 
@@ -662,14 +672,6 @@ typedef DWORDLONG ULONGLONG,*PULONGLONG;
 #  define FILE_ATTRIBUTE_OFFLINE 0x00001000
 #endif
 
-// registry
-
-#ifndef REG_SZ
-#  define REG_SZ 1
-#  define REG_EXPAND_SZ 2
-#  define REG_BINARY 3
-#  define REG_DWORD 4
-#endif
 
 // fopen
 #ifndef GENERIC_READ
@@ -893,10 +895,6 @@ typedef struct tagVS_FIXEDFILEINFO {
   DWORD dwFileDateLS;
 } VS_FIXEDFILEINFO;
 #  pragma pack()
-#endif
-
-#ifndef SHGFP_TYPE_CURRENT
-  #define SHGFP_TYPE_CURRENT 0
 #endif
 
 #endif
