@@ -1,0 +1,153 @@
+/*
+-------------
+   COM.nsh
+-------------
+
+COM defines and helper macros
+
+;Example:
+!include Win\COM.nsh
+!insertmacro ComHlpr_CreateInProcInstance ${CLSID_ShellLink} ${IID_IShellLink} r0 ""
+${If} $0 <> 0
+	${IShellLink::SetPath} $0 '("%COMSPEC%").r1'
+	${IShellLink::SetArguments} $0 '("/k echo HelloWorld").r2'
+	${If} $1 = 0
+	${AndIf} $2 = 0
+		${IUnknown::QueryInterface}$0 '("${IID_IPersistFile}",.r1)'
+		${If} $1 <> 0
+			${IPersistFile::Save} $1 '("$exedir\test.lnk",1)'
+			${IUnknown::Release} $1 ""
+		${EndIf}
+	${EndIf}
+	${IUnknown::Release} $0 ""
+${EndIf}
+
+*/
+
+
+!ifndef __WIN_COM__INC
+!define __WIN_COM__INC
+!verbose push
+!verbose 3
+
+!define /ifndef CLSCTX_INPROC_SERVER 0x1
+!define /ifndef CLSCTX_INPROC_HANDLER 0x2
+!define /ifndef CLSCTX_LOCAL_SERVER 0x4
+!define /ifndef CLSCTX_REMOTE_SERVER 0x10
+!define /ifndef CLSCTX_ACTIVATE_32_BIT_SERVER 0x40000
+!define /ifndef CLSCTX_ACTIVATE_64_BIT_SERVER 0x80000
+!define /ifndef CLSCTX_ENABLE_CLOAKING 0x100000
+
+!define NSISCOMCALL "!insertmacro NSISCOMCALL "
+!macro NSISCOMCALL vtblidx decl ptr params
+System::Call `${ptr}->${vtblidx}${decl}${params}`
+!macroend
+!define NSISCOMIFACEDECL "!insertmacro NSISCOMIFACEDECL "
+!macro NSISCOMIFACEDECL iface method vtblidx decl
+!define ${iface}::${method} `${NSISCOMCALL} ${vtblidx} ${decl} `
+!macroend
+
+!macro ComHlpr_CreateInProcInstance clsid iid sysoutvarIFacePtr sysret
+System::Call 'OLE32::CoCreateInstance(g "${clsid}",i 0,i ${CLSCTX_INPROC_SERVER},g "${iid}",*p.${sysoutvarIFacePtr})i${sysret}'
+!macroend
+
+
+!ifndef IID_IUnknown
+!define IID_IUnknown {00000000-0000-0000-C000-000000000046}
+${NSISCOMIFACEDECL}IUnknown QueryInterface 0 (g,*p)i
+${NSISCOMIFACEDECL}IUnknown AddRef 1 ()i
+${NSISCOMIFACEDECL}IUnknown Release 2 ()i
+!endif
+
+!ifndef IID_IPersist
+!define IID_IPersist {0000010c-0000-0000-C000-000000000046}
+${NSISCOMIFACEDECL}IPersist GetClassID 3 (*g)i
+!endif
+
+!ifndef IID_IPersistFile
+!define IID_IPersistFile {0000010b-0000-0000-C000-000000000046}
+${NSISCOMIFACEDECL}IPersistFile IsDirty 4 ()i
+${NSISCOMIFACEDECL}IPersistFile Load 5 (w,i)i
+${NSISCOMIFACEDECL}IPersistFile Save 6 (w,i)i
+${NSISCOMIFACEDECL}IPersistFile SaveCompleted 7 (w)i
+${NSISCOMIFACEDECL}IPersistFile GetCurFile 8 (*w)i
+!endif
+
+!ifndef CLSID_ShellLink
+!define CLSID_ShellLink {00021401-0000-0000-c000-000000000046}
+!endif
+!ifndef IID_IShellLink
+!define IID_IShellLinkA {000214ee-0000-0000-c000-000000000046}
+!define IID_IShellLinkW {000214f9-0000-0000-c000-000000000046}
+!ifdef NSIS_UNICODE
+!define IID_IShellLink ${IID_IShellLinkW}
+!else
+!define IID_IShellLink ${IID_IShellLinkA}
+!endif
+${NSISCOMIFACEDECL}IShellLink GetPath 3 (t,i,p,i)i
+${NSISCOMIFACEDECL}IShellLink GetIDList 4 (*p)i
+${NSISCOMIFACEDECL}IShellLink SetIDList 5 (p)i
+${NSISCOMIFACEDECL}IShellLink GetDescription 6 (t,i)i
+${NSISCOMIFACEDECL}IShellLink SetDescription 7 (t)i
+${NSISCOMIFACEDECL}IShellLink GetWorkingDirectory 8 (t,i)i
+${NSISCOMIFACEDECL}IShellLink SetWorkingDirectory 9 (t)i
+${NSISCOMIFACEDECL}IShellLink GetArguments 10 (t,i)i
+${NSISCOMIFACEDECL}IShellLink SetArguments 11 (t)i
+${NSISCOMIFACEDECL}IShellLink GetHotkey 12 (*&i2)i
+${NSISCOMIFACEDECL}IShellLink SetHotkey 13 (&i2)i
+${NSISCOMIFACEDECL}IShellLink GetShowCmd 14 (*i)i
+${NSISCOMIFACEDECL}IShellLink SetShowCmd 15 (i)i
+${NSISCOMIFACEDECL}IShellLink GetIconLocation 16 (t,i,*i)i
+${NSISCOMIFACEDECL}IShellLink SetIconLocation 17 (t,i)i
+${NSISCOMIFACEDECL}IShellLink SetRelativePath 18 (t,i)i
+${NSISCOMIFACEDECL}IShellLink Resolve 19 (p,i)i
+${NSISCOMIFACEDECL}IShellLink SetPath 20 (t)i
+!endif
+
+!ifndef IID_IShellLinkDataList
+!define IID_IShellLinkDataList {45e2b4ae-b1c3-11d0-b92f-00a0c90312e1}
+${NSISCOMIFACEDECL}IShellLinkDataList AddDataBlock 3 (p)i
+${NSISCOMIFACEDECL}IShellLinkDataList CopyDataBlock 4 (i,*p)i
+${NSISCOMIFACEDECL}IShellLinkDataList RemoveDataBlock 5 (i)i
+${NSISCOMIFACEDECL}IShellLinkDataList GetFlags 6 (*i)i
+${NSISCOMIFACEDECL}IShellLinkDataList SetFlags 7 (i)i
+!endif
+!define /ifndef EXP_SZ_LINK_SIG         0xA0000001
+!define /ifndef NT_CONSOLE_PROPS_SIG    0xA0000002
+!define /ifndef NT_FE_CONSOLE_PROPS_SIG 0xA0000004
+!define /ifndef EXP_SPECIAL_FOLDER_SIG  0xA0000005
+!define /ifndef EXP_DARWIN_ID_SIG       0xA0000006
+!define /ifndef EXP_SZ_ICON_SIG         0xA0000007
+;SHELL_LINK_DATA_FLAGS
+!define /ifndef SLDF_DEFAULT                               0
+!define /ifndef SLDF_HAS_ID_LIST                           0x00000001
+!define /ifndef SLDF_HAS_LINK_INFO                         0x00000002
+!define /ifndef SLDF_HAS_NAME                              0x00000004
+!define /ifndef SLDF_HAS_RELPATH                           0x00000008
+!define /ifndef SLDF_HAS_WORKINGDIR                        0x00000010
+!define /ifndef SLDF_HAS_ARGS                              0x00000020
+!define /ifndef SLDF_HAS_ICONLOCATION                      0x00000040
+!define /ifndef SLDF_UNICODE                               0x00000080
+!define /ifndef SLDF_FORCE_NO_LINKINFO                     0x00000100
+!define /ifndef SLDF_HAS_EXP_SZ                            0x00000200
+!define /ifndef SLDF_RUN_IN_SEPARATE                       0x00000400
+!define /ifndef SLDF_HAS_LOGO3ID                           0x00000800
+!define /ifndef SLDF_HAS_DARWINID                          0x00001000
+!define /ifndef SLDF_RUNAS_USER                            0x00002000
+!define /ifndef SLDF_HAS_EXP_ICON_SZ                       0x00004000
+!define /ifndef SLDF_NO_PIDL_ALIAS                         0x00008000
+!define /ifndef SLDF_FORCE_UNCNAME                         0x00010000
+!define /ifndef SLDF_RUN_WITH_SHIMLAYER                    0x00020000
+!define /ifndef SLDF_FORCE_NO_LINKTRACK                    0x00040000 ;[Vista+]
+!define /ifndef SLDF_ENABLE_TARGET_METADATA                0x00080000
+!define /ifndef SLDF_DISABLE_LINK_PATH_TRACKING            0x00100000 ;[Seven+]
+!define /ifndef SLDF_DISABLE_KNOWNFOLDER_RELATIVE_TRACKING 0x00200000
+!define /ifndef SLDF_NO_KF_ALIAS                           0x00400000
+!define /ifndef SLDF_ALLOW_LINK_TO_LINK                    0x00800000
+!define /ifndef SLDF_UNALIAS_ON_SAVE                       0x01000000
+!define /ifndef SLDF_PREFER_ENVIRONMENT_PATH               0x02000000
+!define /ifndef SLDF_KEEP_LOCAL_IDLIST_FOR_UNC_TARGET      0x04000000
+
+
+!verbose pop
+!endif /* __WIN_COM__INC */
