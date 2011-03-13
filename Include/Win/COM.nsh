@@ -148,6 +148,31 @@ ${NSISCOMIFACEDECL}IShellLinkDataList SetFlags 7 (i)i
 !define /ifndef SLDF_PREFER_ENVIRONMENT_PATH               0x02000000
 !define /ifndef SLDF_KEEP_LOCAL_IDLIST_FOR_UNC_TARGET      0x04000000
 
+!ifndef IID_IShellItem
+!define IID_IShellItem {43826d1e-e718-42ee-bc55-a1e261c37bfe}
+${NSISCOMIFACEDECL}IShellItem BindToHandler 3 (p,g,g,*p)i
+${NSISCOMIFACEDECL}IShellItem GetParent 4 (*p)i
+${NSISCOMIFACEDECL}IShellItem GetDisplayName 5 (i,*p)i
+${NSISCOMIFACEDECL}IShellItem GetAttributes 6 (i,*i)i
+${NSISCOMIFACEDECL}IShellItem Compare 7 (p,i,*i)i
+!endif
+
+!ifndef CLSID_StartMenuPin
+!define CLSID_StartMenuPin {a2a9545d-a0c2-42b4-9708-a0b2badd77c8}
+!endif
+!ifndef IID_IStartMenuPinnedList
+!define IID_IStartMenuPinnedList {4CD19ADA-25A5-4A32-B3B7-347BEE5BE36B}
+${NSISCOMIFACEDECL}IStartMenuPinnedList RemoveFromList 3 (p)i
+!endif 
+
+!ifndef IID_IPropertyStore
+!define IID_IPropertyStore {886D8EEB-8CF2-4446-8D02-CDBA1DBDCF99}
+${NSISCOMIFACEDECL}IPropertyStore GetCount 3 (*i)i
+${NSISCOMIFACEDECL}IPropertyStore GetAt 4 (i,p)i
+${NSISCOMIFACEDECL}IPropertyStore GetValue 5 (p,p)i
+${NSISCOMIFACEDECL}IPropertyStore SetValue 6 (p,p)i
+${NSISCOMIFACEDECL}IPropertyStore Commit 7 ()i
+!endif 
 
 !verbose pop
 !endif /* __WIN_COM__INC */
