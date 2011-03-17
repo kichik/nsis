@@ -167,6 +167,7 @@ ${MementoSection} "NSIS Core Files (required)" SecCore
   File ..\Include\Win\WinNT.nsh
   File ..\Include\Win\WinUser.nsh
   File ..\Include\Win\COM.nsh
+  File ..\Include\Win\Propkey.nsh
 
   SetOutPath $INSTDIR\Docs\StrFunc
   File ..\Docs\StrFunc\StrFunc.txt
