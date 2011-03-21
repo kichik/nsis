@@ -9,7 +9,7 @@ NLF v6
 950
 # RTL - anything else than RTL means LTR 由右至左書寫
 -
-# Translator: Kii Ali <kiiali@cpatch.org>;Revision date: 2004-12-14
+# Translator: Kii Ali <kiiali@cpatch.org>,<kiiali@ms1.url.com.tw>, <kiiali@pchome.com.tw>;  Revision date: 2010-09-28
 # ^Branding
 Nullsoft Install System %s
 # ^SetupCaption
@@ -49,7 +49,7 @@ $(^Name) 解除安裝
 # ^InstallBtn
 安裝(&I)
 # ^UninstallBtn
-移除(&U)
+解除安裝(&U)
 # ^CancelBtn
 取消(&C)
 # ^CloseBtn
@@ -91,7 +91,7 @@ $(^Name) 解除安裝
 # ^ComponentsSubText2
 或者，自訂選取想安裝的元件: 
 # ^UnComponentsText
-勾選你想要解除安裝的元件，並解除勾選你不希望解除安裝的元件。 $_CLICK
+勾選你想要解除安裝的元件，並解除勾選你不想要望解除安裝的元件。 $_CLICK
 # ^UnComponentsSubText1
 選擇解除安裝的類型: 
 # ^UnComponentsSubText2_NoInstTypes
@@ -99,17 +99,17 @@ $(^Name) 解除安裝
 # ^UnComponentsSubText2
 或是，選擇想要解除安裝的可選項元件: 
 # ^DirText
-Setup 將安裝 $(^NameDA) 在下列資料夾。要安裝到不同資料夾，按一下 [瀏覽(B)] 並選擇其他的資料夾。 $_CLICK
+Setup 將安裝 $(^NameDA) 在下列資料夾。要安裝到不同資料夾，按一下 [瀏覽(B)...] 並選擇其他的資料夾。 $_CLICK
 # ^DirSubText
 目標資料夾
 # ^DirBrowseText
 選擇要安裝 $(^NameDA) 的資料夾位置: 
 # ^UnDirText
-Setup 將解除安裝 $(^NameDA) 在下列資料夾。要解除安裝到不同資料夾，按一下 [瀏覽(B)] 並選擇其他的資料夾。 $_CLICK
+Setup 將自下列資料夾解除安裝 $(^NameDA) 。要解除安裝到不同資料夾，按一下 [瀏覽(B)...] 並選擇其他的資料夾。 $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
-選擇要解除安裝 $(^NameDA) 的資料夾位置: 
+選擇要解除安裝 $(^NameDA) 的資料夾: 
 # ^SpaceAvailable
 "可用空間: "
 # ^SpaceRequired
@@ -119,9 +119,9 @@ Setup 將解除安裝 $(^NameDA) 在下列資料夾。要解除安裝到不同�
 # ^UninstallingSubText
 解除安裝目錄: 
 # ^FileError
-無法開啟要寫入的檔案: \r\n\t"$0"\r\n按一下 [Abort] 放棄安裝，\r\n [Retry] 重新嘗試寫入檔案，或\r\n [Ignore] 忽略這個檔案。
+無法開啟要寫入的檔案: \r\n\t"$0"\r\n按一下 [Abort] 停止安裝，\r\n [Retry] 重新嘗試寫入檔案，或\r\n [Ignore] 忽略這個檔案。
 # ^FileError_NoIgnore
-無法開啟要寫入的檔案: \r\n\t"$0"\r\n按一下 [Retry] 重新嘗試寫入檔案，或\r\n [Cancel] 取消安裝。
+無法開啟要寫入的檔案: \r\n\t"$0"\r\n按一下 [Retry] 重新嘗試寫入檔案，或\r\n [Cancel] 停止安裝。
 # ^CantWrite
 "無法寫入: "
 # ^CopyFailed
@@ -155,7 +155,7 @@ Setup 將解除安裝 $(^NameDA) 在下列資料夾。要解除安裝到不同�
 # ^ErrorRegistering
 "正在註冊 DLL 時發生錯誤"
 # ^ExecShell
-"執行外部程式: "
+"執行殼層程式: "
 # ^Exec
 "執行: "
 # ^Extract
