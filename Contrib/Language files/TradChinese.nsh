@@ -1,8 +1,8 @@
 ﻿;Language: 'Chinese (Traditional)' (1028)
-;Translator: Kii Ali <kiiali@cpatch.org>
-;Revision date: 2004-12-15
+;Translator: Kii Ali <kiiali@cpatch.org>,<kiiali@ms1.url.com.tw>, <kiiali@pchome.com.tw>
+;Revision date: 2010-09-28
 
-!insertmacro LANGFILE "TradChinese" "Chinese (Traditional)" "漢語(繁體)"
+!insertmacro LANGFILE "TradChinese" "Chinese (Traditional)"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "歡迎使用 $(^NameDA) 安裝精靈"
@@ -17,7 +17,7 @@
 !ifdef MUI_LICENSEPAGE
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "授權協議"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "在安裝 $(^NameDA) 之前，請檢閱授權條款。"
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM "如果你接受協議中的條款，按一下 [我同意(I)] 繼續安裝。如果你選取 [取消(C)] ，安裝程式將會關閉。必須要接受協議才能安裝 $(^NameDA) 。"
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM "如果你接受協議中的條款，按一下 [我同意(I)] 繼續安裝。必須要接受協議才能安裝 $(^NameDA) 。"
   ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "如果你接受協議中的條款，按一下下方的勾選框。必須要接受協議才能安裝 $(^NameDA)。$_CLICK"
   ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "如果你接受協議中的條款，選擇下方第一個選項。必須要接受協議才能安裝 $(^NameDA)。$_CLICK"
 !endif
@@ -31,7 +31,7 @@
 !endif
 
 !ifdef MUI_LICENSEPAGE | MUI_UNLICENSEPAGE
-  ${LangFileString} MUI_INNERTEXT_LICENSE_TOP "檢閱協議的其餘部分，請按 [PgDn] 往下捲動頁面。"
+  ${LangFileString} MUI_INNERTEXT_LICENSE_TOP "檢閱協議的其餘部分，按 [PgDn] 往下捲動頁面。"
 !endif
 
 !ifdef MUI_COMPONENTSPAGE
@@ -47,9 +47,9 @@
 !ifdef MUI_COMPONENTSPAGE | MUI_UNCOMPONENTSPAGE
   ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "描述"
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
-    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "移動你的滑鼠指標到元件之上，便可見到它的描述。"
+    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "停懸你的滑鼠指標到元件之上，便可見到它的描述。"
   !else
-    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "移動你的滑鼠指標到元件之上，便可見到它的描述。"
+    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "停懸你的滑鼠指標到元件之上，便可見到它的描述。"
   !endif
 !endif
 
@@ -114,9 +114,17 @@
 !endif
 
 !ifdef MUI_ABORTWARNING
-  ${LangFileString} MUI_TEXT_ABORTWARNING "你確定要離開 $(^Name) 安裝程式？"
+  ${LangFileString} MUI_TEXT_ABORTWARNING "你確定要離開 $(^Name) 安裝程式嗎？"
 !endif
 
 !ifdef MUI_UNABORTWARNING
-  ${LangFileString} MUI_UNTEXT_ABORTWARNING "你確定要離開 $(^Name) 解除安裝嗎？"
+  ${LangFileString} MUI_UNTEXT_ABORTWARNING "你確定要離開 $(^Name) 解除安裝程式嗎？"
+!endif
+
+!ifdef MULTIUSER_INSTALLMODEPAGE
+  ${LangFileString} MULTIUSER_TEXT_INSTALLMODE_TITLE "選取使用者"
+  ${LangFileString} MULTIUSER_TEXT_INSTALLMODE_SUBTITLE "選取你想要安裝 $(^NameDA) 給那一個使用者。"
+  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_TOP "選擇你想要安裝 $(^NameDA) 給自己使用，或此電腦的所有使用者。 $(^ClickNext)"
+  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_ALLUSERS "安裝給此電腦的所有使用者(&A)"
+  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_CURRENTUSER "安裝給自己(&M)"
 !endif
