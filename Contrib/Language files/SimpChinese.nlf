@@ -9,13 +9,13 @@ NLF v6
 936
 # RTL - anything else than RTL means LTR 由右至左书写
 -
-# Translator: Kii Ali <kiiali@cpatch.org>;Revision date: 2004-12-15
+# Translator: Kii Ali <kiiali@cpatch.org>,<kiiali@ms1.url.com.tw>, <kiiali@pchome.com.tw>;  Revision date: 2010-09-28
 # ^Branding
 Nullsoft Install System %s
 # ^SetupCaption
 $(^Name) 安装
 # ^UninstallCaption
-$(^Name) 卸载
+$(^Name) 解除安装
 # ^LicenseSubCaption
 : 许可证协议
 # ^ComponentsSubCaption
@@ -27,13 +27,13 @@ $(^Name) 卸载
 # ^CompletedSubCaption
 : 已完成
 # ^UnComponentsSubCaption
-: 卸载选项
+: 解除安装选项
 # ^UnDirSubCaption
-: 卸载文件夹
+: 解除安装文件夹
 # ^ConfirmSubCaption
 : 确认
 # ^UninstallingSubCaption
-: 正在卸载
+: 正在解除安装
 # ^UnCompletedSubCaption
 : 完成
 # ^BackBtn
@@ -49,7 +49,7 @@ $(^Name) 卸载
 # ^InstallBtn
 安装(&I)
 # ^UninstallBtn
-卸载(&U)
+解除安装(&U)
 # ^CancelBtn
 取消(&C)
 # ^CloseBtn
@@ -63,23 +63,23 @@ $(^Name) 卸载
 # ^ClickInstall
 单击 [安装(I)] 开始安装进程。
 # ^ClickUninstall
-单击 [卸载(U)] 开始解除安装进程。
+单击 [解除安装(U)] 开始解除安装进程。
 # ^Name
 名称
 # ^Completed
 已完成
 # ^LicenseText
-在安装 $(^NameDA) 之前请检阅许可证协议。如果你接受协议中所有条款，单击 [我接受(I)] 。
+在安装 $(^NameDA) 之前请检阅许可证协议。如果你接受协议中所有条款，单击 [我同意(I)] 。
 # ^LicenseTextCB
 在安装 $(^NameDA) 之前请检阅许可证协议。如果你接受协议中所有条款，单击下方的勾选框。 $_CLICK
 # ^LicenseTextRB
 在安装 $(^NameDA) 之前请检阅许可证协议。如果你接受协议中所有条款，选择下方的第一个选项。 $_CLICK
 # ^UnLicenseText
-在卸载 $(^NameDA) 之前请检阅许可证协议。如果你接受协议中所有条款，单击 [我接受(I)] 。
+在解除安装 $(^NameDA) 之前请检阅许可证协议。如果你接受协议中所有条款，单击 [我同意(I)] 。
 # ^UnLicenseTextCB
-在卸载 $(^NameDA) 之前请检阅许可证协议。如果你接受协议中所有条款，单击下方的勾选框。 $_CLICK
+在解除安装 $(^NameDA) 之前请检阅许可证协议。如果你接受协议中所有条款，单击下方的勾选框。 $_CLICK
 # ^UnLicenseTextRB
-在卸载 $(^NameDA) 之前请检阅许可证协议。如果你接受协议中所有条款，选择下方的第一个选项。 $_CLICK
+在解除安装 $(^NameDA) 之前请检阅许可证协议。如果你接受协议中所有条款，选择下方的第一个选项。 $_CLICK
 # ^Custom
 自定义
 # ^ComponentsText
@@ -91,37 +91,37 @@ $(^Name) 卸载
 # ^ComponentsSubText2
 或者，自定义选定想安装的组件: 
 # ^UnComponentsText
-勾选你想要卸载的组件，并解除勾选你不希望卸载的组件。 $_CLICK
+勾选你想要解除安装的组件，并解除勾选你不想要望解除安装的组件。 $_CLICK
 # ^UnComponentsSubText1
-选择卸载的类型: 
+选择解除安装的类型: 
 # ^UnComponentsSubText2_NoInstTypes
-选择要卸载的组件: 
+选择要解除安装的组件: 
 # ^UnComponentsSubText2
-或是，选择想要卸载的可选项组件: 
+或是，选择想要解除安装的可选项组件: 
 # ^DirText
-Setup 将安装 $(^NameDA) 在下列文件夹。要安装到不同文件夹，单击 [浏览(B)] 并选择其他的文件夹。 $_CLICK
+Setup 将安装 $(^NameDA) 在下列文件夹。要安装到不同文件夹，单击 [浏览(B)...] 并选择其他的文件夹。 $_CLICK
 # ^DirSubText
 目标文件夹
 # ^DirBrowseText
 选择要安装 $(^NameDA) 的文件夹位置: 
 # ^UnDirText
-Setup 将卸载 $(^NameDA) 在下列文件夹。要卸载到不同文件夹，单击 [浏览(B)] 并选择其他的文件夹。 $_CLICK
+Setup 将自下列文件夹解除安装 $(^NameDA) 。要解除安装到不同文件夹，单击 [浏览(B)...] 并选择其他的文件夹。 $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
-选择要卸载 $(^NameDA) 的文件夹位置: 
+选择要解除安装 $(^NameDA) 的文件夹: 
 # ^SpaceAvailable
 "可用空间: "
 # ^SpaceRequired
 "所需空间: "
 # ^UninstallingText
-这个向导将从你的计算机卸载 $(^NameDA) 。 $_CLICK
+这个向导将从你的计算机解除安装 $(^NameDA) 。 $_CLICK
 # ^UninstallingSubText
-卸载目录: 
+解除安装目录: 
 # ^FileError
-不能打开要写入的文件: \r\n\t"$0"\r\n单击 [Abort] 放弃安装，\r\n [Retry] 重新尝试写入文件，或\r\n [Ignore] 忽略这个文件。
+不能打开要写入的文件: \r\n\t"$0"\r\n单击 [Abort] 停止安装，\r\n [Retry] 重新尝试写入文件，或\r\n [Ignore] 忽略这个文件。
 # ^FileError_NoIgnore
-不能打开要写入的文件: \r\n\t"$0"\r\n单击 [Retry] 重新尝试写入文件，或\r\n [Cancel] 取消安装。
+不能打开要写入的文件: \r\n\t"$0"\r\n单击 [Retry] 重新尝试写入文件，或\r\n [Cancel] 停止安装。
 # ^CantWrite
 "无法写入: "
 # ^CopyFailed
@@ -141,7 +141,7 @@ Setup 将卸载 $(^NameDA) 在下列文件夹。要卸载到不同文件夹，�
 # ^CreateShortcut
 "创建快捷方式: "
 # ^CreatedUninstaller
-"创建卸载程序: "
+"创建解除安装程序: "
 # ^Delete
 "删除文件: "
 # ^DeleteOnReboot
@@ -155,7 +155,7 @@ Setup 将卸载 $(^NameDA) 在下列文件夹。要卸载到不同文件夹，�
 # ^ErrorRegistering
 "正在注册 DLL 时发生错误"
 # ^ExecShell
-"运行外部程序: "
+"运行壳层程序: "
 # ^Exec
 "运行: "
 # ^Extract
