@@ -163,7 +163,7 @@ ${NSISCOMIFACEDECL}IShellItem Compare 7 (p,i,*i)i
 !ifndef IID_IStartMenuPinnedList
 !define IID_IStartMenuPinnedList {4CD19ADA-25A5-4A32-B3B7-347BEE5BE36B}
 ${NSISCOMIFACEDECL}IStartMenuPinnedList RemoveFromList 3 (p)i
-!endif 
+!endif
 
 !ifndef IID_IPropertyStore
 !define IID_IPropertyStore {886D8EEB-8CF2-4446-8D02-CDBA1DBDCF99}
@@ -172,7 +172,28 @@ ${NSISCOMIFACEDECL}IPropertyStore GetAt 4 (i,p)i
 ${NSISCOMIFACEDECL}IPropertyStore GetValue 5 (p,p)i
 ${NSISCOMIFACEDECL}IPropertyStore SetValue 6 (p,p)i
 ${NSISCOMIFACEDECL}IPropertyStore Commit 7 ()i
-!endif 
+!endif
+
+!ifndef CLSID_ApplicationAssociationRegistration
+!define CLSID_ApplicationAssociationRegistration {591209c7-767b-42b2-9fba-44ee4615f2c7}
+!endif
+!ifndef IID_IApplicationAssociationRegistration
+!define IID_IApplicationAssociationRegistration {4e530b0a-e611-4c77-a3ac-9031d022281b} ;[Vista+]
+${NSISCOMIFACEDECL}IApplicationAssociationRegistration QueryCurrentDefault 3 (w,i,i,*p)i
+${NSISCOMIFACEDECL}IApplicationAssociationRegistration QueryAppIsDefault 4 (w,i,i,w,*i)i
+${NSISCOMIFACEDECL}IApplicationAssociationRegistration QueryAppIsDefaultAll 5 (i,w,*i)i
+${NSISCOMIFACEDECL}IApplicationAssociationRegistration SetAppAsDefault 6 (w,w,i)i
+${NSISCOMIFACEDECL}IApplicationAssociationRegistration SetAppAsDefaultAll 7 (w)i
+${NSISCOMIFACEDECL}IApplicationAssociationRegistration ClearUserAssociations 8 ()i
+!endif
+!ifndef CLSID_ApplicationAssociationRegistrationUI
+!define CLSID_ApplicationAssociationRegistrationUI {1968106d-f3b5-44cf-890e-116fcb9ecef1}
+!endif
+!ifndef IID_IApplicationAssociationRegistrationUI
+!define IID_IApplicationAssociationRegistrationUI {1f76a169-f994-40ac-8fc8-0959e8874710} ;[Vista+]
+${NSISCOMIFACEDECL}IApplicationAssociationRegistrationUI LaunchAdvancedAssociationUI 3 (w)i
+!endif
+
 
 !verbose pop
 !endif /* __WIN_COM__INC */
