@@ -210,5 +210,24 @@ ShlObj.h
 
 
 
+
+/**************************************************
+Shobjidl.h
+**************************************************/
+!ifndef __WIN_NOINC_SHOBJIDL
+; ASSOCIATIONLEVEL
+!define AL_MACHINE 0
+!define AL_EFFECTIVE 1
+!define AL_USER 2
+
+; ASSOCIATIONTYPE
+!define AT_FILEEXTENSION 0
+!define AT_URLPROTOCOL 1
+!define AT_STARTMENUCLIENT 2
+!define AT_MIMETYPE 3
+!endif /* __WIN_NOINC_SHOBJIDL */
+
+
+
 !verbose pop
 !endif /* __WIN_WINDOWS__INC */
