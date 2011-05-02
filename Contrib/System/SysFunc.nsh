@@ -7,7 +7,7 @@
 !ifndef SysFunc.NSH.Included
 !define SysFunc.NSH.Included
 
-!include "${NSISDIR}\Examples\System\System.nsh"
+!include "System.nsh"
 
 !verbose 3      ; For WinMessages especially
   !include "WinMessages.nsh"
