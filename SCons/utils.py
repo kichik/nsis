@@ -28,12 +28,15 @@ def AddZLib(env, platform, alias='install-utils'):
 			print 'Please specify folder of zlib for Win32 via ZLIB_W32'
 			Exit(1)
 
-	conf = env.Configure()
-	if not conf.CheckLibWithHeader(zlib, 'zlib.h', 'c'):
-		print 'zlib (%s) is missing!' % (platform)
-		Exit(1)
+	# Avoid unnecessary configuring when cleaning targets 
+	# and a clash when scons is run in parallel operation.
+	if not env.GetOption('clean'):
+		conf = env.Configure()
+		if not conf.CheckLibWithHeader(zlib, 'zlib.h', 'c'):
+			print 'zlib (%s) is missing!' % (platform)
+			Exit(1)
 
-	env = conf.Finish()
+		env = conf.Finish()
 
 
 def GetAvailableLibs(env, libs):
