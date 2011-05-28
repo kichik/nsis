@@ -4,7 +4,7 @@
 
 \c user_message
 
-Cancels the install, stops execution of script, and displays user_message in the status display. Note: you can use this from \R{callbacks}{Callback functions} to do special things. \R{pages}{Page callbacks} also uses Abort for special purposes.
+Cancels the install, stops execution of script, and displays user_message in the status display. Note: you can use this from \R{callbacks}{Callback functions} to do special things. \R{pages}{Page callbacks} also uses \R{abort}{Abort} for special purposes.
 
 \c Abort
 \c Abort "can't install"
@@ -43,7 +43,7 @@ Clears the error flag.
 
 \c user_var(output)
 
-Gets the address of the current instruction (the GetCurrentAddress) and stores it in the output user variable. This user variable then can be passed to Call or Goto.
+Gets the address of the current instruction (the \R{getcurrentaddress}{GetCurrentAddress}) and stores it in the output user variable. This user variable then can be passed to \R{call}{Call} or \R{goto}{Goto}.
 
 \c Function func
 \c   DetailPrint "function"
@@ -70,7 +70,7 @@ Gets the address of the current instruction (the GetCurrentAddress) and stores i
 
 \c user_var(output) function_name
 
-Gets the address of the function and stores it in the output user variable. This user variable then can be passed to Call or Goto. Note that if you Goto an address which is the output of GetFunctionAddress, your function will never be returned to (when the function you Goto'd to returns, you return instantly).
+Gets the address of the function and stores it in the output user variable. This user variable then can be passed to \R{call}{Call} or \R{goto}{Goto}. Note that if you \R{goto}{Goto} an address which is the output of \R{getfunctionaddress}{GetFunctionAddress}, your function will never be returned to (when the function you Goto'd to returns, you return instantly).
 
 \c Function func
 \c   DetailPrint "function"
@@ -85,7 +85,7 @@ Gets the address of the function and stores it in the output user variable. This
 
 \c user_var(output) label
 
-Gets the address of the label and stores it in the output user variable. This user variable then can be passed to Call or Goto. Note that you may only call this with labels accessible from your function, but you can call it from anywhere (which is potentially dangerous). Note that if you Call the output of GetLabelAddress, code will be executed until it Return's (explicitly or implicitly at the end of a function), and then you will be returned to the statement after the Call.
+Gets the address of the label and stores it in the output user variable. This user variable then can be passed to \R{call}{Call} or \R{goto}{Goto}. Note that you may only call this with labels accessible from your function, but you can call it from anywhere (which is potentially dangerous). Note that if you \R{call}{Call} the output of \R{getlabeladdress}{GetLabelAddress}, code will be executed until it Return's (explicitly or implicitly at the end of a function), and then you will be returned to the statement after the \R{call}{Call}.
 
 \c label:
 \c DetailPrint "label"
@@ -102,7 +102,7 @@ If label is specified, goto the label 'label_to_jump_to:'.
 
 If +offset or -offset is specified, jump is relative by offset instructions. Goto +1 goes to the next instruction, Goto -1 goes to the previous instruction, etc.
 
-If a user variable is specified, jumps to absolute address (generally you will want to get this value from a function like GetLabelAddress). Compiler flag commands and SectionIn aren't instructions so jumping over them has no effect.
+If a user variable is specified, jumps to absolute address (generally you will want to get this value from a function like \R{getlabeladdress}{GetLabelAddress}). Compiler flag commands and \R{ssectionin}{SectionIn} aren't instructions so jumping over them has no effect.
 
 \c Goto label
 \c Goto +2
@@ -137,7 +137,7 @@ Checks and clears the error flag, and if it is set, it will goto jumpto_iferror,
 
 \c file_to_check_for jump_if_present [jump_otherwise]
 
-Checks for existence of file(s) file_to_check_for (which can be a wildcard, or a directory), and Gotos jump_if_present if the file exists, otherwise Gotos jump_otherwise. If you want to check to see if a file is a directory, use IfFileExists DIRECTORY\\*.*
+Checks for existence of file(s) file_to_check_for (which can be a wildcard, or a directory), and Gotos jump_if_present if the file exists, otherwise Gotos jump_otherwise. If you want to check to see if a file is a directory, use \R{iffileexists}{IfFileExists} DIRECTORY\\*.*
 
 \c IfFileExists $WINDIR\notepad.exe 0 +2
 \c   MessageBox MB_OK "notepad is installed"
@@ -146,7 +146,7 @@ Checks for existence of file(s) file_to_check_for (which can be a wildcard, or a
 
 \c jump_if_set [jump_if_not_set]
 
-Checks the reboot flag, and jumps to jump_if_set if the reboot flag is set, otherwise jumps to jump_if_not_set. The reboot flag can be set by Delete and Rename, or manually with \R{setrebootflag}{SetRebootFlag}.
+Checks the reboot flag, and jumps to jump_if_set if the reboot flag is set, otherwise jumps to jump_if_not_set. The reboot flag can be set by \R{delete}{Delete} and \R{rename}{Rename}, or manually with \R{setrebootflag}{SetRebootFlag}.
 
 \c IfRebootFlag 0 noreboot
 \c   MessageBox MB_YESNO "A reboot is required to finish the installation. Do you wish to reboot now?" IDNO noreboot
@@ -190,7 +190,7 @@ Compares two unsigned integers val1 and val2. If val1 and val2 are equal, Gotos 
 
 \c mb_option_list messagebox_text [/SD return] [return_check jumpto] [return_check_2 jumpto_2]
 
-Displays a MessageBox containing the text "messagebox_text". mb_option_list must be one or more of the following, delimited by |s (e.g. MB_YESNO|MB_ICONSTOP).
+Displays a \R{messagebox}{MessageBox} containing the text "messagebox_text". mb_option_list must be one or more of the following, delimited by |s (e.g. MB_YESNO|MB_ICONSTOP).
 
 \b \e{MB_OK} - Display with an OK button
 
@@ -246,7 +246,7 @@ Return_check can be 0 (or empty, or left off), or one of the following:
 
 \b \e{IDYES} - Yes button
 
-If the return value of the MessageBox is return_check, the installer will Goto jumpto.
+If the return value of the \R{messagebox}{MessageBox} is return_check, the installer will Goto jumpto.
 
 Use the /SD parameter with one of the return_check values above to specify the option that will be used when the installer is silent. See \k{silent} for more information.
 
@@ -282,7 +282,7 @@ Returns from a function or section.
 
 \S2{quit} Quit
 
-Causes the installer to exit as soon as possible. After Quit is called, the installer will exit (no callback functions will get a chance to run).
+Causes the installer to exit as soon as possible. After \R{quit}{Quit} is called, the installer will exit (no callback functions will get a chance to run).
 
 \S2{seterrors} SetErrors
 

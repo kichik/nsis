@@ -20,7 +20,7 @@ This command will include 'file' as if it was part of the original script. Note 
 
 \c directory
 
-Adds another include directory to the include directories list. This list is searched when !include is used. This list's initial value is $\{NSISDIR\}\\Include alone.
+Adds another include directory to the include directories list. This list is searched when \R{include}{!include} is used. This list's initial value is $\{NSISDIR\}\\Include alone.
 
 \c !addincludedir ..\include
 \c !include something.nsh
@@ -87,9 +87,9 @@ This command will issue an error to the script compiler and will stop execution 
 
 \c command
 
-This command will execute 'command' using a call to CreateProcess(). Unlike \R{system}{!system}, it does not use the command line processor, so input/output redirection and commands like 'cd', 'dir' and 'type' can not be used. !execute also ignores the return value of the executed command. Currently, the only known advantage of !execute over \R{system}{!system} is that it does not give trouble when the current working directory is specified using UNC.
+This command will execute 'command' using a call to CreateProcess(). Unlike \R{system}{!system}, it does not use the command line processor, so input/output redirection and commands like 'cd', 'dir' and 'type' can not be used. \R{execute}{!execute} also ignores the return value of the executed command. Currently, the only known advantage of \R{execute}{!execute} over \R{system}{!system} is that it does not give trouble when the current working directory is specified using UNC.
 
-On POSIX platforms, !execute will use system() just like \R{system}{!system}.
+On POSIX platforms, \R{execute}{!execute} will use system() just like \R{system}{!system}.
 
 \c !execute '"%WINDIR%\notepad.exe" "${NSISDIR}\license.txt"'
 
@@ -155,7 +155,7 @@ This command will issue a warning to the script compiler. You can also add a mes
 
 This command will set the level of verbosity. 4=all, 3=no script, 2=no info, 1=no warnings, 0=none.
 
-Passing push will cause !verbose to push the current verbosity level on a special stack. Passing pop will cause !verbose to pop the current verbosity level from the same stack and use it.
+Passing push will cause \R{verbose}{!verbose} to push the current verbosity level on a special stack. Passing pop will cause \R{verbose}{!verbose} to pop the current verbosity level from the same stack and use it.
 
 \c !verbose push
 \c !verbose 1

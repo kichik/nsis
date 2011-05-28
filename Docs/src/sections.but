@@ -4,7 +4,7 @@ Each NSIS installer contains one or more sections. Each of these sections are cr
 
 \b Each section contains zero or more instructions.
 
-\b Sections are executed in order by the resulting installer, and if ComponentText is set, the user will have the option of disabling/enabling each visible section.
+\b Sections are executed in order by the resulting installer, and if \R{acomponenttext}{ComponentText} is set, the user will have the option of disabling/enabling each visible section.
 
 \b If a section's name is 'Uninstall' or is prefixed with 'un.', it's an uninstaller section.
 
@@ -75,7 +75,7 @@ This command closes the current open section.
 
 \c insttype_index [insttype_index] [RO]
 
-This command specifies which install types (see \R{ainsttype}{InstType}) the current section defaults to the enabled state in. Multiple SectionIn commands can be specified (they are combined). If you specify RO as a parameter, then the section will be read-only, meaning the user won't be able to change its state. The first install type defined using \R{ainsttype}{InstType} is indexed 1, the next 2 and so on.
+This command specifies which install types (see \R{ainsttype}{InstType}) the current section defaults to the enabled state in. Multiple \R{ssectionin}{SectionIn} commands can be specified (they are combined). If you specify RO as a parameter, then the section will be read-only, meaning the user won't be able to change its state. The first install type defined using \R{ainsttype}{InstType} is indexed 1, the next 2 and so on.
 
 \c InstType "full"
 \c InstType "minimal"
