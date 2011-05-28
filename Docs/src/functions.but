@@ -1,6 +1,6 @@
 \H{functions} Functions
 
-Functions are similar to Sections in that they contain zero or more instructions. User functions are not called by the installer directly, instead they are called from Sections using the Call instruction. Callback functions will be called by the installer when a certain event occurs.
+Functions are similar to Sections in that they contain zero or more instructions. User functions are not called by the installer directly, instead they are called from Sections using the \R{call}{Call} instruction. Callback functions will be called by the installer when a certain event occurs.
 
 Functions must be declared outside of Sections or other Functions.
 
@@ -10,7 +10,7 @@ Functions must be declared outside of Sections or other Functions.
 
 \c [function_name]
 
-Begins and opens a new function. Function names beginning with "." (e.g. ".Whatever") are generally reserved for callback functions. Function names beginning with "un." are functions that will be generated in the Uninstaller. Hence, normal install Sections and functions cannot call uninstall functions, and the Uninstall Section and uninstall functions cannot call normal functions.
+Begins and opens a new function. \R{ffunction}{Function} names beginning with "." (e.g. ".Whatever") are generally reserved for callback functions. \R{ffunction}{Function} names beginning with "un." are functions that will be generated in the Uninstaller. Hence, normal install Sections and functions cannot call uninstall functions, and the Uninstall Section and uninstall functions cannot call normal functions.
 
 \c Function func
 \c   # some commands

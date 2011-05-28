@@ -97,7 +97,7 @@ because the binary value for 5 is "00000101". The error flag will be set if the 
 
 \c section_index user_var(output)
 
-Retrieves the install types flags array of a section. See above explanation about SectionSetInstTypes for a description of how to deal with the output. The error flag will be set if the section index specified is out of range.
+Retrieves the install types flags array of a section. See above explanation about \R{sectionsetinsttypes}{SectionSetInstTypes} for a description of how to deal with the output. The error flag will be set if the section index specified is out of range.
 
 \c Section test test_section_id
 \c SectionEnd
@@ -143,19 +143,19 @@ Gets the Size of the section specified by section_index and stores the value in 
 
 \c inst_type_idx
 
-Sets the current InstType. inst_type_idx should be between 0 and 31. The Error Flag is \\<b\\>not\\</b\\> set if an out of range InstType was used.
+Sets the current \R{ainsttype}{InstType}. inst_type_idx should be between 0 and 31. The Error Flag is \\<b\\>not\\</b\\> set if an out of range \R{ainsttype}{InstType} was used.
 
 \S2{sgetcurinsttype} GetCurInstType
 
 \c user_var
 
-Get the current InstType and stores it in user_var. If the first install type is selected, 0 will be put in user_var. If the second install type is selected, 1 will be put in user_var, and so on. The value of $\{NSIS_MAX_INST_TYPES\} (32 by default) means that the custom install type was selected.
+Get the current \R{ainsttype}{InstType} and stores it in user_var. If the first install type is selected, 0 will be put in user_var. If the second install type is selected, 1 will be put in user_var, and so on. The value of $\{NSIS_MAX_INST_TYPES\} (32 by default) means that the custom install type was selected.
 
 \S2{sinsttypesettext} InstTypeSetText
 
 \c inst_type_idx text
 
-Sets the Text of the specified InstType. If the Text is empty than the InstType is removed. By using a previously unused inst_type_idx number you can create new InstTypes. To add/remove Sections to this new InstType see \R{sectionsetinsttypes}{SectionSetInstTypes}. Unlike \R{ssectionin}{SectionIn} the index is zero based, which means the first install type's index is 0.
+Sets the Text of the specified \R{ainsttype}{InstType}. If the Text is empty than the \R{ainsttype}{InstType} is removed. By using a previously unused inst_type_idx number you can create new InstTypes. To add/remove Sections to this new \R{ainsttype}{InstType} see \R{sectionsetinsttypes}{SectionSetInstTypes}. Unlike \R{ssectionin}{SectionIn} the index is zero based, which means the first install type's index is 0.
 
 \c InstType a
 \c InstType b
@@ -171,7 +171,7 @@ Sets the Text of the specified InstType. If the Text is empty than the InstType 
 
 \c inst_type_idx user_var
 
-Gets the Text of the specified InstType.
+Gets the Text of the specified \R{ainsttype}{InstType}.
 
 \c InstType a
 \c InstType b
