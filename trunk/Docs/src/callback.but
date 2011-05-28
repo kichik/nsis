@@ -136,7 +136,7 @@ Have a look at \R{onguiinit}{.onGUIInit} for an example.
 
 \S3{unonInit} un.onInit
 
-This callback will be called when the uninstaller is nearly finished initializing. If the 'un.onInit' function calls Abort, the uninstaller will quit instantly. Note that this function can verify and/or modify $INSTDIR if necessary.
+This callback will be called when the uninstaller is nearly finished initializing. If the ' \R{unonInit}{un.onInit}' function calls \R{abort}{Abort}, the uninstaller will quit instantly. Note that this function can verify and/or modify $INSTDIR if necessary.
 
 Here are two examples of how this might be used:
 
@@ -197,7 +197,7 @@ Selection changes include both section selection and installation type change.
 
 \S3{unonuserabort} un.onUserAbort
 
-This callback is called when the user hits the 'cancel' button and the uninstall hasn't already failed. If this function calls Abort, the install will not be aborted.
+This callback is called when the user hits the 'cancel' button and the uninstall hasn't already failed. If this function calls \R{abort}{Abort}, the install will not be aborted.
 
 Example:
 

@@ -2,7 +2,7 @@
 
 \S2{BringToFront} BringToFront
 
-Makes the installer window visible and brings it to the top of the window list. If an application was executed that shows itself in front of the installer, a BringToFront would bring the installer back in focus.
+Makes the installer window visible and brings it to the top of the window list. If an application was executed that shows itself in front of the installer, a \R{BringToFront}{BringToFront} would bring the installer back in focus.
 
 Recent Windows versions restrict the setting of foreground windows. If the user is working with another application during installation, the user may be notified using a different method.
 
@@ -42,7 +42,7 @@ Enables or disables mouse and keyboard input to the specified window or control.
 
 \c user_var(hwnd output) windowclass [windowtitle] [windowparent] [childafter]
 
-Searches for a window. Behaves like the win32 FindWindowEx(). Searches by windowclass (and/or windowtitle if specified). If windowparent or childafter are specified, the search will be restricted as such. If windowclass or windowtitle is specified as "", they will not be used for the search. If the window is not found, the user variable returned is 0. To accomplish old-style FindWindow behavior, use FindWindow with SendMessage.
+Searches for a window. Behaves like the win32 FindWindowEx(). Searches by windowclass (and/or windowtitle if specified). If windowparent or childafter are specified, the search will be restricted as such. If windowclass or windowtitle is specified as "", they will not be used for the search. If the window is not found, the user variable returned is 0. To accomplish old-style \R{findwindow}{FindWindow} behavior, use \R{findwindow}{FindWindow} with \R{sendmessage}{SendMessage}.
 
 \c FindWindow $0 "#32770" "" $HWNDPARENT
 \c FindWindow $0 "my window class" "my window title"
@@ -81,7 +81,7 @@ If HWND is a window, Gotos jump_if_window, otherwise, Gotos jump_if_not_window (
 
 \c HWND msg wparam lparam [user_var(return value)] [/TIMEOUT=time_in_ms]
 
-Sends a message to HWND. If a user variable $x is specified as the last parameter (or one before the last if you use /TIMEOUT), the return value of SendMessage will be stored to it. Note that when specifying 'msg' you must just use the integer value of the message. If you wish to send strings use "STR:a string" as wParam or lParam where needed.
+Sends a message to HWND. If a user variable $x is specified as the last parameter (or one before the last if you use /TIMEOUT), the return value of \R{sendmessage}{SendMessage} will be stored to it. Note that when specifying 'msg' you must just use the integer value of the message. If you wish to send strings use "STR:a string" as wParam or lParam where needed.
 
 \b \e{WM_CLOSE} 16
 
@@ -109,7 +109,7 @@ Overrides the default auto window-closing flag (specified for the installer usin
 
 \c [/IMGID=item_id_in_dialog] [/RESIZETOFIT] path_to_bitmap_file.bmp
 
-Sets the current bitmap file displayed as the branding image. If no IMGID is specified, the first image control found will be used, or the image control created by \R{aaddbrandingimage}{AddBrandingImage}. Note that this bitmap must be present on the user's machine. Use File first to put it there. If /RESIZETOFIT is specified the image will be automatically resized (very poorly) to the image control size. If you used \R{aaddbrandingimage}{AddBrandingImage} you can get this size, by compiling your script and watching for \R{aaddbrandingimage}{AddBrandingImage} output, it will tell you the size. SetBrandingImage will not work when called from .onInit!
+Sets the current bitmap file displayed as the branding image. If no IMGID is specified, the first image control found will be used, or the image control created by \R{aaddbrandingimage}{AddBrandingImage}. Note that this bitmap must be present on the user's machine. Use File first to put it there. If /RESIZETOFIT is specified the image will be automatically resized (very poorly) to the image control size. If you used \R{aaddbrandingimage}{AddBrandingImage} you can get this size, by compiling your script and watching for \R{aaddbrandingimage}{AddBrandingImage} output, it will tell you the size. \R{setbrandingimage}{SetBrandingImage} will not work when called from .onInit!
 
 \S2{setdetailsview} SetDetailsView
 

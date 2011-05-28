@@ -832,7 +832,7 @@ Released on May 5th, 2007
 
 \b Disable the X button on InstallOptions pages when CancelEnabled is 0
 
-\b Fixed incomplete MessageBox usage line (\W{http://sourceforge.net/support/tracker.php?aid=1709460}{bug #1709460})
+\b Fixed incomplete \R{messagebox}{MessageBox} usage line (\W{http://sourceforge.net/support/tracker.php?aid=1709460}{bug #1709460})
 
 \S2{} Build System
 
@@ -1098,7 +1098,7 @@ Released on November 27th, 2006
 
 \b Fixed \L{../Include/WinVer.nsh}{WinVer.nsh}'s detection of Windows 98 and ME (reported on the \W{http://forums.winamp.com/showthread.php?s=&threadid=257994&highlight=winver.nsh}{forum})
 
-\b Fixed WriteUninstaller failure to overwrite read-only uninstallers (\W{http://sourceforge.net/support/tracker.php?aid=1542530}{bug #1542530})
+\b Fixed \R{writeuninstaller}{WriteUninstaller} failure to overwrite read-only uninstallers (\W{http://sourceforge.net/support/tracker.php?aid=1542530}{bug #1542530})
 
 \b Licensed lzma under \R{cpl-license}{CPL} with a \R{lzma-special-exception}{special exception}, instead of LGPL
 
@@ -1296,7 +1296,7 @@ Released on May 19th, 2006
 
 \b Fixed possible stack corruption when using TypeLib.dll on an invalid TLB
 
-\b Fixed RMDir deletion failure of read-only folders (\W{http://sourceforge.net/support/tracker.php?aid=1481664}{bug #1481664})
+\b Fixed \R{rmdir}{RMDir} deletion failure of read-only folders (\W{http://sourceforge.net/support/tracker.php?aid=1481664}{bug #1481664})
 
 \b \L{../Docs/makensisw/Readme.txt}{MakeNSISW}: Fixed toolbar compressor selection menu, broken in the previous version (\W{http://sourceforge.net/support/tracker.php?aid=1466486}{bug #1466486})
 
@@ -1478,7 +1478,7 @@ Released on January 24th, 2006
 
 \S2{} Major Changes
 
-\b Fixed a bug that corrupted $TEMP under Windows 9x and NT and caused InitPluginsDir to fail (\W{http://sourceforge.net/support/tracker.php?aid=1412159}{bug #1412159})
+\b Fixed a bug that corrupted $TEMP under Windows 9x and NT and caused \R{initpluginsdir}{InitPluginsDir} to fail (\W{http://sourceforge.net/support/tracker.php?aid=1412159}{bug #1412159})
 
 \S2{} Minor Changes
 
@@ -1939,7 +1939,7 @@ Released on March 19th, 2005
 
 \b Fixed a bug in the Russian language file distributed with 2.05
 
-\b Fixed a bug that caused SetFont to not function properly with RTL languages on Windows 9x (\W{http://sourceforge.net/support/tracker.php?aid=1159700}{bug #1159700})
+\b Fixed a bug that caused \R{asetfont}{SetFont} to not function properly with RTL languages on Windows 9x (\W{http://sourceforge.net/support/tracker.php?aid=1159700}{bug #1159700})
 
 \b Fixed a bug, introduced in 2.05, that caused problems with \R{ainsttype}{InstType} /COMPONENTSONLYONCUSTOM (\W{http://sourceforge.net/support/tracker.php?aid=1155060}{bug #1155060})
 
@@ -2059,7 +2059,7 @@ Released on December 3rd, 2004
 
 \b Fixed handling of absolute paths on POSIX
 
-\b Made RegDLL load and unload a DLL exactly once to fix crashes with COM DLLs registration
+\b Made \R{regdll}{RegDLL} load and unload a DLL exactly once to fix crashes with COM DLLs registration
 
 \S2{} New/Changed Commands
 
@@ -2125,7 +2125,7 @@ Released on October 23rd, 2004
 
 \b Added Albanian language files
 
-\b Added NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE configuration option which makes components only be toggled when the user clicks on the checkbox and makes .onMouseOverSection only be called when the user selects a component
+\b Added NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE configuration option which makes components only be toggled when the user clicks on the checkbox and makes \R{onmouseoversection}{.onMouseOverSection} only be called when the user selects a component
 
 \b Added some CppUnit tests
 
@@ -2229,7 +2229,7 @@ Released on September 24th, 2004
 
 \b Fixed compilation of NSISdl under VS.NET
 
-\b SetCtlColors /BRANDING wasn't working right, if just one of the background or text color were specified
+\b \R{setctlcolors}{SetCtlColors} /BRANDING wasn't working right, if just one of the background or text color were specified
 
 \b Language file fixes and improvements
 
@@ -2295,7 +2295,7 @@ Released on February 7th, 2004
 
 \b New and improved utilities: \L{../Docs/makensisw/Readme.txt}{MakeNSISw}, NSIS Menu (NSIS.exe), NSIS Update (Bin\\NSIS Update.exe) and zip2exe (Bin\\zip2exe.exe)
 
-\b New commands: \R{addplugindir}{!addplugindir}, \R{echo}{!echo}, \R{ifmacrodef}{!ifmacrodef}, \R{ifmacrondef}{!ifmacrondef}, \R{verbose}{!verbose}, \R{aaddbrandingimage}{AddBrandingImage}, \R{asetallowskipfiles}{AllowSkipFiles}, \R{achangeui}{ChangeUI}, \R{acheckbitmap}{CheckBitmap}, \R{createfont}{CreateFont}, \R{adirvar}{DirVar}, \R{adirverify}{DirVerify}, \R{enablewindow}{EnableWindow}, \R{afilebufsize}{FileBufSize}, \R{flushini}{FlushINI}, \R{sgetcurinsttype}{GetCurInstType}, \R{getdlgitem}{GetDlgItem}, \R{getinstdirerror}{GetInstDirError}, \R{ifabort}{IfAbort}, \R{ifsilent}{IfSilent}, \R{initpluginsdir}{InitPluginsDir}, \R{sinsttypegettext}{InstTypeGetText}, \R{sinsttypesettext}{InstTypeSetText}, \R{langstring}{LangString}, \R{alicensebkcolor}{LicenseBkColor}, \R{alicenseforceselection}{LicenseForceSelection}, \R{licenselangstring}{LicenseLangString}, \R{loadlanguagefile}{LoadLanguageFile}, LockWindow, \R{page}{Page}, \R{pageex}{PageEx}, \R{reservefile}{ReserveFile}, \R{sectiongetinsttypes}{SectionGetInstTypes}, \R{ssectiongetsize}{SectionGetSize}, \R{sectionsetinsttypes}{SectionSetInstTypes}, \R{ssectionsetsize}{SectionSetSize}, \R{setbrandingimage}{SetBrandingImage}, SetCompressionLevel, \R{asetcompressor}{SetCompressor}, \R{asetcompressordictsize}{SetCompressorDictSize}, \R{setctlcolors}{SetCtlColors}, \R{ssetcurinsttype}{SetCurInstType}, SetPluginUnload, \R{setsilent}{SetSilent}, \R{showwindow}{ShowWindow}, SubSection (replaced by \R{ssectiongroup}{SectionGroup}), SubSectionEnd (replaced by \R{ssectiongroupend}{SectionGroupEnd}), \R{var}{Var}, \R{viaddversionkey}{VIAddVersionKey}, \R{viproductversion}{VIProductVersion} and \R{axpstyle}{XPStyle}
+\b New commands: \R{addplugindir}{!addplugindir}, \R{echo}{!echo}, \R{ifmacrodef}{!ifmacrodef}, \R{ifmacrondef}{!ifmacrondef}, \R{verbose}{!verbose}, \R{aaddbrandingimage}{AddBrandingImage}, \R{asetallowskipfiles}{AllowSkipFiles}, \R{achangeui}{ChangeUI}, \R{acheckbitmap}{CheckBitmap}, \R{createfont}{CreateFont}, \R{adirvar}{DirVar}, \R{adirverify}{DirVerify}, \R{enablewindow}{EnableWindow}, \R{afilebufsize}{FileBufSize}, \R{flushini}{FlushINI}, \R{sgetcurinsttype}{GetCurInstType}, \R{getdlgitem}{GetDlgItem}, \R{getinstdirerror}{GetInstDirError}, \R{ifabort}{IfAbort}, \R{ifsilent}{IfSilent}, \R{initpluginsdir}{InitPluginsDir}, \R{sinsttypegettext}{InstTypeGetText}, \R{sinsttypesettext}{InstTypeSetText}, \R{langstring}{LangString}, \R{alicensebkcolor}{LicenseBkColor}, \R{alicenseforceselection}{LicenseForceSelection}, \R{licenselangstring}{LicenseLangString}, \R{loadlanguagefile}{LoadLanguageFile}, \R{lockwindow}{LockWindow}, \R{page}{Page}, \R{pageex}{PageEx}, \R{reservefile}{ReserveFile}, \R{sectiongetinsttypes}{SectionGetInstTypes}, \R{ssectiongetsize}{SectionGetSize}, \R{sectionsetinsttypes}{SectionSetInstTypes}, \R{ssectionsetsize}{SectionSetSize}, \R{setbrandingimage}{SetBrandingImage}, SetCompressionLevel, \R{asetcompressor}{SetCompressor}, \R{asetcompressordictsize}{SetCompressorDictSize}, \R{setctlcolors}{SetCtlColors}, \R{ssetcurinsttype}{SetCurInstType}, SetPluginUnload, \R{setsilent}{SetSilent}, \R{showwindow}{ShowWindow}, SubSection (replaced by \R{ssectiongroup}{SectionGroup}), SubSectionEnd (replaced by \R{ssectiongroupend}{SectionGroupEnd}), \R{var}{Var}, \R{viaddversionkey}{VIAddVersionKey}, \R{viproductversion}{VIProductVersion} and \R{axpstyle}{XPStyle}
 
 \b Removed commands: DirShow, DisabledBitmap, EnabledBitmap and SectionDivider
 
@@ -2389,7 +2389,7 @@ Released on January 5th, 2004
 
 \b LangStrings and user variables limit is now 16383 and is enforced
 
-\b Fixed control colors set using SetCtlColors not changing when the system colors were changed
+\b Fixed control colors set using \R{setctlcolors}{SetCtlColors} not changing when the system colors were changed
 
 \b Log window now responds to the context menu key
 
@@ -2597,37 +2597,37 @@ Released on March 16th, 2003
 
 \b New tutorial in the documentation
 
-\b define_if_last in Page command also works when a define has not been specified for all Page commands.\\<br\\>This fixes the problem with the Modern UI "Click Next" / "Click Install" texts.
+\b define_if_last in \R{page}{Page} command also works when a define has not been specified for all \R{page}{Page} commands.\\<br\\>This fixes the problem with the Modern UI "Click Next" / "Click Install" texts.
 
-\b Added SectionSetInstTypes and SectionGetInstTypes
+\b Added \R{sectionsetinsttypes}{SectionSetInstTypes} and \R{sectiongetinsttypes}{SectionGetInstTypes}
 
-\b Reboot command does not force a reboot anymore (allows the user to save work)
+\b \R{reboot}{Reboot} command does not force a reboot anymore (allows the user to save work)
 
 \b !if[n]def/!else fixes
 
-\b LogSet on now really starts logging
+\b \R{logset}{LogSet} on now really starts logging
 
-\b Cancel button available on all pages after the instfiles page but the last page unless /ENABLECANCEL was used in its Page command
+\b Cancel button available on all pages after the instfiles page but the last page unless /ENABLECANCEL was used in its \R{page}{Page} command
 
 \b License page: No more limit on RTF size
 
 \b LangDLL: Option to auto-count number of languages, shell font support
 
-\b Page and UninstPage can not be used inside sections/functions
+\b \R{page}{Page} and \R{uninstpage}{UninstPage} can not be used inside sections/functions
 
-\b CreateDirectory now uses the error flag
+\b \R{createdirectory}{CreateDirectory} now uses the error flag
 
-\b EnumRegKey/Value output_var check fixed
+\b \R{enumregkey}{EnumRegKey}/Value output_var check fixed
 
 \b Updated translations
 
 \b Dreaded BSOD after plug-ins enumeration finally banished
 
-\b Minimize button and BGGradient and BGImage compatibility fixes
+\b Minimize button and \R{abggradient}{BGGradient} and BGImage compatibility fixes
 
-\b WriteINIStr with empty value works again
+\b \R{writeinistr}{WriteINIStr} with empty value works again
 
-\b Added FlushINI
+\b Added \R{flushini}{FlushINI}
 
 \H{v2.0b2} 2.0 Beta 2
 
@@ -2643,7 +2643,7 @@ Released on February 26th, 2003
 
 \b VC7 compiler compatibility issues fixed
 
-\b CreateDirectory sets error flag
+\b \R{createdirectory}{CreateDirectory} sets error flag
 
 \b InstallOptions: INI File State value fixed
 
@@ -2655,9 +2655,9 @@ Released on February 26th, 2003
 
 Released on February 9th, 2003
 
-\b User interface improvements: better order/grouping of controls, button selection problems fixed, added minimize box, transparent BrandingText
+\b User interface improvements: better order/grouping of controls, button selection problems fixed, added minimize box, transparent \R{abrandingtext}{BrandingText}
 
-\b LangString improvements: can be used before they have been defined, warning if not present in all language tables
+\b \R{langstring}{LangString} improvements: can be used before they have been defined, warning if not present in all language tables
 
 \b New version of the Modern User Interface with UI improvements, bugfixes and some small new features
 
@@ -2665,11 +2665,11 @@ Released on February 9th, 2003
 
 \b No more random compression ratios
 
-\b SetOutPath now sets the working directory
+\b \R{setoutpath}{SetOutPath} now sets the working directory
 
 \b File names are validated, directory given by the user will now always work
 
-\b $QUICKLAUNCH now works with SetShellVarContext all
+\b $QUICKLAUNCH now works with \R{setshellvarcontext}{SetShellVarContext} all
 
 \b Automatically appended directory name in the directory selection dialog will no longer contain squares if not all characters are ASCII.
 
@@ -2677,7 +2677,7 @@ Released on February 9th, 2003
 
 \b Plug-in function's names are now case insensitive
 
-\b Fixed a bug with specifying Icon twice
+\b Fixed a bug with specifying \R{aicon}{Icon} twice
 
 \b Include dirs (!addincludedir)
 
@@ -2691,11 +2691,11 @@ Released on February 9th, 2003
 
 \b Win9x rename on reboot now also works when the destination file does not exist
 
-\b DeleteRegKey works on default value
+\b \R{deleteregkey}{DeleteRegKey} works on default value
 
 \b nsExec can be called from an installer executed by CreateProcess
 
-\b WriteUninstaller sets error code
+\b \R{writeuninstaller}{WriteUninstaller} sets error code
 
 \b Banner.dll compatible with Modern UI
 
@@ -2719,7 +2719,7 @@ Released on December 6th, 2002
 
 \b New paging system
 
-\b Added Page and UninstPage
+\b Added \R{page}{Page} and  \R{uninstpage}{UninstPage}
 
 \b Removed .onNextPage, .onPrevPage, .onInitDialog
 
@@ -2729,7 +2729,7 @@ Released on December 6th, 2002
 
 \b Added accelerator keys
 
-\b Added LangString and LangStringUP for user defined multilingual strings
+\b Added \R{langstring}{LangString} and LangStringUP for user defined multilingual strings
 
 \b Added support for transparent check marks
 
@@ -2745,7 +2745,7 @@ Released on December 6th, 2002
 
 \b !ifdef and friends can now be used in macros
 
-\b SendMessage can send strings (put STR: before a param) and supports timeouts
+\b \R{sendmessage}{SendMessage} can send strings (put STR: before a param) and supports timeouts
 
 \b Right mouse button "Copy to clipboard" context menu for the Details window
 
@@ -2757,9 +2757,9 @@ Released on December 6th, 2002
 
 \b Now always loads RichEdit v2 if present (links work on Win9x)
 
-\b DeleteRegKey now complains if given a third parameter (other than /ifempty)
+\b \R{deleteregkey}{DeleteRegKey} now complains if given a third parameter (other than /ifempty)
 
-\b RegDLL now works with DLLs dependent on DLLs from the same directory
+\b \R{regdll}{RegDLL} now works with DLLs dependent on DLLs from the same directory
 
 \b $\{LANG_langName\} defined as the language id when loading a NLF
 
@@ -2785,17 +2785,17 @@ Released on December 6th, 2002
 
 \b Changed section flags values
 
-\b SectionSetFlags can now set bold too
+\b \R{sectionsetflags}{SectionSetFlags} can now set bold too
 
-\b SectionSetFlags now works in silent installers too
+\b \R{sectionsetflags}{SectionSetFlags} now works in silent installers too
 
 \b SectionSetName for sub sections doesn't need '-' in front of the name
 
 \b Added SetPluginUnload
 
-\b Hidden section can now use SectionIn too
+\b Hidden section can now use \R{ssectionin}{SectionIn} too
 
-\b File /nonfatal switch added
+\b \R{file}{File} /nonfatal switch added
 
 \b Plugins no longer add size to their containing section
 
@@ -2815,7 +2815,7 @@ Released on August 29th, 2002
 
 \b Added CreateFont
 
-\b Added .onMouseOverSection
+\b Added \R{onmouseoversection}{.onMouseOverSection}
 
 \b Added .onInitDialog and un.onInitDialog
 
@@ -2825,11 +2825,11 @@ Released on August 29th, 2002
 
 \b SendMessage WM_SETTEXT treats lParam as a string and not a number
 
-\b CopyFiles script message no longer always prints (silent)
+\b \R{copyfiles}{CopyFiles} script message no longer always prints (silent)
 
 \b Custom install type text can now be changed
 
-\b ChangeUI can now change IDD_VERIFY
+\b \R{achangeui}{ChangeUI} can now change IDD_VERIFY
 
 \b Default license color now fits the user system
 
@@ -2871,7 +2871,7 @@ Released on August 29th, 2002
 
 \b Added LangDLL.dll plugin
 
-\b CallInstDLL /NOUNLOAD added (works on plugin calls too)
+\b \R{callinstdll}{CallInstDLL} /NOUNLOAD added (works on plugin calls too)
 
 \H{v2.0a6} 2.0 Alpha 6
 
@@ -2887,7 +2887,7 @@ Released on August 9th, 2002
 
 \b Added UseOuterUIItem
 
-\b Enhanced ChangeUI
+\b Enhanced \R{achangeui}{ChangeUI}
 
 \b Enhanced SetDlgItemText
 
@@ -2919,11 +2919,11 @@ Released on August 5th, 2002
 
 Released on August 4th, 2002
 
-\b Added LoadLanguageFile
+\b Added \R{loadlanguagefile}{LoadLanguageFile}
 
 \b Added $LANGUAGE
 
-\b Added /LANG option to string setters (Name, Caption, etc.)
+\b Added /LANG option to string setters (\R{aname}{Name}, \R{acaption}{Caption}, etc.)
 
 \b 'LogSet on' now builds a log file if not already created
 
@@ -2933,31 +2933,31 @@ Released on July 31st, 2002
 
 \b Added $\{NSISDIR\}
 
-\b Added XPStyle
+\b Added \R{axpstyle}{XPStyle}
 
-\b Added SetFont
+\b Added \R{asetfont}{SetFont}
 
-\b Added ChangeUI
+\b Added \R{achangeui}{ChangeUI}
 
-\b Added AddBrandingImage, and SetBrandingImage
+\b Added AddBrandingImage, and \R{setbrandingimage}{SetBrandingImage}
 
-\b Added SetCompressor (no more makensis-bz2.exe)
+\b Added  \R{asetcompressor}{SetCompressor} (no more makensis-bz2.exe)
 
-\b Added LicenseBkColor
+\b Added \R{alicensebkcolor}{LicenseBkColor}
 
 \b 'SpaceTexts none' now causes no space texts to appear
 
-\b Icon and UninstallIcon now support icons of any type
+\b \R{aicon}{Icon} and \R{auninstallicon}{UninstallIcon} now support icons of any type
 
-\b CheckBitmap now support bitmaps with any color table/depth
+\b \R{acheckbitmap}{CheckBitmap} now support bitmaps with any color table/depth
 
 \b Unused resources are removed before writing out the installer
 
-\b Documented !error and !warning
+\b Documented \R{error}{!error} and \R{warning}{!warning}
 
-\b Added !echo and !verbose
+\b Added \R{echo}{!echo} and \R{verbose}{!verbose}
 
-\b Added force option for CRCCheck
+\b Added force option for \R{acrccheck}{CRCCheck}
 
 \b Updated to Makensisw 1.6
 
@@ -2971,7 +2971,7 @@ Released on July 31st, 2002
 
 \b License data can now be RTF
 
-\b WindowIcon is now handled in the compiler
+\b \R{awindowicon}{WindowIcon} is now handled in the compiler
 
 \b Removed debug version (it never worked anyway)
 
@@ -2981,9 +2981,9 @@ Released on July 31st, 2002
 
 Released on July 9th, 2002
 
-\b Added expand node option to Section and SubSection
+\b Added expand node option to \R{ssection}{Section} and SubSection
 
-\b Added preserve file attribute option to File command
+\b Added preserve file attribute option to \R{file}{File} command
 
 \b Copy-All bug fix in Makensisw
 
@@ -2999,11 +2999,11 @@ Released on May 22nd, 2002
 
 \b No more SectionDivider, but SubSection and SubSectionEnd.
 
-\b No more EnabledBitmap/DisabledBitmap, just CheckBitmap. (with tons of button states)
+\b No more EnabledBitmap/DisabledBitmap, just \R{acheckbitmap}{CheckBitmap}. (with tons of button states)
 
 \b Bugfixes of brokenness.
 
-\b Added ! for Section/SubSection to make bold.
+\b Added ! for \R{ssection}{Section}/SubSection to make bold.
 
 \b Made config.h have hacks for easier building for me. :)
 

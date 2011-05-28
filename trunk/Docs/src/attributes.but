@@ -2,7 +2,7 @@
 
 \S1{attribgen} General Attributes
 
-The commands below all adjust attributes of the installer. These attributes control how the installer looks and functions, including which pages are present in the installer, as what text is displayed in each part of each page, how the installer is named, what icon the installer uses, the default installation directory, what file it writes out, and more. Note that these attributes can be set anywhere in the file except in a Section or Function.
+The commands below all adjust attributes of the installer. These attributes control how the installer looks and functions, including which pages are present in the installer, as what text is displayed in each part of each page, how the installer is named, what icon the installer uses, the default installation directory, what file it writes out, and more. Note that these attributes can be set anywhere in the file except in a \R{ssection}{Section} or \R{ffunction}{Function}.
 
 \\<b\\>\\<u\\>Defaults are bold and underlined\\</u\\>\\</b\\>
 
@@ -10,9 +10,9 @@ The commands below all adjust attributes of the installer. These attributes cont
 
 \c (left|right|top|bottom) (width|height) [padding]
 
-Adds a branding image on the top, bottom, left, or right of the installer. Its size will be set according to the width/height specified, the installer width/height and the installer font. The final size will not always be what you requested; have a look at the output of the command for the actual size. Because this depends on the installer font, you should use SetFont before AddBrandingImage. The default padding value is 2.
+Adds a branding image on the top, bottom, left, or right of the installer. Its size will be set according to the width/height specified, the installer width/height and the installer font. The final size will not always be what you requested; have a look at the output of the command for the actual size. Because this depends on the installer font, you should use \R{asetfont}{SetFont} before \R{aaddbrandingimage}{AddBrandingImage}. The default padding value is 2.
 
-AddBrandingImage only adds a placeholder for an image. To set the image itself on runtime, use \R{setbrandingimage}{SetBrandingImage}.
+\R{aaddbrandingimage}{AddBrandingImage} only adds a placeholder for an image. To set the image itself on runtime, use \R{setbrandingimage}{SetBrandingImage}.
 
 \c AddBrandingImage left 100
 \c AddBrandingImage right 50
@@ -170,7 +170,7 @@ Specifies which variable is to be used to contain the directory selected. This v
 
 \c \\<b\\>auto\\</b\\>|leave
 
-If `DirVerify leave' is used, the Next button will not be disabled if the installation directory is not valid or there is not enough space. A flag that you can read in the leave function using \R{getinstdirerror}{GetInstDirError} will be set instead.
+If `\R{adirverify}{DirVerify} leave' is used, the Next button will not be disabled if the installation directory is not valid or there is not enough space. A flag that you can read in the leave function using \R{getinstdirerror}{GetInstDirError} will be set instead.
 
 \c PageEx directory
 \c   DirVerify leave
@@ -215,9 +215,9 @@ Sets the default installation directory. See the \R{variables}{variables section
 
 \c root_key subkey key_name
 
-This attribute tells the installer to check a string in the registry, and use it for the install dir if that string is valid. If this attribute is present, it will override the InstallDir attribute if the registry key is valid, otherwise it will fall back to the InstallDir default. When querying the registry, this command will automatically remove any quotes. If the string ends in ".exe", it will automatically remove the filename component of the string (i.e. if the string is "C:\\program files\\poop\\poop.exe", it will know to use "C:\\program files\\poop"). For more advanced install directory configuration, set $INSTDIR in .onInit.
+This attribute tells the installer to check a string in the registry, and use it for the install dir if that string is valid. If this attribute is present, it will override the \R{ainstalldir}{InstallDir} attribute if the registry key is valid, otherwise it will fall back to the \R{ainstalldir}{InstallDir} default. When querying the registry, this command will automatically remove any quotes. If the string ends in ".exe", it will automatically remove the filename component of the string (i.e. if the string is "C:\\program files\\poop\\poop.exe", it will know to use "C:\\program files\\poop"). For more advanced install directory configuration, set $INSTDIR in .onInit.
 
-Language strings and variables cannot be used with InstallDirRegKey.
+Language strings and variables cannot be used with \R{ainstalldirregkey}{InstallDirRegKey}.
 
 \c InstallDirRegKey HKLM Software\NSIS ""
 \c InstallDirRegKey HKLM Software\ACME\Thingy InstallLocation
@@ -226,13 +226,13 @@ Language strings and variables cannot be used with InstallDirRegKey.
 
 \c [flag [...]]
 
-Valid values for flag are "smooth" (smooth the progress bar) or "colored" (color the progress bar with the colors set by InstallColors. Examples: "InstProgressFlags" (default old-school windows look), "InstProgressFlags smooth" (new smooth look), "InstProgressFlags smooth colored" (colored smooth look whee). Note: neither "smooth" or "colored" work with \R{axpstyle}{XPStyle} on when the installer runs on Windows XP with a modern theme.
+Valid values for flag are "smooth" (smooth the progress bar) or "colored" (color the progress bar with the colors set by \R{ainstallcolors}{InstallColors}. Examples: "InstProgressFlags" (default old-school windows look), "InstProgressFlags smooth" (new smooth look), "InstProgressFlags smooth colored" (colored smooth look whee). Note: neither "smooth" or "colored" work with \R{axpstyle}{XPStyle} on when the installer runs on Windows XP with a modern theme.
 
 \S2{ainsttype} InstType
 
 \c install_type_name | /NOCUSTOM | /CUSTOMSTRING=str | /COMPONENTSONLYONCUSTOM
 
-Adds an install type to the install type list, or disables the custom install type. There can be as many as 32 types, each one specifying the name of the install type. If the name is prefixed with 'un.' it is an uninstaller install type. The name can contain variables which will be processed at runtime before the components page shows. Another way of changing the InstType name during runtime is the \R{sinsttypesettext}{InstTypeSetText} command. The difference is that with \R{sinsttypesettext}{InstTypeSetText} you are saving your precious user variables. The first type is the default (generally 'Typical'). If the /NOCUSTOM switch is specified, then the "custom" install type is disabled, and the user has to choose one of the pre-defined install types. Alternatively, if the /CUSTOMSTRING switch is specified, the parameter will override the "Custom" install type text. Alternatively, if the /COMPONENTSONLYONCUSTOM flag is specified, the component list will only be shown if the "Custom" install type is selected.
+Adds an install type to the install type list, or disables the custom install type. There can be as many as 32 types, each one specifying the name of the install type. If the name is prefixed with 'un.' it is an uninstaller install type. The name can contain variables which will be processed at runtime before the components page shows. Another way of changing the \R{ainsttype}{InstType} name during runtime is the \R{sinsttypesettext}{InstTypeSetText} command. The difference is that with \R{sinsttypesettext}{InstTypeSetText} you are saving your precious user variables. The first type is the default (generally 'Typical'). If the /NOCUSTOM switch is specified, then the "custom" install type is disabled, and the user has to choose one of the pre-defined install types. Alternatively, if the /CUSTOMSTRING switch is specified, the parameter will override the "Custom" install type text. Alternatively, if the /COMPONENTSONLYONCUSTOM flag is specified, the component list will only be shown if the "Custom" install type is selected.
 
 Accepts variables for type names. If variables are used, they must be initialized before the components page is created.
 
@@ -345,7 +345,7 @@ Sets whether or not the details of the uninstall are shown. Can be 'hide' to hid
 
 \c \\<b\\>normal\\</b\\>|silent|silentlog
 
-Specifies whether or not the installer should be silent. If it is 'silent' or 'silentlog', all sections that have the SF_SELECTED flag are installed quietly (you can set this flag using \R{sectionsetflags}{SectionSetFlags}), with no screen output from the installer itself (the script can still display whatever it wants, use \R{messagebox}{MessageBox}'s /SD to specify a default for silent installers). Note that if this is set to 'normal' and the user runs the installer with /S (case sensitive) on the command line, it will behave as if SilentInstall 'silent' was used. Note: see also \R{logset}{LogSet}.
+Specifies whether or not the installer should be silent. If it is 'silent' or 'silentlog', all sections that have the SF_SELECTED flag are installed quietly (you can set this flag using \R{sectionsetflags}{SectionSetFlags}), with no screen output from the installer itself (the script can still display whatever it wants, use \R{messagebox}{MessageBox}'s /SD to specify a default for silent installers). Note that if this is set to 'normal' and the user runs the installer with /S (case sensitive) on the command line, it will behave as if \R{asilentinstall}{SilentInstall} 'silent' was used. Note: see also \R{logset}{LogSet}.
 
 See \k{silent} for more information.
 
@@ -353,7 +353,7 @@ See \k{silent} for more information.
 
 \c \\<b\\>normal\\</b\\>|silent
 
-Specifies whether or not the uninstaller should be silent. If it is 'silent' or 'silentlog', the uninstall section will run quietly, with no screen output from the uninstaller itself (the script can still display whatever it wants, use \R{messagebox}{MessageBox}'s /SD to specify a default for silent installers). Note that if this is set to 'normal' and the user runs the uninstaller with /S on the command line, it will behave as if SilentUnInstall 'silent' was used. Note: see also \R{logset}{LogSet}.
+Specifies whether or not the uninstaller should be silent. If it is 'silent' or 'silentlog', the uninstall section will run quietly, with no screen output from the uninstaller itself (the script can still display whatever it wants, use \R{messagebox}{MessageBox}'s /SD to specify a default for silent installers). Note that if this is set to 'normal' and the user runs the uninstaller with /S on the command line, it will behave as if \R{asilentuninstall}{SilentUnInstall} 'silent' was used. Note: see also \R{logset}{LogSet}.
 
 See \k{silent} for more information.
 

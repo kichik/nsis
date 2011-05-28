@@ -80,7 +80,7 @@ For more information about sections see \R{sections}{Sections}.
 
 Functions can contain script code, just like sections. The difference between sections and functions is the way they are called. There are two types of functions, user functions and callback functions.
 
-User functions are called by the user from within sections or other functions using the \R{call}{Call} instruction. User functions will not execute unless you call them. After the code of the function will be executed the installer will continue executing the instructions that came after the Call instruction, unless you have aborted the installation inside the function. User functions are very useful if you have a set of instructions that need to be executed at several locations in the installers. If you put the code into a function you can save the copying time and you can maintain the code more easily.
+User functions are called by the user from within sections or other functions using the \R{call}{Call} instruction. User functions will not execute unless you call them. After the code of the function will be executed the installer will continue executing the instructions that came after the \R{call}{Call} instruction, unless you have aborted the installation inside the function. User functions are very useful if you have a set of instructions that need to be executed at several locations in the installers. If you put the code into a function you can save the copying time and you can maintain the code more easily.
 
 Callback functions are called by the installer upon certain defined events such as when the installer starts. Callbacks are optional. If for example you want to welcome the user to your installer you will define a function called .onInit. The NSIS compiler will recognize this function as a callback function by the name and will call it when the installer starts.
 
@@ -90,7 +90,7 @@ Callback functions are called by the installer upon certain defined events such 
 \c   gogogo:
 \c FunctionEnd
 
-\R{abort}{Abort} has a special meaning in callback functions. Each callback function has its own meaning for it, have a look at \R{callbacks}{Callback Functions} for more information. In the above example Abort tells the installer to stop initializing the installer and quit immediately.
+\R{abort}{Abort} has a special meaning in callback functions. Each callback function has its own meaning for it, have a look at \R{callbacks}{Callback Functions} for more information. In the above example \R{abort}{Abort} tells the installer to stop initializing the installer and quit immediately.
 
 For more information about functions see \R{functions}{Functions}.
 
@@ -171,7 +171,7 @@ More examples can be found in \L{../Examples/LogicLib.nsi}{LogicLib.nsi}.
 
 \S2{tutVariables} Variables
 
-You can declare your own variables ($VARNAME) with the \R{var}{Var} command. Variables are global and can be used in any Section or Function.
+You can declare your own variables ($VARNAME) with the \R{var}{Var} command. Variables are global and can be used in any \R{ssection}{Section} or \R{ffunction}{Function}.
 
 Declaring and using a user variable:
 
@@ -183,7 +183,7 @@ Declaring and using a user variable:
 \c
 \c SectionEnd
 
-In addition there is a Stack, which can also be used for temporary storage. To access the stack use the commands \R{Push}{Push} and \R{Pop}{Pop}. Push adds a value to the stack, Pop removes one and sets the variable.
+In addition there is a Stack, which can also be used for temporary storage. To access the stack use the commands \R{Push}{Push} and \R{Pop}{Pop}. \R{Push}{Push} adds a value to the stack, \R{Pop}{Pop} removes one and sets the variable.
 
 For shared code, there are \R{varother}{20 registers available} (like $0 and $R0). These static variables don't have to be declared and you won't get any name conflicts. If you want to use these variables in shared code, store the original values on the stack and restore the original values afterwards.
 
@@ -244,7 +244,7 @@ The second thing you need to do in order to create your installer after you have
 
 To compile you have to right-click your .nsi file and select Compile NSIS Script. This will cause MakeNSISW, the NSIS Compiler Interface, to launch and call MakeNSIS to compile your script. MakeNSISW will get the output of MakeNSIS and present it to you in a window where you can see it, copy it, test the installer, browse for it and more. Using makensis.exe from the command prompt is also possible.
 
-The compiler will check your script and give you warnings or an error. If an error occurs (i.e. 2 parameters required but only 1 given) the compiler will abort and a short error message including the line number will be displayed. For non-critical errors the compiler will give a warning (i.e. two DirText commands in one script). If your script has no errors the compiler will output an installer for you to distribute.
+The compiler will check your script and give you warnings or an error. If an error occurs (i.e. 2 parameters required but only 1 given) the compiler will abort and a short error message including the line number will be displayed. For non-critical errors the compiler will give a warning (i.e. two \R{adirtext}{DirText} commands in one script). If your script has no errors the compiler will output an installer for you to distribute.
 
 NSIS supports different compression methods, as explained \R{asetcompressor}{here}. ZLIB is the default compression method, which is fast and uses only a little bit of memory. LZMA is a good method for the creation of small installers for internet distribution. BZIP2 usually compresses better than ZLIB but not as good as LZMA, it is useful if you need lower memory usage or fast script compilation.
 
