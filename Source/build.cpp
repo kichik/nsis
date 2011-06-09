@@ -92,6 +92,13 @@ CEXEBuild::~CEXEBuild()
   for (int i = 0; i < nlt; i++) {
     DeleteLangTable(nla+i);
   }
+
+  for (;postbuild_cmds;)
+  {
+    struct postbuild_cmd * tmp = postbuild_cmds;
+    postbuild_cmds = postbuild_cmds->next;
+    delete [] tmp;
+  }
 }
 
 CEXEBuild::CEXEBuild() :
@@ -172,7 +179,8 @@ CEXEBuild::CEXEBuild() :
   build_cursection_isfunc=0;
   build_cursection=NULL;
   // init public data.
-  build_packname[0]=build_packcmd[0]=build_output_filename[0]=postbuild_cmd[0]=0;
+  build_packname[0]=build_packcmd[0]=build_output_filename[0]=0;
+  postbuild_cmds=NULL;
 
   // Added by ramon 23 May 2003
   build_allowskipfiles=1;
@@ -2906,23 +2914,39 @@ int CEXEBuild::write_output(void)
       ftell(fp),total_usize,pc/10,pc%10);
   }
   fclose(fp);
-  if (postbuild_cmd[0])
+  if (postbuild_cmds)
   {
-    LPTSTR arg = _tcsstr(postbuild_cmd, _T("%1"));
-    if (arg)    // if found, replace %1 by build_output_filename
+    for (struct postbuild_cmd *cmd=postbuild_cmds; cmd; cmd = cmd->next)
     {
-        memmove(arg+_tcslen(build_output_filename), arg+2, (_tcslen(arg+2)+1)*sizeof(TCHAR));
-        memmove(arg, build_output_filename, _tcslen(build_output_filename)*sizeof(TCHAR));
-    }
-    SCRIPT_MSG(_T("\nFinalize command: %s\n"),postbuild_cmd);
+      LPTSTR cmdstr = cmd->cmd, cmdstrbuf = NULL;
+      LPTSTR arg = _tcsstr(cmdstr, _T("%1"));
+      if (arg)    // if found, replace %1 by build_output_filename
+      {
+        const UINT cchbldoutfile = _tcslen(build_output_filename);
+        cmdstrbuf = (LPTSTR) malloc( (_tcslen(cmdstr) + cchbldoutfile + 1)*sizeof(TCHAR) );
+        if (!cmdstrbuf)
+        {
+          ERROR_MSG(_T("Error: can't allocate memory for finalize command\n"));
+          return PS_ERROR;
+        }
+        arg -= (UINT_PTR)cmdstr, arg += (UINT_PTR)cmdstrbuf;
+        _tcscpy(cmdstrbuf,cmdstr);
+        cmdstr = cmdstrbuf;
+        memmove(arg+cchbldoutfile, arg+2, (_tcslen(arg+2)+1)*sizeof(TCHAR));
+        memmove(arg, build_output_filename, cchbldoutfile*sizeof(TCHAR));
+      }
+
+      SCRIPT_MSG(_T("\nFinalize command: %s\n"),cmdstr);
 #ifdef _WIN32
-    int ret=sane_system(postbuild_cmd);
+      int ret=sane_system(cmdstr);
 #else
-    PATH_CONVERT(postbuild_cmd);
-    int ret=system(postbuild_cmd);
+      PATH_CONVERT(cmdstr);
+      int ret=system(cmdstr);
 #endif
-    if (ret != 0)
-      INFO_MSG(_T("Finalize command returned %d\n"),ret);
+      if (ret != 0)
+        INFO_MSG(_T("Finalize command returned %d\n"),ret);
+      free(cmdstrbuf);
+    }
   }
   print_warnings();
   return PS_OK;
