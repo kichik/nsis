@@ -2983,10 +2983,16 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         build_packname, build_packcmd);
     return PS_OK;
     case TOK_P_FINALIZE:
-      if (postbuild_cmd[0])
-          warning_fl(_T("Several !finalize instructions encountered. Only last one was executed"));
-      _tcsnccpy(postbuild_cmd,line.gettoken_str(1),COUNTOF(postbuild_cmd)-1);
-      SCRIPT_MSG(_T("!finalize: \"%s\"\n"),postbuild_cmd);
+      {
+        TCHAR* cmdstr=line.gettoken_str(1);
+        struct postbuild_cmd *newcmd, *prevcmd;
+        newcmd = (struct postbuild_cmd*) new BYTE[FIELD_OFFSET(struct postbuild_cmd,cmd[_tcsclen(cmdstr)+1])];
+        newcmd->next=NULL;
+        _tcscpy(newcmd->cmd,cmdstr);
+        for (prevcmd=postbuild_cmds; prevcmd && prevcmd->next;) prevcmd = prevcmd->next;
+        if (prevcmd) prevcmd->next = newcmd; else postbuild_cmds = newcmd;
+        SCRIPT_MSG(_T("!finalize: \"%s\"\n"),cmdstr);
+      }
     return PS_OK;
     case TOK_P_SYSTEMEXEC:
       {
