@@ -28,7 +28,6 @@
 #include <commctrl.h>
 #include <shellapi.h>
 #include <shlwapi.h>
-#pragma comment(lib, "shlwapi.lib")
 #include "tchar.h"
 #else
 #  ifndef EXEHEAD
@@ -108,6 +107,10 @@ typedef DWORDLONG ULONGLONG,*PULONGLONG;
 #define _snprintf snprintf
 #define _vsnprintf vsnprintf
 
+#endif
+
+#ifndef INT_MAX
+#include <limits.h>
 #endif
 
 
@@ -220,7 +223,7 @@ typedef DWORDLONG ULONGLONG,*PULONGLONG;
 // functions
 
 // Anders: MSVC's swprintf is non standard, use _snwprintf when you really mean swprintf
-#if !defined(_MSC_VER) && !defined(_snwprintf)
+#if !defined(_MSC_VER) && !defined(__MINGW32__) && !defined(_snwprintf)
 #define _snwprintf swprintf
 #endif
 
@@ -235,6 +238,14 @@ typedef DWORDLONG ULONGLONG,*PULONGLONG;
 #endif
 
 // defines
+
+#ifndef WC_NO_BEST_FIT_CHARS
+#  define MEM_LARGE_PAGES 0x20000000
+#endif
+
+#ifndef WC_NO_BEST_FIT_CHARS
+#  define WC_NO_BEST_FIT_CHARS 0x400
+#endif
 
 #ifndef IDC_HAND
 #  define IDC_HAND MAKEINTRESOURCE(32649)

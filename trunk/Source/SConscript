@@ -53,6 +53,7 @@ libs = Split("""
 	user32
 	pthread
 	iconv
+	shlwapi
 """)
 
 Import('env AddAvailableLibs AddZLib')
