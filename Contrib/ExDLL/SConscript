@@ -67,4 +67,5 @@ plugin_env.Append(LIBPATH = ['#$BUILD_PREFIX/api/nsis'])
 plugin_env.Append(LIBS = [lib_target])
 plugin_uenv.Append(CPPPATH = ['#$BUILD_PREFIX/api'])
 plugin_uenv.Append(LIBPATH = ['#$BUILD_PREFIX/api/nsis'])
-plugin_uenv.Append(LIBS = [lib_target+'W'])
+if env['UNICODE']: # MinGW ANSI build tries to link with pluginapi and pluginapiW, this is a hack to stop that [Anders]
+	plugin_uenv.Append(LIBS = [lib_target+'W'])
