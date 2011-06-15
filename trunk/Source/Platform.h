@@ -239,7 +239,7 @@ typedef DWORDLONG ULONGLONG,*PULONGLONG;
 
 // defines
 
-#ifndef WC_NO_BEST_FIT_CHARS
+#ifndef MEM_LARGE_PAGES
 #  define MEM_LARGE_PAGES 0x20000000
 #endif
 
