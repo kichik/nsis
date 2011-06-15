@@ -31,7 +31,7 @@ defenv['ALIGN_FLAG'] = '-Wl,--file-alignment,512'
 defenv['CPP_REQUIRES_STDLIB'] = 1
 defenv['SUBSYS_CON'] = '-Wl,--subsystem,console'
 defenv['MSVCRT_FLAG'] = ''
-defenv['STDCALL'] = ' __attribute__((__stdcall__))'
+defenv['STDCALL'] = '__attribute__((__stdcall__))'
 
 ### defines
 
