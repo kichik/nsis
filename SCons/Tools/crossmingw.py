@@ -61,6 +61,11 @@ prefixes = SCons.Util.Split("""
 """)
 
 def find(env):
+    # Explicitly specified toolchain to build Windows executables
+    # takes predominance.
+    prefix = SCons.Script.ARGUMENTS.get('XGCC_W32_PREFIX', None)
+    if prefix:
+        prefixes.insert(0, prefix)
     for prefix in prefixes:
         # First search in the SCons path and then the OS path:
         if env.WhereIs(prefix + 'gcc') or SCons.Util.WhereIs(prefix + 'gcc'):
