@@ -301,8 +301,9 @@ class CEXEBuild {
 	  * out parameter.  It will look for a LanguageTable to get the values.
 	  * If not found, then it will set the codepage to English for ANSI
 	  * or Unicode for Unicode version of NSIS.  The language name is looked
-	  * up via the LanguageTable if it exists, otherwise, it calls
-	  * GetLocaleInfo() with the LANGID to get the string.
+	  * up via the LanguageTable if it exists, otherwise, it returns "???" except 
+	  * a hardcoded check for 1033 (english). It really should fall back to 
+	  * calling GetLocaleInfo() with the LANGID to get the string.
 	  *
 	  * This function is not thread-safe!  For a thread-safe version, the
 	  * parameter must include the buffer to write to.
@@ -312,6 +313,7 @@ class CEXEBuild {
 	  * @return The language string in English.
 	  */
     const TCHAR *GetLangNameAndCP(LANGID lang, unsigned int *codepage = NULL);
+    const TCHAR *GetLangNameAndCPForVersionResource(LANGID &lang, unsigned int *codepage = NULL, bool deflangfallback = true);
 
     int DefineLangString(const TCHAR *name, int process=-1);
     int DefineInnerLangString(int id, int process=-1);
@@ -426,7 +428,7 @@ class CEXEBuild {
     // Added by ramon 6 jun 2003
 #ifdef NSIS_SUPPORT_VERSION_INFO
     CResourceVersionInfo rVersionInfo;
-    TCHAR version_product_v[1024];
+    unsigned int version_fixedflags;
 #endif
 
     int sectiongroup_open_cnt;

@@ -381,8 +381,8 @@ const TCHAR *CEXEBuild::GetLangNameAndCP(LANGID lang, unsigned int *codepage/*=N
     return table->nlf.m_szName;
   }
   else {
-	 // If the language table does not exist, then we default to Unicode or ANSI
-	 // depending on the target installer type
+    // If the language table does not exist, then we default to Unicode or ANSI
+    // depending on the target installer type
     if (codepage)
       *codepage = build_unicode ? 1200 : 1252; // Unicode or CP1252
 
@@ -391,6 +391,17 @@ const TCHAR *CEXEBuild::GetLangNameAndCP(LANGID lang, unsigned int *codepage/*=N
     else
       return _T("???");
   }
+}
+
+const TCHAR *CEXEBuild::GetLangNameAndCPForVersionResource(LANGID &lang, unsigned int *codepage/*=NULL*/, bool deflangfallback/*=true*/) {
+  const TCHAR *langname = GetLangNameAndCP(lang, codepage);
+  if (0 == lang) {
+    if (deflangfallback)
+      lang = last_used_lang;
+    else
+      langname = _T("Neutral");
+  }
+  return langname;
 }
 
 int CEXEBuild::DefineLangString(const TCHAR *name, int process/*=-1*/) {

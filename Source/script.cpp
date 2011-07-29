@@ -5912,6 +5912,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     {
       LANGID LangID=0;
       int a = 1;
+      // Allow people to force Neutral, if /LANG=* is not present it uses the default
+      const bool forceneutrallang = !_tcsicmp(line.gettoken_str(a),_T("/LANG=0"));
+
       if (!_tcsnicmp(line.gettoken_str(a),_T("/LANG="),6))
         LangID=_ttoi(line.gettoken_str(a++)+6);
       if (line.getnumtokens()!=a+2) PRINTHELP();
@@ -5925,12 +5928,16 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       else
       {
         SCRIPT_MSG(_T("%s: \"%s\" \"%s\"\n"), line.gettoken_str(0), line.gettoken_str(a), line.gettoken_str(a+1));
-        LANGID lReaded = LangID;
-        if ( a > 1 && lReaded == 0 )
-          warning_fl(_T("%s: %s language not loaded, using default \"1033-English\""), line.gettoken_str(0), line.gettoken_str(1));
+        const bool allowdeflangfallback = a <= 1 && !forceneutrallang;
+        if ( a > 1 && 0 == LangID && !forceneutrallang)
+        {
+          ERROR_MSG(_T("%s: \"%s\" is not a valid language code!\n"),line.gettoken_str(0), line.gettoken_str(1));
+          return PS_ERROR;
+        }
 
         unsigned int codepage;
-        const TCHAR *lang_name = GetLangNameAndCP(LangID, &codepage);
+        // We rely on GetLangNameAndCPForVersionResource to update LangID if required
+        const TCHAR *lang_name = GetLangNameAndCPForVersionResource(LangID, &codepage, allowdeflangfallback);
 
         if ( rVersionInfo.SetKeyValue(LangID, codepage, pKey, pValue) )
         {
@@ -5941,18 +5948,49 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         return PS_OK;
       }
     }
-    case TOK_VI_SETPRODUCTVERSION:
-      if ( version_product_v[0] )
+      case TOK_VI_SETPRODUCTVERSION:
+      case TOK_VI_SETFILEVERSION:
+      // Probably not required, but this code retains the <= 2.46 behaviour and
+      // does not fail on bad product version number here, it "validates" in CEXEBuild::AddVersionInfo()
+      //
+      // It is ok for us to use rVersionInfo as storage since VIProductVersion is required by VIAddVersionKey 
       {
-        ERROR_MSG(_T("Error: %s already defined!\n"), line.gettoken_str(0));
-        return PS_ERROR;
+        const bool settingFileVer = TOK_VI_SETFILEVERSION == which_token;
+        const unsigned int reuseFlag = settingFileVer ? 4 : 1;
+        if (reuseFlag & version_fixedflags) 
+        {
+          ERROR_MSG(_T("Error: %s already defined!\n"), line.gettoken_str(0));
+          return PS_ERROR;
+        }
+        version_fixedflags |= reuseFlag;
+        int imm, iml, ilm, ill;
+        const bool validInput = _stscanf(line.gettoken_str(1), _T("%d.%d.%d.%d"), &imm, &iml, &ilm, &ill) == 4;
+        if (settingFileVer)
+        {
+          if (!validInput) 
+          {
+            ERROR_MSG(_T("Error: invalid %s format, should be X.X.X.X\n"),line.gettoken_str(0));
+            return PS_ERROR;
+          }
+          rVersionInfo.SetFileVersion(MAKELONG(iml, imm),MAKELONG(ill, ilm));
+        }
+        else
+        {
+          if (validInput) 
+          {
+            version_fixedflags |= 2;
+            rVersionInfo.SetProductVersion(MAKELONG(iml, imm),MAKELONG(ill, ilm));
+            // FileVersion defaults to ProductVersion
+            if (!(4 & version_fixedflags)) rVersionInfo.SetFileVersion(MAKELONG(iml, imm),MAKELONG(ill, ilm));
+          }
+        }
       }
-      _tcscpy(version_product_v, line.gettoken_str(1));
       return PS_OK;
 
 #else
     case TOK_VI_ADDKEY:
     case TOK_VI_SETPRODUCTVERSION:
+    case TOK_VI_SETFILEVERSION:
       ERROR_MSG(_T("Error: %s specified, NSIS_SUPPORT_VERSION_INFO not defined.\n"),line.gettoken_str(0));
       return PS_ERROR;
 #endif
