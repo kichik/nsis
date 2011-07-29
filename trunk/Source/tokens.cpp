@@ -292,6 +292,7 @@ static tokenType tokenlist[TOK__LAST] =
 // Added by ramon 6 jun 2003
 {TOK_VI_ADDKEY,_T("VIAddVersionKey"),2,1,_T("/LANG=lang_id keyname value"),TP_GLOBAL},
 {TOK_VI_SETPRODUCTVERSION,_T("VIProductVersion"),1,0,_T("[version_string_X.X.X.X]"),TP_GLOBAL},
+{TOK_VI_SETFILEVERSION,_T("VIFileVersion"),1,0,_T("[version_string_X.X.X.X]"),TP_GLOBAL},
 {TOK_LOCKWINDOW,_T("LockWindow"),1,0,_T("(on|off)"),TP_CODE},
 };
 

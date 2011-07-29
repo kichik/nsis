@@ -151,6 +151,15 @@ The name of these fields are translated on the target system, whereas user defin
 
 \c [version_string_X.X.X.X]
 
-Adds the Product Version on top of the Version Tab in the Properties of the file.
+Sets the Product Version in the VS_FIXEDFILEINFO version information block.
 
 \c VIProductVersion "1.2.3.4"
+
+\S2{vifileversion} VIFileVersion
+
+\c [version_string_X.X.X.X]
+
+Sets the File Version in the VS_FIXEDFILEINFO version information block (You should also set the FileVersion string with VIAddVersionKey so the information is displayed at the top of the Version Tab in the Properties of the file). If you don't provide a File Version the Product Version is used in the VS_FIXEDFILEINFO block.
+
+\c VIFileVersion "1.2.3.4"
+

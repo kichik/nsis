@@ -187,7 +187,7 @@ CEXEBuild::CEXEBuild() :
 
   // Added by ramon 6 jun 2003
 #ifdef NSIS_SUPPORT_VERSION_INFO
-  version_product_v[0]=0;
+  version_fixedflags=0;
 #endif
 
   build_overwrite=build_last_overwrite=0;
@@ -1744,23 +1744,23 @@ int CEXEBuild::AddVersionInfo()
 {
   GrowBuf VerInfoStream;
 
+  // Should probably check for (4 & version_fixedflags) here, but VIProductVersion without VIAddVersionKey
+  // fails silently, so VIFileVersion does the same...
   if ( rVersionInfo.GetStringTablesCount() > 0 )
   {
-    if ( !version_product_v[0] )
+    if ( !(1 & version_fixedflags) )
     {
       ERROR_MSG(_T("Error: VIProductVersion is required when other version information functions are used.\n"));
       return PS_ERROR;
     }
     else
     {
-      int imm, iml, ilm, ill;
-      if ( _stscanf(version_product_v, _T("%d.%d.%d.%d"), &imm, &iml, &ilm, &ill) != 4 )
+      if ( !(2 & version_fixedflags) )
       {
-        ERROR_MSG(_T("Error: invalid VIProductVersion format, should be X.X.X.X\n"));
+        // This error string should match the one used by the TOK_VI_SETFILEVERSION handler
+        ERROR_MSG(_T("Error: invalid %s format, should be X.X.X.X\n"),_T("VIProductVersion"));
         return PS_ERROR;
       }
-      rVersionInfo.SetFileVersion(MAKELONG(iml, imm),MAKELONG(ill, ilm));
-      rVersionInfo.SetProductVersion(MAKELONG(iml, imm),MAKELONG(ill, ilm));
 
       try
       {
@@ -1770,14 +1770,19 @@ int CEXEBuild::AddVersionInfo()
           LANGID lang_id = rVersionInfo.GetLangID(i);
           int code_page = rVersionInfo.GetCodePage(i);
 
-          const TCHAR *lang_name = GetLangNameAndCP(lang_id);
+          const TCHAR *lang_name = GetLangNameAndCPForVersionResource(lang_id, NULL, false);
 
-          if ( !rVersionInfo.FindKey(lang_id, code_page, _T("FileVersion")) )
-            warning(_T("Generating version information for language \"%04d-%s\" without standard key \"FileVersion\""), lang_id, lang_name);
-          if ( !rVersionInfo.FindKey(lang_id, code_page, _T("FileDescription")) )
-            warning(_T("Generating version information for language \"%04d-%s\" without standard key \"FileDescription\""), lang_id, lang_name);
-          if ( !rVersionInfo.FindKey(lang_id, code_page, _T("LegalCopyright")) )
-            warning(_T("Generating version information for language \"%04d-%s\" without standard key \"LegalCopyright\""), lang_id, lang_name);
+          const TCHAR *recverkeys = 
+            _T("FileVersion\0")
+            _T("FileDescription\0")
+            _T("LegalCopyright\0");
+          for(;;)
+          {
+            if ( !*recverkeys ) break;
+            if ( !rVersionInfo.FindKey(lang_id, code_page, recverkeys) )
+              warning(_T("Generating version information for language \"%04d-%s\" without standard key \"%s\""), lang_id, lang_name, recverkeys);
+            recverkeys += _tcsclen(recverkeys) + 1;
+          }
 
           rVersionInfo.ExportToStream(VerInfoStream, i);
           res_editor->UpdateResource(RT_VERSION, 1, lang_id, (BYTE*)VerInfoStream.get(), VerInfoStream.getlen());
