@@ -25,6 +25,7 @@ SectionEnd
 Prefix  Message category
 -------------------------
 SW      ShowWindow Commands
+CCM     Generic Common Control
 BM      Button control
 CB      Combo box control
 EM      Edit control
@@ -86,6 +87,16 @@ UDM     Up-down control
 !define SW_SHOWDEFAULT      10
 !define SW_FORCEMINIMIZE    11
 !define SW_MAX              11
+
+#Generic Common Control Messages#
+!define CCM_FIRST 0x2000
+!define CCM_SETBKCOLOR       /math ${CCM_FIRST} + 0x1 ; IE4
+!define CCM_SETUNICODEFORMAT /math ${CCM_FIRST} + 0x5 
+!define CCM_GETUNICODEFORMAT /math ${CCM_FIRST} + 0x6
+!define CCM_SETVERSION       /math ${CCM_FIRST} + 0x7 ; IE5
+!define CCM_GETVERSION       /math ${CCM_FIRST} + 0x8
+!define CCM_SETWINDOWTHEME   /math ${CCM_FIRST} + 0xB ; WinXP
+!define CCM_DPISCALE         /math ${CCM_FIRST} + 0xC
 
 #Button Control Messages#
 !define BM_CLICK           0x00F5
@@ -580,13 +591,26 @@ UDM     Up-down control
 !define TCM_FIRST                   0x1300
 
 #Progress bar control#
-!define PBM_SETRANGE   0x0401
-!define PBM_SETPOS     0x0402
-!define PBM_DELTAPOS   0x0403
-!define PBM_SETSTEP    0x0404
-!define PBM_STEPIT     0x0405
-!define PBM_GETPOS     0x0408
-!define PBM_SETMARQUEE 0x040a
+!define PBM_SETRANGE 0x0401
+!define PBM_SETPOS   0x0402
+!define PBM_DELTAPOS 0x0403
+!define PBM_SETSTEP  0x0404
+!define PBM_STEPIT   0x0405
+!define PBM_SETRANGE32  0x406 ; IE3 / ComCtl32 v4.70
+!define PBM_GETRANGE    0x407
+!define PBM_GETPOS      0x408
+!define PBM_SETBARCOLOR 0x409 ; IE4 / ComCtl32 v4.71
+!define PBM_SETBKCOLOR  ${CCM_SETBKCOLOR}
+!define PBM_SETMARQUEE  0x40A ; WinXP / ComCtl32 v6
+!define PBM_GETSTEP     0x40D ; WinVista
+!define PBM_GETBKCOLOR  0x40E
+!define PBM_GETBARCOLOR 0x40F
+!define PBM_SETSTATE    0x410
+!define PBM_GETSTATE    0x411
+
+!define PBST_NORMAL 1
+!define PBST_ERROR  2
+!define PBST_PAUSED 3
 
 !verbose pop
 !endif
