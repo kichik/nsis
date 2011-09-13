@@ -333,7 +333,7 @@ Finish page (implemented using nsDialogs)
         SendMessage $mui.FinishPage.Title ${WM_SETFONT} $mui.FinishPage.Title.Font 0
 
         ;Finish text
-        ${NSD_CreateLabel} 120u 45u 195u ${MUI_FINISHPAGE_TEXT_HEIGHT_BUTTONS}u "${MUI_FINISHPAGE_TEXT_REBOOT}"
+        ${NSD_CreateLabel} 120u ${MUI_FINISHPAGE_TEXT_TOP}u 195u ${MUI_FINISHPAGE_TEXT_HEIGHT_BUTTONS}u "${MUI_FINISHPAGE_TEXT_REBOOT}"
         Pop $mui.FinishPage.Text
         SetCtlColors $mui.FinishPage.Text "" "${MUI_BGCOLOR}"
       
