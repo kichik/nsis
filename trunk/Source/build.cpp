@@ -501,7 +501,7 @@ char* convert_processed_string_to_ansi(char *out, const TCHAR *in, WORD codepage
     for (;;)
     {
         _TUCHAR i = (_TUCHAR)*p++;
-        if (NS_IS_CODE(i)) // Note: this include '\0'
+        if (NS_IS_CODE(i)) // Note: this includes '\0'
         {
             // convert all character up to, and including this code
             int cb = WideCharToMultiByte(codepage, 0, in, p-in, out, (p-in)*2, NULL, NULL);
