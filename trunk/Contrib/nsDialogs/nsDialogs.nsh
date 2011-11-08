@@ -520,15 +520,16 @@ Header file for creating custom installer pages with nsDialogs
 	Push $0
 	Push $R0
 
+	Push "${IMAGE}" # in case ${IMAGE} is $R0
 	StrCpy $R0 ${CONTROL} # in case ${CONTROL} is $0
 	
 	!if "${_LIHINSTMODE}" == "exeresource"
-		System::Call 'kernel32::GetModuleHandle(i0) i.r0'
-		!undef _LIHINSTSRC
-		!define _LIHINSTSRC r0
+		!undef _LIHINSTSRC     # If (internal?) _* macro params starts using $0, 
+		!define _LIHINSTSRC r0 # _LIHINSTSRC can be changed to s
+		System::Call 'kernel32::GetModuleHandle(i0)i.${_LIHINSTSRC}' 
 	!endif
 	
-	System::Call 'user32::LoadImage(i ${_LIHINSTSRC}, ts, i ${_IMGTYPE}, i0, i0, i${_LIFLAGS}) i.r0' "${IMAGE}"
+	System::Call 'user32::LoadImage(i ${_LIHINSTSRC}, ts, i ${_IMGTYPE}, i0, i0, i${_LIFLAGS}) i.r0'
 	SendMessage $R0 ${STM_SETIMAGE} ${_IMGTYPE} $0
 
 	Pop $R0
