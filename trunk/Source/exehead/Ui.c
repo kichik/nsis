@@ -1211,7 +1211,9 @@ int NSISCALL TreeGetSelectedSection(HWND tree, BOOL mouse)
     ht.pt.y = GET_Y_LPARAM(dwpos);
     ScreenToClient(tree, &ht.pt);
 
-    TreeView_HitTest(tree, &ht);
+    {
+      const HTREEITEM UNUSED hDummy1 = TreeView_HitTest(tree, &ht);
+    }
 
 #ifdef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     if (!(ht.flags & TVHT_ONITEMSTATEICON))
@@ -1293,7 +1295,9 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     hImageList = ImageList_Create(16,16, ILC_COLOR32|ILC_MASK, 6, 0);
     ImageList_AddMasked(hImageList,hBMcheck1,RGB(255,0,255));
 
-    TreeView_SetImageList(hwndTree1, hImageList, TVSIL_STATE);
+    {
+      const HIMAGELIST UNUSED hDummy1 = TreeView_SetImageList(hwndTree1, hImageList, TVSIL_STATE);
+    }
 
     if (TreeView_GetItemHeight(hwndTree1) < 16)
       TreeView_SetItemHeight(hwndTree1, 16);

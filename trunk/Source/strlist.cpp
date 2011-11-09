@@ -171,7 +171,7 @@ int StringList::idx2pos(int idx) const
 {
   TCHAR *s=(TCHAR*) m_gr.get();
   int offs=0;
-  size_t cnt=0;
+  int cnt=0;
   if (idx>=0) while (offs < getcount())
   {
     if (cnt++ == idx) return offs;
@@ -228,7 +228,6 @@ int DefineList::add(const TCHAR *name, const TCHAR *value/*=_T("")*/)
 
   if (!(*newvalue))
   {
-    extern FILE *g_output;
     extern int g_display_errors;
     extern void quit();
     if (g_display_errors)

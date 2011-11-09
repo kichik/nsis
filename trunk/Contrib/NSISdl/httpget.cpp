@@ -73,7 +73,7 @@ JNL_HTTPGet::~JNL_HTTPGet()
 }
 
 
-void JNL_HTTPGet::addheader(char *header)
+void JNL_HTTPGet::addheader(const char *header)
 {
   //if (strstr(header,"\r") || strstr(header,"\n")) return;
   if (!m_sendheaders)
@@ -135,7 +135,7 @@ void JNL_HTTPGet::do_encode_mimestr(char *in, char *out)
 }
 
 
-void JNL_HTTPGet::connect(char *url)
+void JNL_HTTPGet::connect(const char *url)
 {
   deinit();
   m_http_url=(char*)malloc(strlen(url)+1);
@@ -230,7 +230,7 @@ void JNL_HTTPGet::connect(char *url)
 
 }
 
-static int my_strnicmp(char *b1, char *b2, int l)
+static int my_strnicmp(char *b1, const char *b2, int l)
 {
   while (l-- && *b1 && *b2)
   {
@@ -243,13 +243,13 @@ static int my_strnicmp(char *b1, char *b2, int l)
   return 0;
 }
 
-char *_strstr(char *i, char *s)
+char *_strstr(char *i, const char *s)
 {
   if (strlen(i)>=strlen(s)) while (i[strlen(s)-1])
   {
     int l=strlen(s)+1;
     char *ii=i;
-    char *is=s;
+    const char *is=s;
     while (--l>0)
     {
       if (*ii != *is) break;
@@ -312,20 +312,20 @@ void JNL_HTTPGet::do_parse_url(char *url, char **host, int *port, char **req, ch
 }
 
 
-char *JNL_HTTPGet::getallheaders()
+const char *JNL_HTTPGet::getallheaders()
 { // double null terminated, null delimited list
   if (m_recvheaders) return m_recvheaders;
   else return "\0\0";
 }
 
-char *JNL_HTTPGet::getheader(char *headername)
+const char *JNL_HTTPGet::getheader(const char *headername)
 {
   char *ret=NULL;
   if (strlen(headername)<1||!m_recvheaders) return NULL;
   char *p=m_recvheaders;
   while (*p)
   {
-    if (!my_strnicmp(headername,p,strlen(headername)))
+    if (!my_strnicmp(p,headername,strlen(headername)))
     {
       ret=p+strlen(headername);
       while (*ret == ' ') ret++;
@@ -486,7 +486,7 @@ int JNL_HTTPGet::peek_bytes(char *buf, int len)
 
 __int64 JNL_HTTPGet::content_length()
 {
-  char *p=getheader("content-length:");
+  const char *p=getheader("content-length:");
   if (!p) return 0;
   __int64 cl = myatoi64(p);
   if (cl > 0) return cl;

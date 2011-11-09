@@ -1,4 +1,4 @@
-/* Reviewed for Unicode support by Jim Park -- 08/18/2007
+/* Reviewed for Unicode support by Jim Park -- 08/18/2007 */
 
 /* Initialize update objects. */
 void InitializeUpdate();
