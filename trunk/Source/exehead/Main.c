@@ -174,43 +174,23 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPTSTR lpszCmdPara
   GetTempPath(NSIS_MAX_STRLEN, state_temp_dir);
   if (!ValidateTempDir())
   {
-    LPTSTR tstrslashtemp = _T("\\Temp");
     GetWindowsDirectory(state_temp_dir, NSIS_MAX_STRLEN - 5); // leave space for \Temp
-    mystrcat(state_temp_dir, tstrslashtemp);
+    mystrcat(state_temp_dir, _T("\\Temp"));
     if (!ValidateTempDir())
     {
-      const int myKF_FLAG_CREATE=0x00008000;
-      const GUID myFOLDERID_LocalAppDataLow={0xA520A1A4,0x1780,0x4FF6,{0xBD,0x18,0x16,0x73,0x43,0xC5,0xAF,0x16}};
-      void* pfnSHGetKnownFolderPath=myGetProcAddress(MGA_SHGetKnownFolderPath);
-      WCHAR* localapplow;
-      HRESULT hr = E_NOTIMPL;
-      if (pfnSHGetKnownFolderPath)
-      {
-        // There does not seem to be a API to get the low temp dir directly, so we build the path on our own
-        hr = ((HRESULT(WINAPI*)(void*,DWORD,HANDLE,WCHAR**))pfnSHGetKnownFolderPath)((void*)&myFOLDERID_LocalAppDataLow, myKF_FLAG_CREATE, NULL, &localapplow);
-      }
-      if (S_OK == hr)
-      {
-#ifdef _UNICODE
-        if (mystrlen(localapplow) < NSIS_MAX_STRLEN - 5)
-        {
-          addtrailingslash(state_temp_dir);
-          mystrcat(state_temp_dir, &tstrslashtemp[1]);
-        }
-#else
-        if (lstrlenW(localapplow) < NSIS_MAX_STRLEN - 5)
-        {
-          BOOL useddefchar=FALSE;
-          WideCharToMultiByte(CP_ACP, WC_NO_BEST_FIT_CHARS, localapplow, -1, state_temp_dir, NSIS_MAX_STRLEN, NULL, &useddefchar);
-          if (!useddefchar)
-          {
-            addtrailingslash(state_temp_dir);
-            mystrcat(state_temp_dir, &tstrslashtemp[1]);
-          }
-        }
-#endif
-        CoTaskMemFree(localapplow);
-      }
+      // There does not seem to be a API to get the low temp dir directly, so we build the path on our own
+
+      GetTempPath(NSIS_MAX_STRLEN - 4, state_temp_dir); // leave space for \Low
+      mystrcat(state_temp_dir, _T("Low"));
+
+      // If we don't call SetEnvironmentVariable 
+      // child processes will use %temp% and not %temp%\Low
+      // and some apps probably can't handle a read only %temp%
+      // Do it before ValidateTempDir() because it appends a backslash.
+      // TODO: Should this be moved to ValidateTempDir() so it also updates for %windir%\Temp?
+      SetEnvironmentVariable(_T("TEMP"), state_temp_dir);
+      SetEnvironmentVariable(_T("TMP"), state_temp_dir);
+
       if (!ValidateTempDir())
       {
         goto end;
