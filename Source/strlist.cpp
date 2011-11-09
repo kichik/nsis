@@ -233,8 +233,7 @@ int DefineList::add(const TCHAR *name, const TCHAR *value/*=_T("")*/)
     extern void quit();
     if (g_display_errors)
     {
-      _ftprintf(g_output,_T("\nInternal compiler error #12345: GrowBuf realloc/malloc(%lu) failed.\n"), (unsigned long) size_in_bytes);
-      fflush(g_output);
+      PrintColorFmtMsg_ERR(_T("\nInternal compiler error #12345: GrowBuf realloc/malloc(%lu) failed.\n"), (unsigned long) size_in_bytes);
     }
     quit();
   }

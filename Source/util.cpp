@@ -293,7 +293,7 @@ BOOL IsValidCodePage(UINT CodePage)
   return TRUE;
 }
 
-#define MY_ERROR_MSG(x) {if (g_display_errors) {_ftprintf(g_output,_T("%s"), x);}}
+#define MY_ERROR_MSG(x) {if (g_display_errors) {PrintColorFmtMsg_ERR(_T("%s"), x);}}
 
 TCHAR *my_convert(const TCHAR *path)
 {
@@ -511,6 +511,59 @@ int sane_system(const TCHAR *command) {
 
 #else
   return _tsystem(command);
+#endif
+}
+
+
+void PrintColorFmtMsg(unsigned int type, const TCHAR *fmtstr, va_list args)
+{
+#ifdef _WIN32
+  const HANDLE hWin32Con = GetStdHandle(STD_OUTPUT_HANDLE);
+  static INT32 contxtattrbak = -1;
+  WORD txtattr = 0;
+  if (contxtattrbak < 0)
+  {
+    if (-1 == contxtattrbak)
+    {
+      CONSOLE_SCREEN_BUFFER_INFO csbi;
+      contxtattrbak = -2;
+      if ( GetConsoleScreenBufferInfo(hWin32Con, &csbi) )
+      {
+        contxtattrbak = csbi.wAttributes;
+        goto gottxtattrbak;
+      }
+    }
+  }
+  else
+  {
+gottxtattrbak:
+    switch(type & 0xF)
+    {
+    case 0: goto resettxtattr;
+    case 1: txtattr = FOREGROUND_INTENSITY|FOREGROUND_GREEN|FOREGROUND_RED; break;
+    case 2: txtattr = FOREGROUND_INTENSITY|FOREGROUND_RED; break;
+    }
+    SetConsoleTextAttribute(hWin32Con, txtattr);
+  }
+#endif
+
+  if (fmtstr) _vftprintf(g_output, fmtstr, args);
+  fflush(g_output);
+
+#ifdef _WIN32
+  if (contxtattrbak >= 0 && !(0x10 & type))
+  {
+resettxtattr:
+    SetConsoleTextAttribute(hWin32Con, contxtattrbak);
+  }
+#endif
+}
+
+void FlushOutputAndResetPrintColor()
+{
+  fflush(g_output);
+#ifdef _WIN32
+  PrintColorFmtMsg(0, NULL, (va_list)NULL); //va_list is just a pointer on windows so this is ok
 #endif
 }
 
