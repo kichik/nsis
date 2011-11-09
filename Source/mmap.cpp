@@ -217,7 +217,6 @@ void MMapFile::resize(int newsize)
     if (m_hFileDesc == -1)
 #endif
     {
-      extern FILE *g_output;
       extern void quit(); extern int g_display_errors;
       if (g_display_errors)
       {
@@ -249,7 +248,6 @@ void *MMapFile::get(int offset, int *sizep) const
 
   if (!m_iSize || offset + size > m_iSize)
   {
-    extern FILE *g_output;
     extern void quit(); extern int g_display_errors;
     if (g_display_errors) 
     {
@@ -275,7 +273,6 @@ void *MMapFile::get(int offset, int *sizep) const
   if (m_pView == MAP_FAILED)
 #endif
   {
-    extern FILE *g_output;
     extern void quit(); extern int g_display_errors;
     if (g_display_errors) 
     {

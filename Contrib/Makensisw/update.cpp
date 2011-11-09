@@ -85,7 +85,7 @@ DWORD CALLBACK UpdateThread(LPVOID v) {
     int st=get->run();
     if (st<0) { error = TRUE; break; }//error
     if (get->get_status()==2) {
-      while(len=get->bytes_available()) {
+      while( (len=get->bytes_available()) ) {
         char b[RSZ];
         if (len>RSZ) len=RSZ;
         if (lstrlenA(response)+len>RSZ) break;

@@ -90,7 +90,7 @@ int main( int argc, char *argv[] )
                 FALSE, 0, NULL, NULL, &si, &pi ) )
             {
                 WaitForSingleObject( pi.hProcess, INFINITE );
-                GetExitCodeProcess( pi.hProcess, &err );
+                GetExitCodeProcess( pi.hProcess, (DWORD*) &err );
                 CloseHandle( pi.hProcess );
                 CloseHandle( pi.hThread );
             }

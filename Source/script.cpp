@@ -6504,7 +6504,7 @@ int CEXEBuild::add_file(const tstring& dir, const tstring& file, int attrib, con
       ent.offsets[4]=0;
       ent.offsets[5]=0;
 
-      if (ent.offsets[1] != INVALID_FILE_ATTRIBUTES)
+      if (INVALID_FILE_ATTRIBUTES != (unsigned)ent.offsets[1])
       {
         a=add_entry(&ent);
         if (a != PS_OK)

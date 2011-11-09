@@ -3653,7 +3653,7 @@ int CEXEBuild::set_compressor(const tstring& compressor, const bool solid) {
 tstring CEXEBuild::get_stub_variant_suffix()
 {
     LONG variant = 0;
-    for (int index = 0; index < COUNTOF(available_stub_variants); index++)
+    for (unsigned int index = 0; index < COUNTOF(available_stub_variants); index++)
     {
         if (target_minimal_OS >= available_stub_variants[index])
             variant = available_stub_variants[index];

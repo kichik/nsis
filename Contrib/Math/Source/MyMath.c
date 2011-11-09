@@ -43,7 +43,7 @@ void StringToItem(TCHAR *&s, ExpressionItem *item, int options)
   if ((options & STI_INT) && *s == _T('0') && (s[1] == _T('x') || s[1] == _T('X')))
   {
     s++;
-    while (*(s+1) == _T('0')) *s++;
+    while (*(s+1) == _T('0')) s++;
     for (;;)
     {
       int c=*(++s);
@@ -60,7 +60,7 @@ void StringToItem(TCHAR *&s, ExpressionItem *item, int options)
   {
     int sign=0, numsignif = 0;
     if (*s == _T('-')) sign++; else s--;
-    while (*(s+1) == _T('0')) *s++;
+    while (*(s+1) == _T('0')) s++;
     for (;;)
     {
       int c=*(++s) - _T('0'); numsignif++;
@@ -154,7 +154,7 @@ void ItemToString(TCHAR *sbuf, ExpressionItem *item)
     case ITC_STRING:
         {
         TCHAR *ptr = *((TCHAR**)&(item->param1));
-        while (*(sbuf++) = *(ptr++));
+        while ( (*(sbuf++) = *(ptr++)) );
         }
         break;
     case ITC_ARRAY:

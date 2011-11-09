@@ -61,7 +61,6 @@ void GrowBuf::resize(int newlen)
     n = realloc(m_s, m_alloc);
     if (!n)
     {
-      extern FILE *g_output;
       extern int g_display_errors;
       if (g_display_errors)
       {
