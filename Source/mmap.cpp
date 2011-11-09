@@ -26,6 +26,7 @@
 #  include <fcntl.h>
 #  include <unistd.h>
 #endif
+#include "util.h"
 
 // ========
 // MMapFile
@@ -220,8 +221,7 @@ void MMapFile::resize(int newsize)
       extern void quit(); extern int g_display_errors;
       if (g_display_errors)
       {
-        _ftprintf(g_output,_T("\nInternal compiler error #12345: error creating mmap the size of %d.\n"), m_iSize);
-        fflush(g_output);
+        PrintColorFmtMsg_ERR(_T("\nInternal compiler error #12345: error creating mmap the size of %d.\n"), m_iSize);
       }
       quit();
     }
@@ -253,8 +253,7 @@ void *MMapFile::get(int offset, int *sizep) const
     extern void quit(); extern int g_display_errors;
     if (g_display_errors) 
     {
-      _ftprintf(g_output,_T("\nInternal compiler error #12345: error mmapping file (%d, %d) is out of range.\n"), offset, size);
-      fflush(g_output);
+      PrintColorFmtMsg_ERR(_T("\nInternal compiler error #12345: error mmapping file (%d, %d) is out of range.\n"), offset, size);
     }
     quit();
   }
@@ -280,8 +279,7 @@ void *MMapFile::get(int offset, int *sizep) const
     extern void quit(); extern int g_display_errors;
     if (g_display_errors) 
     {
-      _ftprintf(g_output,_T("\nInternal compiler error #12345: error mmapping datablock to %d.\n"), size);
-      fflush(g_output);
+      PrintColorFmtMsg_ERR(_T("\nInternal compiler error #12345: error mmapping datablock to %d.\n"), size);
     }
     quit();
   }

@@ -23,6 +23,7 @@
 #include <cstdio> // for f*
 #include <algorithm> // for std::min
 #include "tchar.h"
+#include "util.h"
 
 #include "Platform.h"
 
@@ -64,8 +65,7 @@ void GrowBuf::resize(int newlen)
       extern int g_display_errors;
       if (g_display_errors)
       {
-        _ftprintf(g_output,_T("\nack! realloc(%d) failed, trying malloc(%d)!\n"),m_alloc,newlen);
-        fflush(g_output);
+        PrintColorFmtMsg_ERR(_T("\nack! realloc(%d) failed, trying malloc(%d)!\n"),m_alloc,newlen);
       }
       m_alloc=newlen; // try to malloc the minimum needed
       n=malloc(m_alloc);
@@ -74,8 +74,7 @@ void GrowBuf::resize(int newlen)
         extern void quit();
         if (g_display_errors)
         {
-          _ftprintf(g_output,_T("\nInternal compiler error #12345: GrowBuf realloc/malloc(%d) failed.\n"),m_alloc);
-          fflush(g_output);
+          PrintColorFmtMsg_ERR(_T("\nInternal compiler error #12345: GrowBuf realloc/malloc(%d) failed.\n"),m_alloc);
         }
         quit();
       }

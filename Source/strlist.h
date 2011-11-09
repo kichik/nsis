@@ -24,6 +24,7 @@
 #include <fstream>
 #include "tchar.h"
 #include "growbuf.h"
+#include "util.h"
 
 /**
  * Implements a list of strings mapped into a straight buffer.  It is
@@ -188,8 +189,7 @@ class SortedStringList
         extern void quit();
         if (g_display_errors)
         {
-          _ftprintf(g_output,_T("\nInternal compiler error #12345: GrowBuf realloc/malloc(%lu) failed.\n"),(unsigned long)((_tcslen(name)+1)*sizeof(TCHAR)));
-          fflush(g_output);
+          PrintColorFmtMsg_ERR(_T("\nInternal compiler error #12345: GrowBuf realloc/malloc(%lu) failed.\n"),(unsigned long)((_tcslen(name)+1)*sizeof(TCHAR)));
         }
         quit();
       }
