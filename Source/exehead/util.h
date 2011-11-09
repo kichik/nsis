@@ -119,7 +119,6 @@ enum myGetProcAddressFunctions {
   MGA_GetUserDefaultUILanguage,
   MGA_SHAutoComplete,
   MGA_SHGetFolderPath,
-  MGA_SHGetKnownFolderPath
 };
 
 void * NSISCALL myGetProcAddress(const enum myGetProcAddressFunctions func);
