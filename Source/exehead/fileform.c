@@ -266,7 +266,7 @@ const TCHAR * NSISCALL loadHeaders(int cl_flags)
 #ifndef NSIS_CONFIG_CRC_ANAL
     if (left < m_length)
 #endif//NSIS_CONFIG_CRC_ANAL
-      crc = CRC32(crc, temp, l);
+      crc = CRC32(crc, (unsigned char*)temp, l);
 
 #endif//NSIS_CONFIG_CRC_SUPPORT
     m_pos += l;
@@ -350,7 +350,7 @@ const TCHAR * NSISCALL loadHeaders(int cl_flags)
 #if !defined(NSIS_COMPRESS_WHOLE) || !defined(NSIS_CONFIG_COMPRESSION_SUPPORT)
 
 // Decompress data.
-int NSISCALL _dodecomp(int offset, HANDLE hFileOut, char *outbuf, int outbuflen)
+int NSISCALL _dodecomp(int offset, HANDLE hFileOut, unsigned char *outbuf, int outbuflen)
 {
   static char inbuffer[IBUFSIZE+OBUFSIZE];
   char *outbuffer;
@@ -358,7 +358,7 @@ int NSISCALL _dodecomp(int offset, HANDLE hFileOut, char *outbuf, int outbuflen)
   int retval=0;
   int input_len;
 
-  outbuffer = outbuf?outbuf:(inbuffer+IBUFSIZE);
+  outbuffer = outbuf?(char*)outbuf:(inbuffer+IBUFSIZE);
 
   if (offset>=0)
   {
@@ -527,7 +527,7 @@ static int NSISCALL __ensuredata(int amount)
 }
 
 
-int NSISCALL _dodecomp(int offset, HANDLE hFileOut, char *outbuf, int outbuflen)
+int NSISCALL _dodecomp(int offset, HANDLE hFileOut, unsigned char *outbuf, int outbuflen)
 {
   DWORD r;
   int input_len;

@@ -514,7 +514,7 @@ int NSISCALL isheader(firstheader *h); // returns 0 on not header, length_of_dat
 // (or m_uninstheader)
 const TCHAR * NSISCALL loadHeaders(int cl_flags);
 
-int NSISCALL _dodecomp(int offset, HANDLE hFileOut, char *outbuf, int outbuflen);
+int NSISCALL _dodecomp(int offset, HANDLE hFileOut, unsigned char *outbuf, int outbuflen);
 
 #define GetCompressedDataFromDataBlock(offset, hFileOut) _dodecomp(offset,hFileOut,NULL,0)
 #define GetCompressedDataFromDataBlockToMemory(offset, out, out_len) _dodecomp(offset,NULL,out,out_len)

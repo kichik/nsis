@@ -29,7 +29,7 @@ int my_atoi(char *s)
   return (int)v;
 }
 
-__int64 myatoi64(char *s)
+__int64 myatoi64(const char *s)
 {
   __int64 v=0;
   int sign=0;

@@ -184,7 +184,6 @@ class SortedStringList
       newstruct.name=(TCHAR*)malloc((_tcslen(name)+1)*sizeof(TCHAR));
       if (!newstruct.name)
       {
-        extern FILE *g_output;
         extern int g_display_errors;
         extern void quit();
         if (g_display_errors)

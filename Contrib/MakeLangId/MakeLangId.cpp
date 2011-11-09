@@ -9,7 +9,7 @@
 
 struct line {
 	unsigned short id;
-	TCHAR *name;
+	const TCHAR *name;
 };
 
 line primary[] = {

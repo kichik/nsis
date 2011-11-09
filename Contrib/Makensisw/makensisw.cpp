@@ -425,7 +425,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
         // Windows 2000 and higher
         case EN_MSGFILTER:
           #define lpnmMsg ((MSGFILTER*)lParam)
-          if(WM_RBUTTONUP == lpnmMsg->msg || WM_KEYUP == lpnmMsg->msg && lpnmMsg->wParam == VK_APPS){
+          if(WM_RBUTTONUP == lpnmMsg->msg || (WM_KEYUP == lpnmMsg->msg && lpnmMsg->wParam == VK_APPS)){
           POINT pt;
           HWND edit = GetDlgItem(g_sdata.hwnd,IDC_LOGWIN);
           RECT r;
@@ -1291,7 +1291,7 @@ void SetCompressor(NCOMPRESSOR compressor)
 
   if(g_sdata.compressor != compressor) {
     WORD command;
-    TCHAR *compressor_name;
+    LPCTSTR compressor_name;
 
     if(compressor > COMPRESSOR_SCRIPT && compressor < COMPRESSOR_BEST) {
       command = compressor_commands[(int)compressor];

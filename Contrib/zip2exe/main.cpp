@@ -62,7 +62,7 @@ int g_compressor_solid;
 int g_mui;
 int g_zipfile_size;
 
-TCHAR *g_options=_T("");//_T("/V3");
+const TCHAR *g_options=_T("");//_T("/V3");
 
 static BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
@@ -324,12 +324,12 @@ int tempzip_make(HWND hwndDlg, TCHAR *fn)
   return 0;
 }
 
-TCHAR *gp_winamp = _T("(WINAMP DIRECTORY)");
-TCHAR *gp_winamp_plugins = _T("(WINAMP PLUG-INS DIRECTORY)");
-TCHAR *gp_winamp_vis = _T("(WINAMP VIS PLUG-INS DIRECTORY)");
-TCHAR *gp_winamp_dsp = _T("(WINAMP DSP PLUG-INS DIRECTORY)");
-TCHAR *gp_winamp_skins = _T("(WINAMP SKINS DIRECTORY)");
-TCHAR *gp_poi = _T("(PATH OF INSTALLER)");
+const TCHAR *gp_winamp = _T("(WINAMP DIRECTORY)");
+const TCHAR *gp_winamp_plugins = _T("(WINAMP PLUG-INS DIRECTORY)");
+const TCHAR *gp_winamp_vis = _T("(WINAMP VIS PLUG-INS DIRECTORY)");
+const TCHAR *gp_winamp_dsp = _T("(WINAMP DSP PLUG-INS DIRECTORY)");
+const TCHAR *gp_winamp_skins = _T("(WINAMP SKINS DIRECTORY)");
+const TCHAR *gp_poi = _T("(PATH OF INSTALLER)");
 
 
 void wnd_printf(const TCHAR *str)
@@ -366,7 +366,7 @@ void wnd_printf(const TCHAR *str)
 
 }
 
-void ErrorMessage(TCHAR *str)  //display detailed error info
+void ErrorMessage(const TCHAR *str)  //display detailed error info
 {
   LPVOID msg;
   FormatMessage(
@@ -513,7 +513,7 @@ void makeEXE(HWND hwndDlg)
     _ftprintf(fp,_T("!define ZIP2EXE_COMPRESSOR_SOLID\n"));
   GetDlgItemText(hwndDlg,IDC_INSTPATH,buf,sizeof(buf));
   int iswinamp=0;
-  TCHAR *iswinampmode=NULL;
+  LPCTSTR iswinampmode=NULL;
   if (!_tcscmp(buf,gp_poi)) lstrcpy(buf,_T("$EXEDIR"));
 
   if (!_tcscmp(buf,gp_winamp))
