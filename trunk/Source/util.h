@@ -56,6 +56,32 @@ tstring get_string_suffix(const tstring& str, const tstring& separator);
 
 int sane_system(const TCHAR *command);
 
+void PrintColorFmtMsg(unsigned int type, const TCHAR *fmtstr, va_list args);
+void FlushOutputAndResetPrintColor();
+#ifdef _WIN32
+#define ResetPrintColor() FlushOutputAndResetPrintColor() // For reset ONLY use PrintColorFmtMsg(0,NULL ...
+#define SetPrintColorWARN() PrintColorFmtMsg(1|0x10, NULL, (va_list)NULL)
+#define SetPrintColorERR() PrintColorFmtMsg(2|0x10, NULL, (va_list)NULL)
+#else
+#define ResetPrintColor()
+#define SetPrintColorWARN()
+#define SetPrintColorERR()
+#endif
+inline void PrintColorFmtMsg_WARN(const TCHAR *fmtstr, ...)
+{
+  va_list val;
+  va_start(val,fmtstr);
+  PrintColorFmtMsg(1, fmtstr, val);
+  va_end(val);
+}
+inline void PrintColorFmtMsg_ERR(const TCHAR *fmtstr, ...)
+{
+  va_list val;
+  va_start(val,fmtstr);
+  PrintColorFmtMsg(2, fmtstr, val);
+  va_end(val);
+}
+
 #ifndef _WIN32
 TCHAR *CharPrev(const TCHAR *s, const TCHAR *p);
 TCHAR *CharNext(const TCHAR *s);

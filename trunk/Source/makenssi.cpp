@@ -46,9 +46,8 @@ void quit()
 {
   if (g_display_errors) 
   {
-    _ftprintf(g_output,_T("\nNote: you may have one or two (large) stale temporary file(s)\n")
+    PrintColorFmtMsg_WARN(_T("\nNote: you may have one or two (large) stale temporary file(s)\n")
          _T("left in your temporary directory (Generally this only happens on Windows 9x).\n"));
-    fflush(g_output);
   }
   exit(1);
 }
@@ -56,6 +55,7 @@ void quit()
 static void myatexit()
 {
   dopause();
+  ResetPrintColor();
   if (g_output != stdout && g_output) fclose(g_output);
 #ifdef _WIN32
 #ifdef _UNICODE
@@ -68,8 +68,7 @@ static void sigint(int sig)
 {
   if (g_display_errors) 
   {
-    _ftprintf(g_output,_T("\n\nAborting on Ctrl+C...\n"));
-    fflush(g_output);
+    PrintColorFmtMsg_WARN(_T("\n\nAborting on Ctrl+C...\n"));
   }
   quit();
 }
@@ -214,8 +213,7 @@ static int process_config(CEXEBuild& build, tstring& conf)
     {
       if (build.display_errors) 
       {
-        _ftprintf(g_output,_T("Error in config on line %d -- aborting creation process\n"),build.linecnt);
-        fflush(g_output);
+        PrintColorFmtMsg_ERR(_T("Error in config on line %d -- aborting creation process\n"),build.linecnt);
       }
       return 1;
     }
@@ -242,8 +240,7 @@ static int change_to_script_dir(CEXEBuild& build, tstring& script)
     {
       if (build.display_errors)
       {
-        _ftprintf(g_output,_T("Error changing directory to \"%s\"\n"),dir.c_str());
-        fflush(g_output);
+        PrintColorFmtMsg_ERR(_T("Error changing directory to \"%s\"\n"),dir.c_str());
       }
       return 1;
     }
@@ -292,8 +289,7 @@ int _tmain(int argc, TCHAR **argv)
   }
   catch (exception& err)
   {
-    _ftprintf(g_output, _T("Error initalizing CEXEBuild: %s\n"), CtoTString(err.what()));
-    fflush(g_output);
+    PrintColorFmtMsg_ERR(_T("Error initalizing CEXEBuild: %s\n"), CtoTString(err.what()));
     return 1;
   }
 
@@ -319,8 +315,8 @@ int _tmain(int argc, TCHAR **argv)
       g_output=FOPENTEXT(argv[tmpargpos]+2,"w");
       if (!g_output) 
       {
-        _tprintf(_T("Error opening output log for writing. Using stdout.\n"));
-        g_output=stdout;
+        g_output=stdout; // Needs to be set before calling PrintColorFmtMsg*
+        PrintColorFmtMsg_WARN(_T("Error opening output log for writing. Using stdout.\n"));
       }
       outputtried=1;
     }
@@ -365,8 +361,8 @@ int _tmain(int argc, TCHAR **argv)
           g_output=FOPENTEXT(argv[argpos]+2,"w");
           if (!g_output) 
           {
-            if (build.display_errors) _tprintf(_T("Error opening output log for writing. Using stdout.\n"));
-            g_output=stdout;
+            g_output=stdout; // Needs to be set before calling PrintColorFmtMsg*
+            if (build.display_errors) PrintColorFmtMsg_WARN(_T("Error opening output log for writing. Using stdout.\n"));
           }
           outputtried=1;
         }
@@ -508,8 +504,7 @@ int _tmain(int argc, TCHAR **argv)
               if (build.display_errors) 
               {
                 sfile[_tcslen(sfile)-4]=0;
-                _ftprintf(g_output,_T("Can't open script \"%s\"\n"),sfile);
-                fflush(g_output);
+                PrintColorFmtMsg_ERR(_T("Can't open script \"%s\"\n"),sfile);
               }
               return 1;
             }
@@ -536,8 +531,7 @@ int _tmain(int argc, TCHAR **argv)
         {
           if (build.display_errors) 
           {
-            _ftprintf(g_output,_T("Error in script \"%s\" on line %d -- aborting creation process\n"),sfile,build.linecnt);
-            fflush(g_output);
+            PrintColorFmtMsg_ERR(_T("Error in script \"%s\" on line %d -- aborting creation process\n"),sfile,build.linecnt);
           }
           return 1;
         }
@@ -568,8 +562,7 @@ int _tmain(int argc, TCHAR **argv)
   { 
     if (build.display_errors) 
     {
-      _ftprintf(g_output,_T("Error - aborting creation process\n"));
-      fflush(g_output);
+      PrintColorFmtMsg_ERR(_T("Error - aborting creation process\n"));
     }
     return 1;
   }

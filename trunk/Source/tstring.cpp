@@ -58,7 +58,7 @@ FILE* FileOpenUnicodeText(const TCHAR* file, const TCHAR* mode, BOOL* unicode)
 					   break;
 				   case CValidateUnicode::UTF_32LE:
 				   case CValidateUnicode::UTF_32BE:
-					   _ftprintf(g_output, _T("File '%s' has a BOM marked as %s which is not supported at this time.\n"),
+					   PrintColorFmtMsg_ERR(_T("File '%s' has a BOM marked as %s which is not supported at this time.\n"),
 							   file, CValidateUnicode::TypeToName(ftype));
 					   exit(-1);
 					   break;
@@ -72,7 +72,7 @@ FILE* FileOpenUnicodeText(const TCHAR* file, const TCHAR* mode, BOOL* unicode)
                        }
 					   break;
 				   default:
-					   _ftprintf(g_output, _T("CValidateUnicode::CheckBOM() for file '%s' returned an unknown return value: %d\n"),
+					   PrintColorFmtMsg_ERR(_T("CValidateUnicode::CheckBOM() for file '%s' returned an unknown return value: %d\n"),
 							   file, ftype);
 					   exit(-1);
 					   break;

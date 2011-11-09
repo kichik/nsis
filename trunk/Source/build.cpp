@@ -3310,8 +3310,7 @@ void CEXEBuild::warning(const TCHAR *s, ...)
   notify(MAKENSIS_NOTIFY_WARNING,buf);
   if (display_warnings)
   {
-    _ftprintf(g_output,_T("warning: %s\n"),buf);
-    fflush(g_output);
+    PrintColorFmtMsg_WARN(_T("warning: %s\n"),buf);
   }
 }
 
@@ -3332,8 +3331,7 @@ void CEXEBuild::warning_fl(const TCHAR *s, ...)
   notify(MAKENSIS_NOTIFY_WARNING,buf);
   if (display_warnings)
   {
-    _ftprintf(g_output,_T("warning: %s\n"),buf);
-    fflush(g_output);
+    PrintColorFmtMsg_WARN(_T("warning: %s\n"),buf);
   }
 }
 
@@ -3353,8 +3351,7 @@ void CEXEBuild::ERROR_MSG(const TCHAR *s, ...) const
     notify(MAKENSIS_NOTIFY_ERROR,buf);
     if (display_errors)
     {
-      _ftprintf(g_output,_T("%s"),buf);
-      fflush(g_output);
+      PrintColorFmtMsg_ERR(_T("%s"),buf);
     }
   }
 }
@@ -3389,13 +3386,14 @@ void CEXEBuild::print_warnings()
   if (!x || !display_warnings) return;
   TCHAR *p=m_warnings.get();
   while (x>0) if (!p[--x]) nw++;
+  SetPrintColorWARN();
   _ftprintf(g_output,_T("\n%d warning%s:\n"),nw,nw==1?_T(""):_T("s"));
   for (x = 0; x < nw; x ++)
   {
     _ftprintf(g_output,_T("  %s\n"),p);
     p+=_tcslen(p)+1;
   }
-  fflush(g_output);
+  FlushOutputAndResetPrintColor();
 }
 
 void CEXEBuild::notify(notify_e code, const TCHAR *data) const
