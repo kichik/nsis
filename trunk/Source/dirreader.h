@@ -33,6 +33,10 @@ public:
   virtual const std::set<tstring>& files();
   virtual const std::set<tstring>& dirs();
 
+  // dir_reader always excludes . and .. AND the exclude list is private,
+  // use this backdoor if you need to match "."
+  virtual std::set<tstring>& hack_simpleexcluded() {return m_excluded;}
+
   virtual void exclude(const tstring& spec);
   virtual void exclude(const std::set<tstring>& specs);
 
