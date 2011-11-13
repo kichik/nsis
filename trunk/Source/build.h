@@ -433,6 +433,7 @@ class CEXEBuild {
 
     int sectiongroup_open_cnt;
     FastStringList m_warnings;
+    const TCHAR* m_currentmacroname;
     GrowBuf m_macros;
 
     StringList m_macro_entry;

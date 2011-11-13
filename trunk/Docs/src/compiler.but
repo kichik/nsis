@@ -334,6 +334,10 @@ Defined in \R{ssection}{section}, \R{ffunction}{function} or \R{pageex}{PageEx} 
 \c 
 \c FunctionEnd
 
+\S2{} $\{__MACRO__\}
+
+Defined as the name of the current macro.
+
 \S0{compenvvarread} Read environment variables
 
 \S1{compenvvar} $%envVarName%
