@@ -486,7 +486,33 @@ parse_again:
       
       if(line.getnumtokens() == 2)
         istrue = line.gettoken_int(1);
-          
+
+      else if (line.getnumtokens() == 3) {
+        if (!_tcsicmp(line.gettoken_str(1),_T("/fileexists")))
+        {
+          TCHAR *fc = my_convert(line.gettoken_str(2));
+          tstring dir = get_dir_name(fc), spec = get_file_name(fc);
+          my_convert_free(fc);
+          if (dir == spec) dir = _T("."); 
+
+          boost::scoped_ptr<dir_reader> dr( new_dir_reader() );
+          dr->hack_simpleexcluded().erase(_T("."));
+          dr->read(dir);
+
+          for (dir_reader::iterator fit = dr->files().begin();
+             fit != dr->files().end() && !istrue; fit++)
+          {
+            if (dir_reader::matches(*fit, spec)) istrue = true;
+          }
+          if (!istrue) for (dir_reader::iterator dit = dr->dirs().begin();
+             dit != dr->dirs().end() && !istrue; dit++)
+          {
+            if (dir_reader::matches(*dit, spec)) istrue = true;
+          }
+        }
+        else PRINTHELP()
+      }
+
       else if (line.getnumtokens() == 4) {
         mod = line.gettoken_enum(2,_T("=\0==\0!=\0<=\0<\0>\0>=\0&\0&&\0|\0||\0"));
         
