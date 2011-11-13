@@ -256,6 +256,8 @@ CEXEBuild::CEXEBuild() :
 
   no_space_texts=false;
 
+  m_currentmacroname=NULL;
+
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
   build_plugin_unload=0;
   plugins_processed=0;

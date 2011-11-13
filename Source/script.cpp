@@ -1178,6 +1178,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         int npos=m_macro_entry.add(line.gettoken_str(1),0);
 
         wsprintf(str,_T("macro:%s"),line.gettoken_str(1));
+        const TCHAR* oldmacroname=m_currentmacroname;
+        m_currentmacroname=line.gettoken_str(1);
+        definedlist.del(_T("__MACRO__"));
+        definedlist.add(_T("__MACRO__"),m_currentmacroname);
         while (*t)
         {
           lp++;
@@ -1212,6 +1216,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             p+=_tcslen(p)+1;
           }
         }
+        definedlist.del(_T("__MACRO__"));
+        m_currentmacroname = oldmacroname;
+        if (oldmacroname) definedlist.add(_T("__MACRO__"),oldmacroname);
         SCRIPT_MSG(_T("!insertmacro: end of %s\n"),line.gettoken_str(1));
       }
     return PS_OK;
