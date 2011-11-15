@@ -4947,15 +4947,32 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       SCRIPT_MSG(_T("StrLen %s \"%s\"\n"),line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_STRCPY:
-      ent.which=EW_ASSIGNVAR;
-      ent.offsets[0]=GetUserVarIndex(line, 1);
-      ent.offsets[1]=add_string(line.gettoken_str(2));
-      ent.offsets[2]=add_string(line.gettoken_str(3));
-      ent.offsets[3]=add_string(line.gettoken_str(4));
+    case TOK_UNSAFESTRCPY:
+      {
+        ent.which = EW_ASSIGNVAR;
+        const TCHAR* msgprefix = _T("");
+        int idx = -1;
+        if (TOK_STRCPY == which_token)
+        {
+          idx = GetUserVarIndex(line, 1);
+        }
+        else
+        {
+          msgprefix = _T("Unsafe");
+          TCHAR *p = line.gettoken_str(1);
+          if (*p == _T('$') && *++p) idx = m_UserVarNames.get(p);
+          if (-1 != idx && m_UserVarNames.get_reference(idx) != -1) m_UserVarNames.inc_reference(idx);
+        }
+        if (idx < 0) PRINTHELP()
+        ent.offsets[0]=idx;
+        ent.offsets[1]=add_string(line.gettoken_str(2));
+        ent.offsets[2]=add_string(line.gettoken_str(3));
+        ent.offsets[3]=add_string(line.gettoken_str(4));
 
-      if (ent.offsets[0] < 0) PRINTHELP()
-      SCRIPT_MSG(_T("StrCpy %s \"%s\" (%s) (%s)\n"),line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(4));
-    return add_entry(&ent);
+        SCRIPT_MSG(_T("%sStrCpy %s \"%s\" (%s) (%s)\n"),
+          msgprefix,line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(4));
+        return add_entry(&ent);
+      }
     case TOK_GETFUNCTIONADDR:
       ent.which=EW_GETFUNCTIONADDR;
       ent.offsets[0]=GetUserVarIndex(line, 1);
