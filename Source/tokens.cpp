@@ -214,6 +214,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_STRCMP,_T("StrCmp"),3,1,_T("str1 str2 label_to_goto_if_equal [label_to_goto_if_not]"),TP_CODE},
 {TOK_STRCMPS,_T("StrCmpS"),3,1,_T("str1 str2 label_to_goto_if_equal [label_to_goto_if_not]"),TP_CODE},
 {TOK_STRCPY,_T("StrCpy"),2,2,_T("$(user_var: output) str [maxlen] [startoffset]"),TP_CODE},
+{TOK_UNSAFESTRCPY,_T("UnsafeStrCpy"),2,2,_T("$(var: output) str [maxlen] [startoffset]"),TP_CODE},
 {TOK_STRLEN,_T("StrLen"),2,0,_T("$(user_var: length output) str"),TP_CODE},
 {TOK_SUBCAPTION,_T("SubCaption"),2,0,_T("page_number(0-4) new_subcaption"),TP_GLOBAL},
 #ifdef _UNICODE
