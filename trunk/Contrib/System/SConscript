@@ -2,7 +2,6 @@ target = 'System'
 
 files = Split("""
 	Source/Buffers.c
-	Source/Call.S
 	Source/Plugin.c
 	Source/System.c
 """)
@@ -25,7 +24,16 @@ docs = Split("""
 	WhatsNew.txt
 """)
 
-Import('BuildPlugin')
+Import('BuildPlugin env')
+
+conf = env.Configure()
+if conf.TryCompile('END', '.S'):
+	files += ['Source/Call.S']
+elif conf.TryCompile('.end', '.sx'):
+	files += ['Source/Call.Sx']
+else:
+	print 'WARNING: unable to find assembler for Call.S'
+conf.Finish()
 
 BuildPlugin(
 	target,
@@ -36,8 +44,6 @@ BuildPlugin(
 	nodeflib = False,
 	defines = ['SYSTEM_EXPORTS']
 )
-
-Import('env')
 
 res = 'Resource/Resource.rc'
 res_obj = 'Resource/Resource-rc.o'
