@@ -262,6 +262,7 @@ static tokenType tokenlist[TOK__LAST] =
 
 {TOK_P_MACRO,_T("!macro"),1,-1,_T("macroname [parms ...]"),TP_ALL},
 {TOK_P_MACROEND,_T("!macroend"),0,0,_T(""),TP_ALL},
+{TOK_P_MACROUNDEF,_T("!macroundef"),1,0,_T("macroname"),TP_ALL},
 {TOK_P_INSERTMACRO,_T("!insertmacro"),1,-1,_T("macroname [parms ...]"),TP_ALL},
 {TOK_P_IFMACRODEF,_T("!ifmacrodef"),1,-1,_T("macro [| macro2 [& macro3 [...]]]"),TP_ALL},
 {TOK_P_IFMACRONDEF,_T("!ifmacrondef"),1,-1,_T("macro [| macro2 [& macro3 [...]]]"),TP_ALL},

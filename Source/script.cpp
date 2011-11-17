@@ -1112,6 +1112,43 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_P_MACROEND:
       ERROR_MSG(_T("!macroend: no macro currently open.\n"));
     return PS_ERROR;
+    case TOK_P_MACROUNDEF:
+      {
+        const TCHAR* mname=line.gettoken_str(1);
+        if (!mname[0]) PRINTHELP()
+        TCHAR *t=(TCHAR *)m_macros.get(), *mbeg, *mend=0, *mbufb=t;
+        while (t && *t)
+        {
+          const bool foundit = !_tcsicmp((mbeg=t),mname);
+          t+=_tcslen(t)+1;
+
+          // advance over parameters
+          while (*t) t+=_tcslen(t)+1;
+          t++;
+
+          // advance over data
+          while (*t) t+=_tcslen(t)+1;
+          if (foundit)
+          {
+            mend=t;
+            break;
+          }
+          if (t-mbufb >= m_macros.getlen()-1)
+            break;
+          t++;
+        }
+        if (!mend)
+        {
+          ERROR_MSG(_T("!macroundef: \"%s\" does not exist!\n"),mname);
+          return PS_ERROR;
+        }
+        const unsigned int mcb=mend-mbeg, mbufcb=m_macros.getlen();
+        memmove(mbeg,mend+1,mbufcb-(mcb+(mbeg-mbufb)));
+        m_macros.resize(mbufcb-(mcb+1));
+
+        SCRIPT_MSG(_T("!macroundef: %s\n"),mname);
+      }
+    return PS_OK;
     case TOK_P_INSERTMACRO:
       {
         if (!line.gettoken_str(1)[0]) PRINTHELP()
