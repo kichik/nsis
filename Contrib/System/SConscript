@@ -30,7 +30,7 @@ conf = env.Configure()
 if conf.TryCompile('END', '.S'):
 	files += ['Source/Call.S']
 elif conf.TryCompile('.end', '.sx'):
-	files += ['Source/Call.Sx']
+	files += ['Source/Call.sx']
 else:
 	print 'WARNING: unable to find assembler for Call.S'
 conf.Finish()
