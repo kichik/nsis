@@ -19,7 +19,7 @@ For Windows it is recommended to download \W{http://zlib.net}{zlib} from
 \W{http://prdownloads.sourceforge.net/libpng/zlib124-dll.zip?download}{http://prdownloads.sourceforge.net/libpng/zlib124-dll.zip?download}.
 Extract the contents of this zip archive to a folder of your choice, e.g.
 \c{C:\\dev\\zlib-1.2.4} and set an environment variable named \c{ZLIB_W32} 
-containingt his path. 
+containing this path. 
 
 \c C:\>set ZLIB_W32=C:\dev\zlib-1.2.4
 
