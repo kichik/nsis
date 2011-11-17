@@ -141,6 +141,12 @@ Creates a macro named 'macro_name'. All lines between the !macro and the !macroe
 
 Ends a macro that was started with !macro.
 
+\S1{macroundef} !macroundef
+
+\c macro_name
+
+Deletes a macro. 
+
 \S1{searchparse} !searchparse
 
 \c [/ignorecase] [/noerrors] [/file] source_string_or_file substring_start OUTPUTSYMBOL1 [substring [OUTPUTSYMBOL2 [substring ...]]]
