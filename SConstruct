@@ -647,13 +647,16 @@ Import('AddZLib')
 
 def BuildUtilEnv(defines = None, flags = None, libs = None,
                  entry = None, nodeflib = None,
-                 cross_platform = False):
+                 cross_platform = False, cli = False):
 	if not cross_platform:
 		env = util_env.Clone()
 		platform = 'win32'
 	else:
 		env = cp_util_env.Clone()
 		platform = env['PLATFORM']
+
+	if cli:
+		env.Append(LINKFLAGS = env['SUBSYS_CON'])
 
 	if libs and 'z' in libs:
 		libs.remove('z')
@@ -667,8 +670,8 @@ def BuildUtil(target, source, libs, entry = None, res = None,
               resources = None, defines = None, flags = None,
               nodeflib = False, file_name = '', path='', contrib = False,
               examples = None, docs = None, cross_platform = False,
-							root_util = False):
-	env = BuildUtilEnv(defines, flags, libs, entry, nodeflib, cross_platform)
+              root_util = False, cli = False):
+	env = BuildUtilEnv(defines, flags, libs, entry, nodeflib, cross_platform, cli)
 
 	AppendRES(env, source, res, resources)
 
