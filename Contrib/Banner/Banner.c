@@ -36,7 +36,7 @@ BOOL CALLBACK BannerProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       SetDlgItemText(hwndDlg, IDC_STR, buf);
 
     if (!*buf)
-      SetWindowLong(hwndDlg, GWL_EXSTYLE, GetWindowLong(hwndDlg, GWL_EXSTYLE) | WS_EX_TOOLWINDOW);
+      SetWindowLongPtr(hwndDlg, GWL_EXSTYLE, GetWindowLongPtr(hwndDlg, GWL_EXSTYLE) | WS_EX_TOOLWINDOW);
   }
   if (uMsg == WM_CLOSE)
   {

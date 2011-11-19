@@ -196,7 +196,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
           xtraDrawStyle |= DT_HIDEPREFIX;
 
         // Use blue unless the user has set another using SetCtlColors
-        if (!GetWindowLong(lpdis->hwndItem, GWL_USERDATA))
+        if (!GetWindowLongPtr(lpdis->hwndItem, GWLP_USERDATA))
           SetTextColor(lpdis->hDC, RGB(0,0,255));
 
         // Draw the text
@@ -278,7 +278,7 @@ void __declspec(dllexport) Create(HWND hwndParent, int string_size, TCHAR *varia
     SWP_NOZORDER | SWP_NOACTIVATE
   );
 
-  g_dialog.parentOriginalWndproc = (WNDPROC) SetWindowLong(hwndParent, DWL_DLGPROC, (long) ParentProc);
+  g_dialog.parentOriginalWndproc = (WNDPROC) SetWindowLongPtr(hwndParent, DWLP_DLGPROC, (LONG_PTR) ParentProc);
 
   g_dialog.rtl = FALSE;
 
@@ -389,7 +389,7 @@ void __declspec(dllexport) CreateControl(HWND hwndParent, int string_size, TCHAR
   // set the WndProc for the link control
 
   if(g_dialog.controls[id].type == NSCTL_LINK)
-    g_dialog.controls[id].oldWndProc = (WNDPROC) SetWindowLong(hwItem, GWL_WNDPROC, (long) LinkWndProc);
+    g_dialog.controls[id].oldWndProc = (WNDPROC) SetWindowLongPtr(hwItem, GWLP_WNDPROC, (LONG_PTR) LinkWndProc);
 
   // push back result
 
@@ -590,7 +590,7 @@ void __declspec(dllexport) Show(HWND hwndParent, int string_size, TCHAR *variabl
 
   // reset wndproc
 
-  SetWindowLong(hwndParent, DWL_DLGPROC, (long) g_dialog.parentOriginalWndproc);
+  SetWindowLongPtr(hwndParent, DWLP_DLGPROC, (LONG_PTR) g_dialog.parentOriginalWndproc);
 }
 
 BOOL WINAPI DllMain(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)

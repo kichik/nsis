@@ -57,7 +57,7 @@ struct myImageList {
 
 unsigned int uWndWidth, uWndHeight;
 
-void *oldProc;
+WNDPROC oldProc;
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 HBITMAP __stdcall LoadBitmapFile(long right, long bottom, BITMAP *bBitmap);
 COLORREF GetColor();
@@ -151,7 +151,7 @@ NSISFunc(SetBg) {
       return;
     }
 
-    oldProc = (void *)SetWindowLong(hwndParent, GWL_WNDPROC, (long)WndProc);
+    oldProc = (WNDPROC)SetWindowLongPtr(hwndParent, GWLP_WNDPROC, (LONG_PTR)WndProc);
   }
 
   bgBitmap.bReady = FALSE;
@@ -347,7 +347,7 @@ NSISFunc(Clear) {
 NSISFunc(Destroy) {
   bgBitmap.bReady = FALSE;
   if (IsWindow(hwndParent) && oldProc)
-    SetWindowLong(hwndParent, GWL_WNDPROC, (long)oldProc);
+    SetWindowLongPtr(hwndParent, GWLP_WNDPROC, (LONG_PTR)oldProc);
   if (IsWindow(hWndImage))
     SendMessage(hWndImage, WM_CLOSE, 0, 0);
   hWndImage = 0;
@@ -387,13 +387,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
     if (message == WM_WINDOWPOSCHANGED) {
       SetWindowPos(hwndImage, hwndParent, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
     }
-    return CallWindowProc(
-      (long (__stdcall *)(HWND,unsigned int,unsigned int,long))oldProc,
-      hwnd,
-      message,
-      wParam,
-      lParam
-    );
+    return CallWindowProc(oldProc, hwnd, message, wParam, lParam);
   }
   switch (message) {
     case WM_PAINT:

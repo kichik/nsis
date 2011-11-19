@@ -15,7 +15,7 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     RECT vp;
     GetObject(g_hbm, sizeof(bm), &bm);
     SystemParametersInfo(SPI_GETWORKAREA, 0, &vp, 0);
-    SetWindowLong(hwnd,GWL_STYLE,0);
+    SetWindowLongPtr(hwnd,GWL_STYLE,0);
     SetWindowPos(hwnd,NULL,
       vp.left+(vp.right-vp.left-bm.bmWidth)/2,
       vp.top+(vp.bottom-vp.top-bm.bmHeight)/2,
