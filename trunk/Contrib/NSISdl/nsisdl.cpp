@@ -41,7 +41,7 @@ HMODULE     hModule;
 HWND        g_hwndProgressBar;
 HWND        g_hwndStatic;
 static int  g_cancelled;
-static void *lpWndProcOld;
+static WNDPROC lpWndProcOld;
 
 static UINT uMsgCreate;
 
@@ -100,7 +100,7 @@ static LRESULT CALLBACK ParentWndProc(HWND hwnd, UINT message, WPARAM wParam, LP
         );
 
         DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS;
-        dwStyle |= GetWindowLong(hwndP, GWL_STYLE) & PBS_SMOOTH;
+        dwStyle |= GetWindowLongPtr(hwndP, GWL_STYLE) & PBS_SMOOTH;
 
         GetWindowRect(hwndP, &ctlRect);
 
@@ -182,13 +182,7 @@ static LRESULT CALLBACK ParentWndProc(HWND hwnd, UINT message, WPARAM wParam, LP
   }
   else
   {
-    return CallWindowProc(
-      (WNDPROC) lpWndProcOld,
-      hwnd,
-      message,
-      wParam,
-      lParam
-    );
+    return CallWindowProc(lpWndProcOld, hwnd, message, wParam, lParam);
   }
   return 0;
 }
@@ -346,7 +340,7 @@ __declspec(dllexport) void download (HWND   parent,
     {
       uMsgCreate = RegisterWindowMessage(_T("nsisdl create"));
 
-      lpWndProcOld = (void *)SetWindowLong(parent,GWL_WNDPROC,(long)ParentWndProc);
+      lpWndProcOld = (WNDPROC)SetWindowLongPtr(parent,GWLP_WNDPROC,(LONG_PTR)ParentWndProc);
 
       SendMessage(parent, uMsgCreate, TRUE, (LPARAM) parent);
 
@@ -420,7 +414,7 @@ __declspec(dllexport) void download (HWND   parent,
           if (parent)
           {
             SendMessage(parent, uMsgCreate, FALSE, (LPARAM) parent);
-            SetWindowLong(parent, GWL_WNDPROC, (long)lpWndProcOld);
+            SetWindowLongPtr(parent, GWLP_WNDPROC, (LONG_PTR)lpWndProcOld);
           }
           break;
         }

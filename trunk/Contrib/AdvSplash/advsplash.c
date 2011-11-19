@@ -37,7 +37,7 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam,
   switch (uMsg) {
   case WM_CREATE:
     SystemParametersInfo(SPI_GETWORKAREA, 0, &r, 0);
-    SetWindowLong(hwnd, GWL_STYLE, 0);
+    SetWindowLongPtr(hwnd, GWL_STYLE, 0);
     SetWindowPos(hwnd, NULL,
                  r.left + (r.right - r.left - bm.bmWidth) / 2,
                  r.top + (r.bottom - r.top - bm.bmHeight) / 2,

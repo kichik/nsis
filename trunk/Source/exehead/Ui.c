@@ -123,7 +123,7 @@ static BOOL NSISCALL _HandleStaticBkColor(UINT uMsg, WPARAM wParam, LPARAM lPara
 {
   if ((uMsg - WM_CTLCOLOREDIT) <= (WM_CTLCOLORSTATIC - WM_CTLCOLOREDIT))
   {
-    ctlcolors *c = (ctlcolors *)GetWindowLong((HWND)lParam, GWL_USERDATA);
+    ctlcolors *c = (ctlcolors *)GetWindowLongPtr((HWND)lParam, GWLP_USERDATA);
 
     if (c) {
       COLORREF text;
@@ -653,7 +653,7 @@ skipPage:
   }
   if (uMsg == WM_QUERYENDSESSION)
   {
-    SetWindowLong(hwndDlg, DWL_MSGRESULT, FALSE);
+    SetWindowLongPtr(hwndDlg, DWLP_MSGRESULT, FALSE);
     return TRUE;
   }
   if (uMsg == WM_COMMAND)
@@ -1232,7 +1232,7 @@ int NSISCALL TreeGetSelectedSection(HWND tree, BOOL mouse)
   return (int) item.lParam;
 }
 
-static LONG oldTreeWndProc;
+static WNDPROC oldTreeWndProc;
 static LPARAM last_selected_tree_item;
 static DWORD WINAPI newTreeWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -1264,7 +1264,7 @@ static DWORD WINAPI newTreeWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
     }
   }
 #endif//NSIS_SUPPORT_CODECALLBACKS && NSIS_CONFIG_ENHANCEDUI_SUPPORT
-  return CallWindowProc((WNDPROC)oldTreeWndProc,hwnd,uMsg,wParam,lParam);
+  return CallWindowProc(oldTreeWndProc,hwnd,uMsg,wParam,lParam);
 }
 
 static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -1290,7 +1290,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     hBMcheck1=LoadBitmap(g_hInstance, MAKEINTRESOURCE(IDB_BITMAP1));
 
     last_selected_tree_item=-1;
-    oldTreeWndProc=SetWindowLong(hwndTree1,GWL_WNDPROC,(long)newTreeWndProc);
+    oldTreeWndProc=(WNDPROC)SetWindowLongPtr(hwndTree1,GWLP_WNDPROC,(LONG_PTR)newTreeWndProc);
 
     hImageList = ImageList_Create(16,16, ILC_COLOR32|ILC_MASK, 6, 0);
     ImageList_AddMasked(hImageList,hBMcheck1,RGB(255,0,255));
@@ -1358,7 +1358,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
     if (!doLines)
     {
-      SetWindowLong(hwndTree1,GWL_STYLE,GetWindowLong(hwndTree1,GWL_STYLE)&~(TVS_LINESATROOT));
+      SetWindowLongPtr(hwndTree1,GWL_STYLE,GetWindowLongPtr(hwndTree1,GWL_STYLE)&~(TVS_LINESATROOT));
     }
 
     if (!noCombo)
