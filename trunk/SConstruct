@@ -670,7 +670,7 @@ def BuildUtil(target, source, libs, entry = None, res = None,
               resources = None, defines = None, flags = None,
               nodeflib = False, file_name = '', path='', contrib = False,
               examples = None, docs = None, cross_platform = False,
-              root_util = False, cli = False):
+              root_util = False, cli = False, noinstall = False):
 	env = BuildUtilEnv(defines, flags, libs, entry, nodeflib, cross_platform, cli)
 
 	AppendRES(env, source, res, resources)
@@ -691,14 +691,15 @@ def BuildUtil(target, source, libs, entry = None, res = None,
 
 	CleanMap(env, util, target)
 
-	if contrib:
-		ins = env.DistributeContrib(util, path=path, alias='install-utils')
-	elif cross_platform and not env['PLATFORM'] == 'win32' or root_util and env['PLATFORM'] == 'win32':
-		ins = env.DistributeBin(util, path=path, alias='install-utils')
-	else:
-		ins = env.DistributeW32Bin(util, path=path, alias='install-utils')
-
-	DistributeExtras(env, target, examples, docs)
+	if not noinstall:
+		if contrib:
+			ins = env.DistributeContrib(util, path=path, alias='install-utils')
+		elif cross_platform and not env['PLATFORM'] == 'win32' or root_util and env['PLATFORM'] == 'win32':
+			ins = env.DistributeBin(util, path=path, alias='install-utils')
+		else:
+			ins = env.DistributeW32Bin(util, path=path, alias='install-utils')
+		
+		DistributeExtras(env, target, examples, docs)
 
 	return util
 
