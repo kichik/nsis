@@ -141,13 +141,13 @@ struct FieldType {
   HWND   hwnd;
   UINT   nControlID;
 
-  int    nParentIdx;  // this is used to store original windowproc for LINK
+  INT_PTR    nParentIdx;  // this is used to store original windowproc for LINK
   HANDLE hImage; // this is used by image/icon field to save the handle to the image
 
   int    nField; // field number in INI file
   const TCHAR  *pszHwndEntry; // "HWND" or "HWND2"
 
-  long   wndProc; 
+  WNDPROC   wndProc; 
 };
 
 // initial buffer size.  buffers will grow as required.
@@ -702,13 +702,13 @@ LRESULT WINAPI WMCommandProc(HWND hWnd, UINT id, HWND hwndCtl, UINT codeNotify) 
 }
 
 
-static void *lpWndProcOld;
+static WNDPROC lpWndProcOld;
 
 int g_is_cancel,g_is_back;
 
-BOOL CALLBACK ParentWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK ParentWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-  BOOL bRes;
+  INT_PTR bRes;
   if (message == WM_NOTIFY_OUTER_NEXT && wParam == 1)
   {
     // Don't call leave function if fields aren't valid
@@ -719,7 +719,7 @@ BOOL CALLBACK ParentWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
     // Reset the record of activated control
     g_NotifyField = 0;
   }
-  bRes = CallWindowProc((long (__stdcall *)(struct HWND__ *,unsigned int,unsigned int,long))lpWndProcOld,hwnd,message,wParam,lParam);
+  bRes = CallWindowProc(lpWndProcOld,hwnd,message,wParam,lParam);
   if (message == WM_NOTIFY_OUTER_NEXT && !bRes)
   {
     // if leave function didn't abort (bRes != 0 in that case)
@@ -733,7 +733,7 @@ BOOL CALLBACK ParentWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
   return bRes;
 }
 
-BOOL CALLBACK cfgDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK cfgDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   switch (uMsg)
   {
@@ -776,7 +776,7 @@ BOOL CALLBACK cfgDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       if (lpdis->itemAction & ODA_DRAWENTIRE)
       {
         // Get TxtColor unless the user has set another using SetCtlColors
-        if (!GetWindowLong(lpdis->hwndItem, GWL_USERDATA))
+        if (!GetWindowLongPtr(lpdis->hwndItem, GWLP_USERDATA))
           SetTextColor(lpdis->hDC, (COLORREF) pField->hImage);
 
         // Draw the text
@@ -921,7 +921,7 @@ int WINAPI NumbersOnlyPasteWndProc(HWND hWin, UINT uMsg, WPARAM wParam, LPARAM l
     }
   }
 
-  return CallWindowProc((WNDPROC) pField->wndProc, hWin, uMsg, wParam, lParam);
+  return CallWindowProc(pField->wndProc, hWin, uMsg, wParam, lParam);
 }
 
 int old_cancel_visible;
@@ -1225,8 +1225,8 @@ int WINAPI createCfgDlg()
           mySendMessage(hwCtrl, EM_LIMITTEXT, (WPARAM)pField->nMaxLength, (LPARAM)0);
           if (dwStyle & ES_NUMBER)
           {
-            pField->wndProc = GetWindowLong(hwCtrl, GWL_WNDPROC);
-            SetWindowLong(hwCtrl, GWL_WNDPROC, (long) NumbersOnlyPasteWndProc);
+            pField->wndProc = (WNDPROC) GetWindowLongPtr(hwCtrl, GWLP_WNDPROC);
+            SetWindowLongPtr(hwCtrl, GWLP_WNDPROC, (LONG_PTR) NumbersOnlyPasteWndProc);
           }
           break;
 
@@ -1408,7 +1408,7 @@ int WINAPI createCfgDlg()
 
 #ifdef IO_ENABLE_LINK
         case FIELD_LINK:
-          pField->nParentIdx = SetWindowLong(hwCtrl, GWL_WNDPROC, (long)StaticLINKWindowProc);
+          pField->nParentIdx = (INT_PTR) SetWindowLongPtr(hwCtrl, GWLP_WNDPROC, (LONG_PTR)StaticLINKWindowProc);
           break;
 #endif
       }
@@ -1446,7 +1446,7 @@ int WINAPI createCfgDlg()
 
 void WINAPI showCfgDlg()
 {
-  lpWndProcOld = (void *) SetWindowLong(hMainWindow,DWL_DLGPROC,(long)ParentWndProc);
+  lpWndProcOld = (WNDPROC) SetWindowLongPtr(hMainWindow,DWLP_DLGPROC,(LONG_PTR)ParentWndProc);
 
   // Tell NSIS to remove old inner dialog and pass handle of the new inner dialog
   mySendMessage(hMainWindow, WM_NOTIFY_CUSTOM_READY, (WPARAM)hConfigWindow, 0);
@@ -1468,7 +1468,7 @@ void WINAPI showCfgDlg()
   // quit soon, which means the ini might get flushed late and cause crap. :) anwyay.
   if (!g_is_cancel) SaveSettings();
 
-  SetWindowLong(hMainWindow,DWL_DLGPROC,(long)lpWndProcOld);
+  SetWindowLongPtr(hMainWindow,DWLP_DLGPROC,(LONG_PTR)lpWndProcOld);
   DestroyWindow(hConfigWindow);
 
   // by ORTIM: 13-August-2002

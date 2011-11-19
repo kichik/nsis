@@ -21,7 +21,7 @@ int g_done;
 int noicon;
 int rtl;
 
-void *lpWndProcOld;
+WNDPROC lpWndProcOld;
 
 void (__stdcall *validate_filename)(TCHAR *);
 
@@ -120,7 +120,7 @@ void __declspec(dllexport) Init(HWND hwndParent, int string_size, TCHAR *variabl
     }
     else
     {
-      lpWndProcOld = (void *) SetWindowLong(hwndParent, DWL_DLGPROC, (long) ParentWndProc);
+      lpWndProcOld = (WNDPROC) SetWindowLongPtr(hwndParent, DWLP_DLGPROC, (LONG_PTR) ParentWndProc);
       wsprintf(buf, _T("%u"), hwStartMenuSelect);
       pushstring(buf);
     }
@@ -145,7 +145,7 @@ void __declspec(dllexport) Show(HWND hwndParent, int string_size, TCHAR *variabl
   }
   DestroyWindow(hwStartMenuSelect);
 
-  SetWindowLong(hwndParent, DWL_DLGPROC, (long) lpWndProcOld);
+  SetWindowLongPtr(hwndParent, DWLP_DLGPROC, (LONG_PTR) lpWndProcOld);
 }
 
 void __declspec(dllexport) Select(HWND hwndParent, int string_size, TCHAR *variables, stack_t **stacktop, extra_parameters *extra)
@@ -160,7 +160,7 @@ void __declspec(dllexport) Select(HWND hwndParent, int string_size, TCHAR *varia
 
 static BOOL CALLBACK ParentWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-  BOOL bRes = CallWindowProc((long (__stdcall *)(struct HWND__ *,unsigned int,unsigned int,long))lpWndProcOld,hwnd,message,wParam,lParam);
+  BOOL bRes = CallWindowProc(lpWndProcOld,hwnd,message,wParam,lParam);
   if (message == WM_NOTIFY_OUTER_NEXT && !bRes)
   {
     // if leave function didn't abort (lRes != 0 in that case)
@@ -173,10 +173,10 @@ void AddRTLStyle(HWND hWnd, long dwStyle)
 {
   long s;
 
-  s = GetWindowLong(hWnd, GWL_STYLE);
-  SetWindowLong(hWnd, GWL_STYLE, s | dwStyle);
-  s = GetWindowLong(hWnd, GWL_EXSTYLE);
-  SetWindowLong(hWnd, GWL_EXSTYLE, s | WS_EX_RIGHT | WS_EX_RTLREADING);
+  s = GetWindowLongPtr(hWnd, GWL_STYLE);
+  SetWindowLongPtr(hWnd, GWL_STYLE, s | dwStyle);
+  s = GetWindowLongPtr(hWnd, GWL_EXSTYLE);
+  SetWindowLongPtr(hWnd, GWL_EXSTYLE, s | WS_EX_RIGHT | WS_EX_RTLREADING);
 }
 
 #define ProgressiveSetWindowPos(hwWindow, x, cx, cy) \

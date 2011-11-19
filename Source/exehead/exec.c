@@ -799,7 +799,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     case EW_SETCTLCOLORS:
     {
       ctlcolors *c = (ctlcolors *)(g_blocks[NB_CTLCOLORS].offset + parm1);
-      SetWindowLong((HWND) GetIntFromParm(0), GWL_USERDATA, (long) c);
+      SetWindowLongPtr((HWND) GetIntFromParm(0), GWLP_USERDATA, (LONG_PTR) c);
     }
     break;
     case EW_SETBRANDINGIMAGE:
