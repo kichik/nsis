@@ -3397,54 +3397,68 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_P_VERBOSE:
     {
       extern int g_display_errors;
-      int k=line.gettoken_enum(1,_T("push\0pop\0"));
-      int v;
-      if (k < 0)
-        // just set
-        v=line.gettoken_int(1);
-      else
+      for(int argi=1; argi<line.getnumtokens(); ++argi)
       {
-        if (k)
+        int v,k=line.gettoken_enum(argi,_T("push\0pop\0"));
+        if (k < 0)
         {
-          // pop
-          int l=verbose_stack.getlen();
-          if (l)
+          // just set
+          int numconv;
+          v=line.gettoken_int(argi,&numconv);
+          if (!numconv || v < 0 || v > 4 )
           {
-            v=((int*)verbose_stack.get())[(l/sizeof(int))-1];
-            verbose_stack.resize(l-sizeof(int));
+            // < 2.47 would reset level to 0 without warning!
+            ERROR_MSG("!verbose: Invalid verbose level\n");
+            return PS_ERROR;
           }
-          else
-            return PS_OK;
         }
         else
         {
-          // push
-          v=0;
-          if (display_errors)
+          if (k)
           {
-            v++;
-            if (display_warnings)
+            // pop
+            int l=verbose_stack.getlen();
+            if (l)
+            {
+              v=((int*)verbose_stack.get())[(l/sizeof(int))-1];
+              verbose_stack.resize(l-sizeof(int));
+            }
+            else
+            {
+              warning_fl("!verbose: Pop failed, stack is empty");
+              continue; // Pop failed, should still process the next parameter
+            }
+          }
+          else
+          {
+            // push
+            v=0;
+            if (display_errors)
             {
               v++;
-              if (display_info)
+              if (display_warnings)
               {
                 v++;
-                if (display_script)
+                if (display_info)
                 {
                   v++;
+                  if (display_script)
+                  {
+                    v++;
+                  }
                 }
               }
             }
+            verbose_stack.add(&v,sizeof(int));
+            continue;
           }
-          verbose_stack.add(&v,sizeof(int));
-          return PS_OK;
         }
+        display_script=v>3;
+        display_info=v>2;
+        display_warnings=v>1;
+        display_errors=v>0;
+        g_display_errors=display_errors;
       }
-      display_script=v>3;
-      display_info=v>2;
-      display_warnings=v>1;
-      display_errors=v>0;
-      g_display_errors=display_errors;
     }
     return PS_OK;
 

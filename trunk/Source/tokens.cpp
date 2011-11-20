@@ -258,7 +258,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_P_WARNING,_T("!warning"),0,1,_T("[warning_message]"),TP_ALL},
 {TOK_P_ERROR,_T("!error"),0,1,_T("[error_message]"),TP_ALL},
 
-{TOK_P_VERBOSE,_T("!verbose"),1,0,_T("verbose_level | push | pop"),TP_ALL},
+{TOK_P_VERBOSE,_T("!verbose"),1,-1,_T("(verbose_level | push | pop) [...]"),TP_ALL},
 
 {TOK_P_MACRO,_T("!macro"),1,-1,_T("macroname [parms ...]"),TP_ALL},
 {TOK_P_MACROEND,_T("!macroend"),0,0,_T(""),TP_ALL},
