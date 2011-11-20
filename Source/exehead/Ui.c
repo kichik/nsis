@@ -1232,6 +1232,14 @@ int NSISCALL TreeGetSelectedSection(HWND tree, BOOL mouse)
   return (int) item.lParam;
 }
 
+void NSISCALL ExecuteCallbackFunctionWithr0Int(int num,int r0)
+{
+  mystrcpy(g_tmp, g_usrvars[0]);
+  myitoa(g_usrvars[0], r0);
+  ExecuteCallbackFunction(num);
+  mystrcpy(g_usrvars[0], g_tmp);
+}
+
 static WNDPROC oldTreeWndProc;
 static LPARAM last_selected_tree_item;
 static DWORD WINAPI newTreeWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -1253,14 +1261,7 @@ static DWORD WINAPI newTreeWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
     if (last_selected_tree_item != lParam)
     {
       last_selected_tree_item = lParam;
-
-      mystrcpy(g_tmp, g_usrvars[0]);
-
-      myitoa(g_usrvars[0], lParam);
-
-      ExecuteCallbackFunction(CB_ONMOUSEOVERSECTION);
-
-      mystrcpy(g_usrvars[0], g_tmp);
+      ExecuteCallbackFunctionWithr0Int(CB_ONMOUSEOVERSECTION,lParam);
     }
   }
 #endif//NSIS_SUPPORT_CODECALLBACKS && NSIS_CONFIG_ENHANCEDUI_SUPPORT
@@ -1269,11 +1270,12 @@ static DWORD WINAPI newTreeWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 
 static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+  const int wParamSelChangeNotifyInstTypeChanged = -1;
   static HTREEITEM *hTreeItems;
   static HIMAGELIST hImageList;
   HWND hwndCombo1 = GetUIItem(IDC_COMBO1);
   HWND hwndTree1 = GetUIItem(IDC_TREE1);
-  extern HWND g_SectionHack;
+  extern HWND g_SectionHack;// TODO: Can we remove this?
   section *sections=g_sections;
   int *install_types=g_header->install_types;
   if (uMsg == WM_INITDIALOG)
@@ -1414,7 +1416,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
             SectionFlagsChanged(secid);
 
-            wParam = 1;
+            wParam = secid + 1;
             lParam = !(g_flags & CH_FLAGS_COMP_ONLY_ON_CUSTOM);
             uMsg = WM_IN_UPDATEMSG;
           }
@@ -1454,7 +1456,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
       SendMessage(hwndDlg, WM_NOTIFY_INSTTYPE_CHANGED, 0, whichcfg);
 
-      wParam = 1;
+      wParam = wParamSelChangeNotifyInstTypeChanged;
       lParam = 0;
       uMsg = WM_IN_UPDATEMSG;
     }
@@ -1479,9 +1481,11 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     RefreshSectionGroups();
 
 #if defined(NSIS_SUPPORT_CODECALLBACKS) && defined(NSIS_CONFIG_COMPONENTPAGE)
-    if (wParam)
+    if (wParam != 0)
     {
-      ExecuteCallbackFunction(CB_ONSELCHANGE);
+      int secid = wParam;
+      if (wParamSelChangeNotifyInstTypeChanged != secid) --secid;
+      ExecuteCallbackFunctionWithr0Int(CB_ONSELCHANGE,secid);
     }
 #endif//NSIS_SUPPORT_CODECALLBACKS && NSIS_CONFIG_COMPONENTPAGE
 
