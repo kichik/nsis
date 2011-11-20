@@ -100,7 +100,7 @@ Example:
 
 Called when the selection changes on the \R{pages}{component page}. Useful for using with \R{sectionsetflags}{SectionSetFlags} and \R{sectiongetflags}{SectionGetFlags}.
 
-Selection changes include both section selection and installation type change.
+Selection changes include both section selection and installation type changes. The section id of the changed section is stored in $0. $0 is -1 if the installation type changed. You only get notifications for changes initiated by the user and only one notification per action even if the action also affected child sections and/or parent groups.
 
 \S3{onuserabort} .onUserAbort
 
@@ -193,7 +193,7 @@ Example:
 
 Called when the selection changes on the \R{pages}{component page}. Useful for using with \R{sectionsetflags}{SectionSetFlags} and \R{sectiongetflags}{SectionGetFlags}.
 
-Selection changes include both section selection and installation type change.
+Selection changes include both section selection and installation type changes. The section id of the changed section is stored in $0. $0 is -1 if the installation type changed. You only get notifications for changes initiated by the user and only one notification per action even if the action also affected child sections and/or parent groups.
 
 \S3{unonuserabort} un.onUserAbort
 
