@@ -1384,6 +1384,28 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
     return PS_OK;
 
+    case TOK_P_GETDLLVERSION:
+    {
+      const TCHAR *cmdname = _T("!getdllversion");
+      DWORD low, high; 
+      if (!GetDLLVersion(line.gettoken_str(1), high, low))
+      {
+        ERROR_MSG(_T("%s: error reading version info from \"%s\"\n"), cmdname, line.gettoken_str(1));
+        return PS_ERROR;
+      }
+      TCHAR symbuf[MAX_LINELENGTH], numbuf[30], *basesymname = line.gettoken_str(2);
+      DWORD vals[] = { high>>16, high&0xffff, low>>16, low&0xffff };
+      SCRIPT_MSG(_T("%s: %s (%u.%u.%u.%u)->(%s<1..4>)\n"),
+        cmdname, line.gettoken_str(1), vals[0], vals[1], vals[2], vals[3], basesymname);
+      for (UINT i = 0; i < 4; ++i)
+      {
+        _stprintf(symbuf,_T("%s%u"), basesymname, i+1);
+        _stprintf(numbuf,_T("%u"), vals[i]);
+        definedlist.add(symbuf, numbuf);
+      }
+    }
+    return PS_OK;
+
     // page ordering stuff
     ///////////////////////////////////////////////////////////////////////////////
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
@@ -5062,10 +5084,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return add_entry(&ent);
     case TOK_GETDLLVERSIONLOCAL:
       {
+        const TCHAR*cmdname=_T("GetDLLVersionLocal");
         DWORD low, high;
         if (!GetDLLVersion(line.gettoken_str(1),high,low))
         {
-          ERROR_MSG(_T("GetDLLVersionLocal: error reading version info from \"%s\"\n"),line.gettoken_str(1));
+          ERROR_MSG(_T("%s: error reading version info from \"%s\"\n"),cmdname,line.gettoken_str(1));
           return PS_ERROR;
         }
         ent.which=EW_ASSIGNVAR;
@@ -5081,8 +5104,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         ent.offsets[2]=0;
         ent.offsets[3]=0;
         if (ent.offsets[0]<0) PRINTHELP()
-        SCRIPT_MSG(_T("GetDLLVersionLocal: %s (%u,%u)->(%s,%s)\n"),
-          line.gettoken_str(1),high,low,line.gettoken_str(2),line.gettoken_str(3));
+        SCRIPT_MSG(_T("%s: %s (%u,%u)->(%s,%s)\n"),
+          cmdname,line.gettoken_str(1),high,low,line.gettoken_str(2),line.gettoken_str(3));
       }
     return add_entry(&ent);
     case TOK_GETFILETIMELOCAL:

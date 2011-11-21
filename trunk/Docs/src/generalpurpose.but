@@ -66,7 +66,7 @@ Gets the version information from the DLL (or any other executable containing ve
 
 \c localfilename user_var(high dword output) user_var(low dword output)
 
-This is similar to \R{getdllversion}{GetDLLVersion}, only it acts on the system building the installer (it actually compiles into two \R{StrCpy}{StrCpy} commands). Sets the two output variables with the DLL version information of the DLL on the build system.
+This is similar to \R{getdllversion}{GetDLLVersion}, only it acts on the system building the installer (it actually compiles into two \R{StrCpy}{StrCpy} commands). Sets the two output variables with the DLL version information of the DLL on the build system. Use \R{ppgetdllversion}{!getdllversion} if you need to use the values with \R{viproductversion}{VIProductVersion}.
 
 \S2{getfiletime} GetFileTime
 
