@@ -152,7 +152,7 @@ The NSIS script format and the format used for interface dialogs are easy, docum
 
 \H{intro-unicode} Unicode installers
 
-Starting with MakeNSIS v2.50, you can choose create Unicode installers by using \R{atargetminimalos}{TargetMinimalOS} with value greater than or equal to 5.0.
+Starting with MakeNSIS v?.??, you can choose to create Unicode installers by using \R{atargetminimalos}{TargetMinimalOS} with a value greater than or equal to 5.0.
 These installers will work only under Windows 2000 or more recent (depending on the value you chose), but they will allow you to display your installer in any Unicode language supported by the OS.
 
 When building a Unicode installer, NSIS variables can hold Unicode characters (0000-FFFF). There should be no need to modify your existing scripts.

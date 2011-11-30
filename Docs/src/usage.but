@@ -77,7 +77,7 @@ Parameters order:
 
 Generated installers and uninstallers accept a few options on the command line. These options give the user a bit more control over the installation process.
 
-\S1{} Common Options
+\S1{installerusagecommon} Common Options
 
 \b /NCRC disables the CRC check, unless \c{\R{acrccheck}{CRCCheck} force} was used in the script.
 
@@ -85,11 +85,11 @@ Generated installers and uninstallers accept a few options on the command line. 
 
 \b /D sets the default installation directory (\R{varother}{$INSTDIR}), overriding \R{ainstalldir}{InstallDir} and \R{ainstalldirregkey}{InstallDirRegKey}. It must be the last parameter used in the command line and must not contain any quotes, even if the path contains spaces. Only absolute paths are supported.
 
-\S1{} Uninstaller Specific Options
+\S1{installerusageuninstaller} Uninstaller Specific Options
 
 \b _?= sets $INSTDIR. It also stops the uninstaller from copying itself to the temporary directory and running from there. It can be used along with \R{execwait}{ExecWait} to wait for the uninstaller to finish. It must be the last parameter used in the command line and must not contain any quotes, even if the path contains spaces.
 
-\S1{} Examples
+\S1{installerusageexamples} Examples
 
 \c installer.exe /NCRC
 

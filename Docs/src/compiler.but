@@ -207,7 +207,7 @@ NSIS version used to build the script.
 
 Standard predefines that contain information of the current code scope.
 
-\S2{} $\{__GLOBAL__\}
+\S2{prescopeglobal} $\{__GLOBAL__\}
 
 Defined in the global scope.
 
@@ -235,7 +235,7 @@ Defined in the global scope.
 \c 
 \c PageExEnd
 
-\S2{} $\{__SECTION__\}
+\S2{prescopesection} $\{__SECTION__\}
 
 Defined as the section name, without any prefixes, in \R{ssection}{section} scope.
 
@@ -271,7 +271,7 @@ Defined as the section name, without any prefixes, in \R{ssection}{section} scop
 \c 
 \c SectionEnd
 
-\S2{} $\{__FUNCTION__\}
+\S2{prescopefunction} $\{__FUNCTION__\}
 
 Defined as the function name, without any prefixes, in \R{ffunction}{function} scope.
 
@@ -299,7 +299,7 @@ Defined as the function name, without any prefixes, in \R{ffunction}{function} s
 \c 
 \c FunctionEnd
 
-\S2{} $\{__PAGEEX__\}
+\S2{prescopepageex} $\{__PAGEEX__\}
 
 Defined as the page type in \R{pageex}{PageEx} scope.
 
@@ -319,7 +319,7 @@ Defined as the page type in \R{pageex}{PageEx} scope.
 \c 
 \c PageExEnd
 
-\S2{} $\{__UNINSTALL__\}
+\S2{prescopeuninstall} $\{__UNINSTALL__\}
 
 Defined in \R{ssection}{section}, \R{ffunction}{function} or \R{pageex}{PageEx} scopes of the uninstaller.
 
@@ -343,7 +343,7 @@ Defined in \R{ssection}{section}, \R{ffunction}{function} or \R{pageex}{PageEx} 
 \c 
 \c FunctionEnd
 
-\S2{} $\{__MACRO__\}
+\S2{prescopemacro} $\{__MACRO__\}
 
 Defined as the name of the current macro.
 
