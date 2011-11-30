@@ -81,6 +81,7 @@ typedef struct {
   int suppress_address;
   xhtmlheadfmt fchapter, *fsect;
   int nfsect;
+  int keywordfragments;
 } xhtmlconfig;
 
 /*static void xhtml_level(paragraph *, int);
@@ -164,6 +165,7 @@ static xhtmlconfig xhtml_configure(paragraph * source)
   ret.fsect[1].number_suffix = ustrdup(L" ");
   ret.rlink_prefix = NULL;
   ret.rlink_suffix = NULL;
+  ret.keywordfragments = TRUE;
 
   for (; source; source = source->next)
   {
@@ -286,6 +288,9 @@ static xhtmlconfig xhtml_configure(paragraph * source)
           ret.nfsect = n + 1;
         }
         ret.fsect[n].number_suffix = ustrdup(p);
+      } else if (!ustricmp(source->keyword, L"xhtml-keywordfragments"))
+      {
+        ret.keywordfragments = utob(uadv(source->keyword));
       }
     }
   }
@@ -665,6 +670,22 @@ static void xhtml_ponder_layout(paragraph * p)
   xhtml_fixup_layout(topfile);  /* leaf files not at leaf level marked as such */
 }
 
+#define NAMEDFRAGMENT_MAXLEN 200 /* More than enough for our usage */
+/*
+ * Get formated fragment name for html anchor.
+ * Uses para->keyword if possible, falls back to the ?#.#.# default.
+ */
+static char*
+xhtml_get_fragmentname(const xhtmlsection * section, char * fragmentbuf)
+{
+  if (conf.keywordfragments)
+  {
+    paragraph *para = section->para;
+    if (para && para->keyword && *para->keyword) return ustrtoa(para->keyword, fragmentbuf, NAMEDFRAGMENT_MAXLEN);
+  }
+  return section->fragment;
+}
+
 static void xhtml_do_index();
 static void xhtml_do_file(xhtmlfile * file);
 static void xhtml_do_top_file(xhtmlfile * file, paragraph * sourceform);
@@ -888,8 +909,9 @@ static void xhtml_do_index_body(FILE * fp)
         xhtmlsection *sect = xi->sections[i];
         if (sect)
         {
+          char fragmentbuf[NAMEDFRAGMENT_MAXLEN];
           fprintf(fp, "<a href='%s#%s'>", sect->file->filename,
-                  sect->fragment);
+                  xhtml_get_fragmentname(sect, fragmentbuf));
           if (sect->para->kwtext)
           {
             xhtml_para(fp, sect->para->kwtext);
@@ -1205,6 +1227,7 @@ xhtml_do_contents_section_limit(FILE * fp, xhtmlsection * section, int limit)
 static int
 xhtml_add_contents_entry(FILE * fp, xhtmlsection * section, int limit)
 {
+  char fragmentbuf[NAMEDFRAGMENT_MAXLEN], *fragment;
   if (!section || section->level > limit)
     return FALSE;
   if (fp == NULL || section->level < 0)
@@ -1221,17 +1244,18 @@ xhtml_add_contents_entry(FILE * fp, xhtmlsection * section, int limit)
     fprintf(fp, "<ul>\n");
     if(chm_toc)fprintf(chm_toc, "<ul>\n");
   }
+  fragment = xhtml_get_fragmentname(section, fragmentbuf);
   fprintf(fp, "<li>");
   fprintf(fp, "<a %shref=\"%s#%s\">",
           (section->para->type == para_Chapter|| section->para->type == para_Appendix) ? "class=\"btitle\" " : "",
           section->file->filename,
-          (section->para->type == para_Chapter) ? "" : section->fragment);
+          (section->para->type == para_Chapter) ? "" : fragment);
   if(chm_toc)fprintf(chm_toc, "<li><OBJECT type=\"text/sitemap\"><param name=\"Local\" value=\"%s#%s\"><param name=\"Name\" value=\"",
           section->file->filename,
-          (section->para->type == para_Chapter) ? "" : section->fragment);
+          (section->para->type == para_Chapter) ? "" : fragment);
   if(chm_ind)fprintf(chm_ind, "<li><OBJECT type=\"text/sitemap\"><param name=\"Local\" value=\"%s#%s\"><param name=\"Name\" value=\"",
           section->file->filename,
-          (section->para->type == para_Chapter) ? "" : section->fragment);
+          (section->para->type == para_Chapter) ? "" : fragment);
           //%s
   if (section->para->type == para_Chapter
       || section->para->type == para_Appendix)
@@ -1675,10 +1699,11 @@ static void xhtml_rdaddwc(rdstringc * rs, word * text, word * end)
         sect = xhtml_find_section(kwl->para);
         if (sect)
         {
+          char fragmentbuf[NAMEDFRAGMENT_MAXLEN];
           rdaddsc(rs, "<a href=\"");
           rdaddsc(rs, sect->file->filename);
           rdaddc(rs, '#');
-          rdaddsc(rs, sect->fragment);
+          rdaddsc(rs, xhtml_get_fragmentname(sect, fragmentbuf));
           rdaddsc(rs, "\">");
         } else
         {
@@ -1864,10 +1889,10 @@ static void xhtml_heading(FILE * fp, paragraph * p)
   int level = xhtml_para_level(p);
   xhtmlsection *sect = xhtml_find_section(p);
   xhtmlheadfmt *fmt;
-  char *fragment;
+  char fragmentbuf[NAMEDFRAGMENT_MAXLEN], *fragment;
   if (sect)
   {
-    fragment = sect->fragment;
+    fragment = xhtml_get_fragmentname(sect, fragmentbuf);
   } else
   {
     if (p->type == para_Title)
