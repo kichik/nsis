@@ -54,6 +54,12 @@ doc = [
 	'COPYING'
 ]
 
+doctypes = [
+	'chm',
+	'html',
+	'htmlsingle'
+]
+
 ######################################################################
 #######  Build Environment                                         ###
 ######################################################################
@@ -84,9 +90,9 @@ SConscript('SCons/utils.py')
 ######################################################################
 
 import os
-hhc = 'no'
+default_doctype = 'html'
 if defenv.WhereIs('hhc', os.environ['PATH']):
-	hhc = 'yes'
+	default_doctype = 'chm'
 
 from time import strftime, gmtime
 cvs_version = strftime('%d-%b-%Y.cvs', gmtime())
@@ -152,7 +158,7 @@ opts.Add(('PATH', 'A colon-separated list of system paths instead of the default
 opts.Add(('TOOLSET', 'A comma-separated list of specific tools used for building instead of the default', None))
 opts.Add(BoolVariable('MSTOOLKIT', 'Use Microsoft Visual C++ Toolkit', 'no'))
 opts.Add(EnumVariable('MSVS_VERSION', 'MS Visual C++ version', os.environ.get('MSVS_VERSION'), allowed_values=('6.0', '7.0', '7.1', '8.0', '8.0Exp', '9.0', '9.0Exp', '10.0', '10.0Exp')))
-opts.Add(BoolVariable('CHMDOCS', 'Build CHM documentation, requires hhc.exe', hhc))
+opts.Add(ListVariable('DOCTYPES', 'A list of document types that will be built', default_doctype, doctypes))
 opts.Add(PathVariable('APPEND_CPPPATH', 'Additional paths to search for include files', None))
 opts.Add(PathVariable('APPEND_LIBPATH', 'Additional paths to search for libraries', None))
 opts.Add(('APPEND_CCFLAGS', 'Additional C/C++ compiler flags'))
@@ -323,11 +329,11 @@ def DistributeMenu(files, names=[], path='', alias=None):
 def DistributeInclude(files, names=[], path='', alias=None):
 	return defenv.Distribute(files, names, 'data', 'Include', path, alias, 'includes')
 
-def DistributeDoc(files, names=[], path='', alias=None):
-	return defenv.Distribute(files, names, 'doc', '', path, alias)
+def DistributeDoc(files, names=[], path='', alias=None, basepath='', install_alias='docs'):
+	return defenv.Distribute(files, names, 'doc', path=basepath, subpath=path, alias=alias, install_alias=install_alias)
 
-def DistributeDocs(files, names=[], path='', alias=None):
-	return defenv.Distribute(files, names, 'doc', 'Docs', path, alias, 'docs')
+def DistributeDocs(files, names=[], path='', alias=None, basepath='Docs', install_alias='docs'):
+	return defenv.Distribute(files, names, 'doc', path=basepath, subpath=path, alias=alias, install_alias=install_alias)
 
 def DistributeExamples(files, names=[], path='', alias=None):
 	return defenv.Distribute(files, names, 'doc', 'Examples', path, alias, 'examples')
@@ -724,19 +730,13 @@ halibut = defenv.SConscript(
 	exports = {'env' : defenv.Clone()}
 )
 
-if defenv['CHMDOCS']:
+for doctype in defenv['DOCTYPES']:
+	
 	defenv.SConscript(
 		dirs = 'Docs/src',
-		variant_dir = '$BUILD_PREFIX/Docs/chm',
+		variant_dir = '$BUILD_PREFIX/Docs/' + doctype,
 		duplicate = False,
-		exports = {'halibut' : halibut, 'env' : defenv.Clone(), 'build_chm' : True}
-	)
-else:
-	defenv.SConscript(
-		dirs = 'Docs/src',
-		variant_dir = '$BUILD_PREFIX/Docs/html',
-		duplicate = False,
-		exports = {'halibut' : halibut, 'env' : defenv.Clone(), 'build_chm' : False}
+		exports = {'halibut' : halibut, 'env' : defenv.Clone(), 'build_doctype' : doctype}
 	)
 
 ######################################################################
