@@ -1,0 +1,23 @@
+\title NSIS Users Manual
+
+
+\#{ Unnamed fragments should generate a smaller file (It will prevent people from making mk:@MSITStore links to named fragments) }
+
+\cfg{xhtml-keywordfragments}{false}
+
+\cfg{xhtml-leaf-level}{2}
+
+\cfg{xhtml-leaf-contains-contents}{false}
+
+\cfg{xhtml-contents-depth-0}{5}
+
+\cfg{xhtml-head-end}{<link rel="stylesheet" href="style.css" type='text/css' /><script language="JavaScript" type="text/javascript" src="chmlink.js"></script>}
+
+\cfg{xhtml-rlink-prefix}{#" onclick="parser('}
+
+\cfg{xhtml-rlink-suffix}{')}
+
+\cfg{chm-toc-file}{toc.hhc}
+
+\cfg{chm-ind-file}{ind.hhk}
+

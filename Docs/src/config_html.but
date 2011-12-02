@@ -1,0 +1,15 @@
+\title NSIS Users Manual
+
+\preamble NSIS is a free scriptable win32 installer/uninstaller system that doesn't suck and isn't huge.
+
+
+\cfg{xhtml-leaf-level}{1}
+
+\cfg{xhtml-leaf-smallest-contents}{3}
+
+\cfg{xhtml-leaf-contains-contents}{true}
+
+\cfg{xhtml-contents-depth-0}{3}
+
+\cfg{xhtml-head-end}{<link rel="stylesheet" href="style.css" type='text/css' />}
+

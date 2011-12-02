@@ -1,16 +1,7 @@
-config_but = 'config.but'
-
-chapters = 5
-appendices = 9
-
-htmls = Split('IndexPage.html Contents.html') \
-	+ map(lambda ch: 'Chapter' + str(ch + 1) + '.html', range(chapters)) \
-	+ map(lambda ap: 'Appendix' + chr(ord('A') + ap) + '.html', range(appendices))
-fixed_htmls = map(lambda fn: 'fixed/'+fn, htmls)
-
-chm_config_but = 'chm_config.but'
+# TODO FIXME extra files should be targets too, so they're rebuilt in case they're gone
 
 buts = Split("""
+	config.but
 	intro.but
 	tutorial.but
 	usage.but
@@ -55,79 +46,126 @@ buts = Split("""
 	license.but
 """)
 
+chapters = 5
+appendices = 9
+
+htmls = Split('IndexPage.html Contents.html') \
+	+ map(lambda ch: 'Chapter' + str(ch + 1) + '.html', range(chapters)) \
+	+ map(lambda ap: 'Appendix' + chr(ord('A') + ap) + '.html', range(appendices))
+
+docsdefault_install_basepath = 'Docs'
+
+DOCS_CONFIG = {
+	'chm' :
+	{
+		'NSISDOCCONFIG' : 'config_chm.but',
+		'NSISDOCEXTRAFILES' : File(Split('#Docs/style.css chmlink.js nsis.hhp')),
+		'NSISDOCEXTRAACTION' : Action('cd $BUILDDIR && "$HHC" nsis.hhp'),
+		'NSISDOCHTMLFIXES' :
+		{
+		},
+		'NSISDOCTARGET' : 'NSIS.chm',
+		'NSISDOCINSTALLBASEPATH' : '',
+	},
+	'html' :
+	{
+		'NSISDOCCONFIG' : 'config_html.but',
+		'NSISDOCEXTRAFILES' : File(Split('#Docs/style.css')),
+		'NSISDOCEXTRAACTION' : '',
+		'NSISDOCHTMLFIXES' :
+		{
+		},
+		'NSISDOCTARGET' : htmls,
+		'NSISDOCINSTALLBASEPATH' : docsdefault_install_basepath,
+	},
+	'htmlsingle' :
+	{
+		'NSISDOCCONFIG' : 'config_htmlsingle.but',
+		'NSISDOCEXTRAFILES' : [],
+		'NSISDOCEXTRAACTION' : '',
+		'NSISDOCHTMLFIXES' :
+		{
+			'---HTML:HEAD:STYLE:CSS---' : File('#/Docs/style.css').get_contents(),
+		},
+		'NSISDOCTARGET' : 'Manual.html',
+		'NSISDOCINSTALLBASEPATH' : docsdefault_install_basepath,
+	},
+}
+
 import os
 import re
 
-Import('halibut env build_chm')
+Import('halibut env build_doctype')
 
-env.Append(ENV = {'PATH' : os.environ['PATH']})
+# set up environment
+
+env['HHC'] = env.WhereIs('hhc', os.environ['PATH'])
 env['HALIBUT'] = halibut
+env['BUILDDIR'] = build_dir = Dir(GetBuildPath('.')).abspath
+env.Replace(**DOCS_CONFIG[build_doctype])
 
-build_dir = Dir(GetBuildPath('.')).abspath
+if not env['PLATFORM'] == 'win32':
+	env['NSISDOCHTMLFIXES']['<a href="../(Include|Stubs|Plugins|Contrib)/'] = '<a href="$PREFIX_DATA/\\1/'
 
-replacement = '<a href="%s/\\1/' % env.subst('$PREFIX_DATA')
 
-def fix_html(target, source, env):
-	for i in range(len(source)):
-		data = open(source[i].path,'rb').read()
-		data = re.sub('<a href="../(Include|Stubs|Plugins|Contrib)/', replacement, data)
-		open(target[i].path,'wb').write(data)
-	return None
+# builder
 
-if build_chm:
-	hhc_action = Action(r'cd %s && hhc nsis.hhp' % build_dir)
+def docs_emitter(target, source, env):
+	env.Depends(target, '$HALIBUT')
+	for i in env['NSISDOCEXTRAFILES']:
+		env.Depends(target, i)
+	return target, source
 
-	chm_builder = Builder(
-		action = [
-			Copy(build_dir, '${SOURCE.dir}/../style.css'),
-			Copy(build_dir, '${SOURCE.dir}/chmlink.js'),
-			Copy(build_dir, '${SOURCE.dir}/nsis.hhp'),
-			Action(
-				['${HALIBUT[0].abspath} ${SOURCES.abspath}'],
-				chdir = build_dir
-			),
-			hhc_action
-		]
-	)
+def docs_halibut_action(target, source, env):
+	buts = ' '.join(i.abspath for i in source if i.get_suffix() == '.but')
+	result = Execute(env.Action(
+		'${HALIBUT[0].abspath} ' + buts,
+		'', # empty display string
+		chdir = '$BUILDDIR',
+	))
+	#raw_input('meh?')
 
-	env.Append(BUILDERS = {'HalibutCHM' : chm_builder})
+def docs_fixer(target, source, env):
+	fixes = env['NSISDOCHTMLFIXES']
+	if not fixes:
+		return
 
-	# fix hhc.exe reverse return value - UGLY
-	old_spawn = env['SPAWN']
-	def new_spawn(*args, **kw):
-		result = old_spawn(*args, **kw)
-		if 'hhc' in args[3]:
+	for i, html in enumerate(target):
+		data = open(html.path,'rb').read()
+
+		for pat, repl in fixes.items():
+			data = re.sub(env.subst(pat), env.subst(repl), data)
+
+		open(html.path, 'wb').write(data)
+
+
+def docs_extras(target, source, env):
+	for i in env['NSISDOCEXTRAFILES']:
+		env.Execute(Copy('$BUILDDIR', i))
+
+docs_builder = env.Builder(
+	action = [
+		Action(docs_halibut_action),
+		Action(docs_fixer),
+		Action(docs_extras),
+		'$NSISDOCEXTRAACTION'
+	],
+	emitter = docs_emitter
+)
+
+env.Append(BUILDERS = {'Halibut' : docs_builder})
+
+# fix hhc.exe reverse return value - UGLY
+old_spawn = env['SPAWN']
+def new_spawn(*args, **kw):
+	result = old_spawn(*args, **kw)
+	for p in args[3]:
+		if 'hhc.exe' in p.lower():
 			return not result
-		else:
-			return result
-	env['SPAWN'] = new_spawn
+	return result
 
-	# build CHM
-	chm = env.HalibutCHM('NSIS.chm', [chm_config_but] + buts)
-	env.Depends(chm, halibut)
-	env.Depends(chm, '#Docs/style.css')
-	env.Depends(chm, 'chmlink.js')
-	env.Depends(chm, 'nsis.hhp')
-	env.DistributeDoc(chm)
+env['SPAWN'] = new_spawn
 
-else:
-	html_builder = Builder(
-		action = [
-			Copy(build_dir, '${SOURCE.dir}/../style.css'),
-			Action(['${HALIBUT[0].abspath} ${SOURCES.abspath}'], chdir = build_dir)
-		]
-	)
-	
-	html_fixer = Builder(action = fix_html, suffix = '.html', src_suffix = '.html')
-
-	env.Append(BUILDERS = {'Halibut' : html_builder, 'FixHTML': html_fixer})
-
-	html = env.Halibut(htmls, [config_but] + buts)
-	env.Depends(html, halibut)
-	env.DistributeDocs('#Docs/style.css')
-
-	if env['PLATFORM'] == 'win32':
-		env.DistributeDocs(html)
-	else:
-		fixed_html = env.FixHTML(fixed_htmls, htmls)
-		env.DistributeDocs(fixed_html)
+# BUILD!
+docs = env.Halibut(env['NSISDOCTARGET'], ['$NSISDOCCONFIG'] + buts)
+env.DistributeDocs(docs, basepath=env['NSISDOCINSTALLBASEPATH'])
