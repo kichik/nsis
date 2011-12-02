@@ -20,12 +20,14 @@ includes = Split("""
 	x64.nsh
 """)
 
-includesWin = [
-	'Win/WinDef.nsh',
-	'Win/WinError.nsh',
-	'Win/WinNT.nsh',
-	'Win/WinUser.nsh'
-]
+includesWin = Split("""
+	Win/COM.nsh
+	Win/Propkey.nsh
+	Win/WinDef.nsh
+	Win/WinError.nsh
+	Win/WinNT.nsh
+	Win/WinUser.nsh
+""")
 
 Import('env')
 
