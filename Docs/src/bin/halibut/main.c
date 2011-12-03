@@ -21,6 +21,8 @@ int main(int argc, char **argv)
   int reportcols;
   int debug;
 
+  initversionstring();
+
   /*
    * Set up initial (default) parameters.
    */

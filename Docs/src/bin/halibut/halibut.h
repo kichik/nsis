@@ -268,6 +268,7 @@ void licence(void);
 /*
  * version.c
  */
+void initversionstring(void);
 const char *const version;
 
 /*
