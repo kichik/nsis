@@ -910,7 +910,7 @@ static void xhtml_do_index_body(FILE * fp)
         if (sect)
         {
           char fragmentbuf[NAMEDFRAGMENT_MAXLEN];
-          fprintf(fp, "<a href='%s#%s'>", sect->file->filename,
+          fprintf(fp, "<a href='%s#%s'>", conf.leaf_level ? sect->file->filename : "",
                   xhtml_get_fragmentname(sect, fragmentbuf));
           if (sect->para->kwtext)
           {
@@ -1227,7 +1227,7 @@ xhtml_do_contents_section_limit(FILE * fp, xhtmlsection * section, int limit)
 static int
 xhtml_add_contents_entry(FILE * fp, xhtmlsection * section, int limit)
 {
-  char fragmentbuf[NAMEDFRAGMENT_MAXLEN], *fragment;
+  char fragmentbuf[NAMEDFRAGMENT_MAXLEN], *fragment, *filename;
   if (!section || section->level > limit)
     return FALSE;
   if (fp == NULL || section->level < 0)
@@ -1244,17 +1244,18 @@ xhtml_add_contents_entry(FILE * fp, xhtmlsection * section, int limit)
     fprintf(fp, "<ul>\n");
     if(chm_toc)fprintf(chm_toc, "<ul>\n");
   }
+  filename = conf.leaf_level ? section->file->filename : "";
   fragment = xhtml_get_fragmentname(section, fragmentbuf);
   fprintf(fp, "<li>");
   fprintf(fp, "<a %shref=\"%s#%s\">",
           (section->para->type == para_Chapter|| section->para->type == para_Appendix) ? "class=\"btitle\" " : "",
-          section->file->filename,
+          filename,
           (section->para->type == para_Chapter) ? "" : fragment);
   if(chm_toc)fprintf(chm_toc, "<li><OBJECT type=\"text/sitemap\"><param name=\"Local\" value=\"%s#%s\"><param name=\"Name\" value=\"",
-          section->file->filename,
+          filename,
           (section->para->type == para_Chapter) ? "" : fragment);
   if(chm_ind)fprintf(chm_ind, "<li><OBJECT type=\"text/sitemap\"><param name=\"Local\" value=\"%s#%s\"><param name=\"Name\" value=\"",
-          section->file->filename,
+          filename,
           (section->para->type == para_Chapter) ? "" : fragment);
           //%s
   if (section->para->type == para_Chapter
@@ -1701,7 +1702,7 @@ static void xhtml_rdaddwc(rdstringc * rs, word * text, word * end)
         {
           char fragmentbuf[NAMEDFRAGMENT_MAXLEN];
           rdaddsc(rs, "<a href=\"");
-          rdaddsc(rs, sect->file->filename);
+          rdaddsc(rs, conf.leaf_level ? sect->file->filename : "");
           rdaddc(rs, '#');
           rdaddsc(rs, xhtml_get_fragmentname(sect, fragmentbuf));
           rdaddsc(rs, "\">");
