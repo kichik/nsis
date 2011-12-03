@@ -207,7 +207,8 @@ else:
 defenv.Replace(BUILD_CONFIG = defenv.subst('$BUILD_PREFIX/config'))
 
 # ensure the config directory exists
-defenv.Execute(Mkdir(defenv.Dir('#$BUILD_CONFIG')))
+if not Dir(defenv.Dir('#$BUILD_CONFIG')).exists():
+	defenv.Execute(Mkdir(defenv.Dir('#$BUILD_CONFIG')))
 
 # write configuration into sconf.h and defines.h
 sconf_h = open(defenv.File('#$BUILD_CONFIG/nsis-sconf.h').abspath, 'w')
