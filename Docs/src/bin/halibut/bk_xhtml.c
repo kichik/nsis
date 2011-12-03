@@ -1245,18 +1245,18 @@ xhtml_add_contents_entry(FILE * fp, xhtmlsection * section, int limit)
     if(chm_toc)fprintf(chm_toc, "<ul>\n");
   }
   filename = conf.leaf_level ? section->file->filename : "";
-  fragment = xhtml_get_fragmentname(section, fragmentbuf);
+  fragment = "";
+  if (section->para->type != para_Chapter || !conf.leaf_level)
+    fragment = xhtml_get_fragmentname(section, fragmentbuf);
+
   fprintf(fp, "<li>");
   fprintf(fp, "<a %shref=\"%s#%s\">",
           (section->para->type == para_Chapter|| section->para->type == para_Appendix) ? "class=\"btitle\" " : "",
-          filename,
-          (section->para->type == para_Chapter) ? "" : fragment);
+          filename, fragment);
   if(chm_toc)fprintf(chm_toc, "<li><OBJECT type=\"text/sitemap\"><param name=\"Local\" value=\"%s#%s\"><param name=\"Name\" value=\"",
-          filename,
-          (section->para->type == para_Chapter) ? "" : fragment);
+          filename, fragment);
   if(chm_ind)fprintf(chm_ind, "<li><OBJECT type=\"text/sitemap\"><param name=\"Local\" value=\"%s#%s\"><param name=\"Name\" value=\"",
-          filename,
-          (section->para->type == para_Chapter) ? "" : fragment);
+          filename, fragment);
           //%s
   if (section->para->type == para_Chapter
       || section->para->type == para_Appendix)
