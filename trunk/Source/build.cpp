@@ -121,6 +121,9 @@ CEXEBuild::CEXEBuild() :
   multiple_entries_instruction=0;
 
   build_include_depth=0;
+#ifndef _UNICODE
+  build_include_isutf8=false;
+#endif
 
   has_called_write_output=false;
 
