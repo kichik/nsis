@@ -115,7 +115,7 @@ ${MementoSection} "NSIS Core Files (required)" SecCore
   RMDir /r $SMPROGRAMS\NSIS
 
   SetOverwrite on
-  File /oname=makensis.exe ..\Bin\substart.exe
+  File ..\makensis.exe
   File ..\makensisw.exe
   File ..\COPYING
   File ..\NSIS.chm

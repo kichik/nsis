@@ -915,7 +915,7 @@ int CEXEBuild::LoadLicenseFile(TCHAR *file, TCHAR** pdata, LineParser &line, BOO
   }
   if (!memcmp(data+1,_T("{\\rtf"),5*sizeof(TCHAR)))
     *data = SF_RTF;
-  else if (unicode)
+  else if (*unicode)
     *data = SF_TEXT|SF_UNICODE;
   else
     *data = SF_TEXT;
