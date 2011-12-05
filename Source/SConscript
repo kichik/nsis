@@ -24,6 +24,7 @@ makensis_files = Split("""
 	strlist.cpp
 	tokens.cpp
 	tstring.cpp
+	utf.cpp
 	util.cpp
 	validateunicode.cpp
 	winchar.cpp

@@ -185,4 +185,7 @@ RM_DEFINE_FREEFUNC(my_convert_free);
 #  define PATH_CONVERT(x)
 #endif
 
+// Platform detection
+bool Platform_SupportsUTF8Conversion();
+
 #endif //_UTIL_H_

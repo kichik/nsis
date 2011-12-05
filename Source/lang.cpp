@@ -26,6 +26,7 @@
 #include "exehead/resource.h"
 #include <nsis-version.h>
 #include "tstring.h"
+#include "utf.h"
 
 using namespace std;
 
@@ -492,6 +493,9 @@ int CEXEBuild::SetLangString(TCHAR *name, LANGID lang, const TCHAR *str, BOOL un
 
   int sn;
 
+  if (_tcsclen(str) > NSIS_MAX_STRLEN-1)
+    warning_fl("LangString \"%s\" longer than NSIS_MAX_STRLEN!", name);
+
   int pos = build_langstrings.get(name, &sn);
   if (pos < 0)
     pos = build_langstrings.add(name, &sn);
@@ -501,6 +505,21 @@ int CEXEBuild::SetLangString(TCHAR *name, LANGID lang, const TCHAR *str, BOOL un
 
   return PS_OK;
 }
+
+#ifndef _UNICODE
+int CEXEBuild::SetUTF8LangString(TCHAR *name, LANGID lang, const char* stru8)
+{
+  LanguageTable *table = GetLangTable(lang);
+  if (!table) return PS_ERROR;
+  if (!Platform_SupportsUTF8Conversion()) return PS_ERROR;
+
+  EXEHEADTCHAR_T *bufEHTStr = UTF8ToExeHeadTStr(stru8, table->nlf.m_uCodePage);
+  if (!bufEHTStr) return PS_ERROR;
+  const int ret = SetLangString(name, lang, bufEHTStr, sizeof(EXEHEADTCHAR_T) > 1);
+  ExeHeadTStrFree(bufEHTStr);
+  return ret;
+}
+#endif
 
 // Sets the user string to the specific NLF_STRINGS id.
 //
@@ -925,6 +944,11 @@ LanguageTable * CEXEBuild::LoadLangFile(TCHAR *filename) {
     return 0;
   }
 
+#ifndef _UNICODE
+  char fencoding = 0; // 0 = ansi, 8 = utf-8 (16/17 for uft-16le/be not supported)
+  if (IsUTF8BOM(f)) fencoding = 8;
+#endif
+
   // Check header
   TCHAR buf[NSIS_MAX_STRLEN];
   buf[0] = SkipComments(f);
@@ -1096,8 +1120,31 @@ LanguageTable * CEXEBuild::LoadLangFile(TCHAR *filename) {
     buf[0] = SkipComments(f);
 
     _fgetts(buf+1, NSIS_MAX_STRLEN, f);
+#ifndef _UNICODE
+    if (8 == fencoding)
+    {
+      if (!Platform_SupportsUTF8Conversion()) {
+        ERROR_MSG(_T("Error: UTF-8 language files not supported on this OS!\n"));
+        return 0;
+      }
+      EXEHEADTCHAR_T *bufConv = UTF8ToExeHeadTStr(buf, nlf->m_uCodePage);
+      if (!bufConv) {
+        ERROR_MSG(_T("Error: Invalid UTF-8? (string #%d - \"%s\")\n"), i, NLFStrings[i].szLangStringName);
+        return 0;
+      }
+      else {
+        UINT cch = _tcslen(bufConv);
+        _tcsnccpy(buf, bufConv, NSIS_MAX_STRLEN);
+        if (cch >= NSIS_MAX_STRLEN-1) {
+          buf[NSIS_MAX_STRLEN-1] = _T('\0'); // Make sure we fail the "String too long" check
+        }
+      }
+      ExeHeadTStrFree(bufConv);
+    }
+#endif
+
     if (_tcslen(buf) == NSIS_MAX_STRLEN-1) {
-      ERROR_MSG(_T("Error: String too long (string #%d - \"%s\")"), i, NLFStrings[i].szLangStringName);
+      ERROR_MSG(_T("Error: String too long (string #%d - \"%s\")\n"), i, NLFStrings[i].szLangStringName);
       return 0;
     }
     temp=_tcslen(buf);
