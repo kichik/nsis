@@ -448,6 +448,9 @@ typedef DWORDLONG ULONGLONG,*PULONGLONG;
 #ifndef CP_ACP
 #  define CP_ACP 0
 #endif
+#ifndef CP_UTF8
+#  define CP_UTF8 65001
+#endif
 
 #ifndef COLOR_BTNFACE
 #  define COLOR_BTNFACE 15

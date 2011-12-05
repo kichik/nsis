@@ -200,8 +200,15 @@ inline size_t nsis_iconv_adaptor
 }
 
 void static create_code_page_string(TCHAR *buf, size_t len, UINT code_page) {
-  if (code_page == CP_ACP)
+  switch(code_page)
+  {
+  case CP_ACP:
     code_page = 1252;
+    break;
+  case CP_UTF8:
+    _sntprintf(buf, len, _T("UTF-8"));
+    return;
+  }
 
   _sntprintf(buf, len, _T("CP%d"), code_page);
 }
@@ -209,7 +216,7 @@ void static create_code_page_string(TCHAR *buf, size_t len, UINT code_page) {
 int WideCharToMultiByte(UINT CodePage, DWORD dwFlags, LPCWSTR lpWideCharStr,
     int cchWideChar, LPSTR lpMultiByteStr, int cbMultiByte, LPCSTR lpDefaultChar,
     LPBOOL lpUsedDefaultChar) {
-  static char buffer[4096];
+  static char buffer[4096]; // BUGBUG: Should this be 4*NSIS_MAX_STRLEN for large string build?
 
   char cp[128];
   create_code_page_string(cp, sizeof(cp), CodePage);
@@ -245,7 +252,7 @@ int WideCharToMultiByte(UINT CodePage, DWORD dwFlags, LPCWSTR lpWideCharStr,
 
 int MultiByteToWideChar(UINT CodePage, DWORD dwFlags, LPCSTR lpMultiByteStr,
     int cbMultiByte, LPWSTR lpWideCharStr, int cchWideChar) {
-  static WCHAR buffer[4096];
+  static WCHAR buffer[4096]; // BUGBUG: Should this be 4*NSIS_MAX_STRLEN for large string build?
 
   char cp[128];
   create_code_page_string(cp, sizeof(cp), CodePage);
@@ -899,4 +906,11 @@ bool GetDLLVersion(const tstring& filepath, DWORD& high, DWORD& low)
     return true;
 
   return false;
+}
+
+bool Platform_SupportsUTF8Conversion()
+{
+  static unsigned char cached = -1;
+  if (-1 == cached) cached = !!IsValidCodePage(CP_UTF8);
+  return cached != 0;
 }

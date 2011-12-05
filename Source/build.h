@@ -328,6 +328,9 @@ class CEXEBuild {
      * this will return a PS_WARNING.
      */
     int SetLangString(TCHAR *name, LANGID lang, const TCHAR *str, BOOL unicode);
+#ifndef _UNICODE
+    int SetUTF8LangString(TCHAR *name, LANGID lang, const char* stru8);
+#endif
 
     /**
      * Sets the user string to the specific NLF_STRINGS id.
@@ -424,6 +427,9 @@ class CEXEBuild {
     TCHAR build_output_filename[1024];
 
     int build_include_depth;
+#ifndef _UNICODE
+    bool build_include_isutf8; // UTF-8 LangString in .nsh hack for ANSI builds
+#endif
 
     // Added by ramon 6 jun 2003
 #ifdef NSIS_SUPPORT_VERSION_INFO

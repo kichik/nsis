@@ -34,6 +34,7 @@
 #include <cassert> // for assert(3)
 #include <time.h>
 #include "tstring.h"
+#include "utf.h"
 #include <algorithm>
 #include "boost/scoped_ptr.hpp"
 
@@ -813,6 +814,10 @@ int CEXEBuild::includeScript(TCHAR *f)
     return PS_ERROR;
   }
   build_include_depth++;
+#ifndef _UNICODE
+  const bool org_build_include_isutf8 = build_include_isutf8;
+  build_include_isutf8 = IsUTF8BOM(incfp);
+#endif
 
   int last_linecnt=linecnt;
   linecnt=0;
@@ -835,6 +840,10 @@ int CEXEBuild::includeScript(TCHAR *f)
   // Added by Sunil Kamath 11 June 2003
   restore_file_predefine(oldfilename);
   restore_timestamp_predefine(oldtimestamp);
+#endif
+
+#ifndef _UNICODE
+  build_include_isutf8 = org_build_include_isutf8;
 #endif
 
   int errlinecnt=linecnt;
@@ -1712,13 +1721,21 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       TCHAR *name = line.gettoken_str(1);
       LANGID lang = line.gettoken_int(2);
       TCHAR *str = line.gettoken_str(3);
-      int ret = SetLangString(name, lang, str, curfile_unicode);
+      int ret;
+#ifndef _UNICODE
+        if (build_include_isutf8)
+          ret = SetUTF8LangString(name, lang, str);
+        else
+#endif
+          ret = SetLangString(name, lang, str, curfile_unicode);
+
       if (ret == PS_WARNING)
         warning_fl(_T("LangString \"%s\" set multiple times for %d, wasting space"), name, lang);
       else if (ret == PS_ERROR) {
         ERROR_MSG(_T("Error: can't set LangString \"%s\"!\n"), name);
         return PS_ERROR;
       }
+      // BUGBUG: Does not display UTF-8 properly.
       SCRIPT_MSG(_T("LangString: \"%s\" %d \"%s\"\n"), name, lang, str);
     }
     return PS_OK;
