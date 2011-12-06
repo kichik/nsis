@@ -68,14 +68,14 @@ path = ARGUMENTS.get('PATH', '')
 toolset = ARGUMENTS.get('TOOLSET', '')
 
 if toolset and path:
-	defenv = Environment(ENV = {'PATH' : path}, TOOLS = toolset.split(',') + ['zip'])
+	defenv = Environment(TARGET_ARCH = 'x86', ENV = {'PATH' : path}, TOOLS = toolset.split(',') + ['zip'])
 else:
 	if path:
-		defenv = Environment(ENV = {'PATH' : path})
+		defenv = Environment(TARGET_ARCH = 'x86', ENV = {'PATH' : path})
 	if toolset:
-		defenv = Environment(TOOLS = toolset.split(',') + ['zip'])
+		defenv = Environment(TARGET_ARCH = 'x86', TOOLS = toolset.split(',') + ['zip'])
 if not toolset and not path:
-	defenv = Environment()
+	defenv = Environment(TARGET_ARCH = 'x86')
 
 Export('defenv')
 
