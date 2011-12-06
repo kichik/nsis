@@ -28,6 +28,7 @@
 #include <commctrl.h>
 #include <shellapi.h>
 #include <shlwapi.h>
+#include <shlobj.h>
 #include "tchar.h"
 #else
 #  ifndef EXEHEAD
@@ -252,7 +253,7 @@ typedef DWORDLONG ULONGLONG,*PULONGLONG;
 #endif
 
 #ifndef BIF_NEWDIALOGSTYLE
-#  define BIF_NEWDIALOGSTYLE 0x00000040
+#  define BIF_NEWDIALOGSTYLE 0x0040
 #endif
 
 #ifndef TVITEM
