@@ -494,7 +494,7 @@ int CEXEBuild::SetLangString(TCHAR *name, LANGID lang, const TCHAR *str, BOOL un
   int sn;
 
   if (_tcsclen(str) > NSIS_MAX_STRLEN-1)
-    warning_fl("LangString \"%s\" longer than NSIS_MAX_STRLEN!", name);
+    warning_fl(_T("LangString \"%s\" longer than NSIS_MAX_STRLEN!"), name);
 
   int pos = build_langstrings.get(name, &sn);
   if (pos < 0)
