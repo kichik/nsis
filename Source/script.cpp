@@ -3467,7 +3467,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           if (!numconv || v < 0 || v > 4 )
           {
             // < 2.47 would reset level to 0 without warning!
-            ERROR_MSG("!verbose: Invalid verbose level\n");
+            ERROR_MSG(_T("!verbose: Invalid verbose level\n"));
             return PS_ERROR;
           }
         }
@@ -3484,7 +3484,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             }
             else
             {
-              warning_fl("!verbose: Pop failed, stack is empty");
+              warning_fl(_T("!verbose: Pop failed, stack is empty"));
               continue; // Pop failed, should still process the next parameter
             }
           }
