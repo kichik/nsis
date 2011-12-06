@@ -553,7 +553,7 @@ parse_again:
             PRINTHELP()
         }
         if (!cnv1 || !cnv2) {
-          warning_fl("Invalid number: \"%s\"", line.gettoken_str(!cnv1 ? 1 : 3));
+          warning_fl(_T("Invalid number: \"%s\""), line.gettoken_str(!cnv1 ? 1 : 3));
         }
       }
       else PRINTHELP()
