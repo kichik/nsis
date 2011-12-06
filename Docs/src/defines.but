@@ -64,10 +64,10 @@ The opposite of !ifdef. The lines will be compiled when the gflag has not been d
 \c [!] /FileExists "c:\path\file.exe"
 
 This command, when paired with an !endif command, will tell the compiler whether or not to compile the lines in between the two lines. If value is non-zero, or the comparison of value and value2 depending on the operator results in true, the contained lines will be compiled. Otherwise, they will be skipped.
-op can be either == or != (string comparison), <=, < > or >= (float comparison), & (bitwise AND comparison), && or || (boolean comparison).
+op can be either == or != (case-insensitive string comparison), S== or S!= (case-sensitive string comparison), =, <>, <=, <, > or >= (int/hex/float comparison), & (bitwise AND comparison), && or || (boolean comparison).
 If [!] is set, return value will be switched from true to false and vice versa.
 
-\c !if 1 < 2
+\c !if 1 < 0x2
 \c   !echo "1 is smaller than 2!!"
 \c !else if ! 3.1 > 1.99
 \c   !error "this line should never appear"

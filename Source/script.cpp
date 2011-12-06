@@ -489,8 +489,7 @@ parse_again:
         istrue = line.gettoken_int(1);
 
       else if (line.getnumtokens() == 3) {
-        if (!_tcsicmp(line.gettoken_str(1),_T("/fileexists")))
-        {
+        if (!_tcsicmp(line.gettoken_str(1),_T("/fileexists"))) {
           TCHAR *fc = my_convert(line.gettoken_str(2));
           tstring dir = get_dir_name(fc), spec = get_file_name(fc);
           my_convert_free(fc);
@@ -515,31 +514,46 @@ parse_again:
       }
 
       else if (line.getnumtokens() == 4) {
-        mod = line.gettoken_enum(2,_T("=\0==\0!=\0<=\0<\0>\0>=\0&\0&&\0|\0||\0"));
-        
+        mod = line.gettoken_enum(2,
+          _T("==\0!=\0S==\0S!=\0")
+          _T("=\0<>\0<=\0<\0>\0>=\0")
+          _T("&\0&&\0|\0||\0")
+          );
+
+        int cnv1 = 1, cnv2 = 1;
         switch(mod) {
           case 0:
-          case 1:
             istrue = _tcsicmp(line.gettoken_str(1),line.gettoken_str(3)) == 0; break;
-          case 2:
+          case 1:
             istrue = _tcsicmp(line.gettoken_str(1),line.gettoken_str(3)) != 0; break;
+          case 2:
+            istrue = _tcscmp(line.gettoken_str(1),line.gettoken_str(3)) == 0; break;
           case 3:
-            istrue = line.gettoken_float(1) <= line.gettoken_float(3); break;
+            istrue = _tcscmp(line.gettoken_str(1),line.gettoken_str(3)) != 0; break;
           case 4:
-            istrue = line.gettoken_float(1) <  line.gettoken_float(3); break;
+             istrue = line.gettoken_number(1,&cnv1) == line.gettoken_number(3,&cnv2); break;
           case 5:
-            istrue = line.gettoken_float(1) >  line.gettoken_float(3); break;
+             istrue = line.gettoken_number(1,&cnv1) != line.gettoken_number(3,&cnv2); break;
           case 6:
-            istrue = line.gettoken_float(1) >= line.gettoken_float(3); break;
+            istrue = line.gettoken_number(1,&cnv1) <= line.gettoken_number(3,&cnv2); break;
           case 7:
-            istrue = (line.gettoken_int(1) & line.gettoken_int(3)) != 0; break;
+            istrue = line.gettoken_number(1,&cnv1) <  line.gettoken_number(3,&cnv2); break;
           case 8:
-            istrue = line.gettoken_int(1) && line.gettoken_int(3); break;
+            istrue = line.gettoken_number(1,&cnv1) >  line.gettoken_number(3,&cnv2); break;
           case 9:
+            istrue = line.gettoken_number(1,&cnv1) >= line.gettoken_number(3,&cnv2); break;
           case 10:
-            istrue = line.gettoken_int(1) || line.gettoken_int(3); break;
+            istrue = (line.gettoken_int(1,&cnv1) & line.gettoken_int(3,&cnv2)) != 0; break;
+          case 11:
+            istrue = line.gettoken_int(1,&cnv1) && line.gettoken_int(3,&cnv2); break;
+          case 12:
+          case 13:
+            istrue = line.gettoken_int(1,&cnv1) || line.gettoken_int(3,&cnv2); break;
           default:
             PRINTHELP()
+        }
+        if (!cnv1 || !cnv2) {
+          warning_fl("Invalid number: \"%s\"", line.gettoken_str(!cnv1 ? 1 : 3));
         }
       }
       else PRINTHELP()
