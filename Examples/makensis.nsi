@@ -280,7 +280,7 @@ ${MementoSection} "Script Examples" SecExample
 
   SetOutPath $INSTDIR\Examples\Plugin\nsis
   File ..\Examples\Plugin\nsis\pluginapi.h
-  File ..\Examples\Plugin\nsis\pluginapi.lib
+  File /nonfatal ..\Examples\Plugin\nsis\pluginapi.lib
   File ..\Examples\Plugin\nsis\api.h
   File ..\Examples\Plugin\nsis\nsis_tchar.h
 
