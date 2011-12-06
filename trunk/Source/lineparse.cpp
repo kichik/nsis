@@ -88,6 +88,7 @@ double LineParser::gettoken_float(int token, int *success/*=0*/)
   if (success)
   {
     TCHAR *t=m_tokens[token];
+    if (_T('-') == *t || _T('+') == *t) ++t;
     *success=*t?1:0;
     while (*t)
     {
@@ -108,10 +109,20 @@ int LineParser::gettoken_int(int token, int *success/*=0*/)
   }
   TCHAR *tmp;
   int l;
-  if (m_tokens[token][0] == _T('-')) l=_tcstol(m_tokens[token],&tmp,0);
-  else l=(int)_tcstoul(m_tokens[token],&tmp,0);
+  if (_T('-') == m_tokens[token][0]) 
+    l=_tcstol(m_tokens[token],&tmp,0);
+  else 
+    l=(int)_tcstoul(m_tokens[token],&tmp,0);
   if (success) *success=! (int)(*tmp);
   return l;
+}
+
+double LineParser::gettoken_number(int token, int *success/*=0*/)
+{
+  const TCHAR*str=gettoken_str(token);
+  if (_T('-') == *str || _T('+') == *str) ++str;
+  if (_T('0') == str[0] && _T('x') == (str[1]|32)) return gettoken_int(token,success);
+  return gettoken_float(token,success);
 }
 
 TCHAR* LineParser::gettoken_str(int token)
