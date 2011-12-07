@@ -15,6 +15,9 @@
  *
  */
 
+#ifndef NSIS_UTF_H
+#define NSIS_UTF_H
+
 #include "Platform.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -28,9 +31,13 @@ typedef EXEHEADWCHAR_T EXEHEADTCHAR_T;
 #else // !_UNICODE
 typedef char EXEHEADTCHAR_T;
 
-#define ExeHeadTStrFree free
-inline EXEHEADTCHAR_T* ExeHeadTStrAlloc(UINT cb) {return (EXEHEADTCHAR_T*) malloc(cb);}
-extern EXEHEADTCHAR_T* UTF8ToExeHeadTStr(LPCSTR StrU8,UINT Codepage);
+
+inline EXEHEADTCHAR_T* ExeHeadTStrAlloc(UINT cb) 
+{
+  // NOTE: UTF8ToExeHeadTStrDup calls this so we are required to use malloc
+  return (EXEHEADTCHAR_T*) malloc(cb);
+}
+extern EXEHEADTCHAR_T* UTF8ToExeHeadTStrDup(LPCSTR StrU8,UINT Codepage);
 
 #endif // ?_UNICODE
 
@@ -41,3 +48,5 @@ extern EXEHEADTCHAR_T* UTF8ToExeHeadTStr(LPCSTR StrU8,UINT Codepage);
  * if it is not it tries its best to restore the data.
  */
 extern bool IsUTF8BOM(FILE*fstrm);
+
+#endif // NSIS_UTF_H

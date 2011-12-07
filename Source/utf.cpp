@@ -37,7 +37,7 @@ static EXEHEADWCHAR_T* ExeHeadWStrAlloc(UINT cch)
 #ifdef _UNICODE
 #else // !_UNICODE
 
-EXEHEADTCHAR_T* UTF8ToExeHeadTStr(LPCSTR StrU8,UINT Codepage) 
+EXEHEADTCHAR_T* UTF8ToExeHeadTStrDup(LPCSTR StrU8,UINT Codepage) 
 {
   int cchW = MultiByteToWideChar(CP_UTF8,UTF8MBTWCFLAGS,StrU8,-1,NULL,0);
   if (!cchW) return NULL;
@@ -51,7 +51,7 @@ EXEHEADTCHAR_T* UTF8ToExeHeadTStr(LPCSTR StrU8,UINT Codepage)
     {
       if (!WideCharToMultiByte(Codepage,0,bufWStr,cchW,outstr,cbA,NULL,NULL))
       {
-        ExeHeadTStrFree(outstr);
+        free(outstr);
         outstr = NULL;
       }
     }
