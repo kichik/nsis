@@ -2778,22 +2778,54 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #endif
     case TOK_SETFONT:
     {
+      unsigned char failed = 0;
       if (!_tcsnicmp(line.gettoken_str(1), _T("/LANG="), 6))
       {
         LANGID lang_id = _ttoi(line.gettoken_str(1) + 6);
         LanguageTable *table = GetLangTable(lang_id);
-        table->nlf.m_szFont = (TCHAR*)malloc((_tcslen(line.gettoken_str(2))+1)*sizeof(TCHAR));
-        _tcscpy(table->nlf.m_szFont, line.gettoken_str(2));
+        const TCHAR*facename = line.gettoken_str(2);
+#ifndef _UNICODE
+        if (build_include_isutf8)
+        {
+          EXEHEADTCHAR_T *bufEHTStr = UTF8ToExeHeadTStrDup(facename, table->nlf.m_uCodePage);
+          table->nlf.m_szFont = bufEHTStr;
+        }
+        else
+#endif
+        {
+          table->nlf.m_szFont = _tcsdup(facename);
+        }
         table->nlf.m_iFontSize = line.gettoken_int(3);
-
-        SCRIPT_MSG(_T("SetFont: lang=%d \"%s\" %s\n"), lang_id, line.gettoken_str(2), line.gettoken_str(3));
+        
+        if (table->nlf.m_szFont)
+          SCRIPT_MSG(_T("SetFont: lang=%d \"%s\" %s\n"), lang_id, facename, line.gettoken_str(3));
+        else
+          ++failed;
       }
       else
       {
-        _tcsnccpy(build_font, line.gettoken_str(1), COUNTOF(build_font));
+        const TCHAR*facename = line.gettoken_str(1);
+#ifndef _UNICODE
+        if (build_include_isutf8)
+        {
+          EXEHEADTCHAR_T *bufEHTStr = UTF8ToExeHeadTStrDup(facename, CP_ACP);
+          if (!bufEHTStr) ++failed;
+          _tcsnccpy(build_font, bufEHTStr, COUNTOF(build_font));
+          free(bufEHTStr);
+        }
+        else
+#endif
+        {
+          _tcsnccpy(build_font, facename, COUNTOF(build_font));
+        }
         build_font_size = line.gettoken_int(2);
 
-        SCRIPT_MSG(_T("SetFont: \"%s\" %s\n"), line.gettoken_str(1), line.gettoken_str(2));
+        if (!failed) SCRIPT_MSG(_T("SetFont: \"%s\" %s\n"), facename, line.gettoken_str(2));
+      }
+      if (failed)
+      {
+        ERROR_MSG(_T("Error: Unable to convert font name\n"));
+        return PS_ERROR;
       }
     }
     return PS_OK;

@@ -221,7 +221,7 @@ int WideCharToMultiByte(UINT CodePage, DWORD dwFlags, LPCWSTR lpWideCharStr,
   char cp[128];
   create_code_page_string(cp, sizeof(cp), CodePage);
 
-  iconv_t cd = iconv_open(cp, "UCS-2LE");
+  iconv_t cd = iconv_open(cp, "UCS-2LE"); //TODO: Should "UCS-2LE" be "wchar_t"?
   if (cd == (iconv_t) -1) {
     return 0;
   }
@@ -257,7 +257,7 @@ int MultiByteToWideChar(UINT CodePage, DWORD dwFlags, LPCSTR lpMultiByteStr,
   char cp[128];
   create_code_page_string(cp, sizeof(cp), CodePage);
 
-  iconv_t cd = iconv_open("UCS-2LE", cp);
+  iconv_t cd = iconv_open("UCS-2LE", cp); //TODO: Should "UCS-2LE" be "wchar_t"?
   if (cd == (iconv_t) -1) {
     return 0;
   }
@@ -291,7 +291,7 @@ BOOL IsValidCodePage(UINT CodePage)
   TCHAR cp[128];
   create_code_page_string(cp, sizeof(cp), CodePage);
 
-  iconv_t cd = iconv_open(_T("UCS-2LE"), cp);
+  iconv_t cd = iconv_open(_T("UCS-2LE"), cp); //TODO: Should "UCS-2LE" be "wchar_t"?
   if (cd == (iconv_t) -1)
     return FALSE;
 
