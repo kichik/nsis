@@ -513,10 +513,10 @@ int CEXEBuild::SetUTF8LangString(TCHAR *name, LANGID lang, const char* stru8)
   if (!table) return PS_ERROR;
   if (!Platform_SupportsUTF8Conversion()) return PS_ERROR;
 
-  EXEHEADTCHAR_T *bufEHTStr = UTF8ToExeHeadTStr(stru8, table->nlf.m_uCodePage);
+  EXEHEADTCHAR_T *bufEHTStr = UTF8ToExeHeadTStrDup(stru8, table->nlf.m_uCodePage);
   if (!bufEHTStr) return PS_ERROR;
   const int ret = SetLangString(name, lang, bufEHTStr, sizeof(EXEHEADTCHAR_T) > 1);
-  ExeHeadTStrFree(bufEHTStr);
+  free(bufEHTStr);
   return ret;
 }
 #endif
@@ -1049,7 +1049,20 @@ LanguageTable * CEXEBuild::LoadLangFile(TCHAR *filename) {
   if (!unicode && nlf->m_szFont) // convert font name from ANSI to Unicode now that we know the language codepage
   {
     TCHAR* str = nlf->m_szFont;
-    nlf->m_szFont = _tcsdup(CtoTString2(TtoCString(str),table->nlf.m_uCodePage));
+    nlf->m_szFont = _tcsdup(CtoTString2(TtoCString(str), table->nlf.m_uCodePage));
+    free(str);
+  }
+#else
+  if (8 == fencoding && nlf->m_szFont)
+  {
+    TCHAR* str = nlf->m_szFont;
+    EXEHEADTCHAR_T *bufConv = UTF8ToExeHeadTStrDup(str, table->nlf.m_uCodePage);
+    nlf->m_szFont = bufConv;
+    if (!nlf->m_szFont)
+    {
+      ERROR_MSG(_T("Error: Unable to convert font name\n"));
+      return 0;
+    }
     free(str);
   }
 #endif
@@ -1127,7 +1140,7 @@ LanguageTable * CEXEBuild::LoadLangFile(TCHAR *filename) {
         ERROR_MSG(_T("Error: UTF-8 language files not supported on this OS!\n"));
         return 0;
       }
-      EXEHEADTCHAR_T *bufConv = UTF8ToExeHeadTStr(buf, nlf->m_uCodePage);
+      EXEHEADTCHAR_T *bufConv = UTF8ToExeHeadTStrDup(buf, nlf->m_uCodePage);
       if (!bufConv) {
         ERROR_MSG(_T("Error: Invalid UTF-8? (string #%d - \"%s\")\n"), i, NLFStrings[i].szLangStringName);
         return 0;
@@ -1139,7 +1152,7 @@ LanguageTable * CEXEBuild::LoadLangFile(TCHAR *filename) {
           buf[NSIS_MAX_STRLEN-1] = _T('\0'); // Make sure we fail the "String too long" check
         }
       }
-      ExeHeadTStrFree(bufConv);
+      free(bufConv);
     }
 #endif
 
