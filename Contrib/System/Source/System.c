@@ -31,7 +31,8 @@
 #define PCD_PARAMS  2
 #define PCD_DONE    3   // Just Continue
 
-const int ParamSizeByType[7] = {0, // PAT_VOID (Size will be equal to 1)
+const int ParamSizeByType[7] = {
+    0, // PAT_VOID (Size will be equal to 1)
     1, // PAT_INT
     2, // PAT_LONG
     1, // PAT_STRING
@@ -95,20 +96,23 @@ void WriteToLog(TCHAR *buffer)
 
     SetFilePointer(logfile, 0, 0, FILE_END);
 
-    wsprintf(timebuffer, _T("%04d  %04d.%03d    "), (++logop)%10000, (GetTickCount() / 1000) % 10000,
-        GetTickCount() % 1000);
+    if (-1 != logop)
+    {
+        wsprintf(timebuffer, _T("%04d  %04d.%03d    "), (++logop)%10000,
+            (GetTickCount() / 1000) % 10000, GetTickCount() % 1000);
 
 #ifdef _UNICODE
 #ifdef _RPTW0
-    _RPTW0(_CRT_WARN, timebuffer);
-    _RPTW0(_CRT_WARN, buffer);
+        _RPTW0(_CRT_WARN, timebuffer);
+        _RPTW0(_CRT_WARN, buffer);
 #endif
 #else
-    _RPT0(_CRT_WARN, timebuffer);
-    _RPT0(_CRT_WARN, buffer);
+        _RPT0(_CRT_WARN, timebuffer);
+        _RPT0(_CRT_WARN, buffer);
 #endif
 
-    WriteFile(logfile, timebuffer, lstrlen(timebuffer)*sizeof(TCHAR), &written, NULL);
+        WriteFile(logfile, timebuffer, lstrlen(timebuffer)*sizeof(TCHAR), &written, NULL);
+    }
     WriteFile(logfile, buffer, lstrlen(buffer)*sizeof(TCHAR), &written, NULL);
 //    FlushFileBuffers(logfile);
 }
@@ -148,7 +152,11 @@ PLUGINFUNCTION(Debug)
     if (lstrlen(o1) > 0)
     {
         // Log in to log file
+        int orglogop;
         WriteToLog(o1);
+        orglogop = logop, logop = -1;
+        WriteToLog(_T("\n"));
+        logop = orglogop;
     } else
     {
         // Stop debugging
@@ -238,7 +246,7 @@ PLUGINFUNCTION(Get)
     SYSTEM_LOG_ADD(proc->DllName);
     SYSTEM_LOG_ADD(_T("::"));
     SYSTEM_LOG_ADD(proc->ProcName);
-    SYSTEM_LOG_ADD(_T("\n"));
+    //SYSTEM_LOG_ADD(_T("\n"));
     SYSTEM_LOG_POST;
     if ((proc->Options & POPT_ALWRETURN) != 0)
     {
@@ -271,7 +279,8 @@ PLUGINFUNCTION(Call)
     SYSTEM_LOG_ADD(proc->DllName);
     SYSTEM_LOG_ADD(_T("::"));
     SYSTEM_LOG_ADD(proc->ProcName);
-    SYSTEM_LOG_ADD(_T("\n"));
+    //SYSTEM_LOG_ADD(_T("\n"));
+    SYSTEM_LOG_POST;
     if (proc->ProcResult != PR_CALLBACK)
         ParamAllocate(proc);
     ParamsIn(proc);
@@ -512,7 +521,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
             case PST_RETURN:
             case PST_OPTIONS:
                 break;
-            }        
+            }
             ib++;
             cb = cbuf;
             continue;
@@ -553,7 +562,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
                 ProcType = PT_STRUCT;
                 ChangesDone = PCD_DONE;
                 break;
-            }          
+            }
             break;
 
         // Params and return sections parser
@@ -941,16 +950,17 @@ void ParamsIn(SystemProc *proc)
 #ifdef SYSTEM_LOG_DEBUG
         {
             TCHAR buf[1024];
-            wsprintf(buf, _T("\t\t\tParam In %d:    type %d value 0x%08X value2 0x%08X\n"), i, 
+            wsprintf(buf, _T("\t\t\tParam In %d:    type %d value 0x%08X value2 0x%08X"), i, 
                 par->Type, par->Value, par->_value);
             SYSTEM_LOG_ADD(buf);
+            SYSTEM_LOG_POST;
         }
 #endif
 
         if (i == 0) break;
         if (i == proc->ParamCount) i = 0;
         else i++;
-    } 
+    }
 }
 
 void ParamsDeAllocate(SystemProc *proc)
@@ -1029,10 +1039,32 @@ void ParamsOut(SystemProc *proc)
             || (proc->Params[i].Option > 0)))
             GlobalFree(proc->Params[i].allocatedBlock);
 
+        SYSTEM_LOG_ADD(_T("\t\t\tParam Out("));
         // Step 2: place it
-        if (proc->Params[i].Output == IOT_NONE);
-        else if (proc->Params[i].Output == IOT_STACK) system_pushstring(realbuf);
-        else if (proc->Params[i].Output > 0) system_setuservariable(proc->Params[i].Output - 1, realbuf);
+        if (proc->Params[i].Output == IOT_NONE) SYSTEM_LOG_ADD(_T("none"));
+        else if (proc->Params[i].Output == IOT_STACK)
+        {
+            SYSTEM_LOG_ADD(_T("stack"));
+            system_pushstring(realbuf);
+        }
+        else if (proc->Params[i].Output > 0)
+        {
+            SYSTEM_LOG_ADD(_T("var"));
+            system_setuservariable(proc->Params[i].Output - 1, realbuf);
+        }
+        else
+            SYSTEM_LOG_ADD(_T("?BUG?"));
+
+#ifdef SYSTEM_LOG_DEBUG
+        {
+            TCHAR dbgbuf[99];
+            wsprintf(dbgbuf, _T(") %d:\tType=%d Optn=%d Size=%d Data="),
+                i, proc->Params[i].Type, proc->Params[i].Option, proc->Params[i].Size);
+            SYSTEM_LOG_ADD(dbgbuf);
+            SYSTEM_LOG_ADD(realbuf);
+            SYSTEM_LOG_POST;
+        }
+#endif
 
         GlobalFree(realbuf);
 
@@ -1083,10 +1115,12 @@ void CallStruct(SystemProc *proc)
 
     // Calculate the structure size 
     for (i = 1; i <= proc->ParamCount; i++)
+    {
         if (proc->Params[i].Option < 1)
             structsize += proc->Params[i].Size * 4;
         else
             structsize += ByteSizeByType[proc->Params[i].Type] * (proc->Params[i].Option - 1);
+    }
     
     // Struct exists?
     if (proc->Proc == NULL)
@@ -1094,7 +1128,15 @@ void CallStruct(SystemProc *proc)
         proc->Proc = (HANDLE) GlobalAlloc(GPTR, structsize);
     else  // In case of zero size defined structure use mapped size 
         if (structsize == 0) structsize = (int) GlobalSize((HANDLE) proc->Proc);
-    
+
+    #ifdef SYSTEM_LOG_DEBUG
+    {
+        TCHAR dbgbuf[99];
+        wsprintf(dbgbuf, _T("\t(%u bytes)"), structsize);
+        SYSTEM_LOG_ADD(dbgbuf);
+    }
+    #endif
+
     // Pointer to current data
     st = (char*) proc->Proc;
 
