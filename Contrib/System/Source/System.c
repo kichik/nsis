@@ -1116,6 +1116,13 @@ void CallStruct(SystemProc *proc)
     // Calculate the structure size 
     for (i = 1; i <= proc->ParamCount; i++)
     {
+        // Emulate g as &g16
+        // (Changing ByteSizeByType would break compatibility with '*(&g16,i)i.s')
+        if (PAT_GUID==proc->Params[i].Type && 0==proc->Params[i].Option)
+        {
+            proc->Params[i].Option = 1 + 16;
+        }
+
         if (proc->Params[i].Option < 1)
             structsize += proc->Params[i].Size * 4;
         else
