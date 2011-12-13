@@ -4158,8 +4158,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.offsets[3]=SW_SHOWNORMAL;
       if (line.getnumtokens() > 4)
       {
-        int tab[5]={SW_SHOWDEFAULT,SW_SHOWNORMAL,SW_SHOWMAXIMIZED,SW_SHOWMINIMIZED,SW_HIDE};
-        int a=line.gettoken_enum(4,_T("SW_SHOWDEFAULT\0SW_SHOWNORMAL\0SW_SHOWMAXIMIZED\0SW_SHOWMINIMIZED\0SW_HIDE\0"));
+        int tab[8]={SW_SHOWDEFAULT,SW_SHOWNORMAL,SW_SHOWMAXIMIZED,SW_SHOWMINIMIZED,SW_HIDE,SW_SHOW,SW_SHOWNA,SW_SHOWMINNOACTIVE};
+        int a=line.gettoken_enum(4,_T("SW_SHOWDEFAULT\0SW_SHOWNORMAL\0SW_SHOWMAXIMIZED\0SW_SHOWMINIMIZED\0SW_HIDE\0SW_SHOW\0SW_SHOWNA\0SW_SHOWMINNOACTIVE\0"));
         if (a < 0) PRINTHELP()
         ent.offsets[3]=tab[a];
       }
