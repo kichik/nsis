@@ -107,6 +107,17 @@ SConscript('SCons/config.py')
 opts.Update(defenv)
 Help(opts.GenerateHelpText(defenv))
 
+#Fix ListVariable to generate comma separated (quoted if required) list of allowed names:
+org_ListVariable = ListVariable
+def ListVariable(key, help, default, names, map={}):
+	r = list(org_ListVariable(key, help, default, names, map))
+	if len(r) == 5 and isinstance(r[1], str):
+		fmt = 'allowed names: %s'
+		repl = fmt % ', '.join( ((' ' in s) and ('"%s"' % s) or s) for s in names )
+		r[1] = r[1].replace(fmt % ' '.join(names), repl)
+	return r
+
+
 install_dirs = {
 	'relocatable': {
 		'dest': '',
