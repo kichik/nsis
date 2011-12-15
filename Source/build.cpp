@@ -131,6 +131,9 @@ CEXEBuild::CEXEBuild() :
   ns_label.add(_T(""),0);
 
   definedlist.add(_T("NSIS_VERSION"), NSIS_VERSION);
+#ifdef NSIS_PACKEDVERSION
+  definedlist.add(_T("NSIS_PACKEDVERSION"), NSIS_PACKEDVERSION);
+#endif
 
   target_minimal_OS=0;
   build_unicode=false;
