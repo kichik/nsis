@@ -43,3 +43,9 @@ a:hover {
 	color: #000000;
 	text-decoration: underline;
 }
+.wb {
+	background-color: #FFFFCC;
+	color: #000000;
+	border: 1px solid #646400;
+	padding: 0.2em;
+}

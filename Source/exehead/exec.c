@@ -1417,9 +1417,13 @@ static int NSISCALL ExecuteEntry(entry *entry_)
 #ifdef _UNICODE
             if (which==EW_FGETS)
             {
+                /* BUGBUG:
+                How is MBTWC supposed to be able to determine the correct WCHAR for a multibyte string when it only has 1 byte to look at?
+                And what if the multibyte character needs two WCHARs?
+                */
                 char tmpc;
                 if (!ReadFile(h,&tmpc,1,&dw,NULL) || dw != 1) break;
-                MultiByteToWideChar(CP_ACP, 0, &tmpc, 1, &c, 1);
+                if (0==MultiByteToWideChar(CP_ACP, 0, &tmpc, 1, &c, 1)) c = _T('?');
             }
             else
 #endif
