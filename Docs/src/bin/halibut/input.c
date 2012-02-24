@@ -107,6 +107,7 @@ static int get(input * in, filepos * pos)
   } else if (in->stack)
   {
     wchar_t c = in->stack->text[in->stack->ptr];
+    if (pos) *pos = in->stack->pos;
     if (in->stack->text[++in->stack->ptr] == L'\0')
     {
       macrostack *tmp = in->stack;
@@ -637,12 +638,11 @@ static paragraph *addpara(paragraph newpara, paragraph *** hptrptr)
 /*
  * Reads a single file (ie until get() returns EOF)
  */
-static void read_file(paragraph *** ret, input * in, indexdata * idx)
+static void read_file(paragraph *** ret, input * in, indexdata * idx, tree234 *macros)
 {
   token t;
   paragraph par;
   word wd, **whptr, **idximplicit;
-  tree234 *macros;
   wchar_t utext[2], *wdtext;
   int style, spcstyle;
   int already;
@@ -669,7 +669,6 @@ static void read_file(paragraph *** ret, input * in, indexdata * idx)
   wchar_t uchr;
 
   t.text = NULL;
-  macros = newtree234(macrocmp);
   already = FALSE;
 
   /*
@@ -924,7 +923,7 @@ static void read_file(paragraph *** ret, input * in, indexdata * idx)
               rdadd(&macrotext, L'\n');
             rdadds(&macrotext, t.text);
             dtor(t), t = get_token(in);
-            if (t.type == tok_eop)
+            if (t.type == tok_eop || t.type == tok_eof)
               break;
           }
           macrodef(macros, rs.text, macrotext.text, fp);
@@ -1465,13 +1464,15 @@ static void read_file(paragraph *** ret, input * in, indexdata * idx)
    * this cleanup doesn't happen.
    */
   dtor(t);
-  macrocleanup(macros);
 }
 
 paragraph *read_input(input * in, indexdata * idx)
 {
   paragraph *head = NULL;
   paragraph **hptr = &head;
+  tree234 *macros;
+
+  macros = newtree234(macrocmp);
 
   while (in->currindex < in->nfiles)
   {
@@ -1479,10 +1480,11 @@ paragraph *read_input(input * in, indexdata * idx)
     if (in->currfp)
     {
       setpos(in, in->filenames[in->currindex]);
-      read_file(&hptr, in, idx);
+      read_file(&hptr, in, idx, macros);
     }
     in->currindex++;
   }
 
+  macrocleanup(macros);
   return head;
 }
