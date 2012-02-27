@@ -63,38 +63,25 @@ struct NSISException : public std::runtime_error
 };
 
 namespace {
-size_t file_size(ifstream& file) {
-  const ifstream::pos_type pos = file.tellg();
-
-  file.seekg(0, ios::end);
-
-  ifstream::pos_type result = file.tellg();
-  assert(result >= (ifstream::pos_type)0);
-
-  file.seekg(pos);
-
-  return (size_t)result;
-}
-
 // This function slurps the whole file into the vector.
 // Modified so the huge vector isn't returned by value.
 void read_file(const tstring& filename, vector<unsigned char>& data) {
-  ifstream file(filename.c_str(), ios::binary);
+  FILE*file = FOPEN(filename.c_str(), _T("rb"));
 
-  if (!file) {
-    throw NSISException(_T("Can't open file '") + filename + _T("'"));
+  if (!file) throw NSISException(_T("Can't open file '") + filename + _T("'"));
+
+  MANAGE_WITH(file, fclose);
+  bool succ = false;
+
+  if (!fseek(file, 0, SEEK_END))
+  {
+    const long filesize = ftell(file);
+    rewind(file);
+    data.resize(filesize);
+    size_t cbio = fread(reinterpret_cast<char*>(&data[0]), 1, filesize, file);
+    succ = cbio == filesize;
   }
-
-  // get the file size
-  size_t filesize = file_size(file);
-
-  data.resize(filesize);
-
-  file.read(reinterpret_cast<char*>(&data[0]), filesize);
-
-  if (size_t(file.tellg()) != filesize) { // ifstream::eof doesn't return true here
-    throw NSISException(_T("Couldn't read entire file '") + filename + _T("'"));
-  }
+  if (!succ) throw NSISException(_T("Couldn't read entire file '") + filename + _T("'"));
 }
 }
 
@@ -104,6 +91,7 @@ void Plugins::GetExports(const tstring &pathToDll, bool displayInfo)
   PIMAGE_NT_HEADERS NTHeaders;
   try {
     read_file(pathToDll, dlldata);
+    if (dlldata.empty()) return;
     NTHeaders = CResourceEditor::GetNTHeaders(&dlldata[0]);
   } catch (std::runtime_error&) {
     return;
