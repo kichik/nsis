@@ -49,8 +49,93 @@
   #endif
 
   typedef uint32_t TFileOffset;
-  typedef ifstream bifstream;
-  typedef istream bistream;
-  typedef ofstream bofstream;
-  typedef ostream bostream;
+
+  // This is a hacky partial replacement for <i|o>[f]stream so we can open wchar_t*
+  #include "tchar.h"
+  #include <stdio.h>
+  #include <assert.h>
+
+class simplebfstream {
+  FILE*m_File;
+  ios_base::iostate m_state;
+  streamsize m_LastReadCount;
+public:
+  simplebfstream() : m_File(0), m_state(ios_base::badbit|ios_base::failbit) {}
+  ~simplebfstream() 
+  {
+    if (m_File) fclose(m_File);
+  }
+
+  bool open(const TCHAR*filename, ios_base::openmode mode)
+  {
+    TCHAR mAcc, mFmt = _T('b');
+    if (ios::in&mode) mAcc = _T('r');
+    if (ios::out&mode) mAcc = _T('w');
+    assert(0==(mode&~(ios::in|ios::binary|ios::out)));
+
+    TCHAR modestr[3] = {mAcc, mFmt, _T('\0')};
+    m_File = FOPEN(filename, modestr);
+    m_state = m_File ? ios_base::goodbit : ios_base::badbit|ios_base::failbit;
+
+    return good();
+  }
+
+  void close() 
+  {
+    if (!m_File || fclose(m_File))
+    {
+      m_state |= ios_base::failbit;
+    }
+    m_File = 0;
+  }
+
+  bool is_open() const {return !!m_File;}
+  bool eof() const {return !!(ios_base::eofbit & m_state);}
+  bool bad() const {return !!(ios_base::badbit & m_state);}
+  bool fail() const {return !!((ios_base::failbit|ios_base::badbit) & m_state);}
+  bool good() const {return ios_base::goodbit==m_state;}
+
+  streamsize gcount() const {return m_LastReadCount;}
+  streampos tellg() const {return ftell(m_File);}
+
+  simplebfstream& read(char*s,streamsize n) 
+  {
+    size_t cbio = fread(s, 1, n, m_File);
+    m_LastReadCount = cbio;
+    if (cbio != n)
+    {
+      m_state |= ferror(m_File) ? ios_base::badbit : (ios_base::eofbit|ios_base::failbit);
+    }
+    return *this;
+  }
+
+  simplebfstream& seekg(streamoff off, ios_base::seekdir dir)
+  {
+    int origin = ios_base::beg==dir ? SEEK_SET : ios_base::cur==dir ? SEEK_CUR : SEEK_END;
+    if (fseek(m_File, off, origin))
+    {
+      // BUGBUG: Does not follow standard 
+       m_state |= ios_base::badbit|ios_base::failbit;
+    }
+    return *this;
+  }
+
+  simplebfstream& seekp(streamoff off, ios_base::seekdir dir) {return seekg(off, dir);}
+  streampos tellp() const {return tellg();}
+
+  simplebfstream& write(const char* s, streamsize n)
+  {
+    size_t cbio = fwrite(s, 1, n, m_File);
+    if (cbio != n) m_state |= ios_base::badbit;
+    return *this;
+  }
+
+  bool operator ! () const {return fail();}
+};
+
+  typedef simplebfstream bistream;
+  typedef bistream bifstream;
+  typedef simplebfstream bostream;
+  typedef bostream bofstream;
+
 #endif // GlobalTypes_H

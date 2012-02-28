@@ -91,7 +91,7 @@ namespace POSIX {
 #endif
 
   uint32_t getFileSize(const TCHAR* sFileName) {
-    std::ifstream f;
+    bifstream f;
     f.open(sFileName, std::ios_base::binary | std::ios_base::in);
     if (!f.good() || f.eof() || !f.is_open()) {
       throw _T("File could not be read (getFileSize)");

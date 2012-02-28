@@ -103,13 +103,9 @@ int _tmain(int argc, TCHAR* argv[])
 
   // Validate filename
 
-  tifstream fs(filename.c_str());
-  
-  if (fs.is_open())
-  {
-    filefound = 1;
-    fs.close();
-  }
+  FILE*fIn = FOPEN(filename.c_str(), _T("rb"));
+  filefound = !!fIn;
+  fclose(fIn);
 
   // Work
   
@@ -143,29 +139,25 @@ int _tmain(int argc, TCHAR* argv[])
 
   // Write the version to an NSIS header file
 
-  tofstream header(argv[3], tofstream::out);
-  
-  if (header)
+  FILE*fHdr = FOPEN(argv[3], _T("wt"));
+  if (!fHdr) return 1;
+
+  // File content is always ASCII so we don't use TCHAR
+  if (!filefound)
   {
-
-    if (!filefound)
-    {
-      header << _T("!define LIBRARY_VERSION_FILENOTFOUND") << endl;
-    }
-    else if (!versionfound)
-    {
-      header << _T("!define LIBRARY_VERSION_NONE") << endl;
-    }
-    else
-    {
-      header << _T("!define LIBRARY_VERSION_HIGH ") << high << endl;
-      header << _T("!define LIBRARY_VERSION_LOW ") << low << endl;
-    }
-    
-    header.close();
-
+    fputs("!define LIBRARY_VERSION_FILENOTFOUND\n", fHdr);
+  }
+  else if (!versionfound)
+  {
+    fputs("!define LIBRARY_VERSION_NONE\n", fHdr);
+  }
+  else
+  {
+    fprintf(fHdr, "!define LIBRARY_VERSION_HIGH %u\n", high);
+    fprintf(fHdr, "!define LIBRARY_VERSION_LOW %u\n", low);
   }
 
+  fclose(fHdr);
   return 0;
 
 }
