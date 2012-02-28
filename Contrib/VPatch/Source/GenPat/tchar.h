@@ -10,6 +10,7 @@
 #  define _T(x)       __T(x)
 #  define _tmain      wmain
 #  define _tunlink    _wunlink
+#  define FOPEN _wfopen
 
    typedef std::wstring        tstring;
    typedef std::wistringstream tistringstream;
@@ -21,6 +22,7 @@
 #  define _T(x)       x
 #  define _tmain      main
 #  define _tunlink    _unlink
+#  define FOPEN fopen
 
    typedef std::string         tstring;
    typedef std::istringstream  tistringstream;

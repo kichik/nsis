@@ -34,7 +34,11 @@ typedef wchar_t _TUCHAR;
 // printfs
 #define _ftprintf   fwprintf
 #define _sntprintf  _snwprintf
-#define _stprintf   _swprintf
+#if defined(_MSC_VER) && (_MSC_VER<=1200)
+#	define _stprintf   swprintf
+#else
+#	define _stprintf   _swprintf
+#endif
 #define _tprintf    wprintf
 #define _vftprintf  vfwprintf
 #define _vsntprintf _vsnwprintf

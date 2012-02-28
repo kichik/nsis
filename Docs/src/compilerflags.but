@@ -95,8 +95,8 @@ This command sets the minimal OS version of the target Windows system required i
 
 In particular, if you indicate a minimal OS of 5.0 or more, MakeNSIS will generate a \R{intro-unicode}{Unicode installer} (as Windows 2000 and more recent are Unicode fully-compatible OSes).
 
-\c TargetMinimalOS 4.1    ; target Windows 9x or more recent
-\c TargetMinimalOS 4.2    ; target Windows NT4 or more recent
+
+\c TargetMinimalOS 4.0    ; target Windows 9x/NT4 or more recent (Default)
 \c TargetMinimalOS 5.0    ; target Windows 2000 or more recent  / make a Unicode installer
 \c TargetMinimalOS 5.1    ; target Windows XP or more recent    / make a Unicode installer
 \c TargetMinimalOS 6.0    ; target Windows Vista or more recent / make a Unicode installer
