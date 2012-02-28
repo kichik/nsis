@@ -277,6 +277,9 @@ int _tmain(int argc, TCHAR **argv)
   int in_files=0;
 
 #ifdef _UNICODE
+#if (defined(_MSC_VER) && (_MSC_VER<=1200))
+  const int _O_U8TEXT=0x40000; // BUGBUG: This is bogus
+#endif
   _setmode(_fileno(stdout), _O_U8TEXT); // set stdout to UTF-8
 #ifdef _WIN32
   g_initialCodepage = GetConsoleOutputCP();

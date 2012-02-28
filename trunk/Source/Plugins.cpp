@@ -57,9 +57,15 @@ void Plugins::FindCommands(const tstring &path, bool displayInfo)
   }
 }
 
-struct NSISException : public std::runtime_error
+// VC6 cannot handle NSISException(const tstring& msg) : std::runtime_error(string(TtoCString(msg))) {}
+struct NSISExceptionInner : public std::runtime_error
 {
-    NSISException(const tstring& msg) : std::runtime_error(string(TtoCString(msg))) {}
+  NSISExceptionInner(const char* msg) : std::runtime_error(string(msg)) {} // Unicode
+  NSISExceptionInner(const string&msg) : std::runtime_error(msg) {} // Ansi
+};
+struct NSISException : public NSISExceptionInner
+{
+  NSISException(const tstring& msg) : NSISExceptionInner(TtoCString(msg)) {}
 };
 
 namespace {

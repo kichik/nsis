@@ -101,7 +101,7 @@ public:
 
   ~TtoCString() { free(m_cStr); m_cStr = 0; }
 
-  operator const char*() { return m_cStr; }
+  operator const char*() const { return m_cStr; }
 
 private:
   char* m_cStr;

@@ -35,11 +35,17 @@
 
 #include "tchar.h"
 
-#ifdef __WIN32__
+#if defined(__WIN32__) || defined(_WIN32)
   #define OPT_CHAR _T('/')
 #else
   #define OPT_CHAR _T('-')
 #endif
+const TCHAR OPT_CHARSTR[] = {OPT_CHAR, _T('\0')} ;
+// Win32 now supports "/" AND "-" switches (like makensis) but the filename warning only makes sense for "-"
+#define OPT_FSCONFLICTCHARSTR _T("-")
+
+inline bool ISSINGLESWITCHCHAR(const TCHAR c) { return ( OPT_CHAR==(c) || (OPT_CHAR!=_T('-') && _T('-')==(c)) ); }
+#undef OPT_CHAR
 
 #include "GlobalTypes.h"
 #include "POSIXUtil.h"
@@ -71,7 +77,7 @@ int _tmain( int argc, TCHAR * argv[] ) {
     for(int i = 1; i < argc; i++) {
       tstring s(argv[i]);
       if(s.size() > 0) {
-        if(s[0] == OPT_CHAR) {
+        if(ISSINGLESWITCHCHAR(s[0])) {
           if(s.size() > 1) {
             if((s[1] == _T('v')) || (s[1] == _T('V'))) {
               beVerbose = true;
@@ -127,13 +133,13 @@ int _tmain( int argc, TCHAR * argv[] ) {
     tout << _T("  GENPAT (sourcefile) (targetfile) (patchfile)\n\n");
 
     tout << _T("Command line option (optional):\n");
-    tout << OPT_CHAR << _T("R        Replace a patch with same contents as source silently if it\n          already exists.\n");
-    tout << OPT_CHAR << _T("B=64     Set blocksize (default=64), multiple of 2 is required.\n");
-    tout << OPT_CHAR << _T("V        More verbose information during patch creation.\n");
-    tout << OPT_CHAR << _T("O        Deactivate match limit of the ") << OPT_CHAR << _T("A switch (sometimes smaller patches).\n");
-    tout << OPT_CHAR << _T("A=500    Maximum number of block matches per block (improves performance).\n");
-    tout << _T("          Default is 500, larger is slower. Use ") << OPT_CHAR << _T("V to see the cut-off aborts.\n\n");
-    tout << _T("Note: filenames should never start with ") << OPT_CHAR << _T(" character!\n\n");
+    tout << OPT_CHARSTR << _T("R        Replace a patch with same contents as source silently if it\n          already exists.\n");
+    tout << OPT_CHARSTR << _T("B=64     Set blocksize (default=64), multiple of 2 is required.\n");
+    tout << OPT_CHARSTR << _T("V        More verbose information during patch creation.\n");
+    tout << OPT_CHARSTR << _T("O        Deactivate match limit of the ") << OPT_CHARSTR << _T("A switch (sometimes smaller patches).\n");
+    tout << OPT_CHARSTR << _T("A=500    Maximum number of block matches per block (improves performance).\n");
+    tout << _T("          Default is 500, larger is slower. Use ") << OPT_CHARSTR << _T("V to see the cut-off aborts.\n\n");
+    tout << _T("Note: filenames should never start with ") << OPT_FSCONFLICTCHARSTR << _T(" character!\n\n");
     tout << _T("Possible exit codes:\n");
     tout << _T("  0  Success\n");
     tout << _T("  1  Arguments missing\n");
@@ -189,7 +195,7 @@ int _tmain( int argc, TCHAR * argv[] ) {
       previousPatchSize = POSIX::getFileSize(patchFileName.c_str());
     } catch(const TCHAR* s) {
       tout << _T("Patch file does not yet exist: ") << s << _T(", it will be created.\n");
-      std::ofstream newfile;
+      bofstream newfile;
       newfile.open(patchFileName.c_str(), std::ios_base::binary | std::ios_base::out);
       newfile.close();
     }
@@ -280,7 +286,7 @@ int _tmain( int argc, TCHAR * argv[] ) {
       tempF.close();
 
       // now empty the temporary file
-      std::ofstream clearF;
+      bofstream clearF;
       clearF.open(tempFileName.c_str(), std::ios_base::binary | std::ios_base::out);
     }
     catch(tstring s) {
