@@ -82,9 +82,12 @@ inline void PrintColorFmtMsg_ERR(const TCHAR *fmtstr, ...)
   va_end(val);
 }
 
+
+
 #ifndef _WIN32
 TCHAR *CharPrev(const TCHAR *s, const TCHAR *p);
-TCHAR *CharNext(const TCHAR *s);
+char *CharNextA(const char *s);
+WCHAR *CharNextW(const WCHAR *s);
 char *CharNextExA(WORD codepage, const char *s, int flags);
 int wsprintf(TCHAR *s, const TCHAR *format, ...);
 int WideCharToMultiByte(UINT CodePage, DWORD dwFlags, LPCWSTR lpWideCharStr,
@@ -93,13 +96,16 @@ int WideCharToMultiByte(UINT CodePage, DWORD dwFlags, LPCWSTR lpWideCharStr,
 int MultiByteToWideChar(UINT CodePage, DWORD dwFlags, LPCSTR lpMultiByteStr,
     int cbMultiByte, LPWSTR lpWideCharStr, int cchWideChar);
 BOOL IsValidCodePage(UINT CodePage);
+#ifdef _UNICODE
+#define CharNext CharNextW
+#else
+#define CharNext CharNextA
+#endif
 
 TCHAR *my_convert(const TCHAR *path);
 void my_convert_free(TCHAR *converted_path);
 int my_open(const TCHAR *pathname, int flags);
-FILE *my_fopen(const TCHAR *path, const TCHAR *mode);
 
-#define FOPEN(a, b) my_fopen(a, b)
 #define OPEN(a, b) my_open(a, b)
 
 #else
@@ -107,10 +113,12 @@ FILE *my_fopen(const TCHAR *path, const TCHAR *mode);
 #define my_convert(x) (x)
 #define my_convert_free(x)
 
-#define FOPEN(a, b) _tfopen(a, b)
 #define OPEN(a, b) _topen(a, b)
 
 #endif
+
+FILE* my_fopen(const TCHAR *path, const char *mode);
+#define FOPEN(a, b) my_fopen((a), (b))
 
 // round a value up to be a multiple of 512
 // assumption: T is an int type

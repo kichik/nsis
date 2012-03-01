@@ -103,7 +103,7 @@ int _tmain(int argc, TCHAR* argv[])
 
   // Validate filename
 
-  FILE*fIn = FOPEN(filename.c_str(), _T("rb"));
+  FILE*fIn = FOPEN(filename.c_str(), ("rb"));
   filefound = !!fIn;
   fclose(fIn);
 
@@ -139,7 +139,7 @@ int _tmain(int argc, TCHAR* argv[])
 
   // Write the version to an NSIS header file
 
-  FILE*fHdr = FOPEN(argv[3], _T("wt"));
+  FILE*fHdr = FOPEN(argv[3], ("wt"));
   if (!fHdr) return 1;
 
   // File content is always ASCII so we don't use TCHAR
