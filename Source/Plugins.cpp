@@ -72,7 +72,7 @@ namespace {
 // This function slurps the whole file into the vector.
 // Modified so the huge vector isn't returned by value.
 void read_file(const tstring& filename, vector<unsigned char>& data) {
-  FILE*file = FOPEN(filename.c_str(), _T("rb"));
+  FILE*file = FOPEN(filename.c_str(), ("rb"));
 
   if (!file) throw NSISException(_T("Can't open file '") + filename + _T("'"));
 

@@ -19,7 +19,7 @@ extern FILE *g_output;
 
 static FILE * open_icon(const TCHAR* filename, IconGroupHeader& igh)
 {
-  FILE* f = FOPEN(filename, _T("rb"));
+  FILE* f = FOPEN(filename, ("rb"));
   if (!f)
     throw runtime_error("can't open file");
 
