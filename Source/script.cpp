@@ -2565,7 +2565,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         int k=line.gettoken_enum(1, _T("all\0IDD_LICENSE\0IDD_DIR\0IDD_SELCOM\0IDD_INST\0IDD_INSTFILES\0IDD_UNINST\0IDD_VERIFY\0IDD_LICENSE_FSRB\0IDD_LICENSE_FSCB\0"));
         if (k<0) PRINTHELP();
 
-        FILE *fui = FOPEN(line.gettoken_str(2), _T("rb"));
+        FILE *fui = FOPEN(line.gettoken_str(2), ("rb"));
         if (!fui) {
           ERROR_MSG(_T("Error: Can't open \"%s\"!\n"), line.gettoken_str(2));
           return PS_ERROR;
@@ -3188,6 +3188,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_P_EXECUTE:
       {
         TCHAR *exec=line.gettoken_str(1);
+        SCRIPT_MSG(_T("!execute: \"%s\"\n"),exec);
 #ifdef _WIN32
         PROCESS_INFORMATION pi;
         STARTUPINFO si={sizeof(STARTUPINFO),};
@@ -3202,7 +3203,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         system(execfixed);
         my_convert_free(execfixed);
 #endif
-        SCRIPT_MSG(_T("!execute: \"%s\"\n"),exec);
       }
     case TOK_P_ADDINCLUDEDIR:
       {

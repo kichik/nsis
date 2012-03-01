@@ -2482,7 +2482,7 @@ int CEXEBuild::pack_exe_header()
 
   // write out exe header, pack, read back in, and
   // update the header info
-  FILE *tmpfile=FOPEN(build_packname,_T("wb"));
+  FILE *tmpfile=FOPEN(build_packname,("wb"));
   if (!tmpfile)
   {
     ERROR_MSG(_T("Error: writing temporary file \"%s\" for pack\n"),build_packname);
@@ -2593,7 +2593,7 @@ int CEXEBuild::write_output(void)
     INFO_MSG(_T("\nOutput: \"%s\"\n"), full_path.c_str());
   }
 
-  FILE *fp = FOPEN(build_output_filename,_T("w+b"));
+  FILE *fp = FOPEN(build_output_filename,("w+b"));
   if (!fp)
   {
     ERROR_MSG(_T("Can't open output file\n"));
@@ -3684,7 +3684,7 @@ int CEXEBuild::load_stub()
 }
 
 int CEXEBuild::update_exehead(const tstring& file, size_t *size/*=NULL*/) {
-  FILE *tmpfile = _tfopen(file.c_str(), _T("rb"));
+  FILE *tmpfile = FOPEN(file.c_str(), ("rb"));
   if (!tmpfile)
   {
     ERROR_MSG(_T("Error: opening stub \"%s\"\n"), file.c_str());

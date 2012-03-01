@@ -79,7 +79,7 @@ double my_wtof(const wchar_t *str)
 // Returns -3 if the size doesn't match
 // Returns -4 if the bpp doesn't match
 int update_bitmap(CResourceEditor* re, WORD id, const TCHAR* filename, int width/*=0*/, int height/*=0*/, int maxbpp/*=0*/) {
-  FILE *f = FOPEN(filename, _T("rb"));
+  FILE *f = FOPEN(filename, ("rb"));
   if (!f) return -1;
 
   if (fgetc(f) != 'B' || fgetc(f) != 'M') {
@@ -157,17 +157,22 @@ TCHAR *CharPrev(const TCHAR *s, const TCHAR *p) {
   return (TCHAR *) s;
 }
 
-TCHAR *CharNext(const TCHAR *s) {
+char *CharNextA(const char *s) {
   int l = 0;
   if (s && *s)
     l = max(1, mblen(s, MB_CUR_MAX));
-  return (TCHAR *) s + l;
+  return (char *) s + l;
+}
+
+WCHAR *CharNextW(const WCHAR *s) {
+  // BUGBUG: Is this the best we can do?
+  return s + 1;
 }
 
 char *CharNextExA(WORD codepage, const char *s, int flags) {
   char buf[1024];
   snprintf(buf, 1024, "CP%d", codepage);
-  setlocale(LC_CTYPE, buf);
+  const char* orglocct = setlocale(LC_CTYPE, buf);
 
   const char* np;
   int len = mblen(s, strlen(s));
@@ -176,7 +181,7 @@ char *CharNextExA(WORD codepage, const char *s, int flags) {
   else
     np = s + 1;
 
-  setlocale(LC_CTYPE, "");
+  setlocale(LC_CTYPE, orglocct);
 
   return (char *) np;
 }
@@ -300,42 +305,58 @@ BOOL IsValidCodePage(UINT CodePage)
   return TRUE;
 }
 
+#ifdef _UNICODE
+void PathConvertWinToPosix(char*p)
+{
+  if ('\"' == *p) ++p; // Skip opening quote if any (For !system)
+  size_t len = strlen(p);
+
+  /* Replace drive letter X: by /X */
+  if (len >= 2 && ':' == p[1])
+  {
+    p[1] = (char) tolower((int) p[0]);
+    p[0] = '/';
+  }
+
+  do
+  {
+    if ('\\' == *p) *p = '/';
+    p = CharNextA(p);
+  }
+  while (*p);
+}
+#endif
+void PathConvertWinToPosix(TCHAR*p)
+{
+  if (_T('\"') == *p) ++p; // Skip opening quote if any (For !system)
+  size_t len = _tcsclen(p);
+
+  /* Replace drive letter X: by /X */
+  if (len >= 2 && _T(':') == p[1])
+  {
+    p[1] = (TCHAR) tolower((int) p[0]);
+    p[0] = _T('/');
+  }
+
+  do
+  {
+    if (_T('\\') == *p) *p = _T('/');
+    p = CharNext(p);
+  }
+  while (*p);
+}
+
 #define MY_ERROR_MSG(x) {if (g_display_errors) {PrintColorFmtMsg_ERR(_T("%s"), x);}}
 
 TCHAR *my_convert(const TCHAR *path)
 {
-  // TODO: (orip) ref. this func. to use std::string?
   TCHAR *converted_path = _tcsdup(path);
-  size_t len = _tcsclen(path);
-
   if(!converted_path)
   {
     MY_ERROR_MSG(_T("Error: could not allocate memory in my_convert()\n"));
-    return (TCHAR*) path; /* dirty */
+    return 0;
   }
-
-  /* Replace drive letter X: by /X */
-  if(len >= 2)
-  {
-    if (path[1] == _T(':'))
-    {
-      converted_path[0] = _T('/');
-      converted_path[1] = (TCHAR) tolower((int) path[0]);
-    }
-  }
-
-  TCHAR *p = converted_path;
-
-  do
-  {
-    if (*p == _T('\\'))
-    {
-      *p = _T('/');
-    }
-    p = CharNext(p);
-  }
-  while (*p);
-
+  PathConvertWinToPosix(converted_path);
   return converted_path;
 }
 
@@ -352,16 +373,42 @@ int my_open(const TCHAR *pathname, int flags)
   my_convert_free(converted_pathname);
   return result;
 }
-
-FILE *my_fopen(const TCHAR *path, const TCHAR *mode)
-{
-  TCHAR *converted_path = my_convert(path);
-
-  FILE *result = _tfopen(converted_path, mode);
-  my_convert_free(converted_path);
-  return result;
-}
 #endif//!_WIN32
+
+FILE* my_fopen(const TCHAR *path, const char *mode)
+{
+  FILE*f = 0;
+#ifndef _UNICODE
+  f = fopen(path, mode);
+#else
+#ifdef _WIN32
+  TCHAR tmode[20];
+  for (int i=0; ; ++i) if (0 == (tmode[i] = mode[i])) break;
+  f = _wfopen(path, tmode);
+#else
+  const char* orglocct = setlocale(LC_CTYPE, "");
+  const wchar_t* srcW = path;
+  size_t cb = wcsrtombs(0,&srcW,0,0);
+  if (-1 != cb)
+  {
+    char* nativepath = (char*) malloc(++cb);
+    if (nativepath)
+    {
+      cb = wcsrtombs(nativepath,&path,cb,0);
+      if (-1 != cb)
+      {
+        PathConvertWinToPosix(nativepath);
+        f = fopen(nativepath, mode);
+      }
+      free(nativepath);
+    }
+  }
+  setlocale(LC_CTYPE, orglocct);
+#endif
+#endif
+  return f;
+}
+
 
 void *operator new(size_t size) throw(bad_alloc) {
   void *p = malloc(size);
@@ -579,7 +626,7 @@ static bool GetDLLVersionUsingRE(const tstring& filepath, DWORD& high, DWORD & l
 {
   bool found = false;
 
-  FILE *fdll = FOPEN(filepath.c_str(), _T("rb"));
+  FILE *fdll = FOPEN(filepath.c_str(), ("rb"));
   if (!fdll)
     return 0;
 
