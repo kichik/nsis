@@ -26,25 +26,25 @@ example = Split("""
 
 Import('env plugin_env plugin_uenv')
 
+unicodetarget = 'UNICODE' in env['CPPDEFINES']
+lib_targetT = lib_target
+
 # build library
-# in Unicode compilation, we should really build both variants but I can't get it to work [Wizou]
-if env['UNICODE']:
+if unicodetarget:
+	lib_targetT = lib_targetT + 'W'
 	api_uenv = plugin_uenv.Clone()
 	api_uenv.Append(CPPPATH = ['#Source/exehead'])
-	libW = api_uenv.Library(lib_target+'W', lib_files)
+	libW = api_uenv.Library(lib_targetT, lib_files)
 	lib = libW
 else:
 	api_env = plugin_env.Clone()
 	api_env.Append(CPPPATH = ['#Source/exehead'])
-	lib = api_env.Library(lib_target, lib_files)
+	libA = api_env.Library(lib_targetT, lib_files)
+	lib = libA
 
 # distribute library, files and examples
 
-env.DistributeExamples(api_files, path='Plugin/nsis')
-
 if env['PLATFORM'] == 'win32':
-	if env['UNICODE']:
-		env.DistributeExamples(libW, lib_target+".lib", path='Plugin/nsis')
 	env.DistributeExamples(lib, path='Plugin/nsis')
 
 else:
@@ -56,16 +56,20 @@ else:
 	if env.has_key('PREFIX_PLUGINAPI_LIB'):
 		env.Distribute(lib, None, 'pluginapi_lib', '', 'nsis', 'pluginapi', 'pluginapi')
 
-env.DistributeExamples(example, path='Plugin')
+if not unicodetarget:
+	env.DistributeExamples(api_files, path='Plugin/nsis')
+	env.DistributeExamples(example, path='Plugin')
 
 # make sure all the other plug-ins can use the library
 
-env.Install('#$BUILD_PREFIX/api/nsis', api_files + lib)
+if unicodetarget:
+	envT = plugin_uenv
+	env.Install('#$BUILD_PREFIX/api/nsis', libW)
+else:
+	envT = plugin_env
+	env.Install('#$BUILD_PREFIX/api/nsis', api_files + libA)
 
-plugin_env.Append(CPPPATH = ['#$BUILD_PREFIX/api'])
-plugin_env.Append(LIBPATH = ['#$BUILD_PREFIX/api/nsis'])
-plugin_env.Append(LIBS = [lib_target])
-plugin_uenv.Append(CPPPATH = ['#$BUILD_PREFIX/api'])
-plugin_uenv.Append(LIBPATH = ['#$BUILD_PREFIX/api/nsis'])
-if env['UNICODE']: # MinGW ANSI build tries to link with pluginapi and pluginapiW, this is a hack to stop that [Anders]
-	plugin_uenv.Append(LIBS = [lib_target+'W'])
+envT.Append(CPPPATH = ['#$BUILD_PREFIX/api'])
+envT.Append(LIBPATH = ['#$BUILD_PREFIX/api/nsis'])
+envT.Append(LIBS = [lib_targetT])
+

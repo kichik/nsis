@@ -610,23 +610,13 @@ def DistributeExtras(env, target, examples, docs):
 #######  Plug-ins                                                  ###
 ######################################################################
 
-def BuildPluginBoth(target, source, libs, examples = None, docs = None,
-                entry = 'DllMain', res = None, resources = None,
-                defines = None, flags = None, nodeflib = True,
-                cppused = False):
-	# this function should build the ANSI & Unicode variant of the DLL, but I can't get it to work... help!!! [Wizou]
-	if defenv['UNICODE']:
-		#VariantDir('$BUILD_PREFIX/' + plugin + 'W', path)
-		BuildPlugin(target, source, libs, examples, docs, entry, res, resources, defines, flags, nodeflib, cppused, True)
-	else:
-		BuildPlugin(target, source, libs, examples, docs, entry, res, resources, defines, flags, nodeflib, cppused, False)
-	
-def BuildPlugin(target, source, libs, examples = None, docs = None,
+def BuildPluginWorker(target, source, libs, examples = None, docs = None,
                 entry = 'DllMain', res = None, resources = None,
                 defines = None, flags = None, nodeflib = True,
                 cppused = False, unicode = False):
 	if unicode:
 		env = plugin_uenv.Clone()
+		target = target + 'W'
 	else:
 		env = plugin_env.Clone()
 
@@ -650,23 +640,35 @@ def BuildPlugin(target, source, libs, examples = None, docs = None,
 			plugin = i
 			break
 	env.DistributePlugin(plugin)
-	if unicode:
-		env.DistributePlugin(plugin, str(plugin)[:-4]+"W.dll")		# tweak to generate both plugin.dll & pluginW.dll (until we get to build really both variant)
+	
+	if not unicode:	# distribute extras only for ANSI builds
+		DistributeExtras(env, target, examples, docs)
 
-	#if not unicode:	# distribute extras only for ANSI builds
-	DistributeExtras(env, target, examples, docs)
+def BuildPlugin(target, source, libs, examples = None, docs = None,
+                entry = 'DllMain', res = None, resources = None,
+                defines = None, flags = None, nodeflib = True,
+                cppused = False):
+	unicodetarget = 'UNICODE' in exports['env']['CPPDEFINES']
+	BuildPluginWorker(target, source, libs, examples, docs, entry, res, resources, defines, flags, nodeflib, cppused, unicodetarget)
+
+
+
 
 for plugin in plugin_libs + plugins:
 	if plugin in defenv['SKIPPLUGINS']:
 		continue
-
-	path = 'Contrib/' + plugin
+	
+	srcpath = 'Contrib/' + plugin
 	build_dir = '$BUILD_PREFIX/' + plugin
+	pvariants = [{'suff':'', 'e':plugin_env.Clone()}]
 	if defenv['UNICODE']:
-		exports = {'BuildPlugin' : BuildPluginBoth, 'env' : plugin_uenv.Clone()}
-	else:
-		exports = {'BuildPlugin' : BuildPlugin, 'env' : plugin_env.Clone()}
-	defenv.SConscript(dirs = path, variant_dir = build_dir, duplicate = False, exports = exports)
+		pvariants += [{'suff':'W', 'e':plugin_uenv.Clone()}]
+	for pvariant in pvariants:
+		exports = {'BuildPlugin' : BuildPlugin, 'env' : pvariant['e']}
+		vdir = build_dir + pvariant['suff']
+		defenv.SConscript(dirs = srcpath, variant_dir = vdir, duplicate = False, exports = exports)
+
+
 
 ######################################################################
 #######  Utilities                                                 ###
