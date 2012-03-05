@@ -38,5 +38,8 @@ includes = Split("""
 
 Import('BuildPlugin env')
 
+unicodetarget = 'UNICODE' in env['CPPDEFINES']
+
 BuildPlugin(target, files, libs, examples, docs, res = resources)
-env.DistributeInclude(includes)
+if not unicodetarget:
+	env.DistributeInclude(includes)
