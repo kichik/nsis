@@ -1,6 +1,6 @@
-\##############################################/
-\# Common config shared by all output formats #/
-\##############################################/
+\#{**********************************************}
+\#{* Common config shared by all output formats *}
+\#{**********************************************}
 
 \copyright Copyright (C) 1999-2012 Contributors
 
@@ -12,7 +12,7 @@
 
 \define{NsisACPcp} system default ANSI codepage (ACP)
 
-\define{NsisWarnBlockContainerBegin} \\<div class=\"wb\"\\>
+\define{NsisWarnBlockContainerBegin} \\<div class=\\"wb\\"\\>
 
 \define{NsisWarnBlockContainerEnd} \\</div\\>
 
