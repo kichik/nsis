@@ -415,6 +415,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
     BOOL param_defined = FALSE;
     SystemProc *proc = NULL;
     TCHAR *ibuf, *ib, *sbuf, *cbuf, *cb;
+    unsigned int UsedTString = 0;
 
     // Retrieve proc specs
     cb = (cbuf = AllocString()); // Current String buffer
@@ -612,7 +613,10 @@ SystemProc *PrepareProc(BOOL NeedForCall)
             case _T('m'):
             case _T('M'): temp2 = PAT_STRING; break;
             case _T('t'):
-            case _T('T'): temp2 = PAT_TSTRING; break;
+            case _T('T'):
+                temp2 = PAT_TSTRING;
+                ++UsedTString;
+                break;
             case _T('g'):
             case _T('G'): temp2 = PAT_GUID; break;
             case _T('w'):
@@ -815,36 +819,20 @@ SystemProc *PrepareProc(BOOL NeedForCall)
 
                 // Get proc address
                 proc->Proc = NSISGetProcAddress(proc->Dll, proc->ProcName);
-#ifdef _UNICODE
-                if ((proc->Proc != NULL) &&
-                    (proc->ProcName[0] == _T('l') &&
-                     proc->ProcName[1] == _T('s') &&
-                     proc->ProcName[2] == _T('t') &&
-                     proc->ProcName[3] == _T('r')) &&
-                	(lstrcmpi(_T("kernel32"), proc->DllName) == 0 || lstrcmpi(_T("kernel32.dll"), proc->DllName) == 0))
+                if (UsedTString)
                 {
-                    int lastCharIdx = lstrlen(proc->ProcName) - 1;
-
-                    if (lastCharIdx > 1 &&
-                        proc->ProcName[lastCharIdx] != _T('A') && 
-                        proc->ProcName[lastCharIdx] != _T('W'))
-                    {
-                        proc->Proc = NULL; // force using W variant
-                    }
-                }
-#endif
-                if (proc->Proc == NULL)
-                {
+                    FARPROC tproc;
+                    TCHAR*ProcName = proc->ProcName; // This buffer has room for us to party on
+                    unsigned int cch = lstrlen(ProcName);
 #ifdef _UNICODE
-                    // automatic W discover
-                    lstrcat(proc->ProcName, _T("W"));
+                    STRSET2CH(ProcName+cch, _T('W'), _T('\0'));
 #else
-                    // automatic A discover
-                    lstrcat(proc->ProcName, "A");
+                    STRSET2CH(ProcName+cch, _T('A'), _T('\0'));
 #endif
-                    if ((proc->Proc = NSISGetProcAddress(proc->Dll, proc->ProcName)) == NULL)
-                        proc->ProcResult = PR_ERROR;                            
-                }                    
+                    tproc = NSISGetProcAddress(proc->Dll, ProcName);
+                    if (tproc) proc->Proc = tproc;
+                }
+                if (!proc->Proc) proc->ProcResult = PR_ERROR;
             }
             break;
         case PT_STRUCT:
@@ -872,7 +860,9 @@ void ParamsIn(SystemProc *proc)
     int i;
     HGLOBAL* place;
     TCHAR *realbuf;
+#ifndef _UNICODE
     LPWSTR wstr;
+#endif
 
     i = (proc->ParamCount > 0)?(1):(0);
     while (TRUE)
