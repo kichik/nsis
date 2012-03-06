@@ -17,8 +17,7 @@
 #endif /* __GNUC__ */
 #include <objbase.h>
 
-// Type conversion macro
-#define INT_TO_POINTER(i) ((void *) (int) (i))
+
 
 // Parse Section Type 
 #define PST_PROC    0
@@ -205,7 +204,7 @@ void * NSISGetProcAddress(HMODULE dllHandle, TCHAR* funcName)
 
 PLUGINFUNCTIONSHORT(Free)
 {
-    HANDLE memtofree = (HANDLE)popint64();
+    HANDLE memtofree = (HANDLE)popintptr();
 
     if (CallbackThunkListHead)
     {
@@ -251,7 +250,7 @@ PLUGINFUNCTION(Get)
     if ((proc->Options & POPT_ALWRETURN) != 0)
     {
         // Always return flag set -> return separate proc and result
-        system_pushint((int) proc);
+        system_pushintptr((INT_PTR) proc);
         GlobalFree(system_pushstring(GetResultStr(proc)));
     } else
     {
@@ -264,7 +263,7 @@ PLUGINFUNCTION(Get)
                 GlobalFree((HANDLE) proc); // No, free it
         }
         else // Ok result, return proc
-            system_pushint((int) proc);
+            system_pushintptr((INT_PTR) proc);
     }
 } PLUGINFUNCTIONEND
 
@@ -317,7 +316,7 @@ PLUGINFUNCTION(Call)
             pp = proc->Params[0];
 
             // Return result instead of return value
-            proc->Params[0].Value = (int) GetResultStr(proc);
+            proc->Params[0].Value = BUGBUG64(int) GetResultStr(proc);
             proc->Params[0].Type = PAT_TSTRING;
             // Return all params
             ParamsOut(proc);
@@ -486,7 +485,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
 
                         if (proc != NULL) GlobalFree(proc);
                         // Get already defined proc                                      
-                        proc = (SystemProc *) INT_TO_POINTER(myatoi64(cbuf));
+                        proc = (SystemProc *) StrToIntPtr(cbuf);
                         if (!proc) break;
 
                         // Find the last clone at proc queue
@@ -640,8 +639,8 @@ SystemProc *PrepareProc(BOOL NeedForCall)
                 if (temp3 == 0)
                 {
                     ib--;
-                    // It's stupid, I know, but I'm too laze to do another thing
-                    myitoa64(GetIntFromString(&(ib)),(TCHAR *)(temp4 = (int) AllocString()));
+                    // It's stupid, I know, but I'm too lazy to do another thing
+                    myitoa64(GetIntFromString(&(ib)),(TCHAR *)(temp4 = BUGBUG64(int) AllocString()));
                 }
                 break;
 
@@ -658,7 +657,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
                     }
                     // finish and save
                     *cb = 0; 
-                    temp4 = (int) AllocStr(cbuf);
+                    temp4 = BUGBUG64(int) AllocStr(cbuf);
                 }
                 break;
 
@@ -776,7 +775,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
                 // Use direct system proc address
                 int addr;
 
-                proc->Dll = (HMODULE) INT_TO_POINTER(myatoi64(proc->DllName));
+                proc->Dll = (HMODULE) StrToIntPtr(proc->DllName);
   
                 if (proc->Dll == 0)
                 {
@@ -788,16 +787,16 @@ SystemProc *PrepareProc(BOOL NeedForCall)
 
                 // fake-real parameter: for COM interfaces first param is Interface Pointer
                 proc->Params[1].Output = IOT_NONE;
-                proc->Params[1].Input = (int) AllocStr(proc->DllName);
+                proc->Params[1].Input = BUGBUG64(int) AllocStr(proc->DllName);
                 proc->Params[1].Size = 1;
                 proc->Params[1].Type = PAT_INT;
                 proc->Params[1].Option = 0;
 
                 // addr - pointer to interface vtable
-                addr = *((int *)addr);
+                addr = *(BUGBUG64(int *)addr);
                 // now addr contains the pointer to first item at VTABLE
                 // add the index of proc
-                addr = addr + (int)(myatoi64(proc->ProcName)*4);
+                addr = addr + (int)(myatoi64(proc->ProcName)*4); //BUGBUG: sizeof(void*) on x64?
                 proc->Proc = *((HANDLE*)addr);
             }
             break;
@@ -805,7 +804,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
             if (*proc->DllName == 0)
             {
                 // Use direct system proc address
-                if ((proc->Proc = (HANDLE) INT_TO_POINTER(myatoi64(proc->ProcName))) == 0)
+                if ((proc->Proc = (HANDLE) StrToIntPtr(proc->ProcName)) == 0)
                     proc->ProcResult = PR_ERROR;
             } else
             {
@@ -836,7 +835,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
             }
             break;
         case PT_STRUCT:
-            if (*(proc->ProcName) != 0) proc->Proc = (HANDLE) INT_TO_POINTER(myatoi64(proc->ProcName));
+            if (*(proc->ProcName) != 0) proc->Proc = (HANDLE) StrToIntPtr(proc->ProcName);
             break;
         }
     }
@@ -851,7 +850,7 @@ void ParamAllocate(SystemProc *proc)
     for (i = 0; i <= proc->ParamCount; i++)
         if (((HANDLE) proc->Params[i].Value == NULL) && (proc->Params[i].Option == -1))
         {
-            proc->Params[i].Value = (int) GlobalAlloc(GPTR, 4*ParamSizeByType[proc->Params[i].Type]);
+            proc->Params[i].Value = BUGBUG64(int) GlobalAlloc(GPTR, 4*ParamSizeByType[proc->Params[i].Type]);
         }
 }
 
@@ -895,7 +894,7 @@ void ParamsIn(SystemProc *proc)
             par->Value = 0;
             break;
         case PAT_INT:
-            *(int*)place = (int) myatoi64(realbuf);
+            *(int*)place = myatoi(realbuf);
             break;
         case PAT_LONG:
             *(__int64*)place = myatoi64(realbuf);
@@ -932,14 +931,14 @@ void ParamsIn(SystemProc *proc)
         case PAT_CALLBACK:
             // Generate new or use old callback
             if (lstrlen(realbuf) > 0)
-                par->Value = (int) CreateCallback((SystemProc*) INT_TO_POINTER(myatoi64(realbuf)));
+                par->Value = BUGBUG64(int) CreateCallback((SystemProc*) StrToIntPtr(realbuf));
             break;
         }
         GlobalFree(realbuf);
 
 #ifdef SYSTEM_LOG_DEBUG
         {
-            TCHAR buf[1024];
+            TCHAR buf[666];
             wsprintf(buf, _T("\t\t\tParam In %d:    type %d value 0x%08X value2 0x%08X"), i, 
                 par->Type, par->Value, par->_value);
             SYSTEM_LOG_ADD(buf);
@@ -975,8 +974,8 @@ void ParamsOut(SystemProc *proc)
     do
     {
         // Retreive pointer to place
-        if (proc->Params[i].Option == -1) place = (int*) proc->Params[i].Value;
-        else place = (int*) &(proc->Params[i].Value);
+        if (proc->Params[i].Option == -1) place = BUGBUG64(int*) proc->Params[i].Value;
+        else place = BUGBUG64(int*) &(proc->Params[i].Value);
 
         realbuf = AllocString();
 
@@ -1114,7 +1113,7 @@ void CallStruct(SystemProc *proc)
         }
 
         if (proc->Params[i].Option < 1)
-            structsize += proc->Params[i].Size * 4;
+            structsize += proc->Params[i].Size * 4; //BUGBUG: Does this have to be sizeof(void*)?
         else
             structsize += ByteSizeByType[proc->Params[i].Type] * (proc->Params[i].Option - 1);
     }
@@ -1145,7 +1144,7 @@ void CallStruct(SystemProc *proc)
         if (proc->Params[i].Option < 1)
         {
             // Normal
-            size = proc->Params[i].Size*4;
+            size = proc->Params[i].Size*4; //BUGBUG: sizeof(void*) on x64?
             ptr = (char*) &(proc->Params[i].Value);
         }
         else
