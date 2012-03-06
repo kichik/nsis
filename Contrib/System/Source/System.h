@@ -146,4 +146,10 @@ extern SystemProc *CallBack(SystemProc *proc);
 extern SystemProc *RealCallBack();
 extern void CallStruct(SystemProc *proc);
 
+#ifdef _UNICODE
+#   define STRSET2CH(str, c1, c2) ( *(DWORD*)(str) = ((c1)|(c2)<<16) )
+#else
+#   define STRSET2CH(str, c1, c2) ( *(WORD*)(str) = ((c1)|(c2)<<8) )
+#endif
+
 #endif
