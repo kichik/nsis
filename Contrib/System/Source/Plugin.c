@@ -134,21 +134,21 @@ void myitoa64(__int64 i, TCHAR *buffer)
     *buffer = 0;
 }
 
-int popint64()
+int system_popint()
 {
     int value;
-	TCHAR *str;
-	if ((str = system_popstring()) == NULL) return -1;
-	value = (int) myatoi64(str);
+    TCHAR *str;
+    if ((str = system_popstring()) == NULL) return -1;
+    value = myatoi(str);
     GlobalFree(str);
-	return value;
+    return value;
 }
 
 void system_pushint(int value)
 {
-	TCHAR buffer[1024];
-	wsprintf(buffer, _T("%d"), value);
-	system_pushstring(buffer);
+    TCHAR buffer[80];
+    wsprintf(buffer, _T("%d"), value);
+    system_pushstring(buffer);
 }
 
 void *copymem(void *output, void *input, size_t cbSize)
@@ -164,7 +164,7 @@ void *copymem(void *output, void *input, size_t cbSize)
 
 HANDLE GlobalCopy(HANDLE Old)
 {
-	size_t size = GlobalSize(Old);
+    size_t size = GlobalSize(Old);
     return copymem(GlobalAlloc(GPTR, size), Old, size);
 }
 

@@ -13,27 +13,26 @@ struct tagTempStack
 };
 TempStack *tempstack = NULL;
 
-PLUGINFUNCTIONSHORT(Alloc)
+static void AllocWorker(unsigned int mult)
 {
     int size;
-    if ((size = popint64()) == 0)
+    if ((size = popint()) == 0)
     {
         system_pushint(0);
         return;
     }
-    system_pushint((int) GlobalAlloc(GPTR, size));
+    system_pushintptr((INT_PTR) GlobalAlloc(GPTR, size * mult));
+}
+
+PLUGINFUNCTIONSHORT(Alloc)
+{
+    AllocWorker(sizeof(unsigned char));
 }
 PLUGINFUNCTIONEND
 
 PLUGINFUNCTIONSHORT(StrAlloc)
 {
-    int size;
-    if ((size = popint64()) == 0)
-    {
-        system_pushint(0);
-        return;
-    }
-    system_pushint((int) GlobalAlloc(GPTR, size * sizeof(TCHAR)));
+    AllocWorker(sizeof(TCHAR));
 }
 PLUGINFUNCTIONEND
 
@@ -48,19 +47,19 @@ PLUGINFUNCTIONSHORT(Copy)
     // Check for size option
     if (str[0] == _T('/'))
     {
-        size = (int) myatoi64(str+1);
-        dest = (HANDLE) popint64();
+        size = (SIZE_T) myatoi(str+1);
+        dest = (HANDLE) popintptr();
     }
-    else dest = (HANDLE) myatoi64(str);
-    source = (HANDLE) popint64();
+    else dest = (HANDLE) myatoi(str);
+    source = (HANDLE) popintptr();
 
     // Ok, check the size
-    if (size == 0) size = (int) GlobalSize(source);
+    if (size == 0) size = (SIZE_T) GlobalSize(source);
     // and the destinantion
     if ((int) dest == 0) 
     {
         dest = GlobalAlloc((GPTR), size);
-        system_pushint((int) dest);
+        system_pushintptr((INT_PTR) dest);
     }
 
     // COPY!
