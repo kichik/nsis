@@ -105,7 +105,7 @@ private:
 #ifdef _WIN64
      MyFrame *frame = new MyFrame(_("NSIS Menu (64-bit)"),
 #else
-     MyFrame *frame = new MyFrame(_("NSIS Menu")
+     MyFrame *frame = new MyFrame(_("NSIS Menu"),
 #endif
          wxPoint(50, 50), wxSize(600 + wxSystemSettings::GetMetric(wxSYS_FRAMESIZE_X), 365 + wxSystemSettings::GetMetric(wxSYS_FRAMESIZE_X)));
    
