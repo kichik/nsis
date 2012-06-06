@@ -2,7 +2,7 @@
 ;Translator: Kii Ali <kiiali@cpatch.org>,<kiiali@ms1.url.com.tw>, <kiiali@pchome.com.tw>
 ;Revision date: 2010-09-28
 
-!insertmacro LANGFILE "TradChinese" "Chinese (Traditional)"
+!insertmacro LANGFILE "TradChinese" "Chinese (Traditional)" "Chinese (Traditional)"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "歡迎使用 $(^NameDA) 安裝精靈"
