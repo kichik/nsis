@@ -64,7 +64,7 @@ int g_zipfile_size;
 
 const TCHAR *g_options=_T("");//_T("/V3");
 
-static BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+static INT_PTR CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
                    LPTSTR lpszCmdParam, int nCmdShow)
@@ -623,7 +623,7 @@ void SetZip(HWND hwndDlg, TCHAR *path)
   }
 }
 
-BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   static int ids[]={IDC_INFO,IDC_NSISICON,IDC_SZIPFRAME,IDC_BROWSE,IDC_ZIPFILE,IDC_ZIPINFO_SUMMARY,IDC_ZIPINFO_FILES,IDC_OFRAME,IDC_INAMEST,
                         IDC_INSTNAME,IDC_INSTPATH,IDC_OEFST,IDC_OUTFILE,IDC_BROWSE2,IDC_COMPRESSOR,IDC_ZLIB,IDC_BZIP2,IDC_LZMA,IDC_SOLID,IDC_INTERFACE,IDC_MODERNUI,IDC_CLASSICUI};
@@ -655,7 +655,7 @@ BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       SetDlgItemText(hwndDlg,IDC_INSTPATH,gp_poi);
 
       hIcon=LoadIcon(g_hInstance,MAKEINTRESOURCE(IDI_ICON1));
-      SetClassLong(hwndDlg,GCL_HICON,(long)hIcon);
+      SetClassLongPtr(hwndDlg,GCLP_HICON,(LONG_PTR)hIcon);
 
       hFont=CreateFont(15,0,0,0,FW_NORMAL,0,0,0,DEFAULT_CHARSET,
               OUT_CHARACTER_PRECIS,

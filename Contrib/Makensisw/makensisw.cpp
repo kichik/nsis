@@ -172,13 +172,13 @@ void ProcessCommandLine()
     GlobalFree(argv);
 }
 
-BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
+INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
   switch (msg) {
     case WM_INITDIALOG:
     {
       g_sdata.hwnd=hwndDlg;
       HICON hIcon = LoadIcon(g_sdata.hInstance,MAKEINTRESOURCE(IDI_ICON));
-      SetClassLong(hwndDlg,GCL_HICON,(long)hIcon);
+      SetClassLongPtr(hwndDlg,GCLP_HICON,(LONG_PTR)hIcon);
       // Altered by Darren Owen (DrO) on 29/9/2003
       // Added in receiving of mouse and key events from the richedit control
       SendMessage(GetDlgItem(hwndDlg,IDC_LOGWIN),EM_SETEVENTMASK,(WPARAM)NULL,ENM_SELCHANGE|ENM_MOUSEEVENTS|ENM_KEYEVENTS);

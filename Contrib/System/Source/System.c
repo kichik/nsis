@@ -54,7 +54,9 @@ int LastStackReal;
 DWORD LastError;
 volatile SystemProc *LastProc;
 int CallbackIndex;
+#ifndef SYSTEM_X64
 CallbackThunk* CallbackThunkListHead;
+#endif
 HINSTANCE g_hInstance;
 
 // Return to callback caller with stack restore
@@ -206,6 +208,7 @@ PLUGINFUNCTIONSHORT(Free)
 {
     HANDLE memtofree = (HANDLE)popintptr();
 
+#ifndef SYSTEM_X64
     if (CallbackThunkListHead)
     {
         CallbackThunk *pCb=CallbackThunkListHead,*pPrev=NULL;
@@ -227,6 +230,7 @@ PLUGINFUNCTIONSHORT(Free)
         }
         while( pCb != NULL );
     }
+#endif
 
     GlobalFree(memtofree);
 }
@@ -284,6 +288,7 @@ PLUGINFUNCTION(Call)
         ParamAllocate(proc);
     ParamsIn(proc);
 
+#ifndef SYSTEM_X64
     // Make the call
     if (proc->ProcResult != PR_ERROR)
     {
@@ -345,6 +350,10 @@ PLUGINFUNCTION(Call)
     // If proc is permanent?
     if ((proc->Options & POPT_PERMANENT) == 0)
         GlobalFree((HANDLE) proc); // No, free it
+#else
+    ParamsOut(proc);
+    system_pushintptr(0);
+#endif
 } PLUGINFUNCTIONEND
 
 PLUGINFUNCTIONSHORT(Int64Op)
@@ -600,10 +609,10 @@ SystemProc *PrepareProc(BOOL NeedForCall)
             case _T('v'):
             case _T('V'): temp2 = PAT_VOID; break;
 
-            #if !defined(SYSTEM_X86)
-                #error "TODO: handle p"
-            #else
-                case _T('p'):
+            #if defined(SYSTEM_X64)
+            case _T('p'): temp2 = PAT_LONG; break;
+            #elif defined(SYSTEM_X86)
+            case _T('p'): temp2 = PAT_INT; break;
             #endif
             case _T('i'):
             case _T('I'): temp2 = PAT_INT; break;
@@ -1064,6 +1073,7 @@ void ParamsOut(SystemProc *proc)
 
 HANDLE CreateCallback(SystemProc *cbproc)
 {
+#ifndef SYSTEM_X64
     char *mem;
 
     if (cbproc->Proc == NULL)
@@ -1092,6 +1102,10 @@ HANDLE CreateCallback(SystemProc *cbproc)
 
     // Return proc address
     return cbproc->Proc;
+#else
+    // Not yet implemented
+    return NULL;
+#endif
 }
 
 void CallStruct(SystemProc *proc)
@@ -1225,7 +1239,9 @@ BOOL WINAPI DllMain(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
             LastError = 0;
             LastProc = NULL;
             CallbackIndex = 0;
+#ifndef SYSTEM_X64
             CallbackThunkListHead = NULL;
+#endif
             retexpr[0] = (char) 0xC2;
             retexpr[2] = 0x00;
         }

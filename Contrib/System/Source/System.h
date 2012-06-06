@@ -105,6 +105,7 @@ struct tag_SystemProc
     SystemProc *Clone;
 };
 
+#ifndef SYSTEM_X64
 typedef struct tag_CallbackThunk CallbackThunk;
 struct tag_CallbackThunk
 {
@@ -124,12 +125,15 @@ struct tag_CallbackThunk
 
     CallbackThunk* pNext;
 };
+#endif
 
 // Free() only knows about pNext in CallbackThunk, it does not know anything about the assembly, that is where this helper comes in...
+#ifndef SYSTEM_X64
 #ifdef SYSTEM_X86
 #   define GetAssociatedSysProcFromCallbackThunkPtr(pCbT) ( (SystemProc*)  *(unsigned int*) (((char*)(pCbT))+1) )
 #else
 #   error "GetAssociatedSysProcFromCallbackThunkPtr not defined for the current architecture!"
+#endif
 #endif
 
 
@@ -141,8 +145,10 @@ extern void ParamAllocate(SystemProc *proc);
 extern void ParamsDeAllocate(SystemProc *proc);
 extern void ParamsIn(SystemProc *proc);
 extern void ParamsOut(SystemProc *proc);
+#ifndef SYSTEM_X64
 extern SystemProc *CallProc(SystemProc *proc);
 extern SystemProc *CallBack(SystemProc *proc);
+#endif
 extern SystemProc *RealCallBack();
 extern void CallStruct(SystemProc *proc);
 

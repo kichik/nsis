@@ -192,7 +192,9 @@ def check_requirement(ctx, func, trigger):
 
 	return result
 
-def add_file_to_emitter(env, emitter_name, file):
+def add_file_to_emitter(env, emitter_name, file, obj_name=None):
+	if obj_name is None:
+		obj_name = emitter_name
 	try:
 		original_emitter = env[emitter_name]
 		if type(original_emitter) == list:
@@ -207,17 +209,17 @@ def add_file_to_emitter(env, emitter_name, file):
 		if '$NODEFLIBS_FLAG' not in env['LINKFLAGS']:
 			return target, source
 
-		return target, source + env.Object(emitter_name, file)
+		return target, source + env.Object(obj_name, file)
 
 	env[emitter_name] = emitter
 
-def add_file(file):
+def add_file(file, obj_name=None):
 	file = File(file)
-	add_file_to_emitter(stub_env, 'PROGEMITTER', file)
-	add_file_to_emitter(stub_uenv, 'PROGEMITTER', file)
-	add_file_to_emitter(util_env, 'PROGEMITTER', file)
-	add_file_to_emitter(plugin_env, 'SHLIBEMITTER', file)
-	add_file_to_emitter(plugin_uenv, 'SHLIBEMITTER', file)
+	add_file_to_emitter(stub_env, 'PROGEMITTER', file, obj_name)
+	add_file_to_emitter(stub_uenv, 'PROGEMITTER', file, obj_name)
+	add_file_to_emitter(util_env, 'PROGEMITTER', file, obj_name)
+	add_file_to_emitter(plugin_env, 'SHLIBEMITTER', file, obj_name)
+	add_file_to_emitter(plugin_uenv, 'SHLIBEMITTER', file, obj_name)
 
 #
 # MSVC 6 SP6 doesn't like direct shifting of 64-bit integers.
@@ -257,8 +259,21 @@ conf.Finish()
 
 conf = defenv.Configure(custom_tests = { 'CheckRequirement' : check_requirement })
 
-if conf.CheckRequirement('memset', 'char c[128] = "test";'):
-	add_file('memset.c')
+if conf.CheckRequirement('memset', 'char c[128] = "test"; printf("%s", c);'):
+	add_file('memset.c', 'memset')
+memcpy_test = """
+struct foo {
+	int a;
+	int b;
+	int c;
+	int d;
+};
+struct foo foo1 = {0,0,0,0};
+struct foo foo2 = foo1;
+printf("%d", foo2.a);
+"""
+if conf.CheckRequirement('memcpy', memcpy_test):
+	add_file('memcpy.c', 'memcpy')
 
 conf.Finish()	
 

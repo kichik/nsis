@@ -66,16 +66,17 @@ doctypes = [
 
 path = ARGUMENTS.get('PATH', '')
 toolset = ARGUMENTS.get('TOOLSET', '')
+arch = ARGUMENTS.get('TARGET_ARCH', 'x86')
 
 if toolset and path:
-	defenv = Environment(TARGET_ARCH = 'x86', ENV = {'PATH' : path}, TOOLS = toolset.split(',') + ['zip'])
+	defenv = Environment(TARGET_ARCH = arch, ENV = {'PATH' : path}, TOOLS = toolset.split(',') + ['zip'])
 else:
 	if path:
-		defenv = Environment(TARGET_ARCH = 'x86', ENV = {'PATH' : path})
+		defenv = Environment(TARGET_ARCH = arch, ENV = {'PATH' : path})
 	if toolset:
-		defenv = Environment(TARGET_ARCH = 'x86', TOOLS = toolset.split(',') + ['zip'])
+		defenv = Environment(TARGET_ARCH = arch, TOOLS = toolset.split(',') + ['zip'])
 if not toolset and not path:
-	defenv = Environment(TARGET_ARCH = 'x86')
+	defenv = Environment(TARGET_ARCH = arch)
 
 Export('defenv')
 
@@ -184,6 +185,7 @@ opts.Add(PathVariable('CODESIGNER', 'A program used to sign executables', None))
 opts.Add(BoolVariable('STRIP', 'Strips executables of any unrequired data such as symbols', 'yes'))
 opts.Add(BoolVariable('STRIP_CP', 'Strips cross-platform executables of any unrequired data such as symbols', 'yes'))
 opts.Add(BoolVariable('STRIP_W32', 'Strips Win32 executables of any unrequired data such as symbols', 'yes'))
+opts.Add(EnumVariable('TARGET_ARCH', 'Target processor architecture', 'x86', allowed_values=('x86', 'amd64')))
 # path related build options
 opts.Add(('PREFIX_DEST', 'Intermediate installation prefix (extra install time prefix)', dirs['dest']))
 opts.Add(('PREFIX_CONF', 'Path to install nsisconf.nsh to', dirs['conf']))
@@ -282,6 +284,8 @@ defenv['DISTSUFFIX'] = ''
 
 if defenv.has_key('CODESIGNER'):
 	defenv['DISTSUFFIX'] = '-signed'
+if defenv['TARGET_ARCH'] == 'amd64':
+	defenv['DISTSUFFIX'] += '-x64'
 
 defenv.Execute(Delete('$ZIPDISTDIR'))
 defenv.Execute(Delete('$INSTDISTDIR'))

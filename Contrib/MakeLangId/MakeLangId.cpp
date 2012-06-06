@@ -187,7 +187,7 @@ line sub[] = {
 	CBL(SUBLANG_UZBEK_CYRILLIC)
 };
 
-BOOL CALLBACK DialogProc(HWND hwndDlg,UINT uMsg,WPARAM wParam,LPARAM lParam) {
+INT_PTR CALLBACK DialogProc(HWND hwndDlg,UINT uMsg,WPARAM wParam,LPARAM lParam) {
 	size_t i;
 	switch (uMsg) {
 	case WM_INITDIALOG:

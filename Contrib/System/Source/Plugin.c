@@ -151,6 +151,23 @@ void system_pushint(int value)
     system_pushstring(buffer);
 }
 
+__int64 system_popint64()
+{
+    __int64 value;
+    TCHAR *str;
+    if ((str = system_popstring()) == NULL) return -1;
+    value = myatoi64(str);
+    GlobalFree(str);
+    return value;
+}
+
+void system_pushint64(__int64 value)
+{
+    TCHAR buffer[80];
+    wsprintf(buffer, _T("%I64d"), value);
+    system_pushstring(buffer);
+}
+
 void *copymem(void *output, void *input, size_t cbSize)
 {
   BYTE *out = (BYTE*) output;
