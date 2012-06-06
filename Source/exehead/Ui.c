@@ -65,15 +65,15 @@ static void NSISCALL outernotify(int delta) {
 }
 
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 static int CALLBACK WINAPI BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData);
 #ifdef NSIS_CONFIG_LICENSEPAGE
-static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+static INT_PTR CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 #endif
-static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
-static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
-static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
-static BOOL CALLBACK UninstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+static INT_PTR CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+static INT_PTR CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+static INT_PTR CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+static INT_PTR CALLBACK UninstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 #endif//NSIS_CONFIG_VISIBLE_SUPPORT
 
 static DWORD WINAPI install_thread(LPVOID p);
@@ -174,7 +174,7 @@ int *cur_langtable;
 static void NSISCALL set_language()
 {
   LANGID lang_mask=(LANGID)~0;
-  LANGID lang=myatoi(state_language);
+  LANGID lang=(LANGID)myatoi(state_language);
   char *language_table=0;
   int lang_num;
   int *selected_langtable=0;
@@ -460,7 +460,7 @@ static int CALLBACK WINAPI BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lPara
   return 0;
 }
 
-BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   if (uMsg == WM_INITDIALOG || uMsg == WM_NOTIFY_OUTER_NEXT)
   {
@@ -480,7 +480,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 #endif
     };
 
-    m_delta = wParam;
+    m_delta = (int)wParam;
 
     if (uMsg == WM_INITDIALOG)
     {
@@ -714,7 +714,7 @@ skipPage:
 #include <richedit.h>
 #undef _RICHEDIT_VER
 static DWORD dwRead;
-DWORD CALLBACK StreamLicense(DWORD dwCookie, LPBYTE pbBuff, LONG cb, LONG *pcb)
+DWORD CALLBACK StreamLicense(DWORD_PTR dwCookie, LPBYTE pbBuff, LONG cb, LONG *pcb)
 {
   lstrcpyn((LPTSTR)pbBuff,(LPTSTR)(dwCookie+dwRead),cb/sizeof(TCHAR));
   *pcb=lstrlen((LPTSTR)pbBuff)*sizeof(TCHAR);
@@ -723,7 +723,7 @@ DWORD CALLBACK StreamLicense(DWORD dwCookie, LPBYTE pbBuff, LONG cb, LONG *pcb)
 }
 #ifdef _UNICODE
 // on-the-fly conversion of Unicode to ANSI (because Windows doesn't recognize Unicode RTF data)
-DWORD CALLBACK StreamLicenseRTF(DWORD dwCookie, LPBYTE pbBuff, LONG cb, LONG *pcb)
+DWORD CALLBACK StreamLicenseRTF(DWORD_PTR dwCookie, LPBYTE pbBuff, LONG cb, LONG *pcb)
 {
   size_t len = lstrlen(((LPWSTR) dwCookie)+dwRead);
   len = min(len, cb/sizeof(WCHAR));
@@ -734,7 +734,7 @@ DWORD CALLBACK StreamLicenseRTF(DWORD dwCookie, LPBYTE pbBuff, LONG cb, LONG *pc
 }
 #endif
 
-static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+static INT_PTR CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   page *m_this_page=g_this_page;
   HWND hwLicense;
@@ -843,7 +843,7 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
 #endif
 
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-static BOOL CALLBACK UninstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+static INT_PTR CALLBACK UninstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   if (uMsg == WM_INITDIALOG)
   {
@@ -905,7 +905,7 @@ static int NSISCALL _sumsecsfield(int idx)
 
 #define sumsecsfield(x) _sumsecsfield(SECTION_OFFSET(x))
 
-static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+static INT_PTR CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   static int dontsetdefstyle;
   page *thispage = g_this_page;
@@ -980,7 +980,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     {
       static TCHAR bt[NSIS_MAX_STRLEN];
       BROWSEINFO bi = {0,};
-      ITEMIDLIST *idlist;
+      LPITEMIDLIST idlist;
       bi.hwndOwner = hwndDlg;
       bi.pszDisplayName = g_tmp;
       bi.lpfn = BrowseCallbackProc;
@@ -1242,7 +1242,7 @@ void NSISCALL ExecuteCallbackFunctionWithr0Int(int num,int r0)
 
 static WNDPROC oldTreeWndProc;
 static LPARAM last_selected_tree_item;
-static DWORD WINAPI newTreeWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+static LRESULT WINAPI newTreeWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   if (uMsg == WM_CHAR && wParam == VK_SPACE) {
     NotifyCurWnd(WM_TREEVIEW_KEYHACK);
@@ -1268,7 +1268,7 @@ static DWORD WINAPI newTreeWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
   return CallWindowProc(oldTreeWndProc,hwnd,uMsg,wParam,lParam);
 }
 
-static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+static INT_PTR CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   const int wParamSelChangeNotifyInstTypeChanged = -1;
   static HTREEITEM *hTreeItems;
@@ -1312,7 +1312,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       {
         int j;
         if (i != NSIS_MAX_INST_TYPES) noCombo = 0;
-        j=SendMessage(hwndCombo1,CB_ADDSTRING,0,(LPARAM)GetNSISStringTT(install_types[i]));
+        j=(int)SendMessage(hwndCombo1,CB_ADDSTRING,0,(LPARAM)GetNSISStringTT(install_types[i]));
         SendMessage(hwndCombo1,CB_SETITEMDATA,j,i);
       }
     }
@@ -1444,10 +1444,10 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
   if (uMsg == WM_COMMAND && LOWORD(wParam) == IDC_COMBO1 && HIWORD(wParam) == CBN_SELCHANGE)
   {
-    int t = SendMessage(hwndCombo1,CB_GETCURSEL,0,0);
+    int t = (int)SendMessage(hwndCombo1,CB_GETCURSEL,0,0);
     if (t != CB_ERR)
     {
-      int whichcfg = SendMessage(hwndCombo1, CB_GETITEMDATA, t, 0);
+      int whichcfg = (int)SendMessage(hwndCombo1, CB_GETITEMDATA, t, 0);
 
       if (whichcfg == CB_ERR || !install_types[whichcfg])
         whichcfg = NSIS_MAX_INST_TYPES;
@@ -1483,7 +1483,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 #if defined(NSIS_SUPPORT_CODECALLBACKS) && defined(NSIS_CONFIG_COMPONENTPAGE)
     if (wParam != 0)
     {
-      int secid = wParam;
+      int secid = (int)wParam;
       if (wParamSelChangeNotifyInstTypeChanged != secid) --secid;
       ExecuteCallbackFunctionWithr0Int(CB_ONSELCHANGE,secid);
     }
@@ -1626,7 +1626,7 @@ static DWORD WINAPI install_thread(LPVOID p)
 
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
 
-static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+static INT_PTR CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   HWND linsthwnd=insthwnd;
   if (uMsg == WM_INITDIALOG)
@@ -1745,7 +1745,7 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
         i = count;
         while (i--)
           // Add 2 for the CR/LF combination that must follow every line.
-          total += 2+SendMessage(linsthwnd,LVM_GETITEMTEXT,i,(LPARAM)&item);
+          total += 2+(int)SendMessage(linsthwnd,LVM_GETITEMTEXT,i,(LPARAM)&item);
 
         // 2nd pass - store detail view strings on the clipboard
         // Clipboard MSDN docs say mem must be GMEM_MOVEABLE

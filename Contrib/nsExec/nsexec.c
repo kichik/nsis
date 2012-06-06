@@ -414,7 +414,7 @@ void LogMessage(const TCHAR *pStr, BOOL bOEM) {
 #ifndef _UNICODE
   if (bOEM == TRUE) OemToCharBuff(pStr, (char*)pStr, lstrlen(pStr));
 #endif
-  nItemCount=SendMessage(g_hwndList, LVM_GETITEMCOUNT, 0, 0);
+  nItemCount=(int)SendMessage(g_hwndList, LVM_GETITEMCOUNT, 0, 0);
   item.mask=LVIF_TEXT;
   item.pszText=(TCHAR *)pStr;
   item.cchTextMax=0;

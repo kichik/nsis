@@ -120,18 +120,18 @@ static LRESULT CALLBACK ParentWndProc(HWND hwnd, UINT message, WPARAM wParam, LP
 
         long c;
 
-        c = SendMessage(hwndP, PBM_SETBARCOLOR, 0, 0);
+        c = (long)SendMessage(hwndP, PBM_SETBARCOLOR, 0, 0);
         SendMessage(hwndP, PBM_SETBARCOLOR, 0, c);
         SendMessage(pb, PBM_SETBARCOLOR, 0, c);
 
-        c = SendMessage(hwndP, PBM_SETBKCOLOR, 0, 0);
+        c = (long)SendMessage(hwndP, PBM_SETBKCOLOR, 0, 0);
         SendMessage(hwndP, PBM_SETBKCOLOR, 0, c);
         SendMessage(pb, PBM_SETBKCOLOR, 0, c);
 
         // set font
-        long hFont = SendMessage((HWND) lParam, WM_GETFONT, 0, 0);
-        SendMessage(pb, WM_SETFONT, hFont, 0);
-        SendMessage(s, WM_SETFONT, hFont, 0);
+        HFONT hFont = (HFONT)SendMessage((HWND) lParam, WM_GETFONT, 0, 0);
+        SendMessage(pb, WM_SETFONT, (WPARAM)hFont, 0);
+        SendMessage(s, WM_SETFONT, (WPARAM)hFont, 0);
 
         ShowWindow(pb, SW_SHOWNA);
         ShowWindow(s, SW_SHOWNA);

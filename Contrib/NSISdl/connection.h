@@ -110,7 +110,7 @@ class JNL_Connection
     short get_remote_port(void) { return m_remote_port; } // this returns the remote port of connection
   
   protected:
-    int  m_socket;
+    SOCKET m_socket;
     short m_remote_port;
     char *m_recv_buffer;
     char *m_send_buffer;

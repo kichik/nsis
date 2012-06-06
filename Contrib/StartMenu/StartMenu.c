@@ -25,7 +25,7 @@ WNDPROC lpWndProcOld;
 
 void (__stdcall *validate_filename)(TCHAR *);
 
-BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 static BOOL CALLBACK ParentWndProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 void AddFolderFromReg(int nFolder);
 
@@ -173,10 +173,10 @@ void AddRTLStyle(HWND hWnd, long dwStyle)
 {
   long s;
 
-  s = GetWindowLongPtr(hWnd, GWL_STYLE);
-  SetWindowLongPtr(hWnd, GWL_STYLE, s | dwStyle);
-  s = GetWindowLongPtr(hWnd, GWL_EXSTYLE);
-  SetWindowLongPtr(hWnd, GWL_EXSTYLE, s | WS_EX_RIGHT | WS_EX_RTLREADING);
+  s = GetWindowLong(hWnd, GWL_STYLE);
+  SetWindowLong(hWnd, GWL_STYLE, s | dwStyle);
+  s = GetWindowLong(hWnd, GWL_EXSTYLE);
+  SetWindowLong(hWnd, GWL_EXSTYLE, s | WS_EX_RIGHT | WS_EX_RTLREADING);
 }
 
 #define ProgressiveSetWindowPos(hwWindow, x, cx, cy) \
@@ -191,7 +191,7 @@ void AddRTLStyle(HWND hWnd, long dwStyle)
    \
   y_offset += cy + 3;
 
-BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   HWND hwLocation = GetDlgItem(hwndDlg, IDC_LOCATION);
   HWND hwDirList = GetDlgItem(hwndDlg, IDC_DIRLIST);

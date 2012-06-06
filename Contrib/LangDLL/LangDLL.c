@@ -32,9 +32,10 @@ struct lang {
   UINT cp;
 } *langs;
 
-BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  int i, size;
+  INT_PTR i;
+  int size;
   TCHAR *selected_language = NULL;
   static HFONT font;
   switch (uMsg) {
@@ -43,7 +44,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       for (i = visible_langs_num - 1; i >= 0; i--) {
         int cbi;
 
-        cbi = SendDlgItemMessage(hwndDlg, IDC_LANGUAGE, CB_ADDSTRING, 0, (LPARAM) langs[i].name);
+        cbi = (int)SendDlgItemMessage(hwndDlg, IDC_LANGUAGE, CB_ADDSTRING, 0, (LPARAM) langs[i].name);
         SendDlgItemMessage(hwndDlg, IDC_LANGUAGE, CB_SETITEMDATA, cbi, (LPARAM) langs[i].id);
 
         // remember selected language

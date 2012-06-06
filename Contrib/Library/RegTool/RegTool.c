@@ -282,7 +282,7 @@ void RenameViaWininit(const TCHAR* prevName, const TCHAR* newName)
   LPCSTR szRenameSec = "[Rename]\r\n"; // rename section marker
   HANDLE hfile;
   DWORD dwFileSize;
-  DWORD dwBytes;
+  SIZE_T dwBytes;
   DWORD dwRenameLinePos;
   char *pszWinInit;   // Contains the file contents of wininit.ini
 

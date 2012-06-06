@@ -70,7 +70,7 @@ int NSISCALL resolveaddr(int v)
 {
   if (v < 0)
   {
-    return myatoi(g_usrvars[-(v+1)]);
+    return (int)myatoi(g_usrvars[-(v+1)]);
   }
   return v;
 }
@@ -127,7 +127,7 @@ static int NSISCALL GetIntFromParm(int id_)
   return (int)myatoi(GetNSISStringTT(parms[id_]));
 }
 
-static int NSISCALL GetIntPtrFromParm(int id_)
+static INT_PTR NSISCALL GetIntPtrFromParm(int id_)
 {
   return myatoi(GetNSISStringTT(parms[id_]));
 }
@@ -760,7 +760,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     case EW_FINDWINDOW:
     case EW_SENDMESSAGE:
       {
-        int v;
+        DWORD_PTR v;
         INT_PTR b3=GetIntPtrFromParm(3);
         INT_PTR b4=GetIntPtrFromParm(4);
         if (parm5&1) b3=(INT_PTR)GetStringFromParm(0x33);
@@ -771,7 +771,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           HWND hwnd=(HWND)GetIntPtrFromParm(1);
           int msg=GetIntFromParm(2);
 
-          if (parm5>>2) exec_error += !SendMessageTimeout(hwnd,msg,b3,b4,SMTO_NORMAL,parm5>>2,(LPDWORD)&v);
+          if (parm5>>2) exec_error += !SendMessageTimeout(hwnd,msg,b3,b4,SMTO_NORMAL,parm5>>2,&v);
           // Jim Park: This sends script messages.  Some messages require
           // settings for Unicode.  This means the user's script may need
           // to change for Unicode NSIS.
@@ -781,7 +781,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         {
           TCHAR *buf0=GetStringFromParm(0x01);
           TCHAR *buf1=GetStringFromParm(0x12);
-          v=(int)FindWindowEx((HWND)b3,(HWND)b4,buf0[0]?buf0:NULL,buf1[0]?buf1:NULL);
+          v=(DWORD_PTR)FindWindowEx((HWND)b3,(HWND)b4,buf0[0]?buf0:NULL,buf1[0]?buf1:NULL);
         }
 
         if (parm0>=0)

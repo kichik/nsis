@@ -32,9 +32,9 @@ struct nsControl* NSDFUNC GetControl(HWND hwCtl)
   return &g_dialog.controls[id - 1];
 }
 
-BOOL CALLBACK ParentProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK ParentProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-  BOOL res;
+  LRESULT res;
 
   if (message == WM_NOTIFY_OUTER_NEXT)
   {
@@ -76,7 +76,7 @@ LRESULT CALLBACK LinkWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
   return CallWindowProc(ctl->oldWndProc, hwnd, message, wParam, lParam);
 }
 
-BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   switch (uMsg)
   {

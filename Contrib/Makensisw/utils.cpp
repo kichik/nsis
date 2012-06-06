@@ -138,7 +138,7 @@ void SetBranding(HWND hwnd) {
 
 void CopyToClipboard(HWND hwnd) {
   if (!hwnd||!OpenClipboard(hwnd)) return;
-  int len=SendDlgItemMessage(hwnd,IDC_LOGWIN,WM_GETTEXTLENGTH,0,0);
+  int len=(int)SendDlgItemMessage(hwnd,IDC_LOGWIN,WM_GETTEXTLENGTH,0,0);
   HGLOBAL mem = GlobalAlloc(GMEM_MOVEABLE,(len+1)*sizeof(TCHAR));
   if (!mem) { CloseClipboard(); return; }
   TCHAR *existing_text = (TCHAR *)GlobalLock(mem);
@@ -234,7 +234,7 @@ void SetCompressorStats()
   TCHAR buf[1024];
   bool found = false;
 
-  line_count = SendDlgItemMessage(g_sdata.hwnd, IDC_LOGWIN, EM_GETLINECOUNT, 0, 0);
+  line_count = (DWORD)SendDlgItemMessage(g_sdata.hwnd, IDC_LOGWIN, EM_GETLINECOUNT, 0, 0);
   for(i=0; i<line_count; i++) {
     *((LPWORD)buf) = sizeof(buf); 
     SendDlgItemMessage(g_sdata.hwnd, IDC_LOGWIN, EM_GETLINE, (WPARAM)i, (LPARAM)buf);

@@ -84,8 +84,8 @@ int WINAPI _tWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, TCHAR *cmdParam, int 
   if (g_sdata.sigint_event) CloseHandle(g_sdata.sigint_event);
   FreeLibrary(hRichEditDLL);
   FinalizeUpdate();
-  ExitProcess(msg.wParam);
-  return msg.wParam;
+  ExitProcess((UINT)msg.wParam);
+  return (int)msg.wParam;
 }
 
 void SetScript(const TCHAR *script, bool clearArgs /*= true*/)
@@ -644,7 +644,7 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
           if (GetSaveFileName(&l)) {
             HANDLE hFile = CreateFile(buf,GENERIC_WRITE,0,0,CREATE_ALWAYS,0,0);
             if (hFile) {
-              int len=SendDlgItemMessage(g_sdata.hwnd,IDC_LOGWIN,WM_GETTEXTLENGTH,0,0);
+              int len=(int)SendDlgItemMessage(g_sdata.hwnd,IDC_LOGWIN,WM_GETTEXTLENGTH,0,0);
               TCHAR *existing_text=(TCHAR*)GlobalAlloc(GPTR,len * sizeof(TCHAR));
               existing_text[0]=0;
               GetDlgItemText(g_sdata.hwnd, IDC_LOGWIN, existing_text, len);
@@ -693,9 +693,9 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
       SendDlgItemMessage(hwndDlg, IDC_LOGWIN, EM_EXGETSEL, 0, (LPARAM)&ft.chrg);
       if (ft.chrg.cpMax == ft.chrg.cpMin) ft.chrg.cpMin = 0;
       else ft.chrg.cpMin = ft.chrg.cpMax;
-      ft.chrg.cpMax = SendDlgItemMessage(hwndDlg, IDC_LOGWIN, WM_GETTEXTLENGTH, 0, 0);
+      ft.chrg.cpMax = (int)SendDlgItemMessage(hwndDlg, IDC_LOGWIN, WM_GETTEXTLENGTH, 0, 0);
       ft.lpstrText = lpfr->lpstrFindWhat;
-      ft.chrg.cpMin = SendDlgItemMessage(hwndDlg, IDC_LOGWIN, EM_FINDTEXTEX, flags, (LPARAM)&ft);
+      ft.chrg.cpMin = (int)SendDlgItemMessage(hwndDlg, IDC_LOGWIN, EM_FINDTEXTEX, flags, (LPARAM)&ft);
       if (ft.chrg.cpMin != -1) SendDlgItemMessage(hwndDlg, IDC_LOGWIN, EM_SETSEL, ft.chrgText.cpMin, ft.chrgText.cpMax);
       else MessageBeep(MB_ICONASTERISK);
     }
@@ -870,7 +870,7 @@ BOOL CALLBACK AboutProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 void EnableSymbolSetButtons(HWND hwndDlg)
 {
-  int n = SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_GETCOUNT, 0, 0);
+  int n = (int)SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_GETCOUNT, 0, 0);
   if(n > 0) {
     EnableWindow(GetDlgItem(hwndDlg, IDCLEAR), TRUE);
     EnableWindow(GetDlgItem(hwndDlg, IDSAVE), TRUE);
@@ -883,7 +883,7 @@ void EnableSymbolSetButtons(HWND hwndDlg)
 
 void EnableSymbolEditButtons(HWND hwndDlg)
 {
-  int n = SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_GETSELCOUNT, 0, 0);
+  int n = (int)SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_GETSELCOUNT, 0, 0);
   if(n == 0) {
     EnableWindow(GetDlgItem(hwndDlg, IDLEFT), FALSE);
     EnableWindow(GetDlgItem(hwndDlg, IDDEL), FALSE);
@@ -916,13 +916,13 @@ void SetSymbols(HWND hwndDlg, TCHAR **symbols)
 
 TCHAR **GetSymbols(HWND hwndDlg)
 {
-  int n = SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_GETCOUNT, 0, 0);
+  int n = (int)SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_GETCOUNT, 0, 0);
   TCHAR **symbols = NULL;
   if(n > 0) {
     HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE|GMEM_ZEROINIT, (n+1)*sizeof(TCHAR *));
     symbols = (TCHAR **)GlobalLock(hMem);
     for (int i = 0; i < n; i++) {
-      int len = SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_GETTEXTLEN, (WPARAM)i, 0);
+      int len = (int)SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_GETTEXTLEN, (WPARAM)i, 0);
       symbols[i] = (TCHAR *)GlobalAlloc(GPTR, (len+1)*sizeof(TCHAR));
       SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_GETTEXT, (WPARAM)i, (LPARAM)symbols[i]);
     }
@@ -985,7 +985,7 @@ BOOL CALLBACK SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
           ResetSymbols();
           g_sdata.symbols = GetSymbols(hwndDlg);
 
-          int n = SendDlgItemMessage(hwndDlg, IDC_COMPRESSOR, CB_GETCURSEL, (WPARAM)0, (LPARAM)0);
+          int n = (int)SendDlgItemMessage(hwndDlg, IDC_COMPRESSOR, CB_GETCURSEL, (WPARAM)0, (LPARAM)0);
           if (n >= (int)COMPRESSOR_SCRIPT && n <= (int)COMPRESSOR_BEST) {
             g_sdata.default_compressor = (NCOMPRESSOR)n;
           }
@@ -1001,7 +1001,7 @@ BOOL CALLBACK SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
           break;
         case IDRIGHT:
         {
-          int n = SendDlgItemMessage(hwndDlg, IDC_SYMBOL, WM_GETTEXTLENGTH, 0, 0);
+          int n = (int)SendDlgItemMessage(hwndDlg, IDC_SYMBOL, WM_GETTEXTLENGTH, 0, 0);
           if(n > 0) {
             TCHAR *buf = (TCHAR *)GlobalAlloc(GPTR, (n+1)*sizeof(TCHAR));
             SendDlgItemMessage(hwndDlg, IDC_SYMBOL, WM_GETTEXT, n+1, (LPARAM)buf);
@@ -1011,7 +1011,7 @@ BOOL CALLBACK SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
               break;
             }
 
-            n = SendDlgItemMessage(hwndDlg, IDC_VALUE, WM_GETTEXTLENGTH, 0, 0);
+            n = (int)SendDlgItemMessage(hwndDlg, IDC_VALUE, WM_GETTEXTLENGTH, 0, 0);
             if(n > 0) {
               TCHAR *buf2 = (TCHAR *)GlobalAlloc(GPTR, (n+1)*sizeof(TCHAR));
               SendDlgItemMessage(hwndDlg, IDC_VALUE, WM_GETTEXT, n+1, (LPARAM)buf2);
@@ -1021,7 +1021,7 @@ BOOL CALLBACK SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
               buf = buf3;
               GlobalFree(buf2);
             }
-            int idx = SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_ADDSTRING, 0, (LPARAM)buf);
+            int idx = (int)SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_ADDSTRING, 0, (LPARAM)buf);
             if (idx >= 0)
             {
               SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_SETSEL, FALSE, -1);
@@ -1041,9 +1041,9 @@ BOOL CALLBACK SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
             break;
 
           int index;
-          int num = SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_GETSELITEMS, 1, (LPARAM) &index);
+          int num = (int)SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_GETSELITEMS, 1, (LPARAM) &index);
           if(num == 1) {
-            int n = SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_GETTEXTLEN, (WPARAM)index, 0);
+            int n = (int)SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_GETTEXTLEN, (WPARAM)index, 0);
             if(n > 0) {
               TCHAR *buf = (TCHAR *)GlobalAlloc(GPTR, (n+1)*sizeof(TCHAR));
               SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_GETTEXT, (WPARAM)index, (LPARAM)buf);
@@ -1082,7 +1082,7 @@ BOOL CALLBACK SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
         break;
         case IDDEL:
         {
-          int n = SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_GETSELCOUNT, 0, 0);
+          int n = (int)SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_GETSELCOUNT, 0, 0);
           int *items = (int *)GlobalAlloc(GPTR, n*sizeof(int));
           SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_GETSELITEMS, (WPARAM)n, (LPARAM)items);
           int i;
@@ -1096,7 +1096,7 @@ BOOL CALLBACK SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
         case IDC_SYMBOL:
           if(HIWORD(wParam) == EN_CHANGE)
           {
-            int n = SendDlgItemMessage(hwndDlg, IDC_SYMBOL, WM_GETTEXTLENGTH, 0, 0);
+            int n = (int)SendDlgItemMessage(hwndDlg, IDC_SYMBOL, WM_GETTEXTLENGTH, 0, 0);
             if(n > 0) {
               EnableWindow(GetDlgItem(hwndDlg, IDRIGHT), TRUE);
             }
@@ -1143,7 +1143,7 @@ BOOL CALLBACK CompressorProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lPara
         case IDOK:
         {
           int n;
-          n = SendDlgItemMessage(hwndDlg, IDC_COMPRESSOR, CB_GETCURSEL, (WPARAM)0, (LPARAM)0);
+          n = (int)SendDlgItemMessage(hwndDlg, IDC_COMPRESSOR, CB_GETCURSEL, (WPARAM)0, (LPARAM)0);
           if(n >= (int)COMPRESSOR_SCRIPT && n <= (int)COMPRESSOR_BEST) {
             SetCompressor((NCOMPRESSOR)n);
           }
@@ -1243,9 +1243,9 @@ BOOL CALLBACK SymbolSetProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
         }
         case IDDEL:
         {
-          int n = SendDlgItemMessage(hwndDlg, IDC_NAMES, CB_GETCURSEL, 0, 0);
+          int n = (int)SendDlgItemMessage(hwndDlg, IDC_NAMES, CB_GETCURSEL, 0, 0);
           if(n != CB_ERR) {
-            long len = SendDlgItemMessage(hwndDlg, IDC_NAMES, CB_GETLBTEXTLEN, (WPARAM)n, 0);
+            long len = (int)SendDlgItemMessage(hwndDlg, IDC_NAMES, CB_GETLBTEXTLEN, (WPARAM)n, 0);
             TCHAR *buf = (TCHAR *)GlobalAlloc(GPTR, (len+1)*sizeof(TCHAR));
             if(SendDlgItemMessage(hwndDlg, IDC_NAMES, CB_GETLBTEXT, (WPARAM)n, (LPARAM)buf) != CB_ERR) {
               SendDlgItemMessage(hwndDlg, IDC_NAMES, CB_DELETESTRING, n, 0);
@@ -1260,7 +1260,7 @@ BOOL CALLBACK SymbolSetProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
         {
           if(HIWORD(wParam) == CBN_SELCHANGE)
           {
-            int n = SendDlgItemMessage(hwndDlg, IDC_NAMES, CB_GETCURSEL, 0, 0);
+            int n = (int)SendDlgItemMessage(hwndDlg, IDC_NAMES, CB_GETCURSEL, 0, 0);
             if(n == CB_ERR) {
               EnableWindow(GetDlgItem(hwndDlg, IDDEL), FALSE);
             }
@@ -1270,7 +1270,7 @@ BOOL CALLBACK SymbolSetProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
           }
           else if(HIWORD(wParam) == CBN_DBLCLK)
           {
-            int n = SendDlgItemMessage(hwndDlg, IDC_NAMES, CB_GETCURSEL, 0, 0);
+            int n = (int)SendDlgItemMessage(hwndDlg, IDC_NAMES, CB_GETCURSEL, 0, 0);
             if (n != CB_ERR)
             {
               SendDlgItemMessage(hwndDlg, IDOK, BM_CLICK, 0, 0);

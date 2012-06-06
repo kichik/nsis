@@ -230,7 +230,7 @@ bool INLINE ValidateFields() {
     // this if statement prevents a stupid bug where a min/max length is assigned to a label control
     // where the user obviously has no way of changing what is displayed. (can you say, "infinite loop"?)
     if (pField->nType >= FIELD_CHECKLEN) {
-      nLength = mySendMessage(pField->hwnd, WM_GETTEXTLENGTH, 0, 0);
+      nLength = (int)mySendMessage(pField->hwnd, WM_GETTEXTLENGTH, 0, 0);
 
       if (((pField->nMaxLength > 0) && (nLength > pField->nMaxLength)) ||
          ((pField->nMinLength > 0) && (nLength < pField->nMinLength))) {
@@ -290,7 +290,7 @@ bool WINAPI SaveSettings(void) {
         if (!pszItem) return false;
 
         *pszBuffer = _T('\0');
-        int nNumItems = mySendMessage(hwnd, LB_GETCOUNT, 0, 0);
+        int nNumItems = (int)mySendMessage(hwnd, LB_GETCOUNT, 0, 0);
         for (int nIdx2 = 0; nIdx2 < nNumItems; nIdx2++) {
           if (mySendMessage(hwnd, LB_GETSEL, nIdx2, 0) > 0) {
             if (*pszBuffer) lstrcat(pszBuffer, _T("|"));
@@ -308,7 +308,7 @@ bool WINAPI SaveSettings(void) {
       case FIELD_DIRREQUEST:
       case FIELD_COMBOBOX:
       {
-        int nLength = mySendMessage(pField->hwnd, WM_GETTEXTLENGTH, 0, 0);
+        int nLength = (int)mySendMessage(pField->hwnd, WM_GETTEXTLENGTH, 0, 0);
         if (nLength > nBufLen) {
           FREE(pszBuffer);
           // add a bit extra so we do this less often
@@ -346,7 +346,7 @@ bool WINAPI SaveSettings(void) {
                 // CharNext()'s behavior at terminating null char.  But still
                 // definitely, unsafe.
               default:
-                lstrcpyn(p2, p1, CharNext(p1) - p1 + 1);
+                lstrcpyn(p2, p1, (int)(CharNext(p1) - p1 + 1));
                 break;
             }
           }
@@ -820,7 +820,7 @@ INT_PTR CALLBACK cfgDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPara
 #endif
 
 // pFields[nIdx].nParentIdx is used to store original windowproc
-int WINAPI StaticLINKWindowProc(HWND hWin, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT WINAPI StaticLINKWindowProc(HWND hWin, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   int StaticField = FindControlIdx(GetDlgCtrlID(hWin));
   if (StaticField < 0)
@@ -869,7 +869,7 @@ int WINAPI StaticLINKWindowProc(HWND hWin, UINT uMsg, WPARAM wParam, LPARAM lPar
 }
 #endif
 
-int WINAPI NumbersOnlyPasteWndProc(HWND hWin, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT WINAPI NumbersOnlyPasteWndProc(HWND hWin, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   int nIdx = FindControlIdx(GetDlgCtrlID(hWin));
   if (nIdx < 0)
@@ -1275,7 +1275,7 @@ int WINAPI createCfgDlg()
                     *pszEnd = _T('\0');
                     if (*pszStart)
                     {
-                      int nItem = mySendMessage(hwCtrl, LB_FINDSTRINGEXACT, (WPARAM)-1, (LPARAM)pszStart);
+                      int nItem = (int)mySendMessage(hwCtrl, LB_FINDSTRINGEXACT, (WPARAM)-1, (LPARAM)pszStart);
                       if (nItem != LB_ERR)
                         mySendMessage(hwCtrl, LB_SETSEL, TRUE, nItem);
                     }
@@ -1288,7 +1288,7 @@ int WINAPI createCfgDlg()
                 }
               }
               else {
-                int nItem = mySendMessage(hwCtrl, nFindMsg, (WPARAM)-1, (LPARAM)pField->pszState);
+                int nItem = (int)mySendMessage(hwCtrl, nFindMsg, (WPARAM)-1, (LPARAM)pField->pszState);
                 if (nItem != CB_ERR) { // CB_ERR == LB_ERR == -1
                   mySendMessage(hwCtrl, nSetSelMsg, nItem, 0);
                 }
@@ -1300,7 +1300,7 @@ int WINAPI createCfgDlg()
         case FIELD_ICON:
         case FIELD_BITMAP:
         {
-          WPARAM nImageType = pField->nType == FIELD_BITMAP ? IMAGE_BITMAP : IMAGE_ICON;
+          int nImageType = pField->nType == FIELD_BITMAP ? IMAGE_BITMAP : IMAGE_ICON;
           LPARAM nImage = 0;
 
           if (pField->pszText) {

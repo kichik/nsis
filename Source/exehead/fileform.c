@@ -83,7 +83,7 @@ static int NSISCALL calc_percent()
 
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
 #if defined(NSIS_CONFIG_CRC_SUPPORT) || defined(NSIS_COMPRESS_WHOLE)
-BOOL CALLBACK verProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK verProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   if (uMsg == WM_INITDIALOG)
   {
@@ -460,8 +460,8 @@ static char _inbuffer[IBUFSIZE];
 static char _outbuffer[OBUFSIZE];
 extern int m_length;
 extern int m_pos;
-extern BOOL CALLBACK verProc(HWND, UINT, WPARAM, LPARAM);
-extern BOOL CALLBACK DialogProc(HWND, UINT, WPARAM, LPARAM);
+extern INT_PTR CALLBACK verProc(HWND, UINT, WPARAM, LPARAM);
+extern INT_PTR CALLBACK DialogProc(HWND, UINT, WPARAM, LPARAM);
 static int NSISCALL __ensuredata(int amount)
 {
   int needed=amount-(dbd_size-dbd_pos);
