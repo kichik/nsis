@@ -1058,8 +1058,13 @@ Section Uninstall
   DetailPrint "Deleting Files..."
   SetDetailsPrint listonly
 
+!ifdef NSIS_X64_MAKENSIS
+  Delete '$SMPROGRAMS\NSIS (64-bit).lnk'
+  Delete '$DESKTOP\NSIS (64-bit).lnk'
+!else
   Delete $SMPROGRAMS\NSIS.lnk
   Delete $DESKTOP\NSIS.lnk
+!endif
   Delete $INSTDIR\makensis.exe
   Delete $INSTDIR\makensisw.exe
   Delete $INSTDIR\NSIS.exe
