@@ -82,7 +82,7 @@ void CreateToolBar()
     NULL );
   
   SendMessage(g_toolbar.hwnd, TB_BUTTONSTRUCTSIZE, sizeof(tbButton[0]), 0);
-  SendMessage(g_toolbar.hwnd, TB_ADDBUTTONS, BUTTONCOUNT, (LONG) &tbButton);
+  SendMessage(g_toolbar.hwnd, TB_ADDBUTTONS, BUTTONCOUNT, (LONG_PTR) &tbButton);
 
   // For Comctl32.dll version detection
   HMODULE hMod = GetModuleHandle(_T("comctl32.dll"));

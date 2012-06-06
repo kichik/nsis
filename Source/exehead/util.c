@@ -593,16 +593,20 @@ void NSISCALL myRegGetStr(HKEY root, const TCHAR *sub, const TCHAR *name, TCHAR 
   }
 }
 
-void NSISCALL myitoa(TCHAR *s, int d)
+void NSISCALL myitoa(TCHAR *s, INT_PTR d)
 {
+#ifdef _WIN64
+  static const TCHAR c[] = _T("%I64d");
+#else
   static const TCHAR c[] = _T("%d");
+#endif
   wsprintf(s,c,d);
 }
 
-int NSISCALL myatoi(TCHAR *s)
+INT_PTR NSISCALL myatoi(TCHAR *s)
 {
-  unsigned int v=0;
-  int sign=1; // sign of positive
+  UINT_PTR v=0;
+  INT_PTR sign=1; // sign of positive
   TCHAR m=10; // base of 10
   TCHAR t=_T('9'); // cap top of numbers at 9
 

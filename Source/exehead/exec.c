@@ -124,6 +124,11 @@ void NSISCALL update_status_text_buf1(int strtab)
 
 static int NSISCALL GetIntFromParm(int id_)
 {
+  return (int)myatoi(GetNSISStringTT(parms[id_]));
+}
+
+static int NSISCALL GetIntPtrFromParm(int id_)
+{
   return myatoi(GetNSISStringTT(parms[id_]));
 }
 
@@ -756,14 +761,14 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     case EW_SENDMESSAGE:
       {
         int v;
-        int b3=GetIntFromParm(3);
-        int b4=GetIntFromParm(4);
-        if (parm5&1) b3=(int)GetStringFromParm(0x33);
-        if (parm5&2) b4=(int)GetStringFromParm(0x44);
+        INT_PTR b3=GetIntPtrFromParm(3);
+        INT_PTR b4=GetIntPtrFromParm(4);
+        if (parm5&1) b3=(INT_PTR)GetStringFromParm(0x33);
+        if (parm5&2) b4=(INT_PTR)GetStringFromParm(0x44);
 
         if (which == EW_SENDMESSAGE)
         {
-          HWND hwnd=(HWND)GetIntFromParm(1);
+          HWND hwnd=(HWND)GetIntPtrFromParm(1);
           int msg=GetIntFromParm(2);
 
           if (parm5>>2) exec_error += !SendMessageTimeout(hwnd,msg,b3,b4,SMTO_NORMAL,parm5>>2,(LPDWORD)&v);
@@ -784,14 +789,14 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       }
     break;
     case EW_ISWINDOW:
-      if (IsWindow((HWND)GetIntFromParm(0))) return parm1;
+      if (IsWindow((HWND)GetIntPtrFromParm(0))) return parm1;
     return parm2;
 #ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
     case EW_GETDLGITEM:
       myitoa(
         var0,
-        (int)GetDlgItem(
-          (HWND)GetIntFromParm(1),
+        (INT_PTR)GetDlgItem(
+          (HWND)GetIntPtrFromParm(1),
           GetIntFromParm(2)
         )
       );
@@ -799,7 +804,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     case EW_SETCTLCOLORS:
     {
       ctlcolors *c = (ctlcolors *)(g_blocks[NB_CTLCOLORS].offset + parm1);
-      SetWindowLongPtr((HWND) GetIntFromParm(0), GWLP_USERDATA, (LONG_PTR) c);
+      SetWindowLongPtr((HWND) GetIntPtrFromParm(0), GWLP_USERDATA, (LONG_PTR) c);
     }
     break;
     case EW_SETBRANDINGIMAGE:
@@ -841,7 +846,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     break;
     case EW_SHOWWINDOW:
     {
-      HWND hw=(HWND)GetIntFromParm(0);
+      HWND hw=(HWND)GetIntPtrFromParm(0);
       int a=GetIntFromParm(1);
       if (parm2) log_printf(_T("HideWindow"));
       if (!parm3)
