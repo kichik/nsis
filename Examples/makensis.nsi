@@ -54,7 +54,11 @@ RequestExecutionLevel admin
 
 ;Names
 Name "NSIS"
+!ifdef NSIS_X64_MAKENSIS
+Caption "NSIS ${VERSION} (64-bit) Setup"
+!else
 Caption "NSIS ${VERSION} Setup"
+!endif
 
 ;Memento Settings
 !define MEMENTO_REGISTRY_ROOT HKLM
@@ -69,7 +73,11 @@ Caption "NSIS ${VERSION} Setup"
 !define MUI_COMPONENTSPAGE_SMALLDESC
 
 ;Pages
+!ifdef NSIS_X64_MAKENSIS
+!define MUI_WELCOMEPAGE_TITLE "Welcome to the NSIS ${VERSION} (64-bit) Setup Wizard"
+!else
 !define MUI_WELCOMEPAGE_TITLE "Welcome to the NSIS ${VERSION} Setup Wizard"
+!endif
 !define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of NSIS (Nullsoft Scriptable Install System) ${VERSION}, the next generation of the Windows installer and uninstaller system that doesn't suck and isn't huge.$\r$\n$\r$\nNSIS 2 includes a new Modern User Interface, LZMA compression, support for multiple languages and an easy plug-in system.$\r$\n$\r$\n$_CLICK"
 
 !insertmacro MUI_PAGE_WELCOME
@@ -209,10 +217,17 @@ ${MementoSection} "NSIS Core Files (required)" SecCore
     WriteRegStr HKCR "NSIS.Script\shell" "" "open"
     WriteRegStr HKCR "NSIS.Script\shell\open\command" "" 'notepad.exe "%1"'
   no_nsiopen:
+!ifdef NSIS_X64_MAKENSIS
+  WriteRegStr HKCR "NSIS.Script\shell\compile64" "" "Compile NSIS Script (64-bit)"
+  WriteRegStr HKCR "NSIS.Script\shell\compile64\command" "" '"$INSTDIR\makensisw.exe" "%1"'
+  WriteRegStr HKCR "NSIS.Script\shell\compile-compressor64" "" "Compile NSIS Script (Choose Compressor) (64-bit)"
+  WriteRegStr HKCR "NSIS.Script\shell\compile-compressor64\command" "" '"$INSTDIR\makensisw.exe" /ChooseCompressor "%1"'
+!else
   WriteRegStr HKCR "NSIS.Script\shell\compile" "" "Compile NSIS Script"
   WriteRegStr HKCR "NSIS.Script\shell\compile\command" "" '"$INSTDIR\makensisw.exe" "%1"'
   WriteRegStr HKCR "NSIS.Script\shell\compile-compressor" "" "Compile NSIS Script (Choose Compressor)"
   WriteRegStr HKCR "NSIS.Script\shell\compile-compressor\command" "" '"$INSTDIR\makensisw.exe" /ChooseCompressor "%1"'
+!endif
 
   ReadRegStr $R0 HKCR ".nsh" ""
   StrCmp $R0 "NSHFile" 0 +2
@@ -304,10 +319,18 @@ ${MementoSection} "Desktop Shortcut" SecShortcuts
   SectionIn 1 2
   SetOutPath $INSTDIR
 !ifndef NO_STARTMENUSHORTCUTS
+!ifdef NSIS_X64_MAKENSIS
+  CreateShortCut "$SMPROGRAMS\NSIS (64-bit).lnk" "$INSTDIR\NSIS.exe"
+!else
   CreateShortCut "$SMPROGRAMS\NSIS.lnk" "$INSTDIR\NSIS.exe"
 !endif
+!endif
 
+!ifdef NSIS_X64_MAKENSIS
+  CreateShortCut "$DESKTOP\NSIS (64-bit).lnk" "$INSTDIR\NSIS.exe"
+!else
   CreateShortCut "$DESKTOP\NSIS.lnk" "$INSTDIR\NSIS.exe"
+!endif
 
 ${MementoSectionEnd}
 
@@ -798,7 +821,11 @@ Section -post
 
   WriteRegExpandStr HKLM "${MEMENTO_REGISTRY_KEY}" "UninstallString" '"$INSTDIR\uninst-nsis.exe"'
   WriteRegExpandStr HKLM "${MEMENTO_REGISTRY_KEY}" "InstallLocation" "$INSTDIR"
+!ifdef NSIS_X64_MAKENSIS
+  WriteRegStr HKLM "${MEMENTO_REGISTRY_KEY}" "DisplayName" "Nullsoft Install System (64-bit)"
+!else
   WriteRegStr HKLM "${MEMENTO_REGISTRY_KEY}" "DisplayName" "Nullsoft Install System"
+!endif
   WriteRegStr HKLM "${MEMENTO_REGISTRY_KEY}" "DisplayIcon" "$INSTDIR\NSIS.exe,0"
   WriteRegStr HKLM "${MEMENTO_REGISTRY_KEY}" "DisplayVersion" "${VERSION}"
 !ifdef VER_MAJOR & VER_MINOR & VER_REVISION & VER_BUILD

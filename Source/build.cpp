@@ -153,6 +153,9 @@ CEXEBuild::CEXEBuild() :
 #ifdef _UNICODE
   definedlist.add(_T("NSIS_UNICODE_MAKENSIS")); // This define might go away once makensis.exe is always unicode
 #endif
+#ifdef _WIN64
+  definedlist.add(_T("NSIS_X64_MAKENSIS"));
+#endif
 
   db_opt_save=db_comp_save=db_full_size=db_opt_save_u=db_comp_save_u=db_full_size_u=0;
 

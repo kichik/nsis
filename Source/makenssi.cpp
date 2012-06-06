@@ -105,7 +105,12 @@ static void print_logo()
 {
   _ftprintf(g_output,_T("MakeNSIS %s - Copyright 1995-2009 Contributors\n")
          _T("See the file COPYING for license details.\n")
-         _T("Credits can be found in the Users Manual.\n\n"), NSIS_VERSION);
+         _T("Credits can be found in the Users Manual.\n\n"),
+#ifdef _WIN64
+         NSIS_VERSION " (64-bit)");
+#else
+         NSIS_VERSION);
+#endif
   fflush(g_output);
 }
 
@@ -298,7 +303,11 @@ int _tmain(int argc, TCHAR **argv)
 
   if (argc > 1 && IS_OPT(argv[tmpargpos]) && !_tcsicmp(&argv[tmpargpos][1],_T("VERSION")))
   {
-    _ftprintf(g_output,NSIS_VERSION);
+#ifdef _WIN64
+    _ftprintf(g_output, NSIS_VERSION " (64-bit)");
+#else
+    _ftprintf(g_output, NSIS_VERSION);
+#endif
     fflush(g_output);
     return 0;
   }

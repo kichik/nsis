@@ -102,7 +102,11 @@ private:
      wxInitAllImageHandlers();
 
      // Create the main application window
-     MyFrame *frame = new MyFrame(_("NSIS Menu"),
+#ifdef _WIN64
+     MyFrame *frame = new MyFrame(_("NSIS Menu (64-bit)"),
+#else
+     MyFrame *frame = new MyFrame(_("NSIS Menu")
+#endif
          wxPoint(50, 50), wxSize(600 + wxSystemSettings::GetMetric(wxSYS_FRAMESIZE_X), 365 + wxSystemSettings::GetMetric(wxSYS_FRAMESIZE_X)));
    
      // Show it and tell the application that it's our main window
@@ -127,7 +131,11 @@ private:
              wxT("nsis_menu"))
    {  
       m_Html = new wxHtmlWindow(this, HtmlControl);
+#ifdef _WIN64
+      m_Html->SetRelatedFrame(this, _("NSIS Menu (64-bit)"));
+#else
       m_Html->SetRelatedFrame(this, _("NSIS Menu"));
+#endif
       m_Html->SetBorders(0);
       m_Html->EnableScrolling(false, false);
       m_Html->SetSize(600, 365);
