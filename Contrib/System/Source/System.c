@@ -34,8 +34,13 @@ const int ParamSizeByType[7] = {
     0, // PAT_VOID (Size will be equal to 1)
     1, // PAT_INT
     2, // PAT_LONG
+#ifdef SYSTEM_X64
+    2, // PAT_STRING
+    2, // PAT_WSTRING
+#else
     1, // PAT_STRING
     1, // PAT_WSTRING
+#endif
     1, // PAT_GUID
     0}; // PAT_CALLBACK (Size will be equal to 1)
 
@@ -351,8 +356,24 @@ PLUGINFUNCTION(Call)
     if ((proc->Options & POPT_PERMANENT) == 0)
         GlobalFree((HANDLE) proc); // No, free it
 #else
-    ParamsOut(proc);
-    system_pushintptr(0);
+    // Fake the behavior of the System plugin for the LoadImage API function.
+    // Otherwise, it is not yet implemented on 64-bit Windows.
+    if (lstrcmp(proc->ProcName, "LoadImageA") == 0)
+    {
+      HANDLE res = LoadImage((HINSTANCE)proc->Params[1].Value,
+        (LPCSTR)proc->Params[2].Value,
+        (UINT)proc->Params[3].Value,
+        (int)proc->Params[4].Value,
+        (int)proc->Params[5].Value,
+        (UINT)proc->Params[6].Value);
+      ParamsOut(proc);
+      system_pushintptr((INT_PTR)res);
+    }
+    else
+    {
+      ParamsOut(proc);
+      system_pushintptr(0);
+    }
 #endif
 } PLUGINFUNCTIONEND
 
@@ -859,7 +880,7 @@ void ParamAllocate(SystemProc *proc)
     for (i = 0; i <= proc->ParamCount; i++)
         if (((HANDLE) proc->Params[i].Value == NULL) && (proc->Params[i].Option == -1))
         {
-            proc->Params[i].Value = BUGBUG64(int) GlobalAlloc(GPTR, 4*ParamSizeByType[proc->Params[i].Type]);
+            proc->Params[i].Value = (INT_PTR) GlobalAlloc(GPTR, 4*ParamSizeByType[proc->Params[i].Type]);
         }
 }
 

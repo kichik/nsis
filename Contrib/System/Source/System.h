@@ -75,7 +75,7 @@ typedef struct
 {
     int Type;
     int Option; // -1 -> Pointer, 1-... -> Special+1
-    int Value;  // it can hold any 4 byte value BUGBUG: What about pointers on Win64?
+    INT_PTR Value;  // it can hold any value up to 4 bytes on Win32 or 8 bytes on Win64
     int _value; // value buffer for structures > 4 bytes (I hope 8 bytes will be enough)
     int Size; // Value real size (should be either 1 or 2 (the number of pushes))
     int Input; //BUGBUG: What about pointers on Win64?
