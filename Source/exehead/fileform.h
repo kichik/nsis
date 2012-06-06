@@ -468,6 +468,9 @@ typedef struct
 #define CC_BK_SYS 8
 #define CC_BKB 16
 
+// This structure needs 4-byte packing because it is written to file and HBRUSH is
+// 8 bytes on a 64-bit system.
+#pragma pack(push, 4)
 typedef struct {
   COLORREF text;
   COLORREF bkc;
@@ -476,6 +479,7 @@ typedef struct {
   int bkmode;
   int flags;
 } ctlcolors;
+#pragma pack(pop)
 
 // constants for myDelete (util.c)
 #define DEL_DIR 1

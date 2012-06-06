@@ -33,6 +33,7 @@ public:
   virtual void write_byte(const unsigned char b);
   virtual void write_short(const short s);
   virtual void write_int(const int i);
+  virtual void write_intptr(const INT_PTR i);
   virtual void write_int_array(const int i[], const size_t len);
   virtual void write_string(const TCHAR *s, size_t size);
   virtual void write_growbuf(const IGrowBuf *b);

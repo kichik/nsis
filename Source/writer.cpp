@@ -42,6 +42,12 @@ void writer_sink::write_int(const int i)
   write_data(&fi, sizeof(int));
 }
 
+void writer_sink::write_intptr(const INT_PTR i)
+{
+  INT_PTR fi = FIX_ENDIAN_INT_PTR(i);
+  write_data(&fi, sizeof(INT_PTR));
+}
+
 void writer_sink::write_int_array(const int i[], const size_t len)
 {
   for (size_t l = 0; l < len; l++)
