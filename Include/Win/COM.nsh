@@ -51,6 +51,18 @@ System::Call `${ptr}->${vtblidx}${decl}${params}`
 System::Call 'OLE32::CoCreateInstance(g "${clsid}",i 0,i ${CLSCTX_INPROC_SERVER},g "${iid}",*p.${sysoutvarIFacePtr})i${sysret}'
 !macroend
 
+!macro ComHlpr_SafeRelease _p
+${If} ${_p} <> 0
+	${IUnknown::Release} ${_p} ""
+${EndIf}
+!macroend
+!macro ComHlpr_SafeReleaseAndNull _p
+${If} ${_p} <> 0
+	${IUnknown::Release} ${_p} ""
+	StrCpy ${_p} 0
+${EndIf}
+!macroend
+
 
 !ifndef IID_IUnknown
 !define IID_IUnknown {00000000-0000-0000-C000-000000000046}
@@ -93,7 +105,7 @@ ${NSISCOMIFACEDECL}IShellLink GetWorkingDirectory 8 (t,i)i
 ${NSISCOMIFACEDECL}IShellLink SetWorkingDirectory 9 (t)i
 ${NSISCOMIFACEDECL}IShellLink GetArguments 10 (t,i)i
 ${NSISCOMIFACEDECL}IShellLink SetArguments 11 (t)i
-${NSISCOMIFACEDECL}IShellLink GetHotkey 12 (*&i2)i
+${NSISCOMIFACEDECL}IShellLink GetHotkey 12 (*i0)i
 ${NSISCOMIFACEDECL}IShellLink SetHotkey 13 (&i2)i
 ${NSISCOMIFACEDECL}IShellLink GetShowCmd 14 (*i)i
 ${NSISCOMIFACEDECL}IShellLink SetShowCmd 15 (i)i
@@ -118,8 +130,8 @@ ${NSISCOMIFACEDECL}IShellLinkDataList SetFlags 7 (i)i
 !define /ifndef EXP_SPECIAL_FOLDER_SIG  0xA0000005
 !define /ifndef EXP_DARWIN_ID_SIG       0xA0000006
 !define /ifndef EXP_SZ_ICON_SIG         0xA0000007
+!define /ifndef EXP_PROPERTYSTORAGE_SIG 0xA0000009
 ;SHELL_LINK_DATA_FLAGS
-!define /ifndef SLDF_DEFAULT                               0
 !define /ifndef SLDF_HAS_ID_LIST                           0x00000001
 !define /ifndef SLDF_HAS_LINK_INFO                         0x00000002
 !define /ifndef SLDF_HAS_NAME                              0x00000004
@@ -147,6 +159,7 @@ ${NSISCOMIFACEDECL}IShellLinkDataList SetFlags 7 (i)i
 !define /ifndef SLDF_UNALIAS_ON_SAVE                       0x01000000
 !define /ifndef SLDF_PREFER_ENVIRONMENT_PATH               0x02000000
 !define /ifndef SLDF_KEEP_LOCAL_IDLIST_FOR_UNC_TARGET      0x04000000
+!define /ifndef SLDF_PERSIST_VOLUME_ID_RELATIVE            0x08000000 ;[Eight+]
 
 !ifndef IID_IShellItem
 !define IID_IShellItem {43826d1e-e718-42ee-bc55-a1e261c37bfe}
