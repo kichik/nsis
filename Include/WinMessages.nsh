@@ -69,6 +69,15 @@ UDM     Up-down control
 !verbose push
 !verbose 3
 
+!define _NSIS_DEFAW '!insertmacro _NSIS_DEFAW '
+!macro _NSIS_DEFAW d
+!ifdef NSIS_UNICODE
+!define ${d} "${${d}W}"
+!else
+!define ${d} "${${d}A}"
+!endif
+!macroend
+
 !define HWND_BROADCAST      0xFFFF
 
 #ShowWindow Commands#
@@ -107,6 +116,7 @@ UDM     Up-down control
 !define BM_SETIMAGE        0x00F7
 !define BM_SETSTATE        0x00F3
 !define BM_SETSTYLE        0x00F4
+!define BCM_SETSHIELD      0x160C ; WinVista + ComCtl32 v6
 
 !define BST_UNCHECKED      0
 !define BST_CHECKED        1
@@ -555,7 +565,58 @@ UDM     Up-down control
 !define HDM_FIRST           0x1200
 
 #List view control#
-!define LVM_FIRST           0x1000
+!define LVS_SINGLESEL           4
+!define LVS_SHOWSELALWAYS       8
+!define LVS_SHAREIMAGELISTS  0x40
+!define LVS_EDITLABELS      0x200
+!define LVS_NOSCROLL       0x2000
+!define LVS_NOCOLUMNHEADER 0x4000
+!define LVS_NOSORTHEADER   0x8000
+!define LVS_ICON      0
+!define LVS_REPORT    1
+!define LVS_SMALLICON 2
+!define LVS_LIST      3
+!define LVS_EX_CHECKBOXES         4
+!define LVS_EX_FULLROWSELECT   0x20
+!define LVS_EX_INFOTIP        0x400
+!define LVS_EX_LABELTIP      0x4000
+!define LVS_EX_DOUBLEBUFFER 0x10000
+!define LVIF_TEXT  1
+!define LVIF_IMAGE 2
+!define LVIF_PARAM 4
+!define LVIF_STATE 8
+!define LVIS_STATEIMAGEMASK 0xF000
+!define LVCF_FMT     1
+!define LVCF_WIDTH   2
+!define LVCF_TEXT    4
+!define LVCF_SUBITEM 8
+!define SYSSTRUCT_LVITEM_V1 (i,i,i,i,i,t,i,i,p)
+!define SYSSTRUCT_LVITEM_V2 (i,i,i,i,i,t,i,i,p,i)           ; IE3
+!define SYSSTRUCT_LVITEM_V3 (i,i,i,i,i,t,i,i,p,i,i,i,i)     ; WinXP + ComCtl32 v6
+!define SYSSTRUCT_LVITEM_V4 (i,i,i,i,i,t,i,i,p,i,i,i,i,i,i) ; WinVista + ComCtl32 v6
+!define LVM_FIRST                          0x00001000
+!define /math LVM_GETIMAGELIST             ${LVM_FIRST} +  2
+!define /math LVM_SETIMAGELIST             ${LVM_FIRST} +  3
+!define /math LVM_GETITEMCOUNT             ${LVM_FIRST} +  4
+!define /math LVM_GETITEMA                 ${LVM_FIRST} +  5
+!define /math LVM_SETITEMA                 ${LVM_FIRST} +  6
+!define /math LVM_INSERTITEM               ${LVM_FIRST} +  7
+!define /math LVM_DELETEITEM               ${LVM_FIRST} +  8
+!define /math LVM_DELETEALLITEMS           ${LVM_FIRST} +  9
+!define /math LVM_INSERTCOLUMNA            ${LVM_FIRST} + 27
+!define /math LVM_SETCOLUMNWIDTH           ${LVM_FIRST} + 30
+!define /math LVM_SETITEMSTATE             ${LVM_FIRST} + 43
+!define /math LVM_GETITEMSTATE             ${LVM_FIRST} + 44
+!define /math LVM_SETEXTENDEDLISTVIEWSTYLE ${LVM_FIRST} + 54
+!define /math LVM_GETEXTENDEDLISTVIEWSTYLE ${LVM_FIRST} + 55
+!define /math LVM_GETITEMW                 ${LVM_FIRST} + 75
+!define /math LVM_SETITEMW                 ${LVM_FIRST} + 76
+!define /math LVM_INSERTITEMW              ${LVM_FIRST} + 77
+!define /math LVM_INSERTCOLUMNW            ${LVM_FIRST} + 97
+${_NSIS_DEFAW} LVM_GETITEM
+${_NSIS_DEFAW} LVM_SETITEM
+${_NSIS_DEFAW} LVM_INSERTITEM
+${_NSIS_DEFAW} LVM_INSERTCOLUMN
 
 #Status bar window#
 !define SB_CONST_ALPHA      0x00000001
@@ -588,7 +649,18 @@ UDM     Up-down control
 !define STM_SETIMAGE                0x0172
 
 #Tab control#
-!define TCM_FIRST                   0x1300
+!define TCS_SCROLLOPPOSITE 0x0001
+!define TCIF_TEXT  1
+!define TCIF_PARAM 8
+!define SYSSTRUCT_TCITEM (i,i,i,t,i,i,p)
+!define TCM_FIRST             0x1300
+!define /math TCM_INSERTITEMA ${TCM_FIRST} + 7
+!define /math TCM_GETCURSEL   ${TCM_FIRST} + 11
+!define /math TCM_ADJUSTRECT  ${TCM_FIRST} + 40
+!define /math TCM_INSERTITEMW ${TCM_FIRST} + 62
+!define TCN_SELCHANGE   -551
+!define TCN_SELCHANGING -552
+${_NSIS_DEFAW} TCM_INSERTITEM
 
 #Progress bar control#
 !define PBM_SETRANGE 0x0401
@@ -596,12 +668,12 @@ UDM     Up-down control
 !define PBM_DELTAPOS 0x0403
 !define PBM_SETSTEP  0x0404
 !define PBM_STEPIT   0x0405
-!define PBM_SETRANGE32  0x406 ; IE3 / ComCtl32 v4.70
+!define PBM_SETRANGE32  0x406 ; IE3 + ComCtl32 v4.70
 !define PBM_GETRANGE    0x407
 !define PBM_GETPOS      0x408
-!define PBM_SETBARCOLOR 0x409 ; IE4 / ComCtl32 v4.71
+!define PBM_SETBARCOLOR 0x409 ; IE4 + ComCtl32 v4.71
 !define PBM_SETBKCOLOR  ${CCM_SETBKCOLOR}
-!define PBM_SETMARQUEE  0x40A ; WinXP / ComCtl32 v6
+!define PBM_SETMARQUEE  0x40A ; WinXP + ComCtl32 v6
 !define PBM_GETSTEP     0x40D ; WinVista
 !define PBM_GETBKCOLOR  0x40E
 !define PBM_GETBARCOLOR 0x40F
