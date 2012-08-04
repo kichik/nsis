@@ -19,17 +19,17 @@ installed via a package manager (apt-get, aptitude, rpm, yum) on POSIX
 platforms. Another option is to build zlib from scratch and install it.
 
 For Windows it is recommended to download \W{http://zlib.net}{zlib} from
-\W{http://prdownloads.sourceforge.net/libpng/zlib124-dll.zip?download}{http://prdownloads.sourceforge.net/libpng/zlib124-dll.zip?download}.
+\W{http://prdownloads.sourceforge.net/libpng/zlib125-dll.zip?download}{http://prdownloads.sourceforge.net/libpng/zlib125-dll.zip?download}.
 Extract the contents of this zip archive to a folder of your choice, e.g.
-\c{C:\\dev\\zlib-1.2.4} and set an environment variable named \c{ZLIB_W32} 
+\c{C:\\dev\\zlib-1.2.5} and set an environment variable named \c{ZLIB_W32} 
 containing this path. 
 
-\c C:\>set ZLIB_W32=C:\dev\zlib-1.2.4
+\c C:\>set ZLIB_W32=C:\dev\zlib-1.2.5
 
 Alternatively the command line option ZLIB_W32 specifying the path
 could be passed with scons instead of the environment variable.
 
-\c C:\dev\nsis>scons ZLIB_W32=C:\dev\zlib-1.2.4
+\c C:\dev\nsis>scons ZLIB_W32=C:\dev\zlib-1.2.5
 
 The header and library files are assumed to be in %ZLIB_W32%. In addition
 scons checks for zlib header files in %ZLIB_W32%\\include, the
