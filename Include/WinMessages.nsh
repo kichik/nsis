@@ -107,6 +107,14 @@ UDM     Up-down control
 !define CCM_SETWINDOWTHEME   /math ${CCM_FIRST} + 0xB ; WinXP
 !define CCM_DPISCALE         /math ${CCM_FIRST} + 0xC
 
+!define CCS_TOP 1
+!define CCS_BOTTOM 3
+!define CCS_NODIVIDER 64
+!define CCS_LEFT 129
+!define CCS_RIGHT 131
+
+!define I_IMAGENONE -2
+
 #Button Control Messages#
 !define BM_CLICK           0x00F5
 !define BM_GETCHECK        0x00F0
@@ -567,6 +575,8 @@ UDM     Up-down control
 #List view control#
 !define LVS_SINGLESEL           4
 !define LVS_SHOWSELALWAYS       8
+!define LVS_SORTASCENDING    0x10
+!define LVS_SORTDESCENDING   0x20
 !define LVS_SHAREIMAGELISTS  0x40
 !define LVS_EDITLABELS      0x200
 !define LVS_NOSCROLL       0x2000
@@ -594,29 +604,37 @@ UDM     Up-down control
 !define SYSSTRUCT_LVITEM_V2 (i,i,i,i,i,t,i,i,p,i)           ; IE3
 !define SYSSTRUCT_LVITEM_V3 (i,i,i,i,i,t,i,i,p,i,i,i,i)     ; WinXP + ComCtl32 v6
 !define SYSSTRUCT_LVITEM_V4 (i,i,i,i,i,t,i,i,p,i,i,i,i,i,i) ; WinVista + ComCtl32 v6
+!define LVSCW_AUTOSIZE -1
+!define LVSCW_AUTOSIZE_USEHEADER -2
 !define LVM_FIRST                          0x00001000
 !define /math LVM_GETIMAGELIST             ${LVM_FIRST} +  2
 !define /math LVM_SETIMAGELIST             ${LVM_FIRST} +  3
 !define /math LVM_GETITEMCOUNT             ${LVM_FIRST} +  4
 !define /math LVM_GETITEMA                 ${LVM_FIRST} +  5
 !define /math LVM_SETITEMA                 ${LVM_FIRST} +  6
-!define /math LVM_INSERTITEM               ${LVM_FIRST} +  7
+!define /math LVM_INSERTITEMA              ${LVM_FIRST} +  7
 !define /math LVM_DELETEITEM               ${LVM_FIRST} +  8
 !define /math LVM_DELETEALLITEMS           ${LVM_FIRST} +  9
 !define /math LVM_INSERTCOLUMNA            ${LVM_FIRST} + 27
 !define /math LVM_SETCOLUMNWIDTH           ${LVM_FIRST} + 30
 !define /math LVM_SETITEMSTATE             ${LVM_FIRST} + 43
 !define /math LVM_GETITEMSTATE             ${LVM_FIRST} + 44
+!define /math LVM_SETITEMTEXTA             ${LVM_FIRST} + 46
+!define /math LVM_SETITEMCOUNT             ${LVM_FIRST} + 47
+!define /math LVM_SORTITEMS                ${LVM_FIRST} + 48
 !define /math LVM_SETEXTENDEDLISTVIEWSTYLE ${LVM_FIRST} + 54
 !define /math LVM_GETEXTENDEDLISTVIEWSTYLE ${LVM_FIRST} + 55
 !define /math LVM_GETITEMW                 ${LVM_FIRST} + 75
 !define /math LVM_SETITEMW                 ${LVM_FIRST} + 76
 !define /math LVM_INSERTITEMW              ${LVM_FIRST} + 77
 !define /math LVM_INSERTCOLUMNW            ${LVM_FIRST} + 97
+!define /math LVM_SETITEMTEXTW             ${LVM_FIRST} + 116
+!define /math LVM_SETSELECTEDCOLUMN        ${LVM_FIRST} + 140
 ${_NSIS_DEFAW} LVM_GETITEM
 ${_NSIS_DEFAW} LVM_SETITEM
 ${_NSIS_DEFAW} LVM_INSERTITEM
 ${_NSIS_DEFAW} LVM_INSERTCOLUMN
+${_NSIS_DEFAW} LVM_SETITEMTEXT
 
 #Status bar window#
 !define SB_CONST_ALPHA      0x00000001
