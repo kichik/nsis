@@ -396,6 +396,8 @@
   !insertmacro __WinVer_DefineOSTest ${Test} 2008   '${Suffix}'
   !insertmacro __WinVer_DefineOSTest ${Test} 7      '${Suffix}'
   !insertmacro __WinVer_DefineOSTest ${Test} 2008R2 '${Suffix}'
+  !insertmacro __WinVer_DefineOSTest ${Test} 8      '${Suffix}'
+  !insertmacro __WinVer_DefineOSTest ${Test} 2012   '${Suffix}'
 !macroend
 
 !insertmacro __WinVer_DefineOSTests AtLeast ""
