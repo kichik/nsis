@@ -260,7 +260,9 @@ Call functions:
 \\<b\\>Example (Locate with banner - \W{http://nsis.sourceforge.net/Nxs_plug-in}{NxS plugin} required):\\</b\\>
 
 \c Section
-\c 	nxs::Show /NOUNLOAD `$(^Name) Setup` /top `Setup searching something$\r$\nPlease wait... If you can..` /h 1 /can 1 /end
+\c 	nxs::Show /NOUNLOAD `$(^Name) Setup` /top \
+\c 		`Setup searching something$\r$\nPlease wait... If you can..` \
+\c 		/h 1 /can 1 /end
 \c 	${Locate} "C:\WINDOWS" "/L=F /M=*.inf /B=1" "Example8"
 \c 	nxs::Destroy
 \c SectionEnd
@@ -1484,7 +1486,12 @@ Call functions:
 \c SectionEnd
 \c 
 \c Function Example6
-\c 	MessageBox MB_OKCANCEL '$$9    "Line File1" =[$9]$\n$$8    "Line #"      =[$8]$\n$$7    "Line File2" =[$7]$\n$$6    "Line #"      =[$6]' IDOK +2
+\c 	MessageBox MB_OKCANCEL '\
+\c 		$$9    "Line File1" =[$9]$\n\
+\c 		$$8    "Line #"      =[$8]$\n\
+\c 		$$7    "Line File2" =[$7]$\n\
+\c 		$$6    "Line #"      =[$6]'\
+\c 		IDOK +2
 \c 	StrCpy $0 StopTextCompare
 \c 
 \c 	Push $0
