@@ -66,7 +66,7 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
                 continue;
 
               wsprintf(valname, _T("%u.file"), j);
-              l = (lstrlen(file)+1)*sizeof(TCHAR);
+              l = STR_SIZE*sizeof(TCHAR);
               if (FAILED(RegQueryValueEx(key, valname, NULL, &t, (LPBYTE) file, &l)) || t != REG_SZ)
                 continue;
 

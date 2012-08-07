@@ -9,7 +9,7 @@ WTypes.h
 **************************************************/
 ;NOTE: This list is incomplete
 !define VT_EMPTY     0
-!define VT_NULL	     1
+!define VT_NULL      1
 !define VT_I4        3
 !define VT_BSTR      8
 !define VT_BOOL      11
@@ -36,8 +36,9 @@ PropIdl.h
 /**************************************************
 Propkey.h
 **************************************************/
-!define PKEY_AppUserModel_ID '"{9F4C2855-9F79-4B39-A8D0-E1D42DE1D5F3}",5'
-!define PKEY_AppUserModel_PreventPinning '"{9F4C2855-9F79-4B39-A8D0-E1D42DE1D5F3}",9'
+!define PKEY_AppUserModel_ID                          '"{9F4C2855-9F79-4B39-A8D0-E1D42DE1D5F3}",5'
+!define PKEY_AppUserModel_ExcludeFromShowInNewInstall '"{9F4C2855-9F79-4B39-A8D0-E1D42DE1D5F3}",8'
+!define PKEY_AppUserModel_PreventPinning              '"{9F4C2855-9F79-4B39-A8D0-E1D42DE1D5F3}",9'
 
 
 !verbose pop

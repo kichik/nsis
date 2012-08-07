@@ -848,7 +848,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
 
                 // Get proc address
                 proc->Proc = NSISGetProcAddress(proc->Dll, proc->ProcName);
-                if (UsedTString)
+                if (UsedTString || !proc->Proc)
                 {
                     FARPROC tproc;
                     TCHAR*ProcName = proc->ProcName; // This buffer has room for us to party on
@@ -859,9 +859,11 @@ SystemProc *PrepareProc(BOOL NeedForCall)
                     STRSET2CH(ProcName+cch, _T('A'), _T('\0'));
 #endif
                     tproc = NSISGetProcAddress(proc->Dll, ProcName);
-                    if (tproc) proc->Proc = tproc;
+                    if (tproc)
+                        proc->Proc = tproc;
+                    else
+                        proc->ProcResult = PR_ERROR;
                 }
-                if (!proc->Proc) proc->ProcResult = PR_ERROR;
             }
             break;
         case PT_STRUCT:
