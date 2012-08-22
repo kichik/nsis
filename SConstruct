@@ -430,6 +430,8 @@ if 'ZLIB_W32' in defenv:
 			break
 	defenv['ZLIB_W32_DLL'] = defenv.FindFile('zlib1.dll', 
 		[defenv['ZLIB_W32'], defenv['ZLIB_W32_LIB']])
+	defenv['ZLIB_W32_NEW_DLL'] = defenv.FindFile('zlib.dll',
+		[defenv['ZLIB_W32'], defenv['ZLIB_W32_LIB']])
 
 tools = defenv['TOOLS']
 
@@ -484,6 +486,8 @@ inst_env['NSISCONFDIR'] = os.path.abspath(str(defenv['INSTDISTDIR']))
 
 def build_installer(target, source, env):
 	cmdline = FindMakeNSIS(env, str(env['INSTDISTDIR'])) + ' %sDOUTFILE=%s %s' % (optchar, target[0].abspath, env['INSTVER'])
+	if 'ZLIB_W32_NEW_DLL' in env and env['ZLIB_W32_NEW_DLL']:
+		cmdline += ' %sDUSE_NEW_ZLIB' % optchar
 	cmd = env.Command(None, source, cmdline + ' $SOURCE')
 	AlwaysBuild(cmd)
 	# Comment out the following if you want to see the installation directory
