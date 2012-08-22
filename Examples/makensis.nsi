@@ -131,7 +131,11 @@ ${MementoSection} "NSIS Core Files (required)" SecCore
   File /nonfatal ..\NSIS.exe.manifest
   SetOutPath $INSTDIR\Bin
   File ..\Bin\makensis.exe
+!ifdef USE_NEW_ZLIB
+  File ..\Bin\zlib.dll
+!else
   File ..\Bin\zlib1.dll
+!endif
 
   IfFileExists $INSTDIR\nsisconf.nsi "" +2
   Rename $INSTDIR\nsisconf.nsi $INSTDIR\nsisconf.nsh

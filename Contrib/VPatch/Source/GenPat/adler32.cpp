@@ -26,6 +26,7 @@
  */
 
 #include "adler32.h"
+#include <limits.h>
 namespace zlib {
 #include <zlib.h>
 }
