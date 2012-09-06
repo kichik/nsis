@@ -121,7 +121,7 @@ public:
   void  FreeResource(BYTE* pbResource);
 
   // The section name must be in ASCII.
-  bool  AddExtraVirtualSize2PESection(const char* pszSectionName, int addsize);
+  bool  SetPESectionVirtualSize(const char* pszSectionName, DWORD newsize);
   DWORD Save(BYTE* pbBuf, DWORD &dwSize);
 
   // utitlity functions

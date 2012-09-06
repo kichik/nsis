@@ -18,7 +18,15 @@
 
 #include "fileform.h"
 
-extern NSIS_STRING g_usrvars[1];
+#ifdef __GNUC__
+// GCC warns about array bounds when accessing g_usrvarssection[2] because it is only [1] at compile time, 
+// the other part of this hack is in util.c where g_usrvarsstart is initialized.
+extern const NSIS_STRING*const g_usrvarsstart;
+#define g_usrvars ( (NSIS_STRING*) (g_usrvarsstart) )
+#else
+extern NSIS_STRING g_usrvarssection[1];
+#define g_usrvars g_usrvarssection
+#endif
 
 #define state_command_line        g_usrvars[20]
 #define state_install_directory   g_usrvars[21]
