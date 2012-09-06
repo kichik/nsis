@@ -42,12 +42,15 @@ TCHAR g_log_file[1024];
 // nsis then removes the "DISCARDABLE" style from section (for safe)
 #ifdef _MSC_VER
 #  pragma bss_seg(NSIS_VARS_SECTION)
-NSIS_STRING g_usrvars[1];
+NSIS_STRING g_usrvarssection[1];
 #  pragma bss_seg()
 #  pragma comment(linker, "/section:" NSIS_VARS_SECTION ",rwd")
 #else
 #  ifdef __GNUC__
-NSIS_STRING g_usrvars[1] __attribute__((section (NSIS_VARS_SECTION)));
+// GCC does not treat g_usrvarssection as a bss section so we keep the size as small as possible.
+// NSIS_STRING g_usrvarssection[31] is required to remove this hack but that really bloats the exehead.
+char g_usrvarssection[1] __attribute__((section (NSIS_VARS_SECTION)));
+const NSIS_STRING*const g_usrvarsstart = (const NSIS_STRING*const) g_usrvarssection;
 #  else
 #    error Unknown compiler. You must implement the seperate PE section yourself.
 #  endif

@@ -514,14 +514,14 @@ DWORD CResourceEditor::Save(BYTE* pbBuf, DWORD &dwSize) {
 // This function scans exe sections and after find a match with given name
 // increments it's virtual size (auto fixes image size based on section alignment, etc)
 // Jim Park: The section name must be ASCII code.  Do not TCHAR this stuff.
-bool CResourceEditor::AddExtraVirtualSize2PESection(const char* pszSectionName, int addsize)
+bool CResourceEditor::SetPESectionVirtualSize(const char* pszSectionName, DWORD newsize)
 {
   PIMAGE_SECTION_HEADER sectionHeadersArray = IMAGE_FIRST_SECTION(m_ntHeaders);
 
   // Refresh the headers of the sections that come after the resource section, and the data directory
   for (int i = 0; i < ConvertEndianness(m_ntHeaders->FileHeader.NumberOfSections); i++) {
     if (!strcmp((LPCSTR)sectionHeadersArray[i].Name, pszSectionName)) {
-      sectionHeadersArray[i].Misc.VirtualSize = AlignVA(AdjustVA(sectionHeadersArray[i].Misc.VirtualSize, addsize));
+      sectionHeadersArray[i].Misc.VirtualSize = AlignVA(ConvertEndianness(newsize));
 
       sectionHeadersArray[i].Characteristics &= ConvertEndianness((DWORD) ~IMAGE_SCN_MEM_DISCARDABLE);
 
