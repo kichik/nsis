@@ -1423,7 +1423,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       for (UINT i = 0; i < 4; ++i)
       {
         _stprintf(symbuf,_T("%s%u"), basesymname, i+1);
-        _stprintf(numbuf,_T("%u"), vals[i]);
+        _stprintf(numbuf,_T("%lu"), vals[i]);
         definedlist.add(symbuf, numbuf);
       }
     }

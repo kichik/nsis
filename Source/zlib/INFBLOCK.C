@@ -477,7 +477,7 @@ int ZEXPORT inflate(z_streamp z)
       {
         uInt hn = 0;          /* hufts used in space */
 
-        t = huft_build(s->sub.trees.t_blens, 19, 19, (short *)Z_NULL, (short*)Z_NULL,
+        t = huft_build(s->sub.trees.t_blens, 19, 19, (unsigned short*)Z_NULL, (unsigned short*)Z_NULL,
                  &s->sub.trees.tb, &s->sub.trees.bb, s->hufts, &hn);
         if (t != Z_OK || !s->sub.trees.bb)
         {

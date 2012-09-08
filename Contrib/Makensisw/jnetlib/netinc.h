@@ -22,6 +22,7 @@
 #include <time.h>
 #define strcasecmp(x,y) stricmp(x,y)
 #define ERRNO (WSAGetLastError())
+#define PORTABLE_SOCKET SOCKET
 #define SET_SOCK_BLOCK(s,block) { unsigned long __i=block?0:1; ioctlsocket(s,FIONBIO,&__i); }
 #define EWOULDBLOCK WSAEWOULDBLOCK
 #define EINPROGRESS WSAEWOULDBLOCK
@@ -53,6 +54,7 @@ typedef int socklen_t;
 #include <string.h>
 
 #define ERRNO errno
+#define PORTABLE_SOCKET int
 #define closesocket(s) close(s)
 #define SET_SOCK_BLOCK(s,block) { int __flags; if ((__flags = fcntl(s, F_GETFL, 0)) != -1) { if (!block) __flags |= O_NONBLOCK; else __flags &= ~O_NONBLOCK; fcntl(s, F_SETFL, __flags);  } }
 
@@ -72,6 +74,10 @@ typedef int socklen_t;
 
 #ifndef SHUT_RDWR
 #define SHUT_RDWR 2
+#endif
+
+#ifndef INVALID_SOCKET
+#define INVALID_SOCKET -1
 #endif
 
 extern void mini_memset(void *,char,int);

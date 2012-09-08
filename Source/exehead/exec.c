@@ -114,17 +114,17 @@ int NSISCALL ExecuteCallbackFunction(int num)
 
 #endif
 
-static TCHAR bufs[5][NSIS_MAX_STRLEN];
-static int *parms;
+static TCHAR g_bufs[5][NSIS_MAX_STRLEN];
+static int *g_parms;
 
 void NSISCALL update_status_text_buf1(int strtab)
 {
-  update_status_text(strtab, bufs[1]);
+  update_status_text(strtab, g_bufs[1]);
 }
 
 static int NSISCALL GetIntFromParm(int id_)
 {
-  return myatoi(GetNSISStringTT(parms[id_]));
+  return myatoi(GetNSISStringTT(g_parms[id_]));
 }
 
 // NB - USE CAUTION when rearranging code to make use of the new return value of
@@ -133,11 +133,11 @@ static int NSISCALL GetIntFromParm(int id_)
 // Note: Calling GetNSISString has the side effect that the buffer holding
 // the string to expand gets modified.
 // When calling this function with numbers like 0x13, it means create the string
-// from the string ID found in entry.offset[3] and put it into bufs[0].
+// from the string ID found in entry.offset[3] and put it into g_bufs[1].
 static TCHAR * NSISCALL GetStringFromParm(int id_)
 {
   int id = id_ < 0 ? -id_ : id_;
-  TCHAR *result = GetNSISString(bufs[id >> 4], parms[id & 0xF]);
+  TCHAR *result = GetNSISString(g_bufs[id >> 4], g_parms[id & 0xF]);
   if (id_ < 0) validate_filename(result);
   return result;
 }
@@ -193,7 +193,7 @@ static HKEY NSISCALL GetRegRootKey(int hRootKey)
 static HKEY NSISCALL myRegOpenKey(REGSAM samDesired)
 {
   HKEY hKey;
-  if (RegOpenKeyEx(GetRegRootKey(parms[1]), GetStringFromParm(0x22), 0, AlterRegistrySAM(samDesired), &hKey) == ERROR_SUCCESS)
+  if (RegOpenKeyEx(GetRegRootKey(g_parms[1]), GetStringFromParm(0x22), 0, AlterRegistrySAM(samDesired), &hKey) == ERROR_SUCCESS)
   {
     return hKey;
   }
@@ -206,11 +206,11 @@ static HKEY NSISCALL myRegOpenKey(REGSAM samDesired)
 // otherwise, returns new_position+1
 static int NSISCALL ExecuteEntry(entry *entry_)
 {
-  TCHAR *buf0 = bufs[0];
-  TCHAR *buf1 = bufs[1];
-  TCHAR *buf2 = bufs[2];
-  TCHAR *buf3 = bufs[3];
-  //char *buf4 = bufs[4];
+  TCHAR *buf0 = g_bufs[0];
+  TCHAR *buf1 = g_bufs[1];
+  TCHAR *buf2 = g_bufs[2];
+  TCHAR *buf3 = g_bufs[3];
+  //char *buf4 = g_bufs[4];
 
   TCHAR *var0;
   TCHAR *var1;
@@ -245,7 +245,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
   //var4 = g_usrvars[parm4];
   //var5 = g_usrvars[parm5];
 
-  parms = lent.offsets;
+  g_parms = lent.offsets;
 
   switch (which)
   {
@@ -385,7 +385,10 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       {
         TCHAR *buf3=GetStringFromParm(-0x30);
         TCHAR *buf2=GetStringFromParm(-0x21);
-        TCHAR *buf1=GetStringFromParm(0x13);
+#ifdef NSIS_CONFIG_LOG
+        TCHAR *buf1=
+#endif
+          GetStringFromParm(0x13); // For update_status_text_buf1 and log_printf
         log_printf2(_T("Rename: %s"),buf1);
         if (MoveFile(buf3,buf2))
         {
@@ -859,7 +862,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         TCHAR *buf0=GetStringFromParm(0x00);
         TCHAR *buf3=GetStringFromParm(0x31);
         TCHAR *buf2=GetStringFromParm(0x22);
-        TCHAR *buf1=GetStringFromParm(0x15);
+        GetStringFromParm(0x15); // For update_status_text_buf1
         update_status_text_buf1(LANG_EXECSHELL);
         x=(int)ShellExecute(g_hwnd,buf0[0]?buf0:NULL,buf3,buf2[0]?buf2:NULL,state_output_directory,parm3);
         if (x < 33)

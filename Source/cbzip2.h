@@ -52,17 +52,17 @@ class CBzip2 : public ICompressor {
     }
 
     void SetNextIn(char *in, unsigned int size) {
-      stream->next_in = in;
+      stream->next_in = (unsigned char*) in;
       stream->avail_in = size;
     }
 
     void SetNextOut(char *out, unsigned int size) {
-      stream->next_out = out;
+      stream->next_out = (unsigned char*) out;
       stream->avail_out = size;
     }
 
     virtual char* GetNextOut() {
-      return stream->next_out;
+      return (char*) stream->next_out;
     }
 
     virtual unsigned int GetAvailIn() {

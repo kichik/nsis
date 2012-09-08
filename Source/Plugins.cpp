@@ -85,7 +85,7 @@ void read_file(const tstring& filename, vector<unsigned char>& data) {
     rewind(file);
     data.resize(filesize);
     size_t cbio = fread(reinterpret_cast<char*>(&data[0]), 1, filesize, file);
-    succ = cbio == filesize;
+    succ = cbio == (unsigned)filesize;
   }
   if (!succ) throw NSISException(_T("Couldn't read entire file '") + filename + _T("'"));
 }

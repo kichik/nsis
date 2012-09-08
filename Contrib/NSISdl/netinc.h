@@ -43,4 +43,10 @@ typedef int socklen_t;
 #define SHUT_RDWR 2
 #endif
 
+#ifndef INVALID_SOCKET
+#define INVALID_SOCKET -1
+#endif
+
+#define PORTABLE_SOCKET SOCKET
+
 #endif //_NETINC_H_

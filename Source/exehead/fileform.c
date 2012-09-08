@@ -385,7 +385,7 @@ int NSISCALL _dodecomp(int offset, HANDLE hFileOut, unsigned char *outbuf, int o
       if (!ReadSelfFile((LPVOID)inbuffer,l))
         return -3;
 
-      g_inflate_stream.next_in = inbuffer;
+      g_inflate_stream.next_in = (unsigned char*) inbuffer;
       g_inflate_stream.avail_in = l;
       input_len-=l;
 
@@ -393,7 +393,7 @@ int NSISCALL _dodecomp(int offset, HANDLE hFileOut, unsigned char *outbuf, int o
       {
         int u;
 
-        g_inflate_stream.next_out = outbuffer;
+        g_inflate_stream.next_out = (unsigned char*) outbuffer;
         g_inflate_stream.avail_out = (unsigned int)outbuffer_len;
 
         err=inflate(&g_inflate_stream);
@@ -424,7 +424,7 @@ int NSISCALL _dodecomp(int offset, HANDLE hFileOut, unsigned char *outbuf, int o
         {
           retval+=u;
           outbuffer_len-=u;
-          outbuffer=g_inflate_stream.next_out;
+          outbuffer=(char*)g_inflate_stream.next_out;
         }
         if (err==Z_STREAM_END) return retval;
       }
@@ -480,7 +480,7 @@ static int NSISCALL __ensuredata(int amount)
       int l=min(IBUFSIZE,dbd_fulllen-dbd_srcpos);
       if (!ReadSelfFile((LPVOID)_inbuffer,l)) return -1;
       dbd_srcpos+=l;
-      g_inflate_stream.next_in=_inbuffer;
+      g_inflate_stream.next_in=(unsigned char*)_inbuffer;
       g_inflate_stream.avail_in=l;
       do
       {
@@ -496,7 +496,7 @@ static int NSISCALL __ensuredata(int amount)
             handle_ver_dlg(FALSE);
           }
 #endif//NSIS_CONFIG_VISIBLE_SUPPORT
-        g_inflate_stream.next_out=_outbuffer;
+        g_inflate_stream.next_out=(unsigned char*)_outbuffer;
         g_inflate_stream.avail_out=OBUFSIZE;
         err=inflate(&g_inflate_stream);
         if (err<0)

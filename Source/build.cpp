@@ -1820,7 +1820,7 @@ int CEXEBuild::ProcessPages()
   int license_fsrb=0;
   int license_fscb=0;
   int selcom=0;
-  int dir=0, dir_used;
+  int dir=0;
   int uninstconfirm=0;
   int instlog=0, instlog_used;
   int main=0;
@@ -1829,7 +1829,6 @@ int CEXEBuild::ProcessPages()
 again:
 #endif
 
-  dir_used = 0;
   instlog_used = 0;
 
 #ifdef NSIS_CONFIG_SILENT_SUPPORT

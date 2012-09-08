@@ -1104,8 +1104,15 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
     total = (unsigned) sumsecsfield(size_kb);
 
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized" // available_set is checked first so available is initialized
+#endif
     if (available_set && available < total)
       error = NSIS_INSTDIR_NOT_ENOUGH_SPACE;
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
 
     if (LANG_STR_TAB(LANG_SPACE_REQ)) {
       SetSizeText(IDC_SPACEREQUIRED,LANG_SPACE_REQ,total);
@@ -1283,7 +1290,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     int doLines=0;
     HTREEITEM Par;
     HBITMAP hBMcheck1;
-    int x, lastGoodX, i, noCombo=2;
+    int x, i, noCombo=2;
 
     g_SectionHack=hwndDlg;
 
@@ -1322,7 +1329,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
     Par=NULL;
 
-    for (lastGoodX = x = 0; x < num_sections; x ++)
+    for (x = 0; x < num_sections; x ++)
     {
       section *sec=sections+x;
 
@@ -1352,7 +1359,6 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
         }
         else
         {
-          lastGoodX = x;
           hTreeItems[x] = TreeView_InsertItem(hwndTree1, &tv);
         }
       }
