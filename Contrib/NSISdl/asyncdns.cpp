@@ -27,7 +27,7 @@ JNL_AsyncDNS::~JNL_AsyncDNS()
   wait_for_thread_death();
 }
 
-unsigned long WINAPI JNL_AsyncDNS::_threadfunc(LPVOID _d)
+DWORD WINAPI JNL_AsyncDNS::_threadfunc(LPVOID _d)
 {
   JNL_AsyncDNS *_this=(JNL_AsyncDNS*)_d;
   struct hostent *hostentry;

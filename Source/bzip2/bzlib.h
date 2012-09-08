@@ -146,10 +146,10 @@ typedef unsigned short  UInt16;
 #define mini_memcpy memcpy
 
 typedef struct {
-  char *next_in;
+  unsigned char *next_in;
   unsigned int avail_in;
 
-  char *next_out;
+  unsigned char *next_out;
   unsigned int avail_out;
 
   void *state;
@@ -325,10 +325,10 @@ typedef struct {
 
 typedef struct {
   /* pointer back to the struct bz_stream */
-  char *next_in;
+  unsigned char *next_in;
   unsigned int avail_in;
 
-  char *next_out;
+  unsigned char *next_out;
   unsigned int avail_out;
 
   /* state indicator for this stream */

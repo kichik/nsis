@@ -636,7 +636,14 @@ SystemProc *PrepareProc(BOOL NeedForCall)
             case _T('0'): case _T('1'): case _T('2'): case _T('3'): case _T('4'):
             case _T('5'): case _T('6'): case _T('7'): case _T('8'): case _T('9'):
                 // Numeric inline
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized" // temp3 is set to 0 when we start parsing a new parameter
+#endif
                 if (temp3 == 0)
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
                 {
                     ib--;
                     // It's stupid, I know, but I'm too lazy to do another thing
@@ -704,7 +711,14 @@ SystemProc *PrepareProc(BOOL NeedForCall)
                 if (temp3 == 1)
                     proc->Params[ParamIndex].Output = temp4;
                 // Next parameter is output or something else
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#endif
                 temp3++;
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
             }
 
             ChangesDone = PCD_DONE;
@@ -1156,9 +1170,10 @@ void CallStruct(SystemProc *proc)
             // Special
             size = (proc->Params[i].Option-1) * ByteSizeByType[proc->Params[i].Type];
 
+            ptr = NULL;
             switch (proc->Params[i].Type)
             {
-            case PAT_VOID: ptr = NULL; break;
+            case PAT_VOID: break;
             case PAT_LONG: 
                 // real structure size
                 proc->Params[i].Value = structsize;

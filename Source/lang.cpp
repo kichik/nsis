@@ -648,13 +648,6 @@ int CEXEBuild::GenerateLangTable(LanguageTable *lt, int num_lang_tables) {
             const TCHAR *name = _T("(unnamed)");
             for (l = 0; l < langstring_num; l++)
             {
-              int index;
-
-              if (!uninstall_mode)
-                index = lang_strings[l].index;
-              else
-                index = lang_strings[l].uindex;
-
               if (lang_strings[l].index == j)
               {
                 name = build_langstrings.offset2name(lang_strings[l].name);

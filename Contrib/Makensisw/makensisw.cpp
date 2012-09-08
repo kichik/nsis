@@ -319,7 +319,6 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
           }
           else {
             int this_compressor=0;
-            int last_compressor;
             int i;
             HANDLE hPrev, hThis;
             DWORD prevSize=0, thisSize=0;
@@ -328,7 +327,6 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
             for(i=(int)COMPRESSOR_SCRIPT+2; i<(int)COMPRESSOR_BEST; i++) {
               if(!lstrcmpi(g_sdata.compressor_name,compressor_names[i])) {
                 this_compressor = i;
-                last_compressor = i-1;
                 break;
               }
             }
@@ -937,12 +935,11 @@ BOOL CALLBACK SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
     case WM_INITDIALOG:
     {
       int i = 0;
-      LRESULT rv;
 
       for(i = (int)COMPRESSOR_SCRIPT; i <= (int)COMPRESSOR_BEST; i++) {
-        rv = SendDlgItemMessage(hwndDlg, IDC_COMPRESSOR, CB_ADDSTRING, 0, (LPARAM)compressor_display_names[i]);
+        SendDlgItemMessage(hwndDlg, IDC_COMPRESSOR, CB_ADDSTRING, 0, (LPARAM)compressor_display_names[i]);
       }
-      rv = SendDlgItemMessage(hwndDlg, IDC_COMPRESSOR, CB_SETCURSEL, (WPARAM)g_sdata.default_compressor, (LPARAM)0);
+      SendDlgItemMessage(hwndDlg, IDC_COMPRESSOR, CB_SETCURSEL, (WPARAM)g_sdata.default_compressor, (LPARAM)0);
 
       SetSymbols(hwndDlg, g_sdata.symbols);
       SetFocus(GetDlgItem(hwndDlg, IDC_SYMBOL));
@@ -1127,12 +1124,11 @@ BOOL CALLBACK CompressorProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lPara
     case WM_INITDIALOG:
     {
       int i=0;
-      LRESULT rv;
 
       for(i=(int)COMPRESSOR_SCRIPT; i<= (int)COMPRESSOR_BEST; i++) {
-        rv = SendDlgItemMessage(hwndDlg, IDC_COMPRESSOR, CB_ADDSTRING, 0, (LPARAM)compressor_display_names[i]);
+        SendDlgItemMessage(hwndDlg, IDC_COMPRESSOR, CB_ADDSTRING, 0, (LPARAM)compressor_display_names[i]);
       }
-      rv = SendDlgItemMessage(hwndDlg, IDC_COMPRESSOR, CB_SETCURSEL, (WPARAM)g_sdata.compressor, (LPARAM)0);
+      SendDlgItemMessage(hwndDlg, IDC_COMPRESSOR, CB_SETCURSEL, (WPARAM)g_sdata.compressor, (LPARAM)0);
 
       SetFocus(GetDlgItem(hwndDlg, IDC_COMPRESSOR));
       break;

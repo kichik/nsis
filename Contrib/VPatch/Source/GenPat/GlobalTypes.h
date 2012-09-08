@@ -102,7 +102,7 @@ public:
   {
     size_t cbio = fread(s, 1, n, m_File);
     m_LastReadCount = cbio;
-    if (cbio != n)
+    if (cbio != (size_t)n)
     {
       m_state |= ferror(m_File) ? ios_base::badbit : (ios_base::eofbit|ios_base::failbit);
     }
@@ -126,7 +126,7 @@ public:
   simplebfstream& write(const char* s, streamsize n)
   {
     size_t cbio = fwrite(s, 1, n, m_File);
-    if (cbio != n) m_state |= ios_base::badbit;
+    if (cbio != (size_t)n) m_state |= ios_base::badbit;
     return *this;
   }
 

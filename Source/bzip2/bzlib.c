@@ -520,7 +520,7 @@ static void NSISCALL unRLE_obuf_to_output_FAST ( DState* s )
       Int32         c_k0                 = s->k0;
       UInt32        c_tPos               = s->tPos;
 
-      char*         cs_next_out          = s->next_out;
+      char*         cs_next_out          = (char*) s->next_out;
       unsigned int  cs_avail_out         = s->avail_out;
       /* end restore */
 
@@ -583,7 +583,7 @@ static void NSISCALL unRLE_obuf_to_output_FAST ( DState* s )
       s->nblock_used        = c_nblock_used;
       s->k0                 = c_k0;
       s->tPos               = c_tPos;
-      s->next_out     = cs_next_out;
+      s->next_out     = (unsigned char*) cs_next_out;
       s->avail_out    = cs_avail_out;
       /* end save */
 }
