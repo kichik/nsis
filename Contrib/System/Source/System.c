@@ -37,7 +37,8 @@ const int ParamSizeByType[7] = {
     1, // PAT_STRING
     1, // PAT_WSTRING
     1, // PAT_GUID
-    0}; // PAT_CALLBACK (Size will be equal to 1)
+    0}; // PAT_CALLBACK (Size will be equal to 1) //BUGBUG64?
+const int PARAMSIZEBYTYPE_PTR = (4==sizeof(void*)) ? 1 : 2;
 
 // Thomas needs to look at this.
 const int ByteSizeByType[7] = {
@@ -48,7 +49,7 @@ const int ByteSizeByType[7] = {
     2, // PAT_WSTRING (special case for &wN notation: N is a number of WCHAR, not a number of bytes)
     1, // PAT_GUID
     1}; // PAT_CALLBACK
-    
+
 int LastStackPlace;
 int LastStackReal;
 DWORD LastError;
@@ -58,7 +59,7 @@ CallbackThunk* CallbackThunkListHead;
 HINSTANCE g_hInstance;
 
 // Return to callback caller with stack restore
-char retexpr[4];
+char retexpr[4]; //BUGBUG64?
 HANDLE retaddr;
 
 TCHAR *GetResultStr(SystemProc *proc)
@@ -189,7 +190,7 @@ void * NSISGetProcAddress(HMODULE dllHandle, TCHAR* funcName)
 #ifdef _UNICODE
   char* ansiName = NULL;
   int   len;
-  void* funcPtr = NULL;
+  void* funcPtr;
 
   len = WideCharToMultiByte(CP_ACP, 0, funcName, -1, ansiName, 0, NULL, NULL);
   ansiName = (char*) GlobalAlloc(GPTR, len);
@@ -410,7 +411,8 @@ SystemProc *PrepareProc(BOOL NeedForCall)
         ProcType = PT_NOTHING, // Default proc spec
         ChangesDone = 0,
         ParamIndex = 0,
-        temp = 0, temp2, temp3, temp4;
+        temp = 0, temp2, temp3;
+    INT_PTR temp4;
     BOOL param_defined = FALSE;
     SystemProc *proc = NULL;
     TCHAR *ibuf, *ib, *sbuf, *cbuf, *cb;
@@ -627,10 +629,10 @@ SystemProc *PrepareProc(BOOL NeedForCall)
             case _T('.'): temp3++; break; // skip specifier
 
             case _T('R'):
-                temp4 = ((int) GetIntFromString(&ib))+1;
+                temp4 = ((INT_PTR) GetIntFromString(&ib))+1;
                 if (temp4 < 11) temp4 += 10; 
                 break;
-            case _T('r'): temp4 = ((int) GetIntFromString(&ib))+1; break; // Register
+            case _T('r'): temp4 = ((INT_PTR) GetIntFromString(&ib))+1; break; // Register
 
             case _T('-'):
             case _T('0'): case _T('1'): case _T('2'): case _T('3'): case _T('4'):
@@ -647,7 +649,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
                 {
                     ib--;
                     // It's stupid, I know, but I'm too lazy to do another thing
-                    myitoa64(GetIntFromString(&(ib)),(TCHAR *)(temp4 = BUGBUG64(int) AllocString()));
+                    myitoa64(GetIntFromString(&(ib)),(TCHAR *)(temp4 = (INT_PTR) AllocString()));
                 }
                 break;
 
@@ -664,7 +666,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
                     }
                     // finish and save
                     *cb = 0; 
-                    temp4 = BUGBUG64(int) AllocStr(cbuf);
+                    temp4 = (INT_PTR) AllocStr(cbuf);
                 }
                 break;
 
@@ -685,10 +687,11 @@ SystemProc *PrepareProc(BOOL NeedForCall)
             // Param type changed?
             if (temp2 != -1)
             {
+                const int psbt = ParamSizeByType[temp2];
                 param_defined = TRUE;
                 proc->Params[ParamIndex].Type = temp2;
-                proc->Params[ParamIndex].Size = // If pointer, then 1, else by type
-                    (temp == -1)?(1):((ParamSizeByType[temp2]>0)?(ParamSizeByType[temp2]):(1));
+                proc->Params[ParamIndex].Size = // Pointer sized or from type
+                    (temp == -1)?(PARAMSIZEBYTYPE_PTR):((psbt>0)?(psbt):(1)); //BUGBUG64: Is it safe to fallback to 1 for CALLBACK?
                 // Get the parameter real special option value
                 if (temp == 1) temp = ((int) GetIntFromString(&ib)) + 1;
                 proc->Params[ParamIndex].Option = temp;
@@ -787,7 +790,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
         case PT_VTABLEPROC:
             {
                 // Use direct system proc address
-                int addr;
+                INT_PTR addr;
 
                 proc->Dll = (HMODULE) StrToIntPtr(proc->DllName);
   
@@ -797,20 +800,20 @@ SystemProc *PrepareProc(BOOL NeedForCall)
                     break;
                 }
 
-                addr = (int) proc->Dll;
+                addr = (INT_PTR) proc->Dll;
 
                 // fake-real parameter: for COM interfaces first param is Interface Pointer
                 proc->Params[1].Output = IOT_NONE;
                 proc->Params[1].Input = BUGBUG64(int) AllocStr(proc->DllName);
-                proc->Params[1].Size = 1;
-                proc->Params[1].Type = PAT_INT;
+                proc->Params[1].Size = PARAMSIZEBYTYPE_PTR;
+                proc->Params[1].Type = PAT_PTR;
                 proc->Params[1].Option = 0;
 
                 // addr - pointer to interface vtable
-                addr = *(BUGBUG64(int *)addr);
+                addr = *((INT_PTR *)addr);
                 // now addr contains the pointer to first item at VTABLE
                 // add the index of proc
-                addr = addr + (int)(myatoi64(proc->ProcName)*4); //BUGBUG: sizeof(void*) on x64?
+                addr = addr + (INT_PTR)(myatoi64(proc->ProcName)*sizeof(void*));
                 proc->Proc = *((HANDLE*)addr);
             }
             break;
@@ -1129,7 +1132,7 @@ void CallStruct(SystemProc *proc)
         }
 
         if (proc->Params[i].Option < 1)
-            structsize += proc->Params[i].Size * 4; //BUGBUG: Does this have to be sizeof(void*)?
+            structsize += proc->Params[i].Size * 4;
         else
             structsize += ByteSizeByType[proc->Params[i].Type] * (proc->Params[i].Option - 1);
     }
@@ -1160,7 +1163,7 @@ void CallStruct(SystemProc *proc)
         if (proc->Params[i].Option < 1)
         {
             // Normal
-            size = proc->Params[i].Size*4; //BUGBUG: sizeof(void*) on x64?
+            size = proc->Params[i].Size*4;
             ptr = (char*) &(proc->Params[i].Value);
         }
         else
@@ -1169,7 +1172,6 @@ void CallStruct(SystemProc *proc)
 
             // Special
             size = (proc->Params[i].Option-1) * ByteSizeByType[proc->Params[i].Type];
-
             ptr = NULL;
             switch (proc->Params[i].Type)
             {
@@ -1178,7 +1180,7 @@ void CallStruct(SystemProc *proc)
                 // real structure size
                 proc->Params[i].Value = structsize;
                 proc->Params[i]._value = 0;
-                ssflag = TRUE;
+                ssflag = TRUE; //Why does this have to be set?
             case PAT_INT: 
                 // clear unused value bits
                 proc->Params[i].Value &= intmask[((size >= 0) && (size < 4))?(size):(0)];

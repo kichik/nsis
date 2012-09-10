@@ -52,6 +52,7 @@
 #else
 #define PAT_TSTRING     PAT_STRING
 #endif
+#define PAT_PTR ( (4==sizeof(void*)) ? PAT_INT : PAT_LONG )
 
 // Input/Output Source/Destination
 #define IOT_NONE    0
