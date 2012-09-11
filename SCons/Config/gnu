@@ -33,6 +33,11 @@ defenv['SUBSYS_CON'] = '-Wl,--subsystem,console'
 defenv['MSVCRT_FLAG'] = ''
 defenv['STDCALL'] = '"__attribute__((__stdcall__))"'
 
+# Don't allow mingw to link with LIBGCC*.DLL and LIBSTDC++-*.DLL 
+if defenv['PLATFORM'] == 'win32':
+	defenv.Append(LINKFLAGS = ['-static-libgcc'])
+	defenv.Append(LINKFLAGS = ['-static-libstdc++'])
+
 ### defines
 
 defenv.Append(CPPDEFINES = [('NSISCALL', '$STDCALL')])
