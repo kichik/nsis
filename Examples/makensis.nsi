@@ -114,6 +114,11 @@ ${MementoSection} "NSIS Core Files (required)" SecCore
   SetOutPath $INSTDIR
   RMDir /r $SMPROGRAMS\NSIS
 
+  IfFileExists $INSTDIR\nsisconf.nsi "" +2
+  Rename $INSTDIR\nsisconf.nsi $INSTDIR\nsisconf.nsh
+  SetOverwrite off
+  File ..\nsisconf.nsh
+
   SetOverwrite on
   File ..\makensis.exe
   File ..\makensisw.exe
@@ -121,6 +126,7 @@ ${MementoSection} "NSIS Core Files (required)" SecCore
   File ..\NSIS.chm
   File ..\NSIS.exe
   File /nonfatal ..\NSIS.exe.manifest
+
   SetOutPath $INSTDIR\Bin
   File ..\Bin\makensis.exe
 !ifdef USE_NEW_ZLIB
@@ -128,12 +134,6 @@ ${MementoSection} "NSIS Core Files (required)" SecCore
 !else
   File ..\Bin\zlib1.dll
 !endif
-
-  IfFileExists $INSTDIR\nsisconf.nsi "" +2
-  Rename $INSTDIR\nsisconf.nsi $INSTDIR\nsisconf.nsh
-  SetOverwrite off
-  File ..\nsisconf.nsh
-  SetOverwrite on
 
   SetOutPath $INSTDIR\Stubs
   File ..\Stubs\bzip2
