@@ -67,24 +67,20 @@ RefreshShellIcons
 ; ${FILEFUNC_VERBOSE} 3   # no script
 
 !ifndef FILEFUNC_INCLUDED
+
+!verbose push 3
+!define /IfNDef _FILEFUNC_VERBOSE 3
+!verbose ${_FILEFUNC_VERBOSE}
+!define FILEFUNC_VERBOSE `!insertmacro FILEFUNC_VERBOSE`
+
 !define FILEFUNC_INCLUDED
 
 !include Util.nsh
 
-!verbose push
-!verbose 3
-!ifndef _FILEFUNC_VERBOSE
-	!define _FILEFUNC_VERBOSE 3
-!endif
-!verbose ${_FILEFUNC_VERBOSE}
-!define FILEFUNC_VERBOSE `!insertmacro FILEFUNC_VERBOSE`
-!verbose pop
 
 !macro FILEFUNC_VERBOSE _VERBOSE
-	!verbose push
-	!verbose 3
-	!undef _FILEFUNC_VERBOSE
-	!define _FILEFUNC_VERBOSE ${_VERBOSE}
+	!verbose push 3
+	!define /ReDef _FILEFUNC_VERBOSE ${_VERBOSE}
 	!verbose pop
 !macroend
 
@@ -2015,4 +2011,5 @@ RefreshShellIcons
 	!verbose pop
 !macroend
 
+!verbose pop
 !endif

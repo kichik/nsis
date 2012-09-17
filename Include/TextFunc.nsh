@@ -54,25 +54,21 @@ TrimNewLines
 ; ${TEXTFUNC_VERBOSE} 3   # no script
 
 !ifndef TEXTFUNC_INCLUDED
+
+!verbose push 3
+!define /IfNDef _TEXTFUNC_VERBOSE 3
+!verbose ${_TEXTFUNC_VERBOSE}
+!define TEXTFUNC_VERBOSE `!insertmacro TEXTFUNC_VERBOSE`
+
 !define TEXTFUNC_INCLUDED
 
 !include FileFunc.nsh
 !include Util.nsh
 
-!verbose push
-!verbose 3
-!ifndef _TEXTFUNC_VERBOSE
-	!define _TEXTFUNC_VERBOSE 3
-!endif
-!verbose ${_TEXTFUNC_VERBOSE}
-!define TEXTFUNC_VERBOSE `!insertmacro TEXTFUNC_VERBOSE`
-!verbose pop
 
 !macro TEXTFUNC_VERBOSE _VERBOSE
-	!verbose push
-	!verbose 3
-	!undef _TEXTFUNC_VERBOSE
-	!define _TEXTFUNC_VERBOSE ${_VERBOSE}
+	!verbose push 3
+	!define /ReDef _TEXTFUNC_VERBOSE ${_VERBOSE}
 	!verbose pop
 !macroend
 
@@ -1211,4 +1207,5 @@ TrimNewLines
 	!verbose pop
 !macroend
 
+!verbose pop
 !endif

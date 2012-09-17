@@ -5,22 +5,16 @@ Copyright 2002-2009 Joost Verburg
 
 */
 
+!ifndef MUI_INCLUDED
 !echo "NSIS Modern User Interface version 2.0 - Copyright 2002-2009 Joost Verburg"
 
 ;--------------------------------
-
-!ifndef MUI_INCLUDED
-!define MUI_INCLUDED
-
-!define MUI_SYSVERSION "2.0"
-
-!verbose push
-
-!ifndef MUI_VERBOSE
-  !define MUI_VERBOSE 3
-!endif
-
+!verbose push 3
+!define /IfNDef MUI_VERBOSE 3
 !verbose ${MUI_VERBOSE}
+
+!define MUI_INCLUDED
+!define MUI_SYSVERSION "2.0"
 
 !addincludedir "${NSISDIR}\Contrib\Modern UI 2"
 
@@ -117,6 +111,5 @@ Copyright 2002-2009 Joost Verburg
 
 !macroend
 
-!endif
-
 !verbose pop
+!endif
