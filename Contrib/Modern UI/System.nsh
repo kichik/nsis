@@ -5,22 +5,17 @@ Copyright 2002-2009 Joost Verburg
 
 */
 
+!ifndef MUI_INCLUDED
 !echo "NSIS Modern User Interface version 1.8 - Copyright 2002-2009 Joost Verburg"
 
 ;--------------------------------
+!verbose push 3
+!define /IfNDef MUI_VERBOSE 3
+!verbose ${MUI_VERBOSE}
 
-!ifndef MUI_INCLUDED
 !define MUI_INCLUDED
-
 !define MUI_SYSVERSION "1.8"
 
-!verbose push
-
-!ifndef MUI_VERBOSE
-  !define MUI_VERBOSE 3
-!endif
-
-!verbose ${MUI_VERBOSE}
 
 ;--------------------------------
 ;HEADER FILES, DECLARATIONS
@@ -2201,6 +2196,5 @@ Var MUI_TEMP2
 ;--------------------------------
 ;END
 
-!endif
-
 !verbose pop
+!endif
