@@ -67,7 +67,7 @@ bool SupportedOSList::append(const TCHAR* osid)
 }
 
 
-string generate(comctl comctl_selection, exec_level exec_level_selection, SupportedOSList& sosl)
+string generate(comctl comctl_selection, exec_level exec_level_selection, dpiaware dpia, SupportedOSList& sosl)
 {
   if (comctl_selection == comctl_old && exec_level_selection == exec_level_none)
     return "";
@@ -116,6 +116,13 @@ string generate(comctl comctl_selection, exec_level exec_level_selection, Suppor
     xml += "<compatibility xmlns=\"urn:schemas-microsoft-com:compatibility.v1\"><application>";
     while(soslcount--) xml += "<supportedOS Id=\"", xml += sosl.get(soslcount), xml += "\"/>";
     xml += "</application></compatibility>";
+  }
+
+  if (dpiaware_notset != dpia)
+  {
+    xml += "<application xmlns=\"urn:schemas-microsoft-com:asm.v3\"><windowsSettings><dpiAware xmlns=\"http://schemas.microsoft.com/SMI/2005/WindowsSettings\">";
+    xml += dpiaware_false != dpia ? "true" : "false";
+    xml += "</dpiAware></windowsSettings></application>";
   }
 
   xml += "</assembly>";
