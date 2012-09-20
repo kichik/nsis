@@ -38,6 +38,13 @@ namespace manifest
     exec_level_admin
   };
 
+  enum dpiaware
+  {
+    dpiaware_notset,
+    dpiaware_false,
+    dpiaware_true,
+  };
+
   class SupportedOSList
   {
     StringList m_list;
@@ -74,7 +81,7 @@ namespace manifest
     }
   };
 
-  std::string generate(comctl, exec_level, SupportedOSList&);
+  std::string generate(comctl, exec_level, dpiaware, SupportedOSList&);
 
 };
 

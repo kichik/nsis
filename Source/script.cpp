@@ -2862,6 +2862,17 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     }
     return PS_OK;
 
+    case TOK_MANIFEST_DPIAWARE:
+    switch(line.gettoken_enum(1,_T("none\0notset\0true\0false\0")))
+    {
+    case 0: // A lot of attributes use "none" so we support that along with the documented value
+    case 1: manifest_dpiaware = manifest::dpiaware_notset; break;
+    case 2: manifest_dpiaware = manifest::dpiaware_true; break;
+    case 3: manifest_dpiaware = manifest::dpiaware_false; break;
+    default: PRINTHELP();
+    }
+    return PS_OK;
+
     case TOK_MANIFEST_SUPPORTEDOS:
     {
       manifest_sosl.deleteall();
