@@ -20,6 +20,7 @@
 #define ___MANIFEST_H___
 
 #include "tstring.h"
+#include "strlist.h"
 
 namespace manifest
 {
@@ -37,7 +38,44 @@ namespace manifest
     exec_level_admin
   };
 
-  std::string generate(comctl, exec_level);
+  class SupportedOSList
+  {
+    StringList m_list;
+    bool m_isdefaultlist;
+  public:
+    SupportedOSList() : m_isdefaultlist(false) {}
+
+    bool append(const TCHAR* osid);
+    int getcount() const { return m_list.getnum(); }
+    bool isdefaultlist() const { return m_isdefaultlist; }
+    const TCHAR* get(int idx)
+    {
+      int pos = m_list.idx2pos(idx);
+      if (-1 == pos) return 0;
+      return m_list.get() + pos;
+    }
+    void deleteall() 
+    { 
+      m_list.deleteall();
+      m_isdefaultlist = false;
+    }
+    void addall()
+    {
+      append("WinVista");
+      append("Win7");
+      append("Win8");
+    }
+    void setdefault()
+    {
+      m_list.deleteall();
+      append("Win7");
+      append("Win8");
+      m_isdefaultlist = true;
+    }
+  };
+
+  std::string generate(comctl, exec_level, SupportedOSList&);
+
 };
 
 #endif//!___MANIFEST_H___

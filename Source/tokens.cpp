@@ -240,6 +240,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_WRITEUNINSTALLER,_T("WriteUninstaller"),1,0,_T("uninstall_exe_name"),TP_CODE},
 {TOK_XPSTYLE, _T("XPStyle"),1,0,_T("(on|off)"),TP_GLOBAL},
 {TOK_REQEXECLEVEL, _T("RequestExecutionLevel"),1,0,_T("none|user|highest|admin"),TP_GLOBAL},
+{TOK_MANIFEST_SUPPORTEDOS,_T("ManifestSupportedOS"),1,-1,_T("none|all|WinVista|Win7|Win8|{GUID} [...]"),TP_GLOBAL},
 {TOK_P_PACKEXEHEADER,_T("!packhdr"),2,0,_T("temp_file_name command_line_to_compress_that_temp_file"),TP_ALL},
 {TOK_P_FINALIZE,_T("!finalize"),1,0,_T("command_with_%1"),TP_ALL},
 {TOK_P_SYSTEMEXEC,_T("!system"),1,2,_T("command [<|>|<>|=) retval]"),TP_ALL},
@@ -258,7 +259,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_P_WARNING,_T("!warning"),0,1,_T("[warning_message]"),TP_ALL},
 {TOK_P_ERROR,_T("!error"),0,1,_T("[error_message]"),TP_ALL},
 
-{TOK_P_VERBOSE,_T("!verbose"),1,-1,_T("(verbose_level | push | pop) [...]"),TP_ALL},
+{TOK_P_VERBOSE,_T("!verbose"),1,-1,_T("verbose_level | push | pop [...]"),TP_ALL},
 
 {TOK_P_MACRO,_T("!macro"),1,-1,_T("macroname [parms ...]"),TP_ALL},
 {TOK_P_MACROEND,_T("!macroend"),0,0,_T(""),TP_ALL},

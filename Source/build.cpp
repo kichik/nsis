@@ -278,6 +278,7 @@ CEXEBuild::CEXEBuild() :
 
   manifest_comctl = manifest::comctl_old;
   manifest_exec_level = manifest::exec_level_none;
+  manifest_sosl.setdefault();
 
   enable_last_page_cancel=0;
   uenable_last_page_cancel=0;
@@ -2340,7 +2341,7 @@ int CEXEBuild::SetManifest()
   try {
     init_res_editor();
     // This should stay ANSI
-    string manifest = manifest::generate(manifest_comctl, manifest_exec_level);
+    string manifest = manifest::generate(manifest_comctl, manifest_exec_level, manifest_sosl);
 
     if (manifest == "")
       return PS_OK;

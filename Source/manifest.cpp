@@ -28,18 +28,57 @@ namespace manifest
 
 using namespace std;
 
-string generate(comctl comctl_selection, exec_level exec_level_selection)
+static bool isstrhexchars(const TCHAR*s,UINT cch)
+{
+  while(cch-- && *s)
+  {
+    const TCHAR c = *s++, clw = ((char)c) | 32;
+    if (!(c >= '0' && c <= '9') && !(clw >= 'a' && clw <= 'f')) return false;
+  }
+  return true;
+}
+
+bool SupportedOSList::append(const TCHAR* osid)
+{
+  const TCHAR *guid = 0;
+  if ('{' == *osid)
+  {
+    if (38 == _tcsclen(osid) && '}' == osid[37]
+     && '-' == osid[9] && '-' == osid[14] && '-' == osid[19] && '-' == osid[24]
+     && isstrhexchars(osid+1,8) && isstrhexchars(osid+10,4)
+     && isstrhexchars(osid+15,4) && isstrhexchars(osid+20,4)
+     && isstrhexchars(osid+25,12)
+     )
+    {
+      guid = osid;
+    }
+  }
+  else if (!_tcsicmp(osid,"WinVista")) guid = _T("{e2011457-1546-43c5-a5fe-008deee3d3f0}");
+  else if (!_tcsicmp(osid,"Win7")) guid = _T("{35138b9a-5d96-4fbd-8e2d-a2440225f93a}");
+  else if (!_tcsicmp(osid,"Win8")) guid = _T("{4a2f28e3-53b9-4441-ba9c-d69d4a4a6e38}");
+
+  if (guid)
+  {
+    m_list.add(guid,0);
+    m_isdefaultlist = false;
+    return true;
+  }
+  return false;
+}
+
+
+string generate(comctl comctl_selection, exec_level exec_level_selection, SupportedOSList& sosl)
 {
   if (comctl_selection == comctl_old && exec_level_selection == exec_level_none)
     return "";
 
-  string xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><assembly xmlns=\"urn:schemas-microsoft-com:asm.v1\" manifestVersion=\"1.0\"><assemblyIdentity version=\"1.0.0.0\" processorArchitecture=\"X86\" name=\"Nullsoft.NSIS.exehead\" type=\"win32\"/><description>Nullsoft Install System ";
+  string xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><assembly xmlns=\"urn:schemas-microsoft-com:asm.v1\" manifestVersion=\"1.0\"><assemblyIdentity version=\"1.0.0.0\" processorArchitecture=\"*\" name=\"Nullsoft.NSIS.exehead\" type=\"win32\"/><description>Nullsoft Install System ";
   xml += TtoCString(NSIS_VERSION);
   xml += "</description>";
 
   if (comctl_selection == comctl_xp)
   {
-    xml += "<dependency><dependentAssembly><assemblyIdentity type=\"win32\" name=\"Microsoft.Windows.Common-Controls\" version=\"6.0.0.0\" processorArchitecture=\"X86\" publicKeyToken=\"6595b64144ccf1df\" language=\"*\" /></dependentAssembly></dependency>";
+    xml += "<dependency><dependentAssembly><assemblyIdentity type=\"win32\" name=\"Microsoft.Windows.Common-Controls\" version=\"6.0.0.0\" processorArchitecture=\"*\" publicKeyToken=\"6595b64144ccf1df\" language=\"*\" /></dependentAssembly></dependency>";
   }
 
   if (exec_level_selection != exec_level_none)
@@ -64,7 +103,19 @@ string generate(comctl comctl_selection, exec_level exec_level_selection)
     xml += "<trustInfo xmlns=\"urn:schemas-microsoft-com:asm.v3\"><security><requestedPrivileges><requestedExecutionLevel level=\"";
     xml += level;
     xml += "\" uiAccess=\"false\"/></requestedPrivileges></security></trustInfo>";
-    xml += "<compatibility xmlns=\"urn:schemas-microsoft-com:compatibility.v1\"><application><supportedOS Id=\"{35138b9a-5d96-4fbd-8e2d-a2440225f93a}\"/><supportedOS Id=\"{e2011457-1546-43c5-a5fe-008deee3d3f0}\"/></application></compatibility>";
+  }
+  else if (sosl.isdefaultlist())
+  {
+    // Don't add supportedOS list for exec_level_none to remain compatible with v2.46
+    sosl.deleteall();
+  }
+
+  int soslcount = sosl.getcount();
+  if (soslcount)
+  {
+    xml += "<compatibility xmlns=\"urn:schemas-microsoft-com:compatibility.v1\"><application>";
+    while(soslcount--) xml += "<supportedOS Id=\"", xml += sosl.get(soslcount), xml += "\"/>";
+    xml += "</application></compatibility>";
   }
 
   xml += "</assembly>";
