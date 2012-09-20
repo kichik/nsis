@@ -34,13 +34,13 @@ Released on June 6th, 2009
 
 \S1{v2.45-rl} Release Notes
 
-\b Support for Microsoft's upcoming release of Windows 7 has been added based on RC1 testing and documentation. Please report any related issues and don't forget to use \R{requestexecutionlevel}{RequestExecutionLevel}.
+\b Support for Microsoft's upcoming release of Windows 7 has been added based on RC1 testing and documentation. Please report any related issues and don't forget to use \R{arequestexecutionlevel}{RequestExecutionLevel}.
 
 \S1{v2.45-cl} Changelog
 
 \S2{} Major Changes
 
-\b Added support for Windows 7 installers - use \R{requestexecutionlevel}{RequestExecutionLevel}, just like with Vista (\W{http://sourceforge.net/support/tracker.php?aid=2725883}{bug #2725883})
+\b Added support for Windows 7 installers - use \R{arequestexecutionlevel}{RequestExecutionLevel}, just like with Vista (\W{http://sourceforge.net/support/tracker.php?aid=2725883}{bug #2725883})
 
 \b Added WinVer.nsh Windows 7 and Windows 2008 R2 support
 
@@ -1108,7 +1108,7 @@ Released on November 27th, 2006
 
 \S2{} New/Changed Commands
 
-\b Added `highest` option for \R{requestexecutionlevel}{RequestExecutionLevel}
+\b Added `highest` option for \R{arequestexecutionlevel}{RequestExecutionLevel}
 
 \S2{} Translations
 
@@ -1152,7 +1152,7 @@ Released on October 20th, 2006
 
 \S2{} New/Changed Commands
 
-\b Added \R{requestexecutionlevel}{RequestExecutionLevel} (\W{http://sourceforge.net/support/tracker.php?aid=1524709}{RFE #1524709})
+\b Added \R{arequestexecutionlevel}{RequestExecutionLevel} (\W{http://sourceforge.net/support/tracker.php?aid=1524709}{RFE #1524709})
 
 \S2{} Translations
 

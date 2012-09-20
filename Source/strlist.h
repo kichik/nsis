@@ -85,6 +85,7 @@ public:
 	* before the start of the string.
 	*/
   void delbypos(int pos);
+  void deleteall() { m_gr.resize(0); }
 
   /**
 	* Converts the string index to the positional TCHAR index.  For example,

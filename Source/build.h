@@ -507,6 +507,7 @@ class CEXEBuild {
 
     manifest::comctl manifest_comctl;
     manifest::exec_level manifest_exec_level;
+    manifest::SupportedOSList manifest_sosl;
 
     CResourceEditor *res_editor;
     void init_res_editor();

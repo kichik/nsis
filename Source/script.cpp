@@ -2862,6 +2862,28 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     }
     return PS_OK;
 
+    case TOK_MANIFEST_SUPPORTEDOS:
+    {
+      manifest_sosl.deleteall();
+      if (2 == line.getnumtokens())
+      {
+        switch(line.gettoken_enum(1,_T("none\0all\0")))
+        {
+        case 0:
+            return PS_OK;
+        case 1:
+            manifest_sosl.addall();
+            return PS_OK;
+        }
+      }
+      for(int argi=1; argi<line.getnumtokens(); ++argi)
+      {
+        if (!manifest_sosl.append(line.gettoken_str(argi)))
+          PRINTHELP();
+      }
+    }
+    return PS_OK;
+
 #ifdef _UNICODE
     case TOK_TARGETMINIMALOS:
     {
