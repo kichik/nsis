@@ -178,7 +178,7 @@ opts.Add(('APPEND_LINKFLAGS', 'Additional linker flags'))
 opts.Add(PathVariable('WXWIN', 'Path to wxWindows library folder (e.g. C:\\Dev\\wxWidgets-2.8.10)', os.environ.get('WXWIN')))
 opts.Add(PathVariable('ZLIB_W32', 'Path to Win32 zlib library folder (e.g. C:\\Dev\\zlib-1.2.3)', os.environ.get('ZLIB_W32')))
 # build options
-opts.Add(BoolVariable('UNICODE', 'Build the Unicode version of the executable', 'no'))
+opts.Add(BoolVariable('UNICODE', 'Build the Unicode version of the compiler and tools', 'yes'))
 opts.Add(BoolVariable('DEBUG', 'Build executables with debugging information', 'no'))
 opts.Add(PathVariable('CODESIGNER', 'A program used to sign executables', None))
 opts.Add(BoolVariable('STRIP', 'Strips executables of any unrequired data such as symbols', 'yes'))
@@ -252,7 +252,7 @@ if (not defenv.has_key('VER_PACKED')) and defenv.has_key('VER_MAJOR') and defenv
 	if defenv.has_key('VER_REVISION'):
 		packed_r = int(defenv['VER_REVISION'])
 	if defenv.has_key('VER_BUILD'):
-		packed_r = int(defenv['VER_BUILD'])
+		packed_b = int(defenv['VER_BUILD'])
 	defenv['VER_PACKED'] = '0x%0.2i%0.3i%0.2i%0.1i' % (int(defenv['VER_MAJOR']),int(defenv['VER_MINOR']),packed_r,packed_b)
 if defenv.has_key('VER_PACKED'):
 	f.write('#define NSIS_PACKEDVERSION _T("%s")\n' % defenv['VER_PACKED'])
@@ -264,8 +264,15 @@ if defenv.has_key('VER_MAJOR'):
 	if defenv.has_key('VER_REVISION'):
 		defenv['VERSION'] += '.' + defenv['VER_REVISION']
 
-if defenv['UNICODE']:
-	defenv['VERSION'] += "-Unicode"
+if (not defenv.has_key('TARGET_ARCH')) or defenv['TARGET_ARCH'] == 'x86':
+	vermaj = 0
+	if defenv.has_key('VER_MAJOR'):
+		vermaj = int(defenv['VER_MAJOR'])
+	if defenv['UNICODE']:
+		if vermaj < 3:
+			defenv['VERSION'] += "-Unicode"
+	elif vermaj >= 3:
+		defenv['VERSION'] += "-Ansi"
 
 f.write('#define NSIS_VERSION _T("v%s")\n' % defenv['VERSION'])
 
