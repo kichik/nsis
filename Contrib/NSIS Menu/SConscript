@@ -74,12 +74,16 @@ if env['PLATFORM'] != 'win32' and WhereIs('wx-config') or \
    if nsis_menu[0].env['PLATFORM'] == 'win32':
       wxinc = [join(env['WXWIN'], 'include')]
 
-      if env['UNICODE']:
-         wxlib = [join(os.environ['WXWIN'], 'lib', 'vc_libunsis')]
-         wxinc.append(join(os.environ['WXWIN'], 'lib', 'vc_libunsis', 'mswu'))
+      if env['TARGET_ARCH'] == 'amd64':
+         wxbits = '64'
       else:
-         wxlib = [join(os.environ['WXWIN'], 'lib', 'vc_libnsis')]
-         wxinc.append(join(os.environ['WXWIN'], 'lib', 'vc_libnsis', 'msw'))
+	     wxbits = ''
+      if env['UNICODE']:
+         wxlib = [join(os.environ['WXWIN'], 'lib', 'vc_libunsis' + wxbits)]
+         wxinc.append(join(os.environ['WXWIN'], 'lib', 'vc_libunsis' + wxbits, 'mswu'))
+      else:
+         wxlib = [join(os.environ['WXWIN'], 'lib', 'vc_libnsis' + wxbits)]
+         wxinc.append(join(os.environ['WXWIN'], 'lib', 'vc_libnsis' + wxbits, 'msw'))
 
       nsis_menu[0].env.Append(LIBPATH = wxlib)
       nsis_menu[0].env.Append(CPPPATH = wxinc)
