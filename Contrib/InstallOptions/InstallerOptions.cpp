@@ -656,11 +656,11 @@ LRESULT WINAPI WMCommandProc(HWND hWnd, UINT id, HWND hwndCtl, UINT codeNotify) 
         LPSHELLFOLDER sf;
         ULONG eaten;
         LPITEMIDLIST root;
-        int ccRoot = (lstrlen(pField->pszRoot) * 2) + 2;
         SHGetDesktopFolder(&sf);
 #ifdef _UNICODE
         sf->ParseDisplayName(hConfigWindow, NULL, pField->pszRoot, &eaten, &root, NULL);
 #else
+        int ccRoot = (lstrlen(pField->pszRoot) * 2) + 2;
         LPWSTR pwszRoot = (LPWSTR) MALLOC(ccRoot);
         MultiByteToWideChar(CP_ACP, 0, pField->pszRoot, -1, pwszRoot, ccRoot);
         sf->ParseDisplayName(hConfigWindow, NULL, pwszRoot, &eaten, &root, NULL);
@@ -1592,9 +1592,9 @@ extern "C" void __declspec(dllexport) show(HWND hwndParent, int string_size,
   showCfgDlg();
 }
 
-extern "C" BOOL WINAPI DllMain(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
+extern "C" BOOL WINAPI DllMain(HINSTANCE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
 {
-  m_hInstance=(HINSTANCE) hInst;
+  m_hInstance=hInst;
   return TRUE;
 }
 

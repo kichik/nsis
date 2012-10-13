@@ -101,7 +101,7 @@ int MLStringList::add(const TCHAR *str, WORD codepage /*= CP_ACP*/, bool process
   delete[] ansiBuf;
   if (len != cbMultiByte)
   { // resize buffers to align future strings on same offsets
-    len = a+max(len,cbMultiByte);
+    len = a + STD_MAX(len,cbMultiByte);
     m_gr.resize(len*sizeof(TCHAR));
     m_grAnsi.resize(len);
   }

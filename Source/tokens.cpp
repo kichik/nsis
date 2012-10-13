@@ -218,7 +218,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_STRLEN,_T("StrLen"),2,0,_T("$(user_var: length output) str"),TP_CODE},
 {TOK_SUBCAPTION,_T("SubCaption"),2,0,_T("page_number(0-4) new_subcaption"),TP_GLOBAL},
 #ifdef _UNICODE
-{TOK_TARGETMINIMALOS,_T("TargetMinimalOS"),1,0,_T("windows_version"),TP_GLOBAL},
+{TOK_TARGETUNICODE,_T("Unicode"),1,0,_T("true|false"),TP_GLOBAL},
 #endif
 {TOK_UNINSTALLEXENAME,_T("UninstallExeName"),0,0,_T("no longer supported, use WriteUninstaller from section."),TP_ALL},
 {TOK_UNINSTCAPTION,_T("UninstallCaption"),1,0,_T("uninstaller_caption"),TP_GLOBAL},
@@ -288,7 +288,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_GETLABELADDR,_T("GetLabelAddress"),2,0,_T("output label"),TP_CODE},
 {TOK_GETCURRENTADDR,_T("GetCurrentAddress"),1,0,_T("output"),TP_CODE},
 
-{TOK_PLUGINDIR,_T("!AddPluginDir"),1,0,_T("new_plugin_directory"),TP_ALL},
+{TOK_PLUGINDIR,_T("!AddPluginDir"),1,1,_T("[/target] new_plugin_directory"),TP_ALL},
 {TOK_INITPLUGINSDIR,_T("InitPluginsDir"),0,0,_T(""),TP_CODE},
 // Added by ramon 23 May 2003
 {TOK_ALLOWSKIPFILES,_T("AllowSkipFiles"),1,0,_T("(off|on)"),TP_ALL},
@@ -300,6 +300,13 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_VI_SETFILEVERSION,_T("VIFileVersion"),1,0,_T("[version_string_X.X.X.X]"),TP_GLOBAL},
 {TOK_LOCKWINDOW,_T("LockWindow"),1,0,_T("(on|off)"),TP_CODE},
 };
+
+const TCHAR* CEXEBuild::get_commandtoken_name(int tok)
+{
+  for (int x = 0; x < TOK__LAST; ++x)
+    if (tokenlist[x].id==tok) return tokenlist[x].name;
+  return 0;
+}
 
 void CEXEBuild::print_help(TCHAR *commandname)
 {

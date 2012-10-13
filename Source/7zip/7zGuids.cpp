@@ -21,13 +21,16 @@
 
 // #include "StdAfx.h"
 
-#ifdef WIN32
-#  include <objbase.h>
+#ifdef _WIN32
 #  include <initguid.h>
+#  include <objbase.h>
+#endif
+
+#ifndef INITGUID
+#  define INITGUID
 #endif
 
 #include "../Platform.h"
 
-#define INITGUID
 #include "7zip/ICoder.h"
 #include "7zip/Compress/LZ/IMatchFinder.h"

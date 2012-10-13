@@ -603,7 +603,7 @@ BYTE* CDialogTemplate::Save(DWORD& dwSize) {
     }
 
     // Write class variant length array
-    WCHAR *szClass = m_vItems[i]->szClass;
+    const WCHAR *szClass = m_vItems[i]->szClass;
 #ifdef _UNICODE
     if (!IS_INTRESOURCE(szClass) && m_build_unicode && !_wcsicmp(szClass, L"RichEdit20A"))
         szClass = L"RichEdit20W"; // transmute ANSI RichEdit control into Unicode RichEdit

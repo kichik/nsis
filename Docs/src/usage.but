@@ -7,7 +7,7 @@ The NSIS development kit installer sets up your computer so that you can compile
 
 If you want to use MakeNSIS on the command line, the syntax of the makensis command is:
 
-\c makensis [option | script.nsi | - [...]]
+\c makensis [ option | script.nsi | - ] [...]
 
 \S1{usagereference} Options
 

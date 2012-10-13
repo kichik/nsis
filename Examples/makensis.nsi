@@ -1,6 +1,11 @@
 ;NSIS Setup Script
 ;--------------------------------
 
+!ifdef VER_MAJOR & VER_MINOR
+  !define /ifndef VER_REVISION 0
+  !define /ifndef VER_BUILD 0
+!endif
+
 !ifndef VERSION
   !define VERSION 'anonymous-build'
 !endif
@@ -14,6 +19,7 @@
   OutFile ..\nsis-${VERSION}-setup.exe
 !endif
 
+Unicode true
 SetCompressor /SOLID lzma
 
 InstType "Full"
@@ -33,15 +39,6 @@ RequestExecutionLevel admin
 !include "LogicLib.nsh"
 !include "Memento.nsh"
 !include "WordFunc.nsh"
-
-;--------------------------------
-;Functions
-
-!ifdef VER_MAJOR & VER_MINOR & VER_REVISION & VER_BUILD
-
-  !insertmacro VersionCompare
-
-!endif
 
 ;--------------------------------
 ;Definitions
@@ -102,7 +99,21 @@ Page custom PageReinstall PageLeaveReinstall
 !insertmacro MUI_LANGUAGE "English"
 
 ;--------------------------------
+;Version information
+
+!ifdef VER_MAJOR & VER_MINOR & VER_REVISION & VER_BUILD
+VIProductVersion ${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}
+VIAddVersionKey "FileVersion" "${VERSION}"
+VIAddVersionKey "FileDescription" "NSIS Setup"
+!endif
+
+;--------------------------------
 ;Installer Sections
+
+!macro InstallPlugin pi
+  File "/oname=$InstDir\Plugins\x86-ansi\${pi}.dll" ..\Plugins\x86-ansi\${pi}.dll
+  File "/oname=$InstDir\Plugins\x86-unicode\${pi}.dll" ..\Plugins\x86-unicode\${pi}.dll
+!macroend
 
 ${MementoSection} "NSIS Core Files (required)" SecCore
 
@@ -136,13 +147,18 @@ ${MementoSection} "NSIS Core Files (required)" SecCore
 !endif
 
   SetOutPath $INSTDIR\Stubs
-  File ..\Stubs\bzip2
-  File ..\Stubs\bzip2_solid
-  File ..\Stubs\lzma
-  File ..\Stubs\lzma_solid
-  File ..\Stubs\zlib
-  File ..\Stubs\zlib_solid
   File ..\Stubs\uninst
+  !macro InstallStub stub
+    File ..\Stubs\${stub}-x86-ansi
+    File ..\Stubs\${stub}-x86-unicode
+  !macroend
+  !insertmacro InstallStub bzip2
+  !insertmacro InstallStub bzip2_solid
+  !insertmacro InstallStub lzma
+  !insertmacro InstallStub lzma_solid
+  !insertmacro InstallStub zlib
+  !insertmacro InstallStub zlib_solid
+  
 
   SetOutPath $INSTDIR\Include
   File ..\Include\WinMessages.nsh
@@ -198,8 +214,9 @@ ${MementoSection} "NSIS Core Files (required)" SecCore
   File ..\Bin\LibraryLocal.exe
   File ..\Bin\RegTool.bin
 
-  SetOutPath $INSTDIR\Plugins
-  File ..\Plugins\TypeLib.dll
+  CreateDirectory $INSTDIR\Plugins\x86-ansi
+  CreateDirectory $INSTDIR\Plugins\x86-unicode
+  !insertmacro InstallPlugin TypeLib
 
   ReadRegStr $R0 HKCR ".nsi" ""
   StrCmp $R0 "NSISFile" 0 +2
@@ -284,7 +301,7 @@ ${MementoSection} "Script Examples" SecExample
 
   SetOutPath $INSTDIR\Examples\Plugin\nsis
   File ..\Examples\Plugin\nsis\pluginapi.h
-  File /nonfatal ..\Examples\Plugin\nsis\pluginapi.lib
+  File /nonfatal ..\Examples\Plugin\nsis\pluginapi*.lib
   File ..\Examples\Plugin\nsis\api.h
   File ..\Examples\Plugin\nsis\nsis_tchar.h
 
@@ -488,8 +505,7 @@ ${MementoSection} "Banner" SecPluginsBanner
 
   SectionIn 1
 
-  SetOutPath $INSTDIR\Plugins
-  File ..\Plugins\Banner.dll
+  !insertmacro InstallPlugin Banner
   SetOutPath $INSTDIR\Docs\Banner
   File ..\Docs\Banner\Readme.txt
   SetOutPath $INSTDIR\Examples\Banner
@@ -503,8 +519,7 @@ ${MementoSection} "Language DLL" SecPluginsLangDLL
   SetDetailsPrint listonly
 
   SectionIn 1
-  SetOutPath $INSTDIR\Plugins
-  File ..\Plugins\LangDLL.dll
+  !insertmacro InstallPlugin LangDLL
 ${MementoSectionEnd}
 
 ${MementoSection} "nsExec" SecPluginsnsExec
@@ -515,8 +530,7 @@ ${MementoSection} "nsExec" SecPluginsnsExec
 
   SectionIn 1
 
-  SetOutPath $INSTDIR\Plugins
-  File ..\Plugins\nsExec.dll
+  !insertmacro InstallPlugin nsExec
   SetOutPath $INSTDIR\Docs\nsExec
   File ..\Docs\nsExec\nsExec.txt
   SetOutPath $INSTDIR\Examples\nsExec
@@ -531,8 +545,7 @@ ${MementoSection} "Splash" SecPluginsSplash
 
   SectionIn 1
 
-  SetOutPath $INSTDIR\Plugins
-  File ..\Plugins\splash.dll
+  !insertmacro InstallPlugin splash
   SetOutPath $INSTDIR\Docs\Splash
   File ..\Docs\Splash\splash.txt
   SetOutPath $INSTDIR\Examples\Splash
@@ -547,8 +560,7 @@ ${MementoSection} "AdvSplash" SecPluginsSplashT
 
   SectionIn 1
 
-  SetOutPath $INSTDIR\Plugins
-  File ..\Plugins\advsplash.dll
+  !insertmacro InstallPlugin advsplash
   SetOutPath $INSTDIR\Docs\AdvSplash
   File ..\Docs\AdvSplash\advsplash.txt
   SetOutPath $INSTDIR\Examples\AdvSplash
@@ -563,8 +575,7 @@ ${MementoSection} "BgImage" SecPluginsBgImage
 
   SectionIn 1
 
-  SetOutPath $INSTDIR\Plugins
-  File ..\Plugins\BgImage.dll
+  !insertmacro InstallPlugin BgImage
   SetOutPath $INSTDIR\Docs\BgImage
   File ..\Docs\BgImage\BgImage.txt
   SetOutPath $INSTDIR\Examples\BgImage
@@ -579,8 +590,7 @@ ${MementoSection} "InstallOptions" SecPluginsIO
 
   SectionIn 1
 
-  SetOutPath $INSTDIR\Plugins
-  File ..\Plugins\InstallOptions.dll
+  !insertmacro InstallPlugin InstallOptions
   SetOutPath $INSTDIR\Docs\InstallOptions
   File ..\Docs\InstallOptions\Readme.html
   File ..\Docs\InstallOptions\Changelog.txt
@@ -603,8 +613,7 @@ ${MementoSection} "nsDialogs" SecPluginsDialogs
 
   SectionIn 1
 
-  SetOutPath $INSTDIR\Plugins
-  File ..\Plugins\nsDialogs.dll
+  !insertmacro InstallPlugin nsDialogs
   SetOutPath $INSTDIR\Examples\nsDialogs
   File ..\Examples\nsDialogs\example.nsi
   File ..\Examples\nsDialogs\InstallOptions.nsi
@@ -624,8 +633,7 @@ ${MementoSection} "Math" SecPluginsMath
 
   SectionIn 1
 
-  SetOutPath $INSTDIR\Plugins
-  File ..\Plugins\Math.dll
+  !insertmacro InstallPlugin Math
   SetOutPath $INSTDIR\Docs\Math
   File ..\Docs\Math\Math.txt
   SetOutPath $INSTDIR\Examples\Math
@@ -644,8 +652,7 @@ ${MementoSection} "NSISdl" SecPluginsNSISDL
 
   SectionIn 1
 
-  SetOutPath $INSTDIR\Plugins
-  File ..\Plugins\nsisdl.dll
+  !insertmacro InstallPlugin nsisdl
   SetOutPath $INSTDIR\Docs\NSISdl
   File ..\Docs\NSISdl\ReadMe.txt
   File ..\Docs\NSISdl\License.txt
@@ -659,8 +666,7 @@ ${MementoSection} "System" SecPluginsSystem
 
   SectionIn 1
 
-  SetOutPath $INSTDIR\Plugins
-  File ..\Plugins\System.dll
+  !insertmacro InstallPlugin System
   SetOutPath $INSTDIR\Docs\System
   File ..\Docs\System\System.html
   File ..\Docs\System\WhatsNew.txt
@@ -679,8 +685,7 @@ ${MementoSection} "StartMenu" SecPluginsStartMenu
 
   SectionIn 1
 
-  SetOutPath $INSTDIR\Plugins
-  File ..\Plugins\StartMenu.dll
+  !insertmacro InstallPlugin StartMenu
   SetOutPath $INSTDIR\Docs\StartMenu
   File ..\Docs\StartMenu\Readme.txt
   SetOutPath $INSTDIR\Examples\StartMenu
@@ -695,8 +700,7 @@ ${MementoSection} "UserInfo" SecPluginsUserInfo
 
   SectionIn 1
 
-  SetOutPath $INSTDIR\Plugins
-  File ..\Plugins\UserInfo.dll
+  !insertmacro InstallPlugin UserInfo
   SetOutPath $INSTDIR\Examples\UserInfo
   File ..\Examples\UserInfo\UserInfo.nsi
 ${MementoSectionEnd}
@@ -709,8 +713,7 @@ ${MementoSection} "Dialer" SecPluginsDialer
 
   SectionIn 1
 
-  SetOutPath $INSTDIR\Plugins
-  File ..\Plugins\Dialer.dll
+  !insertmacro InstallPlugin Dialer
   SetOutPath $INSTDIR\Docs\Dialer
   File ..\Docs\Dialer\Dialer.txt
 ${MementoSectionEnd}
@@ -723,8 +726,7 @@ ${MementoSection} "VPatch" SecPluginsVPatch
 
   SectionIn 1
 
-  SetOutPath $INSTDIR\Plugins
-  File ..\Plugins\VPatch.dll
+  !insertmacro InstallPlugin VPatch
   SetOutPath $INSTDIR\Examples\VPatch
   File ..\Examples\VPatch\example.nsi
   File ..\Examples\VPatch\oldfile.txt
@@ -807,7 +809,7 @@ Section -post
   WriteRegStr HKLM "${MEMENTO_REGISTRY_KEY}" "DisplayVersion" "${VERSION}"
 !ifdef VER_MAJOR & VER_MINOR & VER_REVISION & VER_BUILD
   WriteRegDWORD HKLM "${MEMENTO_REGISTRY_KEY}" "VersionMajor" "${VER_MAJOR}"
-  WriteRegDWORD HKLM "${MEMENTO_REGISTRY_KEY}" "VersionMinor" "${VER_MINOR}.${VER_REVISION}"
+  WriteRegDWORD HKLM "${MEMENTO_REGISTRY_KEY}" "VersionMinor" "${VER_MINOR}"
 !endif
   WriteRegStr HKLM "${MEMENTO_REGISTRY_KEY}" "URLInfoAbout" "http://nsis.sourceforge.net/"
   WriteRegStr HKLM "${MEMENTO_REGISTRY_KEY}" "HelpLink" "http://nsis.sourceforge.net/Support"
@@ -871,15 +873,15 @@ Var ReinstallPageCheck
 Function PageReinstall
 
   ReadRegStr $R0 HKLM "Software\NSIS" ""
+  ReadRegStr $R1 HKLM "${MEMENTO_REGISTRY_KEY}" "UninstallString"
+  ${IfThen} "$R0$R1" == "" ${|} Abort ${|}
 
-  ${If} $R0 == ""
-    Abort
-  ${EndIf}
-
+  StrCpy $R4 "older"
   ReadRegDWORD $R0 HKLM "Software\NSIS" "VersionMajor"
   ReadRegDWORD $R1 HKLM "Software\NSIS" "VersionMinor"
   ReadRegDWORD $R2 HKLM "Software\NSIS" "VersionRevision"
   ReadRegDWORD $R3 HKLM "Software\NSIS" "VersionBuild"
+  ${IfThen} $R0 = 0 ${|} StrCpy $R4 "unknown" ${|} ; Anonymous builds have no version number
   StrCpy $R0 $R0.$R1.$R2.$R3
 
   ${VersionCompare} ${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD} $R0 $R0
@@ -890,7 +892,7 @@ Function PageReinstall
     !insertmacro MUI_HEADER_TEXT "Already Installed" "Choose the maintenance option to perform."
     StrCpy $R0 "2"
   ${ElseIf} $R0 == 1
-    StrCpy $R1 "An older version of NSIS is installed on your system. It's recommended that you uninstall the current version before installing. Select the operation you want to perform and click Next to continue."
+    StrCpy $R1 "An $R4 version of NSIS is installed on your system. It's recommended that you uninstall the current version before installing. Select the operation you want to perform and click Next to continue."
     StrCpy $R2 "Uninstall before installing"
     StrCpy $R3 "Do not uninstall"
     !insertmacro MUI_HEADER_TEXT "Already Installed" "Choose how you want to install NSIS."
@@ -952,30 +954,35 @@ Function PageLeaveReinstall
   StrCmp $R0 "1" 0 +2
     StrCmp $R1 "1" reinst_uninstall reinst_done
 
-  StrCmp $R0 "2" 0 +3
+  StrCmp $R0 "2" 0 reinst_done
     StrCmp $R1 "1" reinst_done reinst_uninstall
 
   reinst_uninstall:
   ReadRegStr $R1 HKLM "${MEMENTO_REGISTRY_KEY}" "UninstallString"
 
   ;Run uninstaller
-  HideWindow
+    HideWindow
 
     ClearErrors
     ExecWait '$R1 _?=$INSTDIR'
+
+    BringToFront
 
     IfErrors no_remove_uninstaller
     IfFileExists "$INSTDIR\Bin\makensis.exe" no_remove_uninstaller
 
       Delete $R1
       RMDir $INSTDIR
+      StrCpy $R1 ""
 
     no_remove_uninstaller:
 
+    StrCmp "" $R1 0 +3
+      MessageBox MB_ICONEXCLAMATION "Unable to uninstall!"
+      Abort
+
   StrCmp $R0 "2" 0 +2
     Quit
-
-  BringToFront
 
   reinst_done:
 

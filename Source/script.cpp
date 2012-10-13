@@ -389,7 +389,8 @@ parse_again:
     // Added by Ximon Eighteen 5th August 2002
     // We didn't recognise this command, could it be the name of a
     // function exported from a dll?
-    if (m_plugins.IsPluginCommand(line.gettoken_str(0)))
+    // Plugins cannot be called in global scope so there is no need to initialize the list first
+    if (m_pPlugins && m_pPlugins->IsPluginCommand(line.gettoken_str(0)))
     {
       np   = 0;   // parameters are optional
       op   = -1;  // unlimited number of optional parameters
@@ -914,7 +915,7 @@ int CEXEBuild::LoadLicenseFile(TCHAR *file, TCHAR** pdata, LineParser &line, BOO
   MANAGE_WITH(fp, fclose);
   unsigned int beginning=ftell(fp); // (we might be positionned after a BOM)
   fseek(fp,0,SEEK_END);
-  unsigned int datalen=ftell(fp)-beginning; // size of file in bytes! not a number of character
+  unsigned int datalen=ftell(fp)-beginning; // size of file in bytes! not a number of characters
   if (!datalen)
   {
     ERROR_MSG(_T("%s: empty license file \"%s\"\n"),line.gettoken_str(0),file);
@@ -929,16 +930,23 @@ int CEXEBuild::LoadLicenseFile(TCHAR *file, TCHAR** pdata, LineParser &line, BOO
   }
   *pdata = data; // memory will be released by caller
   TCHAR *ldata=data+1;
-  while (_fgetts(ldata, data+datalen+2-ldata, fp)) // _fgetts translate ANSI/UTF8 characters to TCHAR
+  while (_fgetts(ldata, data+datalen+2-ldata, fp)) // _fgetts translates ANSI/UTF8 characters to TCHAR //BUGBUG: There is no reason to store ASCII files as TCHAR
       ldata += _tcslen(ldata);
   if (ferror(fp))
   {
     ERROR_MSG(_T("%s: can't read file.\n"),line.gettoken_str(0));
     return PS_ERROR;
   }
+  bool disallowrichedunicode = false;
+#ifdef _UNICODE
+  if (!build_unicode)
+    disallowrichedunicode = true; //RichEdit 1.0 does not support unicode
+  else
+    *unicode = true; // _fgetts converted to TCHAR
+#endif
   if (!memcmp(data+1,_T("{\\rtf"),5*sizeof(TCHAR)))
     *data = SF_RTF;
-  else if (*unicode)
+  else if (*unicode && !disallowrichedunicode)
     *data = SF_TEXT|SF_UNICODE;
   else
     *data = SF_TEXT;
@@ -1020,7 +1028,6 @@ int CEXEBuild::process_jump(LineParser &line, int wt, int *offs)
   return 0;
 }
 
-#define FLAG_OFFSET(flag) (FIELD_OFFSET(exec_flags_t, flag)/sizeof(int))
 #define SECTION_FIELD_GET(field) (FIELD_OFFSET(section, field)/sizeof(int))
 #define SECTION_FIELD_SET(field) (-1 - (int)(FIELD_OFFSET(section, field)/sizeof(int)))
 
@@ -1036,7 +1043,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
   };
 
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
-  build_plugin_table();
+  if (PS_OK != initialize_default_plugins()) return PS_ERROR;
 #endif
 
   multiple_entries_instruction=0;
@@ -1820,7 +1827,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         installer_icon = load_icon_file(line.gettoken_str(1));
       }
       catch (exception& err) {
-        ERROR_MSG(_T("Error while loading icon from \"%s\": %s\n"), line.gettoken_str(1), CtoTString(err.what()));
+        ERROR_MSG(_T("Error while loading icon from \"%s\": %s\n"), line.gettoken_str(1), CtoTStrParam(err.what()));
         return PS_ERROR;
       }
     return PS_OK;
@@ -1849,7 +1856,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
       }
       catch (exception& err) {
-        ERROR_MSG(_T("Error while replacing bitmap: %s\n"), CtoTString(err.what()));
+        ERROR_MSG(_T("Error while replacing bitmap: %s\n"), CtoTStrParam(err.what()));
         return PS_ERROR;
       }
     return PS_OK;
@@ -2316,7 +2323,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           delete [] dlg;
         }
         catch (exception& err) {
-          ERROR_MSG(_T("Error setting smooth progress bar: %s\n"), CtoTString(err.what()));
+          ERROR_MSG(_T("Error setting smooth progress bar: %s\n"), CtoTStrParam(err.what()));
           return PS_ERROR;
         }
         SCRIPT_MSG(_T("InstProgressFlags: smooth=%d, colored=%d\n"),smooth,
@@ -2694,7 +2701,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         SCRIPT_MSG(_T("ChangeUI: %s %s%s\n"), line.gettoken_str(1), line.gettoken_str(2), branding_image_found?_T(" (branding image holder found)"):_T(""));
       }
       catch (exception& err) {
-        ERROR_MSG(_T("Error while changing UI: %s\n"), CtoTString(err.what()));
+        ERROR_MSG(_T("Error while changing UI: %s\n"), CtoTStrParam(err.what()));
         return PS_ERROR;
       }
     return PS_OK;
@@ -2768,7 +2775,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         branding_image_id = IDC_BRANDIMAGE;
       }
       catch (exception& err) {
-        ERROR_MSG(_T("Error while adding image branding support: %s\n"), CtoTString(err.what()));
+        ERROR_MSG(_T("Error while adding image branding support: %s\n"), CtoTStrParam(err.what()));
         return PS_ERROR;
       }
     return PS_OK;
@@ -2840,25 +2847,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #endif// NSIS_CONFIG_VISIBLE_SUPPORT
 
     case TOK_REQEXECLEVEL:
+    switch (line.gettoken_enum(1,_T("none\0user\0highest\0admin\0")))
     {
-      int k=line.gettoken_enum(1,_T("none\0user\0highest\0admin\0"));
-      switch (k)
-      {
-      case 0:
-        manifest_exec_level = manifest::exec_level_none;
-        break;
-      case 1:
-        manifest_exec_level = manifest::exec_level_user;
-        break;
-      case 2:
-        manifest_exec_level = manifest::exec_level_highest;
-        break;
-      case 3:
-        manifest_exec_level = manifest::exec_level_admin;
-        break;
-      default:
-        PRINTHELP();
-      }
+    case 0: manifest_exec_level = manifest::exec_level_none; break;
+    case 1: manifest_exec_level = manifest::exec_level_user; break;
+    case 2: manifest_exec_level = manifest::exec_level_highest; break;
+    case 3: manifest_exec_level = manifest::exec_level_admin; break;
+    default: PRINTHELP();
     }
     return PS_OK;
 
@@ -2887,7 +2882,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             return PS_OK;
         }
       }
-      for(int argi=1; argi<line.getnumtokens(); ++argi)
+      for(int argi = 1; argi < line.getnumtokens(); ++argi)
       {
         if (!manifest_sosl.append(line.gettoken_str(argi)))
           PRINTHELP();
@@ -2896,21 +2891,21 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return PS_OK;
 
 #ifdef _UNICODE
-    case TOK_TARGETMINIMALOS:
+    case TOK_TARGETUNICODE:
     {
-      if (build_compressor_set) {
-        ERROR_MSG(_T("Error: can't change target minimal OS version after data already got compressed or header already changed!\n"));
-        return PS_ERROR;
-      }
-      int major = 0, minor = 0;
-      if (_stscanf(line.gettoken_str(1), _T("%d.%d"), &major, &minor) == 0)
-        PRINTHELP()
-      if (set_target_minimal_OS(major,minor) != PS_OK)   // Windows 5.0 or more recent requested? => Unicode support
+      if (build_compressor_set)
       {
-        ERROR_MSG(_T("Error: error while setting target minimal OS! (adequate stub not found?)\n"));
+        ERROR_MSG(_T("Error: Can't change target charset after data already got compressed or header already changed!\n"));
         return PS_ERROR;
       }
-      SCRIPT_MSG(_T("TargetMinimalOS: %d.%d %s\n"),major,minor,build_unicode?_T("(Unicode installer)"):_T(""));
+      int k = line.gettoken_enum(1,_T("false\0true\0"));
+      if (-1==k) PRINTHELP();
+      SCRIPT_MSG(_T("Unicode: %s\n"),k?_T("true"):_T("false"));
+      if (set_target_charset(!!k) != PS_OK)
+      {
+        ERROR_MSG(_T("Error: Unable to set target charset (adequate stub not found?)\n"));
+        return PS_ERROR;
+      }
     }
     return PS_OK;
 #endif
@@ -3604,7 +3599,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         uninstaller_icon = load_icon_file(line.gettoken_str(1));
       }
       catch (exception& err) {
-        ERROR_MSG(_T("Error while loading icon from \"%s\": %s\n"), line.gettoken_str(1), CtoTString(err.what()));
+        ERROR_MSG(_T("Error while loading icon from \"%s\": %s\n"), line.gettoken_str(1), CtoTStrParam(err.what()));
         return PS_ERROR;
       }
     return PS_OK;
@@ -3964,7 +3959,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           res_editor->FreeResource(dlg);
         }
         catch (exception& err) {
-          ERROR_MSG(_T("Error while triming branding text control: %s\n"), CtoTString(err.what()));
+          ERROR_MSG(_T("Error while triming branding text control: %s\n"), CtoTStrParam(err.what()));
           return PS_ERROR;
         }
 #else
@@ -6228,12 +6223,32 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
     case TOK_PLUGINDIR:
     {
-      if (line.getnumtokens() == 2)
+      CEXEBuild::TARGETTYPE tt = m_target_type;
+      int numtok = line.getnumtokens() - 1;
+      TCHAR *path = line.gettoken_str(numtok);
+      if (2 == numtok)
       {
-        SCRIPT_MSG(_T("PluginDir: \"%s\"\n"),line.gettoken_str(1));
-        TCHAR *path = line.gettoken_str(1);
+        const TCHAR* arcstr = line.gettoken_str(--numtok);
+        tt = get_target_type(arcstr+1);
+        if (_T('/') != arcstr[0] || CEXEBuild::TARGET_UNKNOWN == tt)
+        {
+          tstring es = get_commandtoken_name(which_token);
+          es += _T(": Target parameter must be one of: /");
+          for(int i = CEXEBuild::TARGETFIRST; i < CEXEBuild::TARGETCOUNT; ++i)
+          {
+            tt = (CEXEBuild::TARGETTYPE) i;
+            if (CEXEBuild::TARGETFIRST != tt) es += _T(", /");
+            es += get_target_suffix(tt);
+          }
+          ERROR_MSG(_T("Error: %s\n"),es.c_str());
+          return PS_ERROR;
+        }
+      }
+      if (1 == numtok)
+      {
+        SCRIPT_MSG(_T("PluginDir: \"%s\"\n"),path);
         PATH_CONVERT(path);
-        m_plugins.FindCommands(path, display_info?true:false);
+        m_plugins[tt].AddPluginsDir(path, !!display_script);
         return PS_OK;
       }
     }
@@ -6241,18 +6256,18 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK__PLUGINCOMMAND:
     {
       int ret;
+      tstring command, dllPath;
 
-      tstring command = m_plugins.NormalizedCommand(line.gettoken_str(0));
-#ifdef _UNICODE
-      if (build_unicode)
-        command = m_plugins.UseUnicodeVariant(command);
-#endif
-      tstring dllPath = m_plugins.GetPluginPath(command);
+      if (!m_pPlugins->GetCommandInfo(line.gettoken_str(0), command, dllPath))
+      {
+        ERROR_MSG(_T("Plugin command %s conflicts with a plugin in another directory!\n"),command.c_str());
+        return PS_ERROR;
+      }
+
       tstring dllName = get_file_name(dllPath);
-      int data_handle = m_plugins.GetPluginHandle(uninstall_mode?true:false, command);
+      int data_handle = m_pPlugins->GetDllDataHandle(!!uninstall_mode, command);
 
-      if (uninstall_mode) uninst_plugin_used = true;
-      else plugin_used = true;
+      if (uninstall_mode) uninst_plugin_used = true; else plugin_used = true;
 
       // Initialize $PLUGINSDIR
       ent.which=EW_CALL;
@@ -6285,7 +6300,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (ret != PS_OK) {
           return ret;
         }
-        m_plugins.SetDllDataHandle(uninstall_mode?true:false, line.gettoken_str(0), data_handle);
+        m_pPlugins->SetDllDataHandle(!!uninstall_mode, command, data_handle);
         build_overwrite=old_build_overwrite;
         build_datesave=old_build_datesave;
         // Added by ramon 23 May 2003

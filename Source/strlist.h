@@ -276,7 +276,6 @@ class SortedStringList
     TinyGrowBuf m_gr;
 };
 
-#define mymin(x, y) ((x < y) ? x : y)
 
 /**
  * This class maintains a list of T types in a GrowBuf sorted by T.name which
@@ -394,9 +393,9 @@ class SortedStringListND // no delete - can be placed in GrowBuf
         {
           unsigned int pCurr_len = _tcslen(pCurr);
           if (case_sensitive)
-            res = _tcsncmp(str, pCurr, mymin((unsigned int) n_chars, pCurr_len));
+            res = _tcsncmp(str, pCurr, STD_MIN((unsigned int) n_chars, pCurr_len));
           else
-            res = _tcsnicmp(str, pCurr, mymin((unsigned int) n_chars, pCurr_len));
+            res = _tcsnicmp(str, pCurr, STD_MIN((unsigned int) n_chars, pCurr_len));
 
           // If there is a match and we are looking for a partial match and
           // n_chars is NOT the length of the current string, then the

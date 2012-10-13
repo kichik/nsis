@@ -28,6 +28,7 @@ typedef unsigned short EXEHEADWCHAR_T;
 #ifdef _UNICODE
 typedef EXEHEADWCHAR_T EXEHEADTCHAR_T;
 
+void RawTStrToASCII(const TCHAR*in,char*out,UINT maxcch);
 #else // !_UNICODE
 typedef char EXEHEADTCHAR_T;
 
@@ -39,7 +40,15 @@ inline EXEHEADTCHAR_T* ExeHeadTStrAlloc(UINT cb)
 }
 extern EXEHEADTCHAR_T* UTF8ToExeHeadTStrDup(LPCSTR StrU8,UINT Codepage);
 
+inline void RawTStrToASCII(const TCHAR*in,char*out,UINT maxcch) { lstrcpyn(out,in,maxcch); }
 #endif // ?_UNICODE
+
+template<typename T> T S7ChLwr(T c) { return c>='A' && c<='Z' ? (T)(c|32) : c; }
+template<typename T> T S7ChUpr(T c) { return c>='a' && c<='z' ? (T)(c-'a'+'A') : c; }
+template<typename T> bool S7IsChEqualI(char ch,T cmp)
+{
+  return cmp==(T)S7ChLwr(ch) || cmp==(T)S7ChUpr(ch);
+}
 
 
 /**

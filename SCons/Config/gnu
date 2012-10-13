@@ -14,9 +14,9 @@ def cross_env(env):
 
 ### flags
 
-def entry(x):
-	if x == 'WinMain':
-		x = '_WinMain@16'
+def entry(x,u):
+	if x == 'NSISWinMainNOCRT':
+		x = '_' + x
 	elif x == 'DllMain':
 		x = '_DllMain@12'
 	return '-Wl,-e%s' % x
@@ -30,6 +30,7 @@ defenv['CPP_FLAG'] = '-xc++'
 defenv['ALIGN_FLAG'] = '-Wl,--file-alignment,512'
 defenv['CPP_REQUIRES_STDLIB'] = 1
 defenv['SUBSYS_CON'] = '-Wl,--subsystem,console'
+defenv['SUBSYS_WIN'] = '-Wl,--subsystem,windows'
 defenv['MSVCRT_FLAG'] = ''
 defenv['STDCALL'] = '"__attribute__((__stdcall__))"'
 
@@ -66,6 +67,11 @@ def TestStrip(ctx):
 if defenv['DEBUG']:
 	defenv.Append(CCFLAGS = '-g')
 
+### unicode
+tdefenv = defenv.Clone()
+if tdefenv['UNICODE']:
+	tdefenv.Append(CPPDEFINES = ['_UNICODE', 'UNICODE'])
+
 ### stub environment
 
 stub_env = defenv.Clone()
@@ -84,12 +90,14 @@ if not defenv['DEBUG'] and defenv['STRIP'] and defenv['STRIP_W32']:
 stub_env.Append(LINKFLAGS = ['-mwindows'])          # build windows executables
 stub_env.Append(LINKFLAGS = ['$NODEFLIBS_FLAG'])    # no standard libraries
 stub_env.Append(LINKFLAGS = ['$ALIGN_FLAG'])        # 512 bytes align
-stub_env.Append(LINKFLAGS = ['-Wl,-e,_WinMain@16']) # entry point
 stub_env.Append(LINKFLAGS = ['$MAP_FLAG'])          # generate map file
+
+stub_uenv = stub_env.Clone()
+stub_uenv.Append(CPPDEFINES = ['_UNICODE', 'UNICODE'])
 
 ### makensis environment
 
-makensis_env = defenv.Clone()
+makensis_env = tdefenv.Clone()
 
 makensis_env.Append(CPPPATH = ['#$BUILD_CONFIG'])
 
@@ -122,11 +130,17 @@ plugin_env.Append(LINKFLAGS = ['$ALIGN_FLAG'])      # 512 bytes align
 plugin_env.Append(LINKFLAGS = ['$MAP_FLAG'])        # generate map file
 plugin_env.Append(LINKFLAGS = ['-static-libgcc'])   # remove libgcc*.dll dependency
 
+plugin_uenv = plugin_env.Clone()
+plugin_uenv.Append(CPPDEFINES = ['_UNICODE', 'UNICODE'])
+
 ### cross-platform util environment
 
-cp_util_env = defenv.Clone()
+cp_util_env = tdefenv.Clone()
 
 cp_util_env.Append(CPPPATH = ['#$BUILD_CONFIG'])
+
+if cp_util_env['PLATFORM'] == 'win32':
+	cp_util_env.Append(LINKFLAGS = ['$ALIGN_FLAG'])
 
 if not defenv['DEBUG']:
 	cp_util_env.Append(CCFLAGS = ['-O2'])             # optimize
@@ -144,6 +158,7 @@ cross_env(util_env)
 
 util_env.Append(LINKFLAGS = ['-mwindows'])          # build windows executables
 util_env.Append(LINKFLAGS = ['$ALIGN_FLAG'])        # 512 bytes align
+
 
 conf = FlagsConfigure(util_env)
 if not defenv['DEBUG'] and defenv['STRIP'] and defenv['STRIP_W32']:
@@ -177,6 +192,8 @@ conf.Finish()
 #
 
 stub_env.Append(LINKFLAGS = ['-T', File('linker_script').rfile()])
+stub_uenv.Append(LINKFLAGS = ['-T', File('linker_script').rfile()])
+
 
 #
 # GCC requires some functions from the CRT to be present, if certain
@@ -314,4 +331,4 @@ if makensis_env['PLATFORM'] == 'hpux':
 
 ### return
 
-Return('stub_env makensis_env plugin_env util_env cp_util_env test_env stub_env plugin_env')
+Return('stub_env makensis_env plugin_env util_env cp_util_env test_env stub_uenv plugin_uenv')

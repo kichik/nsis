@@ -1,5 +1,6 @@
 // Unicode support by Jim Park & Olivier Marcoux
 
+#include "../../../Source/Platform.h"
 #include <windows.h>
 #include <tchar.h>
 
@@ -15,7 +16,8 @@ void RegDll(TCHAR *file);
 void RegTypeLib(TCHAR *file);
 void DeleteFileOnReboot(TCHAR *pszFile);
 
-int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
+NSIS_ENTRYPOINT_GUINOCRT
+EXTERN_C void NSISWinMainNOCRT()
 {
   TCHAR *cmdline;
   TCHAR seekchar = _T(' ');
@@ -33,7 +35,6 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
   if (*cmdline++ != _T('/'))
   {
     ExitProcess(1);
-    return 0;
   }
 
   if (*cmdline == _T('S'))
@@ -113,7 +114,6 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
   }
 
   ExitProcess(0);
-  return 0;
 }
 
 void SafeWow64EnableWow64FsRedirection(BOOL Wow64FsEnableRedirection)

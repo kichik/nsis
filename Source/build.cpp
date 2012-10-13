@@ -41,12 +41,13 @@
 #include "ResourceVersionInfo.h"
 #include "tstring.h"
 
+#include <stdio.h>
+#include <stdarg.h>
 #ifndef _WIN32
 #  include <locale.h>
 #  include <unistd.h>
 #  include <limits.h>
 #  include <stdlib.h>
-#  include <stdarg.h>
 #endif
 
 #include <cassert> // for assert
@@ -56,12 +57,6 @@
   if ( rc != PS_OK) \
     return rc; \
 } while (false)
-
-const LONG available_stub_variants[] =
-{
-    0x00000000,     // classic ANSI stub
-    0x00050000      // Unicode stub for Windows 2000 and more recent (5.0+)
-};
 
 using namespace std;
 
@@ -135,9 +130,8 @@ CEXEBuild::CEXEBuild() :
   definedlist.add(_T("NSIS_PACKEDVERSION"), NSIS_PACKEDVERSION);
 #endif
 
-  target_minimal_OS=0;
   build_unicode=false;
-  definedlist.add(_T("NSIS_CHAR_SIZE"), _T("1"));   // this can change after a TargetMinimalOS instruction is found
+  m_target_type=TARGET_X86ANSI;
 
   // automatically generated header file containing all defines
 #include <nsis-defines.h>
@@ -269,7 +263,7 @@ CEXEBuild::CEXEBuild() :
 
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
   build_plugin_unload=0;
-  plugins_processed=0;
+  m_pPlugins=0;
 #endif
 
   last_used_lang=NSIS_DEFAULT_LANG;
@@ -441,6 +435,8 @@ CEXEBuild::CEXEBuild() :
   set_uninstall_mode(0);
 
   set_code_type_predefines();
+
+  set_target_architecture_predefines();
 }
 
 void CEXEBuild::initialize(const TCHAR *makensis_path)
@@ -1802,7 +1798,7 @@ int CEXEBuild::AddVersionInfo()
         }
       }
       catch (exception& err) {
-        ERROR_MSG(_T("Error adding version information: %s\n"), CtoTString(err.what()));
+        ERROR_MSG(_T("Error adding version information: %s\n"), CtoTStrParam(err.what()));
         return PS_ERROR;
       }
     }
@@ -2208,7 +2204,7 @@ again:
     SCRIPT_MSG(_T("Done!\n"));
   }
   catch (exception& err) {
-    ERROR_MSG(_T("\nError: %s\n"), CtoTString(err.what()));
+    ERROR_MSG(_T("\nError: %s\n"), CtoTStrParam(err.what()));
     return PS_ERROR;
   }
 
@@ -2330,7 +2326,7 @@ int CEXEBuild::SetVarsSection()
     }
   }
   catch (exception& err) {
-    ERROR_MSG(_T("\nError: %s\n"), CtoTString(err.what()));
+    ERROR_MSG(_T("\nError: %s\n"), CtoTStrParam(err.what()));
     return PS_ERROR;
   }
 
@@ -2351,7 +2347,7 @@ int CEXEBuild::SetManifest()
     res_editor->UpdateResource(MAKEINTRESOURCE(24), 1, NSIS_DEFAULT_LANG, (LPBYTE) manifest.c_str(), manifest.length());
   }
   catch (exception& err) {
-    ERROR_MSG(_T("Error setting manifest: %s\n"), CtoTString(err.what()));
+    ERROR_MSG(_T("Error setting manifest: %s\n"), CtoTStrParam(err.what()));
     return PS_ERROR;
   }
 
@@ -2368,7 +2364,7 @@ int CEXEBuild::UpdatePEHeader()
     // terminal services aware
     headers->OptionalHeader.DllCharacteristics |= IMAGE_DLLCHARACTERISTICS_TERMINAL_SERVER_AWARE;
   } catch (std::runtime_error& err) {
-    ERROR_MSG(_T("Error updating PE headers: %s\n"), CtoTString(err.what()));
+    ERROR_MSG(_T("Error updating PE headers: %s\n"), CtoTStrParam(err.what()));
     return PS_ERROR;
   }
 
@@ -2569,7 +2565,7 @@ int CEXEBuild::write_output(void)
     close_res_editor();
   }
   catch (exception& err) {
-    ERROR_MSG(_T("\nError: %s\n"), CtoTString(err.what()));
+    ERROR_MSG(_T("\nError: %s\n"), CtoTStrParam(err.what()));
     return PS_ERROR;
   }
 
@@ -3418,24 +3414,31 @@ void CEXEBuild::notify(notify_e code, const TCHAR *data) const
 #endif
 }
 
-// Added by Ximon Eighteen 5th August 2002
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
-void CEXEBuild::build_plugin_table(void)
+int CEXEBuild::initialize_default_plugins(bool newtargetarc)
 {
-  if (plugins_processed)
-    return;
-  plugins_processed=1;
+  if (!m_pPlugins)
+  {
+    plugin_used = uninst_plugin_used = false;
+    newtargetarc = true;
+  }
+  if (!newtargetarc) return PS_OK;
 
-  plugin_used = false;
-  uninst_plugin_used = false;
+  m_pPlugins = &m_plugins[m_target_type];
+
   tstring searchPath = definedlist.find(_T("NSISDIR"));
-  searchPath += PLATFORM_PATH_SEPARATOR_STR _T("Plugins");
-  INFO_MSG(_T("Processing plugin dlls: \"%s") PLATFORM_PATH_SEPARATOR_STR _T("*.dll\"\n"),searchPath.c_str());
-  m_plugins.FindCommands(searchPath, display_info?true:false);
-  INFO_MSG(_T("\n"));
-}
+  searchPath += PLATFORM_PATH_SEPARATOR_STR _T("Plugins") PLATFORM_PATH_SEPARATOR_STR;
+  searchPath += get_target_suffix();
 
-#define FLAG_OFFSET(flag) (FIELD_OFFSET(exec_flags_t, flag)/sizeof(int))
+  SCRIPT_MSG(_T("Processing default plugins: \"%s") PLATFORM_PATH_SEPARATOR_STR _T("*.dll\"\n"), searchPath.c_str());
+  if (!m_pPlugins->Initialize(searchPath.c_str(), !!display_script))
+  {
+    ERROR_MSG(_T("Error initializing default plugins!\n"));
+    return PS_ERROR;
+  }
+  SCRIPT_MSG(_T("\n"));
+  return PS_OK;
+}
 
 int CEXEBuild::add_plugins_dir_initializer(void)
 {
@@ -3634,14 +3637,11 @@ void CEXEBuild::VerifyDeclaredUserVarRefs(UserVarsStringList *pVarsStringList)
   }
 }
 
-#ifdef _UNICODE
-int CEXEBuild::set_target_minimal_OS(int major, int minor)
+void CEXEBuild::set_target_architecture_predefines()
 {
-  target_minimal_OS = MAKELONG(minor,major);
-  build_unicode = major>=5;
   definedlist.del(_T("NSIS_UNICODE"));
   definedlist.del(_T("NSIS_CHAR_SIZE"));
-  if (build_unicode) // update defines depending on target installer type
+  if (build_unicode)
   {
     definedlist.add(_T("NSIS_UNICODE"));
     definedlist.add(_T("NSIS_CHAR_SIZE"), _T("2"));
@@ -3650,7 +3650,31 @@ int CEXEBuild::set_target_minimal_OS(int major, int minor)
   {
     definedlist.add(_T("NSIS_CHAR_SIZE"), _T("1"));
   }
-  return load_stub();
+}
+
+int CEXEBuild::change_target_architecture()
+{
+  if (build_compressor_set)
+  {
+    ERROR_MSG(_T("Error: Can't change target architecture after data already got compressed!\n"));
+    return PS_ERROR;
+  }
+
+  m_target_type = build_unicode ? TARGET_X86UNICODE : TARGET_X86ANSI;
+  set_target_architecture_predefines();
+
+  int ec = load_stub();
+#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
+  if (PS_OK==ec) ec = initialize_default_plugins(true);
+#endif
+  return ec;
+}
+
+#ifdef _UNICODE
+int CEXEBuild::set_target_charset(bool unicode)
+{
+  build_unicode = unicode;
+  return change_target_architecture();
 }
 #endif
 
@@ -3661,26 +3685,29 @@ int CEXEBuild::set_compressor(const tstring& compressor, const bool solid) {
   return load_stub();
 }
 
-tstring CEXEBuild::get_stub_variant_suffix()
+CEXEBuild::TARGETTYPE CEXEBuild::get_target_type(const TCHAR*s) const
 {
-    LONG variant = 0;
-    for (unsigned int index = 0; index < COUNTOF(available_stub_variants); index++)
-    {
-        if (target_minimal_OS >= available_stub_variants[index])
-            variant = available_stub_variants[index];
-        else
-            break;
-    }
-    if (variant == 0)
-        return tstring();
-    TCHAR buf[32];
-    _stprintf(buf, _T(".%d_%d"), HIWORD(variant), LOWORD(variant));
-    return tstring(buf);
+  for(int i = CEXEBuild::TARGETFIRST; i < CEXEBuild::TARGETCOUNT; ++i)
+  {
+    CEXEBuild::TARGETTYPE tt = (CEXEBuild::TARGETTYPE) i;
+    if (!_tcsicmp(get_target_suffix(tt),s)) return tt;
+  }
+  return TARGET_UNKNOWN;
+}
+
+const TCHAR* CEXEBuild::get_target_suffix(CEXEBuild::TARGETTYPE tt) const
+{
+  switch(tt)
+  {
+  case TARGET_X86ANSI   :return _T("x86-ansi");
+  case TARGET_X86UNICODE:return _T("x86-unicode");
+  default:return _T("?");
+  }
 }
 
 int CEXEBuild::load_stub()
 {
-    return update_exehead(stub_filename+get_stub_variant_suffix(), &m_exehead_original_size);
+  return update_exehead(stub_filename+_T("-")+get_target_suffix(), &m_exehead_original_size);
 }
 
 int CEXEBuild::update_exehead(const tstring& file, size_t *size/*=NULL*/) {

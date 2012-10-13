@@ -14,21 +14,32 @@
 // Jim Park: Only those we use are listed here.
 
 #pragma once
-
 #ifdef _UNICODE
+
+#include <wchar.h>
 
 #ifndef _T
 #define __T(x)   L ## x
 #define _T(x)    __T(x)
 #define _TEXT(x) __T(x)
 #endif
-#if defined(_MSC_VER) && (_MSC_VER<=1200)
-typedef unsigned short TCHAR;
-typedef unsigned short _TUCHAR;
+
+#if !defined(_WIN32) && defined(EXEHEAD)
+typedef unsigned short TCHAR, _TUCHAR;
 #else
-typedef wchar_t TCHAR;
-typedef wchar_t _TUCHAR;
+// MinGW typedefs TCHAR and _TCHAR inside #ifndef _TCHAR_DEFINED
+// MSVC typedefs TCHAR inside #ifndef _TCHAR_DEFINED 
+// and _TCHAR and _T*CHAR inside #ifndef __TCHAR_DEFINED.
+// We don't want to break MSVCs _TSCHAR and _TXCHAR so we don't protect our typedef...
+#if (_MSC_VER>1 && (_MSC_VER<1400 || !defined(_NATIVE_WCHAR_T_DEFINED))) || !defined(_WCHAR_T_DEFINED)
+// VC6 knows about __wchar_t but does not support it. /Zc:wchar_t is on by default starting with VC8.
+// VC7.1 supports __wchar_t but using it causes problems with conversions from WCHAR (unsigned short)?
+typedef unsigned short TCHAR, _TUCHAR;
+#else
+typedef wchar_t TCHAR, _TUCHAR;
 #endif
+#endif
+
 
 // program
 #define _tmain      wmain
@@ -39,7 +50,7 @@ typedef wchar_t _TUCHAR;
 // printfs
 #define _ftprintf   fwprintf
 #define _sntprintf  _snwprintf
-#if defined(_MSC_VER) && (_MSC_VER<=1200)
+#if (defined(_MSC_VER) && (_MSC_VER<=1310)) || defined(__MINGW32__)
 #	define _stprintf   swprintf
 #else
 #	define _stprintf   _swprintf
@@ -47,7 +58,7 @@ typedef wchar_t _TUCHAR;
 #define _tprintf    wprintf
 #define _vftprintf  vfwprintf
 #define _vsntprintf _vsnwprintf
-#if defined(_MSC_VER) && (_MSC_VER<=1200)
+#if defined(_MSC_VER) && (_MSC_VER<=1310)
 #	define _vstprintf  vswprintf
 #else
 #	define _vstprintf  _vswprintf
@@ -132,8 +143,10 @@ typedef wchar_t _TUCHAR;
 #define _T(x)    x
 #define _TEXT(x) x
 #endif
+
 typedef char            TCHAR;
 typedef unsigned char   _TUCHAR;
+
 
 // program
 #define _tmain      main

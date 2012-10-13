@@ -17,6 +17,7 @@
 #define _VALIDATEUNICODE_
 
 #include "tchar.h"
+#include <stdio.h>
 
 class CValidateUnicode
 {

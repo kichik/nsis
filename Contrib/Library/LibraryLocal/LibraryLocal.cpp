@@ -80,6 +80,7 @@ int GetTLBVersion(tstring& filepath, DWORD& high, DWORD & low)
 #endif
 }
 
+NSIS_ENTRYPOINT_TMAIN
 int _tmain(int argc, TCHAR* argv[])
 {
 

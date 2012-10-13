@@ -35,6 +35,14 @@ static EXEHEADWCHAR_T* ExeHeadWStrAlloc(UINT cch)
 }
 
 #ifdef _UNICODE
+
+void RawTStrToASCII(const TCHAR*in,char*out,UINT maxcch)
+{
+  const bool empty = !maxcch;
+  for(; maxcch && *in; --maxcch) *out++ = (char) *in++;
+  if (!empty) *out = 0;
+}
+
 #else // !_UNICODE
 
 EXEHEADTCHAR_T* UTF8ToExeHeadTStrDup(LPCSTR StrU8,UINT Codepage) 

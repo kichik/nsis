@@ -20,6 +20,7 @@
 #include "manifest.h"
 #include <nsis-version.h>
 #include "tstring.h"
+#include "utf.h"
 
 // Jim Park: The manifest must stay UTF-8.  Do not convert.
 
@@ -53,9 +54,9 @@ bool SupportedOSList::append(const TCHAR* osid)
       guid = osid;
     }
   }
-  else if (!_tcsicmp(osid,"WinVista")) guid = _T("{e2011457-1546-43c5-a5fe-008deee3d3f0}");
-  else if (!_tcsicmp(osid,"Win7")) guid = _T("{35138b9a-5d96-4fbd-8e2d-a2440225f93a}");
-  else if (!_tcsicmp(osid,"Win8")) guid = _T("{4a2f28e3-53b9-4441-ba9c-d69d4a4a6e38}");
+  else if (!_tcsicmp(osid,_T("WinVista"))) guid = _T("{e2011457-1546-43c5-a5fe-008deee3d3f0}");
+  else if (!_tcsicmp(osid,_T("Win7"))) guid = _T("{35138b9a-5d96-4fbd-8e2d-a2440225f93a}");
+  else if (!_tcsicmp(osid,_T("Win8"))) guid = _T("{4a2f28e3-53b9-4441-ba9c-d69d4a4a6e38}");
 
   if (guid)
   {
@@ -113,8 +114,14 @@ string generate(comctl comctl_selection, exec_level exec_level_selection, dpiawa
   int soslcount = sosl.getcount();
   if (soslcount)
   {
+    char buf[38+1];
     xml += "<compatibility xmlns=\"urn:schemas-microsoft-com:compatibility.v1\"><application>";
-    while(soslcount--) xml += "<supportedOS Id=\"", xml += sosl.get(soslcount), xml += "\"/>";
+    while(soslcount--)
+    {
+      xml += "<supportedOS Id=\"";
+      RawTStrToASCII(sosl.get(soslcount), buf, COUNTOF(buf));
+      xml += buf, xml +=  "\"/>";
+    }
     xml += "</application></compatibility>";
   }
 

@@ -156,7 +156,7 @@ CResourceEditor::~CResourceEditor() {
 
 // Adds/Replaces/Removes a resource.
 // If lpData is 0 UpdateResource removes the resource.
-bool CResourceEditor::UpdateResourceW(WCHAR* szType, WCHAR* szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize) {
+bool CResourceEditor::UpdateResourceW(const WCHAR* szType, WCHAR* szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize) {
   CResourceDirectory* nameDir = 0;
   CResourceDirectory* langDir = 0;
   CResourceDataEntry* data = 0;
@@ -224,15 +224,14 @@ static WCHAR* ResStringToUnicode(const char *szString) {
   else
     return wcsdup_fromTchar(szString, CP_ACP);
 }
-#endif
 
 static void FreeUnicodeResString(WCHAR* szwString) {
   if (!IS_INTRESOURCE(szwString))
     free(szwString);
 }
+#endif
 
-
-bool CResourceEditor::UpdateResource(TCHAR* szType, WORD szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize) {
+bool CResourceEditor::UpdateResource(const TCHAR* szType, WORD szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize) {
 #ifdef _UNICODE
   return UpdateResourceW(szType, MAKEINTRESOURCEW(szName), wLanguage, lpData, dwSize);
 #else
@@ -245,7 +244,7 @@ bool CResourceEditor::UpdateResource(TCHAR* szType, WORD szName, LANGID wLanguag
 
 // Returns a copy of the requested resource
 // Returns 0 if the requested resource can't be found
-BYTE* CResourceEditor::GetResourceW(WCHAR* szType, WCHAR* szName, LANGID wLanguage) {
+BYTE* CResourceEditor::GetResourceW(const WCHAR* szType, WCHAR* szName, LANGID wLanguage) {
   if (!m_bKeepData)
     throw runtime_error("Can't GetResource() when bKeepData is false");
 
@@ -277,7 +276,7 @@ BYTE* CResourceEditor::GetResourceW(WCHAR* szType, WCHAR* szName, LANGID wLangua
     return NULL;
 }
 
-BYTE* CResourceEditor::GetResource(TCHAR* szType, WORD szName, LANGID wLanguage) {
+BYTE* CResourceEditor::GetResource(const TCHAR* szType, WORD szName, LANGID wLanguage) {
 #ifdef _UNICODE
   return GetResourceW(szType, MAKEINTRESOURCEW(szName), wLanguage);
 #else
@@ -290,7 +289,7 @@ BYTE* CResourceEditor::GetResource(TCHAR* szType, WORD szName, LANGID wLanguage)
 
 // Returns the size of the requested resource
 // Returns -1 if the requested resource can't be found
-int CResourceEditor::GetResourceSizeW(WCHAR* szType, WCHAR* szName, LANGID wLanguage) {
+int CResourceEditor::GetResourceSizeW(const WCHAR* szType, WCHAR* szName, LANGID wLanguage) {
   CResourceDirectory* nameDir = 0;
   CResourceDirectory* langDir = 0;
   CResourceDataEntry* data = 0;
@@ -316,7 +315,7 @@ int CResourceEditor::GetResourceSizeW(WCHAR* szType, WCHAR* szName, LANGID wLang
     return -1;
 }
 
-int CResourceEditor::GetResourceSize(TCHAR* szType, WORD szName, LANGID wLanguage) {
+int CResourceEditor::GetResourceSize(const TCHAR* szType, WORD szName, LANGID wLanguage) {
 #ifdef _UNICODE
   return GetResourceSizeW(szType, MAKEINTRESOURCEW(szName), wLanguage);
 #else
@@ -329,7 +328,7 @@ int CResourceEditor::GetResourceSize(TCHAR* szType, WORD szName, LANGID wLanguag
 
 // Returns the offset of the requested resource in the original PE
 // Returns -1 if the requested resource can't be found
-DWORD CResourceEditor::GetResourceOffsetW(WCHAR* szType, WCHAR* szName, LANGID wLanguage) {
+DWORD CResourceEditor::GetResourceOffsetW(const WCHAR* szType, WCHAR* szName, LANGID wLanguage) {
   CResourceDirectory* nameDir = 0;
   CResourceDirectory* langDir = 0;
   CResourceDataEntry* data = 0;
@@ -355,7 +354,7 @@ DWORD CResourceEditor::GetResourceOffsetW(WCHAR* szType, WCHAR* szName, LANGID w
     return DWORD(-1);
 }
 
-DWORD CResourceEditor::GetResourceOffset(TCHAR* szType, WORD szName, LANGID wLanguage) {
+DWORD CResourceEditor::GetResourceOffset(const TCHAR* szType, WORD szName, LANGID wLanguage) {
 #ifdef _UNICODE
   return GetResourceOffsetW(szType, MAKEINTRESOURCEW(szName), wLanguage);
 #else
@@ -858,7 +857,7 @@ int CResourceDirectory::CountEntries() {
 // Returns the index of a directory entry with the specified name
 // Name can be a string or an id
 // Returns -1 if can not be found
-int CResourceDirectory::Find(WCHAR* szName) {
+int CResourceDirectory::Find(const WCHAR* szName) {
   if (IS_INTRESOURCE(szName))
     return Find((WORD) (ULONG_PTR) szName);
   else
@@ -934,7 +933,7 @@ void CResourceDirectory::Destroy() {
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-CResourceDirectoryEntry::CResourceDirectoryEntry(WCHAR* szName, CResourceDirectory* rdSubDir) {
+CResourceDirectoryEntry::CResourceDirectoryEntry(const WCHAR* szName, CResourceDirectory* rdSubDir) {
   if (IS_INTRESOURCE(szName)) {
     m_bHasName = false;
     m_szName = 0;
@@ -948,7 +947,7 @@ CResourceDirectoryEntry::CResourceDirectoryEntry(WCHAR* szName, CResourceDirecto
   m_rdSubDir = rdSubDir;
 }
 
-CResourceDirectoryEntry::CResourceDirectoryEntry(WCHAR* szName, CResourceDataEntry* rdeData) {
+CResourceDirectoryEntry::CResourceDirectoryEntry(const WCHAR* szName, CResourceDataEntry* rdeData) {
   if (IS_INTRESOURCE(szName)) {
     m_bHasName = false;
     m_szName = 0;

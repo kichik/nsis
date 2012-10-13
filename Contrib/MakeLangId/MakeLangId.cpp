@@ -1,8 +1,7 @@
 // Unicode support by Jim Park -- 08/23/2007
 
-#include <windows.h>
+#include "../../Source/Platform.h"
 #include <commctrl.h>
-#include "../ExDLL/nsis_tchar.h"
 #include "resource.h"
 
 #define CBL(x) {x,_T(#x)}
@@ -231,10 +230,8 @@ BOOL CALLBACK DialogProc(HWND hwndDlg,UINT uMsg,WPARAM wParam,LPARAM lParam) {
 	return 0;
 }
 
-int APIENTRY _tWinMain(HINSTANCE hInstance,
-                     HINSTANCE hPrevInstance,
-                     LPTSTR     lpCmdLine,
-                     int       nCmdShow)
+NSIS_ENTRYPOINT_GUINOCRT
+EXTERN_C void NSISWinMainNOCRT()
 {
 	InitCommonControls();
 
@@ -246,6 +243,5 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	);
 
 	ExitProcess(0);
-
-	return 0;
 }
+

@@ -29,6 +29,7 @@
 #include "mmap.h"
 #include "manifest.h"
 #include "icon.h"
+#include <memory.h>
 
 #include "exehead/fileform.h"
 #include "exehead/config.h"
@@ -48,7 +49,6 @@
 #include "czlib.h"
 #include "cbzip2.h"
 #include "clzma.h"
-
 #endif//NSIS_CONFIG_COMPRESSION_SUPPORT
 
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
@@ -70,10 +70,10 @@
 #define TP_ALL    (TP_CODE | TP_PG)
 
 enum notify_e {
-  MAKENSIS_NOTIFY_SCRIPT,
+  MAKENSIS_NOTIFY_SCRIPT, // main nsi file(s)
   MAKENSIS_NOTIFY_WARNING,
   MAKENSIS_NOTIFY_ERROR,
-  MAKENSIS_NOTIFY_OUTPUT
+  MAKENSIS_NOTIFY_OUTPUT // generated .exe file
 };
 
 #define PAGE_CUSTOM 0
@@ -84,26 +84,31 @@ enum notify_e {
 #define PAGE_UNINSTCONFIRM 5
 #define PAGE_COMPLETED 6
 
+#define FLAG_OFFSET(flag) (FIELD_OFFSET(exec_flags_t, flag)/sizeof(int))
+
 class CEXEBuild {
   public:
     CEXEBuild();
     void initialize(const TCHAR *makensis_path);
     ~CEXEBuild();
 
-    // to add a warning to the compiler's warning list.
-    void warning(const TCHAR *s, ...);
-    // warning with file name and line count
-    void warning_fl(const TCHAR *s, ...);
+    void warning(const TCHAR *s, ...); // to add a warning to the compiler's warning list.
+    void warning_fl(const TCHAR *s, ...); // warning with file name and line count
+    void ERROR_MSG(const TCHAR *s, ...) const;
+    void SCRIPT_MSG(const TCHAR *s, ...) const;
+    void INFO_MSG(const TCHAR *s, ...) const;
 
-    // to add a defined thing.
-    void define(const TCHAR *p, const TCHAR *v=TEXT(""));
-
-#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
-    // Added by Ximon Eighteen 5th August 2002
-    void build_plugin_table(void);
-    int plugins_processed;
-#endif //NSIS_CONFIG_PLUGIN_SUPPORT
-
+    typedef enum {
+      TARGETFIRST,
+      TARGET_X86ANSI = TARGETFIRST,
+      TARGET_X86UNICODE,
+      TARGET_UNKNOWN,
+      TARGETCOUNT = (TARGET_UNKNOWN-TARGETFIRST)
+    } TARGETTYPE;
+    TARGETTYPE m_target_type;
+    TARGETTYPE get_target_type(const TCHAR*s) const;
+    const TCHAR* get_target_suffix(CEXEBuild::TARGETTYPE tt) const;
+    const TCHAR* get_target_suffix() const {return get_target_suffix(m_target_type);}
 
     void set_default_output_filename(const tstring& filename);
 
@@ -119,6 +124,7 @@ class CEXEBuild {
 
     DefineList definedlist; // List of identifiers marked as "defined" like
                             // C++ macro definitions such as _UNICODE.
+    void define(const TCHAR *p, const TCHAR *v=TEXT("")); // to add a defined thing.
 
     int display_errors;
     int display_script;
@@ -138,9 +144,8 @@ class CEXEBuild {
     int prepare_uninstaller();
     int pack_exe_header();
 
-    int set_target_minimal_OS(int major, int minor);
+    int set_target_charset(bool unicode);
     int set_compressor(const tstring& compressor, const bool solid);
-    tstring get_stub_variant_suffix();
     int load_stub();
     int update_exehead(const tstring& file, size_t *size=NULL);
     void update_exehead(const unsigned char *new_exehead, size_t new_size);
@@ -148,6 +153,7 @@ class CEXEBuild {
     // tokens.cpp
     bool is_valid_token(TCHAR *s);
     int get_commandtoken(TCHAR *s, int *np, int *op, int *pos);
+    const TCHAR* get_commandtoken_name(int tok);
 
     /**
      * Returns the current "state" by looking at whether it is in a
@@ -210,17 +216,11 @@ class CEXEBuild {
     bool inside_comment;
     int multiple_entries_instruction;  // 1 (true) or 0 (false)
 
-    void ERROR_MSG(const TCHAR *s, ...) const;
-    void SCRIPT_MSG(const TCHAR *s, ...) const;
-    void INFO_MSG(const TCHAR *s, ...) const;
-
     DefineList *searchParseString(const TCHAR *source_string, LineParser *line, int parmOffs, bool ignCase, bool noErrors);
 
-#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
-    int add_plugins_dir_initializer(void);
-#endif //NSIS_CONFIG_PLUGIN_SUPPORT
-
     // build.cpp functions used mostly by script.cpp
+    void set_target_architecture_predefines();
+    int change_target_architecture();
     void set_code_type_predefines(const TCHAR *value = NULL);
     int getcurdbsize();
     int add_section(const TCHAR *secname, const TCHAR *defname, int expand=0);
@@ -244,11 +244,12 @@ class CEXEBuild {
     int preprocess_string(TCHAR *out, const TCHAR *in, WORD codepage=CP_ACP);
 
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
-    // Added by Ximon Eighteen 5th August 2002
-    Plugins m_plugins;
+    int add_plugins_dir_initializer(void);
+    int initialize_default_plugins(bool newtargetarc = false);
+    Plugins m_plugins[TARGETCOUNT], *m_pPlugins;
     bool plugin_used;
     bool uninst_plugin_used;
-    int build_plugin_unload;
+    int build_plugin_unload; // TOK_SETPLUGINUNLOAD
 #endif //NSIS_CONFIG_PLUGIN_SUPPORT
 
     // build.cpp functions used mostly within build.cpp
@@ -324,7 +325,7 @@ class CEXEBuild {
      * variable 'name' for a given language ID.
      * 
      * @return If the language id, the variable name or string is invalid, it will
-     * return aPS_ERROR.  If this function call is overwriting a set user string,
+     * return a PS_ERROR.  If this function call is overwriting a set user string,
      * this will return a PS_WARNING.
      */
     int SetLangString(TCHAR *name, LANGID lang, const TCHAR *str, BOOL unicode);
@@ -336,7 +337,7 @@ class CEXEBuild {
      * Sets the user string to the specific NLF_STRINGS id.
      *
      * @return If the id is invalid or the string is not valid, it will return
-     * aPS_ERROR.  If this function call is overwriting a set user string,
+     * a PS_ERROR.  If this function call is overwriting a set user string,
      * this will return a PS_WARNING.
      */
     int SetInnerString(int id, TCHAR *str);
@@ -403,8 +404,7 @@ class CEXEBuild {
     int build_compress_dict_size;
 
     bool no_space_texts;
-    LONG target_minimal_OS;
-    bool build_unicode;
+    bool build_unicode;// generate installer with unicode exehead?
 
     bool has_called_write_output;
 

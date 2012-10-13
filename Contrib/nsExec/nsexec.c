@@ -40,7 +40,7 @@ void ExecScript(BOOL log);
 void LogMessage(const TCHAR *pStr, BOOL bOEM);
 TCHAR *my_strstr(TCHAR *a, TCHAR *b);
 unsigned int my_atoi(TCHAR *s);
-int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow);
+int WINAPI AsExeWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow);
 
 void __declspec(dllexport) Exec(HWND hwndParent, int string_size, TCHAR *variables, stack_t **stacktop) {
   g_hwndParent=hwndParent;
@@ -67,7 +67,7 @@ void __declspec(dllexport) ExecToStack(HWND hwndParent, int string_size, TCHAR *
 }
 
 HINSTANCE g_hInst;
-BOOL WINAPI DllMain(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved) {
+BOOL WINAPI DllMain(HINSTANCE hInst, ULONG ul_reason_for_call, LPVOID lpReserved) {
   g_hInst = hInst;
   return TRUE;
 }
@@ -176,7 +176,7 @@ void ExecScript(int log) {
         // WinMain will have the address of the WinMain function in memory.
         // Getting the difference gets you the relative location of the
         // WinMain function.
-        pNTHeaders->OptionalHeader.AddressOfEntryPoint = (DWORD)_tWinMain - (DWORD)g_hInst;  
+        pNTHeaders->OptionalHeader.AddressOfEntryPoint = (DWORD_PTR)AsExeWinMain - (DWORD_PTR)g_hInst;  
         UnmapViewOfFile(pMapView);
       }
       CloseHandle(hMapping);
@@ -476,12 +476,12 @@ unsigned int my_atoi(TCHAR *s) {
   return (int)v;
 }
 
-int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
+int WINAPI AsExeWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
 {
   DWORD               Ret;
   STARTUPINFO         si   = {0};
   PROCESS_INFORMATION pi   = {0};
-  TCHAR command_line[1024];
+  TCHAR command_line[1024]; //BUGBUG
   TCHAR seekchar=_T(' ');
   TCHAR *cmdline;
   

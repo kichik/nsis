@@ -6,6 +6,11 @@
 #include <windowsx.h>
 #include <nsis/pluginapi.h> // nsis plugin
 
+#ifndef LWA_COLORKEY
+#  define LWA_COLORKEY 1
+#  define LWA_ALPHA 2
+#endif
+
 HINSTANCE g_hInstance;
 
 #define RESOLUTION 32 // 30 fps ;) (32? I like SHR more than iDIV ;)
@@ -120,7 +125,7 @@ void SetTransparentRegion(HWND myWnd)
   GlobalFree(bmp_orig);
 }
 
-BOOL WINAPI DllMain(HANDLE hInst, ULONG ul_reason_for_call,
+BOOL WINAPI DllMain(HINSTANCE hInst, ULONG ul_reason_for_call,
                     LPVOID lpReserved)
 {
   g_hInstance = hInst;

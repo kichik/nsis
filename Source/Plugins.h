@@ -13,35 +13,59 @@
  * This software is provided 'as-is', without any express or implied
  * warranty.
  *
- * Unicode support by Jim Park -- 08/21/2007
  */
 
-#ifndef __X18_PLUGINS_H
-#define __X18_PLUGINS_H
+#ifndef NSIS_EXEHEADPLUGINS_H
+#define NSIS_EXEHEADPLUGINS_H
 
 #include <map>
+#include <set>
 #include "tstring.h"
+
+namespace STLHelpers 
+{
+  template<class S, class C>
+  struct string_nocasecmpless : std::binary_function<S, S, bool> 
+  {
+    struct cmp : public std::binary_function<C, C, bool> 
+    {
+      bool operator() (const C&a, const C&b) const 
+      {
+        return tolower(a) < tolower(b); 
+      }
+    };
+    bool operator() (const S&a,const S&b) const
+    {
+      return std::lexicographical_compare(a.begin(), a.end(), b.begin(), b.end(), cmp());
+    }
+  };
+}
 
 class Plugins
 {
   public:
-    void FindCommands(const tstring& path, bool displayInfo);
+    typedef STLHelpers::string_nocasecmpless<tstring, tstring::value_type> strnocasecmp;
+
+    Plugins() : m_initialized(false) {}
+
+    bool Initialize(const TCHAR*arcsubdir, bool displayInfo);
+    void AddPluginsDir(const tstring& path, bool displayInfo);
     bool IsPluginCommand(const tstring& command) const;
-    tstring NormalizedCommand(const tstring& command) const;
-    int GetPluginHandle(bool uninst, const tstring& command) const;
-    tstring GetPluginPath(const tstring& command) const;
-    tstring UseUnicodeVariant(const tstring& lcsig) const;
-    void SetDllDataHandle(bool uninst, const tstring& command, int dataHandle);
+    bool GetCommandInfo(const tstring&command, tstring&canoniccmd, tstring&dllPath);
+    int GetDllDataHandle(bool uninst, const tstring& command) const;
+    void SetDllDataHandle(bool uninst, tstring&canoniccmd, int dataHandle);
 
   private: // methods
     void GetExports(const tstring &pathToDll, bool displayInfo);
+    bool DllHasDataHandle(const tstring& dllnamelowercase) const;
 
   private: // data members
-    std::map<tstring, tstring> m_command_lowercase_to_command;
-    std::map<tstring, tstring> m_command_to_path;
-    std::map<tstring, tstring> m_unicode_variant;
-    std::map<tstring, int> m_command_to_data_handle;
-    std::map<tstring, int> m_command_to_uninstall_data_handle;
+    std::set<tstring, strnocasecmp> m_commands;
+    std::map<tstring, tstring, strnocasecmp> m_dllname_to_path;
+    std::map<tstring, int, strnocasecmp> m_dllname_to_inst_datahandle;
+    std::map<tstring, int, strnocasecmp> m_dllname_to_unst_datahandle;
+    std::set<tstring, strnocasecmp> m_dllname_conflicts;
+    bool m_initialized;
 };
 
 #endif

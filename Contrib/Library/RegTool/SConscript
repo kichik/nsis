@@ -13,6 +13,5 @@ libs = Split("""
 """)
 
 Import('BuildUtil')
-Import('_tWinMain')
 
-BuildUtil(target, files, libs, entry = _tWinMain, nodeflib = True, file_name = 'RegTool.bin')
+BuildUtil(target, files, libs, entry = 'NSISWinMainNOCRT', nodeflib = True, file_name = 'RegTool.bin')

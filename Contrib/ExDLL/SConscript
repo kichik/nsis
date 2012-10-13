@@ -24,29 +24,31 @@ example = Split("""
 	extdll.inc
 """)
 
-Import('env plugin_env plugin_uenv')
+Import('env plugin_env plugin_uenv GetArcSuffix PerformPluginExtrasDistOperationOnce')
 
 unicodetarget = 'UNICODE' in env['CPPDEFINES']
-lib_targetT = lib_target
+plugin_envT = plugin_env
+if unicodetarget:
+	plugin_envT = plugin_uenv
+lib_targetT = lib_target + '-' + GetArcSuffix(plugin_envT, unicodetarget)
+
+
 
 # build library
-if unicodetarget:
-	lib_targetT = lib_targetT + 'W'
-	api_uenv = plugin_uenv.Clone()
-	api_uenv.Append(CPPPATH = ['#Source/exehead'])
-	libW = api_uenv.Library(lib_targetT, lib_files)
-	lib = libW
-else:
-	api_env = plugin_env.Clone()
-	api_env.Append(CPPPATH = ['#Source/exehead'])
-	libA = api_env.Library(lib_targetT, lib_files)
-	lib = libA
+
+api_envT = plugin_envT.Clone()
+api_envT.Append(CPPPATH = ['#Source/exehead']) # For api.h
+lib = api_envT.Library(lib_targetT, lib_files)
+
 
 # distribute library, files and examples
 
+if PerformPluginExtrasDistOperationOnce(plugin_envT, unicodetarget):
+	env.DistributeExamples(api_files, path='Plugin/nsis')
+	env.DistributeExamples(example, path='Plugin')
+
 if env['PLATFORM'] == 'win32':
 	env.DistributeExamples(lib, path='Plugin/nsis')
-
 else:
 	example += lib_files
 
@@ -56,20 +58,14 @@ else:
 	if env.has_key('PREFIX_PLUGINAPI_LIB'):
 		env.Distribute(lib, None, 'pluginapi_lib', '', 'nsis', 'pluginapi', 'pluginapi')
 
-if not unicodetarget:
-	env.DistributeExamples(api_files, path='Plugin/nsis')
-	env.DistributeExamples(example, path='Plugin')
 
 # make sure all the other plug-ins can use the library
 
-if unicodetarget:
-	envT = plugin_uenv
-	env.Install('#$BUILD_PREFIX/api/nsis', libW)
-else:
-	envT = plugin_env
-	env.Install('#$BUILD_PREFIX/api/nsis', api_files + libA)
+if PerformPluginExtrasDistOperationOnce(plugin_envT, unicodetarget):
+	env.Install('#$BUILD_PREFIX/api/nsis', api_files)
 
-envT.Append(CPPPATH = ['#$BUILD_PREFIX/api'])
-envT.Append(LIBPATH = ['#$BUILD_PREFIX/api/nsis'])
-envT.Append(LIBS = [lib_targetT])
+env.Install('#$BUILD_PREFIX/api/nsis', lib)
+plugin_envT.Append(CPPPATH = ['#$BUILD_PREFIX/api'])
+plugin_envT.Append(LIBPATH = ['#$BUILD_PREFIX/api/nsis'])
+plugin_envT.Append(LIBS = [lib_targetT])
 

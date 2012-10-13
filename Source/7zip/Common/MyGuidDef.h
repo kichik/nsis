@@ -47,13 +47,13 @@ inline bool operator==(REFGUID g1, REFGUID g2)
 inline bool operator!=(REFGUID g1, REFGUID g2) { return !(g1 == g2); }
 #endif
 
+#endif // GUID_DEFINED
+
 #ifdef __cplusplus
   #define MY_EXTERN_C extern "C"
 #else
   #define MY_EXTERN_C extern
 #endif
-
-#endif // GUID_DEFINED
 
 
 #ifdef DEFINE_GUID

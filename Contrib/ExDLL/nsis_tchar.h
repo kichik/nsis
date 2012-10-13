@@ -22,19 +22,25 @@
 #define _T(x)    __T(x)
 #define _TEXT(x) __T(x)
 #endif
+
+#ifndef _TCHAR_DEFINED
+#define _TCHAR_DEFINED
+#if !defined(_NATIVE_WCHAR_T_DEFINED) && !defined(_WCHAR_T_DEFINED)
+typedef unsigned short TCHAR;
+#else
 typedef wchar_t TCHAR;
-typedef wchar_t _TUCHAR;
+#endif
+#endif
+
 
 // program
-#define _tmain      wmain
-#define _tWinMain   wWinMain
 #define _tenviron   _wenviron
 #define __targv     __wargv
 
 // printfs
 #define _ftprintf   fwprintf
 #define _sntprintf  _snwprintf
-#if defined(_MSC_VER) && (_MSC_VER<=1200)
+#if (defined(_MSC_VER) && (_MSC_VER<=1310)) || defined(__MINGW32__)
 #	define _stprintf   swprintf
 #else
 #	define _stprintf   _swprintf
@@ -42,7 +48,11 @@ typedef wchar_t _TUCHAR;
 #define _tprintf    wprintf
 #define _vftprintf  vfwprintf
 #define _vsntprintf _vsnwprintf
-#define _vstprintf  _vswprintf
+#if defined(_MSC_VER) && (_MSC_VER<=1310)
+#	define _vstprintf  vswprintf
+#else
+#	define _vstprintf  _vswprintf
+#endif
 
 // scanfs
 #define _tscanf     wscanf
@@ -119,12 +129,13 @@ typedef wchar_t _TUCHAR;
 #define _T(x)    x
 #define _TEXT(x) x
 #endif
-typedef char            TCHAR;
-typedef unsigned char   _TUCHAR;
+
+#ifndef _TCHAR_DEFINED
+#define _TCHAR_DEFINED
+typedef char TCHAR;
+#endif
 
 // program
-#define _tmain      main
-#define _tWinMain   WinMain
 #define _tenviron   environ
 #define __targv     __argv
 

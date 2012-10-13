@@ -10,13 +10,19 @@ if SCons.__version__ == '1.3.0':
   # force inclusion of Platform SDK, sometimes ignored by SCons 1.3.0 due to environment contamination
   defenv.Tool('mssdk')
 
-defenv['ENTRY_FLAG'] = lambda x: '/entry:' + x
+def entry(x,u):
+	if x == 'WinMain' and u:
+		x = 'w' + x 
+	return '/entry:' + x
+
+defenv['ENTRY_FLAG'] = entry
 defenv['MAP_FLAG'] = '/map'
 defenv['NODEFLIBS_FLAG'] = '/NODEFAULTLIB'
 defenv['C_FLAG'] = '/TC'
 defenv['CPP_FLAG'] = '/TP'
 defenv['CPP_REQUIRES_STDLIB'] = 0
 defenv['SUBSYS_CON'] = '/subsystem:console'
+defenv['SUBSYS_WIN'] = '/subsystem:windows'
 defenv['MSVCRT_FLAG'] = '/MD'
 defenv['STDCALL'] = '__stdcall'
 
@@ -112,9 +118,7 @@ stub_env.Append(LINKFLAGS = ['$NODEFLIBS_FLAG'])   # no default libraries
 stub_env.Append(LINKFLAGS = ['$MAP_FLAG'])         # generate map file
 
 stub_uenv = stub_env.Clone()
-stub_uenv.Append(LINKFLAGS = ['/entry:wWinMain'])  # Unicode entry point
 stub_uenv.Append(CPPDEFINES = ['_UNICODE', 'UNICODE'])
-stub_env.Append(LINKFLAGS = ['/entry:WinMain'])    # ANSI entry point
 
 ### makensis environment
 
@@ -228,28 +232,19 @@ def add_file(file):
 
 conf = stub_env.Configure()
 
-if defenv['UNICODE']:
-	int64test = """
-	#include <windows.h>
-	int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPTSTR lpszCmdParam, int nCmdShow) {
-		ULARGE_INTEGER *i = 0;
-		return (int)(i->QuadPart >> 10);
-	}
-	"""
-else:
-	int64test = """
-	#include <windows.h>
-	int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, int nCmdShow) {
-		ULARGE_INTEGER *i = 0;
-		return (int)(i->QuadPart >> 10);
-	}
-	"""
+int64test = """
+#include <windows.h>
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, int nCmdShow) {
+	ULARGE_INTEGER *i = 0;
+	return (int)(i->QuadPart >> 10);
+}
+"""
 
 if not conf.TryLink(int64test, '.c'):
 	stub_env.Append(CPPDEFINES = ['_NSIS_NO_INT64_SHR'])
 	stub_uenv.Append(CPPDEFINES = ['_NSIS_NO_INT64_SHR'])
 
-conf.Finish()	
+conf.Finish()
 
 #
 # MSVC 2005 requires the memset CRT function to be present
@@ -260,7 +255,7 @@ conf = defenv.Configure(custom_tests = { 'CheckRequirement' : check_requirement 
 if conf.CheckRequirement('memset', 'char c[128] = "test";'):
 	add_file('memset.c')
 
-conf.Finish()	
+conf.Finish()
 
 ### return
 

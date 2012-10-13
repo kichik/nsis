@@ -56,7 +56,8 @@ TCHAR *ValidateTempDir()
 
 void *g_SHGetFolderPath;
 
-int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPTSTR lpszCmdParam, int nCmdShow)
+NSIS_ENTRYPOINT_GUINOCRT
+EXTERN_C void NSISWinMainNOCRT()
 {
   int ret = 0;
   const TCHAR *m_Err = _LANG_ERRORWRITINGTEMP;
@@ -307,7 +308,6 @@ end:
   {
     my_MessageBox(m_Err, MB_OK | MB_ICONSTOP | (IDOK << 21));
     ExitProcess(2);
-    return 0;
   }
 
 #ifdef NSIS_SUPPORT_REBOOT
@@ -341,7 +341,6 @@ end:
     ret = g_exec_flags.errlvl;
 
   ExitProcess(ret);
-  return 0;
 }
 
 void NSISCALL CleanUp()
