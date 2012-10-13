@@ -68,15 +68,15 @@ namespace manifest
     }
     void addall()
     {
-      append("WinVista");
-      append("Win7");
-      append("Win8");
+      append(_T("WinVista"));
+      append(_T("Win7"));
+      append(_T("Win8"));
     }
     void setdefault()
     {
       m_list.deleteall();
-      append("Win7");
-      append("Win8");
+      append(_T("Win7"));
+      append(_T("Win8"));
       m_isdefaultlist = true;
     }
   };

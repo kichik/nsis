@@ -24,9 +24,9 @@
 #define MAKENSIS_H
 
 #define _WIN32_IE 0x0400
+#include "../../Source/Platform.h"
 #include <windows.h>
 #include <commctrl.h>
-#include "../ExDLL/nsis_tchar.h"
 #include "utils.h"
 #define _RICHEDIT_VER 0x0200
 #include <richedit.h>
@@ -38,7 +38,7 @@
 #define NSIS_UPDATE  "http://nsis.sourceforge.net/update.php?version="
 #define NSIS_DL_URL  "http://nsis.sourceforge.net/download/"
 #define USAGE        _T("Usage:\r\n\r\n - File | Load Script...\r\n - Drag the .nsi file into this window\r\n - Right click the .nsi file and choose \"Compile NSIS Script\"")
-#define COPYRIGHT    _T("Copyright © 2002 Robert Rainwater")
+#define COPYRIGHT    _T("Copyright (C) 2002 Robert Rainwater")
 #define CONTRIB      _T("Fritz Elfert, Justin Frankel, Amir Szekely, Sunil Kamath, Joost Verburg")
 #define DOCPATH      "http://nsis.sourceforge.net/Docs/"
 #define LOCALDOCS    _T("\\NSIS.chm")
@@ -144,7 +144,6 @@ int compressor_strings[] = {IDS_SCRIPT,
 
 extern const TCHAR* NSISW_VERSION;
 
-int WINAPI     _tWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, TCHAR *cmdParam, int cmdShow);
 BOOL           CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 DWORD WINAPI   MakeNSISProc(LPVOID p);
 BOOL CALLBACK  DialogResize(HWND hWnd, LPARAM /* unused*/);

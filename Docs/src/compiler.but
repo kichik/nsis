@@ -27,9 +27,9 @@ Adds another include directory to the include directories list. This list is sea
 
 \S1{addplugindir} !addplugindir
 
-\c directory
+\c [/x86-ansi | /x86-unicode] directory
 
-Causes the NSIS compiler to scan the given directory for plug-in DLLs.
+Causes the NSIS compiler to scan the given directory for plug-in DLLs. If you don't specify the plug-in architecture it is assumed to match the current target architecture. If the architecture does not match the installer will probably crash!
 
 \c !addplugindir myplugin
 \c MyPlugin::SomeFunction

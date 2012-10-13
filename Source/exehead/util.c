@@ -49,7 +49,7 @@ NSIS_STRING g_usrvarssection[1];
 #  ifdef __GNUC__
 // GCC does not treat g_usrvarssection as a bss section so we keep the size as small as possible.
 // NSIS_STRING g_usrvarssection[31] is required to remove this hack but that really bloats the exehead.
-char g_usrvarssection[1] __attribute__((section (NSIS_VARS_SECTION)));
+TCHAR g_usrvarssection[1] __attribute__((section (NSIS_VARS_SECTION)));
 const NSIS_STRING*const g_usrvarsstart = (const NSIS_STRING*const) g_usrvarssection;
 #  else
 #    error Unknown compiler. You must implement the seperate PE section yourself.

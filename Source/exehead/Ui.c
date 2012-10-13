@@ -714,7 +714,7 @@ skipPage:
 #include <richedit.h>
 #undef _RICHEDIT_VER
 static DWORD dwRead;
-DWORD CALLBACK StreamLicense(DWORD dwCookie, LPBYTE pbBuff, LONG cb, LONG *pcb)
+DWORD CALLBACK StreamLicense(DWORD_PTR dwCookie, LPBYTE pbBuff, LONG cb, LONG *pcb)
 {
   lstrcpyn((LPTSTR)pbBuff,(LPTSTR)(dwCookie+dwRead),cb/sizeof(TCHAR));
   *pcb=lstrlen((LPTSTR)pbBuff)*sizeof(TCHAR);
@@ -723,11 +723,11 @@ DWORD CALLBACK StreamLicense(DWORD dwCookie, LPBYTE pbBuff, LONG cb, LONG *pcb)
 }
 #ifdef _UNICODE
 // on-the-fly conversion of Unicode to ANSI (because Windows doesn't recognize Unicode RTF data)
-DWORD CALLBACK StreamLicenseRTF(DWORD dwCookie, LPBYTE pbBuff, LONG cb, LONG *pcb)
+DWORD CALLBACK StreamLicenseRTF(DWORD_PTR dwCookie, LPBYTE pbBuff, LONG cb, LONG *pcb)
 {
   size_t len = lstrlen(((LPWSTR) dwCookie)+dwRead);
   len = min(len, cb/sizeof(WCHAR));
-  *pcb=WideCharToMultiByte(CP_ACP,0,((LPWSTR) dwCookie)+dwRead,len,pbBuff,cb,NULL,NULL);
+  *pcb=WideCharToMultiByte(CP_ACP,0,((LPWSTR) dwCookie)+dwRead,len,(char*)pbBuff,cb,NULL,NULL);
   // RTF uses only ASCII characters, so we can assume "number of output bytes" = "number of source WChar consumed"
   dwRead+=*pcb;
   return 0;

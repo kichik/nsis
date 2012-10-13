@@ -28,6 +28,7 @@
 
 #include "build.h"
 #include "util.h"
+#include "utf.h"
 
 #include <nsis-version.h>
 #include <fcntl.h>
@@ -135,27 +136,29 @@ static void print_license()
 static void print_usage()
 {
   _ftprintf(g_output,_T("Usage:\n")
-         _T("  makensis [option | script.nsi | - [...]]\n")
-         _T("   options are:\n")
-         _T("    ") OPT_STR _T("CMDHELP item prints out help for 'item', or lists all commands\n")
-         _T("    ") OPT_STR _T("HDRINFO prints information about what options makensis was compiled with\n")
-         _T("    ") OPT_STR _T("LICENSE prints the makensis software license\n")
-         _T("    ") OPT_STR _T("VERSION prints the makensis version and exits\n")
-         _T("    ") OPT_STR _T("Px sets the compiler process priority, where x is 5=realtime,4=high,\n")
-         _T("    ")         _T("    3=above normal,2=normal,1=below normal,0=idle\n")
-         _T("    ") OPT_STR _T("Vx verbosity where x is 4=all,3=no script,2=no info,1=no warnings,0=none\n")
-         _T("    ") OPT_STR _T("Ofile specifies a text file to log compiler output (default is stdout)\n")
-         _T("    ") OPT_STR _T("PAUSE pauses after execution\n")
-         _T("    ") OPT_STR _T("NOCONFIG disables inclusion of <path to makensis.exe>") PLATFORM_PATH_SEPARATOR_STR _T("nsisconf.nsh\n")
-         _T("    ") OPT_STR _T("NOCD disabled the current directory change to that of the .nsi file\n")
-         _T("    ") OPT_STR _T("Ddefine[=value] defines the symbol \"define\" for the script [to value]\n")
-         _T("    ") OPT_STR _T("Xscriptcmd executes scriptcmd in script (i.e. \"") OPT_STR _T("XOutFile poop.exe\")\n")
-         _T("   parameters are processed by order (") OPT_STR _T("Ddef ins.nsi != ins.nsi ") OPT_STR _T("Ddef)\n")
-         _T("   for script file name, you can use - to read from the standard input\n")
-#ifdef _WIN32	
-         _T("   you can also use - as an option character: -PAUSE as well as /PAUSE\n")
+         _T("  ")         _T("makensis [ option | script.nsi | - ] [...]\n")
+         _T("\n")
+         _T("Options:\n")
+         _T("  ") OPT_STR _T("CMDHELP item prints out help for 'item', or lists all commands\n")
+         _T("  ") OPT_STR _T("HDRINFO prints information about what options makensis was compiled with\n")
+         _T("  ") OPT_STR _T("LICENSE prints the makensis software license\n")
+         _T("  ") OPT_STR _T("VERSION prints the makensis version and exits\n")
+         _T("  ") OPT_STR _T("Px sets the compiler process priority, where x is 5=realtime,4=high,\n")
+         _T("  ")         _T("  3=above normal,2=normal,1=below normal,0=idle\n")
+         _T("  ") OPT_STR _T("Vx verbosity where x is 4=all,3=no script,2=no info,1=no warnings,0=none\n")
+         _T("  ") OPT_STR _T("Ofile specifies a text file to log compiler output (default is stdout)\n")
+         _T("  ") OPT_STR _T("PAUSE pauses after execution\n")
+         _T("  ") OPT_STR _T("NOCONFIG disables inclusion of <path to makensis.exe>") PLATFORM_PATH_SEPARATOR_STR _T("nsisconf.nsh\n")
+         _T("  ") OPT_STR _T("NOCD disabled the current directory change to that of the .nsi file\n")
+         _T("  ") OPT_STR _T("Ddefine[=value] defines the symbol \"define\" for the script [to value]\n")
+         _T("  ") OPT_STR _T("Xscriptcmd executes scriptcmd in script (i.e. \"") OPT_STR _T("XOutFile poop.exe\")\n")
+         _T("  ")         _T("  parameters are processed by order (") OPT_STR _T("Ddef ins.nsi != ins.nsi ") OPT_STR _T("Ddef)\n")
+         _T("\n")
+         _T("For script file name, you can use - to read from the standard input\n")
+#ifdef _WIN32
+         _T("You can also use - as an option character: -PAUSE as well as /PAUSE\n")
 #endif
-         _T("   you can use a double-dash to end options processing: makensis -- -ins.nsi\n"));
+         _T("You can use a double-dash to end options processing: makensis -- -ins.nsi\n"));
   fflush(g_output);
 }
 
@@ -202,26 +205,15 @@ static int process_config(CEXEBuild& build, tstring& conf)
   FILE *cfg=FOPENTEXT2(conf.c_str(),"rt",&unicode);
   if (cfg)
   {
-    if (build.display_script) 
-    {
-      _ftprintf(g_output,_T("Processing config: \n"));
-      fflush(g_output);
-    }
+    build.INFO_MSG(_T("Processing config: %s\n"), conf.c_str());
     int ret=build.process_script(cfg,(TCHAR*)conf.c_str(),unicode);
     fclose(cfg);
     if (ret != PS_OK && ret != PS_EOF)
     {
-      if (build.display_errors) 
-      {
-        PrintColorFmtMsg_ERR(_T("Error in config on line %d -- aborting creation process\n"),build.linecnt);
-      }
+      build.ERROR_MSG(_T("Error in config on line %d -- aborting creation process\n"),build.linecnt); 
       return 1;
     }
-    if (build.display_script) 
-    {
-      _ftprintf(g_output,_T("\n"));
-      fflush(g_output);
-    }
+    build.SCRIPT_MSG(_T("\n")); // Extra newline to separate the config from the real script
   }
   return 0;
 }
@@ -231,24 +223,13 @@ static int change_to_script_dir(CEXEBuild& build, tstring& script)
   tstring dir = get_dir_name(get_full_path(script));
   if (!dir.empty()) 
   {
-    if (build.display_script) 
-    {
-      _ftprintf(g_output,_T("Changing directory to: \"%s\"\n"),dir.c_str());
-      fflush(g_output);
-    }
+    build.SCRIPT_MSG(_T("Changing directory to: \"%s\"\n"),dir.c_str());
     if (_tchdir(dir.c_str()))
     {
-      if (build.display_errors)
-      {
-        PrintColorFmtMsg_ERR(_T("Error changing directory to \"%s\"\n"),dir.c_str());
-      }
+      build.ERROR_MSG(_T("Error changing directory to \"%s\"\n"),dir.c_str());
       return 1;
     }
-    if (build.display_script) 
-    {
-      _ftprintf(g_output,_T("\n"));
-      fflush(g_output);
-    }
+    build.SCRIPT_MSG(_T("\n"));
   }
   return 0;
 }
@@ -257,6 +238,7 @@ static int change_to_script_dir(CEXEBuild& build, tstring& script)
 extern "C" void allow_unaligned_data_access();
 #endif
 
+NSIS_ENTRYPOINT_TMAIN
 int _tmain(int argc, TCHAR **argv)
 {
 
@@ -277,8 +259,8 @@ int _tmain(int argc, TCHAR **argv)
   int in_files=0;
 
 #ifdef _UNICODE
-#if (defined(_MSC_VER) && (_MSC_VER<=1200))
-  const int _O_U8TEXT=0x40000; // BUGBUG: This is bogus
+#ifndef _O_U8TEXT
+  const int _O_U8TEXT=0x40000; // BUGBUG: This is bogus (Makensis will ONLY work on NT6)
 #endif
   _setmode(_fileno(stdout), _O_U8TEXT); // set stdout to UTF-8
 #ifdef _WIN32
@@ -292,7 +274,7 @@ int _tmain(int argc, TCHAR **argv)
   }
   catch (exception& err)
   {
-    PrintColorFmtMsg_ERR(_T("Error initalizing CEXEBuild: %s\n"), CtoTString(err.what()));
+    PrintColorFmtMsg_ERR(_T("Error initalizing CEXEBuild: %s\n"), CtoTStrParam(err.what()));
     return 1;
   }
 
@@ -302,18 +284,18 @@ int _tmain(int argc, TCHAR **argv)
     fflush(g_output);
     return 0;
   }
-  if (argc > 1 && IS_OPT(argv[tmpargpos]) && (argv[tmpargpos][1]==_T('v') || argv[tmpargpos][1]==_T('V')))
+  if (argc > 1 && IS_OPT(argv[tmpargpos]) && S7IsChEqualI('v',argv[tmpargpos][1]))
   {
     if (argv[tmpargpos][2] <= _T('2') && argv[tmpargpos][2] >= _T('0'))
     {
       no_logo=1;
     }
-   tmpargpos++;
+    tmpargpos++;
   }
   
   if (!no_logo)
   {
-    if (argc > tmpargpos && IS_OPT(argv[tmpargpos]) && (argv[tmpargpos][1]==_T('o') || argv[tmpargpos][1]==_T('O')) && argv[tmpargpos][2])
+    if (argc > tmpargpos && IS_OPT(argv[tmpargpos]) && S7IsChEqualI('o',argv[tmpargpos][1]) && argv[tmpargpos][2])
     {
       g_output=FOPENTEXT(argv[tmpargpos]+2,"w");
       if (!g_output) 
@@ -335,21 +317,17 @@ int _tmain(int argc, TCHAR **argv)
       in_files=1;
     else if (IS_OPT(argv[argpos]) && _tcscmp(argv[argpos], _T("-")) && !in_files)
     {
-      if ((argv[argpos][1]==_T('D') || argv[argpos][1]==_T('d')) && argv[argpos][2])
+      if (S7IsChEqualI('d',argv[argpos][1]) && argv[argpos][2])
       {
         TCHAR *p=argv[argpos]+2;
         TCHAR *s=_tcsdup(p),*v;
-        if (build.display_script) 
-        {
-          _ftprintf(g_output,_T("Command line defined: \"%s\"\n"),p);
-          fflush(g_output);
-        }
+        build.SCRIPT_MSG(_T("Command line defined: \"%s\"\n"),p);
         v=_tcsstr(s,_T("="));
         if (v) *v++=0;
         build.define(s,v?v:_T(""));
         free(s);
       }
-      else if ((argv[argpos][1]==_T('X') || argv[argpos][1]==_T('x')) && argv[argpos][2])
+      else if (S7IsChEqualI('x',argv[argpos][1]) && argv[argpos][2])
       {
         if (build.process_oneline(argv[argpos]+2,_T("command line"),argpos+1) != PS_OK)
         {
@@ -357,7 +335,7 @@ int _tmain(int argc, TCHAR **argv)
         }
         cmds_processed++;
       }
-      else if ((argv[argpos][1]==_T('O') || argv[argpos][1]==_T('o')) && argv[argpos][2])
+      else if (S7IsChEqualI('o',argv[argpos][1]) && argv[argpos][2])
       {
         if (!outputtried)
         {
@@ -371,7 +349,7 @@ int _tmain(int argc, TCHAR **argv)
         }
       }
       else if (!_tcsicmp(&argv[argpos][1],_T("NOCD"))) do_cd=0;
-      else if ((argv[argpos][1] == _T('V') || argv[argpos][1] == _T('v')) && 
+      else if (S7IsChEqualI('v',argv[argpos][1]) && 
                argv[argpos][2] >= _T('0') && argv[argpos][2] <= _T('4') && !argv[argpos][3])
       {
         int v=argv[argpos][2]-_T('0');
@@ -415,7 +393,7 @@ int _tmain(int argc, TCHAR **argv)
         print_stub_info(build);
         nousage++;
       }
-      else if ((argv[argpos][1]==_T('P') || argv[argpos][1]==_T('p')) &&
+      else if (S7IsChEqualI('p',argv[argpos][1]) &&
                argv[argpos][2] >= _T('0') && argv[argpos][2] <= _T('5') && !argv[argpos][3])
       {
 #ifdef _WIN32
@@ -504,11 +482,8 @@ int _tmain(int argc, TCHAR **argv)
             fp=FOPENTEXT2(sfile,"rt",&unicode);
             if (!fp)
             {
-              if (build.display_errors) 
-              {
-                sfile[_tcslen(sfile)-4]=0;
-                PrintColorFmtMsg_ERR(_T("Can't open script \"%s\"\n"),sfile);
-              }
+              sfile[_tcslen(sfile)-4]=0;
+              build.ERROR_MSG(_T("Can't open script \"%s\"\n"),sfile);
               return 1;
             }
           }
@@ -521,21 +496,14 @@ int _tmain(int argc, TCHAR **argv)
           build.set_default_output_filename(remove_file_extension(sfile)+_T(".exe"));
         }
 
-        if (build.display_script) 
-        {
-          build.notify(MAKENSIS_NOTIFY_SCRIPT,sfile);
-          _ftprintf(g_output,_T("Processing script file: \"%s\"\n"),sfile);
-          fflush(g_output);
-        }
+        build.notify(MAKENSIS_NOTIFY_SCRIPT,sfile);
+        build.INFO_MSG(_T("Processing script file: \"%s\"\n"),sfile);
         int ret=build.process_script(fp,sfile,unicode);
         if (fp != stdin) fclose(fp);
 
         if (ret != PS_EOF && ret != PS_OK)
         {
-          if (build.display_errors) 
-          {
-            PrintColorFmtMsg_ERR(_T("Error in script \"%s\" on line %d -- aborting creation process\n"),sfile,build.linecnt);
-          }
+          build.ERROR_MSG(_T("Error in script \"%s\" on line %d -- aborting creation process\n"),sfile,build.linecnt);
           return 1;
         }
       }
@@ -557,16 +525,13 @@ int _tmain(int argc, TCHAR **argv)
     _ftprintf(g_output,_T("\nProcessed "));
     if (files_processed) _ftprintf(g_output,_T("%d file%s, "),files_processed,files_processed==1?_T(""):_T("s"));
     if (cmds_processed) _ftprintf(g_output,_T("%d command line command%s, "),cmds_processed,cmds_processed==1?_T(""):_T("s"));
-    _ftprintf(g_output,_T("writing output:\n"));
+    _ftprintf(g_output,_T("writing output (%s):\n"),build.get_target_suffix());
     fflush(g_output);
   }
   
   if (build.write_output())
   { 
-    if (build.display_errors) 
-    {
-      PrintColorFmtMsg_ERR(_T("Error - aborting creation process\n"));
-    }
+    build.ERROR_MSG(_T("Error - aborting creation process\n"));
     return 1;
   }
   return 0; 

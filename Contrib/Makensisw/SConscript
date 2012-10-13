@@ -45,7 +45,6 @@ docs = Split("""
 """)
 
 Import('BuildUtil')
-Import('_tWinMain')
 
 BuildUtil(
 	target,
@@ -53,7 +52,7 @@ BuildUtil(
 	libs,
 	res = res,
 	resources = resources,
-	entry = _tWinMain,
+	entry = None,
 	defines = ['RELEASE=2.3'],
 	docs = docs,
 	root_util = True

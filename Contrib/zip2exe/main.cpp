@@ -1,3 +1,5 @@
+
+#include "../../Source/Platform.h"
 #include <windows.h>
 #include <tchar.h>
 #include <stdio.h>
@@ -66,13 +68,12 @@ const TCHAR *g_options=_T("");//_T("/V3");
 
 static BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
-                   LPTSTR lpszCmdParam, int nCmdShow)
+NSIS_ENTRYPOINT_SIMPLEGUI
+int WINAPI _tWinMain(HINSTANCE hInst,HINSTANCE hOldInst,LPTSTR CmdLineParams,int ShowCmd)
 {
-  g_hInstance=hInstance;
-
   InitCommonControls();
-  return DialogBox(hInstance,MAKEINTRESOURCE(IDD_DIALOG1),GetDesktopWindow(),DlgProc);
+  g_hInstance=hInst;
+  return DialogBox(g_hInstance,MAKEINTRESOURCE(IDD_DIALOG1),0,DlgProc);
 }
 TCHAR tempzip_path[1024];
 

@@ -2,15 +2,15 @@
 //
 // Unicode support by Jim Park -- 08/10/2007
 
+#include "../../Source/Platform.h"
 #include <windows.h>
 #include <commctrl.h>
-#include "../ExDLL/nsis_tchar.h"
 #include "resource.h"
 
 HINSTANCE g_hInstance;
 HWND m_curwnd;
 
-TCHAR* windows[] = {
+const TCHAR* windows[] = {
   MAKEINTRESOURCE(IDD_LICENSE),
   MAKEINTRESOURCE(IDD_SELCOM),
   MAKEINTRESOURCE(IDD_DIR),
@@ -76,29 +76,16 @@ BOOL CALLBACK DialogProc(HWND hwndDlg,UINT uMsg,WPARAM wParam,LPARAM lParam) {
       break;
     }
     break;
-	}
-	return 0;
+    }
+    return 0;
 }
 
-int APIENTRY _tWinMain(HINSTANCE hInstance,
-                     HINSTANCE hPrevInstance,
-                     LPTSTR    lpCmdLine,
-                     int       nCmdShow)
+NSIS_ENTRYPOINT_SIMPLEGUI
+int WINAPI _tWinMain(HINSTANCE hInst,HINSTANCE hOldInst,LPTSTR CmdLineParams,int ShowCmd)
 {
   InitCommonControls();
-
+  g_hInstance = hInst;
   LoadLibrary(_T("RichEd32.dll"));
-
-  g_hInstance = GetModuleHandle(0);
-
-	DialogBox(
-		GetModuleHandle(0),
-		MAKEINTRESOURCE(IDD_INST),
-		0,
-		DialogProc
-	);
-
-	ExitProcess(0);
-
-	return 0;
+  return DialogBox(g_hInstance,MAKEINTRESOURCE(IDD_INST),0,DialogProc);
 }
+

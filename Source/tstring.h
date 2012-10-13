@@ -45,8 +45,11 @@ typedef std::ifstream    tifstream;
 #define CtoTString(str) (str)
 #define CtoTString2(str,cp) (str)
 #define TtoCString(str) (str)
+#define CtoTStrParam CtoTString
 #else
-#define CtoTString2(str,cp) CtoTString(str,cp)
+#define CtoTString2(str,cp) CtoTString((str),(cp))
+#define CtoTStrParam(str) ( (const TCHAR*) CtoTString((str)) ) // Use this when passing as a vararg parameter
+
 
 // This is a helpful little function for converting exceptions or
 // other system type things that come back ANSI and must be
@@ -75,7 +78,8 @@ public:
 
   ~CtoTString() { free(m_wStr); m_wStr = 0; }
 
-  operator const wchar_t*() { return m_wStr; }
+  operator const wchar_t*() const { return GetTStr(); }
+  inline const wchar_t*GetTStr() const { return m_wStr; }
 
 private:
   wchar_t* m_wStr;

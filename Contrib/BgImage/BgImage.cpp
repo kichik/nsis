@@ -111,8 +111,7 @@ NSISFunc(SetBg) {
       return;
     }
 
-    WNDCLASSEX wc = {
-      sizeof(WNDCLASSEX),
+    WNDCLASS wc = {
       CS_VREDRAW|CS_HREDRAW,
       WndProc,
       0,
@@ -123,9 +122,8 @@ NSISFunc(SetBg) {
       0,
       0,
       _T("NSISBGImage"),
-      0
     };
-    ATOM atomClass = RegisterClassEx(&wc);
+    ATOM atomClass = RegisterClass(&wc);
     if (!atomClass) {
       my_pushstring(_T("can't create window"));
       return;

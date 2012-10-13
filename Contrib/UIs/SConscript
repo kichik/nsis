@@ -18,10 +18,9 @@ libs = Split("""
 """)
 
 Import('BuildUtil env')
-Import('_tWinMain')
 
 code = env.Object(code)
 
 for ui in uis:
-	ui = BuildUtil(ui, [code], libs, entry = _tWinMain, res = ui + '.rc', contrib = True, path = 'UIs')
+	ui = BuildUtil(ui, [code], libs, res = ui + '.rc', contrib = True, path = 'UIs')
 	env.Alias('UIs', ui)

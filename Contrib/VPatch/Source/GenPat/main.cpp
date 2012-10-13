@@ -56,6 +56,10 @@ inline bool ISSINGLESWITCHCHAR(const TCHAR c) { return ( OPT_CHAR==(c) || (OPT_C
 #include <fstream>
 #include <sstream>
 
+#ifdef _WIN32
+#include "../../../../Source/Platform.h"
+NSIS_ENTRYPOINT_TMAIN
+#endif
 int _tmain( int argc, TCHAR * argv[] ) {
   tout << _T("GenPat v3.1\n");
   tout << _T("===========\n\n(c) 2001-2005 Van de Sande Productions\n");

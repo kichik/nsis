@@ -1229,11 +1229,11 @@ failure is raised if _osplatform is not set. The assertion is reported by
 the same means as used for the _RPT0 macro. This leads to an endless recursion.
 */
 
-BOOL WINAPI DllMain(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
+BOOL WINAPI DllMain(HINSTANCE hInst, DWORD fdwReason, LPVOID lpReserved)
 {
-        g_hInstance=(HINSTANCE)hInst;
+        g_hInstance=hInst;
         
-        if (ul_reason_for_call == DLL_PROCESS_ATTACH)
+        if (DLL_PROCESS_ATTACH == fdwReason)
         {
             // change the protection of return command
             VirtualProtect(&retexpr, sizeof(retexpr), PAGE_EXECUTE_READWRITE, (PDWORD)&LastStackPlace);

@@ -751,7 +751,7 @@ int CEXEBuild::GenerateLangTables() {
 #undef ADD_FONT
     }
     catch (exception& err) {
-      ERROR_MSG(_T("\nError while applying font: %s\n"), CtoTString(err.what()));
+      ERROR_MSG(_T("\nError while applying font: %s\n"), CtoTStrParam(err.what()));
       return PS_ERROR;
     }
   }
@@ -814,7 +814,7 @@ int CEXEBuild::GenerateLangTables() {
 #undef ADD_FONT
       }
       catch (exception& err) {
-        ERROR_MSG(_T("\nError while applying NLF font/RTL: %s\n"), CtoTString(err.what()));
+        ERROR_MSG(_T("\nError while applying NLF font/RTL: %s\n"), CtoTStrParam(err.what()));
         return PS_ERROR;
       }
 

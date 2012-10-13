@@ -42,7 +42,8 @@ NFINDREPLACE g_find;
 extern NTOOLBAR g_toolbar;
 int g_symbol_set_mode;
 
-int WINAPI _tWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, TCHAR *cmdParam, int cmdShow) {
+NSIS_ENTRYPOINT_SIMPLEGUI
+int WINAPI _tWinMain(HINSTANCE hInst,HINSTANCE hOldInst,LPTSTR CmdLineParams,int ShowCmd) {
   MSG  msg;
   int status;
   HACCEL haccel;
@@ -50,7 +51,7 @@ int WINAPI _tWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, TCHAR *cmdParam, int 
   memset(&g_sdata,0,sizeof(NSCRIPTDATA));
   memset(&g_resize,0,sizeof(NRESIZEDATA));
   memset(&g_find,0,sizeof(NFINDREPLACE));
-  g_sdata.hInstance=GetModuleHandle(0);
+  g_sdata.hInstance=hInst;
   g_sdata.symbols = NULL;
   g_sdata.sigint_event = CreateEvent(NULL, FALSE, FALSE, _T("makensis win32 signint event"));
   RestoreSymbols();
@@ -84,7 +85,6 @@ int WINAPI _tWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, TCHAR *cmdParam, int 
   if (g_sdata.sigint_event) CloseHandle(g_sdata.sigint_event);
   FreeLibrary(hRichEditDLL);
   FinalizeUpdate();
-  ExitProcess(msg.wParam);
   return msg.wParam;
 }
 

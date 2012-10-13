@@ -59,6 +59,8 @@ env.Append(CPPDEFINES = ['_WIN32_IE=0x0500'])
 
 if 'NSIS_CONFIG_LOG_STDOUT' in env['NSIS_CPPDEFINES']:
 	env.Append(LINKFLAGS = env['SUBSYS_CON'])
+else:
+	env.Append(LINKFLAGS = env['SUBSYS_WIN'])
 
 ### Compression specific configuration
 

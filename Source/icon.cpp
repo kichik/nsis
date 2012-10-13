@@ -416,7 +416,7 @@ int generate_unicons_offsets(LPBYTE exeHeader, size_t exeHeaderSize, LPBYTE unin
   catch (const exception& e)
   {
     if (g_display_errors)
-      PrintColorFmtMsg_ERR(_T("\nError generating uninstaller icon: %s -- failing!\n"), CtoTString(e.what()));
+      PrintColorFmtMsg_ERR(_T("\nError generating uninstaller icon: %s -- failing!\n"), CtoTStrParam(e.what()));
     return 0;
   }
 

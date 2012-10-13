@@ -141,6 +141,7 @@ typedef unsigned short  UInt16;
 
 #ifndef EXEHEAD
 
+#include <stdlib.h>
 #define BZALLOC(items) malloc(items)
 #define BZFREE(addr)  { if (addr) free(addr); }
 #define mini_memcpy memcpy

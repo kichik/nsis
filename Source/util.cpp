@@ -170,8 +170,8 @@ WCHAR *CharNextW(const WCHAR *s) {
 }
 
 char *CharNextExA(WORD codepage, const char *s, int flags) {
-  char buf[1024];
-  snprintf(buf, 1024, "CP%d", codepage);
+  char buf[30];
+  snprintf(buf, 30, "CP%d", codepage);
   const char* orglocct = setlocale(LC_CTYPE, buf);
 
   const char* np;

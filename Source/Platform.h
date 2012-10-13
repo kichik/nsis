@@ -108,7 +108,7 @@ typedef DWORDLONG ULONGLONG,*PULONGLONG;
 #define _snprintf snprintf
 #define _vsnprintf vsnprintf
 
-#endif
+#endif // ?WIN32
 
 #ifndef INT_MAX
 #include <limits.h>
@@ -119,6 +119,17 @@ typedef DWORDLONG ULONGLONG,*PULONGLONG;
 // but rather declare ULONG_PTR via typedef (see basetsd.h)
 #if !defined(__MINGW32__) && !defined(ULONG_PTR)
 #  define ULONG_PTR unsigned long
+#endif
+
+#ifdef __cplusplus
+#include <algorithm>
+#if defined(_MSC_VER) && _MSC_VER <= 1200
+#define STD_MIN std::_MIN
+#define STD_MAX std::_MAX
+#else
+#define STD_MIN (std::min) // This works even when windows.h defines min/max
+#define STD_MAX (std::max)
+#endif
 #endif
 
 #ifdef _countof
@@ -724,6 +735,9 @@ typedef DWORDLONG ULONGLONG,*PULONGLONG;
 #  define IMAGE_DIRECTORY_ENTRY_EXPORT 0
 #  define IMAGE_SIZEOF_SHORT_NAME 8
 #endif
+#ifndef IMAGE_DLLCHARACTERISTICS_TERMINAL_SERVER_AWARE
+#define IMAGE_DLLCHARACTERISTICS_TERMINAL_SERVER_AWARE 0x8000
+#endif
 
 // structures
 
@@ -860,7 +874,6 @@ typedef PIMAGE_OPTIONAL_HEADER32        PIMAGE_OPTIONAL_HEADER;
 #  define IMAGE_NT_OPTIONAL_HDR32_MAGIC 0x0b01
 #  define IMAGE_NT_OPTIONAL_HDR64_MAGIC 0x0b02
 #endif
-#define IMAGE_DLLCHARACTERISTICS_TERMINAL_SERVER_AWARE 0x8000
 typedef struct _IMAGE_NT_HEADERS {
   DWORD Signature;
   IMAGE_FILE_HEADER FileHeader;
@@ -911,5 +924,42 @@ typedef struct tagVS_FIXEDFILEINFO {
 } VS_FIXEDFILEINFO;
 #  pragma pack()
 #endif
+
+
+// MinGW does not implement the unicode CRT startup functions
+#if (defined(_UNICODE) && defined(_WIN32)) && defined(__MINGW32__)
+#  define NSIS_ENTRYPOINT_TMAIN \
+    int _tmain(int argc,WCHAR**argv); \
+    EXTERN_C int main(int ac,char**cav) { \
+      WCHAR**av=CommandLineToArgvW(GetCommandLineW(),&ac); \
+      if (!av) { \
+        _tprintf(_T("wmain: Error %u\n"),ac = GetLastError()); \
+        return ac; \
+      } \
+      ac = _tmain(ac,av); \
+      /*LEAK: LocalFree(av);*/ \
+      return ac; \
+    }
+#  define NSIS_ENTRYPOINT_SIMPLEGUI \
+     int WINAPI _tWinMain(HINSTANCE hI,HINSTANCE hOld,LPTSTR cl,int sc); \
+     EXTERN_C int WINAPI WinMain(HINSTANCE hI,HINSTANCE hOld,char*cl,int sc) \
+     {return _tWinMain(hI,0,0,sc);}
+#  ifdef __cplusplus
+#    define NSIS_ENTRYPOINT_GUINOCRT \
+       EXTERN_C void NSISWinMainNOCRT(); \
+       int WINAPI WinMain(HINSTANCE hI,HINSTANCE hOld,char*cl,int sc) \
+       {NSISWinMainNOCRT();return 0;}
+#  endif
+#endif
+#ifndef NSIS_ENTRYPOINT_TMAIN
+#  define NSIS_ENTRYPOINT_TMAIN
+#endif
+#ifndef NSIS_ENTRYPOINT_SIMPLEGUI // _tWinMain with valid hInstance, calls ExitProcess
+#  define NSIS_ENTRYPOINT_SIMPLEGUI
+#endif
+#ifndef NSIS_ENTRYPOINT_GUINOCRT
+#  define NSIS_ENTRYPOINT_GUINOCRT
+#endif
+
 
 #endif
