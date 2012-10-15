@@ -78,15 +78,16 @@ if float(defenv['MSVS_VERSION'].replace('Exp','')) < 8.0:
   }
   """
 
-  conf.env.PrependENVPath('LIB', Dir('#/.sconf_temp').abspath)
+  conf.env.Prepend(LIBPATH = Dir('#/.sconf_temp').abspath)
   conf.env.Append(CCFLAGS = ['$EXCEPTION_FLAG'])
 
   if not conf.TryLink(libcptest % 'no change', '.cpp'):
     import os, shutil
 
-    libdirs = defenv['ENV']['LIB'].split(os.pathsep)
+    libdirs = (defenv['ENV']['LIB']).split(os.pathsep) + defenv['LIBPATH']
 
     for libdir in libdirs:
+      libdir = confenv.subst(libdir)
       try:
         libcp = r'%s\libcp.lib' % libdir
         shutil.copy(libcp, Dir('#/.sconf_temp').abspath)
