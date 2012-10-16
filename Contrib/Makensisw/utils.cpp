@@ -705,6 +705,11 @@ TCHAR* BuildSymbols()
   return buf;
 }
 
+static inline bool IsValidFile(const TCHAR *fname)
+{
+  return FileExists(fname);
+}
+
 BOOL PopMRUFile(TCHAR* fname)
 {
   int i;
@@ -726,19 +731,6 @@ BOOL PopMRUFile(TCHAR* fname)
   else {
     return FALSE;
   }
-}
-
-BOOL IsValidFile(TCHAR *fname)
-{
-  WIN32_FIND_DATA wfd;
-  HANDLE h;
-
-  h = FindFirstFile(fname,&wfd);
-  if(h != INVALID_HANDLE_VALUE) {
-    FindClose(h);
-    return true;
-  }
-  return false;
 }
 
 void PushMRUFile(TCHAR* fname)
@@ -770,12 +762,12 @@ void PushMRUFile(TCHAR* fname)
 void BuildMRUMenus()
 {
   HMENU hMenu = g_sdata.fileSubmenu;
-  int i;
+  int i, n;
   MENUITEMINFO mii;
   TCHAR buf[MRU_DISPLAY_LENGTH + 5/*number*/ + 1/*null*/];
   TCHAR buf2[MRU_DISPLAY_LENGTH - 6];
   TCHAR buf3[MRU_DISPLAY_LENGTH + 1];
-  int n;
+  mii.cbSize = sizeof(mii);
 
   for(i = 0; i < MRU_LIST_SIZE; i++) {
     DeleteMenu(hMenu, IDM_MRU_FILE+i, MF_BYCOMMAND);
@@ -783,11 +775,26 @@ void BuildMRUMenus()
 
   n = GetMenuItemCount(hMenu);
 
+  // Remove MRU separator
+  int seppos = n - 1;
+  mii.fMask = MIIM_TYPE;
+  if (GetMenuItemInfo(hMenu, seppos, TRUE, &mii)) {
+    if (MFT_SEPARATOR & mii.fType) {
+      DeleteMenu(hMenu, seppos, MF_BYPOSITION);
+      n--;
+    }
+  }
+  
   for(i = 0; i < MRU_LIST_SIZE; i++) {
     if(g_mru_list[i][0]) {
+      if (seppos) {
+        // We have MRU items so add the separator
+        mii.fMask = MIIM_TYPE;
+        mii.fType = MFT_SEPARATOR;
+        InsertMenuItem(hMenu, n++, TRUE, &mii);
+        seppos = 0;
+      }
       memset(buf,0,sizeof(buf));
-      memset(&mii, 0, sizeof(mii));
-      mii.cbSize = sizeof(mii);
       mii.fMask = MIIM_ID | MIIM_TYPE | MIIM_STATE;
       mii.wID = IDM_MRU_FILE+i;
       mii.fType = MFT_STRING;
@@ -797,7 +804,7 @@ void BuildMRUMenus()
         if(p) {
           p++;
           if(lstrlen(p) > MRU_DISPLAY_LENGTH - 7) {
-            memset(buf2,0,sizeof(buf2));
+            *buf2 = 0;
             lstrcpyn(buf2,p,MRU_DISPLAY_LENGTH - 9);
             lstrcat(buf2,_T("..."));
 
@@ -835,16 +842,8 @@ void BuildMRUMenus()
   }
 
   hMenu = g_sdata.toolsSubmenu;
-  memset(&mii, 0, sizeof(mii));
-  mii.cbSize = sizeof(mii);
   mii.fMask = MIIM_STATE;
-
-  if(g_mru_list[0][0]) {
-    mii.fState = MFS_ENABLED;
-  }
-  else {
-    mii.fState = MFS_GRAYED;
-  }
+  mii.fState = g_mru_list[0][0] ? MFS_ENABLED : MFS_GRAYED;
 
   SetMenuItemInfo(hMenu, IDM_CLEAR_MRU_LIST,FALSE,&mii);
 }
@@ -874,12 +873,12 @@ void RestoreMRUList()
   if (OpenRegSettingsKey(hKey)) {
     if (RegCreateKey(hKey,REGMRUSUBKEY,&hSubKey) == ERROR_SUCCESS) {
       TCHAR buf[8];
-      DWORD l;
+      DWORD l, ec;
       for(int i=0; i<MRU_LIST_SIZE; i++) {
         wsprintf(buf,_T("%d"),i);
         l = sizeof(g_mru_list[n]);
-        RegQueryValueEx(hSubKey,buf,NULL,NULL,(LPBYTE)g_mru_list[n],&l);
-        if(g_mru_list[n][0] != _T('\0')) {
+        ec = RegQueryValueEx(hSubKey,buf,NULL,NULL,(LPBYTE)g_mru_list[n],&l);
+        if(!ec && g_mru_list[n][0] != _T('\0')) {
           n++;
         }
       }
@@ -904,8 +903,13 @@ void SaveMRUList()
       TCHAR buf[8];
       for(i = 0; i < MRU_LIST_SIZE; i++) {
         wsprintf(buf,_T("%d"),i);
-        // cbData must include the size of the terminating null character.
-        RegSetValueEx(hSubKey,buf,0,REG_SZ,(const BYTE*)g_mru_list[i],(lstrlen(g_mru_list[i])+1)*sizeof(TCHAR));
+        if (*g_mru_list[i]) {
+          // cbData must include the size of the terminating null character.
+          RegSetValueEx(hSubKey,buf,0,REG_SZ,(const BYTE*)g_mru_list[i],(lstrlen(g_mru_list[i])+1)*sizeof(TCHAR));
+        }
+        else {
+          RegDeleteValue(hSubKey,buf);
+        }
       }
       RegCloseKey(hSubKey);
     }
@@ -964,19 +968,17 @@ void SaveCompressor()
   }
 }
 
-BOOL FileExists(TCHAR *fname)
+bool FileExists(const TCHAR *fname)
 {
   WIN32_FIND_DATA wfd;
   HANDLE h;
 
   h = FindFirstFile(fname,&wfd);
-  if(h == INVALID_HANDLE_VALUE) {
-    return false;
-  }
-  else {
+  if(INVALID_HANDLE_VALUE != h) {
     FindClose(h);
     return true;
   }
+  return false;
 }
 
 HMENU FindSubMenu(HMENU hMenu, UINT uId)
