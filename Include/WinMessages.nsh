@@ -681,11 +681,11 @@ ${_NSIS_DEFAW} LVM_SETITEMTEXT
 ${_NSIS_DEFAW} TCM_INSERTITEM
 
 #Progress bar control#
-!define PBM_SETRANGE 0x0401
-!define PBM_SETPOS   0x0402
-!define PBM_DELTAPOS 0x0403
-!define PBM_SETSTEP  0x0404
-!define PBM_STEPIT   0x0405
+!define PBM_SETRANGE    0x401
+!define PBM_SETPOS      0x402
+!define PBM_DELTAPOS    0x403
+!define PBM_SETSTEP     0x404
+!define PBM_STEPIT      0x405
 !define PBM_SETRANGE32  0x406 ; IE3 + ComCtl32 v4.70
 !define PBM_GETRANGE    0x407
 !define PBM_GETPOS      0x408

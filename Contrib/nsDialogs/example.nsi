@@ -5,6 +5,9 @@ Name "nsDialogs Example"
 OutFile "nsDialogs Example.exe"
 
 XPStyle on
+RequestExecutionLevel user
+
+LicenseText "All the action takes place on the next page..."
 
 Page license
 Page custom nsDialogsPage

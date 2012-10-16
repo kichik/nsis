@@ -12,7 +12,7 @@
 ;     DetailPrint "Not running on NT. Installing ANSI application."
 ;   ${EndIf}
 ;
-; IsServer checks if the installer is running on a server version of Windows (NT4, 2003, 2008, etc.)
+; IsServerOS checks if the installer is running on a server version of Windows (NT4, 2003, 2008, etc.)
 ;
 ; AtLeastWin<version> checks if the installer is running on Windows version at least as specified.
 ; IsWin<version> checks if the installer is running on Windows version exactly as specified.
@@ -32,6 +32,8 @@
 ;   2008
 ;   7
 ;   2008R2
+;   8
+;   2012
 ;
 ; AtLeastServicePack checks if the installer is running on Windows service pack version at least as specified.
 ; IsServicePack checks if the installer is running on Windows service pack version exactly as specified.
@@ -192,7 +194,7 @@
   !macro __WinVer_Call_GetVersionEx STRUCT_SIZE
 
     System::Call '*$0(i ${STRUCT_SIZE})'
-    System::Call kernel32::GetVersionEx(ir0)i.r3
+    System::Call kernel32::GetVersionEx(pr0)i.r3
 
   !macroend
 
@@ -298,7 +300,7 @@
     _winver_sp_noex: # OSVERSIONINFO, not OSVERSIONINFOEX
 
       ####  TODO
-      ## For IsServer to support < NT4SP6, we need to check the registry
+      ## For IsServerOS to support < NT4SP6, we need to check the registry
       ## here to see if we are a server and/or DC
 
       # get szCSDVersion
