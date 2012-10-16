@@ -62,7 +62,7 @@ void BuildMRUMenus();
 void LoadMRUFile(int position);
 void ClearMRUList();
 
-BOOL FileExists(TCHAR *fname);
+bool FileExists(const TCHAR *fname);
 
 HMENU FindSubMenu(HMENU hMenu, UINT uId);
 #endif
