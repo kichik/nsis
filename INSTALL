@@ -15,7 +15,6 @@ This is a trimmed version of Appendix "Building NSIS" of the documentation.
    * HTML Help Workshop for CHM documentation (http://msdn.microsoft.com/)
    * Cross compiler on POSIX platforms, i.e. MinGW (http://www.mingw.org/)
    * wxWidgets 2.8 for NSIS Menu (http://www.wxwidgets.org)
-     WXWIN environment variable must be set to wxWidgets directory on Windows
 
  - Preparation
 
@@ -24,6 +23,11 @@ This is a trimmed version of Appendix "Building NSIS" of the documentation.
       ZLIB_W32 environment variable, type:
 
        set ZLIB_W32=C:\Dev\zlib-1.2.4
+
+    * See Contrib\NSIS Menu\wx\build.txt for wxWidgets build steps.
+      Optionally, you can skip this by using:
+
+       scons SKIPUTILS="NSIS Menu"
 
  - For Unicode version of NSIS
 
