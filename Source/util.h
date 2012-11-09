@@ -27,6 +27,7 @@
 #ifndef _WIN32
 #  include <iconv.h>
 #  include <stdio.h>
+#  include <unistd.h>
 #endif
 
 
