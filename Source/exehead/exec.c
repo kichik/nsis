@@ -832,7 +832,9 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     case EW_CREATEFONT:
     {
       static LOGFONT f;
-      f.lfHeight=-MulDiv(GetIntFromParm(2),GetDeviceCaps(GetDC(g_hwnd),LOGPIXELSY),72);
+      const HDC hdc=GetDC(g_hwnd);
+      f.lfHeight=-MulDiv(GetIntFromParm(2),GetDeviceCaps(hdc,LOGPIXELSY),72);
+      ReleaseDC(g_hwnd,hdc);
       f.lfWeight=GetIntFromParm(3);
       f.lfItalic=parm4&1;
       f.lfUnderline=parm4&2;
