@@ -352,31 +352,16 @@ Header file for creating custom installer pages with nsDialogs
 
 !define NSD_KillTimer `!insertmacro _NSD_KillTimer`
 
-!macro _NSD_AddStyle CONTROL STYLE
+!macro _NSD_GWLAddFlags GWL HWND DATA
 
-	Push $0
-
-	System::Call "user32::GetWindowLong(i ${CONTROL}, i ${GWL_STYLE}) i .r0"
-	System::Call "user32::SetWindowLong(i ${CONTROL}, i ${GWL_STYLE}, i $0|${STYLE})"
-
-	Pop $0
+	System::Call "user32::GetWindowLong(i${HWND},i${GWL})i.s"
+	System::Int64Op "${DATA}" |
+	System::Call "user32::SetWindowLong(i${HWND},i${GWL},is)"
 
 !macroend
 
-!define NSD_AddStyle "!insertmacro _NSD_AddStyle"
-
-!macro _NSD_AddExStyle CONTROL EXSTYLE
-
-	Push $0
-
-	System::Call "user32::GetWindowLong(i ${CONTROL}, i ${GWL_EXSTYLE}) i .r0"
-	System::Call "user32::SetWindowLong(i ${CONTROL}, i ${GWL_EXSTYLE}, i $0|${EXSTYLE})"
-
-	Pop $0
-
-!macroend
-
-!define NSD_AddExStyle "!insertmacro _NSD_AddExStyle"
+!define NSD_AddStyle "!insertmacro _NSD_GWLAddFlags ${GWL_STYLE} "
+!define NSD_AddExStyle "!insertmacro _NSD_GWLAddFlags ${GWL_EXSTYLE} "
 
 !macro __NSD_GetText CONTROL VAR
 
