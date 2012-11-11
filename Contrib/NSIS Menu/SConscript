@@ -32,13 +32,8 @@ html = Split("""
 images = Split("""
    #Menu/images/line.gif
    #Menu/images/site.gif
+   #Menu/images/header.gif
 """)
-
-
-if env['UNICODE']:
-   images.append("#Menu/images/Unicode/header.gif")
-else:
-   images.append("#Menu/images/header.gif")
 
 import os
 from os.path import join
