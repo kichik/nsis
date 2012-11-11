@@ -4,7 +4,6 @@
 #include "update.h"
 
 #include "jnetlib/httpget.h"
-#include "../ExDLL/nsis_tchar.h"
 
 static BOOL update_initialized = FALSE;
 
