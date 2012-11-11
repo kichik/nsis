@@ -21,7 +21,7 @@ libs_posix = Split("""
 
 Import('BuildUtil BuildUtilEnv GetAvailableLibs')
 
-env = BuildUtilEnv(flags = ['$EXCEPTION_FLAG'], cross_platform = True)
+env = BuildUtilEnv(flags = ['$EXCEPTION_FLAG'], cross_platform = True, cli = True)
 
 import os.path
 
@@ -34,4 +34,4 @@ for s in required_files:
 if env['PLATFORM'] != 'win32':
 	libs = GetAvailableLibs(env, libs_posix)
 
-BuildUtil(target, files, libs, flags = ['$EXCEPTION_FLAG'], cross_platform = True)
+BuildUtil(target, files, libs, flags = ['$EXCEPTION_FLAG'], cross_platform = True, cli = True)
