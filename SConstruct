@@ -720,7 +720,6 @@ def BuildUtilEnv(defines = None, flags = None, libs = None,
 	else:
 		env = cp_util_env.Clone()
 		platform = env['PLATFORM']
-		cli = True
 
 	if libs and 'z' in libs:
 		libs.remove('z')
