@@ -26,7 +26,6 @@
 #include "makensisw.h"
 #include "resource.h"
 #include "toolbar.h"
-#include "../ExDLL/nsis_tchar.h"
 
 #ifdef _countof
 #define COUNTOF _countof
