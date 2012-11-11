@@ -52,11 +52,6 @@ if defenv['DEBUG']:
 	defenv.Append(CCFLAGS = ['/Fd${TARGET.dir}\\${TARGET.dir.file}.pdb'])
 	defenv.Append(LINKFLAGS = ['/debug'])
 
-### unicode
-tdefenv = defenv.Clone()
-if tdefenv['UNICODE']:
-	tdefenv.Append(CPPDEFINES = ['_UNICODE', 'UNICODE'])
-
 ### workarounds
 
 # Some Platform SDK version includes a bad version of libcp.lib.
@@ -102,6 +97,10 @@ if float(defenv['MSVS_VERSION'].replace('Exp','')) < 8.0:
 
 conf.Finish()
 
+### unicode
+tdefenv = defenv.Clone()
+if tdefenv['UNICODE']:
+	tdefenv.Append(CPPDEFINES = ['_UNICODE', 'UNICODE'])
 
 ### stub environment
 
