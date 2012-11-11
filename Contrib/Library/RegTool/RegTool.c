@@ -2,7 +2,6 @@
 
 #include "../../../Source/Platform.h"
 #include <windows.h>
-#include <tchar.h>
 
 #ifndef _CRT_STRINGIZE
 #define __CRT_STRINGIZE(_Value) #_Value
