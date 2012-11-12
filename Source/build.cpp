@@ -2709,7 +2709,7 @@ int CEXEBuild::write_output(void)
     int ns=build_sections.getlen()/sizeof(section);
     section *s=(section*)build_sections.get();
     int x;
-    int req=0;
+    unsigned int req=0;
     for (x = 1; x < ns; x ++)
     {
       if (!s[x].name_ptr || s[x].flags & SF_RO) req++;
@@ -2717,7 +2717,7 @@ int CEXEBuild::write_output(void)
     INFO_MSG(_T("%d section%s"),ns,ns==1?_T(""):_T("s"));
     if (req)
     {
-      INFO_MSG(_T(" (%d required)"),req);
+      INFO_MSG(_T(" (%u required)"),req);
     }
     INFO_MSG(_T(" (%d bytes), "), build_sections.getlen());
   }
@@ -2738,7 +2738,7 @@ int CEXEBuild::write_output(void)
       int ns=ubuild_sections.getlen()/sizeof(section);
       section *s=(section*)ubuild_sections.get();
       int x;
-      int req=0;
+      unsigned int req=0;
       for (x = 1; x < ns; x ++)
       {
         if (!s[x].name_ptr || s[x].flags & SF_RO) req++;
@@ -2746,7 +2746,7 @@ int CEXEBuild::write_output(void)
       INFO_MSG(_T("%d section%s"),ns,ns==1?_T(""):_T("s"));
       if (req)
       {
-        INFO_MSG(_T(" (%d required)"),req);
+        INFO_MSG(_T(" (%u required)"),req);
       }
       INFO_MSG(_T(" (%d bytes), "), ubuild_sections.getlen());
     }
@@ -2774,7 +2774,7 @@ int CEXEBuild::write_output(void)
 
   unsigned int total_usize=m_exehead_original_size;
 
-  INFO_MSG(_T("EXE header size:          %10d / %d bytes\n"),m_exehead_size,m_exehead_original_size);
+  INFO_MSG(_T("EXE header size:          %10u / %u bytes\n"),m_exehead_size,m_exehead_original_size);
 
   if (build_compress_whole) {
     INFO_MSG(_T("Install code:                          (%d bytes)\n"),
@@ -2789,19 +2789,19 @@ int CEXEBuild::write_output(void)
   total_usize+=sizeof(fh)+fh.length_of_header;
 
   {
-    int dbsize, dbsizeu;
+    unsigned int dbsize, dbsizeu;
     dbsize = build_datablock.getlen();
-    if (uninstall_size>0) dbsize-=uninstall_size;
+    if (uninstall_size>0) dbsize -= uninstall_size;
 
     if (build_compress_whole) {
-      dbsizeu=dbsize;
-      INFO_MSG(_T("Install data:                          (%d bytes)\n"),dbsizeu);
+      dbsizeu = dbsize;
+      INFO_MSG(_T("Install data:                          (%u bytes)\n"),dbsizeu);
     }
     else {
       dbsizeu = db_full_size - uninstall_size_full;
-      INFO_MSG(_T("Install data:             %10d / %d bytes\n"),dbsize,dbsizeu);
+      INFO_MSG(_T("Install data:             %10u / %u bytes\n"),dbsize,dbsizeu);
     }
-    total_usize+=dbsizeu;
+    total_usize += dbsizeu;
   }
 
   if (uninstall_size>=0)
@@ -2810,7 +2810,7 @@ int CEXEBuild::write_output(void)
       INFO_MSG(_T("Uninstall code+data:                   (%d bytes)\n"),uninstall_size_full);
     else
       INFO_MSG(_T("Uninstall code+data:          %6d / %d bytes\n"),uninstall_size,uninstall_size_full);
-    total_usize+=uninstall_size_full;
+    total_usize += uninstall_size_full;
   }
 
   if (build_compress_whole) {
@@ -3287,7 +3287,7 @@ void CEXEBuild::set_uninstall_mode(int un)
 
     SWAP(db_opt_save_u,db_opt_save,int);
     SWAP(db_comp_save_u,db_comp_save,int);
-    SWAP(db_full_size_u,db_full_size,int);
+    SWAP(db_full_size_u,db_full_size,unsigned int);
   }
 }
 
