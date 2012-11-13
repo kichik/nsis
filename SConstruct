@@ -461,7 +461,7 @@ if 'ZLIB_W32' in defenv:
 		)
 	))
 	# Search for import library of zlib for VisualC or mingw
-	for importlib in ['zdll.lib', 'libzdll.a']:
+	for importlib in ['zdll.lib', 'libzdll.a', 'libz.dll.a']:
 		defenv['ZLIB_W32_LIB'] = os.path.dirname(str(
 			defenv.FindFile(importlib, 
 				[
