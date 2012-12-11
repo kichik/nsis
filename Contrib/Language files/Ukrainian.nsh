@@ -16,8 +16,8 @@
 
 !ifdef MUI_LICENSEPAGE
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Ліцензійна Угода"
-  ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Будь-ласка перегляньте ліцензію перед встановленням $(^NameDA)."
-  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM "Якщо Ви приймаєте всi умови Угоди, натиснiть на кнопку Згоден. Ви повиннi прийняти умови Угоди для встановлення $(^NameDA)."
+  ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Перегляньте ліцензію перед встановленням $(^NameDA)."
+  ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM "Якщо Ви приймаєте всі умови Угоди, натисніть на кнопку Згоден. Ви повинні прийняти умови Угоди для встановлення $(^NameDA)."
   ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Якщо Ви приймаєте всі умови Угоди, встановіть відмітку у квадратику нижче. Ви повинні прийняти умови Угоди для встановлення $(^NameDA). $_CLICK"
   ${LangFileString} MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Якщо Ви приймаєте всі умови Угоди, виберіть перший варіант з тих що нижче. Ви повинні прийняти умови Угоди для встановлення $(^NameDA). $_CLICK"
 !endif
@@ -25,18 +25,18 @@
 !ifdef MUI_UNLICENSEPAGE
   ${LangFileString} MUI_UNTEXT_LICENSE_TITLE "Ліцензійна угода"
   ${LangFileString} MUI_UNTEXT_LICENSE_SUBTITLE "Прочитайте умови ліцензійної угоди перед видаленням $(^NameDA)."
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "Якщо Ви приймаєте всi умови Угоди, натиснiть на кнопку Згоден. Ви повиннi прийняти умови Угоди для видалення $(^NameDA)."
+  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "Якщо Ви приймаєте всі умови Угоди, натисніть на кнопку Згоден. Ви повинні прийняти умови Угоди для видалення $(^NameDA)."
   ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Якщо Ви приймаєте всі умови Угоди, встановіть відмітку у квадратику нижче. Ви повинні прийняти умови Угоди для видалення $(^NameDA). $_CLICK"
   ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Якщо Ви приймаєте всі умови Угоди, виберіть перший варіант з тих, що нижче. Ви повинні прийняти умови Угоди для видалення $(^NameDA). $_CLICK"
 !endif
 
 !ifdef MUI_LICENSEPAGE | MUI_UNLICENSEPAGE
-  ${LangFileString} MUI_INNERTEXT_LICENSE_TOP "Натиснiть PageDown щоб переміститись вниз угоди."
+  ${LangFileString} MUI_INNERTEXT_LICENSE_TOP "Натисніть PageDown щоб переміститись вниз угоди."
 !endif
 
 !ifdef MUI_COMPONENTSPAGE
   ${LangFileString} MUI_TEXT_COMPONENTS_TITLE "Оберіть компоненти"
-  ${LangFileString} MUI_TEXT_COMPONENTS_SUBTITLE "Оберіть компоненти $(^NameDA) якi Ви бажаєте встановити."
+  ${LangFileString} MUI_TEXT_COMPONENTS_SUBTITLE "Оберіть компоненти $(^NameDA) які Ви бажаєте встановити."
 !endif
 
 !ifdef MUI_UNCOMPONENTSPAGE
@@ -47,15 +47,15 @@
 !ifdef MUI_COMPONENTSPAGE | MUI_UNCOMPONENTSPAGE
   ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Опис"
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
-    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Пiдведiть вашу мишку до компонента, щоб побачити його опис."
+    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Підведіть вашу мишку до компонента, щоб побачити його опис."
   !else
-    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Пiдведiть вашу мишку до компонента, щоб побачити його опис."
+    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Підведіть вашу мишку до компонента, щоб побачити його опис."
   !endif
 !endif
 
 !ifdef MUI_DIRECTORYPAGE
-  ${LangFileString} MUI_TEXT_DIRECTORY_TITLE "Оберiть теку встановлення"
-  ${LangFileString} MUI_TEXT_DIRECTORY_SUBTITLE "Оберiть теку для встановлення $(^NameDA)."
+  ${LangFileString} MUI_TEXT_DIRECTORY_TITLE "Оберіть теку встановлення"
+  ${LangFileString} MUI_TEXT_DIRECTORY_SUBTITLE "Оберіть теку для встановлення $(^NameDA)."
 !endif
 
 !ifdef MUI_UNDIRECTORYPAGE
@@ -65,16 +65,16 @@
 
 !ifdef MUI_INSTFILESPAGE
   ${LangFileString} MUI_TEXT_INSTALLING_TITLE "Копіювання файлів"
-  ${LangFileString} MUI_TEXT_INSTALLING_SUBTITLE "Будь-ласка зачекайте, доки програма встановлення скопіює всі необхідні файли $(^NameDA)."
+  ${LangFileString} MUI_TEXT_INSTALLING_SUBTITLE "Зачекайте, доки програма встановлення скопіює всі необхідні файли $(^NameDA)."
   ${LangFileString} MUI_TEXT_FINISH_TITLE "Встановлення завершено"
-  ${LangFileString} MUI_TEXT_FINISH_SUBTITLE "Встановлення успiшно завершено."
+  ${LangFileString} MUI_TEXT_FINISH_SUBTITLE "Встановлення успішно завершено."
   ${LangFileString} MUI_TEXT_ABORT_TITLE "Встановлення перервана"
-  ${LangFileString} MUI_TEXT_ABORT_SUBTITLE "Встановлення не було успiшно завершено."
+  ${LangFileString} MUI_TEXT_ABORT_SUBTITLE "Встановлення не було успішно завершено."
 !endif
 
 !ifdef MUI_UNINSTFILESPAGE
   ${LangFileString} MUI_UNTEXT_UNINSTALLING_TITLE "Видалення"
-  ${LangFileString} MUI_UNTEXT_UNINSTALLING_SUBTITLE "Будь-ласка зачекайте, йде видалення файлів $(^NameDA)."
+  ${LangFileString} MUI_UNTEXT_UNINSTALLING_SUBTITLE "Зачекайте, йде видалення файлів $(^NameDA)."
   ${LangFileString} MUI_UNTEXT_FINISH_TITLE "Видалення завершено"
   ${LangFileString} MUI_UNTEXT_FINISH_SUBTITLE "Видалення програми було успішно завершено."
   ${LangFileString} MUI_UNTEXT_ABORT_TITLE "Видалення перервано"
@@ -114,9 +114,9 @@
 !endif
 
 !ifdef MUI_ABORTWARNING
-  ${LangFileString} MUI_TEXT_ABORTWARNING "Ви впевненнi, що бажаєте покинути встановлення $(^Name)?"
+  ${LangFileString} MUI_TEXT_ABORTWARNING "Ви впевнені, що бажаєте покинути встановлення $(^Name)?"
 !endif
 
 !ifdef MUI_UNABORTWARNING
-  ${LangFileString} MUI_UNTEXT_ABORTWARNING "Ви впевненні що бажаєте покинути Майстр Видалення $(^Name)?"
+  ${LangFileString} MUI_UNTEXT_ABORTWARNING "Ви впевнені що бажаєте покинути Майстер Видалення $(^Name)?"
 !endif
