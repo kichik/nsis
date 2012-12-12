@@ -48,6 +48,7 @@
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "ដាក់កណ្តុរ​បញ្ជារបស់​អ្នក​លើ​សមាសភាគ​ណា​មួយ​ដើម្បី​មើល​ការ​ពិពណ៍នារបស់​វា​​។"
   !else
+    # FIXME
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "ដាក់កណ្តុរ​បញ្ជារបស់​អ្នក​លើ​សមាសភាគ​ណា​មួយ​ដើម្បី​មើល​ការ​ពិពណ៍នារបស់​វា​​។"
   !endif
 !endif

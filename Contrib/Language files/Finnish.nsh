@@ -51,7 +51,7 @@
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Siirrä hiiri komponentin nimen päälle nähdäksesi sen selityksen."
   !else
-    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Siirrä hiiri komponentin nimen päälle nähdäksesi sen selityksen."
+    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Valitse komponentti nähdäksesi sen selityksen."
   !endif
 !endif
 

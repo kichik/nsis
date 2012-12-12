@@ -49,7 +49,7 @@
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "停懸你的滑鼠指標到元件之上，便可見到它的描述。"
   !else
-    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "停懸你的滑鼠指標到元件之上，便可見到它的描述。"
+    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "選擇一個元件，便可見到它的描述。"
   !endif
 !endif
 

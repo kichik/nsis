@@ -48,7 +48,7 @@
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "상세 설명을 보고 싶으신 부분에 마우스를 올려놓으세요."
   !else
-    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "상세 설명을 보고 싶으신 부분에 마우스를 올려놓으세요."
+    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "상세 설명을 보고 싶으신 부분을 선택하세요."
   !endif
 !endif
 

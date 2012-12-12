@@ -48,6 +48,7 @@
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Placer musemarkøren over en komponent for at se beskrivelsen af komponenten."
   !else
+    # FIXME
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Placer musemarkøren over en komponent for at se beskrivelsen af komponenten."
   !endif
 !endif

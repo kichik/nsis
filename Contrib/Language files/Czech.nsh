@@ -49,6 +49,7 @@
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Při pohybu myší nad instalátorem programu se zobrazí její popis."
   !else
+    # FIXME
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Při pohybu myší nad instalátorem programu se zobrazí její popis."
   !endif
 !endif

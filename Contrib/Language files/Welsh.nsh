@@ -48,7 +48,7 @@
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Gosod eich llygoden dros gydran i weld ei ddisgrifiad."
   !else
-    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Gosod eich llygoden dros gydran i weld ei ddisgrifiad."
+    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Dewis cydran i weld ei ddisgrifiad."
   !endif
 !endif
 

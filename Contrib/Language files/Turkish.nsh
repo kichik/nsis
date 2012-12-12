@@ -49,6 +49,7 @@
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Bileşenlerin açıklamalarını görmek için imleci bileşen üzerine götürün."
   !else
+    # FIXME
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Bileşenlerin açıklamalarını görmek için imleci bileşen üzerine götürün."
   !endif
 !endif

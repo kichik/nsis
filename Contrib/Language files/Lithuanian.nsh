@@ -48,7 +48,7 @@
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Užveskite pelės žymeklį ant komponento ir pamatysite jo aprašymą."
   !else
-    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Užveskite pelės žymeklį ant komponento ir pamatysite jo aprašymą."
+    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Pasirinkite komponentį ir pamatysite jo aprašymą."
   !endif
 !endif
 

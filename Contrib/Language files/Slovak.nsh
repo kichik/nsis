@@ -52,7 +52,7 @@
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Pri prejdení kurzorom myši nad názvom súčasti sa zobrazí jej popis."
   !else
-    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Pri prejdení kurzorom myši nad názvom súčasti sa zobrazí jej popis."
+    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Označte nejakú súčasť, ak chcete zobraziť jej podrobnejší popis."
   !endif
 !endif
 

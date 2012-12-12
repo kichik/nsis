@@ -48,7 +48,7 @@
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Cuir do luch os cionn comhpháirte chun cur síos a fheiceáil."
   !else
-    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Cuir do luch os cionn comhpháirte chun cur síos a fheiceáil."
+    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Roghnaigh comhpháirt chun cur síos a fheiceáil."
   !endif
 !endif
 

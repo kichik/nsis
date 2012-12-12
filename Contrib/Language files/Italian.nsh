@@ -1,4 +1,4 @@
-﻿;Language: Italian (1040)
+;Language: Italian (1040)
 ;By SANFACE Software <sanface@sanface.com> v1.67 accents
 ;Review and update from v1.65 to v1.67 by Alessandro Staltari < staltari (a) geocities.com >
 ;Review and update from v1.67 to v1.68 by Lorenzo Bevilacqua < meow811@libero.it >
@@ -50,7 +50,7 @@
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Posizionare il puntatore del mouse sul componente per vederne la descrizione."
   !else
-    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Posizionare il puntatore del mouse sul componente per vederne la descrizione."
+    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Selezionare un componente per vederne la descrizione."
   !endif
 !endif
 

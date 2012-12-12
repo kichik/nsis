@@ -49,6 +49,7 @@
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Підведіть вашу мишку до компонента, щоб побачити його опис."
   !else
+    # FIXME
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Підведіть вашу мишку до компонента, щоб побачити його опис."
   !endif
 !endif

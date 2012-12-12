@@ -48,7 +48,7 @@
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Færðu músina yfir íhlut til að fá lýsinguna á honum."
   !else
-    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Færðu músina yfir íhlut til að fá lýsinguna á honum."
+    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Veldu íhlut til þess að fá lýsinguna á honum."
   !endif
 !endif
 
