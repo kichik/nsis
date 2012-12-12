@@ -48,6 +48,7 @@
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Allugue'l mur enriba d'un componente pa ver la so descripción."
   !else
+    # FIXME
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Allugue'l mur enriba d'un componente pa ver la so descripción."
   !endif
 !endif

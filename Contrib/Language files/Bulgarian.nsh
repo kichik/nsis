@@ -51,7 +51,7 @@
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Преминете с мишката над определен компонент, за да видите описанието му."
   !else
-    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Преминете с мишката над определен компонент, за да видите описанието му."
+    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Изберете компонент, за да видите описанието му."
   !endif
 !endif
 

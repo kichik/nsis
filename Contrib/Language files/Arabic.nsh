@@ -49,6 +49,7 @@
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "أشر بالفأرة فوق أحد المكونات لرؤية الوصف"
   !else
+    # FIXME
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "أشر بالفأرة فوق أحد المكونات لرؤية الوصف"
   !endif
 !endif

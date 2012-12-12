@@ -48,7 +48,7 @@
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "نشانگر ماوس را بر روی اجزایی که می‌خواهید ببرید تا توضیحات آن را ببینید."
   !else
-    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "نشانگر ماوس را بر روی اجزایی که می‌خواهید ببرید تا توضیحات آن را ببینید."
+    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "يكي از گزينه هاي نصب را انتخاب كنيد تا توضيحات مربوط به آن را ببينيد."
   !endif
 !endif
 

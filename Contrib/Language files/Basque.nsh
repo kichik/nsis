@@ -48,7 +48,7 @@
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Jarri sagua osagai baten gainean dagokion azalpena ikusteko."
   !else
-    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Jarri sagua osagai baten gainean dagokion azalpena ikusteko."
+    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Hautatu osagai bat bere azalpena ikusteko."
   !endif
 !endif
 

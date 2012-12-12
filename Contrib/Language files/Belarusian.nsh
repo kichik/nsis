@@ -48,7 +48,7 @@
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Усталюйце курсор мышы на назву кампанента, каб прачытаць яго апісанне."
   !else
-    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Усталюйце курсор мышы на назву кампанента, каб прачытаць яго апісанне."
+    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Вызначце кампанент, каб прачытаць яго апісанне."
   !endif
 !endif
 

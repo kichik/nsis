@@ -48,6 +48,7 @@
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Rê chuột lên trên một thành phần để thấy mô tả của nó."
   !else
+    # FIXME
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Rê chuột lên trên một thành phần để thấy mô tả của nó."
   !endif
 !endif

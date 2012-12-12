@@ -48,7 +48,7 @@
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Sichqonchaning kursorini komponent tasvirini o'qish uchun ustiga quying."
   !else
-    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Sichqonchaning kursorini komponent tasvirini o'qish uchun ustiga quying."
+    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Tasvirini o'qish o'chun, komponentni tanlang."
   !endif
 !endif
 

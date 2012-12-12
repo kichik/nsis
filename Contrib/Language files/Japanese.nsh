@@ -49,7 +49,7 @@
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "コンポーネントの上にマウス カーソルを移動すると、ここに説明が表示されます。"
   !else
-    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "コンポーネントの上にマウス カーソルを移動すると、ここに説明が表示されます。"
+    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "コンポーネントを選択すると、ここに説明が表示されます。"
   !endif
 !endif
 

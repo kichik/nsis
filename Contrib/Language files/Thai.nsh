@@ -48,7 +48,7 @@
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "ขยับเมาส์ของคุณเหนือส่วนประกอบเพื่อดูรายละเอียด"
   !else
-    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "ขยับเมาส์ของคุณเหนือส่วนประกอบเพื่อดูรายละเอียด"
+    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "เลือกส่วนประกอบที่คุณต้องการดูรายละเอียด"
   !endif
 !endif
 

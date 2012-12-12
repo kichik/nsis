@@ -48,7 +48,7 @@
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Alihkan tetikus ke komponen untuk mengetahui penerangannya."
   !else
-    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Alihkan tetikus ke komponen untuk mengetahui penerangannya."
+    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Pilih komponen untuk mengetahui penerangannya."
   !endif
 !endif
 

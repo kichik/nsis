@@ -48,6 +48,7 @@
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Hal den Mausfeil iwwer eng Komponent, fir d'Beschreiwung dervun ze gesinn."
   !else
+    # FIXME
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Hal den Mausfeil iwwer eng Komponent, fir d'Beschreiwung dervun ze gesinn."
   !endif
 !endif

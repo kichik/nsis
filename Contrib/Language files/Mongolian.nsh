@@ -48,7 +48,7 @@
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Та хулганаараа нэгдлийн дээр очиход тїїний тайлбарыг харуулна."
   !else
-    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Та хулганаараа нэгдлийн дээр очиход тїїний тайлбарыг харуулна."
+    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Нэгдлийг сонговол тїїний тайлбарыг харна."
   !endif
 !endif
 

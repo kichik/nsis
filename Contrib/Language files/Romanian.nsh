@@ -58,6 +58,7 @@
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Aşezaţi mouse-ul deasupra fiecărei componente pentru a vizualiza descrierea acesteia."
   !else
+    # FIXME
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Aşezaţi mouse-ul deasupra fiecărei componente pentru a vizualiza descrierea acesteia."
   !endif
 !endif
