@@ -67,11 +67,28 @@ void dopause(void)
 
 double my_wtof(const wchar_t *str) 
 {
-	char buf[100];
-	WideCharToMultiByte(0,0,str,-1,buf,100,0,0);
-	return atof(buf);
+  char buf[100];
+  WideCharToMultiByte(0,0,str,-1,buf,100,0,0);
+  return atof(buf);
 }
 
+unsigned int my_strncpy(TCHAR*Dest, const TCHAR*Src, unsigned int cchMax)
+{
+  // Dest and Src must be valid, Dest is always \0 terminated.
+  // Returns number of TCHARs copied to Dest; min(strlen(Src),cchMax-1).
+  unsigned int cch = 0;
+  if (cchMax)
+  {
+    for(;--cchMax;)
+    {
+      TCHAR ch = Src[cch];
+      if (!ch) break;
+      Dest[cch++] = ch;
+    }
+    Dest[cch] = _T('\0');
+  }
+  return cch;
+}
 
 // Returns 0 if everything is OK
 // Returns -1 if can't find the file
@@ -208,6 +225,7 @@ void static create_code_page_string(TCHAR *buf, size_t len, UINT code_page) {
   switch(code_page)
   {
   case CP_ACP:
+  case 1: // OEMCP
     code_page = 1252;
     break;
   case CP_UTF8:
@@ -226,7 +244,7 @@ int WideCharToMultiByte(UINT CodePage, DWORD dwFlags, LPCWSTR lpWideCharStr,
   char cp[128];
   create_code_page_string(cp, sizeof(cp), CodePage);
 
-  iconv_t cd = iconv_open(cp, "UCS-2LE"); //TODO: Should "UCS-2LE" be "wchar_t"?
+  iconv_t cd = iconv_open(cp, "wchar_t");
   if (cd == (iconv_t) -1) {
     return 0;
   }
@@ -262,7 +280,7 @@ int MultiByteToWideChar(UINT CodePage, DWORD dwFlags, LPCSTR lpMultiByteStr,
   char cp[128];
   create_code_page_string(cp, sizeof(cp), CodePage);
 
-  iconv_t cd = iconv_open("UCS-2LE", cp); //TODO: Should "UCS-2LE" be "wchar_t"?
+  iconv_t cd = iconv_open("wchar_t", cp);
   if (cd == (iconv_t) -1) {
     return 0;
   }
@@ -296,7 +314,7 @@ BOOL IsValidCodePage(UINT CodePage)
   TCHAR cp[128];
   create_code_page_string(cp, sizeof(cp), CodePage);
 
-  iconv_t cd = iconv_open(_T("UCS-2LE"), cp); //TODO: Should "UCS-2LE" be "wchar_t"?
+  iconv_t cd = iconv_open(_T("wchar_t"), cp);
   if (cd == (iconv_t) -1)
     return FALSE;
 

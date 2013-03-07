@@ -150,6 +150,7 @@ static void print_usage()
          _T("  ") OPT_STR _T("PAUSE pauses after execution\n")
          _T("  ") OPT_STR _T("NOCONFIG disables inclusion of <path to makensis.exe>") PLATFORM_PATH_SEPARATOR_STR _T("nsisconf.nsh\n")
          _T("  ") OPT_STR _T("NOCD disabled the current directory change to that of the .nsi file\n")
+         _T("  ") OPT_STR _T("INPUTCHARSET <") TSTR_INPUTCHARSET _T(">\n")
          _T("  ") OPT_STR _T("Ddefine[=value] defines the symbol \"define\" for the script [to value]\n")
          _T("  ") OPT_STR _T("Xscriptcmd executes scriptcmd in script (i.e. \"") OPT_STR _T("XOutFile poop.exe\")\n")
          _T("  ")         _T("  parameters are processed by order (") OPT_STR _T("Ddef ins.nsi != ins.nsi ") OPT_STR _T("Ddef)\n")
@@ -201,13 +202,11 @@ static tstring get_home()
 
 static int process_config(CEXEBuild& build, tstring& conf)
 {
-  BOOL unicode;
-  FILE *cfg=FOPENTEXT2(conf.c_str(),"rt",&unicode);
-  if (cfg)
+  NIStream strm;
+  if (strm.OpenFileForReading(conf.c_str()))
   {
-    build.INFO_MSG(_T("Processing config: %s\n"), conf.c_str());
-    int ret=build.process_script(cfg,(TCHAR*)conf.c_str(),unicode);
-    fclose(cfg);
+    build.INFO_MSG(_T("Processing config: %s\n"),conf.c_str());
+    int ret=build.process_script(strm,conf.c_str());
     if (ret != PS_OK && ret != PS_EOF)
     {
       build.ERROR_MSG(_T("Error in config on line %d -- aborting creation process\n"),build.linecnt); 
@@ -234,6 +233,16 @@ static int change_to_script_dir(CEXEBuild& build, tstring& script)
   return 0;
 }
 
+static inline bool HasReqParam(TCHAR**argv,int argi,int argc)
+{
+  if (argi>=argc || !*argv[argi])
+  {
+    PrintColorFmtMsg_ERR(_T("Error: Missing required parameter!\n"));
+    return false;
+  }
+  return true;
+}
+
 #ifdef NSIS_HPUX_ALLOW_UNALIGNED_DATA_ACCESS
 extern "C" void allow_unaligned_data_access();
 #endif
@@ -247,16 +256,16 @@ int _tmain(int argc, TCHAR **argv)
 #endif
 
   CEXEBuild build;
-  int do_cd=1;
-  int outputtried=0;
-  int argpos=1;
+  NStreamEncoding inputenc;
+  bool outputtried=0;
+  bool in_files=0;
+  bool do_cd=1;
+  bool no_logo=0;
   int nousage=0;
+  int argpos=1;
+  int tmpargpos=1;
   int files_processed=0;
   int cmds_processed=0;
-  FILE *fp;
-  int tmpargpos=1;
-  int no_logo=0;
-  int in_files=0;
 
 #ifdef _UNICODE
 #ifndef _O_U8TEXT
@@ -329,7 +338,7 @@ int _tmain(int argc, TCHAR **argv)
       }
       else if (S7IsChEqualI('x',argv[argpos][1]) && argv[argpos][2])
       {
-        if (build.process_oneline(argv[argpos]+2,_T("command line"),argpos+1) != PS_OK)
+        if (build.process_oneline(argv[argpos]+2,_T("<command line>"),argpos+1) != PS_OK)
         {
           return 1;
         }
@@ -379,12 +388,12 @@ int _tmain(int argc, TCHAR **argv)
       }
       else if (!_tcsicmp(&argv[argpos][1],_T("NOTIFYHWND")))
       {
+        if (!HasReqParam(argv, ++argpos, argc)) break;
 #ifdef _WIN32
-        build.notify_hwnd=(HWND)_ttol(argv[++argpos]);
+        build.notify_hwnd=(HWND)_ttol(argv[argpos]);
         if (!IsWindow(build.notify_hwnd))
           build.notify_hwnd=0;
 #else
-        argpos++;
         build.warning(OPT_STR _T("NOTIFYHWND is disabled for non Win32 platforms."));
 #endif
       }
@@ -426,7 +435,20 @@ int _tmain(int argc, TCHAR **argv)
         build.warning(OPT_STR _T("Px is disabled for non Win32 platforms."));
 #endif
       }
-      else break;
+      else if (!_tcsicmp(&argv[argpos][1],_T("INPUTCHARSET")) || !_tcsicmp(&argv[argpos][1],_T("ICS")))
+      {
+        if (!HasReqParam(argv, ++argpos, argc)) break;
+        WORD cp = GetEncodingFromString(argv[argpos]);
+        if (NStreamEncoding::UNKNOWN == cp)
+        {
+          if (_tcsicmp(argv[argpos], _T("AUTO")))
+            build.warning(OPT_STR _T("INPUTCHARSET: Ignoring invalid charset %s"), argv[argpos]);
+          cp = NStreamEncoding::AUTO;
+        }
+        inputenc.SetCodepage(cp);
+      }
+      else
+        break;
     }
     else
     {
@@ -465,45 +487,43 @@ int _tmain(int argc, TCHAR **argv)
       }
 
       {
-        TCHAR sfile[1024];
-        BOOL unicode=FALSE;
+        tstring nsifile;
+        NIStream strm;
         if (!_tcscmp(argv[argpos],_T("-")) && !in_files)
         {
-          fp=stdin;
-          _tcscpy(sfile,_T("stdin"));
+          strm.OpenStdIn(inputenc);
+          nsifile = _T("<stdin>");
         }
         else
         {
-          _tcscpy(sfile,argv[argpos]);
-          fp=FOPENTEXT2(sfile,"rt",&unicode);
-          if (!fp)
+          nsifile = argv[argpos];
+          if (!strm.OpenFileForReading(nsifile.c_str(),inputenc))
           {
-            _stprintf(sfile,_T("%s.nsi"),argv[argpos]);
-            fp=FOPENTEXT2(sfile,"rt",&unicode);
-            if (!fp)
+            nsifile += _T(".nsi");
+            if (!strm.OpenFileForReading(nsifile.c_str(),inputenc))
             {
-              sfile[_tcslen(sfile)-4]=0;
-              build.ERROR_MSG(_T("Can't open script \"%s\"\n"),sfile);
+              nsifile = argv[argpos];
+              build.ERROR_MSG(_T("Can't open script \"%s\"\n"),nsifile.c_str());
               return 1;
             }
           }
           if (do_cd)
           {
-            tstring script_file = tstring(sfile);
-            if (change_to_script_dir(build, script_file))
+            if (change_to_script_dir(build, nsifile))
               return 1;
           }
-          build.set_default_output_filename(remove_file_extension(sfile)+_T(".exe"));
+          build.set_default_output_filename(remove_file_extension(nsifile)+_T(".exe"));
         }
 
-        build.notify(MAKENSIS_NOTIFY_SCRIPT,sfile);
-        build.INFO_MSG(_T("Processing script file: \"%s\"\n"),sfile);
-        int ret=build.process_script(fp,sfile,unicode);
-        if (fp != stdin) fclose(fp);
+        build.notify(MAKENSIS_NOTIFY_SCRIPT,nsifile.c_str());
+        TCHAR bufcpdisp[20];
+        strm.StreamEncoding().GetCPDisplayName(bufcpdisp);
+        build.INFO_MSG(_T("Processing script file: \"%s\" (%s)\n"),nsifile.c_str(),bufcpdisp);
+        int ret=build.process_script(strm,nsifile.c_str());
 
         if (ret != PS_EOF && ret != PS_OK)
         {
-          build.ERROR_MSG(_T("Error in script \"%s\" on line %d -- aborting creation process\n"),sfile,build.linecnt);
+          build.ERROR_MSG(_T("Error in script \"%s\" on line %d -- aborting creation process\n"),nsifile.c_str(),build.linecnt);
           return 1;
         }
       }
@@ -534,5 +554,5 @@ int _tmain(int argc, TCHAR **argv)
     build.ERROR_MSG(_T("Error - aborting creation process\n"));
     return 1;
   }
-  return 0; 
+  return 0;
 }

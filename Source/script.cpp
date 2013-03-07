@@ -225,12 +225,12 @@ void CEXEBuild::del_date_time_predefines()
 }
 #endif
 
-int CEXEBuild::process_script(FILE *filepointer, const TCHAR *filename, BOOL unicode)
+int CEXEBuild::process_script(NIStream&Strm, const TCHAR *filename)
 {
-  linecnt = 0;
-  fp = filepointer;
+  NStreamLineReader linereader(Strm);
+  curlinereader = &linereader;
   curfilename = filename;
-  curfile_unicode = unicode;
+  linecnt = 0;
 
   if (has_called_write_output)
   {
@@ -254,9 +254,8 @@ int CEXEBuild::process_script(FILE *filepointer, const TCHAR *filename, BOOL uni
   del_date_time_predefines();
 #endif
 
-  fp = 0;
+  curlinereader = 0;
   curfilename = 0;
-  curfile_unicode = FALSE;
 
   if (m_linebuild.getlen())
   {
@@ -770,17 +769,29 @@ void CEXEBuild::ps_addtoline(const TCHAR *str, GrowBuf &linedata, StringList &hi
 
 int CEXEBuild::parseScript()
 {
+  assert(curlinereader);
   TCHAR str[MAX_LINELENGTH];
+  NStreamLineReader &linereader = *curlinereader;
 
   for (;;)
   {
-    TCHAR *p=str;
-    *p=0;
-    _fgetts(str,MAX_LINELENGTH,fp);
+    UINT lrres = linereader.ReadLine(str,MAX_LINELENGTH);
     linecnt++;
-    if (feof(fp)&&!str[0]) break;
+    if (NStream::OK != lrres)
+    {
+      if (linereader.IsEOF())
+      {
+        if(!str[0]) break;
+      }
+      else
+      {
+        ERROR_MSG(linereader.GetErrorMessage(lrres,curfilename,linecnt).c_str());
+        return PS_ERROR;
+      }
+    }
 
     // remove trailing whitespace
+    TCHAR *p = str;
     while (*p) p++;
     if (p > str) p--;
     while (p >= str && (*p == _T('\r') || *p == _T('\n') || *p == _T(' ') || *p == _T('\t'))) p--;
@@ -809,39 +820,33 @@ int CEXEBuild::parseScript()
   return PS_EOF;
 }
 
-int CEXEBuild::includeScript(TCHAR *f)
+int CEXEBuild::includeScript(const TCHAR *f, NStreamEncoding&enc)
 {
-  SCRIPT_MSG(_T("!include: \"%s\"\n"),f);
-  BOOL unicode;
-  FILE *incfp=FOPENTEXT2(f,"rt",&unicode);
-  if (!incfp)
+  NIStream incstrm;
+  const bool openok = incstrm.OpenFileForReading(f,enc);
+  TCHAR bufcpdisp[20];
+  incstrm.StreamEncoding().GetCPDisplayName(bufcpdisp);
+  SCRIPT_MSG(_T("!include: \"%s\" (%s)\n"),f,bufcpdisp);
+  if (!openok)
   {
     ERROR_MSG(_T("!include: could not open file: \"%s\"\n"),f);
     return PS_ERROR;
   }
 
-  // auto-fclose(3) incfp
-  MANAGE_WITH(incfp, fclose);
-
   if (build_include_depth >= MAX_INCLUDEDEPTH)
   {
-    ERROR_MSG(_T("parseScript: too many levels of includes (%d max).\n"),MAX_INCLUDEDEPTH);
+    ERROR_MSG(_T("!include: too many levels of includes (%d max).\n"),MAX_INCLUDEDEPTH);
     return PS_ERROR;
   }
   build_include_depth++;
-#ifndef _UNICODE
-  const bool org_build_include_isutf8 = build_include_isutf8;
-  build_include_isutf8 = IsUTF8BOM(incfp);
-#endif
 
-  int last_linecnt=linecnt;
+  const int last_linecnt=linecnt;
   linecnt=0;
   const TCHAR *last_filename=curfilename;
-  BOOL last_unicode=curfile_unicode;
   curfilename=f;
-  curfile_unicode=unicode;
-  FILE *last_fp=fp;
-  fp=incfp;
+  NStreamLineReader linereader(incstrm);
+  NStreamLineReader*last_linereader=curlinereader;
+  curlinereader=&linereader;
 
 #ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
   // Added by Sunil Kamath 11 June 2003
@@ -857,16 +862,10 @@ int CEXEBuild::includeScript(TCHAR *f)
   restore_timestamp_predefine(oldtimestamp);
 #endif
 
-#ifndef _UNICODE
-  build_include_isutf8 = org_build_include_isutf8;
-#endif
-
-  int errlinecnt=linecnt;
-
+  const int errlinecnt=linecnt;
   linecnt=last_linecnt;
   curfilename=last_filename;
-  curfile_unicode=last_unicode;
-  fp=last_fp;
+  curlinereader = last_linereader;
 
   build_include_depth--;
   if (r != PS_EOF && r != PS_OK)
@@ -904,52 +903,75 @@ int CEXEBuild::MacroExists(const TCHAR *macroname)
   return 0;
 }
 
-int CEXEBuild::LoadLicenseFile(TCHAR *file, TCHAR** pdata, LineParser &line, BOOL* unicode) // caller must free *pdata, even on error result
+int CEXEBuild::LoadLicenseFile(const TCHAR *file, TCHAR** pdata, const TCHAR *cmdname, WORD AnsiCP) // caller must free *pdata, even on error result
 {
-  FILE *fp=FOPENTEXT2(file,"rt",unicode);
-  if (!fp)
+  NIStream strm;
+  if (!strm.OpenFileForReading(file)) 
   {
-    ERROR_MSG(_T("%s: open failed \"%s\"\n"),line.gettoken_str(0),file);
-    PRINTHELP()
-  }
-  MANAGE_WITH(fp, fclose);
-  unsigned int beginning=ftell(fp); // (we might be positionned after a BOM)
-  fseek(fp,0,SEEK_END);
-  unsigned int datalen=ftell(fp)-beginning; // size of file in bytes! not a number of characters
-  if (!datalen)
-  {
-    ERROR_MSG(_T("%s: empty license file \"%s\"\n"),line.gettoken_str(0),file);
+    ERROR_MSG(_T("%s: open failed \"%s\"\n"),cmdname,file);
+    print_help(cmdname);
     return PS_ERROR;
   }
-  fseek(fp,beginning,SEEK_SET);
-  TCHAR *data=(TCHAR*)malloc((datalen+2)*sizeof(TCHAR)); // alloc enough for worst-case scenario (ANSI/UTF8 characters read in WCHARs)
+  FILE *f=strm.GetHandle();
+  UINT cbBOMOffset=ftell(f); // We might be positioned after a BOM
+  fseek(f,0,SEEK_END);
+  UINT cbFileData=ftell(f)-cbBOMOffset; // Size of file in bytes!
+
+  if (!cbFileData)
+  {
+    warning_fl(_T("%s: empty license file \"%s\"\n"),cmdname,file);
+  }
+  else
+    build_lockedunicodetarget=true;
+
+  fseek(f,cbBOMOffset,SEEK_SET);
+  UINT cbTotalData=sizeof(TCHAR)+cbFileData+sizeof(TCHAR); // SF_*+file+\0
+  TCHAR*data=(TCHAR*)malloc(cbTotalData);
   if (!data)
   {
-    ERROR_MSG(_T("Internal compiler error #12345: %s malloc(%d) failed.\n"),line.gettoken_str(0),(datalen+2)*sizeof(TCHAR));
+l_OOM:
+    ERROR_MSG(_T("Internal compiler error #12345: %s malloc(%d) failed.\n"),cmdname,cbTotalData);
     return PS_ERROR;
   }
-  *pdata = data; // memory will be released by caller
-  TCHAR *ldata=data+1;
-  while (_fgetts(ldata, data+datalen+2-ldata, fp)) // _fgetts translates ANSI/UTF8 characters to TCHAR //BUGBUG: There is no reason to store ASCII files as TCHAR
-      ldata += _tcslen(ldata);
-  if (ferror(fp))
+  *pdata=data; // memory will be released by caller
+  *((TCHAR*)((char*)data+cbTotalData-sizeof(TCHAR)))=_T('\0');
+
+  TCHAR*ldata=data+1;
+  if (!strm.ReadOctets(ldata,&cbFileData))
   {
-    ERROR_MSG(_T("%s: can't read file.\n"),line.gettoken_str(0));
+    ERROR_MSG(_T("%s: can't read file.\n"),cmdname);
     return PS_ERROR;
   }
-  bool disallowrichedunicode = false;
-#ifdef _UNICODE
-  if (!build_unicode)
-    disallowrichedunicode = true; //RichEdit 1.0 does not support unicode
+  // We have to convert the content of the license file to wchar_t
+  const WORD srccp=strm.StreamEncoding().IsUnicode() ? strm.StreamEncoding().GetCodepage() : AnsiCP;
+  const UINT cbcu=NStreamEncoding::GetCodeUnitSize(srccp);
+  if (sizeof(TCHAR) < cbcu)
+  {
+    ERROR_MSG(_T("%s: wchar_t conversion failed!\n"),cmdname);
+    return PS_ERROR;
+  }
+  // Create a fake character in the "header" part of the buffer
+  char*lichdr=((char*)ldata) - cbcu;
+  *((char*)lichdr)='X';
+  if (cbcu > 1) *((WORD*)lichdr)='X';
+  //BUGBUG: No room: if (cbcu > 2) *((UINT32*)lichdr)='X';
+  wchar_t*wcdata=DupWCFromBytes(lichdr,cbcu+cbFileData,srccp);
+  if ((wchar_t*)-1==wcdata)
+  {
+    ERROR_MSG(_T("%s: wchar_t conversion failed!\n"),cmdname);
+    return PS_ERROR;
+  }
+  free(data);
+  *pdata=data=wcdata;
+  ldata=data+1;
+  if (!data) goto l_OOM;
+
+  const bool isRTF=!memcmp(ldata,_T("{\\rtf"),5*sizeof(TCHAR));
+  if (isRTF)
+    *data=SF_RTF;
   else
-    *unicode = true; // _fgetts converted to TCHAR
-#endif
-  if (!memcmp(data+1,_T("{\\rtf"),5*sizeof(TCHAR)))
-    *data = SF_RTF;
-  else if (*unicode && !disallowrichedunicode)
-    *data = SF_TEXT|SF_UNICODE;
-  else
-    *data = SF_TEXT;
+    *data=build_unicode ? (SF_TEXT|SF_UNICODE) : (SF_TEXT);
+
   return PS_OK;
 }
 
@@ -968,7 +990,7 @@ int CEXEBuild::process_oneline(TCHAR *line, const TCHAR *filename, int linenum)
   TCHAR *oldfilename = NULL;
   TCHAR *oldtimestamp = NULL;
   TCHAR *oldline = NULL;
-  BOOL is_commandline = !_tcscmp(filename,_T("command line"));
+  BOOL is_commandline = !_tcscmp(filename,_T("<command line>"));
   BOOL is_macro = !_tcsncmp(filename,_T("macro:"),_tcslen(_T("macro:")));
 
   if(!is_commandline) { // Don't set the predefines for command line /X option
@@ -1047,7 +1069,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #endif
 
   multiple_entries_instruction=0;
-
   entry ent={0,};
   switch (which_token)
   {
@@ -1105,14 +1126,24 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         {
           TCHAR str[MAX_LINELENGTH];
           TCHAR *p=str;
-          str[0]=0;
-          _fgetts(str,MAX_LINELENGTH,fp);
-          //SCRIPT_MSG(_T("%s%s"), str, str[_tcslen(str)-1]==_T('\n')?_T(""):_T("\n"));
-          if (feof(fp) && !str[0])
+          UINT lrres = curlinereader->ReadLine(str,MAX_LINELENGTH);
+          if (NStream::OK != lrres)
           {
-            ERROR_MSG(_T("!macro \"%s\": unterminated (no !macroend found in file)!\n"),line.gettoken_str(1));
-            return PS_ERROR;
+            if (curlinereader->IsEOF())
+            {
+              if (!str[0])
+              {
+                ERROR_MSG(_T("!macro \"%s\": unterminated (no !macroend found in file)!\n"),line.gettoken_str(1));
+                return PS_ERROR;
+              }
+            }
+            else
+            {
+              ERROR_MSG(curlinereader->GetErrorMessage(lrres).c_str());
+              return PS_ERROR;
+            }
           }
+          //SCRIPT_MSG(_T("%s%s"), str, str[_tcslen(str)-1]==_T('\n')?_T(""):_T("\n"));
           // remove trailing whitespace
           while (*p) p++;
           if (p > str) p--;
@@ -1742,21 +1773,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       TCHAR *name = line.gettoken_str(1);
       LANGID lang = line.gettoken_int(2);
       TCHAR *str = line.gettoken_str(3);
-      int ret;
-#ifndef _UNICODE
-        if (build_include_isutf8)
-          ret = SetUTF8LangString(name, lang, str);
-        else
-#endif
-          ret = SetLangString(name, lang, str, curfile_unicode);
-
+      const int ret = SetLangString(name, lang, str);
       if (ret == PS_WARNING)
         warning_fl(_T("LangString \"%s\" set multiple times for %d, wasting space"), name, lang);
       else if (ret == PS_ERROR) {
         ERROR_MSG(_T("Error: can't set LangString \"%s\"!\n"), name);
         return PS_ERROR;
       }
-      // BUGBUG: Does not display UTF-8 properly.
       SCRIPT_MSG(_T("LangString: \"%s\" %d \"%s\"\n"), name, lang, str);
     }
     return PS_OK;
@@ -1765,10 +1788,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return PS_ERROR;
     case TOK_LICENSELANGSTRING:
     {
+      const TCHAR *cmdnam = get_commandtoken_name(which_token);
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
       if (build_header.flags&(CH_FLAGS_SILENT|CH_FLAGS_SILENT_LOG))
       {
-        warning_fl(_T("LicenseLangString: SilentInstall enabled, wasting space"));
+        warning_fl(_T("%s: SilentInstall enabled, wasting space"), cmdnam);
       }
 #endif
       TCHAR *name = line.gettoken_str(1);
@@ -1777,22 +1801,26 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
       TCHAR *data = NULL;
       MANAGE_WITH(data, free);
-      BOOL unicode;
 
-      int ret = LoadLicenseFile(file, &data, line, &unicode);
+      WORD AnsiCP = CP_ACP;
+      LanguageTable *pLT = GetLangTable(lang);
+      if (pLT) AnsiCP = pLT->nlf.m_uCodePage;
+  
+      int ret = LoadLicenseFile(file, &data, cmdnam, AnsiCP);
       if (ret != PS_OK)
           return ret;
 
-      ret = SetLangString(name, lang, data, unicode);
+      ret = SetLangString(name, lang, data, true);
       if (ret == PS_WARNING)
-        warning_fl(_T("LicenseLangString \"%s\" set multiple times for %d, wasting space"), name, lang);
+        warning_fl(_T("%s \"%s\" set multiple times for %d, wasting space"), cmdnam, name, lang);
       else if (ret == PS_ERROR)
       {
-        ERROR_MSG(_T("Error: can't set LicenseLangString \"%s\"!\n"), name);
+        ERROR_MSG(_T("Error: can't set %s \"%s\"!\n"), cmdnam, name);
         return PS_ERROR;
       }
 
-      SCRIPT_MSG(_T("LicenseLangString: \"%s\" %d \"%s\"\n"), name, lang, file);
+      SCRIPT_MSG(_T("%s: \"%s\" %d \"%s\"\n"), cmdnam, name, lang, file);
+      return PS_ERROR;
     }
     return PS_OK;
     case TOK_NAME:
@@ -2033,11 +2061,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return PS_OK;
     case TOK_LICENSEDATA:
       {
+        const TCHAR *cmdnam = get_commandtoken_name(which_token);
         int idx = 0;
         TCHAR *file = line.gettoken_str(1);
         TCHAR *data = NULL;
         TCHAR *filedata = NULL;
         MANAGE_WITH(filedata, free);
+        WORD cp = CP_ACP;
 
         if (file[0] == _T('$') && file[1] == _T('('))
         {
@@ -2053,24 +2083,22 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
         if (!idx)
         {
-          BOOL unicode;
-          int ret = LoadLicenseFile(file, &filedata, line, &unicode);
+          int ret = LoadLicenseFile(file, &filedata, cmdnam, cp);
           if (ret != PS_OK)
-              return ret;
+            return ret;
           data = filedata;
         }
 
         if (!cur_page) {
           if (SetInnerString(NLF_LICENSE_DATA,data) == PS_WARNING)
-            warning_fl(_T("%s: specified multiple times, wasting space"),line.gettoken_str(0));
+            warning_fl(_T("%s: specified multiple times, wasting space"),cmdnam);
         }
         else {
           if (cur_page_type != PAGE_LICENSE) {
             ERROR_MSG(_T("Error: LicenseData can only be used inside PageEx license.\n"));
             return PS_ERROR;
           }
-
-          cur_page->parms[1] = add_string(data, 0);
+          cur_page->parms[1] = add_string(data, false, cp);
         }
 
         SCRIPT_MSG(_T("LicenseData: \"%s\"\n"),file);
@@ -2791,17 +2819,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         LANGID lang_id = _ttoi(line.gettoken_str(1) + 6);
         LanguageTable *table = GetLangTable(lang_id);
         const TCHAR*facename = line.gettoken_str(2);
-#ifndef _UNICODE
-        if (build_include_isutf8)
-        {
-          EXEHEADTCHAR_T *bufEHTStr = UTF8ToExeHeadTStrDup(facename, table->nlf.m_uCodePage);
-          table->nlf.m_szFont = bufEHTStr;
-        }
-        else
-#endif
-        {
-          table->nlf.m_szFont = _tcsdup(facename);
-        }
+        table->nlf.m_szFont = _tcsdup(facename);
         table->nlf.m_iFontSize = line.gettoken_int(3);
         
         if (table->nlf.m_szFont)
@@ -2812,19 +2830,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       else
       {
         const TCHAR*facename = line.gettoken_str(1);
-#ifndef _UNICODE
-        if (build_include_isutf8)
-        {
-          EXEHEADTCHAR_T *bufEHTStr = UTF8ToExeHeadTStrDup(facename, CP_ACP);
-          if (!bufEHTStr) ++failed;
-          _tcsnccpy(build_font, bufEHTStr, COUNTOF(build_font));
-          free(bufEHTStr);
-        }
-        else
-#endif
-        {
-          _tcsnccpy(build_font, facename, COUNTOF(build_font));
-        }
+        _tcsnccpy(build_font, facename, COUNTOF(build_font));
         build_font_size = line.gettoken_int(2);
 
         if (!failed) SCRIPT_MSG(_T("SetFont: \"%s\" %s\n"), facename, line.gettoken_str(2));
@@ -2893,15 +2899,19 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #ifdef _UNICODE
     case TOK_TARGETUNICODE:
     {
-      if (build_compressor_set)
-      {
-        ERROR_MSG(_T("Error: Can't change target charset after data already got compressed or header already changed!\n"));
-        return PS_ERROR;
-      }
       int k = line.gettoken_enum(1,_T("false\0true\0"));
       if (-1==k) PRINTHELP();
       SCRIPT_MSG(_T("Unicode: %s\n"),k?_T("true"):_T("false"));
-      if (set_target_charset(!!k) != PS_OK)
+      const bool newtargetcs = !!k;
+      if (newtargetcs != build_unicode)
+      {
+        if (build_compressor_set || build_lockedunicodetarget)
+        {
+          ERROR_MSG(_T("Error: Can't change target charset after data already got compressed or header already changed!\n"));
+          return PS_ERROR;
+        }
+      }
+      if (set_target_charset(newtargetcs) != PS_OK)
       {
         ERROR_MSG(_T("Error: Unable to set target charset (adequate stub not found?)\n"));
         return PS_ERROR;
@@ -3035,7 +3045,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       {
         line.eattoken();
         define=line.gettoken_str(1);
-        if (dupemode==1 && definedlist.find(define))return PS_OK;
+        if (dupemode==1 && definedlist.find(define)) return PS_OK;
       }
 
 
@@ -3242,19 +3252,26 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_P_INCLUDE:
       {
         bool required = true;
-
-        TCHAR *f = line.gettoken_str(1);
-        
-        if(!_tcsicmp(f,_T("/nonfatal"))) {
-          if (line.getnumtokens()!=3)
-            PRINTHELP();
-        
-          f = line.gettoken_str(2);
+        NStreamEncoding enc(NStreamEncoding::AUTO);
+        TCHAR *f;
+        unsigned int toks = line.getnumtokens() - 1;
+        for(unsigned int tok = 0; toks;)
+        {
+          f = line.gettoken_str(++tok);
+          if (tok >= toks) break;
+          if(!_tcsicmp(f,_T("/nonfatal"))) {
             required = false;
-        } else if (line.getnumtokens()!=2) {
-          PRINTHELP();
+          }
+          TCHAR buf[9+1];
+          my_strncpy(buf,f,COUNTOF(buf));
+          if(!_tcsicmp(buf,_T("/charset="))) {
+            WORD cp = GetEncodingFromString(f+9);
+            if (NStreamEncoding::UNKNOWN == cp) toks = 0;
+            enc.SafeSetCodepage(cp);
+          }
         }
-        
+        if (!toks || !*f) PRINTHELP();
+
         TCHAR *fc = my_convert(f);
         int included = 0;
 
@@ -3282,7 +3299,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
           tstring incfile = basedir + *files_itr;
 
-          if (includeScript((TCHAR *) incfile.c_str()) != PS_OK) {
+          if (includeScript(incfile.c_str(), enc) != PS_OK) {
             return PS_ERROR;
           }
 
@@ -3311,7 +3328,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
             tstring incfile = tstring(incdir) + PLATFORM_PATH_SEPARATOR_STR + basedir + *incdir_itr;
 
-            if (includeScript((TCHAR *) incfile.c_str()) != PS_OK) {
+            if (includeScript(incfile.c_str(), enc) != PS_OK) {
               return PS_ERROR;
             }
 
@@ -3327,12 +3344,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (!included)
         {
           if(required) {
-          ERROR_MSG(_T("!include: could not find: \"%s\"\n"),f);
-          return PS_ERROR;
-        } else {
-          warning_fl(_T("!include: could not find: \"%s\""),f);
+            ERROR_MSG(_T("!include: could not find: \"%s\"\n"),f);
+            return PS_ERROR;
+          } else {
+            warning_fl(_T("!include: could not find: \"%s\""),f);
+          }
         }
-      }
       }
     return PS_OK;
     case TOK_P_CD:
@@ -4214,7 +4231,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.offsets[0]=add_string(line.gettoken_str(1));
       if (which_token == TOK_UNREGDLL)
       {
-        ent.offsets[1]=add_string(_T("DllUnregisterServer"));
+        ent.offsets[1]=add_asciistring(_T("DllUnregisterServer"));
         ent.offsets[2]=DefineInnerLangString(NLF_UNREGISTERING);
       }
       else if (which_token == TOK_CALLINSTDLL)
@@ -4232,7 +4249,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       else // register
       {
         ent.offsets[1] = add_string(line.gettoken_str(2));
-        if (!ent.offsets[1]) ent.offsets[1]=add_string(_T("DllRegisterServer"));
+        if (!ent.offsets[1]) ent.offsets[1]=add_asciistring(_T("DllRegisterServer"));
         ent.offsets[2]=DefineInnerLangString(NLF_REGISTERING);
       }
 
@@ -4677,8 +4694,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return add_entry(&ent);
     case TOK_HIDEWINDOW:
       ent.which=EW_SHOWWINDOW;
-      ent.offsets[0]=add_string(_T("$HWNDPARENT"));
-      ent.offsets[1]=add_string(_T("0")/*SW_HIDE*/);
+      ent.offsets[0]=add_asciistring(_T("$HWNDPARENT"));
+      ent.offsets[1]=add_asciistring(_T("0")/*SW_HIDE*/);
       ent.offsets[2]=1;
       SCRIPT_MSG(_T("HideWindow\n"));
     return add_entry(&ent);
@@ -4686,8 +4703,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     {
       int ret;
       ent.which=EW_SHOWWINDOW;
-      ent.offsets[0]=add_string(_T("$HWNDPARENT"));
-      ent.offsets[1]=add_string(_T("5")/*SW_SHOW*/);
+      ent.offsets[0]=add_asciistring(_T("$HWNDPARENT"));
+      ent.offsets[1]=add_asciistring(_T("5")/*SW_SHOW*/);
       ret = add_entry(&ent);
       if (ret != PS_OK) return ret;
       ent.which=EW_BRINGTOFRONT;
@@ -5343,7 +5360,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       if (line.getnumtokens() == 3)
         ent.offsets[1]=add_string(line.gettoken_str(2));
       else
-        ent.offsets[1]=add_string(_T("$TEMP"));
+        ent.offsets[1]=add_asciistring(_T("$TEMP"));
       if (ent.offsets[0]<0) PRINTHELP()
       SCRIPT_MSG(_T("GetTempFileName -> %s\n"),line.gettoken_str(1));
     return add_entry(&ent);
@@ -5415,7 +5432,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       if (ent.offsets[3] != 7 && ent.offsets[3] != 13) ent.offsets[2]=add_string(line.gettoken_str(4));
       if (ent.offsets[3] == 13) {
         ent.offsets[3]=6;
-        ent.offsets[2]=add_string(_T("0xFFFFFFFF"));
+        ent.offsets[2]=add_asciistring(_T("0xFFFFFFFF"));
       }
       SCRIPT_MSG(_T("IntOp: %s=%s%s%s\n"),line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(4));
     return add_entry(&ent);
@@ -5774,7 +5791,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.which=EW_FGETS;
       ent.offsets[0]=GetUserVarIndex(line, 1); // file handle
       ent.offsets[1]=GetUserVarIndex(line, 2); // output string
-      ent.offsets[2]=add_string(_T("1"));
+      ent.offsets[2]=add_asciistring(_T("1"));
       ent.offsets[3]=1;
       if (ent.offsets[0]<0 || ent.offsets[1]<0) PRINTHELP()
       SCRIPT_MSG(_T("FileReadByte: %s->%s\n"),line.gettoken_str(1),line.gettoken_str(2));
@@ -5825,7 +5842,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.which=EW_FGETWS;
       ent.offsets[0]=GetUserVarIndex(line, 1); // file handle
       ent.offsets[1]=GetUserVarIndex(line, 2); // output string
-      ent.offsets[2]=add_string(_T("1"));
+      ent.offsets[2]=add_asciistring(_T("1"));
       ent.offsets[3]=1;
       if (ent.offsets[0]<0 || ent.offsets[1]<0) PRINTHELP()
       SCRIPT_MSG(_T("FileReadWord: %s->%s\n"),line.gettoken_str(1),line.gettoken_str(2));
@@ -6459,7 +6476,7 @@ int CEXEBuild::do_add_file(const TCHAR *lgss, int attrib, int recurse, int *tota
 
     if (recurse) {
       // save $OUTDIR into $_OUTDIR [StrCpy $_OUTDIR $OUTDIR]
-      if (add_entry_direct(EW_ASSIGNVAR, m_UserVarNames.get(_T("_OUTDIR")), add_string(_T("$OUTDIR"))) != PS_OK) {
+      if (add_entry_direct(EW_ASSIGNVAR, m_UserVarNames.get(_T("_OUTDIR")), add_asciistring(_T("$OUTDIR"))) != PS_OK) {
         return PS_ERROR;
       }
     }
@@ -6540,7 +6557,7 @@ int CEXEBuild::do_add_file(const TCHAR *lgss, int attrib, int recurse, int *tota
     SCRIPT_MSG(_T("%sFile: Returning to: \"%s\"\n"), generatecode ? _T("") : _T("Reserve"), dir.c_str());
 
     // restore $OUTDIR from $_OUTDIR [SetOutPath $_OUTDIR]
-    if (add_entry_direct(EW_CREATEDIR, add_string(_T("$_OUTDIR")), 1) != PS_OK) {
+    if (add_entry_direct(EW_CREATEDIR, add_asciistring(_T("$_OUTDIR")), 1) != PS_OK) {
       return PS_ERROR;
     }
   }
@@ -6778,7 +6795,7 @@ int CEXEBuild::do_add_file_create_dir(const tstring& local_dir, const tstring& d
 
 #ifdef _WIN32
   if (attrib) {
-    int ndc = add_string(_T("."));
+    int ndc = add_asciistring(_T("."));
 
     DWORD attr = GetFileAttributes(local_dir.c_str());
 

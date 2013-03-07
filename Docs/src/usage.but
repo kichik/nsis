@@ -29,6 +29,8 @@ If you want to use MakeNSIS on the command line, the syntax of the makensis comm
 
 \b /NOCD disables the current directory change to that of the .nsi file
 
+\b /INPUTCHARSET allows you to specify a specific codepage for files without a BOM. (\NsisInputCharset)
+
 \b Using the /D switch one or more times will add to symbols to the globally defined list (See !define).
 
 \b Using the /X switch one or more times will execute the code you specify following it. Example: "/XAutoCloseWindow false"

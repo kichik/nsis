@@ -247,7 +247,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_P_SYSTEMEXEC,_T("!system"),1,2,_T("command [<|>|<>|=) retval]"),TP_ALL},
 {TOK_P_EXECUTE,_T("!execute"),1,0,_T("command"),TP_ALL},
 {TOK_P_ADDINCLUDEDIR,_T("!AddIncludeDir"),1,0,_T("dir"),TP_ALL},
-{TOK_P_INCLUDE,_T("!include"),1,1,_T("[/NONFATAL] filename.nsh"),TP_ALL},
+{TOK_P_INCLUDE,_T("!include"),1,2,_T("[/NONFATAL] [/CHARSET=<") TSTR_INPUTCHARSET _T(">] filename.nsh"),TP_ALL},
 {TOK_P_CD,_T("!cd"),1,0,_T("absolute_or_relative_new_directory"),TP_ALL},
 {TOK_P_IF,_T("!if"),1,3,_T("[!] (value [(==,!=,S==,S!=,=,<>,<=,<,>,>=,&,&&,||) value2] | /FILEEXISTS path)"),TP_ALL},
 {TOK_P_IFDEF,_T("!ifdef"),1,-1,_T("symbol [| symbol2 [& symbol3 [...]]]"),TP_ALL},
@@ -308,7 +308,7 @@ const TCHAR* CEXEBuild::get_commandtoken_name(int tok)
   return 0;
 }
 
-void CEXEBuild::print_help(TCHAR *commandname)
+void CEXEBuild::print_help(const TCHAR *commandname)
 {
   int x;
   for (x = 0; x < TOK__LAST; x ++)

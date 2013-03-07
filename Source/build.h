@@ -30,6 +30,7 @@
 #include "manifest.h"
 #include "icon.h"
 #include <memory.h>
+#include "utf.h"
 
 #include "exehead/fileform.h"
 #include "exehead/config.h"
@@ -114,13 +115,13 @@ class CEXEBuild {
 
     // process a script (you can process as many scripts as you want,
     // it is as if they are concatenated)
-    int process_script(FILE *filepointer, const TCHAR *filename, BOOL unicode);
+    int process_script(NIStream&Strm, const TCHAR *filename);
     int process_oneline(TCHAR *line, const TCHAR *curfilename, int lineptr);
     
     // you only get to call write_output once, so use it wisely.
     int write_output(void);
 
-    void print_help(TCHAR *commandname=NULL);
+    void print_help(const TCHAR *commandname=NULL);
 
     DefineList definedlist; // List of identifiers marked as "defined" like
                             // C++ macro definitions such as _UNICODE.
@@ -133,8 +134,7 @@ class CEXEBuild {
 
     int linecnt;
     const TCHAR *curfilename;
-    BOOL curfile_unicode;
-    FILE *fp;
+    NStreamLineReader* curlinereader;
 
     HWND notify_hwnd;
     void notify(notify_e code, const TCHAR *data) const;
@@ -176,9 +176,9 @@ class CEXEBuild {
     void del_date_time_predefines();
 #endif
     int parseScript();
-    int includeScript(TCHAR *f);
+    int includeScript(const TCHAR *f, NStreamEncoding&enc);
     int MacroExists(const TCHAR *macroname);
-    int LoadLicenseFile(TCHAR *file, TCHAR** pdata, LineParser &line, BOOL* unicode);
+    int LoadLicenseFile(const TCHAR *file, TCHAR** pdata, const TCHAR *cmdname, WORD AnsiCP);
 #ifdef NSIS_FIX_DEFINES_IN_STRINGS
     void ps_addtoline(const TCHAR *str, GrowBuf &linedata, StringList &hist, bool bIgnoreDefines = false);
 #else
@@ -238,10 +238,12 @@ class CEXEBuild {
     int add_db_data(IMMap *map); // returns offset
     int add_db_data(const char *data, int length); // returns offset
     int add_data(const char *data, int length, IGrowBuf *dblock); // returns offset
-    int add_string(const TCHAR *string, int process=1, WORD codepage=CP_ACP); // returns offset (in string table)
+    int add_string(const TCHAR *string, int process=1, UINT codepage=-2); // returns offset (in string table)
+    int add_asciistring(const TCHAR *string, int process=1); // For hardcoded 7bit/ASCII strings
     int add_intstring(const int i); // returns offset in stringblock
 
     int preprocess_string(TCHAR *out, const TCHAR *in, WORD codepage=CP_ACP);
+    void init_shellconstantvalues();
 
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
     int add_plugins_dir_initializer(void);
@@ -328,10 +330,8 @@ class CEXEBuild {
      * return a PS_ERROR.  If this function call is overwriting a set user string,
      * this will return a PS_WARNING.
      */
-    int SetLangString(TCHAR *name, LANGID lang, const TCHAR *str, BOOL unicode);
-#ifndef _UNICODE
-    int SetUTF8LangString(TCHAR *name, LANGID lang, const char* stru8);
-#endif
+    int SetLangString(const TCHAR *name, LANGID lang, const TCHAR *str, BOOL LicenseData);
+    int SetLangString(const TCHAR *name, LANGID lang, const TCHAR *str);
 
     /**
      * Sets the user string to the specific NLF_STRINGS id.
@@ -405,6 +405,7 @@ class CEXEBuild {
 
     bool no_space_texts;
     bool build_unicode;// generate installer with unicode exehead?
+    bool build_lockedunicodetarget;
 
     bool has_called_write_output;
 
@@ -427,9 +428,6 @@ class CEXEBuild {
     TCHAR build_output_filename[1024];
 
     int build_include_depth;
-#ifndef _UNICODE
-    bool build_include_isutf8; // UTF-8 LangString in .nsh hack for ANSI builds
-#endif
 
     // Added by ramon 6 jun 2003
 #ifdef NSIS_SUPPORT_VERSION_INFO
@@ -465,7 +463,7 @@ class CEXEBuild {
     GrowBuf build_instruction_entry_map,ubuild_instruction_entry_map, *cur_instruction_entry_map;
     TinyGrowBuf build_functions, ubuild_functions, *cur_functions;
     TinyGrowBuf build_labels, ubuild_labels, *cur_labels;
-    MLStringList build_strlist, ubuild_strlist, *cur_strlist;
+    ExeHeadStringList build_strlist, ubuild_strlist, *cur_strlist;
     GrowBuf build_langtables, ubuild_langtables, *cur_langtables;
     TinyGrowBuf build_pages, ubuild_pages, *cur_pages;
     TinyGrowBuf build_ctlcolors, ubuild_ctlcolors, *cur_ctlcolors;

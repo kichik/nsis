@@ -713,23 +713,23 @@ skipPage:
 #define _RICHEDIT_VER 0x0200
 #include <richedit.h>
 #undef _RICHEDIT_VER
-static DWORD dwRead;
+static DWORD g_cbLicRead;
 DWORD CALLBACK StreamLicense(DWORD_PTR dwCookie, LPBYTE pbBuff, LONG cb, LONG *pcb)
 {
-  lstrcpyn((LPTSTR)pbBuff,(LPTSTR)(dwCookie+dwRead),cb/sizeof(TCHAR));
+  lstrcpyn((LPTSTR)pbBuff,(LPTSTR)(dwCookie+g_cbLicRead),cb/sizeof(TCHAR));
   *pcb=lstrlen((LPTSTR)pbBuff)*sizeof(TCHAR);
-  dwRead+=*pcb;
+  g_cbLicRead+=*pcb;
   return 0;
 }
 #ifdef _UNICODE
 // on-the-fly conversion of Unicode to ANSI (because Windows doesn't recognize Unicode RTF data)
 DWORD CALLBACK StreamLicenseRTF(DWORD_PTR dwCookie, LPBYTE pbBuff, LONG cb, LONG *pcb)
 {
-  size_t len = lstrlen(((LPWSTR) dwCookie)+dwRead);
+  size_t len = lstrlen(((LPWSTR) dwCookie)+g_cbLicRead);
   len = min(len, cb/sizeof(WCHAR));
-  *pcb=WideCharToMultiByte(CP_ACP,0,((LPWSTR) dwCookie)+dwRead,len,(char*)pbBuff,cb,NULL,NULL);
+  *pcb=WideCharToMultiByte(CP_ACP,0,((LPWSTR) dwCookie)+g_cbLicRead,len,(char*)pbBuff,cb,NULL,NULL);
   // RTF uses only ASCII characters, so we can assume "number of output bytes" = "number of source WChar consumed"
-  dwRead+=*pcb;
+  g_cbLicRead+=*pcb;
   return 0;
 }
 #endif
@@ -738,7 +738,7 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
 {
   page *m_this_page=g_this_page;
   HWND hwLicense;
-  static int ignoreWMCommand;
+#define LicIgnoreWMCommand g_cbLicRead // g_cbLicRead is only used in WM_INITDIALOG during EM_STREAMIN
 
   if (uMsg == WM_INITDIALOG)
   {
@@ -768,13 +768,13 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
     SendMessage(hwLicense,EM_SETBKGNDCOLOR,0,lbg>=0?lbg:GetSysColor(-lbg));
 #undef lbg
     SendMessage(hwLicense,EM_SETEVENTMASK,0,ENM_LINK|ENM_KEYEVENTS); //XGE 8th September 2002 Or'd in ENM_KEYEVENTS
-    dwRead=0;
     SendMessage(hwLicense,EM_EXLIMITTEXT,0,mystrlen(l));
+    g_cbLicRead = 0;
     SendMessage(hwLicense,EM_STREAMIN,lt,(LPARAM)&es);
-    ignoreWMCommand = 0;
+    LicIgnoreWMCommand = 0;
     return FALSE;
   }
-  if (uMsg == WM_COMMAND && HIWORD(wParam) == BN_CLICKED && !ignoreWMCommand) {
+  if (uMsg == WM_COMMAND && HIWORD(wParam) == BN_CLICKED && !LicIgnoreWMCommand) {
     if (m_this_page->flags & PF_LICENSE_FORCE_SELECTION) {
       int is = SendMessage(GetUIItem(IDC_LICENSEAGREE), BM_GETCHECK, 0, 0) & BST_CHECKED;
       m_this_page->flags &= ~PF_LICENSE_SELECTED;
@@ -836,7 +836,7 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
   }
   if (uMsg == WM_NOTIFY_INIGO_MONTOYA)
   {
-    ignoreWMCommand++;
+    LicIgnoreWMCommand++;
   }
   return HandleStaticBkColor();
 }

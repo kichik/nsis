@@ -118,30 +118,41 @@ protected:
   GrowBuf m_gr;
 };
 
+
+#include "tstring.h"
 /**
- * Similar to StringList with case_sensitive=2, but stores strings as both Unicode AND ANSI (codepaged)
+ * Stores a list of strings as UTF16LE or raw bytes (multibyte char*).
  */
-class MLStringList : private StringList
+class ExeHeadStringList
 {
 private: // don't copy instances
-  MLStringList(const MLStringList&);
-  void operator=(const MLStringList&);
+  ExeHeadStringList(const ExeHeadStringList&);
+  void operator=(const ExeHeadStringList&);
 
 public:
-  MLStringList();
-  ~MLStringList() {}
+  ExeHeadStringList()
+  {
+    m_wide = false;
+    m_gr.set_zeroing(true);
+  }
 
-  int add(const TCHAR *str, WORD codepage, bool processed, bool build_unicode);
-  int getnum() const                { return StringList::getnum(); }
-  int getcount() const              { return StringList::getcount(); }
-  const TCHAR *getTchar() const     { return (const TCHAR*) m_gr.get(); }
-#ifdef _UNICODE
-  const char *getAnsi() const       { return (const char*) m_grAnsi.get(); }
-  int findAnsi(const char *str, int case_sensitive) const;
-private:
-  GrowBuf m_grAnsi;
-#endif
+  void setunicode(bool unicode) { m_wide = unicode; }
+  bool addemptystring() { return true; } // Added by add() when the first real string is added
+  int add(const TCHAR *str, WORD codepage, bool processed);
+  unsigned int find(const TCHAR *str, WORD codepage, bool processed, char**ppBufMB) const;
+  bool get(unsigned int offset, tstring&str) const;
+  unsigned int getnum() const;
+  unsigned int gettotalsize() const { return m_gr.get() ? m_gr.getlen() : (m_wide ? 2 : 1); }
+  void* getstorageptr() const { return m_gr.get() ? m_gr.get() : L""; }
+
+protected:
+  unsigned int find(const void *str, unsigned int cchF, WORD codepage, bool processed, char**ppBufMB) const;
+
+  GrowBuf m_gr;
+  bool m_wide;
+  enum {WIDEDIV=2}; // ExeHead expects us to provide offsets this way, also helps UTF16 offsets for shell constants to fit in < 0xFF
 };
+
 
 /**
  * This class maintains a list of T types in a GrowBuf sorted by T.name which
@@ -182,14 +193,15 @@ class SortedStringList
       T newstruct={0,};
       int pos=find(name,case_sensitive,1);
       if (pos==-1) return -1;
-      newstruct.name=(TCHAR*)malloc((_tcslen(name)+1)*sizeof(TCHAR));
+      const UINT cbName=(_tcslen(name)+1)*sizeof(TCHAR);
+      newstruct.name=(TCHAR*)malloc(cbName);
       if (!newstruct.name)
       {
         extern int g_display_errors;
         extern void quit();
         if (g_display_errors)
         {
-          PrintColorFmtMsg_ERR(_T("\nInternal compiler error #12345: GrowBuf realloc/malloc(%lu) failed.\n"),(unsigned long)((_tcslen(name)+1)*sizeof(TCHAR)));
+          PrintColorFmtMsg_ERR(_T("\nInternal compiler error #12345: SortedStringList malloc(%lu) failed.\n"),(unsigned long)cbName);
         }
         quit();
       }

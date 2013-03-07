@@ -40,6 +40,7 @@ class ConstantsStringList : public SortedStringListND<struct constantstring>
     int get_value1(int idx);
     int get_value2(int idx);
     TCHAR *idx2name(int idx);
+    bool set_values(const TCHAR *name, int val1, int val2);
 
   private:
     int m_index;

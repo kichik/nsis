@@ -17,97 +17,176 @@
  */
 
 #include "strlist.h"
-
-MLStringList::MLStringList()
-{
-    m_gr.set_zeroing(1);
-#ifdef _UNICODE
-    m_grAnsi.set_zeroing(1);
-#endif
-}
+#include "utf.h"
 
 #ifdef _UNICODE
 char* convert_processed_string_to_ansi(char *out, const TCHAR *in, WORD codepage); // defined in build.cpp
-
-// use 2 for case sensitive end-of-string matches too
-int MLStringList::findAnsi(const char *str, int case_sensitive) const // returns -1 if not found
-{
-  const char *s=(const char*) m_grAnsi.get();
-  int ml=getcount();
-  int offs=0;
-
-  size_t str_slen = strlen(str);
-  size_t offs_slen;
-
-  while (offs < ml)
-  {
-    // Check if the whole string matches str.
-    if ((case_sensitive && !strcmp(s+offs,str)) ||
-        (!case_sensitive && !stricmp(s+offs,str)))
-    {
-      return offs;
-    }
-
-    offs_slen = strlen(s+offs);
-
-    // Check if just the end of the string matches str.
-    if (case_sensitive==2 &&
-        str_slen < offs_slen &&  // check for end of string
-        !strcmp(s + offs + offs_slen - str_slen,str))
-    {
-      return offs + offs_slen - str_slen;
-    }
-    offs += offs_slen + 1;
-  }
-  return -1;
-}
 #endif
 
-int MLStringList::add(const TCHAR *str, WORD codepage /*= CP_ACP*/, bool processed, bool build_unicode)
+static inline bool byte_rev_match(const void*ptr1, const void*ptr2, size_t cb)
 {
-#ifndef _UNICODE
-  int a=find(str,2);
-  if (a >= 0)
-      return a;
-  int len = _tcslen(str)+1;
-  return m_gr.add(str,len*sizeof(TCHAR))/sizeof(TCHAR);
-#else
-  if (build_unicode)
+  char *p1 = (char*) ptr1, *p2 = (char*) ptr2;
+  if (cb) for(; --cb;) if (p1[cb] != p2[cb]) return false;
+  return true;
+}
+
+unsigned int ExeHeadStringList::getnum() const
+{
+  char *p = (char*) m_gr.get();
+  if (!p) return 1; // The empty string always exists
+  unsigned int cbList = gettotalsize(), cb = 0, num = 1, pos;
+  pos = 1 + !!m_wide, p += pos; // Skip empty string
+  if (m_wide)
   {
-    int a=find(str,2);
-    if (a >= 0)
-      return a;
+    for(;;)
+    {
+      if (pos+=cb >= cbList) break;
+      cb = StrLenUTF16LE(p+=cb) + 1, ++num;
+    }
   }
-  // convert to ANSI
-  int len = _tcslen(str)+1;
-  char* ansiBuf = new char[len*2];
-  int cbMultiByte;
-  if (processed)
-    cbMultiByte = convert_processed_string_to_ansi(ansiBuf, str, codepage)-ansiBuf;
   else
-    cbMultiByte = WideCharToMultiByte(codepage, 0, str, len, ansiBuf, len*2, NULL, NULL);
-  if (!build_unicode)
   {
-    int a=findAnsi(ansiBuf,2);
-    if (a >= 0)
+    for(;;)
     {
-      delete[] ansiBuf;
-      return a;
+      if (pos+=cb >= cbList) break;
+      cb = strlen(p+=cb) + 1, ++num;
     }
   }
-  // string not found, add it
-  int a=m_gr.add(str,len*sizeof(TCHAR))/sizeof(TCHAR);
-  m_grAnsi.add(ansiBuf,cbMultiByte);
-  delete[] ansiBuf;
-  if (len != cbMultiByte)
-  { // resize buffers to align future strings on same offsets
-    len = a + STD_MAX(len,cbMultiByte);
-    m_gr.resize(len*sizeof(TCHAR));
-    m_grAnsi.resize(len);
-  }
-  return a;
-#endif
+  return num;
 }
+
+bool ExeHeadStringList::get(unsigned int offset, tstring&outstr) const
+{
+  if (0 == offset)
+  {
+    outstr.clear();
+    return true;
+  }
+  char *p = (char*) m_gr.get();
+  unsigned int cbList = gettotalsize();
+  if (p && cbList < offset)
+  {
+    if (m_wide)
+      StrSetUTF16LE(outstr,&p[offset*WIDEDIV]);
+    else
+      // BUGBUG: There is no way for us to know the correct codepage
+      outstr = CtoTString(&p[offset]);
+    return true;
+  }
+  return false;
+}
+
+/*
+ * find() finds the offset where the string is stored, returns -1 if not found.
+ * It only compares raw byte values, there is no Unicode normalization handling.
+ * If ppBufMB is non-null you must delete[] it (Only valid when m_wide is false)!
+*/
+unsigned int ExeHeadStringList::find(const TCHAR *str, WORD codepage, bool processed, char**ppBufMB) const
+{
+  if (m_wide && *str)
+  {
+    WCToUTF16LEHlpr cnv;
+    if (!cnv.Create(str)) return -1;
+    unsigned int pos = find(cnv.Get(),StrLenUTF16LE(cnv.Get()),codepage,processed,ppBufMB);
+    cnv.Destroy();
+    return pos;
+  }
+  else
+  {
+    return find(str,_tcslen(str),codepage,processed,ppBufMB);
+  }
+}
+unsigned int ExeHeadStringList::find(const void *ptr, unsigned int cchF, WORD codepage, bool processed, char**ppBufMB) const
+{
+  const wchar_t *find = (const wchar_t*) ptr; // Data is: m_wide ? UTF16LE : wchar_t
+  if (!*find) return 0; // The empty string is always first.
+
+  char *p = (char*) m_gr.get();
+  if (!p) return -1;
+
+  unsigned int cbF = ++cchF * 2; // Include \0 as part of cchF, * 2 for UTF16 & DBCS.
+  char *bufMB = 0;
+  if (!m_wide)
+  {
+    unsigned int cbMB;
+    bufMB = new char[cbF];
+    if (processed)
+    {
+      char *pTmp = convert_processed_string_to_ansi(bufMB,find,codepage);
+      cbMB = pTmp ? pTmp - bufMB : 0;
+    }
+    else
+    {
+      cbMB = WideCharToMultiByte(codepage,0,find,cchF,bufMB,cbF,0,0);
+    }
+    assert(cbMB);
+    cbF = cbMB, find = (const wchar_t*) bufMB;
+  }
+
+  unsigned int cbList = gettotalsize(), cb = 0, retval = -1, pos;
+  pos = 1 + !!m_wide, p += pos; // Skip empty string
+  if (m_wide)
+  {
+    for(;;)
+    {
+      if (pos+=cb >= cbList) break;
+      cb = (StrLenUTF16LE(p+=cb) + 1) * 2;
+      if (cb < cbF) continue;
+      if (byte_rev_match(p,find,cbF)) { retval = pos / WIDEDIV; break; }
+    }
+  }
+  else
+  {
+    for(;;)
+    {
+      if (pos+=cb >= cbList) break;
+      cb = strlen(p+=cb) + 1;
+      if (cb < cbF) continue;
+      if (byte_rev_match(p,find,cbF)) { retval = pos; break; }
+    }
+    if (ppBufMB) 
+      *ppBufMB = bufMB;
+    else 
+      delete[] bufMB;
+  }
+  return retval;
+}
+
+int ExeHeadStringList::add(const TCHAR *str, WORD codepage, bool processed)
+{
+  char *p = (char*) m_gr.get();
+  if (!p)
+  {
+    if (!*str) return 0; // Delay allocating the empty string
+    char *&zero = p, cb = 1 + !!m_wide;
+    unsigned int pos = m_gr.add(&zero,cb);
+    assert(0 == pos);
+  }
+
+  char *bufMB = 0;
+  unsigned int pos = find(str,codepage,processed,m_wide ? 0 : &bufMB);
+  if (-1 != pos)
+  {
+    delete[] bufMB;
+    return pos;
+  }
+
+  if (m_wide)
+  {
+    WCToUTF16LEHlpr cnv;
+    if (!cnv.Create(str)) throw std::bad_alloc();
+    pos = m_gr.add(cnv.Get(),cnv.GetSize()) / WIDEDIV;
+    cnv.Destroy();
+  }
+  else
+  {
+    unsigned int cbMB = strlen(bufMB) + 1;
+    pos = m_gr.add(bufMB,cbMB);
+    delete[] bufMB;
+  }
+  return pos;
+}
+
 
 int StringList::add(const TCHAR *str, int case_sensitive)
 {
@@ -232,7 +311,7 @@ int DefineList::add(const TCHAR *name, const TCHAR *value/*=_T("")*/)
     extern void quit();
     if (g_display_errors)
     {
-      PrintColorFmtMsg_ERR(_T("\nInternal compiler error #12345: GrowBuf realloc/malloc(%lu) failed.\n"), (unsigned long) size_in_bytes);
+      PrintColorFmtMsg_ERR(_T("\nInternal compiler error #12345: DefineList malloc(%lu) failed.\n"), (unsigned long) size_in_bytes);
     }
     quit();
   }
