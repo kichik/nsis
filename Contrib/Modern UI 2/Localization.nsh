@@ -185,7 +185,7 @@ Localization
   !verbose push
   !verbose ${MUI_VERBOSE}
 
-  ReserveFile "${NSISDIR}\Plugins\LangDLL.dll"
+  ReserveFile /plugin LangDLL.dll
 
   !verbose pop
 

@@ -1,5 +1,15 @@
 \A{history} Changelog and Release Notes
 
+\H{v3.0a0} 3.0 Alpha 0
+
+Released on ?, 2013
+
+\S1{v3.0a0-cl} Changelog
+
+\S2{} Minor Changes
+
+\b Plugins in $\{NSISDIR\}\\Plugins have to be reserved with \c{ReserveFile /plugin}
+
 \H{v2.46} 2.46
 
 Released on December 6th, 2009
