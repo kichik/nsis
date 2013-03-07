@@ -4817,10 +4817,15 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #ifdef NSIS_SUPPORT_FILE
       {
         set<tstring> excluded;
-        int a=1,attrib=0,rec=0,fatal=1;
-        if (!_tcsicmp(line.gettoken_str(a),_T("/nonfatal"))) {
-          fatal=0;
-          a++;
+        int a=1,attrib=0;
+        bool fatal=true,rec=false,reserveplugin=false;
+        if (!_tcsicmp(line.gettoken_str(a),_T("/nonfatal")))
+        {
+          fatal=false, a++;
+        }
+        if (which_token == TOK_RESERVEFILE && !_tcsicmp(line.gettoken_str(a),_T("/plugin")))
+        {
+          reserveplugin=true, a++;
         }
         if (which_token == TOK_FILE && !_tcsicmp(line.gettoken_str(a),_T("/a")))
         {
@@ -4831,10 +4836,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #endif
           a++;
         }
-        if (!_tcsicmp(line.gettoken_str(a),_T("/r")))
+        if (!reserveplugin && !_tcsicmp(line.gettoken_str(a),_T("/r")))
         {
-          rec=1;
-          a++;
+          rec=true, a++;
         }
         else if (which_token == TOK_FILE && !_tcsnicmp(line.gettoken_str(a),_T("/oname="),7))
         {
@@ -4901,6 +4905,15 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             _tcscpy(buf,_T("X:\\*.*"));
             buf[0]=t[0];
             t=buf;
+          }
+          tstring pluginfullpath;
+          if (reserveplugin && get_file_name(t)==t)
+          {
+            pluginfullpath = definedlist.find(_T("NSISDIR"));
+            pluginfullpath += tstring(PLATFORM_PATH_SEPARATOR_STR) + _T("Plugins");
+            pluginfullpath += tstring(PLATFORM_PATH_SEPARATOR_STR) + get_target_suffix();
+            pluginfullpath += tstring(PLATFORM_PATH_SEPARATOR_STR) + t;
+            t = (TCHAR*) pluginfullpath.c_str();
           }
           int tf=0;
           TCHAR *fn = my_convert(t);

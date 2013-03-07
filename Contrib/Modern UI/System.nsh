@@ -2043,7 +2043,7 @@ Var MUI_TEMP2
   !verbose push
   !verbose ${MUI_VERBOSE}
 
-  ReserveFile "${NSISDIR}\Plugins\InstallOptions.dll"
+  ReserveFile /plugin InstallOptions.dll
 
   !verbose pop
 
@@ -2054,7 +2054,7 @@ Var MUI_TEMP2
   !verbose push
   !verbose ${MUI_VERBOSE}
 
-  ReserveFile "${NSISDIR}\Plugins\LangDLL.dll"
+  ReserveFile /plugin LangDLL.dll
 
   !verbose pop
 

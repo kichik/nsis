@@ -89,7 +89,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_FILE,_T("File"),1,-1,_T("[/nonfatal] [/a] ([/r] [/x filespec [...]] filespec [...] |\n   /oname=outfile one_file_only)"),TP_CODE},
 {TOK_FILEBUFSIZE,_T("FileBufSize"),1,0,_T("buf_size_mb"),TP_ALL},
 {TOK_FLUSHINI,_T("FlushINI"),1,0,_T("ini_file"),TP_CODE},
-{TOK_RESERVEFILE,_T("ReserveFile"),1,-1,_T("[/nonfatal] [/r] [/x filespec [...]] file [file...]"),TP_ALL},
+{TOK_RESERVEFILE,_T("ReserveFile"),1,-1,_T("[/nonfatal] [/r] [/x filespec [...]] file [file...] | [/nonfatal] /plugin file.dll"),TP_ALL},
 {TOK_FILECLOSE,_T("FileClose"),1,0,_T("$(user_var: handle input)"),TP_CODE},
 {TOK_FILEERRORTEXT,_T("FileErrorText"),0,2,_T("[text (can contain $0)] [text without ignore (can contain $0)]"),TP_GLOBAL},
 {TOK_FILEOPEN,_T("FileOpen"),3,0,_T("$(user_var: handle output) filename openmode\n   openmode=r|w|a"),TP_CODE},
