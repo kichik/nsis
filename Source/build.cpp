@@ -101,9 +101,8 @@ CEXEBuild::CEXEBuild() :
     m_exehead_size(0)
 {
   linecnt = 0;
-  fp = 0;
+  curlinereader = 0;
   curfilename = 0;
-  curfile_unicode = FALSE;
 
   display_info=1;
   display_script=1;
@@ -116,9 +115,6 @@ CEXEBuild::CEXEBuild() :
   multiple_entries_instruction=0;
 
   build_include_depth=0;
-#ifndef _UNICODE
-  build_include_isutf8=false;
-#endif
 
   has_called_write_output=false;
 
@@ -131,6 +127,7 @@ CEXEBuild::CEXEBuild() :
 #endif
 
   build_unicode=false;
+  build_lockedunicodetarget=false;
   m_target_type=TARGET_X86ANSI;
 
   // automatically generated header file containing all defines
@@ -244,8 +241,8 @@ CEXEBuild::CEXEBuild() :
 
   uninstaller_writes_used=0;
 
-  build_strlist.add(_T(""), CP_ACP, false, build_unicode);
-  ubuild_strlist.add(_T(""), CP_ACP, false, build_unicode);
+  build_strlist.addemptystring();
+  ubuild_strlist.addemptystring();
 
   build_langstring_num=0;
   ubuild_langstring_num=0;
@@ -365,77 +362,17 @@ CEXEBuild::CEXEBuild() :
   m_ShellConstants.add(_T("RESOURCES"), CSIDL_RESOURCES, CSIDL_RESOURCES);
   m_ShellConstants.add(_T("RESOURCES_LOCALIZED"), CSIDL_RESOURCES_LOCALIZED, CSIDL_RESOURCES_LOCALIZED);
   m_ShellConstants.add(_T("CDBURN_AREA"), CSIDL_CDBURN_AREA, CSIDL_CDBURN_AREA);
-
-  unsigned int program_files = add_string(_T("ProgramFilesDir"), 0);
-  unsigned int program_files_def = add_string(_T("C:\\Program Files"));
-
-  if ((program_files >= 0x40) || (program_files_def >= 0xFF))
-  {
-    // see Source\exehead\util.c for implementation details
-    // basically, it knows it needs to get folders from the registry when the 0x80 is on
-    ERROR_MSG(_T("Internal compiler error: too many strings added to strings block before adding shell constants!\n"));
-    throw out_of_range("Internal compiler error: too many strings added to strings block before adding shell constants!");
-  }
-
-  m_ShellConstants.add(_T("PROGRAMFILES"),   0x80 | program_files, program_files_def);
-
-  unsigned int program_files64_def = add_string(_T("$PROGRAMFILES"));
-
-  if (program_files64_def > 0xFF)
-  {
-    ERROR_MSG(_T("Internal compiler error: too many strings added to strings block before adding shell constants!\n"));
-    throw out_of_range("Internal compiler error: too many strings added to strings block before adding shell constants!");
-  }
-
-  m_ShellConstants.add(_T("PROGRAMFILES32"), 0x80 | program_files, program_files_def);
-  m_ShellConstants.add(_T("PROGRAMFILES64"), 0xC0 | program_files, program_files64_def);
-
-  unsigned int common_files = add_string(_T("CommonFilesDir"), 0);
-  unsigned int common_files_def = add_string(_T("$PROGRAMFILES\\Common Files"));
-
-  if ((common_files > 0x40) || (common_files_def > 0xFF))
-  {
-    ERROR_MSG(_T("Internal compiler error: too many strings added to strings block before adding shell constants!\n"));
-    throw out_of_range("Internal compiler error: too many strings added to strings block before adding shell constants!");
-  }
-
-  m_ShellConstants.add(_T("COMMONFILES"),    0x80 | common_files,  common_files_def);
-
-  unsigned int common_files64_def = add_string(_T("$COMMONFILES"));
-
-  if (common_files64_def > 0xFF)
-  {
-    ERROR_MSG(_T("Internal compiler error: too many strings added to strings block before adding shell constants!\n"));
-    throw out_of_range("Internal compiler error: too many strings added to strings block before adding shell constants!");
-  }
-
-  m_ShellConstants.add(_T("COMMONFILES32"),  0x80 | common_files,  common_files_def);
-  m_ShellConstants.add(_T("COMMONFILES64"),  0xC0 | common_files,  common_files64_def);
-
-  set_uninstall_mode(1);
-
-  unsigned int uprogram_files = add_string(_T("ProgramFilesDir"), 0);
-  unsigned int uprogram_files_def = add_string(_T("C:\\Program Files"));
-  unsigned int uprogram_files64_def = add_string(_T("$PROGRAMFILES"));
-  unsigned int ucommon_files = add_string(_T("CommonFilesDir"), 0);
-  unsigned int ucommon_files_def = add_string(_T("$PROGRAMFILES\\Common Files"));
-  unsigned int ucommon_files64_def = add_string(_T("$COMMONFILES"));
-
-  if (uprogram_files != program_files
-      || uprogram_files_def != program_files_def
-      || uprogram_files64_def != program_files64_def
-      || ucommon_files != common_files
-      || ucommon_files_def != common_files_def
-      || ucommon_files64_def != common_files64_def)
-  {
-    ERROR_MSG(_T("Internal compiler error: installer's shell constants are different than uninstallers!\n"));
-    throw out_of_range("Internal compiler error: installer's shell constants are different than uninstallers!");
-  }
+  // PROGRAMFILES&COMMONFILES does a registry lookup and the required string offsets are filled in later.
+  // We do this because the unicode mode has to be locked when we call add_string...
+  m_ShellConstants.add(_T("PROGRAMFILES"),   0, 0);
+  m_ShellConstants.add(_T("PROGRAMFILES32"), 0, 0);
+  m_ShellConstants.add(_T("PROGRAMFILES64"), 0, 0);
+  m_ShellConstants.add(_T("COMMONFILES"),   0, 0);
+  m_ShellConstants.add(_T("COMMONFILES32"), 0, 0);
+  m_ShellConstants.add(_T("COMMONFILES64"), 0, 0);
 
   set_uninstall_mode(0);
-
   set_code_type_predefines();
-
   set_target_architecture_predefines();
 }
 
@@ -472,12 +409,75 @@ void CEXEBuild::initialize(const TCHAR *makensis_path)
 
 int CEXEBuild::getcurdbsize() { return cur_datablock->getlen(); }
 
+
+void CEXEBuild::init_shellconstantvalues()
+{
+  static bool done = false;
+  if (done) return ;
+  done = true;
+
+  // Note: The order matters because some of the strings are preprocessed and cf must be <= 0x40
+  unsigned int pf       = add_asciistring(_T("ProgramFilesDir"), 0);
+  unsigned int cf       = add_asciistring(_T("CommonFilesDir"), 0);
+  unsigned int pf_def   = add_asciistring(_T("C:\\Program Files"));
+  m_ShellConstants.set_values(_T("PROGRAMFILES"),   0x80 | pf, pf_def);
+  unsigned int pf64_def = add_asciistring(_T("$PROGRAMFILES"));
+  m_ShellConstants.set_values(_T("PROGRAMFILES32"), 0x80 | pf, pf_def);
+  m_ShellConstants.set_values(_T("PROGRAMFILES64"), 0xC0 | pf, pf64_def);
+  unsigned int cf_def   = add_asciistring(_T("$PROGRAMFILES\\Common Files"));
+  m_ShellConstants.set_values(_T("COMMONFILES"),    0x80 | cf, cf_def);
+  unsigned int cf64_def = add_asciistring(_T("$COMMONFILES"));
+  m_ShellConstants.set_values(_T("COMMONFILES32"),  0x80 | cf, cf_def);
+  m_ShellConstants.set_values(_T("COMMONFILES64"),  0xC0 | cf, cf64_def);
+
+  if ( (pf >= 0x40 || pf_def >= 0xFF || pf64_def > 0xFF) // BUGBUG: pf_def should be ">"?
+    || (cf >  0x40 || cf_def >  0xFF || cf64_def > 0xFF) )
+  {
+    // see Source\exehead\util.c for implementation details
+    // basically, it knows it needs to get folders from the registry when the 0x80 is on
+    ERROR_MSG(_T("Internal compiler error: too many strings added to strings block before adding shell constants!\n"));
+    throw out_of_range("Internal compiler error: too many strings added to strings block before adding shell constants!");
+  }
+
+  const int orgunmode = uninstall_mode;
+  set_uninstall_mode(1);
+  unsigned int unpf = add_asciistring(_T("ProgramFilesDir"), 0);
+  unsigned int uncf = add_asciistring(_T("CommonFilesDir"), 0);
+  unsigned int unpf_def = add_asciistring(_T("C:\\Program Files"));
+  unsigned int unpf64_def = add_asciistring(_T("$PROGRAMFILES"));
+  unsigned int uncf_def = add_asciistring(_T("$PROGRAMFILES\\Common Files"));
+  unsigned int uncf64_def = add_asciistring(_T("$COMMONFILES"));
+  set_uninstall_mode(orgunmode);
+
+  if ( unpf != pf
+    || unpf_def != pf_def
+    || unpf64_def != pf64_def
+    || uncf != cf
+    || uncf_def != cf_def
+    || uncf64_def != cf64_def)
+  {
+    ERROR_MSG(_T("Internal compiler error: installer's shell constants are different than uninstallers!\n"));
+    throw out_of_range("Internal compiler error: installer's shell constants are different than uninstallers!");
+  }
+}
+
 // returns offset in stringblock
-int CEXEBuild::add_string(const TCHAR *string, int process/*=1*/, WORD codepage/*=CP_ACP*/)
+int CEXEBuild::add_string(const TCHAR *string, int process/*=1*/, UINT codepage/*=-2*/)
 {
   if (!string || !*string) return 0;
-
-  if (*string == _T('$') && *(string+1) == _T('(')) {
+  build_lockedunicodetarget = true;
+  init_shellconstantvalues();
+  if (-2 == codepage)
+  {
+    assert(curlinereader);
+    codepage = curlinereader->StreamEncoding().GetCodepage();
+    // If the current source file is Unicode we have to pick a real codepage for ANSI!
+    // It might not be the correct codepage but its the best we can do.
+    // Not using CP_ACP to avoid heisenbugs when compiled on a different system.
+    if (NStreamEncoding::IsUnicodeCodepage(codepage)) codepage = 1252;
+  }
+  if (*string == _T('$') && *(string+1) == _T('('))
+  {
     int idx = 0;
     TCHAR *cp = _tcsdup(string+2);
     TCHAR *p = _tcschr(cp, _T(')'));
@@ -489,18 +489,28 @@ int CEXEBuild::add_string(const TCHAR *string, int process/*=1*/, WORD codepage/
     if (idx < 0) return idx;
   }
 
-  if (!process) return cur_strlist->add(string, codepage, false, build_unicode);
+  int i;
+  if (process)
+  {
+    TCHAR buf[NSIS_MAX_STRLEN*4];
+    preprocess_string(buf, string, codepage);
+    i = cur_strlist->add(buf, (WORD)codepage, true);
+  }
+  else
+    i = cur_strlist->add(string, (WORD)codepage, false);
+  return i;
+}
 
-  TCHAR buf[NSIS_MAX_STRLEN*4];
-  preprocess_string(buf,string,codepage);
-  return cur_strlist->add(buf,codepage, true, build_unicode);
+int CEXEBuild::add_asciistring(const TCHAR *string, int process/*=1*/)
+{
+  return add_string(string, process, 1252);
 }
 
 int CEXEBuild::add_intstring(const int i) // returns offset in stringblock
 {
-  TCHAR i_str[32];
-  wsprintf(i_str, _T("%d"), i);
-  return add_string(i_str);
+  TCHAR buf[32];
+  wsprintf(buf, _T("%d"), i);
+  return add_asciistring(buf, false);
 }
 
 #ifdef _UNICODE
@@ -514,6 +524,7 @@ char* convert_processed_string_to_ansi(char *out, const TCHAR *in, WORD codepage
         {
             // convert all character up to, and including this code
             int cb = WideCharToMultiByte(codepage, 0, in, p-in, out, (p-in)*2, NULL, NULL);
+            if (!cb && i) return 0;
             out += cb;
             if (i == _T('\0'))
                 break;
@@ -629,6 +640,7 @@ int CEXEBuild::preprocess_string(TCHAR *out, const TCHAR *in, WORD codepage/*=CP
               // If found...
               if (idxConst >= 0)
               {
+                init_shellconstantvalues();
                 int CSIDL_Value_current = m_ShellConstants.get_value1(idxConst);
                 int CSIDL_Value_all = m_ShellConstants.get_value2(idxConst);
                 *out++=(TCHAR)NS_SHELL_CODE; // Constant code identifier
@@ -1540,7 +1552,7 @@ int CEXEBuild::resolve_coderefs(const TCHAR *str)
     {
       int x=sec->name_ptr;
       TCHAR fname[1024];
-      const TCHAR *section_name;
+      tstring section_name;
       if (x < 0)
       {
         // lang string
@@ -1549,9 +1561,9 @@ int CEXEBuild::resolve_coderefs(const TCHAR *str)
       else
       {
         // normal string
-        section_name = cur_strlist->getTchar() + x;
+        cur_strlist->get(x,section_name);
       }
-      if (x) wsprintf(fname,_T("%s section \"%s\" (%d)"),str,section_name,cnt);
+      if (x) wsprintf(fname,_T("%s section \"%s\" (%d)"),str,section_name.c_str(),cnt);
       else wsprintf(fname,_T("unnamed %s section (%d)"),str,cnt);
       for (x = sec->code; x < sec->code+sec->code_size; x ++)
       {
@@ -2253,12 +2265,12 @@ void CEXEBuild::AddStandardStrings()
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
   if (uninstall_mode)
   {
-    cur_header->str_uninstchild = add_string(_T("$TEMP\\$1u_.exe"));
-    cur_header->str_uninstcmd = add_string(_T("\"$TEMP\\$1u_.exe\" $0 _?=$INSTDIR\\"));
+    cur_header->str_uninstchild = add_asciistring(_T("$TEMP\\$1u_.exe"));
+    cur_header->str_uninstcmd = add_asciistring(_T("\"$TEMP\\$1u_.exe\" $0 _?=$INSTDIR\\"));
   }
 #endif//NSIS_CONFIG_UNINSTALL_SUPPORT
 #ifdef NSIS_SUPPORT_MOVEONREBOOT
-  cur_header->str_wininit = add_string(_T("$WINDIR\\wininit.ini"));
+  cur_header->str_wininit = add_asciistring(_T("$WINDIR\\wininit.ini"));
 #endif//NSIS_SUPPORT_MOVEONREBOOT
 }
 
@@ -2279,12 +2291,7 @@ void CEXEBuild::PrepareHeaders(IGrowBuf *hdrbuf)
   entry_writer::write_block(cur_entries, &sink);
 
   cur_header->blocks[NB_STRINGS].offset = sizeof(header) + blocks_buf.getlen();
-#ifdef _UNICODE
-  if (!build_unicode)
-      blocks_buf.add(cur_strlist->getAnsi(), cur_strlist->getcount());
-  else
-#endif
-    blocks_buf.add(cur_strlist->getTchar(), cur_strlist->getcount()*sizeof(TCHAR));
+  blocks_buf.add(cur_strlist->getstorageptr(), cur_strlist->gettotalsize());
 
   cur_header->blocks[NB_LANGTABLES].offset = sizeof(header) + blocks_buf.getlen();
   lang_table_writer::write_block(cur_langtables, &sink, cur_header->langtable_size);
@@ -2724,7 +2731,7 @@ int CEXEBuild::write_output(void)
   int ne=build_header.blocks[NB_ENTRIES].num;
   INFO_MSG(_T("%d instruction%s (%d bytes), "),ne,ne==1?_T(""):_T("s"),ne*sizeof(entry));
   int ns=build_strlist.getnum();
-  INFO_MSG(_T("%d string%s (%d bytes), "),ns,ns==1?_T(""):_T("s"),build_strlist.getcount()*(build_unicode ? sizeof(CHAR) : sizeof(TCHAR)));
+  INFO_MSG(_T("%d string%s (%d bytes), "),ns,ns==1?_T(""):_T("s"),build_strlist.gettotalsize());
   int nlt=build_header.blocks[NB_LANGTABLES].num;
   INFO_MSG(_T("%d language table%s (%d bytes).\n"),nlt,nlt==1?_T(""):_T("s"),build_langtables.getlen());
   if (ubuild_entries.getlen())
@@ -2753,7 +2760,7 @@ int CEXEBuild::write_output(void)
     ne=build_uninst.blocks[NB_ENTRIES].num;
     INFO_MSG(_T("%d instruction%s (%d bytes), "),ne,ne==1?_T(""):_T("s"),ubuild_entries.getlen());
     ns=ubuild_strlist.getnum();
-    INFO_MSG(_T("%d string%s (%d bytes), "),ns,ns==1?_T(""):_T("s"),ubuild_strlist.getcount()*(build_unicode ? sizeof(CHAR) : sizeof(TCHAR)));
+    INFO_MSG(_T("%d string%s (%d bytes), "),ns,ns==1?_T(""):_T("s"),ubuild_strlist.gettotalsize());
     nlt=build_uninst.blocks[NB_LANGTABLES].num;
     INFO_MSG(_T("%d language table%s (%d bytes).\n"),nlt,nlt==1?_T(""):_T("s"),ubuild_langtables.getlen());
   }
@@ -3460,14 +3467,14 @@ again:
   if (ret != PS_OK) return ret;
 
   // don't move this, depends on [un.]
-  zero_offset=add_string(_T("$0"));
+  zero_offset=add_asciistring(_T("$0"));
 
   // SetDetailsPrint none
   ret=add_entry_direct(EW_SETFLAG, FLAG_OFFSET(status_update), add_intstring(6));
   if (ret != PS_OK) return ret;
 
   // StrCmp $PLUGINSDIR ""
-  ret=add_entry_direct(EW_STRCMP, add_string(_T("$PLUGINSDIR")), 0, 0, ns_label.add(_T("Initialize_____Plugins_done"),0));
+  ret=add_entry_direct(EW_STRCMP, add_asciistring(_T("$PLUGINSDIR")), 0, 0, ns_label.add(_T("Initialize_____Plugins_done"),0));
   if (ret != PS_OK) return ret;
   // Push $0
   ret=add_entry_direct(EW_PUSHPOP, zero_offset);
@@ -3476,7 +3483,7 @@ again:
   ret=add_entry_direct(EW_SETFLAG, FLAG_OFFSET(exec_error));
   if (ret != PS_OK) return ret;
   // GetTempFileName $0
-  ret=add_entry_direct(EW_GETTEMPFILENAME, var_zero, add_string(_T("$TEMP")));
+  ret=add_entry_direct(EW_GETTEMPFILENAME, var_zero, add_asciistring(_T("$TEMP")));
   if (ret != PS_OK) return ret;
   // Delete $0 [simple, nothing that could clash with special temp permissions]
   ret=add_entry_direct(EW_DELETEFILE, zero_offset, DEL_SIMPLE);
@@ -3503,7 +3510,7 @@ again:
   // error
   if (add_label(_T("Initialize_____Plugins_error"))) return PS_ERROR;
   // error message box
-  ret=add_entry_direct(EW_MESSAGEBOX, MB_OK|MB_ICONSTOP|(IDOK<<21), add_string(_T("Error! Can't initialize plug-ins directory. Please try again later.")));
+  ret=add_entry_direct(EW_MESSAGEBOX, MB_OK|MB_ICONSTOP|(IDOK<<21), add_asciistring(_T("Error! Can't initialize plug-ins directory. Please try again later.")));
   if (ret != PS_OK) return ret;
   // Quit
   ret=add_entry_direct(EW_QUIT);
@@ -3673,7 +3680,10 @@ int CEXEBuild::change_target_architecture()
 #ifdef _UNICODE
 int CEXEBuild::set_target_charset(bool unicode)
 {
+  if (build_lockedunicodetarget) return PS_ERROR;
   build_unicode = unicode;
+  build_strlist.setunicode(unicode);
+  ubuild_strlist.setunicode(unicode);
   return change_target_architecture();
 }
 #endif

@@ -88,3 +88,14 @@ int ConstantsStringList::get_internal_idx(int idx)
   }
   return -1;
 }
+
+bool ConstantsStringList::set_values(const TCHAR *name, int val1, int val2)
+{
+  int v = SortedStringListND<struct constantstring>::find(name, -1);
+  if (-1 == v) return false;
+
+  struct constantstring & cs = ((struct constantstring*) m_gr.get())[v];
+  cs.value1 = val1;
+  cs.value2 = val2;
+  return true;
+}

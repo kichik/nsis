@@ -36,6 +36,7 @@ extern int g_dopause;
 extern void dopause(void);
 
 extern double my_wtof(const wchar_t *str);
+extern unsigned int my_strncpy(TCHAR*Dest, const TCHAR*Src, unsigned int cchMax);
 
 // Adds the bitmap in filename using resource editor re as id id.
 // If width or height are specified it will also make sure the bitmap is in that size

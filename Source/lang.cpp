@@ -485,7 +485,7 @@ int CEXEBuild::DefineInnerLangString(int id, int process/*=-1*/) {
 // @return If the language id, the variable name or string is invalid, it will
 // return a PS_ERROR.  If this function call is overwriting a set user string,
 // this will return a PS_WARNING.
-int CEXEBuild::SetLangString(TCHAR *name, LANGID lang, const TCHAR *str, BOOL unicode) {
+int CEXEBuild::SetLangString(const TCHAR *name, LANGID lang, const TCHAR *str, BOOL LicenseData) {
   if (!str || !name) return PS_ERROR;
 
   LanguageTable *table = GetLangTable(lang);
@@ -493,33 +493,24 @@ int CEXEBuild::SetLangString(TCHAR *name, LANGID lang, const TCHAR *str, BOOL un
 
   int sn;
 
-  if (_tcsclen(str) > NSIS_MAX_STRLEN-1)
+  if (!LicenseData && _tcsclen(str) > NSIS_MAX_STRLEN-1)
     warning_fl(_T("LangString \"%s\" longer than NSIS_MAX_STRLEN!"), name);
 
   int pos = build_langstrings.get(name, &sn);
   if (pos < 0)
     pos = build_langstrings.add(name, &sn);
 
-  if (table->lang_strings->set(sn, unicode ? str : CtoTString2(TtoCString(str),table->nlf.m_uCodePage)))
+  if (table->lang_strings->set(sn, str))
     return PS_WARNING;
 
   return PS_OK;
 }
 
-#ifndef _UNICODE
-int CEXEBuild::SetUTF8LangString(TCHAR *name, LANGID lang, const char* stru8)
+int CEXEBuild::SetLangString(const TCHAR *name, LANGID lang, const TCHAR *str)
 {
-  LanguageTable *table = GetLangTable(lang);
-  if (!table) return PS_ERROR;
-  if (!Platform_SupportsUTF8Conversion()) return PS_ERROR;
-
-  EXEHEADTCHAR_T *bufEHTStr = UTF8ToExeHeadTStrDup(stru8, table->nlf.m_uCodePage);
-  if (!bufEHTStr) return PS_ERROR;
-  const int ret = SetLangString(name, lang, bufEHTStr, sizeof(EXEHEADTCHAR_T) > 1);
-  free(bufEHTStr);
-  return ret;
+  return SetLangString(name, lang, str, false);
 }
-#endif
+
 
 // Sets the user string to the specific NLF_STRINGS id.
 //
@@ -912,41 +903,36 @@ void CEXEBuild::FillLanguageTable(LanguageTable *table) {
   }
 }
 
-TCHAR SkipComments(FILE *f) {
-  int c;
-  while ((c = _fgettc(f))) {
-    while (c == _T('\n') || c == _T('\r')) {
-      c = _fgettc(f); // Skip empty lines
+static UINT GetNextNLFLine(NStreamLineReader&lr, TCHAR*Buf, UINT cchBuf) {
+  for (;;) {
+    UINT err = lr.ReadLine(Buf, cchBuf);
+    if (NStream::OK != err) {
+      if (lr.IsEOF()) err = NStream::OK;
+      return err;
     }
-    if (c == _T('#') || c == _T(';')) {
-      while ((c = _fgettc(f))) {
-       if (c == _T('\n')) break;
-      }
-    }
-    else break;
+    if (NStream::IsNewline(*Buf, false)) continue;
+    if (_T('#') != *Buf && _T(';') != *Buf) return err;
   }
-  return (TCHAR) c;
+}
+static inline bool GetNextNLFLine(NStreamLineReader&lr, TCHAR*Buf, UINT cchBuf, UINT&errlr) {
+  errlr = GetNextNLFLine(lr, Buf, cchBuf);
+  return NStream::OK == errlr;
 }
 
 // NSIS Language File parser
 LanguageTable * CEXEBuild::LoadLangFile(TCHAR *filename) {
-  BOOL unicode;
-  FILE *f = FOPENTEXT2(filename, "r", &unicode);
-  if (!f) {
+  NIStream strm;
+  strm.StreamEncoding().SetCodepage(NStreamEncoding::ACP);
+  if (!strm.OpenFileForReading(filename)) {
     ERROR_MSG(_T("Error: Can't open language file - \"%s\"!\n"),filename);
     return 0;
   }
-
-#ifndef _UNICODE
-  char fencoding = 0; // 0 = ansi, 8 = utf-8 (16/17 for uft-16le/be not supported)
-  if (IsUTF8BOM(f)) fencoding = 8;
-#endif
+  NStreamLineReader lr(strm);
+  UINT errlr;
 
   // Check header
   TCHAR buf[NSIS_MAX_STRLEN];
-  buf[0] = SkipComments(f);
-  _fgetts(buf+1, NSIS_MAX_STRLEN, f);
-
+  if (!GetNextNLFLine(lr, buf, NSIS_MAX_STRLEN, errlr)) goto l_readerr;
   if (_tcsncmp(buf, _T("NLF v"), 5)) {
     ERROR_MSG(_T("Error: Invalid language file.\n"));
     return 0;
@@ -960,31 +946,29 @@ LanguageTable * CEXEBuild::LoadLangFile(TCHAR *filename) {
   }
 
   // Get language ID
-  buf[0] = SkipComments(f);
-  _fgetts(buf+1, NSIS_MAX_STRLEN, f);
+  if (!GetNextNLFLine(lr, buf, NSIS_MAX_STRLEN, errlr)) goto l_readerr;
   LANGID lang_id = _ttoi(buf);
 
   // Get appropriate table
   LanguageTable *table = GetLangTable(lang_id);
-  if (!table)
-    return 0;
+  if (!table) return 0;
 
   NLF *nlf = &table->nlf;
-
   if (nlf->m_bLoaded) {
     ERROR_MSG(_T("Error: can't load same language file twice.\n"));
     return 0;
   }
 
   // Generate language name
-  TCHAR *p, *p2, t = 0;
+  TCHAR *p, *p2, *p3, t = 0;
 
   p = _tcsrchr(filename, _T('.'));
   if (p) {
     t = *p;
     *p = 0;
   }
-  p2 = _tcsrchr(filename, _T('\\'));
+  p2 = _tcsrchr(filename, _T('\\')), p3 = _tcsrchr(filename, _T('/'));
+  if (p3 > p2) p2 = p3;
   if (p2) {
     p2++;
     nlf->m_szName = (TCHAR*)malloc((_tcslen(p2)+1)*sizeof(TCHAR));
@@ -1006,8 +990,7 @@ LanguageTable * CEXEBuild::LoadLangFile(TCHAR *filename) {
   int temp;
 
   // Get font
-  buf[0] = SkipComments(f);
-  _fgetts(buf+1, NSIS_MAX_STRLEN, f);
+  if (!GetNextNLFLine(lr, buf, NSIS_MAX_STRLEN, errlr)) goto l_readerr;
   if (!nlf->m_szFont) {
     temp=_tcslen(buf);
     while (buf[temp-1] == _T('\n') || buf[temp-1] == _T('\r')) {
@@ -1020,8 +1003,7 @@ LanguageTable * CEXEBuild::LoadLangFile(TCHAR *filename) {
     }
   }
 
-  buf[0] = SkipComments(f);
-  _fgetts(buf+1, NSIS_MAX_STRLEN, f);
+  if (!GetNextNLFLine(lr, buf, NSIS_MAX_STRLEN, errlr)) goto l_readerr;
   if (!nlf->m_iFontSize) {
     if (buf[0] != _T('-') || buf[1] != 0) {
       nlf->m_iFontSize = _ttoi(buf);
@@ -1030,48 +1012,41 @@ LanguageTable * CEXEBuild::LoadLangFile(TCHAR *filename) {
 
   // Get code page
   nlf->m_uCodePage = CP_ACP;
-  buf[0] = SkipComments(f);
-  _fgetts(buf+1, NSIS_MAX_STRLEN, f);
+  if (!GetNextNLFLine(lr, buf, NSIS_MAX_STRLEN, errlr)) goto l_readerr;
   if (buf[0] != _T('-') || buf[1] != 0) {
     nlf->m_uCodePage = _ttoi(buf);
     if (!IsValidCodePage(nlf->m_uCodePage))
+    {
+      warning_fl(_T("%s language file uses a codepage that is not supported on this system, using ACP!"), nlf->m_szName);
       nlf->m_uCodePage = CP_ACP;
+    }
   }
 
-#ifdef _UNICODE
-  if (!unicode && nlf->m_szFont) // convert font name from ANSI to Unicode now that we know the language codepage
+  if (!lr.IsUnicode())
   {
-    TCHAR* str = nlf->m_szFont;
-    nlf->m_szFont = _tcsdup(CtoTString2(TtoCString(str), table->nlf.m_uCodePage));
-    free(str);
-  }
-#else
-  if (8 == fencoding && nlf->m_szFont)
-  {
-    TCHAR* str = nlf->m_szFont;
-    EXEHEADTCHAR_T *bufConv = UTF8ToExeHeadTStrDup(str, table->nlf.m_uCodePage);
-    nlf->m_szFont = bufConv;
-    if (!nlf->m_szFont)
+    if (NStreamEncoding::IsUnicodeCodepage(nlf->m_uCodePage))
     {
-      ERROR_MSG(_T("Error: Unable to convert font name\n"));
-      return 0;
+      warning_fl(_T("%s unicode language file does not have a BOM!"), nlf->m_szName);
     }
-    free(str);
+
+    if (nlf->m_szFont)
+    {
+      // Convert font name now that we know the codepage: ACP > NLF CP > TCHAR.
+      TCHAR* oldfont = nlf->m_szFont;
+      nlf->m_szFont = _tcsdup(CtoTString2(TtoCString(oldfont), nlf->m_uCodePage));
+      free(oldfont);
+    }
   }
-#endif
+
 
   // Get RTL setting
-  nlf->m_szStrings[NLF_RTL] = (TCHAR *)malloc(2*sizeof(TCHAR));
+  if (!GetNextNLFLine(lr, buf, NSIS_MAX_STRLEN, errlr)) goto l_readerr;
+  nlf->m_szStrings[NLF_RTL] = (TCHAR*) malloc(2*sizeof(TCHAR));
   nlf->m_bRTL = false;
-  buf[0] = SkipComments(f);
-  _fgetts(buf+1, NSIS_MAX_STRLEN, f);
   if (buf[0] == _T('R') && buf[1] == _T('T') && buf[2] == _T('L') && (!buf[3] || buf[3] == _T('\r') || buf[3] == _T('\n'))) {
     nlf->m_bRTL = true;
-    _tcscpy(nlf->m_szStrings[NLF_RTL], _T("1"));
   }
-  else {
-    _tcscpy(nlf->m_szStrings[NLF_RTL], _T("0"));
-  }
+  _tcscpy(nlf->m_szStrings[NLF_RTL], nlf->m_bRTL ? _T("1") : _T("0"));
 
   // Read strings
   for (int i = 0; i < NLF_STRINGS_NO_SPECIAL; i++) {
@@ -1123,38 +1098,14 @@ LanguageTable * CEXEBuild::LoadLangFile(TCHAR *filename) {
         continue;
     }
 
-    buf[0] = SkipComments(f);
-
-    _fgetts(buf+1, NSIS_MAX_STRLEN, f);
-#ifndef _UNICODE
-    if (8 == fencoding)
-    {
-      if (!Platform_SupportsUTF8Conversion()) {
-        ERROR_MSG(_T("Error: UTF-8 language files not supported on this OS!\n"));
-        return 0;
-      }
-      EXEHEADTCHAR_T *bufConv = UTF8ToExeHeadTStrDup(buf, nlf->m_uCodePage);
-      if (!bufConv) {
-        ERROR_MSG(_T("Error: Invalid UTF-8? (string #%d - \"%s\")\n"), i, NLFStrings[i].szLangStringName);
-        return 0;
-      }
-      else {
-        UINT cch = _tcslen(bufConv);
-        _tcsnccpy(buf, bufConv, NSIS_MAX_STRLEN);
-        if (cch >= NSIS_MAX_STRLEN-1) {
-          buf[NSIS_MAX_STRLEN-1] = _T('\0'); // Make sure we fail the "String too long" check
-        }
-      }
-      free(bufConv);
-    }
-#endif
-
+    errlr = GetNextNLFLine(lr, buf, NSIS_MAX_STRLEN);
     if (_tcslen(buf) == NSIS_MAX_STRLEN-1) {
       ERROR_MSG(_T("Error: String too long (string #%d - \"%s\")\n"), i, NLFStrings[i].szLangStringName);
       return 0;
     }
+    if (NStream::OK != errlr) goto l_readerr;
+    
     temp=_tcslen(buf);
-
     while (buf[temp-1] == _T('\n') || buf[temp-1] == _T('\r')) {
       buf[--temp] = 0;
     }
@@ -1190,20 +1141,20 @@ LanguageTable * CEXEBuild::LoadLangFile(TCHAR *filename) {
       else *out = *in;
     }
     *out = 0;
-#ifdef _UNICODE
-    if (!unicode)
+    if (!lr.IsUnicode())
     {
-        TCHAR* str = nlf->m_szStrings[i];
-        nlf->m_szStrings[i] = _tcsdup(CtoTString2(TtoCString(str),table->nlf.m_uCodePage));
-        free(str);
+        TCHAR* oldstr = nlf->m_szStrings[i];
+        nlf->m_szStrings[i] = _tcsdup(CtoTString2(TtoCString(oldstr),table->nlf.m_uCodePage));
+        free(oldstr);
     }
-#endif
   }
-  fclose(f);
 
   nlf->m_bLoaded = true;
-
   return table;
+
+l_readerr:
+  ERROR_MSG(lr.GetErrorMessage(errlr).c_str());
+  return 0;
 }
 
 void CEXEBuild::DeleteLangTable(LanguageTable *table) {
