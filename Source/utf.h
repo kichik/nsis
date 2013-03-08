@@ -23,7 +23,7 @@
 #include <stdio.h>
 #include "util.h" // For my_fopen
 
-#define TSTR_INPUTCHARSET _T("ACP|OEM|CP#|UTF8")
+#define TSTR_INPUTCHARSET _T("ACP|OEM|CP#|UTF8|UTF16LE")
 
 
 void RawTStrToASCII(const TCHAR*in,char*out,UINT maxcch);

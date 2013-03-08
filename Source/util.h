@@ -87,6 +87,51 @@ inline void PrintColorFmtMsg_ERR(const TCHAR *fmtstr, ...)
 
 
 #ifndef _WIN32
+// iconv const inconsistency workaround by Alexandre Oliva
+template <typename T>
+inline size_t nsis_iconv_adaptor
+  (size_t (*iconv_func)(iconv_t, T, size_t *, TCHAR**,size_t*),
+  iconv_t cd, TCHAR **inbuf, size_t *inbytesleft,
+  TCHAR **outbuf, size_t *outbytesleft)
+{
+  return iconv_func (cd, (T)inbuf, inbytesleft, outbuf, outbytesleft);
+}
+
+class iconvdescriptor {
+  iconv_t m_cd;
+public:
+  iconvdescriptor(iconv_t cd = (iconv_t)-1) : m_cd(cd) {}
+  ~iconvdescriptor() { Close(); }
+  void Close()
+  {
+    if ((iconv_t)-1 != m_cd)
+    {
+      iconv_close(m_cd);
+      m_cd = (iconv_t)-1;
+    }
+  }
+  bool Open(const char*tocode, const char*fromcode)
+  {
+    m_cd = iconv_open(tocode, fromcode);
+    return (iconv_t)-1 != m_cd;
+  }
+  UINT Convert(void*inbuf, size_t*pInLeft, void*outbuf, size_t outLeft)
+  {
+    char *in = (char*) inbuf, *out = (char*) outbuf;
+    size_t orgOutLeft = outLeft;
+    size_t ret = nsis_iconv_adaptor(iconv, *this, &in, &out, &outLeft);
+    if (-1 == ret) 
+      ret = 0, *pInLeft = 1;
+    else
+      ret = orgOutLeft - outLeft;
+    return ret;
+  }
+  iconv_t GetDescriptor() const { return m_cd; }
+  operator iconv_t() const { return m_cd; }
+
+  static const char* GetHostEndianUCS4Code() { return "UCS-4-INTERNAL"; }
+}
+
 TCHAR *CharPrev(const TCHAR *s, const TCHAR *p);
 char *CharNextA(const char *s);
 WCHAR *CharNextW(const WCHAR *s);
