@@ -211,16 +211,6 @@ int wsprintf(TCHAR *s, const TCHAR *format, ...) {
   return res;
 }
 
-// iconv const inconsistency workaround by Alexandre Oliva
-template <typename T>
-inline size_t nsis_iconv_adaptor
-  (size_t (*iconv_func)(iconv_t, T, size_t *, TCHAR**,size_t*),
-  iconv_t cd, TCHAR **inbuf, size_t *inbytesleft,
-  TCHAR **outbuf, size_t *outbytesleft)
-{
-  return iconv_func (cd, (T)inbuf, inbytesleft, outbuf, outbytesleft);
-}
-
 void static create_code_page_string(TCHAR *buf, size_t len, UINT code_page) {
   switch(code_page)
   {

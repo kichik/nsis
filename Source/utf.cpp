@@ -29,9 +29,8 @@ void RawTStrToASCII(const TCHAR*in,char*out,UINT maxcch)
 UINT StrLenUTF16LE(const void*str)
 {
   unsigned short *p = (unsigned short *) str;
-  for(;*p;) ++p;
   UINT cch = 0;
-  if ((size_t)p > (size_t)str) cch = ((size_t)p - (size_t)str) - 1;
+  for(;p[cch];) ++cch;
   return cch;
 }
 
@@ -215,6 +214,9 @@ UINT NStreamLineReader::ReadLine(wchar_t*Buffer, UINT cchBuf)
 #endif
   const UINT cchFullBuf = cchBuf;
   NIStream&strm = GetStream();
+#ifndef _WIN32
+  iconvdescriptor iconvd;
+#endif
 
 l_restart:
   // Only supports MBCS and UTF-8 for now...
@@ -273,9 +275,11 @@ l_restart:
       if (CompleteLine(Buffer,cchWC,cchBuf,true)) goto l_success;
     }
   }
-#ifdef _WIN32
   else if (StreamEncoding().IsUTF16LE())
   {
+#ifndef _WIN32
+    if (!iconvd.Open("wchar_t", iconvd::GetHostEndianUCS4Code())) goto ERR_UNSUPPORTEDENCODING;
+#endif
     unsigned short lead, trail, cchWC;
     for(;;)
     {
@@ -283,20 +287,31 @@ l_restart:
       FIX_ENDIAN_INT16LETOHOST_INPLACE(lead);
       if (IsTrailSurrogateUTF16(lead)) goto l_badutf;
       UINT32 codpt = lead;
-      Buffer[0] = lead, cchWC = 0;
+      if (cchBuf <= 1) goto l_lineoverflow;
+      Buffer[0] = lead, cchWC = 1;
       if (IsLeadSurrogateUTF16(lead))
       {
         if (!strm.ReadInt16(&trail)) goto l_ioerror;
         FIX_ENDIAN_INT16LETOHOST_INPLACE(trail);
         if (!IsTrailSurrogateUTF16(trail)) goto l_badutf;
         codpt = CodePointFromUTF16SurrogatePair(lead,trail);
+#ifdef _WIN32
+        if (cchBuf <= 2) goto l_lineoverflow;
         Buffer[1] = trail, ++cchWC;
+#endif
       }
       if (!IsValidUnicodeCodePoint(codpt)) goto l_badutf;
-      if (CompleteLine(Buffer,++cchWC,cchBuf,true)) goto l_success;
+#ifndef _WIN32
+      char tmpdest[8]; // Should be plenty of space to store one UCS4 character as wchar_t(s)
+      size_t inleft = 4;
+      cchWC = iconvd.Convert(&codpt,&inleft,tmpdest,sizeof(tmpdest)) / sizeof(wchar_t);
+      if (!cchWC) goto l_badutf;
+      if (cchBuf <= cchWC) goto l_lineoverflow;
+      for (UINT i = cchWC; i;) --i, Buffer[i] = ((wchar_t*)tmpdest)[i];
+#endif
+      if (CompleteLine(Buffer,cchWC,cchBuf,true)) goto l_success;
     }
   }
-#endif
   else if (StreamEncoding().IsUnicode())
   {
     goto l_unsupportedencoding; 
