@@ -591,7 +591,7 @@ size_t ExpandoStrFmtVaList(wchar_t*Stack, size_t cchStack, wchar_t**ppMalloc, co
   for(;;)
   {
     cch = ExpandoStrFmtVaList_vsnwprintf(dest, cchAvail, FmtStr, Args);
-    if (-1 == cch)
+    if ((unsigned)-1 == cch)
     {
       cch = 0;
       if (cansizecalc) break; // vswprintf error, abort!

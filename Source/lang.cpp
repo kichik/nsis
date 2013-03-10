@@ -932,7 +932,11 @@ LanguageTable * CEXEBuild::LoadLangFile(TCHAR *filename) {
 
   // Check header
   TCHAR buf[NSIS_MAX_STRLEN];
-  if (!GetNextNLFLine(lr, buf, NSIS_MAX_STRLEN, errlr)) goto l_readerr;
+  if (!GetNextNLFLine(lr, buf, NSIS_MAX_STRLEN, errlr)) {
+l_readerr:
+    ERROR_MSG(lr.GetErrorMessage(errlr).c_str());
+    return 0;
+  }
   if (_tcsncmp(buf, _T("NLF v"), 5)) {
     ERROR_MSG(_T("Error: Invalid language file.\n"));
     return 0;
@@ -1151,10 +1155,6 @@ LanguageTable * CEXEBuild::LoadLangFile(TCHAR *filename) {
 
   nlf->m_bLoaded = true;
   return table;
-
-l_readerr:
-  ERROR_MSG(lr.GetErrorMessage(errlr).c_str());
-  return 0;
 }
 
 void CEXEBuild::DeleteLangTable(LanguageTable *table) {
