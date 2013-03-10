@@ -13,36 +13,36 @@ Header file for creating custom installer pages with nsDialogs
 !include LogicLib.nsh
 !include WinMessages.nsh
 
-!define WS_EX_DLGMODALFRAME  0x00000001
-!define WS_EX_NOPARENTNOTIFY 0x00000004
-!define WS_EX_TOPMOST        0x00000008
-!define WS_EX_ACCEPTFILES    0x00000010
-!define WS_EX_TRANSPARENT    0x00000020
-!define WS_EX_MDICHILD       0x00000040
-!define WS_EX_TOOLWINDOW     0x00000080
-!define WS_EX_WINDOWEDGE     0x00000100
-!define WS_EX_CLIENTEDGE     0x00000200
-!define WS_EX_CONTEXTHELP    0x00000400
-!define WS_EX_RIGHT          0x00001000
-!define WS_EX_LEFT           0x00000000
-!define WS_EX_RTLREADING     0x00002000
-!define WS_EX_LTRREADING     0x00000000
-!define WS_EX_LEFTSCROLLBAR  0x00004000
-!define WS_EX_RIGHTSCROLLBAR 0x00000000
-!define WS_EX_CONTROLPARENT  0x00010000
-!define WS_EX_STATICEDGE     0x00020000
-!define WS_EX_APPWINDOW      0x00040000
+!define /ifndef WS_EX_DLGMODALFRAME  0x00000001
+!define /ifndef WS_EX_NOPARENTNOTIFY 0x00000004
+!define /ifndef WS_EX_TOPMOST        0x00000008
+!define /ifndef WS_EX_ACCEPTFILES    0x00000010
+!define /ifndef WS_EX_TRANSPARENT    0x00000020
+!define /ifndef WS_EX_MDICHILD       0x00000040
+!define /ifndef WS_EX_TOOLWINDOW     0x00000080
+!define /ifndef WS_EX_WINDOWEDGE     0x00000100
+!define /ifndef WS_EX_CLIENTEDGE     0x00000200
+!define /ifndef WS_EX_CONTEXTHELP    0x00000400
+!define /ifndef WS_EX_RIGHT          0x00001000
+!define /ifndef WS_EX_LEFT           0x00000000
+!define /ifndef WS_EX_RTLREADING     0x00002000
+!define /ifndef WS_EX_LTRREADING     0x00000000
+!define /ifndef WS_EX_LEFTSCROLLBAR  0x00004000
+!define /ifndef WS_EX_RIGHTSCROLLBAR 0x00000000
+!define /ifndef WS_EX_CONTROLPARENT  0x00010000
+!define /ifndef WS_EX_STATICEDGE     0x00020000
+!define /ifndef WS_EX_APPWINDOW      0x00040000
 
-!define WS_CHILD             0x40000000
-!define WS_VISIBLE           0x10000000
-!define WS_DISABLED          0x08000000
-!define WS_CLIPSIBLINGS      0x04000000
-!define WS_CLIPCHILDREN      0x02000000
-!define WS_MAXIMIZE          0x01000000
-!define WS_VSCROLL           0x00200000
-!define WS_HSCROLL           0x00100000
-!define WS_GROUP             0x00020000
-!define WS_TABSTOP           0x00010000
+!define /ifndef WS_CHILD             0x40000000
+!define /ifndef WS_VISIBLE           0x10000000
+!define /ifndef WS_DISABLED          0x08000000
+!define /ifndef WS_CLIPSIBLINGS      0x04000000
+!define /ifndef WS_CLIPCHILDREN      0x02000000
+!define /ifndef WS_MAXIMIZE          0x01000000
+!define /ifndef WS_VSCROLL           0x00200000
+!define /ifndef WS_HSCROLL           0x00100000
+!define /ifndef WS_GROUP             0x00020000
+!define /ifndef WS_TABSTOP           0x00010000
 
 !define ES_LEFT              0x00000000
 !define ES_CENTER            0x00000001
@@ -152,27 +152,27 @@ Header file for creating custom installer pages with nsDialogs
 !define LBS_NOSEL             0x4000
 !define LBS_COMBOBOX          0x8000
 
-!define LR_DEFAULTCOLOR     0x0000
-!define LR_MONOCHROME       0x0001
-!define LR_COLOR            0x0002
-!define LR_COPYRETURNORG    0x0004
-!define LR_COPYDELETEORG    0x0008
-!define LR_LOADFROMFILE     0x0010
-!define LR_LOADTRANSPARENT  0x0020
-!define LR_DEFAULTSIZE      0x0040
-!define LR_VGACOLOR         0x0080
-!define LR_LOADMAP3DCOLORS  0x1000
-!define LR_CREATEDIBSECTION 0x2000
-!define LR_COPYFROMRESOURCE 0x4000
-!define LR_SHARED           0x8000
+!define /ifndef LR_DEFAULTCOLOR     0x0000
+!define /ifndef LR_MONOCHROME       0x0001
+!define /ifndef LR_COLOR            0x0002
+!define /ifndef LR_COPYRETURNORG    0x0004
+!define /ifndef LR_COPYDELETEORG    0x0008
+!define /ifndef LR_LOADFROMFILE     0x0010
+!define /ifndef LR_LOADTRANSPARENT  0x0020
+!define /ifndef LR_DEFAULTSIZE      0x0040
+!define /ifndef LR_VGACOLOR         0x0080
+!define /ifndef LR_LOADMAP3DCOLORS  0x1000
+!define /ifndef LR_CREATEDIBSECTION 0x2000
+!define /ifndef LR_COPYFROMRESOURCE 0x4000
+!define /ifndef LR_SHARED           0x8000
 
-!define IMAGE_BITMAP        0
-!define IMAGE_ICON          1
-!define IMAGE_CURSOR        2
-!define IMAGE_ENHMETAFILE   3
+!define /ifndef IMAGE_BITMAP        0
+!define /ifndef IMAGE_ICON          1
+!define /ifndef IMAGE_CURSOR        2
+!define /ifndef IMAGE_ENHMETAFILE   3
 
-!define GWL_STYLE           -16
-!define GWL_EXSTYLE         -20
+!define /ifndef GWL_STYLE           -16
+!define /ifndef GWL_EXSTYLE         -20
 
 !define DEFAULT_STYLES ${WS_CHILD}|${WS_VISIBLE}|${WS_CLIPSIBLINGS}
 
