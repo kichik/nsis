@@ -143,7 +143,7 @@ public:
   bool get(unsigned int offset, tstring&str) const;
   unsigned int getnum() const;
   unsigned int gettotalsize() const { return m_gr.get() ? m_gr.getlen() : (m_wide ? 2 : 1); }
-  void* getstorageptr() const { return m_gr.get() ? m_gr.get() : L""; }
+  void* getstorageptr() const { return m_gr.get() ? m_gr.get() : (void*)L""; }
 
 protected:
   unsigned int find(const void *str, unsigned int cchF, WORD codepage, bool processed, char**ppBufMB) const;

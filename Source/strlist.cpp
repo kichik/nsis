@@ -165,7 +165,7 @@ int ExeHeadStringList::add(const TCHAR *str, WORD codepage, bool processed)
 
   char *bufMB = 0;
   unsigned int pos = find(str,codepage,processed,m_wide ? 0 : &bufMB);
-  if (-1 != pos)
+  if ((unsigned)-1 != pos)
   {
     delete[] bufMB;
     return pos;

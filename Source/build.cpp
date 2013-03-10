@@ -467,7 +467,7 @@ int CEXEBuild::add_string(const TCHAR *string, int process/*=1*/, UINT codepage/
   if (!string || !*string) return 0;
   build_lockedunicodetarget = true;
   init_shellconstantvalues();
-  if (-2 == codepage)
+  if ((unsigned)-2 == codepage)
   {
     assert(curlinereader);
     codepage = curlinereader->StreamEncoding().GetCodepage();

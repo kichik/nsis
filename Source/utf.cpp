@@ -37,7 +37,7 @@ UINT StrLenUTF16LE(const void*str)
 bool StrSetUTF16LE(tstring&dest, const void*src)
 {
 #ifdef _WIN32
-  dest = (unsigned short *) src;
+  dest = (wchar_t*) src;
 #else
 #error TODO: UTF16LE to wchar_t
 #endif
@@ -155,7 +155,8 @@ WORD GetEncodingFromString(const TCHAR*s)
 
 void NStreamEncoding::GetCPDisplayName(WORD CP, TCHAR*Buf)
 {
-  TCHAR mybuf[10], *p = mybuf;
+  TCHAR mybuf[10];
+  const TCHAR *p = mybuf;
   switch(CP)
   {
   case ACP: p = _T("ACP"); break;
