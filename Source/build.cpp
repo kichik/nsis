@@ -492,7 +492,9 @@ int CEXEBuild::add_string(const TCHAR *string, int process/*=1*/, UINT codepage/
   int i;
   if (process)
   {
-    TCHAR buf[NSIS_MAX_STRLEN*4];
+    ExpandoString<TCHAR, NSIS_MAX_STRLEN*4> buf;
+    // NOTE: It is impossible to know how much preprocessing will increase the size, we have to guess
+    buf.Reserve(_tcsclen(string) * 2);
     preprocess_string(buf, string, codepage);
     i = cur_strlist->add(buf, (WORD)codepage, true);
   }
@@ -3310,42 +3312,36 @@ bool IsStringASCII(const TCHAR* s)
 
 void CEXEBuild::warning(const TCHAR *s, ...)
 {
-  TCHAR buf[NSIS_MAX_STRLEN*10];
+  ExpandoString<TCHAR, NSIS_MAX_STRLEN + 100> buf;
   va_list val;
   va_start(val,s);
-#ifdef _WIN32
-  _vstprintf(buf,s,val);
-#else
-  _vsntprintf(buf,NSIS_MAX_STRLEN*10,s,val);
-#endif
+  buf.StrFmt(s,val);
   va_end(val);
 
   m_warnings.add(buf,0);
-  notify(MAKENSIS_NOTIFY_WARNING,buf);
+  notify(MAKENSIS_NOTIFY_WARNING,buf.GetPtr());
   if (display_warnings)
   {
-    PrintColorFmtMsg_WARN(_T("warning: %s\n"),buf);
+    PrintColorFmtMsg_WARN(_T("warning: %s\n"),buf.GetPtr());
   }
 }
 
 void CEXEBuild::warning_fl(const TCHAR *s, ...)
 {
-  TCHAR buf[NSIS_MAX_STRLEN*10];
+  ExpandoString<TCHAR, NSIS_MAX_STRLEN + 100> buf;
   va_list val;
   va_start(val,s);
-#ifdef _WIN32
-  _vstprintf(buf,s,val);
-#else
-  _vsntprintf(buf,NSIS_MAX_STRLEN*10,s,val);
-#endif
+  size_t cchMsg = buf.StrFmt(s,val);
   va_end(val);
-  _stprintf(buf+_tcslen(buf),_T(" (%s:%d)"),curfilename,linecnt);
+
+  buf.Reserve(cchMsg+2+_tcslen(curfilename)+50+1+1);
+  _stprintf(&buf[cchMsg],_T(" (%s:%u)"),curfilename,linecnt);
 
   m_warnings.add(buf,0);
-  notify(MAKENSIS_NOTIFY_WARNING,buf);
+  notify(MAKENSIS_NOTIFY_WARNING,buf.GetPtr());
   if (display_warnings)
   {
-    PrintColorFmtMsg_WARN(_T("warning: %s\n"),buf);
+    PrintColorFmtMsg_WARN(_T("warning: %s\n"),buf.GetPtr());
   }
 }
 
@@ -3353,19 +3349,16 @@ void CEXEBuild::ERROR_MSG(const TCHAR *s, ...) const
 {
   if (display_errors || notify_hwnd)
   {
-    TCHAR buf[NSIS_MAX_STRLEN*10];
+    ExpandoString<TCHAR, NSIS_MAX_STRLEN + 100> buf;
     va_list val;
     va_start(val,s);
-#ifdef _WIN32
-    _vstprintf(buf,s,val);
-#else
-    _vsntprintf(buf,NSIS_MAX_STRLEN*10,s,val);
-#endif
+    buf.StrFmt(s,val);
     va_end(val);
-    notify(MAKENSIS_NOTIFY_ERROR,buf);
+
+    notify(MAKENSIS_NOTIFY_ERROR,buf.GetPtr());
     if (display_errors)
     {
-      PrintColorFmtMsg_ERR(_T("%s"),buf);
+      PrintColorFmtMsg_ERR(_T("%s"),buf.GetPtr());
     }
   }
 }

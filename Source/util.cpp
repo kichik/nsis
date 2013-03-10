@@ -552,6 +552,67 @@ tstring lowercase(const tstring &str) {
   return result;
 }
 
+/*
+ * ExpandoStrFmtVaList returns the number of characters written excluding
+ * the \0 terminator or 0 on error.
+ * realloc() is used on *ppMalloc if cchStack is not 
+ * large enough to hold the formated string.
+*/
+size_t ExpandoStrFmtVaList(wchar_t*Stack, size_t cchStack, wchar_t**ppMalloc, const wchar_t*FmtStr, va_list Args)
+{
+#ifdef _WIN32
+// For _vsnwprintf, the \0 terminator is not part of the size
+#define ExpandoStrFmtVaList_vsnwprintf(d,c,f,v) _vsnwprintf((d),(c)?(c)-1:0,(f),(v))
+#else
+#define ExpandoStrFmtVaList_vsnwprintf vswprintf
+#endif
+#if defined(_ISOC99_SOURCE) || _POSIX_C_SOURCE >= 200112L
+  const bool cansizecalc = true, msvcbackdoor = false;
+#else
+  static char testedsizecalc = 0;
+  if (!testedsizecalc)
+  {
+#ifdef _WIN32
+    size_t cch = ExpandoStrFmtVaList_vsnwprintf(0, INT_MAX, L"333", Args);
+#else
+    wchar_t testbuf[1+1];
+    size_t cch = ExpandoStrFmtVaList_vsnwprintf(testbuf, COUNTOF(testbuf), L"333", Args);
+#endif
+    testedsizecalc = (3 == cch) + 1;
+  }
+#ifdef _WIN32
+  const bool msvcbackdoor = !!(testedsizecalc - 1), cansizecalc = false;
+#else
+  const bool cansizecalc = !!(testedsizecalc - 1), msvcbackdoor = false;
+#endif
+#endif
+  size_t &cchAvail = cchStack, cch;
+  wchar_t *&dest = Stack, *mem = *ppMalloc;
+  for(;;)
+  {
+    cch = ExpandoStrFmtVaList_vsnwprintf(dest, cchAvail, FmtStr, Args);
+    if (-1 == cch)
+    {
+      cch = 0;
+      if (cansizecalc) break; // vswprintf error, abort!
+      if (msvcbackdoor)
+        cchAvail = ExpandoStrFmtVaList_vsnwprintf(0, INT_MAX, FmtStr, Args) + 1;
+      else
+        cchAvail = 4 * STD_MAX(cchAvail, (size_t)500);
+    }
+    else
+    {
+      if (cch < cchAvail) break; // We are done.
+      cchAvail = ++cch; // cch from vswprintf did not include the \0 terminator
+    }
+    dest = mem = (wchar_t*) realloc(mem, cchAvail * sizeof(wchar_t));
+    if (!mem) return 0;
+  }
+  *ppMalloc = mem;
+  return cch;
+}
+
+
 int sane_system(const TCHAR *command) {
 #ifdef _WIN32
 
