@@ -56,6 +56,30 @@ tstring lowercase(const tstring&);
 tstring get_string_prefix(const tstring& str, const tstring& separator);
 tstring get_string_suffix(const tstring& str, const tstring& separator);
 
+size_t ExpandoStrFmtVaList(wchar_t*Stack, size_t cchStack, wchar_t**ppMalloc, const wchar_t*FmtStr, va_list Args);
+
+template<typename T, size_t S> class ExpandoString {
+  T m_stack[S ? S : 1], *m_heap;
+public:
+  ExpandoString() : m_heap(0) {}
+  ~ExpandoString() { free(m_heap); }
+  void Reserve(size_t cch)
+  {
+    if (S && cch <= S) return ;
+    void *p = realloc(m_heap, cch * sizeof(T));
+    if (!p) throw std::bad_alloc();
+    m_heap = (T*) p;
+  }
+  size_t StrFmt(const T*FmtStr, va_list Args)
+  {
+    size_t n = ExpandoStrFmtVaList(m_stack, COUNTOF(m_stack), &m_heap, FmtStr, Args);
+    if (!n && *FmtStr) throw std::bad_alloc();
+    return n;
+  }
+  T* GetPtr() { return m_heap ? m_heap : m_stack; }
+  operator T*() { return GetPtr(); }
+};
+
 int sane_system(const TCHAR *command);
 
 void PrintColorFmtMsg(unsigned int type, const TCHAR *fmtstr, va_list args);
