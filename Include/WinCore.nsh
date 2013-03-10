@@ -33,10 +33,10 @@ WinCore.nsh & Win\*.nsh - Collection of common windows defines
 WinBase.h
 **************************************************/
 !ifndef __WIN_NOINC_WINBASE
-!define INVALID_HANDLE_VALUE -1
-!define INVALID_FILE_SIZE 0xFFFFFFFF
-!define INVALID_SET_FILE_POINTER -1
-!define INVALID_FILE_ATTRIBUTES -1
+!define /ifndef INVALID_HANDLE_VALUE -1
+!define /ifndef INVALID_FILE_SIZE 0xFFFFFFFF
+!define /ifndef INVALID_SET_FILE_POINTER -1
+!define /ifndef INVALID_FILE_ATTRIBUTES -1
 
 !define WAIT_FAILED 0xFFFFFFFF
 !define WAIT_OBJECT_0       0 ;((STATUS_WAIT_0 ) + 0 )

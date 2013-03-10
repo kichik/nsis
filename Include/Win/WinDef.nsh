@@ -5,9 +5,7 @@
 !ifndef __WIN_NOINC_WINDEF
 
 
-!ifndef MAX_PATH
-!define MAX_PATH 260
-!endif
+!define /ifndef MAX_PATH 260
 #define NULL 0
 
 
