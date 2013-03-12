@@ -5,17 +5,34 @@
 
 COM defines and helper macros
 
-;Example:
+; Example usage:
 !include Win\COM.nsh
+!include Win\Propkey.nsh
 !insertmacro ComHlpr_CreateInProcInstance ${CLSID_ShellLink} ${IID_IShellLink} r0 ""
 ${If} $0 <> 0
 	${IShellLink::SetPath} $0 '("%COMSPEC%").r1'
 	${IShellLink::SetArguments} $0 '("/k echo HelloWorld").r2'
 	${If} $1 = 0
 	${AndIf} $2 = 0
-		${IUnknown::QueryInterface}$0 '("${IID_IPersistFile}",.r1)'
+		${IUnknown::QueryInterface} $0 '("${IID_IPropertyStore}",.r1)'
 		${If} $1 <> 0
-			${IPersistFile::Save} $1 '("$exedir\test.lnk",1)'
+			System::Call '*${SYSSTRUCT_PROPERTYKEY}(${PKEY_AppUserModel_StartPinOption})p.r2'
+			System::Call '*${SYSSTRUCT_PROPVARIANT}(${VT_UI4},,&i4 ${APPUSERMODEL_STARTPINOPTION_NOPINONINSTALL})p.r3'
+			${IPropertyStore::SetValue} $1 '($2,$3)'
+
+			; Reuse the PROPERTYKEY & PROPVARIANT buffers to set another property
+			System::Call '*$2${SYSSTRUCT_PROPERTYKEY}(${PKEY_AppUserModel_ExcludeFromShowInNewInstall})'
+			System::Call '*$3${SYSSTRUCT_PROPVARIANT}(${VT_BOOL},,&i2 ${VARIANT_TRUE})'
+			${IPropertyStore::SetValue} $1 '($2,$3)'
+
+			System::Free $2
+			System::Free $3
+			${IPropertyStore::Commit} $1 ""
+			${IUnknown::Release} $1 ""
+		${EndIf}
+		${IUnknown::QueryInterface} $0 '("${IID_IPersistFile}",.r1)'
+		${If} $1 <> 0
+			${IPersistFile::Save} $1 '("$SMPrograms\nsis_test.lnk",1)'
 			${IUnknown::Release} $1 ""
 		${EndIf}
 	${EndIf}
