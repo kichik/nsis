@@ -248,6 +248,8 @@ def add_file(file):
 	add_file_to_emitter(stub_env, 'PROGEMITTER', file)
 	add_file_to_emitter(util_env, 'PROGEMITTER', file)
 	add_file_to_emitter(plugin_env, 'SHLIBEMITTER', file)
+	add_file_to_emitter(stub_uenv, 'PROGEMITTER', file)
+	add_file_to_emitter(plugin_uenv, 'SHLIBEMITTER', file)
 
 cenv = defenv.Clone()
 cross_env(cenv)
