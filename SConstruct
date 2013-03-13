@@ -499,7 +499,7 @@ test_env = envs[5]
 stub_uenv = envs[6]
 plugin_uenv = envs[7]
 
-Export('stub_env makensis_env plugin_env plugin_uenv util_env cp_util_env test_env')
+Export('plugin_env plugin_uenv')
 
 def GetArcCPU(env):
 	if (not env.has_key('TARGET_ARCH')) or env['TARGET_ARCH'] == 'x86':
