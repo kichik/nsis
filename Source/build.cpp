@@ -69,6 +69,11 @@ bool isSimpleChar(TCHAR ch)
 
 } // end of anonymous namespace
 
+namespace MakensisAPI {
+  const TCHAR* SigintEventNameFmt = _T("makensis win32 sigint event %u"); // %u is the notify HWND, this is to make sure we abort the correct instance
+  const TCHAR* SigintEventNameLegacy = _T("makensis win32 signint event"); // "sigNint" typo is part of the API now and cannot be changed
+}
+
 void CEXEBuild::define(const TCHAR *p, const TCHAR *v)
 {
   definedlist.add(p,v);
@@ -2594,7 +2599,7 @@ int CEXEBuild::write_output(void)
 
   {
     tstring full_path = get_full_path(build_output_filename);
-    notify(MAKENSIS_NOTIFY_OUTPUT, full_path.c_str());
+    notify(MakensisAPI::NOTIFY_OUTPUT, full_path.c_str());
     INFO_MSG(_T("\nOutput: \"%s\"\n"), full_path.c_str());
   }
 
@@ -3319,7 +3324,7 @@ void CEXEBuild::warning(const TCHAR *s, ...)
   va_end(val);
 
   m_warnings.add(buf,0);
-  notify(MAKENSIS_NOTIFY_WARNING,buf.GetPtr());
+  notify(MakensisAPI::NOTIFY_WARNING,buf.GetPtr());
   if (display_warnings)
   {
     PrintColorFmtMsg_WARN(_T("warning: %s\n"),buf.GetPtr());
@@ -3338,7 +3343,7 @@ void CEXEBuild::warning_fl(const TCHAR *s, ...)
   _stprintf(&buf[cchMsg],_T(" (%s:%u)"),curfilename,linecnt);
 
   m_warnings.add(buf,0);
-  notify(MAKENSIS_NOTIFY_WARNING,buf.GetPtr());
+  notify(MakensisAPI::NOTIFY_WARNING,buf.GetPtr());
   if (display_warnings)
   {
     PrintColorFmtMsg_WARN(_T("warning: %s\n"),buf.GetPtr());
@@ -3355,7 +3360,7 @@ void CEXEBuild::ERROR_MSG(const TCHAR *s, ...) const
     buf.StrFmt(s,val);
     va_end(val);
 
-    notify(MAKENSIS_NOTIFY_ERROR,buf.GetPtr());
+    notify(MakensisAPI::NOTIFY_ERROR,buf.GetPtr());
     if (display_errors)
     {
       PrintColorFmtMsg_ERR(_T("%s"),buf.GetPtr());
@@ -3403,7 +3408,7 @@ void CEXEBuild::print_warnings()
   FlushOutputAndResetPrintColor();
 }
 
-void CEXEBuild::notify(notify_e code, const TCHAR *data) const
+void CEXEBuild::notify(MakensisAPI::notify_e code, const TCHAR *data) const
 {
 #ifdef _WIN32
   if (notify_hwnd)

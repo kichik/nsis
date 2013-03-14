@@ -36,6 +36,11 @@
 #define COUNTOF(a) (sizeof(a)/sizeof(a[0]))
 #endif
 
+namespace MakensisAPI {
+  const TCHAR* SigintEventNameFmt = _T("makensis win32 sigint event %u");
+  const TCHAR* SigintEventNameLegacy = _T("makensis win32 signint event");
+}
+
 NSCRIPTDATA g_sdata;
 NRESIZEDATA g_resize;
 NFINDREPLACE g_find;
@@ -53,7 +58,7 @@ int WINAPI _tWinMain(HINSTANCE hInst,HINSTANCE hOldInst,LPTSTR CmdLineParams,int
   memset(&g_find,0,sizeof(NFINDREPLACE));
   g_sdata.hInstance=hInst;
   g_sdata.symbols = NULL;
-  g_sdata.sigint_event = CreateEvent(NULL, FALSE, FALSE, _T("makensis win32 signint event"));
+  g_sdata.sigint_event_legacy = CreateEvent(NULL, FALSE, FALSE, MakensisAPI::SigintEventNameLegacy);
   RestoreSymbols();
 
   HINSTANCE hRichEditDLL = LoadLibrary(_T("RichEd20.dll"));
@@ -83,6 +88,7 @@ int WINAPI _tWinMain(HINSTANCE hInst,HINSTANCE hOldInst,LPTSTR CmdLineParams,int
   if (g_sdata.script) GlobalFree(g_sdata.script);
   if (g_sdata.script_cmd_args) GlobalFree(g_sdata.script_cmd_args);
   if (g_sdata.sigint_event) CloseHandle(g_sdata.sigint_event);
+  if (g_sdata.sigint_event_legacy) CloseHandle(g_sdata.sigint_event_legacy);
   FreeLibrary(hRichEditDLL);
   FinalizeUpdate();
   return msg.wParam;
@@ -457,17 +463,17 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
     {
       PCOPYDATASTRUCT cds = PCOPYDATASTRUCT(lParam);
       switch (cds->dwData) {
-        case MAKENSIS_NOTIFY_SCRIPT:
+        case MakensisAPI::NOTIFY_SCRIPT:
           if (g_sdata.input_script) GlobalFree(g_sdata.input_script);
           g_sdata.input_script = (TCHAR *)GlobalAlloc(GPTR, cds->cbData * sizeof(TCHAR));
           lstrcpy(g_sdata.input_script, (TCHAR *)cds->lpData);
           break;
-        case MAKENSIS_NOTIFY_WARNING:
+        case MakensisAPI::NOTIFY_WARNING:
           g_sdata.warnings++;
           break;
-        case MAKENSIS_NOTIFY_ERROR:
+        case MakensisAPI::NOTIFY_ERROR:
           break;
-        case MAKENSIS_NOTIFY_OUTPUT:
+        case MakensisAPI::NOTIFY_OUTPUT:
           if (g_sdata.output_exe) GlobalFree(g_sdata.output_exe);
           g_sdata.output_exe = (TCHAR *)GlobalAlloc(GPTR, cds->cbData * sizeof(TCHAR));
           lstrcpy(g_sdata.output_exe, (TCHAR *)cds->lpData);
@@ -614,6 +620,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
         case IDM_CANCEL:
         {
           SetEvent(g_sdata.sigint_event);
+          SetEvent(g_sdata.sigint_event_legacy);
           return TRUE;
         }
         case IDM_COPY:
@@ -704,6 +711,16 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 }
 
 DWORD WINAPI MakeNSISProc(LPVOID p) {
+  TCHAR eventnamebuf[100];
+  wsprintf(eventnamebuf,MakensisAPI::SigintEventNameFmt,g_sdata.hwnd);
+  if (g_sdata.sigint_event) CloseHandle(g_sdata.sigint_event);
+  g_sdata.sigint_event = CreateEvent(NULL,FALSE,FALSE,eventnamebuf);
+  if (!g_sdata.sigint_event) {
+    ErrorMessage(g_sdata.hwnd,_T("There was an error creating the abort event."));
+    PostMessage(g_sdata.hwnd,WM_MAKENSIS_PROCESSCOMPLETE,0,0);
+    return 1;
+  }
+
 #ifdef _UNICODE
   TCHAR buf[1024];
 #endif

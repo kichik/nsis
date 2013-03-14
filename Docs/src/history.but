@@ -10,6 +10,8 @@ Released on ?, 2013
 
 \b Plugins in $\{NSISDIR\}\\Plugins have to be reserved with \c{ReserveFile /plugin}
 
+\b MakeNSIS /NOTIFYHWND uses a (optional) new event name to abort compilation, see build.cpp/h for details.
+
 \H{v2.46} 2.46
 
 Released on December 6th, 2009
