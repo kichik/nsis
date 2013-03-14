@@ -10,6 +10,10 @@ Support code for all pages
 
 !macro MUI_PAGE_INIT
 
+  !ifdef MUI_INSERT
+    !warning "MUI_PAGE_* inserted after MUI_LANGUAGE"
+  !endif
+
   ;Include interface settings in neccesary
   !insertmacro MUI_INTERFACE
 
@@ -28,6 +32,10 @@ Support code for all pages
 !macroend
 
 !macro MUI_UNPAGE_INIT
+
+  !ifdef MUI_INSERT
+    !warning "MUI_UNPAGE_* inserted after MUI_LANGUAGE"
+  !endif
 
   ;Include interface settings
   !insertmacro MUI_INTERFACE

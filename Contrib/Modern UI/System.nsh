@@ -689,6 +689,10 @@ Var MUI_TEMP2
 
 !macro MUI_PAGE_INIT
 
+  !ifdef MUI_INSERT
+    !warning "MUI_[UN]PAGE_* inserted after MUI_LANGUAGE"
+  !endif
+
   !insertmacro MUI_INTERFACE
 
   !insertmacro MUI_DEFAULT MUI_PAGE_UNINSTALLER_PREFIX ""
