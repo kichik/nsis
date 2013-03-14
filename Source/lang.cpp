@@ -1019,9 +1019,9 @@ l_readerr:
   if (!GetNextNLFLine(lr, buf, NSIS_MAX_STRLEN, errlr)) goto l_readerr;
   if (buf[0] != _T('-') || buf[1] != 0) {
     nlf->m_uCodePage = _ttoi(buf);
-    if (!IsValidCodePage(nlf->m_uCodePage))
+    if (!IsValidCodePage(nlf->m_uCodePage) && CP_ACP != nlf->m_uCodePage)
     {
-      warning_fl(_T("%s language file uses a codepage that is not supported on this system, using ACP!"), nlf->m_szName);
+      warning_fl(_T("%s language file uses a codepage (%d) that is not supported on this system, using ACP!"), nlf->m_szName, nlf->m_uCodePage);
       nlf->m_uCodePage = CP_ACP;
     }
   }
