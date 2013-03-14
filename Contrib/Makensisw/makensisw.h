@@ -75,12 +75,17 @@
 #define WM_MAKENSIS_LOADSYMBOLSET (WM_USER+1002)
 #define WM_MAKENSIS_SAVESYMBOLSET (WM_USER+1003)
 
-enum {
-  MAKENSIS_NOTIFY_SCRIPT,
-  MAKENSIS_NOTIFY_WARNING,
-  MAKENSIS_NOTIFY_ERROR,
-  MAKENSIS_NOTIFY_OUTPUT
-};
+namespace MakensisAPI {
+  extern const TCHAR* SigintEventNameFmt;
+  extern const TCHAR* SigintEventNameLegacy;
+
+  enum notify_e {
+    NOTIFY_SCRIPT,
+    NOTIFY_WARNING,
+    NOTIFY_ERROR,
+    NOTIFY_OUTPUT
+  };
+}
 
 typedef enum {
   COMPRESSOR_NONE_SELECTED = -1,
@@ -185,6 +190,7 @@ typedef struct NSISScriptData {
   HMENU toolsSubmenu;
   HANDLE thread;
   HANDLE sigint_event;
+  HANDLE sigint_event_legacy;
   HWND focused_hwnd;
   CHARRANGE textrange;
   NCOMPRESSOR default_compressor;

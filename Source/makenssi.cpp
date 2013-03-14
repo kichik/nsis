@@ -75,9 +75,17 @@ static void sigint(int sig)
 }
 
 #ifdef _WIN32
-static DWORD WINAPI sigint_event_msg_handler(LPVOID)
+static DWORD WINAPI sigint_event_msg_handler(LPVOID ThreadParam)
 {
-  HANDLE hEvent = OpenEvent(EVENT_ALL_ACCESS, FALSE, _T("makensis win32 signint event"));
+  using namespace MakensisAPI;
+  HANDLE hEvent = 0;
+  if (ThreadParam)
+  {
+    TCHAR eventnamebuf[100];
+    wsprintf(eventnamebuf, SigintEventNameFmt, (HWND)ThreadParam);
+    hEvent = OpenEvent(SYNCHRONIZE, FALSE, eventnamebuf);
+  }
+  if (!hEvent) hEvent = OpenEvent(SYNCHRONIZE, FALSE, SigintEventNameLegacy);
 
   if (hEvent)
   {
@@ -90,14 +98,15 @@ static DWORD WINAPI sigint_event_msg_handler(LPVOID)
 }
 #endif
 
-static void init_signals()
+static void init_signals(HWND notify_hwnd)
 {
   atexit(myatexit);
   signal(SIGINT,sigint);
 
 #ifdef _WIN32
   DWORD id;
-  HANDLE hThread = CreateThread(NULL, 0, sigint_event_msg_handler, NULL, 0, &id);
+  HANDLE hThread = CreateThread(NULL, 0, sigint_event_msg_handler, (LPVOID)notify_hwnd, 0, &id);
+  SetThreadPriority(hThread, THREAD_PRIORITY_HIGHEST);
   if (hThread) CloseHandle(hThread);
 #endif
 }
@@ -316,10 +325,30 @@ int _tmain(int argc, TCHAR **argv)
     }
     print_logo();
   }
-
-  init_signals();
-
   if (!g_output) g_output=stdout;
+  
+  // Look for /NOTIFYHWND so we can init_signals()
+  const int orgargpos=argpos;
+  while (argpos < argc)
+  {
+    if (!_tcscmp(argv[argpos], _T("--"))) break;
+    if (!IS_OPT(argv[argpos]) || !_tcscmp(argv[argpos], _T("-"))) break;
+    if (!_tcsicmp(&argv[argpos][1],_T("NOTIFYHWND")))
+    {
+      if (!HasReqParam(argv, ++argpos, argc)) break;
+#ifdef _WIN32
+      build.notify_hwnd=(HWND)_ttol(argv[argpos]);
+      if (!IsWindow(build.notify_hwnd)) build.notify_hwnd=0;
+#else
+      build.warning(OPT_STR _T("NOTIFYHWND is disabled for non Win32 platforms."));
+#endif
+    }
+    argpos++;
+  }
+  argpos=orgargpos;
+
+  init_signals(build.notify_hwnd);
+
   while (argpos < argc)
   {
     if (!_tcscmp(argv[argpos], _T("--")))
@@ -388,14 +417,7 @@ int _tmain(int argc, TCHAR **argv)
       }
       else if (!_tcsicmp(&argv[argpos][1],_T("NOTIFYHWND")))
       {
-        if (!HasReqParam(argv, ++argpos, argc)) break;
-#ifdef _WIN32
-        build.notify_hwnd=(HWND)_ttol(argv[argpos]);
-        if (!IsWindow(build.notify_hwnd))
-          build.notify_hwnd=0;
-#else
-        build.warning(OPT_STR _T("NOTIFYHWND is disabled for non Win32 platforms."));
-#endif
+        ++argpos; // already parsed this
       }
       else if (!_tcsicmp(&argv[argpos][1],_T("HDRINFO")))
       {
@@ -515,7 +537,7 @@ int _tmain(int argc, TCHAR **argv)
           build.set_default_output_filename(remove_file_extension(nsifile)+_T(".exe"));
         }
 
-        build.notify(MAKENSIS_NOTIFY_SCRIPT,nsifile.c_str());
+        build.notify(MakensisAPI::NOTIFY_SCRIPT,nsifile.c_str());
         TCHAR bufcpdisp[20];
         strm.StreamEncoding().GetCPDisplayName(bufcpdisp);
         build.INFO_MSG(_T("Processing script file: \"%s\" (%s)\n"),nsifile.c_str(),bufcpdisp);

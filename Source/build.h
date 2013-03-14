@@ -70,12 +70,17 @@
 #define TP_PG     (TP_GLOBAL | TP_PAGEEX)
 #define TP_ALL    (TP_CODE | TP_PG)
 
-enum notify_e {
-  MAKENSIS_NOTIFY_SCRIPT, // main nsi file(s)
-  MAKENSIS_NOTIFY_WARNING,
-  MAKENSIS_NOTIFY_ERROR,
-  MAKENSIS_NOTIFY_OUTPUT // generated .exe file
-};
+namespace MakensisAPI {
+  extern const TCHAR* SigintEventNameFmt;
+  extern const TCHAR* SigintEventNameLegacy;
+
+  enum notify_e {
+    NOTIFY_SCRIPT, // main nsi file(s)
+    NOTIFY_WARNING,
+    NOTIFY_ERROR,
+    NOTIFY_OUTPUT // generated .exe file
+  };
+}
 
 #define PAGE_CUSTOM 0
 #define PAGE_LICENSE 1
@@ -137,7 +142,7 @@ class CEXEBuild {
     NStreamLineReader* curlinereader;
 
     HWND notify_hwnd;
-    void notify(notify_e code, const TCHAR *data) const;
+    void notify(MakensisAPI::notify_e code, const TCHAR *data) const;
 
   private:
     int check_write_output_errors() const;
