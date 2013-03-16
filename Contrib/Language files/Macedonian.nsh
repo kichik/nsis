@@ -1,7 +1,7 @@
 ﻿;Language: Macedonian (1071)
 ;By Sasko Zdravkin [wingman2083@yahoo.com]
 
-!insertmacro LANGFILE "Macedonian" "Macedonian" "Македонски"
+!insertmacro LANGFILE "Macedonian" = "Македонски" "Makedonski"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Добро дојдовте во инсталацијата на $(^NameDA)"

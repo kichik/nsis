@@ -1,7 +1,7 @@
 ﻿;Language: Norwegian (2068)
 ;By Jonas Lindsrøm (jonasc_88@hotmail.com) Reviewed and fixed by Jan Ivar Beddari, d0der at online.no
 
-!insertmacro LANGFILE "Norwegian" "Norwegian" "Norwegian"
+!insertmacro LANGFILE "Norwegian" = "Norsk" =
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Velkommen til veiviseren for installasjon av $(^NameDA) "
@@ -48,7 +48,7 @@
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Beveg musen over komponentene for å se beskrivelsen."
   !else
-    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Vel eit komponent for å se beskrivinga."
+    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Velg en komponent for å se beskrivelsen."
   !endif
 !endif
 

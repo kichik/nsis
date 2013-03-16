@@ -2,7 +2,7 @@
 ;By Darwin Rodrigo Toledo Cáceres - www.winamp-es.com - niwrad777@gmail.com
 ;Base by Monki y Joel
 
-!insertmacro LANGFILE "SpanishInternational" "Espanol (Alfabetizacion Internacional)" "Español (Alfabetización Internacional)"
+!insertmacro LANGFILE "SpanishInternational" "Spanish (International)" "Español (Alfabetización Internacional)" "Espanol (Alfabetizacion Internacional)"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Bienvenido al Asistente de Instalación de $(^NameDA)"

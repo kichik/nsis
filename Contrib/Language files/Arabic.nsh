@@ -2,7 +2,7 @@
 ;Translation by asdfuae@msn.com
 ;updated by Rami Kattan
 
-!insertmacro LANGFILE "Arabic" "Arabic" "العربية"
+!insertmacro LANGFILE "Arabic" = "العربية" "Al-Arabiyyah"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "مرحبا بك في مرشد إعداد $(^NameDA)"
@@ -49,8 +49,7 @@
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "أشر بالفأرة فوق أحد المكونات لرؤية الوصف"
   !else
-    # FIXME
-    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "أشر بالفأرة فوق أحد المكونات لرؤية الوصف"
+    #FIXME:MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO
   !endif
 !endif
 

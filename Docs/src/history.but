@@ -12,6 +12,16 @@ Released on ?, 2013
 
 \b MakeNSIS /NOTIFYHWND uses a (optional) new event name to abort compilation, see build.cpp/h for details.
 
+\S2{} Translations
+
+\b Changed LANGFILE macro in LangFile.nsh
+
+\b Warnings are now displayed for missing strings (LANGFILE_INCLUDE_WITHDEFAULT)
+
+\b Added Georgian (David Huriev)
+
+\b Added Pashto (Pakhtosoft)
+
 \H{v2.46} 2.46
 
 Released on December 6th, 2009

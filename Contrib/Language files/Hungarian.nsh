@@ -2,7 +2,7 @@
 ;Translation by Jozsef Tamas Herczeg ( - 1.61-ig),
 ;               Lajos Molnar (Orfanik) <orfanik@axelero.hu> ( 1.62 - től)
 
-!insertmacro LANGFILE "Hungarian" "Magyar" "Magyar"
+!insertmacro LANGFILE "Hungarian" = "Magyar" =
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Üdvözli a(z) $(^NameDA) Telepítő Varázsló"
@@ -49,8 +49,7 @@
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Vigye rá az egeret az összetevőre, hogy megtekinthesse a leírását."
   !else
-    # FIXME
-    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Vigye rá az egeret az összetevőre, hogy megtekinthesse a leírását."
+    #FIXME:MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO 
   !endif
 !endif
 

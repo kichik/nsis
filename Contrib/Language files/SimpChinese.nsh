@@ -2,7 +2,7 @@
 ;Translator: Kii Ali <kiiali@cpatch.org>,<kiiali@ms1.url.com.tw>, <kiiali@pchome.com.tw>
 ;Revision date: 2010-09-28
 
-!insertmacro LANGFILE "SimpChinese" "Chinese (Simplified)"
+!insertmacro LANGFILE "SimpChinese" "Chinese (Simplified)" "中文(简体)" "Hanyu (Jiantizi)"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "欢迎使用 $(^NameDA) 安装向导"

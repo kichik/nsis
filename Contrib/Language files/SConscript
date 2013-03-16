@@ -20,6 +20,7 @@ languages = Split("""
 	Finnish
 	French
 	Galician
+	Georgian
 	German
 	Greek
 	Hebrew
@@ -39,6 +40,7 @@ languages = Split("""
 	Mongolian
 	Norwegian
 	NorwegianNynorsk
+	Pashto
 	Polish
 	Portuguese
 	PortugueseBR

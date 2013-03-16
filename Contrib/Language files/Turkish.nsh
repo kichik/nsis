@@ -2,7 +2,7 @@
 ;By Çagatay Dilsiz(Chagy)
 ;Updated by Fatih BOY (fatih_boy@yahoo.com)
 
-!insertmacro LANGFILE "Turkish" "Turkce" "Türkçe"
+!insertmacro LANGFILE "Turkish" = "Türkçe" "Turkce"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "$(^NameDA) Kurulum sihirbazına hoş geldiniz"
@@ -49,8 +49,7 @@
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Bileşenlerin açıklamalarını görmek için imleci bileşen üzerine götürün."
   !else
-    # FIXME
-    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Bileşenlerin açıklamalarını görmek için imleci bileşen üzerine götürün."
+    #FIXME:MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO 
   !endif
 !endif
 

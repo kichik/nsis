@@ -1,7 +1,7 @@
 ﻿;Language: Portuguese (2070)
 ;By Ramon <ramon@netcabo.pt>
 
-!insertmacro LANGFILE "Portuguese" "Portugues" "Português"
+!insertmacro LANGFILE "Portuguese" = "Português" "Portugues"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Bem vindo ao Assistente de Instalação do $(^NameDA)"

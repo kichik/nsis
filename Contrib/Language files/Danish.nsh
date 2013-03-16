@@ -1,7 +1,7 @@
 ﻿;Language: Danish (1030)
 ;By Claus Futtrup
 
-!insertmacro LANGFILE "Danish" "Dansk" "Dansk"
+!insertmacro LANGFILE "Danish" = "Dansk" =
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Velkommen til installationsguiden for $(^NameDA)"
@@ -48,8 +48,7 @@
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Placer musemarkøren over en komponent for at se beskrivelsen af komponenten."
   !else
-    # FIXME
-    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Placer musemarkøren over en komponent for at se beskrivelsen af komponenten."
+    #FIXME:MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO
   !endif
 !endif
 

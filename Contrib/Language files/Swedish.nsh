@@ -1,8 +1,8 @@
-;Compatible with Modern UI 1.72
+﻿;Compatible with Modern UI 1.72
 ;Language: Swedish (1053)
 ;By Magnus Bonnevier (magnus.bonnevier@telia.com), updated by Rickard Angbratt (r.angbratt@home.se), updated by Ulf Axelsson (ulf.axelsson@gmail.com)
 
-!insertmacro LANGFILE "Swedish" "Svenska" "Svenska"
+!insertmacro LANGFILE "Swedish" = "Svenska" =
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Välkommen till installationsguiden för $(^NameDA)."

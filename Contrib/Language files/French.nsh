@@ -1,7 +1,7 @@
 ﻿;Language: French (1036)
 ;By Sébastien Delahaye <seb@delahaye.net>
 
-!insertmacro LANGFILE "French" "Francais" "Français"
+!insertmacro LANGFILE "French" = "Français" "Francais"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Bienvenue dans le programme d'installation de $(^NameDA)"
@@ -123,7 +123,7 @@
 !ifdef MULTIUSER_INSTALLMODEPAGE
   ${LangFileString} MULTIUSER_TEXT_INSTALLMODE_TITLE "Choix des utilisateurs"
   ${LangFileString} MULTIUSER_TEXT_INSTALLMODE_SUBTITLE "Sélection des utilisateurs désirant utiliser $(^NameDA)."
-  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_TOP "Choix entre installer $(^NameDA) seulement pour vous-même  ou bien pour tous les utilisateurs du système. $(^ClickNext)"
+  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_TOP "Choix entre installer $(^NameDA) seulement pour vous-même ou bien pour tous les utilisateurs du système. $(^ClickNext)"
   ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_ALLUSERS "Installer pour tous les utilisateurs"
   ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_CURRENTUSER "Installer seulement pour moi"
 !endif

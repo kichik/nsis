@@ -4,7 +4,7 @@
 ;Updated by Paweł Porwisz, http://www.pepesoft.tox.pl
 ;Corrected by Mateusz Gola (aka Prozac) - http://www.videopedia.pl/avirecomp
 
-!insertmacro LANGFILE "Polish" "Polski" "Polski"
+!insertmacro LANGFILE "Polish" = "Polski" =
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Witamy w kreatorze instalacji programu $(^NameDA)"
@@ -51,8 +51,7 @@
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Przesuń kursor myszy nad komponent, aby zobaczyć jego opis."
   !else
-    # FIXME
-    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Przesuń kursor myszy nad komponent, aby zobaczyć jego opis."
+    #FIXME:MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO 
   !endif
 !endif
 

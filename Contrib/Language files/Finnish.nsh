@@ -4,7 +4,7 @@
 ;Updated by Puuhis (puuhis@puuhis.net)
 ;Updated 11/08 by WTLib Team
 
-!insertmacro LANGFILE "Finnish" "Suomi" "Suomi"
+!insertmacro LANGFILE "Finnish" = "Suomi" =
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Tervetuloa $(^NameDA) -ohjelman asennukseen"

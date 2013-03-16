@@ -110,6 +110,10 @@
   !insertmacro MUI_LANGUAGE "Catalan"
   !insertmacro MUI_LANGUAGE "Esperanto"
   !insertmacro MUI_LANGUAGE "Asturian"
+  !insertmacro MUI_LANGUAGE "Pashto"
+!ifdef NSIS_UNICODE
+  !insertmacro MUI_LANGUAGE "Georgian"
+!endif
 
 ;--------------------------------
 ;Reserve Files

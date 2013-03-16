@@ -1,7 +1,7 @@
 ﻿;Language: Hebrew (1037)
 ;By Yaron Shahrabani
 
-!insertmacro LANGFILE "Hebrew" "Hebrew" "עברית"
+!insertmacro LANGFILE "Hebrew" = "עברית" "Ivrit"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "ברוכים הבאים לאשף ההתקנה של $(^NameDA)"

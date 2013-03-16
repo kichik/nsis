@@ -2,7 +2,7 @@
 ;By Yuri Holubow, http://www.Nash-Soft.com
 ;Correct by Osidach Vitaly (Vit_Os2)
 
-!insertmacro LANGFILE "Ukrainian" "Ukrainian" "Українська"
+!insertmacro LANGFILE "Ukrainian" = "Українська" "Ukrayins'ka"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Ласкаво просимо до Майстра Встановлення $(^NameDA)"
@@ -49,8 +49,7 @@
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Підведіть вашу мишку до компонента, щоб побачити його опис."
   !else
-    # FIXME
-    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Підведіть вашу мишку до компонента, щоб побачити його опис."
+    #FIXME:MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO 
   !endif
 !endif
 

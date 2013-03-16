@@ -1,9 +1,9 @@
-;Language: Italian (1040)
+﻿;Language: Italian (1040)
 ;By SANFACE Software <sanface@sanface.com> v1.67 accents
 ;Review and update from v1.65 to v1.67 by Alessandro Staltari < staltari (a) geocities.com >
 ;Review and update from v1.67 to v1.68 by Lorenzo Bevilacqua < meow811@libero.it >
 
-!insertmacro LANGFILE "Italian" "Italiano" "Italiano"
+!insertmacro LANGFILE "Italian" = "Italiano" =
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Benvenuti nel programma di installazione di $(^NameDA)"

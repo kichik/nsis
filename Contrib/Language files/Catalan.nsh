@@ -1,7 +1,7 @@
 ﻿;Language: Catalan (1027)
 ;By falanko, corrections by Toni Hermoso Pulido
 
-!insertmacro LANGFILE "Catalan" "Catala" "Català"
+!insertmacro LANGFILE "Catalan" = "Català" "Catala"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Benvinguts a l'auxiliar d'instal·lació de l'aplicació $(^NameDA)"
@@ -48,8 +48,7 @@
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Situeu el ratolí damunt d'un component per a veure'n la descripció."
   !else
-    # FIXME
-    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Situeu el ratolí damunt d'un component per a veure'n la descripció."
+    #FIXME:MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO
   !endif
 !endif
 
