@@ -1,7 +1,7 @@
 ﻿;Language: Norwegian nynorsk (2068)
 ;By Vebjoern Sture and Håvard Mork (www.firefox.no)
 
-!insertmacro LANGFILE "NorwegianNynorsk" "Norwegian nynorsk" "Norwegian nynorsk"
+!insertmacro LANGFILE "NorwegianNynorsk" "Norwegian (Nynorsk)" "Norsk (nynorsk)" =
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Velkommen til $(^NameDA) innstallasjonsvegvisar"
@@ -48,7 +48,7 @@
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Beveg musa over komponentene for å sjå beskrivinga."
   !else
-    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Vel eit komponent for å seå beskrivinga."
+    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Vel ein komponent for å sjå beskrivinga."
   !endif
 !endif
 

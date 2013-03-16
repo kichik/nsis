@@ -1,7 +1,7 @@
 ﻿;Language: Serbian (3098)
 ;Translation by Срђан Обућина <obucina@srpskijezik.edu.yu>
 
-!insertmacro LANGFILE "Serbian" "Serbian Cyrillic" "Српски"
+!insertmacro LANGFILE "Serbian" "Serbian (Cyrillic)" "Српски" "Srpski (Cyrillic)"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Добродошли у водич за инсталацију програма $(^NameDA)"

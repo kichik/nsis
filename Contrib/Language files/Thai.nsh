@@ -1,7 +1,7 @@
 ﻿;Language: Thai (1054)
 ;By SoKoOLz, TuW@nNu (asdfuae)
 
-!insertmacro LANGFILE "Thai" "Thai" "ไทย"
+!insertmacro LANGFILE "Thai" = "ไทย" /* TODO: ISO 11940? */ "Thai"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "ยินดีต้อนรับเข้าสู่การติดตั้งโปรแกรม $(^NameDA) "

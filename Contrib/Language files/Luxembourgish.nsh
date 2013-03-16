@@ -1,7 +1,7 @@
 ﻿;Language: Luxembourgish (1031)
 ;By Snowloard, changes by Philo
 
-!insertmacro LANGFILE "Luxembourgish" "Letzebuergesch" "Lëtzebuergesch"
+!insertmacro LANGFILE "Luxembourgish" = "Lëtzebuergesch" "Letzebuergesch"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Wëllkomm beim Installatiouns-$\r$\nAssistent vun $(^NameDA)"
@@ -48,8 +48,7 @@
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Hal den Mausfeil iwwer eng Komponent, fir d'Beschreiwung dervun ze gesinn."
   !else
-    # FIXME
-    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Hal den Mausfeil iwwer eng Komponent, fir d'Beschreiwung dervun ze gesinn."
+    #FIXME:MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO 
   !endif
 !endif
 

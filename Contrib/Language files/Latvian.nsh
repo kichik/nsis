@@ -2,7 +2,7 @@
 ;By Valdis Griķis
 ;Corrections by Kristaps Meņģelis / x-f (x-f 'AT' inbox.lv)
 
-!insertmacro LANGFILE "Latvian" "Latviesu" "Latviešu"
+!insertmacro LANGFILE "Latvian" = "Latviešu" "Latviesu"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Esiet sveicināti '$(^NameDA)' uzstādīšanas vednī"
@@ -49,8 +49,7 @@
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Novietojiet peles kursoru uz komponenta, lai tiktu parādīts tā apraksts."
   !else
-    # FIXME
-    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Novietojiet peles kursoru uz komponenta, lai tiktu parādīts tā apraksts."
+    #FIXME:MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO 
   !endif
 !endif
 

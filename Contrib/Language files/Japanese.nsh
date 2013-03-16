@@ -2,7 +2,7 @@
 ;By Dnanako
 ;Translation updated by Takahiro Yoshimura <takahiro_y@monolithworks.co.jp>
 
-!insertmacro LANGFILE "Japanese" "Japanese" "日本語"
+!insertmacro LANGFILE "Japanese" = "日本語" "Nihongo"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "$(^NameDA) セットアップ ウィザードへようこそ"

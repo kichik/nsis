@@ -1,11 +1,11 @@
 ﻿;Language: Khmer (1033)
 ;By yi.sophally
 
-!insertmacro LANGFILE "Khmer" "Khmer" "ភាសាខ្មែរ"
+!insertmacro LANGFILE "Khmer" = "ភាសាខ្មែរ" "Khmer"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "សូមស្វាគមន៍ចំពោះការ​ដំឡើង​កម្មវិធី​ $(^NameDA)"
-  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "កម្មវិធីជំនួយនេះនឹងនាំអ្នកដល់​ការ​ដំឡើង​កម្មវិធី​នៃកម្មវិធី $(^NameDA).$\r$\n$\r$\nIt ដែល​សូម​អោយ​អ្នក​បិទ​នូវ​កម្ម​វិធី​ទាំងឡាយ​ផ្សេង​ទៀត​មុន​ពេល​ចាប់ផ្តើម​ការ​ដំឡើង​។ ដើម្បី​ងាយ​ស្រួល​ក្នុង​ការ​កែប្រែ​ឯកសារ​នៃប្រព័ន្ធប្រតិបត្តការ​ដោយ​មិន​ចាំបាច់​ចាប់​ផ្តើម​ដំណើរ​ការ​ម៉ាស៊ីនរបស់​អ្នក​​សារ​ជា​ថ្មី។​ $\r$\n$\r$\n$_CLICK"
+  ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "កម្មវិធីជំនួយនេះនឹងនាំអ្នកដល់​ការ​ដំឡើង​កម្មវិធី​នៃកម្មវិធី $(^NameDA).$\r$\n$\r$\nIt ដែល​សូម​អោយ​អ្នក​បិទ​នូវ​កម្ម​វិធី​ទាំងឡាយ​ផ្សេង​ទៀត​មុន​ពេល​ចាប់ផ្តើម​ការ​ដំឡើង​។ ដើម្បី​ងាយ​ស្រួល​ក្នុង​ការ​កែប្រែ​ឯកសារ​នៃប្រព័ន្ធប្រតិបត្តការ​ដោយ​មិន​ចាំបាច់​ចាប់​ផ្តើម​ដំណើរ​ការ​ម៉ាស៊ីនរបស់​អ្នក​​សារ​ជា​ថ្មី។​ $\r$\n$\r$\n$_CLICK" #FIXME? BUGBUG: "It"?
 !endif
 
 !ifdef MUI_UNWELCOMEPAGE
@@ -24,7 +24,7 @@
 !ifdef MUI_UNLICENSEPAGE
   ${LangFileString} MUI_UNTEXT_LICENSE_TITLE "កិច្ចព្រមព្រាង​អាជ្ញា​ប័ណ្ណ"
   ${LangFileString} MUI_UNTEXT_LICENSE_SUBTITLE "សូម​អាន​អាជ្ញាប័ណ្ណ​អោយ​បាន​ត្រឹម​ត្រូវ​មុន​ពេល​លុប​កម្មវិធី​ $(^NameDA)ចេញ។​"
-  ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM "ប្រសិន​បើ​អ្នក​យល់​ព្រម​តាម​កិច្ចព្រម​ព្រាង​ សូម​ចុច​ I Agree ដើម្បី​ដំណើរការ​បន្ត។ ដើម្បីលុប​កម្មវិធី​ $(^NameDA) នេះ​អ្នក​ត្រូវ​តែ​យល់ព្រម​តាម​កិច្ចព្រមព្រាង​ $_CLICK"
+  #FIXME:MUI_UNINNERTEXT_LICENSE_BOTTOM "ប្រសិន​បើ​អ្នក​យល់​ព្រម​តាម​កិច្ចព្រម​ព្រាង​ សូម​ចុច​ I Agree ដើម្បី​ដំណើរការ​បន្ត។ ដើម្បីលុប​កម្មវិធី​ $(^NameDA) នេះ​អ្នក​ត្រូវ​តែ​យល់ព្រម​តាម​កិច្ចព្រមព្រាង​ $_CLICK"
   ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "ប្រសិន​បើ​អ្នក​យល់​ព្រម​តាម​កិច្ចព្រម​ព្រាង​សូម​ចុច​ធិច​ប្រអប់​ខាងក្រោម​។ ដើម្បីលុបកម្មវិធី​ $(^NameDA) នេះ​អ្នក​ត្រូវ​តែ​យល់ព្រម​តាម​កិច្ចព្រមព្រាង​ $_CLICK"
   ${LangFileString} MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "ប្រសិន​បើ​អ្នក​យល់​ព្រម​តាម​កិច្ចព្រម​ព្រាង​សូមជ្រើសរើស​ជំរើស​ទីមួយ​ខាង​ក្រោម​។ ដើម្បីលុប​កម្មវិធី​ $(^NameDA) នេះ​អ្នក​ត្រូវ​តែ​យល់ព្រម​តាម​កិច្ចព្រមព្រាង $_CLICK"
 !endif
@@ -48,8 +48,7 @@
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "ដាក់កណ្តុរ​បញ្ជារបស់​អ្នក​លើ​សមាសភាគ​ណា​មួយ​ដើម្បី​មើល​ការ​ពិពណ៍នារបស់​វា​​។"
   !else
-    # FIXME
-    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "ដាក់កណ្តុរ​បញ្ជារបស់​អ្នក​លើ​សមាសភាគ​ណា​មួយ​ដើម្បី​មើល​ការ​ពិពណ៍នារបស់​វា​​។"
+    #FIXME:MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO 
   !endif
 !endif
 
@@ -83,25 +82,26 @@
 
 !ifdef MUI_FINISHPAGE
   ${LangFileString} MUI_TEXT_FINISH_INFO_TITLE "កម្មវិធី​ជំនួយ​ក្នុងការ​ដំឡើង​ $(^NameDA) កំពុងត្រូវ​បាន​បញ្ចប់​"
-  ${LangFileString} MUI_TEXT_FINISH_INFO_TEXT "កម្មវិធី​ $(^NameDA) បាន​ត្រូវ​ដំឡើង​រួចរាល់​នៅក្នុង​កុំព្យូទ័រ​របស់​អ្នក​។ $\r$\n$\r$\nចុច​ Finish ដើម្បីបិទកម្មវិធីជំនួយ​នេះ​"
+  #FIXME:MUI_TEXT_FINISH_INFO_TEXT "កម្មវិធី​ $(^NameDA) បាន​ត្រូវ​ដំឡើង​រួចរាល់​នៅក្នុង​កុំព្យូទ័រ​របស់​អ្នក​។ $\r$\n$\r$\nចុច​ Finish ដើម្បីបិទកម្មវិធីជំនួយ​នេះ​"
   ${LangFileString} MUI_TEXT_FINISH_INFO_REBOOT "កុំព្យូទ័រ​របស់​អ្នក​ត្រូវតែ​ចាប់​ដំណើរ​ការ​សារ​ជាថ្មី​ដើម្បី​បំពេញ​ការ​ដំឡើង​កម្មវិធី​ $(^NameDA)​ នេះ។ តើ​អ្នក​ចង់ចាប់ផ្តើមដំណើរការ​​កុំព្យូទ័រអ្នក​ឡើង​វិញ​ពេល​នេះ​?"
 !endif
 
 !ifdef MUI_UNFINISHPAGE
   ${LangFileString} MUI_UNTEXT_FINISH_INFO_TITLE "កម្មវិធី​ជំនួយ​ក្នុងការ​លុប​ $(^NameDA) កំពុងត្រូវ​បាន​បញ្ចប់"
-  ${LangFileString} MUI_UNTEXT_FINISH_INFO_TEXT "កម្មវិធី​ $(^NameDA) បាន​ត្រូវ​លុប​រួចរាល់​ពី​ក្នុង​កុំព្យូទ័រ​របស់​អ្នក​។ $\r$\n$\r$\nចុច​ Finish ដើម្បីបិទកម្មវិធីជំនួយ​នេះ​"
+  #FIXME:MUI_UNTEXT_FINISH_INFO_TEXT "កម្មវិធី​ $(^NameDA) បាន​ត្រូវ​លុប​រួចរាល់​ពី​ក្នុង​កុំព្យូទ័រ​របស់​អ្នក​។ $\r$\n$\r$\nចុច​ Finish ដើម្បីបិទកម្មវិធីជំនួយ​នេះ​"
   ${LangFileString} MUI_UNTEXT_FINISH_INFO_REBOOT "កុំព្យូទ័រ​របស់​អ្នក​ត្រូវតែ​ចាប់​ដំណើរ​ការ​សារ​ជាថ្មី​ដើម្បី​បំពេញ​ការ​ដំឡើង​កម្មវិធី​ $(^NameDA)​ នេះ។ តើ​អ្នក​ចង់ចាប់ផ្តើមដំណើរការ​​កុំព្យូទ័រអ្នក​ឡើង​វិញ​ពេល​នេះ​?"
 !endif
 
 !ifdef MUI_FINISHPAGE | MUI_UNFINISHPAGE
   ${LangFileString} MUI_TEXT_FINISH_REBOOTNOW "ចាប់ផ្តើមដំណើរការ​​កុំព្យូទ័រឡើង​វិញ​ពេល​នេះ​"
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "ចង់​ដំណើរការ​កុំព្យូទ័រ​ដោយ​ខ្លួន​ឯង​ពេល​ក្រោយ​"
-  ${LangFileString} MUI_TEXT_FINISH_RUN "&Run $(^NameDA)"
-  ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "&Show Readme"
-  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Finish"  
+  #FIXME:MUI_TEXT_FINISH_RUN
+  #FIXME:MUI_TEXT_FINISH_SHOWREADME 
+  #FIXME:MUI_BUTTONTEXT_FINISH 
 !endif
 
 !ifdef MUI_STARTMENUPAGE
+	#FIXME?
   ${LangFileString} MUI_TEXT_STARTMENU_TITLE "ជ្រើសរើស​ថត​ម៉ឺនុយ Start "
   ${LangFileString} MUI_TEXT_STARTMENU_SUBTITLE "ជ្រើសរើស​ថត​ម៉ឺនុយ Start ដើម្បី​បង្កើត​ផ្លូវ​កាត់​ទៅ​កម្ម​វិធី​ $(^NameDA) ។"
   ${LangFileString} MUI_INNERTEXT_STARTMENU_TOP "ជ្រើសរើស​ថត​ម៉ឺនុយ Start ដែល​អ្នក​ចង់​បង្កើត​ផ្លូវកាត់​ទៅ​កម្មវិធី​​នេះ​។​ អ្នក​ក៏​អាច​បញ្ចូលឈ្មោះមួយ​ដើម្បី​បង្កើត​ថត​ថ្មីមួយទៀត​។"

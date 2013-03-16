@@ -1,7 +1,7 @@
 ﻿;Language: Galician (1110)
 ;Ramon Flores <fa2ramon@usc.es>
 
-!insertmacro LANGFILE "Galician" "Galego" "Galego"
+!insertmacro LANGFILE "Galician" = "Galego" =
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Benvindo ao Asistente de Instalación do $(^NameDA)"

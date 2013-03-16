@@ -2,7 +2,7 @@
 ;By SELiCE (ls@selice.cz - http://ls.selice.cz)
 ;Corrected by Ondřej Vaniš - http://www.vanis.cz/ondra
 
-!insertmacro LANGFILE "Czech" "Cestina" "Čeština"
+!insertmacro LANGFILE "Czech" = "Čeština" "Cestina"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Vítejte v průvodci instalace programu $(^NameDA)"
@@ -49,8 +49,7 @@
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Při pohybu myší nad instalátorem programu se zobrazí její popis."
   !else
-    # FIXME
-    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Při pohybu myší nad instalátorem programu se zobrazí její popis."
+    #FIXME:MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO
   !endif
 !endif
 

@@ -1,7 +1,7 @@
 ﻿;Language: Uzbek (1091)
 ;Translation updated by Emil Garipov [emil.garipov@gmail.com] 
 
-!insertmacro LANGFILE "Uzbek" "O'zbek" "O‘zbek"
+!insertmacro LANGFILE "Uzbek" = "O‘zbek" "O'zbek"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Sizni o'rnatish dastur tabriklaydi $(^NameDA)"

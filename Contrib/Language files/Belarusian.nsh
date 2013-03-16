@@ -1,7 +1,7 @@
 ﻿;Language: Belarusian (1059)
 ;Translated by Sitnikov Vjacheslav [ glory_man@tut.by ]
 
-!insertmacro LANGFILE "Belarusian" "Byelorussian" "Беларуская"
+!insertmacro LANGFILE "Belarusian" = "Беларуская" "Byelorussian"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Вас вiтае майстар ўстаноўкі $(^NameDA)"

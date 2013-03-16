@@ -7,7 +7,8 @@
 ;	- ".. produsului" removed as unnecessary
 ;	- "Elimină" related terms replaced with more appropiate "Dezinstalează"
 ;	- Misc language tweaks
-!insertmacro LANGFILE "Romanian" "Romana" "Română"
+
+!insertmacro LANGFILE "Romanian" = "Română" "Romana"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Bine aţi venit la instalarea $(^NameDA)"
@@ -58,8 +59,7 @@
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Aşezaţi mouse-ul deasupra fiecărei componente pentru a vizualiza descrierea acesteia."
   !else
-    # FIXME
-    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Aşezaţi mouse-ul deasupra fiecărei componente pentru a vizualiza descrierea acesteia."
+    #FIXME:MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO 
   !endif
 !endif
 

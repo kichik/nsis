@@ -1,7 +1,7 @@
 ﻿;Language: Farsi (1065)
 ;By FzerorubigD - FzerorubigD@gmail.com - Thanx to all people help me in forum.persiantools.com
 
-!insertmacro LANGFILE "Farsi" "Farsi" "فارسی"
+!insertmacro LANGFILE "Farsi" "Persian" "فارسی" "Farsi"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "به برنامه نصب $(^NameDA) خوش آمدید."

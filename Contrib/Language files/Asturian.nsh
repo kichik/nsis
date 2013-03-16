@@ -1,7 +1,7 @@
 ﻿;Language: Asturian (1150)
 ;By Marcos (marcoscostales@gmail.com).
 
-!insertmacro LANGFILE "Asturian" "Asturies" "Asturies"
+!insertmacro LANGFILE "Asturian" = "Asturies" =
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Bienveníu al Asistente d'Instalación de $(^NameDA)"
@@ -48,8 +48,7 @@
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Allugue'l mur enriba d'un componente pa ver la so descripción."
   !else
-    # FIXME
-    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Allugue'l mur enriba d'un componente pa ver la so descripción."
+    #FIXME:MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO
   !endif
 !endif
 

@@ -1,7 +1,7 @@
 ﻿;Language: Estonian (1061)
 ;Translated by johnny izzo (izzo@hot.ee)
 
-!insertmacro LANGFILE "Estonian" "Eesti keel" "Eesti keel"
+!insertmacro LANGFILE "Estonian" = "Eesti keel" =
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "$(^NameDA) paigaldamine!"

@@ -7,7 +7,7 @@
 ;     - MUI_UNTEXT_FINISH_INFO_TITLE - mudança de completando para concluindo
 ;     - MUI_TEXT_FINISH_SHOWREADME - mudança de Readme para Leiame
 
-!insertmacro LANGFILE "PortugueseBR" "Portugues Brasileiro" "Português Brasileiro"
+!insertmacro LANGFILE "PortugueseBR" "Brazilian Portuguese" "Português Brasileiro" "Portugues Brasileiro"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Bem-vindo ao Assistente de Instalação da $(^NameDA)"

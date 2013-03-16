@@ -1,7 +1,7 @@
 ﻿;Language: Vietnamese (1066)
 ;By NGUYỄN Mạnh Hùng <loveleeyoungae@yahoo.com>
 
-!insertmacro LANGFILE "Vietnamese" "Tieng Viet" "Tiếng Việt"
+!insertmacro LANGFILE "Vietnamese" = "Tiếng Việt" "Tieng Viet"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Chào mừng đến với Trợ lí Cài đặt $(^NameDA)"
@@ -48,8 +48,7 @@
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Rê chuột lên trên một thành phần để thấy mô tả của nó."
   !else
-    # FIXME
-    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Rê chuột lên trên một thành phần để thấy mô tả của nó."
+    #FIXME:MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO 
   !endif
 !endif
 

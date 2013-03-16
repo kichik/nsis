@@ -1,7 +1,7 @@
 ﻿;Language: Bosnian (5146)
 ;By Salih Čavkić, cavkic@skynet.be
 
-!insertmacro LANGFILE "Bosnian" "Bosanski" "Bosanski"
+!insertmacro LANGFILE "Bosnian" = "Bosanski" =
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Dobrodošli u program za instalaciju $(^NameDA)"

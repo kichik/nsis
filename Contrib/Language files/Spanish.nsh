@@ -2,7 +2,7 @@
 ;By MoNKi & Joel
 ;Updates & Review Darwin Rodrigo Toledo Cáceres - www.winamp-es.com - niwrad777@gmail.com
 
-!insertmacro LANGFILE "Spanish" "Espanol" "Español"
+!insertmacro LANGFILE "Spanish" = "Español" "Espanol"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Bienvenido al Asistente de Instalación de $(^NameDA)"

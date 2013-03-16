@@ -2,7 +2,7 @@
 ;By Rêzan Tovjîn
 ;Updated by Erdal Ronahî (erdal.ronahi@gmail.com)
 
-!insertmacro LANGFILE "Kurdish" "Kurdi" "Kurdî"
+!insertmacro LANGFILE "Kurdish" = "Kurdî" "Kurdi"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "$(^NameDA) Tu bi xêr hatî sêrbaziya sazkirinê"

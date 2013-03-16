@@ -1,7 +1,7 @@
 ﻿;Language: Afrikaans (1078)
 ;By Friedel Wolff
 
-!insertmacro LANGFILE "Afrikaans" "Afrikaans" "Afrikaans"
+!insertmacro LANGFILE "Afrikaans" = "Afrikaans" =
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Welkom by die $(^NameDA) Installasieslimmerd"

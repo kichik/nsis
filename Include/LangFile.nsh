@@ -2,10 +2,10 @@
 
 LangFile.nsh
 
-Header file to create langauge files that can be
+Header file to create language files that can be
 included with a single command.
 
-Copyright 2008-2009 Joost Verburg
+Copyright 2008-2013 Joost Verburg, Anders Kjersem
 
 * Either LANGFILE_INCLUDE or LANGFILE_INCLUDE_WITHDEFAULT
   can be called from the script to include a language
@@ -13,12 +13,10 @@ Copyright 2008-2009 Joost Verburg
 
   - LANGFILE_INCLUDE takes the language file name as parameter.
   - LANGFILE_INCLUDE_WITHDEFAULT takes as additional second
-    parameter the default language file to load missing strings
+    parameter, the default language file to load missing strings
     from.
 
-* A language file start with:
-  !insertmacro LANGFILE_EXT "English"
-  using the same name as the standard NSIS language file.
+* A language file must start by inserting the LANGFILE macro.
 
 * Language strings in the language file have the format:
   ${LangFileString} LANGSTRING_NAME "Text"
@@ -30,7 +28,7 @@ Copyright 2008-2009 Joost Verburg
 
 !macro LANGFILE_INCLUDE FILENAME
 
-  ;Called from script: include a langauge file
+  ;Called from script: include a language file
 
   !ifdef LangFileString
     !undef LangFileString
@@ -43,16 +41,14 @@ Copyright 2008-2009 Joost Verburg
   !undef LANGFILE_SETNAMES
 
   ;Create language strings
-
-  !undef LangFileString
-  !define LangFileString "!insertmacro LANGFILE_LANGSTRING"
+  !define /redef LangFileString "!insertmacro LANGFILE_LANGSTRING"
   !include "${FILENAME}"
 
 !macroend
 
 !macro LANGFILE_INCLUDE_WITHDEFAULT FILENAME FILENAME_DEFAULT
 
-  ;Called from script: include a langauge file
+  ;Called from script: include a language file
   ;Obtains missing strings from a default file
 
   !ifdef LangFileString
@@ -66,18 +62,27 @@ Copyright 2008-2009 Joost Verburg
   !undef LANGFILE_SETNAMES
 
   ;Include default language for missing strings
+  !define LANGFILE_PRIV_INCLUDEISFALLBACK "${FILENAME_DEFAULT}"
   !include "${FILENAME_DEFAULT}"
-  
+  !undef LANGFILE_PRIV_INCLUDEISFALLBACK
+
   ;Create language strings
-  !undef LangFileString
-  !define LangFileString "!insertmacro LANGFILE_LANGSTRING"
+  !define /redef LangFileString "!insertmacro LANGFILE_LANGSTRING"
   !include "${FILENAME_DEFAULT}"
 
 !macroend
 
-!macro LANGFILE IDNAME ASCIINAME LOCNAME
+!macro LANGFILE NLFID ENGNAME NATIVENAME NATIVEASCIINAME
 
   ;Start of standard NSIS language file
+
+  ; NLFID: Must match the name of the .nlf file
+  ; ENGNAME: English name of language, "=" if it is the same as NLFID
+  ; NATIVENAME: Native name of language. (In Unicode)
+  ; NATIVEASCIINAME: Native name of language using only ASCII, "=" if it is the same as NATIVENAME
+
+  ; Example: LANGFILE "Swedish" = "Svenska" =
+  ; For more examples, see French.nsh, Greek.nsh and PortugueseBR.nsh
 
   !ifdef LANGFILE_SETNAMES
 
@@ -85,16 +90,35 @@ Copyright 2008-2009 Joost Verburg
       !undef LANGFILE_IDNAME
     !endif
 
-    !define LANGFILE_IDNAME "${IDNAME}"
+    !define LANGFILE_IDNAME "${NLFID}"
 
-    !ifndef "LANGFILE_${IDNAME}_NAME"
-      !ifndef MUI_LANGDLL_ALLLANGUAGES
-        !define "LANGFILE_${IDNAME}_NAME" "${LOCNAME}"
-      !else ifdef NSIS_UNICODE
-        !define "LANGFILE_${IDNAME}_NAME" "${LOCNAME}"
-      !else
-        !define "LANGFILE_${IDNAME}_NAME" "${ASCIINAME}"
+    ; ModernUI or the .nsi can change LANGFILE_LANGDLL_FMT if desired
+    !ifndef LANGFILE_LANGDLL_FMT
+      !ifndef NSIS_UNICODE
+        !define LANGFILE_LANGDLL_FMT "%ENGNAME% / %NATIVEASCIINAME%"
       !endif
+      !define /ifndef LANGFILE_LANGDLL_FMT "%NATIVENAME%"
+    !endif
+
+    !ifndef "LANGFILE_${NLFID}_NAME"
+      !if "${ENGNAME}" == "="
+        !define /redef ENGNAME "${NLFID}"
+      !endif
+      !if "${NATIVEASCIINAME}" == "="
+        !define /redef NATIVEASCIINAME "${NATIVENAME}"
+      !endif
+
+      !define "LANGFILE_${NLFID}_ENGLISHNAME" "${ENGNAME}"
+      !ifdef NSIS_UNICODE
+        !define "LANGFILE_${NLFID}_NAME" "${NATIVENAME}"
+      !else
+        !define "LANGFILE_${NLFID}_NAME" "${NATIVEASCIINAME}"
+      !endif
+
+      !searchreplace LANGFILE_${NLFID}_LANGDLL "${LANGFILE_LANGDLL_FMT}" %NATIVEASCIINAME% "${NATIVEASCIINAME}"
+      !searchreplace LANGFILE_${NLFID}_LANGDLL "${LANGFILE_${NLFID}_LANGDLL}" %NATIVENAME% "${NATIVENAME}"
+      !searchreplace LANGFILE_${NLFID}_LANGDLL "${LANGFILE_${NLFID}_LANGDLL}" %ENGNAME% "${ENGNAME}"
+
     !endif
 
   !endif
@@ -123,6 +147,9 @@ Copyright 2008-2009 Joost Verburg
 
   !ifndef ${NAME}
     !define "${NAME}" "${VALUE}"
+    !ifdef LANGFILE_PRIV_INCLUDEISFALLBACK
+      !warning 'LangString "${NAME}" for language ${LANGFILE_IDNAME} is missing, using fallback from "${LANGFILE_PRIV_INCLUDEISFALLBACK}"'
+    !endif
   !endif
 
 !macroend

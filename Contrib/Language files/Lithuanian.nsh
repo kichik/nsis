@@ -1,7 +1,7 @@
 ﻿;Language: Lithuanian (1063)
 ;By Vytautas Krivickas (Vytautas). Updated by Danielius Scepanskis (Daan daniel@takas.lt) 2004.01.09
 
-!insertmacro LANGFILE "Lithuanian" "Lietuviu" "Lietuvių"
+!insertmacro LANGFILE "Lithuanian" = "Lietuvių" "Lietuviu"
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Sveiki atvykę į $(^NameDA) įdiegimo programą."
