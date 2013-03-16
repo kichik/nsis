@@ -568,7 +568,7 @@ parse_again:
       {
         if (p & 1)
         {
-          int new_s;
+          bool new_s;
           if (tkid == TOK_P_IFNDEF || tkid == TOK_P_IFDEF)
             new_s=!!definedlist.find(line.gettoken_str(p));
           else
@@ -877,30 +877,35 @@ int CEXEBuild::includeScript(const TCHAR *f, NStreamEncoding&enc)
   return PS_OK;
 }
 
-// !ifmacro[n]def based on Anders Kjersem's code
-int CEXEBuild::MacroExists(const TCHAR *macroname)
+TCHAR* CEXEBuild::GetMacro(const TCHAR *macroname, TCHAR**macroend /*= 0*/)
 {
-  TCHAR *m = (TCHAR *) m_macros.get();
-
-  while (m && *m)
+  TCHAR *t = (TCHAR*)m_macros.get(), *mbeg, *mbufbeg = t;
+  for (; t && *t; ++t)
   {
-    // check if macroname matches
-    if (!_tcsicmp(m, macroname))
-      return 1;
+    mbeg = t;
+    const bool foundit = !_tcsicmp(mbeg, macroname);
+    t += _tcslen(t) + 1; // advance over macro name
 
-    // skip macro name
-    m += _tcslen(m) + 1;
+    // advance over parameters
+    while (*t) t += _tcslen(t) + 1;
+    t++;
 
-    // skip params
-    while (*m) m += _tcslen(m) + 1;
-    m++;
+    // advance over data
+    while (*t) t += _tcslen(t) + 1;
 
-    // skip data
-    while (*m) m += _tcslen(m) + 1;
-    if (m - (TCHAR *) m_macros.get() >= m_macros.getlen() - 1) break;
-    m++;
+    if (foundit)
+    {
+      if (macroend) *macroend = t;
+      return mbeg;
+    }
+    
+    if (t-mbufbeg >= m_macros.getlen()-1) break;
   }
   return 0;
+}
+inline bool CEXEBuild::MacroExists(const TCHAR *macroname)
+{
+  return !!GetMacro(macroname);
 }
 
 int CEXEBuild::LoadLicenseFile(const TCHAR *file, TCHAR** pdata, const TCHAR *cmdname, WORD AnsiCP) // caller must free *pdata, even on error result
@@ -990,8 +995,8 @@ int CEXEBuild::process_oneline(TCHAR *line, const TCHAR *filename, int linenum)
   TCHAR *oldfilename = NULL;
   TCHAR *oldtimestamp = NULL;
   TCHAR *oldline = NULL;
-  BOOL is_commandline = !_tcscmp(filename,_T("<command line>"));
-  BOOL is_macro = !_tcsncmp(filename,_T("macro:"),_tcslen(_T("macro:")));
+  bool is_commandline = !_tcscmp(filename,_T("<command line>"));
+  bool is_macro = !_tcsncmp(filename,_T("macro:"),_tcslen(_T("macro:")));
 
   if(!is_commandline) { // Don't set the predefines for command line /X option
     if(!is_macro) {
@@ -1060,7 +1065,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     _T("HKCR\0HKLM\0HKCU\0HKU\0HKCC\0HKDD\0HKPD\0SHCTX\0"),
     _T("HKEY_CLASSES_ROOT\0HKEY_LOCAL_MACHINE\0HKEY_CURRENT_USER\0HKEY_USERS\0HKEY_CURRENT_CONFIG\0HKEY_DYN_DATA\0HKEY_PERFORMANCE_DATA\0SHELL_CONTEXT\0")
   };
-  static HKEY rootkey_tab[] = {
+  static const HKEY rootkey_tab[] = {
     HKEY_CLASSES_ROOT,HKEY_LOCAL_MACHINE,HKEY_CURRENT_USER,HKEY_USERS,HKEY_CURRENT_CONFIG,HKEY_DYN_DATA,HKEY_PERFORMANCE_DATA,0
   };
 
@@ -1076,29 +1081,15 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     ///////////////////////////////////////////////////////////////////////////////
     case TOK_P_MACRO:
       {
-        if (!line.gettoken_str(1)[0]) PRINTHELP()
-        TCHAR *t=(TCHAR *)m_macros.get();
-        while (t && *t)
+        const TCHAR*const macroname=line.gettoken_str(1);
+        if (!macroname[0]) PRINTHELP()
+        TCHAR *t=GetMacro(macroname);
+        if (t)
         {
-          if (!_tcsicmp(t,line.gettoken_str(1))) break;
-          t+=_tcslen(t)+1;
-
-          // advance over parameters
-          while (*t) t+=_tcslen(t)+1;
-          t++;
-
-          // advance over data
-          while (*t) t+=_tcslen(t)+1;
-          if (t-(TCHAR *)m_macros.get() >= m_macros.getlen()-1)
-            break;
-          t++;
-        }
-        if (t && *t)
-        {
-          ERROR_MSG(_T("!macro: macro named \"%s\" already found!\n"),line.gettoken_str(1));
+          ERROR_MSG(_T("!macro: macro named \"%s\" already found!\n"),macroname);
           return PS_ERROR;
         }
-        m_macros.add(line.gettoken_str(1),(_tcslen(line.gettoken_str(1))+1)*sizeof(TCHAR));
+        m_macros.add(macroname,(_tcslen(macroname)+1)*sizeof(TCHAR));
 
         int pc;
         for (pc=2; pc < line.getnumtokens(); pc ++)
@@ -1133,7 +1124,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             {
               if (!str[0])
               {
-                ERROR_MSG(_T("!macro \"%s\": unterminated (no !macroend found in file)!\n"),line.gettoken_str(1));
+                ERROR_MSG(_T("!macro \"%s\": unterminated (no !macroend found in file)!\n"),macroname);
                 return PS_ERROR;
               }
             }
@@ -1175,34 +1166,16 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return PS_ERROR;
     case TOK_P_MACROUNDEF:
       {
-        const TCHAR* mname=line.gettoken_str(1);
+        const TCHAR*const mname=line.gettoken_str(1);
         if (!mname[0]) PRINTHELP()
-        TCHAR *t=(TCHAR *)m_macros.get(), *mbeg, *mend=0, *mbufb=t;
-        while (t && *t)
-        {
-          const bool foundit = !_tcsicmp((mbeg=t),mname);
-          t+=_tcslen(t)+1;
-
-          // advance over parameters
-          while (*t) t+=_tcslen(t)+1;
-          t++;
-
-          // advance over data
-          while (*t) t+=_tcslen(t)+1;
-          if (foundit)
-          {
-            mend=t;
-            break;
-          }
-          if (t-mbufb >= m_macros.getlen()-1)
-            break;
-          t++;
-        }
-        if (!mend)
+        TCHAR *mbeg, *mend;
+        mbeg=GetMacro(mname,&mend);
+        if (!mbeg)
         {
           ERROR_MSG(_T("!macroundef: \"%s\" does not exist!\n"),mname);
           return PS_ERROR;
         }
+        TCHAR *mbufb=(TCHAR*)m_macros.get();
         const unsigned int mcb=mend-mbeg, mbufcb=m_macros.getlen();
         memmove(mbeg,mend+1,mbufcb-(mcb+(mbeg-mbufb)));
         m_macros.resize(mbufcb-(mcb+1));
@@ -1212,37 +1185,21 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return PS_OK;
     case TOK_P_INSERTMACRO:
       {
-        if (!line.gettoken_str(1)[0]) PRINTHELP()
-        TCHAR *t=(TCHAR *)m_macros.get();
-        TCHAR *m=t;
-        while (t && *t)
+        const TCHAR*const macroname=line.gettoken_str(1);
+        if (!macroname[0]) PRINTHELP()
+        TCHAR *t=GetMacro(macroname), *m=(TCHAR *)m_macros.get();
+        SCRIPT_MSG(_T("!insertmacro: %s\n"),macroname);
+        if (!t)
         {
-          if (!_tcsicmp(t,line.gettoken_str(1))) break;
-          t+=_tcslen(t)+1;
-
-          // advance over parms
-          while (*t) t+=_tcslen(t)+1;
-          t++;
-
-          // advance over data
-          while (*t) t+=_tcslen(t)+1;
-          if (t-(TCHAR *)m_macros.get() >= m_macros.getlen()-1)
-            break;
-          t++;
-        }
-        SCRIPT_MSG(_T("!insertmacro: %s\n"),line.gettoken_str(1));
-        if (!t || !*t)
-        {
-          ERROR_MSG(_T("!insertmacro: macro named \"%s\" not found!\n"),line.gettoken_str(1));
+          ERROR_MSG(_T("!insertmacro: macro named \"%s\" not found!\n"),macroname);
           return PS_ERROR;
         }
         t+=_tcslen(t)+1;
 
-
         GrowBuf l_define_names;
         DefineList l_define_saves;
         int npr=0;
-        // advance over parms
+        // advance over params
         while (*t)
         {
           TCHAR *v=definedlist.find(t);
@@ -1262,22 +1219,22 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (npr != line.getnumtokens()-2)
         {
           ERROR_MSG(_T("!insertmacro: macro \"%s\" requires %d parameter(s), passed %d!\n"),
-            line.gettoken_str(1),npr,line.getnumtokens()-2);
+            macroname,npr,line.getnumtokens()-2);
           return PS_ERROR;
         }
 
         int lp=0;
         TCHAR str[1024];
-        if (m_macro_entry.find(line.gettoken_str(1),0)>=0)
+        if (m_macro_entry.find(macroname,0)>=0)
         {
-          ERROR_MSG(_T("!insertmacro: macro \"%s\" already being inserted!\n"),line.gettoken_str(1));
+          ERROR_MSG(_T("!insertmacro: macro \"%s\" already being inserted!\n"),macroname);
           return PS_ERROR;
         }
-        int npos=m_macro_entry.add(line.gettoken_str(1),0);
+        int npos=m_macro_entry.add(macroname,0);
 
-        wsprintf(str,_T("macro:%s"),line.gettoken_str(1));
+        wsprintf(str,_T("macro:%s"),macroname);
         const TCHAR* oldmacroname=m_currentmacroname;
-        m_currentmacroname=line.gettoken_str(1);
+        m_currentmacroname=macroname;
         definedlist.del(_T("__MACRO__"));
         definedlist.add(_T("__MACRO__"),m_currentmacroname);
         while (*t)
@@ -1288,7 +1245,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             int ret=process_oneline(t,str,lp);
             if (ret != PS_OK)
             {
-              ERROR_MSG(_T("Error in macro %s on macroline %d\n"),line.gettoken_str(1),lp);
+              ERROR_MSG(_T("Error in macro %s on macroline %d\n"),macroname,lp);
               return ret;
             }
           }
@@ -1317,7 +1274,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         definedlist.del(_T("__MACRO__"));
         m_currentmacroname = oldmacroname;
         if (oldmacroname) definedlist.add(_T("__MACRO__"),oldmacroname);
-        SCRIPT_MSG(_T("!insertmacro: end of %s\n"),line.gettoken_str(1));
+        SCRIPT_MSG(_T("!insertmacro: end of %s\n"),macroname);
       }
     return PS_OK;
 
