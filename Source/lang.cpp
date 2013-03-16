@@ -754,6 +754,13 @@ int CEXEBuild::GenerateLangTables() {
   int cur_offset = num_lang_tables == 1 ? 0 : 100;
   for (i = 0; i < num_lang_tables; i++)
   {
+    // A Unicode-only language is never displayed correctly by ANSI exehead
+    if (!build_unicode && 1200 == lt[i].nlf.m_uCodePage)
+    {
+      ERROR_MSG(_T("\nError: Unicode-only language %s cannot be used in ANSI installer!\n"), lt[i].nlf.m_szName);
+      return PS_ERROR;
+    }
+
     if ((lt[i].nlf.m_szFont && !*build_font) || lt[i].nlf.m_bRTL)
     {
       lt[i].dlg_offset = cur_offset;
@@ -1015,24 +1022,32 @@ l_readerr:
   }
 
   // Get code page
+  bool isnlfdataucp = false; // Unicode-only language?
   nlf->m_uCodePage = CP_ACP;
   if (!GetNextNLFLine(lr, buf, NSIS_MAX_STRLEN, errlr)) goto l_readerr;
   if (buf[0] != _T('-') || buf[1] != 0) {
     nlf->m_uCodePage = _ttoi(buf);
-    if (!IsValidCodePage(nlf->m_uCodePage) && CP_ACP != nlf->m_uCodePage)
+    isnlfdataucp = NStreamEncoding::IsUnicodeCodepage(nlf->m_uCodePage);
+    if (isnlfdataucp && 1200 != nlf->m_uCodePage)
+    {
+      ERROR_MSG(_T("Error: Unicode-only language files must use codepage 1200!\n"));
+      return 0;
+    }
+    if (CP_ACP != nlf->m_uCodePage && !isnlfdataucp && !IsValidCodePage(nlf->m_uCodePage))
     {
       warning_fl(_T("%s language file uses a codepage (%d) that is not supported on this system, using ACP!"), nlf->m_szName, nlf->m_uCodePage);
       nlf->m_uCodePage = CP_ACP;
     }
   }
 
+  // SVN is not a big fan of UTF16 so we should always use UTF8SIG
+  if (isnlfdataucp && !lr.StreamEncoding().IsUTF8())
+  {
+    warning_fl(_T("%s Unicode language file is not UTF8SIG."), nlf->m_szName);
+  }
+
   if (!lr.IsUnicode())
   {
-    if (NStreamEncoding::IsUnicodeCodepage(nlf->m_uCodePage))
-    {
-      warning_fl(_T("%s unicode language file does not have a BOM!"), nlf->m_szName);
-    }
-
     if (nlf->m_szFont)
     {
       // Convert font name now that we know the codepage: ACP > NLF CP > TCHAR.
