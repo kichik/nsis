@@ -98,6 +98,10 @@ class CEXEBuild {
     void initialize(const TCHAR *makensis_path);
     ~CEXEBuild();
 
+    enum {
+      MAX_LINELENGTH = 16384 // NSI/NSH line limit, in TCHARs (including \0)
+    };
+
     void warning(const TCHAR *s, ...); // to add a warning to the compiler's warning list.
     void warning_fl(const TCHAR *s, ...); // warning with file name and line count
     void ERROR_MSG(const TCHAR *s, ...) const;
@@ -192,6 +196,7 @@ class CEXEBuild {
 #endif
     int doParse(const TCHAR *str);
     int doCommand(int which_token, LineParser &line);
+    TCHAR m_templinebuf[MAX_LINELENGTH]; // Buffer used by parseScript() & doCommand(), not recursion safe!
 
     int do_add_file(const TCHAR *lgss, int attrib, int recurse, int *total_files, const TCHAR 
       *name_override=0, int generatecode=1, int *data_handle=0, 

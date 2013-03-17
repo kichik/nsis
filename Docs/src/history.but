@@ -12,6 +12,8 @@ Released on ?, 2013
 
 \b MakeNSIS /NOTIFYHWND uses a (optional) new event name to abort compilation, see build.cpp/h for details.
 
+\b Reduced !include/!insertmacro recursion stack usage (\W{http://sourceforge.net/support/tracker.php?aid=3067954}{bug #3067954})
+
 \S2{} Translations
 
 \b Changed LANGFILE macro in LangFile.nsh
