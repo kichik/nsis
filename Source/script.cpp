@@ -51,7 +51,6 @@ using namespace std;
 #endif
 
 #define MAX_INCLUDEDEPTH 10
-#define MAX_LINELENGTH 16384
 
 #ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
 // Added by Sunil Kamath 11 June 2003
@@ -770,7 +769,7 @@ void CEXEBuild::ps_addtoline(const TCHAR *str, GrowBuf &linedata, StringList &hi
 int CEXEBuild::parseScript()
 {
   assert(curlinereader);
-  TCHAR str[MAX_LINELENGTH];
+  TCHAR *str = m_templinebuf;
   NStreamLineReader &linereader = *curlinereader;
 
   for (;;)
@@ -1115,8 +1114,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
         for (;;)
         {
-          TCHAR str[MAX_LINELENGTH];
-          TCHAR *p=str;
+          TCHAR *str = m_templinebuf, *p = str;
           UINT lrres = curlinereader->ReadLine(str,MAX_LINELENGTH);
           if (NStream::OK != lrres)
           {
@@ -1139,7 +1137,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           while (*p) p++;
           if (p > str) p--;
           while (p >= str && (*p == _T('\r') || *p == _T('\n') || *p == _T(' ') || *p == _T('\t'))) p--;
-          *++p=0;
+          *++p = 0;
           LineParser l2(false);
           if (!l2.parse(str))
           {
@@ -1411,7 +1409,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         ERROR_MSG(_T("%s: error reading version info from \"%s\"\n"), cmdname, line.gettoken_str(1));
         return PS_ERROR;
       }
-      TCHAR symbuf[MAX_LINELENGTH], numbuf[30], *basesymname = line.gettoken_str(2);
+      TCHAR *symbuf = m_templinebuf, numbuf[30], *basesymname = line.gettoken_str(2);
       DWORD vals[] = { high>>16, high&0xffff, low>>16, low&0xffff };
       SCRIPT_MSG(_T("%s: %s (%u.%u.%u.%u)->(%s<1..4>)\n"),
         cmdname, line.gettoken_str(1), vals[0], vals[1], vals[2], vals[3], basesymname);
@@ -3043,7 +3041,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
 
         if (fp)  {
-          TCHAR str[MAX_LINELENGTH];
+          TCHAR *str=m_templinebuf;
           for (;;) {
             TCHAR *p=str;
             *p=0;
@@ -3359,14 +3357,14 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           int req_parm = (line.getnumtokens() - parmOffs)/2;
 
           GrowBuf tmpstr;
-          TCHAR str[MAX_LINELENGTH];
+          TCHAR *str=m_templinebuf;
           for (;;)
           {
             tmpstr.resize(0);
             for (;;)
             {
               str[0]=0;
-              _fgetts(str,COUNTOF(str),fp);
+              _fgetts(str,MAX_LINELENGTH,fp);
               if (!str[0]) break; // eof
 
               TCHAR *p=str;
