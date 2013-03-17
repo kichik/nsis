@@ -82,13 +82,13 @@
 
 !ifdef MUI_FINISHPAGE
   ${LangFileString} MUI_TEXT_FINISH_INFO_TITLE "$(^NameDA) 설치 완료"
-  ${LangFileString} MUI_TEXT_FINISH_INFO_TEXT "$(^NameDA)의 설치가 완료되었습니다. 설치 프로그램을 마치려면 '마침' 버튼을 눌러 주세요."
+  ${LangFileString} MUI_TEXT_FINISH_INFO_TEXT "$(^NameDA)의 설치가 완료되었습니다.$\r$\n$\r$\n설치 프로그램을 마치려면 '마침' 버튼을 눌러 주세요."
   ${LangFileString} MUI_TEXT_FINISH_INFO_REBOOT "$(^NameDA)의 설치를 완료하기 위해서는 시스템을 다시 시작해야 합니다. 지금 재부팅 하시겠습니까?"
 !endif
 
 !ifdef MUI_UNFINISHPAGE
-  ${LangFileString} MUI_UNTEXT_FINISH_INFO_TITLE "제거 완료"
-  ${LangFileString} MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA)의 제거가 완료 되었습니다."
+  ${LangFileString} MUI_UNTEXT_FINISH_INFO_TITLE "$(^NameDA) 제거 완료"
+  ${LangFileString} MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA)의 제거가 완료 되었습니다.$\r$\n$\r$\n설치 프로그램을 마치려면 '마침' 버튼을 눌러 주세요."
   ${LangFileString} MUI_UNTEXT_FINISH_INFO_REBOOT "$(^NameDA)의 제거를 완료하기 위해서는 시스템을 다시 시작해야 합니다. 지금 재부팅 하시겠습니까?"
 !endif
 
