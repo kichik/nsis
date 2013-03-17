@@ -5,12 +5,12 @@
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString}  MUI_TEXT_WELCOME_INFO_TITLE "Benvingut a l'Assistent d'Instalacio de $(^NameDA)"
-  ${LangFileString}  MUI_TEXT_WELCOME_INFO_TEXT "Este programa instalarà $(^NameDA) en el seu ordenador.\r\n\r\nEs recomana que tanque totes les demes aplicacions abans d'iniciar l'instalacio. Aixina es podran actualisar archius relacionats en el sistema sense haver de reiniciar el seu ordenador.\r\n\r\n$_CLICK"
+  ${LangFileString}  MUI_TEXT_WELCOME_INFO_TEXT "Este programa instalarà $(^NameDA) en el seu ordenador.$\r$\n$\r$\nEs recomana que tanque totes les demes aplicacions abans d'iniciar l'instalacio. Aixina es podran actualisar archius relacionats en el sistema sense haver de reiniciar el seu ordenador.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_UNWELCOMEPAGE
   ${LangFileString}  MUI_UNTEXT_WELCOME_INFO_TITLE "Benvingut a l'Assistent de Desinstalacio de $(^NameDA)"
-  ${LangFileString}  MUI_UNTEXT_WELCOME_INFO_TEXT "Est assistent el guiarà durant la desinstalacio de $(^NameDA).\r\n\r\nAbans de començar la desinstalacio, assegure's que $(^NameDA) no s'està eixecutant.\r\n\r\n$_CLICK"
+  ${LangFileString}  MUI_UNTEXT_WELCOME_INFO_TEXT "Est assistent el guiarà durant la desinstalacio de $(^NameDA).$\r$\n$\r$\nAbans de començar la desinstalacio, assegure's que $(^NameDA) no s'està eixecutant.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_LICENSEPAGE
@@ -83,13 +83,13 @@
 
 !ifdef MUI_FINISHPAGE
   ${LangFileString}  MUI_TEXT_FINISH_INFO_TITLE "Finalisant l'Assistent d'Instalacio de $(^NameDA)"
-  ${LangFileString}  MUI_TEXT_FINISH_INFO_TEXT "$(^NameDA) s'ha instalat en son sistema.\r\n\r\nPulse Acabar per a tancar est assistent."
+  ${LangFileString}  MUI_TEXT_FINISH_INFO_TEXT "$(^NameDA) s'ha instalat en son sistema.$\r$\n$\r$\nPulse Acabar per a tancar est assistent."
   ${LangFileString}  MUI_TEXT_FINISH_INFO_REBOOT "Son sistema es deu de reiniciar per a que puga completar-se l'instalacio de $(^NameDA). ¿Vol reiniciar ara?"
 !endif
 
 !ifdef MUI_UNFINISHPAGE
   ${LangFileString}  MUI_UNTEXT_FINISH_INFO_TITLE "Finalisant l'Assistent de Desinstalacio de $(^NameDA)"
-  ${LangFileString}  MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) s'ha desinstalat de son sistema.\r\n\r\nPulse Acabar per a tancar est assistent."
+  ${LangFileString}  MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) s'ha desinstalat de son sistema.$\r$\n$\r$\nPulse Acabar per a tancar est assistent."
   ${LangFileString}  MUI_UNTEXT_FINISH_INFO_REBOOT "El seu ordenador deu de reiniciar-se per a completar la desinstalacio de $(^NameDA). ¿Vol reiniciar ara?"
 !endif
 
