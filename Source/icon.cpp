@@ -24,14 +24,20 @@ static FILE * open_icon(const TCHAR* filename, IconGroupHeader& igh)
     throw runtime_error("can't open file");
 
   if (!fread(&igh, sizeof(IconGroupHeader), 1, f))
+  {
+    fclose(f);
     throw runtime_error("unable to read header from file");
+  }
 
   FIX_ENDIAN_INT16_INPLACE(igh.wIsIcon);
   FIX_ENDIAN_INT16_INPLACE(igh.wReserved);
   FIX_ENDIAN_INT16_INPLACE(igh.wCount);
 
   if (igh.wIsIcon != 1 || igh.wReserved != 0)
+  {
+    fclose(f);
     throw runtime_error("invalid icon file");
+  }
 
   return f;
 }
@@ -89,6 +95,7 @@ IconGroup load_icon_file(const TCHAR* filename)
   IconGroup result;
 
   FILE *file = open_icon(filename, iconHeader);
+  MANAGE_WITH(file, fclose);
 
   for (WORD i = 0; i < iconHeader.wCount; i++)
   {

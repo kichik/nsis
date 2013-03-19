@@ -514,10 +514,9 @@ extern unzFile ZEXPORT unzOpen (path)
 extern int ZEXPORT unzClose (file)
     unzFile file;
 {
-    unz_s* s;
-    if (file==NULL)
+    unz_s* s = (unz_s*) file;
+    if (!s)
         return UNZ_PARAMERROR;
-    s=(unz_s*)file;
 
     if (s->pfile_in_zip_read!=NULL)
         unzCloseCurrentFile(file);

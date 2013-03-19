@@ -14,6 +14,8 @@ Released on ?, 2013
 
 \b Reduced !include/!insertmacro recursion stack usage (\W{http://sourceforge.net/support/tracker.php?aid=3067954}{bug #3067954})
 
+\b Fixed minor MakeNSIS leaks (\W{http://sourceforge.net/support/tracker.php?aid=3474662}{bug #3474662})
+
 \S2{} Translations
 
 \b Changed LANGFILE macro in LangFile.nsh

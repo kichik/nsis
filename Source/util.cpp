@@ -145,20 +145,20 @@ int update_bitmap(CResourceEditor* re, WORD id, const TCHAR* filename, int width
   dwSize -= 14;
 
   unsigned char* bitmap = (unsigned char*)malloc(dwSize);
-  if (!bitmap) throw bad_alloc();
-
-  fseek(f, 14, SEEK_SET);
-  if (fread(bitmap, 1, dwSize, f) != dwSize) {
+  if (!bitmap) {
     fclose(f);
-    return -2;
+    throw bad_alloc();
   }
+
+  bool gotbmdata = !fseek(f, 14, SEEK_SET) && dwSize == fread(bitmap, 1, dwSize, f);
+  int retval = gotbmdata ? 0 : -2;
   fclose(f);
 
-  re->UpdateResource(RT_BITMAP, id, NSIS_DEFAULT_LANG, bitmap, dwSize);
+  if (gotbmdata)
+    re->UpdateResource(RT_BITMAP, id, NSIS_DEFAULT_LANG, bitmap, dwSize);
 
   free(bitmap);
-
-  return 0;
+  return retval;
 }
 
 #ifndef _WIN32
@@ -717,6 +717,7 @@ static bool GetDLLVersionUsingRE(const tstring& filepath, DWORD& high, DWORD & l
     free(dll);
     return 0;
   }
+  fclose(fdll);
 
   try
   {
