@@ -1390,6 +1390,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
         if (_fputts(text, fp) < 0)
         {
+          fclose(fp);
           ERROR_MSG(_T("!appendfile: error writing to \"%s\".\n"), file);
           return PS_ERROR;
         }
