@@ -105,6 +105,7 @@ Page custom PageReinstall PageLeaveReinstall
 VIProductVersion ${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}
 VIAddVersionKey "FileVersion" "${VERSION}"
 VIAddVersionKey "FileDescription" "NSIS Setup"
+VIAddVersionKey "LegalCopyright" "http://nsis.sf.net/License"
 !endif
 
 ;--------------------------------
