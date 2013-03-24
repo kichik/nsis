@@ -23,13 +23,14 @@
 
 // includes
 
+#include "tchar.h"
+
 #ifdef _WIN32
 #include <windows.h>
 #include <commctrl.h>
 #include <shellapi.h>
 #include <shlwapi.h>
 #include <shlobj.h>
-#include "tchar.h"
 #else
 #  ifndef EXEHEAD
 #    include <string.h>
@@ -58,15 +59,9 @@ typedef unsigned char UCHAR;
 typedef const char *LPCCH, *PCSTR, *LPCSTR;
 typedef unsigned short WCHAR, OLECHAR, *PWCHAR, *LPWCH, *PWCH, *NWPSTR, *LPWSTR, *PWSTR, *BSTR;
 typedef const unsigned short *LPCWCH, *PCWCH, *LPCWSTR, *PCWSTR, *LPCOLESTR;
-#ifdef  _UNICODE
-typedef WCHAR   TCHAR;
-#define _T(x)   L##x
-#define TEXT(x) L##x
+#ifndef _tctime
 #define _tctime _wctime
 #else
-typedef CHAR    TCHAR;
-#define _T(x)   x
-#define TEXT(x) x
 #define _tctime ctime
 #endif
 typedef int INT_PTR;
