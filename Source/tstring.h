@@ -16,8 +16,8 @@
    Unicode support by Jim Park -- 07/23/2007 
 */
 
-#ifndef _TSTRING_
-#define _TSTRING_
+#ifndef NSIS_TSTRING___H__
+#define NSIS_TSTRING___H__
 
 #include "Platform.h"
 #include "tchar.h"
@@ -57,29 +57,14 @@ typedef std::ifstream    tifstream;
 class CtoTString
 {
 public:
-  CtoTString(const char* str)
-  {
-    int len = MultiByteToWideChar(CP_ACP, 0, str, -1, NULL, 0);
-    m_wStr = (wchar_t*) malloc(len*sizeof(wchar_t));
-    MultiByteToWideChar(CP_ACP, 0, str, -1, m_wStr, len);
-  }
-  CtoTString(const char* str, UINT cp)
-  {
-    int len = MultiByteToWideChar(cp, 0, str, -1, NULL, 0);
-    m_wStr = (wchar_t*) malloc(len*sizeof(wchar_t));
-    MultiByteToWideChar(cp, 0, str, -1, m_wStr, len);
-  }
-  CtoTString(const std::string& str)
-  {
-    int len = MultiByteToWideChar(CP_ACP, 0, str.c_str(), str.length()+1, NULL, 0);
-    m_wStr = (wchar_t*) malloc(len*sizeof(wchar_t));
-    MultiByteToWideChar(CP_ACP, 0, str.c_str(), str.length()+1, m_wStr, len);
-  }
+  CtoTString(const char* str);
+  CtoTString(const char* str, UINT cp);
+  CtoTString(const std::string& str);
 
-  ~CtoTString() { free(m_wStr); m_wStr = 0; }
+  ~CtoTString();
 
-  operator const wchar_t*() const { return GetTStr(); }
-  inline const wchar_t*GetTStr() const { return m_wStr; }
+  operator const wchar_t*() const;
+  inline const wchar_t*GetTStr() const;
 
 private:
   wchar_t* m_wStr;
@@ -90,26 +75,16 @@ private:
 class TtoCString
 {
 public:
-  TtoCString(const wchar_t* wStr)
-  {
-    int len = WideCharToMultiByte(CP_ACP, 0, wStr, -1, NULL, 0, 0, 0);
-    m_cStr = (char*) malloc(len);
-    WideCharToMultiByte(CP_ACP, 0, wStr, -1, m_cStr, len, 0, 0);
-  }
-  TtoCString(const tstring& wStr)
-  {
-    int len = WideCharToMultiByte(CP_ACP, 0, wStr.c_str(), wStr.length()+1, NULL, 0, 0, 0);
-    m_cStr = (char*) malloc(len);
-    WideCharToMultiByte(CP_ACP, 0, wStr.c_str(), wStr.length()+1, m_cStr, len, 0, 0);
-  }
+  TtoCString(const wchar_t* wStr);
+  TtoCString(const tstring& wStr);
 
-  ~TtoCString() { free(m_cStr); m_cStr = 0; }
+  ~TtoCString();
 
-  operator const char*() const { return m_cStr; }
+  operator const char*() const;
 
 private:
   char* m_cStr;
 };
 #endif // _UNICODE
 
-#endif
+#endif // NSIS_TSTRING___H__
