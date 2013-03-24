@@ -124,7 +124,7 @@ CtoTString::CtoTString(const std::string& str)
 
 CtoTString::~CtoTString() { free(m_wStr); m_wStr = 0; }
 
-operator const CtoTString::wchar_t*() const { return GetTStr(); }
+CtoTString::operator const wchar_t*() const { return GetTStr(); }
 inline const wchar_t* CtoTString::GetTStr() const { return m_wStr; }
 
 
@@ -145,6 +145,6 @@ TtoCString::TtoCString(const tstring& wStr)
 
 TtoCString::~TtoCString() { free(m_cStr); m_cStr = 0; }
 
-operator const TtoCString::char*() const { return m_cStr; }
+TtoCString::operator const char*() const { return m_cStr; }
 
 #endif
