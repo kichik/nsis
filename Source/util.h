@@ -30,6 +30,8 @@
 #  include <unistd.h>
 #endif
 
+ #include <stdarg.h>
+
 
 // these are the standard pause-before-quit stuff.
 extern int g_dopause;
@@ -114,9 +116,9 @@ inline void PrintColorFmtMsg_ERR(const TCHAR *fmtstr, ...)
 // iconv const inconsistency workaround by Alexandre Oliva
 template <typename T>
 inline size_t nsis_iconv_adaptor
-  (size_t (*iconv_func)(iconv_t, T, size_t *, TCHAR**,size_t*),
-  iconv_t cd, TCHAR **inbuf, size_t *inbytesleft,
-  TCHAR **outbuf, size_t *outbytesleft)
+  (size_t (*iconv_func)(iconv_t, T, size_t *, char**,size_t*),
+  iconv_t cd, char **inbuf, size_t *inbytesleft,
+  char **outbuf, size_t *outbytesleft)
 {
   return iconv_func (cd, (T)inbuf, inbytesleft, outbuf, outbytesleft);
 }
@@ -143,8 +145,8 @@ public:
   {
     char *in = (char*) inbuf, *out = (char*) outbuf;
     size_t orgOutLeft = outLeft;
-    size_t ret = nsis_iconv_adaptor(iconv, *this, &in, &out, &outLeft);
-    if (-1 == ret) 
+    size_t ret = nsis_iconv_adaptor(iconv, *this, &in, pInLeft, &out, &outLeft);
+    if ((size_t)(-1) == ret) 
       ret = 0, *pInLeft = 1;
     else
       ret = orgOutLeft - outLeft;
@@ -154,7 +156,7 @@ public:
   operator iconv_t() const { return m_cd; }
 
   static const char* GetHostEndianUCS4Code() { return "UCS-4-INTERNAL"; }
-}
+};
 
 TCHAR *CharPrev(const TCHAR *s, const TCHAR *p);
 char *CharNextA(const char *s);
