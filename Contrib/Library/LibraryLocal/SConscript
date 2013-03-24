@@ -8,6 +8,7 @@ required_files = Split("""
 	#Source/ResourceEditor.cpp
 	#Source/util.cpp
 	#Source/winchar.cpp
+	#Source/tstring.cpp
 """)
 
 libs = Split("""
