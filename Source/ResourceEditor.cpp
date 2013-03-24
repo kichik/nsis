@@ -233,7 +233,7 @@ static void FreeUnicodeResString(WCHAR* szwString) {
 
 bool CResourceEditor::UpdateResource(const TCHAR* szType, WORD szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize) {
 #ifdef _UNICODE
-  return UpdateResourceW((const WCHAR*) szType, MAKEINTRESOURCEW(szName), wLanguage, lpData, dwSize);
+  return UpdateResourceW(szType, MAKEINTRESOURCEW(szName), wLanguage, lpData, dwSize);
 #else
   WCHAR* szwType = ResStringToUnicode(szType); 
   bool result = UpdateResourceW(szwType, MAKEINTRESOURCEW(szName), wLanguage, lpData, dwSize);
@@ -278,7 +278,7 @@ BYTE* CResourceEditor::GetResourceW(const WCHAR* szType, WCHAR* szName, LANGID w
 
 BYTE* CResourceEditor::GetResource(const TCHAR* szType, WORD szName, LANGID wLanguage) {
 #ifdef _UNICODE
-  return GetResourceW((const WCHAR *) szType, MAKEINTRESOURCEW(szName), wLanguage);
+  return GetResourceW(szType, MAKEINTRESOURCEW(szName), wLanguage);
 #else
   WCHAR* szwType = ResStringToUnicode(szType);
   BYTE* result = GetResourceW(szwType, MAKEINTRESOURCEW(szName), wLanguage);
@@ -317,7 +317,7 @@ int CResourceEditor::GetResourceSizeW(const WCHAR* szType, WCHAR* szName, LANGID
 
 int CResourceEditor::GetResourceSize(const TCHAR* szType, WORD szName, LANGID wLanguage) {
 #ifdef _UNICODE
-  return GetResourceSizeW((const WCHAR*) szType, MAKEINTRESOURCEW(szName), wLanguage);
+  return GetResourceSizeW(szType, MAKEINTRESOURCEW(szName), wLanguage);
 #else
   WCHAR* szwType = ResStringToUnicode(szType);
   int result = GetResourceSizeW(szwType, MAKEINTRESOURCEW(szName), wLanguage);
@@ -356,7 +356,7 @@ DWORD CResourceEditor::GetResourceOffsetW(const WCHAR* szType, WCHAR* szName, LA
 
 DWORD CResourceEditor::GetResourceOffset(const TCHAR* szType, WORD szName, LANGID wLanguage) {
 #ifdef _UNICODE
-  return GetResourceOffsetW((const WCHAR*) szType, MAKEINTRESOURCEW(szName), wLanguage);
+  return GetResourceOffsetW(szType, MAKEINTRESOURCEW(szName), wLanguage);
 #else
   WCHAR* szwType = ResStringToUnicode(szType);
   DWORD result = GetResourceOffsetW(szwType, MAKEINTRESOURCEW(szName), wLanguage);
