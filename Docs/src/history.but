@@ -4,9 +4,33 @@
 
 Released on ?, 2013
 
+\S1{v3.0a0-rl} Release Notes
+
+\b MakeNSIS can now generate ANSI and \R{intro-unicode}{Unicode} installers. Source files can be UTF8SIG, UTF16LE or traditional MBCS text files (which are converted to Unicode with ACP unless you specify a different codepage). Plugins are now stored in sub-folders based on their CPU target and character set encoding.
+
 \S1{v3.0a0-cl} Changelog
 
+\S2{} Major Changes
+
+\b Added the \R{aunicodetarget}{Unicode} attribute (\W{http://sourceforge.net/support/tracker.php?aid=1238132}{RFE #1238132}, \W{http://sourceforge.net/support/tracker.php?aid=1795257}{patch #1795257})
+
+\b MakeNSIS can read UTF8SIG and UTF16LE script files (\W{http://sourceforge.net/support/tracker.php?aid=2026892}{RFE #2026892})
+
+\b All NLF and NSH language files are stored in Unicode (\W{http://sourceforge.net/support/tracker.php?aid=1879642}{RFE #1879642})
+
+\b Scripts can control the SupportedOS list in the application manifest using \R{amanifestsupportedos}{ManifestSupportedOS} (\W{http://sourceforge.net/support/tracker.php?aid=2725883}{bug #2725883}\#{RFE 3020103?})
+
+\b Installers can claim DPI-awareness with \R{amanifestdpiaware}{ManifestDPIAware} (\W{http://sourceforge.net/support/tracker.php?aid=2897169}{bug #2897169})
+
+\b The index of the changed section is stored in $0 during .onSelChange callbacks (\W{http://sourceforge.net/support/tracker.php?aid=1634936}{RFE #1634936})
+
 \S2{} Minor Changes
+
+\b %temp%\\Low will be used if the installer cannot write to %temp% nor %windir%\\Temp (\W{http://sourceforge.net/support/tracker.php?aid=2909242}{bug #2909242}, \W{http://sourceforge.net/support/tracker.php?aid=2912824}{patch #2912824})
+
+\b Added $\{NSIS_PACKEDVERSION\}, the NSIS version packed in a hex number (\W{http://sourceforge.net/support/tracker.php?aid=2680832}{patch #2680832})
+
+\b Added UnsafeStrCpy instruction, it can write to special variables like $PLUGINSDIR
 
 \b Plugins in $\{NSISDIR\}\\Plugins have to be reserved with \c{ReserveFile /plugin}
 
@@ -15,6 +39,8 @@ Released on ?, 2013
 \b Reduced !include/!insertmacro recursion stack usage (\W{http://sourceforge.net/support/tracker.php?aid=3067954}{bug #3067954})
 
 \b Fixed minor MakeNSIS leaks (\W{http://sourceforge.net/support/tracker.php?aid=3474662}{bug #3474662})
+
+\b Various documentation fixes (bug #3063566, bug #3567313)
 
 \S2{} Translations
 

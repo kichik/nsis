@@ -179,6 +179,8 @@ EXTERN_C void NSISWinMainNOCRT()
     mystrcat(state_temp_dir, _T("\\Temp"));
     if (!ValidateTempDir())
     {
+      // Bug #2909242:
+      // When running at <= Low IL we cannot write to %Temp% but we can try the temp folder used by IE.
       // There does not seem to be a API to get the low temp dir directly, so we build the path on our own
 
       GetTempPath(NSIS_MAX_STRLEN - 4, state_temp_dir); // leave space for \Low

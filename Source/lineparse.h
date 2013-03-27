@@ -36,7 +36,7 @@ class LineParser {
     int gettoken_int(int token, int *success=0);
     double gettoken_number(int token, int *success=0);
     TCHAR *gettoken_str(int token);
-    int gettoken_enum(int token, const TCHAR *strlist); // null seperated list
+    int gettoken_enum(int token, const TCHAR *strlist); // null separated list
 
   private:
 
