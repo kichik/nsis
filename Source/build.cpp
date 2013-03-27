@@ -310,7 +310,7 @@ CEXEBuild::CEXEBuild() :
   InitLangTables();
 
   // Register static user variables $0, $1 and so on
-  // with ONE of reference count, to avoid warning on this vars
+  // with ONE of reference count, to avoid warning on these vars
   TCHAR Aux[3];
   int i;
   for (i = 0; i < 10; i++)    // 0 - 9

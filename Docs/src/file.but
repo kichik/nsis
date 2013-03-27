@@ -107,7 +107,7 @@ Seeks a file opened with \R{FileOpen}{FileOpen}. If mode is omitted or specified
 
 Writes an ANSI string to a file opened with \R{FileOpen}{FileOpen}. If an error occurs writing, the error flag will be set.
 
-(If you are building a \R{intro-unicode}{Unicode installer}, the function makes the adequate conversion and writes an ANSI string)
+(If you are building a \R{intro-unicode}{Unicode installer}, the function converts the string to ANSI/MBCS. The \NsisACPcp is used during the conversion)
 
 \c ClearErrors
 \c FileOpen $0 $INSTDIR\file.dat w

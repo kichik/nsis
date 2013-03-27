@@ -96,7 +96,7 @@ will match the directory named \e{something} on the root directory, the file nam
 
 \c File /r something\*.*
 
-When adding \e{\\*.*}, it will be used as the matching condition and \e{something} will be used as the directory to search. When only \e{something} is specified, the current directory will be recursively searched for every and directory named \e{something} and \e{another\\something} will be matched.
+When adding \e{\\*.*}, it will be used as the matching condition and \e{something} will be used as the directory to search. When only \e{something} is specified, the current directory will be recursively searched for every file and directory named \e{something} and \e{another\\something} will be matched.
 
 \S2{rename} Rename
 

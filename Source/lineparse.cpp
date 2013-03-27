@@ -132,7 +132,7 @@ TCHAR* LineParser::gettoken_str(int token)
   return m_tokens[token];
 }
 
-int LineParser::gettoken_enum(int token, const TCHAR *strlist) // null seperated list
+int LineParser::gettoken_enum(int token, const TCHAR *strlist) // null separated list
 {
   int x=0;
   TCHAR *tt=gettoken_str(token);
