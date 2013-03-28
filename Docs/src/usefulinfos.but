@@ -80,13 +80,13 @@ System.dll recognises the following data types:
 
 \b v - void (generally for return)
 
-\b i - int (includes char, byte, short, handles, pointers and so on)
+\b p - pointer (includes void*, HANDLE, HWND, UINT_PTR and so on)
 
-\b l - long & large integer (known as int64)
+\b i - int (a 32bit integer)
 
-\b t - text, string (LPCSTR, pointer to first character)
+\b l - long & large integer (also known as int64)
 
-\b b - boolean (needs/returns 'true':'false') - by the fact this type is senseless -> usual integer can be used ('0':'1')
+\b t - text, string (LPTSTR, pointer to first character)
 
 \b k - callback. See Callback section in system.html.
 
