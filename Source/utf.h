@@ -23,6 +23,8 @@
 #include <stdio.h>
 #include "util.h" // For my_fopen
 
+const UINT16 UNICODE_REPLACEMENT_CHARACTER = 0xfffd;
+
 #define TSTR_INPUTCHARSET _T("ACP|OEM|CP#|UTF8|UTF16LE")
 
 
@@ -54,6 +56,7 @@ inline UINT32 CodePointFromUTF16SurrogatePair(unsigned short lea,unsigned short 
 UINT StrLenUTF16LE(const void*str);
 bool StrSetUTF16LE(tstring&dest, const void*src);
 
+UINT WCFromCodePoint(wchar_t*Dest,UINT cchDest,UINT32 CodPt);
 wchar_t* DupWCFromBytes(void*Buffer,UINT cbBuffer,WORD SrcCP);
 UINT DetectUTFBOM(FILE*strm);
 WORD GetEncodingFromString(const TCHAR*s);

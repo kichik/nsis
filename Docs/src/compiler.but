@@ -213,6 +213,13 @@ NSIS version as a 32 bit number.
 \c   !error "NSIS 2.47 or higher is required to build this installer!"
 \c !endif
 
+\S1{preunicodecodepoint} $\{U+1\}...$\{U+FFFFFFFF\}
+
+A Unicode (UCS-4) character.
+
+\c !define U+ABC "SIS" # Define will override
+\c DetailPrint "${U+2115}${U+ABC}" # DOUBLE-STRUCK CAPITAL N + "SIS"
+
 \S1{scopepredefines} Scope Predefines
 
 Standard predefines that contain information of the current code scope.

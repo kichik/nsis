@@ -24,6 +24,8 @@ Released on ?, 2013
 
 \b The index of the changed section is stored in $0 during .onSelChange callbacks (\W{http://sourceforge.net/support/tracker.php?aid=1634936}{RFE #1634936})
 
+\b $\{U+1\}...$\{U+FFFFFFFF\} are treated as a Unicode codepoint unless there is already a define with that name
+
 \S2{} Minor Changes
 
 \b %temp%\\Low will be used if the installer cannot write to %temp% nor %windir%\\Temp (\W{http://sourceforge.net/support/tracker.php?aid=2909242}{bug #2909242}, \W{http://sourceforge.net/support/tracker.php?aid=2912824}{patch #2912824})
