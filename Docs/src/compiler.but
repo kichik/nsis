@@ -177,6 +177,10 @@ Passing push will cause \R{verbose}{!verbose} to push the current verbosity leve
 
 You can use these standard predefines to automatically add the build time to the title of development versions, add the date to the version number, etc.
 
+\S1{precounter} $\{__COUNTER__\}
+
+Expands to a number (Starting at 0 and incrementing by 1 every time it is used)
+
 \S1{prefile} $\{__FILE__\}
 
 Current script name.
