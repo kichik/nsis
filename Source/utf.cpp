@@ -56,6 +56,33 @@ inline UINT UTF8ToWC_Prepare(LPCSTR StrU8,UINT cbU8)
   return UTF8ToWC_Convert(StrU8,cbU8,0,0);
 }
 
+UINT WCFromCodePoint(wchar_t*Dest,UINT cchDest,UINT32 CodPt)
+{
+  // Don't allow half surrogate pairs
+  if (CodPt >= 0xd800 && CodPt <= 0xdfff) CodPt = UNICODE_REPLACEMENT_CHARACTER;
+#ifdef _WIN32
+  if (CodPt <= 0xffff && cchDest)
+  {
+    *Dest = (wchar_t) CodPt;
+    return 1;
+  }
+  else if (cchDest >= 2)
+  {
+    const UINT32 lead_offset = 0xd800 - (0x10000 >> 10);
+    UINT16 lead = lead_offset + (CodPt >> 10), trail = 0xdc00 + (CodPt & 0x3ff);
+    Dest[0] = lead, Dest[1] = trail;
+    return 2;
+  }
+  return 0;
+#else
+  iconvdescriptor iconvd;
+  if (!iconvd.Open("wchar_t",iconvd::GetHostEndianUCS4Code())) return 0;
+  size_t inleft = 4;
+  UINT cchW = iconvd.Convert(&codpt,&inleft,Dest,cchDest*sizeof(wchar_t)) / sizeof(wchar_t);
+  return !inleft ? cchW : 0;
+#endif
+}
+
 wchar_t* DupWCFromBytes(void*Buffer,UINT cbBuffer,WORD SrcCP)
 {
   /*\

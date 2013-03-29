@@ -684,6 +684,23 @@ void CEXEBuild::ps_addtoline(const TCHAR *str, GrowBuf &linedata, StringList &hi
           ps_addtoline(s,defname,hist);
           defname.add(_T(""),sizeof(_T("")));
           t=definedlist.find((TCHAR*)defname.get());
+          TCHAR unichar[4+1];
+          if (!t && _T('U')==s[0] && _T('+')==s[1])
+          {
+            TCHAR *n=s+2;
+            unsigned long utf32=_tcstoul(n,&t,16);
+            // We only want to accept "${U+HEXDIGITS}" and not "${U+ -HEXDIGITS }"
+            if (*t || _T('-')==*n || _T('+')==*n) t=0;
+            if (_T(' ')==*n || _T('\t')==*n) t=0; // TODO: _istspace()?
+            if (!utf32) t=0; // Don't allow "${U+0}"
+            if (t)
+            {
+              UINT32 codpts[]={utf32,UNICODE_REPLACEMENT_CHARACTER,'?'};
+              for(UINT i=0; i < COUNTOF(codpts); ++i)
+                if (WCFromCodePoint(unichar,COUNTOF(unichar),codpts[i])) break;
+              t=unichar;
+            }
+          }
           if (t && hist.find((TCHAR*)defname.get(),0)<0)
           {
             in+=_tcslen(s)+2;
