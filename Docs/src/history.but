@@ -32,6 +32,8 @@ Released on ?, 2013
 
 \b Added $\{NSIS_PACKEDVERSION\}, the NSIS version packed in a hex number (\W{http://sourceforge.net/support/tracker.php?aid=2680832}{patch #2680832})
 
+\b Added $\{__COUNTER__\} predefine
+
 \b Added UnsafeStrCpy instruction, it can write to special variables like $PLUGINSDIR
 
 \b Plugins in $\{NSISDIR\}\\Plugins have to be reserved with \c{ReserveFile /plugin}
