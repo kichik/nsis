@@ -6,7 +6,7 @@ Released on ?, 2013
 
 \S1{v3.0a0-rl} Release Notes
 
-\b MakeNSIS can now generate ANSI and \R{intro-unicode}{Unicode} installers. Source files can be UTF8SIG, UTF16LE or traditional MBCS text files (which are converted to Unicode with ACP unless you specify a different codepage). Plugins are now stored in sub-folders based on their CPU target and character set encoding.
+\b MakeNSIS can now generate ANSI and \R{intro-unicode}{Unicode} installers. Source files can be UTF8SIG, UTF16LE or traditional MBCS text files (which are converted to Unicode with ACP unless you specify a different codepage). The default plugins are now stored in sub-folders based on their CPU target and character set encoding.
 
 \S1{v3.0a0-cl} Changelog
 
@@ -24,9 +24,11 @@ Released on ?, 2013
 
 \b The index of the changed section is stored in $0 during .onSelChange callbacks (\W{http://sourceforge.net/support/tracker.php?aid=1634936}{RFE #1634936})
 
-\b $\{U+1\}...$\{U+FFFFFFFF\} are treated as a Unicode codepoint unless there is already a define with that name
+\b $\{U+1\}...$\{U+FFFFFFFF\} are treated as a Unicode codepoint unless there is already a define with that name (\W{http://sourceforge.net/support/tracker.php?aid=2084797}{RFE #2084797})
 
 \S2{} Minor Changes
+
+\b Added \R{ppgetdllversion}{!getdllversion} (\W{http://sourceforge.net/support/tracker.php?aid=2809308}{bug #2809308})
 
 \b Added !appendfile /CHARSET parameter
 
@@ -34,7 +36,7 @@ Released on ?, 2013
 
 \b Added $\{NSIS_PACKEDVERSION\}, the NSIS version packed in a hex number (\W{http://sourceforge.net/support/tracker.php?aid=2680832}{patch #2680832})
 
-\b Added $\{__COUNTER__\} predefine
+\b Added $\{__MACRO__\} and $\{__COUNTER__\} predefines
 
 \b Added UnsafeStrCpy instruction, it can write to special variables like $PLUGINSDIR
 
