@@ -41,7 +41,7 @@ unsigned int ExeHeadStringList::getnum() const
     for(;;)
     {
       if (pos+=cb >= cbList) break;
-      cb = StrLenUTF16LE(p+=cb) + 1, ++num;
+      cb = StrLenUTF16(p+=cb) + 1, ++num;
     }
   }
   else
@@ -87,7 +87,7 @@ unsigned int ExeHeadStringList::find(const TCHAR *str, WORD codepage, bool proce
   {
     WCToUTF16LEHlpr cnv;
     if (!cnv.Create(str)) return -1;
-    unsigned int pos = find(cnv.Get(),StrLenUTF16LE(cnv.Get()),codepage,processed,ppBufMB);
+    unsigned int pos = find(cnv.Get(),StrLenUTF16(cnv.Get()),codepage,processed,ppBufMB);
     cnv.Destroy();
     return pos;
   }
@@ -130,7 +130,7 @@ unsigned int ExeHeadStringList::find(const void *ptr, unsigned int cchF, WORD co
     for(;;)
     {
       if (pos+=cb >= cbList) break;
-      cb = (StrLenUTF16LE(p+=cb) + 1) * 2;
+      cb = (StrLenUTF16(p+=cb) + 1) * 2;
       if (cb < cbF) continue;
       if (byte_rev_match(p,find,cbF)) { retval = pos / WIDEDIV; break; }
     }

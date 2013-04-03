@@ -211,6 +211,30 @@ int wsprintf(TCHAR *s, const TCHAR *format, ...) {
   return res;
 }
 
+bool nsis_iconv_reallociconv(iconv_t CD, char**In, size_t*cbInLeft, char**Mem, size_t&cbConverted)
+{
+  char *in, *heap = *Mem;
+  UINT cbMem = 512;
+  size_t inleft, outleft, icvret = (size_t) -1;
+  for(;;)
+  {
+    in = *In, inleft = *cbInLeft, outleft = cbMem - sizeof(UINT32); // Leave room for \0
+    char *p = (char*) realloc(heap, cbMem), *out = p;
+    if (!p) break;
+    heap = p, icvret = nsis_iconv_adaptor(iconv, CD, &in, &inleft, &out, &outleft);
+    if ((size_t) -1 != icvret || E2BIG != errno) break;
+    cbMem *= 4;
+  }
+  *In = in, *Mem = heap;
+  cbConverted = cbMem - (outleft + sizeof(UINT32)), *cbInLeft = inleft;
+  if ((size_t) -1 != icvret)
+  {
+    *((UINT32*)(&heap[cbConverted])) = 0;
+    return true;
+  }
+  return false;
+}
+
 void static create_code_page_string(TCHAR *buf, size_t len, UINT code_page) {
   switch(code_page)
   {
@@ -221,8 +245,11 @@ void static create_code_page_string(TCHAR *buf, size_t len, UINT code_page) {
   case CP_UTF8:
     _sntprintf(buf, len, _T("UTF-8"));
     return;
+  case 1200: // UTF16LE
+  case 1201: // UTF16BE
+    _sntprintf(buf, len, _T("UTF-16%cE"), 1200==code_page ? _T('L') : _T('B'));
+    return;
   }
-
   _sntprintf(buf, len, _T("CP%d"), code_page);
 }
 
