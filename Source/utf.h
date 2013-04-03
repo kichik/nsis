@@ -22,10 +22,15 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "util.h" // For my_fopen
+#ifdef _WIN32
+#include <io.h> // For _setmode
+#include <fcntl.h> // For _O_BINARY
+#endif
 
-const UINT16 UNICODE_REPLACEMENT_CHARACTER = 0xfffd;
+const WORD UNICODE_REPLACEMENT_CHARACTER = 0xfffd;
 
 #define TSTR_INPUTCHARSET _T("ACP|OEM|CP#|UTF8|UTF16LE")
+#define TSTR_OUTPUTCHARSET _T("ACP|OEM|CP#|UTF8[SIG]|UTF16<LE|BE>[BOM]")
 
 
 void RawTStrToASCII(const TCHAR*in,char*out,UINT maxcch);
@@ -53,13 +58,49 @@ inline UINT32 CodePointFromUTF16SurrogatePair(unsigned short lea,unsigned short 
   return ((UINT32)lea << 10) + tra + surrogate_offset;
 }
 
-UINT StrLenUTF16LE(const void*str);
+void UTF16InplaceEndianSwap(void*Buffer, UINT cch);
+UINT StrLenUTF16(const void*str);
 bool StrSetUTF16LE(tstring&dest, const void*src);
 
 UINT WCFromCodePoint(wchar_t*Dest,UINT cchDest,UINT32 CodPt);
 wchar_t* DupWCFromBytes(void*Buffer,UINT cbBuffer,WORD SrcCP);
 UINT DetectUTFBOM(FILE*strm);
+WORD GetEncodingFromString(const TCHAR*s, bool&BOM);
 WORD GetEncodingFromString(const TCHAR*s);
+
+class CharEncConv {
+  char *m_Result;
+  WORD m_TE, m_FE;
+#ifdef _WIN32
+  bool m_AllowOptimizedReturn; // Can Convert() return Src buffer?
+#else
+  iconvdescriptor m_iconvd;
+#endif
+protected:
+  size_t GuessOutputSize(size_t cbConverted);
+  static bool IsWE(WORD Encoding) { return (WORD)-1 == Encoding; }
+  static bool IsWE(UINT32 Encoding) { return (UINT32)-1 == Encoding; }
+public:
+  CharEncConv() : m_Result(0) {}
+  ~CharEncConv() { Close(); }
+  void Close()
+  {
+    free(m_Result);
+    m_Result = 0;
+#ifndef _WIN32
+    m_iconvd.Close();
+#endif
+  }
+  void* Detach() { void *p = m_Result; m_Result = 0; return p; }
+  bool Initialize(UINT32 ToEnc, UINT32 FromEnc);
+  void* Convert(const void*Src, size_t cbSrc = -1, size_t*cbOut = 0);
+#ifdef _WIN32
+  void SetAllowOptimizedReturn(bool val = true) { m_AllowOptimizedReturn = val; }
+#else
+  void SetAllowOptimizedReturn(bool val = false) {}
+#endif
+  static BOOL IsValidCodePage(UINT cp);
+};
 
 class WCToUTF16LEHlpr {
   unsigned short* m_s;
@@ -67,22 +108,22 @@ public:
   WCToUTF16LEHlpr() : m_s(0) {}
 
   bool Create(const TCHAR*in)
-  {
-#if defined(_WIN32) && defined(_UNICODE)
-    m_s = (unsigned short*) in;
+#if !defined(_WIN32) || !defined(_UNICODE)
+  ;
 #else
-#error TODO: wchar_t to UTF16LE
-#endif
+  {
+    m_s = (unsigned short*) in;
     return true;
   }
+#endif
   void Destroy()
   {
-#if !defined(_WIN32) && !defined(_UNICODE)
-    delete[] m_s;
+#if !defined(_WIN32) || !defined(_UNICODE)
+    free(m_s);
 #endif
   }
   const unsigned short* Get() const { return m_s; }
-  UINT GetLen() const { return StrLenUTF16LE(m_s); }
+  UINT GetLen() const { return StrLenUTF16(m_s); }
   UINT GetSize() const { return (GetLen()+1) * 2; }
 };
 
@@ -110,7 +151,6 @@ public:
   void SafeSetCodepage(WORD cp)
   {
     if (NStreamEncoding::AUTO==cp) cp = GetPlatformDefaultCodepage();
-    if (NStreamEncoding::UNKNOWN==cp) cp = GetPlatformDefaultCodepage();
     SetCodepage(cp);
   }
   void Reset() { SetCodepage(GetPlatformDefaultCodepage()); }
@@ -163,16 +203,23 @@ public:
     }
     return false;
   }
+#ifdef _WIN32
+  static bool SetBinaryMode(int fd) { return -1 != _setmode(fd, _O_BINARY); }
+  static bool SetBinaryMode(FILE*f) { return SetBinaryMode(_fileno(f)); }
+#else
+  static bool SetBinaryMode(int fd) { return true; }
+  static bool SetBinaryMode(FILE*f) { return true; }
+#endif
 };
 
-class NIStream {
+class NBaseStream {
 protected:
   FILE* m_hFile;
   NStreamEncoding m_Enc;
 
 public:
-  NIStream() : m_hFile(0) {}
-  ~NIStream() { Close(); }
+  NBaseStream() : m_hFile(0) {}
+  ~NBaseStream() { Close(); }
   FILE* GetHandle() const { return m_hFile; }
   NStreamEncoding& StreamEncoding() { return m_Enc; }
   bool IsEOF() const { return feof(m_hFile) != 0; }
@@ -187,20 +234,11 @@ public:
   
   bool OpenFileForReading(const TCHAR* Path, WORD enc = NStreamEncoding::AUTO)
   {
-    FILE *hFile = my_fopen(Path, "rb");
-    return Attach(hFile, enc);
+    return Attach(my_fopen(Path, "rb"), enc);
   }
   bool OpenFileForReading(const TCHAR* Path, NStreamEncoding&Enc)
   {
     return OpenFileForReading(Path, Enc.GetCodepage());
-  }
-  bool OpenStdIn(WORD enc = NStreamEncoding::AUTO)
-  {
-    return Attach(stdin, enc);
-  }
-  bool OpenStdIn(NStreamEncoding&Enc)
-  {
-    return OpenStdIn(Enc.GetCodepage());
   }
 
   FILE* Detach() 
@@ -209,18 +247,7 @@ public:
     m_hFile = 0;
     return hFile;
   }
-  bool Attach(FILE*hFile, WORD enc)
-  {
-    Close();
-    m_hFile = hFile;
-    if (m_hFile)
-    {
-      WORD cp = DetectUTFBOM(m_hFile);
-      if (!cp) cp = enc;
-      m_Enc.SafeSetCodepage(cp);
-    }
-    return 0 != m_hFile;
-  }
+  bool Attach(FILE*hFile, WORD enc, bool Seek = true);
 
   UINT ReadOctets(void*Buffer, UINT cbBuf)
   {
@@ -235,6 +262,56 @@ public:
   }
   bool ReadOctet(void*Buffer) { return 1 == ReadOctets(Buffer, 1); }
   bool ReadInt16(void*Buffer) { return 2 == ReadOctets(Buffer, 2); }
+};
+
+class NIStream : public NBaseStream {
+public:
+  bool OpenStdIn(WORD enc = NStreamEncoding::AUTO)
+  {
+    return Attach(stdin, enc, false);
+  }
+  bool OpenStdIn(NStreamEncoding&Enc)
+  {
+    return OpenStdIn(Enc.GetCodepage());
+  }
+};
+
+class NOStream : public NBaseStream {
+public:
+  bool CreateFileForWriting(const TCHAR* Path, WORD enc = NStreamEncoding::AUTO)
+  {
+    return Attach(my_fopen(Path, "w+b"), enc);
+  }
+  bool CreateFileForWriting(const TCHAR* Path, NStreamEncoding&Enc)
+  {
+    return CreateFileForWriting(Path, Enc.GetCodepage());
+  }
+  bool CreateFileForAppending(const TCHAR* Path, WORD enc = NStreamEncoding::AUTO)
+  {
+    return Attach(my_fopen(Path, "a+b"), enc);
+  }
+  bool CreateFileForAppending(const TCHAR* Path, NStreamEncoding&Enc)
+  {
+    return CreateFileForAppending(Path, Enc.GetCodepage());
+  }
+
+  bool WriteOctets(void*Buffer, size_t cbBuf)
+  {
+    return cbBuf == fwrite(Buffer, 1, cbBuf, m_hFile);
+  }
+  bool WriteBOM(NStreamEncoding&Enc)
+  {
+    static const unsigned char u8b[] = {0xEF,0xBB,0xBF};
+    static const unsigned char u16lb[] = {0xFF,0xFE}, u16bb[] = {0xFE,0xFF};
+    switch(Enc.GetCodepage())
+    {
+    case NStreamEncoding::UTF8: return WriteOctets((void*) u8b, sizeof(u8b));
+    case NStreamEncoding::UTF16LE: return WriteOctets((void*) u16lb, sizeof(u16lb));
+    case NStreamEncoding::UTF16BE: return WriteOctets((void*) u16bb, sizeof(u16bb));
+    }
+    return false;
+  }
+  bool WriteString(const wchar_t*Str, size_t cch = -1);
 };
 
 class NStreamLineReader {

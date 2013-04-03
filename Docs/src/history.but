@@ -28,6 +28,8 @@ Released on ?, 2013
 
 \S2{} Minor Changes
 
+\b Added !appendfile /CHARSET parameter
+
 \b %temp%\\Low will be used if the installer cannot write to %temp% nor %windir%\\Temp (\W{http://sourceforge.net/support/tracker.php?aid=2909242}{bug #2909242}, \W{http://sourceforge.net/support/tracker.php?aid=2912824}{patch #2912824})
 
 \b Added $\{NSIS_PACKEDVERSION\}, the NSIS version packed in a hex number (\W{http://sourceforge.net/support/tracker.php?aid=2680832}{patch #2680832})

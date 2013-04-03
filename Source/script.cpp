@@ -893,7 +893,7 @@ int CEXEBuild::includeScript(const TCHAR *f, NStreamEncoding&enc)
   const int errlinecnt=linecnt;
   linecnt=last_linecnt;
   curfilename=last_filename;
-  curlinereader = last_linereader;
+  curlinereader=last_linereader;
 
   build_include_depth--;
   if (r != PS_EOF && r != PS_OK)
@@ -962,7 +962,6 @@ int CEXEBuild::LoadLicenseFile(const TCHAR *file, TCHAR** pdata, const TCHAR *cm
   TCHAR*data=(TCHAR*)malloc(cbTotalData);
   if (!data)
   {
-l_OOM:
     ERROR_MSG(_T("Internal compiler error #12345: %s malloc(%d) failed.\n"),cmdname,cbTotalData);
     return PS_ERROR;
   }
@@ -980,6 +979,7 @@ l_OOM:
   const UINT cbcu=NStreamEncoding::GetCodeUnitSize(srccp);
   if (sizeof(TCHAR) < cbcu)
   {
+l_errwcconv:
     ERROR_MSG(_T("%s: wchar_t conversion failed!\n"),cmdname);
     return PS_ERROR;
   }
@@ -989,15 +989,10 @@ l_OOM:
   if (cbcu > 1) *((WORD*)lichdr)='X';
   //BUGBUG: No room: if (cbcu > 2) *((UINT32*)lichdr)='X';
   wchar_t*wcdata=DupWCFromBytes(lichdr,cbcu+cbFileData,srccp);
-  if ((wchar_t*)-1==wcdata)
-  {
-    ERROR_MSG(_T("%s: wchar_t conversion failed!\n"),cmdname);
-    return PS_ERROR;
-  }
+  if (!wcdata) goto l_errwcconv;
   free(data);
   *pdata=data=wcdata;
   ldata=data+1;
-  if (!data) goto l_OOM;
 
   const bool isRTF=!memcmp(ldata,_T("{\\rtf"),5*sizeof(TCHAR));
   if (isRTF)
@@ -1407,26 +1402,35 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
     case TOK_P_APPENDFILE:
       {
-        TCHAR *file = line.gettoken_str(1);
-        TCHAR *text = line.gettoken_str(2);
-
-        FILE *fp = FOPENTEXT(file, "a");
-        if (!fp)
+        WORD tok = 0, cp;
+        bool bom = false, forceEnc = false;
+        TCHAR *param = line.gettoken_str(++tok), buf[9+1];
+        my_strncpy(buf,param,COUNTOF(buf));
+        if(!_tcsicmp(buf,_T("/charset=")))
         {
-          ERROR_MSG(_T("!appendfile: \"%s\" couldn't be opened.\n"), file);
+          ++tok, ++forceEnc, cp = GetEncodingFromString(param+9, bom);
+          if (NStreamEncoding::UNKNOWN == cp)
+          {
+            ERROR_MSG(_T("!appendfile: Invalid parameter \"%s\"!\n"), param);
+            return PS_ERROR;
+          }
+        }
+        param = line.gettoken_str(tok);
+        NOStream ostrm;
+        if (!ostrm.CreateFileForAppending(param, NStreamEncoding::ACP))
+        {
+          ERROR_MSG(_T("!appendfile: \"%s\" couldn't be opened.\n"), param);
           return PS_ERROR;
         }
-
-        if (_fputts(text, fp) < 0)
+        if (ostrm.IsUnicode()) bom = false;
+        if (forceEnc) ostrm.StreamEncoding().SetCodepage(cp);
+        const TCHAR *const text = line.gettoken_str(++tok);
+        if ((bom ? !ostrm.WriteBOM(ostrm.StreamEncoding()) : 0) || !ostrm.WriteString(text))
         {
-          fclose(fp);
-          ERROR_MSG(_T("!appendfile: error writing to \"%s\".\n"), file);
+          ERROR_MSG(_T("!appendfile: error writing to \"%s\".\n"), param);
           return PS_ERROR;
         }
-
-        fclose(fp);
-
-        SCRIPT_MSG(_T("!appendfile: \"%s\" \"%s\"\n"), file, text);
+        SCRIPT_MSG(_T("!appendfile: \"%s\" \"%s\"\n"), param, text);
       }
     return PS_OK;
 

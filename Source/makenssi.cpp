@@ -467,7 +467,7 @@ int _tmain(int argc, TCHAR **argv)
             build.warning(OPT_STR _T("INPUTCHARSET: Ignoring invalid charset %s"), argv[argpos]);
           cp = NStreamEncoding::AUTO;
         }
-        inputenc.SetCodepage(cp);
+        inputenc.SafeSetCodepage(cp);
       }
       else
         break;

@@ -123,6 +123,8 @@ inline size_t nsis_iconv_adaptor
   return iconv_func (cd, (T)inbuf, inbytesleft, outbuf, outbytesleft);
 }
 
+bool nsis_iconv_reallociconv(iconv_t CD, char**In, size_t*cbInLeft, char**Mem, size_t&cbConverted);
+
 class iconvdescriptor {
   iconv_t m_cd;
 public:
