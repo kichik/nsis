@@ -46,6 +46,7 @@ languages = Split("""
 	PortugueseBR
 	Romanian
 	Russian
+	ScotsGaelic
 	Serbian
 	SerbianLatin
 	SimpChinese
