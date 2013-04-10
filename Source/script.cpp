@@ -52,6 +52,31 @@ using namespace std;
 
 #define MAX_INCLUDEDEPTH 10
 
+static UINT read_line_helper(NStreamLineReader&lr, TCHAR*buf, UINT cch)
+{
+  // Helper function for reading lines from text files. buf MUST be valid and cch MUST be > 1!
+  // Returns 0 on error or the number of characters read including the first \n, \r or \0.
+  // When it returns 0, buf[0] is 0 for EOF and NStream::ERR_* for errors.
+  UINT lrr = lr.ReadLine(buf, cch), eof = 0;
+  if (NStream::OK != lrr)
+  {
+    ++eof;
+    if (!lr.IsEOF())
+    {
+      buf[0] = (TCHAR) lrr;
+      return 0;
+    }
+  }
+  const bool unicode = lr.IsUnicode();
+  for(cch = 0;; ++cch)
+  {
+    TCHAR ch = buf[cch];
+    if (!ch || NStream::IsNewline(ch, unicode)) break;
+  }
+  if (cch) eof = 0; // Read something, postpone EOF
+  return ++cch - eof;
+}
+
 #ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
 // Added by Sunil Kamath 11 June 2003
 TCHAR *CEXEBuild::set_file_predefine(const TCHAR *filename)
@@ -3064,34 +3089,33 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       } else if (!_tcsicmp(define,_T("/file")) || !_tcsicmp(define,_T("/file_noerr"))) {
         
         if (line.getnumtokens()!=4) PRINTHELP()
-
-        define=line.gettoken_str(2);
-        const TCHAR *filename=line.gettoken_str(3);
-        FILE *fp=FOPENTEXT(filename,"r");
-
-        if (!fp && _tcsicmp(define,_T("/file_noerr"))) {
-          ERROR_MSG(_T("!define /file: file not found (\"%s\")\n"),filename);
-          return PS_ERROR;
-        }
-
-        if (fp)  {
-          TCHAR *str=m_templinebuf;
-          for (;;) {
-            TCHAR *p=str;
-            *p=0;
-            _fgetts(str,MAX_LINELENGTH,fp);
-            linecnt++;
-            if (feof(fp)&&!str[0]) break;
-
-            while (*p) p++;
-            if (p > str) p--;
-            while (p >= str && (*p == _T('\r') || *p == _T('\n'))) p--;
-            *++p=0;
-            if (file_buf.getlen()) file_buf.add(_T("\n"),1);
-            file_buf.add(str,_tcslen(str));
+        const TCHAR *const filename=line.gettoken_str(3), *const swit=define;
+        NIStream filestrm;
+        if (!filestrm.OpenFileForReading(filename)) {
+          if (!swit[5]) { // "/file" vs "/file_noerr"
+            ERROR_MSG(_T("!define /file: file not found (\"%s\")\n"),filename);
+            return PS_ERROR;
           }
-          fclose(fp);
+        } else {
+          NStreamLineReader lr(filestrm);
+          TCHAR *str=m_templinebuf;
+          for (UINT linnum = 0;;) {
+            ++linnum;
+            UINT cch=read_line_helper(lr,str,MAX_LINELENGTH);
+            if (!cch) {
+              if (*str) {
+                tstring lrmsg=lr.GetErrorMessage((UINT)*str,filename,linnum);
+                ERROR_MSG(_T("!define %s: %s"),swit,lrmsg.c_str());
+                return PS_ERROR;
+              }
+              break; // EOF
+            }
+            str[--cch]=_T('\0'); // Remove \r or \n, we always append \n
+            if (file_buf.getlen()) file_buf.add(_T("\n"),sizeof(TCHAR));
+            file_buf.add(str,cch*sizeof(TCHAR));
+          }
         }
+        define = line.gettoken_str(2);
         file_buf.add(_T("\0"),1);
         value = (TCHAR *)file_buf.get();
 
@@ -3359,9 +3383,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return PS_OK;
     case TOK_P_SEARCHPARSESTRING:
       {
-        bool ignCase=false;
-        bool noErrors=false;
-        bool isFile=false;
+        bool ignCase=false, noErrors=false, isFile=false;
         int parmOffs=1;
         while (parmOffs < line.getnumtokens())
         {
@@ -3381,34 +3403,40 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
         if (isFile)
         {
-          FILE *fp=FOPENTEXT(source_string,"r");
-          if (!fp)
+          const TCHAR *const filename = source_string;
+          NIStream filestrm;
+          if (!filestrm.OpenFileForReading(filename))
           {
-            ERROR_MSG(_T("!searchparse /file: error opening \"%s\"\n"),source_string);
+            ERROR_MSG(_T("!searchparse /file: error opening \"%s\"\n"),filename);
             return PS_ERROR;
           }
-
           int req_parm = (line.getnumtokens() - parmOffs)/2;
-
+          NStreamLineReader lr(filestrm);
           GrowBuf tmpstr;
           TCHAR *str=m_templinebuf;
+          UINT linnum=0;
           for (;;)
           {
             tmpstr.resize(0);
             for (;;)
             {
-              str[0]=0;
-              _fgetts(str,MAX_LINELENGTH,fp);
-              if (!str[0]) break; // eof
+              ++linnum;
+              UINT cch=read_line_helper(lr,str,MAX_LINELENGTH);
+              if (!cch)
+              {
+                if (*str)
+                {
+                  tstring lrmsg=lr.GetErrorMessage((UINT)*str,filename,linnum);
+                  ERROR_MSG(_T("!searchparse: %s"),lrmsg.c_str());
+                  return PS_ERROR;
+               }
+               break; // EOF
+              }
+              str[--cch]=_T('\0'); // remove newline
 
-              TCHAR *p=str;
-              while (*p) p++;
-              if (p > str) p--;
-              while (p >= str && (*p == _T('\r') || *p == _T('\n'))) p--;
-              *++p=0;
-
-              bool endSlash = (str[0] && str[_tcslen(str)-1] == _T('\\'));
-              if (tmpstr.getlen() || endSlash) tmpstr.add(str,sizeof(TCHAR)*_tcslen(str));
+              const bool endSlash = cch && _T('\\') == str[cch-1];
+              if (endSlash) --cch; // don't include the slash character
+              if (tmpstr.getlen() || endSlash) tmpstr.add(str,cch*sizeof(TCHAR));
 
               // if we have valid contents and not ending on slash, then done
               if (!endSlash && (str[0] || tmpstr.getlen())) break;
@@ -3436,7 +3464,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             }
             // parse line
           }
-          fclose(fp);
           if (!noErrors)
           {
             if (!list)  
