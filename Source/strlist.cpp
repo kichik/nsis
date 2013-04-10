@@ -59,7 +59,7 @@ bool ExeHeadStringList::get(unsigned int offset, tstring&outstr) const
 {
   if (0 == offset)
   {
-    outstr.clear();
+    outstr.assign(_T(""));
     return true;
   }
   char *p = (char*) m_gr.get();
