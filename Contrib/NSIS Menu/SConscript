@@ -21,9 +21,9 @@ libs = Split("""
 """)
 
 if env['UNICODE']:
-   libs.append(["wxbase28u", "wxmsw28u_core", "wxmsw28u_html"])
+   libs.append(["wxbase29u", "wxmsw29u_core", "wxmsw29u_html"])
 else:
-   libs.append(["wxbase28", "wxmsw28_core", "wxmsw28_html"])
+   libs.append(["wxbase29", "wxmsw29_core", "wxmsw29_html"])
 
 html = Split("""
    #Menu/index.html
@@ -52,9 +52,9 @@ if env['PLATFORM'] != 'win32' and WhereIs('wx-config') or \
       libs,
       res = rc,
       resources = resources,
-      flags = ['$MSVCRT_FLAG', '$EXCEPTION_FLAG'],
+      flags = ['$EXCEPTION_FLAG'],
       root_util = True,
-      cross_platform = True
+      cross_platform = True,
    )
 
    # manifest
