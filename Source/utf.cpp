@@ -387,23 +387,24 @@ tstring NStreamLineReader::GetErrorMessage(UINT Error, const TCHAR*Filename, UIN
   switch(Error)
   {
   case NStream::ERR_BUFFEROVERFLOW:
-    msg = _T("Line too long: ");
+    msg = _T("Line too long");
     break;
   case NStream::ERR_IOERROR:
-    msg = _T("I/O  error"), Filename = 0;
+    msg = _T("I/O error"), Filename = 0;
     break;
   case NStream::ERR_UNSUPPORTEDENCODING:
     StreamEncoding().GetCPDisplayName(buf);
     msg = tstring(buf) + _T(" is not supported"), Filename = 0;
     break;
   default:
-    msg = _T("Bad text encoding: ");
+    msg = _T("Bad text encoding");
     break;
   }
   if (Filename)
   {
-    _stprintf(buf,_T("%u"),Line);
-    msg = msg + Filename + _T(":") + buf;
+    const TCHAR *filelinesep = *Filename ? _T(":") : _T("");
+    _stprintf(buf,_T("%s%u"),filelinesep,Line);
+    msg = msg + _T(": ") + Filename + buf;
   }
   return msg + _T("\n");
 }
