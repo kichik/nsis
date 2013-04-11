@@ -184,11 +184,14 @@ def TestSubversionEOL():
 	svn = pysvn.Client()
 
 	for root, dirs, files in walk('..'):
-		if '.svn' not in dirs:
-			continue
-
 		def versioned(f):
-			s = svn.status(join(root, f))[0].text_status
+			try:
+				s = svn.status(join(root, f))[0].text_status
+			except pysvn.ClientError, e:
+				if 'not a working copy' in e.message:
+					return False
+				else:
+					raise
 			return s != pysvn.wc_status_kind.unversioned
 
 		svn_files = filter(versioned, files)
@@ -198,10 +201,11 @@ def TestSubversionEOL():
 			ext = splitext(f)[1]
 			if ext in eoldict.keys():
 				eol = eoldict[ext]
-				s = svn.propget('svn:eol-style', join(root, f)).values()
+				path = join(root, f)
+				s = svn.propget('svn:eol-style', path).values()
 				if not s or s[0] != eol:
-					print '*** %s has bad eol-style' % f
-					log('*** %s has bad eol-style' % f)
+					print '*** %s has bad eol-style' % path
+					log('*** %s has bad eol-style' % path)
 					exit()
 
 def CreateMenuImage():
