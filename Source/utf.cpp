@@ -36,11 +36,13 @@ UINT StrLenUTF16(const void*str)
 
 bool StrSetUTF16LE(tstring&dest, const void*src)
 {
-#ifdef _WIN32
-  dest = (wchar_t*) src;
-#else
-#error TODO: UTF16LE to wchar_t
+#ifndef _WIN32
+  CharEncConv cec;
+  if (!cec.Initialize(-1,NStreamEncoding::UTF16LE)) return false;
+  src = (const void*) cec.Convert(src);
+  if (!src) return false;
 #endif
+  try { dest = (wchar_t*) src; } catch(...) { return false; }
   return true;
 }
 
