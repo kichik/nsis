@@ -266,11 +266,6 @@ if (not defenv.has_key('TARGET_ARCH')) or defenv['TARGET_ARCH'] == 'x86':
 	vermaj = 0
 	if defenv.has_key('VER_MAJOR'):
 		vermaj = int(defenv['VER_MAJOR'])
-	if defenv['UNICODE']:
-		if vermaj < 3:
-			defenv['VERSION'] += "-Unicode"
-	elif vermaj >= 3:
-		defenv['VERSION'] += "-Ansi"
 
 f.write('#define NSIS_VERSION _T("v%s")\n' % defenv['VERSION'])
 
