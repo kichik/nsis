@@ -1834,7 +1834,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
 
       SCRIPT_MSG(_T("%s: \"%s\" %d \"%s\"\n"), cmdnam, name, lang, file);
-      return PS_ERROR;
+      return PS_OK;
     }
     return PS_OK;
     case TOK_NAME:
