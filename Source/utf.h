@@ -29,7 +29,7 @@
 
 const WORD UNICODE_REPLACEMENT_CHARACTER = 0xfffd;
 
-#define TSTR_INPUTCHARSET _T("ACP|OEM|CP#|UTF8|UTF16LE")
+#define TSTR_INPUTCHARSET _T("ACP|OEM|CP#|UTF8|UTF16<LE|BE>")
 #define TSTR_OUTPUTCHARSET _T("ACP|OEM|CP#|UTF8[SIG]|UTF16<LE|BE>[BOM]")
 
 
@@ -163,7 +163,9 @@ public:
 #endif
   }
   bool IsUTF8() const { return UTF8==GetCodepage(); }
+  bool IsUTF16() const { return (UTF16LE|1)==(GetCodepage()|1); }
   bool IsUTF16LE() const { return UTF16LE==GetCodepage(); }
+  bool IsUTF16BE() const { return UTF16BE==GetCodepage(); }
   bool IsUnicode() const { return IsUnicodeCodepage(GetCodepage()); }
   void GetCPDisplayName(TCHAR*Buf) { GetCPDisplayName(m_cp, Buf); }
 

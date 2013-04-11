@@ -484,16 +484,18 @@ l_restart:
       if (CompleteLine(Buffer,cchWC,cchBuf,true)) goto l_success;
     }
   }
-  else if (StreamEncoding().IsUTF16LE())
+  else if (StreamEncoding().IsUTF16())
   {
 #ifndef _WIN32
     if (!iconvd.Open("wchar_t", iconvd::GetHostEndianUCS4Code())) goto ERR_UNSUPPORTEDENCODING;
 #endif
+    const bool utf16be = StreamEncoding().IsUTF16BE();
     unsigned short lead, trail, cchWC;
     for(;;)
     {
       if (!strm.ReadInt16(&lead)) goto l_ioerror;
       FIX_ENDIAN_INT16LETOHOST_INPLACE(lead);
+      if (utf16be) lead = SWAP_ENDIAN_INT16(lead);
       if (IsTrailSurrogateUTF16(lead)) goto l_badutf;
       UINT32 codpt = lead;
       if (cchBuf <= 1) goto l_lineoverflow;
@@ -502,6 +504,7 @@ l_restart:
       {
         if (!strm.ReadInt16(&trail)) goto l_ioerror;
         FIX_ENDIAN_INT16LETOHOST_INPLACE(trail);
+        if (utf16be) trail = SWAP_ENDIAN_INT16(trail);
         if (!IsTrailSurrogateUTF16(trail)) goto l_badutf;
         codpt = CodePointFromUTF16SurrogatePair(lead,trail);
 #ifdef _WIN32
