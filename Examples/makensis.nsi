@@ -288,6 +288,7 @@ ${MementoSection} "Script Examples" SecExample
   File ..\Examples\WordFunc.ini
   File ..\Examples\WordFuncTest.nsi
   File ..\Examples\Memento.nsi
+  File ..\Examples\unicode.nsi
 
   SetOutPath $INSTDIR\Examples\Plugin
   File ..\Examples\Plugin\exdll.c
