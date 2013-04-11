@@ -106,7 +106,8 @@ int _tmain(int argc, TCHAR* argv[])
 
   FILE*fIn = FOPEN(filename.c_str(), ("rb"));
   filefound = !!fIn;
-  fclose(fIn);
+  if (fIn)
+    fclose(fIn);
 
   // Work
   
