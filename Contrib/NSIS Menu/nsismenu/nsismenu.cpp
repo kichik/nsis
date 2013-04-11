@@ -127,15 +127,14 @@ private:
              wxT("nsis_menu"))
    {  
       m_Html = new wxHtmlWindow(this, HtmlControl);
-      m_Html->SetRelatedFrame(this, _("NSIS Menu"));
+      m_Html->SetRelatedFrame(this, wxT("NSIS Menu%s"));
       m_Html->SetBorders(0);
       m_Html->EnableScrolling(false, false);
       m_Html->SetSize(600, 365);
       
       // Set font size
-      wxWindow UnitConvert;
       wxSize DialogSize(1000, 1000);
-      DialogSize = UnitConvert.ConvertDialogToPixels(DialogSize);
+      DialogSize = this->ConvertDialogToPixels(DialogSize);
       int fonts[7] = {0, 0, 14000 / (DialogSize.GetWidth()), 19000 / (DialogSize.GetWidth()), 0, 0, 0};
       m_Html->SetFonts(wxString(), wxString(), fonts);
       
