@@ -19,6 +19,7 @@ examples = Split("""
 	TextFunc.ini
 	TextFunc.nsi
 	TextFuncTest.nsi
+	unicode.nsi
 	UserVars.nsi
 	VersionInfo.nsi
 	viewhtml.nsi
