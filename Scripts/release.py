@@ -3,6 +3,7 @@ requires Python Image Library - http://www.pythonware.com/products/pil/
 requires grep and diff - http://www.mingw.org/msys.shtml
 requires command line svn - http://subversion.tigris.org/
 requires pysvn - http://pysvn.tigris.org/
+requires win32com - http://starship.python.net/~skippy/win32/Downloads.html
 
 example release.cfg:
 =========================
