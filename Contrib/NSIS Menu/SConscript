@@ -21,9 +21,9 @@ libs = Split("""
 """)
 
 if env['UNICODE']:
-   libs.append(["wxbase29u", "wxmsw29u_core", "wxmsw29u_html"])
+   libs.append(["wxbase28u", "wxmsw28u_core", "wxmsw28u_html"])
 else:
-   libs.append(["wxbase29", "wxmsw29_core", "wxmsw29_html"])
+   libs.append(["wxbase28", "wxmsw28_core", "wxmsw28_html"])
 
 html = Split("""
    #Menu/index.html
