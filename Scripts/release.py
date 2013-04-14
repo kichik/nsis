@@ -37,7 +37,7 @@ PURGE_URL=http://nsis.sourceforge.net/%s?action=purge
 UPDATE_URL=http://nsis.sourceforge.net/Special:Simpleupdate?action=raw
 
 [svn2cl]
-SVN2CL_XSL=svl2cl.xsl
+SVN2CL_XSL=svn2cl.xsl
 =========================
 
 7zatarbz2.bat:
@@ -294,7 +294,7 @@ def CreateChangeLog():
 
 		print 'downloading svn2cl.xsl stylesheet...'
 
-		urllib.urlretrieve('http://svn.collab.net/repos/svn/trunk/contrib/client-side/svn2cl/svn2cl.xsl', SVN2CL_XSL)
+		urllib.urlretrieve('http://svn.apache.org/repos/asf/subversion/trunk/contrib/client-side/svn2cl/svn2cl.xsl', SVN2CL_XSL)
 
 	print 'generating ChangeLog...'
 
