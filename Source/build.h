@@ -227,7 +227,7 @@ class CEXEBuild {
     bool inside_comment;
     int multiple_entries_instruction;  // 1 (true) or 0 (false)
 
-    DefineList *searchParseString(const TCHAR *source_string, LineParser *line, int parmOffs, bool ignCase, bool noErrors);
+    DefineList *searchParseString(const TCHAR *source_string, LineParser&line, int parmOffs, bool ignCase, bool noErrors, UINT*failParam = 0);
 
     // build.cpp functions used mostly by script.cpp
     void set_target_architecture_predefines();

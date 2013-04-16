@@ -3397,7 +3397,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           ERROR_MSG(_T("!searchparse: not enough parameters\n"));
           return PS_ERROR;
         }
-
         const TCHAR *source_string = line.gettoken_str(parmOffs++);
         DefineList *list=NULL;
 
@@ -3410,7 +3409,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             ERROR_MSG(_T("!searchparse /file: error opening \"%s\"\n"),filename);
             return PS_ERROR;
           }
-          int req_parm = (line.getnumtokens() - parmOffs)/2;
+          UINT req_parm=(line.getnumtokens() - parmOffs)/2, fail_parm=0;
           NStreamLineReader lr(filestrm);
           GrowBuf tmpstr;
           TCHAR *str=m_templinebuf;
@@ -3434,7 +3433,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
               }
               str[--cch]=_T('\0'); // remove newline
 
-              const bool endSlash = cch && _T('\\') == str[cch-1];
+              const bool endSlash=cch && _T('\\') == str[cch-1];
               if (endSlash) --cch; // don't include the slash character
               if (tmpstr.getlen() || endSlash) tmpstr.add(str,cch*sizeof(TCHAR));
 
@@ -3450,38 +3449,36 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
               tmpstr.add(_T("\0"),sizeof(TCHAR));
               thisline=(TCHAR *)tmpstr.get();
             }
-
-            DefineList *tlist = searchParseString(thisline,&line,parmOffs,ignCase,true);
+            UINT linefailparm;
+            DefineList *tlist = searchParseString(thisline,line,parmOffs,ignCase,true,&linefailparm);
+            if (linefailparm > fail_parm) fail_parm = linefailparm;
             if (tlist && tlist->getnum())
             {
               if (!list || tlist->getnum() > list->getnum())
               {
                 delete list;
-                list=tlist;
-                if (tlist->getnum() >= req_parm) break; // success!
+                list=tlist, tlist=0;
+                if ((unsigned)list->getnum() >= req_parm)
+                {
+                  fail_parm = -1; // success
+                  break; // we found all the tokens, stop parsing the file
+                }
               }
-              else delete list;
             }
+            delete tlist;
             // parse line
           }
-          if (!noErrors)
+          if ((unsigned)-1 != fail_parm && !noErrors)
           {
-            if (!list)  
-            {
-              ERROR_MSG(_T("!searchparse: starting string \"%s\" not found in file!\n"),line.gettoken_str(parmOffs));
-              return PS_ERROR;
-            }
-            else if (list->getnum() < req_parm)
-            {
-              TCHAR *p=line.gettoken_str(parmOffs + list->getnum()*2);
-              ERROR_MSG(_T("!searchparse: failed search at string \"%s\" not found in file!\n"),p?p:_T("(null)"));
-              return PS_ERROR;
-            }
+            const TCHAR *msgprefix=!fail_parm ? _T("starting ") : _T("");
+            TCHAR *p=line.gettoken_str(parmOffs + (fail_parm*2));
+            ERROR_MSG(_T("!searchparse: %sstring \"%s\" not found in file!\n"),msgprefix,p?p:_T("(null)"));
+            return PS_ERROR;
           }
         }
         else
         {
-          list=searchParseString(source_string,&line,parmOffs,ignCase,noErrors);
+          list=searchParseString(source_string,line,parmOffs,ignCase,noErrors);
           if (!list && !noErrors) return PS_ERROR;
         }
 
@@ -6844,66 +6841,51 @@ int CEXEBuild::do_add_file_create_dir(const tstring& local_dir, const tstring& d
 
 
 
-DefineList *CEXEBuild::searchParseString(const TCHAR *source_string, LineParser *line, int parmOffs, bool ignCase, bool noErrors)
+DefineList *CEXEBuild::searchParseString(const TCHAR *source_string, LineParser&line, int parmOffs, bool ignCase, bool noErrors, UINT*failParam)
 {
-  const TCHAR *tok = line->gettoken_str(parmOffs++);
-  if (tok && *tok)
-  {
-    int toklen = _tcslen(tok);
-    while (*source_string && (ignCase?_tcsnicmp(source_string,tok,toklen):_tcsncmp(source_string,tok,toklen))) source_string++;
-
-    if (!*source_string) 
-    {
-      if (!noErrors) ERROR_MSG(_T("!searchparse: starting string \"%s\" not found, aborted search!\n"),tok);
-      return NULL;
-    }
-    if (*source_string) source_string+=toklen;
-  }
-
+  if (failParam) *failParam = 0;
   DefineList *ret = NULL;
-
-  while (parmOffs < line->getnumtokens())
+  const TCHAR *defout = 0, *src_start = 0, *tok;
+  int toklen = 0, maxlen;
+  for (;;)
   {
-    const TCHAR *defout = line->gettoken_str(parmOffs++);
-    if (parmOffs < line->getnumtokens()) tok=line->gettoken_str(parmOffs++);
-    else tok=NULL;
-
-
-    int maxlen=-1;
-    const TCHAR *src_start = source_string;
-    if (tok && *tok)
+    tok = line.gettoken_str(parmOffs++);
+    const bool lasttoken = parmOffs > line.getnumtokens();
+    if (!tok || !*tok)
+      tok = 0, maxlen = -1; // No more tokens to search for, save the rest of the string
+    else
     {
-      int toklen = _tcslen(tok);
+      toklen = _tcslen(tok);
       while (*source_string && (ignCase?_tcsnicmp(source_string,tok,toklen):_tcsncmp(source_string,tok,toklen))) source_string++;
-
-      maxlen = source_string - src_start;
-
-      if (*source_string) source_string += toklen;
-      else if (!noErrors)
-      {
-        ERROR_MSG(_T("!searchparse: string \"%s\" not found, aborted search!\n"),tok);
-        delete ret;
-        return NULL;
-      }
-      
+      maxlen = source_string - src_start; // Length of previous string
     }
- 
-    if (defout && defout[0])
+    if (defout && defout[0]) // We now know the start and length of the previous string, add it to the list
     {
-      if (!ret) ret = new DefineList;
-
-      if (maxlen < 0) ret->add(defout,src_start);
+      if (!ret) ret = new DefineList();
+      if (maxlen < 0)
+        ret->add(defout,src_start);
       else
       {
-        TCHAR *p=_tcsdup(src_start);
+        TCHAR *p = _tcsdup(src_start);
         if (p)
         {
-          p[maxlen]=0;
+          p[maxlen] = 0;
           ret->add(defout,p);
           free(p);
         }
       }
     }
+    if (!*source_string || (!tok && !lasttoken)) // We did not find the requested token!
+    {
+      if (failParam) *failParam = ret ? ret->getnum() : 0;
+      if (noErrors) break; // Caller is OK with a incomplete list of matched strings
+      const TCHAR *msgprefix = src_start ? _T("") : _T("starting ");
+      ERROR_MSG(_T("!searchparse: %sstring \"%s\" not found, aborted search!\n"),msgprefix,tok);
+      delete ret;
+      return NULL;
+    }
+    if (maxlen < 0) break;
+    defout = line.gettoken_str(parmOffs++), src_start = source_string + toklen;
   }
   return ret;
 }
