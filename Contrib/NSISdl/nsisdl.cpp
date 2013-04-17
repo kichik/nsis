@@ -241,7 +241,7 @@ __declspec(dllexport) void download (HWND   parent,
 {
   char buf[1024];
   char url[1024];
-  char filename[1024];
+  TCHAR filenameT[1024];
   static char proxy[1024];
   BOOL bSuccess=FALSE;
   int timeout_ms=30000;
@@ -325,13 +325,22 @@ __declspec(dllexport) void download (HWND   parent,
     getieproxy=0;
     PopStringA(url);
   }
-  PopStringA(filename);
+  popstring(filenameT);
 
-  HANDLE hFile = CreateFileA(filename,GENERIC_WRITE,FILE_SHARE_READ,NULL,CREATE_ALWAYS,0,NULL);
+  static char main_buf[8192];
+  char *filenameA;
+#ifdef _UNICODE
+  filenameA = main_buf;
+  wsprintfA(filenameA, "%S", filenameT);
+#else
+  filenameA = filenameT;
+#endif
+
+  HANDLE hFile = CreateFile(filenameT,GENERIC_WRITE,FILE_SHARE_READ,NULL,CREATE_ALWAYS,0,NULL);
 
   if (hFile == INVALID_HANDLE_VALUE)
   {
-    wsprintfA(buf, "Unable to open %s", filename);
+    wsprintfA(buf, "Unable to open %s", filenameA);
     error = buf;
   }
   else
@@ -345,10 +354,10 @@ __declspec(dllexport) void download (HWND   parent,
       SendMessage(parent, uMsgCreate, TRUE, (LPARAM) parent);
 
       // set initial text
-      char *p = filename;
+      char *p = filenameA;
       while (*p) p++;
-      while (*p !='\\' && p != filename) p = CharPrevA(filename, p);
-      wsprintfA(buf, szDownloading, p != filename ? p + 1 : p);
+      while (*p !='\\' && p != filenameA) p = CharPrevA(filenameA, p);
+      wsprintfA(buf, szDownloading, p != filenameA ? p + 1 : p);
       SetDlgItemTextA(childwnd, 1006, buf);
       SetWindowTextA(g_hwndStatic, szConnecting);
     }
@@ -358,9 +367,7 @@ __declspec(dllexport) void download (HWND   parent,
 
       JNL_HTTPGet *get = 0;
 
-      static char main_buf[8192];
-      char *buf=main_buf;
-      char *p=NULL;
+      char *buf = main_buf, *p = NULL;
 
       HKEY hKey;
       if (getieproxy && RegOpenKeyExA(HKEY_CURRENT_USER,"Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings",0,KEY_READ,&hKey) == ERROR_SUCCESS)
@@ -574,7 +581,7 @@ __declspec(dllexport) void download (HWND   parent,
   }
 
   if (g_cancelled || !bSuccess) {
-    DeleteFileA(filename);
+    DeleteFile(filenameT);
   }
 
   PushStringA(error);
