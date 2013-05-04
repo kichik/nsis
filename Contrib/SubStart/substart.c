@@ -87,7 +87,7 @@ int main( int argc, char *argv[] )
                WARNING: The subprocess can't parse GetCommandLine()
                to find its own path since we pass the wrong path! */
             if ( CreateProcess( szPath, GetCommandLine(), NULL, NULL,
-                FALSE, 0, NULL, NULL, &si, &pi ) )
+                TRUE, 0, NULL, NULL, &si, &pi ) )
             {
                 WaitForSingleObject( pi.hProcess, INFINITE );
                 GetExitCodeProcess( pi.hProcess, (DWORD*) &err );

@@ -3241,6 +3241,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         TCHAR *exec=line.gettoken_str(1);
         SCRIPT_MSG(_T("!execute: \"%s\"\n"),exec);
 #ifdef _WIN32
+#ifdef _UNICODE
+        RunChildProcessRedirected(0,exec);
+#else
         PROCESS_INFORMATION pi;
         STARTUPINFO si={sizeof(STARTUPINFO),};
         if (CreateProcess(NULL,exec,NULL,NULL,FALSE,0,NULL,NULL,&si,&pi))
@@ -3249,6 +3252,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           CloseHandle(pi.hThread);
           CloseHandle(pi.hProcess);
         }
+#endif
 #else
         TCHAR *execfixed = my_convert(exec);
         system(execfixed);

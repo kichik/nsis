@@ -16,6 +16,7 @@
  */
 
 #include "utf.h"
+#include "util.h"
 
 #define FIX_ENDIAN_INT16LETOHOST_INPLACE FIX_ENDIAN_INT16_INPLACE
 
@@ -259,10 +260,27 @@ bool WCToUTF16LEHlpr::Create(const TCHAR*in)
 }
 #endif
 
+UINT DetectUTFBOM(void*Buffer, UINT cb)
+{
+  unsigned char *b = (unsigned char*) Buffer;
+  if (cb >= 3 && 0xef == b[0] && 0xbb == b[1] && 0xbf == b[2])
+    return NStreamEncoding::UTF8;
+  if (cb >= 2)
+  {
+    if (cb >= 4 && !b[0] && !b[1] && 0xfe == b[2] && 0xff == b[3])
+      return NStreamEncoding::UTF32BE;
+    if (0xff == b[0] && 0xfe == b[1])
+      return (cb >= 4 && !b[2] && !b[3]) ? NStreamEncoding::UTF32LE : NStreamEncoding::UTF16LE;
+    if (0xfe == b[0] && 0xff == b[1])
+      return NStreamEncoding::UTF16BE;
+  }
+  return 0;
+}
 UINT DetectUTFBOM(FILE*strm)
 {
   /*\
-  Tries to detect a BOM at the start of a stream. If a BOM is found it is eaten.
+  Tries to detect a BOM at the current position in a stream.
+  If a BOM is found it is eaten.
   NOTE: ungetc is only guaranteed to support 1 pushback, 
   lets hope no MBCS file starts with parts of a BOM.
   \*/
@@ -358,7 +376,8 @@ bool NBaseStream::Attach(FILE*hFile, WORD enc, bool Seek /*= true*/)
 {
   Close();
   m_hFile = hFile;
-  if (!m_hFile || !NStream::SetBinaryMode(m_hFile)) return false;
+  if (!m_hFile) return false;
+  if (!NStream::SetBinaryMode(m_hFile) && m_hFile != stdin) return false;
   fpos_t pos;
   if (Seek && !fgetpos(m_hFile, &pos)) rewind(m_hFile); else Seek = false;
   WORD cp = DetectUTFBOM(m_hFile);
@@ -377,9 +396,35 @@ bool NOStream::WriteString(const wchar_t*Str, size_t cch /*= -1*/)
   CharEncConv cec;
   if (!cec.Initialize(m_Enc.GetCodepage(), -1)) return false;
   cec.SetAllowOptimizedReturn(true);
+  if ((unsigned)-1 != cch) cch *= sizeof(wchar_t); // cec.Convert wants byte count
   size_t cbConv;
   char *p = (char*) cec.Convert(Str, cch, &cbConv);
   return p && WriteOctets(p, cbConv);
+}
+bool NOStream::WritePlatformNLString(const wchar_t*Str, size_t cch /*= -1*/)
+{
+#ifdef _WIN32
+  size_t cch2 = 0, nlcount = 0;
+  for(; cch2 < cch && Str[cch2]; ++cch2) if (L'\n' == Str[cch2]) ++nlcount;
+  if (nlcount)
+  {
+    cch = cch2 + nlcount;
+    wchar_t chPrev = 0, *buf = (wchar_t*) malloc(cch * sizeof(wchar_t));
+    if (!buf) return false;
+    for(size_t s = 0, d = 0; d < cch; ++s, ++d)
+    {
+      if (L'\n' == Str[s])
+      {
+        if (L'\r' != chPrev) buf[d++] = L'\r'; else --cch;
+      }
+      buf[d] = chPrev = Str[s];
+    }
+    bool retval = WriteString(buf, cch);
+    free(buf);
+    return retval;
+  }
+#endif
+  return WriteString(Str, cch);
 }
 
 tstring NStreamLineReader::GetErrorMessage(UINT Error, const TCHAR*Filename, UINT Line)
@@ -450,26 +495,7 @@ l_restart:
       else
 #endif
       {
-        if (0xC0 == (0xC0 & chU8[0]))
-        {
-          ++cb;
-          if (0xE0 == (0xE0 & chU8[0]))
-          {
-            ++cb;
-            if (0xF0 == (0xF0 & chU8[0]))
-            {
-              ++cb;
-              if (0xF8 == (0xF8 & chU8[0]))
-              {
-                ++cb;
-                if (0xFC == (0xFE & chU8[0]))
-                  ++cb; 
-                else 
-                  goto l_badutf;
-              }
-            }
-          }
-        }
+        if (!UTF8_GetTrailCount(chU8[0], cb)) goto l_badutf;
         for(BYTE moreU8 = 0; moreU8 < cb;) 
         {
           BYTE b;

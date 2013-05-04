@@ -28,17 +28,10 @@
 typedef std::wstring     tstring;
 typedef std::wofstream   tofstream;
 typedef std::wifstream   tifstream;
-// Use the following macros to open text files.
-FILE* FileOpenUnicodeText(const TCHAR* file, const TCHAR* mode, BOOL* unicode);
-#define FOPENTEXT(file, mode)           FileOpenUnicodeText(file, _T(mode), NULL)
-#define FOPENTEXT2(file, mode, unicode) FileOpenUnicodeText(file, _T(mode), unicode)
 #else
 typedef std::string      tstring;
 typedef std::ofstream    tofstream;
 typedef std::ifstream    tifstream;
-// Use the following macros to open text files.
-#define FOPENTEXT(file, mode)           fopen(file, mode)
-#define FOPENTEXT2(file, mode, unicode) (*(unicode)=FALSE, fopen(file, mode))
 #endif
 
 #ifndef _UNICODE

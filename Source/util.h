@@ -30,12 +30,8 @@
 #  include <unistd.h>
 #endif
 
- #include <stdarg.h>
+#include <stdarg.h>
 
-
-// these are the standard pause-before-quit stuff.
-extern int g_dopause;
-extern void dopause(void);
 
 extern double my_wtof(const wchar_t *str);
 extern unsigned int my_strncpy(TCHAR*Dest, const TCHAR*Src, unsigned int cchMax);
@@ -72,10 +68,10 @@ public:
     if (!p) throw std::bad_alloc();
     m_heap = (T*) p;
   }
-  size_t StrFmt(const T*FmtStr, va_list Args)
+  size_t StrFmt(const T*FmtStr, va_list Args, bool throwonerr = true)
   {
     size_t n = ExpandoStrFmtVaList(m_stack, COUNTOF(m_stack), &m_heap, FmtStr, Args);
-    if (!n && *FmtStr) throw std::bad_alloc();
+    if (throwonerr && !n && *FmtStr) throw std::bad_alloc();
     return n;
   }
   T* GetPtr() { return m_heap ? m_heap : m_stack; }
@@ -87,6 +83,34 @@ int sane_system(const TCHAR *command);
 void PrintColorFmtMsg(unsigned int type, const TCHAR *fmtstr, va_list args);
 void FlushOutputAndResetPrintColor();
 #ifdef _WIN32
+#ifdef _UNICODE
+int RunChildProcessRedirected(LPCWSTR cmdprefix, LPCWSTR cmdmain);
+#ifdef MAKENSIS
+typedef struct {
+  HANDLE hNative;
+  FILE*hCRT;
+  WORD cp;
+  signed char mode; // -1 = redirected, 0 = unknown, 1 = console
+  bool mustwritebom;
+} WINSIO_OSDATA;
+inline bool WinStdIO_IsConsole(WINSIO_OSDATA&osd) { return osd.mode > 0; }
+inline bool WinStdIO_IsRedirected(WINSIO_OSDATA&osd) { return osd.mode < 0; }
+bool WINAPI WinStdIO_OStreamInit(WINSIO_OSDATA&osd, FILE*strm, WORD cp, int bom = 1);
+bool WINAPI WinStdIO_OStreamWrite(WINSIO_OSDATA&osd, const wchar_t *Str, UINT cch = -1);
+int WINAPI WinStdIO_vfwprintf(FILE*strm, const wchar_t*Fmt, va_list val);
+int WinStdIO_fwprintf(FILE*strm, const wchar_t*Fmt, ...);
+int WinStdIO_wprintf(const wchar_t*Fmt, ...);
+// We don't hook fflush since the native handle is only used with WriteConsoleW
+#undef _vsntprintf
+#define _vsntprintf Error: TODO
+#undef _tprintf
+#define _tprintf WinStdIO_wprintf
+#undef _ftprintf
+#define _ftprintf WinStdIO_fwprintf
+#undef _vftprintf
+#define _vftprintf WinStdIO_vfwprintf
+#endif // ~MAKENSIS
+#endif // ~_UNICODE
 #define ResetPrintColor() FlushOutputAndResetPrintColor() // For reset ONLY use PrintColorFmtMsg(0,NULL ...
 #define SetPrintColorWARN() PrintColorFmtMsg(1|0x10, NULL, (va_list)NULL)
 #define SetPrintColorERR() PrintColorFmtMsg(2|0x10, NULL, (va_list)NULL)
@@ -94,7 +118,7 @@ void FlushOutputAndResetPrintColor();
 #define ResetPrintColor()
 #define SetPrintColorWARN()
 #define SetPrintColorERR()
-#endif
+#endif // ~_WIN32
 inline void PrintColorFmtMsg_WARN(const TCHAR *fmtstr, ...)
 {
   va_list val;

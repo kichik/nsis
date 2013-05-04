@@ -12,7 +12,9 @@
 
 \define{NsisACPcp} system default ANSI codepage (ACP)
 
-\define{NsisInputCharset} ACP|OEM|CP#|UTF8|UTF16LE|UTF16BE
+\define{NsisInputCharset} ACP|OEM|CP#|UTF8|UTF16<LE|BE>
+
+\define{NsisOutputCharset} ACP|OEM|CP#|UTF8[SIG]|UTF16<LE|BE>[BOM]
 
 \define{NsisWarnBlockContainerBegin} \\<div class=\\"wb\\"\\>
 

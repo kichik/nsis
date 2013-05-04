@@ -26,7 +26,6 @@ makensis_files = Split("""
 	tstring.cpp
 	utf.cpp
 	util.cpp
-	validateunicode.cpp
 	winchar.cpp
 	writer.cpp
 """)
@@ -71,6 +70,7 @@ AddZLib(env, env['PLATFORM'], 'install-compiler')
 
 ##### Defines
 
+env.Append(CPPDEFINES = ['MAKENSIS'])
 env.Append(CPPDEFINES = ['_WIN32_IE=0x0500'])
 
 ##### Set PCH

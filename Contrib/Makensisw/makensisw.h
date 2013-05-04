@@ -85,6 +85,12 @@ namespace MakensisAPI {
     NOTIFY_ERROR,
     NOTIFY_OUTPUT
   };
+  enum sndmsg_e {
+    QUERYHOST = WM_APP
+  };
+  enum QUERYHOST_e {
+    QH_OUTPUTCHARSET = 1
+  };
 }
 
 typedef enum {
