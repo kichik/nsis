@@ -568,57 +568,73 @@ void ResetSymbols() {
   }
 }
 
-int InitBranding() {
-  TCHAR *s;
-  TCHAR opt[] = _T(" /version");
-  s = (TCHAR *)GlobalAlloc(GPTR,(lstrlen(EXENAME)+lstrlen(opt)+1)*sizeof(TCHAR));
-  lstrcpy(s, EXENAME);
-  lstrcat(s, opt);
-  {
-    STARTUPINFO si={sizeof(si),};
-    SECURITY_ATTRIBUTES sa={sizeof(sa),};
-    SECURITY_DESCRIPTOR sd={0,};
-    PROCESS_INFORMATION pi={0,};
-    HANDLE newstdout=0,read_stdout=0; 
+void FreeSpawn(PROCESS_INFORMATION *pPI, HANDLE hRd, HANDLE hWr) {
+  if (pPI) {
+    GetExitCodeProcess(pPI->hProcess, &pPI->dwProcessId);
+    CloseHandle(pPI->hProcess);
+    CloseHandle(pPI->hThread);
+  }
+  CloseHandle(hRd);
+  CloseHandle(hWr);
+}
+BOOL InitSpawn(STARTUPINFO &si, HANDLE &hRd, HANDLE &hWr) {
+  OSVERSIONINFO osv = {sizeof(osv)};
+  GetVersionEx(&osv);
+  const bool winnt = VER_PLATFORM_WIN32_NT == osv.dwPlatformId;
 
-    OSVERSIONINFO osv={sizeof(osv)};
-    GetVersionEx(&osv);
-    if (osv.dwPlatformId == VER_PLATFORM_WIN32_NT) {
-      InitializeSecurityDescriptor(&sd,SECURITY_DESCRIPTOR_REVISION);
-      SetSecurityDescriptorDacl(&sd,true,NULL,false);
-      sa.lpSecurityDescriptor = &sd;
-    }
-    else sa.lpSecurityDescriptor = NULL;
-    sa.bInheritHandle = true;
-    if (!CreatePipe(&read_stdout,&newstdout,&sa,0)) {
+  memset(&si, 0, sizeof(STARTUPINFO));
+  si.cb = sizeof(STARTUPINFO);
+  GetStartupInfo(&si);
+  si.dwFlags = STARTF_USESTDHANDLES|STARTF_USESHOWWINDOW;
+  si.wShowWindow = SW_HIDE;
+
+  SECURITY_ATTRIBUTES sa={sizeof(sa)};
+  SECURITY_DESCRIPTOR sd;
+  if (winnt) {
+    InitializeSecurityDescriptor(&sd, SECURITY_DESCRIPTOR_REVISION);
+    SetSecurityDescriptorDacl(&sd, true, NULL, false);
+    sa.lpSecurityDescriptor = &sd;
+  }
+  sa.bInheritHandle = true;
+  BOOL okp = CreatePipe(&hRd, &hWr, &sa, 0);
+  si.hStdOutput = hWr, si.hStdError = hWr;
+  si.hStdInput = INVALID_HANDLE_VALUE;
+  return okp;
+}
+
+int InitBranding() {
+  const TCHAR *opt = _T(" /version");
+  UINT cch = lstrlen(EXENAME) + lstrlen(opt) + 1;
+  TCHAR *s = (TCHAR *)GlobalAlloc(GPTR, cch*sizeof(TCHAR));
+  if (s) {
+    lstrcpy(s, EXENAME);
+    lstrcat(s, opt);
+    STARTUPINFO si;
+    HANDLE newstdout, read_stdout;
+    if (!InitSpawn(si, read_stdout, newstdout)) return 0;
+    PROCESS_INFORMATION pi;
+    if (!CreateProcess(0, s, 0, 0, TRUE, CREATE_NEW_CONSOLE, 0, 0, &si, &pi)) {
+      FreeSpawn(0, read_stdout, newstdout);
       return 0;
     }
-    GetStartupInfo(&si);
-    si.dwFlags = STARTF_USESTDHANDLES|STARTF_USESHOWWINDOW;
-    si.wShowWindow = SW_HIDE;
-    si.hStdOutput = newstdout;
-    si.hStdError = newstdout;
-    if (!CreateProcess(NULL,s,NULL,NULL,TRUE,CREATE_NEW_CONSOLE,NULL,NULL,&si,&pi)) {
-      CloseHandle(newstdout);
-      CloseHandle(read_stdout);
-      return 0;
+    char szBuf[1024], retval = 0;
+    DWORD dwRead = 0;
+    if (WAIT_OBJECT_0 == WaitForSingleObject(pi.hProcess, 10000)) {
+      ReadFile(read_stdout, szBuf, sizeof(szBuf)-1, &dwRead, NULL);
+      retval = 1;
     }
-    char szBuf[1024];
-    DWORD dwRead = 1;
-    if (WaitForSingleObject(pi.hProcess,10000)!=WAIT_OBJECT_0) {
-      return 0;
-    }
-    ReadFile(read_stdout, szBuf, sizeof(szBuf)-1, &dwRead, NULL);
+    FreeSpawn(&pi, read_stdout, newstdout);
     szBuf[dwRead] = 0;
     int len = lstrlenA(szBuf);
-    if (len==0) return 0;
-    g_sdata.branding = (TCHAR *)GlobalAlloc(GPTR,(len+6)*sizeof(TCHAR));
-    wsprintf(g_sdata.branding,_T("NSIS %hs"),szBuf);
-    g_sdata.brandingv = (char *)GlobalAlloc(GPTR,len+1);
-    lstrcpyA(g_sdata.brandingv,szBuf);
+    if (len==0) retval = 0;
+    g_sdata.branding = (TCHAR *)GlobalAlloc(GPTR, (len+6)*sizeof(TCHAR)); // LEAKED
+    wsprintf(g_sdata.branding, _T("NSIS %hs"), szBuf);
+    g_sdata.brandingv = (char *)GlobalAlloc(GPTR, len+1); // LEAKED
+    lstrcpyA(g_sdata.brandingv, szBuf);
     GlobalFree(s);
+    return retval;
   }
-  return 1;
+  return 0;
 }
 
 
@@ -627,7 +643,7 @@ void InitTooltips(HWND h) {
   memset(&g_tip,0,sizeof(NTOOLTIP));
   g_tip.tip_p = h;
   INITCOMMONCONTROLSEX icx;
-  icx.dwSize  = sizeof(icx);
+  icx.dwSize = sizeof(icx);
   icx.dwICC  = ICC_BAR_CLASSES;
   InitCommonControlsEx(&icx);
   DWORD dwStyle = WS_POPUP | WS_BORDER | TTS_ALWAYSTIP;

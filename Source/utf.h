@@ -19,21 +19,11 @@
 #define NSIS_UTF_H
 
 #include "Platform.h"
-#include <stdlib.h>
-#include <stdio.h>
-#include "util.h" // For my_fopen
-#ifdef _WIN32
-#include <io.h> // For _setmode
-#include <fcntl.h> // For _O_BINARY
-#endif
 
 const WORD UNICODE_REPLACEMENT_CHARACTER = 0xfffd;
 
 #define TSTR_INPUTCHARSET _T("ACP|OEM|CP#|UTF8|UTF16<LE|BE>")
 #define TSTR_OUTPUTCHARSET _T("ACP|OEM|CP#|UTF8[SIG]|UTF16<LE|BE>[BOM]")
-
-
-void RawTStrToASCII(const TCHAR*in,char*out,UINT maxcch);
 
 template<typename T> T S7ChLwr(T c) { return c>='A' && c<='Z' ? (T)(c|32) : c; }
 template<typename T> T S7ChUpr(T c) { return c>='a' && c<='z' ? (T)(c-'a'+'A') : c; }
@@ -58,12 +48,51 @@ inline UINT32 CodePointFromUTF16SurrogatePair(unsigned short lea,unsigned short 
   return ((UINT32)lea << 10) + tra + surrogate_offset;
 }
 
+inline bool UTF8_GetTrailCount(unsigned char chFirst, unsigned char &cb)
+{
+  // This function should only be used to get a rough idea of how large the encoded
+  // codepoint is, just because it returns true does not mean that it is valid UTF-8!
+  cb = 0;
+  if (0xC0 == (0xC0 & chFirst))
+  {
+    ++cb;
+    if (0xE0 == (0xE0 & chFirst))
+    {
+      ++cb;
+      if (0xF0 == (0xF0 & chFirst))
+      {
+        ++cb;
+        if (0xF8 == (0xF8 & chFirst))
+        {
+          ++cb;
+          if (0xFC == (0xFE & chFirst)) ++cb; else return false;
+        }
+      }
+    }
+  }
+  return true;
+}
+
+#ifdef MAKENSIS
+#include <stdlib.h>
+#include <stdio.h>
+#include "tstring.h"
+#ifdef _WIN32
+#include <io.h> // For _setmode
+#include <fcntl.h> // For _O_BINARY
+#endif
+
+FILE* my_fopen(const TCHAR *path, const char *mode); // from util.h
+
+void RawTStrToASCII(const TCHAR*in,char*out,UINT maxcch);
+
 void UTF16InplaceEndianSwap(void*Buffer, UINT cch);
 UINT StrLenUTF16(const void*str);
 bool StrSetUTF16LE(tstring&dest, const void*src);
 
 UINT WCFromCodePoint(wchar_t*Dest,UINT cchDest,UINT32 CodPt);
 wchar_t* DupWCFromBytes(void*Buffer,UINT cbBuffer,WORD SrcCP);
+UINT DetectUTFBOM(void*Buffer,UINT cb);
 UINT DetectUTFBOM(FILE*strm);
 WORD GetEncodingFromString(const TCHAR*s, bool&BOM);
 WORD GetEncodingFromString(const TCHAR*s);
@@ -220,8 +249,9 @@ protected:
   NStreamEncoding m_Enc;
 
 public:
-  NBaseStream() : m_hFile(0) {}
+  NBaseStream(FILE *hFile = 0) : m_hFile(hFile) {}
   ~NBaseStream() { Close(); }
+
   FILE* GetHandle() const { return m_hFile; }
   NStreamEncoding& StreamEncoding() { return m_Enc; }
   bool IsEOF() const { return feof(m_hFile) != 0; }
@@ -280,6 +310,8 @@ public:
 
 class NOStream : public NBaseStream {
 public:
+  NOStream(FILE *hFile = 0) : NBaseStream(hFile) {}
+
   bool CreateFileForWriting(const TCHAR* Path, WORD enc = NStreamEncoding::AUTO)
   {
     return Attach(my_fopen(Path, "w+b"), enc);
@@ -314,6 +346,7 @@ public:
     return false;
   }
   bool WriteString(const wchar_t*Str, size_t cch = -1);
+  bool WritePlatformNLString(const wchar_t*Str, size_t cch = -1);
 };
 
 class NStreamLineReader {
@@ -343,4 +376,5 @@ protected:
   }
 };
 
+#endif // MAKENSIS
 #endif // NSIS_UTF_H

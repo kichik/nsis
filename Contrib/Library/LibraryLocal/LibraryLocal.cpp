@@ -27,12 +27,6 @@ int GetTLBVersion(tstring& filepath, DWORD& high, DWORD & low)
 {
 #ifdef _WIN32
 
-#ifdef _countof
-#define COUNTOF _countof
-#else
-#define COUNTOF(a) (sizeof(a)/sizeof(a[0]))
-#endif
-
   int found = 0;
 
   TCHAR fullpath[1024];

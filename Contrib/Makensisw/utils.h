@@ -30,6 +30,9 @@
 #define MRU_LIST_SIZE 5
 #define MRU_DISPLAY_LENGTH 40
 
+void FreeSpawn(PROCESS_INFORMATION *pPI, HANDLE hRd, HANDLE hWr);
+BOOL InitSpawn(STARTUPINFO &si, HANDLE &hRd, HANDLE &hWr);
+
 int SetArgv(const TCHAR *cmdLine, TCHAR ***argv);
 void SetTitle(HWND hwnd,const TCHAR *substr);
 void SetBranding(HWND hwnd);

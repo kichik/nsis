@@ -413,6 +413,14 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
       DragAcceptFiles(g_sdata.hwnd,TRUE);
       return TRUE;
     }
+    case MakensisAPI::QUERYHOST: {
+      if (MakensisAPI::QH_OUTPUTCHARSET) {
+        const UINT reqcp = CP_UTF8; // TODO: UTF16LE will be faster for makensis
+        SetWindowLongPtr(hwndDlg, DWLP_MSGRESULT, (LONG_PTR)(1+reqcp));
+        return TRUE;
+      }
+      return FALSE;
+    }
     case WM_NOTIFY:
       switch (((NMHDR*)lParam)->code ) {
         case EN_SELCHANGE:
@@ -712,12 +720,12 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 DWORD WINAPI MakeNSISProc(LPVOID p) {
   TCHAR eventnamebuf[100];
-  wsprintf(eventnamebuf,MakensisAPI::SigintEventNameFmt,g_sdata.hwnd);
+  wsprintf(eventnamebuf, MakensisAPI::SigintEventNameFmt, g_sdata.hwnd);
   if (g_sdata.sigint_event) CloseHandle(g_sdata.sigint_event);
-  g_sdata.sigint_event = CreateEvent(NULL,FALSE,FALSE,eventnamebuf);
+  g_sdata.sigint_event = CreateEvent(NULL, FALSE, FALSE, eventnamebuf);
   if (!g_sdata.sigint_event) {
-    ErrorMessage(g_sdata.hwnd,_T("There was an error creating the abort event."));
-    PostMessage(g_sdata.hwnd,WM_MAKENSIS_PROCESSCOMPLETE,0,0);
+    ErrorMessage(g_sdata.hwnd, _T("There was an error creating the abort event."));
+    PostMessage(g_sdata.hwnd, WM_MAKENSIS_PROCESSCOMPLETE, 0, 0);
     return 1;
   }
 
@@ -725,44 +733,21 @@ DWORD WINAPI MakeNSISProc(LPVOID p) {
   TCHAR buf[1024];
 #endif
   char iobuf[1024];           //i/o buffer
-  STARTUPINFO si={sizeof(si),};
-  SECURITY_ATTRIBUTES sa={sizeof(sa),};
-  SECURITY_DESCRIPTOR sd={0,};
-  PROCESS_INFORMATION pi={0,};
-  HANDLE newstdout=0,read_stdout=0;
-  HANDLE newstdin=0,read_stdin=0;
-  OSVERSIONINFO osv={sizeof(osv)};
-  GetVersionEx(&osv);
-  if (osv.dwPlatformId == VER_PLATFORM_WIN32_NT) {
-    InitializeSecurityDescriptor(&sd,SECURITY_DESCRIPTOR_REVISION);
-    SetSecurityDescriptorDacl(&sd,true,NULL,false);
-    sa.lpSecurityDescriptor = &sd;
-  }
-  else sa.lpSecurityDescriptor = NULL;
-  sa.bInheritHandle = true;
-  if (!CreatePipe(&read_stdout,&newstdout,&sa,0)) {
-    ErrorMessage(g_sdata.hwnd,_T("There was an error creating the output pipe."));
-    PostMessage(g_sdata.hwnd,WM_MAKENSIS_PROCESSCOMPLETE,0,0);
+  STARTUPINFO si;
+  HANDLE newstdout,read_stdout;
+  
+  if (!InitSpawn(si, read_stdout, newstdout)) {
+    ErrorMessage(g_sdata.hwnd, _T("There was an error creating the pipe."));
+    PostMessage(g_sdata.hwnd, WM_MAKENSIS_PROCESSCOMPLETE, 0, 0);
     return 1;
   }
-  if (!CreatePipe(&read_stdin,&newstdin,&sa,0)) {
-    ErrorMessage(g_sdata.hwnd,_T("There was an error creating the input pipe."));
-    PostMessage(g_sdata.hwnd,WM_MAKENSIS_PROCESSCOMPLETE,0,0);
-    return 1;
-  }
-  GetStartupInfo(&si);
-  si.dwFlags = STARTF_USESTDHANDLES|STARTF_USESHOWWINDOW;
-  si.wShowWindow = SW_HIDE;
-  si.hStdOutput = newstdout;
-  si.hStdError = newstdout;
-  si.hStdInput = newstdin;
-  if (!CreateProcess(NULL,g_sdata.compile_command,NULL,NULL,TRUE,CREATE_NEW_CONSOLE,NULL,NULL,&si,&pi)) {
-    TCHAR buf[MAX_STRING];
-    wsprintf(buf,_T("Could not execute:\r\n %s."),g_sdata.compile_command);
-    ErrorMessage(g_sdata.hwnd,buf);
-    CloseHandle(newstdout);
-    CloseHandle(read_stdout);
-    PostMessage(g_sdata.hwnd,WM_MAKENSIS_PROCESSCOMPLETE,0,0);
+  PROCESS_INFORMATION pi;
+  if (!CreateProcess(0, g_sdata.compile_command, 0, 0, TRUE, CREATE_NEW_CONSOLE, 0, 0, &si, &pi)) {
+    TCHAR buf[MAX_STRING]; // BUGBUG: TODO: Too small?
+    wsprintf(buf,_T("Could not execute:\r\n %s."), g_sdata.compile_command);
+    ErrorMessage(g_sdata.hwnd, buf);
+    FreeSpawn(0, read_stdout, newstdout);
+    PostMessage(g_sdata.hwnd, WM_MAKENSIS_PROCESSCOMPLETE, 0, 0);
     return 1;
   }
   CloseHandle(newstdout); // close this handle (duplicated in subprocess) now so we get ERROR_BROKEN_PIPE
@@ -774,8 +759,9 @@ DWORD WINAPI MakeNSISProc(LPVOID p) {
 #ifdef _UNICODE
     // this tweak is to prevent LogMessage from cutting in the middle of an UTF-8 sequence
     // we print only up to the latest \n of the buffer, and keep the remaining for the next loop
+    // BUGBUG: What if the line is longer than sizeof(iobuf)?
     char* lastLF = strrchr(iobuf,'\n');
-    if (lastLF == NULL) lastLF = iobuf+dwRead-1;
+    if (!lastLF) lastLF = iobuf+dwRead-1;
     char ch = *++lastLF;
     *lastLF = '\0';
     MultiByteToWideChar(CP_UTF8,0,iobuf,lastLF+1-iobuf,buf,COUNTOF(buf));
@@ -794,15 +780,9 @@ DWORD WINAPI MakeNSISProc(LPVOID p) {
   MultiByteToWideChar(CP_UTF8,0,iobuf,dwRead+1,buf,COUNTOF(buf));
   LogMessage(g_sdata.hwnd, buf);
 #endif
-  DWORD dwExit;
-  GetExitCodeProcess(pi.hProcess, &dwExit);
-  g_sdata.retcode = dwExit;
-  CloseHandle(pi.hThread);
-  CloseHandle(pi.hProcess);
-  CloseHandle(read_stdout);
-  CloseHandle(newstdin);
-  CloseHandle(read_stdin);
-  PostMessage(g_sdata.hwnd,WM_MAKENSIS_PROCESSCOMPLETE,0,0);
+  FreeSpawn(&pi, read_stdout, 0);
+  g_sdata.retcode = pi.dwProcessId;
+  PostMessage(g_sdata.hwnd, WM_MAKENSIS_PROCESSCOMPLETE, 0, 0);
   return 0;
 }
 

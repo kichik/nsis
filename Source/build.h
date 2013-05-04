@@ -80,6 +80,14 @@ namespace MakensisAPI {
     NOTIFY_ERROR,
     NOTIFY_OUTPUT // generated .exe file
   };
+#ifdef _WIN32
+  enum sndmsg_e {
+    QUERYHOST = WM_APP // QUERYHOST_e in wParam
+  };
+  enum QUERYHOST_e {
+    QH_OUTPUTCHARSET = 1 // return (wincodepage+1) or 0 for default
+  };
+#endif
 }
 
 #define PAGE_CUSTOM 0

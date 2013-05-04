@@ -26,6 +26,7 @@
 #include "util.h"
 #include "strlist.h"
 #include "winchar.h"
+#include "utf.h"
 
 #ifndef _WIN32
 #  include <ctype.h>
@@ -50,20 +51,8 @@ namespace Apple { // defines struct section
 
 using namespace std;
 
-int g_dopause=0;
 extern int g_display_errors;
 extern FILE *g_output;
-
-void dopause(void)
-{
-  if (g_dopause)
-  {
-    if (g_display_errors) _ftprintf(g_output,_T("MakeNSIS done - hit enter to close..."));
-    fflush(stdout);
-    int a;
-    while ((a=_gettchar()) != _T('\r') && a != _T('\n') && a != 27/*esc*/);
-  }
-}
 
 double my_wtof(const wchar_t *str) 
 {
@@ -639,8 +628,119 @@ size_t ExpandoStrFmtVaList(wchar_t*Stack, size_t cchStack, wchar_t**ppMalloc, co
   return cch;
 }
 
+#if defined(_WIN32) && defined(_UNICODE)
+int RunChildProcessRedirected(LPCWSTR cmdprefix, LPCWSTR cmdmain)
+{
+  // We have to deliver the requested output encoding to our host (if any) and the 
+  // only way to do that is to convert the pipe content from what we hope is UTF-8.
+  // The reason we need a pipe in the first place is because we cannot trust the 
+  // child to call GetConsoleOutputCP(), and even if we could, UTF-16 is not valid there.
+  UINT cp = CP_UTF8, mbtwcf = MB_ERR_INVALID_CHARS;
+  errno = ENOMEM;
+  if (!cmdprefix) cmdprefix = _T("");
+  UINT cch1 = _tcslen(cmdprefix), cch2 = _tcslen(cmdmain);
+  WCHAR *cmd = (WCHAR*) malloc( (cch1 + cch2 + 1) * sizeof(WCHAR) );
+  if (!cmd) return -1;
+  _tcscpy(cmd, cmdprefix);
+  _tcscat(cmd, cmdmain);
+  SECURITY_DESCRIPTOR sd = {1, 0, SE_DACL_PRESENT, NULL, };
+  SECURITY_ATTRIBUTES sa = {sizeof(sa), &sd, true};
+  const UINT orgwinconcp = GetConsoleCP(), orgwinconoutcp = GetConsoleOutputCP(); 
+  HANDLE hPipRd, hPipWr;
+  PROCESS_INFORMATION pi;
+  BOOL ok = CreatePipe(&hPipRd, &hPipWr, &sa, 0);
+  if (!ok)
+    hPipRd = 0, hPipWr = 0;
+  else
+  {
+    STARTUPINFO si = {sizeof(si)};
+    si.dwFlags = STARTF_USESTDHANDLES|STARTF_USESHOWWINDOW;
+    si.wShowWindow = SW_HIDE;
+    si.hStdOutput = si.hStdError = hPipWr;
+    si.hStdInput = INVALID_HANDLE_VALUE;
+    errno = ECHILD;
+    SetConsoleOutputCP(cp);
+    ok = CreateProcess(0, cmd, 0, 0, TRUE, 0, 0, 0, &si, &pi);
+    CloseHandle(hPipWr); // We want ERROR_BROKEN_PIPE when the child is done
+  }
+  free(cmd);
+  DWORD childec = -1;
+  if (ok)
+  {
+    bool utf8 = true, okt;
+    char iobuf[512];
+    DWORD cbRead, cbOfs = 0, cchwb = 0;
+    WCHAR wbuf[100], wchbuf[2+1]; // A surrogate pair + \0
+    for(;;)
+    {
+      BOOL okr = ReadFile(hPipRd, iobuf+cbOfs, sizeof(iobuf)-cbOfs, &cbRead, 0);
+      cbRead += cbOfs, cbOfs = 0;
+      unsigned char cbTrail, cch;
+      for(DWORD i = 0; i < cbRead;)
+      {
+        cch = 0;
+        if (utf8)
+        {
+          okt = UTF8_GetTrailCount(iobuf[i], cbTrail);
+          if (!okt) // Not UTF-8? Switching to ACP
+          {
+switchtoacp:cp = CP_ACP, mbtwcf = 0, utf8 = false;
+            SetConsoleOutputCP(cp);
+            continue;
+          }
+          if (!cbTrail) cch++, wchbuf[0] = iobuf[i]; // ASCII
+        }
+        else
+        {
+          cbTrail = !!IsDBCSLeadByteEx(cp, iobuf[i]);
+        }
+        if (i+cbTrail >= cbRead) // Read more first?
+        {
+          memmove(iobuf, iobuf+i, cbOfs = cbRead - i);
+          if (okr) break; else i = 0;
+        }
+        if (!cch)
+        {
+          cch = MultiByteToWideChar(cp, mbtwcf, &iobuf[i], 1+cbTrail, wchbuf, COUNTOF(wchbuf)-1);
+          if (!cch)
+          {
+            if (utf8) goto switchtoacp;
+            cch++, wchbuf[0] = UNICODE_REPLACEMENT_CHARACTER;
+          }
+        }
+        i += 1+cbTrail;
+        if (0xfeff == wchbuf[0] && 1 == cch) cch = 0; // MakeNsisW is not a fan of the BOM, eat it.
+        if (!cch) continue;
+        wbuf[cchwb++] = wchbuf[0];
+        if (--cch) wbuf[cchwb++] = wchbuf[1];
+        const bool fullbuf = cchwb+cch >= COUNTOF(wbuf)-1; // cch is 1 for surrogate pairs
+        if (!okr || fullbuf || L'\n' == wchbuf[0]) // Stop on \n so \r\n conversion has enough context (...\r\n vs ...\n)
+        {
+#ifdef MAKENSIS
+          extern WINSIO_OSDATA g_osdata_stdout;
+          WinStdIO_OStreamWrite(g_osdata_stdout, wbuf, cchwb); // Faster than _ftprintf
+#else
+          wbuf[cchwb] = L'\0';
+          _ftprintf(g_output, _T("%s"), wbuf);
+#endif
+          cchwb = 0;
+        }
+      }
+      if (!okr) break;
+    }
+    WaitForSingleObject(pi.hProcess, INFINITE);
+    GetExitCodeProcess(pi.hProcess, &childec);
+    CloseHandle(pi.hThread);
+    CloseHandle(pi.hProcess);
+  }
+  SetConsoleCP(orgwinconcp); SetConsoleOutputCP(orgwinconoutcp);
+  CloseHandle(hPipRd);
+  return childec;
+}
+#endif
 
-int sane_system(const TCHAR *command) {
+int sane_system(const TCHAR *command)
+{
 #ifdef _WIN32
 
   // workaround for bug #1509909
@@ -653,17 +753,119 @@ int sane_system(const TCHAR *command) {
   //   `program files\nsis\makensis.exe" "args`
   // which obviously fails...
   //
-  // to avoid the stripping, a harmless string is prefixed
-  // to the command line.
-  tstring command_s = _T("IF 1==1 ");
-  command_s += command;
-  return _tsystem(command_s.c_str());
+  // to avoid the stripping, a harmless string is prefixed to the command line.
+  const TCHAR* prefix = _T("IF 1==1 ");
+#ifdef _UNICODE
+  if (!command) return 0;
+  if (!*command) return 1;
+  tstring fixedcmd = _tgetenv(_T("COMSPEC"));
+  if (!fixedcmd.length()) fixedcmd = _T("CMD.EXE");
+  fixedcmd += _T(" /C ");
+  fixedcmd += prefix;
+  return RunChildProcessRedirected(fixedcmd.c_str(), command);
+#else
+  tstring fixedcmd = prefix + _T("") + command;
+  return _tsystem(fixedcmd.c_str());
+#endif
 
 #else
   return _tsystem(command);
 #endif
 }
 
+#ifdef _WIN32
+bool GetFileSize64(HANDLE hFile, ULARGE_INTEGER &uli)
+{
+  uli.LowPart = GetFileSize(hFile, &uli.HighPart);
+  return INVALID_FILE_SIZE != uli.LowPart || !GetLastError();
+}
+#endif
+#if defined(_WIN32) && defined(_UNICODE) && defined(MAKENSIS)
+#include <io.h> // for _get_osfhandle
+bool WINAPI WinStdIO_OStreamInit(WINSIO_OSDATA&osd, FILE*strm, WORD cp, int bom)
+{
+  // bom < 0: override cp if UTF detected but never write BOM
+  // bom = 0: ignore BOM and force cp
+  // bom > 0: override cp if UTF detected, write BOM if it does not already exist
+  const int fd = _fileno(strm);
+  osd.mode = 0, osd.hCRT = strm, osd.hNative = (HANDLE) _get_osfhandle(fd);
+  if (INVALID_HANDLE_VALUE == osd.hNative) return false;
+  DWORD conmode;
+  if (GetConsoleMode(osd.hNative, &conmode)) osd.mode++; else osd.mode--;
+  bool succ = NStream::SetBinaryMode(fd);
+  DWORD cbio = 0;
+  ULARGE_INTEGER uli;
+  if (succ && GetFileSize64(osd.hNative, uli) && uli.QuadPart)
+  {
+    OVERLAPPED olap = {0}; // Used to read from start of file
+    unsigned char bufbom[4];
+    if (ReadFile(osd.hNative, bufbom, sizeof(bufbom), &cbio, &olap))
+    {
+      UINT detbom = DetectUTFBOM(bufbom, cbio);
+      if (detbom) cp = (WORD) detbom, bom = 0;
+    }
+    SetFilePointer(osd.hNative, 0, 0, FILE_END);
+  }
+  osd.mustwritebom = bom > 0 && !cbio, osd.cp = cp;
+  return succ || (sizeof(TCHAR)-1 && WinStdIO_IsConsole(osd)); // Don't care about BOM for WriteConsoleW
+}
+bool WINAPI WinStdIO_OStreamWrite(WINSIO_OSDATA&osd, const wchar_t *Str, UINT cch)
+{
+  if ((unsigned)-1 == cch) cch = _tcslen(Str);
+  DWORD cbio;
+  if (WinStdIO_IsConsole(osd))
+    return !!WriteConsoleW(osd.hNative, Str, cch, &cbio, 0) || !cch;
+  NOStream strm(osd.hCRT);
+  NStreamEncoding &enc = strm.StreamEncoding();
+  enc.SetCodepage(osd.cp);
+  bool retval = false;
+  if (osd.mustwritebom)
+  {
+    osd.mustwritebom = false;
+    if (enc.IsUnicode() && !strm.WriteBOM(enc))
+    {
+      osd.mode = 1, osd.hNative = 0; // Something is wrong, stop writing!
+      goto end;
+    }
+  }
+  retval = strm.WritePlatformNLString(Str, cch);
+end:
+  strm.Detach();
+  return retval;
+}
+int WINAPI WinStdIO_vfwprintf(FILE*strm, const wchar_t*Fmt, va_list val)
+{
+  if (g_output == strm && Fmt)
+  {
+    extern WINSIO_OSDATA g_osdata_stdout;
+    ExpandoString<wchar_t, NSIS_MAX_STRLEN> buf;
+    errno = ENOMEM;
+    UINT cch = buf.StrFmt(Fmt, val, false);
+    if (cch && !WinStdIO_OStreamWrite(g_osdata_stdout, buf, cch))
+    {
+      cch = 0, errno = EIO;
+    }
+    return cch ? cch : (*Fmt ? -1 : 0);
+  }
+  return vfwprintf(strm, Fmt, val);
+}
+int WinStdIO_fwprintf(FILE*strm, const wchar_t*Fmt, ...)
+{
+  va_list val;
+  va_start(val, Fmt);
+  int rv = _vftprintf(strm, Fmt, val);
+  va_end(val);
+  return rv;
+}
+int WinStdIO_wprintf(const wchar_t*Fmt, ...)
+{
+  va_list val;
+  va_start(val, Fmt);
+  int rv = _vftprintf(g_output, Fmt, val);
+  va_end(val);
+  return rv;
+}
+#endif
 
 void PrintColorFmtMsg(unsigned int type, const TCHAR *fmtstr, va_list args)
 {
@@ -693,6 +895,9 @@ gottxtattrbak:
     case 1: txtattr = FOREGROUND_INTENSITY|FOREGROUND_GREEN|FOREGROUND_RED; break;
     case 2: txtattr = FOREGROUND_INTENSITY|FOREGROUND_RED; break;
     }
+    // Use original background color if our text will still be readable
+    if ((contxtattrbak & 0xF0) != (txtattr<<4)) txtattr |= (contxtattrbak & 0xF0);
+    if ((txtattr & 0xFF) == 0xFE) txtattr &= ~FOREGROUND_INTENSITY; // BrightYellow on BrightWhite is hard to read
     SetConsoleTextAttribute(hWin32Con, txtattr);
   }
 #endif

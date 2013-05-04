@@ -36,12 +36,24 @@
 
 using namespace std;
 
-int g_noconfig=0;
+bool g_dopause=false;
 int g_display_errors=1;
-FILE *g_output=stdout;
+FILE *g_output;
+#ifdef _WIN32
+UINT g_wincon_orgoutcp;
 #ifdef _UNICODE
-UINT g_initialCodepage;
+WINSIO_OSDATA g_osdata_stdout;
 #endif
+#endif
+
+static void dopause(void)
+{
+  if (!g_dopause) return;
+  if (g_display_errors) _ftprintf(g_output,_T("MakeNSIS done - hit enter to close..."));
+  fflush(stdout);
+  int a;
+  while ((a=_gettchar()) != _T('\r') && a != _T('\n') && a != 27/*esc*/);
+}
 
 void quit()
 {
@@ -59,9 +71,7 @@ static void myatexit()
   ResetPrintColor();
   if (g_output != stdout && g_output) fclose(g_output);
 #ifdef _WIN32
-#ifdef _UNICODE
-  SetConsoleOutputCP(g_initialCodepage);
-#endif
+  SetConsoleOutputCP(g_wincon_orgoutcp);
 #endif
 }
 
@@ -160,6 +170,7 @@ static void print_usage()
          _T("  ") OPT_STR _T("NOCONFIG disables inclusion of <path to makensis.exe>") PLATFORM_PATH_SEPARATOR_STR _T("nsisconf.nsh\n")
          _T("  ") OPT_STR _T("NOCD disabled the current directory change to that of the .nsi file\n")
          _T("  ") OPT_STR _T("INPUTCHARSET <") TSTR_INPUTCHARSET _T(">\n")
+         _T("  ") OPT_STR _T("OUTPUTCHARSET <") TSTR_OUTPUTCHARSET _T(">\n")
          _T("  ") OPT_STR _T("Ddefine[=value] defines the symbol \"define\" for the script [to value]\n")
          _T("  ") OPT_STR _T("Xscriptcmd executes scriptcmd in script (i.e. \"") OPT_STR _T("XOutFile poop.exe\")\n")
          _T("  ")         _T("  parameters are processed by order (") OPT_STR _T("Ddef ins.nsi != ins.nsi ") OPT_STR _T("Ddef)\n")
@@ -242,11 +253,11 @@ static int change_to_script_dir(CEXEBuild& build, tstring& script)
   return 0;
 }
 
-static inline bool HasReqParam(TCHAR**argv,int argi,int argc)
+static inline bool HasReqParam(TCHAR**argv,int argi,int argc,bool silent=false)
 {
   if (argi>=argc || !*argv[argi])
   {
-    PrintColorFmtMsg_ERR(_T("Error: Missing required parameter!\n"));
+    if (!silent) PrintColorFmtMsg_ERR(_T("Error: Missing required parameter!\n"));
     return false;
   }
   return true;
@@ -263,29 +274,111 @@ int _tmain(int argc, TCHAR **argv)
 #ifdef NSIS_HPUX_ALLOW_UNALIGNED_DATA_ACCESS
   allow_unaligned_data_access();
 #endif
+  assert(sizeof(wchar_t) > 1 && sizeof(wchar_t) <= 4 && sizeof(WORD) == 2);
+
+  HWND hostnotifyhandle=0;
+  const TCHAR*stdoutredirname=0;
+  NStreamEncoding inputenc, outputenc;
+  int argpos=0;
+  bool in_files=false;
+  bool do_cd=true;
+  bool no_logo=false;
+  bool initialparsefail=false;
+  bool noconfig=false;
+#ifdef _WIN32
+  signed char outputbom=1;
+#endif
+
+  // Some parameters have to be parsed early so we can initialize stdout and the "host API".
+  while (++argpos < argc && !initialparsefail)
+  {
+    if (!IS_OPT(argv[argpos])) break; // must be a filename, stop parsing
+    if (!_tcscmp(argv[argpos], _T("--"))) break; // stop parsing
+    if (_T('-') == argv[argpos][0] && !argv[argpos][1]) continue; // stdin
+
+    const TCHAR *swname = &argv[argpos][1];
+    if (!_tcsicmp(swname,_T("VERSION"))) argc=0;
+    else if (!_tcsicmp(swname,_T("NOTIFYHWND")))
+    {
+      initialparsefail=!HasReqParam(argv,++argpos,argc,true);
+      if (initialparsefail) break;
+      hostnotifyhandle=(HWND)_ttol(argv[argpos]);
+#ifdef _WIN32
+      if (!IsWindow(hostnotifyhandle)) hostnotifyhandle=0;
+#endif
+    }
+    else if (!_tcsicmp(swname,_T("OUTPUTCHARSET")) || !_tcsicmp(swname,_T("OCS")))
+    {
+      initialparsefail=!HasReqParam(argv,++argpos,argc,true);
+      if (initialparsefail) break;
+#ifdef _WIN32
+      bool bom;
+      WORD cp=GetEncodingFromString(argv[argpos],bom);
+      if (NStreamEncoding::UNKNOWN == cp)
+      {
+        ++initialparsefail;
+      }
+      else
+      {
+        outputbom=bom ? 1 : -1;
+        outputenc.SetCodepage(cp);
+      }
+#else
+      outputenc.SetCodepage(NStreamEncoding::UNKNOWN);
+#endif
+    }
+#ifdef _WIN32
+    else if (!_tcsicmp(swname,_T("RAW")))
+    {
+      // Emulate the scratchpaper.com fork and its /RAW switch.
+      // NOTE: Unlike the fork, we print \r\n and not just \n.
+      outputbom=0;
+      outputenc.SetCodepage(NStreamEncoding::UTF16LE);
+    }
+#endif
+    else if (S7IsChEqualI('v',swname[0]) && swname[1] && !swname[2])
+    {
+      no_logo=swname[1] >= _T('0') && swname[1] <= _T('2');
+    }
+    // This must be parsed last because it will eat other switches
+    else if (S7IsChEqualI('o',swname[0]) && swname[1]) stdoutredirname=swname+1;
+  }
+
+
+#ifdef _WIN32
+  g_wincon_orgoutcp = GetConsoleOutputCP();
+#endif
+
+  init_signals(hostnotifyhandle);
+
+
+  FILE*stdoutredir=stdout;
+  if (stdoutredirname) stdoutredir=my_fopen(stdoutredirname,"w");
+  g_output=stdoutredir;
+  if (!g_output) g_output=stdout;
+#if defined(_WIN32) && defined(_UNICODE)
+  if (hostnotifyhandle)
+  {
+    // The host can override the output format if they want to
+    LPARAM lp=MAKELONG(outputenc.GetCodepage(),outputbom);
+    LRESULT mr=SendMessage(hostnotifyhandle,MakensisAPI::QUERYHOST,MakensisAPI::QH_OUTPUTCHARSET,lp);
+    if (mr) outputenc.SetCodepage((WORD)--mr), outputbom = -1;
+  }
+
+  if (!WinStdIO_OStreamInit(g_osdata_stdout,g_output,outputenc.GetCodepage(),outputbom))
+  {
+    assert(!"StdIO init failed");
+    return 1;
+  }
+#endif
+  // g_output is now initialized and Print*/_[f]tprintf can be used
+  if (!stdoutredir) PrintColorFmtMsg_WARN(_T("Error opening output log for writing! Using stdout.\n"));
+
+  unsigned int nousage=0;
+  unsigned int files_processed=0;
+  unsigned int cmds_processed=0;
 
   CEXEBuild build;
-  NStreamEncoding inputenc;
-  bool outputtried=0;
-  bool in_files=0;
-  bool do_cd=1;
-  bool no_logo=0;
-  int nousage=0;
-  int argpos=1;
-  int tmpargpos=1;
-  int files_processed=0;
-  int cmds_processed=0;
-
-#ifdef _UNICODE
-#ifndef _O_U8TEXT
-  const int _O_U8TEXT=0x40000; // BUGBUG: This is bogus (Makensis will ONLY work on NT6)
-#endif
-  _setmode(_fileno(stdout), _O_U8TEXT); // set stdout to UTF-8
-#ifdef _WIN32
-  g_initialCodepage = GetConsoleOutputCP();
-  SetConsoleOutputCP(CP_UTF8); // set console output to UTF-8 (especially useful for subprocesses like !system)
-#endif
-#endif
   try
   {
     build.initialize(argv[0]);
@@ -296,66 +389,107 @@ int _tmain(int argc, TCHAR **argv)
     return 1;
   }
 
-  if (argc > 1 && IS_OPT(argv[tmpargpos]) && !_tcsicmp(&argv[tmpargpos][1],_T("VERSION")))
+#ifdef _WIN32
+  build.notify_hwnd=hostnotifyhandle;
+#else
+  const TCHAR*const badnonwinswitchfmt=OPT_STR _T("%s is disabled for non Win32 platforms.");
+  if (hostnotifyhandle)
+    build.warning(badnonwinswitchfmt,_T("NOTIFYHWND"));
+  if (NStreamEncoding::UNKNOWN==outputenc.GetCodepage())
+    build.warning(badnonwinswitchfmt,_T("OUTPUTCHARSET"));
+#endif // ~_WIN32
+
+  if (!argc)
   {
     _ftprintf(g_output,NSIS_VERSION);
     fflush(g_output);
     return 0;
   }
-  if (argc > 1 && IS_OPT(argv[tmpargpos]) && S7IsChEqualI('v',argv[tmpargpos][1]))
-  {
-    if (argv[tmpargpos][2] <= _T('2') && argv[tmpargpos][2] >= _T('0'))
-    {
-      no_logo=1;
-    }
-    tmpargpos++;
-  }
-  
-  if (!no_logo)
-  {
-    if (argc > tmpargpos && IS_OPT(argv[tmpargpos]) && S7IsChEqualI('o',argv[tmpargpos][1]) && argv[tmpargpos][2])
-    {
-      g_output=FOPENTEXT(argv[tmpargpos]+2,"w");
-      if (!g_output) 
-      {
-        g_output=stdout; // Needs to be set before calling PrintColorFmtMsg*
-        PrintColorFmtMsg_WARN(_T("Error opening output log for writing. Using stdout.\n"));
-      }
-      outputtried=1;
-    }
-    print_logo();
-  }
-  if (!g_output) g_output=stdout;
-  
-  // Look for /NOTIFYHWND so we can init_signals()
-  const int orgargpos=argpos;
-  while (argpos < argc)
-  {
-    if (!_tcscmp(argv[argpos], _T("--"))) break;
-    if (!IS_OPT(argv[argpos]) || !_tcscmp(argv[argpos], _T("-"))) break;
-    if (!_tcsicmp(&argv[argpos][1],_T("NOTIFYHWND")))
-    {
-      if (!HasReqParam(argv, ++argpos, argc)) break;
-#ifdef _WIN32
-      build.notify_hwnd=(HWND)_ttol(argv[argpos]);
-      if (!IsWindow(build.notify_hwnd)) build.notify_hwnd=0;
-#else
-      build.warning(OPT_STR _T("NOTIFYHWND is disabled for non Win32 platforms."));
-#endif
-    }
-    argpos++;
-  }
-  argpos=orgargpos;
+  if (!no_logo) print_logo();
 
-  init_signals(build.notify_hwnd);
 
+  argpos=initialparsefail ? argc : 1;
   while (argpos < argc)
   {
     if (!_tcscmp(argv[argpos], _T("--")))
       in_files=1;
     else if (IS_OPT(argv[argpos]) && _tcscmp(argv[argpos], _T("-")) && !in_files)
     {
-      if (S7IsChEqualI('d',argv[argpos][1]) && argv[argpos][2])
+      if (!_tcsicmp(&argv[argpos][1],_T("NOCD"))) do_cd=false;
+      else if (!_tcsicmp(&argv[argpos][1],_T("NOCONFIG"))) noconfig=true;
+      else if (!_tcsicmp(&argv[argpos][1],_T("PAUSE"))) g_dopause=true;
+      else if (!_tcsicmp(&argv[argpos][1],_T("LICENSE"))) 
+      {
+        if (build.display_info) print_license();
+        nousage++;
+      }
+      else if (!_tcsicmp(&argv[argpos][1],_T("CMDHELP")))
+      {
+        if (argpos < argc-1)
+          build.print_help(argv[++argpos]);
+        else
+          build.print_help(NULL);
+        nousage++;
+      }
+      else if (!_tcsicmp(&argv[argpos][1],_T("HDRINFO")))
+      {
+        print_stub_info(build);
+        nousage++;
+      }
+      else if (!_tcsicmp(&argv[argpos][1],_T("INPUTCHARSET")) || !_tcsicmp(&argv[argpos][1],_T("ICS")))
+      {
+        if (!HasReqParam(argv, ++argpos, argc)) break;
+        WORD cp = GetEncodingFromString(argv[argpos]);
+        if (NStreamEncoding::UNKNOWN == cp)
+        {
+          if (_tcsicmp(argv[argpos], _T("AUTO")))
+            build.warning(OPT_STR _T("INPUTCHARSET: Ignoring invalid charset %s"), argv[argpos]);
+          cp = NStreamEncoding::AUTO;
+        }
+        inputenc.SafeSetCodepage(cp);
+      }
+      else if (S7IsChEqualI('v',argv[argpos][1]) && 
+               argv[argpos][2] >= _T('0') && argv[argpos][2] <= _T('4') && !argv[argpos][3])
+      {
+        int v=argv[argpos][2]-_T('0');
+        build.display_script=v>3;
+        build.display_info=v>2;
+        build.display_warnings=v>1;
+        build.display_errors=v>0;
+        g_display_errors=build.display_errors;
+      }
+      else if (S7IsChEqualI('p',argv[argpos][1]) &&
+               argv[argpos][2] >= _T('0') && argv[argpos][2] <= _T('5') && !argv[argpos][3])
+      {
+#ifdef _WIN32
+        // priority setting added 01-2007 by Comm@nder21
+        int p=argv[argpos][2]-_T('0');
+        HANDLE hProc = GetCurrentProcess();
+        struct
+        {
+          DWORD priority, fallback;
+        } static const classes[] = {
+          {IDLE_PRIORITY_CLASS,         IDLE_PRIORITY_CLASS},
+          {BELOW_NORMAL_PRIORITY_CLASS, IDLE_PRIORITY_CLASS},
+          {NORMAL_PRIORITY_CLASS,       NORMAL_PRIORITY_CLASS},
+          {ABOVE_NORMAL_PRIORITY_CLASS, HIGH_PRIORITY_CLASS},
+          {HIGH_PRIORITY_CLASS,         HIGH_PRIORITY_CLASS},
+          {REALTIME_PRIORITY_CLASS,     REALTIME_PRIORITY_CLASS}
+        };
+        if (SetPriorityClass(hProc, classes[p].priority) == FALSE)
+        {
+          SetPriorityClass(hProc, classes[p].fallback);
+        }
+        if (p == 5) build.warning(_T("makensis is running in REALTIME priority mode!"));
+#else
+        build.warning(badnonwinswitchfmt,_T("Px"));
+#endif
+      }
+      // Already parsed these (must adjust argpos)
+      else if (!_tcsicmp(&argv[argpos][1],_T("NOTIFYHWND"))) ++argpos;
+      else if (!_tcsicmp(&argv[argpos][1],_T("OUTPUTCHARSET")) || !_tcsicmp(&argv[argpos][1],_T("OCS"))) ++argpos;
+      // These must be parsed last because they will eat other switches
+      else if (S7IsChEqualI('d',argv[argpos][1]) && argv[argpos][2])
       {
         TCHAR *p=argv[argpos]+2;
         TCHAR *s=_tcsdup(p),*v;
@@ -373,102 +507,12 @@ int _tmain(int argc, TCHAR **argv)
         }
         cmds_processed++;
       }
-      else if (S7IsChEqualI('o',argv[argpos][1]) && argv[argpos][2])
-      {
-        if (!outputtried)
-        {
-          g_output=FOPENTEXT(argv[argpos]+2,"w");
-          if (!g_output) 
-          {
-            g_output=stdout; // Needs to be set before calling PrintColorFmtMsg*
-            if (build.display_errors) PrintColorFmtMsg_WARN(_T("Error opening output log for writing. Using stdout.\n"));
-          }
-          outputtried=1;
-        }
-      }
-      else if (!_tcsicmp(&argv[argpos][1],_T("NOCD"))) do_cd=0;
-      else if (S7IsChEqualI('v',argv[argpos][1]) && 
-               argv[argpos][2] >= _T('0') && argv[argpos][2] <= _T('4') && !argv[argpos][3])
-      {
-        int v=argv[argpos][2]-_T('0');
-        build.display_script=v>3;
-        build.display_info=v>2;
-        build.display_warnings=v>1;
-        build.display_errors=v>0;
-        g_display_errors=build.display_errors;
-      }
-      else if (!_tcsicmp(&argv[argpos][1],_T("NOCONFIG"))) g_noconfig=1;
-      else if (!_tcsicmp(&argv[argpos][1],_T("PAUSE"))) g_dopause=1;
-      else if (!_tcsicmp(&argv[argpos][1],_T("LICENSE"))) 
-      {
-        if (build.display_info) 
-        {
-          print_license();
-        }
-        nousage++;
-      }
-      else if (!_tcsicmp(&argv[argpos][1],_T("CMDHELP")))
-      {
-        if (argpos < argc-1)
-          build.print_help(argv[++argpos]);
-        else
-          build.print_help(NULL);
-        nousage++;
-      }
-      else if (!_tcsicmp(&argv[argpos][1],_T("NOTIFYHWND")))
-      {
-        ++argpos; // already parsed this
-      }
-      else if (!_tcsicmp(&argv[argpos][1],_T("HDRINFO")))
-      {
-        print_stub_info(build);
-        nousage++;
-      }
-      else if (S7IsChEqualI('p',argv[argpos][1]) &&
-               argv[argpos][2] >= _T('0') && argv[argpos][2] <= _T('5') && !argv[argpos][3])
-      {
+      // Already parsed these
 #ifdef _WIN32
-        // priority setting added 01-2007 by Comm@nder21
-        int p=argv[argpos][2]-_T('0');
-        HANDLE hProc = GetCurrentProcess();
-        
-        struct
-        {
-          DWORD priority;
-          DWORD fallback;
-        } classes[] = {
-          {IDLE_PRIORITY_CLASS,         IDLE_PRIORITY_CLASS},
-          {BELOW_NORMAL_PRIORITY_CLASS, IDLE_PRIORITY_CLASS},
-          {NORMAL_PRIORITY_CLASS,       NORMAL_PRIORITY_CLASS},
-          {ABOVE_NORMAL_PRIORITY_CLASS, HIGH_PRIORITY_CLASS},
-          {HIGH_PRIORITY_CLASS,         HIGH_PRIORITY_CLASS},
-          {REALTIME_PRIORITY_CLASS,     REALTIME_PRIORITY_CLASS}
-        };
-
-        if (SetPriorityClass(hProc, classes[p].priority) == FALSE)
-        {
-          SetPriorityClass(hProc, classes[p].fallback);
-        }
-
-        if (p == 5)
-          build.warning(_T("makensis is running in REALTIME priority mode!"));
-
-#else
-        build.warning(OPT_STR _T("Px is disabled for non Win32 platforms."));
+      else if (!_tcsicmp(&argv[argpos][1],_T("RAW"))) {}
 #endif
-      }
-      else if (!_tcsicmp(&argv[argpos][1],_T("INPUTCHARSET")) || !_tcsicmp(&argv[argpos][1],_T("ICS")))
-      {
-        if (!HasReqParam(argv, ++argpos, argc)) break;
-        WORD cp = GetEncodingFromString(argv[argpos]);
-        if (NStreamEncoding::UNKNOWN == cp)
-        {
-          if (_tcsicmp(argv[argpos], _T("AUTO")))
-            build.warning(OPT_STR _T("INPUTCHARSET: Ignoring invalid charset %s"), argv[argpos]);
-          cp = NStreamEncoding::AUTO;
-        }
-        inputenc.SafeSetCodepage(cp);
-      }
+      else if (!_tcsicmp(&argv[argpos][1],_T("VERSION"))) {}
+      else if (S7IsChEqualI('o',argv[argpos][1]) && argv[argpos][2]) {} 
       else
         break;
     }
@@ -476,10 +520,10 @@ int _tmain(int argc, TCHAR **argv)
     {
       files_processed++;
       if (!_tcscmp(argv[argpos],_T("-")) && !in_files)
-        g_dopause=0;
-      if (!g_noconfig)
+        g_dopause=false;
+      if (!noconfig)
       {
-        g_noconfig=1;
+        noconfig=true;
         tstring main_conf;
         TCHAR* env_var = _tgetenv(_T("NSISCONFDIR"));
         if(env_var == NULL)
