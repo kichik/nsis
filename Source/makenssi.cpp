@@ -297,7 +297,8 @@ int _tmain(int argc, TCHAR **argv)
     if (_T('-') == argv[argpos][0] && !argv[argpos][1]) continue; // stdin
 
     const TCHAR *swname = &argv[argpos][1];
-    if (!_tcsicmp(swname,_T("VERSION"))) argc=0;
+    if (!_tcsicmp(swname,_T("INPUTCHARSET")) || !_tcsicmp(swname,_T("ICS"))) ++argpos; // Skip
+    else if (!_tcsicmp(swname,_T("VERSION"))) argc=0;
     else if (!_tcsicmp(swname,_T("NOTIFYHWND")))
     {
       initialparsefail=!HasReqParam(argv,++argpos,argc,true);
@@ -507,11 +508,10 @@ int _tmain(int argc, TCHAR **argv)
         }
         cmds_processed++;
       }
-      // Already parsed these
+      // Already parsed these ("VERSION" never gets this far)
 #ifdef _WIN32
       else if (!_tcsicmp(&argv[argpos][1],_T("RAW"))) {}
 #endif
-      else if (!_tcsicmp(&argv[argpos][1],_T("VERSION"))) {}
       else if (S7IsChEqualI('o',argv[argpos][1]) && argv[argpos][2]) {} 
       else
         break;

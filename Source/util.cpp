@@ -795,7 +795,7 @@ bool WINAPI WinStdIO_OStreamInit(WINSIO_OSDATA&osd, FILE*strm, WORD cp, int bom)
   bool succ = NStream::SetBinaryMode(fd);
   DWORD cbio = 0;
   ULARGE_INTEGER uli;
-  if (succ && GetFileSize64(osd.hNative, uli) && uli.QuadPart)
+  if (succ && 0 != bom && GetFileSize64(osd.hNative, uli) && uli.QuadPart)
   {
     OVERLAPPED olap = {0}; // Used to read from start of file
     unsigned char bufbom[4];
