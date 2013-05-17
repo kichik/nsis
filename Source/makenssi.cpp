@@ -3,7 +3,7 @@
  * 
  * This file is a part of NSIS.
  * 
- * Copyright (C) 1999-2009 Nullsoft and Contributors
+ * Copyright (C) 1999-2013 Nullsoft and Contributors
  * 
  * Licensed under the zlib/libpng license (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,8 @@
 #include <nsis-version.h>
 #include <fcntl.h>
 #include <io.h>
+
+#define NSIS_COPYYEARS _T("1999-2013")
 
 using namespace std;
 
@@ -123,7 +125,7 @@ static void init_signals(HWND notify_hwnd)
 
 static void print_logo()
 {
-  _ftprintf(g_output,_T("MakeNSIS %s - Copyright 1995-2009 Contributors\n")
+  _ftprintf(g_output,_T("MakeNSIS %s - Copyright ") NSIS_COPYYEARS _T(" Contributors\n")
          _T("See the file COPYING for license details.\n")
          _T("Credits can be found in the Users Manual.\n\n"), NSIS_VERSION);
   fflush(g_output);
@@ -131,7 +133,7 @@ static void print_logo()
 
 static void print_license()
 {
-  _ftprintf(g_output,_T("Copyright (C) 1999-2009 Nullsoft and Contributors\n\n")
+  _ftprintf(g_output,_T("Copyright (C) ") NSIS_COPYYEARS _T(" Nullsoft and Contributors\n\n")
        _T("This license applies to everything in the NSIS package, except where otherwise\n")
        _T("noted.\n\n")
        _T("This software is provided 'as-is', without any express or implied warranty.\n")
