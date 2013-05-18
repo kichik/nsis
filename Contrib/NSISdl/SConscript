@@ -12,7 +12,7 @@ libs = Split("""
 	kernel32
 	user32
 	advapi32
-	ws2_32
+	wsock32
 """)
 
 docs = Split("""
