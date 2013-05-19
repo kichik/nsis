@@ -128,7 +128,7 @@ def run(command, log_level, err, wanted_ret = 0, log_dir = '.'):
 	else:
 		raise ValueError
 
-	ret = os.system(cmd)
+	ret = os.system('if 1==1 ' + cmd)
 
 	# sleep because for some weird reason, running cvs.exe hugs
 	# the release log for some time after os.system returns
