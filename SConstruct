@@ -255,7 +255,7 @@ if (not defenv.has_key('VER_PACKED')) and defenv.has_key('VER_MAJOR') and defenv
 if defenv.has_key('VER_PACKED'):
 	f.write('#define NSIS_PACKEDVERSION _T("%s")\n' % defenv['VER_PACKED'])
 
-if defenv.has_key('VER_MAJOR'):
+if defenv.has_key('VER_MAJOR') and not defenv.has_key('VERSION'):
 	defenv['VERSION'] = defenv['VER_MAJOR']
 	if defenv.has_key('VER_MINOR'):
 		defenv['VERSION'] += '.' + defenv['VER_MINOR']
