@@ -2,11 +2,19 @@
 
 \H{v3.0a0} 3.0 Alpha 0
 
-Released on ?, 2013
+Released on May 19th, 2013
 
 \S1{v3.0a0-rl} Release Notes
 
 \b MakeNSIS can now generate ANSI and \R{intro-unicode}{Unicode} installers. Source files can be UTF8SIG, UTF16BOM or traditional MBCS text files (which are converted to Unicode with ACP unless you specify a different codepage). The default plugins are now stored in sub-folders based on their CPU target and character set encoding.
+
+\S2{} Known Issues
+
+\b The POSIX build is currently broken
+
+\b LangDLL doesn't display localized language name with \R{aunicodetarget}{Unicode} false
+
+\b \R{FileRead}{FileRead} may return '?' for MBCS letters with \R{aunicodetarget}{Unicode} true
 
 \S1{v3.0a0-cl} Changelog
 
@@ -14,17 +22,19 @@ Released on ?, 2013
 
 \b Added the \R{aunicodetarget}{Unicode} attribute (\W{http://sourceforge.net/support/tracker.php?aid=1238132}{RFE #1238132}, \W{http://sourceforge.net/support/tracker.php?aid=1795257}{patch #1795257})
 
+\b Added support for Windows 8 and Windows Server 2012
+
 \b MakeNSIS can read UTF8SIG and UTF16BOM script files (\W{http://sourceforge.net/support/tracker.php?aid=2026892}{RFE #2026892})
 
 \b All NLF and NSH language files are stored in Unicode (\W{http://sourceforge.net/support/tracker.php?aid=1879642}{RFE #1879642})
 
-\b Scripts can control the SupportedOS list in the application manifest using \R{amanifestsupportedos}{ManifestSupportedOS} (\W{http://sourceforge.net/support/tracker.php?aid=2725883}{bug #2725883}\#{RFE 3020103?})
+\b Scripts can control the SupportedOS list in the application manifest using \R{amanifestsupportedos}{ManifestSupportedOS} (\W{http://sourceforge.net/support/tracker.php?aid=2725883}{bug #2725883}, \W{http://sourceforge.net/support/tracker.php?aid=3020103}{RFE #3020103})
 
 \b Installers can claim DPI-awareness with \R{amanifestdpiaware}{ManifestDPIAware} (\W{http://sourceforge.net/support/tracker.php?aid=2897169}{bug #2897169})
 
 \b The index of the changed section is stored in $0 during .onSelChange callbacks (\W{http://sourceforge.net/support/tracker.php?aid=1634936}{RFE #1634936})
 
-\b $\{U+1\}...$\{U+FFFFFFFF\} are treated as a Unicode codepoint unless there is already a define with that name (\W{http://sourceforge.net/support/tracker.php?aid=2084797}{RFE #2084797})
+\b $\{U+1\}...$\{U+FFFFFFFF\} are treated as a Unicode characters unless there is already a define with that name (\W{http://sourceforge.net/support/tracker.php?aid=2084797}{RFE #2084797})
 
 \S2{} Minor Changes
 
@@ -32,13 +42,21 @@ Released on ?, 2013
 
 \b Added !appendfile /CHARSET parameter
 
+\b Added \R{if}{!if} support for /fileexists, case sensitive comparisons, hex and float
+
+\b Added more definitions to WinMessages.nsh
+
 \b %temp%\\Low will be used if the installer cannot write to %temp% nor %windir%\\Temp (\W{http://sourceforge.net/support/tracker.php?aid=2909242}{bug #2909242}, \W{http://sourceforge.net/support/tracker.php?aid=2912824}{patch #2912824})
 
 \b Added $\{NSIS_PACKEDVERSION\}, the NSIS version packed in a hex number (\W{http://sourceforge.net/support/tracker.php?aid=2680832}{patch #2680832})
 
-\b Added $\{__MACRO__\} and $\{__COUNTER__\} predefines
+\b Added \R{prescopemacro}{$\{__MACRO__\}} and \R{precounter}{$\{__COUNTER__\}} predefines
 
 \b Added UnsafeStrCpy instruction, it can write to special variables like $PLUGINSDIR
+
+\b Added \R{vifileversion}{VIFileVersion}
+
+\b Added \R{finalize}{!finalize} for post-build commands (like signing the installer)
 
 \b Plugins in $\{NSISDIR\}\\Plugins have to be reserved with \c{ReserveFile /plugin}
 
@@ -48,7 +66,15 @@ Released on ?, 2013
 
 \b Fixed minor MakeNSIS leaks (\W{http://sourceforge.net/support/tracker.php?aid=3474662}{bug #3474662})
 
-\b Various documentation fixes (bug #3063566, bug #3567313)
+\b Fixed MUI_FINISHPAGE_TITLE_3LINES padding when reboot is required (\W{http://sourceforge.net/support/tracker.php?aid=3400067}{bug #3400067}, \W{http://sourceforge.net/support/tracker.php?aid=3408407}{bug #3408407})
+
+\b Fixed removal of read only attribute even if Delete or RMDir fails (\W{http://sourceforge.net/support/tracker.php?aid=3072159}{bug #3072159})
+
+\b Fixed $\{__SECTION__\} in hidden sections (\W{http://sourceforge.net/support/tracker.php?aid=1787648}{RFE #1787648})
+
+\b Various documentation fixes (\W{http://sourceforge.net/support/tracker.php?aid=3063566}{bug #3063566}, \W{http://sourceforge.net/support/tracker.php?aid=3567313}{bug #3567313}, \W{http://sourceforge.net/support/tracker.php?aid=3307144}{patch #3307144})
+
+\b Lots of other small fixes...
 
 \S2{} Translations
 
