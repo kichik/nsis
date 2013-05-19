@@ -1086,8 +1086,8 @@ void NSISCALL MessageLoop(UINT uCheckedMsg)
 void * NSISCALL NSISGetProcAddress(HANDLE dllHandle, TCHAR* funcName)
 {
 #ifdef _UNICODE
-  char ansiName[NSIS_MAX_STRLEN];
-  if (WideCharToMultiByte(CP_ACP, 0, funcName, -1, ansiName, NSIS_MAX_STRLEN, NULL, NULL) != 0)
+  char ansiName[256];
+  if (WideCharToMultiByte(CP_ACP, 0, funcName, -1, ansiName, 256, NULL, NULL) != 0)
     return GetProcAddress(dllHandle, ansiName);
   return NULL;
 #else
