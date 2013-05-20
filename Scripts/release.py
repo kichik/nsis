@@ -80,6 +80,8 @@ VER_MINOR = cfg.get('version', 'VER_MINOR')
 VER_REVISION = cfg.get('version', 'VER_REVISION')
 VER_BUILD = cfg.get('version', 'VER_BUILD')
 
+PRE_RELEASE_VERSION = 'a' in VERSION or 'b' in VERSION
+
 SVN = cfg.get('svn', 'SVN')
 SVNROOT = cfg.get('svn', 'SVNROOT')
 
@@ -372,9 +374,13 @@ def CreateSpecialBuilds():
 def UploadFiles():
 	print 'uploading files to SourceForge...'
 
+	folder = 'NSIS 3/' + VERSION
+	if PRE_RELEASE_VERSION:
+		folder = 'NSIS 3 Pre-release/' + VERSION
+
 	sftpcmds = file('sftp-commands', 'w')
-	sftpcmds.write('mkdir "/home/frs/project/n/ns/nsis/NSIS 2/%s"\n' % VERSION)
-	sftpcmds.write('cd "/home/frs/project/n/ns/nsis/NSIS 2/%s"\n' % VERSION)
+	sftpcmds.write('mkdir "/home/frs/project/n/ns/nsis/%s"\n' % folder)
+	sftpcmds.write('cd "/home/frs/project/n/ns/nsis/%s"\n' % folder)
 	sftpcmds.write('put %s.tar.bz2\n' % newverdir)
 	sftpcmds.write('put %s\\nsis-%s-setup.exe\n' % (newverdir, VERSION))
 	sftpcmds.write('put %s\\nsis-%s.zip\n' % (newverdir, VERSION))
@@ -415,8 +421,14 @@ def UpdateWiki():
 			log('*** failed updating `%s` wiki page' % page)
 			print '	*** failed updating `%s` wiki page' % page
 
-	update_wiki_page('Template:NSISVersion', VERSION, 'new version')
-	update_wiki_page('Template:NSISReleaseDate', time.strftime('%B %d, %Y'), 'new version')
+	if not PRE_RELEASE_VERSION:
+		update_wiki_page('Template:NSISVersion', VERSION, 'new version')
+		update_wiki_page('Template:NSISReleaseDate', time.strftime('%B %d, %Y'), 'new version')
+		update_wiki_page('Template:NSISIsPreRelease', 'no', 'new version')
+	else:
+		update_wiki_page('Template:NSISPreVersion', VERSION, 'new version')
+		update_wiki_page('Template:NSISPreReleaseDate', time.strftime('%B %d, %Y'), 'new version')
+		update_wiki_page('Template:NSISIsPreRelease', 'yes', 'new version')
 
 	os.system('start ' + PURGE_URL % 'Download')
 
