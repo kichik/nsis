@@ -6884,12 +6884,12 @@ DefineList *CEXEBuild::searchParseString(const TCHAR *source_string, LineParser&
       if (failParam) *failParam = ret ? ret->getnum() : 0;
       if (noErrors) break; // Caller is OK with a incomplete list of matched strings
       const TCHAR *msgprefix = src_start ? _T("") : _T("starting ");
-      ERROR_MSG(_T("!searchparse: %sstring \"%s\" not found, aborted search!\n"),msgprefix,tok);
+      ERROR_MSG(_T("!searchparse: %sstring \"%s\" not found, aborted search!\n"),msgprefix,tok?tok:_T("(null)"));
       delete ret;
       return NULL;
     }
     if (maxlen < 0) break;
-    defout = line.gettoken_str(parmOffs++), src_start = source_string + toklen;
+    defout = line.gettoken_str(parmOffs++), src_start = source_string += toklen;
   }
   return ret;
 }
