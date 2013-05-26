@@ -100,6 +100,7 @@ bool WINAPI WinStdIO_OStreamWrite(WINSIO_OSDATA&osd, const wchar_t *Str, UINT cc
 int WINAPI WinStdIO_vfwprintf(FILE*strm, const wchar_t*Fmt, va_list val);
 int WinStdIO_fwprintf(FILE*strm, const wchar_t*Fmt, ...);
 int WinStdIO_wprintf(const wchar_t*Fmt, ...);
+#include <tchar.h> // Make sure we include the CRTs tchar.h in case it is pulled in by something else later.
 // We don't hook fflush since the native handle is only used with WriteConsoleW
 #undef _vsntprintf
 #define _vsntprintf Error: TODO
