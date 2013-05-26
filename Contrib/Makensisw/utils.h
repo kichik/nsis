@@ -27,15 +27,25 @@
 #include "resource.h"
 #include "toolbar.h"
 
+#ifdef _countof
+#define COUNTOF _countof
+#else
+#define COUNTOF(a) (sizeof(a)/sizeof(a[0]))
+#endif
+
 #define MRU_LIST_SIZE 5
 #define MRU_DISPLAY_LENGTH 40
+
+void* MemAllocZI(SIZE_T cb);
+void MemSafeFree(void*mem);
+#define MemAlloc MemAllocZI
+#define MemFree MemSafeFree
 
 void FreeSpawn(PROCESS_INFORMATION *pPI, HANDLE hRd, HANDLE hWr);
 BOOL InitSpawn(STARTUPINFO &si, HANDLE &hRd, HANDLE &hWr);
 
 int SetArgv(const TCHAR *cmdLine, TCHAR ***argv);
 void SetTitle(HWND hwnd,const TCHAR *substr);
-void SetBranding(HWND hwnd);
 void CopyToClipboard(HWND hwnd);
 void ClearLog(HWND hwnd);
 void LogMessage(HWND hwnd,const TCHAR *str);
@@ -68,4 +78,12 @@ void ClearMRUList();
 bool FileExists(const TCHAR *fname);
 
 HMENU FindSubMenu(HMENU hMenu, UINT uId);
+HFONT CreateFont(int Height, int Weight, DWORD PitchAndFamily, LPCTSTR Face);
+
+inline void GetGripperPos(HWND hwnd, RECT&r)
+{
+  GetClientRect(hwnd, &r);
+  r.left = r.right - GetSystemMetrics(SM_CXVSCROLL);
+  r.top = r.bottom - GetSystemMetrics(SM_CYVSCROLL);
+}
 #endif
