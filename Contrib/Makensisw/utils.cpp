@@ -27,12 +27,6 @@
 #include "toolbar.h"
 #include <shlwapi.h>
 
-#ifdef _countof
-#define COUNTOF _countof
-#else
-#define COUNTOF(a) (sizeof(a)/sizeof(a[0]))
-#endif
-
 NTOOLTIP g_tip;
 LRESULT CALLBACK TipHookProc(int nCode, WPARAM wParam, LPARAM lParam);
 
@@ -41,8 +35,10 @@ TCHAR g_mru_list[MRU_LIST_SIZE][MAX_PATH] = { _T(""), _T(""), _T(""), _T(""), _T
 extern NSCRIPTDATA g_sdata;
 extern const TCHAR *compressor_names[];
 
-int SetArgv(const TCHAR *cmdLine, TCHAR ***argv)
-{
+void MemSafeFree(void*mem) { if (mem) GlobalFree(mem); }
+void*MemAllocZI(SIZE_T cb) { return GlobalAlloc(GPTR, cb); }
+
+int SetArgv(const TCHAR *cmdLine, TCHAR ***argv) {
   const TCHAR *p;
   TCHAR *arg, *argSpace;
   int size, argSpaceSize, inquote, copy, slashes;
@@ -61,7 +57,7 @@ int SetArgv(const TCHAR *cmdLine, TCHAR ***argv)
   }
 
   argSpaceSize = (size+1) * sizeof(TCHAR *) + (lstrlen(cmdLine) + 1) * sizeof(TCHAR);
-  argSpace = (TCHAR *) GlobalAlloc(GMEM_FIXED, argSpaceSize);
+  argSpace = (TCHAR *) MemAlloc(argSpaceSize);
   *argv = (TCHAR **) argSpace;
   if (!argSpace)
     return 0;
@@ -132,10 +128,6 @@ void SetTitle(HWND hwnd,const TCHAR *substr) {
   SetWindowText(hwnd,title);
 }
 
-void SetBranding(HWND hwnd) {
-  SetDlgItemText(hwnd, IDC_VERSION, g_sdata.branding);
-}
-
 void CopyToClipboard(HWND hwnd) {
   if (!hwnd||!OpenClipboard(hwnd)) return;
   int len=SendDlgItemMessage(hwnd,IDC_LOGWIN,WM_GETTEXTLENGTH,0,0);
@@ -174,7 +166,7 @@ void ErrorMessage(HWND hwnd,const TCHAR *str) {
 }
 
 // Altered by Darren Owen (DrO) on 1/10/2003
-void Items(HWND hwnd, int on){
+void Items(HWND hwnd, int on) {
   UINT mf = (!on ? MF_GRAYED : MF_ENABLED);
   UINT nmf = (!on ? MF_ENABLED : MF_GRAYED);
 
@@ -190,26 +182,25 @@ void Items(HWND hwnd, int on){
     EnableWindow(GetDlgItem(hwnd,IDC_TEST),on);
   EnableWindow(GetDlgItem(hwnd,IDC_RECOMPILE_TEST),on);
 
-  EnableMenuItem(g_sdata.menu,IDM_SAVE,mf);
+  const HMENU menu = g_sdata.menu;
+  EnableMenuItem(menu,IDM_CANCEL,nmf);
   // Altered by Darren Owen (DrO) on 6/10/2003
   if((!g_sdata.retcode && on) || !on)
-    EnableMenuItem(g_sdata.menu,IDM_TEST,mf);
-  EnableMenuItem(g_sdata.menu,IDM_EXIT,mf);
-  EnableMenuItem(g_sdata.menu,IDM_LOADSCRIPT,mf);
-  EnableMenuItem(g_sdata.menu,IDM_RECOMPILE,mf);
-  EnableMenuItem(g_sdata.menu,IDM_COPY,mf);
-  EnableMenuItem(g_sdata.menu,IDM_COPYSELECTED,mf);
-  EnableMenuItem(g_sdata.menu,IDM_EDITSCRIPT,mf);
-  EnableMenuItem(g_sdata.menu,IDM_CLEARLOG,mf);
-  EnableMenuItem(g_sdata.menu,IDM_BROWSESCR,mf);
-  EnableMenuItem(g_sdata.menu,IDM_RECOMPILE_TEST,mf);
-  EnableMenuItem(g_sdata.menu,IDM_COMPRESSOR,mf);
-  EnableMenuItem(g_sdata.menu,IDM_CANCEL,nmf);
+    EnableMenuItem(menu,IDM_TEST,mf);
+  const UINT mcmdbase = IDM_COMPRESSOR;
+  static const UINT8 mcmds [] = {
+    UINT8(IDM_SAVE-mcmdbase), UINT8(IDM_EXIT-mcmdbase), UINT8(IDM_LOADSCRIPT-mcmdbase),
+    UINT8(IDM_RECOMPILE-mcmdbase), UINT8(IDM_COPY-mcmdbase), UINT8(IDM_COPYSELECTED-mcmdbase),
+    UINT8(IDM_EDITSCRIPT-mcmdbase), UINT8(IDM_CLEARLOG-mcmdbase), UINT8(IDM_BROWSESCR-mcmdbase),
+    UINT8(IDM_RECOMPILE_TEST-mcmdbase), UINT8(IDM_COMPRESSOR-mcmdbase)
+  };
+  for (UINT i = 0; i < COUNTOF(mcmds); ++i)
+    EnableMenuItem(menu,mcmdbase+mcmds[i],mf);
 
-  EnableToolBarButton(IDM_SAVE,on);
   // Altered by Darren Owen (DrO) on 6/10/2003
   if((!g_sdata.retcode && on) || !on)
     EnableToolBarButton(IDM_TEST,on);
+  EnableToolBarButton(IDM_SAVE,on);
   EnableToolBarButton(IDM_EXIT,on);
   EnableToolBarButton(IDM_LOADSCRIPT,on);
   EnableToolBarButton(IDM_RECOMPILE,on);
@@ -258,7 +249,6 @@ void SetCompressorStats()
 }
 
 void CompileNSISScript() {
-  static TCHAR *s;
   DragAcceptFiles(g_sdata.hwnd,FALSE);
   ClearLog(g_sdata.hwnd);
   SetTitle(g_sdata.hwnd,NULL);
@@ -282,10 +272,9 @@ void CompileNSISScript() {
     return;
   }
   if (!g_sdata.compile_command) {
-    if (s) GlobalFree(s);
     TCHAR *symbols = BuildSymbols();
-    
     TCHAR compressor[40];
+
     if(lstrlen(g_sdata.compressor_name)) {
       wsprintf(compressor,_T("/X\"SetCompressor /FINAL %s\""),g_sdata.compressor_name);
     }
@@ -304,7 +293,7 @@ void CompileNSISScript() {
       /* /NOTIFYHWND + HWND  */ COUNTOF(_T("/NOTIFYHWND -4294967295")) + /* space */ 1
       +6); /* for -- \"\" and NULL */
       
-    g_sdata.compile_command = (TCHAR *) GlobalAlloc(GPTR, byteSize);
+    g_sdata.compile_command = (TCHAR*) MemAlloc(byteSize);
 
     wsprintf(
       g_sdata.compile_command,
@@ -318,18 +307,18 @@ void CompileNSISScript() {
     );
 
     GlobalUnlock(g_sdata.script_cmd_args);
-    GlobalFree(symbols);
+    MemFree(symbols);
   }
-  GlobalFree(g_sdata.input_script);
-  GlobalFree(g_sdata.output_exe);
+  MemSafeFree(g_sdata.input_script);
+  MemSafeFree(g_sdata.output_exe);
   g_sdata.input_script = 0;
   g_sdata.output_exe = 0;
   g_sdata.warnings = 0;
   g_sdata.logLength = 0;
   // Disable buttons during compile
   DisableItems(g_sdata.hwnd);
-  DWORD id;
-  g_sdata.thread=CreateThread(NULL,0,MakeNSISProc,0,0,&id);
+  DWORD tid;
+  g_sdata.thread=CreateThread(NULL,0,MakeNSISProc,0,0,&tid);
 }
 
 static bool InternalOpenRegSettingsKey(HKEY root, HKEY &key, bool create) {
@@ -470,7 +459,7 @@ TCHAR** LoadSymbolSet(TCHAR *name)
           if(symbols) {
             l++;
             DWORD bytes = sizeof(TCHAR) * l;
-            symbols[i] = (TCHAR *)GlobalAlloc(GPTR, bytes);
+            symbols[i] = (TCHAR*) MemAllocZI(bytes);
             if (symbols[i]) {
               RegQueryValueEx(hSubKey,buf,NULL,&t,(unsigned char*)symbols[i],&bytes);
             }
@@ -541,16 +530,11 @@ void SaveSymbolSet(TCHAR *name, TCHAR **symbols)
 }
 
 void ResetObjects() {
-  if (g_sdata.compile_command)
-  {
-    GlobalFree(g_sdata.compile_command);
-    g_sdata.compile_command = 0;
-  }
-
+  MemSafeFree(g_sdata.compile_command);
+  g_sdata.compile_command = NULL;
   g_sdata.warnings = FALSE;
   g_sdata.retcode = -1;
   g_sdata.thread = NULL;
-  g_sdata.compile_command = NULL;
 }
 
 void ResetSymbols() {
@@ -558,7 +542,7 @@ void ResetSymbols() {
     HGLOBAL hMem;
     int i = 0;
     while(g_sdata.symbols[i]) {
-      GlobalFree(g_sdata.symbols[i]);
+      MemFree(g_sdata.symbols[i]);
       i++;
     }
     hMem = GlobalHandle(g_sdata.symbols);
@@ -605,38 +589,34 @@ BOOL InitSpawn(STARTUPINFO &si, HANDLE &hRd, HANDLE &hWr) {
 int InitBranding() {
   const TCHAR *opt = _T(" /version");
   UINT cch = lstrlen(EXENAME) + lstrlen(opt) + 1;
-  TCHAR *s = (TCHAR *)GlobalAlloc(GPTR, cch*sizeof(TCHAR));
-  if (s) {
-    lstrcpy(s, EXENAME);
-    lstrcat(s, opt);
-    STARTUPINFO si;
-    HANDLE newstdout, read_stdout;
-    if (!InitSpawn(si, read_stdout, newstdout)) return 0;
-    PROCESS_INFORMATION pi;
-    if (!CreateProcess(0, s, 0, 0, TRUE, CREATE_NEW_CONSOLE, 0, 0, &si, &pi)) {
-      FreeSpawn(0, read_stdout, newstdout);
-      return 0;
+  TCHAR *cmd = (TCHAR*) MemAlloc(cch*sizeof(TCHAR));
+  if (!cmd) return 0;
+  lstrcpy(cmd, EXENAME);
+  lstrcat(cmd, opt);
+  STARTUPINFO si;
+  HANDLE newstdout, read_stdout;
+  char szBuf[1024], retval = 0;
+  if (InitSpawn(si, read_stdout, newstdout)) {
+    PROCESS_INFORMATION pi, *ppi = 0;
+    if (CreateProcess(0, cmd, 0, 0, TRUE, CREATE_NEW_CONSOLE, 0, 0, &si, &pi)) {
+      DWORD dwRead = 0;
+      if (WAIT_OBJECT_0 == WaitForSingleObject(pi.hProcess, 10000)) {
+        ReadFile(read_stdout, szBuf, sizeof(szBuf)-1, &dwRead, NULL);
+        retval = 1;
+      }
+      szBuf[dwRead] = 0, ppi = &pi;
+      int len = lstrlenA(szBuf);
+      if (!len) retval = 0;
+      g_sdata.branding = (TCHAR*) MemAlloc((len+6)*sizeof(TCHAR)); // LEAKED
+      wsprintf(g_sdata.branding, _T("NSIS %hs"), szBuf);
+      g_sdata.brandingv = (char*) MemAlloc(len+1); // LEAKED
+      lstrcpyA(g_sdata.brandingv, szBuf);
     }
-    char szBuf[1024], retval = 0;
-    DWORD dwRead = 0;
-    if (WAIT_OBJECT_0 == WaitForSingleObject(pi.hProcess, 10000)) {
-      ReadFile(read_stdout, szBuf, sizeof(szBuf)-1, &dwRead, NULL);
-      retval = 1;
-    }
-    FreeSpawn(&pi, read_stdout, newstdout);
-    szBuf[dwRead] = 0;
-    int len = lstrlenA(szBuf);
-    if (len==0) retval = 0;
-    g_sdata.branding = (TCHAR *)GlobalAlloc(GPTR, (len+6)*sizeof(TCHAR)); // LEAKED
-    wsprintf(g_sdata.branding, _T("NSIS %hs"), szBuf);
-    g_sdata.brandingv = (char *)GlobalAlloc(GPTR, len+1); // LEAKED
-    lstrcpyA(g_sdata.brandingv, szBuf);
-    GlobalFree(s);
-    return retval;
+    FreeSpawn(ppi, read_stdout, newstdout);
   }
-  return 0;
+  MemFree(cmd);
+  return retval;
 }
-
 
 void InitTooltips(HWND h) {
   if (h == NULL)  return;
@@ -701,20 +681,20 @@ TCHAR* BuildSymbols()
     int i=0;
     while(g_sdata.symbols[i]) {
       if(buf) {
-        TCHAR *buf3 = (TCHAR *)GlobalAlloc(GPTR,(lstrlen(buf)+lstrlen(g_sdata.symbols[i])+6)*sizeof(TCHAR));
+        TCHAR *buf3 = (TCHAR*) MemAlloc((lstrlen(buf)+lstrlen(g_sdata.symbols[i])+6)*sizeof(TCHAR));
         wsprintf(buf3,_T("%s \"/D%s\""),buf,g_sdata.symbols[i]);
-        GlobalFree(buf);
+        MemFree(buf);
         buf = buf3;
       }
       else {
-        buf = (TCHAR *)GlobalAlloc(GPTR,(lstrlen(g_sdata.symbols[i])+5)*sizeof(TCHAR));
+        buf = (TCHAR*) MemAlloc((lstrlen(g_sdata.symbols[i])+5)*sizeof(TCHAR));
         wsprintf(buf,_T("\"/D%s\""),g_sdata.symbols[i]);
       }
       i++;
     }
   }
   else {
-    buf = (TCHAR *)GlobalAlloc(GPTR, sizeof(TCHAR));
+    buf = (TCHAR*) MemAlloc(sizeof(TCHAR));
     buf[0] = _T('\0');
   }
 
@@ -987,9 +967,7 @@ void SaveCompressor()
 bool FileExists(const TCHAR *fname)
 {
   WIN32_FIND_DATA wfd;
-  HANDLE h;
-
-  h = FindFirstFile(fname,&wfd);
+  HANDLE h = FindFirstFile(fname,&wfd);
   if(INVALID_HANDLE_VALUE != h) {
     FindClose(h);
     return true;
@@ -999,14 +977,15 @@ bool FileExists(const TCHAR *fname)
 
 HMENU FindSubMenu(HMENU hMenu, UINT uId)
 {
-  MENUITEMINFO mii = {
-    sizeof(MENUITEMINFO),
-    MIIM_SUBMENU,
-  };
+  MENUITEMINFO mii;
+  mii.cbSize = sizeof(MENUITEMINFO);
+  mii.fMask = MIIM_SUBMENU;
+  return GetMenuItemInfo(hMenu, uId, FALSE, &mii) ? mii.hSubMenu : 0;
+}
 
-  mii.hSubMenu = NULL;
-
-  GetMenuItemInfo(hMenu, uId, FALSE, &mii);
-
-  return mii.hSubMenu;
+HFONT CreateFont(int Height, int Weight, DWORD PitchAndFamily, LPCTSTR Face)
+{
+  return CreateFont(Height, 0, 0, 0, Weight, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
+                    OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
+                    PitchAndFamily, Face);
 }

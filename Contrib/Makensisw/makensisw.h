@@ -39,9 +39,10 @@
 #define NSIS_DL_URL  "http://nsis.sourceforge.net/download/"
 #define USAGE        _T("Usage:\r\n\r\n - File | Load Script...\r\n - Drag the .nsi file into this window\r\n - Right click the .nsi file and choose \"Compile NSIS Script\"")
 #define COPYRIGHT    _T("Copyright (C) 2002 Robert Rainwater")
-#define CONTRIB      _T("Fritz Elfert, Justin Frankel, Amir Szekely, Sunil Kamath, Joost Verburg")
+#define CONTRIB      _T("Fritz Elfert, Justin Frankel, Amir Szekely, Sunil Kamath, Joost Verburg, Anders Kjersem")
 #define DOCPATH      "http://nsis.sourceforge.net/Docs/"
 #define LOCALDOCS    _T("\\NSIS.chm")
+#define ERRBOXTITLE  0 //_T("Error")
 #define NSISERROR    _T("Unable to intialize MakeNSIS.  Please verify that makensis.exe is in the same directory as makensisw.exe.")
 #define DLGERROR     _T("Unable to intialize MakeNSISW.")
 #define SYMBOLSERROR _T("Symbol cannot contain whitespace characters")
@@ -155,14 +156,13 @@ int compressor_strings[] = {IDS_SCRIPT,
 
 extern const TCHAR* NSISW_VERSION;
 
-BOOL           CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 DWORD WINAPI   MakeNSISProc(LPVOID p);
-BOOL CALLBACK  DialogResize(HWND hWnd, LPARAM /* unused*/);
-BOOL CALLBACK  AboutNSISProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
-BOOL CALLBACK  AboutProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
-BOOL CALLBACK  SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
-BOOL CALLBACK  SymbolSetProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
-BOOL CALLBACK  CompressorProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+BOOL CALLBACK DialogResize(HWND hWnd, LPARAM /* unused*/);
+INT_PTR CALLBACK AboutProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK SymbolSetProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK CompressorProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 void           SetScript(const TCHAR *script, bool clearArgs = true);
 void           CompileNSISScript();
 TCHAR*         BuildSymbols();

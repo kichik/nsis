@@ -49,8 +49,7 @@ int getProxyInfo(char *out) {
 DWORD CALLBACK UpdateThread(LPVOID v) {
   #define RSZ 30
   int len;
-  char *response = (char *)GlobalAlloc(GPTR,RSZ);
-  char *r;
+  char response[RSZ], *r;
   char url[300];
   BOOL error = FALSE;
   static char pbuf[8192];
@@ -72,7 +71,7 @@ DWORD CALLBACK UpdateThread(LPVOID v) {
 
   InitializeUpdate();
 
-  JNL_HTTPGet *get = new JNL_HTTPGet(g_dns,8192,(p&&p[0])?p:NULL);;
+  JNL_HTTPGet *get = new JNL_HTTPGet(g_dns,8192,(p&&p[0])?p:NULL);
   lstrcpyA(url,NSIS_UPDATE);
   lstrcatA(url,g_sdata.brandingv);
 
@@ -107,36 +106,32 @@ DWORD CALLBACK UpdateThread(LPVOID v) {
   }
   else if (*response=='1'&&lstrlenA(response)>2) {
     char buf[200];
-    response+=2;
-    wsprintfA(buf, "NSIS %s is now available.  Would you like to download it now?",response);
+    wsprintfA(buf, "NSIS %s is now available.  Would you like to download it now?",response+2);
     if (MessageBoxA(g_sdata.hwnd,buf,"NSIS Update",MB_YESNO|MB_ICONINFORMATION)==IDYES) {
       ShellExecuteA(g_sdata.hwnd,"open",NSIS_DL_URL,NULL,NULL,SW_SHOWNORMAL);
     }
   }
   else if (*response=='2'&&lstrlenA(response)>2) {
     char buf[200];
-    response+=2;
-    wsprintfA(buf,"NSIS %s is now available.  Would you like to download this preview release now?",response);
+    wsprintfA(buf,"NSIS %s is now available.  Would you like to download this preview release now?",response+2);
     if (MessageBoxA(g_sdata.hwnd,buf,"NSIS Update",MB_YESNO|MB_ICONINFORMATION)==IDYES) {
       ShellExecuteA(g_sdata.hwnd,"open",NSIS_DL_URL,NULL,NULL,SW_SHOWNORMAL);
     }
   }
   else MessageBoxA(g_sdata.hwnd,"There is no update available for NSIS at this time.","NSIS Update",MB_OK|MB_ICONINFORMATION);
-  GlobalFree(response);
   delete get;
   EnableMenuItem(g_sdata.menu,IDM_NSISUPDATE,MF_ENABLED);
   return 0;
 }
 
 void Update() {
-  DWORD dwThreadId;
-
   if (strstr(g_sdata.brandingv,"cvs"))
   {
-    MessageBox(g_sdata.hwnd,_T("Cannot check for new version of nightly builds.  To update, download a new nightly build."),_T("NSIS Update"),MB_OK|MB_ICONSTOP);
+    MessageBoxA(g_sdata.hwnd,"Cannot check for new version of nightly builds.  To update, download a new nightly build.","NSIS Update",MB_OK|MB_ICONSTOP);
     return;
   }
 
   EnableMenuItem(g_sdata.menu,IDM_NSISUPDATE,MF_GRAYED);
-  CloseHandle(CreateThread(NULL,0,UpdateThread,(LPVOID)NULL,0,&dwThreadId));
+  DWORD tid;
+  CloseHandle(CreateThread(NULL,0,UpdateThread,NULL,0,&tid));
 }

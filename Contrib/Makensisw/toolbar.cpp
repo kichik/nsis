@@ -27,12 +27,6 @@
 #include "resource.h"
 #include "toolbar.h"
 
-#ifdef _countof
-#define COUNTOF _countof
-#else
-#define COUNTOF(a) (sizeof(a)/sizeof(a[0]))
-#endif
-
 NTOOLBAR g_toolbar;
 extern NSCRIPTDATA g_sdata;
 extern NTOOLTIP g_tip;
