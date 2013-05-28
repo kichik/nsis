@@ -1,5 +1,17 @@
 \A{history} Changelog and Release Notes
 
+\H{v3.0a1} 3.0 Alpha 1
+
+Released on ?, 2013
+
+\S1{v3.0a1-cl} Changelog
+
+\S2{} Minor Changes
+
+\b Fixed !searchparse
+
+\b Minor MakeNSISW fixes and tweaks
+
 \H{v3.0a0} 3.0 Alpha 0
 
 Released on May 19th, 2013
