@@ -227,6 +227,10 @@ typedef DWORDLONG ULONGLONG,*PULONGLONG;
 #  define IS_INTRESOURCE(_r) (((ULONG_PTR)(_r) >> 16) == 0)
 #endif
 
+#ifndef IS_HIGH_SURROGATE
+#  define IS_HIGH_SURROGATE(wch) (((wch) >= 0xd800) && ((wch) <= 0xdbff))
+#endif
+
 // functions
 
 // Anders: MSVC's swprintf is non standard, use _snwprintf when you really mean swprintf

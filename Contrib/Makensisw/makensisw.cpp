@@ -413,7 +413,7 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
     }
     case MakensisAPI::QUERYHOST: {
       if (MakensisAPI::QH_OUTPUTCHARSET) {
-        const UINT reqcp = CP_UTF8; // TODO: UTF16LE will be faster for makensis
+        const UINT reqcp = 1200; // We want UTF-16LE
         SetWindowLongPtr(hwndDlg, DWLP_MSGRESULT, (LONG_PTR)(1+reqcp));
         return TRUE;
       }
@@ -717,7 +717,7 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
   return 0;
 }
 
-DWORD WINAPI MakeNSISProc(LPVOID p) {
+DWORD WINAPI MakeNSISProc(LPVOID TreadParam) {
   TCHAR eventnamebuf[100];
   wsprintf(eventnamebuf, MakensisAPI::SigintEventNameFmt, g_sdata.hwnd);
   if (g_sdata.sigint_event) CloseHandle(g_sdata.sigint_event);
@@ -728,10 +728,6 @@ DWORD WINAPI MakeNSISProc(LPVOID p) {
     return 1;
   }
 
-#ifdef _UNICODE
-  TCHAR buf[1024];
-#endif
-  char iobuf[1024];           //i/o buffer
   STARTUPINFO si;
   HANDLE newstdout,read_stdout;
   
@@ -750,35 +746,44 @@ DWORD WINAPI MakeNSISProc(LPVOID p) {
     return 1;
   }
   CloseHandle(newstdout); // close this handle (duplicated in subprocess) now so we get ERROR_BROKEN_PIPE
-  DWORD dwLeft = 0, dwRead = 0;
-  while (ReadFile(read_stdout, iobuf+dwLeft, sizeof(iobuf)-dwLeft-1, &dwRead, NULL)) //wait for buffer, or fails with ERROR_BROKEN_PIPE when subprocess exits
+
+  char iob[1024 & ~1];
+  WCHAR *p = (WCHAR*) iob, wcl = 0, wct = 0;
+  DWORD cb = 0, cbofs = 0, cch, cbio;
+  for(;;)
   {
-    dwRead += dwLeft;
-    iobuf[dwRead] = '\0';
-#ifdef _UNICODE
-    // this tweak is to prevent LogMessage from cutting in the middle of an UTF-8 sequence
-    // we print only up to the latest \n of the buffer, and keep the remaining for the next loop
-    // BUGBUG: What if the line is longer than sizeof(iobuf)?
-    char* lastLF = strrchr(iobuf,'\n');
-    if (!lastLF) lastLF = iobuf+dwRead-1;
-    char ch = *++lastLF;
-    *lastLF = '\0';
-    MultiByteToWideChar(CP_UTF8,0,iobuf,lastLF+1-iobuf,buf,COUNTOF(buf));
-    LogMessage(g_sdata.hwnd, buf);
-    *lastLF = ch;
-    dwLeft = iobuf+dwRead-lastLF;
-    memmove(iobuf, lastLF, dwLeft);
-#else
-    LogMessage(g_sdata.hwnd, iobuf);
-#endif
+    BOOL rok = ReadFile(read_stdout, iob+cbofs, sizeof(iob)-cbofs, &cbio, NULL);
+    cb += cbio;
+logappend:
+    cch = cb / sizeof(WCHAR);
+    if (!cch)
+    {
+      if (!rok) break;
+      cbofs += cbio;
+      continue;
+    }
+    bool fullbuf = sizeof(iob) == cb, incompsurr = false;
+    cbofs = 0, cb = 0, --cch;
+    if (fullbuf || (incompsurr = IS_HIGH_SURROGATE(p[cch])))
+    {
+      wcl = p[cch], cbofs = sizeof(WCHAR);
+      if (cch && IS_HIGH_SURROGATE(p[cch-1]) && !incompsurr)
+        wct = wcl, wcl = p[cch-1], cbofs += sizeof(WCHAR);
+    }
+    p[cch] = L'\0';
+    LogMessage(g_sdata.hwnd, p);
+    p[0] = wcl, p[1] = wct;
+    if (!rok)
+    {
+      if (cbofs)
+      {
+        if (incompsurr) p[0] = 0xfffd, cbofs = sizeof(WCHAR); // Unable to complete the surrogate pair
+        cb = cbofs;
+        goto logappend;
+      }
+      break;
+    }
   }
-#ifdef _UNICODE
-  // because of UTF-8 tweak, in rare case there can be some data remaining
-  dwRead += dwLeft;
-  iobuf[dwRead] = 0;
-  MultiByteToWideChar(CP_UTF8,0,iobuf,dwRead+1,buf,COUNTOF(buf));
-  LogMessage(g_sdata.hwnd, buf);
-#endif
   FreeSpawn(&pi, read_stdout, 0);
   g_sdata.retcode = pi.dwProcessId;
   PostMessage(g_sdata.hwnd, WM_MAKENSIS_PROCESSCOMPLETE, 0, 0);
