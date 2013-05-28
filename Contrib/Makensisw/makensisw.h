@@ -156,7 +156,7 @@ int compressor_strings[] = {IDS_SCRIPT,
 
 extern const TCHAR* NSISW_VERSION;
 
-DWORD WINAPI   MakeNSISProc(LPVOID p);
+DWORD WINAPI   MakeNSISProc(LPVOID TreadParam);
 INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 BOOL CALLBACK DialogResize(HWND hWnd, LPARAM /* unused*/);
 INT_PTR CALLBACK AboutProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
