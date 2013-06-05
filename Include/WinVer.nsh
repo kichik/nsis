@@ -149,21 +149,15 @@
 # use this to make all nt > 9x
 
 !ifdef WINVER_NT4_OVER_W95
-  !define __WINVERTMP ${WINVER_NT4}
-  !undef WINVER_NT4
-  !define /math WINVER_NT4 ${__WINVERTMP} | ${_WINVER_VERXBIT}
-  !undef __WINVERTMP
+  !define /redef /math WINVER_NT4 ${WINVER_NT4} | ${_WINVER_VERXBIT}
 !endif
 
 # some definitions from header files
 
-!ifdef NSIS_UNICODE
-!define OSVERSIONINFO_SIZE   276	; OSVERSIONINFOW
-!define OSVERSIONINFOEX_SIZE 284	; OSVERSIONINFOEXW
-!else
-!define OSVERSIONINFO_SIZE   148	; OSVERSIONINFOA
-!define OSVERSIONINFOEX_SIZE 156	; OSVERSIONINFOEXA
-!endif
+!define OSVERSIONINFOW_SIZE   276
+!define OSVERSIONINFOEXW_SIZE 284
+!define OSVERSIONINFOA_SIZE   148
+!define OSVERSIONINFOEXA_SIZE 156
 !define /ifndef VER_PLATFORM_WIN32_NT 2
 !define /ifndef VER_NT_WORKSTATION    1
 
@@ -216,9 +210,17 @@
   Push $3 ;bld
   Push $R0 ;temp
 
+  # a plugin call will lock the Unicode mode, it is now safe to set the struct size
+  !ifdef NSIS_UNICODE
+  !define /redef OSVERSIONINFO_SIZE ${OSVERSIONINFOW_SIZE}
+  !define /redef OSVERSIONINFOEX_SIZE ${OSVERSIONINFOEXW_SIZE}
+  !else
+  !define /redef OSVERSIONINFO_SIZE ${OSVERSIONINFOA_SIZE}
+  !define /redef OSVERSIONINFOEX_SIZE ${OSVERSIONINFOEXA_SIZE}
+  !endif
+
   # allocate memory
-  System::Alloc ${OSVERSIONINFOEX_SIZE}
-  Pop $0
+  System::Call '*(&i${OSVERSIONINFOEX_SIZE})p.r0'
 
   # use OSVERSIONINFOEX
   !insertmacro __WinVer_Call_GetVersionEx ${OSVERSIONINFOEX_SIZE}

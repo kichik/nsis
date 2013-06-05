@@ -43,7 +43,7 @@ ${EndIf}
 
 
 !ifndef __WIN_COM__INC
-!define __WIN_COM__INC
+!define __WIN_COM__INC ${NSIS_CHAR_SIZE}
 !verbose push
 !verbose 3
 
@@ -57,6 +57,10 @@ ${EndIf}
 
 !define NSISCOMCALL "!insertmacro NSISCOMCALL "
 !macro NSISCOMCALL vtblidx decl ptr params
+!if ${NSIS_CHAR_SIZE} <> ${__WIN_COM__INC}
+; Warn if QueryInterface() for IID_IShellLink etc will return the wrong interface
+!warning "NSIS_CHAR_SIZE changed, existing defines and macros might not work correctly!"
+!endif
 System::Call `${ptr}->${vtblidx}${decl}${params}`
 !macroend
 !define NSISCOMIFACEDECL "!insertmacro NSISCOMIFACEDECL "
