@@ -2954,7 +2954,7 @@ int CEXEBuild::write_output(void)
           ERROR_MSG(_T("Error: can't allocate memory for finalize command\n"));
           return PS_ERROR;
         }
-        *((UINT_PTR*)&arg) -= (UINT_PTR)cmdstr, *((UINT_PTR*)&arg) += (UINT_PTR)cmdstrbuf;
+        *((unsigned char**)&arg) -= (UINT_PTR)cmdstr, *((unsigned char**)&arg) += (UINT_PTR)cmdstrbuf;
         _tcscpy(cmdstrbuf,cmdstr);
         cmdstr = cmdstrbuf;
         memmove(arg+cchbldoutfile, arg+2, (_tcslen(arg+2)+1)*sizeof(TCHAR));
