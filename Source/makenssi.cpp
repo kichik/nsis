@@ -284,7 +284,7 @@ int _tmain(int argc, TCHAR **argv)
   int argpos=0;
   bool in_files=false;
   bool do_cd=true;
-  bool no_logo=false;
+  bool no_logo=true;
   bool initialparsefail=false;
   bool noconfig=false;
 #ifdef _WIN32
