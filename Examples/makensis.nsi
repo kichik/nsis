@@ -953,11 +953,10 @@ Function PageLeaveReinstall
 
   ${NSD_GetState} $R2 $R1
 
-  StrCmp $R0 "1" 0 +2
+  StrCmp $R0 "1" 0 +2 ; Existing install is not the same version?
     StrCmp $R1 "1" reinst_uninstall reinst_done
 
-  StrCmp $R0 "2" 0 reinst_done
-    StrCmp $R1 "1" reinst_done reinst_uninstall
+  StrCmp $R1 "1" reinst_done ; Same version, skip to add/reinstall components?
 
   reinst_uninstall:
   ReadRegStr $R1 HKLM "${MEMENTO_REGISTRY_KEY}" "UninstallString"
@@ -966,25 +965,27 @@ Function PageLeaveReinstall
     HideWindow
 
     ClearErrors
-    ExecWait '$R1 _?=$INSTDIR'
+    ExecWait '$R1 _?=$INSTDIR' $0
 
     BringToFront
 
-    IfErrors no_remove_uninstaller
-    IfFileExists "$INSTDIR\Bin\makensis.exe" no_remove_uninstaller
+    ${IfThen} ${Errors} ${|} StrCpy $0 2 ${|} ; ExecWait failed, set fake exit code
 
-      Delete $R1
-      RMDir $INSTDIR
-      StrCpy $R1 ""
-
-    no_remove_uninstaller:
-
-    StrCmp "" $R1 0 +3
+    ${If} $0 <> 0
+    ${OrIf} ${FileExists} "$INSTDIR\Bin\makensis.exe"
+      ${If} $0 = 1 ; User aborted uninstaller?
+        StrCmp $R0 "2" 0 +2 ; Is the existing install the same version?
+          Quit ; ...yes, already installed, we are done
+        Abort
+      ${EndIf}
       MessageBox MB_ICONEXCLAMATION "Unable to uninstall!"
       Abort
-
-  StrCmp $R0 "2" 0 +2
-    Quit
+    ${Else}
+      StrCpy $0 $R1 1
+      ${IfThen} $0 == '"' ${|} StrCpy $R1 $R1 -1 1 ${|} ; Strip quotes from UninstallString
+      Delete $R1
+      RMDir $INSTDIR
+    ${EndIf}
 
   reinst_done:
 
