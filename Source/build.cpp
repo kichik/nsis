@@ -109,10 +109,10 @@ CEXEBuild::CEXEBuild() :
   curlinereader = 0;
   curfilename = 0;
 
-  display_info=1;
-  display_script=1;
   display_errors=1;
   display_warnings=1;
+  display_info=1;
+  display_script=0;
 
   cur_ifblock=NULL;
   last_line_had_slash=0;

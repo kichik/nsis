@@ -51,9 +51,11 @@ int WINAPI _tWinMain(HINSTANCE hInst,HINSTANCE hOldInst,LPTSTR CmdLineParams,int
   memset(&g_sdata,0,sizeof(NSCRIPTDATA));
   memset(&g_resize,0,sizeof(NRESIZEDATA));
   memset(&g_find,0,sizeof(NFINDREPLACE));
-  g_sdata.hInstance=hInst;
+  g_sdata.hInstance = hInst;
   g_sdata.symbols = NULL;
   g_sdata.sigint_event_legacy = CreateEvent(NULL, FALSE, FALSE, MakensisAPI::SigintEventNameLegacy);
+  g_sdata.verbosity = (unsigned char) ReadRegSettingDW(REGVERBOSITY, 4);
+  if (g_sdata.verbosity > 4) g_sdata.verbosity = 4;
   RestoreSymbols();
 
   HINSTANCE hRichEditDLL = LoadLibrary(_T("RichEd20.dll"));

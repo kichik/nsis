@@ -6,6 +6,10 @@ Released on ?, 2013
 
 \S1{v3.0a1-cl} Changelog
 
+\S2{} Major Changes
+
+\b Default verbosity is /V3 without logo, MakeNSISW still uses /V4.
+
 \S2{} Minor Changes
 
 \b Fixed !searchparse

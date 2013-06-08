@@ -285,11 +285,12 @@ void CompileNSISScript() {
     TCHAR *args = (TCHAR *) GlobalLock(g_sdata.script_cmd_args);
 
     size_t byteSize = sizeof(TCHAR)*(
-      /* makensis.exe        */ lstrlen(EXENAME)                  + /* space */ 1 +
-      /* script path         */ lstrlen(g_sdata.script)           + /* space */ 1 +
-      /* script cmd args     */ lstrlen(args)  + /* space */ 1 +
-      /* defines /Dblah=...  */ lstrlen(symbols)                  + /* space */ 1 +
-      /* /XSetCompressor...  */ lstrlen(compressor)               + /* space */ 1 +
+      /* makensis.exe        */ lstrlen(EXENAME)        + /* space */ 1 +
+      /* script path         */ lstrlen(g_sdata.script) + /* space */ 1 +
+      /* script cmd args     */ lstrlen(args)           + /* space */ 1 +
+      /* defines /Dblah=...  */ lstrlen(symbols)        + /* space */ 1 +
+      /* /XSetCompressor...  */ lstrlen(compressor)     + /* space */ 1 +
+      /* /V + UINT8          */ 2 + 3                   + /* space */ 1 +
       /* /NOTIFYHWND + HWND  */ COUNTOF(_T("/NOTIFYHWND -4294967295")) + /* space */ 1
       +6); /* for -- \"\" and NULL */
       
@@ -297,8 +298,9 @@ void CompileNSISScript() {
 
     wsprintf(
       g_sdata.compile_command,
-      _T("%s %s %s /NOTIFYHWND %d %s -- \"%s\""),
+      _T("%s /V%u %s %s /NOTIFYHWND %d %s -- \"%s\""),
       EXENAME,
+      g_sdata.verbosity,
       compressor,
       symbols,
       g_sdata.hwnd,
@@ -338,6 +340,17 @@ bool OpenRegSettingsKey(HKEY &hKey, bool create) {
   if (InternalOpenRegSettingsKey(REGSECDEF, hKey, create))
     return true;
   return false;
+}
+
+DWORD ReadRegSettingDW(LPCTSTR name, const DWORD defval) {
+  DWORD val = defval, siz = sizeof(val), typ;
+  HKEY hKey;
+  if (OpenRegSettingsKey(hKey)) {
+    if (RegQueryValueEx(hKey,name,NULL,&typ,(LPBYTE)&val,&siz) || REG_DWORD != typ || sizeof(val) != siz)
+      val = defval;
+    RegCloseKey(hKey);
+  }
+  return val;
 }
 
 void RestoreWindowPos(HWND hwnd) {

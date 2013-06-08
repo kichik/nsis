@@ -52,6 +52,7 @@
 #define REGSECDEF    HKEY_LOCAL_MACHINE
 #define REGKEY       _T("Software\\NSIS")
 #define REGLOC       _T("MakeNSISWPlacement")
+#define REGVERBOSITY _T("MakeNSISWVerbosity")
 #define REGCOMPRESSOR _T("MakeNSISWCompressor")
 #define REGSYMSUBKEY _T("Symbols")
 #define REGMRUSUBKEY _T("MRU")
@@ -185,7 +186,8 @@ typedef struct NSISScriptData {
   char  *brandingv;
   TCHAR **symbols;
   int retcode;
-  BOOL userSelectCompressor;
+  bool userSelectCompressor;
+  unsigned char verbosity;
   DWORD logLength;
   DWORD warnings;
   HINSTANCE hInstance;
