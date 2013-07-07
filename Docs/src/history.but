@@ -10,6 +10,8 @@ Released on ?, 2013
 
 \b Default verbosity is /V3 without logo, MakeNSISW still uses /V4.
 
+\b \R{amanifestsupportedos}{ManifestSupportedOS} added support for the Windows 8.1 Preview GUID and it is set by default to avoid GetVersionEx compatibility behavior.
+
 \S2{} Minor Changes
 
 \b Fixed !finalize %1

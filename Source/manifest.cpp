@@ -57,6 +57,7 @@ bool SupportedOSList::append(const TCHAR* osid)
   else if (!_tcsicmp(osid,_T("WinVista"))) guid = _T("{e2011457-1546-43c5-a5fe-008deee3d3f0}");
   else if (!_tcsicmp(osid,_T("Win7"))) guid = _T("{35138b9a-5d96-4fbd-8e2d-a2440225f93a}");
   else if (!_tcsicmp(osid,_T("Win8"))) guid = _T("{4a2f28e3-53b9-4441-ba9c-d69d4a4a6e38}");
+  else if (!_tcsicmp(osid,_T("Win8.1"))) guid = _T("{1f676c76-80e1-4239-95bb-83d0f6d0da78}");
 
   if (guid)
   {
