@@ -21,7 +21,6 @@ pre {
 	font-family: Courier New, Courier, mono;
 	background-color: #F7F7F7;
 	padding: 1px;
-	overflow-x: auto;
 }
 pre b {
 	text-decoration: underline;
