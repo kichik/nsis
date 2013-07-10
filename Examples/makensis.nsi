@@ -225,6 +225,7 @@ ${MementoSection} "NSIS Core Files (required)" SecCore
     DeleteRegKey HKCR "NSISFile"
 
   WriteRegStr HKCR ".nsi" "" "NSIS.Script"
+  WriteRegStr HKCR ".nsi" "PerceivedType" "text"
   WriteRegStr HKCR "NSIS.Script" "" "NSIS Script File"
   WriteRegStr HKCR "NSIS.Script\DefaultIcon" "" "$INSTDIR\makensisw.exe,1"
   ReadRegStr $R0 HKCR "NSIS.Script\shell\open\command" ""
@@ -242,6 +243,7 @@ ${MementoSection} "NSIS Core Files (required)" SecCore
     DeleteRegKey HKCR "NSHFile"
 
   WriteRegStr HKCR ".nsh" "" "NSIS.Header"
+  WriteRegStr HKCR ".nsh" "PerceivedType" "text"
   WriteRegStr HKCR "NSIS.Header" "" "NSIS Header File"
   WriteRegStr HKCR "NSIS.Header\DefaultIcon" "" "$INSTDIR\makensisw.exe,1"
   ReadRegStr $R0 HKCR "NSIS.Header\shell\open\command" ""
