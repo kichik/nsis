@@ -6,9 +6,7 @@
   !define /ifndef VER_BUILD 0
 !endif
 
-!ifndef VERSION
-  !define VERSION 'anonymous-build'
-!endif
+!define /ifndef VERSION 'anonymous-build'
 
 ;--------------------------------
 ;Configuration
@@ -53,9 +51,11 @@ RequestExecutionLevel admin
 Name "NSIS"
 Caption "NSIS ${VERSION} Setup"
 
+!define REG_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS"
+
 ;Memento Settings
 !define MEMENTO_REGISTRY_ROOT HKLM
-!define MEMENTO_REGISTRY_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS"
+!define MEMENTO_REGISTRY_KEY "${REG_UNINST_KEY}"
 
 ;Interface Settings
 !define MUI_ABORTWARNING
@@ -116,6 +116,11 @@ VIAddVersionKey "LegalCopyright" "http://nsis.sf.net/License"
   File "/oname=$InstDir\Plugins\x86-unicode\${pi}.dll" ..\Plugins\x86-unicode\${pi}.dll
 !macroend
 
+!macro InstallStub stub
+  File ..\Stubs\${stub}-x86-ansi
+  File ..\Stubs\${stub}-x86-unicode
+!macroend
+
 ${MementoSection} "NSIS Core Files (required)" SecCore
 
   SetDetailsPrint textonly
@@ -149,10 +154,6 @@ ${MementoSection} "NSIS Core Files (required)" SecCore
 
   SetOutPath $INSTDIR\Stubs
   File ..\Stubs\uninst
-  !macro InstallStub stub
-    File ..\Stubs\${stub}-x86-ansi
-    File ..\Stubs\${stub}-x86-unicode
-  !macroend
   !insertmacro InstallStub bzip2
   !insertmacro InstallStub bzip2_solid
   !insertmacro InstallStub lzma
@@ -227,10 +228,10 @@ ${MementoSection} "NSIS Core Files (required)" SecCore
   WriteRegStr HKCR "NSIS.Script" "" "NSIS Script File"
   WriteRegStr HKCR "NSIS.Script\DefaultIcon" "" "$INSTDIR\makensisw.exe,1"
   ReadRegStr $R0 HKCR "NSIS.Script\shell\open\command" ""
-  StrCmp $R0 "" 0 no_nsiopen
+  ${If} $R0 == ""
     WriteRegStr HKCR "NSIS.Script\shell" "" "open"
     WriteRegStr HKCR "NSIS.Script\shell\open\command" "" 'notepad.exe "%1"'
-  no_nsiopen:
+  ${EndIf}
   WriteRegStr HKCR "NSIS.Script\shell\compile" "" "Compile NSIS Script"
   WriteRegStr HKCR "NSIS.Script\shell\compile\command" "" '"$INSTDIR\makensisw.exe" "%1"'
   WriteRegStr HKCR "NSIS.Script\shell\compile-compressor" "" "Compile NSIS Script (Choose Compressor)"
@@ -244,10 +245,10 @@ ${MementoSection} "NSIS Core Files (required)" SecCore
   WriteRegStr HKCR "NSIS.Header" "" "NSIS Header File"
   WriteRegStr HKCR "NSIS.Header\DefaultIcon" "" "$INSTDIR\makensisw.exe,1"
   ReadRegStr $R0 HKCR "NSIS.Header\shell\open\command" ""
-  StrCmp $R0 "" 0 no_nshopen
+  ${If} $R0 == ""
     WriteRegStr HKCR "NSIS.Header\shell" "" "open"
     WriteRegStr HKCR "NSIS.Header\shell\open\command" "" 'notepad.exe "%1"'
-  no_nshopen:
+  ${EndIf}
 
   System::Call 'Shell32::SHChangeNotify(i ${SHCNE_ASSOCCHANGED}, i ${SHCNF_IDLIST}, i 0, i 0)'
 
@@ -752,30 +753,19 @@ Section -post
   ; * Always install the English language file
   ; * Always install default icons / bitmaps
 
-  !insertmacro SectionFlagIsSet ${SecInterfacesModernUI} ${SF_SELECTED} mui nomui
-
-    mui:
+  ${If} ${SectionIsSelected} ${SecInterfacesModernUI}
 
     SetDetailsPrint textonly
     DetailPrint "Configuring Modern UI..."
     SetDetailsPrint listonly
 
-    !insertmacro SectionFlagIsSet ${SecLangFiles} ${SF_SELECTED} langfiles nolangfiles
-
-      nolangfiles:
-
+    ${If} ${SectionIsSelected} ${SecLangFiles}
       SetOutPath "$INSTDIR\Contrib\Language files"
       File "..\Contrib\Language files\English.nlf"
-      SetOutPath "$INSTDIR\Contrib\Language files"
       File "..\Contrib\Language files\English.nsh"
+    ${EndIf}
 
-    langfiles:
-
-    !insertmacro SectionFlagIsSet ${SecGraphics} ${SF_SELECTED} graphics nographics
-
-      nographics:
-
-      SetOutPath $INSTDIR\Contrib\Graphics
+    ${If} ${SectionIsSelected} ${SecGraphics}
       SetOutPath $INSTDIR\Contrib\Graphics\Checks
       File "..\Contrib\Graphics\Checks\modern.bmp"
       SetOutPath $INSTDIR\Contrib\Graphics\Icons
@@ -785,10 +775,9 @@ Section -post
       File "..\Contrib\Graphics\Header\nsis.bmp"
       SetOutPath $INSTDIR\Contrib\Graphics\Wizard
       File "..\Contrib\Graphics\Wizard\win.bmp"
+    ${EndIf}
 
-    graphics:
-
-  nomui:
+  ${EndIf}
 
   SetDetailsPrint textonly
   DetailPrint "Creating Registry Keys..."
@@ -804,19 +793,19 @@ Section -post
   WriteRegDword HKLM "Software\NSIS" "VersionBuild" "${VER_BUILD}"
 !endif
 
-  WriteRegExpandStr HKLM "${MEMENTO_REGISTRY_KEY}" "UninstallString" '"$INSTDIR\uninst-nsis.exe"'
-  WriteRegExpandStr HKLM "${MEMENTO_REGISTRY_KEY}" "InstallLocation" "$INSTDIR"
-  WriteRegStr HKLM "${MEMENTO_REGISTRY_KEY}" "DisplayName" "Nullsoft Install System"
-  WriteRegStr HKLM "${MEMENTO_REGISTRY_KEY}" "DisplayIcon" "$INSTDIR\NSIS.exe,0"
-  WriteRegStr HKLM "${MEMENTO_REGISTRY_KEY}" "DisplayVersion" "${VERSION}"
+  WriteRegExpandStr HKLM "${REG_UNINST_KEY}" "UninstallString" '"$INSTDIR\uninst-nsis.exe"'
+  WriteRegExpandStr HKLM "${REG_UNINST_KEY}" "InstallLocation" "$INSTDIR"
+  WriteRegStr HKLM "${REG_UNINST_KEY}" "DisplayName" "Nullsoft Install System"
+  WriteRegStr HKLM "${REG_UNINST_KEY}" "DisplayIcon" "$INSTDIR\NSIS.exe,0"
+  WriteRegStr HKLM "${REG_UNINST_KEY}" "DisplayVersion" "${VERSION}"
 !ifdef VER_MAJOR & VER_MINOR & VER_REVISION & VER_BUILD
-  WriteRegDWORD HKLM "${MEMENTO_REGISTRY_KEY}" "VersionMajor" "${VER_MAJOR}"
-  WriteRegDWORD HKLM "${MEMENTO_REGISTRY_KEY}" "VersionMinor" "${VER_MINOR}"
+  WriteRegDWORD HKLM "${REG_UNINST_KEY}" "VersionMajor" "${VER_MAJOR}"
+  WriteRegDWORD HKLM "${REG_UNINST_KEY}" "VersionMinor" "${VER_MINOR}"
 !endif
-  WriteRegStr HKLM "${MEMENTO_REGISTRY_KEY}" "URLInfoAbout" "http://nsis.sourceforge.net/"
-  WriteRegStr HKLM "${MEMENTO_REGISTRY_KEY}" "HelpLink" "http://nsis.sourceforge.net/Support"
-  WriteRegDWORD HKLM "${MEMENTO_REGISTRY_KEY}" "NoModify" "1"
-  WriteRegDWORD HKLM "${MEMENTO_REGISTRY_KEY}" "NoRepair" "1"
+  WriteRegStr HKLM "${REG_UNINST_KEY}" "URLInfoAbout" "http://nsis.sourceforge.net/"
+  WriteRegStr HKLM "${REG_UNINST_KEY}" "HelpLink" "http://nsis.sourceforge.net/Support"
+  WriteRegDWORD HKLM "${REG_UNINST_KEY}" "NoModify" "1"
+  WriteRegDWORD HKLM "${REG_UNINST_KEY}" "NoRepair" "1"
 
   WriteUninstaller $INSTDIR\uninst-nsis.exe
 
@@ -875,7 +864,7 @@ Var ReinstallPageCheck
 Function PageReinstall
 
   ReadRegStr $R0 HKLM "Software\NSIS" ""
-  ReadRegStr $R1 HKLM "${MEMENTO_REGISTRY_KEY}" "UninstallString"
+  ReadRegStr $R1 HKLM "${REG_UNINST_KEY}" "UninstallString"
   ${IfThen} "$R0$R1" == "" ${|} Abort ${|}
 
   StrCpy $R4 "older"
@@ -959,7 +948,7 @@ Function PageLeaveReinstall
   StrCmp $R1 "1" reinst_done ; Same version, skip to add/reinstall components?
 
   reinst_uninstall:
-  ReadRegStr $R1 HKLM "${MEMENTO_REGISTRY_KEY}" "UninstallString"
+  ReadRegStr $R1 HKLM "${REG_UNINST_KEY}" "UninstallString"
 
   ;Run uninstaller
     HideWindow
@@ -994,16 +983,12 @@ FunctionEnd
 !endif # VER_MAJOR & VER_MINOR & VER_REVISION & VER_BUILD
 
 Function ShowReleaseNotes
-  ${If} ${FileExists} $WINDIR\hh.exe
-    StrCpy $0 $WINDIR\hh.exe
+  StrCpy $0 $WINDIR\hh.exe
+  ${IfNotThen} ${FileExists} $0 ${|} SearchPath $0 hh.exe ${|}
+  ${If} ${FileExists} $0
     Exec '"$0" mk:@MSITStore:$INSTDIR\NSIS.chm::/SectionF.1.html'
   ${Else}
-    SearchPath $0 hh.exe
-    ${If} ${FileExists} $0
-      Exec '"$0" mk:@MSITStore:$INSTDIR\NSIS.chm::/SectionF.1.html'
-    ${Else}
-      ExecShell "open" "http://nsis.sourceforge.net/Docs/AppendixF.html#F.1"
-    ${EndIf}
+    ExecShell "" "http://nsis.sourceforge.net/Docs/AppendixF.html#F.1"
   ${EndIf}
 FunctionEnd
 
@@ -1038,7 +1023,7 @@ Section Uninstall
 
   System::Call 'Shell32::SHChangeNotify(i ${SHCNE_ASSOCCHANGED}, i ${SHCNF_IDLIST}, i 0, i 0)'
 
-  DeleteRegKey HKLM "${MEMENTO_REGISTRY_KEY}"
+  DeleteRegKey HKLM "${REG_UNINST_KEY}"
   DeleteRegKey HKLM "Software\NSIS"
 
   SetDetailsPrint textonly
