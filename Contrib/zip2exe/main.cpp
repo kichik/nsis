@@ -13,6 +13,11 @@
 #endif
 
 /*
+version 0.37 (by Anders Kjersem)
+* Unicode checkbox
+* No output log length limit
+* Fixed tab order
+
 version 0.36
 * Unicode support by Jim Park -- 08/27/2007
 * This support allow Unicode *ZIP file* names but does NOT allow the archive
@@ -52,19 +57,24 @@ extern "C"
 };
 #include "resource.h"
 
+#define WM_NOTIFYENDCOMPILE WM_APP
+
 const TCHAR *g_errcaption=_T("Zip2Exe Error");
+const TCHAR *g_options=_T("/V3 /OUTPUTCHARSET UTF8");
 
 HINSTANCE g_hInstance;
 HWND g_hwnd;
 HANDLE g_hThread;
 TCHAR g_cmdline[1024];
+TCHAR tempzip_path[1024];
+TCHAR nsifilename[MAX_PATH];
 int g_extracting;
 int g_compressor;
 int g_compressor_solid;
 int g_mui;
 int g_zipfile_size;
+bool g_made;
 
-const TCHAR *g_options=_T("");//_T("/V3");
 
 static BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
@@ -75,10 +85,6 @@ int WINAPI _tWinMain(HINSTANCE hInst,HINSTANCE hOldInst,LPTSTR CmdLineParams,int
   g_hInstance=hInst;
   return DialogBox(g_hInstance,MAKEINTRESOURCE(IDD_DIALOG1),0,DlgProc);
 }
-TCHAR tempzip_path[1024];
-
-
-int made;
 
 static void doRMDir(TCHAR *buf)
 {
@@ -136,7 +142,6 @@ static void doMKDir(TCHAR *directory)
   }
   CreateDirectory(directory,NULL);
 }
-
 
 
 void tempzip_cleanup(HWND hwndDlg, int err)
@@ -336,35 +341,9 @@ const TCHAR *gp_poi = _T("(PATH OF INSTALLER)");
 void wnd_printf(const TCHAR *str)
 {
   if (!*str) return;
-  TCHAR existing_text[32000];
-  existing_text[0]=0;
-  UINT l=GetDlgItemText(g_hwnd, IDC_OUTPUTTEXT, existing_text, 32000);
-  l+=_tcslen(str);
-
-  TCHAR *p=existing_text;
-  existing_text[31000]=0;
-  while (l > 31000 && *p)
-  {
-    while (*p != _T('\r') && *p != _T('\n') && *p)
-    {
-      p++;
-      l--;
-    }
-    while (*p == _T('\r') || *p == _T('\n'))
-    {
-      p++;
-      l--;
-    }
-  }
-
-  TCHAR buf[31000];
-  lstrcpy(buf,p);
-  lstrcpy(existing_text,buf);
-  lstrcat(existing_text,str);
-
-  SetDlgItemText(g_hwnd, IDC_OUTPUTTEXT, existing_text);
-  SendDlgItemMessage(g_hwnd, IDC_OUTPUTTEXT, EM_LINESCROLL, 0, SendDlgItemMessage(g_hwnd, IDC_OUTPUTTEXT, EM_GETLINECOUNT, 0, 0)); // scroll to the last line of the textbox
-
+  HWND hLog=GetDlgItem(g_hwnd,IDC_OUTPUTTEXT);
+  SendMessage(hLog,EM_SETSEL,0x7fffffff,-1);
+  SendMessage(hLog,EM_REPLACESEL,false,(LPARAM)str);
 }
 
 void ErrorMessage(const TCHAR *str)  //display detailed error info
@@ -409,7 +388,7 @@ DWORD WINAPI ThreadProc(LPVOID p) // thread that will start & monitor makensis
   if (!CreatePipe(&read_stdout,&newstdout,&sa,0))  //create stdout pipe
   {
     ErrorMessage(_T("CreatePipe"));
-    PostMessage(g_hwnd,WM_USER+1203,0,1);
+    PostMessage(g_hwnd,WM_NOTIFYENDCOMPILE,0,1);
     return 1;
   }
 
@@ -435,7 +414,7 @@ DWORD WINAPI ThreadProc(LPVOID p) // thread that will start & monitor makensis
     wnd_printf(_T("\r\nPlease make sure the path to makensis.exe is correct."));
     CloseHandle(newstdout);
     CloseHandle(read_stdout);
-    PostMessage(g_hwnd,WM_USER+1203,0,1);
+    PostMessage(g_hwnd,WM_NOTIFYENDCOMPILE,0,1);
     return 1;
   }
   CloseHandle(newstdout); // close this handle (duplicated in subprocess) now so we get ERROR_BROKEN_PIPE
@@ -475,13 +454,9 @@ DWORD WINAPI ThreadProc(LPVOID p) // thread that will start & monitor makensis
   wsprintf(buf,_T("(source ZIP size was %d bytes)\r\n"),g_zipfile_size);
   wnd_printf(buf);
 
-  PostMessage(g_hwnd,WM_USER+1203,0,0);
+  PostMessage(g_hwnd,WM_NOTIFYENDCOMPILE,0,0);
   return 0;
 }
-
-
-TCHAR nsifilename[MAX_PATH];
-
 
 
 void makeEXE(HWND hwndDlg)
@@ -490,16 +465,17 @@ void makeEXE(HWND hwndDlg)
   GetTempPath(MAX_PATH,buf);
   GetTempFileName(buf,_T("zne"),0,nsifilename);
 #ifdef _UNICODE
-  FILE *fp=_tfopen(nsifilename,_T("w, ccs=UNICODE")); // generate a Unicode .NSI file
+  FILE *fp=_tfopen(nsifilename,_T("w, ccs=UNICODE")); // generate a Unicode .NSI file BUGBUG: MSVCRT version specific
 #else
   FILE *fp=_tfopen(nsifilename,_T("w"));
 #endif
   if (!fp)
   {
     MessageBox(hwndDlg,_T("Error writing .NSI file"),g_errcaption,MB_OK|MB_ICONSTOP);
-    PostMessage(g_hwnd,WM_USER+1203,0,0);
+    PostMessage(g_hwnd,WM_NOTIFYENDCOMPILE,0,0);
     return;
   }
+  _ftprintf(fp,_T("Unicode %s\n"),IsDlgButtonChecked(hwndDlg,IDC_UNICODE)?_T("true"):_T("false"));
   GetDlgItemText(hwndDlg,IDC_INSTNAME,buf,sizeof(buf));
   _ftprintf(fp,_T("!define ZIP2EXE_NAME `%s`\n"),buf);
   GetDlgItemText(hwndDlg,IDC_OUTFILE,buf,sizeof(buf));
@@ -585,7 +561,7 @@ void makeEXE(HWND hwndDlg)
       if (h==INVALID_HANDLE_VALUE)
       {
         MessageBox(hwndDlg,_T("Error finding makensis.exe."),g_errcaption,MB_OK|MB_ICONSTOP);
-        PostMessage(g_hwnd,WM_USER+1203,0,0);
+        PostMessage(g_hwnd,WM_NOTIFYENDCOMPILE,0,0);
         return;
       }
     }
@@ -627,16 +603,16 @@ void SetZip(HWND hwndDlg, TCHAR *path)
 BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   static int ids[]={IDC_INFO,IDC_NSISICON,IDC_SZIPFRAME,IDC_BROWSE,IDC_ZIPFILE,IDC_ZIPINFO_SUMMARY,IDC_ZIPINFO_FILES,IDC_OFRAME,IDC_INAMEST,
-                        IDC_INSTNAME,IDC_INSTPATH,IDC_OEFST,IDC_OUTFILE,IDC_BROWSE2,IDC_COMPRESSOR,IDC_ZLIB,IDC_BZIP2,IDC_LZMA,IDC_SOLID,IDC_INTERFACE,IDC_MODERNUI,IDC_CLASSICUI};
-  static HICON hIcon;
-  static HFONT hFont;
-  if (uMsg == WM_DESTROY) { if (hIcon) DeleteObject(hIcon); hIcon=0; if (hFont) DeleteObject(hFont); hFont=0; }
+                        IDC_INSTNAME,IDC_INSTPATH,IDC_OEFST,IDC_OUTFILE,IDC_BROWSE2,IDC_COMPRESSOR,IDC_ZLIB,IDC_BZIP2,IDC_LZMA,IDC_SOLID,IDC_INTERFACE,IDC_MODERNUI,IDC_CLASSICUI,IDC_UNICODE};
+  static HICON hIcon=0;
+  static HFONT hFont=0;
   switch (uMsg)
   {
     case WM_INITDIALOG:
       g_hwnd=hwndDlg;
       CheckDlgButton(hwndDlg,IDC_LZMA,BST_CHECKED);
       CheckDlgButton(hwndDlg,IDC_MODERNUI,BST_CHECKED);
+      CheckDlgButton(hwndDlg,IDC_UNICODE,BST_CHECKED);
       SendDlgItemMessage(hwndDlg,IDC_INSTPATH,CB_ADDSTRING,0,(LPARAM)gp_poi);
       SendDlgItemMessage(hwndDlg,IDC_INSTPATH,CB_ADDSTRING,0,(LPARAM)_T("$TEMP"));
       SendDlgItemMessage(hwndDlg,IDC_INSTPATH,CB_ADDSTRING,0,(LPARAM)_T("$SYSDIR"));
@@ -666,6 +642,10 @@ BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
       DragAcceptFiles(hwndDlg,TRUE);
     return 1;
+    case WM_NCDESTROY:
+      DeleteObject(hIcon); hIcon=0;
+      DeleteObject(hFont); hFont=0;
+    break;
     case WM_CLOSE:
       if (!g_hThread)
       {
@@ -673,7 +653,7 @@ BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         EndDialog(hwndDlg,1);
       }
     break;
-    case WM_USER+1203:
+    case WM_NOTIFYENDCOMPILE:
 
       if (g_hThread)
       {
@@ -681,7 +661,7 @@ BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         CloseHandle(g_hThread);
         g_hThread=0;
       }
-      made=1;
+      g_made=true;
       ShowWindow(GetDlgItem(hwndDlg,IDC_BACK),SW_SHOWNA);
       EnableWindow(GetDlgItem(hwndDlg,IDOK),1);
       if (nsifilename[0]) DeleteFile(nsifilename);
@@ -749,7 +729,7 @@ BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         case IDC_BACK:
           if (!g_hThread)
           {
-            made=0;
+            g_made=false;
             ShowWindow(GetDlgItem(hwndDlg,IDC_BACK),SW_HIDE);
             ShowWindow(GetDlgItem(hwndDlg,IDC_TEST),SW_HIDE);
             ShowWindow(GetDlgItem(hwndDlg,IDC_OUTPUTTEXT),SW_HIDE);
@@ -771,7 +751,7 @@ BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         case IDOK:
           if (!g_hThread)
           {
-            if (!made)
+            if (!g_made)
             {
               if (IsDlgButtonChecked(hwndDlg,IDC_ZLIB))
                 g_compressor = 1;
