@@ -14,6 +14,8 @@ Released on ?, 2013
 
 \S2{} Minor Changes
 
+\b Zip2Exe Unicode checkbox
+
 \b Fixed !finalize %1
 
 \b Fixed !searchparse
