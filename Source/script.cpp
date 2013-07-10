@@ -1044,7 +1044,7 @@ int CEXEBuild::process_oneline(TCHAR *line, const TCHAR *filename, int linenum)
   TCHAR *oldtimestamp = NULL;
   TCHAR *oldline = NULL;
   bool is_commandline = !_tcscmp(filename,_T("<command line>"));
-  bool is_macro = !_tcsncmp(filename,_T("macro:"),_tcslen(_T("macro:")));
+  bool is_macro = !_tcsncmp(filename,_T("macro:"),6);
 
   if(!is_commandline) { // Don't set the predefines for command line /X option
     if(!is_macro) {
@@ -1279,6 +1279,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
         int npos=m_macro_entry.add(macroname,0);
 
+        const bool oldparserinsidecomment=inside_comment;
+        inside_comment=false; // "!insertmacro foo /*" does not mean that the macro body is a comment
         wsprintf(str,_T("macro:%s"),macroname);
         const TCHAR* oldmacroname=m_currentmacroname;
         m_currentmacroname=macroname;
@@ -1299,11 +1301,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           {
             // fix t if process_oneline changed m_macros
             TCHAR *nm=(TCHAR *)m_macros.get();
-            if (nm != m)
-            {
-              t += nm - m;
-              m = nm;
-            }
+            if (nm != m) t += nm - m, m = nm;
           }
           t+=_tcslen(t)+1;
         }
@@ -1319,7 +1317,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           }
         }
         definedlist.del(_T("__MACRO__"));
-        m_currentmacroname = oldmacroname;
+        m_currentmacroname=oldmacroname;
+        inside_comment=oldparserinsidecomment;
         if (oldmacroname) definedlist.add(_T("__MACRO__"),oldmacroname);
         SCRIPT_MSG(_T("!insertmacro: end of %s\n"),macroname);
       }
