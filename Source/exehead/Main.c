@@ -150,7 +150,9 @@ EXTERN_C void NSISWinMainNOCRT()
 
 #if defined(NSIS_CONFIG_VISIBLE_SUPPORT) && defined(NSIS_CONFIG_SILENT_SUPPORT)
       if (cmdline[0] == _T('S') && END_OF_ARG(cmdline[1]))
-        cl_flags |= FH_FLAGS_SILENT;
+        g_exec_flags.silent = 1; // bug #1076 - just set the silent flag. the user really wants it silent.
+                                 // loadHeaders() will not reset this as it uses |= to apply the script flags.
+                                 // there is also no option to force non-silent like `CRCCheck force`
 #endif//NSIS_CONFIG_SILENT_SUPPORT && NSIS_CONFIG_VISIBLE_SUPPORT
 #ifdef NSIS_CONFIG_CRC_SUPPORT
       if (CMP4CHAR(cmdline, _T("NCRC")) && END_OF_ARG(cmdline[4]))
