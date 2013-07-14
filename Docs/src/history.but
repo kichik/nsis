@@ -2,7 +2,17 @@
 
 \H{v3.0a1} 3.0 Alpha 1
 
-Released on ?, 2013
+Released on July 14th, 2013
+
+\S1{v3.0a1-rl} Release Notes
+
+\S2{} Known Issues
+
+\b The POSIX build is currently broken
+
+\b LangDLL doesn't display localized language name with \R{aunicodetarget}{Unicode} false
+
+\b \R{FileRead}{FileRead} may return '?' for MBCS letters with \R{aunicodetarget}{Unicode} true
 
 \S1{v3.0a1-cl} Changelog
 
@@ -14,13 +24,15 @@ Released on ?, 2013
 
 \S2{} Minor Changes
 
-\b Zip2Exe Unicode checkbox
-
 \b Fixed !finalize %1
 
-\b Fixed !searchparse
+\b Fixed !searchparse (\W{https://sourceforge.net/p/nsis/bugs/1073/}{bug #1073})
+
+\b Made installers always respect /S on command line, even when installer file can't be read (\W{https://sourceforge.net/p/nsis/bugs/1076/}{bug #1076})
 
 \b Minor MakeNSISW fixes and tweaks
+
+\b Zip2Exe Unicode checkbox
 
 \H{v3.0a0} 3.0 Alpha 0
 
