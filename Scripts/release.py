@@ -391,6 +391,7 @@ def UploadFiles():
 	sftpcmds.write('put %s\\nsis-%s.zip\n' % (newverdir, VERSION))
 	sftpcmds.write('put nsis-%s-log.zip\n' % VERSION)
 	sftpcmds.write('put nsis-%s-strlen_8192.zip\n' % VERSION)
+	sftpcmds.write('put %s\\build\\urelease\\Docs\\chm\\SectionF.1.html RELEASE.html\n' % newverdir)
 	sftpcmds.close()
 
 	run(
