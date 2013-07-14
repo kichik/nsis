@@ -38,6 +38,9 @@ UPDATE_URL=http://nsis.sourceforge.net/Special:Simpleupdate?action=raw
 
 [svn2cl]
 SVN2CL_XSL=svn2cl.xsl
+
+[options]
+SKIP_CPPUNIT=no
 =========================
 
 7zatarbz2.bat:
@@ -96,6 +99,8 @@ PURGE_URL = cfg.get('wiki', 'PURGE_URL')
 UPDATE_URL = cfg.get('wiki', 'UPDATE_URL')
 
 SVN2CL_XSL = cfg.get('svn2cl', 'SVN2CL_XSL')
+
+SKIP_CPPUINT = cfg.get('options', 'SKIP_CPPUNIT')
 
 ### config env
 
@@ -161,7 +166,7 @@ def RunTests():
 	print 'running tests...'
 
 	run(
-		'scons -C .. test',
+		'scons -C .. %s' % (SKIP_CPPUINT == 'yes' and 'test-scripts' or 'test'),
 		LOG_ALL,
 		'tests failed - see test.log for details'
 	)
