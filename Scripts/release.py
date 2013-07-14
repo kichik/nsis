@@ -20,7 +20,7 @@ VER_BUILD=0
 
 [svn]
 SVN="C:\svn-win32\bin\svn.exe"
-SVNROOT=https://nsis.svn.sourceforge.net/svnroot/nsis/NSIS
+SVNROOT=https://svn.code.sf.net/p/nsis/code/NSIS
 
 [compression]
 TAR_BZ2=7zatarbz2.bat %s %s
