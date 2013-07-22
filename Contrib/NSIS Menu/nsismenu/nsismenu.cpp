@@ -127,7 +127,7 @@ private:
              wxT("nsis_menu"))
    {  
       m_Html = new wxHtmlWindow(this, HtmlControl);
-      m_Html->SetRelatedFrame(this, wxT("NSIS Menu%s"));
+      m_Html->SetRelatedFrame(this, wxT("%s")); // Dialog caption comes from the html title element or filename
       m_Html->SetBorders(0);
       m_Html->EnableScrolling(false, false);
       m_Html->SetSize(600, 365);
