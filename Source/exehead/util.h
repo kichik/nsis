@@ -41,6 +41,7 @@ TCHAR * NSISCALL mystrcat(TCHAR *out, const TCHAR *concat);
 TCHAR * NSISCALL mystrstr(TCHAR *a, TCHAR *b);
 WIN32_FIND_DATA * NSISCALL file_exists(TCHAR *buf);
 TCHAR * NSISCALL my_GetTempFileName(TCHAR *buf, const TCHAR *dir);
+BOOL NSISCALL myReadFile(HANDLE h, LPVOID buf, DWORD cb);
 
 //BOOL NSISCALL my_SetWindowText(HWND hWnd, const TCHAR *val);
 #define my_SetWindowText SetWindowText

@@ -540,7 +540,7 @@ int NSISCALL _dodecomp(int offset, HANDLE hFileOut, unsigned char *outbuf, int o
   retval=__ensuredata(sizeof(int));
   if (retval<0) return retval;
 
-  if (!ReadFile(dbd_hFile,(LPVOID)&input_len,sizeof(int),&r,NULL) || r!=sizeof(int)) return -3;
+  if (!myReadFile(dbd_hFile,(LPVOID)&input_len,sizeof(int))) return -3;
   dbd_pos+=sizeof(int);
 
   retval=__ensuredata(input_len);
@@ -552,7 +552,7 @@ int NSISCALL _dodecomp(int offset, HANDLE hFileOut, unsigned char *outbuf, int o
     {
       DWORD t;
       DWORD l=min(input_len,IBUFSIZE);
-      if (!ReadFile(dbd_hFile,(LPVOID)_inbuffer,l,&r,NULL) || l != r) return -3;
+      if (!myReadFile(dbd_hFile,(LPVOID)_inbuffer,r=l)) return -3;
       if (!WriteFile(hFileOut,_inbuffer,r,&t,NULL) || t != l) return -2;
       retval+=r;
       input_len-=r;
@@ -571,8 +571,7 @@ int NSISCALL _dodecomp(int offset, HANDLE hFileOut, unsigned char *outbuf, int o
 
 BOOL NSISCALL ReadSelfFile(LPVOID lpBuffer, DWORD nNumberOfBytesToRead)
 {
-  DWORD rd;
-  return ReadFile(g_db_hFile,lpBuffer,nNumberOfBytesToRead,&rd,NULL) && (rd == nNumberOfBytesToRead);
+  return myReadFile(g_db_hFile,lpBuffer,nNumberOfBytesToRead);
 }
 
 DWORD NSISCALL SetSelfFilePointer(LONG lDistanceToMove)
