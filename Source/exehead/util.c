@@ -449,6 +449,13 @@ TCHAR * NSISCALL my_GetTempFileName(TCHAR *buf, const TCHAR *dir)
   return 0;
 }
 
+BOOL NSISCALL myReadFile(HANDLE h, LPVOID buf, DWORD cb)
+{
+	DWORD cbio;
+	BOOL r = ReadFile(h, buf, cb, &cbio, NULL);
+	return r && cb == cbio;
+}
+
 #ifdef NSIS_SUPPORT_MOVEONREBOOT
 /** Modifies the wininit.ini file to rename / delete a file.
  *
@@ -503,7 +510,7 @@ void RenameViaWininit(const TCHAR* prevName, const TCHAR* newName)
 
     if (pszWinInit != NULL)
     {
-      if (ReadFile(hfile, pszWinInit, dwFileSize, &dwBytes, NULL) && dwFileSize == dwBytes)
+      if (myReadFile(hfile, pszWinInit, dwFileSize))
       {
         // Look for the rename section in the current file.
         LPSTR pszRenameSecInFile = mystrstriA(pszWinInit, szRenameSec);

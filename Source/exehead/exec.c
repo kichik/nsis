@@ -1406,7 +1406,6 @@ static int NSISCALL ExecuteEntry(entry *entry_)
 #endif
       {
         TCHAR *textout=var1;
-        DWORD dw;
         int rpos=0;
         TCHAR *hptr=var0;
         int maxlen=GetIntFromParm(2);
@@ -1427,17 +1426,17 @@ static int NSISCALL ExecuteEntry(entry *entry_)
               And what if the multibyte character needs two WCHARs?
               */
               char tmpc;
-              if (!ReadFile(h,&tmpc,1,&dw,NULL) || dw != 1) break;
+              if (!myReadFile(h,&tmpc,1)) break;
               if (0==MultiByteToWideChar(CP_ACP, 0, &tmpc, 1, &c, 1)) c = _T('?');
             }
             else
 #endif
             {
-              if (!ReadFile(h,&c,1,&dw,NULL) || dw != 1) break;
+              if (!myReadFile(h,&c,1)) break;
             }
             if (parm3)
             {
-              myitoa(textout,(unsigned int)(_TUCHAR)c);
+              myitoa(textout,(unsigned char)c);
               return 0;
             }
             if (lc == _T('\r') || lc == _T('\n'))
