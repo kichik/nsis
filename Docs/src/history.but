@@ -1,5 +1,15 @@
 \A{history} Changelog and Release Notes
 
+\H{v3.0a2} 3.0 Alpha 2
+
+Released on ?
+
+\S1{v3.0a2-cl} Changelog
+
+\S2{} Minor Changes
+
+\b FileReadByte no longer performs a Unicode conversion on non-ASCII characters
+
 \H{v3.0a1} 3.0 Alpha 1
 
 Released on July 14th, 2013

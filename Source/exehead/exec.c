@@ -1420,19 +1420,21 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           {
             TCHAR c;
 #ifdef _UNICODE
-            if (which==EW_FGETS)
+            if (which==EW_FGETS && !parm3)
             {
-                /* BUGBUG:
-                How is MBTWC supposed to be able to determine the correct WCHAR for a multibyte string when it only has 1 byte to look at?
-                And what if the multibyte character needs two WCHARs?
-                */
-                char tmpc;
-                if (!ReadFile(h,&tmpc,1,&dw,NULL) || dw != 1) break;
-                if (0==MultiByteToWideChar(CP_ACP, 0, &tmpc, 1, &c, 1)) c = _T('?');
+              /* BUGBUG:
+              How is MBTWC supposed to be able to determine the correct WCHAR for a multibyte string when it only has 1 byte to look at?
+              And what if the multibyte character needs two WCHARs?
+              */
+              char tmpc;
+              if (!ReadFile(h,&tmpc,1,&dw,NULL) || dw != 1) break;
+              if (0==MultiByteToWideChar(CP_ACP, 0, &tmpc, 1, &c, 1)) c = _T('?');
             }
             else
 #endif
-            if (!ReadFile(h,&c,sizeof(c),&dw,NULL) || dw != sizeof(c)) break;
+            {
+              if (!ReadFile(h,&c,1,&dw,NULL) || dw != 1) break;
+            }
             if (parm3)
             {
               myitoa(textout,(unsigned int)(_TUCHAR)c);
@@ -1440,8 +1442,10 @@ static int NSISCALL ExecuteEntry(entry *entry_)
             }
             if (lc == _T('\r') || lc == _T('\n'))
             {
-              if (lc == c || (c != _T('\r') && c != _T('\n'))) SetFilePointer(h,-((int)(sizeof(c))),NULL,FILE_CURRENT);
-              else textout[rpos++]=c;
+              if (lc == c || (c != _T('\r') && c != _T('\n')))
+                SetFilePointer(h,-((int)(sizeof(c))),NULL,FILE_CURRENT);
+              else
+                textout[rpos++]=c;
               break;
             }
             textout[rpos++]=c;
