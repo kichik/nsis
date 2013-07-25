@@ -48,6 +48,7 @@ namespace Apple { // defines struct section
 #include <cassert> // for assert
 #include <algorithm>
 #include <stdexcept>
+#include <errno.h>
 
 using namespace std;
 
@@ -577,10 +578,14 @@ tstring lowercase(const tstring &str) {
 size_t ExpandoStrFmtVaList(wchar_t*Stack, size_t cchStack, wchar_t**ppMalloc, const wchar_t*FmtStr, va_list Args)
 {
 #ifdef _WIN32
-// For _vsnwprintf, the \0 terminator is not part of the size
-#define ExpandoStrFmtVaList_vsnwprintf(d,c,f,v) _vsnwprintf((d),(c)?(c)-1:0,(f),(v))
+// For _vsnwprintf, the \0 terminator is not part of the input size
+#  if _MSC_VER <= 1310
+#    define ExpandoStrFmtVaList_vsnwprintf(d,c,f,v) _vsnwprintf((d),(c)?(c)-1:0,(f),(v)) // Allow INT_MAX hack on MinGW and older versions of VC that don't have _vscwprintf
+#  else
+#    define ExpandoStrFmtVaList_vsnwprintf(d,c,f,v) ( INT_MAX==(c) ? _vscwprintf((f),(v)) : _vsnwprintf((d),(c)?(c)-1:0,(f),(v)) )
+#  endif
 #else
-#define ExpandoStrFmtVaList_vsnwprintf vswprintf
+#  define ExpandoStrFmtVaList_vsnwprintf vswprintf
 #endif
 #if defined(_ISOC99_SOURCE) || _POSIX_C_SOURCE >= 200112L
   const bool cansizecalc = true, msvcbackdoor = false;
