@@ -5872,7 +5872,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.offsets[0]=GetUserVarIndex(line, 1); // file handle
       ent.offsets[1]=GetUserVarIndex(line, 2); // output string
       ent.offsets[2]=add_asciistring(_T("1"));
-      ent.offsets[3]=1;
+      ent.offsets[3]=2;
       if (ent.offsets[0]<0 || ent.offsets[1]<0) PRINTHELP()
       SCRIPT_MSG(_T("FileReadWord: %s->%s\n"),line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
