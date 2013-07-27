@@ -961,4 +961,6 @@ typedef struct tagVS_FIXEDFILEINFO {
 #endif
 
 
+#define NSIS_CXX_THROWSPEC(ignoredthrowspec) // Ignore c++ exception specifications
+
 #endif
