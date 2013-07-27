@@ -1406,7 +1406,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
 #endif
       {
         TCHAR *textout=var1;
-        int rpos=0;
+        int rpos=0, ungetseek=sizeof(TCHAR);
         TCHAR *hptr=var0;
         int maxlen=GetIntFromParm(2);
         if (maxlen<1) break;
@@ -1419,30 +1419,38 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           {
             TCHAR c;
 #ifdef _UNICODE
+            c=0; // Make sure high byte is 0 for FileReadByte
             if (which==EW_FGETS && !parm3)
             {
-              /* BUGBUG:
-              How is MBTWC supposed to be able to determine the correct WCHAR for a multibyte string when it only has 1 byte to look at?
-              And what if the multibyte character needs two WCHARs?
-              */
-              char tmpc;
-              if (!myReadFile(h,&tmpc,1)) break;
-              if (0==MultiByteToWideChar(CP_ACP, 0, &tmpc, 1, &c, 1)) c = _T('?');
+              char tmpc[2];
+              DWORD mbtwcflags=MB_ERR_INVALID_CHARS, cbio;
+              if (!ReadFile(h,tmpc,2,&cbio,NULL) || !cbio) break;
+              ungetseek=cbio;
+              for(;;) // Try to parse as DBCS first, if that fails try again as a single byte
+              {
+                // BUGBUG: Limited to UCS-2/BMP, surrogate pairs are not supported.
+                if (MultiByteToWideChar(CP_ACP,mbtwcflags,tmpc,cbio,&c,1)) break;
+                c=0xfffd; // Unicode replacement character
+                // If we read 2 bytes and it was not a DBCS character, we need to seek -1
+                if (--cbio) SetFilePointer(h,-(--ungetseek),NULL,FILE_CURRENT); else break;
+              }
             }
             else
 #endif
             {
-              if (!myReadFile(h,&c,1)) break;
+              // Read 1 TCHAR (FileReadUTF16LE and (Ansi)FileRead) or 
+              // parm3 bytes (FileReadByte and (Unicode)FileReadWord)
+              if (!myReadFile(h,&c,!parm3 ? sizeof(TCHAR) : sizeof(TCHAR) > 1 ? parm3 : 1)) break;
             }
             if (parm3)
             {
-              myitoa(textout,(unsigned char)c);
+              myitoa(textout,(UINT)(_TUCHAR)c);
               return 0;
             }
             if (lc == _T('\r') || lc == _T('\n'))
             {
               if (lc == c || (c != _T('\r') && c != _T('\n')))
-                SetFilePointer(h,-((int)(sizeof(c))),NULL,FILE_CURRENT);
+                SetFilePointer(h,-((int)ungetseek),NULL,FILE_CURRENT);
               else
                 textout[rpos++]=c;
               break;

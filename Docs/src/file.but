@@ -26,7 +26,7 @@ Reads a string (ANSI characters) from a file opened with \R{FileOpen}{FileOpen}.
 \NsisWarnBlockContainerBegin
 \NsisBlockHeaderExeheadU
 \#{This is a bug in exehead but it is probably a good idea to document it here...}
-The \R{intro-unicode}{Unicode} version can only read text encoded with a single byte character set! The \NsisACPcp is used during the conversion.
+DBCS text is supported but conversion output is limited to UCS-2/BMP, surrogate pairs are not supported. The \NsisACPcp is used during the conversion.
 \NsisWarnBlockContainerEnd
 
 
