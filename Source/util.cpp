@@ -435,7 +435,7 @@ FILE* my_fopen(const TCHAR *path, const char *mode)
 }
 
 
-void *operator new(size_t size) throw(bad_alloc) {
+void *operator new(size_t size) NSIS_CXX_THROWSPEC(bad_alloc) {
   void *p = malloc(size);
   if (!p)
     throw bad_alloc();
