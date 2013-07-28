@@ -1419,14 +1419,14 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           {
             TCHAR c;
 #ifdef _UNICODE
-            c=0; // Make sure high byte is 0 for FileReadByte
-            if (which==EW_FGETS && !parm3)
+            if (which==EW_FGETS)
             {
               char tmpc[2];
               DWORD mbtwcflags=MB_ERR_INVALID_CHARS, cbio;
-              if (!ReadFile(h,tmpc,2,&cbio,NULL) || !cbio) break;
+              if (!ReadFile(h,tmpc,2-parm3,&cbio,NULL) || !cbio) break;
               ungetseek=cbio;
-              for(;;) // Try to parse as DBCS first, if that fails try again as a single byte
+              c = (unsigned char) tmpc[0]; // FileReadByte
+              if (!parm3) for(;;) // Try to parse as DBCS first, if that fails try again as a single byte
               {
                 // BUGBUG: Limited to UCS-2/BMP, surrogate pairs are not supported.
                 if (MultiByteToWideChar(CP_ACP,mbtwcflags,tmpc,cbio,&c,1)) break;
@@ -1438,9 +1438,8 @@ static int NSISCALL ExecuteEntry(entry *entry_)
             else
 #endif
             {
-              // Read 1 TCHAR (FileReadUTF16LE and (Ansi)FileRead) or 
-              // parm3 bytes (FileReadByte and (Unicode)FileReadWord)
-              if (!myReadFile(h,&c,!parm3 ? sizeof(TCHAR) : sizeof(TCHAR) > 1 ? parm3 : 1)) break;
+              // Read 1 TCHAR (FileReadUTF16LE, (Ansi)FileRead, FileReadWord)
+              if (!myReadFile(h,&c,sizeof(TCHAR))) break;
             }
             if (parm3)
             {
