@@ -504,8 +504,7 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
         }
         case IDM_ABOUT:
         {
-          DialogBox(g_sdata.hInstance,MAKEINTRESOURCE(DLG_ABOUT),g_sdata.hwnd,(DLGPROC)AboutProc);
-          return TRUE;
+          return DialogBox(g_sdata.hInstance,MAKEINTRESOURCE(DLG_ABOUT),hwndDlg,(DLGPROC)AboutProc);
         }
         case IDM_NSISHOME:
         {
@@ -843,8 +842,10 @@ INT_PTR CALLBACK AboutProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
       break;
     }
     case WM_COMMAND:
-      if (IDOK == LOWORD(wParam)) EndDialog(hwndDlg, TRUE);
-      break;
+      if (IDOK != LOWORD(wParam)) break;
+      // fall through
+    case WM_CLOSE:
+      return EndDialog(hwndDlg, TRUE);
     case WM_DESTROY:
       DeleteObject((HGDIOBJ)SendDlgItemMessage(hwndDlg, IDC_ABOUTVERSION, WM_GETFONT, 0, 0));
       DeleteObject((HGDIOBJ)SendDlgItemMessage(hwndDlg, IDC_ABOUTCOPY, WM_GETFONT, 0, 0));
