@@ -64,6 +64,9 @@ private:
 // constants
 // ----------------------------------------------------------------------------
 
+#define HTMLW 598 // release.py generates a 598x45 header image
+#define HTMLH 365
+
 // IDs for the controls and the menu commands
    enum
    {
@@ -103,7 +106,7 @@ private:
 
      // Create the main application window
      MyFrame *frame = new MyFrame(_("NSIS Menu"),
-         wxPoint(50, 50), wxSize(600 + wxSystemSettings::GetMetric(wxSYS_FRAMESIZE_X), 365 + wxSystemSettings::GetMetric(wxSYS_FRAMESIZE_X)));
+         wxPoint(50, 50), wxSize(HTMLW + wxSystemSettings::GetMetric(wxSYS_FRAMESIZE_X), HTMLH + wxSystemSettings::GetMetric(wxSYS_FRAMESIZE_Y)));
    
      // Show it and tell the application that it's our main window
 
@@ -130,7 +133,7 @@ private:
       m_Html->SetRelatedFrame(this, wxT("%s")); // Dialog caption comes from the html title element or filename
       m_Html->SetBorders(0);
       m_Html->EnableScrolling(false, false);
-      m_Html->SetSize(600, 365);
+      m_Html->SetSize(HTMLW, HTMLH);
       
       // Set font size
       wxSize DialogSize(1000, 1000);
