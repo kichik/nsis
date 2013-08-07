@@ -24,8 +24,6 @@
 #define TOOLBAR_H
 #include <commctrl.h>
 
-#define TOOLBAR_ID                   10001
-
 #define BUTTONCOUNT     15
 
 #define TBB_LOADSCRIPT                   0

@@ -27,6 +27,10 @@
 #include "toolbar.h"
 #include <shlwapi.h>
 
+typedef UINT8 PACKEDCMDID_T;
+#define PACKCMDID(id) ( PACKEDCMDID_T((id) - IDM_CMDBASE) )
+#define UNPACKCMDID(id) ( IDM_CMDBASE + (id) )
+
 NTOOLTIP g_tip;
 LRESULT CALLBACK TipHookProc(int nCode, WPARAM wParam, LPARAM lParam);
 
@@ -165,58 +169,50 @@ void ErrorMessage(HWND hwnd,const TCHAR *str) {
   LogMessage(hwnd,buf);
 }
 
-// Altered by Darren Owen (DrO) on 1/10/2003
-void Items(HWND hwnd, int on) {
-  UINT mf = (!on ? MF_GRAYED : MF_ENABLED);
-  UINT nmf = (!on ? MF_ENABLED : MF_GRAYED);
+void SetDialogFocus(HWND hDlg, HWND hCtl)
+{
+  //blogs.msdn.com/b/oldnewthing/archive/2004/08/02/205624.aspx
+  SendMessage(hDlg, WM_NEXTDLGCTL, (WPARAM)hCtl, TRUE);
+}
 
-  if(!on)
-      g_sdata.focused_hwnd = GetFocus();
-  // Altered by Darren Owen (DrO) on 6/10/2003
-  else
-    EnableWindow(GetDlgItem(hwnd,IDCANCEL),1);
+void Items(HWND hwnd, int on) 
+{
+  const HWND hCloseBtn = GetDlgItem(hwnd, IDCANCEL);
+  const HWND hTestBtn = GetDlgItem(hwnd, IDC_TEST);
+  const HMENU hMenu = g_sdata.menu;
+  const UINT mf = (!on ? MF_GRAYED : MF_ENABLED);
+  const UINT nmf = (!on ? MF_ENABLED : MF_GRAYED);
+  const bool compsuccess = !g_sdata.retcode && on;
 
-  EnableWindow(GetDlgItem(hwnd,IDCANCEL),on);
-  // Altered by Darren Owen (DrO) on 6/10/2003
-  if((!g_sdata.retcode && on) || !on)
-    EnableWindow(GetDlgItem(hwnd,IDC_TEST),on);
-  EnableWindow(GetDlgItem(hwnd,IDC_RECOMPILE_TEST),on);
+  if(!on) g_sdata.focused_hwnd = GetFocus();
 
-  const HMENU menu = g_sdata.menu;
-  EnableMenuItem(menu,IDM_CANCEL,nmf);
-  // Altered by Darren Owen (DrO) on 6/10/2003
-  if((!g_sdata.retcode && on) || !on)
-    EnableMenuItem(menu,IDM_TEST,mf);
-  const UINT mcmdbase = IDM_COMPRESSOR;
-  static const UINT8 mcmds [] = {
-    UINT8(IDM_SAVE-mcmdbase), UINT8(IDM_EXIT-mcmdbase), UINT8(IDM_LOADSCRIPT-mcmdbase),
-    UINT8(IDM_RECOMPILE-mcmdbase), UINT8(IDM_COPY-mcmdbase), UINT8(IDM_COPYSELECTED-mcmdbase),
-    UINT8(IDM_EDITSCRIPT-mcmdbase), UINT8(IDM_CLEARLOG-mcmdbase), UINT8(IDM_BROWSESCR-mcmdbase),
-    UINT8(IDM_RECOMPILE_TEST-mcmdbase), UINT8(IDM_COMPRESSOR-mcmdbase)
-  };
-  for (UINT i = 0; i < COUNTOF(mcmds); ++i)
-    EnableMenuItem(menu,mcmdbase+mcmds[i],mf);
-
-  // Altered by Darren Owen (DrO) on 6/10/2003
-  if((!g_sdata.retcode && on) || !on)
-    EnableToolBarButton(IDM_TEST,on);
-  EnableToolBarButton(IDM_SAVE,on);
-  EnableToolBarButton(IDM_EXIT,on);
-  EnableToolBarButton(IDM_LOADSCRIPT,on);
-  EnableToolBarButton(IDM_RECOMPILE,on);
-  EnableToolBarButton(IDM_COPY,on);
-  EnableToolBarButton(IDM_EDITSCRIPT,on);
-  EnableToolBarButton(IDM_CLEARLOG,on);
-  EnableToolBarButton(IDM_BROWSESCR,on);
-  EnableToolBarButton(IDM_RECOMPILE_TEST,on);
-  EnableToolBarButton(IDM_COMPRESSOR,on);
-
-  if(!on) {
-    if (!IsWindowEnabled(g_sdata.focused_hwnd))
-      SetFocus(GetDlgItem(hwnd,IDC_LOGWIN));
+  if(compsuccess || !on) {
+    EnableWindow(hTestBtn, on);
+    EnableToolBarButton(IDM_TEST, on);
+    EnableMenuItem(hMenu, IDM_TEST, mf);
   }
-  else
-    SetFocus(g_sdata.focused_hwnd);
+  EnableMenuItem(hMenu, IDM_CANCEL, nmf);
+  EnableWindow(hCloseBtn, on);
+
+  static const PACKEDCMDID_T cmds [] = {
+    PACKCMDID(IDM_EXIT), PACKCMDID(IDM_LOADSCRIPT), PACKCMDID(IDM_EDITSCRIPT), 
+    PACKCMDID(IDM_COPY), PACKCMDID(IDM_COPYSELECTED), PACKCMDID(IDM_SAVE), 
+    PACKCMDID(IDM_CLEARLOG), PACKCMDID(IDM_BROWSESCR), 
+    PACKCMDID(IDM_COMPRESSOR), PACKCMDID(IDM_COMPRESSOR_SUBMENU),
+    PACKCMDID(IDM_RECOMPILE), PACKCMDID(IDM_RECOMPILE_TEST)
+  };
+  for (UINT i = 0; i < COUNTOF(cmds); ++i) {
+    UINT id = UNPACKCMDID(cmds[i]);
+    EnableMenuItem(hMenu, id, mf);
+    if (IDM_COPYSELECTED != id && IDM_COMPRESSOR_SUBMENU != id)
+      EnableToolBarButton(id, on);
+  }
+
+  HWND hFocus = g_sdata.focused_hwnd, hOptimal = hTestBtn;
+  if (on && hCloseBtn == hFocus) hFocus = hOptimal;
+  if (!IsWindowEnabled(hFocus)) hFocus = GetDlgItem(hwnd, IDC_LOGWIN);
+  SetDialogFocus(hwnd, hOptimal);
+  SetDialogFocus(hwnd, hFocus);
 }
 
 void SetCompressorStats()
@@ -254,20 +250,17 @@ void CompileNSISScript() {
   SetTitle(g_sdata.hwnd,NULL);
   if (lstrlen(g_sdata.script)==0) {
     LogMessage(g_sdata.hwnd,USAGE);
-    EnableMenuItem(g_sdata.menu,IDM_RECOMPILE,MF_GRAYED);
-    EnableMenuItem(g_sdata.menu,IDM_EDITSCRIPT,MF_GRAYED);
-    EnableMenuItem(g_sdata.menu,IDM_TEST,MF_GRAYED);
-    EnableMenuItem(g_sdata.menu,IDM_BROWSESCR,MF_GRAYED);
-    // Added by Darren Owen (DrO) on 1/10/2003
-    EnableMenuItem(g_sdata.menu,IDM_RECOMPILE_TEST,MF_GRAYED);
 
-    EnableToolBarButton(IDM_RECOMPILE,FALSE);
-    EnableToolBarButton(IDM_EDITSCRIPT,FALSE);
-    EnableToolBarButton(IDM_TEST,FALSE);
-    EnableToolBarButton(IDM_RECOMPILE_TEST,FALSE);
-    EnableToolBarButton(IDM_BROWSESCR,FALSE);
-
-    EnableWindow(GetDlgItem(g_sdata.hwnd,IDC_TEST),0);
+    static const PACKEDCMDID_T cmds [] = {
+      PACKCMDID(IDM_RECOMPILE),PACKCMDID(IDM_RECOMPILE_TEST),PACKCMDID(IDM_TEST), 
+      PACKCMDID(IDM_BROWSESCR),PACKCMDID(IDM_EDITSCRIPT)
+    };
+    for (UINT i = 0; i < COUNTOF(cmds); ++i) {
+      int id = UNPACKCMDID(cmds[i]);
+      EnableMenuItem(g_sdata.menu,id,MF_GRAYED);
+      EnableToolBarButton(id,FALSE);
+    }
+    EnableWindow(GetDlgItem(g_sdata.hwnd,IDC_TEST),FALSE);
     DragAcceptFiles(g_sdata.hwnd,TRUE);
     return;
   }

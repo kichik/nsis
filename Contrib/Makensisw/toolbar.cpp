@@ -63,16 +63,9 @@ void CreateToolBar()
   tbButton[TBB_NSISHOME]    = CreateToolBarButton(IDB_NSISHOME,      IDM_NSISHOME,   TBSTATE_ENABLED,        TBSTYLE_BUTTON,   0, 0);
   tbButton[TBB_DOCS]        = CreateToolBarButton(IDB_DOCS,          IDM_DOCS,       TBSTATE_ENABLED,        TBSTYLE_BUTTON,   0, 0);
 
-  g_toolbar.hwnd = CreateWindowEx (
-    0L,
-    TOOLBARCLASSNAME,
-    _T(""),
+  g_toolbar.hwnd = CreateWindowEx(0, TOOLBARCLASSNAME, NULL,
     WS_CHILD | WS_VISIBLE | TBSTYLE_TRANSPARENT | TBSTYLE_FLAT,
-    0, 0, 0, 30,
-    g_sdata.hwnd,
-    (HMENU) TOOLBAR_ID,
-    g_sdata.hInstance,
-    NULL );
+    0, 0, 0, 30, g_sdata.hwnd, NULL, g_sdata.hInstance, NULL);
   
   SendMessage(g_toolbar.hwnd, TB_BUTTONSTRUCTSIZE, sizeof(tbButton[0]), 0);
   SendMessage(g_toolbar.hwnd, TB_ADDBUTTONS, BUTTONCOUNT, (LONG) &tbButton);
@@ -121,11 +114,8 @@ void UpdateToolBarCompressorButton()
 {
   int iBitmap;
   int iString;
-  TCHAR   szBuffer[124]; // increased to 124 for good measure, also.
-  TCHAR   temp[64]; // increased to 64.  Hit limit 08/20/2007 -- Jim Park.
-  TOOLINFO ti;
-
-  memset(&ti, 0, sizeof(TOOLINFO));
+  TCHAR szBuffer[124]; // increased to 124 for good measure, also.
+  TCHAR temp[64]; // increased to 64.  Hit limit 08/20/2007 -- Jim Park.
 
   if(g_sdata.compressor >= COMPRESSOR_SCRIPT && g_sdata.compressor <= COMPRESSOR_BEST) {
     iBitmap = compressor_bitmaps[(int)g_sdata.compressor];
@@ -134,27 +124,21 @@ void UpdateToolBarCompressorButton()
   else {
     return;
   }
-  LoadString(g_sdata.hInstance,
-             IDS_COMPRESSOR,
-             temp,
-             COUNTOF(temp));
-  memset(szBuffer, 0, sizeof(szBuffer));
+
+  LoadString(g_sdata.hInstance, IDS_COMPRESSOR, temp, COUNTOF(temp));
+  szBuffer[0] = _T('\0');
   lstrcat(szBuffer,temp);
   lstrcat(szBuffer,_T(" ["));
-  LoadString(g_sdata.hInstance,
-             iString,
-             temp,
-             COUNTOF(temp));
+  LoadString(g_sdata.hInstance, iString, temp, COUNTOF(temp));
   lstrcat(szBuffer,temp);
   lstrcat(szBuffer,_T("]"));
 
   SendMessage(g_toolbar.hwnd, TB_CHANGEBITMAP, (WPARAM) IDM_COMPRESSOR, (LPARAM) MAKELPARAM(iBitmap, 0));
 
-  ti.cbSize = sizeof(TOOLINFO);
-  ti.uFlags = 0;
-  ti.hinst = g_sdata.hInstance;
+  TOOLINFO ti = { sizeof(TOOLINFO), 0 };
   ti.hwnd = g_toolbar.hwnd;
   ti.uId = (UINT)TBB_COMPRESSOR;
+  ti.hinst = g_sdata.hInstance;
   SendMessage(g_tip.tip, TTM_GETTOOLINFO, 0, (LPARAM) (LPTOOLINFO) &ti);
   ti.lpszText = (LPTSTR)szBuffer;
   SendMessage(g_tip.tip, TTM_SETTOOLINFO, 0, (LPARAM) (LPTOOLINFO) &ti);
@@ -205,11 +189,10 @@ void AddToolBarTooltips()
   AddToolBarButtonTooltip(TBB_DOCS, IDS_DOCS);
 }
 
-void EnableToolBarButton(int id, BOOL enabled)
+void EnableToolBarButton(int cmdid, BOOL enabled)
 {
-  UINT state = (enabled?TBSTATE_ENABLED:TBSTATE_INDETERMINATE);
-
-  SendMessage(g_toolbar.hwnd, TB_SETSTATE, id, MAKELPARAM(state, 0));
+  UINT state = enabled ? TBSTATE_ENABLED : TBSTATE_INDETERMINATE;
+  SendMessage(g_toolbar.hwnd, TB_SETSTATE, cmdid, MAKELPARAM(state, 0));
 }
 
 void ShowToolbarDropdownMenu()
