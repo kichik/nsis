@@ -113,7 +113,9 @@ typedef DWORDLONG ULONGLONG,*PULONGLONG;
 // mingw32 and w64-mingw32 do not define ULONG_PTR
 // but rather declare ULONG_PTR via typedef (see basetsd.h)
 #if !defined(__MINGW32__) && !defined(ULONG_PTR)
-#  define ULONG_PTR unsigned long
+#  ifndef _WIN64
+#    define ULONG_PTR unsigned long
+#  endif
 #endif
 
 #ifdef __cplusplus
@@ -246,6 +248,13 @@ typedef DWORDLONG ULONGLONG,*PULONGLONG;
 #  define strnicmp strncasecmp
 #  define CopyMemory memcpy
 #  define ZeroMemory(x, y) memset(x, 0, y)
+#endif
+
+#ifndef _WIN64
+#  ifndef GCLP_HICON
+#    define GCLP_HICON GCL_HICON
+#    define SetClassLongPtr SetClassLong
+#  endif
 #endif
 
 // defines

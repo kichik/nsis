@@ -122,10 +122,12 @@ void NSISCALL update_status_text_buf1(int strtab)
   update_status_text(strtab, g_bufs[1]);
 }
 
-static int NSISCALL GetIntFromParm(int id_)
+static INT_PTR NSISCALL GetIntPtrFromParm(int id_)
 {
-  return myatoi(GetNSISStringTT(g_parms[id_]));
+  return strtoiptr(GetNSISStringTT(g_parms[id_]));
 }
+#define GetHwndFromParm(id_) ( (HWND)GetIntPtrFromParm(id_) )
+#define GetIntFromParm(id_) ( (INT32)(UINT32)GetIntPtrFromParm(id_) )
 
 // NB - USE CAUTION when rearranging code to make use of the new return value of
 // this function - be sure the parm being accessed is not modified before the call.
@@ -685,7 +687,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       {
         int v,v2;
         TCHAR *p=var0;
-        v=GetIntFromParm(1);
+        v=GetIntFromParm(1); // BUGBUG64: TODO: These should be INT_PTR, the script might be playing with pointers and System::Call
         v2=GetIntFromParm(2);
         switch (parm3)
         {
@@ -710,7 +712,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       TCHAR *buf0=GetStringFromParm(0x01);
       wsprintf(var0,
                buf0,
-               GetIntFromParm(2));
+               GetIntPtrFromParm(2));
     }
     break;
 #endif//NSIS_SUPPORT_INTOPTS
@@ -758,15 +760,15 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     case EW_FINDWINDOW:
     case EW_SENDMESSAGE:
       {
-        int v;
-        int b3=GetIntFromParm(3);
-        int b4=GetIntFromParm(4);
-        if (parm5&1) b3=(int)GetStringFromParm(0x33);
-        if (parm5&2) b4=(int)GetStringFromParm(0x44);
+        LRESULT v;
+        INT_PTR b3=GetIntPtrFromParm(3);
+        INT_PTR b4=GetIntPtrFromParm(4);
+        if (parm5&1) b3=(INT_PTR)GetStringFromParm(0x33);
+        if (parm5&2) b4=(INT_PTR)GetStringFromParm(0x44);
 
         if (which == EW_SENDMESSAGE)
         {
-          HWND hwnd=(HWND)GetIntFromParm(1);
+          HWND hwnd=GetHwndFromParm(1);
           int msg=GetIntFromParm(2);
 
           if (parm5>>2) exec_error += !SendMessageTimeout(hwnd,msg,b3,b4,SMTO_NORMAL,parm5>>2,(LPDWORD)&v);
@@ -779,22 +781,21 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         {
           TCHAR *buf0=GetStringFromParm(0x01);
           TCHAR *buf1=GetStringFromParm(0x12);
-          v=(int)FindWindowEx((HWND)b3,(HWND)b4,buf0[0]?buf0:NULL,buf1[0]?buf1:NULL);
+          v=(LRESULT)FindWindowEx((HWND)b3,(HWND)b4,buf0[0]?buf0:NULL,buf1[0]?buf1:NULL);
         }
 
-        if (parm0>=0)
-          myitoa(var0,v);
+        if (parm0>=0) iptrtostr(var0,v);
       }
     break;
     case EW_ISWINDOW:
-      if (IsWindow((HWND)GetIntFromParm(0))) return parm1;
+      if (IsWindow(GetHwndFromParm(0))) return parm1;
     return parm2;
 #ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
     case EW_GETDLGITEM:
-      myitoa(
+      iptrtostr(
         var0,
-        (int)GetDlgItem(
-          (HWND)GetIntFromParm(1),
+        (INT_PTR)GetDlgItem(
+          GetHwndFromParm(1),
           GetIntFromParm(2)
         )
       );
@@ -802,7 +803,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     case EW_SETCTLCOLORS:
     {
       ctlcolors *c = (ctlcolors *)(g_blocks[NB_CTLCOLORS].offset + parm1);
-      SetWindowLongPtr((HWND) GetIntFromParm(0), GWLP_USERDATA, (LONG_PTR) c);
+      SetWindowLongPtr(GetHwndFromParm(0), GWLP_USERDATA, (LONG_PTR) c);
     }
     break;
     case EW_SETBRANDINGIMAGE:
@@ -841,12 +842,12 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       f.lfStrikeOut=parm4&4;
       f.lfCharSet=DEFAULT_CHARSET;
       GetNSISString(f.lfFaceName,parm1);
-      myitoa(var0,(int)CreateFontIndirect(&f));
+      iptrtostr(var0,(INT_PTR)CreateFontIndirect(&f));
     }
     break;
     case EW_SHOWWINDOW:
     {
-      HWND hw=(HWND)GetIntFromParm(0);
+      HWND hw=GetHwndFromParm(0);
       int a=GetIntFromParm(1);
       if (parm2) log_printf(_T("HideWindow"));
       if (!parm3)
@@ -1077,7 +1078,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
 #ifdef _UNICODE
             hres = ppf->lpVtbl->Save(ppf,buf1,TRUE);
 #else
-            WCHAR *wsz = (LPWSTR) buf2; // buf2...buf3 = WCHAR wsz[NSIS_MAX_STRLEN]
+            WCHAR *wsz = (LPWSTR) buf2; // buf2 + buf3 = WCHAR wsz[NSIS_MAX_STRLEN]
             hres = E_FAIL;
             if (MultiByteToWideChar(CP_ACP,0,buf1,-1,wsz,NSIS_MAX_STRLEN))
               hres = ppf->lpVtbl->Save(ppf,wsz,TRUE);
@@ -1162,18 +1163,9 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         mystrcpy(buf1,_T("<RM>"));
         mystrcpy(buf2,buf1);
 #endif
-        if (parm0)
-        {
-          sec=GetStringFromParm(0x00);
-        }
-        if (parm1)
-        {
-          key=GetStringFromParm(0x11);
-        }
-        if (parm4)
-        {
-          str=GetStringFromParm(0x22);
-        }
+        if (parm0) sec=GetStringFromParm(0x00);
+        if (parm1) key=GetStringFromParm(0x11);
+        if (parm4) str=GetStringFromParm(0x22);
         buf3=GetStringFromParm(-0x33);
         log_printf5(_T("WriteINIStr: wrote [%s] %s=%s in %s"),buf0,buf1,buf2,buf3);
         if (!WritePrivateProfileString(sec,key,str,buf3)) exec_error++;
@@ -1346,7 +1338,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     case EW_FCLOSE:
       {
         TCHAR *t=var0;
-        if (*t) CloseHandle((HANDLE)myatoi(t));
+        if (*t) CloseHandle((HANDLE)strtoiptr(t));
       }
     break;
     case EW_FOPEN:
@@ -1362,7 +1354,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         }
         else
         {
-          myitoa(handleout,(int)h);
+          iptrtostr(handleout,(INT_PTR)h);
         }
       }
     break;
@@ -1393,7 +1385,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         {
           l=mystrlen(GetStringFromParm(0x11))*sizeof(TCHAR);
         }
-        if (!*t || !WriteFile((HANDLE)myatoi(t),buf1,l,&dw,NULL))
+        if (!*t || !WriteFile((HANDLE)strtoiptr(t),buf1,l,&dw,NULL))
         {
           exec_error++;
         }
@@ -1414,7 +1406,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         if (*hptr)
         {
           TCHAR lc=0;
-          HANDLE h=(HANDLE)myatoi(hptr);
+          HANDLE h=(HANDLE)strtoiptr(hptr);
           while (rpos<maxlen)
           {
             TCHAR c;
@@ -1468,7 +1460,8 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         TCHAR *t=var0;
         if (*t)
         {
-          DWORD v=SetFilePointer((HANDLE)myatoi(t),GetIntFromParm(2),NULL,parm3);
+          // TODO: Use SetFilePointerEx for > 4GB support on _WIN64
+          DWORD v=SetFilePointer((HANDLE)strtoiptr(t),GetIntFromParm(2),NULL,parm3);
 
           if (parm1>=0)
           {
@@ -1482,7 +1475,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     case EW_FINDCLOSE:
       {
         TCHAR *t=var0;
-        if (*t) FindClose((HANDLE)myatoi(t));
+        if (*t) FindClose((HANDLE)strtoiptr(t));
       }
     break;
     case EW_FINDNEXT:
@@ -1490,7 +1483,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         TCHAR *textout=var0;
         TCHAR *t=var1;
         WIN32_FIND_DATA fd;
-        if (*t && FindNextFile((HANDLE)myatoi(t),&fd))
+        if (*t && FindNextFile((HANDLE)strtoiptr(t),&fd))
         {
           mystrcpy(textout,fd.cFileName);
         }
@@ -1518,7 +1511,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         }
         else
         {
-          myitoa(handleout,(int)h);
+          iptrtostr(handleout,(INT_PTR)h);
           mystrcpy(textout,fd.cFileName);
         }
       }

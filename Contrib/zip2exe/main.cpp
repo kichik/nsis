@@ -632,7 +632,7 @@ BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       SetDlgItemText(hwndDlg,IDC_INSTPATH,gp_poi);
 
       hIcon=LoadIcon(g_hInstance,MAKEINTRESOURCE(IDI_ICON1));
-      SetClassLong(hwndDlg,GCL_HICON,(long)hIcon);
+      SetClassLongPtr(hwndDlg,GCLP_HICON,(LONG_PTR)hIcon);
 
       hFont=CreateFont(15,0,0,0,FW_NORMAL,0,0,0,DEFAULT_CHARSET,
               OUT_CHARACTER_PRECIS,

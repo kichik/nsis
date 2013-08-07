@@ -33,8 +33,10 @@ TCHAR * NSISCALL GetNSISString(TCHAR *outbuf, int strtab);
 #define GetNSISTab(strtab) (strtab < 0 ? LANG_STR_TAB(strtab) : strtab)
 
 void NSISCALL myRegGetStr(HKEY root, const TCHAR *sub, const TCHAR *name, TCHAR *out, int x64);
-int NSISCALL myatoi(TCHAR *s);
-void NSISCALL myitoa(TCHAR *s, int d);
+#define myatoi(s) ( (int)strtoiptr(s) )
+INT_PTR NSISCALL strtoiptr(const TCHAR *s);
+#define myitoa iptrtostr
+void NSISCALL iptrtostr(TCHAR *s, INT_PTR d);
 TCHAR * NSISCALL mystrcpy(TCHAR *out, const TCHAR *in);
 int NSISCALL mystrlen(const TCHAR *in);
 TCHAR * NSISCALL mystrcat(TCHAR *out, const TCHAR *concat);
