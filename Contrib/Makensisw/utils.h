@@ -50,11 +50,10 @@ void CopyToClipboard(HWND hwnd);
 void ClearLog(HWND hwnd);
 void LogMessage(HWND hwnd,const TCHAR *str);
 void ErrorMessage(HWND hwnd,const TCHAR *str);
+void SetDialogFocus(HWND hDlg, HWND hCtl); // Use this and not SetFocus()!
 #define DisableItems(hwnd) Items(hwnd, 0)
 #define EnableItems(hwnd) Items(hwnd, 1)
 void Items(HWND hwnd, int on);
-/*void DisableItems(HWND hwnd);
-void EnableItems(HWND hwnd);*/
 bool OpenRegSettingsKey(HKEY &hKey, bool create = false);
 DWORD ReadRegSettingDW(LPCTSTR name, const DWORD defval);
 void RestoreWindowPos(HWND hwnd);

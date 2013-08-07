@@ -311,7 +311,7 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
       }
       if(g_sdata.compressor == COMPRESSOR_BEST) {
         if (g_sdata.retcode==0 && FileExists(g_sdata.output_exe)) {
-          TCHAR temp_file_name[1024];
+          TCHAR temp_file_name[1024]; // BUGBUG: Hardcoded buffer size
           wsprintf(temp_file_name,_T("%s_makensisw_temp"),g_sdata.output_exe);
           if(!lstrcmpi(g_sdata.compressor_name,compressor_names[(int)COMPRESSOR_SCRIPT+1])) {
             SetCompressorStats();
@@ -584,7 +584,6 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
         }
         // Added by Darren Owen (DrO) on 1/10/2003
         case IDM_RECOMPILE_TEST:
-        case IDC_RECOMPILE_TEST:
         {
           g_sdata.recompile_test = 1;
           CompileNSISScript();
@@ -857,31 +856,15 @@ INT_PTR CALLBACK AboutProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 void EnableSymbolSetButtons(HWND hwndDlg)
 {
   int n = SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_GETCOUNT, 0, 0);
-  if(n > 0) {
-    EnableWindow(GetDlgItem(hwndDlg, IDCLEAR), TRUE);
-    EnableWindow(GetDlgItem(hwndDlg, IDSAVE), TRUE);
-  }
-  else {
-    EnableWindow(GetDlgItem(hwndDlg, IDCLEAR), FALSE);
-    EnableWindow(GetDlgItem(hwndDlg, IDSAVE), FALSE);
-  }
+  EnableWindow(GetDlgItem(hwndDlg, IDC_CLEAR), n > 0);
+  EnableWindow(GetDlgItem(hwndDlg, IDC_SAVE), n > 0);
 }
 
 void EnableSymbolEditButtons(HWND hwndDlg)
 {
   int n = SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_GETSELCOUNT, 0, 0);
-  if(n == 0) {
-    EnableWindow(GetDlgItem(hwndDlg, IDLEFT), FALSE);
-    EnableWindow(GetDlgItem(hwndDlg, IDDEL), FALSE);
-  }
-  else if(n == 1) {
-    EnableWindow(GetDlgItem(hwndDlg, IDLEFT), TRUE);
-    EnableWindow(GetDlgItem(hwndDlg, IDDEL), TRUE);
-  }
-  else if(n > 1) {
-    EnableWindow(GetDlgItem(hwndDlg, IDLEFT), FALSE);
-    EnableWindow(GetDlgItem(hwndDlg, IDDEL), TRUE);
-  }
+  EnableWindow(GetDlgItem(hwndDlg, IDC_LEFT), n == 1);
+  EnableWindow(GetDlgItem(hwndDlg, IDC_DEL), n != 0);
 }
 
 void SetSymbols(HWND hwndDlg, TCHAR **symbols)
@@ -895,9 +878,9 @@ void SetSymbols(HWND hwndDlg, TCHAR **symbols)
       }
     }
     EnableSymbolSetButtons(hwndDlg);
-    EnableWindow(GetDlgItem(hwndDlg, IDRIGHT), FALSE);
-    EnableWindow(GetDlgItem(hwndDlg, IDLEFT), FALSE);
-    EnableWindow(GetDlgItem(hwndDlg, IDDEL), FALSE);
+    EnableWindow(GetDlgItem(hwndDlg, IDC_RIGHT), FALSE);
+    EnableWindow(GetDlgItem(hwndDlg, IDC_LEFT), FALSE);
+    EnableWindow(GetDlgItem(hwndDlg, IDC_DEL), FALSE);
 }
 
 TCHAR **GetSymbols(HWND hwndDlg)
@@ -984,7 +967,7 @@ INT_PTR CALLBACK SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lPar
         case IDCANCEL:
           EndDialog(hwndDlg, TRUE);
           break;
-        case IDRIGHT:
+        case IDC_RIGHT:
         {
           int n = SendDlgItemMessage(hwndDlg, IDC_SYMBOL, WM_GETTEXTLENGTH, 0, 0);
           if(n > 0) {
@@ -1020,7 +1003,7 @@ INT_PTR CALLBACK SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lPar
           }
         }
         break;
-        case IDLEFT:
+        case IDC_LEFT:
         {
           if (SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_GETSELCOUNT, 0, 0) != 1)
             break;
@@ -1040,27 +1023,27 @@ INT_PTR CALLBACK SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lPar
               SendDlgItemMessage(hwndDlg, IDC_SYMBOL, WM_SETTEXT, 0, (LPARAM)buf);
               MemFree(buf);
               SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_DELETESTRING, (WPARAM)index, 0);
-              EnableWindow(GetDlgItem(hwndDlg, IDLEFT), FALSE);
-              EnableWindow(GetDlgItem(hwndDlg, IDDEL), FALSE);
+              EnableWindow(GetDlgItem(hwndDlg, IDC_LEFT), FALSE);
+              EnableWindow(GetDlgItem(hwndDlg, IDC_DEL), FALSE);
               EnableSymbolSetButtons(hwndDlg);
             }
           }
         }
         break;
-        case IDCLEAR:
+        case IDC_CLEAR:
         {
           SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_RESETCONTENT , 0, 0);
           EnableSymbolSetButtons(hwndDlg);
         }
         break;
-        case IDLOAD:
-        case IDSAVE:
+        case IDC_LOAD:
+        case IDC_SAVE:
         {
-          g_symbol_set_mode = IDLOAD == LOWORD(wParam) ? 1 : 2;
+          g_symbol_set_mode = IDC_LOAD == LOWORD(wParam) ? 1 : 2;
           DialogBox(g_sdata.hInstance,MAKEINTRESOURCE(DLG_SYMBOLSET),hwndDlg,(DLGPROC)SymbolSetProc);
         }
         break;
-        case IDDEL:
+        case IDC_DEL:
         {
           int n = SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_GETSELCOUNT, 0, 0);
           int *items = (int*) MemAllocZI(n*sizeof(int));
@@ -1078,12 +1061,7 @@ INT_PTR CALLBACK SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lPar
           if(HIWORD(wParam) == EN_CHANGE)
           {
             int n = SendDlgItemMessage(hwndDlg, IDC_SYMBOL, WM_GETTEXTLENGTH, 0, 0);
-            if(n > 0) {
-              EnableWindow(GetDlgItem(hwndDlg, IDRIGHT), TRUE);
-            }
-            else {
-              EnableWindow(GetDlgItem(hwndDlg, IDRIGHT), FALSE);
-            }
+            EnableWindow(GetDlgItem(hwndDlg, IDC_RIGHT), n > 0);
           }
           break;
         case IDC_SYMBOLS:
@@ -1093,7 +1071,7 @@ INT_PTR CALLBACK SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lPar
           }
           else if (HIWORD(wParam) == LBN_DBLCLK)
           {
-            SendDlgItemMessage(hwndDlg, IDLEFT, BM_CLICK, 0, 0);
+            SendDlgItemMessage(hwndDlg, IDC_LEFT, BM_CLICK, 0, 0);
           }
           break;
         }
@@ -1154,7 +1132,7 @@ INT_PTR CALLBACK SymbolSetProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lPa
       HWND hwndEdit;
       HKEY hKey;
 
-      EnableWindow(GetDlgItem(hwndDlg, IDDEL), FALSE);
+      EnableWindow(GetDlgItem(hwndDlg, IDC_DEL), FALSE);
       if (OpenRegSettingsKey(hKey)) {
         HKEY hSubKey;
 
@@ -1221,7 +1199,7 @@ INT_PTR CALLBACK SymbolSetProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lPa
           EndDialog(hwndDlg, TRUE);
           break;
         }
-        case IDDEL:
+        case IDC_DEL:
         {
           int n = SendDlgItemMessage(hwndDlg, IDC_NAMES, CB_GETCURSEL, 0, 0);
           if(n != CB_ERR) {
@@ -1233,7 +1211,7 @@ INT_PTR CALLBACK SymbolSetProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lPa
             }
             MemFree(buf);
           }
-          EnableWindow(GetDlgItem(hwndDlg, IDDEL), FALSE);
+          EnableWindow(GetDlgItem(hwndDlg, IDC_DEL), FALSE);
           break;
         }
         case IDC_NAMES:
@@ -1241,7 +1219,7 @@ INT_PTR CALLBACK SymbolSetProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lPa
           if(HIWORD(wParam) == CBN_SELCHANGE)
           {
             int n = SendDlgItemMessage(hwndDlg, IDC_NAMES, CB_GETCURSEL, 0, 0);
-            EnableWindow(GetDlgItem(hwndDlg, IDDEL), CB_ERR != n);
+            EnableWindow(GetDlgItem(hwndDlg, IDC_DEL), CB_ERR != n);
           }
           else if(HIWORD(wParam) == CBN_DBLCLK)
           {
