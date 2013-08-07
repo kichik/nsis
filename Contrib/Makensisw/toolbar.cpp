@@ -31,44 +31,48 @@ NTOOLBAR g_toolbar;
 extern NSCRIPTDATA g_sdata;
 extern NTOOLTIP g_tip;
 
-TBBUTTON CreateToolBarButton(int iBitmap, int idCommand, BYTE fsState, BYTE fsStyle, DWORD dwData, int iString)
-{
-  TBBUTTON tbButton;
-  tbButton.iBitmap = iBitmap;
-  tbButton.idCommand = idCommand;
-  tbButton.fsState = fsState;
-  tbButton.fsStyle = fsStyle;
-  tbButton.dwData = dwData;
-  tbButton.iString = iString;
+typedef struct {
+  BYTE Style, State;
+  UINT8 ImgIdx;
+  UINT8 TTip;
+  UINT16 CmdId;
+} TBBTNDESC;
+#define MKNAMEDTBBTNDESC(id, sta, sty) sty, sta, IDB_##id, IDS_##id, IDM_##id
 
-  return tbButton;
-}
+static const TBBTNDESC g_TBBtnsDesc[BUTTONCOUNT] = {
+/*TBB_LOADSCRIPT*/ { MKNAMEDTBBTNDESC(LOADSCRIPT, TBSTATE_ENABLED,       TBSTYLE_BUTTON  ) },
+/*TBB_SAVE      */ { MKNAMEDTBBTNDESC(SAVE,       TBSTATE_INDETERMINATE, TBSTYLE_BUTTON  ) },
+/*TBB_SEP1      */ { TBSTYLE_SEP },
+/*TBB_COPY      */ { MKNAMEDTBBTNDESC(COPY,       TBSTATE_INDETERMINATE, TBSTYLE_BUTTON  ) },
+/*TBB_FIND      */ { MKNAMEDTBBTNDESC(FIND,       TBSTATE_ENABLED,       TBSTYLE_BUTTON  ) },
+/*TBB_CLEARLOG  */ { MKNAMEDTBBTNDESC(CLEARLOG,   TBSTATE_ENABLED,       TBSTYLE_BUTTON  ) },
+/*TBB_SEP2      */ { TBSTYLE_SEP },
+/*TBB_RECOMPILE */ { MKNAMEDTBBTNDESC(RECOMPILE,  TBSTATE_INDETERMINATE, TBSTYLE_BUTTON  ) },
+/*TBB_TEST      */ { MKNAMEDTBBTNDESC(TEST,       TBSTATE_INDETERMINATE, TBSTYLE_BUTTON  ) },
+/*TBB_COMPRESSOR*/ { MKNAMEDTBBTNDESC(COMPRESSOR, TBSTATE_ENABLED,       TBSTYLE_DROPDOWN) },
+/*TBB_EDITSCRIPT*/ { MKNAMEDTBBTNDESC(EDITSCRIPT, TBSTATE_INDETERMINATE, TBSTYLE_BUTTON  ) },
+/*TBB_BROWSESCR */ { MKNAMEDTBBTNDESC(BROWSESCR,  TBSTATE_INDETERMINATE, TBSTYLE_BUTTON  ) },
+/*TBB_SEP3      */ { TBSTYLE_SEP },
+/*TBB_NSISHOME  */ { MKNAMEDTBBTNDESC(NSISHOME,   TBSTATE_ENABLED,       TBSTYLE_BUTTON  ) },
+/*TBB_DOCS      */ { MKNAMEDTBBTNDESC(DOCS,       TBSTATE_ENABLED,       TBSTYLE_BUTTON  ) }
+};
 
 void CreateToolBar()
 {
-  static TBBUTTON tbButton[BUTTONCOUNT];
-  tbButton[TBB_LOADSCRIPT]  = CreateToolBarButton(IDB_LOADSCRIPT,    IDM_LOADSCRIPT, TBSTATE_ENABLED,        TBSTYLE_BUTTON,   0, 0);
-  tbButton[TBB_SAVE]        = CreateToolBarButton(IDB_SAVE,          IDM_SAVE,       TBSTATE_ENABLED,        TBSTYLE_BUTTON,   0, 0);
-  tbButton[TBB_SEP1]        = CreateToolBarButton(0,                 0,              TBSTATE_ENABLED,        TBSTYLE_SEP,      0, 0);
-  tbButton[TBB_COPY]        = CreateToolBarButton(IDB_COPY,          IDM_COPY,       TBSTATE_INDETERMINATE,  TBSTYLE_BUTTON,   0, 0);
-  tbButton[TBB_FIND]        = CreateToolBarButton(IDB_FIND,          IDM_FIND,       TBSTATE_ENABLED,        TBSTYLE_BUTTON,   0, 0);
-  tbButton[TBB_CLEARLOG]    = CreateToolBarButton(IDB_CLEARLOG,      IDM_CLEARLOG,   TBSTATE_ENABLED,        TBSTYLE_BUTTON,   0, 0);
-  tbButton[TBB_SEP2]        = CreateToolBarButton(0,                 0,              TBSTATE_ENABLED,        TBSTYLE_SEP,      0, 0);
-  tbButton[TBB_RECOMPILE]   = CreateToolBarButton(IDB_RECOMPILE,     IDM_RECOMPILE,  TBSTATE_INDETERMINATE,  TBSTYLE_BUTTON,   0, 0);
-  tbButton[TBB_COMPRESSOR]  = CreateToolBarButton(IDB_COMPRESSOR,    IDM_COMPRESSOR, TBSTATE_ENABLED,        TBSTYLE_DROPDOWN, 0, 0);
-  tbButton[TBB_TEST]        = CreateToolBarButton(IDB_TEST,          IDM_TEST,       TBSTATE_INDETERMINATE,  TBSTYLE_BUTTON,   0, 0);
-  tbButton[TBB_EDITSCRIPT]  = CreateToolBarButton(IDB_EDITSCRIPT,    IDM_EDITSCRIPT, TBSTATE_INDETERMINATE,  TBSTYLE_BUTTON,   0, 0);
-  tbButton[TBB_BROWSESCR]   = CreateToolBarButton(IDB_BROWSESCR,     IDM_BROWSESCR,  TBSTATE_INDETERMINATE,  TBSTYLE_BUTTON,   0, 0);
-  tbButton[TBB_SEP3]        = CreateToolBarButton(0,                 0,              TBSTATE_ENABLED,        TBSTYLE_SEP,      0, 0);
-  tbButton[TBB_NSISHOME]    = CreateToolBarButton(IDB_NSISHOME,      IDM_NSISHOME,   TBSTATE_ENABLED,        TBSTYLE_BUTTON,   0, 0);
-  tbButton[TBB_DOCS]        = CreateToolBarButton(IDB_DOCS,          IDM_DOCS,       TBSTATE_ENABLED,        TBSTYLE_BUTTON,   0, 0);
-
   g_toolbar.hwnd = CreateWindowEx(0, TOOLBARCLASSNAME, NULL,
     WS_CHILD | WS_VISIBLE | TBSTYLE_TRANSPARENT | TBSTYLE_FLAT,
     0, 0, 0, 30, g_sdata.hwnd, NULL, g_sdata.hInstance, NULL);
   
-  SendMessage(g_toolbar.hwnd, TB_BUTTONSTRUCTSIZE, sizeof(tbButton[0]), 0);
-  SendMessage(g_toolbar.hwnd, TB_ADDBUTTONS, BUTTONCOUNT, (LONG) &tbButton);
+  TBBUTTON tbbs[BUTTONCOUNT];
+  SendMessage(g_toolbar.hwnd, TB_BUTTONSTRUCTSIZE, sizeof(tbbs[0]), 0);
+  for (UINT i = 0; i < BUTTONCOUNT; ++i) {
+    tbbs[i].iBitmap = g_TBBtnsDesc[i].ImgIdx;
+    tbbs[i].idCommand = g_TBBtnsDesc[i].CmdId;
+    tbbs[i].fsState = g_TBBtnsDesc[i].State;
+    tbbs[i].fsStyle = g_TBBtnsDesc[i].Style;
+    tbbs[i].dwData = 0, tbbs[i].iString = 0;
+  }
+  SendMessage(g_toolbar.hwnd, TB_ADDBUTTONS, BUTTONCOUNT, (LPARAM) &tbbs);
 
   // For Comctl32.dll version detection
   HMODULE hMod = GetModuleHandle(_T("comctl32.dll"));
@@ -86,26 +90,24 @@ void CreateToolBar()
 
     // Version 4.71
     if (GetProcAddress(hMod, "DllGetVersion")) {
-      SendMessage(g_toolbar.hwnd, TB_SETEXTENDEDSTYLE, 0, (LPARAM) (DWORD) TBSTYLE_EX_DRAWDDARROWS);
+      SendMessage(g_toolbar.hwnd, TB_SETEXTENDEDSTYLE, 0, TBSTYLE_EX_DRAWDDARROWS);
     }
       
   }
-  else
-  {
+  else {
     // Old Windows 95 toolbar, 256 color bitmap with system palette
 
     TBADDBITMAP tbBitmap;
 
     tbBitmap.hInst = g_sdata.hInstance;
     tbBitmap.nID = IDB_TOOLBAR;
-  
-    SendMessage(g_toolbar.hwnd, TB_ADDBITMAP, IMAGECOUNT, (LONG) &tbBitmap);
+    SendMessage(g_toolbar.hwnd, TB_ADDBITMAP, IMAGECOUNT, (LPARAM) &tbBitmap);
   }
 
   HMENU toolmenu = FindSubMenu(g_sdata.menu, IDM_SCRIPT);
   g_toolbar.dropdownmenu = FindSubMenu(toolmenu, IDM_COMPRESSOR_SUBMENU);
   RECT rect;
-  SendMessage(g_toolbar.hwnd, TB_GETITEMRECT, TBB_COMPRESSOR, (LPARAM) (LPRECT) &rect);
+  SendMessage(g_toolbar.hwnd, TB_GETITEMRECT, TBB_COMPRESSOR, (LPARAM) &rect);
   g_toolbar.dropdownpoint.x = rect.left;
   g_toolbar.dropdownpoint.y = rect.bottom+1;
 }
@@ -144,49 +146,35 @@ void UpdateToolBarCompressorButton()
   SendMessage(g_tip.tip, TTM_SETTOOLINFO, 0, (LPARAM) (LPTOOLINFO) &ti);
 }
 
-void AddToolBarButtonTooltip(int id, int iString)
+void AddToolBarButtonTooltip(UINT idx, int iString)
 {
   TOOLINFO ti;
   TCHAR   szBuffer[64];
   RECT rect;
 
   memset(&ti, 0, sizeof(TOOLINFO));
-
-  SendMessage(g_toolbar.hwnd, TB_GETITEMRECT, id, (LPARAM) (LPRECT) &rect);
-
   ti.cbSize = sizeof(TOOLINFO);
   ti.uFlags = 0;
   ti.hwnd = g_toolbar.hwnd;
   ti.hinst = g_sdata.hInstance;
-  ti.uId = (UINT)id;
-
-  LoadString(g_sdata.hInstance,
-             iString,
-             szBuffer,
-             COUNTOF(szBuffer));
+  ti.uId = idx;
+  LoadString(g_sdata.hInstance, iString, szBuffer, COUNTOF(szBuffer));
   ti.lpszText = (LPTSTR) szBuffer;
+  SendMessage(g_toolbar.hwnd, TB_GETITEMRECT, idx, (LPARAM) &rect);
   ti.rect.left =rect.left;
   ti.rect.top = rect.top;
   ti.rect.right = rect.right;
   ti.rect.bottom = rect.bottom;
 
-  SendMessage(g_tip.tip, TTM_ADDTOOL, 0, (LPARAM) (LPTOOLINFO) &ti);
+  SendMessage(g_tip.tip, TTM_ADDTOOL, 0, (LPARAM) &ti);
 }
 
 void AddToolBarTooltips()
 {
-  AddToolBarButtonTooltip(TBB_LOADSCRIPT, IDS_LOADSCRIPT);
-  AddToolBarButtonTooltip(TBB_SAVE, IDS_SAVE);
-  AddToolBarButtonTooltip(TBB_COPY, IDS_COPY);
-  AddToolBarButtonTooltip(TBB_FIND, IDS_FIND);
-  AddToolBarButtonTooltip(TBB_RECOMPILE, IDS_RECOMPILE);
-  AddToolBarButtonTooltip(TBB_COMPRESSOR, IDS_COMPRESSOR);
-  AddToolBarButtonTooltip(TBB_TEST, IDS_TEST);
-  AddToolBarButtonTooltip(TBB_EDITSCRIPT, IDS_EDITSCRIPT);
-  AddToolBarButtonTooltip(TBB_BROWSESCR, IDS_BROWSESCR);
-  AddToolBarButtonTooltip(TBB_CLEARLOG, IDS_CLEARLOG);
-  AddToolBarButtonTooltip(TBB_NSISHOME, IDS_NSISHOME);
-  AddToolBarButtonTooltip(TBB_DOCS, IDS_DOCS);
+  for (UINT i = 0; i < BUTTONCOUNT; ++i) {
+    int ids = g_TBBtnsDesc[i].TTip;
+    if (ids) AddToolBarButtonTooltip(i, ids);
+  }
 }
 
 void EnableToolBarButton(int cmdid, BOOL enabled)
@@ -198,12 +186,9 @@ void EnableToolBarButton(int cmdid, BOOL enabled)
 void ShowToolbarDropdownMenu()
 {
   RECT rect;
-  GetWindowRect(g_toolbar.hwnd, (LPRECT) &rect);
-  TrackPopupMenu(g_toolbar.dropdownmenu,
-                 (UINT)NULL,
-                 rect.left + (int)(short)g_toolbar.dropdownpoint.x,
-                 rect.top + (int)(short)g_toolbar.dropdownpoint.y,
-                 0,
-                 g_sdata.hwnd,
-                 0);
+  GetWindowRect(g_toolbar.hwnd, &rect);
+  TrackPopupMenu(g_toolbar.dropdownmenu, 0, 
+                 rect.left + g_toolbar.dropdownpoint.x, 
+                 rect.top + g_toolbar.dropdownpoint.y, 
+                 0, g_sdata.hwnd, 0);
 }
