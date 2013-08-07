@@ -179,9 +179,11 @@ void NSISCALL myDelete(TCHAR *buf, int flags)
       do
       {
         TCHAR *fdfn = fd.cFileName;
+#ifndef _UNICODE
         if (*findchar(fdfn, _T('?')) && *fd.cAlternateFileName)
           // name contains unicode, use short name
           fdfn = fd.cAlternateFileName;
+#endif
 
 #ifdef NSIS_SUPPORT_RMDIR
         if (fdfn[0] == _T('.') && !fdfn[1]) continue;
