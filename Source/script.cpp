@@ -877,6 +877,12 @@ int CEXEBuild::includeScript(const TCHAR *f, NStreamEncoding&enc)
 {
   NIStream incstrm;
   const bool openok = incstrm.OpenFileForReading(f,enc);
+  if ( // !include defaults to UTF-8 after "Unicode true" 
+    NStreamEncoding::AUTO == enc.GetCodepage() && build_unicode && 
+    enc.GetPlatformDefaultCodepage() == incstrm.StreamEncoding().GetCodepage()
+  ) incstrm.StreamEncoding().SetCodepage(NStreamEncoding::UTF8);
+  enc = incstrm.StreamEncoding();
+
   TCHAR bufcpdisp[20];
   incstrm.StreamEncoding().GetCPDisplayName(bufcpdisp);
   SCRIPT_MSG(_T("!include: \"%s\" (%s)\n"),f,bufcpdisp);

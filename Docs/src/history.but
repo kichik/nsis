@@ -6,6 +6,10 @@ Released on ?
 
 \S1{v3.0a2-cl} Changelog
 
+\S2{} Major Changes
+
+\b !include defaults to UTF-8 after \cw{Unicode True}
+
 \S2{} Minor Changes
 
 \b FileRead in Unicode installers can handle DBCS, conversion output is limited to UCS-2.
