@@ -9,6 +9,12 @@
 //
 #include "afxres.h"
 #include "config.h"
+#undef RICHEDIT_CLASS
+#ifdef UNICODE
+#define RICHEDIT_CLASS "RichEdit20W"
+#else
+#define RICHEDIT_CLASS "RichEdit20A"
+#endif
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
 
@@ -37,7 +43,7 @@ FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     ICON            IDI_ICON2,IDC_ULICON,0,0,22,20
     LTEXT           "",IDC_INTROTEXT,25,0,241,23
-    CONTROL         "",IDC_EDIT1,"RichEdit20A",WS_BORDER | WS_VSCROLL | 
+    CONTROL         "",IDC_EDIT1,RICHEDIT_CLASS,WS_BORDER | WS_VSCROLL | 
                     WS_TABSTOP | 0x804,0,24,266,105
 END
 #endif
@@ -53,7 +59,7 @@ FONT 8, "MS Shell Dlg"
 BEGIN
     ICON            IDI_ICON2,1031,0,0,22,20
     LTEXT           "",IDC_INTROTEXT,25,0,241,23
-    CONTROL         "",IDC_EDIT1,"RichEdit20A",WS_BORDER | WS_VSCROLL | 
+    CONTROL         "",IDC_EDIT1,RICHEDIT_CLASS,WS_BORDER | WS_VSCROLL | 
                     WS_TABSTOP | 0x804,0,24,266,85
     CONTROL         "",IDC_LICENSEAGREE,"Button",BS_AUTORADIOBUTTON | 
                     WS_TABSTOP,0,110,266,9
@@ -73,7 +79,7 @@ FONT 8, "MS Shell Dlg"
 BEGIN
     ICON            IDI_ICON2,1031,0,0,22,20
     LTEXT           "",IDC_INTROTEXT,25,0,241,23
-    CONTROL         "",IDC_EDIT1,"RichEdit20A",WS_BORDER | WS_VSCROLL | 
+    CONTROL         "",IDC_EDIT1,RICHEDIT_CLASS,WS_BORDER | WS_VSCROLL | 
                     WS_TABSTOP | 0x804,0,24,266,95
     CONTROL         "",IDC_LICENSEAGREE,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,0,120,266,9
@@ -244,7 +250,13 @@ END
 2 TEXTINCLUDE DISCARDABLE 
 BEGIN
     "#include ""afxres.h""\r\n"
-    "#include ""config.h""\0"
+    "#include ""config.h""\r\n"
+    "#undef RICHEDIT_CLASS\r\n"
+    "#ifdef UNICODE\r\n"
+    "#define RICHEDIT_CLASS ""RichEdit20W""\r\n"
+    "#else\r\n"
+    "#define RICHEDIT_CLASS ""RichEdit20A""\r\n"
+    "#endif\0"
 END
 
 3 TEXTINCLUDE DISCARDABLE 
