@@ -18,6 +18,8 @@ Released on ?
 
 \b FileReadByte no longer performs a Unicode conversion on non-ASCII characters
 
+\b Fixed !define Unicode null terminator bug (\W{http://sf.net/p/nsis/bugs/1079/}{bug #1079})
+
 \b Fixed MakeNSISW default pushbutton and tab order
 
 \H{v3.0a1} 3.0 Alpha 1
