@@ -3121,7 +3121,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           }
         }
         define = line.gettoken_str(2);
-        file_buf.add(_T("\0"),1);
+        file_buf.add(_T("\0"),sizeof(TCHAR));
         value = (TCHAR *)file_buf.get();
 
       } else if (!_tcsicmp(define,_T("/math"))) {
