@@ -385,18 +385,22 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
     { // load richedit DLL
       static const TCHAR riched20[]=_T("RichEd20");
       static const TCHAR riched32[]=_T("RichEd32");
-      static const TCHAR richedit20a[]=_T("RichEdit20A");
+#ifdef UNICODE
+      static const TCHAR richedit20t[]=_T("RichEdit20W");
+#else
+      static const TCHAR richedit20t[]=_T("RichEdit20A");
+#endif
       static const TCHAR richedit[]=_T("RichEdit");
       if (!LoadLibrary(riched20))
       {
-        LoadLibrary(riched32);
+        LoadLibrary(riched32); // Win95 only ships with v1.0, NT4 has v2.0: web.archive.org/web/20030607222419/http://msdn.microsoft.com/library/en-us/shellcc/platform/commctls/richedit/richeditcontrols/aboutricheditcontrols.asp
       }
 
-      // make richedit20a point to RICHEDIT
-      if (!GetClassInfo(NULL,richedit20a,&wc))
+      // make richedit20a/w point to RICHEDIT
+      if (!GetClassInfo(NULL,richedit20t,&wc))
       {
         GetClassInfo(NULL,richedit,&wc);
-        wc.lpszClassName = richedit20a;
+        wc.lpszClassName = richedit20t;
         RegisterClass(&wc);
       }
     }
@@ -797,7 +801,7 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
           },
           ps_tmpbuf
         };
-        if (tr.chrg.cpMax-tr.chrg.cpMin < sizeof(ps_tmpbuf)) {
+        if (tr.chrg.cpMax-tr.chrg.cpMin < COUNTOF(ps_tmpbuf)) {
           SendMessage(hwLicense,EM_GETTEXTRANGE,0,(LPARAM)&tr);
           SetCursor(LoadCursor(0, IDC_WAIT));
           ShellExecute(hwndDlg,_T("open"),tr.lpstrText,NULL,NULL,SW_SHOWNORMAL);
