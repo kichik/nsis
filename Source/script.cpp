@@ -2647,7 +2647,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         // Search for required items
         #define GET(x) dlg = uire->GetResource(RT_DIALOG, x, 0); if (!dlg) return PS_ERROR; CDialogTemplate UIDlg(dlg, build_unicode, uDefCodePage);
         #define SEARCH(x) if (!UIDlg.GetItem(x)) {ERROR_MSG(_T("Error: Can't find %s (%u) in the custom UI!\n"), _T(#x), x);delete [] dlg;delete uire;return PS_ERROR;}
-        #define SAVE(x) dwSize = UIDlg.GetSize(); res_editor->UpdateResource(RT_DIALOG, x, NSIS_DEFAULT_LANG, dlg, dwSize); delete [] dlg;
+        #define SAVE(x) delete [] dlg; dlg = UIDlg.Save(dwSize); res_editor->UpdateResource(RT_DIALOG, x, NSIS_DEFAULT_LANG, dlg, dwSize); delete [] dlg;
 
         LPBYTE dlg = NULL;
 

@@ -605,8 +605,11 @@ BYTE* CDialogTemplate::Save(DWORD& dwSize) {
     // Write class variant length array
     const WCHAR *szClass = m_vItems[i]->szClass;
 #ifdef _UNICODE
-    if (!IS_INTRESOURCE(szClass) && m_build_unicode && !_wcsicmp(szClass, L"RichEdit20A"))
-        szClass = L"RichEdit20W"; // transmute ANSI RichEdit control into Unicode RichEdit
+    if (!IS_INTRESOURCE(szClass)) {
+      // transmute RichEdit20A/W control into RichEdit20T that matches the target
+      if (m_build_unicode && !_wcsicmp(szClass, L"RichEdit20A")) szClass = L"RichEdit20W";
+      if (!m_build_unicode && !_wcsicmp(szClass, L"RichEdit20W")) szClass = L"RichEdit20A";
+    }
 #endif
     WriteStringOrId(szClass);
     // Write title variant length array
