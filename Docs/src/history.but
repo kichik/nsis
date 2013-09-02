@@ -18,6 +18,8 @@ Released on ?
 
 \b FileReadByte no longer performs a Unicode conversion on non-ASCII characters
 
+\b Windows 8.1 & 2012R2 support in WinVer.nsh
+
 \b Fixed !define Unicode null terminator bug (\W{http://sf.net/p/nsis/bugs/1079/}{bug #1079})
 
 \b Unicode stubs create WCHAR richedit controls (\W{http://sf.net/p/nsis/bugs/1080/}{bug #1080})
