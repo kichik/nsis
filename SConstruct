@@ -66,16 +66,17 @@ doctypes = [
 
 path = ARGUMENTS.get('PATH', '')
 toolset = ARGUMENTS.get('TOOLSET', '')
+arch = ARGUMENTS.get('TARGET_ARCH', 'x86')
 
 if toolset and path:
-	defenv = Environment(TARGET_ARCH = 'x86', ENV = {'PATH' : path}, TOOLS = toolset.split(',') + ['zip'])
+	defenv = Environment(TARGET_ARCH = arch, ENV = {'PATH' : path}, TOOLS = toolset.split(',') + ['zip'])
 else:
 	if path:
-		defenv = Environment(TARGET_ARCH = 'x86', ENV = {'PATH' : path})
+		defenv = Environment(TARGET_ARCH = arch, ENV = {'PATH' : path})
 	if toolset:
-		defenv = Environment(TARGET_ARCH = 'x86', TOOLS = toolset.split(',') + ['zip'])
+		defenv = Environment(TARGET_ARCH = arch, TOOLS = toolset.split(',') + ['zip'])
 if not toolset and not path:
-	defenv = Environment(TARGET_ARCH = 'x86')
+	defenv = Environment(TARGET_ARCH = arch)
 
 Export('defenv')
 
@@ -170,6 +171,7 @@ opts.Add(('PATH', 'A colon-separated list of system paths instead of the default
 opts.Add(('TOOLSET', 'A comma-separated list of specific tools used for building instead of the default', None))
 opts.Add(BoolVariable('MSTOOLKIT', 'Use Microsoft Visual C++ Toolkit', 'no'))
 opts.Add(EnumVariable('MSVS_VERSION', 'MS Visual C++ version', os.environ.get('MSVS_VERSION'), allowed_values=('6.0', '7.0', '7.1', '8.0', '8.0Exp', '9.0', '9.0Exp', '10.0', '10.0Exp')))
+opts.Add(EnumVariable('TARGET_ARCH', 'Target processor architecture', 'x86', allowed_values=('x86', 'amd64')))
 opts.Add(ListVariable('DOCTYPES', 'A list of document types that will be built', default_doctype, doctypes))
 opts.Add(PathVariable('APPEND_CPPPATH', 'Additional paths to search for include files', None))
 opts.Add(PathVariable('APPEND_LIBPATH', 'Additional paths to search for libraries', None))
@@ -195,6 +197,9 @@ opts.Add(('PREFIX_PLUGINAPI_LIB','Path to install plugin static library to.', No
 
 opts.Update(defenv)
 Help(opts.GenerateHelpText(defenv))
+
+if defenv['TARGET_ARCH'] != 'x86':
+	defenv['UNICODE'] = True
 
 # add prefixes defines
 if 'NSIS_CONFIG_CONST_DATA_PATH' in defenv['NSIS_CPPDEFINES']:
@@ -324,6 +329,8 @@ defenv['INSTDISTDIR'] = defenv.Dir('#.instdist')
 defenv['TESTDISTDIR'] = defenv.Dir('#.test')
 defenv['DISTSUFFIX'] = ''
 
+if defenv['TARGET_ARCH'] == 'amd64':
+	defenv['DISTSUFFIX'] += '-amd64'
 if defenv.has_key('CODESIGNER'):
 	defenv['DISTSUFFIX'] = '-signed'
 
@@ -609,6 +616,7 @@ for stub in stubs:
 	if GetArcCPU(defenv)=='x86':
 		BuildStub(stub, False, False)
 		BuildStub(stub, True, False)
+	# BUGBUG64: Should build x86 stubs on x64?
 
 defenv.DistributeStubs('Source/exehead/uninst.ico',names='uninst')
 

@@ -16,12 +16,11 @@
  * Unicode support by Jim Park -- 08/10/2007
  */
 
+#include "../Platform.h"
 #include <windowsx.h>
 #include <shlobj.h>
 #include <shellapi.h>
 #include <shlwapi.h>
-
-#include "../Platform.h"
 
 #include "resource.h"
 
@@ -65,15 +64,15 @@ static void NSISCALL outernotify(int delta) {
 }
 
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 static int CALLBACK WINAPI BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData);
 #ifdef NSIS_CONFIG_LICENSEPAGE
-static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+static INT_PTR CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 #endif
-static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
-static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
-static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
-static BOOL CALLBACK UninstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+static INT_PTR CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+static INT_PTR CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+static INT_PTR CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+static INT_PTR CALLBACK UninstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 #endif//NSIS_CONFIG_VISIBLE_SUPPORT
 
 static DWORD WINAPI install_thread(LPVOID p);
@@ -119,7 +118,7 @@ static void NSISCALL NotifyCurWnd(UINT uNotifyCode)
 
 #ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
 #define HandleStaticBkColor() _HandleStaticBkColor(uMsg, wParam, lParam)
-static BOOL NSISCALL _HandleStaticBkColor(UINT uMsg, WPARAM wParam, LPARAM lParam)
+static INT_PTR NSISCALL _HandleStaticBkColor(UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   if ((uMsg - WM_CTLCOLOREDIT) <= (WM_CTLCOLORSTATIC - WM_CTLCOLOREDIT))
   {
@@ -151,7 +150,7 @@ static BOOL NSISCALL _HandleStaticBkColor(UINT uMsg, WPARAM wParam, LPARAM lPara
         c->bkb = CreateBrushIndirect(&lh);
       }
 
-      return (BOOL)c->bkb;
+      return (INT_PTR)c->bkb;
     }
   }
   return 0;
@@ -464,7 +463,7 @@ static int CALLBACK WINAPI BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lPara
   return 0;
 }
 
-BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   if (uMsg == WM_INITDIALOG || uMsg == WM_NOTIFY_OUTER_NEXT)
   {
@@ -738,7 +737,7 @@ DWORD CALLBACK StreamLicenseRTF(DWORD_PTR dwCookie, LPBYTE pbBuff, LONG cb, LONG
 }
 #endif
 
-static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+static INT_PTR CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   page *m_this_page=g_this_page;
   HWND hwLicense;
@@ -847,7 +846,7 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
 #endif
 
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-static BOOL CALLBACK UninstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+static INT_PTR CALLBACK UninstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   if (uMsg == WM_INITDIALOG)
   {
@@ -909,7 +908,7 @@ static int NSISCALL _sumsecsfield(int idx)
 
 #define sumsecsfield(x) _sumsecsfield(SECTION_OFFSET(x))
 
-static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+static INT_PTR CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   static int dontsetdefstyle;
   page *thispage = g_this_page;
@@ -1279,7 +1278,7 @@ static DWORD WINAPI newTreeWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
   return CallWindowProc(oldTreeWndProc,hwnd,uMsg,wParam,lParam);
 }
 
-static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+static INT_PTR CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   const int wParamSelChangeNotifyInstTypeChanged = -1;
   static HTREEITEM *hTreeItems;
@@ -1636,7 +1635,7 @@ static DWORD WINAPI install_thread(LPVOID p)
 
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
 
-static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+static INT_PTR CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   HWND linsthwnd=insthwnd;
   if (uMsg == WM_INITDIALOG)
@@ -1724,24 +1723,14 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
       HMENU menu = CreatePopupMenu();
       POINT pt;
       AppendMenu(menu,MF_STRING,1,GetNSISStringTT(LANG_COPYDETAILS));
-      if (lParam == ((UINT)-1))
+      pt.x = GET_X_LPARAM(lParam), pt.y = GET_Y_LPARAM(lParam);
+      if (lParam == ((UINT)-1)) // BUGBUG64?
       {
         RECT r;
-        GetWindowRect(linsthwnd, &r);
-        pt.x = r.left;
-        pt.y = r.top;
+        GetWindowRect(linsthwnd,&r);
+        pt.x = r.left, pt.y = r.top;
       }
-      else
-      {
-        pt.x = GET_X_LPARAM(lParam);
-        pt.y = GET_Y_LPARAM(lParam);
-      }
-      if (1==TrackPopupMenu(
-        menu,
-        TPM_NONOTIFY|TPM_RETURNCMD,
-        pt.x,
-        pt.y,
-        0,hwndDlg,0))
+      if (1==TrackPopupMenu(menu,TPM_NONOTIFY|TPM_RETURNCMD,pt.x,pt.y,0,hwndDlg,0))
       {
         int i,total = 1; // 1 for the null char
         LVITEM item;

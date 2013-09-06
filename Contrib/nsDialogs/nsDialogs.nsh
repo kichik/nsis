@@ -354,9 +354,9 @@ Header file for creating custom installer pages with nsDialogs
 
 !macro _NSD_GWLAddFlags GWL HWND DATA
 
-	System::Call "user32::GetWindowLong(i${HWND},i${GWL})i.s"
+	System::Call "user32::GetWindowLong(p${HWND},i${GWL})p.s"
 	System::Int64Op "${DATA}" |
-	System::Call "user32::SetWindowLong(i${HWND},i${GWL},is)"
+	System::Call "user32::SetWindowLong(p${HWND},p${GWL},ps)"
 
 !macroend
 
@@ -365,7 +365,7 @@ Header file for creating custom installer pages with nsDialogs
 
 !macro __NSD_GetText CONTROL VAR
 
-	System::Call user32::GetWindowText(i${CONTROL},t.s,i${NSIS_MAX_STRLEN})
+	System::Call user32::GetWindowText(p${CONTROL},t.s,i${NSIS_MAX_STRLEN})
 	Pop ${VAR}
 
 !macroend
@@ -422,7 +422,7 @@ Header file for creating custom installer pages with nsDialogs
 
 !macro __NSD_SetFocus HWND
 
-	System::Call "user32::SetFocus(i${HWND})"
+	System::Call "user32::SetFocus(p${HWND})"
   
 !macroend
 
@@ -492,7 +492,7 @@ Header file for creating custom installer pages with nsDialogs
 !macro __NSD_LB_GetSelection CONTROL VAR
 
 	SendMessage ${CONTROL} ${LB_GETCURSEL} 0 0 ${VAR}
-	System::Call 'user32::SendMessage(i ${CONTROL}, i ${LB_GETTEXT}, i ${VAR}, t .s)'
+	System::Call 'user32::SendMessage(p ${CONTROL}, i ${LB_GETTEXT}, p ${VAR}, t .s)'
 	Pop ${VAR}
 
 !macroend
@@ -511,10 +511,10 @@ Header file for creating custom installer pages with nsDialogs
 	!if "${_LIHINSTMODE}" == "exeresource"
 		!undef _LIHINSTSRC     # If (internal?) _* macro params starts using $0, 
 		!define _LIHINSTSRC r0 # _LIHINSTSRC can be changed to s
-		System::Call 'kernel32::GetModuleHandle(i0)i.${_LIHINSTSRC}' 
+		System::Call 'kernel32::GetModuleHandle(p0)p.${_LIHINSTSRC}' 
 	!endif
 	
-	System::Call 'user32::LoadImage(i ${_LIHINSTSRC}, ts, i ${_IMGTYPE}, i0, i0, i${_LIFLAGS}) i.r0'
+	System::Call 'user32::LoadImage(p ${_LIHINSTSRC}, ts, i ${_IMGTYPE}, i0, i0, i${_LIFLAGS})p.r0'
 	SendMessage $R0 ${STM_SETIMAGE} ${_IMGTYPE} $0
 
 	Pop $R0
@@ -549,25 +549,19 @@ Header file for creating custom installer pages with nsDialogs
 
 	StrCpy $R0 ${CONTROL} # in case ${CONTROL} is $0
 
-	StrCpy $1 ""
-	StrCpy $2 ""
-
-	System::Call '*(i, i, i, i) i.s'
-	Pop $0
-
+	# Allocate a RECT in $0 and initialize $1 and $2 to 0
+	System::Call '*(i0r1, i0r2, i, i)p.r0'
 	${If} $0 <> 0
-	
-		System::Call 'user32::GetClientRect(iR0, ir0)'
+		System::Call 'user32::GetClientRect(pR0, pr0)'
 		System::Call '*$0(i, i, i .s, i .s)'
 		System::Free $0
 		Pop $1
 		Pop $2
-
 	${EndIf}
 
-	System::Call 'user32::LoadImage(i0, ts, i ${IMAGE_BITMAP}, ir1, ir2, i${LR_LOADFROMFILE}) i.s' "${IMAGE}"
+	System::Call 'user32::LoadImage(p0, ts, i ${IMAGE_BITMAP}, ir1, ir2, i${LR_LOADFROMFILE}) p.s' "${IMAGE}"
 	Pop $0
-    SendMessage $R0 ${STM_SETIMAGE} ${IMAGE_BITMAP} $0
+	SendMessage $R0 ${STM_SETIMAGE} ${IMAGE_BITMAP} $0
 
 	Pop $R0
 	Pop $2
@@ -583,9 +577,7 @@ Header file for creating custom installer pages with nsDialogs
 !macro __NSD_FreeImage IMAGE
 
 	${If} ${IMAGE} <> 0
-
-		System::Call gdi32::DeleteObject(is) ${IMAGE}
-
+		System::Call gdi32::DeleteObject(ps) ${IMAGE}
 	${EndIf}
 
 !macroend
@@ -594,7 +586,7 @@ Header file for creating custom installer pages with nsDialogs
 !define NSD_FreeBitmap `${NSD_FreeImage}`
 
 !macro __NSD_FreeIcon IMAGE
-	System::Call user32::DestroyIcon(is) ${IMAGE}
+	System::Call user32::DestroyIcon(ps) ${IMAGE}
 !macroend
 
 !define NSD_FreeIcon `!insertmacro __NSD_FreeIcon`

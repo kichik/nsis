@@ -96,7 +96,7 @@ Function nsDialogsWelcome
 	Pop $IMAGECTL
 
 	StrCpy $0 $PLUGINSDIR\welcome.bmp
-	System::Call 'user32::LoadImage(i 0, t r0, i ${IMAGE_BITMAP}, i 0, i 0, i ${LR_LOADFROMFILE}) i.s'
+	System::Call 'user32::LoadImage(p 0, t r0, i ${IMAGE_BITMAP}, i 0, i 0, i ${LR_LOADFROMFILE})p.s'
 	Pop $IMAGE
 	
 	SendMessage $IMAGECTL ${STM_SETIMAGE} ${IMAGE_BITMAP} $IMAGE
@@ -119,7 +119,7 @@ Function nsDialogsWelcome
 
 	Call ShowControls
 
-	System::Call gdi32::DeleteObject(i$IMAGE)
+	System::Call gdi32::DeleteObject(p$IMAGE)
 
 FunctionEnd
 
@@ -198,7 +198,7 @@ Function DirChange
 
 	GetDlgItem $0 $HWNDPARENT 1
 
-	System::Call user32::GetWindowText(i$DIRECTORY,t.d,i${NSIS_MAX_STRLEN})
+	System::Call user32::GetWindowText(p$DIRECTORY,t.d,i${NSIS_MAX_STRLEN})
 
 	${If} ${FileExists} $INSTDIR\makensis.exe
 		EnableWindow $0 1

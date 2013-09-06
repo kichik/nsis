@@ -32,7 +32,7 @@ struct lang {
   UINT cp;
 } *langs;
 
-BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   int i, size;
   TCHAR *selected_language = NULL;

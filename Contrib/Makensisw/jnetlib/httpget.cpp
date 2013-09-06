@@ -16,7 +16,7 @@
 #include "util.h"
 #include "httpget.h"
 
-void *operator new( unsigned int num_bytes ){return GlobalAlloc(GPTR,num_bytes);}
+void *operator new( size_t num_bytes ){return GlobalAlloc(GPTR,num_bytes);}
 void operator delete( void *p ) { if (p) GlobalFree(p); }
 
 JNL_HTTPGet::JNL_HTTPGet(JNL_AsyncDNS *dns, int recvbufsize, char *proxy)

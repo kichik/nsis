@@ -18,7 +18,7 @@ const TCHAR* windows[] = {
   MAKEINTRESOURCE(IDD_UNINST)
 };
 
-BOOL CALLBACK GenericProc(HWND hwndDlg,UINT uMsg,WPARAM wParam,LPARAM lParam) {
+INT_PTR CALLBACK GenericProc(HWND hwndDlg,UINT uMsg,WPARAM wParam,LPARAM lParam) {
   static LOGBRUSH b = {BS_SOLID, RGB(255,0,0), 0};
   static HBRUSH red;
 
@@ -27,26 +27,26 @@ BOOL CALLBACK GenericProc(HWND hwndDlg,UINT uMsg,WPARAM wParam,LPARAM lParam) {
 
   switch (uMsg) {
     case WM_CTLCOLORSTATIC:
-      return (int)red;
+      return (INT_PTR)red;
   }
-  return 0;
+  return FALSE;
 }
 
-BOOL CALLBACK DialogProc(HWND hwndDlg,UINT uMsg,WPARAM wParam,LPARAM lParam) {
+INT_PTR CALLBACK DialogProc(HWND hwndDlg,UINT uMsg,WPARAM wParam,LPARAM lParam) {
   static int i = -1;
-	switch (uMsg) {
-	case WM_INITDIALOG:
-		SetWindowText(hwndDlg, _T("NSIS User Interface - Testing"));
-		SetWindowText(GetDlgItem(hwndDlg, IDC_VERSTR), _T("NSIS version"));
-		SetWindowText(GetDlgItem(hwndDlg, IDC_BACK), _T("< Back"));
-		SetWindowText(GetDlgItem(hwndDlg, IDOK), _T("Next >"));
-		SetWindowText(GetDlgItem(hwndDlg, IDCANCEL), _T("Cancel"));
-		ShowWindow(GetDlgItem(hwndDlg, IDC_BACK), SW_SHOW);
-		ShowWindow(GetDlgItem(hwndDlg, IDC_CHILDRECT), SW_SHOW);
+  switch (uMsg) {
+  case WM_INITDIALOG:
+    SetWindowText(hwndDlg, _T("NSIS User Interface - Testing"));
+    SetWindowText(GetDlgItem(hwndDlg, IDC_VERSTR), _T("NSIS version"));
+    SetWindowText(GetDlgItem(hwndDlg, IDC_BACK), _T("< Back"));
+    SetWindowText(GetDlgItem(hwndDlg, IDOK), _T("Next >"));
+    SetWindowText(GetDlgItem(hwndDlg, IDCANCEL), _T("Cancel"));
+    ShowWindow(GetDlgItem(hwndDlg, IDC_BACK), SW_SHOW);
+    ShowWindow(GetDlgItem(hwndDlg, IDC_CHILDRECT), SW_SHOW);
     SendMessage(hwndDlg, WM_COMMAND, MAKEWORD(IDOK, 0), 0);
-		ShowWindow(hwndDlg, SW_SHOW);
-		break;
-	case WM_COMMAND:
+    ShowWindow(hwndDlg, SW_SHOW);
+    break;
+  case WM_COMMAND:
     switch (LOWORD(wParam)) {
     case IDOK:
     case IDC_BACK:
@@ -77,7 +77,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg,UINT uMsg,WPARAM wParam,LPARAM lParam) {
     }
     break;
     }
-    return 0;
+    return FALSE;
 }
 
 NSIS_ENTRYPOINT_SIMPLEGUI

@@ -73,7 +73,7 @@ enumex: ; End of drives or user cancel
      ; ----- Sample 3 ----- Direct proc defenition -----
 
      ; Direct specification demo
-     System::Call 'user32::MessageBox(i $HWNDPARENT, t "Just direct MessageBox specification demo ;)", t "System Example 3", i ${MB_OK}) i.s'
+     System::Call 'user32::MessageBox(p $HWNDPARENT, t "Just direct MessageBox specification demo ;)", t "System Example 3", i ${MB_OK}) i.s'
      Pop $0
 
      ; ----- Sample 4 ----- Int64, mixed definition demo -----

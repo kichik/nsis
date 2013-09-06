@@ -468,6 +468,7 @@ typedef struct
 #define CC_BK_SYS 8
 #define CC_BKB 16
 
+#pragma pack(push, 4)
 typedef struct {
   COLORREF text;
   COLORREF bkc;
@@ -476,6 +477,7 @@ typedef struct {
   int bkmode;
   int flags;
 } ctlcolors;
+#pragma pack(pop)
 
 // constants for myDelete (util.c)
 #define DEL_DIR 1

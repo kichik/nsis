@@ -76,7 +76,7 @@ int g_zipfile_size;
 bool g_made;
 
 
-static BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+static INT_PTR CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 NSIS_ENTRYPOINT_SIMPLEGUI
 int WINAPI _tWinMain(HINSTANCE hInst,HINSTANCE hOldInst,LPTSTR CmdLineParams,int ShowCmd)
@@ -600,7 +600,7 @@ void SetZip(HWND hwndDlg, TCHAR *path)
   }
 }
 
-BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   static int ids[]={IDC_INFO,IDC_NSISICON,IDC_SZIPFRAME,IDC_BROWSE,IDC_ZIPFILE,IDC_ZIPINFO_SUMMARY,IDC_ZIPINFO_FILES,IDC_OFRAME,IDC_INAMEST,
                         IDC_INSTNAME,IDC_INSTPATH,IDC_OEFST,IDC_OUTFILE,IDC_BROWSE2,IDC_COMPRESSOR,IDC_ZLIB,IDC_BZIP2,IDC_LZMA,IDC_SOLID,IDC_INTERFACE,IDC_MODERNUI,IDC_CLASSICUI,IDC_UNICODE};
@@ -783,5 +783,5 @@ BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       }
     break;
   }
-  return 0;
+  return FALSE;
 }

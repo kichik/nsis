@@ -11,7 +11,7 @@ BOOL bFailed;
 
 TCHAR buf[1024];
 
-BOOL CALLBACK BannerProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK BannerProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   if (uMsg == WM_INITDIALOG)
   {
@@ -42,7 +42,7 @@ BOOL CALLBACK BannerProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
   {
     DestroyWindow(hwndDlg);
   }
-  return 0;
+  return FALSE;
 }
 
 BOOL ProcessMessages()

@@ -11,12 +11,20 @@
 ;--------------------------------
 ;Configuration
 
-!ifdef OUTFILE
-  OutFile "${OUTFILE}"
+!ifdef NSIS_MAKENSIS64
+  !define BITS 64
+  !define NAMESUFFIX " (64 bit)"
 !else
-  OutFile ..\nsis-${VERSION}-setup.exe
+  !define BITS 32
+  !define NAMESUFFIX ""
 !endif
 
+!ifndef OUTFILE
+  !define OUTFILE "..\nsis${BITS}-${VERSION}-setup.exe"
+  !searchreplace OUTFILE "${OUTFILE}" nsis32 nsis
+!endif
+
+OutFile "${OUTFILE}"
 Unicode true
 SetCompressor /SOLID lzma
 
@@ -24,7 +32,7 @@ InstType "Full"
 InstType "Lite"
 InstType "Minimal"
 
-InstallDir $PROGRAMFILES\NSIS
+InstallDir $PROGRAMFILES${BITS}\NSIS
 InstallDirRegKey HKLM Software\NSIS ""
 
 RequestExecutionLevel admin
@@ -49,7 +57,7 @@ RequestExecutionLevel admin
 
 ;Names
 Name "NSIS"
-Caption "NSIS ${VERSION} Setup"
+Caption "NSIS ${VERSION}${NAMESUFFIX} Setup"
 
 !define REG_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS"
 
@@ -114,11 +122,17 @@ VIAddVersionKey "LegalCopyright" "http://nsis.sf.net/License"
 !macro InstallPlugin pi
   File "/oname=$InstDir\Plugins\x86-ansi\${pi}.dll" ..\Plugins\x86-ansi\${pi}.dll
   File "/oname=$InstDir\Plugins\x86-unicode\${pi}.dll" ..\Plugins\x86-unicode\${pi}.dll
+  !ifdef NSIS_MAKENSIS64
+    File "/oname=$InstDir\Plugins\amd64-unicode\${pi}.dll" ..\Plugins\amd64-unicode\${pi}.dll
+  !endif
 !macroend
 
 !macro InstallStub stub
   File ..\Stubs\${stub}-x86-ansi
   File ..\Stubs\${stub}-x86-unicode
+  !ifdef NSIS_MAKENSIS64
+    File ..\Stubs\${stub}-amd64-unicode
+  !endif
 !macroend
 
 ${MementoSection} "NSIS Core Files (required)" SecCore
@@ -218,6 +232,9 @@ ${MementoSection} "NSIS Core Files (required)" SecCore
 
   CreateDirectory $INSTDIR\Plugins\x86-ansi
   CreateDirectory $INSTDIR\Plugins\x86-unicode
+  !ifdef NSIS_MAKENSIS64
+    CreateDirectory $INSTDIR\Plugins\amd64-unicode
+  !endif
   !insertmacro InstallPlugin TypeLib
 
   ReadRegStr $R0 HKCR ".nsi" ""
@@ -330,10 +347,10 @@ ${MementoSection} "Desktop Shortcut" SecShortcuts
   SectionIn 1 2
   SetOutPath $INSTDIR
 !ifndef NO_STARTMENUSHORTCUTS
-  CreateShortCut "$SMPROGRAMS\NSIS.lnk" "$INSTDIR\NSIS.exe"
+  CreateShortCut "$SMPROGRAMS\NSIS${NAMESUFFIX}.lnk" "$INSTDIR\NSIS.exe"
 !endif
 
-  CreateShortCut "$DESKTOP\NSIS.lnk" "$INSTDIR\NSIS.exe"
+  CreateShortCut "$DESKTOP\NSIS${NAMESUFFIX}.lnk" "$INSTDIR\NSIS.exe"
 
 ${MementoSectionEnd}
 
@@ -797,7 +814,7 @@ Section -post
 
   WriteRegExpandStr HKLM "${REG_UNINST_KEY}" "UninstallString" '"$INSTDIR\uninst-nsis.exe"'
   WriteRegExpandStr HKLM "${REG_UNINST_KEY}" "InstallLocation" "$INSTDIR"
-  WriteRegStr HKLM "${REG_UNINST_KEY}" "DisplayName" "Nullsoft Install System"
+  WriteRegStr HKLM "${REG_UNINST_KEY}" "DisplayName" "Nullsoft Install System${NAMESUFFIX}"
   WriteRegStr HKLM "${REG_UNINST_KEY}" "DisplayIcon" "$INSTDIR\NSIS.exe,0"
   WriteRegStr HKLM "${REG_UNINST_KEY}" "DisplayVersion" "${VERSION}"
 !ifdef VER_MAJOR & VER_MINOR & VER_REVISION & VER_BUILD
@@ -1032,8 +1049,8 @@ Section Uninstall
   DetailPrint "Deleting Files..."
   SetDetailsPrint listonly
 
-  Delete $SMPROGRAMS\NSIS.lnk
-  Delete $DESKTOP\NSIS.lnk
+  Delete "$SMPROGRAMS\NSIS${NAMESUFFIX}.lnk"
+  Delete "$DESKTOP\NSIS${NAMESUFFIX}.lnk"
   Delete $INSTDIR\makensis.exe
   Delete $INSTDIR\makensisw.exe
   Delete $INSTDIR\NSIS.exe

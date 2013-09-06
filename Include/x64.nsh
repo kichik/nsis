@@ -27,8 +27,8 @@
 
 !macro _RunningX64 _a _b _t _f
   !insertmacro _LOGICLIB_TEMP
-  System::Call kernel32::GetCurrentProcess()i.s
-  System::Call kernel32::IsWow64Process(is,*i.s)
+  System::Call kernel32::GetCurrentProcess()p.s
+  System::Call kernel32::IsWow64Process(ps,*i.s)
   Pop $_LOGICLIB_TEMP
   !insertmacro _!= $_LOGICLIB_TEMP 0 `${_t}` `${_f}`
 !macroend

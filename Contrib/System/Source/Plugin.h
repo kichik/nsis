@@ -5,15 +5,17 @@
 
 // Always use system* functions to keep the size down
 #define pushstring error(use system_pushstring)
+#undef pushint
 #define pushint error(use system_pushint)
+#define pushintptr error(use system_pushintptr)
 
-#define popint system_popint
+#undef myatoi
 #define myatoi(str) ( (int) myatoi64(str) ) 
+#define system_pushint(v) system_pushintptr((INT_PTR)(v))
+#define popintptr system_popintptr
 #ifdef _WIN64
-#	error TODO
+#	define StrToIntPtr(str) ( (INT_PTR)myatoi64((str)) )
 #else
-#	define system_pushintptr system_pushint
-#	define popintptr popint
 #	define StrToIntPtr(str) ( (INT_PTR)myatoi((str)) )
 #endif
 
@@ -39,8 +41,8 @@ extern TCHAR *system_setuservariable(int varnum, TCHAR *var);
 extern TCHAR* system_popstring();  // NULL - stack empty
 extern TCHAR* system_pushstring(TCHAR *str);
 extern __int64 myatoi64(TCHAR *s);
-extern int system_popint();  // -1 -> stack empty
-extern void system_pushint(int value);
+extern INT_PTR system_popintptr();  // -1 -> stack empty
+extern void system_pushintptr(INT_PTR value);
 
 extern HANDLE GlobalCopy(HANDLE Old);
 extern void *copymem(void *output, void *input, size_t cbSize);

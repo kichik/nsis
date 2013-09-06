@@ -134,20 +134,20 @@ void myitoa64(__int64 i, TCHAR *buffer)
     *buffer = 0;
 }
 
-int system_popint()
+INT_PTR system_popintptr()
 {
-    int value;
+    INT_PTR value;
     TCHAR *str;
     if ((str = system_popstring()) == NULL) return -1;
-    value = myatoi(str);
+    value = StrToIntPtr(str);
     GlobalFree(str);
     return value;
 }
 
-void system_pushint(int value)
+void system_pushintptr(INT_PTR value)
 {
-    TCHAR buffer[80];
-    wsprintf(buffer, _T("%d"), value);
+    TCHAR buffer[50];
+    wsprintf(buffer, sizeof(void*) > 4 ? _T("%Id") : _T("%d"), value);
     system_pushstring(buffer);
 }
 

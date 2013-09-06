@@ -14,105 +14,105 @@
 ; ------------- Functions --------------
 
 ; LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-!define sysWNDPROC "(i.s, i.s, i.s, i.s) iss"
+!define sysWNDPROC "(p.s, i.s, p.s, p.s) pss"
 
 ; LRESULT DefWindowProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
-!define sysDefWindowProc "user32::DefWindowProc(i, i, i, i) i"
+!define sysDefWindowProc "user32::DefWindowProc(p, i, p, p) p"
 
-!define sysMessageBox "user32::MessageBox(i, t, t, i) i"
+!define sysMessageBox "user32::MessageBox(p, t, t, i) i"
 
 !define sysMessageBeep "user32::MessageBeep(i) i"
 
-!define sysMessageBoxIndirect 'user32::MessageBoxIndirect(i) i'
+!define sysMessageBoxIndirect 'user32::MessageBoxIndirect(p) i'
 
 ; HMODULE GetModuleHandle(LPCTSTR lpModuleName); 
 !define sysGetModuleHandle "kernel32::GetModuleHandle(t) i"
 
 ; HMODULE LoadLibrary(LPCTSTR lpFileName);
-!define sysLoadLibrary "kernel32::LoadLibrary(t) i"
+!define sysLoadLibrary "kernel32::LoadLibrary(t) p"
 
 ; BOOL FreeLibrary(HMODULE hModule);
-!define sysFreeLibrary "kernel32::FreeLibrary(i) i"
+!define sysFreeLibrary "kernel32::FreeLibrary(p) i"
 
 ; HCURSOR LoadCursor(HINSTANCE hInstance, LPCTSTR lpCursorName);
-!define sysLoadCursor "user32::LoadCursor(i, t) i"
+!define sysLoadCursor "user32::LoadCursor(p, t) p"
 
 ; ATOM RegisterClass(CONST WNDCLASS *lpWndClass);
-!define sysRegisterClass "user32::RegisterClass(i) i"
+!define sysRegisterClass "user32::RegisterClass(p) i"
 
 ; HANDLE LoadImage(HINSTANCE hinst, LPCTSTR lpszName, UINT uType,
 ;       int cxDesired, int cyDesired, UINT fuLoad);
-!define sysLoadImage "user32::LoadImage(i, t, i, i, i, i) i"
+!define sysLoadImage "user32::LoadImage(p, t, i, i, i, i) p"
 
 ; BOOL PlaySound(LPCSTR pszSound, HMODULE hmod, DWORD fdwSound);
-!define sysPlaySound "winmm.dll::PlaySound(t, i, i) i"
+!define sysPlaySound "winmm.dll::PlaySound(t, p, i) i"
 
 ; HWND CreateWindowEx(DWORD dwExStyle, LPCTSTR lpClassName, LPCTSTR lpWindowName,
 ;       DWORD dwStyle, int x, int y, int nWidth, int nHeight, HWND hWndParent,
 ;       HMENU hMenu, HINSTANCE hInstance, LPVOID lpParam);
-!define sysCreateWindowEx "user32::CreateWindowEx(i, t, t, i, i, i, i, i, i, i, i, i) i"
+!define sysCreateWindowEx "user32::CreateWindowEx(i, t, t, i, i, i, i, i, p, p, p, p) p"
 
 ; BOOL IsWindow(HWND hWnd);
-!define sysIsWindow "user32::IsWindow(i) i"
+!define sysIsWindow "user32::IsWindow(p) i"
 
 ; LONG SetWindowLong(HWND hWnd, int nIndex, LONG dwNewLong);
-!define sysSetWindowLong "user32::SetWindowLong(i, i, i) i"
+!define sysSetWindowLong "user32::SetWindowLong(p, i, p) p"
 
 ; BOOL SetWindowPos(HWND hWnd, HWND hWndInsertAfter, int X, int Y, int cx, int cy, UINT uFlags);
-!define sysSetWindowPos "user32::SetWindowPos(i, i, i, i, i, i, i) i"
+!define sysSetWindowPos "user32::SetWindowPos(p, p, i, i, i, i, i) i"
 
 ; BOOL ShowWindow(HWND hWnd, int nCmdShow);
-!define sysShowWindow "user32::ShowWindow(i, i) i"
+!define sysShowWindow "user32::ShowWindow(p, i) i"
 
 ; BOOL DestroyWindow(HWND hWnd);
-!define sysDestroyWindow "user32::DestroyWindow(i) i"
+!define sysDestroyWindow "user32::DestroyWindow(p) i"
 
 ; BOOL GetClientRect(HWND hWnd, LPRECT lpRect);
-!define sysGetClientRect "user32::GetClientRect(i, i) i"
+!define sysGetClientRect "user32::GetClientRect(p, p) i"
 
 ; BOOL GetMessage(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilterMax);
-!define sysGetMessage "user32::GetMessage(i, i, i, i) i"
+!define sysGetMessage "user32::GetMessage(p, p, i, i) i"
 
 ; LRESULT DispatchMessage(CONST MSG *lpmsg);
-!define sysDispatchMessage "user32::DispatchMessage(i) i"
+!define sysDispatchMessage "user32::DispatchMessage(p) p"
 
 ; BOOL DeleteObject(HGDIOBJ hObject);
-!define sysDeleteObject "gdi32::DeleteObject(i) i"
+!define sysDeleteObject "gdi32::DeleteObject(p) i"
 
 ; int GetObject(HGDIOBJ hgdiobj, int cbBuffer, LPVOID lpvObject);
-!define sysGetObject "gdi32::GetObject(i, i, i) i"
+!define sysGetObject "gdi32::GetObject(p, i, p) i"
 
 ; HGDIOBJ SelectObject(HDC hdc, HGDIOBJ hgdiobj);
-!define sysSelectObject "gdi32::SelectObject(i, i) i"
+!define sysSelectObject "gdi32::SelectObject(p, p) p"
 
 ; HDC CreateCompatibleDC(HDC hdc);
-!define sysCreateCompatibleDC "gdi32::CreateCompatibleDC(i) i"
+!define sysCreateCompatibleDC "gdi32::CreateCompatibleDC(p) p"
 
 ; BOOL DeleteDC(HDC hdc);
-!define sysDeleteDC "gdi32::DeleteDC(i) i"
+!define sysDeleteDC "gdi32::DeleteDC(p) i"
 
 ; BOOL BitBlt(HDC hdcDest, int nXDest, int nYDest, int nWidth, int nHeight, 
 ;       HDC hdcSrc, int nXSrc, int nYSrc, DWORD dwRop);
-!define sysBitBlt "gdi32::BitBlt(i, i, i, i, i, i, i, i, i) i"
+!define sysBitBlt "gdi32::BitBlt(p, i, i, i, i, p, i, i, i) i"
 
 ; proposed by abgandar
 ; int AddFontResource(LPCTSTR lpszFilename);
 !define sysAddFontResource "gdi32::AddFontResource(t) i"
 
 ; HDC BeginPaint(HWND hwnd, LPPAINTSTRUCT lpPaint);
-!define sysBeginPaint "user32::BeginPaint(i, i) i"
+!define sysBeginPaint "user32::BeginPaint(p, p) p"
 
 ; BOOL EndPaint(HWND hWnd, CONST PAINTSTRUCT *lpPaint);
-!define sysEndPaint "user32::EndPaint(i, i) i"
+!define sysEndPaint "user32::EndPaint(p, p) i"
 
 ; BOOL SystemParametersInfo(UINT uiAction, UINT uiParam, PVOID pvParam, UINT fWinIni);
-!define sysSystemParametersInfo "user32::SystemParametersInfo(i, i, i, i) i"
+!define sysSystemParametersInfo "user32::SystemParametersInfo(i, i, p, i) i"
 
 ; UINT_PTR SetTimer(HWND hWnd, UINT_PTR nIDEvent, UINT uElapse, TIMERPROC lpTimerFunc);
-!define sysSetTimer "user32::SetTimer(i, i, i, k) i"
+!define sysSetTimer "user32::SetTimer(p, p, i, k) i"
 
 ; DWORD GetLogicalDriveStrings(DWORD nBufferLength, LPTSTR LpBuffer);
-!define sysGetLogicalDriveStrings 'kernel32::GetLogicalDriveStrings(i, i) i'
+!define sysGetLogicalDriveStrings 'kernel32::GetLogicalDriveStrings(i, p) i'
 
 !define sysGetDiskFreeSpaceEx 'kernel32::GetDiskFreeSpaceEx(t, *l, *l, *l) i'
 
@@ -120,14 +120,14 @@
 !define sysGetDriveType 'kernel32::GetDriveType(t) i'
 
 ; HANDLE FindFirstFile(LPCTSTR lpFileName,LPWIN32_FIND_DATA lpFindFileData);
-!define sysFindFirstFile 'kernel32::FindFirstFile(t, i) i'
+!define sysFindFirstFile 'kernel32::FindFirstFile(t, p) p'
 
 ; BOOL FindClose(HANDLE hFindFile);
-!define sysFindClose 'kernel32::FindClose(i) i'
+!define sysFindClose 'kernel32::FindClose(p) i'
 
 ; BOOL FileTimeToSystemTime(CONST FILETIME *lpFileTime, 
 ; LPSYSTEMTIME lpSystemTime);
-!define sysFileTimeToSystemTime 'kernel32::FileTimeToSystemTime(*l, i) i'
+!define sysFileTimeToSystemTime 'kernel32::FileTimeToSystemTime(*l, p) i'
 
 ; BOOL FileTimeToLocalFileTime(
 ;       CONST FILETIME *lpFileTime, 
@@ -136,7 +136,7 @@
 
 ; BOOL SystemTimeToTzSpecificLocalTime(LPTIME_ZONE_INFORMATION lpTimeZone, 
 ; LPSYSTEMTIME lpUniversalTime, LPSYSTEMTIME lpLocalTime);
-!define sysSystemTimeToTzSpecificLocalTime 'kernel32::SystemTimeToTzSpecificLocalTime(i, i, i) i'
+!define sysSystemTimeToTzSpecificLocalTime 'kernel32::SystemTimeToTzSpecificLocalTime(p, p, p) i'
 
 !define syslstrlen 'kernel32::lstrlen(t) i'
 
@@ -157,7 +157,7 @@
 ;               LPCTSTR    lpszMenuName; 
 ;               LPCTSTR    lpszClassName; 
 ; } WNDCLASS, *PWNDCLASS; 
-!define stWNDCLASS "(i, k, i, i, i, i, i, i, t, t) i"
+!define stWNDCLASS "(i, k, i, i, p, p, p, p, t, t) p"
 
 ; typedef struct tagMSG {
 ;   HWND   hwnd; 
@@ -167,7 +167,7 @@
 ;   DWORD  time; 
 ;   POINT  pt;  -> will be presented as two separate px and py
 ; } MSG, *PMSG;
-!define stMSG "(i, i, i, i, i, i, i) i"
+!define stMSG "(p, i, p, p, i, i, i) p"
 
 ; typedef struct tagBITMAP {
 ;   LONG   bmType; 
@@ -178,7 +178,7 @@
 ;   WORD   bmBitsPixel; 
 ;   LPVOID bmBits; 
 ; } BITMAP, *PBITMAP; 
-!define stBITMAP "(i, i, i, i, i, i, i) i"
+!define stBITMAP "(i, i, i, i, i, i, p) p"
 
 ; typedef struct _RECT { 
 ;   LONG left; 
@@ -186,7 +186,7 @@
 ;   LONG right; 
 ;   LONG bottom; 
 ; } RECT, *PRECT; 
-!define stRECT "(i, i, i, i) i"
+!define stRECT "(i, i, i, i) p"
 
 ; typedef struct tagPAINTSTRUCT { 
 ;   HDC  hdc; 
@@ -196,7 +196,7 @@
 ;   BOOL fIncUpdate; 
 ;   BYTE rgbReserved[32]; 
 ; } PAINTSTRUCT, *PPAINTSTRUCT; 
-!define stPAINTSTRUCT "(i, i, i, i, i, i, i, i, &v32) i"
+!define stPAINTSTRUCT "(p, i, i, i, i, i, i, i, &v32) p"
 
 ; typedef struct { 
 ;  UINT      cbSize; 
@@ -210,7 +210,7 @@
 ;  MSGBOXCALLBACK lpfnMsgBoxCallback; 
 ;  DWORD     dwLanguageId; 
 ; } MSGBOXPARAMS, *PMSGBOXPARAMS; 
-!define stMSGBOXPARAMS '(&l4, i, i, t, t, i, t, i, k, i) i'
+!define stMSGBOXPARAMS '(&l4, p, p, t, t, i, t, p, k, i) p'
 
 ; typedef struct _SYSTEMTIME { 
 ;    WORD wYear; 
@@ -222,7 +222,7 @@
 ;    WORD wSecond; 
 ;    WORD wMilliseconds; 
 ; } SYSTEMTIME, *PSYSTEMTIME; 
-!define stSYSTEMTIME '(&i2, &i2, &i2, &i2, &i2, &i2, &i2, &i2) i'
+!define stSYSTEMTIME '(&i2, &i2, &i2, &i2, &i2, &i2, &i2, &i2) p'
 
 ; Maximal windows path
 !define /ifndef MAX_PATH 260
@@ -239,7 +239,7 @@
 ;  TCHAR    cFileName[ MAX_PATH ]; 
 ;  TCHAR    cAlternateFileName[ 14 ]; 
 ; } WIN32_FIND_DATA, *PWIN32_FIND_DATA; 
-!define stWIN32_FIND_DATA '(i, l, l, l, i, i, i, i, &t${MAX_PATH}, &t14) i'
+!define stWIN32_FIND_DATA '(i, l, l, l, i, i, i, i, &t${MAX_PATH}, &t14) p'
 
 ; ------------- Constants --------------
 
