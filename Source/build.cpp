@@ -149,6 +149,7 @@ CEXEBuild::CEXEBuild() :
 #ifdef _UNICODE
   definedlist.add(_T("NSIS_UNICODE_MAKENSIS")); // This define might go away once makensis.exe is always unicode
 #endif
+  if (sizeof(void*) > 4) definedlist.add(_T("NSIS_MAKENSIS64"));
 
   db_opt_save=db_comp_save=db_full_size=db_opt_save_u=db_comp_save_u=db_full_size_u=0;
 
@@ -3645,6 +3646,7 @@ void CEXEBuild::set_target_architecture_predefines()
 {
   definedlist.del(_T("NSIS_UNICODE"));
   definedlist.del(_T("NSIS_CHAR_SIZE"));
+  definedlist.del(_T("NSIS_PTR_SIZE"));
   if (build_unicode)
   {
     definedlist.add(_T("NSIS_UNICODE"));
@@ -3654,6 +3656,7 @@ void CEXEBuild::set_target_architecture_predefines()
   {
     definedlist.add(_T("NSIS_CHAR_SIZE"), _T("1"));
   }
+  definedlist.add(_T("NSIS_PTR_SIZE"), m_target_type <= TARGET_X86UNICODE ? _T("4") : _T("8"));
 }
 
 int CEXEBuild::change_target_architecture()
@@ -3664,7 +3667,7 @@ int CEXEBuild::change_target_architecture()
     return PS_ERROR;
   }
 
-  m_target_type = build_unicode ? TARGET_X86UNICODE : TARGET_X86ANSI;
+  m_target_type = build_unicode ? TARGET_X86UNICODE : TARGET_X86ANSI; // BUGBUG64
   set_target_architecture_predefines();
 
   int ec = load_stub();
@@ -3708,6 +3711,9 @@ const TCHAR* CEXEBuild::get_target_suffix(CEXEBuild::TARGETTYPE tt) const
   {
   case TARGET_X86ANSI   :return _T("x86-ansi");
   case TARGET_X86UNICODE:return _T("x86-unicode");
+#if !defined(_WIN32) || defined(_WIN64)
+  case TARGET_AMD64     :return _T("amd64-unicode");
+#endif
   default:return _T("?");
   }
 }

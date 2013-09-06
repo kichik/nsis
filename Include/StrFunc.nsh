@@ -285,7 +285,7 @@ o-----------------------------------------------------------------------------o
           ; Else convert to lower case.
 
           ;Use "IsCharAlpha" for the job
-          System::Call "*(&t1 r7) i .r8"
+          System::Call "*(&t1 r7) p .r8"
           System::Call "*$8(&i1 .r7)"
           System::Free $8
           System::Call "user32::IsCharAlpha(i r7) i .r8"
@@ -325,7 +325,7 @@ o-----------------------------------------------------------------------------o
           ; Switch all characters cases to their inverse case.
 
           ;Use "IsCharUpper" for the job
-          System::Call "*(&t1 r6) i .r8"
+          System::Call "*(&t1 r6) p .r8"
           System::Call "*$8(&i1 .r7)"
           System::Free $8
           System::Call "user32::IsCharUpper(i r7) i .r8"
@@ -395,7 +395,7 @@ o-----------------------------------------------------------------------------o
       StrCpy $4 ""
 
       ;Open the clipboard to do the operations the user chose (kichik's fix)
-      System::Call 'user32::OpenClipboard(i $HWNDPARENT)'
+      System::Call 'user32::OpenClipboard(p $HWNDPARENT)'
 
       ${If} $1 == ">" ;Set
 
@@ -405,44 +405,44 @@ o-----------------------------------------------------------------------------o
         ;Step 2: Allocate global heap
         StrLen $2 $0
         IntOp $2 $2 + 1
-		IntOp $2 $2 * ${NSIS_CHAR_SIZE}
-        System::Call 'kernel32::GlobalAlloc(i 2, i r2) i.r2'
+        IntOp $2 $2 * ${NSIS_CHAR_SIZE}
+        System::Call 'kernel32::GlobalAlloc(i 2, i r2) p.r2'
 
         ;Step 3: Lock the handle
-        System::Call 'kernel32::GlobalLock(i r2) i.r3'
+        System::Call 'kernel32::GlobalLock(p r2) i.r3'
 
         ;Step 4: Copy the text to locked clipboard buffer
-        System::Call 'kernel32::lstrcpy(i r3, t r0)'
+        System::Call 'kernel32::lstrcpy(p r3, t r0)'
 
         ;Step 5: Unlock the handle again
-        System::Call 'kernel32::GlobalUnlock(i r2)'
+        System::Call 'kernel32::GlobalUnlock(p r2)'
 
         ;Step 6: Set the information to the clipboard
-        System::Call 'user32::SetClipboardData(i 1, i r2)'
+        System::Call 'user32::SetClipboardData(i 1, p r2)'
 
         StrCpy $0 ""
 
       ${ElseIf} $1 == "<" ;Get
 
         ;Step 1: Get clipboard data
-        System::Call 'user32::GetClipboardData(i 1) i .r2'
+        System::Call 'user32::GetClipboardData(i 1) p .r2'
 
         ;Step 2: Lock and copy data (kichik's fix)
-        System::Call 'kernel32::GlobalLock(i r2) t .r0'
+        System::Call 'kernel32::GlobalLock(p r2) t .r0'
 
         ;Step 3: Unlock (kichik's fix)
-        System::Call 'kernel32::GlobalUnlock(i r2)'
+        System::Call 'kernel32::GlobalUnlock(p r2)'
 
       ${ElseIf} $1 == "<>" ;Swap
 
         ;Step 1: Get clipboard data
-        System::Call 'user32::GetClipboardData(i 1) i .r2'
+        System::Call 'user32::GetClipboardData(i 1) p .r2'
 
         ;Step 2: Lock and copy data (kichik's fix)
-        System::Call 'kernel32::GlobalLock(i r2) t .r4'
+        System::Call 'kernel32::GlobalLock(p r2) t .r4'
 
         ;Step 3: Unlock (kichik's fix)
-        System::Call 'kernel32::GlobalUnlock(i r2)'
+        System::Call 'kernel32::GlobalUnlock(p r2)'
 
         ;Step 4: Clear the clipboard
         System::Call 'user32::EmptyClipboard()'
@@ -451,19 +451,19 @@ o-----------------------------------------------------------------------------o
         StrLen $2 $0
         IntOp $2 $2 + 1
 		IntOp $2 $2 * ${NSIS_CHAR_SIZE}
-        System::Call 'kernel32::GlobalAlloc(i 2, i r2) i.r2'
+        System::Call 'kernel32::GlobalAlloc(i 2, i r2) p.r2'
 
         ;Step 6: Lock the handle
-        System::Call 'kernel32::GlobalLock(i r2) i.r3'
+        System::Call 'kernel32::GlobalLock(p r2) i.r3'
 
         ;Step 7: Copy the text to locked clipboard buffer
-        System::Call 'kernel32::lstrcpy(i r3, t r0)'
+        System::Call 'kernel32::lstrcpy(p r3, t r0)'
 
         ;Step 8: Unlock the handle again
-        System::Call 'kernel32::GlobalUnlock(i r2)'
+        System::Call 'kernel32::GlobalUnlock(p r2)'
 
         ;Step 9: Set the information to the clipboard
-        System::Call 'user32::SetClipboardData(i 1, i r2)'
+        System::Call 'user32::SetClipboardData(i 1, p r2)'
         
         StrCpy $0 $4
       ${Else} ;Clear

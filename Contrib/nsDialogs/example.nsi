@@ -58,7 +58,7 @@ Function OnChange
 
 	Pop $0 # HWND
 
-	System::Call user32::GetWindowText(i$EDIT,t.r0,i${NSIS_MAX_STRLEN})
+	System::Call user32::GetWindowText(p$EDIT,t.r0,i${NSIS_MAX_STRLEN})
 
 	${If} $0 == "hello there"
 		MessageBox MB_OK "right back at ya"

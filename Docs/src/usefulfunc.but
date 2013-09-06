@@ -141,14 +141,14 @@
 
 \H{installerfilename} Get Installer Filename
 
-\c  System::Call 'kernel32::GetModuleFileNameA(i 0, t .R0, i 1024) i r1'
+\c  System::Call 'kernel32::GetModuleFileName(p 0, t .R0, i 1024) i r1'
 \c  ;$R0 will contain the installer filename
 
 \H{multipleinstances} Prevent Multiple Instances
 
 Put the following code in your \R{oninit}{.onInit function}:
 
-\c  System::Call 'kernel32::CreateMutexA(i 0, i 0, t "myMutex") i .r1 ?e'
+\c  System::Call 'kernel32::CreateMutex(p 0, i 0, t "myMutex") p .r1 ?e'
 \c  Pop $R0
 \c  
 \c  StrCmp $R0 0 +3

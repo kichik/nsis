@@ -26,14 +26,17 @@ docs = Split("""
 
 Import('BuildPlugin env')
 
-conf = env.Configure()
-if conf.TryCompile('END', '.S'):
-	files += ['Source/Call.S']
-elif conf.TryCompile('.end', '.sx'):
-	files += ['Source/Call.sx']
+if env['TARGET_ARCH'] != 'amd64':
+	conf = env.Configure()
+	if conf.TryCompile('END', '.S'):
+		files += ['Source/Call.S']
+	elif conf.TryCompile('.end', '.sx'):
+		files += ['Source/Call.sx']
+	else:
+		print 'WARNING: unable to find assembler for Call.S'
+	conf.Finish()
 else:
-	print 'WARNING: unable to find assembler for Call.S'
-conf.Finish()
+	print 'WARNING: missing Win64 code, dynamic function calls not supported'
 
 BuildPlugin(
 	target,

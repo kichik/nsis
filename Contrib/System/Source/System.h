@@ -10,7 +10,11 @@
 #else
 #    error "Unknown architecture!"
 #endif
-
+#ifdef _WIN64
+#define SYSFMT_HEXPTR _T("0x%016IX")
+#else
+#define SYSFMT_HEXPTR _T("0x%08X")
+#endif
 
 
 // The following ifdef block is the standard way of creating macros which make exporting 
@@ -76,8 +80,8 @@ typedef struct
 {
     int Type;
     int Option; // -1 -> Pointer, 1-... -> Special+1
-    int Value;  // it can hold any 4 byte value BUGBUG: What about pointers on Win64?
-    int _value; // value buffer for structures > 4 bytes (I hope 8 bytes will be enough)
+    INT_PTR Value; // it can hold any pointer sized value
+    int _value; // value buffer for structures > 4 bytes (I hope 8 bytes will be enough) BUGBUG: Does Win64 need this?
     int Size; // Value real size (should be either 1 or 2 (the number of pushes))
     int Input; //BUGBUG: What about pointers on Win64?
     int Output;
@@ -119,6 +123,8 @@ struct tag_CallbackThunk
         #pragma pack(pop)
         */
         char asm_code[10];
+    #elif defined(SYSTEM_X64)
+        char asm_code[BUGBUG64(1)]; // TODO: BUGBUG64
     #else
         #error "Asm thunk not implemeted for this architecture!"
     #endif
@@ -129,6 +135,8 @@ struct tag_CallbackThunk
 // Free() only knows about pNext in CallbackThunk, it does not know anything about the assembly, that is where this helper comes in...
 #ifdef SYSTEM_X86
 #   define GetAssociatedSysProcFromCallbackThunkPtr(pCbT) ( (SystemProc*)  *(unsigned int*) (((char*)(pCbT))+1) )
+#elif defined(SYSTEM_X64)
+#   define GetAssociatedSysProcFromCallbackThunkPtr(pCbT) BUGBUG64(NULL)
 #else
 #   error "GetAssociatedSysProcFromCallbackThunkPtr not defined for the current architecture!"
 #endif

@@ -193,7 +193,7 @@ line sub[] = {
 	CBL(SUBLANG_UZBEK_CYRILLIC)
 };
 
-BOOL CALLBACK DialogProc(HWND hwndDlg,UINT uMsg,WPARAM wParam,LPARAM lParam) {
+INT_PTR CALLBACK DialogProc(HWND hwndDlg,UINT uMsg,WPARAM wParam,LPARAM lParam) {
 	size_t i;
 	switch (uMsg) {
 	case WM_INITDIALOG:
@@ -222,7 +222,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg,UINT uMsg,WPARAM wParam,LPARAM lParam) {
 				TCHAR *lang_id = (TCHAR *)GlobalLock(hMem);
 				wsprintf(lang_id, _T("%u"), MAKELANGID(primary[SendDlgItemMessage(hwndDlg, IDC_PRIMARY, CB_GETCURSEL, 0, 0)].id, sub[SendDlgItemMessage(hwndDlg, IDC_SUB, CB_GETCURSEL, 0, 0)].id));
 				GlobalUnlock(hMem);
-				if (!OpenClipboard(hwndDlg)) return 0;
+				if (!OpenClipboard(hwndDlg)) return FALSE;
 				EmptyClipboard();
 #ifdef _UNICODE
 				SetClipboardData(CF_UNICODETEXT,hMem);
@@ -234,7 +234,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg,UINT uMsg,WPARAM wParam,LPARAM lParam) {
 		}
 		break;
 	}
-	return 0;
+	return FALSE;
 }
 
 NSIS_ENTRYPOINT_GUINOCRT

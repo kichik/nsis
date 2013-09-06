@@ -20,7 +20,7 @@
 #        System::Alloc 156
 #        Pop $0
 #        System::Call *$0(ir1)
-#        System::Call kernel32::GetVersionEx(ir0)i.R0
+#        System::Call kernel32::GetVersionEx(pr0)i.R0
 #
 #        DetailPrint 'StrCpy $2_RES $R0'
 #

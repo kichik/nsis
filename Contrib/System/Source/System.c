@@ -30,18 +30,18 @@
 #define PCD_PARAMS  2
 #define PCD_DONE    3   // Just Continue
 
+const int PARAMSIZEBYTYPE_PTR = (4==sizeof(void*)) ? 1 : 2;
 const int ParamSizeByType[7] = {
-    0, // PAT_VOID (Size will be equal to 1)
+    0, // PAT_VOID (Size will be equal to 1) //BUGBUG64?
     1, // PAT_INT
     2, // PAT_LONG
-    1, // PAT_STRING
-    1, // PAT_WSTRING
-    1, // PAT_GUID
+    sizeof(void*) / 4, // PAT_STRING //BUGBUG64?
+    sizeof(void*) / 4, // PAT_WSTRING //BUGBUG64?
+    sizeof(void*) / 4, // PAT_GUID //BUGBUG64?
     0}; // PAT_CALLBACK (Size will be equal to 1) //BUGBUG64?
-const int PARAMSIZEBYTYPE_PTR = (4==sizeof(void*)) ? 1 : 2;
 
 // Thomas needs to look at this.
-const int ByteSizeByType[7] = {
+static const int ByteSizeByType[7] = {
     1, // PAT_VOID
     1, // PAT_INT
     1, // PAT_LONG
@@ -55,7 +55,7 @@ int LastStackReal;
 DWORD LastError;
 volatile SystemProc *LastProc;
 int CallbackIndex;
-CallbackThunk* CallbackThunkListHead;
+CallbackThunk* g_CallbackThunkListHead;
 HINSTANCE g_hInstance;
 
 // Return to callback caller with stack restore
@@ -145,7 +145,7 @@ PLUGINFUNCTION(Debug)
             GetLocalTime(&t);
             GetTimeFormat(LOCALE_SYSTEM_DEFAULT, LOCALE_NOUSEROVERRIDE, &t, NULL, buftime, 1024);
             GetDateFormat(LOCALE_SYSTEM_DEFAULT, LOCALE_NOUSEROVERRIDE, &t, NULL, bufdate, 1024);
-            wsprintf(buffer, _T("System, %s %s [build ") __TTIME__ _T(" ") __TDATE__ _T("]\n"), buftime, bufdate);
+            wsprintf(buffer, _T("System, %s %s [build %hs %hs]\n"), buftime, bufdate, __TIME__, __DATE__);
             WriteToLog(buffer);
         } else ;
     else
@@ -207,9 +207,9 @@ PLUGINFUNCTIONSHORT(Free)
 {
     HANDLE memtofree = (HANDLE)popintptr();
 
-    if (CallbackThunkListHead)
+    if (g_CallbackThunkListHead)
     {
-        CallbackThunk *pCb=CallbackThunkListHead,*pPrev=NULL;
+        CallbackThunk *pCb=g_CallbackThunkListHead,*pPrev=NULL;
         do 
         {
             if (GetAssociatedSysProcFromCallbackThunkPtr(pCb) == (SystemProc*)memtofree) 
@@ -217,7 +217,7 @@ PLUGINFUNCTIONSHORT(Free)
                 if (pPrev)
                     pPrev->pNext=pCb->pNext;
                 else
-                    CallbackThunkListHead=pCb->pNext;
+                    g_CallbackThunkListHead=pCb->pNext;
 
                 --(CallbackIndex);
                 VirtualFree(pCb,0,MEM_RELEASE);
@@ -268,12 +268,45 @@ PLUGINFUNCTION(Get)
     }
 } PLUGINFUNCTIONEND
 
+
+#ifdef _WIN64
+/*
+TODO: CallProc/Back not implemeted.
+Fake the behavior of the System plugin for the LoadImage API function so MUI works.
+BUGBUG: Leaking DeleteObject and failing GetClientRect
+*/
+static SystemProc* CallProc(SystemProc *proc)
+{
+    INT_PTR ret, *place;
+    LastError = lstrcmp(proc->ProcName, sizeof(TCHAR) > 1 ? _T("LoadImageW") : _T("LoadImageA"));
+    if (!LastError)
+    {
+        ret = (INT_PTR) LoadImage((HINSTANCE)proc->Params[1].Value,
+          (LPCTSTR)proc->Params[2].Value, (UINT)proc->Params[3].Value,
+          (int)proc->Params[4].Value, (int)proc->Params[5].Value,
+          (UINT)proc->Params[6].Value);
+        LastError = GetLastError();
+    }
+    else
+        proc->ProcResult = PR_ERROR, ret = 0;
+    place = (INT_PTR*) proc->Params[0].Value;
+    if (proc->Params[0].Option != -1) place = (INT_PTR*) &(proc->Params[0].Value);
+    if (place) *place = ret;
+    return proc;
+}
+static SystemProc* CallBack(SystemProc *proc)
+{
+    proc->ProcResult = PR_ERROR;
+    return proc;
+}
+#endif
+
+
 PLUGINFUNCTION(Call)
 {
     // Prepare input
     SystemProc *proc = PrepareProc(TRUE);
-    if (proc == NULL)
-      return;
+    if (proc == NULL) return;
 
     SYSTEM_LOG_ADD(_T("Call "));
     SYSTEM_LOG_ADD(proc->DllName);
@@ -281,8 +314,7 @@ PLUGINFUNCTION(Call)
     SYSTEM_LOG_ADD(proc->ProcName);
     //SYSTEM_LOG_ADD(_T("\n"));
     SYSTEM_LOG_POST;
-    if (proc->ProcResult != PR_CALLBACK)
-        ParamAllocate(proc);
+    if (proc->ProcResult != PR_CALLBACK) ParamAllocate(proc);
     ParamsIn(proc);
 
     // Make the call
@@ -308,35 +340,30 @@ PLUGINFUNCTION(Call)
         // Always return flag set - return separate return and result
         ParamsOut(proc);
         GlobalFree(system_pushstring(GetResultStr(proc)));
-    } else
+    }
+    else
     {
         if (proc->ProcResult != PR_OK)
         {
-            ProcParameter pp;
-            // Save old return param
-            pp = proc->Params[0];
+            ProcParameter pp = proc->Params[0]; // Save old return param
 
             // Return result instead of return value
-            proc->Params[0].Value = BUGBUG64(int) GetResultStr(proc);
+            proc->Params[0].Value = (INT_PTR) GetResultStr(proc);
             proc->Params[0].Type = PAT_TSTRING;
-            // Return all params
-            ParamsOut(proc);
 
-            // Restore old return param
-            proc->Params[0] = pp;
-        } else 
+            ParamsOut(proc); // Return all params
+            proc->Params[0] = pp; // Restore old return param
+        }
+        else
             ParamsOut(proc);        
     }
 
     if (proc->ProcResult != PR_CALLBACK)
     {
-        // Deallocate params if not callback
         ParamsDeAllocate(proc);
 
         // if not callback - check for unload library option
-        if ((proc->Options & POPT_UNLOAD) 
-            && (proc->ProcType == PT_PROC) 
-            && (proc->Dll != NULL)) 
+        if ((proc->Options & POPT_UNLOAD) && proc->ProcType == PT_PROC && proc->Dll)
             FreeLibrary(proc->Dll); // and unload it :)
 
         // In case of POPT_ERROR - first pop will be proc error
@@ -344,8 +371,7 @@ PLUGINFUNCTION(Call)
     }    
 
     // If proc is permanent?
-    if ((proc->Options & POPT_PERMANENT) == 0)
-        GlobalFree((HANDLE) proc); // No, free it
+    if ((proc->Options & POPT_PERMANENT) == 0) GlobalFree((HANDLE) proc); // No, free it
 } PLUGINFUNCTIONEND
 
 PLUGINFUNCTIONSHORT(Int64Op)
@@ -602,13 +628,14 @@ SystemProc *PrepareProc(BOOL NeedForCall)
             case _T('v'):
             case _T('V'): temp2 = PAT_VOID; break;
 
-            #if !defined(SYSTEM_X86)
-                #error "TODO: handle p"
-            #else
-                case _T('p'):
-            #endif
+#ifndef _WIN64
+            case _T('p'):
+#endif
             case _T('i'):
             case _T('I'): temp2 = PAT_INT; break;
+#ifdef _WIN64
+            case _T('p'):
+#endif
             case _T('l'):
             case _T('L'): temp2 = PAT_LONG; break;
             case _T('m'):
@@ -865,12 +892,9 @@ SystemProc *PrepareProc(BOOL NeedForCall)
 void ParamAllocate(SystemProc *proc)
 {
     int i;
-
     for (i = 0; i <= proc->ParamCount; i++)
-        if (((HANDLE) proc->Params[i].Value == NULL) && (proc->Params[i].Option == -1))
-        {
-            proc->Params[i].Value = BUGBUG64(int) GlobalAlloc(GPTR, 4*ParamSizeByType[proc->Params[i].Type]);
-        }
+        if (!proc->Params[i].Value && proc->Params[i].Option == -1)
+            proc->Params[i].Value = (INT_PTR) GlobalAlloc(GPTR, 4*ParamSizeByType[proc->Params[i].Type]);
 }
 
 void ParamsIn(SystemProc *proc)
@@ -958,7 +982,7 @@ void ParamsIn(SystemProc *proc)
 #ifdef SYSTEM_LOG_DEBUG
         {
             TCHAR buf[666];
-            wsprintf(buf, _T("\t\t\tParam In %d:    type %d value 0x%08X value2 0x%08X"), i, 
+            wsprintf(buf, _T("\t\t\tParam In %d:    type %d value ")SYSFMT_HEXPTR _T(" value2 0x%08X"), i, 
                 par->Type, par->Value, par->_value);
             SYSTEM_LOG_ADD(buf);
             SYSTEM_LOG_POST;
@@ -974,18 +998,18 @@ void ParamsIn(SystemProc *proc)
 void ParamsDeAllocate(SystemProc *proc)
 {
     int i;
-
     for (i = proc->ParamCount; i >= 0; i--)
-        if (((HANDLE) proc->Params[i].Value != NULL) && (proc->Params[i].Option == -1))
+        if (proc->Params[i].Value && proc->Params[i].Option == -1)
         {
             GlobalFree((HANDLE) (proc->Params[i].Value));
-            proc->Params[i].Value = (int) NULL;
+            proc->Params[i].Value = 0;
         }
 }
 
 void ParamsOut(SystemProc *proc)
 {
-    int i, *place;
+    INT_PTR *place;
+    int i;
     TCHAR *realbuf;
     LPWSTR wstr;
 
@@ -993,8 +1017,8 @@ void ParamsOut(SystemProc *proc)
     do
     {
         // Retreive pointer to place
-        if (proc->Params[i].Option == -1) place = BUGBUG64(int*) proc->Params[i].Value;
-        else place = BUGBUG64(int*) &(proc->Params[i].Value);
+        if (proc->Params[i].Option == -1) place = (INT_PTR*) proc->Params[i].Value;
+        else place = (INT_PTR*) &(proc->Params[i].Value);
 
         realbuf = AllocString();
 
@@ -1005,7 +1029,7 @@ void ParamsOut(SystemProc *proc)
             lstrcpy(realbuf,_T(""));
             break;
         case PAT_INT:
-            wsprintf(realbuf, _T("%d"), *((int*) place));
+            wsprintf(realbuf, _T("%d"), (int)(*((INT_PTR*) place)));
             break;
         case PAT_LONG:
             myitoa64(*((__int64*) place), realbuf);
@@ -1038,7 +1062,7 @@ void ParamsOut(SystemProc *proc)
 #endif
             break;
         case PAT_CALLBACK:
-            wsprintf(realbuf, _T("%d"), proc->Params[i].Value);
+            wsprintf(realbuf, _T("%d"), BUGBUG64(proc->Params[i].Value));
             break;
         }
 
@@ -1083,6 +1107,9 @@ void ParamsOut(SystemProc *proc)
 
 HANDLE CreateCallback(SystemProc *cbproc)
 {
+#ifdef SYSTEM_X64
+    return BUGBUG64(HANDLE) NULL;
+#else
     char *mem;
 
     if (cbproc->Proc == NULL)
@@ -1093,8 +1120,8 @@ HANDLE CreateCallback(SystemProc *cbproc)
 
         mem = (char *) (cbproc->Proc = VirtualAlloc(NULL, sizeof(CallbackThunk), MEM_COMMIT, PAGE_EXECUTE_READWRITE));
 
-        ((CallbackThunk*)mem)->pNext=CallbackThunkListHead;
-        CallbackThunkListHead=(CallbackThunk*)mem;
+        ((CallbackThunk*)mem)->pNext=g_CallbackThunkListHead;
+        g_CallbackThunkListHead=(CallbackThunk*)mem;
 
 #ifdef SYSTEM_X86
         *(mem++) = (char) 0xB8; // Mov eax, const
@@ -1111,6 +1138,7 @@ HANDLE CreateCallback(SystemProc *cbproc)
 
     // Return proc address
     return cbproc->Proc;
+#endif
 }
 
 void CallStruct(SystemProc *proc)
@@ -1215,7 +1243,7 @@ void CallStruct(SystemProc *proc)
     SYSTEM_LOG_POST;
 
     // Proc virtual return - pointer to memory struct
-    proc->Params[0].Value = (int) proc->Proc;
+    proc->Params[0].Value = BUGBUG64(int) proc->Proc;
 }
 
 /*
@@ -1231,25 +1259,28 @@ the same means as used for the _RPT0 macro. This leads to an endless recursion.
 
 BOOL WINAPI DllMain(HINSTANCE hInst, DWORD fdwReason, LPVOID lpReserved)
 {
-        g_hInstance=hInst;
-        
-        if (DLL_PROCESS_ATTACH == fdwReason)
-        {
-            // change the protection of return command
-            VirtualProtect(&retexpr, sizeof(retexpr), PAGE_EXECUTE_READWRITE, (PDWORD)&LastStackPlace);
+    g_hInstance=hInst;
 
-            // initialize some variables
-            LastStackPlace = 0;
-            LastStackReal = 0;
-            LastError = 0;
-            LastProc = NULL;
-            CallbackIndex = 0;
-            CallbackThunkListHead = NULL;
-            retexpr[0] = (char) 0xC2;
-            retexpr[2] = 0x00;
-        }
+    if (DLL_PROCESS_ATTACH == fdwReason)
+    {
+        // change the protection of return command
+        VirtualProtect(&retexpr, sizeof(retexpr), PAGE_EXECUTE_READWRITE, (PDWORD)&LastStackPlace);
 
-        return TRUE;
+        // initialize some variables
+        LastStackPlace = 0, LastStackReal = 0;
+        LastError = 0;
+        LastProc = NULL;
+        CallbackIndex = 0, g_CallbackThunkListHead = NULL;
+#ifdef SYSTEM_X86
+        retexpr[0] = (char) 0xC2;
+        retexpr[2] = 0x00;
+#elif defined(SYSTEM_X64)
+        retexpr[0] = BUGBUG64(0);
+#else
+#error TODO
+#endif
+    }
+    return TRUE;
 }
 
 /*

@@ -32,9 +32,9 @@ struct nsControl* NSDFUNC GetControl(HWND hwCtl)
   return &g_dialog.controls[id - 1];
 }
 
-BOOL CALLBACK ParentProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK ParentProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-  BOOL res;
+  INT_PTR res;
 
   if (message == WM_NOTIFY_OUTER_NEXT)
   {
@@ -76,7 +76,7 @@ LRESULT CALLBACK LinkWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
   return CallWindowProc(ctl->oldWndProc, hwnd, message, wParam, lParam);
 }
 
-BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   switch (uMsg)
   {
@@ -93,7 +93,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       {
         if (ctl->callbacks.onClick)
         {
-          pushint((int) hwCtl);
+          pushintptr((INT_PTR) hwCtl);
           g_pluginParms->ExecuteCodeSegment(ctl->callbacks.onClick - 1, 0);
         }
       }
@@ -101,7 +101,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       {
         if (ctl->callbacks.onChange)
         {
-          pushint((int) hwCtl);
+          pushintptr((INT_PTR) hwCtl);
           g_pluginParms->ExecuteCodeSegment(ctl->callbacks.onChange - 1, 0);
         }
       }
@@ -109,7 +109,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       {
         if (ctl->callbacks.onChange)
         {
-          pushint((int) hwCtl);
+          pushintptr((INT_PTR) hwCtl);
           g_pluginParms->ExecuteCodeSegment(ctl->callbacks.onChange - 1, 0);
         }
       }
@@ -118,7 +118,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       {
         if (ctl->callbacks.onChange)
         {
-          pushint((int) hwCtl);
+          pushintptr((INT_PTR) hwCtl);
           g_pluginParms->ExecuteCodeSegment(ctl->callbacks.onChange - 1, 0);
         }
       }
@@ -126,7 +126,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       {
         if (ctl->callbacks.onClick)
         {
-          pushint((int) hwCtl);
+          pushintptr((INT_PTR) hwCtl);
           g_pluginParms->ExecuteCodeSegment(ctl->callbacks.onClick - 1, 0);
         }
       }
@@ -145,9 +145,9 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       if (!ctl->callbacks.onNotify)
         break;
 
-      pushint((int) nmhdr);
-      pushint(nmhdr->code);
-      pushint((int) nmhdr->hwndFrom);
+      pushintptr((INT_PTR) nmhdr);
+      pushintptr(nmhdr->code);
+      pushintptr((INT_PTR) nmhdr->hwndFrom);
       g_pluginParms->ExecuteCodeSegment(ctl->callbacks.onNotify - 1, 0);
     }
 
@@ -287,7 +287,7 @@ void __declspec(dllexport) Create(HWND hwndParent, int string_size, TCHAR *varia
 
   g_dialog.callbacks.onBack = 0;
 
-  pushint((int) g_dialog.hwDialog);
+  pushintptr((INT_PTR) g_dialog.hwDialog);
 }
 
 void __declspec(dllexport) CreateControl(HWND hwndParent, int string_size, TCHAR *variables, stack_t **stacktop, extra_parameters *extra)
@@ -393,7 +393,7 @@ void __declspec(dllexport) CreateControl(HWND hwndParent, int string_size, TCHAR
 
   // push back result
 
-  pushint((int) hwItem);
+  pushintptr((INT_PTR) hwItem);
 
   // done
 
@@ -413,11 +413,11 @@ void __declspec(dllexport) SetUserData(HWND hwndParent, int string_size, TCHAR *
 
   // get info from stack
 
-  hwCtl = (HWND) popint();
+  hwCtl = (HWND) popintptr();
 
   if (!IsWindow(hwCtl))
   {
-    popint(); // remove user data from stack
+    popintptr(); // remove user data from stack
     return;
   }
 
@@ -440,7 +440,7 @@ void __declspec(dllexport) GetUserData(HWND hwndParent, int string_size, TCHAR *
 
   // get info from stack
 
-  hwCtl = (HWND) popint();
+  hwCtl = (HWND) popintptr();
 
   if (!IsWindow(hwCtl))
   {
@@ -513,7 +513,7 @@ void NSDFUNC SetControlCallback(size_t callbackIdx)
 
   // get info from stack
 
-  hwCtl = (HWND) popint();
+  hwCtl = (HWND) popintptr();
   callback = (nsFunction) popint();
 
   if (!IsWindow(hwCtl))

@@ -30,7 +30,7 @@
 
 #include <nsis/pluginapi.h> // nsis plugin
 
-void *operator new( unsigned int num_bytes )
+void *operator new( size_t num_bytes )
 {
   return GlobalAlloc(GPTR,num_bytes);
 }

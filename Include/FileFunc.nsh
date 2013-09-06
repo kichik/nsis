@@ -1107,22 +1107,22 @@ RefreshShellIcons
 
 	FileFunc_GetTime_getfile:
 	IfFileExists $0 0 FileFunc_GetTime_error
-	System::Call '*(i,l,l,l,i,i,i,i,&t260,&t14) i .r6'
-	System::Call 'kernel32::FindFirstFile(t,i)i(r0,r6) .r2'
+	System::Call '*(i,l,l,l,i,i,i,i,&t260,&t14) p .r6'
+	System::Call 'kernel32::FindFirstFile(t,p)p(r0,r6) .r2'
 	System::Call 'kernel32::FindClose(i)i(r2)'
 
 	FileFunc_GetTime_gettime:
-	System::Call '*(&i2,&i2,&i2,&i2,&i2,&i2,&i2,&i2) i .r7'
+	System::Call '*(&i2,&i2,&i2,&i2,&i2,&i2,&i2,&i2) p .r7'
 	StrCmp $1 'L' 0 FileFunc_GetTime_systemtime
-	System::Call 'kernel32::GetLocalTime(i)i(r7)'
+	System::Call 'kernel32::GetLocalTime(p)i(r7)'
 	goto FileFunc_GetTime_convert
 	FileFunc_GetTime_systemtime:
 	StrCmp $1 'LS' 0 FileFunc_GetTime_filetime
-	System::Call 'kernel32::GetSystemTime(i)i(r7)'
+	System::Call 'kernel32::GetSystemTime(p)i(r7)'
 	goto FileFunc_GetTime_convert
 
 	FileFunc_GetTime_filetime:
-	System::Call '*$6(i,l,l,l,i,i,i,i,&t260,&t14)i(,.r4,.r3,.r2)'
+	System::Call '*$6(i,l,l,l,i,i,i,i,&t260,&t14)p(,.r4,.r3,.r2)'
 	System::Free $6
 	StrCmp $1 'A' 0 +3
 	StrCpy $2 $3
@@ -1146,7 +1146,7 @@ RefreshShellIcons
 	System::Call 'kernel32::FileTimeToSystemTime(*l,i)i(r3,r7)'
 
 	FileFunc_GetTime_convert:
-	System::Call '*$7(&i2,&i2,&i2,&i2,&i2,&i2,&i2,&i2)i(.r5,.r6,.r4,.r0,.r3,.r2,.r1,)'
+	System::Call '*$7(&i2,&i2,&i2,&i2,&i2,&i2,&i2,&i2)p(.r5,.r6,.r4,.r0,.r3,.r2,.r1,)'
 	System::Free $7
 
 	IntCmp $0 9 0 0 +2
@@ -1398,7 +1398,7 @@ RefreshShellIcons
 	Push $0
 	Push $1
 	Push $2
-	System::Call 'kernel32::GetModuleFileName(i 0, t .r0, i 1024)'
+	System::Call 'kernel32::GetModuleFileName(p 0, t .r0, i 1024)'
 	System::Call 'kernel32::GetLongPathName(t r0, t .r1, i 1024)i .r2'
 	StrCmp $2 error +2
 	StrCpy $0 $1

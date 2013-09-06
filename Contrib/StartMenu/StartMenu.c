@@ -25,8 +25,8 @@ WNDPROC lpWndProcOld;
 
 void (__stdcall *validate_filename)(TCHAR *);
 
-BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
-static BOOL CALLBACK ParentWndProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+static INT_PTR CALLBACK ParentWndProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 void AddFolderFromReg(int nFolder);
 
 static UINT_PTR PluginCallback(enum NSPIM msg)
@@ -158,9 +158,9 @@ void __declspec(dllexport) Select(HWND hwndParent, int string_size, TCHAR *varia
   }
 }
 
-static BOOL CALLBACK ParentWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+static INT_PTR CALLBACK ParentWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-  BOOL bRes = CallWindowProc(lpWndProcOld,hwnd,message,wParam,lParam);
+  INT_PTR bRes = CallWindowProc(lpWndProcOld,hwnd,message,wParam,lParam);
   if (message == WM_NOTIFY_OUTER_NEXT && !bRes)
   {
     // if leave function didn't abort (lRes != 0 in that case)
@@ -191,7 +191,7 @@ void AddRTLStyle(HWND hWnd, long dwStyle)
    \
   y_offset += cy + 3;
 
-BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   HWND hwLocation = GetDlgItem(hwndDlg, IDC_LOCATION);
   HWND hwDirList = GetDlgItem(hwndDlg, IDC_DIRLIST);
@@ -424,7 +424,7 @@ BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       return SendMessage(hwParent, uMsg, wParam, lParam);
     break;
   }
-	return 0;
+  return FALSE;
 }
 
 BOOL WINAPI DllMain(HINSTANCE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)

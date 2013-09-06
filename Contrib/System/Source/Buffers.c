@@ -15,8 +15,8 @@ TempStack *tempstack = NULL;
 
 static void AllocWorker(unsigned int mult)
 {
-    int size;
-    if ((size = popint()) == 0)
+    size_t size;
+    if ((size = popintptr()) == 0)
     {
         system_pushint(0);
         return;
@@ -56,7 +56,7 @@ PLUGINFUNCTIONSHORT(Copy)
     // Ok, check the size
     if (size == 0) size = (SIZE_T) GlobalSize(source);
     // and the destinantion
-    if ((int) dest == 0) 
+    if (!dest) 
     {
         dest = GlobalAlloc((GPTR), size);
         system_pushintptr((INT_PTR) dest);
