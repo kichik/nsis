@@ -91,7 +91,8 @@ UINT StrLenUTF16(const void*str);
 bool StrSetUTF16LE(tstring&dest, const void*src);
 
 UINT WCFromCodePoint(wchar_t*Dest,UINT cchDest,UINT32 CodPt);
-wchar_t* DupWCFromBytes(void*Buffer,UINT cbBuffer,WORD SrcCP);
+#define DWCFBF_ALLOWOPTIMIZEDRETURN 0x80000000 // DupWCFromBytes can return input Buffer
+wchar_t* DupWCFromBytes(void*Buffer,UINT cbBuffer,UINT32 SrcCP);
 UINT DetectUTFBOM(void*Buffer,UINT cb);
 UINT DetectUTFBOM(FILE*strm);
 WORD GetEncodingFromString(const TCHAR*s, bool&BOM);
@@ -110,7 +111,7 @@ protected:
   static bool IsWE(WORD Encoding) { return (WORD)-1 == Encoding; }
   static bool IsWE(UINT32 Encoding) { return (UINT32)-1 == Encoding; }
 public:
-  CharEncConv() : m_Result(0) {}
+  CharEncConv() : m_Result(0) { SetAllowOptimizedReturn(false); }
   ~CharEncConv() { Close(); }
   void Close()
   {

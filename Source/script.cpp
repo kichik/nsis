@@ -991,12 +991,12 @@ int CEXEBuild::LoadLicenseFile(const TCHAR *file, TCHAR** pdata, const TCHAR *cm
   fseek(f,cbBOMOffset,SEEK_SET);
   UINT cbTotalData=sizeof(TCHAR)+cbFileData+sizeof(TCHAR); // SF_*+file+\0
   TCHAR*data=(TCHAR*)malloc(cbTotalData);
+  *pdata=data; // memory will be released by caller
   if (!data)
   {
     ERROR_MSG(_T("Internal compiler error #12345: %s malloc(%d) failed.\n"),cmdname,cbTotalData);
     return PS_ERROR;
   }
-  *pdata=data; // memory will be released by caller
   *((TCHAR*)((char*)data+cbTotalData-sizeof(TCHAR)))=_T('\0');
 
   TCHAR*ldata=data+1;
@@ -1014,16 +1014,16 @@ l_errwcconv:
     ERROR_MSG(_T("%s: wchar_t conversion failed!\n"),cmdname);
     return PS_ERROR;
   }
-  // Create a fake character in the "header" part of the buffer
+  // Create a fake character in the "header" part of the buffer (For DupWCFromBytes)
   char*lichdr=((char*)ldata) - cbcu;
   *((char*)lichdr)='X';
   if (cbcu > 1) *((WORD*)lichdr)='X';
   //BUGBUG: No room: if (cbcu > 2) *((UINT32*)lichdr)='X';
-  wchar_t*wcdata=DupWCFromBytes(lichdr,cbcu+cbFileData,srccp);
+  const bool canOptRet = (char*)data == lichdr;
+  wchar_t*wcdata=DupWCFromBytes(lichdr,cbcu+cbFileData,srccp|(canOptRet?DWCFBF_ALLOWOPTIMIZEDRETURN:0));
   if (!wcdata) goto l_errwcconv;
-  free(data);
-  *pdata=data=wcdata;
-  ldata=data+1;
+  if (wcdata != data) free(data);
+  *pdata=data=wcdata, ldata=data+1;
 
   const bool isRTF=!memcmp(ldata,_T("{\\rtf"),5*sizeof(TCHAR));
   if (isRTF)

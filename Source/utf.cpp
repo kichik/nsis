@@ -92,14 +92,15 @@ UINT WCFromCodePoint(wchar_t*Dest,UINT cchDest,UINT32 CodPt)
 #endif
 }
 
-wchar_t* DupWCFromBytes(void*Buffer,UINT cbBuffer,WORD SrcCP)
+wchar_t* DupWCFromBytes(void*Buffer,UINT cbBuffer,UINT32 SrcCP)
 {
   /*\
   Converts a buffer encoded with SrcCP to a \0 terminated wchar_t malloc'ed buffer.
   Returns 0 on failure.
   \*/
   CharEncConv cec;
-  if (!cec.Initialize(-1, SrcCP)) return 0;
+  cec.SetAllowOptimizedReturn(!!(SrcCP&DWCFBF_ALLOWOPTIMIZEDRETURN));
+  if (!cec.Initialize(-1, SrcCP&=~DWCFBF_ALLOWOPTIMIZEDRETURN)) return 0;
   wchar_t *pWC = (wchar_t*) cec.Convert(Buffer, cbBuffer);
   return pWC ? (wchar_t*) cec.Detach() : 0;
 }
@@ -183,7 +184,7 @@ void* CharEncConv::Convert(const void*Src, size_t cbSrc, size_t*cbOut)
         if (cbSrc && ((WORD*)Src)[--cbSrc]) ++cbSrc;
         *cbOut = cbSrc * sizeof(wchar_t);
       }
-      return (void*) Src;
+      return (void*) (m_Result = (char*) Src);
     }
 #endif
     char *p = (char*) realloc(m_Result, cbSrc + sizeof(UINT32));
