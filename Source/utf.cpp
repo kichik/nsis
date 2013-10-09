@@ -154,6 +154,7 @@ void* CharEncConv::Convert(const void*Src, size_t cbSrc, size_t*cbOut)
   ** Returns a pointer to the buffer on success or 0 on error.
   ** The buffer is valid until you call Close() or Convert().
   */
+  m_OptimizedReturn = false;
   if ((size_t)-1 == cbSrc)
   {
     UINT cus = IsWE(m_FE) ? sizeof(wchar_t) : NStreamEncoding::GetCodeUnitSize(m_FE);
@@ -184,6 +185,7 @@ void* CharEncConv::Convert(const void*Src, size_t cbSrc, size_t*cbOut)
         if (cbSrc && ((WORD*)Src)[--cbSrc]) ++cbSrc;
         *cbOut = cbSrc * sizeof(wchar_t);
       }
+      m_OptimizedReturn = true;
       return (void*) (m_Result = (char*) Src);
     }
 #endif
