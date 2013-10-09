@@ -103,6 +103,7 @@ class CharEncConv {
   WORD m_TE, m_FE;
 #ifdef _WIN32
   bool m_AllowOptimizedReturn; // Can Convert() return Src buffer?
+  bool m_OptimizedReturn;
 #else
   iconvdescriptor m_iconvd;
 #endif
@@ -115,7 +116,10 @@ public:
   ~CharEncConv() { Close(); }
   void Close()
   {
-    free(m_Result);
+#ifdef _WIN32
+    if (!m_OptimizedReturn)
+#endif
+      free(m_Result);
     m_Result = 0;
 #ifndef _WIN32
     m_iconvd.Close();
