@@ -2331,7 +2331,7 @@ int CEXEBuild::SetVarsSection()
 
     VerifyDeclaredUserVarRefs(&m_UserVarNames);
     int MaxUserVars = m_UserVarNames.getnum();
-    int stringSize = NSIS_MAX_STRLEN*(build_unicode?sizeof(TCHAR):sizeof(char));
+    int stringSize = NSIS_MAX_STRLEN * (build_unicode?2:1);
     if (!res_editor->SetPESectionVirtualSize(NSIS_VARS_SECTION, MaxUserVars * stringSize))
     {
       ERROR_MSG(_T("Internal compiler error #12346: invalid exehead cannot find section \"%") NPRIs _T("\"!\n"), _T(NSIS_VARS_SECTION));
