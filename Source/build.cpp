@@ -2716,6 +2716,7 @@ int CEXEBuild::write_output(void)
   INFO_MSG(_T("Install: "));
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
   int np=build_header.blocks[NB_PAGES].num;
+  if (PAGE_COMPLETED != PAGE_INSTFILES && np) --np; // Special page not part of count
   INFO_MSG(_T("%d page%") NPRIs _T(" (%d bytes), "),np,np==1?_T(""):_T("s"),np*sizeof(page));
 #endif
   {
@@ -2745,6 +2746,7 @@ int CEXEBuild::write_output(void)
     INFO_MSG(_T("Uninstall: "));
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
     np=build_uninst.blocks[NB_PAGES].num;
+    if (PAGE_COMPLETED != PAGE_INSTFILES && np) --np; // Special page not part of count
     INFO_MSG(_T("%d page%") NPRIs _T(" (%d bytes), "),np,np==1?_T(""):_T("s"),ubuild_pages.getlen());
 #endif
     {
