@@ -19,51 +19,41 @@
 #include <vector>
 #include <stdio.h>
 
-
-CtoTString::CtoTString(const char* str)
+void CtoTString::Init(const char* str, UINT cp)
 {
-	int len = MultiByteToWideChar(CP_ACP, 0, str, -1, NULL, 0);
-	m_wStr = (wchar_t*) malloc(len*sizeof(wchar_t));
-	MultiByteToWideChar(CP_ACP, 0, str, -1, m_wStr, len);
+#if defined(_UNICODE) && !defined(_WIN32)
+  if (CP_ACP == cp)
+  {
+    m_wStr = NSISRT_mbtowc(str); // Should be faster than iconv
+    return ;
+  }
+#endif
+  int len = MultiByteToWideChar(cp, 0, str, -1, NULL, 0);
+  m_wStr = (wchar_t*) malloc(len*sizeof(wchar_t));
+  if (m_wStr) MultiByteToWideChar(cp, 0, str, -1, m_wStr, len);
 }
 
-CtoTString::CtoTString(const char* str, UINT cp)
+void CtoTString::Init(const char* str)
 {
-	int len = MultiByteToWideChar(cp, 0, str, -1, NULL, 0);
-	m_wStr = (wchar_t*) malloc(len*sizeof(wchar_t));
-	MultiByteToWideChar(cp, 0, str, -1, m_wStr, len);
-}
-
-CtoTString::CtoTString(const std::string& str)
-{
-	int len = MultiByteToWideChar(CP_ACP, 0, str.c_str(), str.length()+1, NULL, 0);
-	m_wStr = (wchar_t*) malloc(len*sizeof(wchar_t));
-	MultiByteToWideChar(CP_ACP, 0, str.c_str(), str.length()+1, m_wStr, len);
+  Init(str, CP_ACP);
 }
 
 CtoTString::~CtoTString() { free(m_wStr); m_wStr = 0; }
 
-CtoTString::operator const wchar_t*() const { return GetTStr(); }
-inline const wchar_t* CtoTString::GetTStr() const { return m_wStr; }
 
 
-
-TtoCString::TtoCString(const wchar_t* wStr)
+void TtoCString::Init(const wchar_t* str)
 {
-	int len = WideCharToMultiByte(CP_ACP, 0, wStr, -1, NULL, 0, 0, 0);
-	m_cStr = (char*) malloc(len);
-	WideCharToMultiByte(CP_ACP, 0, wStr, -1, m_cStr, len, 0, 0);
-}
-
-TtoCString::TtoCString(const tstring& wStr)
-{
-	int len = WideCharToMultiByte(CP_ACP, 0, wStr.c_str(), wStr.length()+1, NULL, 0, 0, 0);
-	m_cStr = (char*) malloc(len);
-	WideCharToMultiByte(CP_ACP, 0, wStr.c_str(), wStr.length()+1, m_cStr, len, 0, 0);
+#if defined(_UNICODE) && !defined(_WIN32)
+  m_cStr = NSISRT_wctomb(str); // Should be faster than iconv
+  return ;
+#endif
+  int len = WideCharToMultiByte(CP_ACP, 0, str, -1, NULL, 0, 0, 0);
+  m_cStr = (char*) malloc(len);
+  if (m_cStr) WideCharToMultiByte(CP_ACP, 0, str, -1, m_cStr, len, 0, 0);
 }
 
 TtoCString::~TtoCString() { free(m_cStr); m_cStr = 0; }
 
-TtoCString::operator const char*() const { return m_cStr; }
 
 #endif

@@ -46,18 +46,20 @@ typedef std::ifstream    tifstream;
 
 // This is a helpful little function for converting exceptions or
 // other system type things that come back ANSI and must be
-// utilized as either ANSI or WCHAR depending on _UNICODE.
+// utilized as either ANSI or wchar_t depending on _UNICODE.
 class CtoTString
 {
+  void Init(const char* str, UINT cp);
+  void Init(const char* str);
 public:
-  CtoTString(const char* str);
-  CtoTString(const char* str, UINT cp);
-  CtoTString(const std::string& str);
+  CtoTString(const char* str) { Init(str); }
+  CtoTString(const char* str, UINT cp) { Init(str, cp); }
+  CtoTString(const std::string& str) { Init(str.c_str()); }
 
   ~CtoTString();
 
-  operator const wchar_t*() const;
-  inline const wchar_t*GetTStr() const;
+  operator const wchar_t*() const { return m_wStr; }
+  inline const wchar_t*GetTStr() const { return m_wStr; }
 
 private:
   wchar_t* m_wStr;
@@ -67,17 +69,21 @@ private:
 // may actually have Unicode strings.
 class TtoCString
 {
+  void Init(const wchar_t* str);
 public:
-  TtoCString(const wchar_t* wStr);
-  TtoCString(const tstring& wStr);
+  TtoCString(const wchar_t* wStr) { Init(wStr); }
+  TtoCString(const tstring& wStr) { Init(wStr.c_str()); }
 
   ~TtoCString();
 
-  operator const char*() const;
+  operator const char*() const { return m_cStr; };
 
 private:
   char* m_cStr;
 };
 #endif // _UNICODE
+
+#define PosixBug_CtoTString CtoTString
+#define PosixBug_TtoCString TtoCString
 
 #endif // NSIS_TSTRING___H__

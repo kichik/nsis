@@ -77,14 +77,13 @@ inline bool UTF8_GetTrailCount(unsigned char chFirst, unsigned char &cb)
 #include <stdlib.h>
 #include <stdio.h>
 #include "tstring.h"
+#include "util.h" // iconvdescriptor & my_fopen
 #ifdef _WIN32
 #include <io.h> // For _setmode
 #include <fcntl.h> // For _O_BINARY
 #endif
 
 FILE* my_fopen(const TCHAR *path, const char *mode); // from util.h
-
-void RawTStrToASCII(const TCHAR*in,char*out,UINT maxcch);
 
 void UTF16InplaceEndianSwap(void*Buffer, UINT cch);
 UINT StrLenUTF16(const void*str);
@@ -141,7 +140,7 @@ class WCToUTF16LEHlpr {
 public:
   WCToUTF16LEHlpr() : m_s(0) {}
 
-  bool Create(const TCHAR*in)
+  bool Create(const TCHAR*in, unsigned int codepage = CP_ACP)
 #if !defined(_WIN32) || !defined(_UNICODE)
   ;
 #else
@@ -159,6 +158,8 @@ public:
   const unsigned short* Get() const { return m_s; }
   UINT GetLen() const { return StrLenUTF16(m_s); }
   UINT GetSize() const { return (GetLen()+1) * 2; }
+  unsigned short* Detach() { unsigned short *r = m_s; m_s = 0; return r; }
+  void CopyTo(unsigned short*Dest) const { memcpy(Dest, Get(), GetSize()); }
 };
 
 class NStreamEncoding {

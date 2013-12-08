@@ -474,6 +474,9 @@ typedef struct {
   COLORREF bkc;
   UINT lbStyle;
   HBRUSH bkb;
+#ifdef _WIN64
+#error Should we swap lbStyle and bkb to get better alignment? If we are going to do it, now is our only chance before plugins in the wild start depending on the ctlcolors layout on x64
+#endif
   int bkmode;
   int flags;
 } ctlcolors;

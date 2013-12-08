@@ -34,6 +34,11 @@
 #  include <fcntl.h> // for open(2)
 #  include <iconv.h>
 #  include <locale.h>
+#  include <stdlib.h>
+#  include <limits.h>
+#  ifdef _UNICODE
+#    include <wchar.h>
+#  endif
 #endif
 
 #ifdef __APPLE__
@@ -88,70 +93,73 @@ unsigned int my_strncpy(TCHAR*Dest, const TCHAR*Src, unsigned int cchMax)
 int update_bitmap(CResourceEditor* re, WORD id, const TCHAR* filename, int width/*=0*/, int height/*=0*/, int maxbpp/*=0*/) {
   FILE *f = FOPEN(filename, ("rb"));
   if (!f) return -1;
-
   if (fgetc(f) != 'B' || fgetc(f) != 'M') {
     fclose(f);
     return -2;
   }
-
   if (width != 0) {
     INT32 biWidth;
     fseek(f, 18, SEEK_SET); // Seek to the width member of the header
-    fread(&biWidth, sizeof(INT32), 1, f);
+    size_t nio = fread(&biWidth, sizeof(INT32), 1, f);
     FIX_ENDIAN_INT32_INPLACE(biWidth);
-    if (width != biWidth) {
+    if (nio != 1 || width != biWidth) {
       fclose(f);
       return -3;
     }
   }
-
   if (height != 0) {
     INT32 biHeight;
     fseek(f, 22, SEEK_SET); // Seek to the height member of the header
-    fread(&biHeight, sizeof(INT32), 1, f);
+    size_t nio = fread(&biHeight, sizeof(INT32), 1, f);
     FIX_ENDIAN_INT32_INPLACE(biHeight);
     // Bitmap height can be negative too...
-    if (height != abs(biHeight)) {
+    if (nio != 1 || height != abs(biHeight)) {
       fclose(f);
       return -3;
     }
   }
-
   if (maxbpp != 0) {
     WORD biBitCount;
     fseek(f, 28, SEEK_SET); // Seek to the height member of the header
-    fread(&biBitCount, sizeof(WORD), 1, f);
+    size_t nio = fread(&biBitCount, sizeof(WORD), 1, f);
     FIX_ENDIAN_INT16_INPLACE(biBitCount);
-    if (biBitCount > maxbpp) {
+    if (nio != 1 || biBitCount > maxbpp) {
       fclose(f);
       return -4;
     }
   }
-
   DWORD dwSize;
   fseek(f, 2, SEEK_SET);
-  fread(&dwSize, sizeof(DWORD), 1, f);
+  size_t nio = fread(&dwSize, sizeof(DWORD), 1, f);
+  if (nio != 1) {
+    fclose(f);
+    return -3;
+  }
   FIX_ENDIAN_INT32_INPLACE(dwSize);
   dwSize -= 14;
-
   unsigned char* bitmap = (unsigned char*)malloc(dwSize);
   if (!bitmap) {
     fclose(f);
     throw bad_alloc();
   }
-
   bool gotbmdata = !fseek(f, 14, SEEK_SET) && dwSize == fread(bitmap, 1, dwSize, f);
   int retval = gotbmdata ? 0 : -2;
   fclose(f);
-
   if (gotbmdata)
     re->UpdateResource(RT_BITMAP, id, NSIS_DEFAULT_LANG, bitmap, dwSize);
-
   free(bitmap);
   return retval;
 }
 
 #ifndef _WIN32
+void PathConvertWinToPosix(char*p);
+
+BOOL IsDBCSLeadByteEx(unsigned int CodePage, unsigned char TestChar)
+{
+  if (CP_UTF8 == CodePage) return false; //blogs.msdn.com/b/michkap/archive/2007/04/19/2190207.aspx
+  const char buf[] = {(char)TestChar, 'a', 'b', '\0'}; // Untested and probably not the best way to do this!
+  return CharNextExA(CodePage, buf, 0) > &buf[1];
+}
 TCHAR *CharPrev(const TCHAR *s, const TCHAR *p) {
   if (!s || !p || p < s)
     return NULL;
@@ -171,34 +179,257 @@ char *CharNextA(const char *s) {
   return (char *) s + l;
 }
 
-WCHAR *CharNextW(const WCHAR *s) {
-  // BUGBUG: Is this the best we can do?
-  return s + 1;
+wchar_t *CharNextW(const wchar_t *s) {
+  if (sizeof(*s)==2 && IsLeadSurrogateUTF16(*s)) (wchar_t*) ++s; //BUGBUG: This assumes that 16bit wchar_t == UTF16
+  // else if(...) BUGBUG: Is this the best we can do? What about combining characters/diacritics etc?
+  return (wchar_t*) s + 1;
 }
 
 char *CharNextExA(WORD codepage, const char *s, int flags) {
-  char buf[30];
-  snprintf(buf, 30, "CP%d", codepage);
-  const char* orglocct = setlocale(LC_CTYPE, buf);
-
-  const char* np;
+  // blogs.msdn.com/b/michkap/archive/2007/04/19/2190207.aspx implies that 
+  // CharNextExA uses IsDBCSLeadByteEx, should we do the same?
+  const char* orglocct = NSISRT_setlocale_wincp(LC_CTYPE, codepage), *np;
   int len = mblen(s, strlen(s));
-  if (len > 0)
-    np = s + len;
-  else
-    np = s + 1;
-
+  if (len > 0) np = s + len; else np = s + 1;
   setlocale(LC_CTYPE, orglocct);
-
   return (char *) np;
 }
 
 int wsprintf(TCHAR *s, const TCHAR *format, ...) {
   va_list val;
   va_start(val, format);
-  int res = _vsntprintf(s, 1024, format, val);
+  int res = _vsntprintf(s, 1024+1, format, val);
+  if (res >= 0) s[res] = _T('\0');
   va_end(val);
   return res;
+}
+
+static char g_nrt_iconv_narrowlocbuf[50], *g_nrt_iconv_narrowloc;
+#define setlocale_ACP(cat) setlocale((cat), "")
+#define iconv_ACP g_nrt_iconv_narrowloc
+#define setlocale_OEM(cat) NSISRT_setlocale_wincp((cat), 1252)
+#define iconv_OEM "CP1252"
+
+#ifdef HAVE_LANGINFO_H // BUGBUG: scons needs to check for HAVE_LANGINFO_H and HAVE_NL_LANGINFO support?
+#include <langinfo.h>
+#endif
+bool NSISRT_Initialize()
+{
+  iconvdescriptor id;
+  g_nrt_iconv_narrowloc = const_cast<char*>(""); // Use "" and not "char", "char" is a GNU extension?
+  if (!id.Open("wchar_t", g_nrt_iconv_narrowloc)) 
+  {
+    unsigned int cchmax = COUNTOF(g_nrt_iconv_narrowlocbuf);
+    const char *tmp = "";
+#ifdef HAVE_NL_LANGINFO
+    tmp = nl_langinfo(CODESET); // TODO: Use libcharset or locale_charset if possible
+    if (strlen(tmp) >= cchmax) tmp = "";
+#endif
+    strcpy(g_nrt_iconv_narrowloc = g_nrt_iconv_narrowlocbuf, tmp);
+    if (!id.Open("wchar_t", g_nrt_iconv_narrowloc))
+    {
+      // Unable to determine the iconv narrow string code, UTF-8 is the best we can do
+      create_code_page_string(g_nrt_iconv_narrowloc, cchmax, CP_UTF8);
+    }
+  }
+  return !!nsis_iconv_get_host_endian_ucs4_code();
+}
+
+const char* NSISRT_setlocale_wincp(int cat, unsigned int cp)
+{
+  if (cp <= 1) return CP_ACP == cp ? setlocale_ACP(cat) : setlocale_OEM(cat);
+  char buf[40];
+  const char *p, *p1 = 0, *p2 = 0;
+  sprintf(buf, ".CP%u", cp);
+  p = setlocale(cat, &buf[1]); // "CP%u"
+  if (!p) p = setlocale(cat, buf); // ".CP%u" this is the format used by MSVCRT?
+  if (!p)
+  {
+    switch(cp) // This list is probably incomplete
+    {
+    case 932: p1 = "SJIS"; break; // Not an exact match but CP932 already failed, this is the best we can do
+    case 936: p1 = "EUCCN", p2 = "euc-CN"; break;
+    case 949: p1 = "EUCKR", p2 = "euc-KR"; break;
+    case 950: p1 = "Big5"; break;
+    case 20866: p1 = "KOI8-R"; break;
+    case 20932: p1 = "EUCJP", p2 = "euc-JP"; break;
+    case 65001: p1 = "UTF-8", p2 = "utf8"; break;
+    default:
+      if (cp >= 28591 && cp <= 28599) sprintf(buf, "ISO-8859-%u", cp - 28590), p1 = buf;
+      if (cp == 28603 || cp == 28605) sprintf(buf, "ISO-8859-%u", (cp - 28600) + 10), p1 = buf;
+    }
+    if (!(p = setlocale(cat, p1))) p = setlocale(cat, p2);
+  }
+  return p;
+}
+
+wchar_t* NSISRT_mbtowc(const char *Str)
+{
+  const char *orglocct = setlocale(LC_CTYPE, "");
+  wchar_t *d = 0;
+  const char *s = Str;
+  size_t cch = mbsrtowcs(0, &s, 0, 0);
+  if ((size_t)-1 != cch && (d = (wchar_t*) malloc(++cch * sizeof(wchar_t))))
+  {
+    cch = mbsrtowcs(d, &Str, cch, 0);
+    if ((size_t) -1 == cch) { NSISRT_free(d); d = 0; }
+  }
+  if (!errno) errno = ENOMEM;
+  setlocale(LC_CTYPE, orglocct);
+  return d;
+}
+char* NSISRT_wctomb(const wchar_t *Str)
+{
+  const char *orglocct = setlocale(LC_CTYPE, "");
+  char *d = 0;
+  const wchar_t *s = Str;
+  errno = 0;
+  size_t cb = wcsrtombs(0, &s, 0, 0);
+  if ((size_t) -1 != cb && (d = (char*) malloc(++cb)))
+  {
+    cb = wcsrtombs(d, &Str, cb, 0);
+    if ((size_t) -1 == cb) { NSISRT_free(d); d = 0; }
+  }
+  if (!errno) errno = ENOMEM;
+  setlocale(LC_CTYPE, orglocct);
+  return d;
+}
+char* NSISRT_wctombpath(const wchar_t *Path)
+{
+  char *p = NSISRT_wctomb(Path);
+  if (p) PathConvertWinToPosix(p);
+  return p;
+}
+char* NSISRT_ttombpath(const TCHAR *Path)
+{
+#ifdef _UNICODE
+  return NSISRT_wctombpath(Path);
+#else
+  char *p = _tcsdup(Path);
+  if (p) PathConvertWinToPosix(p); else errno = ENOMEM;
+  return p;
+#endif
+}
+
+#include <wctype.h>
+int _wcsnicmp(const wchar_t *a, const wchar_t *b, size_t n)
+{
+  // Note: Behavior depends on the LC_CTYPE category of the current locale.
+#if _XOPEN_SOURCE >= 700 || _POSIX_C_SOURCE >= 200809L
+  return wcsncasecmp(a, b, n);
+#else
+  int diff = 0;
+  for ( ; n--; ++a, ++b )
+    if ((diff = (int) towlower(*a) - (int) towlower(*b)) || !*a) break;
+  return diff;
+#endif
+}
+int _wcsicmp(const wchar_t *a, const wchar_t *b)
+{
+  return _wcsnicmp(a, b, (size_t)-1);
+}
+
+long _wtol(const wchar_t *s) { return wcstol(s, 0, 10); }
+int _wtoi(const wchar_t *s)
+{
+  errno = 0;
+  long int r = _wtol(s);
+  if (errno) r = 0;
+  if (LONG_MIN == r) r = INT_MIN;
+  if (LONG_MAX == r) r = INT_MAX;
+  return (int) r;
+}
+
+int _swprintf(wchar_t *d, const wchar_t *f, ...)
+{
+  va_list val;
+  va_start(val, f);
+  int res = _vsnwprintf(d, INT_MAX / sizeof(*d), f, val);
+  va_end(val);
+  return res;
+}
+
+wchar_t* _wcsdup(const wchar_t *s)
+{
+  wchar_t *d = (wchar_t*) malloc((wcslen(s)+1) * sizeof(wchar_t));
+  if (d) wcscpy(d, s);
+  return d;
+}
+
+wchar_t* _wgetenv(const wchar_t *wname)
+{
+  mbstate_t mbs;
+  memset(&mbs,0,sizeof(mbs));
+  char *nval, *nval2, nname[200]; // Hopefully this is enough
+  size_t cbnn = wcsrtombs(nname, &wname, sizeof(nname), &mbs);
+  if ((size_t)-1 == cbnn || !(nval = getenv(nname))) return NULL;
+  static wchar_t *g_wval = 0; // Not thread safe!
+  for ( unsigned int cch = 200;; cch *= 2 )
+  {
+    if (!(g_wval = (wchar_t*) realloc(g_wval, cch * sizeof(wchar_t)))) break;
+    nval2 = nval;
+    memset(&mbs,0,sizeof(mbs));
+    size_t cchwv = mbsrtowcs(g_wval, const_cast<const char**>(&nval2), cch, &mbs);
+    if ((size_t)-1 == cchwv) return NULL;
+    if (!nval2) return g_wval;
+  }
+  errno = ENOMEM;
+  return 0;
+}
+
+int _wremove(const wchar_t *Path)
+{
+  const char *path = NSISRT_wctomb(Path); // Caller should have converted to POSIX path
+  if (!path) return -1;
+  const int retval = remove(path);
+  NSISRT_free(path);
+  return retval;
+}
+
+int _wchdir(const wchar_t *Path)
+{
+  const char *path = NSISRT_wctomb(Path); // Caller should have converted to POSIX path
+  if (!path) return -1;
+  const int retval = chdir(path);
+  NSISRT_free(path);
+  return retval;
+}
+
+#include <sys/types.h>
+#include <sys/stat.h>
+int _wstat(const wchar_t *Path, struct stat *pS)
+{
+  const char *path = NSISRT_wctomb(Path); // Caller should have converted to POSIX path
+  if (!path) return -1;
+  const int retval = stat(path, pS);
+  NSISRT_free(path);
+  return retval;
+}
+
+static int NSISRT_wsystem(const wchar_t *wcmd)
+{
+  if (!wcmd) return system(NULL);
+  // NOTE: Only the first drive in the path will be converted to posix style (c:\foo d:\bar > /c/foo d:/bar)
+  const char *cmd = NSISRT_wctombpath(wcmd);
+  if (!cmd) return -1;
+  const int retval = system(cmd);
+  NSISRT_free(cmd);
+  return retval;
+}
+
+const char* nsis_iconv_get_host_endian_ucs4_code()
+{
+  static const char* ucs4 = 0;
+  if (!ucs4)
+  {
+    iconvdescriptor id;
+#define NRT_TMP_IGHEUC(s) if (id.Open("wchar_t", (s))) return ucs4 = (s)
+    NRT_TMP_IGHEUC("UCS-4-INTERNAL");
+    NRT_TMP_IGHEUC(Platform_IsBigEndian() ? "UCS-4BE" : "UCS-4LE");
+    NRT_TMP_IGHEUC(Platform_IsBigEndian() ? "UTF-32BE" : "UTF-32LE");
+#undef NRT_TMP_IGHEUC
+  }
+  return ucs4;
 }
 
 bool nsis_iconv_reallociconv(iconv_t CD, char**In, size_t*cbInLeft, char**Mem, size_t&cbConverted)
@@ -225,50 +456,44 @@ bool nsis_iconv_reallociconv(iconv_t CD, char**In, size_t*cbInLeft, char**Mem, s
   return false;
 }
 
-void static create_code_page_string(TCHAR *buf, size_t len, UINT code_page) {
+const unsigned short CODEPAGESTR_MAXLEN = 50; // Should be plenty
+void create_code_page_string(TCHAR *buf, size_t len, UINT code_page)
+{
   switch(code_page)
   {
-  case CP_ACP:
-  case 1: // OEMCP
-    code_page = 1252;
-    break;
-  case CP_UTF8:
-    _sntprintf(buf, len, _T("UTF-8"));
-    return;
+  case CP_ACP:   _sntprintf(buf, len, _T("%") NPRINs, iconv_ACP); return;
+  case CP_OEMCP: _sntprintf(buf, len, _T("%") NPRINs, iconv_OEM); return;
+  case CP_UTF8:  _sntprintf(buf, len, _T("UTF-8")); return;
   case 1200: // UTF16LE
   case 1201: // UTF16BE
-    _sntprintf(buf, len, _T("UTF-16%cE"), 1200==code_page ? _T('L') : _T('B'));
+    _sntprintf(buf, len, _T("UTF-16%cE"), 1200 == code_page ? 'L' : 'B');
     return;
   }
   _sntprintf(buf, len, _T("CP%d"), code_page);
 }
+#ifdef _UNICODE
+void create_code_page_string(char*buf, size_t len, UINT code_page)
+{
+  TCHAR t[CODEPAGESTR_MAXLEN];
+  create_code_page_string(t, COUNTOF(t), code_page);
+  RawTStrToASCII(t, buf, len);
+}
+#endif
 
-int WideCharToMultiByte(UINT CodePage, DWORD dwFlags, LPCWSTR lpWideCharStr,
+int WideCharToMultiByte(UINT CodePage, DWORD dwFlags, const wchar_t* lpWideCharStr,
     int cchWideChar, LPSTR lpMultiByteStr, int cbMultiByte, LPCSTR lpDefaultChar,
     LPBOOL lpUsedDefaultChar) {
   static char buffer[4096]; // BUGBUG: Should this be 4*NSIS_MAX_STRLEN for large string build?
 
-  char cp[128];
-  create_code_page_string(cp, sizeof(cp), CodePage);
-
+  char cp[CODEPAGESTR_MAXLEN];
+  create_code_page_string(cp, COUNTOF(cp), CodePage);
   iconv_t cd = iconv_open(cp, "wchar_t");
-  if (cd == (iconv_t) -1) {
-    return 0;
-  }
+  if (cd == (iconv_t) -1) return 0;
+  if (cchWideChar < 0) cchWideChar = (int) wcslen(lpWideCharStr) + 1;
+  if (cbMultiByte == 0) cbMultiByte = sizeof(buffer), lpMultiByteStr = buffer;
 
-  if (cchWideChar < 0) {
-    cchWideChar = (int) _wcslen(lpWideCharStr) + 1;
-  }
-
-  if (cbMultiByte == 0) {
-    cbMultiByte = sizeof(buffer);
-    lpMultiByteStr = buffer;
-  }
-
-  char *in = (char *) lpWideCharStr;
-  char *out = lpMultiByteStr;
-  size_t inbytes = cchWideChar * sizeof(WCHAR);
-  size_t outbytes = cbMultiByte;
+  char *in = (char *) lpWideCharStr, *out = lpMultiByteStr;
+  size_t inbytes = cchWideChar * sizeof(wchar_t), outbytes = cbMultiByte;
 
   if (nsis_iconv_adaptor(iconv, cd, &in, &inbytes, &out, &outbytes) == (size_t) -1) {
     iconv_close(cd);
@@ -276,35 +501,22 @@ int WideCharToMultiByte(UINT CodePage, DWORD dwFlags, LPCWSTR lpWideCharStr,
   }
 
   iconv_close(cd);
-
   return cbMultiByte - outbytes;
 }
 
 int MultiByteToWideChar(UINT CodePage, DWORD dwFlags, LPCSTR lpMultiByteStr,
-    int cbMultiByte, LPWSTR lpWideCharStr, int cchWideChar) {
-  static WCHAR buffer[4096]; // BUGBUG: Should this be 4*NSIS_MAX_STRLEN for large string build?
+    int cbMultiByte, wchar_t* lpWideCharStr, int cchWideChar) {
+  static wchar_t buffer[4096]; // BUGBUG: Should this be 4*NSIS_MAX_STRLEN for large string build?
 
-  char cp[128];
-  create_code_page_string(cp, sizeof(cp), CodePage);
-
+  char cp[CODEPAGESTR_MAXLEN];
+  create_code_page_string(cp, COUNTOF(cp), CodePage);
   iconv_t cd = iconv_open("wchar_t", cp);
-  if (cd == (iconv_t) -1) {
-    return 0;
-  }
+  if (cd == (iconv_t) -1) return 0;
+  if (cbMultiByte < 0) cbMultiByte = strlen(lpMultiByteStr) + 1;
+  if (cchWideChar == 0) cchWideChar = sizeof(buffer), lpWideCharStr = buffer;
 
-  if (cbMultiByte < 0) {
-    cbMultiByte = strlen(lpMultiByteStr) + 1;
-  }
-
-  if (cchWideChar == 0) {
-    cchWideChar = sizeof(buffer);
-    lpWideCharStr = buffer;
-  }
-
-  char *in = (char *) lpMultiByteStr;
-  char *out = (char *) lpWideCharStr;
-  size_t inbytes = cbMultiByte;
-  size_t outbytes = cchWideChar * sizeof(WCHAR);
+  char *in = (char *) lpMultiByteStr, *out = (char *) lpWideCharStr;
+  size_t inbytes = cbMultiByte, outbytes = cchWideChar * sizeof(wchar_t);
 
   if (nsis_iconv_adaptor(iconv, cd, &in, &inbytes, &out, &outbytes) == (size_t) -1) {
     iconv_close(cd);
@@ -312,21 +524,16 @@ int MultiByteToWideChar(UINT CodePage, DWORD dwFlags, LPCSTR lpMultiByteStr,
   }
 
   iconv_close(cd);
-
-  return cchWideChar - (outbytes / sizeof (WCHAR));
+  return cchWideChar - (outbytes / sizeof (wchar_t));
 }
 
 BOOL IsValidCodePage(UINT CodePage)
 {
-  TCHAR cp[128];
-  create_code_page_string(cp, sizeof(cp), CodePage);
-
-  iconv_t cd = iconv_open(_T("wchar_t"), cp);
-  if (cd == (iconv_t) -1)
-    return FALSE;
-
+  char cp[CODEPAGESTR_MAXLEN];
+  create_code_page_string(cp, COUNTOF(cp), CodePage);
+  iconv_t cd = iconv_open("wchar_t", cp);
+  if (cd == (iconv_t) -1) return FALSE;
   iconv_close(cd);
-
   return TRUE;
 }
 
@@ -335,43 +542,21 @@ void PathConvertWinToPosix(char*p)
 {
   if ('\"' == *p) ++p; // Skip opening quote if any (For !system)
   size_t len = strlen(p);
-
-  /* Replace drive letter X: by /X */
-  if (len >= 2 && ':' == p[1])
-  {
-    p[1] = (char) tolower((int) p[0]);
-    p[0] = '/';
-  }
-
-  do
-  {
-    if ('\\' == *p) *p = '/';
-    p = CharNextA(p);
-  }
-  while (*p);
+  /* Replace drive letter X: by /x */
+  if (len >= 2 && ':' == p[1]) p[1] = (char) tolower((int) p[0]), p[0] = '/';
+  do if ('\\' == *p) *p = '/'; while (*(p = CharNextA(p)));
 }
 #endif
 void PathConvertWinToPosix(TCHAR*p)
 {
   if (_T('\"') == *p) ++p; // Skip opening quote if any (For !system)
   size_t len = _tcsclen(p);
-
-  /* Replace drive letter X: by /X */
-  if (len >= 2 && _T(':') == p[1])
-  {
-    p[1] = (TCHAR) tolower((int) p[0]);
-    p[0] = _T('/');
-  }
-
-  do
-  {
-    if (_T('\\') == *p) *p = _T('/');
-    p = CharNext(p);
-  }
-  while (*p);
+  /* Replace drive letter X: by /x */
+  if (len >= 2 && _T(':') == p[1]) p[1] = (TCHAR) tolower((int) p[0]), p[0] = _T('/');
+  do if (_T('\\') == *p) *p = _T('/'); while (*(p = CharNext(p)));
 }
 
-#define MY_ERROR_MSG(x) {if (g_display_errors) {PrintColorFmtMsg_ERR(_T("%s"), x);}}
+#define MY_ERROR_MSG(x) {if (g_display_errors) {PrintColorFmtMsg_ERR(_T("%") NPRIs, x);}}
 
 TCHAR *my_convert(const TCHAR *path)
 {
@@ -392,10 +577,14 @@ void my_convert_free(TCHAR *converted_path)
 
 int my_open(const TCHAR *pathname, int flags)
 {
-  TCHAR *converted_pathname = my_convert(pathname);
-
-  int result = open(converted_pathname, flags);
-  my_convert_free(converted_pathname);
+#ifndef _UNICODE
+  int result = open(pathname, flags);
+#else
+  char *nativepath = NSISRT_ttombpath(pathname);
+  if (!nativepath) return -1;
+  int result = open(nativepath, flags);
+  NSISRT_free(nativepath);
+#endif
   return result;
 }
 #endif//!_WIN32
@@ -411,43 +600,15 @@ FILE* my_fopen(const TCHAR *path, const char *mode)
   for (int i=0; ; ++i) if (0 == (tmode[i] = mode[i])) break;
   f = _wfopen(path, tmode);
 #else
-  const char* orglocct = setlocale(LC_CTYPE, "");
-  const wchar_t* srcW = path;
-  size_t cb = wcsrtombs(0,&srcW,0,0);
-  if (-1 != cb)
+  char *nativepath = NSISRT_wctombpath(path);
+  if (nativepath)
   {
-    char* nativepath = (char*) malloc(++cb);
-    if (nativepath)
-    {
-      cb = wcsrtombs(nativepath,&path,cb,0);
-      if (-1 != cb)
-      {
-        PathConvertWinToPosix(nativepath);
-        f = fopen(nativepath, mode);
-      }
-      free(nativepath);
-    }
+    f = fopen(nativepath, mode);
+    NSISRT_free(nativepath);
   }
-  setlocale(LC_CTYPE, orglocct);
 #endif
 #endif
   return f;
-}
-
-
-void *operator new(size_t size) NSIS_CXX_THROWSPEC(bad_alloc) {
-  void *p = malloc(size);
-  if (!p)
-    throw bad_alloc();
-  return p;
-}
-
-void operator delete(void *p) throw() {
-  if (p) free(p);
-}
-
-void operator delete [](void *p) throw() {
-  if (p) free(p);
 }
 
 size_t my_strftime(TCHAR *s, size_t max, const TCHAR  *fmt, const struct tm *tm) {
@@ -456,53 +617,57 @@ size_t my_strftime(TCHAR *s, size_t max, const TCHAR  *fmt, const struct tm *tm)
 
 tstring get_full_path(const tstring &path) {
 #ifdef _WIN32
-  TCHAR *throwaway;
-  TCHAR real_path[1024];
-  int rc = GetFullPathName(path.c_str(),1024,real_path,&throwaway);
+  TCHAR real_path[1024], *fnpart;
+  DWORD rc = GetFullPathName(path.c_str(), COUNTOF(real_path), real_path, &fnpart);
   assert(rc <= 1024); // path size is limited by MAX_PATH (260)
   assert(rc != 0); // rc==0 in case of error
   return tstring(real_path);
-#else//_WIN32
+#else // !_WIN32
+  tstring result;
+  char *rpret = 0, *inputpath = NSISRT_ttombpath(path.c_str());
+  if (!inputpath) return tstring(path);
 #ifdef PATH_MAX
-  static TCHAR buffer[PATH_MAX];
-#else//PATH_MAX
-  int path_max = pathconf(path.c_str(), _PC_PATH_MAX);
-  if (path_max <= 0)
-    path_max = 4096;
-  TCHAR *buffer = (TCHAR *) malloc(path_max*sizeof(TCHAR));
-  if (!buffer)
-    return tstring(path);
-#endif//PATH_MAX
-  if (!realpath(path.c_str(), buffer))
-    _tcscpy(buffer, path.c_str());
-  tstring result(buffer);
+  static char buffer[PATH_MAX];
+#else // !PATH_MAX
+#if _POSIX_C_SOURCE >= 200809L
+  char *buffer = NULL; // realpath can malloc
+#else
+  int path_max = pathconf(inputpath, _PC_PATH_MAX);
+  if (path_max <= 0) path_max = 4096;
+  char *buffer = (char *) malloc(path_max * sizeof(char));
+  if (buffer)
+#endif
+#endif // ~PATH_MAX
+  {
+    rpret = realpath(inputpath, buffer);
+  }
+  result = CtoTString(rpret ? rpret : inputpath);
 #ifndef PATH_MAX
-  free(buffer);
-#endif//!PATH_MAX
+  free(rpret ? rpret : buffer);
+#endif
+  NSISRT_free(inputpath);
   return result;
-#endif//_WIN32
+#endif // ~_WIN32
 }
 
 tstring get_string_prefix(const tstring& str, const tstring& separator) {
   const tstring::size_type last_separator_pos = str.rfind(separator);
-  if (last_separator_pos == string::npos)
-    return str;
+  if (last_separator_pos == string::npos) return str;
   return str.substr(0, last_separator_pos);
 }
 
 tstring get_string_suffix(const tstring& str, const tstring& separator) {
   const tstring::size_type last_separator_pos = str.rfind(separator);
-  if (last_separator_pos == tstring::npos)
-    return str;
+  if (last_separator_pos == tstring::npos) return str;
   return str.substr(last_separator_pos + separator.size(), tstring::npos);
 }
 
 tstring get_dir_name(const tstring& path) {
-  return get_string_prefix(path, PLATFORM_PATH_SEPARATOR_STR);
+  return get_string_prefix(path, PLATFORM_PATH_SEPARATOR_STR); // BUGBUG: Windows should support "\" and "/"
 }
 
 tstring get_file_name(const tstring& path) {
-  return get_string_suffix(path, PLATFORM_PATH_SEPARATOR_STR);
+  return get_string_suffix(path, PLATFORM_PATH_SEPARATOR_STR); // BUGBUG: Windows should support "\" and "/"
 }
 
 tstring get_executable_path(const TCHAR* argv0) {
@@ -520,27 +685,28 @@ tstring get_executable_path(const TCHAR* argv0) {
   return tstring(temp_buf);
 #else /* Linux/BSD/POSIX/etc */
   const TCHAR *envpath = _tgetenv(_T("_"));
-  if( envpath != NULL ) return get_full_path( envpath );
+  if( envpath != NULL )
+    return get_full_path( envpath );
   else {
-    TCHAR* pathtmp;
-    TCHAR* path = NULL;
+    char *path = NULL, *pathtmp;
     size_t len = 100;
     int nchars;
     while(1){
-      pathtmp = (TCHAR*)realloc(path,len+1);
+      pathtmp = (char*)realloc(path,len+1);
       if( pathtmp == NULL ){
         free(path);
         return get_full_path(argv0);
       }
       path = pathtmp;
-      nchars = readlink(_T("/proc/self/exe"), path, len);
+      nchars = readlink("/proc/self/exe", path, len);
       if( nchars == -1 ){
         free(path);
         return get_full_path(argv0);
       }
       if( nchars < (int) len ){
-        path[nchars] = _T('\0');
-        string result(path);
+        path[nchars] = '\0';
+        tstring result;
+        result = CtoTString(path);
         free(path);
         return result;
       }
@@ -569,6 +735,13 @@ tstring lowercase(const tstring &str) {
   return result;
 }
 
+void RawTStrToASCII(const TCHAR*in,char*out,UINT maxcch)
+{
+  const bool empty = !maxcch;
+  for(; maxcch && *in; --maxcch) *out++ = (char) *in++;
+  if (!empty) *out = 0;
+}
+
 /*
  * ExpandoStrFmtVaList returns the number of characters written excluding
  * the \0 terminator or 0 on error.
@@ -579,7 +752,7 @@ size_t ExpandoStrFmtVaList(wchar_t*Stack, size_t cchStack, wchar_t**ppMalloc, co
 {
 #ifdef _WIN32
 // For _vsnwprintf, the \0 terminator is not part of the input size
-#  if _MSC_VER <= 1310
+#  if _MSC_VER < 1310
 #    define ExpandoStrFmtVaList_vsnwprintf(d,c,f,v) _vsnwprintf((d),(c)?(c)-1:0,(f),(v)) // Allow INT_MAX hack on MinGW and older versions of VC that don't have _vscwprintf
 #  else
 #    define ExpandoStrFmtVaList_vsnwprintf(d,c,f,v) ( INT_MAX==(c) ? _vscwprintf((f),(v)) : _vsnwprintf((d),(c)?(c)-1:0,(f),(v)) )
@@ -726,7 +899,7 @@ switchtoacp:cp = CP_ACP, mbtwcf = 0, utf8 = false;
           WinStdIO_OStreamWrite(g_osdata_stdout, wbuf, cchwb); // Faster than _ftprintf
 #else
           wbuf[cchwb] = L'\0';
-          _ftprintf(g_output, _T("%s"), wbuf);
+          _ftprintf(g_output, _T("%") NPRIs, wbuf);
 #endif
           cchwb = 0;
         }
@@ -759,23 +932,25 @@ int sane_system(const TCHAR *command)
   // which obviously fails...
   //
   // to avoid the stripping, a harmless string is prefixed to the command line.
-  const TCHAR* prefix = _T("IF 1==1 ");
+  const TCHAR*const prefix = _T("IF 1==1 ");
 #ifdef _UNICODE
-  if (!command) return 0;
-  if (!*command) return 1;
+  if (!command) return 0; else if (!*command) return 1;
   tstring fixedcmd = _tgetenv(_T("COMSPEC"));
   if (!fixedcmd.length()) fixedcmd = _T("CMD.EXE");
-  fixedcmd += _T(" /C ");
-  fixedcmd += prefix;
+  fixedcmd += _T(" /C "), fixedcmd += prefix;
   return RunChildProcessRedirected(fixedcmd.c_str(), command);
 #else
   tstring fixedcmd = prefix + _T("") + command;
   return _tsystem(fixedcmd.c_str());
-#endif
-
-#else
+#endif // ~_UNICODE
+#else // !_WIN32
+#ifndef _UNICODE
+  PATH_CONVERT(command);
   return _tsystem(command);
+#else
+  return NSISRT_wsystem(command);
 #endif
+#endif // ~_WIN32
 }
 
 #ifdef _WIN32
@@ -812,7 +987,7 @@ bool WINAPI WinStdIO_OStreamInit(WINSIO_OSDATA&osd, FILE*strm, WORD cp, int bom)
     SetFilePointer(osd.hNative, 0, 0, FILE_END);
   }
   osd.mustwritebom = bom > 0 && !cbio, osd.cp = cp;
-  return succ || (sizeof(TCHAR)-1 && WinStdIO_IsConsole(osd)); // Don't care about BOM for WriteConsoleW
+  return succ || (sizeof(TCHAR) > 1 && WinStdIO_IsConsole(osd)); // Don't care about BOM for WriteConsoleW
 }
 bool WINAPI WinStdIO_OStreamWrite(WINSIO_OSDATA&osd, const wchar_t *Str, UINT cch)
 {
@@ -884,7 +1059,7 @@ void PrintColorFmtMsg(unsigned int type, const TCHAR *fmtstr, va_list args)
     {
       CONSOLE_SCREEN_BUFFER_INFO csbi;
       contxtattrbak = -2;
-      if ( GetConsoleScreenBufferInfo(hWin32Con, &csbi) )
+      if (GetConsoleScreenBufferInfo(hWin32Con, &csbi))
       {
         contxtattrbak = csbi.wAttributes;
         goto gottxtattrbak;
@@ -967,15 +1142,13 @@ static bool GetDLLVersionUsingRE(const tstring& filepath, DWORD& high, DWORD & l
       if ((size_t) versize > sizeof(WORD) * 3)
       {
         // get VS_FIXEDFILEINFO from VS_VERSIONINFO
-        WCHAR *szKey = (WCHAR *)(ver + sizeof(WORD) * 3);
-        int len = (wcslen(szKey) + 1) * sizeof(WCHAR) + sizeof(WORD) * 3;
+        WINWCHAR *szKey = (WINWCHAR *)(ver + sizeof(WORD) * 3);
+        int len = (WinWStrLen(szKey) + 1) * sizeof(WINWCHAR) + sizeof(WORD) * 3;
         len = (len + 3) & ~3; // align on DWORD boundry
         VS_FIXEDFILEINFO *verinfo = (VS_FIXEDFILEINFO *)(ver + len);
         if (versize > len && verinfo->dwSignature == VS_FFI_SIGNATURE)
         {
-          low = verinfo->dwFileVersionLS;
-          high = verinfo->dwFileVersionMS;
-          found = true;
+          found = true, low = verinfo->dwFileVersionLS, high = verinfo->dwFileVersionMS;
         }
       }
       dllre->FreeResource(ver);
@@ -1012,9 +1185,7 @@ static bool GetDLLVersionUsingAPI(const tstring& filepath, DWORD& high, DWORD& l
       VS_FIXEDFILEINFO *pvsf;
       if (GetFileVersionInfo(path, 0, verSize, buf) && VerQueryValue(buf, _T("\\"), (void**) &pvsf, &uLen))
       {
-        low = pvsf->dwFileVersionLS;
-        high = pvsf->dwFileVersionMS;
-        found = true;
+        found = true, low = pvsf->dwFileVersionLS, high = pvsf->dwFileVersionMS;
       }
       GlobalFree(buf);
     }
@@ -1029,9 +1200,9 @@ static bool GetDLLVersionUsingAPI(const tstring& filepath, DWORD& high, DWORD& l
 // the following structure must be byte-aligned.
 #pragma pack( push, pre_vxd_ver, 1 )
 typedef struct _VXD_VERSION_RESOURCE {
-  char  cType;				// Should not be converted to TCHAR (JP)
+  char  cType; // Should not be converted to TCHAR (JP)
   WORD  wID;
-  char  cName;				// Should not be converted to TCHAR (JP)
+  char  cName; // Should not be converted to TCHAR (JP)
   WORD  wOrdinal;
   WORD  wFlags;
   DWORD dwResSize;
@@ -1068,10 +1239,7 @@ static BOOL GetVxdVersion( LPCTSTR szFile, LPDWORD lpdwLen, LPVOID lpData )
   if ( !hFileMapping )
   {
     dwError = GetLastError();
-
-    if ( hFile != INVALID_HANDLE_VALUE )
-      CloseHandle( hFile );
-
+    if ( hFile != INVALID_HANDLE_VALUE ) CloseHandle( hFile );
     SetLastError( dwError );
     return FALSE;
   }
@@ -1081,13 +1249,8 @@ static BOOL GetVxdVersion( LPCTSTR szFile, LPDWORD lpdwLen, LPVOID lpData )
   if ( !pView )
   {
     dwError = GetLastError();
-
-    if ( hFileMapping )
-      CloseHandle( hFileMapping );
-
-    if ( hFile != INVALID_HANDLE_VALUE )
-      CloseHandle( hFile );
-
+    if ( hFileMapping ) CloseHandle( hFileMapping );
+    if ( hFile != INVALID_HANDLE_VALUE ) CloseHandle( hFile );
     SetLastError( dwError );
     return FALSE;
   }
@@ -1098,35 +1261,22 @@ static BOOL GetVxdVersion( LPCTSTR szFile, LPDWORD lpdwLen, LPVOID lpData )
   // Check to make sure the file has a DOS EXE header.
   if ( pDosExeHdr->e_magic != IMAGE_DOS_SIGNATURE ) 
   {
-    if ( pView )
-      UnmapViewOfFile( pView );
-
-    if ( hFileMapping )
-      CloseHandle( hFileMapping );
-
-    if ( hFile != INVALID_HANDLE_VALUE )
-      CloseHandle( hFile );
-
+    if ( pView ) UnmapViewOfFile( pView );
+    if ( hFileMapping ) CloseHandle( hFileMapping );
+    if ( hFile != INVALID_HANDLE_VALUE ) CloseHandle( hFile );
     SetLastError( ERROR_BAD_FORMAT );
     return FALSE;
   }
 
   // Find the beginning of the NT header at offset e_lfanew.
-  pNtExeHdr = (PIMAGE_NT_HEADERS) ( (ULONG_PTR) pView
-       + pDosExeHdr->e_lfanew );
+  pNtExeHdr = (PIMAGE_NT_HEADERS) ( (ULONG_PTR) pView + pDosExeHdr->e_lfanew );
 
   // Check to make sure the file is a VxD.
   if ( (DWORD) pNtExeHdr->Signature != IMAGE_VXD_SIGNATURE ) 
   {
-    if ( pView )
-      UnmapViewOfFile( pView );
-
-    if ( hFileMapping )
-      CloseHandle( hFileMapping );
-
-    if ( hFile != INVALID_HANDLE_VALUE )
-      CloseHandle( hFile );
-
+    if ( pView ) UnmapViewOfFile( pView );
+    if ( hFileMapping ) CloseHandle( hFileMapping );
+    if ( hFile != INVALID_HANDLE_VALUE ) CloseHandle( hFile );
     SetLastError( ERROR_BAD_FORMAT );
     return FALSE;
   }
@@ -1137,38 +1287,24 @@ static BOOL GetVxdVersion( LPCTSTR szFile, LPDWORD lpdwLen, LPVOID lpData )
   // e32_winreslen contains the size of the VxD's version resource.
   if ( pLEHdr->e32_winreslen == 0 ) {
     *lpdwLen = 0;
-    if ( pView )
-      UnmapViewOfFile( pView );
-
-    if ( hFileMapping )
-      CloseHandle( hFileMapping );
-
-    if ( hFile != INVALID_HANDLE_VALUE )
-      CloseHandle( hFile );
-
+    if ( pView ) UnmapViewOfFile( pView );
+    if ( hFileMapping ) CloseHandle( hFileMapping );
+    if ( hFile != INVALID_HANDLE_VALUE ) CloseHandle( hFile );
     SetLastError( ERROR_RESOURCE_DATA_NOT_FOUND );
     return FALSE;
   }
 
   // e32_winresoff contains the offset of the resource in the VxD.
-  pVerRes = (VXD_VERSION_RESOURCE *) ( (ULONG_PTR) pView
-       + pLEHdr->e32_winresoff );
+  pVerRes = (VXD_VERSION_RESOURCE *) ( (ULONG_PTR) pView + pLEHdr->e32_winresoff );
   dwSize = pVerRes->dwResSize;
   pRawRes = &(pVerRes->bVerData);
 
   // Make sure the supplied buffer is large enough for the resource.
   if ( ( lpData == NULL ) || ( *lpdwLen < dwSize ) ) {
     *lpdwLen = dwSize;
-
-    if ( pView )
-      UnmapViewOfFile( pView );
-
-    if ( hFileMapping )
-      CloseHandle( hFileMapping );
-
-    if ( hFile != INVALID_HANDLE_VALUE )
-      CloseHandle( hFile );
-
+    if ( pView ) UnmapViewOfFile( pView );
+    if ( hFileMapping ) CloseHandle( hFileMapping );
+    if ( hFile != INVALID_HANDLE_VALUE ) CloseHandle( hFile );
     SetLastError( ERROR_INSUFFICIENT_BUFFER );
     return FALSE;
   }
@@ -1179,16 +1315,10 @@ static BOOL GetVxdVersion( LPCTSTR szFile, LPDWORD lpdwLen, LPVOID lpData )
   *lpdwLen = dwSize;
 
   // Clean up resources.
-  if ( pView )
-    UnmapViewOfFile( pView );
-
-  if ( hFileMapping )
-    CloseHandle( hFileMapping );
-
-  if ( hFile != INVALID_HANDLE_VALUE )
-    CloseHandle( hFile );
-
-  SetLastError(0);
+  if ( pView ) UnmapViewOfFile( pView );
+  if ( hFileMapping ) CloseHandle( hFileMapping );
+  if ( hFile != INVALID_HANDLE_VALUE ) CloseHandle( hFile );
+  SetLastError(0); // Why bother?
   return TRUE;
 }
 
@@ -1224,7 +1354,6 @@ static BOOL GetVxdVersionInfo( LPCTSTR szFile, DWORD dwLen, LPVOID lpData )
 static bool GetDLLVersionFromVXD(const tstring& filepath, DWORD& high, DWORD& low)
 {
   bool found = false;
-
 #ifdef _WIN32
   DWORD verSize = GetVxdVersionInfoSize(filepath.c_str());
   if (verSize)
@@ -1236,35 +1365,39 @@ static bool GetDLLVersionFromVXD(const tstring& filepath, DWORD& high, DWORD& lo
       VS_FIXEDFILEINFO *pvsf;
       if (GetVxdVersionInfo(filepath.c_str(), verSize, buf) && VerQueryValue(buf, _T("\\"), (void**) &pvsf, &uLen))
       {
-        low = pvsf->dwFileVersionLS;
-        high = pvsf->dwFileVersionMS;
-        found = true;
+        found = true, low = pvsf->dwFileVersionLS, high = pvsf->dwFileVersionMS;
       }
       GlobalFree(buf);
     }
   }
 #endif
-
   return found;
 }
 
 bool GetDLLVersion(const tstring& filepath, DWORD& high, DWORD& low)
 {
-  if (GetDLLVersionUsingAPI(filepath, high, low))
-    return true;
-
-  if (GetDLLVersionUsingRE(filepath, high, low))
-    return true;
-
-  if (GetDLLVersionFromVXD(filepath, high, low))
-    return true;
-
+  if (GetDLLVersionUsingAPI(filepath, high, low)) return true;
+  if (GetDLLVersionUsingRE(filepath, high, low)) return true;
+  if (GetDLLVersionFromVXD(filepath, high, low)) return true;
   return false;
 }
 
-bool Platform_SupportsUTF8Conversion()
+unsigned char Platform_SupportsUTF8Conversion()
 {
-  static unsigned char cached = -1;
-  if (-1 == cached) cached = !!IsValidCodePage(CP_UTF8);
-  return cached != 0;
+  static unsigned char cached = 0;
+  if (0 == cached) cached = 1 + !!IsValidCodePage(CP_UTF8);
+  return (cached - 1);
 }
+
+void *operator new(size_t size) NSIS_CXX_THROWSPEC(bad_alloc)
+{
+  void *p = malloc(size);
+  if (!p) throw bad_alloc();
+  return p;
+}
+void *operator new[](size_t size) NSIS_CXX_THROWSPEC(bad_alloc)
+{
+  return operator new(size);
+}
+void operator delete(void *p) throw() { if (p) free(p); }
+void operator delete [](void *p) throw() { if (p) free(p); }

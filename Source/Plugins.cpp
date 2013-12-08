@@ -82,7 +82,7 @@ static inline tstring GetDllName(const tstring&command)
 
 static inline void PrintCommandSig(const tstring sig)
 {
-  _ftprintf(g_output, _T(" + %s\n"), sig.c_str());
+  _ftprintf(g_output, _T(" + %") NPRIs _T("\n"), sig.c_str());
 }
 
 void Plugins::AddPluginsDir(const tstring &path, bool displayInfo)

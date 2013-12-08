@@ -494,7 +494,7 @@ int CEXEBuild::SetLangString(const TCHAR *name, LANGID lang, const TCHAR *str, B
   int sn;
 
   if (!LicenseData && _tcsclen(str) > NSIS_MAX_STRLEN-1)
-    warning_fl(_T("LangString \"%s\" longer than NSIS_MAX_STRLEN!"), name);
+    warning_fl(_T("LangString \"%") NPRIs _T("\" longer than NSIS_MAX_STRLEN!"), name);
 
   int pos = build_langstrings.get(name, &sn);
   if (pos < 0)
@@ -589,16 +589,16 @@ int CEXEBuild::GenerateLangTable(LanguageTable *lt, int num_lang_tables) {
               if (lsn[0] != _T('^'))
               {
                 if (lt[i].nlf.m_bLoaded)
-                  warning(_T("LangString \"%s\" is not set in language table of language %s"), lsn, lt[i].nlf.m_szName);
+                  warning(_T("LangString \"%") NPRIs _T("\" is not set in language table of language %") NPRIs, lsn, lt[i].nlf.m_szName);
                 else
-                  warning(_T("LangString \"%s\" is not set in language table of language %d"), lsn, lt[i].lang_id);
+                  warning(_T("LangString \"%") NPRIs _T("\" is not set in language table of language %d"), lsn, lt[i].lang_id);
               }
             }
             else
             {
               // Add the language string to the string data block
               TCHAR fn[1024];
-              _stprintf(fn, _T("LangString %s"), lsn);
+              _stprintf(fn, _T("LangString %") NPRIs, lsn);
               curfilename = fn;
               linecnt = lt[i].lang_id;
               *ptr = add_string(str, lang_strings[j].process, (WORD) lt[i].nlf.m_uCodePage);
@@ -644,7 +644,7 @@ int CEXEBuild::GenerateLangTable(LanguageTable *lt, int num_lang_tables) {
                 name = build_langstrings.offset2name(lang_strings[l].name);
               }
             }
-            ERROR_MSG(_T("Error: LangString %s is recursive!\n"), name);
+            ERROR_MSG(_T("Error: LangString %") NPRIs _T(" is recursive!\n"), name);
             delete [] string_ptrs;
             return PS_ERROR;
           }
@@ -718,7 +718,7 @@ int CEXEBuild::GenerateLangTables() {
           DWORD dwSize; \
           dlg = td.Save(dwSize); \
           res_editor->UpdateResource(RT_DIALOG, id, NSIS_DEFAULT_LANG, dlg, dwSize); \
-          delete [] dlg; \
+          res_editor->FreeResource(dlg); \
         } \
       }
 
@@ -742,7 +742,7 @@ int CEXEBuild::GenerateLangTables() {
 #undef ADD_FONT
     }
     catch (exception& err) {
-      ERROR_MSG(_T("\nError while applying font: %s\n"), CtoTStrParam(err.what()));
+      ERROR_MSG(_T("\nError while applying font: %") NPRIs _T("\n"), CtoTStrParam(err.what()));
       return PS_ERROR;
     }
   }
@@ -757,7 +757,7 @@ int CEXEBuild::GenerateLangTables() {
     // A Unicode-only language is never displayed correctly by ANSI exehead
     if (!build_unicode && 1200 == lt[i].nlf.m_uCodePage)
     {
-      ERROR_MSG(_T("\nError: Unicode-only language %s cannot be used in ANSI installer!\n"), lt[i].nlf.m_szName);
+      ERROR_MSG(_T("\nError: Unicode-only language %") NPRIs _T(" cannot be used in ANSI installer!\n"), lt[i].nlf.m_szName);
       return PS_ERROR;
     }
 
@@ -788,7 +788,7 @@ int CEXEBuild::GenerateLangTables() {
             DWORD dwSize; \
             dlg = td.Save(dwSize); \
             res_editor->UpdateResource(RT_DIALOG, id+cur_offset, NSIS_DEFAULT_LANG, dlg, dwSize); \
-            delete [] dlg; \
+            res_editor->FreeResource(dlg); \
           } \
         }
 
@@ -812,7 +812,7 @@ int CEXEBuild::GenerateLangTables() {
 #undef ADD_FONT
       }
       catch (exception& err) {
-        ERROR_MSG(_T("\nError while applying NLF font/RTL: %s\n"), CtoTStrParam(err.what()));
+        ERROR_MSG(_T("\nError while applying NLF font/RTL: %") NPRIs _T("\n"), CtoTStrParam(err.what()));
         return PS_ERROR;
       }
 
@@ -837,6 +837,21 @@ int CEXEBuild::GenerateLangTables() {
   SCRIPT_MSG(_T("Done!\n"));
 
   return PS_OK;
+}
+
+static void CreatePlatformStrfmt(const TCHAR *templ, TCHAR *out) {
+  // NOTE: Only supports plain %s with no options
+  for ( ;; out++ )
+  {
+    *out = *templ++;
+    if (!*out) break;
+    if (*out == L'%' && *templ == L's')
+    {
+      out++, templ++;
+      unsigned int cch = my_strncpy(out, NPRIs, -1);
+      out += --cch; // --cch because for loop does out++
+    }
+  }
 }
 
 void CEXEBuild::FillLanguageTable(LanguageTable *table) {
@@ -876,8 +891,9 @@ void CEXEBuild::FillLanguageTable(LanguageTable *table) {
           if (!dstr)
             continue;
           if (i == NLF_BRANDING) {
-            TCHAR temp[NSIS_MAX_STRLEN + sizeof(NSIS_VERSION)];
-            _stprintf(temp, dstr, NSIS_VERSION);
+            TCHAR temp[NSIS_MAX_STRLEN + sizeof(NSIS_VERSION)], temp2[COUNTOF(temp)];
+            CreatePlatformStrfmt(dstr, temp2); // Change %s to %ls if required
+            _stprintf(temp, temp2, NSIS_VERSION);
             table->lang_strings->set(sn, temp);
             continue;
           }
@@ -931,7 +947,7 @@ LanguageTable * CEXEBuild::LoadLangFile(TCHAR *filename) {
   NIStream strm;
   strm.StreamEncoding().SetCodepage(NStreamEncoding::ACP);
   if (!strm.OpenFileForReading(filename)) {
-    ERROR_MSG(_T("Error: Can't open language file - \"%s\"!\n"),filename);
+    ERROR_MSG(_T("Error: Can't open language file - \"%") NPRIs _T("\"!\n"),filename);
     return 0;
   }
   NStreamLineReader lr(strm);
@@ -992,7 +1008,7 @@ l_readerr:
   if (p) *p = t;
 
   if (nlf_version != NLF_VERSION) {
-    warning_fl(_T("%s language file version doesn't match. Using default English texts for missing strings."), nlf->m_szName);
+    warning_fl(_T("%") NPRIs _T(" language file version doesn't match. Using default English texts for missing strings."), nlf->m_szName);
   }
 
   // set ^Language
@@ -1035,7 +1051,7 @@ l_readerr:
     }
     if (CP_ACP != nlf->m_uCodePage && !isnlfdataucp && !IsValidCodePage(nlf->m_uCodePage))
     {
-      warning_fl(_T("%s language file uses a codepage (%d) that is not supported on this system, using ACP!"), nlf->m_szName, nlf->m_uCodePage);
+      warning_fl(_T("%") NPRIs _T(" language file uses a codepage (%d) that is not supported on this system, using ACP!"), nlf->m_szName, nlf->m_uCodePage);
       nlf->m_uCodePage = CP_ACP;
     }
   }
@@ -1043,7 +1059,7 @@ l_readerr:
   // SVN is not a big fan of UTF16 so we should always use UTF8SIG
   if (isnlfdataucp && !lr.StreamEncoding().IsUTF8())
   {
-    warning_fl(_T("%s Unicode language file is not UTF8SIG."), nlf->m_szName);
+    warning_fl(_T("%") NPRIs _T(" Unicode language file is not UTF8SIG."), nlf->m_szName);
   }
 
   if (!lr.IsUnicode())
@@ -1119,7 +1135,7 @@ l_readerr:
 
     errlr = GetNextNLFLine(lr, buf, NSIS_MAX_STRLEN);
     if (_tcslen(buf) == NSIS_MAX_STRLEN-1) {
-      ERROR_MSG(_T("Error: String too long (string #%d - \"%s\")\n"), i, NLFStrings[i].szLangStringName);
+      ERROR_MSG(_T("Error: String too long (string #%d - \"%") NPRIs _T("\")\n"), i, NLFStrings[i].szLangStringName);
       return 0;
     }
     if (NStream::OK != errlr) goto l_readerr;

@@ -46,7 +46,7 @@ static inline short ConvertEndianness(short s) {
 #define ALIGN(dwToAlign, dwAlignOn) dwToAlign = (dwToAlign%dwAlignOn == 0) ? dwToAlign : dwToAlign - (dwToAlign%dwAlignOn) + dwAlignOn
 
 // Reads a variant length array from seeker into readInto and advances seeker
-void ReadVarLenArr(LPBYTE &seeker, WCHAR* &readInto, unsigned int uCodePage) {
+void ReadVarLenArr(LPBYTE &seeker, WINWCHAR* &readInto, unsigned int uCodePage) {
   WORD* arr = (WORD*)seeker;
   switch (ConvertEndianness(arr[0])) {
   case 0x0000:
@@ -54,13 +54,13 @@ void ReadVarLenArr(LPBYTE &seeker, WCHAR* &readInto, unsigned int uCodePage) {
     seeker += sizeof(WORD);
     break;
   case 0xFFFF:
-    readInto = MAKEINTRESOURCEW(ConvertEndianness(arr[1]));
+    readInto = MAKEINTRESOURCEWINW(ConvertEndianness(arr[1]));
     seeker += 2*sizeof(WORD);
     break;
   default:
     {
-      readInto = wcsdup((WCHAR *) arr);
-      PWCHAR wseeker = PWCHAR(seeker);
+      readInto = WinWStrDupFromWinWStr((WINWCHAR*) arr);
+      WINWCHAR *wseeker = (WINWCHAR*) seeker;
       while (*wseeker++);
       seeker = LPBYTE(wseeker);
     }
@@ -78,14 +78,14 @@ void ReadVarLenArr(LPBYTE &seeker, WCHAR* &readInto, unsigned int uCodePage) {
       seeker += sizeof(WORD); \
     } \
     else { \
-      wcscpy((WCHAR *) seeker, x); \
-      seeker += wcslen((WCHAR *) seeker) * sizeof(WCHAR) + sizeof(WCHAR); \
+      WinWStrCpy((WINWCHAR *) seeker, x); \
+      seeker += WinWStrLen((WINWCHAR *) seeker) * sizeof(WINWCHAR) + sizeof(WINWCHAR); \
     } \
   else \
     seeker += sizeof(WORD);
 
 // A macro that adds the size of x (which can be a string a number, or nothing) to dwSize
-#define AddStringOrIdSize(x) dwSize += x ? (IS_INTRESOURCE(x) ? sizeof(DWORD) : (wcslen(x) + 1) * sizeof(WCHAR)) : sizeof(WORD)
+#define AddStringOrIdSize(x) dwSize += x ? (IS_INTRESOURCE(x) ? sizeof(DWORD) : (WinWStrLen(x) + 1) * sizeof(WINWCHAR)) : sizeof(WORD)
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -220,23 +220,22 @@ CDialogTemplate::CDialogTemplate(BYTE* pbData, bool build_unicode, unsigned int 
   }
 }
 
+static void free_template_string(WINWCHAR*s)
+{
+  if (!IS_INTRESOURCE(s)) free(s);
+}
+
 CDialogTemplate::~CDialogTemplate() {
-  if (m_szMenu && !IS_INTRESOURCE(m_szMenu))
-    delete [] m_szMenu;
-  if (m_szClass && !IS_INTRESOURCE(m_szClass))
-    delete [] m_szClass;
-  if (m_szTitle)
-    delete [] m_szTitle;
-  if (m_szFont)
-    free(m_szFont);
+  free_template_string(m_szMenu);
+  free_template_string(m_szClass);
+  free(m_szTitle);
+  free(m_szFont);
 
   for (unsigned int i = 0; i < m_vItems.size(); i++) {
-    if (m_vItems[i]->szClass && !IS_INTRESOURCE(m_vItems[i]->szClass))
-      delete [] m_vItems[i]->szClass;
-    if (m_vItems[i]->szTitle && !IS_INTRESOURCE(m_vItems[i]->szTitle))
-      delete [] m_vItems[i]->szTitle;
-    if (m_vItems[i]->szCreationData)
-      delete [] m_vItems[i]->szCreationData;
+    free_template_string(m_vItems[i]->szClass);
+    free_template_string(m_vItems[i]->szTitle);
+    if (m_vItems[i]->szCreationData) delete [] m_vItems[i]->szCreationData;
+    delete m_vItems[i];
   }
 }
 
@@ -293,7 +292,7 @@ void CDialogTemplate::SetFont(TCHAR* szFaceName, WORD wFontSize) {
   m_bCharset = DEFAULT_CHARSET;
   m_dwStyle |= DS_SETFONT;
   if (m_szFont) free(m_szFont);
-  m_szFont = wcsdup_fromTchar(szFaceName, m_uCodePage);
+  m_szFont = WinWStrDupFromTChar(szFaceName, m_uCodePage);
   m_sFontSize = wFontSize;
 }
 
@@ -303,10 +302,10 @@ void CDialogTemplate::AddItem(DialogItemTemplate item) {
   CopyMemory(newItem, &item, sizeof(DialogItemTemplate));
 
   if (item.szClass && !IS_INTRESOURCE(item.szClass)) {
-    newItem->szClass = _wcsdup(item.szClass);
+    newItem->szClass = WinWStrDupFromWinWStr(item.szClass);
   }
   if (item.szTitle && !IS_INTRESOURCE(item.szTitle)) {
-    newItem->szTitle = _wcsdup(item.szTitle);
+    newItem->szTitle = WinWStrDupFromWinWStr(item.szTitle);
   }
   if (item.wCreateDataSize) {
     newItem->szCreationData = new char[item.wCreateDataSize];
@@ -475,18 +474,18 @@ void CDialogTemplate::ConvertToRTL() {
         m_vItems[i]->dwStyle |= SS_CENTERIMAGE;
       }
     }
-    else if (!IS_INTRESOURCE(m_vItems[i]->szClass) && !_wcsnicmp(m_vItems[i]->szClass, L"RichEdit20", 10)) {
+    else if (!IS_INTRESOURCE(m_vItems[i]->szClass) && !WinWStrNICmpASCII(m_vItems[i]->szClass, "RichEdit20", 10)) {
       if ((m_vItems[i]->dwStyle & ES_CENTER) == 0) {
         m_vItems[i]->dwStyle ^= ES_RIGHT;
       }
     }
-    else if (!IS_INTRESOURCE(m_vItems[i]->szClass) && !_wcsicmp(m_vItems[i]->szClass, L"SysTreeView32")) {
+    else if (!IS_INTRESOURCE(m_vItems[i]->szClass) && !WinWStrICmpASCII(m_vItems[i]->szClass, "SysTreeView32")) {
       m_vItems[i]->dwStyle |= TVS_RTLREADING;
       m_vItems[i]->dwExtStyle |= WS_EX_LAYOUTRTL;
       addExStyle = true;
       addExLeftScrollbar = false;
     }
-    else if (!IS_INTRESOURCE(m_vItems[i]->szClass) && !_wcsicmp(m_vItems[i]->szClass, L"SysListView32")) {
+    else if (!IS_INTRESOURCE(m_vItems[i]->szClass) && !WinWStrICmpASCII(m_vItems[i]->szClass, "SysListView32")) {
       m_vItems[i]->dwExtStyle |= WS_EX_LAYOUTRTL;
       addExLeftScrollbar = false;
     }
@@ -603,12 +602,14 @@ BYTE* CDialogTemplate::Save(DWORD& dwSize) {
     }
 
     // Write class variant length array
-    const WCHAR *szClass = m_vItems[i]->szClass;
+    const WINWCHAR *szClass = m_vItems[i]->szClass;
 #ifdef _UNICODE
+    static const WINWCHAR clsRE20W[] = {'R','i','c','h','E','d','i','t','2','0','W',0};
+    static const WINWCHAR clsRE20A[] = {'R','i','c','h','E','d','i','t','2','0','A',0};
     if (!IS_INTRESOURCE(szClass)) {
       // transmute RichEdit20A/W control into RichEdit20T that matches the target
-      if (m_build_unicode && !_wcsicmp(szClass, L"RichEdit20A")) szClass = L"RichEdit20W";
-      if (!m_build_unicode && !_wcsicmp(szClass, L"RichEdit20W")) szClass = L"RichEdit20A";
+      if (m_build_unicode && !WinWStrICmpASCII(szClass, "RichEdit20A")) szClass = clsRE20W;
+      if (!m_build_unicode && !WinWStrICmpASCII(szClass, "RichEdit20W")) szClass = clsRE20A;
     }
 #endif
     WriteStringOrId(szClass);

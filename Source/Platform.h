@@ -21,6 +21,15 @@
 
 // some definitions for non Win32 platforms were taken from MinGW's free Win32 library
 
+
+#if defined(__cplusplus) && defined(MAKENSIS)
+template<class T> class NSISCHARTYPE{ T _c; public: NSISCHARTYPE(){} NSISCHARTYPE(T c):_c(c){} operator T()const{ return _c; } };
+typedef NSISCHARTYPE<unsigned short> WINWCHAR; // WINWCHAR is always UTF16LE and should not be passed to wcs* functions
+#else
+typedef unsigned short WINWCHAR;
+#endif
+
+
 // includes
 
 #include "tchar.h"
@@ -50,6 +59,14 @@ typedef long LONG;
 typedef unsigned long ULONG;
 typedef long long INT64, LARGE_INTEGER;
 typedef unsigned long long UINT64, ULARGE_INTEGER;
+#include <stdint.h>
+#ifdef INTPTR_MAX
+typedef intptr_t INT_PTR;
+typedef uintptr_t UINT_PTR;
+#else
+typedef int INT_PTR;
+typedef unsigned int UINT_PTR;
+#endif
 typedef int BOOL, *LPBOOL;
 typedef short VARIANT_BOOL;
 typedef void VOID;
@@ -64,8 +81,6 @@ typedef const unsigned short *LPCWCH, *PCWCH, *LPCWSTR, *PCWSTR, *LPCOLESTR;
 #else
 #define _tctime ctime
 #endif
-typedef int INT_PTR;
-typedef unsigned int UINT_PTR;
 // basic stuff
 typedef void * HANDLE;
 typedef HANDLE HWND;
@@ -221,6 +236,13 @@ typedef DWORDLONG ULONGLONG,*PULONGLONG;
 #  ifndef RGB
 #    define RGB(r,g,b) ((DWORD)(((BYTE)(r)|((WORD)(g)<<8))|(((DWORD)(BYTE)(b))<<16)))
 #  endif
+#  ifndef LOBYTE
+#    define LOBYTE(w) ((BYTE)(w))
+#    define HIBYTE(w) ((BYTE)(((WORD)(w)>>8)&0xFF))
+#  endif
+#  ifndef MAKEWORD
+#    define MAKEWORD(a,b) ((WORD)(((BYTE)(a))|(((WORD)((BYTE)(b)))<<8)))
+#  endif
 #  ifndef MAKELONG
 #    define MAKELONG(a,b) ((DWORD)(((WORD)(a))|(((DWORD)((WORD)(b)))<<16)))
 #  endif
@@ -237,7 +259,10 @@ typedef DWORDLONG ULONGLONG,*PULONGLONG;
 
 // Anders: MSVC's swprintf is non standard, use _snwprintf when you really mean swprintf
 #if !defined(_MSC_VER) && !defined(__MINGW32__) && !defined(_snwprintf)
-#define _snwprintf swprintf
+#  define _snwprintf swprintf // (wchar_t*,size_t,const wchar_t*,...)
+#endif
+#ifndef _WIN32
+#  define _vsnwprintf vswprintf // (wchar_t*,size_t,const wchar_t*,va_list)
 #endif
 
 // Jim Park: These str functions will probably never be encountered with all my
@@ -467,6 +492,7 @@ typedef DWORDLONG ULONGLONG,*PULONGLONG;
 
 #ifndef CP_ACP
 #  define CP_ACP 0
+#  define CP_OEMCP 1
 #endif
 #ifndef CP_UTF8
 #  define CP_UTF8 65001
@@ -628,6 +654,7 @@ typedef DWORDLONG ULONGLONG,*PULONGLONG;
 #  define SW_SHOWMINIMIZED 2
 #  define SW_SHOWMAXIMIZED 3
 #  define SW_SHOWNOACTIVATE 4
+#  define SW_SHOW 5
 #  define SW_SHOWMINNOACTIVE 7
 #  define SW_SHOWNA 8
 #  define SW_RESTORE 9
@@ -972,4 +999,33 @@ typedef struct tagVS_FIXEDFILEINFO {
 
 #define NSIS_CXX_THROWSPEC(ignoredthrowspec) // Ignore c++ exception specifications
 
+/*
+_tprintf on Windows/MSVCRT treats %s as TCHAR* and on POSIX %s is always char*!
+Always use our NPRI* (NsisPRInt[Narrow|Wide]*) defines in format strings when calling 
+functions from tchar.h (Similar to the way <inttypes.h> works)
+
+Example: _tprintf(_T("Hello %") NPRIs _T("\n"), _T("World"));
+*/
+#ifdef _WIN32
+#  define NPRIs _T("s")
+#  define NPRINs _T("hs")
+#  define NPRIWs _T("ls") // ws also works, not sure which is most compatible
+#  ifndef _WIN64
+#    define NPRIp _T(".8x")
+#    define NPRINp ".8x"
+#  endif
+#else  // !_WIN32
+#  define NPRINs _T("s")
+#  define NPRIWs _T("ls")
+#  ifdef _UNICODE
+#    define NPRIs _T("ls")
+#  else // !_UNICODE
+#    define NPRIs _T("s")
+#  endif // ~_UNICODE
+#endif // ~_WIN32
+#ifndef NPRIp
+#  define NPRIp _T("p")
+#  define NPRINp "p"
 #endif
+
+#endif // EOF

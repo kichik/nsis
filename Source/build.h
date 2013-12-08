@@ -143,7 +143,7 @@ class CEXEBuild {
 
     DefineList definedlist; // List of identifiers marked as "defined" like
                             // C++ macro definitions such as _UNICODE.
-    void define(const TCHAR *p, const TCHAR *v=TEXT("")); // to add a defined thing.
+    void define(const TCHAR *p, const TCHAR *v=_T("")); // to add a defined thing.
 
     int display_errors;
     int display_script;

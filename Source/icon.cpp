@@ -86,6 +86,7 @@ IconGroup load_icon_res(CResourceEditor* re, WORD id)
     result.push_back(icon);
   }
 
+  re->FreeResource(group);
   return result;
 }
 
@@ -243,6 +244,7 @@ static IconPairs get_icon_order(IconGroup icon1, IconGroup icon2)
   return result;
 }
 
+#define destroy_icon_group(p) ( delete [] (p) )
 static LPBYTE generate_icon_group(IconGroup icon, IconPairs order, bool first)
 {
   LPBYTE group = new BYTE[
@@ -284,6 +286,7 @@ void set_icon(CResourceEditor* re, WORD wIconId, IconGroup icon1, IconGroup icon
     + order.size() * SIZEOF_RSRC_ICON_GROUP_ENTRY; // entries
 
   re->UpdateResource(RT_GROUP_ICON, wIconId, NSIS_DEFAULT_LANG, group1, group_size);
+  destroy_icon_group(group1);
 
   // delete old icons
   unsigned i = 1;
@@ -367,6 +370,7 @@ unsigned char* generate_uninstall_icon_data(IconGroup icon1, IconGroup icon2, si
   *(LPDWORD) seeker = 0;
 
   // done
+  destroy_icon_group(group);
   return uninst_data;
 }
 
@@ -423,7 +427,7 @@ int generate_unicons_offsets(LPBYTE exeHeader, size_t exeHeaderSize, LPBYTE unin
   catch (const exception& e)
   {
     if (g_display_errors)
-      PrintColorFmtMsg_ERR(_T("\nError generating uninstaller icon: %s -- failing!\n"), CtoTStrParam(e.what()));
+      PrintColorFmtMsg_ERR(_T("\nError generating uninstaller icon: %") NPRIs _T(" -- failing!\n"), CtoTStrParam(e.what()));
     return 0;
   }
 

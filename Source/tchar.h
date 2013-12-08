@@ -31,7 +31,7 @@ typedef unsigned short TCHAR, _TUCHAR;
 // MSVC typedefs TCHAR inside #ifndef _TCHAR_DEFINED 
 // and _TCHAR and _T*CHAR inside #ifndef __TCHAR_DEFINED.
 // We don't want to break MSVCs _TSCHAR and _TXCHAR so we don't protect our typedef...
-#if (_MSC_VER>1 && (_MSC_VER<1400 || !defined(_NATIVE_WCHAR_T_DEFINED))) || !defined(_WCHAR_T_DEFINED)
+#if defined(_WIN32) && ((_MSC_VER>1 && (_MSC_VER<1400 || !defined(_NATIVE_WCHAR_T_DEFINED))) || !defined(_WCHAR_T_DEFINED))
 // VC6 knows about __wchar_t but does not support it. /Zc:wchar_t is on by default starting with VC8.
 // VC7.1 supports __wchar_t but using it causes problems with conversions from WCHAR (unsigned short)?
 typedef unsigned short TCHAR, _TUCHAR;
@@ -98,7 +98,7 @@ typedef wchar_t TCHAR, _TUCHAR;
 #define _tcstoi64   _wcstoi64
 #define _tcstol     wcstol
 #define _tcstoul    wcstoul
-#if defined(_MSC_VER) && (_MSC_VER<=1200)
+#if !defined(_WIN32) || (defined(_MSC_VER) && (_MSC_VER<=1200))
 #	define _tstof      my_wtof
 #else
 #	define _tstof      _wtof
@@ -120,6 +120,7 @@ typedef wchar_t TCHAR, _TUCHAR;
 #define _topen      _wopen
 #define _tremove    _wremove
 #define _tunlink    _wunlink
+#define _tstat      _wstat
 
 // reading and writing to i/o
 #define _fgettc     fgetwc
@@ -216,6 +217,7 @@ typedef unsigned char   _TUCHAR;
 #define _topen      _open
 #define _tremove    remove
 #define _tunlink    _unlink
+#define _tstat      stat // _stat on Windows?
 
 // reading and writing to i/o
 #define _fgettc     fgetc

@@ -19,10 +19,14 @@
 #include "Platform.h"
 #include "dirreader.h"
 #include "tstring.h"
+#include "util.h"
 #include <set>
 
 #include <string.h> // for stricmp()
 #include <ctype.h> // for tolower()
+#ifdef _UNICODE
+#  include <wctype.h> // towlower()
+#endif
 
 using namespace std;
 
@@ -175,11 +179,10 @@ public:
     HANDLE h = ::FindFirstFile(spec.c_str(), &fd);
     if (h != INVALID_HANDLE_VALUE) {
       do {
-        if (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+        if (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
           dir_reader::add_dir(fd.cFileName);
-        } else {
+        else
           dir_reader::add_file(fd.cFileName);
-        }
       } while (::FindNextFile(h, &fd));
       ::FindClose(h);
     }
@@ -197,43 +200,33 @@ class posix_dir_reader : public dir_reader {
 public:
 
   virtual void read(const tstring& dir) {
-    //convert(dir);
 
-    DIR *dip = ::opendir(dir.c_str());
+    static const char platformpathsep[2] = {(char)PLATFORM_PATH_SEPARATOR_C, '\0'};
+
+    char *nativedir = NSISRT_ttombpath(dir.c_str());
+    if (!nativedir) return ;
+
+    DIR *dip = ::opendir(nativedir);
     if (dip) {
       dirent *dit;
       while ((dit = ::readdir(dip))) {
         struct stat st;
-        string file = dir + PLATFORM_PATH_SEPARATOR_STR + dit->d_name;
+        string file = nativedir;
+        file += platformpathsep, file += dit->d_name;
 
         if (!stat(file.c_str(), &st)) {
-          if (S_ISDIR(st.st_mode)) {
-            dir_reader::add_dir(dit->d_name);
-          } else {
-            dir_reader::add_file(dit->d_name);
-          }
+          tstring name;
+          name = PosixBug_CtoTString(dit->d_name);
+          if (S_ISDIR(st.st_mode))
+            dir_reader::add_dir(name);
+          else
+            dir_reader::add_file(name);
         }
       }
       ::closedir(dip);
     }
+    NSISRT_free(nativedir);
   }
-
-private:
-
-  void convert(string& path) {
-    string::size_type pos = path.find(_T('\\'));
-    while (pos != string::npos) {
-      path[pos] = _T('/');
-      pos = path.find(_T('\\'));
-    }
-
-    /* Replace drive letter X: by /x */
-    if (path[1] == _T(':')) {
-      path[1] = ::_totlower(path[0]);
-      path[0] = _T('/');
-    }
-  }
-
 };
 
 #endif

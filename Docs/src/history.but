@@ -24,6 +24,8 @@ Released on ?
 
 \b Unicode stubs create WCHAR richedit controls (\W{http://sf.net/p/nsis/bugs/1080/}{bug #1080})
 
+\b Fixed !macroundef
+
 \b Fixed MakeNSISW default pushbutton and tab order
 
 \H{v3.0a1} 3.0 Alpha 1
