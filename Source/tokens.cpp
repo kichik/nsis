@@ -315,13 +315,13 @@ void CEXEBuild::print_help(const TCHAR *commandname)
   {
     if (!commandname || !_tcsicmp(tokenlist[x].name,commandname))
     {
-      ERROR_MSG(_T("%s%s %s\n"),commandname?_T("Usage: "):_T(""),tokenlist[x].name,tokenlist[x].usage_str);
+      ERROR_MSG(_T("%") NPRIs _T("%") NPRIs _T(" %") NPRIs _T("\n"),commandname?_T("Usage: "):_T(""),tokenlist[x].name,tokenlist[x].usage_str);
       if (commandname) break;
     }
   }
   if (x == TOK__LAST && commandname)
   {
-    ERROR_MSG(_T("Invalid command \"%s\"\n"),commandname);
+    ERROR_MSG(_T("Invalid command \"%") NPRIs _T("\"\n"),commandname);
   }
 
 }
@@ -381,17 +381,17 @@ int CEXEBuild::IsTokenPlacedRight(int pos, TCHAR *tok)
   else {
     TCHAR err[1024];
     if (cp == TP_SEC) {
-      _tcscpy(err, _T("Error: command %s not valid in Section\n"));
+      _tcscpy(err, _T("Error: command %") NPRIs _T(" not valid in Section\n"));
     }
     else if (cp == TP_FUNC) {
-      _tcscpy(err, _T("Error: command %s not valid in Function\n"));
+      _tcscpy(err, _T("Error: command %") NPRIs _T(" not valid in Function\n"));
     }
     else if (cp == TP_PAGEEX) {
-      _tcscpy(err, _T("Error: command %s not valid in PageEx\n"));
+      _tcscpy(err, _T("Error: command %") NPRIs _T(" not valid in PageEx\n"));
     }
     else
     {
-      _tcscpy(err, _T("Error: command %s not valid outside "));
+      _tcscpy(err, _T("Error: command %") NPRIs _T(" not valid outside "));
       if (tp & TP_SEC)
         _tcscat(err, _T("Section"));
       if (tp & TP_FUNC)

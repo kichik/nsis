@@ -20,13 +20,6 @@
 
 #define FIX_ENDIAN_INT16LETOHOST_INPLACE FIX_ENDIAN_INT16_INPLACE
 
-void RawTStrToASCII(const TCHAR*in,char*out,UINT maxcch)
-{
-  const bool empty = !maxcch;
-  for(; maxcch && *in; --maxcch) *out++ = (char) *in++;
-  if (!empty) *out = 0;
-}
-
 UINT StrLenUTF16(const void*str)
 {
   unsigned short *p = (unsigned short *) str;
@@ -85,9 +78,9 @@ UINT WCFromCodePoint(wchar_t*Dest,UINT cchDest,UINT32 CodPt)
   return 0;
 #else
   iconvdescriptor iconvd;
-  if (!iconvd.Open("wchar_t",iconvd::GetHostEndianUCS4Code())) return 0;
+  if (!iconvd.Open("wchar_t",iconvdescriptor::GetHostEndianUCS4Code())) return 0;
   size_t inleft = 4;
-  UINT cchW = iconvd.Convert(&codpt,&inleft,Dest,cchDest*sizeof(wchar_t)) / sizeof(wchar_t);
+  UINT cchW = iconvd.Convert(&CodPt,&inleft,Dest,cchDest*sizeof(wchar_t)) / sizeof(wchar_t);
   return !inleft ? cchW : 0;
 #endif
 }
@@ -110,7 +103,7 @@ BOOL CharEncConv::IsValidCodePage(UINT cp)
 #ifdef _WIN32
   if (cp <= 1 || NStreamEncoding::IsUnicodeCodepage(cp)) return true; // Allow ACP/OEM/UTF*
 #endif
-  return cp < (WORD)-1 && ::IsValidCodePage(cp);
+  return cp < NStreamEncoding::CPCOUNT && ::IsValidCodePage(cp);
 }
 bool CharEncConv::Initialize(UINT32 ToEnc, UINT32 FromEnc)
 {
@@ -123,7 +116,7 @@ bool CharEncConv::Initialize(UINT32 ToEnc, UINT32 FromEnc)
   if (NStreamEncoding::UTF16LE == FromEnc) FromEnc = -1;
 #endif
   m_TE = (WORD) ToEnc, m_FE = (WORD) FromEnc;
-  if ((UTF32LE|1) == (m_FE|1) || (UTF32LE|1) == (m_TE|1)) return false; // UTF32 is a pain to deal with on Windows
+  if ((UTF32LE|1) == (m_FE|1) || (UTF32LE|1) == (m_TE|1)) return false; // UTF-32 is a pain to deal with on Windows
 #ifdef _WIN32
   return (IsWE(m_FE) || IsValidCodePage(FromEnc)) && (IsWE(m_TE) || IsValidCodePage(ToEnc));
 #else
@@ -154,7 +147,9 @@ void* CharEncConv::Convert(const void*Src, size_t cbSrc, size_t*cbOut)
   ** Returns a pointer to the buffer on success or 0 on error.
   ** The buffer is valid until you call Close() or Convert().
   */
+#ifdef _WIN32
   m_OptimizedReturn = false;
+#endif
   if ((size_t)-1 == cbSrc)
   {
     UINT cus = IsWE(m_FE) ? sizeof(wchar_t) : NStreamEncoding::GetCodeUnitSize(m_FE);
@@ -162,7 +157,7 @@ void* CharEncConv::Convert(const void*Src, size_t cbSrc, size_t*cbOut)
     {
     case 1: cbSrc = strlen((char*)Src); break;
     case 2: cbSrc = StrLenUTF16(Src); break;
-    //case 4: // No UTF32 support...
+    //case 4: // No UTF-32 support...
     default:
       if (sizeof(wchar_t) > 2 && sizeof(wchar_t) == cus)
       {
@@ -212,10 +207,10 @@ void* CharEncConv::Convert(const void*Src, size_t cbSrc, size_t*cbOut)
   {
     if (NStreamEncoding::UTF16BE == m_TE) goto l_swapUTF16;
     cbSrc /= sizeof(wchar_t);
-    UINT cbDest = WideCharToMultiByte(m_TE, 0, (LPWSTR)Src, cbSrc, 0, 0, 0, 0);
+    UINT cbDest = WideCharToMultiByte(m_TE, 0, (wchar_t*)Src, cbSrc, 0, 0, 0, 0);
     char *p = (char*) realloc(m_Result, (cbDest + 1) * sizeof(char));
     if (p) m_Result = p; else return 0;
-    if (!(cbDest = WideCharToMultiByte(m_TE, 0, (LPWSTR)Src, cbSrc, p, cbDest, 0, 0))) return 0;
+    if (!(cbDest = WideCharToMultiByte(m_TE, 0, (wchar_t*)Src, cbSrc, p, cbDest, 0, 0))) return 0;
     if (p[--cbDest]) p[++cbDest] = '\0'; // Always \0 terminate
     if (cbOut) *cbOut = cbDest; // cbOut never includes the \0 terminator
   }
@@ -253,12 +248,12 @@ l_swapUTF16:
 }
 
 #if !defined(_WIN32) || !defined(_UNICODE)
-bool WCToUTF16LEHlpr::Create(const TCHAR*in)
+bool WCToUTF16LEHlpr::Create(const TCHAR*in, unsigned int codepage)
 {
   CharEncConv cec;
   if (!cec.Initialize(NStreamEncoding::UTF16LE, -1)) return false;
   if (!cec.Convert(in)) return false;
-  m_s = cec.Detach();
+  m_s = (unsigned short*) cec.Detach();
   return true;
 }
 #endif
@@ -399,7 +394,7 @@ bool NOStream::WriteString(const wchar_t*Str, size_t cch /*= -1*/)
   CharEncConv cec;
   if (!cec.Initialize(m_Enc.GetCodepage(), -1)) return false;
   cec.SetAllowOptimizedReturn(true);
-  if ((unsigned)-1 != cch) cch *= sizeof(wchar_t); // cec.Convert wants byte count
+  if ((size_t)-1 != cch) cch *= sizeof(wchar_t); // cec.Convert wants byte count
   size_t cbConv;
   char *p = (char*) cec.Convert(Str, cch, &cbConv);
   return p && WriteOctets(p, cbConv);
@@ -453,7 +448,7 @@ tstring NStreamLineReader::GetErrorMessage(UINT Error, const TCHAR*Filename, UIN
   if (Filename)
   {
     const TCHAR *filelinesep = *Filename ? _T(":") : _T("");
-    _stprintf(buf,_T("%s%u"),filelinesep,Line);
+    _stprintf(buf,_T("%") NPRIs _T("%u"),filelinesep,Line);
     msg = msg + _T(": ") + Filename + buf;
   }
   return msg + _T("\n");
@@ -478,7 +473,6 @@ UINT NStreamLineReader::ReadLine(wchar_t*Buffer, UINT cchBuf)
 #endif
 
 l_restart:
-  // Only supports MBCS and UTF-8 for now...
   if (StreamEncoding().IsUTF8())
   {
     for(;;)
@@ -518,7 +512,7 @@ l_restart:
   else if (StreamEncoding().IsUTF16())
   {
 #ifndef _WIN32
-    if (!iconvd.Open("wchar_t", iconvd::GetHostEndianUCS4Code())) goto ERR_UNSUPPORTEDENCODING;
+    if (!iconvd.Open("wchar_t", iconvdescriptor::GetHostEndianUCS4Code())) goto l_unsupportedencoding;
 #endif
     const bool utf16be = StreamEncoding().IsUTF16BE();
     unsigned short lead, trail, cchWC;
@@ -557,7 +551,7 @@ l_restart:
   }
   else if (StreamEncoding().IsUnicode())
   {
-    goto l_unsupportedencoding; 
+    goto l_unsupportedencoding;
   }
   else
   {

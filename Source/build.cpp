@@ -391,7 +391,7 @@ void CEXEBuild::initialize(const TCHAR *makensis_path)
 #ifndef NSIS_CONFIG_CONST_DATA_PATH
     nsis_dir = get_dir_name(get_executable_dir(makensis_path));
 #else
-    nsis_dir = PREFIX_DATA;
+    nsis_dir = PosixBug_CtoTString(PREFIX_DATA);
 #endif
   }
   definedlist.add(_T("NSISDIR"), nsis_dir.c_str());
@@ -419,9 +419,10 @@ int CEXEBuild::getcurdbsize() { return cur_datablock->getlen(); }
 void CEXEBuild::init_shellconstantvalues()
 {
   static bool done = false;
-  if (done) return ;
-  done = true;
+  if (done) return ; else done = true;
 
+  const int orgunmode = uninstall_mode;
+  set_uninstall_mode(0);
   // Note: The order matters because some of the strings are preprocessed and cf must be <= 0x40
   unsigned int pf       = add_asciistring(_T("ProgramFilesDir"), 0);
   unsigned int cf       = add_asciistring(_T("CommonFilesDir"), 0);
@@ -445,7 +446,6 @@ void CEXEBuild::init_shellconstantvalues()
     throw out_of_range("Internal compiler error: too many strings added to strings block before adding shell constants!");
   }
 
-  const int orgunmode = uninstall_mode;
   set_uninstall_mode(1);
   unsigned int unpf = add_asciistring(_T("ProgramFilesDir"), 0);
   unsigned int uncf = add_asciistring(_T("CommonFilesDir"), 0);
@@ -473,7 +473,7 @@ int CEXEBuild::add_string(const TCHAR *string, int process/*=1*/, UINT codepage/
   if (!string || !*string) return 0;
   build_lockedunicodetarget = true;
   init_shellconstantvalues();
-  if ((unsigned)-2 == codepage)
+  if ((UINT)-2 == codepage)
   {
     codepage = curlinereader ? curlinereader->StreamEncoding().GetCodepage() : CP_UTF8;
     // If the current source file is Unicode we have to pick a real codepage for ANSI!
@@ -500,7 +500,7 @@ int CEXEBuild::add_string(const TCHAR *string, int process/*=1*/, UINT codepage/
     ExpandoString<TCHAR, NSIS_MAX_STRLEN*4> buf;
     // NOTE: It is impossible to know how much preprocessing will increase the size, we have to guess
     buf.Reserve(_tcsclen(string) * 2);
-    preprocess_string(buf, string, codepage);
+    preprocess_string(buf, string, codepage); // BUGBUG: This could overflow buf
     i = cur_strlist->add(buf, (WORD)codepage, true);
   }
   else
@@ -624,8 +624,8 @@ int CEXEBuild::preprocess_string(TCHAR *out, const TCHAR *in, WORD codepage/*=CP
                 //m_UserVarNames.inc_reference(idxUserVar);
                 *out++ = (TCHAR) NS_VAR_CODE; // Named user variable;
                 WORD w = FIX_ENDIAN_INT16(CODE_SHORT(idxUserVar));
-                memcpy(out, &w, sizeof(WORD));
-                out += sizeof(WORD)/sizeof(TCHAR);
+                unsigned int w4 = sizeof(TCHAR) > 2 ? FIX_ENDIAN_INT32(CODE_SHORT(idxUserVar)) : w; // Maybe this is too much endian fixing?
+                if (sizeof(TCHAR) < 2) *((WORD*)out) = w, out += 2; else *out = (TCHAR) w4, out++;
                 p += pUserVarName-p; // zip past the user var string.
                 bProceced = true;
                 break;
@@ -680,8 +680,8 @@ int CEXEBuild::preprocess_string(TCHAR *out, const TCHAR *in, WORD codepage/*=CP
               {
                 *out++ = (TCHAR)NS_LANG_CODE; // Next word is lang-string Identifier
                 WORD w = FIX_ENDIAN_INT16(CODE_SHORT(-idx-1));
-                memcpy(out, &w, sizeof(WORD));
-                out += sizeof(WORD)/sizeof(TCHAR);
+                unsigned int w4 = sizeof(TCHAR) > 2 ? FIX_ENDIAN_INT32(CODE_SHORT(-idx-1)) : w; // Maybe this is too much endian fixing?
+                if (sizeof(TCHAR) < 2) *((WORD*)out) = w, out += 2; else *out = (TCHAR) w4, out++;
                 p += _tcslen(cp) + 2;
                 bProceced = true;
               }
@@ -722,7 +722,7 @@ int CEXEBuild::preprocess_string(TCHAR *out, const TCHAR *in, WORD codepage/*=CP
               if (_tcsstr(tbuf,_T(" "))) _tcsstr(tbuf,_T(" "))[0]=0;
             }
             if ( bDoWarning )
-              warning_fl(_T("unknown variable/constant \"%s\" detected, ignoring"),tbuf);
+              warning_fl(_T("unknown variable/constant \"%") NPRIs _T("\" detected, ignoring"),tbuf);
             i = _T('$'); // redundant since i is already '$' and has
                          // not changed.
           }
@@ -837,7 +837,7 @@ int CEXEBuild::add_db_data(IMMap *mmap) // returns offset
     int n = compressor->Init(build_compress_level, build_compress_dict_size);
     if (n != C_OK)
     {
-      ERROR_MSG(_T("Internal compiler error #12345: deflateInit() failed(%s [%d]).\n"), compressor->GetErrStr(n), n);
+      ERROR_MSG(_T("Internal compiler error #12345: deflateInit() failed(%") NPRIs _T(" [%d]).\n"), compressor->GetErrStr(n), n);
       extern void quit(); quit();
     }
 
@@ -853,7 +853,7 @@ int CEXEBuild::add_db_data(IMMap *mmap) // returns offset
       compressor->SetNextOut((char*) db->get(st + sizeof(int) + bufferlen - avail_out, out_len), out_len);
       if ((ret = compressor->Compress(0)) < 0)
       {
-        ERROR_MSG(_T("Error: add_db_data() - compress() failed(%s [%d])\n"), compressor->GetErrStr(ret), ret);
+        ERROR_MSG(_T("Error: add_db_data() - compress() failed(%") NPRIs _T(" [%d])\n"), compressor->GetErrStr(ret), ret);
         return -1;
       }
       mmap->release();
@@ -884,7 +884,7 @@ int CEXEBuild::add_db_data(IMMap *mmap) // returns offset
         compressor->SetNextOut(out, out_len);
         if ((ret = compressor->Compress(C_FINISH)) < 0)
         {
-          ERROR_MSG(_T("Error: add_db_data() - compress() failed(%s [%d])\n"), compressor->GetErrStr(ret), ret);
+          ERROR_MSG(_T("Error: add_db_data() - compress() failed(%") NPRIs _T(" [%d])\n"), compressor->GetErrStr(ret), ret);
           return -1;
         }
 
@@ -976,7 +976,7 @@ int CEXEBuild::add_data(const char *data, int length, IGrowBuf *dblock) // retur
     int n = compressor->Init(build_compress_level, build_compress_dict_size);
     if (n != C_OK)
     {
-      ERROR_MSG(_T("Internal compiler error #12345: deflateInit() failed(%s [%d]).\n"), compressor->GetErrStr(n), n);
+      ERROR_MSG(_T("Internal compiler error #12345: deflateInit() failed(%") NPRIs _T(" [%d]).\n"), compressor->GetErrStr(n), n);
       extern void quit(); quit();
     }
 
@@ -1043,13 +1043,13 @@ int CEXEBuild::add_label(const TCHAR *name)
       if ((*name == _T('.') || (t->code >= cs && t->code <= ce))  &&
           t->name_ptr==offs)
       {
-        if (*name == _T('.')) ERROR_MSG(_T("Error: global label \"%s\" already declared\n"),name);
+        if (*name == _T('.')) ERROR_MSG(_T("Error: global label \"%") NPRIs _T("\" already declared\n"),name);
         else
         {
           const TCHAR *szType = _T("section");
           if (build_cursection_isfunc)
             szType = _T("function");
-          ERROR_MSG(_T("Error: label \"%s\" already declared in %s\n"),name,szType);
+          ERROR_MSG(_T("Error: label \"%") NPRIs _T("\" already declared in %") NPRIs _T("\n"),name,szType);
         }
         return PS_ERROR;
       }
@@ -1099,7 +1099,7 @@ int CEXEBuild::add_function(const TCHAR *funname)
   {
     if (tmp[x].name_ptr == addr)
     {
-      ERROR_MSG(_T("Error: Function named \"%s\" already exists.\n"),funname);
+      ERROR_MSG(_T("Error: Function named \"%") NPRIs _T("\" already exists.\n"),funname);
       return PS_ERROR;
     }
   }
@@ -1267,7 +1267,7 @@ int CEXEBuild::add_section(const TCHAR *secname, const TCHAR *defname, int expan
   {
     if (uninstall_mode != old_uninstall_mode)
     {
-      ERROR_MSG(_T("Error: Can't create %s section in %s section group (use SectionGroupEnd first)\n"), uninstall_mode ? _T("uninstaller") : _T("installer"), old_uninstall_mode ? _T("uninstaller") : _T("installer"));
+      ERROR_MSG(_T("Error: Can't create %") NPRIs _T(" section in %") NPRIs _T(" section group (use SectionGroupEnd first)\n"), uninstall_mode ? _T("uninstaller") : _T("installer"), old_uninstall_mode ? _T("uninstaller") : _T("installer"));
       return PS_ERROR;
     }
   }
@@ -1287,7 +1287,7 @@ int CEXEBuild::add_section(const TCHAR *secname, const TCHAR *defname, int expan
     wsprintf(buf, _T("%d"), cur_header->blocks[NB_SECTIONS].num);
     if (definedlist.add(defname, buf))
     {
-      ERROR_MSG(_T("Error: \"%s\" already defined, can't assign section index!\n"), defname);
+      ERROR_MSG(_T("Error: \"%") NPRIs _T("\" already defined, can't assign section index!\n"), defname);
       return PS_ERROR;
     }
   }
@@ -1417,7 +1417,7 @@ int CEXEBuild::resolve_jump_int(const TCHAR *fn, int *a, int offs, int start, in
         s++;
       }
 
-      ERROR_MSG(_T("Error: could not resolve label \"%s\" in %s\n"),lname,fn);
+      ERROR_MSG(_T("Error: could not resolve label \"%") NPRIs _T("\" in %") NPRIs _T("\n"),lname,fn);
       return 1;
     }
   }
@@ -1443,7 +1443,7 @@ int CEXEBuild::resolve_call_int(const TCHAR *fn, const TCHAR *str, int fptr, int
     }
     sec++;
   }
-  ERROR_MSG(_T("Error: resolving %s function \"%s\" in %s\n"),str,(TCHAR*)ns_func.get()+fptr,fn);
+  ERROR_MSG(_T("Error: resolving %") NPRIs _T(" function \"%") NPRIs _T("\" in %") NPRIs _T("\n"),str,(TCHAR*)ns_func.get()+fptr,fn);
   ERROR_MSG(_T("Note: uninstall functions must begin with \"un.\", and install functions must not\n"));
   return 1;
 }
@@ -1546,7 +1546,7 @@ int CEXEBuild::resolve_coderefs(const TCHAR *str)
       for (x = sec->code; x < sec->code+sec->code_size; x ++)
       {
         TCHAR fname[1024];
-        wsprintf(fname,_T("function \"%s\""),ns_func.get()+sec->name_ptr);
+        wsprintf(fname,_T("function \"%") NPRIs _T("\""),ns_func.get()+sec->name_ptr);
         if (resolve_instruction(fname,str,w+x,x,sec->code,sec->code+sec->code_size)) return 1;
       }
       sec++;
@@ -1570,8 +1570,8 @@ int CEXEBuild::resolve_coderefs(const TCHAR *str)
         // normal string
         cur_strlist->get(x,section_name);
       }
-      if (x) wsprintf(fname,_T("%s section \"%s\" (%d)"),str,section_name.c_str(),cnt);
-      else wsprintf(fname,_T("unnamed %s section (%d)"),str,cnt);
+      if (x) wsprintf(fname,_T("%") NPRIs _T(" section \"%") NPRIs _T("\" (%d)"),str,section_name.c_str(),cnt);
+      else wsprintf(fname,_T("unnamed %") NPRIs _T(" section (%d)"),str,cnt);
       for (x = sec->code; x < sec->code+sec->code_size; x ++)
       {
         if (resolve_instruction(fname,str,w+x,x,sec->code,sec->code+sec->code_size))
@@ -1587,7 +1587,7 @@ int CEXEBuild::resolve_coderefs(const TCHAR *str)
       int i = 0;
       while (i < cur_header->blocks[NB_PAGES].num) {
         TCHAR pagestr[1024];
-        wsprintf(pagestr, _T("%s pages"), str);
+        wsprintf(pagestr, _T("%") NPRIs _T(" pages"), str);
         if (resolve_call_int(pagestr,p->dlg_id?_T("pre-page"):_T("create-page"),p->prefunc,&p->prefunc)) return 1;
         if (resolve_call_int(pagestr,_T("show-page"),p->showfunc,&p->showfunc)) return 1;
         if (resolve_call_int(pagestr,_T("leave-page"),p->leavefunc,&p->leavefunc)) return 1;
@@ -1606,21 +1606,21 @@ int CEXEBuild::resolve_coderefs(const TCHAR *str)
       const TCHAR *name;
       int *p;
     } callbacks[] = {
-      {_T("%s.onInit"), &cur_header->code_onInit},
-      {_T("%s.on%sInstSuccess"), &cur_header->code_onInstSuccess},
-      {_T("%s.on%sInstFailed"), &cur_header->code_onInstFailed},
-      {_T("%s.onUserAbort"), &cur_header->code_onUserAbort},
-      {_T("%s.onVerifyInstDir"), &cur_header->code_onVerifyInstDir},
+      {_T("%") NPRIs _T(".onInit"), &cur_header->code_onInit},
+      {_T("%") NPRIs _T(".on%") NPRIs _T("InstSuccess"), &cur_header->code_onInstSuccess},
+      {_T("%") NPRIs _T(".on%") NPRIs _T("InstFailed"), &cur_header->code_onInstFailed},
+      {_T("%") NPRIs _T(".onUserAbort"), &cur_header->code_onUserAbort},
+      {_T("%") NPRIs _T(".onVerifyInstDir"), &cur_header->code_onVerifyInstDir},
 #ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
-      {_T("%s.onGUIInit"), &cur_header->code_onGUIInit},
-      {_T("%s.onGUIEnd"), &cur_header->code_onGUIEnd},
-      {_T("%s.onMouseOverSection"), &cur_header->code_onMouseOverSection},
+      {_T("%") NPRIs _T(".onGUIInit"), &cur_header->code_onGUIInit},
+      {_T("%") NPRIs _T(".onGUIEnd"), &cur_header->code_onGUIEnd},
+      {_T("%") NPRIs _T(".onMouseOverSection"), &cur_header->code_onMouseOverSection},
 #endif//NSIS_CONFIG_ENHANCEDUI_SUPPORT
 #ifdef NSIS_CONFIG_COMPONENTPAGE
-      {_T("%s.onSelChange"), &cur_header->code_onSelChange},
+      {_T("%") NPRIs _T(".onSelChange"), &cur_header->code_onSelChange},
 #endif//NSIS_CONFIG_COMPONENTPAGE
 #ifdef NSIS_SUPPORT_REBOOT
-      {_T("%s.onRebootFailed"), &cur_header->code_onRebootFailed},
+      {_T("%") NPRIs _T(".onRebootFailed"), &cur_header->code_onRebootFailed},
 #endif//NSIS_SUPPORT_REBOOT
       {0, 0}
     };
@@ -1630,9 +1630,9 @@ int CEXEBuild::resolve_coderefs(const TCHAR *str)
       TCHAR fname[1024];
       wsprintf(fname, callbacks[i].name, un, un);
       TCHAR cbstr[1024];
-      wsprintf(cbstr, _T("%s callback"), str);
+      wsprintf(cbstr, _T("%") NPRIs _T(" callback"), str);
       TCHAR cbstr2[1024];
-      wsprintf(cbstr2, _T("%s.callbacks"), un);
+      wsprintf(cbstr2, _T("%") NPRIs _T(".callbacks"), un);
 
       if (resolve_call_int(cbstr,cbstr2,ns_func.find(fname,0),callbacks[i].p))
         return PS_ERROR;
@@ -1653,7 +1653,7 @@ int CEXEBuild::resolve_coderefs(const TCHAR *str)
         {
           if (sec->code_size>0)
           {
-            warning(_T("%s function \"%s\" not referenced - zeroing code (%d-%d) out\n"),str,
+            warning(_T("%") NPRIs _T(" function \"%") NPRIs _T("\" not referenced - zeroing code (%d-%d) out\n"),str,
               ns_func.get()+sec->name_ptr,
               sec->code,sec->code+sec->code_size);
             memset(w+sec->code,0,sec->code_size*sizeof(entry));
@@ -1673,8 +1673,8 @@ int CEXEBuild::resolve_coderefs(const TCHAR *str)
       if (!t->flags)
       {
         TCHAR *n=(TCHAR*)ns_label.get()+t->name_ptr;
-        if (*n == _T('.')) warning(_T("global label \"%s\" not used"),n);
-        else warning(_T("label \"%s\" not used"),n);
+        if (*n == _T('.')) warning(_T("global label \"%") NPRIs _T("\" not used"),n);
+        else warning(_T("label \"%") NPRIs _T("\" not used"),n);
       }
       t++;
     }
@@ -1751,7 +1751,6 @@ int CEXEBuild::add_page(int type)
   cur_pages->add(&pg,sizeof(page));
 
   cur_page = (page *)cur_pages->get() + cur_header->blocks[NB_PAGES].num++;
-
   cur_page_type = type;
   
   set_code_type_predefines(ids[type].name);
@@ -1786,7 +1785,7 @@ int CEXEBuild::AddVersionInfo()
       if ( !(2 & version_fixedflags) )
       {
         // This error string should match the one used by the TOK_VI_SETFILEVERSION handler
-        ERROR_MSG(_T("Error: invalid %s format, should be X.X.X.X\n"),_T("VIProductVersion"));
+        ERROR_MSG(_T("Error: invalid %") NPRIs _T(" format, should be X.X.X.X\n"),_T("VIProductVersion"));
         return PS_ERROR;
       }
 
@@ -1808,7 +1807,7 @@ int CEXEBuild::AddVersionInfo()
           {
             if ( !*recverkeys ) break;
             if ( !rVersionInfo.FindKey(lang_id, code_page, recverkeys) )
-              warning(_T("Generating version information for language \"%04d-%s\" without standard key \"%s\""), lang_id, lang_name, recverkeys);
+              warning(_T("Generating version information for language \"%04d-%") NPRIs _T("\" without standard key \"%") NPRIs _T("\""), lang_id, lang_name, recverkeys);
             recverkeys += _tcsclen(recverkeys) + 1;
           }
 
@@ -1817,7 +1816,7 @@ int CEXEBuild::AddVersionInfo()
         }
       }
       catch (exception& err) {
-        ERROR_MSG(_T("Error adding version information: %s\n"), CtoTStrParam(err.what()));
+        ERROR_MSG(_T("Error adding version information: %") NPRIs _T("\n"), CtoTStrParam(err.what()));
         return PS_ERROR;
       }
     }
@@ -2134,7 +2133,7 @@ again:
       }
 
       if (!instlog_used) {
-        warning(_T("%sage instfiles not used, no sections will be executed!"), uninstall_mode ? _T("Uninstall p") : _T("P"));
+        warning(_T("%") NPRIs _T("age instfiles not used, no sections will be executed!"), uninstall_mode ? _T("Uninstall p") : _T("P"));
       }
     }
   }
@@ -2223,7 +2222,7 @@ again:
     SCRIPT_MSG(_T("Done!\n"));
   }
   catch (exception& err) {
-    ERROR_MSG(_T("\nError: %s\n"), CtoTStrParam(err.what()));
+    ERROR_MSG(_T("\nError: %") NPRIs _T("\n"), CtoTStrParam(err.what()));
     return PS_ERROR;
   }
 
@@ -2335,12 +2334,12 @@ int CEXEBuild::SetVarsSection()
     int stringSize = NSIS_MAX_STRLEN*(build_unicode?sizeof(TCHAR):sizeof(char));
     if (!res_editor->SetPESectionVirtualSize(NSIS_VARS_SECTION, MaxUserVars * stringSize))
     {
-      ERROR_MSG(_T("Internal compiler error #12346: invalid exehead cannot find section \"%s\"!\n"), _T(NSIS_VARS_SECTION));
+      ERROR_MSG(_T("Internal compiler error #12346: invalid exehead cannot find section \"%") NPRIs _T("\"!\n"), _T(NSIS_VARS_SECTION));
       return PS_ERROR;
     }
   }
   catch (exception& err) {
-    ERROR_MSG(_T("\nError: %s\n"), CtoTStrParam(err.what()));
+    ERROR_MSG(_T("\nError: %") NPRIs _T("\n"), CtoTStrParam(err.what()));
     return PS_ERROR;
   }
 
@@ -2361,7 +2360,7 @@ int CEXEBuild::SetManifest()
     res_editor->UpdateResource(MAKEINTRESOURCE(24), 1, NSIS_DEFAULT_LANG, (LPBYTE) manifest.c_str(), manifest.length());
   }
   catch (exception& err) {
-    ERROR_MSG(_T("Error setting manifest: %s\n"), CtoTStrParam(err.what()));
+    ERROR_MSG(_T("Error setting manifest: %") NPRIs _T("\n"), CtoTStrParam(err.what()));
     return PS_ERROR;
   }
 
@@ -2378,7 +2377,7 @@ int CEXEBuild::UpdatePEHeader()
     // terminal services aware
     headers->OptionalHeader.DllCharacteristics |= IMAGE_DLLCHARACTERISTICS_TERMINAL_SERVER_AWARE;
   } catch (std::runtime_error& err) {
-    ERROR_MSG(_T("Error updating PE headers: %s\n"), CtoTStrParam(err.what()));
+    ERROR_MSG(_T("Error updating PE headers: %") NPRIs _T("\n"), CtoTStrParam(err.what()));
     return PS_ERROR;
   }
 
@@ -2495,7 +2494,7 @@ int CEXEBuild::pack_exe_header()
   FILE *tmpfile=FOPEN(build_packname,("wb"));
   if (!tmpfile)
   {
-    ERROR_MSG(_T("Error: writing temporary file \"%s\" for pack\n"),build_packname);
+    ERROR_MSG(_T("Error: writing temporary file \"%") NPRIs _T("\" for pack\n"),build_packname);
     return PS_ERROR;
   }
   fwrite(m_exehead,1,m_exehead_size,tmpfile);
@@ -2503,7 +2502,7 @@ int CEXEBuild::pack_exe_header()
   if (sane_system(build_packcmd) == -1)
   {
     _tremove(build_packname);
-    ERROR_MSG(_T("Error: calling packer on \"%s\"\n"),build_packname);
+    ERROR_MSG(_T("Error: calling packer on \"%") NPRIs _T("\"\n"),build_packname);
     return PS_ERROR;
   }
 
@@ -2512,7 +2511,7 @@ int CEXEBuild::pack_exe_header()
 
   if (result != PS_OK)
   {
-    ERROR_MSG(_T("Error: reading temporary file \"%s\" after pack\n"),build_packname);
+    ERROR_MSG(_T("Error: reading temporary file \"%") NPRIs _T("\" after pack\n"),build_packname);
     return result;
   }
 
@@ -2579,7 +2578,7 @@ int CEXEBuild::write_output(void)
     close_res_editor();
   }
   catch (exception& err) {
-    ERROR_MSG(_T("\nError: %s\n"), CtoTStrParam(err.what()));
+    ERROR_MSG(_T("\nError: %") NPRIs _T("\n"), CtoTStrParam(err.what()));
     return PS_ERROR;
   }
 
@@ -2600,7 +2599,7 @@ int CEXEBuild::write_output(void)
   {
     tstring full_path = get_full_path(build_output_filename);
     notify(MakensisAPI::NOTIFY_OUTPUT, full_path.c_str());
-    INFO_MSG(_T("\nOutput: \"%s\"\n"), full_path.c_str());
+    INFO_MSG(_T("\nOutput: \"%") NPRIs _T("\"\n"), full_path.c_str());
   }
 
   FILE *fp = FOPEN(build_output_filename,("w+b"));
@@ -2649,7 +2648,7 @@ int CEXEBuild::write_output(void)
     int n = compressor->Init(build_compress_level, build_compress_dict_size);
     if (n != C_OK)
     {
-      ERROR_MSG(_T("Internal compiler error #12345: deflateInit() failed(%s [%d]).\n"), compressor->GetErrStr(n), n);
+      ERROR_MSG(_T("Internal compiler error #12345: deflateInit() failed(%") NPRIs _T(" [%d]).\n"), compressor->GetErrStr(n), n);
       return PS_ERROR;
     }
   }
@@ -2717,7 +2716,7 @@ int CEXEBuild::write_output(void)
   INFO_MSG(_T("Install: "));
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
   int np=build_header.blocks[NB_PAGES].num;
-  INFO_MSG(_T("%d page%s (%d bytes), "),np,np==1?_T(""):_T("s"),np*sizeof(page));
+  INFO_MSG(_T("%d page%") NPRIs _T(" (%d bytes), "),np,np==1?_T(""):_T("s"),np*sizeof(page));
 #endif
   {
     int ns=build_sections.getlen()/sizeof(section);
@@ -2728,7 +2727,7 @@ int CEXEBuild::write_output(void)
     {
       if (!s[x].name_ptr || s[x].flags & SF_RO) req++;
     }
-    INFO_MSG(_T("%d section%s"),ns,ns==1?_T(""):_T("s"));
+    INFO_MSG(_T("%d section%") NPRIs,ns,ns==1?_T(""):_T("s"));
     if (req)
     {
       INFO_MSG(_T(" (%u required)"),req);
@@ -2736,17 +2735,17 @@ int CEXEBuild::write_output(void)
     INFO_MSG(_T(" (%d bytes), "), build_sections.getlen());
   }
   int ne=build_header.blocks[NB_ENTRIES].num;
-  INFO_MSG(_T("%d instruction%s (%d bytes), "),ne,ne==1?_T(""):_T("s"),ne*sizeof(entry));
+  INFO_MSG(_T("%d instruction%") NPRIs _T(" (%d bytes), "),ne,ne==1?_T(""):_T("s"),ne*sizeof(entry));
   int ns=build_strlist.getnum();
-  INFO_MSG(_T("%d string%s (%d bytes), "),ns,ns==1?_T(""):_T("s"),build_strlist.gettotalsize());
+  INFO_MSG(_T("%d string%") NPRIs _T(" (%d bytes), "),ns,ns==1?_T(""):_T("s"),build_strlist.gettotalsize());
   int nlt=build_header.blocks[NB_LANGTABLES].num;
-  INFO_MSG(_T("%d language table%s (%d bytes).\n"),nlt,nlt==1?_T(""):_T("s"),build_langtables.getlen());
+  INFO_MSG(_T("%d language table%") NPRIs _T(" (%d bytes).\n"),nlt,nlt==1?_T(""):_T("s"),build_langtables.getlen());
   if (ubuild_entries.getlen())
   {
     INFO_MSG(_T("Uninstall: "));
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
     np=build_uninst.blocks[NB_PAGES].num;
-    INFO_MSG(_T("%d page%s (%d bytes), \n"),np,np==1?_T(""):_T("s"),ubuild_pages.getlen());
+    INFO_MSG(_T("%d page%") NPRIs _T(" (%d bytes), "),np,np==1?_T(""):_T("s"),ubuild_pages.getlen());
 #endif
     {
       int ns=ubuild_sections.getlen()/sizeof(section);
@@ -2757,7 +2756,7 @@ int CEXEBuild::write_output(void)
       {
         if (!s[x].name_ptr || s[x].flags & SF_RO) req++;
       }
-      INFO_MSG(_T("%d section%s"),ns,ns==1?_T(""):_T("s"));
+      INFO_MSG(_T("%d section%") NPRIs,ns,ns==1?_T(""):_T("s"));
       if (req)
       {
         INFO_MSG(_T(" (%u required)"),req);
@@ -2765,11 +2764,11 @@ int CEXEBuild::write_output(void)
       INFO_MSG(_T(" (%d bytes), "), ubuild_sections.getlen());
     }
     ne=build_uninst.blocks[NB_ENTRIES].num;
-    INFO_MSG(_T("%d instruction%s (%d bytes), "),ne,ne==1?_T(""):_T("s"),ubuild_entries.getlen());
+    INFO_MSG(_T("%d instruction%") NPRIs _T(" (%d bytes), "),ne,ne==1?_T(""):_T("s"),ubuild_entries.getlen());
     ns=ubuild_strlist.getnum();
-    INFO_MSG(_T("%d string%s (%d bytes), "),ns,ns==1?_T(""):_T("s"),ubuild_strlist.gettotalsize());
+    INFO_MSG(_T("%d string%") NPRIs _T(" (%d bytes), "),ns,ns==1?_T(""):_T("s"),ubuild_strlist.gettotalsize());
     nlt=build_uninst.blocks[NB_LANGTABLES].num;
-    INFO_MSG(_T("%d language table%s (%d bytes).\n"),nlt,nlt==1?_T(""):_T("s"),ubuild_langtables.getlen());
+    INFO_MSG(_T("%d language table%") NPRIs _T(" (%d bytes).\n"),nlt,nlt==1?_T(""):_T("s"),ubuild_langtables.getlen());
   }
 
 
@@ -2783,7 +2782,7 @@ int CEXEBuild::write_output(void)
   }
 
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
-  INFO_MSG(_T("\nUsing %s%s compression.\n\n"), compressor->GetName(), build_compress_whole?_T(" (compress whole)"):_T(""));
+  INFO_MSG(_T("\nUsing %") NPRIs _T("%") NPRIs _T(" compression.\n\n"), compressor->GetName(), build_compress_whole?_T(" (compress whole)"):_T(""));
 #endif
 
   unsigned int total_usize=m_exehead_original_size;
@@ -2944,12 +2943,12 @@ int CEXEBuild::write_output(void)
   {
     for (struct postbuild_cmd *cmd=postbuild_cmds; cmd; cmd = cmd->next)
     {
-      LPTSTR cmdstr = cmd->cmd, cmdstrbuf = NULL;
-      LPTSTR arg = _tcsstr(cmdstr, _T("%1"));
+      TCHAR *cmdstr = cmd->cmd, *cmdstrbuf = NULL;
+      TCHAR *arg = _tcsstr(cmdstr, _T("%1"));
       if (arg)    // if found, replace %1 by build_output_filename
       {
         const UINT cchbldoutfile = _tcslen(build_output_filename);
-        cmdstrbuf = (LPTSTR) malloc( (_tcslen(cmdstr) + cchbldoutfile + 1)*sizeof(TCHAR) );
+        cmdstrbuf = (TCHAR*) malloc( (_tcslen(cmdstr) + cchbldoutfile + 1)*sizeof(TCHAR) );
         if (!cmdstrbuf)
         {
           ERROR_MSG(_T("Error: can't allocate memory for finalize command\n"));
@@ -2960,17 +2959,12 @@ int CEXEBuild::write_output(void)
         cmdstr = cmdstrbuf;
         memmove(arg+cchbldoutfile, arg+2, (_tcslen(arg+2)+1)*sizeof(TCHAR));
         memmove(arg, build_output_filename, cchbldoutfile*sizeof(TCHAR));
+        //BUGBUG: Should we call PathConvertWinToPosix on build_output_filename?
       }
 
-      SCRIPT_MSG(_T("\nFinalize command: %s\n"),cmdstr);
-#ifdef _WIN32
-      int ret=sane_system(cmdstr);
-#else
-      PATH_CONVERT(cmdstr);
-      int ret=system(cmdstr);
-#endif
-      if (ret != 0)
-        INFO_MSG(_T("Finalize command returned %d\n"),ret);
+      SCRIPT_MSG(_T("\nFinalize command: %") NPRIs _T("\n"),cmdstr);
+      int ret = sane_system(cmdstr);
+      if (ret != 0) INFO_MSG(_T("Finalize command returned %d\n"),ret);
       free(cmdstrbuf);
     }
   }
@@ -2998,7 +2992,7 @@ int CEXEBuild::deflateToFile(FILE *fp, char *buf, int len) // len==0 to flush
     int ret=compressor->Compress(flush);
     if (ret<0 && (ret!=-1 || !flush))
     {
-      ERROR_MSG(_T("Error: deflateToFile: deflate() failed(%s [%d])\n"), compressor->GetErrStr(ret), ret);
+      ERROR_MSG(_T("Error: deflateToFile: deflate() failed(%") NPRIs _T(" [%d])\n"), compressor->GetErrStr(ret), ret);
       return 1;
     }
     int l=compressor->GetNextOut()-obuf;
@@ -3143,7 +3137,7 @@ int CEXEBuild::uninstall_generate()
         int n = compressor->Init(build_compress_level, build_compress_dict_size);
         if (n != C_OK)
         {
-          ERROR_MSG(_T("Internal compiler error #12345: deflateInit() failed(%s [%d]).\n"), compressor->GetErrStr(n), n);
+          ERROR_MSG(_T("Internal compiler error #12345: deflateInit() failed(%") NPRIs _T(" [%d]).\n"), compressor->GetErrStr(n), n);
           extern void quit(); quit();
         }
 
@@ -3327,7 +3321,7 @@ void CEXEBuild::warning(const TCHAR *s, ...)
   notify(MakensisAPI::NOTIFY_WARNING,buf.GetPtr());
   if (display_warnings)
   {
-    PrintColorFmtMsg_WARN(_T("warning: %s\n"),buf.GetPtr());
+    PrintColorFmtMsg_WARN(_T("warning: %") NPRIs _T("\n"),buf.GetPtr());
   }
 }
 
@@ -3340,13 +3334,13 @@ void CEXEBuild::warning_fl(const TCHAR *s, ...)
   va_end(val);
 
   buf.Reserve(cchMsg+2+_tcslen(curfilename)+50+1+1);
-  _stprintf(&buf[cchMsg],_T(" (%s:%u)"),curfilename,linecnt);
+  _stprintf(&buf[cchMsg],_T(" (%") NPRIs _T(":%u)"),curfilename,linecnt);
 
   m_warnings.add(buf,0);
   notify(MakensisAPI::NOTIFY_WARNING,buf.GetPtr());
   if (display_warnings)
   {
-    PrintColorFmtMsg_WARN(_T("warning: %s\n"),buf.GetPtr());
+    PrintColorFmtMsg_WARN(_T("warning: %") NPRIs _T("\n"),buf.GetPtr());
   }
 }
 
@@ -3363,7 +3357,7 @@ void CEXEBuild::ERROR_MSG(const TCHAR *s, ...) const
     notify(MakensisAPI::NOTIFY_ERROR,buf.GetPtr());
     if (display_errors)
     {
-      PrintColorFmtMsg_ERR(_T("%s"),buf.GetPtr());
+      PrintColorFmtMsg_ERR(_T("%") NPRIs ,buf.GetPtr());
     }
   }
 }
@@ -3399,10 +3393,10 @@ void CEXEBuild::print_warnings()
   TCHAR *p=m_warnings.get();
   while (x>0) if (!p[--x]) nw++;
   SetPrintColorWARN();
-  _ftprintf(g_output,_T("\n%d warning%s:\n"),nw,nw==1?_T(""):_T("s"));
+  _ftprintf(g_output,_T("\n%d warning%") NPRIs _T(":\n"),nw,nw==1?_T(""):_T("s"));
   for (x = 0; x < nw; x ++)
   {
-    _ftprintf(g_output,_T("  %s\n"),p);
+    _ftprintf(g_output,_T("  %") NPRIs _T("\n"),p);
     p+=_tcslen(p)+1;
   }
   FlushOutputAndResetPrintColor();
@@ -3435,7 +3429,7 @@ int CEXEBuild::initialize_default_plugins(bool newtargetarc)
   searchPath += PLATFORM_PATH_SEPARATOR_STR _T("Plugins") PLATFORM_PATH_SEPARATOR_STR;
   searchPath += get_target_suffix();
 
-  SCRIPT_MSG(_T("Processing default plugins: \"%s") PLATFORM_PATH_SEPARATOR_STR _T("*.dll\"\n"), searchPath.c_str());
+  SCRIPT_MSG(_T("Processing default plugins: \"%") NPRIs PLATFORM_PATH_SEPARATOR_STR _T("*.dll\"\n"), searchPath.c_str());
   if (!m_pPlugins->Initialize(searchPath.c_str(), !!display_script))
   {
     ERROR_MSG(_T("Error initializing default plugins!\n"));
@@ -3562,14 +3556,14 @@ int CEXEBuild::DeclaredUserVar(const TCHAR *szVarName)
 {
   if (m_ShellConstants.get((TCHAR*)szVarName) >= 0)
   {
-    ERROR_MSG(_T("Error: name \"%s\" in use by constant\n"), szVarName);
+    ERROR_MSG(_T("Error: name \"%") NPRIs _T("\" in use by constant\n"), szVarName);
     return PS_ERROR;
   }
 
   int idxUserVar = m_UserVarNames.get((TCHAR*)szVarName);
   if (idxUserVar >= 0)
   {
-    ERROR_MSG(_T("Error: variable \"%s\" already declared\n"), szVarName);
+    ERROR_MSG(_T("Error: variable \"%") NPRIs _T("\" already declared\n"), szVarName);
     return PS_ERROR;
   }
   const TCHAR *pVarName = szVarName;
@@ -3591,7 +3585,7 @@ int CEXEBuild::DeclaredUserVar(const TCHAR *szVarName)
     {
       if (!isSimpleChar(*pVarName))
       {
-        ERROR_MSG(_T("Error: invalid characters in variable name \"%s\", use only characters [a-z][A-Z][0-9] and '_'\n"), szVarName);
+        ERROR_MSG(_T("Error: invalid characters in variable name \"%") NPRIs _T("\", use only characters [a-z][A-Z][0-9] and '_'\n"), szVarName);
         return PS_ERROR;
       }
       pVarName++;
@@ -3624,7 +3618,7 @@ int CEXEBuild::GetUserVarIndex(LineParser &line, int token)
       int idxConst = m_ShellConstants.get((TCHAR *)p+1);
       if (idxConst >= 0)
       {
-        ERROR_MSG(_T("Error: cannot change constants : %s\n"), p);
+        ERROR_MSG(_T("Error: cannot change constants : %") NPRIs _T("\n"), p);
       }
     }
   }
@@ -3637,7 +3631,7 @@ void CEXEBuild::VerifyDeclaredUserVarRefs(UserVarsStringList *pVarsStringList)
   {
     if (!pVarsStringList->get_reference(i))
     {
-      warning(_T("Variable \"%s\" not referenced or never set, wasting memory!"), pVarsStringList->idx2name(i));
+      warning(_T("Variable \"%") NPRIs _T("\" not referenced or never set, wasting memory!"), pVarsStringList->idx2name(i));
     }
   }
 }
@@ -3711,7 +3705,7 @@ const TCHAR* CEXEBuild::get_target_suffix(CEXEBuild::TARGETTYPE tt) const
   {
   case TARGET_X86ANSI   :return _T("x86-ansi");
   case TARGET_X86UNICODE:return _T("x86-unicode");
-#if !defined(_WIN32) || defined(_WIN64)
+#if !defined(_WIN32) || defined(_WIN64) // BUGBUG: Need a better define for this
   case TARGET_AMD64     :return _T("amd64-unicode");
 #endif
   default:return _T("?");
@@ -3727,7 +3721,7 @@ int CEXEBuild::update_exehead(const tstring& file, size_t *size/*=NULL*/) {
   FILE *tmpfile = FOPEN(file.c_str(), ("rb"));
   if (!tmpfile)
   {
-    ERROR_MSG(_T("Error: opening stub \"%s\"\n"), file.c_str());
+    ERROR_MSG(_T("Error: opening stub \"%") NPRIs _T("\"\n"), file.c_str());
     return PS_ERROR;
   }
 
@@ -3738,7 +3732,7 @@ int CEXEBuild::update_exehead(const tstring& file, size_t *size/*=NULL*/) {
   fseek(tmpfile, 0, SEEK_SET);
   if (fread(exehead, 1, exehead_size, tmpfile) != exehead_size)
   {
-    ERROR_MSG(_T("Error: reading stub \"%s\"\n"), file.c_str());
+    ERROR_MSG(_T("Error: reading stub \"%") NPRIs _T("\"\n"), file.c_str());
     fclose(tmpfile);
     delete [] exehead;
     return PS_ERROR;

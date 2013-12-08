@@ -31,11 +31,14 @@ if msvs_version >= 8.0:
 	defenv['EXCEPTION_FLAG'] = '/EHsc'
 	defenv.Append(CCFLAGS = ['/GS-'])
 	defenv.Append(CPPDEFINES = ['_CRT_SECURE_NO_WARNINGS', '_CRT_NONSTDC_NO_WARNINGS', '_CRT_SECURE_NO_DEPRECATE', '_CRT_NON_CONFORMING_SWPRINTFS'])
+	defenv['MSVCRT_FLAG'] = '/MT' # Avoid msvcr?0.dll dependency
 else:
 	defenv['EXCEPTION_FLAG'] = '/GX'
 if msvs_version < 10.0:
 	# not even /ALIGN:512 works for vc10... fails to load process
 	defenv.Append(LINKFLAGS = ['/opt:nowin98'])
+if defenv['MSTOOLKIT']:
+	defenv['MSVCRT_FLAG'] = '/ML' # TK2003 does not have all libs
 
 ### defines
 
@@ -51,6 +54,7 @@ if defenv['DEBUG']:
 	defenv.Append(CCFLAGS = ['/Zi'])
 	defenv.Append(CCFLAGS = ['/Fd${TARGET.dir}\\${TARGET.dir.file}.pdb'])
 	defenv.Append(LINKFLAGS = ['/debug'])
+	defenv['MSVCRT_FLAG'] = defenv['MSVCRT_FLAG'] + 'd'
 
 ### workarounds
 
@@ -109,7 +113,7 @@ stub_env = defenv.Clone()
 stub_env.Append(CPPPATH = ['#$BUILD_CONFIG'])
 
 if not defenv['DEBUG']:
-	stub_env.Append(CCFLAGS = ['/O1'])               # optimize for size
+  stub_env.Append(CCFLAGS = ['/O1'])               # optimize for size
 stub_env.Append(CCFLAGS = ['/W3'])                 # level 3 warnings
 stub_env.Append(CCFLAGS = ['/FAcs'])               # full listing files
 stub_env.Append(CCFLAGS = ['/Fa${TARGET}.lst'])    # listing file name
@@ -132,6 +136,7 @@ makensis_env.Append(CCFLAGS = ['$EXCEPTION_FLAG']) # enable exceptions
 makensis_env.Append(CCFLAGS = ['/W3'])             # level 3 warnings
 makensis_env.Append(CCFLAGS = ['/FAcs'])               # full listing files
 makensis_env.Append(CCFLAGS = ['/Fa${TARGET}.lst'])    # listing file name
+makensis_env.Append(CCFLAGS = [defenv['MSVCRT_FLAG']])
 
 makensis_env.Append(LINKFLAGS = ['$MAP_FLAG'])     # generate map file
 if defenv['UNICODE']:
@@ -157,6 +162,7 @@ util_env = tdefenv.Clone()
 if not defenv['DEBUG']:
 	util_env.Append(CCFLAGS = ['/O1'])            # optimize for speed
 util_env.Append(CCFLAGS = ['/W3'])              # level 3 warnings
+util_env.Append(CCFLAGS = [defenv['MSVCRT_FLAG']])
 
 util_env.Append(LINKFLAGS = ['$MAP_FLAG'])      # generate map file
 

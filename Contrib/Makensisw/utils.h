@@ -27,11 +27,7 @@
 #include "resource.h"
 #include "toolbar.h"
 
-#ifdef _countof
-#define COUNTOF _countof
-#else
 #define COUNTOF(a) (sizeof(a)/sizeof(a[0]))
-#endif
 
 #define MRU_LIST_SIZE 5
 #define MRU_DISPLAY_LENGTH 40

@@ -361,9 +361,10 @@ void NSISCALL CleanUp()
     dbd_hFile = INVALID_HANDLE_VALUE;
   }
 #endif
+#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
   // Notify plugins that we are about to unload
   Plugins_UnloadAll();
-#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
+
   // Clean up after plug-ins
   myDelete(state_plugins_dir, DEL_DIR | DEL_RECURSE | DEL_REBOOT);
 #endif // NSIS_CONFIG_PLUGIN_SUPPORT

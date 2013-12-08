@@ -32,15 +32,13 @@
 
 #include <stdarg.h>
 
-
 extern double my_wtof(const wchar_t *str);
 extern unsigned int my_strncpy(TCHAR*Dest, const TCHAR*Src, unsigned int cchMax);
+size_t my_strftime(TCHAR *s, size_t max, const TCHAR  *fmt, const struct tm *tm);
 
 // Adds the bitmap in filename using resource editor re as id id.
 // If width or height are specified it will also make sure the bitmap is in that size
 int update_bitmap(CResourceEditor* re, WORD id, const TCHAR* filename, int width=0, int height=0, int maxbpp=0);
-
-size_t my_strftime(TCHAR *s, size_t max, const TCHAR  *fmt, const struct tm *tm);
 
 bool GetDLLVersion(const tstring& filepath, DWORD& high, DWORD& low);
 
@@ -54,6 +52,7 @@ tstring lowercase(const tstring&);
 tstring get_string_prefix(const tstring& str, const tstring& separator);
 tstring get_string_suffix(const tstring& str, const tstring& separator);
 
+void RawTStrToASCII(const TCHAR*in,char*out,UINT maxcch);
 size_t ExpandoStrFmtVaList(wchar_t*Stack, size_t cchStack, wchar_t**ppMalloc, const wchar_t*FmtStr, va_list Args);
 
 template<typename T, size_t S> class ExpandoString {
@@ -112,7 +111,7 @@ int WinStdIO_wprintf(const wchar_t*Fmt, ...);
 #define _vftprintf WinStdIO_vfwprintf
 #endif // ~MAKENSIS
 #endif // ~_UNICODE
-#define ResetPrintColor() FlushOutputAndResetPrintColor() // For reset ONLY use PrintColorFmtMsg(0,NULL ...
+#define ResetPrintColor() FlushOutputAndResetPrintColor() // For reset ONLY, use PrintColorFmtMsg(0,NULL ...
 #define SetPrintColorWARN() PrintColorFmtMsg(1|0x10, NULL, (va_list)NULL)
 #define SetPrintColorERR() PrintColorFmtMsg(2|0x10, NULL, (va_list)NULL)
 #else
@@ -136,7 +135,6 @@ inline void PrintColorFmtMsg_ERR(const TCHAR *fmtstr, ...)
 }
 
 
-
 #ifndef _WIN32
 // iconv const inconsistency workaround by Alexandre Oliva
 template <typename T>
@@ -148,7 +146,9 @@ inline size_t nsis_iconv_adaptor
   return iconv_func (cd, (T)inbuf, inbytesleft, outbuf, outbytesleft);
 }
 
+const char* nsis_iconv_get_host_endian_ucs4_code();
 bool nsis_iconv_reallociconv(iconv_t CD, char**In, size_t*cbInLeft, char**Mem, size_t&cbConverted);
+void create_code_page_string(char*buf, size_t len, UINT code_page); // Create iconv code from Windows codepage
 
 class iconvdescriptor {
   iconv_t m_cd;
@@ -182,25 +182,44 @@ public:
   iconv_t GetDescriptor() const { return m_cd; }
   operator iconv_t() const { return m_cd; }
 
-  static const char* GetHostEndianUCS4Code() { return "UCS-4-INTERNAL"; }
+  static const char* GetHostEndianUCS4Code() { return nsis_iconv_get_host_endian_ucs4_code(); }
 };
 
+BOOL IsDBCSLeadByteEx(unsigned int CodePage, unsigned char TestChar);
 TCHAR *CharPrev(const TCHAR *s, const TCHAR *p);
 char *CharNextA(const char *s);
-WCHAR *CharNextW(const WCHAR *s);
+wchar_t *CharNextW(const wchar_t *s);
 char *CharNextExA(WORD codepage, const char *s, int flags);
 int wsprintf(TCHAR *s, const TCHAR *format, ...);
-int WideCharToMultiByte(UINT CodePage, DWORD dwFlags, LPCWSTR lpWideCharStr,
+int WideCharToMultiByte(UINT CodePage, DWORD dwFlags, const wchar_t* lpWideCharStr,
     int cchWideChar, LPSTR lpMultiByteStr, int cbMultiByte, LPCSTR lpDefaultChar,
     LPBOOL lpUsedDefaultChar);
 int MultiByteToWideChar(UINT CodePage, DWORD dwFlags, LPCSTR lpMultiByteStr,
-    int cbMultiByte, LPWSTR lpWideCharStr, int cchWideChar);
+    int cbMultiByte, wchar_t* lpWideCharStr, int cchWideChar);
 BOOL IsValidCodePage(UINT CodePage);
 #ifdef _UNICODE
 #define CharNext CharNextW
 #else
 #define CharNext CharNextA
 #endif
+bool NSISRT_Initialize();
+#define NSISRT_free(p) ( free((void*)(p)) )
+wchar_t* NSISRT_mbtowc(const char *Str);
+char* NSISRT_wctomb(const wchar_t *Str);
+char* NSISRT_wctombpath(const wchar_t *Path);
+char* NSISRT_ttombpath(const TCHAR *Path);
+const char* NSISRT_setlocale_wincp(int cat, unsigned int cp);
+int _wcsicmp(const wchar_t *a, const wchar_t *b);
+int _wcsnicmp(const wchar_t *a, const wchar_t *b, size_t n);
+long _wtol(const wchar_t *s);
+int _wtoi(const wchar_t *s);
+int _swprintf(wchar_t *d, const wchar_t *f, ...);
+wchar_t* _wcsdup(const wchar_t *s);
+wchar_t* _wgetenv(const wchar_t *wname);
+int _wremove(const wchar_t *Path);
+#define _wunlink _wremove // BUGBUG: This is not 100% correct, _wremove can also call rmdir
+int _wchdir(const wchar_t *Path);
+int _wstat(const wchar_t *Path, struct stat *pS);
 
 TCHAR *my_convert(const TCHAR *path);
 void my_convert_free(TCHAR *converted_path);
@@ -208,14 +227,16 @@ int my_open(const TCHAR *pathname, int flags);
 
 #define OPEN(a, b) my_open(a, b)
 
-#else
+#else // _WIN32
+
+#define NSISRT_Initialize() (true)
 
 #define my_convert(x) (x)
 #define my_convert_free(x)
 
 #define OPEN(a, b) _topen(a, b)
 
-#endif
+#endif // ~_WIN32
 
 FILE* my_fopen(const TCHAR *path, const char *mode);
 #define FOPEN(a, b) my_fopen((a), (b))
@@ -240,9 +261,9 @@ inline T align_to_512(const T x) {
 
 class BaseResourceManager {
 protected:
-	BaseResourceManager() {}
+  BaseResourceManager() {}
 public:
-	virtual ~BaseResourceManager() {}
+  virtual ~BaseResourceManager() {}
 };
 
 template <typename _RESOURCE, typename _FREE_RESOURCE>
@@ -258,25 +279,23 @@ private: // don't copy instances
   void operator=(const ResourceManager&);
 };
 
-#define RM_MANGLE_FREEFUNC(freefunc) \
-	__free_with_##freefunc
-
+#define RM_MANGLE_FREEFUNC(freefunc) __free_with_##freefunc
 #define RM_DEFINE_FREEFUNC(freefunc) \
-struct RM_MANGLE_FREEFUNC(freefunc) { \
-  template <typename T> void operator()(T& x) { freefunc(x); } \
-}
+  struct RM_MANGLE_FREEFUNC(freefunc) { \
+    template <typename T> void operator()(T& x) { freefunc(x); } \
+  }
 
 typedef boost::scoped_ptr<BaseResourceManager> ResourceManagerPtr;
 
 template<typename _FREE_RESOURCE, typename _RESOURCE>
 void createResourceManager(_RESOURCE& resource, ResourceManagerPtr& ptr) {
-	ptr.reset(new ResourceManager<_RESOURCE, _FREE_RESOURCE>(resource));
+  ptr.reset(new ResourceManager<_RESOURCE, _FREE_RESOURCE>(resource));
 }
 
 #define RM_MANGLE_RESOURCE(resource) resource##_autoManager
 #define MANAGE_WITH(resource, freefunc) \
-	ResourceManagerPtr RM_MANGLE_RESOURCE(resource); \
-		createResourceManager<RM_MANGLE_FREEFUNC(freefunc)>( \
+  ResourceManagerPtr RM_MANGLE_RESOURCE(resource); \
+    createResourceManager<RM_MANGLE_FREEFUNC(freefunc)>( \
       resource, RM_MANGLE_RESOURCE(resource))
 
 // Add more resource-freeing functions here when you need them
@@ -294,6 +313,7 @@ RM_DEFINE_FREEFUNC(my_convert_free);
 #endif
 
 // Platform detection
-bool Platform_SupportsUTF8Conversion();
+inline bool Platform_IsBigEndian() { return FIX_ENDIAN_INT16(0x00ff) != 0x00ff; }
+unsigned char Platform_SupportsUTF8Conversion();
 
 #endif //_UTIL_H_

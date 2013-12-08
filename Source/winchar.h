@@ -12,23 +12,45 @@
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty.
- *
- * Reviewed for Unicode support by Jim Park -- 07/31/2007
  */
 
+#ifndef INC_NSIS_WINCHAR
+#define INC_NSIS_WINCHAR
 #include "Platform.h"
 
+#define MAKEINTRESOURCEWINW(i) ( (WINWCHAR*) MAKEINTRESOURCEW(i) )
+
+int WinWStrICmpASCII(const WINWCHAR *a, const char *b);
+int WinWStrNICmpASCII(const WINWCHAR *a, const char *b, size_t n);
+#ifdef _WIN32
+inline size_t WinWStrLen(const WINWCHAR *s) { return wcslen((wchar_t*)s); }
+inline WINWCHAR* WinWStrCpy(WINWCHAR *d, const WINWCHAR *s) { return (WINWCHAR*)wcscpy((wchar_t*)d, (wchar_t*)s); }
+inline WINWCHAR* WinWStrNCpy(WINWCHAR *d, const WINWCHAR *s, size_t n) { return (WINWCHAR*)wcsncpy((wchar_t*)d, (wchar_t*)s, n); }
+inline int WinWStrCmp(const WINWCHAR *a, const WINWCHAR *b) { return wcscmp((wchar_t*)a, (wchar_t*)b); }
+inline WINWCHAR* WinWStrDupFromWinWStr(const WINWCHAR *s) { return (WINWCHAR*)wcsdup((wchar_t*)s); }
+inline WINWCHAR* WinWStrDupFromTChar(const wchar_t *s) { return WinWStrDupFromWinWStr((WINWCHAR*)s); }
+inline int WinWStrToInt(const WINWCHAR *s) { return _wtoi((wchar_t*)s); }
+#else // !_WIN32
+size_t WinWStrLen(const WINWCHAR *s);
+WINWCHAR* WinWStrCpy(WINWCHAR *d, const WINWCHAR *s);
+WINWCHAR* WinWStrNCpy(WINWCHAR *d, const WINWCHAR *s, size_t n);
+int WinWStrCmp(const WINWCHAR *a, const WINWCHAR *b);
+WINWCHAR* WinWStrDupFromWinWStr(const WINWCHAR *s);
+WINWCHAR* WinWStrDupFromTChar(const TCHAR *s);
+int WinWStrToInt(const WINWCHAR *s);
+#endif // ~_WIN32
+
+#ifdef _UNICODE
+inline WINWCHAR* WinWStrDupFromTChar(const TCHAR *s, unsigned int codepage) { return WinWStrDupFromTChar(s); }
+#endif
+
+
+#if 0
 WCHAR *wcsdup_fromansi(const char* s, unsigned int codepage = CP_ACP);
 #ifdef _UNICODE
 #define wcsdup_fromTchar(s, codepage) _wcsdup(s)      // codepage is not used in this mode
 #else
 #define wcsdup_fromTchar(s, codepage) wcsdup_fromansi(s, codepage)
 #endif
-
-#if 0 // Needed by some RTL missing wchar string functions ?
-WCHAR *wcscpy(WCHAR *ws1, const WCHAR *ws2);
-WCHAR *wcsncpy(WCHAR *ws1, const WCHAR *ws2, size_t n);
-size_t wcslen(const WCHAR *ws);
-WCHAR *_wcsdup(const WCHAR *ws);
-int wcscmp(const WCHAR *ws1, const WCHAR *ws2);
 #endif
+#endif // ~INC_NSIS_WINCHAR

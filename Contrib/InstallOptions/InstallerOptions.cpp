@@ -13,15 +13,15 @@
 #include <shlobj.h>
 #include <commdlg.h>
 #include <cderr.h>
+#include <shellapi.h>
 #include "resource.h"
-#include "shellapi.h"
 
 #include <nsis/pluginapi.h> // nsis plugin
 
-#ifdef _countof
-#define COUNTOF _countof
-#else
 #define COUNTOF(a) (sizeof(a)/sizeof(a[0]))
+#ifndef min
+#include <algorithm>
+#define min std::min // mingw64?
 #endif
 
 // Use for functions only called from one place to possibly reduce some code

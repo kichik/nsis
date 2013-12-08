@@ -24,6 +24,7 @@
 #endif // _MSC_VER > 1000
 
 #include "Platform.h"
+#include "winchar.h"
 
 #include <vector>
 #include <stdexcept>
@@ -45,8 +46,8 @@ struct DialogItemTemplate {
   DWORD  dwStyle;
   WORD   wId;
 
-  WCHAR *szClass;
-  WCHAR *szTitle;
+  WINWCHAR *szClass;
+  WINWCHAR *szTitle;
   char  *szCreationData;
 
   WORD  wCreateDataSize;
@@ -148,16 +149,16 @@ private:
   DWORD m_dwExtStyle;
   DWORD m_dwStyle;
 
-  WCHAR *m_szMenu;
-  WCHAR *m_szClass;
-  WCHAR *m_szTitle;
+  WINWCHAR *m_szMenu;
+  WINWCHAR *m_szClass;
+  WINWCHAR *m_szTitle;
 
    // Only if DS_FONT style is set
   short m_sFontSize;
   short m_sFontWeight; // Extended only
   BYTE  m_bItalic; // Extended only
   BYTE  m_bCharset; // Extended only
-  WCHAR *m_szFont;
+  WINWCHAR *m_szFont;
 
   // For (en/de)coding Unicode
   unsigned int m_uCodePage;

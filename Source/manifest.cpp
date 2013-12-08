@@ -20,7 +20,7 @@
 #include "manifest.h"
 #include <nsis-version.h>
 #include "tstring.h"
-#include "utf.h"
+#include "util.h" // RawTStrToASCII
 
 // Jim Park: The manifest must stay UTF-8.  Do not convert.
 

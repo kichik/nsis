@@ -21,6 +21,7 @@
 #include "Platform.h"
 #include "util.h"
 #include "winchar.h"
+#include "utf.h"
 
 #ifdef NSIS_SUPPORT_VERSION_INFO
 
@@ -129,7 +130,7 @@ void CResourceVersionInfo::SetProductVersion(int HighPart, int LowPart)
 // Jim Park: Not sure where this is used.
 int GetVersionHeader (LPSTR &p, WORD &wLength, WORD &wValueLength, WORD &wType)
 {
-    WCHAR *szKey;
+    WINWCHAR *szKey;
     char * baseP;
     
     baseP = p;
@@ -139,11 +140,11 @@ int GetVersionHeader (LPSTR &p, WORD &wLength, WORD &wValueLength, WORD &wType)
     p += sizeof(WORD);
     wType = *(WORD*)p;
     p += sizeof(WORD);
-    szKey = (WCHAR*)p;
-    p += (wcslen(szKey) + 1) * sizeof (WCHAR);
+    szKey = (WINWCHAR*)p;
+    p += (WinWStrLen(szKey) + 1) * sizeof (WINWCHAR);
     while ( ((ULONG_PTR)p % 4) != 0 )
         p++;
-    return p - baseP;    
+    return p - baseP;
 }
 
 DWORD ZEROS = 0;
@@ -162,16 +163,16 @@ void PadStream (GrowBuf &strm)
 // @param wType If type is 1, it's a wchar_t string, so save value length appropriately.
 // @param key The string key
 // @param value The value mapped to string key.
-void SaveVersionHeader (GrowBuf &strm, WORD wLength, WORD wValueLength, WORD wType, const WCHAR *key, void *value)
+static void SaveVersionHeaderUTF16LE(GrowBuf &strm, WORD wLength, WORD wValueLength, WORD wType, const unsigned short *key, void *value)
 {
     WORD valueLen;
     WORD keyLen;
     
-    strm.add (&wLength, sizeof (wLength));
+    strm.add (&wLength, sizeof(wLength));
     
-    strm.add (&wValueLength, sizeof (wValueLength));
+    strm.add (&wValueLength, sizeof(wValueLength));
     strm.add (&wType, sizeof (wType));
-    keyLen = WORD((wcslen(key) + 1) * sizeof (WCHAR));
+    keyLen = WORD((StrLenUTF16(key) + 1) * sizeof(WINWCHAR));
     strm.add ((void*)key, keyLen);
     
     PadStream(strm);
@@ -180,9 +181,16 @@ void SaveVersionHeader (GrowBuf &strm, WORD wLength, WORD wValueLength, WORD wTy
     {
         valueLen = wValueLength;
         if ( wType == 1 )
-            valueLen = valueLen * WORD(sizeof (WCHAR));
+            valueLen = valueLen * WORD(sizeof(WINWCHAR));
         strm.add (value, valueLen);
     }
+}
+static void SaveVersionHeader(GrowBuf &strm, WORD wLength, WORD wValueLength, WORD wType, const wchar_t *key, void *value)
+{
+  WCToUTF16LEHlpr cnv;
+  if (!cnv.Create(key)) throw std::runtime_error("Unicode conversion failed");
+  SaveVersionHeaderUTF16LE(strm, wLength, wValueLength, wType, cnv.Get(), value);
+  cnv.Destroy();
 }
 
 void CResourceVersionInfo::ExportToStream(GrowBuf &strm, int Index)
@@ -190,10 +198,9 @@ void CResourceVersionInfo::ExportToStream(GrowBuf &strm, int Index)
     DWORD v;
     WORD wSize;  
     int p, p1;
-    WCHAR *KeyName, *KeyValue;
 
     strm.resize(0);
-    SaveVersionHeader (strm, 0, sizeof (VS_FIXEDFILEINFO), 0, L"VS_VERSION_INFO", &m_FixedInfo);
+    SaveVersionHeader(strm, 0, sizeof (VS_FIXEDFILEINFO), 0, L"VS_VERSION_INFO", &m_FixedInfo);
     
     DefineList *pChildStrings = m_ChildStringLists.get_strings(Index);
     if ( pChildStrings->getnum() > 0 )
@@ -201,20 +208,19 @@ void CResourceVersionInfo::ExportToStream(GrowBuf &strm, int Index)
       GrowBuf stringInfoStream;
       int codepage = m_ChildStringLists.get_codepage(Index);
       LANGID langid = m_ChildStringLists.get_lang(Index);
-      WCHAR Buff[16];
+      wchar_t Buff[16];
       _snwprintf(Buff, COUNTOF(Buff), L"%04x%04x", langid, codepage);
-      SaveVersionHeader (stringInfoStream, 0, 0, 0, Buff, &ZEROS);
+      SaveVersionHeader(stringInfoStream, 0, 0, 0, Buff, &ZEROS);
       
       for ( int i = 0; i < pChildStrings->getnum(); i++ )
       {
         PadStream (stringInfoStream);
-        
+        WCToUTF16LEHlpr cnvName, cnvValue;
+        if (!cnvName.Create(pChildStrings->getname(i), codepage)) throw std::runtime_error("Unicode conversion failed");
+        if (!cnvValue.Create(pChildStrings->getvalue(i), codepage)) throw std::runtime_error("Unicode conversion failed");
         p = stringInfoStream.getlen();
-        KeyName = wcsdup_fromTchar(pChildStrings->getname(i), codepage);
-        KeyValue = wcsdup_fromTchar(pChildStrings->getvalue(i), codepage);
-        SaveVersionHeader (stringInfoStream, 0, WORD(wcslen(KeyValue) + 1), 1, KeyName, (void*)KeyValue);
-        free(KeyName);
-        free(KeyValue);
+        SaveVersionHeaderUTF16LE(stringInfoStream, 0, WORD(StrLenUTF16(cnvValue.Get()) + 1), 1, cnvName.Get(), (void*)cnvValue.Get());
+        cnvName.Destroy(), cnvValue.Destroy();
         wSize = WORD(stringInfoStream.getlen() - p);
         
         *(WORD*)((PBYTE)stringInfoStream.get()+p)=wSize;
@@ -225,7 +231,7 @@ void CResourceVersionInfo::ExportToStream(GrowBuf &strm, int Index)
       
       PadStream (strm);
       p = strm.getlen();
-      SaveVersionHeader (strm, 0, 0, 0, L"StringFileInfo", &ZEROS);
+      SaveVersionHeader(strm, 0, 0, 0, L"StringFileInfo", &ZEROS);
       strm.add (stringInfoStream.get(), stringInfoStream.getlen());
       wSize = WORD(strm.getlen() - p);
       
@@ -237,11 +243,11 @@ void CResourceVersionInfo::ExportToStream(GrowBuf &strm, int Index)
     {
       PadStream (strm);
       p = strm.getlen();
-      SaveVersionHeader (strm, 0, 0, 0, L"VarFileInfo", &ZEROS);
+      SaveVersionHeader(strm, 0, 0, 0, L"VarFileInfo", &ZEROS);
       PadStream (strm);
       
       p1 = strm.getlen();
-      SaveVersionHeader (strm, 0, 0, 0, L"Translation", &ZEROS);
+      SaveVersionHeader(strm, 0, 0, 0, L"Translation", &ZEROS);
       
       // First add selected code language translation
       v = MAKELONG(m_ChildStringLists.get_lang(Index), m_ChildStringLists.get_codepage(Index));

@@ -24,10 +24,11 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-
-#include <vector>
-
 #include "Platform.h"
+#include "winchar.h"
+#include <vector>
+#include <cassert>
+
 #ifdef _WIN32
 #include <winnt.h>
 #else
@@ -114,10 +115,50 @@ public:
   CResourceEditor(BYTE* pbPE, int iSize, bool bKeepData = true);
   virtual ~CResourceEditor();
 
-  bool  UpdateResource   (const TCHAR* szType, WORD szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize);
-  BYTE* GetResource      (const TCHAR* szType, WORD szName, LANGID wLanguage);
-  int   GetResourceSize  (const TCHAR* szType, WORD szName, LANGID wLanguage);
-  DWORD GetResourceOffset(const TCHAR* szType, WORD szName, LANGID wLanguage);
+  // On POSIX+Unicode GetResource(RT_VERSION,..) is not TCHAR nor WINWCHAR, it is WCHAR/UINT16.
+  // If it passes IS_INTRESOURCE we must allow it.
+  // Use TCHAR* for real strings. If you need to pass in a WINWCHAR*, make GetResourceW public...
+  template<class T> bool UpdateResource(const T*Type, WORD Name, LANGID Lang, BYTE*Data, DWORD Size)
+  {
+    if (sizeof(T) != sizeof(TCHAR) && !IS_INTRESOURCE(Type))
+    {
+      assert(IS_INTRESOURCE(Type));
+      return false;
+    }
+    return UpdateResourceT((const TCHAR*) Type, Name, Lang, Data, Size);
+  }
+  template<class T> BYTE* GetResource(const T*Type, WORD Name, LANGID Lang)
+  {
+    if (sizeof(T) != sizeof(TCHAR) && !IS_INTRESOURCE(Type))
+    {
+      assert(IS_INTRESOURCE(Type));
+      return NULL;
+    }
+    return GetResourceT((const TCHAR*) Type, Name, Lang);
+  }
+  template<class T> int GetResourceSize(const T*Type, WORD Name, LANGID Lang)
+  {
+    if (sizeof(T) != sizeof(TCHAR) && !IS_INTRESOURCE(Type))
+    {
+      assert(IS_INTRESOURCE(Type));
+      return -1;
+    }
+    return GetResourceSizeT((const TCHAR*) Type, Name, Lang);
+  }
+  template<class T> DWORD GetResourceOffset(const T*Type, WORD Name, LANGID Lang)
+  {
+    if (sizeof(T) != sizeof(TCHAR) && !IS_INTRESOURCE(Type))
+    {
+      assert(IS_INTRESOURCE(Type));
+      return -1;
+    }
+    return GetResourceOffsetT((const TCHAR*) Type, Name, Lang);
+  }
+
+  bool  UpdateResourceT   (const TCHAR* szType, WORD szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize);
+  BYTE* GetResourceT      (const TCHAR* szType, WORD szName, LANGID wLanguage);
+  int   GetResourceSizeT  (const TCHAR* szType, WORD szName, LANGID wLanguage);
+  DWORD GetResourceOffsetT(const TCHAR* szType, WORD szName, LANGID wLanguage);
   void  FreeResource(BYTE* pbResource);
 
   // The section name must be in ASCII.
@@ -135,10 +176,10 @@ public:
     DWORD *pdwSectionIndex = NULL
   );
 private:
-  bool  UpdateResourceW(const WCHAR* szType, WCHAR* szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize);
-  BYTE* GetResourceW(const WCHAR* szType, WCHAR* szName, LANGID wLanguage);
-  int   GetResourceSizeW(const WCHAR* szType, WCHAR* szName, LANGID wLanguage);
-  DWORD GetResourceOffsetW(const WCHAR* szType, WCHAR* szName, LANGID wLanguage);
+  bool  UpdateResourceW(const WINWCHAR* szType, WINWCHAR* szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize);
+  BYTE* GetResourceW(const WINWCHAR* szType, WINWCHAR* szName, LANGID wLanguage);
+  int   GetResourceSizeW(const WINWCHAR* szType, WINWCHAR* szName, LANGID wLanguage);
+  DWORD GetResourceOffsetW(const WINWCHAR* szType, WINWCHAR* szName, LANGID wLanguage);
 
 private:
   BYTE* m_pbPE;
@@ -169,10 +210,10 @@ public:
   IMAGE_RESOURCE_DIRECTORY GetInfo();
 
   CResourceDirectoryEntry* GetEntry(unsigned int i);
-  void AddEntry(CResourceDirectoryEntry* entry);
+  bool AddEntry(CResourceDirectoryEntry* entry);
   void RemoveEntry(int i);
   int  CountEntries();
-  int  Find(const WCHAR* szName);
+  int  Find(const WINWCHAR* szName);
   int  Find(WORD wId);
 
   DWORD GetSize();
@@ -188,12 +229,12 @@ private:
 
 class CResourceDirectoryEntry {
 public:
-  CResourceDirectoryEntry(const WCHAR* szName, CResourceDirectory* rdSubDir);
-  CResourceDirectoryEntry(const WCHAR* szName, CResourceDataEntry* rdeData);
+  CResourceDirectoryEntry(const WINWCHAR* szName, CResourceDirectory* rdSubDir);
+  CResourceDirectoryEntry(const WINWCHAR* szName, CResourceDataEntry* rdeData);
   virtual ~CResourceDirectoryEntry();
 
   bool HasName();
-  WCHAR* GetName();
+  WINWCHAR* GetName();
   int GetNameLength();
 
   WORD GetId();
@@ -207,7 +248,7 @@ public:
 
 private:
   bool m_bHasName;
-  WCHAR* m_szName;
+  WINWCHAR* m_szName;
   WORD m_wId;
 
   bool m_bIsDataDirectory;

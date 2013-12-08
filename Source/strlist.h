@@ -308,25 +308,25 @@ class SortedStringListND // no delete - can be placed in GrowBuf
     SortedStringListND() { }
     virtual ~SortedStringListND() { }
 
-	 /**
-	  * Adds name into the list of sorted strings.
-	  *
-	  * @param name String to store.
-	  * @param case_sensitive Look for string case sensitively.  Default is 0.
-	  * @param alwaysreturnpos Always return the position regardless of whether
-	  * name was inserted into the list or not.  The default is 0.
-	  *
-	  * @return Returns -1 when name already exists, otherwise the T offset
-	  * into which the struct was stored in m_gr.  If alwaysreturnpos
-	  * is true, then it will return the byte offset regardless of whether
-	  * the string was found.
-	  */
+     /**
+      * Adds name into the list of sorted strings.
+      *
+      * @param name String to store.
+      * @param case_sensitive Look for string case sensitively.  Default is 0.
+      * @param alwaysreturnpos Always return the position regardless of whether
+      * name was inserted into the list or not.  The default is 0.
+      *
+      * @return Returns -1 when name already exists, otherwise the T offset
+      * into which the struct was stored in m_gr.  If alwaysreturnpos
+      * is true, then it will return the byte offset regardless of whether
+      * the string was found.
+      */
     int add(const TCHAR *name, int case_sensitive=0, int alwaysreturnpos=0)
     {
       int where=0;
       T newstruct={0,};
 
-		// Find the best position to insert.
+      // Find the best position to insert.
       int pos=find(name,-1,case_sensitive,1,&where);
 
       if (pos==-1) return alwaysreturnpos ? where : -1;
@@ -342,46 +342,46 @@ class SortedStringListND // no delete - can be placed in GrowBuf
       return pos;
     }
 
-	 /**
-	  * This function looks for the string str, in T.name in the buffer m_gr.
-	  * If it finds it, it returns the position found.  Otherwise, it returns
-	  * -1.  
-	  *
-	  * This behavior changes when returnbestpos == 1.  In this case,
-	  * it will do the reverse.  It will return -1 when it is found, noting
-	  * that there is no good place to put this duplicate string.  If it
-	  * is <b>not</b> found, it returns the position where it ought to be
-	  * placed.
-	  *
-	  * When case_sensitive == -1 and returnbestpos == 1, then when the string
-	  * is found, it returns
-	  * the position of the string so that one can overwrite it.  Very strange
-	  * special case behavior that I'm not sure if anyone actually uses.
-	  *
-	  * @param str The key string to search for.
-	  *
-	  * @param n_chars The number of characters to compare.  Use -1 to match
-	  * the entire string.
-	  *
-	  * @param case_sensitive 1 = case sensitive, 0 = case insensitive,
-	  * -1 is a special case where it is case sensitive and overrides the
-	  * returnbestpos behavior when the string is found.
-	  *
-	  * @param returnbestpos If 1, then look for the best position to add the
-	  * string.  If found in the list, return -1.
-	  *
-	  * @param where When str is found, returns the position of the string.
-	  *
-	  * @return The position of T where T.name == str.  If returnbestpos != 0
-	  * then return the best position to add T if not found, otherwise, -1.
-	  */
+   /**
+    * This function looks for the string str, in T.name in the buffer m_gr.
+    * If it finds it, it returns the position found.  Otherwise, it returns
+    * -1.  
+    *
+    * This behavior changes when returnbestpos == 1.  In this case,
+    * it will do the reverse.  It will return -1 when it is found, noting
+    * that there is no good place to put this duplicate string.  If it
+    * is <b>not</b> found, it returns the position where it ought to be
+    * placed.
+    *
+    * When case_sensitive == -1 and returnbestpos == 1, then when the string
+    * is found, it returns
+    * the position of the string so that one can overwrite it.  Very strange
+    * special case behavior that I'm not sure if anyone actually uses.
+    *
+    * @param str The key string to search for.
+    *
+    * @param n_chars The number of characters to compare.  Use -1 to match
+    * the entire string.
+    *
+    * @param case_sensitive 1 = case sensitive, 0 = case insensitive,
+    * -1 is a special case where it is case sensitive and overrides the
+    * returnbestpos behavior when the string is found.
+    *
+    * @param returnbestpos If 1, then look for the best position to add the
+    * string.  If found in the list, return -1.
+    *
+    * @param where When str is found, returns the position of the string.
+    *
+    * @return The position of T where T.name == str.  If returnbestpos != 0
+    * then return the best position to add T if not found, otherwise, -1.
+    */
     int find
     (
-	    const TCHAR* 	str,					/* key to search for */
-		 int 				n_chars=-1,			/* if -1, test the entire string, otherwise just n characters */
-		 int				case_sensitive=0,
-		 int				returnbestpos=0,	/* if not found, return best pos */
-		 int*				where=0				/* */
+      const TCHAR* str,    /* key to search for */
+      int n_chars=-1,      /* if -1, test the entire string, otherwise just n characters */
+      int case_sensitive=0,
+      int returnbestpos=0, /* if not found, return best pos */
+      int*where=0
     )
     {
       T *data=(T *) m_gr.get();
@@ -389,7 +389,7 @@ class SortedStringListND // no delete - can be placed in GrowBuf
       int ll = 0;
       int nextpos = (ul+ll)/2;
 
-		// Do binary search on m_gr which is sorted. m_strings is NOT sorted.
+      // Do binary search on m_gr which is sorted. m_strings is NOT sorted.
       while (ul > ll)
       {
         int res;
@@ -436,9 +436,8 @@ class SortedStringListND // no delete - can be placed in GrowBuf
     }
 
   protected:
-    TinyGrowBuf m_gr;			// Sorted array of Ts
-    GrowBuf     m_strings;		// Unsorted array of TCHAR strings
-	 									//  (contains the .names)
+    TinyGrowBuf m_gr;      // Sorted array of Ts
+    GrowBuf     m_strings; // Unsorted array of TCHAR strings (contains the .names)
 };
 
 /**

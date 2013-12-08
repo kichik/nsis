@@ -29,11 +29,9 @@
 #include "build.h"
 #include "util.h"
 #include "utf.h"
+#include "winchar.h" // assert(sizeof(WINWCHAR)...)
 
 #include <nsis-version.h>
-#include <fcntl.h>
-#include <io.h>
-
 #define NSIS_COPYYEARS _T("1999-2013")
 
 using namespace std;
@@ -125,7 +123,7 @@ static void init_signals(HWND notify_hwnd)
 
 static void print_logo()
 {
-  _ftprintf(g_output,_T("MakeNSIS %s - Copyright ") NSIS_COPYYEARS _T(" Contributors\n")
+  _ftprintf(g_output,_T("MakeNSIS %") NPRIs _T(" - Copyright ") NSIS_COPYYEARS _T(" Contributors\n")
          _T("See the file COPYING for license details.\n")
          _T("Credits can be found in the Users Manual.\n\n"), NSIS_VERSION);
   fflush(g_output);
@@ -160,21 +158,25 @@ static void print_usage()
          _T("  ")         _T("makensis [ option | script.nsi | - ] [...]\n")
          _T("\n")
          _T("Options:\n")
-         _T("  ") OPT_STR _T("CMDHELP item prints out help for 'item', or lists all commands\n")
+         _T("  ") OPT_STR _T("CMDHELP [item] prints out help for 'item', or lists all commands\n")
          _T("  ") OPT_STR _T("HDRINFO prints information about what options makensis was compiled with\n")
          _T("  ") OPT_STR _T("LICENSE prints the makensis software license\n")
          _T("  ") OPT_STR _T("VERSION prints the makensis version and exits\n")
+#ifdef _WIN32
          _T("  ") OPT_STR _T("Px sets the compiler process priority, where x is 5=realtime,4=high,\n")
          _T("  ")         _T("  3=above normal,2=normal,1=below normal,0=idle\n")
+#endif
          _T("  ") OPT_STR _T("Vx verbosity where x is 4=all,3=no script,2=no info,1=no warnings,0=none\n")
          _T("  ") OPT_STR _T("Ofile specifies a text file to log compiler output (default is stdout)\n")
          _T("  ") OPT_STR _T("PAUSE pauses after execution\n")
          _T("  ") OPT_STR _T("NOCONFIG disables inclusion of <path to makensis.exe>") PLATFORM_PATH_SEPARATOR_STR _T("nsisconf.nsh\n")
          _T("  ") OPT_STR _T("NOCD disabled the current directory change to that of the .nsi file\n")
          _T("  ") OPT_STR _T("INPUTCHARSET <") TSTR_INPUTCHARSET _T(">\n")
+#ifdef _WIN32
          _T("  ") OPT_STR _T("OUTPUTCHARSET <") TSTR_OUTPUTCHARSET _T(">\n")
+#endif
          _T("  ") OPT_STR _T("Ddefine[=value] defines the symbol \"define\" for the script [to value]\n")
-         _T("  ") OPT_STR _T("Xscriptcmd executes scriptcmd in script (i.e. \"") OPT_STR _T("XOutFile poop.exe\")\n")
+         _T("  ") OPT_STR _T("Xscriptcmd executes scriptcmd in script (i.e. \"") OPT_STR _T("XOutFile inst.exe\")\n")
          _T("  ")         _T("  parameters are processed by order (") OPT_STR _T("Ddef ins.nsi != ins.nsi ") OPT_STR _T("Ddef)\n")
          _T("\n")
          _T("For script file name, you can use - to read from the standard input\n")
@@ -198,9 +200,9 @@ static void print_stub_info(CEXEBuild& build)
     _ftprintf(g_output,_T("\nDefined symbols: "));
     for (int i=0; i<x; i++)
     {
-      _ftprintf(g_output,_T("%s"),build.definedlist.getname(i));
+      _ftprintf(g_output,_T("%")NPRIs,build.definedlist.getname(i));
       TCHAR *p=build.definedlist.getvalue(i);
-      if (*p) _ftprintf(g_output,_T("=%s"),p);
+      if (*p) _ftprintf(g_output,_T("=%")NPRIs,p);
       if (i<x-1) _ftprintf(g_output,_T(","));
     }
     if (!x) _ftprintf(g_output,_T("none"));
@@ -227,7 +229,7 @@ static int process_config(CEXEBuild& build, tstring& conf)
   NIStream strm;
   if (strm.OpenFileForReading(conf.c_str()))
   {
-    build.INFO_MSG(_T("Processing config: %s\n"),conf.c_str());
+    build.INFO_MSG(_T("Processing config: %") NPRIs _T("\n"),conf.c_str());
     int ret=build.process_script(strm,conf.c_str());
     if (ret != PS_OK && ret != PS_EOF)
     {
@@ -244,10 +246,10 @@ static int change_to_script_dir(CEXEBuild& build, tstring& script)
   tstring dir = get_dir_name(get_full_path(script));
   if (!dir.empty()) 
   {
-    build.SCRIPT_MSG(_T("Changing directory to: \"%s\"\n"),dir.c_str());
+    build.SCRIPT_MSG(_T("Changing directory to: \"%") NPRIs _T("\"\n"),dir.c_str());
     if (_tchdir(dir.c_str()))
     {
-      build.ERROR_MSG(_T("Error changing directory to \"%s\"\n"),dir.c_str());
+      build.ERROR_MSG(_T("Error changing directory to \"%") NPRIs _T("\"\n"),dir.c_str());
       return 1;
     }
     build.SCRIPT_MSG(_T("\n"));
@@ -269,14 +271,22 @@ static inline bool HasReqParam(TCHAR**argv,int argi,int argc,bool silent=false)
 extern "C" void allow_unaligned_data_access();
 #endif
 
-NSIS_ENTRYPOINT_TMAIN
-int _tmain(int argc, TCHAR **argv)
+static inline int makensismain(int argc, TCHAR **argv)
 {
 
 #ifdef NSIS_HPUX_ALLOW_UNALIGNED_DATA_ACCESS
   allow_unaligned_data_access();
 #endif
-  assert(sizeof(wchar_t) > 1 && sizeof(wchar_t) <= 4 && sizeof(WORD) == 2);
+  assert(sizeof(UINT_PTR) == sizeof(void*));
+  assert(sizeof(wchar_t) > 1 && sizeof(wchar_t) <= 4);
+  assert(sizeof(WINWCHAR) == 2 && sizeof(WORD) == 2);
+  assert(sizeof(WINWCHAR) == sizeof(WCHAR)); // Not really required but if WCHAR changes we need to know
+
+  if (!NSISRT_Initialize())
+  {
+    _ftprintf(stdout,_T("NSISRT_Initialize failed!\n"));
+    return 1;
+  }
 
   HWND hostnotifyhandle=0;
   const TCHAR*stdoutredirname=0;
@@ -388,14 +398,14 @@ int _tmain(int argc, TCHAR **argv)
   }
   catch (exception& err)
   {
-    PrintColorFmtMsg_ERR(_T("Error initalizing CEXEBuild: %s\n"), CtoTStrParam(err.what()));
+    PrintColorFmtMsg_ERR(_T("Error initalizing CEXEBuild: %") NPRIs _T("\n"), CtoTStrParam(err.what()));
     return 1;
   }
 
 #ifdef _WIN32
   build.notify_hwnd=hostnotifyhandle;
 #else
-  const TCHAR*const badnonwinswitchfmt=OPT_STR _T("%s is disabled for non Win32 platforms.");
+  const TCHAR*const badnonwinswitchfmt=OPT_STR _T("%") NPRIs _T(" is disabled for non Win32 platforms.");
   if (hostnotifyhandle)
     build.warning(badnonwinswitchfmt,_T("NOTIFYHWND"));
   if (NStreamEncoding::UNKNOWN==outputenc.GetCodepage())
@@ -446,7 +456,7 @@ int _tmain(int argc, TCHAR **argv)
         if (NStreamEncoding::UNKNOWN == cp)
         {
           if (_tcsicmp(argv[argpos], _T("AUTO")))
-            build.warning(OPT_STR _T("INPUTCHARSET: Ignoring invalid charset %s"), argv[argpos]);
+            build.warning(OPT_STR _T("INPUTCHARSET: Ignoring invalid charset %") NPRIs , argv[argpos]);
           cp = NStreamEncoding::AUTO;
         }
         inputenc.SafeSetCodepage(cp);
@@ -479,10 +489,8 @@ int _tmain(int argc, TCHAR **argv)
           {HIGH_PRIORITY_CLASS,         HIGH_PRIORITY_CLASS},
           {REALTIME_PRIORITY_CLASS,     REALTIME_PRIORITY_CLASS}
         };
-        if (SetPriorityClass(hProc, classes[p].priority) == FALSE)
-        {
+        if (!SetPriorityClass(hProc, classes[p].priority))
           SetPriorityClass(hProc, classes[p].fallback);
-        }
         if (p == 5) build.warning(_T("makensis is running in REALTIME priority mode!"));
 #else
         build.warning(badnonwinswitchfmt,_T("Px"));
@@ -496,7 +504,7 @@ int _tmain(int argc, TCHAR **argv)
       {
         TCHAR *p=argv[argpos]+2;
         TCHAR *s=_tcsdup(p),*v;
-        build.SCRIPT_MSG(_T("Command line defined: \"%s\"\n"),p);
+        build.SCRIPT_MSG(_T("Command line defined: \"%") NPRIs _T("\"\n"),p);
         v=_tcsstr(s,_T("="));
         if (v) *v++=0;
         build.define(s,v?v:_T(""));
@@ -532,7 +540,7 @@ int _tmain(int argc, TCHAR **argv)
 #ifndef NSIS_CONFIG_CONST_DATA_PATH
           main_conf = get_dir_name(get_executable_dir(argv[0]));
 #else
-          main_conf = PREFIX_CONF;
+          main_conf = PosixBug_CtoTString(PREFIX_CONF);
 #endif
         else main_conf = env_var;
         main_conf += PLATFORM_PATH_SEPARATOR_STR;
@@ -571,7 +579,7 @@ int _tmain(int argc, TCHAR **argv)
             if (!strm.OpenFileForReading(nsifile.c_str(),inputenc))
             {
               nsifile = argv[argpos];
-              build.ERROR_MSG(_T("Can't open script \"%s\"\n"),nsifile.c_str());
+              build.ERROR_MSG(_T("Can't open script \"%") NPRIs _T("\"\n"),nsifile.c_str());
               return 1;
             }
           }
@@ -586,12 +594,12 @@ int _tmain(int argc, TCHAR **argv)
         build.notify(MakensisAPI::NOTIFY_SCRIPT,nsifile.c_str());
         TCHAR bufcpdisp[20];
         strm.StreamEncoding().GetCPDisplayName(bufcpdisp);
-        build.INFO_MSG(_T("Processing script file: \"%s\" (%s)\n"),nsifile.c_str(),bufcpdisp);
+        build.INFO_MSG(_T("Processing script file: \"%") NPRIs _T("\" (%") NPRIs _T(")\n"),nsifile.c_str(),bufcpdisp);
         int ret=build.process_script(strm,nsifile.c_str());
 
         if (ret != PS_EOF && ret != PS_OK)
         {
-          build.ERROR_MSG(_T("Error in script \"%s\" on line %d -- aborting creation process\n"),nsifile.c_str(),build.linecnt);
+          build.ERROR_MSG(_T("Error in script \"%") NPRIs _T("\" on line %d -- aborting creation process\n"),nsifile.c_str(),build.linecnt);
           return 1;
         }
       }
@@ -611,9 +619,9 @@ int _tmain(int argc, TCHAR **argv)
   if (build.display_info) 
   {
     _ftprintf(g_output,_T("\nProcessed "));
-    if (files_processed) _ftprintf(g_output,_T("%d file%s, "),files_processed,files_processed==1?_T(""):_T("s"));
-    if (cmds_processed) _ftprintf(g_output,_T("%d command line command%s, "),cmds_processed,cmds_processed==1?_T(""):_T("s"));
-    _ftprintf(g_output,_T("writing output (%s):\n"),build.get_target_suffix());
+    if (files_processed) _ftprintf(g_output,_T("%d file%") NPRIs _T(", "),files_processed,files_processed==1?_T(""):_T("s"));
+    if (cmds_processed) _ftprintf(g_output,_T("%d command line command%") NPRIs _T(", "),cmds_processed,cmds_processed==1?_T(""):_T("s"));
+    _ftprintf(g_output,_T("writing output (%") NPRIs _T("):\n"),build.get_target_suffix());
     fflush(g_output);
   }
   
@@ -624,3 +632,55 @@ int _tmain(int argc, TCHAR **argv)
   }
   return 0;
 }
+
+
+#ifndef NDEBUG
+#  ifdef _MSC_VER
+#    include <crtdbg.h>
+#  endif
+#endif
+
+NSIS_ENTRYPOINT_TMAIN
+int _tmain(int argc, TCHAR **argv)
+{
+#ifndef NDEBUG
+#ifdef _MSC_VER
+  _CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) | _CRTDBG_CHECK_ALWAYS_DF);
+  _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE), _CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDOUT);
+  _CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_FILE), _CrtSetReportFile(_CRT_ERROR, _CRTDBG_FILE_STDOUT);
+  //_CrtSetReportMode(_CRT_ASSERT, _CRTDBG_MODE_FILE), _CrtSetReportFile(_CRT_ASSERT, _CRTDBG_FILE_STDOUT);
+#endif
+#endif
+  int retval = makensismain(argc,argv);
+#ifndef NDEBUG
+#ifdef _MSC_VER
+  _CrtDumpMemoryLeaks();
+  assert(_CrtCheckMemory());
+#endif
+#endif
+  return retval;
+}
+
+
+#if !defined(_WIN32) && defined(_UNICODE)
+#include <errno.h>
+int main(int argc, char **argv)
+{
+  errno = ENOMEM;
+  int wargc = 0;
+  wchar_t term[1], *p, **wargv = (wchar_t **) malloc((argc+1) * sizeof(void*));
+  if (wargv) 
+    for ( ; wargc < argc; ++wargc )
+      if ((p = NSISRT_mbtowc(argv[wargc]))) wargv[wargc] = p; else break;
+  if (wargc == argc)
+    *term = L'\0', wargv[wargc] = term, errno = _tmain(wargc,wargv);
+  else
+    wprintf(L"FATAL: main argv conversion failed!\n");
+#ifndef NDEBUG // Normally we just leak
+  if (wargv) for ( int i = 0; i < wargc; ++i ) NSISRT_free(wargv[i]);
+  free(wargv);
+#endif
+  return errno;
+}
+#endif
+
