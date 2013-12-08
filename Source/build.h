@@ -169,7 +169,7 @@ class CEXEBuild {
     void update_exehead(const unsigned char *new_exehead, size_t new_size);
 
     // tokens.cpp
-    bool is_valid_token(TCHAR *s);
+    bool is_ppbranch_token(TCHAR *s);
     int get_commandtoken(TCHAR *s, int *np, int *op, int *pos);
     const TCHAR* get_commandtoken_name(int tok);
 

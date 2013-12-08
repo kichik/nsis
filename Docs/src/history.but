@@ -10,6 +10,8 @@ Released on ?
 
 \b !include defaults to UTF-8 after \cw{Unicode True}
 
+\b Preprocessor does not parse all branches and will not validate code that is never executed (\W{http://sf.net/p/nsis/bugs/1086/}{bug #1086})
+
 \S2{} Minor Changes
 
 \b FileRead in Unicode installers can handle DBCS, conversion output is limited to UCS-2.

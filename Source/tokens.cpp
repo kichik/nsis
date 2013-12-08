@@ -326,18 +326,22 @@ void CEXEBuild::print_help(const TCHAR *commandname)
 
 }
 
-bool CEXEBuild::is_valid_token(TCHAR *s)
+bool CEXEBuild::is_ppbranch_token(TCHAR *s)
 {
-  for (int x = 0; x < TOK__LAST; x ++)
-    if (!_tcsicmp(tokenlist[x].name,s)) 
-      return true;
-  return false;
+  int np, op, pos, tkid = get_commandtoken(s, &np, &op, &pos);
+  switch(tkid)
+  {
+  case TOK_P_IF: case TOK_P_ELSE: case TOK_P_ENDIF:
+  case TOK_P_IFDEF: case TOK_P_IFNDEF:
+  case TOK_P_IFMACRODEF: case TOK_P_IFMACRONDEF:
+    return true;
+  default: return false;
+  }
 }
 
 int CEXEBuild::get_commandtoken(TCHAR *s, int *np, int *op, int *pos)
 {
-  int x;
-  for (x = 0; x < TOK__LAST; x ++)
+  for (int x = 0; x < TOK__LAST; x ++)
     if (!_tcsicmp(tokenlist[x].name,s)) 
     {
       *np=tokenlist[x].num_parms;
