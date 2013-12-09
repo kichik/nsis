@@ -465,7 +465,12 @@ SystemProc *PrepareProc(BOOL NeedForCall)
         switch (*ib)
         {
         case 0x0: SectionType = -1; break;
-        case _T('#'): SectionType = PST_PROC; ProcType = PT_NOTHING; break;
+        case _T('#'): // "...#" redefines proc unless preceded by ":", then it's an ordinal (dll::#123)
+          if (ib <= ibuf || *(ib-1) != _T(':') || PST_PROC != SectionType)
+            SectionType = PST_PROC, ProcType = PT_NOTHING;
+          else
+            changed = FALSE;
+          break;
         case _T('('): 
             SectionType = PST_PARAMS; 
             // fake-real parameter: for COM interfaces first param is Interface Pointer
@@ -862,6 +867,12 @@ SystemProc *PrepareProc(BOOL NeedForCall)
 
                 // Get proc address
                 proc->Proc = NSISGetProcAddress(proc->Dll, proc->ProcName);
+                if (!proc->Proc && *proc->ProcName == _T('#'))
+                {
+                  int ordinal = myatoi(proc->ProcName+1);
+                  if (ordinal && IS_INTRESOURCE(ordinal))
+                    proc->Proc = GetProcAddress(proc->Dll, MAKEINTRESOURCEA(ordinal));
+                }
                 if (UsedTString || !proc->Proc)
                 {
                     FARPROC tproc;
@@ -876,7 +887,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
                     if (tproc)
                         proc->Proc = tproc;
                     else
-                        proc->ProcResult = PR_ERROR;
+                        if (!proc->Proc) proc->ProcResult = PR_ERROR;
                 }
             }
             break;
