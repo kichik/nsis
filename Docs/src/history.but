@@ -2,7 +2,17 @@
 
 \H{v3.0a2} 3.0 Alpha 2
 
-Released on ?
+Released on December 24th, 2013
+
+\S1{v3.0a2-rl} Release Notes
+
+It's the holiday gift you've been waiting for!
+
+\S2{} Known Issues
+
+\b The POSIX build is getting much closer, but still currently broken
+
+\b LangDLL doesn't display localized language name with \R{aunicodetarget}{Unicode} false
 
 \S1{v3.0a2-cl} Changelog
 
