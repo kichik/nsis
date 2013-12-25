@@ -22,8 +22,8 @@
 // some definitions for non Win32 platforms were taken from MinGW's free Win32 library
 
 
-#if defined(__cplusplus) && defined(MAKENSIS)
-template<class T> class NSISCHARTYPE{ T _c; public: NSISCHARTYPE(){} NSISCHARTYPE(T c):_c(c){} operator T()const{ return _c; } };
+#if defined(__cplusplus) && defined(MAKENSIS) && !defined(_MSC_VER)
+template<class T> class NSISCHARTYPE{ T _c; public: NSISCHARTYPE(){} NSISCHARTYPE(T c):_c(c){} operator T()const{ return _c; } operator int()const{ return (int) _c; } operator bool()const{ return _c != 0; } };
 typedef NSISCHARTYPE<unsigned short> WINWCHAR; // WINWCHAR is always UTF16LE and should not be passed to wcs* functions
 #else
 typedef unsigned short WINWCHAR;
