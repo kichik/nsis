@@ -285,20 +285,40 @@ def generate(env):
 		CScan.add_skey('.rc')
 	env['BUILDERS']['RES'] = res_builder
 
-	include_path, lib_path, exe_path, sdk_path = get_msvctoolkit_paths()
+
+	include_path, lib_path, exe_path, sdk_path = "", "", "", ""
+
+	if os.environ.has_key('MSVC_USE_SCRIPT') and "None" == os.environ['MSVC_USE_SCRIPT']:
+		for x in ['INCLUDE', 'LIB', 'PATH']: env['ENV'][x] = ""
+		if not env.WhereIs('cl', os.environ['PATH']):
+			raise SCons.Errors.InternalError("CL not found in %s" % os.environ['PATH'])
+		include_path = os.environ['INCLUDE']
+		lib_path = os.environ['LIB']
+		exe_path = os.environ['PATH']
+		sdk_path = env.WhereIs('windows.h', include_path, '.h')
+		if not sdk_path:
+			raise SCons.Errors.InternalError("windows.h not found in %s" % include_path)
+		sdk_path = os.path.normpath(sdk_path + "\..\..")
+		sdk_path_AR = env.WhereIs('lib', exe_path)
+		sdk_path_LINK = env.WhereIs('link', exe_path)
+	else:
+		include_path, lib_path, exe_path, sdk_path = get_msvctoolkit_paths()
+		sdk_path_AR = sdk_path + '\\bin\\Win64\\lib.exe'
+		sdk_path_LINK = sdk_path + '\\bin\\Win64\\link.exe'
+
 	env.PrependENVPath('INCLUDE', include_path)
 	env.PrependENVPath('LIB', lib_path)
 	env.PrependENVPath('PATH', exe_path)
 	
-	env['ENV']['CPU'] = 'i386'
+	env['ENV']['CPU'] = 'i386' # TODO: Check TARGET_ARCH for AMD64
+	env['ENV']['TARGETOS'] = 'BOTH'
+	env['ENV']['APPVER'] = '4.0'
 	env['ENV']['MSSDK'] = sdk_path
 	env['ENV']['BkOffice'] = sdk_path
 	env['ENV']['Basemake'] = sdk_path + "\\Include\\BKOffice.Mak"
 	env['ENV']['INETSDK'] = sdk_path
 	env['ENV']['MSSDK'] = sdk_path
 	env['ENV']['MSTOOLS'] = sdk_path
-	env['ENV']['TARGETOS'] = 'WINNT'
-	env['ENV']['APPVER'] = '5.0'
 	
 	env['CFILESUFFIX'] = '.c'
 	env['CXXFILESUFFIX'] = '.cc'
@@ -306,7 +326,7 @@ def generate(env):
 	env['PCHCOM'] = '$CXX $CXXFLAGS $CPPFLAGS $_CPPDEFFLAGS $_CPPINCFLAGS /c $SOURCES /Fo${TARGETS[1]} /Yc$PCHSTOP /Fp${TARGETS[0]} $CCPDBFLAGS'
 	env['BUILDERS']['PCH'] = pch_builder
 
-	env['AR']          = '"' +sdk_path + '\\bin\\Win64\\lib.exe"'
+	env['AR']          = '"' + sdk_path_AR + '"'
 	env['ARFLAGS']     = SCons.Util.CLVar('/nologo')
 	env['ARCOM']       = "${TEMPFILE('$AR $ARFLAGS /OUT:$TARGET $SOURCES')}"
 	
@@ -316,7 +336,7 @@ def generate(env):
 	env['_SHLINK_SOURCES'] = win32ShlinkSources
 	env['SHLINKCOM']   =  compositeLinkAction
 	env['SHLIBEMITTER']= win32LibEmitter
-	env['LINK'] =  '"' +sdk_path + '\\bin\\Win64\\' + 'link.exe"'
+	env['LINK'] =  '"' + sdk_path_LINK + '"'
 	env['LINKFLAGS']   = SCons.Util.CLVar('/nologo')
 	env['_PDB'] = pdbGenerator
 	env['LINKCOM'] = '${TEMPFILE("$LINK $LINKFLAGS /OUT:$TARGET $( $_LIBDIRFLAGS $) $_LIBFLAGS $_PDB $SOURCES")}'
@@ -338,7 +358,7 @@ def generate(env):
 	env['REGSVRFLAGS'] = '/s '
 	env['REGSVRCOM'] = '$REGSVR $REGSVRFLAGS $TARGET'
 
-	env['MSVS_VERSION'] = '7.1'
+	if not env.has_key('MSVS_VERSION'): env['MSVS_VERSION'] = '7.1'
 
 
 def exists(env):

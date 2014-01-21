@@ -1,6 +1,5 @@
-print "Using Microsoft tools configuration"
-
 Import('defenv')
+print "Using Microsoft tools configuration (%s)" % defenv.get('MSVS_VERSION','<Default>')
 
 ### flags
 
@@ -37,7 +36,7 @@ else:
 if msvs_version < 10.0:
 	# not even /ALIGN:512 works for vc10... fails to load process
 	defenv.Append(LINKFLAGS = ['/opt:nowin98'])
-if defenv['MSTOOLKIT']:
+if defenv['MSTOOLKIT'] and msvs_version < 8.0:
 	defenv['MSVCRT_FLAG'] = '/ML' # TK2003 does not have all libs
 
 ### defines
