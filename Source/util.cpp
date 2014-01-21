@@ -406,6 +406,7 @@ int _wstat(const wchar_t *Path, struct stat *pS)
   return retval;
 }
 
+#ifdef _UNICODE
 static int NSISRT_wsystem(const wchar_t *wcmd)
 {
   if (!wcmd) return system(NULL);
@@ -416,6 +417,7 @@ static int NSISRT_wsystem(const wchar_t *wcmd)
   NSISRT_free(cmd);
   return retval;
 }
+#endif
 
 const char* nsis_iconv_get_host_endian_ucs4_code()
 {
@@ -945,8 +947,9 @@ int sane_system(const TCHAR *command)
 #endif // ~_UNICODE
 #else // !_WIN32
 #ifndef _UNICODE
-  PATH_CONVERT(command);
-  return _tsystem(command);
+  TCHAR* cmd = const_cast<TCHAR*>(command);
+  PATH_CONVERT(cmd);
+  return _tsystem(cmd);
 #else
   return NSISRT_wsystem(command);
 #endif

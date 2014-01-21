@@ -183,10 +183,15 @@ typedef unsigned char   _TUCHAR;
 
 // string comparisons
 #define _tcscmp     strcmp
-#define _tcsicmp    _stricmp
 #define _tcsncmp    strncmp
 #define _tcsncicmp  _strnicmp
+#ifdef _WIN32
+#define _tcsicmp    _stricmp
 #define _tcsnicmp   _strnicmp
+#else
+#define _tcsicmp    strcasecmp
+#define _tcsnicmp   strncasecmp
+#endif
 
 // upper / lower
 #define _tcslwr     _strlwr

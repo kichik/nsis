@@ -222,11 +222,10 @@ bool CResourceEditor::UpdateResourceW(const WINWCHAR* szType, WINWCHAR* szName, 
 #ifndef _UNICODE
 static WINWCHAR* ResStringToUnicode(const char *szString) {
   if (IS_INTRESOURCE(szString)) return MAKEINTRESOURCEWINW((ULONG_PTR)szString);
-  WINWCHAR *s = WinWStrDupFromTChar(szString, CP_ACP);
+  WINWCHAR *s = WinWStrDupFromTChar(szString);
   if (!s) throw std::bad_alloc();
   return s;
 }
-
 static void FreeUnicodeResString(WINWCHAR* szwString) {
   if (!IS_INTRESOURCE(szwString)) free(szwString);
 }

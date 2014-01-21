@@ -46,7 +46,11 @@ int WinWStrNICmpASCII(const WINWCHAR *a, const char *b, size_t n)
 #ifndef _WIN32
 size_t WinWStrLen(const WINWCHAR *s)
 {
+#ifdef MAKENSIS // Only makensis implements all the functions in utf.cpp
   return StrLenUTF16(s);
+#else
+  return sizeof(wchar_t) == 2 ? wcslen((wchar_t*)str) : InlineStrLenUTF16(str);
+#endif
 }
 
 WINWCHAR* WinWStrCpy(WINWCHAR *d, const WINWCHAR *s)
@@ -84,9 +88,17 @@ WINWCHAR* WinWStrDupFromWinWStr(const WINWCHAR *s)
 
 WINWCHAR* WinWStrDupFromTChar(const TCHAR *s)
 {
+#ifdef MAKENSIS
   WCToUTF16LEHlpr cnv;
   if (!cnv.Create(s)) throw runtime_error("Unicode conversion failed");
   return (WINWCHAR*) cnv.Detach();
+#else
+  // NOTE: Anything outside the ASCII range will not convert correctly!
+  size_t cch = strlen(s);
+  WINWCHAR* p = (WINWCHAR*) malloc(++cch * 2);
+  if (p) for (size_t i = 0; i < cch; ++i) p[i] = s[i];
+  return p;
+#endif
 }
 
 int WinWStrToInt(const WINWCHAR *s)
@@ -102,17 +114,3 @@ int WinWStrToInt(const WINWCHAR *s)
   return ((int)v) * sign;
 } 
 #endif // ~!_WIN32
-
-#if 0
-WCHAR *wcsdup_fromansi(const char* s, unsigned int codepage/* = CP_ACP*/)
-{
-  int l = MultiByteToWideChar(codepage, 0, s, -1, 0, 0);
-  if (l == 0)
-    throw runtime_error("Unicode conversion failed");
-
-  WCHAR *ws = new WCHAR[l + 1];
-  if (MultiByteToWideChar(codepage, 0, s, -1, ws, l + 1) == 0)
-    throw runtime_error("Unicode conversion failed");
-  return ws;
-}
-#endif

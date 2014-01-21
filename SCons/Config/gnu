@@ -135,12 +135,15 @@ plugin_uenv.Append(CPPDEFINES = ['_UNICODE', 'UNICODE'])
 
 ### cross-platform util environment
 
-cp_util_env = tdefenv.Clone()
+if defenv['PLATFORM'] == 'win32':
+	cp_util_env = tdefenv.Clone()
+else:
+	cp_util_env = defenv.Clone()
 
 cp_util_env.Append(CPPPATH = ['#$BUILD_CONFIG'])
 
 if cp_util_env['PLATFORM'] == 'win32':
-	cp_util_env.Append(LINKFLAGS = ['$ALIGN_FLAG'])
+	cp_util_env.Append(LINKFLAGS = ['$ALIGN_FLAG']) # 512 bytes align
 
 if not defenv['DEBUG']:
 	cp_util_env.Append(CCFLAGS = ['-O2'])             # optimize
@@ -153,8 +156,15 @@ conf.Finish()
 
 ### util environment
 
-util_env = cp_util_env.Clone()
+util_env = tdefenv.Clone()
 cross_env(util_env)
+
+util_env.Append(CPPPATH = ['#$BUILD_CONFIG'])
+
+if not defenv['DEBUG']:
+	util_env.Append(CCFLAGS = ['-O2'])             # optimize
+util_env.Append(CCFLAGS = ['-Wall'])             # all warnings
+util_env.Append(CCFLAGS = ['-fno-strict-aliasing']) # not safe for strict aliasing
 
 util_env.Append(LINKFLAGS = ['-mwindows'])          # build windows executables
 util_env.Append(LINKFLAGS = ['$ALIGN_FLAG'])        # 512 bytes align

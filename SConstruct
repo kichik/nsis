@@ -728,10 +728,11 @@ def BuildUtilEnv(defines = None, flags = None, libs = None,
 		libs.remove('z')
 		AddZLib(env, platform)
 
-	if cli:
-		env.Append(LINKFLAGS = env['SUBSYS_CON'])
-	else:
-		env.Append(LINKFLAGS = env['SUBSYS_WIN'])
+	if platform == 'win32':
+		if cli:
+			env.Append(LINKFLAGS = env['SUBSYS_CON'])
+		else:
+			env.Append(LINKFLAGS = env['SUBSYS_WIN'])
 
 	AddEnvStandardFlags(env, defines, flags, libs, entry, nodeflib)
 
