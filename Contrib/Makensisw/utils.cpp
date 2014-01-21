@@ -27,7 +27,7 @@
 #include "toolbar.h"
 #include <shlwapi.h>
 
-typedef UINT8 PACKEDCMDID_T;
+typedef BYTE PACKEDCMDID_T;
 #define PACKCMDID(id) ( PACKEDCMDID_T((id) - IDM_CMDBASE) )
 #define UNPACKCMDID(id) ( IDM_CMDBASE + (id) )
 

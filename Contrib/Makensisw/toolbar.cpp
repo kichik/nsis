@@ -33,9 +33,9 @@ extern NTOOLTIP g_tip;
 
 typedef struct {
   BYTE Style, State;
-  UINT8 ImgIdx;
-  UINT8 TTip;
-  UINT16 CmdId;
+  BYTE ImgIdx;
+  BYTE TTip;
+  WORD CmdId;
 } TBBTNDESC;
 #define MKNAMEDTBBTNDESC(id, sta, sty) sty, sta, IDB_##id, IDS_##id, IDM_##id
 
