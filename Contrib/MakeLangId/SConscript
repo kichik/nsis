@@ -20,5 +20,5 @@ libs = Split("""
 
 Import('BuildUtil')
 
-BuildUtil(target, files, libs, res = res, resources = resources, entry = 'NSISWinMainNOCRT')
+BuildUtil(target, files, libs, res = res, resources = resources, entry = 'NSISWinMainNOCRT', nodeflib = True)
 

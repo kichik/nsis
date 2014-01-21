@@ -44,13 +44,4 @@ int WinWStrToInt(const WINWCHAR *s);
 inline WINWCHAR* WinWStrDupFromTChar(const TCHAR *s, unsigned int codepage) { return WinWStrDupFromTChar(s); }
 #endif
 
-
-#if 0
-WCHAR *wcsdup_fromansi(const char* s, unsigned int codepage = CP_ACP);
-#ifdef _UNICODE
-#define wcsdup_fromTchar(s, codepage) _wcsdup(s)      // codepage is not used in this mode
-#else
-#define wcsdup_fromTchar(s, codepage) wcsdup_fromansi(s, codepage)
-#endif
-#endif
 #endif // ~INC_NSIS_WINCHAR

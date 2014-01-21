@@ -22,10 +22,7 @@
 
 UINT StrLenUTF16(const void*str)
 {
-  unsigned short *p = (unsigned short *) str;
-  UINT cch = 0;
-  for(;p[cch];) ++cch;
-  return cch;
+  return sizeof(wchar_t) == 2 ? wcslen((wchar_t*)str) : InlineStrLenUTF16(str);
 }
 
 bool StrSetUTF16LE(tstring&dest, const void*src)

@@ -73,6 +73,14 @@ inline bool UTF8_GetTrailCount(unsigned char chFirst, unsigned char &cb)
   return true;
 }
 
+inline UINT InlineStrLenUTF16(const void*str)
+{
+  unsigned short *p = (unsigned short *) str;
+  UINT cch = 0;
+  for(;p[cch];) ++cch;
+  return cch;
+}
+
 #ifdef MAKENSIS
 #include <stdlib.h>
 #include <stdio.h>

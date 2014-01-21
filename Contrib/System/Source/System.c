@@ -672,7 +672,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
                 // Numeric inline
 #ifdef __GNUC__
 #pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wmaybe-uninitialized" // temp3 is set to 0 when we start parsing a new parameter
+#pragma GCC diagnostic ignored "-Wuninitialized" // temp3 is set to 0 when we start parsing a new parameter
 #endif
                 if (temp3 == 0)
 #ifdef __GNUC__
@@ -748,7 +748,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
                 // Next parameter is output or something else
 #ifdef __GNUC__
 #pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#pragma GCC diagnostic ignored "-Wuninitialized"
 #endif
                 temp3++;
 #ifdef __GNUC__

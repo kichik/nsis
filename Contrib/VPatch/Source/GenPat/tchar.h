@@ -21,7 +21,11 @@
 #  define terr        cerr
 #  define _T(x)       x
 #  define _tmain      main
+#  ifdef _WIN32
 #  define _tunlink    _unlink
+#  else
+#  define _tunlink    unlink
+#  endif
 #  define FOPEN fopen
 
    typedef std::string         tstring;

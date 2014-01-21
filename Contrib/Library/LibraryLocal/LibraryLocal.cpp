@@ -41,7 +41,8 @@ int GetTLBVersion(tstring& filepath, DWORD& high, DWORD & low)
   hr = LoadTypeLib(fullpath, &typeLib);
 #else
   // If built without UNICODE, we still need to convert this string to a Unicode string.
-  WCHAR *ole_filename = wcsdup_fromTchar(fullpath, CP_ACP);
+  WCHAR *ole_filename = WinWStrDupFromTChar(fullpath);
+  if (!ole_filename) return 0;
   hr = LoadTypeLib(ole_filename, &typeLib);
   free(ole_filename);
 #endif
