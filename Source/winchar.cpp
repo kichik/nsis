@@ -49,7 +49,7 @@ size_t WinWStrLen(const WINWCHAR *s)
 #ifdef MAKENSIS // Only makensis implements all the functions in utf.cpp
   return StrLenUTF16(s);
 #else
-  return sizeof(wchar_t) == 2 ? wcslen((wchar_t*)str) : InlineStrLenUTF16(str);
+  return sizeof(wchar_t) == 2 ? wcslen((wchar_t*)s) : InlineStrLenUTF16(s);
 #endif
 }
 
