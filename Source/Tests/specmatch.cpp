@@ -1,7 +1,10 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include "../dirreader.h"
+#include "../tstring.h"
 
-#include "tstring.h"
+#ifndef TEXT
+#define TEXT _T
+#endif
 
 using namespace std;
 

@@ -43,6 +43,21 @@ int WinWStrNICmpASCII(const WINWCHAR *a, const char *b, size_t n)
   return diff;
 }
 
+WINWCHAR* WinWStrDupFromChar(const char *s, unsigned int cp)
+{
+  size_t cch = MultiByteToWideChar(cp, 0, s, -1, 0, 0);
+  wchar_t *p = (wchar_t*) malloc(cch);
+  if (p)
+  {
+    MultiByteToWideChar(cp, 0, s, -1, p, cch);
+#ifndef _WIN32
+    wchar_t *p2 = (wchar_t*) WinWStrDupFromWC(p);
+    free(p), p = p2;
+#endif
+  }
+  return (WINWCHAR*) p;
+}
+
 #ifndef _WIN32
 size_t WinWStrLen(const WINWCHAR *s)
 {
@@ -86,7 +101,7 @@ WINWCHAR* WinWStrDupFromWinWStr(const WINWCHAR *s)
   return d;
 }
 
-WINWCHAR* WinWStrDupFromTChar(const TCHAR *s)
+WINWCHAR* WinWStrDupFromWC(const wchar_t *s)
 {
 #ifdef MAKENSIS
   WCToUTF16LEHlpr cnv;
@@ -94,9 +109,9 @@ WINWCHAR* WinWStrDupFromTChar(const TCHAR *s)
   return (WINWCHAR*) cnv.Detach();
 #else
   // NOTE: Anything outside the ASCII range will not convert correctly!
-  size_t cch = strlen(s);
+  size_t cch = wcslen(s);
   WINWCHAR* p = (WINWCHAR*) malloc(++cch * 2);
-  if (p) for (size_t i = 0; i < cch; ++i) p[i] = s[i];
+  if (p) for (size_t i = 0; i < cch; ++i) p[i] = (unsigned char) s[i];
   return p;
 #endif
 }

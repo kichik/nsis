@@ -942,7 +942,8 @@ int sane_system(const TCHAR *command)
   fixedcmd += _T(" /C "), fixedcmd += prefix;
   return RunChildProcessRedirected(fixedcmd.c_str(), command);
 #else
-  tstring fixedcmd = prefix + _T("") + command;
+  tstring fixedcmd = prefix;
+  fixedcmd += _T(""), fixedcmd += command;
   return _tsystem(fixedcmd.c_str());
 #endif // ~_UNICODE
 #else // !_WIN32

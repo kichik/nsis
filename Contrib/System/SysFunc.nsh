@@ -3,15 +3,13 @@
 ; (c) brainsucker, 2002
 ; (r) BSForce
 
-; Check for double includes
+
+!verbose push 3
 !ifndef SysFunc.NSH.Included
 !define SysFunc.NSH.Included
 
 !include "System.nsh"
-
-!verbose 3      ; For WinMessages especially
-  !include "WinMessages.nsh"
-!verbose 4
+!include "WinMessages.nsh"
 
 ; ================= GetInstallerExeName implementation =================
 
@@ -393,6 +391,5 @@ exit:
    System::Store "P0 l"
 FunctionEnd
 
-!verbose 4
-
 !endif
+!verbose pop

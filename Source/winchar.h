@@ -28,7 +28,7 @@ inline WINWCHAR* WinWStrCpy(WINWCHAR *d, const WINWCHAR *s) { return (WINWCHAR*)
 inline WINWCHAR* WinWStrNCpy(WINWCHAR *d, const WINWCHAR *s, size_t n) { return (WINWCHAR*)wcsncpy((wchar_t*)d, (wchar_t*)s, n); }
 inline int WinWStrCmp(const WINWCHAR *a, const WINWCHAR *b) { return wcscmp((wchar_t*)a, (wchar_t*)b); }
 inline WINWCHAR* WinWStrDupFromWinWStr(const WINWCHAR *s) { return (WINWCHAR*)wcsdup((wchar_t*)s); }
-inline WINWCHAR* WinWStrDupFromTChar(const wchar_t *s) { return WinWStrDupFromWinWStr((WINWCHAR*)s); }
+inline WINWCHAR* WinWStrDupFromWC(const wchar_t *s) { return WinWStrDupFromWinWStr((WINWCHAR*)s); }
 inline int WinWStrToInt(const WINWCHAR *s) { return _wtoi((wchar_t*)s); }
 #else // !_WIN32
 size_t WinWStrLen(const WINWCHAR *s);
@@ -36,12 +36,19 @@ WINWCHAR* WinWStrCpy(WINWCHAR *d, const WINWCHAR *s);
 WINWCHAR* WinWStrNCpy(WINWCHAR *d, const WINWCHAR *s, size_t n);
 int WinWStrCmp(const WINWCHAR *a, const WINWCHAR *b);
 WINWCHAR* WinWStrDupFromWinWStr(const WINWCHAR *s);
-WINWCHAR* WinWStrDupFromTChar(const TCHAR *s);
+WINWCHAR* WinWStrDupFromWC(const wchar_t *s);
 int WinWStrToInt(const WINWCHAR *s);
 #endif // ~_WIN32
 
+WINWCHAR* WinWStrDupFromChar(const char *s, unsigned int cp);
+inline WINWCHAR* WinWStrDupFromChar(const char *s) { return WinWStrDupFromChar(s, CP_ACP); }
+
 #ifdef _UNICODE
-inline WINWCHAR* WinWStrDupFromTChar(const TCHAR *s, unsigned int codepage) { return WinWStrDupFromTChar(s); }
+inline WINWCHAR* WinWStrDupFromTChar(const wchar_t *s) { return WinWStrDupFromWC(s); }
+inline WINWCHAR* WinWStrDupFromTChar(const wchar_t *s, unsigned int codepage) { return WinWStrDupFromTChar(s); }
+#else
+inline WINWCHAR* WinWStrDupFromTChar(const char *s, unsigned int cp) { return WinWStrDupFromChar(s, cp); }
+inline WINWCHAR* WinWStrDupFromTChar(const char *s) { return WinWStrDupFromChar(s, CP_ACP); }
 #endif
 
 #endif // ~INC_NSIS_WINCHAR
