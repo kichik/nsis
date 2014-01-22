@@ -3,11 +3,9 @@
 ; (c) brainsucker, 2002
 ; (r) BSForce
 
-; Check for double includes
+!verbose push 3
 !ifndef System.NSH.Included
 !define System.NSH.Included
-
-!verbose 3
 
 !include WinCore.nsh
 
@@ -411,6 +409,5 @@ CheckCB_${CHKN}:
 ExitCB_${CHKN}:
 !macroend
 
-!verbose 4
-
 !endif
+!verbose pop

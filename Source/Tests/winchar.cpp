@@ -8,6 +8,10 @@
 // macro for fixing endianity
 #define _x(x) FIX_ENDIAN_INT16(WCHAR(x))
 
+// BUGBUG: These tests currently run as Ansi, it would be better if it respected defenv['UNICODE']
+
+// BUGBUG: WinWStrDupFromWC is unable to test WCToUTF16LEHlpr because it is behind #ifdef MAKENSIS
+
 class WinCharTest : public CppUnit::TestFixture {
 
   CPPUNIT_TEST_SUITE( WinCharTest );
@@ -21,42 +25,49 @@ class WinCharTest : public CppUnit::TestFixture {
 
 public:
   void testFromTchar() {
-    WCHAR test[] = { _x('t'), _x('e'), _x('s'), _x('t'), 0 };
-    WCHAR *dyn = wcsdup_fromansi("test");
+    unsigned short test[] = { _x('t'), _x('e'), _x('s'), _x('t'), 0 };
 
+    WINWCHAR *dyn = WinWStrDupFromTChar(_T("test"));
     CPPUNIT_ASSERT_EQUAL( 0, memcmp(test, dyn, 5) );
+    free(dyn);
 
+    dyn = WinWStrDupFromChar("test");
+    CPPUNIT_ASSERT_EQUAL( 0, memcmp(test, dyn, 5) );
+    free(dyn);
+
+    dyn = WinWStrDupFromWC(L"test");
+    CPPUNIT_ASSERT_EQUAL( 0, memcmp(test, dyn, 5) );
     free(dyn);
   }
 
   void testStrCpy() {
-    WCHAR a[] = { _x('t'), _x('e'), _x('s'), _x('t'), 0 };
-    WCHAR b[5];
+    WINWCHAR a[] = { _x('t'), _x('e'), _x('s'), _x('t'), 0 };
+    WINWCHAR b[5];
 
-    CPPUNIT_ASSERT_EQUAL( (WCHAR*) b, (WCHAR*) wcscpy(b, a) );
-    CPPUNIT_ASSERT_EQUAL( 0, memcmp(a, b, 5) );
+    CPPUNIT_ASSERT_EQUAL( b, WinWStrCpy(b, a) );
+    CPPUNIT_ASSERT_EQUAL( 0, memcmp(a, b, 5 * sizeof(WINWCHAR)) );
   }
 
   void testStrNCpy() {
-    WCHAR a1[] = { _x('t'), _x('e'), _x('s'), _x('t'), 0 };
-    WCHAR b[5];
+    WINWCHAR a1[] = { _x('t'), _x('e'), _x('s'), _x('t'), 0 };
+    WINWCHAR b[5];
 
-    CPPUNIT_ASSERT_EQUAL( (WCHAR*) b, (WCHAR*) wcsncpy(b, a1, 5) );
-    CPPUNIT_ASSERT_EQUAL( 0, memcmp(a1, b, 5 * sizeof(WCHAR)) );
+    CPPUNIT_ASSERT_EQUAL( b, WinWStrNCpy(b, a1, 5) );
+    CPPUNIT_ASSERT_EQUAL( 0, memcmp(a1, b, 5 * sizeof(WINWCHAR)) );
 
-    WCHAR a2[] = { _x('t'), _x('e'), 0, 0, 0 };
+    WINWCHAR a2[] = { _x('t'), _x('e'), 0, 0, 0 };
 
-    CPPUNIT_ASSERT_EQUAL( (WCHAR*) b, (WCHAR*) wcsncpy(b, a2, 5) );
-    CPPUNIT_ASSERT_EQUAL( 0, memcmp(a2, b, 5 * sizeof(WCHAR)) );
+    CPPUNIT_ASSERT_EQUAL( b, WinWStrNCpy(b, a2, 5) );
+    CPPUNIT_ASSERT_EQUAL( 0, memcmp(a2, b, 5 * sizeof(WINWCHAR)) );
 
-    CPPUNIT_ASSERT_EQUAL( (WCHAR*) b, (WCHAR*) wcsncpy(b, a1, 2) );
-    CPPUNIT_ASSERT_EQUAL( 0, memcmp(a2, b, 5 * sizeof(WCHAR)) );
+    CPPUNIT_ASSERT_EQUAL( b, WinWStrNCpy(b, a1, 2) );
+    CPPUNIT_ASSERT_EQUAL( 0, memcmp(a2, b, 5 * sizeof(WINWCHAR)) );
   }
 
   void testStrLen() {
-    WCHAR test[] = { _x('t'), _x('e'), _x('s'), _x('t'), 0 };
+    WINWCHAR test[] = { _x('t'), _x('e'), _x('s'), _x('t'), 0 };
 
-    CPPUNIT_ASSERT_EQUAL( (size_t) 4, wcslen(test) );
+    CPPUNIT_ASSERT_EQUAL( (size_t) 4, WinWStrLen(test) );
   }
 
   static int simplifyNumber(int n) {
@@ -69,16 +80,16 @@ public:
 
   void testStrCmp() {
     char a[] = "a";
-    WCHAR wa[] = { _x('a'), 0 };
+    WINWCHAR wa[] = { _x('a'), 0 };
     char b[] = "b";
-    WCHAR wb[] = { _x('b'), 0 };
+    WINWCHAR wb[] = { _x('b'), 0 };
     char empty[] = "";
-    WCHAR wempty[] = { 0 };
+    WINWCHAR wempty[] = { 0 };
 
     #define TEST_STR_CMP(x, y) \
       CPPUNIT_ASSERT_EQUAL(\
         simplifyNumber(strcmp(x, y)), \
-        simplifyNumber(wcscmp(w##x, w##y)) \
+        simplifyNumber(WinWStrCmp(w##x, w##y)) \
       )
 
     TEST_STR_CMP(a, b);
@@ -91,13 +102,13 @@ public:
   }
 
   void testStrDup() {
-    WCHAR a[] = { _x('a'), _x('b'), _x('c'), 0 };
+    WINWCHAR a[] = { _x('a'), _x('b'), _x('c'), 0 };
 
-    WCHAR *b = _wcsdup(a);
+    WINWCHAR *b = WinWStrDupFromWinWStr(a);
 
-    CPPUNIT_ASSERT_EQUAL( 0, wcscmp(a, b) );
+    CPPUNIT_ASSERT_EQUAL( 0, WinWStrCmp(a, b) );
 
-    delete [] b;
+    free(b);
   }
 
 };

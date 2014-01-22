@@ -130,8 +130,6 @@ Macros and conversion functions for InstallOptions
 !endif
   !insertmacro INSTALLOPTIONS_WRITE "${FILE}" "Settings" "RTL" "$(^RTL)"
 
-  !verbose pop
-
 !macroend
 
 !macro INSTALLOPTIONS_EXTRACT_AS FILE FILENAME
