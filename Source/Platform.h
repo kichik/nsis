@@ -41,32 +41,27 @@ typedef unsigned short WINWCHAR;
 #include <shlwapi.h>
 #include <shlobj.h>
 #else
+#  include <stdint.h>
 #  ifndef EXEHEAD
 #    include <string.h>
 #    include <stdlib.h>
 #  endif
 // basic types
-typedef unsigned char BYTE, *PBYTE, *LPBYTE;
-typedef unsigned short WORD, *LPWORD;
-typedef unsigned long DWORD, *LPDWORD;
-typedef short SHORT;
-typedef unsigned short USHORT;
-typedef unsigned int UINT;
-typedef unsigned int UINT32;
-typedef int INT;
-typedef int INT32;
-typedef long LONG;
-typedef unsigned long ULONG;
-typedef long long INT64, LARGE_INTEGER;
-typedef unsigned long long UINT64, ULARGE_INTEGER;
-#include <stdint.h>
-#ifdef INTPTR_MAX
+typedef uint8_t BYTE, *PBYTE, *LPBYTE;
+typedef uint16_t WORD, *LPWORD;
+typedef uint32_t DWORD, *LPDWORD;
+typedef int16_t SHORT;
+typedef uint16_t USHORT;
+typedef uint32_t UINT;
+typedef uint32_t UINT32;
+typedef int32_t INT;
+typedef int32_t INT32;
+typedef int32_t LONG;
+typedef uint32_t ULONG;
+typedef int64_t INT64, LARGE_INTEGER;
+typedef uint64_t UINT64, ULARGE_INTEGER;
 typedef intptr_t INT_PTR;
 typedef uintptr_t UINT_PTR;
-#else
-typedef int INT_PTR;
-typedef unsigned int UINT_PTR;
-#endif
 typedef int BOOL, *LPBOOL;
 typedef short VARIANT_BOOL;
 typedef void VOID;
@@ -217,7 +212,7 @@ typedef DWORDLONG ULONGLONG,*PULONGLONG;
 
 #ifndef _WIN32
 #  ifndef FIELD_OFFSET
-#    define FIELD_OFFSET(t,f) ((LONG)&(((t*)0)->f))
+#    define FIELD_OFFSET(t,f) ((UINT_PTR)&(((t*)0)->f))
 #  endif
 #  ifndef MAKEINTRESOURCEA
 #    define MAKEINTRESOURCEA(i) ((LPSTR)((ULONG_PTR)((WORD)(i))))
