@@ -15,10 +15,50 @@
  * warranty.
  */
 
-#include <stdint.h>
-
 #ifndef __COMMON_TYPES_H
 #define __COMMON_TYPES_H
+
+#ifdef _WIN32
+#include <windows.h>
+
+#ifndef _7ZIP_BYTE_DEFINED
+#define _7ZIP_BYTE_DEFINED
+typedef UINT8 Byte;
+#endif 
+
+#ifndef _7ZIP_INT16_DEFINED
+#define _7ZIP_INT16_DEFINED
+typedef INT16 Int16;
+#endif 
+
+#ifndef _7ZIP_UINT16_DEFINED
+#define _7ZIP_UINT16_DEFINED
+typedef UINT16 UInt16;
+#endif 
+
+#ifndef _7ZIP_INT32_DEFINED
+#define _7ZIP_INT32_DEFINED
+typedef INT32 Int32;
+#endif 
+
+#ifndef _7ZIP_UINT32_DEFINED
+#define _7ZIP_UINT32_DEFINED
+typedef UINT32 UInt32;
+#endif 
+
+#ifndef _7ZIP_INT64_DEFINED
+#define _7ZIP_INT64_DEFINED
+typedef INT64 Int64;
+#endif 
+
+#ifndef _7ZIP_UINT64_DEFINED
+#define _7ZIP_UINT64_DEFINED
+typedef UINT64 UInt64;
+#endif 
+
+#else // !_WIN32
+
+#include <stdint.h>
 
 #ifndef _7ZIP_BYTE_DEFINED
 #define _7ZIP_BYTE_DEFINED
@@ -44,20 +84,6 @@ typedef int32_t Int32;
 #define _7ZIP_UINT32_DEFINED
 typedef uint32_t UInt32;
 #endif 
-
-#ifdef _MSC_VER
-
-#ifndef _7ZIP_INT64_DEFINED
-#define _7ZIP_INT64_DEFINED
-typedef __int64 Int64;
-#endif 
-
-#ifndef _7ZIP_UINT64_DEFINED
-#define _7ZIP_UINT64_DEFINED
-typedef unsigned __int64 UInt64;
-#endif 
-
-#else
 
 #ifndef _7ZIP_INT64_DEFINED
 #define _7ZIP_INT64_DEFINED
