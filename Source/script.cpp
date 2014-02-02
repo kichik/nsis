@@ -715,7 +715,7 @@ void CEXEBuild::ps_addtoline(const TCHAR *str, GrowBuf &linedata, StringList &hi
             if (_T('U')==s[0] && _T('+')==s[1])
             {
               TCHAR *n=s+2;
-              unsigned long utf32=_tcstoul(n,&t,16);
+              UINT32 utf32=_tcstoul(n,&t,16);
               // We only want to accept "${U+HEXDIGITS}" and not "${U+ -HEXDIGITS }"
               if (*t || _T('-')==*n || _T('+')==*n) t=0;
               if (_T(' ')==*n || _T('\t')==*n) t=0; // TODO: _istspace()?
