@@ -1,5 +1,15 @@
 \A{history} Changelog and Release Notes
 
+\H{v3.0b0} 3.0 Beta 0
+
+Released on ?, 2014
+
+\S1{v3.0b0-rl} Release Notes
+
+\S2{} Minor Changes
+
+\b Added Int<32|64|Ptr><Op|Cmp[U]> helper macros to Util.nsh
+
 \H{v3.0a2} 3.0 Alpha 2
 
 Released on December 24th, 2013
