@@ -38,7 +38,7 @@ PLUGINFUNCTIONEND
 
 PLUGINFUNCTIONSHORT(Copy)
 {
-    int size = 0;
+    SIZE_T size = 0;
     HANDLE source, dest;
     TCHAR *str;
     // Get the string
@@ -47,10 +47,10 @@ PLUGINFUNCTIONSHORT(Copy)
     // Check for size option
     if (str[0] == _T('/'))
     {
-        size = (SIZE_T) myatoi(str+1);
+        size = (SIZE_T) StrToIntPtr(str+1);
         dest = (HANDLE) popintptr();
     }
-    else dest = (HANDLE) myatoi(str);
+    else dest = (HANDLE) StrToIntPtr(str);
     source = (HANDLE) popintptr();
 
     // Ok, check the size

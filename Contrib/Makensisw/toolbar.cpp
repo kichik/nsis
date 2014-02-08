@@ -75,9 +75,15 @@ void CreateToolBar()
   SendMessage(g_toolbar.hwnd, TB_ADDBUTTONS, BUTTONCOUNT, (LPARAM) &tbbs);
 
   // For Comctl32.dll version detection
+  #ifndef _WIN64
   HMODULE hMod = GetModuleHandle(_T("comctl32.dll"));
+  const FARPROC hasCC4_70 = GetProcAddress(hMod, "InitCommonControlsEx");
+  const FARPROC hasCC4_71 = GetProcAddress(hMod, "DllGetVersion");
+  #else
+  const bool hasCC4_70 = true, hasCC4_71 = true;
+  #endif
 
-  if (GetProcAddress(hMod, "InitCommonControlsEx")) { // Version 4.70
+  if (hasCC4_70) { // Version 4.70
     // Modern toolbar, 24-bit bitmaps
 
     g_toolbar.imagelist = ImageList_LoadImage(g_sdata.hInstance, MAKEINTRESOURCE(IDB_TOOLBAR24), 16, 0, RGB(255, 0, 255), IMAGE_BITMAP, LR_CREATEDIBSECTION);
@@ -88,8 +94,7 @@ void CreateToolBar()
     SendMessage(g_toolbar.hwnd, TB_SETDISABLEDIMAGELIST, 0, (LPARAM) g_toolbar.imagelistd);
     SendMessage(g_toolbar.hwnd, TB_SETHOTIMAGELIST, 0, (LPARAM) g_toolbar.imagelisth);
 
-    // Version 4.71
-    if (GetProcAddress(hMod, "DllGetVersion")) {
+    if (hasCC4_71) { // Version 4.71
       SendMessage(g_toolbar.hwnd, TB_SETEXTENDEDSTYLE, 0, TBSTYLE_EX_DRAWDDARROWS);
     }
       

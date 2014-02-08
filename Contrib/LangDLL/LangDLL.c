@@ -14,6 +14,7 @@
 
 
 #include <nsis/pluginapi.h> // nsis plugin
+#define NSIS_DECLSPEC_DLLEXPORT __declspec(dllexport) // BUGBUG: Compiler specific
 
 HINSTANCE g_hInstance;
 HWND g_hwndParent;
@@ -34,14 +35,15 @@ struct lang {
 
 INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  int i, size;
+  INT_PTR i;
+  int size;
   TCHAR *selected_language = NULL;
   static HFONT font;
   switch (uMsg) {
-  	case WM_INITDIALOG:
+    case WM_INITDIALOG:
       // add languages
       for (i = visible_langs_num - 1; i >= 0; i--) {
-        int cbi;
+        INT_PTR cbi;
 
         cbi = SendDlgItemMessage(hwndDlg, IDC_LANGUAGE, CB_ADDSTRING, 0, (LPARAM) langs[i].name);
         SendDlgItemMessage(hwndDlg, IDC_LANGUAGE, CB_SETITEMDATA, cbi, (LPARAM) langs[i].id);
@@ -82,7 +84,7 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPara
       break;
     case WM_COMMAND:
       switch (LOWORD(wParam)) {
-      	case IDOK:
+        case IDOK:
           // push result on the stack
           i = SendDlgItemMessage(hwndDlg, IDC_LANGUAGE, CB_GETCURSEL, 0, 0);
           i = SendDlgItemMessage(hwndDlg, IDC_LANGUAGE, CB_GETITEMDATA, i, 0);
@@ -113,7 +115,7 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPara
   return TRUE; // message processed
 }
 
-void __declspec(dllexport) LangDialog(HWND hwndParent, int string_size, 
+void NSIS_DECLSPEC_DLLEXPORT LangDialog(HWND hwndParent, int string_size, 
                                       TCHAR *variables, stack_t **stacktop)
 {
   g_hwndParent=hwndParent;
@@ -240,5 +242,5 @@ void __declspec(dllexport) LangDialog(HWND hwndParent, int string_size,
 BOOL WINAPI DllMain(HINSTANCE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
 {
   g_hInstance=hInst;
-	return TRUE;
+  return TRUE;
 }

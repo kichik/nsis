@@ -343,7 +343,7 @@ int CEXEBuild::doParse(const TCHAR *str)
   }
 
   // add new line to line buffer
-  const size_t cchstr = _tcslen(str);
+  const unsigned int cchstr = (unsigned int) _tcslen(str);
   m_linebuild.add(str,(cchstr+1)*sizeof(TCHAR));
 
   // keep waiting for more lines if this line ends with a backslash
@@ -651,7 +651,7 @@ void CEXEBuild::ps_addtoline(const TCHAR *str, GrowBuf &linedata, StringList &hi
 
     if (t-in > 1) // handle multibyte chars (no escape)
     {
-      linedata.add((void*)in,(t-in)*sizeof(TCHAR));
+      linedata.add((void*)in,BUGBUG64TRUNCATE(int,(t-in)*sizeof(TCHAR)));
       in=t;
       continue;
     }
@@ -1134,7 +1134,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           ERROR_MSG(_T("!macro: macro named \"%") NPRIs _T("\" already found!\n"),macroname);
           return PS_ERROR;
         }
-        m_macros.add(macroname,(_tcslen(macroname)+1)*sizeof(TCHAR));
+        m_macros.add(macroname,(int)(_tcslen(macroname)+1)*sizeof(TCHAR));
 
         int pc;
         for (pc=2; pc < line.getnumtokens(); pc ++)
@@ -1154,7 +1154,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
               return PS_ERROR;
             }
           }
-          m_macros.add(line.gettoken_str(pc),(_tcslen(line.gettoken_str(pc))+1)*sizeof(TCHAR));
+          m_macros.add(line.gettoken_str(pc),(int)(_tcslen(line.gettoken_str(pc))+1)*sizeof(TCHAR));
         }
         m_macros.add(_T(""),sizeof(_T("")));
 
@@ -1198,7 +1198,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
               return PS_ERROR;
             }
           }
-          if (str[0]) m_macros.add(str,(_tcslen(str)+1)*sizeof(TCHAR));
+          if (str[0]) m_macros.add(str,(int)(_tcslen(str)+1)*sizeof(TCHAR));
           else m_macros.add(_T(" "),sizeof(_T(" ")));
           linecnt++;
         }
@@ -1220,9 +1220,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           return PS_ERROR;
         }
         TCHAR *mbufb=(TCHAR*)m_macros.get();
-        const unsigned int mcb=(mend-mbeg)*sizeof(TCHAR), mbufcb=m_macros.getlen();
+        const unsigned int mcb=BUGBUG64TRUNCATE(unsigned int, (mend-mbeg)*sizeof(TCHAR)), mbufcb=m_macros.getlen();
         memmove(mbeg,mend+sizeof(TCHAR),mbufcb-(mcb+(mbeg-mbufb)));
-        m_macros.resize(mbufcb-(mcb+sizeof(TCHAR)));
+        m_macros.resize((int)(mbufcb-(mcb+sizeof(TCHAR))));
         SCRIPT_MSG(_T("!macroundef: %") NPRIs _T("\n"),mname);
       }
     return PS_OK;
@@ -1251,7 +1251,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             l_define_saves.add(t,v);
             definedlist.del(t);
           }
-          l_define_names.add(t,(_tcslen(t)+1)*sizeof(TCHAR));
+          l_define_names.add(t,(int)(_tcslen(t)+1)*sizeof(TCHAR));
           definedlist.add(t,line.gettoken_str(npr+2));
 
           npr++;
@@ -3132,9 +3132,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         } else if (!_tcscmp(mathop,_T("<<")) || !_tcscmp(mathop,_T("<<<")) ) {
           _stprintf(value,_T("%d"),value1<<value2);
         } else if (!_tcscmp(mathop,_T(">>"))) {
-          _stprintf(value,_T("%d"),(signed)value1>>(signed)value2);
-         } else if (!_tcscmp(mathop,_T(">>>"))) {
-          _stprintf(value,_T("%d"),(unsigned)value1>>(unsigned)value2);
+          _stprintf(value,_T("%d"),(signed int)value1>>(signed int)value2);
+        } else if (!_tcscmp(mathop,_T(">>>"))) {
+          _stprintf(value,_T("%d"),(unsigned int)value1>>(unsigned int)value2);
         } else if (!_tcscmp(mathop,_T("/"))) {
           if (value2==0) {
             ERROR_MSG(_T("!define /math: division by zero! (\"%i / %i\")\n"),value1,value2);
@@ -3155,7 +3155,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         value=line.gettoken_str(2);
       }
 
-      if (dupemode==2)definedlist.del(define);
+      if (dupemode==2) definedlist.del(define);
       if (definedlist.add(define,value))
       {
         ERROR_MSG(_T("!define: \"%") NPRIs _T("\" already defined!\n"),define);
@@ -3453,7 +3453,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             delete tlist;
             // parse line
           }
-          if ((unsigned)-1 != fail_parm && !noErrors)
+          if ((UINT)-1 != fail_parm && !noErrors)
           {
             const TCHAR *msgprefix=!fail_parm ? _T("starting ") : _T("");
             TCHAR *p=line.gettoken_str(parmOffs + (fail_parm*2));
@@ -3493,8 +3493,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         TCHAR *src = line.gettoken_str(2+ignoreCase);
         TCHAR *search = line.gettoken_str(3+ignoreCase);
         TCHAR *replace = line.gettoken_str(4+ignoreCase);
-        int searchlen=_tcslen(search);
-        int replacelen=_tcslen(replace);
+        int searchlen=(int)_tcslen(search), replacelen=(int)_tcslen(replace);
         if (!searchlen)
         {
           ERROR_MSG(_T("!searchreplace: search string must not be empty for search/replace!\n"));
@@ -4332,8 +4331,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           TCHAR *np=p;
           while (*np && *np != _T('|')) np++;
           if (*np) *np++=0;
-          for (x = 0 ; (unsigned) x < COUNTOF(list) && _tcsicmp(list[x].str, p); x++);
-          if ((unsigned) x < COUNTOF(list))
+          for (x = 0 ; (size_t) x < COUNTOF(list) && _tcsicmp(list[x].str, p); x++);
+          if ((size_t) x < COUNTOF(list))
           {
             r|=list[x].id;
           }
@@ -6735,7 +6734,7 @@ int CEXEBuild::add_file(const tstring& dir, const tstring& file, int attrib, con
       ent.offsets[4]=0;
       ent.offsets[5]=0;
 
-      if (INVALID_FILE_ATTRIBUTES != (unsigned)ent.offsets[1])
+      if (INVALID_FILE_ATTRIBUTES != (DWORD)ent.offsets[1])
       {
         a=add_entry(&ent);
         if (a != PS_OK)
@@ -6800,7 +6799,7 @@ DefineList *CEXEBuild::searchParseString(const TCHAR *source_string, LineParser&
       tok = 0, maxlen = -1; // No more tokens to search for, save the rest of the string
     else
     {
-      toklen = _tcslen(tok);
+      toklen = (int) _tcslen(tok);
       while (*source_string && (ignCase?_tcsnicmp(source_string,tok,toklen):_tcsncmp(source_string,tok,toklen))) source_string++;
       maxlen = source_string - src_start; // Length of previous string
     }

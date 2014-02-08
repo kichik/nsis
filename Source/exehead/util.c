@@ -404,16 +404,14 @@ char * NSISCALL mystrstriA(char *a, const char *b)
 }
 
 
+#ifndef _NSIS_NODEFLIB_CRTMEMCPY
 // mini_memcpy takes the number of bytes to copy.
-void NSISCALL mini_memcpy(void *out, const void *in, int len)
+void NSISCALL mini_memcpy(void *out, const void *in, UINT_PTR cb)
 {
-  char *c_out=(char*)out;
-  char *c_in=(char *)in;
-  while (len-- > 0)
-  {
-    *c_out++=*c_in++;
-  }
+  char *dst = (char*) out, *src = (char*) in;
+  while (cb-- > 0) *dst++ = *src++;
 }
+#endif
 
 DWORD NSISCALL remove_ro_attr(LPCTSTR file)
 {
@@ -538,7 +536,7 @@ void RenameViaWininit(const TCHAR* prevName, const TCHAR* newName)
               *pEnd-- = *p--;
             }
 
-            dwRenameLinePos = pszNextSec - pszWinInit + 1; // +1 for the \n
+            dwRenameLinePos = BUGBUG64TRUNCATE(DWORD, pszNextSec - pszWinInit) + 1; // +1 for the \n
           }
           // rename section is last, stick item at end of file
           else dwRenameLinePos = dwFileSize;
@@ -570,13 +568,17 @@ void NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
   BOOL fOk = 0;
   typedef BOOL (WINAPI *mfea_t)(LPCTSTR lpExistingFileName,LPCTSTR lpNewFileName,DWORD dwFlags);
   mfea_t mfea;
+  #ifdef _WIN64
+  mfea=MoveFileEx;
+  #else
   mfea=(mfea_t) myGetProcAddress(MGA_MoveFileEx);
   if (mfea)
+  #endif
   {
     fOk=mfea(pszExisting, pszNew, MOVEFILE_DELAY_UNTIL_REBOOT|MOVEFILE_REPLACE_EXISTING);
   }
   
-  if (!fOk)
+  if (!fOk && sizeof(void*) <= 4)
   {
     RenameViaWininit(pszExisting, pszNew);
   }
@@ -691,7 +693,7 @@ TCHAR * NSISCALL GetNSISString(TCHAR *outbuf, int strtab)
   // indexes into the language
   TCHAR *in = (TCHAR*)GetNSISStringNP(GetNSISTab(strtab));
   TCHAR *out = ps_tmpbuf;
-  
+
   // Still working within ps_tmpbuf, so set out to the
   // current position that is passed in.
   if (outbuf >= ps_tmpbuf && 
@@ -1035,6 +1037,7 @@ struct MGA_FUNC
 
 #ifdef _UNICODE
 struct MGA_FUNC MGA_FUNCS[] = {
+#ifndef _WIN64
   {"KERNEL32", "GetDiskFreeSpaceExW"},
   {"KERNEL32", "MoveFileExW"},
   {"ADVAPI32", "RegDeleteKeyExW"},
@@ -1042,6 +1045,7 @@ struct MGA_FUNC MGA_FUNCS[] = {
   {"ADVAPI32", "LookupPrivilegeValueW"},
   {"ADVAPI32", "AdjustTokenPrivileges"},
   {"KERNEL32", "GetUserDefaultUILanguage"},
+#endif
   {"SHLWAPI",  "SHAutoComplete"},
   {"SHFOLDER", "SHGetFolderPathW"}
 };

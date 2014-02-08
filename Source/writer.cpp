@@ -41,6 +41,11 @@ void writer_sink::write_int(const int i)
   int fi = FIX_ENDIAN_INT32(i);
   write_data(&fi, sizeof(int));
 }
+void writer_sink::write_int64(const INT64 i)
+{
+  INT64 fi = FIX_ENDIAN_INT64(i);
+  write_data(&fi, sizeof(INT64));
+}
 
 void writer_sink::write_int_array(const int i[], const size_t len)
 {
@@ -73,7 +78,7 @@ void writer_sink::write_string(const TCHAR *s, size_t size)
   {
     char *wb = new char[size];
     memset(wb, 0, size);
-    WideCharToMultiByte(CP_ACP, 0, s, -1, wb, size, NULL, NULL);
+    WideCharToMultiByte(CP_ACP, 0, s, -1, wb, (int)size, NULL, NULL);
     write_data(wb, size);
     delete [] wb;
  }
@@ -93,7 +98,7 @@ void writer_sink::write_growbuf(const IGrowBuf *b)
 
 void growbuf_writer_sink::write_data(const void *data, const size_t size)
 {
-  m_buf->add(data, size);
+  m_buf->add(data, BUGBUG64TRUNCATE(int, size));
 }
 
 void file_writer_sink::write_data(const void *data, const size_t size)
@@ -109,6 +114,6 @@ void file_writer_sink::write_data(const void *data, const size_t size)
 
 void crc_writer_sink::write_data(const void *data, const size_t size)
 {
-  *m_crc = CRC32(*m_crc, (const unsigned char *) data, size);
+  *m_crc = CRC32(*m_crc, (const unsigned char *) data, BUGBUG64TRUNCATE(unsigned int, size));
 }
 #endif

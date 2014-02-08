@@ -605,11 +605,13 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
         case IDM_EDITSCRIPT:
         {
           if (g_sdata.input_script) {
-            if ((int)ShellExecute(g_sdata.hwnd,_T("open"),g_sdata.input_script,NULL,NULL,SW_SHOWNORMAL)<=32) {
+            LPCTSTR verb = _T("open"); // BUGBUG: Should not force the open verb?
+            HINSTANCE hi = ShellExecute(g_sdata.hwnd,verb,g_sdata.input_script,NULL,NULL,SW_SHOWNORMAL);
+            if ((UINT_PTR)hi <= 32) {
               TCHAR path[MAX_PATH];
               if (GetWindowsDirectory(path,sizeof(path))) {
                 lstrcat(path,_T("\\notepad.exe"));
-                ShellExecute(g_sdata.hwnd,_T("open"),path,g_sdata.input_script,NULL,SW_SHOWNORMAL);
+                ShellExecute(g_sdata.hwnd,verb,path,g_sdata.input_script,NULL,SW_SHOWNORMAL);
               }
             }
           }

@@ -34,7 +34,8 @@ unsigned int ExeHeadStringList::getnum() const
 {
   char *p = (char*) m_gr.get();
   if (!p) return 1; // The empty string always exists
-  unsigned int cbList = gettotalsize(), cb = 0, num = 1, pos;
+  unsigned int num = 1;
+  size_t cbList = gettotalsize(), cb = 0, pos;
   pos = 1 + !!m_wide, p += pos; // Skip empty string
   if (m_wide)
   {
@@ -93,7 +94,7 @@ unsigned int ExeHeadStringList::find(const TCHAR *str, WORD codepage, bool proce
   }
   else
   {
-    return find(str,_tcslen(str),codepage,processed,ppBufMB);
+    return find(str,(unsigned int)_tcslen(str),codepage,processed,ppBufMB);
   }
 }
 unsigned int ExeHeadStringList::find(const void *ptr, unsigned int cchF, WORD codepage, bool processed, char**ppBufMB) const
@@ -140,7 +141,7 @@ unsigned int ExeHeadStringList::find(const void *ptr, unsigned int cchF, WORD co
     for(;;)
     {
       if (pos+=cb >= cbList) break;
-      cb = strlen(p+=cb) + 1;
+      cb = (unsigned int) strlen(p+=cb) + 1;
       if (cb < cbF) continue;
       if (byte_rev_match(p,find,cbF)) { retval = pos; break; }
     }
@@ -165,7 +166,7 @@ int ExeHeadStringList::add(const TCHAR *str, WORD codepage, bool processed)
 
   char *bufMB = 0;
   unsigned int pos = find(str,codepage,processed,m_wide ? 0 : &bufMB);
-  if ((unsigned)-1 != pos)
+  if ((unsigned int)-1 != pos)
   {
     delete[] bufMB;
     return pos;
@@ -180,7 +181,7 @@ int ExeHeadStringList::add(const TCHAR *str, WORD codepage, bool processed)
   }
   else
   {
-    unsigned int cbMB = strlen(bufMB) + 1;
+    unsigned int cbMB = (unsigned int) strlen(bufMB) + 1;
     pos = m_gr.add(bufMB,cbMB);
     delete[] bufMB;
   }
@@ -192,7 +193,7 @@ int StringList::add(const TCHAR *str, int case_sensitive)
 {
   int a=find(str,case_sensitive);
   if (a >= 0 && case_sensitive!=-1) return a;
-  return m_gr.add(str,(_tcslen(str)+1)*sizeof(TCHAR))/sizeof(TCHAR);
+  return m_gr.add(str,BUGBUG64TRUNCATE(int, (_tcslen(str)+1)*sizeof(TCHAR)))/sizeof(TCHAR);
 }
 
 // use 2 for case sensitive end-of-string matches too
@@ -222,9 +223,9 @@ int StringList::find(const TCHAR *str, int case_sensitive, int *idx/*=NULL*/) co
         str_slen < offs_slen &&  // check for end of string
         !_tcscmp(s + offs + offs_slen - str_slen,str))
     {
-      return offs + offs_slen - str_slen;
+      return BUGBUG64TRUNCATE(int, offs + offs_slen - str_slen);
     }
-    offs += offs_slen + 1;
+    offs += BUGBUG64TRUNCATE(int, offs_slen + 1);
 
     if (idx) (*idx)++;
   }
@@ -235,12 +236,12 @@ int StringList::find(const TCHAR *str, int case_sensitive, int *idx/*=NULL*/) co
 void StringList::delbypos(int pos)
 {
   TCHAR *s=(TCHAR*) m_gr.get();
-  int len=_tcslen(s+pos)+1;
+  int len=(int)_tcslen(s+pos)+1;
 
   if (pos+len < getcount()) 
   {
-	  // Move everything after the string position to the current position.
-	  memcpy(s+pos,s+pos+len, (getcount()-pos+len)*sizeof(TCHAR));
+    // Move everything after the string position to the current position.
+    memcpy(s+pos,s+pos+len, (getcount()-pos+len)*sizeof(TCHAR));
   }
   m_gr.resize(m_gr.getlen()-len*sizeof(TCHAR));
 }
@@ -254,7 +255,7 @@ int StringList::idx2pos(int idx) const
   if (idx>=0) while (offs < getcount())
   {
     if (cnt++ == idx) return offs;
-    offs+=_tcslen(s+offs)+1;
+    offs+=(int)_tcslen(s+offs)+1;
   }
   return -1;
 }
@@ -267,7 +268,7 @@ int StringList::getnum() const
   int idx=0;
   while (offs < ml)
   {
-    offs+=_tcslen(s+offs)+1;
+    offs+=(int)_tcslen(s+offs)+1;
     idx++;
   }
   return idx;

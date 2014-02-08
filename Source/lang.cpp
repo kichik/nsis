@@ -285,7 +285,7 @@ int StringsArray::set(int idx, const TCHAR *str)
   int old = ((int*) m_offsets.get())[idx];
 
   // Need to store the TCHAR index so we divide the return value of add by sizeof(TCHAR).
-  ((int*)m_offsets.get())[idx] = m_strings.add(str, (_tcslen(str)+1)*sizeof(TCHAR))/sizeof(TCHAR);
+  ((int*)m_offsets.get())[idx] = m_strings.add(str, (DWORD)(_tcslen(str)+1)*sizeof(TCHAR))/sizeof(TCHAR);
 
   return old;
 }
@@ -1014,7 +1014,7 @@ l_readerr:
   // set ^Language
   nlf->m_szStrings[NLF_LANGUAGE] = _tcsdup(nlf->m_szName);
 
-  int temp;
+  size_t temp;
 
   // Get font
   if (!GetNextNLFLine(lr, buf, NSIS_MAX_STRLEN, errlr)) goto l_readerr;

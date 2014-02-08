@@ -273,9 +273,9 @@ PLUGINFUNCTION(Get)
 /*
 TODO: CallProc/Back not implemeted.
 Fake the behavior of the System plugin for the LoadImage API function so MUI works.
-BUGBUG: Leaking DeleteObject and failing GetClientRect
+BUGBUG: MUI is leaking DeleteObject and failing GetClientRect
 */
-static SystemProc* CallProc(SystemProc *proc)
+SystemProc* CallProc(SystemProc *proc)
 {
     INT_PTR ret, *place;
     LastError = lstrcmp(proc->ProcName, sizeof(TCHAR) > 1 ? _T("LoadImageW") : _T("LoadImageA"));
@@ -294,7 +294,7 @@ static SystemProc* CallProc(SystemProc *proc)
     if (place) *place = ret;
     return proc;
 }
-static SystemProc* CallBack(SystemProc *proc)
+SystemProc* CallBack(SystemProc *proc)
 {
     proc->ProcResult = PR_ERROR;
     return proc;
@@ -741,10 +741,10 @@ SystemProc *PrepareProc(BOOL NeedForCall)
                     // it may contain previous inline input
                     if (!((proc->Params[ParamIndex].Input > -1) && (proc->Params[ParamIndex].Input <= __INST_LAST)))
                         GlobalFree((HANDLE) proc->Params[ParamIndex].Input);
-                    proc->Params[ParamIndex].Input = temp4;
+                    proc->Params[ParamIndex].Input = BUGBUG64(int) temp4;
                 }
                 if (temp3 == 1)
-                    proc->Params[ParamIndex].Output = temp4;
+                    proc->Params[ParamIndex].Output = BUGBUG64(int) temp4;
                 // Next parameter is output or something else
 #ifdef __GNUC__
 #pragma GCC diagnostic push
@@ -985,7 +985,7 @@ void ParamsIn(SystemProc *proc)
         case PAT_CALLBACK:
             // Generate new or use old callback
             if (lstrlen(realbuf) > 0)
-                par->Value = BUGBUG64(int) CreateCallback((SystemProc*) StrToIntPtr(realbuf));
+                par->Value = (INT_PTR) CreateCallback((SystemProc*) StrToIntPtr(realbuf));
             break;
         }
         GlobalFree(realbuf);
@@ -1254,7 +1254,7 @@ void CallStruct(SystemProc *proc)
     SYSTEM_LOG_POST;
 
     // Proc virtual return - pointer to memory struct
-    proc->Params[0].Value = BUGBUG64(int) proc->Proc;
+    proc->Params[0].Value = (INT_PTR) proc->Proc;
 }
 
 /*

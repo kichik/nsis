@@ -213,7 +213,7 @@ static IconPairs get_icon_order(IconGroup icon1, IconGroup icon2)
       FIX_ENDIAN_INT32(sorted_icons1[i].meta.dwRawSize),
       FIX_ENDIAN_INT32(sorted_icons2[i].meta.dwRawSize)
     );
-    pair.size_index = i;
+    pair.size_index = BUGBUG64TRUNCATE(unsigned int,i);
 
     result.push_back(pair);
   }
@@ -227,7 +227,7 @@ static IconPairs get_icon_order(IconGroup icon1, IconGroup icon2)
       pair.index1 = sorted_icons1[i].index;
       pair.index2 = 0xffff;
       pair.size = FIX_ENDIAN_INT32(sorted_icons1[i].meta.dwRawSize);
-      pair.size_index = i;
+      pair.size_index = BUGBUG64TRUNCATE(unsigned int,i);
     }
 
     if (i < sorted_icons2.size())
@@ -235,7 +235,7 @@ static IconPairs get_icon_order(IconGroup icon1, IconGroup icon2)
       pair.index2 = sorted_icons2[i].index;
       pair.index1 = 0xffff;
       pair.size = FIX_ENDIAN_INT32(sorted_icons2[i].meta.dwRawSize);
-      pair.size_index = i;
+      pair.size_index = BUGBUG64TRUNCATE(unsigned int,i);
     }
 
     result.push_back(pair);
@@ -256,7 +256,7 @@ static LPBYTE generate_icon_group(IconGroup icon, IconPairs order, bool first)
 
   header->wReserved = 0;
   header->wIsIcon   = FIX_ENDIAN_INT16(1);
-  header->wCount    = FIX_ENDIAN_INT16(icon.size());
+  header->wCount    = FIX_ENDIAN_INT16((WORD)icon.size());
 
   order = sort_pairs(order, first);
 
@@ -285,7 +285,7 @@ void set_icon(CResourceEditor* re, WORD wIconId, IconGroup icon1, IconGroup icon
   size_t group_size = sizeof(IconGroupHeader) // header
     + order.size() * SIZEOF_RSRC_ICON_GROUP_ENTRY; // entries
 
-  re->UpdateResource(RT_GROUP_ICON, wIconId, NSIS_DEFAULT_LANG, group1, group_size);
+  re->UpdateResource(RT_GROUP_ICON, wIconId, NSIS_DEFAULT_LANG, group1, (DWORD)group_size);
   destroy_icon_group(group1);
 
   // delete old icons
@@ -343,7 +343,7 @@ unsigned char* generate_uninstall_icon_data(IconGroup icon1, IconGroup icon2, si
   LPBYTE seeker = uninst_data;
 
   // fill group header
-  *(LPDWORD) seeker = FIX_ENDIAN_INT32(group_size);
+  *(LPDWORD) seeker = FIX_ENDIAN_INT32((UINT32)group_size);
   seeker += sizeof(DWORD);
   *(LPDWORD) seeker = 0;
   seeker += sizeof(DWORD);
@@ -382,7 +382,7 @@ int generate_unicons_offsets(LPBYTE exeHeader, size_t exeHeaderSize, LPBYTE unin
     DWORD offset;
     DWORD size;
 
-    CResourceEditor re(exeHeader, exeHeaderSize, false);
+    CResourceEditor re(exeHeader, (DWORD)exeHeaderSize, false);
 
     LPBYTE seeker = uninstIconData;
 

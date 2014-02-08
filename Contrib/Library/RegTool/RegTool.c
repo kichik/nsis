@@ -345,7 +345,7 @@ void RenameViaWininit(const TCHAR* prevName, const TCHAR* newName)
               *pEnd-- = *p--;
             }
 
-            dwRenameLinePos = pszNextSec - pszWinInit + 1; // +1 for the \n
+            dwRenameLinePos = BUGBUG64TRUNCATE(DWORD, pszNextSec - pszWinInit) + 1; // +1 for the \n
           }
           // rename section is last, stick item at end of file
           else dwRenameLinePos = dwFileSize;

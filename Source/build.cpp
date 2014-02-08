@@ -131,9 +131,12 @@ CEXEBuild::CEXEBuild() :
   definedlist.add(_T("NSIS_PACKEDVERSION"), NSIS_PACKEDVERSION);
 #endif
 
-  build_unicode=false;
-  build_lockedunicodetarget=false;
   m_target_type=TARGET_X86ANSI;
+#ifdef _WIN32
+  if (sizeof(void*) > 4) m_target_type = TARGET_AMD64; // BUGBUG: There is no instuction to select it so we force
+#endif
+  build_unicode=TARGET_X86ANSI != m_target_type;
+  build_lockedunicodetarget=false;
 
   // automatically generated header file containing all defines
 #include <nsis-defines.h>
@@ -379,7 +382,6 @@ CEXEBuild::CEXEBuild() :
 
   set_uninstall_mode(0);
   set_code_type_predefines();
-  set_target_architecture_predefines();
 }
 
 void CEXEBuild::initialize(const TCHAR *makensis_path)
@@ -403,7 +405,7 @@ void CEXEBuild::initialize(const TCHAR *makensis_path)
   stubs_dir = nsis_dir;
   stubs_dir += PLATFORM_PATH_SEPARATOR_STR _T("Stubs");
 
-  if (set_compressor(_T("zlib"), false) != PS_OK)
+  if (set_compressor(_T("zlib"), false) != PS_OK || set_target_architecture_data() != PS_OK)
   {
     throw runtime_error("error setting default stub");
   }
@@ -2303,7 +2305,7 @@ void CEXEBuild::PrepareHeaders(IGrowBuf *hdrbuf)
   lang_table_writer::write_block(cur_langtables, &sink, cur_header->langtable_size);
 
   cur_header->blocks[NB_CTLCOLORS].offset = sizeof(header) + blocks_buf.getlen();
-  ctlcolors_writer::write_block(cur_ctlcolors, &sink);
+  ctlcolors_writer::write_block(cur_ctlcolors, &sink, build_unicode, is_target_64bit());
 
 #ifdef NSIS_SUPPORT_BGBG
   if (cur_header->bg_color1 != -1)
@@ -2357,7 +2359,7 @@ int CEXEBuild::SetManifest()
       return PS_OK;
 
     // Saved directly as binary into the exe.
-    res_editor->UpdateResource(MAKEINTRESOURCE(24), 1, NSIS_DEFAULT_LANG, (LPBYTE) manifest.c_str(), manifest.length());
+    res_editor->UpdateResource(MAKEINTRESOURCE(24), 1, NSIS_DEFAULT_LANG, (LPBYTE) manifest.c_str(), (DWORD)manifest.length());
   }
   catch (exception& err) {
     ERROR_MSG(_T("Error setting manifest: %") NPRIs _T("\n"), CtoTStrParam(err.what()));
@@ -2520,6 +2522,7 @@ int CEXEBuild::pack_exe_header()
 
 int CEXEBuild::write_output(void)
 {
+  if (sizeof(void*)>4 && lowercase(get_file_name(stub_filename)).c_str()[0]=='z') warning(_T("ZLIB is broken?!\n"));
 #ifndef NSIS_CONFIG_CRC_SUPPORT
   build_crcchk=0;
 #endif
@@ -2618,9 +2621,9 @@ int CEXEBuild::write_output(void)
 
 #ifdef NSIS_CONFIG_CRC_SUPPORT
   #ifdef NSIS_CONFIG_CRC_ANAL
-    crc=CRC32(crc,m_exehead,m_exehead_size);
+    crc=CRC32(crc,m_exehead,(DWORD)m_exehead_size);
   #else
-    crc=CRC32(crc,m_exehead+512,m_exehead_size-512);
+    crc=CRC32(crc,m_exehead+512,(DWORD)m_exehead_size-512);
   #endif
 #endif
 
@@ -2776,8 +2779,8 @@ int CEXEBuild::write_output(void)
 
   if (db_opt_save)
   {
-    int total_out_size_estimate=
-      m_exehead_size+sizeof(fh)+build_datablock.getlen()+(build_crcchk?sizeof(crc32_t):0);
+    int total_out_size_estimate=BUGBUG64TRUNCATE(int, // BUGBUG: This should be UINT64 or at least unsigned
+      m_exehead_size+sizeof(fh)+build_datablock.getlen()+(build_crcchk?sizeof(crc32_t):0));
     int pc=(int)(((INT64)db_opt_save*1000)/(db_opt_save+total_out_size_estimate));
     INFO_MSG(_T("Datablock optimizer saved %d bytes (~%d.%d%%).\n"),db_opt_save,
       pc/10,pc%10);
@@ -2787,7 +2790,7 @@ int CEXEBuild::write_output(void)
   INFO_MSG(_T("\nUsing %") NPRIs _T("%") NPRIs _T(" compression.\n\n"), compressor->GetName(), build_compress_whole?_T(" (compress whole)"):_T(""));
 #endif
 
-  unsigned int total_usize=m_exehead_original_size;
+  unsigned int total_usize=(unsigned int) m_exehead_original_size;
 
   INFO_MSG(_T("EXE header size:          %10u / %u bytes\n"),m_exehead_size,m_exehead_original_size);
 
@@ -2912,7 +2915,7 @@ int CEXEBuild::write_output(void)
       for (;;)
       {
         char buf[32768];
-        int l=fread(buf,1,sizeof(buf),fp);
+        unsigned int l=(unsigned int)fread(buf,1,sizeof(buf),fp);
         if (!l) break;
         crc=CRC32(crc,(unsigned char *)buf,l);
       }
@@ -2949,7 +2952,7 @@ int CEXEBuild::write_output(void)
       TCHAR *arg = _tcsstr(cmdstr, _T("%1"));
       if (arg)    // if found, replace %1 by build_output_filename
       {
-        const UINT cchbldoutfile = _tcslen(build_output_filename);
+        const size_t cchbldoutfile = _tcslen(build_output_filename);
         cmdstrbuf = (TCHAR*) malloc( (_tcslen(cmdstr) + cchbldoutfile + 1)*sizeof(TCHAR) );
         if (!cmdstrbuf)
         {
@@ -3000,7 +3003,7 @@ int CEXEBuild::deflateToFile(FILE *fp, char *buf, int len) // len==0 to flush
     int l=compressor->GetNextOut()-obuf;
     if (l)
     {
-      if (fwrite(obuf,1,l,fp) != (unsigned)l)
+      if (fwrite(obuf,1,l,fp) != (size_t)l)
       {
         ERROR_MSG(_T("Error: deflateToFile fwrite(%d) failed\n"),l);
         return 1;
@@ -3062,7 +3065,7 @@ int CEXEBuild::uninstall_generate()
       if (ent->which == EW_WRITEUNINSTALLER)
       {
         ent->offsets[1] = uninstdata_offset;
-        ent->offsets[2] = m_unicon_size;
+        ent->offsets[2] = (int) m_unicon_size;
         uns--;
         if (!uns)
           break;
@@ -3099,9 +3102,9 @@ int CEXEBuild::uninstall_generate()
       delete [] unicon_data;
 
 #ifdef NSIS_CONFIG_CRC_ANAL
-      crc=CRC32(crc, uninst_header, m_exehead_size);
+      crc=CRC32(crc, uninst_header, (DWORD)m_exehead_size);
 #else
-      crc=CRC32(crc, uninst_header + 512, m_exehead_size - 512);
+      crc=CRC32(crc, uninst_header + 512, (DWORD)m_exehead_size - 512);
 #endif
 
       free(uninst_header);
@@ -3242,7 +3245,7 @@ int CEXEBuild::uninstall_generate()
     udata.clear();
 
     //uninstall_size_full=fh.length_of_all_following_data + sizeof(int) + unicondata_size - 32 + sizeof(int);
-    uninstall_size_full=fh.length_of_all_following_data+m_unicon_size;
+    uninstall_size_full=fh.length_of_all_following_data+(int)m_unicon_size;
 
     // compressed size
     uninstall_size=build_datablock.getlen()-uninstdata_offset;
@@ -3409,7 +3412,7 @@ void CEXEBuild::notify(MakensisAPI::notify_e code, const TCHAR *data) const
 #ifdef _WIN32
   if (notify_hwnd)
   {
-    COPYDATASTRUCT cds = {(DWORD)code, (_tcslen(data)+1)*sizeof(TCHAR), (void *) data};
+    COPYDATASTRUCT cds = {(DWORD)code, (UINT32)(_tcslen(data)+1)*sizeof(TCHAR), (void *) data};
     SendMessage(notify_hwnd, WM_COPYDATA, 0, (LPARAM)&cds);
   }
 #endif
@@ -3529,7 +3532,7 @@ void CEXEBuild::init_res_editor()
 {
   build_compressor_set = true;
   if (!res_editor)
-    res_editor = new CResourceEditor(m_exehead, m_exehead_size);
+    res_editor = new CResourceEditor(m_exehead, (DWORD)m_exehead_size);
 }
 
 void CEXEBuild::close_res_editor()
@@ -3569,7 +3572,7 @@ int CEXEBuild::DeclaredUserVar(const TCHAR *szVarName)
     return PS_ERROR;
   }
   const TCHAR *pVarName = szVarName;
-  int iVarLen = _tcslen(szVarName);
+  size_t iVarLen = _tcslen(szVarName);
 
   if (iVarLen > 60)
   {
@@ -3638,8 +3641,10 @@ void CEXEBuild::VerifyDeclaredUserVarRefs(UserVarsStringList *pVarsStringList)
   }
 }
 
-void CEXEBuild::set_target_architecture_predefines()
+int CEXEBuild::set_target_architecture_data()
 {
+  build_strlist.setunicode(build_unicode), ubuild_strlist.setunicode(build_unicode);
+
   definedlist.del(_T("NSIS_UNICODE"));
   definedlist.del(_T("NSIS_CHAR_SIZE"));
   definedlist.del(_T("NSIS_PTR_SIZE"));
@@ -3652,23 +3657,27 @@ void CEXEBuild::set_target_architecture_predefines()
   {
     definedlist.add(_T("NSIS_CHAR_SIZE"), _T("1"));
   }
-  definedlist.add(_T("NSIS_PTR_SIZE"), m_target_type <= TARGET_X86UNICODE ? _T("4") : _T("8"));
+  definedlist.add(_T("NSIS_PTR_SIZE"), is_target_64bit() ? _T("8") : _T("4"));
+
+  return PS_OK;
 }
 
-int CEXEBuild::change_target_architecture()
+int CEXEBuild::change_target_architecture(TARGETTYPE tt)
 {
-  if (build_compressor_set)
+  const bool wide = TARGET_X86ANSI != tt;
+  if (build_compressor_set || (build_unicode != wide && build_lockedunicodetarget))
   {
     ERROR_MSG(_T("Error: Can't change target architecture after data already got compressed!\n"));
     return PS_ERROR;
   }
 
-  m_target_type = build_unicode ? TARGET_X86UNICODE : TARGET_X86ANSI; // BUGBUG64
-  set_target_architecture_predefines();
+  m_target_type = tt;
+  build_unicode = wide;
 
-  int ec = load_stub();
+  int ec = set_target_architecture_data();
+  if (PS_OK == ec) ec = load_stub();
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
-  if (PS_OK==ec) ec = initialize_default_plugins(true);
+  if (PS_OK == ec) ec = initialize_default_plugins(true);
 #endif
   return ec;
 }
@@ -3677,10 +3686,9 @@ int CEXEBuild::change_target_architecture()
 int CEXEBuild::set_target_charset(bool unicode)
 {
   if (build_lockedunicodetarget) return PS_ERROR;
-  build_unicode = unicode;
-  build_strlist.setunicode(unicode);
-  ubuild_strlist.setunicode(unicode);
-  return change_target_architecture();
+  TARGETTYPE tt = unicode ? m_target_type : TARGET_X86ANSI;
+  if (TARGET_X86ANSI == tt && unicode) tt = TARGET_X86UNICODE;
+  return change_target_architecture(tt);
 }
 #endif
 

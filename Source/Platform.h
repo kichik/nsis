@@ -130,7 +130,7 @@ typedef DWORDLONG ULONGLONG,*PULONGLONG;
 
 #ifdef __cplusplus
 #include <algorithm>
-#if defined(_MSC_VER) && _MSC_VER <= 1200
+#if defined(_MSC_VER) && (_MSC_VER <= 1200 || (defined(_MIN)&&_MSC_FULL_VER<=140040310))
 #define STD_MIN std::_MIN
 #define STD_MAX std::_MAX
 #else
@@ -146,16 +146,27 @@ typedef DWORDLONG ULONGLONG,*PULONGLONG;
 #endif
 
 #ifndef __BIG_ENDIAN__
+# define FIX_ENDIAN_INT64(x) (x)
 # define FIX_ENDIAN_INT32_INPLACE(x) ((void)(x))
 # define FIX_ENDIAN_INT32(x) (x)
 # define FIX_ENDIAN_INT16_INPLACE(x) ((void)(x))
 # define FIX_ENDIAN_INT16(x) (x)
 #else
+# define FIX_ENDIAN_INT64(x) SWAP_ENDIAN_INT64(x)
 # define FIX_ENDIAN_INT32_INPLACE(x) ((x) = SWAP_ENDIAN_INT32(x))
 # define FIX_ENDIAN_INT32(x) SWAP_ENDIAN_INT32(x)
 # define FIX_ENDIAN_INT16_INPLACE(x) ((x) = SWAP_ENDIAN_INT16(x))
 # define FIX_ENDIAN_INT16(x) SWAP_ENDIAN_INT16(x)
 #endif
+#define SWAP_ENDIAN_INT64(x) ( \
+  (((x)&0xFF00000000000000) >> 56) | \
+  (((x)&0x00FF000000000000) >> 40) | \
+  (((x)&0x0000FF0000000000) >> 24) | \
+  (((x)&0x000000FF00000000) >>  8) | \
+  (((x)&0x00000000FF000000) <<  8) | \
+  (((x)&0x0000000000FF0000) << 24) | \
+  (((x)&0x000000000000FF00) << 40) | \
+  (((x)&0x00000000000000FF) << 56) )
 #define SWAP_ENDIAN_INT32(x) ( \
   (((x)&0xFF000000) >> 24) | \
   (((x)&0x00FF0000) >>  8) | \
@@ -993,6 +1004,7 @@ typedef struct tagVS_FIXEDFILEINFO {
 
 
 #define NSIS_CXX_THROWSPEC(ignoredthrowspec) // Ignore c++ exception specifications
+#define BUGBUG64TRUNCATE(cast,xpr) ( (cast) (xpr) )
 
 /*
 _tprintf on Windows/MSVCRT treats %s as TCHAR* and on POSIX %s is always char*!

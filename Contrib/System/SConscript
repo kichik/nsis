@@ -33,10 +33,10 @@ if env['TARGET_ARCH'] != 'amd64':
 	elif conf.TryCompile('.end', '.sx'):
 		files += ['Source/Call.sx']
 	else:
-		print 'WARNING: unable to find assembler for Call.S'
+		print 'WARNING: System.dll: unable to find assembler for Call.S'
 	conf.Finish()
 else:
-	print 'WARNING: missing Win64 code, dynamic function calls not supported'
+	print 'WARNING: System.dll: missing Win64 code, dynamic function calls not supported'
 
 BuildPlugin(
 	target,

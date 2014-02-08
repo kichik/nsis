@@ -45,7 +45,7 @@ int WinWStrNICmpASCII(const WINWCHAR *a, const char *b, size_t n)
 
 WINWCHAR* WinWStrDupFromChar(const char *s, unsigned int cp)
 {
-  size_t cch = MultiByteToWideChar(cp, 0, s, -1, 0, 0);
+  int cch = MultiByteToWideChar(cp, 0, s, -1, 0, 0);
   wchar_t *p = (wchar_t*) malloc(cch);
   if (p)
   {

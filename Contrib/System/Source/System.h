@@ -3,7 +3,7 @@
 
 // This should probably be moved to platform.h at some point
 
-#if defined(_M_X64) || defined(__amd64__)
+#if defined(_M_X64) || defined(_M_AMD64) || defined(__amd64__)
 #    define SYSTEM_X64
 #elif defined(_M_IX86) || defined(__i386__) || defined(_X86_)
 #    define SYSTEM_X86

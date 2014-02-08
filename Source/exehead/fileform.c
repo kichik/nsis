@@ -398,14 +398,14 @@ int NSISCALL _dodecomp(int offset, HANDLE hFileOut, unsigned char *outbuf, int o
 
         if (err<0) return -4;
 
-        u=(char*)g_inflate_stream.next_out - outbuffer;
+        u=BUGBUG64TRUNCATE(int, (char*)g_inflate_stream.next_out - outbuffer);
 
-        tc = GetTickCount();
+        tc=GetTickCount();
         if (g_exec_flags.status_update & 1 && (tc - ltc > 200 || !input_len))
         {
           wsprintf(progress, _T("... %d%%"), MulDiv(input_len_total - input_len, 100, input_len_total));
           update_status_text(0, progress);
-          ltc = tc;
+          ltc=tc;
         }
 
         // if there's no output, more input is needed

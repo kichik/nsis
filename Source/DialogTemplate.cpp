@@ -85,7 +85,7 @@ void ReadVarLenArr(LPBYTE &seeker, WINWCHAR* &readInto, unsigned int uCodePage) 
     seeker += sizeof(WORD);
 
 // A macro that adds the size of x (which can be a string a number, or nothing) to dwSize
-#define AddStringOrIdSize(x) dwSize += x ? (IS_INTRESOURCE(x) ? sizeof(DWORD) : (WinWStrLen(x) + 1) * sizeof(WINWCHAR)) : sizeof(WORD)
+#define AddStringOrIdSize(x) dwSize += x ? (IS_INTRESOURCE(x) ? sizeof(DWORD) : (DWORD)((WinWStrLen(x) + 1) * sizeof(WINWCHAR))) : sizeof(WORD)
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -381,7 +381,7 @@ SIZE CDialogTemplate::GetStringSize(WORD id, TCHAR *str) {
   SelectObject(memDC, font);
 
   SIZE size;
-  GetTextExtentPoint32(memDC, str, _tcslen(str), &size);
+  GetTextExtentPoint32(memDC, str, (int) _tcslen(str), &size);
 
   DestroyWindow(hDlg);
   DeleteObject(font);

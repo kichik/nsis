@@ -473,13 +473,31 @@ typedef struct {
   COLORREF text;
   COLORREF bkc;
   UINT lbStyle;
+#ifndef MAKENSIS
   HBRUSH bkb;
-#ifdef _WIN64
-#error Should we swap lbStyle and bkb to get better alignment? If we are going to do it, now is our only chance before plugins in the wild start depending on the ctlcolors layout on x64
+#else
+  INT32 bkb;
 #endif
   int bkmode;
   int flags;
-} ctlcolors;
+} ctlcolors32;
+typedef struct {
+  COLORREF text;
+  COLORREF bkc;
+#ifndef MAKENSIS
+  HBRUSH bkb; // NOTE: Placed above lbStyle for better alignment
+#else
+  INT64 bkb;
+#endif
+  UINT lbStyle;
+  int bkmode;
+  int flags;
+} ctlcolors64;
+#if defined(_WIN64) && !defined(MAKENSIS)
+#  define ctlcolors ctlcolors64
+#else
+#  define ctlcolors ctlcolors32
+#endif
 #pragma pack(pop)
 
 // constants for myDelete (util.c)

@@ -669,7 +669,7 @@ void CResourceEditor::WriteRsrcSec(BYTE* pbRsrcSec) {
     crd->m_ulWrittenAt = (ULONG_PTR)(seeker);
     seeker += sizeof(IMAGE_RESOURCE_DIRECTORY);
 
-    for (int i = 0; i < crd->CountEntries(); i++) {
+    for (unsigned int i = 0; i < crd->CountEntries(); i++) {
       if (crd->GetEntry(i)->HasName())
         qStrings.push(crd->GetEntry(i));
       if (crd->GetEntry(i)->IsDataDirectory())
@@ -718,7 +718,7 @@ void CResourceEditor::WriteRsrcSec(BYTE* pbRsrcSec) {
     PMY_IMAGE_RESOURCE_DIRECTORY_ENTRY(cRDirE->m_ulWrittenAt)->UName.NameString.NameOffset = ConvertEndianness((DWORD) (seeker - pbRsrcSec));
 
     WINWCHAR* szName = cRDirE->GetName();
-    WORD iLen = WinWStrLen(szName) + 1;
+    WORD iLen = (WORD) WinWStrLen(szName) + 1;
 
     *(WORD*)seeker = ConvertEndianness(iLen);
     CopyMemory(seeker + sizeof(WORD), szName, iLen*sizeof(WINWCHAR));
@@ -751,7 +751,7 @@ void CResourceEditor::WriteRsrcSec(BYTE* pbRsrcSec) {
 
 // Sets the offsets in directory entries
 void CResourceEditor::SetOffsets(CResourceDirectory* resDir, ULONG_PTR newResDirAt) {
-  for (int i = 0; i < resDir->CountEntries(); i++) {
+  for (unsigned int i = 0; i < resDir->CountEntries(); i++) {
     PMY_IMAGE_RESOURCE_DIRECTORY_ENTRY rde = PMY_IMAGE_RESOURCE_DIRECTORY_ENTRY(resDir->GetEntry(i)->m_ulWrittenAt);
     if (resDir->GetEntry(i)->IsDataDirectory()) {
       rde->UOffset.DirectoryOffset.DataIsDirectory = 1;
@@ -860,8 +860,8 @@ void CResourceDirectory::RemoveEntry(int i) {
   m_vEntries.erase(m_vEntries.begin() + i);
 }
 
-int CResourceDirectory::CountEntries() {
-  return m_vEntries.size();
+unsigned int CResourceDirectory::CountEntries() {
+  return BUGBUG64TRUNCATE(unsigned int,m_vEntries.size());
 }
 
 // Returns the index of a directory entry with the specified name
@@ -987,7 +987,7 @@ WINWCHAR* CResourceDirectoryEntry::GetName() {
 }
 
 int CResourceDirectoryEntry::GetNameLength() {
-  return WinWStrLen(m_szName);
+  return (int) WinWStrLen(m_szName);
 }
 
 WORD CResourceDirectoryEntry::GetId() {

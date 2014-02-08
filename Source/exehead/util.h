@@ -108,11 +108,16 @@ void NSISCALL validate_filename(TCHAR *fn);
  * @param pszNew The new name of the file.
  */
 void NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew);
-
-void NSISCALL mini_memcpy(void *out, const void *in, int len);
 DWORD NSISCALL remove_ro_attr(LPCTSTR file);
 
+#ifdef _NSIS_NODEFLIB_CRTMEMCPY
+#define mini_memcpy memcpy
+#else
+void NSISCALL mini_memcpy(void *out, const void *in, UINT_PTR cb);
+#endif
+
 enum myGetProcAddressFunctions {
+#ifndef _WIN64
   MGA_GetDiskFreeSpaceEx,
   MGA_MoveFileEx,
   MGA_RegDeleteKeyEx,
@@ -120,8 +125,9 @@ enum myGetProcAddressFunctions {
   MGA_LookupPrivilegeValue,
   MGA_AdjustTokenPrivileges,
   MGA_GetUserDefaultUILanguage,
-  MGA_SHAutoComplete,
-  MGA_SHGetFolderPath,
+#endif
+  MGA_SHAutoComplete, // x64 can link to shlwapi directly but as long as MGA_SHGetFolderPath is used we can stick with myGetProcAddress
+  MGA_SHGetFolderPath, // TODO: This can probably call something else directly on x64
 };
 
 void * NSISCALL myGetProcAddress(const enum myGetProcAddressFunctions func);

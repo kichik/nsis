@@ -236,7 +236,11 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
 
   LANGID (WINAPI *GUDUIL)();
 
+  #ifndef _WIN64
   GUDUIL = myGetProcAddress(MGA_GetUserDefaultUILanguage);
+  #else
+  GUDUIL = GetUserDefaultUILanguage;
+  #endif
   if (GUDUIL)
   {
     // Windows ME/2000+
@@ -407,7 +411,7 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
 #endif
 
     {
-      int ret=DialogBox(g_hInstance,MAKEINTRESOURCE(IDD_INST+dlg_offset),0,DialogProc);
+      int ret=(int) DialogBox(g_hInstance,MAKEINTRESOURCE(IDD_INST+dlg_offset),0,DialogProc);
 #if defined(NSIS_SUPPORT_CODECALLBACKS) && defined(NSIS_CONFIG_ENHANCEDUI_SUPPORT)
       ExecuteCallbackFunction(CB_ONGUIEND);
 #endif
@@ -483,7 +487,7 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPara
 #endif
     };
 
-    m_delta = wParam;
+    m_delta = (int) wParam;
 
     if (uMsg == WM_INITDIALOG)
     {
@@ -538,7 +542,6 @@ nextPage:
     else
     {
       HWND hwndtmp;
-
       int pflags = this_page->flags;
 
       GetNSISString(state_click_next, this_page->clicknext);
@@ -730,7 +733,7 @@ DWORD CALLBACK StreamLicenseRTF(DWORD_PTR dwCookie, LPBYTE pbBuff, LONG cb, LONG
 {
   size_t len = lstrlen(((LPWSTR) dwCookie)+g_cbLicRead);
   len = min(len, cb/sizeof(WCHAR));
-  *pcb=WideCharToMultiByte(CP_ACP,0,((LPWSTR) dwCookie)+g_cbLicRead,len,(char*)pbBuff,cb,NULL,NULL);
+  *pcb=WideCharToMultiByte(CP_ACP,0,((LPWSTR) dwCookie)+g_cbLicRead,(int)len,(char*)pbBuff,cb,NULL,NULL);
   // RTF uses only ASCII characters, so we can assume "number of output bytes" = "number of source WChar consumed"
   g_cbLicRead+=*pcb;
   return 0;
@@ -779,7 +782,7 @@ static INT_PTR CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
   }
   if (uMsg == WM_COMMAND && HIWORD(wParam) == BN_CLICKED && !LicIgnoreWMCommand) {
     if (m_this_page->flags & PF_LICENSE_FORCE_SELECTION) {
-      int is = SendMessage(GetUIItem(IDC_LICENSEAGREE), BM_GETCHECK, 0, 0) & BST_CHECKED;
+      int is = (int) (SendMessage(GetUIItem(IDC_LICENSEAGREE), BM_GETCHECK, 0, 0) & BST_CHECKED);
       m_this_page->flags &= ~PF_LICENSE_SELECTED;
       m_this_page->flags |= is;
       EnableNext(is);
@@ -1052,7 +1055,11 @@ static INT_PTR CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
     // Test for and use the GetDiskFreeSpaceEx API
     {
       BOOL (WINAPI *GDFSE)(LPCTSTR, PULARGE_INTEGER, PULARGE_INTEGER, PULARGE_INTEGER) =
+#ifdef _WIN64
+          GetDiskFreeSpaceEx;
+#else
           myGetProcAddress(MGA_GetDiskFreeSpaceEx);
+#endif
       if (GDFSE)
       {
         ULARGE_INTEGER available64;
@@ -1086,7 +1093,7 @@ static INT_PTR CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
       }
     }
 
-    if (!available_set)
+    if (!available_set) // TODO: Can GetDiskFreeSpace succeed when ..Ex failed on x64?
     {
       DWORD spc, bps, fc, tc;
       TCHAR *root;
@@ -1252,7 +1259,7 @@ void NSISCALL ExecuteCallbackFunctionWithr0Int(int num,int r0)
 
 static WNDPROC oldTreeWndProc;
 static LPARAM last_selected_tree_item;
-static DWORD WINAPI newTreeWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+static LRESULT CALLBACK newTreeWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   if (uMsg == WM_CHAR && wParam == VK_SPACE) {
     NotifyCurWnd(WM_TREEVIEW_KEYHACK);
@@ -1271,7 +1278,7 @@ static DWORD WINAPI newTreeWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
     if (last_selected_tree_item != lParam)
     {
       last_selected_tree_item = lParam;
-      ExecuteCallbackFunctionWithr0Int(CB_ONMOUSEOVERSECTION,lParam);
+      ExecuteCallbackFunctionWithr0Int(CB_ONMOUSEOVERSECTION,(int)lParam);
     }
   }
 #endif//NSIS_SUPPORT_CODECALLBACKS && NSIS_CONFIG_ENHANCEDUI_SUPPORT
@@ -1320,7 +1327,7 @@ static INT_PTR CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
     {
       if (install_types[i])
       {
-        int j;
+        LRESULT j;
         if (i != NSIS_MAX_INST_TYPES) noCombo = 0;
         j=SendMessage(hwndCombo1,CB_ADDSTRING,0,(LPARAM)GetNSISStringTT(install_types[i]));
         SendMessage(hwndCombo1,CB_SETITEMDATA,j,i);
@@ -1453,10 +1460,10 @@ static INT_PTR CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 
   if (uMsg == WM_COMMAND && LOWORD(wParam) == IDC_COMBO1 && HIWORD(wParam) == CBN_SELCHANGE)
   {
-    int t = SendMessage(hwndCombo1,CB_GETCURSEL,0,0);
+    LRESULT t = SendMessage(hwndCombo1,CB_GETCURSEL,0,0);
     if (t != CB_ERR)
     {
-      int whichcfg = SendMessage(hwndCombo1, CB_GETITEMDATA, t, 0);
+      int whichcfg = (int) SendMessage(hwndCombo1, CB_GETITEMDATA, t, 0);
 
       if (whichcfg == CB_ERR || !install_types[whichcfg])
         whichcfg = NSIS_MAX_INST_TYPES;
@@ -1492,7 +1499,7 @@ static INT_PTR CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 #if defined(NSIS_SUPPORT_CODECALLBACKS) && defined(NSIS_CONFIG_COMPONENTPAGE)
     if (wParam != 0)
     {
-      int secid = wParam;
+      int secid = (int) wParam;
       if (wParamSelChangeNotifyInstTypeChanged != secid) --secid;
       ExecuteCallbackFunctionWithr0Int(CB_ONSELCHANGE,secid);
     }
@@ -1744,7 +1751,7 @@ static INT_PTR CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
         i = count;
         while (i--)
           // Add 2 for the CR/LF combination that must follow every line.
-          total += 2+SendMessage(linsthwnd,LVM_GETITEMTEXT,i,(LPARAM)&item);
+          total += 2+(int)SendMessage(linsthwnd,LVM_GETITEMTEXT,i,(LPARAM)&item);
 
         // 2nd pass - store detail view strings on the clipboard
         // Clipboard MSDN docs say mem must be GMEM_MOVEABLE

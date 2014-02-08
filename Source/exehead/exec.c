@@ -172,8 +172,11 @@ static LONG NSISCALL myRegDeleteKeyEx(HKEY thiskey, LPCTSTR lpSubKey, int onlyif
     {
       typedef LONG (WINAPI * RegDeleteKeyExPtr)(HKEY, LPCTSTR, REGSAM, DWORD);
       RegDeleteKeyExPtr RDKE = (RegDeleteKeyExPtr)
+      #ifdef _WIN64
+        RegDeleteKeyEx;
+      #else
         myGetProcAddress(MGA_RegDeleteKeyEx);
-
+      #endif
       if (RDKE)
         retval=RDKE(thiskey,lpSubKey,AlterRegistrySAM(0),0);
       else
@@ -771,7 +774,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           HWND hwnd=GetHwndFromParm(1);
           int msg=GetIntFromParm(2);
 
-          if (parm5>>2) exec_error += !SendMessageTimeout(hwnd,msg,b3,b4,SMTO_NORMAL,parm5>>2,(LPDWORD)&v);
+          if (parm5>>2) exec_error += !SendMessageTimeout(hwnd,msg,b3,b4,SMTO_NORMAL,parm5>>2,(PDWORD_PTR)&v);
           // Jim Park: This sends script messages.  Some messages require
           // settings for Unicode.  This means the user's script may need
           // to change for Unicode NSIS.
