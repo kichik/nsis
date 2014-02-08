@@ -92,9 +92,9 @@ public:
     _streamPos -= subValue;
   }
 
-  bool NeedMove(UInt32 numCheckBytes)
+  bool NeedMove(size_t numCheckBytes)
   {
-    UInt32 reserv = _pointerToLastSafePosition - (_buffer + _pos);
+    size_t reserv = _pointerToLastSafePosition - (_buffer + _pos);
     return (reserv <= numCheckBytes);
   }
 };

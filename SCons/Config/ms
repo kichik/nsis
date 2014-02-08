@@ -145,6 +145,9 @@ if defenv['UNICODE']:
 
 plugin_env = defenv.Clone(no_import_lib = 1)
 
+if defenv['TARGET_ARCH'] == 'amd64':
+	plugin_env.Append(LINKFLAGS = ['/MACHINE:AMD64']) # Contrib\System\Resource will not link without this
+
 if not defenv['DEBUG']:
 	plugin_env.Append(CCFLAGS = ['/O1'])             # optimize for size
 plugin_env.Append(CCFLAGS = ['/W3'])               # level 3 warnings
@@ -201,7 +204,9 @@ def check_requirement(ctx, func, trigger):
 
 	return result
 
-def add_file_to_emitter(env, emitter_name, file):
+def add_file_to_emitter(env, emitter_name, file, obj_name=None):
+	if obj_name is None:
+		obj_name = emitter_name
 	try:
 		original_emitter = env[emitter_name]
 		if type(original_emitter) == list:
@@ -216,17 +221,17 @@ def add_file_to_emitter(env, emitter_name, file):
 		if '$NODEFLIBS_FLAG' not in env['LINKFLAGS']:
 			return target, source
 
-		return target, source + env.Object(emitter_name, file)
+		return target, source + env.Object(obj_name, file)
 
 	env[emitter_name] = emitter
 
-def add_file(file):
+def add_file(file, obj_name=None):
 	file = File(file)
-	add_file_to_emitter(stub_env, 'PROGEMITTER', file)
-	add_file_to_emitter(stub_uenv, 'PROGEMITTER', file)
-	add_file_to_emitter(util_env, 'PROGEMITTER', file)
-	add_file_to_emitter(plugin_env, 'SHLIBEMITTER', file)
-	add_file_to_emitter(plugin_uenv, 'SHLIBEMITTER', file)
+	add_file_to_emitter(stub_env, 'PROGEMITTER', file, obj_name)
+	add_file_to_emitter(stub_uenv, 'PROGEMITTER', file, obj_name)
+	add_file_to_emitter(util_env, 'PROGEMITTER', file, obj_name)
+	add_file_to_emitter(plugin_env, 'SHLIBEMITTER', file, obj_name)
+	add_file_to_emitter(plugin_uenv, 'SHLIBEMITTER', file, obj_name)
 
 #
 # MSVC 6 SP6 doesn't like direct shifting of 64-bit integers.
@@ -253,12 +258,21 @@ conf.Finish()
 
 #
 # MSVC 2005 requires the memset CRT function to be present
+# and the stubs might need memcpy (entry struct copy on x64)
+# BUGBUG: The tests are currently broken on x64 and designed to fail!
 #
 
 conf = defenv.Configure(custom_tests = { 'CheckRequirement' : check_requirement })
+if conf.CheckRequirement('memset', 'char c[128] = "test";switch(sizeof(void*)){case 8:break;case sizeof(void*):return 1;}'):
+	add_file('memset.c', 'memset')
 
-if conf.CheckRequirement('memset', 'char c[128] = "test";'):
-	add_file('memset.c')
+memcpy_test = """
+switch(sizeof(void*)){case 8:break;case sizeof(void*):return 1;}
+"""
+if conf.CheckRequirement('memcpy', memcpy_test):
+	add_file('memcpy.c', 'memcpy')
+	stub_env.Append(CPPDEFINES = ['_NSIS_NODEFLIB_CRTMEMCPY'])
+	stub_uenv.Append(CPPDEFINES = ['_NSIS_NODEFLIB_CRTMEMCPY'])
 
 conf.Finish()
 

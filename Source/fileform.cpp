@@ -146,14 +146,25 @@ void page_writer::write(const page *data)
   m_sink->write_int_array(data->parms, 5);
 }
 
-void ctlcolors_writer::write(const ctlcolors *data)
+void ctlcolors_writer::writeplatformitem(const void *data, bool wide, bool x64)
 {
-  m_sink->write_int(data->text);
-  m_sink->write_int(data->bkc);
-  m_sink->write_int(data->lbStyle);
-  m_sink->write_int((INT_PTR) data->bkb);
-  m_sink->write_int(data->bkmode);
-  m_sink->write_int(data->flags);
+  assert(sizeof(int) == 4 && sizeof(ctlcolors64) > sizeof(ctlcolors32));
+  ctlcolors *p = (ctlcolors*) data;
+  m_sink->write_int(p->text);
+  m_sink->write_int(p->bkc);
+  if (x64)
+  {
+    assert(!p->bkb);
+    m_sink->write_int64(p->bkb);
+    m_sink->write_int(p->lbStyle);
+  }
+  else
+  {
+    m_sink->write_int(p->lbStyle);
+    m_sink->write_int(p->bkb);
+  }
+  m_sink->write_int(p->bkmode);
+  m_sink->write_int(p->flags);
 }
 
 void LOGFONT_writer::write(const LOGFONT *data)

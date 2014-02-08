@@ -22,7 +22,7 @@
 
 UINT StrLenUTF16(const void*str)
 {
-  return sizeof(wchar_t) == 2 ? wcslen((wchar_t*)str) : InlineStrLenUTF16(str);
+  return sizeof(wchar_t) == 2 ? (UINT)wcslen((wchar_t*)str) : InlineStrLenUTF16(str);
 }
 
 bool StrSetUTF16LE(tstring&dest, const void*src)
@@ -204,10 +204,10 @@ void* CharEncConv::Convert(const void*Src, size_t cbSrc, size_t*cbOut)
   {
     if (NStreamEncoding::UTF16BE == m_TE) goto l_swapUTF16;
     cbSrc /= sizeof(wchar_t);
-    UINT cbDest = WideCharToMultiByte(m_TE, 0, (wchar_t*)Src, cbSrc, 0, 0, 0, 0);
+    UINT cbDest = WideCharToMultiByte(m_TE, 0, (wchar_t*)Src, (int)cbSrc, 0, 0, 0, 0);
     char *p = (char*) realloc(m_Result, (cbDest + 1) * sizeof(char));
     if (p) m_Result = p; else return 0;
-    if (!(cbDest = WideCharToMultiByte(m_TE, 0, (wchar_t*)Src, cbSrc, p, cbDest, 0, 0))) return 0;
+    if (!(cbDest = WideCharToMultiByte(m_TE, 0, (wchar_t*)Src, (int)cbSrc, p, (int)cbDest, 0, 0))) return 0;
     if (p[--cbDest]) p[++cbDest] = '\0'; // Always \0 terminate
     if (cbOut) *cbOut = cbDest; // cbOut never includes the \0 terminator
   }
@@ -220,16 +220,16 @@ l_swapUTF16:
       char *p = (char*) realloc(m_Result, cbSrc + sizeof(wchar_t));
       if (p) m_Result = p; else return 0;
       memcpy(p, Src, cbSrc);
-      cchDest = cbSrc / sizeof(wchar_t);
+      cchDest = (UINT) (cbSrc / sizeof(wchar_t));
       UTF16InplaceEndianSwap(p, cchDest);
       if (!cchDest) *((WORD*)p) = 0, ++cchDest; // For "--cchDest" during \0 termination
     }
     else
     {
-      cchDest = MultiByteToWideChar(m_FE, 0, (char*)Src, cbSrc, 0, 0);
+      cchDest = MultiByteToWideChar(m_FE, 0, (char*)Src, (int)cbSrc, 0, 0);
       char *p = (char*) realloc(m_Result, (cchDest + 1) * sizeof(wchar_t));
       if (p) m_Result = p; else return 0;
-      if (!(cchDest = MultiByteToWideChar(m_FE, 0, (char*)Src, cbSrc, (LPWSTR)p, cchDest))) return 0;
+      if (!(cchDest = MultiByteToWideChar(m_FE, 0, (char*)Src, (int)cbSrc, (LPWSTR)p, (int)cchDest))) return 0;
       if (NStreamEncoding::UTF16BE == m_TE) UTF16InplaceEndianSwap(p, cchDest);
     }
     if (((WORD*)m_Result)[--cchDest]) ((WORD*)m_Result)[++cchDest] = '\0';

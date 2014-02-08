@@ -40,7 +40,7 @@ typedef wchar_t TCHAR;
 // printfs
 #define _ftprintf   fwprintf
 #define _sntprintf  _snwprintf
-#if (defined(_MSC_VER) && (_MSC_VER<=1310)) || defined(__MINGW32__)
+#if (defined(_MSC_VER) && (_MSC_VER<=1310||_MSC_FULL_VER<=140040310)) || defined(__MINGW32__)
 #	define _stprintf   swprintf
 #else
 #	define _stprintf   _swprintf

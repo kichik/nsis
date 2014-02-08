@@ -787,7 +787,7 @@ size_t ExpandoStrFmtVaList(wchar_t*Stack, size_t cchStack, wchar_t**ppMalloc, co
   for(;;)
   {
     cch = ExpandoStrFmtVaList_vsnwprintf(dest, cchAvail, FmtStr, Args);
-    if ((unsigned)-1 == cch)
+    if ((size_t)-1 == cch)
     {
       cch = 0;
       if (cansizecalc) break; // vswprintf error, abort!
@@ -818,7 +818,7 @@ int RunChildProcessRedirected(LPCWSTR cmdprefix, LPCWSTR cmdmain)
   UINT cp = CP_UTF8, mbtwcf = MB_ERR_INVALID_CHARS;
   errno = ENOMEM;
   if (!cmdprefix) cmdprefix = _T("");
-  UINT cch1 = _tcslen(cmdprefix), cch2 = _tcslen(cmdmain);
+  size_t cch1 = _tcslen(cmdprefix), cch2 = _tcslen(cmdmain);
   WCHAR *cmd = (WCHAR*) malloc( (cch1 + cch2 + 1) * sizeof(WCHAR) );
   if (!cmd) return -1;
   _tcscpy(cmd, cmdprefix);
@@ -995,7 +995,7 @@ bool WINAPI WinStdIO_OStreamInit(WINSIO_OSDATA&osd, FILE*strm, WORD cp, int bom)
 }
 bool WINAPI WinStdIO_OStreamWrite(WINSIO_OSDATA&osd, const wchar_t *Str, UINT cch)
 {
-  if ((unsigned)-1 == cch) cch = _tcslen(Str);
+  if ((UINT)-1 == cch) cch = (UINT)_tcslen(Str);
   DWORD cbio;
   if (WinStdIO_IsConsole(osd))
     return !!WriteConsoleW(osd.hNative, Str, cch, &cbio, 0) || !cch;
@@ -1024,7 +1024,9 @@ int WINAPI WinStdIO_vfwprintf(FILE*strm, const wchar_t*Fmt, va_list val)
     extern WINSIO_OSDATA g_osdata_stdout;
     ExpandoString<wchar_t, NSIS_MAX_STRLEN> buf;
     errno = ENOMEM;
-    UINT cch = buf.StrFmt(Fmt, val, false);
+    const size_t cchfmt = buf.StrFmt(Fmt, val, false);
+    UINT cch = (UINT) cchfmt;
+    assert(sizeof(size_t) <= 4 || cchfmt == cch);
     if (cch && !WinStdIO_OStreamWrite(g_osdata_stdout, buf, cch))
     {
       cch = 0, errno = EIO;
@@ -1139,7 +1141,7 @@ static bool GetDLLVersionUsingRE(const tstring& filepath, DWORD& high, DWORD & l
   {
     CResourceEditor *dllre = new CResourceEditor(dll, len);
     LPBYTE ver = dllre->GetResource(VS_FILE_INFO, VS_VERSION_INFO, 0);
-    int versize = dllre->GetResourceSize(VS_FILE_INFO, VS_VERSION_INFO, 0);
+    size_t versize = (size_t) dllre->GetResourceSize(VS_FILE_INFO, VS_VERSION_INFO, 0);
 
     if (ver)
     {
@@ -1147,7 +1149,7 @@ static bool GetDLLVersionUsingRE(const tstring& filepath, DWORD& high, DWORD & l
       {
         // get VS_FIXEDFILEINFO from VS_VERSIONINFO
         WINWCHAR *szKey = (WINWCHAR *)(ver + sizeof(WORD) * 3);
-        int len = (WinWStrLen(szKey) + 1) * sizeof(WINWCHAR) + sizeof(WORD) * 3;
+        size_t len = (WinWStrLen(szKey) + 1) * sizeof(WINWCHAR) + sizeof(WORD) * 3;
         len = (len + 3) & ~3; // align on DWORD boundry
         VS_FIXEDFILEINFO *verinfo = (VS_FIXEDFILEINFO *)(ver + len);
         if (versize > len && verinfo->dwSignature == VS_FFI_SIGNATURE)

@@ -212,7 +212,7 @@ public:
   CResourceDirectoryEntry* GetEntry(unsigned int i);
   bool AddEntry(CResourceDirectoryEntry* entry);
   void RemoveEntry(int i);
-  int  CountEntries();
+  unsigned int  CountEntries();
   int  Find(const WINWCHAR* szName);
   int  Find(WORD wId);
 

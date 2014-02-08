@@ -320,9 +320,13 @@ end:
     BOOL (WINAPI *OPT)(HANDLE, DWORD,PHANDLE);
     BOOL (WINAPI *LPV)(LPCTSTR,LPCTSTR,PLUID);
     BOOL (WINAPI *ATP)(HANDLE,BOOL,PTOKEN_PRIVILEGES,DWORD,PTOKEN_PRIVILEGES,PDWORD);
+    #ifndef _WIN64
     OPT=myGetProcAddress(MGA_OpenProcessToken);
     LPV=myGetProcAddress(MGA_LookupPrivilegeValue);
     ATP=myGetProcAddress(MGA_AdjustTokenPrivileges);
+    #else
+    OPT=OpenProcessToken, LPV=LookupPrivilegeValue, ATP=AdjustTokenPrivileges;
+    #endif
     if (OPT && LPV && ATP)
     {
       HANDLE hToken;
@@ -368,4 +372,7 @@ void NSISCALL CleanUp()
   // Clean up after plug-ins
   myDelete(state_plugins_dir, DEL_DIR | DEL_RECURSE | DEL_REBOOT);
 #endif // NSIS_CONFIG_PLUGIN_SUPPORT
+#ifdef _DEBUG
+  // GlobalFree(g_header); ?
+#endif
 }

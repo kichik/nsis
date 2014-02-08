@@ -203,7 +203,7 @@ int tempzip_make(HWND hwndDlg, TCHAR *fn)
     // was zip created on MS-DOS/Windows?
     if ((info.version & 0xFF00) == 0)
     {
-      OemToCharBuffA(filenameA, filenameA, strlen(filenameA));
+      OemToCharBuffA(filenameA, filenameA, (DWORD)strlen(filenameA));
     }
 
 #ifdef _UNICODE

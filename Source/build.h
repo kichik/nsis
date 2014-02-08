@@ -128,6 +128,7 @@ class CEXEBuild {
     TARGETTYPE get_target_type(const TCHAR*s) const;
     const TCHAR* get_target_suffix(CEXEBuild::TARGETTYPE tt) const;
     const TCHAR* get_target_suffix() const {return get_target_suffix(m_target_type);}
+    bool is_target_64bit() const { return TARGET_AMD64 == m_target_type; }
 
     void set_default_output_filename(const tstring& filename);
 
@@ -239,8 +240,8 @@ class CEXEBuild {
     DefineList *searchParseString(const TCHAR *source_string, LineParser&line, int parmOffs, bool ignCase, bool noErrors, UINT*failParam = 0);
 
     // build.cpp functions used mostly by script.cpp
-    void set_target_architecture_predefines();
-    int change_target_architecture();
+    int set_target_architecture_data();
+    int change_target_architecture(TARGETTYPE tt);
     void set_code_type_predefines(const TCHAR *value = NULL);
     int getcurdbsize();
     int add_section(const TCHAR *secname, const TCHAR *defname, int expand=0);
@@ -257,6 +258,7 @@ class CEXEBuild {
     int add_entry_direct(int which, int o0=0, int o1=0, int o2=0, int o3=0, int o4=0, int o5=0);
     int add_db_data(IMMap *map); // returns offset
     int add_db_data(const char *data, int length); // returns offset
+    int add_db_data(const char *data, size_t length) { assert(length <= 0x7FFFFFFF); return add_db_data(data, (int)length); }
     int add_data(const char *data, int length, IGrowBuf *dblock); // returns offset
     int add_string(const TCHAR *string, int process=1, UINT codepage=-2); // returns offset (in string table)
     int add_asciistring(const TCHAR *string, int process=1); // For hardcoded 7bit/ASCII strings

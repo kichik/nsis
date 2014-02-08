@@ -1,5 +1,5 @@
 EnsureSConsVersion(1,2)
-	
+
 stubs = [
 	'bzip2',
 	'lzma',
@@ -260,7 +260,7 @@ if (not defenv.has_key('VER_PACKED')) and defenv.has_key('VER_MAJOR') and defenv
 if defenv.has_key('VER_PACKED'):
 	f.write('#define NSIS_PACKEDVERSION _T("%s")\n' % defenv['VER_PACKED'])
 
-if defenv.has_key('VER_MAJOR') and not defenv.has_key('VERSION'):
+if defenv.has_key('VER_MAJOR') and defenv.get('VERSION','') == '':
 	defenv['VERSION'] = defenv['VER_MAJOR']
 	if defenv.has_key('VER_MINOR'):
 		defenv['VERSION'] += '.' + defenv['VER_MINOR']
@@ -694,7 +694,9 @@ for plugin in plugin_libs + plugins:
 	
 	srcpath = 'Contrib/' + plugin
 	build_dir = '$BUILD_PREFIX/' + plugin
-	pvariants = [{'e':plugin_env.Clone()}] # BUGBUG64: Only build unicode plugins
+	pvariants = []
+	if GetArcCPU(defenv) == 'x86':
+		pvariants += [{'e':plugin_env.Clone()}]
 	if defenv['UNICODE']:
 		pvariants += [{'e':plugin_uenv.Clone()}]
 	for pvariant in pvariants:

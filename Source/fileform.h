@@ -40,13 +40,26 @@
     } \
   }
 
+#define DECLARE_PLATFORMITEMWRITER(x) class x##_writer : public writer \
+  { public: \
+    x##_writer(writer_sink *sink) : writer(sink) {} \
+    void writeplatformitem(const void *data, bool wide, bool x64); \
+    static void write_block(IGrowBuf *pGB, writer_sink *pS, bool wide, bool x64) \
+    { \
+      x##_writer writer(pS); \
+      for (size_t l = pGB->getlen() / sizeof(x), i = 0; i < l; i++) \
+        writer.writeplatformitem(&(((x*)pGB->get())[i]), wide, x64); \
+    } \
+  }
+
+
 DECLARE_WRITER(firstheader);
 DECLARE_WRITER(block_header);
 DECLARE_WRITER(header);
 DECLARE_WRITER(section);
 DECLARE_WRITER(entry);
 DECLARE_WRITER(page);
-DECLARE_WRITER(ctlcolors);
+DECLARE_PLATFORMITEMWRITER(ctlcolors);
 DECLARE_WRITER(LOGFONT);
 
 class lang_table_writer : public writer

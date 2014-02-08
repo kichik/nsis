@@ -171,7 +171,7 @@ static INT_PTR CALLBACK ParentWndProc(HWND hwnd, UINT message, WPARAM wParam, LP
 
 void AddRTLStyle(HWND hWnd, long dwStyle)
 {
-  long s;
+  LONG_PTR s;
 
   s = GetWindowLongPtr(hWnd, GWL_STYLE);
   SetWindowLongPtr(hWnd, GWL_STYLE, s | dwStyle);

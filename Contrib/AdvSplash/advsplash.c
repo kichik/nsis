@@ -132,8 +132,7 @@ BOOL WINAPI DllMain(HINSTANCE hInst, ULONG ul_reason_for_call,
   return TRUE;
 }
 
-void CALLBACK TimeProc(UINT uID,
-                       UINT uMsg, DWORD dwUser, DWORD dw1, DWORD dw2)
+void CALLBACK TimeProc(UINT uID, UINT uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWORD_PTR dw2)
 {
   int call = -1;
   switch (state) {
@@ -251,11 +250,15 @@ void __declspec(dllexport) show(HWND hwndParent, int string_size,
 
         // Set transparency / key color
         if (nt50) {
+          #ifndef _WIN64
           // Get blending proc address
           HANDLE user32 = GetModuleHandle(_T("user32"));
           SetLayeredWindowAttributesProc =
               (_tSetLayeredWindowAttributesProc) GetProcAddress(user32,
                                                                 "SetLayeredWindowAttributes");
+          #else
+          #define SetLayeredWindowAttributesProc SetLayeredWindowAttributes
+          #endif
           // Use win2k method
           SetLayeredWindowAttributesProc(myWnd, keycolor,
                                          (BYTE) ((fadein_val > 0) ? (0) : (255)),

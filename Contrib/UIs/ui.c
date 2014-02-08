@@ -86,6 +86,6 @@ int WINAPI _tWinMain(HINSTANCE hInst,HINSTANCE hOldInst,LPTSTR CmdLineParams,int
   InitCommonControls();
   g_hInstance = hInst;
   LoadLibrary(_T("RichEd32.dll"));
-  return DialogBox(g_hInstance,MAKEINTRESOURCE(IDD_INST),0,DialogProc);
+  return (int) DialogBox(g_hInstance,MAKEINTRESOURCE(IDD_INST),0,DialogProc);
 }
 

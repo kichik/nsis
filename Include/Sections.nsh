@@ -150,7 +150,7 @@
 ;
 ; For details, see http://nsis.sourceforge.net/wiki/SetSectionInInstType%2C_ClearSectionInInstType
 ;
-; Use the defines below for the WANTED_INSTTYPE paramter.
+; Use the defines below for the WANTED_INSTTYPE parameter.
 
 !define INSTTYPE_1 1
 !define INSTTYPE_2 2

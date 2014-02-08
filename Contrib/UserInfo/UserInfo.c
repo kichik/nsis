@@ -67,8 +67,12 @@ TCHAR* GetAccountTypeHelper(BOOL CheckTokenForGroupDeny)
     if (CheckTokenForGroupDeny)
       // GetUserName is in advapi32.dll so we can avoid Load/Freelibrary
       _CheckTokenMembership=
+      #ifndef _WIN64
         (CHECKTOKENMEMBERSHIP) GetProcAddress(
           GetModuleHandle(_T("ADVAPI32")), "CheckTokenMembership");
+      #else
+        _CheckTokenMembership = CheckTokenMembership;
+      #endif
     
     // Use "old school" membership check?
     if (!CheckTokenForGroupDeny || _CheckTokenMembership == NULL)

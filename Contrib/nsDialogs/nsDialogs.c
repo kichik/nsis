@@ -466,7 +466,7 @@ void __declspec(dllexport) GetUserData(HWND hwndParent, int string_size, TCHAR *
 void CALLBACK TimerProc(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
 {
   // we use a timer proc instead of WM_TIMER to make sure no one messes with the ids but us
-  g_pluginParms->ExecuteCodeSegment(idEvent - 1, 0);
+  g_pluginParms->ExecuteCodeSegment((int)(idEvent - 1), 0);
 }
 
 void __declspec(dllexport) CreateTimer(HWND hwndParent, int string_size, TCHAR *variables, stack_t **stacktop, extra_parameters *extra)

@@ -164,10 +164,10 @@ template <class T>
 class SortedStringList
 {
   public:
-	 /**
-	  * Jim Park: Note that SortedStringList actually <b>owns</b> T.name.
-	  * Yes, this violates all kinds of encapsulation ideas.
-	  */
+    /**
+     * Jim Park: Note that SortedStringList actually <b>owns</b> T.name.
+     * Yes, this violates all kinds of encapsulation ideas.
+     */
     virtual ~SortedStringList()
     {
       T *s=(T*) m_gr.get();
@@ -178,22 +178,22 @@ class SortedStringList
       }
     }
 
-	 /**
-	  * This function adds a new T struct with a copy of TCHAR *name into
-	  * T.name.  But adds it into a sorted position.  All calls to
-	  * add must be done with the same value for case_sensitive or you
-	  * can get random behavior.
-	  *
-	  * @param name The name which is the "key" to finding the instance of T.
-	  * @param case_sensitive 1 means case sensitive, 0 insensitive.
+    /**
+     * This function adds a new T struct with a copy of TCHAR *name into
+     * T.name.  But adds it into a sorted position.  All calls to
+     * add must be done with the same value for case_sensitive or you
+     * can get random behavior.
+     *
+     * @param name The name which is the "key" to finding the instance of T.
+     * @param case_sensitive 1 means case sensitive, 0 insensitive.
      * @return Returns -1 when name already exists and pos if added.
-	  */
+     */
     int add(const TCHAR *name, int case_sensitive=0)
     {
       T newstruct={0,};
       int pos=find(name,case_sensitive,1);
       if (pos==-1) return -1;
-      const UINT cbName=(_tcslen(name)+1)*sizeof(TCHAR);
+      const unsigned long cbName=(unsigned long) (_tcslen(name)+1)*sizeof(TCHAR);
       newstruct.name=(TCHAR*)malloc(cbName);
       if (!newstruct.name)
       {
@@ -215,22 +215,22 @@ class SortedStringList
       return pos;
     }
 
-	 /**
+    /**
      * This function does a binary search for the T in the buffer that
      * contains str as its T.name.  It then returns the position of the found
      * T, not in its byte position, but its T position (valid offset to T*).
-	  *
+     *
      * @param str The string to search for in T.name.
-	  *
+     *
      * @param case_sensitive If 1, do a case sensitive search, otherwise, case insensitive.
-	  *
+     *
      * @param returnbestpos If 1, then the function changes behavior.  Instead
      * of looking for the string str in the Ts, it tries to find the best
      * sorted position to insert str into the buffer.
-	  *
+     *
      * @return Returns -1 if not found, position if found.  If returnbestpos=1
      * returns -1 if found, best pos to insert if not found
-	  */
+     */
     int find(const TCHAR *str, int case_sensitive=0, int returnbestpos=0)
     {
       T *data=(T *) m_gr.get();
@@ -254,12 +254,12 @@ class SortedStringList
       return returnbestpos ? nextpos : -1;
     }
 
-	 /**
-	  * This function looks for str in T.name and deletes the T in the
-	  * buffer.
-	  *
-	  * @return Returns 0 on success, 1 on failure.
-	  */
+    /**
+     * This function looks for str in T.name and deletes the T in the
+     * buffer.
+     *
+     * @return Returns 0 on success, 1 on failure.
+     */
     int del(const TCHAR *str, int case_sensitive=0)
     {
       int pos=find(str, case_sensitive);
@@ -332,7 +332,7 @@ class SortedStringListND // no delete - can be placed in GrowBuf
       if (pos==-1) return alwaysreturnpos ? where : -1;
 
       // Note that .name is set with the TCHAR* offset into m_strings.
-      newstruct.name=m_strings.add(name,(_tcslen(name)+1)*sizeof(TCHAR))/sizeof(TCHAR);
+      newstruct.name=m_strings.add(name,((unsigned int)_tcslen(name)+1)*sizeof(TCHAR))/sizeof(TCHAR);
 
       m_gr.add(&newstruct,sizeof(T));
       T *s=(T*) m_gr.get();
@@ -403,7 +403,7 @@ class SortedStringListND // no delete - can be placed in GrowBuf
         }
         else
         {
-          unsigned int pCurr_len = _tcslen(pCurr);
+          unsigned int pCurr_len = (unsigned int) _tcslen(pCurr);
           if (case_sensitive)
             res = _tcsncmp(str, pCurr, STD_MIN((unsigned int) n_chars, pCurr_len));
           else
@@ -444,8 +444,8 @@ class SortedStringListND // no delete - can be placed in GrowBuf
  * Structure stored by DefineList.
  */
 struct define {
-  TCHAR *name;		// key
-  TCHAR *value;	// value stored
+  TCHAR *name;  // key
+  TCHAR *value; // value stored
 };
 
 /**
@@ -459,11 +459,11 @@ class DefineList : public SortedStringList<struct define>
     void operator=(const DefineList&);
 
   public:
-	 /* Empty default constructor */
+    /* Empty default constructor */
     DefineList() {} // VC6 complains otherwise
     virtual ~DefineList();
 
-	 /**
+    /**
      * Add a name-value pair, case insensitively.
      * 
      * @param name The name of the variable or key to search by.  In a
@@ -473,8 +473,8 @@ class DefineList : public SortedStringList<struct define>
      * of the pair.
      * 
      * @return Returns 0 if successful, 1 if already exists.  Errors cause
-	  * general program exit with error logging.
-	  */
+     * general program exit with error logging.
+     */
     int add(const TCHAR *name, const TCHAR *value=_T(""));
 
 	 /**
