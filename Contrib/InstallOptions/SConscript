@@ -37,10 +37,10 @@ includes = Split("""
 	InstallOptions.nsh
 """)
 
-Import('BuildPlugin env')
+Import('BuildPlugin env PerformPluginExtrasDistOperationOnce')
 
 unicodetarget = 'UNICODE' in env['CPPDEFINES']
 
 BuildPlugin(target, files, libs, examples, docs, res = resources)
-if not unicodetarget:
+if PerformPluginExtrasDistOperationOnce(env, unicodetarget):
 	env.DistributeInclude(includes)
