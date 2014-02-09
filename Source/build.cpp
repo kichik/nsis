@@ -2522,7 +2522,6 @@ int CEXEBuild::pack_exe_header()
 
 int CEXEBuild::write_output(void)
 {
-  if (sizeof(void*)>4 && lowercase(get_file_name(stub_filename)).c_str()[0]=='z') warning(_T("ZLIB is broken?!\n"));
 #ifndef NSIS_CONFIG_CRC_SUPPORT
   build_crcchk=0;
 #endif
