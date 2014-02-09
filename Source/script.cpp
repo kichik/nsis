@@ -4608,16 +4608,16 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         c.bkmode=OPAQUE;
       }
 
-      int i;
-      int l=cur_ctlcolors->getlen()/sizeof(ctlcolors);
+      assert(sizeof(ctlcolors64) > sizeof(ctlcolors));
+      int i, l=cur_ctlcolors->getlen()/sizeof(ctlcolors), pad=is_target_64bit()?sizeof(ctlcolors64)-sizeof(ctlcolors):0;
       for (i=0; i<l; i++) {
         if (!memcmp((ctlcolors*)cur_ctlcolors->get()+i,&c,sizeof(ctlcolors))) {
-          ent.offsets[1]=i*sizeof(ctlcolors);
+          ent.offsets[1]=i*(sizeof(ctlcolors)+pad);
           break;
         }
       }
       if (i>=l) {
-        ent.offsets[1]=cur_ctlcolors->add(&c,sizeof(ctlcolors));
+        ent.offsets[1]=cur_ctlcolors->add(&c,sizeof(ctlcolors))+(l*pad);
       }
 
       SCRIPT_MSG(_T("SetCtlColors: hwnd=%") NPRIs _T(" %") NPRIs _T("text=%") NPRIs _T(" background=%") NPRIs _T("\n"),line.gettoken_str(1),a==2?_T(""):_T("/BRANDING "),line.gettoken_str(a),line.gettoken_str(a+1));
