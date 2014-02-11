@@ -500,12 +500,12 @@ DWORD CResourceEditor::Save(BYTE* pbBuf, DWORD &dwSize) {
   seeker += dwRsrcSizeAligned;
 
   // Copy everything that comes after the resource section (other sections and tacked data)
-  DWORD dwLeft = m_iSize - (oldSeeker - m_pbPE);
-  if (dwLeft)
-    CopyMemory(seeker, oldSeeker, dwLeft);
+  size_t cbLeft = m_iSize - (oldSeeker - m_pbPE);
+  if (cbLeft)
+    CopyMemory(seeker, oldSeeker, cbLeft);
 
-  seeker += dwLeft;
-  oldSeeker += dwLeft;
+  seeker += cbLeft;
+  oldSeeker += cbLeft;
 
   /**********************************************************
    * To add checksum to the header use MapFileAndCheckSum

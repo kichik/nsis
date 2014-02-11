@@ -131,9 +131,8 @@ void CResourceVersionInfo::SetProductVersion(int HighPart, int LowPart)
 int GetVersionHeader (LPSTR &p, WORD &wLength, WORD &wValueLength, WORD &wType)
 {
     WINWCHAR *szKey;
-    char * baseP;
-    
-    baseP = p;
+    char *baseP = p;
+
     wLength = *(WORD*)p;
     p += sizeof(WORD);
     wValueLength = *(WORD*)p;
@@ -142,9 +141,9 @@ int GetVersionHeader (LPSTR &p, WORD &wLength, WORD &wValueLength, WORD &wType)
     p += sizeof(WORD);
     szKey = (WINWCHAR*)p;
     p += (WinWStrLen(szKey) + 1) * sizeof (WINWCHAR);
-    while ( ((ULONG_PTR)p % 4) != 0 )
-        p++;
-    return p - baseP;
+    while ( ((ULONG_PTR)p % 4) != 0 ) p++;
+
+    return (int)(p - baseP);
 }
 
 DWORD ZEROS = 0;

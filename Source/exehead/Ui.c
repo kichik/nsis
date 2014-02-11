@@ -986,7 +986,7 @@ static INT_PTR CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
     {
       static TCHAR bt[NSIS_MAX_STRLEN];
       BROWSEINFO bi = {0,};
-      ITEMIDLIST *idlist;
+      LPITEMIDLIST idlist;
       bi.hwndOwner = hwndDlg;
       bi.pszDisplayName = g_tmp;
       bi.lpfn = BrowseCallbackProc;

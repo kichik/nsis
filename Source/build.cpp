@@ -532,7 +532,7 @@ char* convert_processed_string_to_ansi(char *out, const TCHAR *in, WORD codepage
         if (NS_IS_CODE(i)) // Note: this includes '\0'
         {
             // convert all character up to, and including this code
-            int cb = WideCharToMultiByte(codepage, 0, in, p-in, out, (p-in)*2, NULL, NULL);
+            int c = (int)(p-in), cb = WideCharToMultiByte(codepage, 0, in, c, out, c*2, NULL, NULL);
             if (!cb && i) return 0;
             out += cb;
             if (i == _T('\0'))
@@ -566,8 +566,8 @@ int CEXEBuild::preprocess_string(TCHAR *out, const TCHAR *in, WORD codepage/*=CP
 #endif
     if (np - p > 1) // multibyte TCHAR
     {
-      int l = np - p;
-      while (l--)
+      size_t len = np - p;
+      while (len--)
       {
         _TUCHAR i = (_TUCHAR)*p++;
         if (NS_IS_CODE(i)) {
@@ -605,7 +605,7 @@ int CEXEBuild::preprocess_string(TCHAR *out, const TCHAR *in, WORD codepage/*=CP
 
             while (pUserVarName > p)
             {
-              if (m_ShellConstants.get((TCHAR*)p, pUserVarName-p) >= 0)
+              if (m_ShellConstants.get((TCHAR*)p, BUGBUG64TRUNCATE(int, pUserVarName-p)) >= 0)
                 break; // Woops it's a shell constant
 
               // Jim Park: The following line could be a source of bugs for
@@ -616,7 +616,7 @@ int CEXEBuild::preprocess_string(TCHAR *out, const TCHAR *in, WORD codepage/*=CP
               // TCHAR varname[NSIS_MAX_STRLEN];
               // _tcsncpy(varname, p, pUserVarName-p);
               // int idxUserVar = m_UserVarNames.get(varname);
-              int idxUserVar = m_UserVarNames.get((TCHAR*)p, pUserVarName-p);
+              int idxUserVar = m_UserVarNames.get((TCHAR*)p, BUGBUG64TRUNCATE(int, pUserVarName-p));
               if (idxUserVar >= 0)
               {
                 // Well, using variables inside string formating doens't mean
@@ -644,7 +644,7 @@ int CEXEBuild::preprocess_string(TCHAR *out, const TCHAR *in, WORD codepage/*=CP
             while (pShellConstName > p)
             {
               // Look for the identifier in the shell constants list of strings.
-              int idxConst = m_ShellConstants.get((TCHAR*)p, pShellConstName - p);
+              int idxConst = m_ShellConstants.get((TCHAR*)p, BUGBUG64TRUNCATE(int, pShellConstName - p));
 
               // If found...
               if (idxConst >= 0)
@@ -2999,12 +2999,12 @@ int CEXEBuild::deflateToFile(FILE *fp, char *buf, int len) // len==0 to flush
       ERROR_MSG(_T("Error: deflateToFile: deflate() failed(%") NPRIs _T(" [%d])\n"), compressor->GetErrStr(ret), ret);
       return 1;
     }
-    int l=compressor->GetNextOut()-obuf;
+    size_t l=compressor->GetNextOut()-obuf;
     if (l)
     {
-      if (fwrite(obuf,1,l,fp) != (size_t)l)
+      if (fwrite(obuf,1,l,fp) != l)
       {
-        ERROR_MSG(_T("Error: deflateToFile fwrite(%d) failed\n"),l);
+        ERROR_MSG(_T("Error: deflateToFile fwrite(%lu) failed\n"),(unsigned long)l);
         return 1;
       }
       fflush(fp);
@@ -3152,7 +3152,7 @@ int CEXEBuild::uninstall_generate()
           compressor->Compress(0);
           if (compressor->GetNextOut() - obuf > 0)
           {
-            udata.add(obuf, compressor->GetNextOut() - obuf);
+            udata.add(obuf, BUGBUG64TRUNCATE(int, compressor->GetNextOut() - obuf));
           }
         }
 
@@ -3169,7 +3169,7 @@ int CEXEBuild::uninstall_generate()
             compressor->SetNextOut(obuf, sizeof(obuf));
             compressor->Compress(0);
             if (compressor->GetNextOut() - obuf > 0)
-              udata.add(obuf, compressor->GetNextOut() - obuf);
+              udata.add(obuf, BUGBUG64TRUNCATE(int, compressor->GetNextOut() - obuf));
           }
 
           ubuild_datablock.release();
@@ -3183,7 +3183,7 @@ int CEXEBuild::uninstall_generate()
           compressor->SetNextOut(obuf, sizeof(obuf));
           compressor->Compress(C_FINISH);
           if (compressor->GetNextOut() - obuf > 0)
-            udata.add(obuf, compressor->GetNextOut() - obuf);
+            udata.add(obuf, BUGBUG64TRUNCATE(int, compressor->GetNextOut() - obuf));
           else break;
         }
         compressor->End();
