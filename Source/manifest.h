@@ -78,7 +78,7 @@ namespace manifest
       m_list.deleteall();
       append(_T("Win7"));
       append(_T("Win8"));
-      append(_T("Win8.1")); // In the default list because GetVersion(Ex) supposedly lies if this is not set in the manifest
+      append(_T("Win8.1")); // In the default list because GetVersion[Ex] lies if this is not set in the manifest
       m_isdefaultlist = true;
     }
   };

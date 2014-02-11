@@ -2188,11 +2188,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
         else
         {
-        int v=_tcstoul(p,&p,16);
-        build_header.license_bg=((v&0xff)<<16)|(v&0xff00)|((v&0xff0000)>>16);
-        build_uninst.license_bg=build_header.license_bg;
-        SCRIPT_MSG(_T("LicenseBkColor: %06X\n"),v);
-      }
+          int v=_tcstoul(p,&p,16);
+          build_header.license_bg=((v&0xff)<<16)|(v&0xff00)|((v&0xff0000)>>16);
+          build_uninst.license_bg=build_header.license_bg;
+          SCRIPT_MSG(_T("LicenseBkColor: %06X\n"),v);
+        }
       }
     return PS_OK;
 #else//!NSIS_CONFIG_LICENSEPAGE
@@ -2311,7 +2311,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         int k=line.gettoken_enum(1,rootkeys[0]);
         if (k == -1) k=line.gettoken_enum(1,rootkeys[1]);
         if (k == -1) PRINTHELP()
-        build_header.install_reg_rootkey=(INT_PTR)rootkey_tab[k];
+        build_header.install_reg_rootkey=(INT)rootkey_tab[k];
         if (!build_header.install_reg_rootkey) PRINTHELP() // SHCTX is invalid here
         build_header.install_reg_key_ptr = add_string(line.gettoken_str(2),0);
         if (line.gettoken_str(2)[0] == _T('\\'))
@@ -2327,10 +2327,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return PS_OK;
     case TOK_INSTPROGRESSFLAGS:
       {
-        int x;
         int smooth=0;
         build_header.flags&=~CH_FLAGS_PROGRESS_COLORED;
-        for (x = 1; x < line.getnumtokens(); x ++)
+        for (int x = 1; x < line.getnumtokens(); x ++)
         {
           if (!_tcsicmp(line.gettoken_str(x),_T("smooth"))) smooth=1;
           else if (!_tcsicmp(line.gettoken_str(x),_T("colored"))) build_header.flags|=CH_FLAGS_PROGRESS_COLORED;
@@ -2344,14 +2343,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           CDialogTemplate dt(dlg,build_unicode,uDefCodePage);
           res_editor->FreeResource(dlg);
           DialogItemTemplate* progress = dt.GetItem(IDC_PROGRESS);
-          if (!progress) {
-            throw runtime_error("IDC_PROGRESS doesn't exist!");
-          }
+          if (!progress) throw runtime_error("IDC_PROGRESS doesn't exist!");
 
-          if (smooth)
-            progress->dwStyle |= PBS_SMOOTH;
-          else
-            progress->dwStyle &= ~PBS_SMOOTH;
+          if (smooth) progress->dwStyle |= PBS_SMOOTH; else progress->dwStyle &= ~PBS_SMOOTH;
 
           DWORD dwSize;
           dlg = dt.Save(dwSize);
@@ -2596,10 +2590,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         int k=line.gettoken_enum(1,_T("on\0off\0"));
         if (k == -1) PRINTHELP()
         SCRIPT_MSG(_T("XPStyle: %") NPRIs _T("\n"), line.gettoken_str(1));
-        if (!k)
-          manifest_comctl = manifest::comctl_xp;
-        else
-          manifest_comctl = manifest::comctl_old;
+        manifest_comctl = !k ? manifest::comctl_xp : manifest::comctl_old;
       }
     return PS_OK;
     case TOK_CHANGEUI:
@@ -5471,7 +5462,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         int k=line.gettoken_enum(2,rootkeys[0]);
         if (k == -1) k=line.gettoken_enum(2,rootkeys[1]);
         if (ent.offsets[0] == -1 || k == -1) PRINTHELP()
-        ent.offsets[1]=(INT_PTR)rootkey_tab[k];
+        ent.offsets[1]=(INT)rootkey_tab[k];
         ent.offsets[2]=add_string(line.gettoken_str(3));
         ent.offsets[3]=add_string(line.gettoken_str(4));
         if (which_token == TOK_READREGDWORD) ent.offsets[4]=1;
@@ -5503,7 +5494,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (k == -1) k=line.gettoken_enum(a,rootkeys[1]);
         if (k == -1) PRINTHELP()
         ent.which=EW_DELREG;
-        ent.offsets[1]=(INT_PTR)rootkey_tab[k];
+        ent.offsets[1]=(INT)rootkey_tab[k];
         ent.offsets[2]=add_string(line.gettoken_str(a+1));
         ent.offsets[3]=(which_token==TOK_DELETEREGKEY)?0:add_string(line.gettoken_str(a+2));
         if (line.gettoken_str(a+1)[0] == _T('\\'))
@@ -5523,7 +5514,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (k == -1) k=line.gettoken_enum(1,rootkeys[1]);
         if (k == -1) PRINTHELP()
         ent.which=EW_WRITEREG;
-        ent.offsets[0]=(INT_PTR)rootkey_tab[k];
+        ent.offsets[0]=(INT)rootkey_tab[k];
         ent.offsets[1]=add_string(line.gettoken_str(2));
         if (line.gettoken_str(2)[0] == _T('\\'))
           warning_fl(_T("%") NPRIs _T(": registry path name begins with \'\\\', may cause problems"),line.gettoken_str(0));
@@ -5593,7 +5584,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         int k=line.gettoken_enum(2,rootkeys[0]);
         if (k == -1) k=line.gettoken_enum(2,rootkeys[1]);
         if (ent.offsets[0] == -1 || k == -1) PRINTHELP()
-        ent.offsets[1]=(INT_PTR)rootkey_tab[k];
+        ent.offsets[1]=(INT)rootkey_tab[k];
         ent.offsets[2]=add_string(line.gettoken_str(3));
         ent.offsets[3]=add_string(line.gettoken_str(4));
         ent.offsets[4]=which_token == TOK_ENUMREGKEY;
@@ -6801,7 +6792,7 @@ DefineList *CEXEBuild::searchParseString(const TCHAR *source_string, LineParser&
     {
       toklen = (int) _tcslen(tok);
       while (*source_string && (ignCase?_tcsnicmp(source_string,tok,toklen):_tcsncmp(source_string,tok,toklen))) source_string++;
-      maxlen = source_string - src_start; // Length of previous string
+      maxlen = (int)(source_string - src_start); // Length of previous string
     }
     if (defout && defout[0]) // We now know the start and length of the previous string, add it to the list
     {

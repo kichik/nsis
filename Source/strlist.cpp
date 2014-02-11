@@ -114,7 +114,7 @@ unsigned int ExeHeadStringList::find(const void *ptr, unsigned int cchF, WORD co
     if (processed)
     {
       char *pTmp = convert_processed_string_to_ansi(bufMB,find,codepage);
-      cbMB = pTmp ? pTmp - bufMB : 0;
+      cbMB = (int)(pTmp ? pTmp - bufMB : 0);
     }
     else
     {
