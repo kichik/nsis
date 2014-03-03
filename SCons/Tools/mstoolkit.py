@@ -287,9 +287,10 @@ def generate(env):
 
 
 	include_path, lib_path, exe_path, sdk_path = "", "", "", ""
+	targ_arc = env.get('TARGET_ARCH', 'x86')
 
 	if os.environ.has_key('MSVC_USE_SCRIPT') and "None" == os.environ['MSVC_USE_SCRIPT']:
-		for x in ['INCLUDE', 'LIB', 'PATH']: env['ENV'][x] = ""
+		for x in ['INCLUDE', 'LIB', 'PATH', 'CL', 'LINK', 'ML']: env['ENV'][x] = ""
 		if not env.WhereIs('cl', os.environ['PATH']):
 			raise SCons.Errors.InternalError("CL not found in %s" % os.environ['PATH'])
 		include_path = os.environ['INCLUDE']
@@ -309,8 +310,8 @@ def generate(env):
 	env.PrependENVPath('INCLUDE', include_path)
 	env.PrependENVPath('LIB', lib_path)
 	env.PrependENVPath('PATH', exe_path)
-	
-	env['ENV']['CPU'] = 'i386' # TODO: Check TARGET_ARCH for AMD64
+
+	env['ENV']['CPU'] = (targ_arc.upper(), 'i386')['x86' in targ_arc.lower()] # i386 or AMD64
 	env['ENV']['TARGETOS'] = 'BOTH'
 	env['ENV']['APPVER'] = '4.0'
 	env['ENV']['MSSDK'] = sdk_path
@@ -319,7 +320,7 @@ def generate(env):
 	env['ENV']['INETSDK'] = sdk_path
 	env['ENV']['MSSDK'] = sdk_path
 	env['ENV']['MSTOOLS'] = sdk_path
-	
+
 	env['CFILESUFFIX'] = '.c'
 	env['CXXFILESUFFIX'] = '.cc'
 
@@ -329,7 +330,10 @@ def generate(env):
 	env['AR']          = '"' + sdk_path_AR + '"'
 	env['ARFLAGS']     = SCons.Util.CLVar('/nologo')
 	env['ARCOM']       = "${TEMPFILE('$AR $ARFLAGS /OUT:$TARGET $SOURCES')}"
-	
+
+	if 'AMD64' in targ_arc.upper():
+		env['AS'] = 'ml64'
+
 	env['SHLINK']      = '$LINK'
 	env['SHLINKFLAGS'] = SCons.Util.CLVar('$LINKFLAGS /dll')
 	env['_SHLINK_TARGETS'] = win32ShlinkTargets

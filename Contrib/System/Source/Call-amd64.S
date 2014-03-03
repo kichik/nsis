@@ -1,0 +1,181 @@
+;# 
+;# This file is a part of NSIS.
+;#
+;# Copyright (C) 2014 Anders Kjersem
+;#
+;# Licensed under the zlib/libpng license (the "License");
+;# you may not use this file except in compliance with the License.
+;#
+;# Licence details can be found in the file COPYING.
+;#
+;# This software is provided 'as-is', without any express or implied
+;# warranty.
+;# 
+;#
+;# MASM:
+;# ml64.exe /c Call-amd64.S
+;#
+
+; .if 0
+;# MASM
+
+SECTION_DATA equ .data
+SECTION_CODE equ .code
+
+FUNC_DECL MACRO name
+name PROC
+ENDM
+FUNC_END MACRO name
+name ENDP
+ENDM
+
+;# ~MASM
+IF 0
+; .else
+;# GNU
+.intel_syntax noprefix
+
+#define IFDEF .ifdef
+#define ELSE  .else
+#define ENDIF .endif
+
+#define SECTION_DATA .data
+#define SECTION_CODE .text
+
+#define END          .end
+#define EXTERN       .extern
+
+;# ~GNU
+ENDIF
+
+
+EXTERN __imp_GetLastError : PROC
+IFDEF SYSTEM_LOG_DEBUG
+  EXTERN __imp_IsDebuggerPresent : PROC
+ENDIF
+
+EXTERN LastError : DWORD
+
+EXTERN GetProcOffset       : PROC
+EXTERN GetParamsOffset     : PROC
+EXTERN GetSizeOfProcParam  : PROC
+EXTERN GetValueOffsetParam : PROC
+EXTERN SetProcResultOk     : PROC
+EXTERN GetErrorOption      : PROC
+
+
+SECTION_CODE
+
+
+FUNC_DECL CallProc2 ;# rcx=SystemProc* edx=ParamCount
+  mov [rsp+8h], r12
+  mov [rsp+10h], r13
+  mov [rsp+18h], r14
+  ;#mov [rsp+20h], r15
+
+  ;# The stack is unaligned on function entry. We have to calculate the required 
+  ;# stack size for our parameters + maybe 8 padding bytes to end up 16 byte aligned.
+  pSystemProc equ r14
+  mov pSystemProc, rcx ;# Save SystemProc*
+  ;# Not required since we zero-extend eax: xor rax, rax
+  mov r13d, edx ;# Save ParamCount
+  imul eax, edx, 8
+  and edx, 1
+  jnz noparamalignpadding
+  lea eax, [eax+8] ;# sizeof(params) + 8 will make us 16 byte aligned
+noparamalignpadding:
+  cmp eax, 28h ;# The ABI guarantees shadow space for the 4 register parameters
+  ja computedstacksize
+  mov eax, 28h ;# Minimum (4*8) + 8 to align
+computedstacksize:
+  mov r12d, eax ;# Save stack size (Zero-extended mov)
+  sub rsp, r12
+
+IFDEF SYSTEM_LOG_DEBUG
+  ;# BUGBUG: Remove this
+  call qword ptr [__imp_IsDebuggerPresent]
+  test eax, eax
+  jz nodbgbrk
+  int 3
+  nodbgbrk:
+ENDIF
+
+  ;# We are going to set all stack parameters including the first 4, 
+  ;# it does not hurt to do that and it allows us to copy them to 
+  ;# their registers without reading pSystemProc->Params[1..3] again
+  call GetSizeOfProcParam
+  mov r9, rax ;# Store sizeof(ProcParameter)
+  call GetValueOffsetParam
+  mov r8, rax ;# Store FIELD_OFFSET(ProcParameter,Value)
+  call GetParamsOffset
+  lea r10, [pSystemProc+rax] ;# Store pSystemProc+FIELD_OFFSET(SystemProc,Params)
+  mov ecx, r13d ;# Zero-extended mov
+  test rcx, rcx
+  jz callthefunc
+setparameter:
+  mov rax, r9
+  mul rcx ;# rax = sizeof(ProcParameter) * paramidx (paramidx is 1 based because the return value is stored in Params[0])
+  add rax, r10 ;# rax += pSystemProc->Params
+  mov rax, qword ptr [rax+r8] ;# rax = pSystemProc->Params[paramidx].Value
+  dec rcx
+  mov [rsp+(8*rcx)], rax
+  inc rcx
+  loop setparameter
+  ;# The 4 parameter registers are all volatile so we might as well assign all of them:
+  ;# setparam4:
+  ;#   cmp r13d, 4
+  ;#   jb setparam3
+  mov r9, [rsp+(8*3)]
+  ;# setparam3:
+  ;#   cmp r13d, 3
+  ;#   jb setparam2
+  mov r8, [rsp+(8*2)]
+  ;# setparam2:
+  ;#   cmp r13d, 2
+  ;#   jb setparam1
+  mov rdx, [rsp+(8*1)]
+  ;# setparam1:
+  ;#   cmp r13d, 1
+  ;#   jb callthefunc
+  mov rcx, [rsp+(8*0)]
+
+callthefunc:
+  call GetProcOffset
+  mov r10, qword ptr [pSystemProc+rax]
+  xor rax, rax ;# Fix bug #1535007
+  call r10
+  mov r13, rax ;# Save return value
+
+  mov rcx, pSystemProc
+  call GetErrorOption
+  test eax, eax
+  jz capturegle_done
+  call qword ptr [__imp_GetLastError]
+  mov dword ptr [LastError], eax
+capturegle_done:
+
+  ;# proc->Params[0].Value = pSystemProc->Proc's return value
+  call GetParamsOffset
+  mov rdx, rax ;# This assumes that the next function is not going to clobber rdx!
+  call GetValueOffsetParam
+  add rdx, rax
+  mov qword ptr [pSystemProc+rdx], r13
+
+  mov rcx, pSystemProc
+  call SetProcResultOk ;# BUGBUG: This is pointless, system.c should just assume we are OK
+
+  mov rax, pSystemProc ;# Return SystemProc*
+  ;# Epilog:
+  ;# http://msdn.microsoft.com/en-us/library/tawsa7cb claims that only 
+  ;# add/lea rsp and pop is valid in the epilog. Unwind might fail on our version?
+  add rsp, r12 ;# Restore stack
+  ;# Restore nonvolatile registers:
+  mov r12, [rsp+8h]
+  mov r13, [rsp+10h]
+  mov r14, [rsp+18h]
+  ;#mov r15, [rsp+20h]
+  ret
+FUNC_END CallProc2
+
+
+END

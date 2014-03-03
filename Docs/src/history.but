@@ -6,6 +6,12 @@ Released on ?, 2014
 
 \S1{v3.0b0-rl} Release Notes
 
+\S1{v3.0b0-cl} Changelog
+
+\S2{} Major Changes
+
+\b Basic AMD64 System::Call support
+
 \S2{} Minor Changes
 
 \b Added Int<32|64|Ptr><Op|Cmp[U]> helper macros to Util.nsh

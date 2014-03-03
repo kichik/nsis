@@ -45,7 +45,8 @@ defenv.Append(CPPDEFINES = [('NSISCALL', '$STDCALL')])
 
 ### asm
 
-defenv.Append(ASFLAGS = ['/coff'])
+if 'x86' in defenv.get('TARGET_ARCH','x86'):
+	defenv.Append(ASFLAGS = ['/coff']) # ML64 does not support /coff
 
 ### debug
 
