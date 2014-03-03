@@ -1056,11 +1056,11 @@ static INT_PTR CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
     {
       BOOL (WINAPI *GDFSE)(LPCTSTR, PULARGE_INTEGER, PULARGE_INTEGER, PULARGE_INTEGER) =
 #ifdef _WIN64
-          GetDiskFreeSpaceEx;
+        GetDiskFreeSpaceEx;
 #else
-          myGetProcAddress(MGA_GetDiskFreeSpaceEx);
-#endif
+        myGetProcAddress(MGA_GetDiskFreeSpaceEx);
       if (GDFSE)
+#endif
       {
         ULARGE_INTEGER available64;
         ULARGE_INTEGER a, b;
@@ -1093,7 +1093,7 @@ static INT_PTR CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
       }
     }
 
-    if (!available_set) // TODO: Can GetDiskFreeSpace succeed when ..Ex failed on x64?
+    if (!available_set && sizeof(void*) <= 4)
     {
       DWORD spc, bps, fc, tc;
       TCHAR *root;

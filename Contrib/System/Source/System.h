@@ -4,16 +4,17 @@
 // This should probably be moved to platform.h at some point
 
 #if defined(_M_X64) || defined(_M_AMD64) || defined(__amd64__)
-#    define SYSTEM_X64
+#  define SYSTEM_AMD64
 #elif defined(_M_IX86) || defined(__i386__) || defined(_X86_)
-#    define SYSTEM_X86
+#  define SYSTEM_X86
 #else
-#    error "Unknown architecture!"
+#  error "Unknown architecture!"
 #endif
+
 #ifdef _WIN64
-#define SYSFMT_HEXPTR _T("0x%016IX")
+#  define SYSFMT_HEXPTR _T("0x%016IX")
 #else
-#define SYSFMT_HEXPTR _T("0x%08X")
+#  define SYSFMT_HEXPTR _T("0x%08X")
 #endif
 
 
@@ -25,9 +26,9 @@
 // defined with this macro as being exported.
 
 #ifdef SYSTEM_EXPORTS
-#define SYSTEM_API __declspec(dllexport)
+#  define SYSTEM_API __declspec(dllexport)
 #else
-#define SYSTEM_API __declspec(dllimport)
+#  define SYSTEM_API __declspec(dllimport) // BUGBUG: This is a plugin, who is going to import the functions directly?
 #endif
 
 #define NEW_STACK_SIZE     256*256
@@ -123,7 +124,7 @@ struct tag_CallbackThunk
         #pragma pack(pop)
         */
         char asm_code[10];
-    #elif defined(SYSTEM_X64)
+    #elif defined(SYSTEM_AMD64)
         char asm_code[BUGBUG64(1)]; // TODO: BUGBUG64
     #else
         #error "Asm thunk not implemeted for this architecture!"
@@ -135,7 +136,7 @@ struct tag_CallbackThunk
 // Free() only knows about pNext in CallbackThunk, it does not know anything about the assembly, that is where this helper comes in...
 #ifdef SYSTEM_X86
 #   define GetAssociatedSysProcFromCallbackThunkPtr(pCbT) ( (SystemProc*)  *(unsigned int*) (((char*)(pCbT))+1) )
-#elif defined(SYSTEM_X64)
+#elif defined(SYSTEM_AMD64)
 #   define GetAssociatedSysProcFromCallbackThunkPtr(pCbT) BUGBUG64(NULL)
 #else
 #   error "GetAssociatedSysProcFromCallbackThunkPtr not defined for the current architecture!"
@@ -145,14 +146,23 @@ struct tag_CallbackThunk
 extern const int ParamSizeByType[];   // Size of every parameter type (*4 bytes)
 
 extern HANDLE CreateCallback(SystemProc *cbproc);
-extern SystemProc *PrepareProc(BOOL NeedForCall);
+extern SystemProc* PrepareProc(BOOL NeedForCall);
 extern void ParamAllocate(SystemProc *proc);
 extern void ParamsDeAllocate(SystemProc *proc);
 extern void ParamsIn(SystemProc *proc);
 extern void ParamsOut(SystemProc *proc);
-extern SystemProc *CallProc(SystemProc *proc);
-extern SystemProc *CallBack(SystemProc *proc);
-extern SystemProc *RealCallBack();
+#ifdef SYSTEM_AMD64
+#ifdef SYSTEM_PARTIALCALLSUPPORT
+extern SystemProc* CallProc2(SystemProc *proc, UINT_PTR ParamCount);
+#define CallProc(p) CallProc2((p), (p)->ParamCount) // ParamCount is passed as a parameter so CallProc2 can determine the required stack size without a function call
+#endif
+#else // !SYSTEM_AMD64
+extern SystemProc* CallProc(SystemProc *proc);
+#endif // ~SYSTEM_AMD64
+#ifndef SYSTEM_NOCALLBACKS
+extern SystemProc* CallBack(SystemProc *proc);
+extern SystemProc* RealCallBack();
+#endif
 extern void CallStruct(SystemProc *proc);
 
 #ifdef _UNICODE

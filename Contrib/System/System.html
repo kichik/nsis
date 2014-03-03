@@ -422,7 +422,7 @@ System::Free $0
 <blockquote>
 <ul>
 <li>To find out the index of a member in a COM interface, you need to search for the definition of this COM interface in the header files that come with Visual C/C++ or the Platform SDK. Remember the index is zero based.</li>
-<li>If a function can't be found, an `A' will be appended to its name and it will be looked up again. This is done because a lot of Windows API functions have two versions, one for ANSI strings and one for Unicode strings. The ANSI version of the function is marked with `A' and the Unicode version is marked with `W'. For example: lstrcpyA and lstrcpyW.</li>
+<li>If a function can't be found or the <code>t</code> parameter type was used, an `A' or `W' will be appended to its name and it will be looked up again. This is done because a lot of Windows API functions have two versions, one for ANSI strings and one for Unicode strings. The ANSI version of the function is marked with `A' and the Unicode version is marked with `W'. For example: lstrcpyA and lstrcpyW.</li>
 </ul>
 </blockquote>
 
@@ -436,7 +436,7 @@ System::Free $0
 </tr>
 <tr>
 <th>c</th>
-<td>cdecl calling convention (the stack restored by caller). By default stdcall calling convention is used (the stack restored by callee).</td>
+<td>cdecl calling convention (the stack restored by caller). By default stdcall calling convention is used on x86 (the stack restored by callee).</td>
 <td></td>
 </tr>
 <tr>

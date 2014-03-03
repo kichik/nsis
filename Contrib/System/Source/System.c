@@ -275,6 +275,7 @@ TODO: CallProc/Back not implemeted.
 Fake the behavior of the System plugin for the LoadImage API function so MUI works.
 BUGBUG: MUI is leaking DeleteObject and failing GetClientRect
 */
+#ifndef SYSTEM_PARTIALCALLSUPPORT
 SystemProc* CallProc(SystemProc *proc)
 {
     INT_PTR ret, *place;
@@ -294,12 +295,13 @@ SystemProc* CallProc(SystemProc *proc)
     if (place) *place = ret;
     return proc;
 }
+#endif // ~SYSTEM_PARTIALCALLSUPPORT
 SystemProc* CallBack(SystemProc *proc)
 {
     proc->ProcResult = PR_ERROR;
     return proc;
 }
-#endif
+#endif // ~_WIN64
 
 
 PLUGINFUNCTION(Call)
@@ -355,7 +357,7 @@ PLUGINFUNCTION(Call)
             proc->Params[0] = pp; // Restore old return param
         }
         else
-            ParamsOut(proc);        
+            ParamsOut(proc);
     }
 
     if (proc->ProcResult != PR_CALLBACK)
@@ -768,7 +770,9 @@ SystemProc *PrepareProc(BOOL NeedForCall)
                 break;
             case _T('!'): temp = -temp; break;
             case _T('c'):
+#ifndef _WIN64
                 temp2 = POPT_CDECL;
+#endif
                 break;
             case _T('r'):
                 temp2 = POPT_ALWRETURN;
@@ -993,16 +997,19 @@ void ParamsIn(SystemProc *proc)
 #ifdef SYSTEM_LOG_DEBUG
         {
             TCHAR buf[666];
-            wsprintf(buf, _T("\t\t\tParam In %d:    type %d value ")SYSFMT_HEXPTR _T(" value2 0x%08X"), i, 
-                par->Type, par->Value, par->_value);
+            UINT32 hi32 = 0;
+#ifndef _WIN64
+            hi32 = par->_value;
+#endif
+            wsprintf(buf, _T("\t\t\tParam In %d:\tType=%d Value=")SYSFMT_HEXPTR _T(" hi32=0x%08X"), i, 
+                par->Type, par->Value, hi32);
             SYSTEM_LOG_ADD(buf);
             SYSTEM_LOG_POST;
         }
 #endif
 
         if (i == 0) break;
-        if (i == proc->ParamCount) i = 0;
-        else i++;
+        if (i == proc->ParamCount) i = 0; else i++;
     }
 }
 
@@ -1101,7 +1108,7 @@ void ParamsOut(SystemProc *proc)
 #ifdef SYSTEM_LOG_DEBUG
         {
             TCHAR dbgbuf[99];
-            wsprintf(dbgbuf, _T(") %d:\tType=%d Optn=%d Size=%d Data="),
+            wsprintf(dbgbuf, _T(")\t%d:\tType=%d Optn=%d Size=%d Data="),
                 i, proc->Params[i].Type, proc->Params[i].Option, proc->Params[i].Size);
             SYSTEM_LOG_ADD(dbgbuf);
             SYSTEM_LOG_ADD(realbuf);
@@ -1118,7 +1125,7 @@ void ParamsOut(SystemProc *proc)
 
 HANDLE CreateCallback(SystemProc *cbproc)
 {
-#ifdef SYSTEM_X64
+#ifdef SYSTEM_AMD64
     return BUGBUG64(HANDLE) NULL;
 #else
     char *mem;
@@ -1285,7 +1292,7 @@ BOOL WINAPI DllMain(HINSTANCE hInst, DWORD fdwReason, LPVOID lpReserved)
 #ifdef SYSTEM_X86
         retexpr[0] = (char) 0xC2;
         retexpr[2] = 0x00;
-#elif defined(SYSTEM_X64)
+#elif defined(SYSTEM_AMD64)
         retexpr[0] = BUGBUG64(0);
 #else
 #error TODO
@@ -1329,9 +1336,9 @@ unsigned int GetErrorOption(SystemProc *proc)
 /*
 Returns offset for element Proc of SystemProc structure
 */
-unsigned int GetProcOffset(void)
+UINT_PTR GetProcOffset(void)
 {
-		return (unsigned int)(&(((SystemProc *)0)->Proc));
+		return (UINT_PTR)(&(((SystemProc *)0)->Proc));
 }
 
 /*
@@ -1369,15 +1376,15 @@ unsigned int GetParamCount(SystemProc *proc)
 /*
 Returns offset for element Params of SystemProc structure
 */
-unsigned int GetParamsOffset(void)
+UINT_PTR GetParamsOffset(void)
 {
-		return (unsigned int)(&(((SystemProc *)0)->Params));
+		return (UINT_PTR)(&(((SystemProc *)0)->Params));
 }
 
 /*
 Returns size of ProcParameter structure
 */
-unsigned int GetSizeOfProcParam(void)
+UINT_PTR GetSizeOfProcParam(void)
 {
 		return (sizeof(ProcParameter));
 }
@@ -1393,11 +1400,12 @@ unsigned int GetSizeOffsetParam(void)
 /*
 Returns offset for element Value of ProcParameter structure
 */
-unsigned int GetValueOffsetParam(void)
+UINT_PTR GetValueOffsetParam(void)
 {
-		return (unsigned int)(&(((ProcParameter *)0)->Value));
+		return (UINT_PTR)(&(((ProcParameter *)0)->Value));
 }
 
+#ifndef _WIN64
 /*
 Returns offset for element _value of ProcParameter structure
 */
@@ -1405,6 +1413,7 @@ unsigned int Get_valueOffsetParam(void)
 {
 		return (unsigned int)(&(((ProcParameter *)0)->_value));
 }
+#endif
 
 /*
 Sets "CLONE" option

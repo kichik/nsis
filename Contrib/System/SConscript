@@ -26,14 +26,25 @@ docs = Split("""
 
 Import('BuildPlugin env')
 
-if env['TARGET_ARCH'] != 'amd64':
+defs = ['SYSTEM_EXPORTS']
+msvc = 'msvc' in env['TOOLS'] or 'mstoolkit' in env['TOOLS']
+
+if env['TARGET_ARCH'] != 'amd64' or msvc: # BUGBUG: Call-amd64.S is missing GAS macros
+	srcsuff = ''
+	if env['TARGET_ARCH'] != 'x86':
+		srcsuff = '-' + env['TARGET_ARCH']
+		defs += ['SYSTEM_NOCALLBACKS'] # BUGBUG: Remove this when CallBack() is implemented
+		if msvc: # BUGBUG: Remove this when GAS is fixed
+			defs += ['SYSTEM_PARTIALCALLSUPPORT']
+	filename = 'Call' + srcsuff
+
 	conf = env.Configure()
 	if conf.TryCompile('END', '.S'):
-		files += ['Source/Call.S']
+		files += ['Source/'+filename+'.S']
 	elif conf.TryCompile('.end', '.sx'):
-		files += ['Source/Call.sx']
+		files += ['Source/'+filename+'.sx']
 	else:
-		print 'WARNING: System.dll: unable to find assembler for Call.S'
+		print 'WARNING: System.dll: unable to find assembler for '+filename+'.S'
 	conf.Finish()
 else:
 	print 'WARNING: System.dll: missing Win64 code, dynamic function calls not supported'
@@ -45,7 +56,7 @@ BuildPlugin(
 	examples,
 	docs,
 	nodeflib = False,
-	defines = ['SYSTEM_EXPORTS']
+	defines = defs
 )
 
 res = 'Resource/Resource.rc'
