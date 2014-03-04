@@ -52,6 +52,8 @@
 ;         a U< b; a U>= b; a U> b; a U<= b
 ;       64-bit integer tests (using System.dll):
 ;         a L= b; a L<> b; a L< b; a L>= b; a L> b; a L<= b
+;       ptrdiff_t integer tests
+;         a P= b; a P<> b; a P< b; a P>= b; a P> b; a P<= b
 ;       Built-in NSIS flag tests:
 ;         ${Abort}; ${Errors}; ${RebootFlag}; ${Silent}
 ;       Built-in NSIS other tests:
@@ -248,6 +250,33 @@
 
   !macro _L<= _a _b _t _f
     !insertmacro _L> `${_a}` `${_b}` `${_f}` `${_t}`
+  !macroend
+
+  ; ptrdiff_t tests
+  !macro LogicLib_PtrDiffTest _o _a _b _t _f
+    !if ${NSIS_PTR_SIZE} <= 4
+      !insertmacro _${_o} `${_a}` `${_b}` `${_t}` `${_f}`
+    !else
+      !insertmacro _L${_o} `${_a}` `${_b}` `${_t}` `${_f}`
+    !endif
+  !macroend
+  !macro _P= _a _b _t _f
+    !insertmacro LogicLib_PtrDiffTest = `${_a}` `${_b}` `${_t}` `${_f}`
+  !macroend
+  !macro _P<> _a _b _t _f
+    !insertmacro LogicLib_PtrDiffTest <> `${_a}` `${_b}` `${_t}` `${_f}`
+  !macroend
+  !macro _P< _a _b _t _f
+    !insertmacro LogicLib_PtrDiffTest < `${_a}` `${_b}` `${_t}` `${_f}`
+  !macroend
+  !macro _P>= _a _b _t _f
+    !insertmacro LogicLib_PtrDiffTest >= `${_a}` `${_b}` `${_t}` `${_f}`
+  !macroend
+  !macro _P> _a _b _t _f
+    !insertmacro LogicLib_PtrDiffTest > `${_a}` `${_b}` `${_t}` `${_f}`
+  !macroend
+  !macro _P<= _a _b _t _f
+    !insertmacro LogicLib_PtrDiffTest <= `${_a}` `${_b}` `${_t}` `${_f}`
   !macroend
 
   ; Flag tests
