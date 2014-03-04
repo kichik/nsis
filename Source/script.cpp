@@ -6234,17 +6234,18 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       TCHAR *path = line.gettoken_str(numtok);
       if (2 == numtok)
       {
-        const TCHAR* arcstr = line.gettoken_str(--numtok);
+        const TCHAR *arcstr = line.gettoken_str(--numtok);
         tt = get_target_type(arcstr+1);
         if (_T('/') != arcstr[0] || CEXEBuild::TARGET_UNKNOWN == tt)
         {
           tstring es = get_commandtoken_name(which_token);
           es += _T(": Target parameter must be one of: /");
-          for(int i = CEXEBuild::TARGETFIRST; i < CEXEBuild::TARGETCOUNT; ++i)
+          for(int comma = 0, i = CEXEBuild::TARGETFIRST; i < CEXEBuild::TARGETCOUNT; ++i)
           {
-            tt = (CEXEBuild::TARGETTYPE) i;
-            if (CEXEBuild::TARGETFIRST != tt) es += _T(", /");
-            es += get_target_suffix(tt);
+            const TCHAR *ts = get_target_suffix((CEXEBuild::TARGETTYPE) i, 0);
+            if (!ts) continue;
+            if (comma++) es += _T(", /");
+            es += ts;
           }
           ERROR_MSG(_T("Error: %") NPRIs _T("\n"),es.c_str());
           return PS_ERROR;

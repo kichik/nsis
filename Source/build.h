@@ -126,7 +126,7 @@ class CEXEBuild {
     } TARGETTYPE;
     TARGETTYPE m_target_type;
     TARGETTYPE get_target_type(const TCHAR*s) const;
-    const TCHAR* get_target_suffix(CEXEBuild::TARGETTYPE tt) const;
+    const TCHAR* get_target_suffix(CEXEBuild::TARGETTYPE tt, const TCHAR*defval = _T("?")) const;
     const TCHAR* get_target_suffix() const {return get_target_suffix(m_target_type);}
     bool is_target_64bit() const { return TARGET_AMD64 == m_target_type; }
 

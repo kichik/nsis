@@ -3703,12 +3703,12 @@ CEXEBuild::TARGETTYPE CEXEBuild::get_target_type(const TCHAR*s) const
   for(int i = CEXEBuild::TARGETFIRST; i < CEXEBuild::TARGETCOUNT; ++i)
   {
     CEXEBuild::TARGETTYPE tt = (CEXEBuild::TARGETTYPE) i;
-    if (!_tcsicmp(get_target_suffix(tt),s)) return tt;
+    if (!_tcsicmp(get_target_suffix(tt, _T("")),s) && *s) return tt;
   }
   return TARGET_UNKNOWN;
 }
 
-const TCHAR* CEXEBuild::get_target_suffix(CEXEBuild::TARGETTYPE tt) const
+const TCHAR* CEXEBuild::get_target_suffix(CEXEBuild::TARGETTYPE tt, const TCHAR*defval) const
 {
   switch(tt)
   {
@@ -3717,7 +3717,7 @@ const TCHAR* CEXEBuild::get_target_suffix(CEXEBuild::TARGETTYPE tt) const
 #if !defined(_WIN32) || defined(_WIN64) // BUGBUG: Need a better define for this
   case TARGET_AMD64     :return _T("amd64-unicode");
 #endif
-  default:return _T("?");
+  default:return defval;
   }
 }
 
