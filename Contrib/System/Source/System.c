@@ -1044,7 +1044,7 @@ void ParamsOut(SystemProc *proc)
         switch (proc->Params[i].Type)
         {
         case PAT_VOID:
-            lstrcpy(realbuf,_T(""));
+            *realbuf = _T('\0');
             break;
         case PAT_INT:
             wsprintf(realbuf, _T("%d"), (int)(*((INT_PTR*) place)));
