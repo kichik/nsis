@@ -600,10 +600,10 @@ UDM     Up-down control
 !define LVCF_WIDTH   2
 !define LVCF_TEXT    4
 !define LVCF_SUBITEM 8
-!define SYSSTRUCT_LVITEM_V1 (i,i,i,i,i,t,i,i,p)
-!define SYSSTRUCT_LVITEM_V2 (i,i,i,i,i,t,i,i,p,i)           ; IE3
-!define SYSSTRUCT_LVITEM_V3 (i,i,i,i,i,t,i,i,p,i,i,i,i)     ; WinXP + ComCtl32 v6
-!define SYSSTRUCT_LVITEM_V4 (i,i,i,i,i,t,i,i,p,i,i,i,i,i,i) ; WinVista + ComCtl32 v6
+!define SYSSTRUCT_LVITEM_V1 (i,i,i,i,&i${NSIS_PTR_SIZE},t,i,i,p)
+!define SYSSTRUCT_LVITEM_V2 (i,i,i,i,&i${NSIS_PTR_SIZE},t,i,i,p,i)           ; IE3
+!define SYSSTRUCT_LVITEM_V3 (i,i,i,i,&i${NSIS_PTR_SIZE},t,i,i,p,i,i,i,i)     ; WinXP + ComCtl32 v6
+!define SYSSTRUCT_LVITEM_V4 (i,i,i,i,&i${NSIS_PTR_SIZE},t,i,i,p,i,i,i,i,i,i) ; WinVista + ComCtl32 v6
 !define LVSCW_AUTOSIZE -1
 !define LVSCW_AUTOSIZE_USEHEADER -2
 !define LVM_FIRST                          0x00001000
@@ -670,7 +670,7 @@ ${_NSIS_DEFAW} LVM_SETITEMTEXT
 !define TCS_SCROLLOPPOSITE 0x0001
 !define TCIF_TEXT  1
 !define TCIF_PARAM 8
-!define SYSSTRUCT_TCITEM (i,i,i,t,i,i,p)
+!define SYSSTRUCT_TCITEM (i,i,&i${NSIS_PTR_SIZE},t,i,i,p)
 !define TCM_FIRST             0x1300
 !define /math TCM_INSERTITEMA ${TCM_FIRST} + 7
 !define /math TCM_GETCURSEL   ${TCM_FIRST} + 11
