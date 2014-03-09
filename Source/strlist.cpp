@@ -18,6 +18,9 @@
 
 #include "strlist.h"
 #include "utf.h"
+#ifndef NDEBUG
+#include "util.h" // For PrintColorFmtMsg_ERR
+#endif
 
 #ifdef _UNICODE
 char* convert_processed_string_to_ansi(char *out, const TCHAR *in, WORD codepage); // defined in build.cpp
@@ -120,6 +123,13 @@ unsigned int ExeHeadStringList::find(const void *ptr, unsigned int cchF, WORD co
     {
       cbMB = WideCharToMultiByte(codepage,0,find,cchF,bufMB,cbF,0,0);
     }
+#ifndef NDEBUG
+    if (!cbMB)
+    {
+      const TCHAR *fmt = _T("Unable to convert%")NPRINs _T(" string \"%")NPRIs _T("\" to codepage %u\n");
+      PrintColorFmtMsg_ERR(fmt,(processed ? " processed" : ""),find,codepage);
+    }
+#endif
     assert(cbMB);
     cbF = cbMB, find = (const wchar_t*) bufMB;
   }
