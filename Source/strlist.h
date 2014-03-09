@@ -143,13 +143,13 @@ public:
   bool get(unsigned int offset, tstring&str) const;
   unsigned int getnum() const;
   unsigned int gettotalsize() const { return m_gr.get() ? m_gr.getlen() : (m_wide ? 2 : 1); }
-  void* getstorageptr() const { return m_gr.get() ? m_gr.get() : (void*)L""; }
+  const void* getstorageptr() const { return m_gr.get() ? m_gr.get() : (void*)L""; }
 
 protected:
   unsigned int find(const void *str, unsigned int cchF, WORD codepage, bool processed, char**ppBufMB) const;
 
   GrowBuf m_gr;
-  bool m_wide;
+  bool m_wide; // Are we storing wide or narrow strings
   enum {WIDEDIV=2}; // ExeHead expects us to provide offsets this way, also helps UTF16 offsets for shell constants to fit in < 0xFF
 };
 
