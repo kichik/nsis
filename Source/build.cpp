@@ -444,8 +444,9 @@ void CEXEBuild::init_shellconstantvalues()
   {
     // see Source\exehead\util.c for implementation details
     // basically, it knows it needs to get folders from the registry when the 0x80 is on
-    ERROR_MSG(_T("Internal compiler error: too many strings added to strings block before adding shell constants!\n"));
-    throw out_of_range("Internal compiler error: too many strings added to strings block before adding shell constants!");
+    const char* msg = "Internal compiler error: too many strings added to strings block before adding shell constants!";
+    ERROR_MSG(_T("%") NPRINs, msg);
+    throw out_of_range(msg);
   }
 
   set_uninstall_mode(1);
@@ -464,8 +465,9 @@ void CEXEBuild::init_shellconstantvalues()
     || uncf_def != cf_def
     || uncf64_def != cf64_def)
   {
-    ERROR_MSG(_T("Internal compiler error: installer's shell constants are different than uninstallers!\n"));
-    throw out_of_range("Internal compiler error: installer's shell constants are different than uninstallers!");
+    const char* msg = "Internal compiler error: installer's shell constants are different than uninstallers!";
+    ERROR_MSG(_T("%") NPRINs, msg);
+    throw out_of_range(msg);
   }
 }
 
