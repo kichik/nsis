@@ -29,7 +29,7 @@ char* convert_processed_string_to_ansi(char *out, const TCHAR *in, WORD codepage
 static inline bool byte_rev_match(const void*ptr1, const void*ptr2, size_t cb)
 {
   char *p1 = (char*) ptr1, *p2 = (char*) ptr2;
-  if (cb) for(; --cb;) if (p1[cb] != p2[cb]) return false;
+  for(; cb--;) if (p1[cb] != p2[cb]) return false;
   return true;
 }
 
@@ -44,7 +44,7 @@ unsigned int ExeHeadStringList::getnum() const
   {
     for(;;)
     {
-      if (pos+=cb >= cbList) break;
+      if ((pos+=cb) >= cbList) break;
       cb = StrLenUTF16(p+=cb) + 1, ++num;
     }
   }
@@ -52,7 +52,7 @@ unsigned int ExeHeadStringList::getnum() const
   {
     for(;;)
     {
-      if (pos+=cb >= cbList) break;
+      if ((pos+=cb) >= cbList) break;
       cb = strlen(p+=cb) + 1, ++num;
     }
   }
@@ -134,26 +134,28 @@ unsigned int ExeHeadStringList::find(const void *ptr, unsigned int cchF, WORD co
     cbF = cbMB, find = (const wchar_t*) bufMB;
   }
 
-  unsigned int cbList = gettotalsize(), cb = 0, retval = -1, pos;
+  size_t cbList = gettotalsize(), cb = 0, retval = -1, pos;
   pos = 1 + !!m_wide, p += pos; // Skip empty string
   if (m_wide)
   {
     for(;;)
     {
-      if (pos+=cb >= cbList) break;
+      if ((pos+=cb) >= cbList) break;
       cb = (StrLenUTF16(p+=cb) + 1) * 2;
       if (cb < cbF) continue;
-      if (byte_rev_match(p,find,cbF)) { retval = pos / WIDEDIV; break; }
+      size_t cbOfs = cb - cbF;
+      if (byte_rev_match(p + cbOfs,find,cbF)) { retval = (pos + cbOfs) / WIDEDIV; break; }
     }
   }
   else
   {
     for(;;)
     {
-      if (pos+=cb >= cbList) break;
+      if ((pos+=cb) >= cbList) break;
       cb = (unsigned int) strlen(p+=cb) + 1;
       if (cb < cbF) continue;
-      if (byte_rev_match(p,find,cbF)) { retval = pos; break; }
+      size_t cbOfs = cb - cbF;
+      if (byte_rev_match(p + cbOfs,find,cbF)) { retval = (pos + cbOfs); break; }
     }
     if (ppBufMB) 
       *ppBufMB = bufMB;
