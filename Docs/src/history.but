@@ -18,6 +18,8 @@ Released on ?, 2014
 
 \b Added P<, P<=, P=, P<>, P>= and P> LogicLib ptrdiff_t tests
 
+\b Try harder to find duplicate strings in string block (\W{http://sf.net/p/nsis/bugs/1088/}{bug #1088})
+
 \H{v3.0a2} 3.0 Alpha 2
 
 Released on December 24th, 2013
