@@ -4381,13 +4381,15 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #endif//!NSIS_SUPPORT_MESSAGEBOX
     case TOK_CREATESHORTCUT:
 #ifdef NSIS_SUPPORT_CREATESHORTCUT
+    {
       ent.which=EW_CREATESHORTCUT;
+      int noLnkWorkDir=0, s;
+      if (!_tcsicmp(line.gettoken_str(1),_T("/NoWorkingDir"))) line.eattoken(), noLnkWorkDir++;
       ent.offsets[0]=add_string(line.gettoken_str(1));
       ent.offsets[1]=add_string(line.gettoken_str(2));
       ent.offsets[2]=add_string(line.gettoken_str(3));
       ent.offsets[3]=add_string(line.gettoken_str(4));
       ent.offsets[5]=add_string(line.gettoken_str(8));
-      int s;
       ent.offsets[4]=line.gettoken_int(5,&s)&0xff;
       if (!s)
       {
@@ -4398,6 +4400,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
         ent.offsets[4]=0;
       }
+      if (noLnkWorkDir) ent.offsets[4] |= 0x8000;
       if (line.getnumtokens() > 6 && *line.gettoken_str(6))
       {
         int tab[3]={SW_SHOWNORMAL,SW_SHOWMAXIMIZED,SW_SHOWMINNOACTIVE/*SW_SHOWMINIMIZED doesn't work*/};
@@ -4407,7 +4410,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           ERROR_MSG(_T("CreateShortCut: unknown show mode \"%") NPRIs _T("\"\n"),line.gettoken_str(6));
           PRINTHELP()
         }
-        ent.offsets[4]|=tab[a]<<8;
+        ent.offsets[4] |= tab[a]<<8;
       }
       if (line.getnumtokens() > 7)
       {
@@ -4453,6 +4456,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
       DefineInnerLangString(NLF_CREATE_SHORTCUT);
       DefineInnerLangString(NLF_ERR_CREATING_SHORTCUT);
+    }
     return add_entry(&ent);
 #else//!NSIS_SUPPORT_CREATESHORTCUT
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_SUPPORT_CREATESHORTCUT not defined.\n"),  line.gettoken_str(0));

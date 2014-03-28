@@ -14,6 +14,8 @@ Released on ?, 2014
 
 \S2{} Minor Changes
 
+\b Added CreateShortcut /NoWorkingDir parameter
+
 \b Added Int<32|64|Ptr><Op|Cmp[U]> helper macros to Util.nsh
 
 \b Added P<, P<=, P=, P<>, P>= and P> LogicLib ptrdiff_t tests
