@@ -4395,7 +4395,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       {
         if (line.getnumtokens() > 5 && *line.gettoken_str(5))
         {
-          ERROR_MSG(_T("CreateShortCut: cannot interpret icon index\n"));
+          ERROR_MSG(_T("CreateShortcut: cannot interpret icon index\n"));
           PRINTHELP()
         }
         ent.offsets[4]=0;
@@ -4407,7 +4407,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         int a=line.gettoken_enum(6,_T("SW_SHOWNORMAL\0SW_SHOWMAXIMIZED\0SW_SHOWMINIMIZED\0"));
         if (a < 0)
         {
-          ERROR_MSG(_T("CreateShortCut: unknown show mode \"%") NPRIs _T("\"\n"),line.gettoken_str(6));
+          ERROR_MSG(_T("CreateShortcut: unknown show mode \"%") NPRIs _T("\"\n"),line.gettoken_str(6));
           PRINTHELP()
         }
         ent.offsets[4] |= tab[a]<<8;
@@ -4437,7 +4437,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             c=VK_F1-1+_ttoi(s+1);
             if (_ttoi(s+1) < 1 || _ttoi(s+1) > 24)
             {
-              warning_fl(_T("CreateShortCut: F-key \"%") NPRIs _T("\" out of range"),s);
+              warning_fl(_T("CreateShortcut: F-key \"%") NPRIs _T("\" out of range"),s);
             }
           }
           else if (((s[0] >= _T('A') && s[0] <= _T('Z')) || (s[0] >= _T('0') && s[0] <= _T('9'))) && !s[1])
@@ -4445,12 +4445,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           else
           {
             c=s[0];
-            warning_fl(_T("CreateShortCut: unrecognized hotkey \"%") NPRIs _T("\""),s);
+            warning_fl(_T("CreateShortcut: unrecognized hotkey \"%") NPRIs _T("\""),s);
           }
           ent.offsets[4] |= (c) << 16;
         }
       }
-      SCRIPT_MSG(_T("CreateShortCut: \"%") NPRIs _T("\"->\"%") NPRIs _T("\" %") NPRIs _T(" icon:%") NPRIs _T(",%d, showmode=0x%X, hotkey=0x%X, comment=%") NPRIs _T("\n"),
+      SCRIPT_MSG(_T("CreateShortcut: \"%") NPRIs _T("\"->\"%") NPRIs _T("\" %") NPRIs _T(" icon:%") NPRIs _T(",%d, showmode=0x%X, hotkey=0x%X, comment=%") NPRIs _T("\n"),
         line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),
         line.gettoken_str(4),ent.offsets[4]&0xff,(ent.offsets[4]>>8)&0xff,ent.offsets[4]>>16,line.gettoken_str(8));
 

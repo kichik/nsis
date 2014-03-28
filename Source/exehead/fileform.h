@@ -138,7 +138,7 @@ enum
 #endif
 
 #ifdef NSIS_SUPPORT_CREATESHORTCUT
-  EW_CREATESHORTCUT,    // Make Shortcut: 5, [link file, target file, parameters, icon file, iconindex|show mode<<8|hotkey<<16]
+  EW_CREATESHORTCUT,    // Make Shortcut: 5, [link file, target file, parameters, icon file, iconindex|show mode<<8|hotkey<<16|noworkingdir]
 #endif
 
 #ifdef NSIS_SUPPORT_COPYFILES
