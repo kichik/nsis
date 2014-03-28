@@ -1069,8 +1069,8 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         if (SUCCEEDED(hres))
         {
           hres = psl->lpVtbl->SetPath(psl,buf2);
-          psl->lpVtbl->SetWorkingDirectory(psl,state_output_directory);
-          if ((parm4&0xff00)>>8) psl->lpVtbl->SetShowCmd(psl,(parm4&0xff00)>>8);
+          if (!(parm4&0x8000)) psl->lpVtbl->SetWorkingDirectory(psl,state_output_directory);
+          if ((parm4&0x7f00)>>8) psl->lpVtbl->SetShowCmd(psl,(parm4&0x7f00)>>8);
           psl->lpVtbl->SetHotkey(psl,(unsigned short)(parm4>>16));
           if (buf3[0]) psl->lpVtbl->SetIconLocation(psl,buf3,parm4&0xff);
           psl->lpVtbl->SetArguments(psl,buf0);
