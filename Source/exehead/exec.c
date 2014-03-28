@@ -1056,7 +1056,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       if (!validpathspec(buf2))
         GetStringFromParm(0x21);
 
-      log_printf8(_T("CreateShortCut: out: \"%s\", in: \"%s %s\", icon: %s,%d, sw=%d, hk=%d"),
+      log_printf8(_T("CreateShortcut: out: \"%s\", in: \"%s %s\", icon: %s,%d, sw=%d, hk=%d"),
         buf1,buf2,buf0,buf3,parm4&0xff,(parm4&0xff00)>>8,parm4>>16);
 
       hres = CoCreateInstance(&CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER,

@@ -242,7 +242,7 @@ cfg.Add(
 cfg.Add(
   BoolVariable(
     'NSIS_SUPPORT_CREATESHORTCUT',
-    'enables support for CreateShortCut.',
+    'enables support for CreateShortcut.',
     'yes'
   )
 )

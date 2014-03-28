@@ -78,7 +78,7 @@ Variables start with $. User variables should be declared.
 
 To extend a command over multiple lines, use a backslash (\\) at the end of the line. The next line will effectively be concatenated to the end of it. For example:
 
-\c CreateShortCut "$SMPROGRAMS\NSIS\ZIP2EXE project workspace.lnk" \
+\c CreateShortcut "$SMPROGRAMS\NSIS\ZIP2EXE project workspace.lnk" \
 \c     "$INSTDIR\source\zip2exe\zip2exe.dsw"
 \c
 \c MessageBox MB_YESNO|MB_ICONQUESTION \
