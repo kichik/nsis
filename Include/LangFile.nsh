@@ -5,21 +5,46 @@ LangFile.nsh
 Header file to create language files that can be
 included with a single command.
 
-Copyright 2008-2013 Joost Verburg, Anders Kjersem
+Copyright 2008-2014 Joost Verburg, Anders Kjersem
 
 * Either LANGFILE_INCLUDE or LANGFILE_INCLUDE_WITHDEFAULT
-  can be called from the script to include a language
-  file.
+  can be called from the script to include a language file.
 
   - LANGFILE_INCLUDE takes the language file name as parameter.
   - LANGFILE_INCLUDE_WITHDEFAULT takes as additional second
-    parameter, the default language file to load missing strings
-    from.
-
-* A language file must start by inserting the LANGFILE macro.
+    parameter, the default language file to load missing strings from.
 
 * Language strings in the language file have the format:
   ${LangFileString} LANGSTRING_NAME "Text"
+
+* There are two types of language header files:
+
+  - NSIS multi-lang support; these must start with the LANGFILE macro and 
+    provide strings for features like MUI and MultiUser. If you are adding 
+    support for a new language to NSIS you should make a copy of English.nsh 
+    and translate this .nsh along with the .nlf.
+  - Custom installer strings; these must start with the LANGFILE_EXT macro and 
+    contain translated versions of 
+    custom strings used in a particular installer.
+    This is useful if you want to put the translations for each language in 
+    their own separate file.
+
+* Example:
+
+  ; Setup.nsi
+  !include "MUI.nsh"
+  !insertmacro MUI_PAGE_INSTFILES
+  !insertmacro MUI_LANGUAGE "Danish"
+  !insertmacro LANGFILE_INCLUDE "DanishExtra.nsh"
+  !insertmacro MUI_LANGUAGE "Swedish"
+  !insertmacro LANGFILE_INCLUDE "SwedishExtra.nsh"
+  Section
+  MessageBox MB_OK "$(myCustomString)"
+  SectionEnd
+
+  ; SwedishExtra.nsh
+  !insertmacro LANGFILE_EXT Swedish
+  ${LangFileString} myCustomString "Bork bork"
 
 */
 
