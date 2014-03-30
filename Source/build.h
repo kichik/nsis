@@ -278,6 +278,7 @@ class CEXEBuild {
 
     // build.cpp functions used mostly within build.cpp
     int datablock_optimize(int start_offset, int first_int);
+    bool datablock_finddata(IMMap&mmap, int mmstart, int size, int*ofs);
     void printline(int l);
     int process_jump(LineParser &line, int wt, int *offs);
 
