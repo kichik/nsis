@@ -779,10 +779,7 @@ int CEXEBuild::datablock_optimize(int start_offset, int first_int)
         db->release(oldstuff, l);
         db->release();
 
-        if (res)
-        {
-          break;
-        }
+        if (res) break;
 
         left -= l;
       }
@@ -799,8 +796,37 @@ int CEXEBuild::datablock_optimize(int start_offset, int first_int)
   }
 
   db->setro(FALSE);
-
   return start_offset;
+}
+
+bool CEXEBuild::datablock_finddata(IMMap&mmap, int mmstart, int size, int*ofs)
+{
+  const int first_int = size;
+  size &= ~ 0x80000000;
+  MMapBuf *db = (MMapBuf *) cur_datablock;
+  cached_db_size *db_sizes = (cached_db_size *) this->cur_datablock_cache->get();
+  int db_sizes_num = this->cur_datablock_cache->getlen() / sizeof(cached_db_size);
+  for (int i = 0; i < db_sizes_num; i++)
+  {
+    if (db_sizes[i].first_int != first_int) continue;
+    int left = size, oldpos = db_sizes[i].start_offset;
+    while (left > 0)
+    {
+      int cbCmp = min(left, build_filebuflen);
+      void *newstuff = mmap.get(mmstart + size - left, cbCmp);
+      void *oldstuff = db->get(sizeof(int) + oldpos + size - left, cbCmp);
+      int res = memcmp(newstuff, oldstuff, cbCmp);
+      mmap.release(), db->release();
+      if (res) break;
+      left -= cbCmp;
+    }
+    if (!left)
+    {
+      if (ofs) *ofs = oldpos;
+      return true;
+    }
+  }
+  return false;
 }
 
 int CEXEBuild::add_db_data(IMMap *mmap) // returns offset
@@ -924,7 +950,15 @@ int CEXEBuild::add_db_data(IMMap *mmap) // returns offset
 
   if (!done)
   {
-    db->resize(st + length + sizeof(int));
+    // Adding the same file twice can push cur_datablock over the limit
+    // because datablock_optimize() happens too late. Let's try to find a dupe early.
+    if (this->build_optimize_datablock && st + sizeof(int) + length < 0)
+    {
+      int oldst;
+      if (datablock_finddata(*mmap, 0, length, &oldst)) return oldst;
+    }
+
+    db->resize(st + sizeof(int) + length);
     int *plen = (int *) db->get(st, sizeof(int));
     *plen = FIX_ENDIAN_INT32(length);
     db->release();
@@ -945,7 +979,6 @@ int CEXEBuild::add_db_data(IMMap *mmap) // returns offset
   }
 
   db_full_size += length + sizeof(int);
-
   return st;
 }
 
