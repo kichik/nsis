@@ -815,7 +815,7 @@ int RunChildProcessRedirected(LPCWSTR cmdprefix, LPCWSTR cmdmain)
   // only way to do that is to convert the pipe content from what we hope is UTF-8.
   // The reason we need a pipe in the first place is because we cannot trust the 
   // child to call GetConsoleOutputCP(), and even if we could, UTF-16 is not valid there.
-  UINT cp = CP_UTF8, mbtwcf = MB_ERR_INVALID_CHARS;
+  UINT cp = CP_UTF8, mbtwcf = MB_ERR_INVALID_CHARS, oemcp = GetOEMCP();
   errno = ENOMEM;
   if (!cmdprefix) cmdprefix = _T("");
   size_t cch1 = _tcslen(cmdprefix), cch2 = _tcslen(cmdmain);
@@ -825,7 +825,8 @@ int RunChildProcessRedirected(LPCWSTR cmdprefix, LPCWSTR cmdmain)
   _tcscat(cmd, cmdmain);
   SECURITY_DESCRIPTOR sd = {1, 0, SE_DACL_PRESENT, NULL, };
   SECURITY_ATTRIBUTES sa = {sizeof(sa), &sd, true};
-  const UINT orgwinconcp = GetConsoleCP(), orgwinconoutcp = GetConsoleOutputCP(); 
+  const UINT orgwinconcp = GetConsoleCP(), orgwinconoutcp = GetConsoleOutputCP();
+  if (orgwinconoutcp == oemcp) cp = oemcp, mbtwcf = 0; // Bug #1092: Batch files not a fan of UTF-8
   HANDLE hPipRd, hPipWr;
   PROCESS_INFORMATION pi;
   BOOL ok = CreatePipe(&hPipRd, &hPipWr, &sa, 0);
@@ -847,7 +848,7 @@ int RunChildProcessRedirected(LPCWSTR cmdprefix, LPCWSTR cmdmain)
   DWORD childec = -1;
   if (ok)
   {
-    bool utf8 = true, okt;
+    bool utf8 = CP_UTF8 == cp, okt;
     char iobuf[512];
     DWORD cbRead, cbOfs = 0, cchwb = 0;
     WCHAR wbuf[100], wchbuf[2+1]; // A surrogate pair + \0
@@ -862,10 +863,10 @@ int RunChildProcessRedirected(LPCWSTR cmdprefix, LPCWSTR cmdmain)
         if (utf8)
         {
           okt = UTF8_GetTrailCount(iobuf[i], cbTrail);
-          if (!okt) // Not UTF-8? Switching to ACP
+          if (!okt) // Not UTF-8? Switching to a MBCS CP
           {
-switchtoacp:cp = CP_ACP, mbtwcf = 0, utf8 = false;
-            SetConsoleOutputCP(cp);
+switchcp:   cp = orgwinconoutcp, mbtwcf = 0, utf8 = false;
+            SetConsoleOutputCP(cp = (CP_UTF8 == cp ? CP_ACP : cp));
             continue;
           }
           if (!cbTrail) cch++, wchbuf[0] = iobuf[i]; // ASCII
@@ -884,7 +885,7 @@ switchtoacp:cp = CP_ACP, mbtwcf = 0, utf8 = false;
           cch = MultiByteToWideChar(cp, mbtwcf, &iobuf[i], 1+cbTrail, wchbuf, COUNTOF(wchbuf)-1);
           if (!cch)
           {
-            if (utf8) goto switchtoacp;
+            if (utf8) goto switchcp;
             cch++, wchbuf[0] = UNICODE_REPLACEMENT_CHARACTER;
           }
         }
@@ -913,7 +914,7 @@ switchtoacp:cp = CP_ACP, mbtwcf = 0, utf8 = false;
     CloseHandle(pi.hThread);
     CloseHandle(pi.hProcess);
   }
-  SetConsoleCP(orgwinconcp); SetConsoleOutputCP(orgwinconoutcp);
+  SetConsoleCP(orgwinconcp), SetConsoleOutputCP(orgwinconoutcp);
   CloseHandle(hPipRd);
   return childec;
 }
