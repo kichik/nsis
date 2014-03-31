@@ -154,7 +154,8 @@ CEXEBuild::CEXEBuild() :
 #endif
   if (sizeof(void*) > 4) definedlist.add(_T("NSIS_MAKENSIS64"));
 
-  db_opt_save=db_comp_save=db_full_size=db_opt_save_u=db_comp_save_u=db_full_size_u=0;
+  db_opt_save=db_opt_save_u=0;
+  db_comp_save=db_full_size=db_comp_save_u=db_full_size_u=0;
 
   // Added by Amir Szekely 31st July 2002
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
@@ -860,8 +861,8 @@ int CEXEBuild::add_db_data(IMMap *mmap) // returns offset
   {
     // grow datablock so that there is room to compress into
     int bufferlen = length + 1024 + length / 4; // give a nice 25% extra space
-    if (st+bufferlen+sizeof(int) < 0)          // we've hit a signed integer overflow (file is over 1.6 GB)
-        bufferlen = INT_MAX-st-sizeof(int); //  so maximize compressor room and hope the file compresses well
+    if (st+bufferlen+(signed)sizeof(int) < 0) // we've hit a signed integer overflow (file is over 1.6 GB)
+        bufferlen = INT_MAX-st-sizeof(int); //   so maximize compressor room and hope the file compresses well
       db->resize(st + bufferlen + sizeof(int));
 
     int n = compressor->Init(build_compress_level, build_compress_dict_size);
@@ -952,10 +953,15 @@ int CEXEBuild::add_db_data(IMMap *mmap) // returns offset
   {
     // Adding the same file twice can push cur_datablock over the limit
     // because datablock_optimize() happens too late. Let's try to find a dupe early.
-    if (this->build_optimize_datablock && st + sizeof(int) + length < 0)
+    if (this->build_optimize_datablock && st + length < 0)
     {
       int oldst;
-      if (datablock_finddata(*mmap, 0, length, &oldst)) return oldst;
+      if (datablock_finddata(*mmap, 0, length, &oldst))
+      {
+        // BUGBUG: Should we increase db_full_size? db_full_size = BUGBUG64TRUNCATE(int,db_full_size+length);
+        db_opt_save += length;
+        return oldst;
+      }
     }
 
     db->resize(st + sizeof(int) + length);
@@ -2813,11 +2819,12 @@ int CEXEBuild::write_output(void)
 
   if (db_opt_save)
   {
-    int total_out_size_estimate=BUGBUG64TRUNCATE(int, // BUGBUG: This should be UINT64 or at least unsigned
-      m_exehead_size+sizeof(fh)+build_datablock.getlen()+(build_crcchk?sizeof(crc32_t):0));
-    int pc=(int)(((INT64)db_opt_save*1000)/(db_opt_save+total_out_size_estimate));
-    INFO_MSG(_T("Datablock optimizer saved %d bytes (~%d.%d%%).\n"),db_opt_save,
-      pc/10,pc%10);
+    UINT32 disp_db_opt_save, total_out_size_estimate=
+      m_exehead_size+sizeof(fh)+build_datablock.getlen()+(build_crcchk?sizeof(crc32_t):0);
+    int pc=(int)((db_opt_save*1000)/(db_opt_save+total_out_size_estimate));
+    const TCHAR *disp_savedunit=GetFriendlySize(db_opt_save, disp_db_opt_save, true);
+    INFO_MSG(_T("Datablock optimizer saved %u %") NPRIs _T(" (~%d.%d%%).\n"),
+      disp_db_opt_save,disp_savedunit,pc/10,pc%10);
   }
 
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
@@ -3332,7 +3339,7 @@ void CEXEBuild::set_uninstall_mode(int un)
       definedlist.del(_T("__UNINSTALL__"));
     }
 
-    SWAP(db_opt_save_u,db_opt_save,int);
+    SWAP(db_opt_save_u,db_opt_save,UINT64);
     SWAP(db_comp_save_u,db_comp_save,int);
     SWAP(db_full_size_u,db_full_size,unsigned int);
   }
