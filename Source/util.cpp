@@ -85,6 +85,17 @@ unsigned int my_strncpy(TCHAR*Dest, const TCHAR*Src, unsigned int cchMax)
   return cch;
 }
 
+const TCHAR* GetFriendlySize(UINT64 n, unsigned int&fn, bool accurate)
+{
+  static const TCHAR* names[] = {
+    _T("bytes"), _T("KiB"), _T("MiB"), _T("GiB"), _T("TiB")
+  };
+  unsigned char s = 0;
+  while(n > ((!accurate || s) ? 1024-1 : UINT_MAX)) n /= 1024, ++s;
+  fn = (unsigned int) n;
+  return s >= COUNTOF(names) ? _T("?") : 1 == fn && !s ? _T("byte") : names[s];
+}
+
 // Returns 0 if everything is OK
 // Returns -1 if can't find the file
 // Returns -2 if the file is an invalid bitmap
