@@ -35,7 +35,6 @@
 extern double my_wtof(const wchar_t *str);
 extern unsigned int my_strncpy(TCHAR*Dest, const TCHAR*Src, unsigned int cchMax);
 size_t my_strftime(TCHAR *s, size_t max, const TCHAR  *fmt, const struct tm *tm);
-const TCHAR* GetFriendlySize(UINT64 n, unsigned int&fn, bool accurate = false);
 
 // Adds the bitmap in filename using resource editor re as id id.
 // If width or height are specified it will also make sure the bitmap is in that size
@@ -76,6 +75,22 @@ public:
   }
   T* GetPtr() { return m_heap ? m_heap : m_stack; }
   operator T*() { return GetPtr(); }
+};
+
+typedef enum {
+  GFSF_BYTESIFPOSSIBLE = 0x1,
+  GFSF_HIDEBYTESCALE   = 0x2,
+  GFSF_DEFAULT = 0
+} GETFRIENDLYSIZEFLAGS;
+const TCHAR* GetFriendlySize(UINT64 n, unsigned int&fn, GETFRIENDLYSIZEFLAGS f = GFSF_DEFAULT);
+class FriendlySize {
+  const TCHAR* m_s;
+  unsigned int m_n;
+public:
+  FriendlySize(UINT64 n, size_t f = GFSF_DEFAULT) { Calculate(n, f); }
+  void Calculate(UINT64 n, size_t f) { m_s = GetFriendlySize(n, m_n, (GETFRIENDLYSIZEFLAGS)f); }
+  unsigned int UInt() const { return m_n; }
+  const TCHAR* Scale() const { return m_s; }
 };
 
 int sane_system(const TCHAR *command);
