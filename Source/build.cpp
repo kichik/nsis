@@ -154,8 +154,8 @@ CEXEBuild::CEXEBuild() :
 #endif
   if (sizeof(void*) > 4) definedlist.add(_T("NSIS_MAKENSIS64"));
 
-  db_opt_save=db_opt_save_u=0;
-  db_comp_save=db_full_size=db_comp_save_u=db_full_size_u=0;
+  db_opt_save=db_opt_save_u=db_full_size=db_full_size_u=0;
+  db_comp_save=db_comp_save_u=0;
 
   // Added by Amir Szekely 31st July 2002
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
@@ -957,11 +957,7 @@ int CEXEBuild::add_db_data(IMMap *mmap) // returns offset
     {
       int oldst;
       if (datablock_finddata(*mmap, 0, length, &oldst))
-      {
-        // BUGBUG: Should we increase db_full_size? db_full_size = BUGBUG64TRUNCATE(int,db_full_size+length);
-        db_opt_save += length;
-        return oldst;
-      }
+        return (db_full_size += length, db_opt_save += length, oldst);
     }
 
     db->resize(st + sizeof(int) + length);
@@ -2819,12 +2815,12 @@ int CEXEBuild::write_output(void)
 
   if (db_opt_save)
   {
-    UINT32 disp_db_opt_save, total_out_size_estimate=
+    UINT32 total_out_size_estimate=
       m_exehead_size+sizeof(fh)+build_datablock.getlen()+(build_crcchk?sizeof(crc32_t):0);
     int pc=(int)((db_opt_save*1000)/(db_opt_save+total_out_size_estimate));
-    const TCHAR *disp_savedunit=GetFriendlySize(db_opt_save, disp_db_opt_save, true);
-    INFO_MSG(_T("Datablock optimizer saved %u %") NPRIs _T(" (~%d.%d%%).\n"),
-      disp_db_opt_save,disp_savedunit,pc/10,pc%10);
+    FriendlySize fs(db_opt_save);
+    INFO_MSG(_T("Datablock optimizer saved %u%") NPRIs _T(" (~%d.%d%%).\n"),
+      fs.UInt(),fs.Scale(),pc/10,pc%10);
   }
 
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
@@ -2848,19 +2844,25 @@ int CEXEBuild::write_output(void)
   total_usize+=sizeof(fh)+fh.length_of_header;
 
   {
-    unsigned int dbsize, dbsizeu;
+    unsigned int dbsize;
+    UINT64 dbsizeu;
     dbsize = build_datablock.getlen();
     if (uninstall_size>0) dbsize -= uninstall_size;
 
     if (build_compress_whole) {
       dbsizeu = dbsize;
-      INFO_MSG(_T("Install data:                          (%u bytes)\n"),dbsizeu);
+      INFO_MSG(_T("Install data:                          (%u bytes)\n"),dbsize); // dbsize==dbsizeu and is easy to print
     }
     else {
       dbsizeu = db_full_size - uninstall_size_full;
-      INFO_MSG(_T("Install data:             %10u / %u bytes\n"),dbsize,dbsizeu);
+      FriendlySize us(dbsizeu, GFSF_BYTESIFPOSSIBLE); // uncompressed installer size
+      FriendlySize cs(dbsize, GFSF_BYTESIFPOSSIBLE | (us.UInt()==dbsizeu ? GFSF_HIDEBYTESCALE : 0)); // compressed installer size
+      INFO_MSG(_T("Install data:             %10u%") NPRIs _T(" / %u%") NPRIs _T("\n"),
+        cs.UInt(),cs.Scale(),us.UInt(),us.Scale()); // "123 / 456 bytes" or "123 KiB / 456 MiB"
     }
-    total_usize += dbsizeu;
+    UINT future = (build_crcchk ? sizeof(int) : 0) + (uninstall_size > 0 ? uninstall_size_full : 0);
+    UINT maxsize = (~(UINT)0) - (total_usize + future), totsizadd = dbsizeu < maxsize ? (UINT)dbsizeu : maxsize;
+    total_usize += totsizadd; // Might not be accurate, it is more important to not overflow the additions coming up
   }
 
   if (uninstall_size>=0)
@@ -2980,9 +2982,10 @@ int CEXEBuild::write_output(void)
   }
   INFO_MSG(_T("\n"));
   {
-    UINT pc=(UINT)(((UINT64)ftell(fp)*1000)/(total_usize));
+    long fileend = ftell(fp);
+    UINT pc=(UINT)(((UINT64)fileend*1000)/(total_usize));
     INFO_MSG(_T("Total size:               %10u / %u bytes (%u.%u%%)\n"),
-      ftell(fp),total_usize,pc/10,pc%10);
+      fileend,total_usize,pc/10,pc%10);
   }
   fclose(fp);
   if (postbuild_cmds)
@@ -3341,7 +3344,7 @@ void CEXEBuild::set_uninstall_mode(int un)
 
     SWAP(db_opt_save_u,db_opt_save,UINT64);
     SWAP(db_comp_save_u,db_comp_save,int);
-    SWAP(db_full_size_u,db_full_size,unsigned int);
+    SWAP(db_full_size_u,db_full_size,UINT64);
   }
 }
 

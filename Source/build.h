@@ -465,9 +465,8 @@ class CEXEBuild {
 
     StringList m_macro_entry;
 
-    UINT64 db_opt_save, db_opt_save_u;
+    UINT64 db_opt_save, db_opt_save_u, db_full_size, db_full_size_u;
     int db_comp_save, db_comp_save_u;
-    unsigned int db_full_size, db_full_size_u;
 
     FastStringList include_dirs;
 
