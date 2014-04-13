@@ -1280,8 +1280,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         wsprintf(str,_T("macro:%") NPRIs,macroname);
         const TCHAR* oldmacroname=m_currentmacroname;
         m_currentmacroname=macroname;
-        definedlist.del(_T("__MACRO__"));
-        definedlist.add(_T("__MACRO__"),m_currentmacroname);
+        definedlist.set(_T("__MACRO__"),m_currentmacroname);
         while (*t)
         {
           lp++;
@@ -3189,14 +3188,17 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_P_EXECUTE:
       {
         const TCHAR *cmdname=get_commandtoken_name(which_token);
-        TCHAR *exec=line.gettoken_str(1);
+        TCHAR *exec=line.gettoken_str(1), *define;
         int comp=line.gettoken_enum(2,_T("<\0>\0<>\0=\0ignore\0"));
-        if (line.getnumtokens() == 2) comp = 4;
-        if (comp == -1 && line.getnumtokens() == 3) comp=4;
-        if (comp == -1) PRINTHELP()
-        int success=0, ret;
-        int cmpv=line.gettoken_int(3,&success);
-        if (!success && comp != 4) PRINTHELP()
+        int validparams=true, ret=-1, cmpv;
+        switch(line.getnumtokens()-1)
+        {
+        case 1: comp=4; break;
+        case 2: comp=5, validparams=!!*(define=line.gettoken_str(2)); break;
+        case 3: cmpv=line.gettoken_int(3,&validparams); break;
+        default: comp=-1;
+        }
+        if (!validparams || comp == -1) PRINTHELP()
         SCRIPT_MSG(_T("%") NPRIs _T(": \"%") NPRIs _T("\"\n"),cmdname,exec);
 #ifdef _WIN32
         if (TOK_P_EXECUTE == which_token)
@@ -3204,13 +3206,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #ifdef _UNICODE
           ret=RunChildProcessRedirected(0,exec);
 #else
-          ret=-1;
           PROCESS_INFORMATION pi;
           STARTUPINFO si={sizeof(STARTUPINFO),};
           if (CreateProcess(NULL,exec,NULL,NULL,FALSE,0,NULL,NULL,&si,&pi))
           {
             WaitForSingleObject(pi.hProcess,INFINITE);
-            if (GetExitCodeProcess(pi.hProcess, &si.cb)) ret=(int)si.cb;
+            if (GetExitCodeProcess(pi.hProcess,&si.cb)) ret=(int)si.cb;
             CloseHandle(pi.hThread), CloseHandle(pi.hProcess);
           }
 #endif
@@ -3223,6 +3224,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         else if (comp == 2 && ret != cmpv);
         else if (comp == 3 && ret == cmpv);
         else if (comp == 4);
+        else if (comp == 5)
+        {
+          TCHAR buf[50];
+          _stprintf(buf,_T("%d"),ret);
+          definedlist.set(define,buf);
+        }
         else
         {
           ERROR_MSG(_T("%") NPRIs _T(": returned %d, aborting\n"),cmdname,ret);

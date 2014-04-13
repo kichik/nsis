@@ -332,6 +332,12 @@ int DefineList::add(const TCHAR *name, const TCHAR *value/*=_T("")*/)
   return 0;
 }
 
+void DefineList::set(const TCHAR *name, const TCHAR *value/*=_T("")*/)
+{
+  del(name);
+  add(name, value);
+}
+
 TCHAR *DefineList::find(const TCHAR *name)
 {
   int v=SortedStringList<struct define>::find(name);

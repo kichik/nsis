@@ -476,6 +476,7 @@ class DefineList : public SortedStringList<struct define>
      * general program exit with error logging.
      */
     int add(const TCHAR *name, const TCHAR *value=_T(""));
+    void set(const TCHAR *name, const TCHAR *value=_T(""));
 
 	 /**
 	  * This function returns the pointer to the .value TCHAR* that corresponds
