@@ -24,6 +24,8 @@ Released on ?, 2014
 
 \b !system will decode child output as OEMCP if GetConsoleOutputCP() == GetOEMCP()
 
+\b !execute supports comparing the exit code with the same syntax as !system
+
 \H{v3.0a2} 3.0 Alpha 2
 
 Released on December 24th, 2013
