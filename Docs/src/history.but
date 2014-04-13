@@ -24,6 +24,8 @@ Released on ?, 2014
 
 \b !system will decode child output as OEMCP if GetConsoleOutputCP() == GetOEMCP()
 
+\b !system and !execute can store the exit code in a define
+
 \b !execute supports comparing the exit code with the same syntax as !system
 
 \H{v3.0a2} 3.0 Alpha 2

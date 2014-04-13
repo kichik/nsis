@@ -3689,19 +3689,17 @@ int CEXEBuild::set_target_architecture_data()
 {
   build_strlist.setunicode(build_unicode), ubuild_strlist.setunicode(build_unicode);
 
-  definedlist.del(_T("NSIS_UNICODE"));
-  definedlist.del(_T("NSIS_CHAR_SIZE"));
-  definedlist.del(_T("NSIS_PTR_SIZE"));
   if (build_unicode)
   {
-    definedlist.add(_T("NSIS_UNICODE"));
-    definedlist.add(_T("NSIS_CHAR_SIZE"), _T("2"));
+    definedlist.set(_T("NSIS_UNICODE"));
+    definedlist.set(_T("NSIS_CHAR_SIZE"), _T("2"));
   }
   else
   {
-    definedlist.add(_T("NSIS_CHAR_SIZE"), _T("1"));
+    definedlist.del(_T("NSIS_UNICODE"));
+    definedlist.set(_T("NSIS_CHAR_SIZE"), _T("1"));
   }
-  definedlist.add(_T("NSIS_PTR_SIZE"), is_target_64bit() ? _T("8") : _T("4"));
+  definedlist.set(_T("NSIS_PTR_SIZE"), is_target_64bit() ? _T("8") : _T("4"));
 
   return PS_OK;
 }

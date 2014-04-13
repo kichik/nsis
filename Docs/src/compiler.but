@@ -89,7 +89,7 @@ This command will issue an error to the script compiler and will stop execution 
 
 \S1{execute} !execute
 
-\c command
+\c command [compare comparevalue | symbol]
 
 This command will execute 'command' using a call to CreateProcess(). Unlike \R{system}{!system}, it does not use the command line processor, so input/output redirection and commands like 'cd', 'dir' and 'type' can not be used. Currently, the only known advantage of \R{execute}{!execute} over \R{system}{!system} is that it does not give trouble when the current working directory is specified using UNC.
 
@@ -115,9 +115,9 @@ This option will execute 'command' using a call to system() after the output EXE
 
 \S1{system} !system
 
-\c command [compare comparevalue]
+\c command [compare comparevalue | symbol]
 
-This command will execute 'command' using a call to system(), and if the return value compared (using 'compare') to 'comparevalue' is false, execution will halt. 'compare' can be '<' or '>' or '<>' or '='.
+This command will execute 'command' using a call to system(). You can store the return value in a define ('symbol') or halt execution if the return value compared (using 'compare') to 'comparevalue' is false. 'compare' can be '<' or '>' or '<>' or '='. 
 
 \c !system '"%WINDIR%\notepad.exe" "${NSISDIR}\license.txt"'
 \c !system 'echo !define something > newinclude.nsh'
