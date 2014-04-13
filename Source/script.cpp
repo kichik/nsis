@@ -3186,17 +3186,38 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
     return PS_OK;
     case TOK_P_SYSTEMEXEC:
+    case TOK_P_EXECUTE:
       {
+        const TCHAR *cmdname=get_commandtoken_name(which_token);
         TCHAR *exec=line.gettoken_str(1);
         int comp=line.gettoken_enum(2,_T("<\0>\0<>\0=\0ignore\0"));
         if (line.getnumtokens() == 2) comp = 4;
         if (comp == -1 && line.getnumtokens() == 3) comp=4;
         if (comp == -1) PRINTHELP()
-        int success=0;
+        int success=0, ret;
         int cmpv=line.gettoken_int(3,&success);
         if (!success && comp != 4) PRINTHELP()
-        SCRIPT_MSG(_T("!system: \"%") NPRIs _T("\"\n"),exec);
-        int ret=sane_system(exec);
+        SCRIPT_MSG(_T("%") NPRIs _T(": \"%") NPRIs _T("\"\n"),cmdname,exec);
+#ifdef _WIN32
+        if (TOK_P_EXECUTE == which_token)
+        {
+#ifdef _UNICODE
+          ret=RunChildProcessRedirected(0,exec);
+#else
+          ret=-1;
+          PROCESS_INFORMATION pi;
+          STARTUPINFO si={sizeof(STARTUPINFO),};
+          if (CreateProcess(NULL,exec,NULL,NULL,FALSE,0,NULL,NULL,&si,&pi))
+          {
+            WaitForSingleObject(pi.hProcess,INFINITE);
+            if (GetExitCodeProcess(pi.hProcess, &si.cb)) ret=(int)si.cb;
+            CloseHandle(pi.hThread), CloseHandle(pi.hProcess);
+          }
+#endif
+        }
+        else
+#endif //~ _WIN32
+          ret=sane_system(exec);
         if (comp == 0 && ret < cmpv);
         else if (comp == 1 && ret > cmpv);
         else if (comp == 2 && ret != cmpv);
@@ -3204,33 +3225,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         else if (comp == 4);
         else
         {
-          ERROR_MSG(_T("!system: returned %d, aborting\n"),ret);
+          ERROR_MSG(_T("%") NPRIs _T(": returned %d, aborting\n"),cmdname,ret);
           return PS_ERROR;
         }
-        SCRIPT_MSG(_T("!system: returned %d\n"),ret);
+        SCRIPT_MSG(_T("%") NPRIs _T(": returned %d\n"),cmdname,ret);
       }
     return PS_OK;
-    case TOK_P_EXECUTE:
-      {
-        TCHAR *exec=line.gettoken_str(1);
-        SCRIPT_MSG(_T("!execute: \"%") NPRIs _T("\"\n"),exec);
-#ifdef _WIN32
-#ifdef _UNICODE
-        RunChildProcessRedirected(0,exec);
-#else
-        PROCESS_INFORMATION pi;
-        STARTUPINFO si={sizeof(STARTUPINFO),};
-        if (CreateProcess(NULL,exec,NULL,NULL,FALSE,0,NULL,NULL,&si,&pi))
-        {
-          WaitForSingleObject(pi.hProcess,INFINITE);
-          CloseHandle(pi.hThread);
-          CloseHandle(pi.hProcess);
-        }
-#endif
-#else
-        sane_system(exec);
-#endif
-      }
     case TOK_P_ADDINCLUDEDIR:
       {
         TCHAR *f = line.gettoken_str(1);

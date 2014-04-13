@@ -91,7 +91,7 @@ This command will issue an error to the script compiler and will stop execution 
 
 \c command
 
-This command will execute 'command' using a call to CreateProcess(). Unlike \R{system}{!system}, it does not use the command line processor, so input/output redirection and commands like 'cd', 'dir' and 'type' can not be used. \R{execute}{!execute} also ignores the return value of the executed command. Currently, the only known advantage of \R{execute}{!execute} over \R{system}{!system} is that it does not give trouble when the current working directory is specified using UNC.
+This command will execute 'command' using a call to CreateProcess(). Unlike \R{system}{!system}, it does not use the command line processor, so input/output redirection and commands like 'cd', 'dir' and 'type' can not be used. Currently, the only known advantage of \R{execute}{!execute} over \R{system}{!system} is that it does not give trouble when the current working directory is specified using UNC.
 
 On POSIX platforms, \R{execute}{!execute} will use system() just like \R{system}{!system}.
 
