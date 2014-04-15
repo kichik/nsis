@@ -405,6 +405,7 @@ class CEXEBuild {
     int m_iBaseVarsNum;
     int DeclaredUserVar(const TCHAR *VarName);
     void VerifyDeclaredUserVarRefs(UserVarsStringList *pVarsStringList);
+    bool IsIntOrUserVar(const LineParser &line, int token) const;
 
     ConstantsStringList m_ShellConstants;
 

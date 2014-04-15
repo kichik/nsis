@@ -77,7 +77,7 @@ void LineParser::eattoken()
   m_eat++;
 }
 
-double LineParser::gettoken_float(int token, int *success/*=0*/)
+double LineParser::gettoken_float(int token, int *success/*=0*/) const
 {
   token+=m_eat;
   if (token < 0 || token >= m_nt)
@@ -99,7 +99,7 @@ double LineParser::gettoken_float(int token, int *success/*=0*/)
   return _tstof(m_tokens[token]);
 }
 
-int LineParser::gettoken_int(int token, int *success/*=0*/)
+int LineParser::gettoken_int(int token, int *success/*=0*/) const
 {
   token+=m_eat;
   if (token < 0 || token >= m_nt || !m_tokens[token][0])
@@ -117,7 +117,7 @@ int LineParser::gettoken_int(int token, int *success/*=0*/)
   return l;
 }
 
-double LineParser::gettoken_number(int token, int *success/*=0*/)
+double LineParser::gettoken_number(int token, int *success/*=0*/) const
 {
   const TCHAR*str=gettoken_str(token);
   if (_T('-') == *str || _T('+') == *str) ++str;
@@ -125,7 +125,7 @@ double LineParser::gettoken_number(int token, int *success/*=0*/)
   return gettoken_float(token,success);
 }
 
-TCHAR* LineParser::gettoken_str(int token)
+TCHAR* LineParser::gettoken_str(int token) const
 {
   token+=m_eat;
   if (token < 0 || token >= m_nt) return (TCHAR*)_T("");
