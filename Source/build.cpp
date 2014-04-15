@@ -3685,6 +3685,19 @@ void CEXEBuild::VerifyDeclaredUserVarRefs(UserVarsStringList *pVarsStringList)
   }
 }
 
+bool CEXEBuild::IsIntOrUserVar(const LineParser &line, int token) const
+{
+  const TCHAR *p = line.gettoken_str(token);
+  if ( *p == _T('$') && *(p+1) )
+  {
+    int idxUserVar = m_UserVarNames.get(p+1);
+    return (idxUserVar >= 0 && m_UserVarNames.get_reference(idxUserVar) >= 0);
+  }
+  int succ;
+  line.gettoken_int(token, &succ);
+  return !!succ;
+}
+
 int CEXEBuild::set_target_architecture_data()
 {
   build_strlist.setunicode(build_unicode), ubuild_strlist.setunicode(build_unicode);

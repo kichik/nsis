@@ -32,10 +32,10 @@ class LineParser {
     int parse(TCHAR *line, int ignore_escaping=0); // returns -1 on error
     int getnumtokens();
     void eattoken();
-    double gettoken_float(int token, int *success=0);
-    int gettoken_int(int token, int *success=0);
-    double gettoken_number(int token, int *success=0);
-    TCHAR *gettoken_str(int token);
+    double gettoken_float(int token, int *success=0) const;
+    int gettoken_int(int token, int *success=0) const;
+    double gettoken_number(int token, int *success=0) const;
+    TCHAR *gettoken_str(int token) const;
     int gettoken_enum(int token, const TCHAR *strlist); // null separated list
 
   private:

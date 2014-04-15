@@ -382,7 +382,7 @@ class SortedStringListND // no delete - can be placed in GrowBuf
       int case_sensitive=0,
       int returnbestpos=0, /* if not found, return best pos */
       int*where=0
-    )
+    ) const
     {
       T *data=(T *) m_gr.get();
       int ul = m_gr.getlen()/sizeof(T);

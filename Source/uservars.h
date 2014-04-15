@@ -70,7 +70,7 @@ class UserVarsStringList : public SortedStringListND<struct uservarstring>
 	  * @return The index position of the structure where structure.name ==
 	  * name.
 	  */
-    int get(const TCHAR *name, int n_chars = -1)
+    int get(const TCHAR *name, int n_chars = -1) const
     {
       int v = SortedStringListND<struct uservarstring>::find(name, n_chars);
       if (v == -1) return -1;
@@ -82,7 +82,7 @@ class UserVarsStringList : public SortedStringListND<struct uservarstring>
 	  *
 	  * @return The count of strings.
 	  */
-    int getnum()
+    int getnum() const
     {
        return m_index;
     }
@@ -93,7 +93,7 @@ class UserVarsStringList : public SortedStringListND<struct uservarstring>
 	  * @return The reference count of the nth uservarstring structure.
 	  * If not found, returns -1.
 	  */
-    int get_reference(int idx)
+    int get_reference(int idx) const
     {
       int pos=get_internal_idx(idx);
       if (pos==-1) return -1;
@@ -131,7 +131,7 @@ class UserVarsStringList : public SortedStringListND<struct uservarstring>
   private:
     int m_index;
 
-    int get_internal_idx(int idx)
+    int get_internal_idx(int idx) const
     {
       struct uservarstring *data=(struct uservarstring *) m_gr.get();
       for (int i = 0; i < m_index; i++)

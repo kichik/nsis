@@ -5972,6 +5972,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.offsets[0]=add_string(line.gettoken_str(1));
       ent.offsets[2]=SECTION_FIELD_SET(name_ptr);
       ent.offsets[4]=add_string(line.gettoken_str(2));
+      if (!IsIntOrUserVar(line,1)) PRINTHELP()
       SCRIPT_MSG(_T("SectionSetText: %") NPRIs _T("->%") NPRIs _T("\n"),line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_SECTIONGETTEXT:
@@ -5979,7 +5980,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.offsets[0]=add_string(line.gettoken_str(1));
       ent.offsets[1]=GetUserVarIndex(line, 2);
       ent.offsets[2]=SECTION_FIELD_GET(name_ptr);
-      if (line.gettoken_str(2)[0] && ent.offsets[1]<0) PRINTHELP()
+      if (!IsIntOrUserVar(line,1) || ent.offsets[1]<0) PRINTHELP()
       SCRIPT_MSG(_T("SectionGetText: %") NPRIs _T("->%") NPRIs _T("\n"),line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_SECTIONSETFLAGS:
@@ -5988,6 +5989,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.offsets[1]=add_string(line.gettoken_str(2));
       ent.offsets[2]=SECTION_FIELD_SET(flags);
       ent.offsets[3]=1;
+      if (!IsIntOrUserVar(line,1) || !IsIntOrUserVar(line,2)) PRINTHELP()
       SCRIPT_MSG(_T("SectionSetFlags: %") NPRIs _T("->%") NPRIs _T("\n"),line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_SECTIONGETFLAGS:
@@ -5995,7 +5997,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.offsets[0]=add_string(line.gettoken_str(1));
       ent.offsets[1]=GetUserVarIndex(line, 2);
       ent.offsets[2]=SECTION_FIELD_GET(flags);
-      if (line.gettoken_str(2)[0] && ent.offsets[1]<0) PRINTHELP()
+      if (!IsIntOrUserVar(line,1) || ent.offsets[1]<0) PRINTHELP()
       SCRIPT_MSG(_T("SectionGetFlags: %") NPRIs _T("->%") NPRIs _T("\n"),line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_INSTTYPESETTEXT:
@@ -6010,7 +6012,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.offsets[0]=add_string(line.gettoken_str(1));
       ent.offsets[1]=GetUserVarIndex(line, 2);
       ent.offsets[2]=0;
-      if (line.gettoken_str(1)[0] && ent.offsets[1]<0) PRINTHELP()
+      if (!IsIntOrUserVar(line,1) || ent.offsets[1]<0) PRINTHELP()
       SCRIPT_MSG(_T("InstTypeGetText: %") NPRIs _T("->%") NPRIs _T("\n"),line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_SECTIONSETINSTTYPES:
@@ -6025,7 +6027,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.offsets[0]=add_string(line.gettoken_str(1));
       ent.offsets[1]=GetUserVarIndex(line, 2);
       ent.offsets[2]=SECTION_FIELD_GET(install_types);
-      if (line.gettoken_str(2)[0] && ent.offsets[1]<0) PRINTHELP()
+      if (!IsIntOrUserVar(line,1) || ent.offsets[1]<0) PRINTHELP()
       SCRIPT_MSG(_T("SectionGetInstTypes: %") NPRIs _T("->%") NPRIs _T("\n"),line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_SECTIONSETSIZE:
@@ -6040,7 +6042,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.offsets[0]=add_string(line.gettoken_str(1));
       ent.offsets[1]=GetUserVarIndex(line, 2);
       ent.offsets[2]=SECTION_FIELD_GET(size_kb);
-      if (line.gettoken_str(2)[0] && ent.offsets[1]<0) PRINTHELP()
+      if (!IsIntOrUserVar(line,1) || ent.offsets[1]<0) PRINTHELP()
       SCRIPT_MSG(_T("SectionGetSize: %") NPRIs _T("->%") NPRIs _T("\n"),line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_SETCURINSTTYPE:
@@ -6057,7 +6059,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.offsets[1]=GetUserVarIndex(line,1);
       ent.offsets[2]=0;
       ent.offsets[3]=1;
-      if (line.gettoken_str(1)[0] && ent.offsets[1]<0) PRINTHELP()
+      if (ent.offsets[1]<0) PRINTHELP()
       SCRIPT_MSG(_T("GetCurInstType: %") NPRIs _T("\n"),line.gettoken_str(1));
     return add_entry(&ent);
 #else//!NSIS_CONFIG_COMPONENTPAGE
