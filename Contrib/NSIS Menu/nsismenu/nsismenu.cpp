@@ -110,6 +110,7 @@ private:
    
      // Show it and tell the application that it's our main window
 
+     frame->SetClientSize(HTMLW, HTMLH);
      frame->Show(TRUE);
      SetTopWindow(frame);
    
