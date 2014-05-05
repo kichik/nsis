@@ -10,6 +10,9 @@
 ;--------------------------------
 ;General
 
+  ;Properly display all languages (Windows 2000+ only!)
+  Unicode true
+
   ;Name and file
   Name "Modern UI Test"
   OutFile "MultiLanguage.exe"
