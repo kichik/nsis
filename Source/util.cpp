@@ -471,7 +471,7 @@ void create_code_page_string(TCHAR *buf, size_t len, UINT code_page)
     _sntprintf(buf, len, _T("UTF-16%cE"), 1200 == code_page ? 'L' : 'B');
     return;
   }
-  _sntprintf(buf, len, _T("CP%d"), code_page);
+  _sntprintf(buf, len, _T("CP%d//TRANSLIT"), code_page);
 }
 #ifdef _UNICODE
 void create_code_page_string(char*buf, size_t len, UINT code_page)
