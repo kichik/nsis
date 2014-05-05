@@ -541,6 +541,7 @@ char* convert_processed_string_to_ansi(char *out, const TCHAR *in, WORD codepage
             if (i == _T('\0'))
                 break;
             else if (i == NS_SKIP_CODE)
+                // BUGBUG shouldn't the escaped code be converted from UTF-8 to codepage as well?
                 *out++ = (char) *in++; // simply copy escaped code (01..04)
             else
             {
