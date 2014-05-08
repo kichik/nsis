@@ -367,7 +367,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         mystrcpy(state_output_directory,buf1);
         if (!SetCurrentDirectory(buf1))
         {
-            log_printf3("SetCurrentDirectory(%s) failed (%d)",buf1,GetLastError());
+            log_printf3(_T("SetCurrentDirectory(%s) failed (%d)"),buf1,GetLastError());
             exec_error++;
         }
       }
@@ -1259,7 +1259,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
 #endif
             // use buf2, buf3 and buf4
             size = GetCompressedDataFromDataBlockToMemory(parm3, data, (3 * NSIS_MAX_STRLEN)*sizeof(TCHAR));
-            LogData2Hex(binbuf, sizeof(binbuf), data, size);
+            LogData2Hex(binbuf, COUNTOF(binbuf), data, size);
             log_printf5(_T("WriteRegBin: \"%s\\%s\" \"%s\"=\"%s\""),rkn,buf1,buf0,binbuf);
           }
           

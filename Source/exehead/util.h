@@ -55,10 +55,10 @@ int NSISCALL my_GetDialogItemText(UINT idx, TCHAR *val);
 //#define my_GetDialogItemText GetDlgItemText
 
 #ifdef NSIS_CONFIG_LOG
-extern TCHAR log_text[2048];
+extern TCHAR log_text[2048]; // BUGBUG: Should this be 2*NSIS_MAX_STRLEN? ...and a little larger when NSIS_CONFIG_LOG_TIMESTAMP is defined!
 void NSISCALL log_write(int close);
 const TCHAR * _RegKeyHandleToName(HKEY hKey);
-void _LogData2Hex(TCHAR *buf, size_t buflen, BYTE *data, size_t datalen);
+void _LogData2Hex(TCHAR *buf, size_t cchbuf, BYTE *data, size_t cbdata);
 void log_printf(TCHAR *format, ...);
 #define log_printf2(x1,x2) log_printf(x1,x2);
 #define log_printf3(x1,x2,x3) log_printf(x1,x2,x3);
