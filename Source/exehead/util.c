@@ -947,22 +947,16 @@ const TCHAR * _RegKeyHandleToName(HKEY hKey)
     return _T("invalid registry key");
 }
 
-void _LogData2Hex(TCHAR *buf, size_t buflen, BYTE *data, size_t datalen)
+void _LogData2Hex(TCHAR *buf, size_t cchbuf, BYTE *data, size_t cbdata)
 {
   TCHAR *p = buf;
-
-  size_t i;
-
   int dots = 0;
-  size_t bufbytes = buflen / 3; // 2 hex digits, one space/null
+  size_t i, bufbytes = cchbuf / 3; // 2 hex digits, one space/null
 
-  if (datalen > bufbytes)
-  {
-    bufbytes--;
-    dots = 1;
-  }
+  if (cbdata > bufbytes)
+    bufbytes--, dots++;
   else
-    bufbytes = datalen;
+    bufbytes = cbdata;
 
   for (i = 0; i < bufbytes; i++)
   {
@@ -970,8 +964,7 @@ void _LogData2Hex(TCHAR *buf, size_t buflen, BYTE *data, size_t datalen)
     p += 3;
   }
 
-  if (dots)
-    mystrcat(buf, _T("..."));
+  if (dots) mystrcat(buf, _T("..."));
 }
 
 #ifdef NSIS_CONFIG_LOG_TIMESTAMP
