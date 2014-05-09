@@ -107,22 +107,44 @@ int LineParser::gettoken_int(int token, int *success/*=0*/) const
     if (success) *success=0;
     return 0;
   }
-  TCHAR *tmp;
-  int l;
-  if (_T('-') == m_tokens[token][0]) 
-    l=_tcstol(m_tokens[token],&tmp,0);
-  else 
-    l=(int)_tcstoul(m_tokens[token],&tmp,0);
-  if (success) *success=! (int)(*tmp);
-  return l;
+  const TCHAR *p=m_tokens[token], *parse=p;
+  TCHAR *end;
+  int neg=0, base=0, num;
+  if (_T('+') == *p)
+    ++p;
+  else if (_T('-') == *p)
+    ++p, ++neg;
+  if (_T('0') == p[0])
+  {
+    // Special support for 0n and 0y MASM style radix prefix:
+    if (_T('n') == (p[1]|32)) parse=&p[2], base=10;
+    if (_T('y') == (p[1]|32)) parse=&p[2], base=2;
+  }
+  if (neg)
+  {
+    num=_tcstol(parse,&end,base);
+    if (base) num*=-1; // Input was "-0n012" but we have only parsed "012" and need to fix the sign
+  }
+  else
+  {
+    num=(int)_tcstoul(parse,&end,base);
+  }
+  if (success) *success=! (int)(*end);
+  return num;
 }
 
 double LineParser::gettoken_number(int token, int *success/*=0*/) const
 {
   const TCHAR*str=gettoken_str(token);
   if (_T('-') == *str || _T('+') == *str) ++str;
-  if (_T('0') == str[0] && _T('x') == (str[1]|32)) return gettoken_int(token,success);
-  return gettoken_float(token,success);
+  bool forceint = false;
+  if (_T('0') == str[0])
+  {
+    if (_T('x') == (str[1]|32)) ++forceint;
+    if (_T('n') == (str[1]|32)) ++forceint;
+    if (_T('y') == (str[1]|32)) ++forceint;
+  }
+  return forceint ? gettoken_int(token,success) : gettoken_float(token,success);
 }
 
 TCHAR* LineParser::gettoken_str(int token) const

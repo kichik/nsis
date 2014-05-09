@@ -28,6 +28,8 @@ Released on ?, 2014
 
 \b !execute supports comparing the exit code with the same syntax as !system
 
+\b Preprocessor supports MASM style 0n and 0y radix prefix on numbers
+
 \H{v3.0a2} 3.0 Alpha 2
 
 Released on December 24th, 2013
