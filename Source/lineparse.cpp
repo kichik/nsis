@@ -116,9 +116,9 @@ int LineParser::gettoken_int(int token, int *success/*=0*/) const
     ++p, ++neg;
   if (_T('0') == p[0])
   {
-    // Special support for 0n and 0y MASM style radix prefix:
+    // Special support for 0n and 0y MASM style and 0b Python style radix prefix:
     if (_T('n') == (p[1]|32)) parse=&p[2], base=10;
-    if (_T('y') == (p[1]|32)) parse=&p[2], base=2;
+    if (_T('b') == (p[1]|32) || _T('y') == (p[1]|32)) parse=&p[2], base=2;
   }
   if (neg)
   {
@@ -142,7 +142,7 @@ double LineParser::gettoken_number(int token, int *success/*=0*/) const
   {
     if (_T('x') == (str[1]|32)) ++forceint;
     if (_T('n') == (str[1]|32)) ++forceint;
-    if (_T('y') == (str[1]|32)) ++forceint;
+    if (_T('b') == (str[1]|32) || _T('y') == (str[1]|32)) ++forceint;
   }
   return forceint ? gettoken_int(token,success) : gettoken_float(token,success);
 }
