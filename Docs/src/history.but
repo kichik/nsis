@@ -2,15 +2,19 @@
 
 \H{v3.0b0} 3.0 Beta 0
 
-Released on ?, 2014
+Released on May 11th, 2014
 
 \S1{v3.0b0-rl} Release Notes
+
+\b POSIX builds work again! Please let us know if your favorite platform is still having build issues. We mainly test on Linux.
 
 \S1{v3.0b0-cl} Changelog
 
 \S2{} Major Changes
 
 \b Basic AMD64 System::Call support
+
+\b Fixed POSIX builds
 
 \S2{} Minor Changes
 
