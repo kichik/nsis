@@ -10,7 +10,7 @@
 ;--------------------------------
 ;General
 
-  ;Properly display all languages (Windows 2000+ only!)
+  ;Properly display all languages (Installer will not work on Windows 95, 98 or ME!)
   Unicode true
 
   ;Name and file
