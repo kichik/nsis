@@ -116,6 +116,7 @@
   !insertmacro MUI_LANGUAGE "Pashto"
   !insertmacro MUI_LANGUAGE "ScotsGaelic"
 !ifdef NSIS_UNICODE
+  !insertmacro MUI_LANGUAGE "Armenian"
   !insertmacro MUI_LANGUAGE "Georgian"
 !endif
 
