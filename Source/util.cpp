@@ -3,7 +3,7 @@
  * 
  * This file is a part of NSIS.
  * 
- * Copyright (C) 1999-2013 Nullsoft and Contributors
+ * Copyright (C) 1999-2014 Nullsoft and Contributors
  * 
  * Licensed under the zlib/libpng license (the "License");
  * you may not use this file except in compliance with the License.
@@ -120,7 +120,7 @@ int update_bitmap(CResourceEditor* re, WORD id, const TCHAR* filename, int width
   }
   if (maxbpp != 0) {
     WORD biBitCount;
-    fseek(f, 28, SEEK_SET); // Seek to the height member of the header
+    fseek(f, 28, SEEK_SET); // Seek to the bitcount member of the header
     size_t nio = fread(&biBitCount, sizeof(WORD), 1, f);
     FIX_ENDIAN_INT16_INPLACE(biBitCount);
     if (nio != 1 || biBitCount > maxbpp) {

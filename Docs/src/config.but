@@ -2,7 +2,7 @@
 \#{* Common config shared by all output formats *}
 \#{**********************************************}
 
-\define{NsisCopyright} Copyright (C) 1999-2013 Contributors
+\define{NsisCopyright} Copyright (C) 1999-2014 Contributors
 
 \copyright \NsisCopyright
 

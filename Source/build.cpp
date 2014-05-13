@@ -3,7 +3,7 @@
  * 
  * This file is a part of NSIS.
  * 
- * Copyright (C) 1999-2013 Nullsoft and Contributors
+ * Copyright (C) 1999-2014 Nullsoft and Contributors
  * 
  * Licensed under the zlib/libpng license (the "License");
  * you may not use this file except in compliance with the License.
@@ -133,7 +133,7 @@ CEXEBuild::CEXEBuild() :
 
   m_target_type=TARGET_X86ANSI;
 #ifdef _WIN32
-  if (sizeof(void*) > 4) m_target_type = TARGET_AMD64; // BUGBUG: There is no instuction to select it so we force
+  if (sizeof(void*) > 4) m_target_type = TARGET_AMD64; // BUGBUG: There is no instruction to select it so we force
 #endif
   build_unicode=TARGET_X86ANSI != m_target_type;
   build_lockedunicodetarget=false;
@@ -541,7 +541,7 @@ char* convert_processed_string_to_ansi(char *out, const TCHAR *in, WORD codepage
             if (i == _T('\0'))
                 break;
             else if (i == NS_SKIP_CODE)
-                // BUGBUG shouldn't the escaped code be converted from UTF to codepage as well?
+                // BUGBUG: Shouldn't the escaped code be converted from wchar_t to codepage as well?
                 *out++ = (char) *in++; // simply copy escaped code (01..04)
             else
             {

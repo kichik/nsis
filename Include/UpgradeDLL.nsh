@@ -102,8 +102,8 @@ Example:
   SetOverwrite try
 
   ;------------------------
-  ;Copy the parameters used on run-time to a variable
-  ;This allows the usage of variables as paramter
+  ;Copy the macro parameters to a run-time to a variable, 
+  ;this allows the usage of variables as parameter
 
   StrCpy $R4 "${DESTFILE}"
   StrCpy $R5 "${TEMPBASEDIR}"
