@@ -4189,10 +4189,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_EXECSHELL: // this uses improvements of Andras Varga
 #ifdef NSIS_SUPPORT_SHELLEXECUTE
     {
+      const TCHAR *verb=line.gettoken_str(1), *file=line.gettoken_str(2), *params=line.gettoken_str(3);
       ent.which=EW_SHELLEXEC;
-      ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[1]=add_string(line.gettoken_str(2));
-      ent.offsets[2]=add_string(line.gettoken_str(3));
+      ent.offsets[0]=add_string(verb);
+      ent.offsets[1]=add_string(file);
+      ent.offsets[2]=add_string(params);
       ent.offsets[3]=SW_SHOWNORMAL;
       if (line.getnumtokens() > 4)
       {
@@ -4201,11 +4202,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (a < 0) PRINTHELP()
         ent.offsets[3]=tab[a];
       }
-      tstring detail=tstring(line.gettoken_str(1))+_T(" ")+tstring(line.gettoken_str(2));
+      tstring detail=tstring(verb)+(_T(" ")+!*verb)+tstring(file);
       ent.offsets[5]=add_string(detail.c_str());
-      SCRIPT_MSG(_T("ExecShell: %") NPRIs _T(": \"%") NPRIs _T("\" \"%") NPRIs _T("\" %") NPRIs _T("\n"),line.gettoken_str(1),line.gettoken_str(2),
-                                                 line.gettoken_str(3),line.gettoken_str(4));
-
+      SCRIPT_MSG(_T("ExecShell: %") NPRIs _T(": \"%") NPRIs _T("\" \"%") NPRIs _T("\" %") NPRIs _T("\n"),verb,file,params,line.gettoken_str(4));
       DefineInnerLangString(NLF_EXEC_SHELL);
     }
     return add_entry(&ent);
