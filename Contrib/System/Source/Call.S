@@ -462,7 +462,7 @@ stack_expand_done:
   cmp         eax,0
   jle         params_loop_done
 
-  ;# Save number of paramters on stack
+  ;# Save number of parameters on stack
   push        eax
 
   ;# Get offset for element Params of SystemProc structure
@@ -479,9 +479,9 @@ stack_expand_done:
   mul         ecx
   add         ebx,eax
 
-  ;# Save offset of last paramter on stack
+  ;# Save offset of last parameter on stack
   push        ebx
-  ;# Save number of paramters on stack
+  ;# Save number of parameters on stack
   push        ecx
 
   ;# Size offset of parameter
@@ -657,7 +657,7 @@ stack_restore_done:
   pop         esi
   ;# eax = offset of current worked on parameter
   pop         eax
-  ;# ecx = n-th paramter
+  ;# ecx = n-th parameter
   pop         ecx
 
 temp_stack_loop:
@@ -681,7 +681,7 @@ real_stack_cleanup:
   pop         esi
   ;# eax = offset of current worked on parameter
   pop         eax
-  ;# ecx = Number of paramters
+  ;# ecx = Number of parameters
   pop         ecx
 
 real_stack_loop:

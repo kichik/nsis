@@ -4,7 +4,7 @@ MultiUser.nsh
 
 Installer configuration for multi-user Windows environments
 
-Copyright 2008-2013 Joost Verburg
+Copyright 2008-2014 Joost Verburg
 
 */
 

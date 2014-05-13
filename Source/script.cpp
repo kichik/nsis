@@ -3,7 +3,7 @@
  * 
  * This file is a part of NSIS.
  * 
- * Copyright (C) 1999-2013 Nullsoft and Contributors
+ * Copyright (C) 1999-2014 Nullsoft and Contributors
  * 
  * Licensed under the zlib/libpng license (the "License");
  * you may not use this file except in compliance with the License.
@@ -1009,7 +1009,7 @@ l_errwcconv:
   char*lichdr=((char*)ldata) - cbcu;
   *((char*)lichdr)='X';
   if (cbcu > 1) *((WORD*)lichdr)='X';
-  //BUGBUG: No room: if (cbcu > 2) *((UINT32*)lichdr)='X';
+  //BUGBUG: No room, cannot support UTF-32: if (cbcu > 2) *((UINT32*)lichdr)='X';
   const bool canOptRet = (char*)data == lichdr;
   wchar_t*wcdata=DupWCFromBytes(lichdr,cbcu+cbFileData,srccp|(canOptRet?DWCFBF_ALLOWOPTIMIZEDRETURN:0));
   if (!wcdata) goto l_errwcconv;
