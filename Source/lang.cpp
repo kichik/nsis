@@ -820,7 +820,7 @@ int CEXEBuild::GenerateLangTables() {
     }
   }
 
-  int orig_uninstall_mode = uninstall_mode;
+  const int orig_uninstall_mode = uninstall_mode;
 
   set_uninstall_mode(0);
   if (GenerateLangTable(lt, num_lang_tables) != PS_OK)
@@ -926,6 +926,12 @@ void CEXEBuild::FillLanguageTable(LanguageTable *table) {
   }
 }
 
+void TrimTrailingNewlines(TCHAR *s) {
+    size_t cch = _tcslen(s);
+    while (s[cch-1] == _T('\n') || s[cch-1] == _T('\r'))
+      s[cch-1] = 0, --cch;
+}
+
 static UINT GetNextNLFLine(NStreamLineReader&lr, TCHAR*Buf, UINT cchBuf) {
   for (;;) {
     UINT err = lr.ReadLine(Buf, cchBuf);
@@ -1019,11 +1025,7 @@ l_readerr:
   // Get font
   if (!GetNextNLFLine(lr, buf, NSIS_MAX_STRLEN, errlr)) goto l_readerr;
   if (!nlf->m_szFont) {
-    temp=_tcslen(buf);
-    while (buf[temp-1] == _T('\n') || buf[temp-1] == _T('\r')) {
-      buf[temp-1] = 0;
-      temp--;
-    }
+    TrimTrailingNewlines(buf);
     if (buf[0] != _T('-') || buf[1] != 0) {
       nlf->m_szFont = (TCHAR*)malloc((_tcslen(buf)+1)*sizeof(TCHAR));
       _tcscpy(nlf->m_szFont, buf);
@@ -1041,6 +1043,7 @@ l_readerr:
   bool isnlfdataucp = false; // Unicode-only language?
   nlf->m_uCodePage = CP_ACP;
   if (!GetNextNLFLine(lr, buf, NSIS_MAX_STRLEN, errlr)) goto l_readerr;
+  TrimTrailingNewlines(buf);
   if (buf[0] != _T('-') || buf[1] != 0) {
     nlf->m_uCodePage = _ttoi(buf);
     isnlfdataucp = NStreamEncoding::IsUnicodeCodepage(nlf->m_uCodePage);
@@ -1048,6 +1051,10 @@ l_readerr:
     {
       ERROR_MSG(_T("Error: Unicode-only language files must use codepage 1200!\n"));
       return 0;
+    }
+    if ((unsigned)nlf->m_uCodePage <= 1 && !lr.IsUnicode()) // Warn if someone uses a system specific codepage
+    {
+      warning_fl(_T("%") NPRIs _T(" language file uses the system default codepage!"), nlf->m_szName);
     }
     if (CP_ACP != nlf->m_uCodePage && !isnlfdataucp && !IsValidCodePage(nlf->m_uCodePage))
     {
@@ -1062,17 +1069,19 @@ l_readerr:
     warning_fl(_T("%") NPRIs _T(" Unicode language file is not UTF8SIG."), nlf->m_szName);
   }
 
+#ifdef _UNICODE
   if (!lr.IsUnicode())
   {
     if (nlf->m_szFont)
     {
-      // Convert font name now that we know the codepage: ACP > NLF CP > TCHAR.
+      // Convert font name now that we know the codepage
       TCHAR* oldfont = nlf->m_szFont;
-      nlf->m_szFont = _tcsdup(CtoTString2(TtoCString(oldfont), nlf->m_uCodePage));
+      nlf->m_szFont = _tcsdup(CtoTString2(TtoCString(oldfont), nlf->m_uCodePage)); // BUGBUG: Depends on lossless ACP -> TCHAR -> NLF CP -> TCHAR conversion!
       free(oldfont);
     }
+    lr.StreamEncoding().SetCodepage(nlf->m_uCodePage); // Read the rest of this NLF file with the correct MBCS > TCHAR conversion
   }
-
+#endif
 
   // Get RTL setting
   if (!GetNextNLFLine(lr, buf, NSIS_MAX_STRLEN, errlr)) goto l_readerr;
@@ -1130,7 +1139,7 @@ l_readerr:
       case NLF_UNINST_TEXT:
         if (nlf_version >= 6) break;
         nlf->m_szStrings[i] = 0;
-        continue;
+        continue; // This applies to the for loop and not this switch!
     }
 
     errlr = GetNextNLFLine(lr, buf, NSIS_MAX_STRLEN);
@@ -1141,6 +1150,7 @@ l_readerr:
     if (NStream::OK != errlr) goto l_readerr;
     
     temp=_tcslen(buf);
+    // Not using TrimTrailingNewlines because we need temp to be correct for the quote trimming
     while (buf[temp-1] == _T('\n') || buf[temp-1] == _T('\r')) {
       buf[--temp] = 0;
     }
@@ -1176,12 +1186,6 @@ l_readerr:
       else *out = *in;
     }
     *out = 0;
-    if (!lr.IsUnicode())
-    {
-        TCHAR* oldstr = nlf->m_szStrings[i];
-        nlf->m_szStrings[i] = _tcsdup(CtoTString2(TtoCString(oldstr),table->nlf.m_uCodePage));
-        free(oldstr);
-    }
   }
 
   nlf->m_bLoaded = true;
