@@ -247,7 +247,7 @@ EXTERN_C void NSISWinMainNOCRT()
       CreateDirectory(state_temp_dir,NULL);
       SetCurrentDirectory(state_temp_dir);
 
-      if (!state_install_directory[0])
+      if (!(*state_install_directory))
         mystrcpy(state_install_directory,state_exe_directory);
 
       mystrcpy(g_usrvars[0], realcmds);
@@ -280,7 +280,7 @@ EXTERN_C void NSISWinMainNOCRT()
             }
           }
         }
-        g_usrvars[1][0]++;
+        (*(((NSIS_STRING *)g_usrvars)[1]))++;
       }
 
 #ifdef NSIS_SUPPORT_MOVEONREBOOT

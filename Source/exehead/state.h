@@ -28,18 +28,18 @@ extern NSIS_STRING g_usrvarssection[1];
 #define g_usrvars g_usrvarssection
 #endif
 
-#define state_command_line        g_usrvars[20]
-#define state_install_directory   g_usrvars[21]
-#define state_output_directory    g_usrvars[22]
-#define state_exe_directory       g_usrvars[23]
-#define state_language            g_usrvars[24] 
-#define state_temp_dir            g_usrvars[25]
+#define state_command_line        (((NSIS_STRING *) g_usrvars)[20])
+#define state_install_directory   (((NSIS_STRING *) g_usrvars)[21])
+#define state_output_directory    (((NSIS_STRING *) g_usrvars)[22])
+#define state_exe_directory       (((NSIS_STRING *) g_usrvars)[23])
+#define state_language            (((NSIS_STRING *) g_usrvars)[24])
+#define state_temp_dir            (((NSIS_STRING *) g_usrvars)[25])
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
-#  define state_plugins_dir       g_usrvars[26]
+#  define state_plugins_dir       (((NSIS_STRING *) g_usrvars)[26])
 #endif
-#define state_exe_path            g_usrvars[27]
-#define state_exe_file            g_usrvars[28]
-#define state_click_next          g_usrvars[30]
+#define state_exe_path            (((NSIS_STRING *) g_usrvars)[27])
+#define state_exe_file            (((NSIS_STRING *) g_usrvars)[28])
+#define state_click_next          (((NSIS_STRING *) g_usrvars)[30])
 
 extern TCHAR g_caption[NSIS_MAX_STRLEN*2];
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
