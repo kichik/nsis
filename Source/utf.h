@@ -65,12 +65,13 @@ inline bool UTF8_GetTrailCount(unsigned char chFirst, unsigned char &cb)
         if (0xF8 == (0xF8 & chFirst))
         {
           ++cb;
-          if (0xFC == (0xFE & chFirst)) ++cb; else return false;
+          if (0xFC == (0xFE & chFirst)) ++cb; else return 0xFC >= (0xFE & chFirst);
         }
       }
     }
+    return true;
   }
-  return true;
+  return (signed char)chFirst >= 0;
 }
 
 inline UINT InlineStrLenUTF16(const void*str)
