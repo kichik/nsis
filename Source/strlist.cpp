@@ -18,9 +18,7 @@
 
 #include "strlist.h"
 #include "utf.h"
-#ifndef NDEBUG
 #include "util.h" // For PrintColorFmtMsg_ERR
-#endif
 
 #ifdef _UNICODE
 char* convert_processed_string_to_ansi(char *out, const TCHAR *in, WORD codepage); // defined in build.cpp
@@ -300,36 +298,35 @@ DefineList::~DefineList()
   struct define *s=(struct define*) m_gr.get();
   int num=m_gr.getlen()/sizeof(struct define);
 
-  for (int i=0; i<num; i++) {
-    free(s[i].value);
-  }
+  for (int i=0; i<num; i++) free(s[i].value);
 }
 
-int DefineList::add(const TCHAR *name, const TCHAR *value/*=_T("")*/)
+int DefineList::addn(const TCHAR *name, size_t maxvallen, const TCHAR *value)
 {
   int pos=SortedStringList<struct define>::add(name);
-  if (pos == -1)
-  {
-    return 1;
-  }
+  if (pos == -1) return 1;
 
+  size_t cbVal = ++maxvallen * sizeof(TCHAR);
   TCHAR **newvalue=&(((struct define*) m_gr.get())[pos].value);
-  size_t size_in_bytes = (_tcslen(value) + 1) * sizeof(TCHAR);
 
-  *newvalue=(TCHAR*)malloc(size_in_bytes);
-
+  *newvalue = (TCHAR*)malloc(cbVal);
   if (!(*newvalue))
   {
     extern int g_display_errors;
     extern void quit();
     if (g_display_errors)
     {
-      PrintColorFmtMsg_ERR(_T("\nInternal compiler error #12345: DefineList malloc(%lu) failed.\n"), (unsigned long) size_in_bytes);
+      PrintColorFmtMsg_ERR(_T("\nInternal compiler error #12345: DefineList malloc(%lu) failed.\n"), BUGBUG64TRUNCATE(unsigned long,cbVal));
     }
     quit();
   }
-  _tcscpy(*newvalue,value);
+  my_strncpy(*newvalue, value, maxvallen);
   return 0;
+}
+
+int DefineList::add(const TCHAR *name, const TCHAR *value/*=_T("")*/)
+{
+  return addn(name, _tcslen(value), value);
 }
 
 void DefineList::set(const TCHAR *name, const TCHAR *value/*=_T("")*/)

@@ -3470,13 +3470,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           int i;
           for (i=0;i<list->getnum(); i ++)
           {
-            TCHAR *def=list->getname(i);
-            TCHAR *val=list->getvalue(i);
-            if (def && val)
-            {
-              if (definedlist.find(def)) definedlist.del(def);
-              definedlist.add(def,val);
-            }
+            TCHAR *def=list->getname(i), *val=list->getvalue(i);
+            if (def && val) definedlist.set(def,val);
           }
         }
         delete list;
@@ -6791,6 +6786,7 @@ int CEXEBuild::do_add_file_create_dir(const tstring& local_dir, const tstring& d
 
 DefineList *CEXEBuild::searchParseString(const TCHAR *source_string, LineParser&line, int parmOffs, bool ignCase, bool noErrors, UINT*failParam)
 {
+  const bool allowEmptyFirstTok = true;
   if (failParam) *failParam = 0;
   DefineList *ret = NULL;
   const TCHAR *defout = 0, *src_start = 0, *tok;
@@ -6799,7 +6795,7 @@ DefineList *CEXEBuild::searchParseString(const TCHAR *source_string, LineParser&
   {
     tok = line.gettoken_str(parmOffs++);
     const bool lasttoken = parmOffs > line.getnumtokens();
-    if (!tok || !*tok)
+    if (!*tok)
       tok = 0, maxlen = -1; // No more tokens to search for, save the rest of the string
     else
     {
@@ -6813,17 +6809,10 @@ DefineList *CEXEBuild::searchParseString(const TCHAR *source_string, LineParser&
       if (maxlen < 0)
         ret->add(defout,src_start);
       else
-      {
-        TCHAR *p = _tcsdup(src_start);
-        if (p)
-        {
-          p[maxlen] = 0;
-          ret->add(defout,p);
-          free(p);
-        }
-      }
+        ret->addn(defout,maxlen,src_start);
     }
-    if (!*source_string || (!tok && !lasttoken)) // We did not find the requested token!
+    if (!tok && lasttoken) break;
+    if (!*source_string || (allowEmptyFirstTok ? false : !tok)) // We did not find the requested token!
     {
       if (failParam) *failParam = ret ? ret->getnum() : 0;
       if (noErrors) break; // Caller is OK with a incomplete list of matched strings
@@ -6832,7 +6821,6 @@ DefineList *CEXEBuild::searchParseString(const TCHAR *source_string, LineParser&
       delete ret;
       return NULL;
     }
-    if (maxlen < 0) break;
     defout = line.gettoken_str(parmOffs++), src_start = source_string += toklen;
   }
   return ret;

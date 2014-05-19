@@ -848,7 +848,7 @@ static void CreatePlatformStrfmt(const TCHAR *templ, TCHAR *out) {
     if (*out == L'%' && *templ == L's')
     {
       out++, templ++;
-      unsigned int cch = my_strncpy(out, NPRIs, -1);
+      size_t cch = my_strncpy(out, NPRIs, -1);
       out += --cch; // --cch because for loop does out++
     }
   }

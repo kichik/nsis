@@ -476,6 +476,7 @@ class DefineList : public SortedStringList<struct define>
      * general program exit with error logging.
      */
     int add(const TCHAR *name, const TCHAR *value=_T(""));
+    int addn(const TCHAR *name, size_t maxvallen, const TCHAR *value); // maxvallen does not include \0
     void set(const TCHAR *name, const TCHAR *value=_T(""));
 
 	 /**
