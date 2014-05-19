@@ -723,8 +723,11 @@ void CEXEBuild::ps_addtoline(const TCHAR *str, GrowBuf &linedata, StringList &hi
               if (t)
               {
                 UINT32 codpts[]={utf32,UNICODE_REPLACEMENT_CHARACTER,'?'};
-                for(UINT i=0; i < COUNTOF(codpts); ++i)
-                  if (WCFromCodePoint(dyndefbuf,COUNTOF(dyndefbuf),codpts[i])) break;
+                for(size_t i=0, cch; i < COUNTOF(codpts); ++i)
+                {
+                  cch = WCFromCodePoint(dyndefbuf,COUNTOF(dyndefbuf),codpts[i]);
+                  if (cch) { dyndefbuf[cch] = _T('\0'); break; }
+                }
                 t=dyndefbuf;
               }
             }

@@ -379,18 +379,25 @@ PLUGINFUNCTION(Call)
 PLUGINFUNCTIONSHORT(Int64Op)
 {
     __int64 i1, i2 = 0, i3, i4;
-    TCHAR *op, *o1, *o2;
-    TCHAR buf[128];
+    TCHAR *op;
+#ifndef _WIN64
+    TCHAR buf[25], *o1, *o2;
+#endif
 
-    // Get strings
-    o1 = system_popstring(); op = system_popstring(); 
-    i1 = myatoi64(o1); // convert first arg to int64
+    // Get parameters: <num1> <op> [num2]
+#ifdef _WIN64
+    i1 = system_popintptr();
+#else
+    o1 = system_popstring(), i1 = myatoi64(o1);
+#endif
+    op = system_popstring();
     if ((*op != _T('~')) && (*op != _T('!')))
     {
-        // get second arg, convert it, free it
-        o2 = system_popstring();
-        i2 = myatoi64(o2); 
-        GlobalFree(o2);
+#ifdef _WIN64
+        i2 = system_popintptr();
+#else
+        o2 = system_popstring(), i2 = myatoi64(o2), GlobalFree(o2);
+#endif
     }
 
     // operation
@@ -418,9 +425,12 @@ PLUGINFUNCTIONSHORT(Int64Op)
     }
     
     // Output and freedom
-    myitoa64(i1, buf);
-    system_pushstring(buf);
-    GlobalFree(o1); GlobalFree(op);
+#ifdef _WIN64
+    system_pushintptr(i1);
+#else
+    myitoa64(i1, buf), system_pushstring(buf), GlobalFree(o1);
+#endif
+    GlobalFree(op);
 } PLUGINFUNCTIONEND
 
 __int64 GetIntFromString(TCHAR **p)

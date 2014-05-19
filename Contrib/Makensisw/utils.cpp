@@ -268,12 +268,9 @@ void CompileNSISScript() {
     TCHAR *symbols = BuildSymbols();
     TCHAR compressor[40];
 
-    if(lstrlen(g_sdata.compressor_name)) {
+    compressor[0] = _T('\0');
+    if(*g_sdata.compressor_name)
       wsprintf(compressor,_T("/X\"SetCompressor /FINAL %s\""),g_sdata.compressor_name);
-    }
-    else {
-      lstrcpy(compressor,_T(""));
-    }
 
     TCHAR *args = (TCHAR *) GlobalLock(g_sdata.script_cmd_args);
 

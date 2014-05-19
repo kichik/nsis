@@ -320,14 +320,14 @@ end:
     BOOL (WINAPI *OPT)(HANDLE, DWORD,PHANDLE);
     BOOL (WINAPI *LPV)(LPCTSTR,LPCTSTR,PLUID);
     BOOL (WINAPI *ATP)(HANDLE,BOOL,PTOKEN_PRIVILEGES,DWORD,PTOKEN_PRIVILEGES,PDWORD);
-    #ifndef _WIN64
+    #ifdef _WIN64
+    OPT=OpenProcessToken, LPV=LookupPrivilegeValue, ATP=AdjustTokenPrivileges;
+    #else
     OPT=myGetProcAddress(MGA_OpenProcessToken);
     LPV=myGetProcAddress(MGA_LookupPrivilegeValue);
     ATP=myGetProcAddress(MGA_AdjustTokenPrivileges);
-    #else
-    OPT=OpenProcessToken, LPV=LookupPrivilegeValue, ATP=AdjustTokenPrivileges;
-    #endif
     if (OPT && LPV && ATP)
+    #endif
     {
       HANDLE hToken;
       TOKEN_PRIVILEGES tkp;

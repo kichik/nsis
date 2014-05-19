@@ -457,6 +457,7 @@ BOOL NSISCALL myReadFile(HANDLE h, LPVOID buf, DWORD cb)
 }
 
 #ifdef NSIS_SUPPORT_MOVEONREBOOT
+#ifndef _WIN64
 /** Modifies the wininit.ini file to rename / delete a file.
  *
  * @param prevName The previous / current name of the file.
@@ -555,6 +556,7 @@ void RenameViaWininit(const TCHAR* prevName, const TCHAR* newName)
     CloseHandle(hfile);
   }
 }
+#endif
 
 /**
  * MoveFileOnReboot tries to move a file by the name of pszExisting to the
@@ -577,11 +579,12 @@ void NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
   {
     fOk=mfea(pszExisting, pszNew, MOVEFILE_DELAY_UNTIL_REBOOT|MOVEFILE_REPLACE_EXISTING);
   }
-  
-  if (!fOk && sizeof(void*) <= 4)
+#ifndef _WIN64
+  if (!fOk)
   {
     RenameViaWininit(pszExisting, pszNew);
   }
+#endif
 
 #ifdef NSIS_SUPPORT_REBOOT
   g_exec_flags.exec_reboot++;
@@ -610,7 +613,7 @@ void NSISCALL myRegGetStr(HKEY root, const TCHAR *sub, const TCHAR *name, TCHAR 
 void NSISCALL iptrtostr(TCHAR *s, INT_PTR d)
 {
 #ifdef _WIN64
-  static const TCHAR c[] = _T("%I64d"); 
+  static const TCHAR c[] = _T("%Id"); 
 #else
   static const TCHAR c[] = _T("%d");
 #endif

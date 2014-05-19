@@ -58,7 +58,7 @@ typedef wchar_t TCHAR, _TUCHAR;
 #define _tprintf    wprintf
 #define _vftprintf  vfwprintf
 #define _vsntprintf _vsnwprintf
-#if defined(_MSC_VER) && (_MSC_VER<=1310)
+#if defined(_MSC_VER) && (_MSC_VER<=1310||_MSC_FULL_VER<=140040310)
 #	define _vstprintf  vswprintf
 #else
 #	define _vstprintf  _vswprintf
@@ -242,10 +242,11 @@ typedef unsigned char   _TUCHAR;
 
 #endif
 
-// is functions (the same in Unicode / ANSI)
-#ifndef _istgraph
-#define _istgraph   isgraph
-#endif
+// is functions (the same in Unicode / ANSI on MinGW? MSVC does not agree!)
 #ifndef _istascii
-#define _istascii   __isascii
+#if defined(_MSC_VER) && defined(_UNICODE)
+#define _istascii iswascii
+#else
+#define _istascii __isascii
+#endif
 #endif

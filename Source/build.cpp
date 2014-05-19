@@ -2316,7 +2316,7 @@ void CEXEBuild::AddStandardStrings()
   }
 #endif//NSIS_CONFIG_UNINSTALL_SUPPORT
 #ifdef NSIS_SUPPORT_MOVEONREBOOT
-  cur_header->str_wininit = add_asciistring(_T("$WINDIR\\wininit.ini"));
+  cur_header->str_wininit = is_target_64bit() ? 0 : add_asciistring(_T("$WINDIR\\wininit.ini"));
 #endif//NSIS_SUPPORT_MOVEONREBOOT
 }
 
@@ -2816,7 +2816,7 @@ int CEXEBuild::write_output(void)
 
   if (db_opt_save)
   {
-    UINT32 total_out_size_estimate=
+    size_t total_out_size_estimate=
       m_exehead_size+sizeof(fh)+build_datablock.getlen()+(build_crcchk?sizeof(crc32_t):0);
     int pc=(int)((db_opt_save*1000)/(db_opt_save+total_out_size_estimate));
     FriendlySize fs(db_opt_save);
