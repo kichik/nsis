@@ -67,21 +67,13 @@ double my_wtof(const wchar_t *str)
   return atof(buf);
 }
 
-unsigned int my_strncpy(TCHAR*Dest, const TCHAR*Src, unsigned int cchMax)
+size_t my_strncpy(TCHAR*Dest, const TCHAR*Src, size_t cchMax)
 {
   // Dest and Src must be valid, Dest is always \0 terminated.
-  // Returns number of TCHARs copied to Dest; min(strlen(Src),cchMax-1).
-  unsigned int cch = 0;
-  if (cchMax)
-  {
-    for(;--cchMax;)
-    {
-      TCHAR ch = Src[cch];
-      if (!ch) break;
-      Dest[cch++] = ch;
-    }
-    Dest[cch] = _T('\0');
-  }
+  // Returns number of TCHARs copied to Dest (not counting \0); min(strlen(Src),cchMax-1).
+  size_t cch = 0;
+  if (cchMax) for (TCHAR c; --cchMax;) if (!(c = Src[cch])) break; else Dest[cch++] = c;
+  Dest[cch] = _T('\0');
   return cch;
 }
 

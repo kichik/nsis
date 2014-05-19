@@ -33,7 +33,7 @@
 #include <stdarg.h>
 
 extern double my_wtof(const wchar_t *str);
-extern unsigned int my_strncpy(TCHAR*Dest, const TCHAR*Src, unsigned int cchMax);
+extern size_t my_strncpy(TCHAR*Dest, const TCHAR*Src, size_t cchMax);
 size_t my_strftime(TCHAR *s, size_t max, const TCHAR  *fmt, const struct tm *tm);
 
 // Adds the bitmap in filename using resource editor re as id id.

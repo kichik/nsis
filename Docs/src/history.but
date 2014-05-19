@@ -6,6 +6,10 @@ Released on ?, 2014
 
 \S1{v3.0b1-cl} Changelog
 
+\S2{} Minor Changes
+
+\b Fixed POSIX !searchparse bug (\W{http://sf.net/p/nsis/patches/251}{patch #251})
+
 \S2{} Translations
 
 \b Added Armenian (Hrant Ohanyan)
