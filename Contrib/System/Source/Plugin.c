@@ -7,6 +7,8 @@
 
 HWND g_hwndParent;
 
+#define isvalidnsisvarindex(varnum) ( ((unsigned int)(varnum)) < (__INST_LAST) )
+
 TCHAR *AllocString()
 {
     return (TCHAR*) GlobalAlloc(GPTR,g_stringsize*sizeof(TCHAR));
@@ -46,14 +48,14 @@ TCHAR *system_pushstring(TCHAR *str)
 
 TCHAR *system_getuservariable(int varnum)
 {
-        if (varnum < 0 || varnum >= __INST_LAST) return AllocString();
+        if (!isvalidnsisvarindex(varnum)) return AllocString();
         return AllocStr(g_variables+varnum*g_stringsize);
 }
 
 TCHAR *system_setuservariable(int varnum, TCHAR *var)
 {
-        if (var != NULL && varnum >= 0 && varnum < __INST_LAST) {
-                lstrcpy (g_variables + varnum*g_stringsize, var);
+        if (var && isvalidnsisvarindex(varnum)) {
+                lstrcpy(g_variables + varnum*g_stringsize, var);
         }
         return var;
 }

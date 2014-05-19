@@ -83,7 +83,7 @@ typedef HANDLE HMODULE;
 typedef unsigned long HKEY;
 // some gdi
 typedef DWORD COLORREF;
-typedef UINT32 HBRUSH;
+typedef HANDLE HBRUSH;
 // bool
 #  define FALSE 0
 #  define TRUE 1

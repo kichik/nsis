@@ -8,6 +8,8 @@
 #define COUNTOF(a) (sizeof(a)/sizeof(a[0]))
 #endif
 
+#define isvalidnsisvarindex(varnum) ( ((unsigned int)(varnum)) < (__INST_LAST) )
+
 unsigned int g_stringsize;
 stack_t **g_stacktop;
 TCHAR *g_variables;
@@ -48,13 +50,13 @@ void NSISCALL pushstring(const TCHAR *str)
 
 TCHAR* NSISCALL getuservariable(const int varnum)
 {
-  if (varnum < 0 || varnum >= __INST_LAST) return NULL;
+  if (!isvalidnsisvarindex(varnum)) return NULL;
   return g_variables+varnum*g_stringsize;
 }
 
 void NSISCALL setuservariable(const int varnum, const TCHAR *var)
 {
-	if (var != NULL && varnum >= 0 && varnum < __INST_LAST) 
+	if (var && isvalidnsisvarindex(varnum)) 
 		lstrcpy(g_variables + varnum*g_stringsize, var);
 }
 
@@ -100,7 +102,7 @@ void NSISCALL GetUserVariableA(const int varnum, char* ansiStr)
 
 void NSISCALL SetUserVariableA(const int varnum, const char* ansiStr)
 {
-   if (ansiStr != NULL && varnum >= 0 && varnum < __INST_LAST)
+   if (ansiStr && isvalidnsisvarindex(varnum))
    {
       wchar_t* wideStr = g_variables + varnum * g_stringsize;
       MultiByteToWideChar(CP_ACP, 0, ansiStr, -1, wideStr, g_stringsize);
@@ -149,7 +151,7 @@ void NSISCALL GetUserVariableA(const int varnum, char* ansiStr)
 
 void NSISCALL SetUserVariableW(const int varnum, const wchar_t* wideStr)
 {
-   if (wideStr != NULL && varnum >= 0 && varnum < __INST_LAST)
+   if (wideStr && isvalidnsisvarindex(varnum))
    {
       char* ansiStr = g_variables + varnum * g_stringsize;
       WideCharToMultiByte(CP_ACP, 0, wideStr, -1, ansiStr, g_stringsize, NULL, NULL);

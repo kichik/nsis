@@ -265,6 +265,7 @@ HANDLE myOpenFile(const TCHAR *fn, DWORD da, DWORD cd)
   );
 }
 
+#ifndef _WIN64
 /** Modifies the wininit.ini file to rename / delete a file.
  *
  * @param prevName The previous / current name of the file.
@@ -364,6 +365,7 @@ void RenameViaWininit(const TCHAR* prevName, const TCHAR* newName)
     CloseHandle(hfile);
   }
 }
+#endif
 
 void DeleteFileOnReboot(TCHAR *pszFile)
 {
@@ -379,9 +381,10 @@ void DeleteFileOnReboot(TCHAR *pszFile)
       fOk=mfea(pszFile, NULL, MOVEFILE_DELAY_UNTIL_REBOOT);
     }
   }
-
+#ifndef _WIN64
   if (!fOk)
   {
     RenameViaWininit(pszFile, NULL);
   }
+#endif
 }

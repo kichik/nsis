@@ -236,16 +236,17 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
 
   LANGID (WINAPI *GUDUIL)();
 
-  #ifndef _WIN64
-  GUDUIL = myGetProcAddress(MGA_GetUserDefaultUILanguage);
-  #else
+#ifdef _WIN64
   GUDUIL = GetUserDefaultUILanguage;
-  #endif
+#else
+  GUDUIL = myGetProcAddress(MGA_GetUserDefaultUILanguage);
   if (GUDUIL)
+#endif
   {
     // Windows ME/2000+
     myitoa(state_language, GUDUIL());
   }
+#ifndef _WIN64
   else
   {
     static const TCHAR reg_9x_locale[]     = _T("Control Panel\\Desktop\\ResourceLocale");
@@ -270,6 +271,7 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
 
     mystrcat(state_language, g_tmp);
   }
+#endif
 
   // set default language
   set_language();

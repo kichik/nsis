@@ -379,7 +379,7 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
                 LogMessage(g_sdata.hwnd, g_sdata.compressor_stats);
               }
               DeleteFile(temp_file_name);
-              lstrcpy(g_sdata.compressor_stats,_T(""));
+              g_sdata.compressor_stats[0] = _T('\0');
             }
             else {
               g_sdata.compressor_name = compressor_names[this_compressor+1];
@@ -545,7 +545,7 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
             l.lpstrFileTitle = NULL;
             l.lpstrInitialDir = NULL;
             l.Flags = OFN_HIDEREADONLY|OFN_EXPLORER|OFN_PATHMUSTEXIST|OFN_FILEMUSTEXIST;
-            lstrcpy(buf,_T(""));
+            buf[0] = _T('\0');
             if (GetOpenFileName(&l)) {
               SetScript(buf);
               PushMRUFile(g_sdata.script);
@@ -1176,7 +1176,7 @@ INT_PTR CALLBACK SymbolSetProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lPa
           hwndEdit = FindWindowEx(GetDlgItem(hwndDlg, IDC_NAMES), 0, 0, 0); // Handle of list
           hwndEdit = FindWindowEx(GetDlgItem(hwndDlg, IDC_NAMES), hwndEdit, 0, 0); //Handle of edit box
           SendMessage(hwndEdit, WM_GETTEXT, (WPARAM)SYMBOL_SET_NAME_MAXLEN+1, (LPARAM)name);
-          if(!lstrlen(name)) {
+          if(!*name) {
             if(g_symbol_set_mode == 1) { //Load
               MessageBox(hwndDlg,LOAD_SYMBOL_SET_MESSAGE,LOAD_SYMBOL_SET_DLG_NAME,MB_OK|MB_ICONEXCLAMATION);
             }

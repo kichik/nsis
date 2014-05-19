@@ -160,7 +160,7 @@ unsigned int ExeHeadStringList::find(const void *ptr, unsigned int cchF, WORD co
     else 
       delete[] bufMB;
   }
-  return retval;
+  return BUGBUG64TRUNCATE(unsigned int, retval);
 }
 
 int ExeHeadStringList::add(const TCHAR *str, WORD codepage, bool processed)
