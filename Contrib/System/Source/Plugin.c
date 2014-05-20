@@ -21,18 +21,14 @@ TCHAR *AllocStr(TCHAR *str)
 
 TCHAR* system_popstring()
 {
-        TCHAR *str;
-        stack_t *th;
+    stack_t *pSt;
+    TCHAR *src, *dst, *retval;
 
-        if (!g_stacktop || !*g_stacktop) return NULL;
-        th=(*g_stacktop);
+    if (!g_stacktop || !*g_stacktop) return NULL;
+    pSt = *g_stacktop, *g_stacktop = pSt->next, src = pSt->text, dst = (TCHAR*)pSt;
 
-        str = AllocString();
-        lstrcpy(str,th->text);
-
-        *g_stacktop = th->next;
-        GlobalFree((HGLOBAL)th);
-        return str;
+    // We don't have to call AllocString+lstrcpy+GlobalFree if we convert the stack item to a string
+    for (retval = dst;;) if (!(*dst++ = *src++)) return retval;
 }
 
 TCHAR *system_pushstring(TCHAR *str)

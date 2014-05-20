@@ -164,6 +164,7 @@ PLUGINFUNCTION(Debug)
         CloseHandle(logfile);
         logfile = NULL;
     }
+    if (o1) GlobalFree(o1);
 } PLUGINFUNCTIONEND
 
 #else
