@@ -305,7 +305,7 @@ CEXEBuild::CEXEBuild() :
   bg_default_font.lfClipPrecision=CLIP_DEFAULT_PRECIS;
   bg_default_font.lfQuality=DEFAULT_QUALITY;
   bg_default_font.lfPitchAndFamily=DEFAULT_PITCH;
-  _tcsnccpy(bg_default_font.lfFaceName,_T("Times New Roman"),LF_FACESIZE);
+  my_strncpy(bg_default_font.lfFaceName,_T("Times New Roman"),LF_FACESIZE);
   memcpy(&bg_font,&bg_default_font,sizeof(LOGFONT));
 #endif
 
@@ -609,7 +609,7 @@ int CEXEBuild::preprocess_string(TCHAR *out, const TCHAR *in, WORD codepage/*=CP
 
             while (pUserVarName > p)
             {
-              if (m_ShellConstants.get((TCHAR*)p, BUGBUG64TRUNCATE(int, pUserVarName-p)) >= 0)
+              if (m_ShellConstants.get(p, BUGBUG64TRUNCATE(int, pUserVarName-p)) >= 0)
                 break; // Woops it's a shell constant
 
               // Jim Park: The following line could be a source of bugs for
@@ -620,7 +620,7 @@ int CEXEBuild::preprocess_string(TCHAR *out, const TCHAR *in, WORD codepage/*=CP
               // TCHAR varname[NSIS_MAX_STRLEN];
               // _tcsncpy(varname, p, pUserVarName-p);
               // int idxUserVar = m_UserVarNames.get(varname);
-              int idxUserVar = m_UserVarNames.get((TCHAR*)p, BUGBUG64TRUNCATE(int, pUserVarName-p));
+              int idxUserVar = m_UserVarNames.get(p, BUGBUG64TRUNCATE(int, pUserVarName-p));
               if (idxUserVar >= 0)
               {
                 // Well, using variables inside string formating doens't mean
@@ -709,8 +709,7 @@ int CEXEBuild::preprocess_string(TCHAR *out, const TCHAR *in, WORD codepage/*=CP
             else if ( *p == _T('{') )
               cBracket = _T('}');
 
-            _tcsnccpy(tbuf,p,63);
-            tbuf[63]=0;
+            my_strncpy(tbuf,p,COUNTOF(tbuf));
 
             if ( cBracket != 0 )
             {
@@ -2427,7 +2426,7 @@ int CEXEBuild::UpdatePEHeader()
 void CEXEBuild::set_default_output_filename(const tstring& filename)
 {
     if (build_output_filename[0] == 0)
-        _tcsnccpy(build_output_filename,filename.c_str(),1024-1);
+        my_strncpy(build_output_filename,filename.c_str(),COUNTOF(build_output_filename));
 }
 
 int CEXEBuild::check_write_output_errors() const

@@ -35,7 +35,7 @@ class ConstantsStringList : public SortedStringListND<struct constantstring>
     ConstantsStringList();
 
     int add(const TCHAR *name, int value1, int value2);
-    int get(TCHAR *name, int n_chars = -1);
+    int get(const TCHAR *name, int n_chars = -1);
     int getnum();
     int get_value1(int idx);
     int get_value2(int idx);
