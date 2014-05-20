@@ -718,6 +718,22 @@ tstring remove_file_extension(const tstring& path) {
   return get_string_prefix(path, _T("."));
 }
 
+static int PathGetDosDriveNumber(const TCHAR *p)
+{
+  // Note: Unlike PathGetDriveNumber(), we require a path separator after the colon.
+  if (p[0] && _T(':') == p[1] && IsAgnosticPathSeparator(p[2]))
+  {
+    const TCHAR loch = p[0]|32;
+    if (loch >= _T('a') && loch <= _T('z')) return loch - _T('a');
+  }
+  return -1;
+}
+bool IsWindowsPathRelative(const TCHAR *p)
+{
+  if (_T('\\') == p[0]) return _T('\\') != p[1]; // Current drive relative, not (unverified) UNC
+  return PathGetDosDriveNumber(p) < 0;
+}
+
 struct ToLower
 {
    TCHAR operator() (TCHAR c) const { return _totlower(c); }
