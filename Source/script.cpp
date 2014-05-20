@@ -4128,33 +4128,32 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return add_entry(&ent);
     case TOK_SETOUTPATH:
       {
-        const TCHAR *op=line.gettoken_str(1);
+        const TCHAR *op=line.gettoken_str(1), *cmdname=_T("SetOutPath");
         if (!_tcscmp(op,_T("-"))) op=_T("$INSTDIR");
-
-        SCRIPT_MSG(_T("SetOutPath: \"%") NPRIs _T("\"\n"),op);
+        SCRIPT_MSG(_T("%") NPRIs _T(": \"%") NPRIs _T("\"\n"),cmdname,op);
         ent.which=EW_CREATEDIR;
         ent.offsets[0]=add_string(op);
         ent.offsets[1]=1;
-
         DefineInnerLangString(NLF_OUTPUT_DIR);
       }
     return add_entry(&ent);
     case TOK_CREATEDIR:
       {
+        const TCHAR *cmdname=_T("CreateDirectory");
         TCHAR out_path[NSIS_MAX_STRLEN], *p=line.gettoken_str(1);
-        if (*p == _T('-')) out_path[0]=0;
+        bool badpath=IsWindowsPathRelative(p) && _T('$') != *p; // ExeHead will have to deal with expanded $variables...
+        if (badpath)
+          ERROR_MSG(_T("%") NPRIs _T(": Relative paths not supported\n"),cmdname);
         else
         {
-          if (p[0] == _T('\\') && p[1] != _T('\\')) p++;
           my_strncpy(out_path,p,COUNTOF(out_path));
           p=CharPrev(out_path,out_path+_tcslen(out_path));
-          if (_T('\\') == *p || _T('/') == *p) *p=0; // remove trailing slash
+          if (IsAgnosticPathSeparator(*p)) *p=0; // remove trailing slash
         }
-        if (!*out_path) PRINTHELP()
-        SCRIPT_MSG(_T("CreateDirectory: \"%") NPRIs _T("\"\n"),out_path);
+        if (badpath || !*out_path) PRINTHELP()
+        SCRIPT_MSG(_T("%") NPRIs _T(": \"%") NPRIs _T("\"\n"),cmdname,out_path);
         ent.which=EW_CREATEDIR;
         ent.offsets[0]=add_string(out_path);
-
         DefineInnerLangString(NLF_CREATE_DIR);
       }
     return add_entry(&ent);

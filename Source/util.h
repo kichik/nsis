@@ -47,11 +47,12 @@ tstring get_dir_name(const tstring& path);
 tstring get_file_name(const tstring& path);
 tstring get_executable_dir(const TCHAR *argv0);
 tstring remove_file_extension(const tstring& path);
-tstring lowercase(const tstring&);
+inline bool IsAgnosticPathSeparator(const TCHAR c) { return _T('\\') == c || _T('/') == c; }
+bool IsWindowsPathRelative(const TCHAR *p);
 
+tstring lowercase(const tstring&);
 tstring get_string_prefix(const tstring& str, const tstring& separator);
 tstring get_string_suffix(const tstring& str, const tstring& separator);
-
 void RawTStrToASCII(const TCHAR*in,char*out,UINT maxcch);
 size_t ExpandoStrFmtVaList(wchar_t*Stack, size_t cchStack, wchar_t**ppMalloc, const wchar_t*FmtStr, va_list Args);
 
