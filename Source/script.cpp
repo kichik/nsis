@@ -106,7 +106,7 @@ TCHAR *CEXEBuild::set_file_predefine(const TCHAR *filename)
   if(p == filename)
     _tcscpy(dir, _T("."));
   else
-    _tcsncpy(dir, filename, p-filename-1);
+    my_strncpy(dir, filename, p-filename+!0);
 #endif
   definedlist.add(_T("__FILEDIR__"),dir);
 
@@ -2277,7 +2277,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return PS_ERROR;
 #endif//NSIS_CONFIG_SILENT_SUPPORT
     case TOK_OUTFILE:
-      _tcsnccpy(build_output_filename,line.gettoken_str(1),1024-1);
+      my_strncpy(build_output_filename,line.gettoken_str(1),COUNTOF(build_output_filename));
       SCRIPT_MSG(_T("OutFile: \"%") NPRIs _T("\"\n"),build_output_filename);
     return PS_OK;
     case TOK_INSTDIR:
@@ -2451,24 +2451,19 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       LOGFONT newfont;
       newfont.lfHeight=40;
       newfont.lfWidth=0;
-      newfont.lfEscapement=0;
-      newfont.lfOrientation=0;
+      newfont.lfEscapement=0, newfont.lfOrientation=0;
       newfont.lfWeight=FW_NORMAL;
-      newfont.lfItalic=FALSE;
-      newfont.lfUnderline=FALSE;
-      newfont.lfStrikeOut=FALSE;
+      newfont.lfItalic=newfont.lfUnderline=newfont.lfStrikeOut=FALSE;
       newfont.lfCharSet=DEFAULT_CHARSET;
       newfont.lfOutPrecision=OUT_DEFAULT_PRECIS;
       newfont.lfClipPrecision=CLIP_DEFAULT_PRECIS;
       newfont.lfQuality=DEFAULT_QUALITY;
       newfont.lfPitchAndFamily=DEFAULT_PITCH;
-
-      _tcsnccpy(newfont.lfFaceName,line.gettoken_str(1),LF_FACESIZE);
+      my_strncpy(newfont.lfFaceName,line.gettoken_str(1),LF_FACESIZE);
 
       SCRIPT_MSG(_T("BGFont: \"%") NPRIs _T("\""),line.gettoken_str(1));
       {
-        bool height=false;
-        bool weight=false;
+        bool height=false, weight=false;
         for (int i = 2; i < line.getnumtokens(); i++) {
           TCHAR *tok=line.gettoken_str(i);
           if (tok[0]==_T('/')) {
@@ -2829,7 +2824,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       else
       {
         const TCHAR*facename = line.gettoken_str(1);
-        _tcsnccpy(build_font, facename, COUNTOF(build_font));
+        my_strncpy(build_font, facename, COUNTOF(build_font));
         build_font_size = line.gettoken_int(2);
 
         if (!failed) SCRIPT_MSG(_T("SetFont: \"%") NPRIs _T("\" %") NPRIs _T("\n"), facename, line.gettoken_str(2));
@@ -3169,8 +3164,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       {
         TCHAR* packname = line.gettoken_str(1);
         PATH_CONVERT(packname);
-        _tcsnccpy(build_packname,packname,COUNTOF(build_packname)-1);
-        _tcsnccpy(build_packcmd,line.gettoken_str(2),COUNTOF(build_packcmd)-1);
+        my_strncpy(build_packname,packname,COUNTOF(build_packname));
+        my_strncpy(build_packcmd,line.gettoken_str(2),COUNTOF(build_packcmd));
         SCRIPT_MSG(_T("!packhdr: filename=\"%") NPRIs _T("\", command=\"%") NPRIs _T("\"\n"),
           build_packname, build_packcmd);
       }
@@ -4146,15 +4141,14 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return add_entry(&ent);
     case TOK_CREATEDIR:
       {
-        TCHAR out_path[1024];
-        TCHAR *p=line.gettoken_str(1);
+        TCHAR out_path[NSIS_MAX_STRLEN], *p=line.gettoken_str(1);
         if (*p == _T('-')) out_path[0]=0;
         else
         {
           if (p[0] == _T('\\') && p[1] != _T('\\')) p++;
-          _tcsnccpy(out_path,p,1024-1);
-          if (*CharPrev(out_path,out_path+_tcslen(out_path))==_T('\\'))
-            *CharPrev(out_path,out_path+_tcslen(out_path))=0; // remove trailing slash
+          my_strncpy(out_path,p,COUNTOF(out_path));
+          p=CharPrev(out_path,out_path+_tcslen(out_path));
+          if (_T('\\') == *p || _T('/') == *p) *p=0; // remove trailing slash
         }
         if (!*out_path) PRINTHELP()
         SCRIPT_MSG(_T("CreateDirectory: \"%") NPRIs _T("\"\n"),out_path);

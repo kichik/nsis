@@ -75,8 +75,6 @@ typedef wchar_t TCHAR, _TUCHAR;
 #define _tcscpy     wcscpy
 #define _tcsdup     _wcsdup
 #define _tcslen     wcslen
-#define _tcsnccpy   wcsncpy
-#define _tcsncpy    wcsncpy
 #define _tcsrchr    wcsrchr
 #define _tcsstr     wcsstr
 #define _tcstok     wcstok
@@ -176,7 +174,6 @@ typedef unsigned char   _TUCHAR;
 #define _tcscpy     strcpy
 #define _tcsdup     _strdup
 #define _tcslen     strlen
-#define _tcsnccpy   strncpy
 #define _tcsrchr    strrchr
 #define _tcsstr     strstr
 #define _tcstok     strtok

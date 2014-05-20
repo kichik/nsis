@@ -40,7 +40,7 @@ int ConstantsStringList::add(const TCHAR *name, int value1, int value2)
   return temp;
 }
 
-int ConstantsStringList::get(TCHAR *name, int n_chars /*= -1*/)
+int ConstantsStringList::get(const TCHAR *name, int n_chars /*= -1*/)
 {
   int v=SortedStringListND<struct constantstring>::find(name, n_chars);
   if (v==-1) return -1;
