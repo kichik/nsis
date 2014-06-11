@@ -85,7 +85,7 @@ namespace MakensisAPI {
     QUERYHOST = WM_APP // QUERYHOST_e in wParam
   };
   enum QUERYHOST_e {
-    QH_OUTPUTCHARSET = 1 // return (wincodepage+1) or 0 for default
+    QH_OUTPUTCHARSET = 1 // return (wincodepage+1) or 0 for default (This encoding is used by stdout and the notify messages)
   };
 #endif
 }

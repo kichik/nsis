@@ -189,7 +189,7 @@ public:
   };
 
   NStreamEncoding() { Reset(); }
-  NStreamEncoding(WORD cp) { Reset();SetCodepage(cp); }
+  NStreamEncoding(WORD cp) { Reset(), SetCodepage(cp); }
   WORD GetCodepage() const { return m_cp; }
   void SetCodepage(WORD cp) { m_cp = cp; }
   void SafeSetCodepage(WORD cp)

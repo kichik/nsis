@@ -70,7 +70,11 @@ bool isSimpleChar(TCHAR ch)
 } // end of anonymous namespace
 
 namespace MakensisAPI {
-  const TCHAR* SigintEventNameFmt = _T("makensis win32 sigint event %u"); // %u is the notify HWND, this is to make sure we abort the correct instance
+#ifdef _WIN64
+  const TCHAR* SigintEventNameFmt = _T("makensis win32 sigint event %Iu"); // %u is the notify HWND, this is to make sure we abort the correct instance
+#else
+  const TCHAR* SigintEventNameFmt = _T("makensis win32 sigint event %u");
+#endif
   const TCHAR* SigintEventNameLegacy = _T("makensis win32 signint event"); // "sigNint" typo is part of the API now and cannot be changed
 }
 
@@ -3456,7 +3460,20 @@ void CEXEBuild::notify(MakensisAPI::notify_e code, const TCHAR *data) const
 #ifdef _WIN32
   if (notify_hwnd)
   {
-    COPYDATASTRUCT cds = {(DWORD)code, (UINT32)(_tcslen(data)+1)*sizeof(TCHAR), (void *) data};
+    DWORD cb = (DWORD) (_tcslen(data)+1) * sizeof(TCHAR);
+#ifdef _UNICODE
+    extern NStreamEncoding g_outputenc;
+    extern void quit();
+    CharEncConv cec;
+    if (!g_outputenc.IsUTF16LE())
+    {
+      size_t cbConv;
+      if (!cec.Initialize(g_outputenc.GetCodepage(), -1) || !(data = (const TCHAR*) cec.Convert(data, cb, &cbConv)))
+        PrintColorFmtMsg_ERR(_T("conversion failed!\n")), quit(); // Cannot use ERROR_MSG() here!
+      cb = (DWORD) (cbConv + NStreamEncoding::GetCodeUnitSize(g_outputenc.GetCodepage())); // cbConv does not include the \0.
+    }
+#endif
+    COPYDATASTRUCT cds = {(DWORD) code, cb, (void*) data};
     SendMessage(notify_hwnd, WM_COPYDATA, 0, (LPARAM)&cds);
   }
 #endif

@@ -31,7 +31,11 @@
 #include "update.h"
 
 namespace MakensisAPI {
+#ifdef _WIN64
+  const TCHAR* SigintEventNameFmt = _T("makensis win32 sigint event %Iu");
+#else
   const TCHAR* SigintEventNameFmt = _T("makensis win32 sigint event %u");
+#endif
   const TCHAR* SigintEventNameLegacy = _T("makensis win32 signint event");
 }
 
