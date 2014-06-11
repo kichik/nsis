@@ -39,6 +39,7 @@ using namespace std;
 bool g_dopause=false;
 int g_display_errors=1;
 FILE *g_output;
+NStreamEncoding g_outputenc;
 #ifdef _WIN32
 UINT g_wincon_orgoutcp;
 #ifdef _UNICODE
@@ -290,7 +291,7 @@ static inline int makensismain(int argc, TCHAR **argv)
 
   HWND hostnotifyhandle=0;
   const TCHAR*stdoutredirname=0;
-  NStreamEncoding inputenc, outputenc;
+  NStreamEncoding inputenc, &outputenc = g_outputenc;
   int argpos=0;
   bool in_files=false;
   bool do_cd=true;
@@ -299,6 +300,8 @@ static inline int makensismain(int argc, TCHAR **argv)
   bool noconfig=false;
 #ifdef _WIN32
   signed char outputbom=1;
+
+  assert(CP_ACP == outputenc.GetCodepage()); // Required by CEXEBuild::notify() char* legacy handling.
 #endif
 
   // Some parameters have to be parsed early so we can initialize stdout and the "host API".

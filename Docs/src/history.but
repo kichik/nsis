@@ -6,6 +6,10 @@ Released on ?, 2014
 
 \S1{v3.0b1-cl} Changelog
 
+\S2{} Major Changes
+
+\b MakeNSIS WM_COPYDATA messages now use the QH_OUTPUTCHARSET encoding with CP_ACP as the default for compatibility with old IDEs.
+
 \S2{} Minor Changes
 
 \b Fixed POSIX !searchparse bug (\W{http://sf.net/p/nsis/patches/251}{patch #251})
