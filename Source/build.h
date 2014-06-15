@@ -146,10 +146,12 @@ class CEXEBuild {
                             // C++ macro definitions such as _UNICODE.
     void define(const TCHAR *p, const TCHAR *v=_T("")); // to add a defined thing.
 
-    int display_errors;
-    int display_script;
-    int display_warnings;
-    int display_info;
+    int get_verbosity() const;
+    void set_verbosity(int lvl);
+    bool display_errors;
+    bool display_script;
+    bool display_warnings;
+    bool display_info;
 
     int linecnt;
     const TCHAR *curfilename;

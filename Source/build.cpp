@@ -109,15 +109,11 @@ CEXEBuild::CEXEBuild() :
     m_exehead(0),
     m_exehead_size(0)
 {
-  linecnt = 0;
-  curlinereader = 0;
-  curfilename = 0;
+  set_verbosity(3);
 
-  display_errors=1;
-  display_warnings=1;
-  display_info=1;
-  display_script=0;
-
+  curlinereader=0;
+  curfilename=0;
+  linecnt=0;
   cur_ifblock=NULL;
   last_line_had_slash=0;
   inside_comment=false;
@@ -3345,6 +3341,38 @@ bool IsStringASCII(const TCHAR* s)
   return true;
 }
 */
+
+int CEXEBuild::get_verbosity() const
+{
+  int v = 0;
+  if (display_errors)
+  {
+    v++;
+    if (display_warnings)
+    {
+      v++;
+      if (display_info)
+      {
+        v++;
+        if (display_script)
+        {
+          v++;
+        }
+      }
+    }
+  }
+  return v;
+}
+
+void CEXEBuild::set_verbosity(int lvl)
+{
+  display_errors = lvl > 0;
+  display_warnings = lvl > 1;
+  display_info = lvl > 2;
+  display_script = lvl > 3;
+  extern int g_display_errors;
+  g_display_errors = display_errors;
+}
 
 void CEXEBuild::warning(const TCHAR *s, ...)
 {
