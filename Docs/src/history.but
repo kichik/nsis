@@ -162,7 +162,7 @@ Released on May 19th, 2013
 
 \b The index of the changed section is stored in $0 during .onSelChange callbacks (\W{http://sourceforge.net/support/tracker.php?aid=1634936}{RFE #1634936})
 
-\b $\{U+1\}...$\{U+FFFFFFFF\} are treated as a Unicode characters unless there is already a define with that name (\W{http://sourceforge.net/support/tracker.php?aid=2084797}{RFE #2084797})
+\b $\{U+1\}...$\{U+10FFFF\} are treated as a Unicode character unless there is already a define with that name (\W{http://sourceforge.net/support/tracker.php?aid=2084797}{RFE #2084797})
 
 \S2{} Minor Changes
 
