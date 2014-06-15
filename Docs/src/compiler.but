@@ -219,7 +219,7 @@ NSIS version as a 32 bit number.
 \c   !error "NSIS 2.47 or higher is required to build this installer!"
 \c !endif
 
-\S1{preunicodecodepoint} $\{U+1\}...$\{U+FFFFFFFF\}
+\S1{preunicodecodepoint} $\{U+1\}...$\{U+10FFFF\}
 
 A Unicode (UCS-4) character.
 
