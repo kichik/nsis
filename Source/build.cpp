@@ -603,142 +603,126 @@ int CEXEBuild::preprocess_string(TCHAR *out, const TCHAR *in, WORD codepage/*=CP
       else
       {
         // starts with a $ but not $$.
-        { // block - why do we need this extra {?
-          bool bProceced=false;
-          if ( *p )
+        bool bProceced=false;
+        if ( *p )
+        {
+          const TCHAR *pUserVarName = p;
+          while (isSimpleChar(*pUserVarName))
+            pUserVarName++;
+
+          while (pUserVarName > p)
           {
-            const TCHAR *pUserVarName = p;
-            while (isSimpleChar(*pUserVarName))
-              pUserVarName++;
+            if (m_ShellConstants.get(p, BUGBUG64TRUNCATE(int, pUserVarName-p)) >= 0)
+              break; // Woops it's a shell constant
 
-            while (pUserVarName > p)
+            int idxUserVar = m_UserVarNames.get(p, BUGBUG64TRUNCATE(int, pUserVarName-p));
+            if (idxUserVar >= 0)
             {
-              if (m_ShellConstants.get(p, BUGBUG64TRUNCATE(int, pUserVarName-p)) >= 0)
-                break; // Woops it's a shell constant
-
-              // Jim Park: The following line could be a source of bugs for
-              // variables where one variable name is a prefix of another
-              // variable name.  For example, if you are searching for
-              // variable 'UserVar', you can get 'UserVariable' instead.
-              // Suggest that we do:
-              // TCHAR varname[NSIS_MAX_STRLEN];
-              // _tcsncpy(varname, p, pUserVarName-p);
-              // int idxUserVar = m_UserVarNames.get(varname);
-              int idxUserVar = m_UserVarNames.get(p, BUGBUG64TRUNCATE(int, pUserVarName-p));
-              if (idxUserVar >= 0)
-              {
-                // Well, using variables inside string formating doens't mean
-                // using the variable, beacuse it will be always an empty string
-                // which is also memory wasting
-                // So the line below must be commented !??
-                //m_UserVarNames.inc_reference(idxUserVar);
-                *out++ = (TCHAR) NS_VAR_CODE; // Named user variable;
-                WORD w = FIX_ENDIAN_INT16(CODE_SHORT(idxUserVar));
-                unsigned int w4 = sizeof(TCHAR) > 2 ? FIX_ENDIAN_INT32(CODE_SHORT(idxUserVar)) : w; // Maybe this is too much endian fixing?
-                if (sizeof(TCHAR) < 2) *((WORD*)out) = w, out += 2; else *out = (TCHAR) w4, out++;
-                p += pUserVarName-p; // zip past the user var string.
-                bProceced = true;
-                break;
-              }
-              pUserVarName--;
+              // Well, using variables inside string formating doens't mean
+              // using the variable, because it will be always an empty string
+              // which is also memory wasting
+              // So the line below must be commented !??
+              //m_UserVarNames.inc_reference(idxUserVar);
+              *out++ = (TCHAR) NS_VAR_CODE; // Named user variable;
+              WORD w = FIX_ENDIAN_INT16(CODE_SHORT(idxUserVar));
+              unsigned int w4 = sizeof(TCHAR) > 2 ? FIX_ENDIAN_INT32(CODE_SHORT(idxUserVar)) : w; // Maybe this is too much endian fixing?
+              if (sizeof(TCHAR) < 2) *((WORD*)out) = w, out += 2; else *out = (TCHAR) w4, out++;
+              p += pUserVarName-p; // zip past the user var string.
+              bProceced = true;
+              break;
             }
-          }// if ( *p )
-          if (!bProceced && *p)
+            pUserVarName--;
+          }
+        }// if ( *p )
+        if (!bProceced && *p)
+        {
+          const TCHAR *pShellConstName = p;
+          while (isSimpleChar(*pShellConstName))
+            pShellConstName++;
+
+          while (pShellConstName > p)
           {
-            const TCHAR *pShellConstName = p;
-            while (isSimpleChar(*pShellConstName))
-              pShellConstName++;
+            // Look for the identifier in the shell constants list of strings.
+            int idxConst = m_ShellConstants.get((TCHAR*)p, BUGBUG64TRUNCATE(int, pShellConstName - p));
 
-            while (pShellConstName > p)
+            // If found...
+            if (idxConst >= 0)
             {
-              // Look for the identifier in the shell constants list of strings.
-              int idxConst = m_ShellConstants.get((TCHAR*)p, BUGBUG64TRUNCATE(int, pShellConstName - p));
-
-              // If found...
-              if (idxConst >= 0)
-              {
-                init_shellconstantvalues();
-                int CSIDL_Value_current = m_ShellConstants.get_value1(idxConst);
-                int CSIDL_Value_all = m_ShellConstants.get_value2(idxConst);
-                *out++=(TCHAR)NS_SHELL_CODE; // Constant code identifier
+              init_shellconstantvalues();
+              int CSIDL_Value_current = m_ShellConstants.get_value1(idxConst);
+              int CSIDL_Value_all = m_ShellConstants.get_value2(idxConst);
+              *out++=(TCHAR)NS_SHELL_CODE; // Constant code identifier
 #ifdef _UNICODE
-                *out++=MAKEWORD(CSIDL_Value_current, CSIDL_Value_all);
+            *out++=MAKEWORD(CSIDL_Value_current, CSIDL_Value_all);
 #else
-                *out++=(TCHAR)CSIDL_Value_current;
-                *out++=(TCHAR)CSIDL_Value_all;
+            *out++=(TCHAR)CSIDL_Value_current;
+            *out++=(TCHAR)CSIDL_Value_all;
 #endif
-                p = pShellConstName; // zip past the shell constant string.
-                bProceced = true;
-                break;
-              }
+              p = pShellConstName; // zip past the shell constant string.
+              bProceced = true;
+              break;
+            }
 
-              // We are looking from the longest identifier first and work
-              // smaller.
-              pShellConstName--;
-            }
+            // We are looking from the longest identifier first and work
+            // smaller.
+            pShellConstName--;
           }
-          if ( !bProceced && *p == _T('(') )
+        }
+        if ( !bProceced && *p == _T('(') )
+        {
+          int idx = -1;
+          TCHAR *cp = _tcsdup(p+1); // JP: Bad... should avoid memory alloc.
+          TCHAR *pos = _tcschr(cp, _T(')'));
+          if (pos)
           {
-            int idx = -1;
-            TCHAR *cp = _tcsdup(p+1); // JP: Bad... should avoid memory alloc.
-            TCHAR *pos = _tcschr(cp, _T(')'));
-            if (pos)
+            *pos = 0;
+            idx = DefineLangString(cp);
+            if (idx < 0)
             {
-              *pos = 0;
-              idx = DefineLangString(cp);
-              if (idx < 0)
-              {
-                *out++ = (TCHAR)NS_LANG_CODE; // Next word is lang-string Identifier
-                WORD w = FIX_ENDIAN_INT16(CODE_SHORT(-idx-1));
-                unsigned int w4 = sizeof(TCHAR) > 2 ? FIX_ENDIAN_INT32(CODE_SHORT(-idx-1)) : w; // Maybe this is too much endian fixing?
-                if (sizeof(TCHAR) < 2) *((WORD*)out) = w, out += 2; else *out = (TCHAR) w4, out++;
-                p += _tcslen(cp) + 2;
-                bProceced = true;
-              }
+              *out++ = (TCHAR)NS_LANG_CODE; // Next word is lang-string Identifier
+              WORD w = FIX_ENDIAN_INT16(CODE_SHORT(-idx-1));
+              unsigned int w4 = sizeof(TCHAR) > 2 ? FIX_ENDIAN_INT32(CODE_SHORT(-idx-1)) : w; // Maybe this is too much endian fixing?
+              if (sizeof(TCHAR) < 2) *((WORD*)out) = w, out += 2; else *out = (TCHAR) w4, out++;
+              p += _tcslen(cp) + 2;
+              bProceced = true;
             }
-            free(cp);
           }
-          if ( bProceced )
-            continue; // outermost while
+          free(cp);
+        }
+        if ( bProceced )
+          continue; // outermost while
+        else
+        {
+          TCHAR tbuf[64], cBracket = _T('\0');
+          bool bDoWarning = true;
+
+          if ( *p == _T('[') ) cBracket = _T(']');
+          else if ( *p == _T('(') ) cBracket = _T(')');
+          else if ( *p == _T('{') ) cBracket = _T('}');
+
+          my_strncpy(tbuf,p,COUNTOF(tbuf));
+
+          if ( cBracket != 0 )
+          {
+            if (_tcschr(tbuf,cBracket)) (_tcschr(tbuf,cBracket)+1)[0]=0;
+            if ( tbuf[0] == _T('{') && tbuf[_tcslen(tbuf)-1] == _T('}') )
+            {
+              TCHAR *tstIfDefine = _tcsdup(tbuf+1);
+              tstIfDefine[_tcslen(tstIfDefine)-1] = _T('\0');
+              bDoWarning = definedlist.find(tstIfDefine) == NULL;
+              // If it's a defined identifier, then don't warn.
+            }
+          }
           else
           {
-            TCHAR tbuf[64];
-            TCHAR cBracket = _T('\0');
-            bool bDoWarning = true;
-
-            if ( *p == _T('[') )
-              cBracket = _T(']');
-            else if ( *p == _T('(') )
-              cBracket = _T(')');
-            else if ( *p == _T('{') )
-              cBracket = _T('}');
-
-            my_strncpy(tbuf,p,COUNTOF(tbuf));
-
-            if ( cBracket != 0 )
-            {
-              if (_tcschr(tbuf,cBracket)) (_tcschr(tbuf,cBracket)+1)[0]=0;
-              if ( tbuf[0] == _T('{') && tbuf[_tcslen(tbuf)-1] == _T('}') )
-              {
-                TCHAR *tstIfDefine = _tcsdup(tbuf+1);
-                tstIfDefine[_tcslen(tstIfDefine)-1] = _T('\0');
-                bDoWarning = definedlist.find(tstIfDefine) == NULL;
-                // If it's a defined identifier, then don't warn.
-              }
-            }
-            else
-            {
-              if (_tcsstr(tbuf,_T(" "))) _tcsstr(tbuf,_T(" "))[0]=0;
-            }
-            if ( bDoWarning )
-              warning_fl(_T("unknown variable/constant \"%") NPRIs _T("\" detected, ignoring"),tbuf);
-            i = _T('$'); // redundant since i is already '$' and has
-                         // not changed.
+            if (_tcsstr(tbuf,_T(" "))) _tcsstr(tbuf,_T(" "))[0]=0;
           }
-        } // block
+          if ( bDoWarning )
+            warning_fl(_T("unknown variable/constant \"%") NPRIs _T("\" detected, ignoring"),tbuf);
+          i = _T('$'); // redundant since i is already '$' and has not changed.
+        }
       } // else
     } // else if (i == _T('$'))
-
     *out++=(TCHAR)i;
   } // outside while
   *out=0;
