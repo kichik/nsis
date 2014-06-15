@@ -117,11 +117,11 @@ void CEXEBuild::restore_file_predefine(TCHAR *oldfilename)
   definedlist.del(_T("__FILEDIR__"));
   definedlist.del(_T("__FILE__"));
   if(oldfilename) {
-      TCHAR *oldfiledir = _tcschr(oldfilename, _T('|'));
-      definedlist.add(_T("__FILEDIR__"),oldfiledir+1);
-      *oldfiledir = '\0';
-      definedlist.add(_T("__FILE__"),oldfilename);
-      delete[] oldfilename;
+    TCHAR *oldfiledir = _tcschr(oldfilename, _T('|'));
+    definedlist.add(_T("__FILEDIR__"),oldfiledir+1);
+    *oldfiledir = '\0';
+    definedlist.add(_T("__FILE__"),oldfilename);
+    delete[] oldfilename;
   }
 }
 
@@ -134,9 +134,7 @@ TCHAR *CEXEBuild::set_timestamp_predefine(const TCHAR *filename)
   }
 
 #ifdef _WIN32
-  TCHAR timestampbuf[256] = _T("");
-  TCHAR datebuf[128] = _T("");
-  TCHAR timebuf[128] = _T("");
+  TCHAR datebuf[128] = _T(""), timebuf[128] = _T(""), timestampbuf[256];
   WIN32_FIND_DATA fd;
   FILETIME floctime;
   SYSTEMTIME stime;
@@ -167,8 +165,8 @@ void CEXEBuild::restore_timestamp_predefine(TCHAR *oldtimestamp)
 {
   definedlist.del(_T("__TIMESTAMP__"));
   if(oldtimestamp) {
-      definedlist.add(_T("__TIMESTAMP__"),oldtimestamp);
-      free(oldtimestamp);
+    definedlist.add(_T("__TIMESTAMP__"),oldtimestamp);
+    free(oldtimestamp);
   }
 }
 
@@ -200,8 +198,8 @@ void CEXEBuild::restore_line_predefine(TCHAR *oldline)
 {
   definedlist.del(_T("__LINE__"));
   if(oldline) {
-      definedlist.add(_T("__LINE__"),oldline);
-      free(oldline);
+    definedlist.add(_T("__LINE__"),oldline);
+    free(oldline);
   }
 }
 
@@ -209,8 +207,7 @@ void CEXEBuild::set_date_time_predefines()
 {
   time_t etime;
   struct tm * ltime;
-  TCHAR datebuf[128];
-  TCHAR timebuf[128];
+  TCHAR datebuf[128], timebuf[128];
 
   time(&etime);
   ltime = localtime(&etime);
@@ -490,19 +487,13 @@ parse_again:
       return PS_OK;
     }
 
-    int istrue=0;
-
-    int mod=0;
-  
-    int p=0;
+    int istrue=0, mod=0, logicneg=0;
     
     if (tkid == TOK_P_IF) {
-      if(!_tcscmp(line.gettoken_str(1),_T("!"))) {
-        p = 1;
-        line.eattoken();
-      }
+      if (!_tcscmp(line.gettoken_str(1),_T("!")))
+        logicneg++, line.eattoken();
       
-      if(line.getnumtokens() == 2)
+      if (line.getnumtokens() == 2)
         istrue = line.gettoken_int(1);
 
       else if (line.getnumtokens() == 3) {
@@ -575,13 +566,12 @@ parse_again:
       }
       else PRINTHELP()
         
-      if(p) istrue = !istrue;
+      if (logicneg) istrue = !istrue;
     }
-
     else {
   
       // pure left to right precedence. Not too powerful, but useful.
-      for (p = 1; p < line.getnumtokens(); p ++)
+      for (int p = 1; p < line.getnumtokens(); p++)
       {
         if (p & 1)
         {
@@ -646,8 +636,7 @@ void CEXEBuild::ps_addtoline(const TCHAR *str, GrowBuf &linedata, StringList &hi
   while (*in)
   {
     int add=1;
-    TCHAR *t, c=*in;
-    t=CharNext(in);
+    TCHAR c=*in, *t=CharNext(in);
 
     if (t-in > 1) // handle multibyte chars (no escape)
     {
@@ -662,20 +651,11 @@ void CEXEBuild::ps_addtoline(const TCHAR *str, GrowBuf &linedata, StringList &hi
       if (in[0] == _T('\\'))
       {
         if (in[1] == _T('r'))
-        {
-          in+=2;
-          c=_T('\r');
-        }
+          in+=2, c=_T('\r');
         else if (in[1] == _T('n'))
-        {
-          in+=2;
-          c=_T('\n');
-        }
+          in+=2, c=_T('\n');
         else if (in[1] == _T('t'))
-        {
-          in+=2;
-          c=_T('\t');
-        }
+          in+=2, c=_T('\t');
       }
       else if (in[0] == _T('{'))
       {
@@ -894,9 +874,8 @@ int CEXEBuild::includeScript(const TCHAR *f, NStreamEncoding&enc)
   build_include_depth++;
 
   const int last_linecnt=linecnt;
-  linecnt=0;
   const TCHAR *last_filename=curfilename;
-  curfilename=f;
+  curfilename=f, linecnt=0;
   NStreamLineReader linereader(incstrm);
   NStreamLineReader*last_linereader=curlinereader;
   curlinereader=&linereader;
@@ -916,8 +895,7 @@ int CEXEBuild::includeScript(const TCHAR *f, NStreamEncoding&enc)
 #endif
 
   const int errlinecnt=linecnt;
-  linecnt=last_linecnt;
-  curfilename=last_filename;
+  curfilename=last_filename, linecnt=last_linecnt;
   curlinereader=last_linereader;
 
   build_include_depth--;
@@ -1030,19 +1008,16 @@ l_errwcconv:
 
 int CEXEBuild::process_oneline(TCHAR *line, const TCHAR *filename, int linenum)
 {
-  const TCHAR *last_filename=curfilename;
-  curfilename=filename;
-  int last_linecnt=linecnt;
-  linecnt=linenum;
+  const TCHAR *last_filename = curfilename;
+  int last_linecnt = linecnt;
+  curfilename = filename, linecnt = linenum;
 
   StringList hist;
   GrowBuf linedata;
 
 #ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
   // Added by Sunil Kamath 11 June 2003
-  TCHAR *oldfilename = NULL;
-  TCHAR *oldtimestamp = NULL;
-  TCHAR *oldline = NULL;
+  TCHAR *oldfilename = NULL, *oldtimestamp = NULL, *oldline = NULL;
   bool is_commandline = !_tcscmp(filename,_T("<command line>"));
   bool is_macro = !_tcsncmp(filename,_T("macro:"),6);
 
@@ -1057,7 +1032,7 @@ int CEXEBuild::process_oneline(TCHAR *line, const TCHAR *filename, int linenum)
 
   ps_addtoline(line,linedata,hist);
   linedata.add(_T(""),sizeof(_T("")));
-  int ret=doParse((TCHAR*)linedata.get());
+  int ret = doParse((TCHAR*)linedata.get());
 
 #ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
   // Added by Sunil Kamath 11 June 2003
@@ -1069,10 +1044,7 @@ int CEXEBuild::process_oneline(TCHAR *line, const TCHAR *filename, int linenum)
     restore_line_predefine(oldline);
   }
 #endif
-
-  linecnt=last_linecnt;
-  curfilename=last_filename;
-
+  curfilename = last_filename, linecnt = last_linecnt;
   return ret;
 }
 
@@ -1131,16 +1103,14 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       {
         const TCHAR*const macroname=line.gettoken_str(1);
         if (!macroname[0]) PRINTHELP()
-        TCHAR *t=GetMacro(macroname);
-        if (t)
+        if (MacroExists(macroname))
         {
           ERROR_MSG(_T("!macro: macro named \"%") NPRIs _T("\" already found!\n"),macroname);
           return PS_ERROR;
         }
         m_macros.add(macroname,(int)(_tcslen(macroname)+1)*sizeof(TCHAR));
 
-        int pc;
-        for (pc=2; pc < line.getnumtokens(); pc ++)
+        for (int pc=2; pc < line.getnumtokens(); pc++)
         {
           if (!line.gettoken_str(pc)[0])
           {
@@ -1148,7 +1118,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             return PS_ERROR;
           }
           int a;
-          for (a=2; a < pc; a ++)
+          for (a=2; a < pc; a++)
           {
             if (!_tcsicmp(line.gettoken_str(pc),line.gettoken_str(a)))
             {
@@ -1995,7 +1965,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_INSTTYPE:
       {
         int x;
-
         if (!_tcsicmp(line.gettoken_str(1),_T("/NOCUSTOM")))
         {
           build_header.flags|=CH_FLAGS_NO_CUSTOM;
@@ -2025,7 +1994,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             itname += 3;
           }
 
-          for (x = 0; x < NSIS_MAX_INST_TYPES && cur_header->install_types[x]; x ++);
+          for (x = 0; x < NSIS_MAX_INST_TYPES && cur_header->install_types[x]; x++);
           if (x == NSIS_MAX_INST_TYPES)
           {
             ERROR_MSG(_T("InstType: no more than %d install types allowed. %d specified\n"), NSIS_MAX_INST_TYPES, NSIS_MAX_INST_TYPES + 1);
@@ -2073,11 +2042,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       {
         const TCHAR *cmdnam = get_commandtoken_name(which_token);
         int idx = 0;
-        TCHAR *file = line.gettoken_str(1);
-        TCHAR *data = NULL;
-        TCHAR *filedata = NULL;
+        TCHAR *file = line.gettoken_str(1), *data = NULL, *filedata = NULL;
         MANAGE_WITH(filedata, free);
-        WORD cp = CP_ACP;
+        WORD wincp = CP_ACP;
 
         if (file[0] == _T('$') && file[1] == _T('('))
         {
@@ -2093,7 +2060,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
         if (!idx)
         {
-          int ret = LoadLicenseFile(file, &filedata, cmdnam, cp);
+          int ret = LoadLicenseFile(file, &filedata, cmdnam, wincp);
           if (ret != PS_OK)
             return ret;
           data = filedata;
@@ -2108,7 +2075,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             ERROR_MSG(_T("Error: LicenseData can only be used inside PageEx license.\n"));
             return PS_ERROR;
           }
-          cur_page->parms[1] = add_string(data, false, cp);
+          cur_page->parms[1] = add_string(data, false, wincp);
         }
 
         SCRIPT_MSG(_T("LicenseData: \"%") NPRIs _T("\"\n"),file);
@@ -2130,15 +2097,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
 
         switch (k) {
-          case 0:
-            license_res_id = IDD_LICENSE;
-            break;
-          case 1:
-            license_res_id = IDD_LICENSE_FSCB;
-            break;
-          case 2:
-            license_res_id = IDD_LICENSE_FSRB;
-            break;
+          case 0: license_res_id = IDD_LICENSE; break;
+          case 1: license_res_id = IDD_LICENSE_FSCB; break;
+          case 2: license_res_id = IDD_LICENSE_FSRB; break;
         }
       }
       else {
@@ -2177,23 +2138,24 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return PS_OK;
     case TOK_LICENSEBKCOLOR:
       {
+        const TCHAR *cmdname = _T("LicenseBkColor");
         TCHAR *p = line.gettoken_str(1);
         if (!_tcsicmp(p,_T("/windows")))
         {
           build_header.license_bg=-COLOR_WINDOW;
-          SCRIPT_MSG(_T("LicenseBkColor: /windows\n"));
+          SCRIPT_MSG(_T("%") NPRIs _T(": /windows\n"),cmdname);
         }
         else if (!_tcsicmp(p,_T("/grey")) || !_tcsicmp(p,_T("/gray")))
         {
           build_header.license_bg=-COLOR_BTNFACE;
-          SCRIPT_MSG(_T("LicenseBkColor: /grey\n"));
+          SCRIPT_MSG(_T("%") NPRIs _T(": /grey\n"),cmdname);
         }
         else
         {
-          int v=_tcstoul(p,&p,16);
+          const int v=_tcstoul(p,&p,16);
           build_header.license_bg=((v&0xff)<<16)|(v&0xff00)|((v&0xff0000)>>16);
           build_uninst.license_bg=build_header.license_bg;
-          SCRIPT_MSG(_T("LicenseBkColor: %06X\n"),v);
+          SCRIPT_MSG(_T("%") NPRIs _T(": %06X\n"),cmdname,v);
         }
       }
     return PS_OK;
@@ -2307,9 +2269,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_INSTALLDIRREGKEY: // InstallDirRegKey
       {
         if (build_header.install_reg_key_ptr)
-        {
           warning_fl(_T("%") NPRIs _T(": specified multiple times, wasting space"),line.gettoken_str(0));
-        }
+
         int k=line.gettoken_enum(1,rootkeys[0]);
         if (k == -1) k=line.gettoken_enum(1,rootkeys[1]);
         if (k == -1) PRINTHELP()
@@ -2331,7 +2292,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       {
         int smooth=0;
         build_header.flags&=~CH_FLAGS_PROGRESS_COLORED;
-        for (int x = 1; x < line.getnumtokens(); x ++)
+        for (int x = 1; x < line.getnumtokens(); x++)
         {
           if (!_tcsicmp(line.gettoken_str(x),_T("smooth"))) smooth=1;
           else if (!_tcsicmp(line.gettoken_str(x),_T("colored"))) build_header.flags|=CH_FLAGS_PROGRESS_COLORED;
@@ -2566,12 +2527,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
       else
       {
-        int v1,v2;
         if (line.getnumtokens()!=3) PRINTHELP()
-        v1=_tcstoul(p,&p,16);
+        int v1=_tcstoul(p,&p,16);
         build_header.lb_fg=((v1&0xff)<<16)|(v1&0xff00)|((v1&0xff0000)>>16);
         p=line.gettoken_str(2);
-        v2=_tcstoul(p,&p,16);
+        int v2=_tcstoul(p,&p,16);
         build_header.lb_bg=((v2&0xff)<<16)|(v2&0xff00)|((v2&0xff0000)>>16);
         SCRIPT_MSG(_T("InstallColors: fg=%06X bg=%06X\n"),v1,v2);
       }
@@ -2741,22 +2701,16 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
         init_res_editor();
         BYTE* dlg = res_editor->GetResource(RT_DIALOG, IDD_INST, NSIS_DEFAULT_LANG);
-
         CDialogTemplate dt(dlg, build_unicode, uDefCodePage);
-
         res_editor->FreeResource(dlg);
 
         DialogItemTemplate brandingCtl = {0,};
-
         brandingCtl.dwStyle = SS_BITMAP | WS_CHILD | WS_VISIBLE;
-        brandingCtl.sX = padding;
-        brandingCtl.sY = padding;
+        brandingCtl.sX = brandingCtl.sY = padding;
         brandingCtl.szClass = MAKEINTRESOURCEWINW(0x0082);
         brandingCtl.szTitle = NULL;
         brandingCtl.wId = IDC_BRANDIMAGE;
-
-        brandingCtl.sHeight = wh;
-        brandingCtl.sWidth = wh;
+        brandingCtl.sHeight = brandingCtl.sWidth = wh;
         dt.PixelsToDlgUnits(brandingCtl.sWidth, brandingCtl.sHeight);
         if (k%2) {
           // left (1) / right (3)
@@ -2847,26 +2801,26 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #endif// NSIS_CONFIG_VISIBLE_SUPPORT
 
     case TOK_REQEXECLEVEL:
-    switch (line.gettoken_enum(1,_T("none\0user\0highest\0admin\0")))
-    {
-    case 0: manifest_exec_level = manifest::exec_level_none; break;
-    case 1: manifest_exec_level = manifest::exec_level_user; break;
-    case 2: manifest_exec_level = manifest::exec_level_highest; break;
-    case 3: manifest_exec_level = manifest::exec_level_admin; break;
-    default: PRINTHELP();
-    }
-    return PS_OK;
+      switch (line.gettoken_enum(1,_T("none\0user\0highest\0admin\0")))
+      {
+      case 0: manifest_exec_level = manifest::exec_level_none; break;
+      case 1: manifest_exec_level = manifest::exec_level_user; break;
+      case 2: manifest_exec_level = manifest::exec_level_highest; break;
+      case 3: manifest_exec_level = manifest::exec_level_admin; break;
+      default: PRINTHELP();
+      }
+      return PS_OK;
 
     case TOK_MANIFEST_DPIAWARE:
-    switch(line.gettoken_enum(1,_T("none\0notset\0true\0false\0")))
-    {
-    case 0: // A lot of attributes use "none" so we support that along with the documented value
-    case 1: manifest_dpiaware = manifest::dpiaware_notset; break;
-    case 2: manifest_dpiaware = manifest::dpiaware_true; break;
-    case 3: manifest_dpiaware = manifest::dpiaware_false; break;
-    default: PRINTHELP();
-    }
-    return PS_OK;
+      switch(line.gettoken_enum(1,_T("none\0notset\0true\0false\0")))
+      {
+      case 0: // A lot of attributes use "none" so we support that along with the documented value
+      case 1: manifest_dpiaware = manifest::dpiaware_notset; break;
+      case 2: manifest_dpiaware = manifest::dpiaware_true; break;
+      case 3: manifest_dpiaware = manifest::dpiaware_false; break;
+      default: PRINTHELP();
+      }
+      return PS_OK;
 
     case TOK_MANIFEST_SUPPORTEDOS:
     {
@@ -2922,30 +2876,22 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         ERROR_MSG(_T("Error: can't change compressor after data already got compressed or header already changed!\n"));
         return PS_ERROR;
       }
-
       if (build_compressor_final)
       {
         warning_fl(_T("SetCompressor ignored due to previous call with the /FINAL switch"));
         return PS_OK;
       }
-
-      int a = 1;
-
       build_compress_whole = false;
 
+      int a = 1;
       while (line.gettoken_str(a)[0] == _T('/'))
       {
         if (!_tcsicmp(line.gettoken_str(a),_T("/FINAL")))
-        {
-          build_compressor_final = true;
-          a++;
-        }
+          build_compressor_final = true, a++;
         else if (!_tcsicmp(line.gettoken_str(a),_T("/SOLID")))
-        {
-          build_compress_whole = true;
-          a++;
-        }
-        else PRINTHELP();
+          build_compress_whole = true, a++;
+        else
+          PRINTHELP();
       }
 
       if (a != line.getnumtokens() - 1)
@@ -2956,20 +2902,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
       int k=line.gettoken_enum(a, _T("zlib\0bzip2\0lzma\0"));
       switch (k) {
-        case 0:
-          compressor = &zlib_compressor;
-        break;
-
-        case 1:
-          compressor = &bzip2_compressor;
-          break;
-
-        case 2:
-          compressor = &lzma_compressor;
-        break;
-
-        default:
-          PRINTHELP();
+        case 0: compressor = &zlib_compressor; break;
+        case 1: compressor = &bzip2_compressor; break;
+        case 2: compressor = &lzma_compressor; break;
+        default: PRINTHELP();
       }
 
       tstring compressor_name = line.gettoken_str(a);
@@ -2993,9 +2929,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       SCRIPT_MSG(_T("LoadLanguageFile: %") NPRIs _T("\n"), line.gettoken_str(1));
 
       LanguageTable *table = LoadLangFile(line.gettoken_str(1));
-
-      if (!table)
-        return PS_ERROR;
+      if (!table) return PS_ERROR;
 
       if (!defcodepage_set)
       {
@@ -3006,9 +2940,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       last_used_lang = table->lang_id;
       // define LANG_LangName as "####" (lang id)
       // for example ${LANG_ENGLISH} = 1033
-      TCHAR lang_id[16];
-      TCHAR lang_cp[16];
-      TCHAR lang_name[1024];
+      TCHAR lang_id[16], lang_cp[16], lang_name[1024];
       wsprintf(lang_name, _T("LANG_%") NPRIs, table->nlf.m_szName);
       wsprintf(lang_id, _T("%u"), table->lang_id);
       wsprintf(lang_cp, _T("%u"), table->nlf.m_uCodePage);
@@ -3139,7 +3071,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
       } else {
         if (line.getnumtokens()==4) PRINTHELP()
-
         value=line.gettoken_str(2);
       }
 
@@ -3409,8 +3340,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
                   tstring lrmsg=lr.GetErrorMessage((UINT)*str,filename,linnum);
                   ERROR_MSG(_T("!searchparse: %") NPRIs,lrmsg.c_str());
                   return PS_ERROR;
-               }
-               break; // EOF
+                }
+                break; // EOF
               }
               str[--cch]=_T('\0'); // remove newline
 
@@ -3466,7 +3397,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (list) // if we got our list, merge them defines in
         {
           int i;
-          for (i=0;i<list->getnum(); i ++)
+          for (i=0;i<list->getnum(); i++)
           {
             TCHAR *def=list->getname(i), *val=list->getvalue(i);
             if (def && val) definedlist.set(def,val);
@@ -3492,7 +3423,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
 
         GrowBuf valout;
-
         while (*src)
         {
           if (ignoreCase ? _tcsnicmp(src,search,searchlen) : _tcsncmp(src,search,searchlen)) 
@@ -3503,18 +3433,15 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             src+=searchlen;
           }
         }
-
         valout.add(_T(""),sizeof(TCHAR));
        
         definedlist.del(define); // allow changing variables since we'll often use this in series
-
         if (definedlist.add(define,(TCHAR*)valout.get()))
         {
           ERROR_MSG(_T("!searchreplace: error defining \"%") NPRIs _T("\"!\n"),define);
           return PS_ERROR;
         }
         SCRIPT_MSG(_T("!searchreplace: \"%") NPRIs _T("\"=\"%") NPRIs _T("\"\n"),define,(TCHAR*)valout.get());
-
       }
     return PS_OK;
 
@@ -3588,7 +3515,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
     case TOK_UNINSTALLEXENAME: PRINTHELP()
 
-
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
     case TOK_UNINSTCAPTION:
       {
@@ -3628,9 +3554,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return PS_OK;
     case TOK_UNINSTSUBCAPTION:
       {
-        int s;
-        int w=line.gettoken_int(1,&s);
-        if (!s || w < 0 || w > 2) PRINTHELP()
+        int succ, w=line.gettoken_int(1,&succ);
+        if (!succ || w < 0 || w > 2) PRINTHELP()
         SetInnerString(NLF_USUBCAPTION_CONFIRM+w,line.gettoken_str(2));
         SCRIPT_MSG(_T("UninstSubCaption: page:%d, text=%") NPRIs _T("\n"),w,line.gettoken_str(2));
       }
@@ -3666,18 +3591,14 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #endif
 
 
-
     // section/function stuff
     ///////////////////////////////////////////////////////////////////////////////
 
     case TOK_SECTION:
     {
-      int a=1,unselected = 0;
+      int a = 1, unselected = 0;
       if (!_tcsicmp(line.gettoken_str(1),_T("/o")))
-      {
-        unselected = 1;
-        a++;
-      }
+        unselected++, a++;
       else if (line.getnumtokens() > 3)
         PRINTHELP();
       SCRIPT_MSG(_T("Section: \"%") NPRIs _T("\""),line.gettoken_str(a));
@@ -3690,16 +3611,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         return PS_ERROR;
       }
 #endif
-
-      int ret;
-
-      ret=add_section(line.gettoken_str(a),line.gettoken_str(a+1));
-      if (ret != PS_OK) return ret;
-
-      if (unselected)
+      int ret = add_section(line.gettoken_str(a),line.gettoken_str(a+1));
+      if (PS_OK == ret && unselected)
         build_cursection->flags &= ~SF_SELECTED;
-
-      return PS_OK;
+      return ret;
     }
     case TOK_SECTIONEND:
       SCRIPT_MSG(_T("SectionEnd\n"));
@@ -3707,8 +3622,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_SECTIONIN:
       {
         SCRIPT_MSG(_T("SectionIn: "));
-        int wt;
-        for (wt = 1; wt < line.getnumtokens(); wt ++)
+        for (int wt = 1; wt < line.getnumtokens(); wt++)
         {
           TCHAR *p=line.gettoken_str(wt);
           if (!_tcsicmp(p, _T("RO")))
@@ -3745,12 +3659,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_SUBSECTION:
     {
       TCHAR buf[1024];
-      int a=1,ex = 0;
-      if (!_tcsicmp(line.gettoken_str(1),_T("/e")))
-      {
-        ex = 1;
-        a++;
-      }
+      int a = 1, ex = 0;
+      if (!_tcsicmp(line.gettoken_str(1),_T("/e"))) ex = 1, a++;
+
       wsprintf(buf,_T("\x1F%") NPRIs,line.gettoken_str(a));
       if (which_token == TOK_SECTIONGROUP || which_token == TOK_SUBSECTION)
       {
@@ -3804,16 +3715,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       int k=line.gettoken_enum(1,_T("on\0off\0try\0ifnewer\0ifdiff\0lastused\0"));
       if (k==-1) PRINTHELP()
       if (k==5)
-      {
-        k=build_overwrite;
-        build_overwrite=build_last_overwrite;
-        build_last_overwrite=k;
-      }
+        k=build_overwrite, build_overwrite=build_last_overwrite, build_last_overwrite=k;
       else
-      {
-        build_last_overwrite=build_overwrite;
-        build_overwrite=k;
-      }
+        build_last_overwrite=build_overwrite, build_overwrite=k;
       SCRIPT_MSG(_T("SetOverwrite: %") NPRIs _T("\n"),line.gettoken_str(1));
     }
     return PS_OK;
@@ -3828,9 +3732,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       build_compress=line.gettoken_enum(1,_T("off\0auto\0force\0"));
       if (build_compress==-1) PRINTHELP()
       if (build_compress==0 && build_compress_whole)
-      {
         warning_fl(_T("'SetCompress off' encountered, and in whole compression mode. Effectively ignored."));
-      }
       SCRIPT_MSG(_T("SetCompress: %") NPRIs _T("\n"),line.gettoken_str(1));
     return PS_OK;
     case TOK_DBOPTIMIZE:
@@ -3884,18 +3786,16 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #endif//NSIS_CONFIG_COMPRESSION_SUPPORT
     case TOK_ADDSIZE:
       {
-        int s;
-        int size_kb=line.gettoken_int(1,&s);
-        if (!s) PRINTHELP()
+        int succ, size_kb=line.gettoken_int(1,&succ);
+        if (!succ) PRINTHELP()
         SCRIPT_MSG(_T("AddSize: %d kb\n"),size_kb);
         section_add_size_kb(size_kb);
       }
     return PS_OK;
     case TOK_SUBCAPTION:
       {
-        int s;
-        int w=line.gettoken_int(1,&s);
-        if (!s || w < 0 || w > 4) PRINTHELP()
+        int succ, w=line.gettoken_int(1,&succ);
+        if (!succ || w < 0 || w > 4) PRINTHELP()
         SetInnerString(NLF_SUBCAPTION_LICENSE+w,line.gettoken_str(2));
         SCRIPT_MSG(_T("SubCaption: page:%d, text=%") NPRIs _T("\n"),w,line.gettoken_str(2));
       }
@@ -3914,8 +3814,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #endif
     case TOK_BRANDINGTEXT:
       {
-        int a = 1;
-        int trim = 0;
+        int a = 1, trim = 0;
         while (line.gettoken_str(a)[0] == _T('/')) {
           if (!_tcsnicmp(line.gettoken_str(a),_T("/TRIM"),5)) {
             if (!_tcsicmp(line.gettoken_str(a)+5,_T("LEFT"))) trim = 1;
@@ -3953,9 +3852,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             }
 
             if (td.GetItem(IDC_VERSTR)->sWidth > old_width)
-            {
               warning_fl(_T("BrandingText: \"%") NPRIs _T("\" is too long, trimming has expanded the label"), str);
-            }
           }
 
           DWORD dwSize;
@@ -4310,10 +4207,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           MBD(MB_DEFBUTTON4)
         };
         #undef MBD
-        int r=0;
-        int x;
+        int r=0, x;
         TCHAR *p=line.gettoken_str(1);
-
         while (*p)
         {
           TCHAR *np=p;
@@ -4321,19 +4216,15 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           if (*np) *np++=0;
           for (x = 0 ; (size_t) x < COUNTOF(list) && _tcsicmp(list[x].str, p); x++);
           if ((size_t) x < COUNTOF(list))
-          {
-            r|=list[x].id;
-          }
-          else PRINTHELP()
+            r |= list[x].id;
+          else
+            PRINTHELP()
           p=np;
         }
         ent.which=EW_MESSAGEBOX;
         ent.offsets[0]=r;
         ent.offsets[1]=add_string(line.gettoken_str(2));
-        int rettab[] =
-        {
-          0,IDABORT,IDCANCEL,IDIGNORE,IDNO,IDOK,IDRETRY,IDYES
-        };
+        static const int rettab[] = { 0,IDABORT,IDCANCEL,IDIGNORE,IDNO,IDOK,IDRETRY,IDYES };
         const TCHAR *retstr=_T("0\0IDABORT\0IDCANCEL\0IDIGNORE\0IDNO\0IDOK\0IDRETRY\0IDYES\0");
         int a=3;
         if (line.getnumtokens() > 3)
@@ -4342,7 +4233,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           {
             int k=line.gettoken_enum(4,retstr);
             if (k <= 0) PRINTHELP();
-            ent.offsets[0]|=rettab[k]<<21;
+            ent.offsets[0] |= rettab[k]<<21;
             a=5;
           }
           else if (line.getnumtokens() > 7)
@@ -4411,9 +4302,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
       if (line.getnumtokens() > 7)
       {
-        TCHAR *s=(line.gettoken_str(7));
-
-        TCHAR b[255];
+        TCHAR *s=line.gettoken_str(7), b[255];
         for (unsigned int spos=0; (spos <= _tcslen(s)) && (spos <= 255); spos++)
           b[spos]=_totupper(*(s+spos));
         _tcscpy(s,b);
@@ -4472,6 +4361,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(4),line.gettoken_str(5));
     return add_entry(&ent);
     case TOK_SENDMESSAGE:
+    {
       ent.which=EW_SENDMESSAGE;
 
       if (line.gettoken_str(1)[0] == _T('/') || line.gettoken_str(2)[0] == _T('/') ||
@@ -4481,26 +4371,24 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
 
       SCRIPT_MSG(_T("SendMessage:"));
+      int a=5;
+      ent.offsets[0]=GetUserVarIndex(line, 5);
+      if (ent.offsets[0]>=0)
       {
-        int a=5;
-        ent.offsets[0]=GetUserVarIndex(line, 5);
-        if (ent.offsets[0]>=0)
-        {
-          SCRIPT_MSG(_T("(->%") NPRIs _T(")"),line.gettoken_str(5));
-          a++;
-        }
+        SCRIPT_MSG(_T("(->%") NPRIs _T(")"),line.gettoken_str(5));
+        a++;
+      }
 
-        if (!_tcsncmp(line.gettoken_str(a),_T("/TIMEOUT="),9))
-        {
-          ent.offsets[5]|=_ttoi(line.gettoken_str(a)+9)<<2;
-          SCRIPT_MSG(_T(" (timeout=%d)"),ent.offsets[5]>>2);
-          a++;
-        }
+      if (!_tcsncmp(line.gettoken_str(a),_T("/TIMEOUT="),9))
+      {
+        ent.offsets[5]|=_ttoi(line.gettoken_str(a)+9)<<2;
+        SCRIPT_MSG(_T(" (timeout=%d)"),ent.offsets[5]>>2);
+        a++;
+      }
 
-        if (line.getnumtokens()>a)
-        {
-          PRINTHELP()
-        }
+      if (line.getnumtokens()>a)
+      {
+        PRINTHELP()
       }
 
       if (!_tcsncmp(line.gettoken_str(3),_T("STR:"),4))
@@ -4508,18 +4396,20 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         ent.offsets[5]|=1;
         ent.offsets[3]=add_string(line.gettoken_str(3)+4);
       }
-      else ent.offsets[3]=add_string(line.gettoken_str(3));
+      else
+        ent.offsets[3]=add_string(line.gettoken_str(3));
       if (!_tcsncmp(line.gettoken_str(4),_T("STR:"),4))
       {
         ent.offsets[5]|=2;
         ent.offsets[4]=add_string(line.gettoken_str(4)+4);
       }
-      else ent.offsets[4]=add_string(line.gettoken_str(4));
+      else
+        ent.offsets[4]=add_string(line.gettoken_str(4));
 
       ent.offsets[1]=add_string(line.gettoken_str(1));
       ent.offsets[2]=add_string(line.gettoken_str(2));
-
       SCRIPT_MSG(_T("(%") NPRIs _T(",%") NPRIs _T(",%") NPRIs _T(",%") NPRIs _T(")\n"),line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(4));
+    }
     return add_entry(&ent);
     case TOK_ISWINDOW:
       ent.which=EW_ISWINDOW;
@@ -4539,47 +4429,40 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return add_entry(&ent);
     case TOK_SETCTLCOLORS:
     {
-      ctlcolors c={0, };
-
       ent.which=EW_SETCTLCOLORS;
       ent.offsets[0]=add_string(line.gettoken_str(1));
-
+      ctlcolors c={0, };
       int a = 2;
-
       if (!_tcsicmp(line.gettoken_str(2),_T("/BRANDING")))
         a++;
 
-      {
-        TCHAR *p;
+      TCHAR *p;
+      if (a == 2 && line.getnumtokens() == 5) {
+        ERROR_MSG(_T("Error: SetCtlColors expected 3 parameters, got 4\n"));
+        return PS_ERROR;
+      }
 
-        if (a == 2 && line.getnumtokens() == 5) {
-          ERROR_MSG(_T("Error: SetCtlColors expected 3 parameters, got 4\n"));
-          return PS_ERROR;
-        }
-
-        if (!_tcsicmp(line.gettoken_str(a+1),_T("transparent"))) {
-          c.flags|=CC_BKB;
-          c.lbStyle=BS_NULL;
-          c.bkmode=TRANSPARENT;
-        }
-        else {
-          p=line.gettoken_str(a+1);
-          if (*p) {
-            int v=_tcstoul(p,&p,16);
-            c.bkc=((v&0xff)<<16)|(v&0xff00)|((v&0xff0000)>>16);
-            c.flags|=CC_BK|CC_BKB;
-          }
-
-          c.lbStyle=BS_SOLID;
-          c.bkmode=OPAQUE;
-        }
-
-        p=line.gettoken_str(a);
+      if (!_tcsicmp(line.gettoken_str(a+1),_T("transparent"))) {
+        c.flags|=CC_BKB;
+        c.lbStyle=BS_NULL;
+        c.bkmode=TRANSPARENT;
+      }
+      else {
+        p=line.gettoken_str(a+1);
         if (*p) {
           int v=_tcstoul(p,&p,16);
-          c.text=((v&0xff)<<16)|(v&0xff00)|((v&0xff0000)>>16);
-          c.flags|=CC_TEXT;
+          c.bkc=((v&0xff)<<16)|(v&0xff00)|((v&0xff0000)>>16);
+          c.flags|=CC_BK|CC_BKB;
         }
+        c.lbStyle=BS_SOLID;
+        c.bkmode=OPAQUE;
+      }
+
+      p=line.gettoken_str(a);
+      if (*p) {
+        int v=_tcstoul(p,&p,16);
+        c.text=((v&0xff)<<16)|(v&0xff00)|((v&0xff0000)>>16);
+        c.flags|=CC_TEXT;
       }
 
       if (a == 3)
@@ -4616,48 +4499,45 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     }
     return add_entry(&ent);
     case TOK_CREATEFONT:
+    {
       ent.which=EW_CREATEFONT;
       ent.offsets[0]=GetUserVarIndex(line, 1);
       if (ent.offsets[0] < 0) PRINTHELP()
       ent.offsets[1]=add_string(line.gettoken_str(2));
       SCRIPT_MSG(_T("CreateFont: output=%") NPRIs _T(" \"%") NPRIs _T("\""),line.gettoken_str(1),line.gettoken_str(2));
-      {
-        int height=0;
-        int weight=0;
-        int flags=0;
-        for (int i = 3; i < line.getnumtokens(); i++) {
-          TCHAR *tok=line.gettoken_str(i);
-          if (tok[0]=='/') {
-            if (!_tcsicmp(tok,_T("/ITALIC"))) {
-              SCRIPT_MSG(_T(" /ITALIC"));
-              flags|=1;
-            }
-            else if (!_tcsicmp(tok,_T("/UNDERLINE"))) {
-              SCRIPT_MSG(_T(" /UNDERLINE"));
-              flags|=2;
-            }
-            else if (!_tcsicmp(tok,_T("/STRIKE"))) {
-              SCRIPT_MSG(_T(" /STRIKE"));
-              flags|=4;
-            }
-            else {
-              SCRIPT_MSG(_T("\n"));
-              PRINTHELP();
-            }
+      int height=0, weight=0, flags=0;
+      for (int i = 3; i < line.getnumtokens(); i++) {
+        TCHAR *tok=line.gettoken_str(i);
+        if (tok[0]=='/') {
+          if (!_tcsicmp(tok,_T("/ITALIC"))) {
+            SCRIPT_MSG(_T(" /ITALIC"));
+            flags|=1;
+          }
+          else if (!_tcsicmp(tok,_T("/UNDERLINE"))) {
+            SCRIPT_MSG(_T(" /UNDERLINE"));
+            flags|=2;
+          }
+          else if (!_tcsicmp(tok,_T("/STRIKE"))) {
+            SCRIPT_MSG(_T(" /STRIKE"));
+            flags|=4;
           }
           else {
-            if (!height) {
-              SCRIPT_MSG(_T(" height=%") NPRIs,tok);
-              height=add_string(tok);
-            }
-            else if (!weight) {
-              SCRIPT_MSG(_T(" weight=%") NPRIs,tok);
-              weight=add_string(tok);
-            }
-            else {
-              SCRIPT_MSG(_T("\n"));
-              PRINTHELP();
-            }
+            SCRIPT_MSG(_T("\n"));
+            PRINTHELP();
+          }
+        }
+        else {
+          if (!height) {
+            SCRIPT_MSG(_T(" height=%") NPRIs,tok);
+            height=add_string(tok);
+          }
+          else if (!weight) {
+            SCRIPT_MSG(_T(" weight=%") NPRIs,tok);
+            weight=add_string(tok);
+          }
+          else {
+            SCRIPT_MSG(_T("\n"));
+            PRINTHELP();
           }
         }
         ent.offsets[2]=height;
@@ -4665,6 +4545,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         ent.offsets[4]=flags;
       }
       SCRIPT_MSG(_T("\n"));
+    }
     return add_entry(&ent);
     case TOK_ENABLEWINDOW:
       ent.which=EW_SHOWWINDOW;
@@ -4929,10 +4810,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       {
         ent.which=EW_COPYFILES;
         ent.offsets[2]=FOF_NOCONFIRMATION|FOF_NOCONFIRMMKDIR|FOF_NOERRORUI|FOF_SIMPLEPROGRESS;
-
         int a=1;
-        int x;
-        for (x = 0; x < 2; x ++)
+        for (int x = 0; x < 2; x++)
         {
           if (!_tcsicmp(line.gettoken_str(a),_T("/SILENT")))
           {
@@ -4953,12 +4832,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         ent.offsets[1]=add_string(line.gettoken_str(a+1));
         tstring copy_to = tstring(_T("$(^CopyTo)")) + line.gettoken_str(a+1);
         ent.offsets[3]=add_string(copy_to.c_str());
-        int s;
-        int size_kb=line.gettoken_int(a+2,&s);
-        if (!s && line.gettoken_str(a+2)[0]) PRINTHELP()
+        int succ, size_kb=line.gettoken_int(a+2,&succ);
+        if (!succ && line.gettoken_str(a+2)[0]) PRINTHELP()
         section_add_size_kb(size_kb);
         SCRIPT_MSG(_T("CopyFiles: %") NPRIs _T("\"%") NPRIs _T("\" -> \"%") NPRIs _T("\", size=%iKB\n"),ent.offsets[2]&FOF_SILENT?_T("(silent) "):_T(""), line.gettoken_str(a),line.gettoken_str(a+1),size_kb);
-
         DefineInnerLangString(NLF_COPY_FAILED);
         DefineInnerLangString(NLF_COPY_TO);
       }
@@ -4995,22 +4872,19 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           {FILE_ATTRIBUTE_NORMAL,_T("0")},
         };
         #undef MBD
-        int r=0;
-        int x;
+        int r=0, x;
         TCHAR *p=line.gettoken_str(2);
-
         while (*p)
         {
           TCHAR *np=p;
           while (*np && *np != _T('|')) np++;
           if (*np) *np++=0;
-          for (x = 0 ; (unsigned) x < COUNTOF(list) && _tcsicmp(list[x].str,p); x ++);
+          for (x = 0 ; (unsigned) x < COUNTOF(list) && _tcsicmp(list[x].str,p); x++);
 
           if ((unsigned) x < COUNTOF(list))
-          {
-            r|=list[x].id;
-          }
-          else PRINTHELP()
+            r |= list[x].id;
+          else
+            PRINTHELP()
           p=np;
         }
         ent.which=EW_SETFILEATTRIBUTES;
@@ -5044,8 +4918,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_SETDETAILSVIEW:
       {
         int v=line.gettoken_enum(1,_T("hide\0show\0"));
-        ent.which=EW_CHDETAILSVIEW;
         if (v < 0) PRINTHELP()
+        ent.which=EW_CHDETAILSVIEW;
         ent.offsets[0] = v?SW_SHOWNA:SW_HIDE;
         ent.offsets[1] = v?SW_HIDE:SW_SHOWNA;
         SCRIPT_MSG(_T("SetDetailsView: %") NPRIs _T("\n"),line.gettoken_str(1));
@@ -5287,8 +5161,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_DELETEINISEC:
     case TOK_DELETEINISTR:
       {
-        const TCHAR *vname=_T("");
-        const TCHAR *space=_T("");
+        const TCHAR *vname=_T(""), *space=_T("");
         ent.which=EW_WRITEINI;
         ent.offsets[0]=add_string(line.gettoken_str(2)); // section name
         if (line.getnumtokens() > 3)
@@ -5527,14 +5400,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           ent.offsets[3]=add_string(line.gettoken_str(4));
           ent.offsets[4]=ent.offsets[5]=REG_SZ;
           if (which_token == TOK_WRITEREGEXPANDSTR)
-          {
             ent.offsets[5]=REG_EXPAND_SZ;
-          }
         }
         if (which_token == TOK_WRITEREGBIN)
         {
-          // Jim Park: Keep the data as char / 8 bits
-          char data[3*NSIS_MAX_STRLEN];
+          char data[3*NSIS_MAX_STRLEN]; // Jim Park: Keep the data as char / 8 bits
           TCHAR *p=line.gettoken_str(4);
           int data_len=0;
           while (*p)
@@ -5616,9 +5486,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         ent.which=EW_PUSHPOP;
         if (line.gettoken_str(1)[0] && save<0)
         {
-          int s=0;
-          swapitem=line.gettoken_int(1,&s);
-          if (!s || swapitem <= 0) PRINTHELP()
+          int succ=0;
+          swapitem=line.gettoken_int(1,&succ);
+          if (!succ || swapitem <= 0) PRINTHELP()
         }
         if (save>=0)
         {
@@ -5722,10 +5592,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_FINDFIRST:
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_SUPPORT_FINDFIRST not defined.\n"),  line.gettoken_str(0));
     return PS_ERROR;
-
 #endif//!NSIS_SUPPORT_FINDFIRST
-
-
 #ifdef NSIS_SUPPORT_FILEFUNCTIONS
     case TOK_FILEOPEN:
       {
@@ -5894,7 +5761,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #endif
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_SUPPORT_FILEFUNCTIONS not defined.\n"),  line.gettoken_str(0));
     return PS_ERROR;
-
 #endif//!NSIS_SUPPORT_FILEFUNCTIONS
 #ifdef NSIS_SUPPORT_REBOOT
     case TOK_REBOOT:
@@ -5940,7 +5806,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.offsets[0]=1;
       ent.offsets[1]=line.gettoken_enum(1,_T("off\0on\0"));
       if (ent.offsets[1]<0) PRINTHELP()
-
       SCRIPT_MSG(_T("LogSet: %") NPRIs _T("\n"),line.gettoken_str(1));
     return add_entry(&ent);
     case TOK_LOGTEXT:
@@ -6108,15 +5973,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_DEFVAR:
     {
       int a=1;
-
       if (!_tcsicmp(line.gettoken_str(1),_T("/GLOBAL")))
-      {
         a++;
-      }
       else if (line.getnumtokens() == 3)
-      {
         PRINTHELP();
-      }
 
       if (build_cursection)
       {
@@ -6126,13 +5986,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           PRINTHELP();
         }
       }
-
       SCRIPT_MSG(_T("Var: \"%") NPRIs _T("\"\n"),line.gettoken_str(a));
-
-      int res = DeclaredUserVar(line.gettoken_str(a));
-      if (res != PS_OK)
-        return res;
-
+      return DeclaredUserVar(line.gettoken_str(a));
     }
     return PS_OK;
 
@@ -6142,7 +5997,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     {
       LANGID LangID=0;
       int a = 1;
-      // Allow people to force Neutral, if /LANG=* is not present it uses the default
+      // Allow people to force Neutral (if /LANG=* is not present it uses the default)
       const bool forceneutrallang = !_tcsicmp(line.gettoken_str(a),_T("/LANG=0"));
 
       if (!_tcsnicmp(line.gettoken_str(a),_T("/LANG="),6))
@@ -6295,11 +6150,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       if (data_handle == -1)
       {
         int files_added;
-        int old_build_allowskipfiles=build_allowskipfiles;
+        const int old_build_allowskipfiles=build_allowskipfiles;
         build_allowskipfiles=1; // on
-        int old_build_overwrite=build_overwrite;
+        const int old_build_overwrite=build_overwrite;
         build_overwrite=1; // off
-        int old_build_datesave=build_datesave;
+        const int old_build_datesave=build_datesave;
         build_datesave=0; // off
         
         // Jim Park: While the code looks as if the same DLL is added multiple
@@ -6392,8 +6247,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       DefineInnerLangString(NLF_SYMBOL_NOT_FOUND);
       DefineInnerLangString(NLF_COULD_NOT_LOAD);
       DefineInnerLangString(NLF_NO_OLE);
-      // not used anywhere - DefineInnerLangString(NLF_ERR_REG_DLL);
-
+      // not used anywhere: DefineInnerLangString(NLF_ERR_REG_DLL);
       return PS_OK;
     }
     case TOK_INITPLUGINSDIR:
@@ -6432,14 +6286,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return add_entry(&ent);
 #else
     case TOK_LOCKWINDOW:
-    {
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_LOCKWINDOW_SUPPORT not defined.\n"),line.gettoken_str(0));
-    }
     return PS_ERROR;
 #endif // NSIS_LOCKWINDOW_SUPPORT
 
-    default: break;
-
+    default:
+      break;
   }
   ERROR_MSG(_T("Error: doCommand: Invalid token \"%") NPRIs _T("\".\n"),line.gettoken_str(0));
   return PS_ERROR;
@@ -6450,8 +6302,7 @@ int CEXEBuild::do_add_file(const TCHAR *lgss, int attrib, int recurse, int *tota
 {
   assert(!name_override || !recurse);
 
-  tstring dir = get_dir_name(lgss);
-  tstring spec;
+  tstring dir = get_dir_name(lgss), spec;
 
   if (dir == lgss)
     dir = _T("."), spec = lgss;
@@ -6508,11 +6359,10 @@ int CEXEBuild::do_add_file(const TCHAR *lgss, int attrib, int recurse, int *tota
     tstring new_dir;
     bool created = false;
 
-    if (basedir == _T("")) {
+    if (basedir == _T(""))
       new_dir = *dirs_itr;
-    } else {
+    else
       new_dir = basedir + _T('\\') + *dirs_itr;
-    }
 
     tstring new_spec = dir + PLATFORM_PATH_SEPARATOR_STR + *dirs_itr + PLATFORM_PATH_SEPARATOR_STR;
 
@@ -6531,7 +6381,6 @@ int CEXEBuild::do_add_file(const TCHAR *lgss, int attrib, int recurse, int *tota
     }
 
     const TCHAR *new_spec_c = new_spec.c_str();
-
     int res = do_add_file(new_spec_c, attrib, 1, total_files, NULL, generatecode, NULL, excluded, new_dir, created);
     if (res != PS_OK) {
       return PS_ERROR;
@@ -6646,20 +6495,18 @@ int CEXEBuild::add_file(const tstring& dir, const tstring& file, int attrib, con
   mmap.clear();
 
   if (ent.offsets[2] < 0)
-  {
     return PS_ERROR;
-  }
 
   if (data_handle)
-  {
     *data_handle=ent.offsets[2];
-  }
 
   {
     DWORD s=getcurdbsize()-last_build_datablock_used;
     if (s) s-=4;
-    if (s != len) SCRIPT_MSG(_T(" %d/%d bytes\n"),s,len);
-    else SCRIPT_MSG(_T(" %d bytes\n"),len);
+    if (s != len)
+      SCRIPT_MSG(_T(" %d/%d bytes\n"),s,len);
+    else
+      SCRIPT_MSG(_T(" %d bytes\n"),len);
   }
 
   if (generatecode)
@@ -6699,14 +6546,12 @@ int CEXEBuild::add_file(const tstring& dir, const tstring& file, int attrib, con
     if (build_allowskipfiles)
     {
       mb = MB_ABORTRETRYIGNORE | MB_ICONSTOP;
-      // default for silent installers
-      mb |= IDIGNORE << 21;
+      mb |= IDIGNORE << 21; // default for silent installers
     }
     else
     {
       mb = MB_RETRYCANCEL | MB_ICONSTOP;
-      // default for silent installers
-      mb |= IDCANCEL << 21;
+      mb |= IDCANCEL << 21; // default for silent installers
     }
     ent.offsets[0] |= mb << 3;
     ent.offsets[5] = DefineInnerLangString(build_allowskipfiles ? NLF_FILE_ERROR : NLF_FILE_ERROR_NOIGNORE);
@@ -6763,7 +6608,6 @@ int CEXEBuild::do_add_file_create_dir(const tstring& local_dir, const tstring& d
     int ndc = add_asciistring(_T("."));
 
     DWORD attr = GetFileAttributes(local_dir.c_str());
-
     if (attr != INVALID_FILE_ATTRIBUTES)
     {
       if (add_entry_direct(EW_SETFILEATTRIBUTES, ndc, attr) != PS_OK)
