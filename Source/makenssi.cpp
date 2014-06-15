@@ -468,11 +468,7 @@ static inline int makensismain(int argc, TCHAR **argv)
                argv[argpos][2] >= _T('0') && argv[argpos][2] <= _T('4') && !argv[argpos][3])
       {
         int v=argv[argpos][2]-_T('0');
-        build.display_script=v>3;
-        build.display_info=v>2;
-        build.display_warnings=v>1;
-        build.display_errors=v>0;
-        g_display_errors=build.display_errors;
+        build.set_verbosity(v);
       }
       else if (S7IsChEqualI('p',argv[argpos][1]) &&
                argv[argpos][2] >= _T('0') && argv[argpos][2] <= _T('5') && !argv[argpos][3])

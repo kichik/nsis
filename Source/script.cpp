@@ -3447,7 +3447,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
     case TOK_P_VERBOSE:
     {
-      extern int g_display_errors;
       for(int argi=1; argi<line.getnumtokens(); ++argi)
       {
         int v,k=line.gettoken_enum(argi,_T("push\0pop\0"));
@@ -3483,32 +3482,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           else
           {
             // push
-            v=0;
-            if (display_errors)
-            {
-              v++;
-              if (display_warnings)
-              {
-                v++;
-                if (display_info)
-                {
-                  v++;
-                  if (display_script)
-                  {
-                    v++;
-                  }
-                }
-              }
-            }
+            v=get_verbosity();
             verbose_stack.add(&v,sizeof(int));
             continue;
           }
         }
-        display_script=v>3;
-        display_info=v>2;
-        display_warnings=v>1;
-        display_errors=v>0;
-        g_display_errors=display_errors;
+        set_verbosity(v);
       }
     }
     return PS_OK;
