@@ -24,7 +24,7 @@ NSIS is created to be small, fast and efficient. While other installers often ad
 
 \\<b\\>Compatible with all major Windows versions\\</b\\>
 
-You can create a single installer that is compatible with Windows 95, Windows 98, Windows ME, Windows NT, Windows 2000, Windows XP, Windows Server 2003 and Windows Vista.
+You can create a single installer that is compatible with Windows 95, 98, ME, NT4, 2000, XP, 2003, Vista, Server 2008, 7, Server 2008R2, 8, Server 2012, 8.1 and Server 2012R2.
 
 \\<b\\>Unique compression methods\\</b\\>
 
