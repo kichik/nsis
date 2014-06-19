@@ -33,6 +33,8 @@ If you want to use MakeNSIS on the command line, the syntax of the makensis comm
 
 \b /OUTPUTCHARSET allows you to specify the codepage used by stdout when the output is redirected. (\NsisOutputCharset)
 
+\b /PPO or /SAFEPPO will only run the preprocessor and print the result to stdout. The safe version will not execute instructions like !appendfile or !system. !packhdr and !finalize are never executed.
+
 \b Using the /D switch one or more times will add to symbols to the globally defined list (See !define).
 
 \b Using the /X switch one or more times will execute the code you specify following it. Example: "/XAutoCloseWindow false"

@@ -102,7 +102,7 @@ namespace MakensisAPI {
 
 class CEXEBuild {
   public:
-    CEXEBuild();
+    CEXEBuild(signed char pponly);
     void initialize(const TCHAR *makensis_path);
     ~CEXEBuild();
 
@@ -135,7 +135,7 @@ class CEXEBuild {
     // process a script (you can process as many scripts as you want,
     // it is as if they are concatenated)
     int process_script(NIStream&Strm, const TCHAR *filename);
-    int process_oneline(TCHAR *line, const TCHAR *curfilename, int lineptr);
+    int process_oneline(const TCHAR *line, const TCHAR *curfilename, int lineptr);
     
     // you only get to call write_output once, so use it wisely.
     int write_output(void);
@@ -145,6 +145,7 @@ class CEXEBuild {
     DefineList definedlist; // List of identifiers marked as "defined" like
                             // C++ macro definitions such as _UNICODE.
     void define(const TCHAR *p, const TCHAR *v=_T("")); // to add a defined thing.
+    signed char preprocessonly; // > 0 = safe, < 0 = unsafe
 
     int get_verbosity() const;
     void set_verbosity(int lvl);
@@ -173,6 +174,8 @@ class CEXEBuild {
 
     // tokens.cpp
     bool is_ppbranch_token(TCHAR *s);
+    bool is_pp_token(int tkid);
+    bool is_unsafe_pp_token(int tkid);
     int get_commandtoken(TCHAR *s, int *np, int *op, int *pos);
     const TCHAR* get_commandtoken_name(int tok);
 

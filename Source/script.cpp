@@ -286,6 +286,8 @@ int CEXEBuild::process_script(NIStream&Strm, const TCHAR *filename)
 }
 
 #define PRINTHELP() { print_help(line.gettoken_str(0)); return PS_ERROR; }
+static void PREPROCESSONLY_BEGINCOMMENT() { extern FILE *g_output; _ftprintf(g_output,_T("!if 0 /*\n")); }
+static void PREPROCESSONLY_ENDCOMMENT() { extern FILE *g_output; _ftprintf(g_output,_T("*/\n!endif\n")); }
 
 void CEXEBuild::start_ifblock()
 {
@@ -369,6 +371,8 @@ int CEXEBuild::doParse(const TCHAR *str)
     }
   }
 
+  GrowBuf ppoline;
+  if (preprocessonly) m_linebuild.swap(ppoline); // LineParser strips quotes and we need to display them
   m_linebuild.resize(0);
 
   if (res)
@@ -393,7 +397,11 @@ parse_again:
         ERROR_MSG(_T("Invalid label: %") NPRIs _T(" (labels cannot begin with !, $, -, +, or 0-9)\n"),line.gettoken_str(0));
         return PS_ERROR;
       }
-      if (add_label(line.gettoken_str(0))) return PS_ERROR;
+      extern FILE *g_output;
+      if (preprocessonly)
+        _ftprintf(g_output,_T("%") NPRIs _T("\n"),line.gettoken_str(0));
+      else
+        if (add_label(line.gettoken_str(0))) return PS_ERROR;
       line.eattoken();
       goto parse_again;
     }
@@ -616,6 +624,16 @@ parse_again:
   }
   if (!cur_ifblock || (!cur_ifblock->ignore && !cur_ifblock->inherited_ignore))
   {
+    if (preprocessonly)
+    {
+      extern FILE *g_output;
+      bool pptok = is_pp_token(tkid), docmd = pptok;
+      bool both = TOK_P_VERBOSE == tkid || TOK_P_WARNING == tkid || TOK_P_ECHO == tkid;
+      if (TOK_P_FINALIZE == tkid || TOK_P_PACKEXEHEADER == tkid) docmd = false;
+      if (docmd && is_unsafe_pp_token(tkid) && preprocessonly > 0) docmd = false;
+      if (!docmd || both) _ftprintf(g_output,(_T("%") NPRIs _T("\n")),ppoline.get());
+      if (!docmd && !both) return PS_OK;
+    }
     return doCommand(tkid,line);
   }
 
@@ -1006,7 +1024,7 @@ l_errwcconv:
   return PS_OK;
 }
 
-int CEXEBuild::process_oneline(TCHAR *line, const TCHAR *filename, int linenum)
+int CEXEBuild::process_oneline(const TCHAR *line, const TCHAR *filename, int linenum)
 {
   const TCHAR *last_filename = curfilename;
   int last_linecnt = linecnt;
@@ -3129,6 +3147,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
         if (!validparams || comp == -1) PRINTHELP()
         SCRIPT_MSG(_T("%") NPRIs _T(": \"%") NPRIs _T("\"\n"),cmdname,exec);
+        PREPROCESSONLY_BEGINCOMMENT();
 #ifdef _WIN32
         if (TOK_P_EXECUTE == which_token)
         {
@@ -3164,6 +3183,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           ERROR_MSG(_T("%") NPRIs _T(": returned %d, aborting\n"),cmdname,ret);
           return PS_ERROR;
         }
+        PREPROCESSONLY_ENDCOMMENT();
         SCRIPT_MSG(_T("%") NPRIs _T(": returned %d\n"),cmdname,ret);
       }
     return PS_OK;

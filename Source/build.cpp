@@ -105,15 +105,15 @@ CEXEBuild::~CEXEBuild()
   }
 }
 
-CEXEBuild::CEXEBuild() :
-    m_exehead(0),
-    m_exehead_size(0)
+CEXEBuild::CEXEBuild(signed char pponly) :
+  m_exehead(0),
+  m_exehead_size(0),
+  preprocessonly(pponly)
 {
   set_verbosity(3);
 
   curlinereader=0;
-  curfilename=0;
-  linecnt=0;
+  curfilename=0, linecnt=0;
   cur_ifblock=NULL;
   last_line_had_slash=0;
   inside_comment=false;
@@ -3366,6 +3366,7 @@ int CEXEBuild::get_verbosity() const
 
 void CEXEBuild::set_verbosity(int lvl)
 {
+  if (preprocessonly) lvl = STD_MIN(lvl, 1);
   display_errors = lvl > 0;
   display_warnings = lvl > 1;
   display_info = lvl > 2;

@@ -8,6 +8,8 @@ Released on ?, 2014
 
 \S2{} Major Changes
 
+\b Added PPO and SafePPO preprocess-only compiler switches
+
 \b MakeNSIS WM_COPYDATA messages now use the QH_OUTPUTCHARSET encoding with CP_ACP as the default for compatibility with old IDEs.
 
 \S2{} Minor Changes

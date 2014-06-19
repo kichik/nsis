@@ -176,6 +176,7 @@ static void print_usage()
 #ifdef _WIN32
          _T("  ") OPT_STR _T("OUTPUTCHARSET <") TSTR_OUTPUTCHARSET _T(">\n")
 #endif
+         _T("  ") OPT_STR _T("[SAFE]PPO preprocess to stdout/file\n")
          _T("  ") OPT_STR _T("Ddefine[=value] defines the symbol \"define\" for the script [to value]\n")
          _T("  ") OPT_STR _T("Xscriptcmd executes scriptcmd in script (i.e. \"") OPT_STR _T("XOutFile inst.exe\")\n")
          _T("  ")         _T("  parameters are processed by order (") OPT_STR _T("Ddef ins.nsi != ins.nsi ") OPT_STR _T("Ddef)\n")
@@ -298,6 +299,7 @@ static inline int makensismain(int argc, TCHAR **argv)
   bool no_logo=true;
   bool initialparsefail=false;
   bool noconfig=false;
+  signed char pponly=0;
 #ifdef _WIN32
   signed char outputbom=1;
 
@@ -352,6 +354,10 @@ static inline int makensismain(int argc, TCHAR **argv)
       outputenc.SetCodepage(NStreamEncoding::UTF16LE);
     }
 #endif
+    else if (!_tcsicmp(swname,_T("PPO")) || !_tcsicmp(swname,_T("SafePPO")))
+    {
+      pponly = S7IsChEqualI('s',swname[0]) ? 1 : -1;
+    }
     else if (S7IsChEqualI('v',swname[0]) && swname[1] && !swname[2])
     {
       no_logo=swname[1] >= _T('0') && swname[1] <= _T('2');
@@ -394,7 +400,7 @@ static inline int makensismain(int argc, TCHAR **argv)
   unsigned int files_processed=0;
   unsigned int cmds_processed=0;
 
-  CEXEBuild build;
+  CEXEBuild build(pponly);
   try
   {
     build.initialize(argv[0]);
@@ -421,7 +427,7 @@ static inline int makensismain(int argc, TCHAR **argv)
     fflush(g_output);
     return 0;
   }
-  if (!no_logo) print_logo();
+  if (!no_logo && !pponly) print_logo();
 
 
   argpos=initialparsefail ? argc : 1;
@@ -431,15 +437,17 @@ static inline int makensismain(int argc, TCHAR **argv)
       in_files=1;
     else if (IS_OPT(argv[argpos]) && _tcscmp(argv[argpos], _T("-")) && !in_files)
     {
-      if (!_tcsicmp(&argv[argpos][1],_T("NOCD"))) do_cd=false;
-      else if (!_tcsicmp(&argv[argpos][1],_T("NOCONFIG"))) noconfig=true;
-      else if (!_tcsicmp(&argv[argpos][1],_T("PAUSE"))) g_dopause=true;
-      else if (!_tcsicmp(&argv[argpos][1],_T("LICENSE"))) 
+      const TCHAR* const swname = &argv[argpos][1];
+      if (!_tcsicmp(swname,_T("PPO")) || !_tcsicmp(swname,_T("SafePPO"))) {} // Already parsed
+      else if (!_tcsicmp(swname,_T("NOCD"))) do_cd=false;
+      else if (!_tcsicmp(swname,_T("NOCONFIG"))) noconfig=true;
+      else if (!_tcsicmp(swname,_T("PAUSE"))) g_dopause=true;
+      else if (!_tcsicmp(swname,_T("LICENSE"))) 
       {
         if (build.display_info) print_license();
         nousage++;
       }
-      else if (!_tcsicmp(&argv[argpos][1],_T("CMDHELP")))
+      else if (!_tcsicmp(swname,_T("CMDHELP")))
       {
         if (argpos < argc-1)
           build.print_help(argv[++argpos]);
@@ -447,12 +455,12 @@ static inline int makensismain(int argc, TCHAR **argv)
           build.print_help(NULL);
         nousage++;
       }
-      else if (!_tcsicmp(&argv[argpos][1],_T("HDRINFO")))
+      else if (!_tcsicmp(swname,_T("HDRINFO")))
       {
         print_stub_info(build);
         nousage++;
       }
-      else if (!_tcsicmp(&argv[argpos][1],_T("INPUTCHARSET")) || !_tcsicmp(&argv[argpos][1],_T("ICS")))
+      else if (!_tcsicmp(swname,_T("INPUTCHARSET")) || !_tcsicmp(swname,_T("ICS")))
       {
         if (!HasReqParam(argv, ++argpos, argc)) break;
         WORD cp = GetEncodingFromString(argv[argpos]);
@@ -464,13 +472,13 @@ static inline int makensismain(int argc, TCHAR **argv)
         }
         inputenc.SafeSetCodepage(cp);
       }
-      else if (S7IsChEqualI('v',argv[argpos][1]) && 
+      else if (S7IsChEqualI('v',*swname) && 
                argv[argpos][2] >= _T('0') && argv[argpos][2] <= _T('4') && !argv[argpos][3])
       {
         int v=argv[argpos][2]-_T('0');
         build.set_verbosity(v);
       }
-      else if (S7IsChEqualI('p',argv[argpos][1]) &&
+      else if (S7IsChEqualI('p',*swname) &&
                argv[argpos][2] >= _T('0') && argv[argpos][2] <= _T('5') && !argv[argpos][3])
       {
 #ifdef _WIN32
@@ -496,10 +504,10 @@ static inline int makensismain(int argc, TCHAR **argv)
 #endif
       }
       // Already parsed these (must adjust argpos)
-      else if (!_tcsicmp(&argv[argpos][1],_T("NOTIFYHWND"))) ++argpos;
-      else if (!_tcsicmp(&argv[argpos][1],_T("OUTPUTCHARSET")) || !_tcsicmp(&argv[argpos][1],_T("OCS"))) ++argpos;
+      else if (!_tcsicmp(swname,_T("NOTIFYHWND"))) ++argpos;
+      else if (!_tcsicmp(swname,_T("OUTPUTCHARSET")) || !_tcsicmp(swname,_T("OCS"))) ++argpos;
       // These must be parsed last because they will eat other switches
-      else if (S7IsChEqualI('d',argv[argpos][1]) && argv[argpos][2])
+      else if (S7IsChEqualI('d',swname[0]) && swname[1])
       {
         TCHAR *p=argv[argpos]+2;
         TCHAR *s=_tcsdup(p),*v;
@@ -509,9 +517,9 @@ static inline int makensismain(int argc, TCHAR **argv)
         build.define(s,v?v:_T(""));
         free(s);
       }
-      else if (S7IsChEqualI('x',argv[argpos][1]) && argv[argpos][2])
+      else if (S7IsChEqualI('x',swname[0]) && swname[1])
       {
-        if (build.process_oneline(argv[argpos]+2,_T("<command line>"),argpos+1) != PS_OK)
+        if (build.process_oneline(swname+1,_T("<command line>"),argpos+1) != PS_OK)
         {
           return 1;
         }
@@ -519,9 +527,9 @@ static inline int makensismain(int argc, TCHAR **argv)
       }
       // Already parsed these ("VERSION" never gets this far)
 #ifdef _WIN32
-      else if (!_tcsicmp(&argv[argpos][1],_T("RAW"))) {}
+      else if (!_tcsicmp(swname,_T("RAW"))) {}
 #endif
-      else if (S7IsChEqualI('o',argv[argpos][1]) && argv[argpos][2]) {} 
+      else if (S7IsChEqualI('o',swname[0]) && swname[1]) {} 
       else
         break;
     }
@@ -614,6 +622,8 @@ static inline int makensismain(int argc, TCHAR **argv)
     }
     return 1;
   }
+
+  if (build.preprocessonly) return 0;
 
   if (build.display_info) 
   {
