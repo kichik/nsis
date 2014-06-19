@@ -335,8 +335,27 @@ bool CEXEBuild::is_ppbranch_token(TCHAR *s)
   case TOK_P_IFDEF: case TOK_P_IFNDEF:
   case TOK_P_IFMACRODEF: case TOK_P_IFMACRONDEF:
     return true;
-  default: return false;
+  default:
+    return false;
   }
+}
+
+bool CEXEBuild::is_pp_token(int tkid)
+{
+  // NOTE: This assumes that all TOK_P_* in tokens.h are grouped together.
+  return (tkid >= TOK_P_IF && tkid <= TOK_P_SEARCHREPLACESTRING);
+}
+
+bool CEXEBuild::is_unsafe_pp_token(int tkid)
+{
+  switch(tkid)
+  {
+  case TOK_P_TEMPFILE: case TOK_P_APPENDFILE: case TOK_P_DELFILE:
+  case TOK_P_SYSTEMEXEC: case TOK_P_EXECUTE: case TOK_P_FINALIZE:
+  case TOK_P_PACKEXEHEADER:
+    return true;
+  }
+  return false;
 }
 
 int CEXEBuild::get_commandtoken(TCHAR *s, int *np, int *op, int *pos)
@@ -355,16 +374,7 @@ int CEXEBuild::get_commandtoken(TCHAR *s, int *np, int *op, int *pos)
 int CEXEBuild::GetCurrentTokenPlace()
 {
   if (build_cursection)
-  {
-    if (build_cursection_isfunc)
-    {
-      return TP_FUNC;
-    }
-    else
-    {
-      return TP_SEC;
-    }
-  }
+    return build_cursection_isfunc ? TP_FUNC : TP_SEC;
 
   if (cur_page)
     return TP_PAGEEX;
@@ -374,6 +384,8 @@ int CEXEBuild::GetCurrentTokenPlace()
 
 int CEXEBuild::IsTokenPlacedRight(int pos, TCHAR *tok)
 {
+  if (preprocessonly)
+    return PS_OK;
   if ((unsigned int) pos > (sizeof(tokenlist) / sizeof(tokenType)))
     return PS_OK;
 

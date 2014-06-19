@@ -98,3 +98,12 @@ void GrowBuf::resize(int newlen)
 
 int GrowBuf::getlen() const { return m_used; }
 void *GrowBuf::get() const { return m_s; }
+
+void GrowBuf::swap(GrowBuf&other)
+{
+  std::swap(m_s, other.m_s);
+  std::swap(m_alloc, other.m_alloc);
+  std::swap(m_used, other.m_used);
+  std::swap(m_zero, other.m_zero);
+  std::swap(m_bs, other.m_bs);
+}

@@ -103,6 +103,8 @@ class GrowBuf : public IGrowBuf
      */
     void *get() const;
 
+    void swap(GrowBuf&other);
+
   private:
     void *m_s;    /* the storage buffer */
     int m_alloc;  /* allocated bytes */
