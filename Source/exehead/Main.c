@@ -372,7 +372,7 @@ void NSISCALL CleanUp()
   // Clean up after plug-ins
   myDelete(state_plugins_dir, DEL_DIR | DEL_RECURSE | DEL_REBOOT);
 #endif // NSIS_CONFIG_PLUGIN_SUPPORT
-#ifdef _DEBUG
+#ifdef DEBUG
   // GlobalFree(g_header); ?
 #endif
 }

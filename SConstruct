@@ -201,13 +201,15 @@ Help(opts.GenerateHelpText(defenv))
 if defenv['TARGET_ARCH'] != 'x86':
 	defenv['UNICODE'] = True
 
+if defenv['DEBUG']:
+	defenv.Append(CPPDEFINES = ['DEBUG'])
+
 # add prefixes defines
 if 'NSIS_CONFIG_CONST_DATA_PATH' in defenv['NSIS_CPPDEFINES']:
 	defenv.Append(NSIS_CPPDEFINES = [('PREFIX_CONF', '"%s"' % defenv.subst('$PREFIX_CONF'))])
 	defenv.Append(NSIS_CPPDEFINES = [('PREFIX_DATA', '"%s"' % defenv.subst('$PREFIX_DATA'))])
 
 # Need this early for the config header files to be placed in
-
 if defenv['UNICODE']:
 	if defenv['DEBUG']:
 		defenv.Replace(BUILD_PREFIX = 'build/udebug')

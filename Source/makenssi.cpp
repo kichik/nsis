@@ -303,8 +303,10 @@ static inline int makensismain(int argc, TCHAR **argv)
 #ifdef _WIN32
   signed char outputbom=1;
 
+#ifdef DEBUG
   assert(CP_ACP == outputenc.GetCodepage()); // Required by CEXEBuild::notify() char* legacy handling.
 #endif
+#endif //~ _WIN32
 
   // Some parameters have to be parsed early so we can initialize stdout and the "host API".
   while (++argpos < argc && !initialparsefail)

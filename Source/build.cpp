@@ -740,7 +740,10 @@ int CEXEBuild::datablock_optimize(int start_offset, int first_int)
   if (!this->build_optimize_datablock || this_len < (int) sizeof(int))
     return start_offset;
 
-  MMapBuf *db = (MMapBuf *) cur_datablock;
+#ifdef DEBUG
+  assert(dynamic_cast<MMapBuf*>(cur_datablock));
+#endif
+  MMapBuf *db = static_cast<MMapBuf*>(cur_datablock);
   db->setro(TRUE);
 
   cached_db_size *db_sizes = (cached_db_size *) this->cur_datablock_cache->get();
@@ -788,7 +791,10 @@ bool CEXEBuild::datablock_finddata(IMMap&mmap, int mmstart, int size, int*ofs)
 {
   const int first_int = size;
   size &= ~ 0x80000000;
-  MMapBuf *db = (MMapBuf *) cur_datablock;
+#ifdef DEBUG
+  assert(dynamic_cast<MMapBuf*>(cur_datablock));
+#endif
+  MMapBuf *db = static_cast<MMapBuf*>(cur_datablock);
   cached_db_size *db_sizes = (cached_db_size *) this->cur_datablock_cache->get();
   int db_sizes_num = this->cur_datablock_cache->getlen() / sizeof(cached_db_size);
   for (int i = 0; i < db_sizes_num; i++)
