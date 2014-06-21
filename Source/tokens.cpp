@@ -246,6 +246,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_P_FINALIZE,_T("!finalize"),1,0,_T("command_with_%1"),TP_ALL},
 {TOK_P_SYSTEMEXEC,_T("!system"),1,2,_T("command [<OP retval> | <retvalsymbol>]\n    OP=(< > <> =)"),TP_ALL},
 {TOK_P_EXECUTE,  _T("!execute"),1,2,_T("command [<OP retval> | <retvalsymbol>]\n    OP=(< > <> =)"),TP_ALL},
+{TOK_P_MAKENSIS,_T("!makensis"),1,2,_T("parameters [<OP retval> | <retvalsymbol>]"),TP_ALL},
 {TOK_P_ADDINCLUDEDIR,_T("!AddIncludeDir"),1,0,_T("dir"),TP_ALL},
 {TOK_P_INCLUDE,_T("!include"),1,2,_T("[/NONFATAL] [/CHARSET=<") TSTR_INPUTCHARSET _T(">] filename.nsh"),TP_ALL},
 {TOK_P_CD,_T("!cd"),1,0,_T("absolute_or_relative_new_directory"),TP_ALL},

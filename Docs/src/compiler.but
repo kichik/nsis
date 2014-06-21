@@ -97,6 +97,15 @@ On POSIX platforms, \R{execute}{!execute} will use system() just like \R{system}
 
 \c !execute '"%WINDIR%\notepad.exe" "${NSISDIR}\license.txt"'
 
+\S1{makensis} !makensis
+
+\c parameters [compare comparevalue | symbol]
+
+This command will \R{execute}{!execute} a new instance of MakeNSIS with the parameters you specify.
+
+\c !makensis '-DGENERATEUNINST "${__FILE__}"' = 0
+\c !system '"signtool" sign ...' = 0
+
 \S1{packhdr} !packhdr
 
 \c tempfile command

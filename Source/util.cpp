@@ -828,7 +828,8 @@ const TCHAR* GetFriendlySize(UINT64 n, unsigned int&fn, GETFRIENDLYSIZEFLAGS f)
   return s >= COUNTOF(scale) ? _T(" ?") : scale[s];
 }
 
-#if defined(_WIN32) && defined(_UNICODE)
+#ifdef _WIN32
+#ifdef _UNICODE
 int RunChildProcessRedirected(LPCWSTR cmdprefix, LPCWSTR cmdmain)
 {
   // We have to deliver the requested output encoding to our host (if any) and the 
@@ -837,7 +838,7 @@ int RunChildProcessRedirected(LPCWSTR cmdprefix, LPCWSTR cmdmain)
   // child to call GetConsoleOutputCP(), and even if we could, UTF-16 is not valid there.
   UINT cp = CP_UTF8, mbtwcf = MB_ERR_INVALID_CHARS, oemcp = GetOEMCP();
   errno = ENOMEM;
-  if (!cmdprefix) cmdprefix = _T("");
+  if (!cmdprefix) cmdprefix = L"";
   size_t cch1 = _tcslen(cmdprefix), cch2 = _tcslen(cmdmain);
   WCHAR *cmd = (WCHAR*) malloc( (cch1 + cch2 + 1) * sizeof(WCHAR) );
   if (!cmd) return -1;
@@ -938,7 +939,20 @@ switchcp:   cp = orgwinconoutcp, mbtwcf = 0, utf8 = false;
   CloseHandle(hPipRd);
   return childec;
 }
-#endif
+#else
+int RunChildProcessRedirected(LPCWSTR cmd)
+{
+  STARTUPINFO si = { sizeof(STARTUPINFO), };
+  PROCESS_INFORMATION pi;
+  if (!CreateProcess(NULL, cmd, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi))
+    return GetLastError();
+  WaitForSingleObject(pi.hProcess, INFINITE);
+  GetExitCodeProcess(pi.hProcess, &si.cb);
+  CloseHandle(pi.hThread), CloseHandle(pi.hProcess);
+  return (int) si.cb;
+}
+#endif //~ _UNICODE
+#endif //~ _WIN32
 
 int sane_system(const TCHAR *command)
 {
