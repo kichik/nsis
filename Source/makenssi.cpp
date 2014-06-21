@@ -46,6 +46,7 @@ UINT g_wincon_orgoutcp;
 WINSIO_OSDATA g_osdata_stdout;
 #endif
 #endif
+const TCHAR *g_argv0=0;
 
 static void dopause(void)
 {
@@ -283,6 +284,8 @@ static inline int makensismain(int argc, TCHAR **argv)
   assert(sizeof(wchar_t) > 1 && sizeof(wchar_t) <= 4);
   assert(sizeof(WINWCHAR) == 2 && sizeof(WORD) == 2);
   assert(sizeof(WINWCHAR) == sizeof(WCHAR)); // Not really required but if WCHAR changes we need to know
+
+  g_argv0=argv[0];
 
   if (!NSISRT_Initialize())
   {

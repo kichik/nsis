@@ -45,6 +45,7 @@ bool GetDLLVersion(const tstring& filepath, DWORD& high, DWORD& low);
 tstring get_full_path(const tstring& path);
 tstring get_dir_name(const tstring& path);
 tstring get_file_name(const tstring& path);
+tstring get_executable_path(const TCHAR* argv0);
 tstring get_executable_dir(const TCHAR *argv0);
 tstring remove_file_extension(const tstring& path);
 inline bool IsAgnosticPathSeparator(const TCHAR c) { return _T('\\') == c || _T('/') == c; }
@@ -101,6 +102,7 @@ void FlushOutputAndResetPrintColor();
 #ifdef _WIN32
 #ifdef _UNICODE
 int RunChildProcessRedirected(LPCWSTR cmdprefix, LPCWSTR cmdmain);
+inline int RunChildProcessRedirected(LPCWSTR cmd) { return RunChildProcessRedirected(0, cmd); }
 #ifdef MAKENSIS
 typedef struct {
   HANDLE hNative;
@@ -129,6 +131,8 @@ int WinStdIO_wprintf(const wchar_t*Fmt, ...);
 #undef _vftprintf
 #define _vftprintf WinStdIO_vfwprintf
 #endif // ~MAKENSIS
+#else
+int RunChildProcessRedirected(LPCWSTR cmd);
 #endif // ~_UNICODE
 #define ResetPrintColor() FlushOutputAndResetPrintColor() // For reset ONLY, use PrintColorFmtMsg(0,NULL ...
 #define SetPrintColorWARN() PrintColorFmtMsg(1|0x10, NULL, (va_list)NULL)

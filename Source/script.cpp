@@ -3133,9 +3133,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return PS_OK;
     case TOK_P_SYSTEMEXEC:
     case TOK_P_EXECUTE:
+    case TOK_P_MAKENSIS:
       {
         const TCHAR *cmdname=get_commandtoken_name(which_token);
-        TCHAR *exec=line.gettoken_str(1), *define;
+        const TCHAR *exec=line.gettoken_str(1), *define;
         int comp=line.gettoken_enum(2,_T("<\0>\0<>\0=\0ignore\0"));
         int validparams=true, ret=-1, cmpv;
         switch(line.getnumtokens()-1)
@@ -3146,24 +3147,23 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         default: comp=-1;
         }
         if (!validparams || comp == -1) PRINTHELP()
-        SCRIPT_MSG(_T("%") NPRIs _T(": \"%") NPRIs _T("\"\n"),cmdname,exec);
-        PREPROCESSONLY_BEGINCOMMENT();
-#ifdef _WIN32
-        if (TOK_P_EXECUTE == which_token)
+        tstring compile;
+        if (TOK_P_MAKENSIS == which_token)
         {
-#ifdef _UNICODE
-          ret=RunChildProcessRedirected(0,exec);
-#else
-          PROCESS_INFORMATION pi;
-          STARTUPINFO si={sizeof(STARTUPINFO),};
-          if (CreateProcess(NULL,exec,NULL,NULL,FALSE,0,NULL,NULL,&si,&pi))
-          {
-            WaitForSingleObject(pi.hProcess,INFINITE);
-            if (GetExitCodeProcess(pi.hProcess,&si.cb)) ret=(int)si.cb;
-            CloseHandle(pi.hThread), CloseHandle(pi.hProcess);
-          }
-#endif
+          extern const TCHAR *g_argv0;
+          extern NStreamEncoding g_outputenc;
+          TCHAR buf[33];
+          compile=_T("\""), compile+=get_executable_path(g_argv0), compile+= _T("\"");
+          compile+= _T(" ") OPT_STR _T("v"), compile+=_itot(get_verbosity(),buf,10);
+          compile+= _T(" ") OPT_STR _T("OCS "), g_outputenc.GetCPDisplayName(buf), compile+=buf;
+          if (*exec) compile+= _T(" "), compile+=exec;
+          exec=compile.c_str();
         }
+        SCRIPT_MSG(_T("%") NPRIs _T(": \"%") NPRIs _T("\"\n"),cmdname,exec);
+        if (preprocessonly) PREPROCESSONLY_BEGINCOMMENT();
+#ifdef _WIN32
+        if (TOK_P_SYSTEMEXEC != which_token)
+          ret=RunChildProcessRedirected(exec);
         else
 #endif //~ _WIN32
           ret=sane_system(exec);
@@ -3183,7 +3183,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           ERROR_MSG(_T("%") NPRIs _T(": returned %d, aborting\n"),cmdname,ret);
           return PS_ERROR;
         }
-        PREPROCESSONLY_ENDCOMMENT();
+        if (preprocessonly) PREPROCESSONLY_ENDCOMMENT();
         SCRIPT_MSG(_T("%") NPRIs _T(": returned %d\n"),cmdname,ret);
       }
     return PS_OK;
