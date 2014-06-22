@@ -3136,9 +3136,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_P_MAKENSIS:
       {
         const TCHAR *cmdname=get_commandtoken_name(which_token);
-        const TCHAR *exec=line.gettoken_str(1), *define;
+        const TCHAR *exec=line.gettoken_str(1), *define=0;
         int comp=line.gettoken_enum(2,_T("<\0>\0<>\0=\0ignore\0"));
-        int validparams=true, ret=-1, cmpv;
+        int validparams=true, ret=-1, cmpv=0;
         switch(line.getnumtokens()-1)
         {
         case 1: comp=4; break;
