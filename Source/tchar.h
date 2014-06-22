@@ -108,7 +108,7 @@ typedef wchar_t TCHAR, _TUCHAR;
 #define _ttol       _wtol
 
 // conversion from numbers to strings
-#define _itot       _itow
+//Only VC has this? #define _itot _itow
 #define _ltot       _ltow
 #define _i64tot     _i64tow
 #define _ui64tot    _ui64tow

@@ -3154,7 +3154,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           extern NStreamEncoding g_outputenc;
           TCHAR buf[33];
           compile=_T("\""), compile+=get_executable_path(g_argv0), compile+= _T("\"");
-          compile+= _T(" ") OPT_STR _T("v"), compile+=_itot(get_verbosity(),buf,10);
+          compile+= _T(" ") OPT_STR _T("v"), wsprintf(buf,_T("%d"),get_verbosity()), compile+=buf;
           compile+= _T(" ") OPT_STR _T("OCS "), g_outputenc.GetCPDisplayName(buf), compile+=buf;
           if (*exec) compile+= _T(" "), compile+=exec;
           exec=compile.c_str();
