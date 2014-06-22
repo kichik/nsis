@@ -106,9 +106,9 @@ CEXEBuild::~CEXEBuild()
 }
 
 CEXEBuild::CEXEBuild(signed char pponly) :
+  preprocessonly(pponly),
   m_exehead(0),
-  m_exehead_size(0),
-  preprocessonly(pponly)
+  m_exehead_size(0)
 {
   set_verbosity(3);
 

@@ -169,6 +169,9 @@ uInt *hn)               /* working area: values in order of bit length */
   int y;                        /* number of dummy codes added */
   uInt z;                       /* number of entries in current table */
 
+#ifdef __GNUC__
+  r.base = 0; // Avoid GCC "may be used uninitialized in this function" warning
+#endif
 
   /* Generate counts for each bit length */
   p=c;
