@@ -352,8 +352,8 @@ bool CEXEBuild::is_unsafe_pp_token(int tkid)
   switch(tkid)
   {
   case TOK_P_TEMPFILE: case TOK_P_APPENDFILE: case TOK_P_DELFILE:
-  case TOK_P_SYSTEMEXEC: case TOK_P_EXECUTE: case TOK_P_FINALIZE:
-  case TOK_P_PACKEXEHEADER:
+  case TOK_P_SYSTEMEXEC: case TOK_P_EXECUTE: case TOK_P_MAKENSIS:
+  case TOK_P_PACKEXEHEADER: case TOK_P_FINALIZE:
     return true;
   }
   return false;
