@@ -444,6 +444,11 @@ __int64 GetIntFromString(TCHAR **p)
     return myatoi64(buffer);
 }
 
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuninitialized" // temp3 is set to 0 when we start parsing a new parameter
+// must be outside of function for mingw
+#endif
 SystemProc *PrepareProc(BOOL NeedForCall)
 {
     int SectionType = PST_PROC, // First section is always proc spec
@@ -683,14 +688,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
             case _T('0'): case _T('1'): case _T('2'): case _T('3'): case _T('4'):
             case _T('5'): case _T('6'): case _T('7'): case _T('8'): case _T('9'):
                 // Numeric inline
-#ifdef __GNUC__
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wuninitialized" // temp3 is set to 0 when we start parsing a new parameter
-#endif
                 if (temp3 == 0)
-#ifdef __GNUC__
-#pragma GCC diagnostic pop
-#endif
                 {
                     ib--;
                     // It's stupid, I know, but I'm too lazy to do another thing
@@ -759,14 +757,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
                 if (temp3 == 1)
                     proc->Params[ParamIndex].Output = BUGBUG64(int) temp4;
                 // Next parameter is output or something else
-#ifdef __GNUC__
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wuninitialized"
-#endif
                 temp3++;
-#ifdef __GNUC__
-#pragma GCC diagnostic pop
-#endif
             }
 
             ChangesDone = PCD_DONE;
@@ -914,6 +905,9 @@ SystemProc *PrepareProc(BOOL NeedForCall)
 
     return proc;
 }
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
 
 void ParamAllocate(SystemProc *proc)
 {
