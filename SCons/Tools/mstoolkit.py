@@ -179,7 +179,7 @@ def win32ShlinkSources(target, source, env, for_signature):
 			# Just treat it as a generic source file.
 			listCmd.append(src)
 	return listCmd
-	
+
 def win32LibEmitter(target, source, env):
 	# SCons.Tool.msvc.validate_vars(env)
 	
@@ -289,7 +289,7 @@ def generate(env):
 	include_path, lib_path, exe_path, sdk_path = "", "", "", ""
 	targ_arc = env.get('TARGET_ARCH', 'x86')
 
-	if os.environ.has_key('MSVC_USE_SCRIPT') and "None" == os.environ['MSVC_USE_SCRIPT']:
+	if "None" == env.get('MSVC_USE_SCRIPT', '!'):
 		for x in ['INCLUDE', 'LIB', 'PATH', 'CL', 'LINK', 'ML']: env['ENV'][x] = ""
 		if not env.WhereIs('cl', os.environ['PATH']):
 			raise SCons.Errors.InternalError("CL not found in %s" % os.environ['PATH'])
@@ -300,12 +300,14 @@ def generate(env):
 		if not sdk_path:
 			raise SCons.Errors.InternalError("windows.h not found in %s" % include_path)
 		sdk_path = os.path.normpath(sdk_path + "\..\..")
-		sdk_path_AR = env.WhereIs('lib', exe_path)
 		sdk_path_LINK = env.WhereIs('link', exe_path)
+		sdk_path_AR = env.WhereIs('lib', exe_path)
 	else:
 		include_path, lib_path, exe_path, sdk_path = get_msvctoolkit_paths()
+		if float(env['MSVS_VERSION']) < 7.0: # Override SConstruct default
+			env['MSVS_VERSION'] = '7.1'
+		sdk_path_LINK = env.WhereIs('link', exe_path)
 		sdk_path_AR = sdk_path + '\\bin\\Win64\\lib.exe'
-		sdk_path_LINK = sdk_path + '\\bin\\Win64\\link.exe'
 
 	env.PrependENVPath('INCLUDE', include_path)
 	env.PrependENVPath('LIB', lib_path)
@@ -327,8 +329,13 @@ def generate(env):
 	env['PCHCOM'] = '$CXX $CXXFLAGS $CPPFLAGS $_CPPDEFFLAGS $_CPPINCFLAGS /c $SOURCES /Fo${TARGETS[1]} /Yc$PCHSTOP /Fp${TARGETS[0]} $CCPDBFLAGS'
 	env['BUILDERS']['PCH'] = pch_builder
 
-	env['AR']          = '"' + sdk_path_AR + '"'
-	env['ARFLAGS']     = SCons.Util.CLVar('/nologo')
+	# VC 2003 Toolkit does not have lib.exe but we can use link.exe
+	if not sdk_path_AR or not env.File(sdk_path_AR).exists():
+		env['AR']          = '"' + sdk_path_LINK + '"'
+		env['ARFLAGS'] = '/LIB ' + env['ARFLAGS']
+	else:
+		env['AR']          = '"' + sdk_path_AR + '"'
+		env['ARFLAGS']     = SCons.Util.CLVar('/nologo')
 	env['ARCOM']       = "${TEMPFILE('$AR $ARFLAGS /OUT:$TARGET $SOURCES')}"
 
 	if 'AMD64' in targ_arc.upper():
@@ -361,8 +368,6 @@ def generate(env):
 	env['REGSVR'] = os.path.join(SCons.Platform.win32.get_system_root(),'System32','regsvr32')
 	env['REGSVRFLAGS'] = '/s '
 	env['REGSVRCOM'] = '$REGSVR $REGSVRFLAGS $TARGET'
-
-	if not env.has_key('MSVS_VERSION'): env['MSVS_VERSION'] = '7.1'
 
 
 def exists(env):
