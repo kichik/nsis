@@ -242,6 +242,7 @@ def add_file(file, obj_name=None):
 #
 
 conf = stub_env.Configure()
+conf.env.Append(LINKFLAGS = ['/entry:WinMain'])
 
 int64test = """
 #include <windows.h>
