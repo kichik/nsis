@@ -10,6 +10,8 @@ Released on ?, 2014
 
 \b Added \R{makensis}{!makensis} command
 
+\b InitiateShutdown is used to reboot the machine if available (\W{http://sf.net/p/nsis/patches/247}{patch #247})
+
 \b Added PPO and SafePPO preprocess-only compiler switches
 
 \b MakeNSIS WM_COPYDATA messages now use the QH_OUTPUTCHARSET encoding with CP_ACP as the default for compatibility with old IDEs.
