@@ -1031,29 +1031,30 @@ struct MGA_FUNC
   const char *func;
 };
 
-#ifdef _UNICODE
 struct MGA_FUNC MGA_FUNCS[] = {
+#ifdef _UNICODE
 #ifndef _WIN64
   {"KERNEL32", "GetDiskFreeSpaceExW"},
   {"KERNEL32", "MoveFileExW"},
+  {"KERNEL32", "GetUserDefaultUILanguage"},
   {"ADVAPI32", "RegDeleteKeyExW"},
   {"ADVAPI32", "OpenProcessToken"},
   {"ADVAPI32", "LookupPrivilegeValueW"},
   {"ADVAPI32", "AdjustTokenPrivileges"},
-  {"KERNEL32", "GetUserDefaultUILanguage"},
 #endif
+  {"ADVAPI32", "InitiateShutdownW"},
   {"SHLWAPI",  "SHAutoComplete"},
   {"SHFOLDER", "SHGetFolderPathW"}
 };
 #else
-struct MGA_FUNC MGA_FUNCS[] = {
   {"KERNEL32", "GetDiskFreeSpaceExA"},
   {"KERNEL32", "MoveFileExA"},
+  {"KERNEL32", "GetUserDefaultUILanguage"},
   {"ADVAPI32", "RegDeleteKeyExA"},
   {"ADVAPI32", "OpenProcessToken"},
   {"ADVAPI32", "LookupPrivilegeValueA"},
   {"ADVAPI32", "AdjustTokenPrivileges"},
-  {"KERNEL32", "GetUserDefaultUILanguage"},
+  {"ADVAPI32", "InitiateShutdownA"},
   {"SHLWAPI",  "SHAutoComplete"},
   {"SHFOLDER", "SHGetFolderPathA"}
 };

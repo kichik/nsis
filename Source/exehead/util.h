@@ -120,12 +120,13 @@ enum myGetProcAddressFunctions {
 #ifndef _WIN64
   MGA_GetDiskFreeSpaceEx,
   MGA_MoveFileEx,
+  MGA_GetUserDefaultUILanguage,
   MGA_RegDeleteKeyEx,
   MGA_OpenProcessToken,
   MGA_LookupPrivilegeValue,
   MGA_AdjustTokenPrivileges,
-  MGA_GetUserDefaultUILanguage,
 #endif
+  MGA_InitiateShutdown,
   MGA_SHAutoComplete, // x64 can link to shlwapi directly but as long as MGA_SHGetFolderPath is used we can stick with myGetProcAddress
   MGA_SHGetFolderPath, // TODO: This can probably call something else directly on x64
 };
