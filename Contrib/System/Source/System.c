@@ -31,24 +31,28 @@
 #define PCD_DONE    3   // Just Continue
 
 const int PARAMSIZEBYTYPE_PTR = (4==sizeof(void*)) ? 1 : 2;
-const int ParamSizeByType[7] = {
+static const int ParamSizeByType[8] = {
     0, // PAT_VOID (Size will be equal to 1) //BUGBUG64?
     1, // PAT_INT
     2, // PAT_LONG
     sizeof(void*) / 4, // PAT_STRING //BUGBUG64?
     sizeof(void*) / 4, // PAT_WSTRING //BUGBUG64?
     sizeof(void*) / 4, // PAT_GUID //BUGBUG64?
-    0}; // PAT_CALLBACK (Size will be equal to 1) //BUGBUG64?
+    0, // PAT_CALLBACK (Size will be equal to 1) //BUGBUG64?
+    1 // PAT_REGMEM
+};
 
 // Thomas needs to look at this.
-static const int ByteSizeByType[7] = {
+static const int ByteSizeByType[8] = {
     1, // PAT_VOID
     1, // PAT_INT
     1, // PAT_LONG
     1, // PAT_STRING
     2, // PAT_WSTRING (special case for &wN notation: N is a number of WCHAR, not a number of bytes)
     1, // PAT_GUID
-    1}; // PAT_CALLBACK
+    1, // PAT_CALLBACK
+    1 // PAT_REGMEM
+};
 
 int LastStackPlace;
 int LastStackReal;
@@ -648,6 +652,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
                 temp = -1; break; // Pointer parameter option
 
             // Types
+            case _T('@'): temp2 = PAT_REGMEM; break;
             case _T('v'):
             case _T('V'): temp2 = PAT_VOID; break;
 
@@ -996,6 +1001,12 @@ void ParamsIn(SystemProc *proc)
             if (lstrlen(realbuf) > 0)
                 par->Value = (INT_PTR) CreateCallback((SystemProc*) StrToIntPtr(realbuf));
             break;
+        case PAT_REGMEM:
+            (LPTSTR)place = system_getuservariableptr(par->Input - 1);
+            par->Value = (INT_PTR) place;
+            par->Value += sizeof(void*) > 4 ? sizeof(_T("-9223372036854775807")) : sizeof(_T("-2147483647"));
+            IntPtrToStr(par->Value, (LPTSTR)place);
+            break;
         }
         GlobalFree(realbuf);
 
@@ -1051,9 +1062,15 @@ void ParamsOut(SystemProc *proc)
         case PAT_VOID:
             *realbuf = _T('\0');
             break;
+#ifndef _WIN64
+        case PAT_REGMEM:
+#endif
         case PAT_INT:
             wsprintf(realbuf, _T("%d"), (int)(*((INT_PTR*) place)));
             break;
+#ifdef _WIN64
+        case PAT_REGMEM:
+#endif
         case PAT_LONG:
             myitoa64(*((__int64*) place), realbuf);
             break;

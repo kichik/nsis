@@ -543,29 +543,19 @@ Header file for creating custom installer pages with nsDialogs
 !macro __NSD_SetStretchedImage CONTROL IMAGE HANDLE
 
 	Push $0
-	Push $1
-	Push $2
 	Push $R0
 
+	Push "${IMAGE}" # in case ${IMAGE} is $0 or $R0
 	StrCpy $R0 ${CONTROL} # in case ${CONTROL} is $0
 
-	# Allocate a RECT in $0 and initialize $1 and $2 to 0
-	System::Call '*(i0r1, i0r2, i, i)p.r0'
-	${If} $0 <> 0
-		System::Call 'user32::GetClientRect(pR0, pr0)'
-		System::Call '*$0(i, i, i .s, i .s)'
-		System::Free $0
-		Pop $1
-		Pop $2
-	${EndIf}
+	System::Call 'user32::GetClientRect(pR0,@r0)'
+	System::Call '*$0(i,i,i.r0,i.s)'
+	Exch # swap so stack contains ImagePath and then ControlHeight
 
-	System::Call 'user32::LoadImage(p0, ts, i ${IMAGE_BITMAP}, ir1, ir2, i${LR_LOADFROMFILE}) p.s' "${IMAGE}"
-	Pop $0
+	System::Call 'user32::LoadImage(p0, ts, i${IMAGE_BITMAP}, ir0, is, i${LR_LOADFROMFILE}) p.r0'
 	SendMessage $R0 ${STM_SETIMAGE} ${IMAGE_BITMAP} $0
 
 	Pop $R0
-	Pop $2
-	Pop $1
 	Exch $0
 
 	Pop ${HANDLE}
