@@ -15,8 +15,10 @@
 #define popintptr system_popintptr
 #ifdef _WIN64
 #	define StrToIntPtr(str) ( (INT_PTR)myatoi64((str)) )
+#	define IntPtrToStr(p,buf) myitoa64((p),(buf))
 #else
 #	define StrToIntPtr(str) ( (INT_PTR)myatoi((str)) )
+#	define IntPtrToStr(p,buf) myitoa64((p),(buf))
 #endif
 
 #define BUGBUG64(brokencast) (brokencast) // Cast that needs fixing on x64
@@ -36,7 +38,8 @@
 extern TCHAR *AllocStr(TCHAR *str);
 extern void myitoa64(__int64 i, TCHAR *buffer);
 extern TCHAR *AllocString();
-extern TCHAR *system_getuservariable(int varnum);
+#define system_getuservariableptr(varnum) ( (g_variables)+(varnum)*(g_stringsize) )
+extern TCHAR *system_getuservariable(int varnum); // NOTE: This dupes with GlobalAlloc!
 extern TCHAR *system_setuservariable(int varnum, TCHAR *var);
 extern TCHAR* system_popstring();  // NULL - stack empty
 extern TCHAR* system_pushstring(TCHAR *str);

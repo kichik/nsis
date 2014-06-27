@@ -16,6 +16,8 @@ Released on ?, 2014
 
 \S2{} Minor Changes
 
+\b Added System::Call direct register memory access type. (\W{http://sf.net/p/nsis/patches/249}{patch #249})
+
 \b Fixed POSIX !searchparse bug (\W{http://sf.net/p/nsis/patches/251}{patch #251})
 
 \S2{} Translations

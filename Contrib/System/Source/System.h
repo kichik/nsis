@@ -52,6 +52,7 @@
 #define PAT_WSTRING     4
 #define PAT_GUID        5
 #define PAT_CALLBACK    6
+#define PAT_REGMEM      7
 #ifdef _UNICODE
 #define PAT_TSTRING     PAT_WSTRING
 #else

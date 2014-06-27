@@ -281,6 +281,10 @@ DetailPrint $4
 <th>k</th>
 <td>callback</td>
 </tr>
+<th>@</th>
+<td>Direct register memory access (Buffer is limited to <code>(NSIS_MAX_STRLEN - 21) * NSIS_CHAR_SIZE</code> bytes)</td>
+</tr>
+<tr>
 <tr>
 <th>&amp;v<i>N</i></th>
 <td><i>N</i> bytes padding (structures only)</td>
@@ -371,6 +375,7 @@ DetailPrint $4
 <td>null for source, no output required for destination</td>
 </tr>
 </table>
+<p>Source is required when using the @ type and must be a register. When the call returns the source register already contains the memory address in string form so using destination is usually <a href="#directvarmemparam">not necessary</a>.
 </blockquote>
 
 <h4>Callbacks</h4>
@@ -492,14 +497,21 @@ DetailPrint "Return value - $2"
 <blockquote><pre>
 <a name="structaddr"></a>System::Alloc 4
 Pop $0
-System::<b>Call</b> "*$0(i 5)"
-System::<b>Call</b> "*$0(i .r1)"
+System::<b>Call</b> "*$0(i 5)" ; Write
+System::<b>Call</b> "*$0(i .r1)" ; Read
+System::Free $0
 DetailPrint $1
 </pre></blockquote>
 <blockquote><pre>
 <a name="newstruct"></a>System::<b>Call</b> "*(i 5) p .r0"
 System::<b>Call</b> "*$0(i .r1)"
+System::Free $0
 DetailPrint $1
+</pre></blockquote>
+<blockquote><pre>
+<a name="directvarmemparam"></a>System::<b>Call</b> "user32::GetClientRect(p $hwndparent, @ r0)"
+System::<b>Call</b> "*$0(i,i,i.r1,i.r2)"
+DetailPrint ClientRect=$1x$2
 </pre></blockquote>
 <blockquote><pre>
 <a name="com"></a># defines
