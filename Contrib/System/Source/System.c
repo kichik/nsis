@@ -31,7 +31,7 @@
 #define PCD_DONE    3   // Just Continue
 
 const int PARAMSIZEBYTYPE_PTR = (4==sizeof(void*)) ? 1 : 2;
-static const int ParamSizeByType[8] = {
+const int ParamSizeByType[8] = {
     0, // PAT_VOID (Size will be equal to 1) //BUGBUG64?
     1, // PAT_INT
     2, // PAT_LONG
@@ -1002,10 +1002,12 @@ void ParamsIn(SystemProc *proc)
                 par->Value = (INT_PTR) CreateCallback((SystemProc*) StrToIntPtr(realbuf));
             break;
         case PAT_REGMEM:
-            (LPTSTR)place = system_getuservariableptr(par->Input - 1);
-            par->Value = (INT_PTR) place;
-            par->Value += sizeof(void*) > 4 ? sizeof(_T("-9223372036854775807")) : sizeof(_T("-2147483647"));
-            IntPtrToStr(par->Value, (LPTSTR)place);
+            {
+              LPTSTR straddr = system_getuservariableptr(par->Input - 1);
+              par->Value = (INT_PTR) straddr;
+              par->Value += sizeof(void*) > 4 ? sizeof(_T("-9223372036854775807")) : sizeof(_T("-2147483647"));
+              IntPtrToStr(par->Value, straddr);
+            }
             break;
         }
         GlobalFree(realbuf);

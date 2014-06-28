@@ -43,6 +43,8 @@ if env['TARGET_ARCH'] != 'amd64' or msvc: # BUGBUG: Call-amd64.S is missing GAS 
 	# "D4027 : source file 'file.sx' ignored"
 	# ...and then it returns 0!
 	# This only happens if TryCompile .S fails (ML/ML64 not in %PATH%?)
+	#
+	# BUGBUG: GCC < 4.3 does not understand .sx, only .S
 	conf = env.Configure()
 	if conf.TryCompile('END', '.S'):
 		files += ['Source/'+filename+'.S']
