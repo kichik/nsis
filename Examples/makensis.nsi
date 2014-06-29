@@ -269,7 +269,7 @@ ${MementoSection} "NSIS Core Files (required)" SecCore
     WriteRegStr HKCR "NSIS.Header\shell\open\command" "" 'notepad.exe "%1"'
   ${EndIf}
 
-  System::Call 'Shell32::SHChangeNotify(i ${SHCNE_ASSOCCHANGED}, i ${SHCNF_IDLIST}, i 0, i 0)'
+  System::Call 'Shell32::SHChangeNotify(i ${SHCNE_ASSOCCHANGED}, i ${SHCNF_IDLIST}, p0, p0)'
 
 ${MementoSectionEnd}
 
@@ -1029,18 +1029,18 @@ Section Uninstall
   DetailPrint "Deleting Registry Keys..."
   SetDetailsPrint listonly
 
-  ReadRegStr $R0 HKCR ".nsi" ""
-  StrCmp $R0 "NSIS.Script" 0 +2
-    DeleteRegKey HKCR ".nsi"
+  !macro AssocDeleteFileExtAndProgId _hkey _dotext _pid
+  ReadRegStr $R0 ${_hkey} "Software\Classes\${_dotext}" ""
+  StrCmp $R0 "${_pid}" 0 +2
+    DeleteRegKey ${_hkey} "Software\Classes\${_dotext}"
 
-  ReadRegStr $R0 HKCR ".nsh" ""
-  StrCmp $R0 "NSIS.Header" 0 +2
-    DeleteRegKey HKCR ".nsh"
+  DeleteRegKey ${_hkey} "Software\Classes\${_pid}"
+  !macroend
 
-  DeleteRegKey HKCR "NSIS.Script"
-  DeleteRegKey HKCR "NSIS.Header"
+  !insertmacro AssocDeleteFileExtAndProgId HKLM ".nsi" "NSIS.Script"
+  !insertmacro AssocDeleteFileExtAndProgId HKLM ".nsh" "NSIS.Header"
 
-  System::Call 'Shell32::SHChangeNotify(i ${SHCNE_ASSOCCHANGED}, i ${SHCNF_IDLIST}, i 0, i 0)'
+  System::Call 'Shell32::SHChangeNotify(i ${SHCNE_ASSOCCHANGED}, i ${SHCNF_IDLIST}, p0, p0)'
 
   DeleteRegKey HKLM "${REG_UNINST_KEY}"
   DeleteRegKey HKLM "Software\NSIS"
