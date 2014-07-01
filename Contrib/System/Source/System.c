@@ -39,7 +39,7 @@ const int ParamSizeByType[8] = {
     sizeof(void*) / 4, // PAT_WSTRING //BUGBUG64?
     sizeof(void*) / 4, // PAT_GUID //BUGBUG64?
     0, // PAT_CALLBACK (Size will be equal to 1) //BUGBUG64?
-    1 // PAT_REGMEM
+    0 // PAT_REGMEM //BUGBUG64?
 };
 
 // Thomas needs to look at this.
@@ -266,7 +266,7 @@ PLUGINFUNCTION(Get)
             GlobalFree(system_pushstring(GetResultStr(proc)));
             // If proc is permanent?
             if ((proc->Options & POPT_PERMANENT) == 0)
-                GlobalFree((HANDLE) proc); // No, free it
+                GlobalFree((HGLOBAL) proc); // No, free it
         }
         else // Ok result, return proc
             system_pushintptr((INT_PTR) proc);
@@ -378,7 +378,7 @@ PLUGINFUNCTION(Call)
     }    
 
     // If proc is permanent?
-    if ((proc->Options & POPT_PERMANENT) == 0) GlobalFree((HANDLE) proc); // No, free it
+    if ((proc->Options & POPT_PERMANENT) == 0) GlobalFree((HGLOBAL) proc); // No, free it
 } PLUGINFUNCTIONEND
 
 PLUGINFUNCTIONSHORT(Int64Op)
@@ -756,11 +756,11 @@ SystemProc *PrepareProc(BOOL NeedForCall)
                 {
                     // it may contain previous inline input
                     if (!((proc->Params[ParamIndex].Input > -1) && (proc->Params[ParamIndex].Input <= __INST_LAST)))
-                        GlobalFree((HANDLE) proc->Params[ParamIndex].Input);
-                    proc->Params[ParamIndex].Input = BUGBUG64(int) temp4;
+                        GlobalFree((HGLOBAL) proc->Params[ParamIndex].Input);
+                    proc->Params[ParamIndex].Input = temp4;
                 }
                 if (temp3 == 1)
-                    proc->Params[ParamIndex].Output = BUGBUG64(int) temp4;
+                    proc->Params[ParamIndex].Output = (int) temp4; // Note: As long as we never assign a pointer to temp4 when parsing a destination the cast to int is OK.
                 // Next parameter is output or something else
                 temp3++;
             }
@@ -847,7 +847,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
 
                 // fake-real parameter: for COM interfaces first param is Interface Pointer
                 proc->Params[1].Output = IOT_NONE;
-                proc->Params[1].Input = BUGBUG64(int) AllocStr(proc->DllName);
+                proc->Params[1].Input = (INT_PTR) AllocStr(proc->DllName);
                 proc->Params[1].Size = PARAMSIZEBYTYPE_PTR;
                 proc->Params[1].Type = PAT_PTR;
                 proc->Params[1].Option = 0;
@@ -940,7 +940,7 @@ void ParamsIn(SystemProc *proc)
             realbuf = AllocStr(_T(""));
         else if (par->Input == IOT_STACK) realbuf = system_popstring();
         else if ((par->Input > 0) && (par->Input <= __INST_LAST)) 
-            realbuf = system_getuservariable(par->Input - 1);
+            realbuf = system_getuservariable((int)par->Input - 1);
         else 
         {
             // Inline input, will be freed as realbuf
@@ -1037,7 +1037,7 @@ void ParamsDeAllocate(SystemProc *proc)
     for (i = proc->ParamCount; i >= 0; i--)
         if (proc->Params[i].Value && proc->Params[i].Option == -1)
         {
-            GlobalFree((HANDLE) (proc->Params[i].Value));
+            GlobalFree((HGLOBAL) (proc->Params[i].Value));
             proc->Params[i].Value = 0;
         }
 }
@@ -1045,18 +1045,18 @@ void ParamsDeAllocate(SystemProc *proc)
 void ParamsOut(SystemProc *proc)
 {
     INT_PTR *place;
-    int i;
-    TCHAR *realbuf;
     LPWSTR wstr;
+    int i;
+    TCHAR *realbuf = AllocString();
 
     i = proc->ParamCount;
     do
     {
         // Retreive pointer to place
-        if (proc->Params[i].Option == -1) place = (INT_PTR*) proc->Params[i].Value;
-        else place = (INT_PTR*) &(proc->Params[i].Value);
-
-        realbuf = AllocString();
+        if (proc->Params[i].Option == -1)
+            place = (INT_PTR*) proc->Params[i].Value;
+        else 
+            place = (INT_PTR*) &(proc->Params[i].Value);
 
         // Step 1: retrive value
         switch (proc->Params[i].Type)
@@ -1088,10 +1088,11 @@ void ParamsOut(SystemProc *proc)
 #ifdef _UNICODE
             StringFromGUID2(*((REFGUID*)place), realbuf, g_stringsize);
 #else
-            wstr = (LPWSTR) GlobalAlloc(GPTR, g_stringsize*2);
-            StringFromGUID2(*((REFGUID*)place), wstr, g_stringsize);
-            WideCharToMultiByte(CP_ACP, 0, wstr, g_stringsize, realbuf, g_stringsize, NULL, NULL); 
-            GlobalFree((HGLOBAL)wstr);
+            {
+                WCHAR guidstrbuf[39];
+                int guidcch = StringFromGUID2(*((REFGUID*)place), guidstrbuf, g_stringsize);
+                WideCharToMultiByte(CP_ACP, 0, guidstrbuf, guidcch, realbuf, g_stringsize, NULL, NULL);
+            }
 #endif
             break;
         case PAT_WSTRING:
@@ -1115,7 +1116,8 @@ void ParamsOut(SystemProc *proc)
 
         SYSTEM_LOG_ADD(_T("\t\t\tParam Out("));
         // Step 2: place it
-        if (proc->Params[i].Output == IOT_NONE) SYSTEM_LOG_ADD(_T("none"));
+        if (proc->Params[i].Output == IOT_NONE)
+            SYSTEM_LOG_ADD(_T("none"));
         else if (proc->Params[i].Output == IOT_STACK)
         {
             SYSTEM_LOG_ADD(_T("stack"));
@@ -1140,11 +1142,11 @@ void ParamsOut(SystemProc *proc)
         }
 #endif
 
-        GlobalFree(realbuf);
-
         i--;
     } 
     while (i >= 0);
+
+    GlobalFree(realbuf);
 }
 
 HANDLE CreateCallback(SystemProc *cbproc)
@@ -1212,7 +1214,7 @@ void CallStruct(SystemProc *proc)
         // No. Allocate struct memory
         proc->Proc = (HANDLE) GlobalAlloc(GPTR, structsize);
     else  // In case of zero size defined structure use mapped size 
-        if (structsize == 0) structsize = (int) GlobalSize((HANDLE) proc->Proc);
+        if (structsize == 0) structsize = (int) GlobalSize((HGLOBAL) proc->Proc);
 
     #ifdef SYSTEM_LOG_DEBUG
     {
@@ -1238,7 +1240,7 @@ void CallStruct(SystemProc *proc)
         }
         else
         {
-            int intmask[4] = {0xFFFFFFFF, 0x000000FF, 0x0000FFFF, 0x00FFFFFF};
+            const int intmask[4] = {0xFFFFFFFF, 0x000000FF, 0x0000FFFF, 0x00FFFFFF};
 
             // Special
             size = (proc->Params[i].Option-1) * ByteSizeByType[proc->Params[i].Type];
@@ -1249,8 +1251,10 @@ void CallStruct(SystemProc *proc)
             case PAT_LONG: 
                 // real structure size
                 proc->Params[i].Value = structsize;
+#ifndef _WIN64
                 proc->Params[i]._value = 0;
-                ssflag = TRUE; //Why does this have to be set?
+#endif
+                ssflag = TRUE; // System::Call '*(...,&l.r0)'
             case PAT_INT: 
                 // clear unused value bits
                 proc->Params[i].Value &= intmask[((size >= 0) && (size < 4))?(size):(0)];
