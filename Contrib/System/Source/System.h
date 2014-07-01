@@ -83,10 +83,12 @@ typedef struct
     int Type;
     int Option; // -1 -> Pointer, 1-... -> Special+1
     INT_PTR Value; // it can hold any pointer sized value
-    int _value; // value buffer for structures > 4 bytes (I hope 8 bytes will be enough) BUGBUG: Does Win64 need this?
+#ifndef _WIN64
+    int _value; // Upper 32 bits of Value when type is 64 bit (2 pushes)
+#endif
     int Size; // Value real size (should be either 1 or 2 (the number of pushes))
-    int Input; //BUGBUG: What about pointers on Win64?
     int Output;
+    INT_PTR Input;
     HGLOBAL allocatedBlock; // block allocated for passing string, wstring or guid param
 } ProcParameter;
 

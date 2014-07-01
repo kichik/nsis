@@ -788,8 +788,7 @@ System::Free $0
 
 <blockquote><pre>
 # allocate
-System::Alloc 32
-Pop $1
+System::Call "*(i,i,p,p,p,p,p,p)p.r1"
 # call
 System::Call "Kernel32::GlobalMemoryStatus(p r1)"
 # get
