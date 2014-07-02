@@ -1334,7 +1334,7 @@ Returns size by which the stack should be expanded
 */
 unsigned int GetNewStackSize(void)
 {
-		return NEW_STACK_SIZE;
+    return NEW_STACK_SIZE;
 }
 
 /*
@@ -1342,7 +1342,7 @@ Returns non-zero value if GENSTACK option is set
 */
 unsigned int GetGenStackOption(SystemProc *proc)
 {
-		return (proc->Options & POPT_GENSTACK);
+    return (proc->Options & POPT_GENSTACK);
 }
 
 /*
@@ -1350,7 +1350,7 @@ Returns non-zero value if CDECL option is set
 */
 unsigned int GetCDeclOption(SystemProc *proc)
 {
-		return (proc->Options & POPT_CDECL);
+    return (proc->Options & POPT_CDECL);
 }
 
 /*
@@ -1358,7 +1358,7 @@ Returns non-zero value if Error option is set
 */
 unsigned int GetErrorOption(SystemProc *proc)
 {
-		return (proc->Options & POPT_ERROR);
+    return (proc->Options & POPT_ERROR);
 }
 
 /*
@@ -1366,7 +1366,7 @@ Returns offset for element Proc of SystemProc structure
 */
 UINT_PTR GetProcOffset(void)
 {
-		return (UINT_PTR)(&(((SystemProc *)0)->Proc));
+    return (UINT_PTR)(&(((SystemProc *)0)->Proc));
 }
 
 /*
@@ -1374,7 +1374,7 @@ Returns offset for element Clone of SystemProc structure
 */
 unsigned int GetCloneOffset(void)
 {
-		return (unsigned int)(&(((SystemProc *)0)->Clone));
+    return (unsigned int)(&(((SystemProc *)0)->Clone));
 }
 
 /*
@@ -1382,7 +1382,7 @@ Returns offset for element ProcName of SystemProc structure
 */
 unsigned int GetProcNameOffset(void)
 {
-		return (unsigned int)(&(((SystemProc *)0)->ProcName));
+    return (unsigned int)(&(((SystemProc *)0)->ProcName));
 }
 
 /*
@@ -1390,7 +1390,7 @@ Returns offset for element ArgsSize of SystemProc structure
 */
 unsigned int GetArgsSizeOffset(void)
 {
-		return (unsigned int)(&(((SystemProc *)0)->ArgsSize));
+    return (unsigned int)(&(((SystemProc *)0)->ArgsSize));
 }
 
 /*
@@ -1398,7 +1398,7 @@ Returns number of parameters
 */
 unsigned int GetParamCount(SystemProc *proc)
 {
-		return proc->ParamCount;
+    return proc->ParamCount;
 }
 
 /*
@@ -1406,7 +1406,7 @@ Returns offset for element Params of SystemProc structure
 */
 UINT_PTR GetParamsOffset(void)
 {
-		return (UINT_PTR)(&(((SystemProc *)0)->Params));
+    return (UINT_PTR)(&(((SystemProc *)0)->Params));
 }
 
 /*
@@ -1414,7 +1414,7 @@ Returns size of ProcParameter structure
 */
 UINT_PTR GetSizeOfProcParam(void)
 {
-		return (sizeof(ProcParameter));
+    return (sizeof(ProcParameter));
 }
 
 /*
@@ -1422,7 +1422,7 @@ Returns offset for element Size of ProcParameter structure
 */
 unsigned int GetSizeOffsetParam(void)
 {
-		return (unsigned int)(&(((ProcParameter *)0)->Size));
+    return (unsigned int)(&(((ProcParameter *)0)->Size));
 }
 
 /*
@@ -1430,7 +1430,7 @@ Returns offset for element Value of ProcParameter structure
 */
 UINT_PTR GetValueOffsetParam(void)
 {
-		return (UINT_PTR)(&(((ProcParameter *)0)->Value));
+    return (UINT_PTR)(&(((ProcParameter *)0)->Value));
 }
 
 #ifndef _WIN64
@@ -1439,7 +1439,7 @@ Returns offset for element _value of ProcParameter structure
 */
 unsigned int Get_valueOffsetParam(void)
 {
-		return (unsigned int)(&(((ProcParameter *)0)->_value));
+    return (unsigned int)(&(((ProcParameter *)0)->_value));
 }
 #endif
 
@@ -1448,7 +1448,7 @@ Sets "CLONE" option
 */
 void SetCloneOption(SystemProc *proc)
 {
-	proc->Options |= POPT_CLONE;
+    proc->Options |= POPT_CLONE;
 }
 
 /*
@@ -1456,7 +1456,7 @@ Sets Result of procedure call to be "OK"
 */
 void SetProcResultOk(SystemProc *proc)
 {
-	proc->ProcResult = PR_OK;
+    proc->ProcResult = PR_OK;
 }
 
 /*
@@ -1464,5 +1464,5 @@ Sets Result of procedure call to be "CALLBACK"
 */
 void SetProcResultCallback(SystemProc *proc)
 {
-	proc->ProcResult = PR_CALLBACK;
+    proc->ProcResult = PR_CALLBACK;
 }

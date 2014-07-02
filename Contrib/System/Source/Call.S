@@ -144,7 +144,7 @@ ENDIF
 
 EXTERN    __alloca_probe         : PROC
 
-EXTERN	  __imp__GlobalFree@4    : PROC
+EXTERN    __imp__GlobalFree@4    : PROC
 EXTERN    __imp__GetLastError@0  : PROC
 
 IFDEF _UNICODE
@@ -572,7 +572,7 @@ params_loop_done:
   IFDEF SYSTEM_LOG_DEBUG
     SYSTEM_LOG_INIT
     SYSTEM_LOG_ADD offset LogBackFrom
-    ;# LastProc->ProcName	
+    ;# LastProc->ProcName
     call        _GetProcNameOffset
     mov         ecx,dword ptr [_LastProc]
     add         eax,ecx

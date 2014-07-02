@@ -319,7 +319,7 @@ class CEXEBuild {
      * it will get the LanguageTable of the last used language or more
      * correctly, the last Language ID that generated a valid return value
      * (not NULL).
-	  *
+     *
      * @param lang [in/out] Language ID reference.  If LANG_NEUTRAL, it gets
      * set to thelast used language ID.
      * @param create Create a new LanguageTable?  Default = true.
@@ -327,22 +327,22 @@ class CEXEBuild {
      */
     LanguageTable *GetLangTable(LANGID &lang, bool create = true);
 
-	 /**
-	  * Get the language name as a TCHAR* and the code page value via an
-	  * out parameter.  It will look for a LanguageTable to get the values.
-	  * If not found, then it will set the codepage to English for ANSI
-	  * or Unicode for Unicode version of NSIS.  The language name is looked
-	  * up via the LanguageTable if it exists, otherwise, it returns "???" except 
-	  * a hardcoded check for 1033 (english). It really should fall back to 
-	  * calling GetLocaleInfo() with the LANGID to get the string.
-	  *
-	  * This function is not thread-safe!  For a thread-safe version, the
-	  * parameter must include the buffer to write to.
-	  *
-	  * @param lang The language ID
-	  * @param codepage [out] The code page referred to by the language ID.
-	  * @return The language string in English.
-	  */
+    /**
+      * Get the language name as a TCHAR* and the code page value via an
+      * out parameter.  It will look for a LanguageTable to get the values.
+      * If not found, then it will set the codepage to English for ANSI
+      * or Unicode for Unicode version of NSIS.  The language name is looked
+      * up via the LanguageTable if it exists, otherwise, it returns "???" except 
+      * a hardcoded check for 1033 (english). It really should fall back to 
+      * calling GetLocaleInfo() with the LANGID to get the string.
+      *
+      * This function is not thread-safe!  For a thread-safe version, the
+      * parameter must include the buffer to write to.
+      *
+      * @param lang The language ID
+      * @param codepage [out] The code page referred to by the language ID.
+      * @return The language string in English.
+      */
     const TCHAR *GetLangNameAndCP(LANGID lang, unsigned int *codepage = NULL);
     const TCHAR *GetLangNameAndCPForVersionResource(LANGID &lang, unsigned int *codepage = NULL, bool deflangfallback = true);
 
@@ -450,7 +450,7 @@ class CEXEBuild {
         build_allowskipfiles; // Added by ramon 23 May 2003
 
     header build_header, build_uninst, *cur_header;
-    int uninstall_mode; // Are we in uinstall mode?  Acts like a bool.
+    int uninstall_mode; // Are we in uninstall mode?  Acts like a bool.
     int uninstall_size,uninstall_size_full;
     int uninstaller_writes_used;
 
@@ -483,7 +483,7 @@ class CEXEBuild {
     section *build_cursection;   // The section we are defining, NULL if not in section.
                                  // This could be a function or a section.
 
-    // The ubuild prefixed objects / variables are for the uinstall versions
+    // The ubuild prefixed objects / variables are for the uninstall versions
     // of the code.  The cur prefix objects are what the current objects that
     // need to be referenced should be.  What is pointed to by the cur* objects
     // are determined by whether or not we are in uninstall mode or not.

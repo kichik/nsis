@@ -9,7 +9,7 @@
 #define NSISFunction(funcname) void __declspec(dllexport) funcname(HWND hwndParent, int string_size, TCHAR *variables, stack_t **stacktop, extra_parameters *extra)
 
 BOOL WINAPI DllMain(HINSTANCE hInst, ULONG ul_reason_for_call, LPVOID lpReserved) {
-	return TRUE;
+  return TRUE;
 }
 
 /*************\
@@ -44,12 +44,12 @@ NSISFunction(AutodialOnline) {
     return;
   }
 
-	EXDLL_INIT();
+  EXDLL_INIT();
 
   if (pInternetAutodial(INTERNET_AUTODIAL_FORCE_ONLINE, 0))
-		pushstring(_T("online"));
-	else
-		pushstring(_T("offline"));
+    pushstring(_T("online"));
+  else
+    pushstring(_T("offline"));
 
   FreeWinInet();
 }
@@ -62,12 +62,12 @@ NSISFunction(AutodialUnattended) {
     return;
   }
 
-	EXDLL_INIT();
+  EXDLL_INIT();
 
-	if (pInternetAutodial(INTERNET_AUTODIAL_FORCE_UNATTENDED , 0))
-		pushstring(_T("online"));
-	else
-		pushstring(_T("offline"));
+  if (pInternetAutodial(INTERNET_AUTODIAL_FORCE_UNATTENDED , 0))
+    pushstring(_T("online"));
+  else
+    pushstring(_T("offline"));
 
   FreeWinInet();
 }
@@ -83,15 +83,15 @@ NSISFunction(AttemptConnect) {
   EXDLL_INIT();
 
   if (pInternetAttemptConnect(0) == ERROR_SUCCESS)
-		pushstring(_T("online"));
-	else
-		pushstring(_T("offline"));
+    pushstring(_T("online"));
+  else
+    pushstring(_T("offline"));
 
   FreeWinInet();
 }
 
 NSISFunction(GetConnectedState) {
-	DWORD dwState;
+  DWORD dwState;
 
   typedef BOOL (WINAPI *fGetConState)(LPDWORD, DWORD);
   fGetConState pInternetGetConnectedState = (fGetConState) GetWinInetFunc("InternetGetConnectedState");
@@ -100,12 +100,12 @@ NSISFunction(GetConnectedState) {
     return;
   }
 
-	EXDLL_INIT();
+  EXDLL_INIT();
 
-	if (pInternetGetConnectedState(&dwState, 0))
-		pushstring(_T("online"));
-	else
-		pushstring(_T("offline"));
+  if (pInternetGetConnectedState(&dwState, 0))
+    pushstring(_T("online"));
+  else
+    pushstring(_T("offline"));
 
   FreeWinInet();
 }
@@ -118,12 +118,12 @@ NSISFunction(AutodialHangup) {
     return;
   }
 
-	EXDLL_INIT();
+  EXDLL_INIT();
 
-	if (pInternetAutodialHangup(0))
-		pushstring(_T("success"));
-	else
-		pushstring(_T("failure"));
+  if (pInternetAutodialHangup(0))
+    pushstring(_T("success"));
+  else
+    pushstring(_T("failure"));
 
   FreeWinInet();
 }
