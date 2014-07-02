@@ -172,7 +172,7 @@ static void print_usage()
          _T("  ") OPT_STR _T("Ofile specifies a text file to log compiler output (default is stdout)\n")
          _T("  ") OPT_STR _T("PAUSE pauses after execution\n")
          _T("  ") OPT_STR _T("NOCONFIG disables inclusion of <path to makensis.exe>") PLATFORM_PATH_SEPARATOR_STR _T("nsisconf.nsh\n")
-         _T("  ") OPT_STR _T("NOCD disabled the current directory change to that of the .nsi file\n")
+         _T("  ") OPT_STR _T("NOCD disables the current directory change to that of the .nsi file\n")
          _T("  ") OPT_STR _T("INPUTCHARSET <") TSTR_INPUTCHARSET _T(">\n")
 #ifdef _WIN32
          _T("  ") OPT_STR _T("OUTPUTCHARSET <") TSTR_OUTPUTCHARSET _T(">\n")
@@ -554,7 +554,8 @@ static inline int makensismain(int argc, TCHAR **argv)
 #else
           main_conf = PosixBug_CtoTString(PREFIX_CONF);
 #endif
-        else main_conf = env_var;
+        else
+          main_conf = env_var;
         main_conf += PLATFORM_PATH_SEPARATOR_STR;
         main_conf += _T("nsisconf.nsh");
         if (process_config(build, main_conf))
