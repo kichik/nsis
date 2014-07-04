@@ -107,7 +107,8 @@ class CEXEBuild {
     ~CEXEBuild();
 
     enum {
-      MAX_LINELENGTH = 16384 // NSI/NSH line limit, in TCHARs (including \0)
+      MAX_LINELENGTH = 16384, // NSI/NSH line limit, in TCHARs (including \0)
+      MAX_MACRORECURSION = 50
     };
 
     void warning(const TCHAR *s, ...); // to add a warning to the compiler's warning list.

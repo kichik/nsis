@@ -8,46 +8,38 @@
 !ifndef ___UTIL__NSH___
 !define ___UTIL__NSH___
 
-# see WinVer.nsh and *Func.nsh for usage examples
-!macro CallArtificialFunction NAME
-  !ifndef __UNINSTALL__
-    !define CallArtificialFunction_TYPE inst
-  !else
-    !define CallArtificialFunction_TYPE uninst
-  !endif
-  Call :.${NAME}${CallArtificialFunction_TYPE}
-  !ifndef ${NAME}${CallArtificialFunction_TYPE}_DEFINED
-    Goto ${NAME}${CallArtificialFunction_TYPE}_DONE
-    !define ${NAME}${CallArtificialFunction_TYPE}_DEFINED
-    .${NAME}${CallArtificialFunction_TYPE}:
+# CallArtificialFunction, see WinVer.nsh and *Func.nsh for usage examples
+!macro CallArtificialFunctionHelper TYPE NAME
+  !verbose pop
+  Call :.${NAME}${TYPE}
+  !ifndef ${NAME}${TYPE}_DEFINED
+    !verbose push 2
+    Goto ${NAME}${TYPE}_DONE
+    !define ${NAME}${TYPE}_DEFINED
+    !verbose pop
+    .${NAME}${TYPE}:
       !insertmacro ${NAME}
-    Return
-    ${NAME}${CallArtificialFunction_TYPE}_DONE:
+      Return
+    ${NAME}${TYPE}_DONE:
   !endif
-  !undef CallArtificialFunction_TYPE
+  !verbose push 2
+!macroend
+
+!macro CallArtificialFunction NAME
+  !verbose push 2
+  !ifdef __UNINSTALL__
+    !insertmacro CallArtificialFunctionHelper uninst ${NAME}
+  !else
+    !insertmacro CallArtificialFunctionHelper inst ${NAME}
+  !endif
+  !verbose pop
 !macroend
 !define CallArtificialFunction `!insertmacro CallArtificialFunction`
 
-# for usage of artificial functions inside artificial functions
-# macro recursion is prohibited
-!macro CallArtificialFunction2 NAME
-  !ifndef __UNINSTALL__
-    !define CallArtificialFunction2_TYPE inst
-  !else
-    !define CallArtificialFunction2_TYPE uninst
-  !endif
-  Call :.${NAME}${CallArtificialFunction2_TYPE}
-  !ifndef ${NAME}${CallArtificialFunction2_TYPE}_DEFINED
-    Goto ${NAME}${CallArtificialFunction2_TYPE}_DONE
-    !define ${NAME}${CallArtificialFunction2_TYPE}_DEFINED
-    .${NAME}${CallArtificialFunction2_TYPE}:
-      !insertmacro ${NAME}
-    Return
-    ${NAME}${CallArtificialFunction2_TYPE}_DONE:
-  !endif
-  !undef CallArtificialFunction2_TYPE
+!macro CallArtificialFunction2 NAME ; Retained for v2.4x..v3.0b0 compatibility
+  ${CallArtificialFunction} ${NAME}
 !macroend
-!define CallArtificialFunction2 `!insertmacro CallArtificialFunction2`
+!define CallArtificialFunction2 `!insertmacro CallArtificialFunction`
 
 
 !define Int32Op '!insertmacro Int32Op '
