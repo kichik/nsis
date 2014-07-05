@@ -24,6 +24,8 @@ Released on ?, 2014
 
 \b Fixed POSIX !searchparse bug (\W{http://sf.net/p/nsis/patches/251}{patch #251})
 
+\b Fixed !macroundef
+
 \S2{} Translations
 
 \b Added Armenian (Hrant Ohanyan)
@@ -97,8 +99,6 @@ It's the holiday gift you've been waiting for!
 \b Fixed !define Unicode null terminator bug (\W{http://sf.net/p/nsis/bugs/1079/}{bug #1079})
 
 \b Unicode stubs create WCHAR richedit controls (\W{http://sf.net/p/nsis/bugs/1080/}{bug #1080})
-
-\b Fixed !macroundef
 
 \b Fixed MakeNSISW default pushbutton and tab order
 
