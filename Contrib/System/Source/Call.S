@@ -997,7 +997,7 @@ FUNC_DECL _CallBack
   pop         edx
   jne         _retexpr_stdcall
   ;# retexpr[1] = proc->ArgsSize
-  call        _GetArgsSizeOffset	
+  call        _GetArgsSizeOffset
   mov         ecx,dword ptr [ebp+8]
   mov         al,byte ptr [ecx+eax]
   mov         byte ptr [_retexpr+1],al

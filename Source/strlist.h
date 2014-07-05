@@ -44,74 +44,74 @@ public:
   /**
    * Adds a string to the StringList.  If the string already exists in the
    * list, then it just returns the index of the found string.
-	*
+   *
    * @param str String to add.
-	*
+   *
    * @param case_sensitive If 0, search for whole string case insensitively.
    * If 1, then search for whole string case sensitively.  If 2, then search
    * for just the end of the string match case sensitively.  Basically it's
    * like searching for regexp('str$') in the list of string.  If -1, then it
    * adds the string regardless of whether there is a match or not!
-	*
+   *
    * @return the index to the string in TCHARs.
    */
   int add(const TCHAR *str, int case_sensitive);
 
   /**
-   * Search the StrinList for a string.  If the string already exists in the
+   * Search the StringList for a string.  If the string already exists in the
    * list then it returns the index of the found string.  Returns -1 on
    * failure.
    * 
    * @param str String to search for.
-	*
+   *
    * @param case_sensitive If 0, search for whole string case insensitively.If
    * 1, then search for whole string case <b>sensitively</b>.  If 2, then
    * search for just the <b>end of the string match</b>, case sensitively.
    * Basically it's like searching for regexp('str$') in the list of string.
-	*
-	* @param idx If not NULL, the *idx is set to the cardinal number of the
-	* string.  In other words, it tells you which nth string it is in the
-	* list.
-	*
+   *
+   * @param idx If not NULL, the *idx is set to the cardinal number of the
+   * string.  In other words, it tells you which nth string it is in the
+   * list.
+   *
    * @return the TCHAR index to the string (not necessarily the byte positional
-	* offset).  -1 if not found.
-	*/
+   * offset).  -1 if not found.
+   */
   int find(const TCHAR *str, int case_sensitive, int *idx=NULL) const; // returns -1 if not found
 
   /**
-	* Delete the string at the positional index.
-	*
-	* @param pos The number of TCHARS to count from the beginning of the buffer
-	* before the start of the string.
-	*/
+   * Delete the string at the positional index.
+   *
+   * @param pos The number of TCHARS to count from the beginning of the buffer
+   * before the start of the string.
+   */
   void delbypos(int pos);
   void deleteall() { m_gr.resize(0); }
 
   /**
-	* Converts the string index to the positional TCHAR index.  For example,
-	* it gives the answer to which TCHAR position is the beginning of the
-	* nth string in the list?
-	*
-	* @param idx The string index.
-	*/
+   * Converts the string index to the positional TCHAR index.  For example,
+   * it gives the answer to which TCHAR position is the beginning of the
+   * nth string in the list?
+   *
+   * @param idx The string index.
+   */
   int idx2pos(int idx) const;
 
   /**
-	* Get the count of the number of strings in the list.
-	* @return the number of string in the list.
-	*/
+   * Get the count of the number of strings in the list.
+   * @return the number of string in the list.
+   */
   int getnum() const;
 
   /**
-	* Get the buffer straight as a const TCHAR pointer.  Very unwise to use.
-	* @return m_gr.m_s cast as a TCHAR*.
-	*/
+   * Get the buffer straight as a const TCHAR pointer.  Very unwise to use.
+   * @return m_gr.m_s cast as a TCHAR*.
+   */
   const TCHAR *get() const { return (const TCHAR*) m_gr.get(); }
 
   /**
-	* Get the buffer size (number of TCHARs).
-	* @return The buffer size (number of TCHARs).
-	*/
+   * Get the buffer size (number of TCHARs).
+   * @return The buffer size (number of TCHARs).
+   */
   int getcount() const { return m_gr.getlen() / sizeof(TCHAR); }
 
 protected:
@@ -270,12 +270,12 @@ class SortedStringList
       return 0;
     }
 
-	 /**
-	  * Given a T position, it deletes it from the buffer.  It will
-	  * move the rest of the Ts to fill its position.
-	  *
-	  * @param pos The position of the target for deletion in T* offsets.
-	  */
+    /**
+     * Given a T position, it deletes it from the buffer.  It will
+     * move the rest of the Ts to fill its position.
+     *
+     * @param pos The position of the target for deletion in T* offsets.
+     */
     void delbypos(int pos)
     {
       T *db=(T *) m_gr.get();
@@ -479,41 +479,41 @@ class DefineList : public SortedStringList<struct define>
     int addn(const TCHAR *name, size_t maxvallen, const TCHAR *value); // maxvallen does not include \0
     void set(const TCHAR *name, const TCHAR *value=_T(""));
 
-	 /**
-	  * This function returns the pointer to the .value TCHAR* that corresponds
-	  * to the name key.
-	  *
-	  * @param name The key to search with.
-	  * 
-	  * @return The TCHAR* to the value portion of the define struct.  If not
-	  * found, returns NULL.
-	  */
+    /**
+     * This function returns the pointer to the .value TCHAR* that corresponds
+     * to the name key.
+     *
+     * @param name The key to search with.
+     * 
+     * @return The TCHAR* to the value portion of the define struct.  If not
+     * found, returns NULL.
+     */
     TCHAR *find(const TCHAR *name);
 
-	 /**
-	  * This function deletes the define struct corresponding to the key 'str'.
-	  *
-	  * @return Returns 0 on success, 1 otherwise
-	  */
+    /**
+     * This function deletes the define struct corresponding to the key 'str'.
+     *
+     * @return Returns 0 on success, 1 otherwise
+     */
     int del(const TCHAR *str);
 
-	 /**
-	  * This function returns the number of define structs in the sorted array.
-	  */
+    /**
+     * This function returns the number of define structs in the sorted array.
+     */
     int getnum();
 
-	 /**
-	  * Get the .name string of the (num)th define struct in the sorted array.
-	  *
-	  * @return Returns 0 if not found, otherwise the pointer to the .name.
-	  */
+    /**
+     * Get the .name string of the (num)th define struct in the sorted array.
+     *
+     * @return Returns 0 if not found, otherwise the pointer to the .name.
+     */
     TCHAR *getname(int num);
 
-	 /**
-	  * Get the .value string of the (num)th define struct in the sorted array.
-	  *
-	  * @return Returns 0 if not found, otherwise the pointer to the .value.
-	  */
+    /**
+     * Get the .value string of the (num)th define struct in the sorted array.
+     *
+     * @return Returns 0 if not found, otherwise the pointer to the .value.
+     */
     TCHAR *getvalue(int num);
 };
 
@@ -540,46 +540,46 @@ class FastStringList : public SortedStringListND<struct string_t>
     void operator=(const FastStringList&);
     
   public:
-	 /* Empty constructor */
+    /* Empty constructor */
     FastStringList() {} // VC6 complains otherwise
 
-	 /* Empty virtual destructor */
+    /* Empty virtual destructor */
     virtual ~FastStringList() {}
 
-	 /**
-	  * Adds name to sorted array and returns the TCHAR* offset of m_strings
-	  * where it is stored.
-	  *
-	  * @param name The string to store.
-	  *
-	  * @param case_sensitive Should we store this case sensitively or not?
-	  * Setting case_sensitive to -1 will cause it to be case sensitive and
-	  * always overwrite.  (Weird bad behavior).
-	  *
-	  * @return The TCHAR* offset of name in m_string as an int.
-	  */
+    /**
+     * Adds name to sorted array and returns the TCHAR* offset of m_strings
+     * where it is stored.
+     *
+     * @param name The string to store.
+     *
+     * @param case_sensitive Should we store this case sensitively or not?
+     * Setting case_sensitive to -1 will cause it to be case sensitive and
+     * always overwrite.  (Weird bad behavior).
+     *
+     * @return The TCHAR* offset of name in m_string as an int.
+     */
     int add(const TCHAR *name, int case_sensitive=0);
 
-	 /**
-	  * Get the buffer that contains the list of the strings in the order
-	  * in which they were added.
-	  *
-	  * @return The pointer to m_strings as a TCHAR*.
-	  */
+    /**
+     * Get the buffer that contains the list of the strings in the order
+     * in which they were added.
+     *
+     * @return The pointer to m_strings as a TCHAR*.
+     */
     TCHAR *get() const;
 
-	 /**
-	  * The size of the collection of m_strings as a count of TCHARs.
-	  *
-	  * @return the size of m_strings as count of TCHARs.
-	  */
-	int getcount() const;
+    /**
+     * The size of the collection of m_strings as a count of TCHARs.
+     *
+     * @return the size of m_strings as count of TCHARs.
+     */
+    int getcount() const;
 
-	 /**
-	  * The number of strings stored in the sorted array.
-	  *
-	  * @return The number of strings stored.
-	  */
+    /**
+     * The number of strings stored in the sorted array.
+     *
+     * @return The number of strings stored.
+     */
     int getnum() const;
 };
 

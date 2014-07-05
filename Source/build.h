@@ -203,7 +203,7 @@ class CEXEBuild {
     int parseScript();
     int includeScript(const TCHAR *f, NStreamEncoding&enc);
     TCHAR* GetMacro(const TCHAR *macroname, TCHAR**macroend = 0);
-    inline bool MacroExists(const TCHAR *macroname);
+    bool MacroExists(const TCHAR *macroname) { return !!GetMacro(macroname); }
     int LoadLicenseFile(const TCHAR *file, TCHAR** pdata, const TCHAR *cmdname, WORD AnsiCP);
 #ifdef NSIS_FIX_DEFINES_IN_STRINGS
     void ps_addtoline(const TCHAR *str, GrowBuf &linedata, StringList &hist, bool bIgnoreDefines = false);
@@ -469,8 +469,6 @@ class CEXEBuild {
     FastStringList m_warnings;
     const TCHAR* m_currentmacroname;
     GrowBuf m_macros;
-
-    StringList m_macro_entry;
 
     UINT64 db_opt_save, db_opt_save_u, db_full_size, db_full_size_u;
     int db_comp_save, db_comp_save_u;

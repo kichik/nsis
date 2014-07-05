@@ -952,10 +952,6 @@ TCHAR* CEXEBuild::GetMacro(const TCHAR *macroname, TCHAR**macroend /*= 0*/)
   }
   return 0;
 }
-inline bool CEXEBuild::MacroExists(const TCHAR *macroname)
-{
-  return !!GetMacro(macroname);
-}
 
 int CEXEBuild::LoadLicenseFile(const TCHAR *file, TCHAR** pdata, const TCHAR *cmdname, WORD AnsiCP) // caller must free *pdata, even on error result
 {

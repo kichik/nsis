@@ -27,8 +27,8 @@ class CCRC
 {
   UInt32 _value;
 public:
-	static UInt32 Table[256];
-	static void InitTable();
+  static UInt32 Table[256];
+  static void InitTable();
 
   CCRC():  _value(0xFFFFFFFF){};
   void Init() { _value = 0xFFFFFFFF; }
