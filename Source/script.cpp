@@ -1212,7 +1212,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
         TCHAR *mbufb=(TCHAR*)m_macros.get();
         const unsigned int mcb=BUGBUG64TRUNCATE(unsigned int, (mend-mbeg)*sizeof(TCHAR)), mbufcb=m_macros.getlen();
-        memmove(mbeg,mend+sizeof(TCHAR),mbufcb-(mcb+(mbeg-mbufb)));
+        memmove(mbeg,mend+1,mbufcb-(mcb+(mbeg-mbufb)));
         m_macros.resize((int)(mbufcb-(mcb+sizeof(TCHAR))));
         SCRIPT_MSG(_T("!macroundef: %") NPRIs _T("\n"),mname);
       }
