@@ -672,11 +672,11 @@ tstring get_executable_path(const TCHAR* argv0) {
   assert(rc != 0);
   return tstring(temp_buf);
 #elif __APPLE__
-  TCHAR temp_buf[MAXPATHLEN+1];
+  char temp_buf[MAXPATHLEN+1];
   unsigned int buf_len = MAXPATHLEN;
   int rc = Apple::_NSGetExecutablePath(temp_buf, &buf_len);
   assert(rc == 0);
-  return tstring(temp_buf);
+  return tstring(CtoTString(temp_buf));
 #else /* Linux/BSD/POSIX/etc */
   const TCHAR *envpath = _tgetenv(_T("_"));
   if( envpath != NULL )
