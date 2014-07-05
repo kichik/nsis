@@ -56,8 +56,8 @@ TCHAR* NSISCALL getuservariable(const int varnum)
 
 void NSISCALL setuservariable(const int varnum, const TCHAR *var)
 {
-	if (var && isvalidnsisvarindex(varnum)) 
-		lstrcpy(g_variables + varnum*g_stringsize, var);
+  if (var && isvalidnsisvarindex(varnum)) 
+    lstrcpy(g_variables + varnum*g_stringsize, var);
 }
 
 #ifdef _UNICODE
@@ -290,7 +290,7 @@ int NSISCALL popint_or()
 
 void NSISCALL pushintptr(INT_PTR value)
 {
-	TCHAR buffer[30];
-	wsprintf(buffer, sizeof(void*) > 4 ? _T("%Id") : _T("%d"), value);
-	pushstring(buffer);
+  TCHAR buffer[30];
+  wsprintf(buffer, sizeof(void*) > 4 ? _T("%Id") : _T("%d"), value);
+  pushstring(buffer);
 }

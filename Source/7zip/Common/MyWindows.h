@@ -132,33 +132,33 @@ typedef IUnknown *LPUNKNOWN;
 #define VARIANT_FALSE ((VARIANT_BOOL)0)
 
 enum VARENUM
-{	
-  VT_EMPTY	= 0,
-	VT_NULL	= 1,
-	VT_I2	= 2,
-	VT_I4	= 3,
-	VT_R4	= 4,
-	VT_R8	= 5,
-	VT_CY	= 6,
-	VT_DATE	= 7,
-	VT_BSTR	= 8,
-	VT_DISPATCH	= 9,
-	VT_ERROR	= 10,
-	VT_BOOL	= 11,
-	VT_VARIANT	= 12,
-	VT_UNKNOWN	= 13,
-	VT_DECIMAL	= 14,
-	VT_I1	= 16,
-	VT_UI1	= 17,
-	VT_UI2	= 18,
-	VT_UI4	= 19,
-	VT_I8	= 20,
-	VT_UI8	= 21,
-	VT_INT	= 22,
-	VT_UINT	= 23,
-	VT_VOID	= 24,
-	VT_HRESULT	= 25,
-	VT_FILETIME	= 64
+{
+  VT_EMPTY = 0,
+  VT_NULL = 1,
+  VT_I2 = 2,
+  VT_I4 = 3,
+  VT_R4 = 4,
+  VT_R8 = 5,
+  VT_CY = 6,
+  VT_DATE = 7,
+  VT_BSTR = 8,
+  VT_DISPATCH = 9,
+  VT_ERROR = 10,
+  VT_BOOL = 11,
+  VT_VARIANT = 12,
+  VT_UNKNOWN = 13,
+  VT_DECIMAL = 14,
+  VT_I1 = 16,
+  VT_UI1 = 17,
+  VT_UI2 = 18,
+  VT_UI4 = 19,
+  VT_I8 = 20,
+  VT_UI8 = 21,
+  VT_INT = 22,
+  VT_UINT = 23,
+  VT_VOID = 24,
+  VT_HRESULT = 25,
+  VT_FILETIME = 64
 };
 
 typedef unsigned short VARTYPE;
@@ -210,10 +210,10 @@ MY_EXTERN_C LONG CompareFileTime(const FILETIME* ft1, const FILETIME* ft2);
 #define CP_OEMCP  1
 
 typedef enum tagSTREAM_SEEK
-{	
-  STREAM_SEEK_SET	= 0,
-  STREAM_SEEK_CUR	= 1,
-  STREAM_SEEK_END	= 2
+{
+  STREAM_SEEK_SET = 0,
+  STREAM_SEEK_CUR = 1,
+  STREAM_SEEK_END = 2
 } STREAM_SEEK;
 
 #endif

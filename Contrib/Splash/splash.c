@@ -11,7 +11,7 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 {
   if (uMsg == WM_CREATE)
   {
- 	  BITMAP bm;
+    BITMAP bm;
     RECT vp;
     GetObject(g_hbm, sizeof(bm), &bm);
     SystemParametersInfo(SPI_GETWORKAREA, 0, &vp, 0);

@@ -27,8 +27,8 @@
 // NSIS Plug-In Callback Messages
 enum NSPIM 
 {
-	NSPIM_UNLOAD,    // This is the last message a plugin gets, do final cleanup
-	NSPIM_GUIUNLOAD, // Called after .onGUIEnd
+  NSPIM_UNLOAD,    // This is the last message a plugin gets, do final cleanup
+  NSPIM_GUIUNLOAD, // Called after .onGUIEnd
 };
 
 // Prototype for callbacks registered with extra_parameters->RegisterPluginCallback()

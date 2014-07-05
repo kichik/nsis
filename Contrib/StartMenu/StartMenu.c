@@ -469,7 +469,7 @@ void AddFolderFromReg(int nFolder)
               (LPARAM)ExtractAssociatedIcon(g_hInstance, FileData.cFileName, (WORD*)&idx));*/
           }
         }
-	  }
+      }
     } while (FindNextFile(hSearch, &FileData));
     FindClose(hSearch);
   }

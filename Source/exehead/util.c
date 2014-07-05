@@ -451,9 +451,9 @@ TCHAR * NSISCALL my_GetTempFileName(TCHAR *buf, const TCHAR *dir)
 
 BOOL NSISCALL myReadFile(HANDLE h, LPVOID buf, DWORD cb)
 {
-	DWORD cbio;
-	BOOL r = ReadFile(h, buf, cb, &cbio, NULL);
-	return r && cb == cbio;
+  DWORD cbio;
+  BOOL r = ReadFile(h, buf, cb, &cbio, NULL);
+  return r && cb == cbio;
 }
 
 #ifdef NSIS_SUPPORT_MOVEONREBOOT
