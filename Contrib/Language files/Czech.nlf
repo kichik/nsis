@@ -1,5 +1,6 @@
 ﻿# Header, don't edit
 NLF v6
+# Start editing here
 # Language ID
 1029
 # Font and size - dash (-) means default
@@ -9,31 +10,31 @@ NLF v6
 1250
 # RTL - anything else than RTL means LTR
 -
-# Translation by SELiCE (ls@selice.cz - http://ls.selice.cz)
+# Translation by Václav Pavlíček (v.pavlicek@centrum.cz), dříve SELiCE
 # ^Branding
 Nullsoft Install System %s
 # ^SetupCaption
-Instalovat $(^Name)
+Instalace $(^Name)
 # ^UninstallCaption
-Odinstalovat $(^Name)
+Odinstalace $(^Name)
 # ^LicenseSubCaption
-: Licenční ujednání
+: Licenční smlouva
 # ^ComponentsSubCaption
 : Možnosti instalace
 # ^DirSubCaption
-: Umístění instalace
+: Instalační složka
 # ^InstallingSubCaption
-: Instaluje se
+: Instalace
 # ^CompletedSubCaption
 : Dokončeno
 # ^UnComponentsSubCaption
 : Možnosti odinstalace
 # ^UnDirSubCaption
-: Odinstalovat adresář
+: Odinstalační složka
 # ^ConfirmSubCaption
 : Potvrzení
 # ^UninstallingSubCaption
-: Odinstalování
+: Odinstalace
 # ^UnCompletedSubCaption
 : Dokončeno
 # ^BackBtn
@@ -43,9 +44,9 @@ Odinstalovat $(^Name)
 # ^AgreeBtn
 Souhl&asím
 # ^AcceptBtn
-Souhl&asím s podmínkami Licenčního ujednání
+Souhl&asím s podmínkami licenční smlouvy
 # ^DontAcceptBtn
-&Nesouhlasím s podmínkami Licenčního ujednání
+&Nesouhlasím s podmínkami licenční smlouvy
 # ^InstallBtn
 &Instalovat
 # ^UninstallBtn
@@ -57,121 +58,121 @@ Storno
 # ^BrowseBtn
 P&rocházet...
 # ^ShowDetailsBtn
-Zobrazit &detaily
+&Podrobnosti
 # ^ClickNext
-Pro pokračování klikněte na 'Další'.
+Pokračujte kliknutím na tlačítko Další.
 # ^ClickInstall
-Klikněte na 'Instalovat' pro zahájení instalace.
+Instalaci spustíte kliknutím na tlačítko Instalovat.
 # ^ClickUninstall
-Klikněte na 'Odinstalovat' pro zahájení odinstalace.
+Odinstalaci spustíte kliknutím na tlačítko Odinstalovat.
 # ^Name
 Název
 # ^Completed
 Dokončeno
 # ^LicenseText
-Před instalací $(^NameDA) si prosím přečtěte licenční ujednání. Jestliže souhlasíte se všema podmínkama ujednání, klikněte 'Souhlasím'.
+Před instalací programu $(^NameDA) si prosím přečtěte licenční smlouvu. Jestliže souhlasíte s podmínkami této smlouvy, klikněte na tlačítko Souhlasím.
 # ^LicenseTextCB
-Před instalací $(^NameDA) si prosím přečtěte licenční ujednání. Jestliže souhlasíte se všema podmínkama ujednání, zaškrtněte políčko dole. $_CLICK
+Před instalací programu $(^NameDA) si prosím přečtěte licenční smlouvu. Jestliže souhlasíte s podmínkami této smlouvy, zaškrtněte políčko níže. $_CLICK
 # ^LicenseTextRB
-Před instalací $(^NameDA) si prosím přečtěte licenční ujednání. Jestliže souhlasíte se všema podmínkama ujednání, zaškrtněte níže první možnost. $_CLICK
+Před instalací programu $(^NameDA) si prosím přečtěte licenční smlouvu. Jestliže souhlasíte s podmínkami této smlouvy, vyberte níže první možnost. $_CLICK
 # ^UnLicenseText
-Před odinstalování $(^NameDA) si prosím přečtěte licenční ujednání. Jestliže souhlasíte se všema podmínkama ujednání, klikněte 'Souhlasím'.
+Před odinstalací programu $(^NameDA) si prosím přečtěte licenční smlouvu. Jestliže souhlasíte s podmínkami této smlouvy, klikněte na tlačítko Souhlasím.
 # ^UnLicenseTextCB
-Před odinstalování $(^NameDA) si prosím přečtěte licenční ujednání. Jestliže souhlasíte se všema podmínkama ujednání, zaškrtněte políčko dole. $_CLICK
+Před odinstalací programu $(^NameDA) si prosím přečtěte licenční smlouvu. Jestliže souhlasíte s podmínkami této smlouvy, zaškrtněte políčko níže. $_CLICK
 # ^UnLicenseTextRB
-Před odinstalování $(^NameDA) si prosím přečtěte licenční ujednání. Jestliže souhlasíte se všema podmínkama ujednání, zaškrtněte níže první možnost. $_CLICK
+Před odinstalací programu $(^NameDA) si prosím přečtěte licenční smlouvu. Jestliže souhlasíte s podmínkami této smlouvy, vyberte níže první možnost. $_CLICK
 # ^Custom
 Vlastní
 # ^ComponentsText
-Zvolte součásti, které chcete nainstalovat a nezatrhněte součásti, které instalovat nechcete. $_CLICK
+Zaškrtněte součásti, které chcete nainstalovat a zrušte zaškrtnutí součástí, které nechcete nainstalovat. $_CLICK
 # ^ComponentsSubText1
 Zvolte způsob instalace:
 # ^ComponentsSubText2_NoInstTypes
-Zvolte součásti k instalaci:
+Vyberte součásti, které chcete nainstalovat.
 # ^ComponentsSubText2
-Nebo zvolte volitelné součásti, které chcete nainstalovat:
+Nebo vyberte volitelné součásti, které chcete nainstalovat.
 # ^UnComponentsText
-Zatrhněte součásti, které chcete odinstalovat a nezatrhněte součásti, které odinstalovat nechcete. $_CLICK
+Zaškrtněte součásti, které chcete odinstalovat a zrušte zaškrtnutí součástí, které nechcete odinstalovat. $_CLICK
 # ^UnComponentsSubText1
 Zvolte způsob odinstalace:
 # ^UnComponentsSubText2_NoInstTypes
-Zvolte součásti pro odinstalaci:
+Vyberte součásti, které chcete odinstalovat.
 # ^UnComponentsSubText2
-Nebo zvolte jednotlivé součásti, které chcete odinstalovat:
+Nebo vyberte volitelné součásti, které chcete odinstalovat.
 # ^DirText
-Setup nyní nainstaluje program $(^NameDA) do následující složky. Pro instalaci do jiné složky zvolte 'Procházet' a vyberte jinou složku. $_CLICK
+Instalační program nainstaluje program $(^NameDA) do následující složky. Chcete-li instalovat do jiné složky, klikněte na tlačítko Procházet a vyberte jinou složku. $_CLICK
 # ^DirSubText
 Cílová složka
 # ^DirBrowseText
-Zvolte složku kam instalovat program $(^NameDA):
+Výběr instalační složky programu $(^NameDA).
 # ^UnDirText
-Setup nyní odinstaluje program $(^NameDA) z následující složky. Pro odinstalaci z jiné složky zvolte 'Procházet' a vyberte jinou složku. $_CLICK
+Odinstalační program odinstaluje program $(^NameDA) z následující složky. Chcete-li odinstalovat z jiné složky, klikněte na tlačítko Procházet a vyberte jinou složku. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
-Zvolte adresář pro odinstalaci $(^NameDA) z:
+Vyberte odinstalační složku programu $(^NameDA):
 # ^SpaceAvailable
 "Volné místo: "
 # ^SpaceRequired
-"Potřebné místo: "
+"Požadované místo: "
 # ^UninstallingText
-Tento průvodce z Vašeho počítače odinstaluje $(^NameDA). $_CLICK
+Program $(^NameDA) bude odinstalován z následující složky. $_CLICK
 # ^UninstallingSubText
 Odinstalovat z:
 # ^FileError
-Nelze otevřít soubor pro zápis: \r\n\t"$0"\r\nStiskněte 'Přerušit' pro ukončení instalace\r\nnebo 'Znovu' pro další pokus nebo\r\n'Ignorovat' pro přeskočení souboru
+Soubor nelze otevřít pro zápis: \r\n\t"$0"\r\nKlikněte na tlačítko Přerušit k ukončení instalace,\r\nnebo na tlačítko Opakovat k zopakování akce, nebo\r\n na tlačítko Ignorovat k přeskočení souboru.
 # ^FileError_NoIgnore
-Nelze otevřít soubor pro zápis: \r\n\t"$0"\r\nStiskněte 'Znovu' pro další pokus nebo\r\n*Storno* pro ukončení instalace
+Soubor nelze otevřít pro zápis: \r\n\t"$0"\r\nKlikněte na tlačítko Opakovat k zopakování akce, nebo\r\n na tlačítko Storno k ukončení instalace.
 # ^CantWrite
 "Nelze zapsat: "
 # ^CopyFailed
-Kopírování selhalo
+Kopírování se nezdařilo.
 # ^CopyTo
 "Zkopírovat do "
 # ^Registering
-"Registrování: "
+"Registrace: "
 # ^Unregistering
-"Odregistrování: "
+"Rušení registrace: "
 # ^SymbolNotFound
-"Nelze najít znak: "
+"Nelze najít symbol: "
 # ^CouldNotLoad
 "Nelze načíst: "
 # ^CreateFolder
-"Vytvořen adresář: "
+"Vytváření složky: "
 # ^CreateShortcut
-"Vytvořen zástupce: "
+"Vytváření zástupce: "
 # ^CreatedUninstaller
-"Vytvořen odinstalátor: "
+"Vytváření odinstalačního programu: "
 # ^Delete
-"Smazat soubor: "
+"Odstraňování souboru: "
 # ^DeleteOnReboot
-"Smazat po restartu: "
+"Odstranit při restartování: "
 # ^ErrorCreatingShortcut
-"Chyba při vytváření zástupce: "
+"Při vytváření zástupce došlo k chybě: "
 # ^ErrorCreating
-"Chyba při vytváření: "
+"Při vytváření došlo k chybě: "
 # ^ErrorDecompressing
-Chyba při rozbalování dat! Poškozený instalátor?
+Při dekompresi dat došlo k chybě. Byl poškozen instalační program?
 # ^ErrorRegistering
-Chyba při registrování DLL
+Při registraci souborů DLL došlo k chybě.
 # ^ExecShell
-"Spustit shell: "
+"Spouštění prostředí: "
 # ^Exec
-"Spustit: "
+"Spouštění: "
 # ^Extract
-"Rozbalit: "
+"Extrahování: "
 # ^ErrorWriting
-"Rozbalit: chyba při zápisu do souboru "
+"Extrakce: Při zápisu souboru došlo k chybě "
 # ^InvalidOpcode
-Instalátor je poškozen: nesprávný kontrolní kód
+Instalační program byl poškozen: neplatný operační kód.
 # ^NoOLE
 "Nedostupné OLE pro: "
 # ^OutputFolder
 "Výstupní složka: "
 # ^RemoveFolder
-"Odstranit složku: "
+"Odstraňování složky: "
 # ^RenameOnReboot
-"Přejmenovat při restartu: "
+"Přejmenovat při restartování: "
 # ^Rename
 "Přejmenováno: "
 # ^Skipped
@@ -179,7 +180,7 @@ Instalátor je poškozen: nesprávný kontrolní kód
 # ^CopyDetails
 Zkopírovat podrobnosti do schránky
 # ^LogInstall
-Zaznamenat průběh instalace
+Protokolovat proces instalace
 # ^Byte
 B
 # ^Kilo
