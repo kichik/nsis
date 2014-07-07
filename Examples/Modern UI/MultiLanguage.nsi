@@ -113,12 +113,13 @@
   !insertmacro MUI_LANGUAGE "Catalan"
   !insertmacro MUI_LANGUAGE "Esperanto"
   !insertmacro MUI_LANGUAGE "Asturian"
+  !insertmacro MUI_LANGUAGE "Basque"
   !insertmacro MUI_LANGUAGE "Pashto"
   !insertmacro MUI_LANGUAGE "ScotsGaelic"
-!ifdef NSIS_UNICODE
-  !insertmacro MUI_LANGUAGE "Armenian"
   !insertmacro MUI_LANGUAGE "Georgian"
-!endif
+  !insertmacro MUI_LANGUAGE "Vietnamese"
+  !insertmacro MUI_LANGUAGE "Welsh"
+  !insertmacro MUI_LANGUAGE "Armenian"
 
 ;--------------------------------
 ;Reserve Files
