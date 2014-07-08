@@ -75,7 +75,7 @@ typedef wchar_t TCHAR, _TUCHAR;
 #define _tcscpy     wcscpy
 #define _tcsdup     _wcsdup
 #define _tcslen     wcslen
-#define _tcsrchr    wcsrchr
+#define _tcsrchr(s,c) ( wcsrchr((wchar_t*)(s), (c)) ) // bug #1085: If <cwchar> is included the compiler has problems picking the correct overloaded function
 #define _tcsstr     wcsstr
 #define _tcstok     wcstok
 
