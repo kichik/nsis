@@ -1465,7 +1465,7 @@ void WINAPI showCfgDlg()
   }
 
   // we don't save settings on cancel since that means your installer will likely
-  // quit soon, which means the ini might get flushed late and cause crap. :) anwyay.
+  // quit soon, which means the ini might get flushed late and cause delete issues?
   if (!g_is_cancel) SaveSettings();
 
   SetWindowLongPtr(hMainWindow,DWLP_DLGPROC,(LONG_PTR)lpWndProcOld);
