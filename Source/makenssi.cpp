@@ -36,7 +36,7 @@
 
 using namespace std;
 
-bool g_dopause=false;
+bool g_dopause=false, g_warnaserror=false;
 int g_display_errors=1;
 FILE *g_output;
 NStreamEncoding g_outputenc;
@@ -61,7 +61,7 @@ void quit()
 {
   if (g_display_errors) 
   {
-    PrintColorFmtMsg_WARN(_T("\nNote: you may have one or two (large) stale temporary file(s)\n")
+    PrintColorFmtMsg_WARN(_T("\nNote: you may have one or two (large) stale temporary file(s) ")
          _T("left in your temporary directory (Generally this only happens on Windows 9x).\n"));
   }
   exit(1);
@@ -169,6 +169,7 @@ static void print_usage()
          _T("  ")         _T("  3=above normal,2=normal,1=below normal,0=idle\n")
 #endif
          _T("  ") OPT_STR _T("Vx verbosity where x is 4=all,3=no script,2=no info,1=no warnings,0=none\n")
+         _T("  ") OPT_STR _T("WX treat warnings as errors\n")
          _T("  ") OPT_STR _T("Ofile specifies a text file to log compiler output (default is stdout)\n")
          _T("  ") OPT_STR _T("PAUSE pauses after execution\n")
          _T("  ") OPT_STR _T("NOCONFIG disables inclusion of <path to makensis.exe>") PLATFORM_PATH_SEPARATOR_STR _T("nsisconf.nsh\n")
@@ -367,6 +368,10 @@ static inline int makensismain(int argc, TCHAR **argv)
     {
       no_logo=swname[1] >= _T('0') && swname[1] <= _T('2');
     }
+    else if (!_tcsicmp(swname,_T("WX")))
+    {
+      g_warnaserror = true;
+    }
     // This must be parsed last because it will eat other switches
     else if (S7IsChEqualI('o',swname[0]) && swname[1]) stdoutredirname=swname+1;
   }
@@ -444,6 +449,7 @@ static inline int makensismain(int argc, TCHAR **argv)
     {
       const TCHAR* const swname = &argv[argpos][1];
       if (!_tcsicmp(swname,_T("PPO")) || !_tcsicmp(swname,_T("SafePPO"))) {} // Already parsed
+      else if (!_tcsicmp(swname,_T("WX"))) {} // Already parsed
       else if (!_tcsicmp(swname,_T("NOCD"))) do_cd=false;
       else if (!_tcsicmp(swname,_T("NOCONFIG"))) noconfig=true;
       else if (!_tcsicmp(swname,_T("PAUSE"))) g_dopause=true;

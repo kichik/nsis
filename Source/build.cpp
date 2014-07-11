@@ -3409,10 +3409,23 @@ void CEXEBuild::warning_fl(const TCHAR *s, ...)
   _stprintf(&buf[cchMsg],_T(" (%") NPRIs _T(":%u)"),curfilename,linecnt);
 
   m_warnings.add(buf,0);
-  notify(MakensisAPI::NOTIFY_WARNING,buf.GetPtr());
+
+  MakensisAPI::notify_e hostcode = MakensisAPI::NOTIFY_WARNING;
+  extern bool g_warnaserror;
+  if (g_warnaserror)
+    hostcode = MakensisAPI::NOTIFY_ERROR, display_warnings = display_errors;
+  notify(hostcode,buf.GetPtr());
+
   if (display_warnings)
   {
     PrintColorFmtMsg_WARN(_T("warning: %") NPRIs _T("\n"),buf.GetPtr());
+  }
+  if (g_warnaserror)
+  {
+    ERROR_MSG(_T("Error: warning treated as error\n"));
+    extern int g_display_errors;
+    if (!has_called_write_output) g_display_errors = false; // This is a hack to avoid the "stale file in %temp%" warning.
+    extern void quit(); quit();
   }
 }
 
