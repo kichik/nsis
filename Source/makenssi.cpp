@@ -626,7 +626,7 @@ static inline int makensismain(int argc, TCHAR **argv)
     argpos++;
   }
 
-  if (argpos<argc || (!files_processed && !cmds_processed))
+  if (argpos < argc || (!files_processed && !cmds_processed))
   {
     if (build.display_errors && !nousage)
     {

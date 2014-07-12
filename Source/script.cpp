@@ -3149,7 +3149,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           TCHAR buf[33];
           compile=_T("\""), compile+=get_executable_path(g_argv0), compile+= _T("\"");
           compile+= _T(" ") OPT_STR _T("v"), wsprintf(buf,_T("%d"),get_verbosity()), compile+=buf;
+#ifdef _WIN32 // POSIX does not support -OUTPUTCHARSET
           compile+= _T(" ") OPT_STR _T("OCS "), g_outputenc.GetCPDisplayName(buf), compile+=buf;
+#endif
           if (*exec) compile+= _T(" "), compile+=exec;
           exec=compile.c_str();
         }
@@ -3168,7 +3170,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         else if (comp == 4);
         else if (comp == 5)
         {
-          TCHAR buf[50];
+          TCHAR buf[25];
           _stprintf(buf,_T("%d"),ret);
           definedlist.set(define,buf);
         }
@@ -3193,7 +3195,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         bool required = true;
         NStreamEncoding enc(NStreamEncoding::AUTO);
         TCHAR *f;
-        unsigned int toks = line.getnumtokens() - 1;
+        unsigned int toks = line.getnumtokens() - 1, included = 0;
         for(unsigned int tok = 0; toks;)
         {
           f = line.gettoken_str(++tok);
@@ -3212,71 +3214,50 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (!toks || !*f) PRINTHELP();
 
         TCHAR *fc = my_convert(f);
-        int included = 0;
-
         tstring dir = get_dir_name(fc);
         tstring spec = get_file_name(fc);
         tstring basedir = dir + PLATFORM_PATH_SEPARATOR_STR;
-        if (dir == spec) {
-          // no path, just file name
-          dir = _T(".");
-          basedir = _T("");
-        }
-
+        if (dir == spec) basedir = _T(""), dir = _T("."); // no path, just file name
         my_convert_free(fc);
 
         // search working directory
         boost::scoped_ptr<dir_reader> dr( new_dir_reader() );
         dr->read(dir);
-
         for (dir_reader::iterator files_itr = dr->files().begin();
              files_itr != dr->files().end();
              files_itr++)
         {
-          if (!dir_reader::matches(*files_itr, spec))
-            continue;
+          if (!dir_reader::matches(*files_itr, spec)) continue;
 
           tstring incfile = basedir + *files_itr;
-
-          if (includeScript(incfile.c_str(), enc) != PS_OK) {
+          if (includeScript(incfile.c_str(), enc) != PS_OK)
             return PS_ERROR;
-          }
-
-          included++;
+          else
+            included++;
         }
-
-        if (included)
-            return PS_OK;
+        if (included) return PS_OK;
 
         // search include dirs
         TCHAR *incdir = include_dirs.get();
         int incdirs = include_dirs.getnum();
-
         for (int i = 0; i < incdirs; i++, incdir += _tcslen(incdir) + 1) {
           tstring curincdir = tstring(incdir) + PLATFORM_PATH_SEPARATOR_STR + dir;
 
           boost::scoped_ptr<dir_reader> dr( new_dir_reader() );
           dr->read(curincdir);
-
           for (dir_reader::iterator incdir_itr = dr->files().begin();
                incdir_itr != dr->files().end();
                incdir_itr++)
           {
-            if (!dir_reader::matches(*incdir_itr, spec))
-              continue;
+            if (!dir_reader::matches(*incdir_itr, spec)) continue;
 
             tstring incfile = tstring(incdir) + PLATFORM_PATH_SEPARATOR_STR + basedir + *incdir_itr;
-
-            if (includeScript(incfile.c_str(), enc) != PS_OK) {
+            if (includeScript(incfile.c_str(), enc) != PS_OK)
               return PS_ERROR;
-            }
-
-            included++;
+            else
+              included++;
           }
-
-          if (included)
-            return PS_OK;
-
+          if (included) return PS_OK;
         }
 
         // nothing found
