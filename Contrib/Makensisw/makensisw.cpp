@@ -753,39 +753,33 @@ DWORD WINAPI MakeNSISProc(LPVOID TreadParam) {
   }
   CloseHandle(newstdout); // close this handle (duplicated in subprocess) now so we get ERROR_BROKEN_PIPE
 
-  char iob[1024 & ~1];
-  WCHAR *p = (WCHAR*) iob, wcl = 0, wct = 0;
-  DWORD cb = 0, cbofs = 0, cch, cbio;
+  char iob[(1024 & ~1) + sizeof(WCHAR)];
+  WCHAR *p = (WCHAR*) iob, wcl = 0;
+  DWORD cbiob = sizeof(iob) - sizeof(WCHAR), cb = 0, cbofs = 0, cch, cbio;
   for(;;)
   {
-    BOOL rok = ReadFile(read_stdout, iob+cbofs, sizeof(iob)-cbofs, &cbio, NULL);
-    cb += cbio;
-logappend:
-    cch = cb / sizeof(WCHAR);
+    BOOL rok = ReadFile(read_stdout, iob+cbofs, cbiob-cbofs, &cbio, NULL);
+    cb += cbio, cch = cb / sizeof(WCHAR);
     if (!cch)
     {
-      if (!rok) break;
-      cbofs += cbio;
+      if (!rok) break; // TODO: if cb is non-zero we should report a incomplete read error?
+      cbofs += cbio; // We only have 1 byte, need to read more to get a complete WCHAR
       continue;
     }
-    bool fullbuf = sizeof(iob) == cb, incompsurr = false;
-    cbofs = 0, cb = 0, --cch;
-    if (fullbuf || (incompsurr = IS_HIGH_SURROGATE(p[cch])))
-    {
-      wcl = p[cch], cbofs = sizeof(WCHAR);
-      if (cch && IS_HIGH_SURROGATE(p[cch-1]) && !incompsurr)
-        wct = wcl, wcl = p[cch-1], cbofs += sizeof(WCHAR);
-    }
+    bool incompsurr;
+    cb = 0, cbofs = 0;
+    if (incompsurr = IS_HIGH_SURROGATE(p[cch-1]))
+      wcl = p[--cch], cbofs = sizeof(WCHAR); // Store leading surrogate part and complete it later
+logappendfinal:
     p[cch] = L'\0';
     LogMessage(g_sdata.hwnd, p);
-    p[0] = wcl, p[1] = wct;
-    if (!rok)
+    p[0] = wcl;
+    if (!rok) // No more data can be read
     {
-      if (cbofs)
+      if (incompsurr) // Unable to complete the surrogate pair
       {
-        if (incompsurr) p[0] = 0xfffd, cbofs = sizeof(WCHAR); // Unable to complete the surrogate pair
-        cb = cbofs;
-        goto logappend;
+        p[0] = 0xfffd, cch = 1, incompsurr = false; 
+        goto logappendfinal;
       }
       break;
     }
