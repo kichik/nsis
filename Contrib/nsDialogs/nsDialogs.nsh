@@ -501,7 +501,7 @@ Header file for creating custom installer pages with nsDialogs
 
 
 !macro __NSD_LoadAndSetImage _LIHINSTMODE _IMGTYPE _LIHINSTSRC _LIFLAGS CONTROL IMAGE HANDLE
-	
+
 	Push $0
 	Push $R0
 

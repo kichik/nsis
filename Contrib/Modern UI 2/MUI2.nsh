@@ -2,6 +2,7 @@
 
 NSIS Modern User Interface - Version 2.0
 Copyright 2002-2014 Joost Verburg
+Contributors: Amir Szekely, Anders Kjersem
 
 */
 

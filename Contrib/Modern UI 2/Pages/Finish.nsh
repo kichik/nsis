@@ -264,11 +264,7 @@ Finish page (implemented using nsDialogs)
     ;Image control
     ${NSD_CreateBitmap} 0u 0u 109u 193u ""
     Pop $mui.FinishPage.Image
-    !ifndef MUI_${MUI_PAGE_UNINSTALLER_PREFIX}WELCOMEFINISHPAGE_BITMAP_NOSTRETCH
-      ${NSD_SetStretchedImage} $mui.FinishPage.Image $PLUGINSDIR\modern-wizard.bmp $mui.FinishPage.Image.Bitmap
-    !else
-      ${NSD_SetImage} $mui.FinishPage.Image $PLUGINSDIR\modern-wizard.bmp $mui.FinishPage.Image.Bitmap
-    !endif
+    !insertmacro MUI_INTERNAL_FULLWINDOW_LOADWIZARDIMAGE "${MUI_PAGE_UNINSTALLER_PREFIX}" $mui.FinishPage.Image $PLUGINSDIR\modern-wizard.bmp $mui.FinishPage.Image.Bitmap
     
     ;Positiong of controls
 
