@@ -944,7 +944,7 @@ TCHAR* CEXEBuild::GetMacro(const TCHAR *macroname, TCHAR**macroend /*= 0*/)
 
     if (foundit)
     {
-      if (macroend) *macroend = t;
+      if (macroend) *macroend = ++t;
       return mbeg;
     }
     
@@ -1207,9 +1207,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           return PS_ERROR;
         }
         TCHAR *mbufb=(TCHAR*)m_macros.get();
-        const unsigned int mcb=BUGBUG64TRUNCATE(unsigned int, (mend-mbeg)*sizeof(TCHAR)), mbufcb=m_macros.getlen();
-        memmove(mbeg,mend+1,mbufcb-(mcb+(mbeg-mbufb)));
-        m_macros.resize((int)(mbufcb-(mcb+sizeof(TCHAR))));
+        const size_t mcb=((mend)-mbeg)*sizeof(TCHAR), mbufcb=m_macros.getlen();
+        memmove(mbeg,mend,mbufcb-(((mbeg-mbufb)*sizeof(TCHAR))+mcb));
+        m_macros.resize(BUGBUG64TRUNCATE(int,mbufcb-mcb));
         SCRIPT_MSG(_T("!macroundef: %") NPRIs _T("\n"),mname);
       }
     return PS_OK;
