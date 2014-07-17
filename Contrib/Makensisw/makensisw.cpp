@@ -766,19 +766,21 @@ DWORD WINAPI MakeNSISProc(LPVOID TreadParam) {
       cbofs += cbio; // We only have 1 byte, need to read more to get a complete WCHAR
       continue;
     }
-    bool incompsurr;
-    cb = 0, cbofs = 0;
+    char oddbyte = (char)(cb % 2), incompsurr;
+    cbofs = 0;
     if (incompsurr = IS_HIGH_SURROGATE(p[cch-1]))
       wcl = p[--cch], cbofs = sizeof(WCHAR); // Store leading surrogate part and complete it later
+    if (oddbyte)
+      oddbyte = iob[cb-1], ++cbofs;
 logappendfinal:
     p[cch] = L'\0';
     LogMessage(g_sdata.hwnd, p);
-    p[0] = wcl;
+    p[0] = wcl, iob[cbofs - !!oddbyte] = oddbyte, cb = 0;
     if (!rok) // No more data can be read
     {
-      if (incompsurr) // Unable to complete the surrogate pair
+      if (cbofs) // Unable to complete the surrogate pair or odd byte
       {
-        p[0] = 0xfffd, cch = 1, incompsurr = false; 
+        p[0] = 0xfffd, cch = 1, cbofs = 0; 
         goto logappendfinal;
       }
       break;
