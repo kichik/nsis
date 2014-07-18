@@ -48,6 +48,14 @@ tstring get_file_name(const tstring& path);
 tstring get_executable_path(const TCHAR* argv0);
 tstring get_executable_dir(const TCHAR *argv0);
 tstring remove_file_extension(const tstring& path);
+tstring& path_append_separator(tstring& path);
+tstring& path_append(tstring& base, const TCHAR* more);
+inline tstring& path_append(tstring& base, const tstring& more) { return path_append(base, more.c_str()); }
+#ifdef _WIN32
+#define IsPathSeparator IsAgnosticPathSeparator
+#else
+#define IsPathSeparator(c) ( PLATFORM_PATH_SEPARATOR_C == (c) )
+#endif
 inline bool IsAgnosticPathSeparator(const TCHAR c) { return _T('\\') == c || _T('/') == c; }
 bool IsWindowsPathRelative(const TCHAR *p);
 

@@ -718,6 +718,20 @@ tstring remove_file_extension(const tstring& path) {
   return get_string_prefix(path, _T("."));
 }
 
+tstring& path_append_separator(tstring& path)
+{
+  tstring::iterator ib = path.begin(), ie = path.end();
+  if (ib != ie && !IsPathSeparator(*--ie))
+    path.push_back(PLATFORM_PATH_SEPARATOR_C);
+  return path;
+}
+
+tstring& path_append(tstring& base, const TCHAR* more)
+{
+  if (IsPathSeparator(*more)) ++more;
+  return path_append_separator(base) += more;
+}
+
 static int PathGetDosDriveNumber(const TCHAR *p)
 {
   // Note: Unlike PathGetDriveNumber(), we require a path separator after the colon.

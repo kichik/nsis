@@ -1366,14 +1366,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
         SCRIPT_MSG(_T("!delfile: \"%") NPRIs _T("\"\n"), line.gettoken_str(a));
 
-        tstring dir = get_dir_name(fc);
-        tstring spec = get_file_name(fc);
+        tstring dir = get_dir_name(fc), spec = get_file_name(fc);
         tstring basedir = dir + PLATFORM_PATH_SEPARATOR_STR;
-        if (dir == spec) {
-          // no path, just file name
-          dir = _T(".");
-          basedir = _T("");
-        }
+        if (dir == spec) dir = _T("."), basedir = _T(""); // no path, just file name
 
         boost::scoped_ptr<dir_reader> dr( new_dir_reader() );
         dr->read(dir); // BUGBUG: PATH_CONVERT?
@@ -3200,12 +3195,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         {
           f = line.gettoken_str(++tok);
           if (tok >= toks) break;
-          if(!_tcsicmp(f,_T("/nonfatal"))) {
-            required = false;
-          }
+          if (!_tcsicmp(f,_T("/nonfatal"))) required = false;
           TCHAR buf[9+1];
           my_strncpy(buf,f,COUNTOF(buf));
-          if(!_tcsicmp(buf,_T("/charset="))) {
+          if (!_tcsicmp(buf,_T("/charset="))) {
             WORD cp = GetEncodingFromString(f+9);
             if (NStreamEncoding::UNKNOWN == cp) toks = 0;
             enc.SafeSetCodepage(cp);
@@ -3214,9 +3207,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (!toks || !*f) PRINTHELP();
 
         TCHAR *fc = my_convert(f);
-        tstring dir = get_dir_name(fc);
-        tstring spec = get_file_name(fc);
-        tstring basedir = dir + PLATFORM_PATH_SEPARATOR_STR;
+        tstring dir = get_dir_name(fc), spec = get_file_name(fc), basedir = dir;
+        path_append_separator(basedir);
         if (dir == spec) basedir = _T(""), dir = _T("."); // no path, just file name
         my_convert_free(fc);
 
@@ -3228,7 +3220,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
              files_itr++)
         {
           if (!dir_reader::matches(*files_itr, spec)) continue;
-
           tstring incfile = basedir + *files_itr;
           if (includeScript(incfile.c_str(), enc) != PS_OK)
             return PS_ERROR;
@@ -3241,7 +3232,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         TCHAR *incdir = include_dirs.get();
         int incdirs = include_dirs.getnum();
         for (int i = 0; i < incdirs; i++, incdir += _tcslen(incdir) + 1) {
-          tstring curincdir = tstring(incdir) + PLATFORM_PATH_SEPARATOR_STR + dir;
+          tstring curincdir = path_append(tstring(incdir), dir);
 
           boost::scoped_ptr<dir_reader> dr( new_dir_reader() );
           dr->read(curincdir);
@@ -3251,7 +3242,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           {
             if (!dir_reader::matches(*incdir_itr, spec)) continue;
 
-            tstring incfile = tstring(incdir) + PLATFORM_PATH_SEPARATOR_STR + basedir + *incdir_itr;
+            tstring incfile = path_append(tstring(incdir), basedir) + *incdir_itr;
             if (includeScript(incfile.c_str(), enc) != PS_OK)
               return PS_ERROR;
             else
