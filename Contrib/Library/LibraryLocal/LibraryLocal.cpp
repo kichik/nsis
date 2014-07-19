@@ -150,8 +150,8 @@ int _tmain(int argc, TCHAR* argv[])
   }
   else
   {
-    fprintf(fHdr, "!define LIBRARY_VERSION_HIGH %u\n", high);
-    fprintf(fHdr, "!define LIBRARY_VERSION_LOW %u\n", low);
+    fprintf(fHdr, "!define LIBRARY_VERSION_HIGH %lu\n", high);
+    fprintf(fHdr, "!define LIBRARY_VERSION_LOW %lu\n", low);
   }
 
   fclose(fHdr);

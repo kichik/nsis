@@ -1031,6 +1031,10 @@ static INT_PTR CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
     int available_set = 0;
     unsigned total, available;
 
+#if defined(__GNUC__) && ((__GNUC__ * 1000) + __GNUC_MINOR__) < 4006
+    available = 0; // warning: 'available' may be used uninitialized in this function
+#endif
+
     GetUIText(IDC_DIR,dir);
     if (!is_valid_instpath(dir))
       error = NSIS_INSTDIR_INVALID;

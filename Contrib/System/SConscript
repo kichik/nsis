@@ -39,17 +39,19 @@ if env['TARGET_ARCH'] != 'amd64' or msvc: # BUGBUG: Call-amd64.S is missing GAS 
 	filename = 'Call' + srcsuff
 
 	src_ascpp = """
-		#if 1 /* a C style comment */
-		.end
+		#if 0 /* a C style comment */
+		ERROR: assembler-with-cpp required!
 		#else
-		ERROR!
+		.end
 		#endif
 	"""
 	conf = env.Configure()
 	if conf.TryCompile('END', '.S'):
 		files += ['Source/'+filename+'.S']
-	elif conf.TryCompile(src_ascpp, '.S'):
+	elif (not msvc) and conf.TryCompile(src_ascpp, '.S'):
 		files += ['Source/'+filename+'CPP.S']
+	elif (not msvc) and conf.TryCompile(src_ascpp, '.sx'):
+		files += ['Source/'+filename+'CPP.sx']
 	else:
 		print 'WARNING: System.dll: unable to find assembler for '+filename+'.S'
 	conf.Finish()

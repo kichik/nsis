@@ -448,11 +448,6 @@ __int64 GetIntFromString(TCHAR **p)
     return myatoi64(buffer);
 }
 
-#ifdef __GNUC__
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wuninitialized" // temp3 is set to 0 when we start parsing a new parameter
-// must be outside of function for mingw
-#endif
 SystemProc *PrepareProc(BOOL NeedForCall)
 {
     int SectionType = PST_PROC, // First section is always proc spec
@@ -465,6 +460,10 @@ SystemProc *PrepareProc(BOOL NeedForCall)
     SystemProc *proc = NULL;
     TCHAR *ibuf, *ib, *sbuf, *cbuf, *cb;
     unsigned int UsedTString = 0;
+
+#if defined(__GNUC__) && ((__GNUC__ * 1000) + __GNUC_MINOR__) < 4006
+    temp3 = 0; // "warning: 'temp3' may be used uninitialized in this function": temp3 is set to 0 when we start parsing a new parameter
+#endif
 
     // Retrieve proc specs
     cb = (cbuf = AllocString()); // Current String buffer
@@ -693,7 +692,14 @@ SystemProc *PrepareProc(BOOL NeedForCall)
             case _T('0'): case _T('1'): case _T('2'): case _T('3'): case _T('4'):
             case _T('5'): case _T('6'): case _T('7'): case _T('8'): case _T('9'):
                 // Numeric inline
+#if defined(__GNUC__) && ((__GNUC__ * 1000) + __GNUC_MINOR__) >= 4006
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuninitialized" // temp3 is set to 0 when we start parsing a new parameter
+#endif
                 if (temp3 == 0)
+#if defined(__GNUC__) && ((__GNUC__ * 1000) + __GNUC_MINOR__) >= 4006
+#pragma GCC diagnostic pop
+#endif
                 {
                     ib--;
                     // It's stupid, I know, but I'm too lazy to do another thing
@@ -762,7 +768,14 @@ SystemProc *PrepareProc(BOOL NeedForCall)
                 if (temp3 == 1)
                     proc->Params[ParamIndex].Output = (int) temp4; // Note: As long as we never assign a pointer to temp4 when parsing a destination the cast to int is OK.
                 // Next parameter is output or something else
+#if defined(__GNUC__) && ((__GNUC__ * 1000) + __GNUC_MINOR__) >= 4006
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuninitialized"
+#endif  
                 temp3++;
+#if defined(__GNUC__) && ((__GNUC__ * 1000) + __GNUC_MINOR__) >= 4006
+#pragma GCC diagnostic pop
+#endif
             }
 
             ChangesDone = PCD_DONE;
@@ -910,9 +923,6 @@ SystemProc *PrepareProc(BOOL NeedForCall)
 
     return proc;
 }
-#ifdef __GNUC__
-#pragma GCC diagnostic pop
-#endif
 
 void ParamAllocate(SystemProc *proc)
 {

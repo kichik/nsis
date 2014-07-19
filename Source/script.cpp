@@ -1400,7 +1400,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
     case TOK_P_APPENDFILE:
       {
-        WORD tok = 0, cp;
+        WORD tok = 0, cp = 0;
         bool bom = false, forceEnc = false;
         TCHAR *param = line.gettoken_str(++tok), buf[9+1];
         my_strncpy(buf,param,COUNTOF(buf));
