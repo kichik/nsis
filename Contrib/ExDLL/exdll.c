@@ -1,5 +1,8 @@
 #include <windows.h>
 #include <nsis/pluginapi.h> // nsis plugin
+#ifndef _TCHAR_DEFINED
+#include <tchar.h>
+#endif
 
 HINSTANCE g_hInstance;
 
@@ -26,8 +29,8 @@ void __declspec(dllexport) myFunction(HWND hwndParent, int string_size,
 
   // do your stuff here
   {
-    TCHAR buf[1024];
-    wsprintf(buf,_T("$0=%s\n"),getuservariable(INST_0));
+    TCHAR buf[3+1024+1]; // A real plugin should use string_size and not 1024!
+    wsprintf(buf,TEXT("$0=%.1024s"),getuservariable(INST_0));
     MessageBox(g_hwndParent,buf,0,MB_OK);
   }
 }

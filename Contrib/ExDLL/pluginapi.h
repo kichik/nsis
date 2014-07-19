@@ -6,10 +6,10 @@ extern "C" {
 #endif
 
 #include "api.h"
-#include "nsis_tchar.h"
+#include "nsis_tchar.h" // BUGBUG: Why cannot our plugins use the compilers tchar.h?
 
 #ifndef NSISCALL
-#  define NSISCALL __stdcall
+#  define NSISCALL WINAPI
 #endif
 
 #define EXDLL_INIT()           {  \
@@ -19,7 +19,11 @@ extern "C" {
 
 typedef struct _stack_t {
   struct _stack_t *next;
-  TCHAR text[1]; // this should be the length of string_size
+#ifdef UNICODE
+  WCHAR text[1]; // this should be the length of g_stringsize when allocating
+#else
+  char text[1];
+#endif
 } stack_t;
 
 enum
@@ -54,33 +58,33 @@ __INST_LAST
 
 extern unsigned int g_stringsize;
 extern stack_t **g_stacktop;
-extern TCHAR *g_variables;
+extern LPTSTR g_variables;
 
-void NSISCALL pushstring(const TCHAR *str);
+void NSISCALL pushstring(LPCTSTR str);
 void NSISCALL pushintptr(INT_PTR value);
 #define pushint(v) pushintptr((INT_PTR)(v))
-int NSISCALL popstring(TCHAR *str); // 0 on success, 1 on empty stack
-int NSISCALL popstringn(TCHAR *str, int maxlen); // with length limit, pass 0 for g_stringsize
+int NSISCALL popstring(LPTSTR str); // 0 on success, 1 on empty stack
+int NSISCALL popstringn(LPTSTR str, int maxlen); // with length limit, pass 0 for g_stringsize
 INT_PTR NSISCALL popintptr();
 #define popint() ( (int) popintptr() )
 int NSISCALL popint_or(); // with support for or'ing (2|4|8)
-INT_PTR NSISCALL nsishelper_str_to_ptr(const TCHAR *s);
+INT_PTR NSISCALL nsishelper_str_to_ptr(LPCTSTR s);
 #define myatoi(s) ( (int) nsishelper_str_to_ptr(s) ) // converts a string to an integer
-unsigned int NSISCALL myatou(const TCHAR *s); // converts a string to an unsigned integer, decimal only
-int NSISCALL myatoi_or(const TCHAR *s); // with support for or'ing (2|4|8)
-TCHAR* NSISCALL getuservariable(const int varnum);
-void NSISCALL setuservariable(const int varnum, const TCHAR *var);
+unsigned int NSISCALL myatou(LPCTSTR s); // converts a string to an unsigned integer, decimal only
+int NSISCALL myatoi_or(LPCTSTR s); // with support for or'ing (2|4|8)
+LPTSTR NSISCALL getuservariable(const int varnum);
+void NSISCALL setuservariable(const int varnum, LPCTSTR var);
 
-#ifdef _UNICODE
+#ifdef UNICODE
 #define PopStringW(x) popstring(x)
 #define PushStringW(x) pushstring(x)
 #define SetUserVariableW(x,y) setuservariable(x,y)
 
-int  NSISCALL PopStringA(char* ansiStr);
-void NSISCALL PushStringA(const char* ansiStr);
-void NSISCALL GetUserVariableW(const int varnum, wchar_t* wideStr);
-void NSISCALL GetUserVariableA(const int varnum, char* ansiStr);
-void NSISCALL SetUserVariableA(const int varnum, const char* ansiStr);
+int  NSISCALL PopStringA(LPSTR ansiStr);
+void NSISCALL PushStringA(LPCSTR ansiStr);
+void NSISCALL GetUserVariableW(const int varnum, LPWSTR wideStr);
+void NSISCALL GetUserVariableA(const int varnum, LPSTR ansiStr);
+void NSISCALL SetUserVariableA(const int varnum, LPCSTR ansiStr);
 
 #else
 // ANSI defs
@@ -89,11 +93,11 @@ void NSISCALL SetUserVariableA(const int varnum, const char* ansiStr);
 #define PushStringA(x) pushstring(x)
 #define SetUserVariableA(x,y) setuservariable(x,y)
 
-int  NSISCALL PopStringW(wchar_t* wideStr);
-void NSISCALL PushStringW(wchar_t* wideStr);
-void NSISCALL GetUserVariableW(const int varnum, wchar_t* wideStr);
-void NSISCALL GetUserVariableA(const int varnum, char* ansiStr);
-void NSISCALL SetUserVariableW(const int varnum, const wchar_t* wideStr);
+int  NSISCALL PopStringW(LPWSTR wideStr);
+void NSISCALL PushStringW(LPWSTR wideStr);
+void NSISCALL GetUserVariableW(const int varnum, LPWSTR wideStr);
+void NSISCALL GetUserVariableA(const int varnum, LPSTR ansiStr);
+void NSISCALL SetUserVariableW(const int varnum, LPCWSTR wideStr);
 
 #endif
 
