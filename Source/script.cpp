@@ -3232,7 +3232,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         TCHAR *incdir = include_dirs.get();
         int incdirs = include_dirs.getnum();
         for (int i = 0; i < incdirs; i++, incdir += _tcslen(incdir) + 1) {
-          tstring curincdir = path_append(tstring(incdir), dir);
+          tstring curincdir(incdir);
+          path_append(curincdir, dir);
 
           boost::scoped_ptr<dir_reader> dr( new_dir_reader() );
           dr->read(curincdir);
@@ -3242,7 +3243,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           {
             if (!dir_reader::matches(*incdir_itr, spec)) continue;
 
-            tstring incfile = path_append(tstring(incdir), basedir) + *incdir_itr;
+            tstring incfile(incdir);
+            incfile = path_append(incfile, basedir) + *incdir_itr;
             if (includeScript(incfile.c_str(), enc) != PS_OK)
               return PS_ERROR;
             else
