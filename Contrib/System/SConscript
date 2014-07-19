@@ -38,18 +38,18 @@ if env['TARGET_ARCH'] != 'amd64' or msvc: # BUGBUG: Call-amd64.S is missing GAS 
 			defs += ['SYSTEM_PARTIALCALLSUPPORT']
 	filename = 'Call' + srcsuff
 
-	# When using the MS toolchain, SCons can pass .sx files to cl.exe:
-	# "D4024 : unrecognized source file type 'file.sx', object file assumed"
-	# "D4027 : source file 'file.sx' ignored"
-	# ...and then it returns 0!
-	# This only happens if TryCompile .S fails (ML/ML64 not in %PATH%?)
-	#
-	# BUGBUG: GCC < 4.3 does not understand .sx, only .S
+	src_ascpp = """
+		#if 1 /* a C style comment */
+		.end
+		#else
+		ERROR!
+		#endif
+	"""
 	conf = env.Configure()
 	if conf.TryCompile('END', '.S'):
 		files += ['Source/'+filename+'.S']
-	elif (not msvc) and conf.TryCompile('.end', '.sx'):
-		files += ['Source/'+filename+'.sx']
+	elif conf.TryCompile(src_ascpp, '.S'):
+		files += ['Source/'+filename+'CPP.S']
 	else:
 		print 'WARNING: System.dll: unable to find assembler for '+filename+'.S'
 	conf.Finish()
