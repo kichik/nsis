@@ -722,7 +722,7 @@ tstring& path_append_separator(tstring& path)
 {
   tstring::iterator ib = path.begin(), ie = path.end();
   if (ib != ie && !IsPathSeparator(*--ie))
-    path.push_back(PLATFORM_PATH_SEPARATOR_C);
+    path += PLATFORM_PATH_SEPARATOR_STR;
   return path;
 }
 

@@ -62,7 +62,7 @@ void writer_sink::write_string(const TCHAR *s, size_t size)
   if (m_build_unicode)
   {
     bool strEnd = false;
-    TCHAR ch;
+    TCHAR ch = L'\0';
     for (; size ; size--)
     {
       if (!strEnd)

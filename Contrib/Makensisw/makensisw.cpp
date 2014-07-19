@@ -768,7 +768,7 @@ DWORD WINAPI MakeNSISProc(LPVOID TreadParam) {
     }
     char oddbyte = (char)(cb % 2), incompsurr;
     cbofs = 0;
-    if (incompsurr = IS_HIGH_SURROGATE(p[cch-1]))
+    if ((incompsurr = IS_HIGH_SURROGATE(p[cch-1])))
       wcl = p[--cch], cbofs = sizeof(WCHAR); // Store leading surrogate part and complete it later
     if (oddbyte)
       oddbyte = iob[cb-1], ++cbofs;

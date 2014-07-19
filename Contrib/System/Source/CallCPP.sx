@@ -4,5 +4,5 @@
 #if 0
 ERROR: assembler-with-cpp required!
 #else
-#include "Call.S"
+#include "CallCPP.S"
 #endif

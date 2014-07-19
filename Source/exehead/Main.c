@@ -362,9 +362,9 @@ end:
     }
 
     IS=myGetProcAddress(MGA_InitiateShutdown);
-    if (IS && !IS(NULL, NULL, 0, SHUTDOWN_RESTART | SHUTDOWN_FORCE_OTHERS | SHUTDOWN_GRACE_OVERRIDE, reason)
-     || !ExitWindowsEx(EWX_REBOOT, reason)
-    )
+    if ( (IS && !IS(NULL, NULL, 0, SHUTDOWN_RESTART | SHUTDOWN_FORCE_OTHERS | SHUTDOWN_GRACE_OVERRIDE, reason))
+      || (!ExitWindowsEx(EWX_REBOOT, reason))
+      )
       ExecuteCallbackFunction(CB_ONREBOOTFAILED);
   }
 #endif//NSIS_SUPPORT_REBOOT
