@@ -2320,7 +2320,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           DWORD dwSize;
           dlg = dt.Save(dwSize);
           res_editor->UpdateResource(RT_DIALOG, IDD_INSTFILES, NSIS_DEFAULT_LANG, dlg, dwSize);
-          delete [] dlg;
+          dt.FreeSavedTemplate(dlg);
         }
         catch (exception& err) {
           ERROR_MSG(_T("Error setting smooth progress bar: %") NPRIs _T("\n"), CtoTStrParam(err.what()));
@@ -2589,9 +2589,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         init_res_editor();
 
         // Search for required items
-        #define GET(x) dlg = uire->GetResource(RT_DIALOG, x, 0); if (!dlg) return PS_ERROR; CDialogTemplate UIDlg(dlg, build_unicode, uDefCodePage);
-        #define SEARCH(x) if (!UIDlg.GetItem(x)) {ERROR_MSG(_T("Error: Can't find %") NPRIs _T(" (%u) in the custom UI!\n"), _T(#x), x);uire->FreeResource(dlg);delete uire;return PS_ERROR;}
-        #define SAVE(x) uire->FreeResource(dlg); dlg = UIDlg.Save(dwSize); res_editor->UpdateResource(RT_DIALOG, x, NSIS_DEFAULT_LANG, dlg, dwSize); uire->FreeResource(dlg);
+        #define CUISEARCHERR(n,v) ERROR_MSG(_T("Error: Can't find %") NPRIs _T(" (%u) in the custom UI!\n"), n, v);
+        #define GET(x) if (!(dlg = uire->GetResource(RT_DIALOG, x, 0))) { CUISEARCHERR(_T(#x), x); return PS_ERROR; } CDialogTemplate UIDlg(dlg, build_unicode, uDefCodePage);
+        #define SEARCH(x) if (!UIDlg.GetItem(x)) { CUISEARCHERR(_T(#x), x); uire->FreeResource(dlg); delete uire; return PS_ERROR; }
+        #define SAVE(x) uire->FreeResource(dlg); dlg = UIDlg.Save(dwSize); res_editor->UpdateResource(RT_DIALOG, x, NSIS_DEFAULT_LANG, dlg, dwSize); UIDlg.FreeSavedTemplate(dlg);
 
         LPBYTE dlg = NULL;
 
@@ -2749,7 +2750,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         DWORD dwDlgSize;
         dlg = dt.Save(dwDlgSize);
         res_editor->UpdateResource(RT_DIALOG, IDD_INST, NSIS_DEFAULT_LANG, dlg, dwDlgSize);
-        res_editor->FreeResource(dlg);
+        dt.FreeSavedTemplate(dlg);
 
         dt.DlgUnitsToPixels(brandingCtl.sWidth, brandingCtl.sHeight);
         SCRIPT_MSG(_T("AddBrandingImage: %") NPRIs _T(" %ux%u\n"), line.gettoken_str(1), brandingCtl.sWidth, brandingCtl.sHeight);
@@ -3825,7 +3826,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           DWORD dwSize;
           dlg = td.Save(dwSize);
           res_editor->UpdateResource(RT_DIALOG, IDD_INST, NSIS_DEFAULT_LANG, dlg, dwSize);
-          res_editor->FreeResource(dlg);
+          td.FreeSavedTemplate(dlg);
         }
         catch (exception& err) {
           ERROR_MSG(_T("Error while triming branding text control: %") NPRIs _T("\n"), CtoTStrParam(err.what()));

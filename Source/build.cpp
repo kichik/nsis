@@ -2199,7 +2199,7 @@ again:
         DWORD dwSize; \
         dlg = dt.Save(dwSize); \
         res_editor->UpdateResource(RT_DIALOG, id, NSIS_DEFAULT_LANG, dlg, dwSize); \
-        delete [] dlg; \
+        dt.FreeSavedTemplate(dlg); \
       } \
     } \
   }

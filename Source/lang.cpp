@@ -718,7 +718,7 @@ int CEXEBuild::GenerateLangTables() {
           DWORD dwSize; \
           dlg = td.Save(dwSize); \
           res_editor->UpdateResource(RT_DIALOG, id, NSIS_DEFAULT_LANG, dlg, dwSize); \
-          res_editor->FreeResource(dlg); \
+          td.FreeSavedTemplate(dlg); \
         } \
       }
 
@@ -788,7 +788,7 @@ int CEXEBuild::GenerateLangTables() {
             DWORD dwSize; \
             dlg = td.Save(dwSize); \
             res_editor->UpdateResource(RT_DIALOG, id+cur_offset, NSIS_DEFAULT_LANG, dlg, dwSize); \
-            res_editor->FreeResource(dlg); \
+            td.FreeSavedTemplate(dlg); \
           } \
         }
 

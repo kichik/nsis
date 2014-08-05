@@ -281,17 +281,12 @@ int CDialogTemplate::RemoveItem(WORD wId) {
 
 // Sets the font of the dialog
 void CDialogTemplate::SetFont(TCHAR* szFaceName, WORD wFontSize) {
-  if (_tcscmp(szFaceName, _T("MS Shell Dlg"))) {
-     // not MS Shell Dlg
-    m_dwStyle &= ~DS_SHELLFONT;
-  }
-  else {
-    // MS Shell Dlg
+  m_dwStyle &= ~DS_SHELLFONT;
+  if (!_tcscmp(szFaceName, _T("MS Shell Dlg"))) // TODO: "MS Shell Dlg 2"?
     m_dwStyle |= DS_SHELLFONT;
-  }
-  m_bCharset = DEFAULT_CHARSET;
   m_dwStyle |= DS_SETFONT;
-  if (m_szFont) free(m_szFont);
+  m_bCharset = DEFAULT_CHARSET;
+  free(m_szFont);
   m_szFont = WinWStrDupFromTChar(szFaceName, m_uCodePage);
   m_sFontSize = wFontSize;
 }
@@ -334,7 +329,7 @@ HWND CDialogTemplate::CreateDummyDialog() {
   DWORD dwTemp;
   BYTE* pbDlg = Save(dwTemp);
   HWND hDlg = CreateDialogIndirect(GetModuleHandle(0), (DLGTEMPLATE*)pbDlg, 0, 0);
-  delete [] pbDlg;
+  FreeSavedTemplate(pbDlg);
   if (!hDlg)
     throw runtime_error("Can't create dialog from template!");
 
