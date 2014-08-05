@@ -134,6 +134,7 @@ public:
 #endif
   void  ConvertToRTL();
   BYTE* Save(DWORD& dwSize);
+  static void FreeSavedTemplate(BYTE*pDT) { delete [] pDT; }
   DWORD GetSize();
 
 private:

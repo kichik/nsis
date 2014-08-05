@@ -40,7 +40,7 @@ public:
     CPPUNIT_ASSERT_EQUAL( (DWORD) sizeof(original_dialog), dwSize );
     CPPUNIT_ASSERT_EQUAL( 0, memcmp(saved_dialog, original_dialog, dwSize) );
 
-    delete [] saved_dialog;
+    dt.FreeSavedTemplate(saved_dialog);
   }
 
 };

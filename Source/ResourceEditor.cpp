@@ -271,9 +271,7 @@ BYTE* CResourceEditor::GetResourceW(const WINWCHAR* szType, WINWCHAR* szName, LA
     i = nameDir->Find(szName);
     if (i > -1) {
       langDir = nameDir->GetEntry(i)->GetSubDirectory();
-      i = 0;
-      if (wLanguage)
-        i = langDir->Find(wLanguage);
+      i = wLanguage ? langDir->Find(wLanguage) : 0;
       if (i > -1) {
         data = langDir->GetEntry(i)->GetDataEntry();
       }
@@ -313,9 +311,7 @@ int CResourceEditor::GetResourceSizeW(const WINWCHAR* szType, WINWCHAR* szName, 
     i = nameDir->Find(szName);
     if (i > -1) {
       langDir = nameDir->GetEntry(i)->GetSubDirectory();
-      i = 0;
-      if (wLanguage)
-        i = langDir->Find(wLanguage);
+      i = wLanguage ? langDir->Find(wLanguage) : 0;
       if (i > -1) {
         data = langDir->GetEntry(i)->GetDataEntry();
       }
@@ -352,9 +348,7 @@ DWORD CResourceEditor::GetResourceOffsetW(const WINWCHAR* szType, WINWCHAR* szNa
     i = nameDir->Find(szName);
     if (i > -1) {
       langDir = nameDir->GetEntry(i)->GetSubDirectory();
-      i = 0;
-      if (wLanguage)
-        i = langDir->Find(wLanguage);
+      i = wLanguage ? langDir->Find(wLanguage) : 0;
       if (i > -1) {
         data = langDir->GetEntry(i)->GetDataEntry();
       }
@@ -565,7 +559,7 @@ bool CResourceEditor::SetPESectionVirtualSize(const char* pszSectionName, DWORD 
 // Private Methods
 //////////////////////////////////////////////////////////////////////
 
-// This function scans a give resource directory and return a CResourceDirectory object
+// This function scans a given resource directory and returns a CResourceDirectory object
 // rdRoot must point to the root directory of the resource section
 CResourceDirectory* CResourceEditor::ScanDirectory(PRESOURCE_DIRECTORY rdRoot, PRESOURCE_DIRECTORY rdToScan) {
   // Create CResourceDirectory from rdToScan
