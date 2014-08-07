@@ -2528,12 +2528,15 @@ int CEXEBuild::pack_exe_header()
   }
   fwrite(m_exehead,1,m_exehead_size,tmpfile);
   fclose(tmpfile);
-  if (sane_system(build_packcmd) == -1)
+  int ec = sane_system(build_packcmd);
+  if (ec == -1)
   {
     _tremove(build_packname);
     ERROR_MSG(_T("Error: calling packer on \"%") NPRIs _T("\"\n"),build_packname);
     return PS_ERROR;
   }
+  if (ec != 0)
+    warning(_T("Packer returned %d, \"%") NPRIs _T("\" might still be unpacked\n"),ec,build_packname);
 
   int result = update_exehead(build_packname);
   _tremove(build_packname);
