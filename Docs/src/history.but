@@ -26,6 +26,10 @@ Released on ?, 2014
 
 \b Added WX compiler switch
 
+\b Added PEDllCharacteristics attribute
+
+\b Changed default DllCharacteristics to TS_AWARE+NO_SEH+NX_COMPAT+DYNAMIC_BASE
+
 \b Fixed POSIX !searchparse bug (\W{http://sf.net/p/nsis/patches/251}{patch #251})
 
 \b Fixed !macroundef
