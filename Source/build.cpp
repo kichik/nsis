@@ -3767,6 +3767,13 @@ int CEXEBuild::set_target_architecture_data()
   }
   definedlist.set(_T("NSIS_PTR_SIZE"), is_target_64bit() ? _T("8") : _T("4"));
 
+  definedlist.del(_T("NSIS_IX86"));
+  definedlist.del(_T("NSIS_AMD64"));
+  if (TARGET_AMD64 == m_target_type)
+    definedlist.set(_T("NSIS_AMD64"));
+  else
+    definedlist.set(_T("NSIS_IX86"), build_unicode ? _T("400") : _T("300"));
+
   return PS_OK;
 }
 

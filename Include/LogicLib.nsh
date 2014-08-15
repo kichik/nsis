@@ -93,6 +93,10 @@
     !endif
   !macroend
 
+  !macro LogicLib_JumpToBranch _Jump _Skip
+    StrCmp "" ""  `${_Jump}` ${_Skip}
+  !macroend
+
   !macro _IncreaseCounter
     !define _LOGICLIB_COUNTER ${LOGICLIB_COUNTER}
     !undef LOGICLIB_COUNTER

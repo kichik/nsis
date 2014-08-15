@@ -34,6 +34,8 @@ Released on ?, 2014
 
 \b Fixed !macroundef
 
+\b Added IsWow64 to x64.nsh
+
 \S2{} Translations
 
 \b Added Armenian (Hrant Ohanyan)
