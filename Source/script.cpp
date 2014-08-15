@@ -2808,6 +2808,16 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return PS_ERROR;
 #endif// NSIS_CONFIG_VISIBLE_SUPPORT
 
+    case TOK_PEDLLCHARACTERISTICS:
+      {
+        int s1, s2;
+        WORD add = (WORD)line.gettoken_int(1, &s1), del = (WORD)line.gettoken_int(2, &s2), org = PEDllCharacteristics;
+        if (!s1 || !s2) PRINTHELP();
+        PEDllCharacteristics &= ~del, PEDllCharacteristics |= add;
+        SCRIPT_MSG(_T("PEDllCharacteristics: 0x%.4x -> 0x%.4x\n"), org, PEDllCharacteristics);
+      }
+      return PS_OK;
+
     case TOK_REQEXECLEVEL:
       switch (line.gettoken_enum(1,_T("none\0user\0highest\0admin\0")))
       {

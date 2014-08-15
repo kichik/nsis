@@ -531,6 +531,7 @@ class CEXEBuild {
     int deflateToFile(FILE *fp, char *buf, int len); // len==0 to flush
 #endif
 
+    WORD PEDllCharacteristics;
     manifest::comctl manifest_comctl;
     manifest::exec_level manifest_exec_level;
     manifest::dpiaware manifest_dpiaware;

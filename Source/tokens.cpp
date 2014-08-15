@@ -238,6 +238,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_WRITEREGSTR,_T("WriteRegStr"),4,0,_T("rootkey subkey entry_name new_value_string\n    root_key=(HKCR|HKLM|HKCU|HKU|HKCC|HKDD|HKPD|SHCTX)"),TP_CODE},
 {TOK_WRITEREGEXPANDSTR,_T("WriteRegExpandStr"),4,0,_T("rootkey subkey entry_name new_value_string\n    root_key=(HKCR|HKLM|HKCU|HKU|HKCC|HKDD|HKPD|SHCTX)"),TP_CODE},
 {TOK_WRITEUNINSTALLER,_T("WriteUninstaller"),1,0,_T("uninstall_exe_name"),TP_CODE},
+{TOK_PEDLLCHARACTERISTICS, _T("PEDllCharacteristics"),2,0,_T("addbits removebits"),TP_GLOBAL},
 {TOK_XPSTYLE, _T("XPStyle"),1,0,_T("(on|off)"),TP_GLOBAL},
 {TOK_REQEXECLEVEL, _T("RequestExecutionLevel"),1,0,_T("none|user|highest|admin"),TP_GLOBAL},
 {TOK_MANIFEST_DPIAWARE,_T("ManifestDPIAware"),1,0,_T("notset|true|false"),TP_GLOBAL},

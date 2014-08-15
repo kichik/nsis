@@ -277,6 +277,7 @@ CEXEBuild::CEXEBuild(signed char pponly) :
 
   res_editor=0;
 
+  PEDllCharacteristics = IMAGE_DLLCHARACTERISTICS_TERMINAL_SERVER_AWARE|IMAGE_DLLCHARACTERISTICS_NO_SEH|IMAGE_DLLCHARACTERISTICS_NX_COMPAT|IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE; //forums.winamp.com/showthread.php?t=344755
   manifest_comctl = manifest::comctl_old;
   manifest_exec_level = manifest::exec_level_none;
   manifest_dpiaware = manifest::dpiaware_notset;
@@ -2401,10 +2402,10 @@ int CEXEBuild::UpdatePEHeader()
   try {
     PIMAGE_NT_HEADERS headers = CResourceEditor::GetNTHeaders(m_exehead);
     // workaround for bug #2697027, #2725883, #2803097
-    headers->OptionalHeader.MajorImageVersion = 6;
-    headers->OptionalHeader.MinorImageVersion = 0;
-    // terminal services aware
-    headers->OptionalHeader.DllCharacteristics |= IMAGE_DLLCHARACTERISTICS_TERMINAL_SERVER_AWARE;
+    headers->OptionalHeader.MajorImageVersion = FIX_ENDIAN_INT16(6);
+    headers->OptionalHeader.MinorImageVersion = FIX_ENDIAN_INT16(0);
+    // DllCharacteristics
+    headers->OptionalHeader.DllCharacteristics = FIX_ENDIAN_INT16(PEDllCharacteristics);
   } catch (std::runtime_error& err) {
     ERROR_MSG(_T("Error updating PE headers: %") NPRIs _T("\n"), CtoTStrParam(err.what()));
     return PS_ERROR;
