@@ -3219,9 +3219,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
         TCHAR *fc = my_convert(f);
         tstring dir = get_dir_name(fc), spec = get_file_name(fc), basedir = dir;
+        my_convert_free(fc);
         path_append_separator(basedir);
         if (dir == spec) basedir = _T(""), dir = _T("."); // no path, just file name
-        my_convert_free(fc);
 
         // search working directory
         boost::scoped_ptr<dir_reader> dr( new_dir_reader() );
@@ -3231,6 +3231,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
              files_itr++)
         {
           if (!dir_reader::matches(*files_itr, spec)) continue;
+
           tstring incfile = basedir + *files_itr;
           if (includeScript(incfile.c_str(), enc) != PS_OK)
             return PS_ERROR;
@@ -3243,8 +3244,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         TCHAR *incdir = include_dirs.get();
         int incdirs = include_dirs.getnum();
         for (int i = 0; i < incdirs; i++, incdir += _tcslen(incdir) + 1) {
-          tstring curincdir(incdir);
-          path_append(curincdir, dir);
+          tstring curincdir(incdir), incfile;
+          if (_T(".") != dir) path_append(curincdir, dir);
 
           boost::scoped_ptr<dir_reader> dr( new_dir_reader() );
           dr->read(curincdir);
@@ -3254,8 +3255,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           {
             if (!dir_reader::matches(*incdir_itr, spec)) continue;
 
-            tstring incfile(incdir);
-            incfile = path_append(incfile, basedir) + *incdir_itr;
+            path_append(incfile = curincdir, *incdir_itr);
             if (includeScript(incfile.c_str(), enc) != PS_OK)
               return PS_ERROR;
             else
