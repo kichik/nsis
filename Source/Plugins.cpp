@@ -51,8 +51,9 @@ bool contains(const C& cntnr, const K& key)
 template <class C, class K>
 const typename C::const_iterator get_iterator(const C& cntnr, const K& key)
 {
-  assert( contains(cntnr, key) );
-  return cntnr.find(key);
+  const typename C::const_iterator it = cntnr.find(key);
+  assert(cntnr.end() != it);
+  return it;
 }
 
 template <class C, class K> 
@@ -245,6 +246,16 @@ bool Plugins::IsPluginCommand(const tstring& token) const
   return contains(m_commands, token);
 }
 
+bool Plugins::IsKnownPlugin(const tstring& token) const
+{
+  const tstring dllname = GetDllName(token);
+  return contains(m_dllname_to_path, dllname);
+}
 
+bool Plugins::IsPluginCallSyntax(const tstring& token)
+{
+  const tstring dllname = GetDllName(token);
+  return dllname.length() + 2 < token.length();
+}
 
 #endif

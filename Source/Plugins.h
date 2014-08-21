@@ -51,9 +51,11 @@ class Plugins
     bool Initialize(const TCHAR*arcsubdir, bool displayInfo);
     void AddPluginsDir(const tstring& path, bool displayInfo);
     bool IsPluginCommand(const tstring& command) const;
+    bool IsKnownPlugin(const tstring& token) const;
     bool GetCommandInfo(const tstring&command, tstring&canoniccmd, tstring&dllPath);
     int GetDllDataHandle(bool uninst, const tstring& command) const;
     void SetDllDataHandle(bool uninst, tstring&canoniccmd, int dataHandle);
+    static bool IsPluginCallSyntax(const tstring& token);
 
   private: // methods
     void GetExports(const tstring &pathToDll, bool displayInfo);
