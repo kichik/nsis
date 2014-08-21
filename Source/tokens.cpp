@@ -360,7 +360,7 @@ bool CEXEBuild::is_unsafe_pp_token(int tkid)
   return false;
 }
 
-int CEXEBuild::get_commandtoken(TCHAR *s, int *np, int *op, int *pos)
+int CEXEBuild::get_commandtoken(const TCHAR *s, int *np, int *op, int *pos)
 {
   for (int x = 0; x < TOK__LAST; x ++)
     if (!_tcsicmp(tokenlist[x].name,s)) 
@@ -384,7 +384,7 @@ int CEXEBuild::GetCurrentTokenPlace()
   return TP_GLOBAL;
 }
 
-int CEXEBuild::IsTokenPlacedRight(int pos, TCHAR *tok)
+int CEXEBuild::IsTokenPlacedRight(int pos, const TCHAR *tok)
 {
   if (preprocessonly)
     return PS_OK;

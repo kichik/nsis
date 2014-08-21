@@ -177,7 +177,7 @@ class CEXEBuild {
     bool is_ppbranch_token(TCHAR *s);
     bool is_pp_token(int tkid);
     bool is_unsafe_pp_token(int tkid);
-    int get_commandtoken(TCHAR *s, int *np, int *op, int *pos);
+    int get_commandtoken(const TCHAR *s, int *np, int *op, int *pos);
     const TCHAR* get_commandtoken_name(int tok);
 
     /**
@@ -186,7 +186,7 @@ class CEXEBuild {
      * @return TP_FUNC, TP_SEC, TP_PAGEEX, TP_GLOBAL.
      */
     int GetCurrentTokenPlace();
-    int IsTokenPlacedRight(int pos, TCHAR *tok);
+    int IsTokenPlacedRight(int pos, const TCHAR *tok);
 
     // script.cpp
 #ifdef NSIS_SUPPORT_STANDARD_PREDEFINES

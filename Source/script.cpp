@@ -385,23 +385,24 @@ int CEXEBuild::doParse(const TCHAR *str)
 parse_again:
   if (line.getnumtokens() < 1) return PS_OK;
 
+  const TCHAR* const tokstr0 = line.gettoken_str(0);
   int np,op,pos;
-  int tkid=get_commandtoken(line.gettoken_str(0),&np,&op,&pos);
+  int tkid=get_commandtoken(tokstr0,&np,&op,&pos);
   if (tkid == -1)
   {
-    TCHAR *p=line.gettoken_str(0);
+    const TCHAR *p=tokstr0;
     if (p[0] && p[_tcslen(p)-1]==_T(':'))
     {
       if (p[0] == _T('!') || (p[0] >= _T('0') && p[0] <= _T('9')) || p[0] == _T('$') || p[0] == _T('-') || p[0] == _T('+'))
       {
-        ERROR_MSG(_T("Invalid label: %") NPRIs _T(" (labels cannot begin with !, $, -, +, or 0-9)\n"),line.gettoken_str(0));
+        ERROR_MSG(_T("Invalid label: %") NPRIs _T(" (labels cannot begin with !, $, -, +, or 0-9)\n"),tokstr0);
         return PS_ERROR;
       }
       extern FILE *g_output;
       if (preprocessonly)
-        _ftprintf(g_output,_T("%") NPRIs _T("\n"),line.gettoken_str(0));
+        _ftprintf(g_output,_T("%") NPRIs _T("\n"),tokstr0);
       else
-        if (add_label(line.gettoken_str(0))) return PS_ERROR;
+        if (add_label(tokstr0)) return PS_ERROR;
       line.eattoken();
       goto parse_again;
     }
@@ -411,7 +412,7 @@ parse_again:
     // We didn't recognise this command, could it be the name of a
     // function exported from a dll?
     // Plugins cannot be called in global scope so there is no need to initialize the list first
-    if (m_pPlugins && m_pPlugins->IsPluginCommand(line.gettoken_str(0)))
+    if (m_pPlugins && m_pPlugins->IsPluginCommand(tokstr0))
     {
       np   = 0;   // parameters are optional
       op   = -1;  // unlimited number of optional parameters
@@ -421,18 +422,23 @@ parse_again:
     else
 #endif
     {
-      ERROR_MSG(_T("Invalid command: %") NPRIs _T("\n"),line.gettoken_str(0));
+#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
+      if (Plugins::IsPluginCallSyntax(tokstr0) && (!m_pPlugins || !m_pPlugins->IsKnownPlugin(tokstr0)))
+        ERROR_MSG(_T("Plugin not found, cannot call %") NPRIs _T("\n"),tokstr0);
+      else
+#endif
+        ERROR_MSG(_T("Invalid command: %") NPRIs _T("\n"),tokstr0);
       return PS_ERROR;
     }
   }
 
-  if (IsTokenPlacedRight(pos, line.gettoken_str(0)) != PS_OK)
+  if (IsTokenPlacedRight(pos, tokstr0) != PS_OK)
     return PS_ERROR;
 
   int v=line.getnumtokens()-(np+1);
   if (v < 0 || (op >= 0 && v > op)) // opt_parms is -1 for unlimited
   {
-    ERROR_MSG(_T("%") NPRIs _T(" expects %d"),line.gettoken_str(0),np);
+    ERROR_MSG(_T("%") NPRIs _T(" expects %d"),tokstr0,np);
     if (op < 0) ERROR_MSG(_T("+"));
     if (op > 0) ERROR_MSG(_T("-%d"),op+np);
     ERROR_MSG(_T(" parameters, got %d.\n"),line.getnumtokens()-1);
