@@ -12,6 +12,8 @@
 #define EXEHEAD
 #define NSIS_CONFIG_COMPRESSION_SUPPORT
 
+#include "../Platform.h"
+
 extern "C" {
 #define NSIS_COMPRESS_USE_BZIP2
 #include "../bzip2/bzlib.h"
