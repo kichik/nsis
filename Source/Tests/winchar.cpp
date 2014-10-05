@@ -1,5 +1,6 @@
 // Reviewed for Unicode support by Jim Park -- 08/13/2007
 #include <cppunit/extensions/HelperMacros.h>
+#include "../util.h"
 #include "../winchar.h"
 
 #include <time.h>
@@ -11,6 +12,8 @@
 // BUGBUG: These tests currently run as Ansi, it would be better if it respected defenv['UNICODE']
 
 // BUGBUG: WinWStrDupFromWC is unable to test WCToUTF16LEHlpr because it is behind #ifdef MAKENSIS
+
+// TODO write equal() for WINWCHAR -- http://subcommanderblog.wordpress.com/2009/01/10/cppunit_assert_equal-and-custom-data-types/
 
 class WinCharTest : public CppUnit::TestFixture {
 
@@ -24,8 +27,12 @@ class WinCharTest : public CppUnit::TestFixture {
   CPPUNIT_TEST_SUITE_END();
 
 public:
+  void setUp() {
+    NSISRT_Initialize();
+  }
+
   void testFromTchar() {
-    unsigned short test[] = { _x('t'), _x('e'), _x('s'), _x('t'), 0 };
+    WINWCHAR test[] = { _x('t'), _x('e'), _x('s'), _x('t'), 0 };
 
     WINWCHAR *dyn = WinWStrDupFromTChar(_T("test"));
     CPPUNIT_ASSERT_EQUAL( 0, memcmp(test, dyn, 5) );
@@ -44,7 +51,7 @@ public:
     WINWCHAR a[] = { _x('t'), _x('e'), _x('s'), _x('t'), 0 };
     WINWCHAR b[5];
 
-    CPPUNIT_ASSERT_EQUAL( b, WinWStrCpy(b, a) );
+    CPPUNIT_ASSERT( !WinWStrCmp(b, WinWStrCpy(b, a)) );
     CPPUNIT_ASSERT_EQUAL( 0, memcmp(a, b, 5 * sizeof(WINWCHAR)) );
   }
 
@@ -52,15 +59,15 @@ public:
     WINWCHAR a1[] = { _x('t'), _x('e'), _x('s'), _x('t'), 0 };
     WINWCHAR b[5];
 
-    CPPUNIT_ASSERT_EQUAL( b, WinWStrNCpy(b, a1, 5) );
+    CPPUNIT_ASSERT( !WinWStrCmp(b, WinWStrNCpy(b, a1, 5)) );
     CPPUNIT_ASSERT_EQUAL( 0, memcmp(a1, b, 5 * sizeof(WINWCHAR)) );
 
     WINWCHAR a2[] = { _x('t'), _x('e'), 0, 0, 0 };
 
-    CPPUNIT_ASSERT_EQUAL( b, WinWStrNCpy(b, a2, 5) );
+    CPPUNIT_ASSERT( !WinWStrCmp(b, WinWStrNCpy(b, a2, 5)) );
     CPPUNIT_ASSERT_EQUAL( 0, memcmp(a2, b, 5 * sizeof(WINWCHAR)) );
 
-    CPPUNIT_ASSERT_EQUAL( b, WinWStrNCpy(b, a1, 2) );
+    CPPUNIT_ASSERT( !WinWStrCmp(b, WinWStrNCpy(b, a1, 2)) );
     CPPUNIT_ASSERT_EQUAL( 0, memcmp(a2, b, 5 * sizeof(WINWCHAR)) );
   }
 

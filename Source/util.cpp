@@ -196,7 +196,7 @@ int wsprintf(TCHAR *s, const TCHAR *format, ...) {
   return res;
 }
 
-static char g_nrt_iconv_narrowlocbuf[50], *g_nrt_iconv_narrowloc;
+static char g_nrt_iconv_narrowlocbuf[50], *g_nrt_iconv_narrowloc = 0;
 #define setlocale_ACP(cat) setlocale((cat), "")
 #define iconv_ACP g_nrt_iconv_narrowloc
 #define setlocale_OEM(cat) NSISRT_setlocale_wincp((cat), 1252)
@@ -453,6 +453,7 @@ bool nsis_iconv_reallociconv(iconv_t CD, char**In, size_t*cbInLeft, char**Mem, s
 const unsigned short CODEPAGESTR_MAXLEN = 50; // Should be plenty
 void create_code_page_string(TCHAR *buf, size_t len, UINT code_page)
 {
+  if (!g_nrt_iconv_narrowloc) NSISRT_Initialize(); // For winchar.cpp unit test
   switch(code_page)
   {
   case CP_ACP:   _sntprintf(buf, len, _T("%") NPRINs, iconv_ACP); return;
