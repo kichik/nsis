@@ -22,11 +22,13 @@ Released on ?, 2014
 
 \S2{} Minor Changes
 
+\b Added IsWow64 to x64.nsh
+
+\b Added PEDllCharacteristics attribute
+
 \b Added System::Call direct register memory access type. (\W{http://sf.net/p/nsis/patches/249}{patch #249})
 
 \b Added WX compiler switch
-
-\b Added PEDllCharacteristics attribute
 
 \b Changed default DllCharacteristics to TS_AWARE+NO_SEH+NX_COMPAT+DYNAMIC_BASE
 
@@ -34,7 +36,7 @@ Released on ?, 2014
 
 \b Fixed !macroundef
 
-\b Added IsWow64 to x64.nsh
+\b Fixed Visual Studio 2012 builds
 
 \S2{} Translations
 
