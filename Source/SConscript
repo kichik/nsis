@@ -73,6 +73,10 @@ AddZLib(env, env['PLATFORM'], 'install-compiler')
 env.Append(CPPDEFINES = ['MAKENSIS'])
 env.Append(CPPDEFINES = ['_WIN32_IE=0x0500'])
 
+##### Gnereal settings
+
+env.Append(LINKFLAGS = ['$SUBSYS_CON'])
+
 ##### Set PCH
 
 # XXX doesn't work

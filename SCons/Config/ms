@@ -38,6 +38,10 @@ if msvs_version < 10.0:
 	defenv.Append(LINKFLAGS = ['/opt:nowin98'])
 if defenv['MSTOOLKIT'] and msvs_version < 8.0:
 	defenv['MSVCRT_FLAG'] = '/ML' # TK2003 does not have all libs
+if msvs_version >= 11.0:
+	defenv.Append(LINKFLAGS = ['/FIXED']) # no relocations that our resource editor ignores
+	defenv['SUBSYS_CON'] = '/subsystem:console,5.01' # support windows xp
+	defenv['SUBSYS_WIN'] = '/subsystem:windows,5.01' # support windows xp
 
 ### defines
 
