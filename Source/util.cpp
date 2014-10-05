@@ -955,7 +955,7 @@ switchcp:   cp = orgwinconoutcp, mbtwcf = 0, utf8 = false;
   return childec;
 }
 #else
-int RunChildProcessRedirected(LPCWSTR cmd)
+int RunChildProcessRedirected(LPCSTR cmd)
 {
   STARTUPINFO si = { sizeof(STARTUPINFO), };
   PROCESS_INFORMATION pi;
