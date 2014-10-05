@@ -2,7 +2,11 @@
 
 \H{v3.0b1} 3.0 Beta 1
 
-Released on ?, 2014
+Released on October 6th, 2014
+
+\S1{v3.0b1-rl} Release Notes
+
+\b This release addresses a lot of build issues, reintroduces the \W{https://drone.io/github.com/kichik/nsis}{nightly builds} and adds automatic nightly test execution
 
 \S1{v3.0b1-cl} Changelog
 
@@ -30,11 +34,17 @@ Released on ?, 2014
 
 \b Added WX compiler switch
 
+\b Allow skipping ExDLL build with SKIPPLUGINS ((\W{http://sf.net/p/nsis/patches/254}{patch #254}))
+
 \b Changed default DllCharacteristics to TS_AWARE+NO_SEH+NX_COMPAT+DYNAMIC_BASE
+
+\b Fixed Mac OS X builds (\W{http://sf.net/p/nsis/patches/251}{patch #253} and \W{http://sf.net/p/nsis/bugs/1085}{bug #1085})
 
 \b Fixed POSIX !searchparse bug (\W{http://sf.net/p/nsis/patches/251}{patch #251})
 
 \b Fixed !macroundef
+
+\b Fixed test-code build target on POSIX and enabled it in nightly builds (\W{http://sf.net/p/nsis/bugs/1088/}{bug #1098})
 
 \b Fixed Visual Studio 2012 builds
 
