@@ -160,7 +160,7 @@ opts.Add(('VER_PACKED', 'Packed version of NSIS in 0xMMmmmrrb format, used for f
 # installation
 opts.Add(('PREFIX', 'Installation prefix', dirs['prefix']))
 opts.Add(ListVariable('SKIPSTUBS', 'A list of stubs that will not be built', 'none', stubs))
-opts.Add(ListVariable('SKIPPLUGINS', 'A list of plug-ins that will not be built', 'none', plugins))
+opts.Add(ListVariable('SKIPPLUGINS', 'A list of plug-ins that will not be built', 'none', plugin_libs + plugins))
 opts.Add(ListVariable('SKIPUTILS', 'A list of utilities that will not be built', 'none', utils))
 opts.Add(ListVariable('SKIPMISC', 'A list of plug-ins that will not be built', 'none', misc))
 opts.Add(ListVariable('SKIPDOC', 'A list of doc files that will not be built/installed', 'none', doc))
