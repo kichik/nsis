@@ -133,7 +133,7 @@ Gets the Size of the section specified by section_index and stores the value in 
 \c SectionEnd
 \c
 \c Function .onInit
-\c   # increase required size of section 'test' by 100 bytes
+\c   # increase required size of section 'test' by 100 KiB
 \c   SectionGetSize ${test_section_id} $0
 \c   IntOp $0 $0 + 100
 \c   SectionSetSize ${test_section_id} $0
