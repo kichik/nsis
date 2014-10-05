@@ -143,6 +143,7 @@ makensis_env.Append(CCFLAGS = ['/Fa${TARGET}.lst'])    # listing file name
 makensis_env.Append(CCFLAGS = [defenv['MSVCRT_FLAG']])
 
 makensis_env.Append(LINKFLAGS = ['$MAP_FLAG'])     # generate map file
+makensis_env.Append(LINKFLAGS = ['$SUBSYS_CON'])   # console executable
 if defenv['UNICODE']:
 	makensis_env.Append(LINKFLAGS = ['/STACK:2097152'])  # need 2 MB of stack in Unicode (default is 1 MB)
 
