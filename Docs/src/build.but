@@ -99,6 +99,8 @@ To build NSIS Menu, install \W{http://www.wxwidgets.org/}{wxWidgets 2.8}, create
 
 \\<b\\>Important notes for Microsoft Visual C++ 6.0 users:\\</b\\> The 2003 Platform SDK must be installed before building, you can download it \W{http://groups.google.com/group/microsoft.public.platformsdk.sdk_install/msg/087b0178f5d8159e}{here} or \W{http://go.microsoft.com/fwlink/?LinkId=48615}{order it on CD}. Because of flaws in the libraries distributed with Microsoft Visual C++ 6.0, not installing the Platform SDK will result in crashes when using the \R{copyfiles}{CopyFiles} command. See \W{http://forums.winamp.com/showthread.php?s=&threadid=131964}{this forum topic} for more information. Installing the \W{http://wayback.archive.org/web/20100923113933/http://msdn.microsoft.com/en-us/vstudio/aa718349.aspx}{Processor Pack} is highly recommended to decrease the size of the installer overhead.
 
+\\<b\\>Important note for Microsoft Visual C++ 2012 users:\\</b\\> Installers generated using this release and beyond will not be able to run on Windows 9x or Windows 2000. The minimum requirement for 2012 is Windows XP.
+
 \H{build_posix} Building on POSIX
 
 As of NSIS 2.01, the compiler, makensis, also compiles on POSIX platforms. POSIX platforms include Linux, *BSD, Mac OS X and others. Since the generated installer will eventually run on Windows, a \W{http://www.libsdl.org/extras/win32/cross/README.txt}{cross-compiler} is needed in order to compile them.
