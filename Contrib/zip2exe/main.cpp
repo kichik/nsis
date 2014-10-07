@@ -84,7 +84,7 @@ int WINAPI _tWinMain(HINSTANCE hInst,HINSTANCE hOldInst,LPTSTR CmdLineParams,int
 {
   InitCommonControls();
   g_hInstance=hInst;
-  return DialogBox(g_hInstance,MAKEINTRESOURCE(IDD_DIALOG1),0,DlgProc);
+  return (int) DialogBox(g_hInstance,MAKEINTRESOURCE(IDD_DIALOG1),0,DlgProc);
 }
 
 static void doRMDir(TCHAR *buf)
@@ -431,10 +431,10 @@ DWORD WINAPI ThreadProc(LPVOID p) // thread that will start & monitor makensis
     if (lastLF == NULL) lastLF = iobuf+dwRead-1;
     char ch = *++lastLF;
     *lastLF = '\0';
-    MultiByteToWideChar(CP_UTF8,0,iobuf,lastLF+1-iobuf,buf,COUNTOF(buf));
+    MultiByteToWideChar(CP_UTF8,0,iobuf,(int)(lastLF+1-iobuf),buf,COUNTOF(buf));
     wnd_printf(buf);
     *lastLF = ch;
-    dwLeft = iobuf+dwRead-lastLF;
+    dwLeft = (DWORD)(iobuf+dwRead-lastLF);
     memmove(iobuf, lastLF, dwLeft);
 #else
     wnd_printf(iobuf);
