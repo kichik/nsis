@@ -3157,11 +3157,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (TOK_P_MAKENSIS == which_token)
         {
           extern const TCHAR *g_argv0;
-          extern NStreamEncoding g_outputenc;
           TCHAR buf[33];
           compile=_T("\""), compile+=get_executable_path(g_argv0), compile+= _T("\"");
           compile+= _T(" ") OPT_STR _T("v"), wsprintf(buf,_T("%d"),get_verbosity()), compile+=buf;
 #ifdef _WIN32 // POSIX does not support -OUTPUTCHARSET
+          extern NStreamEncoding g_outputenc;
           compile+= _T(" ") OPT_STR _T("OCS "), g_outputenc.GetCPDisplayName(buf), compile+=buf;
 #endif
           if (*exec) compile+= _T(" "), compile+=exec;
