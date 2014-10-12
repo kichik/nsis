@@ -42,6 +42,17 @@ extern const TCHAR *compressor_names[];
 void MemSafeFree(void*mem) { if (mem) GlobalFree(mem); }
 void*MemAllocZI(SIZE_T cb) { return GlobalAlloc(GPTR, cb); }
 
+static bool WriteFile(HANDLE hFile, const void*pData, DWORD cb)
+{
+  DWORD cbio;
+  return WriteFile(hFile, pData, cb, &cbio, 0) && cb == cbio;
+}
+bool WriteUTF16LEBOM(HANDLE hFile)
+{
+  static const unsigned char u16lb[] = {0xFF,0xFE};
+  return WriteFile(hFile, u16lb, sizeof(u16lb));
+}
+
 int SetArgv(const TCHAR *cmdLine, TCHAR ***argv) {
   const TCHAR *p;
   TCHAR *arg, *argSpace;
@@ -134,14 +145,14 @@ void SetTitle(HWND hwnd,const TCHAR *substr) {
 
 void CopyToClipboard(HWND hwnd) {
   if (!hwnd||!OpenClipboard(hwnd)) return;
-  int len=SendDlgItemMessage(hwnd,IDC_LOGWIN,WM_GETTEXTLENGTH,0,0);
+  LRESULT len=SendDlgItemMessage(hwnd,IDC_LOGWIN,WM_GETTEXTLENGTH,0,0);
   HGLOBAL mem = GlobalAlloc(GMEM_MOVEABLE,(len+1)*sizeof(TCHAR));
   if (!mem) { CloseClipboard(); return; }
   TCHAR *existing_text = (TCHAR *)GlobalLock(mem);
   if (!existing_text) { CloseClipboard(); return; }
   EmptyClipboard();
   existing_text[0]=0;
-  GetDlgItemText(hwnd, IDC_LOGWIN, existing_text, len+1);
+  SendMessage(GetDlgItem(hwnd, IDC_LOGWIN), WM_GETTEXT, (WPARAM)(len+1), (LPARAM)existing_text);
   GlobalUnlock(mem);
 #ifdef _UNICODE
   SetClipboardData(CF_UNICODETEXT,mem);
@@ -217,7 +228,7 @@ void Items(HWND hwnd, int on)
 
 void SetCompressorStats()
 {
-  DWORD line_count, i;
+  DWORD_PTR line_count, i;
   TCHAR buf[1024];
   bool found = false;
 

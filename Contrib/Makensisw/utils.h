@@ -39,6 +39,7 @@ void* MemAllocZI(SIZE_T cb);
 void MemSafeFree(void*mem);
 #define MemAlloc MemAllocZI
 #define MemFree MemSafeFree
+bool WriteUTF16LEBOM(HANDLE hFile);
 
 void FreeSpawn(PROCESS_INFORMATION *pPI, HANDLE hRd, HANDLE hWr);
 BOOL InitSpawn(STARTUPINFO &si, HANDLE &hRd, HANDLE &hWr);
