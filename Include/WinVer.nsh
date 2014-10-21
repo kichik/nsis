@@ -36,6 +36,9 @@
 ;   2012
 ;   8.1
 ;   2012R2
+;   10
+;
+;   Note: Windows 8.1 and later will be detected as Windows 8 unless ManifestSupportedOS is set correctly!
 ;
 ; AtLeastServicePack checks if the installer is running on Windows service pack version at least as specified.
 ; IsServicePack checks if the installer is running on Windows service pack version exactly as specified.
@@ -150,6 +153,8 @@
 !define WINVER_8.1       0x06030000 ;6.03.9600
 !define WINVER_2012R2_NT 0x86030001 ;6.03.9600
 !define WINVER_2012R2    0x06030001 ;6.03.9600
+!define WINVER_10_NT     0x86040000 ;6.04.????
+!define WINVER_10        0x06040000 ;6.04.????
 
 
 # use this to make all nt > 9x
@@ -410,6 +415,7 @@
   !insertmacro __WinVer_DefineOSTest ${Test} 2012   '${Suffix}'
   !insertmacro __WinVer_DefineOSTest ${Test} 8.1    '${Suffix}'
   !insertmacro __WinVer_DefineOSTest ${Test} 2012R2 '${Suffix}'
+  !insertmacro __WinVer_DefineOSTest ${Test} 10     '${Suffix}'
 !macroend
 
 !insertmacro __WinVer_DefineOSTests AtLeast ""
