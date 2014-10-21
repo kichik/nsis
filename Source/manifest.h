@@ -61,17 +61,11 @@ namespace manifest
       if (-1 == pos) return 0;
       return m_list.get() + pos;
     }
+    void addall();
     void deleteall() 
     { 
       m_list.deleteall();
       m_isdefaultlist = false;
-    }
-    void addall()
-    {
-      append(_T("WinVista"));
-      append(_T("Win7"));
-      append(_T("Win8"));
-      append(_T("Win8.1"));
     }
     void setdefault()
     {
