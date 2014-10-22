@@ -434,7 +434,7 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
       return TRUE;
     }
     case MakensisAPI::QUERYHOST: {
-      if (MakensisAPI::QH_OUTPUTCHARSET) {
+      if (MakensisAPI::QH_OUTPUTCHARSET == wParam) {
         const UINT reqcp = 1200; // We want UTF-16LE
         SetWindowLongPtr(hwndDlg, DWLP_MSGRESULT, (LONG_PTR)(1+reqcp));
         return TRUE;
