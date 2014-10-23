@@ -64,7 +64,7 @@ typedef struct
 typedef struct {
   exec_flags_t *exec_flags;
   int (NSISCALL *ExecuteCodeSegment)(int, HWND);
-  void (NSISCALL *validate_filename)(TCHAR *);
+  void (NSISCALL *validate_filename)(LPTSTR);
   int (NSISCALL *RegisterPluginCallback)(HMODULE, NSISPLUGINCALLBACK); // returns 0 on success, 1 if already registered and < 0 on errors
 } extra_parameters;
 

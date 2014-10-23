@@ -23,7 +23,7 @@ int rtl;
 
 WNDPROC lpWndProcOld;
 
-void (__stdcall *validate_filename)(TCHAR *);
+void (__stdcall *validate_filename)(LPTSTR);
 
 INT_PTR CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 static INT_PTR CALLBACK ParentWndProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
