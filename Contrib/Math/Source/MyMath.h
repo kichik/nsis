@@ -4,6 +4,7 @@
 
 #include <math.h>
 #include <float.h>
+#include <nsis/nsis_tchar.h>
 
 #define DEFAULT_ARRAY_SIZE  1024
 

@@ -855,7 +855,7 @@ TCHAR * NSISCALL GetNSISString(TCHAR *outbuf, int strtab)
   return ps_tmpbuf;
 }
 
-void NSISCALL validate_filename(TCHAR *in) {
+void NSISCALL validate_filename(LPTSTR in) {
   TCHAR *nono = _T("*?|<>/\":");
   TCHAR *out;
   TCHAR *out_save;

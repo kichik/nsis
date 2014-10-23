@@ -3,6 +3,7 @@
 #pragma once
 
 #include <nsis/pluginapi.h> // nsis plugin
+#include <nsis/nsis_tchar.h>
 
 #ifdef _DEBUG
 //#define _DEBUG_LEAKS
