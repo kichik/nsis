@@ -344,11 +344,9 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
             return TRUE;
           }
           else {
-            int this_compressor=0;
-            int i;
+            int this_compressor=0, i;
             HANDLE hPrev, hThis;
             DWORD prevSize=0, thisSize=0;
-
 
             for(i=(int)COMPRESSOR_SCRIPT+2; i<(int)COMPRESSOR_BEST; i++) {
               if(!lstrcmpi(g_sdata.compressor_name,compressor_names[i])) {
@@ -359,14 +357,14 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
 
             if(FileExists(temp_file_name)) {
               hPrev = CreateFile(temp_file_name,GENERIC_READ, FILE_SHARE_READ,
-                                 NULL, OPEN_EXISTING, (DWORD)NULL, NULL);
+                                 NULL, OPEN_EXISTING, 0, NULL);
               if(hPrev != INVALID_HANDLE_VALUE) {
                 prevSize = GetFileSize(hPrev, 0);
                 CloseHandle(hPrev);
 
                 if(prevSize != INVALID_FILE_SIZE) {
                   hThis = CreateFile(g_sdata.output_exe,GENERIC_READ, FILE_SHARE_READ,
-                                     NULL, OPEN_EXISTING, (DWORD)NULL, NULL);
+                                     NULL, OPEN_EXISTING, 0, NULL);
                   if(hThis != INVALID_HANDLE_VALUE) {
                     thisSize = GetFileSize(hThis, 0);
                     CloseHandle(hThis);
@@ -763,7 +761,7 @@ DWORD WINAPI MakeNSISProc(LPVOID TreadParam) {
     PostMessage(g_sdata.hwnd, WM_MAKENSIS_PROCESSCOMPLETE, 0, 0);
     return 1;
   }
-  CloseHandle(newstdout); // close this handle (duplicated in subprocess) now so we get ERROR_BROKEN_PIPE
+  CloseHandle(newstdout); // Close this handle (duplicated in subprocess) now so we get ERROR_BROKEN_PIPE
 
   char iob[(1024 & ~1) + sizeof(WCHAR)];
   WCHAR *p = (WCHAR*) iob, wcl = 0;
@@ -774,7 +772,7 @@ DWORD WINAPI MakeNSISProc(LPVOID TreadParam) {
     cb += cbio, cch = cb / sizeof(WCHAR);
     if (!cch)
     {
-      if (!rok) break; // TODO: if cb is non-zero we should report a incomplete read error?
+      if (!rok) break; // TODO: If cb is non-zero we should report a incomplete read error?
       cbofs += cbio; // We only have 1 byte, need to read more to get a complete WCHAR
       continue;
     }
@@ -919,11 +917,8 @@ INT_PTR CALLBACK SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lPar
   switch(msg) {
     case WM_INITDIALOG:
     {
-      int i = 0;
-
-      for(i = (int)COMPRESSOR_SCRIPT; i <= (int)COMPRESSOR_BEST; i++) {
+      for(int i = (int)COMPRESSOR_SCRIPT; i <= (int)COMPRESSOR_BEST; i++)
         SendDlgItemMessage(hwndDlg, IDC_COMPRESSOR, CB_ADDSTRING, 0, (LPARAM)compressor_display_names[i]);
-      }
       SendDlgItemMessage(hwndDlg, IDC_COMPRESSOR, CB_SETCURSEL, (WPARAM)g_sdata.default_compressor, (LPARAM)0);
 
       SetSymbols(hwndDlg, g_sdata.symbols);

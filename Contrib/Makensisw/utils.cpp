@@ -186,7 +186,7 @@ void SetDialogFocus(HWND hDlg, HWND hCtl)
   SendMessage(hDlg, WM_NEXTDLGCTL, (WPARAM)hCtl, TRUE);
 }
 
-void Items(HWND hwnd, int on) 
+void EnableDisableItems(HWND hwnd, int on) 
 {
   const HWND hCloseBtn = GetDlgItem(hwnd, IDCANCEL);
   const HWND hTestBtn = GetDlgItem(hwnd, IDC_TEST);
@@ -234,12 +234,12 @@ void SetCompressorStats()
 
   line_count = SendDlgItemMessage(g_sdata.hwnd, IDC_LOGWIN, EM_GETLINECOUNT, 0, 0);
   for(i=0; i<line_count; i++) {
-    *((LPWORD)buf) = sizeof(buf); 
-    SendDlgItemMessage(g_sdata.hwnd, IDC_LOGWIN, EM_GETLINE, (WPARAM)i, (LPARAM)buf);
+    *((LPWORD)buf) = ARRAYSIZE(buf); 
+    LRESULT cchLine = SendDlgItemMessage(g_sdata.hwnd, IDC_LOGWIN, EM_GETLINE, (WPARAM)i, (LPARAM)buf);
+    buf[cchLine] = _T('\0');
     if(found) {
       DWORD len = lstrlen(TOTAL_SIZE_COMPRESSOR_STAT);
       lstrcat(g_sdata.compressor_stats,buf);
-
       if(!StrCmpN(buf,TOTAL_SIZE_COMPRESSOR_STAT,len)) {
         break;
       }
