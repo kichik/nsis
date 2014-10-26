@@ -234,7 +234,7 @@ void SetCompressorStats()
 
   line_count = SendDlgItemMessage(g_sdata.hwnd, IDC_LOGWIN, EM_GETLINECOUNT, 0, 0);
   for(i=0; i<line_count; i++) {
-    *((LPWORD)buf) = ARRAYSIZE(buf); 
+    *((LPWORD)buf) = COUNTOF(buf); 
     LRESULT cchLine = SendDlgItemMessage(g_sdata.hwnd, IDC_LOGWIN, EM_GETLINE, (WPARAM)i, (LPARAM)buf);
     buf[cchLine] = _T('\0');
     if(found) {
