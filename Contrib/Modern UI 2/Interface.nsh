@@ -74,6 +74,9 @@ Var mui.Button.Back
         !endif
       !endif
 
+      !insertmacro MUI_DEFAULT MUI_HEADERIMAGE_UNBITMAP_STRETCH ${MUI_HEADERIMAGE_BITMAP_STRETCH}
+      !insertmacro MUI_DEFAULT MUI_HEADERIMAGE_UNBITMAP_RTL_STRETCH ${MUI_HEADERIMAGE_BITMAP_RTL_STRETCH}
+
     !endif
 
     ;Default texts
