@@ -60,6 +60,9 @@ typedef struct
 #ifndef NSISCALL
 #  define NSISCALL __stdcall
 #endif
+#if !defined(_WIN32) && !defined(LPTSTR)
+#  define LPTSTR TCHAR*
+#endif
 
 typedef struct {
   exec_flags_t *exec_flags;

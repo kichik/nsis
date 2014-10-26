@@ -98,7 +98,7 @@ TCHAR * NSISCALL findchar(TCHAR *str, TCHAR c);
 TCHAR * NSISCALL trimslashtoend(TCHAR *buf);
 TCHAR * NSISCALL skip_root(TCHAR *path);
 int NSISCALL is_valid_instpath(TCHAR *s);
-void NSISCALL validate_filename(LPTSTR fn);
+void NSISCALL validate_filename(TCHAR *fn);
 
 /**
  * MoveFileOnReboot tries to move a file by the name of pszExisting to the
