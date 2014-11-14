@@ -173,7 +173,7 @@ void Plugins::GetExports(const tstring &pathToDll, bool displayInfo)
     {
       DWORD va = FIX_ENDIAN_INT32(sections[i].VirtualAddress);
       if (va <= ExportDirVA
-          && va + FIX_ENDIAN_INT32(sections[i].Misc.VirtualSize) >= ExportDirVA + ExportDirSize)
+          && va + FIX_ENDIAN_INT32(sections[i].SizeOfRawData) >= ExportDirVA + ExportDirSize)
       {
         DWORD prd = FIX_ENDIAN_INT32(sections[i].PointerToRawData);
         PIMAGE_EXPORT_DIRECTORY exports = PIMAGE_EXPORT_DIRECTORY(&dlldata[0] + prd + ExportDirVA - va);
