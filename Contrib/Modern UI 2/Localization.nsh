@@ -33,6 +33,10 @@ Localization
   !verbose push
   !verbose ${MUI_VERBOSE}
 
+  !ifndef MUI_PAGE_UNINSTALLER_PREFIX
+    !warning "MUI_LANGUAGE should be inserted after the MUI_[UN]PAGE_* macros"
+  !endif
+
   !insertmacro MUI_INSERT
 
   LoadLanguageFile "${NSISDIR}\Contrib\Language files\${NLFID}.nlf"
