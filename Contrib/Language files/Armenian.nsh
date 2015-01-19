@@ -51,6 +51,7 @@
   !else
     ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Մկնիկի սլաքը ուղղեք բաղադրիչի վրա՝ նկարագրությունը կարդալու համար։"
   !endif
+!endif
 
 !ifdef MUI_DIRECTORYPAGE
   ${LangFileString} MUI_TEXT_DIRECTORY_TITLE "Տեղակայելու թղթապանակի ընտրություն"
@@ -126,5 +127,4 @@
   ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_TOP "Ընտրեք, թե ինչպես եք ցանկանում տեղակայել $(^NameDA)-ը՝ միայն Ձեզ համար, թե բոլոր օգտվողների: $(^ClickNext)"
   ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_ALLUSERS "Տեղակայել բոլոր օգտվողների համար"
   ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_CURRENTUSER "Տեղակայել միայն ինձ համար"
-!endif
 !endif
