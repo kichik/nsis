@@ -5023,7 +5023,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.offsets[2]=0;
       ent.offsets[3]=0;
       if (ent.offsets[0] < 0) PRINTHELP()
-      SCRIPT_MSG(_T("GetFunctionAddress: %") NPRIs _T(" %") NPRIs,line.gettoken_str(1),line.gettoken_str(2));
+      SCRIPT_MSG(_T("GetFunctionAddress: %") NPRIs _T(" %") NPRIs _T("\n"),line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_GETLABELADDR:
       ent.which=EW_GETLABELADDR;
@@ -5031,7 +5031,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       if (ent.offsets[0] < 0 || process_jump(line,2,&ent.offsets[1])) PRINTHELP()
       ent.offsets[2]=0;
       ent.offsets[3]=0;
-      SCRIPT_MSG(_T("GetLabelAddress: %") NPRIs _T(" %") NPRIs,line.gettoken_str(1),line.gettoken_str(2));
+      SCRIPT_MSG(_T("GetLabelAddress: %") NPRIs _T(" %") NPRIs _T("\n"),line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_GETCURRENTADDR:
       ent.which=EW_ASSIGNVAR;
@@ -5040,7 +5040,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       if (ent.offsets[0] < 0) PRINTHELP()
       ent.offsets[2]=0;
       ent.offsets[3]=0;
-      SCRIPT_MSG(_T("GetCurrentAddress: %") NPRIs,line.gettoken_str(1));
+      SCRIPT_MSG(_T("GetCurrentAddress: %") NPRIs _T("\n"),line.gettoken_str(1));
     return add_entry(&ent);
     case TOK_STRCMP:
     case TOK_STRCMPS:
