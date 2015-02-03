@@ -52,12 +52,12 @@ type
 
 type
   PluginCallbackMessages = (
-    NSPIM_UNLOAD,    // This is the last message a plugin gets, do final cleanup
-    NSPIM_GUIUNLOAD, // Called after .onGUIEnd
+    NSPIM_UNLOAD,   // This is the last message a plugin gets, do final cleanup
+    NSPIM_GUIUNLOAD // Called after .onGUIEnd
     );
   TNSPIM = NSPIM_UNLOAD..NSPIM_GUIUNLOAD;
 
-  //TPluginCallback = function (const NSPIM: Integer): Pointer;
+  //TPluginCallback = function (const NSPIM: Integer): Pointer; cdecl;
 
   TExecuteCodeSegment = function (const funct_id: Integer; const parent: HWND): Integer;  stdcall;
   Tvalidate_filename = procedure (const filename: PChar); stdcall;
@@ -84,7 +84,7 @@ type
   pextrap_t = ^extrap_t;
   extrap_t = record
     exec_flags: Pointer; // exec_flags_t;
-    exec_code_segment: Pointer; //  TFarProc;
+    exec_code_segment: TExecuteCodeSegment; //  TFarProc;
     validate_filename: Pointer; // Tvalidate_filename;
     RegisterPluginCallback: Pointer; //TRegisterPluginCallback;
   end;
@@ -102,10 +102,7 @@ var
   g_hwndParent: HWND;
   g_hwndList: HWND;
   g_hwndLogList: HWND;
-
   g_extraparameters: pextrap_t;
-  func : TExecuteCodeSegment;
-  extrap : extrap_t;
 
 procedure Init(const hwndParent: HWND; const string_size: integer; const variables: PChar; const stacktop: pointer; const extraparameters: pointer = nil);
 
@@ -125,23 +122,21 @@ begin
   g_hwndParent := hwndParent;
   g_stacktop   := stacktop;
   g_variables  := variables;
-  g_hwndList := 0;
-  g_hwndList := FindWindowEx(FindWindowEx(g_hwndParent, 0, '#32770', nil), 0,'SysListView32', nil);
+  g_hwndList   := FindWindowEx(FindWindowEx(g_hwndParent, 0, '#32770', nil), 0,'SysListView32', nil);
   g_extraparameters := extraparameters;
-  extrap := g_extraparameters^;
 end;
+
 
 function Call(NSIS_func : String) : Integer;
 var
-  NSISFun: Integer; //The ID of nsis function
+  codeoffset: Integer; //The ID of nsis function
 begin
   Result := 0;
-  NSISFun := StrToIntDef(NSIS_func, 0);
-  if (NSISFun <> 0) and (g_extraparameters <> nil) then
+  codeoffset := StrToIntDef(NSIS_func, 0);
+  if (codeoffset <> 0) and (g_extraparameters <> nil) then
     begin
-    @func := extrap.exec_code_segment;
-    NSISFun := NSISFun - 1;
-    Result := func(NSISFun, g_hwndParent);
+    codeoffset := codeoffset - 1;
+    Result := g_extraparameters.exec_code_segment(codeoffset, g_hwndParent);
     end;
 end;
 
@@ -156,8 +151,8 @@ begin
   ItemCount := SendMessage(g_hwndList, LVM_GETITEMCOUNT, 0, 0);
   item.iItem := ItemCount;
   item.mask := LVIF_TEXT;
-  item.pszText := PAnsiChar(Msg);
-  ListView_InsertItem(g_hwndList, item );
+  item.pszText := PChar(Msg);
+  ListView_InsertItem(g_hwndList, item);
   ListView_EnsureVisible(g_hwndList, ItemCount, TRUE);
 end;
 
