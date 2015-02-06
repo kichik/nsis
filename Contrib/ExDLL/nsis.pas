@@ -195,8 +195,12 @@ begin
 end;
 
 procedure NSISDialog(const text, caption: string; const buttons: integer);
+var
+  hwndOwner: HWND;
 begin
-  MessageBox(g_hwndParent, PChar(text), PChar(caption), buttons);
+  hwndOwner := g_hwndParent;
+  if not IsWindow(g_hwndParent) then hwndOwner := 0; // g_hwndParent is not valid in NSPIM_[GUI]UNLOAD
+  MessageBox(hwndOwner, PChar(text), PChar(caption), buttons);
 end;
 
 begin
