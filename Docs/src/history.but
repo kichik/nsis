@@ -12,6 +12,12 @@ Released on ?, 201?
 
 \S2{} Minor Changes
 
+\b Fixed minor issues in the Pascal NSIS plug-in SDK and removed the extrap global variable
+
+\S1{v3.0b2-cl} Changelog
+
+\S2{} Minor Changes
+
 \b Windows 10 support
 
 \H{v3.0b1} 3.0 Beta 1

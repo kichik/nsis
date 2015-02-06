@@ -63,11 +63,10 @@ end;
 
 function mynsiscallback(const NSPIM: TNSPIM): Pointer; cdecl;
 begin
-  Result := 0;
+  Result := nil;
   if NSPIM = NSPIM_UNLOAD then
     begin
-      // Note: Cannot use NSISDialog here because g_hwndParent has been destroyed at this point
-      MessageBox(0, PChar('NSPIM_UNLOAD is the final callback, goodbye...'), PChar('mynsiscallback'), MB_OK);
+      NSISDialog(PChar('NSPIM_UNLOAD is the final callback, goodbye...'), PChar('mynsiscallback'), MB_OK);
     end;
 end;
 
