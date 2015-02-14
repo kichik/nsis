@@ -13,8 +13,6 @@ WinCore.nsh & Win\*.nsh - Collection of common windows defines
 !verbose 3
 
 
-!define __WIN_PTRSIZE 4 ;will we ever see a 64 bit version?
-
 
 !include Win\WinDef.nsh
 !include Win\WinError.nsh
