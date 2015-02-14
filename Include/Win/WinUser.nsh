@@ -95,8 +95,8 @@
 !define /ifndef GWLP_USERDATA   -21
 !define /ifndef GWLP_ID         -12
 !define DWLP_MSGRESULT  0
-!define /math DWLP_DLGPROC ${DWLP_MSGRESULT} + ${__WIN_PTRSIZE} ;DWLP_MSGRESULT + sizeof(LRESULT) 
-!define /math DWLP_USER    ${DWLP_DLGPROC} + ${__WIN_PTRSIZE} ;DWLP_DLGPROC + sizeof(DLGPROC)
+!define /math DWLP_DLGPROC ${DWLP_MSGRESULT} + ${NSIS_PTR_SIZE} ;DWLP_MSGRESULT + sizeof(LRESULT) 
+!define /math DWLP_USER    ${DWLP_DLGPROC} + ${NSIS_PTR_SIZE} ;DWLP_DLGPROC + sizeof(DLGPROC)
 !endif
 
 !ifndef __WIN_MS_NONCMESSAGES
