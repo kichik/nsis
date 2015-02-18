@@ -61,7 +61,7 @@ HANDLE NSISCALL myCreateProcess(TCHAR *cmd)
   PROCESS_INFORMATION ProcInfo;
   static STARTUPINFO StartUp;
   StartUp.cb=sizeof(StartUp);
-  if (!CreateProcess(NULL, cmd, NULL, NULL, FALSE, 0, NULL, NULL, &StartUp, &ProcInfo))
+  if (!CreateProcess(NULL, cmd, NULL, NULL, FALSE, CREATE_DEFAULT_ERROR_MODE, NULL, NULL, &StartUp, &ProcInfo))
     return NULL;
   CloseHandle(ProcInfo.hThread);
   return ProcInfo.hProcess;
