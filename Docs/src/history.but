@@ -12,6 +12,8 @@ Released on ?, 201?
 
 \S2{} Minor Changes
 
+\b Exec[Wait] sets the CREATE_DEFAULT_ERROR_MODE flag when creating a process
+
 \b Fixed minor issues in the Pascal NSIS plug-in SDK and removed the extrap global variable
 
 \S1{v3.0b2-cl} Changelog
