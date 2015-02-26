@@ -58,7 +58,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_CRCCHECK,_T("CRCCheck"),1,0,_T("(on|force|off)"),TP_GLOBAL},
 {TOK_CREATEDIR,_T("CreateDirectory"),1,0,_T("directory_name"),TP_CODE},
 {TOK_CREATEFONT,_T("CreateFont"),2,5,_T("$(user_var: handle output) face_name [height weight /ITALIC /UNDERLINE /STRIKE]"),TP_CODE},
-{TOK_CREATESHORTCUT,_T("CreateShortcut"),2,6,_T("[/NoWorkingDir] shortcut_name.lnk shortcut_target [parameters [icon_file [icon index [showmode [hotkey [comment]]]]]]\n    showmode=(SW_SHOWNORMAL|SW_SHOWMAXIMIZED|SW_SHOWMINIMIZED)\n    hotkey=(ALT|CONTROL|EXT|SHIFT)|(F1-F24|A-Z)"),TP_CODE},
+{TOK_CREATESHORTCUT,_T("CreateShortcut"),2,7,_T("[/NoWorkingDir] shortcut_name.lnk shortcut_target [parameters [icon_file [icon index [showmode [hotkey [comment]]]]]]\n    showmode=(SW_SHOWNORMAL|SW_SHOWMAXIMIZED|SW_SHOWMINIMIZED)\n    hotkey=(ALT|CONTROL|EXT|SHIFT)|(F1-F24|A-Z)"),TP_CODE},
 {TOK_DBOPTIMIZE,_T("SetDatablockOptimize"),1,0,_T("(off|on)"),TP_ALL},
 {TOK_DELETEINISEC,_T("DeleteINISec"),2,0,_T("ini_file section_name"),TP_CODE},
 {TOK_DELETEINISTR,_T("DeleteINIStr"),3,0,_T("ini_file section_name entry_name"),TP_CODE},
