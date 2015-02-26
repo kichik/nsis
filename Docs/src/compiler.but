@@ -40,9 +40,9 @@ Causes the NSIS compiler to scan the given directory for plug-in DLLs. If you do
 
 \# NOTE: \NsisOutputCharset define cannot be used in a \c block 
 
-\c [/CHARSET=ACP|OEM|CP#|UTF8[SIG]|UTF16<LE|BE>[BOM]] file text
+\c [/CHARSET=ACP|OEM|CP#|UTF8[SIG]|UTF16<LE|BE>[BOM]] [/RawNL] file text
 
-Appends \e{text} to \e{file}. The text is written as ANSI (ACP) unless the file already has a BOM. Using /CHARSET will force a specific character encoding.
+Appends \e{text} to \e{file}. The text is written as ANSI (ACP) unless the file already has a BOM. Using /CHARSET will force a specific character encoding. \c{$\\n}  will be translated to \c{$\\r$\\n} on Windows unless you specify /RawNL.
 
 \c !tempfile FILE
 \c !appendfile "${FILE}" "XPStyle on$\n"

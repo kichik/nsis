@@ -12,13 +12,11 @@ Released on ?, 201?
 
 \S2{} Minor Changes
 
+\b Added !appendfile /RawNL switch
+
 \b Exec[Wait] sets the CREATE_DEFAULT_ERROR_MODE flag when creating a process
 
-\b Fixed minor issues in the Pascal NSIS plug-in SDK and removed the extrap global variable
-
-\S1{v3.0b2-cl} Changelog
-
-\S2{} Minor Changes
+\b Fixed minor issues in the Pascal NSIS plug-in SDK and removed the \cw{extrap} global variable
 
 \b Windows 10 support
 
@@ -40,7 +38,7 @@ Released on October 6th, 2014
 
 \b Added new MUI2 bitmap stretch modes, *_NOSTRETCH is now deprecated (\W{http://sf.net/p/nsis/feature-requests/521}{RFE #521})
 
-\b InitiateShutdown is used to reboot the machine if available (\W{http://sf.net/p/nsis/patches/247}{patch #247})
+\b \c{InitiateShutdown()} is used to reboot the machine if available (\W{http://sf.net/p/nsis/patches/247}{patch #247})
 
 \b Added PPO and SafePPO preprocess-only compiler switches
 
