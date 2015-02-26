@@ -1407,18 +1407,25 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_P_APPENDFILE:
       {
         WORD tok = 0, cp = 0;
-        bool bom = false, forceEnc = false;
-        TCHAR *param = line.gettoken_str(++tok), buf[9+1];
-        my_strncpy(buf,param,COUNTOF(buf));
-        if(!_tcsicmp(buf,_T("/charset=")))
+        bool bom = false, forceEnc = false, rawnl = false;
+        TCHAR *param, buf[9+!0];
+        for (;;)
         {
-          ++tok, ++forceEnc, cp = GetEncodingFromString(param+9, bom);
-          if (NStreamEncoding::UNKNOWN == cp)
+          param = line.gettoken_str(++tok);
+          my_strncpy(buf, param, COUNTOF(buf));
+          if (!_tcsicmp(param,_T("/RawNL"))) ++rawnl;
+          else if(!_tcsicmp(buf,_T("/CharSet=")))
           {
-            ERROR_MSG(_T("!appendfile: Invalid parameter \"%") NPRIs _T("\"!\n"), param);
-            return PS_ERROR;
+            ++forceEnc, cp = GetEncodingFromString(param+9, bom);
+            if (NStreamEncoding::UNKNOWN == cp)
+            {
+              ERROR_MSG(_T("!appendfile: Invalid parameter \"%") NPRIs _T("\"!\n"), param);
+              return PS_ERROR;
+            }
           }
+          else break;
         }
+        if (line.getnumtokens() != 2 + tok) { PRINTHELP(); return PS_ERROR; }
         param = line.gettoken_str(tok);
         NOStream ostrm;
         if (!ostrm.CreateFileForAppending(param, NStreamEncoding::ACP))
@@ -1429,7 +1436,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (ostrm.IsUnicode()) bom = false;
         if (forceEnc) ostrm.StreamEncoding().SetCodepage(cp);
         const TCHAR *const text = line.gettoken_str(++tok);
-        if ((bom ? !ostrm.WriteBOM(ostrm.StreamEncoding()) : 0) || !ostrm.WriteString(text))
+        bool succ = bom ? ostrm.WriteBOM(ostrm.StreamEncoding()) : true;
+        if (!succ || rawnl ? !ostrm.WriteString(text) : !ostrm.WritePlatformNLString(text))
         {
           ERROR_MSG(_T("!appendfile: error writing to \"%") NPRIs _T("\".\n"), param);
           return PS_ERROR;
