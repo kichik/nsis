@@ -69,10 +69,8 @@ static UINT read_line_helper(NStreamLineReader&lr, TCHAR*buf, UINT cch)
   }
   const bool unicode = lr.IsUnicode();
   for(cch = 0;; ++cch)
-  {
-    TCHAR ch = buf[cch];
-    if (!ch || NStream::IsNewline(ch, unicode)) break;
-  }
+    if (!buf[cch] || NStream::IsNewline(buf[cch], unicode))
+      break;
   if (cch) eof = 0; // Read something, postpone EOF
   return ++cch - eof;
 }
@@ -6134,7 +6132,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         return ret;
       }
 
-      // DLL name on the user machine
+      // DLL name on the users machine
       TCHAR tempDLL[NSIS_MAX_STRLEN];
       wsprintf(tempDLL, _T("$PLUGINSDIR\\%") NPRIs, dllName.c_str());
 
@@ -6205,7 +6203,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
       // First push dll args
 
-      int parmst=i; // we push  em in reverse order
+      int parmst=i; // we push 'em in reverse order
       int nounloadmisused=0;
       for (; i < line.getnumtokens(); i++) {
         int w=parmst + (line.getnumtokens()-i - 1);

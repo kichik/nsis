@@ -67,7 +67,7 @@ typename C::value_type::second_type get_paired_value(const C& cntnr, const K& ke
 {
   return get_iterator(cntnr,key)->second;
 }
-template <class V,class C, class K>
+template <class V, class C, class K>
 V get_paired_value(const C& cntnr, const K& key, const V& defval)
 {
    typename C::const_iterator it = cntnr.find(key);

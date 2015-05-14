@@ -33,15 +33,15 @@ static bool isstrhexchars(const TCHAR*s,UINT cch)
 {
   while(cch-- && *s)
   {
-    const TCHAR c = *s++, clw = ((char)c) | 32;
+    const TCHAR c = *s++, clw = ((TCHAR)c) | 32;
     if (!(c >= '0' && c <= '9') && !(clw >= 'a' && clw <= 'f')) return false;
   }
   return true;
 }
 
 static const struct { const TCHAR *name, *guidstr; } g_soslmap[] = {
-  { _T("WinVista"), _T("{e2011457-1546-43c5-a5fe-008deee3d3f0}") },
-  { _T("Win7"),     _T("{35138b9a-5d96-4fbd-8e2d-a2440225f93a}") },
+  { _T("WinVista"), _T("{e2011457-1546-43c5-a5fe-008deee3d3f0}") }, //msdn.microsoft.com/en-us/library/aa374191
+  { _T("Win7"),     _T("{35138b9a-5d96-4fbd-8e2d-a2440225f93a}") }, //msdn.microsoft.com/en-us/library/dd371711
   { _T("Win8"),     _T("{4a2f28e3-53b9-4441-ba9c-d69d4a4a6e38}") }, //msdn.microsoft.com/en-us/library/hh848036
   { _T("Win8.1"),   _T("{1f676c76-80e1-4239-95bb-83d0f6d0da78}") }, //msdn.microsoft.com/en-us/library/windows/desktop/dn481241
   { _T("Win10"),    _T("{8e0f7a12-bfb3-4fe8-b9a5-48fd50a15a9a}") }  //blogs.msdn.com/b/chuckw/archive/2013/09/10/manifest-madness.aspx

@@ -681,7 +681,7 @@ tstring get_executable_path(const TCHAR* argv0) {
 #else /* Linux/BSD/POSIX/etc */
   const TCHAR *envpath = _tgetenv(_T("_"));
   if( envpath != NULL )
-    return get_full_path( envpath );
+    return get_full_path(envpath);
   else {
     char *path = NULL, *pathtmp;
     size_t len = 100;
