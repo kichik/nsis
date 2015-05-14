@@ -199,7 +199,7 @@ Installer/uninstaller initialization
   !endif
 
   !ifndef MULTIUSER_INIT_TEXT_ALLUSERSNOTPOSSIBLE
-    !define MULTIUSER_INIT_TEXT_ALLUSERSNOTPOSSIBLE "Your user account does not have sufficient privileges to install $(^Name) for all users of this compuetr."
+    !define MULTIUSER_INIT_TEXT_ALLUSERSNOTPOSSIBLE "Your user account does not have sufficient privileges to install $(^Name) for all users of this computer."
   !endif
 
 !macroend

@@ -659,7 +659,7 @@ void AddTip(HWND hWnd,LPCTSTR lpszToolTip) {
   ti.cbSize = sizeof(TOOLINFO);
   ti.uFlags = TTF_IDISHWND;
   ti.hwnd   = g_tip.tip_p;
-  ti.uId = (UINT) hWnd;
+  ti.uId = (UINT_PTR) hWnd;
   ti.lpszText = (LPTSTR) lpszToolTip;
   SendMessage(g_tip.tip, TTM_ADDTOOL, 0, (LPARAM) (LPTOOLINFO) &ti); 
 }

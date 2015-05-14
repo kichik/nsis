@@ -874,7 +874,7 @@ static void NSISCALL SetSizeText64(int dlgItem, int prefix, ULARGE_INTEGER kb64)
   int scale = LANG_GIGA;
   UINT intgr, fract;
 
-  if (kb64.HighPart) // 4TB+ ?
+  if (kb64.HighPart) // >= 4 TiB ?
   {
     kb64.QuadPart = NRT_U64Shr32(kb64.QuadPart, 20); // Convert from KiB to GiB
     // wsprintf only supports the I64 size specifier on WinXP+.

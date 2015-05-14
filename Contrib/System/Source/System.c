@@ -405,7 +405,7 @@ PLUGINFUNCTIONSHORT(Int64Op)
 #endif
     }
 
-    // operation
+    // Operation
     switch (*op)
     {
     case _T('+'): i1 += i2; break;

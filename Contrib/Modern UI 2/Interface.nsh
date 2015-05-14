@@ -51,9 +51,11 @@ Var mui.Button.Back
     !insertmacro MUI_DEFAULT MUI_BGCOLOR "FFFFFF"
 
     ;Map *_NOSTRETCH legacy define to the correct *_STRETCH value
+    !verbose push 2
     !insertmacro MUI_LEGACY_MAP_NOSTRETCH MUI_HEADERIMAGE_ ""
     !insertmacro MUI_LEGACY_MAP_NOSTRETCH MUI_WELCOMEFINISHPAGE_ ""
     !insertmacro MUI_LEGACY_MAP_NOSTRETCH MUI_UNWELCOMEFINISHPAGE_ ""
+    !verbose pop
 
     ;Default header images
     !ifdef MUI_HEADERIMAGE
@@ -158,7 +160,7 @@ Var mui.Button.Back
 !macroend
 !macro MUI_HEADERIMAGE_INITHELPER_LOADIMAGE UN RTL IMGRESID PATH
 
-  GetDlgItem $mui.Header.Image $HWNDPARENT ${IMGRESID} ; Every mode doesn't use this variable but we have to reference it to avoid a compiler warning.
+  GetDlgItem $mui.Header.Image $HWNDPARENT ${IMGRESID} ; This variable is not used by every mode but we have to reference it to avoid a compiler warning.
 
   !if "${MUI_HEADERIMAGE_${UN}BITMAP${RTL}_STRETCH}" == "NoStretchNoCropNoAlign"
 

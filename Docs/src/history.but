@@ -2403,7 +2403,7 @@ Released on October 23rd, 2004
 
 \b Added some CppUnit tests
 
-\b Both _=? and /D= now require a space before them so they can safely remove the space from $CMDLINE
+\b Both _?= and /D= now require a space before them so they can safely remove the space from $CMDLINE
 
 \b Fixed a bug that caused the uninstaller CRC-check to fail if \R{packhdr}{!packhdr} created a non-512-bytes-aligned exehead
 

@@ -69,7 +69,7 @@ void NSISCALL setuservariable(const int varnum, LPCTSTR var)
     lstrcpy(g_variables + varnum*g_stringsize, var);
 }
 
-#ifdef _UNICODE
+#ifdef UNICODE
 int NSISCALL PopStringA(LPSTR ansiStr)
 {
    LPWSTR wideStr = (LPWSTR) GlobalAlloc(GPTR, g_stringsize*sizeof(WCHAR));
