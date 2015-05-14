@@ -862,18 +862,41 @@ static INT_PTR CALLBACK UninstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 }
 #endif
 
+#ifndef _NSIS_NO_INT64_SHR
+#define NRT_U64Shr32(v,s) ( (v) >> (s) )
+#else
+#define NRT_U64Shr32 Int64ShrlMod32
+#endif
 
-static void NSISCALL SetSizeText(int dlgItem, int prefix, unsigned kb)
+static void NSISCALL SetSizeText64(int dlgItem, int prefix, ULARGE_INTEGER kb64)
 {
   TCHAR scalestr[32], byte[32];
-  unsigned sh = 20;
   int scale = LANG_GIGA;
+  UINT intgr, fract;
 
-  if (kb < 1024 * 1024) { sh = 10; scale = LANG_MEGA; }
-  if (kb < 1024) { sh = 0; scale = LANG_KILO; }
+  if (kb64.HighPart) // 4TB+ ?
+  {
+    kb64.QuadPart = NRT_U64Shr32(kb64.QuadPart, 20); // Convert from KiB to GiB
+    // wsprintf only supports the I64 size specifier on WinXP+.
+    // Older versions would crash because %s will use a bad pointer if we use "%I64u%s%s".
+    // Consequently we will only use the bottom 32-bits of the size (in GiB),
+    // this means we will display the wrong number if you have more than 4194303 TiB of free space.
+    intgr = kb64.LowPart;
+    fract = 0; // We don't even attempt to calculate this
+  }
+  else
+  {
+    unsigned sh = 20, kb = kb64.LowPart;
+    if (kb < 1024 * 1024) sh = 10, scale = LANG_MEGA;
+    if (kb < 1024) sh = 0, scale = LANG_KILO;
 
-  if (kb < (0xFFFFFFFF - ((1 << 20) / 20))) // check for overflow
-    kb += (1 << sh) / 20; // round numbers for better display (e.g. 1.59 => 1.6)
+    if (kb < (0xFFFFFFFF - ((1 << 20) / 20))) // check for overflow
+      kb += (1 << sh) / 20; // round numbers for better display (e.g. 1.59 => 1.6)
+
+     intgr = kb >> sh;
+     // 0x00FFFFFF mask is used to prevent overflow that causes bad results
+     fract = (((kb & 0x00FFFFFF) * 10) >> sh) % 10;
+  }
 
 #if _MSC_VER == 1200 // patch #1982084
   wsprintf(
@@ -884,15 +907,18 @@ static void NSISCALL SetSizeText(int dlgItem, int prefix, unsigned kb)
     g_tmp + mystrlen(g_tmp),
 #endif
     _T("%u.%u%s%s"),
-    kb >> sh,
-    (((kb & 0x00FFFFFF) * 10) >> sh) % 10, // 0x00FFFFFF mask is used to
-                                           // prevent overflow that causes
-                                           // bad results
+    intgr, fract,
     GetNSISString(scalestr, scale),
     GetNSISString(byte, LANG_BYTE)
-  );
+    );
 
   my_SetDialogItemText(m_curwnd,dlgItem,g_tmp);
+}
+static void NSISCALL SetSizeText(int dlgItem, int prefix, unsigned kb)
+{
+  ULARGE_INTEGER kb64;
+  kb64.QuadPart = kb;
+  SetSizeText64(dlgItem, prefix, kb64);
 }
 
 static int NSISCALL _sumsecsfield(int idx)
@@ -1028,12 +1054,8 @@ static INT_PTR CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
   {
     static TCHAR s[NSIS_MAX_STRLEN];
     int error = 0;
-    int available_set = 0;
-    unsigned total, available;
-
-#if defined(__GNUC__) && ((__GNUC__ * 1000) + __GNUC_MINOR__) < 4006
-    available = 0; // warning: 'available' may be used uninitialized in this function
-#endif
+    UINT total, available_set = FALSE;
+    ULARGE_INTEGER available;
 
     GetUIText(IDC_DIR,dir);
     if (!is_valid_instpath(dir))
@@ -1068,19 +1090,13 @@ static INT_PTR CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
       if (GDFSE)
 #endif
       {
-        ULARGE_INTEGER available64;
         ULARGE_INTEGER a, b;
-        TCHAR *p;
-        TCHAR *pw = NULL;
+        TCHAR *p, *pw = NULL;
         while (pw != s) // trimslashtoend() cut the entire string
         {
-          if (GDFSE(s, &available64, &a, &b))
+          if (GDFSE(s, &available, &a, &b))
           {
-#ifndef _NSIS_NO_INT64_SHR
-            available = (int)(available64.QuadPart >> 10);
-#else
-            available = (int)(Int64ShrlMod32(available64.QuadPart, 10));
-#endif
+            available.QuadPart = NRT_U64Shr32(available.QuadPart, 10);
             available_set++;
             break;
           }
@@ -1098,8 +1114,8 @@ static INT_PTR CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
         }
       }
     }
-
-    if (!available_set && sizeof(void*) <= 4)
+#ifndef _WIN64
+    if (!available_set)
     {
       DWORD spc, bps, fc, tc;
       TCHAR *root;
@@ -1107,33 +1123,26 @@ static INT_PTR CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
       // GetDiskFreeSpaceEx accepts any path, but GetDiskFreeSpace accepts only the root
       mystrcpy(s,dir);
       root=skip_root(s);
-      if (root)
-        *root=0;
+      if (root) *root=0;
 
       // GetDiskFreeSpaceEx is not available
       if (GetDiskFreeSpace(s, &spc, &bps, &fc, &tc))
       {
-        available = (int)MulDiv(bps * spc, fc, 1 << 10);
+        available.QuadPart = (int)MulDiv(bps * spc, fc, 1 << 10);
         available_set++;
       }
     }
-
-    total = (unsigned) sumsecsfield(size_kb);
-
-#if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wuninitialized" // available_set is checked first so available is initialized
 #endif
-    if (available_set && available < total)
-      error = NSIS_INSTDIR_NOT_ENOUGH_SPACE;
-#if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)
-#pragma GCC diagnostic pop
-#endif
+    total = (UINT) sumsecsfield(size_kb);
+
+    if (available_set)
+      if (available.QuadPart < total)
+        error = NSIS_INSTDIR_NOT_ENOUGH_SPACE;
 
     if (LANG_STR_TAB(LANG_SPACE_REQ)) {
       SetSizeText(IDC_SPACEREQUIRED,LANG_SPACE_REQ,total);
       if (available_set)
-        SetSizeText(IDC_SPACEAVAILABLE,LANG_SPACE_AVAIL,available);
+        SetSizeText64(IDC_SPACEAVAILABLE,LANG_SPACE_AVAIL,available);
       else
         SetUITextNT(IDC_SPACEAVAILABLE,_T(""));
     }
