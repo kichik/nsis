@@ -14,11 +14,13 @@ Released on ?, 201?
 
 \b Added !appendfile /RawNL switch
 
+\b Fixed 4+ TiB freespace calculation bug (\W{http://sf.net/p/nsis/bugs/1115/}{bug #1115})
+
+\b Preliminary Windows 10 support
+
 \b Exec[Wait] sets the CREATE_DEFAULT_ERROR_MODE flag when creating a process
 
 \b Fixed minor issues in the Pascal NSIS plug-in SDK and removed the \cw{extrap} global variable
-
-\b Windows 10 support
 
 \b Fixed CreateShortcut /NoWorkingDir parsing bug (\W{http://sf.net/p/nsis/bugs/1110/}{bug #1110})
 
