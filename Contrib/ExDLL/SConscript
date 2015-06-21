@@ -46,14 +46,15 @@ lib = api_envT.Library(lib_targetT, lib_files)
 if PerformPluginExtrasDistOperationOnce(plugin_envT, unicodetarget):
 	env.DistributeExamples(api_files, path='Plugin/nsis')
 	env.DistributeExamples(example, path='Plugin')
+	if env['PLATFORM'] != 'win32':
+		if env.has_key('PREFIX_PLUGINAPI_INC'):
+			env.Distribute(api_files, None, 'pluginapi_inc', '', 'nsis', 'pluginapi', 'pluginapi')
+
 
 if env['PLATFORM'] == 'win32':
 	env.DistributeExamples(lib, path='Plugin/nsis')
 else:
 	example += lib_files
-
-	if env.has_key('PREFIX_PLUGINAPI_INC'):
-		env.Distribute(api_files, None, 'pluginapi_inc', '', 'nsis', 'pluginapi', 'pluginapi')
 
 	if env.has_key('PREFIX_PLUGINAPI_LIB'):
 		env.Distribute(lib, None, 'pluginapi_lib', '', 'nsis', 'pluginapi', 'pluginapi')
