@@ -186,6 +186,7 @@ conf.Finish()
 ### test environment
 
 test_env = defenv.Clone()
+test_env['STDCALL'] = ''                                # avoid warnings
 test_env.Append(CPPPATH = ['#$BUILD_CONFIG'])
 conf = FlagsConfigure(test_env)
 conf.Finish()
