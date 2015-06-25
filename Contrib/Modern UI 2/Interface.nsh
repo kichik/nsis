@@ -69,10 +69,24 @@ Var mui.Button.Back
         !insertmacro MUI_SET MUI_HEADERIMAGE_UNBITMAP_STRETCH ${MUI_HEADERIMAGE_BITMAP_STRETCH}
       !endif
 
+      !if "${MUI_HEADERIMAGE_BITMAP}" == ""
+        !error "Invalid MUI_HEADERIMAGE_BITMAP"
+      !endif
+      !if "${MUI_HEADERIMAGE_UNBITMAP}" == ""
+        !error "Invalid MUI_HEADERIMAGE_UNBITMAP"
+      !endif
+
       !ifdef MUI_HEADERIMAGE_BITMAP_RTL
         !ifndef MUI_HEADERIMAGE_UNBITMAP_RTL
           !define MUI_HEADERIMAGE_UNBITMAP_RTL "${MUI_HEADERIMAGE_BITMAP_RTL}"
           !insertmacro MUI_SET MUI_HEADERIMAGE_UNBITMAP_RTL_STRETCH ${MUI_HEADERIMAGE_BITMAP_RTL_STRETCH}
+        !endif
+
+        !if "${MUI_HEADERIMAGE_BITMAP_RTL}" == ""
+          !error "Invalid MUI_HEADERIMAGE_BITMAP_RTL"
+        !endif
+        !if "${MUI_HEADERIMAGE_UNBITMAP_RTL}" == ""
+          !error "Invalid MUI_HEADERIMAGE_UNBITMAP_RTL"
         !endif
       !endif
 
