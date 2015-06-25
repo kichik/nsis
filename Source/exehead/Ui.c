@@ -1678,7 +1678,7 @@ static INT_PTR CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
     log_printf3(_T("New install of \"%s\" to \"%s\""),GetNSISStringTT(LANG_NAME),state_install_directory);
 
     GetClientRect(linsthwnd, &r);
-    lvc.cx = r.right - GetSystemMetrics(SM_CXHSCROLL);
+    lvc.cx = r.right - GetSystemMetrics(SM_CXVSCROLL);
     ListView_InsertColumn(linsthwnd, 0, &lvc);
 
     ListView_SetExtendedListViewStyleEx(linsthwnd, LVS_EX_LABELTIP, LVS_EX_LABELTIP);
