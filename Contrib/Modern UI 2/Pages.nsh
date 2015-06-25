@@ -49,7 +49,7 @@ Support code for all pages
   
   ;Generate unique ID
   !insertmacro MUI_UNSET MUI_UNIQUEID
-  !define MUI_UNIQUEID ${__LINE__}  
+  !define MUI_UNIQUEID ${__LINE__}
 
 !macroend
 
@@ -295,12 +295,12 @@ Support code for all pages
   ${EndIf}
 
   ${DoWhile} $R2 > $R8 ; ImgH > CtlH
-  IntOp $R1 $R1 - $R3
-  IntOp $R2 $R2 - $R4
+    IntOp $R1 $R1 - $R3
+    IntOp $R2 $R2 - $R4
   ${Loop}
   ${DoWhile} $R2 < $R8 ; ImgH < CtlH
-  IntOp $R1 $R1 + $R3
-  IntOp $R2 $R2 + $R4
+    IntOp $R1 $R1 + $R3
+    IntOp $R2 $R2 + $R4
   ${Loop}
   IntOp $1 $R1 / 10000
   IntOp $2 $R2 / 10000
@@ -312,9 +312,9 @@ Support code for all pages
   ${EndIf}
 
   ${DoWhile} $2 > $8 ; Non-aspect-maintained stretch to make it a pixel perfect match
-  IntOp $2 $2 - 1
-  IntOp $1 $1 - 1
-  ${IfThen} $3 == "*" ${|} IntOp $5 $5 + 1 ${|}
+    IntOp $2 $2 - 1
+    IntOp $1 $1 - 1
+    ${IfThen} $3 == "*" ${|} IntOp $5 $5 + 1 ${|}
   ${Loop}
 
   System::Call 'USER32::SetWindowPos(pr0,p0,ir5,ir6,ir1,ir2,i0x14)'
