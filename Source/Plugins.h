@@ -50,6 +50,7 @@ class Plugins
 
     bool Initialize(const TCHAR*arcsubdir, bool displayInfo);
     void AddPluginsDir(const tstring& path, bool displayInfo);
+    bool FindDllPath(const tstring filename, tstring&dllPath);
     bool IsPluginCommand(const tstring& command) const;
     bool IsKnownPlugin(const tstring& token) const;
     bool GetCommandInfo(const tstring&command, tstring&canoniccmd, tstring&dllPath);

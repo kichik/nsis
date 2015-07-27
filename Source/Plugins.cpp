@@ -233,6 +233,14 @@ bool Plugins::Initialize(const TCHAR*arcsubdir, bool displayInfo)
   return true;
 }
 
+bool Plugins::FindDllPath(const tstring filename, tstring&dllPath)
+{
+  tstring dllName = remove_file_extension(filename);
+  if (!contains(m_dllname_to_path, dllName)) return false;
+  dllPath = get_paired_value(m_dllname_to_path, dllName);
+  return true;
+}
+
 bool Plugins::GetCommandInfo(const tstring&command, tstring&canoniccmd, tstring&dllPath)
 {
   const tstring dllname = GetDllName(command);
