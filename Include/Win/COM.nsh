@@ -6,6 +6,7 @@
 COM defines and helper macros
 
 ; Example usage:
+!include LogicLib.nsh
 !include Win\COM.nsh
 !include Win\Propkey.nsh
 !insertmacro ComHlpr_CreateInProcInstance ${CLSID_ShellLink} ${IID_IShellLink} r0 ""
@@ -15,7 +16,7 @@ ${If} $0 <> 0
 	${If} $1 = 0
 	${AndIf} $2 = 0
 		${IUnknown::QueryInterface} $0 '("${IID_IPropertyStore}",.r1)'
-		${If} $1 <> 0
+		${If} $1 P<> 0
 			System::Call '*${SYSSTRUCT_PROPERTYKEY}(${PKEY_AppUserModel_StartPinOption})p.r2'
 			System::Call '*${SYSSTRUCT_PROPVARIANT}(${VT_UI4},,&i4 ${APPUSERMODEL_STARTPINOPTION_NOPINONINSTALL})p.r3'
 			${IPropertyStore::SetValue} $1 '($2,$3)'
@@ -31,7 +32,7 @@ ${If} $0 <> 0
 			${IUnknown::Release} $1 ""
 		${EndIf}
 		${IUnknown::QueryInterface} $0 '("${IID_IPersistFile}",.r1)'
-		${If} $1 <> 0
+		${If} $1 P<> 0
 			${IPersistFile::Save} $1 '("$SMPrograms\nsis_test.lnk",1)'
 			${IUnknown::Release} $1 ""
 		${EndIf}
