@@ -2829,6 +2829,16 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         SCRIPT_MSG(_T("PEDllCharacteristics: 0x%.4x -> 0x%.4x\n"), org, PEDllCharacteristics);
       }
       return PS_OK;
+  
+    case TOK_PESUBSYSVER:
+      {
+        unsigned int mj, mi;
+        if (2 == _stscanf(line.gettoken_str(1), _T("%u.%u"), &mj, &mi))
+          if (mj <= 0xffff && mi <= 0xffff)
+            return (PESubsysVerMaj = (WORD) mj, PESubsysVerMin = (WORD) mi, PS_OK);
+      }
+      PRINTHELP();
+      return PS_ERROR;
 
     case TOK_REQEXECLEVEL:
       switch (line.gettoken_enum(1,_T("none\0user\0highest\0admin\0")))

@@ -278,6 +278,7 @@ CEXEBuild::CEXEBuild(signed char pponly) :
   res_editor=0;
 
   PEDllCharacteristics = IMAGE_DLLCHARACTERISTICS_TERMINAL_SERVER_AWARE|IMAGE_DLLCHARACTERISTICS_NO_SEH|IMAGE_DLLCHARACTERISTICS_NX_COMPAT|IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE; //forums.winamp.com/showthread.php?t=344755
+  PESubsysVerMaj = PESubsysVerMin = (WORD) -1;
   manifest_comctl = manifest::comctl_old;
   manifest_exec_level = manifest::exec_level_none;
   manifest_dpiaware = manifest::dpiaware_notset;
@@ -2404,6 +2405,12 @@ int CEXEBuild::UpdatePEHeader()
     // workaround for bug #2697027, #2725883, #2803097
     headers->OptionalHeader.MajorImageVersion = FIX_ENDIAN_INT16(6);
     headers->OptionalHeader.MinorImageVersion = FIX_ENDIAN_INT16(0);
+    // Override SubsystemVersion?
+    if (PESubsysVerMaj != (WORD) -1)
+    {
+      headers->OptionalHeader.MajorSubsystemVersion = FIX_ENDIAN_INT16(PESubsysVerMaj);
+      headers->OptionalHeader.MinorSubsystemVersion = FIX_ENDIAN_INT16(PESubsysVerMin);
+    }
     // DllCharacteristics
     headers->OptionalHeader.DllCharacteristics = FIX_ENDIAN_INT16(PEDllCharacteristics);
   } catch (std::runtime_error& err) {
