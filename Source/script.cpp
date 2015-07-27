@@ -4765,10 +4765,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           tstring pluginfullpath;
           if (reserveplugin && get_file_name(t)==t)
           {
-            pluginfullpath = definedlist.find(_T("NSISDIR"));
-            pluginfullpath += tstring(PLATFORM_PATH_SEPARATOR_STR) + _T("Plugins");
-            pluginfullpath += tstring(PLATFORM_PATH_SEPARATOR_STR) + get_target_suffix();
-            pluginfullpath += tstring(PLATFORM_PATH_SEPARATOR_STR) + t;
+            if (!m_pPlugins || !m_pPlugins->FindDllPath(t, pluginfullpath))
+            {
+              pluginfullpath = definedlist.find(_T("NSISDIR"));
+              pluginfullpath += tstring(PLATFORM_PATH_SEPARATOR_STR) + _T("Plugins");
+              pluginfullpath += tstring(PLATFORM_PATH_SEPARATOR_STR) + get_target_suffix();
+              pluginfullpath += tstring(PLATFORM_PATH_SEPARATOR_STR) + t;
+            }
             t = (TCHAR*) pluginfullpath.c_str();
           }
           int tf=0;
@@ -6095,7 +6098,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             if (comma++) es += _T(", /");
             es += ts;
           }
-          ERROR_MSG(_T("Error: %") NPRIs _T("\n"),es.c_str());
+          ERROR_MSG(_T("Error: %") NPRIs _T("\n"), es.c_str());
           return PS_ERROR;
         }
       }
