@@ -209,6 +209,17 @@ void WINAPI mySetWindowText(HWND hWnd, LPCTSTR pszText)
     SetWindowText(hWnd, pszText);
 }
 
+static COLORREF GetLinkColor()
+{
+  COLORREF clr = GetSysColor(COLOR_HOTLIGHT);
+#ifndef _WIN64
+  // COLOR_HOTLIGHT is Win98/2000+. GetSysColorBrush is the correct way to
+  // detect valid colors but here we just assume nobody uses black.
+  if (!clr) clr = RGB(0,0,255);
+#endif
+  return clr;
+}
+
 int CALLBACK BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lp, LPARAM pData) {
   static TCHAR szDir[MAX_PATH];
 
@@ -552,8 +563,8 @@ int WINAPI ReadSettings(void) {
     pField->nMinLength = myGetProfileInt(_T("MinLen"), 0);
     pField->nMaxLength = myGetProfileInt(_T("MaxLen"), 0);
 
-    // Text color for LINK control, default is pure blue
-    pField->hImage = (HANDLE)myGetProfileInt(_T("TxtColor"), RGB(0,0,255));
+    // Text color for LINK control, default is the system default link color
+    pField->hImage = (HANDLE)myGetProfileInt(_T("TxtColor"), GetLinkColor());
 
     pField->nControlID = 1200 + nIdx;
     if (pField->nType == FIELD_FILEREQUEST || pField->nType == FIELD_DIRREQUEST)
