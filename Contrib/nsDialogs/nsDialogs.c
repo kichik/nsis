@@ -20,6 +20,17 @@ HINSTANCE g_hInstance;
 struct nsDialog g_dialog;
 extra_parameters* g_pluginParms;
 
+static COLORREF GetLinkColor()
+{
+  COLORREF clr = GetSysColor(COLOR_HOTLIGHT);
+#ifndef _WIN64
+  // COLOR_HOTLIGHT is Win98/2000+. GetSysColorBrush is the correct way to
+  // detect valid colors but here we just assume nobody uses black.
+  if (!clr) clr = RGB(0,0,255);
+#endif
+  return clr;
+}
+
 struct nsControl* NSDFUNC GetControl(HWND hwCtl)
 {
   unsigned id = (unsigned) GetProp(hwCtl, NSCONTROL_ID_PROP);
@@ -195,9 +206,9 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPara
         if (hideAccel)
           xtraDrawStyle |= DT_HIDEPREFIX;
 
-        // Use blue unless the user has set another using SetCtlColors
+        // Use the system color unless the user has set another using SetCtlColors
         if (!GetWindowLongPtr(lpdis->hwndItem, GWLP_USERDATA))
-          SetTextColor(lpdis->hDC, RGB(0,0,255));
+          SetTextColor(lpdis->hDC, GetLinkColor());
 
         // Draw the text
         DrawText(lpdis->hDC, text, -1, &rc, xtraDrawStyle | DT_CENTER | DT_VCENTER | DT_WORDBREAK);

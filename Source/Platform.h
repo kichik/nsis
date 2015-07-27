@@ -510,6 +510,9 @@ typedef DWORDLONG ULONGLONG,*PULONGLONG;
 #ifndef COLOR_WINDOW
 #  define COLOR_WINDOW 5
 #endif
+#ifndef COLOR_HOTLIGHT
+#  define COLOR_HOTLIGHT 26
+#endif
 
 // resources
 
