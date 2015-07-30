@@ -73,6 +73,7 @@ namespace manifest
       append(_T("Win7"));
       append(_T("Win8"));
       append(_T("Win8.1")); // In the default list because GetVersion[Ex] lies if this is not set in the manifest
+      append(_T("Win10"));
       m_isdefaultlist = true;
     }
   };
