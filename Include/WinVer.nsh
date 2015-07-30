@@ -153,8 +153,8 @@
 !define WINVER_8.1       0x06030000 ;6.03.9600
 !define WINVER_2012R2_NT 0x86030001 ;6.03.9600
 !define WINVER_2012R2    0x06030001 ;6.03.9600
-!define WINVER_10_NT     0x86040000 ;6.04.????
-!define WINVER_10        0x06040000 ;6.04.????
+!define WINVER_10_NT     0x8A000000 ;10.0.10240
+!define WINVER_10        0x0A000000 ;10.0.10240
 
 
 # use this to make all nt > 9x
