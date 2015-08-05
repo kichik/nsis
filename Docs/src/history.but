@@ -2,31 +2,39 @@
 
 \H{v3.0b2} 3.0 Beta 2
 
-Released on ?, 201?
-
-\S1{v3.0b2-rl} Release Notes
-
-\b ?
+Released on August 4th, 2015
 
 \S1{v3.0b2-cl} Changelog
+
+\S2{} Major Changes
+
+\b Preliminary Windows 10 support
 
 \S2{} Minor Changes
 
 \b Added !appendfile /RawNL switch
 
-\b Fixed 4+ TiB freespace calculation bug (\W{http://sf.net/p/nsis/bugs/1115/}{bug #1115})
-
-\b Preliminary Windows 10 support
+\b Added PESubsysVer attribute
 
 \b Exec[Wait] sets the CREATE_DEFAULT_ERROR_MODE flag when creating a process
 
-\b Fixed minor issues in the Pascal NSIS plug-in SDK and removed the \cw{extrap} global variable
+\b Fixed 4+ TiB freespace calculation bug (\W{http://sf.net/p/nsis/bugs/1115/}{bug #1115})
 
 \b Fixed CreateShortcut /NoWorkingDir parsing bug (\W{http://sf.net/p/nsis/bugs/1110/}{bug #1110})
 
+\b Fixed minor issues in the Pascal NSIS plug-in SDK and removed the \cw{extrap} global variable
+
 \b nsDialogs and InstallOptions now use the system link color
 
-\b Added PESubsysVer attribute
+\S2{} Build System
+
+\b Linux stdcall warning fix (\W{http://sf.net/p/nsis/patches/261}{patch #261})
+
+\b Linux test-scripts fix (\W{http://sf.net/p/nsis/patches/260}{patch #260})
+
+\b Win64 fixes (including \W{http://sf.net/p/nsis/patches/258}{patch #258}, \W{http://sf.net/p/nsis/bugs/1105/}{bug #1105})
+
+\b Visual C 2012 fixes
 
 \H{v3.0b1} 3.0 Beta 1
 
@@ -66,7 +74,7 @@ Released on October 6th, 2014
 
 \b Changed default DllCharacteristics to TS_AWARE+NO_SEH+NX_COMPAT+DYNAMIC_BASE
 
-\b Fixed Mac OS X builds (\W{http://sf.net/p/nsis/patches/251}{patch #253} and \W{http://sf.net/p/nsis/bugs/1085}{bug #1085})
+\b Fixed Mac OS X builds (\W{http://sf.net/p/nsis/patches/253}{patch #253} and \W{http://sf.net/p/nsis/bugs/1085}{bug #1085})
 
 \b Fixed POSIX !searchparse bug (\W{http://sf.net/p/nsis/patches/251}{patch #251})
 
