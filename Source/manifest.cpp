@@ -90,7 +90,8 @@ bool SupportedOSList::append(const TCHAR* osid)
 
 string generate(comctl comctl_selection, exec_level exec_level_selection, dpiaware dpia, SupportedOSList& sosl)
 {
-  if (comctl_selection == comctl_old && exec_level_selection == exec_level_none)
+  bool default_or_empty_sosl = sosl.isdefaultlist() || !sosl.getcount();
+  if (comctl_selection == comctl_old && exec_level_selection == exec_level_none && default_or_empty_sosl && dpiaware_notset == dpia)
     return "";
 
   string xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><assembly xmlns=\"urn:schemas-microsoft-com:asm.v1\" manifestVersion=\"1.0\"><assemblyIdentity version=\"1.0.0.0\" processorArchitecture=\"*\" name=\"Nullsoft.NSIS.exehead\" type=\"win32\"/><description>Nullsoft Install System ";
