@@ -1,5 +1,15 @@
 \A{history} Changelog and Release Notes
 
+\H{v3.0b3} 3.0 Beta 3
+
+Released on ? ?th, 201?
+
+\S1{v3.0b3-cl} Changelog
+
+\S2{} Major Changes
+
+\b RequestExecutionLevel now defaults to \c{admin}
+
 \H{v3.0b2} 3.0 Beta 2
 
 Released on August 4th, 2015
