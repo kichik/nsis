@@ -859,26 +859,28 @@ int RunChildProcessRedirected(LPCWSTR cmdprefix, LPCWSTR cmdmain)
   if (!cmd) return -1;
   _tcscpy(cmd, cmdprefix);
   _tcscat(cmd, cmdmain);
-  SECURITY_DESCRIPTOR sd = {1, 0, SE_DACL_PRESENT, NULL, };
-  SECURITY_ATTRIBUTES sa = {sizeof(sa), &sd, true};
+  SECURITY_DESCRIPTOR sd = { 1, 0, SE_DACL_PRESENT, NULL, };
+  SECURITY_ATTRIBUTES sa = { sizeof(sa), &sd, TRUE };
   const UINT orgwinconcp = GetConsoleCP(), orgwinconoutcp = GetConsoleOutputCP();
   if (orgwinconoutcp == oemcp) cp = oemcp, mbtwcf = 0; // Bug #1092: Batch files not a fan of UTF-8
-  HANDLE hPipRd, hPipWr;
+  HANDLE hSIRd, hSIWr, hSORd, hSOWr;
   PROCESS_INFORMATION pi;
-  BOOL ok = CreatePipe(&hPipRd, &hPipWr, &sa, 0);
+  if (!CreatePipe(&hSIRd, &hSIWr, &sa, 0)) // XCopy.exe does not work without a valid StdIn!
+    hSIRd = hSIWr = INVALID_HANDLE_VALUE;
+  BOOL ok = CreatePipe(&hSORd, &hSOWr, &sa, 0);
   if (!ok)
-    hPipRd = 0, hPipWr = 0;
+    hSORd = hSOWr = 0;
   else
   {
     STARTUPINFO si = {sizeof(si)};
     si.dwFlags = STARTF_USESTDHANDLES|STARTF_USESHOWWINDOW;
     si.wShowWindow = SW_HIDE;
-    si.hStdOutput = si.hStdError = hPipWr;
-    si.hStdInput = INVALID_HANDLE_VALUE;
+    si.hStdOutput = si.hStdError = hSOWr;
+    si.hStdInput = hSIRd;
     errno = ECHILD;
     SetConsoleOutputCP(cp);
     ok = CreateProcess(0, cmd, 0, 0, TRUE, 0, 0, 0, &si, &pi);
-    CloseHandle(hPipWr); // We want ERROR_BROKEN_PIPE when the child is done
+    CloseHandle(hSOWr); // We want ERROR_BROKEN_PIPE when the child is done
   }
   free(cmd);
   DWORD childec = -1;
@@ -890,7 +892,7 @@ int RunChildProcessRedirected(LPCWSTR cmdprefix, LPCWSTR cmdmain)
     WCHAR wbuf[100], wchbuf[2+1]; // A surrogate pair + \0
     for(;;)
     {
-      BOOL okr = ReadFile(hPipRd, iobuf+cbOfs, sizeof(iobuf)-cbOfs, &cbRead, 0);
+      BOOL okr = ReadFile(hSORd, iobuf+cbOfs, sizeof(iobuf)-cbOfs, &cbRead, 0);
       cbRead += cbOfs, cbOfs = 0;
       unsigned char cbTrail, cch;
       for(DWORD i = 0; i < cbRead;)
@@ -951,7 +953,8 @@ switchcp:   cp = orgwinconoutcp, mbtwcf = 0, utf8 = false;
     CloseHandle(pi.hProcess);
   }
   SetConsoleCP(orgwinconcp), SetConsoleOutputCP(orgwinconoutcp);
-  CloseHandle(hPipRd);
+  CloseHandle(hSIRd), CloseHandle(hSIWr);
+  CloseHandle(hSORd);
   return childec;
 }
 #else
