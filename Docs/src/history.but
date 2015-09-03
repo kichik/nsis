@@ -10,6 +10,10 @@ Released on ? ?th, 201?
 
 \b RequestExecutionLevel now defaults to \c{admin}
 
+\S2{} Minor Changes
+
+\b !system and !execute now provide a empty StdIn pipe to work around bugs in some Windows utilities
+
 \H{v3.0b2} 3.0 Beta 2
 
 Released on August 4th, 2015
