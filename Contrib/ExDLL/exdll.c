@@ -24,7 +24,7 @@ void __declspec(dllexport) myFunction(HWND hwndParent, int string_size,
 
   // do your stuff here
   {
-    LPTSTR msgbuf = GlobalAlloc(GPTR, (3 + string_size + 1) * sizeof(*msgbuf));
+    LPTSTR msgbuf = (LPTSTR) GlobalAlloc(GPTR, (3 + string_size + 1) * sizeof(*msgbuf));
     if (msgbuf)
     {
       wsprintf(msgbuf, TEXT("$0=%s"), getuservariable(INST_0));
