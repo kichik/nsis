@@ -1,23 +1,18 @@
 #include <windows.h>
 #include <nsis/pluginapi.h> // nsis plugin
-#ifndef _TCHAR_DEFINED
-#include <tchar.h>
-#endif
 
 HINSTANCE g_hInstance;
-
 HWND g_hwndParent;
 
 // To work with Unicode version of NSIS, please use TCHAR-type
 // functions for accessing the variables and the stack.
 
 void __declspec(dllexport) myFunction(HWND hwndParent, int string_size, 
-                                      TCHAR *variables, stack_t **stacktop,
-                                      extra_parameters *extra)
+                                      LPTSTR variables, stack_t **stacktop,
+                                      extra_parameters *extra, ...)
 {
-  g_hwndParent=hwndParent;
-
   EXDLL_INIT();
+  g_hwndParent = hwndParent;
 
 
   // note if you want parameters from the stack, pop them off in order.
@@ -29,16 +24,19 @@ void __declspec(dllexport) myFunction(HWND hwndParent, int string_size,
 
   // do your stuff here
   {
-    TCHAR buf[3+1024+1]; // A real plugin should use string_size and not 1024!
-    wsprintf(buf,TEXT("$0=%.1024s"),getuservariable(INST_0));
-    MessageBox(g_hwndParent,buf,0,MB_OK);
+    LPTSTR msgbuf = GlobalAlloc(GPTR, (3 + string_size + 1) * sizeof(*msgbuf));
+    if (msgbuf)
+    {
+      wsprintf(msgbuf, TEXT("$0=%s"), getuservariable(INST_0));
+      MessageBox(g_hwndParent, msgbuf, TEXT("Message from example plugin"), MB_OK);
+      GlobalFree(msgbuf);
+    }
   }
 }
 
 
-
 BOOL WINAPI DllMain(HINSTANCE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
 {
-  g_hInstance=hInst;
+  g_hInstance = hInst;
   return TRUE;
 }
