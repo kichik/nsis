@@ -719,8 +719,6 @@ void CResourceEditor::WriteRsrcSec(BYTE* pbRsrcSec) {
 
     seeker += RALIGN(iLen * sizeof(WINWCHAR) + sizeof(WORD), 4);
 
-    free(szName);
-
     qStrings.pop();
   }
 
@@ -823,15 +821,11 @@ bool CResourceDirectory::AddEntry(CResourceDirectoryEntry* entry) {
     for (i = 0; i < m_rdDir.NumberOfNamedEntries; i++) {
       WINWCHAR* szName = m_vEntries[i]->GetName();
       int cmp = WinWStrCmp(szName, szEntName);
-      free(szName);
-      if (cmp == 0) {
-        free(szEntName);
+      if (cmp == 0)
         return false;
-      }
       if (cmp > 0)
         break;
     }
-    free(szEntName);
     m_rdDir.NumberOfNamedEntries++;
   }
   else {
@@ -874,8 +868,6 @@ int CResourceDirectory::Find(const WINWCHAR* szName) {
 
     WINWCHAR* szEntName = m_vEntries[i]->GetName();
     int cmp = WinWStrCmp(szName, szEntName);
-    free(szEntName);
-
     if (!cmp)
       return i;
   }
@@ -963,7 +955,7 @@ CResourceDirectoryEntry::CResourceDirectoryEntry(const WINWCHAR* szName, CResour
 }
 
 CResourceDirectoryEntry::~CResourceDirectoryEntry() {
-  if (m_szName && m_bHasName)
+  if (m_bHasName)
     free(m_szName);
 }
 
@@ -977,7 +969,7 @@ bool CResourceDirectoryEntry::HasName() {
 
 // Don't forget to free the memory used by the string after usage!
 WINWCHAR* CResourceDirectoryEntry::GetName() {
-  return m_bHasName ? WinWStrDupFromWinWStr(m_szName) : 0;
+  return m_bHasName ? m_szName : 0;
 }
 
 int CResourceDirectoryEntry::GetNameLength() {
