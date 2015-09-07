@@ -91,7 +91,6 @@ int WINAPI _tWinMain(HINSTANCE hInst,HINSTANCE hOldInst,LPTSTR CmdLineParams,int
   if (g_sdata.sigint_event) CloseHandle(g_sdata.sigint_event);
   if (g_sdata.sigint_event_legacy) CloseHandle(g_sdata.sigint_event_legacy);
   FreeLibrary(hRichEditDLL);
-  FinalizeUpdate();
   return (int) msg.wParam;
 }
 
@@ -526,17 +525,15 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
         }
         case IDM_NSISHOME:
         {
-          ShellExecuteA(g_sdata.hwnd,"open",NSIS_URL,NULL,NULL,SW_SHOWNORMAL);
-          return TRUE;
+          return OpenUrlInDefaultBrowser(g_sdata.hwnd, NSIS_URL);
         }
         case IDM_FORUM:
         {
-          ShellExecuteA(g_sdata.hwnd,"open",NSIS_FOR,NULL,NULL,SW_SHOWNORMAL);
-          return TRUE;
+          return OpenUrlInDefaultBrowser(g_sdata.hwnd, NSIS_FORUM_URL);
         }
         case IDM_NSISUPDATE:
         {
-          Update();
+          CheckForUpdate();
           return TRUE;
         }
         case IDM_SELECTALL:

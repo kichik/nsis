@@ -34,8 +34,8 @@
 
 // Defines
 #define NSIS_URL     "http://nsis.sourceforge.net/"
-#define NSIS_FOR     "http://forums.winamp.com/forumdisplay.php?forumid=65"
-#define NSIS_UPDATE  "http://nsis.sourceforge.net/update.php?version="
+#define NSIS_FORUM_URL "http://forums.winamp.com/forumdisplay.php?forumid=65"
+#define NSIS_UC_URL  "http://nsis.sourceforge.net/update.php?version="
 #define NSIS_DL_URL  "http://nsis.sourceforge.net/download/"
 #define USAGE        _T("Usage:\r\n\r\n - File | Load Script...\r\n - Drag the .nsi file into this window\r\n - Right click the .nsi file and choose \"Compile NSIS Script\"")
 #define COPYRIGHT    _T("Copyright (C) 2002 Robert Rainwater")
@@ -43,7 +43,7 @@
 #define DOCPATH      "http://nsis.sourceforge.net/Docs/"
 #define LOCALDOCS    _T("\\NSIS.chm")
 #define ERRBOXTITLE  0 //_T("Error")
-#define NSISERROR    _T("Unable to intialize MakeNSIS.  Please verify that makensis.exe is in the same directory as makensisw.exe.")
+#define NSISERROR    _T("Unable to intialize MakeNSIS. Please verify that makensis.exe is in the same directory as makensisw.exe.")
 #define DLGERROR     _T("Unable to intialize MakeNSISW.")
 #define SYMBOLSERROR _T("Symbol cannot contain whitespace characters")
 #define MULTIDROPERROR _T("Dropping more than one script at a time is not supported")
@@ -157,7 +157,7 @@ int compressor_strings[] = {IDS_SCRIPT,
 
 extern const TCHAR* NSISW_VERSION;
 
-DWORD WINAPI   MakeNSISProc(LPVOID TreadParam);
+DWORD WINAPI MakeNSISProc(LPVOID TreadParam);
 INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 BOOL CALLBACK DialogResize(HWND hWnd, LPARAM /* unused*/);
 INT_PTR CALLBACK AboutProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);

@@ -6,10 +6,6 @@ files = Split("""
 	utils.cpp
 	version.cpp
 	update.cpp
-	jnetlib/asyncdns.cpp
-	jnetlib/connection.cpp
-	jnetlib/httpget.cpp
-	jnetlib/util.cpp
 """)
 
 res = Split("""
@@ -36,7 +32,7 @@ libs = Split("""
 	shlwapi
 	comdlg32
 	comctl32
-	wsock32
+	wininet
 """)
 
 docs = Split("""
@@ -53,7 +49,7 @@ BuildUtil(
 	res = res,
 	resources = resources,
 	entry = None,
-	defines = ['RELEASE=2.3.2'],
+	defines = ['RELEASE=2.3.3'],
 	docs = docs,
 	root_util = True
 )

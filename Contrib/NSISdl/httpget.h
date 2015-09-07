@@ -41,6 +41,10 @@
 ** Reviewed for Unicode support by Jim Park -- 08/24/2004
 **   Everything remains ANSI.  Made sure all TCHAR style functions were
 **   changed to strictly ANSI.
+**
+** Notes:
+**   We used to have a fork of JNetLib in MakeNSISw that was slightly different, 
+**   you can see it @ http://sf.net/p/nsis/code/6603/tree/NSIS/trunk/Contrib/Makensisw/jnetlib/
 */
 
 #ifndef _HTTPGET_H_
