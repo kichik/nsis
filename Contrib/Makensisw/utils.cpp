@@ -989,6 +989,11 @@ bool FileExists(const TCHAR *fname)
   return false;
 }
 
+bool OpenUrlInDefaultBrowser(HWND hwnd, LPCSTR Url)
+{
+  return (int)(INT_PTR) ShellExecuteA(hwnd, NULL , Url, NULL, NULL, SW_SHOWNORMAL) > 32;
+}
+
 HMENU FindSubMenu(HMENU hMenu, UINT uId)
 {
   MENUITEMINFO mii;

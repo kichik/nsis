@@ -117,7 +117,7 @@ BEGIN
         MENUITEM "", -1, MFT_SEPARATOR
         MENUITEM "NSIS &Homepage",              IDM_NSISHOME
         MENUITEM "NSIS &Forum",                 IDM_FORUM
-        MENUITEM "NSIS &Update",                IDM_NSISUPDATE
+        MENUITEM "Check for &Updates",           IDM_NSISUPDATE
         MENUITEM "", -1, MFT_SEPARATOR
         MENUITEM "&About MakeNSISW",            IDM_ABOUT
     END

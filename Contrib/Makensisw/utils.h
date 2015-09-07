@@ -76,6 +76,7 @@ void LoadMRUFile(int position);
 void ClearMRUList();
 
 bool FileExists(const TCHAR *fname);
+bool OpenUrlInDefaultBrowser(HWND hwnd, LPCSTR Url);
 
 HMENU FindSubMenu(HMENU hMenu, UINT uId);
 HFONT CreateFont(int Height, int Weight, DWORD PitchAndFamily, LPCTSTR Face);
