@@ -233,16 +233,16 @@ public:
   CResourceDirectoryEntry(const WINWCHAR* szName, CResourceDataEntry* rdeData);
   virtual ~CResourceDirectoryEntry();
 
-  bool HasName();
-  WINWCHAR* GetName();
-  int GetNameLength();
+  bool HasName() const;
+  const WINWCHAR* GetName() const;
+  int GetNameLength() const;
 
-  WORD GetId();
+  WORD GetId() const;
 
-  bool IsDataDirectory();
-  CResourceDirectory* GetSubDirectory();
+  bool IsDataDirectory() const;
+  CResourceDirectory* GetSubDirectory() const;
 
-  CResourceDataEntry* GetDataEntry();
+  CResourceDataEntry* GetDataEntry() const;
 
   ULONG_PTR m_ulWrittenAt;
 

@@ -711,7 +711,7 @@ void CResourceEditor::WriteRsrcSec(BYTE* pbRsrcSec) {
 
     PMY_IMAGE_RESOURCE_DIRECTORY_ENTRY(cRDirE->m_ulWrittenAt)->UName.NameString.NameOffset = ConvertEndianness((DWORD) (seeker - pbRsrcSec));
 
-    WINWCHAR* szName = cRDirE->GetName();
+    const WINWCHAR* szName = cRDirE->GetName();
     WORD iLen = (WORD) WinWStrLen(szName) + 1;
 
     *(WORD*)seeker = ConvertEndianness(iLen);
@@ -817,9 +817,9 @@ CResourceDirectoryEntry* CResourceDirectory::GetEntry(unsigned int i) {
 bool CResourceDirectory::AddEntry(CResourceDirectoryEntry* entry) {
   int i = 0;
   if (entry->HasName()) {
-    WINWCHAR* szEntName = entry->GetName();
+    const WINWCHAR* szEntName = entry->GetName();
     for (i = 0; i < m_rdDir.NumberOfNamedEntries; i++) {
-      WINWCHAR* szName = m_vEntries[i]->GetName();
+      const WINWCHAR* szName = m_vEntries[i]->GetName();
       int cmp = WinWStrCmp(szName, szEntName);
       if (cmp == 0)
         return false;
@@ -866,7 +866,7 @@ int CResourceDirectory::Find(const WINWCHAR* szName) {
     if (!m_vEntries[i]->HasName())
       continue;
 
-    WINWCHAR* szEntName = m_vEntries[i]->GetName();
+    const WINWCHAR* szEntName = m_vEntries[i]->GetName();
     int cmp = WinWStrCmp(szName, szEntName);
     if (!cmp)
       return i;
@@ -963,34 +963,34 @@ CResourceDirectoryEntry::~CResourceDirectoryEntry() {
 // Methods
 //////////////////////////////////////////////////////////////////////
 
-bool CResourceDirectoryEntry::HasName() {
+bool CResourceDirectoryEntry::HasName() const {
   return m_bHasName;
 }
 
 // Don't forget to free the memory used by the string after usage!
-WINWCHAR* CResourceDirectoryEntry::GetName() {
+const WINWCHAR* CResourceDirectoryEntry::GetName() const {
   return m_bHasName ? m_szName : 0;
 }
 
-int CResourceDirectoryEntry::GetNameLength() {
+int CResourceDirectoryEntry::GetNameLength() const {
   return (int) WinWStrLen(m_szName);
 }
 
-WORD CResourceDirectoryEntry::GetId() {
+WORD CResourceDirectoryEntry::GetId() const {
   return m_bHasName ? 0 : m_wId;
 }
 
-bool CResourceDirectoryEntry::IsDataDirectory() {
+bool CResourceDirectoryEntry::IsDataDirectory() const {
   return m_bIsDataDirectory;
 }
 
-CResourceDirectory* CResourceDirectoryEntry::GetSubDirectory() {
+CResourceDirectory* CResourceDirectoryEntry::GetSubDirectory() const {
   if (!m_bIsDataDirectory)
     return NULL;
   return m_rdSubDir;
 }
 
-CResourceDataEntry* CResourceDirectoryEntry::GetDataEntry() {
+CResourceDataEntry* CResourceDirectoryEntry::GetDataEntry() const {
   if (m_bIsDataDirectory)
     return NULL;
   return m_rdeData;
