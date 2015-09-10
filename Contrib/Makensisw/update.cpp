@@ -2,6 +2,7 @@
 
 #include "makensisw.h"
 #include "update.h"
+#include <Wininet.h>
 #include "utils.h" // OpenUrlInDefaultBrowser
 
 #define mbtitle "NSIS Update"
@@ -78,9 +79,9 @@ static DWORD CALLBACK UpdateCheckWebrequestThread(LPVOID ThreadParam)
     gle = GetLastError();
     if (hConn)
     {
-      char response[30];
+      char response[30+1];
       DWORD cbRecv;
-      gle = InetSynchronousReadFile(hConn, response, sizeof(response), &cbRecv);
+      gle = InetSynchronousReadFile(hConn, response, sizeof(response)-1, &cbRecv);
       if (!gle)
       {
         response[cbRecv] = '\0';
