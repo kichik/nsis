@@ -448,7 +448,7 @@ void CEXEBuild::init_shellconstantvalues()
     // see Source\exehead\util.c for implementation details
     // basically, it knows it needs to get folders from the registry when the 0x80 is on
     const char* msg = "Internal compiler error: too many strings added to strings block before adding shell constants!";
-    ERROR_MSG(_T("%") NPRINs, msg);
+    ERROR_MSG(_T("%") NPRIns, msg);
     throw out_of_range(msg);
   }
 
@@ -469,7 +469,7 @@ void CEXEBuild::init_shellconstantvalues()
     || uncf64_def != cf64_def)
   {
     const char* msg = "Internal compiler error: installer's shell constants are different than uninstallers!";
-    ERROR_MSG(_T("%") NPRINs, msg);
+    ERROR_MSG(_T("%") NPRIns, msg);
     throw out_of_range(msg);
   }
 }
@@ -602,7 +602,7 @@ int CEXEBuild::preprocess_string(TCHAR *out, const TCHAR *in, WORD codepage/*=CP
       {
         // starts with a $ but not $$.
         bool bProceced=false;
-        if ( *p )
+        if (*p)
         {
           const TCHAR *pUserVarName = p;
           while (isSimpleChar(*pUserVarName))
@@ -610,10 +610,10 @@ int CEXEBuild::preprocess_string(TCHAR *out, const TCHAR *in, WORD codepage/*=CP
 
           while (pUserVarName > p)
           {
-            if (m_ShellConstants.get(p, BUGBUG64TRUNCATE(int, pUserVarName-p)) >= 0)
+            if (m_ShellConstants.get(p, truncate_cast(int, (size_t)(pUserVarName - p))) >= 0)
               break; // Woops it's a shell constant
 
-            int idxUserVar = m_UserVarNames.get(p, BUGBUG64TRUNCATE(int, pUserVarName-p));
+            int idxUserVar = m_UserVarNames.get(p, truncate_cast(int, (size_t)(pUserVarName - p)));
             if (idxUserVar >= 0)
             {
               // Well, using variables inside string formating doens't mean
@@ -641,7 +641,7 @@ int CEXEBuild::preprocess_string(TCHAR *out, const TCHAR *in, WORD codepage/*=CP
           while (pShellConstName > p)
           {
             // Look for the identifier in the shell constants list of strings.
-            int idxConst = m_ShellConstants.get((TCHAR*)p, BUGBUG64TRUNCATE(int, pShellConstName - p));
+            int idxConst = m_ShellConstants.get((TCHAR*)p, truncate_cast(int, (size_t)(pShellConstName - p)));
 
             // If found...
             if (idxConst >= 0)
@@ -857,6 +857,14 @@ int CEXEBuild::add_db_data(IMMap *mmap) // returns offset
         bufferlen = INT_MAX-st-sizeof(int); //   so maximize compressor room and hope the file compresses well
       db->resize(st + bufferlen + sizeof(int));
 
+#if defined(NSIS_CONFIG_COMPRESSION_SUPPORT) && defined(__GNUC__) && defined(_WIN64) // There is another one of these, remove both when fixed
+  // BUGBUG: zlib is currently broken on 64-bit MinGW
+  if (compressor == &zlib_compressor)
+  {
+    ERROR_MSG(_T("\nError: ZLib is currently broken on this platform!\n"));
+    return -1;
+  }
+#endif
     int n = compressor->Init(build_compress_level, build_compress_dict_size);
     if (n != C_OK)
     {
@@ -1123,8 +1131,7 @@ int CEXEBuild::add_function(const TCHAR *funname)
 
   // ns_func contains all the function names defined.
   int addr=ns_func.add(funname,0);
-  int x;
-  int n=cur_functions->getlen()/sizeof(section);
+  int n=cur_functions->getlen()/sizeof(section), x;
   section *tmp=(section*)cur_functions->get();
   for (x = 0; x < n; x ++)
   {
@@ -2566,6 +2573,15 @@ int CEXEBuild::write_output(void)
 
   RET_UNLESS_OK( check_write_output_errors() );
 
+#if defined(NSIS_CONFIG_COMPRESSION_SUPPORT) && defined(__GNUC__) && defined(_WIN64) // There is another one of these, remove both when fixed
+  // BUGBUG: zlib is currently broken on 64-bit MinGW
+  if (compressor == &zlib_compressor)
+  {
+    ERROR_MSG(_T("\nError: ZLib is currently broken on this platform!\n"));
+    return PS_ERROR;
+  }
+#endif
+
   has_called_write_output=true;
 
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
@@ -3198,7 +3214,7 @@ int CEXEBuild::uninstall_generate()
           compressor->Compress(0);
           if (compressor->GetNextOut() - obuf > 0)
           {
-            udata.add(obuf, BUGBUG64TRUNCATE(int, compressor->GetNextOut() - obuf));
+            udata.add(obuf, truncate_cast(int, (size_t)(compressor->GetNextOut() - obuf)));
           }
         }
 
@@ -3215,7 +3231,7 @@ int CEXEBuild::uninstall_generate()
             compressor->SetNextOut(obuf, sizeof(obuf));
             compressor->Compress(0);
             if (compressor->GetNextOut() - obuf > 0)
-              udata.add(obuf, BUGBUG64TRUNCATE(int, compressor->GetNextOut() - obuf));
+              udata.add(obuf, truncate_cast(int, (size_t)(compressor->GetNextOut() - obuf)));
           }
 
           ubuild_datablock.release();
@@ -3229,7 +3245,7 @@ int CEXEBuild::uninstall_generate()
           compressor->SetNextOut(obuf, sizeof(obuf));
           compressor->Compress(C_FINISH);
           if (compressor->GetNextOut() - obuf > 0)
-            udata.add(obuf, BUGBUG64TRUNCATE(int, compressor->GetNextOut() - obuf));
+            udata.add(obuf, truncate_cast(int, (size_t)(compressor->GetNextOut() - obuf)));
           else break;
         }
         compressor->End();

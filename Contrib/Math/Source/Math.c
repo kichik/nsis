@@ -11,6 +11,8 @@ extern "C" int _fltused;
 int _fltused = 1;
 #endif
 
+#define EIPtrToInt(pEI) ( (int) (INT_PTR) (pEI) ) // Make GCC (64-bit) happy. BUGBUG64: Somebody should verify that this truncation is OK
+
 ExpressionItem *stack;
 
 int UserVarsCount, UserFuncsCount;
@@ -28,8 +30,8 @@ void PlaceNewItem(TCHAR *&vb, ParseInfo *pi, int precedence)
     PlaceVariable(vb, pi);
     if (pi->item == NULL) return;
 
-    while ((pi->OpsStack) && ((((int) pi->OpsStack->param2) < precedence)
-        || ((((int)pi->OpsStack->param2) == precedence)
+    while ((pi->OpsStack) && (((EIPtrToInt(pi->OpsStack->param2)) < precedence)
+        || (((EIPtrToInt(pi->OpsStack->param2)) == precedence)
             && (precedence != OPERATOR_SET_PRECEDENCE))))
     {
         // second operand for our operator
@@ -300,7 +302,7 @@ void PlaceOp(TCHAR *&vb, int type, int precedence, ParseInfo *pi)
         // uniary pre op
         ExpressionItem *item = AllocItem();
         item->type = type;
-        item->param2 = (EIPARAM) precedence;
+        item->param2 = (EIPARAM) (INT_PTR) precedence;
         item->next = pi->OpsStack;
         pi->OpsStack = item;
     }
@@ -323,7 +325,7 @@ void PlaceOp(TCHAR *&vb, int type, int precedence, ParseInfo *pi)
         } else
         {
             // binary operator
-            item->param2 = (EIPARAM) precedence;
+            item->param2 = (EIPARAM) (INT_PTR) precedence;
             item->next = pi->OpsStack;
             pi->OpsStack = item;
         }
@@ -857,7 +859,7 @@ void SaveResult(ExpressionItem *var, ExpressionItem *result)
         break;
     case ITV_ARRITEM:
         {
-            ExpressionItem *&ei = ((ArrayDesc*)(var->param1))->array[(int)var->param2];
+            ExpressionItem *&ei = ((ArrayDesc*)(var->param1))->array[(UINT_PTR)(var->param2)];
             CleanupItems(ei);
             ei = CopyItem(result);
         }
@@ -880,9 +882,9 @@ void SaveResult(ExpressionItem *var, ExpressionItem *result)
     }
 }
 
-void RunAndGetConst(int from, ExpressionItem* &result, int type)
+void RunAndGetConst(ExpressionItem* from, ExpressionItem* &result, int type)
 {
-    RunTree(*((ExpressionItem**)&(from)), result, type | RTO_NEEDCONST);
+    RunTree(from, result, type | RTO_NEEDCONST);
     ItemToType(result, type);
 }
 
@@ -930,7 +932,7 @@ void RunTree(ExpressionItem *from, ExpressionItem* &result, int options)
                 case ITV_ARRITEM:
                     {
                         // array item
-                        ExpressionItem *ei = ((ArrayDesc*)(item->param1))->array[(int)item->param2];
+                        ExpressionItem *ei = ((ArrayDesc*)(item->param1))->array[(UINT_PTR)(item->param2)];
                         if (ei)
                             result = CopyItem(ei);
                         else
@@ -1115,7 +1117,7 @@ void RunTree(ExpressionItem *from, ExpressionItem* &result, int options)
                         int ir = -666;
                         TCHAR *i1 = (item1)?((TCHAR*)item1->param1):(NULL);
                         TCHAR *i2 = (item2)?((TCHAR*)item2->param1):(NULL);
-                       	int sc = (i1 && i2)?(lstrcmp(i1, i2)):((i1)?(1):((i2)?(-1):(0)));
+                        int sc = (i1 && i2)?(lstrcmp(i1, i2)):((i1)?(1):((i2)?(-1):(0)));
 
                     switch (subtype)
                     {
@@ -1176,7 +1178,7 @@ void RunTree(ExpressionItem *from, ExpressionItem* &result, int options)
                 }
                 while (true)
                 {
-                    RunAndGetConst((int) ifbr, result, ITC_INT);
+                    RunAndGetConst((ifbr), result, ITC_INT);
                     if (ifmode)
                     {
                         // we need then or else branch?
@@ -1260,20 +1262,21 @@ void RunTree(ExpressionItem *from, ExpressionItem* &result, int options)
                 CleanupItems(si); CleanupItems(var);
             } else if (subtype == ITF_TYPE)
             {
-                int newtype = (int) MathFunctions[ioptions].fptr;
+                INT_PTR newtype = (INT_PTR) MathFunctions[ioptions].fptr;
                 if (newtype < ITC_UNKNOWN)
                 {
                     // get as possibly close to ready expression
-                    RunAndGetConst((int)item->param1, result, newtype);
+                    int truncatednewtype = (int) newtype; // BUGBUG64: Make sure this is safe for 64-bit, meaning, can newtype be < INT_MIN?
+                    RunAndGetConst((item->param1), result, truncatednewtype);
                     if (ioptions == ITFT_CARRAY_ID)
                         CopyArray(result);
                 } else if (newtype == FTT_FLOATF)
                 {
                     // float format function
                     ExpressionItem *arg1, *arg2;
-                    RunAndGetConst((int)item->param1, arg1, ITC_FLOAT);
+                    RunAndGetConst((item->param1), arg1, ITC_FLOAT);
                     double value = *((double*)&(arg1->param1));
-                    RunAndGetConst((int)item->param2, arg2, ITC_INT);
+                    RunAndGetConst((item->param2), arg2, ITC_INT);
                     int format = (int) *((__int64*)&(arg2->param1));
 
                     result = AllocItem();
@@ -1331,7 +1334,7 @@ void RunTree(ExpressionItem *from, ExpressionItem* &result, int options)
             } else
             {
                 // oops :-o function call :)
-                RunAndGetConst((int)item->param1, result, ITC_FLOAT);
+                RunAndGetConst((item->param1), result, ITC_FLOAT);
                 double &value = *((double*)&(result->param1));
                 if (subtype == ITF_MATH1)
                 {
@@ -1365,7 +1368,7 @@ void RunTree(ExpressionItem *from, ExpressionItem* &result, int options)
                     {
                         // normal 2-arg math function
                         ExpressionItem *arg2;
-                        RunAndGetConst((int)item->param2, arg2, ITC_FLOAT);
+                        RunAndGetConst((item->param2), arg2, ITC_FLOAT);
                         double value2 = *((double*)&(arg2->param1));
                         value = ((Math2FuncPtr)(MathFunctions[ioptions].fptr))(value, value2);
                         CleanupItems(arg2);
@@ -1388,7 +1391,7 @@ void RunTree(ExpressionItem *from, ExpressionItem* &result, int options)
                     if ((*((ExpressionItem **) &(item->param2)))->type != IT_EXPRESSION)
                     {
                         // one index - user need a char
-                        RunAndGetConst((int)item->param2, index, ITC_INT);
+                        RunAndGetConst((item->param2), index, ITC_INT);
 
                         int pos = (int) *((__int64*)&(index->param1));
                         if (pos < 0) pos += len; // -index - means from end
@@ -1408,7 +1411,7 @@ void RunTree(ExpressionItem *from, ExpressionItem* &result, int options)
                         if ((*((ExpressionItem **) &(item->param2)))->param1 == 0)
                             index = AllocItem();
                         else
-                            RunAndGetConst((int)(*((ExpressionItem **) &(item->param2)))->param1, index, ITC_INT);
+                            RunAndGetConst(((*((ExpressionItem **) &(item->param2)))->param1), index, ITC_INT);
                         if ((*((ExpressionItem **) &(item->param2)))->next->param1 == 0)
                         {
                             // if second index is skipped -> -1 (till last char)
@@ -1416,7 +1419,7 @@ void RunTree(ExpressionItem *from, ExpressionItem* &result, int options)
                             *((__int64*)&(index2->param1)) = -1;
                         }
                         else
-                            RunAndGetConst((int)(*((ExpressionItem **) &(item->param2)))->next->param1, index2, ITC_INT);
+                            RunAndGetConst(((*((ExpressionItem **) &(item->param2)))->next->param1), index2, ITC_INT);
 
                         // ok, we've got two indexes
                         int pos1 = (int) *((__int64*)&(index->param1));
@@ -1445,16 +1448,16 @@ void RunTree(ExpressionItem *from, ExpressionItem* &result, int options)
                 } else
                 {
                     // argument is array
-                    RunAndGetConst((int)item->param2, index, ITC_INT);
+                    RunAndGetConst((item->param2), index, ITC_INT);
 
                     // convert array pointer to array item pointer
                     aritem->type = IT_VARIABLE | ITV_ARRITEM;
                     aritem->param2 = (EIPARAM) *((__int64*)&(index->param1));
 
                     ArrayDesc *ad = (ArrayDesc*)aritem->param1;
-                    if (((int)aritem->param2) >= ad->count)
+                    if ((EIPtrToInt(aritem->param2)) >= ad->count)
                     {
-                        ad->count = ((int)aritem->param2)+1;
+                        ad->count = (EIPtrToInt(aritem->param2))+1;
                         while (ad->count > ad->size)
                         {
                             // resize array

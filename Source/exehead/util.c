@@ -567,7 +567,9 @@ void RenameViaWininit(const TCHAR* prevName, const TCHAR* newName)
  */
 void NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
 {
-  BOOL fOk = 0;
+#ifndef _WIN64 // Shut up GCC unused warning
+  BOOL fOk = FALSE;
+#endif
   typedef BOOL (WINAPI *mfea_t)(LPCTSTR lpExistingFileName,LPCTSTR lpNewFileName,DWORD dwFlags);
   mfea_t mfea;
   #ifdef _WIN64
@@ -577,7 +579,10 @@ void NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
   if (mfea)
   #endif
   {
-    fOk=mfea(pszExisting, pszNew, MOVEFILE_DELAY_UNTIL_REBOOT|MOVEFILE_REPLACE_EXISTING);
+#ifndef _WIN64 // Shut up GCC unused warning
+    fOk=
+#endif
+      mfea(pszExisting, pszNew, MOVEFILE_DELAY_UNTIL_REBOOT|MOVEFILE_REPLACE_EXISTING);
   }
 #ifndef _WIN64
   if (!fOk)

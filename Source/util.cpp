@@ -456,8 +456,8 @@ void create_code_page_string(TCHAR *buf, size_t len, UINT code_page)
   if (!g_nrt_iconv_narrowloc) NSISRT_Initialize(); // For winchar.cpp unit test
   switch(code_page)
   {
-  case CP_ACP:   _sntprintf(buf, len, _T("%") NPRINs, iconv_ACP); return;
-  case CP_OEMCP: _sntprintf(buf, len, _T("%") NPRINs, iconv_OEM); return;
+  case CP_ACP:   _sntprintf(buf, len, _T("%") NPRIns, iconv_ACP); return;
+  case CP_OEMCP: _sntprintf(buf, len, _T("%") NPRIns, iconv_OEM); return;
   case CP_UTF8:  _sntprintf(buf, len, _T("UTF-8")); return;
   case 1200: // UTF16LE
   case 1201: // UTF16BE

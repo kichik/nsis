@@ -15,6 +15,9 @@
 ;# MASM:
 ;# ml64.exe /c Call-amd64.S
 ;#
+;# Notes:
+;# * MASM does not accept 0x* constants and GAS does not accept *h constants in Intel mode, must use decimal!
+;#
 
 ; .if 0
 ;# MASM
@@ -34,6 +37,7 @@ IF 0
 ; .else
 ;# GNU
 .intel_syntax noprefix
+.set __GNU__,1
 
 #define IFDEF .ifdef
 #define ELSE  .else
@@ -44,6 +48,15 @@ IF 0
 
 #define END          .end
 #define EXTERN       .extern
+
+.macro FUNC_DECL name
+.global \name
+.func   \name
+\name:
+.endm
+.macro FUNC_END name
+.endfunc
+.endm
 
 ;# ~GNU
 ENDIF
@@ -68,14 +81,18 @@ SECTION_CODE
 
 
 FUNC_DECL CallProc2 ;# rcx=SystemProc* edx=ParamCount
-  mov [rsp+8h], r12
-  mov [rsp+10h], r13
-  mov [rsp+18h], r14
-  ;#mov [rsp+20h], r15
+  mov [rsp+8], r12
+  mov [rsp+16], r13
+  mov [rsp+24], r14
+  ;#mov [rsp+32], r15
 
   ;# The stack is unaligned on function entry. We have to calculate the required 
   ;# stack size for our parameters + maybe 8 padding bytes to end up 16 byte aligned.
+IFDEF __GNU__
+#define pSystemProc r14
+ELSE
   pSystemProc equ r14
+ENDIF
   mov pSystemProc, rcx ;# Save SystemProc*
   ;# Not required since we zero-extend eax: xor rax, rax
   mov r13d, edx ;# Save ParamCount
@@ -84,9 +101,9 @@ FUNC_DECL CallProc2 ;# rcx=SystemProc* edx=ParamCount
   jnz noparamalignpadding
   lea eax, [eax+8] ;# sizeof(params) + 8 will make us 16 byte aligned
 noparamalignpadding:
-  cmp eax, 28h ;# The ABI guarantees shadow space for the 4 register parameters
+  cmp eax, 40 ;# The ABI guarantees shadow space for the 4 register parameters
   ja computedstacksize
-  mov eax, 28h ;# Minimum (4*8) + 8 to align
+  mov eax, 40 ;# Minimum (4*8) + 8 to align
 computedstacksize:
   mov r12d, eax ;# Save stack size (Zero-extended mov)
   sub rsp, r12
@@ -170,10 +187,10 @@ capturegle_done:
   ;# add/lea rsp and pop is valid in the epilog. Unwind might fail on our version?
   add rsp, r12 ;# Restore stack
   ;# Restore nonvolatile registers:
-  mov r12, [rsp+8h]
-  mov r13, [rsp+10h]
-  mov r14, [rsp+18h]
-  ;#mov r15, [rsp+20h]
+  mov r12, [rsp+8]
+  mov r13, [rsp+16]
+  mov r14, [rsp+24]
+  ;#mov r15, [rsp+32]
   ret
 FUNC_END CallProc2
 

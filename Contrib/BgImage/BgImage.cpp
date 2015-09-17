@@ -131,7 +131,7 @@ NSISFunc(SetBg) {
 
     hWndImage = CreateWindowEx(
       WS_EX_TOOLWINDOW,
-      (LPTSTR)(DWORD)atomClass,
+      (LPTSTR)(UINT_PTR)atomClass,
       0,
       WS_CLIPSIBLINGS|WS_POPUP,
       0,
@@ -293,7 +293,7 @@ NSISFunc(AddText) {
   lstrcpy(newImg->szText, szTemp);
 
   popstring(szTemp);
-  newImg->hFont = (HFONT)myatoi(szTemp);
+  newImg->hFont = (HFONT) nsishelper_str_to_ptr(szTemp);
   newImg->cTextColor = GetColor();
   
   GetXY(LPPOINT(&newImg->rPos));

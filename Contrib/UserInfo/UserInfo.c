@@ -71,7 +71,7 @@ TCHAR* GetAccountTypeHelper(BOOL CheckTokenForGroupDeny)
         (CHECKTOKENMEMBERSHIP) GetProcAddress(
           GetModuleHandle(_T("ADVAPI32")), "CheckTokenMembership");
       #else
-        _CheckTokenMembership = CheckTokenMembership;
+        CheckTokenMembership;
       #endif
     
     // Use "old school" membership check?

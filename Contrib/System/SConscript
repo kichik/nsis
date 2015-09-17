@@ -29,34 +29,30 @@ Import('BuildPlugin env')
 defs = ['SYSTEM_EXPORTS']
 msvc = 'msvc' in env['TOOLS'] or 'mstoolkit' in env['TOOLS']
 
-if env['TARGET_ARCH'] != 'amd64' or msvc: # BUGBUG: Call-amd64.S is missing GAS macros
-	srcsuff = ''
-	if env['TARGET_ARCH'] != 'x86':
-		srcsuff = '-' + env['TARGET_ARCH']
-		defs += ['SYSTEM_NOCALLBACKS'] # BUGBUG: Remove this when CallBack() is implemented
-		if msvc: # BUGBUG: Remove this when GAS is fixed
-			defs += ['SYSTEM_PARTIALCALLSUPPORT']
-	filename = 'Call' + srcsuff
+srcsuff = ''
+if env['TARGET_ARCH'] != 'x86':
+	srcsuff = '-' + env['TARGET_ARCH']
+	defs += ['SYSTEM_NOCALLBACKS'] # BUGBUG: Remove this when CallBack() is implemented
+	defs += ['SYSTEM_PARTIALCALLSUPPORT']
+filename = 'Call' + srcsuff
 
-	src_ascpp = """
-		#if 0 /* a C style comment */
-		ERROR: assembler-with-cpp required!
-		#else
-		.end
-		#endif
-	"""
-	conf = env.Configure()
-	if conf.TryCompile('END', '.S'):
-		files += ['Source/'+filename+'.S']
-	elif (not msvc) and conf.TryCompile(src_ascpp, '.S'):
-		files += ['Source/'+filename+'CPP.S']
-	elif (not msvc) and conf.TryCompile(src_ascpp, '.sx'):
-		files += ['Source/'+filename+'CPP.sx']
-	else:
-		print 'WARNING: System.dll: unable to find assembler for '+filename+'.S'
-	conf.Finish()
+src_ascpp = """
+	#if 0 /* a C style comment */
+	ERROR: assembler-with-cpp required!
+	#else
+	.end
+	#endif
+"""
+conf = env.Configure()
+if conf.TryCompile('END', '.S'):
+	files += ['Source/'+filename+'.S']
+elif (not msvc) and conf.TryCompile(src_ascpp, '.S'):
+	files += ['Source/'+filename+'CPP.S']
+elif (not msvc) and conf.TryCompile(src_ascpp, '.sx'):
+	files += ['Source/'+filename+'CPP.sx']
 else:
-	print 'WARNING: System.dll: missing Win64 code, dynamic function calls not supported'
+	print 'WARNING: System.dll: unable to find assembler for '+filename+'.S'
+conf.Finish()
 
 BuildPlugin(
 	target,

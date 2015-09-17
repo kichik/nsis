@@ -33,7 +33,7 @@ static COLORREF GetLinkColor()
 
 struct nsControl* NSDFUNC GetControl(HWND hwCtl)
 {
-  unsigned id = (unsigned) GetProp(hwCtl, NSCONTROL_ID_PROP);
+  unsigned id = (unsigned)(UINT_PTR) GetProp(hwCtl, NSCONTROL_ID_PROP);
 
   if (id == 0 || id > g_dialog.controlCount)
   {

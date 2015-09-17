@@ -336,7 +336,7 @@ defenv['DISTSUFFIX'] = ''
 if defenv['TARGET_ARCH'] == 'amd64':
 	defenv['DISTSUFFIX'] += '-amd64'
 if defenv.has_key('CODESIGNER'):
-	defenv['DISTSUFFIX'] = '-signed'
+	defenv['DISTSUFFIX'] += '-signed'
 
 defenv.Execute(Delete('$ZIPDISTDIR'))
 defenv.Execute(Delete('$INSTDISTDIR'))
@@ -448,7 +448,7 @@ def DistributeExtras(env, target, examples, docs):
 ######################################################################
 
 if defenv['MSTOOLKIT']:
-	if ARGUMENTS.get('MSVC_USE_SCRIPT', ''):
+	if GetOptionOrEnv('MSVC_USE_SCRIPT', '!') != '!':
 		defenv['MSVC_USE_SCRIPT'] = ARGUMENTS.get('MSVC_USE_SCRIPT')
 	defenv.Tool('mstoolkit', toolpath = [Dir('SCons/Tools').rdir()])
 

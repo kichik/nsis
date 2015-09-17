@@ -55,12 +55,13 @@ protected:
 
 class growbuf_writer_sink : public writer_sink {
 public:
-  growbuf_writer_sink(IGrowBuf *buf, bool build_unicode) : m_buf(buf) { m_build_unicode=build_unicode; }
+  typedef IGrowBuf sink_type;
+  growbuf_writer_sink(sink_type *buf, bool build_unicode) : m_buf(buf) { m_build_unicode=build_unicode; }
 
   virtual void write_data(const void *data, const size_t size);
 
 private:
-  IGrowBuf *m_buf;
+  sink_type *m_buf;
 
 };
 

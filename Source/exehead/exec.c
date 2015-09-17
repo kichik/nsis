@@ -189,10 +189,10 @@ static LONG NSISCALL myRegDeleteKeyEx(HKEY thiskey, LPCTSTR lpSubKey, int onlyif
 static HKEY NSISCALL GetRegRootKey(int hRootKey)
 {
   if (hRootKey)
-    return (HKEY) hRootKey;
+    return (HKEY) (UINT_PTR) hRootKey;
 
   // HKEY_LOCAL_MACHINE - HKEY_CURRENT_USER == 1
-  return (HKEY) ((int) HKEY_CURRENT_USER + g_exec_flags.all_user_var);
+  return (HKEY) ((UINT_PTR) HKEY_CURRENT_USER + g_exec_flags.all_user_var);
 }
 
 static HKEY NSISCALL myRegOpenKey(REGSAM samDesired)
@@ -870,7 +870,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         TCHAR *buf2=GetStringFromParm(0x22);
         GetStringFromParm(0x15); // For update_status_text_buf1
         update_status_text_buf1(LANG_EXECSHELL);
-        x=(int)ShellExecute(g_hwnd,buf0[0]?buf0:NULL,buf3,buf2[0]?buf2:NULL,state_output_directory,parm3);
+        x=(int)(INT_PTR)ShellExecute(g_hwnd,buf0[0]?buf0:NULL,buf3,buf2[0]?buf2:NULL,state_output_directory,parm3);
         if (x < 33)
         {
           log_printf5(_T("ExecShell: warning: error (\"%s\": file:\"%s\" params:\"%s\")=%d"),buf0,buf3,buf2,x);

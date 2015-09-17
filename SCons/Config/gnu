@@ -4,7 +4,17 @@ Import('defenv')
 
 ### imports
 
-Import('FlagsConfigure')
+Import('FlagsConfigure GetOptionOrEnv')
+
+### HACKS!
+if GetOptionOrEnv('NSIS_SCONS_GNU_ENVPATHHACK'):
+	import os
+	defenv['ENV']['PATH'] = os.getenv('PATH') # Major hack!
+	import_env = ['SystemDrive', 'SystemRoot', 'TEMP', 'TMP', 'PATHEXT']
+	for var in import_env: 
+		if var in os.environ:
+			defenv['ENV'][var] = os.environ.get(var, '')
+	#print defenv.Dump()
 
 ### cross compiling
 
@@ -15,10 +25,11 @@ def cross_env(env):
 ### flags
 
 def entry(x,u):
-	if x == 'NSISWinMainNOCRT':
-		x = '_' + x
-	elif x == 'DllMain':
-		x = '_DllMain@12'
+	if defenv['TARGET_ARCH'] == 'x86':
+		if x == 'NSISWinMainNOCRT':
+			x = '_' + x
+		elif x == 'DllMain':
+			x = '_DllMain@12'
 	return '-Wl,-e%s' % x
 
 defenv['ENTRY_FLAG'] = entry
@@ -203,6 +214,12 @@ conf.Finish()
 # sure the sections will be written in the correct order.
 #
 
+if defenv['TARGET_ARCH'] == 'amd64':
+	stub_env.Append(LINKFLAGS = ['-B pei-x86-64'])
+	stub_uenv.Append(LINKFLAGS = ['-B pei-x86-64']) 
+else:
+	stub_env.Append(LINKFLAGS = ['--oformat pei-i386'])
+	stub_uenv.Append(LINKFLAGS = ['--oformat pei-i386'])
 stub_env.Append(LINKFLAGS = ['-T', File('linker_script').rfile()])
 stub_uenv.Append(LINKFLAGS = ['-T', File('linker_script').rfile()])
 

@@ -77,7 +77,7 @@ LRESULT CALLBACK BG_WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
         if (header->bg_textcolor != -1)
         {
-          HFONT newFont = CreateFontIndirect((LOGFONT *) header->blocks[NB_BGFONT].offset);
+          HFONT newFont = CreateFontIndirect((LOGFONT*) header->blocks[NB_BGFONT].offset);
           if (newFont)
           {
             HFONT oldFont;

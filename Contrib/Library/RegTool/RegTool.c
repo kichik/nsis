@@ -13,7 +13,7 @@
 void RegFile(TCHAR cmd, TCHAR *file, int x64);
 void RegDll(TCHAR *file);
 void RegTypeLib(TCHAR *file);
-void DeleteFileOnReboot(TCHAR *pszFile);
+BOOL DeleteFileOnReboot(TCHAR *pszFile);
 
 NSIS_ENTRYPOINT_GUINOCRT
 EXTERN_C void NSISWinMainNOCRT()
@@ -367,9 +367,9 @@ void RenameViaWininit(const TCHAR* prevName, const TCHAR* newName)
 }
 #endif
 
-void DeleteFileOnReboot(TCHAR *pszFile)
+BOOL DeleteFileOnReboot(TCHAR *pszFile)
 {
-  BOOL fOk = 0;
+  BOOL fOk = FALSE;
   HMODULE hLib=GetModuleHandle(_T("KERNEL32.dll"));
   if (hLib)
   {
@@ -385,6 +385,8 @@ void DeleteFileOnReboot(TCHAR *pszFile)
   if (!fOk)
   {
     RenameViaWininit(pszFile, NULL);
+    fOk = TRUE; // BUGBUG: We just pretend everything is OK, nobody checks our return value anyway
   }
 #endif
+  return fOk;
 }
