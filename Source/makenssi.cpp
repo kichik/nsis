@@ -118,8 +118,11 @@ static void init_signals(HWND notify_hwnd)
 #ifdef _WIN32
   DWORD id;
   HANDLE hThread = CreateThread(NULL, 0, sigint_event_msg_handler, (LPVOID)notify_hwnd, 0, &id);
-  SetThreadPriority(hThread, THREAD_PRIORITY_HIGHEST);
-  if (hThread) CloseHandle(hThread);
+  if (hThread)
+  {
+    SetThreadPriority(hThread, THREAD_PRIORITY_HIGHEST);
+    CloseHandle(hThread);
+  }
 #endif
 }
 
@@ -326,7 +329,7 @@ static inline int makensismain(int argc, TCHAR **argv)
     {
       initialparsefail=!HasReqParam(argv,++argpos,argc,true);
       if (initialparsefail) break;
-      hostnotifyhandle=(HWND)_ttol(argv[argpos]);
+      hostnotifyhandle=(HWND)(INT_PTR) _ttol(argv[argpos]); // MSDN says we should sign extend HWNDs: msdn.microsoft.com/en-us/library/aa384203
 #ifdef _WIN32
       if (!IsWindow(hostnotifyhandle)) hostnotifyhandle=0;
 #endif
@@ -394,7 +397,7 @@ static inline int makensismain(int argc, TCHAR **argv)
     // The host can override the output format if they want to
     LPARAM lp=MAKELONG(outputenc.GetCodepage(),outputbom);
     LRESULT mr=SendMessage(hostnotifyhandle,MakensisAPI::QUERYHOST,MakensisAPI::QH_OUTPUTCHARSET,lp);
-    if (mr) outputenc.SetCodepage((WORD)--mr), outputbom = -1;
+    if (mr) outputenc.SetCodepage((WORD)(--mr)), outputbom = -1;
   }
 
   if (!WinStdIO_OStreamInit(g_osdata_stdout,g_output,outputenc.GetCodepage(),outputbom))

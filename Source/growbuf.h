@@ -26,6 +26,7 @@
 class IGrowBuf
 {
   public:
+    typedef int size_type; // Hopefully we can change this at some point
     virtual ~IGrowBuf() {}
 
     /**
@@ -34,19 +35,19 @@ class IGrowBuf
      * @param len Size of the data in bytes.
      * @return the previous logical size in bytes before the addition.
      */
-    virtual int add(const void *data, int len)=0;
+    virtual size_type add(const void *data, size_type len)=0;
 
     /**
      * Resizes the buffer to hold the number of bytes specified.
      * @param newlen the desired logical size of the buffer.
      */
-    virtual void resize(int newlen)=0;
+    virtual void resize(size_type newlen)=0;
 
     /**
      * Get the length of the logical buffer in bytes.
      * @return the length in bytes
      */
-    virtual int getlen() const=0;
+    virtual size_type getlen() const=0;
 
     /**
      * Get the buffer itself.
@@ -72,7 +73,7 @@ class GrowBuf : public IGrowBuf
      * Set whether to zero out buffer
      * @param zero A boolean value.
      */
-    void set_zeroing(int zero);
+    void set_zeroing(bool zero);
 
     /**
      * Add data to the buffer.
@@ -80,22 +81,21 @@ class GrowBuf : public IGrowBuf
      * @param len Size of the data in bytes.
      * @return the previous logical size in bytes before the addition.
      */
-    int add(const void *data, int len);
+    size_type add(const void *data, size_type len);
 
     /**
      * Resizes the buffer to hold the number of bytes specified.
+     * Setting the newlen to 0 will cause the buffer to be at most
+     * 2*m_bs bytes long.  (It will free the buffer if > 2*m_bs.)
      * @param newlen the desired logical size of the buffer.
      */
-    void resize(int newlen);
+    void resize(size_type newlen);
 
     /**
      * Get the length of the logical buffer in bytes.
-     * Setting the newlen to 0 will cause the buffer to be at most
-     * 2*m_bs bytes long.  (It will free the buffer if > 2*m_bs.)
-     *
      * @return the length in bytes
      */
-    int getlen() const;
+    size_type getlen() const;
 
     /**
      * Get the buffer itself.
@@ -107,12 +107,12 @@ class GrowBuf : public IGrowBuf
 
   private:
     void *m_s;    /* the storage buffer */
-    int m_alloc;  /* allocated bytes */
-    int m_used;   /* how many bytes of the buffer is used? */
-    int m_zero;   /* should storage be zeroed out? */
+    size_type m_alloc;  /* allocated bytes */
+    size_type m_used;   /* how many bytes of the buffer is used? */
+    bool m_zero;   /* should storage be zeroed out? */
 
   protected:
-    int m_bs;     // byte-size to grow by
+    unsigned short m_bs;     // byte-size to grow by
 };
 
 /**

@@ -140,7 +140,7 @@ int WinStdIO_wprintf(const wchar_t*Fmt, ...);
 #define _vftprintf WinStdIO_vfwprintf
 #endif // ~MAKENSIS
 #else
-int RunChildProcessRedirected(LPCWSTR cmd);
+int RunChildProcessRedirected(LPCSTR cmd);
 #endif // ~_UNICODE
 #define ResetPrintColor() FlushOutputAndResetPrintColor() // For reset ONLY, use PrintColorFmtMsg(0,NULL ...
 #define SetPrintColorWARN() PrintColorFmtMsg(1|0x10, NULL, (va_list)NULL)
@@ -274,10 +274,28 @@ FILE* my_fopen(const TCHAR *path, const char *mode);
 
 // round a value up to be a multiple of 512
 // assumption: T is an int type
-template <class T>
-inline T align_to_512(const T x) {
-  return (x+511) & ~511;
+template <class T> inline T align_to_512(const T x) { return (x+511) & ~511; }
+
+// some values need to be truncated from size_t to [unsigned] int, using this function is better than a plain cast
+template<class R, class T> inline R internaltruncate_cast(T t) {
+  assert((~((T)0)) > T(0)); // Only unsigned types supported right now
+  if (sizeof(T) > sizeof(R)) assert(t <= (T)(~((R)0))); // BUGBUG: What if R is a signed type?
+  return (R) t;
 }
+template<class R, class T> inline R debugtruncate_cast(T t,const char*f,unsigned int l) { 
+#ifdef MAKENSIS
+  if (sizeof(T) > sizeof(R) && !( (t <= (T)(~((R)0))) )) {
+    _tprintf(_T("unsafe truncate_cast: %") NPRIns _T(":%u\n"),f,l);
+    if (sizeof(T) <= sizeof(void*)) _tprintf(_T("\t0x%p > %0xp\n"),(void*)(UINT_PTR)(t),(void*)(UINT_PTR)(~((R)0)));
+  }
+#endif
+  return internaltruncate_cast<R>(t);
+}
+#if defined(DEBUG) || defined(_WIN64) // Always enabled for experimental 64-bit builds
+#define truncate_cast(ret_t,input) debugtruncate_cast<ret_t>((input),__FILE__,__LINE__)
+#else
+#define truncate_cast(ret_t,input) internaltruncate_cast<ret_t>((input))
+#endif
 
 // ================
 // ResourceManagers

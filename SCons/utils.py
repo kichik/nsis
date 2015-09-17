@@ -118,4 +118,17 @@ def FlagsConfigure(env):
 	"""
 	return env.Configure(custom_tests = { 'CheckCompileFlag' : check_compile_flag, 'CheckLinkFlag': check_link_flag })
 
-Export('AddAvailableLibs AddZLib FlagsConfigure GetAvailableLibs')
+def GetOptionOrEnv(name, defval = None):
+	"""
+	Get option set on scons command line or in os.environ
+	"""
+	import os
+	#if optenv and optenv.has_key(name):
+	#	return optenv[name]
+	if ARGUMENTS.has_key(name):
+		return ARGUMENTS[name]
+	if os.environ.has_key(name):
+		return os.environ[name]
+	return defval
+
+Export('AddAvailableLibs AddZLib FlagsConfigure GetAvailableLibs GetOptionOrEnv')

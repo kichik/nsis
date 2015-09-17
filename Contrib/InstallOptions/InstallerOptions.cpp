@@ -564,7 +564,7 @@ int WINAPI ReadSettings(void) {
     pField->nMaxLength = myGetProfileInt(_T("MaxLen"), 0);
 
     // Text color for LINK control, default is the system default link color
-    pField->hImage = (HANDLE)myGetProfileInt(_T("TxtColor"), GetLinkColor());
+    pField->hImage = (HANDLE)(UINT_PTR) myGetProfileInt(_T("TxtColor"), GetLinkColor());
 
     pField->nControlID = 1200 + nIdx;
     if (pField->nType == FIELD_FILEREQUEST || pField->nType == FIELD_DIRREQUEST)
@@ -788,7 +788,7 @@ INT_PTR CALLBACK cfgDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPara
       {
         // Get TxtColor unless the user has set another using SetCtlColors
         if (!GetWindowLongPtr(lpdis->hwndItem, GWLP_USERDATA))
-          SetTextColor(lpdis->hDC, (COLORREF) pField->hImage);
+          SetTextColor(lpdis->hDC, (COLORREF)(INT_PTR) pField->hImage);
 
         // Draw the text
         DrawText(lpdis->hDC, pField->pszText, -1, &rc, DT_CENTER | DT_VCENTER | DT_WORDBREAK | (bRTL ? DT_RTLREADING : 0));
@@ -1212,7 +1212,7 @@ int WINAPI createCfgDlg()
       rect.right - rect.left,
       rect.bottom - rect.top,
       hConfigWindow,
-      (HMENU)pField->nControlID,
+      (HMENU)(UINT_PTR) pField->nControlID,
       m_hInstance,
       NULL
     );

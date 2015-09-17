@@ -290,7 +290,7 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
     if (header->install_reg_key_ptr)
     {
       myRegGetStr(
-        (HKEY)header->install_reg_rootkey,
+        (HKEY)(UINT_PTR)header->install_reg_rootkey,
         GetNSISStringNP(header->install_reg_key_ptr),
         GetNSISStringNP(header->install_reg_value_ptr),
         ps_tmpbuf,

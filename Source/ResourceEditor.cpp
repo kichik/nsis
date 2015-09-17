@@ -849,7 +849,7 @@ void CResourceDirectory::RemoveEntry(int i) {
 }
 
 unsigned int CResourceDirectory::CountEntries() {
-  return BUGBUG64TRUNCATE(unsigned int,m_vEntries.size());
+  return truncate_cast(unsigned int,m_vEntries.size());
 }
 
 // Returns the index of a directory entry with the specified name

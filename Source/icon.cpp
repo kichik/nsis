@@ -228,7 +228,7 @@ static IconPairs get_icon_order(IconGroup icon1, IconGroup icon2)
       FIX_ENDIAN_INT32(sorted_icons1[i].meta.dwRawSize),
       FIX_ENDIAN_INT32(sorted_icons2[i].meta.dwRawSize)
     );
-    pair.size_index = BUGBUG64TRUNCATE(unsigned int,i);
+    pair.size_index = truncate_cast(unsigned int,i);
 
     result.push_back(pair);
   }
@@ -242,7 +242,7 @@ static IconPairs get_icon_order(IconGroup icon1, IconGroup icon2)
       pair.index1 = sorted_icons1[i].index;
       pair.index2 = 0xffff;
       pair.size = FIX_ENDIAN_INT32(sorted_icons1[i].meta.dwRawSize);
-      pair.size_index = BUGBUG64TRUNCATE(unsigned int,i);
+      pair.size_index = truncate_cast(unsigned int,i);
     }
 
     if (i < sorted_icons2.size())
@@ -250,7 +250,7 @@ static IconPairs get_icon_order(IconGroup icon1, IconGroup icon2)
       pair.index2 = sorted_icons2[i].index;
       pair.index1 = 0xffff;
       pair.size = FIX_ENDIAN_INT32(sorted_icons2[i].meta.dwRawSize);
-      pair.size_index = BUGBUG64TRUNCATE(unsigned int,i);
+      pair.size_index = truncate_cast(unsigned int,i);
     }
 
     result.push_back(pair);

@@ -258,7 +258,7 @@ typedef struct
 
 // nsis blocks
 struct block_header {
-  int offset;
+  /*UINT_PTR*/ int offset; // BUGBUG: This should probably be UINT_PTR but that currently crashes :(
   int num;
 };
 
@@ -554,10 +554,10 @@ extern int g_flags;
 extern int g_filehdrsize;
 extern int g_is_uninstaller;
 
-#define g_pages ((page*)g_blocks[NB_PAGES].offset)
-#define g_sections ((section*)g_blocks[NB_SECTIONS].offset)
-#define num_sections (g_blocks[NB_SECTIONS].num)
-#define g_entries ((entry*)g_blocks[NB_ENTRIES].offset)
+#define g_pages ( (page*) g_blocks[NB_PAGES].offset )
+#define g_sections ( (section*) g_blocks[NB_SECTIONS].offset )
+#define num_sections ( g_blocks[NB_SECTIONS].num )
+#define g_entries ( (entry*) g_blocks[NB_ENTRIES].offset )
 #endif
 
 #endif //_FILEFORM_H_

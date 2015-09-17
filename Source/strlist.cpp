@@ -124,7 +124,7 @@ unsigned int ExeHeadStringList::find(const void *ptr, unsigned int cchF, WORD co
 #ifndef NDEBUG
     if (!cbMB)
     {
-      const TCHAR *fmt = _T("Unable to convert%")NPRINs _T(" string \"%")NPRIs _T("\" to codepage %u\n");
+      const TCHAR *fmt = _T("Unable to convert%")NPRIns _T(" string \"%")NPRIs _T("\" to codepage %u\n");
       PrintColorFmtMsg_ERR(fmt,(processed ? " processed" : ""),find,codepage);
     }
 #endif
@@ -160,7 +160,8 @@ unsigned int ExeHeadStringList::find(const void *ptr, unsigned int cchF, WORD co
     else 
       delete[] bufMB;
   }
-  return BUGBUG64TRUNCATE(unsigned int, retval);
+  // -1 is a valid magic return value but we must avoid the truncation check in truncate_cast
+  return retval != (size_t)(-1) ? truncate_cast(unsigned int,retval) : (unsigned int) retval;
 }
 
 int ExeHeadStringList::add(const TCHAR *str, WORD codepage, bool processed)
@@ -203,7 +204,7 @@ int StringList::add(const TCHAR *str, int case_sensitive)
 {
   int a=find(str,case_sensitive);
   if (a >= 0 && case_sensitive!=-1) return a;
-  return m_gr.add(str,BUGBUG64TRUNCATE(int, (_tcslen(str)+1)*sizeof(TCHAR)))/sizeof(TCHAR);
+  return m_gr.add(str,truncate_cast(int,(_tcslen(str)+1)*sizeof(TCHAR)))/sizeof(TCHAR);
 }
 
 // use 2 for case sensitive end-of-string matches too
@@ -233,9 +234,9 @@ int StringList::find(const TCHAR *str, int case_sensitive, int *idx/*=NULL*/) co
         str_slen < offs_slen &&  // check for end of string
         !_tcscmp(s + offs + offs_slen - str_slen,str))
     {
-      return BUGBUG64TRUNCATE(int, offs + offs_slen - str_slen);
+      return truncate_cast(int,offs + offs_slen - str_slen);
     }
-    offs += BUGBUG64TRUNCATE(int, offs_slen + 1);
+    offs += truncate_cast(int,offs_slen + 1);
 
     if (idx) (*idx)++;
   }
@@ -316,7 +317,7 @@ int DefineList::addn(const TCHAR *name, size_t maxvallen, const TCHAR *value)
     extern void quit();
     if (g_display_errors)
     {
-      PrintColorFmtMsg_ERR(_T("\nInternal compiler error #12345: DefineList malloc(%lu) failed.\n"), BUGBUG64TRUNCATE(unsigned long,cbVal));
+      PrintColorFmtMsg_ERR(_T("\nInternal compiler error #12345: DefineList malloc(%lu) failed.\n"), truncate_cast(unsigned long,cbVal));
     }
     quit();
   }

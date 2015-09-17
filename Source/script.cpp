@@ -52,6 +52,8 @@ using namespace std;
 
 #define MAX_INCLUDEDEPTH 10
 
+#define REGROOTKEYTOINT(hk) ( (INT) (((INT_PTR)(hk)) & 0xffffffff) ) // Masking off non-existing top bits to make GCC happy
+
 static UINT read_line_helper(NStreamLineReader&lr, TCHAR*buf, UINT cch)
 {
   // Helper function for reading lines from text files. buf MUST be valid and cch MUST be > 1!
@@ -662,7 +664,7 @@ void CEXEBuild::ps_addtoline(const TCHAR *str, GrowBuf &linedata, StringList &hi
 
     if (t-in > 1) // handle multibyte chars (no escape)
     {
-      linedata.add((void*)in,BUGBUG64TRUNCATE(int,(t-in)*sizeof(TCHAR)));
+      linedata.add((void*)in,truncate_cast(int, (size_t)((t-in)*sizeof(TCHAR))));
       in=t;
       continue;
     }
@@ -1213,7 +1215,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         TCHAR *mbufb=(TCHAR*)m_macros.get();
         const size_t mcb=((mend)-mbeg)*sizeof(TCHAR), mbufcb=m_macros.getlen();
         memmove(mbeg,mend,mbufcb-(((mbeg-mbufb)*sizeof(TCHAR))+mcb));
-        m_macros.resize(BUGBUG64TRUNCATE(int,mbufcb-mcb));
+        m_macros.resize(truncate_cast(int,(size_t)(mbufcb-mcb)));
         SCRIPT_MSG(_T("!macroundef: %") NPRIs _T("\n"),mname);
       }
     return PS_OK;
@@ -2293,7 +2295,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         int k=line.gettoken_enum(1,rootkeys[0]);
         if (k == -1) k=line.gettoken_enum(1,rootkeys[1]);
         if (k == -1) PRINTHELP()
-        build_header.install_reg_rootkey=(INT)rootkey_tab[k];
+        build_header.install_reg_rootkey=REGROOTKEYTOINT(rootkey_tab[k]);
         if (!build_header.install_reg_rootkey) PRINTHELP() // SHCTX is invalid here
         build_header.install_reg_key_ptr = add_string(line.gettoken_str(2),0);
         if (line.gettoken_str(2)[0] == _T('\\'))
@@ -5339,7 +5341,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         int k=line.gettoken_enum(2,rootkeys[0]);
         if (k == -1) k=line.gettoken_enum(2,rootkeys[1]);
         if (ent.offsets[0] == -1 || k == -1) PRINTHELP()
-        ent.offsets[1]=(INT)rootkey_tab[k];
+        ent.offsets[1]=REGROOTKEYTOINT(rootkey_tab[k]);
         ent.offsets[2]=add_string(line.gettoken_str(3));
         ent.offsets[3]=add_string(line.gettoken_str(4));
         if (which_token == TOK_READREGDWORD) ent.offsets[4]=1;
@@ -5371,7 +5373,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (k == -1) k=line.gettoken_enum(a,rootkeys[1]);
         if (k == -1) PRINTHELP()
         ent.which=EW_DELREG;
-        ent.offsets[1]=(INT)rootkey_tab[k];
+        ent.offsets[1]=REGROOTKEYTOINT(rootkey_tab[k]);
         ent.offsets[2]=add_string(line.gettoken_str(a+1));
         ent.offsets[3]=(which_token==TOK_DELETEREGKEY)?0:add_string(line.gettoken_str(a+2));
         if (line.gettoken_str(a+1)[0] == _T('\\'))
@@ -5391,7 +5393,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (k == -1) k=line.gettoken_enum(1,rootkeys[1]);
         if (k == -1) PRINTHELP()
         ent.which=EW_WRITEREG;
-        ent.offsets[0]=(INT)rootkey_tab[k];
+        ent.offsets[0]=REGROOTKEYTOINT(rootkey_tab[k]);
         ent.offsets[1]=add_string(line.gettoken_str(2));
         if (line.gettoken_str(2)[0] == _T('\\'))
           warning_fl(_T("%") NPRIs _T(": registry path name begins with \'\\\', may cause problems"),line.gettoken_str(0));
@@ -5458,7 +5460,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         int k=line.gettoken_enum(2,rootkeys[0]);
         if (k == -1) k=line.gettoken_enum(2,rootkeys[1]);
         if (ent.offsets[0] == -1 || k == -1) PRINTHELP()
-        ent.offsets[1]=(INT)rootkey_tab[k];
+        ent.offsets[1]=REGROOTKEYTOINT(rootkey_tab[k]);
         ent.offsets[2]=add_string(line.gettoken_str(3));
         ent.offsets[3]=add_string(line.gettoken_str(4));
         ent.offsets[4]=which_token == TOK_ENUMREGKEY;

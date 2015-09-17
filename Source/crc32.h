@@ -16,16 +16,17 @@
  * Reviewed for Unicode support by Jim Park -- 08/24/2007
  */
 
-#include "Platform.h"
-
 #ifndef ___CRC32__H___
 #define ___CRC32__H___
+
+#include "Platform.h"
+#include <stddef.h> // size_t
 
 typedef UINT32 crc32_t;
 
 #ifdef __cplusplus
 extern "C"
 #endif
-crc32_t NSISCALL CRC32(crc32_t crc, const unsigned char *buf, unsigned int len);
+crc32_t NSISCALL CRC32(crc32_t crc, const unsigned char *buf, size_t len);
 
 #endif//!___CRC32__H___

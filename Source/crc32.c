@@ -19,10 +19,11 @@
 #include "Platform.h"
 #include "crc32.h"
 #include "exehead/config.h"
+
 #ifdef NSIS_CONFIG_CRC_SUPPORT
 
 // this is based on the (slow,small) CRC32 implementation from zlib.
-crc32_t NSISCALL CRC32(crc32_t crc, const unsigned char *buf, unsigned int len)
+crc32_t NSISCALL CRC32(crc32_t crc, const unsigned char *buf, size_t len)
 {
     static crc32_t crc_table[256];
 

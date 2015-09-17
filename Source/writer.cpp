@@ -96,9 +96,28 @@ void writer_sink::write_growbuf(const IGrowBuf *b)
   write_data(b->get(), b->getlen());
 }
 
+namespace hlp {
+  template<class T> static inline bool issigned() { return T(-1) < T(0); }
+  template<class T> static inline bool issigned(const T&t) { return issigned<T>(); }
+}
+
 void growbuf_writer_sink::write_data(const void *data, const size_t size)
 {
-  m_buf->add(data, BUGBUG64TRUNCATE(int, size));
+  // TODO: Replace all of this with a simple call when GrowBuf is changed to use size_t
+  if (sizeof(size) == sizeof(sink_type::size_type) && hlp::issigned(size) == hlp::issigned<sink_type::size_type>())
+  {
+    m_buf->add(data, truncate_cast(sink_type::size_type, size));
+  }
+  else
+  {
+    size_t left = size;
+    sink_type::size_type cbmaxadd = INT_MAX, cb;
+    for (char *p = (char *) data; left; p += cb, left -= cb)
+    {
+      cb = left >= (size_t) cbmaxadd ? cbmaxadd : (sink_type::size_type) left;
+      m_buf->add(p, cb);
+    }
+  }
 }
 
 void file_writer_sink::write_data(const void *data, const size_t size)
@@ -114,6 +133,6 @@ void file_writer_sink::write_data(const void *data, const size_t size)
 
 void crc_writer_sink::write_data(const void *data, const size_t size)
 {
-  *m_crc = CRC32(*m_crc, (const unsigned char *) data, BUGBUG64TRUNCATE(unsigned int, size));
+  *m_crc = CRC32(*m_crc, (const unsigned char *) data, size);
 }
 #endif

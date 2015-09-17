@@ -276,31 +276,8 @@ PLUGINFUNCTION(Get)
 
 #ifdef _WIN64
 /*
-TODO: CallProc/Back not implemeted.
-Fake the behavior of the System plugin for the LoadImage API function so MUI works.
-BUGBUG: MUI is leaking DeleteObject and failing GetClientRect
+BUGBUG: TODO: CallBack support not implemeted!
 */
-#ifndef SYSTEM_PARTIALCALLSUPPORT
-SystemProc* CallProc(SystemProc *proc)
-{
-    INT_PTR ret, *place;
-    LastError = lstrcmp(proc->ProcName, sizeof(TCHAR) > 1 ? _T("LoadImageW") : _T("LoadImageA"));
-    if (!LastError)
-    {
-        ret = (INT_PTR) LoadImage((HINSTANCE)proc->Params[1].Value,
-          (LPCTSTR)proc->Params[2].Value, (UINT)proc->Params[3].Value,
-          (int)proc->Params[4].Value, (int)proc->Params[5].Value,
-          (UINT)proc->Params[6].Value);
-        LastError = GetLastError();
-    }
-    else
-        proc->ProcResult = PR_ERROR, ret = 0;
-    place = (INT_PTR*) proc->Params[0].Value;
-    if (proc->Params[0].Option != -1) place = (INT_PTR*) &(proc->Params[0].Value);
-    if (place) *place = ret;
-    return proc;
-}
-#endif // ~SYSTEM_PARTIALCALLSUPPORT
 SystemProc* CallBack(SystemProc *proc)
 {
     proc->ProcResult = PR_ERROR;
@@ -461,7 +438,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
     TCHAR *ibuf, *ib, *sbuf, *cbuf, *cb;
     unsigned int UsedTString = 0;
 
-#if defined(__GNUC__) && ((__GNUC__ * 1000) + __GNUC_MINOR__) < 4006
+#ifdef __GNUC__
     temp3 = 0; // "warning: 'temp3' may be used uninitialized in this function": temp3 is set to 0 when we start parsing a new parameter
 #endif
 
@@ -692,14 +669,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
             case _T('0'): case _T('1'): case _T('2'): case _T('3'): case _T('4'):
             case _T('5'): case _T('6'): case _T('7'): case _T('8'): case _T('9'):
                 // Numeric inline
-#if defined(__GNUC__) && ((__GNUC__ * 1000) + __GNUC_MINOR__) >= 4006
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wuninitialized" // temp3 is set to 0 when we start parsing a new parameter
-#endif
                 if (temp3 == 0)
-#if defined(__GNUC__) && ((__GNUC__ * 1000) + __GNUC_MINOR__) >= 4006
-#pragma GCC diagnostic pop
-#endif
                 {
                     ib--;
                     // It's stupid, I know, but I'm too lazy to do another thing
@@ -768,14 +738,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
                 if (temp3 == 1)
                     proc->Params[ParamIndex].Output = (int) temp4; // Note: As long as we never assign a pointer to temp4 when parsing a destination the cast to int is OK.
                 // Next parameter is output or something else
-#if defined(__GNUC__) && ((__GNUC__ * 1000) + __GNUC_MINOR__) >= 4006
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wuninitialized"
-#endif  
                 temp3++;
-#if defined(__GNUC__) && ((__GNUC__ * 1000) + __GNUC_MINOR__) >= 4006
-#pragma GCC diagnostic pop
-#endif
             }
 
             ChangesDone = PCD_DONE;
@@ -1384,7 +1347,7 @@ Returns offset for element Clone of SystemProc structure
 */
 unsigned int GetCloneOffset(void)
 {
-    return (unsigned int)(&(((SystemProc *)0)->Clone));
+    return (unsigned int)(UINT_PTR) (&(((SystemProc *)0)->Clone));
 }
 
 /*
@@ -1392,7 +1355,7 @@ Returns offset for element ProcName of SystemProc structure
 */
 unsigned int GetProcNameOffset(void)
 {
-    return (unsigned int)(&(((SystemProc *)0)->ProcName));
+    return (unsigned int)(UINT_PTR) (&(((SystemProc *)0)->ProcName));
 }
 
 /*
@@ -1400,7 +1363,7 @@ Returns offset for element ArgsSize of SystemProc structure
 */
 unsigned int GetArgsSizeOffset(void)
 {
-    return (unsigned int)(&(((SystemProc *)0)->ArgsSize));
+    return (unsigned int)(UINT_PTR) (&(((SystemProc *)0)->ArgsSize));
 }
 
 /*
@@ -1432,7 +1395,7 @@ Returns offset for element Size of ProcParameter structure
 */
 unsigned int GetSizeOffsetParam(void)
 {
-    return (unsigned int)(&(((ProcParameter *)0)->Size));
+    return (unsigned int)(UINT_PTR) (&(((ProcParameter *)0)->Size));
 }
 
 /*

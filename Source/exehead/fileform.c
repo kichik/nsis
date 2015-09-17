@@ -17,6 +17,10 @@
  */
 
 #include "../Platform.h"
+#if defined(__cplusplus) && defined(truncate_cast)
+#undef BUGBUG64TRUNCATE
+#define BUGBUG64TRUNCATE truncate_cast
+#endif
 #include "fileform.h"
 #include "util.h"
 #include "state.h"
@@ -327,7 +331,13 @@ const TCHAR * NSISCALL loadHeaders(int cl_flags)
   // set offsets to real memory offsets rather than installer's header offset
   left = BLOCKS_NUM;
   while (left--)
-    header->blocks[left].offset += (int)data;
+  {
+#ifdef DEBUG
+    if (h.length_of_header < header->blocks[left].offset)
+      return _LANG_GENERIC_ERROR; // Should never happen
+#endif
+    header->blocks[left].offset += BUGBUG64TRUNCATE(UINT, (UINT_PTR) data);
+  }
 
 #ifdef NSIS_COMPRESS_WHOLE
   header->blocks[NB_DATA].offset = dbd_pos;
@@ -398,7 +408,7 @@ int NSISCALL _dodecomp(int offset, HANDLE hFileOut, unsigned char *outbuf, int o
 
         if (err<0) return -4;
 
-        u=BUGBUG64TRUNCATE(int, (char*)g_inflate_stream.next_out - outbuffer);
+        u=BUGBUG64TRUNCATE(int, (size_t)((char*)g_inflate_stream.next_out - outbuffer));
 
         tc=GetTickCount();
         if (g_exec_flags.status_update & 1 && (tc - ltc > 200 || !input_len))
@@ -501,7 +511,7 @@ static int NSISCALL __ensuredata(int amount)
         {
           return -3;
         }
-        r=(DWORD)g_inflate_stream.next_out-(DWORD)_outbuffer;
+        r=BUGBUG64TRUNCATE(DWORD,(UINT_PTR)g_inflate_stream.next_out)-BUGBUG64TRUNCATE(DWORD,(UINT_PTR)_outbuffer);
         if (r)
         {
           if (!WriteFile(dbd_hFile,_outbuffer,r,&t,NULL) || r != t)

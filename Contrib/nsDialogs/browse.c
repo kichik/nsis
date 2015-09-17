@@ -8,9 +8,7 @@
 
 #include "defs.h"
 
-#ifdef _countof
-#define COUNTOF _countof
-#else
+#ifndef COUNTOF
 #define COUNTOF(a) (sizeof(a)/sizeof(a[0]))
 #endif
 

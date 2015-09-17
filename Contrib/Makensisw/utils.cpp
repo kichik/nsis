@@ -683,8 +683,8 @@ void ShowDocs() {
   path=_tcsrchr(pathf,_T('\\'));
   if(path!=NULL) *path=0;
   lstrcat(pathf,LOCALDOCS);
-  if ((int)ShellExecute(g_sdata.hwnd,_T("open"),pathf,NULL,NULL,SW_SHOWNORMAL)<=32) 
-  ShellExecuteA(g_sdata.hwnd,"open",DOCPATH,NULL,NULL,SW_SHOWNORMAL);
+  if ((int)(INT_PTR) ShellExecute(g_sdata.hwnd,_T("open"),pathf,NULL,NULL,SW_SHOWNORMAL) <= 32) 
+    ShellExecuteA(g_sdata.hwnd,"open",DOCPATH,NULL,NULL,SW_SHOWNORMAL);
 }
 
 TCHAR* BuildSymbols()

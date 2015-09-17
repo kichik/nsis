@@ -1,4 +1,6 @@
-OUTPUT_FORMAT(pei-i386)
+/*
+OUTPUT_FORMAT(pei-i386 VS pei-x86-64) must be set somewhere else
+*/
 SECTIONS
 {
   .text  __image_base__ + __section_alignment__  :

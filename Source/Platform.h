@@ -139,9 +139,7 @@ typedef DWORDLONG ULONGLONG,*PULONGLONG;
 #endif
 #endif
 
-#ifdef _countof
-#define COUNTOF _countof
-#else
+#ifndef COUNTOF
 #define COUNTOF(a) (sizeof(a)/sizeof(a[0]))
 #endif
 
@@ -1020,22 +1018,22 @@ typedef struct tagVS_FIXEDFILEINFO {
 
 /*
 _tprintf on Windows/MSVCRT treats %s as TCHAR* and on POSIX %s is always char*!
-Always use our NPRI* (NsisPRInt[Narrow|Wide]*) defines in format strings when calling 
+Always use our NPRI* (NsisPRInt*[Narrow|Wide]) defines in format strings when calling 
 functions from tchar.h (Similar to the way <inttypes.h> works)
 
 Example: _tprintf(_T("Hello %") NPRIs _T("\n"), _T("World"));
 */
 #ifdef _WIN32
 #  define NPRIs _T("s")
-#  define NPRINs _T("hs")
-#  define NPRIWs _T("ls") // ws also works, not sure which is most compatible
+#  define NPRIns _T("hs")
+#  define NPRIws _T("ls") // ws also works, not sure which is most compatible
 #  ifndef _WIN64
 #    define NPRIp _T(".8x")
-#    define NPRINp ".8x"
+#    define NPRIpN ".8x"
 #  endif
 #else  // !_WIN32
-#  define NPRINs _T("s")
-#  define NPRIWs _T("ls")
+#  define NPRIns _T("s")
+#  define NPRIws _T("ls")
 #  ifdef _UNICODE
 #    define NPRIs _T("ls")
 #  else // !_UNICODE
@@ -1044,7 +1042,7 @@ Example: _tprintf(_T("Hello %") NPRIs _T("\n"), _T("World"));
 #endif // ~_WIN32
 #ifndef NPRIp
 #  define NPRIp _T("p")
-#  define NPRINp "p"
+#  define NPRIpN "p"
 #endif
 
 #endif // EOF
