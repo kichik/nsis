@@ -2,7 +2,7 @@
 
 #include "makensisw.h"
 #include "update.h"
-#include <Wininet.h>
+#include <wininet.h>
 #include "utils.h" // OpenUrlInDefaultBrowser
 
 #define mbtitle "NSIS Update"

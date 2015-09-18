@@ -175,6 +175,11 @@ const TCHAR * NSISCALL loadHeaders(int cl_flags)
 
   HANDLE db_hFile;
 
+#ifdef C_ASSERT
+{C_ASSERT(sizeof(firstheader) == sizeof(int) * 7);}
+{C_ASSERT(sizeof(struct block_header) == sizeof(UINT_PTR) + sizeof(int));}
+#endif
+
 #ifdef NSIS_CONFIG_CRC_SUPPORT
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
   verify_time = GetTickCount() + 1000;
@@ -336,7 +341,7 @@ const TCHAR * NSISCALL loadHeaders(int cl_flags)
     if (h.length_of_header < header->blocks[left].offset)
       return _LANG_GENERIC_ERROR; // Should never happen
 #endif
-    header->blocks[left].offset += BUGBUG64TRUNCATE(UINT, (UINT_PTR) data);
+    header->blocks[left].offset += (UINT_PTR) data;
   }
 
 #ifdef NSIS_COMPRESS_WHOLE
@@ -370,7 +375,12 @@ int NSISCALL _dodecomp(int offset, HANDLE hFileOut, unsigned char *outbuf, int o
 
   if (offset>=0)
   {
-    SetSelfFilePointer(g_blocks[NB_DATA].offset+offset);
+    UINT_PTR datofs=g_blocks[NB_DATA].offset+offset;
+#if (NSIS_MAX_EXESIZE+0) > 0x7fffffff
+#error "SetFilePointer is documented to only support signed 32-bit offsets in lDistanceToMove"
+#endif
+    const int pos=(int)datofs;
+    SetSelfFilePointer(pos);
   }
 
   if (!ReadSelfFile((LPVOID)&input_len,sizeof(int))) return -3;
@@ -542,7 +552,11 @@ int NSISCALL _dodecomp(int offset, HANDLE hFileOut, unsigned char *outbuf, int o
   int retval;
   if (offset>=0)
   {
-    dbd_pos=g_blocks[NB_DATA].offset+offset;
+    UINT_PTR datofs=g_blocks[NB_DATA].offset+offset;
+#if (NSIS_MAX_EXESIZE+0) > 0x7fffffff
+#error "SetFilePointer is documented to only support signed 32-bit offsets in lDistanceToMove"
+#endif
+    dbd_pos=(int)datofs;
     SetFilePointer(dbd_hFile,dbd_pos,NULL,FILE_BEGIN);
   }
   retval=__ensuredata(sizeof(int));

@@ -209,6 +209,8 @@ enum
 #endif
 };
 
+#pragma pack(push, 1) // fileform.cpp assumes no padding/alignment
+
 #define FH_FLAGS_MASK 15
 #define FH_FLAGS_UNINSTALL 1
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
@@ -258,7 +260,11 @@ typedef struct
 
 // nsis blocks
 struct block_header {
-  /*UINT_PTR*/ int offset; // BUGBUG: This should probably be UINT_PTR but that currently crashes :(
+#ifdef MAKENSIS
+  int offset;
+#else
+  UINT_PTR offset; // exehead stores a memory location here so it needs to be pointer sized
+#endif
   int num;
 };
 
@@ -286,7 +292,7 @@ typedef TCHAR NSIS_STRING[NSIS_MAX_STRLEN];
 typedef struct
 {
   int flags; // CH_FLAGS_*
-  struct block_header blocks[BLOCKS_NUM];
+  struct block_header blocks[BLOCKS_NUM]; // CEXEBuild::get_header_size needs to adjust the size of this based on the targets pointer size
 
   // InstallDirRegKey stuff
   int install_reg_rootkey;
@@ -468,7 +474,6 @@ typedef struct
 #define CC_BK_SYS 8
 #define CC_BKB 16
 
-#pragma pack(push, 4)
 typedef struct {
   COLORREF text;
   COLORREF bkc;
@@ -498,7 +503,6 @@ typedef struct {
 #else
 #  define ctlcolors ctlcolors32
 #endif
-#pragma pack(pop)
 
 // constants for myDelete (util.c)
 #define DEL_DIR 1
@@ -524,6 +528,8 @@ typedef struct {
 #define NSIS_INSTDIR_NOT_ENOUGH_SPACE 2
 
 #define FIELDN(x, y) (((int *)&x)[y])
+
+#pragma pack(pop)
 
 #ifdef EXEHEAD
 

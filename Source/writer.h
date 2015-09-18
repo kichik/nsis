@@ -25,9 +25,19 @@
 #include <stdio.h>
 #include "tchar.h"
 
+class writer_target_info {
+public:
+  writer_target_info(bool Unicode = 0, bool Cpu64 = 0) { m_f = (Unicode ? F_U : 0) | (Cpu64 ? F_64 : 0); }
+  bool is_unicode() const { return !!(m_f & F_U); }
+  bool is_64bit() const { return !!(m_f & F_64); }
+protected:
+  enum { F_U = 0x01, F_64 = 0x80 };
+  BYTE m_f;
+};
+
 class writer_sink {
 public:
-  writer_sink() : m_build_unicode(false) {}
+  writer_sink(const writer_target_info&ti) : m_ti(ti) {}
   virtual ~writer_sink() {}
 
   virtual void write_byte(const unsigned char b);
@@ -39,8 +49,9 @@ public:
   virtual void write_growbuf(const IGrowBuf *b);
 
   virtual void write_data(const void *data, const size_t size) = 0;
+  virtual const writer_target_info& get_target_info() const { return m_ti; }
 protected:
-  bool m_build_unicode;
+  writer_target_info m_ti;
 };
 
 class writer {
@@ -56,7 +67,7 @@ protected:
 class growbuf_writer_sink : public writer_sink {
 public:
   typedef IGrowBuf sink_type;
-  growbuf_writer_sink(sink_type *buf, bool build_unicode) : m_buf(buf) { m_build_unicode=build_unicode; }
+  growbuf_writer_sink(sink_type *buf, const writer_target_info&ti) : writer_sink(ti), m_buf(buf) {  }
 
   virtual void write_data(const void *data, const size_t size);
 
@@ -67,7 +78,7 @@ private:
 
 class file_writer_sink : public writer_sink {
 public:
-  file_writer_sink(FILE *fp) : m_fp(fp) {}
+  file_writer_sink(FILE *fp, const writer_target_info&ti) : writer_sink(ti), m_fp(fp) {}
 
   virtual void write_data(const void *data, const size_t size);
 
@@ -79,7 +90,7 @@ private:
 #ifdef NSIS_CONFIG_CRC_SUPPORT
 class crc_writer_sink : public writer_sink {
 public:
-  crc_writer_sink(crc32_t *crc) : m_crc(crc) {}
+  crc_writer_sink(crc32_t *crc) : writer_sink(writer_target_info()), m_crc(crc) {}
 
   virtual void write_data(const void *data, const size_t size);
 
