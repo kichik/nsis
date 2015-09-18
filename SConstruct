@@ -449,7 +449,7 @@ def DistributeExtras(env, target, examples, docs):
 
 if defenv['MSTOOLKIT']:
 	if GetOptionOrEnv('MSVC_USE_SCRIPT', '!') != '!':
-		defenv['MSVC_USE_SCRIPT'] = ARGUMENTS.get('MSVC_USE_SCRIPT')
+		defenv['MSVC_USE_SCRIPT'] = GetOptionOrEnv('MSVC_USE_SCRIPT')
 	defenv.Tool('mstoolkit', toolpath = [Dir('SCons/Tools').rdir()])
 
 defenv.Append(CCFLAGS = Split('$APPEND_CCFLAGS'))

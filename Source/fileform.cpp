@@ -22,9 +22,9 @@
 
 #include <cassert>
 
-// these functions MUST be synchronized with the structures in Source/exehead/fileform.h !
-// data must be written in the same order it's defined in Source/exehead/fileform.h
-// in the future, i hope to get one of the two automtaically generated from the other
+// These functions MUST be synchronized with the structures in Source/exehead/fileform.h !
+// Data must be written in the same order it's defined in Source/exehead/fileform.h
+// In the future, I hope to get one of the two automatically generated from the other
 
 void firstheader_writer::write(const firstheader *data)
 {

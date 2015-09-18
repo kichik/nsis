@@ -33,7 +33,6 @@ srcsuff = ''
 if env['TARGET_ARCH'] != 'x86':
 	srcsuff = '-' + env['TARGET_ARCH']
 	defs += ['SYSTEM_NOCALLBACKS'] # BUGBUG: Remove this when CallBack() is implemented
-	defs += ['SYSTEM_PARTIALCALLSUPPORT']
 filename = 'Call' + srcsuff
 
 src_ascpp = """

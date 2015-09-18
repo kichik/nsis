@@ -6094,29 +6094,29 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     {
       CEXEBuild::TARGETTYPE tt = m_target_type;
       int numtok = line.getnumtokens() - 1;
-      TCHAR *path = line.gettoken_str(numtok);
+      const TCHAR *path = line.gettoken_str(numtok), *cmdnam = get_commandtoken_name(which_token), *arcstr = 0;
       if (2 == numtok)
       {
-        const TCHAR *arcstr = line.gettoken_str(--numtok);
-        tt = get_target_type(arcstr+1);
-        if (_T('/') != arcstr[0] || CEXEBuild::TARGET_UNKNOWN == tt)
+        arcstr = line.gettoken_str(--numtok);
+        if (_T('/') != *arcstr || CEXEBuild::TARGET_UNKNOWN == (tt = get_target_type(++arcstr)))
         {
-          tstring es = get_commandtoken_name(which_token);
-          es += _T(": Target parameter must be one of: /");
+          tstring errstr = cmdnam;
+          errstr += _T(": Target parameter must be one of: /");
           for(int comma = 0, i = CEXEBuild::TARGETFIRST; i < CEXEBuild::TARGETCOUNT; ++i)
           {
             const TCHAR *ts = get_target_suffix((CEXEBuild::TARGETTYPE) i, 0);
             if (!ts) continue;
-            if (comma++) es += _T(", /");
-            es += ts;
+            if (comma++) errstr += _T(", /");
+            errstr += ts;
           }
-          ERROR_MSG(_T("Error: %") NPRIs _T("\n"), es.c_str());
+          ERROR_MSG(_T("Error: %") NPRIs _T("\n"), errstr.c_str());
           return PS_ERROR;
         }
       }
       if (1 == numtok)
       {
-        SCRIPT_MSG(_T("PluginDir: \"%") NPRIs _T("\"\n"),path);
+        const TCHAR *fmtstr = _T("%") NPRIs _T(": \"%") NPRIs _T("\"%") NPRIs _T("%") NPRIs _T("%") NPRIs _T("\n");
+        SCRIPT_MSG(fmtstr, cmdnam, path, arcstr ? _T(" (") : _T(""), arcstr ? arcstr : _T(""), arcstr ? _T(")") : _T(""));
         PATH_CONVERT(path);
         m_plugins[tt].AddPluginsDir(path, !!display_script);
         return PS_OK;

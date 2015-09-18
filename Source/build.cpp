@@ -484,7 +484,7 @@ int CEXEBuild::add_string(const TCHAR *string, int process/*=1*/, UINT codepage/
   {
     codepage = curlinereader ? curlinereader->StreamEncoding().GetCodepage() : CP_UTF8;
     // If the current source file is Unicode we have to pick a real codepage for ANSI!
-    // It might not be the correct codepage but its the best we can do.
+    // It might not be the correct codepage but it's the best we can do.
     // Not using CP_ACP to avoid heisenbugs when compiled on a different system.
     if (NStreamEncoding::IsUnicodeCodepage(codepage)) codepage = 1252;
   }
