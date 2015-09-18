@@ -130,6 +130,7 @@ class CEXEBuild {
     const TCHAR* get_target_suffix(CEXEBuild::TARGETTYPE tt, const TCHAR*defval = _T("?")) const;
     const TCHAR* get_target_suffix() const {return get_target_suffix(m_target_type);}
     bool is_target_64bit() const { return TARGET_AMD64 == m_target_type; }
+    unsigned int get_header_size() const { return (unsigned int)sizeof(header) + (is_target_64bit() ? (4 * BLOCKS_NUM) : 0); }
 
     void set_default_output_filename(const tstring& filename);
 
@@ -436,6 +437,7 @@ class CEXEBuild {
     bool no_space_texts;
     bool build_unicode;// generate installer with unicode exehead?
     bool build_lockedunicodetarget;
+    class writer_target_info mk_writer_target_info();
 
     bool has_called_write_output;
 

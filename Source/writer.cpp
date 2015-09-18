@@ -59,7 +59,7 @@ void writer_sink::write_int_array(const int i[], const size_t len)
 void writer_sink::write_string(const TCHAR *s, size_t size)
 {
 #ifdef _UNICODE
-  if (m_build_unicode)
+  if (m_ti.is_unicode())
   {
     bool strEnd = false;
     TCHAR ch = L'\0';
@@ -83,6 +83,7 @@ void writer_sink::write_string(const TCHAR *s, size_t size)
     delete [] wb;
  }
 #else
+  //TODO: Why does this allocate memory? It could just write the string and a manual zero character?
   char *wb = new char[size];
   memset(wb, 0, size);
   strncpy(wb, s, size);

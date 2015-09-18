@@ -2318,46 +2318,50 @@ void CEXEBuild::AddStandardStrings()
 #endif//NSIS_SUPPORT_MOVEONREBOOT
 }
 
+writer_target_info CEXEBuild::mk_writer_target_info() { return writer_target_info(build_unicode, is_target_64bit()); }
+
 void CEXEBuild::PrepareHeaders(IGrowBuf *hdrbuf)
 {
+  const writer_target_info ti = mk_writer_target_info();
+  const unsigned int cbHdr = get_header_size();
   GrowBuf blocks_buf;
-  growbuf_writer_sink sink(&blocks_buf, build_unicode);
+  growbuf_writer_sink sink(&blocks_buf, ti);
 
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-  cur_header->blocks[NB_PAGES].offset = sizeof(header) + blocks_buf.getlen();
+  cur_header->blocks[NB_PAGES].offset = cbHdr + blocks_buf.getlen();
   page_writer::write_block(cur_pages, &sink);
 #endif
 
-  cur_header->blocks[NB_SECTIONS].offset = sizeof(header) + blocks_buf.getlen();
+  cur_header->blocks[NB_SECTIONS].offset = cbHdr + blocks_buf.getlen();
   section_writer::write_block(cur_sections, &sink);
 
-  cur_header->blocks[NB_ENTRIES].offset = sizeof(header) + blocks_buf.getlen();
+  cur_header->blocks[NB_ENTRIES].offset = cbHdr + blocks_buf.getlen();
   entry_writer::write_block(cur_entries, &sink);
 
-  cur_header->blocks[NB_STRINGS].offset = sizeof(header) + blocks_buf.getlen();
+  cur_header->blocks[NB_STRINGS].offset = cbHdr + blocks_buf.getlen();
   blocks_buf.add(cur_strlist->getstorageptr(), cur_strlist->gettotalsize());
 
-  cur_header->blocks[NB_LANGTABLES].offset = sizeof(header) + blocks_buf.getlen();
+  cur_header->blocks[NB_LANGTABLES].offset = cbHdr + blocks_buf.getlen();
   lang_table_writer::write_block(cur_langtables, &sink, cur_header->langtable_size);
 
-  cur_header->blocks[NB_CTLCOLORS].offset = sizeof(header) + blocks_buf.getlen();
-  ctlcolors_writer::write_block(cur_ctlcolors, &sink, build_unicode, is_target_64bit());
+  cur_header->blocks[NB_CTLCOLORS].offset = cbHdr + blocks_buf.getlen();
+  ctlcolors_writer::write_block(cur_ctlcolors, &sink);
 
 #ifdef NSIS_SUPPORT_BGBG
   if (cur_header->bg_color1 != -1)
   {
     bg_font.lfFaceName[LF_FACESIZE-1] = 0;
 
-    cur_header->blocks[NB_BGFONT].offset = sizeof(header) + blocks_buf.getlen();
+    cur_header->blocks[NB_BGFONT].offset = cbHdr + blocks_buf.getlen();
 
     LOGFONT_writer w(&sink);
     w.write(&bg_font);
   }
 #endif
 
-  growbuf_writer_sink sink2(hdrbuf, build_unicode);
+  growbuf_writer_sink sink2(hdrbuf, ti);
   header_writer header(&sink2);
-  header.write(cur_header);
+  header.write(cur_header, ti);
 
   sink2.write_growbuf(&blocks_buf);
 }
@@ -2731,7 +2735,7 @@ int CEXEBuild::write_output(void)
 
     try
     {
-      file_writer_sink sink(fp);
+      file_writer_sink sink(fp, mk_writer_target_info());
       firstheader_writer w(&sink);
       w.write(&fh);
     }
@@ -2956,7 +2960,7 @@ int CEXEBuild::write_output(void)
 
     try
     {
-      file_writer_sink sink(fp);
+      file_writer_sink sink(fp, mk_writer_target_info());
       firstheader_writer w(&sink);
       w.write(&fh);
     }
@@ -3188,7 +3192,7 @@ int CEXEBuild::uninstall_generate()
     MMapBuf udata;
 
     {
-      growbuf_writer_sink sink(&udata, build_unicode);
+      growbuf_writer_sink sink(&udata, mk_writer_target_info());
       firstheader_writer w(&sink);
       w.write(&fh);
     }

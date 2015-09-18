@@ -199,7 +199,7 @@ static void print_stub_info(CEXEBuild& build)
   if (build.display_info)
   {
     _ftprintf(g_output,_T("Size of first header is %lu bytes.\n"),(unsigned long)sizeof(firstheader));
-    _ftprintf(g_output,_T("Size of main header is %lu bytes.\n"),(unsigned long)sizeof(header));
+    _ftprintf(g_output,_T("Size of main header is %lu bytes.\n"),(unsigned long)build.get_header_size());
     _ftprintf(g_output,_T("Size of each section is %lu bytes.\n"),(unsigned long)sizeof(section));
     _ftprintf(g_output,_T("Size of each page is %lu bytes.\n"),(unsigned long)sizeof(page));
     _ftprintf(g_output,_T("Size of each instruction is %lu bytes.\n"),(unsigned long)sizeof(entry));

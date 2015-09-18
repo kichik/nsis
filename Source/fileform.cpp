@@ -35,20 +35,23 @@ void firstheader_writer::write(const firstheader *data)
   m_sink->write_int(data->length_of_all_following_data);
 }
 
-void block_header_writer::write(const block_header *data)
+void block_header_writer::write(const block_header *data, const writer_target_info&ti)
 {
-  m_sink->write_int(data->offset);
+  if (ti.is_64bit())
+    m_sink->write_int64(data->offset);
+  else
+    m_sink->write_int(data->offset);
   m_sink->write_int(data->num);
 }
 
-void header_writer::write(const header *data)
+void header_writer::write(const header *data, const writer_target_info&ti)
 {
   m_sink->write_int(data->flags);
 
   block_header_writer bw(writer::m_sink);
   for (int i = 0; i < BLOCKS_NUM; i++)
   {
-    bw.write(&data->blocks[i]);
+    bw.write(&data->blocks[i], ti);
   }
 
   m_sink->write_int(data->install_reg_rootkey);
@@ -146,13 +149,13 @@ void page_writer::write(const page *data)
   m_sink->write_int_array(data->parms, 5);
 }
 
-void ctlcolors_writer::writeplatformitem(const void *data, bool wide, bool x64)
+void ctlcolors_writer::write(const ctlcolors *data, const writer_target_info&ti)
 {
   assert(sizeof(int) == 4 && sizeof(ctlcolors64) > sizeof(ctlcolors32));
-  ctlcolors *p = (ctlcolors*) data;
+  const ctlcolors *p = data;
   m_sink->write_int(p->text);
   m_sink->write_int(p->bkc);
-  if (x64)
+  if (ti.is_64bit())
   {
     assert(!p->bkb);
     m_sink->write_int64(p->bkb);
