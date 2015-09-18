@@ -214,7 +214,10 @@ conf.Finish()
 # sure the sections will be written in the correct order.
 #
 
-stub_env.Append(LINKFLAGS = ['-B', petype]) ; --oformat petype also works in GCC 4.5.2
+petype = 'pei-i386'
+if defenv['TARGET_ARCH'] == 'amd64':
+	petype = 'pei-x86-64'
+stub_env.Append(LINKFLAGS = ['-B', petype]) # --oformat petype also works in GCC 4.5.2
 stub_uenv.Append(LINKFLAGS = ['-B', petype])
 stub_env.Append(LINKFLAGS = ['-T', File('linker_script').rfile()])
 stub_uenv.Append(LINKFLAGS = ['-T', File('linker_script').rfile()])
