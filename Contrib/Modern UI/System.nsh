@@ -2126,6 +2126,10 @@ Var MUI_TEMP2
   !verbose push
   !verbose ${MUI_VERBOSE}
 
+  !ifndef MUI_LANGDLL_LANGUAGES
+    !warning "MUI_LANGDLL_DISPLAY should only be used after inserting the MUI_LANGUAGE macro(s)"
+  !endif
+
   !insertmacro MUI_DEFAULT MUI_LANGDLL_WINDOWTITLE "Installer Language"
   !insertmacro MUI_DEFAULT MUI_LANGDLL_INFO "Please select a language."
 
