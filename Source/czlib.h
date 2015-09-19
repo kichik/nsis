@@ -26,34 +26,33 @@ class CZlib : public ICompressor {
   public:
     virtual ~CZlib() {}
 
-    int Init(int level, unsigned int dict_size) {
+    virtual int Init(int level, unsigned int dict_size) {
       stream = new z_stream;
       if (!stream) return Z_MEM_ERROR;
 
       stream->zalloc = (alloc_func)Z_NULL;
       stream->zfree = (free_func)Z_NULL;
       stream->opaque = (voidpf)Z_NULL;
-
       return deflateInit2(stream, level,
         Z_DEFLATED, -MAX_WBITS, MAX_MEM_LEVEL, Z_DEFAULT_STRATEGY);
     }
 
-    int End() {
+    virtual int End() {
       int ret = deflateEnd(stream);
       delete stream;
       return ret;
     }
 
-    int Compress(bool finish) {
+    virtual int Compress(bool finish) {
       return deflate(stream, finish?Z_FINISH:0);
     }
 
-    void SetNextIn(char *in, unsigned int size) {
+    virtual void SetNextIn(char *in, unsigned int size) {
       stream->next_in = (unsigned char*)in;
       stream->avail_in = size;
     }
 
-    void SetNextOut(char *out, unsigned int size) {
+    virtual void SetNextOut(char *out, unsigned int size) {
       stream->next_out = (unsigned char*)out;
       stream->avail_out = size;
     }
@@ -70,11 +69,11 @@ class CZlib : public ICompressor {
       return stream->avail_out;
     }
 
-    const TCHAR* GetName() {
+    virtual const TCHAR* GetName() {
       return _T("zlib");
     }
 
-    const TCHAR* GetErrStr(int err) {
+    virtual const TCHAR* GetErrStr(int err) {
       switch (err)
       {
       case Z_STREAM_ERROR:
