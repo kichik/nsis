@@ -66,6 +66,10 @@ Localization
   !verbose push
   !verbose ${MUI_VERBOSE}
 
+  !ifndef MUI_LANGDLL_LANGUAGES
+    !warning "MUI_LANGDLL_DISPLAY should only be used after inserting the MUI_LANGUAGE macro(s)"
+  !endif
+
   !insertmacro MUI_LANGDLL_VARIABLES
 
   !insertmacro MUI_DEFAULT MUI_LANGDLL_WINDOWTITLE "Installer Language"
