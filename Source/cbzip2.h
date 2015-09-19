@@ -26,20 +26,20 @@ class CBzip2 : public ICompressor {
   public:
     virtual ~CBzip2() {}
 
-    int Init(int level, unsigned int dict_size) {
+    virtual int Init(int level, unsigned int dict_size) {
       last_ret = !BZ_STREAM_END;
       stream = new bz_stream;
       if (!stream) return BZ_MEM_ERROR;
       return BZ2_bzCompressInit(stream, level, 0, 30);
     }
 
-    int End() {
+    virtual int End() {
       int ret = BZ2_bzCompressEnd(stream);
       delete stream;
       return ret;
     }
 
-    int Compress(bool finish) {
+    virtual int Compress(bool finish) {
       // act like zlib when it comes to stream ending
       if (last_ret == BZ_STREAM_END && finish)
         return C_FINISHED;
@@ -51,12 +51,12 @@ class CBzip2 : public ICompressor {
       return C_OK;
     }
 
-    void SetNextIn(char *in, unsigned int size) {
+    virtual void SetNextIn(char *in, unsigned int size) {
       stream->next_in = (unsigned char*) in;
       stream->avail_in = size;
     }
 
-    void SetNextOut(char *out, unsigned int size) {
+    virtual void SetNextOut(char *out, unsigned int size) {
       stream->next_out = (unsigned char*) out;
       stream->avail_out = size;
     }
@@ -73,11 +73,11 @@ class CBzip2 : public ICompressor {
       return stream->avail_out;
     }
 
-    const TCHAR* GetName() {
+    virtual const TCHAR* GetName() {
       return _T("bzip2");
     }
 
-    const TCHAR* GetErrStr(int err) {
+    virtual const TCHAR* GetErrStr(int err) {
       switch (err)
       {
       case BZ_SEQUENCE_ERROR:

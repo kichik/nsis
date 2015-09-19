@@ -857,14 +857,6 @@ int CEXEBuild::add_db_data(IMMap *mmap) // returns offset
         bufferlen = INT_MAX-st-sizeof(int); //   so maximize compressor room and hope the file compresses well
       db->resize(st + bufferlen + sizeof(int));
 
-#if defined(NSIS_CONFIG_COMPRESSION_SUPPORT) && defined(__GNUC__) && defined(_WIN64) // There is another one of these, remove both when fixed
-  // BUGBUG: zlib is currently broken on 64-bit MinGW
-  if (compressor == &zlib_compressor)
-  {
-    ERROR_MSG(_T("\nError: ZLib is currently broken on this platform!\n"));
-    return -1;
-  }
-#endif
     int n = compressor->Init(build_compress_level, build_compress_dict_size);
     if (n != C_OK)
     {
@@ -2576,15 +2568,6 @@ int CEXEBuild::write_output(void)
 #endif
 
   RET_UNLESS_OK( check_write_output_errors() );
-
-#if defined(NSIS_CONFIG_COMPRESSION_SUPPORT) && defined(__GNUC__) && defined(_WIN64) // There is another one of these, remove both when fixed
-  // BUGBUG: zlib is currently broken on 64-bit MinGW
-  if (compressor == &zlib_compressor)
-  {
-    ERROR_MSG(_T("\nError: ZLib is currently broken on this platform!\n"));
-    return PS_ERROR;
-  }
-#endif
 
   has_called_write_output=true;
 
