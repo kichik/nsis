@@ -17,10 +17,6 @@
  */
 
 #include "../Platform.h"
-#if defined(__cplusplus) && defined(truncate_cast)
-#undef BUGBUG64TRUNCATE
-#define BUGBUG64TRUNCATE truncate_cast
-#endif
 #include "fileform.h"
 #include "util.h"
 #include "state.h"

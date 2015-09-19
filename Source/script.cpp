@@ -6094,7 +6094,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     {
       CEXEBuild::TARGETTYPE tt = m_target_type;
       int numtok = line.getnumtokens() - 1;
-      const TCHAR *path = line.gettoken_str(numtok), *cmdnam = get_commandtoken_name(which_token), *arcstr = 0;
+      TCHAR *path = line.gettoken_str(numtok);
+      const TCHAR *cmdnam = get_commandtoken_name(which_token), *arcstr = 0;
       if (2 == numtok)
       {
         arcstr = line.gettoken_str(--numtok);
