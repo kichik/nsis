@@ -12,15 +12,15 @@ NLF v6
 -
 # Translation by Piotr Murawski & Rafał Lampe
 # Updated by cube and SYSTEMsoft Group
-# Corrections by Marek Stepien <marcoos@aviary.pl> - http://www.aviary.pl/
-# Updated by Paweł Porwisz, http://www.pepesoft.tox.pl
-# Corrected by Mateusz Gola (aka Prozac) - http://www.videopedia.pl/avirecomp
+# Corrected by Marek Stępień <mstepien@aviary.pl> - http://www.aviary.pl
+# Corrected by Mateusz Gola (aka Prozac) - http://www.avirecomp.com
+# Updated by Paweł Porwisz (http://www.pawelporwisz.pl)
 # ^Branding
 Nullsoft Install System %s
 # ^SetupCaption
-Instalator programu $(^Name)
+Instalator $(^Name)
 # ^UninstallCaption
-Deinstalator programu $(^Name)
+Deinstalator $(^Name)
 # ^LicenseSubCaption
 : Umowa licencyjna
 # ^ComponentsSubCaption
@@ -64,27 +64,27 @@ Anuluj
 # ^ShowDetailsBtn
 Pokaż &szczegóły
 # ^ClickNext
-Kliknij Dalej, aby kontynuować.
+Kliknij przycisk 'Dalej', aby kontynuować.
 # ^ClickInstall
-Kliknij Zainstaluj, aby rozpocząć instalację.
+Kliknij przycisk 'Zainstaluj', aby rozpocząć instalację.
 # ^ClickUninstall
-Kliknij Odinstaluj, aby rozpocząć deinstalację.
+Kliknij przycisk 'Odinstaluj', aby rozpocząć deinstalację.
 # ^Name
 Nazwa
 # ^Completed
 Zakończono
 # ^LicenseText
-Przed zainstalowaniem $(^NameDA) przeczytaj umowę licencyjną. Jeśli akceptujesz wszystkie warunki umowy, kliknij Zgadzam się.
+Przed instalacją $(^NameDA) zapoznaj się z warunkami licencji. Jeśli akceptujesz wszystkie warunki umowy, kliknij przycisk 'Zgadzam się'.
 # ^LicenseTextCB
-Przed zainstalowaniem $(^NameDA) przeczytaj umowę licencyjną. Jeśli akceptujesz wszystkie warunki umowy, kliknij pole wyboru poniżej. $_CLICK.
+Przed instalacją $(^NameDA) zapoznaj się z warunkami licencji. Jeśli akceptujesz wszystkie warunki umowy, kliknij poniższe pole wyboru. $_CLICK.
 # ^LicenseTextRB
-Przed zainstalowaniem $(^NameDA) przeczytaj umowę licencyjną. Jeśli akceptujesz wszystkie warunki umowy, wybierz pierwszą opcję poniżej. $_CLICK.
+Przed instalacją $(^NameDA) zapoznaj się z warunkami licencji. Jeśli akceptujesz wszystkie warunki umowy, wybierz pierwszą z poniższych opcji. $_CLICK.
 # ^UnLicenseText
-Przed odinstalowaniem $(^NameDA) przeczytaj umowę licencyjną. Jeśli akceptujesz wszystkie warunki umowy, kliknij Zgadzam się.
+Przed deinstalacją $(^NameDA) zapoznaj się z warunkami licencji. Jeśli akceptujesz wszystkie warunki umowy, kliknij przycisk 'Zgadzam się'.
 # ^UnLicenseTextCB
-Przed odinstalowaniem $(^NameDA) przeczytaj umowę licencyjną. Jeśli akceptujesz wszystkie warunki umowy, kliknij pole wyboru poniżej. $_CLICK.
+Przed deinstalacją $(^NameDA) zapoznaj się z warunkami licencji. Jeśli akceptujesz wszystkie warunki umowy, kliknij poniższe pole wyboru. $_CLICK.
 # ^UnLicenseTextRB
-Przed odinstalowaniem $(^NameDA) przeczytaj licencję. Jeśli akceptujesz wszystkie warunki umowy, wybierz pierwszą opcję poniżej. $_CLICK.
+Przed deinstalacją $(^NameDA) zapoznaj się z warunkami licencji. Jeśli akceptujesz wszystkie warunki umowy, wybierz pierwszą z poniższych opcji. $_CLICK.
 # ^Custom
 Użytkownika
 # ^ComponentsText
@@ -104,17 +104,17 @@ Wybierz komponenty do odinstalowania:
 # ^UnComponentsSubText2
 Albo wybierz opcjonalne komponenty, które chcesz odinstalować:
 # ^DirText
-Instalator zainstaluje program $(^NameDA) w podanym niżej folderze. (Możesz także kliknąć przycisk ... i wybrać inny folder). $_CLICK
+Instalator zainstaluje $(^NameDA) w podanym poniżej folderze docelowym (możesz także kliknąć przycisk 'Przeglądaj...' i wybrać inny folder). $_CLICK
 # ^DirSubText
 Folder docelowy
 # ^DirBrowseText
 Wybierz folder instalacyjny $(^NameDA):
 # ^UnDirText
-Deinstalator usunie $(^NameDA) z następującego folderu. Aby odinstalować z innego folderu, kliknij Przeglądaj i wybierz folder. $_CLICK
+Deinstalator usunie $(^NameDA) z następującego folderu. Aby odinstalować z innego folderu, kliknij przycisk 'Przeglądaj...' i wybierz folder. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
-Wybierz folder, z którego zostanie odinstalowany program $(^NameDA):
+Wybierz folder, z którego zostanie odinstalowany $(^NameDA):
 # ^SpaceAvailable
 "Dostępne miejsce: "
 # ^SpaceRequired
@@ -124,9 +124,9 @@ Ten kreator odinstaluje $(^NameDA) z Twojego komputera. $_CLICK
 # ^UninstallingSubText
 Deinstalacja z: 
 # ^FileError
-Błąd otwarcia pliku do zapisu: \r\n\r\n$0\r\n\r\nWybierz Anuluj, aby przerwać instalację,\r\nPonów, aby ponowić zapis do pliku lub\r\nIgnoruj, aby pominąć ten plik.
+Błąd otwarcia pliku do zapisu: \r\n\r\n$0\r\n\r\nWybierz 'Anuluj', aby przerwać instalację,\r\n'Ponów', aby ponowić zapis do pliku lub\r\n'Ignoruj', aby pominąć ten plik.
 # ^FileError_NoIgnore
-Błąd otwarcia pliku do zapisu: \r\n\r\n$0\r\n\r\nWybierz Ponów, aby ponowić zapis do pliku lub\r\nAnuluj, aby przerwać instalację.
+Błąd otwarcia pliku do zapisu: \r\n\r\n$0\r\n\r\nWybierz 'Ponów', aby ponowić zapis do pliku lub\r\n'Anuluj', aby przerwać instalację.
 # ^CantWrite
 "Nie można zapisać: "
 # ^CopyFailed
@@ -136,7 +136,7 @@ Błąd kopiowania
 # ^Registering 
 "Rejestrowanie: "
 # ^Unregistering
-"Odrejestrowywanie: "
+"Wyrejestrowywanie: "
 # ^SymbolNotFound
 "Nie można odnaleźć symbolu: "
 # ^CouldNotLoad
@@ -156,7 +156,7 @@ Błąd kopiowania
 # ^ErrorCreating
 "Błąd tworzenia: "
 # ^ErrorDecompressing
-Błąd rozpakowywania danych! Uszkodzony instalator?
+Błąd wyodrębniania danych! Uszkodzony instalator?
 # ^ErrorRegistering
 Błąd rejestracji pliku DLL
 # ^ExecShell
@@ -164,9 +164,9 @@ Błąd rejestracji pliku DLL
 # ^Exec
 "Uruchom: "
 # ^Extract
-"Rozpakuj: "
+"Wyodrębnij: "
 # ^ErrorWriting
-"Rozpakuj: błąd zapisu do pliku "
+"Wyodrębnij: błąd zapisu do pliku "
 # ^InvalidOpcode
 Instalator uszkodzony: nieprawidłowy kod operacji
 # ^NoOLE
