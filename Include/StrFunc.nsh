@@ -9,12 +9,10 @@ o-----------------------------------------------------------------------------o
 o-----------------------------------------------------------------------------o
 */
 
-!verbose push
-!verbose 3
-!ifndef STRFUNC_VERBOSITY
-  !define STRFUNC_VERBOSITY 3
-!endif
+!verbose push 3
+!define /IfNDef STRFUNC_VERBOSITY 3
 !define _STRFUNC_VERBOSITY ${STRFUNC_VERBOSITY}
+!define _STRFUNC_CREDITVERBOSITY ${STRFUNC_VERBOSITY}
 !undef STRFUNC_VERBOSITY
 !verbose ${_STRFUNC_VERBOSITY}
 
@@ -22,8 +20,8 @@ o-----------------------------------------------------------------------------o
 
 !ifndef STRFUNC
 
-  !define FALSE 0
-  !define TRUE 1
+  !define /IfNDef FALSE 0
+  !define /IfNDef TRUE 1
 
   ;Header File Identification
 
@@ -47,8 +45,7 @@ o-----------------------------------------------------------------------------o
 
   ;Header File Init Message
 
-  !verbose push
-  !verbose 4
+  !verbose push ${_STRFUNC_CREDITVERBOSITY}
   !echo `${STRFUNC_INITMSGPRE}NSIS ${STRFUNC} ${STRFUNC_VER} - Copyright ${STRFUNC_CREDITS}${STRFUNC_INITMSGPOST}`
   !verbose pop
 
@@ -78,8 +75,7 @@ o-----------------------------------------------------------------------------o
   !macroend
   
   !macro STRFUNC_FUNC ShortName Credits
-    !verbose push
-    !verbose 4
+    !verbose push ${_STRFUNC_CREDITVERBOSITY}
 
     !ifndef `Un${ShortName}`
       !echo `${STRFUNC_FUNCMSGPRE}$ {Un${ShortName}} - Copyright ${Credits}${STRFUNC_FUNCMSGPOST}`
@@ -450,7 +446,7 @@ o-----------------------------------------------------------------------------o
         ;Step 5: Allocate global heap
         StrLen $2 $0
         IntOp $2 $2 + 1
-		IntOp $2 $2 * ${NSIS_CHAR_SIZE}
+        IntOp $2 $2 * ${NSIS_CHAR_SIZE}
         System::Call 'kernel32::GlobalAlloc(i 2, i r2) p.r2'
 
         ;Step 6: Lock the handle
@@ -1505,8 +1501,7 @@ o-----------------------------------------------------------------------------o
   ;Function Calls for Install and Uninstall
 
   !macro FUNCTION_STRING_StrCase_Call ResultVar String Type
-    !verbose push
-    !verbose 4
+    !verbose push ${_STRFUNC_CREDITVERBOSITY}
     !echo `$ {StrCase} "${ResultVar}" "${String}" "${Type}"`
     !verbose pop
 
@@ -1516,8 +1511,7 @@ o-----------------------------------------------------------------------------o
     Pop `${ResultVar}`
   !macroend
   !macro FUNCTION_STRING_UnStrCase_Call ResultVar String Type
-    !verbose push
-    !verbose 4
+    !verbose push ${_STRFUNC_CREDITVERBOSITY}
     !echo `$ {UnStrCase} "${ResultVar}" "${String}" "${Type}"`
     !verbose pop
 
@@ -1528,8 +1522,7 @@ o-----------------------------------------------------------------------------o
   !macroend
 
   !macro FUNCTION_STRING_StrClb_Call ResultVar String Action
-    !verbose push
-    !verbose 4
+    !verbose push ${_STRFUNC_CREDITVERBOSITY}
     !echo `$ {StrClb} "${ResultVar}" "${String}" "${Action}"`
     !verbose pop
 
@@ -1539,8 +1532,7 @@ o-----------------------------------------------------------------------------o
     Pop `${ResultVar}`
   !macroend
   !macro FUNCTION_STRING_UnStrClb_Call ResultVar String Action
-    !verbose push
-    !verbose 4
+    !verbose push ${_STRFUNC_CREDITVERBOSITY}
     !echo `$ {UnStrClb} "${ResultVar}" "${String}" "${Action}"`
     !verbose pop
 
@@ -1551,8 +1543,7 @@ o-----------------------------------------------------------------------------o
   !macroend
 
   !macro FUNCTION_STRING_StrIOToNSIS_Call ResultVar String
-    !verbose push
-    !verbose 4
+    !verbose push ${_STRFUNC_CREDITVERBOSITY}
     !echo `$ {StrIOToNSIS} "${ResultVar}" "${String}"`
     !verbose pop
 
@@ -1561,8 +1552,7 @@ o-----------------------------------------------------------------------------o
     Pop `${ResultVar}`
   !macroend
   !macro FUNCTION_STRING_UnStrIOToNSIS_Call ResultVar String
-    !verbose push
-    !verbose 4
+    !verbose push ${_STRFUNC_CREDITVERBOSITY}
     !echo `$ {UnStrIOToNSIS} "${ResultVar}" "${String}"`
     !verbose pop
 
@@ -1572,8 +1562,7 @@ o-----------------------------------------------------------------------------o
   !macroend
 
   !macro FUNCTION_STRING_StrLoc_Call ResultVar String StrToSearchFor OffsetDirection
-    !verbose push
-    !verbose 4
+    !verbose push ${_STRFUNC_CREDITVERBOSITY}
     !echo `$ {StrLoc} "${ResultVar}" "${String}" "${StrToSearchFor}" "${OffsetDirection}"`
     !verbose pop
 
@@ -1584,8 +1573,7 @@ o-----------------------------------------------------------------------------o
     Pop `${ResultVar}`
   !macroend
   !macro FUNCTION_STRING_UnStrLoc_Call ResultVar String StrToSearchFor OffsetDirection
-    !verbose push
-    !verbose 4
+    !verbose push ${_STRFUNC_CREDITVERBOSITY}
     !echo `$ {UnStrLoc} "${ResultVar}" "${String}" "${StrToSearchFor}" "${OffsetDirection}"`
     !verbose pop
 
@@ -1597,8 +1585,7 @@ o-----------------------------------------------------------------------------o
   !macroend
 
   !macro FUNCTION_STRING_StrNSISToIO_Call ResultVar String
-    !verbose push
-    !verbose 4
+    !verbose push ${_STRFUNC_CREDITVERBOSITY}
     !echo `$ {StrNSISToIO} "${ResultVar}" "${String}"`
     !verbose pop
 
@@ -1607,8 +1594,7 @@ o-----------------------------------------------------------------------------o
     Pop `${ResultVar}`
   !macroend
   !macro FUNCTION_STRING_UnStrNSISToIO_Call ResultVar String
-    !verbose push
-    !verbose 4
+    !verbose push ${_STRFUNC_CREDITVERBOSITY}
     !echo `$ {UnStrNSISToIO} "${ResultVar}" "${String}"`
     !verbose pop
 
@@ -1618,8 +1604,7 @@ o-----------------------------------------------------------------------------o
   !macroend
 
   !macro FUNCTION_STRING_StrRep_Call ResultVar String StringToReplace ReplacementString
-    !verbose push
-    !verbose 4
+    !verbose push ${_STRFUNC_CREDITVERBOSITY}
     !echo `$ {StrRep} "${ResultVar}" "${String}" "${StringToReplace}" "${ReplacementString}"`
     !verbose pop
 
@@ -1630,8 +1615,7 @@ o-----------------------------------------------------------------------------o
     Pop `${ResultVar}`
   !macroend
   !macro FUNCTION_STRING_UnStrRep_Call ResultVar String StringToReplace ReplacementString
-    !verbose push
-    !verbose 4
+    !verbose push ${_STRFUNC_CREDITVERBOSITY}
     !echo `$ {UnStrRep} "${ResultVar}" "${String}" "${StringToReplace}" "${ReplacementString}"`
     !verbose pop
 
@@ -1643,8 +1627,7 @@ o-----------------------------------------------------------------------------o
   !macroend
 
   !macro FUNCTION_STRING_StrSort_Call ResultVar String CenterStr LeftStr RightStr IncludeCenterStr IncludeLeftStr IncludeRightStr
-    !verbose push
-    !verbose 4
+    !verbose push ${_STRFUNC_CREDITVERBOSITY}
     !echo `$ {StrSort} "${ResultVar}" "${String}" "${CenterStr}" "${LeftStr}" "${RightStr}" "${IncludeCenterStr}" "${IncludeLeftStr}" "${IncludeRightStr}"`
     !verbose pop
 
@@ -1659,8 +1642,7 @@ o-----------------------------------------------------------------------------o
     Pop `${ResultVar}`
   !macroend
   !macro FUNCTION_STRING_UnStrSort_Call ResultVar String CenterStr LeftStr RightStr IncludeCenterStr IncludeLeftStr IncludeRightStr
-    !verbose push
-    !verbose 4
+    !verbose push ${_STRFUNC_CREDITVERBOSITY}
     !echo `$ {UnStrSort} "${ResultVar}" "${String}" "${CenterStr}" "${LeftStr}" "${RightStr}" "${IncludeCenterStr}" "${IncludeLeftStr}" "${IncludeRightStr}"`
     !verbose pop
 
@@ -1676,8 +1658,7 @@ o-----------------------------------------------------------------------------o
   !macroend
 
   !macro FUNCTION_STRING_StrStr_Call ResultVar String StrToSearchFor
-    !verbose push
-    !verbose 4
+    !verbose push ${_STRFUNC_CREDITVERBOSITY}
     !echo `$ {StrStr} "${ResultVar}" "${String}" "${StrToSearchFor}"`
     !verbose pop
 
@@ -1687,8 +1668,7 @@ o-----------------------------------------------------------------------------o
     Pop `${ResultVar}`
   !macroend
   !macro FUNCTION_STRING_UnStrStr_Call ResultVar String StrToSearchFor
-    !verbose push
-    !verbose 4
+    !verbose push ${_STRFUNC_CREDITVERBOSITY}
     !echo `$ {UnStrStr} "${ResultVar}" "${String}" "${StrToSearchFor}"`
     !verbose pop
 
@@ -1699,8 +1679,7 @@ o-----------------------------------------------------------------------------o
   !macroend
 
   !macro FUNCTION_STRING_StrStrAdv_Call ResultVar String StrToSearchFor SearchDirection ResultStrDirection DisplayStrToSearch Loops CaseSensitive
-    !verbose push
-    !verbose 4
+    !verbose push ${_STRFUNC_CREDITVERBOSITY}
     !echo `$ {StrStrAdv} "${ResultVar}" "${String}" "${StrToSearchFor}" "${SearchDirection}" "${ResultStrDirection}" "${DisplayStrToSearch}" "${Loops}" "${CaseSensitive}"`
     !verbose pop
 
@@ -1715,8 +1694,7 @@ o-----------------------------------------------------------------------------o
     Pop `${ResultVar}`
   !macroend
   !macro FUNCTION_STRING_UnStrStrAdv_Call ResultVar String StrToSearchFor SearchDirection ResultStrDirection DisplayStrToSearch Loops CaseSensitive
-    !verbose push
-    !verbose 4
+    !verbose push ${_STRFUNC_CREDITVERBOSITY}
     !echo `$ {UnStrStrAdv} "${ResultVar}" "${String}" "${StrToSearchFor}" "${SearchDirection}" "${ResultStrDirection}" "${DisplayStrToSearch}" "${Loops}" "${CaseSensitive}"`
     !verbose pop
 
@@ -1732,8 +1710,7 @@ o-----------------------------------------------------------------------------o
   !macroend
 
   !macro FUNCTION_STRING_StrTok_Call ResultVar String Separators ResultPart SkipEmptyParts
-    !verbose push
-    !verbose 4
+    !verbose push ${_STRFUNC_CREDITVERBOSITY}
     !echo `$ {StrTok} "${ResultVar}" "${String}" "${Separators}" "${ResultPart}" "${SkipEmptyParts}"`
     !verbose pop
 
@@ -1745,8 +1722,7 @@ o-----------------------------------------------------------------------------o
     Pop `${ResultVar}`
   !macroend
   !macro FUNCTION_STRING_UnStrTok_Call ResultVar String Separators ResultPart SkipEmptyParts
-    !verbose push
-    !verbose 4
+    !verbose push ${_STRFUNC_CREDITVERBOSITY}
     !echo `$ {UnStrTok} "${ResultVar}" "${String}" "${Separators}" "${ResultPart}" "${SkipEmptyParts}"`
     !verbose pop
 
@@ -1759,8 +1735,7 @@ o-----------------------------------------------------------------------------o
   !macroend
 
   !macro FUNCTION_STRING_StrTrimNewLines_Call ResultVar String
-    !verbose push
-    !verbose 4
+    !verbose push ${_STRFUNC_CREDITVERBOSITY}
     !echo `$ {StrTrimNewLines} "${ResultVar}" "${String}"`
     !verbose pop
 
@@ -1769,8 +1744,7 @@ o-----------------------------------------------------------------------------o
     Pop `${ResultVar}`
   !macroend
   !macro FUNCTION_STRING_UnStrTrimNewLines_Call ResultVar String
-    !verbose push
-    !verbose 4
+    !verbose push ${_STRFUNC_CREDITVERBOSITY}
     !echo `$ {UnStrTrimNewLines} "${ResultVar}" "${String}"`
     !verbose pop
 
