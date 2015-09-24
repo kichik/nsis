@@ -151,7 +151,7 @@ Function nsDialogsDirectory
 	GetFunctionAddress $0 DirChange
 	nsDialogs::OnChange $DIRECTORY $0
 
-	System::Call shlwapi::SHAutoComplete(i$DIRECTORY,i${SHACF_FILESYSTEM})
+	System::Call shlwapi::SHAutoComplete(p$DIRECTORY,i${SHACF_FILESYSTEM})
 
 	nsDialogs::CreateControl STATIC ${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS} 0 0 -10u 100% 10u ""
 	Pop $FREESPACE
