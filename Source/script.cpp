@@ -6114,7 +6114,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           return PS_ERROR;
         }
       }
-      if (1 == numtok)
+      if (1 == numtok && *path)
       {
         const TCHAR *fmtstr = _T("%") NPRIs _T(": \"%") NPRIs _T("\"%") NPRIs _T("%") NPRIs _T("%") NPRIs _T("\n");
         SCRIPT_MSG(fmtstr, cmdnam, path, arcstr ? _T(" (") : _T(""), arcstr ? arcstr : _T(""), arcstr ? _T(")") : _T(""));
@@ -6123,7 +6123,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         return PS_OK;
       }
     }
-    return PS_ERROR;
+    PRINTHELP();
     case TOK__PLUGINCOMMAND:
     {
       int ret;
