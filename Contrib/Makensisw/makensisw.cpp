@@ -113,7 +113,7 @@ void SetScript(const TCHAR *script, bool clearArgs /*= true*/)
   lstrcpy(g_sdata.script, script);
 }
 
-void AddScriptCmdArgs(const TCHAR *arg)
+static void AddScriptCmdArgs(const TCHAR *arg)
 {
   g_sdata.script_cmd_args = GlobalReAlloc(g_sdata.script_cmd_args,
     GlobalSize(g_sdata.script_cmd_args) + (lstrlen(arg) + 2/* quotes */ + 1 /* space */)*sizeof(TCHAR),
@@ -128,7 +128,7 @@ void AddScriptCmdArgs(const TCHAR *arg)
   GlobalUnlock(g_sdata.script_cmd_args);
 }
 
-void ProcessCommandLine()
+static void ProcessCommandLine()
 {
   TCHAR **argv;
   int i, j;
@@ -243,9 +243,8 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
     }
     case WM_DESTROY:
     {
-      DragAcceptFiles(g_sdata.hwnd,FALSE);
+      DragAcceptFiles(g_sdata.hwnd, FALSE);
       SaveSymbols();
-      SaveCompressor();
       SaveMRUList();
       SaveWindowPos(g_sdata.hwnd);
       ImageList_Destroy(g_toolbar.imagelist);
@@ -862,29 +861,26 @@ INT_PTR CALLBACK AboutProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
   return FALSE;
 }
 
-void EnableSymbolSetButtons(HWND hwndDlg)
+static void EnableSymbolSetButtons(HWND hwndDlg)
 {
   LRESULT n = SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_GETCOUNT, 0, 0);
   EnableWindow(GetDlgItem(hwndDlg, IDC_CLEAR), n > 0);
   EnableWindow(GetDlgItem(hwndDlg, IDC_SAVE), n > 0);
 }
 
-void EnableSymbolEditButtons(HWND hwndDlg)
+static void EnableSymbolEditButtons(HWND hwndDlg)
 {
   LRESULT n = SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_GETSELCOUNT, 0, 0);
   EnableWindow(GetDlgItem(hwndDlg, IDC_LEFT), n == 1);
   EnableWindow(GetDlgItem(hwndDlg, IDC_DEL), n != 0);
 }
 
-void SetSymbols(HWND hwndDlg, TCHAR **symbols)
+static void SetSymbols(HWND hwndDlg, TCHAR **symbols)
 {
-    int i = 0;
     SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_RESETCONTENT , 0, 0);
     if (symbols) {
-      while (symbols[i]) {
+      for (SIZE_T i = 0; symbols[i]; ++i)
         SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_ADDSTRING, 0, (LPARAM)symbols[i]);
-        i++;
-      }
     }
     EnableSymbolSetButtons(hwndDlg);
     EnableWindow(GetDlgItem(hwndDlg, IDC_RIGHT), FALSE);
@@ -892,16 +888,19 @@ void SetSymbols(HWND hwndDlg, TCHAR **symbols)
     EnableWindow(GetDlgItem(hwndDlg, IDC_DEL), FALSE);
 }
 
-TCHAR **GetSymbols(HWND hwndDlg)
+static TCHAR **GetSymbols(HWND hwndDlg)
 {
   LRESULT n = SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_GETCOUNT, 0, 0);
   TCHAR **symbols = NULL;
   if(n > 0) {
-    HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE|GMEM_ZEROINIT, (n+1)*sizeof(TCHAR *));
-    symbols = (TCHAR **)GlobalLock(hMem);
+    symbols = (TCHAR **) GlobalAlloc(GPTR, (n+1)*sizeof(TCHAR *));
     for (LRESULT i = 0; i < n; i++) {
       LRESULT len = SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_GETTEXTLEN, (WPARAM)i, 0);
       symbols[i] = (TCHAR*) MemAllocZI((len+1)*sizeof(TCHAR));
+      if (!symbols[i]) {
+        FreeSymbolSet(symbols);
+        return NULL;
+      }
       SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_GETTEXT, (WPARAM)i, (LPARAM)symbols[i]);
     }
     symbols[n] = NULL;
@@ -926,13 +925,9 @@ INT_PTR CALLBACK SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lPar
     {
       TCHAR *name = (TCHAR *)wParam;
       TCHAR **symbols = LoadSymbolSet(name);
-      HGLOBAL hMem;
-
-      SetSymbols(hwndDlg, symbols);
       if(symbols) {
-        hMem = GlobalHandle(symbols);
-        GlobalUnlock(hMem);
-        GlobalFree(hMem);
+        SetSymbols(hwndDlg, symbols);
+        GlobalFree((HGLOBAL) symbols);
       }
       break;
     }
@@ -940,13 +935,9 @@ INT_PTR CALLBACK SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lPar
     {
       TCHAR *name = (TCHAR *)wParam;
       TCHAR **symbols = GetSymbols(hwndDlg);
-      HGLOBAL hMem;
-
       if(symbols) {
         SaveSymbolSet(name, symbols);
-        hMem = GlobalHandle(symbols);
-        GlobalUnlock(hMem);
-        GlobalFree(hMem);
+        GlobalFree((HGLOBAL) symbols);
       }
       break;
     }
@@ -960,14 +951,13 @@ INT_PTR CALLBACK SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lPar
           g_sdata.symbols = GetSymbols(hwndDlg);
 
           INT_PTR n = SendDlgItemMessage(hwndDlg, IDC_COMPRESSOR, CB_GETCURSEL, (WPARAM)0, (LPARAM)0);
-          if (n >= (INT_PTR)COMPRESSOR_SCRIPT && n <= (INT_PTR)COMPRESSOR_BEST) {
+          if (n >= (INT_PTR)COMPRESSOR_SCRIPT && n <= (INT_PTR)COMPRESSOR_BEST)
             g_sdata.default_compressor = (NCOMPRESSOR)n;
-          }
-          else {
+          else
             g_sdata.default_compressor = COMPRESSOR_SCRIPT;
-          }
-          EndDialog(hwndDlg, TRUE);
+          SaveCompressor();
           SetCompressor(g_sdata.default_compressor);
+          EndDialog(hwndDlg, TRUE);
         }
         break;
         case IDCANCEL:
@@ -1153,7 +1143,7 @@ INT_PTR CALLBACK SymbolSetProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lPa
 
       hwndEdit = FindWindowEx(GetDlgItem(hwndDlg, IDC_NAMES), 0, 0, 0); // Handle of list
       hwndEdit = FindWindowEx(GetDlgItem(hwndDlg, IDC_NAMES), hwndEdit, 0, 0); //Handle of edit box
-      SendMessage(hwndEdit, EM_LIMITTEXT, (WPARAM)SYMBOL_SET_NAME_MAXLEN, 0);
+      SendMessage(hwndEdit, EM_LIMITTEXT, (WPARAM)SYMSETNAME_MAXLEN, 0);
       if(g_symbol_set_mode == 1) { //Load
         SetWindowText(hwndDlg, LOAD_SYMBOL_SET_DLG_NAME);
         SetWindowText(GetDlgItem(hwndDlg, IDOK), LOAD_BUTTON_TEXT);
@@ -1171,11 +1161,11 @@ INT_PTR CALLBACK SymbolSetProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lPa
         case IDOK:
         {
           HWND hwndEdit;
-          TCHAR name[SYMBOL_SET_NAME_MAXLEN+1];
+          TCHAR name[SYMSETNAME_MAXLEN+1];
 
           hwndEdit = FindWindowEx(GetDlgItem(hwndDlg, IDC_NAMES), 0, 0, 0); // Handle of list
           hwndEdit = FindWindowEx(GetDlgItem(hwndDlg, IDC_NAMES), hwndEdit, 0, 0); //Handle of edit box
-          SendMessage(hwndEdit, WM_GETTEXT, (WPARAM)SYMBOL_SET_NAME_MAXLEN+1, (LPARAM)name);
+          SendMessage(hwndEdit, WM_GETTEXT, (WPARAM)COUNTOF(name), (LPARAM)name);
           if(!*name) {
             if(g_symbol_set_mode == 1) { //Load
               MessageBox(hwndDlg,LOAD_SYMBOL_SET_MESSAGE,LOAD_SYMBOL_SET_DLG_NAME,MB_OK|MB_ICONEXCLAMATION);

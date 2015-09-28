@@ -144,20 +144,20 @@ void SetTitle(HWND hwnd,const TCHAR *substr) {
 }
 
 void CopyToClipboard(HWND hwnd) {
-  if (!hwnd||!OpenClipboard(hwnd)) return;
-  LRESULT len=SendDlgItemMessage(hwnd,IDC_LOGWIN,WM_GETTEXTLENGTH,0,0);
-  HGLOBAL mem = GlobalAlloc(GMEM_MOVEABLE,(len+1)*sizeof(TCHAR));
+  if (!hwnd || !OpenClipboard(hwnd)) return;
+  LRESULT len = SendDlgItemMessage(hwnd, IDC_LOGWIN, WM_GETTEXTLENGTH, 0, 0);
+  HGLOBAL mem = GlobalAlloc(GMEM_MOVEABLE, (++len)*sizeof(TCHAR));
   if (!mem) { CloseClipboard(); return; }
-  TCHAR *existing_text = (TCHAR *)GlobalLock(mem);
-  if (!existing_text) { CloseClipboard(); return; }
+  TCHAR *txt = (TCHAR *)GlobalLock(mem);
+  if (!txt) { CloseClipboard(); return; }
   EmptyClipboard();
-  existing_text[0]=0;
-  SendMessage(GetDlgItem(hwnd, IDC_LOGWIN), WM_GETTEXT, (WPARAM)(len+1), (LPARAM)existing_text);
+  txt[0] = 0;
+  SendDlgItemMessage(hwnd, IDC_LOGWIN, WM_GETTEXT, (WPARAM)(len), (LPARAM)txt);
   GlobalUnlock(mem);
 #ifdef _UNICODE
-  SetClipboardData(CF_UNICODETEXT,mem);
+  SetClipboardData(CF_UNICODETEXT, mem);
 #else
-  SetClipboardData(CF_TEXT,mem);
+  SetClipboardData(CF_TEXT, mem);
 #endif
   CloseClipboard();
 }
@@ -176,7 +176,7 @@ void LogMessage(HWND hwnd,const TCHAR *str) {
 void ErrorMessage(HWND hwnd,const TCHAR *str) {
   if (!str) return;
   TCHAR buf[1028];
-  wsprintf(buf,_T("[Error] %s\r\n"),str);
+  wsprintf(buf, _T("[Error] %s\r\n"), str);
   LogMessage(hwnd,buf);
 }
 
@@ -324,23 +324,43 @@ void CompileNSISScript() {
   g_sdata.thread=CreateThread(NULL,0,MakeNSISProc,0,0,&tid);
 }
 
+static DWORD RegWriteString(HKEY hKey, LPCTSTR Name, LPCTSTR Data)
+{
+  const DWORD cb = (lstrlen(Data) + 1) * sizeof(*Data);
+  return RegSetValueEx(hKey, Name, 0, REG_SZ, (LPBYTE)Data, cb);
+}
+
+static DWORD RegReadString(HKEY hKey, LPCTSTR Name, LPTSTR Buf, DWORD cbBufSize) {
+  DWORD ec, rt, cb = cbBufSize, cbCh = sizeof(*Buf);
+  ec = RegQueryValueEx(hKey, Name, NULL, &rt, (BYTE*) Buf, &cb);
+  if (cbBufSize) {
+#if 0
+    if (rt == REG_DWORD) cb = cbCh * wsprintf(Buf, _T("%d"), *((INT32*)Buf));
+#endif
+    if (cb+cbCh < cbBufSize) Buf[cb / cbCh] = _T('\0'); // Add a \0 after the data if there is room
+    Buf[(cbBufSize / cbCh) - 1] = _T('\0'); // Always \0 terminate, truncating data if necessary
+  }
+  return ec;
+}
+
+static DWORD RegOpenKeyForReading(HKEY hRoot, LPCTSTR SubKey, HKEY*pKey) {
+  return RegOpenKeyEx(hRoot, SubKey, 0, KEY_READ, pKey);
+}
+
 static bool InternalOpenRegSettingsKey(HKEY root, HKEY &key, bool create) {
   if (create) {
     if (RegCreateKey(root, REGKEY, &key) == ERROR_SUCCESS)
       return true;
   } else {
-    if (RegOpenKeyEx(root, REGKEY, 0, KEY_READ, &key) == ERROR_SUCCESS)
+    if (RegOpenKeyForReading(root, REGKEY, &key) == ERROR_SUCCESS)
       return true;
   }
   return false;
 }
 
 bool OpenRegSettingsKey(HKEY &hKey, bool create) {
-  if (InternalOpenRegSettingsKey(REGSEC, hKey, create))
-    return true;
-  if (InternalOpenRegSettingsKey(REGSECDEF, hKey, create))
-    return true;
-  return false;
+  return InternalOpenRegSettingsKey(REGSEC, hKey, create)
+      || InternalOpenRegSettingsKey(REGSECDEF, hKey, create);
 }
 
 DWORD ReadRegSettingDW(LPCTSTR name, const DWORD defval) {
@@ -407,139 +427,104 @@ void SaveWindowPos(HWND hwnd) {
   WINDOWPLACEMENT p;
   p.length = sizeof(p);
   GetWindowPlacement(hwnd, &p);
-  if (OpenRegSettingsKey(hKey, true)) {
-    RegSetValueEx(hKey,REGLOC,0,REG_BINARY,(LPBYTE)&p,sizeof(p));
+  if (CreateRegSettingsKey(hKey)) {
+    RegSetValueEx(hKey, REGLOC, 0, REG_BINARY, (LPBYTE)&p, sizeof(p));
     RegCloseKey(hKey);
   }
 }
 
-void RestoreSymbols()
-{
+void RestoreSymbols() {
   g_sdata.symbols = LoadSymbolSet(NULL);
 }
 
-void SaveSymbols()
-{
+void SaveSymbols() {
   SaveSymbolSet(NULL, g_sdata.symbols);
 }
 
-void DeleteSymbolSet(TCHAR *name)
-{
-  if(name) {
-    HKEY hKey;
-    if (OpenRegSettingsKey(hKey)) {
-      TCHAR subkey[1024];
-      wsprintf(subkey,_T("%s\\%s"),REGSYMSUBKEY,name);
-      RegDeleteKey(hKey,subkey);
-      RegCloseKey(hKey);
-    }
+#define SYMSET_SUBKEY_MAXLEN (100 + SYMSETNAME_MAXLEN) // REGSYMSUBKEY + [\name]
+static int CreateSymbolSetSubkeyPath(const TCHAR *name, TCHAR *buffer) {
+  return wsprintf(buffer, name ? _T("%s\\%s") : _T("%s"), REGSYMSUBKEY, name);
+}
+
+void FreeSymbolSet(TCHAR **symbols) {
+  if (symbols) {
+    for (SIZE_T i = 0; symbols[i]; ++i)
+      MemSafeFree(symbols[i]);
+    GlobalFree((HGLOBAL) symbols);
   }
 }
 
-TCHAR** LoadSymbolSet(TCHAR *name)
-{
+void DeleteSymbolSet(const TCHAR *name) {
   HKEY hKey;
-  HKEY hSubKey;
-  TCHAR **symbols = NULL;
-  if (OpenRegSettingsKey(hKey)) {
-    TCHAR subkey[1024];
-    if(name) {
-      wsprintf(subkey,_T("%s\\%s"),REGSYMSUBKEY,name);
-    }
-    else {
-      lstrcpy(subkey,REGSYMSUBKEY);
-    }
-    if (RegCreateKey(hKey,subkey,&hSubKey) == ERROR_SUCCESS) {
-      TCHAR buf[8];
-      DWORD l;
-      DWORD t;
-      DWORD bufSize;
-      DWORD i = 0;
-      HGLOBAL hMem = NULL;
-
-      while(TRUE) {
-        l = 0;
-        bufSize = sizeof(buf);
-        if ((RegEnumValue(hSubKey,i, buf, &bufSize,NULL,&t,NULL,&l)==ERROR_SUCCESS)&&(t == REG_SZ)) {
-          if(symbols) {
-            GlobalUnlock(hMem);
-            hMem = GlobalReAlloc(hMem, (i+2)*sizeof(TCHAR *), GMEM_MOVEABLE|GMEM_ZEROINIT);
-            symbols = (TCHAR **)GlobalLock(hMem);
-          }
-          else {
-            hMem = GlobalAlloc(GMEM_MOVEABLE|GMEM_ZEROINIT, (i+2)*sizeof(TCHAR *));
-            symbols = (TCHAR **)GlobalLock(hMem);
-          }
-          if(symbols) {
-            l++;
-            DWORD bytes = sizeof(TCHAR) * l;
-            symbols[i] = (TCHAR*) MemAllocZI(bytes);
-            if (symbols[i]) {
-              RegQueryValueEx(hSubKey,buf,NULL,&t,(unsigned char*)symbols[i],&bytes);
-            }
-            else {
-              break;
-            }
-          }
-          else {
-            break;
-          }
-          i++;
-          symbols[i] = NULL;
-        }
-        else {
-          break;
-        }
-      }
-      RegCloseKey(hSubKey);
-    }
+  if (name && OpenRegSettingsKey(hKey)) {
+    TCHAR subkey[SYMSET_SUBKEY_MAXLEN+1];
+    CreateSymbolSetSubkeyPath(name, subkey);
+    RegDeleteKey(hKey, subkey);
     RegCloseKey(hKey);
   }
+}
 
+TCHAR** LoadSymbolSet(const TCHAR *name) {
+  HKEY hCfgKey, hSymKey;
+  TCHAR **symbols = NULL;
+  if (OpenRegSettingsKey(hCfgKey)) {
+    TCHAR subkey[SYMSET_SUBKEY_MAXLEN+1];
+    CreateSymbolSetSubkeyPath(name, subkey);
+    if (RegOpenKeyForReading(hCfgKey, subkey, &hSymKey) == ERROR_SUCCESS) {
+      TCHAR bufName[8];
+      for (DWORD i = 0, rt, cbBuf, cbData;;) {
+        cbBuf = sizeof(bufName);
+        if (RegEnumValue(hSymKey, i, bufName, &cbBuf, NULL, &rt, NULL, &cbData) == ERROR_SUCCESS && rt == REG_SZ) {
+          if(symbols) {
+            HGLOBAL newmem = GlobalReAlloc(symbols, (i+2)*sizeof(TCHAR*), GMEM_MOVEABLE|GMEM_ZEROINIT);
+            if (!newmem) FreeSymbolSet(symbols);
+            symbols = (TCHAR**) newmem;
+          }
+          else {
+            symbols = (TCHAR**) GlobalAlloc(GPTR, (i+2)*sizeof(TCHAR*));
+          }
+          if (!symbols) break; // Out of memory, abort!
+          symbols[i] = (TCHAR*) MemAllocZI(cbData += sizeof(TCHAR));
+          if (!symbols[i] || RegReadString(hSymKey, bufName, symbols[i], cbData)) {
+            FreeSymbolSet(symbols);
+            break;
+          }
+          symbols[++i] = NULL; // The symbols array is terminated by a NULL pointer
+        }
+        else
+          break;
+      }
+      RegCloseKey(hSymKey);
+    }
+    RegCloseKey(hCfgKey);
+  }
   return symbols;
 }
 
-void SaveSymbolSet(TCHAR *name, TCHAR **symbols)
-{
-  HKEY hKey;
-  HKEY hSubKey;
-  int n = 0;
-  if (OpenRegSettingsKey(hKey, true)) {
-    TCHAR subkey[1024];
-    if(name) {
-      wsprintf(subkey,_T("%s\\%s"),REGSYMSUBKEY,name);
-    }
-    else {
-      lstrcpy(subkey,REGSYMSUBKEY);
-    }
-
-    if (RegOpenKey(hKey,subkey,&hSubKey) == ERROR_SUCCESS) {
-      TCHAR buf[8];
-      DWORD l;
-      while(TRUE) {
-        l = sizeof(buf);
-        if (RegEnumValue(hSubKey,0, buf, &l,NULL,NULL,NULL,NULL)==ERROR_SUCCESS) {
-          RegDeleteValue(hSubKey,buf);
-        }
-        else {
-          break;
-        }
+void SaveSymbolSet(const TCHAR *name, TCHAR **symbols) {
+  HKEY hCfgKey, hSymKey;
+  if (CreateRegSettingsKey(hCfgKey)) {
+    TCHAR subkey[SYMSET_SUBKEY_MAXLEN+1], bufName[8];
+    CreateSymbolSetSubkeyPath(name, subkey);
+    if (RegOpenKey(hCfgKey, subkey, &hSymKey) == ERROR_SUCCESS) {
+      // Cannot use DeleteSymbolSet because name might be NULL and named sets are stored inside the base symbols key
+      for (DWORD cb;;) {
+        cb = sizeof(bufName);
+        if (RegEnumValue(hSymKey,0, bufName, &cb,NULL,NULL,NULL,NULL)!=ERROR_SUCCESS) break;
+        RegDeleteValue(hSymKey, bufName);
       }
-      RegCloseKey(hSubKey);
+      RegCloseKey(hSymKey);
     }
     if(symbols) {
-      if (RegCreateKey(hKey,subkey,&hSubKey) == ERROR_SUCCESS) {
-        TCHAR buf[8];
-        n = 0;
-        while(symbols[n]) {
-          wsprintf(buf,_T("%d"),n);
-          RegSetValueEx(hSubKey,buf,0,REG_SZ,(CONST BYTE *)symbols[n],(lstrlen(symbols[n])+1)*sizeof(TCHAR));
-          n++;
+      if (RegCreateKey(hCfgKey, subkey, &hSymKey) == ERROR_SUCCESS) {
+        for (SIZE_T i = 0; symbols[i]; ++i) {
+          wsprintf(bufName, _T("%d"), (INT) i);
+          RegWriteString(hSymKey, bufName, symbols[i]);
         }
-        RegCloseKey(hSubKey);
+        RegCloseKey(hSymKey);
       }
     }
-    RegCloseKey(hKey);
+    RegCloseKey(hCfgKey);
   }
 }
 
@@ -552,18 +537,8 @@ void ResetObjects() {
 }
 
 void ResetSymbols() {
-  if(g_sdata.symbols) {
-    HGLOBAL hMem;
-    int i = 0;
-    while(g_sdata.symbols[i]) {
-      MemFree(g_sdata.symbols[i]);
-      i++;
-    }
-    hMem = GlobalHandle(g_sdata.symbols);
-    GlobalUnlock(hMem);
-    GlobalFree(hMem);
-    g_sdata.symbols = NULL;
-  }
+  FreeSymbolSet(g_sdata.symbols);
+  g_sdata.symbols = NULL;
 }
 
 void FreeSpawn(PROCESS_INFORMATION *pPI, HANDLE hRd, HANDLE hWr) {
@@ -876,25 +851,21 @@ void LoadMRUFile(int position)
 
 void RestoreMRUList()
 {
-  HKEY hKey;
-  HKEY hSubKey;
-  int n = 0;
-  int i;
-  if (OpenRegSettingsKey(hKey)) {
-    if (RegCreateKey(hKey,REGMRUSUBKEY,&hSubKey) == ERROR_SUCCESS) {
-      TCHAR buf[8];
-      DWORD l, ec;
+  HKEY hCfgKey, hMRUKey;
+  UINT n = 0, i;
+  if (OpenRegSettingsKey(hCfgKey)) {
+    if (RegOpenKeyForReading(hCfgKey, REGMRUSUBKEY, &hMRUKey) == ERROR_SUCCESS) {
       for(int i=0; i<MRU_LIST_SIZE; i++) {
-        wsprintf(buf,_T("%d"),i);
-        l = sizeof(g_mru_list[n]);
-        ec = RegQueryValueEx(hSubKey,buf,NULL,NULL,(LPBYTE)g_mru_list[n],&l);
+        TCHAR bufName[8];
+        wsprintf(bufName, _T("%d"), i);
+        DWORD ec = RegReadString(hMRUKey, bufName, g_mru_list[n], sizeof(g_mru_list[n]));
         if(!ec && g_mru_list[n][0] != _T('\0')) {
           n++;
         }
       }
-      RegCloseKey(hSubKey);
+      RegCloseKey(hMRUKey);
     }
-    RegCloseKey(hKey);
+    RegCloseKey(hCfgKey);
   }
   for(i = n; i < MRU_LIST_SIZE; i++) {
     g_mru_list[i][0] = _T('\0');
@@ -905,32 +876,30 @@ void RestoreMRUList()
 
 void SaveMRUList()
 {
-  HKEY hKey;
-  HKEY hSubKey;
-  int i = 0;
-  if (OpenRegSettingsKey(hKey, true)) {
-    if (RegCreateKey(hKey,REGMRUSUBKEY,&hSubKey) == ERROR_SUCCESS) {
-      TCHAR buf[8];
-      for(i = 0; i < MRU_LIST_SIZE; i++) {
-        wsprintf(buf,_T("%d"),i);
-        if (*g_mru_list[i]) {
-          // cbData must include the size of the terminating null character.
-          RegSetValueEx(hSubKey,buf,0,REG_SZ,(const BYTE*)g_mru_list[i],(lstrlen(g_mru_list[i])+1)*sizeof(TCHAR));
-        }
-        else {
-          RegDeleteValue(hSubKey,buf);
-        }
+  UINT c = 0, i;
+  for (i = 0; i < MRU_LIST_SIZE; ++i)
+    if (*g_mru_list[i])
+      ++c;
+  HKEY hCfgKey, hMRUKey;
+  if (CreateRegSettingsKey(hCfgKey)) {
+    if ((c ? RegCreateKey : RegOpenKey)(hCfgKey, REGMRUSUBKEY, &hMRUKey) == ERROR_SUCCESS) {
+      for (i = 0; i < MRU_LIST_SIZE; ++i) {
+        TCHAR bufName[8];
+        wsprintf(bufName, _T("%d"), i);
+        if (*g_mru_list[i])
+          RegWriteString(hMRUKey, bufName, g_mru_list[i]);
+        else
+          RegDeleteValue(hMRUKey, bufName);
       }
-      RegCloseKey(hSubKey);
+      RegCloseKey(hMRUKey);
     }
-    RegCloseKey(hKey);
+    RegCloseKey(hCfgKey);
   }
 }
 
 void ClearMRUList()
 {
-  int i;
-  for(i=0; i<MRU_LIST_SIZE; i++) {
+  for(UINT i=0; i < MRU_LIST_SIZE; ++i) {
     g_mru_list[i][0] = _T('\0');
   }
 
@@ -943,13 +912,9 @@ void RestoreCompressor()
   NCOMPRESSOR v = COMPRESSOR_SCRIPT;
   if (OpenRegSettingsKey(hKey)) {
     TCHAR compressor_name[32];
-    DWORD l = sizeof(compressor_name);
-    DWORD t;
-
-    if (RegQueryValueEx(hKey,REGCOMPRESSOR,NULL,&t,(LPBYTE)compressor_name,&l)==ERROR_SUCCESS) {
-      int i;
-      for(i=(int)COMPRESSOR_SCRIPT; i<= (int)COMPRESSOR_BEST; i++) {
-        if(!lstrcmpi(compressor_names[i],compressor_name)) {
+    if (RegReadString(hKey, REGCOMPRESSOR, compressor_name, sizeof(compressor_name))==ERROR_SUCCESS) {
+      for(UINT i= (UINT)COMPRESSOR_SCRIPT; i <= (UINT)COMPRESSOR_BEST; i++) {
+        if(!lstrcmpi(compressor_names[i], compressor_name)) {
           v = (NCOMPRESSOR)i;
           break;
         }
@@ -957,7 +922,7 @@ void RestoreCompressor()
     }
     RegCloseKey(hKey);
   }
-  g_sdata.default_compressor=v;
+  g_sdata.default_compressor = v;
 }
 
 void SaveCompressor()
@@ -970,10 +935,11 @@ void SaveCompressor()
     n = (int)v;
   }
 
-  if (OpenRegSettingsKey(hKey, true)) {
-    // compressor_names, even if Unicode is saved as BYTE* data.
-    RegSetValueEx(hKey,REGCOMPRESSOR,0,REG_SZ,(const BYTE*)compressor_names[n],
-                  lstrlen(compressor_names[n])*sizeof(TCHAR));
+  if (CreateRegSettingsKey(hKey)) {
+    if (compressor_names[n][0])
+      RegWriteString(hKey, REGCOMPRESSOR, compressor_names[n]);
+    else
+      RegDeleteValue(hKey, REGCOMPRESSOR);
     RegCloseKey(hKey);
   }
 }

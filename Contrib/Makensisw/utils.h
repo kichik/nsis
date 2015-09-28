@@ -34,6 +34,7 @@
 
 #define MRU_LIST_SIZE 5
 #define MRU_DISPLAY_LENGTH 40
+#define SYMSETNAME_MAXLEN 40
 
 void* MemAllocZI(SIZE_T cb);
 void MemSafeFree(void*mem);
@@ -55,6 +56,7 @@ void SetDialogFocus(HWND hDlg, HWND hCtl); // Use this and not SetFocus()!
 #define EnableItems(hwnd) EnableDisableItems(hwnd, 1)
 void EnableDisableItems(HWND hwnd, int on);
 bool OpenRegSettingsKey(HKEY &hKey, bool create = false);
+#define CreateRegSettingsKey(refhkey) OpenRegSettingsKey((refhkey), true)
 DWORD ReadRegSettingDW(LPCTSTR name, const DWORD defval);
 void RestoreWindowPos(HWND hwnd);
 void SaveWindowPos(HWND hwnd);

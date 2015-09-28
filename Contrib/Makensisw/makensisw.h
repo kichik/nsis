@@ -65,7 +65,6 @@
 #define RESTORED_COMPRESSOR_MESSAGE _T("\n\nThe %s compressor created the smallest installer (%d bytes).")
 #define EXE_HEADER_COMPRESSOR_STAT _T("EXE header size:")
 #define TOTAL_SIZE_COMPRESSOR_STAT _T("Total size:")
-#define SYMBOL_SET_NAME_MAXLEN 40
 #define LOAD_SYMBOL_SET_DLG_NAME _T("Load Symbol Definitions Set")
 #define SAVE_SYMBOL_SET_DLG_NAME _T("Save Symbol Definitions Set")
 #define LOAD_BUTTON_TEXT _T("Load")
@@ -170,9 +169,10 @@ TCHAR*         BuildSymbols();
 void           SetCompressor(NCOMPRESSOR);
 void           RestoreSymbols();
 void           SaveSymbols();
-void           DeleteSymbolSet(TCHAR *);
-TCHAR**        LoadSymbolSet(TCHAR *);
-void           SaveSymbolSet(TCHAR *, TCHAR **);
+void           FreeSymbolSet(TCHAR **);
+void           DeleteSymbolSet(const TCHAR *);
+TCHAR**        LoadSymbolSet(const TCHAR *);
+void           SaveSymbolSet(const TCHAR *, TCHAR **);
 void           RestoreMRUList();
 void           SaveMRUList();
 
