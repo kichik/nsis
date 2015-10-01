@@ -48,8 +48,8 @@ class Plugins
 
     Plugins() : m_initialized(false) {}
 
-    bool Initialize(const TCHAR*arcsubdir, bool displayInfo);
-    void AddPluginsDir(const tstring& path, bool displayInfo);
+    bool Initialize(const TCHAR*arcsubdir, bool pe64, bool displayInfo);
+    void AddPluginsDir(const tstring& path, bool pe64, bool displayInfo);
     bool FindDllPath(const tstring filename, tstring&dllPath);
     bool IsPluginCommand(const tstring& command) const;
     bool IsKnownPlugin(const tstring& token) const;
@@ -59,7 +59,7 @@ class Plugins
     static bool IsPluginCallSyntax(const tstring& token);
 
   private: // methods
-    void GetExports(const tstring &pathToDll, bool displayInfo);
+    void GetExports(const tstring &pathToDll, bool pe64, bool displayInfo);
     bool DllHasDataHandle(const tstring& dllnamelowercase) const;
 
   private: // data members

@@ -52,8 +52,8 @@ PIMAGE_NT_HEADERS CResourceEditor::GetNTHeaders(BYTE* pbPE) {
     throw runtime_error("PE file missing NT signature");
 
   // Make sure this is a supported PE format
-  if (ntHeaders->OptionalHeader.Magic != IMAGE_NT_OPTIONAL_HDR32_MAGIC &&
-      ntHeaders->OptionalHeader.Magic != IMAGE_NT_OPTIONAL_HDR64_MAGIC)
+  const WORD ohm = *GetCommonMemberFromPEOptHdr(ntHeaders->OptionalHeader, Magic);
+  if (ohm != IMAGE_NT_OPTIONAL_HDR32_MAGIC && ohm != IMAGE_NT_OPTIONAL_HDR64_MAGIC)
     throw runtime_error("Unsupported PE format");
 
   return ntHeaders;
@@ -66,8 +66,8 @@ PRESOURCE_DIRECTORY CResourceEditor::GetResourceDirectory(
   DWORD *pdwResSecVA /*=NULL*/,
   DWORD *pdwSectionIndex /*=NULL*/
 ) {
-  PIMAGE_DATA_DIRECTORY dataDirectory = *GetMemberFromOptionalHeader(ntHeaders->OptionalHeader, DataDirectory);
-  DWORD dwNumberOfRvaAndSizes = *GetMemberFromOptionalHeader(ntHeaders->OptionalHeader, NumberOfRvaAndSizes);
+  PIMAGE_DATA_DIRECTORY dataDirectory = *GetMemberFromPEOptHdr(ntHeaders->OptionalHeader, DataDirectory);
+  DWORD dwNumberOfRvaAndSizes = *GetMemberFromPEOptHdr(ntHeaders->OptionalHeader, NumberOfRvaAndSizes);
   
   if (ConvertEndianness(dwNumberOfRvaAndSizes) <= IMAGE_DIRECTORY_ENTRY_RESOURCE)
     throw runtime_error("No resource section found");
@@ -130,7 +130,7 @@ CResourceEditor::CResourceEditor(BYTE* pbPE, int iSize, bool bKeepData /*=true*/
   m_ntHeaders = GetNTHeaders(m_pbPE);
 
   // No check sum support yet...
-  DWORD* pdwCheckSum = GetMemberFromOptionalHeader(m_ntHeaders->OptionalHeader, CheckSum);
+  DWORD* pdwCheckSum = GetCommonMemberFromPEOptHdr(m_ntHeaders->OptionalHeader, CheckSum);
   if (*pdwCheckSum)
   {
     // clear checksum (should be [re]calculated after all changes done)
@@ -384,10 +384,12 @@ DWORD CResourceEditor::Save(BYTE* pbBuf, DWORD &dwSize) {
     throw runtime_error("Can't Save() when bKeepData is false");
 
   unsigned int i;
-  DWORD dwReqSize;
+  DWORD dwReqSize, temp32;
 
-  DWORD dwFileAlign = ConvertEndianness(m_ntHeaders->OptionalHeader.FileAlignment);
-  DWORD dwSecAlign = ConvertEndianness(m_ntHeaders->OptionalHeader.SectionAlignment);
+  temp32 = *GetCommonMemberFromPEOptHdr(m_ntHeaders->OptionalHeader, FileAlignment);
+  const DWORD dwFileAlign = ConvertEndianness(temp32);
+  temp32 = *GetCommonMemberFromPEOptHdr(m_ntHeaders->OptionalHeader, SectionAlignment);
+  const DWORD dwSecAlign = ConvertEndianness(temp32);
 
   DWORD dwRsrcSize = m_cResDir->GetSize(); // Size of new resource section
   DWORD dwRsrcSizeAligned = RALIGN(dwRsrcSize, dwFileAlign); // Align it to FileAlignment
@@ -440,36 +442,36 @@ DWORD CResourceEditor::Save(BYTE* pbBuf, DWORD &dwSize) {
   sectionHeadersArray[m_dwResourceSectionIndex].SizeOfRawData = ConvertEndianness(dwRsrcSizeAligned);
   // Set the virtual size as well (in memory)
   sectionHeadersArray[m_dwResourceSectionIndex].Misc.VirtualSize = ConvertEndianness(dwRsrcSize);
-  (*GetMemberFromOptionalHeader(ntHeaders->OptionalHeader, DataDirectory))[IMAGE_DIRECTORY_ENTRY_RESOURCE].Size = ConvertEndianness(dwRsrcSize);
+  (*GetMemberFromPEOptHdr(ntHeaders->OptionalHeader, DataDirectory))[IMAGE_DIRECTORY_ENTRY_RESOURCE].Size = ConvertEndianness(dwRsrcSize);
 
   // Set the new virtual size of the image
-  DWORD* pdwSizeOfImage = GetMemberFromOptionalHeader(ntHeaders->OptionalHeader, SizeOfImage);
-  *pdwSizeOfImage = AlignVA(*GetMemberFromOptionalHeader(ntHeaders->OptionalHeader, SizeOfHeaders));
+  DWORD* pdwSizeOfImage = GetCommonMemberFromPEOptHdr(ntHeaders->OptionalHeader, SizeOfImage);
+  *pdwSizeOfImage = AlignVA(*GetCommonMemberFromPEOptHdr(ntHeaders->OptionalHeader, SizeOfHeaders));
   for (i = 0; i < wNumberOfSections; i++) {
     DWORD dwSecSize = ConvertEndianness(sectionHeadersArray[i].Misc.VirtualSize);
     *pdwSizeOfImage = AlignVA(AdjustVA(*pdwSizeOfImage, dwSecSize));
   }
 
   // Set the new AddressOfEntryPoint if needed
-  DWORD* pdwAddressOfEntryPoint = GetMemberFromOptionalHeader(ntHeaders->OptionalHeader, AddressOfEntryPoint);
+  DWORD* pdwAddressOfEntryPoint = GetCommonMemberFromPEOptHdr(ntHeaders->OptionalHeader, AddressOfEntryPoint);
   if (ConvertEndianness(*pdwAddressOfEntryPoint) > m_dwResourceSectionVA)
     *pdwAddressOfEntryPoint = AdjustVA(*pdwAddressOfEntryPoint, dwVAAdjustment);
 
   // Set the new BaseOfCode if needed
-  DWORD* pdwBaseOfCode = GetMemberFromOptionalHeader(ntHeaders->OptionalHeader, BaseOfCode);
+  DWORD* pdwBaseOfCode = GetCommonMemberFromPEOptHdr(ntHeaders->OptionalHeader, BaseOfCode);
   if (ConvertEndianness(*pdwBaseOfCode) > m_dwResourceSectionVA)
     *pdwBaseOfCode = AdjustVA(*pdwBaseOfCode, dwVAAdjustment);
 
   // Set the new BaseOfData if needed
-  if (ntHeaders->OptionalHeader.Magic == IMAGE_NT_OPTIONAL_HDR32_MAGIC) {
+  if (*GetCommonMemberFromPEOptHdr(ntHeaders->OptionalHeader, Magic) == IMAGE_NT_OPTIONAL_HDR32_MAGIC) {
     DWORD* pdwBaseOfData = &((PIMAGE_OPTIONAL_HEADER32)&ntHeaders->OptionalHeader)->BaseOfData;
     if (ConvertEndianness(*pdwBaseOfData) > m_dwResourceSectionVA)
       *pdwBaseOfData = AdjustVA(*pdwBaseOfData, dwVAAdjustment);
   }
 
   // Refresh the headers of the sections that come after the resource section, and the data directory
-  DWORD dwNumberOfRvaAndSizes = *GetMemberFromOptionalHeader(ntHeaders->OptionalHeader, NumberOfRvaAndSizes);
-  PIMAGE_DATA_DIRECTORY pDataDirectory = *GetMemberFromOptionalHeader(ntHeaders->OptionalHeader, DataDirectory);
+  DWORD dwNumberOfRvaAndSizes = *GetMemberFromPEOptHdr(ntHeaders->OptionalHeader, NumberOfRvaAndSizes);
+  PIMAGE_DATA_DIRECTORY pDataDirectory = *GetMemberFromPEOptHdr(ntHeaders->OptionalHeader, DataDirectory);
   for (i = m_dwResourceSectionIndex + 1; i < wNumberOfSections; i++) {
     if (sectionHeadersArray[i].PointerToRawData) {
       AdjustVA(sectionHeadersArray[i].PointerToRawData, dwRsrcSizeAligned - dwOldRsrcSize);
@@ -542,7 +544,7 @@ bool CResourceEditor::SetPESectionVirtualSize(const char* pszSectionName, DWORD 
         if (m_dwResourceSectionIndex == (DWORD) k)
         {
           // fix the resources virtual address if it changed
-          PIMAGE_DATA_DIRECTORY pDataDirectory = *GetMemberFromOptionalHeader(m_ntHeaders->OptionalHeader, DataDirectory);
+          PIMAGE_DATA_DIRECTORY pDataDirectory = *GetMemberFromPEOptHdr(m_ntHeaders->OptionalHeader, DataDirectory);
           pDataDirectory[IMAGE_DIRECTORY_ENTRY_RESOURCE].VirtualAddress = dwSecVA;
           m_dwResourceSectionVA = ConvertEndianness(dwSecVA);
         }
@@ -768,8 +770,8 @@ DWORD CResourceEditor::AdjustVA(DWORD dwVirtualAddress, DWORD dwAdjustment) {
 
 // Aligns a virtual address to the section alignment
 DWORD CResourceEditor::AlignVA(DWORD dwVirtualAddress) {
-  DWORD dwSectionAlignment = *GetMemberFromOptionalHeader(m_ntHeaders->OptionalHeader, SectionAlignment);
-  DWORD dwAlignment = ConvertEndianness(dwSectionAlignment);
+  DWORD temp32 = *GetCommonMemberFromPEOptHdr(m_ntHeaders->OptionalHeader, SectionAlignment);
+  DWORD dwAlignment = ConvertEndianness(temp32);
 
   dwVirtualAddress = ConvertEndianness(dwVirtualAddress);
   dwVirtualAddress = RALIGN(dwVirtualAddress, dwAlignment);
