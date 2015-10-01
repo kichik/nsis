@@ -2406,16 +2406,16 @@ int CEXEBuild::UpdatePEHeader()
   try {
     PIMAGE_NT_HEADERS headers = CResourceEditor::GetNTHeaders(m_exehead);
     // workaround for bug #2697027, #2725883, #2803097
-    headers->OptionalHeader.MajorImageVersion = FIX_ENDIAN_INT16(6);
-    headers->OptionalHeader.MinorImageVersion = FIX_ENDIAN_INT16(0);
+    *GetCommonMemberFromPEOptHdr(headers->OptionalHeader, MajorImageVersion) = FIX_ENDIAN_INT16(6);
+    *GetCommonMemberFromPEOptHdr(headers->OptionalHeader, MinorImageVersion) = FIX_ENDIAN_INT16(0);
     // Override SubsystemVersion?
     if (PESubsysVerMaj != (WORD) -1)
     {
-      headers->OptionalHeader.MajorSubsystemVersion = FIX_ENDIAN_INT16(PESubsysVerMaj);
-      headers->OptionalHeader.MinorSubsystemVersion = FIX_ENDIAN_INT16(PESubsysVerMin);
+      *GetCommonMemberFromPEOptHdr(headers->OptionalHeader, MajorSubsystemVersion) = FIX_ENDIAN_INT16(PESubsysVerMaj);
+      *GetCommonMemberFromPEOptHdr(headers->OptionalHeader, MinorSubsystemVersion) = FIX_ENDIAN_INT16(PESubsysVerMin);
     }
     // DllCharacteristics
-    headers->OptionalHeader.DllCharacteristics = FIX_ENDIAN_INT16(PEDllCharacteristics);
+    *GetCommonMemberFromPEOptHdr(headers->OptionalHeader, DllCharacteristics) = FIX_ENDIAN_INT16(PEDllCharacteristics);
   } catch (std::runtime_error& err) {
     ERROR_MSG(_T("Error updating PE headers: %") NPRIs _T("\n"), CtoTStrParam(err.what()));
     return PS_ERROR;
@@ -3542,7 +3542,7 @@ int CEXEBuild::initialize_default_plugins(bool newtargetarc)
   searchPath += get_target_suffix();
 
   SCRIPT_MSG(_T("Processing default plugins: \"%") NPRIs PLATFORM_PATH_SEPARATOR_STR _T("*.dll\"\n"), searchPath.c_str());
-  if (!m_pPlugins->Initialize(searchPath.c_str(), !!display_script))
+  if (!m_pPlugins->Initialize(searchPath.c_str(), is_target_64bit(), !!display_script))
   {
     ERROR_MSG(_T("Error initializing default plugins!\n"));
     return PS_ERROR;

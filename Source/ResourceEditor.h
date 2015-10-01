@@ -105,11 +105,18 @@ typedef struct RESOURCE_DIRECTORY {
   MY_IMAGE_RESOURCE_DIRECTORY_ENTRY Entries[1];
 } *PRESOURCE_DIRECTORY;
 
-#define GetMemberFromOptionalHeader(optionalHeader, member) \
-    ( (optionalHeader.Magic == IMAGE_NT_OPTIONAL_HDR32_MAGIC) ? \
-      &((PIMAGE_OPTIONAL_HEADER32)&optionalHeader)->member : \
-      &((PIMAGE_OPTIONAL_HEADER64)&optionalHeader)->member \
-    )
+#define GetCommonStructField(ref, s1, s2, fld) \
+  ( (&((ref).fld))[(1 / ( 0 + !!(FIELD_OFFSET(s1, fld) == FIELD_OFFSET(s2, fld) && sizeof(((s1*)0)->fld) == sizeof(((s2*)0)->fld)) )) - 1] ) // Try to fail at compile-time if the field is not at the same offset in both structs or does not have the same size
+#define GetCommonMemberFromPEOptHdr(OptHdr, Member) \
+  ( &GetCommonStructField(OptHdr, IMAGE_OPTIONAL_HEADER32, IMAGE_OPTIONAL_HEADER64, Member) )
+#define GetMemberFromPEOptHdrEx(OptHdr, Member, Sixtyfour) \
+  ( (Sixtyfour) ? \
+    &((PIMAGE_OPTIONAL_HEADER64)&(OptHdr))->Member : \
+    &((PIMAGE_OPTIONAL_HEADER32)&(OptHdr))->Member \
+  )
+#define GetMemberFromPEOptHdr(OptHdr, Member) \
+  ( GetMemberFromPEOptHdrEx(OptHdr, Member, ((OptHdr).Magic == IMAGE_NT_OPTIONAL_HDR64_MAGIC)) )
+
 class CResourceEditor {
 public:
   CResourceEditor(BYTE* pbPE, int iSize, bool bKeepData = true);

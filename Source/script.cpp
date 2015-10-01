@@ -6119,7 +6119,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         const TCHAR *fmtstr = _T("%") NPRIs _T(": \"%") NPRIs _T("\"%") NPRIs _T("%") NPRIs _T("%") NPRIs _T("\n");
         SCRIPT_MSG(fmtstr, cmdnam, path, arcstr ? _T(" (") : _T(""), arcstr ? arcstr : _T(""), arcstr ? _T(")") : _T(""));
         PATH_CONVERT(path);
-        m_plugins[tt].AddPluginsDir(path, !!display_script);
+        m_plugins[tt].AddPluginsDir(path, is_targettype_64bit(tt), !!display_script);
         return PS_OK;
       }
     }

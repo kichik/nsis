@@ -86,7 +86,7 @@ static inline void PrintCommandSig(const tstring sig)
   _ftprintf(g_output, _T(" + %") NPRIs _T("\n"), sig.c_str());
 }
 
-void Plugins::AddPluginsDir(const tstring &path, bool displayInfo)
+void Plugins::AddPluginsDir(const tstring &path, bool pe64, bool displayInfo)
 {
   boost::scoped_ptr<dir_reader> dr( new_dir_reader() );
   dr->read(path);
@@ -99,7 +99,7 @@ void Plugins::AddPluginsDir(const tstring &path, bool displayInfo)
       continue;
 
     const tstring plugin = path + PLATFORM_PATH_SEPARATOR_C + *files_itr;
-    GetExports(plugin, displayInfo);
+    GetExports(plugin, pe64, displayInfo);
   }
 }
 
@@ -136,15 +136,22 @@ void read_file(const tstring& filename, vector<unsigned char>& data)
 }
 }
 
-void Plugins::GetExports(const tstring &pathToDll, bool displayInfo)
+void Plugins::GetExports(const tstring &pathToDll, bool pe64, bool displayInfo)
 {
   vector<unsigned char> dlldata;
-  PIMAGE_NT_HEADERS NTHeaders;
+  PIMAGE_NT_HEADERS pNTHdrs;
   try {
     read_file(pathToDll, dlldata);
     if (dlldata.empty()) return;
-    NTHeaders = CResourceEditor::GetNTHeaders(&dlldata[0]);
+    pNTHdrs = CResourceEditor::GetNTHeaders(&dlldata[0]);
   } catch (std::runtime_error&) {
+    return;
+  }
+
+  const WORD reqohm = pe64 ? IMAGE_NT_OPTIONAL_HDR64_MAGIC : IMAGE_NT_OPTIONAL_HDR32_MAGIC;
+  if (*GetCommonMemberFromPEOptHdr(pNTHdrs->OptionalHeader, Magic) != reqohm)
+  {
+    // Ignore DLLs that don't match our target
     return;
   }
 
@@ -154,20 +161,20 @@ void Plugins::GetExports(const tstring &pathToDll, bool displayInfo)
     m_dllname_conflicts.insert(dllName);
   }
 
-  FIX_ENDIAN_INT16_INPLACE(NTHeaders->FileHeader.Characteristics);
-  if (NTHeaders->FileHeader.Characteristics & IMAGE_FILE_DLL)
+  FIX_ENDIAN_INT16_INPLACE(pNTHdrs->FileHeader.Characteristics);
+  if (pNTHdrs->FileHeader.Characteristics & IMAGE_FILE_DLL)
   {
-    FIX_ENDIAN_INT32_INPLACE(NTHeaders->OptionalHeader.NumberOfRvaAndSizes);
-    if (NTHeaders->OptionalHeader.NumberOfRvaAndSizes <= IMAGE_DIRECTORY_ENTRY_EXPORT) return;
+    DWORD numrvaandsiz = *GetMemberFromPEOptHdr(pNTHdrs->OptionalHeader, NumberOfRvaAndSizes);
+    FIX_ENDIAN_INT32_INPLACE(numrvaandsiz);
+    if (numrvaandsiz <= IMAGE_DIRECTORY_ENTRY_EXPORT) return;
 
-    DWORD ExportDirVA = NTHeaders->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].VirtualAddress;
-    DWORD ExportDirSize = NTHeaders->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].Size;
-    PIMAGE_SECTION_HEADER sections = IMAGE_FIRST_SECTION(NTHeaders);
+    const IMAGE_DATA_DIRECTORY *pExportDir;
+    pExportDir = &(*GetMemberFromPEOptHdr(pNTHdrs->OptionalHeader, DataDirectory))[IMAGE_DIRECTORY_ENTRY_EXPORT];
+    const DWORD ExportDirVA = FIX_ENDIAN_INT32(pExportDir->VirtualAddress);
+    const DWORD ExportDirSize = FIX_ENDIAN_INT32(pExportDir->Size);
 
-    FIX_ENDIAN_INT32_INPLACE(ExportDirVA);
-    FIX_ENDIAN_INT32_INPLACE(ExportDirSize);
-
-    WORD num_sections = FIX_ENDIAN_INT16(NTHeaders->FileHeader.NumberOfSections);
+    PIMAGE_SECTION_HEADER sections = IMAGE_FIRST_SECTION(pNTHdrs);
+    const WORD num_sections = FIX_ENDIAN_INT16(pNTHdrs->FileHeader.NumberOfSections);
 
     for (DWORD i = 0; i < num_sections; i++)
     {
@@ -223,12 +230,12 @@ bool Plugins::DllHasDataHandle(const tstring& dllnamelowercase) const
   return -1 != h;
 }
 
-bool Plugins::Initialize(const TCHAR*arcsubdir, bool displayInfo)
+bool Plugins::Initialize(const TCHAR*arcsubdir, bool pe64, bool displayInfo)
 {
   if (m_initialized) return true;
   m_initialized = true;
 
-  AddPluginsDir(tstring(arcsubdir), displayInfo);
+  AddPluginsDir(tstring(arcsubdir), pe64, displayInfo);
 
   return true;
 }
