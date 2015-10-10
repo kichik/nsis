@@ -177,7 +177,7 @@ This constant is not available on Windows 95 with Internet Explorer 4 and Active
 
 \e{$LOCALAPPDATA}
 
-The local (nonroaming) application data directory.
+The local (non-roaming) application data directory.
 
 This constant is available on Windows 2000 and above.
 
