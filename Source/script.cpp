@@ -285,7 +285,8 @@ int CEXEBuild::process_script(NIStream&Strm, const TCHAR *filename)
   return ret;
 }
 
-#define PRINTHELP() { print_help(line.gettoken_str(0)); return PS_ERROR; }
+#define PRINTHELPEX(cmdname) { print_help((cmdname)); return PS_ERROR; }
+#define PRINTHELP() PRINTHELPEX(line.gettoken_str(0))
 static void PREPROCESSONLY_BEGINCOMMENT() { extern FILE *g_output; _ftprintf(g_output,_T("!if 0 /*\n")); }
 static void PREPROCESSONLY_ENDCOMMENT() { extern FILE *g_output; _ftprintf(g_output,_T("*/\n!endif\n")); }
 
@@ -502,11 +503,12 @@ parse_again:
     }
 
     int istrue=0, mod=0, logicneg=0;
-    
+
     if (tkid == TOK_P_IF) {
+      const TCHAR *cmdnam = line.gettoken_str(0); // Must save name now before eattoken!
       if (!_tcscmp(line.gettoken_str(1),_T("!")))
         logicneg++, line.eattoken();
-      
+
       if (line.getnumtokens() == 2)
         istrue = line.gettoken_int(1);
 
@@ -532,7 +534,7 @@ parse_again:
             if (dir_reader::matches(*dit, spec)) istrue = true;
           }
         }
-        else PRINTHELP()
+        else PRINTHELPEX(cmdnam)
       }
 
       else if (line.getnumtokens() == 4) {
@@ -572,13 +574,13 @@ parse_again:
           case 13:
             istrue = line.gettoken_int(1,&cnv1) || line.gettoken_int(3,&cnv2); break;
           default:
-            PRINTHELP()
+            PRINTHELPEX(cmdnam)
         }
         if (!cnv1 || !cnv2) {
           warning_fl(_T("Invalid number: \"%") NPRIs _T("\""), line.gettoken_str(!cnv1 ? 1 : 3));
         }
       }
-      else PRINTHELP()
+      else PRINTHELPEX(cmdnam)
         
       if (logicneg) istrue = !istrue;
     }
@@ -2996,9 +2998,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     ///////////////////////////////////////////////////////////////////////////////
     case TOK_P_DEFINE:
     {
-      TCHAR *define=line.gettoken_str(1), *value;
+      const TCHAR *cmdnam=line.gettoken_str(0), *define=line.gettoken_str(1);
       GrowBuf file_buf;
-      TCHAR datebuf[256], mathbuf[256];
+      TCHAR datebuf[256], mathbuf[256], *value;
       int dupemode=0;
 
       if (!_tcsicmp(define,_T("/ifndef")))
@@ -3014,9 +3016,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
 
       if (!_tcsicmp(define,_T("/date")) || !_tcsicmp(define,_T("/utcdate"))) {
-        if (line.getnumtokens()!=4) PRINTHELP()
+        if (line.getnumtokens()!=4) PRINTHELPEX(cmdnam)
 
-        TCHAR *date_type = define;
+        const TCHAR *date_type = define;
         time_t rawtime;
         time(&rawtime);
         define=line.gettoken_str(2), value=line.gettoken_str(3);
@@ -3026,7 +3028,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
         datebuf[0]=0;
         size_t s=_tcsftime(datebuf,COUNTOF(datebuf),value,localtime(&rawtime));
-
         if (s == 0)
           datebuf[0]=0;
         else
@@ -3035,7 +3036,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         value=datebuf;
       } else if (!_tcsicmp(define,_T("/file")) || !_tcsicmp(define,_T("/file_noerr"))) {
         
-        if (line.getnumtokens()!=4) PRINTHELP()
+        if (line.getnumtokens()!=4) PRINTHELPEX(cmdnam)
         const TCHAR *const filename=line.gettoken_str(3), *const swit=define;
         NIStream filestrm;
         if (!filestrm.OpenFileForReading(filename)) {
@@ -3071,8 +3072,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         int value1, value2;
         TCHAR *mathop;
 
-        if (line.getnumtokens()!=6) PRINTHELP()
-
+        if (line.getnumtokens()!=6) PRINTHELPEX(cmdnam)
         define = line.gettoken_str(2);
         value1 = line.gettoken_int(3);
         mathop = line.gettoken_str(4);
@@ -3099,20 +3099,20 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           _stprintf(value,_T("%d"),(unsigned int)value1>>(unsigned int)value2);
         } else if (!_tcscmp(mathop,_T("/"))) {
           if (value2==0) {
-            ERROR_MSG(_T("!define /math: division by zero! (\"%i / %i\")\n"),value1,value2);
+            ERROR_MSG(_T("!define /math: division by zero! (\"%i %") NPRIs _T(" %i\")\n"),value1,mathop,value2);
             return PS_ERROR;
           }
           _stprintf(value,_T("%d"),value1/value2);
         } else if (!_tcscmp(mathop,_T("%"))) {
           if (value2==0) {
-            ERROR_MSG(_T("!define /math: division by zero! (\"%i %% %i\")\n"),value1,value2);
+            ERROR_MSG(_T("!define /math: division by zero! (\"%i %") NPRIs _T(" %i\")\n"),value1,mathop,value2);
             return PS_ERROR;
           }
           _stprintf(value,_T("%d"),value1%value2);
-        } else PRINTHELP()
+        } else PRINTHELPEX(cmdnam)
 
       } else {
-        if (line.getnumtokens()==4) PRINTHELP()
+        if (line.getnumtokens()>=4) PRINTHELPEX(cmdnam)
         value=line.gettoken_str(2);
       }
 
@@ -4272,6 +4272,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_CREATESHORTCUT:
 #ifdef NSIS_SUPPORT_CREATESHORTCUT
     {
+      const TCHAR *cmdnam = line.gettoken_str(0);
       ent.which=EW_CREATESHORTCUT;
       int noLnkWorkDir=0, s;
       if (!_tcsicmp(line.gettoken_str(1),_T("/NoWorkingDir"))) line.eattoken(), noLnkWorkDir++;
@@ -4286,7 +4287,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (line.getnumtokens() > 5 && *line.gettoken_str(5))
         {
           ERROR_MSG(_T("CreateShortcut: cannot interpret icon index\n"));
-          PRINTHELP()
+          PRINTHELPEX(cmdnam)
         }
         ent.offsets[4]=0;
       }
@@ -4298,7 +4299,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (a < 0)
         {
           ERROR_MSG(_T("CreateShortcut: unknown show mode \"%") NPRIs _T("\"\n"),line.gettoken_str(6));
-          PRINTHELP()
+          PRINTHELPEX(cmdnam)
         }
         ent.offsets[4] |= tab[a]<<8;
       }
