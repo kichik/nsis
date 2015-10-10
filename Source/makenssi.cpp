@@ -525,7 +525,7 @@ static inline int makensismain(int argc, TCHAR **argv)
       {
         TCHAR *p=argv[argpos]+2;
         TCHAR *s=_tcsdup(p),*v;
-        build.SCRIPT_MSG(_T("Command line defined: \"%") NPRIs _T("\"\n"),p);
+        build.INFO_MSG(_T("Command line defined: \"%") NPRIs _T("\"\n"),p);
         v=_tcsstr(s,_T("="));
         if (v) *v++=0;
         build.define(s,v?v:_T(""));
