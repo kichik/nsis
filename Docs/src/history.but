@@ -358,7 +358,7 @@ Released on June 6th, 2009
 
 \S2{} Minor Changes
 
-\b Added wildcard and /nonfatal suppport for \R{delfile}{!delfile} (\W{http://sourceforge.net/support/tracker.php?aid=1505425}{RFE #1505425})
+\b Added wildcard and /nonfatal support for \R{delfile}{!delfile} (\W{http://sourceforge.net/support/tracker.php?aid=1505425}{RFE #1505425})
 
 \b Fixed \R{searchparse}{!searchparse} (\W{http://sourceforge.net/support/tracker.php?aid=2680110}{bug #2680110})
 
@@ -1092,7 +1092,7 @@ Released on June 8th, 2007
 
 \S2{} Major Changes
 
-\b Added a workaround for a Windows 2000 bug that caused infinite loops when hitting a key in the instilfes page (\W{http://sourceforge.net/support/tracker.php?aid=1733692}{bug #1733692})
+\b Added a workaround for a Windows 2000 bug that caused infinite loops when hitting a key on the instfiles page (\W{http://sourceforge.net/support/tracker.php?aid=1733692}{bug #1733692})
 
 \S2{} Minor Changes
 
@@ -1670,7 +1670,7 @@ Released on April 7th, 2006
 
 \b Fixed makensis self-path detection on non-Windows platforms (NSIS_CONFIG_CONST_DATA_PATH=no)
 
-\b Fixed replace_icon and and generate_uninstall_icon_data icon validation
+\b Fixed replace_icon and generate_uninstall_icon_data icon validation
 
 \b Made external CHM links safer to script exceptions (\W{http://sourceforge.net/support/tracker.php?aid=1449879}{bug #1449879})
 
@@ -1746,7 +1746,7 @@ Released on March 4th, 2006
 
 \b More informative \R{aicon}{Icon} error messages (\W{http://sourceforge.net/support/tracker.php?aid=1174742}{bug #1174742})
 
-\b New case sesnsitive functions in headers: \R{wordfinds}{WordFindS}, \R{wordfind2xs}{WordFind2XS}, \R{wordfind3xs}{WordFind3XS}, \R{wordreplaces}{WordReplaceS}, \R{wordadds}{WordAddS}, \R{wordinserts}{WordInsertS}, \R{strfilters}{StrFilterS}, \R{textcompares}{TextCompareS}, \R{configreads}{ConfigReadS}, \R{configwrites}{ConfigWriteS}, \R{getoptionss}{GetOptionsS}
+\b New case-sensitive functions in headers: \R{wordfinds}{WordFindS}, \R{wordfind2xs}{WordFind2XS}, \R{wordfind3xs}{WordFind3XS}, \R{wordreplaces}{WordReplaceS}, \R{wordadds}{WordAddS}, \R{wordinserts}{WordInsertS}, \R{strfilters}{StrFilterS}, \R{textcompares}{TextCompareS}, \R{configreads}{ConfigReadS}, \R{configwrites}{ConfigWriteS}, \R{getoptionss}{GetOptionsS}
 
 \S2{} Translations
 
@@ -1756,7 +1756,7 @@ Released on March 4th, 2006
 
 \b Bulgarian translation improvements
 
-\b Fixed Czech grammer mistakes (\W{http://sourceforge.net/support/tracker.php?aid=1427189}{patch #1427189})
+\b Fixed Czech grammar mistakes (\W{http://sourceforge.net/support/tracker.php?aid=1427189}{patch #1427189})
 
 \b Fixed Italian typo (\W{http://sourceforge.net/support/tracker.php?aid=1416988}{patch #1416988})
 
@@ -2721,7 +2721,7 @@ Released on January 5th, 2004
 
 \H{v2.0rc1} 2.0 Release Candidate 1
 
-Released on Decemeber 27th, 2003
+Released on December 27th, 2003
 
 \S1{v2.0rc1-rn} Release Notes
 
