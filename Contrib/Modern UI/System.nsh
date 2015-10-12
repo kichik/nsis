@@ -2094,7 +2094,8 @@ Var MUI_TEMP2
   !verbose push
   !verbose ${MUI_VERBOSE}
 
-  !ifndef MUI_PAGE_UNINSTALLER_PREFIX
+  ; MUI_PAGE_UNINSTALLER_PREFIX is undefined by uninstaller pages so we check MUI_UNINSTALLER as well
+  !ifndef MUI_PAGE_UNINSTALLER_PREFIX && MUI_UNINSTALLER
     !warning "MUI_LANGUAGE should be inserted after the MUI_[UN]PAGE_* macros"
   !endif
 
