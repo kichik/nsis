@@ -99,13 +99,13 @@ UDM     Up-down control
 
 #Generic Common Control Messages#
 !define CCM_FIRST 0x2000
-!define CCM_SETBKCOLOR       /math ${CCM_FIRST} + 0x1 ; IE4
-!define CCM_SETUNICODEFORMAT /math ${CCM_FIRST} + 0x5 
-!define CCM_GETUNICODEFORMAT /math ${CCM_FIRST} + 0x6
-!define CCM_SETVERSION       /math ${CCM_FIRST} + 0x7 ; IE5
-!define CCM_GETVERSION       /math ${CCM_FIRST} + 0x8
-!define CCM_SETWINDOWTHEME   /math ${CCM_FIRST} + 0xB ; WinXP
-!define CCM_DPISCALE         /math ${CCM_FIRST} + 0xC
+!define /math CCM_SETBKCOLOR       ${CCM_FIRST} + 0x1 ; IE4
+!define /math CCM_SETUNICODEFORMAT ${CCM_FIRST} + 0x5 
+!define /math CCM_GETUNICODEFORMAT ${CCM_FIRST} + 0x6
+!define /math CCM_SETVERSION       ${CCM_FIRST} + 0x7 ; IE5
+!define /math CCM_GETVERSION       ${CCM_FIRST} + 0x8
+!define /math CCM_SETWINDOWTHEME   ${CCM_FIRST} + 0xB ; WinXP
+!define /math CCM_DPISCALE         ${CCM_FIRST} + 0xC
 
 !define CCS_TOP 1
 !define CCS_BOTTOM 3
