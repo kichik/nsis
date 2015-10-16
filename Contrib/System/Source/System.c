@@ -1063,7 +1063,7 @@ void ParamsOut(SystemProc *proc)
 #else
             {
                 WCHAR guidstrbuf[39];
-                int guidcch = StringFromGUID2(*((REFGUID*)place), guidstrbuf, g_stringsize);
+                int guidcch = StringFromGUID2(*((REFGUID*)place), guidstrbuf, 39);
                 WideCharToMultiByte(CP_ACP, 0, guidstrbuf, guidcch, realbuf, g_stringsize, NULL, NULL);
             }
 #endif

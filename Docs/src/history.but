@@ -12,6 +12,8 @@ Released on ? ?th, 201?
 
 \S2{} Minor Changes
 
+\b Fixed System plugin GUID type output bug on Win98
+
 \b !system and !execute now provide a empty StdIn pipe to work around bugs in some Windows utilities
 
 \b MakeNSISW now uses WinInet when checking for updates
