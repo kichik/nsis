@@ -5690,11 +5690,17 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         ERROR_MSG(_T("Error: %") NPRIs _T(" is only available when building a Unicode installer\n"),  line.gettoken_str(0));
         return PS_ERROR;
       }
-      ent.which=EW_FPUTWS;
-      ent.offsets[0]=GetUserVarIndex(line, 1); // file handle
-      ent.offsets[1]=add_string(line.gettoken_str(2));
-      if (ent.offsets[0]<0) PRINTHELP()
-      SCRIPT_MSG(_T("FileWriteUTF16LE: %") NPRIs _T("->%") NPRIs _T("\n"),line.gettoken_str(2),line.gettoken_str(1));
+      {
+        UINT bom=0, swofs=0;
+        if (!_tcsicmp(_T("/BOM"),line.gettoken_str(swofs+1))) ++bom, ++swofs;
+        if (!_tcsicmp(_T("/NoBOM"),line.gettoken_str(swofs+1))) bom = 0, ++swofs; // Undocumented switch
+        ent.which=EW_FPUTWS;
+        ent.offsets[0]=GetUserVarIndex(line, swofs+1); // file handle
+        ent.offsets[1]=add_string(line.gettoken_str(swofs+2));
+        ent.offsets[3]=bom;
+        if (ent.offsets[0]<0 || line.getnumtokens()-swofs != 3) PRINTHELP()
+        SCRIPT_MSG(_T("FileWriteUTF16LE: %") NPRIs _T("->%") NPRIs _T("\n"),line.gettoken_str(swofs+2),line.gettoken_str(swofs+1));
+      }
     return add_entry(&ent);
     case TOK_FILEREADWORD:
       if (!build_unicode)

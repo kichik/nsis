@@ -456,6 +456,31 @@ BOOL NSISCALL myReadFile(HANDLE h, LPVOID buf, DWORD cb)
   return r && cb == cbio;
 }
 
+// Reading skips the BOM if present, writing writes it to a empty file
+HRESULT NSISCALL UTF16LEBOM(HANDLE h, INT_PTR ForWrite)
+{
+  DWORD orgpos = SetFilePointer(h, 0, NULL, FILE_CURRENT), cbio;
+  if (0 == orgpos)
+  {
+    BYTE bom[2];
+    if (myReadFile(h, bom, 2) && (0xff == bom[0] && 0xfe == bom[1]))
+    {
+      return S_OK;
+    }
+    else if (ForWrite)
+    {
+      if (0 == SetFilePointer(h, 0, NULL, FILE_CURRENT)) // Is the file empty?
+      {
+        static const BYTE bom16le[] = { 0xff, 0xfe };
+        return (WriteFile(h, bom16le, 2, &cbio, NULL) && 2 == cbio)
+          ? S_OK : E_FAIL;
+      }
+    }
+    SetFilePointer(h, 0, NULL, FILE_BEGIN); // The file may have starting with something that was not a BOM, undo the read
+  }
+  return S_FALSE;
+}
+
 #ifdef NSIS_SUPPORT_MOVEONREBOOT
 #ifndef _WIN64
 /** Modifies the wininit.ini file to rename / delete a file.

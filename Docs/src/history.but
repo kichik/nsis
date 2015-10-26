@@ -10,9 +10,13 @@ Released on ? ?th, 201?
 
 \b RequestExecutionLevel now defaults to \c{admin}
 
+\b FileReadUTF16LE now skips the optional BOM at the start of a file
+
 \S2{} Minor Changes
 
 \b Fixed System plugin GUID type output bug on Win98
+
+\b FileWriteUTF16LE can add a BOM with the /BOM switch
 
 \b !system and !execute now provide a empty StdIn pipe to work around bugs in some Windows utilities
 
