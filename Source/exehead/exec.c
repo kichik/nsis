@@ -1370,11 +1370,12 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         DWORD dw;
         int l; // number of bytes to write
         TCHAR *t=var0;
-        if (parm2) // FileWriteByte or FileWriteWord
+        const int writeCodPt = parm2, ansi = EW_FPUTS == which;
+        if (writeCodPt) // FileWriteByte or FileWriteWord
         {
           // Note: In Unicode version, we put a WORD in buf1[0] and will write 1 or 2 bytes, depending on FileWriteByte/Word.
           ((_TUCHAR *)buf1)[0]=(_TUCHAR) GetIntFromParm(1); // FIX_ENDIAN_INT16 needed?
-          l=(which==EW_FPUTS)?1:sizeof(TCHAR);              // Note: This is optimized by the compiler into l=1 for ANSI compilation
+          l=(ansi)?1:sizeof(TCHAR);
         }
 #ifdef _UNICODE
         else if (which==EW_FPUTS)
@@ -1388,10 +1389,16 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         {
           l=mystrlen(GetStringFromParm(0x11))*sizeof(TCHAR);
         }
-        if (!*t || !WriteFile((HANDLE)strtoiptr(t),buf1,l,&dw,NULL))
+        if (*t)
         {
-          exec_error++;
+          const HANDLE hFile = (HANDLE) strtoiptr(t);
+#ifdef _UNICODE
+          if ((ansi | writeCodPt) || !parm3 || SUCCEEDED(UTF16LEBOM(hFile,(INT_PTR)hFile)))
+#endif
+            if (WriteFile(hFile,buf1,l,&dw,NULL))
+              break; // Success
         }
+        exec_error++;
       }
     break;
     case EW_FGETS:
@@ -1433,6 +1440,9 @@ static int NSISCALL ExecuteEntry(entry *entry_)
             else
 #endif
             {
+#ifdef _UNICODE
+              if (!parm3 && 0 == rpos && FAILED(UTF16LEBOM(h,FALSE))) break;
+#endif
               // Read 1 TCHAR (FileReadUTF16LE, (Ansi)FileRead, FileReadWord)
               if (!myReadFile(h,&c,sizeof(TCHAR))) break;
             }
