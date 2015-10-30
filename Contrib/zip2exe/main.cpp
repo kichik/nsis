@@ -1,6 +1,13 @@
 
 #include "../../Source/Platform.h"
 #undef _tcsrchr // The fix for bug #1085 causes a MSVC redefinition warning when <tchar.h> is included by zlib/unzip.h -> zlib/ioapi.h.
+
+// Platform.h includes our custom tchar.h and
+// VS2015 does not like this because we are about to pull in its tchar.h.
+// As a temporary workaround we just undefine the things it disagrees with:
+#undef _vstprintf
+#undef _tcstok
+
 #include <windows.h>
 #include <tchar.h>
 #include <stdio.h>

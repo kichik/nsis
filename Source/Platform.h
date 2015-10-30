@@ -1054,4 +1054,17 @@ Example: _tprintf(_T("Hello %") NPRIs _T("\n"), _T("World"));
 #  define NPRIpN "p"
 #endif
 
+
+// Disable deprecated warnings (Windows SDK for Windows 8.1)
+#ifdef _MSC_VER
+#if _MSC_VER >= 1500
+FORCEINLINE DWORD NoDepr_GetVersion() { __pragma(warning(push))__pragma(warning(disable:4996)) DWORD r = GetVersion(); __pragma(warning(pop)) return r; }
+#define GetVersion NoDepr_GetVersion
+FORCEINLINE BOOL NoDepr_GetVersionExA(OSVERSIONINFOA*p) { __pragma(warning(push))__pragma(warning(disable:4996)) BOOL r = GetVersionExA(p); __pragma(warning(pop)) return r; }
+#define GetVersionExA NoDepr_GetVersionExA
+FORCEINLINE BOOL NoDepr_GetVersionExW(OSVERSIONINFOW*p) { __pragma(warning(push))__pragma(warning(disable:4996)) BOOL r = GetVersionExW(p); __pragma(warning(pop)) return r; }
+#define GetVersionExW NoDepr_GetVersionExW
+#endif //~ _MSC_VER >= 1500
+#endif //~ _MSC_VER
+
 #endif // EOF

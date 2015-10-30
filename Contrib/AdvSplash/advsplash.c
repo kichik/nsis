@@ -11,6 +11,14 @@
 #  define LWA_ALPHA 2
 #endif
 
+#if defined(_MSC_VER) && !defined(GetVersion)
+#if _MSC_VER >= 1500
+FORCEINLINE DWORD NoDepr_GetVersion() { __pragma(warning(push))__pragma(warning(disable:4996)) DWORD r = GetVersion(); __pragma(warning(pop)) return r; }
+#define GetVersion NoDepr_GetVersion
+#endif //~ _MSC_VER >= 1500
+#endif //~ _MSC_VER
+
+
 HINSTANCE g_hInstance;
 
 #define RESOLUTION 32 // 30 fps ;) (32? I like SHR more than iDIV ;)

@@ -2,6 +2,14 @@
 
 #include <windows.h>
 #include <nsis/pluginapi.h> // nsis plugin
+
+#if defined(_MSC_VER) && !defined(GetVersion)
+#if _MSC_VER >= 1500
+FORCEINLINE DWORD NoDepr_GetVersion() { __pragma(warning(push))__pragma(warning(disable:4996)) DWORD r = GetVersion(); __pragma(warning(pop)) return r; }
+#define GetVersion NoDepr_GetVersion
+#endif //~ _MSC_VER >= 1500
+#endif //~ _MSC_VER
+
 typedef BOOL (WINAPI*CHECKTOKENMEMBERSHIP)(HANDLE TokenHandle,PSID SidToCheck,PBOOL IsMember);
 CHECKTOKENMEMBERSHIP _CheckTokenMembership=NULL;
 
@@ -47,11 +55,12 @@ TCHAR* GetAccountTypeHelper(BOOL CheckTokenForGroupDeny)
   TCHAR  *group = NULL;
   HANDLE  hToken = NULL;
 
-
+#ifndef _WIN64
   if (GetVersion() & 0x80000000) // Not NT
   {
     return _T("Admin");
   }
+#endif
 
   // First we must open a handle to the access token for this thread.
   if (OpenThreadToken(GetCurrentThread(), TOKEN_QUERY, FALSE, &hToken) ||

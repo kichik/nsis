@@ -36,8 +36,8 @@ void InitCRC() {
   int i, j; unsigned long c;
   for (c = i = 0; i < 256; c = ++i) {
     for (j = 0; j < 8; j++) {
-      if (c & 1)	c = (c>>1) ^ 0xEDB88320;
-      else		c >>= 1;
+      if (c & 1) c = (c>>1) ^ 0xEDB88320;
+      else c >>= 1;
     }
     CRCTable[i] = c;
   }
@@ -56,7 +56,7 @@ crc32_t streamCRC32(bistream& data) {
   crc32_t crc = 0xFFFFFFFF;
   while(data.good()) {
     data.read(reinterpret_cast<char*>(block), CRCBLOCKSIZE);
-    read = data.gcount();
+    read = (unsigned int) data.gcount(); // The cast is safe because we never read more than CRCBLOCKSIZE
     for (p = block; p < block + read; p++)
       crc = CRCTable[(crc & 0xFF) ^ *p] ^ (crc >> 8);
   }
@@ -77,7 +77,7 @@ void streamMD5(bistream& data, md5_byte_t digest[16]) {
 
   while(data.good()) {
     data.read(reinterpret_cast<char*>(md5block), MD5BLOCKSIZE);
-    read = data.gcount();
+    read = (unsigned int) data.gcount(); // The cast is safe because we never read more than MD5BLOCKSIZE
     md5_append(&state, md5block, read);
   }
 

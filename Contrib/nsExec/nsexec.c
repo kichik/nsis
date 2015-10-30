@@ -25,16 +25,23 @@ Unicode support by Jim Park -- 08/24/2007
 #include <winnt.h>
 #include <nsis/pluginapi.h> // nsis plugin
 
+#if defined(_MSC_VER) && !defined(GetVersion)
+#if _MSC_VER >= 1500
+FORCEINLINE DWORD NoDepr_GetVersion() { __pragma(warning(push))__pragma(warning(disable:4996)) DWORD r = GetVersion(); __pragma(warning(pop)) return r; }
+#define GetVersion NoDepr_GetVersion
+#endif //~ _MSC_VER >= 1500
+#endif //~ _MSC_VER
+
 #ifndef true
 #define true TRUE
 #endif
 #ifndef false
 #define false FALSE
 #endif
-#define LOOPTIMEOUT  100
 
-HWND          g_hwndParent;
-HWND          g_hwndList;
+#define LOOPTIMEOUT  100
+HWND g_hwndParent;
+HWND g_hwndList;
 
 void ExecScript(BOOL log);
 void LogMessage(const TCHAR *pStr, BOOL bOEM);
@@ -239,7 +246,7 @@ params:
     SECURITY_ATTRIBUTES sa={sizeof(sa),};
     SECURITY_DESCRIPTOR sd={0,};
     PROCESS_INFORMATION pi={0,};
-    OSVERSIONINFO osv={sizeof(osv)};
+    const BOOL isNT = sizeof(void*) > 4 || (GetVersion() < 0x80000000);
     HANDLE newstdout=0,read_stdout=0;
     HANDLE newstdin=0,read_stdin=0;
     DWORD dwRead = 1;
@@ -262,15 +269,14 @@ params:
       szUnusedBuf = (TCHAR *)GlobalLock(hUnusedBuf);
     }
 
-    GetVersionEx(&osv); // Get OS info
-    if (osv.dwPlatformId == VER_PLATFORM_WIN32_NT) {
+    sa.bInheritHandle = true;
+    sa.lpSecurityDescriptor = NULL;
+    if (isNT) {
       InitializeSecurityDescriptor(&sd,SECURITY_DESCRIPTOR_REVISION);
       SetSecurityDescriptorDacl(&sd,true,NULL,false);
       sa.lpSecurityDescriptor = &sd;
     }
-    else 
-      sa.lpSecurityDescriptor = NULL;
-    sa.bInheritHandle = true;
+
     if (!CreatePipe(&read_stdout,&newstdout,&sa,0)) {
       lstrcpy(szRet, _T("error"));
       goto done;
