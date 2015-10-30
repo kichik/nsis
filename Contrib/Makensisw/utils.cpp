@@ -720,21 +720,19 @@ BOOL PopMRUFile(TCHAR* fname)
 
 void PushMRUFile(TCHAR* fname)
 {
-  int i;
-  DWORD   rv;
   TCHAR full_file_name[MAX_PATH+1];
 
   if(!fname || fname[0] == _T('\0') || fname[0] == _T('/') || fname[0] == _T('-')) {
     return;
   }
 
-  memset(full_file_name,0,sizeof(full_file_name));
-  rv = GetFullPathName(fname,COUNTOF(full_file_name),full_file_name,NULL);
-  if (rv == 0) {
+  DWORD rv = GetFullPathName(fname,COUNTOF(full_file_name),full_file_name,NULL);
+  if (rv == 0 || rv >= COUNTOF(full_file_name)) {
     return;
   }
 
   if(IsValidFile(full_file_name)) {
+    int i;
     PopMRUFile(full_file_name);
     for(i = MRU_LIST_SIZE - 2; i >= 0; i--) {
       lstrcpy(g_mru_list[i+1], g_mru_list[i]);
@@ -762,7 +760,7 @@ void BuildMRUMenus()
 
   // Remove MRU separator
   int seppos = n - 1;
-  mii.fMask = MIIM_TYPE;
+  mii.fMask = MIIM_TYPE, mii.cch = 0;
   if (GetMenuItemInfo(hMenu, seppos, TRUE, &mii)) {
     if (MFT_SEPARATOR & mii.fType) {
       DeleteMenu(hMenu, seppos, MF_BYPOSITION);

@@ -334,7 +334,7 @@ const TCHAR * NSISCALL loadHeaders(int cl_flags)
   while (left--)
   {
 #ifdef DEBUG
-    if (h.length_of_header < header->blocks[left].offset)
+    if ((UINT_PTR) h.length_of_header < header->blocks[left].offset)
       return _LANG_GENERIC_ERROR; // Should never happen
 #endif
     header->blocks[left].offset += (UINT_PTR) data;

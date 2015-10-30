@@ -96,13 +96,13 @@ public:
   bool good() const {return ios_base::goodbit==m_state;}
 
   streamsize gcount() const {return m_LastReadCount;}
-  streampos tellg() const {return ftell(m_File);}
+  long tellg() const {return ftell(m_File);}
 
   simplebfstream& read(char*s,streamsize n) 
   {
-    size_t cbio = fread(s, 1, n, m_File);
+    streamsize cbio = fread(s, 1, n);
     m_LastReadCount = cbio;
-    if (cbio != (size_t)n)
+    if (cbio != n)
     {
       m_state |= ferror(m_File) ? ios_base::badbit : (ios_base::eofbit|ios_base::failbit);
     }
@@ -112,7 +112,7 @@ public:
   simplebfstream& seekg(streamoff off, ios_base::seekdir dir)
   {
     int origin = ios_base::beg==dir ? SEEK_SET : ios_base::cur==dir ? SEEK_CUR : SEEK_END;
-    if (fseek(m_File, off, origin))
+    if (fseek(off, origin))
     {
       // BUGBUG: Does not follow standard 
        m_state |= ios_base::badbit|ios_base::failbit;
@@ -121,16 +121,52 @@ public:
   }
 
   simplebfstream& seekp(streamoff off, ios_base::seekdir dir) {return seekg(off, dir);}
-  streampos tellp() const {return tellg();}
+  long tellp() const {return tellg();}
 
   simplebfstream& write(const char* s, streamsize n)
   {
-    size_t cbio = fwrite(s, 1, n, m_File);
-    if (cbio != (size_t)n) m_state |= ios_base::badbit;
+    streamsize cbio = fwrite(s, 1, n);
+    if (cbio != n) m_state |= ios_base::badbit;
     return *this;
   }
 
   bool operator ! () const {return fail();}
+protected:
+  // streamsize and streamoff can be INT64 on x86 in VS2015
+  template<class F> streamsize readwritehelper(void*buf, size_t itemsize, streamsize count, F func)
+  {
+    if (sizeof(streamsize) <= sizeof(size_t))
+      return func(buf, itemsize, (size_t) count, m_File);
+    for (streamsize totc = 0;;)
+    {
+      size_t small = count > 0x7fffffff ? 0x7fffffff : (size_t) count;
+      size_t rv = func(((char*)buf) + totc, itemsize, small, m_File);
+      count -= (streamsize) rv, totc += rv;
+      if (rv != small)
+        return totc;
+    }
+  }
+  streamsize fread(void*buf, size_t itemsize, streamsize count)
+  {
+    return readwritehelper(buf, itemsize, count, ::fread);
+  }
+  streamsize fwrite(const void*buf, size_t itemsize, streamsize count)
+  {
+    return readwritehelper((void*) buf, itemsize, count, ::fwrite);
+  }
+  int fseek(streamoff off, int origin)
+  {
+    if (sizeof(streamoff) <= sizeof(long))
+      return ::fseek(m_File, (long) off, origin);
+    for (;;)
+    {
+      long small = off > 0x7fffffff ? 0x7fffffff : off < -2147483647 ? -2147483647 : (long) off;
+      int retval = ::fseek(m_File, small, origin);
+      off -= small, origin = SEEK_CUR;
+      if (!off || retval)
+        return retval;
+    }
+  }
 };
 
   typedef simplebfstream bistream;

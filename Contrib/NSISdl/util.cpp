@@ -9,8 +9,7 @@
 **   Keep everything here strictly ANSI.  No TCHAR style stuff.
 */
 
-#include "netinc.h"
-
+#include <windows.h>
 #include "util.h"
 
 int my_atoi(char *s)
@@ -75,10 +74,26 @@ void myitoa64(__int64 i, char *buffer)
     *buffer = 0;
 }
 
+// Visual Studio 2015 (CLv19 x86) and some older versions of CLv14 x64 will optimize
+// our loop into a direct call to _memset and this fails to link because we don't use the CRT
+#if defined(_MSC_VER) && _MSC_VER+0 >= 1400
+#if defined(_MSC_FULL_VER) && _MSC_FULL_VER+0 >= 140050727
+#include <intrin.h>
+#else
+EXTERN_C void __stosb(BYTE*,BYTE,size_t);
+#endif //~ _MSC_FULL_VER >= 140050727
+#pragma intrinsic(__stosb)
+#define CRTINTRINSIC_memset(p,c,s) __stosb((BYTE*)(p),(BYTE)(c),(s))
+#endif //~ _MSC_VER
+
 void mini_memset(void *o,char i,int l)
 {
+#ifdef CRTINTRINSIC_memset
+  CRTINTRINSIC_memset(o, i, l);
+#else
   char *oo=(char*)o;
   while (l-- > 0) *oo++=i;
+#endif
 }
 void mini_memcpy(void *o,void*i,int l)
 {

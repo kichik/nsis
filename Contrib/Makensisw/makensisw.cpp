@@ -267,7 +267,7 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
       num = DragQueryFile((HDROP)wParam,(UINT)-1,NULL,0);
       if (num==1) {
         DragQueryFile((HDROP)wParam,0,szTmp,MAX_PATH);
-        if (lstrlen(szTmp)>0) {
+        if (szTmp[0]) {
           SetScript(szTmp);
           PushMRUFile(g_sdata.script);
           ResetObjects();
