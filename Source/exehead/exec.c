@@ -1367,7 +1367,6 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       // Jim Park/Wizou: in Unicode version of NSIS, EW_FPUTS still deals with ANSI files (conversion is done). We add EW_FPUTWS to deal with Unicode files.
 #endif
       {
-        DWORD dw;
         int l; // number of bytes to write
         TCHAR *t=var0;
         const int writeCodPt = parm2, ansi = EW_FPUTS == which;
@@ -1395,7 +1394,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
 #ifdef _UNICODE
           if ((ansi | writeCodPt) || !parm3 || SUCCEEDED(UTF16LEBOM(hFile,(INT_PTR)hFile)))
 #endif
-            if (WriteFile(hFile,buf1,l,&dw,NULL))
+            if (myWriteFile(hFile,buf1,l))
               break; // Success
         }
         exec_error++;
@@ -1549,7 +1548,6 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           filebuf=(unsigned char *)GlobalAlloc(GPTR,filehdrsize);
           if (filebuf)
           {
-            DWORD lout;
             SetSelfFilePointer(0);
             ReadSelfFile((char*)filebuf,filehdrsize);
             {
@@ -1571,7 +1569,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
                 GlobalFree(unicon_data);
               }
             }
-            WriteFile(hFile,(char*)filebuf,filehdrsize,&lout,NULL);
+            myWriteFile(hFile,(char*)filebuf,filehdrsize);
             GlobalFree(filebuf);
             ret=GetCompressedDataFromDataBlock(-1,hFile);
           }

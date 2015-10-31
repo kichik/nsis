@@ -44,6 +44,7 @@ TCHAR * NSISCALL mystrstr(TCHAR *a, TCHAR *b);
 WIN32_FIND_DATA * NSISCALL file_exists(TCHAR *buf);
 TCHAR * NSISCALL my_GetTempFileName(TCHAR *buf, const TCHAR *dir);
 BOOL NSISCALL myReadFile(HANDLE h, LPVOID buf, DWORD cb);
+BOOL NSISCALL myWriteFile(HANDLE h, const void*buf, DWORD cb);
 HRESULT NSISCALL UTF16LEBOM(HANDLE h, INT_PTR ForWrite);
 
 //BOOL NSISCALL my_SetWindowText(HWND hWnd, const TCHAR *val);
