@@ -1014,7 +1014,7 @@ void log_timestamp(TCHAR *buf)
 
 void log_printf(TCHAR *format, ...)
 {
-#ifdef NSIS_CONFIG_LOG_STDOUT
+#if defined(NSIS_CONFIG_LOG_STDOUT)
   HANDLE hStdOut;
 #endif
   va_list val;
@@ -1025,18 +1025,28 @@ void log_printf(TCHAR *format, ...)
   wvsprintf(log_text+mystrlen(log_text),format,val);
 
   va_end(val);
-#ifdef NSIS_CONFIG_LOG_ODS
+#if defined(NSIS_CONFIG_LOG_ODS)
   if (log_dolog)
     OutputDebugString(log_text);
-#endif
-#ifdef NSIS_CONFIG_LOG_STDOUT
+#elif defined(NSIS_CONFIG_LOG_STDOUT)
   if (log_dolog && (hStdOut = GetStdHandle(STD_OUTPUT_HANDLE)) != INVALID_HANDLE_VALUE)
   {
-    myWriteFile(hStdOut, log_text, lstrlen(log_text)); // BUGBUG: Should this be lstrlen*sizeof(TCHAR)?
-    myWriteFile(hStdOut, _T("\n"), 1); // BUGBUG: sizeof(TCHAR)?
+    const DWORD cch = lstrlen(log_text), cb = cch * sizeof(TCHAR);
+#ifdef UNICODE
+    DWORD conmode, cchio;
+    if (GetConsoleMode(hStdOut, &conmode))
+    {
+      WriteConsoleW(hStdOut, log_text, cch, &cchio, 0);
+      myWriteFile(hStdOut, "\n", 1);
+    }
+    else
+#endif //~ UNICODE
+    {
+      myWriteFile(hStdOut, log_text, cb);
+      myWriteFile(hStdOut, _T("\n"), 1 * sizeof(TCHAR));
+    }
   }
-#endif
-#if !defined(NSIS_CONFIG_LOG_ODS) && !defined(NSIS_CONFIG_LOG_STDOUT)
+#else
   log_write(0);
 #endif
 }
