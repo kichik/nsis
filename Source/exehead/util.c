@@ -452,14 +452,19 @@ TCHAR * NSISCALL my_GetTempFileName(TCHAR *buf, const TCHAR *dir)
 BOOL NSISCALL myReadFile(HANDLE h, LPVOID buf, DWORD cb)
 {
   DWORD cbio;
-  BOOL r = ReadFile(h, buf, cb, &cbio, NULL);
-  return r && cb == cbio;
+  return ReadFile(h, buf, cb, &cbio, NULL) && cb == cbio;
+}
+
+BOOL NSISCALL myWriteFile(HANDLE h, const void*buf, DWORD cb)
+{
+  DWORD cbio;
+  return WriteFile(h, buf, cb, &cbio, NULL) && cb == cbio;
 }
 
 // Reading skips the BOM if present, writing writes it to a empty file
 HRESULT NSISCALL UTF16LEBOM(HANDLE h, INT_PTR ForWrite)
 {
-  DWORD orgpos = SetFilePointer(h, 0, NULL, FILE_CURRENT), cbio;
+  DWORD orgpos = SetFilePointer(h, 0, NULL, FILE_CURRENT);
   if (0 == orgpos)
   {
     BYTE bom[2];
@@ -472,11 +477,10 @@ HRESULT NSISCALL UTF16LEBOM(HANDLE h, INT_PTR ForWrite)
       if (0 == SetFilePointer(h, 0, NULL, FILE_CURRENT)) // Is the file empty?
       {
         static const BYTE bom16le[] = { 0xff, 0xfe };
-        return (WriteFile(h, bom16le, 2, &cbio, NULL) && 2 == cbio)
-          ? S_OK : E_FAIL;
+        return myWriteFile(h, bom16le, 2) ? S_OK : E_FAIL;
       }
     }
-    SetFilePointer(h, 0, NULL, FILE_BEGIN); // The file may have starting with something that was not a BOM, undo the read
+    SetFilePointer(h, 0, NULL, FILE_BEGIN); // The file may have started with something that was not a BOM, undo the read
   }
   return S_FALSE;
 }
@@ -498,9 +502,7 @@ void RenameViaWininit(const TCHAR* prevName, const TCHAR* newName)
   int cchRenameLine;
   LPCSTR szRenameSec = "[Rename]\r\n"; // rename section marker
   HANDLE hfile;
-  DWORD dwFileSize;
-  DWORD dwBytes;
-  DWORD dwRenameLinePos;
+  DWORD dwFileSize, dwRenameLinePos;
   char *pszWinInit;   // Contains the file contents of wininit.ini
 
   int spn;   // length of the short path name in TCHARs.
@@ -572,7 +574,7 @@ void RenameViaWininit(const TCHAR* prevName, const TCHAR* newName)
         dwFileSize += cchRenameLine;
 
         SetFilePointer(hfile, 0, NULL, FILE_BEGIN);
-        WriteFile(hfile, pszWinInit, dwFileSize, &dwBytes, NULL);
+        myWriteFile(hfile, pszWinInit, dwFileSize);
 
         GlobalFree(pszWinInit);
       }
@@ -952,9 +954,8 @@ void NSISCALL log_write(int close)
     }
     if (fp!=INVALID_HANDLE_VALUE)
     {
-      DWORD d;
       mystrcat(log_text,_T("\r\n"));
-      WriteFile(fp,log_text,mystrlen(log_text)*sizeof(TCHAR),&d,NULL);
+      myWriteFile(fp,log_text,mystrlen(log_text)*sizeof(TCHAR));
     }
   }
 }
@@ -1013,6 +1014,9 @@ void log_timestamp(TCHAR *buf)
 
 void log_printf(TCHAR *format, ...)
 {
+#ifdef NSIS_CONFIG_LOG_STDOUT
+  HANDLE hStdOut;
+#endif
   va_list val;
   va_start(val,format);
 
@@ -1026,11 +1030,10 @@ void log_printf(TCHAR *format, ...)
     OutputDebugString(log_text);
 #endif
 #ifdef NSIS_CONFIG_LOG_STDOUT
-  if (log_dolog && GetStdHandle(STD_OUTPUT_HANDLE) != INVALID_HANDLE_VALUE)
+  if (log_dolog && (hStdOut = GetStdHandle(STD_OUTPUT_HANDLE)) != INVALID_HANDLE_VALUE)
   {
-    DWORD dwBytes;
-    WriteFile(GetStdHandle(STD_OUTPUT_HANDLE), log_text, lstrlen(log_text), &dwBytes, NULL);
-    WriteFile(GetStdHandle(STD_OUTPUT_HANDLE), _T("\n"), 1, &dwBytes, NULL);
+    myWriteFile(hStdOut, log_text, lstrlen(log_text)); // BUGBUG: Should this be lstrlen*sizeof(TCHAR)?
+    myWriteFile(hStdOut, _T("\n"), 1); // BUGBUG: sizeof(TCHAR)?
   }
 #endif
 #if !defined(NSIS_CONFIG_LOG_ODS) && !defined(NSIS_CONFIG_LOG_STDOUT)

@@ -430,8 +430,7 @@ int NSISCALL _dodecomp(int offset, HANDLE hFileOut, unsigned char *outbuf, int o
 
         if (!outbuf)
         {
-          DWORD r;
-          if (!WriteFile(hFileOut,outbuffer,u,&r,NULL) || (int)r != u) return -2;
+          if (!myWriteFile(hFileOut,outbuffer,u)) return -2;
           retval+=u;
         }
         else
@@ -452,9 +451,8 @@ int NSISCALL _dodecomp(int offset, HANDLE hFileOut, unsigned char *outbuf, int o
       while (input_len > 0)
       {
         DWORD l=min(input_len,outbuffer_len);
-        DWORD t;
         if (!ReadSelfFile((LPVOID)inbuffer,l)) return -3;
-        if (!WriteFile(hFileOut,inbuffer,l,&t,NULL) || l!=t) return -2;
+        if (!myWriteFile(hFileOut,inbuffer,l)) return -2;
         retval+=l;
         input_len-=l;
       }
@@ -498,7 +496,7 @@ static int NSISCALL __ensuredata(int amount)
       g_inflate_stream.avail_in=l;
       do
       {
-        DWORD r,t;
+        DWORD r;
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
         if (g_header)
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
@@ -520,7 +518,7 @@ static int NSISCALL __ensuredata(int amount)
         r=BUGBUG64TRUNCATE(DWORD,(UINT_PTR)g_inflate_stream.next_out)-BUGBUG64TRUNCATE(DWORD,(UINT_PTR)_outbuffer);
         if (r)
         {
-          if (!WriteFile(dbd_hFile,_outbuffer,r,&t,NULL) || r != t)
+          if (!myWriteFile(dbd_hFile,_outbuffer,r))
           {
             return -2;
           }
@@ -568,10 +566,9 @@ int NSISCALL _dodecomp(int offset, HANDLE hFileOut, unsigned char *outbuf, int o
   {
     while (input_len > 0)
     {
-      DWORD t;
       DWORD l=min(input_len,IBUFSIZE);
       if (!myReadFile(dbd_hFile,(LPVOID)_inbuffer,r=l)) return -3;
-      if (!WriteFile(hFileOut,_inbuffer,r,&t,NULL) || t != l) return -2;
+      if (!myWriteFile(hFileOut,_inbuffer,r)) return -2;
       retval+=r;
       input_len-=r;
       dbd_pos+=r;
