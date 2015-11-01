@@ -96,10 +96,10 @@ typedef wchar_t TCHAR, _TUCHAR;
 #define _tcstoi64   _wcstoi64
 #define _tcstol     wcstol
 #define _tcstoul    wcstoul
-#if !defined(_WIN32) || (defined(_MSC_VER) && (_MSC_VER<=1200))
-#	define _tstof      my_wtof
+#if !defined(_WIN32) || !defined(_MSC_VER) || (defined(_MSC_VER) && ((_MSC_VER<=1200) || defined(_DLL))) // _wtof does not exist in older versions of MSVCRT.dll
+#  define _tstof    my_wtof
 #else
-#	define _tstof      _wtof
+#  define _tstof    _wtof
 #endif
 #define _tstoi      _wtoi
 #define _tstoi64    _wtoi64
