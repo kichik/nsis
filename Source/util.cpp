@@ -776,13 +776,17 @@ void RawTStrToASCII(const TCHAR*in,char*out,UINT maxcch)
 size_t ExpandoStrFmtVaList(wchar_t*Stack, size_t cchStack, wchar_t**ppMalloc, const wchar_t*FmtStr, va_list Args)
 {
 #ifdef _WIN32
+  static size_t qlen = INT_MAX;
 // For _vsnwprintf, the \0 terminator is not part of the input size
 #  if _MSC_VER < 1310
+  const bool have__vscwprintf = false;
 #    define ExpandoStrFmtVaList_vsnwprintf(d,c,f,v) _vsnwprintf((d),(c)?(c)-1:0,(f),(v)) // Allow INT_MAX hack on MinGW and older versions of VC that don't have _vscwprintf
 #  else
+  const bool have__vscwprintf = true;
 #    define ExpandoStrFmtVaList_vsnwprintf(d,c,f,v) ( INT_MAX==(c) ? _vscwprintf((f),(v)) : _vsnwprintf((d),(c)?(c)-1:0,(f),(v)) )
 #  endif
 #else
+  const size_t qlen = INT_MAX;
 #  define ExpandoStrFmtVaList_vsnwprintf vswprintf
 #endif
 #if defined(_ISOC99_SOURCE) || _POSIX_C_SOURCE >= 200112L
@@ -792,10 +796,11 @@ size_t ExpandoStrFmtVaList(wchar_t*Stack, size_t cchStack, wchar_t**ppMalloc, co
   if (!testedsizecalc)
   {
 #ifdef _WIN32
-    size_t cch = ExpandoStrFmtVaList_vsnwprintf(0, INT_MAX, L"333", Args);
+    int cch = have__vscwprintf ? 0 : ExpandoStrFmtVaList_vsnwprintf(0, qlen = 0, L"333", Args);
+    if (cch != 3) cch = ExpandoStrFmtVaList_vsnwprintf(0, qlen = INT_MAX, L"333", Args); // Is this actually necessary? Just set qlen = INT_MAX if have__vscwprintf?
 #else
-    wchar_t testbuf[1+1];
-    size_t cch = ExpandoStrFmtVaList_vsnwprintf(testbuf, COUNTOF(testbuf), L"333", Args);
+    wchar_t testbuf[1+!0];
+    int cch = ExpandoStrFmtVaList_vsnwprintf(testbuf, COUNTOF(testbuf), L"333", Args);
 #endif
     testedsizecalc = (3 == cch) + 1;
   }
@@ -810,12 +815,12 @@ size_t ExpandoStrFmtVaList(wchar_t*Stack, size_t cchStack, wchar_t**ppMalloc, co
   for(;;)
   {
     cch = ExpandoStrFmtVaList_vsnwprintf(dest, cchAvail, FmtStr, Args);
-    if ((size_t)-1 == cch)
+    if ((int)cch < 0)
     {
       cch = 0;
       if (cansizecalc) break; // vswprintf error, abort!
       if (msvcbackdoor)
-        cchAvail = ExpandoStrFmtVaList_vsnwprintf(0, INT_MAX, FmtStr, Args) + 1;
+        cchAvail = ExpandoStrFmtVaList_vsnwprintf(0, qlen, FmtStr, Args) + 1;
       else
         cchAvail = 4 * STD_MAX(cchAvail, (size_t)500);
     }
