@@ -23,6 +23,7 @@ defenv['CPP_REQUIRES_STDLIB'] = 0
 defenv['SUBSYS_CON'] = '/subsystem:console'
 defenv['SUBSYS_WIN'] = '/subsystem:windows'
 defenv['MSVCRT_FLAG'] = '/MD'
+defenv['MSVCRT_NEEDSMANIFEST'] = False
 defenv['STDCALL'] = '__stdcall'
 
 msvs_version = float(defenv['MSVS_VERSION'].replace('Exp',''))
@@ -103,6 +104,24 @@ if float(defenv['MSVS_VERSION'].replace('Exp','')) < 8.0:
       Exit(2)
 
 conf.Finish()
+
+# Linking to msvcr?0.dll (/MD) might require a manifest
+
+confenv = defenv.Clone()
+conf = confenv.Configure()
+if msvs_version >= 7.0:
+    conf.env.Append(CCFLAGS = [defenv['MSVCRT_FLAG']])
+    code = """
+        #include <stdlib.h>
+        int main() { return atoi("0"); }
+    """
+    result = True # TryLink should not fail but default to True just in case so distribution will fail as well
+    if conf.TryLink(code, '.cpp'):
+        import os
+        result = os.path.exists('%s.manifest' % conf.lastTarget)
+    defenv['MSVCRT_NEEDSMANIFEST'] = result
+conf.Finish()
+
 
 ### unicode
 tdefenv = defenv.Clone()

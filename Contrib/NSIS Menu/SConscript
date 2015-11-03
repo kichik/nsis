@@ -58,11 +58,9 @@ if env['PLATFORM'] != 'win32' and WhereIs('wx-config') or \
    )
 
    # manifest
-
-   if env.has_key('MSVS_VERSION'):
-      if float(env['MSVS_VERSION'].replace('Exp','')) >= 8.0:
-         manifest = env.SideEffect('%s.exe.manifest' % target, nsis_menu)
-         env.DistributeBin(manifest, alias='install-utils')
+   if env.get('MSVCRT_NEEDSMANIFEST'):
+      manifest = env.SideEffect('%s.exe.manifest' % target, nsis_menu)
+      env.DistributeBin(manifest, alias='install-utils')
 
    # set directories
 
