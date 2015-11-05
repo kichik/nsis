@@ -150,7 +150,7 @@ double LineParser::gettoken_number(int token, int *success/*=0*/) const
 TCHAR* LineParser::gettoken_str(int token) const
 {
   token+=m_eat;
-  if (token < 0 || token >= m_nt) return (TCHAR*)_T("");
+  if (token < 0 || token >= m_nt) return (TCHAR*) _T("");
   return m_tokens[token];
 }
 
@@ -201,7 +201,8 @@ int LineParser::doline(TCHAR *line, int ignore_escaping/*=0*/)
         else line++;
       }
     }
-    else {
+    else
+    {
       int lstate=0; // 1=", 2=`, 4='
       if (*line == _T(';') || *line == _T('#'))
       {
@@ -213,7 +214,8 @@ int LineParser::doline(TCHAR *line, int ignore_escaping/*=0*/)
         m_incommentblock = true;
         line+=2;
       }
-      else {
+      else
+      {
         if (*line == _T('\"')) lstate=1;
         else if (*line == _T('\'')) lstate=2;
         else if (*line == _T('`')) lstate=4;
@@ -222,8 +224,10 @@ int LineParser::doline(TCHAR *line, int ignore_escaping/*=0*/)
         TCHAR *p = line;
         while (*line)
         {
-          if (line[0] == _T('$') && line[1] == _T('\\')) {
-            switch (line[2]) {
+          if (line[0] == _T('$') && line[1] == _T('\\'))
+          {
+            switch (line[2]) 
+            {
               case _T('"'):
               case _T('\''):
               case _T('`'):
@@ -247,8 +251,10 @@ int LineParser::doline(TCHAR *line, int ignore_escaping/*=0*/)
           int i;
           m_tokens[m_nt]=(TCHAR*)malloc((nc+1)*sizeof(TCHAR));
           for (i = 0; p < line; i++, p++) {
-            if (!ignore_escaping && p[0] == _T('$') && p[1] == _T('\\')) {
-              switch (p[2]) {
+            if (!ignore_escaping && p[0] == _T('$') && p[1] == _T('\\'))
+            {
+              switch (p[2])
+              {
                 case _T('"'):
                 case _T('\''):
                 case _T('`'):
