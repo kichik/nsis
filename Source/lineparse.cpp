@@ -90,8 +90,10 @@ double LineParser::gettoken_float(int token, int *success/*=0*/) const
     TCHAR *t=m_tokens[token];
     if (_T('-') == *t || _T('+') == *t) ++t;
     *success=*t?1:0;
+    unsigned int dotcount = 0;
     while (*t)
     {
+      if (_T('.') == *t && ++dotcount > 1) *success=0;
       if ((*t < _T('0') || *t > _T('9'))&&*t != _T('.')) *success=0;
       t++;
     }
@@ -116,9 +118,10 @@ int LineParser::gettoken_int(int token, int *success/*=0*/) const
     ++p, ++neg;
   if (_T('0') == p[0])
   {
-    // Special support for 0n and 0y MASM style and 0b Python style radix prefix:
+    // Special support for 0n, 0y and 0t MASM style and 0b and 0o Python style radix prefix:
     if (_T('n') == (p[1]|32)) parse=&p[2], base=10;
     if (_T('b') == (p[1]|32) || _T('y') == (p[1]|32)) parse=&p[2], base=2;
+    if (_T('o') == (p[1]|32) || _T('t') == (p[1]|32)) parse=&p[2], base=8;
   }
   if (neg)
   {
@@ -143,6 +146,7 @@ double LineParser::gettoken_number(int token, int *success/*=0*/) const
     if (_T('x') == (str[1]|32)) ++forceint;
     if (_T('n') == (str[1]|32)) ++forceint;
     if (_T('b') == (str[1]|32) || _T('y') == (str[1]|32)) ++forceint;
+    if (_T('o') == (str[1]|32) || _T('t') == (str[1]|32)) ++forceint;
   }
   return forceint ? gettoken_int(token,success) : gettoken_float(token,success);
 }

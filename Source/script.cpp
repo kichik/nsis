@@ -517,7 +517,7 @@ parse_again:
         logicneg++, line.eattoken();
 
       if (line.getnumtokens() == 2)
-        istrue = line.gettoken_int(1);
+        istrue = line.gettoken_number(1) || line.gettoken_int(1);
 
       else if (line.getnumtokens() == 3) {
         if (!_tcsicmp(line.gettoken_str(1),_T("/fileexists"))) {
