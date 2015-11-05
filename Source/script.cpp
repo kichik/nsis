@@ -364,11 +364,18 @@ int CEXEBuild::doParse(const TCHAR *str)
   // if ignoring, ignore all lines that don't begin with an exclamation mark
   {
     bool ignore_line = cur_ifblock && (cur_ifblock->ignore || cur_ifblock->inherited_ignore);
-    TCHAR first_char = *(TCHAR *) m_linebuild.get();
-    if (ignore_line && (first_char!=_T('!') || !is_ppbranch_token(line.gettoken_str(0))))
+    if (ignore_line)
     {
-      m_linebuild.resize(0);
-      return PS_OK;
+      TCHAR *rawline = (TCHAR*) m_linebuild.get(), first_char = *rawline, buf[30], *first_token = buf;
+      if (!res)
+        first_token = line.gettoken_str(0);
+      else // LineParser::parse() failed so we cannot call gettoken_str but we still might need to ignore this line
+        for (size_t i = 0; i < COUNTOF(buf); ++i) if ((buf[i] = rawline[i]) <= ' ') { buf[i] = _T('\0'); break; }
+      if (first_char!=_T('!') || !is_ppbranch_token(first_token))
+      {
+        m_linebuild.resize(0);
+        return PS_OK;
+      }
     }
   }
 

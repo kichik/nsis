@@ -329,7 +329,7 @@ void CEXEBuild::print_help(const TCHAR *commandname)
 
 }
 
-bool CEXEBuild::is_ppbranch_token(TCHAR *s)
+bool CEXEBuild::is_ppbranch_token(const TCHAR *s)
 {
   int np, op, pos, tkid = get_commandtoken(s, &np, &op, &pos);
   switch(tkid)
