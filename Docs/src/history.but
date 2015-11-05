@@ -20,6 +20,12 @@ Released on ? ?th, 201?
 
 \b !system and !execute now provide a empty StdIn pipe to work around bugs in some Windows utilities
 
+\b Added support for 0o octal radix prefix on number literals in the preprocessor
+
+\b The single parameter version of !if now also supports floats
+
+\b Preprocessor now warns when invalid floating point numbers are used in math operations
+
 \b MakeNSISW now uses WinInet when checking for updates
 
 \S2{} Translations
