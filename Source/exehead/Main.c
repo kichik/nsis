@@ -98,17 +98,17 @@ EXTERN_C void NSISWinMainNOCRT()
   }
 #endif
 
-  // load shfolder.dll before any script code is executed to avoid
-  // weird situations where SetOutPath or even the extraction of 
-  // shfolder.dll will cause unexpected behavior.
-  //
-  // this also prevents the following:
-  //
-  //  SetOutPath "C:\Program Files\NSIS" # maybe read from reg
-  //  File shfolder.dll
-  //  Delete $PROGRAMFILES\shfolder.dll # can't be deleted, as the
-  //                                    # new shfolder.dll is used
-  //                                    # to find its own path.
+  // Because myGetProcAddress now loads dlls with a full path 
+  // under GetSystemDirectory() the previous issues in <= v3.0b2 with 
+  // 'SetOutPath' and/or 'File "shfolder.dll"' no longer apply.
+  // All MGA dlls still need to be loaded early here because installers 
+  // running under WoW64 might disable WoW64 FS redirection in .onInit and 
+  // because GetSystemDirectory() can return the native system32 path we need
+  // the redirection to be turned off so LoadLibrary uses the correct folder.
+  // Note: We also import directly from KERNEL32, ADVAPI32 and SHELL32 so they 
+  // are exempt from this requirement and SHELL32 imports from SHLWAPI on 
+  // WoW64 systems and it is also on the KnownDLLs list so 
+  // SHLWAPI also gets a pass and that just leaves SHFOLDER.
   g_SHGetFolderPath = myGetProcAddress(MGA_SHGetFolderPath);
 
   {

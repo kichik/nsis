@@ -1113,12 +1113,25 @@ struct MGA_FUNC MGA_FUNCS[] = {
  */
 void * NSISCALL myGetProcAddress(const enum myGetProcAddressFunctions func)
 {
-  const char *dll = MGA_FUNCS[func].dll;
-  HMODULE hModule = GetModuleHandleA(dll);
+#ifdef UNICODE
+  static const TCHAR dllpathfmt[] = _T("%s%hs.dll"); // Strings in MGA_FUNC are always ANSI
+#else
+  static const TCHAR dllpathfmt[] = _T("%s%s.dll");
+#endif
+  HMODULE hModule;
+  const char *dllname = MGA_FUNCS[func].dll;
+  TCHAR buf[MAX_PATH+1+20+4+!0]; // 20+4 is more than enough for the dllnames we are using
+
+  UINT cch = GetSystemDirectory(buf, MAX_PATH);
+  if (cch > MAX_PATH) // MAX_PATH was somehow not large enough and we don't support 
+    cch = 0;          // \\?\ paths so we have to settle for just the name.
+  wsprintf(buf + cch, dllpathfmt, _T("\\") + (!cch || buf[cch-1] == '\\'), dllname);
+
+  hModule = GetModuleHandleA(dllname); // Avoid LoadLibrary if possible because 
+  if (!hModule)                        // it can crash on 64-bit dlls if 
+    hModule = LoadLibrary(buf);        // WoW64 FS redirection is off.
   if (!hModule)
-    hModule = LoadLibraryA(dll);
-  if (!hModule)
-    return NULL;
+    return (FARPROC) hModule; // Optimized "return NULL;"
 
   return GetProcAddress(hModule, MGA_FUNCS[func].func);
 }
