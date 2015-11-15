@@ -121,12 +121,8 @@ void NSISCALL mini_memcpy(void *out, const void *in, UINT_PTR cb);
 enum myGetProcAddressFunctions {
 #ifndef _WIN64
   MGA_GetDiskFreeSpaceEx,
-  MGA_MoveFileEx,
   MGA_GetUserDefaultUILanguage,
   MGA_RegDeleteKeyEx,
-  MGA_OpenProcessToken,
-  MGA_LookupPrivilegeValue,
-  MGA_AdjustTokenPrivileges,
 #endif
   MGA_InitiateShutdown,
   MGA_SHAutoComplete, // x64 can link to shlwapi directly but as long as MGA_SHGetFolderPath is used we can stick with myGetProcAddress

@@ -337,28 +337,15 @@ end:
   if (g_exec_flags.reboot_called)
   {
     const DWORD reason = SHTDN_REASON_FLAG_PLANNED | SHTDN_REASON_MAJOR_APPLICATION | SHTDN_REASON_MINOR_INSTALLATION;
-    BOOL (WINAPI *OPT)(HANDLE, DWORD,PHANDLE);
-    BOOL (WINAPI *LPV)(LPCTSTR,LPCTSTR,PLUID);
-    BOOL (WINAPI *ATP)(HANDLE,BOOL,PTOKEN_PRIVILEGES,DWORD,PTOKEN_PRIVILEGES,PDWORD);
     BOOL (WINAPI *IS)(LPTSTR,LPTSTR,DWORD,DWORD,DWORD);
-    #ifdef _WIN64
-    OPT=OpenProcessToken, LPV=LookupPrivilegeValue, ATP=AdjustTokenPrivileges;
-    #else
-    OPT=myGetProcAddress(MGA_OpenProcessToken);
-    LPV=myGetProcAddress(MGA_LookupPrivilegeValue);
-    ATP=myGetProcAddress(MGA_AdjustTokenPrivileges);
-    if (OPT && LPV && ATP)
-    #endif
+    HANDLE hToken;
+    TOKEN_PRIVILEGES tkp;
+    if (OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &hToken))
     {
-      HANDLE hToken;
-      TOKEN_PRIVILEGES tkp;
-      if (OPT(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &hToken))
-      {
-        LPV(NULL, SE_SHUTDOWN_NAME, &tkp.Privileges[0].Luid);
-        tkp.PrivilegeCount = 1;
-        tkp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
-        ATP(hToken, FALSE, &tkp, 0, (PTOKEN_PRIVILEGES)NULL, 0);
-      }
+      LookupPrivilegeValue(NULL, SE_SHUTDOWN_NAME, &tkp.Privileges[0].Luid);
+      tkp.PrivilegeCount = 1;
+      tkp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
+      AdjustTokenPrivileges(hToken, FALSE, &tkp, 0, (PTOKEN_PRIVILEGES)NULL, 0);
     }
 
     IS=myGetProcAddress(MGA_InitiateShutdown);

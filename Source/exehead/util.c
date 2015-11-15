@@ -595,22 +595,9 @@ void RenameViaWininit(const TCHAR* prevName, const TCHAR* newName)
 void NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
 {
 #ifndef _WIN64 // Shut up GCC unused warning
-  BOOL fOk = FALSE;
+  BOOL fOk =
 #endif
-  typedef BOOL (WINAPI *mfea_t)(LPCTSTR lpExistingFileName,LPCTSTR lpNewFileName,DWORD dwFlags);
-  mfea_t mfea;
-  #ifdef _WIN64
-  mfea=MoveFileEx;
-  #else
-  mfea=(mfea_t) myGetProcAddress(MGA_MoveFileEx);
-  if (mfea)
-  #endif
-  {
-#ifndef _WIN64 // Shut up GCC unused warning
-    fOk=
-#endif
-      mfea(pszExisting, pszNew, MOVEFILE_DELAY_UNTIL_REBOOT|MOVEFILE_REPLACE_EXISTING);
-  }
+    MoveFileEx(pszExisting, pszNew, MOVEFILE_DELAY_UNTIL_REBOOT|MOVEFILE_REPLACE_EXISTING);
 #ifndef _WIN64
   if (!fOk)
   {
@@ -1078,12 +1065,8 @@ struct MGA_FUNC MGA_FUNCS[] = {
 #ifdef _UNICODE
 #ifndef _WIN64
   {"KERNEL32", "GetDiskFreeSpaceExW"},
-  {"KERNEL32", "MoveFileExW"},
   {"KERNEL32", "GetUserDefaultUILanguage"},
   {"ADVAPI32", "RegDeleteKeyExW"},
-  {"ADVAPI32", "OpenProcessToken"},
-  {"ADVAPI32", "LookupPrivilegeValueW"},
-  {"ADVAPI32", "AdjustTokenPrivileges"},
 #endif
   {"ADVAPI32", "InitiateShutdownW"},
   {"SHLWAPI",  "SHAutoComplete"},
@@ -1091,12 +1074,8 @@ struct MGA_FUNC MGA_FUNCS[] = {
 };
 #else
   {"KERNEL32", "GetDiskFreeSpaceExA"},
-  {"KERNEL32", "MoveFileExA"},
   {"KERNEL32", "GetUserDefaultUILanguage"},
   {"ADVAPI32", "RegDeleteKeyExA"},
-  {"ADVAPI32", "OpenProcessToken"},
-  {"ADVAPI32", "LookupPrivilegeValueA"},
-  {"ADVAPI32", "AdjustTokenPrivileges"},
   {"ADVAPI32", "InitiateShutdownA"},
   {"SHLWAPI",  "SHAutoComplete"},
   {"SHFOLDER", "SHGetFolderPathA"}
