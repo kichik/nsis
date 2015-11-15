@@ -369,18 +369,8 @@ void RenameViaWininit(const TCHAR* prevName, const TCHAR* newName)
 
 BOOL DeleteFileOnReboot(TCHAR *pszFile)
 {
-  BOOL fOk = FALSE;
-  HMODULE hLib=GetModuleHandle(_T("KERNEL32.dll"));
-  if (hLib)
-  {
-    typedef BOOL (WINAPI *mfea_t)(LPCTSTR lpExistingFileName,LPCTSTR lpNewFileName,DWORD dwFlags);
-    mfea_t mfea;
-    mfea=(mfea_t) GetProcAddress(hLib,_CRT_STRINGIZE(MoveFileEx));
-    if (mfea)
-    {
-      fOk=mfea(pszFile, NULL, MOVEFILE_DELAY_UNTIL_REBOOT);
-    }
-  }
+  BOOL fOk = 
+    MoveFileEx(pszFile, NULL, MOVEFILE_DELAY_UNTIL_REBOOT);
 #ifndef _WIN64
   if (!fOk)
   {
