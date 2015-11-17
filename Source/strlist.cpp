@@ -101,7 +101,7 @@ unsigned int ExeHeadStringList::find(const TCHAR *str, WORD codepage, bool proce
 unsigned int ExeHeadStringList::find(const void *ptr, unsigned int cchF, WORD codepage, bool processed, char**ppBufMB) const
 {
   const wchar_t *find = (const wchar_t*) ptr; // Data is: m_wide ? UTF16LE : wchar_t
-  if (!*find) return 0; // The empty string is always first.
+  if (!*find) return 0; // The empty string is always first (ExeHead uses string block offset 0 to indicate no parameter present in some places).
 
   char *p = (char*) m_gr.get();
   if (!p) return -1;
