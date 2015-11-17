@@ -704,8 +704,8 @@ Call functions:
 \c $var               ; Result: option string
 
 \\<b\\>Note:\\</b\\>
-\\<br\\>- Error flag if option not found
-\\<br\\>- First option symbol it is delimiter
+\\<br\\>- The error flag is set if the option is not found
+\\<br\\>- The first character in the option string is treated as a parameter delimiter
 
 
 \\<b\\>Example1:\\</b\\>
