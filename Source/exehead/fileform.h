@@ -510,6 +510,17 @@ typedef struct {
 #define DEL_REBOOT 4
 #define DEL_SIMPLE 8
 
+#ifdef NSIS_SUPPORT_CREATESHORTCUT
+#define CS_HK_MASK 0xffff0000 // HotKey
+#define CS_HK_SHIFT 16
+#define CS_NWD     0x00008000 // NoWorkingDirectory flag
+#define CS_SC_MASK 0x00007000 // ShowCmd
+#define CS_SC_SHIFT 12
+#define CS_II_MASK 0x00000fff // IconIndex
+#define CS_II_SHIFT 0
+#define CS_II_MAX (CS_II_MASK >> CS_II_SHIFT)
+#endif
+
 // special escape characters used in strings: (we use control codes in order to minimize conflicts with normal characters)
 #define NS_LANG_CODE  _T('\x01')    // for a langstring
 #define NS_SHELL_CODE _T('\x02')    // for a shell folder path

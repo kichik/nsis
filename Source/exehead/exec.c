@@ -1049,6 +1049,8 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       TCHAR *buf0=GetStringFromParm(0x02);
       TCHAR *buf3=GetStringFromParm(-0x33);
       TCHAR *buf4=GetStringFromParm(0x45);
+      const int icoi = (parm4>>CS_II_SHIFT)&(CS_II_MASK>>CS_II_SHIFT), nwd = parm4&CS_NWD,
+        sc = (parm4>>CS_SC_SHIFT)&(CS_SC_MASK>>CS_SC_SHIFT), hk = (parm4>>CS_HK_SHIFT)&(CS_HK_MASK>>CS_HK_SHIFT);
 
       HRESULT hres;
       IShellLink* psl;
@@ -1057,7 +1059,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         GetStringFromParm(0x21);
 
       log_printf8(_T("CreateShortcut: out: \"%s\", in: \"%s %s\", icon: %s,%d, sw=%d, hk=%d"),
-        buf1,buf2,buf0,buf3,parm4&0xff,(parm4&0xff00)>>8,parm4>>16);
+        buf1,buf2,buf0,buf3,icoi,sc,hk);
 
       hres = CoCreateInstance(&CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER,
                                 &IID_IShellLink, (void **) &psl);
@@ -1069,10 +1071,10 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         if (SUCCEEDED(hres))
         {
           hres = psl->lpVtbl->SetPath(psl,buf2);
-          if (!(parm4&0x8000)) psl->lpVtbl->SetWorkingDirectory(psl,state_output_directory);
-          if ((parm4&0x7f00)>>8) psl->lpVtbl->SetShowCmd(psl,(parm4&0x7f00)>>8);
-          psl->lpVtbl->SetHotkey(psl,(unsigned short)(parm4>>16));
-          if (buf3[0]) psl->lpVtbl->SetIconLocation(psl,buf3,parm4&0xff);
+          if (!nwd) psl->lpVtbl->SetWorkingDirectory(psl,state_output_directory);
+          if (sc) psl->lpVtbl->SetShowCmd(psl,sc);
+          psl->lpVtbl->SetHotkey(psl,(unsigned short) hk);
+          if (buf3[0]) psl->lpVtbl->SetIconLocation(psl,buf3,icoi);
           psl->lpVtbl->SetArguments(psl,buf0);
           psl->lpVtbl->SetDescription(psl,buf4);
 

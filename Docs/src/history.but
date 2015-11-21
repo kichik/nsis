@@ -20,6 +20,8 @@ Released on ? ?th, 201?
 
 \b FileWriteUTF16LE can add a BOM with the /BOM switch
 
+\b CreateShortcut icon index can now be larger than 255 (\W{http://sf.net/p/nsis/bugs/1123/}{bug #1123})
+
 \b !system and !execute now provide a empty StdIn pipe to work around bugs in some Windows utilities
 
 \b Added support for 0o octal radix prefix on number literals in the preprocessor
