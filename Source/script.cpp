@@ -4288,27 +4288,26 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.offsets[2]=add_string(line.gettoken_str(3));
       ent.offsets[3]=add_string(line.gettoken_str(4));
       ent.offsets[5]=add_string(line.gettoken_str(8));
-      ent.offsets[4]=line.gettoken_int(5,&s)&0xff;
-      if (!s)
+      ent.offsets[4]=(line.gettoken_int(5,&s) << CS_II_SHIFT) & CS_II_MASK;
+      if (!s || ent.offsets[4] < 0 || ent.offsets[4] > CS_II_MAX)
       {
         if (line.getnumtokens() > 5 && *line.gettoken_str(5))
         {
           ERROR_MSG(_T("CreateShortcut: cannot interpret icon index\n"));
           PRINTHELPEX(cmdnam)
         }
-        ent.offsets[4]=0;
       }
-      if (noLnkWorkDir) ent.offsets[4] |= 0x8000;
+      if (noLnkWorkDir) ent.offsets[4] |= CS_NWD;
       if (line.getnumtokens() > 6 && *line.gettoken_str(6))
       {
-        int tab[3]={SW_SHOWNORMAL,SW_SHOWMAXIMIZED,SW_SHOWMINNOACTIVE/*SW_SHOWMINIMIZED doesn't work*/};
+        const int tab[3]={SW_SHOWNORMAL,SW_SHOWMAXIMIZED,SW_SHOWMINNOACTIVE/*SW_SHOWMINIMIZED doesn't work*/};
         int a=line.gettoken_enum(6,_T("SW_SHOWNORMAL\0SW_SHOWMAXIMIZED\0SW_SHOWMINIMIZED\0"));
-        if (a < 0)
+        if (a < 0 || (tab[a] << CS_SC_SHIFT) & ~CS_SC_MASK)
         {
           ERROR_MSG(_T("CreateShortcut: unknown show mode \"%") NPRIs _T("\"\n"),line.gettoken_str(6));
           PRINTHELPEX(cmdnam)
         }
-        ent.offsets[4] |= tab[a]<<8;
+        ent.offsets[4] |= tab[a] << CS_SC_SHIFT;
       }
       if (line.getnumtokens() > 7)
       {
@@ -4316,25 +4315,20 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         for (unsigned int spos=0; (spos <= _tcslen(s)) && (spos <= 255); spos++)
           b[spos]=_totupper(*(s+spos));
         _tcscpy(s,b);
-
         if (*s)
         {
           int c=0;
-          if (_tcsstr(s,_T("ALT|"))) ent.offsets[4]|=HOTKEYF_ALT << 24;
-          if (_tcsstr(s,_T("CONTROL|"))) ent.offsets[4]|=HOTKEYF_CONTROL << 24;
-          if (_tcsstr(s,_T("EXT|"))) ent.offsets[4]|=HOTKEYF_EXT << 24;
-          if (_tcsstr(s,_T("SHIFT|"))) ent.offsets[4]|=HOTKEYF_SHIFT << 24;
+          if (_tcsstr(s,_T("ALT|"))) ent.offsets[4] |= HOTKEYF_ALT << (CS_HK_SHIFT+8);
+          if (_tcsstr(s,_T("CONTROL|"))) ent.offsets[4] |= HOTKEYF_CONTROL << (CS_HK_SHIFT+8);
+          if (_tcsstr(s,_T("EXT|"))) ent.offsets[4] |= HOTKEYF_EXT << (CS_HK_SHIFT+8);
+          if (_tcsstr(s,_T("SHIFT|"))) ent.offsets[4] |= HOTKEYF_SHIFT << (CS_HK_SHIFT+8);
           while (_tcsstr(s,_T("|")))
-          {
             s=_tcsstr(s,_T("|"))+1;
-          }
           if ((s[0] == _T('F')) && (s[1] >= _T('1') && s[1] <= _T('9')))
           {
             c=VK_F1-1+_ttoi(s+1);
             if (_ttoi(s+1) < 1 || _ttoi(s+1) > 24)
-            {
               warning_fl(_T("CreateShortcut: F-key \"%") NPRIs _T("\" out of range"),s);
-            }
           }
           else if (((s[0] >= _T('A') && s[0] <= _T('Z')) || (s[0] >= _T('0') && s[0] <= _T('9'))) && !s[1])
             c=s[0];
@@ -4343,12 +4337,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             c=s[0];
             warning_fl(_T("CreateShortcut: unrecognized hotkey \"%") NPRIs _T("\""),s);
           }
-          ent.offsets[4] |= (c) << 16;
+          ent.offsets[4] |= ((c) << CS_HK_SHIFT) & CS_HK_MASK;
         }
       }
-      SCRIPT_MSG(_T("CreateShortcut: \"%") NPRIs _T("\"->\"%") NPRIs _T("\" %") NPRIs _T(" icon:%") NPRIs _T(",%d, showmode=0x%X, hotkey=0x%X, comment=%") NPRIs _T("\n"),
-        line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),
-        line.gettoken_str(4),ent.offsets[4]&0xff,(ent.offsets[4]>>8)&0xff,ent.offsets[4]>>16,line.gettoken_str(8));
+      SCRIPT_MSG(_T("CreateShortcut: \"%") NPRIs _T("\"->\"%") NPRIs _T("\" %") NPRIs _T(" icon:%") NPRIs _T(",%d, nwd=%d, showmode=0x%X, hotkey=0x%X, comment=%") NPRIs _T("\n"),
+        line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(4),(ent.offsets[4]>>CS_II_SHIFT)&(CS_II_MASK>>CS_II_SHIFT),!!(ent.offsets[4]&CS_NWD),
+        (ent.offsets[4]>>CS_SC_SHIFT)&(CS_SC_MASK>>CS_SC_SHIFT),(ent.offsets[4]>>CS_HK_SHIFT)&(CS_HK_MASK>>CS_HK_SHIFT),line.gettoken_str(8));
 
       DefineInnerLangString(NLF_CREATE_SHORTCUT);
       DefineInnerLangString(NLF_ERR_CREATING_SHORTCUT);
