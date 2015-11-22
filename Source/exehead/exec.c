@@ -1342,8 +1342,8 @@ static int NSISCALL ExecuteEntry(entry *entry_)
 #ifdef NSIS_SUPPORT_FILEFUNCTIONS
     case EW_FCLOSE:
       {
-        TCHAR *t=var0;
-        if (*t) CloseHandle((HANDLE)strtoiptr(t));
+        HANDLE handle = (HANDLE) strtoiptr(var0);
+        if (handle) CloseHandle(handle);
       }
     break;
     case EW_FOPEN:
@@ -1375,7 +1375,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         if (writeCodPt) // FileWriteByte or FileWriteWord
         {
           // Note: In Unicode version, we put a WORD in buf1[0] and will write 1 or 2 bytes, depending on FileWriteByte/Word.
-          ((_TUCHAR *)buf1)[0]=(_TUCHAR) GetIntFromParm(1); // FIX_ENDIAN_INT16 needed?
+          ((_TUCHAR *)buf1)[0]=(_TUCHAR) GetIntFromParm(1);
           l=(ansi)?1:sizeof(TCHAR);
         }
 #ifdef _UNICODE
@@ -1488,16 +1488,16 @@ static int NSISCALL ExecuteEntry(entry *entry_)
 #ifdef NSIS_SUPPORT_FINDFIRST
     case EW_FINDCLOSE:
       {
-        TCHAR *t=var0;
-        if (*t) FindClose((HANDLE)strtoiptr(t));
+        HANDLE hFind = (HANDLE) strtoiptr(var0);
+        if (hFind) FindClose(hFind);
       }
     break;
     case EW_FINDNEXT:
       {
         TCHAR *textout=var0;
-        TCHAR *t=var1;
+        HANDLE hFind = (HANDLE) strtoiptr(var1);
         WIN32_FIND_DATA fd;
-        if (*t && FindNextFile((HANDLE)strtoiptr(t),&fd))
+        if (hFind && FindNextFile(hFind,&fd))
         {
           mystrcpy(textout,fd.cFileName);
         }
