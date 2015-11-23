@@ -264,7 +264,7 @@ ${MementoSection} "NSIS Core Files (required)" SecCore
   WriteRegStr HKCR ".nsh" "" "NSIS.Header"
   WriteRegStr HKCR ".nsh" "PerceivedType" "text"
   WriteRegStr HKCR "NSIS.Header" "" "NSIS Header File"
-  WriteRegStr HKCR "NSIS.Header\DefaultIcon" "" "$INSTDIR\makensisw.exe,1"
+  WriteRegStr HKCR "NSIS.Header\DefaultIcon" "" "$INSTDIR\makensisw.exe,2"
   ReadRegStr $R0 HKCR "NSIS.Header\shell\open\command" ""
   ${If} $R0 == ""
     WriteRegStr HKCR "NSIS.Header\shell" "" "open"

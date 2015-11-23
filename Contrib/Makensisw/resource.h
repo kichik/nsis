@@ -32,7 +32,8 @@
 #define DLG_ABOUT                       103
 #define IDM_MENU                        104
 #define IDK_ACCEL                       105
-#define IDI_SHELL                       112
+#define IDI_ASSOC_NSI                   112
+#define IDI_ASSOC_NSH                   113
 #define IDB_LOGO                        115
 #define DLG_SETTINGS                    116
 #define IDB_BITMAP1                     120

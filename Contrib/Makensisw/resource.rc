@@ -55,7 +55,8 @@ END
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDI_ICON                ICON                    "icon.ico"
-IDI_SHELL               ICON                    "shell.ico"
+IDI_ASSOC_NSI           ICON                    "assoc_nsi.ico"
+IDI_ASSOC_NSH           ICON                    "assoc_nsh.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
