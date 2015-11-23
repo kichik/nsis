@@ -13,8 +13,9 @@ res = Split("""
 """)
 
 resources = Split("""
-	shell.ico
 	icon.ico
+	assoc_nsi.ico
+	assoc_nsh.ico
 	makensisw.xml
 	logo.bmp
 	toolbar.bmp

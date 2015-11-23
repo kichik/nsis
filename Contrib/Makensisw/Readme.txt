@@ -197,6 +197,7 @@ Version History
 
 2.3.3
 - Update check switched from JNetLib to WinInet
+- New file type icons
 
 
 Copyright Information
