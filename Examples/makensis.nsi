@@ -156,9 +156,9 @@ ${MementoSection} "NSIS Core Files (required)" SecCore
   File ..\COPYING
   File ..\NSIS.chm
   File ..\NSIS.exe
-  !verbose push 1
-  File /nonfatal ..\NSIS.exe.manifest
-  !verbose pop
+  !if /FileExists "..\NSIS.exe.manifest"
+    File "..\NSIS.exe.manifest"
+  !endif
 
   SetOutPath $INSTDIR\Bin
   File ..\Bin\makensis.exe
