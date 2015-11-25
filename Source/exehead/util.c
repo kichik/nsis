@@ -1070,7 +1070,10 @@ struct MGA_FUNC MGA_FUNCS[] = {
 #endif
   {"ADVAPI32", "InitiateShutdownW"},
   {"SHLWAPI",  "SHAutoComplete"},
-  {"SHFOLDER", "SHGetFolderPathW"}
+  {"SHFOLDER", "SHGetFolderPathW"},
+  {"VERSION",  "GetFileVersionInfoSizeW"},
+  {"VERSION",  "GetFileVersionInfoW"},
+  {"VERSION",  "VerQueryValueW"}
 };
 #else
   {"KERNEL32", "GetDiskFreeSpaceExA"},
@@ -1078,7 +1081,10 @@ struct MGA_FUNC MGA_FUNCS[] = {
   {"ADVAPI32", "RegDeleteKeyExA"},
   {"ADVAPI32", "InitiateShutdownA"},
   {"SHLWAPI",  "SHAutoComplete"},
-  {"SHFOLDER", "SHGetFolderPathA"}
+  {"SHFOLDER", "SHGetFolderPathA"},
+  {"VERSION",  "GetFileVersionInfoSizeA"},
+  {"VERSION",  "GetFileVersionInfoA"},
+  {"VERSION",  "VerQueryValueA"}
 };
 #endif
 
