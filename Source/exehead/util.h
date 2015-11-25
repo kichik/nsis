@@ -127,6 +127,9 @@ enum myGetProcAddressFunctions {
   MGA_InitiateShutdown,
   MGA_SHAutoComplete, // x64 can link to shlwapi directly but as long as MGA_SHGetFolderPath is used we can stick with myGetProcAddress
   MGA_SHGetFolderPath, // TODO: This can probably call something else directly on x64
+  MGA_GetFileVersionInfoSize, // Version.dll exists in all Windows versions, it is delay loaded to avoid dll hijacking [bug #1125]
+  MGA_GetFileVersionInfo,
+  MGA_VerQueryValue
 };
 
 void * NSISCALL myGetProcAddress(const enum myGetProcAddressFunctions func);

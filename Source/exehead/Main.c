@@ -108,8 +108,9 @@ EXTERN_C void NSISWinMainNOCRT()
   // Note: We also import directly from KERNEL32, ADVAPI32 and SHELL32 so they 
   // are exempt from this requirement and SHELL32 imports from SHLWAPI on 
   // WoW64 systems and it is also on the KnownDLLs list so 
-  // SHLWAPI also gets a pass and that just leaves SHFOLDER.
-  g_SHGetFolderPath = myGetProcAddress(MGA_SHGetFolderPath);
+  // SHLWAPI also gets a pass and that just leaves 
+  myGetProcAddress(MGA_GetFileVersionInfo); // VERSION
+  g_SHGetFolderPath = myGetProcAddress(MGA_SHGetFolderPath); // and SHFOLDER
 
   {
     // workaround for bug #1008632
