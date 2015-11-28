@@ -130,7 +130,7 @@ typedef DWORDLONG ULONGLONG,*PULONGLONG;
 
 #ifdef __cplusplus
 #include <algorithm>
-#if defined(_MSC_VER) && ( _MSC_VER <= 1200 || (defined(_MIN)&&_MSC_FULL_VER<=140040310) ) && _MSC_FULL_VER!=13103052
+#if defined(_MSC_VER) && ( _MSC_VER <= 1200 || (defined(_MIN) && _MSC_FULL_VER >= 140000000 && _MSC_FULL_VER <= 140040310) )
 #define STD_MIN std::_MIN
 #define STD_MAX std::_MAX
 #else
