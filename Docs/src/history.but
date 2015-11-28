@@ -12,7 +12,7 @@ Released on ? ?th, 201?
 
 \b FileReadUTF16LE now skips the optional BOM at the start of a file
 
-\b SHFolder.dll is loaded with full path to prevent dll hijacking
+\b LoadLibrary security hardening to prevent dll hijacking
 
 \S2{} Minor Changes
 

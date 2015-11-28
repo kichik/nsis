@@ -119,6 +119,7 @@ void NSISCALL mini_memcpy(void *out, const void *in, UINT_PTR cb);
 #endif
 
 enum myGetProcAddressFunctions {
+  MGA_SetDefaultDllDirectories, // Win8+ but exists on Vista/2008/7/2008R2 if KB2533623 is installed
 #ifndef _WIN64
   MGA_GetDiskFreeSpaceEx,
   MGA_GetUserDefaultUILanguage,
@@ -127,12 +128,12 @@ enum myGetProcAddressFunctions {
   MGA_InitiateShutdown,
   MGA_SHAutoComplete, // x64 can link to shlwapi directly but as long as MGA_SHGetFolderPath is used we can stick with myGetProcAddress
   MGA_SHGetFolderPath, // TODO: This can probably call something else directly on x64
-  MGA_GetFileVersionInfoSize, // Version.dll exists in all Windows versions, it is delay loaded to avoid dll hijacking [bug #1125]
+  MGA_GetFileVersionInfoSize, // Version.dll exists in all Windows versions, it is delay loaded to avoid DLL hijacking [bug #1125]
   MGA_GetFileVersionInfo,
   MGA_VerQueryValue
 };
 
-void * NSISCALL myGetProcAddress(const enum myGetProcAddressFunctions func);
+void*NSISCALL myGetProcAddress(const enum myGetProcAddressFunctions func);
 void NSISCALL MessageLoop(UINT uCheckedMsg);
 
 /**
