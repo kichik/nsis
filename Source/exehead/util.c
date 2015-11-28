@@ -1063,6 +1063,7 @@ struct MGA_FUNC
 
 struct MGA_FUNC MGA_FUNCS[] = {
 #ifdef _UNICODE
+  {"KERNEL32", "SetDefaultDllDirectories"},
 #ifndef _WIN64
   {"KERNEL32", "GetDiskFreeSpaceExW"},
   {"KERNEL32", "GetUserDefaultUILanguage"},
@@ -1076,6 +1077,7 @@ struct MGA_FUNC MGA_FUNCS[] = {
   {"VERSION",  "VerQueryValueW"}
 };
 #else
+  {"KERNEL32", "SetDefaultDllDirectories"},
   {"KERNEL32", "GetDiskFreeSpaceExA"},
   {"KERNEL32", "GetUserDefaultUILanguage"},
   {"ADVAPI32", "RegDeleteKeyExA"},
@@ -1096,7 +1098,7 @@ struct MGA_FUNC MGA_FUNCS[] = {
  * @param func Enum value that indexes the MGA_FUNCS array.
  * @return Pointer to the function identified by the enum value.
  */
-void * NSISCALL myGetProcAddress(const enum myGetProcAddressFunctions func)
+void* NSISCALL myGetProcAddress(const enum myGetProcAddressFunctions func)
 {
 #ifdef UNICODE
   static const TCHAR dllpathfmt[] = _T("%s%hs.dll"); // Strings in MGA_FUNC are always ANSI

@@ -28,6 +28,12 @@
 #include "exec.h"
 #include "plugin.h"
 
+#ifndef LOAD_LIBRARY_SEARCH_USER_DIRS
+#define LOAD_LIBRARY_SEARCH_USER_DIRS 0x00000400
+#endif
+#ifndef LOAD_LIBRARY_SEARCH_SYSTEM32
+#define LOAD_LIBRARY_SEARCH_SYSTEM32 0x00000800
+#endif
 #ifndef SHTDN_REASON_FLAG_PLANNED
 #define SHTDN_REASON_FLAG_PLANNED 0x80000000
 #endif
@@ -97,6 +103,16 @@ EXTERN_C void NSISWinMainNOCRT()
     g_hres=OleInitialize(NULL);
   }
 #endif
+
+  {
+    // bug #1125: Don't load modules from the application nor current directory.
+    // SetDefaultDllDirectories() allows us to restrict implicitly loaded and 
+    // dynamically loaded modules (with relative paths) to just 
+    // %windir%\System32 and directories added with AddDllDirectory().
+    // This prevents DLL search order attacks (CAPEC-471).
+    FARPROC fp = myGetProcAddress(MGA_SetDefaultDllDirectories);
+    if (fp) ((BOOL(WINAPI*)(DWORD))fp)(LOAD_LIBRARY_SEARCH_SYSTEM32|LOAD_LIBRARY_SEARCH_USER_DIRS);
+  }
 
   // Because myGetProcAddress now loads dlls with a full path 
   // under GetSystemDirectory() the previous issues in <= v3.0b2 with 
