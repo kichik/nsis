@@ -1090,6 +1090,20 @@ struct MGA_FUNC MGA_FUNCS[] = {
 };
 #endif
 
+HMODULE NSISCALL LoadSystemLibrary(LPCSTR name)
+{
+  LPCTSTR fmt = sizeof(*fmt) > 1 ? TEXT("%s%S.dll") : TEXT("%s%s.dll"); // The module name is always ANSI
+  BYTE bytebuf[(MAX_PATH+1+20+1+3+!0) * sizeof(*fmt)]; // 20+4 is more than enough for 
+  LPTSTR path = (LPTSTR) bytebuf;                      // the dllnames we are using.
+
+  UINT cch = GetSystemDirectory(path, MAX_PATH);
+  if (cch > MAX_PATH) // MAX_PATH was somehow not large enough and we don't support 
+    cch = 0;          // \\?\ paths so we have to settle for just the name.
+  wsprintf(path + cch, fmt, TEXT("\\") + (!cch || path[cch-1] == '\\'), name);
+
+  return LoadLibrary(path);
+}
+
 /**
  * Given a function enum, it will load the appropriate DLL and get the
  * process address of the function and return the pointer.  It's up to
@@ -1100,27 +1114,16 @@ struct MGA_FUNC MGA_FUNCS[] = {
  */
 void* NSISCALL myGetProcAddress(const enum myGetProcAddressFunctions func)
 {
-#ifdef UNICODE
-  static const TCHAR dllpathfmt[] = _T("%s%hs.dll"); // Strings in MGA_FUNC are always ANSI
-#else
-  static const TCHAR dllpathfmt[] = _T("%s%s.dll");
-#endif
-  HMODULE hModule;
   const char *dllname = MGA_FUNCS[func].dll;
-  TCHAR buf[MAX_PATH+1+20+4+!0]; // 20+4 is more than enough for the dllnames we are using
+  HMODULE hModule;
 
-  UINT cch = GetSystemDirectory(buf, MAX_PATH);
-  if (cch > MAX_PATH) // MAX_PATH was somehow not large enough and we don't support 
-    cch = 0;          // \\?\ paths so we have to settle for just the name.
-  wsprintf(buf + cch, dllpathfmt, _T("\\") + (!cch || buf[cch-1] == '\\'), dllname);
+  hModule = GetModuleHandleA(dllname);    // Avoid LoadLibrary if possible because 
+  if (!hModule)                           // it can crash on 64-bit dlls if 
+    hModule = LoadSystemLibrary(dllname); // WoW64 FS redirection is off.
 
-  hModule = GetModuleHandleA(dllname); // Avoid LoadLibrary if possible because 
-  if (!hModule)                        // it can crash on 64-bit dlls if 
-    hModule = LoadLibrary(buf);        // WoW64 FS redirection is off.
-  if (!hModule)
-    return (FARPROC) hModule; // Optimized "return NULL;"
-
-  return GetProcAddress(hModule, MGA_FUNCS[func].func);
+  return hModule
+    ? GetProcAddress(hModule, MGA_FUNCS[func].func)
+    : (FARPROC) hModule; // Optimized "return NULL;"
 }
 
 void NSISCALL MessageLoop(UINT uCheckedMsg)
@@ -1136,7 +1139,7 @@ void NSISCALL MessageLoop(UINT uCheckedMsg)
  * the windows call and does the appropriate translation when
  * appropriate.
  *
- * @param dllHandle Handle to the DLL loaded by LoadLibraryEx.
+ * @param dllHandle Handle to the DLL loaded by LoadLibrary[Ex].
  * @param funcName The name of the function to get the address of.
  * @return The pointer to the function.  Null if failure.
  */

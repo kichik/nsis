@@ -125,7 +125,9 @@ EXTERN_C void NSISWinMainNOCRT()
   // are exempt from this requirement and SHELL32 imports from SHLWAPI on 
   // WoW64 systems and it is also on the KnownDLLs list so 
   // SHLWAPI also gets a pass and that just leaves 
+#ifdef NSIS_SUPPORT_GETDLLVERSION
   myGetProcAddress(MGA_GetFileVersionInfo); // VERSION
+#endif
   g_SHGetFolderPath = myGetProcAddress(MGA_SHGetFolderPath); // and SHFOLDER
 
   {

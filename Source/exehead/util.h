@@ -128,11 +128,14 @@ enum myGetProcAddressFunctions {
   MGA_InitiateShutdown,
   MGA_SHAutoComplete, // x64 can link to shlwapi directly but as long as MGA_SHGetFolderPath is used we can stick with myGetProcAddress
   MGA_SHGetFolderPath, // TODO: This can probably call something else directly on x64
+#ifdef NSIS_SUPPORT_GETDLLVERSION
   MGA_GetFileVersionInfoSize, // Version.dll exists in all Windows versions, it is delay loaded to avoid DLL hijacking [bug #1125]
   MGA_GetFileVersionInfo,
   MGA_VerQueryValue
+#endif
 };
 
+HMODULE NSISCALL LoadSystemLibrary(LPCSTR name);
 void*NSISCALL myGetProcAddress(const enum myGetProcAddressFunctions func);
 void NSISCALL MessageLoop(UINT uCheckedMsg);
 
@@ -142,7 +145,7 @@ void NSISCALL MessageLoop(UINT uCheckedMsg);
  * the windows call and does the appropriate translation when
  * appropriate.
  *
- * @param dllHandle Handle to the DLL loaded by LoadLibraryEx.
+ * @param dllHandle Handle to the DLL loaded by LoadLibrary[Ex].
  * @param funcName The name of the function to get the address of.
  * @return The pointer to the function.  Null if failure.
  */
