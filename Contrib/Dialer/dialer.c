@@ -16,20 +16,32 @@ BOOL WINAPI DllMain(HINSTANCE hInst, ULONG ul_reason_for_call, LPVOID lpReserved
  *   LOADER  *
 \*************/
 
-HMODULE hWinInet = NULL;
+HMODULE g_hWinInet = NULL;
 
-// GetProcAddress only takes ANSI.
-FARPROC GetWinInetFunc(char *func) {
-  hWinInet = LoadLibrary(_T("wininet.dll"));
-  if (hWinInet)
-    return GetProcAddress(hWinInet, func);
+HMODULE NSISCALL LoadSystemLibrary(LPCSTR name) {
+  LPCTSTR fmt = sizeof(*fmt) > 1 ? TEXT("%s%S.dll") : TEXT("%s%s.dll"); // The module name is always ANSI
+  BYTE bytebuf[(MAX_PATH+1+20+1+3+!0) * sizeof(*fmt)]; // 20+4 is more than enough for 
+  LPTSTR path = (LPTSTR) bytebuf;                      // the dllnames we are using.
+
+  UINT cch = GetSystemDirectory(path, MAX_PATH);
+  if (cch > MAX_PATH) // MAX_PATH was somehow not large enough and we don't support 
+    cch = 0;          // \\?\ paths so we have to settle for just the name.
+  wsprintf(path + cch, fmt, TEXT("\\") + (!cch || path[cch-1] == '\\'), name);
+
+  return LoadLibrary(path);
+}
+
+FARPROC GetWinInetFunc(LPCSTR funcname) {
+  g_hWinInet = LoadSystemLibrary("WININET");
+  if (g_hWinInet)
+    return GetProcAddress(g_hWinInet, funcname);
   return NULL;
 }
 
 void FreeWinInet() {
-  if (hWinInet)
-    FreeLibrary(hWinInet);
-  hWinInet = NULL;
+  if (g_hWinInet)
+    FreeLibrary(g_hWinInet);
+  g_hWinInet = NULL;
 }
 
 /*************\
