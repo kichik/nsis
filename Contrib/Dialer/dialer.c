@@ -16,8 +16,6 @@ BOOL WINAPI DllMain(HINSTANCE hInst, ULONG ul_reason_for_call, LPVOID lpReserved
  *   LOADER  *
 \*************/
 
-HMODULE g_hWinInet = NULL;
-
 HMODULE NSISCALL LoadSystemLibrary(LPCSTR name) {
   LPCTSTR fmt = sizeof(*fmt) > 1 ? TEXT("%s%S.dll") : TEXT("%s%s.dll"); // The module name is always ANSI
   BYTE bytebuf[(MAX_PATH+1+20+1+3+!0) * sizeof(*fmt)]; // 20+4 is more than enough for 
@@ -32,17 +30,10 @@ HMODULE NSISCALL LoadSystemLibrary(LPCSTR name) {
 }
 
 FARPROC GetWinInetFunc(LPCSTR funcname) {
-  g_hWinInet = LoadSystemLibrary("WININET");
-  if (g_hWinInet)
-    return GetProcAddress(g_hWinInet, funcname);
-  return NULL;
+  HMODULE hWinInet = LoadSystemLibrary("WININET");
+  return hWinInet ? GetProcAddress(hWinInet, funcname) : (FARPROC) hWinInet;
 }
 
-void FreeWinInet() {
-  if (g_hWinInet)
-    FreeLibrary(g_hWinInet);
-  g_hWinInet = NULL;
-}
 
 /*************\
  * FUNCTIONS *
@@ -62,8 +53,6 @@ NSISFunction(AutodialOnline) {
     pushstring(_T("online"));
   else
     pushstring(_T("offline"));
-
-  FreeWinInet();
 }
 
 NSISFunction(AutodialUnattended) {
@@ -80,8 +69,6 @@ NSISFunction(AutodialUnattended) {
     pushstring(_T("online"));
   else
     pushstring(_T("offline"));
-
-  FreeWinInet();
 }
 
 NSISFunction(AttemptConnect) {
@@ -98,8 +85,6 @@ NSISFunction(AttemptConnect) {
     pushstring(_T("online"));
   else
     pushstring(_T("offline"));
-
-  FreeWinInet();
 }
 
 NSISFunction(GetConnectedState) {
@@ -118,8 +103,6 @@ NSISFunction(GetConnectedState) {
     pushstring(_T("online"));
   else
     pushstring(_T("offline"));
-
-  FreeWinInet();
 }
 
 NSISFunction(AutodialHangup) {
@@ -136,6 +119,4 @@ NSISFunction(AutodialHangup) {
     pushstring(_T("success"));
   else
     pushstring(_T("failure"));
-
-  FreeWinInet();
 }
