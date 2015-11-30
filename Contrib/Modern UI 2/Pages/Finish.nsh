@@ -50,8 +50,8 @@ Finish page (implemented using nsDialogs)
   !endif
   
   !ifdef MUI_FINISHPAGE_SHOWREADME
-    !ifndef MUI_FINISHPAGE_SHOREADME_VARAIBLES
-      !define MUI_FINISHPAGE_SHOREADME_VARAIBLES
+    !ifndef MUI_FINISHPAGE_SHOWREADME_VARIABLES
+      !define MUI_FINISHPAGE_SHOWREADME_VARIABLES
       Var mui.FinishPage.ShowReadme
     !endif
   !endif
