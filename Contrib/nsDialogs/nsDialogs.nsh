@@ -566,7 +566,7 @@ Header file for creating custom installer pages with nsDialogs
 
 !macro __NSD_FreeImage IMAGE
 
-	${If} ${IMAGE} <> 0
+	${If} ${IMAGE} P<> 0
 		System::Call gdi32::DeleteObject(ps) ${IMAGE}
 	${EndIf}
 
