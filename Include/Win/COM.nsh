@@ -10,7 +10,7 @@ COM defines and helper macros
 !include Win\COM.nsh
 !include Win\Propkey.nsh
 !insertmacro ComHlpr_CreateInProcInstance ${CLSID_ShellLink} ${IID_IShellLink} r0 ""
-${If} $0 <> 0
+${If} $0 P<> 0
 	${IShellLink::SetPath} $0 '("%COMSPEC%").r1'
 	${IShellLink::SetArguments} $0 '("/k echo HelloWorld").r2'
 	${If} $1 = 0
@@ -74,12 +74,12 @@ System::Call 'OLE32::CoCreateInstance(g "${clsid}",i 0,i ${CLSCTX_INPROC_SERVER}
 !macroend
 
 !macro ComHlpr_SafeRelease _p
-${If} ${_p} <> 0
+${If} ${_p} P<> 0
 	${IUnknown::Release} ${_p} ""
 ${EndIf}
 !macroend
 !macro ComHlpr_SafeReleaseAndNull _p
-${If} ${_p} <> 0
+${If} ${_p} P<> 0
 	${IUnknown::Release} ${_p} ""
 	StrCpy ${_p} 0
 ${EndIf}
