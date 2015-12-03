@@ -11,35 +11,22 @@
 #  define LWA_ALPHA 2
 #endif
 
-#if defined(_MSC_VER) && !defined(GetVersion)
-#if _MSC_VER >= 1500
-FORCEINLINE DWORD NoDepr_GetVersion() { __pragma(warning(push))__pragma(warning(disable:4996)) DWORD r = GetVersion(); __pragma(warning(pop)) return r; }
-#define GetVersion NoDepr_GetVersion
-#endif //~ _MSC_VER >= 1500
-#endif //~ _MSC_VER
-
-
-HINSTANCE g_hInstance;
 
 #define RESOLUTION 32 // 30 fps ;) (32? I like SHR more than iDIV ;)
 
-BITMAP bm;
+HINSTANCE g_hInstance;
 HBITMAP g_hbm;
+BITMAP bm;
 int g_rv;
 int resolution;
-int sleep_val, fadein_val, fadeout_val, state, timeleft, keycolor, nt50,
-    alphaparam;
+int sleep_val, fadein_val, fadeout_val, state, timeleft, keycolor, alphaparam;
 const TCHAR classname[4] = _T("_sp");
 
-typedef BOOL(_stdcall * _tSetLayeredWindowAttributesProc) (HWND hwnd,      // handle to the layered window
-                                                           COLORREF crKey, // specifies the color key
-                                                           BYTE bAlpha,    // value for the blend function
-                                                           DWORD dwFlags   // action
-    );
-_tSetLayeredWindowAttributesProc SetLayeredWindowAttributesProc;
+typedef BOOL(WINAPI*SetLayeredWindowAttributes_T)(HWND hwnd, COLORREF crKey, BYTE bAlpha, DWORD dwFlags);
+SetLayeredWindowAttributes_T SetLayeredWindowAttributesProc;
+#define IsLayeredWnd() ( SetLayeredWindowAttributesProc != NULL )
 
-static LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam,
-                                LPARAM lParam)
+static LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   PAINTSTRUCT ps;
   RECT r;
@@ -133,8 +120,7 @@ void SetTransparentRegion(HWND myWnd)
   GlobalFree(bmp_orig);
 }
 
-BOOL WINAPI DllMain(HINSTANCE hInst, ULONG ul_reason_for_call,
-                    LPVOID lpReserved)
+BOOL WINAPI DllMain(HINSTANCE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
 {
   g_hInstance = hInst;
   return TRUE;
@@ -149,7 +135,7 @@ void CALLBACK TimeProc(UINT uID, UINT uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWO
     if (timeleft == 0) {
       timeleft = sleep_val;
       state++;
-      if (nt50)
+      if (IsLayeredWnd())
         call = 255;
     } else {
       call = ((fadein_val - timeleft) * 255) / fadein_val;
@@ -174,9 +160,10 @@ void CALLBACK TimeProc(UINT uID, UINT uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWO
     }
   }
   // Transparency value aquired, and could be set...
-  if ((call >= 0) && nt50)
-    SetLayeredWindowAttributesProc((HWND) dwUser, keycolor,
-                                   (BYTE) call, alphaparam);
+  if ((call >= 0) && IsLayeredWnd())
+  {
+    SetLayeredWindowAttributesProc((HWND) dwUser, keycolor, (BYTE) call, alphaparam);
+  }
 
   // Time is running out...
   timeleft--;
@@ -186,8 +173,9 @@ void __declspec(dllexport) show(HWND hwndParent, int string_size,
                                 TCHAR *variables, stack_t ** stacktop)
 {
   DEVMODE dm;
-  TCHAR fn[MAX_PATH];
+  TCHAR fn[MAX_PATH], uselayerwnd;
   TCHAR temp[64];
+  FARPROC slwa;
 
   g_rv = -1;
   resolution = RESOLUTION;
@@ -206,10 +194,16 @@ void __declspec(dllexport) show(HWND hwndParent, int string_size,
 
   dm.dmSize = sizeof(DEVMODE);
   EnumDisplaySettings(NULL, ENUM_CURRENT_SETTINGS, &dm);
+#ifdef _WIN64
+  slwa = (FARPROC) SetLayeredWindowAttributes;
+#else
+  slwa = GetProcAddress(LoadLibraryA("USER32"), "SetLayeredWindowAttributes");
+#endif
+
   // Check for winXP/2k at 32 bpp transparency
-  nt50 = (LOBYTE(LOWORD(GetVersion())) >= 5) && !((dm.dmBitsPerPel < 32)
-                                                  && (keycolor != -1));
-  if (!nt50) {
+  uselayerwnd = slwa && dm.dmBitsPerPel >= 32 && keycolor == -1;
+
+  if (!uselayerwnd) {
     // Fading+transparency is unsupported at old windows versions...
     resolution = sleep_val + fadein_val + fadeout_val;
     fadeout_val = fadein_val = 0;
@@ -237,12 +231,13 @@ void __declspec(dllexport) show(HWND hwndParent, int string_size,
     wc.lpszClassName = classname;
     if (RegisterClass(&wc)) {
       TCHAR fn2[MAX_PATH];
-      lstrcpy(fn2, fn);
-      lstrcat(fn, _T(".bmp"));
+
+      fn2[0] = _T('\0'), lstrcat(fn2, fn);
       lstrcat(fn2, _T(".wav"));
-      g_hbm =
-          LoadImage(NULL, fn, IMAGE_BITMAP, 0, 0,
-                    LR_CREATEDIBSECTION | LR_LOADFROMFILE);
+      lstrcat(fn, _T(".bmp"));
+
+      g_hbm = LoadImage(NULL, fn, IMAGE_BITMAP, 0, 0,
+                LR_CREATEDIBSECTION | LR_LOADFROMFILE);
       if (g_hbm) {
         HWND myWnd;
         UINT timerEvent;
@@ -250,23 +245,15 @@ void __declspec(dllexport) show(HWND hwndParent, int string_size,
         // Get Bitmap Information
         GetObject(g_hbm, sizeof(bm), & bm);
 
-        myWnd =
-            CreateWindowEx(WS_EX_TOOLWINDOW |
-                           ((nt50) ? (WS_EX_LAYERED) : (0)), classname,
+        myWnd = CreateWindowEx(WS_EX_TOOLWINDOW |
+                           (uselayerwnd ? (WS_EX_LAYERED) : (0)), classname,
                            classname, 0, 0, 0, 0, 0, (HWND) hwndParent,
                            NULL, g_hInstance, NULL);
 
         // Set transparency / key color
-        if (nt50) {
-          #ifndef _WIN64
-          // Get blending proc address
-          HANDLE user32 = GetModuleHandle(_T("user32"));
-          SetLayeredWindowAttributesProc =
-              (_tSetLayeredWindowAttributesProc) GetProcAddress(user32,
-                                                                "SetLayeredWindowAttributes");
-          #else
-          #define SetLayeredWindowAttributesProc SetLayeredWindowAttributes
-          #endif
+        if (uselayerwnd) {
+          SetLayeredWindowAttributesProc = (SetLayeredWindowAttributes_T) slwa;
+
           // Use win2k method
           SetLayeredWindowAttributesProc(myWnd, keycolor,
                                          (BYTE) ((fadein_val > 0) ? (0) : (255)),
@@ -297,7 +284,7 @@ void __declspec(dllexport) show(HWND hwndParent, int string_size,
         DeleteObject(g_hbm);
       }
       // We should UnRegister class, since Windows NT series never does this by itself
-      UnregisterClass(wc.lpszClassName, g_hInstance);
+      UnregisterClass(wc.lpszClassName, wc.hInstance);
     }
   }
   wsprintf(temp, _T("%d"), g_rv);
