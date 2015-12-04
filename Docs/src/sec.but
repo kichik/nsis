@@ -97,7 +97,7 @@ because the binary value for 5 is "00000101". The error flag will be set if the 
 
 \c section_index user_var(output)
 
-Retrieves the install types flags array of a section. See above explanation about \R{sectionsetinsttypes}{SectionSetInstTypes} for a description of how to deal with the output. The error flag will be set if the section index specified is out of range.
+Retrieves the install types flags array of a section. See above explanation about \R{sectionsetinsttypes}{SectionSetInstTypes} for a description of how to deal with the output. The error flag will be set if the section index is out of range.
 
 \c Section test test_section_id
 \c SectionEnd
@@ -127,7 +127,7 @@ Sets the Size of the section specified by section_index. Note that the Index sta
 
 \c section_index user_var
 
-Gets the Size of the section specified by section_index and stores the value in the given User Variable. Note that the Index starts with Zero.
+Gets the Size of the section specified by section_index and stores the value in the given User Variable. Note that the Index starts with Zero. The error flag will be set if the section index is out of range.
 
 \c Section test test_section_id
 \c SectionEnd
