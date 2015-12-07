@@ -27,6 +27,13 @@
 #include "exec.h"
 #include "plugin.h"
 
+#ifndef LOAD_LIBRARY_SEARCH_USER_DIRS
+#define LOAD_LIBRARY_SEARCH_USER_DIRS 0x00000400
+#endif
+#ifndef LOAD_LIBRARY_SEARCH_SYSTEM32
+#define LOAD_LIBRARY_SEARCH_SYSTEM32 0x00000800
+#endif
+
 #if !defined(NSIS_CONFIG_VISIBLE_SUPPORT) && !defined(NSIS_CONFIG_SILENT_SUPPORT)
 #error One of NSIS_CONFIG_SILENT_SUPPORT or NSIS_CONFIG_VISIBLE_SUPPORT must be defined.
 #endif
@@ -48,7 +55,7 @@ char *ValidateTempDir()
   if (!validpathspec(state_temp_dir))
     return NULL;
   addtrailingslash(state_temp_dir);
-  CreateDirectory(state_temp_dir, NULL);
+  CreateNormalDirectory(state_temp_dir);
   // state_language is used as a temp var here
   return my_GetTempFileName(state_language, state_temp_dir);
 }
@@ -77,18 +84,31 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
   }
 #endif
 
-  // load shfolder.dll before any script code is executed to avoid
-  // weird situations where SetOutPath or even the extraction of 
-  // shfolder.dll will cause unexpected behavior.
-  //
-  // this also prevents the following:
-  //
-  //  SetOutPath "C:\Program Files\NSIS" # maybe read from reg
-  //  File shfolder.dll
-  //  Delete $PROGRAMFILES\shfolder.dll # can't be deleted, as the
-  //                                    # new shfolder.dll is used
-  //                                    # to find its own path.
-  g_SHGetFolderPath = myGetProcAddress(MGA_SHGetFolderPathA);
+  {
+    // bug #1125: Don't load modules from the application nor current directory.
+    // SetDefaultDllDirectories() allows us to restrict implicitly loaded and 
+    // dynamically loaded modules (with relative paths) to just 
+    // %windir%\System32 and directories added with AddDllDirectory().
+    // This prevents DLL search order attacks (CAPEC-471).
+    FARPROC fp = myGetProcAddress(MGA_SetDefaultDllDirectories);
+    if (fp) ((BOOL(WINAPI*)(DWORD))fp)(LOAD_LIBRARY_SEARCH_SYSTEM32|LOAD_LIBRARY_SEARCH_USER_DIRS);
+  }
+
+  // Because myGetProcAddress now loads dlls with a full path 
+  // under GetSystemDirectory() the previous issues in <= v3.0b2 with 
+  // 'SetOutPath' and/or 'File "shfolder.dll"' no longer apply.
+  // All MGA dlls still need to be loaded early here because installers 
+  // running under WoW64 might disable WoW64 FS redirection in .onInit and 
+  // because GetSystemDirectory() can return the native system32 path we need
+  // the redirection to be turned off so LoadLibrary uses the correct folder.
+  // Note: We also import directly from KERNEL32, ADVAPI32 and SHELL32 so they 
+  // are exempt from this requirement and SHELL32 imports from SHLWAPI on 
+  // WoW64 systems and it is also on the KnownDLLs list so 
+  // SHLWAPI also gets a pass and that just leaves 
+#ifdef NSIS_SUPPORT_GETDLLVERSION
+  myGetProcAddress(MGA_GetFileVersionInfo); // VERSION
+#endif
+  g_SHGetFolderPath = myGetProcAddress(MGA_SHGetFolderPathA); // and SHFOLDER
 
   {
     // workaround for bug #1008632
@@ -214,16 +234,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
     }
     else
     {
-      int x;
+      int x, admin = UserIsAdminGrpMember();
 
-      mystrcat(state_temp_dir,"~nsu.tmp");
+      mystrcat(state_temp_dir,TEXT("~nsu"));
+      if (admin) mystrcat(state_temp_dir,TEXT("A")); // Don't lock down the directory used by non-admins
+      mystrcat(state_temp_dir,TEXT(".tmp"));
 
       // check if already running from uninstaller temp dir
       // this prevents recursive uninstaller calls
       if (!lstrcmpi(state_temp_dir,state_exe_directory))
         goto end;
 
-      CreateDirectory(state_temp_dir,NULL);
+      admin ? CreateRestrictedDirectory(state_temp_dir) : CreateNormalDirectory(state_temp_dir);
       SetCurrentDirectory(state_temp_dir);
 
       if (!state_install_directory[0])

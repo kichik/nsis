@@ -1,5 +1,15 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.47} 2.47
+
+Released on ? ?th, 2015
+
+\S1{v2.47-cl} Changelog
+
+\S2{} Major Changes
+
+\b LoadLibrary security hardening to prevent dll hijacking
+
 \H{v2.46} 2.46
 
 Released on December 6th, 2009

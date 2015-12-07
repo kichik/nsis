@@ -58,7 +58,7 @@ enum
   EW_BRINGTOFRONT,      // BringToFront: 0
   EW_CHDETAILSVIEW,     // SetDetailsView: 2 [listaction,buttonaction]
   EW_SETFILEATTRIBUTES, // SetFileAttributes: 2 [filename, attributes]
-  EW_CREATEDIR,         // Create directory: 2, [path, ?update$INSTDIR]
+  EW_CREATEDIR,         // Create directory: 2, [path, ?update$INSTDIR, ?restrictAcl]
   EW_IFFILEEXISTS,      // IfFileExists: 3, [file name, jump amount if exists, jump amount if not exists]
   EW_SETFLAG,           // Sets a flag: 2 [id, data]
   EW_IFFLAG,            // If a flag: 4 [on, off, id, new value mask]
