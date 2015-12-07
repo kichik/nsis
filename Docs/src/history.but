@@ -10,9 +10,9 @@ Released on ? ?th, 201?
 
 \b RequestExecutionLevel now defaults to \c{admin}
 
-\b FileReadUTF16LE now skips the optional BOM at the start of a file
-
 \b LoadLibrary security hardening to prevent dll hijacking
+
+\b FileReadUTF16LE now skips the optional BOM at the start of a file
 
 \S2{} Minor Changes
 
