@@ -3103,7 +3103,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         } else if (!_tcscmp(mathop,_T(">>"))) {
           _stprintf(value,_T("%d"),(signed int)value1>>(signed int)value2);
         } else if (!_tcscmp(mathop,_T(">>>"))) {
-          _stprintf(value,_T("%d"),(unsigned int)value1>>(unsigned int)value2);
+          _stprintf(value,_T("%u"),(unsigned int)value1>>(unsigned int)value2);
         } else if (!_tcscmp(mathop,_T("/"))) {
           if (value2==0) {
             ERROR_MSG(_T("!define /math: division by zero! (\"%i %") NPRIs _T(" %i\")\n"),value1,mathop,value2);
