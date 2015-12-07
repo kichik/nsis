@@ -870,10 +870,11 @@ void ParamsOut(SystemProc *proc)
             }
             break;
         case PAT_GUID:
-            wstr = (LPWSTR) GlobalAlloc(GPTR, g_stringsize*2);
-            StringFromGUID2(*((REFGUID*)place), wstr, g_stringsize*2);
-            WideCharToMultiByte(CP_ACP, 0, wstr, g_stringsize, realbuf, g_stringsize, NULL, NULL); 
-            GlobalFree((HGLOBAL)wstr);
+            {
+              WCHAR guidstrbuf[39]; 
+              int guidcch = StringFromGUID2(*((REFGUID*)place), guidstrbuf, 39);
+              WideCharToMultiByte(CP_ACP, 0, guidstrbuf, guidcch, realbuf, g_stringsize, NULL, NULL); 
+            }
             break;
         case PAT_WSTRING:
             wstr = *((LPWSTR*)place);
