@@ -86,6 +86,13 @@ extern TCHAR g_log_file[1024];
 #define LogData2Hex(x1,x2,x3,x4)
 #endif
 
+extern const UINT32 g_restrictedacl[];
+#define GetAdminGrpAcl() ( (PACL) g_restrictedacl )
+#define GetAdminGrpSid() ( (PSID) &g_restrictedacl[4] )
+BOOL NSISCALL UserIsAdminGrpMember(); // Does not check integrity level, returns true if the process has a non-deny administrators group ACE in the token
+DWORD NSISCALL CreateRestrictedDirectory(LPCTSTR path);
+DWORD NSISCALL CreateNormalDirectory(LPCTSTR path);
+
 HANDLE NSISCALL myCreateProcess(TCHAR *cmd);
 int NSISCALL my_MessageBox(const TCHAR *text, UINT type);
 
@@ -126,6 +133,7 @@ enum myGetProcAddressFunctions {
   MGA_RegDeleteKeyEx,
 #endif
   MGA_InitiateShutdown,
+  MGA_IsUserAnAdmin,
   MGA_SHAutoComplete, // x64 can link to shlwapi directly but as long as MGA_SHGetFolderPath is used we can stick with myGetProcAddress
   MGA_SHGetFolderPath, // TODO: This can probably call something else directly on x64
 #ifdef NSIS_SUPPORT_GETDLLVERSION

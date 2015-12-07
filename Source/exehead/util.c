@@ -56,6 +56,38 @@ const NSIS_STRING*const g_usrvarsstart = (const NSIS_STRING*const) g_usrvarssect
 #  endif
 #endif
 
+const UINT32 g_restrictedacl[] = {
+  0x00340002, 0x00000002, // ACL (ACL_REVISION2, 2 ACEs)
+  0x00180300, // ACCESS_ALLOWED_ACE:ACE_HEADER (ACCESS_ALLOWED_ACE_TYPE, CONTAINER_INHERIT_ACE|OBJECT_INHERIT_ACE)
+  0x10000000, // ACCESS_ALLOWED_ACE:ACCESS_MASK: GENERIC_ALL
+  0x00000201, 0x05000000, 0x00000020, 0x00000220, // ACCESS_ALLOWED_ACE:SID (BUILTIN\Administrators) NOTE: GetAdminGrpSid() relies on this being the first SID in the ACL
+  0x00140300, // ACCESS_ALLOWED_ACE:ACE_HEADER (ACCESS_ALLOWED_ACE_TYPE, CONTAINER_INHERIT_ACE|OBJECT_INHERIT_ACE)
+  0x00130041, // ACCESS_ALLOWED_ACE:ACCESS_MASK: DELETE|READ_CONTROL|SYNCHRONIZE|FILE_DELETE_CHILD|FILE_LIST_DIRECTORY
+  0x00000101, 0x01000000, 0x00000000 // ACCESS_ALLOWED_ACE:SID (WORLD\Everyone)
+};
+
+DWORD NSISCALL CreateRestrictedDirectory(LPCTSTR path)
+{
+  const SECURITY_INFORMATION si = OWNER_SECURITY_INFORMATION|GROUP_SECURITY_INFORMATION|DACL_SECURITY_INFORMATION|PROTECTED_DACL_SECURITY_INFORMATION;
+  PSID admingrpsid = GetAdminGrpSid();
+  SECURITY_DESCRIPTOR sd = { 1, 0, SE_DACL_PRESENT, admingrpsid, admingrpsid, NULL, GetAdminGrpAcl() };
+  SECURITY_ATTRIBUTES sa = { sizeof(SECURITY_ATTRIBUTES), &sd, FALSE };
+  DWORD ec = CreateDirectory(path, &sa) ? ERROR_SUCCESS : GetLastError();
+  if (ERROR_ALREADY_EXISTS == ec)
+    ec = SetFileSecurity(path, si, &sd) ? ERROR_SUCCESS : GetLastError();
+  return ec;
+}
+DWORD NSISCALL CreateNormalDirectory(LPCTSTR path)
+{
+  return CreateDirectory(path, NULL) ? ERROR_SUCCESS : GetLastError();
+}
+
+BOOL NSISCALL UserIsAdminGrpMember()
+{
+  FARPROC iuaa = myGetProcAddress(MGA_IsUserAnAdmin);
+  return iuaa && ((BOOL(WINAPI*)())iuaa)();
+}
+
 HANDLE NSISCALL myCreateProcess(TCHAR *cmd)
 {
   PROCESS_INFORMATION ProcInfo;
@@ -1070,6 +1102,7 @@ struct MGA_FUNC MGA_FUNCS[] = {
   {"ADVAPI32", "RegDeleteKeyExW"},
 #endif
   {"ADVAPI32", "InitiateShutdownW"},
+  {"SHELL32", (CHAR*) 680}, // IsUserAnAdmin
   {"SHLWAPI",  "SHAutoComplete"},
   {"SHFOLDER", "SHGetFolderPathW"},
   {"VERSION",  "GetFileVersionInfoSizeW"},
@@ -1082,6 +1115,7 @@ struct MGA_FUNC MGA_FUNCS[] = {
   {"KERNEL32", "GetUserDefaultUILanguage"},
   {"ADVAPI32", "RegDeleteKeyExA"},
   {"ADVAPI32", "InitiateShutdownA"},
+  {"SHELL32", (CHAR*) 680}, // IsUserAnAdmin
   {"SHLWAPI",  "SHAutoComplete"},
   {"SHFOLDER", "SHGetFolderPathA"},
   {"VERSION",  "GetFileVersionInfoSizeA"},

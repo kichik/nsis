@@ -3592,8 +3592,8 @@ again:
   // Delete $0 [simple, nothing that could clash with special temp permissions]
   ret=add_entry_direct(EW_DELETEFILE, zero_offset, DEL_SIMPLE);
   if (ret != PS_OK) return ret;
-  // CraeteDirectory $0 - a dir instead of that temp file
-  ret=add_entry_direct(EW_CREATEDIR, zero_offset);
+  // CreateDirectory $0 - a dir instead of that temp file
+  ret=add_entry_direct(EW_CREATEDIR, zero_offset, 0, 1);
   if (ret != PS_OK) return ret;
   // IfErrors Initialize_____Plugins_error - detect errors
   ret=add_entry_direct(EW_IFFLAG, ns_label.add(_T("Initialize_____Plugins_error"),0), 0, FLAG_OFFSET(exec_error));

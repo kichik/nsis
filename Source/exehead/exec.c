@@ -331,20 +331,23 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       TCHAR *buf1=GetStringFromParm(-0x10);
       log_printf3(_T("CreateDirectory: \"%s\" (%d)"),buf1,parm1);
       {
-        TCHAR *p = skip_root(buf1);
-        TCHAR c = _T('c');
+        TCHAR *p = skip_root(buf1), c = _T('c');
         if (p)
         {
           while (c)
           {
+            DWORD ec;
             p = findchar(p, _T('\\'));
-            c = *p;
-            *p = 0;
-            if (!CreateDirectory(buf1, NULL))
+            c = *p, *p = 0;
+            if (!c && parm2 && UserIsAdminGrpMember()) // Lock down the final directory?
+              ec = CreateRestrictedDirectory(buf1);
+            else
+              ec = CreateNormalDirectory(buf1);
+            if (ec)
             {
-              if (GetLastError() != ERROR_ALREADY_EXISTS)
+              if (ec != ERROR_ALREADY_EXISTS)
               {                
-                log_printf3(_T("CreateDirectory: can't create \"%s\" (err=%d)"),buf1,GetLastError());
+                log_printf3(_T("CreateDirectory: can't create \"%s\" (err=%d)"),buf1,ec);
                 exec_error++;
               }
               else if ((GetFileAttributes(buf1) & FILE_ATTRIBUTE_DIRECTORY) == 0)

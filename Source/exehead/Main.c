@@ -74,7 +74,7 @@ TCHAR *ValidateTempDir()
   if (!validpathspec(state_temp_dir))
     return NULL;
   addtrailingslash(state_temp_dir);
-  CreateDirectory(state_temp_dir, NULL);
+  CreateNormalDirectory(state_temp_dir);
   // state_language is used as a temp var here
   return my_GetTempFileName(state_language, state_temp_dir);
 }
@@ -273,16 +273,18 @@ EXTERN_C void NSISWinMainNOCRT()
     }
     else
     {
-      int x;
+      int x, admin = UserIsAdminGrpMember();
 
-      mystrcat(state_temp_dir,_T("~nsu.tmp"));
+      mystrcat(state_temp_dir,_T("~nsu"));
+      if (admin) mystrcat(state_temp_dir,_T("A")); // Don't lock down the directory used by non-admins
+      mystrcat(state_temp_dir,_T(".tmp"));
 
       // check if already running from uninstaller temp dir
       // this prevents recursive uninstaller calls
       if (!lstrcmpi(state_temp_dir,state_exe_directory))
         goto end;
 
-      CreateDirectory(state_temp_dir,NULL);
+      admin ? CreateRestrictedDirectory(state_temp_dir) : CreateNormalDirectory(state_temp_dir);
       SetCurrentDirectory(state_temp_dir);
 
       if (!(*state_install_directory))
