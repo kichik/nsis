@@ -105,11 +105,12 @@ enum myGetProcAddressFunctions {
   MGA_SetDefaultDllDirectories, // Win8+ but also exists on Vista/2008/7/2008R2 if KB2533623 is installed
   MGA_GetDiskFreeSpaceExA,
   MGA_MoveFileExA,
+  MGA_GetUserDefaultUILanguage,
   MGA_RegDeleteKeyExA,
   MGA_OpenProcessToken,
   MGA_LookupPrivilegeValueA,
   MGA_AdjustTokenPrivileges,
-  MGA_GetUserDefaultUILanguage,
+  MGA_InitiateShutdown,
   MGA_IsUserAnAdmin,
   MGA_SHAutoComplete,
   MGA_SHGetFolderPathA,

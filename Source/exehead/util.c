@@ -966,17 +966,20 @@ struct MGA_FUNC MGA_FUNCS[] = {
   {"KERNEL32", "SetDefaultDllDirectories"},
   {"KERNEL32", "GetDiskFreeSpaceExA"},
   {"KERNEL32", "MoveFileExA"},
+  {"KERNEL32", "GetUserDefaultUILanguage"},
   {"ADVAPI32", "RegDeleteKeyExA"},
   {"ADVAPI32", "OpenProcessToken"},
   {"ADVAPI32", "LookupPrivilegeValueA"},
   {"ADVAPI32", "AdjustTokenPrivileges"},
-  {"KERNEL32", "GetUserDefaultUILanguage"},
+  {"ADVAPI32", "InitiateShutdownA"},
   {"SHELL32", (CHAR*) 680}, // IsUserAnAdmin
   {"SHLWAPI",  "SHAutoComplete"},
   {"SHFOLDER", "SHGetFolderPathA"},
+#ifdef NSIS_SUPPORT_GETDLLVERSION
   {"VERSION",  "GetFileVersionInfoSizeA"},
   {"VERSION",  "GetFileVersionInfoA"},
   {"VERSION",  "VerQueryValueA"}
+#endif
 };
 
 HMODULE NSISCALL LoadSystemLibrary(LPCSTR name)
