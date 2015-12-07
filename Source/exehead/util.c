@@ -50,6 +50,38 @@ NSIS_STRING g_usrvars[1] __attribute__((section (NSIS_VARS_SECTION)));
 #  endif
 #endif
 
+const UINT32 g_restrictedacl[] = {
+  0x00340002, 0x00000002, // ACL (ACL_REVISION2, 2 ACEs)
+  0x00180300, // ACCESS_ALLOWED_ACE:ACE_HEADER (ACCESS_ALLOWED_ACE_TYPE, CONTAINER_INHERIT_ACE|OBJECT_INHERIT_ACE)
+  0x10000000, // ACCESS_ALLOWED_ACE:ACCESS_MASK: GENERIC_ALL
+  0x00000201, 0x05000000, 0x00000020, 0x00000220, // ACCESS_ALLOWED_ACE:SID (BUILTIN\Administrators) NOTE: GetAdminGrpSid() relies on this being the first SID in the ACL
+  0x00140300, // ACCESS_ALLOWED_ACE:ACE_HEADER (ACCESS_ALLOWED_ACE_TYPE, CONTAINER_INHERIT_ACE|OBJECT_INHERIT_ACE)
+  0x00130041, // ACCESS_ALLOWED_ACE:ACCESS_MASK: DELETE|READ_CONTROL|SYNCHRONIZE|FILE_DELETE_CHILD|FILE_LIST_DIRECTORY
+  0x00000101, 0x01000000, 0x00000000 // ACCESS_ALLOWED_ACE:SID (WORLD\Everyone)
+};
+
+DWORD NSISCALL CreateRestrictedDirectory(LPCTSTR path)
+{
+  const SECURITY_INFORMATION si = OWNER_SECURITY_INFORMATION|GROUP_SECURITY_INFORMATION|DACL_SECURITY_INFORMATION|PROTECTED_DACL_SECURITY_INFORMATION;
+  PSID admingrpsid = GetAdminGrpSid();
+  SECURITY_DESCRIPTOR sd = { 1, 0, SE_DACL_PRESENT, admingrpsid, admingrpsid, NULL, GetAdminGrpAcl() };
+  SECURITY_ATTRIBUTES sa = { sizeof(SECURITY_ATTRIBUTES), &sd, FALSE };
+  DWORD ec = CreateDirectory(path, &sa) ? ERROR_SUCCESS : GetLastError();
+  if (ERROR_ALREADY_EXISTS == ec)
+    ec = SetFileSecurity(path, si, &sd) ? ERROR_SUCCESS : GetLastError();
+  return ec;
+}
+DWORD NSISCALL CreateNormalDirectory(LPCTSTR path)
+{
+  return CreateDirectory(path, NULL) ? ERROR_SUCCESS : GetLastError();
+}
+
+BOOL NSISCALL UserIsAdminGrpMember()
+{
+  FARPROC iuaa = myGetProcAddress(MGA_IsUserAnAdmin);
+  return iuaa && ((BOOL(WINAPI*)())iuaa)();
+}
+
 HANDLE NSISCALL myCreateProcess(char *cmd)
 {
   PROCESS_INFORMATION ProcInfo;
@@ -931,6 +963,7 @@ struct MGA_FUNC
 };
 
 struct MGA_FUNC MGA_FUNCS[] = {
+  {"KERNEL32", "SetDefaultDllDirectories"},
   {"KERNEL32", "GetDiskFreeSpaceExA"},
   {"KERNEL32", "MoveFileExA"},
   {"ADVAPI32", "RegDeleteKeyExA"},
@@ -938,20 +971,40 @@ struct MGA_FUNC MGA_FUNCS[] = {
   {"ADVAPI32", "LookupPrivilegeValueA"},
   {"ADVAPI32", "AdjustTokenPrivileges"},
   {"KERNEL32", "GetUserDefaultUILanguage"},
+  {"SHELL32", (CHAR*) 680}, // IsUserAnAdmin
   {"SHLWAPI",  "SHAutoComplete"},
-  {"SHFOLDER", "SHGetFolderPathA"}
+  {"SHFOLDER", "SHGetFolderPathA"},
+  {"VERSION",  "GetFileVersionInfoSizeA"},
+  {"VERSION",  "GetFileVersionInfoA"},
+  {"VERSION",  "VerQueryValueA"}
 };
 
-void * NSISCALL myGetProcAddress(const enum myGetProcAddressFunctions func)
+HMODULE NSISCALL LoadSystemLibrary(LPCSTR name)
 {
-  const char *dll = MGA_FUNCS[func].dll;
-  HMODULE hModule = GetModuleHandle(dll);
-  if (!hModule)
-    hModule = LoadLibrary(dll);
-  if (!hModule)
-    return NULL;
+  LPCTSTR fmt = sizeof(*fmt) > 1 ? TEXT("%s%S.dll") : TEXT("%s%s.dll"); // The module name is always ANSI
+  BYTE bytebuf[(MAX_PATH+1+20+1+3+!0) * sizeof(*fmt)]; // 20+4 is more than enough for 
+  LPTSTR path = (LPTSTR) bytebuf;                      // the dllnames we are using.
 
-  return GetProcAddress(hModule, MGA_FUNCS[func].func);
+  UINT cch = GetSystemDirectory(path, MAX_PATH);
+  if (cch > MAX_PATH) // MAX_PATH was somehow not large enough and we don't support 
+    cch = 0;          // \\?\ paths so we have to settle for just the name.
+  wsprintf(path + cch, fmt, TEXT("\\") + (!cch || path[cch-1] == '\\'), name);
+
+  return LoadLibrary(path);
+}
+
+void* NSISCALL myGetProcAddress(const enum myGetProcAddressFunctions func)
+{
+  const char *dllname = MGA_FUNCS[func].dll;
+  HMODULE hModule;
+
+  hModule = GetModuleHandleA(dllname);    // Avoid LoadLibrary if possible because 
+  if (!hModule)                           // it can crash on 64-bit dlls if 
+    hModule = LoadSystemLibrary(dllname); // WoW64 FS redirection is off.
+
+  return hModule
+    ? GetProcAddress(hModule, MGA_FUNCS[func].func)
+    : (FARPROC) hModule; // Optimized "return NULL;"
 }
 
 void NSISCALL MessageLoop(UINT uCheckedMsg)

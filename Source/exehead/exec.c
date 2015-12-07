@@ -919,13 +919,11 @@ static int NSISCALL ExecuteEntry(entry *entry_)
 #ifdef NSIS_SUPPORT_GETDLLVERSION
     case EW_GETDLLVERSION:
       {
-        char *highout=var0;
-        char *lowout=var1;
-        DWORD s1;
+        TCHAR *highout=var0, *lowout=var1;
+        DWORD s1, d;
         VS_FIXEDFILEINFO *pvsf1;
-        DWORD d;
-        char *buf1=GetStringFromParm(-0x12);
-        s1=GetFileVersionInfoSize(buf1,&d);
+        TCHAR *buf1=GetStringFromParm(-0x12);
+        s1=((DWORD(WINAPI*)(LPCTSTR,DWORD*))myGetProcAddress(MGA_GetFileVersionInfoSize))(buf1,&d);
         *lowout=*highout=0;
         exec_error++;
         if (s1)
@@ -934,8 +932,10 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           b1=GlobalAlloc(GPTR,s1);
           if (b1)
           {
+            FARPROC gfvi = myGetProcAddress(MGA_GetFileVersionInfo), vqv = myGetProcAddress(MGA_VerQueryValue);
             UINT uLen;
-            if (GetFileVersionInfo(buf1,0,s1,b1) && VerQueryValue(b1,"\\",(void*)&pvsf1,&uLen))
+            if ( ((BOOL(WINAPI*)(LPCTSTR,DWORD,DWORD,LPVOID))gfvi)(buf1,0,s1,b1)
+              && ((BOOL(WINAPI*)(LPCVOID,LPCTSTR,LPVOID*,UINT*))vqv)(b1,"\\",(void*)&pvsf1,&uLen) )
             {
               myitoa(highout,pvsf1->dwFileVersionMS);
               myitoa(lowout,pvsf1->dwFileVersionLS);

@@ -14,19 +14,22 @@ BOOL WINAPI DllMain(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved) {
  *   LOADER  *
 \*************/
 
-HMODULE hWinInet = NULL;
+HMODULE NSISCALL LoadSystemLibrary(LPCSTR name) {
+  LPCTSTR fmt = sizeof(*fmt) > 1 ? TEXT("%s%S.dll") : TEXT("%s%s.dll"); // The module name is always ANSI
+  BYTE bytebuf[(MAX_PATH+1+20+1+3+!0) * sizeof(*fmt)]; // 20+4 is more than enough for 
+  LPTSTR path = (LPTSTR) bytebuf;                      // the dllnames we are using.
 
-FARPROC GetWinInetFunc(char *func) {
-  hWinInet = LoadLibrary("wininet.dll");
-  if (hWinInet)
-    return GetProcAddress(hWinInet, func);
-  return NULL;
+  UINT cch = GetSystemDirectory(path, MAX_PATH);
+  if (cch > MAX_PATH) // MAX_PATH was somehow not large enough and we don't support 
+    cch = 0;          // \\?\ paths so we have to settle for just the name.
+  wsprintf(path + cch, fmt, TEXT("\\") + (!cch || path[cch-1] == '\\'), name);
+
+  return LoadLibrary(path);
 }
 
-void FreeWinInet() {
-  if (hWinInet)
-    FreeLibrary(hWinInet);
-  hWinInet = NULL;
+FARPROC GetWinInetFunc(LPCSTR funcname) {
+  HMODULE hWinInet = LoadSystemLibrary("WININET");
+  return hWinInet ? GetProcAddress(hWinInet, funcname) : (FARPROC) hWinInet;
 }
 
 /*************\
@@ -41,14 +44,13 @@ NSISFunction(AutodialOnline) {
     return;
   }
 
-	EXDLL_INIT();
+  EXDLL_INIT();
 
   if (pInternetAutodial(INTERNET_AUTODIAL_FORCE_ONLINE, 0))
-		pushstring("online");
-	else
-		pushstring("offline");
+    pushstring("online");
+  else
+    pushstring("offline");
 
-  FreeWinInet();
 }
 
 NSISFunction(AutodialUnattended) {
@@ -59,14 +61,13 @@ NSISFunction(AutodialUnattended) {
     return;
   }
 
-	EXDLL_INIT();
+  EXDLL_INIT();
 
-	if (pInternetAutodial(INTERNET_AUTODIAL_FORCE_UNATTENDED , 0))
-		pushstring("online");
-	else
-		pushstring("offline");
+  if (pInternetAutodial(INTERNET_AUTODIAL_FORCE_UNATTENDED , 0))
+    pushstring("online");
+  else
+    pushstring("offline");
 
-  FreeWinInet();
 }
 
 NSISFunction(AttemptConnect) {
@@ -80,15 +81,14 @@ NSISFunction(AttemptConnect) {
   EXDLL_INIT();
 
   if (pInternetAttemptConnect(0) == ERROR_SUCCESS)
-		pushstring("online");
-	else
-		pushstring("offline");
+    pushstring("online");
+  else
+    pushstring("offline");
 
-  FreeWinInet();
 }
 
 NSISFunction(GetConnectedState) {
-	DWORD dwState;
+  DWORD dwState;
 
   typedef BOOL (WINAPI *fGetConState)(LPDWORD, DWORD);
   fGetConState pInternetGetConnectedState = (fGetConState) GetWinInetFunc("InternetGetConnectedState");
@@ -97,14 +97,13 @@ NSISFunction(GetConnectedState) {
     return;
   }
 
-	EXDLL_INIT();
+  EXDLL_INIT();
 
-	if (pInternetGetConnectedState(&dwState, 0))
-		pushstring("online");
-	else
-		pushstring("offline");
+  if (pInternetGetConnectedState(&dwState, 0))
+    pushstring("online");
+  else
+    pushstring("offline");
 
-  FreeWinInet();
 }
 
 NSISFunction(AutodialHangup) {
@@ -115,12 +114,11 @@ NSISFunction(AutodialHangup) {
     return;
   }
 
-	EXDLL_INIT();
+  EXDLL_INIT();
 
-	if (pInternetAutodialHangup(0))
-		pushstring("success");
-	else
-		pushstring("failure");
+  if (pInternetAutodialHangup(0))
+    pushstring("success");
+  else
+    pushstring("failure");
 
-  FreeWinInet();
 }

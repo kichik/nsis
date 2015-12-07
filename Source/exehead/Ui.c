@@ -382,9 +382,9 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
       static const char riched32[]="RichEd32";
       static const char richedit20a[]="RichEdit20A";
       static const char richedit[]="RichEdit";
-      if (!LoadLibrary(riched20))
+      if (!LoadSystemLibrary(riched20))
       {
-        LoadLibrary(riched32);
+        LoadSystemLibrary(riched32); // Win95 only ships with v1.0, NT4 has v2.0: web.archive.org/web/20030607222419/http://msdn.microsoft.com/library/en-us/shellcc/platform/commctls/richedit/richeditcontrols/aboutricheditcontrols.asp
       }
 
       // make richedit20a point to RICHEDIT

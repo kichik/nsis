@@ -75,6 +75,13 @@ extern char g_log_file[1024];
 #define LogData2Hex(x1,x2,x3,x4)
 #endif
 
+extern const UINT32 g_restrictedacl[];
+#define GetAdminGrpAcl() ( (PACL) g_restrictedacl )
+#define GetAdminGrpSid() ( (PSID) &g_restrictedacl[4] )
+BOOL NSISCALL UserIsAdminGrpMember(); // Does not check integrity level, returns true if the process has a non-deny administrators group ACE in the token
+DWORD NSISCALL CreateRestrictedDirectory(LPCTSTR path);
+DWORD NSISCALL CreateNormalDirectory(LPCTSTR path);
+
 HANDLE NSISCALL myCreateProcess(char *cmd);
 int NSISCALL my_MessageBox(const char *text, UINT type);
 
@@ -95,6 +102,7 @@ void NSISCALL mini_memcpy(void *out, const void *in, int len);
 void NSISCALL remove_ro_attr(char *file);
 
 enum myGetProcAddressFunctions {
+  MGA_SetDefaultDllDirectories, // Win8+ but also exists on Vista/2008/7/2008R2 if KB2533623 is installed
   MGA_GetDiskFreeSpaceExA,
   MGA_MoveFileExA,
   MGA_RegDeleteKeyExA,
@@ -102,11 +110,18 @@ enum myGetProcAddressFunctions {
   MGA_LookupPrivilegeValueA,
   MGA_AdjustTokenPrivileges,
   MGA_GetUserDefaultUILanguage,
+  MGA_IsUserAnAdmin,
   MGA_SHAutoComplete,
-  MGA_SHGetFolderPathA
+  MGA_SHGetFolderPathA,
+#ifdef NSIS_SUPPORT_GETDLLVERSION
+  MGA_GetFileVersionInfoSize, // Version.dll exists in all Windows versions, it is delay loaded to avoid DLL hijacking [bug #1125]
+  MGA_GetFileVersionInfo,
+  MGA_VerQueryValue
+#endif
 };
 
-void * NSISCALL myGetProcAddress(const enum myGetProcAddressFunctions func);
+HMODULE NSISCALL LoadSystemLibrary(LPCSTR name);
+void* NSISCALL myGetProcAddress(const enum myGetProcAddressFunctions func);
 void NSISCALL MessageLoop(UINT uCheckedMsg);
 
 // Turn a pair of chars into a word
