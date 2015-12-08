@@ -14,7 +14,9 @@ Released on ? ?th, 2015
 
 \S2{} Minor Changes
 
-\b Fixed 4+ TiB freespace calculation bug (\W{http://sf.net/p/nsis/bugs/1115/}{bug #1115}) 
+\b Fixed 4+ TiB freespace calculation bug (\W{http://sf.net/p/nsis/bugs/1115/}{bug #1115})
+
+\b Windows 8 & 2012 support in WinVer.nsh
 
 \H{v2.46} 2.46
 
