@@ -126,7 +126,7 @@ void NSISCALL mini_memcpy(void *out, const void *in, UINT_PTR cb);
 #endif
 
 enum myGetProcAddressFunctions {
-  MGA_SetDefaultDllDirectories, // Win8+ but exists on Vista/2008/7/2008R2 if KB2533623 is installed
+  MGA_SetDefaultDllDirectories, // Win8+ but also exists on Vista/2008/7/2008R2 if KB2533623 is installed
 #ifndef _WIN64
   MGA_GetDiskFreeSpaceEx,
   MGA_GetUserDefaultUILanguage,
