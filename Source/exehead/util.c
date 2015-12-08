@@ -1105,9 +1105,11 @@ struct MGA_FUNC MGA_FUNCS[] = {
   {"SHELL32", (CHAR*) 680}, // IsUserAnAdmin
   {"SHLWAPI",  "SHAutoComplete"},
   {"SHFOLDER", "SHGetFolderPathW"},
+#ifdef NSIS_SUPPORT_GETDLLVERSION
   {"VERSION",  "GetFileVersionInfoSizeW"},
   {"VERSION",  "GetFileVersionInfoW"},
   {"VERSION",  "VerQueryValueW"}
+#endif
 };
 #else
   {"KERNEL32", "SetDefaultDllDirectories"},
@@ -1118,9 +1120,11 @@ struct MGA_FUNC MGA_FUNCS[] = {
   {"SHELL32", (CHAR*) 680}, // IsUserAnAdmin
   {"SHLWAPI",  "SHAutoComplete"},
   {"SHFOLDER", "SHGetFolderPathA"},
+#ifdef NSIS_SUPPORT_GETDLLVERSION
   {"VERSION",  "GetFileVersionInfoSizeA"},
   {"VERSION",  "GetFileVersionInfoA"},
   {"VERSION",  "VerQueryValueA"}
+#endif
 };
 #endif
 

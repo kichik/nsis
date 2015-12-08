@@ -967,7 +967,7 @@ int RunChildProcessRedirected(LPCSTR cmd)
 {
   STARTUPINFO si = { sizeof(STARTUPINFO), };
   PROCESS_INFORMATION pi;
-  if (!CreateProcess(NULL, cmd, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi))
+  if (!CreateProcess(NULL, const_cast<LPSTR>(cmd), NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi))
     return GetLastError();
   WaitForSingleObject(pi.hProcess, INFINITE);
   GetExitCodeProcess(pi.hProcess, &si.cb);
