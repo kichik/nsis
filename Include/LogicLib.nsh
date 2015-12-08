@@ -643,7 +643,7 @@
         !error "Cannot use Case following a CaseElse"
       !endif
       Goto ${${_Logic}EndSelect}                          ; Go to EndSelect (Ends the previous Case)
-      !define _LogicLib_EndSelectLabelUsed
+      !define /IfNDef _LogicLib_EndSelectLabelUsed
       ${${_Logic}Else}:                                   ; Place the Else label
       !undef ${_Logic}Else                                ; and remove it
     !else
