@@ -127,10 +127,12 @@ class CEXEBuild {
     } TARGETTYPE;
     TARGETTYPE m_target_type;
     TARGETTYPE get_target_type(const TCHAR*s) const;
+    bool m_previous_x86_unicode;
     const TCHAR* get_target_suffix(CEXEBuild::TARGETTYPE tt, const TCHAR*defval = _T("?")) const;
-    const TCHAR* get_target_suffix() const {return get_target_suffix(m_target_type);}
+    const TCHAR* get_target_suffix() const { return get_target_suffix(m_target_type); }
     static bool is_targettype_64bit(TARGETTYPE tt) { return TARGET_AMD64 == tt; }
     bool is_target_64bit() const { return is_targettype_64bit(m_target_type); }
+    void print_bad_targettype_parameter(const TCHAR*cmdname, const TCHAR*prefix = _T("")) const;
     unsigned int get_header_size() const { return (unsigned int)sizeof(header) + (is_target_64bit() ? (4 * BLOCKS_NUM) : 0); }
 
     void set_default_output_filename(const tstring& filename);
@@ -169,7 +171,6 @@ class CEXEBuild {
     int prepare_uninstaller();
     int pack_exe_header();
 
-    int set_target_charset(bool unicode);
     int set_compressor(const tstring& compressor, const bool solid);
     int load_stub();
     int update_exehead(const tstring& file, size_t *size=NULL);

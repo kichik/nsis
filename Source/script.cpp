@@ -2896,23 +2896,51 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return PS_OK;
 
 #ifdef _UNICODE
+    case TOK_TARGET:
+    {
+      const TCHAR *cmdnam = get_commandtoken_name(which_token);
+      CEXEBuild::TARGETTYPE tt = get_target_type(line.gettoken_str(1));
+      if (CEXEBuild::TARGET_UNKNOWN == tt)
+      {
+        print_bad_targettype_parameter(cmdnam);
+        return PS_ERROR;
+      }
+      if (m_target_type != tt && PS_OK != change_target_architecture(tt))
+      {
+        ERROR_MSG(_T("Error: Unable to set target %") NPRIs _T(" (adequate stub not found?)\n"), _T("architecture"));
+        return PS_ERROR;
+      }
+      SCRIPT_MSG(_T("%") NPRIs _T(": %") NPRIs _T("\n"), cmdnam, get_target_suffix(tt));
+    }
+    return PS_OK;
+    case TOK_TARGETCPU:
+    {
+      int k = line.gettoken_enum(1, _T("x86\0amd64\0x64\0"));
+      if (-1 == k) PRINTHELP();
+      CEXEBuild::TARGETTYPE tt = TARGET_AMD64;
+      if (0 == k) tt = m_previous_x86_unicode ? TARGET_X86UNICODE : TARGET_X86ANSI;
+      if (m_target_type != tt && PS_OK != change_target_architecture(tt))
+      {
+        ERROR_MSG(_T("Error: Unable to set target %") NPRIs _T(" (adequate stub not found?)\n"), _T("architecture"));
+        return PS_ERROR;
+      }
+      SCRIPT_MSG(_T("%") NPRIs _T(": %") NPRIs _T("\n"), get_commandtoken_name(which_token), line.gettoken_str(1));
+    }
+    return PS_OK;
     case TOK_TARGETUNICODE:
     {
-      int k = line.gettoken_enum(1,_T("false\0true\0"));
-      if (-1==k) PRINTHELP();
-      SCRIPT_MSG(_T("Unicode: %") NPRIs _T("\n"),k?_T("true"):_T("false"));
-      const bool newtargetcs = !!k;
-      if (newtargetcs != build_unicode)
+      int k = line.gettoken_enum(1, _T("false\0true\0"));
+      if (-1 == k) PRINTHELP();
+      CEXEBuild::TARGETTYPE tt = k ? (TARGET_X86ANSI == m_target_type ? TARGET_X86UNICODE : m_target_type) : TARGET_X86ANSI;
+      if (tt != m_target_type && (build_compressor_set | build_lockedunicodetarget))
       {
-        if (build_compressor_set || build_lockedunicodetarget)
-        {
-          ERROR_MSG(_T("Error: Can't change target charset after data already got compressed or header already changed!\n"));
-          return PS_ERROR;
-        }
+        ERROR_MSG(_T("Error: Can't change target %") NPRIs _T(" after data already got compressed or header already changed!\n"), _T("charset"));
+        return PS_ERROR;
       }
-      if (set_target_charset(newtargetcs) != PS_OK)
+      SCRIPT_MSG(_T("Unicode: %") NPRIs _T("\n"), k ? _T("true") : _T("false"));
+      if (is_targettype_64bit(tt) != is_targettype_64bit(m_target_type) || PS_OK != change_target_architecture(tt))
       {
-        ERROR_MSG(_T("Error: Unable to set target charset (adequate stub not found?)\n"));
+        ERROR_MSG(_T("Error: Unable to set target %") NPRIs _T(" (adequate stub not found?)\n"), _T("charset"));
         return PS_ERROR;
       }
     }
@@ -6109,16 +6137,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         arcstr = line.gettoken_str(--numtok);
         if (_T('/') != *arcstr || CEXEBuild::TARGET_UNKNOWN == (tt = get_target_type(++arcstr)))
         {
-          tstring errstr = cmdnam;
-          errstr += _T(": Target parameter must be one of: /");
-          for(int comma = 0, i = CEXEBuild::TARGETFIRST; i < CEXEBuild::TARGETCOUNT; ++i)
-          {
-            const TCHAR *ts = get_target_suffix((CEXEBuild::TARGETTYPE) i, 0);
-            if (!ts) continue;
-            if (comma++) errstr += _T(", /");
-            errstr += ts;
-          }
-          ERROR_MSG(_T("Error: %") NPRIs _T("\n"), errstr.c_str());
+          print_bad_targettype_parameter(cmdnam, _T("/"));
           return PS_ERROR;
         }
       }
