@@ -265,7 +265,7 @@ def Tag():
 	print 'tagging...'
 
 	run(
-		'%s copy %s/trunk %s/tags/%s -m "Tagging for release %s"' % (SVN, SVNROOT, SVNROOT, SVN_TAG, VERSION),
+		'%s copy %s/branches/nsis2 %s/tags/%s -m "Tagging for release %s"' % (SVN, SVNROOT, SVNROOT, SVN_TAG, VERSION),
 		LOG_ALL,
 		'failed creating tag %s' % SVN_TAG
 	)
