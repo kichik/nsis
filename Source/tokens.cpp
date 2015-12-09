@@ -279,7 +279,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_P_APPENDFILE,_T("!appendfile"),2,2,_T("[/CHARSET=<") TSTR_OUTPUTCHARSET _T(">] [/RAWNL] file appended_line"),TP_ALL},
 {TOK_P_GETDLLVERSION,_T("!getdllversion"),2,0,_T("localfilename define_basename"),TP_ALL},
 
-{TOK_P_SEARCHPARSESTRING,_T("!searchparse"),3,-1,_T("[/ignorecase] [/noerrors] [/file] source_string substring OUTPUTSYM1 [substring [OUTPUTSYM2 [substring ...]]]"),TP_ALL},
+{TOK_P_SEARCHPARSESTRING,_T("!searchparse"),3,-1,_T("[/ignorecase] [/noerrors] [/file] source_string_or_file substring OUTPUTSYM1 [substring [OUTPUTSYM2 [substring ...]]]"),TP_ALL},
 {TOK_P_SEARCHREPLACESTRING,_T("!searchreplace"),4,1,_T("[/ignorecase] output_name source_string substring replacestring"), TP_ALL},
 
 {TOK_MISCBUTTONTEXT,_T("MiscButtonText"),0,4,_T("[back button text] [next button text] [cancel button text] [close button text]"),TP_GLOBAL},
