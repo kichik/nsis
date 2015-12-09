@@ -3792,10 +3792,12 @@ int CEXEBuild::change_target_architecture(TARGETTYPE tt)
   const bool wide = TARGET_X86ANSI != tt;
   if (build_compressor_set || (build_unicode != wide && build_lockedunicodetarget))
   {
-    ERROR_MSG(_T("Error: Can't change target architecture after data already got compressed!\n"));
+    ERROR_MSG(_T("Error: Can't change target %") NPRIs _T(" after data already got compressed or header already changed!\n"), _T("architecture"));
     return PS_ERROR;
   }
 
+  if (TARGET_X86ANSI == m_target_type || TARGET_X86UNICODE == m_target_type)
+    m_previous_x86_unicode = build_unicode;
   m_target_type = tt;
   build_unicode = wide;
 
@@ -3806,16 +3808,6 @@ int CEXEBuild::change_target_architecture(TARGETTYPE tt)
 #endif
   return ec;
 }
-
-#ifdef _UNICODE
-int CEXEBuild::set_target_charset(bool unicode)
-{
-  if (build_lockedunicodetarget) return PS_ERROR;
-  TARGETTYPE tt = unicode ? m_target_type : TARGET_X86ANSI;
-  if (TARGET_X86ANSI == tt && unicode) tt = TARGET_X86UNICODE;
-  return change_target_architecture(tt);
-}
-#endif
 
 int CEXEBuild::set_compressor(const tstring& compressor, const bool solid) {
   stub_filename = stubs_dir + PLATFORM_PATH_SEPARATOR_STR + compressor;
@@ -3838,13 +3830,25 @@ const TCHAR* CEXEBuild::get_target_suffix(CEXEBuild::TARGETTYPE tt, const TCHAR*
 {
   switch(tt)
   {
-  case TARGET_X86ANSI   :return _T("x86-ansi");
-  case TARGET_X86UNICODE:return _T("x86-unicode");
-#if !defined(_WIN32) || defined(_WIN64) // BUGBUG: Need a better define for this
-  case TARGET_AMD64     :return _T("amd64-unicode");
-#endif
-  default:return defval;
+  case TARGET_X86ANSI   : return _T("x86-ansi");
+  case TARGET_X86UNICODE: return _T("x86-unicode");
+  case TARGET_AMD64     : return _T("amd64-unicode");
+  default: return defval;
   }
+}
+
+void CEXEBuild::print_bad_targettype_parameter(const TCHAR*cmdname, const TCHAR*prefix) const
+{
+  tstring errstr = cmdname;
+  errstr += _T(": Target parameter must be one of: "), errstr += prefix;
+  for(int comma = 0, i = CEXEBuild::TARGETFIRST; i < CEXEBuild::TARGETCOUNT; ++i)
+  {
+    const TCHAR *ts = get_target_suffix((CEXEBuild::TARGETTYPE) i, 0);
+    if (!ts) continue;
+    if (comma++) errstr += _T(", "), errstr += prefix;
+    errstr += ts;
+  }
+  ERROR_MSG(_T("Error: %") NPRIs _T("\n"), errstr.c_str());
 }
 
 int CEXEBuild::load_stub()
