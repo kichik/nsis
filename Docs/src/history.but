@@ -12,7 +12,7 @@ Released on December 8th, 2015
 
 \S2{} Major Changes
 
-\b LoadLibrary security hardening to prevent dll hijacking (\W{http://sf.net/p/nsis/bugs/1125}{bug #1125}
+\b LoadLibrary security hardening to prevent dll hijacking (\W{http://sf.net/p/nsis/bugs/1125}{bug #1125})
 
 \b \c{InitiateShutdown()} is used to reboot the machine if available (\W{http://sf.net/p/nsis/patches/247}{patch #247})
 
