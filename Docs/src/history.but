@@ -2,13 +2,17 @@
 
 \H{v2.47} 2.47
 
-Released on ? ?th, 2015
+Released on December 8th, 2015
+
+\S1{v2.47-rl} Release Notes
+
+\b This is a maintenance and security release
 
 \S1{v2.47-cl} Changelog
 
 \S2{} Major Changes
 
-\b LoadLibrary security hardening to prevent dll hijacking
+\b LoadLibrary security hardening to prevent dll hijacking (\W{http://sf.net/p/nsis/bugs/1125}{patch #1125}
 
 \b \c{InitiateShutdown()} is used to reboot the machine if available (\W{http://sf.net/p/nsis/patches/247}{patch #247})
 
