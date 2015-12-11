@@ -158,12 +158,16 @@ env.Append(BUILDERS = {'Halibut' : docs_builder})
 # fix hhc.exe reverse return value - UGLY
 old_spawn = env['SPAWN']
 def new_spawn(*args, **kw):
+	if 'hhc' in args[3]:
+		if len(args) == 5:
+			args = (args[0], args[1], args[2], args[3], {'PATH': args[4]['PATH']})
+		else:
+			kw['env'] = {}
 	result = old_spawn(*args, **kw)
 	for p in args[3]:
 		if 'hhc.exe' in p.lower():
 			return not result
 	return result
-
 env['SPAWN'] = new_spawn
 
 # BUILD!

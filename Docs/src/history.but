@@ -324,6 +324,36 @@ Released on May 19th, 2013
 
 \b Fixed Korean MUI_[UN]TEXT_FINISH_INFO_* (\W{http://sourceforge.net/support/tracker.php?aid=3541515}{bug #3541515})
 
+\H{v2.48} 2.48
+
+Released on December 10th, 2015
+
+\S1{v2.48-cl} Changelog
+
+\b Fixed CHM (\W{http://sf.net/p/nsis/bugs/1129/}{bug #1129})
+
+\H{v2.47} 2.47
+
+Released on December 8th, 2015
+
+\S1{v2.47-rl} Release Notes
+
+\b This is a maintenance and security release
+
+\S1{v2.47-cl} Changelog
+
+\S2{} Major Changes
+
+\b LoadLibrary security hardening to prevent dll hijacking (\W{http://sf.net/p/nsis/bugs/1125}{bug #1125})
+
+\b \c{InitiateShutdown()} is used to reboot the machine if available (\W{http://sf.net/p/nsis/patches/247}{patch #247})
+
+\S2{} Minor Changes
+
+\b Fixed 4+ TiB freespace calculation bug (\W{http://sf.net/p/nsis/bugs/1115/}{bug #1115})
+
+\b Windows 8 & 2012 support in WinVer.nsh
+
 \H{v2.46} 2.46
 
 Released on December 6th, 2009
