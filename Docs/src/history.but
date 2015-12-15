@@ -324,6 +324,14 @@ Released on May 19th, 2013
 
 \b Fixed Korean MUI_[UN]TEXT_FINISH_INFO_* (\W{http://sourceforge.net/support/tracker.php?aid=3541515}{bug #3541515})
 
+\H{v2.49} 2.49
+
+Released on December 16th, 2015
+
+\S1{v2.49-cl} Changelog
+
+\b Fixed CreateShortcut failure on Vista caused by security changes in 2.47
+
 \H{v2.48} 2.48
 
 Released on December 10th, 2015
