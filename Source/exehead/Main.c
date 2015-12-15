@@ -80,7 +80,7 @@ char *ValidateTempDir()
 
 void *g_SHGetFolderPath;
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, int nCmdShow)
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpszCmdParam, int nCmdShow)
 {
   int ret = 0;
   const char *m_Err = _LANG_ERRORWRITINGTEMP;
@@ -108,8 +108,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
     // dynamically loaded modules (with relative paths) to just 
     // %windir%\System32 and directories added with AddDllDirectory().
     // This prevents DLL search order attacks (CAPEC-471).
-    FARPROC fp = myGetProcAddress(MGA_SetDefaultDllDirectories);
-    if (fp) ((BOOL(WINAPI*)(DWORD))fp)(LOAD_LIBRARY_SEARCH_SYSTEM32|LOAD_LIBRARY_SEARCH_USER_DIRS);
+    DWORD winver = GetVersion();
+    // CoCreateInstance(CLSID_ShellLink, ...) fails on Vista if SetDefaultDllDirectories is called
+    BOOL avoidwinbug = LOWORD(winver) == MAKEWORD(6, 0);
+    if (!avoidwinbug)
+    {
+      FARPROC fp = myGetProcAddress(MGA_SetDefaultDllDirectories);
+      if (fp) ((BOOL(WINAPI*)(DWORD))fp)(LOAD_LIBRARY_SEARCH_SYSTEM32|LOAD_LIBRARY_SEARCH_USER_DIRS);
+    }
   }
 
   // Because myGetProcAddress now loads dlls with a full path 
