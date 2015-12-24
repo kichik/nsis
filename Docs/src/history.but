@@ -1,5 +1,19 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.50} 2.50
+
+Released on December 23th, 2015
+
+\S1{v2.50-cl} Changelog
+
+\S2{} Major Changes
+
+\b RequestExecutionLevel now defaults to \c{admin}
+
+\S2{} Minor Changes
+
+\b Preload certain system libraries to prevent dll hijacking
+
 \H{v2.49} 2.49
 
 Released on December 16th, 2015
