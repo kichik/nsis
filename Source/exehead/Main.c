@@ -91,23 +91,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpszCmdParam,
   char seekchar=' ';
   char *cmdline;
 
-  InitCommonControls();
-
   SetErrorMode(SEM_NOOPENFILEERRORBOX | SEM_FAILCRITICALERRORS);
-
-#if defined(NSIS_SUPPORT_ACTIVEXREG) || defined(NSIS_SUPPORT_CREATESHORTCUT)
-  {
-    extern HRESULT g_hres;
-    g_hres=OleInitialize(NULL);
-  }
-#endif
 
   {
     // bug #1125: Don't load modules from the application nor current directory.
     // SetDefaultDllDirectories() allows us to restrict implicitly loaded and 
-    // dynamically loaded modules (with relative paths) to just 
-    // %windir%\System32 and directories added with AddDllDirectory().
-    // This prevents DLL search order attacks (CAPEC-471).
+    // dynamically loaded modules to just %windir%\System32 and directories 
+    // added with AddDllDirectory(). This prevents DLL search order attacks (CAPEC-471).
     DWORD winver = GetVersion();
     // CoCreateInstance(CLSID_ShellLink, ...) fails on Vista if SetDefaultDllDirectories is called
     BOOL avoidwinbug = LOWORD(winver) == MAKEWORD(6, 0);
@@ -116,6 +106,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpszCmdParam,
       FARPROC fp = myGetProcAddress(MGA_SetDefaultDllDirectories);
       if (fp) ((BOOL(WINAPI*)(DWORD))fp)(LOAD_LIBRARY_SEARCH_SYSTEM32|LOAD_LIBRARY_SEARCH_USER_DIRS);
     }
+    LoadSystemLibrary("UXTHEME"); // On Vista OleInitialize calls NtUserCreateWindowEx and that pulls in UXTheme.dll
+    LoadSystemLibrary("USERENV"); // On Vista SHGetFileInfo ends up in SHELL32.kfapi::GetUserProfileDir and that pulls in UserEnv.dll
+    LoadSystemLibrary("SETUPAPI"); // On XP SHGetFileInfo ends up in CMountPoint::_InitLocalDriveHelper and that pulls in SetupAPI.dll
   }
 
   // Because myGetProcAddress now loads dlls with a full path 
@@ -133,6 +126,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpszCmdParam,
   myGetProcAddress(MGA_GetFileVersionInfo); // VERSION
 #endif
   g_SHGetFolderPath = myGetProcAddress(MGA_SHGetFolderPathA); // and SHFOLDER
+
+
+  InitCommonControls();
+
+#if defined(NSIS_SUPPORT_ACTIVEXREG) || defined(NSIS_SUPPORT_CREATESHORTCUT)
+  {
+    extern HRESULT g_hres;
+    g_hres=OleInitialize(NULL);
+  }
+#endif
+
 
   {
     // workaround for bug #1008632
