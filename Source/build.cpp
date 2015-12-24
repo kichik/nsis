@@ -243,7 +243,7 @@ CEXEBuild::CEXEBuild() :
   res_editor=0;
 
   manifest_comctl = manifest::comctl_old;
-  manifest_exec_level = manifest::exec_level_none;
+  manifest_exec_level = manifest::exec_level_admin;
 
   enable_last_page_cancel=0;
   uenable_last_page_cancel=0;
