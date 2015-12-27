@@ -2,31 +2,31 @@
 
 \H{v3.0b3} 3.0 Beta 3
 
-Released on ? ?th, 201?
+Released on December 26th, 2015
 
 \S1{v3.0b3-cl} Changelog
 
 \S2{} Major Changes
 
-\b RequestExecutionLevel now defaults to \c{admin}
+\b \R{arequestexecutionlevel}{RequestExecutionLevel} now defaults to \c{admin}
 
-\b LoadLibrary security hardening to prevent dll hijacking
+\b LoadLibrary security hardening to prevent dll hijacking (\W{http://sf.net/p/nsis/bugs/1125}{bug #1125})
 
-\b FileReadUTF16LE now skips the optional BOM at the start of a file
+\b \R{FileReadUTF16LE}{FileReadUTF16LE} now skips the optional BOM at the start of a file
 
 \S2{} Minor Changes
 
 \b Fixed System plugin GUID type output bug on Win98
 
-\b FileWriteUTF16LE can add a BOM with the /BOM switch
+\b \R{FileWriteUTF16LE}{FileWriteUTF16LE} can add a BOM with the /BOM switch
 
-\b CreateShortcut icon index can now be larger than 255 (\W{http://sf.net/p/nsis/bugs/1123/}{bug #1123})
+\b \R{createshortcut}{CreateShortcut} icon index can now be larger than 255 (\W{http://sf.net/p/nsis/bugs/1123/}{bug #1123})
 
-\b !system and !execute now provide a empty StdIn pipe to work around bugs in some Windows utilities
+\b \R{system}{!system} and \R{execute}{!execute} now provide an empty StdIn pipe to work around bugs in some Windows utilities
 
 \b Added support for 0o octal radix prefix on number literals in the preprocessor
 
-\b The single parameter version of !if now also supports floats
+\b The single parameter version of \R{if}{!if} now also supports floats
 
 \b Preprocessor now warns when invalid floating point numbers are used in math operations
 
@@ -332,7 +332,7 @@ Released on December 26th, 2015
 
 \S2{} Major Changes
 
-\b \R{requestexecutionlevel}{RequestExecutionLevel} now defaults to \c{admin}
+\b \R{arequestexecutionlevel}{RequestExecutionLevel} now defaults to \c{admin}
 
 \S2{} Minor Changes
 
