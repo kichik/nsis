@@ -2,17 +2,17 @@
 
 \H{v2.50} 2.50
 
-Released on December 23th, 2015
+Released on December 26th, 2015
 
 \S1{v2.50-cl} Changelog
 
 \S2{} Major Changes
 
-\b RequestExecutionLevel now defaults to \c{admin}
+\b \R{requestexecutionlevel}{RequestExecutionLevel} now defaults to \c{admin}
 
 \S2{} Minor Changes
 
-\b Preload certain system libraries to prevent dll hijacking
+\b Preload certain system libraries to prevent dll hijacking (\W{http://sf.net/p/nsis/bugs/1125}{bug #1125})
 
 \H{v2.49} 2.49
 
