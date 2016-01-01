@@ -1182,7 +1182,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     case EW_READINISTR:
       {
         // GetPrivateProfileString can't read CR & LF characters inside values from INI files
-        // so we use "\n" as a detection system to see if we did succesfully read a value
+        // so we use "\n" as a detection system to see if we did successfully read a value
         const TCHAR errstr[] = _T("\n");
         TCHAR *p=var0;
         TCHAR *buf0=GetStringFromParm(0x01);
