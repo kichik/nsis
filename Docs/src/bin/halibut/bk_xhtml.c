@@ -672,7 +672,7 @@ static void xhtml_ponder_layout(paragraph * p)
 
 #define NAMEDFRAGMENT_MAXLEN 200 /* More than enough for our usage */
 /*
- * Get formated fragment name for html anchor.
+ * Get formatted fragment name for html anchor.
  * Uses para->keyword if possible, falls back to the ?#.#.# default.
  */
 static char*

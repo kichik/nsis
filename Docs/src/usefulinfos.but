@@ -123,7 +123,7 @@ To call a function in a third party DLL, the \R{call}{Call} function is used lik
 
 \c System::Call 'YourDllName::YourDllFunction(i, *i, t) i(r0, .r1, r2) .r3'
 
-The '(r0, .r1, r2) .r3' section at the end are the parameters that are passed between your DLL and your NSIS script. As can be seen in this parameters list type and input/output can be seperated. Each block of "(parms list) return value" overrides and/or adds to the last one. In this case, the first block specifies the types and the second specifies input and output.
+The '(r0, .r1, r2) .r3' section at the end are the parameters that are passed between your DLL and your NSIS script. As can be seen in this parameters list type and input/output can be separated. Each block of "(parms list) return value" overrides and/or adds to the last one. In this case, the first block specifies the types and the second specifies input and output.
 
 \\<b\\>Before starting to code the NSIS script\\</b\\> \\<br\\>
 Before you start to code any NSIS code, you need to know the full prototype of the function you are going to call. For the purposes of this example, we will use the 'CmGetHotSyncExecPath' function from the Palm 'CondMgr.dll'. This function is used to return the full path of 'HotSync.exe'.
