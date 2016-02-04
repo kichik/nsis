@@ -106,9 +106,23 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpszCmdParam,
       FARPROC fp = myGetProcAddress(MGA_SetDefaultDllDirectories);
       if (fp) ((BOOL(WINAPI*)(DWORD))fp)(LOAD_LIBRARY_SEARCH_SYSTEM32|LOAD_LIBRARY_SEARCH_USER_DIRS);
     }
-    LoadSystemLibrary("UXTHEME"); // On Vista OleInitialize calls NtUserCreateWindowEx and that pulls in UXTheme.dll
-    LoadSystemLibrary("USERENV"); // On Vista SHGetFileInfo ends up in SHELL32.kfapi::GetUserProfileDir and that pulls in UserEnv.dll
-    LoadSystemLibrary("SETUPAPI"); // On XP SHGetFileInfo ends up in CMountPoint::_InitLocalDriveHelper and that pulls in SetupAPI.dll
+    // SetDefaultDllDirectories might not be available so we try to preload various libraries as 
+    // best we can before Windows gets a chance to mess things up by loading from the wrong directory.
+    {
+      static const char preload[] = 
+        "UXTHEME\0" // Vista: OleInitialize calls NtUserCreateWindowEx and that pulls in UXTheme.dll
+        "USERENV\0" // Vista: SHGetFileInfo ends up in SHELL32.kfapi::GetUserProfileDir and that pulls in UserEnv.dll
+        "SETUPAPI\0" // XP: SHGetFileInfo ends up in CMountPoint::_InitLocalDriveHelper and that pulls in SetupAPI.dll
+        "APPHELP\0" // Vista: SHGetFileInfo ... SHELL32.SHILAliasTranslate ... SHELL32.ApphelpCheckShellObject
+        "PROPSYS\0" // Vista: SHGetFileInfo ... SHELL32.SHILAliasTranslate ... SHLWAPI.#187 ... SHLWAPI.#505/SHPropertyBag_ReadGUID
+        "DWMAPI\0" // Win7 without KB2533623: UXTheme pulls in DWMAPI.dll
+        "CRYPTBASE\0" // Win7 without KB2533623: OleInitialize ... RPCRT4.UuidCreate ... RPCRT4.GenerateRandomNumber
+        "OLEACC\0" // Vista: SHFileOperation ... SHELL32.CProgressDialogUI::_Setup ... SHELL32.GetRoleTextW
+      ;
+      const char *dll;
+      for (dll = preload; dll[0]; dll += lstrlenA(dll) + 1)
+        LoadSystemLibrary(dll);
+    }
   }
 
   // Because myGetProcAddress now loads dlls with a full path 
