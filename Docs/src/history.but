@@ -1,5 +1,19 @@
 \A{history} Changelog and Release Notes
 
+\H{v3.0b4} 3.0 Beta 4
+
+Released on ? ?th, 2016
+
+\S1{v3.0b4-cl} Changelog
+
+\S2{} Minor Changes
+
+\b More security hardening to prevent dll hijacking
+
+\S2{} Translations
+
+\b Added missing MULTIUSER_* entries to Japanese.nsh (\W{http://sf.net/p/nsis/patches/266}{patch #266})
+
 \H{v3.0b3} 3.0 Beta 3
 
 Released on December 26th, 2015
