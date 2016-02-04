@@ -993,7 +993,7 @@ HMODULE NSISCALL LoadSystemLibrary(LPCSTR name)
     cch = 0;          // \\?\ paths so we have to settle for just the name.
   wsprintf(path + cch, fmt, TEXT("\\") + (!cch || path[cch-1] == '\\'), name);
 
-  return LoadLibrary(path);
+  return LoadLibraryEx(path, NULL, LOAD_WITH_ALTERED_SEARCH_PATH);
 }
 
 void* NSISCALL myGetProcAddress(const enum myGetProcAddressFunctions func)

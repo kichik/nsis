@@ -315,20 +315,23 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       char *buf1=GetStringFromParm(-0x10);
       log_printf3("CreateDirectory: \"%s\" (%d)",buf1,parm1);
       {
-        char *p = skip_root(buf1);
-        char c = 'c';
+        char *p = skip_root(buf1), c = 'c';
         if (p)
         {
           while (c)
           {
+            DWORD ec;
             p = findchar(p, '\\');
-            c = *p;
-            *p = 0;
-            if (!CreateDirectory(buf1, NULL))
+            c = *p, *p = 0;
+            if (!c && parm2 && UserIsAdminGrpMember()) // Lock down the final directory?
+              ec = CreateRestrictedDirectory(buf1);
+            else
+              ec = CreateNormalDirectory(buf1);
+            if (ec)
             {
-              if (GetLastError() != ERROR_ALREADY_EXISTS)
-              {
-                log_printf3("CreateDirectory: can't create \"%s\" (err=%d)",buf1,GetLastError());
+              if (ec != ERROR_ALREADY_EXISTS)
+              {                
+                log_printf3("CreateDirectory: can't create \"%s\" (err=%d)",buf1,ec);
                 exec_error++;
               }
               else if ((GetFileAttributes(buf1) & FILE_ATTRIBUTE_DIRECTORY) == 0)
@@ -349,7 +352,11 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       {
         update_status_text_buf1(LANG_OUTPUTDIR);
         mystrcpy(state_output_directory,buf1);
-        SetCurrentDirectory(buf1);
+        if (!SetCurrentDirectory(buf1))
+        {
+            log_printf3("SetCurrentDirectory(%s) failed (%d)",buf1,GetLastError());
+            exec_error++;
+        }
       }
       else update_status_text_buf1(LANG_CREATEDIR);
     }
