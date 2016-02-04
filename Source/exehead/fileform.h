@@ -29,7 +29,7 @@
 //     pages (struct page)
 //     section headers (struct section)
 //     entries/instructions (struct entry)
-//     strings (null seperated)
+//     strings (null separated)
 //     language tables (language id, dialog offset, language strings)
 //     colors (struct color)
 // data block (compressed files and uninstaller data)

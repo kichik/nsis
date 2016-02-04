@@ -47,7 +47,7 @@ int DoPatch(HANDLE hPatch, HANDLE hSource, HANDLE hDest) {
   FILETIME targetModifiedTime;
   
   // special 'addition' for the dll: since the patch file is now
-  // in a seperate file, the VPAT header might be right at the start
+  // in a separate file, the VPAT header might be right at the start
   // of the file, and a pointer at the end of the file is probably missing
   // (because all patch generator versions don't append it, the linker/gui
   //  does this).

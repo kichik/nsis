@@ -46,7 +46,7 @@ NSIS_STRING g_usrvars[1];
 #  ifdef __GNUC__
 NSIS_STRING g_usrvars[1] __attribute__((section (NSIS_VARS_SECTION)));
 #  else
-#    error Unknown compiler. You must implement the seperate PE section yourself.
+#    error Unknown compiler. You must implement the separate PE section yourself.
 #  endif
 #endif
 
