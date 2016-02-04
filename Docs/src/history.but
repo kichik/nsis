@@ -1,5 +1,20 @@
 \A{history} Changelog and Release Notes
 
+
+\H{v2.51} 2.51
+
+Released on ? ?th, 2016
+
+\S1{v2.51-cl} Changelog
+
+\S2{} Minor Changes
+
+\b More security hardening to prevent dll hijacking
+
+\S2{} Translations
+
+\b Added missing MULTIUSER_* entries to Japanese.nsh (\W{http://sf.net/p/nsis/patches/266}{patch #266})
+
 \H{v2.50} 2.50
 
 Released on December 26th, 2015
