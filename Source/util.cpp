@@ -771,7 +771,7 @@ void RawTStrToASCII(const TCHAR*in,char*out,UINT maxcch)
  * ExpandoStrFmtVaList returns the number of characters written excluding
  * the \0 terminator or 0 on error.
  * realloc() is used on *ppMalloc if cchStack is not 
- * large enough to hold the formated string.
+ * large enough to hold the formatted string.
 */
 size_t ExpandoStrFmtVaList(wchar_t*Stack, size_t cchStack, wchar_t**ppMalloc, const wchar_t*FmtStr, va_list Args)
 {
@@ -1208,7 +1208,7 @@ static bool GetDLLVersionUsingRE(const tstring& filepath, DWORD& high, DWORD & l
         // get VS_FIXEDFILEINFO from VS_VERSIONINFO
         WINWCHAR *szKey = (WINWCHAR *)(ver + sizeof(WORD) * 3);
         size_t len = (WinWStrLen(szKey) + 1) * sizeof(WINWCHAR) + sizeof(WORD) * 3;
-        len = (len + 3) & ~3; // align on DWORD boundry
+        len = (len + 3) & ~3; // align on DWORD boundary
         VS_FIXEDFILEINFO *verinfo = (VS_FIXEDFILEINFO *)(ver + len);
         if (versize > len && verinfo->dwSignature == VS_FFI_SIGNATURE)
         {

@@ -52,7 +52,7 @@ NSIS_STRING g_usrvarssection[1];
 TCHAR g_usrvarssection[1] __attribute__((section (NSIS_VARS_SECTION)));
 const NSIS_STRING*const g_usrvarsstart = (const NSIS_STRING*const) g_usrvarssection;
 #  else
-#    error Unknown compiler. You must implement the seperate PE section yourself.
+#    error Unknown compiler. You must implement the separate PE section yourself.
 #  endif
 #endif
 

@@ -434,7 +434,7 @@ int CEXEBuild::DefineLangString(const TCHAR *name, int process/*=-1*/) {
 #endif
 
   // Now set the new index and uindex values with the
-  // passed in proces value.
+  // passed in process value.
   build_langstrings.set(pos, index, uindex, process);
 
   // set reference count for NLF strings
