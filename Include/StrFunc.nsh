@@ -11,8 +11,8 @@ o-----------------------------------------------------------------------------o
 
 !verbose push 3
 !define /IfNDef STRFUNC_VERBOSITY 3
-!define _STRFUNC_VERBOSITY ${STRFUNC_VERBOSITY}
-!define _STRFUNC_CREDITVERBOSITY ${STRFUNC_VERBOSITY}
+!define /IfNDef _STRFUNC_VERBOSITY ${STRFUNC_VERBOSITY}
+!define /IfNDef _STRFUNC_CREDITVERBOSITY ${STRFUNC_VERBOSITY}
 !undef STRFUNC_VERBOSITY
 !verbose ${_STRFUNC_VERBOSITY}
 
