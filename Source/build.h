@@ -306,6 +306,7 @@ class CEXEBuild {
 
     int resolve_coderefs(const TCHAR *str);
     void print_warnings();
+    void warninghelper(const TCHAR *msg);
     int uninstall_generate();
 
     /** Are we defining an uninstall version of the code?

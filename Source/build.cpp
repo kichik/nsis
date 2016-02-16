@@ -3404,44 +3404,22 @@ void CEXEBuild::set_verbosity(int lvl)
   g_display_errors = display_errors;
 }
 
-void CEXEBuild::warning(const TCHAR *s, ...)
+void CEXEBuild::warninghelper(const TCHAR *msg)
 {
-  ExpandoString<TCHAR, NSIS_MAX_STRLEN + 100> buf;
-  va_list val;
-  va_start(val,s);
-  buf.StrFmt(s,val);
-  va_end(val);
+  m_warnings.add(msg,0);
 
-  m_warnings.add(buf,0);
-  notify(MakensisAPI::NOTIFY_WARNING,buf.GetPtr());
-  if (display_warnings)
-  {
-    PrintColorFmtMsg_WARN(_T("warning: %") NPRIs _T("\n"),buf.GetPtr());
-  }
-}
-
-void CEXEBuild::warning_fl(const TCHAR *s, ...)
-{
-  ExpandoString<TCHAR, NSIS_MAX_STRLEN + 100> buf;
-  va_list val;
-  va_start(val,s);
-  size_t cchMsg = buf.StrFmt(s,val);
-  va_end(val);
-
-  buf.Reserve(cchMsg+2+_tcslen(curfilename)+50+1+1);
-  _stprintf(&buf[cchMsg],_T(" (%") NPRIs _T(":%u)"),curfilename,linecnt);
-
-  m_warnings.add(buf,0);
-
-  MakensisAPI::notify_e hostcode = MakensisAPI::NOTIFY_WARNING;
   extern bool g_warnaserror;
+  MakensisAPI::notify_e hostnotifyevnt = MakensisAPI::NOTIFY_WARNING;
   if (g_warnaserror)
-    hostcode = MakensisAPI::NOTIFY_ERROR, display_warnings = display_errors;
-  notify(hostcode,buf.GetPtr());
+  {
+    hostnotifyevnt = MakensisAPI::NOTIFY_ERROR;
+    display_warnings = display_errors;
+  }
+  notify(hostnotifyevnt, msg);
 
   if (display_warnings)
   {
-    PrintColorFmtMsg_WARN(_T("warning: %") NPRIs _T("\n"),buf.GetPtr());
+    PrintColorFmtMsg_WARN(_T("warning: %") NPRIs _T("\n"), msg);
   }
   if (g_warnaserror)
   {
@@ -3450,6 +3428,30 @@ void CEXEBuild::warning_fl(const TCHAR *s, ...)
     if (!has_called_write_output) g_display_errors = false; // This is a hack to avoid the "stale file in %temp%" warning.
     extern void quit(); quit();
   }
+}
+
+void CEXEBuild::warning(const TCHAR *s, ...)
+{
+  ExpandoString<TCHAR, NSIS_MAX_STRLEN + 100> buf;
+  va_list val;
+  va_start(val,s);
+  buf.StrFmt(s,val);
+  va_end(val);
+
+  warninghelper(buf.GetPtr());
+}
+
+void CEXEBuild::warning_fl(const TCHAR *s, ...)
+{
+  ExpandoString<TCHAR, NSIS_MAX_STRLEN + 100> buf;
+  va_list val;
+  va_start(val,s);
+  size_t cchMsg = buf.StrFmt(s, val);
+  va_end(val);
+
+  buf.Reserve(cchMsg+2+_tcslen(curfilename)+50+1+!0);
+  _stprintf(&buf[cchMsg], _T(" (%") NPRIs _T(":%u)"), curfilename, linecnt);
+  warninghelper(buf.GetPtr());
 }
 
 void CEXEBuild::ERROR_MSG(const TCHAR *s, ...) const
@@ -3462,10 +3464,10 @@ void CEXEBuild::ERROR_MSG(const TCHAR *s, ...) const
     buf.StrFmt(s,val);
     va_end(val);
 
-    notify(MakensisAPI::NOTIFY_ERROR,buf.GetPtr());
+    notify(MakensisAPI::NOTIFY_ERROR, buf.GetPtr());
     if (display_errors)
     {
-      PrintColorFmtMsg_ERR(_T("%") NPRIs ,buf.GetPtr());
+      PrintColorFmtMsg_ERR(_T("%") NPRIs, buf.GetPtr());
     }
   }
 }
