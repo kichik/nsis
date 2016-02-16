@@ -2640,10 +2640,10 @@ int CEXEBuild::write_output(void)
   crc32_t crc=0;
 
   {
-    tstring full_path = get_full_path(build_output_filename);
+    tstring full_path = get_full_path(build_output_filename), fnamebuf = get_file_name(build_output_filename);
     notify(MakensisAPI::NOTIFY_OUTPUT, full_path.c_str());
     INFO_MSG(_T("\nOutput: \"%") NPRIs _T("\"\n"), full_path.c_str());
-    const TCHAR *fname = get_file_name(build_output_filename).c_str();
+    const TCHAR *fname = fnamebuf.c_str();
     // Warn when special compatibility names are used. See also: http://github.com/wixtoolset/wix4/commit/3f4341b8ac4d13dffb1d6ba773d48ccc0ab07cf8
     if (!lstrcmpi(fname, _T("setup.exe")))
     {
