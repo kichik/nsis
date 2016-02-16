@@ -2643,6 +2643,15 @@ int CEXEBuild::write_output(void)
     tstring full_path = get_full_path(build_output_filename);
     notify(MakensisAPI::NOTIFY_OUTPUT, full_path.c_str());
     INFO_MSG(_T("\nOutput: \"%") NPRIs _T("\"\n"), full_path.c_str());
+    const TCHAR *fname = get_file_name(build_output_filename).c_str();
+    // Warn when special compatibility names are used. See also: http://github.com/wixtoolset/wix4/commit/3f4341b8ac4d13dffb1d6ba773d48ccc0ab07cf8
+    if (!lstrcmpi(fname, _T("setup.exe")))
+    {
+      const bool orgdispwarn = display_warnings;
+      display_warnings = false; // Don't display warning inline in the middle of our statistics output.
+      warning(_T("Insecure filename \"%") NPRIs _T("\", Windows will unsafely load compatibility shims into the process."), fname);
+      display_warnings = orgdispwarn;
+    }
   }
 
   FILE *fp = FOPEN(build_output_filename,("w+b"));
