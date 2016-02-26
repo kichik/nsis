@@ -1781,7 +1781,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_LANGSTRING:
     {
       TCHAR *name = line.gettoken_str(1);
-      LANGID lang = line.gettoken_int(2);
+      LANGID lang = ParseLangIdParameter(line, 2);
       TCHAR *str = line.gettoken_str(3);
       const int ret = SetLangString(name, lang, str);
       if (ret == PS_WARNING)
@@ -1806,17 +1806,15 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
 #endif
       TCHAR *name = line.gettoken_str(1);
-      LANGID lang = line.gettoken_int(2);
+      LANGID lang = ParseLangIdParameter(line, 2);
       TCHAR *file = line.gettoken_str(3);
 
       TCHAR *data = NULL;
       MANAGE_WITH(data, free);
 
-      WORD AnsiCP = CP_ACP;
       LanguageTable *pLT = GetLangTable(lang);
-      if (pLT) AnsiCP = pLT->nlf.m_uCodePage;
-  
-      int ret = LoadLicenseFile(file, &data, cmdnam, AnsiCP);
+      WORD acp = pLT ? pLT->nlf.m_uCodePage : CP_ACP;
+      int ret = LoadLicenseFile(file, &data, cmdnam, acp);
       if (ret != PS_OK)
           return ret;
 
@@ -6655,8 +6653,6 @@ int CEXEBuild::do_add_file_create_dir(const tstring& local_dir, const tstring& d
 }
 #endif
 
-
-
 DefineList *CEXEBuild::searchParseString(const TCHAR *source_string, LineParser&line, int parmOffs, bool ignCase, bool noErrors, UINT*failParam)
 {
   const bool allowEmptyFirstTok = true;
@@ -6697,4 +6693,13 @@ DefineList *CEXEBuild::searchParseString(const TCHAR *source_string, LineParser&
     defout = line.gettoken_str(parmOffs++), src_start = source_string += toklen;
   }
   return ret;
+}
+
+LANGID CEXEBuild::ParseLangIdParameter(const LineParser&line, int token)
+{
+  int succ, lid = line.gettoken_int(token, &succ);
+  if (!lid) lid = last_used_lang;
+  if (!succ)
+    warning_fl(_T("\"%") NPRIs _T("\" is not a valid language id, using language id %u!"), line.gettoken_str(token), lid);
+  return lid;
 }
