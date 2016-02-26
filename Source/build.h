@@ -207,6 +207,7 @@ class CEXEBuild {
     int includeScript(const TCHAR *f, NStreamEncoding&enc);
     TCHAR* GetMacro(const TCHAR *macroname, TCHAR**macroend = 0);
     bool MacroExists(const TCHAR *macroname) { return !!GetMacro(macroname); }
+    LANGID ParseLangIdParameter(const LineParser&line, int token);
     int LoadLicenseFile(const TCHAR *file, TCHAR** pdata, const TCHAR *cmdname, WORD AnsiCP);
 #ifdef NSIS_FIX_DEFINES_IN_STRINGS
     void ps_addtoline(const TCHAR *str, GrowBuf &linedata, StringList &hist, bool bIgnoreDefines = false);
