@@ -10,7 +10,7 @@
 
 #include "util.h"
 
-int my_atoi(char *s)
+int my_atoi(const char *s)
 {
   int sign=0;
   int v=0;
@@ -26,7 +26,7 @@ int my_atoi(char *s)
   return (int)v;
 }
 
-__int64 myatoi64(char *s)
+__int64 myatoi64(const char *s)
 {
   __int64 v=0;
   int sign=0;

@@ -83,7 +83,7 @@ NSISFunc(SetReturn) {
   bReturn = !lstrcmpi(szTemp, "on");
 }
 
-static void __stdcall my_pushstring(char *str)
+static void __stdcall my_pushstring(const char *str)
 {
   stack_t *th;
   if (!g_stacktop || !bReturn) return;

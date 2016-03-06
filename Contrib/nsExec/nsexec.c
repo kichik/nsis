@@ -37,7 +37,7 @@ HWND          g_hwndList;
 void ExecScript(BOOL log);
 void LogMessage(const char *pStr, BOOL bOEM);
 char *my_strstr(char *a, char *b);
-unsigned int my_atoi(char *s);
+unsigned int my_atoi(const char *s);
 
 void __declspec(dllexport) Exec(HWND hwndParent, int string_size, char *variables, stack_t **stacktop) {
   g_hwndParent=hwndParent;
@@ -64,7 +64,7 @@ void __declspec(dllexport) ExecToStack(HWND hwndParent, int string_size, char *v
 }
 
 HINSTANCE g_hInst;
-BOOL WINAPI DllMain(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved) {
+BOOL WINAPI DllMain(HINSTANCE hInst, ULONG ul_reason_for_call, LPVOID lpReserved) {
   g_hInst = hInst;
   return TRUE;
 }
@@ -394,7 +394,7 @@ char *my_strstr(char *a, char *b)
   return NULL;
 }
 
-unsigned int my_atoi(char *s) {
+unsigned int my_atoi(const char *s) {
   unsigned int v=0;
   if (*s == '0' && (s[1] == 'x' || s[1] == 'X')) {
     s+=2;

@@ -35,7 +35,7 @@ void JNL::addr_to_ipstr(unsigned long addr, char *host, int maxhostlen)
   char *p=::inet_ntoa(a); strncpy(host,p?p:"",maxhostlen);
 }
 
-int my_atoi(char *s)
+int my_atoi(const char *s)
 {
   int sign=0;
   int v=0;

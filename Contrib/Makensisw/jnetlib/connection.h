@@ -81,7 +81,7 @@ class JNL_Connection
 
     void run(int max_send_bytes=-1, int max_recv_bytes=-1, int *bytes_sent=NULL, int *bytes_rcvd=NULL);
     int  get_state() { return m_state; }
-    char *get_errstr() { return m_errorstr; }
+    const char *get_errstr() { return m_errorstr; }
 
     void close(int quick=0);
     void flush_send(void) { m_send_len=m_send_pos=0; }
@@ -126,7 +126,7 @@ class JNL_Connection
     int m_dns_owned;
 
     state m_state;
-    char *m_errorstr;
+    const char *m_errorstr;
 
     int getbfromrecv(int pos, int remove); // used by recv_line*
 

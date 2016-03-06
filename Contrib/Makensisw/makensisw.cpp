@@ -1269,7 +1269,7 @@ void SetCompressor(NCOMPRESSOR compressor)
 
   if(g_sdata.compressor != compressor) {
     WORD command;
-    char *compressor_name;
+    const char *compressor_name;
 
     if(compressor > COMPRESSOR_SCRIPT && compressor < COMPRESSOR_BEST) {
       command = compressor_commands[(int)compressor];

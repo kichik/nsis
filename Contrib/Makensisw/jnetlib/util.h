@@ -36,6 +36,6 @@ class JNL
     static void addr_to_ipstr(unsigned long addr, char *host, int maxhostlen);
 };
 
-int my_atoi(char *p);
+int my_atoi(const char *p);
 
 #endif //_UTIL_H_

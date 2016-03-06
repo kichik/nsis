@@ -138,7 +138,7 @@ void __declspec(dllexport) GetOriginalAccountType(HWND hwndParent, int string_si
   pushstring(GetAccountTypeHelper(FALSE));
 }
 
-BOOL WINAPI DllMain(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
+BOOL WINAPI DllMain(HINSTANCE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
 {
   return TRUE;
 }

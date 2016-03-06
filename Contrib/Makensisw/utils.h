@@ -29,7 +29,7 @@
 #define MRU_DISPLAY_LENGTH 40
 
 int SetArgv(const char *cmdLine, int *argc, char ***argv);
-void SetTitle(HWND hwnd,char *substr);
+void SetTitle(HWND hwnd,const char *substr);
 void SetBranding(HWND hwnd);
 void CopyToClipboard(HWND hwnd);
 void ClearLog(HWND hwnd);
@@ -48,7 +48,7 @@ void ResetSymbols();
 int InitBranding();
 void InitTooltips(HWND h);
 void DestroyTooltips();
-void AddTip(HWND hWnd,LPSTR lpszToolTip);
+void AddTip(HWND hWnd,LPCSTR lpszToolTip);
 void ShowDocs();
 void RestoreCompressor();
 void SaveCompressor();

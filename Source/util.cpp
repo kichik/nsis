@@ -780,7 +780,7 @@ static DWORD GetVxdVersionInfoSize( LPCSTR szFile )
 
     // GetVxdVersion() will fail with ERROR_INSUFFICIENT_BUFFER and
     // the required buffer size will be returned in dwResult.
-    if ( GetLastError() == ERROR_INSUFFICIENT_BUFFER ) 
+    if ( dwError == ERROR_INSUFFICIENT_BUFFER ) 
     {
       SetLastError( 0 );
       return dwResult;

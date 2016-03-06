@@ -591,8 +591,8 @@ void __declspec(dllexport) Show(HWND hwndParent, int string_size, char *variable
   SetWindowLong(hwndParent, DWL_DLGPROC, (long) g_dialog.parentOriginalWndproc);
 }
 
-BOOL WINAPI DllMain(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
+BOOL WINAPI DllMain(HINSTANCE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
 {
-  g_hInstance = (HINSTANCE) hInst;
+  g_hInstance = hInst;
   return TRUE;
 }

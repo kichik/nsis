@@ -229,8 +229,8 @@ void __declspec(dllexport) LangDialog(HWND hwndParent, int string_size,
   }
 }
 
-BOOL WINAPI DllMain(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
+BOOL WINAPI DllMain(HINSTANCE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
 {
   g_hInstance=hInst;
-	return TRUE;
+  return TRUE;
 }

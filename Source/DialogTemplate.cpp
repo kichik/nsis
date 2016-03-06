@@ -363,6 +363,12 @@ void CDialogTemplate::DlgUnitsToPixels(short& x, short& y) {
   y = short(float(y) * (float(r.bottom)/10000));
 }
 
+void CDialogTemplate::PixelsToDlgUnits(SIZE& siz) {
+  short x = (short)siz.cx, y = (short)siz.cy;
+  PixelsToDlgUnits(x, y);
+  siz.cx = x, siz.cy = y;
+}
+
 // Returns the size of a string in the dialog (in dialog units)
 SIZE CDialogTemplate::GetStringSize(WORD id, char *str) {
   HWND hDlg = CreateDummyDialog();
@@ -381,7 +387,7 @@ SIZE CDialogTemplate::GetStringSize(WORD id, char *str) {
   DeleteObject(font);
   DeleteDC(memDC);
 
-  PixelsToDlgUnits((short&)size.cx, (short&)size.cy);
+  PixelsToDlgUnits(size);
   
   return size;
 }
