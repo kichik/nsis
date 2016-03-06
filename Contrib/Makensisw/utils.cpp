@@ -31,7 +31,7 @@ LRESULT CALLBACK TipHookProc(int nCode, WPARAM wParam, LPARAM lParam);
 char g_mru_list[MRU_LIST_SIZE][MAX_PATH] = { "", "", "", "", "" };
 
 extern NSCRIPTDATA g_sdata;
-extern char *compressor_names[];
+extern const char *compressor_names[];
 
 int SetArgv(const char *cmdLine, int *argc, char ***argv)
 {
@@ -116,7 +116,7 @@ int SetArgv(const char *cmdLine, int *argc, char ***argv)
   return argSpaceSize;
 }
 
-void SetTitle(HWND hwnd,char *substr) {
+void SetTitle(HWND hwnd,const char *substr) {
   char title[64];
   if (substr==NULL) wsprintf(title,"MakeNSISW");
   else wsprintf(title,"MakeNSISW - %s",substr);
@@ -622,13 +622,13 @@ void DestroyTooltips() {
   UnhookWindowsHookEx(g_tip.hook);
 }
 
-void AddTip(HWND hWnd,LPSTR lpszToolTip) {
+void AddTip(HWND hWnd,LPCSTR lpszToolTip) {
   TOOLINFO ti;
   ti.cbSize = sizeof(TOOLINFO);
   ti.uFlags = TTF_IDISHWND;
   ti.hwnd   = g_tip.tip_p;
   ti.uId = (UINT) hWnd;
-  ti.lpszText = lpszToolTip;
+  ti.lpszText = const_cast<LPSTR>(lpszToolTip);
   SendMessage(g_tip.tip, TTM_ADDTOOL, 0, (LPARAM) (LPTOOLINFO) &ti); 
 }
 

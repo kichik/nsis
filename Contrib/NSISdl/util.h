@@ -27,8 +27,8 @@
 #ifndef _UTIL_H_
 #define _UTIL_H_
 
-int my_atoi(char *p);
-__int64 myatoi64(char *s);
+int my_atoi(const char *p);
+__int64 myatoi64(const char *s);
 void myitoa64(__int64 i, char *buffer);
 void mini_memset(void *,char,int);
 void mini_memcpy(void *,void*,int);

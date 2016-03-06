@@ -93,7 +93,7 @@ typedef enum {
 } NCOMPRESSOR;
 
 #ifdef MAKENSISW_CPP
-char *compressor_names[] = {"",
+const char *compressor_names[] = {"",
                             "zlib",
                             "/SOLID zlib",
                             "bzip2",
@@ -101,7 +101,7 @@ char *compressor_names[] = {"",
                             "lzma",
                             "/SOLID lzma",
                             "Best"};
-char *compressor_display_names[] = {"Defined in Script/Compiler Default",
+const char *compressor_display_names[] = {"Defined in Script/Compiler Default",
                             "ZLIB",
                             "ZLIB (solid)",
                             "BZIP2",
@@ -188,9 +188,9 @@ typedef struct NSISScriptData {
   CHARRANGE textrange;
   NCOMPRESSOR default_compressor;
   NCOMPRESSOR compressor;
-  char *compressor_name;
+  const char *compressor_name;
   char compressor_stats[512];
-  char *best_compressor_name;
+  const char *best_compressor_name;
   // Added by Darren Owen (DrO) on 1/10/2003
   int recompile_test;
 } NSCRIPTDATA;

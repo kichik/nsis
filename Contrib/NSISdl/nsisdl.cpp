@@ -214,7 +214,7 @@ int MulDiv64(int nNumber, __int64 nNumerator, __int64 nDenominator)
 
 static __int64 g_file_size;
 static DWORD g_dwLastTick = 0;
-void progress_callback(char *msg, __int64 read_bytes)
+void progress_callback(const char *msg, __int64 read_bytes)
 {
   // flicker reduction by A. Schiffler
   DWORD dwLastTick = g_dwLastTick;
@@ -232,7 +232,7 @@ void progress_callback(char *msg, __int64 read_bytes)
   }
 }
 
-extern char *_strstr(char *i, char *s);
+extern char *_strstr(const char *i, const char *s);
 #define strstr _strstr
 
 extern "C"
@@ -253,7 +253,7 @@ __declspec(dllexport) void download (HWND   parent,
   int manualproxy=0;
   int translation_version;
 
-  char *error=NULL;
+  const char *error=NULL;
 
   // translation version 2 & 1
   static char szDownloading[1024]; // "Downloading %s"

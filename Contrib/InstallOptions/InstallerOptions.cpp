@@ -111,7 +111,7 @@ char *WINAPI STRDUP(const char *c)
 #define FLAG_FOCUS         0x10000000 // Controls that can receive focus
 
 struct TableEntry {
-  char *pszName;
+  const char *pszName;
   int   nValue;
 };
 
@@ -147,7 +147,7 @@ struct FieldType {
   HANDLE hImage; // this is used by image/icon field to save the handle to the image
 
   int    nField; // field number in INI file
-  char  *pszHwndEntry; // "HWND" or "HWND2"
+  const char  *pszHwndEntry; // "HWND" or "HWND2"
 
   long   wndProc; 
 };
@@ -373,7 +373,7 @@ bool WINAPI SaveSettings(void) {
 #define BROWSE_WIDTH 15
 
 static char szResult[BUFFER_SIZE];
-char *pszAppName;
+const char *pszAppName;
 
 DWORD WINAPI myGetProfileString(LPCTSTR lpKeyName)
 {
@@ -1005,7 +1005,7 @@ int WINAPI createCfgDlg()
 
   for (int nIdx = 0; nIdx < nNumFields; nIdx++) {
     static struct {
-      char* pszClass;
+      const char* pszClass;
       DWORD dwStyle;
       DWORD dwRTLStyle;
       DWORD dwExStyle;
@@ -1541,7 +1541,7 @@ extern "C" void __declspec(dllexport) show(HWND hwndParent, int string_size,
   showCfgDlg();
 }
 
-extern "C" BOOL WINAPI DllMain(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
+extern "C" BOOL WINAPI DllMain(HINSTANCE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
 {
   m_hInstance=(HINSTANCE) hInst;
   return TRUE;

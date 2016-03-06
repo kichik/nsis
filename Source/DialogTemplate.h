@@ -122,6 +122,7 @@ public:
   void  Resize(short x, short y);
 #ifdef _WIN32
   void  PixelsToDlgUnits(short& x, short& y);
+  void  PixelsToDlgUnits(SIZE& siz);
   void  DlgUnitsToPixels(short& x, short& y);
   SIZE  GetStringSize(WORD id, char *str);
   void  RTrimToString(WORD id, char *str, int margins);

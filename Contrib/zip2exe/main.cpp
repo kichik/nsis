@@ -50,7 +50,7 @@ int g_compressor_solid;
 int g_mui;
 int g_zipfile_size;
 
-char *g_options="";//"/V3";
+const char *g_options="";//"/V3";
 
 static BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
@@ -299,12 +299,12 @@ int tempzip_make(HWND hwndDlg, char *fn)
   return 0;
 }
 
-char *gp_winamp = "(WINAMP DIRECTORY)";
-char *gp_winamp_plugins = "(WINAMP PLUG-INS DIRECTORY)";
-char *gp_winamp_vis = "(WINAMP VIS PLUG-INS DIRECTORY)";
-char *gp_winamp_dsp = "(WINAMP DSP PLUG-INS DIRECTORY)";
-char *gp_winamp_skins = "(WINAMP SKINS DIRECTORY)";
-char *gp_poi = "(PATH OF INSTALLER)";
+const char *gp_winamp = "(WINAMP DIRECTORY)";
+const char *gp_winamp_plugins = "(WINAMP PLUG-INS DIRECTORY)";
+const char *gp_winamp_vis = "(WINAMP VIS PLUG-INS DIRECTORY)";
+const char *gp_winamp_dsp = "(WINAMP DSP PLUG-INS DIRECTORY)";
+const char *gp_winamp_skins = "(WINAMP SKINS DIRECTORY)";
+const char *gp_poi = "(PATH OF INSTALLER)";
 
 
 void wnd_printf(const char *str)

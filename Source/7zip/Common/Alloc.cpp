@@ -25,6 +25,10 @@
 
 #include "Alloc.h"
 
+#ifndef MEM_LARGE_PAGES
+#define MEM_LARGE_PAGES 0x20000000  
+#endif
+
 /* #define _SZ_ALLOC_DEBUG */
 /* use _SZ_ALLOC_DEBUG to debug alloc/free operations */
 #ifdef _SZ_ALLOC_DEBUG

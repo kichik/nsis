@@ -6,7 +6,7 @@
 
 struct line {
 	unsigned short id;
-	char *name;
+	const char *name;
 };
 
 line primary[] = {

@@ -51,17 +51,17 @@ class JNL_HTTPGet
     JNL_HTTPGet(JNL_AsyncDNS *dns=JNL_CONNECTION_AUTODNS, int recvbufsize=16384, char *proxy=NULL);
     ~JNL_HTTPGet();
 
-    void addheader(char *header);
+    void addheader(const char *header);
 
-    void connect(char *url);
+    void connect(const char *url);
 
     int run(); // returns: 0 if all is OK. -1 if error (call geterrorstr()). 1 if connection closed.
 
     int   get_status(); // returns 0 if connecting, 1 if reading headers, 
                         // 2 if reading content, -1 if error.
 
-    char *getallheaders(); // double null terminated, null delimited list
-    char *getheader(char *headername);
+    const char *getallheaders(); // double null terminated, null delimited list
+    const char *getheader(const char *headername);
     char *getreply() { return m_reply; }
     int   getreplycode(); // returns 0 if none yet, otherwise returns http reply code.
 
@@ -71,14 +71,14 @@ class JNL_HTTPGet
     int get_bytes(char *buf, int len);
     int peek_bytes(char *buf, int len);
 
-    int content_length() { char *p=getheader("content-length:"); if (p) return my_atoi(p); return 0; }
+    int content_length() { const char *p=getheader("content-length:"); if (p) return my_atoi(p); return 0; }
 
     JNL_Connection *get_con() { return m_con; }
 
   public:
     void reinit();
     void deinit();
-    void seterrstr(char *str) { if (m_errstr) free(m_errstr); m_errstr=(char*)malloc(strlen(str)+1); strcpy(m_errstr,str); }
+    void seterrstr(const char *str) { if (m_errstr) free(m_errstr); m_errstr=(char*)malloc(strlen(str)+1); strcpy(m_errstr,str); }
 
     void do_parse_url(char *url, char **host, int *port, char **req, char **lp);
     void do_encode_mimestr(char *in, char *out);

@@ -1023,7 +1023,7 @@ failure is raised if _osplatform is not set. The assertion is reported by
 the same means as used for the _RPT0 macro. This leads to an endless recursion.
 */
 
-BOOL WINAPI DllMain(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
+BOOL WINAPI DllMain(HINSTANCE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
 {
         g_hInstance=hInst;
         
