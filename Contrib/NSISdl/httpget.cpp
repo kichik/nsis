@@ -243,12 +243,12 @@ static int my_strnicmp(char *b1, const char *b2, int l)
   return 0;
 }
 
-char *_strstr(char *i, const char *s)
+char *_strstr(const char *i, const char *s)
 {
   if (strlen(i)>=strlen(s)) while (i[strlen(s)-1])
   {
     int l=strlen(s)+1;
-    char *ii=i;
+    const char *ii=i;
     const char *is=s;
     while (--l>0)
     {
@@ -256,7 +256,7 @@ char *_strstr(char *i, const char *s)
       ii++;
       is++;
     }
-    if (l==0) return i;
+    if (l==0) return const_cast<char*>(i);
     i++;
   }
   return NULL;
