@@ -123,7 +123,7 @@ const TCHAR *compressor_display_names[] = {_T("Defined in Script/Compiler Defaul
                             _T("LZMA"),
                             _T("LZMA (solid)"),
                             _T("Best Compressor")};
-WORD compressor_commands[] = {IDM_COMPRESSOR_SCRIPT,
+const WORD compressor_commands[] = {IDM_COMPRESSOR_SCRIPT,
                               IDM_ZLIB,
                               IDM_ZLIB_SOLID,
                               IDM_BZIP2,

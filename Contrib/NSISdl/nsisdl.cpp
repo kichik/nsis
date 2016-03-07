@@ -226,7 +226,7 @@ void progress_callback(const char *msg, __int64 read_bytes)
   }
 }
 
-extern char *_strstr(char *i, const char *s);
+extern char *_strstr(const char *i, const char *s);
 #define strstr _strstr
 
 extern "C"
