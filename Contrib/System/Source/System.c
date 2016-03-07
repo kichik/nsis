@@ -501,6 +501,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
             // Types
             case 'v':
             case 'V': temp2 = PAT_VOID; break;
+            case 'p':
             case 'i':
             case 'I': temp2 = PAT_INT; break;
             case 'l':

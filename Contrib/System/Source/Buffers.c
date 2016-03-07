@@ -37,7 +37,7 @@ PLUGINFUNCTIONSHORT(Copy)
         size = (int) myatoi64(str+1);
         dest = (HANDLE) popint64();
     }
-    else dest = (HANDLE) myatoi64(str);
+    else dest = (HANDLE)(INT_PTR) myatoi64(str);
     source = (HANDLE) popint64();
 
     // Ok, check the size
