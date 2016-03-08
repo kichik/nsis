@@ -237,7 +237,7 @@ This constant is available on Windows XP and above.
 
 \e{$HWNDPARENT}
 
-The decimal HWND of the parent window.
+HWND of the main window (in decimal).
 
 \e{$PLUGINSDIR}
 

@@ -58,13 +58,9 @@ IntOp ${_tmpvar} "${_whi}" << 16
 IntOp ${_outvar} ${_outvar} | ${_tmpvar}
 !macroend
 !define MAKELONG "!insertmacro _Win_MAKELONG32 "
-!if "${NSIS_PTR_SIZE}" <= 4
 !define MAKEWPARAM "${MAKELONG}"
 !define MAKELPARAM "${MAKELONG}"
 !define MAKELRESULT "${MAKELONG}"
-!else
-!error "Missing 64bit imp!"
-!endif
 
 
 !endif /* __WIN_NOINC_WINDEF */
