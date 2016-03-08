@@ -226,8 +226,8 @@ NSIS version used to build the script.
 
 NSIS version as a 32 bit number.
 
-\c !if 0x2046000 >= ${NSIS_PACKEDVERSION}
-\c   !error "NSIS 2.47 or higher is required to build this installer!"
+\c !if 0x3014000 >= "${NSIS_PACKEDVERSION}"
+\c   !error "NSIS 3.15 or higher is required to build this installer!"
 \c !endif
 
 \S1{preunicodecodepoint} $\{U+1\}...$\{U+10FFFF\}
