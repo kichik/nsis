@@ -617,13 +617,7 @@ int CEXEBuild::GenerateLangTable(LanguageTable *lt, int num_lang_tables) {
   {
     TinyGrowBuf rec;
     int *lst = (int *)string_ptrs[i].get();
-
-    int langstring_num;
-
-    if (!uninstall_mode)
-      langstring_num = build_langstring_num;
-    else
-      langstring_num = ubuild_langstring_num;
+    int langstring_num = uninstall_mode ? ubuild_langstring_num : build_langstring_num;
 
     for (j = 0; j < langstring_num; j++)
     {
@@ -639,12 +633,13 @@ int CEXEBuild::GenerateLangTable(LanguageTable *lt, int num_lang_tables) {
             const TCHAR *name = _T("(unnamed)");
             for (l = 0; l < langstring_num; l++)
             {
-              if (lang_strings[l].index == j)
+              int recidx = uninstall_mode ? lang_strings[l].uindex : lang_strings[l].index;
+              if (recidx == j)
               {
                 name = build_langstrings.offset2name(lang_strings[l].name);
               }
             }
-            ERROR_MSG(_T("Error: LangString %") NPRIs _T(" is recursive!\n"), name);
+            ERROR_MSG(_T("Error: LangString %") NPRIs _T(" in language %u is recursive!\n"), name, lt->lang_id);
             delete [] string_ptrs;
             return PS_ERROR;
           }
