@@ -230,6 +230,16 @@ NSIS version as a 32 bit number.
 \c   !error "NSIS 3.15 or higher is required to build this installer!"
 \c !endif
 
+\S1{prensischarsize} $\{NSIS_CHAR_SIZE\}
+
+The size of a character code unit (in bytes). 1 in ANSI installers and 2 in Unicode installers.
+
+A \W{http://unicode.org/glossary/#grapheme}{grapheme} cluster consists of a base character plus optional combining characters and diacritics and is defined as one or more code points. One or more code units is required to encode a single code point.
+
+\S1{prensisptrsize} $\{NSIS_PTR_SIZE\}
+
+The size of a pointer (in bytes) in the generated installer.
+
 \S1{preunicodecodepoint} $\{U+1\}...$\{U+10FFFF\}
 
 A Unicode (UCS-4) character.
