@@ -55,7 +55,7 @@
 ;       ptrdiff_t integer tests
 ;         a P= b; a P<> b; a P< b; a P>= b; a P> b; a P<= b
 ;       size_t integer tests
-;         a Z= b; a Z<> b
+;         a Z= b; a Z<> b; a Z< b; a Z>= b; a Z> b; a Z<= b
 ;       Built-in NSIS flag tests:
 ;         ${Abort}; ${Errors}; ${RebootFlag}; ${Silent}
 ;       Built-in NSIS other tests:

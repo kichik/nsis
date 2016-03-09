@@ -2468,9 +2468,18 @@ int CEXEBuild::write_output(void)
   crc32_t crc=0;
 
   {
-    string full_path = get_full_path(build_output_filename);
+    string full_path = get_full_path(build_output_filename), fnamebuf = get_file_name(build_output_filename);
     notify(MAKENSIS_NOTIFY_OUTPUT, full_path.c_str());
     INFO_MSG("\nOutput: \"%s\"\n", full_path.c_str());
+    const char *fname = fnamebuf.c_str();
+    // Warn when special compatibility names are used. See also: http://github.com/wixtoolset/wix4/commit/3f4341b8ac4d13dffb1d6ba773d48ccc0ab07cf8
+    if (!lstrcmpi(fname, ("setup.exe")))
+    {
+      const bool orgdispwarn = display_warnings;
+      display_warnings = false; // Don't display warning inline in the middle of our statistics output.
+      warning(("Insecure filename \"%s\", Windows will unsafely load compatibility shims into the process."), fname);
+      display_warnings = orgdispwarn;
+    }
   }
 
   FILE *fp = FOPEN(build_output_filename,"w+b");
