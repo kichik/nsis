@@ -55,7 +55,7 @@
 ;       ptrdiff_t integer tests
 ;         a P= b; a P<> b; a P< b; a P>= b; a P> b; a P<= b
 ;       size_t integer tests
-;         a Z= b; a Z<> b
+;         a Z= b; a Z<> b; a Z< b; a Z>= b; a Z> b; a Z<= b
 ;       Built-in NSIS flag tests:
 ;         ${Abort}; ${Errors}; ${RebootFlag}; ${Silent}
 ;       Built-in NSIS other tests:
@@ -281,26 +281,25 @@
   !macro _P<= _a _b _t _f
     !insertmacro LogicLib_PtrDiffTest <= `${_a}` `${_b}` `${_t}` `${_f}`
   !macroend
+  !include Util.nsh
   !macro _Z= _a _b _t _f
     !insertmacro LogicLib_PtrDiffTest = `${_a}` `${_b}` `${_t}` `${_f}`
   !macroend
   !macro _Z<> _a _b _t _f
     !insertmacro LogicLib_PtrDiffTest <> `${_a}` `${_b}` `${_t}` `${_f}`
   !macroend
-!if "${NSIS_PTR_SIZE}" <= 4 ; BUGBUG: System::Int64Op does not support unsigned operations!
   !macro _Z< _a _b _t _f
-    !insertmacro _U< `${_a}` `${_b}` `${_t}` `${_f}`
+    !insertmacro IntPtrCmpU `${_a}` `${_b}` `${_f}` `${_t}` `${_f}`
   !macroend
   !macro _Z>= _a _b _t _f
-    !insertmacro _U>= `${_a}` `${_b}` `${_t}` `${_f}`
+    !insertmacro IntPtrCmpU `${_a}` `${_b}` `${_t}` `${_f}` `${_t}`
   !macroend
   !macro _Z> _a _b _t _f
-    !insertmacro _U> `${_a}` `${_b}` `${_t}` `${_f}`
+    !insertmacro IntPtrCmpU `${_a}` `${_b}` `${_f}` `${_f}` `${_t}`
   !macroend
   !macro _Z<= _a _b _t _f
-    !insertmacro _U<= `${_a}` `${_b}` `${_t}` `${_f}`
+    !insertmacro IntPtrCmpU `${_a}` `${_b}` `${_t}` `${_t}` `${_f}`
   !macroend
-!endif
 
   ; Flag tests
   !macro _Abort _a _b _t _f
