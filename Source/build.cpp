@@ -2301,8 +2301,8 @@ void CEXEBuild::AddStandardStrings()
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
   if (uninstall_mode)
   {
-    cur_header->str_uninstchild = add_asciistring(_T("$TEMP\\$1u_.exe"));
-    cur_header->str_uninstcmd = add_asciistring(_T("\"$TEMP\\$1u_.exe\" $0 _?=$INSTDIR\\"));
+    cur_header->str_uninstchild = add_asciistring(_T("$TEMP\\Un_$1.exe"));
+    cur_header->str_uninstcmd = add_asciistring(_T("\"$TEMP\\Un_$1.exe\" $0 _?=$INSTDIR\\"));
   }
 #endif//NSIS_CONFIG_UNINSTALL_SUPPORT
 #ifdef NSIS_SUPPORT_MOVEONREBOOT

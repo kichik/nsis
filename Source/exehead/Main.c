@@ -320,7 +320,7 @@ EXTERN_C void NSISWinMainNOCRT()
       {
         static TCHAR buf2[NSIS_MAX_STRLEN];
 
-        GetNSISString(buf2,g_header->str_uninstchild); // $TEMP\$1u_.exe
+        GetNSISString(buf2,g_header->str_uninstchild); // $TEMP\Un_$1.exe
 
         DeleteFile(buf2); // clean up after all the other ones if they are there
 
@@ -333,7 +333,7 @@ EXTERN_C void NSISWinMainNOCRT()
 #ifdef NSIS_SUPPORT_MOVEONREBOOT
             MoveFileOnReboot(buf2,NULL);
 #endif
-            GetNSISString(buf2,g_header->str_uninstcmd); // '"$TEMP\$1u_.exe" $0 _?=$INSTDIR\'
+            GetNSISString(buf2,g_header->str_uninstcmd); // '"$TEMP\Un_$1.exe" $0 _?=$INSTDIR\'
             hProc=myCreateProcess(buf2);
             if (hProc)
             {
