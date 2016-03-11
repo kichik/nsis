@@ -1,12 +1,12 @@
 /*
 
 NSIS Modern User Interface - Version 1.8
-Copyright 2002-2015 Joost Verburg
+Copyright 2002-2016 Joost Verburg
 
 */
 
 !ifndef MUI_INCLUDED
-!echo "NSIS Modern User Interface version 1.8 - Copyright 2002-2015 Joost Verburg"
+!echo "NSIS Modern User Interface version 1.8 - Copyright 2002-2016 Joost Verburg"
 
 ;--------------------------------
 !verbose push 3
