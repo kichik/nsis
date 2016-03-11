@@ -10,6 +10,8 @@ Released on ? ?th, 2016
 
 \b More security hardening to prevent dll hijacking
 
+\b The name of the uninstaller created in %TEMP%\\~nsu.tmp has changed from %UNIQUE%u_.exe to Un_%UNIQUE%.exe
+
 \S2{} Translations
 
 \b Added missing MULTIUSER_* entries to Japanese.nsh (\W{http://sf.net/p/nsis/patches/266}{patch #266})
