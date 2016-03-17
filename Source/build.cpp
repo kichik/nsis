@@ -2645,7 +2645,7 @@ int CEXEBuild::write_output(void)
     INFO_MSG(_T("\nOutput: \"%") NPRIs _T("\"\n"), full_path.c_str());
     const TCHAR *fname = fnamebuf.c_str();
     // Warn when special compatibility names are used. See also: http://github.com/wixtoolset/wix4/commit/3f4341b8ac4d13dffb1d6ba773d48ccc0ab07cf8
-    if (!lstrcmpi(fname, _T("setup.exe")))
+    if (!_tcsicmp(fname, _T("setup.exe")))
     {
       const bool orgdispwarn = display_warnings;
       display_warnings = false; // Don't display warning inline in the middle of our statistics output.
