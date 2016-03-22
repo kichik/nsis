@@ -431,8 +431,8 @@ parse_again:
 #endif
     {
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
-      if (Plugins::IsPluginCallSyntax(tokstr0) && (!m_pPlugins || !m_pPlugins->IsKnownPlugin(tokstr0)))
-        ERROR_MSG(_T("Plugin not found, cannot call %") NPRIs _T("\n"),tokstr0);
+      if (Plugins::IsPluginCallSyntax(tokstr0))
+        ERROR_MSG(_T("Plugin%") NPRIs _T(" not found, cannot call %") NPRIs _T("\n"),m_pPlugins && m_pPlugins->IsKnownPlugin(tokstr0) ? _T(" function") : _T(""),tokstr0);
       else
 #endif
         ERROR_MSG(_T("Invalid command: %") NPRIs _T("\n"),tokstr0);
