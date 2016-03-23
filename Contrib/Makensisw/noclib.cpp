@@ -29,17 +29,16 @@ char *my_strrchr(const char *string, int c) {
   return 0;
 }
 
-char *my_strstr(char *i, char *s) {
+char *my_strstr(const char *i, const char *s) {
   if (lstrlen(i)>=lstrlen(s)) while (i[lstrlen(s)-1])  {
     int l=lstrlen(s)+1;
-    char *ii=i;
-    char *is=s;
+    const char *ii=i, *is=s;
     while (--l>0) {
       if (*ii != *is) break;
       ii++;
       is++;
     }
-    if (l==0) return i;
+    if (l==0) return const_cast<char*>(i);
     i++;
   }
   return NULL;
