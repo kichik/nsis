@@ -1746,7 +1746,7 @@ static INT_PTR CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
       POINT pt;
       AppendMenu(menu,MF_STRING,1,GetNSISStringTT(LANG_COPYDETAILS));
       pt.x = GET_X_LPARAM(lParam), pt.y = GET_Y_LPARAM(lParam);
-      if (lParam == ((UINT)-1)) // BUGBUG64?
+      if (lParam == (LPARAM)((INT_PTR)-1))
       {
         RECT r;
         GetWindowRect(linsthwnd,&r);
