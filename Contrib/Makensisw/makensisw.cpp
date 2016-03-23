@@ -48,9 +48,12 @@ int g_symbol_set_mode;
 
 NSIS_ENTRYPOINT_SIMPLEGUI
 int WINAPI _tWinMain(HINSTANCE hInst,HINSTANCE hOldInst,LPTSTR CmdLineParams,int ShowCmd) {
-  MSG  msg;
-  int status;
-  HACCEL haccel;
+
+  HMODULE hK32 = LoadLibraryA("KERNEL32");
+  // We can be associated with .nsi and .nsh files and when launched from the shell we inherit the current directory 
+  // so we need to prevent LoadLibrary from searching the current directory because it can contain untrusted DLLs!
+  FARPROC SDDA = GetProcAddress(hK32, "SetDllDirectoryA"); // WinXP.SP1+
+  if (SDDA) ((BOOL(WINAPI*)(LPCSTR))SDDA)(""); // Remove the current directory from the default DLL search order
 
   memset(&g_sdata,0,sizeof(NSCRIPTDATA));
   memset(&g_resize,0,sizeof(NRESIZEDATA));
@@ -62,7 +65,7 @@ int WINAPI _tWinMain(HINSTANCE hInst,HINSTANCE hOldInst,LPTSTR CmdLineParams,int
   if (g_sdata.verbosity > 4) g_sdata.verbosity = 4;
   RestoreSymbols();
 
-  HINSTANCE hRichEditDLL = LoadLibrary(_T("RichEd20.dll"));
+  HMODULE hRichEditDLL = LoadLibraryA("RichEd20.dll");
 
   if (!InitBranding()) {
     MessageBox(0,NSISERROR,ERRBOXTITLE,MB_ICONEXCLAMATION|MB_OK|MB_TASKMODAL);
@@ -74,7 +77,9 @@ int WINAPI _tWinMain(HINSTANCE hInst,HINSTANCE hOldInst,LPTSTR CmdLineParams,int
     MessageBox(0,DLGERROR,ERRBOXTITLE,MB_ICONEXCLAMATION|MB_OK|MB_TASKMODAL);
     return 1;
   }
-  haccel = LoadAccelerators(g_sdata.hInstance, MAKEINTRESOURCE(IDK_ACCEL));
+  HACCEL haccel = LoadAccelerators(g_sdata.hInstance, MAKEINTRESOURCE(IDK_ACCEL));
+  MSG  msg;
+  int status;
   while ((status=GetMessage(&msg,0,0,0))!=0) {
     if (status==-1) return -1;
     if (!IsDialogMessage(g_find.hwndFind, &msg)) {
