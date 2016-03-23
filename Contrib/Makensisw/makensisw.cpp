@@ -35,9 +35,12 @@ extern NTOOLBAR g_toolbar;
 int g_symbol_set_mode;
 
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmdShow) {
-  MSG  msg;
-  int status;
-  HACCEL haccel;
+
+  HMODULE hK32 = LoadLibraryA("KERNEL32");
+  // We can be associated with .nsi and .nsh files and when launched from the shell we inherit the current directory 
+  // so we need to prevent LoadLibrary from searching the current directory because it can contain untrusted DLLs!
+  FARPROC SDDA = GetProcAddress(hK32, "SetDllDirectoryA"); // WinXP.SP1+
+  if (SDDA) ((BOOL(WINAPI*)(LPCSTR))SDDA)(""); // Remove the current directory from the default DLL search order
 
   my_memset(&g_sdata,0,sizeof(NSCRIPTDATA));
   my_memset(&g_resize,0,sizeof(NRESIZEDATA));
@@ -47,7 +50,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmd
   g_sdata.sigint_event = CreateEvent(NULL, FALSE, FALSE, "makensis win32 signint event");
   RestoreSymbols();
 
-  HINSTANCE hRichEditDLL = LoadLibrary("RichEd32.dll");
+  HMODULE hRichEditDLL = LoadLibraryA("RichEd32.dll");
 
   if (!InitBranding()) {
     MessageBox(0,NSISERROR,"Error",MB_ICONEXCLAMATION|MB_OK);
@@ -59,7 +62,9 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmd
     MessageBox(0,DLGERROR,"Error",MB_ICONEXCLAMATION|MB_OK);
     return 1;
   }
-  haccel = LoadAccelerators(g_sdata.hInstance, MAKEINTRESOURCE(IDK_ACCEL));
+  HACCEL haccel = LoadAccelerators(g_sdata.hInstance, MAKEINTRESOURCE(IDK_ACCEL));
+  MSG  msg;
+  int status;
   while ((status=GetMessage(&msg,0,0,0))!=0) {
     if (status==-1) return -1;
     if (!IsDialogMessage(g_find.hwndFind, &msg)) {
@@ -419,7 +424,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
         // Windows 2000 and higher
         case EN_MSGFILTER:
           #define lpnmMsg ((MSGFILTER*)lParam)
-          if(WM_RBUTTONUP == lpnmMsg->msg || WM_KEYUP == lpnmMsg->msg && lpnmMsg->wParam == VK_APPS){
+          if(WM_RBUTTONUP == lpnmMsg->msg || (WM_KEYUP == lpnmMsg->msg && lpnmMsg->wParam == VK_APPS)){
           POINT pt;
           HWND edit = GetDlgItem(g_sdata.hwnd,IDC_LOGWIN);
           RECT r;
