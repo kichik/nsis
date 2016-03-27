@@ -236,7 +236,7 @@ Released on July 14th, 2013
 
 \b Default verbosity is /V3 without logo, MakeNSISW still uses /V4.
 
-\b \R{amanifestsupportedos}{ManifestSupportedOS} added support for the Windows 8.1 Preview GUID and it is set by default to avoid GetVersionEx compatibility behavior.
+\b \R{amanifestsupportedos}{ManifestSupportedOS} added support for the Windows 8.1 GUID and it is set by default to avoid GetVersionEx compatibility behavior.
 
 \S2{} Minor Changes
 
@@ -248,7 +248,7 @@ Released on July 14th, 2013
 
 \b Minor MakeNSISW fixes and tweaks
 
-\b Zip2Exe Unicode checkbox
+\b Added Zip2Exe Unicode checkbox
 
 \H{v3.0a0} 3.0 Alpha 0
 
@@ -276,7 +276,7 @@ Released on May 19th, 2013
 
 \b MakeNSIS can read UTF8SIG and UTF16BOM script files (\W{http://sourceforge.net/support/tracker.php?aid=2026892}{RFE #2026892})
 
-\b All NLF and NSH language files are stored in Unicode (\W{http://sourceforge.net/support/tracker.php?aid=1879642}{RFE #1879642})
+\b All NLF and NSH language files are stored as UTF-16LE (\W{http://sourceforge.net/support/tracker.php?aid=1879642}{RFE #1879642})
 
 \b Scripts can control the SupportedOS list in the application manifest using \R{amanifestsupportedos}{ManifestSupportedOS} (\W{http://sourceforge.net/support/tracker.php?aid=2725883}{bug #2725883}, \W{http://sourceforge.net/support/tracker.php?aid=3020103}{RFE #3020103})
 
@@ -298,7 +298,7 @@ Released on May 19th, 2013
 
 \b %temp%\\Low will be used if the installer cannot write to %temp% nor %windir%\\Temp (\W{http://sourceforge.net/support/tracker.php?aid=2909242}{bug #2909242}, \W{http://sourceforge.net/support/tracker.php?aid=2912824}{patch #2912824})
 
-\b Added $\{NSIS_PACKEDVERSION\}, the NSIS version packed in a hex number (\W{http://sourceforge.net/support/tracker.php?aid=2680832}{patch #2680832})
+\b Added $\{NSIS_PACKEDVERSION\}, the NSIS version packed as a hex number (\W{http://sourceforge.net/support/tracker.php?aid=2680832}{patch #2680832})
 
 \b Added \R{prescopemacro}{$\{__MACRO__\}} and \R{precounter}{$\{__COUNTER__\}} predefines
 
@@ -578,7 +578,7 @@ Released on December 20th, 2008
 
 \b \L{../Docs/nsDialogs/Readme.html}{nsDialogs}: Added progress bar support
 
-\b \L{../Include/WinVer.nsh}{WinVer.nsh}: Added IsServer, IsWin2003R2, IsStarterEdition, OSHasMediaCenter and OSHasTabletSupport (patch by Anders)
+\b \L{../Include/WinVer.nsh}{WinVer.nsh}: Added IsServer, IsWin2003R2, IsStarterEdition, OSHasMediaCenter and OSHasTabletSupport
 
 \b \L{../Include/WinVer.nsh}{WinVer.nsh}: Fixed 95/NT4 ambiguity (\W{http://sourceforge.net/support/tracker.php?aid=2053642}{bug #2053642})
 
@@ -1254,7 +1254,7 @@ Released on April 27th, 2007
 
 \b Added LIBRARY_IGNORE_VERSION option for \R{library_install}{InstallLib} (\W{http://sourceforge.net/support/tracker.php?aid=1699435}{patch #1699435})
 
-\b Added VXD support for \R{getdllversionlocal}{GetDLLVersionLocal} on Windows NT/2000/XP/Vista (\W{http://sourceforge.net/support/tracker.php?aid=1706624}{patch #1706624})
+\b Added VXD support for \R{getdllversionlocal}{GetDLLVersionLocal} on Windows NT4/2000/XP/Vista (\W{http://sourceforge.net/support/tracker.php?aid=1706624}{patch #1706624})
 
 \b Avoid \R{library}{Library} warning when UnInstallLib is unused (\W{http://sourceforge.net/support/tracker.php?aid=1692761}{bug #1692761})
 
@@ -2317,7 +2317,7 @@ Released on March 19th, 2005
 
 \b Added MB_RTLREADING style to \R{messagebox}{MessageBox} (\W{http://sourceforge.net/support/tracker.php?aid=1159701}{RFE #1159701})
 
-\b All registry instructions now accept SHCTX which is replaced with HKLM or HKCU on runtime according to \R{setshellvarcontext}{SetShellVarContext} (\W{http://sourceforge.net/support/tracker.php?aid=1124901}{RFE #1124901})
+\b All registry instructions now accept SHCTX which is replaced with HKLM or HKCU at runtime according to \R{setshellvarcontext}{SetShellVarContext} (\W{http://sourceforge.net/support/tracker.php?aid=1124901}{RFE #1124901})
 
 \S2{} Minor Changes
 
@@ -2827,7 +2827,7 @@ Released on December 27th, 2003
 
 \b Added \R{adirverify}{DirVerify} and \R{getinstdirerror}{GetInstDirError} to allow custom error checking when the installation directory is invalid or the drive does not have enough space
 
-\b Support for reading environmental variables on compile time: \R{compenvvar}{$%envVarName%}
+\b Support for reading environmental variables at compile time: \R{compenvvar}{$%envVarName%}
 
 \b Added /SD parameter for \R{messagebox}{MessageBox}. Allows to set default for silent installers.
 

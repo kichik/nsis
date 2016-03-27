@@ -14,7 +14,7 @@ Define/conditional compilation related commands:
 
 This command will add \e{gflag} to the global define list. This will have a similar effect as using the /D switch on the command line (the define only becomes effective after the !define command).
 
-If \e{/date} or \e{/utcdate} are used, \e{value} will be passed into strftime and the result will be used as the value of \e{gflag}. strftime converts special symbols into certain parts of the current time or date. For example, %H will be converted into the current hour in 24-hour format. For a complete list of available symbols, search for strftime on \W{http://msdn.microsoft.com/}{MSDN}. On POSIX, you can get the list by using \c{man strftime}.
+If \e{/date} or \e{/utcdate} are used, \e{value} will be passed to strftime() and the result will be used as the value of \e{gflag}. strftime converts special symbols into certain parts of the current time or date. For example, %H will be converted into the current hour in 24-hour format. For a complete list of available symbols, search for strftime on \W{http://msdn.microsoft.com/}{MSDN}. On POSIX, you can get the list by using \c{man strftime}.
 
 If \e{/math} is used, the result of 'val1 OP val2', where OP may be +,-,*,&,|,^,/,<<,>>,>>> or % , will be used as the value of \e{gflag}. Note that val1 AND val2 MUST be integer values!
 
@@ -25,7 +25,7 @@ If \e{/file} is used, the entire text file specified (including whitespace and n
 \c !define /date NOW "%H:%M:%S %d %b, %Y"
 \c !define /math RESULT 3 + 10
 \c !define /math REST 15 % ${RESULT}
-\c !define /file BUNCHASTUFF somesourcefile.cpp
+\c !define /file BunchaStuff somesourcefile.cpp
 \c !define /redef USE_SOMETHING ${RESULT} ;redefine USE_SOMETHING
 
 \S1{undef} !undef
@@ -65,7 +65,7 @@ The opposite of !ifdef. The lines will be compiled when the gflag has not been d
 
 This command, when paired with an !endif command, will tell the compiler whether or not to compile the lines in between the two lines. If value is non-zero, or the comparison of value and value2 depending on the operator results in true, the contained lines will be compiled. Otherwise, they will be skipped.
 op can be either == or != (case-insensitive string comparison), S== or S!= (case-sensitive string comparison), =, <>, <=, <, > or >= (int/hex/float comparison), & (bitwise AND comparison), && or || (boolean comparison).
-If [!] is set, return value will be switched from true to false and vice versa.
+If [!] is set, the result will be flipped from true to false and vice versa.
 
 \c !if 1 < 0x2
 \c   !echo "1 is smaller than 2!!"

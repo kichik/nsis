@@ -1,6 +1,6 @@
 \S1{flags} Compiler Flags
 
-The following commands affect how the compiler generates code and compresses data. Unless otherwise noted, these commands are valid anywhere in the script, and effect every line below where each one is placed (until overridden by another command). They cannot be jumped over using \R{flowcontrol}{flow control instructions}.
+The following commands affect how the compiler generates code and compresses data. Unless otherwise noted, these commands are valid anywhere in the script and affect every line below where each one is placed (until overridden by another command). They cannot be jumped over using \R{flowcontrol}{flow control instructions}.
 
 For example, in the following script, blah.dat will never be overwritten.
 
@@ -25,7 +25,7 @@ Instead, the following should be used.
 
 \c \\<b\\>on\\</b\\>|off
 
-This command specifies whether the user should be able to skip a file or not. A user has an option to skip a file if \R{asetoverwrite}{SetOverwrite} is set to on (default) and the installer fails to open a file for writing when trying to extract a file. If \e{off} is used the ignore button which allows the user to skip the file will not show and the user will only have an option to abort the installation (Cancel button) or retry opening the file for writing (Retry button). If \e{on} is used the user will have an option to skip the file (error flag will be set - see \R{asetoverwrite}{SetOverwrite}).
+This command specifies whether the user should be able to skip a file or not. A user has an option to skip a file if \R{asetoverwrite}{SetOverwrite} is set to on (default) and the installer fails to open a file for writing when trying to extract a file. If \e{off} is used the ignore button which allows the user to skip the file will not be shown and the user will only have an option to abort the installation (Cancel button) or retry opening the file for writing (Retry button). If \e{on} is used the user will have an option to skip the file (error flag will be set - see \R{asetoverwrite}{SetOverwrite}).
 
 \S2{afilebufsize} FileBufSize
 
@@ -45,7 +45,7 @@ Note that this option has no effect when solid compression is used.
 
 \c [/SOLID] [/FINAL] \\<b\\>zlib\\</b\\>|bzip2|lzma
 
-This command sets the compression algorithm used to compress files/data in the installer. It can only be used outside of sections and functions and before any data is compressed. Different compression methods can not be used for different files in the same installer. It is recommended to use it on the very top of the script to avoid compilation errors.
+This command sets the compression algorithm used to compress files/data in the installer. It can only be used outside of sections and functions and before any data is compressed. Different compression methods can not be used for different files in the same installer. It is recommended to use it at the very top of the script to avoid compilation errors.
 
 Three compression methods are supported: ZLIB, BZIP2 and LZMA.
 
@@ -69,7 +69,7 @@ Sets the dictionary size in megabytes (MB) used by the LZMA compressor (default 
 
 \c \\<b\\>on\\</b\\>|off
 
-This command tells the compiler whether or not to do datablock optimizations. Datablock optimizations have the compiler check to see if any data being added to the data block is already in the data block, and if so, it is simply referenced as opposed to added (can save a little bit of size). It is highly recommended to leave this option on.
+This command tells the compiler whether or not to do datablock optimizations. Datablock optimizations causes the compiler to check to see if any data being added to the data block is already in the data block, and if so, it is simply referenced as opposed to added (can save a little bit of size). It is highly recommended to leave this option on.
 
 \S2{asetdatesave} SetDateSave
 
@@ -99,8 +99,8 @@ Generate a \R{intro-unicode}{Unicode installer}. It can only be used outside of 
 
 \c  [/LANG=lang_id] keyname value
 
-Adds a field in the Version Tab of the File Properties. This can either be a field provided by the system or a user defined field.
-The following fields are provided by the System:
+Adds a string entry to the version information stored in the installer and uninstaller. These can be viewed in the File Properties Version or Details tab. keyname can either be a special name known by Windows or a user defined name. /LANG=0 can be used to indicate a language neutral language id.
+The following names are known by Windows:
 
 \b ProductName
 
@@ -126,7 +126,7 @@ The following fields are provided by the System:
 
 \b SpecialBuild
 
-The name of these fields are translated on the target system, whereas user defined fields remain untranslated.
+The displayed name of these special entries are translated on the target system, whereas user defined keynames remain untranslated.
 
 \c VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductName" "Test Application"
 \c VIAddVersionKey /LANG=${LANG_ENGLISH} "Comments" "A test comment"
@@ -142,7 +142,7 @@ The name of these fields are translated on the target system, whereas user defin
 
 Sets the Product Version in the VS_FIXEDFILEINFO version information block.
 
-\c VIProductVersion "1.2.3.4"
+\c VIProductVersion 1.2.3.4
 
 \S2{vifileversion} VIFileVersion
 
@@ -150,5 +150,5 @@ Sets the Product Version in the VS_FIXEDFILEINFO version information block.
 
 Sets the File Version in the VS_FIXEDFILEINFO version information block (You should also set the FileVersion string with VIAddVersionKey so the information is displayed at the top of the Version Tab in the Properties of the file). If you don't provide a File Version the Product Version is used in the VS_FIXEDFILEINFO block.
 
-\c VIFileVersion "1.2.3.4"
+\c VIFileVersion 1.2.3.4
 

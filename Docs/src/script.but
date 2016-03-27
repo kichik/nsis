@@ -53,7 +53,7 @@ To represent strings that have spaces, use quotes:
 
 \c MessageBox MB_OK "Hi there!"
 
-Quotes only have the property of containing a parameter if they begin the parameter. They can be either single quotes, double quotes, or the backward single quote.
+Quotes only have the property of containing a parameter if they surround the rest of the parameter. They can be either single quotes, double quotes, or the backward single quote.
 
 You can escape quotes using $\\:
 
@@ -66,7 +66,7 @@ It is also possible to put newlines, tabs etc. in a string using $\\r, $\\n, $\\
 
 \\<b\\>Variables\\</b\\>
 
-Variables start with $. User variables should be declared.
+Variables start with $. User variables must be declared.
 
 \c Var MYVAR
 \c

@@ -2,7 +2,7 @@
 
 \S2{abort} Abort
 
-\c user_message
+\c [user_message]
 
 Cancels the install, stops execution of script, and displays user_message in the status display. Note: you can use this from \R{callbacks}{Callback functions} to do special things. \R{pages}{Page callbacks} also uses \R{abort}{Abort} for special purposes.
 
@@ -47,18 +47,17 @@ Gets the address of the current instruction (the \R{getcurrentaddress}{GetCurren
 
 \c Function func
 \c   DetailPrint "function"
-\c   IntOp $0 $0 + 2
+\c   IntOp $0 $0 + 2 ; Calculate the address after of the instruction after "Goto callFunc" in the Section
 \c   Call $0
 \c   DetailPrint "function end"
 \c FunctionEnd
 \c
 \c Section
 \c   DetailPrint "section"
-\c   DetailPrint "section"
 \c   GetCurrentAddress $0
 \c   Goto callFunc
 \c
-\c   DetailPrint "back to section"
+\c   DetailPrint "back in section"
 \c   Return
 \c
 \c callFunc:
@@ -113,7 +112,7 @@ If a user variable is specified, jumps to absolute address (generally you will w
 
 \c label_to_goto_if_abort [label_to_goto_if_no_abort]
 
-If abort is called it will "return" true. This can happen if the user chose abort on a file that failed to create (or overwrite) or if the user aborted by hand. This function can only be called from the leave function of the instfiles \R{page}{page}.
+Will "return" true if the installation has been aborted. This can happen if the user chose abort on a file that failed to create (or overwrite) or if the user aborted by hand. This function can only be called from the leave function of the instfiles \R{page}{page}.
 
 \c Page instfiles "" "" instfilesLeave
 \c
@@ -184,7 +183,7 @@ Compares two integers val1 and val2. If val1 and val2 are equal, Gotos jump_if_e
 
 \c val1 val2 jump_if_equal [jump_if_val1_less] [jump_if_val1_more]
 
-Compares two unsigned integers val1 and val2. If val1 and val2 are equal, Gotos jump_if_equal, otherwise if val1 < val2, Gotos jump_if_val1_less, otherwise if val1 > val2, Gotos jump_if_val1_more. Performs the comparison as unsigned integers.
+Same as \R{intcmp}{IntCmp}, but treats the values as unsigned integers.
 
 \S2{messagebox} MessageBox
 

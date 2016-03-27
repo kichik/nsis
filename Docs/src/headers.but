@@ -75,7 +75,7 @@ Call functions:
 \\<b\\>Note:\\</b\\>
 \\<br\\>- Error flag if disk or directory isn't exist
 \\<br\\>- Error flag if syntax error
-\\<br\\>- See also \W{http://nsis.sourceforge.net/Locate_plugin}{Locate plugin}
+\\<br\\>- See also: \W{http://nsis.sf.net/Locate_plugin}{Locate plugin}
 
 
 \\<b\\>Example (Find one file):\\</b\\>
@@ -320,16 +320,15 @@ Call functions:
 \\<b\\>Note:\\</b\\>
 \\<br\\>- Error flag if disk or directory isn't exist
 \\<br\\>- Error flag if syntax error
-\\<br\\>- See also \W{http://nsis.sourceforge.net/Locate_plugin}{Locate plugin}
+\\<br\\>- See also: \W{http://nsis.sf.net/Locate_plugin}{Locate plugin}
 
 
-\\<b\\>Example (1):\\</b\\>
+\\<b\\>Examples:\\</b\\>
 
-\c Section
-\c 	; Find file size "C:\WINDOWS\Explorer.exe" in kilobytes
+\c Section 'Find file size of "$WINDIR\Explorer.exe" in KiB'
 \c 
-\c 	${GetSize} "C:\WINDOWS" "/M=Explorer.exe /S=0K /G=0" $0 $1 $2
-\c 	; $0="220" Kb
+\c 	${GetSize} "$WINDIR" "/M=Explorer.exe /S=0K /G=0" $0 $1 $2
+\c 	; $0="220" KiB
 \c 	; $1="1"   files
 \c 	; $2=""    directories
 \c 
@@ -337,13 +336,10 @@ Call functions:
 \c 	MessageBox MB_OK "Error"
 \c SectionEnd
 
-\\<b\\>Example (2):\\</b\\>
-
-\c Section
-\c 	; Find folder size "C:\Installs\Reanimator\Drivers" in megabytes
+\c Section 'Find folder size of "C:\Installs\Drivers" in MiB'
 \c 
-\c 	${GetSize} "C:\Installs\Reanimator\Drivers" "/S=0M" $0 $1 $2
-\c 	; $0="132" Mb
+\c 	${GetSize} "C:\Installs\Drivers" "/S=0M" $0 $1 $2
+\c 	; $0="132" MiB
 \c 	; $1="555" files
 \c 	; $2="55"  directories
 \c 
@@ -351,12 +347,9 @@ Call functions:
 \c 	MessageBox MB_OK "Error"
 \c SectionEnd
 
-\\<b\\>Example (3):\\</b\\>
-
-\c Section
-\c 	; Find sum of files and folders "C:\WINDOWS" (no subfolders)
+\c Section 'Find sum of files and folders in "$WINDIR" (no subfolders)'
 \c 
-\c 	${GetSize} "C:\WINDOWS" "/G=0" $0 $1 $2
+\c 	${GetSize} "$WINDIR" "/G=0" $0 $1 $2
 \c 	; $0=""    size
 \c 	; $1="253" files
 \c 	; $2="46"  directories
@@ -505,12 +498,12 @@ Call functions:
 \\<b\\>Note:\\</b\\>
 \\<br\\>- Error flag if file isn't exist
 \\<br\\>- Error flag if syntax error
-\\<br\\>- See also \W{http://nsis.sourceforge.net/Time_plugin}{Time plugin}
+\\<br\\>- See also: \W{http://nsis.sf.net/Time_plugin}{Time plugin}
 
 
-\\<b\\>Example (Get local time):\\</b\\>
+\\<b\\>Examples:\\</b\\>
 
-\c Section
+\c Section 'Get local time'
 \c 	${GetTime} "" "L" $0 $1 $2 $3 $4 $5 $6
 \c 	; $0="01"      day
 \c 	; $1="04"      month
@@ -523,9 +516,7 @@ Call functions:
 \c 	MessageBox MB_OK 'Date=$0/$1/$2 ($3)$\nTime=$4:$5:$6'
 \c SectionEnd
 
-\\<b\\>Example (Get file time):\\</b\\>
-
-\c Section
+\c Section 'Get file time'
 \c 	${GetTime} "$WINDIR\Explorer.exe" "C" $0 $1 $2 $3 $4 $5 $6
 \c 	; $0="12"       day
 \c 	; $1="10"       month
@@ -534,15 +525,13 @@ Call functions:
 \c 	; $4="2"        hour
 \c 	; $5="32"       minute
 \c 	; $6="03"       seconds
-\c 
+\c
 \c 	IfErrors 0 +2
 \c 	MessageBox MB_OK "Error" IDOK +2
 \c 	MessageBox MB_OK 'Date=$0/$1/$2 ($3)$\nTime=$4:$5:$6'
 \c SectionEnd
 
-\\<b\\>Example (Get system time):\\</b\\>
-
-\c Section
+\c Section 'Get system time'
 \c 	${GetTime} "" "LS" $0 $1 $2 $3 $4 $5 $6
 \c 	; $0="01"      day
 \c 	; $1="04"      month
@@ -555,9 +544,7 @@ Call functions:
 \c 	MessageBox MB_OK 'Date=$0/$1/$2 ($3)$\nTime=$4:$5:$6'
 \c SectionEnd
 
-\\<b\\>Example (Convert time to 12-hour format AM/PM):\\</b\\>
-
-\c Section
+\c Section 'Convert time to 12-hour format AM/PM'
 \c 	${GetTime} "" "L" $0 $1 $2 $3 $4 $5 $6
 \c 
 \c 	StrCmp $4 0 0 +3
@@ -597,26 +584,18 @@ Call functions:
 \c                   ;    $var=0   file has no specified attributes
 
 \\<b\\>Note:\\</b\\>
-\\<br\\>- Error flag if file doesn't exist
+\\<br\\>- Error flag is set if file doesn't exist
 
 
-\\<b\\>Example1:\\</b\\>
+\\<b\\>Example:\\</b\\>
 
 \c Section
 \c 	${GetFileAttributes} "C:\MSDOS.SYS" "ALL" $R0
 \c 	; $R0=READONLY|HIDDEN|SYSTEM|ARCHIVE
-\c SectionEnd
-
-\\<b\\>Example2:\\</b\\>
-
-\c Section
+\c
 \c 	${GetFileAttributes} "C:\MSDOS.SYS" "SYSTEM|HIDDEN" $R0
 \c 	; $R0=1
-\c SectionEnd
-
-\\<b\\>Example3:\\</b\\>
-
-\c Section
+\c
 \c 	${GetFileAttributes} "C:\MSDOS.SYS" "NORMAL" $R0
 \c 	; $R0=0
 \c SectionEnd
@@ -639,10 +618,7 @@ Call functions:
 
 \\<b\\>Example:\\</b\\>
 
-\c Section
-\c 	${GetFileVersion} "C:\ftp\program.exe" $R0
-\c 	; $R0="1.1.0.12"
-\c SectionEnd
+\c ${GetFileVersion} "C:\ftp\program.exe" $R0 ; $R0="1.1.0.12"
 
 \S1{getexename} GetExeName
 
@@ -654,10 +630,7 @@ Call functions:
 
 \\<b\\>Example:\\</b\\>
 
-\c Section
-\c 	${GetExeName} $R0
-\c 	; $R0="C:\ftp\program.exe"
-\c SectionEnd
+\c ${GetExeName} $R0 ; $R0="C:\ftp\program.exe"
 
 \S1{getexepath} GetExePath
 
@@ -669,10 +642,7 @@ Call functions:
 
 \\<b\\>Example:\\</b\\>
 
-\c Section
-\c 	${GetExePath} $R0
-\c 	; $R0="C:\ftp"
-\c SectionEnd
+\c ${GetExePath} $R0 ; $R0="C:\ftp"
 
 \S1{getparameters} GetParameters
 
@@ -684,10 +654,7 @@ Call functions:
 
 \\<b\\>Example:\\</b\\>
 
-\c Section
-\c 	${GetParameters} $R0
-\c 	; $R0="[parameters]"
-\c SectionEnd
+\c ${GetParameters} $R0 ; $R0="[parameters]"
 
 \S1{getoptions} GetOptions
 
@@ -751,19 +718,10 @@ Call functions:
 
 \c ${GetRoot} "[FullPath]" $var
 
-\\<b\\>Example1:\\</b\\>
+\\<b\\>Examples:\\</b\\>
 
-\c Section
-\c 	${GetRoot} "C:\Program Files\NSIS" $R0
-\c 	; $R0="C:"
-\c SectionEnd
-
-\\<b\\>Example2:\\</b\\>
-
-\c Section
-\c 	${GetRoot} "\\SuperPimp\NSIS\Source\exehead\Ui.c" $R0
-\c 	; $R0="\\SuperPimp\NSIS"
-\c SectionEnd
+\c ${GetRoot} "C:\Program Files\NSIS" $R0 ; $R0="C:"
+\c ${GetRoot} "\\SuperPimp\NSIS\Source\exehead\Ui.c" $R0 ; $R0="\\SuperPimp\NSIS"
 
 \S1{getparent} GetParent
 
@@ -775,10 +733,7 @@ Call functions:
 
 \\<b\\>Example:\\</b\\>
 
-\c Section
-\c 	${GetParent} "C:\Program Files\Winamp\uninstwa.exe" $R0
-\c 	; $R0="C:\Program Files\Winamp"
-\c SectionEnd
+\c ${GetParent} "C:\Program Files\Winamp\uninstwa.exe" $R0 ; $R0="C:\Program Files\Winamp"
 
 \S1{getfilename} GetFileName
 
@@ -790,10 +745,7 @@ Call functions:
 
 \\<b\\>Example:\\</b\\>
 
-\c Section
-\c 	${GetFileName} "C:\Program Files\Winamp\uninstwa.exe" $R0
-\c 	; $R0="uninstwa.exe"
-\c SectionEnd
+\c ${GetFileName} "C:\Program Files\Winamp\uninstwa.exe" $R0 ; $R0="uninstwa.exe"
 
 \S1{getbasename} GetBaseName
 
@@ -805,10 +757,7 @@ Call functions:
 
 \\<b\\>Example:\\</b\\>
 
-\c Section
-\c 	${GetBaseName} "C:\ftp\program.exe" $R0
-\c 	; $R0="program"
-\c SectionEnd
+\c ${GetBaseName} "C:\ftp\program.exe" $R0 ; $R0="program"
 
 \S1{getfileext} GetFileExt
 
@@ -820,10 +769,7 @@ Call functions:
 
 \\<b\\>Example:\\</b\\>
 
-\c Section
-\c 	${GetFileExt} "C:\ftp\program.exe" $R0
-\c 	; $R0="exe"
-\c SectionEnd
+\c ${GetFileExt} "C:\ftp\program.exe" $R0 ; $R0="exe"
 
 \S1{bannertrimpath} BannerTrimPath
 
@@ -934,10 +880,7 @@ Call functions:
 
 \\<b\\>Example:\\</b\\>
 
-\c Section
-\c 	${DirState} "$TEMP" $R0
-\c 	; $R0="1"  directory is full
-\c SectionEnd
+\c ${DirState} "$TEMP" $R0 ; $R0="1" (directory is full)
 
 \S1{refreshshellicons} RefreshShellIcons
 
@@ -950,8 +893,7 @@ Call functions:
 \\<b\\>Example:\\</b\\>
 
 \c Section
-\c 	WriteRegStr HKCR "Winamp.File\DefaultIcon" "" "$PROGRAMFILES\Winamp\WINAMP.EXE,2"
-\c 
+\c 	WriteRegStr HKCR "Winamp.File\DefaultIcon" "" "$INSTDIR\WINAMP.EXE,2"
 \c 	${RefreshShellIcons}
 \c SectionEnd
 
