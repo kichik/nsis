@@ -1,6 +1,6 @@
 \S0{labels} Labels
 
-Labels are the targets of \R{goto}{Goto} instructions, or of the various branching instructions (such as \R{iferrors}{IfErrors}, \R{messagebox}{MessageBox}, \R{iffileexists}{IfFileExists}, and \R{strcmp}{StrCmp}). Labels must be within a \R{ssection}{Section} or a \R{ffunction}{Function}. Labels are local in scope, meaning they are only accessible from within the \R{ssection}{Section} or \R{ffunction}{Function} that they reside in.
+Labels are the targets of \R{goto}{Goto} instructions and the various branching instructions (such as \R{iferrors}{IfErrors}, \R{messagebox}{MessageBox}, \R{iffileexists}{IfFileExists}, and \R{strcmp}{StrCmp}). Labels must be within a \R{ssection}{Section} or a \R{ffunction}{Function}. Labels are local in scope, meaning they are only accessible from within the \R{ssection}{Section} or \R{ffunction}{Function} that they reside in.
 To declare a label, simply use:
 
 \e{MyLabel:}

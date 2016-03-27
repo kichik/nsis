@@ -2,7 +2,7 @@
 
 \S2{BringToFront} BringToFront
 
-Makes the installer window visible and brings it to the top of the window list. If an application was executed that shows itself in front of the installer, a \R{BringToFront}{BringToFront} would bring the installer back in focus.
+Makes the installer window visible and brings it to the top of the window list. If an application was executed that shows itself in front of the installer, \R{BringToFront}{BringToFront} would bring the installer back in focus.
 
 Recent Windows versions restrict the setting of foreground windows. If the user is working with another application during installation, the user may be notified using a different method.
 
@@ -25,11 +25,11 @@ You can get the current font used by NSIS using the ^Font and ^FontSize \R{langs
 
 Adds the string "user_message" to the details view of the installer.
 
-\c DetailPrint "this message will show on the installation window"
+\c DetailPrint "this message will be shown in the installation window"
 
 \S2{enablewindow} EnableWindow
 
-\c hwnd (1|0)
+\c hwnd state(1|0)
 
 Enables or disables mouse and keyboard input to the specified window or control. Possible states are 0 (disabled) or 1 (enabled).
 
@@ -42,22 +42,22 @@ Enables or disables mouse and keyboard input to the specified window or control.
 
 \c user_var(hwnd output) windowclass [windowtitle] [windowparent] [childafter]
 
-Searches for a window. Behaves like the win32 FindWindowEx(). Searches by windowclass (and/or windowtitle if specified). If windowparent or childafter are specified, the search will be restricted as such. If windowclass or windowtitle is specified as "", they will not be used for the search. If the window is not found, the user variable returned is 0. To accomplish old-style \R{findwindow}{FindWindow} behavior, use \R{findwindow}{FindWindow} with \R{sendmessage}{SendMessage}.
+Searches for a window. Behaves like Win32's FindWindowEx(). Searches by windowclass (and/or windowtitle if specified). If windowparent or childafter are specified, the search will be restricted as such. If windowclass or windowtitle is specified as "", they will not be used for the search. If the window is not found the user variable is set to 0. To accomplish old-style \R{findwindow}{FindWindow} behavior, use \R{findwindow}{FindWindow} with \R{sendmessage}{SendMessage}.
 
-\c FindWindow $0 "#32770" "" $HWNDPARENT
-\c FindWindow $0 "my window class" "my window title"
+\c FindWindow $1 "#32770" "" $HWNDPARENT # Finds the inner dialog
+\c FindWindow $2 "EDIT" "" $1 # Finds the first edit control in the inner dialog
 
 \S2{getdlgitem} GetDlgItem
 
 \c user_var(output) dialog item_id
 
-Retrieves the handle of a control identified by item_id in the specified dialog box dialog. If you want to get the handle of a control on the inner dialog, first use FindWindow user_var(output) "#32770" "" $HWNDPARENT to get the handle of the inner dialog.
+Retrieves the handle of a control identified by item_id in the specified dialog box dialog. If you want to get the handle of a control in the inner dialog, first use FindWindow to get the handle of the inner dialog.
 
 \c GetDlgItem $0 $HWNDPARENT 1 # next/install button
 
 \S2{hidewindow} HideWindow
 
-Hides the installer.
+Hides the installer window.
 
 \S2{iswindow} IsWindow
 
@@ -81,23 +81,14 @@ If HWND is a window, Gotos jump_if_window, otherwise, Gotos jump_if_not_window (
 
 \c HWND msg wparam lparam [user_var(return value)] [/TIMEOUT=time_in_ms]
 
-Sends a message to HWND. If a user variable $x is specified as the last parameter (or one before the last if you use /TIMEOUT), the return value of \R{sendmessage}{SendMessage} will be stored to it. Note that when specifying 'msg' you must just use the integer value of the message. If you wish to send strings use "STR:a string" as wParam or lParam where needed.
-
-\b \e{WM_CLOSE} 16
-
-\b \e{WM_COMMAND} 273
-
-\b \e{WM_USER} 1024
-
-Include WinMessages.nsh to have all of Windows messages defined in your script.
-
-To send a string param, put STR: before the parameter, for example: "STR:Some string".
-
-Use /TIMEOUT=time_in_ms to specify the duration, in milliseconds, of the time-out period.
+Sends a message to HWND. If a user variable $x is specified as the last parameter (or one before the last if you use /TIMEOUT), the return value from SendMessage will be stored in it. Note that when specifying 'msg' you must just use the integer value of the message. Include WinMessages.nsh to have all Windows messages defined in your script. If you wish to send strings use "STR:a string" as wParam or lParam where needed. Use /TIMEOUT=time_in_ms to specify the duration, in milliseconds, of the time-out period.
 
 \c !include WinMessages.nsh
 \c FindWindow $0 "Winamp v1.x"
 \c SendMessage $0 ${WM_CLOSE} 0 0
+\c
+\c GetDlgItem $1 $HWNDPARENT 2
+\c SendMessage $1 ${WM_SETTEXT} 0 "STR:Goodbye"
 
 \S2{setautoclose} SetAutoClose
 
@@ -109,7 +100,7 @@ Overrides the default auto window-closing flag (specified for the installer usin
 
 \c [/IMGID=item_id_in_dialog] [/RESIZETOFIT] path_to_bitmap_file.bmp
 
-Sets the current bitmap file displayed as the branding image. If no IMGID is specified, the first image control found will be used, or the image control created by \R{aaddbrandingimage}{AddBrandingImage}. Note that this bitmap must be present on the user's machine. Use File first to put it there. If /RESIZETOFIT is specified the image will be automatically resized (very poorly) to the image control size. If you used \R{aaddbrandingimage}{AddBrandingImage} you can get this size, by compiling your script and watching for \R{aaddbrandingimage}{AddBrandingImage} output, it will tell you the size. \R{setbrandingimage}{SetBrandingImage} will not work when called from .onInit!
+Sets the current bitmap file displayed as the branding image. If no IMGID is specified, the first image control found will be used, or the image control created by \R{aaddbrandingimage}{AddBrandingImage}. Note that this bitmap must be present on the user's machine. Use File first to put it there. If /RESIZETOFIT is specified the image will be automatically resized (very poorly) to the image control size. If you used \R{aaddbrandingimage}{AddBrandingImage} you can get this size by compiling your script and watching for \R{aaddbrandingimage}{AddBrandingImage} output, it will tell you the size. SetBrandingImage will not work when called from .onInit!
 
 \S2{setdetailsview} SetDetailsView
 
@@ -131,13 +122,15 @@ Sets mode at which commands print their status. None has commands be quiet, list
 
 \c hwnd [/BRANDING] [text_color] [transparent|bg_color]
 
-Sets a background color and the text color for a static control, edit control, button or a dialog. \e{text_color} and \e{bg_color} don't accept variables. Use \R{getdlgitem}{GetDlgItem} to get the handle (HWND) of the control. To make the control transparent specify "transparent" as the background color value. You can also specify /BRANDING with or without text color and background color to make the control completely gray (or any other color you choose). This is used by the branding text control in the MUI.
+Sets the text and background color of a static control, edit control, button or a dialog. \e{text_color} and \e{bg_color} don't accept variables. Use \R{getdlgitem}{GetDlgItem} to get the handle (HWND) of the control. To make the control transparent specify "transparent" as the background color value. You can also specify /BRANDING with or without text color and background color to make the control completely gray (or any other color you choose). This is used by the branding text control in the MUI.
 
 \c FindWindow $0 "#32770" "" $HWNDPARENT
 \c GetDlgItem $0 $0 1006
 \c SetCtlColors $0 0xFF0000 0x00FF00
 
-\\<b\\>Warning:\\</b\\> setting the background color of check boxes to "transparent" may not function properly when using \c{\R{axpstyle}{XPStlye} on}. The background may be completely black, instead of transparent, when using certain Windows themes.
+\NsisWarnBlockContainerBegin
+\\<b\\>Warning:\\</b\\> Setting the background color of check boxes to "transparent" may not function properly when using \c{\R{axpstyle}{XPStyle} on}. The background may be completely black, instead of transparent, when using certain Windows themes.
+\NsisWarnBlockContainerEnd
 
 \S2{setsilent} SetSilent
 
@@ -149,7 +142,7 @@ Sets the installer to silent mode or normal mode. See \R{asilentinstall}{SilentI
 
 \c hwnd show_state
 
-Sets the visibility of a window. Possible show_states are the same as \W{http://msdn2.microsoft.com/en-us/library/ms633548}{Windows ShowWindow} function. SW_* constants are defined in \L{../Include/WinMessages.nsh}{Include\\WinMessages.nsh}.
+Sets the visibility of a window. Possible show_states are the same as the Windows \W{http://msdn2.microsoft.com/en-us/library/ms633548}{ShowWindow} function. SW_* constants are defined in \L{../Include/WinMessages.nsh}{Include\\WinMessages.nsh}.
 
 \c !include WinMessages.nsh
 \c GetDlgItem $0 $HWNDPARENT 1

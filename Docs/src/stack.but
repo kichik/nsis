@@ -35,6 +35,6 @@ Pops a string off of the stack into user variable $x. If the stack is empty, the
 
 \c string
 
-Pushes a string onto the stack. The string can then be Popped off of the stack.
+Pushes a string onto the stack. The string can then be Pop'ed off of the stack.
 
 \c Push "a string"

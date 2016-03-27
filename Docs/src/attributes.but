@@ -2,7 +2,7 @@
 
 \S1{attribgen} General Attributes
 
-The commands below all adjust attributes of the installer. These attributes control how the installer looks and functions, including which pages are present in the installer, as what text is displayed in each part of each page, how the installer is named, what icon the installer uses, the default installation directory, what file it writes out, and more. Note that these attributes can be set anywhere in the file except in a \R{ssection}{Section} or \R{ffunction}{Function}.
+The commands below all adjust attributes of the installer. These attributes control how the installer looks and functions, including which pages are present in the installer, which text is displayed in each part of each page, the name of the installer, the icon the installer uses, the default installation directory and more. Note that these attributes can be set anywhere in the file except in a \R{ssection}{Section} or \R{ffunction}{Function}.
 
 \\<b\\>\\<u\\>Defaults are bold and underlined\\</u\\>\\</b\\>
 
@@ -10,9 +10,9 @@ The commands below all adjust attributes of the installer. These attributes cont
 
 \c (left|right|top|bottom) (width|height) [padding]
 
-Adds a branding image on the top, bottom, left, or right of the installer. Its size will be set according to the width/height specified, the installer width/height and the installer font. The final size will not always be what you requested; have a look at the output of the command for the actual size. Because this depends on the installer font, you should use \R{asetfont}{SetFont} before \R{aaddbrandingimage}{AddBrandingImage}. The default padding value is 2.
+Adds a branding image on the top, bottom, left, or right of the installer. Its size will be set according to the width/height specified, the installer width/height and the installers font. The final size will not always be what you requested; have a look at the output of the command for the actual size. Because this depends on the installers font, you should use \R{asetfont}{SetFont} before \R{aaddbrandingimage}{AddBrandingImage}. The default padding value is 2.
 
-\R{aaddbrandingimage}{AddBrandingImage} only adds a placeholder for an image. To set the image itself on runtime, use \R{setbrandingimage}{SetBrandingImage}.
+\R{aaddbrandingimage}{AddBrandingImage} only adds a placeholder for an image. To set the image itself at runtime, use \R{setbrandingimage}{SetBrandingImage}.
 
 \c AddBrandingImage left 100
 \c AddBrandingImage right 50
@@ -24,7 +24,7 @@ Adds a branding image on the top, bottom, left, or right of the installer. Its s
 
 \c true|\\<b\\>false\\</b\\>
 
-Controls whether or not installs are enabled to the root directory of a drive, or directly into a network share. Set to 'true' to change the safe behavior, which prevents users from selecting C:\\ or \\\\Server\\Share as an install (and later on, uninstall) directory. For additional directory selection page customizability, see \R{onverifyinstdir}{.onVerifyInstDir}.
+Controls whether or not installs are allowed in the root directory of a drive, or directly into a network share. Set to 'true' to change the safe behavior, which prevents users from selecting C:\\ or \\\\Server\\Share as an install (and later on, uninstall) directory. For additional directory selection page customizability, see \R{onverifyinstdir}{.onVerifyInstDir}.
 
 \S2{aautoclosewindow} AutoCloseWindow
 
@@ -36,7 +36,7 @@ Sets whether or not the install window automatically closes when completed. This
 
 \c [font_face [height [weight] [/ITALIC] [/UNDERLINE] [/STRIKE]]]
 
-Specifies the font used to show the text on the background gradient. To set the color use \R{abggradient}{BGGradient}. If no parameters are specified, the default font will be used. The default font is bold and italic Times New Roman.
+Specifies the font used to show the text on the background gradient. To set the color use \R{abggradient}{BGGradient}. The default font will be used if no parameters are specified. The default font is bold and italic Times New Roman.
 
 \S2{abggradient} BGGradient
 
@@ -48,7 +48,7 @@ Specifies whether or not to use a gradient background window. If 'off', the inst
 
 \c /TRIM(LEFT|RIGHT|CENTER) text
 
-Sets the text that is shown (by default it is 'Nullsoft Install System vX.XX') at the bottom of the install window. Setting this to an empty string ("") uses the default; to set the string to blank, use " " (a space). If it doesn't matter to you, leave it the default so that everybody can know why the installer didn't suck. heh. Use /TRIMLEFT, /TRIMRIGHT or /TRIMCENTER to trim down the size of the control to the size of the string.
+Sets the text that is shown at the bottom of the install window (by default it is 'Nullsoft Install System vX.XX'). Setting this to an empty string ("") uses the default; to set the string to blank, use " " (a space). If it doesn't matter to you, leave it the default so that everybody can know why the installer didn't suck :). Use /TRIMLEFT, /TRIMRIGHT or /TRIMCENTER to trim down the size of the control to the size of the string.
 
 Accepts variables. If variables are used, they must be initialized on \R{oninit}{.onInit}.
 
@@ -56,7 +56,7 @@ Accepts variables. If variables are used, they must be initialized on \R{oninit}
 
 \c caption
 
-When used outside a \R{pageex}{PageEx} block: Sets the text for the titlebar of the installer. the By default, it is 'Name Setup', where Name is specified with the \R{aname}{Name} instruction. You can, however, override it with 'MyApp Installer' or whatever. If you specify an empty string (""), the default will be used (you can however specify " " to achieve a blank string).
+When used outside a \R{pageex}{PageEx} block: Sets the text for the titlebar of the installer. By default it is '$(^Name) Setup', where Name is specified by the \R{aname}{Name} instruction. You can however override it with 'MyApp Installer' or whatever. If you specify an empty string (""), the default will be used (you can specify " " to simulate a empty string).
 
 When used inside a \R{pageex}{PageEx} block: Sets the subcaption of the current page.
 
@@ -66,7 +66,7 @@ Accepts variables. If variables are used, they must be initialized on \R{oninit}
 
 \c dialog ui_file.exe
 
-Replaces dialog (\e{IDD_LICENSE}, \e{IDD_DIR}, \e{IDD_SELCOM}, \e{IDD_INST}, \e{IDD_INSTFILES}, \e{IDD_UNINST} or \e{IDD_VERIFY}) by a dialog with the same resource ID in ui_file.exe. You can also specify 'all' as the dialog if you wish to replace all 7 of the dialogs at once from the same UI file. For some example UIs look at Contrib\\UIs under your NSIS directory.
+Replaces dialog (\e{IDD_LICENSE}, \e{IDD_DIR}, \e{IDD_SELCOM}, \e{IDD_INST}, \e{IDD_INSTFILES}, \e{IDD_UNINST} or \e{IDD_VERIFY}) with a dialog from ui_file.exe with the same resource ID. You can also specify 'all' as the dialog if you wish to replace all 7 of the dialogs at once from the same UI file. For some example UIs look at Contrib\\UIs under your NSIS directory.
 
 \b \e{IDD_LICENSE} must contain \e{IDC_EDIT1} (RICHEDIT control).
 
@@ -88,7 +88,7 @@ Replaces dialog (\e{IDD_LICENSE}, \e{IDD_DIR}, \e{IDD_SELCOM}, \e{IDD_INST}, \e{
 
 \c bitmap.bmp
 
-Specifies the bitmap with the images used for the checks of the component-selection page treeview.
+Specifies the bitmap with the checkbox images used in the component-selection page treeview.
 
 This bitmap should have a size of 96x16 pixels, no more than 8bpp (256 colors) and contain six 16x16 images for the different states (in order: selection mask, not checked, checked, greyed out, unchecked & read-only, checked & read-only). Use magenta as mask color (this area will be transparent).
 
@@ -124,7 +124,7 @@ Specifies whether or not the installer will perform a CRC on itself before allow
 
 \S2{adetailsbuttontext} DetailsButtonText
 
-\c show details text
+\c show_details_text
 
 Replaces the default details button text of "Show details", if parameter is specified (otherwise the default is used).
 
@@ -152,7 +152,7 @@ Accepts variables. If variables are used, they must be initialized before the di
 
 \c user_var(dir input/output)
 
-Specifies which variable is to be used to contain the directory selected. This variable should contain the default value too. This allows to easily create two different directory pages that will not require you to move values in and out of $INSTDIR. The default variable is $INSTDIR. This can only be used in \R{pageex}{PageEx} and for directory and uninstConfirm pages.
+Specifies which variable is to be used to contain the directory selected. This variable should be initialized with a default value. This allows you to easily create two different directory pages that will not require you to move values in and out of $INSTDIR. The default variable is $INSTDIR. This can only be used in \R{pageex}{PageEx} for directory and uninstConfirm pages.
 
 \c Var ANOTHER_DIR
 \c PageEx directory
@@ -179,7 +179,7 @@ If `\R{adirverify}{DirVerify} leave' is used, the Next button will not be disabl
 
 \S2{a} FileErrorText
 
-\c file error text
+\c file_error_text [noignore_file_error_text]
 
 Replaces the default text that comes up when a file cannot be written to. This string can contain a reference to $0, which is the filename ($0 is temporarily changed to this value). Example: "Can not write to file $\\r$\\n$0$\\r$\\ngood luck.".
 
@@ -189,11 +189,11 @@ Accepts variables. If variables are used, they must be initialized before \R{fil
 
 \c [path\]icon.ico
 
-Sets the icon of the installer. Every icon in the icon file will be included in the installer. Use \R{auninstallicon}{UninstallIcon} to set the uninstaller icon.
+Sets the icon of the installer. Every image in the icon file will be included in the installer. Use \R{auninstallicon}{UninstallIcon} to set the uninstaller icon.
 
 \S2{ainstallbuttontext} InstallButtonText
 
-\c install button text
+\c install_button_text
 
 If parameter is specified, overrides the default install button text (of "Install") with the specified text.
 
@@ -215,7 +215,7 @@ Sets the default installation directory. See the \R{variables}{variables section
 
 \c root_key subkey key_name
 
-This attribute tells the installer to check a string in the registry, and use it for the install dir if that string is valid. If this attribute is present, it will override the \R{ainstalldir}{InstallDir} attribute if the registry key is valid, otherwise it will fall back to the \R{ainstalldir}{InstallDir} default. When querying the registry, this command will automatically remove any quotes. If the string ends in ".exe", it will automatically remove the filename component of the string (i.e. if the string is "C:\\Program Files\\Foo\\app.exe", it will know to use "C:\\Program Files\\Foo"). For more advanced install directory configuration, set $INSTDIR in .onInit.
+This attribute tells the installer to check a string in the registry and use it as the install dir if that string is valid. If this attribute is present, it will override the \R{ainstalldir}{InstallDir} attribute if the registry key is valid, otherwise it will fall back to the \R{ainstalldir}{InstallDir} value. When querying the registry, this command will automatically remove any quotes. If the string ends in ".exe", it will automatically remove the filename component of the string (i.e. if the string is "C:\\Program Files\\Foo\\app.exe", it will know to use "C:\\Program Files\\Foo"). For more advanced install directory configuration, set $INSTDIR in .onInit.
 
 Language strings and variables cannot be used with \R{ainstalldirregkey}{InstallDirRegKey}.
 
@@ -246,9 +246,9 @@ Sets the background color of the license data. Color is specified using the form
 
 \c licdata.(txt|rtf)
 
-Specifies a text file or a RTF file to use for the license that the user can read. Omit this to not have a license displayed. Note that the file must be in the evil DOS text format (\\r\\n, yeah!). To define a multilingual license data use \R{licenselangstring}{LicenseLangString}.
+Specifies a text file or a RTF file to use for the license that the user can read. Omit this to not have a license displayed. Note that the file must be in DOS text format (\\r\\n). To define a multilingual license data use \R{licenselangstring}{LicenseLangString}.
 
-If you make your license file a RTF file it is recommended you edit it with WordPad and not MS Word. Using WordPad will result in a much smaller file.
+If you are using a RTF file it is recommended that you edit it with WordPad and not MS Word. Using WordPad will result in a much smaller file.
 
 Use \R{licenselangstring}{LicenseLangString} to show a different license for every language.
 
@@ -256,7 +256,7 @@ Use \R{licenselangstring}{LicenseLangString} to show a different license for eve
 
 \c (checkbox [accept_text] | radiobuttons [accept_text] [decline_text] | \\<b\\>off\\</b\\>)
 
-Specifies if the displayed license must be accept explicit or not. This can be done either by a checkbox or by radiobuttons. By default the "next button" is disabled and will only be enabled if the checkbox is enabled or the right radio button is selected. If off is specified the "next button" is enabled by default.
+Specifies if the displayed license must be explicitly accepted or not. This can be done either by a checkbox or by radiobuttons. By default the "next button" is disabled and will only be enabled if the checkbox is enabled or the correct radio button is selected. If off is specified the "next button" is enabled by default.
 
 \c LicenseForceSelection checkbox
 \c LicenseForceSelection checkbox "i accept"
@@ -293,13 +293,13 @@ See \W{http://msdn.microsoft.com/en-us/library/dd464660}{MSDN} for more informat
 
 \c none|all|WinVista|\\<b\\>Win7|Win8|Win8.1|Win10\\</b\\>|{GUID} [...]
 
-Declare that the installer is compatible with the specified Windows version(s). This adds a SupportedOS entry in the compatibility section of the application manifest. The default list of Win7+8+8.1+10 will probably be updated to include newer Windows versions in the future. \e{none} is the default if \R{arequestexecutionlevel}{RequestExecutionLevel} is set to \e{none} for compatibility reasons.
+Declare that the installer is compatible with the specified Windows version(s). This adds a SupportedOS entry in the compatibility section of the application manifest. The default is Win7+8+8.1+10. \e{none} is the default if \R{arequestexecutionlevel}{RequestExecutionLevel} is set to \e{none} for compatibility reasons.
 
 Windows 8.1 and later will fake its version number if you don't declare support for that particular version. You can read more about the other changes in behavior on \W{http://msdn.microsoft.com/en-us/library/windows/desktop/hh848036}{MSDN}.
 
 \S2{amiscbuttontext} MiscButtonText
 
-\c [back button text [next button text] [cancel button text] [close button text]]
+\c [back_button_text [next_button_text] [cancel_button_text] [close_button_text]]
 
 Replaces the default text strings for the four buttons (< Back, Next >, Cancel and Close). If parameters are omitted, the defaults are used.
 
@@ -329,7 +329,7 @@ Specifies the output file that the MakeNSIS should write the installer to. This 
 
 Specifies the requested execution level for Windows Vista and higher. The value is embedded in the installer and uninstaller's XML manifest and tells Windows which privilege level the installer requires. \e{user} requests the user's normal level with no administrative privileges. \e{highest} will request the highest execution level available for the current user and will cause Windows to prompt the user to verify privilege escalation if they are a member of the administrators group. The prompt might request for the user's password. \e{admin}, which is also the default, requests administrator level and will cause Windows to prompt the user as well. Specifying \e{none} will keep the manifest empty and let Windows decide which execution level is required. Windows automatically identifies NSIS installers and decides administrator privileges are required. Because of this, \e{none} and \e{admin} have virtually the same effect.
 
-It's recommended, at least by Microsoft, that every application is marked with a required execution level. Unmarked installers are subject to compatibility mode. Workarounds of this mode include automatically moving any shortcuts created in the user's start menu to all users' start menu. Installers that don't install anything into system folders nor write to the local machine registry (HKLM) should specify \e{user} execution level.
+It's recommended that every application is marked with a required execution level. Unmarked installers are subject to compatibility mode. Workarounds of this mode include automatically moving any shortcuts created in the user's start menu to all users' start menu. Installers that don't install anything into system folders nor write to the local machine registry (HKLM) should specify \e{user} execution level.
 
 More information about this topic can be found on \W{http://msdn.microsoft.com/en-us/library/bb756929}{MSDN}.
 
@@ -370,13 +370,13 @@ See \k{silent} for more information.
 
 \c \\<b\\>normal\\</b\\>|silent
 
-Specifies whether or not the uninstaller should be silent. If it is 'silent' or 'silentlog', the uninstall section will run quietly, with no screen output from the uninstaller itself (the script can still display whatever it wants, use \R{messagebox}{MessageBox}'s /SD to specify a default for silent installers). Note that if this is set to 'normal' and the user runs the uninstaller with /S on the command line, it will behave as if \R{asilentuninstall}{SilentUnInstall} 'silent' was used. Note: see also \R{logset}{LogSet}.
+Specifies whether or not the uninstaller should be silent. If it is 'silent' the uninstall sections will run quietly, with no screen output from the uninstaller itself (the script can still display whatever it wants, use \R{messagebox}{MessageBox}'s /SD to specify a default for silent uninstallers). Note that if this is set to 'normal' and the user runs the uninstaller with /S on the command line, it will behave as if \R{asilentuninstall}{SilentUnInstall} 'silent' was used.
 
 See \k{silent} for more information.
 
 \S2{aspacetexts} SpaceTexts
 
-\c [req text [avail text]]
+\c [req_text [avail_text]]
 
 If parameters are specified, overrides the space required and space available text ("Space required: " and "Space available: " by default). If 'none' is specified as the required text no space texts will be shown.
 
@@ -396,7 +396,7 @@ Accepts variables. If variables are used, they must be initialized before the re
 
 \c text
 
-Changes the text of the button that by default says "Uninstall" in the uninstaller. If no parameter is specified, the default text is used. See also \R{writeuninstaller}{WriteUninstaller} (replaces UninstallEXEName).
+Changes the text of the button that by default says "Uninstall" in the uninstaller. If no parameter is specified, the default text is used.
 
 Accepts variables. If variables are used, they must be initialized before the uninstall button shows.
 
@@ -404,7 +404,7 @@ Accepts variables. If variables are used, they must be initialized before the un
 
 \c caption
 
-Sets what the titlebars of the uninstaller will display. By default, it is 'Name Uninstall', where Name is specified with the Name command. You can, however, override it with 'MyApp uninstaller' or whatever. If you specify an empty string (""), the default will be used (you can however specify " " to achieve a blank string).
+Sets what the titlebars of the uninstaller will display. By default it is '$(^Name) Uninstall', where Name is specified with the Name command. You can, however, override it with 'MyApp uninstaller' or whatever. If you specify an empty string (""), the default will be used (you can specify " " to simulate a empty string).
 
 Accepts variables. If variables are used, they must be initialized in \R{unonInit}{un.onInit}.
 
@@ -418,7 +418,7 @@ Sets the icon of the uninstaller.
 
 \c page_number subcaption
 
-Sets the default subcaptions for the uninstaller pages (0=": Confirmation",1=": Uninstalling Files",2=": Completed"). If you specify an empty string (""), the default will be used (you can however specify " " to achieve a blank string).
+Sets the default subcaptions for the uninstaller pages (0=": Confirmation",1=": Uninstalling Files",2=": Completed"). If you specify an empty string (""), the default will be used (you can specify " " to simulate a empty string).
 
 You can also set a subcaption (or override the default) using \R{acaption}{Caption} inside a \R{pageex}{PageEx} block.
 
@@ -440,10 +440,10 @@ Accepts variables. If variables are used, they must be initialized before the un
 
 \c \\<b\\>on\\</b\\>|off
 
-Sets whether or not the installer's icon is being displayed.
+Sets whether or not the installer's icon is displayed on certain pages.
 
 \S2{axpstyle} XPStyle
 
 \c on|\\<b\\>off\\</b\\>
 
-Sets whether or not an XP manifest will be added to the installer. An XP manifest makes the installer controls use the new XP style when running on Windows XP. This affects the uninstaller too.
+Sets whether or not a XP visual style manifest will be added to the installer. This manifest makes the installers controls use the new visual styles when running on Windows XP and later. This affects the uninstaller too.

@@ -4,7 +4,7 @@
 
 \c user_var(error level output)
 
-Returns the last error level set by \R{seterrorlevel}{SetErrorLevel} or -1 if it was never used.
+Returns the last error level set by \R{seterrorlevel}{SetErrorLevel} or -1 if it has never been set.
 
 \c GetErrorLevel $0
 \c IntOp $0 $0 + 1
@@ -69,11 +69,11 @@ Sets the error level of the installer or uninstaller to \e{error_level}. See \R{
 
 \c \\<b\\>32\\</b\\>|64|lastused
 
-Sets the registry view affected by \R{registry}{registry commands}. On Windows x64 there are two views. One for 32-bit applications and one for x64 applications. By default, 32-bit applications running on x64 systems under WOW64 have access only to the 32-bit view. Using \c{SetRegView 64} allows the installer to access keys in the x64 view of the registry.
+Sets the registry view affected by \R{registry}{registry commands}. On 64-bit versions of Windows there are two views; one for 32-bit applications and one for 64-bit applications. By default, 32-bit applications running on 64-bit systems (WOW64) only have access to the 32-bit view. Using \c{SetRegView 64} allows the installer to access keys in the 64-bit view of the registry.
 
 Affects \R{deleteregkey}{DeleteRegKey}, \R{deleteregvalue}{DeleteRegValue}, \R{enumregkey}{EnumRegKey}, \R{enumregvalue}{EnumRegValue}, \R{readregdword}{ReadRegDWORD}, \R{readregstr}{ReadRegStr}, \R{writeregbin}{WriteRegBin}, \R{writeregdword}{WriteRegDWORD}, \R{writeregstr}{WriteRegStr} and \R{writeregexpandstr}{WriteRegExpandStr}.
 
-Does not affect \R{ainstalldirregkey}{InstallDirRegKey}. Instead, the registry can be read using \R{readregstr}{ReadRegStr} in \R{oninit}{.onInit}.
+Does not affect \R{ainstalldirregkey}{InstallDirRegKey}. Instead, the registry must be read using \R{readregstr}{ReadRegStr} in \R{oninit}{.onInit}.
 
 \c SetRegView 32
 \c ReadRegStr $0 HKLM Software\Microsoft\Windows\CurrentVersion ProgramFilesDir

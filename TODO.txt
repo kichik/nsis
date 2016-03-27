@@ -3,8 +3,6 @@ TODO
 
 NSIS
 
-* Make Unicode version compile on other compilers / platforms.
-
 * Compiler plug-ins
 
 * Empty subsections should not show
@@ -18,7 +16,7 @@ EXAMPLES
 
 PLUG-INS
 
-* InstallOptions - custom class names so you can include whatever control
+* InstallOptions - custom class names so you can include any control
   you want
 
 * nsExec - live outputs

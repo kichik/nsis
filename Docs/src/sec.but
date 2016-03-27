@@ -4,7 +4,7 @@
 
 \c section_index section_flags
 
-Sets the section's flags. The flag is a 32 bit integer. The first bit (lowest) represents whether the section is currently selected, the second bit represents whether the section is a section group (don't modify this unless you really know what you are doing), the third bit represents whether the section is a section group end (again, don't modify), the fourth bit represents whether the section is shown in bold or not, the fifth bit represents whether the section is read-only, the sixth bit represents whether the section group is to be automatically expanded, the seventh bit is set for section groups which are partially selected, the eighth bit is internally used for partially selected section group toggling and the ninth bit is used for reflecting section name changes. The error flag will be set if an out of range section is specified.
+Sets the section's flags. The flag is a 32-bit integer. The first bit (lowest) represents whether the section is currently selected, the second bit represents whether the section is a section group (don't modify this unless you really know what you are doing), the third bit represents whether the section is a section group end (again, don't modify), the fourth bit represents whether the section is shown in bold or not, the fifth bit represents whether the section is read-only, the sixth bit represents whether the section group is to be automatically expanded, the seventh bit is set for section groups which are partially selected, the eighth bit is internally used for partially selected section group toggling and the ninth bit is used for reflecting section name changes. The error flag will be set if an out of range section is specified.
 
 Each flag has a name, prefixed with `SF_`:
 
@@ -33,7 +33,7 @@ For more useful macros and definitions, see Include\\Sections.nsh.
 
 \c section_index user_var(output)
 
-Retrieves the section's flags. See above for a description of the flag. The error flag will be set if an out of range section is specified.
+Retrieves the section's flags. See SectionSetFlags for a description of the flags. The error flag will be set if an out of range section is specified.
 
 \c Section test test_section_id
 \c SectionEnd
@@ -83,7 +83,7 @@ Sets the install types the section specified by section_index defaults to the en
 
 \c SectionSetInstTypes 0 5
 
-because the binary value for 5 is "00000101". The error flag will be set if the section index specified is out of range.
+because the binary value for 5 is "...00101". The error flag will be set if the section index specified is out of range.
 
 \c Section test test_section_id
 \c SectionEnd
@@ -113,7 +113,7 @@ Retrieves the install types flags array of a section. See above explanation abou
 
 \c section_index new_size
 
-Sets the Size of the section specified by section_index. Note that the Index starts with Zero. The Value for Size must be entered in KiloByte and supports only whole numbers.
+Sets the size of the section specified by section_index. Note that the index starts with zero. The Value for Size must be entered in KiloByte and supports only whole numbers.
 
 \c Section test test_section_id
 \c SectionEnd
@@ -127,7 +127,7 @@ Sets the Size of the section specified by section_index. Note that the Index sta
 
 \c section_index user_var
 
-Gets the Size of the section specified by section_index and stores the value in the given User Variable. Note that the Index starts with Zero. The error flag will be set if the section index is out of range.
+Gets the size of the section specified by section_index and stores the value in the given user variable. Note that the index starts with zero. The error flag will be set if the section index is out of range.
 
 \c Section test test_section_id
 \c SectionEnd
@@ -143,19 +143,19 @@ Gets the Size of the section specified by section_index and stores the value in 
 
 \c inst_type_idx
 
-Sets the current \R{ainsttype}{InstType}. inst_type_idx should be between 0 and 31. The Error Flag is \\<b\\>not\\</b\\> set if an out of range \R{ainsttype}{InstType} was used.
+Sets the current \R{ainsttype}{InstType}. inst_type_idx should be between 0 and 31. The error flag is \\<b\\>not\\</b\\> set if an out of range \R{ainsttype}{InstType} was used.
 
 \S2{sgetcurinsttype} GetCurInstType
 
 \c user_var
 
-Get the current \R{ainsttype}{InstType} and stores it in user_var. If the first install type is selected, 0 will be put in user_var. If the second install type is selected, 1 will be put in user_var, and so on. The value of $\{NSIS_MAX_INST_TYPES\} (32 by default) means that the user selected a custom set of sections. Note that simply selecting "Custom" in the drop-down menu is not enough to trigger this. The value is calculated by the sections actually selected.
+Get the current \R{ainsttype}{InstType} and stores it in user_var. If the first install type is selected, 0 will be put in user_var. If the second install type is selected, 1 will be put in user_var, and so on. The value of $\{NSIS_MAX_INST_TYPES\} (32 by default) means that the user selected a custom set of sections (Simply selecting "Custom" in the drop-down menu is not enough to trigger this, the value is calculated by the sections actually selected).
 
 \S2{sinsttypesettext} InstTypeSetText
 
 \c inst_type_idx text
 
-Sets the Text of the specified \R{ainsttype}{InstType}. If the Text is empty than the \R{ainsttype}{InstType} is removed. By using a previously unused inst_type_idx number you can create new InstTypes. To add/remove Sections to this new \R{ainsttype}{InstType} see \R{sectionsetinsttypes}{SectionSetInstTypes}. Unlike \R{ssectionin}{SectionIn} the index is zero based, which means the first install type's index is 0.
+Sets the text of the specified \R{ainsttype}{InstType}. If the text is empty then the \R{ainsttype}{InstType} is removed. By using a previously unused inst_type_idx number you can create new InstTypes. To add/remove Sections to this new \R{ainsttype}{InstType} see \R{sectionsetinsttypes}{SectionSetInstTypes}. Unlike \R{ssectionin}{SectionIn} the index is zero based, which means the first install type's index is 0.
 
 \c InstType a
 \c InstType b
@@ -171,7 +171,7 @@ Sets the Text of the specified \R{ainsttype}{InstType}. If the Text is empty tha
 
 \c inst_type_idx user_var
 
-Gets the Text of the specified \R{ainsttype}{InstType}.
+Gets the text of the specified \R{ainsttype}{InstType}.
 
 \c InstType a
 \c InstType b

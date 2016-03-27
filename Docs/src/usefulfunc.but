@@ -5,15 +5,11 @@
 \c  ; GetIEVersion
 \c  ;
 \c  ; Based on Yazno's function, http://yazno.tripod.com/powerpimpit/
-\c  ; Returns on top of stack
-\c  ; 1-6 (Installed IE Version)
-\c  ; or
-\c  ; '' (IE is not installed)
+\c  ; Returns 1-6 (IE Version) or '' (IE is not installed) on top of the stack
 \c  ;
 \c  ; Usage:
 \c  ;   Call GetIEVersion
-\c  ;   Pop $R0
-\c  ;   ; at this point $R0 is "5" or whatnot
+\c  ;   Pop $R0 ; at this point $R0 is "5" or whatnot
 \c
 \c  Function GetIEVersion
 \c  Push $R0
@@ -59,7 +55,7 @@
 \c  ; Usage:
 \c  ;   Call IsDotNETInstalled
 \c  ;   Pop $0
-\c  ;   StrCmp $0 1 found.NETFramework no.NETFramework
+\c  ;   StrCmp $0 1 found_dotNETFramework no_dotNETFramework
 \c
 \c  Function IsDotNETInstalled
 \c    Push $0
@@ -79,15 +75,11 @@
 \c  ; IsFlashInstalled
 \c  ;
 \c  ; By Yazno, http://yazno.tripod.com/powerpimpit/
-\c  ; Returns on top of stack
-\c  ; 0 (Flash is not installed)
-\c  ; or
-\c  ; 1 (Flash is installed)
+\c  ; Returns the result on top of the stack
 \c  ;
 \c  ; Usage:
 \c  ;   Call IsFlashInstalled
-\c  ;   Pop $R0
-\c  ;   ; $R0 at this point is "1" or "0"
+\c  ;   Pop $R0 ; $R0 is "1" or "0" at this point 
 \c
 \c  Function IsFlashInstalled
 \c   Push $R0
@@ -141,7 +133,7 @@
 
 \H{installerfilename} Get Installer Filename
 
-\c  System::Call 'kernel32::GetModuleFileName(p 0, t .R0, i 1024) i r1'
+\c  System::Call 'kernel32::GetModuleFileName(p 0, t .R0, i ${NSIS_MAX_STRLEN}) i.r1'
 \c  ;$R0 will contain the installer filename
 
 \H{multipleinstances} Prevent Multiple Instances
@@ -155,8 +147,8 @@ Put the following code in your \R{oninit}{.onInit function}:
 \c    MessageBox MB_OK|MB_ICONEXCLAMATION "The installer is already running."
 \c    Abort
 
-'myMutex' should be replaced by a unique value. 
+'myMutex' must be replaced by a unique value!
 
 \H{morefuncs} More
 
-You can find more useful scripts at \W{http://nsis.sourceforge.net/wiki/}{the NSIS Wiki}, \W{http://forums.winamp.com/forumdisplay.php?s=&forumid=65}{the NSIS forum} and \W{http://nsis.sourceforge.net/}{NSIS development page}.
+You can find more useful scripts on \W{http://nsis.sourceforge.net/wiki/}{the NSIS Wiki}, \W{http://forums.winamp.com/forumdisplay.php?s=&forumid=65}{the NSIS forum} and the \W{http://nsis.sourceforge.net/}{NSIS development page}.

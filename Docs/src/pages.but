@@ -2,7 +2,7 @@
 
 Each (non-silent) NSIS installer has a set of pages. Each page can be a NSIS built-in page or a custom page created by a user's function (with \L{../Docs/nsDialogs/Readme.html}{nsDialogs} or \L{../Docs/InstallOptions/Readme.html}{InstallOptions} for example).
 
-Using the script you can control the pages' order, appearance, and behavior. You can skip pages, paint them white, force the user to stay in a certain page until a certain condition is met, show a readme page, show custom designed pages for input and more. In this section, you will learn how to control all of the above.
+The script controls the page order, appearance, and behavior. You can skip pages, paint them white, force the user to stay in a certain page until a certain condition is met, show a readme page, show custom designed pages for input and more. In this section you will learn how to do all of the above.
 
 There are two basic commands regarding pages, \R{page}{Page} and \R{uninstpage}{UninstPage}. The first adds a page to the installer, the second adds a page to the uninstaller. On top of those two there is the \R{pageex}{PageEx} command which allows you to add a page to either one and with greater amount of options. \R{pageex}{PageEx} allows you to set options to the specific page you are adding instead of using the default that's set outside of \R{pageex}{PageEx}.
 
@@ -17,17 +17,17 @@ The page order is set simply by the order \R{page}{Page}, \R{uninstpage}{UninstP
 \c  UninstPage uninstConfirm
 \c  UninstPage instfiles
 
-This code will tell NSIS to first show the license page, then the components selection page, then the directory selection page and finally the install log where sections are executed, just like in old installers. The uninstaller will first show the uninstall confirmation page and then the uninstallation log.
+This code will tell NSIS to first show the license page, then the components selection page, then the directory selection page and finally the install log where sections are executed. The uninstaller will first show the uninstall confirmation page and then the uninstallation log.
 
 You can specify the same page type more than once.
 
-For backwards compatibility with old NSIS scripts, the following installer pages will be added if no installer page commands are used: license (if \R{alicensetext}{LicenseText} and \R{alicensedata}{LicenseData} were specified), components (if \R{acomponenttext}{ComponentText} was specified and there is more than one visible section), directory (if \R{adirtext}{DirText} was specified) and instfiles. When there are no uninstaller page commands, the following uninstaller pages will be added: uninstall confirmation page (if \R{auninstalltext}{UninstallText} was specified) and instfiles. This method is deprecated, converting scripts to use page commands is highly recommended because you can use the new standard language strings.
+For backwards compatibility with old NSIS scripts, the following installer pages will be added if no installer page commands are used: license (if \R{alicensetext}{LicenseText} and \R{alicensedata}{LicenseData} were specified), components (if \R{acomponenttext}{ComponentText} was specified and there is more than one visible section), directory (if \R{adirtext}{DirText} was specified) and instfiles. When there are no uninstaller page commands the following uninstaller pages will be added: uninstall confirmation page (if \R{auninstalltext}{UninstallText} was specified) and instfiles. This method is deprecated, converting scripts to use page commands is highly recommended because you can use the new standard language strings.
 
 \S{pageoptions} Page Options
 
 Each page has its unique set of data that defines how it will look and act. This section describes what data each type of page uses and how you can set it. \R{pagecallbacks_explain}{Callback functions} are described below and are not dealt with in this section.
 
-The list below lists what commands affect the certain page type. Unless mentioned otherwise, these commands can be used both in and out of a \R{pageex}{PageEx} block. If used inside a \R{pageex}{PageEx} block they will only affect the current page being set by \R{pageex}{PageEx}, else they will set the default for every other page.
+The list below lists the commands that affect a certain page type. Unless otherwise mentioned, these commands can be used both inside and outside of a \R{pageex}{PageEx} block. If used inside a \R{pageex}{PageEx} block they will only affect the current page being set by PageEx, otherwise they will set the default for all other pages.
 
 \e{License page}
 
@@ -45,7 +45,7 @@ The list below lists what commands affect the certain page type. Unless mentione
 
 \b \R{adirtext}{DirText}
 
-\b \R{adirvar}{DirVar} - can only be used in \R{pageex}{PageEx}
+\b \R{adirvar}{DirVar} (can only be used in \R{pageex}{PageEx})
 
 \b \R{adirverify}{DirVerify}
 
@@ -57,19 +57,19 @@ The list below lists what commands affect the certain page type. Unless mentione
 
 \e{Uninstall confirmation page}
 
-\b \R{adirvar}{DirVar} - can only be used in \R{pageex}{PageEx}
+\b \R{adirvar}{DirVar} (can only be used in \R{pageex}{PageEx})
 
 \b \R{auninstalltext}{UninstallText}
 
-To set the page caption use \R{acaption}{Caption}.
+Use \R{acaption}{Caption} to set the page caption.
 
 \S{pagecallbacks_explain} Callbacks
 
-Each built-in page has three callback functions: the pre-function, the show-creation function and the leave-function. The pre-function is called right before the page is created, the show-function is called right after it is created and before it is shown and the leave-function is called right after the user has pressed the next button and before the page is left.
+Each built-in page has three callback functions: the pre-function, the show function and the leave-function. The pre-function is called right before the page is created, the show-function is called right after it has been created but before it is shown and the leave-function is called right after the user has pressed the next button (before actually leaving the page).
 
 \b The pre-function allows you to skip the page using \R{abort}{Abort}.
 
-\b The show-function allows you to tweak the page's user interface with \R{createfont}{CreateFont}, \R{setctlcolors}{SetCtlColors}, \R{sendmessage}{SendMessage} and others.
+\b The show-function allows you to tweak the page's user interface with \R{createfont}{CreateFont}, \R{setctlcolors}{SetCtlColors}, \R{sendmessage}{SendMessage} etc.
 
 \b The leave-function allows you to force the user to stay on the current page using \R{abort}{Abort}.
 

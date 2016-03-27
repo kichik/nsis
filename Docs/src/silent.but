@@ -16,7 +16,7 @@ To check if the installer/uninstaller is silent use \R{ifsilent}{IfSilent}.
 
 To make sure your installer will be silent when it needs to, you should check with \R{ifsilent}{IfSilent} before each command that might require user intervention or create a window. The \R{messagebox}{MessageBox} command, which is the most common culprit in silent installers, has the /SD switch to set a default answer for silent installers. If you want your installer/uninstaller to be able to be completely silent you should use this switch. All internal NSIS message boxes have defaults for silent installers. The \L{../Examples/silent.nsi}{silent.nsi example} demonstrates all aspects of this topic.
 
-Since the directory page can not be shown on silent installers, the user has an option to specify the installation directory on the command line (this also works on non-silent installers/uninstallers). To do that, the user uses the /D switch as in the following example:
+Since the directory page is not shown in silent installers the user has an option to specify the installation directory on the command line (this also works on non-silent installers/uninstallers). To do that, the user uses the /D switch as in the following example:
 
 \c foo.exe /S /D=C:\Program Files\Foo
 

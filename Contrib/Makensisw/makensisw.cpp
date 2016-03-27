@@ -50,8 +50,8 @@ NSIS_ENTRYPOINT_SIMPLEGUI
 int WINAPI _tWinMain(HINSTANCE hInst,HINSTANCE hOldInst,LPTSTR CmdLineParams,int ShowCmd) {
 
   HMODULE hK32 = LoadLibraryA("KERNEL32");
-  // We can be associated with .nsi and .nsh files and when launched from the shell we inherit the current directory 
-  // so we need to prevent LoadLibrary from searching the current directory because it can contain untrusted DLLs!
+  // We can be associated with .nsi files and when launched from the shell we inherit the current directory so 
+  // we need to prevent LoadLibrary from searching the current directory because it can contain untrusted DLLs!
   FARPROC SDDA = GetProcAddress(hK32, "SetDllDirectoryA"); // WinXP.SP1+
   if (SDDA) ((BOOL(WINAPI*)(LPCSTR))SDDA)(""); // Remove the current directory from the default DLL search order
 

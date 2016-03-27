@@ -2,7 +2,7 @@
 
 \S0{compcommands} Compiler Utility Commands
 
-These commands are similar to the C preprocessor in terms of purpose and functionality. They allow file inclusion, conditional compilation, executable header packing, and processes execution during the build process. Note: None of these commands allow the use of variables.
+These commands are similar to the C preprocessor in terms of purpose and functionality. They allow file inclusion, conditional compilation, executable header packing and process execution during the build process. Note: None of these commands allow the use of variables.
 
 Number literals support the \c{0b}, \c{0o}, \c{0n} and \c{0x} radix prefixes (base 2, 8, 10 and 16 respectively). Note: The deprecated plain \c{0} octal prefix is also supported in some places but its usage is discouraged.
 
@@ -24,7 +24,7 @@ This command will include 'file' as if it was part of the original script. Note 
 
 \c directory
 
-Adds another include directory to the include directories list. This list is searched when \R{include}{!include} is used. This list's initial value is $\{NSISDIR\}\\Include alone.
+Adds another include directory to the include directories list. This list is searched when \R{include}{!include} is used. This list's initial value is $\{NSISDIR\}\\Include.
 
 \c !addincludedir ..\include
 \c !include something.nsh
@@ -35,7 +35,7 @@ Adds another include directory to the include directories list. This list is sea
 
 Causes the NSIS compiler to scan the given directory for plug-in DLLs. If you don't specify the plug-in architecture it is assumed to match the current target architecture. If the architecture does not match the installer will probably crash!
 
-\c !addplugindir myplugin
+\c !addplugindir ..\myplugin
 \c MyPlugin::SomeFunction
 
 \S1{appendfile} !appendfile
@@ -63,7 +63,7 @@ This command will change the compiler to the new directory, new_path. new_path c
 
 \S1{delfile} !delfile
 
-\c file
+\c [/nonfatal] file
 
 This command deletes a file.
 
@@ -97,7 +97,7 @@ This command will execute 'command' using a call to CreateProcess(). Unlike \R{s
 
 On POSIX platforms, \R{execute}{!execute} will use system() just like \R{system}{!system}.
 
-\c !execute '"%WINDIR%\notepad.exe" "${NSISDIR}\license.txt"'
+\c !execute '"$%WINDIR%\notepad.exe" /P "${NSISDIR}\COPYING"'
 
 \S1{makensis} !makensis
 
@@ -120,7 +120,7 @@ This option makes the compiler use an external EXE packer (such as \W{http://www
 
 \c command
 
-This option will execute 'command' using a call to system() after the output EXE has been generated. You can typically use it to sign (Authenticode) your installer. If 'command' contains a '%1' it will be replaced by the executable filename.
+This option will execute 'command' using a call to system() after the output EXE has been generated. You can typically use it to sign (Authenticode) your installer. If 'command' contains a '%1' it will be replaced by the executables filename.
 
 \c !finalize 'sign.bat "%1" "Product Installer" http://example.com'
 
@@ -130,7 +130,7 @@ This option will execute 'command' using a call to system() after the output EXE
 
 This command will execute 'command' using a call to system(). You can store the return value in a define ('symbol') or halt execution if the return value compared (using 'compare') to 'comparevalue' is false. 'compare' can be '<' or '>' or '<>' or '='. 
 
-\c !system '"%WINDIR%\notepad.exe" "${NSISDIR}\license.txt"'
+\c !system '"%WINDIR%\notepad.exe" "${NSISDIR}\COPYING"'
 \c !system 'echo !define something > newinclude.nsh'
 \c !include newinclude.nsh
 \c !ifdef something
@@ -149,10 +149,10 @@ This command creates a temporary file. It puts its path into a define, named \e{
 \c !tempfile FILE
 \c !define /date DATE "%H:%M:%S %d %b, %Y"
 \c !system 'echo built on ${DATE} > "${FILE}"'
+\c !undef DATE
 \c File /oname=build.txt "${FILE}"
 \c !delfile "${FILE}"
 \c !undef FILE
-\c !undef DATE
 
 \S1{ppgetdllversion} !getdllversion
 
@@ -160,7 +160,7 @@ This command creates a temporary file. It puts its path into a define, named \e{
 
 This is similar to \R{getdllversionlocal}{GetDLLVersionLocal}, only it stores the version number in defines and can therefore be used anywhere, not just inside functions and sections.
 
-\c !getdllversion "$%windir%\explorer.exe" expv_
+\c !getdllversion "$%WINDIR%\Explorer.exe" expv_
 \c !echo "Explorer.exe version is ${expv_1}.${expv_2}.${expv_3}.${expv_4}"
 
 \S1{warning} !warning
@@ -224,7 +224,7 @@ NSIS version used to build the script.
 
 \S1{prensispackedversion} $\{NSIS_PACKEDVERSION\}
 
-NSIS version as a 32 bit number.
+NSIS version as a 32-bit number.
 
 \c !if 0x3014000 >= "${NSIS_PACKEDVERSION}"
 \c   !error "NSIS 3.15 or higher is required to build this installer!"
@@ -244,39 +244,26 @@ The size of a pointer (in bytes) in the generated installer.
 
 A Unicode (UCS-4) character.
 
-\c !define U+ABC "SIS" # Define will override
-\c DetailPrint "${U+2115}${U+ABC}" # DOUBLE-STRUCK CAPITAL N + "SIS"
+\c DetailPrint "${U+2115}SIS" # DOUBLE-STRUCK CAPITAL N + "SIS"
 
 \S1{scopepredefines} Scope Predefines
 
-Standard predefines that contain information of the current code scope.
+Standard predefines that contain information about the current code scope.
 
 \S2{prescopeglobal} $\{__GLOBAL__\}
 
 Defined in the global scope.
 
 \c Section test
-\c
 \c   !ifdef ${__GLOBAL__}
 \c     !error "this shouldn't be here!"
 \c   !endif
-\c 
 \c SectionEnd
 \c
-\c Function test
-\c 
-\c   !ifdef ${__GLOBAL__}
-\c     !error "this shouldn't be here!"
-\c   !endif
-\c 
-\c FunctionEnd
-\c
 \c PageEx instfiles
-\c 
 \c   !ifdef ${__GLOBAL__}
 \c     !error "this shouldn't be here!"
 \c   !endif
-\c 
 \c PageExEnd
 
 \S2{prescopesection} $\{__SECTION__\}
@@ -288,7 +275,6 @@ Defined as the section name, without any prefixes, in \R{ssection}{section} scop
 \c !endif
 \c 
 \c Section test
-\c 
 \c   !ifndef __SECTION__
 \c     !error "missing predefine!"
 \c   !endif
@@ -296,23 +282,18 @@ Defined as the section name, without any prefixes, in \R{ssection}{section} scop
 \c   !if ${__SECTION__} != test
 \c     !error "wrong predefine value!"
 \c   !endif
-\c 
 \c SectionEnd
 \c
 \c Section !test
-\c
 \c   !if ${__SECTION__} != test
 \c     !error "wrong predefine value!"
 \c   !endif
-\c 
 \c SectionEnd
 \c
 \c Section un.test
-\c
 \c   !if ${__SECTION__} != test
 \c     !error "wrong predefine value!"
 \c   !endif
-\c 
 \c SectionEnd
 
 \S2{prescopefunction} $\{__FUNCTION__\}
@@ -324,7 +305,6 @@ Defined as the function name, without any prefixes, in \R{ffunction}{function} s
 \c !endif
 \c 
 \c Function test
-\c 
 \c   !ifndef __FUNCTION__
 \c     !error "missing predefine!"
 \c   !endif
@@ -332,15 +312,12 @@ Defined as the function name, without any prefixes, in \R{ffunction}{function} s
 \c   !if ${__FUNCTION__} != test
 \c     !error "wrong predefine value!"
 \c   !endif
-\c 
 \c FunctionEnd
 \c
 \c Function un.test
-\c
 \c   !if ${__FUNCTION__} != test
 \c     !error "wrong predefine value!"
 \c   !endif
-\c 
 \c FunctionEnd
 
 \S2{prescopepageex} $\{__PAGEEX__\}
@@ -352,7 +329,6 @@ Defined as the page type in \R{pageex}{PageEx} scope.
 \c !endif
 \c 
 \c PageEx instfiles
-\c 
 \c   !ifndef __PAGEEX__
 \c     !error "missing predefine!"
 \c   !endif
@@ -360,7 +336,6 @@ Defined as the page type in \R{pageex}{PageEx} scope.
 \c   !if ${__PAGEEX__} != instfiles
 \c     !error "wrong page type"
 \c   !endif
-\c 
 \c PageExEnd
 
 \S2{prescopeuninstall} $\{__UNINSTALL__\}
@@ -372,19 +347,15 @@ Defined in \R{ssection}{section}, \R{ffunction}{function} or \R{pageex}{PageEx} 
 \c !endif
 \c 
 \c Function test
-\c 
 \c   !ifdef __UNINSTALL__
 \c     !error "this shouldn't be here!"
 \c   !endif
-\c 
 \c FunctionEnd
 \c 
 \c Function un.test
-\c 
 \c   !ifndef __UNINSTALL__
 \c     !error "missing predefine!"
 \c   !endif
-\c 
 \c FunctionEnd
 
 \S2{prescopemacro} $\{__MACRO__\}
@@ -395,4 +366,4 @@ Defined as the name of the current macro.
 
 \S1{compenvvar} $%envVarName%
 
-$%envVarName% will be replaced on compile time by the environment variable envVarName.
+$%envVarName% will be replaced at compile time by the environment variable envVarName.

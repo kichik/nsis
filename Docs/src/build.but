@@ -1,6 +1,6 @@
 \A{build} Building NSIS
 
-NSIS version 2.07 introduced a new build system, based on \W{http://www.scons.org/}{SCons}. The build system can build the entire NSIS package so there is no longer need to build it project by project. It allows building using several simultaneous jobs, installation without an installer on both Windows and POSIX and easy compilation with debugging symbols.
+NSIS version 2.07 introduced a new build system, based on \W{http://www.scons.org/}{SCons}. The build system can build the entire NSIS package so you no longer need to build it project by project. It allows building using several simultaneous jobs, installation without an installer on both Windows and POSIX and easy compilation with debugging symbols.
 
 \#{ MSVC6.SP5 direct link: http://web.archive.org/web/20060509123628/http://download.microsoft.com/download/vstudio60ent/SP5/Wideband-Full/WIN98Me/EN-US/vs6sp5.exe }
 The official release is built with MSVC6 \W{http://web.archive.org/web/20060509123628/http://msdn2.microsoft.com/en-us/vstudio/aa718363.aspx}{Service Pack 5} \W{http://dl.dropbox.com/u/20029891/vs6sp5.exe}{(Mirror)} with the \W{http://wayback.archive.org/web/20100923113933/http://msdn.microsoft.com/en-us/vstudio/aa718349.aspx}{Processor Pack} and the February 2003 Platform SDK (5.2.3790.0).
@@ -9,7 +9,7 @@ The official release is built with MSVC6 \W{http://web.archive.org/web/200605091
 
 Source code is available in \W{http://nsis.svn.sourceforge.net/viewvc/nsis/}{SVN} and as a separate package with every \W{http://sourceforge.net/project/showfiles.php?group_id=22049}{NSIS distribution}.
 
-To build NSIS \W{http://www.python.org/}{Python}, \W{http://www.scons.org/}{SCons} must be installed. Currently, the supported version of SCons is version 1.2.0 and above. Any version of Python above 1.6 is supported.
+To build NSIS, \W{http://www.python.org/}{Python} and \W{http://www.scons.org/}{SCons} must be installed. Currently, the supported version of SCons is version 1.2.0 and above. Any version of Python above 1.6 is supported.
 
 NSIS uses the \W{http://zlib.net}{zlib} compression library. As a
 consequence the header and library files of zlib must be installed. 
@@ -19,7 +19,7 @@ installed via a package manager (apt-get, aptitude, rpm, yum) on POSIX
 platforms. Another option is to build zlib from scratch and install it.
 
 For Windows it is recommended to download \W{http://zlib.net}{zlib} from
-\W{http://nsis.sourceforge.net/Zlib}{http://nsis.sourceforge.net/Zlib}.
+\W{http://nsis.sf.net/Zlib}{http://nsis.sf.net/Zlib}.
 Extract the contents of this zip archive to a folder of your choice, e.g.
 \c{C:\\dev\\zlib-1.2.7} and set an environment variable named \c{ZLIB_W32} 
 containing this path. 
@@ -27,7 +27,7 @@ containing this path.
 \c C:\>set ZLIB_W32=C:\dev\zlib-1.2.7
 
 Alternatively the command line option ZLIB_W32 specifying the path
-could be passed with scons instead of the environment variable.
+can be passed to scons instead of the environment variable.
 
 \c C:\dev\nsis>scons ZLIB_W32=C:\dev\zlib-1.2.7
 
@@ -91,7 +91,7 @@ In case of errors about the compiler or the Platform SDK not being found, use:
 \c set VCToolkitInstallDir=C:\Path\To\VCToolkit
 \c scons MSTOOLKIT=yes
 
-The open-source \W{http://www.mingw.org/}{MinGW} can also be used to for building, but this results in noticeably larger installers. Borland C++ or Open Watcom C/C++ might also work, but haven't been tested.
+The open-source \W{http://www.mingw.org/}{MinGW} can also be used to for building but this results in noticeably larger installers. Borland C++ or Open Watcom C/C++ might also work, but haven't been tested.
 
 To compile the documentation as a CHM file, hhc.exe must be in the PATH. It is available as part of \W{http://wayback.archive.org/web/20121021033631/http://msdn.microsoft.com/en-us/library/ms669985}{HTML Help Workshop}.
 
