@@ -12,11 +12,12 @@ Sets the user variable $x with str. Note that str can contain other variables, o
 \c StrCpy $0 "a string" "" 2 # = "string"
 \c StrCpy $0 "a string" "" -3 # = "ing"
 \c StrCpy $0 "a string" 3 -4 # = "rin"
+\c StrCpy $0 "$0$0" # = "rinrin"
 
 \S2{StrLen} StrLen
 
 \c user_var(length output) str
 
-Sets user variable $x with the length of str.
+Sets user variable $x to the length of str.
 
 \c StrLen $0 "123456" # = 6

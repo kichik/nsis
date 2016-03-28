@@ -37,8 +37,8 @@ int g_symbol_set_mode;
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmdShow) {
 
   HMODULE hK32 = LoadLibraryA("KERNEL32");
-  // We can be associated with .nsi and .nsh files and when launched from the shell we inherit the current directory 
-  // so we need to prevent LoadLibrary from searching the current directory because it can contain untrusted DLLs!
+  // We can be associated with .nsi files and when launched from the shell we inherit the current directory so 
+  // we need to prevent LoadLibrary from searching the current directory because it can contain untrusted DLLs!
   FARPROC SDDA = GetProcAddress(hK32, "SetDllDirectoryA"); // WinXP.SP1+
   if (SDDA) ((BOOL(WINAPI*)(LPCSTR))SDDA)(""); // Remove the current directory from the default DLL search order
 

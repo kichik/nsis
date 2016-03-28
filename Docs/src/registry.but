@@ -111,7 +111,7 @@ Reads from entry_name in [section_name] of ini_filename and stores the value int
 
 \c user_var(output) root_key sub_key name
 
-Reads a 32 bit DWORD from the registry into the user variable $x. Valid values for root_key are listed under WriteRegStr. The error flag will be set and $x will be set to an empty string ("" which is 0) if the DWORD is not present. If the value is present, but is not a DWORD, it will be read as a string and the error flag will be set.
+Reads a 32-bit DWORD from the registry into the user variable $x. Valid values for root_key are listed under WriteRegStr. The error flag will be set and $x will be set to an empty string ("" which is 0) if the DWORD is not present. If the value is present, but is not a DWORD, it will be read as a string and the error flag will be set.
 
 \c ReadRegDWORD $0 HKLM Software\NSIS VersionBuild
 
@@ -146,7 +146,7 @@ This command writes a block of binary data to the registry. Valid values for roo
 
 \c root_key subkey key_name value
 
-This command writes a dword (32 bit integer) to the registry (a user variable can be specified). Valid values for root_key are listed under WriteRegStr. The error flag is set if the dword could not be written to the registry. If the registry key doesn't exist it will be created.
+This command writes a dword (32-bit integer) to the registry (a user variable can be specified). Valid values for root_key are listed under WriteRegStr. The error flag is set if the dword could not be written to the registry. If the registry key doesn't exist it will be created.
 
 \c WriteRegDWORD HKLM "Software\My Company\My Software" "DWORD Value" 0xDEADBEEF
 

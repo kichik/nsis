@@ -4,7 +4,7 @@
 
 \c section_index section_flags
 
-Sets the section's flags. The flag is a 32 bit integer. The first bit (lowest) represents whether the section is currently selected, the second bit represents whether the section is a section group (don't modify this unless you really know what you are doing), the third bit represents whether the section is a section group end (again, don't modify), the fourth bit represents whether the section is shown in bold or not, the fifth bit represents whether the section is read-only, the sixth bit represents whether the section group is to be automatically expanded, the seventh bit is set for section groups which are partially selected, the eighth bit is internally used for partially selected section group toggling and the ninth bit is used for reflecting section name changes. The error flag will be set if an out of range section is specified.
+Sets the section's flags. The flag is a 32-bit integer. The first bit (lowest) represents whether the section is currently selected, the second bit represents whether the section is a section group (don't modify this unless you really know what you are doing), the third bit represents whether the section is a section group end (again, don't modify), the fourth bit represents whether the section is shown in bold or not, the fifth bit represents whether the section is read-only, the sixth bit represents whether the section group is to be automatically expanded, the seventh bit is set for section groups which are partially selected, the eighth bit is internally used for partially selected section group toggling and the ninth bit is used for reflecting section name changes. The error flag will be set if an out of range section is specified.
 
 Each flag has a name, prefixed with `SF_`:
 
@@ -83,7 +83,7 @@ Sets the install types the section specified by section_index defaults to the en
 
 \c SectionSetInstTypes 0 5
 
-because the binary value for 5 is "00000101". The error flag will be set if the section index specified is out of range.
+because the binary value for 5 is "...00101". The error flag will be set if the section index specified is out of range.
 
 \c Section test test_section_id
 \c SectionEnd

@@ -20,7 +20,7 @@ Each language string has a name that identifies it and a value for each language
 
 \b Unlike defines that use curly braces - \{\}, language strings use parenthesis - ().
 
-\b If you change the language in the .onInit function, note that language strings in .onInit will still use the detected language based on the user's default Windows language, because the language is initialized after .onInit.
+\b If you change the language in the .onInit function, note that language strings in .onInit will still use the detected language based on the user's default Windows language because the language is initialized after .onInit.
 
 \b Always set language strings for every language in your script.
 
@@ -38,12 +38,12 @@ Each language string has a name that identifies it and a value for each language
 
 \c name language_id license_path
 
-Does the same as \R{langstring}{LangString} only it loads the string from a text/RTF file and defines a special LangString that can be used only by \R{alicensedata}{LicenseData}.
+Does the same as \R{langstring}{LangString} only it loads the string from a text/RTF file and defines a special LangString that can only be used by \R{alicensedata}{LicenseData}.
 
 \c LicenseLangString license ${LANG_ENGLISH} license-english.txt
 \c LicenseLangString license ${LANG_FRENCH} license-french.txt
 \c LicenseLangString license ${LANG_GERMAN} license-german.txt
-
+\c
 \c LicenseData $(license)
 
 \S0{langs} Multiple Languages

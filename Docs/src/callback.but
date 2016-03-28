@@ -116,7 +116,7 @@ Example:
 
 \S3{onverifyinstdir} .onVerifyInstDir
 
-This callback enables control over whether or not an installation path is valid for your installer. This code will be called every time the user changes the install directory, so it shouldn't do anything crazy with \R{messagebox}{MessageBox} or the likes. If this function calls \R{abort}{Abort}, the installation path in $INSTDIR is deemed invalid.
+This callback enables control over whether or not an installation path is valid for your installer. This code will be called every time the user changes the install directory, so it shouldn't do anything crazy with \R{messagebox}{MessageBox} or the like. If this function calls \R{abort}{Abort}, the installation path in $INSTDIR is deemed invalid.
 
 Example:
 

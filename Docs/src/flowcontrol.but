@@ -2,7 +2,7 @@
 
 \S2{abort} Abort
 
-\c user_message
+\c [user_message]
 
 Cancels the install, stops execution of script, and displays user_message in the status display. Note: you can use this from \R{callbacks}{Callback functions} to do special things. \R{pages}{Page callbacks} also uses Abort for special purposes.
 
@@ -53,7 +53,6 @@ Gets the address of the current instruction (the GetCurrentAddress) and stores i
 \c FunctionEnd
 \c
 \c Section
-\c   DetailPrint "section"
 \c   DetailPrint "section"
 \c   GetCurrentAddress $0
 \c   Goto callFunc
