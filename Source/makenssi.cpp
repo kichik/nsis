@@ -561,7 +561,7 @@ static inline int makensismain(int argc, TCHAR **argv)
 #ifndef NSIS_CONFIG_CONST_DATA_PATH
           main_conf = get_dir_name(get_executable_dir(argv[0]));
 #else
-          main_conf = PosixBug_CtoTString(PREFIX_CONF);
+          main_conf = _T(PREFIX_CONF);
 #endif
         else
           main_conf = env_var;
