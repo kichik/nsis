@@ -2,7 +2,7 @@
 
 \S0{compcommands} Compiler Utility Commands
 
-These commands are similar to the C preprocessor in terms of purpose and functionality. They allow file inclusion, conditional compilation, executable header packing, and processes execution during the build process. Note: none of these commands allow use of variables.
+These commands are similar to the C preprocessor in terms of purpose and functionality. They allow file inclusion, conditional compilation, executable header packing and processe execution during the build process. Note: none of these commands allow use of variables.
 
 \S1{include} !include
 
@@ -31,7 +31,7 @@ Adds another include directory to the include directories list. This list is sea
 
 Causes the NSIS compiler to scan the given directory for plug-in DLLs.
 
-\c !addplugindir myplugin
+\c !addplugindir ..\myplugin
 \c MyPlugin::SomeFunction
 
 \S1{appendfile} !appendfile
@@ -57,7 +57,7 @@ This command will change the compiler to the new directory, new_path. new_path c
 
 \S1{delfile} !delfile
 
-\c file
+\c [/nonfatal] file
 
 This command deletes a file.
 
@@ -91,7 +91,7 @@ This command will execute 'command' using a call to CreateProcess(). Unlike \R{s
 
 On POSIX platforms, !execute will use system() just like \R{system}{!system}.
 
-\c !execute '"%WINDIR%\notepad.exe" "${NSISDIR}\license.txt"'
+\c !execute '"$%WINDIR%\notepad.exe" "${NSISDIR}\COPYING"'
 
 \S1{packhdr} !packhdr
 
@@ -107,7 +107,7 @@ This option makes the compiler use an external EXE packer (such as \W{http://www
 
 This command will execute 'command' using a call to system(), and if the return value compared (using 'compare') to 'comparevalue' is false, execution will halt. 'compare' can be '<' or '>' or '<>' or '='.
 
-\c !system '"%WINDIR%\notepad.exe" "${NSISDIR}\license.txt"'
+\c !system '"%WINDIR%\notepad.exe" "${NSISDIR}\COPYING"'
 \c !system 'echo !define something > newinclude.nsh'
 \c !include newinclude.nsh
 \c !ifdef something
@@ -184,7 +184,7 @@ NSIS version used to build the script.
 
 \S1{scopepredefines} Scope Predefines
 
-Standard predefines that contain information of the current code scope.
+Standard predefines that contain information about the current code scope.
 
 \S2{} $\{__GLOBAL__\}
 
@@ -326,4 +326,4 @@ Defined in \R{ssection}{section}, \R{ffunction}{function} or \R{pageex}{PageEx} 
 
 \S1{compenvvar} $%envVarName%
 
-$%envVarName% will be replaced on compile time by the environment variable envVarName.
+$%envVarName% will be replaced at compile time by the environment variable envVarName.

@@ -141,7 +141,7 @@
 
 \H{installerfilename} Get Installer Filename
 
-\c  System::Call 'kernel32::GetModuleFileNameA(i 0, t .R0, i 1024) i r1'
+\c  System::Call 'kernel32::GetModuleFileNameA(i 0, t .R0, i ${NSIS_MAX_STRLEN}) i r1'
 \c  ;$R0 will contain the installer filename
 
 \H{multipleinstances} Prevent Multiple Instances
@@ -155,7 +155,7 @@ Put the following code in your \R{oninit}{.onInit function}:
 \c    MessageBox MB_OK|MB_ICONEXCLAMATION "The installer is already running."
 \c    Abort
 
-'myMutex' should be replaced by a unique value. 
+'myMutex' must be replaced by a unique value. 
 
 \H{morefuncs} More
 

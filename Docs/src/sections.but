@@ -4,7 +4,7 @@ Each NSIS installer contains one or more sections. Each of these sections are cr
 
 \b Each section contains zero or more instructions.
 
-\b Sections are executed in order by the resulting installer, and if ComponentText is set, the user will have the option of disabling/enabling each visible section.
+\b Sections are executed in order by the resulting installer, and if a component page is used, the user will have the option of disabling/enabling each visible section.
 
 \b If a section's name is 'Uninstall' or is prefixed with 'un.', it's an uninstaller section.
 

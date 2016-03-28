@@ -100,7 +100,7 @@ For more information about functions see \R{functions}{Functions}.
 
 Conditionally executing code, or executing code in a loop can be done using \R{strcmp}{StrCmp}, \R{intcmp}{IntCmp}, \R{iferrors}{IfErrors}, \R{goto}{Goto} and more. However, there's a much easier way do this. The LogicLib provides some very simple macros that allow easy construction of complex logical structures. Its syntax, explained in \L{../Include/LogicLib.nsh}{LogicLib.nsh}, is similar to other programming languages and can prove to be simpler for beginners and advanced users alike.
 
-For example, checking a value of a variable without the LogicLib can be done as followed.
+For example, checking a value of a variable without the LogicLib can be done as followes.
 
 \c StrCmp $0 'some value' 0 +3
 \c   MessageBox MB_OK '$$0 is some value'
@@ -112,7 +112,7 @@ For example, checking a value of a variable without the LogicLib can be done as 
 \c   MessageBox MB_OK '$$0 is "$0"'
 \c done:
 
-However, with the LogicLib, the code gets is much more readable and easy to understand, as can be seen in the following example.
+However, with the LogicLib the code is much more readable and easy to understand, as can be seen in the following example.
 
 \c ${If} $0 == 'some value'
 \c   MessageBox MB_OK '$$0 is some value'
@@ -145,7 +145,7 @@ Multiple conditions are also supported. The following example will notify the us
 
 The LogicLib removes the need for labels and relative jumps, thus prevents label name conflicts, and removes the need to manually adjust relative jump offsets every time the script is changed.
 
-It also simplifies looping, by supporting the common while, do and for loops. All of the following examples count to five using the LogicLib.
+It also simplifies looping by supporting the common while, do and for loops. All of the following examples count to five using the LogicLib.
 
 \c StrCpy $R1 0
 \c ${While} $R1 < 5
@@ -163,7 +163,7 @@ It also simplifies looping, by supporting the common while, do and for loops. Al
 \c   DetailPrint $R1
 \c ${LoopUntil} $R1 >= 5
 
-To use the LogicLib, the following line needs to put at the top of the script.
+To use the LogicLib the following line needs to be added near the top of the script.
 
 \c !include LogicLib.nsh
 
@@ -207,13 +207,13 @@ The more you work with NSIS the more complex the scripts will become. This will 
 
 \S1{tutscriptexecution} Script Execution
 
-When a user runs an installer or an uninstaller, pages are displayed in the order they were defined in the script. When the instfiles page is reached, sections, corresponding to the selected components, are executed in the order they were defined in the script. If the components page is not displayed, all sections are executed, assuming they were not unselected or somehow disabled by the script.
+When a user runs an installer or uninstaller, pages are displayed in the order they were defined in the script. When the instfiles page is reached, sections, corresponding to the selected components, are executed in the order they were defined in the script. If the components page is not displayed, all sections are executed, assuming they were not unselected or somehow disabled by the script.
 
 Beside code in sections, there's also code in callback functions. If defined, they might be executed before the sections code. For example, the \R{oninit}{.onInit} callback function is executed before anything else in the script. There are also \R{pagecallbacks_explain}{page callback functions} which are executed at certain points of the page display process.
 
 \S1{compilercommands} Compiler Commands
 
-Compiler commands will be executed on compile time on your computer. They can be used for conditional compilation, to include header files, to execute applications, to change the working directory and more. The most common usage is defines. Defines are compile time constants. You can define your product's version number and use it in your script. For example:
+Compiler commands will be executed at compile time on your computer. They can be used for conditional compilation, to include header files, to execute applications, to change the working directory and more. The most common usage is defines. Defines are compile time constants. You can define your product's version number and use it in your script. For example:
 
 \c !define VERSION "1.0.3"
 \c Name "My Program ${VERSION}"
@@ -221,7 +221,7 @@ Compiler commands will be executed on compile time on your computer. They can be
 
 For more information about defines see \R{compdefines}{Conditional Compilation}.
 
-Another common use is macros. Macros are used to insert code on compile time, depending on defines and using the values of the defines. The macro's commands are inserted at compile time. This allows you to write a general code only once and use it a lot of times but with a few changes. For example:
+Another common use is macros. Macros are used to insert code at compile time, depending on defines and using the values of the defines. The macro's commands are inserted at compile time. This allows you to write a general code only once and use it a lot of times but with a few changes. For example:
 
 \c !macro MyFunc UN
 \c Function ${UN}MyFunc
@@ -242,19 +242,19 @@ For more information see \R{comptime}{Compile Time Commands}.
 
 The second thing you need to do in order to create your installer after you have created your script is to compile your script. MakeNSIS.exe is the NSIS compiler. It reads your script, parses it and creates an installer for you.
 
-To compile you have to right-click your .nsi file and select Compile NSIS Script. This will cause MakeNSISW, the NSIS Compiler Interface, to launch and call MakeNSIS to compile your script. MakeNSISW will get the output of MakeNSIS and present it to you in a window where you can see it, copy it, test the installer, browse for it and more. Using makensis.exe from the command prompt is also possible.
+To compile you can right-click your .nsi file and select Compile NSIS Script. This will cause MakeNSISW, the NSIS Compiler Interface, to launch and call MakeNSIS to compile your script. MakeNSISW receives the output of MakeNSIS and presents it to you in a window where you can see it, copy it, test the installer and more. Using makensis.exe from the command prompt is also possible.
 
 The compiler will check your script and give you warnings or an error. If an error occurs (i.e. 2 parameters required but only 1 given) the compiler will abort and a short error message including the line number will be displayed. For non-critical errors the compiler will give a warning (i.e. two DirText commands in one script). If your script has no errors the compiler will output an installer for you to distribute.
 
 NSIS supports different compression methods, as explained \R{asetcompressor}{here}. ZLIB is the default compression method, which is fast and uses only a little bit of memory. LZMA is a good method for the creation of small installers for internet distribution. BZIP2 usually compresses better than ZLIB but not as good as LZMA, it is useful if you need lower memory usage or fast script compilation.
 
-It it also possible to compile Windows installer on Linux, BSD or Mac OS X servers. See \R{build}{Building NSIS} for details.
+It it also possible to compile Windows installers on Linux, BSD or Mac OS X servers. See \R{build}{Building NSIS} for details.
 
 \H{tutmodernui} Modern UI
 
 A popular user interface for NSIS is the Modern User Interface. It has an interface like the wizards of recent Windows versions. The Modern UI is not only a customized resource file, it has a lots of new interface elements. It features a white header to describe the current step, a description area on the component page, a welcome page, a finish page that allows the user to run the application or reboot the system and more.
 
-For more information, check the \L{../Docs/Modern UI 2/Readme.html}{Modern UI 2 Readme} and the \L{../Examples/Modern UI}{Modern UI Examples}.
+For more information, see the \L{../Docs/Modern UI 2/Readme.html}{Modern UI 2 Readme} and the \L{../Examples/Modern UI}{Modern UI Examples}.
 
 \H{tutplugin} Plug-ins
 
@@ -267,12 +267,15 @@ A plug-in call looks like this:
 Every plug-in's function has its own requirements when it comes to parameters, some will require none, some will accept as many parameters as you want to send. Examples:
 
 \c nsExec::ExecToLog '"${NSISDIR}\makensis.exe" /CMDHELP'
+\c Pop $0 ; Process exit code or "error"
 \c InstallOptions::dialog "$PLUGINSDIR\test.ini"
+\c Pop $0 ; success/back/cancel/error
 \c NSISdl::download http://download.nullsoft.com/winamp/client/winamp291_lite.exe $R0
+\c Pop $0 ; "success" or a error code
 
 The plug-ins that NSIS knows of are listed at the top of the output of the compiler. NSIS searches for plug-ins in the \L{../Plugins/}{Plugins folder} under your NSIS directory and lists all of their available functions. You can use \R{addplugindir}{!addplugindir} to tell NSIS to search in other directories too.
 
-The NSIS distribution already included many plug-ins. \L{../Docs/InstallOptions/Readme.html}{InstallOptions} is a popular plug-in that allows you to create custom pages, in combination with the NSIS Page commands (See \R{pages}{Pages}). The \L{../Docs/StartMenu/Readme.txt}{Startmenu plug-in} provides a page that allows the user to choose a Start Menu folder. There are a lot of plug-ins for different purposes, have a look at the \L{../Docs/}{Docs folder} for help files and examples. You can find additional plug-ins on-line: \W{http://nsis.sf.net/}{NSIS Wiki}.
+The NSIS distribution already includes many plug-ins. \L{../Docs/InstallOptions/Readme.html}{InstallOptions} is a popular plug-in that allows you to create custom pages, in combination with the NSIS Page commands (See \R{pages}{Pages}). The \L{../Docs/StartMenu/Readme.txt}{Startmenu plug-in} provides a page that allows the user to choose a Start Menu folder. There are a lot of plug-ins for different purposes, have a look at the \L{../Docs/}{Docs folder} for help files and examples. You can find additional plug-ins online: \W{http://nsis.sf.net/}{NSIS Wiki}.
 
 You can also create a plug-in yourself. C/C++ and Delphi header files are already available, see the \L{../Examples/Plugin/}{example plugin} for how to do this. Source code of included plug-ins can also be found in the source code package.
 

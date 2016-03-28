@@ -50,7 +50,7 @@ Reads a byte from a file opened with FileOpen. The byte is stored in the output 
 
 \c handle offset [mode] [user_var(new position)]
 
-Seeks a file opened with FileOpen. If mode is omitted or specified as SET, the file is positioned to "offset", relative to the beginning of the file. If mode is specified as CUR, then the file is positioned to "offset", relative to the current file position. If mode is specified as END, then the file is positioned to "offset", relative to the end of the file. If the final parameter "new position" is specified, the new file position will be stored to that variable.
+Seeks a file opened with FileOpen. If mode is omitted or specified as SET, the file is positioned to "offset", relative to the beginning of the file. If mode is specified as CUR, then the file is positioned to "offset", relative to the current file position. If mode is specified as END, then the file is positioned to "offset", relative to the end of the file. If the final parameter "new position" is specified, the new file position will be stored in that variable.
 
 \c ClearErrors
 \c FileOpen $0 $INSTDIR\file.dat r
@@ -83,7 +83,7 @@ Writes the integer interpretation of 'string' to a file opened with FileOpen. Of
 \c FileWriteByte file_handle "13"
 \c FileWriteByte file_handle "10"
 
-If an error occurs while writing, the error flag will be set. Note that the low byte of the integer is used, i.e. writing 256 is the same as writing 0, etc.
+If an error occurs while writing, the error flag will be set. Note that only the low byte of the integer is used, i.e. writing 256 is the same as writing 0, etc.
 
 \S2{FindClose} FindClose
 

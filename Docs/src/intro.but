@@ -2,7 +2,7 @@
 
 \H{intro-about} About NSIS
 
-An installer is the first experience of a user with your application.
+The installer is your application's first impression.
 Slow or unsuccessful software installations are the most irritating computer problems.
 A quick and user friendly installer is therefore an essential part of your software product. 
 
@@ -10,23 +10,23 @@ NSIS (Nullsoft Scriptable Install System) is a tool that allows programmers to c
 It is released under an open source license and is \R{license}{completely free for any use}. 
 
 NSIS creates installers that are capable of installing, uninstalling, setting system settings, extracting files, etc.
-Because it's based on script files, you can fully control every part of your installers.
-The script language supports variables, functions, string manipulation, just like a normal programming language - but designed for the creation of installers.
+Because it's based on script files you can fully control every part of your installer.
+The script language supports variables, functions and string manipulation, just like a normal programming language - but designed for the creation of installers.
 Even with all these features, NSIS is still the smallest installer system available. With the default options, it has an overhead of only 34 KB.
 
 \H{intro-features} Main Features
 
 \\<b\\>Small overhead size\\</b\\>
 
-NSIS is created to be small, fast and efficient. While other installers often add hundreds of kilobytes or several megabytes to your installer data, a full featured NSIS installer has an overhead of only 34 KB.
+NSIS has been designed to be small, fast and efficient. While other installers often add hundreds of kilobytes or several megabytes to your installer data, a full featured NSIS installer has an overhead of only 34 KB.
 
 \\<b\\>Compatible with all major Windows versions\\</b\\>
 
-You can create a single installer that is compatible with Windows 95, Windows 98, Windows ME, Windows NT, Windows 2000, Windows XP, Windows Server 2003 and Windows Vista.
+You can create a single installer that is compatible with Windows 95, 98, ME, NT4, 2000, XP, 2003, Vista, Server 2008, 7, Server 2008R2, 8 and Server 2012
 
 \\<b\\>Unique compression methods\\</b\\>
 
-You can choose between three different integrated compression method (ZLib, BZip2, LZMA). The new LZMA compression gives better results than any other common compression method. You don't have to use large self-extracting archive modules or other applications. The compression support is included in the 34 KB overhead.
+You can choose between three different integrated compression methods (ZLib, BZip2, LZMA). The LZMA compression gives better results than any other common compression method. You don't have to use large self-extracting archive modules or other applications. The compression support is included in the 34 KB overhead.
 
 \\<b\\>Script based\\</b\\>
 
@@ -46,7 +46,7 @@ You can create custom wizard pages to get user input or integrate configuration 
 
 \\<b\\>Plug-in system\\</b\\>
 
-NSIS can be extended with plug-ins that can communicate with the installer. They can be written in C, C++, Delphi or another language and can be used to perform installation tasks or extend the installer interface. You can use the plug-in with a single line of script code. Plug-ins can also be compressed like other installation data and will only be included when you are using the provided features.
+NSIS can be extended with plug-ins that can communicate with the installer. They can be written in C, C++, Delphi or another language and can be used to perform installation tasks or extend the installer interface. You can use the plug-in with a single line of script code. Plug-ins can also be compressed like other installation data and will only be included when you are using their features.
 
 \\<b\\>Support for web installation, file patching\\</b\\>
 

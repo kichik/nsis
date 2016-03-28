@@ -25,7 +25,7 @@ Instead, the following should be used.
 
 \c \\<b\\>on\\</b\\>|off
 
-This command specifies whether the user should be able to skip a file or not. A user has an option to skip a file if \R{asetoverwrite}{SetOverwrite} is set to on (default) and the installer fails to open a file for writing when trying to extract a file. If \e{off} is used the ignore button which allows the user to skip the file will not show and the user will only have an option to abort the installation (Cancel button) or retry opening the file for writing (Retry button). If \e{on} is used the user will have an option to skip the file (error flag will be set - see \R{asetoverwrite}{SetOverwrite}).
+This command specifies whether the user should be able to skip a file or not. A user has an option to skip a file if \R{asetoverwrite}{SetOverwrite} is set to on (default) and the installer fails to open a file for writing when trying to extract a file. If \e{off} is used the ignore button which allows the user to skip the file will not be shown and the user will only have an option to abort the installation (Cancel button) or retry opening the file for writing (Retry button). If \e{on} is used the user will have an option to skip the file (error flag will be set - see \R{asetoverwrite}{SetOverwrite}).
 
 \S2{afilebufsize} FileBufSize
 
@@ -45,7 +45,7 @@ Note that this option has no effect when solid compression is used.
 
 \c [/SOLID] [/FINAL] \\<b\\>zlib\\</b\\>|bzip2|lzma
 
-This command sets the compression algorithm used to compress files/data in the installer. It can only be used outside of sections and functions and before any data is compressed. Different compression methods can not be used for different files in the same installer. It is recommended to use it on the very top of the script to avoid compilation errors.
+This command sets the compression algorithm used to compress files/data in the installer. It can only be used outside of sections and functions and before any data is compressed. Different compression methods can not be used for different files in the same installer. It is recommended to use it at the very top of the script to avoid compilation errors.
 
 Three compression methods are supported: ZLIB, BZIP2 and LZMA.
 
@@ -69,7 +69,7 @@ Sets the dictionary size in megabytes (MB) used by the LZMA compressor (default 
 
 \c \\<b\\>on\\</b\\>|off
 
-This command tells the compiler whether or not to do datablock optimizations. Datablock optimizations have the compiler check to see if any data being added to the data block is already in the data block, and if so, it is simply referenced as opposed to added (can save a little bit of size). It is highly recommended to leave this option on.
+This command tells the compiler whether or not to do datablock optimizations. Datablock optimizations causes the compiler to check to see if any data being added to the data block is already in the data block, and if so, it is simply referenced as opposed to added (can save a little bit of size). It is highly recommended to leave this option on.
 
 \S2{asetdatesave} SetDateSave
 
@@ -93,7 +93,7 @@ This command sets the overwrite flag which is used by the \R{file}{File} command
 
 \c  [/LANG=lang_id] keyname value
 
-Adds a field in the Version Tab of the File Properties. This can either be a field provided by the system or a user defined field.
+Adds a string entry to the version information stored in the installer and uninstaller. These can be viewed in the File Properties Version or Details tab. This can either be a field provided by the system or a user defined field.
 The following fields are provided by the System:
 
 \b ProductName

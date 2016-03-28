@@ -324,9 +324,9 @@ Call functions:
 \\<b\\>Example (1):\\</b\\>
 
 \c Section
-\c 	; Find file size "C:\WINDOWS\Explorer.exe" in kilobytes
+\c 	; Find file size "$WINDIR\Explorer.exe" in kilobytes
 \c 
-\c 	${GetSize} "C:\WINDOWS" "/M=Explorer.exe /S=0K /G=0" $0 $1 $2
+\c 	${GetSize} "$WINDIR" "/M=Explorer.exe /S=0K /G=0" $0 $1 $2
 \c 	; $0="220" Kb
 \c 	; $1="1"   files
 \c 	; $2=""    directories
@@ -338,9 +338,9 @@ Call functions:
 \\<b\\>Example (2):\\</b\\>
 
 \c Section
-\c 	; Find folder size "C:\Installs\Reanimator\Drivers" in megabytes
+\c 	; Find folder size "C:\Installs\Drivers" in megabytes
 \c 
-\c 	${GetSize} "C:\Installs\Reanimator\Drivers" "/S=0M" $0 $1 $2
+\c 	${GetSize} "C:\Installs\Drivers" "/S=0M" $0 $1 $2
 \c 	; $0="132" Mb
 \c 	; $1="555" files
 \c 	; $2="55"  directories
@@ -352,9 +352,9 @@ Call functions:
 \\<b\\>Example (3):\\</b\\>
 
 \c Section
-\c 	; Find sum of files and folders "C:\WINDOWS" (no subfolders)
+\c 	; Find sum of files and folders "$WINDIR" (no subfolders)
 \c 
-\c 	${GetSize} "C:\WINDOWS" "/G=0" $0 $1 $2
+\c 	${GetSize} "$WINDIR" "/G=0" $0 $1 $2
 \c 	; $0=""    size
 \c 	; $1="253" files
 \c 	; $2="46"  directories
@@ -948,7 +948,7 @@ Call functions:
 \\<b\\>Example:\\</b\\>
 
 \c Section
-\c 	WriteRegStr HKCR "Winamp.File\DefaultIcon" "" "$PROGRAMFILES\Winamp\WINAMP.EXE,2"
+\c 	WriteRegStr HKCR "Winamp.File\DefaultIcon" "" "$INSTDIR\WINAMP.EXE,2"
 \c 
 \c 	${RefreshShellIcons}
 \c SectionEnd
