@@ -104,13 +104,13 @@ void __declspec(dllexport) SelectFileDialog(HWND hwndParent, int string_size, TC
   ofn.hwndOwner = hwndParent;
   ofn.lpstrFilter = filter;
   ofn.lpstrFile = path;
-  ofn.nMaxFile  = sizeof(path);
+  ofn.nMaxFile  = COUNTOF(path);
   //ofn.Flags = pField->nFlags & (OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_CREATEPROMPT | OFN_EXPLORER);
   ofn.Flags = OFN_CREATEPROMPT | OFN_EXPLORER;
 
-  popstringn(type, sizeof(type));
-  popstringn(path, sizeof(path));
-  popstringn(filter, sizeof(filter));
+  popstringn(type, COUNTOF(type));
+  popstringn(path, COUNTOF(path));
+  popstringn(filter, COUNTOF(filter));
 
   save = !lstrcmpi(type, _T("save"));
 
@@ -148,7 +148,7 @@ void __declspec(dllexport) SelectFileDialog(HWND hwndParent, int string_size, TC
     *p = 0;
   }
 
-  GetCurrentDirectory(sizeof(currentDirectory), currentDirectory); // save working dir
+  GetCurrentDirectory(COUNTOF(currentDirectory), currentDirectory); // save working dir
 
   if ((save ? GetSaveFileName(&ofn) : GetOpenFileName(&ofn)))
   {
