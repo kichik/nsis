@@ -120,18 +120,20 @@ VIAddVersionKey "LegalCopyright" "http://nsis.sf.net/License"
 ;Installer Sections
 
 !macro InstallPlugin pi
-  File "/oname=$InstDir\Plugins\x86-ansi\${pi}.dll" ..\Plugins\x86-ansi\${pi}.dll
-  File "/oname=$InstDir\Plugins\x86-unicode\${pi}.dll" ..\Plugins\x86-unicode\${pi}.dll
   !ifdef NSIS_MAKENSIS64
     File "/oname=$InstDir\Plugins\amd64-unicode\${pi}.dll" ..\Plugins\amd64-unicode\${pi}.dll
+  !else
+    File "/oname=$InstDir\Plugins\x86-ansi\${pi}.dll" ..\Plugins\x86-ansi\${pi}.dll
+    File "/oname=$InstDir\Plugins\x86-unicode\${pi}.dll" ..\Plugins\x86-unicode\${pi}.dll
   !endif
 !macroend
 
 !macro InstallStub stub
-  File ..\Stubs\${stub}-x86-ansi
-  File ..\Stubs\${stub}-x86-unicode
   !ifdef NSIS_MAKENSIS64
     File ..\Stubs\${stub}-amd64-unicode
+  !else
+    File ..\Stubs\${stub}-x86-ansi
+    File ..\Stubs\${stub}-x86-unicode
   !endif
 !macroend
 
