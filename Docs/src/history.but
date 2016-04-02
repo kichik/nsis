@@ -3,13 +3,15 @@
 
 \H{v2.51} 2.51
 
-Released on ? ?th, 2016
+Released on April 1st, 2016
 
 \S1{v2.51-cl} Changelog
 
 \S2{} Minor Changes
 
 \b More security hardening to prevent dll hijacking
+
+\b Backported support for system 'p' type and logiclib P and Z tests
 
 \S2{} Translations
 
