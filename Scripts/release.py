@@ -384,8 +384,8 @@ def UploadFiles():
 		folder = 'NSIS 3 Pre-release/' + VERSION
 
 	sftpcmds = file('sftp-commands', 'w')
-	sftpcmds.write('mkdir "/home/frs/project/n/ns/nsis/%s"\n' % folder)
-	sftpcmds.write('cd "/home/frs/project/n/ns/nsis/%s"\n' % folder)
+	sftpcmds.write('mkdir "/home/frs/project/nsis/%s"\n' % folder)
+	sftpcmds.write('cd "/home/frs/project/nsis/%s"\n' % folder)
 	sftpcmds.write('put %s.tar.bz2\n' % newverdir)
 	sftpcmds.write('put %s\\nsis-%s-setup.exe\n' % (newverdir, VERSION))
 	sftpcmds.write('put %s\\nsis-%s.zip\n' % (newverdir, VERSION))
