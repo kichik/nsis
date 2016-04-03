@@ -6,13 +6,15 @@ Released on April 3nd, 2016
 
 \S1{v3.0rc1-cl} Changelog
 
-\S2{} Minor Changes
-
-\b Documentation improvements
+\S2{} Major Changes
 
 \b Fixed \R{appendfile}{!appendfile} on POSIX and LogicLib $\{Switch\}
 
 \b More security hardening to prevent dll hijacking
+
+\S2{} Minor Changes
+
+\b Documentation improvements
 
 \b The name of the uninstaller created in %TEMP%\\~nsu.tmp has changed from %UNIQUE%u_.exe to Un_%UNIQUE%.exe
 
