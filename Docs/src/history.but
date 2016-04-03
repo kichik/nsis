@@ -1,16 +1,22 @@
 \A{history} Changelog and Release Notes
 
-\H{v3.0b4} 3.0 Beta 4
+\H{v3.0rc1} 3.0 Release Candidate 1
 
-Released on ? ?th, 2016
+Released on April 3nd, 2016
 
-\S1{v3.0b4-cl} Changelog
+\S1{v3.0rc1-cl} Changelog
 
 \S2{} Minor Changes
+
+\b Documentation improvements
+
+\b Fixed \R{appendfile}{!appendfile} on POSIX and LogicLib $\{Switch\}
 
 \b More security hardening to prevent dll hijacking
 
 \b The name of the uninstaller created in %TEMP%\\~nsu.tmp has changed from %UNIQUE%u_.exe to Un_%UNIQUE%.exe
+
+\b Various warning and error improvments
 
 \S2{} Translations
 
@@ -339,6 +345,22 @@ Released on May 19th, 2013
 \b Added Scottish Gaelic (GunChleoc)
 
 \b Fixed Korean MUI_[UN]TEXT_FINISH_INFO_* (\W{http://sourceforge.net/support/tracker.php?aid=3541515}{bug #3541515})
+
+\H{v2.51} 2.51
+
+Released on April 1st, 2016
+
+\S1{v2.51-cl} Changelog
+
+\S2{} Minor Changes
+
+\b More security hardening to prevent dll hijacking
+
+\b Backported support for system 'p' type and logiclib P and Z tests
+
+\S2{} Translations
+
+\b Added missing MULTIUSER_* entries to Japanese.nsh (\W{http://sf.net/p/nsis/patches/266}{patch #266})
 
 \H{v2.50} 2.50
 
