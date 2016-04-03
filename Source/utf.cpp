@@ -130,9 +130,9 @@ size_t CharEncConv::GuessOutputSize(size_t cbConverted)
   if (!cch) return 0;
   switch(cus)
   {
-  case 1: zt = !!((char*)m_Result)[--cch]; break;
-  case 2: zt = !!((WORD*)m_Result)[--cch]; break;
-  case 4: zt = !!((UINT32*)m_Result)[--cch]; break;
+  case 1: zt = !((char*)m_Result)[--cch]; break;
+  case 2: zt = !((WORD*)m_Result)[--cch]; break;
+  case 4: zt = !((UINT32*)m_Result)[--cch]; break;
   }
   return (cch + (zt ? 0 : 1)) * cus;
 }
