@@ -1,5 +1,6 @@
 ﻿# Header, don't edit
 NLF v6
+# Start editing here
 # Language ID
 1030
 # Font and size - dash (-) means default
@@ -59,11 +60,11 @@ G&ennemse...
 # ^ShowDetailsBtn
 Vis &detaljer
 # ^ClickNext
-Tryk Næste for at fortsætte.
+Tryk på Næste for at fortsætte.
 # ^ClickInstall
-Tryk Installer for at starte installationen.
+Tryk på Installer for at starte installationen.
 # ^ClickUninstall
-Tryk Afinstaller for at starte afinstallationen.
+Tryk på Afinstaller for at starte afinstallationen.
 # ^Name
 Navn
 # ^Completed
@@ -99,13 +100,13 @@ Vælg de komponenter der skal afinstalleres:
 # ^UnComponentsSubText2
 Eller vælg de tillægskomponenter du ønsker at afinstallere:
 # ^DirText
-Installationsguiden vil installere $(^NameDA) i følgende mappe. For at installere i en anden mappe, tryk Gennemse og vælg en anden mappe. $_CLICK
+Installationsguiden vil installere $(^NameDA) i følgende mappe. For at installere i en anden mappe, tryk på Gennemse og vælg en anden mappe. $_CLICK
 # ^DirSubText
 Destinationsmappe
 # ^DirBrowseText
 Vælg den mappe $(^NameDA) skal installeres i:
 # ^UnDirText
-Installationsguiden vil afinstallere $(^NameDA) fra følgende mappe. For at afinstallere fra en anden mappe, tryk Gennemse og vælg en anden mappe. $_CLICK
+Installationsguiden vil afinstallere $(^NameDA) fra følgende mappe. For at afinstallere fra en anden mappe, tryk på Gennemse og vælg en anden mappe. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
@@ -119,9 +120,9 @@ $(^NameDA) vil blive afinstalleret fra følgende mappe. $_CLICK
 # ^UninstallingSubText
 Afinstallerer fra:
 # ^FileError
-Fejl ved skrivning af fil: \r\n\t"$0"\r\nTryk Afbryd for at afbryde installationen,\r\nPrøv Igen for at prøve at skrive til filen, eller\r\nIgnorer for at springe over denne fil
+Fejl ved skrivning af fil: \r\n\r\n$0\r\n\r\nTryk på Afbryd for at stoppe installationen,\r\nPrøv igen for at prøve igen, eller\r\nIgnorer for at springe over denne fil.
 # ^FileError_NoIgnore
-Fejl ved åbning af fil: \r\n\t"$0"\r\nTryk Prøv Igen for at prøve at skrive til filen, eller\r\nAfbryd for at afbryde installationen
+Fejl ved åbning af fil: \r\n\r\n$0\r\n\r\nTryk på Prøv igen for at prøve igen, eller\r\nAfbryd for at stoppe installationen.
 # ^CantWrite
 "Kan ikke skrive: "
 # ^CopyFailed

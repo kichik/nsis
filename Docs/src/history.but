@@ -1,5 +1,15 @@
 \A{history} Changelog and Release Notes
 
+\H{v3.0rc2} 3.0 Release Candidate 2
+
+Released on ???? ?nd, 2016
+
+\S1{v3.0rc2-cl} Changelog
+
+\S2{} Translations
+
+\b Minor tweaks to Danish.nlf (scootergrisen) (\W{http://sf.net/p/nsis/bugs/1140}{bug #1140})
+
 \H{v3.0rc1} 3.0 Release Candidate 1
 
 Released on April 3nd, 2016
