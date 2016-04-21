@@ -92,6 +92,14 @@ int WINAPI _tWinMain(HINSTANCE hInst,HINSTANCE hOldInst,LPTSTR CmdLineParams,int
   return (int) DialogBox(g_hInstance,MAKEINTRESOURCE(IDD_DIALOG1),0,DlgProc);
 }
 
+static bool IsEncrypted(unz_file_info&zfi)
+{
+  const unsigned short gpf_encrypted = (1<< 0); // 2.0.0+
+  const unsigned short gpf_encstrong = (1<< 6); // 5.0.0+ APPNOTE says that bit 0 MUST be set if bit 6 is set
+  const unsigned short gpf_enccntdir = (1<<13); // 6.2.0+ Central Directory Encryption
+  return (zfi.flag & (gpf_encrypted|gpf_enccntdir)) != 0;
+}
+
 static void doRMDir(TCHAR *buf)
 {
   HANDLE h;
@@ -205,6 +213,13 @@ int tempzip_make(HWND hwndDlg, TCHAR *fn)
 
     // ZREAD uses byte size, not TCHAR length.
     unzGetCurrentFileInfo(f,&info,filenameA,sizeof(filenameA),NULL,0,NULL,0);
+    if (IsEncrypted(info))
+    {
+      if (f) unzClose(f);
+      g_extracting = 0;
+      MessageBox(hwndDlg,_T("Encrypted ZIP files are not supported!"),g_errcaption,MB_OK|MB_ICONSTOP);
+      return 1;
+    }
 
     // was zip created on MS-DOS/Windows?
     if ((info.version & 0xFF00) == 0)
@@ -217,6 +232,7 @@ int tempzip_make(HWND hwndDlg, TCHAR *fn)
     if (MultiByteToWideChar(CP_ACP, 0, filenameA, -1, filename, MAX_PATH) == 0)
     {
       if (f) unzClose(f);
+      g_extracting = 0;
       MessageBox(hwndDlg,_T("Error converting filename to Unicode"), g_errcaption, MB_OK|MB_ICONSTOP);
       return 1;
     }

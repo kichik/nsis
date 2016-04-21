@@ -6,6 +6,10 @@ Released on ???? ?nd, 2016
 
 \S1{v3.0rc2-cl} Changelog
 
+\S2{} Minor Changes
+
+\b Zip2Exe aborts if the zip file is encrypted
+
 \S2{} Translations
 
 \b Minor tweaks to Danish.nlf (scootergrisen) (\W{http://sf.net/p/nsis/bugs/1140}{bug #1140})
