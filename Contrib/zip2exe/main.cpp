@@ -19,6 +19,9 @@
 #endif
 
 /*
+version 0.38 (by Anders Kjersem)
+* Aborts if the zip file is encrypted
+
 version 0.37 (by Anders Kjersem)
 * Unicode checkbox
 * No output log length limit
