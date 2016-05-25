@@ -6,6 +6,10 @@ Released on ???? ?nd, 2016
 
 \S1{v3.0rc2-cl} Changelog
 
+\S2{} Major Changes
+
+\b Fixed LogicLib nested ${Select} bug
+
 \S2{} Minor Changes
 
 \b Zip2Exe aborts if the zip file is encrypted (\W{http://sf.net/p/nsis/bugs/1141}{bug #1141})

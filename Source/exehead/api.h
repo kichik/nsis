@@ -46,7 +46,7 @@ typedef struct
   int abort;
   int exec_reboot; // NSIS_SUPPORT_REBOOT
   int reboot_called; // NSIS_SUPPORT_REBOOT
-  int XXX_cur_insttype; // depreacted
+  int XXX_cur_insttype; // Deprecated
   int plugin_api_version; // see NSISPIAPIVER_CURR
                           // used to be XXX_insttype_changed
   int silent; // NSIS_CONFIG_SILENT_SUPPORT
