@@ -14,6 +14,8 @@ Released on ???? ?nd, 2016
 
 \b Zip2Exe aborts if the zip file is encrypted (\W{http://sf.net/p/nsis/bugs/1141}{bug #1141})
 
+\b Added LogicLib & operator
+
 \S2{} Translations
 
 \b Minor tweaks to Danish.nlf (scootergrisen) (\W{http://sf.net/p/nsis/bugs/1140}{bug #1140})
