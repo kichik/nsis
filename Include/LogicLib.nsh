@@ -47,7 +47,7 @@
 ;       Case-sensitive string tests:
 ;         a S== b; a S!= b
 ;       Standard (built-in) signed integer tests:
-;         a = b; a <> b; a < b; a >= b; a > b; a <= b
+;         a = b; a <> b; a < b; a >= b; a > b; a <= b; a & b
 ;       Standard (built-in) unsigned integer tests:
 ;         a U< b; a U>= b; a U> b; a U<= b
 ;       64-bit integer tests (using System.dll):
@@ -204,6 +204,12 @@
 
   !macro _<= _a _b _t _f
     !insertmacro _> `${_a}` `${_b}` `${_f}` `${_t}`
+  !macroend
+
+  !macro _& _a _b _t _f
+    !insertmacro _LOGICLIB_TEMP
+    IntOp $_LOGICLIB_TEMP `${_a}` & `${_b}`
+    !insertmacro _<> $_LOGICLIB_TEMP 0 `${_t}` `${_f}`
   !macroend
 
   ; Unsigned integer tests (NB: no need for extra equality tests)
