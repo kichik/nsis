@@ -23,6 +23,7 @@
 #include "ResourceEditor.h"
 
 #ifndef _WIN32
+#  include <unistd.h>
 #  include <iconv.h>
 #  include <stdio.h>
 #endif
