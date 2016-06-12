@@ -27,6 +27,7 @@ else:
 
 html = Split("""
    #Menu/index.html
+   #Menu/notinstalled.html
 """)
 
 images = Split("""
