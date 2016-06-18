@@ -300,7 +300,7 @@
       Pop $0
 
       # is server?
-      IntCmp $0 ${VER_NT_WORKSTATION} _winver_noserver _winver_noserver ""
+      IntCmp $0 ${VER_NT_WORKSTATION} _winver_noserver
         IntOp $__WINVERSP $__WINVERSP | ${_WINVER_NTSRVBIT}
       _winver_noserver:
 
