@@ -16,7 +16,7 @@
     #pragma hdrstop
 #endif
 
-#if wxUSE_HTML && wxUSE_STREAMS
+#if wxUSE_HTML && wxUSE_STREAMS && !defined(NSISMENU_NOLINKTAGHANDLER)
 
 #ifndef WXPRECOMP
 #endif
@@ -27,7 +27,13 @@
 #include <wx/filefn.h>
 #include <wx/stdpaths.h>
 
+#include <nsis-sconf.h>
+
 FORCE_LINK_ME(nslinks)
+
+// TODO: These helper function declarations should be in a header file
+typedef enum { SUT_UNKNOWN = 0, SUT_BIN = 0x14, SUT_DOC = 0x24, SUT_WEB = 0x34 } SPECIALURLTYPE;
+SPECIALURLTYPE TransformUrl(wxString&Url);
 
 class wxHtmlAnchorCell : public wxHtmlCell
 {
@@ -56,28 +62,21 @@ TAG_HANDLER_BEGIN(A, "A")
         {
             wxHtmlLinkInfo oldlnk = m_WParser->GetLink();
             wxColour oldclr = m_WParser->GetActualColor();
-            wxString name(tag.GetParam( wxT("HREF") )), target;
+            wxString href(tag.GetParam( wxT("HREF") )), target;
 
             if (tag.HasParam( wxT("TARGET") )) target = tag.GetParam( wxT("TARGET") );
 
             wxColour colour = m_WParser->GetLinkColor();
-            wxHtmlLinkInfo linkInfo(name, target);
-
-            if (name.Left(3).IsSameAs((const wxChar*) wxT("EX:"), false))
+            wxHtmlLinkInfo linkInfo(href, target);
+            
+            wxString location = href;
+            SPECIALURLTYPE ut = TransformUrl(location);
+            if (ut == SUT_BIN || ut == SUT_DOC)
             {
-                wxString url = name.Mid(3);
-                if (!url.Left(7).IsSameAs((const wxChar*) wxT("http://"), false) && !url.Left(6).IsSameAs((const wxChar*) wxT("irc://"), false))
+                if (!wxFileExists(location) && !wxDirExists(location))
                 {
-                    wxString exePath = wxStandardPaths::Get().GetExecutablePath();
-                    wxString path = ::wxPathOnly(exePath);
-                    path.Append(wxFileName::GetPathSeparators()[0]);
-                    path.Append(url);
-
-                    if (!::wxFileExists(path) && !::wxDirExists(path))
-                    {
-                        colour = wxColour(0x80, 0x80, 0x80);
-                        linkInfo = wxHtmlLinkInfo(wxT("notinstalled.html"), target);
-                    }
+                    colour = wxColour(0x80, 0x80, 0x80);
+                    linkInfo = wxHtmlLinkInfo(wxT("notinstalled.html"), target);
                 }
             }
 
@@ -102,11 +101,11 @@ TAG_HANDLER_END(A)
 
 
 
-TAGS_MODULE_BEGIN(CustomLinks)
+TAGS_MODULE_BEGIN(Links)
 
     TAGS_MODULE_ADD(A)
 
-TAGS_MODULE_END(CustomLinks)
+TAGS_MODULE_END(Links)
 
 
 #endif
