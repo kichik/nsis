@@ -84,6 +84,8 @@ if env['PLATFORM'] != 'win32' and WhereIs('wx-config') or \
 
    env.DistributeMenu(html, alias='install-utils')
    env.DistributeMenu(images, path='images', alias='install-utils')
+   if env['PLATFORM'] != 'win32':
+      env.DistributeBin(resources);
 
 else:
    

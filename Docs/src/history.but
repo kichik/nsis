@@ -8,13 +8,15 @@ Released on ???? ?nd, 2016
 
 \S2{} Major Changes
 
-\b Fixed LogicLib nested ${Select} bug
+\b Fixed LogicLib nested $\{Select\} bug
 
 \S2{} Minor Changes
 
 \b Zip2Exe aborts if the zip file is encrypted (\W{http://sf.net/p/nsis/bugs/1141}{bug #1141})
 
 \b Added LogicLib & operator
+
+\b NSIS Menu POSIX fixes (\W{http://sf.net/p/nsis/bugs/1144}{bug #1144})
 
 \S2{} Translations
 
