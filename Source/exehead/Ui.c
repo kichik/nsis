@@ -1762,7 +1762,7 @@ static INT_PTR CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
         // 1st pass - determine clipboard memory required.
         item.iSubItem   = 0;
         item.pszText    = g_tmp;
-        item.cchTextMax = sizeof(g_tmp) - 1;
+        item.cchTextMax = COUNTOF(g_tmp);
         i = count;
         while (i--)
           // Add 2 for the CR/LF combination that must follow every line.
