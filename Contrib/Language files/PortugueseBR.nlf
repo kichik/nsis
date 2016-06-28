@@ -10,7 +10,7 @@ NLF v6
 1252
 # RTL - anything else than RTL means LTR
 -
-# Translation by Diego Marcos and Felipe
+# Translation by Diego Pedroso and Felipe
 # ^Branding
 Sistema de Instalação Nullsoft %s
 # ^SetupCaption
@@ -18,25 +18,25 @@ Instalação do $(^Name)
 # ^UninstallCaption
 Desinstalação do $(^Name)
 # ^LicenseSubCaption
-: Acordo da Licença
+: Acordo de licença
 # ^ComponentsSubCaption
-: Opções da Instalação
+: Opções de instalação
 # ^DirSubCaption
-: Pasta da Instalação
+: Pasta de instalação
 # ^InstallingSubCaption
 : Instalando
 # ^CompletedSubCaption
-: Completado
+: Concluído
 # ^UnComponentsSubCaption
-: Opções da Desinstalação
+: Opções de desinstalação
 # ^UnDirSubCaption
-: Pasta da Desinstalação
+: Pasta de desinstalação
 # ^ConfirmSubCaption
 : Confirmação
 # ^UninstallingSubCaption
 : Desinstalando
 # ^UnCompletedSubCaption
-: Completado
+: Concluído
 # ^BackBtn
 < &Voltar
 # ^NextBtn
@@ -44,9 +44,9 @@ Desinstalação do $(^Name)
 # ^AgreeBtn
 Eu &Concordo
 # ^AcceptBtn
-Eu &aceito os termos do Acordo da Licença
+Eu &aceito os termos do acordo de licença
 # ^DontAcceptBtn
-Eu &não aceito os termos do Acordo da Licença
+Eu &não aceito os termos do acordo de licença
 # ^InstallBtn
 &Instalar
 # ^UninstallBtn
@@ -56,7 +56,7 @@ Cancelar
 # ^CloseBtn
 &Fechar
 # ^BrowseBtn
-P&rocurar...
+&Procurar...
 # ^ShowDetailsBtn
 Mostrar &detalhes
 # ^ClickNext
@@ -68,19 +68,19 @@ Clique em Desinstalar para iniciar a desinstalação.
 # ^Name
 Nome
 # ^Completed
-Completado
+Concluído
 # ^LicenseText
-Por favor reveja o acordo da licença antes de instalar o $(^NameDA). Se você aceita todos os termos do acordo, clique em Eu Concordo.
+Por favor reveja o acordo de licença antes de instalar o $(^NameDA). Se você aceita todos os termos do acordo, clique em Eu Concordo.
 # ^LicenseTextCB
-Por favor reveja o acordo da licença antes de instalar o $(^NameDA). Se você aceita todos os termos do acordo, clique na caixa de seleção abaixo. $_CLICK
+Por favor reveja o acordo de licença antes de instalar o $(^NameDA). Se você aceita todos os termos do acordo, clique na caixa de seleção abaixo. $_CLICK
 # ^LicenseTextRB
-Por favor reveja o acordo da licença antes de instalar o $(^NameDA). Se você aceita todos os termos do acordo, selecione a primeira opção abaixo. $_CLICK
+Por favor reveja o acordo de licença antes de instalar o $(^NameDA). Se você aceita todos os termos do acordo, selecione a primeira opção abaixo. $_CLICK
 # ^UnLicenseText
-Por favor reveja o acordo da licença antes de desinstalar o $(^NameDA). Se você aceita todos os termos do acordo, clique em Eu Concordo.
+Por favor reveja o acordo de licença antes de desinstalar o $(^NameDA). Se você aceita todos os termos do acordo, clique em Eu Concordo.
 # ^UnLicenseTextCB
-Por favor reveja o acordo da licença antes de desinstalar o $(^NameDA). Se você aceita todos os termos do acordo, clique na caixa de seleção abaixo. $_CLICK
+Por favor reveja o acordo de licença antes de desinstalar o $(^NameDA). Se você aceita todos os termos do acordo, clique na caixa de seleção abaixo. $_CLICK
 # ^UnLicenseTextRB
-Por favor reveja o acordo da licença antes de desinstalar o $(^NameDA). Se você aceita todos os termos do acordo, selecione a primeira opção abaixo. $_CLICK
+Por favor reveja o acordo de licença antes de desinstalar o $(^NameDA). Se você aceita todos os termos do acordo, selecione a primeira opção abaixo. $_CLICK
 # ^Custom
 Personalizado
 # ^ComponentsText
@@ -88,7 +88,7 @@ Marque os componentes que você quer instalar e desmarque os componentes que voc
 # ^ComponentsSubText1
 Selecione o tipo de instalação:
 # ^ComponentsSubText2_NoInstTypes
-Selecione os componentes a instalar:
+Selecione os componentes para instalar:
 # ^ComponentsSubText2
 Ou, selecione os componentes opcionais que você deseja instalar:
 # ^UnComponentsText
@@ -96,13 +96,13 @@ Marque os componentes que você quer desinstalar e desmarque os componentes que 
 # ^UnComponentsSubText1
 Selecione o tipo de desinstalação:
 # ^UnComponentsSubText2_NoInstTypes
-Selecione os componentes a desinstalar:
+Selecione os componentes para desinstalar:
 # ^UnComponentsSubText2
 Ou, selecione os componentes opcionais que você deseja desinstalar:
 # ^DirText
 O $(^NameDA) será instalado na seguinte pasta. Para instalar em uma pasta diferente, clique em Procurar e selecione outra pasta. $_CLICK
 # ^DirSubText
-Pasta Destino
+Pasta de destino
 # ^DirBrowseText
 Selecione a pasta para instalar o $(^NameDA):
 # ^UnDirText
@@ -120,31 +120,31 @@ O $(^NameDA) será desinstalada da seguinte pasta. $_CLICK
 # ^UninstallingSubText
 Desinstalando de:
 # ^FileError
-Erro ao abrir o arquivo para a gravação: \r\n\r\n$0\r\n\r\nClique em Abortar para parar a instalação,\r\nRepetir para tentar de novo, ou\r\nIgnorar para pular este arquivo.
+Erro ao abrir o arquivo para a gravação: \r\n\r\n$0\r\n\r\nClique em Anular para parar a instalação,\r\nRepetir para tentar de novo, ou\r\nIgnorar para pular este arquivo.
 # ^FileError_NoIgnore
 Erro ao abrir o arquivo para a gravação: \r\n\r\n$0\r\n\r\nClique em Repetir para tentar de novo, ou\r\nCancelar para parar a instalação.
 # ^CantWrite
 "Não pôde gravar: "
 # ^CopyFailed
-Falhou em copiar
+Falha ao copiar
 # ^CopyTo
 "Copiar para "
 # ^Registering
 "Registrando: "
 # ^Unregistering
-"Desfazendo o registro: "
+"Desregistrando: "
 # ^SymbolNotFound
-"Não pôde achar o símbolo: "
+"Símbolo não encontrado: "
 # ^CouldNotLoad
 "Não pôde carregar: "
 # ^CreateFolder
-"Criar pasta: "
+"Criando pasta: "
 # ^CreateShortcut
-"Criar atalho: "
+"Criando atalho: "
 # ^CreatedUninstaller
-"Desinstalador criado: "
+"Criando desinstalador: "
 # ^Delete
-"Apagar o arquivo: "
+"Apagando: "
 # ^DeleteOnReboot
 "Apagar ao reiniciar: "
 # ^ErrorCreatingShortcut
@@ -156,31 +156,31 @@ Erro ao descomprimir os dados! Instalador corrompido?
 # ^ErrorRegistering
 Erro ao registar a DLL
 # ^ExecShell
-"ExecShell: "
+"Executando pelo shell: "
 # ^Exec
-"Executar: "
+"Executando: "
 # ^Extract
-"Extrair: "
+"Extraindo: "
 # ^ErrorWriting
-"Extrair: erro ao gravar o arquivo "
+"Extraindo: (erro ao gravar) "
 # ^InvalidOpcode
-Instalador corrompido: opcode inválido
+Instalador corrompido: código de operação inválido
 # ^NoOLE
 "Sem OLE para: "
 # ^OutputFolder
 "Pasta de saída: "
 # ^RemoveFolder
-"Remover a pasta: "
+"Removendo a pasta: "
 # ^RenameOnReboot
 "Renomear ao reiniciar: "
 # ^Rename
-"Renomear: "
+"Renomeando: "
 # ^Skipped
-"Ignorado: "
+"Ignorando: "
 # ^CopyDetails
-Copiar os Detalhes para a Área de Transferência
+Copiar os detalhes para a área de transferência
 # ^LogInstall
-Pôr no Log o processo de instalação
+Registrar o processo de instalação
 # ^Byte
 B
 # ^Kilo
