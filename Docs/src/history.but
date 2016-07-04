@@ -10,6 +10,8 @@ Released on ???? ?nd, 2016
 
 \b Fixed LogicLib nested $\{Select\} bug
 
+\b \R{makensis}{!makensis} command must force Unicode output to be UTF-8 (\W{http://sf.net/p/nsis/bugs/1147}{bug #1147})
+
 \S2{} Minor Changes
 
 \b Zip2Exe aborts if the zip file is encrypted (\W{http://sf.net/p/nsis/bugs/1141}{bug #1141})
