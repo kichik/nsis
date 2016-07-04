@@ -3213,7 +3213,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           compile+= _T(" ") OPT_STR _T("v"), wsprintf(buf,_T("%d"),get_verbosity()), compile+=buf;
 #ifdef _WIN32 // POSIX does not support -OUTPUTCHARSET
           extern NStreamEncoding g_outputenc;
-          compile+= _T(" ") OPT_STR _T("OCS "), g_outputenc.GetCPDisplayName(buf), compile+=buf;
+          NStreamEncoding childenc=g_outputenc;
+          if (childenc.IsUnicode()) childenc.SetCodepage(NStreamEncoding::UTF8); // UTF-8 is the only Unicode encoding supported by RunChildProcessRedirected
+          compile+= _T(" ") OPT_STR _T("OCS "), childenc.GetCPDisplayName(buf), compile+=buf;
 #endif
           if (*exec) compile+= _T(" "), compile+=exec;
           exec=compile.c_str();
