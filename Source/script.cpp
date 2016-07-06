@@ -3195,7 +3195,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         const TCHAR *cmdname=get_commandtoken_name(which_token);
         const TCHAR *exec=line.gettoken_str(1), *define=0;
         int comp=line.gettoken_enum(2,_T("<\0>\0<>\0=\0ignore\0"));
-        int validparams=true, ret=-1, cmpv=0;
+        int validparams=true, ret=-1, cmpv=0, forceutf8=0;
         switch(line.getnumtokens()-1)
         {
         case 1: comp=4; break;
@@ -3211,11 +3211,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           TCHAR buf[33];
           compile=_T("\""), compile+=get_executable_path(g_argv0), compile+= _T("\"");
           compile+= _T(" ") OPT_STR _T("v"), wsprintf(buf,_T("%d"),get_verbosity()), compile+=buf;
-#ifdef _WIN32 // POSIX does not support -OUTPUTCHARSET
-          extern NStreamEncoding g_outputenc;
-          NStreamEncoding childenc=g_outputenc;
-          if (childenc.IsUnicode()) childenc.SetCodepage(NStreamEncoding::UTF8); // UTF-8 is the only Unicode encoding supported by RunChildProcessRedirected
-          compile+= _T(" ") OPT_STR _T("OCS "), childenc.GetCPDisplayName(buf), compile+=buf;
+#if defined(_WIN32) && defined(_UNICODE) // POSIX does not support -OUTPUTCHARSET
+          compile+= _T(" ") OPT_STR _T("OCS UTF8"), forceutf8++; // Force UTF-8 and disable batch-file workaround in RunChildProcessRedirected
 #endif
           if (*exec) compile+= _T(" "), compile+=exec;
           exec=compile.c_str();
@@ -3224,7 +3221,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (preprocessonly) PREPROCESSONLY_BEGINCOMMENT();
 #ifdef _WIN32
         if (TOK_P_SYSTEMEXEC != which_token)
-          ret=RunChildProcessRedirected(exec);
+          ret=RunChildProcessRedirected(exec, forceutf8 ? true : false);
         else
 #endif //~ _WIN32
           ret=sane_system(exec);
