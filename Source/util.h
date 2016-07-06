@@ -109,8 +109,8 @@ void PrintColorFmtMsg(unsigned int type, const TCHAR *fmtstr, va_list args);
 void FlushOutputAndResetPrintColor();
 #ifdef _WIN32
 #ifdef _UNICODE
-int RunChildProcessRedirected(LPCWSTR cmdprefix, LPCWSTR cmdmain);
-inline int RunChildProcessRedirected(LPCWSTR cmd) { return RunChildProcessRedirected(0, cmd); }
+int RunChildProcessRedirected(LPCWSTR cmdprefix, LPCWSTR cmdmain, bool ForceUTF8 = false);
+inline int RunChildProcessRedirected(LPCWSTR cmd, bool ForceUTF8 = false) { return RunChildProcessRedirected(0, cmd, ForceUTF8); }
 #ifdef MAKENSIS
 typedef struct {
   HANDLE hNative;
@@ -140,7 +140,7 @@ int WinStdIO_wprintf(const wchar_t*Fmt, ...);
 #define _vftprintf WinStdIO_vfwprintf
 #endif // ~MAKENSIS
 #else
-int RunChildProcessRedirected(LPCSTR cmd);
+int RunChildProcessRedirected(LPCSTR cmd, bool ForceUTF8 = false);
 #endif // ~_UNICODE
 #define ResetPrintColor() FlushOutputAndResetPrintColor() // For reset ONLY, use PrintColorFmtMsg(0,NULL ...
 #define SetPrintColorWARN() PrintColorFmtMsg(1|0x10, NULL, (va_list)NULL)

@@ -848,7 +848,7 @@ const TCHAR* GetFriendlySize(UINT64 n, unsigned int&fn, GETFRIENDLYSIZEFLAGS f)
 
 #ifdef _WIN32
 #ifdef _UNICODE
-int RunChildProcessRedirected(LPCWSTR cmdprefix, LPCWSTR cmdmain)
+int RunChildProcessRedirected(LPCWSTR cmdprefix, LPCWSTR cmdmain, bool ForceUTF8)
 {
   // We have to deliver the requested output encoding to our host (if any) and the 
   // only way to do that is to convert the pipe content from what we hope is UTF-8.
@@ -865,7 +865,7 @@ int RunChildProcessRedirected(LPCWSTR cmdprefix, LPCWSTR cmdmain)
   SECURITY_DESCRIPTOR sd = { 1, 0, SE_DACL_PRESENT, NULL, };
   SECURITY_ATTRIBUTES sa = { sizeof(sa), &sd, TRUE };
   const UINT orgwinconcp = GetConsoleCP(), orgwinconoutcp = GetConsoleOutputCP();
-  if (orgwinconoutcp == oemcp) cp = oemcp, mbtwcf = 0; // Bug #1092: Batch files not a fan of UTF-8
+  if (orgwinconoutcp == oemcp && !ForceUTF8) cp = oemcp, mbtwcf = 0; // Bug #1092: Batch files not a fan of UTF-8
   HANDLE hSIRd, hSIWr, hSORd, hSOWr;
   PROCESS_INFORMATION pi;
   if (!CreatePipe(&hSIRd, &hSIWr, &sa, 0)) // XCopy.exe does not work without a valid StdIn!
@@ -961,7 +961,7 @@ switchcp:   cp = orgwinconoutcp, mbtwcf = 0, utf8 = false;
   return childec;
 }
 #else
-int RunChildProcessRedirected(LPCSTR cmd)
+int RunChildProcessRedirected(LPCSTR cmd, bool ForceUTF8)
 {
   STARTUPINFO si = { sizeof(STARTUPINFO), };
   PROCESS_INFORMATION pi;
