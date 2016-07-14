@@ -3179,12 +3179,15 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_P_FINALIZE:
       {
         TCHAR* cmdstr=line.gettoken_str(1);
+        int validparams=false;
         struct postbuild_cmd *newcmd, *prevcmd;
-        newcmd = (struct postbuild_cmd*) (new BYTE[FIELD_OFFSET(struct postbuild_cmd,cmd[_tcsclen(cmdstr)+1])]);
-        newcmd->next=NULL;
-        _tcscpy(newcmd->cmd,cmdstr);
-        for (prevcmd=postbuild_cmds; prevcmd && prevcmd->next;) prevcmd = prevcmd->next;
-        if (prevcmd) prevcmd->next = newcmd; else postbuild_cmds = newcmd;
+        newcmd=(struct postbuild_cmd*) (new BYTE[FIELD_OFFSET(struct postbuild_cmd,cmd[_tcsclen(cmdstr)+1])]);
+        newcmd->next=NULL, _tcscpy(newcmd->cmd,cmdstr);
+        newcmd->cmpop=line.gettoken_enum(2,_T("<\0>\0<>\0=\0ignore\0")), newcmd->cmpval=line.gettoken_int(3,&validparams);
+        if (line.getnumtokens() == 1+1) newcmd->cmpop=4, validparams=true; // just a command, ignore the exit code
+        if (newcmd->cmpop == -1 || !validparams) PRINTHELP();
+        for (prevcmd=postbuild_cmds; prevcmd && prevcmd->next;) prevcmd=prevcmd->next;
+        if (prevcmd) prevcmd->next=newcmd; else postbuild_cmds=newcmd;
         SCRIPT_MSG(_T("!finalize: \"%") NPRIs _T("\"\n"),cmdstr);
       }
     return PS_OK;
@@ -3194,6 +3197,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       {
         const TCHAR *cmdname=get_commandtoken_name(which_token);
         const TCHAR *exec=line.gettoken_str(1), *define=0;
+        TCHAR buf[33];
         int comp=line.gettoken_enum(2,_T("<\0>\0<>\0=\0ignore\0"));
         int validparams=true, ret=-1, cmpv=0, forceutf8=0;
         switch(line.getnumtokens()-1)
@@ -3208,7 +3212,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (TOK_P_MAKENSIS == which_token)
         {
           extern const TCHAR *g_argv0;
-          TCHAR buf[33];
           compile=_T("\""), compile+=get_executable_path(g_argv0), compile+= _T("\"");
           compile+= _T(" ") OPT_STR _T("v"), wsprintf(buf,_T("%d"),get_verbosity()), compile+=buf;
 #if defined(_WIN32) && defined(_UNICODE) // POSIX does not support -OUTPUTCHARSET
@@ -3225,18 +3228,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         else
 #endif //~ _WIN32
           ret=sane_system(exec);
-        if (comp == 0 && ret < cmpv);
-        else if (comp == 1 && ret > cmpv);
-        else if (comp == 2 && ret != cmpv);
-        else if (comp == 3 && ret == cmpv);
-        else if (comp == 4);
-        else if (comp == 5)
+        if (comp == 5)
         {
-          TCHAR buf[25];
           _stprintf(buf,_T("%d"),ret);
           definedlist.set(define,buf);
         }
-        else
+        else if (!check_external_exitcode(ret,comp,cmpv))
         {
           ERROR_MSG(_T("%") NPRIs _T(": returned %d, aborting\n"),cmdname,ret);
           return PS_ERROR;

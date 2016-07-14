@@ -118,7 +118,7 @@ This option makes the compiler use an external EXE packer (such as \W{http://www
 
 \S1{finalize} !finalize
 
-\c command
+\c command [compare comparevalue]
 
 This option will execute 'command' using a call to system() after the output EXE has been generated. You can typically use it to sign (Authenticode) your installer. If 'command' contains a '%1' it will be replaced by the executables filename.
 

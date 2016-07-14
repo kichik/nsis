@@ -448,8 +448,10 @@ class CEXEBuild {
     struct postbuild_cmd
     {
       struct postbuild_cmd*next;
+      int cmpop, cmpval;
       TCHAR cmd[1];
     } *postbuild_cmds;
+    int check_external_exitcode(int exitcode, int op, int val);
 
     TCHAR build_packname[1024], build_packcmd[1024];
     int build_overwrite, build_last_overwrite, build_crcchk,

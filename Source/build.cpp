@@ -3026,7 +3026,12 @@ int CEXEBuild::write_output(void)
 
       SCRIPT_MSG(_T("\nFinalize command: %") NPRIs _T("\n"),cmdstr);
       int ret = sane_system(cmdstr);
-      if (ret != 0) INFO_MSG(_T("Finalize command returned %d\n"),ret);
+      if (!check_external_exitcode(ret, cmd->cmpop, cmd->cmpval))
+      {
+        ERROR_MSG(_T("%") NPRIs _T(" %d, aborting\n"), _T("Finalize command returned"), ret);
+        return PS_ERROR;
+      }
+      if (ret != 0) INFO_MSG(_T("%") NPRIs _T(" %d\n"), _T("Finalize command returned"), ret);
       free(cmdstrbuf);
     }
   }
@@ -3938,3 +3943,15 @@ void CEXEBuild::set_code_type_predefines(const TCHAR *value)
   }
 }
 
+int CEXEBuild::check_external_exitcode(int exitcode, int op, int val)
+{
+  switch(op)
+  {
+  case 0: return exitcode < val;
+  case 1: return exitcode > val;
+  case 2: return exitcode != val;
+  case 3: return exitcode == val;
+  case 4: return -1; // ignore
+  }
+  return 0;
+}

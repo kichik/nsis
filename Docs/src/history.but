@@ -1,5 +1,15 @@
 \A{history} Changelog and Release Notes
 
+\H{v3.0} 3.0
+
+Released on ???? ?th, 2016
+
+\S1{v3.0-cl} Changelog
+
+\S2{} Minor Changes
+
+\b \R{finalize}{!finalize} command now supports the same compare operators as !system (\W{http://sf.net/p/nsis/bugs/1148}{bug #1148})
+
 \H{v3.0rc2} 3.0 Release Candidate 2
 
 Released on July 8th, 2016
