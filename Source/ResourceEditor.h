@@ -180,7 +180,7 @@ public:
 
   void Destroy();
 
-  DWORD m_dwWrittenAt;
+  long m_dwWrittenAt;
 
 private:
   IMAGE_RESOURCE_DIRECTORY m_rdDir;
@@ -204,7 +204,7 @@ public:
 
   CResourceDataEntry* GetDataEntry();
 
-  DWORD m_dwWrittenAt;
+  long m_dwWrittenAt;
 
 private:
   bool m_bHasName;
@@ -232,7 +232,7 @@ public:
   DWORD GetCodePage();
   DWORD GetOffset();
 
-  DWORD m_dwWrittenAt;
+  long m_dwWrittenAt;
 
 private:
   BYTE* m_pbData;
