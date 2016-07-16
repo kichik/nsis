@@ -20,23 +20,23 @@ Desinstalação do $(^Name)
 # ^LicenseSubCaption
 : Acordo de licença
 # ^ComponentsSubCaption
-: Opções de instalação
+: Opções da Instalação
 # ^DirSubCaption
-: Pasta de instalação
+: Pasta da Instalação
 # ^InstallingSubCaption
 : Instalando
 # ^CompletedSubCaption
-: Concluído
+: Completado
 # ^UnComponentsSubCaption
-: Opções de desinstalação
+: Opções da Desinstalação
 # ^UnDirSubCaption
-: Pasta de desinstalação
+: Pasta da Desinstalação
 # ^ConfirmSubCaption
 : Confirmação
 # ^UninstallingSubCaption
 : Desinstalando
 # ^UnCompletedSubCaption
-: Concluído
+: Completado
 # ^BackBtn
 < &Voltar
 # ^NextBtn
@@ -44,9 +44,9 @@ Desinstalação do $(^Name)
 # ^AgreeBtn
 Eu &Concordo
 # ^AcceptBtn
-Eu &aceito os termos do acordo de licença
+Eu &aceito os termos do Acordo de Licença
 # ^DontAcceptBtn
-Eu &não aceito os termos do acordo de licença
+Eu &não aceito os termos do Acordo de Licença
 # ^InstallBtn
 &Instalar
 # ^UninstallBtn
@@ -56,19 +56,19 @@ Cancelar
 # ^CloseBtn
 &Fechar
 # ^BrowseBtn
-&Procurar...
+P&rocurar...
 # ^ShowDetailsBtn
 Mostrar &detalhes
 # ^ClickNext
-Clique em Próximo para continuar.
+Clique em Próximo pra continuar.
 # ^ClickInstall
-Clique em Instalar para iniciar a instalação.
+Clique em Instalar pra iniciar a instalação.
 # ^ClickUninstall
-Clique em Desinstalar para iniciar a desinstalação.
+Clique em Desinstalar pra iniciar a desinstalação.
 # ^Name
 Nome
 # ^Completed
-Concluído
+Completado
 # ^LicenseText
 Por favor reveja o acordo de licença antes de instalar o $(^NameDA). Se você aceita todos os termos do acordo, clique em Eu Concordo.
 # ^LicenseTextCB
@@ -88,7 +88,7 @@ Marque os componentes que você quer instalar e desmarque os componentes que voc
 # ^ComponentsSubText1
 Selecione o tipo de instalação:
 # ^ComponentsSubText2_NoInstTypes
-Selecione os componentes para instalar:
+Selecione os componentes a instalar:
 # ^ComponentsSubText2
 Ou, selecione os componentes opcionais que você deseja instalar:
 # ^UnComponentsText
@@ -96,17 +96,17 @@ Marque os componentes que você quer desinstalar e desmarque os componentes que 
 # ^UnComponentsSubText1
 Selecione o tipo de desinstalação:
 # ^UnComponentsSubText2_NoInstTypes
-Selecione os componentes para desinstalar:
+Selecione os componentes a desinstalar:
 # ^UnComponentsSubText2
 Ou, selecione os componentes opcionais que você deseja desinstalar:
 # ^DirText
-O $(^NameDA) será instalado na seguinte pasta. Para instalar em uma pasta diferente, clique em Procurar e selecione outra pasta. $_CLICK
+O $(^NameDA) será instalado na seguinte pasta. Pra instalar em uma pasta diferente, clique em Procurar e selecione outra pasta. $_CLICK
 # ^DirSubText
-Pasta de destino
+Pasta Destino
 # ^DirBrowseText
 Selecione a pasta para instalar o $(^NameDA):
 # ^UnDirText
-O $(^NameDA) será desinstalado da seguinte pasta. Para desinstalar de uma pasta diferente, clique em Procurar e selecione outra pasta. $_CLICK
+O $(^NameDA) será desinstalado da seguinte pasta. Pra desinstalar de uma pasta diferente, clique em Procurar e selecione outra pasta. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
@@ -116,35 +116,35 @@ Selecione a pasta de onde desinstalar o $(^NameDA):
 # ^SpaceRequired
 "Espaço requerido: "
 # ^UninstallingText
-O $(^NameDA) será desinstalada da seguinte pasta. $_CLICK
+O $(^NameDA) será desinstalado da seguinte pasta. $_CLICK
 # ^UninstallingSubText
 Desinstalando de:
 # ^FileError
-Erro ao abrir o arquivo para a gravação: \r\n\r\n$0\r\n\r\nClique em Anular para parar a instalação,\r\nRepetir para tentar de novo, ou\r\nIgnorar para pular este arquivo.
+Erro ao abrir o arquivo para a gravação: \r\n\r\n$0\r\n\r\nClique em Abortar pra parar a instalação,\r\nRepetir pra tentar de novo, ou\r\nIgnorar pra pular este arquivo.
 # ^FileError_NoIgnore
-Erro ao abrir o arquivo para a gravação: \r\n\r\n$0\r\n\r\nClique em Repetir para tentar de novo, ou\r\nCancelar para parar a instalação.
+Erro ao abrir o arquivo para a gravação: \r\n\r\n$0\r\n\r\nClique em Repetir pra tentar de novo, ou\r\nCancelar pra parar a instalação.
 # ^CantWrite
 "Não pôde gravar: "
 # ^CopyFailed
-Falha ao copiar
+Falhou em copiar
 # ^CopyTo
 "Copiar para "
 # ^Registering
 "Registrando: "
 # ^Unregistering
-"Desregistrando: "
+"Desfazendo o registro: "
 # ^SymbolNotFound
-"Símbolo não encontrado: "
+"Não pôde achar o símbolo: "
 # ^CouldNotLoad
 "Não pôde carregar: "
 # ^CreateFolder
-"Criando pasta: "
+"Criar pasta: "
 # ^CreateShortcut
-"Criando atalho: "
+"Criar atalho: "
 # ^CreatedUninstaller
-"Criando desinstalador: "
+"Desinstalador criado: "
 # ^Delete
-"Apagando: "
+"Apagar o arquivo: "
 # ^DeleteOnReboot
 "Apagar ao reiniciar: "
 # ^ErrorCreatingShortcut
@@ -156,29 +156,29 @@ Erro ao descomprimir os dados! Instalador corrompido?
 # ^ErrorRegistering
 Erro ao registar a DLL
 # ^ExecShell
-"Executando pelo shell: "
+"ExecShell: "
 # ^Exec
-"Executando: "
+"Executar: "
 # ^Extract
-"Extraindo: "
+"Extrair: "
 # ^ErrorWriting
-"Extraindo: (erro ao gravar) "
+"Extrair: erro ao gravar o arquivo "
 # ^InvalidOpcode
-Instalador corrompido: código de operação inválido
+Instalador corrompido: opcode inválido
 # ^NoOLE
 "Sem OLE para: "
 # ^OutputFolder
 "Pasta de saída: "
 # ^RemoveFolder
-"Removendo a pasta: "
+"Remover a pasta: "
 # ^RenameOnReboot
 "Renomear ao reiniciar: "
 # ^Rename
-"Renomeando: "
+"Renomear: "
 # ^Skipped
-"Ignorando: "
+"Ignorado: "
 # ^CopyDetails
-Copiar os detalhes para a área de transferência
+Copiar os Detalhes para a Área de Transferência
 # ^LogInstall
 Registrar o processo de instalação
 # ^Byte
