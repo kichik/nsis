@@ -10,6 +10,10 @@ Released on ???? ?th, 2016
 
 \b \R{finalize}{!finalize} command now supports the same compare operators as !system (\W{http://sf.net/p/nsis/bugs/1148}{bug #1148})
 
+\S2{} Translations
+
+\b PortugueseBR fixes (\W{http://sf.net/p/nsis/bugs/1149}{bug #1149})
+
 \H{v3.0rc2} 3.0 Release Candidate 2
 
 Released on July 8th, 2016
