@@ -66,6 +66,7 @@ DOCS_CONFIG = {
 		},
 		'NSISDOCTARGET' : 'NSIS.chm',
 		'NSISDOCINSTALLBASEPATH' : '',
+		'NSISEXTRADIST' : [],
 	},
 	'html' :
 	{
@@ -75,8 +76,9 @@ DOCS_CONFIG = {
 		'NSISDOCHTMLFIXES' :
 		{
 		},
-		'NSISDOCTARGET' : htmls + ['style.css'],
+		'NSISDOCTARGET' : htmls,
 		'NSISDOCINSTALLBASEPATH' : docsdefault_install_basepath,
+		'NSISEXTRADIST' : File(Split('#Docs/style.css')),
 	},
 	'htmlsingle' :
 	{
@@ -89,6 +91,7 @@ DOCS_CONFIG = {
 		},
 		'NSISDOCTARGET' : 'Manual.html',
 		'NSISDOCINSTALLBASEPATH' : docsdefault_install_basepath,
+		'NSISEXTRADIST' : [],
 	},
 }
 
@@ -172,4 +175,4 @@ env['SPAWN'] = new_spawn
 
 # BUILD!
 docs = env.Halibut(env['NSISDOCTARGET'], ['$NSISDOCCONFIG'] + buts)
-env.DistributeDocs(docs, basepath=env['NSISDOCINSTALLBASEPATH'])
+env.DistributeDocs(docs + env['NSISEXTRADIST'], basepath=env['NSISDOCINSTALLBASEPATH'])
