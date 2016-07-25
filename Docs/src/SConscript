@@ -75,7 +75,7 @@ DOCS_CONFIG = {
 		'NSISDOCHTMLFIXES' :
 		{
 		},
-		'NSISDOCTARGET' : htmls,
+		'NSISDOCTARGET' : htmls + ['style.css'],
 		'NSISDOCINSTALLBASEPATH' : docsdefault_install_basepath,
 	},
 	'htmlsingle' :
