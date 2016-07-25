@@ -2,7 +2,11 @@
 
 \H{v3.0} 3.0
 
-Released on ???? ?th, 2016
+Released on July 24th, 2016
+
+\S1{v3.0-rl} Release Notes
+
+Long-awaited version 3 of NSIS is finally ready. It comes with optional \R{aunicodetarget}{Unicode} support, still works on all the same versions of Windows, supports Windows 10, and adds a lot of other small features and fixes. Huge thanks goes out to Anders and Wizou for making this happen and Jim Park for the original patch.
 
 \S1{v3.0-cl} Changelog
 
