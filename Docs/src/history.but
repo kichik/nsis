@@ -1,5 +1,15 @@
 \A{history} Changelog and Release Notes
 
+\H{v3.01} 3.01
+
+Released on ? ?th, 201?
+
+\S1{v3.01-cl} Changelog
+
+\S2{} Minor Changes
+
+\b Fixed buffer size bug in winchar.cpp (\W{http://sf.net/p/nsis/patches/271}{patch #271})
+
 \H{v3.0} 3.0
 
 Released on July 24th, 2016
