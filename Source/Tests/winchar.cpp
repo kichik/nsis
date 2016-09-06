@@ -35,15 +35,15 @@ public:
     WINWCHAR test[] = { _x('t'), _x('e'), _x('s'), _x('t'), 0 };
 
     WINWCHAR *dyn = WinWStrDupFromTChar(_T("test"));
-    CPPUNIT_ASSERT_EQUAL( 0, memcmp(test, dyn, 5) );
+    CPPUNIT_ASSERT_EQUAL( 0, memcmp(test, dyn, sizeof(test)) );
     free(dyn);
 
     dyn = WinWStrDupFromChar("test");
-    CPPUNIT_ASSERT_EQUAL( 0, memcmp(test, dyn, 5) );
+    CPPUNIT_ASSERT_EQUAL( 0, memcmp(test, dyn, sizeof(test)) );
     free(dyn);
 
     dyn = WinWStrDupFromWC(L"test");
-    CPPUNIT_ASSERT_EQUAL( 0, memcmp(test, dyn, 5) );
+    CPPUNIT_ASSERT_EQUAL( 0, memcmp(test, dyn, sizeof(test)) );
     free(dyn);
   }
 
