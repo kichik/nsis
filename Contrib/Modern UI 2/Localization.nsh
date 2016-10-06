@@ -26,24 +26,22 @@ Localization
 ;--------------------------------
 ;Include langauge files
 
-!macro MUI_LANGUAGE NLFID
+!macro MUI_LANGUAGEEX LangDir NLFID
 
-  ;Include a language
-
-  !verbose push
-  !verbose ${MUI_VERBOSE}
+  !verbose push ${MUI_VERBOSE}
 
   !ifndef MUI_PAGE_UNINSTALLER_PREFIX
-    !warning "MUI_LANGUAGE should be inserted after the MUI_[UN]PAGE_* macros"
+    !warning "MUI_LANGUAGE[EX] should be inserted after the MUI_[UN]PAGE_* macros"
   !endif
 
   !insertmacro MUI_INSERT
 
-  LoadLanguageFile "${NSISDIR}\Contrib\Language files\${NLFID}.nlf"
+  ;Include a language
+  LoadLanguageFile "${LangDir}\${NLFID}.nlf"
 
-  ;Include language file
+  ;Include MUI language file
   !insertmacro LANGFILE_INCLUDE_WITHDEFAULT \
-    "${NSISDIR}\Contrib\Language files\${NLFID}.nsh" "${NSISDIR}\Contrib\Language files\English.nsh"
+    "${LangDir}\${NLFID}.nsh" "${NSISDIR}\Contrib\Language files\English.nsh"
 
   ;Add language to list of languages for selection dialog
   !define /ifndef MUI_LANGDLL_LANGUAGES ""
@@ -52,6 +50,16 @@ Localization
   !define /ifndef MUI_LANGDLL_LANGUAGES_CP ""
   !define /redef MUI_LANGDLL_LANGUAGES_CP \
     `"${LANGFILE_${NLFID}_LANGDLL}" "${LANG_${NLFID}}" "${LANG_${NLFID}_CP}" ${MUI_LANGDLL_LANGUAGES_CP}`
+
+  !verbose pop
+
+!macroend
+
+!macro MUI_LANGUAGE NLFID
+
+  !verbose push ${MUI_VERBOSE}
+
+  !insertmacro MUI_LANGUAGEEX "${NSISDIR}\Contrib\Language files" "${NLFID}"
 
   !verbose pop
 
