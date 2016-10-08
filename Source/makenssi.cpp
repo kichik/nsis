@@ -285,6 +285,7 @@ static inline int makensismain(int argc, TCHAR **argv)
   allow_unaligned_data_access();
 #endif
   assert(sizeof(UINT_PTR) == sizeof(void*));
+  assert('a' + 25 == 'z' && '0' < 'A' && 'A' < 'a'); // ASCII, do you speak it?
   assert(sizeof(wchar_t) > 1 && sizeof(wchar_t) <= 4);
   assert(sizeof(WINWCHAR) == 2 && sizeof(WORD) == 2);
   assert(sizeof(WINWCHAR) == sizeof(WCHAR)); // Not really required but if WCHAR changes we need to know
