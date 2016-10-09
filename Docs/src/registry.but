@@ -2,6 +2,8 @@
 
 In all of the below registry instructions use an empty string (just two quotes with nothing between them - "") as the key name to specify the default key which is shown as (Default) in regedit.exe.
 
+Use \R{setregview}{SetRegView} on Windows x64 to choose which registry view is used.
+
 If a full path is not specified for any of the INI handling instructions, the Windows directory will be used.
 
 \S2{deleteinisec} DeleteINISec
@@ -185,3 +187,26 @@ If \e{root_key} is \e{SHCTX} or \e{SHELL_CONTEXT}, it will be replaced with \e{H
 The error flag is set if the string could not be written to the registry. The type of the string will be REG_SZ for \R{writeregstr}{WriteRegStr}, or REG_EXPAND_STR for \R{writeregexpandstr}{WriteRegExpandStr}. If the registry key doesn't exist it will be created.
 
 \c WriteRegExpandStr HKLM "Software\My Company\My Software" "Expand String Value" "%WINDIR%\notepad.exe"
+
+\S2{setregview} SetRegView
+
+\c \\<b\\>32\\</b\\>|64|lastused
+
+Sets the registry view affected by \R{registry}{registry commands}. On 64-bit versions of Windows there are two views; one for 32-bit applications and one for 64-bit applications. By default, 32-bit applications running on 64-bit systems (WOW64) only have access to the 32-bit view. Using \c{SetRegView 64} allows the installer to access keys in the 64-bit view of the registry.
+
+Affects \R{deleteregkey}{DeleteRegKey}, \R{deleteregvalue}{DeleteRegValue}, \R{enumregkey}{EnumRegKey}, \R{enumregvalue}{EnumRegValue}, \R{readregdword}{ReadRegDWORD}, \R{readregstr}{ReadRegStr}, \R{writeregbin}{WriteRegBin}, \R{writeregdword}{WriteRegDWORD}, \R{writeregstr}{WriteRegStr} and \R{writeregexpandstr}{WriteRegExpandStr}.
+
+Does not affect \R{ainstalldirregkey}{InstallDirRegKey}. Instead, the registry must be read using \R{readregstr}{ReadRegStr} in \R{oninit}{.onInit}.
+
+\c SetRegView 32
+\c ReadRegStr $0 HKLM Software\Microsoft\Windows\CurrentVersion ProgramFilesDir
+\c DetailPrint $0 # prints C:\Program Files (x86)
+\c SetRegView 64
+\c ReadRegStr $0 HKLM Software\Microsoft\Windows\CurrentVersion ProgramFilesDir
+\c DetailPrint $0 # prints C:\Program Files
+
+\c Function .onInit
+\c   SetRegView 64
+\c   ReadRegStr $INSTDIR HKLM Software\NSIS ""
+\c   SetRegView 32
+\c FunctionEnd
