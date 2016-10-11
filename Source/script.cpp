@@ -6297,9 +6297,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_PLUGINDIR:
     case TOK__PLUGINCOMMAND:
     case TOK_INITPLUGINSDIR:
-    {
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_CONFIG_PLUGIN_SUPPORT not defined.\n"),line.gettoken_str(0));
-    }
     return PS_ERROR;
 #endif// NSIS_CONFIG_PLUGIN_SUPPORT
 
@@ -6308,8 +6306,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       SCRIPT_MSG(_T("LockWindow: lock state=%d\n"),line.gettoken_str(1));
       ent.which=EW_LOCKWINDOW;
       ent.offsets[0]=line.gettoken_enum(1,_T("on\0off\0"));
-      if (ent.offsets[0] == -1)
-        PRINTHELP();
+      if (ent.offsets[0] == -1) PRINTHELP();
     return add_entry(&ent);
 #else
     case TOK_LOCKWINDOW:
