@@ -232,7 +232,7 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
 
   // detect default language
   // more information at:
-  //   http://msdn.microsoft.com/library/default.asp?url=/library/en-us/intl/nls_0xrn.asp
+  //   https://web.archive.org/web/20060618155426/http://msdn.microsoft.com/library/en-us/intl/nls_0xrn.asp
 
   LANGID (WINAPI *GUDUIL)();
 
