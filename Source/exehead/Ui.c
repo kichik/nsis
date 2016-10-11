@@ -637,7 +637,7 @@ skipPage:
 
     if (!ui_dlg_visible && m_curwnd)
     {
-      ShowWindow(hwndDlg, SW_SHOWDEFAULT);
+      ShowWindow(hwndDlg, SW_SHOWDEFAULT); // BUGBUG: Why is this here, it does not seem to be required?
       ui_dlg_visible = 1;
     }
 
