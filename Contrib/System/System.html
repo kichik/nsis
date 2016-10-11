@@ -27,7 +27,7 @@
 
 <h2><a name="intro"></a>Introduction</h2>
 
-<p>The System plug-in gives developers the ability to call any exported function from any DLL. For example, you can use it to call <a href="http://msdn.microsoft.com/library/en-us/fileio/base/getlogicaldrivestrings.asp">GetLogicalDriveStrings</a> to get a list of available drives on the user's computer.</p>
+<p>The System plug-in gives developers the ability to call any exported function from any DLL. For example, you can use it to call <a href="https://msdn.microsoft.com/en-us/library/aa364975">GetLogicalDriveStrings</a> to get a list of available drives on the user's computer.</p>
 
 <p>The System plug-in also allows the developer to allocate, free and copy memory; interact with COM objects and perform mathematical operations on 64-bit integers.</p>
 
@@ -381,7 +381,7 @@ DetailPrint $4
 <h4>Callbacks</h4>
 
 <blockquote>
-<p>Callback functions are simply functions which are passed to a function and called back by it. They are frequently used to pass a possibly large set of data item by item. For example, <a href="http://msdn.microsoft.com/library/en-us/winui/WinUI/WindowsUserInterface/Windowing/Windows/WindowReference/WindowFunctions/EnumChildWindows.asp">EnumChildWindows</a> uses a <a href="http://msdn.microsoft.com/library/en-us/winui/WinUI/WindowsUserInterface/Windowing/Windows/WindowReference/WindowFunctions/EnumChildProc.asp">callback function</a>. As NSIS functions are not quite regular functions, the System plug-in provides its own mechanism to support callback functions. It allows you to create callback functions and notifies you each time a callback function was called.</p>
+<p>Callback functions are simply functions which are passed to a function and called back by it. They are frequently used to pass a possibly large set of data item by item. For example, <a href="https://msdn.microsoft.com/en-us/library/ms633494">EnumChildWindows</a> uses a <a href="https://msdn.microsoft.com/en-us/library/ms633493p">callback function</a>. As NSIS functions are not quite regular functions, the System plug-in provides its own mechanism to support callback functions. It allows you to create callback functions and notifies you each time a callback function was called.</p>
 
 <p>Creation of callback functions is done using <a href="#callfuncs">Get</a> and the callback creation syntax. As you will not call the callbacks yourself, the source of the parameters should be omitted using a dot. When the callback is called, the destination of the parameters will be filled with the values passed on to the callback. The value the callback will return is set by the source of the return "parameter". The destination of the return "parameter" should always be set as that's where System will notify you the callback was called.</p>
 
