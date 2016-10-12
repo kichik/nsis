@@ -120,3 +120,11 @@
 !ifdef MUI_UNABORTWARNING
   ${LangFileString} MUI_UNTEXT_ABORTWARNING "Ви впевнені що бажаєте покинути Майстер Видалення $(^Name)?"
 !endif
+
+!ifdef MULTIUSER_INSTALLMODEPAGE
+  ${LangFileString} MULTIUSER_TEXT_INSTALLMODE_TITLE "Виберіть користувачів"
+  ${LangFileString} MULTIUSER_TEXT_INSTALLMODE_SUBTITLE "Виберіть користувачів, для яких слід встановити $(^NameDA)."
+  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_TOP "Визначтеся, слід встановити $(^NameDA) лише для вашого користувача, чи для усіх користувачів цієї операційної системи. $(^ClickNext)"
+  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_ALLUSERS "Встановити для усіх у цій системі"
+  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_CURRENTUSER "Встановити лише для вас"
+!endif
