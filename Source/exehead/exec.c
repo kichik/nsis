@@ -1702,9 +1702,11 @@ static int NSISCALL ExecuteEntry(entry *entry_)
 #ifdef NSIS_LOCKWINDOW_SUPPORT
     case EW_LOCKWINDOW:
     {
-      // Not using ui_dlg_visible because it is not always in sync and we don't want to risk not painting.
+      // ui_dlg_visible is 1 or 0, so is parm0. It is used because WM_SETREDRAW will toggle WS_VISIBLE!
+      // BUGBUG: This has unfortunate consequences when used in
+      // combination with BringToFront on the first page.
       // See http://forums.winamp.com/showthread.php?t=397781 for details.
-      SendMessage(g_hwnd, WM_SETREDRAW, parm0, 0);
+      SendMessage(g_hwnd, WM_SETREDRAW, parm0 & ui_dlg_visible, 0);
       if (parm0) InvalidateRect(g_hwnd, NULL, FALSE);
       break;
     }
