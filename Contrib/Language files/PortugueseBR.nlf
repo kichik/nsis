@@ -10,7 +10,7 @@ NLF v6
 1252
 # RTL - anything else than RTL means LTR
 -
-# Translation by Diego Pedroso and Felipe
+# Translation by Diego Pedroso and Felipe, reviewed by Georger Araújo
 # ^Branding
 Sistema de Instalação Nullsoft %s
 # ^SetupCaption
@@ -60,27 +60,27 @@ P&rocurar...
 # ^ShowDetailsBtn
 Mostrar &detalhes
 # ^ClickNext
-Clique em Próximo pra continuar.
+Clique em Próximo para continuar.
 # ^ClickInstall
-Clique em Instalar pra iniciar a instalação.
+Clique em Instalar para iniciar a instalação.
 # ^ClickUninstall
-Clique em Desinstalar pra iniciar a desinstalação.
+Clique em Desinstalar para iniciar a desinstalação.
 # ^Name
 Nome
 # ^Completed
 Completado
 # ^LicenseText
-Por favor reveja o acordo de licença antes de instalar o $(^NameDA). Se você aceita todos os termos do acordo, clique em Eu Concordo.
+Por favor, leia com atenção o acordo de licença antes de instalar o $(^NameDA). Se você aceita todos os termos do acordo, clique em Eu Concordo.
 # ^LicenseTextCB
-Por favor reveja o acordo de licença antes de instalar o $(^NameDA). Se você aceita todos os termos do acordo, clique na caixa de seleção abaixo. $_CLICK
+Por favor, leia com atenção o acordo de licença antes de instalar o $(^NameDA). Se você aceita todos os termos do acordo, clique na caixa de seleção abaixo. $_CLICK
 # ^LicenseTextRB
-Por favor reveja o acordo de licença antes de instalar o $(^NameDA). Se você aceita todos os termos do acordo, selecione a primeira opção abaixo. $_CLICK
+Por favor, leia com atenção o acordo de licença antes de instalar o $(^NameDA). Se você aceita todos os termos do acordo, selecione a primeira opção abaixo. $_CLICK
 # ^UnLicenseText
-Por favor reveja o acordo de licença antes de desinstalar o $(^NameDA). Se você aceita todos os termos do acordo, clique em Eu Concordo.
+Por favor, leia com atenção o acordo de licença antes de desinstalar o $(^NameDA). Se você aceita todos os termos do acordo, clique em Eu Concordo.
 # ^UnLicenseTextCB
-Por favor reveja o acordo de licença antes de desinstalar o $(^NameDA). Se você aceita todos os termos do acordo, clique na caixa de seleção abaixo. $_CLICK
+Por favor, leia com atenção o acordo de licença antes de desinstalar o $(^NameDA). Se você aceita todos os termos do acordo, clique na caixa de seleção abaixo. $_CLICK
 # ^UnLicenseTextRB
-Por favor reveja o acordo de licença antes de desinstalar o $(^NameDA). Se você aceita todos os termos do acordo, selecione a primeira opção abaixo. $_CLICK
+Por favor, leia com atenção o acordo de licença antes de desinstalar o $(^NameDA). Se você aceita todos os termos do acordo, selecione a primeira opção abaixo. $_CLICK
 # ^Custom
 Personalizado
 # ^ComponentsText
@@ -100,13 +100,13 @@ Selecione os componentes a desinstalar:
 # ^UnComponentsSubText2
 Ou, selecione os componentes opcionais que você deseja desinstalar:
 # ^DirText
-O $(^NameDA) será instalado na seguinte pasta. Pra instalar em uma pasta diferente, clique em Procurar e selecione outra pasta. $_CLICK
+O $(^NameDA) será instalado na pasta a seguir. Para instalar em uma pasta diferente, clique em Procurar e selecione outra pasta. $_CLICK
 # ^DirSubText
-Pasta Destino
+Pasta de Destino
 # ^DirBrowseText
 Selecione a pasta para instalar o $(^NameDA):
 # ^UnDirText
-O $(^NameDA) será desinstalado da seguinte pasta. Pra desinstalar de uma pasta diferente, clique em Procurar e selecione outra pasta. $_CLICK
+O $(^NameDA) será desinstalado da pasta a seguir. Para desinstalar de uma pasta diferente, clique em Procurar e selecione outra pasta. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
@@ -114,19 +114,19 @@ Selecione a pasta de onde desinstalar o $(^NameDA):
 # ^SpaceAvailable
 "Espaço disponível: "
 # ^SpaceRequired
-"Espaço requerido: "
+"Espaço necessário: "
 # ^UninstallingText
-O $(^NameDA) será desinstalado da seguinte pasta. $_CLICK
+O $(^NameDA) será desinstalado da pasta a seguir. $_CLICK
 # ^UninstallingSubText
 Desinstalando de:
 # ^FileError
-Erro ao abrir o arquivo para a gravação: \r\n\r\n$0\r\n\r\nClique em Abortar pra parar a instalação,\r\nRepetir pra tentar de novo, ou\r\nIgnorar pra pular este arquivo.
+Erro ao abrir o arquivo para gravação: \r\n\r\n$0\r\n\r\nClique em Abortar para parar a instalação,\r\nRepetir para tentar de novo, ou\r\nIgnorar para pular este arquivo.
 # ^FileError_NoIgnore
-Erro ao abrir o arquivo para a gravação: \r\n\r\n$0\r\n\r\nClique em Repetir pra tentar de novo, ou\r\nCancelar pra parar a instalação.
+Erro ao abrir o arquivo para gravação: \r\n\r\n$0\r\n\r\nClique em Repetir para tentar de novo, ou\r\nCancelar para parar a instalação.
 # ^CantWrite
-"Não pôde gravar: "
+"Não foi possível gravar: "
 # ^CopyFailed
-Falhou em copiar
+Falha ao copiar
 # ^CopyTo
 "Copiar para "
 # ^Registering
@@ -134,9 +134,9 @@ Falhou em copiar
 # ^Unregistering
 "Desfazendo o registro: "
 # ^SymbolNotFound
-"Não pôde achar o símbolo: "
+"Não foi possível localizar o símbolo: "
 # ^CouldNotLoad
-"Não pôde carregar: "
+"Não foi possível carregar: "
 # ^CreateFolder
 "Criar pasta: "
 # ^CreateShortcut
@@ -144,11 +144,11 @@ Falhou em copiar
 # ^CreatedUninstaller
 "Desinstalador criado: "
 # ^Delete
-"Apagar o arquivo: "
+"Excluir o arquivo: "
 # ^DeleteOnReboot
-"Apagar ao reiniciar: "
+"Excluir ao reiniciar: "
 # ^ErrorCreatingShortcut
-"Erro ao criar o atalho: "
+"Erro ao criar atalho: "
 # ^ErrorCreating
 "Erro ao criar: "
 # ^ErrorDecompressing
@@ -170,7 +170,7 @@ Instalador corrompido: opcode inválido
 # ^OutputFolder
 "Pasta de saída: "
 # ^RemoveFolder
-"Remover a pasta: "
+"Excluir a pasta: "
 # ^RenameOnReboot
 "Renomear ao reiniciar: "
 # ^Rename
