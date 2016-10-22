@@ -120,3 +120,11 @@
 !ifdef MUI_UNABORTWARNING
   ${LangFileString} MUI_UNTEXT_ABORTWARNING "هل أنت متأكد من أنك الخروج من مزيل $(^Name)؟"
 !endif
+
+!ifdef MULTIUSER_INSTALLMODEPAGE
+  ${LangFileString} MULTIUSER_TEXT_INSTALLMODE_TITLE "اختر المستخدمين"
+  ${LangFileString} MULTIUSER_TEXT_INSTALLMODE_SUBTITLE "حدد لمن من المستخدمين تريد تركيب $(^NameDA)."
+  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_TOP "حدد لمن تريد تركيب $(^NameDA) لنفسك فقط أم لجميع مستخدمي الحاسب. $(^ClickNext)"
+  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_ALLUSERS "تركيب لجميع مستخدمي هذا الحاسب"
+  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_CURRENTUSER "تركيب لي فقط"
+!endif
