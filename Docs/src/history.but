@@ -8,6 +8,8 @@ Released on ? ?th, 201?
 
 \S2{} Minor Changes
 
+\b SetCtlColors now supports Windows color constants
+
 \b Fixed buffer size bug in winchar.cpp (\W{http://sf.net/p/nsis/patches/271}{patch #271})
 
 \S2{} Translations
@@ -3223,7 +3225,7 @@ Released on December 6th, 2002
 
 \b !ifdef and friends can now be used in macros
 
-\b \R{sendmessage}{SendMessage} can send strings (put STR: before a param) and supports timeouts
+\b \R{sendmessage}{SendMessage} can send strings (put cw{STR:} before a param) and supports timeouts
 
 \b Right mouse button "Copy to clipboard" context menu for the Details window
 

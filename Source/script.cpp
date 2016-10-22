@@ -77,6 +77,36 @@ static UINT read_line_helper(NStreamLineReader&lr, TCHAR*buf, UINT cch)
   return ++cch - eof;
 }
 
+#ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
+static bool LookupWinSysColorId(const TCHAR*Str, UINT&Clr)
+{
+  static const struct { const TCHAR*Name; UINT Id; } map[] = { // Note: This list is incomplete.
+    { TEXT("WINDOW"), 5 }, { TEXT("WINDOWTEXT"), 8 },
+    { TEXT("3DFACE"), 15 }, { TEXT("BTNTEXT"), 18 }, // "Three-dimensional display elements and dialog box"
+    { TEXT("HIGHLIGHT"), 13 }, { TEXT("HIGHLIGHTTEXT"), 14 }, // "Item(s) selected in a control"
+    { TEXT("GRAYTEXT"), 17 }, // "Grayed (disabled) text"
+    { TEXT("HOTLIGHT"), 26 }, // "Color for a hyperlink or hot-tracked item" (Win98+)
+  };
+  for (UINT i = 0; i < COUNTOF(map); ++i)
+    if (!_tcsicmp(map[i].Name, Str)) return (Clr = map[i].Id, true);
+  return false;
+}
+static UINT ParseCtlColor(const TCHAR*Str, int&CCFlags, int CCFlagmask)
+{
+  UINT clr, v;
+  TCHAR buf[7+!0], *pEnd;
+  my_strncpy(buf, Str, 7+!0), buf[7] = '\0';
+  if (!_tcscmp(_T("SYSCLR:"), buf))
+  {
+    CCFlags |= ((CC_TEXT_SYS|CC_BK_SYS) & CCFlagmask); // ExeHead must call GetSysColor
+    if (!LookupWinSysColorId(Str+7, clr)) clr = _tcstoul(Str+7, &pEnd, 0);
+  }
+  else
+    v = _tcstoul(Str, &pEnd, 16), clr = ((v&0xff)<<16)|(v&0xff00)|((v&0xff0000)>>16);
+  return clr;
+}
+#endif
+
 #ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
 // Added by Sunil Kamath 11 June 2003
 TCHAR *CEXEBuild::set_file_predefine(const TCHAR *filename)
@@ -4458,69 +4488,41 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.which=EW_SETCTLCOLORS;
       ent.offsets[0]=add_string(line.gettoken_str(1));
       ctlcolors c={0, };
-      int a = 2;
-      if (!_tcsicmp(line.gettoken_str(2),_T("/BRANDING")))
-        a++;
-
       TCHAR *p;
-      if (a == 2 && line.getnumtokens() == 5) {
+      int a = 2, ctok = line.getnumtokens();
+      if (!_tcsicmp(line.gettoken_str(2),_T("/BRANDING"))) a+=1;
+      if (!_tcsicmp(line.gettoken_str(2),_T("/RESET"))) { if (ctok != 3) return PS_ERROR; else a+=2; }
+      if (a == 2 && ctok == 5) {
         ERROR_MSG(_T("Error: SetCtlColors expected 3 parameters, got 4\n"));
         return PS_ERROR;
       }
-
       if (!_tcsicmp(line.gettoken_str(a+1),_T("transparent"))) {
-        c.flags|=CC_BKB;
-        c.lbStyle=BS_NULL;
-        c.bkmode=TRANSPARENT;
+        c.flags|=CC_BKB, c.lbStyle=BS_NULL, c.bkmode=TRANSPARENT;
       }
-      else {
-        p=line.gettoken_str(a+1);
-        if (*p) {
-          int v=_tcstoul(p,&p,16);
-          c.bkc=((v&0xff)<<16)|(v&0xff00)|((v&0xff0000)>>16);
-          c.flags|=CC_BK|CC_BKB;
-        }
-        c.lbStyle=BS_SOLID;
-        c.bkmode=OPAQUE;
+      else { // Parse background color
+        c.lbStyle=BS_SOLID, c.bkmode=OPAQUE;
+        if (*(p=line.gettoken_str(a+1)))
+          c.flags|=CC_BK|CC_BKB, c.bkc=ParseCtlColor(p, c.flags, CC_BK_SYS);
       }
-
-      p=line.gettoken_str(a);
-      if (*p) {
-        int v=_tcstoul(p,&p,16);
-        c.text=((v&0xff)<<16)|(v&0xff00)|((v&0xff0000)>>16);
-        c.flags|=CC_TEXT;
-      }
-
-      if (a == 3)
-      {
+      if (*(p=line.gettoken_str(a))) // Set text color?
+        c.flags|=CC_TEXT, c.text=ParseCtlColor(p, c.flags, CC_TEXT_SYS);
+      if (a == 3) { // Handle /BRANDING
         c.flags|=CC_BK|CC_BKB;
         c.lbStyle=BS_NULL;
-        if (!*line.gettoken_str(a+1))
-        {
-          c.bkc=COLOR_BTNFACE;
-          c.flags|=CC_BK_SYS;
-        }
+        if (!*line.gettoken_str(a+1)) c.bkc=COLOR_BTNFACE, c.flags|=CC_BK_SYS;
         c.flags|=CC_TEXT;
-        if (!*line.gettoken_str(a))
-        {
-          c.text=COLOR_BTNFACE;
-          c.flags|=CC_TEXT_SYS;
-        }
+        if (!*line.gettoken_str(a)) c.text=COLOR_BTNFACE, c.flags|=CC_TEXT_SYS;
         c.bkmode=OPAQUE;
       }
-
+      if (a == 4) c.bkmode=OPAQUE, c.flags=0, c.bkb = 0; // Experimental and undocumented /RESET, a formal way of doing SetCtlColors $hCtl "" ""
       assert(sizeof(ctlcolors64) > sizeof(ctlcolors));
       int i, l=cur_ctlcolors->getlen()/sizeof(ctlcolors), pad=is_target_64bit()?sizeof(ctlcolors64)-sizeof(ctlcolors):0;
-      for (i=0; i<l; i++) {
+      for (i=0; i<l; i++)
         if (!memcmp((ctlcolors*)cur_ctlcolors->get()+i,&c,sizeof(ctlcolors))) {
           ent.offsets[1]=i*(sizeof(ctlcolors)+pad);
           break;
         }
-      }
-      if (i>=l) {
-        ent.offsets[1]=cur_ctlcolors->add(&c,sizeof(ctlcolors))+(l*pad);
-      }
-
+      if (i>=l) ent.offsets[1]=cur_ctlcolors->add(&c,sizeof(ctlcolors))+(l*pad);
       SCRIPT_MSG(_T("SetCtlColors: hwnd=%") NPRIs _T(" %") NPRIs _T("text=%") NPRIs _T(" background=%") NPRIs _T("\n"),line.gettoken_str(1),a==2?_T(""):_T("/BRANDING "),line.gettoken_str(a),line.gettoken_str(a+1));
     }
     return add_entry(&ent);

@@ -237,7 +237,7 @@ Var mui.Button.Back
   GetDlgItem $mui.Header.Text $HWNDPARENT 1037
   CreateFont $mui.Header.Text.Font "$(^Font)" "$(^FontSize)" "700"
   SendMessage $mui.Header.Text ${WM_SETFONT} $mui.Header.Text.Font 0
-  
+
   GetDlgItem $mui.Header.SubText $HWNDPARENT 1038
 
   !ifndef MUI_HEADER_TRANSPARENT_TEXT
@@ -247,7 +247,7 @@ Var mui.Button.Back
     SetCtlColors $mui.Header.Text "" "transparent"
     SetCtlColors $mui.Header.SubText "" "transparent"
   !endif
-  
+
   ;Header image
   !insertmacro MUI_HEADERIMAGE_INIT "${UNINSTALLER}" 1046
 
@@ -267,11 +267,11 @@ Var mui.Button.Back
   GetDlgItem $mui.Branding.Text $HWNDPARENT 1256
   SetCtlColors $mui.Branding.Text /BRANDING
   SendMessage $mui.Branding.Text ${WM_SETTEXT} 0 "STR:$(^Branding) "
-  
+
   ;Lines
   GetDlgItem $mui.Line.Standard $HWNDPARENT 1035
   GetDlgItem $mui.Line.FullWindow $HWNDPARENT 1045
-  
+
   ;Buttons
   GetDlgItem $mui.Button.Next $HWNDPARENT 1
   GetDlgItem $mui.Button.Cancel $HWNDPARENT 2
