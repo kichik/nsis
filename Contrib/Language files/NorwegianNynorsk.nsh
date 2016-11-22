@@ -119,3 +119,11 @@
 !ifdef MUI_UNABORTWARNING
   ${LangFileString} MUI_UNTEXT_ABORTWARNING "Er du viss på at du vil avbryta avinstalleringa av $(^Name)?"
 !endif
+
+!ifdef MULTIUSER_INSTALLMODEPAGE
+  ${LangFileString} MULTIUSER_TEXT_INSTALLMODE_TITLE "Vel brukarar"
+  ${LangFileString} MULTIUSER_TEXT_INSTALLMODE_SUBTITLE "Vel kva brukarar du vil installere $(^NameDA) for."
+  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_TOP "Vel om du vil installere $(^NameDA) berre for deg, eller for alle som nyttar denne maskina. $(^ClickNext)"
+  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_ALLUSERS "Installer for alle som nyttar maskina"
+  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_CURRENTUSER "Installer berre for me"
+!endif
