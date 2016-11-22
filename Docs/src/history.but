@@ -2,13 +2,17 @@
 
 \H{v3.01} 3.01
 
-Released on ? ?th, 201?
+Released on December ?th, 2016
 
 \S1{v3.01-cl} Changelog
 
+\S2{} Major Changes
+
+\b Error messages are now written to stderr by default
+
 \S2{} Minor Changes
 
-\b SetCtlColors now supports Windows color constants
+\b \R{setctlcolors}{SetCtlColors} now supports Windows color constant values
 
 \b Fixed buffer size bug in winchar.cpp (\W{http://sf.net/p/nsis/patches/271}{patch #271})
 

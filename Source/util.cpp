@@ -56,7 +56,7 @@ namespace Apple { // defines struct section
 using namespace std;
 
 extern int g_display_errors;
-extern FILE *g_output;
+extern FILE *g_output, *g_errout;
 
 double my_wtof(const wchar_t *str) 
 {
@@ -1073,17 +1073,23 @@ end:
   strm.Detach();
   return retval;
 }
+static WINSIO_OSDATA*WinStdIO_GetNativeStreamData(FILE*strm)
+{
+  extern WINSIO_OSDATA g_osdata_stdout, g_osdata_stderr;
+  if (g_output == strm) return &g_osdata_stdout;
+  return g_errout == strm ? &g_osdata_stderr : NULL;
+}
 int WINAPI WinStdIO_vfwprintf(FILE*strm, const wchar_t*Fmt, va_list val)
 {
-  if (g_output == strm && Fmt)
+  WINSIO_OSDATA*pOSD;
+  if (Fmt && (pOSD = WinStdIO_GetNativeStreamData(strm)))
   {
-    extern WINSIO_OSDATA g_osdata_stdout;
     ExpandoString<wchar_t, NSIS_MAX_STRLEN> buf;
     errno = ENOMEM;
     const size_t cchfmt = buf.StrFmt(Fmt, val, false);
     UINT cch = (UINT) cchfmt;
     assert(sizeof(size_t) <= 4 || cchfmt == cch);
-    if (cch && !WinStdIO_OStreamWrite(g_osdata_stdout, buf, cch))
+    if (cch && !WinStdIO_OStreamWrite(*pOSD, buf, cch))
     {
       cch = 0, errno = EIO;
     }
@@ -1112,7 +1118,9 @@ int WinStdIO_wprintf(const wchar_t*Fmt, ...)
 void PrintColorFmtMsg(unsigned int type, const TCHAR *fmtstr, va_list args)
 {
 #ifdef _WIN32
-  const HANDLE hWin32Con = GetStdHandle(STD_OUTPUT_HANDLE);
+  DWORD conmode;
+  HANDLE hWin32Con = GetStdHandle(STD_OUTPUT_HANDLE);
+  if (!GetConsoleMode(hWin32Con, &conmode)) hWin32Con = GetStdHandle(STD_ERROR_HANDLE);
   static INT32 contxtattrbak = -1;
   WORD txtattr = 0;
   if (contxtattrbak < 0)
