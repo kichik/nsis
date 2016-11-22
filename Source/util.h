@@ -105,6 +105,8 @@ public:
 
 int sane_system(const TCHAR *command);
 
+#define NSISRT_DEFINEGLOBALS() int g_display_errors=1; FILE *g_output=stdout, *g_errout=stderr
+void PrintColorFmtErrMsg(const TCHAR *fmtstr, va_list args);
 void PrintColorFmtMsg(unsigned int type, const TCHAR *fmtstr, va_list args);
 void FlushOutputAndResetPrintColor();
 #ifdef _WIN32
@@ -161,11 +163,7 @@ inline void PrintColorFmtMsg_ERR(const TCHAR *fmtstr, ...)
 {
   va_list val;
   va_start(val,fmtstr);
-  PrintColorFmtMsg_WARN(_T("")); // flush g_output
-  SetPrintColorERR();
-  extern FILE *g_errout;
-  _vftprintf(g_errout, fmtstr, val), fflush(g_errout);
-  ResetPrintColor();
+  PrintColorFmtErrMsg(fmtstr, val);
   va_end(val);
 }
 

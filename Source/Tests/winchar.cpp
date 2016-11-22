@@ -28,7 +28,7 @@ class WinCharTest : public CppUnit::TestFixture {
 
 public:
   void setUp() {
-    NSISRT_Initialize();
+    NSISRT_Initialize(); // HACKHACK: This really belongs in textrunner.cpp?
   }
 
   void testFromTchar() {

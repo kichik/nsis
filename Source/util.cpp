@@ -1115,6 +1115,14 @@ int WinStdIO_wprintf(const wchar_t*Fmt, ...)
 }
 #endif
 
+void PrintColorFmtErrMsg(const TCHAR *fmtstr, va_list args)
+{
+  PrintColorFmtMsg_WARN(_T("")); // flush g_output
+  SetPrintColorERR();
+  _vftprintf(g_errout, fmtstr, args), fflush(g_errout);
+  ResetPrintColor();
+}
+
 void PrintColorFmtMsg(unsigned int type, const TCHAR *fmtstr, va_list args)
 {
 #ifdef _WIN32

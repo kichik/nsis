@@ -19,9 +19,8 @@
 
 using namespace std;
 
-int g_noconfig=0;
-int g_display_errors=1;
-FILE *g_output=stdout;
+int g_noconfig=0; // TODO: Not used?
+NSISRT_DEFINEGLOBALS();
 
 int GetTLBVersion(tstring& filepath, DWORD& high, DWORD & low)
 {
