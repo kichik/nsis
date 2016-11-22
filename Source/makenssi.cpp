@@ -36,9 +36,8 @@
 
 using namespace std;
 
+NSISRT_DEFINEGLOBALS();
 bool g_dopause=false, g_warnaserror=false;
-int g_display_errors=1;
-FILE *g_output, *g_errout;
 NStreamEncoding g_outputenc;
 #ifdef _WIN32
 UINT g_wincon_orgoutcp;
@@ -296,7 +295,6 @@ static inline int makensismain(int argc, TCHAR **argv)
   assert(sizeof(WINWCHAR) == sizeof(WCHAR)); // Not really required but if WCHAR changes we need to know
 
   g_argv0=argv[0];
-  g_output=stdout, g_errout=stderr;
 
   if (!NSISRT_Initialize())
   {

@@ -6,14 +6,14 @@
 #include <time.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include "../util.h" // HACKHACK: for NSISRT_DEFINEGLOBALS
 
 using namespace std; // for std::min
 
-int g_display_errors = 1;
-FILE *g_output = stderr;
+NSISRT_DEFINEGLOBALS(); // HACKHACK: This really belongs in textrunner.cpp?
 
 void quit() {
-  _ftprintf(g_output, _T("MMap quit\n"));
+  _ftprintf(g_errout, _T("MMap quit\n"));
 }
 
 class MMapTest : public CppUnit::TestFixture {
