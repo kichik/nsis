@@ -161,7 +161,11 @@ inline void PrintColorFmtMsg_ERR(const TCHAR *fmtstr, ...)
 {
   va_list val;
   va_start(val,fmtstr);
-  PrintColorFmtMsg(2, fmtstr, val);
+  PrintColorFmtMsg_WARN(_T("")); // flush g_output
+  SetPrintColorERR();
+  extern FILE *g_errout;
+  _vftprintf(g_errout, fmtstr, val), fflush(g_errout);
+  ResetPrintColor();
   va_end(val);
 }
 

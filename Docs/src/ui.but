@@ -130,7 +130,7 @@ Sets the text and background color of a static control, edit control, button or 
 \c GetDlgItem $0 $1 1006
 \c SetCtlColors $0 0xFF0000 0x00FF00 ; Red on Green
 \c GetDlgItem $0 $1 1022
-\c SetCtlColors $0 SYSCLR:23 SYSCLR:24
+\c SetCtlColors $0 SYSCLR:23 SYSCLR:24 ; COLOR_INFOTEXT on COLOR_INFOBK
 \c FunctionEnd
 
 \NsisWarnBlockContainerBegin
