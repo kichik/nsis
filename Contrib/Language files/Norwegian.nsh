@@ -119,3 +119,11 @@
 !ifdef MUI_UNABORTWARNING
   ${LangFileString} MUI_UNTEXT_ABORTWARNING "Er du sikker på at du vil avbryte avinstallasjonen av $(^Name)?"
 !endif
+
+!ifdef MULTIUSER_INSTALLMODEPAGE
+  ${LangFileString} MULTIUSER_TEXT_INSTALLMODE_TITLE "Velg brukere"
+  ${LangFileString} MULTIUSER_TEXT_INSTALLMODE_SUBTITLE "Velg hvilke brukere du vil installere $(^NameDA) for."
+  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_TOP "Velg om du vil installere $(^NameDA) bare for deg selv, eller for alle som bruker denne maskinen. $(^ClickNext)"
+  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_ALLUSERS "Installer for alle som bruker denne maskinen"
+  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_CURRENTUSER "Installer bare for meg"
+!endif
