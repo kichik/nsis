@@ -77,6 +77,7 @@ int GetTLBVersion(tstring& filepath, DWORD& high, DWORD & low)
 NSIS_ENTRYPOINT_TMAIN
 int _tmain(int argc, TCHAR* argv[])
 {
+  if (!NSISRT_Initialize()) return 1;
 
   // Parse the command line
 

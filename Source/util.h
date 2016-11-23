@@ -168,6 +168,7 @@ inline void PrintColorFmtMsg_ERR(const TCHAR *fmtstr, ...)
 }
 
 
+bool NSISRT_Initialize();
 #ifndef _WIN32
 // iconv const inconsistency workaround by Alexandre Oliva
 template <typename T>
@@ -235,7 +236,6 @@ BOOL IsValidCodePage(UINT CodePage);
 #else
 #define CharNext CharNextA
 #endif
-bool NSISRT_Initialize();
 #define NSISRT_free(p) ( free((void*)(p)) )
 wchar_t* NSISRT_mbtowc(const char *Str);
 char* NSISRT_wctomb(const wchar_t *Str);
@@ -261,8 +261,6 @@ int my_open(const TCHAR *pathname, int flags);
 #define OPEN(a, b) my_open(a, b)
 
 #else // _WIN32
-
-#define NSISRT_Initialize() (true)
 
 #define my_convert(x) (x)
 #define my_convert_free(x)

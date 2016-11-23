@@ -203,7 +203,7 @@ static char g_nrt_iconv_narrowlocbuf[50], *g_nrt_iconv_narrowloc = 0;
 #ifdef HAVE_LANGINFO_H // BUGBUG: scons needs to check for HAVE_LANGINFO_H and HAVE_NL_LANGINFO support?
 #include <langinfo.h>
 #endif
-bool NSISRT_Initialize()
+bool NSISRT_Initialize() // Init function for POSIX
 {
   iconvdescriptor id;
   g_nrt_iconv_narrowloc = const_cast<char*>(""); // Use "" and not "char", "char" is a GNU extension?
@@ -1019,7 +1019,13 @@ bool GetFileSize64(HANDLE hFile, ULARGE_INTEGER &uli)
   uli.LowPart = GetFileSize(hFile, &uli.HighPart);
   return INVALID_FILE_SIZE != uli.LowPart || !GetLastError();
 }
-#endif
+static HANDLE NSISRT_GetConsoleScreenHandle()
+{
+  DWORD cm;
+  HANDLE hCon = GetStdHandle(STD_OUTPUT_HANDLE);
+  return GetConsoleMode(hCon, &cm) ? hCon : GetStdHandle(STD_ERROR_HANDLE);
+}
+#endif //~ _WIN32
 #if defined(_WIN32) && defined(_UNICODE) && defined(MAKENSIS)
 #include <io.h> // for _get_osfhandle
 bool WINAPI WinStdIO_OStreamInit(WINSIO_OSDATA&osd, FILE*strm, WORD cp, int bom)
@@ -1113,6 +1119,22 @@ int WinStdIO_wprintf(const wchar_t*Fmt, ...)
   va_end(val);
   return rv;
 }
+static HANDLE NSISRT_FastGetConsoleScreenHandle()
+{
+  extern WINSIO_OSDATA g_osdata_stdout, g_osdata_stderr;
+  return WinStdIO_IsConsole(g_osdata_stdout) ? g_osdata_stdout.hNative : g_osdata_stderr.hNative;
+}
+bool NSISRT_Initialize() // Init function for MakeNSIS Win32
+{
+  static bool inited = false;
+  if (inited) return inited;
+  extern WINSIO_OSDATA g_osdata_stdout, g_osdata_stderr;
+  g_osdata_stderr.mode = g_osdata_stdout.mode = 0, g_osdata_stderr.hNative = g_osdata_stdout.hNative = 0;
+  return (inited = true);
+}
+#elif defined(_WIN32)
+#define NSISRT_FastGetConsoleScreenHandle NSISRT_GetConsoleScreenHandle
+bool NSISRT_Initialize() { return true; } // Init function for non-MakeNSIS Win32 (NSISRT_DEFINEGLOBALS sets g_output and g_errout)
 #endif
 
 void PrintColorFmtErrMsg(const TCHAR *fmtstr, va_list args)
@@ -1126,9 +1148,7 @@ void PrintColorFmtErrMsg(const TCHAR *fmtstr, va_list args)
 void PrintColorFmtMsg(unsigned int type, const TCHAR *fmtstr, va_list args)
 {
 #ifdef _WIN32
-  DWORD conmode;
-  HANDLE hWin32Con = GetStdHandle(STD_OUTPUT_HANDLE);
-  if (!GetConsoleMode(hWin32Con, &conmode)) hWin32Con = GetStdHandle(STD_ERROR_HANDLE);
+  HANDLE hWin32Con = NSISRT_FastGetConsoleScreenHandle();
   static INT32 contxtattrbak = -1;
   WORD txtattr = 0;
   if (contxtattrbak < 0)
