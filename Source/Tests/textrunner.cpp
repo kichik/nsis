@@ -1,9 +1,14 @@
 #include <cppunit/CompilerOutputter.h>
 #include <cppunit/extensions/TestFactoryRegistry.h>
 #include <cppunit/ui/text/TestRunner.h>
+#include "../util.h" // for NSISRT_*
+
+NSISRT_DEFINEGLOBALS();
 
 int main(int argc, char* argv[])
 {
+  if (!NSISRT_Initialize()) return 1;
+
   // Get the top level suite from the registry
   CppUnit::Test *suite = CppUnit::TestFactoryRegistry::getRegistry().makeTest();
 

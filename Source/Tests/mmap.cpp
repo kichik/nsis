@@ -6,13 +6,12 @@
 #include <time.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "../util.h" // HACKHACK: for NSISRT_DEFINEGLOBALS
 
 using namespace std; // for std::min
 
-NSISRT_DEFINEGLOBALS(); // HACKHACK: This really belongs in textrunner.cpp?
 
 void quit() {
+  extern FILE *g_errout;
   _ftprintf(g_errout, _T("MMap quit\n"));
 }
 

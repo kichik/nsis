@@ -81,11 +81,11 @@ static UINT read_line_helper(NStreamLineReader&lr, TCHAR*buf, UINT cch)
 static bool LookupWinSysColorId(const TCHAR*Str, UINT&Clr)
 {
   static const struct { const TCHAR*Name; UINT Id; } map[] = { // Note: This list is incomplete.
-    { TEXT("WINDOW"), 5 }, { TEXT("WINDOWTEXT"), 8 },
-    { TEXT("3DFACE"), 15 }, { TEXT("BTNTEXT"), 18 }, // "Three-dimensional display elements and dialog box"
-    { TEXT("HIGHLIGHT"), 13 }, { TEXT("HIGHLIGHTTEXT"), 14 }, // "Item(s) selected in a control"
-    { TEXT("GRAYTEXT"), 17 }, // "Grayed (disabled) text"
-    { TEXT("HOTLIGHT"), 26 }, // "Color for a hyperlink or hot-tracked item" (Win98+)
+    { _T("WINDOW"), 5 }, { _T("WINDOWTEXT"), 8 },
+    { _T("3DFACE"), 15 }, { _T("BTNTEXT"), 18 }, // "Three-dimensional display elements and dialog box"
+    { _T("HIGHLIGHT"), 13 }, { _T("HIGHLIGHTTEXT"), 14 }, // "Item(s) selected in a control"
+    { _T("GRAYTEXT"), 17 }, // "Grayed (disabled) text"
+    { _T("HOTLIGHT"), 26 }, // "Color for a hyperlink or hot-tracked item" (Win98+)
   };
   for (UINT i = 0; i < COUNTOF(map); ++i)
     if (!_tcsicmp(map[i].Name, Str)) return (Clr = map[i].Id, true);
@@ -3235,7 +3235,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         case 1: comp=4; break;
         case 2: comp=5, validparams=!!*(define=line.gettoken_str(2)); break;
         case 3: cmpv=line.gettoken_int(3,&validparams); break;
-        default: comp=-1;
+        default: forceutf8=comp=-1;
         }
         if (!validparams || comp == -1) PRINTHELP()
         tstring compile;
