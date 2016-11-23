@@ -84,11 +84,11 @@ namespace MakensisAPI {
   enum sndmsg_e {
     QUERYHOST = WM_APP // [0x03000000] QUERYHOST_e in wParam. MUST return 0 for unknown QUERYHOST_e values!
   };
+#endif
   enum QUERYHOST_e {
     QH_OUTPUTCHARSET = 1, // [0x03000000] return (wincodepage+1) or 0 for default (This encoding is used by stdout, stderr and the notify messages)
     QH_ENABLESTDERR // [0x03001000] return 1 to output error messages to stderr or 0 to output error messages to stdout
   };
-#endif
 }
 
 #define PAGE_CUSTOM 0
