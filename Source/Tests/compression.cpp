@@ -17,11 +17,12 @@ public:
   void randData(IGrowBuf &buf, int kb) {
     srand(time(0));
 
+#define IsBug1156(r) ( ((r) & 0x80) == 0x80 )
     for (int i = 0; i < kb; i++) {
       int r;
       do 
         r = rand();
-      while (0x3dd0def3 == r); // Temporary workaround for https://sf.net/p/nsis/bugs/1156/#zlibCompressionTest loops endlessly
+      while (IsBug1156(r)); // Temporary workaround for https://sf.net/p/nsis/bugs/1156/#zlibCompressionTest loops endlessly
       for (size_t j = 0; j < 1024/sizeof(int); j++) {
         buf.add(&r, sizeof(int));
       }
