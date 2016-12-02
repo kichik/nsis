@@ -33,6 +33,9 @@ bool StrSetUTF16LE(tstring&dest, const void*src)
   src = (const void*) cec.Convert(src);
   if (!src) return false;
 #endif
+#ifdef C_ASSERT
+  C_ASSERT(sizeof(tstring::value_type) >= sizeof(wchar_t));
+#endif
   try { dest = (wchar_t*) src; } catch(...) { return false; }
   return true;
 }
