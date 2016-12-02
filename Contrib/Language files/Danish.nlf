@@ -10,7 +10,7 @@ NLF v6
 1252
 # RTL - anything else than RTL means LTR
 -
-# Translation by Claus Futtrup
+# Translation by Claus Futtrup, scootergrisen
 # ^Branding
 Nullsoft Install System %s
 # ^SetupCaption
@@ -20,7 +20,7 @@ $(^Name) Afinstallation
 # ^LicenseSubCaption
 : Licensaftale
 # ^ComponentsSubCaption
-: Installationsmuligheder
+: Installationsvalgmuligheder
 # ^DirSubCaption
 : Installationsmappe
 # ^InstallingSubCaption
@@ -28,7 +28,7 @@ $(^Name) Afinstallation
 # ^CompletedSubCaption
 : Gennemført
 # ^UnComponentsSubCaption
-: Afinstallationsmuligheder
+: Afinstallationsvalgmuligheder
 # ^UnDirSubCaption
 : Afinstallationsmappe
 # ^ConfirmSubCaption
@@ -52,7 +52,7 @@ Jeg &accepterer ikke vilkårene i licensaftalen
 # ^UninstallBtn
 &Afinstaller
 # ^CancelBtn
-Afbryd
+Annuller
 # ^CloseBtn
 &Luk
 # ^BrowseBtn
@@ -70,41 +70,41 @@ Navn
 # ^Completed
 Gennemført
 # ^LicenseText
-Læs venligst licensaftalen før installationen af $(^NameDA). Hvis du accepterer alle betingelser i aftalen, skal du trykke 'Jeg accepterer'.
+Gennemlæs venligst licensaftalen før installationen af $(^NameDA). Hvis du accepterer alle vilkår i aftalen, skal du klikke på Jeg accepterer.
 # ^LicenseTextCB
-Læs venligst licensaftalen før installationen af $(^NameDA). Hvis du accepterer alle betingelser i aftalen, skal du markere afkrydsningsfeltet nedenfor. $_CLICK
+Gennemlæs venligst licensaftalen før installationen af $(^NameDA). Hvis du accepterer alle vilkår i aftalen, skal du klikke på afkrydsningsfeltet nedenfor. $_CLICK
 # ^LicenseTextRB
-Læs venligst licensaftalen før installationen af $(^NameDA). Hvis du accepterer alle betingelser i aftalen, skal du vælge den første mulighed nedenfor. $_CLICK
+Gennemlæs venligst licensaftalen før installationen af $(^NameDA). Hvis du accepterer alle vilkår i aftalen, skal du vælge den første valgmulighed nedenfor. $_CLICK
 # ^UnLicenseText
-Læs venligst licensaftalen før afinstallationen af $(^NameDA). Hvis du accepterer alle betingelser i aftalen, skal du trykke 'Jeg accepterer'
+Gennemlæs venligst licensaftalen før afinstallationen af $(^NameDA). Hvis du accepterer alle vilkår i aftalen, skal du trykke på Jeg accepterer.
 # ^UnLicenseTextCB
-Læs venligst licensaftalen før afinstallationen af $(^NameDA). Hvis du accepterer alle betingelser i aftalen, skal du markere afkrydsningsfeltet nedenfor. $_CLICK
+Gennemlæs venligst licensaftalen før afinstallationen af $(^NameDA). Hvis du accepterer alle vilkår i aftalen, skal du klikke på afkrydsningsfeltet nedenfor. $_CLICK
 # ^UnLicenseTextRB
-Læs venligst licensaftalen før afinstallationen af $(^NameDA). Hvis du accepterer alle betingelser i aftalen, skal du vælge den første mulighed nedenfor $_CLICK
+Gennemlæs venligst licensaftalen før afinstallationen af $(^NameDA). Hvis du accepterer alle vilkår i aftalen, skal du vælge den første valgmulighed nedenfor. $_CLICK
 # ^Custom
 Brugerdefineret
 # ^ComponentsText
-Marker de komponenter du vil installere, og fjern markeringen af de komponenter du ikke vil installere. $_CLICK
+Tilvælg de komponenter du vil installere, og fravælg de komponenter du ikke vil installere. $_CLICK
 # ^ComponentsSubText1
 Vælg installationstype:
 # ^ComponentsSubText2_NoInstTypes
 Vælg de komponenter der skal installeres:
 # ^ComponentsSubText2
-Eller vælg de tillægskomponenter komponenter du ønsker at installere:
+Eller vælg de valgfrie komponenter du ønsker at installere:
 # ^UnComponentsText
-Marker de komponenter du vil afinstallere, og fjern markeringen af de komponenter du ikke vil afinstallere. $_CLICK
+Tilvælg de komponenter du vil afinstallere, og fravælg de komponenter du ikke vil afinstallere. $_CLICK
 # ^UnComponentsSubText1
 Vælg afinstallationstype:
 # ^UnComponentsSubText2_NoInstTypes
 Vælg de komponenter der skal afinstalleres:
 # ^UnComponentsSubText2
-Eller vælg de tillægskomponenter du ønsker at afinstallere:
+Eller vælg de valgfrie komponenter du ønsker at afinstallere:
 # ^DirText
 Installationsguiden vil installere $(^NameDA) i følgende mappe. For at installere i en anden mappe, tryk på Gennemse og vælg en anden mappe. $_CLICK
 # ^DirSubText
 Destinationsmappe
 # ^DirBrowseText
-Vælg den mappe $(^NameDA) skal installeres i:
+Vælg den mappe hvori $(^NameDA) skal installeres:
 # ^UnDirText
 Installationsguiden vil afinstallere $(^NameDA) fra følgende mappe. For at afinstallere fra en anden mappe, tryk på Gennemse og vælg en anden mappe. $_CLICK
 # ^UnDirSubText
@@ -120,9 +120,9 @@ $(^NameDA) vil blive afinstalleret fra følgende mappe. $_CLICK
 # ^UninstallingSubText
 Afinstallerer fra:
 # ^FileError
-Fejl ved skrivning af fil: \r\n\r\n$0\r\n\r\nTryk på Afbryd for at stoppe installationen,\r\nPrøv igen for at prøve igen, eller\r\nIgnorer for at springe over denne fil.
+Fejl ved skrivning af fil til skrivning: \r\n\r\n$0\r\n\r\nTryk på Annuller for at stoppe installationen,\r\nPrøv igen for at prøve igen, eller\r\nIgnorer for at springe over denne fil.
 # ^FileError_NoIgnore
-Fejl ved åbning af fil: \r\n\r\n$0\r\n\r\nTryk på Prøv igen for at prøve igen, eller\r\nAfbryd for at stoppe installationen.
+Fejl ved åbning af fil til skrivning: \r\n\r\n$0\r\n\r\nTryk på Prøv igen for at prøve igen, eller\r\nAnnuller for at stoppe installationen.
 # ^CantWrite
 "Kan ikke skrive: "
 # ^CopyFailed
@@ -136,7 +136,7 @@ Kopiering mislykkedes
 # ^SymbolNotFound
 "Kunne ikke finde symbol: "
 # ^CouldNotLoad
-"Kunne ikke hente: "
+"Kunne ikke indlæse: "
 # ^CreateFolder
 "Opret mappe: "
 # ^CreateShortcut
@@ -152,7 +152,7 @@ Kopiering mislykkedes
 # ^ErrorCreating
 "Fejl ved oprettelse: "
 # ^ErrorDecompressing
-Fejl ved udpakning af data! Installationsguiden skadet?
+Fejl ved udpakning af data! Beskadiget installationsguide?
 # ^ErrorRegistering
 Fejl ved registrering af DLL
 # ^ExecShell
@@ -162,9 +162,9 @@ Fejl ved registrering af DLL
 # ^Extract
 "Udpak: "
 # ^ErrorWriting
-"Udpak: Fejl ved skrivning til fil "
+"Udpak: fejl ved skrivning til fil "
 # ^InvalidOpcode
-Installationsguide i stykker: Ugyldig opcode
+Beskadiget installationsguide: ugyldig opcode
 # ^NoOLE
 "Ingen OLE for: "
 # ^OutputFolder
