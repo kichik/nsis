@@ -68,8 +68,12 @@ Caption "NSIS ${VERSION}${NAMESUFFIX} Setup"
 ;Interface Settings
 !define MUI_ABORTWARNING
 
+!define MUI_ICON "${NSISDIR}\Contrib\Graphics\Icons\nsis3-install.ico"
+!define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\nsis3-uninstall.ico"
+
 !define MUI_HEADERIMAGE
-!define MUI_WELCOMEFINISHPAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Wizard\nsis.bmp"
+!define MUI_HEADERIMAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Header\nsis3-branding.bmp"
+!define MUI_WELCOMEFINISHPAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Wizard\nsis3-branding.bmp"
 
 !define MUI_COMPONENTSPAGE_SMALLDESC
 
