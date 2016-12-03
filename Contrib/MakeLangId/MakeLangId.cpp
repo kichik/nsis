@@ -5,9 +5,46 @@
 #include "resource.h"
 
 #ifndef LANG_SCOTTISH_GAELIC
-#define LANG_SCOTTISH_GAELIC    0x91
+#define LANG_SCOTTISH_GAELIC 0x91
 #define SUBLANG_SCOTTISH_GAELIC 0x01
 #endif
+#ifndef LANG_CHEROKEE
+#define LANG_CHEROKEE 0x5C
+#define SUBLANG_CHEROKEE_CHEROKEE 0x01
+#endif
+#ifndef LANG_CORSICAN
+#define LANG_CORSICAN 0x83
+#define SUBLANG_CORSICAN_FRANCE 0x01
+#endif
+#ifndef LANG_FILIPINO
+#define LANG_FILIPINO 0x64
+#define SUBLANG_FILIPINO_PHILIPPINES 0x01
+#endif
+#ifndef LANG_HAWAIIAN
+#define LANG_HAWAIIAN 0x75
+#define SUBLANG_HAWAIIAN_US 0x01
+#endif
+#ifndef LANG_KHMER
+#define LANG_KHMER 0x53
+#define SUBLANG_KHMER_CAMBODIA 0x01
+#endif
+#ifndef LANG_LAO
+#define LANG_LAO 0x54
+#define SUBLANG_LAO_LAO 0x01
+#endif
+#ifndef LANG_MALTESE
+#define LANG_MALTESE 0x3A
+#define SUBLANG_MALTESE_MALTA 0x01
+#endif
+#ifndef LANG_TIBETAN
+#define LANG_TIBETAN 0x51
+#define SUBLANG_TIBETAN_PRC 0x01
+#endif
+#ifndef LANG_WELSH
+#define LANG_WELSH 0x52
+#define SUBLANG_WELSH_UNITED_KINGDOM 0x01
+#endif
+
 
 #define CBL(x) {x,_T(#x)}
 
@@ -30,7 +67,9 @@ line primary[] = {
 	CBL(LANG_BENGALI),
 	CBL(LANG_BULGARIAN),
 	CBL(LANG_CATALAN),
+	CBL(LANG_CHEROKEE),
 	CBL(LANG_CHINESE),
+	CBL(LANG_CORSICAN),
 	CBL(LANG_CROATIAN),
 	CBL(LANG_CZECH),
 	CBL(LANG_DANISH),
@@ -39,7 +78,8 @@ line primary[] = {
 	CBL(LANG_ENGLISH),
 	CBL(LANG_ESTONIAN),
 	CBL(LANG_FAEROESE),
-	CBL(LANG_FARSI),
+	CBL(LANG_FARSI), // AKA LANG_PERSIAN
+	CBL(LANG_FILIPINO),
 	CBL(LANG_FINNISH),
 	CBL(LANG_FRENCH),
 	CBL(LANG_GALICIAN),
@@ -47,6 +87,7 @@ line primary[] = {
 	CBL(LANG_GERMAN),
 	CBL(LANG_GREEK),
 	CBL(LANG_GUJARATI),
+	CBL(LANG_HAWAIIAN),
 	CBL(LANG_HEBREW),
 	CBL(LANG_HINDI),
 	CBL(LANG_HUNGARIAN),
@@ -57,14 +98,17 @@ line primary[] = {
 	CBL(LANG_KANNADA),
 	CBL(LANG_KASHMIRI),
 	CBL(LANG_KAZAK),
+	CBL(LANG_KHMER),
 	CBL(LANG_KONKANI),
 	CBL(LANG_KOREAN),
 	CBL(LANG_KYRGYZ),
+	CBL(LANG_LAO),
 	CBL(LANG_LATVIAN),
 	CBL(LANG_LITHUANIAN),
 	CBL(LANG_MACEDONIAN),
 	CBL(LANG_MALAY),
 	CBL(LANG_MALAYALAM),
+	CBL(LANG_MALTESE),
 	CBL(LANG_MANIPURI),
 	CBL(LANG_MARATHI),
 	CBL(LANG_MONGOLIAN),
@@ -90,11 +134,13 @@ line primary[] = {
 	CBL(LANG_TATAR),
 	CBL(LANG_TELUGU),
 	CBL(LANG_THAI),
+	CBL(LANG_TIBETAN),
 	CBL(LANG_TURKISH),
 	CBL(LANG_UKRAINIAN),
 	CBL(LANG_URDU),
 	CBL(LANG_UZBEK),
-	CBL(LANG_VIETNAMESE)
+	CBL(LANG_VIETNAMESE),
+	CBL(LANG_WELSH)
 };
 
 line sub[] = {
@@ -193,6 +239,11 @@ line sub[] = {
 	CBL(SUBLANG_UZBEK_CYRILLIC)
 };
 
+static void SelectDefaultSublanguage(HWND hwndDlg)
+{
+	SendDlgItemMessage(hwndDlg, IDC_SUB, CB_SELECTSTRING, -1, (LPARAM) _T("SUBLANG_DEFAULT"));
+}
+
 INT_PTR CALLBACK DialogProc(HWND hwndDlg,UINT uMsg,WPARAM wParam,LPARAM lParam) {
 	size_t i;
 	switch (uMsg) {
@@ -202,6 +253,7 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg,UINT uMsg,WPARAM wParam,LPARAM lParam) 
 			SendDlgItemMessage(hwndDlg, IDC_PRIMARY, CB_ADDSTRING, 0, (LPARAM)primary[i].name);
 		for (i = 0; i < sizeof(sub)/sizeof(line); i++)
 			SendDlgItemMessage(hwndDlg, IDC_SUB, CB_ADDSTRING, 0, (LPARAM)sub[i].name);
+		SelectDefaultSublanguage(hwndDlg);
 		break;
 	case WM_COMMAND:
 		if (LOWORD(wParam) == IDCANCEL) {
@@ -209,10 +261,22 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg,UINT uMsg,WPARAM wParam,LPARAM lParam) 
 			PostQuitMessage(0);
 		}
 		else if (HIWORD(wParam) == CBN_SELCHANGE) {
+			// When the language changes you probably need to update the sublanguage as well
+			// so we set it to something safe.
+			if (LOWORD(wParam) == IDC_PRIMARY)
+				SelectDefaultSublanguage(hwndDlg);
+
 			if (SendDlgItemMessage(hwndDlg, IDC_PRIMARY, CB_GETCURSEL, 0, 0) != CB_ERR && SendDlgItemMessage(hwndDlg, IDC_SUB, CB_GETCURSEL, 0, 0) != CB_ERR) {
-				TCHAR lang[512];
-				wsprintf(lang, _T("Language ID: %d"), MAKELANGID(primary[SendDlgItemMessage(hwndDlg, IDC_PRIMARY, CB_GETCURSEL, 0, 0)].id, sub[SendDlgItemMessage(hwndDlg, IDC_SUB, CB_GETCURSEL, 0, 0)].id));
-				SetDlgItemText(hwndDlg, IDC_RESULT, lang);
+				TCHAR lidbuf[50+11+!0], cpdispbuf[50+11+!0], cpbuf[11+!0];
+				WORD langid = MAKELANGID(primary[SendDlgItemMessage(hwndDlg, IDC_PRIMARY, CB_GETCURSEL, 0, 0)].id, sub[SendDlgItemMessage(hwndDlg, IDC_SUB, CB_GETCURSEL, 0, 0)].id);
+				wsprintf(lidbuf, _T("Language ID: %d"), langid);
+				SetDlgItemText(hwndDlg, IDC_RESULT, lidbuf);
+				if (!GetLocaleInfo(MAKELCID(langid, SORT_DEFAULT), LOCALE_IDEFAULTANSICODEPAGE, cpbuf, 11+!0))
+					wsprintf(cpbuf, _T("N/A"));
+				else if (!lstrcmp(cpbuf, _T("0")))
+					wsprintf(cpbuf, _T("1200 (Unicode-only)"));
+				wsprintf(cpdispbuf, _T("Codepage: %s"), cpbuf);
+				SetDlgItemText(hwndDlg, IDC_CODEPAGE, cpdispbuf);
 			}
 		}
 		else if (LOWORD(wParam) == IDOK) {

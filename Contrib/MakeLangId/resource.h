@@ -7,6 +7,7 @@
 #define IDC_SUB                         1001
 #define IDC_PRIMARY                     1002
 #define IDC_RESULT                      1003
+#define IDC_CODEPAGE                    1004
 
 // Next default values for new objects
 // 
