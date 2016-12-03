@@ -26,7 +26,7 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 // Dialog
 //
 
-IDD_DIALOG DIALOG DISCARDABLE  0, 0, 135, 75
+IDD_DIALOG DIALOG DISCARDABLE  0, 0, 135, 85
 STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "MakeLangID"
 FONT 8, "MS Sans Serif"
@@ -35,9 +35,10 @@ BEGIN
                     WS_TABSTOP
     COMBOBOX        IDC_SUB,7,24,121,100,CBS_DROPDOWNLIST | WS_VSCROLL | 
                     WS_TABSTOP
-    DEFPUSHBUTTON   "Copy",IDOK,78,54,50,14
-    PUSHBUTTON      "Exit",IDCANCEL,7,54,50,14
+    DEFPUSHBUTTON   "Copy",IDOK,78,64,50,14
+    PUSHBUTTON      "Exit",IDCANCEL,7,64,50,14
     LTEXT           "",IDC_RESULT,7,41,121,8
+    LTEXT           "",IDC_CODEPAGE,7,51,121,8
 END
 
 /////////////////////////////////////////////////////////////////////////////
@@ -60,7 +61,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 128
         TOPMARGIN, 7
-        BOTTOMMARGIN, 68
+        BOTTOMMARGIN, 78
     END
 END
 #endif    // APSTUDIO_INVOKED
