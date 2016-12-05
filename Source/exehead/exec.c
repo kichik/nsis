@@ -122,12 +122,23 @@ void NSISCALL update_status_text_buf1(int strtab)
   update_status_text(strtab, g_bufs[1]);
 }
 
-static INT_PTR NSISCALL GetIntPtrFromParm(int id_)
+#ifdef _WIN64
+static INT_PTR NSISCALL GetIntPtrFromParm(int id)
 {
-  return strtoiptr(GetNSISStringTT(g_parms[id_]));
+  return strtoiptr(GetNSISStringTT(g_parms[id]));
 }
+#else
+#define GetIntPtrFromParm(id_) ( (INT32)(GetIntFromParmEx(id_).LowPart) )
+#endif
 #define GetHwndFromParm(id_) ( (HWND)GetIntPtrFromParm(id_) )
 #define GetIntFromParm(id_) ( (INT32)(UINT32)GetIntPtrFromParm(id_) )
+static LARGE_INTEGER GetIntFromParmEx(int id)
+{
+  LARGE_INTEGER v;
+  const TCHAR *p = GetNSISStringTT(g_parms[id]);
+  v.LowPart = myatoi(p), v.HighPart = *p;
+  return v; // HighPart is non-zero if the string is not empty
+}
 
 // NB - USE CAUTION when rearranging code to make use of the new return value of
 // this function - be sure the parm being accessed is not modified before the call.
@@ -616,20 +627,18 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     break;
     case EW_ASSIGNVAR:
       {
-        int newlen=GetIntFromParm(2);
-        int start=GetIntFromParm(3);
-        int l;
-        TCHAR *p=var0;
-        TCHAR *buf0=GetStringFromParm(0x01);
+        LARGE_INTEGER newlenex=GetIntFromParmEx(2);
+        int start=GetIntFromParm(3), newlen=newlenex.LowPart;
+        TCHAR *p=var0, *buf0=GetStringFromParm(0x01);
+        int srclen=mystrlen(buf0);
         *p=0;
-        if (!parm2 || newlen)
+        if (!newlenex.HighPart) newlen=srclen; // "StrCpy $1 $2 $3" where $3=""
+        if (newlen)
         {
-          l=mystrlen(buf0);
-
-          if (start<0) start=l+start;
+          if (start<0) start=srclen+start;
           if (start>=0)
           {
-            if (start>l) start=l;
+            if (start>srclen) start=srclen;
             mystrcpy(p,buf0+start);
             if (newlen)
             {
