@@ -16,6 +16,14 @@ checks = Split("""
 headers = Split("""
 	nsis-r.bmp
 	nsis.bmp
+	nsis3-branding-r.bmp
+	nsis3-branding.bmp
+	nsis3-grey-right.bmp
+	nsis3-grey.bmp
+	nsis3-metro-right.bmp
+	nsis3-metro.bmp
+	nsis3-vintage-right.bmp
+	nsis3-vintage.bmp
 	orange-nsis.bmp
 	orange-r-nsis.bmp
 	orange-r.bmp
@@ -50,6 +58,9 @@ icons = Split("""
 	modern-uninstall.ico
 	nsis1-install.ico
 	nsis1-uninstall.ico
+	nsis3-install.ico
+	nsis3-install-alt.ico
+	nsis3-uninstall.ico
 	orange-install-nsis.ico
 	orange-install.ico
 	orange-uninstall-nsis.ico
@@ -64,6 +75,10 @@ wizards = Split("""
 	arrow.bmp
 	llama.bmp
 	nsis.bmp
+	nsis3-branding.bmp
+	nsis3-grey.bmp
+	nsis3-metro.bmp
+	nsis3-vintage.bmp
 	nullsoft.bmp
 	orange-nsis.bmp
 	orange-uninstall-nsis.bmp
