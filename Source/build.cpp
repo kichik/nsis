@@ -3730,6 +3730,13 @@ int CEXEBuild::DeclaredUserVar(const TCHAR *szVarName)
 }
 
 
+int CEXEBuild::GetUnsafeUserVarIndex(LineParser &line, int token)
+{
+  TCHAR *p = line.gettoken_str(token);
+  int idx = (*p == _T('$') && *++p) ? m_UserVarNames.get(p) : -1;
+  if (idx >= 0 && m_UserVarNames.get_reference(idx) >= 0) m_UserVarNames.inc_reference(idx);
+  return idx;
+}
 int CEXEBuild::GetUserVarIndex(LineParser &line, int token)
 {
   TCHAR *p = line.gettoken_str(token);

@@ -411,6 +411,7 @@ class CEXEBuild {
     int disable_window_icon;
 
     // User variables stuff
+    int GetUnsafeUserVarIndex(LineParser &line, int token);
     int GetUserVarIndex(LineParser &line, int token);
     // Added by ramon 3 jun 2003
     UserVarsStringList m_UserVarNames;

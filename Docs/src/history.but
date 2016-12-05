@@ -14,6 +14,8 @@ Released on December ?th, 2016
 
 \b \R{setctlcolors}{SetCtlColors} now supports Windows color constant values
 
+\b StrCpy "" maxlen handling (\W{http://sf.net/p/nsis/bugs/1122}{bug #1122})
+
 \b Fixed buffer size bug in winchar.cpp (\W{http://sf.net/p/nsis/patches/271}{patch #271})
 
 \S2{} Translations

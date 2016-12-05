@@ -4601,8 +4601,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.which=EW_SHOWWINDOW;
       ent.offsets[0]=add_asciistring(_T("$HWNDPARENT"));
       ent.offsets[1]=add_asciistring(_T("5")/*SW_SHOW*/);
-      ret = add_entry(&ent);
-      if (ret != PS_OK) return ret;
+      if ((ret = add_entry(&ent)) != PS_OK) return ret;
       ent.which=EW_BRINGTOFRONT;
       ent.offsets[0]=0;
       ent.offsets[1]=0;
@@ -5043,22 +5042,14 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         const TCHAR* msgprefix = _T("");
         int idx = -1;
         if (TOK_STRCPY == which_token)
-        {
           idx = GetUserVarIndex(line, 1);
-        }
         else
-        {
-          msgprefix = _T("Unsafe");
-          TCHAR *p = line.gettoken_str(1);
-          if (*p == _T('$') && *++p) idx = m_UserVarNames.get(p);
-          if (-1 != idx && m_UserVarNames.get_reference(idx) != -1) m_UserVarNames.inc_reference(idx);
-        }
+          idx = GetUnsafeUserVarIndex(line, 1), msgprefix = _T("Unsafe");
         if (idx < 0) PRINTHELP()
-        ent.offsets[0]=idx;
-        ent.offsets[1]=add_string(line.gettoken_str(2));
-        ent.offsets[2]=add_string(line.gettoken_str(3));
-        ent.offsets[3]=add_string(line.gettoken_str(4));
-
+        ent.offsets[0]=idx; // Destination variable
+        ent.offsets[1]=add_string(line.gettoken_str(2)); // Source string
+        ent.offsets[2]=add_string(line.gettoken_str(3)); // Optional MaxLen
+        ent.offsets[3]=add_string(line.gettoken_str(4)); // Optional StartOffset
         SCRIPT_MSG(_T("%") NPRIs _T("StrCpy %") NPRIs _T(" \"%") NPRIs _T("\" (%") NPRIs _T(") (%") NPRIs _T(")\n"),
           msgprefix,line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(4));
         return add_entry(&ent);
@@ -5082,11 +5073,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return add_entry(&ent);
     case TOK_GETCURRENTADDR:
       ent.which=EW_ASSIGNVAR;
-      ent.offsets[0]=GetUserVarIndex(line, 1);
+      if ((ent.offsets[0]=GetUserVarIndex(line, 1)) < 0) PRINTHELP()
       ent.offsets[1]=add_intstring(1+(cur_header->blocks[NB_ENTRIES].num));
-      if (ent.offsets[0] < 0) PRINTHELP()
-      ent.offsets[2]=0;
-      ent.offsets[3]=0;
+      ent.offsets[2]=ent.offsets[3]=0;
       SCRIPT_MSG(_T("GetCurrentAddress: %") NPRIs _T("\n"),line.gettoken_str(1));
     return add_entry(&ent);
     case TOK_STRCMP:
@@ -5109,18 +5098,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           return PS_ERROR;
         }
         ent.which=EW_ASSIGNVAR;
-        ent.offsets[0]=GetUserVarIndex(line, 2);
+        if ((ent.offsets[0]=GetUserVarIndex(line, 2)) < 0) PRINTHELP()
         ent.offsets[1]=add_intstring(high);
-        ent.offsets[2]=0;
-        ent.offsets[3]=0;
-        if (ent.offsets[0]<0) PRINTHELP()
-        add_entry(&ent);
-
-        ent.offsets[0]=GetUserVarIndex(line, 3);
+        ent.offsets[2]=ent.offsets[3]=0;
+        if (PS_OK != add_entry(&ent)) return PS_ERROR;
+        if ((ent.offsets[0]=GetUserVarIndex(line, 3)) < 0) PRINTHELP()
         ent.offsets[1]=add_intstring(low);
-        ent.offsets[2]=0;
-        ent.offsets[3]=0;
-        if (ent.offsets[0]<0) PRINTHELP()
+        ent.offsets[2]=ent.offsets[3]=0;
         SCRIPT_MSG(_T("%") NPRIs _T(": %") NPRIs _T(" (%u,%u)->(%") NPRIs _T(",%") NPRIs _T(")\n"),
           cmdname,line.gettoken_str(1),high,low,line.gettoken_str(2),line.gettoken_str(3));
       }
@@ -5154,22 +5138,16 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         unsigned long long ll = (st.st_mtime * 10000000LL) + 116444736000000000LL;
         high = (DWORD) (ll >> 32), low = (DWORD) ll;
 #endif
-
         ent.which=EW_ASSIGNVAR;
-        ent.offsets[0]=GetUserVarIndex(line, 2);
+        if ((ent.offsets[0]=GetUserVarIndex(line, 2)) < 0) PRINTHELP()
         wsprintf(buf,_T("%u"),high);
         ent.offsets[1]=add_string(buf);
-        ent.offsets[2]=0;
-        ent.offsets[3]=0;
-        if (ent.offsets[0]<0) PRINTHELP()
-        add_entry(&ent);
-
-        ent.offsets[0]=GetUserVarIndex(line, 3);
+        ent.offsets[2]=ent.offsets[3]=0;
+        if (PS_OK != add_entry(&ent)) return PS_ERROR;
+        if ((ent.offsets[0]=GetUserVarIndex(line, 3)) < 0) PRINTHELP()
         wsprintf(buf,_T("%u"),low);
         ent.offsets[1]=add_string(buf);
-        ent.offsets[2]=0;
-        ent.offsets[3]=0;
-        if (ent.offsets[0]<0) PRINTHELP()
+        ent.offsets[2]=ent.offsets[3]=0;
         SCRIPT_MSG(_T("GetFileTimeLocal: %") NPRIs _T(" (%u,%u)->(%") NPRIs _T(",%") NPRIs _T(")\n"),
           line.gettoken_str(1),high,low,line.gettoken_str(2),line.gettoken_str(3));
       }
@@ -6149,7 +6127,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     PRINTHELP();
     case TOK__PLUGINCOMMAND:
     {
-      int ret;
       tstring command, dllPath;
 
       if (!m_pPlugins->GetCommandInfo(line.gettoken_str(0), command, dllPath))
@@ -6159,17 +6136,14 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
 
       tstring dllName = get_file_name(dllPath);
-      int data_handle = m_pPlugins->GetDllDataHandle(!!uninstall_mode, command);
+      int data_handle = m_pPlugins->GetDllDataHandle(!!uninstall_mode, command), ret;
 
       if (uninstall_mode) uninst_plugin_used = true; else plugin_used = true;
 
       // Initialize $PLUGINSDIR
       ent.which=EW_CALL;
       ent.offsets[0]=ns_func.add(uninstall_mode?_T("un.Initialize_____Plugins"):_T("Initialize_____Plugins"),0);
-      ret=add_entry(&ent);
-      if (ret != PS_OK) {
-        return ret;
-      }
+      if ((ret=add_entry(&ent)) != PS_OK) return ret;
 
       // DLL name on the users machine
       TCHAR tempDLL[NSIS_MAX_STRLEN];
@@ -6217,17 +6191,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         ent.offsets[3]=0xffffffff;
         ent.offsets[4]=0xffffffff;
         ent.offsets[5]=DefineInnerLangString(NLF_FILE_ERROR);
-        ret=add_entry(&ent);
-        if (ret != PS_OK) {
-          return ret;
-        }
+        if ((ret=add_entry(&ent)) != PS_OK) return ret;
       }
 
       // SetDetailsPrint lastused
       ret=add_entry_direct(EW_SETFLAG, FLAG_OFFSET(status_update), 0, 1);
-      if (ret != PS_OK) {
-        return ret;
-      }
+      if (ret != PS_OK) return ret;
 
       // Call the DLL
       tstring funcname = get_string_suffix(command, _T("::"));
@@ -6236,8 +6205,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       int i = 1;
       int nounload = 0;
       if (!_tcsicmp(line.gettoken_str(i), _T("/NOUNLOAD"))) {
-        i++;
-        nounload++;
+        i++, nounload++;
       }
 
       // First push dll args
@@ -6251,10 +6219,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (!_tcsicmp(line.gettoken_str(w), _T("/NOUNLOAD"))) nounloadmisused=1;
         ent.offsets[1]=0;
         ent.offsets[2]=0;
-        ret=add_entry(&ent);
-        if (ret != PS_OK) {
-          return ret;
-        }
+        if ((ret=add_entry(&ent)) != PS_OK) return ret;
         SCRIPT_MSG(_T(" %") NPRIs,line.gettoken_str(i));
       }
       SCRIPT_MSG(_T("\n"));
@@ -6268,10 +6233,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.offsets[2]=0;
       ent.offsets[3]=nounload|build_plugin_unload;
       ent.offsets[4]=1;
-      ret=add_entry(&ent);
-      if (ret != PS_OK) {
-        return ret;
-      }
+      if ((ret=add_entry(&ent)) != PS_OK) return ret;
 
       DefineInnerLangString(NLF_SYMBOL_NOT_FOUND);
       DefineInnerLangString(NLF_COULD_NOT_LOAD);
@@ -6288,8 +6250,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       // Call [un.]Initialize_____Plugins
       ent.which=EW_CALL;
       ent.offsets[0]=ns_func.add(uninstall_mode?_T("un.Initialize_____Plugins"):_T("Initialize_____Plugins"),0);
-      ret=add_entry(&ent);
-      if (ret != PS_OK) return ret;
+      if ((ret=add_entry(&ent)) != PS_OK) return ret;
       // SetDetailsPrint lastused
       ret=add_entry_direct(EW_SETFLAG, FLAG_OFFSET(status_update), 0, 1);
       if (ret != PS_OK) return ret;
