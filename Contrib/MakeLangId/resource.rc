@@ -21,64 +21,6 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #pragma code_page(1252)
 #endif //_WIN32
 
-/////////////////////////////////////////////////////////////////////////////
-//
-// Dialog
-//
-
-IDD_DIALOG DIALOG DISCARDABLE  0, 0, 135, 85
-STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "MakeLangID"
-FONT 8, "MS Sans Serif"
-BEGIN
-    COMBOBOX        IDC_PRIMARY,7,7,121,100,CBS_DROPDOWNLIST | WS_VSCROLL | 
-                    WS_TABSTOP
-    COMBOBOX        IDC_SUB,7,24,121,100,CBS_DROPDOWNLIST | WS_VSCROLL | 
-                    WS_TABSTOP
-    DEFPUSHBUTTON   "Copy",IDOK,78,64,50,14
-    PUSHBUTTON      "Exit",IDCANCEL,7,64,50,14
-    LTEXT           "",IDC_RESULT,7,41,121,8
-    LTEXT           "",IDC_CODEPAGE,7,51,121,8
-END
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// RT_MANIFEST
-//
-
-1                       RT_MANIFEST             "MakeLangId.xml"
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// DESIGNINFO
-//
-
-#ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO DISCARDABLE 
-BEGIN
-    IDD_DIALOG, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 128
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 78
-    END
-END
-#endif    // APSTUDIO_INVOKED
-
-#endif    // English (U.S.) resources
-/////////////////////////////////////////////////////////////////////////////
-
-
-/////////////////////////////////////////////////////////////////////////////
-// Unknown language: 0xD, 0x1 resources
-
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_HEB)
-#ifdef _WIN32
-LANGUAGE 0xD, 0x1
-#pragma code_page(1255)
-#endif //_WIN32
-
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -92,7 +34,7 @@ END
 
 2 TEXTINCLUDE DISCARDABLE 
 BEGIN
-    "#include ""afxres.h""\r\n"
+    "#include <windows.h>\r\n"
     "\0"
 END
 
@@ -104,8 +46,66 @@ END
 
 #endif    // APSTUDIO_INVOKED
 
-#endif    // Unknown language: 0xD, 0x1 resources
+
 /////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+IDI_ICON ICON "MakeLangId.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_DIALOG DIALOGEX DISCARDABLE 0, 0, 185, 95
+STYLE DS_SETFONT | DS_FIXEDSYS | DS_SETFOREGROUND | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX
+CAPTION "MakeLangID"
+FONT 8, "MS Shell Dlg"
+BEGIN
+   COMBOBOX IDC_SOURCE, 7, 7,  171, 100, CBS_DROPDOWNLIST | WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_TABSTOP
+   COMBOBOX IDC_SYSLANGLIST, 7, 24, 171, 100, CBS_DROPDOWNLIST | CBS_SORT | WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_TABSTOP
+   COMBOBOX IDC_INTLANGLIST, 7, 24, 171, 100, CBS_DROPDOWNLIST | CBS_SORT | WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_TABSTOP
+   LTEXT "", IDC_INFO, 7, 41, 171, 8
+   LTEXT "Language ID:", -1, 7, 51, 45, 8
+   CONTROL "", IDC_LANGID, "EDIT", ES_LEFT | ES_READONLY | ES_AUTOHSCROLL | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 58, 51, 119, 8
+   LTEXT "Codepage:", -1, 7, 61, 45, 8
+   CONTROL "", IDC_CODEPAGE, "EDIT", ES_LEFT | ES_READONLY | ES_AUTOHSCROLL | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 58, 61, 119, 8
+   DEFPUSHBUTTON "Copy", IDOK, 128, 74, 50, 14
+   PUSHBUTTON "Exit", IDCANCEL, 7, 74, 50, 14
+   CONTROL "", IDC_COPYHELPER, "EDIT", ES_LEFT | ES_READONLY | WS_CHILD | WS_VISIBLE, 0, 0, 0, 0
+END
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// RT_MANIFEST
+//
+
+1 RT_MANIFEST "MakeLangId.xml"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 178
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 88
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
 
 
 
