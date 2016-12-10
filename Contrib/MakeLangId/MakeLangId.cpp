@@ -19,7 +19,7 @@ History
 
 Reference
 =========
-https://msdn.microsoft.com/en-us/library/windows/desktop/dd318693(v=vs.85).aspx#Language Identifier Constants and Strings
+https://msdn.microsoft.com/library/dd318693#Language Identifier Constants and Strings
 https://wayback.archive.org/web/20021221200122/http://msdn.microsoft.com/library/en-us/intl/nls_8rse.asp#LOCALE_* (95/98/ME/NT4/2000/XP)
 
 */
@@ -66,7 +66,7 @@ static INT_PTR StrToIntptr(LPCTSTR s, bool ForceHex = false)
 typedef struct { WORD id; LPCSTR name; } INTLNG; // Storing the names as ASCII saves 4 KiB
 
 #define IL(p, s, pn, sn) { MAKELANGID(p, s), #pn ":" #sn }
-static const INTLNG g_IntLoc[] = {
+static const INTLNG g_IntLang[] = {
 	//(0x00, 0x00, NEUTRAL, NEUTRAL),
 	//(0x00, 0x01, NEUTRAL, DEFAULT),
 	IL(0x7f, 0x00, INVARIANT, NEUTRAL), // Invariant locale
@@ -247,7 +247,7 @@ static BOOL CALLBACK EnumSysLocalesProc(LPTSTR lpLocaleString)
 	if (!retval) // LOCALE_SENGLISHDISPLAYNAME is Win7+
 	{
 		GetLocaleInfo(lcid, LOCALE_SENGCOUNTRY|LOCALE_NOUSEROVERRIDE, buf2, cchbuf2);
-		retval = GetLocaleInfo(lcid, LOCALE_SENGLANGUAGE|LOCALE_NOUSEROVERRIDE, buf1, cchbuf1);
+		if ((retval = GetLocaleInfo(lcid, LOCALE_SENGLANGUAGE|LOCALE_NOUSEROVERRIDE, buf1, cchbuf1))) --retval;
 		retval += wsprintf(buf1+retval, retval ? TEXT(" (%s)") : TEXT("?"), buf2);
 	}
 	AddLocale(g_hList, buf1, lid);
@@ -265,15 +265,15 @@ static void InitIntLangList(HWND hCtl)
 {
 	g_hList = hCtl;
 	SendMessage(hCtl, CB_SETCUEBANNER, 0, (LPARAM) L"Select a language...");
-	for (UINT i = 0; i < sizeof(g_IntLoc)/sizeof(INTLNG); ++i)
+	for (UINT i = 0; i < sizeof(g_IntLang)/sizeof(INTLNG); ++i)
 	{
 		#ifdef UNICODE
 		WCHAR name[200];
-		wsprintf(name, L"%S", g_IntLoc[i].name);
+		wsprintf(name, L"%S", g_IntLang[i].name);
 		#else
-		LPCTSTR name = g_IntLoc[i].name;
+		LPCTSTR name = g_IntLang[i].name;
 		#endif
-		AddLocale(hCtl, name,  g_IntLoc[i].id);
+		AddLocale(hCtl, name,  g_IntLang[i].id);
 	}
 }
 
@@ -285,7 +285,7 @@ static void OnLanguageChanged(HWND hDlg)
 	HWND hList = g_hList;
 
 	INT idx = SendMessage(hList, CB_GETCURSEL, 0, 0);
-	UINT lid = SendMessage(hList, CB_GETITEMDATA, idx, 0), lcid = MAKELCID(lid, SORT_DEFAULT);
+	UINT lid = SendMessage(hList, CB_GETITEMDATA, idx, 0), lcid = MAKELCID(lid, SORT_DEFAULT), retval;
 	EnableWindow(GetDlgItem(hDlg, IDOK), idx != CB_ERR);
 	if (idx == CB_ERR)
 	{
@@ -295,17 +295,17 @@ static void OnLanguageChanged(HWND hDlg)
 		return ;
 	}
 
-	UINT retval = GetLocaleInfo(lcid, LOCALE_SNATIVEDISPLAYNAME|LOCALE_NOUSEROVERRIDE, buf1, cchbuf1);
+	if ((retval = GetLocaleInfo(lcid, LOCALE_SNATIVEDISPLAYNAME|LOCALE_NOUSEROVERRIDE, buf1, cchbuf1))) --retval;
 	if (!retval) // LOCALE_SNATIVEDISPLAYNAME is Win7+
 	{
 		GetLocaleInfo(lcid, LOCALE_SNATIVECTRYNAME|LOCALE_NOUSEROVERRIDE, buf2, cchbuf2);
-		retval = GetLocaleInfo(lcid, LOCALE_SNATIVELANGNAME|LOCALE_NOUSEROVERRIDE, buf1, cchbuf1);
+		if ((retval = GetLocaleInfo(lcid, LOCALE_SNATIVELANGNAME|LOCALE_NOUSEROVERRIDE, buf1, cchbuf1))) --retval;
 		retval += wsprintf(buf1+retval, retval ? TEXT(" (%s)") : TEXT("?"), buf2);
 	}
 
 	if (retval && GetLocaleInfo(lcid, LOCALE_SNAME|LOCALE_NOUSEROVERRIDE, buf2, cchbuf2) && *buf2)
 	{
-		wsprintf(buf1+retval-1, TEXT(" [%s]"), buf2);
+		wsprintf(buf1+retval, TEXT(" [%s]"), buf2);
 	}
 	SetDlgItemText(hDlg, IDC_INFO, buf1);
 
