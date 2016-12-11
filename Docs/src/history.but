@@ -2,13 +2,15 @@
 
 \H{v3.01} 3.01
 
-Released on December ?th, 2016
+Released on December 11th, 2016
 
 \S1{v3.01-cl} Changelog
 
 \S2{} Major Changes
 
 \b Error messages are now written to stderr by default
+
+\b New icons by Jan T. Sott
 
 \S2{} Minor Changes
 
