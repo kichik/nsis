@@ -230,9 +230,9 @@ static const INTLNG g_IntLang[] = {
 
 HWND g_hList;
 
-static UINT AddLocale(HWND hCtl, LPCTSTR Name, UINT LangId)
+static INT AddLocale(HWND hCtl, LPCTSTR Name, UINT LangId)
 {
-	UINT idx = SendMessage(hCtl, CB_ADDSTRING, 0, (LPARAM) Name);
+	INT idx = SendMessage(hCtl, CB_ADDSTRING, 0, (LPARAM) Name);
 	if (idx != CB_ERR) SendMessage(hCtl, CB_SETITEMDATA, idx, LangId);
 	return idx;
 }
@@ -374,6 +374,6 @@ EXTERN_C void NSISWinMainNOCRT()
 	InitCommonControls();
 	HINSTANCE hInst = GetModuleHandle(0);
 	HANDLE hIco = LoadImage(hInst, MAKEINTRESOURCE(IDI_ICON), IMAGE_ICON, 0, 0, LR_DEFAULTSIZE|LR_SHARED);
-	DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_DIALOG), 0, DialogProc, (LPARAM) hIco);
-	ExitProcess(0);
+	INT_PTR retval = DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_DIALOG), 0, DialogProc, (LPARAM) hIco);
+	ExitProcess((UINT) retval);
 }

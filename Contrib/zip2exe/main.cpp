@@ -98,7 +98,7 @@ int WINAPI _tWinMain(HINSTANCE hInst,HINSTANCE hOldInst,LPTSTR CmdLineParams,int
 static bool IsEncrypted(unz_file_info&zfi)
 {
   const unsigned short gpf_encrypted = (1<< 0); // 2.0.0+
-  const unsigned short gpf_encstrong = (1<< 6); // 5.0.0+ APPNOTE says that bit 0 MUST be set if bit 6 is set
+  //nst unsigned short gpf_encstrong = (1<< 6); // 5.0.0+ APPNOTE says that bit 0 MUST be set if bit 6 is set
   const unsigned short gpf_enccntdir = (1<<13); // 6.2.0+ Central Directory Encryption
   return (zfi.flag & (gpf_encrypted|gpf_enccntdir)) != 0;
 }
