@@ -50,7 +50,7 @@ Does the same as \R{langstring}{LangString} only it loads the string from a text
 
 As of version 2 NSIS fully supports multiple languages. The interface of one installer can support multiple languages.
 
-Use \R{loadlanguagefile}{LoadLanguageFile} for every language to load the default interface texts and language properties.
+Use \R{loadlanguagefile}{LoadLanguageFile} for every language to load the default interface texts and language properties. Visit the \W{http://forums.winamp.com/showthread.php?t=157119}{NSIS translations forum} for more information about creating new language files.
 
 The default interface texts can easily be changed using instructions like \R{acomponenttext}{ComponentText} etc. 
 
