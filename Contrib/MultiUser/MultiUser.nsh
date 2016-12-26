@@ -91,7 +91,11 @@ Install modes
     !if "${UNINSTALLER_PREFIX}" != UN
       ;Set default installation location for installer
       !ifdef MULTIUSER_INSTALLMODE_INSTDIR
-        StrCpy $INSTDIR "$PROGRAMFILES\${MULTIUSER_INSTALLMODE_INSTDIR}"
+        !ifdef MULTIUSER_USE_PROGRAMFILES64
+          StrCpy $INSTDIR "$PROGRAMFILES64\${MULTIUSER_INSTALLMODE_INSTDIR}"
+        !else
+          StrCpy $INSTDIR "$PROGRAMFILES\${MULTIUSER_INSTALLMODE_INSTDIR}"
+        !endif
       !endif
     !endif
   

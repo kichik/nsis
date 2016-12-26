@@ -1,5 +1,15 @@
 \A{history} Changelog and Release Notes
 
+\H{v3.01} 3.02
+
+Released on ? ?th, 2017
+
+\S1{v3.02-cl} Changelog
+
+\S2{} Minor Changes
+
+\b MultiUser now supports $ProgramFiles64 (\W{http://sf.net/p/nsis/bugs/843}{bug #843})
+
 \H{v3.01} 3.01
 
 Released on December 11th, 2016
