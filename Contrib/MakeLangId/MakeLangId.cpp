@@ -232,7 +232,7 @@ HWND g_hList;
 
 static INT AddLocale(HWND hCtl, LPCTSTR Name, UINT LangId)
 {
-	INT idx = SendMessage(hCtl, CB_ADDSTRING, 0, (LPARAM) Name);
+	INT idx = (INT) SendMessage(hCtl, CB_ADDSTRING, 0, (LPARAM) Name);
 	if (idx != CB_ERR) SendMessage(hCtl, CB_SETITEMDATA, idx, LangId);
 	return idx;
 }
@@ -241,7 +241,7 @@ static BOOL CALLBACK EnumSysLocalesProc(LPTSTR lpLocaleString)
 {
 	const UINT cchbuf1 = 80+2+80+1+2+85+1+!0, cchbuf2 = 85+!0;
 	TCHAR buf1[cchbuf1], buf2[cchbuf2];
-	UINT lid = StrToIntptr(lpLocaleString, true), lcid = MAKELCID(lid, SORT_DEFAULT);
+	UINT lid = (UINT) StrToIntptr(lpLocaleString, true), lcid = MAKELCID(lid, SORT_DEFAULT);
 
 	UINT retval = GetLocaleInfo(lcid, LOCALE_SENGLISHDISPLAYNAME|LOCALE_NOUSEROVERRIDE, buf1, cchbuf1);
 	if (!retval) // LOCALE_SENGLISHDISPLAYNAME is Win7+
@@ -284,8 +284,8 @@ static void OnLanguageChanged(HWND hDlg)
 	TCHAR buf1[cchbuf1], buf2[cchbuf2];
 	HWND hList = g_hList;
 
-	INT idx = SendMessage(hList, CB_GETCURSEL, 0, 0);
-	UINT lid = SendMessage(hList, CB_GETITEMDATA, idx, 0), lcid = MAKELCID(lid, SORT_DEFAULT), retval;
+	INT idx = (INT) SendMessage(hList, CB_GETCURSEL, 0, 0);
+	UINT lid = (UINT) SendMessage(hList, CB_GETITEMDATA, idx, 0), lcid = MAKELCID(lid, SORT_DEFAULT), retval;
 	EnableWindow(GetDlgItem(hDlg, IDOK), idx != CB_ERR);
 	if (idx == CB_ERR)
 	{
