@@ -14,6 +14,10 @@ Released on ? ?th, 2017
 
 \b MultiUser now supports $ProgramFiles64 (\W{http://sf.net/p/nsis/bugs/843}{bug #843})
 
+\S2{} Translations
+
+\b Minor French improvements (\W{http://sf.net/p/nsis/patches/221}{patch #221})
+
 \H{v3.01} 3.01
 
 Released on December 11th, 2016

@@ -64,7 +64,7 @@
 
 !ifdef MUI_INSTFILESPAGE
   ${LangFileString} MUI_TEXT_INSTALLING_TITLE "Installation en cours"
-  ${LangFileString} MUI_TEXT_INSTALLING_SUBTITLE "Veuillez patienter pendant que $(^NameDA) est en train d'être installé."
+  ${LangFileString} MUI_TEXT_INSTALLING_SUBTITLE "Veuillez patienter pendant l'installation de $(^NameDA)."
   ${LangFileString} MUI_TEXT_FINISH_TITLE "Installation terminée"
   ${LangFileString} MUI_TEXT_FINISH_SUBTITLE "L'installation s'est terminée avec succès."
   ${LangFileString} MUI_TEXT_ABORT_TITLE "Installation interrompue"
@@ -73,7 +73,7 @@
 
 !ifdef MUI_UNINSTFILESPAGE
   ${LangFileString} MUI_UNTEXT_UNINSTALLING_TITLE "Désinstallation en cours"
-  ${LangFileString} MUI_UNTEXT_UNINSTALLING_SUBTITLE "Veuillez patienter pendant que $(^NameDA) est en train d'être supprimé de votre ordinateur."
+  ${LangFileString} MUI_UNTEXT_UNINSTALLING_SUBTITLE "Veuillez patienter pendant la désinstallation de $(^NameDA)."
   ${LangFileString} MUI_UNTEXT_FINISH_TITLE "Désinstallation terminée"
   ${LangFileString} MUI_UNTEXT_FINISH_SUBTITLE "La désinstallation s'est terminée avec succès."
   ${LangFileString} MUI_UNTEXT_ABORT_TITLE "Désinstallation interrompue"
