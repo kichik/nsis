@@ -35,6 +35,7 @@ class LineParser {
     double gettoken_float(int token, int *success=0) const;
     int gettoken_int(int token, int *success=0) const;
     double gettoken_number(int token, int *success=0) const;
+    int gettoken_binstrdata(int token, char*buffer, int bufcap) const;
     TCHAR *gettoken_str(int token) const;
     int gettoken_enum(int token, const TCHAR *strlist); // null separated list
 

@@ -188,6 +188,14 @@ The error flag is set if the string could not be written to the registry. The ty
 
 \c WriteRegExpandStr HKLM "Software\My Company\My Software" "Expand String Value" "%WINDIR%\notepad.exe"
 
+\S2{writeregmultistr} WriteRegMultiStr
+
+\c /REGEDIT5 root_key subkey key_name value
+
+Writes a multi-string value. The /REGEDIT5 switch must be used and specifies that the data is in the hex format used by .reg files on Windows 2000 and later.
+
+\c WriteRegMultiStr /REGEDIT5 HKCU "Software\NSIS\Test" "Multi Value" 66,00,6f,00,6f,00,00,00,62,00,61,00,72,00,00,00,00,00
+
 \S2{setregview} SetRegView
 
 \c \\<b\\>32\\</b\\>|64|lastused

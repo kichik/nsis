@@ -6,6 +6,10 @@ Released on ? ?th, 2017
 
 \S1{v3.02-cl} Changelog
 
+\S2{} Major Changes
+
+\b Added \R{writeregmultistr}{WriteRegMultiStr} (\W{http://sf.net/p/nsis/feature-requests/382}{RFE #382}, \W{http://sf.net/p/nsis/patches/219}{patch #219})
+
 \S2{} Minor Changes
 
 \b MultiUser now supports $ProgramFiles64 (\W{http://sf.net/p/nsis/bugs/843}{bug #843})

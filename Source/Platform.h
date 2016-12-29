@@ -651,6 +651,7 @@ typedef DWORDLONG ULONGLONG,*PULONGLONG;
 #  define REG_EXPAND_SZ 2
 #  define REG_BINARY 3
 #  define REG_DWORD 4
+#  define REG_MULTI_SZ 7
 #endif
 
 // show modes

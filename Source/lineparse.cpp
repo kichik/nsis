@@ -149,6 +149,31 @@ double LineParser::gettoken_number(int token, int *success/*=0*/) const
   return forceint ? gettoken_int(token,success) : gettoken_float(token,success);
 }
 
+int LineParser::gettoken_binstrdata(int token, char*buffer, int bufcap) const
+{
+  const TCHAR*p=gettoken_str(token);
+  int a,b,c,d=0;
+  while (*p)
+  {
+    a=*p;
+    if (a >= _T('0') && a <= _T('9')) a-=_T('0');
+    else if (a >= _T('a') && a <= _T('f')) a-=_T('a')-10;
+    else if (a >= _T('A') && a <= _T('F')) a-=_T('A')-10;
+    else if (a == _T(',')) { ++p; continue; } // Allow comma separator (for Regedit5 .reg format)
+    else break;
+    b=*++p;
+    if (b >= _T('0') && b <= _T('9')) b-=_T('0');
+    else if (b >= _T('a') && b <= _T('f')) b-=_T('a')-10;
+    else if (b >= _T('A') && b <= _T('F')) b-=_T('A')-10;
+    else break;
+    c=(a<<4)|b, p++;
+    if (d >= bufcap) return -1; // Buffer too small
+    buffer[d++]=c;
+  }
+  if (*p) return -2; // Did not parse the entire buffer
+  return d;
+}
+
 TCHAR* LineParser::gettoken_str(int token) const
 {
   token+=m_eat;

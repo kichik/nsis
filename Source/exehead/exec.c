@@ -1274,7 +1274,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
             // use buf2, buf3 and buf4
             size = GetCompressedDataFromDataBlockToMemory(parm3, data, (3 * NSIS_MAX_STRLEN)*sizeof(TCHAR));
             LogData2Hex(binbuf, COUNTOF(binbuf), data, size);
-            log_printf5(_T("WriteRegBin: \"%s\\%s\" \"%s\"=\"%s\""),rkn,buf1,buf0,binbuf);
+            log_printf6(_T("%s: \"%s\\%s\" \"%s\"=\"%s\""),rtype==REG_MULTI_SZ?_T("WriteRegMultiStr"):_T("WriteRegBin"),rkn,buf1,buf0,binbuf);
           }
           
           if (size >= 0 && RegSetValueEx(hKey,buf0,0,rtype,data,size) == ERROR_SUCCESS)
