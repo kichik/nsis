@@ -236,6 +236,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_WINDOWICON,_T("WindowIcon"),1,0,_T("on|off"),TP_GLOBAL},
 {TOK_WRITEINISTR,_T("WriteINIStr"),4,0,_T("ini_file section_name entry_name new_value"),TP_CODE},
 {TOK_WRITEREGBIN,_T("WriteRegBin"),4,0,_T("rootkey subkey entry_name hex_string_like_12848412AB\n    root_key=(HKCR|HKLM|HKCU|HKU|HKCC|HKDD|HKPD|SHCTX)"),TP_CODE},
+{TOK_WRITEREGMULTISZ, _T("WriteRegMultiStr"),5,0,_T("/REGEDIT5 rootkey subkey entry_name hex_string_like_660000000000\n    root_key=(HKCR|HKLM|HKCU|HKU|HKCC|HKDD|HKPD|SHCTX)"),TP_CODE},
 {TOK_WRITEREGDWORD,_T("WriteRegDWORD"),4,0,_T("rootkey subkey entry_name new_value_dword\n    root_key=(HKCR|HKLM|HKCU|HKU|HKCC|HKDD|HKPD|SHCTX)"),TP_CODE},
 {TOK_WRITEREGSTR,_T("WriteRegStr"),4,0,_T("rootkey subkey entry_name new_value_string\n    root_key=(HKCR|HKLM|HKCU|HKU|HKCC|HKDD|HKPD|SHCTX)"),TP_CODE},
 {TOK_WRITEREGEXPANDSTR,_T("WriteRegExpandStr"),4,0,_T("rootkey subkey entry_name new_value_string\n    root_key=(HKCR|HKLM|HKCU|HKU|HKCC|HKDD|HKPD|SHCTX)"),TP_CODE},

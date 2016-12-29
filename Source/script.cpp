@@ -5391,60 +5391,47 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_WRITEREGSTR:
     case TOK_WRITEREGEXPANDSTR:
     case TOK_WRITEREGBIN:
+    case TOK_WRITEREGMULTISZ:
     case TOK_WRITEREGDWORD:
       {
+        const TCHAR*cmdname=get_commandtoken_name(which_token);
+        int reg5=0==line.gettoken_enum(1,_T("/REGEDIT5\0")), multisz=which_token==TOK_WRITEREGMULTISZ;
+        if (reg5) line.eattoken();
         int k=line.gettoken_enum(1,rootkeys[0]);
         if (k == -1) k=line.gettoken_enum(1,rootkeys[1]);
-        if (k == -1) PRINTHELP()
+        if (k == -1 || reg5 != multisz) PRINTHELPEX(cmdname); // WriteRegMultiStr only supports the /REGEDIT5 serialized format right now but we really should allow variables at some point.
         ent.which=EW_WRITEREG;
         ent.offsets[0]=REGROOTKEYTOINT(rootkey_tab[k]);
         ent.offsets[1]=add_string(line.gettoken_str(2));
         if (line.gettoken_str(2)[0] == _T('\\'))
-          warning_fl(_T("%") NPRIs _T(": registry path name begins with \'\\\', may cause problems"),line.gettoken_str(0));
+          warning_fl(_T("%") NPRIs _T(": registry path name begins with \'\\\', may cause problems"),cmdname);
         ent.offsets[2]=add_string(line.gettoken_str(3));
         if (which_token == TOK_WRITEREGSTR || which_token == TOK_WRITEREGEXPANDSTR)
         {
           SCRIPT_MSG(_T("%") NPRIs _T(": %") NPRIs _T("\\%") NPRIs _T("\\%") NPRIs _T("=%") NPRIs _T("\n"),
-            line.gettoken_str(0),line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(4));
+            cmdname,line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(4));
           ent.offsets[3]=add_string(line.gettoken_str(4));
           ent.offsets[4]=ent.offsets[5]=REG_SZ;
           if (which_token == TOK_WRITEREGEXPANDSTR)
             ent.offsets[5]=REG_EXPAND_SZ;
         }
-        if (which_token == TOK_WRITEREGBIN)
+        if (which_token == TOK_WRITEREGBIN || multisz)
         {
-          char data[3*NSIS_MAX_STRLEN]; // Jim Park: Keep the data as char / 8 bits
-          TCHAR *p=line.gettoken_str(4);
-          int data_len=0;
-          while (*p)
+          char data[3*NSIS_MAX_STRLEN];
+          int data_len=line.gettoken_binstrdata(4, data, sizeof(data));
+          if (data_len < 0)
           {
-            int c;
-            int a,b;
-            a=*p;
-            if (a >= _T('0') && a <= _T('9')) a-=_T('0');
-            else if (a >= _T('a') && a <= _T('f')) a-=_T('a')-10;
-            else if (a >= _T('A') && a <= _T('F')) a-=_T('A')-10;
-            else break;
-            b=*++p;
-            if (b >= _T('0') && b <= _T('9')) b-=_T('0');
-            else if (b >= _T('a') && b <= _T('f')) b-=_T('a')-10;
-            else if (b >= _T('A') && b <= _T('F')) b-=_T('A')-10;
-            else break;
-            p++;
-            c=(a<<4)|b;
-            if (data_len >= 3*NSIS_MAX_STRLEN)
-            {
-              ERROR_MSG(_T("WriteRegBin: %d bytes of data exceeded\n"),3*NSIS_MAX_STRLEN);
-              return PS_ERROR;
-            }
-            data[data_len++]=c;
+            if (data_len == -2) PRINTHELPEX(cmdname);
+            ERROR_MSG(_T("%") NPRIs _T(": %d bytes of data exceeded\n"),cmdname,sizeof(data));
+            return PS_ERROR;
           }
-          if (*p) PRINTHELP()
-          SCRIPT_MSG(_T("WriteRegBin: %") NPRIs _T("\\%") NPRIs _T("\\%") NPRIs _T("=%") NPRIs _T("\n"),
-            line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(4));
+          if (multisz && (data_len < 4 || *(UINT32*)(&data[data_len-4]))) PRINTHELPEX(cmdname);
+          SCRIPT_MSG(_T("%") NPRIs _T(": %") NPRIs _T("\\%") NPRIs _T("\\%") NPRIs _T("=%") NPRIs _T("\n"),
+            cmdname,line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(4));
+          if (multisz && !build_unicode) for (int p1=0, p2=p1; p1 < data_len; data_len--) data[p1++]=data[p2], p2+=2; // BUGBUG: Should convert each string from UTF-16 to DBCS but only exehead knows the codepage, limited to ASCII for now.
           ent.offsets[3]=add_db_data(data,data_len);
           if (ent.offsets[3] < 0) return PS_ERROR;
-          ent.offsets[4]=ent.offsets[5]=REG_BINARY;
+          ent.offsets[4]=REG_BINARY, ent.offsets[5]=multisz?REG_MULTI_SZ:REG_BINARY;
         }
         if (which_token == TOK_WRITEREGDWORD)
         {
@@ -5481,6 +5468,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_WRITEREGSTR:
     case TOK_WRITEREGEXPANDSTR:
     case TOK_WRITEREGBIN:
+    case TOK_WRITEREGMULTISZ:
     case TOK_WRITEREGDWORD:
     case TOK_ENUMREGKEY:
     case TOK_ENUMREGVAL:
