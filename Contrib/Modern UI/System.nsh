@@ -1123,6 +1123,10 @@ Var MUI_TEMP2
 
     UninstallText "${MUI_UNCONFIRMPAGE_TEXT_TOP}" "${MUI_UNCONFIRMPAGE_TEXT_LOCATION}"
 
+    !ifdef MUI_UNCONFIRMPAGE_VARIABLE
+      DirVar "${MUI_UNCONFIRMPAGE_VARIABLE}"
+    !endif
+
   PageExEnd
 
   !insertmacro MUI_UNFUNCTION_CONFIRMPAGE un.mui.ConfirmPre_${MUI_UNIQUEID} un.mui.ConfirmShow_${MUI_UNIQUEID} un.mui.ConfirmLeave_${MUI_UNIQUEID}

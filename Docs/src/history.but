@@ -1,6 +1,6 @@
 \A{history} Changelog and Release Notes
 
-\H{v3.01} 3.02
+\H{v3.02} 3.02
 
 Released on ? ?th, 2017
 
@@ -13,6 +13,8 @@ Released on ? ?th, 2017
 \S2{} Minor Changes
 
 \b MultiUser now supports $ProgramFiles64 (\W{http://sf.net/p/nsis/bugs/843}{bug #843})
+
+\b Added support for MUI_UNCONFIRMPAGE_VARIABLE (\W{http://sf.net/p/nsis/feature-requests/511}{RFE #511})
 
 \S2{} Translations
 
@@ -3253,7 +3255,7 @@ Released on December 6th, 2002
 
 \b !ifdef and friends can now be used in macros
 
-\b \R{sendmessage}{SendMessage} can send strings (put cw{STR:} before a param) and supports timeouts
+\b \R{sendmessage}{SendMessage} can send strings (put \cw{STR:} before a param) and supports timeouts
 
 \b Right mouse button "Copy to clipboard" context menu for the Details window
 
