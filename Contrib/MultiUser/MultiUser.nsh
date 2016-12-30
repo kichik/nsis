@@ -433,7 +433,7 @@ Modern UI 2 page
     nsDialogs::Create 1018
     Pop $MultiUser.InstallModePage
 
-    ${NSD_CreateLabel} 0u 0u 300u 20u "${MULTIUSER_INSTALLMODEPAGE_TEXT_TOP}"
+    ${NSD_CreateLabel} 0u 0u 300u 40u "${MULTIUSER_INSTALLMODEPAGE_TEXT_TOP}"
     Pop $MultiUser.InstallModePage.Text
 
     ${NSD_CreateRadioButton} 20u 50u 280u 10u "${MULTIUSER_INSTALLMODEPAGE_TEXT_ALLUSERS}"
