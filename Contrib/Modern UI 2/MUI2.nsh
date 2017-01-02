@@ -1,13 +1,13 @@
 /*
 
 NSIS Modern User Interface - Version 2.0
-Copyright 2002-2016 Joost Verburg
+Copyright 2002-2017 Joost Verburg
 Contributors: Amir Szekely, Anders Kjersem
 
 */
 
 !ifndef MUI_INCLUDED
-!echo "NSIS Modern User Interface version 2.0 - Copyright 2002-2016 Joost Verburg"
+!echo "NSIS Modern User Interface version 2.0 - Copyright 2002-2017 Joost Verburg"
 
 ;--------------------------------
 !verbose push 3
