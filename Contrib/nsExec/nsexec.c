@@ -107,19 +107,19 @@ BOOL IsWOW64() {
  * @param cnt     [in]  the size of widebuf in wchar_t's.
  * @return true, if ASCII, false if suspected as wide.
  */
-BOOL WideConvertIfASCII(const char* ansiStr, int strLen, WCHAR* wideBuf, int cnt)
+BOOL WideConvertIfASCII(const char* ansiStr, int strLen, WCHAR* wideBuf, int cnt, BOOL OEMCP)
 {
    BOOL rval = FALSE;
    wideBuf[0] = 0;
    if (lstrlenA(ansiStr) == strLen)
    {
-      MultiByteToWideChar(CP_ACP, 0, ansiStr, -1, wideBuf, cnt);
+      MultiByteToWideChar(OEMCP ? CP_OEMCP : CP_ACP, 0, ansiStr, -1, wideBuf, cnt);
       rval = TRUE;
    }
    else
    {
       // Going to assume that it's a wide char array.
-      lstrcpyW(wideBuf, (const WCHAR*) ansiStr);
+      lstrcpynW(wideBuf, (const WCHAR*) ansiStr, cnt);
    }
 
    return rval;
@@ -307,7 +307,7 @@ params:
 #ifdef _UNICODE
         ReadFile(read_stdout, ansiBuf, sizeof(ansiBuf)-1, &dwRead, NULL);
         ansiBuf[dwRead] = 0;
-        WideConvertIfASCII(ansiBuf, dwRead, szBuf, sizeof(szBuf)/sizeof(szBuf[0]));
+        WideConvertIfASCII(ansiBuf, dwRead, szBuf, sizeof(szBuf)/sizeof(szBuf[0]), bOEM);
 #else
         ReadFile(read_stdout, szBuf, sizeof(szBuf)-1, &dwRead, NULL);
         szBuf[dwRead] = '\0';
