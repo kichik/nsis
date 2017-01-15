@@ -16,6 +16,8 @@ Released on ? ?th, 2017
 
 \b Added support for MUI_UNCONFIRMPAGE_VARIABLE (\W{http://sf.net/p/nsis/feature-requests/511}{RFE #511})
 
+\b Unicode nsExec now supports the /OEM switch (\W{http://sf.net/p/nsis/bugs/1171}{bug #1171})
+
 \S2{} Translations
 
 \b Minor French improvements (\W{http://sf.net/p/nsis/patches/221}{patch #221})
