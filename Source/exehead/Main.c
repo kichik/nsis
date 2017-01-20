@@ -119,6 +119,9 @@ EXTERN_C void NSISWinMainNOCRT()
         "CRYPTBASE\0" // Win7 without KB2533623: OleInitialize ... RPCRT4.UuidCreate ... RPCRT4.GenerateRandomNumber
         "OLEACC\0" // Vista: SHFileOperation ... SHELL32.CProgressDialogUI::_Setup ... SHELL32.GetRoleTextW
         "CLBCATQ\0" // XP.SP2&SP3: SHAutoComplete ... OLE32!InitializeCatalogIfNecessary ... OLE32!CComCatalog::TryToLoadCLB
+#ifndef NSIS_SUPPORT_GETDLLVERSION
+        "VERSION\0"
+#endif
       ;
       const char *dll;
       for (dll = preload; dll[0]; dll += lstrlenA(dll) + 1)
