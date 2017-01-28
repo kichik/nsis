@@ -12,6 +12,10 @@ Delete file (which can be a file or wildcard, but should be specified with a ful
 
 \c Delete $INSTDIR\somefile.dat
 
+\NsisWarnBlockContainerBegin
+\\<b\\>Warning:\\</b\\> The /REBOOTOK switch requires administrator rights on Windows NT and later.
+\NsisWarnBlockContainerEnd
+
 \S2{exec} Exec
 
 \c command
@@ -108,6 +112,10 @@ If no absolute path is specified the current folder will be used. The current fo
 
 \c Rename $INSTDIR\file.ext $INSTDIR\file.dat
 
+\NsisWarnBlockContainerBegin
+\\<b\\>Warning:\\</b\\> The /REBOOTOK switch requires administrator rights on Windows NT and later.
+\NsisWarnBlockContainerEnd
+
 \S2{reservefile} ReserveFile
 
 \c [/nonfatal] [/r] [/x file|wildcard [...]] file [file...] | [/nonfatal] /plugin file.dll
@@ -142,6 +150,10 @@ The next example will succeed in deleting the directory.
 
 \NsisWarnBlockContainerBegin
 \\<b\\>Warning:\\</b\\> Using \e{RMDir /r $INSTDIR} in the uninstaller is not safe. Though it is unlikely, the user might select to install to the root of the Program Files folder and this command would wipe out the entire Program Files folder, including all other installed programs! The user can also put other files in the installation folder and wouldn't expect them to get deleted along with the program. Solutions are \W{http://nsis.sourceforge.net/Uninstall_only_installed_files}{available} for easily uninstalling only files which were installed by the installer.
+\NsisWarnBlockContainerEnd
+
+\NsisWarnBlockContainerBegin
+\\<b\\>Warning:\\</b\\> The /REBOOTOK switch requires administrator rights on Windows NT and later.
 \NsisWarnBlockContainerEnd
 
 \S2{setoutpath} SetOutPath
