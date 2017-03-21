@@ -876,20 +876,29 @@ static int NSISCALL ExecuteEntry(entry *entry_)
 #ifdef NSIS_SUPPORT_SHELLEXECUTE
     case EW_SHELLEXEC: // this uses improvements of Andras Varga
       {
-        int x;
-        TCHAR *buf0=GetStringFromParm(0x00);
-        TCHAR *buf3=GetStringFromParm(0x31);
-        TCHAR *buf2=GetStringFromParm(0x22);
+        SHELLEXECUTEINFO sei;
+        TCHAR *buf0=GetStringFromParm(0x00); // Verb
+        TCHAR *buf3=GetStringFromParm(0x31); // File
+        TCHAR *buf2=GetStringFromParm(0x22); // Parameters
         GetStringFromParm(0x15); // For update_status_text_buf1
         update_status_text_buf1(LANG_EXECSHELL);
-        x=(int)(INT_PTR)ShellExecute(g_hwnd,buf0[0]?buf0:NULL,buf3,buf2[0]?buf2:NULL,state_output_directory,parm3);
-        if (x < 33)
+        sei.cbSize=sizeof(SHELLEXECUTEINFO);
+        sei.fMask=parm4;
+        sei.hwnd=g_hwnd, sei.nShow=parm3;
+        sei.lpVerb=buf0[0]?buf0:NULL, sei.lpFile=buf3, sei.lpParameters=buf2[0]?buf2:NULL, sei.lpDirectory=state_output_directory;
+        sei.lpIDList=NULL; // Must set this because SEE_MASK_INVOKEIDLIST might be set
+        if (!ShellExecuteEx(&sei))
         {
           log_printf5(_T("ExecShell: warning: error (\"%s\": file:\"%s\" params:\"%s\")=%d"),buf0,buf3,buf2,x);
           exec_error++;
         }
         else
         {
+          if (SEE_MASK_NOCLOSEPROCESS & sei.fMask)
+          {
+            WaitForProcess(sei.hProcess);
+            CloseHandle(sei.hProcess);
+          }
           log_printf4(_T("ExecShell: success (\"%s\": file:\"%s\" params:\"%s\")"),buf0,buf3,buf2);
         }
       }
@@ -910,17 +919,11 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           log_printf2(_T("Exec: success (\"%s\")"),buf0);
           if (parm2)
           {
-            DWORD lExitCode;
-            while (WaitForSingleObject(hProc,100) == WAIT_TIMEOUT)
-            {
-              MessageLoop(WM_PAINT);
-            }
-            GetExitCodeProcess(hProc, &lExitCode);
-
+            DWORD lExitCode=WaitForProcess(hProc);
             if (parm1>=0) myitoa(var1,lExitCode);
             else if (lExitCode) exec_error++;
           }
-          CloseHandle( hProc );
+          CloseHandle(hProc);
         }
         else
         {

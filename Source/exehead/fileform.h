@@ -50,7 +50,7 @@
 enum
 {
   EW_INVALID_OPCODE,    // zero is invalid. useful for catching errors. (otherwise an all zeroes instruction
-                        // does nothing, which is easily ignored but means something is wrong.
+                        // does nothing, which is easily ignored but means something is wrong)
   EW_RET,               // return from function call
   EW_NOP,               // Nop/Jump, do nothing: 1, [?new address+1:advance one]
   EW_ABORT,             // Abort: 1 [status]
@@ -118,7 +118,7 @@ enum
 #endif
 
 #ifdef NSIS_SUPPORT_SHELLEXECUTE
-  EW_SHELLEXEC,         // ShellExecute program: 4, [shell action, complete commandline, parameters, showwindow]
+  EW_SHELLEXEC,         // ShellExecute program: 5, [SEE_MASK_FLAG_*, verb, file, parameters, showwindow] (Will wait if SEE_MASK_NOCLOSEPROCESS is set)
 #endif
 
 #ifdef NSIS_SUPPORT_EXECUTE

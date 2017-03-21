@@ -1192,3 +1192,13 @@ void * NSISCALL NSISGetProcAddress(HANDLE dllHandle, TCHAR* funcName)
   return GetProcAddress(dllHandle, funcName);
 #endif
 }
+
+DWORD NSISCALL WaitForProcess(HANDLE hProcess)
+{
+  DWORD excod;
+  while (WaitForSingleObject(hProcess, 100) == WAIT_TIMEOUT)
+    MessageLoop(WM_PAINT);
+
+  GetExitCodeProcess(hProcess, &excod);
+  return excod;
+}
