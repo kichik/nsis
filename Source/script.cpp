@@ -4135,25 +4135,28 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_SUPPORT_EXECUTE not defined.\n"),  line.gettoken_str(0));
     return PS_ERROR;
 #endif//!NSIS_SUPPORT_EXECUTE
-    case TOK_EXECSHELL: // this uses improvements of Andras Varga
+    case TOK_EXECSHELL:
+    case TOK_EXECSHELLWAIT:
 #ifdef NSIS_SUPPORT_SHELLEXECUTE
     {
-      const TCHAR *verb=line.gettoken_str(1), *file=line.gettoken_str(2), *params=line.gettoken_str(3);
+      UINT to=0, xflags=0;
+      static const TCHAR*fn=_T("/INVOKEIDLIST\0/CONNECTNETDRV\0/DOENVSUBST\0/NOIDLIST\0/NOCONSOLE\0/NOZONECHECKS\0/WAITFORINPUTIDLE\0/LOGUSAGE\0/ASYNCOK\0");
+      static const UINT fv[]={  0x0000000C,    0x00000080,     0x00000200,  0x00001000,0x00008000, 0x00800000,    0x02000000,        0x04000000,0x00100000 };
+      for (int k;;) if ((k = line.gettoken_enum(to+1,fn)) < 0) { if (line.gettoken_str(to+1)[0]=='/') PRINTHELP(); break; } else xflags|=fv[k], to++;
+      const TCHAR *verb=line.gettoken_str(to+1), *file=line.gettoken_str(to+2), *params=line.gettoken_str(to+3), *cnam=get_commandtoken_name(which_token);
       ent.which=EW_SHELLEXEC;
-      ent.offsets[0]=add_string(verb);
-      ent.offsets[1]=add_string(file);
-      ent.offsets[2]=add_string(params);
-      ent.offsets[3]=SW_SHOWNORMAL;
-      if (line.getnumtokens() > 4)
+      ent.offsets[0]=add_string(verb), ent.offsets[1]=add_string(file);
+      ent.offsets[2]=add_string(params), ent.offsets[3]=SW_SHOWNORMAL;
+      ent.offsets[4]=SEE_MASK_FLAG_NO_UI|SEE_MASK_FLAG_DDEWAIT|xflags|(which_token==TOK_EXECSHELLWAIT ? SEE_MASK_NOCLOSEPROCESS : 0);
+      if (line.getnumtokens()-to > 4)
       {
         int tab[8]={SW_SHOWDEFAULT,SW_SHOWNORMAL,SW_SHOWMAXIMIZED,SW_SHOWMINIMIZED,SW_HIDE,SW_SHOW,SW_SHOWNA,SW_SHOWMINNOACTIVE};
-        int a=line.gettoken_enum(4,_T("SW_SHOWDEFAULT\0SW_SHOWNORMAL\0SW_SHOWMAXIMIZED\0SW_SHOWMINIMIZED\0SW_HIDE\0SW_SHOW\0SW_SHOWNA\0SW_SHOWMINNOACTIVE\0"));
-        if (a < 0) PRINTHELP()
-        ent.offsets[3]=tab[a];
+        int a=line.gettoken_enum(to+4,_T("SW_SHOWDEFAULT\0SW_SHOWNORMAL\0SW_SHOWMAXIMIZED\0SW_SHOWMINIMIZED\0SW_HIDE\0SW_SHOW\0SW_SHOWNA\0SW_SHOWMINNOACTIVE\0"));
+        if (a >= 0) ent.offsets[3]=tab[a]; else PRINTHELP()
       }
       tstring detail=tstring(verb)+(_T(" ")+!*verb)+tstring(file);
       ent.offsets[5]=add_string(detail.c_str());
-      SCRIPT_MSG(_T("ExecShell: %") NPRIs _T(": \"%") NPRIs _T("\" \"%") NPRIs _T("\" %") NPRIs _T("\n"),verb,file,params,line.gettoken_str(4));
+      SCRIPT_MSG(_T("%") NPRIs _T(": %") NPRIs _T(": \"%") NPRIs _T("\" \"%") NPRIs _T("\" %") NPRIs _T("\n"),cnam,verb,file,params,line.gettoken_str(to+4));
       DefineInnerLangString(NLF_EXEC_SHELL);
     }
     return add_entry(&ent);

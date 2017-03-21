@@ -157,7 +157,9 @@ void NSISCALL MessageLoop(UINT uCheckedMsg);
  * @param funcName The name of the function to get the address of.
  * @return The pointer to the function.  Null if failure.
  */
-void * NSISCALL NSISGetProcAddress(HANDLE dllHandle, TCHAR* funcName);
+void* NSISCALL NSISGetProcAddress(HANDLE dllHandle, TCHAR* funcName);
+
+DWORD NSISCALL WaitForProcess(HANDLE hProcess);
 
 // Turn a pair of chars into a word
 // Turn four chars into a dword
