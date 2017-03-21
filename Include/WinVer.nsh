@@ -155,6 +155,8 @@
 !define WINVER_2012R2    0x06030001 ;6.03.9600
 !define WINVER_10_NT     0x8A000000 ;10.0.10240
 !define WINVER_10        0x0A000000 ;10.0.10240
+!define WINVER_2016_NT   0x8A000001 ;10.0.14393
+!define WINVER_2016      0x0A000001 ;10.0.14393
 
 
 # use this to make all nt > 9x
@@ -416,6 +418,7 @@
   !insertmacro __WinVer_DefineOSTest ${Test} 8.1    '${Suffix}'
   !insertmacro __WinVer_DefineOSTest ${Test} 2012R2 '${Suffix}'
   !insertmacro __WinVer_DefineOSTest ${Test} 10     '${Suffix}'
+  !insertmacro __WinVer_DefineOSTest ${Test} 2016   '${Suffix}'
 !macroend
 
 !insertmacro __WinVer_DefineOSTests AtLeast ""
