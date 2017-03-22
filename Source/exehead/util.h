@@ -32,7 +32,7 @@ TCHAR * NSISCALL GetNSISString(TCHAR *outbuf, int strtab);
 // use the LANG_STR_TAB() macro to decode it.
 #define GetNSISTab(strtab) (strtab < 0 ? LANG_STR_TAB(strtab) : strtab)
 
-void NSISCALL myRegGetStr(HKEY root, const TCHAR *sub, const TCHAR *name, TCHAR *out, int x64);
+void NSISCALL myRegGetStr(HKEY root, const TCHAR *sub, const TCHAR *name, TCHAR *out, int altview);
 #define myatoi(s) ( (int)strtoiptr(s) )
 INT_PTR NSISCALL strtoiptr(const TCHAR *s);
 #define myitoa iptrtostr

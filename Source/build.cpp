@@ -426,24 +426,25 @@ void CEXEBuild::init_shellconstantvalues()
   static bool done = false;
   if (done) return ; else done = true;
 
-  const int orgunmode = uninstall_mode;
+  const int orgunmode = uninstall_mode, t64 = is_target_64bit(), reg = 0x80, r32 = t64 ? 0xC0 : reg, r64 = r32 ^ 0x40;
   set_uninstall_mode(0);
   // Note: The order matters because some of the strings are preprocessed and cf must be <= 0x40
   unsigned int pf       = add_asciistring(_T("ProgramFilesDir"), 0);
   unsigned int cf       = add_asciistring(_T("CommonFilesDir"), 0);
-  unsigned int pf_def   = add_asciistring(_T("C:\\Program Files"));
-  m_ShellConstants.set_values(_T("PROGRAMFILES"),   0x80 | pf, pf_def);
-  unsigned int pf64_def = add_asciistring(_T("$PROGRAMFILES"));
-  m_ShellConstants.set_values(_T("PROGRAMFILES32"), 0x80 | pf, pf_def);
-  m_ShellConstants.set_values(_T("PROGRAMFILES64"), 0xC0 | pf, pf64_def);
+  unsigned int pf_def   = add_asciistring(_T("C:\\Program Files")); // Ultimate fallback
+  // TODO: 64-bit targets could use CSIDL_PROGRAM_FILES+CSIDL_PROGRAM_FILESX86?
+  m_ShellConstants.set_values(_T("PROGRAMFILES"),   reg | pf, pf_def);
+  unsigned int pf_var = add_asciistring(_T("$PROGRAMFILES")); // Fallback for the 32/64 specific constants if the WOW registry view fails
+  m_ShellConstants.set_values(_T("PROGRAMFILES32"), r32 | pf, reg != r32 ? pf_var : pf_def);
+  m_ShellConstants.set_values(_T("PROGRAMFILES64"), r64 | pf, reg != r64 ? pf_var : pf_def);
   unsigned int cf_def   = add_asciistring(_T("$PROGRAMFILES\\Common Files"));
-  m_ShellConstants.set_values(_T("COMMONFILES"),    0x80 | cf, cf_def);
-  unsigned int cf64_def = add_asciistring(_T("$COMMONFILES"));
-  m_ShellConstants.set_values(_T("COMMONFILES32"),  0x80 | cf, cf_def);
-  m_ShellConstants.set_values(_T("COMMONFILES64"),  0xC0 | cf, cf64_def);
+  m_ShellConstants.set_values(_T("COMMONFILES"),    reg | cf, cf_def);
+  unsigned int cf_var = add_asciistring(_T("$COMMONFILES"));
+  m_ShellConstants.set_values(_T("COMMONFILES32"),  r32 | cf, reg != r32 ? cf_var : cf_def);
+  m_ShellConstants.set_values(_T("COMMONFILES64"),  r64 | cf, reg != r64 ? cf_var : cf_def);
 
-  if ( (pf >= 0x40 || pf_def >= 0xFF || pf64_def > 0xFF) // BUGBUG: pf_def should be ">"?
-    || (cf >  0x40 || cf_def >  0xFF || cf64_def > 0xFF) )
+  if ( (pf >= 0x40 || pf_def >= 0xFF || pf_var > 0xFF) // BUGBUG: pf_def should be ">"?
+    || (cf >  0x40 || cf_def >  0xFF || cf_var > 0xFF) )
   {
     // see Source\exehead\util.c for implementation details
     // basically, it knows it needs to get folders from the registry when the 0x80 is on
@@ -456,17 +457,13 @@ void CEXEBuild::init_shellconstantvalues()
   unsigned int unpf = add_asciistring(_T("ProgramFilesDir"), 0);
   unsigned int uncf = add_asciistring(_T("CommonFilesDir"), 0);
   unsigned int unpf_def = add_asciistring(_T("C:\\Program Files"));
-  unsigned int unpf64_def = add_asciistring(_T("$PROGRAMFILES"));
+  unsigned int unpf_var = add_asciistring(_T("$PROGRAMFILES"));
   unsigned int uncf_def = add_asciistring(_T("$PROGRAMFILES\\Common Files"));
-  unsigned int uncf64_def = add_asciistring(_T("$COMMONFILES"));
+  unsigned int uncf_var = add_asciistring(_T("$COMMONFILES"));
   set_uninstall_mode(orgunmode);
 
-  if ( unpf != pf
-    || unpf_def != pf_def
-    || unpf64_def != pf64_def
-    || uncf != cf
-    || uncf_def != cf_def
-    || uncf64_def != cf64_def)
+  if ( unpf != pf || unpf_def != pf_def || unpf_var != pf_var
+    || uncf != cf || uncf_def != cf_def || uncf_var != cf_var )
   {
     const char* msg = "Internal compiler error: installer's shell constants are different than uninstallers!";
     ERROR_MSG(_T("%") NPRIns, msg);

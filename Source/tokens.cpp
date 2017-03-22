@@ -203,7 +203,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_SETOVERWRITE,_T("SetOverwrite"),1,0,_T("on|off|try|ifnewer|ifdiff"),TP_ALL},
 {TOK_SETPLUGINUNLOAD,_T("SetPluginUnload"),1,0,_T("deprecated - plug-ins should handle this on their own"),TP_ALL},
 {TOK_SETREBOOTFLAG,_T("SetRebootFlag"),1,0,_T("true|false"),TP_CODE},
-{TOK_SETREGVIEW,_T("SetRegView"),1,0,_T("32|64|lastused"),TP_CODE},
+{TOK_SETREGVIEW,_T("SetRegView"),1,0,_T("32|64|default|lastused"),TP_CODE},
 {TOK_SETSHELLVARCONTEXT,_T("SetShellVarContext"),1,0,_T("all|current"),TP_CODE},
 {TOK_SETSILENT,_T("SetSilent"),1,0,_T("silent|normal"),TP_CODE},
 {TOK_SHOWDETAILS,_T("ShowInstDetails"),1,0,_T("(hide|show|nevershow)"),TP_GLOBAL},
