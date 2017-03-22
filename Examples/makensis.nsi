@@ -497,11 +497,10 @@ ${MementoSection} "Language Files" SecLangFiles
   SetOutPath $INSTDIR\Bin
   File ..\Bin\MakeLangID.exe
 
-  !insertmacro SectionFlagIsSet ${SecInterfacesModernUI} ${SF_SELECTED} mui nomui
-  mui:
+  ${If} ${SectionIsSelected} ${SecInterfacesModernUI}
     SetOutPath "$INSTDIR\Contrib\Language files"
     File "..\Contrib\Language files\*.nsh"
-  nomui:
+  ${EndIf}
 
 ${MementoSectionEnd}
 
@@ -787,13 +786,13 @@ Section -post
     DetailPrint "Configuring Modern UI..."
     SetDetailsPrint listonly
 
-    ${If} ${SectionIsSelected} ${SecLangFiles}
+    ${IfNot} ${SectionIsSelected} ${SecLangFiles}
       SetOutPath "$INSTDIR\Contrib\Language files"
       File "..\Contrib\Language files\English.nlf"
       File "..\Contrib\Language files\English.nsh"
     ${EndIf}
 
-    ${If} ${SectionIsSelected} ${SecGraphics}
+    ${IfNot} ${SectionIsSelected} ${SecGraphics}
       SetOutPath $INSTDIR\Contrib\Graphics\Checks
       File "..\Contrib\Graphics\Checks\modern.bmp"
       SetOutPath $INSTDIR\Contrib\Graphics\Icons
