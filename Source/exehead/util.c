@@ -645,14 +645,14 @@ void NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
 
 // The value of registry->sub->name is stored in out.  If failure, then out becomes
 // an empty string "".
-void NSISCALL myRegGetStr(HKEY root, const TCHAR *sub, const TCHAR *name, TCHAR *out, int x64)
+void NSISCALL myRegGetStr(HKEY root, const TCHAR *sub, const TCHAR *name, TCHAR *out, int altview)
 {
   HKEY hKey;
+  const REGSAM wowsam = altview ? (sizeof(void*) > 4 ? KEY_WOW64_32KEY : KEY_WOW64_64KEY) : 0;
   *out=0;
-  if (RegOpenKeyEx(root,sub,0,KEY_READ|(x64?KEY_WOW64_64KEY:0),&hKey) == ERROR_SUCCESS)
+  if (RegOpenKeyEx(root,sub,0,KEY_READ|wowsam,&hKey) == ERROR_SUCCESS)
   {
-    DWORD l = NSIS_MAX_STRLEN*sizeof(TCHAR);
-    DWORD t;
+    DWORD l = NSIS_MAX_STRLEN*sizeof(TCHAR), t;
     // Note that RegQueryValueEx returns Unicode strings if _UNICODE is defined for the
     // REG_SZ type.
     if (RegQueryValueEx(hKey,name,NULL,&t,(LPBYTE)out,&l ) != ERROR_SUCCESS || (t != REG_SZ && t != REG_EXPAND_SZ)) *out=0;

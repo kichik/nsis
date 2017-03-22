@@ -2,7 +2,7 @@
 
 In all of the below registry instructions use an empty string (just two quotes with nothing between them - "") as the key name to specify the default key which is shown as (Default) in regedit.exe.
 
-Use \R{setregview}{SetRegView} on Windows x64 to choose which registry view is used.
+Use \R{setregview}{SetRegView} on 64-bit Windows to choose which registry view is used.
 
 If a full path is not specified for any of the INI handling instructions, the Windows directory will be used.
 
@@ -198,7 +198,7 @@ Writes a multi-string value. The /REGEDIT5 switch must be used and specifies tha
 
 \S2{setregview} SetRegView
 
-\c \\<b\\>32\\</b\\>|64|lastused
+\c 32|64|\\<b\\>default\\</b\\>|lastused
 
 Sets the registry view affected by \R{registry}{registry commands}. On 64-bit versions of Windows there are two views; one for 32-bit applications and one for 64-bit applications. By default, 32-bit applications running on 64-bit systems (WOW64) only have access to the 32-bit view. Using \c{SetRegView 64} allows the installer to access keys in the 64-bit view of the registry.
 

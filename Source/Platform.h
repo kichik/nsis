@@ -642,6 +642,9 @@ typedef DWORDLONG ULONGLONG,*PULONGLONG;
 #  define HKEY_DYN_DATA ((HKEY)0x80000006)
 #endif
 
+#ifndef KEY_WOW64_32KEY
+#  define KEY_WOW64_32KEY 0x200
+#endif
 #ifndef KEY_WOW64_64KEY
 #  define KEY_WOW64_64KEY 0x100
 #endif

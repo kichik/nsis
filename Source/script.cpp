@@ -4023,15 +4023,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     {
       ent.which=EW_SETFLAG;
       ent.offsets[0]=FLAG_OFFSET(alter_reg_view);
-      // "64" results in setting the flag to 1 which alters the view
-      int k=line.gettoken_enum(1,_T("32\0") _T("64\0lastused\0"));
+      int k=line.gettoken_enum(1,_T("32\0") _T("64\0default\0lastused\0")); // TODO: Can we support "native" without OS sniffing? Must verify on 9x, NT4 and 2000!
       if (k<0) PRINTHELP()
-      if (k == 0) // 32
-        ent.offsets[1]=add_intstring(0);
-      else if (k == 1) // 64
-        ent.offsets[1]=add_intstring(KEY_WOW64_64KEY);
-      else if (k == 2) // last used
-        ent.offsets[2]=1;
+      if (k == 0) ent.offsets[1]=add_intstring(is_target_64bit() ? KEY_WOW64_32KEY : 0); // 32
+      else if (k == 1) ent.offsets[1]=add_intstring(KEY_WOW64_64KEY); // 64
+      else if (k == 2) ent.offsets[1]=add_intstring(0); // default
+      else if (k == 3) ent.offsets[2]=1; // last used
       SCRIPT_MSG(_T("SetRegView: %") NPRIs _T("\n"),line.gettoken_str(1));
     }
     return add_entry(&ent);
