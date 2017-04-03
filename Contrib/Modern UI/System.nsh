@@ -1451,8 +1451,8 @@ Var MUI_TEMP2
   !endif
 
   !insertmacro MUI_PAGE_FUNCTION_CUSTOM SHOW
-
   StartMenu::Show
+  !insertmacro MUI_PAGE_FUNCTION_CUSTOM DESTROYED
 
     Pop $MUI_TEMP1
     StrCmp $MUI_TEMP1 "success" 0 +2
