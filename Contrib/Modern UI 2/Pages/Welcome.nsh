@@ -160,6 +160,7 @@ Welcome page (implemented using nsDialogs)
     Call ${MUI_PAGE_UNINSTALLER_FUNCPREFIX}muiPageLoadFullWindow
     !insertmacro MUI_PAGE_FUNCTION_CUSTOM SHOW
     nsDialogs::Show
+    !insertmacro MUI_PAGE_FUNCTION_CUSTOM DESTROYED
     Call ${MUI_PAGE_UNINSTALLER_FUNCPREFIX}muiPageUnloadFullWindow    
 
     ;Delete image from memory

@@ -191,7 +191,7 @@
                         </div>
                     </div>
                     <h1>
-                        Modern UI 2.0</h1>
+                        Modern UI 2.1</h1>
                     <div>
                         <p>
                             This new version makes it easier to customize pages, because the same method can
@@ -1086,6 +1086,7 @@ FunctionEnd</pre>
                                 <strong>MUI_PAGE_CUSTOMFUNCTION_PRE</strong> <span class="parameter">function</span><br />
                                 <strong>MUI_PAGE_CUSTOMFUNCTION_SHOW</strong> <span class="parameter">function</span><br />
                                 <strong>MUI_PAGE_CUSTOMFUNCTION_LEAVE</strong> <span class="parameter">function</span><br />
+                                <strong>MUI_PAGE_CUSTOMFUNCTION_DESTROYED</strong> <span class="parameter">function</span><br />
                             </p>
                             <p>
                                 The pre function is called first and allows you to initalize variables or decide
@@ -1095,8 +1096,10 @@ FunctionEnd</pre>
                             <p>
                                 In the show function, the window handles of all controls on the page can be retrieved
                                 from a Modern UI variable. A list of the variables names is not yet available. For
-                                now, refer to the source files of the Modern UI 2.0. The variable declarations can
+                                now, refer to the source files of the Modern UI 2. The variable declarations can
                                 be found in the first lines of the header file for a certain page.</p>
+                            <p>
+                                The destroyed function is called after a external/plug-in page has been destroyed.
                         </div>
                     </div>
                     <h1>

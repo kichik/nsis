@@ -203,7 +203,7 @@ enum
 
 #ifdef _UNICODE     // opcodes available only in Unicode installers must be at the end of the enumeration
 #ifdef NSIS_SUPPORT_FILEFUNCTIONS
-  EW_FPUTWS,            // FileWriteUTF16LE: 3 [handle, string, ?int:string]
+  EW_FPUTWS,            // FileWriteUTF16LE: 4 [handle, string, ?int:string, TryWriteBOM]
   EW_FGETWS,            // FileReadUTF16LE: 4 [handle, output, maxlen, ?getchar:gets]
 #endif//NSIS_SUPPORT_FILEFUNCTIONS
 #endif

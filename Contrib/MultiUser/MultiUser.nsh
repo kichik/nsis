@@ -450,6 +450,7 @@ Modern UI 2 page
     
     !insertmacro MUI_PAGE_FUNCTION_CUSTOM SHOW
     nsDialogs::Show
+    !insertmacro MUI_PAGE_FUNCTION_CUSTOM DESTROYED
     
   FunctionEnd
 
