@@ -9,7 +9,11 @@ NLF v6
 950
 # RTL - anything else than RTL means LTR 由右至左書寫
 -
-# Translator: Kii Ali <kiiali@cpatch.org>,<kiiali@ms1.url.com.tw>, <kiiali@pchome.com.tw>;  Revision date: 2010-09-28
+# Revision date: 2017-03-17
+# Translators:
+## Kii Ali <kiiali@cpatch.org>, <kiiali@ms1.url.com.tw>, <kiiali@pchome.com.tw>
+## Walter Cheuk <wwycheuk@gamil.com>
+#
 # ^Branding
 Nullsoft Install System %s
 # ^SetupCaption
@@ -37,91 +41,91 @@ $(^Name) 解除安裝
 # ^UnCompletedSubCaption
 : 完成
 # ^BackBtn
-< 上一步(&P)
+< 上一步(&B)
 # ^NextBtn
 下一步(&N) >
 # ^AgreeBtn
-我接受(&I)
+我同意(&A)
 # ^AcceptBtn
-我接受「授權協議」中的條款(&A)
+我接受「授權協議」的條款(&A)
 # ^DontAcceptBtn
-我不接受「授權協議」中的條款(&N)
+我不接受「授權協議」的條款(&D)
 # ^InstallBtn
 安裝(&I)
 # ^UninstallBtn
 解除安裝(&U)
 # ^CancelBtn
-取消(&C)
+取消
 # ^CloseBtn
-關閉(&L)
+關閉(&C)
 # ^BrowseBtn
-瀏覽(&B)...
+瀏覽(&R)...
 # ^ShowDetailsBtn
 顯示細節(&D)
 # ^ClickNext
-按一下 [下一步(N)] 繼續。
+按「下一步(N)」繼續。
 # ^ClickInstall
-按一下 [安裝(I)] 開始安裝進程。
+按「安裝(I)」開始安裝。
 # ^ClickUninstall
-按一下 [解除安裝(U)] 開始解除安裝進程。
+按「解除安裝(U)」開始解除安裝。
 # ^Name
 名稱
 # ^Completed
 已完成
 # ^LicenseText
-在安裝 $(^NameDA) 之前請檢閱授權協議。如果你接受協議中所有條款，按一下 [我同意(I)] 。
+在安裝 $(^NameDA) 之前請檢閱授權協議。如果接受協議所有條款，按「我同意(A)」。
 # ^LicenseTextCB
-在安裝 $(^NameDA) 之前請檢閱授權協議。如果你接受協議中所有條款，按一下下方的勾選框。 $_CLICK
+在安裝 $(^NameDA) 之前請檢閱授權協議。如果接受協議所有條款，按下方的勾選框。 $_CLICK
 # ^LicenseTextRB
-在安裝 $(^NameDA) 之前請檢閱授權協議。如果你接受協議中所有條款，選擇下方的第一個選項。 $_CLICK
+在安裝 $(^NameDA) 之前請檢閱授權協議。如果接受協議所有條款，選擇下方的第一個選項。 $_CLICK
 # ^UnLicenseText
-在解除安裝 $(^NameDA) 之前請檢閱授權協議。如果你接受協議中所有條款，按一下 [我同意(I)] 。
+在解除安裝 $(^NameDA) 之前請檢閱授權協議。如果接受協議中所有條款，按「我同意(A)」。
 # ^UnLicenseTextCB
-在解除安裝 $(^NameDA) 之前請檢閱授權協議。如果你接受協議中所有條款，按一下下方的勾選框。 $_CLICK
+在解除安裝 $(^NameDA) 之前請檢閱授權協議。如果接受協議中所有條款，按下方的勾選框。 $_CLICK
 # ^UnLicenseTextRB
-在解除安裝 $(^NameDA) 之前請檢閱授權協議。如果你接受協議中所有條款，選擇下方的第一個選項。 $_CLICK
+在解除安裝 $(^NameDA) 之前請檢閱授權協議。如果接受協議中所有條款，選擇的第一個選項。 $_CLICK
 # ^Custom
 自訂
 # ^ComponentsText
-勾選你想要安裝的元件，並解除勾選你不希望安裝的元件。 $_CLICK
+勾選想要安裝的元件，並解除勾選不想安裝的元件。 $_CLICK
 # ^ComponentsSubText1
 選取安裝的類型: 
 # ^ComponentsSubText2_NoInstTypes
 選取安裝的元件: 
 # ^ComponentsSubText2
-或者，自訂選取想安裝的元件: 
+又或者，自訂選取想安裝的元件: 
 # ^UnComponentsText
-勾選你想要解除安裝的元件，並解除勾選你不想要望解除安裝的元件。 $_CLICK
+勾選想要解除安裝的元件，並解除勾選不想解除安裝的元件。 $_CLICK
 # ^UnComponentsSubText1
-選擇解除安裝的類型: 
+選取解除安裝的類型: 
 # ^UnComponentsSubText2_NoInstTypes
-選擇要解除安裝的元件: 
+選取要解除安裝的元件: 
 # ^UnComponentsSubText2
-或是，選擇想要解除安裝的可選項元件: 
+又或者，選擇想要解除安裝的可選項元件: 
 # ^DirText
-Setup 將安裝 $(^NameDA) 在下列資料夾。要安裝到不同資料夾，按一下 [瀏覽(B)...] 並選擇其他的資料夾。 $_CLICK
+安裝程式會將 $(^NameDA) 安裝在以下資料夾。要安裝到不同的資料夾，按「瀏覽(B)...」並選擇其他資料夾。 $_CLICK
 # ^DirSubText
 目標資料夾
 # ^DirBrowseText
-選擇要安裝 $(^NameDA) 的資料夾位置: 
+選取要安裝 $(^NameDA) 的資料夾: 
 # ^UnDirText
-Setup 將自下列資料夾解除安裝 $(^NameDA) 。要解除安裝到不同資料夾，按一下 [瀏覽(B)...] 並選擇其他的資料夾。 $_CLICK
+安裝程式會自以下資料夾解除安裝 $(^NameDA) 。要解除安裝不同的資料夾，按「瀏覽(B)...」並選擇其他資料夾。 $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
-選擇要解除安裝 $(^NameDA) 的資料夾: 
+選取要解除安裝 $(^NameDA) 的資料夾: 
 # ^SpaceAvailable
 "可用空間: "
 # ^SpaceRequired
 "所需空間: "
 # ^UninstallingText
-這個精靈將從你的電腦解除安裝 $(^NameDA) 。 $_CLICK
+會自以下資料夾解除安裝 $(^NameDA) 。 $_CLICK
 # ^UninstallingSubText
 解除安裝目錄: 
 # ^FileError
-無法開啟要寫入的檔案: \r\n\t"$0"\r\n按一下 [Abort] 停止安裝，\r\n [Retry] 重新嘗試寫入檔案，或\r\n [Ignore] 忽略這個檔案。
+無法開啟要寫入的檔案: \r\n\t"$0"\r\n按「中止」停止安裝，\r\n「重試」重新嘗試寫入檔案，或\r\n「忽略」略過此檔案。
 # ^FileError_NoIgnore
-無法開啟要寫入的檔案: \r\n\t"$0"\r\n按一下 [Retry] 重新嘗試寫入檔案，或\r\n [Cancel] 停止安裝。
+無法開啟要寫入的檔案: \r\n\t"$0"\r\n按「重試」重新嘗試寫入檔案，或\r\n「取消」停止安裝。
 # ^CantWrite
 "無法寫入: "
 # ^CopyFailed
@@ -145,15 +149,15 @@ Setup 將自下列資料夾解除安裝 $(^NameDA) 。要解除安裝到不同�
 # ^Delete
 "刪除檔案: "
 # ^DeleteOnReboot
-"重新啟動後刪除: "
+"重新開機後刪除: "
 # ^ErrorCreatingShortcut
-"正在建立捷徑時發生錯誤: "
+"建立捷徑時發生錯誤: "
 # ^ErrorCreating
-"正在建立時發生錯誤: "
+"建立時發生錯誤: "
 # ^ErrorDecompressing
-"正在解壓縮資料發生錯誤！已損壞的安裝程式？"
+"解壓縮資料發生錯誤！安裝程式是否已損壞？"
 # ^ErrorRegistering
-"正在註冊 DLL 時發生錯誤"
+"註冊 DLL 時發生錯誤"
 # ^ExecShell
 "執行殼層程式: "
 # ^Exec
@@ -163,15 +167,15 @@ Setup 將自下列資料夾解除安裝 $(^NameDA) 。要解除安裝到不同�
 # ^ErrorWriting
 "抽取: 無法寫入檔案 "
 # ^InvalidOpcode
-"安裝損毀: 無效的作業代碼 "
+"安裝程式損毀: 無效的作業代碼 "
 # ^NoOLE
 "沒有 OLE 用於: "
 # ^OutputFolder
-"輸出目錄: "
+"輸出資料夾: "
 # ^RemoveFolder
-"移除目錄: "
+"移除資料夾: "
 # ^RenameOnReboot
-"重新啟動後重新命名: "
+"重新開機後重新命名: "
 # ^Rename
 "重新命名: "
 # ^Skipped
@@ -179,12 +183,12 @@ Setup 將自下列資料夾解除安裝 $(^NameDA) 。要解除安裝到不同�
 # ^CopyDetails
 "複製細節到剪貼簿 "
 # ^LogInstall
-"日誌安裝進程"
-# byte
+"將安裝進程記入日誌"
+# ^Byte
 B
-# kilo
+# ^Kilo
 K
-# mega
+# ^Mega
 M
-# giga
+# ^Giga
 G

@@ -1,5 +1,5 @@
 ﻿;Language: 'Chinese (Simplified)' (2052)
-;Translator: Kii Ali <kiiali@cpatch.org>,<kiiali@ms1.url.com.tw>, <kiiali@pchome.com.tw>
+;Translator: Kii Ali <kiiali@cpatch.org>, <kiiali@ms1.url.com.tw>, <kiiali@pchome.com.tw>
 ;Revision date: 2010-09-28
 
 !insertmacro LANGFILE "SimpChinese" "Chinese (Simplified)" "中文(简体)" "Hanyu (Jiantizi)"
