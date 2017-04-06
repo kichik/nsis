@@ -9,7 +9,8 @@ NLF v6
 936
 # RTL - anything else than RTL means LTR 由右至左书写
 -
-# Translator: Kii Ali <kiiali@cpatch.org>,<kiiali@ms1.url.com.tw>, <kiiali@pchome.com.tw>;  Revision date: 2010-09-28
+# Revision date: 2010-09-28
+# Translator: Kii Ali <kiiali@cpatch.org>, <kiiali@ms1.url.com.tw>, <kiiali@pchome.com.tw>
 # ^Branding
 Nullsoft Install System %s
 # ^SetupCaption
