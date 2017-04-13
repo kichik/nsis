@@ -1,0 +1,19 @@
+language: cpp
+dist: xenial
+compiler:
+- gcc
+os:
+- linux
+before_install:
+- sudo apt-get install scons mingw32 mingw32-binutils zlib1g-dev libcppunit-dev
+install:
+- wget -O /tmp/zlib.zip "https://downloads.sourceforge.net/project/libpng/zlib/1.2.8/zlib128-dll.zip?r=&ts=1403402496&use_mirror=hivelocity"
+- mkdir /tmp/zlib
+- unzip /tmp/zlib.zip -d /tmp/zlib
+script:
+- scons ZLIB_W32=/tmp/zlib SKIPUTILS="NSIS Menu" test dist-zip
+deploy:
+  provider: script
+  script: echo this is where we will deploy to SF
+  on:
+    branch: master
