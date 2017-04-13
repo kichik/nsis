@@ -276,6 +276,15 @@ FILE* my_fopen(const TCHAR *path, const char *mode);
 // assumption: T is an int type
 template <class T> inline T align_to_512(const T x) { return (x+511) & ~511; }
 
+template<class T> inline T read_ptr_as(const void*p)
+{
+#if defined(_MSC_VER) && (_MSC_VER-0 < 1400) // TODO: Figure out which versions are able to optimize the memcpy
+  return *(T*)(p);
+#else
+  T t; memcpy(&t, p, sizeof(T)); return t;
+#endif
+}
+
 // some values need to be truncated from size_t to [unsigned] int, using this function is better than a plain cast
 template<class R, class T> inline R internaltruncate_cast(T t) {
   assert((~((T)0)) > T(0)); // Only unsigned types supported right now
