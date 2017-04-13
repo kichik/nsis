@@ -3257,7 +3257,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           ret=RunChildProcessRedirected(exec, forceutf8 ? true : false);
         else
 #endif //~ _WIN32
-          ret=sane_system(exec);
+          ret=sane_system(exec), (void)forceutf8; // forceutf8 is not used on POSIX
         if (comp == 5)
         {
           _stprintf(buf,_T("%d"),ret);
@@ -5425,7 +5425,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             ERROR_MSG(_T("%") NPRIs _T(": %d bytes of data exceeded\n"),cmdname,sizeof(data));
             return PS_ERROR;
           }
-          if (multisz && (data_len < 4 || *(UINT32*)(&data[data_len-4]))) PRINTHELPEX(cmdname);
+          if (multisz && (data_len < 4 || 0 != read_ptr_as<UINT32>(&data[data_len-4]))) PRINTHELPEX(cmdname); // Must end with 4 zero bytes
           SCRIPT_MSG(_T("%") NPRIs _T(": %") NPRIs _T("\\%") NPRIs _T("\\%") NPRIs _T("=%") NPRIs _T("\n"),
             cmdname,line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(4));
           if (multisz && !build_unicode) for (int p1=0, p2=p1; p1 < data_len; data_len--) data[p1++]=data[p2], p2+=2; // BUGBUG: Should convert each string from UTF-16 to DBCS but only exehead knows the codepage, limited to ASCII for now.
