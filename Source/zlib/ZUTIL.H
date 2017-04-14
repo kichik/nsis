@@ -69,6 +69,7 @@ typedef unsigned long  ulg;
 #    include "../exehead/util.h"
 #    define zmemcpy mini_memcpy
 #  else
+#    include <string.h> // Avoid "incompatible implicit declaration of built-in function"
 #    define zmemcpy memcpy
 #  endif
 #else
