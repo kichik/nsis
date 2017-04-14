@@ -6,7 +6,7 @@ NLF v6
 # Font and size - dash (-) means default
 굴림
 9
-# Codepage - dash (-) means ANSI code page
+# Codepage - dash (-) means ASCII code page
 949
 # RTL - anything else than RTL means LTR
 -

@@ -5,7 +5,7 @@ NLF v6
 # Font and size - dash (-) means default 字型名稱與大小
 新細明體
 9
-# Codepage - dash (-) means ANSI code page ANSI 字碼頁
+# Codepage - dash (-) means ASCII code page ASCII 字碼頁
 950
 # RTL - anything else than RTL means LTR 由右至左書寫
 -
