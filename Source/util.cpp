@@ -222,7 +222,7 @@ bool NSISRT_Initialize() // Init function for POSIX
       create_code_page_string(g_nrt_iconv_narrowloc, cchmax, CP_UTF8);
     }
   }
-  return !!nsis_iconv_get_host_endian_ucs4_code();
+  return nsis_iconv_get_host_endian_ucs4_code() && IsValidCodePage(NSISRT_GetASCIICodepage());
 }
 
 const char* NSISRT_setlocale_wincp(int cat, unsigned int cp)

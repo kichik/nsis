@@ -1036,7 +1036,7 @@ l_readerr:
 
   // Get code page
   bool isnlfdataucp = false; // Unicode-only language?
-  nlf->m_uCodePage = CP_ACP;
+  nlf->m_uCodePage = NSISRT_GetASCIICodepage();
   if (!GetNextNLFLine(lr, buf, NSIS_MAX_STRLEN, errlr)) goto l_readerr;
   TrimTrailingNewlines(buf);
   if (buf[0] != _T('-') || buf[1] != 0) {

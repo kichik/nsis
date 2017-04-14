@@ -5,7 +5,7 @@ NLF v6
 # Font and size - dash (-) means default
 ＭＳ Ｐゴシック
 9
-# Codepage - dash (-) means ANSI code page
+# Codepage - dash (-) means ASCII code page
 932
 # RTL - anything else than RTL means LTR
 -

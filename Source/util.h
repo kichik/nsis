@@ -169,6 +169,7 @@ inline void PrintColorFmtMsg_ERR(const TCHAR *fmtstr, ...)
 
 
 bool NSISRT_Initialize();
+#define NSISRT_GetASCIICodepage() ( 1252 )
 #ifndef _WIN32
 // iconv const inconsistency workaround by Alexandre Oliva
 template <typename T>

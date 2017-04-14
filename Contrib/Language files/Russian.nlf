@@ -5,7 +5,7 @@ NLF v6
 # Font and size - dash (-) means default
 -
 -
-# Codepage - dash (-) means ANSI code page
+# Codepage - dash (-) means ASCII code page
 1251
 # RTL - anything else than RTL means LTR
 -
