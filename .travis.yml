@@ -11,7 +11,10 @@ install:
 - mkdir /tmp/zlib
 - unzip /tmp/zlib.zip -d /tmp/zlib
 script:
-- scons ZLIB_W32=/tmp/zlib SKIPUTILS="NSIS Menu" test dist-zip
+- scons ZLIB_W32=/tmp/zlib SKIPUTILS="NSIS Menu" NSIS_CONFIG_LOG=$CFG_LOG test dist-zip
+env:
+- CFG_LOG=yes
+- CFG_LOG=no
 deploy:
   provider: script
   script: echo this is where we will deploy to SF
