@@ -889,7 +889,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         sei.lpIDList=NULL; // Must set this because SEE_MASK_INVOKEIDLIST might be set
         if (!ShellExecuteEx(&sei))
         {
-          log_printf5(_T("ExecShell: warning: error (\"%s\": file:\"%s\" params:\"%s\")=%d"),buf0,buf3,buf2,x);
+          log_printf5(_T("ExecShell: warning: error (\"%s\": file:\"%s\" params:\"%s\")=%d"),buf0,buf3,buf2,GetLastError());
           exec_error++;
         }
         else
