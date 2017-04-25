@@ -30,6 +30,7 @@
 #include "crc32.h"
 #include "manifest.h"
 #include "icon.h"
+#include "utf.h" // For NStream
 
 #include "exehead/api.h"
 #include "exehead/resource.h"
@@ -3408,18 +3409,31 @@ void CEXEBuild::set_verbosity(int lvl)
 
 int CEXEBuild::parse_pragma(LineParser &line)
 {
-  if (line.gettoken_enum(1, _T("warning\0")) == -1)
-    return (warning_fl(DW_PP_PRAGMA_UNKNOWN, _T("Unknown pragma")), PS_ERROR);
+  const int rvSucc = PS_OK, rvWarn = PS_WARNING, rvErr = PS_WARNING; // rvErr is not PS_ERROR because we want !pragma parsing to be very forgiving.
 
-  int warnOp = line.gettoken_enum(2, _T("disable\0enable\0default\0push\0pop\0")), ret = PS_OK;
+  // 2.47 shipped with a corrupted CHM file (bug #1129). This minimal verification command exists because the !searchparse hack we added does not work with codepage 936!
+  if (line.gettoken_enum(1, _T("verifychm\0")) == 0)
+  {
+    struct { UINT32 Sig, Ver, cbH; } chm;
+    NIStream f;
+    bool valid = f.OpenFileForReading(line.gettoken_str(2));
+    valid = valid && 12 == f.ReadOctets(&chm, 12);
+    valid = valid && FIX_ENDIAN_INT32(chm.Sig) == 0x46535449 && (FIX_ENDIAN_INT32(chm.Ver)|1) == 3; // 'ITSF' v2..3
+    return valid ? rvSucc : (ERROR_MSG(_T("Invalid format\n")), PS_ERROR);
+  }
+
+  if (line.gettoken_enum(1, _T("warning\0")) == -1)
+    return (warning_fl(DW_PP_PRAGMA_UNKNOWN, _T("Unknown pragma")), rvErr);
+
+  int warnOp = line.gettoken_enum(2, _T("disable\0enable\0default\0push\0pop\0")), ret = rvSucc;
   if (warnOp < 0)
-    ret = PS_ERROR, warning_fl(DW_PP_PRAGMA_UNKNOWN, _T("Unknown pragma")); // Unknown warning pragma action
+    ret = rvErr, warning_fl(DW_PP_PRAGMA_UNKNOWN, _T("Unknown pragma")); // Unknown warning pragma action
   else if (warnOp == 3)
     diagstate.Push();
   else if (warnOp == 4)
   {
     if (!diagstate.Pop())
-      ret = PS_WARNING, warning_fl(DW_PP_PRAGMA_INVALID, _T("Unexpected"));
+      ret = rvWarn, warning_fl(DW_PP_PRAGMA_INVALID, _T("Unexpected"));
   }
   else // warning: disable/enable/default
   {
@@ -3427,7 +3441,7 @@ int CEXEBuild::parse_pragma(LineParser &line)
     {
       DIAGCODE code = static_cast<DIAGCODE>(line.gettoken_int(ti));
       if (!diagstate.IsValidCode(code))
-        ret = PS_WARNING, warning_fl(DW_PP_PRAGMA_INVALID, _T("Invalid number: \"%") NPRIs _T("\""), line.gettoken_str(ti));
+        ret = rvWarn, warning_fl(DW_PP_PRAGMA_INVALID, _T("Invalid number: \"%") NPRIs _T("\""), line.gettoken_str(ti));
       else if (warnOp == 0)
         diagstate.Disable(code);
       else // if ((warnOp == 1) | (warnOp == 2)) All warnings currently default to enabled

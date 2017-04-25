@@ -3367,8 +3367,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
     return PS_OK;
     case TOK_P_PRAGMA:
-      parse_pragma(line); // Never abort with ERROR_MSG, even if the pragma is unknown/invalid
-    return PS_OK;
+    return parse_pragma(line) == PS_ERROR ? PS_ERROR : PS_OK;
     case TOK_P_ERROR:
       ERROR_MSG(_T("!error: %") NPRIs _T("\n"),line.gettoken_str(1));
     return PS_ERROR;
