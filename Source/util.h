@@ -77,7 +77,8 @@ public:
     if (!p) throw std::bad_alloc();
     m_heap = (T*) p;
   }
-  size_t StrFmt(const T*FmtStr, va_list Args, bool throwonerr = true)
+  size_t StrFmt(const T*f, ...) { va_list v; va_start(v, f); size_t r = StrVFmt(f, v); va_end(v); return r; }
+  size_t StrVFmt(const T*FmtStr, va_list Args, bool throwonerr = true)
   {
     size_t n = ExpandoStrFmtVaList(m_stack, COUNTOF(m_stack), &m_heap, FmtStr, Args);
     if (throwonerr && !n && *FmtStr) throw std::bad_alloc();

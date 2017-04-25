@@ -713,7 +713,7 @@ int CEXEBuild::preprocess_string(TCHAR *out, const TCHAR *in, WORD codepage/*=CP
             if (_tcsstr(tbuf,_T(" "))) _tcsstr(tbuf,_T(" "))[0]=0;
           }
           if ( bDoWarning )
-            warning_fl(_T("unknown variable/constant \"%") NPRIs _T("\" detected, ignoring"),tbuf);
+            warning_fl(DW_VAR_IGNORED_UNKNOWN, _T("unknown variable/constant \"%") NPRIs _T("\" detected, ignoring"),tbuf);
           i = _T('$'); // redundant since i is already '$' and has not changed.
         }
       } // else
@@ -1680,7 +1680,7 @@ int CEXEBuild::resolve_coderefs(const TCHAR *str)
         {
           if (sec->code_size>0)
           {
-            warning(_T("%") NPRIs _T(" function \"%") NPRIs _T("\" not referenced - zeroing code (%d-%d) out\n"),str,
+            warning(DW_UNUSED_FUNCTION, _T("%") NPRIs _T(" function \"%") NPRIs _T("\" not referenced - zeroing code (%d-%d) out\n"),str,
               ns_func.get()+sec->name_ptr,
               sec->code,sec->code+sec->code_size);
             memset(w+sec->code,0,sec->code_size*sizeof(entry));
@@ -1700,8 +1700,8 @@ int CEXEBuild::resolve_coderefs(const TCHAR *str)
       if (!t->flags)
       {
         TCHAR *n=(TCHAR*)ns_label.get()+t->name_ptr;
-        if (*n == _T('.')) warning(_T("global label \"%") NPRIs _T("\" not used"),n);
-        else warning(_T("label \"%") NPRIs _T("\" not used"),n);
+        if (*n == _T('.')) warning(DW_UNUSED_GLOBALLABEL, _T("global label \"%") NPRIs _T("\" not used"),n);
+        else warning(DW_UNUSED_LABEL, _T("label \"%") NPRIs _T("\" not used"),n);
       }
       t++;
     }
@@ -1834,7 +1834,7 @@ int CEXEBuild::AddVersionInfo()
           {
             if ( !*recverkeys ) break;
             if ( !rVersionInfo.FindKey(lang_id, code_page, recverkeys) )
-              warning(_T("Generating version information for language \"%04d-%") NPRIs _T("\" without standard key \"%") NPRIs _T("\""), lang_id, lang_name, recverkeys);
+              warning(DW_VI_MISSINGSTDKEY, _T("Generating version information for language \"%04d-%") NPRIs _T("\" without standard key \"%") NPRIs _T("\""), lang_id, lang_name, recverkeys);
             recverkeys += _tcsclen(recverkeys) + 1;
           }
 
@@ -2160,7 +2160,7 @@ again:
       }
 
       if (!instlog_used) {
-        warning(_T("%") NPRIs _T("age instfiles not used, no sections will be executed!"), uninstall_mode ? _T("Uninstall p") : _T("P"));
+        warning(DW_INSTFILESPAGE_NOT_USED, _T("%") NPRIs _T("age instfiles not used, no sections will be executed!"), uninstall_mode ? _T("Uninstall p") : _T("P"));
       }
     }
   }
@@ -2487,7 +2487,7 @@ int CEXEBuild::prepare_uninstaller() {
   {
     if (!uninstaller_writes_used)
     {
-      warning(_T("Uninstaller script code found but WriteUninstaller never used - no uninstaller will be created."));
+      warning(DW_UNCODE_WITHOUT_UNEXE, _T("Uninstaller script code found but WriteUninstaller never used - no uninstaller will be created."));
       return PS_OK;
     }
 
@@ -2544,7 +2544,7 @@ int CEXEBuild::pack_exe_header()
     return PS_ERROR;
   }
   if (ec != 0)
-    warning(_T("Packer returned %d, \"%") NPRIs _T("\" might still be unpacked\n"),ec,build_packname);
+    warning(DW_PACKHDR_RETNONZERO, _T("Packer returned %d, \"%") NPRIs _T("\" might still be unpacked\n"),ec,build_packname);
 
   int result = update_exehead(build_packname);
   _tremove(build_packname);
@@ -2646,7 +2646,7 @@ int CEXEBuild::write_output(void)
     {
       const bool orgdispwarn = display_warnings;
       display_warnings = false; // Don't display warning inline in the middle of our statistics output.
-      warning(_T("Insecure filename \"%") NPRIs _T("\", Windows will unsafely load compatibility shims into the process."), fname);
+      warning(DW_INSECURE_OUTFILENAME, _T("Insecure filename \"%") NPRIs _T("\", Windows will unsafely load compatibility shims into the process."), fname);
       display_warnings = orgdispwarn;
     }
   }
@@ -3406,23 +3406,83 @@ void CEXEBuild::set_verbosity(int lvl)
   g_display_errors = display_errors;
 }
 
-void CEXEBuild::warninghelper(const TCHAR *msg)
+int CEXEBuild::parse_pragma(LineParser &line)
 {
-  m_warnings.add(msg,0);
+  if (line.gettoken_enum(1, _T("warning\0")) == -1)
+    return (warning_fl(DW_PP_PRAGMA_UNKNOWN, _T("Unknown pragma")), PS_ERROR);
 
+  int warnOp = line.gettoken_enum(2, _T("disable\0enable\0default\0push\0pop\0")), ret = PS_OK;
+  if (warnOp < 0)
+    ret = PS_ERROR, warning_fl(DW_PP_PRAGMA_UNKNOWN, _T("Unknown pragma")); // Unknown warning pragma action
+  else if (warnOp == 3)
+    diagstate.Push();
+  else if (warnOp == 4)
+  {
+    if (!diagstate.Pop())
+      ret = PS_WARNING, warning_fl(DW_PP_PRAGMA_INVALID, _T("Unexpected"));
+  }
+  else // warning: disable/enable/default
+  {
+    for (int ti = 3; ti < line.getnumtokens(); ++ti)
+    {
+      DIAGCODE code = static_cast<DIAGCODE>(line.gettoken_int(ti));
+      if (!diagstate.IsValidCode(code))
+        ret = PS_WARNING, warning_fl(DW_PP_PRAGMA_INVALID, _T("Invalid number: \"%") NPRIs _T("\""), line.gettoken_str(ti));
+      else if (warnOp == 0)
+        diagstate.Disable(code);
+      else // if ((warnOp == 1) | (warnOp == 2)) All warnings currently default to enabled
+        diagstate.Enable(code);
+    }
+  }
+  return ret;
+}
+
+void CEXEBuild::DiagState::Push()
+{
+  CEXEBuild::DiagState *p = new DiagState();
+  p->m_Disabled = m_Disabled; // Copy current state
+  p->m_pStack = m_pStack, m_pStack = p;
+}
+bool CEXEBuild::DiagState::Pop()
+{
+  if (!m_pStack) return false;
+  CEXEBuild::DiagState *pPop = m_pStack;
+  m_pStack = pPop->m_pStack, pPop->m_pStack = 0;
+  m_Disabled.swap(pPop->m_Disabled);
+  delete pPop;
+  return true;
+}
+
+void CEXEBuild::warninghelper(DIAGCODE dc, bool fl, const TCHAR *fmt, va_list args)
+{
   extern bool g_warnaserror;
-  MakensisAPI::notify_e hostnotifyevnt = MakensisAPI::NOTIFY_WARNING;
-  if (g_warnaserror)
-  {
-    hostnotifyevnt = MakensisAPI::NOTIFY_ERROR;
-    display_warnings = display_errors;
-  }
-  notify(hostnotifyevnt, msg);
+  bool showcode = dc != DIAGCODE_INTERNAL_HIDEDIAGCODE;
+  if (diagstate.IsDisabled(dc)) return ;
 
-  if (display_warnings)
+  TCHAR codbuf[11+2+!0];
+  _stprintf(codbuf, showcode ? _T("%u: ") : _T(""), static_cast<unsigned int>(dc));
+  ExpandoString<TCHAR, COUNTOF(codbuf) + NSIS_MAX_STRLEN + 100> msgbuf;
+  ExpandoString<TCHAR, COUNTOF(codbuf) + 200> fmtbuf;
+  fmtbuf.StrFmt(_T("%") NPRIs _T("%") NPRIs, codbuf, fmt);
+  size_t cchMsg = msgbuf.StrVFmt(fmtbuf.GetPtr(), args);
+  if (fl)
   {
-    PrintColorFmtMsg_WARN(_T("warning: %") NPRIs _T("\n"), msg);
+    msgbuf.Reserve(cchMsg+2+_tcslen(curfilename)+1+11+1+!0);
+    _stprintf(&msgbuf[cchMsg], _T(" (%") NPRIs _T(":%u)"), curfilename, linecnt);
   }
+  const TCHAR *msg = msgbuf.GetPtr();
+
+  m_warnings.add(msg,0); // Add to list of warnings to display at the end
+
+  MakensisAPI::notify_e hostevent = MakensisAPI::NOTIFY_WARNING;
+  if (g_warnaserror)
+    hostevent = MakensisAPI::NOTIFY_ERROR, display_warnings = display_errors;
+
+  notify(hostevent, msg); // Notify the host
+
+  if (display_warnings) // Print "warning %msgwithcodeprefix%" or "warning: %msg%"
+    PrintColorFmtMsg_WARN(_T("warning%") NPRIs _T("%") NPRIs _T("\n"), showcode ? _T(" ") : _T(": "), msg);
+
   if (g_warnaserror)
   {
     ERROR_MSG(_T("Error: warning treated as error\n"));
@@ -3432,28 +3492,20 @@ void CEXEBuild::warninghelper(const TCHAR *msg)
   }
 }
 
-void CEXEBuild::warning(const TCHAR *s, ...)
+void CEXEBuild::warning(DIAGCODE dc, const TCHAR *s, ...)
 {
-  ExpandoString<TCHAR, NSIS_MAX_STRLEN + 100> buf;
   va_list val;
-  va_start(val,s);
-  buf.StrFmt(s,val);
+  va_start(val, s);
+  warninghelper(dc, false, s, val);
   va_end(val);
-
-  warninghelper(buf.GetPtr());
 }
 
-void CEXEBuild::warning_fl(const TCHAR *s, ...)
+void CEXEBuild::warning_fl(DIAGCODE dc, const TCHAR *s, ...)
 {
-  ExpandoString<TCHAR, NSIS_MAX_STRLEN + 100> buf;
   va_list val;
-  va_start(val,s);
-  size_t cchMsg = buf.StrFmt(s, val);
+  va_start(val, s);
+  warninghelper(dc, true, s, val);
   va_end(val);
-
-  buf.Reserve(cchMsg+2+_tcslen(curfilename)+50+1+!0);
-  _stprintf(&buf[cchMsg], _T(" (%") NPRIs _T(":%u)"), curfilename, linecnt);
-  warninghelper(buf.GetPtr());
 }
 
 void CEXEBuild::ERROR_MSG(const TCHAR *s, ...) const
@@ -3463,7 +3515,7 @@ void CEXEBuild::ERROR_MSG(const TCHAR *s, ...) const
     ExpandoString<TCHAR, NSIS_MAX_STRLEN + 100> buf;
     va_list val;
     va_start(val,s);
-    buf.StrFmt(s,val);
+    buf.StrVFmt(s,val);
     va_end(val);
 
     notify(MakensisAPI::NOTIFY_ERROR, buf.GetPtr());
@@ -3763,7 +3815,7 @@ void CEXEBuild::VerifyDeclaredUserVarRefs(UserVarsStringList *pVarsStringList)
   {
     if (!pVarsStringList->get_reference(i))
     {
-      warning(_T("Variable \"%") NPRIs _T("\" not referenced or never set, wasting memory!"), pVarsStringList->idx2name(i));
+      warning(DW_VAR_NOREF, _T("Variable \"%") NPRIs _T("\" not referenced or never set, wasting memory!"), pVarsStringList->idx2name(i));
     }
   }
 }

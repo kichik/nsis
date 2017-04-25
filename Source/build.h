@@ -50,11 +50,75 @@
 #include "czlib.h"
 #include "cbzip2.h"
 #include "clzma.h"
-#endif//NSIS_CONFIG_COMPRESSION_SUPPORT
+#endif //~ NSIS_CONFIG_COMPRESSION_SUPPORT
 
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
 #  include "Plugins.h"
-#endif //NSIS_CONFIG_PLUGIN_SUPPORT
+#endif //~ NSIS_CONFIG_PLUGIN_SUPPORT
+
+// 1000..4999 Errors
+// 5000..5999 Important generic warnings
+// 6000..6999 Script warnings
+// 7000..7499 Recovered from bad input etc. warnings
+// 7500..7999 Discouraged usage warnings (allocated top to bottom to reserve as much space as possible for more bad input codes)
+// 8000..8999 Generic warnings
+// 9000..9999 Breaking our and/or MS guidelines warnings
+typedef enum {
+  //DE_OOM = 1000?, // Generic out of memory
+  //DE_MMAP = 1001?,
+  //DE_STUB_SECTION = 1100?,
+  //DE_PP_VERBOSE_BAD_LEVEL = 4000?,
+  //DW_STALE_TEMP = 5020?, TODO: There is currently no way to disable this
+  DW_PACKHDR_RETNONZERO = 5021,
+  DW_UNSUPP_STORE_FILE_ATT = 5050,
+  //DW_CMDLINE_UNSUPP = 5200?,
+  //DW_CMDLINE_UNSUPP_WIN = 5201?,
+  DW_CMDLINE_UNSUPP_NIX = 5202,
+  DW_CMDLINE_BAD_INPUTENC = 5210, // reserved ..5229
+  DW_VAR_IGNORED_UNKNOWN = 6000, // reserved ..6009
+  DW_VAR_NOREF = 6001,
+  DW_UNUSED_FUNCTION = 6010, // reserved ..6019
+  DW_UNUSED_GLOBALLABEL = 6011,
+  DW_UNUSED_LABEL = 6012,
+  DW_UNCODE_WITHOUT_UNEXE = 6020,
+  DW_INNERSTRING_MULTISETWASTE = 6029,
+  DW_STRING_MULTISETWASTE = DW_INNERSTRING_MULTISETWASTE,
+  DW_LANGSTRING_MULTISETWASTE = 6030, // reserved ..6049
+  DW_LANGSTRING_NOTSETINLANG = 6040,
+  DW_LANGSTRING_SILENTLICENSE = 6049,
+  DW_COMMENT_NEWLINE = 6050, // reserved ..6079
+  DW_PLUGIN_NOUNLOAD_PLACEMENT = 6080, // reserved ..6099
+  DW_PP_PRAGMA_UNKNOWN = 6100, // reserved ..6199
+  DW_PP_PRAGMA_INVALID = 6101,
+  DW_PP_VERBOSE_POP_EMPTY_STACK = 6150,
+  //DW_PP_VERBOSE_BAD_LEVEL = 6151?, // 2.x failed to issue a warning. 3.x currently aborts with hard error.
+  DW_INCLUDE_NONFATAL_NOT_FOUND = 7000, // reserved ..7009
+  DW_FILE_NONFATAL_NOT_FOUND = 7010, // reserved ..7019
+  DW_LANGSTRING_OVERLONGLENGTH = 7020, // reserved ..7024
+  DW_BAD_LANGID = 7025, // reserved ..7029
+  DW_NLF_OLDVERSION = 7030, // reserved ..7049
+  DW_NLF_SYSCP = 7031,
+  DW_NLF_UNSUPPORTED_CP = 7032,
+  DW_NLF_NOT_PREFERRED_ENC = 7033,
+  DW_LICENSE_EMPTY = 7050,
+  DW_ATTRIBUTE_OVERLONGSTRING = 7060,
+  DW_PARSE_BADNUMBER = 7070,
+  DW_PARSE_LNK_HK = 7075,
+  DW_PARSE_REGPATHPREFIX = 7999,
+  DW_INSTFILESPAGE_NOT_USED = 8000, // reserved ..8019
+  DW_COMP_FINAL = 8020, // reserved ..8059
+  DW_COMP_WHOLE_IGNORE_OFF = 8021,
+  DW_COMP_LEVEL_IGNORE = 8025,
+  DW_COMP_DICT_IGNORE = 8026,
+  DW_COMP_DICTWHOLE = 8030,
+  DW_CMDLINE_HIGHPRIORITY = 8499,
+  DW_INSECURE_OUTFILENAME = 9000,
+  DW_VI_MISSINGSTDKEY = 9100,
+
+  DIAGCODE_INTERNAL_HIDEDIAGCODE = 9999,
+  DIAGCODE_INTERNAL_FIRST = 1000, DIAGCODE_INTERNAL_LAST = 9999
+} DIAGCODE;
+
 
 #define PS_OK 0
 #define PS_EOF 1
@@ -112,11 +176,25 @@ class CEXEBuild {
       MAX_MACRORECURSION = 50
     };
 
-    void warning(const TCHAR *s, ...); // to add a warning to the compiler's warning list.
-    void warning_fl(const TCHAR *s, ...); // warning with file name and line count
+    void warning(DIAGCODE dc, const TCHAR *s, ...); // to add a warning to the compiler's warning list.
+    void warning_fl(DIAGCODE dc, const TCHAR *s, ...); // warning with file name and line number
     void ERROR_MSG(const TCHAR *s, ...) const;
     void SCRIPT_MSG(const TCHAR *s, ...) const;
     void INFO_MSG(const TCHAR *s, ...) const;
+    class DiagState {
+    public:
+      DiagState() : m_pStack(0) { assert(DIAGCODE_INTERNAL_LAST <= 0xffff); }
+      ~DiagState() { delete m_pStack; }
+      void Enable(DIAGCODE n) { m_Disabled.erase(static_cast<unsigned short>(n)); }
+      void Disable(DIAGCODE n) { m_Disabled.insert(static_cast<unsigned short>(n)); }
+      bool IsDisabled(DIAGCODE n) { return m_Disabled.find(static_cast<unsigned short>(n)) != m_Disabled.end(); }
+      void Push();
+      bool Pop();
+      static bool IsValidCode(unsigned int n) { return n >= DIAGCODE_INTERNAL_FIRST && n <= DIAGCODE_INTERNAL_LAST; }
+    protected:
+      DiagState *m_pStack;
+      std::set<unsigned short> m_Disabled;
+    } diagstate;
 
     typedef enum {
       TARGETFIRST,
@@ -277,6 +355,7 @@ class CEXEBuild {
 
     int preprocess_string(TCHAR *out, const TCHAR *in, WORD codepage=CP_ACP);
     void init_shellconstantvalues();
+    int parse_pragma(LineParser &line);
 
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
     int add_plugins_dir_initializer(void);
@@ -308,7 +387,7 @@ class CEXEBuild {
 
     int resolve_coderefs(const TCHAR *str);
     void print_warnings();
-    void warninghelper(const TCHAR *msg);
+    void warninghelper(DIAGCODE dc, bool fl, const TCHAR *fmt, va_list args);
     int uninstall_generate();
 
     /** Are we defining an uninstall version of the code?

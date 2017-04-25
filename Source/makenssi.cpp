@@ -439,9 +439,9 @@ static inline int makensismain(int argc, TCHAR **argv)
 #else
   const TCHAR*const badnonwinswitchfmt=OPT_STR _T("%") NPRIs _T(" is disabled for non Win32 platforms.");
   if (hostnotifyhandle)
-    build.warning(badnonwinswitchfmt,_T("NOTIFYHWND"));
+    build.warning(DW_CMDLINE_UNSUPP_NIX,badnonwinswitchfmt,_T("NOTIFYHWND"));
   if (NStreamEncoding::UNKNOWN==outputenc.GetCodepage())
-    build.warning(badnonwinswitchfmt,_T("OUTPUTCHARSET"));
+    build.warning(DW_CMDLINE_UNSUPP_NIX,badnonwinswitchfmt,_T("OUTPUTCHARSET"));
 #endif // ~_WIN32
 
   if (!argc)
@@ -491,7 +491,7 @@ static inline int makensismain(int argc, TCHAR **argv)
         if (NStreamEncoding::UNKNOWN == cp)
         {
           if (_tcsicmp(argv[argpos], _T("AUTO")))
-            build.warning(OPT_STR _T("INPUTCHARSET: Ignoring invalid charset %") NPRIs , argv[argpos]);
+            build.warning(DW_CMDLINE_BAD_INPUTENC, OPT_STR _T("INPUTCHARSET: Ignoring invalid charset %") NPRIs , argv[argpos]);
           cp = NStreamEncoding::AUTO;
         }
         inputenc.SafeSetCodepage(cp);
@@ -522,9 +522,9 @@ static inline int makensismain(int argc, TCHAR **argv)
         };
         if (!SetPriorityClass(hProc, classes[p].priority))
           SetPriorityClass(hProc, classes[p].fallback);
-        if (p == 5) build.warning(_T("makensis is running in REALTIME priority mode!"));
+        if (p == 5) build.warning(DW_CMDLINE_HIGHPRIORITY,_T("makensis is running in REALTIME priority mode!"));
 #else
-        build.warning(badnonwinswitchfmt,_T("Px"));
+        build.warning(DW_CMDLINE_UNSUPP_NIX,badnonwinswitchfmt,_T("Px"));
 #endif
       }
       // Already parsed these (must adjust argpos)

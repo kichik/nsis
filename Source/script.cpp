@@ -368,7 +368,7 @@ int CEXEBuild::doParse(const TCHAR *str)
 
     if (prevline.inComment() && !thisline.inComment())
     {
-      warning_fl(_T("comment contains line-continuation character, following line will be ignored"));
+      warning_fl(DW_COMMENT_NEWLINE, _T("comment contains line-continuation character, following line will be ignored"));
     }
   }
 
@@ -614,7 +614,7 @@ parse_again:
             PRINTHELPEX(cmdnam)
         }
         if (!cnv1 || !cnv2) {
-          warning_fl(_T("Invalid number: \"%") NPRIs _T("\""), line.gettoken_str(!cnv1 ? 1 : 3));
+          warning_fl(DW_PARSE_BADNUMBER, _T("Invalid number: \"%") NPRIs _T("\""), line.gettoken_str(!cnv1 ? 1 : 3));
         }
       }
       else PRINTHELPEX(cmdnam)
@@ -1014,7 +1014,7 @@ int CEXEBuild::LoadLicenseFile(const TCHAR *file, TCHAR** pdata, const TCHAR *cm
 
   if (!cbFileData)
   {
-    warning_fl(_T("%") NPRIs _T(": empty license file \"%") NPRIs _T("\"\n"),cmdname,file);
+    warning_fl(DW_LICENSE_EMPTY, _T("%") NPRIs _T(": empty license file \"%") NPRIs _T("\"\n"),cmdname,file);
   }
   else
     build_lockedunicodetarget=true;
@@ -1815,7 +1815,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       TCHAR *str = line.gettoken_str(3);
       const int ret = SetLangString(name, lang, str);
       if (ret == PS_WARNING)
-        warning_fl(_T("LangString \"%") NPRIs _T("\" set multiple times for %d, wasting space"), name, lang);
+        warning_fl(DW_LANGSTRING_MULTISETWASTE, _T("LangString \"%") NPRIs _T("\" set multiple times for %d, wasting space"), name, lang);
       else if (ret == PS_ERROR) {
         ERROR_MSG(_T("Error: can't set LangString \"%") NPRIs _T("\"!\n"), name);
         return PS_ERROR;
@@ -1832,7 +1832,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
       if (build_header.flags&(CH_FLAGS_SILENT|CH_FLAGS_SILENT_LOG))
       {
-        warning_fl(_T("%") NPRIs _T(": SilentInstall enabled, wasting space"), cmdnam);
+        warning_fl(DW_LANGSTRING_SILENTLICENSE, _T("%") NPRIs _T(": SilentInstall enabled, wasting space"), cmdnam);
       }
 #endif
       TCHAR *name = line.gettoken_str(1);
@@ -1850,7 +1850,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
       ret = SetLangString(name, lang, data, true);
       if (ret == PS_WARNING)
-        warning_fl(_T("%") NPRIs _T(" \"%") NPRIs _T("\" set multiple times for %d, wasting space"), cmdnam, name, lang);
+        warning_fl(DW_LANGSTRING_MULTISETWASTE, _T("%") NPRIs _T(" \"%") NPRIs _T("\" set multiple times for %d, wasting space"), cmdnam, name, lang);
       else if (ret == PS_ERROR)
       {
         ERROR_MSG(_T("Error: can't set %") NPRIs _T(" \"%") NPRIs _T("\"!\n"), cmdnam, name);
@@ -1864,7 +1864,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_NAME:
       {
         if (SetInnerString(NLF_NAME,line.gettoken_str(1)) == PS_WARNING)
-          warning_fl(_T("%") NPRIs _T(": specified multiple times, wasting space"),line.gettoken_str(0));
+          warning_fl(DW_INNERSTRING_MULTISETWASTE, _T("%") NPRIs _T(": specified multiple times, wasting space"),line.gettoken_str(0));
         SetInnerString(NLF_NAME_DA,line.gettoken_str(2));
         SCRIPT_MSG(_T("Name: \"%") NPRIs _T("\""),line.gettoken_str(1));
         if (*line.gettoken_str(2))
@@ -1877,7 +1877,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (!cur_page)
         {
           if (SetInnerString(NLF_CAPTION,line.gettoken_str(1)) == PS_WARNING)
-            warning_fl(_T("%") NPRIs _T(": specified multiple times, wasting space"),line.gettoken_str(0));
+            warning_fl(DW_INNERSTRING_MULTISETWASTE, _T("%") NPRIs _T(": specified multiple times, wasting space"),line.gettoken_str(0));
         }
         else
         {
@@ -1936,7 +1936,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       {
         if (!cur_page) {
           if (SetInnerString(NLF_DIR_TEXT, line.gettoken_str(1)) == PS_WARNING)
-            warning_fl(_T("%") NPRIs _T(": specified multiple times, wasting space"),line.gettoken_str(0));
+            warning_fl(DW_INNERSTRING_MULTISETWASTE, _T("%") NPRIs _T(": specified multiple times, wasting space"),line.gettoken_str(0));
           if (line.getnumtokens() > 2)
             SetInnerString(NLF_DIR_SUBTEXT, line.gettoken_str(2));
           if (line.getnumtokens() > 3)
@@ -2000,7 +2000,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       {
         if (!cur_page) {
           if (SetInnerString(NLF_COMP_TEXT, line.gettoken_str(1)) == PS_WARNING)
-            warning_fl(_T("%") NPRIs _T(": specified multiple times, wasting space"),line.gettoken_str(0));
+            warning_fl(DW_INNERSTRING_MULTISETWASTE, _T("%") NPRIs _T(": specified multiple times, wasting space"),line.gettoken_str(0));
           if (line.getnumtokens() > 2)
             SetInnerString(NLF_COMP_SUBTEXT1, line.gettoken_str(2));
           if (line.getnumtokens() > 3)
@@ -2037,7 +2037,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         {
           SCRIPT_MSG(_T("InstType: setting custom text to: \"%") NPRIs _T("\"\n"),line.gettoken_str(1)+14);
           if (SetInnerString(NLF_COMP_CUSTOM,line.gettoken_str(1)+14) == PS_WARNING)
-            warning_fl(_T("%") NPRIs _T(": specified multiple times, wasting space"),_T("InstType /CUSTOMSTRING"));
+            warning_fl(DW_INNERSTRING_MULTISETWASTE, _T("%") NPRIs _T(": specified multiple times, wasting space"),_T("InstType /CUSTOMSTRING"));
         }
         else if (line.gettoken_str(1)[0]==_T('/'))
         {
@@ -2079,7 +2079,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       {
         if (!cur_page) {
           if (SetInnerString(NLF_LICENSE_TEXT, line.gettoken_str(1)) == PS_WARNING)
-            warning_fl(_T("%") NPRIs _T(": specified multiple times, wasting space"),line.gettoken_str(0));
+            warning_fl(DW_INNERSTRING_MULTISETWASTE, _T("%") NPRIs _T(": specified multiple times, wasting space"),line.gettoken_str(0));
           SetInnerString(NLF_LICENSE_TEXT_FSRB, line.gettoken_str(1));
           SetInnerString(NLF_LICENSE_TEXT_FSCB, line.gettoken_str(1));
           if (line.getnumtokens() > 2)
@@ -2126,7 +2126,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
         if (!cur_page) {
           if (SetInnerString(NLF_LICENSE_DATA,data) == PS_WARNING)
-            warning_fl(_T("%") NPRIs _T(": specified multiple times, wasting space"),cmdnam);
+            warning_fl(DW_INNERSTRING_MULTISETWASTE, _T("%") NPRIs _T(": specified multiple times, wasting space"),cmdnam);
         }
         else {
           if (cur_page_type != PAGE_LICENSE) {
@@ -2240,7 +2240,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #ifdef NSIS_CONFIG_LICENSEPAGE
       if (k && HasUserDefined(NLF_LICENSE_DATA))
       {
-        warning_fl(_T("SilentInstall: LicenseData already specified. wasting space"));
+        warning_fl(DW_LANGSTRING_SILENTLICENSE, _T("SilentInstall: LicenseData already specified. wasting space"));
       }
       if (k) {
         build_header.flags|=CH_FLAGS_SILENT;
@@ -2305,7 +2305,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       TCHAR *p = line.gettoken_str(1);
       if (build_header.install_directory_ptr)
       {
-        warning_fl(_T("%") NPRIs _T(": specified multiple times. wasting space"),line.gettoken_str(0));
+        warning_fl(DW_STRING_MULTISETWASTE, _T("%") NPRIs _T(": specified multiple times. wasting space"),line.gettoken_str(0));
       }
       build_header.install_directory_ptr = add_string(p);
       build_header.install_directory_auto_append = 0;
@@ -2327,7 +2327,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_INSTALLDIRREGKEY: // InstallDirRegKey
       {
         if (build_header.install_reg_key_ptr)
-          warning_fl(_T("%") NPRIs _T(": specified multiple times, wasting space"),line.gettoken_str(0));
+          warning_fl(DW_STRING_MULTISETWASTE, _T("%") NPRIs _T(": specified multiple times, wasting space"),line.gettoken_str(0));
 
         int k=line.gettoken_enum(1,rootkeys[0]);
         if (k == -1) k=line.gettoken_enum(1,rootkeys[1]);
@@ -2336,7 +2336,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (!build_header.install_reg_rootkey) PRINTHELP() // SHCTX is invalid here
         build_header.install_reg_key_ptr = add_string(line.gettoken_str(2),0);
         if (line.gettoken_str(2)[0] == _T('\\'))
-          warning_fl(_T("%") NPRIs _T(": registry path name begins with \'\\\', may cause problems"),line.gettoken_str(0));
+          warning_fl(DW_PARSE_REGPATHPREFIX, _T("%") NPRIs _T(": registry path name begins with \'\\\', may cause problems"),line.gettoken_str(0));
         build_header.install_reg_value_ptr = add_string(line.gettoken_str(3),0);
         SCRIPT_MSG(_T("InstallRegKey: \"%") NPRIs _T("\\%") NPRIs _T("\\%") NPRIs _T("\"\n"),line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3));
       }
@@ -2985,7 +2985,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
       if (build_compressor_final)
       {
-        warning_fl(_T("SetCompressor ignored due to previous call with the /FINAL switch"));
+        warning_fl(DW_COMP_FINAL, _T("SetCompressor ignored due to previous call with the /FINAL switch"));
         return PS_OK;
       }
       build_compress_whole = false;
@@ -3354,7 +3354,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             ERROR_MSG(_T("!include: could not find: \"%") NPRIs _T("\"\n"),f);
             return PS_ERROR;
           } else {
-            warning_fl(_T("!include: could not find: \"%") NPRIs _T("\""),f);
+            warning_fl(DW_INCLUDE_NONFATAL_NOT_FOUND, _T("!include: could not find: \"%") NPRIs _T("\""),f);
           }
         }
       }
@@ -3366,11 +3366,14 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         return PS_ERROR;
       }
     return PS_OK;
+    case TOK_P_PRAGMA:
+      parse_pragma(line); // Never abort with ERROR_MSG, even if the pragma is unknown/invalid
+    return PS_OK;
     case TOK_P_ERROR:
       ERROR_MSG(_T("!error: %") NPRIs _T("\n"),line.gettoken_str(1));
     return PS_ERROR;
     case TOK_P_WARNING:
-      warning_fl(_T("!warning: %") NPRIs,line.gettoken_str(1));
+      warning_fl(DIAGCODE_INTERNAL_HIDEDIAGCODE, _T("!warning: %") NPRIs,line.gettoken_str(1));
     return PS_OK;
     case TOK_P_ECHO:
       SCRIPT_MSG(_T("%") NPRIs _T(" (%") NPRIs _T(":%d)\n"), line.gettoken_str(1),curfilename,linecnt);
@@ -3531,11 +3534,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     {
       for(int argi=1; argi<line.getnumtokens(); ++argi)
       {
-        int v,k=line.gettoken_enum(argi,_T("push\0pop\0"));
-        if (k < 0)
+        int k=line.gettoken_enum(argi,_T("push\0pop\0")), v, numconv;
+        if (k < 0) // not push/pop, just set the level
         {
-          // just set
-          int numconv;
           v=line.gettoken_int(argi,&numconv);
           if (!numconv || v < 0 || v > 4 )
           {
@@ -3546,9 +3547,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
         else
         {
-          if (k)
+          if (k) // pop
           {
-            // pop
             int l=verbose_stack.getlen();
             if (l)
             {
@@ -3557,13 +3557,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             }
             else
             {
-              warning_fl(_T("!verbose: Pop failed, stack is empty"));
+              warning_fl(DW_PP_VERBOSE_POP_EMPTY_STACK, _T("!verbose: Pop failed, stack is empty"));
               continue; // Pop failed, should still process the next parameter
             }
           }
-          else
+          else // push
           {
-            // push
             v=get_verbosity();
             verbose_stack.add(&v,sizeof(int));
             continue;
@@ -3580,7 +3579,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_UNINSTCAPTION:
       {
         if (SetInnerString(NLF_UCAPTION,line.gettoken_str(1)) == PS_WARNING)
-          warning_fl(_T("%") NPRIs _T(": specified multiple times, wasting space"),line.gettoken_str(0));
+          warning_fl(DW_INNERSTRING_MULTISETWASTE, _T("%") NPRIs _T(": specified multiple times, wasting space"),line.gettoken_str(0));
         SCRIPT_MSG(_T("UninstCaption: \"%") NPRIs _T("\"\n"),line.gettoken_str(1));
       }
     return PS_OK;
@@ -3599,7 +3598,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       {
         if (!cur_page) {
           if (SetInnerString(NLF_UNINST_TEXT, line.gettoken_str(1)) == PS_WARNING)
-            warning_fl(_T("%") NPRIs _T(": specified multiple times, wasting space"),line.gettoken_str(0));
+            warning_fl(DW_INNERSTRING_MULTISETWASTE, _T("%") NPRIs _T(": specified multiple times, wasting space"),line.gettoken_str(0));
           SetInnerString(NLF_UNINST_SUBTEXT, line.gettoken_str(2));
         }
         else {
@@ -3793,7 +3792,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       build_compress=line.gettoken_enum(1,_T("off\0auto\0force\0"));
       if (build_compress==-1) PRINTHELP()
       if (build_compress==0 && build_compress_whole)
-        warning_fl(_T("'SetCompress off' encountered, and in whole compression mode. Effectively ignored."));
+        warning_fl(DW_COMP_WHOLE_IGNORE_OFF, _T("'SetCompress off' encountered, and in whole compression mode. Effectively ignored."));
       SCRIPT_MSG(_T("SetCompress: %") NPRIs _T("\n"),line.gettoken_str(1));
     return PS_OK;
     case TOK_DBOPTIMIZE:
@@ -3815,9 +3814,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_SETCOMPRESSIONLEVEL:
     {
       if (compressor == &lzma_compressor)
-        warning_fl(_T("SetCompressionLevel: compressor is set to LZMA. Effectively ignored."));
+        warning_fl(DW_COMP_LEVEL_IGNORE, _T("SetCompressionLevel: compressor is set to LZMA. Effectively ignored."));
       if (build_compressor_set && build_compress_whole)
-        warning_fl(_T("SetCompressionLevel: data already compressed in compress whole mode. Effectively ignored."));
+        warning_fl(DW_COMP_LEVEL_IGNORE, _T("SetCompressionLevel: data already compressed in compress whole mode. Effectively ignored."));
 
       int s;
       build_compress_level=line.gettoken_int(1,&s);
@@ -3828,9 +3827,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_SETCOMPRESSORDICTSIZE:
     {
       if (compressor != &lzma_compressor)
-        warning_fl(_T("SetCompressorDictSize: compressor is not set to LZMA. Effectively ignored."));
+        warning_fl(DW_COMP_DICT_IGNORE, _T("SetCompressorDictSize: compressor is not set to LZMA. Effectively ignored."));
       if (build_compressor_set && build_compress_whole)
-        warning_fl(_T("SetCompressorDictSize: data already compressed in compress whole mode. Effectively ignored."));
+        warning_fl(DW_COMP_DICT_IGNORE, _T("SetCompressorDictSize: data already compressed in compress whole mode. Effectively ignored."));
 
       int s;
       build_compress_dict_size=line.gettoken_int(1,&s);
@@ -3913,7 +3912,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             }
 
             if (td.GetItem(IDC_VERSTR)->sWidth > old_width)
-              warning_fl(_T("BrandingText: \"%") NPRIs _T("\" is too long, trimming has expanded the label"), str);
+              warning_fl(DW_ATTRIBUTE_OVERLONGSTRING, _T("BrandingText: \"%") NPRIs _T("\" is too long, trimming has expanded the label"), str);
           }
 
           DWORD dwSize;
@@ -3968,7 +3967,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       {
         if (!cur_page) {
           if (SetInnerString(NLF_BTN_DETAILS,line.gettoken_str(1)) == PS_WARNING)
-            warning_fl(_T("%") NPRIs _T(": specified multiple times, wasting space"),line.gettoken_str(0));
+            warning_fl(DW_INNERSTRING_MULTISETWASTE, _T("%") NPRIs _T(": specified multiple times, wasting space"),line.gettoken_str(0));
         }
         else {
           if (cur_page_type != PAGE_INSTFILES) {
@@ -3984,7 +3983,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       {
         if (!cur_page) {
           if (SetInnerString(NLF_COMPLETED,line.gettoken_str(1)) == PS_WARNING)
-            warning_fl(_T("%") NPRIs _T(": specified multiple times, wasting space"),line.gettoken_str(0));
+            warning_fl(DW_INNERSTRING_MULTISETWASTE, _T("%") NPRIs _T(": specified multiple times, wasting space"),line.gettoken_str(0));
         }
         else {
           if (cur_page_type != PAGE_INSTFILES) {
@@ -4380,14 +4379,14 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           {
             c=VK_F1-1+_ttoi(s+1);
             if (_ttoi(s+1) < 1 || _ttoi(s+1) > 24)
-              warning_fl(_T("CreateShortcut: F-key \"%") NPRIs _T("\" out of range"),s);
+              warning_fl(DW_PARSE_LNK_HK, _T("CreateShortcut: F-key \"%") NPRIs _T("\" out of range"),s);
           }
           else if (((s[0] >= _T('A') && s[0] <= _T('Z')) || (s[0] >= _T('0') && s[0] <= _T('9'))) && !s[1])
             c=s[0];
           else
           {
             c=s[0];
-            warning_fl(_T("CreateShortcut: unrecognized hotkey \"%") NPRIs _T("\""),s);
+            warning_fl(DW_PARSE_LNK_HK, _T("CreateShortcut: unrecognized hotkey \"%") NPRIs _T("\""),s);
           }
           ent.offsets[4] |= ((c) << CS_HK_SHIFT) & CS_HK_MASK;
         }
@@ -4725,7 +4724,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #ifdef _WIN32
           attrib=1;
 #else
-          warning_fl(_T("%") NPRIs _T("File /a is disabled for non Win32 platforms."),(which_token == TOK_FILE)?_T(""):_T("Reserve"));
+          warning_fl(DW_UNSUPP_STORE_FILE_ATT, _T("%") NPRIs _T("File /a is disabled for non Win32 platforms."),(which_token == TOK_FILE)?_T(""):_T("Reserve"));
 #endif
           a++;
         }
@@ -4760,7 +4759,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             }
             else
             {
-              warning_fl(_T("%") NPRIs _T("File: \"%") NPRIs _T("\" -> no files found"),(which_token == TOK_FILE)?_T(""):_T("Reserve"),line.gettoken_str(a));
+              warning_fl(DW_FILE_NONFATAL_NOT_FOUND, _T("%") NPRIs _T("File: \"%") NPRIs _T("\" -> no files found"),(which_token == TOK_FILE)?_T(""):_T("Reserve"),line.gettoken_str(a));
 
               // workaround for bug #1299100
               // add a nop opcode so relative jumps will work as expected
@@ -4825,7 +4824,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             }
             else
             {
-              warning_fl(_T("%") NPRIs _T("File: \"%") NPRIs _T("\" -> no files found."),(which_token == TOK_FILE)?_T(""):_T("Reserve"),t);
+              warning_fl(DW_FILE_NONFATAL_NOT_FOUND, _T("%") NPRIs _T("File: \"%") NPRIs _T("\" -> no files found."),(which_token == TOK_FILE)?_T(""):_T("Reserve"),t);
             }
           }
         }
@@ -5351,7 +5350,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (which_token == TOK_READREGDWORD) ent.offsets[4]=1;
         else ent.offsets[4]=0;
         if (line.gettoken_str(3)[0] == _T('\\'))
-          warning_fl(_T("%") NPRIs _T(": registry path name begins with \'\\\', may cause problems"),line.gettoken_str(0));
+          warning_fl(DW_PARSE_REGPATHPREFIX, _T("%") NPRIs _T(": registry path name begins with \'\\\', may cause problems"),line.gettoken_str(0));
 
         SCRIPT_MSG(_T("%") NPRIs _T(" %") NPRIs _T(" %") NPRIs _T("\\%") NPRIs _T("\\%") NPRIs _T("\n"),line.gettoken_str(0),
           line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(4));
@@ -5381,7 +5380,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         ent.offsets[2]=add_string(line.gettoken_str(a+1));
         ent.offsets[3]=(which_token==TOK_DELETEREGKEY)?0:add_string(line.gettoken_str(a+2));
         if (line.gettoken_str(a+1)[0] == _T('\\'))
-          warning_fl(_T("%") NPRIs _T(": registry path name begins with \'\\\', may cause problems"),line.gettoken_str(0));
+          warning_fl(DW_PARSE_REGPATHPREFIX, _T("%") NPRIs _T(": registry path name begins with \'\\\', may cause problems"),line.gettoken_str(0));
         if (which_token==TOK_DELETEREGKEY)
           SCRIPT_MSG(_T("DeleteRegKey: %") NPRIs _T("\\%") NPRIs _T("\n"),line.gettoken_str(a),line.gettoken_str(a+1));
         else
@@ -5404,7 +5403,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         ent.offsets[0]=REGROOTKEYTOINT(rootkey_tab[k]);
         ent.offsets[1]=add_string(line.gettoken_str(2));
         if (line.gettoken_str(2)[0] == _T('\\'))
-          warning_fl(_T("%") NPRIs _T(": registry path name begins with \'\\\', may cause problems"),cmdname);
+          warning_fl(DW_PARSE_REGPATHPREFIX, _T("%") NPRIs _T(": registry path name begins with \'\\\', may cause problems"),cmdname);
         ent.offsets[2]=add_string(line.gettoken_str(3));
         if (which_token == TOK_WRITEREGSTR || which_token == TOK_WRITEREGEXPANDSTR)
         {
@@ -5455,7 +5454,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         ent.offsets[2]=add_string(line.gettoken_str(3));
         ent.offsets[3]=add_string(line.gettoken_str(4));
         ent.offsets[4]=which_token == TOK_ENUMREGKEY;
-        if (line.gettoken_str(3)[0] == _T('\\')) warning_fl(_T("%") NPRIs _T(": registry path name begins with \'\\\', may cause problems"),line.gettoken_str(0));
+        if (line.gettoken_str(3)[0] == _T('\\')) warning_fl(DW_PARSE_REGPATHPREFIX, _T("%") NPRIs _T(": registry path name begins with \'\\\', may cause problems"),line.gettoken_str(0));
         SCRIPT_MSG(_T("%") NPRIs _T(" %") NPRIs _T(" %") NPRIs _T("\\%") NPRIs _T("\\%") NPRIs _T("\n"),which_token == TOK_ENUMREGKEY ? _T("EnumRegKey") : _T("EnumRegValue"),
           line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(4));
       }
@@ -6212,7 +6211,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
       SCRIPT_MSG(_T("\n"));
       if (nounloadmisused)
-        warning_fl(_T("/NOUNLOAD must come first before any plugin parameter. Unless the plugin you are trying to use has a parameter /NOUNLOAD, you are doing something wrong"));
+        warning_fl(DW_PLUGIN_NOUNLOAD_PLACEMENT, _T("/NOUNLOAD must come first before any plugin parameter. Unless the plugin you are trying to use has a parameter /NOUNLOAD, you are doing something wrong"));
 
       // next, call it
       ent.which=EW_REGISTERDLL;
@@ -6644,6 +6643,6 @@ LANGID CEXEBuild::ParseLangIdParameter(const LineParser&line, int token)
   int succ, lid = line.gettoken_int(token, &succ);
   if (!lid) lid = last_used_lang;
   if (!succ)
-    warning_fl(_T("\"%") NPRIs _T("\" is not a valid language id, using language id %u!"), line.gettoken_str(token), lid);
+    warning_fl(DW_BAD_LANGID, _T("\"%") NPRIs _T("\" is not a valid language id, using language id %u!"), line.gettoken_str(token), lid);
   return lid;
 }
