@@ -11,6 +11,7 @@ LicenseText "All the action takes place on the next page..."
 
 Page license
 Page custom nsDialogsPage
+!pragma warning disable 8000 ; "Page instfiles not used, no sections will be executed!"
 
 Var BUTTON
 Var EDIT

@@ -1092,7 +1092,7 @@ int WINAPI WinStdIO_vfwprintf(FILE*strm, const wchar_t*Fmt, va_list val)
   {
     ExpandoString<wchar_t, NSIS_MAX_STRLEN> buf;
     errno = ENOMEM;
-    const size_t cchfmt = buf.StrFmt(Fmt, val, false);
+    const size_t cchfmt = buf.StrVFmt(Fmt, val, false);
     UINT cch = (UINT) cchfmt;
     assert(sizeof(size_t) <= 4 || cchfmt == cch);
     if (cch && !WinStdIO_OStreamWrite(*pOSD, buf, cch))

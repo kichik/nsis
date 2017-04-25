@@ -16,6 +16,7 @@ Var BUTTON
 Var BUTTON2
 
 Page custom nsDialogsPage
+!pragma warning disable 8000 ; "Page instfiles not used, no sections will be executed!"
 
 Function OnTimer
 

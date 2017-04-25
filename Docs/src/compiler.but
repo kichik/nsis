@@ -173,6 +173,16 @@ This command will issue a warning to the script compiler. You can also add a mes
 \c   !warning "using dangerous stuff"
 \c !endif
 
+\S1{pragma} !pragma
+
+\c warning <enable|disable|default> code
+\c warning <push|pop>
+
+The pragma commands allows you to change compiler features and behavior.
+
+\c !pragma warning disable 9000 ; Disable warning about using "Setup.exe" as the name
+\c OutFile "Setup.exe"
+
 \S1{verbose} !verbose
 
 \c level | push | pop
