@@ -22,3 +22,5 @@ deploy:
   script: echo this is where we will deploy to SF
   on:
     branch: master
+notifications:
+  slack: $SLACK_TOKEN
