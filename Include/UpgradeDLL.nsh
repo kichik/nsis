@@ -60,26 +60,26 @@ Example:
   ;Advance counter
 
   StrCpy $R0 0
-  ReadRegDWORD $R0 HKLM "Software\NSIS.Library.RegTool.v2\UpgradeDLLSession" "count"
+  ReadRegDWORD $R0 HKLM "Software\NSIS.Library.RegTool.v3\UpgradeDLLSession" "count"
   IntOp $R0 $R0 + 1
-  WriteRegDWORD HKLM "Software\NSIS.Library.RegTool.v2\UpgradeDLLSession" "count" "$R0"
+  WriteRegDWORD HKLM "Software\NSIS.Library.RegTool.v3\UpgradeDLLSession" "count" "$R0"
 
   ;------------------------
   ;Setup RegTool
 
-  ReadRegStr $R3 HKLM "Software\Microsoft\Windows\CurrentVersion\RunOnce" "NSIS.Library.RegTool.v2"
+  ReadRegStr $R3 HKLM "Software\Microsoft\Windows\CurrentVersion\RunOnce" "NSIS.Library.RegTool.v3"
   StrCpy $R3 $R3 -4 1
   IfFileExists $R3 +3
 
-    File /oname=$R2\NSIS.Library.RegTool.v2.$HWNDPARENT.exe "${NSISDIR}\Bin\RegTool.bin"
+    File /oname=$R2\NSIS.Library.RegTool.v3.$HWNDPARENT.exe "${NSISDIR}\Bin\RegTool.bin"
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\RunOnce" \
-      "NSIS.Library.RegTool.v2" '"$R2\NSIS.Library.RegTool.v2.$HWNDPARENT.exe" /S'
+      "NSIS.Library.RegTool.v3" '"$R2\NSIS.Library.RegTool.v3.$HWNDPARENT.exe" /S'
 
   ;------------------------
   ;Add RegTool entry
 
-  WriteRegStr HKLM "Software\NSIS.Library.RegTool.v2\UpgradeDLLSession" "$R0.file" "$R1"
-  WriteRegStr HKLM "Software\NSIS.Library.RegTool.v2\UpgradeDLLSession" "$R0.mode" "${mode}"
+  WriteRegStr HKLM "Software\NSIS.Library.RegTool.v3\UpgradeDLLSession" "$R0.file" "$R1"
+  WriteRegStr HKLM "Software\NSIS.Library.RegTool.v3\UpgradeDLLSession" "$R0.mode" "${mode}"
 
   Pop $R3
   Pop $R2
