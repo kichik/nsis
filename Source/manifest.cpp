@@ -47,10 +47,12 @@ static const struct { const TCHAR *name, *guidstr; } g_soslmap[] = {
   { _T("Win10"),    _T("{8e0f7a12-bfb3-4fe8-b9a5-48fd50a15a9a}") }  //blogs.msdn.com/b/chuckw/archive/2013/09/10/manifest-madness.aspx
 };
 
-void SupportedOSList::addall()
+bool SupportedOSList::addall()
 {
   for (UINT i = 0; i < COUNTOF(g_soslmap); ++i)
-    append(g_soslmap[i].name);
+    if (!append(g_soslmap[i].name))
+      return false;
+  return true;
 }
 
 bool SupportedOSList::append(const TCHAR* osid)

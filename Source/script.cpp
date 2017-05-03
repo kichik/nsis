@@ -12,8 +12,6 @@
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty.
- *
- * Unicode support by Jim Park -- 08/09/2007
  */
 
 #include "Platform.h"
@@ -40,9 +38,7 @@
 
 using namespace std;
 
-#ifdef _WIN32
-#  include <direct.h> // for chdir
-#else
+#ifndef _WIN32
 #  include <sys/stat.h> // for stat and umask
 #  include <sys/types.h> // for mode_t
 #  include <fcntl.h> // for O_RDONLY
@@ -50,32 +46,7 @@ using namespace std;
 #  include <stdlib.h> // for mkstemp
 #endif
 
-#define MAX_INCLUDEDEPTH 10
-
 #define REGROOTKEYTOINT(hk) ( (INT) (((INT_PTR)(hk)) & 0xffffffff) ) // Masking off non-existing top bits to make GCC happy
-
-static UINT read_line_helper(NStreamLineReader&lr, TCHAR*buf, UINT cch)
-{
-  // Helper function for reading lines from text files. buf MUST be valid and cch MUST be > 1!
-  // Returns 0 on error or the number of characters read including the first \n, \r or \0.
-  // When it returns 0, buf[0] is 0 for EOF and NStream::ERR_* for errors.
-  UINT lrr = lr.ReadLine(buf, cch), eof = 0;
-  if (NStream::OK != lrr)
-  {
-    ++eof;
-    if (!lr.IsEOF())
-    {
-      buf[0] = (TCHAR) lrr;
-      return 0;
-    }
-  }
-  const bool unicode = lr.IsUnicode();
-  for(cch = 0;; ++cch)
-    if (!buf[cch] || NStream::IsNewline(buf[cch], unicode))
-      break;
-  if (cch) eof = 0; // Read something, postpone EOF
-  return ++cch - eof;
-}
 
 #ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
 static bool LookupWinSysColorId(const TCHAR*Str, UINT&Clr)
@@ -105,168 +76,7 @@ static UINT ParseCtlColor(const TCHAR*Str, int&CCFlags, int CCFlagmask)
     v = _tcstoul(Str, &pEnd, 16), clr = ((v&0xff)<<16)|(v&0xff00)|((v&0xff0000)>>16);
   return clr;
 }
-#endif
-
-#ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
-// Added by Sunil Kamath 11 June 2003
-TCHAR *CEXEBuild::set_file_predefine(const TCHAR *filename)
-{
-  TCHAR *oldfileinfo = NULL;
-  TCHAR *oldfilename = definedlist.find(_T("__FILE__"));
-  TCHAR *oldfiledir = definedlist.find(_T("__FILEDIR__"));
-  if(oldfilename && oldfiledir)
-  {
-    oldfileinfo = new TCHAR[_tcslen(oldfilename)+1+_tcslen(oldfiledir)+1];
-    _tcscpy(oldfileinfo, oldfilename);
-    _tcscat(oldfileinfo, _T("|"));
-    _tcscat(oldfileinfo, oldfiledir);
-    definedlist.del(_T("__FILE__"));
-    definedlist.del(_T("__FILEDIR__"));
-  }
-  const TCHAR *p = _tcsrchr(filename,_T('\\')), *p2 = _tcsrchr(filename,_T('/'));
-  if(p2 > p) p = p2;
-  if(p) p++; else p = filename;
-  definedlist.add(_T("__FILE__"),p);
-  TCHAR dir[260]; // BUGBUG: MAX_PATH outside #ifdef _WIN32, should be PATH/NAME_MAX on POSIX?
-#ifdef _WIN32
-  LPTSTR lpFilePart;
-  GetFullPathName(filename, COUNTOF(dir), dir, &lpFilePart);
-  PathRemoveFileSpec(dir);
-#else
-  if(p == filename)
-    _tcscpy(dir, _T("."));
-  else
-    my_strncpy(dir, filename, p-filename+!0);
-#endif
-  definedlist.add(_T("__FILEDIR__"),dir);
-
-  return oldfileinfo;
-}
-void CEXEBuild::restore_file_predefine(TCHAR *oldfilename)
-{
-  definedlist.del(_T("__FILEDIR__"));
-  definedlist.del(_T("__FILE__"));
-  if(oldfilename) {
-    TCHAR *oldfiledir = _tcschr(oldfilename, _T('|'));
-    definedlist.add(_T("__FILEDIR__"),oldfiledir+1);
-    *oldfiledir = '\0';
-    definedlist.add(_T("__FILE__"),oldfilename);
-    delete[] oldfilename;
-  }
-}
-
-TCHAR *CEXEBuild::set_timestamp_predefine(const TCHAR *filename)
-{
-  TCHAR *oldtimestamp = definedlist.find(_T("__TIMESTAMP__"));
-  if(oldtimestamp) {
-    oldtimestamp = _tcsdup(oldtimestamp);
-    definedlist.del(_T("__TIMESTAMP__"));
-  }
-
-#ifdef _WIN32
-  TCHAR datebuf[128] = _T(""), timebuf[128] = _T(""), timestampbuf[256];
-  WIN32_FIND_DATA fd;
-  FILETIME floctime;
-  SYSTEMTIME stime;
-
-  HANDLE hSearch = FindFirstFile(filename, &fd);
-  if (hSearch != INVALID_HANDLE_VALUE)
-  {
-    FindClose(hSearch);
-
-    FileTimeToLocalFileTime(&fd.ftLastWriteTime, &floctime);
-    FileTimeToSystemTime(&floctime, &stime);
-
-    GetDateFormat(LOCALE_USER_DEFAULT, DATE_LONGDATE, &stime, NULL, datebuf, COUNTOF(datebuf));
-    GetTimeFormat(LOCALE_USER_DEFAULT, 0, &stime, NULL, timebuf, COUNTOF(timebuf));
-    wsprintf(timestampbuf,_T("%") NPRIs _T(" %") NPRIs,datebuf,timebuf);
-
-    definedlist.add(_T("__TIMESTAMP__"),timestampbuf);
-  }
-#else
-  struct stat st;
-  if (!_tstat(filename, &st))
-    definedlist.add(_T("__TIMESTAMP__"),PosixBug_CtoTString(ctime(&st.st_mtime)));
-#endif
-
-  return oldtimestamp;
-}
-void CEXEBuild::restore_timestamp_predefine(TCHAR *oldtimestamp)
-{
-  definedlist.del(_T("__TIMESTAMP__"));
-  if(oldtimestamp) {
-    definedlist.add(_T("__TIMESTAMP__"),oldtimestamp);
-    free(oldtimestamp);
-  }
-}
-
-TCHAR *CEXEBuild::set_line_predefine(int linecnt, BOOL is_macro)
-{
-  TCHAR* linebuf = NULL;
-  MANAGE_WITH(linebuf, free);
-
-  TCHAR temp[128] = _T("");
-  _stprintf(temp,_T("%d"),linecnt);
-
-  TCHAR *oldline = definedlist.find(_T("__LINE__"));
-  if(oldline) {
-    oldline = _tcsdup(oldline);
-    definedlist.del(_T("__LINE__"));
-  }
-  if(is_macro && oldline) {
-    linebuf = (TCHAR *)malloc((_tcslen(oldline)+_tcslen(temp)+2)*sizeof(TCHAR));
-    _stprintf(linebuf,_T("%") NPRIs _T(".%") NPRIs,oldline,temp);
-  }
-  else {
-    linebuf = _tcsdup(temp);
-  }
-  definedlist.add(_T("__LINE__"),linebuf);
-
-  return oldline;
-}
-void CEXEBuild::restore_line_predefine(TCHAR *oldline)
-{
-  definedlist.del(_T("__LINE__"));
-  if(oldline) {
-    definedlist.add(_T("__LINE__"),oldline);
-    free(oldline);
-  }
-}
-
-void CEXEBuild::set_date_time_predefines()
-{
-  time_t etime;
-  struct tm * ltime;
-  TCHAR datebuf[128], timebuf[128];
-
-  time(&etime);
-  ltime = localtime(&etime);
-#ifdef _WIN32
-  SYSTEMTIME stime;
-  stime.wYear = ltime->tm_year+1900;
-  stime.wMonth = ltime->tm_mon + 1;
-  stime.wDay = ltime->tm_mday;
-  stime.wHour= ltime->tm_hour;
-  stime.wMinute= ltime->tm_min;
-  stime.wSecond= ltime->tm_sec;
-  stime.wMilliseconds= 0;
-  GetDateFormat(LOCALE_USER_DEFAULT, DATE_SHORTDATE, &stime, NULL, datebuf, sizeof(datebuf));
-  definedlist.add(_T("__DATE__"),(TCHAR *)datebuf);
-  GetTimeFormat(LOCALE_USER_DEFAULT, 0, &stime, NULL, timebuf, sizeof(timebuf));
-  definedlist.add(_T("__TIME__"),(TCHAR *)timebuf);
-#else
-  my_strftime(datebuf, sizeof(datebuf), _T("%x"), ltime);
-  definedlist.add(_T("__DATE__"),(TCHAR *)datebuf);
-  my_strftime(timebuf, sizeof(timebuf), _T("%X"), ltime);
-  definedlist.add(_T("__TIME__"),(TCHAR *)timebuf);
-#endif
-}
-void CEXEBuild::del_date_time_predefines()
-{
-  definedlist.del(_T("__DATE__"));
-  definedlist.del(_T("__TIME__"));
-}
-#endif
+#endif //~ NSIS_CONFIG_ENHANCEDUI_SUPPORT
 
 int CEXEBuild::process_script(NIStream&Strm, const TCHAR *filename)
 {
@@ -282,7 +92,6 @@ int CEXEBuild::process_script(NIStream&Strm, const TCHAR *filename)
   }
 
 #ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
-  // Added by Sunil Kamath 11 June 2003
   set_date_time_predefines();
   TCHAR *oldfilename = set_file_predefine(curfilename);
   TCHAR *oldtimestamp = set_timestamp_predefine(curfilename);
@@ -291,7 +100,6 @@ int CEXEBuild::process_script(NIStream&Strm, const TCHAR *filename)
   int ret=parseScript();
 
 #ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
-  // Added by Sunil Kamath 11 June 2003
   restore_file_predefine(oldfilename);
   restore_timestamp_predefine(oldtimestamp);
   del_date_time_predefines();
@@ -317,8 +125,6 @@ int CEXEBuild::process_script(NIStream&Strm, const TCHAR *filename)
 
 #define PRINTHELPEX(cmdname) { print_help((cmdname)); return PS_ERROR; }
 #define PRINTHELP() PRINTHELPEX(line.gettoken_str(0))
-static void PREPROCESSONLY_BEGINCOMMENT() { extern FILE *g_output; _ftprintf(g_output,_T("!if 0 /*\n")); }
-static void PREPROCESSONLY_ENDCOMMENT() { extern FILE *g_output; _ftprintf(g_output,_T("*/\n!endif\n")); }
 
 void CEXEBuild::start_ifblock()
 {
@@ -346,7 +152,6 @@ int CEXEBuild::num_ifblock()
   return build_preprocessor_data.getlen() / sizeof(ifblock);
 }
 
-// Func size: just under 200 lines (orip)
 int CEXEBuild::doParse(const TCHAR *str)
 {
   LineParser line(inside_comment);
@@ -446,9 +251,7 @@ parse_again:
     }
 
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
-    // Added by Ximon Eighteen 5th August 2002
-    // We didn't recognise this command, could it be the name of a
-    // function exported from a dll?
+    // We didn't recognise this command, could it be the name of a function exported from a dll?
     // Plugins cannot be called in global scope so there is no need to initialize the list first
     if (m_pPlugins && m_pPlugins->IsPluginCommand(tokstr0))
     {
@@ -685,7 +488,6 @@ parse_again:
   return PS_OK;
 }
 
-// Func size: about 140 lines (orip)
 #ifdef NSIS_FIX_DEFINES_IN_STRINGS
 void CEXEBuild::ps_addtoline(const TCHAR *str, GrowBuf &linedata, StringList &hist, bool bIgnoreDefines /*= false*/)
 #else
@@ -871,7 +673,7 @@ int CEXEBuild::parseScript()
     {
       if (linereader.IsEOF())
       {
-        if(!str[0]) break;
+        if (!str[0]) break;
       }
       else
       {
@@ -891,16 +693,12 @@ int CEXEBuild::parseScript()
     GrowBuf linedata;
 
 #ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
-  // Added by Sunil Kamath 11 June 2003
     TCHAR *oldline = set_line_predefine(linecnt, FALSE);
 #endif
-
     ps_addtoline(str,linedata,hist);
     linedata.add(_T(""),sizeof(_T("")));
     int ret=doParse((TCHAR*)linedata.get());
-
 #ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
-    // Added by Sunil Kamath 11 June 2003
     restore_line_predefine(oldline);
 #endif
 
@@ -908,94 +706,6 @@ int CEXEBuild::parseScript()
   }
 
   return PS_EOF;
-}
-
-int CEXEBuild::includeScript(const TCHAR *f, NStreamEncoding&enc)
-{
-  NIStream incstrm;
-  const bool openok = incstrm.OpenFileForReading(f,enc);
-  if (NStreamEncoding::AUTO == enc.GetCodepage() && // !include defaults to UTF-8 after "Unicode true" 
-    build_unicode && !enc.IsUnicodeCodepage(enc.GetPlatformDefaultCodepage()) &&
-    enc.GetPlatformDefaultCodepage() == incstrm.StreamEncoding().GetCodepage()
-  ) incstrm.StreamEncoding().SetCodepage(NStreamEncoding::UTF8);
-  enc = incstrm.StreamEncoding();
-
-  TCHAR bufcpdisp[20];
-  incstrm.StreamEncoding().GetCPDisplayName(bufcpdisp);
-  SCRIPT_MSG(_T("!include: \"%") NPRIs _T("\" (%") NPRIs _T(")\n"),f,bufcpdisp);
-  if (!openok)
-  {
-    ERROR_MSG(_T("!include: could not open file: \"%") NPRIs _T("\"\n"),f);
-    return PS_ERROR;
-  }
-
-  if (build_include_depth >= MAX_INCLUDEDEPTH)
-  {
-    ERROR_MSG(_T("!include: too many levels of includes (%d max).\n"),MAX_INCLUDEDEPTH);
-    return PS_ERROR;
-  }
-  build_include_depth++;
-
-  const int last_linecnt=linecnt;
-  const TCHAR *last_filename=curfilename;
-  curfilename=f, linecnt=0;
-  NStreamLineReader linereader(incstrm);
-  NStreamLineReader*last_linereader=curlinereader;
-  curlinereader=&linereader;
-
-#ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
-  // Added by Sunil Kamath 11 June 2003
-  TCHAR *oldfilename = set_file_predefine(curfilename);
-  TCHAR *oldtimestamp = set_timestamp_predefine(curfilename);
-#endif
-
-  int r=parseScript();
-
-#ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
-  // Added by Sunil Kamath 11 June 2003
-  restore_file_predefine(oldfilename);
-  restore_timestamp_predefine(oldtimestamp);
-#endif
-
-  const int errlinecnt=linecnt;
-  curfilename=last_filename, linecnt=last_linecnt;
-  curlinereader=last_linereader;
-
-  build_include_depth--;
-  if (r != PS_EOF && r != PS_OK)
-  {
-    ERROR_MSG(_T("!include: error in script: \"%") NPRIs _T("\" on line %d\n"),f,errlinecnt);
-    return PS_ERROR;
-  }
-  SCRIPT_MSG(_T("!include: closed: \"%") NPRIs _T("\"\n"),f);
-  return PS_OK;
-}
-
-TCHAR* CEXEBuild::GetMacro(const TCHAR *macroname, TCHAR**macroend /*= 0*/)
-{
-  TCHAR *t = (TCHAR*)m_macros.get(), *mbeg, *mbufbeg = t;
-  for (; t && *t; ++t)
-  {
-    mbeg = t;
-    const bool foundit = !_tcsicmp(mbeg, macroname);
-    t += _tcslen(t) + 1; // advance over macro name
-
-    // advance over parameters
-    while (*t) t += _tcslen(t) + 1;
-    t++;
-
-    // advance over data
-    while (*t) t += _tcslen(t) + 1;
-
-    if (foundit)
-    {
-      if (macroend) *macroend = ++t;
-      return mbeg;
-    }
-    
-    if (t-mbufbeg >= m_macros.getlen()-1) break;
-  }
-  return 0;
 }
 
 int CEXEBuild::LoadLicenseFile(const TCHAR *file, TCHAR** pdata, const TCHAR *cmdname, WORD AnsiCP) // caller must free *pdata, even on error result
@@ -1075,13 +785,12 @@ int CEXEBuild::process_oneline(const TCHAR *line, const TCHAR *filename, int lin
   GrowBuf linedata;
 
 #ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
-  // Added by Sunil Kamath 11 June 2003
   TCHAR *oldfilename = NULL, *oldtimestamp = NULL, *oldline = NULL;
-  bool is_commandline = !_tcscmp(filename,_T("<command line>"));
+  bool is_commandline = !_tcscmp(filename, get_commandlinecode_filename());
   bool is_macro = !_tcsncmp(filename,_T("macro:"),6);
 
-  if(!is_commandline) { // Don't set the predefines for command line /X option
-    if(!is_macro) {
+  if (!is_commandline) { // Don't set the predefines for command line /X option
+    if (!is_macro) {
       oldfilename = set_file_predefine(curfilename);
       oldtimestamp = set_timestamp_predefine(curfilename);
     }
@@ -1094,9 +803,8 @@ int CEXEBuild::process_oneline(const TCHAR *line, const TCHAR *filename, int lin
   int ret = doParse((TCHAR*)linedata.get());
 
 #ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
-  // Added by Sunil Kamath 11 June 2003
-  if(!is_commandline) { // Don't set the predefines for command line /X option
-    if(!is_macro) {
+  if (!is_commandline) { // Don't set the predefines for command line /X option
+    if (!is_macro) {
       restore_file_predefine(oldfilename);
       restore_timestamp_predefine(oldtimestamp);
     }
@@ -1137,7 +845,6 @@ int CEXEBuild::process_jump(LineParser &line, int wt, int *offs)
 #define SECTION_FIELD_GET(field) (FIELD_OFFSET(section, field)/sizeof(int))
 #define SECTION_FIELD_SET(field) (-1 - (int)(FIELD_OFFSET(section, field)/sizeof(int)))
 
-// Func size: about 5000 lines (orip)
 int CEXEBuild::doCommand(int which_token, LineParser &line)
 {
   static const TCHAR *rootkeys[2] = {
@@ -1153,359 +860,30 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #endif
 
   multiple_entries_instruction=0;
-  entry ent={0,};
+  entry ent={};
   switch (which_token)
   {
     // macro stuff
     ///////////////////////////////////////////////////////////////////////////////
     case TOK_P_MACRO:
-      {
-        const TCHAR*const macroname=line.gettoken_str(1);
-        if (!macroname[0]) PRINTHELP()
-        if (MacroExists(macroname))
-        {
-          ERROR_MSG(_T("!macro: macro named \"%") NPRIs _T("\" already found!\n"),macroname);
-          return PS_ERROR;
-        }
-        m_macros.add(macroname,(int)(_tcslen(macroname)+1)*sizeof(TCHAR));
-
-        for (int pc=2; pc < line.getnumtokens(); pc++)
-        {
-          if (!line.gettoken_str(pc)[0])
-          {
-            ERROR_MSG(_T("!macro: macro parameter %d is empty, not valid!\n"),pc-1);
-            return PS_ERROR;
-          }
-          int a;
-          for (a=2; a < pc; a++)
-          {
-            if (!_tcsicmp(line.gettoken_str(pc),line.gettoken_str(a)))
-            {
-              ERROR_MSG(_T("!macro: macro parameter named %") NPRIs _T(" is used multiple times!\n"),
-                line.gettoken_str(pc));
-              return PS_ERROR;
-            }
-          }
-          m_macros.add(line.gettoken_str(pc),(int)(_tcslen(line.gettoken_str(pc))+1)*sizeof(TCHAR));
-        }
-        m_macros.add(_T(""),sizeof(_T("")));
-
-        for (;;)
-        {
-          TCHAR *str = m_templinebuf, *p = str;
-          UINT lrres = curlinereader->ReadLine(str,MAX_LINELENGTH);
-          if (NStream::OK != lrres)
-          {
-            if (curlinereader->IsEOF())
-            {
-              if (!str[0])
-              {
-                ERROR_MSG(_T("!macro \"%") NPRIs _T("\": unterminated (no !macroend found in file)!\n"),macroname);
-                return PS_ERROR;
-              }
-            }
-            else
-            {
-              ERROR_MSG(curlinereader->GetErrorMessage(lrres).c_str());
-              return PS_ERROR;
-            }
-          }
-          //SCRIPT_MSG(_T("%") NPRIs _T("%") NPRIs, str, str[_tcslen(str)-1]==_T('\n')?_T(""):_T("\n"));
-          // remove trailing whitespace
-          while (*p) p++;
-          if (p > str) p--;
-          while (p >= str && (*p == _T('\r') || *p == _T('\n') || *p == _T(' ') || *p == _T('\t'))) p--;
-          *++p = 0;
-          LineParser l2(false);
-          if (!l2.parse(str))
-          {
-            if (!_tcsicmp(l2.gettoken_str(0),_T("!macroend")))
-            {
-              linecnt++;
-              break;
-            }
-            if (!_tcsicmp(l2.gettoken_str(0),_T("!macro")))
-            {
-              ERROR_MSG(_T("Error: can't define a macro inside a macro!\n"));
-              return PS_ERROR;
-            }
-          }
-          if (str[0]) m_macros.add(str,(int)(_tcslen(str)+1)*sizeof(TCHAR));
-          else m_macros.add(_T(" "),sizeof(_T(" ")));
-          linecnt++;
-        }
-        m_macros.add(_T(""),sizeof(_T("")));
-      }
-    return PS_OK;
+    return pp_macro(line);
     case TOK_P_MACROEND:
-      ERROR_MSG(_T("!macroend: no macro currently open.\n"));
-    return PS_ERROR;
+    return (ERROR_MSG(_T("!macroend: no macro currently open.\n")), PS_ERROR);
     case TOK_P_MACROUNDEF:
-      {
-        const TCHAR*const mname=line.gettoken_str(1);
-        if (!mname[0]) PRINTHELP()
-        TCHAR *mbeg, *mend;
-        mbeg=GetMacro(mname,&mend);
-        if (!mbeg)
-        {
-          ERROR_MSG(_T("!macroundef: \"%") NPRIs _T("\" does not exist!\n"),mname);
-          return PS_ERROR;
-        }
-        TCHAR *mbufb=(TCHAR*)m_macros.get();
-        const size_t mcb=((mend)-mbeg)*sizeof(TCHAR), mbufcb=m_macros.getlen();
-        memmove(mbeg,mend,mbufcb-(((mbeg-mbufb)*sizeof(TCHAR))+mcb));
-        m_macros.resize(truncate_cast(int,(size_t)(mbufcb-mcb)));
-        SCRIPT_MSG(_T("!macroundef: %") NPRIs _T("\n"),mname);
-      }
-    return PS_OK;
+    return pp_macroundef(line);
     case TOK_P_INSERTMACRO:
-      {
-        const TCHAR*const macroname=line.gettoken_str(1);
-        if (!macroname[0]) PRINTHELP()
-        TCHAR *t=GetMacro(macroname), *m=(TCHAR *)m_macros.get();
-        SCRIPT_MSG(_T("!insertmacro: %") NPRIs _T("\n"),macroname);
-        if (!t)
-        {
-          ERROR_MSG(_T("!insertmacro: macro named \"%") NPRIs _T("\" not found!\n"),macroname);
-          return PS_ERROR;
-        }
-        t+=_tcslen(t)+1;
-
-        GrowBuf l_define_names;
-        DefineList l_define_saves;
-        int npr=0;
-        // advance over params
-        while (*t)
-        {
-          TCHAR *v=definedlist.find(t);
-          if (v)
-          {
-            l_define_saves.add(t,v);
-            definedlist.del(t);
-          }
-          l_define_names.add(t,(int)(_tcslen(t)+1)*sizeof(TCHAR));
-          definedlist.add(t,line.gettoken_str(npr+2));
-
-          npr++;
-          t+=_tcslen(t)+1;
-        }
-        l_define_names.add(_T(""),sizeof(_T("")));
-        t++;
-        if (npr != line.getnumtokens()-2)
-        {
-          ERROR_MSG(_T("!insertmacro: macro \"%") NPRIs _T("\" requires %d parameter(s), passed %d!\n"),
-            macroname,npr,line.getnumtokens()-2);
-          return PS_ERROR;
-        }
-        static unsigned char insertmacrorecursion=0;
-        if (++insertmacrorecursion > MAX_MACRORECURSION)
-        {
-          ERROR_MSG(_T("!insertmacro: insert depth is limited to %u macros!\n"),MAX_MACRORECURSION);
-          return PS_ERROR;
-        }
-        const bool oldparserinsidecomment=inside_comment;
-        inside_comment=false; // "!insertmacro foo /*" does not mean that the macro body is a comment
-        TCHAR str[1024];
-        wsprintf(str,_T("macro:%") NPRIs,macroname);
-        const TCHAR *oldmacroname=m_currentmacroname;
-        m_currentmacroname=macroname;
-        definedlist.set(_T("__MACRO__"),m_currentmacroname);
-        int lp=0;
-        while (*t)
-        {
-          lp++;
-          if (_tcscmp(t,_T(" ")))
-          {
-            int ret=process_oneline(t,str,lp);
-            if (ret != PS_OK)
-            {
-              ERROR_MSG(_T("Error in macro %") NPRIs _T(" on macroline %d\n"),macroname,lp);
-              return ret;
-            }
-          }
-          {
-            // fix t if process_oneline changed m_macros
-            TCHAR *nm=(TCHAR *)m_macros.get();
-            if (nm != m) t += nm - m, m = nm;
-          }
-          t+=_tcslen(t)+1;
-        }
-        {
-          TCHAR *p=(TCHAR*)l_define_names.get();
-          while (*p)
-          {
-            definedlist.del(p);
-            TCHAR *v;
-            if ((v=l_define_saves.find(p))) definedlist.add(p,v);
-            p+=_tcslen(p)+1;
-          }
-        }
-        definedlist.del(_T("__MACRO__"));
-        m_currentmacroname=oldmacroname;
-        if (oldmacroname) definedlist.add(_T("__MACRO__"),oldmacroname);
-        inside_comment=oldparserinsidecomment;
-        --insertmacrorecursion;
-        SCRIPT_MSG(_T("!insertmacro: end of %") NPRIs _T("\n"),macroname);
-      }
-    return PS_OK;
+    return pp_insertmacro(line);
 
     // preprocessor files fun
     ///////////////////////////////////////////////////////////////////////////////
-
     case TOK_P_TEMPFILE:
-      {
-        TCHAR *symbol = line.gettoken_str(1);
-        const TCHAR *fpath;
-#ifdef _WIN32
-        TCHAR buf[MAX_PATH], buf2[MAX_PATH];
-        GetTempPath(MAX_PATH, buf);
-        if (!GetTempFileName(buf, _T("nst"), 0, buf2))
-        {
-          ERROR_MSG(_T("!tempfile: unable to create temporary file.\n"));
-          return PS_ERROR;
-        }
-        fpath = buf2;
-#else // !_WIN32
-        char t[] = ("/tmp/makensisXXXXXX");
-        const mode_t old_umask = umask(0077);
-        int fd = mkstemp(t);
-        umask(old_umask);
-        if (fd == -1) { L_tok_p_tempfile_oom:
-          ERROR_MSG(_T("!tempfile: unable to create temporary file.\n"));
-          return PS_ERROR;
-        }
-        close(fd);
-#ifdef _UNICODE
-        if (!(fpath = NSISRT_mbtowc(t))) goto L_tok_p_tempfile_oom;
-#else
-        fpath = t;
-#endif
-#endif // ~_WIN32
-
-        if (definedlist.add(symbol, fpath))
-        {
-          ERROR_MSG(_T("!tempfile: \"%") NPRIs _T("\" already defined!\n"), symbol);
-          return PS_ERROR;
-        }
-        SCRIPT_MSG(_T("!tempfile: \"%") NPRIs _T("\"=\"%") NPRIs _T("\"\n"), symbol, fpath);
-#if !defined(_WIN32) && defined(_UNICODE)
-        NSISRT_free(fpath);
-#endif
-      }
-    return PS_OK;
-
+    return pp_tempfile(line);
     case TOK_P_DELFILE:
-      {
-        int fatal = 1;
-        int a = 1;
-        TCHAR *fc = line.gettoken_str(a);
-        if (line.getnumtokens()==3)
-        {
-          if(!_tcsicmp(fc,_T("/nonfatal")))
-          {
-            fatal = 0;
-            fc = line.gettoken_str(++a);
-          }
-          else PRINTHELP();
-        }
-
-        SCRIPT_MSG(_T("!delfile: \"%") NPRIs _T("\"\n"), line.gettoken_str(a));
-
-        tstring dir = get_dir_name(fc), spec = get_file_name(fc);
-        tstring basedir = dir + PLATFORM_PATH_SEPARATOR_STR;
-        if (dir == spec) dir = _T("."), basedir = _T(""); // no path, just file name
-
-        boost::scoped_ptr<dir_reader> dr( new_dir_reader() );
-        dr->read(dir); // BUGBUG: PATH_CONVERT?
-
-        for (dir_reader::iterator files_itr = dr->files().begin();
-             files_itr != dr->files().end();
-             files_itr++)
-        {
-          if (!dir_reader::matches(*files_itr, spec))
-            continue;
-
-          tstring file = basedir + *files_itr; // BUGBUG: PATH_CONVERT?
-
-          int result = _tunlink(file.c_str());
-          if (result == -1) {
-            ERROR_MSG(_T("!delfile: \"%") NPRIs _T("\" couldn't be deleted.\n"), file.c_str());
-            if (fatal)
-            {
-              return PS_ERROR;
-            }
-          }
-          else
-          {
-            SCRIPT_MSG(_T("!delfile: deleted \"%") NPRIs _T("\"\n"), file.c_str());
-          }
-        }
-      }
-    return PS_OK;
-
+    return pp_delfile(line);
     case TOK_P_APPENDFILE:
-      {
-        WORD tok = 0, cp = 0;
-        bool bom = false, forceEnc = false, rawnl = false;
-        TCHAR *param, buf[9+!0];
-        for (;;)
-        {
-          param = line.gettoken_str(++tok);
-          my_strncpy(buf, param, COUNTOF(buf));
-          if (!_tcsicmp(param,_T("/RawNL"))) ++rawnl;
-          else if(!_tcsicmp(buf,_T("/CharSet=")))
-          {
-            ++forceEnc, cp = GetEncodingFromString(param+9, bom);
-            if (NStreamEncoding::UNKNOWN == cp)
-            {
-              ERROR_MSG(_T("!appendfile: Invalid parameter \"%") NPRIs _T("\"!\n"), param);
-              return PS_ERROR;
-            }
-          }
-          else break;
-        }
-        if (line.getnumtokens() != 2 + tok) { PRINTHELP(); return PS_ERROR; }
-        param = line.gettoken_str(tok);
-        NOStream ostrm;
-        if (!ostrm.CreateFileForAppending(param, NStreamEncoding::ACP))
-        {
-          ERROR_MSG(_T("!appendfile: \"%") NPRIs _T("\" couldn't be opened.\n"), param);
-          return PS_ERROR;
-        }
-        if (ostrm.IsUnicode()) bom = false;
-        if (forceEnc) ostrm.StreamEncoding().SetCodepage(cp);
-        const TCHAR *const text = line.gettoken_str(++tok);
-        bool succ = bom ? ostrm.WriteBOM(ostrm.StreamEncoding()) : true;
-        if (!succ || rawnl ? !ostrm.WriteString(text) : !ostrm.WritePlatformNLString(text))
-        {
-          ERROR_MSG(_T("!appendfile: error writing to \"%") NPRIs _T("\".\n"), param);
-          return PS_ERROR;
-        }
-        SCRIPT_MSG(_T("!appendfile: \"%") NPRIs _T("\" \"%") NPRIs _T("\"\n"), param, text);
-      }
-    return PS_OK;
-
+    return pp_appendfile(line);
     case TOK_P_GETDLLVERSION:
-    {
-      const TCHAR *cmdname = _T("!getdllversion");
-      DWORD low, high; 
-      if (!GetDLLVersion(line.gettoken_str(1), high, low))
-      {
-        ERROR_MSG(_T("%") NPRIs _T(": error reading version info from \"%") NPRIs _T("\"\n"), cmdname, line.gettoken_str(1));
-        return PS_ERROR;
-      }
-      TCHAR *symbuf = m_templinebuf, numbuf[30], *basesymname = line.gettoken_str(2);
-      DWORD vals[] = { high>>16, high&0xffff, low>>16, low&0xffff };
-      SCRIPT_MSG(_T("%") NPRIs _T(": %") NPRIs _T(" (%u.%u.%u.%u)->(%") NPRIs _T("<1..4>)\n"),
-        cmdname, line.gettoken_str(1), vals[0], vals[1], vals[2], vals[3], basesymname);
-      for (UINT i = 0; i < 4; ++i)
-      {
-        _stprintf(symbuf,_T("%") NPRIs _T("%u"), basesymname, i+1);
-        _stprintf(numbuf,_T("%lu"), vals[i]);
-        definedlist.add(symbuf, numbuf);
-      }
-    }
-    return PS_OK;
+    return pp_getdllversion(line);
 
     // page ordering stuff
     ///////////////////////////////////////////////////////////////////////////////
@@ -1526,9 +904,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
 
         int k = line.gettoken_enum(1,_T("custom\0license\0components\0directory\0instfiles\0uninstConfirm\0"));
-
         if (k < 0) PRINTHELP();
-
         if (add_page(k) != PS_OK)
           return PS_ERROR;
 
@@ -1537,10 +913,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           ERROR_MSG(_T("Error: custom page specified, NSIS_SUPPORT_CODECALLBACKS not defined.\n"));
           return PS_ERROR;
         }
-#endif//!NSIS_SUPPORT_CODECALLBACKS
-
-        if (k) {
-          // not custom
+#endif //~ NSIS_SUPPORT_CODECALLBACKS
+        if (k) { // not custom
 #ifdef NSIS_SUPPORT_CODECALLBACKS
           switch (line.getnumtokens() - enable_last_page_cancel) {
             case 6:
@@ -1555,11 +929,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
               if (*line.gettoken_str(2))
                 cur_page->prefunc = ns_func.add(line.gettoken_str(2),0);
           }
-#endif//NSIS_SUPPORT_CODECALLBACKS
+#endif //~ NSIS_SUPPORT_CODECALLBACKS
         }
 #ifdef NSIS_SUPPORT_CODECALLBACKS
-        else {
-          // a custom page
+        else { // a custom page
           switch (line.getnumtokens() - enable_last_page_cancel) {
             case 6:
               PRINTHELP();
@@ -1577,10 +950,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
               PRINTHELP();
           }
         }
-#endif//NSIS_SUPPORT_CODECALLBACKS
+#endif //~ NSIS_SUPPORT_CODECALLBACKS
 
         SCRIPT_MSG(_T("%") NPRIs _T("Page: %") NPRIs, uninstall_mode?_T("Uninst"):_T(""), line.gettoken_str(1));
-
 #ifdef NSIS_SUPPORT_CODECALLBACKS
         if (cur_page->prefunc>=0)
           SCRIPT_MSG(_T(" (%") NPRIs _T(":%") NPRIs _T(")"), k?_T("pre"):_T("creator"), line.gettoken_str(2));
@@ -1599,13 +971,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           add_page(PAGE_COMPLETED);
           page_end();
         }
-
         set_uninstall_mode(0);
       }
     return PS_OK;
-
-    // extended page setting
-    case TOK_PAGEEX:
+    case TOK_PAGEEX: // extended page setting
     {
       int k = line.gettoken_enum(1,_T("custom\0license\0components\0directory\0instfiles\0uninstConfirm\0"));
       if (k < 0) {
@@ -1613,34 +982,28 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (k < 0) PRINTHELP();
         set_uninstall_mode(1);
       }
-
       SCRIPT_MSG(_T("PageEx: %") NPRIs _T("\n"), line.gettoken_str(1));
-
       if (add_page(k) != PS_OK)
         return PS_ERROR;
 
       cur_page->flags |= PF_PAGE_EX;
     }
     return PS_OK;
-
     case TOK_PAGEEXEND:
     {
       SCRIPT_MSG(_T("PageExEnd\n"));
-
 #ifdef NSIS_SUPPORT_CODECALLBACKS
       if (cur_page_type == PAGE_CUSTOM && !cur_page->prefunc) {
         ERROR_MSG(_T("Error: custom pages must have a creator function.\n"));
         return PS_ERROR;
       }
 #endif
-
       page_end();
 
       if (cur_page_type == PAGE_INSTFILES) {
         add_page(PAGE_COMPLETED);
         page_end();
       }
-
       set_uninstall_mode(0);
     }
     return PS_OK;
@@ -1648,15 +1011,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #ifdef NSIS_SUPPORT_CODECALLBACKS
     {
       SCRIPT_MSG(_T("PageCallbacks:"));
-
       if (cur_page_type == PAGE_CUSTOM)
       {
         switch (line.getnumtokens())
         {
           case 4:
-          {
             PRINTHELP();
-          }
           case 3:
           {
             if (*line.gettoken_str(2))
@@ -1780,23 +1140,20 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           }
         }
       }
-
       int custom = cur_page_type == PAGE_CUSTOM ? 1 : 0;
-
       if (cur_page->prefunc>=0)
         SCRIPT_MSG(_T(" %") NPRIs _T(":%") NPRIs, !custom?_T("pre"):_T("creator"), line.gettoken_str(1));
       if (cur_page->showfunc>=0 && !custom)
         SCRIPT_MSG(_T(" show:%") NPRIs, line.gettoken_str(2));
       if (cur_page->leavefunc>=0)
         SCRIPT_MSG(_T(" leave:%") NPRIs, line.gettoken_str(3-custom));
-
       SCRIPT_MSG(_T("\n"));
     }
     return PS_OK;
 #else
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_SUPPORT_CODECALLBACKS not defined.\n"),  line.gettoken_str(0));
     return PS_ERROR;
-#endif//NSIS_SUPPORT_CODECALLBACKS
+#endif //~ NSIS_SUPPORT_CODECALLBACKS
 #else
     case TOK_PAGE:
     case TOK_UNINSTPAGE:
@@ -1805,7 +1162,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_PAGECALLBACKS:
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_CONFIG_VISIBLE_SUPPORT not defined.\n"),  line.gettoken_str(0));
     return PS_ERROR;
-#endif//NSIS_CONFIG_VISIBLE_SUPPORT
+#endif //~ NSIS_CONFIG_VISIBLE_SUPPORT
+
     // header flags
     ///////////////////////////////////////////////////////////////////////////////
     case TOK_LANGSTRING:
@@ -1831,22 +1189,18 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       const TCHAR *cmdnam = get_commandtoken_name(which_token);
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
       if (build_header.flags&(CH_FLAGS_SILENT|CH_FLAGS_SILENT_LOG))
-      {
         warning_fl(DW_LANGSTRING_SILENTLICENSE, _T("%") NPRIs _T(": SilentInstall enabled, wasting space"), cmdnam);
-      }
 #endif
       TCHAR *name = line.gettoken_str(1);
       LANGID lang = ParseLangIdParameter(line, 2);
-      TCHAR *file = line.gettoken_str(3);
-
-      TCHAR *data = NULL;
+      TCHAR *file = line.gettoken_str(3), *data = NULL;
       MANAGE_WITH(data, free);
 
       LanguageTable *pLT = GetLangTable(lang);
       WORD acp = pLT ? pLT->nlf.m_uCodePage : CP_ACP;
       int ret = LoadLicenseFile(file, &data, cmdnam, acp);
       if (ret != PS_OK)
-          return ret;
+        return ret;
 
       ret = SetLangString(name, lang, data, true);
       if (ret == PS_WARNING)
@@ -1926,11 +1280,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         return PS_ERROR;
       }
     return PS_OK;
-#else//NSIS_CONFIG_COMPONENTPAGE
+#else
     case TOK_CHECKBITMAP:
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_CONFIG_COMPONENTPAGE not defined.\n"),  line.gettoken_str(0));
     return PS_ERROR;
-#endif//!NSIS_CONFIG_COMPONENTPAGE
+#endif //~ NSIS_CONFIG_COMPONENTPAGE
     case TOK_DIRTEXT:
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
       {
@@ -1960,10 +1314,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         SCRIPT_MSG(_T("DirText: \"%") NPRIs _T("\" \"%") NPRIs _T("\" \"%") NPRIs _T("\" \"%") NPRIs _T("\"\n"),line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(4));
       }
     return PS_OK;
-#else//NSIS_CONFIG_VISIBLE_SUPPORT
+#else
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_CONFIG_VISIBLE_SUPPORT not defined.\n"),  line.gettoken_str(0));
     return PS_ERROR;
-#endif//!NSIS_CONFIG_VISIBLE_SUPPORT
+#endif //~ NSIS_CONFIG_VISIBLE_SUPPORT
     case TOK_DIRVAR:
     {
       if (cur_page_type != PAGE_DIRECTORY && cur_page_type != PAGE_UNINSTCONFIRM) {
@@ -2068,12 +1422,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
       }
     return PS_OK;
-#else//NSIS_CONFIG_COMPONENTPAGE
+#else
     case TOK_COMPTEXT:
     case TOK_INSTTYPE:
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified but NSIS_CONFIG_COMPONENTPAGE not defined\n"),line.gettoken_str(0));
     return PS_ERROR;
-#endif//!NSIS_CONFIG_COMPONENTPAGE
+#endif //~ NSIS_CONFIG_COMPONENTPAGE
 #ifdef NSIS_CONFIG_LICENSEPAGE
     case TOK_LICENSETEXT:
       {
@@ -2153,7 +1507,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             SetInnerString(NLF_BTN_LICENSE_AGREE, line.gettoken_str(2));
             break;
         }
-
         switch (k) {
           case 0: license_res_id = IDD_LICENSE; break;
           case 1: license_res_id = IDD_LICENSE_FSCB; break;
@@ -2174,7 +1527,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
 
         cur_page->flags &= ~(PF_LICENSE_FORCE_SELECTION | PF_LICENSE_NO_FORCE_SELECTION);
-
         switch (k) {
           case 0:
             cur_page->dlg_id = IDD_LICENSE;
@@ -2190,7 +1542,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             break;
         }
       }
-
       SCRIPT_MSG(_T("LicenseForceSelection: %") NPRIs _T(" \"%") NPRIs _T("\" \"%") NPRIs _T("\"\n"), line.gettoken_str(1), line.gettoken_str(2), line.gettoken_str(3));
     }
     return PS_OK;
@@ -2217,13 +1568,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
       }
     return PS_OK;
-#else//!NSIS_CONFIG_LICENSEPAGE
+#else
     case TOK_LICENSETEXT:
     case TOK_LICENSEDATA:
     case TOK_LICENSEBKCOLOR:
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_CONFIG_LICENSEPAGE not defined.\n"),  line.gettoken_str(0));
     return PS_ERROR;
-#endif//!NSIS_CONFIG_LICENSEPAGE
+#endif //~ NSIS_CONFIG_LICENSEPAGE
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
     case TOK_SILENTINST:
     {
@@ -2235,7 +1586,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         ERROR_MSG(_T("SilentInstall: silentlog specified, no log support compiled in (use NSIS_CONFIG_LOG)\n"));
         return PS_ERROR;
       }
-#endif//NSIS_CONFIG_LOG
+#endif //~ NSIS_CONFIG_LOG
       SCRIPT_MSG(_T("SilentInstall: %") NPRIs _T("\n"),line.gettoken_str(1));
 #ifdef NSIS_CONFIG_LICENSEPAGE
       if (k && HasUserDefined(NLF_LICENSE_DATA))
@@ -2251,7 +1602,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         build_header.flags&=~CH_FLAGS_SILENT;
         build_header.flags&=~CH_FLAGS_SILENT_LOG;
       }
-#endif//NSIS_CONFIG_LICENSEPAGE
+#endif //~ NSIS_CONFIG_LICENSEPAGE
     }
     return PS_OK;
     case TOK_SILENTUNINST:
@@ -2288,14 +1639,14 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       SCRIPT_MSG(_T("SetSilent: %") NPRIs _T("\n"),line.gettoken_str(1));
     }
     return add_entry(&ent);
-#else//!NSIS_CONFIG_SILENT_SUPPORT
+#else 
     case TOK_SILENTINST:
     case TOK_SILENTUNINST:
     case TOK_IFSILENT:
     case TOK_SETSILENT:
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_CONFIG_SILENT_SUPPORT not defined.\n"),  line.gettoken_str(0));
     return PS_ERROR;
-#endif//NSIS_CONFIG_SILENT_SUPPORT
+#endif //~ NSIS_CONFIG_SILENT_SUPPORT
     case TOK_OUTFILE:
       my_strncpy(build_output_filename,line.gettoken_str(1),COUNTOF(build_output_filename));
       SCRIPT_MSG(_T("OutFile: \"%") NPRIs _T("\"\n"),build_output_filename);
@@ -2401,7 +1752,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #else
     ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_CONFIG_VISIBLE_SUPPORT not defined.\n"),line.gettoken_str(0));
     return PS_ERROR;
-#endif // NSIS_CONFIG_VISIBLE_SUPPORT
+#endif //~ NSIS_CONFIG_VISIBLE_SUPPORT
     case TOK_SHOWDETAILSUNINST:
 #ifndef NSIS_CONFIG_UNINSTALL_SUPPORT
       ERROR_MSG(_T("Error: ShowUninstDetails specified but NSIS_CONFIG_UNINSTALL_SUPPORT not defined\n"));
@@ -2435,7 +1786,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_DIRSHOW:
       /*{
         int k=line.gettoken_enum(1,_T("show\0hide\0"));
-        if (k == -1) PRINTHELP();
+        if (k < 0) PRINTHELP();
         if (k)
           build_header.flags|=CH_FLAGS_DIR_NO_SHOW;
         else
@@ -2459,14 +1810,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #ifndef NSIS_SUPPORT_BGBG
       ERROR_MSG(_T("Error: BGFont specified but NSIS_SUPPORT_BGBG not defined\n"));
       return PS_ERROR;
-#else//NSIS_SUPPORT_BGBG
+#else // NSIS_SUPPORT_BGBG
       if (line.getnumtokens()==1)
       {
         memcpy(&bg_font,&bg_default_font,sizeof(LOGFONT));
         SCRIPT_MSG(_T("BGFont: default font\n"));
         return PS_OK;
       }
-
       LOGFONT newfont;
       newfont.lfHeight=40;
       newfont.lfWidth=0;
@@ -2524,12 +1874,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       SCRIPT_MSG(_T("\n"));
       memcpy(&bg_font, &newfont, sizeof(LOGFONT));
     return PS_OK;
-#endif//NSIS_SUPPORT_BGBG
+#endif //~ NSIS_SUPPORT_BGBG
     case TOK_BGGRADIENT:
 #ifndef NSIS_SUPPORT_BGBG
       ERROR_MSG(_T("Error: BGGradient specified but NSIS_SUPPORT_BGBG not defined\n"));
       return PS_ERROR;
-#else//NSIS_SUPPORT_BGBG
+#else // NSIS_SUPPORT_BGBG
       if (line.getnumtokens()==1)
       {
         SCRIPT_MSG(_T("BGGradient: default colors\n"));
@@ -2565,13 +1915,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
         SCRIPT_MSG(_T("BGGradient: 0x%06X->0x%06X (text=0x%06X)\n"),v1,v2,v3);
       }
-
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
       build_uninst.bg_color1=build_header.bg_color1;
       build_uninst.bg_color2=build_header.bg_color2;
       build_uninst.bg_textcolor=build_header.bg_textcolor;
-#endif//NSIS_CONFIG_UNINSTALL_SUPPORT
-#endif//NSIS_SUPPORT_BGBG
+#endif //~ NSIS_CONFIG_UNINSTALL_SUPPORT
+#endif //~ NSIS_SUPPORT_BGBG
     return PS_OK;
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
     case TOK_INSTCOLORS:
@@ -2593,7 +1942,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         build_header.lb_bg=((v2&0xff)<<16)|(v2&0xff00)|((v2&0xff0000)>>16);
         SCRIPT_MSG(_T("InstallColors: fg=%06X bg=%06X\n"),v1,v2);
       }
-
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
       build_uninst.lb_fg=build_header.lb_fg;
       build_uninst.lb_bg=build_header.lb_bg;
@@ -2636,7 +1984,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
 
         CResourceEditor *uire = new CResourceEditor(ui, len);
-
         init_res_editor();
 
         // Search for required items
@@ -2646,7 +1993,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         #define SAVE(x) uire->FreeResource(dlg); dlg = UIDlg.Save(dwSize); res_editor->UpdateResource(RT_DIALOG, x, NSIS_DEFAULT_LANG, dlg, dwSize); UIDlg.FreeSavedTemplate(dlg);
 
         LPBYTE dlg = NULL;
-
         if (k == 0 || k == 1) {
           GET(IDD_LICENSE);
           SEARCH(IDC_EDIT1);
@@ -2683,14 +2029,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           DialogItemTemplate* dlgItem = 0;
           for (int i = 0; (dlgItem = UIDlg.GetItemByIdx(i)); i++) {
             bool check = false;
-
             if (IS_INTRESOURCE(dlgItem->szClass)) {
               if (dlgItem->szClass == MAKEINTRESOURCEWINW(0x0082)) {
                 check = true;
               }
-            } else {
+            } else
               check = WinWStrICmpASCII(dlgItem->szClass, "Static") == 0;
-            }
 
             if (check) {
               if ((dlgItem->dwStyle & SS_BITMAP) == SS_BITMAP) {
@@ -2700,7 +2044,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
               }
             }
           }
-
           SAVE(IDD_INST);
         }
 
@@ -2817,7 +2160,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #else
       ERROR_MSG(_T("Error: AddBrandingImage is disabled for non Win32 platforms.\n"));
     return PS_ERROR;
-#endif
+#endif //~ _WIN32
     case TOK_SETFONT:
     {
       unsigned char failed = 0;
@@ -2857,7 +2200,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_SETFONT:
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_CONFIG_VISIBLE_SUPPORT not defined.\n"),line.gettoken_str(0));
     return PS_ERROR;
-#endif// NSIS_CONFIG_VISIBLE_SUPPORT
+#endif //~ NSIS_CONFIG_VISIBLE_SUPPORT
 
     case TOK_PEDLLCHARACTERISTICS:
       {
@@ -2908,11 +2251,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       {
         switch(line.gettoken_enum(1,_T("none\0all\0")))
         {
-        case 0:
-            return PS_OK;
-        case 1:
-            manifest_sosl.addall();
-            return PS_OK;
+        case 0: return PS_OK;
+        case 1: return manifest_sosl.addall() ? PS_OK : PS_ERROR;
         }
       }
       for(int argi = 1; argi < line.getnumtokens(); ++argi)
@@ -2973,7 +2313,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
     }
     return PS_OK;
-#endif
+#endif //~ _UNICODE
 
     // Ability to change compression methods from within the script
     case TOK_SETCOMPRESSOR:
@@ -3027,10 +2367,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       SCRIPT_MSG(_T("SetCompressor: %") NPRIs _T("%") NPRIs _T("%") NPRIs _T("\n"), build_compressor_final ? _T("/FINAL ") : _T(""), build_compress_whole ? _T("/SOLID ") : _T(""), line.gettoken_str(a));
     }
     return PS_OK;
-#else//NSIS_CONFIG_COMPRESSION_SUPPORT
+#else
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_CONFIG_COMPRESSION_SUPPORT not defined.\n"),  line.gettoken_str(0));
     return PS_ERROR;
-#endif//NSIS_CONFIG_COMPRESSION_SUPPORT
+#endif //~ NSIS_CONFIG_COMPRESSION_SUPPORT
     case TOK_LOADNLF:
     {
       SCRIPT_MSG(_T("LoadLanguageFile: %") NPRIs _T("\n"), line.gettoken_str(1));
@@ -3045,327 +2385,37 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
 
       last_used_lang = table->lang_id;
-      // define LANG_LangName as "####" (lang id)
-      // for example ${LANG_ENGLISH} = 1033
-      TCHAR lang_id[16], lang_cp[16], lang_name[1024];
-      wsprintf(lang_name, _T("LANG_%") NPRIs, table->nlf.m_szName);
+      // define LANG_LangName as "####" (lang id), for example ${LANG_ENGLISH} = 1033
+      TCHAR lang_id[16], lang_cp[16], lang_def[1024];
+      wsprintf(lang_def, _T("LANG_%") NPRIs, table->nlf.m_szName);
       wsprintf(lang_id, _T("%u"), table->lang_id);
+      definedlist.add(lang_def, lang_id);
+      wsprintf(lang_def, _T("LANG_%") NPRIs _T("_CP"), table->nlf.m_szName);
       wsprintf(lang_cp, _T("%u"), table->nlf.m_uCodePage);
-      definedlist.add(lang_name, lang_id);
-      wsprintf(lang_name, _T("LANG_%") NPRIs _T("_CP"), table->nlf.m_szName);
-      definedlist.add(lang_name, lang_cp);
+      definedlist.add(lang_def, lang_cp);
     }
     return PS_OK;
 
     // preprocessor-ish (ifdef/ifndef/else/endif are handled one step out from here)
     ///////////////////////////////////////////////////////////////////////////////
     case TOK_P_DEFINE:
-    {
-      const TCHAR *cmdnam=line.gettoken_str(0), *define=line.gettoken_str(1);
-      GrowBuf file_buf;
-      TCHAR datebuf[256], mathbuf[256], *value;
-      int dupemode=0;
-
-      if (!_tcsicmp(define,_T("/ifndef")))
-        dupemode=1;
-      else if (!_tcsicmp(define,_T("/redef")))
-        dupemode=2;
-
-      if (dupemode!=0)
-      {
-        line.eattoken();
-        define=line.gettoken_str(1);
-        if (dupemode==1 && definedlist.find(define)) return PS_OK;
-      }
-
-      if (!_tcsicmp(define,_T("/date")) || !_tcsicmp(define,_T("/utcdate"))) {
-        if (line.getnumtokens()!=4) PRINTHELPEX(cmdnam)
-
-        const TCHAR *date_type = define;
-        time_t rawtime;
-        time(&rawtime);
-        define=line.gettoken_str(2), value=line.gettoken_str(3);
-
-        if (!_tcsicmp(date_type,_T("/utcdate")))
-          rawtime = mktime(gmtime(&rawtime));
-
-        datebuf[0]=0;
-        size_t s=_tcsftime(datebuf,COUNTOF(datebuf),value,localtime(&rawtime));
-        if (s == 0)
-          datebuf[0]=0;
-        else
-          datebuf[max(s,COUNTOF(datebuf)-1)]=0;
-
-        value=datebuf;
-      } else if (!_tcsicmp(define,_T("/file")) || !_tcsicmp(define,_T("/file_noerr"))) {
-        
-        if (line.getnumtokens()!=4) PRINTHELPEX(cmdnam)
-        const TCHAR *const filename=line.gettoken_str(3), *const swit=define;
-        NIStream filestrm;
-        if (!filestrm.OpenFileForReading(filename)) {
-          if (!swit[5]) { // "/file" vs "/file_noerr"
-            ERROR_MSG(_T("!define /file: file not found (\"%") NPRIs _T("\")\n"),filename);
-            return PS_ERROR;
-          }
-        } else {
-          NStreamLineReader lr(filestrm);
-          TCHAR *str=m_templinebuf;
-          for (UINT linnum = 0;;) {
-            ++linnum;
-            UINT cch=read_line_helper(lr,str,MAX_LINELENGTH);
-            if (!cch) {
-              if (*str) {
-                tstring lrmsg=lr.GetErrorMessage((UINT)*str,filename,linnum);
-                ERROR_MSG(_T("!define %") NPRIs _T(": %") NPRIs,swit,lrmsg.c_str());
-                return PS_ERROR;
-              }
-              break; // EOF
-            }
-            str[--cch]=_T('\0'); // Remove \r or \n, we always append \n
-            if (file_buf.getlen()) file_buf.add(_T("\n"),sizeof(TCHAR));
-            file_buf.add(str,cch*sizeof(TCHAR));
-          }
-        }
-        define = line.gettoken_str(2);
-        file_buf.add(_T("\0"),sizeof(TCHAR));
-        value = (TCHAR *)file_buf.get();
-
-      } else if (!_tcsicmp(define,_T("/math"))) {
-
-        int value1, value2;
-        TCHAR *mathop;
-
-        if (line.getnumtokens()!=6) PRINTHELPEX(cmdnam)
-        define = line.gettoken_str(2);
-        value1 = line.gettoken_int(3);
-        mathop = line.gettoken_str(4);
-        value2 = line.gettoken_int(5);
-        value = mathbuf;
-
-        if (!_tcscmp(mathop,_T("+"))) {
-          _stprintf(value,_T("%d"),value1+value2);
-        } else if (!_tcscmp(mathop,_T("-"))) {
-          _stprintf(value,_T("%d"),value1-value2);
-        } else if (!_tcscmp(mathop,_T("*"))) {
-          _stprintf(value,_T("%d"),value1*value2);
-        } else if (!_tcscmp(mathop,_T("&"))) {
-          _stprintf(value,_T("%d"),value1&value2);
-        } else if (!_tcscmp(mathop,_T("|"))) {
-          _stprintf(value,_T("%d"),value1|value2);
-        } else if (!_tcscmp(mathop,_T("^"))) {
-          _stprintf(value,_T("%d"),value1^value2);
-        } else if (!_tcscmp(mathop,_T("<<")) || !_tcscmp(mathop,_T("<<<")) ) {
-          _stprintf(value,_T("%d"),value1<<value2);
-        } else if (!_tcscmp(mathop,_T(">>"))) {
-          _stprintf(value,_T("%d"),(signed int)value1>>(signed int)value2);
-        } else if (!_tcscmp(mathop,_T(">>>"))) {
-          _stprintf(value,_T("%u"),(unsigned int)value1>>(unsigned int)value2);
-        } else if (!_tcscmp(mathop,_T("/"))) {
-          if (value2==0) {
-            ERROR_MSG(_T("!define /math: division by zero! (\"%i %") NPRIs _T(" %i\")\n"),value1,mathop,value2);
-            return PS_ERROR;
-          }
-          _stprintf(value,_T("%d"),value1/value2);
-        } else if (!_tcscmp(mathop,_T("%"))) {
-          if (value2==0) {
-            ERROR_MSG(_T("!define /math: division by zero! (\"%i %") NPRIs _T(" %i\")\n"),value1,mathop,value2);
-            return PS_ERROR;
-          }
-          _stprintf(value,_T("%d"),value1%value2);
-        } else PRINTHELPEX(cmdnam)
-
-      } else {
-        if (line.getnumtokens()>=4) PRINTHELPEX(cmdnam)
-        value=line.gettoken_str(2);
-      }
-
-      if (dupemode==2) definedlist.del(define);
-      if (definedlist.add(define,value))
-      {
-        ERROR_MSG(_T("!define: \"%") NPRIs _T("\" already defined!\n"),define);
-        return PS_ERROR;
-      }
-      SCRIPT_MSG(_T("!define: \"%") NPRIs _T("\"=\"%") NPRIs _T("\"\n"),define,value);
-    }
-    return PS_OK;
+    return pp_define(line);
     case TOK_P_UNDEF:
-      if (definedlist.del(line.gettoken_str(1)))
-      {
-        ERROR_MSG(_T("!undef: \"%") NPRIs _T("\" not defined!\n"),line.gettoken_str(1));
-        return PS_ERROR;
-      }
-      SCRIPT_MSG(_T("!undef: \"%") NPRIs _T("\"\n"),line.gettoken_str(1));
-    return PS_OK;
+    return pp_undef(line);
     case TOK_P_PACKEXEHEADER:
-      {
-        TCHAR* packname = line.gettoken_str(1);
-        PATH_CONVERT(packname);
-        my_strncpy(build_packname,packname,COUNTOF(build_packname));
-        my_strncpy(build_packcmd,line.gettoken_str(2),COUNTOF(build_packcmd));
-        SCRIPT_MSG(_T("!packhdr: filename=\"%") NPRIs _T("\", command=\"%") NPRIs _T("\"\n"),
-          build_packname, build_packcmd);
-      }
-    return PS_OK;
+    return pp_packhdr(line);
     case TOK_P_FINALIZE:
-      {
-        TCHAR* cmdstr=line.gettoken_str(1);
-        int validparams=false;
-        struct postbuild_cmd *newcmd, *prevcmd;
-        newcmd=(struct postbuild_cmd*) (new BYTE[FIELD_OFFSET(struct postbuild_cmd,cmd[_tcsclen(cmdstr)+1])]);
-        newcmd->next=NULL, _tcscpy(newcmd->cmd,cmdstr);
-        newcmd->cmpop=line.gettoken_enum(2,_T("<\0>\0<>\0=\0ignore\0")), newcmd->cmpval=line.gettoken_int(3,&validparams);
-        if (line.getnumtokens() == 1+1) newcmd->cmpop=4, validparams=true; // just a command, ignore the exit code
-        if (newcmd->cmpop == -1 || !validparams) PRINTHELP();
-        for (prevcmd=postbuild_cmds; prevcmd && prevcmd->next;) prevcmd=prevcmd->next;
-        if (prevcmd) prevcmd->next=newcmd; else postbuild_cmds=newcmd;
-        SCRIPT_MSG(_T("!finalize: \"%") NPRIs _T("\"\n"),cmdstr);
-      }
-    return PS_OK;
+    return pp_finalize(line);
     case TOK_P_SYSTEMEXEC:
     case TOK_P_EXECUTE:
     case TOK_P_MAKENSIS:
-      {
-        const TCHAR *cmdname=get_commandtoken_name(which_token);
-        const TCHAR *exec=line.gettoken_str(1), *define=0;
-        TCHAR buf[33];
-        int comp=line.gettoken_enum(2,_T("<\0>\0<>\0=\0ignore\0"));
-        int validparams=true, ret=-1, cmpv=0, forceutf8=0;
-        switch(line.getnumtokens()-1)
-        {
-        case 1: comp=4; break;
-        case 2: comp=5, validparams=!!*(define=line.gettoken_str(2)); break;
-        case 3: cmpv=line.gettoken_int(3,&validparams); break;
-        default: forceutf8=comp=-1;
-        }
-        if (!validparams || comp == -1) PRINTHELP()
-        tstring compile;
-        if (TOK_P_MAKENSIS == which_token)
-        {
-          extern const TCHAR *g_argv0;
-          compile=_T("\""), compile+=get_executable_path(g_argv0), compile+= _T("\"");
-          compile+= _T(" ") OPT_STR _T("v"), wsprintf(buf,_T("%d"),get_verbosity()), compile+=buf;
-#if defined(_WIN32) && defined(_UNICODE) // POSIX does not support -OUTPUTCHARSET
-          compile+= _T(" ") OPT_STR _T("OCS UTF8"), forceutf8++; // Force UTF-8 and disable batch-file workaround in RunChildProcessRedirected
-#endif
-          if (*exec) compile+= _T(" "), compile+=exec;
-          exec=compile.c_str();
-        }
-        SCRIPT_MSG(_T("%") NPRIs _T(": \"%") NPRIs _T("\"\n"),cmdname,exec);
-        if (preprocessonly) PREPROCESSONLY_BEGINCOMMENT();
-#ifdef _WIN32
-        if (TOK_P_SYSTEMEXEC != which_token)
-          ret=RunChildProcessRedirected(exec, forceutf8 ? true : false);
-        else
-#endif //~ _WIN32
-          ret=sane_system(exec), (void)forceutf8; // forceutf8 is not used on POSIX
-        if (comp == 5)
-        {
-          _stprintf(buf,_T("%d"),ret);
-          definedlist.set(define,buf);
-        }
-        else if (!check_external_exitcode(ret,comp,cmpv))
-        {
-          ERROR_MSG(_T("%") NPRIs _T(": returned %d, aborting\n"),cmdname,ret);
-          return PS_ERROR;
-        }
-        if (preprocessonly) PREPROCESSONLY_ENDCOMMENT();
-        SCRIPT_MSG(_T("%") NPRIs _T(": returned %d\n"),cmdname,ret);
-      }
-    return PS_OK;
+    return pp_execute(which_token, line);
     case TOK_P_ADDINCLUDEDIR:
-      {
-        TCHAR *f = line.gettoken_str(1);
-        PATH_CONVERT(f);
-        include_dirs.add(f,0);
-      }
-    return PS_OK;
+    return pp_addincludedir(line);
     case TOK_P_INCLUDE:
-      {
-        bool required = true;
-        NStreamEncoding enc(NStreamEncoding::AUTO);
-        TCHAR *f;
-        unsigned int toks = line.getnumtokens() - 1, included = 0;
-        for(unsigned int tok = 0; toks;)
-        {
-          f = line.gettoken_str(++tok);
-          if (tok >= toks) break;
-          if (!_tcsicmp(f,_T("/nonfatal"))) required = false;
-          TCHAR buf[9+1];
-          my_strncpy(buf,f,COUNTOF(buf));
-          if (!_tcsicmp(buf,_T("/charset="))) {
-            WORD cp = GetEncodingFromString(f+9);
-            if (NStreamEncoding::UNKNOWN == cp) toks = 0;
-            enc.SafeSetCodepage(cp);
-          }
-        }
-        if (!toks || !*f) PRINTHELP();
-
-        TCHAR *fc = my_convert(f);
-        tstring dir = get_dir_name(fc), spec = get_file_name(fc), basedir = dir;
-        my_convert_free(fc);
-        path_append_separator(basedir);
-        if (dir == spec) basedir = _T(""), dir = _T("."); // no path, just file name
-
-        // search working directory
-        boost::scoped_ptr<dir_reader> dr( new_dir_reader() );
-        dr->read(dir);
-        for (dir_reader::iterator files_itr = dr->files().begin();
-             files_itr != dr->files().end();
-             files_itr++)
-        {
-          if (!dir_reader::matches(*files_itr, spec)) continue;
-
-          tstring incfile = basedir + *files_itr;
-          if (includeScript(incfile.c_str(), enc) != PS_OK)
-            return PS_ERROR;
-          else
-            included++;
-        }
-        if (included) return PS_OK;
-
-        // search include dirs
-        TCHAR *incdir = include_dirs.get();
-        int incdirs = include_dirs.getnum();
-        for (int i = 0; i < incdirs; i++, incdir += _tcslen(incdir) + 1) {
-          tstring curincdir(incdir), incfile;
-          if (_T(".") != dir) path_append(curincdir, dir);
-
-          boost::scoped_ptr<dir_reader> dr( new_dir_reader() );
-          dr->read(curincdir);
-          for (dir_reader::iterator incdir_itr = dr->files().begin();
-               incdir_itr != dr->files().end();
-               incdir_itr++)
-          {
-            if (!dir_reader::matches(*incdir_itr, spec)) continue;
-
-            path_append(incfile = curincdir, *incdir_itr);
-            if (includeScript(incfile.c_str(), enc) != PS_OK)
-              return PS_ERROR;
-            else
-              included++;
-          }
-          if (included) return PS_OK;
-        }
-
-        // nothing found
-        if (!included)
-        {
-          if(required) {
-            ERROR_MSG(_T("!include: could not find: \"%") NPRIs _T("\"\n"),f);
-            return PS_ERROR;
-          } else {
-            warning_fl(DW_INCLUDE_NONFATAL_NOT_FOUND, _T("!include: could not find: \"%") NPRIs _T("\""),f);
-          }
-        }
-      }
-    return PS_OK;
+    return pp_include(line);
     case TOK_P_CD:
-      if (!line.gettoken_str(1)[0] || _tchdir(line.gettoken_str(1)))
-      {
-        ERROR_MSG(_T("!cd: error changing to: \"%") NPRIs _T("\"\n"),line.gettoken_str(1));
-        return PS_ERROR;
-      }
-    return PS_OK;
+    return pp_cd(line);
     case TOK_P_PRAGMA:
     return parse_pragma(line) == PS_ERROR ? PS_ERROR : PS_OK;
     case TOK_P_ERROR:
@@ -3378,199 +2428,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       SCRIPT_MSG(_T("%") NPRIs _T(" (%") NPRIs _T(":%d)\n"), line.gettoken_str(1),curfilename,linecnt);
     return PS_OK;
     case TOK_P_SEARCHPARSESTRING:
-      {
-        bool ignCase=false, noErrors=false, isFile=false;
-        int parmOffs=1;
-        while (parmOffs < line.getnumtokens())
-        {
-          if (!_tcsicmp(line.gettoken_str(parmOffs),_T("/ignorecase"))) { ignCase=true; parmOffs++; }
-          else if (!_tcsicmp(line.gettoken_str(parmOffs),_T("/noerrors"))) { noErrors=true; parmOffs++; }
-          else if (!_tcsicmp(line.gettoken_str(parmOffs),_T("/file"))) { isFile=true; parmOffs++; }
-          else break;
-        }
-        if (parmOffs+3 > line.getnumtokens())
-        {
-          ERROR_MSG(_T("!searchparse: not enough parameters\n"));
-          return PS_ERROR;
-        }
-        const TCHAR *source_string = line.gettoken_str(parmOffs++);
-        DefineList *list=NULL;
-
-        if (isFile)
-        {
-          const TCHAR *const filename = source_string;
-          NIStream filestrm;
-          if (!filestrm.OpenFileForReading(filename))
-          {
-            ERROR_MSG(_T("!searchparse /file: error opening \"%") NPRIs _T("\"\n"),filename);
-            return PS_ERROR;
-          }
-          UINT req_parm=(line.getnumtokens() - parmOffs)/2, fail_parm=0;
-          NStreamLineReader lr(filestrm);
-          GrowBuf tmpstr;
-          TCHAR *str=m_templinebuf;
-          UINT linnum=0;
-          for (;;)
-          {
-            tmpstr.resize(0);
-            for (;;)
-            {
-              ++linnum;
-              UINT cch=read_line_helper(lr,str,MAX_LINELENGTH);
-              if (!cch)
-              {
-                if (*str)
-                {
-                  tstring lrmsg=lr.GetErrorMessage((UINT)*str,filename,linnum);
-                  ERROR_MSG(_T("!searchparse: %") NPRIs,lrmsg.c_str());
-                  return PS_ERROR;
-                }
-                break; // EOF
-              }
-              str[--cch]=_T('\0'); // remove newline
-
-              const bool endSlash=cch && _T('\\') == str[cch-1];
-              if (endSlash) --cch; // don't include the slash character
-              if (tmpstr.getlen() || endSlash) tmpstr.add(str,cch*sizeof(TCHAR));
-
-              // if we have valid contents and not ending on slash, then done
-              if (!endSlash && (str[0] || tmpstr.getlen())) break;
-            }
-
-            if (!str[0] && !tmpstr.getlen()) break; // reached eof
-
-            TCHAR *thisline=str;
-            if (tmpstr.getlen()) 
-            {
-              tmpstr.add(_T("\0"),sizeof(TCHAR));
-              thisline=(TCHAR *)tmpstr.get();
-            }
-            UINT linefailparm;
-            DefineList *tlist = searchParseString(thisline,line,parmOffs,ignCase,true,&linefailparm);
-            if (linefailparm > fail_parm) fail_parm = linefailparm;
-            if (tlist && tlist->getnum())
-            {
-              if (!list || tlist->getnum() > list->getnum())
-              {
-                delete list;
-                list=tlist, tlist=0;
-                if ((unsigned)list->getnum() >= req_parm)
-                {
-                  fail_parm = -1; // success
-                  break; // we found all the tokens, stop parsing the file
-                }
-              }
-            }
-            delete tlist;
-            // parse line
-          }
-          if ((UINT)-1 != fail_parm && !noErrors)
-          {
-            const TCHAR *msgprefix=!fail_parm ? _T("starting ") : _T("");
-            TCHAR *p=line.gettoken_str(parmOffs + (fail_parm*2));
-            ERROR_MSG(_T("!searchparse: %") NPRIs _T("string \"%") NPRIs _T("\" not found in file!\n"),msgprefix,p?p:_T("(null)"));
-            return PS_ERROR;
-          }
-        }
-        else
-        {
-          list=searchParseString(source_string,line,parmOffs,ignCase,noErrors);
-          if (!list && !noErrors) return PS_ERROR;
-        }
-
-        if (list) // if we got our list, merge them defines in
-        {
-          int i;
-          for (i=0;i<list->getnum(); i++)
-          {
-            TCHAR *def=list->getname(i), *val=list->getvalue(i);
-            if (def && val) definedlist.set(def,val);
-          }
-        }
-        delete list;
-      }
-    return PS_OK;
+    return pp_searchparsestring(line);
     case TOK_P_SEARCHREPLACESTRING:
-      {
-        int ignoreCase=!_tcsicmp(line.gettoken_str(1),_T("/ignorecase"));
-        if (line.getnumtokens()!=5+ignoreCase) PRINTHELP()
-
-        TCHAR *define=line.gettoken_str(1+ignoreCase);
-        TCHAR *src = line.gettoken_str(2+ignoreCase);
-        TCHAR *search = line.gettoken_str(3+ignoreCase);
-        TCHAR *replace = line.gettoken_str(4+ignoreCase);
-        int searchlen=(int)_tcslen(search), replacelen=(int)_tcslen(replace);
-        if (!searchlen)
-        {
-          ERROR_MSG(_T("!searchreplace: search string must not be empty for search/replace!\n"));
-          return PS_ERROR;
-        }
-
-        GrowBuf valout;
-        while (*src)
-        {
-          if (ignoreCase ? _tcsnicmp(src,search,searchlen) : _tcsncmp(src,search,searchlen)) 
-            valout.add(src++,sizeof(TCHAR));
-          else
-          {
-            valout.add(replace,sizeof(TCHAR)*replacelen);
-            src+=searchlen;
-          }
-        }
-        valout.add(_T(""),sizeof(TCHAR));
-       
-        definedlist.del(define); // allow changing variables since we'll often use this in series
-        if (definedlist.add(define,(TCHAR*)valout.get()))
-        {
-          ERROR_MSG(_T("!searchreplace: error defining \"%") NPRIs _T("\"!\n"),define);
-          return PS_ERROR;
-        }
-        SCRIPT_MSG(_T("!searchreplace: \"%") NPRIs _T("\"=\"%") NPRIs _T("\"\n"),define,(TCHAR*)valout.get());
-      }
-    return PS_OK;
-
+    return pp_searchreplacestring(line);
     case TOK_P_VERBOSE:
-    {
-      for(int argi=1; argi<line.getnumtokens(); ++argi)
-      {
-        int k=line.gettoken_enum(argi,_T("push\0pop\0")), v, numconv;
-        if (k < 0) // not push/pop, just set the level
-        {
-          v=line.gettoken_int(argi,&numconv);
-          if (!numconv || v < 0 || v > 4 )
-          {
-            // < 2.47 would reset level to 0 without warning!
-            ERROR_MSG(_T("!verbose: Invalid verbose level\n"));
-            return PS_ERROR;
-          }
-        }
-        else
-        {
-          if (k) // pop
-          {
-            int l=verbose_stack.getlen();
-            if (l)
-            {
-              v=((int*)verbose_stack.get())[(l/sizeof(int))-1];
-              verbose_stack.resize(l-sizeof(int));
-            }
-            else
-            {
-              warning_fl(DW_PP_VERBOSE_POP_EMPTY_STACK, _T("!verbose: Pop failed, stack is empty"));
-              continue; // Pop failed, should still process the next parameter
-            }
-          }
-          else // push
-          {
-            v=get_verbosity();
-            verbose_stack.add(&v,sizeof(int));
-            continue;
-          }
-        }
-        set_verbosity(v);
-      }
-    }
-    return PS_OK;
+    return pp_verbose(line);
 
     case TOK_UNINSTALLEXENAME: PRINTHELP()
 
@@ -3639,7 +2501,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       DefineInnerLangString(NLF_CREATED_UNINST);
     }
     return add_entry(&ent);
-#else//!NSIS_CONFIG_UNINSTALL_SUPPORT
+#else //! NSIS_CONFIG_UNINSTALL_SUPPORT
     case TOK_WRITEUNINSTALLER:
     case TOK_UNINSTCAPTION:
     case TOK_UNINSTICON:
@@ -3649,10 +2511,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return PS_ERROR;
 #endif
 
-
     // section/function stuff
     ///////////////////////////////////////////////////////////////////////////////
-
     case TOK_SECTION:
     {
       int a = 1, unselected = 0;
@@ -3756,14 +2616,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
     // flag setters
     ///////////////////////////////////////////////////////////////////////////////
-
-    // BEGIN - Added by ramon 23 May 2003
     case TOK_ALLOWSKIPFILES:
       build_allowskipfiles=line.gettoken_enum(1,_T("off\0on\0"));
       if (build_allowskipfiles==-1) PRINTHELP()
       SCRIPT_MSG(_T("AllowSkipFiles: %") NPRIs _T("\n"),line.gettoken_str(1));
     return PS_OK;
-    // END - Added by ramon 23 May 2003
     case TOK_SETDATESAVE:
       build_datesave=line.gettoken_enum(1,_T("off\0on\0"));
       if (build_datesave==-1) PRINTHELP()
@@ -3786,7 +2643,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       if (build_plugin_unload==-1) PRINTHELP()
       SCRIPT_MSG(_T("SetPluginUnload: %") NPRIs _T("\n"),line.gettoken_str(1));
     return PS_OK;
-#endif //NSIS_CONFIG_PLUGIN_SUPPORT
+#endif //~ NSIS_CONFIG_PLUGIN_SUPPORT
     case TOK_SETCOMPRESS:
       build_compress=line.gettoken_enum(1,_T("off\0auto\0force\0"));
       if (build_compress==-1) PRINTHELP()
@@ -3842,7 +2699,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_SETCOMPRESSORDICTSIZE:
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_CONFIG_COMPRESSION_SUPPORT not defined.\n"),  line.gettoken_str(0));
     return PS_ERROR;
-#endif//NSIS_CONFIG_COMPRESSION_SUPPORT
+#endif //~ NSIS_CONFIG_COMPRESSION_SUPPORT
     case TOK_ADDSIZE:
       {
         int succ, size_kb=line.gettoken_int(1,&succ);
@@ -3903,17 +2760,14 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
               wsprintf(str, _T("Nullsoft Install System %") NPRIs, NSIS_VERSION);
 
             short old_width = td.GetItem(IDC_VERSTR)->sWidth;
-
             switch (trim) {
               case 1: td.LTrimToString(IDC_VERSTR, str, 4); break;
               case 2: td.RTrimToString(IDC_VERSTR, str, 4); break;
               case 3: td.CTrimToString(IDC_VERSTR, str, 4); break;
             }
-
             if (td.GetItem(IDC_VERSTR)->sWidth > old_width)
               warning_fl(DW_ATTRIBUTE_OVERLONGSTRING, _T("BrandingText: \"%") NPRIs _T("\" is too long, trimming has expanded the label"), str);
           }
-
           DWORD dwSize;
           dlg = td.Save(dwSize);
           res_editor->UpdateResource(RT_DIALOG, IDD_INST, NSIS_DEFAULT_LANG, dlg, dwSize);
@@ -4126,10 +2980,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
       DefineInnerLangString(NLF_EXEC);
     return add_entry(&ent);
-#else//!NSIS_SUPPORT_EXECUTE
+#else
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_SUPPORT_EXECUTE not defined.\n"),  line.gettoken_str(0));
     return PS_ERROR;
-#endif//!NSIS_SUPPORT_EXECUTE
+#endif //~ NSIS_SUPPORT_EXECUTE
     case TOK_EXECSHELL:
     case TOK_EXECSHELLWAIT:
 #ifdef NSIS_SUPPORT_SHELLEXECUTE
@@ -4155,17 +3009,17 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       DefineInnerLangString(NLF_EXEC_SHELL);
     }
     return add_entry(&ent);
-#else//!NSIS_SUPPORT_SHELLEXECUTE
+#else
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_SUPPORT_SHELLEXECUTE not defined.\n"),  line.gettoken_str(0));
     return PS_ERROR;
-#endif//!NSIS_SUPPORT_SHELLEXECUTE
+#endif //~ NSIS_SUPPORT_SHELLEXECUTE
     case TOK_CALLINSTDLL:
     case TOK_REGDLL:
     case TOK_UNREGDLL:
 #ifndef NSIS_SUPPORT_ACTIVEXREG
       ERROR_MSG(_T("%") NPRIs _T(": support not compiled in (NSIS_SUPPORT_ACTIVEXREG)\n"),line.gettoken_str(0));
       return PS_ERROR;
-#else//NSIS_SUPPORT_ACTIVEXREG
+#else // NSIS_SUPPORT_ACTIVEXREG
       ent.which=EW_REGISTERDLL;
       ent.offsets[0]=add_string(line.gettoken_str(1));
       if (which_token == TOK_UNREGDLL)
@@ -4185,7 +3039,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (!ent.offsets[1]) PRINTHELP()
         ent.offsets[2]=0;
       }
-      else // register
+      else // Register DLL
       {
         ent.offsets[1] = add_string(line.gettoken_str(2));
         if (!ent.offsets[1]) ent.offsets[1]=add_asciistring(_T("DllRegisterServer"));
@@ -4193,13 +3047,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
 
       SCRIPT_MSG(_T("%") NPRIs _T(": \"%") NPRIs _T("\" %") NPRIs _T("\n"),line.gettoken_str(0),line.gettoken_str(1), line.gettoken_str(ent.offsets[3]?3:2));
-
       DefineInnerLangString(NLF_SYMBOL_NOT_FOUND);
       DefineInnerLangString(NLF_COULD_NOT_LOAD);
       DefineInnerLangString(NLF_NO_OLE);
       // not used anywhere - DefineInnerLangString(NLF_ERR_REG_DLL);
     return add_entry(&ent);
-#endif//NSIS_SUPPORT_ACTIVEXREG
+#endif //~ NSIS_SUPPORT_ACTIVEXREG
     case TOK_RENAME:
 #ifdef NSIS_SUPPORT_RENAME
       {
@@ -4231,20 +3084,15 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #endif
       }
     return add_entry(&ent);
-#else//!NSIS_SUPPORT_RENAME
+#else
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_SUPPORT_RENAME not defined.\n"),  line.gettoken_str(0));
     return PS_ERROR;
-#endif//!NSIS_SUPPORT_RENAME
+#endif //~ NSIS_SUPPORT_RENAME
     case TOK_MESSAGEBOX:
 #ifdef NSIS_SUPPORT_MESSAGEBOX
       {
         #define MBD(x) {x,_T(#x)},
-        struct
-        {
-          int id;
-          const TCHAR *str;
-        } list[]=
-        {
+        struct { int id; const TCHAR *str; } list[] = {
           MBD(MB_ABORTRETRYIGNORE)
           MBD(MB_OK)
           MBD(MB_OKCANCEL)
@@ -4322,10 +3170,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         SCRIPT_MSG(_T("\n"));
       }
     return add_entry(&ent);
-#else//!NSIS_SUPPORT_MESSAGEBOX
+#else
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_SUPPORT_MESSAGEBOX not defined.\n"),  line.gettoken_str(0));
     return PS_ERROR;
-#endif//!NSIS_SUPPORT_MESSAGEBOX
+#endif //~ NSIS_SUPPORT_MESSAGEBOX
     case TOK_CREATESHORTCUT:
 #ifdef NSIS_SUPPORT_CREATESHORTCUT
     {
@@ -4398,10 +3246,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       DefineInnerLangString(NLF_ERR_CREATING_SHORTCUT);
     }
     return add_entry(&ent);
-#else//!NSIS_SUPPORT_CREATESHORTCUT
+#else
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_SUPPORT_CREATESHORTCUT not defined.\n"),  line.gettoken_str(0));
     return PS_ERROR;
-#endif//NSIS_SUPPORT_CREATESHORTCUT
+#endif //~ NSIS_SUPPORT_CREATESHORTCUT
 #ifdef NSIS_SUPPORT_HWNDS
     case TOK_FINDWINDOW:
       ent.which=EW_FINDWINDOW;
@@ -4417,7 +3265,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_SENDMESSAGE:
     {
       ent.which=EW_SENDMESSAGE;
-
       if (line.gettoken_str(1)[0] == _T('/') || line.gettoken_str(2)[0] == _T('/') ||
           line.gettoken_str(3)[0] == _T('/') || line.gettoken_str(4)[0] == _T('/'))
       {
@@ -4441,9 +3288,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
 
       if (line.getnumtokens()>a)
-      {
         PRINTHELP()
-      }
 
       if (!_tcsncmp(line.gettoken_str(3),_T("STR:"),4))
       {
@@ -4606,7 +3451,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       SCRIPT_MSG(_T("BringToFront\n"));
     }
     return add_entry(&ent);
-#else//NSIS_CONFIG_ENHANCEDUI_SUPPORT
+#else
     case TOK_GETDLGITEM:
     case TOK_SETCTLCOLORS:
     case TOK_SHOWWINDOW:
@@ -4616,8 +3461,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_ENABLEWINDOW:
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_CONFIG_ENHANCEDUI_SUPPORT not defined.\n"),  line.gettoken_str(0));
     return PS_ERROR;
-#endif//NSIS_CONFIG_ENHANCEDUI_SUPPORT
-#else//!NSIS_SUPPORT_HWNDS
+#endif //~ NSIS_CONFIG_ENHANCEDUI_SUPPORT
+#else //! NSIS_SUPPORT_HWNDS
     case TOK_ISWINDOW:
     case TOK_SENDMESSAGE:
     case TOK_FINDWINDOW:
@@ -4630,7 +3475,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_BRINGTOFRONT:
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_SUPPORT_HWNDS not defined.\n"),  line.gettoken_str(0));
     return PS_ERROR;
-#endif//!NSIS_SUPPORT_HWNDS
+#endif //~ NSIS_SUPPORT_HWNDS
     case TOK_DELETE:
 #ifdef NSIS_SUPPORT_DELETE
       {
@@ -4659,10 +3504,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #endif
       }
     return add_entry(&ent);
-#else//!NSIS_SUPPORT_DELETE
+#else
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_SUPPORT_DELETE not defined.\n"),  line.gettoken_str(0));
     return PS_ERROR;
-#endif//!NSIS_SUPPORT_DELETE
+#endif //~ NSIS_SUPPORT_DELETE
     case TOK_RMDIR:
 #ifdef NSIS_SUPPORT_RMDIR
       {
@@ -4701,10 +3546,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #endif
       }
     return add_entry(&ent);
-#else//!NSIS_SUPPORT_RMDIR
+#else
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_SUPPORT_RMDIR not defined.\n"),  line.gettoken_str(0));
     return PS_ERROR;
-#endif//!NSIS_SUPPORT_RMDIR
+#endif //~ NSIS_SUPPORT_RMDIR
     case TOK_RESERVEFILE:
     case TOK_FILE:
 #ifdef NSIS_SUPPORT_FILE
@@ -4760,12 +3605,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             {
               warning_fl(DW_FILE_NONFATAL_NOT_FOUND, _T("%") NPRIs _T("File: \"%") NPRIs _T("\" -> no files found"),(which_token == TOK_FILE)?_T(""):_T("Reserve"),line.gettoken_str(a));
 
-              // workaround for bug #1299100
-              // add a nop opcode so relative jumps will work as expected
+              // workaround for bug #1299100: add a nop opcode so relative jumps will work as expected
               add_entry_direct(EW_NOP);
             }
           }
-
           return PS_OK;
         }
         if (!_tcsnicmp(line.gettoken_str(a),_T("/x"),2))
@@ -4829,10 +3672,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
       }
     return PS_OK;
-#else//!NSIS_SUPPORT_FILE
+#else
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_SUPPORT_FILE not defined.\n"),  line.gettoken_str(0));
     return PS_ERROR;
-#endif//!NSIS_SUPPORT_FILE
+#endif //~ NSIS_SUPPORT_FILE
 #ifdef NSIS_SUPPORT_COPYFILES
     case TOK_COPYFILES:
       {
@@ -4868,21 +3711,15 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         DefineInnerLangString(NLF_COPY_TO);
       }
     return add_entry(&ent);
-#else//!NSIS_SUPPORT_COPYFILES
+#else
     case TOK_COPYFILES:
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_SUPPORT_COPYFILES not defined.\n"),  line.gettoken_str(0));
     return PS_ERROR;
-#endif//!NSIS_SUPPORT_COPYFILES
-
+#endif //~ NSIS_SUPPORT_COPYFILES
     case TOK_SETFILEATTRIBUTES:
       {
         #define MBD(x) {x,_T(#x)},
-        struct
-        {
-          int id;
-          const TCHAR *str;
-        } list[]=
-        {
+        struct { int id; const TCHAR *str; } list[] = {
           MBD(FILE_ATTRIBUTE_NORMAL)
           MBD(FILE_ATTRIBUTE_ARCHIVE)
           MBD(FILE_ATTRIBUTE_HIDDEN)
@@ -4890,7 +3727,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           MBD(FILE_ATTRIBUTE_READONLY)
           MBD(FILE_ATTRIBUTE_SYSTEM)
           MBD(FILE_ATTRIBUTE_TEMPORARY)
-          {FILE_ATTRIBUTE_NORMAL,_T("NORMAL")},
+          {FILE_ATTRIBUTE_NORMAL,_T("NORMAL")}, // Short alias
           {FILE_ATTRIBUTE_ARCHIVE,_T("ARCHIVE")},
           {FILE_ATTRIBUTE_HIDDEN,_T("HIDDEN")},
           {FILE_ATTRIBUTE_OFFLINE,_T("OFFLINE")},
@@ -4958,19 +3795,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.which=EW_SETFLAG;
       ent.offsets[0]=FLAG_OFFSET(status_update);
       int k=line.gettoken_enum(1,_T("both\0textonly\0listonly\0none\0lastused\0"));
-      if (k<0) PRINTHELP()
+      if (k < 0) PRINTHELP()
       if (k == 4)
-      {
-        ent.offsets[2]=1;
-      }
+        ent.offsets[2]=1; // lastused
       else
-      {
-        // both     0
-        // textonly 2
-        // listonly 4
-        // none     6
-        ent.offsets[1]=add_intstring(k*2);
-      }
+        ent.offsets[1]=add_intstring(k*2); // both=0, textonly=2, listonly=4, none=6
       SCRIPT_MSG(_T("SetDetailsPrint: %") NPRIs _T("\n"),line.gettoken_str(1));
     }
     return add_entry(&ent);
@@ -5151,7 +3980,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
     return add_entry(&ent);
 
-#else//!NSIS_SUPPORT_STROPTS
+#else
     case TOK_GETDLLVERSIONLOCAL:
     case TOK_GETFILETIMELOCAL:
     case TOK_GETFUNCTIONADDR:
@@ -5163,7 +3992,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_STRCMPS:
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_SUPPORT_STROPTS not defined.\n"),  line.gettoken_str(0));
     return PS_ERROR;
-#endif//!NSIS_SUPPORT_STROPTS
+#endif //~ NSIS_SUPPORT_STROPTS
 #ifdef NSIS_SUPPORT_INIFILES
     case TOK_DELETEINISEC:
     case TOK_DELETEINISTR:
@@ -5208,7 +4037,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.offsets[3]=add_string(line.gettoken_str(2));
       SCRIPT_MSG(_T("ReadINIStr %") NPRIs _T(" [%") NPRIs _T("]:%") NPRIs _T(" from %") NPRIs _T("\n"),line.gettoken_str(1),line.gettoken_str(3),line.gettoken_str(4),line.gettoken_str(2));
     return add_entry(&ent);
-#else//!NSIS_SUPPORT_INIFILES
+#else
     case TOK_DELETEINISEC:
     case TOK_DELETEINISTR:
     case TOK_FLUSHINI:
@@ -5216,7 +4045,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_READINISTR:
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_SUPPORT_INIFILES not defined.\n"),  line.gettoken_str(0));
     return PS_ERROR;
-#endif//!NSIS_SUPPORT_INIFILES
+#endif //~ NSIS_SUPPORT_INIFILES
     case TOK_DETAILPRINT:
       ent.which=EW_UPDATETEXT;
       ent.offsets[0]=add_string(line.gettoken_str(1));
@@ -5261,7 +4090,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_GETFULLPATHNAME:
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_SUPPORT_FNUTIL not defined.\n"),  line.gettoken_str(0));
       return PS_ERROR;
-#endif
+#endif //~ NSIS_SUPPORT_FNUTIL
     case TOK_GETDLLVERSION:
 #ifdef NSIS_SUPPORT_GETDLLVERSION
       ent.which=EW_GETDLLVERSION;
@@ -5272,10 +4101,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       SCRIPT_MSG(_T("GetDLLVersion: %") NPRIs _T("->%") NPRIs _T(",%") NPRIs _T("\n"),
         line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3));
     return add_entry(&ent);
-#else//!NSIS_SUPPORT_GETDLLVERSION
+#else
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_SUPPORT_GETDLLVERSION not defined.\n"),  line.gettoken_str(0));
       return PS_ERROR;
-#endif//!NSIS_SUPPORT_GETDLLVERSION
+#endif //~ NSIS_SUPPORT_GETDLLVERSION
     case TOK_GETFILETIME:
 #ifdef NSIS_SUPPORT_GETFILETIME
       ent.which=EW_GETFILETIME;
@@ -5286,10 +4115,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       SCRIPT_MSG(_T("GetFileTime: %") NPRIs _T("->%") NPRIs _T(",%") NPRIs _T("\n"),
         line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3));
     return add_entry(&ent);
-#else//!NSIS_SUPPORT_GETFILETIME
+#else
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_SUPPORT_GETFILETIME not defined.\n"),  line.gettoken_str(0));
       return PS_ERROR;
-#endif//!NSIS_SUPPORT_GETFILETIME
+#endif //~ NSIS_SUPPORT_GETFILETIME
 #ifdef NSIS_SUPPORT_INTOPTS
     case TOK_INTOP:
       ent.which=EW_INTOP;
@@ -5326,14 +4155,14 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       SCRIPT_MSG(_T("%") NPRIs _T(" %") NPRIs _T(":%") NPRIs _T(" equal=%") NPRIs _T(", < %") NPRIs _T(", > %") NPRIs _T("\n"),line.gettoken_str(0),
         line.gettoken_str(1),line.gettoken_str(2), line.gettoken_str(3),line.gettoken_str(4),line.gettoken_str(5));
     return add_entry(&ent);
-#else//!NSIS_SUPPORT_INTOPTS
+#else
     case TOK_INTOP:
     case TOK_INTCMP:
     case TOK_INTFMT:
     case TOK_INTCMPU:
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_SUPPORT_INTOPTS not defined.\n"),  line.gettoken_str(0));
       return PS_ERROR;
-#endif//!NSIS_SUPPORT_INTOPTS
+#endif //~ NSIS_SUPPORT_INTOPTS
 #ifdef NSIS_SUPPORT_REGISTRYFUNCTIONS
     case TOK_READREGSTR:
     case TOK_READREGDWORD:
@@ -5458,7 +4287,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(4));
       }
     return add_entry(&ent);
-#else//!NSIS_SUPPORT_REGISTRYFUNCTIONS
+#else
     case TOK_READREGSTR:
     case TOK_READREGDWORD:
     case TOK_DELETEREGVALUE:
@@ -5472,7 +4301,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_ENUMREGVAL:
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_SUPPORT_REGISTRYFUNCTIONS not defined.\n"),  line.gettoken_str(0));
       return PS_ERROR;
-#endif//!NSIS_SUPPORT_REGISTRYFUNCTIONS
+#endif //~ NSIS_SUPPORT_REGISTRYFUNCTIONS
 #ifdef NSIS_SUPPORT_STACK
     case TOK_EXCH:
       {
@@ -5523,13 +4352,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       if (ent.offsets[0] < 0) PRINTHELP()
       SCRIPT_MSG(_T("Pop: %") NPRIs _T("\n"),line.gettoken_str(1));
     return add_entry(&ent);
-#else//!NSIS_SUPPORT_STACK
+#else
     case TOK_POP:
     case TOK_PUSH:
     case TOK_EXCH:
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_SUPPORT_STACK not defined.\n"),  line.gettoken_str(0));
     return PS_ERROR;
-#endif//!NSIS_SUPPORT_STACK
+#endif //~ NSIS_SUPPORT_STACK
 #ifdef NSIS_SUPPORT_ENVIRONMENT
     case TOK_READENVSTR:
       ent.which=EW_READENVSTR;
@@ -5553,12 +4382,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       if (ent.offsets[0] < 0) PRINTHELP()
       SCRIPT_MSG(_T("ExpandEnvStrings: %") NPRIs _T("->%") NPRIs _T("\n"),line.gettoken_str(2),line.gettoken_str(1));
     return add_entry(&ent);
-#else//!NSIS_SUPPORT_ENVIRONMENT
+#else
     case TOK_EXPANDENVSTRS:
     case TOK_READENVSTR:
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_SUPPORT_ENVIRONMENT not defined.\n"),  line.gettoken_str(0));
     return PS_ERROR;
-#endif//!NSIS_SUPPORT_ENVIRONMENT
+#endif //~ NSIS_SUPPORT_ENVIRONMENT
 #ifdef NSIS_SUPPORT_FINDFIRST
     case TOK_FINDFIRST:
       ent.which=EW_FINDFIRST;
@@ -5581,13 +4410,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       if (ent.offsets[0] < 0) PRINTHELP()
       SCRIPT_MSG(_T("FindClose: %") NPRIs _T("\n"),line.gettoken_str(1));
     return add_entry(&ent);
-#else//!NSIS_SUPPORT_FINDFIRST
+#else
     case TOK_FINDCLOSE:
     case TOK_FINDNEXT:
     case TOK_FINDFIRST:
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_SUPPORT_FINDFIRST not defined.\n"),  line.gettoken_str(0));
     return PS_ERROR;
-#endif//!NSIS_SUPPORT_FINDFIRST
+#endif //~ NSIS_SUPPORT_FINDFIRST
 #ifdef NSIS_SUPPORT_FILEFUNCTIONS
     case TOK_FILEOPEN:
       {
@@ -5718,7 +4547,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       if (ent.offsets[0]<0) PRINTHELP()
       SCRIPT_MSG(_T("FileWriteWord: %") NPRIs _T("->%") NPRIs _T("\n"),line.gettoken_str(2),line.gettoken_str(1));
     return add_entry(&ent);
-#endif
+#endif //~ _UNICODE
     case TOK_FILESEEK:
       {
         const TCHAR *modestr;
@@ -5746,7 +4575,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
 
     return add_entry(&ent);
-#else//!NSIS_SUPPORT_FILEFUNCTIONS
+#else
     case TOK_FILEOPEN:
     case TOK_FILECLOSE:
     case TOK_FILESEEK:
@@ -5762,7 +4591,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #endif
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_SUPPORT_FILEFUNCTIONS not defined.\n"),  line.gettoken_str(0));
     return PS_ERROR;
-#endif//!NSIS_SUPPORT_FILEFUNCTIONS
+#endif //~ NSIS_SUPPORT_FILEFUNCTIONS
 #ifdef NSIS_SUPPORT_REBOOT
     case TOK_REBOOT:
     {
@@ -5794,13 +4623,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.offsets[1]=add_intstring(k);
     }
     return add_entry(&ent);
-#else//!NSIS_SUPPORT_REBOOT
+#else
     case TOK_REBOOT:
     case TOK_IFREBOOTFLAG:
     case TOK_SETREBOOTFLAG:
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_SUPPORT_REBOOT not defined.\n"),  line.gettoken_str(0));
     return PS_ERROR;
-#endif//!NSIS_SUPPORT_REBOOT
+#endif //~ NSIS_SUPPORT_REBOOT
 #ifdef NSIS_CONFIG_LOG
     case TOK_LOGSET:
       ent.which=EW_LOG;
@@ -5815,13 +4644,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.offsets[1]=add_string(line.gettoken_str(1));
       SCRIPT_MSG(_T("LogText \"%") NPRIs _T("\"\n"),line.gettoken_str(1));
     return add_entry(&ent);
-#else//!NSIS_CONFIG_LOG
-
+#else
     case TOK_LOGSET:
     case TOK_LOGTEXT:
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_CONFIG_LOG not defined.\n"),  line.gettoken_str(0));
     return PS_ERROR;
-#endif//!NSIS_CONFIG_LOG
+#endif //~ NSIS_CONFIG_LOG
 #ifdef NSIS_CONFIG_COMPONENTPAGE
     case TOK_SECTIONSETTEXT:
       ent.which=EW_SECTIONSET;
@@ -5918,7 +4746,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       if (ent.offsets[1]<0) PRINTHELP()
       SCRIPT_MSG(_T("GetCurInstType: %") NPRIs _T("\n"),line.gettoken_str(1));
     return add_entry(&ent);
-#else//!NSIS_CONFIG_COMPONENTPAGE
+#else
     case TOK_SECTIONSETTEXT:
     case TOK_SECTIONGETTEXT:
     case TOK_SECTIONSETFLAGS:
@@ -5931,7 +4759,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_GETCURINSTTYPE:
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_CONFIG_COMPONENTPAGE not defined.\n"),  line.gettoken_str(0));
     return PS_ERROR;
-#endif//!NSIS_CONFIG_COMPONENTPAGE
+#endif //~ NSIS_CONFIG_COMPONENTPAGE
 #ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
     case TOK_SETBRANDINGIMAGE:
     {
@@ -5964,13 +4792,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       SCRIPT_MSG(_T("\n"));
     }
     return add_entry(&ent);
-#else//NSIS_CONFIG_ENHANCEDUI_SUPPORT
+#else
     case TOK_SETBRANDINGIMAGE:
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_CONFIG_ENHANCEDUI_SUPPORT not defined.\n"),line.gettoken_str(0));
       return PS_ERROR;
-#endif//!NSIS_SUPPORT_CREATEFONT
-
-    // Added by ramon 3 jun 2003
+#endif //~ NSIS_SUPPORT_CREATEFONT
     case TOK_DEFVAR:
     {
       int a=1;
@@ -5991,8 +4817,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       return DeclaredUserVar(line.gettoken_str(a));
     }
     return PS_OK;
-
-    // Added by ramon 6 jun 2003
 #ifdef NSIS_SUPPORT_VERSION_INFO
     case TOK_VI_ADDKEY:
     {
@@ -6072,19 +4896,28 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
       }
       return PS_OK;
-
 #else
     case TOK_VI_ADDKEY:
     case TOK_VI_SETPRODUCTVERSION:
     case TOK_VI_SETFILEVERSION:
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_SUPPORT_VERSION_INFO not defined.\n"),line.gettoken_str(0));
       return PS_ERROR;
-#endif
+#endif //~ NSIS_SUPPORT_VERSION_INFO
+    case TOK_LOCKWINDOW:
+#ifdef NSIS_LOCKWINDOW_SUPPORT
+      SCRIPT_MSG(_T("LockWindow: lock state=%d\n"),line.gettoken_str(1));
+      ent.which=EW_LOCKWINDOW;
+      ent.offsets[0]=line.gettoken_enum(1,_T("on\0off\0"));
+      if (ent.offsets[0] == -1) PRINTHELP();
+    return add_entry(&ent);
+#else
+      ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_LOCKWINDOW_SUPPORT not defined.\n"),line.gettoken_str(0));
+    return PS_ERROR;
+#endif //~ NSIS_LOCKWINDOW_SUPPORT
 
     // end of instructions
     ///////////////////////////////////////////////////////////////////////////////
 
-    // Added by Ximon Eighteen 5th August 2002
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
     case TOK_PLUGINDIR:
     {
@@ -6131,9 +4964,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.offsets[0]=ns_func.add(uninstall_mode?_T("un.Initialize_____Plugins"):_T("Initialize_____Plugins"),0);
       if ((ret=add_entry(&ent)) != PS_OK) return ret;
 
-      // DLL name on the users machine
       TCHAR tempDLL[NSIS_MAX_STRLEN];
-      wsprintf(tempDLL, _T("$PLUGINSDIR\\%") NPRIs, dllName.c_str());
+      wsprintf(tempDLL, _T("$PLUGINSDIR\\%") NPRIs, dllName.c_str()); // DLL name on the end-users machine
 
       // Add the DLL to the installer
       if (data_handle == -1)
@@ -6157,7 +4989,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         m_pPlugins->SetDllDataHandle(!!uninstall_mode, command, data_handle);
         build_overwrite=old_build_overwrite;
         build_datesave=old_build_datesave;
-        // Added by ramon 23 May 2003
         build_allowskipfiles=old_build_allowskipfiles;
       }
       else
@@ -6195,7 +5026,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
 
       // First push dll args
-
       int parmst=i; // we push 'em in reverse order
       int nounloadmisused=0;
       for (; i < line.getnumtokens(); i++) {
@@ -6248,20 +5078,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_INITPLUGINSDIR:
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_CONFIG_PLUGIN_SUPPORT not defined.\n"),line.gettoken_str(0));
     return PS_ERROR;
-#endif// NSIS_CONFIG_PLUGIN_SUPPORT
-
-#ifdef NSIS_LOCKWINDOW_SUPPORT
-    case TOK_LOCKWINDOW:
-      SCRIPT_MSG(_T("LockWindow: lock state=%d\n"),line.gettoken_str(1));
-      ent.which=EW_LOCKWINDOW;
-      ent.offsets[0]=line.gettoken_enum(1,_T("on\0off\0"));
-      if (ent.offsets[0] == -1) PRINTHELP();
-    return add_entry(&ent);
-#else
-    case TOK_LOCKWINDOW:
-      ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_LOCKWINDOW_SUPPORT not defined.\n"),line.gettoken_str(0));
-    return PS_ERROR;
-#endif // NSIS_LOCKWINDOW_SUPPORT
+#endif //~ NSIS_CONFIG_PLUGIN_SUPPORT
 
     default:
       break;
@@ -6556,7 +5373,6 @@ int CEXEBuild::add_file(const tstring& dir, const tstring& file, int attrib, con
 #endif
     }
   }
-
   return PS_OK;
 }
 
@@ -6571,7 +5387,6 @@ int CEXEBuild::do_add_file_create_dir(const tstring& local_dir, const tstring& d
   }
 
   int outdir = add_string(outdir_s.c_str());
-
   if (add_entry_direct(EW_CREATEDIR, outdir, 1) != PS_OK) {
     return PS_ERROR;
   }
@@ -6579,7 +5394,6 @@ int CEXEBuild::do_add_file_create_dir(const tstring& local_dir, const tstring& d
 #ifdef _WIN32
   if (attrib) {
     int ndc = add_asciistring(_T("."));
-
     DWORD attr = GetFileAttributes(local_dir.c_str());
     if (attr != INVALID_FILE_ATTRIBUTES)
     {
@@ -6590,52 +5404,9 @@ int CEXEBuild::do_add_file_create_dir(const tstring& local_dir, const tstring& d
     }
   }
 #endif
-
   return PS_OK;
 }
 #endif
-
-DefineList *CEXEBuild::searchParseString(const TCHAR *source_string, LineParser&line, int parmOffs, bool ignCase, bool noErrors, UINT*failParam)
-{
-  const bool allowEmptyFirstTok = true;
-  if (failParam) *failParam = 0;
-  DefineList *ret = NULL;
-  const TCHAR *defout = 0, *src_start = 0, *tok;
-  int toklen = 0, maxlen;
-  for (;;)
-  {
-    tok = line.gettoken_str(parmOffs++);
-    const bool lasttoken = parmOffs > line.getnumtokens();
-    if (!*tok)
-      tok = 0, maxlen = -1; // No more tokens to search for, save the rest of the string
-    else
-    {
-      toklen = (int) _tcslen(tok);
-      while (*source_string && (ignCase?_tcsnicmp(source_string,tok,toklen):_tcsncmp(source_string,tok,toklen))) source_string++;
-      maxlen = (int)(source_string - src_start); // Length of previous string
-    }
-    if (defout && defout[0]) // We now know the start and length of the previous string, add it to the list
-    {
-      if (!ret) ret = new DefineList();
-      if (maxlen < 0)
-        ret->add(defout,src_start);
-      else
-        ret->addn(defout,maxlen,src_start);
-    }
-    if (!tok && lasttoken) break;
-    if (!*source_string || (allowEmptyFirstTok ? false : !tok)) // We did not find the requested token!
-    {
-      if (failParam) *failParam = ret ? ret->getnum() : 0;
-      if (noErrors) break; // Caller is OK with a incomplete list of matched strings
-      const TCHAR *msgprefix = src_start ? _T("") : _T("starting ");
-      ERROR_MSG(_T("!searchparse: %") NPRIs _T("string \"%") NPRIs _T("\" not found, aborted search!\n"),msgprefix,tok?tok:_T("(null)"));
-      delete ret;
-      return NULL;
-    }
-    defout = line.gettoken_str(parmOffs++), src_start = source_string += toklen;
-  }
-  return ret;
-}
 
 LANGID CEXEBuild::ParseLangIdParameter(const LineParser&line, int token)
 {

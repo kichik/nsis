@@ -20,6 +20,7 @@ makensis_files = Split("""
 	ResourceEditor.cpp
 	ResourceVersionInfo.cpp
 	script.cpp
+	scriptpp.cpp
 	ShConstants.cpp
 	strlist.cpp
 	tokens.cpp

@@ -61,7 +61,7 @@ namespace manifest
       if (-1 == pos) return 0;
       return m_list.get() + pos;
     }
-    void addall();
+    bool addall();
     void deleteall() 
     { 
       m_list.deleteall();

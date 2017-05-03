@@ -1032,7 +1032,11 @@ typedef struct tagVS_FIXEDFILEINFO {
 #endif
 
 
+#if defined(__clang__) && defined(__cplusplus) && __cplusplus < 201103L
+#define NSIS_CXX_THROWSPEC(throwspec) throw(throwspec) // Use exception specifications to avoid operator new missing-exception-spec warning
+#else
 #define NSIS_CXX_THROWSPEC(ignoredthrowspec) // Ignore c++ exception specifications
+#endif
 #define BUGBUG64TRUNCATE(cast,xpr) ( (cast) (xpr) )
 
 /*

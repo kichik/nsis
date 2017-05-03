@@ -3419,7 +3419,7 @@ int CEXEBuild::parse_pragma(LineParser &line)
     bool valid = f.OpenFileForReading(line.gettoken_str(2));
     valid = valid && 12 == f.ReadOctets(&chm, 12);
     valid = valid && FIX_ENDIAN_INT32(chm.Sig) == 0x46535449 && (FIX_ENDIAN_INT32(chm.Ver)|1) == 3; // 'ITSF' v2..3
-    return valid ? rvSucc : (ERROR_MSG(_T("Invalid format\n")), PS_ERROR);
+    return valid ? rvSucc : (ERROR_MSG(_T("Error: Invalid format\n")), PS_ERROR);
   }
 
   if (line.gettoken_enum(1, _T("warning\0")) == -1)

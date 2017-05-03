@@ -138,7 +138,7 @@ double LineParser::gettoken_number(int token, int *success/*=0*/) const
 {
   const TCHAR*str=gettoken_str(token);
   if (_T('-') == *str || _T('+') == *str) ++str;
-  bool forceint = false;
+  unsigned int forceint = false;
   if (_T('0') == str[0])
   {
     if (_T('x') == (str[1]|32)) ++forceint;

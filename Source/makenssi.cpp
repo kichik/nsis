@@ -543,7 +543,7 @@ static inline int makensismain(int argc, TCHAR **argv)
       }
       else if (S7IsChEqualI('x',swname[0]) && swname[1])
       {
-        if (build.process_oneline(swname+1,_T("<command line>"),argpos+1) != PS_OK)
+        if (build.process_oneline(swname+1,build.get_commandlinecode_filename(),argpos+1) != PS_OK)
         {
           return 1;
         }
@@ -567,7 +567,7 @@ static inline int makensismain(int argc, TCHAR **argv)
         noconfig=true;
         tstring main_conf;
         TCHAR* env_var = _tgetenv(_T("NSISCONFDIR"));
-        if(env_var == NULL)
+        if (env_var == NULL)
 #ifndef NSIS_CONFIG_CONST_DATA_PATH
           main_conf = get_dir_name(get_executable_dir(argv[0]));
 #else
