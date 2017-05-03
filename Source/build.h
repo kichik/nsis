@@ -175,26 +175,13 @@ class CEXEBuild {
       MAX_LINELENGTH = 16384, // NSI/NSH line limit, in TCHARs (including \0)
       MAX_MACRORECURSION = 50
     };
+    static const TCHAR* get_commandlinecode_filename() { return _T("<command line>"); }
 
     void warning(DIAGCODE dc, const TCHAR *s, ...); // to add a warning to the compiler's warning list.
     void warning_fl(DIAGCODE dc, const TCHAR *s, ...); // warning with file name and line number
     void ERROR_MSG(const TCHAR *s, ...) const;
     void SCRIPT_MSG(const TCHAR *s, ...) const;
     void INFO_MSG(const TCHAR *s, ...) const;
-    class DiagState {
-    public:
-      DiagState() : m_pStack(0) { assert(DIAGCODE_INTERNAL_LAST <= 0xffff); }
-      ~DiagState() { delete m_pStack; }
-      void Enable(DIAGCODE n) { m_Disabled.erase(static_cast<unsigned short>(n)); }
-      void Disable(DIAGCODE n) { m_Disabled.insert(static_cast<unsigned short>(n)); }
-      bool IsDisabled(DIAGCODE n) { return m_Disabled.find(static_cast<unsigned short>(n)) != m_Disabled.end(); }
-      void Push();
-      bool Pop();
-      static bool IsValidCode(unsigned int n) { return n >= DIAGCODE_INTERNAL_FIRST && n <= DIAGCODE_INTERNAL_LAST; }
-    protected:
-      DiagState *m_pStack;
-      std::set<unsigned short> m_Disabled;
-    } diagstate;
 
     typedef enum {
       TARGETFIRST,
@@ -326,7 +313,26 @@ class CEXEBuild {
     bool inside_comment;
     int multiple_entries_instruction;  // 1 (true) or 0 (false)
 
+    int pp_macro(LineParser&line);
+    int pp_macroundef(LineParser&line);
+    int pp_insertmacro(LineParser&line);
+    int pp_tempfile(LineParser&line);
+    int pp_delfile(LineParser&line);
+    int pp_appendfile(LineParser&line);
+    int pp_getdllversion(LineParser&line);
+    int pp_searchreplacestring(LineParser&line);
+    int pp_searchparsestring(LineParser&line);
     DefineList *searchParseString(const TCHAR *source_string, LineParser&line, int parmOffs, bool ignCase, bool noErrors, UINT*failParam = 0);
+    int pp_verbose(LineParser&line);
+    int pp_define(LineParser&line);
+    int pp_undef(LineParser&line);
+    int pp_packhdr(LineParser&line);
+    int pp_finalize(LineParser&line);
+    int pp_execute(int which_token, LineParser&line);
+    int pp_addincludedir(LineParser&line);
+    int pp_include(LineParser&line);
+    int pp_cd(LineParser&line);
+    int pp_pragma(LineParser&line);
 
     // build.cpp functions used mostly by script.cpp
     int set_target_architecture_data();
@@ -386,9 +392,24 @@ class CEXEBuild {
     int resolve_instruction(const TCHAR *fn, const TCHAR *str, entry *w, int offs, int start, int end);
 
     int resolve_coderefs(const TCHAR *str);
+    int uninstall_generate();
+
     void print_warnings();
     void warninghelper(DIAGCODE dc, bool fl, const TCHAR *fmt, va_list args);
-    int uninstall_generate();
+    class DiagState {
+    public:
+      DiagState() : m_pStack(0) { assert(DIAGCODE_INTERNAL_LAST <= 0xffff); }
+      ~DiagState() { delete m_pStack; }
+      void Enable(DIAGCODE n) { m_Disabled.erase(static_cast<unsigned short>(n)); }
+      void Disable(DIAGCODE n) { m_Disabled.insert(static_cast<unsigned short>(n)); }
+      bool IsDisabled(DIAGCODE n) { return m_Disabled.find(static_cast<unsigned short>(n)) != m_Disabled.end(); }
+      void Push();
+      bool Pop();
+      static bool IsValidCode(unsigned int n) { return n >= DIAGCODE_INTERNAL_FIRST && n <= DIAGCODE_INTERNAL_LAST; }
+    protected:
+      DiagState *m_pStack;
+      std::set<unsigned short> m_Disabled;
+    } diagstate;
 
     /** Are we defining an uninstall version of the code?
      * @param un Use like a boolean to define whether in uninstall mode.

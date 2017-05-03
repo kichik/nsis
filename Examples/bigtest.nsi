@@ -36,6 +36,7 @@ LicenseText "A test text, make sure it's all there"
 LicenseData "bigtest.nsi"
 
 RequestExecutionLevel admin
+ManifestSupportedOS all
 
 ;--------------------------------
 

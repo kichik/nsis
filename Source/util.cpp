@@ -70,7 +70,7 @@ size_t my_strncpy(TCHAR*Dest, const TCHAR*Src, size_t cchMax)
   // Dest and Src must be valid, Dest is always \0 terminated.
   // Returns number of TCHARs copied to Dest (not counting \0); min(strlen(Src),cchMax-1).
   size_t cch = 0;
-  if (cchMax) for (TCHAR c; --cchMax;) if (!(c = Src[cch])) break; else Dest[cch++] = c;
+  if (cchMax) for (TCHAR c; --cchMax;) { if (!(c = Src[cch])) break; Dest[cch++] = c; }
   Dest[cch] = _T('\0');
   return cch;
 }
@@ -159,20 +159,20 @@ TCHAR *CharPrev(const TCHAR *s, const TCHAR *p) {
       break;
     s = n;
   }
-  return (TCHAR *) s;
+  return const_cast<TCHAR*>(s);
 }
 
 char *CharNextA(const char *s) {
   int l = 0;
   if (s && *s)
     l = max(1, mblen(s, MB_CUR_MAX));
-  return (char *) s + l;
+  return const_cast<char*>(s + l);
 }
 
 wchar_t *CharNextW(const wchar_t *s) {
-  if (sizeof(*s)==2 && IsLeadSurrogateUTF16(*s)) (wchar_t*) ++s; //BUGBUG: This assumes that 16bit wchar_t == UTF16
-  // else if(...) BUGBUG: Is this the best we can do? What about combining characters/diacritics etc?
-  return (wchar_t*) s + 1;
+  if (sizeof(*s) == 2 && IsLeadSurrogateUTF16(*s)) ++s; //BUGBUG: This assumes that 16bit wchar_t == UTF16
+  // else if (...) BUGBUG: Is this the best we can do? What about combining characters/diacritics etc?
+  return const_cast<wchar_t*>(s + 1);
 }
 
 char *CharNextExA(WORD codepage, const char *s, int flags) {
@@ -182,7 +182,7 @@ char *CharNextExA(WORD codepage, const char *s, int flags) {
   int len = mblen(s, strlen(s));
   if (len > 0) np = s + len; else np = s + 1;
   setlocale(LC_CTYPE, orglocct);
-  return (char *) np;
+  return const_cast<char*>(np);
 }
 
 int wsprintf(TCHAR *s, const TCHAR *format, ...) {
@@ -554,7 +554,7 @@ void PathConvertWinToPosix(TCHAR*p)
 TCHAR *my_convert(const TCHAR *path)
 {
   TCHAR *converted_path = _tcsdup(path);
-  if(!converted_path)
+  if (!converted_path)
   {
     MY_ERROR_MSG(_T("Error: could not allocate memory in my_convert()\n"));
     return 0;
@@ -678,7 +678,7 @@ tstring get_executable_path(const TCHAR* argv0) {
   return tstring(CtoTString(temp_buf));
 #else /* Linux/BSD/POSIX/etc */
   const TCHAR *envpath = _tgetenv(_T("_"));
-  if( envpath != NULL )
+  if (envpath)
     return get_full_path(envpath);
   else {
     char *path = NULL, *pathtmp;
@@ -686,17 +686,17 @@ tstring get_executable_path(const TCHAR* argv0) {
     int nchars;
     while(1){
       pathtmp = (char*)realloc(path,len+1);
-      if( pathtmp == NULL ){
+      if (pathtmp == NULL) {
         free(path);
         return get_full_path(argv0);
       }
       path = pathtmp;
       nchars = readlink("/proc/self/exe", path, len);
-      if( nchars == -1 ){
+      if (nchars == -1) {
         free(path);
         return get_full_path(argv0);
       }
-      if( nchars < (int) len ){
+      if (nchars < (int) len) {
         path[nchars] = '\0';
         tstring result;
         result = CtoTString(path);
