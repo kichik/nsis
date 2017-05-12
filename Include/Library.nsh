@@ -121,6 +121,16 @@
   ;------------------------
   ;Setup RegTool
 
+  !ifdef NSIS_MAKENSIS64
+    !if "${NSIS_PTR_SIZE}" < 8
+      !error "Incompatible RegTool bitness, compile with 32-bit NSIS!" ; 64-bit RegTool on 32-bit Windows
+    !endif
+  !else
+    !if "${NSIS_PTR_SIZE}" > 4
+      !warning "Incompatible RegTool bitness!" ; 32-bit RegTool will probably fail to register 64-bit library
+    !endif
+  !endif
+
   ReadRegStr $R3 HKLM "Software\Microsoft\Windows\CurrentVersion\RunOnce" "${REGTOOL_KEY}"
   StrCpy $R3 $R3 -4 1
   IfFileExists $R3 +3
