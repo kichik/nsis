@@ -1,7 +1,7 @@
 target = 'RegTool'
 
 files = Split("""
-	RegTool.c
+	RegTool.cpp
 """)
 
 libs = Split("""

@@ -8,6 +8,8 @@ Released on ? ?th, 2017
 
 \S2{} Major Changes
 
+\b Fixed RegTool Win9x bug
+
 \b Added \R{execshellwait}{ExecShellWait}
 
 \b Added \R{writeregmultistr}{WriteRegMultiStr} (\W{http://sf.net/p/nsis/feature-requests/382}{RFE #382}, \W{http://sf.net/p/nsis/patches/219}{patch #219})
