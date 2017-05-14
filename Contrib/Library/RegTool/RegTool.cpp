@@ -49,7 +49,7 @@ template<class T> BOOL CreateProcess(const T*p1,const T*p2,LPSECURITY_ATTRIBUTES
 
 static bool IsWinNT()
 {
-#ifdef _WIN64
+#if defined(_WIN64) || (defined(_M_ARM) || defined(__arm__))
   return true;
 #else
   LPCWSTR str = L"count"; // Using this string because it's already used in other parts of the code

@@ -134,7 +134,7 @@ CEXEBuild::CEXEBuild(signed char pponly) :
 
   m_target_type=TARGET_X86ANSI;
 #ifdef _WIN32
-  if (sizeof(void*) > 4) m_target_type = TARGET_AMD64; // BUGBUG: There is no instruction to select it so we force
+  if (sizeof(void*) > 4) m_target_type = TARGET_AMD64; // BUGBUG: scons 'TARGET_ARCH' should specify the default
 #endif
   build_unicode=TARGET_X86ANSI != m_target_type;
   build_lockedunicodetarget=false;
@@ -3844,7 +3844,7 @@ bool CEXEBuild::IsIntOrUserVar(const LineParser &line, int token) const
   }
   int succ;
   line.gettoken_int(token, &succ);
-  return !!succ;
+  return succ != false;
 }
 
 int CEXEBuild::set_target_architecture_data()
@@ -3862,6 +3862,9 @@ int CEXEBuild::set_target_architecture_data()
     definedlist.set(_T("NSIS_CHAR_SIZE"), _T("1"));
   }
   definedlist.set(_T("NSIS_PTR_SIZE"), is_target_64bit() ? _T("8") : _T("4"));
+
+  tstring cpu = get_string_prefix(get_target_suffix(m_target_type), _T("-"));
+  definedlist.set(_T("NSIS_CPU"), cpu.c_str()); // Used by Library.nsh to pick the correct RegTool
 
   definedlist.del(_T("NSIS_IX86"));
   definedlist.del(_T("NSIS_AMD64"));

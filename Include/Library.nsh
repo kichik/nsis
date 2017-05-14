@@ -121,21 +121,15 @@
   ;------------------------
   ;Setup RegTool
 
-  !ifdef NSIS_MAKENSIS64
-    !if "${NSIS_PTR_SIZE}" < 8
-      !error "Incompatible RegTool bitness, compile with 32-bit NSIS!" ; 64-bit RegTool on 32-bit Windows
-    !endif
-  !else
-    !if "${NSIS_PTR_SIZE}" > 4
-      !warning "Incompatible RegTool bitness!" ; 32-bit RegTool will probably fail to register 64-bit library
-    !endif
+  !if ! /FileExists "${NSISDIR}\Bin\RegTool-${NSIS_CPU}.bin"
+    !error "Missing RegTool for ${NSIS_CPU}!"
   !endif
 
   ReadRegStr $R3 HKLM "Software\Microsoft\Windows\CurrentVersion\RunOnce" "${REGTOOL_KEY}"
   StrCpy $R3 $R3 -4 1
   IfFileExists $R3 +3
 
-    File /oname=$R2\${REGTOOL_KEY}.$__INSTALLLLIB_SESSIONGUID.exe "${NSISDIR}\Bin\RegTool.bin"
+    File /oname=$R2\${REGTOOL_KEY}.$__INSTALLLLIB_SESSIONGUID.exe "${NSISDIR}\Bin\RegTool-${NSIS_CPU}.bin"
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\RunOnce" \
       "${REGTOOL_KEY}" '"$R2\${REGTOOL_KEY}.$__INSTALLLLIB_SESSIONGUID.exe" /S'
 
