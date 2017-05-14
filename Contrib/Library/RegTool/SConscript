@@ -12,6 +12,8 @@ libs = Split("""
 	ole32
 """)
 
-Import('BuildUtil')
+Import('BuildUtil env GetArcCPU')
 
-BuildUtil(target, files, libs, entry = 'NSISWinMainNOCRT', nodeflib = True, file_name = 'RegTool.bin')
+filename = 'RegTool-' + GetArcCPU(env) + '.bin'
+
+BuildUtil(target, files, libs, entry = 'NSISWinMainNOCRT', nodeflib = True, file_name = filename)

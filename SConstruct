@@ -791,7 +791,7 @@ for util in utils:
 
 	path = 'Contrib/' + util
 	build_dir = '$BUILD_PREFIX/' + util
-	exports = {'BuildUtil' : BuildUtil, 'BuildUtilEnv' : BuildUtilEnv, 'env' : util_env}
+	exports = {'BuildUtil' : BuildUtil, 'BuildUtilEnv' : BuildUtilEnv, 'env' : util_env, 'GetArcCPU' : GetArcCPU}
 
 	defenv.SConscript(dirs = path, variant_dir = build_dir, duplicate = False, exports = exports)
 

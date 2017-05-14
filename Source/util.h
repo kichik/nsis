@@ -34,7 +34,7 @@
 
 extern double my_wtof(const wchar_t *str);
 extern size_t my_strncpy(TCHAR*Dest, const TCHAR*Src, size_t cchMax);
-static bool strtrycpy(TCHAR*Dest, const TCHAR*Src, size_t cchCap) { size_t c = my_strncpy(Dest, Src, cchCap); return c < cchCap && !Src[c]; }
+template<class T> bool strtrycpy(T*Dest, const T*Src, size_t cchCap) { size_t c = my_strncpy(Dest, Src, cchCap); return c < cchCap && !Src[c]; }
 size_t my_strftime(TCHAR *s, size_t max, const TCHAR  *fmt, const struct tm *tm);
 
 // Adds the bitmap in filename using resource editor re as id id.
