@@ -144,7 +144,7 @@ int NSISCALL my_MessageBox(const TCHAR *text, UINT type) {
   mbp.hwndOwner = g_hwnd;
   mbp.hInstance = g_hInstance;
   mbp.lpszText = text;
-  mbp.lpszCaption = g_caption;
+  mbp.lpszCaption = g_caption; // Should call update_caption() here?
   mbp.dwStyle = _type;
   
   return MessageBoxIndirect(&mbp);

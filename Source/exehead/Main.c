@@ -58,7 +58,7 @@
 extern HANDLE dbd_hFile;
 #endif
 
-TCHAR g_caption[NSIS_MAX_STRLEN*2];
+TCHAR g_caption[NSIS_MAX_STRLEN*2]; // Why does this have to be NSIS_MAX_STRLEN*2?
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
 HWND g_hwnd;
 HANDLE g_hInstance;

@@ -36,8 +36,8 @@ enum NSPIM
 // Should always be __cdecl for future expansion possibilities
 typedef UINT_PTR (*NSISPLUGINCALLBACK)(enum NSPIM);
 
-// extra_parameters data structures containing other interesting stuff
-// but the stack, variables and HWND passed on to plug-ins.
+// extra_parameters data structure containing other interesting stuff
+// besides the stack, variables and HWND passed on to plug-ins.
 typedef struct
 {
   int autoclose;
@@ -83,4 +83,4 @@ typedef struct {
 // sent as wParam with WM_NOTIFY_OUTER_NEXT when user cancels - heed its warning
 #define NOTIFY_BYE_BYE 'x'
 
-#endif /* _PLUGIN_H_ */
+#endif /* _NSIS_EXEHEAD_API_H_ */

@@ -60,7 +60,7 @@ When used outside a \R{pageex}{PageEx} block: Sets the text for the titlebar of 
 
 When used inside a \R{pageex}{PageEx} block: Sets the subcaption of the current page.
 
-Accepts variables. If variables are used, they must be initialized on \R{oninit}{.onInit}.
+Accepts variables. If variables are used, they must be initialized on \R{oninit}{.onInit} or \R{onguiinit}{.onGUIInit}.
 
 \S2{achangeui} ChangeUI
 
