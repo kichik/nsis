@@ -170,6 +170,16 @@ void NSISCALL build_g_logfile()
 
 int *cur_langtable;
 
+static TCHAR* update_caption()
+{
+  TCHAR *gcap = g_caption;
+  GetNSISString(gcap, LANG_CAPTION);
+#ifdef NSIS_SUPPORT_BGBG
+  my_SetWindowText(m_bgwnd, gcap);
+#endif
+  return gcap;
+}
+
 static void NSISCALL set_language()
 {
   LANGID lang_mask=(LANGID)~0;
@@ -200,14 +210,9 @@ lang_again:
   }
 
   cur_langtable = selected_langtable;
-
   myitoa(state_language, *(LANGID*)language_table);
-  {
-    TCHAR *caption = GetNSISString(g_caption,LANG_CAPTION);
-#ifdef NSIS_SUPPORT_BGBG
-    my_SetWindowText(m_bgwnd, caption);
-#endif
-  }
+
+  update_caption();
 
   // reload section names
   {
@@ -581,7 +586,7 @@ nextPage:
         SetActiveCtl(m_hwndOK);
       }
 
-      mystrcpy(g_tmp,g_caption);
+      mystrcpy(g_tmp,update_caption());
       GetNSISString(g_tmp+mystrlen(g_tmp),this_page->caption);
       my_SetWindowText(hwndDlg,g_tmp);
 
