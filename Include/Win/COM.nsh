@@ -69,8 +69,11 @@ System::Call `${ptr}->${vtblidx}${decl}${params}`
 !define ${iface}::${method} `${NSISCOMCALL} ${vtblidx} ${decl} `
 !macroend
 
+!macro ComHlpr_CreateInstance clsid iid sysoutvarIFacePtr sysret
+System::Call 'OLE32::CoCreateInstance(g"${clsid}",i0,i23,g"${iid}",*p.${sysoutvarIFacePtr})i${sysret}'
+!macroend
 !macro ComHlpr_CreateInProcInstance clsid iid sysoutvarIFacePtr sysret
-System::Call 'OLE32::CoCreateInstance(g "${clsid}",i 0,i ${CLSCTX_INPROC_SERVER},g "${iid}",*p.${sysoutvarIFacePtr})i${sysret}'
+System::Call 'OLE32::CoCreateInstance(g"${clsid}",i0,i${CLSCTX_INPROC_SERVER},g"${iid}",*p.${sysoutvarIFacePtr})i${sysret}'
 !macroend
 
 !macro ComHlpr_SafeRelease _p
@@ -95,7 +98,7 @@ ${NSISCOMIFACEDECL}IUnknown Release 2 ()i
 
 !ifndef IID_IPersist
 !define IID_IPersist {0000010c-0000-0000-C000-000000000046}
-${NSISCOMIFACEDECL}IPersist GetClassID 3 (*g)i
+${NSISCOMIFACEDECL}IPersist GetClassID 3 (g)i
 !endif
 
 !ifndef IID_IPersistFile
@@ -229,6 +232,33 @@ ${NSISCOMIFACEDECL}IApplicationAssociationRegistration ClearUserAssociations 8 (
 ${NSISCOMIFACEDECL}IApplicationAssociationRegistrationUI LaunchAdvancedAssociationUI 3 (w)i
 !endif
 
+!ifndef CLSID_GameExplorer
+!define CLSID_GameExplorer {9A5EA990-3034-4D6F-9128-01F3C61022BC}
+!endif
+!ifndef IID_IGameExplorer
+!define IID_IGameExplorer {E7B2FB72-D728-49B3-A5F2-18EBF5F1349E} ;[Vista+]
+${NSISCOMIFACEDECL}IGameExplorer AddGame 3 (p,p,i,g)i
+${NSISCOMIFACEDECL}IGameExplorer RemoveGame 4 (i,i,i,i)i ; The parameter is a GUID, not REFGUID so the 'g' type cannot be used!
+${NSISCOMIFACEDECL}IGameExplorer UpdateGame 5 (i,i,i,i)i
+${NSISCOMIFACEDECL}IGameExplorer VerifyAccess 6 (p,*i)i
+!endif
+!define /ifndef GIS_NOT_INSTALLED 1
+!define /ifndef GIS_CURRENT_USER 2
+!define /ifndef GIS_ALL_USERS 3
+!ifndef IID_IGameExplorer2
+!define IID_IGameExplorer2 {86874AA7-A1ED-450d-A7EB-B89E20B2FFF3} ;[Seven+]
+${NSISCOMIFACEDECL}IGameExplorer2 InstallGame 3 (w,w,i)i
+${NSISCOMIFACEDECL}IGameExplorer2 UninstallGame 4 (w)i
+${NSISCOMIFACEDECL}IGameExplorer2 CheckAccess 5 (w,*i)i
+!endif
+!ifndef CLSID_GameStatistics
+!define CLSID_GameStatistics {DBC85A2C-C0DC-4961-B6E2-D28B62C11AD4}
+!endif
+!ifndef IID_IGameStatisticsMgr
+!define IID_IGameStatisticsMgr {AFF3EA11-E70E-407d-95DD-35E612C41CE2} ;[Seven+]
+${NSISCOMIFACEDECL}IGameStatisticsMgr GetGameStatistics 3 (w,i,*i,*p)i
+${NSISCOMIFACEDECL}IGameStatisticsMgr RemoveGameStatistics 4 (w)i
+!endif
 
 !verbose pop
 !endif /* __WIN_COM__INC */
