@@ -4209,14 +4209,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           SCRIPT_MSG(_T("DeleteRegValue: %") NPRIs _T("\\%") NPRIs _T("\\%") NPRIs _T("\n"),line.gettoken_str(a),line.gettoken_str(a+1),line.gettoken_str(a+2));
       }
     return add_entry(&ent);
-    case TOK_WRITEREGSTR:
-    case TOK_WRITEREGEXPANDSTR:
-    case TOK_WRITEREGBIN:
+    case TOK_WRITEREGSTR: case TOK_WRITEREGEXPANDSTR:
+    case TOK_WRITEREGBIN: case TOK_WRITEREGNONE:
     case TOK_WRITEREGMULTISZ:
     case TOK_WRITEREGDWORD:
       {
         const TCHAR*cmdname=get_commandtoken_name(which_token);
-        int reg5=0==line.gettoken_enum(1,_T("/REGEDIT5\0")), multisz=which_token==TOK_WRITEREGMULTISZ;
+        int reg5=0==line.gettoken_enum(1,_T("/REGEDIT5\0")), multisz=which_token == TOK_WRITEREGMULTISZ;
         if (reg5) line.eattoken();
         int k=line.gettoken_enum(1,rootkeys[0]);
         if (k == -1) k=line.gettoken_enum(1,rootkeys[1]);
@@ -4236,10 +4235,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           if (which_token == TOK_WRITEREGEXPANDSTR)
             ent.offsets[5]=REG_EXPAND_SZ;
         }
-        if (which_token == TOK_WRITEREGBIN || multisz)
+        if (which_token == TOK_WRITEREGBIN || multisz || which_token == TOK_WRITEREGNONE)
         {
           char data[3*NSIS_MAX_STRLEN];
-          int data_len=line.gettoken_binstrdata(4, data, sizeof(data));
+          int data_len=line.gettoken_binstrdata(4, data, sizeof(data)), none=which_token == TOK_WRITEREGNONE;
           if (data_len < 0)
           {
             if (data_len == -2) PRINTHELPEX(cmdname);
@@ -4252,7 +4251,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           if (multisz && !build_unicode) for (int p1=0, p2=p1; p1 < data_len; data_len--) data[p1++]=data[p2], p2+=2; // BUGBUG: Should convert each string from UTF-16 to DBCS but only exehead knows the codepage, limited to ASCII for now.
           ent.offsets[3]=add_db_data(data,data_len);
           if (ent.offsets[3] < 0) return PS_ERROR;
-          ent.offsets[4]=REG_BINARY, ent.offsets[5]=multisz?REG_MULTI_SZ:REG_BINARY;
+          ent.offsets[4]=REG_BINARY, ent.offsets[5]=none?REG_NONE:multisz?REG_MULTI_SZ:REG_BINARY;
         }
         if (which_token == TOK_WRITEREGDWORD)
         {

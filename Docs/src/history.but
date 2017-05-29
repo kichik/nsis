@@ -12,7 +12,7 @@ Released on ? ?th, 2017
 
 \b Added \R{execshellwait}{ExecShellWait}
 
-\b Added \R{writeregmultistr}{WriteRegMultiStr} (\W{http://sf.net/p/nsis/feature-requests/382}{RFE #382}, \W{http://sf.net/p/nsis/patches/219}{patch #219})
+\b Added \R{writeregmultistr}{WriteRegMultiStr} (\W{http://sf.net/p/nsis/feature-requests/382}{RFE #382}, \W{http://sf.net/p/nsis/patches/219}{patch #219}) and WriteRegNone
 
 \b Added \R{pragma}{!pragma warning} (\W{http://sf.net/p/nsis/patches/267}{patch #267})
 

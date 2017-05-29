@@ -1273,11 +1273,12 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           {
 #ifdef NSIS_CONFIG_LOG
             TCHAR binbuf[128];
+            LPCTSTR logf = rtype==REG_NONE?_T("WriteRegNone"):rtype==REG_MULTI_SZ?_T("WriteRegMultiStr"):_T("WriteRegBin");
 #endif
             // use buf2, buf3 and buf4
             size = GetCompressedDataFromDataBlockToMemory(parm3, data, (3 * NSIS_MAX_STRLEN)*sizeof(TCHAR));
             LogData2Hex(binbuf, COUNTOF(binbuf), data, size);
-            log_printf6(_T("%s: \"%s\\%s\" \"%s\"=\"%s\""),rtype==REG_MULTI_SZ?_T("WriteRegMultiStr"):_T("WriteRegBin"),rkn,buf1,buf0,binbuf);
+            log_printf6(_T("%s: \"%s\\%s\" \"%s\"=\"%s\""),logf,rkn,buf1,buf0,binbuf);
           }
           
           if (size >= 0 && RegSetValueEx(hKey,buf0,0,rtype,data,size) == ERROR_SUCCESS)
@@ -1302,8 +1303,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         p[0]=0;
         if (hKey)
         {
-          DWORD l = NSIS_MAX_STRLEN*sizeof(TCHAR);
-          DWORD t;
+          DWORD l = NSIS_MAX_STRLEN*sizeof(TCHAR), t;
 
           // Jim Park: If plain text in p or binary data in p,
           // user must be careful in accessing p correctly.

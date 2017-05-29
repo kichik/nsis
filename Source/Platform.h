@@ -656,6 +656,7 @@ typedef DWORDLONG ULONGLONG,*PULONGLONG;
 #endif
 
 #ifndef REG_SZ
+#  define REG_NONE 0
 #  define REG_SZ 1
 #  define REG_EXPAND_SZ 2
 #  define REG_BINARY 3
