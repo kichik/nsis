@@ -3267,24 +3267,18 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.which=EW_SENDMESSAGE;
       if (line.gettoken_str(1)[0] == _T('/') || line.gettoken_str(2)[0] == _T('/') ||
           line.gettoken_str(3)[0] == _T('/') || line.gettoken_str(4)[0] == _T('/'))
-      {
         PRINTHELP()
-      }
 
       SCRIPT_MSG(_T("SendMessage:"));
       int a=5;
-      ent.offsets[0]=GetUserVarIndex(line, 5);
+      ent.offsets[0]=GetUserVarIndex(line,a);
       if (ent.offsets[0]>=0)
-      {
-        SCRIPT_MSG(_T("(->%") NPRIs _T(")"),line.gettoken_str(5));
-        a++;
-      }
+        SCRIPT_MSG(_T("(->%") NPRIs _T(")"),line.gettoken_str(a++));
 
-      if (!_tcsncmp(line.gettoken_str(a),_T("/TIMEOUT="),9))
+      if (!_tcsncicmp(line.gettoken_str(a),_T("/TIMEOUT="),9))
       {
-        ent.offsets[5]|=_ttoi(line.gettoken_str(a)+9)<<2;
+        ent.offsets[5]|=_ttoi(line.gettoken_str(a++)+9)<<2;
         SCRIPT_MSG(_T(" (timeout=%d)"),ent.offsets[5]>>2);
-        a++;
       }
 
       if (line.getnumtokens()>a)
