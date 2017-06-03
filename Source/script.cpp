@@ -3003,7 +3003,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         int a=line.gettoken_enum(to+4,_T("SW_SHOWDEFAULT\0SW_SHOWNORMAL\0SW_SHOWMAXIMIZED\0SW_SHOWMINIMIZED\0SW_HIDE\0SW_SHOW\0SW_SHOWNA\0SW_SHOWMINNOACTIVE\0"));
         if (a >= 0) ent.offsets[3]=tab[a]; else PRINTHELP()
       }
-      tstring detail=tstring(verb)+(_T(" ")+!*verb)+tstring(file);
+      tstring detail=tstring(verb)+(_T(" ")[!*verb])+tstring(file);
       ent.offsets[5]=add_string(detail.c_str());
       SCRIPT_MSG(_T("%") NPRIs _T(": %") NPRIs _T(": \"%") NPRIs _T("\" \"%") NPRIs _T("\" %") NPRIs _T("\n"),cnam,verb,file,params,line.gettoken_str(to+4));
       DefineInnerLangString(NLF_EXEC_SHELL);

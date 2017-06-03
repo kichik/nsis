@@ -705,7 +705,7 @@ int main(int argc, char **argv)
   wchar_t term[1], *p, **wargv = (wchar_t **) malloc((argc+1) * sizeof(void*));
   if (wargv) 
     for ( ; wargc < argc; ++wargc )
-      if ((p = NSISRT_mbtowc(argv[wargc]))) wargv[wargc] = p; else break;
+      if ((p = NSISRT_mbtowc(argv[wargc]))) { wargv[wargc] = p; } else { break; }
   if (wargc == argc)
     *term = L'\0', wargv[wargc] = term, errno = _tmain(wargc,wargv);
   else

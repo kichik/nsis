@@ -331,11 +331,11 @@ WORD GetEncodingFromString(const TCHAR*s, bool&BOM)
   if (!_tcsicmp(s,_T("ACP"))) return NStreamEncoding::ACP;
   if (!_tcsicmp(s,_T("OEM"))) return NStreamEncoding::OEMCP;
   if (!_tcsicmp(s,_T("UTF8"))) return NStreamEncoding::UTF8;
-  if ((!_tcsicmp(s,_T("UTF8SIG")) || !_tcsicmp(s,_T("UTF8BOM"))) && ++BOM)
+  if ((!_tcsicmp(s,_T("UTF8SIG")) || !_tcsicmp(s,_T("UTF8BOM"))) && (BOM = true))
     return NStreamEncoding::UTF8;
-  if (!_tcsicmp(s,_T("UTF16LE")) || (!_tcsicmp(s,_T("UTF16LEBOM")) && ++BOM))
+  if (!_tcsicmp(s,_T("UTF16LE")) || (!_tcsicmp(s,_T("UTF16LEBOM")) && (BOM = true)))
     return NStreamEncoding::UTF16LE;
-  if (!_tcsicmp(s,_T("UTF16BE")) || (!_tcsicmp(s,_T("UTF16BEBOM")) && ++BOM))
+  if (!_tcsicmp(s,_T("UTF16BE")) || (!_tcsicmp(s,_T("UTF16BEBOM")) && (BOM = true)))
     return NStreamEncoding::UTF16BE;
   if (S7IsChEqualI('C',*s++) && S7IsChEqualI('P',*s++))
   {
