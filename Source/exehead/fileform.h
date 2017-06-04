@@ -155,7 +155,7 @@ enum
 #endif
 
 #ifdef NSIS_SUPPORT_REGISTRYFUNCTIONS
-  EW_DELREG,            // DeleteRegValue/DeleteRegKey: 4, [root key(int), KeyName, ValueName, delkeyonlyifempty]. ValueName is -1 if delete key
+  EW_DELREG,            // DeleteRegValue/DeleteRegKey: 4, [root key(int), KeyName, ValueName, ActionAndFlags]
   EW_WRITEREG,          // Write Registry value: 5, [RootKey(int),KeyName,ItemName,ItemData,typelen]
                         //  typelen=1 for str, 2 for dword, 3 for binary, 0 for expanded str
   EW_READREGSTR,        // ReadRegStr: 5 [output, rootkey(int), keyname, itemname, ==1?int::str]
@@ -509,6 +509,8 @@ typedef struct {
 #define DEL_RECURSE 2
 #define DEL_REBOOT 4
 #define DEL_SIMPLE 8
+
+#define HKSHCTX ( (HKEY) 0 ) // Converted to HKCU or HKLM by GetRegRootKey
 
 #ifdef NSIS_SUPPORT_CREATESHORTCUT
 #define CS_HK_MASK 0xffff0000 // HotKey

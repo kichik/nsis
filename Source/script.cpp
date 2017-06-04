@@ -845,16 +845,23 @@ int CEXEBuild::process_jump(LineParser &line, int wt, int *offs)
 #define SECTION_FIELD_GET(field) (FIELD_OFFSET(section, field)/sizeof(int))
 #define SECTION_FIELD_SET(field) (-1 - (int)(FIELD_OFFSET(section, field)/sizeof(int)))
 
-int CEXEBuild::doCommand(int which_token, LineParser &line)
+#define INVALIDREGROOT ( (HKEY) 0x8000baad )
+static HKEY ParseRegRootKey(LineParser &line, int tok)
 {
   static const TCHAR *rootkeys[2] = {
     _T("HKCR\0HKLM\0HKCU\0HKU\0HKCC\0HKDD\0HKPD\0SHCTX\0"),
     _T("HKEY_CLASSES_ROOT\0HKEY_LOCAL_MACHINE\0HKEY_CURRENT_USER\0HKEY_USERS\0HKEY_CURRENT_CONFIG\0HKEY_DYN_DATA\0HKEY_PERFORMANCE_DATA\0SHELL_CONTEXT\0")
   };
   static const HKEY rootkey_tab[] = {
-    HKEY_CLASSES_ROOT,HKEY_LOCAL_MACHINE,HKEY_CURRENT_USER,HKEY_USERS,HKEY_CURRENT_CONFIG,HKEY_DYN_DATA,HKEY_PERFORMANCE_DATA,0
+    HKEY_CLASSES_ROOT,HKEY_LOCAL_MACHINE,HKEY_CURRENT_USER,HKEY_USERS,HKEY_CURRENT_CONFIG,HKEY_DYN_DATA,HKEY_PERFORMANCE_DATA,HKSHCTX
   };
+  int k = line.gettoken_enum(tok, rootkeys[0]);
+  if (k == -1) k = line.gettoken_enum(tok, rootkeys[1]);
+  return k == -1 ? INVALIDREGROOT : rootkey_tab[k];
+}
 
+int CEXEBuild::doCommand(int which_token, LineParser &line)
+{
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
   if (PS_OK != initialize_default_plugins()) return PS_ERROR;
 #endif
@@ -1680,11 +1687,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (build_header.install_reg_key_ptr)
           warning_fl(DW_STRING_MULTISETWASTE, _T("%") NPRIs _T(": specified multiple times, wasting space"),line.gettoken_str(0));
 
-        int k=line.gettoken_enum(1,rootkeys[0]);
-        if (k == -1) k=line.gettoken_enum(1,rootkeys[1]);
-        if (k == -1) PRINTHELP()
-        build_header.install_reg_rootkey=REGROOTKEYTOINT(rootkey_tab[k]);
-        if (!build_header.install_reg_rootkey) PRINTHELP() // SHCTX is invalid here
+        HKEY hRK = ParseRegRootKey(line,1);
+        if (INVALIDREGROOT == hRK) PRINTHELP()
+        if (HKSHCTX == hRK) PRINTHELP() // SHCTX is invalid here
+        build_header.install_reg_rootkey=REGROOTKEYTOINT(hRK);
         build_header.install_reg_key_ptr = add_string(line.gettoken_str(2),0);
         if (line.gettoken_str(2)[0] == _T('\\'))
           warning_fl(DW_PARSE_REGPATHPREFIX, _T("%") NPRIs _T(": registry path name begins with \'\\\', may cause problems"),line.gettoken_str(0));
@@ -2875,12 +2881,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     {
       ent.which=EW_SETFLAG;
       ent.offsets[0]=FLAG_OFFSET(alter_reg_view);
-      int k=line.gettoken_enum(1,_T("32\0") _T("64\0default\0lastused\0")); // TODO: Can we support "native" without OS sniffing? Must verify on 9x, NT4 and 2000!
-      if (k<0) PRINTHELP()
+      int k=line.gettoken_enum(1,_T("32\0") _T("64\0default\0lastused\0"));
       if (k == 0) ent.offsets[1]=add_intstring(is_target_64bit() ? KEY_WOW64_32KEY : 0); // 32
       else if (k == 1) ent.offsets[1]=add_intstring(KEY_WOW64_64KEY); // 64
       else if (k == 2) ent.offsets[1]=add_intstring(0); // default
       else if (k == 3) ent.offsets[2]=1; // last used
+      else PRINTHELP()
       SCRIPT_MSG(_T("SetRegView: %") NPRIs _T("\n"),line.gettoken_str(1));
     }
     return add_entry(&ent);
@@ -4163,10 +4169,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       {
         ent.which=EW_READREGSTR;
         ent.offsets[0]=GetUserVarIndex(line, 1);
-        int k=line.gettoken_enum(2,rootkeys[0]);
-        if (k == -1) k=line.gettoken_enum(2,rootkeys[1]);
-        if (ent.offsets[0] == -1 || k == -1) PRINTHELP()
-        ent.offsets[1]=REGROOTKEYTOINT(rootkey_tab[k]);
+        HKEY hRK = ParseRegRootKey(line,2);
+        if (ent.offsets[0] == -1 || INVALIDREGROOT == hRK) PRINTHELP()
+        ent.offsets[1]=REGROOTKEYTOINT(hRK);
         ent.offsets[2]=add_string(line.gettoken_str(3));
         ent.offsets[3]=add_string(line.gettoken_str(4));
         if (which_token == TOK_READREGDWORD) ent.offsets[4]=1;
@@ -4181,29 +4186,27 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_DELETEREGVALUE:
     case TOK_DELETEREGKEY:
       {
-        int a=1;
-        if (which_token==TOK_DELETEREGKEY)
+        int a=1, iskeyop, delkeyflag=1, onlyifemptyflag=2;
+        if ((iskeyop = which_token == TOK_DELETEREGKEY))
         {
-          ent.offsets[4]=1;
+          ent.offsets[4]=(delkeyflag);
           TCHAR *s=line.gettoken_str(a);
           if (s[0] == _T('/'))
           {
             if (_tcsicmp(s,_T("/ifempty"))) PRINTHELP()
-            a++;
-            ent.offsets[4]=3;
+            a++, ent.offsets[4]=(delkeyflag|onlyifemptyflag);
           }
           if (line.gettoken_str(a+2)[0]) PRINTHELP()
         }
-        int k=line.gettoken_enum(a,rootkeys[0]);
-        if (k == -1) k=line.gettoken_enum(a,rootkeys[1]);
-        if (k == -1) PRINTHELP()
+        HKEY hRK=ParseRegRootKey(line,a);
+        if (INVALIDREGROOT == hRK) PRINTHELP()
         ent.which=EW_DELREG;
-        ent.offsets[1]=REGROOTKEYTOINT(rootkey_tab[k]);
+        ent.offsets[1]=REGROOTKEYTOINT(hRK);
         ent.offsets[2]=add_string(line.gettoken_str(a+1));
-        ent.offsets[3]=(which_token==TOK_DELETEREGKEY)?0:add_string(line.gettoken_str(a+2));
+        ent.offsets[3]=iskeyop ? 0 : add_string(line.gettoken_str(a+2));
         if (line.gettoken_str(a+1)[0] == _T('\\'))
           warning_fl(DW_PARSE_REGPATHPREFIX, _T("%") NPRIs _T(": registry path name begins with \'\\\', may cause problems"),line.gettoken_str(0));
-        if (which_token==TOK_DELETEREGKEY)
+        if (iskeyop)
           SCRIPT_MSG(_T("DeleteRegKey: %") NPRIs _T("\\%") NPRIs _T("\n"),line.gettoken_str(a),line.gettoken_str(a+1));
         else
           SCRIPT_MSG(_T("DeleteRegValue: %") NPRIs _T("\\%") NPRIs _T("\\%") NPRIs _T("\n"),line.gettoken_str(a),line.gettoken_str(a+1),line.gettoken_str(a+2));
@@ -4217,11 +4220,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         const TCHAR*cmdname=get_commandtoken_name(which_token);
         int reg5=0==line.gettoken_enum(1,_T("/REGEDIT5\0")), multisz=which_token == TOK_WRITEREGMULTISZ;
         if (reg5) line.eattoken();
-        int k=line.gettoken_enum(1,rootkeys[0]);
-        if (k == -1) k=line.gettoken_enum(1,rootkeys[1]);
-        if (k == -1 || reg5 != multisz) PRINTHELPEX(cmdname); // WriteRegMultiStr only supports the /REGEDIT5 serialized format right now but we really should allow variables at some point.
+        HKEY hRK=ParseRegRootKey(line,1);
+        if (INVALIDREGROOT == hRK || reg5 != multisz) PRINTHELPEX(cmdname); // WriteRegMultiStr only supports the /REGEDIT5 serialized format right now but we really should allow variables at some point.
         ent.which=EW_WRITEREG;
-        ent.offsets[0]=REGROOTKEYTOINT(rootkey_tab[k]);
+        ent.offsets[0]=REGROOTKEYTOINT(hRK);
         ent.offsets[1]=add_string(line.gettoken_str(2));
         if (line.gettoken_str(2)[0] == _T('\\'))
           warning_fl(DW_PARSE_REGPATHPREFIX, _T("%") NPRIs _T(": registry path name begins with \'\\\', may cause problems"),cmdname);
@@ -4268,10 +4270,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       {
         ent.which=EW_REGENUM;
         ent.offsets[0]=GetUserVarIndex(line, 1);
-        int k=line.gettoken_enum(2,rootkeys[0]);
-        if (k == -1) k=line.gettoken_enum(2,rootkeys[1]);
-        if (ent.offsets[0] == -1 || k == -1) PRINTHELP()
-        ent.offsets[1]=REGROOTKEYTOINT(rootkey_tab[k]);
+        HKEY hRK=ParseRegRootKey(line,2);
+        if (ent.offsets[0] == -1 || INVALIDREGROOT == hRK) PRINTHELP()
+        ent.offsets[1]=REGROOTKEYTOINT(hRK);
         ent.offsets[2]=add_string(line.gettoken_str(3));
         ent.offsets[3]=add_string(line.gettoken_str(4));
         ent.offsets[4]=which_token == TOK_ENUMREGKEY;

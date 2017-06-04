@@ -28,9 +28,7 @@
 
 #ifndef LOAD_LIBRARY_SEARCH_USER_DIRS
 #define LOAD_LIBRARY_SEARCH_USER_DIRS 0x00000400
-#endif
-#ifndef LOAD_LIBRARY_SEARCH_SYSTEM32
-#define LOAD_LIBRARY_SEARCH_SYSTEM32 0x00000800
+#define LOAD_LIBRARY_SEARCH_SYSTEM32  0x00000800
 #endif
 #ifndef SHTDN_REASON_FLAG_PLANNED
 #define SHTDN_REASON_FLAG_PLANNED 0x80000000
@@ -63,6 +61,8 @@ TCHAR g_caption[NSIS_MAX_STRLEN*2]; // Why does this have to be NSIS_MAX_STRLEN*
 HWND g_hwnd;
 HANDLE g_hInstance;
 #endif
+void *g_SHGetFolderPath;
+DWORD g_WinVer;
 
 void NSISCALL CleanUp();
 
@@ -77,14 +77,12 @@ TCHAR *ValidateTempDir()
   return my_GetTempFileName(state_language, state_temp_dir);
 }
 
-void *g_SHGetFolderPath;
 
 NSIS_ENTRYPOINT_GUINOCRT
 EXTERN_C void NSISWinMainNOCRT()
 {
   int ret = 0;
   const TCHAR *m_Err = _LANG_ERRORWRITINGTEMP;
-
   int cl_flags = 0;
 
   TCHAR *realcmds;
@@ -92,13 +90,14 @@ EXTERN_C void NSISWinMainNOCRT()
   TCHAR *cmdline;
 
   SetErrorMode(SEM_NOOPENFILEERRORBOX | SEM_FAILCRITICALERRORS);
+  g_WinVer = GetVersion() & ~(NSIS_WINVER_WOW64FLAG); // We store a private flag in the build number bits
 
   {
     // bug #1125: Don't load modules from the application nor current directory.
     // SetDefaultDllDirectories() allows us to restrict implicitly loaded and 
     // dynamically loaded modules to just %windir%\System32 and directories 
     // added with AddDllDirectory(). This prevents DLL search order attacks (CAPEC-471).
-    DWORD winver = GetVersion();
+    DWORD winver = g_WinVer;
     // CoCreateInstance(CLSID_ShellLink, ...) fails on Vista if SetDefaultDllDirectories is called
     BOOL avoidwinbug = LOWORD(winver) == MAKEWORD(6, 0);
     if (!avoidwinbug)
@@ -145,6 +144,16 @@ EXTERN_C void NSISWinMainNOCRT()
 #endif
   g_SHGetFolderPath = myGetProcAddress(MGA_SHGetFolderPath); // and SHFOLDER
 
+#ifndef _WIN64
+  {
+    // KEY_WOW64_xxKEY causes registry functions to fail on WinNT4 & Win2000.
+    // We don't filter them out because all registry instructions are supposed to fail when 
+    // accessing a unsupported view and RegKey* takes care of that by looking at the WOW64 flag.
+    FARPROC fp = myGetProcAddress(MGA_IsOS);
+    enum { os_wow6432 = 30 };
+    if (fp && ((BOOL(WINAPI*)(UINT))fp)(os_wow6432)) g_WinVer |= NSIS_WINVER_WOW64FLAG;
+  }
+#endif
 
   InitCommonControls();
 

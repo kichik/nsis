@@ -376,7 +376,7 @@ CEXEBuild::CEXEBuild(signed char pponly) :
   m_ShellConstants.add(_T("RESOURCES_LOCALIZED"), CSIDL_RESOURCES_LOCALIZED, CSIDL_RESOURCES_LOCALIZED);
   m_ShellConstants.add(_T("CDBURN_AREA"), CSIDL_CDBURN_AREA, CSIDL_CDBURN_AREA);
   // PROGRAMFILES&COMMONFILES does a registry lookup and the required string offsets are filled in later.
-  // We do this because the unicode mode has to be locked when we call add_string...
+  // We do this later because the unicode mode has to be locked when we call add_string...
   m_ShellConstants.add(_T("PROGRAMFILES"),   0, 0);
   m_ShellConstants.add(_T("PROGRAMFILES32"), 0, 0);
   m_ShellConstants.add(_T("PROGRAMFILES64"), 0, 0);

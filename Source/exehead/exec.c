@@ -156,30 +156,41 @@ static TCHAR * NSISCALL GetStringFromParm(int id_)
 }
 
 #ifdef NSIS_SUPPORT_REGISTRYFUNCTIONS
-
-#define AlterRegistrySAM(sam) (sam | g_exec_flags.alter_reg_view)
-
-// based loosely on code from Tim Kosse
-// in win9x this isn't necessary (RegDeleteKey() can delete a tree of keys),
-// but in win2k you need to do this manually.
-static LONG NSISCALL myRegDeleteKeyEx(HKEY thiskey, LPCTSTR lpSubKey, int onlyifempty)
+static HKEY NSISCALL GetRegRootKey(int RootKey)
 {
-  HKEY key;
-  int retval=RegOpenKeyEx(thiskey,lpSubKey,0,AlterRegistrySAM(KEY_ENUMERATE_SUB_KEYS),&key);
-  if (retval==ERROR_SUCCESS)
+  if (RootKey != (int) HKSHCTX) return (HKEY) (UINT_PTR) RootKey;
+  return (HKEY) ((UINT_PTR) HKEY_CURRENT_USER + g_exec_flags.all_user_var); // SHCTX: HKEY_CURRENT_USER + 1 == HKEY_LOCAL_MACHINE
+}
+static HKEY NSISCALL RegOpenScriptKey(REGSAM RS)
+{
+  HKEY hKey;
+  return RegKeyOpen(GetRegRootKey(g_parms[1]), GetStringFromParm(0x22), RS|KEY_FROMSCRIPT, &hKey) ? NULL : hKey;
+}
+static HKEY NSISCALL RegCreateScriptKey(int RootKey, LPCTSTR SubKey, REGSAM RS)
+{
+  HKEY hKey;
+  return RegKeyCreate(GetRegRootKey(RootKey), SubKey, RS|KEY_FROMSCRIPT, &hKey) ? NULL : hKey;
+}
+
+// RegDeleteKey on Win9x will delete a tree of keys, WinNT will only delete a key without subkeys.
+// RegDeleteKeyEx on 32-bit Windows accepts but ignores the KEY_WOW64_xxKEY flags and always uses the 
+// one and only native key. Our RegKeyOpen will intentionally fail if a incompatible WoW64 flag is used.
+#define RegDeleteScriptKey(RootKey, SubKey, Flags) RegDeleteScriptKeyWorker(GetRegRootKey(RootKey), (SubKey), (Flags))
+static LONG NSISCALL RegDeleteScriptKeyWorker(HKEY hThisKey, LPCTSTR SubKey, UINT Flags)
+{
+  HKEY hKey;
+  UINT onlyifempty = Flags;
+  REGSAM viewsam = g_exec_flags.alter_reg_view; // Not using KEY_ALTERVIEW here because viewsam is also passed to RegDeleteKeyEx.
+  LONG retval = RegKeyOpen(hThisKey, SubKey, KEY_ENUMERATE_SUB_KEYS|viewsam, &hKey);
+  if (retval == ERROR_SUCCESS)
   {
-    // NB - don't change this to static (recursive function)
-    TCHAR buffer[MAX_PATH+1];
-    while (RegEnumKey(key,0,buffer,MAX_PATH+1)==ERROR_SUCCESS)
+    TCHAR child[MAX_PATH+1]; // NB - don't change this to static (recursive function)
+    while (RegEnumKey(hKey, 0, child, COUNTOF(child)) == ERROR_SUCCESS)
     {
-      if (onlyifempty)
-      {
-        RegCloseKey(key);
-        return !ERROR_SUCCESS;
-      }
-      if ((retval=myRegDeleteKeyEx(key,buffer,0)) != ERROR_SUCCESS) break;
+      if (onlyifempty) return (RegCloseKey(hKey), !ERROR_SUCCESS);
+      if ((retval = RegDeleteScriptKeyWorker(hKey, child, Flags)) != ERROR_SUCCESS) break;
     }
-    RegCloseKey(key);
+    RegCloseKey(hKey);
     {
       typedef LONG (WINAPI * RegDeleteKeyExPtr)(HKEY, LPCTSTR, REGSAM, DWORD);
       RegDeleteKeyExPtr RDKE = (RegDeleteKeyExPtr)
@@ -189,31 +200,12 @@ static LONG NSISCALL myRegDeleteKeyEx(HKEY thiskey, LPCTSTR lpSubKey, int onlyif
         myGetProcAddress(MGA_RegDeleteKeyEx);
       #endif
       if (RDKE)
-        retval=RDKE(thiskey,lpSubKey,AlterRegistrySAM(0),0);
+        retval = RDKE(hThisKey, SubKey, viewsam, 0);
       else
-        retval=g_exec_flags.alter_reg_view||RegDeleteKey(thiskey,lpSubKey);
+        retval = RegDeleteKey(hThisKey, SubKey);
     }
   }
   return retval;
-}
-
-static HKEY NSISCALL GetRegRootKey(int hRootKey)
-{
-  if (hRootKey)
-    return (HKEY) (UINT_PTR) hRootKey;
-
-  // HKEY_LOCAL_MACHINE - HKEY_CURRENT_USER == 1
-  return (HKEY) ((UINT_PTR) HKEY_CURRENT_USER + g_exec_flags.all_user_var);
-}
-
-static HKEY NSISCALL myRegOpenKey(REGSAM samDesired)
-{
-  HKEY hKey;
-  if (RegOpenKeyEx(GetRegRootKey(g_parms[1]), GetStringFromParm(0x22), 0, AlterRegistrySAM(samDesired), &hKey) == ERROR_SUCCESS)
-  {
-    return hKey;
-  }
-  return NULL;
 }
 #endif//NSIS_SUPPORT_REGISTRYFUNCTIONS
 
@@ -1212,11 +1204,11 @@ static int NSISCALL ExecuteEntry(entry *entry_)
 #ifdef NSIS_SUPPORT_REGISTRYFUNCTIONS
     case EW_DELREG:
       {
-        long res=!ERROR_SUCCESS;
-        const TCHAR *rkn UNUSED=RegKeyHandleToName((HKEY)parm1);
-        if (!parm4)
+        long res=!ERROR_SUCCESS, rootkey=parm1;
+        const TCHAR *rkn UNUSED=RegKeyHandleToName((HKEY)rootkey);
+        if (!parm4) // TOK_DELETEREGVALUE
         {
-          HKEY hKey=myRegOpenKey(KEY_SET_VALUE);
+          HKEY hKey=RegOpenScriptKey(KEY_SET_VALUE);
           if (hKey)
           {
             TCHAR *buf3=GetStringFromParm(0x33);
@@ -1225,11 +1217,11 @@ static int NSISCALL ExecuteEntry(entry *entry_)
             RegCloseKey(hKey);
           }
         }
-        else
+        else // TOK_DELETEREGKEY
         {
           TCHAR *buf2=GetStringFromParm(0x22);
           log_printf3(_T("DeleteRegKey: \"%s\\%s\""),rkn,buf2);
-          res = myRegDeleteKeyEx(GetRegRootKey(parm1),buf2,parm4&2);
+          res = RegDeleteScriptKey(rootkey,buf2,parm4 >> 1); // Shifting away the TOK_DELETEREGKEY bit, onlyifempty is now the bottom bit (">> 1" is 1 byte smaller than "& 2")
         }
         if (res != ERROR_SUCCESS)
           exec_error++;
@@ -1237,16 +1229,14 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     break;
     case EW_WRITEREG: // write registry value
       {
+        int rootkey=parm0, type=parm4, rtype=parm5;
+        const TCHAR *rkn UNUSED=RegKeyHandleToName((HKEY)rootkey);
         HKEY hKey;
-        HKEY rootkey=GetRegRootKey(parm0);
-        int type=parm4;
-        int rtype=parm5;
         TCHAR *buf0=GetStringFromParm(0x02);
         TCHAR *buf1=GetStringFromParm(0x11);
-        const TCHAR *rkn UNUSED=RegKeyHandleToName(rootkey);
 
         exec_error++;
-        if (RegCreateKeyEx(rootkey,buf1,0,0,0,AlterRegistrySAM(KEY_SET_VALUE),0,&hKey,0) == ERROR_SUCCESS)
+        if ((hKey = RegCreateScriptKey(rootkey, buf1, KEY_SET_VALUE)))
         {
           LPBYTE data = (LPBYTE) buf2;
           DWORD size = 0;
@@ -1297,7 +1287,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     break;
     case EW_READREGSTR: // read registry string
       {
-        HKEY hKey=myRegOpenKey(KEY_READ);
+        HKEY hKey=RegOpenScriptKey(KEY_READ);
         TCHAR *p=var0;
         TCHAR *buf3=GetStringFromParm(0x33); // buf3 == key name
         p[0]=0;
@@ -1333,21 +1323,19 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     break;
     case EW_REGENUM:
       {
-        HKEY key=myRegOpenKey(KEY_READ);
+        HKEY hKey=RegOpenScriptKey(KEY_READ);
         TCHAR *p=var0;
         int b=GetIntFromParm(3);
-        p[0]=0;
-        if (key)
+        p[0]=0; // "" on error. This assumes that RegEnumKey and RegEnumValue do not party on our buffer!
+        if (hKey)
         {
-          DWORD d=NSIS_MAX_STRLEN-1;
-          if (parm4) RegEnumKey(key,b,p,d);
-          else if (RegEnumValue(key,b,p,&d,NULL,NULL,NULL,NULL)!=ERROR_SUCCESS)
-          {
+          DWORD d=NSIS_MAX_STRLEN-1; // -1 is not required here?
+          if (parm4)
+            RegEnumKey(hKey,b,p,d);
+          else if (RegEnumValue(hKey,b,p,&d,NULL,NULL,NULL,NULL) != ERROR_SUCCESS)
             exec_error++;
-            break;
-          }
-          p[NSIS_MAX_STRLEN-1]=0;
-          RegCloseKey(key);
+          p[NSIS_MAX_STRLEN-1]=0; // Not required?
+          RegCloseKey(hKey);
         }
         else exec_error++;
       }
