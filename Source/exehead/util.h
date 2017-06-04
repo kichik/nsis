@@ -32,7 +32,6 @@ TCHAR * NSISCALL GetNSISString(TCHAR *outbuf, int strtab);
 // use the LANG_STR_TAB() macro to decode it.
 #define GetNSISTab(strtab) (strtab < 0 ? LANG_STR_TAB(strtab) : strtab)
 
-void NSISCALL myRegGetStr(HKEY root, const TCHAR *sub, const TCHAR *name, TCHAR *out, int altview);
 #define myatoi(s) ( (int)strtoiptr(s) )
 INT_PTR NSISCALL strtoiptr(const TCHAR *s);
 #define myitoa iptrtostr
@@ -41,6 +40,22 @@ TCHAR * NSISCALL mystrcpy(TCHAR *out, const TCHAR *in);
 int NSISCALL mystrlen(const TCHAR *in);
 TCHAR * NSISCALL mystrcat(TCHAR *out, const TCHAR *concat);
 TCHAR * NSISCALL mystrstr(TCHAR *a, TCHAR *b);
+
+
+#define KEY_ALTERVIEW SYNCHRONIZE // Our private flag used by RegKey* to indicate that we want it to apply g_exec_flags.alter_reg_view. (MSDN:"Registry keys do not support the SYNCHRONIZE standard access right")
+#define KEY_FROMSCRIPT (KEY_ALTERVIEW) // Use this flag for registry operations from a .nsi script
+#define NSIS_REGSAM_PRIVATEMASK (KEY_FROMSCRIPT|KEY_ALTERVIEW)
+LONG NSISCALL RegKeyOpen(HKEY hBase, LPCTSTR SubKey, REGSAM RS, HKEY*phKey);
+LONG NSISCALL RegKeyCreate(HKEY hBase, LPCTSTR SubKey, REGSAM RS, HKEY*phKey);
+void NSISCALL myRegGetStr(HKEY root, const TCHAR *sub, const TCHAR *name, TCHAR *out, UINT altview);
+
+
+extern DWORD g_WinVer; // GetVersion()
+#define NSIS_WINVER_WOW64FLAG ( sizeof(void*) > 4 ? ( 0 ) : ( 0x40000000 ) )
+#define IsWow64() ( sizeof(void*) > 4 ? ( FALSE ) : ( g_WinVer & NSIS_WINVER_WOW64FLAG ) )
+#define SystemSupportsAltRegView() ( sizeof(void*) > 4 ? ( TRUE ) : ( IsWow64() ) )
+
+
 WIN32_FIND_DATA * NSISCALL file_exists(TCHAR *buf);
 TCHAR * NSISCALL my_GetTempFileName(TCHAR *buf, const TCHAR *dir);
 BOOL NSISCALL myReadFile(HANDLE h, LPVOID buf, DWORD cb);
@@ -134,6 +149,9 @@ enum myGetProcAddressFunctions {
 #endif
   MGA_InitiateShutdown,
   MGA_IsUserAnAdmin,
+#ifndef _WIN64
+  MGA_IsOS,
+#endif
   MGA_SHAutoComplete, // x64 can link to shlwapi directly but as long as MGA_SHGetFolderPath is used we can stick with myGetProcAddress
   MGA_SHGetFolderPath, // TODO: This can probably call something else directly on x64
 #ifdef NSIS_SUPPORT_GETDLLVERSION
