@@ -99,6 +99,13 @@ HANDLE NSISCALL myCreateProcess(TCHAR *cmd)
   return ProcInfo.hProcess;
 }
 
+BOOL NSISCALL myShellExecuteEx(SHELLEXECUTEINFO*pSEI)
+{
+  pSEI->cbSize = sizeof(SHELLEXECUTEINFO);
+  pSEI->lpIDList = NULL; // Must set this because SEE_MASK_INVOKEIDLIST might be set by ExecShell[Wait]
+  return ShellExecuteEx(pSEI);
+}
+
 /*BOOL NSISCALL my_SetWindowText(HWND hWnd, const TCHAR *val)
 {
   return SendMessage(hWnd,WM_SETTEXT,0,(LPARAM)val);

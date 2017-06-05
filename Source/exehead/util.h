@@ -109,6 +109,7 @@ DWORD NSISCALL CreateRestrictedDirectory(LPCTSTR path);
 DWORD NSISCALL CreateNormalDirectory(LPCTSTR path);
 
 HANDLE NSISCALL myCreateProcess(TCHAR *cmd);
+BOOL NSISCALL myShellExecuteEx(SHELLEXECUTEINFO*pSEI);
 int NSISCALL my_MessageBox(const TCHAR *text, UINT type);
 
 void NSISCALL myDelete(TCHAR *buf, int flags);
