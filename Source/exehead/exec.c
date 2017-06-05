@@ -874,12 +874,10 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         TCHAR *buf2=GetStringFromParm(0x22); // Parameters
         GetStringFromParm(0x15); // For update_status_text_buf1
         update_status_text_buf1(LANG_EXECSHELL);
-        sei.cbSize=sizeof(SHELLEXECUTEINFO);
         sei.fMask=parm4;
         sei.hwnd=g_hwnd, sei.nShow=parm3;
         sei.lpVerb=buf0[0]?buf0:NULL, sei.lpFile=buf3, sei.lpParameters=buf2[0]?buf2:NULL, sei.lpDirectory=state_output_directory;
-        sei.lpIDList=NULL; // Must set this because SEE_MASK_INVOKEIDLIST might be set
-        if (!ShellExecuteEx(&sei))
+        if (!myShellExecuteEx(&sei))
         {
           log_printf5(_T("ExecShell: warning: error (\"%s\": file:\"%s\" params:\"%s\")=%d"),buf0,buf3,buf2,GetLastError());
           exec_error++;

@@ -103,6 +103,15 @@ static void NSISCALL SetActiveCtl(HWND hCtl)
   SendMessage(g_hwnd, WM_NEXTDLGCTL, (WPARAM) hCtl, TRUE);
 }
 
+static BOOL NSISCALL LaunchURL(HWND hOwner, LPCTSTR URL, int ShowMode)
+{
+  SHELLEXECUTEINFO sei;
+  sei.fMask = SEE_MASK_FLAG_NO_UI|SEE_MASK_FLAG_DDEWAIT;
+  sei.hwnd = hOwner, sei.nShow = SW_SHOWNORMAL;
+  sei.lpVerb = _T("open"), sei.lpFile = URL, sei.lpParameters=NULL, sei.lpDirectory = NULL;
+  return myShellExecuteEx(&sei);
+}
+
 static void NSISCALL NotifyCurWnd(UINT uNotifyCode)
 {
   if (m_curwnd)
@@ -813,7 +822,7 @@ static INT_PTR CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
         if (tr.chrg.cpMax-tr.chrg.cpMin < COUNTOF(ps_tmpbuf)) {
           SendMessage(hwLicense,EM_GETTEXTRANGE,0,(LPARAM)&tr);
           SetCursor(LoadCursor(0, IDC_WAIT));
-          ShellExecute(hwndDlg,_T("open"),tr.lpstrText,NULL,NULL,SW_SHOWNORMAL);
+          LaunchURL(hwndDlg,tr.lpstrText,SW_SHOWNORMAL);
           SetCursor(LoadCursor(0, IDC_ARROW));
         }
       }
