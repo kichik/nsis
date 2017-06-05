@@ -546,7 +546,11 @@ void RenameViaWininit(const TCHAR* prevName, const TCHAR* newName)
 
   int spn;   // length of the short path name in TCHARs.
 
-  mystrcpy(tmpbuf, _T("NUL"));
+  // Optimized mystrcpy(tmpbuf, _T("NUL")):
+  if (sizeof(TCHAR) == 1)
+    *(UINT32*)tmpbuf = ((UINT32)'N' <<  0) | ((UINT32)'U' <<  8) | ((UINT32)'L' << 16) | ((UINT32)'\0' << 24);
+  else
+    *(UINT64*)tmpbuf = ((UINT64)'N' <<  0) | ((UINT64)'U' << 16) | ((UINT64)'L' << 32) | ((UINT64)'\0' << 48);
 
   if (newName) {
     // create the file if it's not already there to prevent GetShortPathName from failing
