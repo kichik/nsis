@@ -8,9 +8,11 @@ Released on ? ?th, 2017
 
 \S2{} Major Changes
 
-\b Fixed RegTool Win9x bug
+\b Fixed NSIS3 RegTool Win9x bug
 
-\b Unsupported SetRegView mode fails all registry operations
+\b Added the HKCR32, HKCR64, HKCU32, HKCU64, HKLM32 and HKLM64 root keys
+
+\b Unsupported SetRegView mode now fails all registry operations
 
 \b Added \R{execshellwait}{ExecShellWait}
 

@@ -971,7 +971,7 @@ void ParamsIn(SystemProc *proc)
 #endif
         case PAT_CALLBACK:
             // Generate new or use old callback
-            if (lstrlen(realbuf) > 0)
+            if (realbuf[0])
                 par->Value = (INT_PTR) CreateCallback((SystemProc*) StrToIntPtr(realbuf));
             break;
         case PAT_REGMEM:
