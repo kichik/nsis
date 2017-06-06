@@ -4,7 +4,7 @@
  * This file is a part of LZMA compression module for NSIS.
  * 
  * Original LZMA SDK Copyright (C) 1999-2006 Igor Pavlov
- * Modifications Copyright (C) 2003-2006 Amir Szekely <kichik@netvision.net.il>
+ * Modifications Copyright (C) 2003-2017 Amir Szekely <kichik@netvision.net.il>
  * 
  * Licensed under the Common Public License version 1.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1220,8 +1220,8 @@ HRESULT CEncoder::GetOptimumFast(UInt32 position, UInt32 &backRes, UInt32 &lenRe
   if (repLens[repMaxIndex] >= 2)
   {
     if (repLens[repMaxIndex] + 1 >= lenMain || 
-        repLens[repMaxIndex] + 2 >= lenMain && (backMain > (1 << 9)) ||
-        repLens[repMaxIndex] + 3 >= lenMain && (backMain > (1 << 15)))
+        (repLens[repMaxIndex] + 2 >= lenMain && (backMain > (1 <<  9))) ||
+        (repLens[repMaxIndex] + 3 >= lenMain && (backMain > (1 << 15))) )
     {
       backRes = repMaxIndex;
       lenRes = repLens[repMaxIndex];
@@ -1235,10 +1235,10 @@ HRESULT CEncoder::GetOptimumFast(UInt32 position, UInt32 &backRes, UInt32 &lenRe
     if (_longestMatchLength >= 2)
     {
       UInt32 newDistance = matchDistances[_numDistancePairs - 1];
-      if (_longestMatchLength >= lenMain && newDistance < backMain || 
-          _longestMatchLength == lenMain + 1 && !ChangePair(backMain, newDistance) ||
-          _longestMatchLength > lenMain + 1 ||
-          _longestMatchLength + 1 >= lenMain && lenMain >= 3 && ChangePair(newDistance, backMain))
+      if ((_longestMatchLength >= lenMain && newDistance < backMain) || 
+          (_longestMatchLength == lenMain + 1 && !ChangePair(backMain, newDistance)) ||
+          (_longestMatchLength > lenMain + 1) ||
+          (_longestMatchLength + 1 >= lenMain && lenMain >= 3 && ChangePair(newDistance, backMain)))
       {
         _longestMatchWasFound = true;
         backRes = UInt32(-1);

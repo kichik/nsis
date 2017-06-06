@@ -34,7 +34,9 @@ class CMatchFinder:
   UInt32 _matchMaxLen;
   CIndex *_hash;
   CIndex *_son;
+#ifdef HASH_ARRAY_2
   UInt32 _hashMask;
+#endif
   UInt32 _cutValue;
   UInt32 _hashSizeSum;
 

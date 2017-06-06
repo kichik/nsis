@@ -3,7 +3,7 @@
  * 
  * This file is a part of NSIS.
  * 
- * Copyright (C) 1999-2015 Nullsoft and Contributors
+ * Copyright (C) 1999-2017 Nullsoft and Contributors
  * 
  * Licensed under the zlib/libpng license (the "License");
  * you may not use this file except in compliance with the License.
@@ -234,7 +234,7 @@ const char * NSISCALL loadHeaders(int cl_flags)
 
 #ifndef NSIS_CONFIG_CRC_ANAL
         left = h.length_of_all_following_data - 4;
-        // end crc checking at crc :) this means you can tack shit on the end and it'll still work.
+        // end crc checking at crc :) this means you can tack stuff on the end and it'll still work.
 #else //!NSIS_CONFIG_CRC_ANAL
         left -= 4;
 #endif//NSIS_CONFIG_CRC_ANAL

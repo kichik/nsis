@@ -199,6 +199,7 @@ def TestSubversionEOL():
 		svn_files = filter(versioned, files)
 		svn_files = filter(lambda x: x not in exceptions, svn_files)
 
+		bad_eol = False
 		for f in svn_files:
 			ext = splitext(f)[1]
 			if ext in eoldict.keys():
@@ -207,7 +208,10 @@ def TestSubversionEOL():
 				if not s or s[0] != eol:
 					print '*** %s has bad eol-style' % f
 					log('*** %s has bad eol-style' % f)
-					exit()
+					bad_eol = True
+					
+		if bad_eol:
+				exit()
 
 def CreateMenuImage():
 	print 'creating images...'

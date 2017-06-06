@@ -4,7 +4,7 @@ MultiUser.nsh
 
 Installer configuration for multi-user Windows environments
 
-Copyright 2008-2015 Joost Verburg
+Copyright 2008-2017 Joost Verburg
 
 */
 
@@ -91,7 +91,11 @@ Install modes
     !if "${UNINSTALLER_PREFIX}" != UN
       ;Set default installation location for installer
       !ifdef MULTIUSER_INSTALLMODE_INSTDIR
-        StrCpy $INSTDIR "$PROGRAMFILES\${MULTIUSER_INSTALLMODE_INSTDIR}"
+        !ifdef MULTIUSER_USE_PROGRAMFILES64
+          StrCpy $INSTDIR "$PROGRAMFILES64\${MULTIUSER_INSTALLMODE_INSTDIR}"
+        !else
+          StrCpy $INSTDIR "$PROGRAMFILES\${MULTIUSER_INSTALLMODE_INSTDIR}"
+        !endif
       !endif
     !endif
   
@@ -429,7 +433,7 @@ Modern UI 2 page
     nsDialogs::Create 1018
     Pop $MultiUser.InstallModePage
 
-    ${NSD_CreateLabel} 0u 0u 300u 20u "${MULTIUSER_INSTALLMODEPAGE_TEXT_TOP}"
+    ${NSD_CreateLabel} 0u 0u 300u 40u "${MULTIUSER_INSTALLMODEPAGE_TEXT_TOP}"
     Pop $MultiUser.InstallModePage.Text
 
     ${NSD_CreateRadioButton} 20u 50u 280u 10u "${MULTIUSER_INSTALLMODEPAGE_TEXT_ALLUSERS}"

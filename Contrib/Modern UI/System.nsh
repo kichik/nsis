@@ -1,11 +1,11 @@
 /*
 
 NSIS Modern User Interface - Version 1.8
-Copyright 2002-2015 Joost Verburg
+Copyright 2002-2017 Joost Verburg
 
 */
 
-!echo "NSIS Modern User Interface version 1.8 - Copyright 2002-2015 Joost Verburg"
+!echo "NSIS Modern User Interface version 1.8 - Copyright 2002-2017 Joost Verburg"
 
 ;--------------------------------
 
@@ -1104,6 +1104,10 @@ Var MUI_TEMP2
 
     UninstallText "${MUI_UNCONFIRMPAGE_TEXT_TOP}" "${MUI_UNCONFIRMPAGE_TEXT_LOCATION}"
 
+    !ifdef MUI_UNCONFIRMPAGE_VARIABLE
+      DirVar "${MUI_UNCONFIRMPAGE_VARIABLE}"
+    !endif
+
   PageExEnd
 
   !insertmacro MUI_UNFUNCTION_CONFIRMPAGE un.mui.ConfirmPre_${MUI_UNIQUEID} un.mui.ConfirmShow_${MUI_UNIQUEID} un.mui.ConfirmLeave_${MUI_UNIQUEID}
@@ -2172,7 +2176,8 @@ Var MUI_TEMP2
 
 !macro MUI_UNGETLANGUAGE
 
-  !verbose pop
+  !verbose push
+  !verbose ${MUI_VERBOSE}
 
   !ifdef MUI_LANGDLL_REGISTRY_ROOT & MUI_LANGDLL_REGISTRY_KEY & MUI_LANGDLL_REGISTRY_VALUENAME
 

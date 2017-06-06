@@ -3,7 +3,7 @@
  * 
  * This file is a part of NSIS.
  * 
- * Copyright (C) 1999-2015 Nullsoft and Contributors
+ * Copyright (C) 1999-2017 Nullsoft and Contributors
  * 
  * Licensed under the zlib/libpng license (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,7 +56,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_CRCCHECK,"CRCCheck",1,0,"(on|force|off)",TP_GLOBAL},
 {TOK_CREATEDIR,"CreateDirectory",1,0,"directory_name",TP_CODE},
 {TOK_CREATEFONT,"CreateFont",2,5,"$(user_var: handle output) face_name [height wieght /ITALIC /UNDERLINE /STRIKE]",TP_CODE},
-{TOK_CREATESHORTCUT,"CreateShortCut",2,6,"shortcut_name.lnk shortcut_target [parameters [icon_file [icon index [showmode [hotkey [comment]]]]]]\n    showmode=(SW_SHOWNORMAL|SW_SHOWMAXIMIZED|SW_SHOWMINIMIZED)\n    hotkey=(ALT|CONTROL|EXT|SHIFT)|(F1-F24|A-Z)",TP_CODE},
+{TOK_CREATESHORTCUT,"CreateShortcut",2,6,"shortcut_name.lnk shortcut_target [parameters [icon_file [icon index [showmode [hotkey [comment]]]]]]\n    showmode=(SW_SHOWNORMAL|SW_SHOWMAXIMIZED|SW_SHOWMINIMIZED)\n    hotkey=(ALT|CONTROL|EXT|SHIFT)|(F1-F24|A-Z)",TP_CODE},
 {TOK_DBOPTIMIZE,"SetDatablockOptimize",1,0,"(off|on)",TP_ALL},
 {TOK_DELETEINISEC,"DeleteINISec",2,0,"ini_file section_name",TP_CODE},
 {TOK_DELETEINISTR,"DeleteINIStr",3,0,"ini_file section_name entry_name",TP_CODE},
@@ -72,7 +72,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_GETINSTDIRERROR,"GetInstDirError",1,0,"$(user_var: error output)",TP_CODE},
 {TOK_ROOTDIRINST,"AllowRootDirInstall",1,0,"(true|false)",TP_GLOBAL},
 {TOK_CHECKBITMAP,"CheckBitmap",1,0,"local_bitmap.bmp",TP_GLOBAL},
-{TOK_ENABLEWINDOW,"EnableWindow",2,0,"hwnd (1|0)",TP_CODE},
+{TOK_ENABLEWINDOW,"EnableWindow",2,0,"hwnd state(1|0)",TP_CODE},
 {TOK_ENUMREGKEY,"EnumRegKey",4,0,"$(user_var: output) rootkey subkey index\n    root_key=(HKCR|HKLM|HKCU|HKU|HKCC|HKDD|HKPD|SHCTX)",TP_CODE},
 {TOK_ENUMREGVAL,"EnumRegValue",4,0,"$(user_var: output) rootkey subkey index\n    root_key=(HKCR|HKLM|HKCU|HKU|HKCC|HKDD|HKPD|SHCTX)",TP_CODE},
 {TOK_EXCH,"Exch",0,1,"[$(user_var)] | [stack_item_index]",TP_CODE},

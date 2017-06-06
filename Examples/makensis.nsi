@@ -299,10 +299,10 @@ ${MementoSection} "Desktop Shortcut" SecShortcuts
   SectionIn 1 2
   SetOutPath $INSTDIR
 !ifndef NO_STARTMENUSHORTCUTS
-  CreateShortCut "$SMPROGRAMS\NSIS.lnk" "$INSTDIR\NSIS.exe"
+  CreateShortcut "$SMPROGRAMS\NSIS.lnk" "$INSTDIR\NSIS.exe"
 !endif
 
-  CreateShortCut "$DESKTOP\NSIS.lnk" "$INSTDIR\NSIS.exe"
+  CreateShortcut "$DESKTOP\NSIS.lnk" "$INSTDIR\NSIS.exe"
 
 ${MementoSectionEnd}
 

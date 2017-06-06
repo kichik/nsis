@@ -12,6 +12,8 @@ Delete file (which can be a file or wildcard, but should be specified with a ful
 
 \c Delete $INSTDIR\somefile.dat
 
+\\<b\\>Warning:\\</b\\> The /REBOOTOK switch requires administrator rights on Windows NT and later.
+
 \S2{exec} Exec
 
 \c command
@@ -108,6 +110,8 @@ If no absolute path is specified the current folder will be used. The current fo
 
 \c Rename $INSTDIR\file.ext $INSTDIR\file.dat
 
+\\<b\\>Warning:\\</b\\> The /REBOOTOK switch requires administrator rights on Windows NT and later.
+
 \S2{reservefile} ReserveFile
 
 \c [/nonfatal] [/r] [/x file|wildcard [...]] file [file...]
@@ -138,13 +142,15 @@ The next example will succeed in deleting the directory.
 \c SetOutPath $TEMP
 \c RMDir $TEMP\dir
 
-\\<b\\>Warning:\\</b\\> using \e{RMDir /r $INSTDIR} in the uninstaller is not safe. Though it is unlikely, the user might select to install to the Program Files folder and so this command will wipe out the entire Program Files folder, including other programs that has nothing to do with the uninstaller. The user can also put other files but the program's files and would expect them to get deleted with the program. Solutions are \W{http://nsis.sourceforge.net/Uninstall_only_installed_files}{available} for easily uninstalling only files which were installed by the installer.
+\\<b\\>Warning:\\</b\\> Using \e{RMDir /r $INSTDIR} in the uninstaller is not safe. Though it is unlikely, the user might select to install to the root of the Program Files folder and this command would wipe out the entire Program Files folder, including all other installed programs! The user can also put other files in the installation folder and wouldn't expect them to get deleted along with the program. Solutions are \W{http://nsis.sourceforge.net/Uninstall_only_installed_files}{available} for easily uninstalling only files which were installed by the installer.
+
+\\<b\\>Warning:\\</b\\> The /REBOOTOK switch requires administrator rights on Windows NT and later.
 
 \S2{setoutpath} SetOutPath
 
 \c outpath
 
-Sets the output path ($OUTDIR) and creates it (recursively if necessary), if it does not exist. Must be a full pathname, usually is just $INSTDIR (you can specify $INSTDIR if you are lazy with a single "-").
+Sets the output path ($OUTDIR) and creates it (recursively if necessary), if it does not exist. Must be a full pathname, usually is just $INSTDIR (you can specify $INSTDIR with a single "-" if you are lazy).
 
 \c SetOutPath $INSTDIR
 \c File program.exe

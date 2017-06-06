@@ -3,7 +3,7 @@
  * 
  * This file is a part of NSIS.
  * 
- * Copyright (C) 1999-2015 Nullsoft and Contributors
+ * Copyright (C) 1999-2017 Nullsoft and Contributors
  * 
  * Licensed under the zlib/libpng license (the "License");
  * you may not use this file except in compliance with the License.
@@ -922,7 +922,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
   entry ent={0,};
   switch (which_token)
   {
-    // macro shit
+    // macro stuff
     ///////////////////////////////////////////////////////////////////////////////
     case TOK_P_MACRO:
       {
@@ -1241,7 +1241,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
     return PS_OK;
 
-    // page ordering shit
+    // page ordering stuff
     ///////////////////////////////////////////////////////////////////////////////
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
     case TOK_UNINSTPAGE:
@@ -3397,7 +3397,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
 
 
-    // section/function shit
+    // section/function stuff
     ///////////////////////////////////////////////////////////////////////////////
 
     case TOK_SECTION:
@@ -3803,14 +3803,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.which=EW_SETFLAG;
       ent.offsets[0]=FLAG_OFFSET(alter_reg_view);
       // "64" results in setting the flag to 1 which alters the view
-      int k=line.gettoken_enum(1,"32\0" "64\0lastused\0");
+      int k=line.gettoken_enum(1,"32\0" "64\0default\0lastused\0");
       if (k<0) PRINTHELP()
-      if (k == 0) // 32
-        ent.offsets[1]=add_intstring(0);
-      else if (k == 1) // 64
-        ent.offsets[1]=add_intstring(KEY_WOW64_64KEY);
-      else if (k == 2) // last used
-        ent.offsets[2]=1;
+      if (k == 0) ent.offsets[1]=add_intstring(0); // 32
+      else if (k == 1) ent.offsets[1]=add_intstring(KEY_WOW64_64KEY); // 64
+      else if (k == 2) ent.offsets[1]=add_intstring(0); //default
+      else if (k == 3) ent.offsets[2]=1; // last used
       SCRIPT_MSG("SetRegView: %s\n",line.gettoken_str(1));
     }
     return add_entry(&ent);
@@ -4132,7 +4130,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       {
         if (line.getnumtokens() > 5 && *line.gettoken_str(5))
         {
-          ERROR_MSG("CreateShortCut: cannot interpret icon index\n");
+          ERROR_MSG("CreateShortcut: cannot interpret icon index\n");
           PRINTHELP()
         }
         ent.offsets[4]=0;
@@ -4143,7 +4141,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         int a=line.gettoken_enum(6,"SW_SHOWNORMAL\0SW_SHOWMAXIMIZED\0SW_SHOWMINIMIZED\0");
         if (a < 0)
         {
-          ERROR_MSG("CreateShortCut: unknown show mode \"%s\"\n",line.gettoken_str(6));
+          ERROR_MSG("CreateShortcut: unknown show mode \"%s\"\n",line.gettoken_str(6));
           PRINTHELP()
         }
         ent.offsets[4]|=tab[a]<<8;
@@ -4173,7 +4171,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             c=VK_F1-1+atoi(s+1);
             if (atoi(s+1) < 1 || atoi(s+1) > 24)
             {
-              warning_fl("CreateShortCut: F-key \"%s\" out of range",s);
+              warning_fl("CreateShortcut: F-key \"%s\" out of range",s);
             }
           }
           else if (((s[0] >= 'A' && s[0] <= 'Z') || (s[0] >= '0' && s[0] <= '9')) && !s[1])
@@ -4181,12 +4179,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           else
           {
             c=s[0];
-            warning_fl("CreateShortCut: unrecognized hotkey \"%s\"",s);
+            warning_fl("CreateShortcut: unrecognized hotkey \"%s\"",s);
           }
           ent.offsets[4] |= (c) << 16;
         }
       }
-      SCRIPT_MSG("CreateShortCut: \"%s\"->\"%s\" %s icon:%s,%d, showmode=0x%X, hotkey=0x%X, comment=%s\n",
+      SCRIPT_MSG("CreateShortcut: \"%s\"->\"%s\" %s icon:%s,%d, showmode=0x%X, hotkey=0x%X, comment=%s\n",
         line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),
         line.gettoken_str(4),ent.offsets[4]&0xff,(ent.offsets[4]>>8)&0xff,ent.offsets[4]>>16,line.gettoken_str(8));
 
@@ -4228,7 +4226,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           a++;
         }
 
-        if (!strncmp(line.gettoken_str(a),"/TIMEOUT=",9))
+        if (!strnicmp(line.gettoken_str(a),"/TIMEOUT=",9))
         {
           ent.offsets[5]|=atoi(line.gettoken_str(a)+9)<<2;
           SCRIPT_MSG(" (timeout=%d)",ent.offsets[5]>>2);
@@ -4699,12 +4697,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_SETFILEATTRIBUTES:
       {
         #define MBD(x) {x,#x},
-        struct
-        {
-          int id;
-          const char *str;
-        } list[]=
-        {
+        struct { int id; const char *str; } list[]={
           MBD(FILE_ATTRIBUTE_NORMAL)
           MBD(FILE_ATTRIBUTE_ARCHIVE)
           MBD(FILE_ATTRIBUTE_HIDDEN)
@@ -4712,7 +4705,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           MBD(FILE_ATTRIBUTE_READONLY)
           MBD(FILE_ATTRIBUTE_SYSTEM)
           MBD(FILE_ATTRIBUTE_TEMPORARY)
-          {FILE_ATTRIBUTE_NORMAL,"NORMAL"},
+          {FILE_ATTRIBUTE_NORMAL,"NORMAL"}, // Short alias
           {FILE_ATTRIBUTE_ARCHIVE,"ARCHIVE"},
           {FILE_ATTRIBUTE_HIDDEN,"HIDDEN"},
           {FILE_ATTRIBUTE_OFFLINE,"OFFLINE"},
@@ -4785,17 +4778,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       int k=line.gettoken_enum(1,"both\0textonly\0listonly\0none\0lastused\0");
       if (k<0) PRINTHELP()
       if (k == 4)
-      {
-        ent.offsets[2]=1;
-      }
+        ent.offsets[2]=1; // lastused
       else
-      {
-        // both     0
-        // textonly 2
-        // listonly 4
-        // none     6
-        ent.offsets[1]=add_intstring(k*2);
-      }
+        ent.offsets[1]=add_intstring(k*2); // both=0, textonly=2, listonly=4, none=6
       SCRIPT_MSG("SetDetailsPrint: %s\n",line.gettoken_str(1));
     }
     return add_entry(&ent);
@@ -5202,13 +5187,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         int a=1;
         if (which_token==TOK_DELETEREGKEY)
         {
-          ent.offsets[4]=1;
+          ent.offsets[4]=(1);
           char *s=line.gettoken_str(a);
           if (s[0] == '/')
           {
             if (stricmp(s,"/ifempty")) PRINTHELP()
             a++;
-            ent.offsets[4]=3;
+            ent.offsets[4]=(1|2);
           }
           if (line.gettoken_str(a+2)[0]) PRINTHELP()
         }
@@ -5878,10 +5863,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         return ret;
       }
 
-      // DLL name on the user machine
       char tempDLL[NSIS_MAX_STRLEN];
       string dllName = get_file_name(dllPath);
-      wsprintf(tempDLL, "$PLUGINSDIR\\%s", dllName.c_str());
+      wsprintf(tempDLL, "$PLUGINSDIR\\%s", dllName.c_str()); // DLL name on the end-users machine
 
       // Add the DLL to the installer
       if (data_handle == -1)

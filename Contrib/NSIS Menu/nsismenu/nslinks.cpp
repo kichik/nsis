@@ -99,11 +99,19 @@ TAG_HANDLER_END(A)
 
 
 
+#if wxCHECK_VERSION(3, 0, 0)
+TAGS_MODULE_BEGIN(Links)
+#else
 TAGS_MODULE_BEGIN(CustomLinks)
+#endif
 
     TAGS_MODULE_ADD(A)
 
+#if wxCHECK_VERSION(3, 0, 0)
+TAGS_MODULE_END(Links)
+#else
 TAGS_MODULE_END(CustomLinks)
+#endif
 
 
 #endif

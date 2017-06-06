@@ -20,7 +20,7 @@ This command will include 'file' as if it was part of the original script. Note 
 
 \c directory
 
-Adds another include directory to the include directories list. This list is searched when !include is used. This list's initial value is $\{NSISDIR\}\\Include alone.
+Adds another include directory to the include directories list. This list is searched when !include is used. This list's initial value is $\{NSISDIR\}\\Include.
 
 \c !addincludedir ..\include
 \c !include something.nsh
@@ -126,10 +126,10 @@ This command creates a temporary file. It puts its path into a define, named \e{
 \c !tempfile FILE
 \c !define /date DATE "%H:%M:%S %d %b, %Y"
 \c !system 'echo built on ${DATE} > "${FILE}"'
+\c !undef DATE
 \c File /oname=build.txt "${FILE}"
 \c !delfile "${FILE}"
 \c !undef FILE
-\c !undef DATE
 
 \S1{warning} !warning
 

@@ -3,7 +3,7 @@
  * 
  * This file is a part of NSIS.
  * 
- * Copyright (C) 1999-2015 Nullsoft and Contributors
+ * Copyright (C) 1999-2017 Nullsoft and Contributors
  * 
  * Licensed under the zlib/libpng license (the "License");
  * you may not use this file except in compliance with the License.
@@ -143,14 +143,14 @@ char *CharPrev(const char *s, const char *p) {
       break;
     s = n;
   }
-  return (char *) s;
+  return const_cast<char*>(s);
 }
 
 char *CharNext(const char *s) {
   int l = 0;
   if (s && *s)
     l = max(1, mblen(s, MB_CUR_MAX));
-  return (char *) s + l;
+  return const_cast<char*>(s + l);
 }
 
 char *CharNextExA(WORD codepage, const char *s, int flags) {
@@ -167,7 +167,7 @@ char *CharNextExA(WORD codepage, const char *s, int flags) {
 
   setlocale(LC_CTYPE, "");
 
-  return (char *) np;
+  return const_cast<char*>(np);
 }
 
 int wsprintf(char *s, const char *format, ...) {
@@ -290,14 +290,14 @@ char *my_convert(const char *path)
   char *converted_path = strdup(path);
   size_t len = strlen(path);
 
-  if(!converted_path)
+  if (!converted_path)
   {
     MY_ERROR_MSG("Error: could not allocate memory in my_convert()\n");
     return (char*) path; /* dirty */
   }
 
   /* Replace drive letter X: by /X */
-  if(len >= 2)
+  if (len >= 2)
   {
     if (path[1] == ':')
     {
@@ -436,7 +436,7 @@ string get_executable_path(const char* argv0) {
     char* path = NULL;
     size_t len = 100;
     int nchars;
-    while(1){
+    while(1) {
       pathtmp = (char*)realloc(path,len+1);
       if( pathtmp == NULL ){
         free(path);
@@ -444,11 +444,11 @@ string get_executable_path(const char* argv0) {
       }
       path = pathtmp;
       nchars = readlink("/proc/self/exe", path, len);
-      if( nchars == -1 ){
+      if( nchars == -1 ) {
         free(path);
         return get_full_path(argv0);
       }
-      if( nchars < (int) len ){
+      if( nchars < (int) len ) {
         path[nchars] = '\0';
         string result(path);
         free(path);

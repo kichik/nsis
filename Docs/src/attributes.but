@@ -10,7 +10,7 @@ The commands below all adjust attributes of the installer. These attributes cont
 
 \c (left|right|top|bottom) (width|height) [padding]
 
-Adds a branding image on the top, bottom, left, or right of the installer. Its size will be set according to the width/height specified, the installer width/height and the installer font. The final size will not always be what you requested; have a look at the output of the command for the actual size. Because this depends on the installers font, you should use SetFont before AddBrandingImage. The default padding value is 2.
+Adds a branding image on the top, bottom, left, or right of the installer. Its size will be set according to the width/height specified, the installer width/height and the installers font. The final size will not always be what you requested; have a look at the output of the command for the actual size. Because this depends on the installers font, you should use SetFont before AddBrandingImage. The default padding value is 2.
 
 AddBrandingImage only adds a placeholder for an image. To set the image itself at runtime, use \R{setbrandingimage}{SetBrandingImage}.
 
@@ -48,7 +48,7 @@ Specifies whether or not to use a gradient background window. If 'off', the inst
 
 \c /TRIM(LEFT|RIGHT|CENTER) text
 
-Sets the text that is shown (by default it is 'Nullsoft Install System vX.XX') at the bottom of the install window. Setting this to an empty string ("") uses the default; to set the string to blank, use " " (a space). If it doesn't matter to you, leave it the default so that everybody can know why the installer didn't suck. heh. Use /TRIMLEFT, /TRIMRIGHT or /TRIMCENTER to trim down the size of the control to the size of the string.
+Sets the text that is shown at the bottom of the install window (by default it is 'Nullsoft Install System vX.XX'). Setting this to an empty string ("") uses the default; to set the string to blank, use " " (a space). If it doesn't matter to you, leave it the default so that everybody can know why the installer didn't suck :). Use /TRIMLEFT, /TRIMRIGHT or /TRIMCENTER to trim down the size of the control to the size of the string.
 
 Accepts variables. If variables are used, they must be initialized on \R{oninit}{.onInit}.
 
@@ -56,7 +56,7 @@ Accepts variables. If variables are used, they must be initialized on \R{oninit}
 
 \c caption
 
-When used outside a \R{pageex}{PageEx} block: Sets the text for the titlebar of the installer. By default it is 'Name Setup', where Name is specified with the \R{aname}{Name} instruction. You can however override it with 'MyApp Installer' or whatever. If you specify an empty string (""), the default will be used (you can specify " " to simulate a empty string).
+When used outside a \R{pageex}{PageEx} block: Sets the text for the titlebar of the installer. By default it is '$(^Name) Setup', where Name is specified by the \R{aname}{Name} instruction. You can however override it with 'MyApp Installer' or whatever. If you specify an empty string (""), the default will be used (you can specify " " to simulate a empty string).
 
 When used inside a \R{pageex}{PageEx} block: Sets the subcaption of the current page.
 
@@ -66,7 +66,7 @@ Accepts variables. If variables are used, they must be initialized on \R{oninit}
 
 \c dialog ui_file.exe
 
-Replaces dialog (\e{IDD_LICENSE}, \e{IDD_DIR}, \e{IDD_SELCOM}, \e{IDD_INST}, \e{IDD_INSTFILES}, \e{IDD_UNINST} or \e{IDD_VERIFY}) by a dialog with the same resource ID in ui_file.exe. You can also specify 'all' as the dialog if you wish to replace all 7 of the dialogs at once from the same UI file. For some example UIs look at Contrib\\UIs under your NSIS directory.
+Replaces dialog (\e{IDD_LICENSE}, \e{IDD_DIR}, \e{IDD_SELCOM}, \e{IDD_INST}, \e{IDD_INSTFILES}, \e{IDD_UNINST} or \e{IDD_VERIFY}) with a dialog from ui_file.exe with the same resource ID. You can also specify 'all' as the dialog if you wish to replace all 7 of the dialogs at once from the same UI file. For some example UIs look at Contrib\\UIs under your NSIS directory.
 
 \b \e{IDD_LICENSE} must contain \e{IDC_EDIT1} (RICHEDIT control).
 
@@ -215,7 +215,7 @@ Sets the default installation directory. See the \R{variables}{variables section
 
 \c root_key subkey key_name
 
-This attribute tells the installer to check a string in the registry, and use it for the install dir if that string is valid. If this attribute is present, it will override the InstallDir attribute if the registry key is valid, otherwise it will fall back to the InstallDir value. When querying the registry, this command will automatically remove any quotes. If the string ends in ".exe", it will automatically remove the filename component of the string (i.e. if the string is "C:\\program files\\poop\\poop.exe", it will know to use "C:\\program files\\poop"). For more advanced install directory configuration, set $INSTDIR in .onInit.
+This attribute tells the installer to check a string in the registry and use it as the install dir if that string is valid. If this attribute is present, it will override the \R{ainstalldir}{InstallDir} attribute if the registry key is valid, otherwise it will fall back to the \R{ainstalldir}{InstallDir} value. When querying the registry, this command will automatically remove any quotes. If the string ends in ".exe", it will automatically remove the filename component of the string (i.e. if the string is "C:\\Program Files\\Foo\\app.exe", it will know to use "C:\\Program Files\\Foo"). For more advanced install directory configuration, set $INSTDIR in .onInit.
 
 Language strings and variables cannot be used with InstallDirRegKey.
 

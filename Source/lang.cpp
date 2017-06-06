@@ -3,7 +3,7 @@
  * 
  * This file is a part of NSIS.
  * 
- * Copyright (C) 1999-2015 Nullsoft and Contributors
+ * Copyright (C) 1999-2017 Nullsoft and Contributors
  * 
  * Licensed under the zlib/libpng license (the "License");
  * you may not use this file except in compliance with the License.
@@ -959,7 +959,7 @@ LanguageTable * CEXEBuild::LoadLangFile(char *filename) {
   }
 
   // Get code page
-  nlf->m_uCodePage = CP_ACP;
+  nlf->m_uCodePage = 1252; // Bug #1180: Default language file codepage must be ASCII compatible
   buf[0] = SkipComments(f);
   fgets(buf+1, NSIS_MAX_STRLEN, f);
   if (buf[0] != '-' || buf[1] != 0) {

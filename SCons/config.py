@@ -7,7 +7,7 @@ cfg = Variables()
 cfg.Add(
   (
     'NSIS_MAX_STRLEN',
-    'defines the maximum string length for internal variables and stack entries. 1024 should be plenty, but if you are doing crazy registry shit, you might want to bump it up. Generally it adds about 16-32x the memory, so setting this to 4096 from 1024 will add around 64k of memory usage (not really a big deal, but not usually needed).',
+    'defines the maximum string length for internal variables and stack entries. 1024 should be plenty, but if you are doing crazy registry stuff, you might want to bump it up. Generally it adds about 16-32x the memory, so setting this to 4096 from 1024 will add around 64k of memory usage (not really a big deal, but not usually needed).',
     1024
   )
 )
@@ -242,7 +242,7 @@ cfg.Add(
 cfg.Add(
   BoolVariable(
     'NSIS_SUPPORT_CREATESHORTCUT',
-    'enables support for CreateShortCut.',
+    'enables support for CreateShortcut.',
     'yes'
   )
 )

@@ -120,3 +120,11 @@
 !ifdef MUI_UNABORTWARNING
   ${LangFileString} MUI_UNTEXT_ABORTWARNING "Â· √‰  „ √ﬂœ „‰ √‰ﬂ «·Œ—ÊÃ „‰ „“Ì· $(^Name)ø"
 !endif
+
+!ifdef MULTIUSER_INSTALLMODEPAGE
+  ${LangFileString} MULTIUSER_TEXT_INSTALLMODE_TITLE "«Œ — «·„” Œœ„Ì‰"
+  ${LangFileString} MULTIUSER_TEXT_INSTALLMODE_SUBTITLE "Õœœ ·„‰ „‰ «·„” Œœ„Ì‰  —Ìœ  —ﬂÌ» $(^NameDA)."
+  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_TOP "Õœœ ·„‰  —Ìœ  —ﬂÌ» $(^NameDA) ·‰›”ﬂ ›ﬁÿ √„ ·Ã„Ì⁄ „” Œœ„Ì «·Õ«”». $(^ClickNext)"
+  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_ALLUSERS " —ﬂÌ» ·Ã„Ì⁄ „” Œœ„Ì Â–« «·Õ«”»"
+  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_CURRENTUSER " —ﬂÌ» ·Ì ›ﬁÿ"
+!endif

@@ -116,13 +116,13 @@ Afrikaans - \e{Friedel Wolff}
 
 Arabic - \e{asdfuae, Rami Kattan}
 
-Basque - \e{I\u00F1aki San Vicente}
+Basque - \e{I\uF1{n}aki San Vicente}
 
 Belarusian - \e{Sitnikov Vjacheslav}
 
 Bosnian - \e{Salih CAVKIC}
 
-Breton - \e{Korvigello\uF9 An Drouizig}
+Breton - \e{Korvigello\uF9{u} An Drouizig}
 
 Bulgarian - \e{Asparouh Kalyandjiev, Plamen Penkov}
 
@@ -158,7 +158,7 @@ Hungarian - \e{Soft-Trans Bt., Jozsef Tamas Herczeg, Lajos Molnar (Orfanik)}
 
 Icelandic - \e{Gretar Orri Kristinsson}
 
-Indonesian - \e{ariel825010106}
+Indonesian - \e{\#{Ariel Silooy}ariel825010106}
 
 Italian - \e{Orfanik, sanface, Alessandro Staltari, Lorenzo Bevilacqua}
 
@@ -180,9 +180,9 @@ Mongolian - \e{Bayarsaikhan Enkhtaivan}
 
 Norwegian - \e{Jonas Christoffer Lindstrom, Jan Ivar Beddari}
 
-Norwegian Nynorsk - \e{Vebj\u00F8rn Sture}
+Norwegian Nynorsk - \e{Vebj\u00F8{o}rn Sture}
 
-Polish - \e{Piotr Murawski, Rafa³ Lampe, cube, SYSTEMsoft Group}
+Polish - \e{Piotr Murawski, Rafa\u0142{l} Lampe, cube, SYSTEMsoft Group}
 
 Portuguese - \e{DragonSoull, Dre', Ramon}
 
@@ -196,11 +196,11 @@ Serbian - \e{Srdjan Obucina}
 
 Serbian Latin - \e{Srdjan Obucina, Vladan Obradovic}
 
-Slovak - \e{trace, Kypec, Mari\u00e1n Hikan\u00edk}
+Slovak - \e{trace, Kypec, Mari\u00e1{a}n Hikan\u00ed{i}k}
 
 Slovenian - \e{Janez Dolinar, Martin Sebotnjak}
 
-Spanish - \e{MoNKi, Lobo Lunar, Darwin Rodrigo Toledo C\u00e1ceres}
+Spanish - \e{MoNKi, Lobo Lunar, Darwin Rodrigo Toledo C\u00e1{a}ceres}
 
 Swedish - \e{Peter Gustafsson, Magnus Bonnevier, Rickard Angbratt}
 
@@ -214,7 +214,7 @@ Ukrainian - \e{Yuri Holubow, Nash-Soft}
 
 Uzbek - \e{Emil Garipov (emil.garipov@gmail.com)}
 
-Valencian - \e{Bernardo Arlandis Ma\uF1\uF3}
+Valencian - \e{Bernardo Arlandis Ma\uF1{n}\uF3{o}}
 
 Welsh - \e{Rhoslyn Prys, Meddal.com}
 

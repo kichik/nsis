@@ -3,7 +3,7 @@
  * 
  * This file is a part of NSIS.
  * 
- * Copyright (C) 1999-2015 Nullsoft and Contributors
+ * Copyright (C) 1999-2017 Nullsoft and Contributors
  * 
  * Licensed under the zlib/libpng license (the "License");
  * you may not use this file except in compliance with the License.
@@ -1033,7 +1033,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       if (!validpathspec(buf2))
         GetStringFromParm(0x21);
 
-      log_printf8("CreateShortCut: out: \"%s\", in: \"%s %s\", icon: %s,%d, sw=%d, hk=%d",
+      log_printf8("CreateShortcut: out: \"%s\", in: \"%s %s\", icon: %s,%d, sw=%d, hk=%d",
         buf1,buf2,buf0,buf3,parm4&0xff,(parm4&0xff00)>>8,parm4>>16);
 
       hres = CoCreateInstance(&CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER,
@@ -1192,7 +1192,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         {
           char *buf2=GetStringFromParm(0x22);
           log_printf3("DeleteRegKey: \"%s\\%s\"",rkn,buf2);
-          res = myRegDeleteKeyEx(GetRegRootKey(parm1),buf2,parm4&2);
+          res = myRegDeleteKeyEx(GetRegRootKey(parm1),buf2,parm4>>1); // Shifting away the TOK_DELETEREGKEY bit, onlyifempty is now the bottom bit (">> 1" is 1 byte smaller than "& 2")
         }
         if (res != ERROR_SUCCESS)
           exec_error++;
@@ -1297,16 +1297,14 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         HKEY key=myRegOpenKey(KEY_READ);
         char *p=var0;
         int b=GetIntFromParm(3);
-        p[0]=0;
+        p[0]=0; // "" on error. This assumes that RegEnumKey and RegEnumValue do not party on our buffer! 
         if (key)
         {
           DWORD d=NSIS_MAX_STRLEN-1;
-          if (parm4) RegEnumKey(key,b,p,d);
+          if (parm4)
+            RegEnumKey(key,b,p,d);
           else if (RegEnumValue(key,b,p,&d,NULL,NULL,NULL,NULL)!=ERROR_SUCCESS)
-          {
             exec_error++;
-            break;
-          }
           p[NSIS_MAX_STRLEN-1]=0;
           RegCloseKey(key);
         }

@@ -3,7 +3,7 @@
  * 
  * This file is a part of NSIS.
  * 
- * Copyright (C) 1999-2015 Nullsoft and Contributors
+ * Copyright (C) 1999-2017 Nullsoft and Contributors
  * 
  * Licensed under the zlib/libpng license (the "License");
  * you may not use this file except in compliance with the License.
@@ -555,7 +555,7 @@ void NSISCALL myRegGetStr(HKEY root, const char *sub, const char *name, char *ou
   {
     DWORD l = NSIS_MAX_STRLEN;
     DWORD t;
-    if (RegQueryValueEx(hKey,name,NULL,&t,out,&l ) != ERROR_SUCCESS || (t != REG_SZ && t != REG_EXPAND_SZ)) *out=0;
+    if (RegQueryValueEx(hKey,name,NULL,&t,(BYTE*)out,&l ) != ERROR_SUCCESS || (t != REG_SZ && t != REG_EXPAND_SZ)) *out=0;
     out[NSIS_MAX_STRLEN-1]=0;
     RegCloseKey(hKey);
   }
@@ -706,12 +706,12 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
             GetNSISString(out, fldrs[3]);
           x = 0;
         }
-        else if (fldrs[1] == CSIDL_SYSTEM)
+        else if (fldrs[1] == CSIDL_SYSTEM) // Does not work on 95, 98 nor NT4.
         {
           GetSystemDirectory(out, NSIS_MAX_STRLEN);
           x = 0;
         }
-        else if (fldrs[1] == CSIDL_WINDOWS)
+        else if (fldrs[1] == CSIDL_WINDOWS) // Does not work on 95, 98 nor NT4.
         {
           GetWindowsDirectory(out, NSIS_MAX_STRLEN);
           x = 0;

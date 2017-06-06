@@ -15,9 +15,9 @@ void __declspec(dllexport) myFunction(HWND hwndParent, int string_size,
 
 
   // note if you want parameters from the stack, pop them off in order.
-  // i.e. if you are called via exdll::myFunction file.dat poop.dat
+  // i.e. if you are called via exdll::myFunction file.dat read.txt
   // calling popstring() the first time would give you file.dat,
-  // and the second time would give you poop.dat. 
+  // and the second time would give you read.txt. 
   // you should empty the stack of your parameters, and ONLY your
   // parameters.
 

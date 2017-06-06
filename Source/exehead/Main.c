@@ -3,7 +3,7 @@
  * 
  * This file is a part of NSIS.
  * 
- * Copyright (C) 1999-2015 Nullsoft and Contributors
+ * Copyright (C) 1999-2017 Nullsoft and Contributors
  * 
  * Licensed under the zlib/libpng license (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,8 +29,6 @@
 
 #ifndef LOAD_LIBRARY_SEARCH_USER_DIRS
 #define LOAD_LIBRARY_SEARCH_USER_DIRS 0x00000400
-#endif
-#ifndef LOAD_LIBRARY_SEARCH_SYSTEM32
 #define LOAD_LIBRARY_SEARCH_SYSTEM32 0x00000800
 #endif
 #ifndef SHTDN_REASON_FLAG_PLANNED
@@ -119,6 +117,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpszCmdParam,
         "CRYPTBASE\0" // Win7 without KB2533623: OleInitialize ... RPCRT4.UuidCreate ... RPCRT4.GenerateRandomNumber
         "OLEACC\0" // Vista: SHFileOperation ... SHELL32.CProgressDialogUI::_Setup ... SHELL32.GetRoleTextW
         "CLBCATQ\0" // XP.SP2&SP3: SHAutoComplete ... OLE32!InitializeCatalogIfNecessary ... OLE32!CComCatalog::TryToLoadCLB
+#ifndef NSIS_SUPPORT_GETDLLVERSION
+        "VERSION\0"
+#endif
       ;
       const char *dll;
       for (dll = preload; dll[0]; dll += lstrlenA(dll) + 1)

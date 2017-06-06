@@ -14,7 +14,9 @@ o-----------------------------------------------------------------------------o
 !ifndef STRFUNC_VERBOSITY
   !define STRFUNC_VERBOSITY 3
 !endif
-!define _STRFUNC_VERBOSITY ${STRFUNC_VERBOSITY}
+!ifndef _STRFUNC_VERBOSITY
+  !define _STRFUNC_VERBOSITY ${STRFUNC_VERBOSITY}
+!endif
 !undef STRFUNC_VERBOSITY
 !verbose ${_STRFUNC_VERBOSITY}
 

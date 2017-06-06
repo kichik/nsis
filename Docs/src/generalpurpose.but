@@ -33,7 +33,7 @@ You should always specify an absolute path.
 
 \c CreateDirectory $INSTDIR\some\directory
 
-\S2{createshortcut} CreateShortCut
+\S2{createshortcut} CreateShortcut
 
 \c link.lnk target.file [parameters [icon.file [icon_index_number [start_options [keyboard_shortcut [description]]]]]]
 
@@ -45,7 +45,7 @@ description should be the description of the shortcut, or comment as it is calle
 The error flag is set if the shortcut cannot be created (i.e. either of the paths (link or target) does not exist, or some other error).
 
 \c CreateDirectory "$SMPROGRAMS\My Company"
-\c CreateShortCut "$SMPROGRAMS\My Company\My Program.lnk" "$INSTDIR\My Program.exe" \
+\c CreateShortcut "$SMPROGRAMS\My Company\My Program.lnk" "$INSTDIR\My Program.exe" \
 \c   "some command line parameters" "$INSTDIR\My Program.exe" 2 SW_SHOWNORMAL \
 \c   ALT|CONTROL|SHIFT|F5 "a description"
 

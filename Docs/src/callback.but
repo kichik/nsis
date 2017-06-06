@@ -1,6 +1,6 @@
 \S1{callbacks} Callback Functions
 
-You can create callback functions which have special names, that will be called by the installer at certain points in the install. Below is a list of currently available callbacks:
+You can create callback functions (which have special names), that will be called by the installer at certain points in the install. Below is a list of available callbacks:
 
 \S2{instcallbacks} Install Callbacks
 

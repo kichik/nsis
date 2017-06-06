@@ -1,5 +1,14 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.52} 2.52
+
+Released on ???? ??, 20??
+
+\S1{v2.52-cl} Changelog
+
+\S2{} Minor Changes
+
+\b Backported some bugfixes from NSIS 3
 
 \H{v2.51} 2.51
 
@@ -2814,7 +2823,7 @@ Released on December 6th, 2002
 
 \b !ifdef and friends can now be used in macros
 
-\b SendMessage can send strings (put STR: before a param) and supports timeouts
+\b SendMessage can send strings (put \cw{STR:} before a param) and supports timeouts
 
 \b Right mouse button "Copy to clipboard" context menu for the Details window
 

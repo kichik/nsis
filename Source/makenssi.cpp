@@ -3,7 +3,7 @@
  * 
  * This file is a part of NSIS.
  * 
- * Copyright (C) 1999-2015 Nullsoft and Contributors
+ * Copyright (C) 1999-2017 Nullsoft and Contributors
  * 
  * Licensed under the zlib/libpng license (the "License");
  * you may not use this file except in compliance with the License.
@@ -92,7 +92,7 @@ static void init_signals()
 
 static void print_logo()
 {
-  fprintf(g_output,"MakeNSIS %s - Copyright 1995-2015 Contributors\n"
+  fprintf(g_output,"MakeNSIS %s - Copyright 1995-2017 Contributors\n"
          "See the file COPYING for license details.\n"
          "Credits can be found in the Users Manual.\n\n", NSIS_VERSION);
   fflush(g_output);
@@ -100,7 +100,7 @@ static void print_logo()
 
 static void print_license()
 {
-  fprintf(g_output,"Copyright (C) 1999-2015 Nullsoft and Contributors\n\n"
+  fprintf(g_output,"Copyright (C) 1999-2017 Nullsoft and Contributors\n\n"
        "This license applies to everything in the NSIS package, except where otherwise\n"
        "noted.\n\n"
        "This software is provided 'as-is', without any express or implied warranty.\n"
@@ -138,7 +138,7 @@ static void print_usage()
          "    " OPT_STR "NOCONFIG disables inclusion of <path to makensis.exe>" PLATFORM_PATH_SEPARATOR_STR "nsisconf.nsh\n"
          "    " OPT_STR "NOCD disabled the current directory change to that of the .nsi file\n"
          "    " OPT_STR "Ddefine[=value] defines the symbol \"define\" for the script [to value]\n"
-         "    " OPT_STR "Xscriptcmd executes scriptcmd in script (i.e. \"" OPT_STR "XOutFile poop.exe\")\n"
+         "    " OPT_STR "Xscriptcmd executes scriptcmd in script (i.e. \"" OPT_STR "XOutFile inst.exe\")\n"
          "   parameters are processed by order (" OPT_STR "Ddef ins.nsi != ins.nsi " OPT_STR "Ddef)\n"
          "   for script file name, you can use - to read from the standard input\n"
 #ifdef _WIN32	
@@ -252,6 +252,8 @@ int main(int argc, char **argv)
 #ifdef NSIS_HPUX_ALLOW_UNALIGNED_DATA_ACCESS
   allow_unaligned_data_access();
 #endif
+  assert(sizeof(UINT_PTR) == sizeof(void*));
+  assert('a' + 25 == 'z' && '0' < 'A' && 'A' < 'a'); // ASCII, do you speak it?
 
   CEXEBuild build;
   int do_cd=1;

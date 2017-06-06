@@ -3,7 +3,7 @@
  * 
  * This file is a part of NSIS.
  * 
- * Copyright (C) 1999-2015 Nullsoft, Jeff Doozan and Contributors
+ * Copyright (C) 1999-2017 Nullsoft, Jeff Doozan and Contributors
  * 
  * Licensed under the zlib/libpng license (the "License");
  * you may not use this file except in compliance with the License.
@@ -229,7 +229,7 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
 
   // detect default language
   // more information at:
-  //   http://msdn.microsoft.com/library/default.asp?url=/library/en-us/intl/nls_0xrn.asp
+  //   https://web.archive.org/web/20060618155426/http://msdn.microsoft.com/library/en-us/intl/nls_0xrn.asp
 
   LANGID (WINAPI *GUDUIL)();
 
@@ -1737,7 +1737,7 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
         // 1st pass - determine clipboard memory required.
         item.iSubItem   = 0;
         item.pszText    = g_tmp;
-        item.cchTextMax = sizeof(g_tmp) - 1;
+        item.cchTextMax = sizeof(g_tmp);
         i = count;
         while (i--)
           // Add 2 for the CR/LF combination that must follow every line.

@@ -119,3 +119,11 @@
 !ifdef MUI_UNABORTWARNING
   ${LangFileString} MUI_UNTEXT_ABORTWARNING "Ziur zaude $(^Name)-ren ezabaketa laguntzailetik irten nahi duzula?"
 !endif
+
+!ifdef MULTIUSER_INSTALLMODEPAGE
+  ${LangFileString} MULTIUSER_TEXT_INSTALLMODE_TITLE "Hautatu Erabiltzaileak"
+  ${LangFileString} MULTIUSER_TEXT_INSTALLMODE_SUBTITLE "Hautatu zein erabiltzailerentzat ezartzea nahi duzun $(^NameDA)."
+  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_TOP "Hautatu norentzat ezartzea nahi duzun $(^NameDA) zuretzat bakarrik edo ordenagailu honetako erabiltzaile guztientzat. $(^ClickNext)"
+  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_ALLUSERS "Ezarri ordenagailu hau erabiltzen duen edonorentzat"
+  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_CURRENTUSER "Ezarri niretzat bakarrik"
+!endif

@@ -5,6 +5,9 @@
 
 /*
 
+version 0.35.1 (by Anders Kjersem)
+* Ported "Aborts if the zip file is encrypted" from NSIS 3
+
 version 0.35
 * drag & drop support
 
@@ -67,6 +70,14 @@ char tempzip_path[1024];
 
 
 int made;
+
+static bool IsEncrypted(unz_file_info&zfi)
+{
+  const unsigned short gpf_encrypted = (1<< 0); // 2.0.0+
+  //nst unsigned short gpf_encstrong = (1<< 6); // 5.0.0+ APPNOTE says that bit 0 MUST be set if bit 6 is set
+  const unsigned short gpf_enccntdir = (1<<13); // 6.2.0+ Central Directory Encryption
+  return (zfi.flag & (gpf_encrypted|gpf_enccntdir)) != 0;
+}
 
 static void doRMDir(char *buf)
 {
@@ -181,6 +192,14 @@ int tempzip_make(HWND hwndDlg, char *fn)
     unz_file_info info;
 
     unzGetCurrentFileInfo(f,&info,filename,sizeof(filename),NULL,0,NULL,0);
+
+    if (IsEncrypted(info))
+    {
+      if (f) unzClose(f);
+      g_extracting = 0;
+      MessageBox(hwndDlg,("Encrypted ZIP files are not supported!"),g_errcaption,MB_OK|MB_ICONSTOP);
+      return 1;
+    }
 
     // was zip created on MS-DOS/Windows?
     if ((info.version & 0xFF00) == 0)
