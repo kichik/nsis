@@ -42,9 +42,14 @@ TCHAR * NSISCALL mystrcat(TCHAR *out, const TCHAR *concat);
 TCHAR * NSISCALL mystrstr(TCHAR *a, TCHAR *b);
 
 
+#ifndef KEY_CREATE_LINK
+#define KEY_CREATE_LINK 0x0020
+#endif
+#define KEY_FORCEVIEW KEY_CREATE_LINK // Our private flag used by RegKey* to indicate that we want it to handle HKLM[32|64] style root keys. Cannot be set if the HKEY is a real handle!
 #define KEY_ALTERVIEW SYNCHRONIZE // Our private flag used by RegKey* to indicate that we want it to apply g_exec_flags.alter_reg_view. (MSDN:"Registry keys do not support the SYNCHRONIZE standard access right")
-#define KEY_FROMSCRIPT (KEY_ALTERVIEW) // Use this flag for registry operations from a .nsi script
-#define NSIS_REGSAM_PRIVATEMASK (KEY_FROMSCRIPT|KEY_ALTERVIEW)
+#define KEY_FROMSCRIPT (KEY_FORCEVIEW|KEY_ALTERVIEW) // Use this flag for registry operations from a .nsi script
+#define NSIS_REGSAM_PRIVATEMASK (KEY_FROMSCRIPT|KEY_FORCEVIEW|KEY_ALTERVIEW)
+HKEY NSISCALL GetRegKeyAndSAM(HKEY hKey, REGSAM*pRS);
 LONG NSISCALL RegKeyOpen(HKEY hBase, LPCTSTR SubKey, REGSAM RS, HKEY*phKey);
 LONG NSISCALL RegKeyCreate(HKEY hBase, LPCTSTR SubKey, REGSAM RS, HKEY*phKey);
 void NSISCALL myRegGetStr(HKEY root, const TCHAR *sub, const TCHAR *name, TCHAR *out, UINT altview);

@@ -655,11 +655,25 @@ void NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
 #endif
 
 #define GetAltViewREGSAM() ( sizeof(void*) > 4 ? KEY_WOW64_32KEY : KEY_WOW64_64KEY )
-static HKEY GetRegKeyAndSAM(HKEY hKey, REGSAM*pRS)
+HKEY NSISCALL GetRegKeyAndSAM(HKEY hKey, REGSAM*pRS)
 {
-  REGSAM sam = *pRS, otherview = GetAltViewREGSAM();
-  REGSAM incompatsam = SystemSupportsAltRegView() ? 0 : otherview;
-  if (sam & KEY_ALTERVIEW) sam |= g_exec_flags.alter_reg_view;
+  const REGSAM samviewmask = (KEY_WOW64_32KEY|KEY_WOW64_64KEY);
+  const REGSAM incompatsamview = SystemSupportsAltRegView() ? 0 : GetAltViewREGSAM();
+  REGSAM sam = *pRS, incompatsam = incompatsamview;
+#ifdef C_ASSERT
+  {C_ASSERT(REGROOTVIEWTOSAMVIEW(REGROOTVIEW32|REGROOTVIEW64) == (KEY_WOW64_32KEY|KEY_WOW64_64KEY));}
+#endif
+  if ((sam & KEY_FORCEVIEW) && IsRegRootkeyForcedView(hKey))
+  {
+    REGSAM keysamview = REGROOTVIEWTOSAMVIEW(hKey);
+    if (keysamview == samviewmask) keysamview = (g_exec_flags.alter_reg_view & ~incompatsamview); // HKxxANY tries to honor SetRegView
+    sam &= ~samviewmask, sam |= (keysamview & ~(sizeof(void*) > 4 ? 0 : KEY_WOW64_32KEY)); // HKxx32 has the *_32KEY bit set but WinNT4&2000 cannot handle any KEY_WOW64_xxKEY flags.
+    hKey = (HKEY) ( (UINT_PTR) hKey & ~(REGROOTVIEW32|REGROOTVIEW64) );
+  }
+  else if (sam & KEY_ALTERVIEW)
+  {
+    sam |= g_exec_flags.alter_reg_view; // We don't mask away the incompatsamview bits because the operation is supposed to fail if the view is not supported.
+  }
   *pRS = sam & ~(NSIS_REGSAM_PRIVATEMASK); // Filter away internal flags
   return (incompatsam & sam) ? NULL : hKey; // Fail if the requested view is not supported
 }
@@ -678,8 +692,8 @@ void NSISCALL myRegGetStr(HKEY root, const TCHAR *sub, const TCHAR *name, TCHAR 
 {
   HKEY hKey;
   DWORD cb = NSIS_MAX_STRLEN*sizeof(TCHAR), rt, ec;
-  REGSAM viewsam = altview ? GetAltViewREGSAM() : 0;
-  if ((ec = RegKeyOpen(root, sub, KEY_READ|viewsam, &hKey)) == ERROR_SUCCESS)
+  REGSAM samview = altview ? GetAltViewREGSAM() : 0;
+  if ((ec = RegKeyOpen(root, sub, KEY_READ|samview, &hKey)) == ERROR_SUCCESS)
   {
     ec = RegQueryValueEx(hKey, name, NULL, &rt, (LPBYTE)out, &cb);
     RegCloseKey(hKey);
@@ -1013,6 +1027,19 @@ const TCHAR * _RegKeyHandleToName(HKEY hKey)
   if (hKey == HKEY_PERFORMANCE_DATA) return _T("HKEY_PERFORMANCE_DATA");
   if (hKey == HKEY_CURRENT_CONFIG) return _T("HKEY_CURRENT_CONFIG");
   if (hKey == HKEY_DYN_DATA) return _T("HKEY_DYN_DATA");
+  if (hKey == HKSHCTX) return _T("HKSHCTX");
+  if (hKey == HKSHCTX32) return _T("HKSHCTX32");
+  if (hKey == HKSHCTX64) return _T("HKSHCTX64");
+  if (hKey == HKCR32) return _T("HKCR32");
+  if (hKey == HKCR64) return _T("HKCR64");
+  if (hKey == HKCU32) return _T("HKCU32");
+  if (hKey == HKCU64) return _T("HKCU64");
+  if (hKey == HKLM32) return _T("HKLM32");
+  if (hKey == HKLM64) return _T("HKLM64");
+  if (hKey == HKSHCTXANY) return _T("HKSHCTXANY");
+  if (hKey == HKCRANY) return _T("HKCRANY");
+  if (hKey == HKCUANY) return _T("HKCUANY");
+  if (hKey == HKLMANY) return _T("HKLMANY");
   return _T("HK??");
 }
 

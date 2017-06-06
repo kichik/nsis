@@ -158,8 +158,8 @@ static TCHAR * NSISCALL GetStringFromParm(int id_)
 #ifdef NSIS_SUPPORT_REGISTRYFUNCTIONS
 static HKEY NSISCALL GetRegRootKey(int RootKey)
 {
-  if (RootKey != (int) HKSHCTX) return (HKEY) (UINT_PTR) RootKey;
-  return (HKEY) ((UINT_PTR) HKEY_CURRENT_USER + g_exec_flags.all_user_var); // SHCTX: HKEY_CURRENT_USER + 1 == HKEY_LOCAL_MACHINE
+  if (RootKey < 0) return (HKEY) (UINT_PTR) RootKey;
+  return (HKEY) ((UINT_PTR) HKEY_CURRENT_USER + RootKey + g_exec_flags.all_user_var); // SHCTX[32|64|ANY]: HKEY_CURRENT_USER + 1 == HKEY_LOCAL_MACHINE
 }
 static HKEY NSISCALL RegOpenScriptKey(REGSAM RS)
 {
@@ -175,20 +175,20 @@ static HKEY NSISCALL RegCreateScriptKey(int RootKey, LPCTSTR SubKey, REGSAM RS)
 // RegDeleteKey on Win9x will delete a tree of keys, WinNT will only delete a key without subkeys.
 // RegDeleteKeyEx on 32-bit Windows accepts but ignores the KEY_WOW64_xxKEY flags and always uses the 
 // one and only native key. Our RegKeyOpen will intentionally fail if a incompatible WoW64 flag is used.
-#define RegDeleteScriptKey(RootKey, SubKey, Flags) RegDeleteScriptKeyWorker(GetRegRootKey(RootKey), (SubKey), (Flags))
-static LONG NSISCALL RegDeleteScriptKeyWorker(HKEY hThisKey, LPCTSTR SubKey, UINT Flags)
+#define DRTF_ONLYIFNOSUBKEYS DELREGKEY_ONLYIFNOSUBKEYS
+static LONG NSISCALL DeleteRegTree(HKEY hThisKey, LPCTSTR SubKey, REGSAM SamviewAndFlags)
 {
   HKEY hKey;
-  UINT onlyifempty = Flags;
-  REGSAM viewsam = g_exec_flags.alter_reg_view; // Not using KEY_ALTERVIEW here because viewsam is also passed to RegDeleteKeyEx.
-  LONG retval = RegKeyOpen(hThisKey, SubKey, KEY_ENUMERATE_SUB_KEYS|viewsam, &hKey);
+  UINT onlyifempty = SamviewAndFlags & DRTF_ONLYIFNOSUBKEYS;
+  REGSAM samview = SamviewAndFlags & (KEY_WOW64_32KEY|KEY_WOW64_64KEY);
+  LONG retval = RegKeyOpen(hThisKey, SubKey, KEY_ENUMERATE_SUB_KEYS|samview, &hKey);
   if (retval == ERROR_SUCCESS)
   {
     TCHAR child[MAX_PATH+1]; // NB - don't change this to static (recursive function)
     while (RegEnumKey(hKey, 0, child, COUNTOF(child)) == ERROR_SUCCESS)
     {
       if (onlyifempty) return (RegCloseKey(hKey), !ERROR_SUCCESS);
-      if ((retval = RegDeleteScriptKeyWorker(hKey, child, Flags)) != ERROR_SUCCESS) break;
+      if ((retval = DeleteRegTree(hKey, child, SamviewAndFlags)) != ERROR_SUCCESS) break;
     }
     RegCloseKey(hKey);
     {
@@ -200,12 +200,19 @@ static LONG NSISCALL RegDeleteScriptKeyWorker(HKEY hThisKey, LPCTSTR SubKey, UIN
         myGetProcAddress(MGA_RegDeleteKeyEx);
       #endif
       if (RDKE)
-        retval = RDKE(hThisKey, SubKey, viewsam, 0);
+        retval = RDKE(hThisKey, SubKey, samview, 0);
       else
         retval = RegDeleteKey(hThisKey, SubKey);
     }
   }
   return retval;
+}
+static LONG NSISCALL RegDeleteScriptKey(int RootKey, LPCTSTR SubKey, REGSAM SamviewAndFlags)
+{
+  HKEY hKey;
+  SamviewAndFlags |= KEY_FROMSCRIPT;
+  hKey = GetRegKeyAndSAM(GetRegRootKey(RootKey), &SamviewAndFlags);
+  return hKey ? DeleteRegTree(hKey, SubKey, SamviewAndFlags) : ERROR_INVALID_HANDLE; // ERROR_CANTOPEN?
 }
 #endif//NSIS_SUPPORT_REGISTRYFUNCTIONS
 
@@ -1219,7 +1226,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         {
           TCHAR *buf2=GetStringFromParm(0x22);
           log_printf3(_T("DeleteRegKey: \"%s\\%s\""),rkn,buf2);
-          res = RegDeleteScriptKey(rootkey,buf2,parm4 >> 1); // Shifting away the TOK_DELETEREGKEY bit, onlyifempty is now the bottom bit (">> 1" is 1 byte smaller than "& 2")
+          res = RegDeleteScriptKey(rootkey,buf2,parm4 >> DELREGKEYFLAGSSHIFT); // SHR is 1 byte smaller than AND
         }
         if (res != ERROR_SUCCESS)
           exec_error++;

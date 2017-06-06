@@ -47,6 +47,7 @@ using namespace std;
 #endif
 
 #define REGROOTKEYTOINT(hk) ( (INT) (((INT_PTR)(hk)) & 0xffffffff) ) // Masking off non-existing top bits to make GCC happy
+#define REGROOTKEYTOINTEX(hk, removeviewbits) ( REGROOTKEYTOINT(hk) & ~(removeviewbits ? (REGROOTVIEW32|REGROOTVIEW64) : 0) )
 
 #ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
 static bool LookupWinSysColorId(const TCHAR*Str, UINT&Clr)
@@ -849,11 +850,11 @@ int CEXEBuild::process_jump(LineParser &line, int wt, int *offs)
 static HKEY ParseRegRootKey(LineParser &line, int tok)
 {
   static const TCHAR *rootkeys[2] = {
-    _T("HKCR\0HKLM\0HKCU\0HKU\0HKCC\0HKDD\0HKPD\0SHCTX\0"),
+    _T("HKCR\0HKLM\0HKCU\0HKU\0HKCC\0HKDD\0HKPD\0SHCTX\0HKCR32\0HKCR64\0HKCU32\0HKCU64\0HKLM32\0HKLM64\0HKCRANY\0HKCUANY\0HKLMANY\0SHCTX32\0SHCTX64\0SHCTXANY\0"),
     _T("HKEY_CLASSES_ROOT\0HKEY_LOCAL_MACHINE\0HKEY_CURRENT_USER\0HKEY_USERS\0HKEY_CURRENT_CONFIG\0HKEY_DYN_DATA\0HKEY_PERFORMANCE_DATA\0SHELL_CONTEXT\0")
   };
   static const HKEY rootkey_tab[] = {
-    HKEY_CLASSES_ROOT,HKEY_LOCAL_MACHINE,HKEY_CURRENT_USER,HKEY_USERS,HKEY_CURRENT_CONFIG,HKEY_DYN_DATA,HKEY_PERFORMANCE_DATA,HKSHCTX
+    HKEY_CLASSES_ROOT,HKEY_LOCAL_MACHINE,HKEY_CURRENT_USER,HKEY_USERS,HKEY_CURRENT_CONFIG,HKEY_DYN_DATA,HKEY_PERFORMANCE_DATA,HKSHCTX,HKCR32,HKCR64,HKCU32,HKCU64,HKLM32,HKLM64,HKCRANY,HKCUANY,HKLMANY,HKSHCTX32,HKSHCTX64,HKSHCTXANY
   };
   int k = line.gettoken_enum(tok, rootkeys[0]);
   if (k == -1) k = line.gettoken_enum(tok, rootkeys[1]);
@@ -1690,6 +1691,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         HKEY hRK = ParseRegRootKey(line,1);
         if (INVALIDREGROOT == hRK) PRINTHELP()
         if (HKSHCTX == hRK) PRINTHELP() // SHCTX is invalid here
+        if (IsRegRootkeyForcedView(hRK)) PRINTHELP() // 32|64 views are also invalid
         build_header.install_reg_rootkey=REGROOTKEYTOINT(hRK);
         build_header.install_reg_key_ptr = add_string(line.gettoken_str(2),0);
         if (line.gettoken_str(2)[0] == _T('\\'))
@@ -4186,24 +4188,24 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_DELETEREGVALUE:
     case TOK_DELETEREGKEY:
       {
-        int a=1, iskeyop, delkeyflag=1, onlyifemptyflag=2;
+        int a=1, iskeyop;
         if ((iskeyop = which_token == TOK_DELETEREGKEY))
         {
-          ent.offsets[4]=(delkeyflag);
           TCHAR *s=line.gettoken_str(a);
           if (s[0] == _T('/'))
           {
             if (_tcsicmp(s,_T("/ifempty"))) PRINTHELP()
-            a++, ent.offsets[4]=(delkeyflag|onlyifemptyflag);
+            a++, ent.offsets[4]|=(DELREGKEY_ONLYIFNOSUBKEYS<<DELREGKEYFLAGSSHIFT);
           }
           if (line.gettoken_str(a+2)[0]) PRINTHELP()
         }
         HKEY hRK=ParseRegRootKey(line,a);
         if (INVALIDREGROOT == hRK) PRINTHELP()
         ent.which=EW_DELREG;
-        ent.offsets[1]=REGROOTKEYTOINT(hRK);
+        ent.offsets[1]=REGROOTKEYTOINTEX(hRK, iskeyop); // DELETEREGKEY needs the REGSAM view bits in parm4 and NOT in HKEY while DELETEREGVALUE needs them in HKEY.
         ent.offsets[2]=add_string(line.gettoken_str(a+1));
         ent.offsets[3]=iskeyop ? 0 : add_string(line.gettoken_str(a+2));
+        ent.offsets[4]|=iskeyop ? DELREG_KEY|(REGROOTVIEWTOSAMVIEW(hRK)<<DELREGKEYFLAGSSHIFT) : DELREG_VALUE;
         if (line.gettoken_str(a+1)[0] == _T('\\'))
           warning_fl(DW_PARSE_REGPATHPREFIX, _T("%") NPRIs _T(": registry path name begins with \'\\\', may cause problems"),line.gettoken_str(0));
         if (iskeyop)
