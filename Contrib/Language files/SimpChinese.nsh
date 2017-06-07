@@ -11,7 +11,7 @@
 
 !ifdef MUI_UNWELCOMEPAGE
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "欢迎使用 $(^NameDA) 解除安装向导"
-  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "这个向导将全程指引你 $(^NameDA) 的解除安装进程。$\r$\n$\r$\n在开始解除安装之前，确懧 $(^NameDA) 并未运行当中。$\r$\n$\r$\n$_CLICK"
+  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "这个向导将全程指引你 $(^NameDA) 的解除安装进程。$\r$\n$\r$\n在开始解除安装之前，确认 $(^NameDA) 并未运行当中。$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_LICENSEPAGE
