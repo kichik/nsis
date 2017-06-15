@@ -179,7 +179,7 @@ This constant is not available on Windows 95 unless Internet Explorer 4 with Act
 
 The local (non-roaming) application data directory.
 
-This constant is available on Windows 2000 and above.
+This constant is available on Windows ME, 2000 and above.
 
 \e{$PRINTHOOD}
 
