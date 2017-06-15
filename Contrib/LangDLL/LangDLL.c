@@ -4,11 +4,11 @@
 
 // JF> updated usage
 // call like this:
-// LangDLL:LangDialog "Window Title" "Window subtext" <number of languages>[F] language_text language_id ... [font_size font_face]
+// LangDLL:LangDialog "Window Title" "Window subtext" <number of languages|"A">[C][F] language_text language_id [codepage] ... [font_size font_face]
 // ex:
-//  LangDLL:LangDialog "Language Selection" "Choose a language" 2 French 1036 English 1033
+//  LangDLL:LangDialog "Language Selection" "Choose a language" "2" French 1036 English 1033
 // or (the F after the 2 means we're supplying font information)
-//  LangDLL:LangDialog "Language Selection" "Choose a language" 2F French 1036 English 1033 12 Garamond
+//  LangDLL:LangDialog "Language Selection" "Choose a language" "2F" French 1036 English 1033 12 Garamond
 //
 // Unicode support added by Jim Park -- 07/27/2007
 
@@ -32,6 +32,26 @@ struct lang {
   TCHAR *id;
   UINT cp;
 } *langs;
+
+#ifndef UNICODE
+static UINT AllowLang(struct lang*pL)
+{
+  UINT acp = GetACP(), lcp = pL->cp, allow = lcp == acp;
+  /*
+  ** Workaround for bug #1185:
+  ** English and German can be displayed in cp1250
+  */
+  if (acp == 1250 && lcp == 1252)
+  {
+    const UINT lid = myatou(pL->id);
+    if (lid == 1033 // English
+     || lid == 1031 // German
+    )
+      ++allow;
+  }
+  return allow;
+}
+#endif
 
 INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -194,10 +214,10 @@ void NSIS_DECLSPEC_DLLEXPORT LangDialog(HWND hwndParent, int string_size,
       }
 
       // If Unicode, show everything.
-#ifdef _UNICODE
+#ifdef UNICODE
       visible_langs_num++;
 #else
-      if (!docp || langs[visible_langs_num].cp == GetACP() || langs[visible_langs_num].cp == 0)
+      if (!docp || AllowLang(&langs[visible_langs_num]) || langs[visible_langs_num].cp == 0)
       {
         visible_langs_num++;
       }
