@@ -187,7 +187,7 @@ Same as \R{intcmp}{IntCmp}, but treats the values as unsigned integers.
 
 \S2{messagebox} MessageBox
 
-\c mb_option_list messagebox_text [/SD return] [return_check jumpto] [return_check_2 jumpto_2]
+\c mb_option_list messagebox_text [/SD return] [return_check jumpto [return_check_2 jumpto_2]]
 
 Displays a \R{messagebox}{MessageBox} containing the text "messagebox_text". mb_option_list must be one or more of the following, delimited by |s (e.g. MB_YESNO|MB_ICONSTOP).
 

@@ -128,7 +128,7 @@ Soubor nelze otevřít pro zápis: \r\n\t"$0"\r\nKlikněte na tlačítko Opakova
 # ^CopyFailed
 Kopírování se nezdařilo.
 # ^CopyTo
-"Zkopírovat do "
+"Kopírování do "
 # ^Registering
 "Registrace: "
 # ^Unregistering
