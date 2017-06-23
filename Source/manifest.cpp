@@ -49,6 +49,7 @@ static const struct { const TCHAR *name, *guidstr; } g_soslmap[] = {
 
 bool SupportedOSList::addall()
 {
+  m_isdefaultlist = false;
   for (UINT i = 0; i < COUNTOF(g_soslmap); ++i)
     if (!append(g_soslmap[i].name))
       return false;
