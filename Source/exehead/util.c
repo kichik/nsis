@@ -845,7 +845,7 @@ TCHAR * NSISCALL GetNSISString(TCHAR *outbuf, int strtab)
         */
         BOOL use_shfolder =
           // Use shfolder if not on 95/98
-          !((ver & 0x80000000) && (LOWORD(ver) != 0x5A04)) ||
+          !((ver & 0x80000000) && (LOWORD(ver) != MAKEWORD(4,90))) ||
 
           // Unless the Application Data or Documents folder is requested
           (

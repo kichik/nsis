@@ -20,6 +20,8 @@ Released on ? ?th, 2017
 
 \b Added \R{pragma}{!pragma warning} (\W{http://sf.net/p/nsis/patches/267}{patch #267})
 
+\b $LocalAppData now resolves to the ProgramData folder in the \R{setshellvarcontext}{SetShellVarContext all} context
+
 \S2{} Minor Changes
 
 \b Variables used in Caption can now be set in .onGuiInit (\W{http://sf.net/p/nsis/feature-requests/539}{RFE #539})
