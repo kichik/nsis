@@ -363,7 +363,7 @@ CEXEBuild::CEXEBuild(signed char pponly) :
   m_ShellConstants.add(_T("NETHOOD"), CSIDL_NETHOOD, CSIDL_NETHOOD);
   m_ShellConstants.add(_T("FONTS"), CSIDL_FONTS, CSIDL_FONTS);
   m_ShellConstants.add(_T("TEMPLATES"), CSIDL_TEMPLATES, CSIDL_COMMON_TEMPLATES);
-  m_ShellConstants.add(_T("APPDATA"), CSIDL_APPDATA, CSIDL_COMMON_APPDATA);
+  m_ShellConstants.add(_T("APPDATA"), CSIDL_APPDATA, CSIDL_COMMON_APPDATA); // Note: There is no all-users roaming appdata folder.
   m_ShellConstants.add(_T("LOCALAPPDATA"), CSIDL_LOCAL_APPDATA, CSIDL_COMMON_APPDATA);
   m_ShellConstants.add(_T("PRINTHOOD"), CSIDL_PRINTHOOD, CSIDL_PRINTHOOD);
   //m_ShellConstants.add(_T("ALTSTARTUP"), CSIDL_ALTSTARTUP, CSIDL_COMMON_ALTSTARTUP);

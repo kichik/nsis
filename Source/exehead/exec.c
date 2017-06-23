@@ -284,7 +284,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         return ExecuteCodeSegment(v,NULL);
       }
     case EW_UPDATETEXT:
-      log_printf2(_T("detailprint: %s"),GetStringFromParm(0x00));
+      log_printf2(_T("DetailPrint: %s"),GetStringFromParm(0x00));
       update_status_text(parm0,0);
     break;
     case EW_SLEEP:
@@ -305,6 +305,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       {
         FIELDN(g_exec_flags_last_used,parm0)=FIELDN(g_exec_flags,parm0);
         FIELDN(g_exec_flags,parm0)=GetIntFromParm(1);
+        log_printf3(_T("SetFlag: %d=%d"),parm0,FIELDN(g_exec_flags,parm0));
       }
       else
       {
