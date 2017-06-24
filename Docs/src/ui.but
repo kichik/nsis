@@ -42,7 +42,7 @@ Enables or disables mouse and keyboard input to the specified window or control.
 
 \c user_var(hwnd output) windowclass [windowtitle] [windowparent] [childafter]
 
-Searches for a window. Behaves like Win32's FindWindowEx(). Searches by windowclass (and/or windowtitle if specified). If windowparent or childafter are specified, the search will be restricted as such. If windowclass or windowtitle is specified as "", they will not be used for the search. If the window is not found the user variable is set to 0. To accomplish old-style \R{findwindow}{FindWindow} behavior, use \R{findwindow}{FindWindow} with \R{sendmessage}{SendMessage}.
+Searches for a window. Behaves like Win32's FindWindowEx(). Searches by windowclass (and/or windowtitle if specified). If windowparent or childafter are specified, the search will be restricted as such. If windowclass or windowtitle is specified as "", they will not be used for the search. If the window is not found the user variable is set to 0.
 
 \c FindWindow $1 "#32770" "" $HWNDPARENT # Finds the inner dialog
 \c FindWindow $2 "EDIT" "" $1 # Finds the first edit control in the inner dialog

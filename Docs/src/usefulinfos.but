@@ -10,7 +10,7 @@ Like other applications, installers made by NSIS return error levels as a result
 
 \b 2 - Installation aborted by script
 
-As of NSIS 2.01, you can set the error level to other values using \R{seterrorlevel}{SetErrorLevel}.
+You can set the error level to other values using \R{seterrorlevel}{SetErrorLevel}.
 
 Note that uninstallers copy themselves to the temporary directory and execute from there so the original uninstaller can be deleted. This means the error level the uninstaller sets is not available to the executing process, unless it simulates this copy process and executes the copied uninstaller. To simulate this process, use:
 
