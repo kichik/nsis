@@ -138,7 +138,7 @@ The displayed name of these special entries are translated on the target system,
 
 \S2{viproductversion} VIProductVersion
 
-\c [version_string_X.X.X.X]
+\c version_string_X.X.X.X
 
 Sets the Product Version in the VS_FIXEDFILEINFO version information block.
 
@@ -146,7 +146,7 @@ Sets the Product Version in the VS_FIXEDFILEINFO version information block.
 
 \S2{vifileversion} VIFileVersion
 
-\c [version_string_X.X.X.X]
+\c version_string_X.X.X.X
 
 Sets the File Version in the VS_FIXEDFILEINFO version information block (You should also set the FileVersion string with VIAddVersionKey so the information is displayed at the top of the Version Tab in the Properties of the file). If you don't provide a File Version the Product Version is used in the VS_FIXEDFILEINFO block.
 
