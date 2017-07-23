@@ -160,18 +160,22 @@ env.Append(BUILDERS = {'Halibut' : docs_builder})
 
 # fix hhc.exe reverse return value - UGLY
 old_spawn = env['SPAWN']
-def new_spawn(*args, **kw):
-	if 'hhc' in args[3]:
-		if len(args) == 5:
-			args = (args[0], args[1], args[2], args[3], {'PATH': args[4]['PATH']})
-		else:
-			kw['env'] = {}
+def env_trimming_spawn(*args, **kw):
+	# hhc.exe crashes and produces corrupt CHM files with big environment variables
+	# removing os env doesn't seem to break anything else and it's local to this doc building scons env
+	if len(args) == 5:
+		# env is passed arg (old scons versions maybe?)
+		args = (args[0], args[1], args[2], args[3], {})
+	else:
+		# env is passed as kwargs
+		kw['env'] = {}
 	result = old_spawn(*args, **kw)
+	# hhc returns 1 when it's successful, because why not...
 	for p in args[3]:
 		if 'hhc.exe' in p.lower():
 			return not result
 	return result
-env['SPAWN'] = new_spawn
+env['SPAWN'] = env_trimming_spawn
 
 # BUILD!
 docs = env.Halibut(env['NSISDOCTARGET'], ['$NSISDOCCONFIG'] + buts)
