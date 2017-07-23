@@ -868,7 +868,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #endif
 
   multiple_entries_instruction=0;
-  entry ent={};
+  entry ent={0,};
   switch (which_token)
   {
     // macro stuff

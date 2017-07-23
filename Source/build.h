@@ -165,6 +165,21 @@ namespace MakensisAPI {
 
 #define FLAG_OFFSET(flag) (FIELD_OFFSET(exec_flags_t, flag)/sizeof(int))
 
+class DiagState {
+public:
+  DiagState() : m_pStack(0) { assert(DIAGCODE_INTERNAL_LAST <= 0xffff); }
+  ~DiagState() { delete m_pStack; }
+  void Enable(DIAGCODE n) { m_Disabled.erase(static_cast<unsigned short>(n)); }
+  void Disable(DIAGCODE n) { m_Disabled.insert(static_cast<unsigned short>(n)); }
+  bool IsDisabled(DIAGCODE n) { return m_Disabled.find(static_cast<unsigned short>(n)) != m_Disabled.end(); }
+  void Push();
+  bool Pop();
+  static bool IsValidCode(unsigned int n) { return n >= DIAGCODE_INTERNAL_FIRST && n <= DIAGCODE_INTERNAL_LAST; }
+protected:
+  DiagState *m_pStack;
+  std::set<unsigned short> m_Disabled;
+};
+
 class CEXEBuild {
   public:
     CEXEBuild(signed char pponly);
@@ -396,20 +411,7 @@ class CEXEBuild {
 
     void print_warnings();
     void warninghelper(DIAGCODE dc, bool fl, const TCHAR *fmt, va_list args);
-    class DiagState {
-    public:
-      DiagState() : m_pStack(0) { assert(DIAGCODE_INTERNAL_LAST <= 0xffff); }
-      ~DiagState() { delete m_pStack; }
-      void Enable(DIAGCODE n) { m_Disabled.erase(static_cast<unsigned short>(n)); }
-      void Disable(DIAGCODE n) { m_Disabled.insert(static_cast<unsigned short>(n)); }
-      bool IsDisabled(DIAGCODE n) { return m_Disabled.find(static_cast<unsigned short>(n)) != m_Disabled.end(); }
-      void Push();
-      bool Pop();
-      static bool IsValidCode(unsigned int n) { return n >= DIAGCODE_INTERNAL_FIRST && n <= DIAGCODE_INTERNAL_LAST; }
-    protected:
-      DiagState *m_pStack;
-      std::set<unsigned short> m_Disabled;
-    } diagstate;
+    DiagState diagstate;
 
     /** Are we defining an uninstall version of the code?
      * @param un Use like a boolean to define whether in uninstall mode.

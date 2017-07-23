@@ -3451,16 +3451,16 @@ int CEXEBuild::parse_pragma(LineParser &line)
   return ret;
 }
 
-void CEXEBuild::DiagState::Push()
+void DiagState::Push()
 {
-  CEXEBuild::DiagState *p = new DiagState();
+  DiagState *p = new DiagState();
   p->m_Disabled = m_Disabled; // Copy current state
   p->m_pStack = m_pStack, m_pStack = p;
 }
-bool CEXEBuild::DiagState::Pop()
+bool DiagState::Pop()
 {
   if (!m_pStack) return false;
-  CEXEBuild::DiagState *pPop = m_pStack;
+  DiagState *pPop = m_pStack;
   m_pStack = pPop->m_pStack, pPop->m_pStack = 0;
   m_Disabled.swap(pPop->m_Disabled);
   delete pPop;
