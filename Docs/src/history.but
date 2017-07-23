@@ -2,7 +2,7 @@
 
 \H{v3.02} 3.02
 
-Released on ? ?th, 2017
+Released on July 23rd, 2017
 
 \S1{v3.02-cl} Changelog
 
@@ -12,7 +12,7 @@ Released on ? ?th, 2017
 
 \b Added the HKCR32, HKCR64, HKCU32, HKCU64, HKLM32 and HKLM64 root keys
 
-\b Unsupported SetRegView mode now fails all registry operations
+\b Unsupported \R{setregview}{SetRegView} mode now fails all registry operations
 
 \b Added \R{execshellwait}{ExecShellWait}
 
@@ -20,13 +20,13 @@ Released on ? ?th, 2017
 
 \b Added \R{pragma}{!pragma warning} (\W{http://sf.net/p/nsis/patches/267}{patch #267})
 
-\b $LocalAppData now resolves to the ProgramData folder in the \R{setshellvarcontext}{SetShellVarContext all} context
+\b \R{varconstant}{$LocalAppData} now resolves to the ProgramData folder in the \R{setshellvarcontext}{SetShellVarContext all} context
 
 \S2{} Minor Changes
 
-\b Variables used in Caption can now be set in .onGuiInit (\W{http://sf.net/p/nsis/feature-requests/539}{RFE #539})
+\b Variables used in \R{acaption}{Caption} can now be set in \R{onguiinit}{.onGUIInit} (\W{http://sf.net/p/nsis/feature-requests/539}{RFE #539})
 
-\b MultiUser now supports $ProgramFiles64 (\W{http://sf.net/p/nsis/bugs/843}{bug #843})
+\b \L{../Docs/MultiUser/Readme.html}{MultiUser} now supports \R{varconstant}{$ProgramFiles64} (\W{http://sf.net/p/nsis/bugs/843}{bug #843})
 
 \b Added support for MUI_UNCONFIRMPAGE_VARIABLE (\W{http://sf.net/p/nsis/feature-requests/511}{RFE #511}) and MUI_PAGE_CUSTOMFUNCTION_DESTROYED
 
@@ -66,7 +66,7 @@ Released on December 11th, 2016
 
 \b Updated Danish translation (\W{http://sf.net/p/nsis/bugs/1164}{bug #1164})
 
-\b Arabic, Norwegian, Portuguese, Ukrainian and Swedish MultiUser fixes (\W{http://sf.net/p/nsis/patches/278}{patch #278}, \W{http://sf.net/p/nsis/patches/279}{patch #279}, \W{http://sf.net/p/nsis/patches/274}{patch #274}, \W{http://sf.net/p/nsis/patches/275}{patch #275} & \W{http://sf.net/p/nsis/patches/277}{patch #277})
+\b Arabic, Norwegian, Portuguese, Ukrainian and Swedish \L{../Docs/MultiUser/Readme.html}{MultiUser} fixes (\W{http://sf.net/p/nsis/patches/278}{patch #278}, \W{http://sf.net/p/nsis/patches/279}{patch #279}, \W{http://sf.net/p/nsis/patches/274}{patch #274}, \W{http://sf.net/p/nsis/patches/275}{patch #275} & \W{http://sf.net/p/nsis/patches/277}{patch #277})
 
 \H{v3.0} 3.0
 
