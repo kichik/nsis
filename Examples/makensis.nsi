@@ -237,7 +237,8 @@ ${MementoSection} "NSIS Core Files (required)" SecCore
 
   SetOutPath $INSTDIR\Bin
   File ..\Bin\LibraryLocal.exe
-  File ..\Bin\RegTool.bin
+  File ..\Bin\RegTool-x86.bin
+  File /nonfatal ..\Bin\RegTool-amd64.bin
 
   CreateDirectory $INSTDIR\Plugins\x86-ansi
   CreateDirectory $INSTDIR\Plugins\x86-unicode
