@@ -1235,11 +1235,11 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     break;
     case EW_WRITEREG: // write registry value
       {
-        int rootkey=parm0, type=parm4, rtype=parm5;
-        const TCHAR *rkn UNUSED=RegKeyHandleToName((HKEY)rootkey);
         HKEY hKey;
+        int rootkey=parm0, type=parm4, rtype=parm5;
         TCHAR *buf0=GetStringFromParm(0x02);
         TCHAR *buf1=GetStringFromParm(0x11);
+        const TCHAR *rkn UNUSED=RegKeyHandleToName((HKEY)rootkey);
 
         exec_error++;
         if ((hKey = RegCreateScriptKey(rootkey, buf1, KEY_SET_VALUE)))
