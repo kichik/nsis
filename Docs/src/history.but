@@ -1,5 +1,15 @@
 \A{history} Changelog and Release Notes
 
+\H{v3.03} 3.03
+
+Released on ???? ???, 201?
+
+\S1{v3.02-cl} Changelog
+
+\S2{} Translations
+
+\b Fixed Chinese (Traditional) and Romanian translation bugs (\W{http://sf.net/p/nsis/bugs/1189}{bug #1189})
+
 \H{v3.02} 3.02
 
 Released on July 23rd, 2017
