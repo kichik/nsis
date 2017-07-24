@@ -214,14 +214,14 @@ void CEXEBuild::set_date_time_predefines()
   st.wHour = ltime->tm_hour, st.wMinute = ltime->tm_min, st.wSecond = ltime->tm_sec;
   st.wMilliseconds = 0;
   GetDateFormat(LOCALE_USER_DEFAULT, DATE_SHORTDATE, &st, NULL, datebuf, sizeof(datebuf));
-  definedlist.add(_T("__DATE__"), (TCHAR *)datebuf);
+  definedlist.add(_T("__DATE__"), datebuf);
   GetTimeFormat(LOCALE_USER_DEFAULT, 0, &st, NULL, timebuf, sizeof(timebuf));
-  definedlist.add(_T("__TIME__"), (TCHAR *)timebuf);
+  definedlist.add(_T("__TIME__"), timebuf);
 #else
   my_strftime(datebuf, sizeof(datebuf), _T("%x"), ltime);
-  definedlist.add(_T("__DATE__"), (TCHAR *)datebuf);
+  definedlist.add(_T("__DATE__"), datebuf);
   my_strftime(timebuf, sizeof(timebuf), _T("%X"), ltime);
-  definedlist.add(_T("__TIME__"), (TCHAR *)timebuf);
+  definedlist.add(_T("__TIME__"), timebuf);
 #endif
 }
 void CEXEBuild::del_date_time_predefines()
