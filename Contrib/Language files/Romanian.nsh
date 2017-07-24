@@ -20,10 +20,6 @@
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Această aplicaţie va dezinstala $(^NameDA).$\r$\n$\r$\nEste recomandat să închideţi toate aplicaţiile înainte de începerea procesului de dezinstalare. Acest lucru vă poate asigura un proces de dezinstalare fără erori sau situaţii neprevăzute.$\r$\n$\r$\n$_CLICK"
 !endif
 
-!ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
-  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Terminare"
-!endif
-
 !ifdef MUI_LICENSEPAGE
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "Contract de licenţă"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Citiţi cu atenţie termenii contractului de licenţă înainte de a instala $(^NameDA)."
@@ -108,6 +104,7 @@
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Repornesc eu mai târziu"
   ${LangFileString} MUI_TEXT_FINISH_RUN "Executare $(^NameDA)"
   ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "Afişare fişier readme (citeşte-mă)."
+  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Terminare"
 !endif
 
 !ifdef MUI_STARTMENUPAGE
