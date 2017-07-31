@@ -84,7 +84,7 @@
 
 !ifdef MUI_FINISHPAGE
   ${LangFileString} MUI_TEXT_FINISH_INFO_TITLE "即將完成安裝 $(^NameDA)"
-  ${LangFileString} MUI_TEXT_FINISH_INFO_TEXT "$已在電腦安裝 $(^NameDA) 。$\r$\n按 [完成(F)] 關閉安裝程式。"
+  ${LangFileString} MUI_TEXT_FINISH_INFO_TEXT "已在電腦安裝 $(^NameDA) 。$\r$\n按 [完成(F)] 關閉安裝程式。"
   ${LangFileString} MUI_TEXT_FINISH_INFO_REBOOT "電腦需要重新開機，才能完成安裝 $(^NameDA) 。要馬上重新開機嗎？"
 !endif
 
