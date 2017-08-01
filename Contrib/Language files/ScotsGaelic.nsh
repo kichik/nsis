@@ -82,7 +82,7 @@
 
 !ifdef MUI_FINISHPAGE
   ${LangFileString} MUI_TEXT_FINISH_INFO_TITLE "A' coileanadh an draoidh stàlaidh aig $(^NameDA)"
-  ${LangFileString} MUI_TEXT_FINISH_INFO_TEXT "Chaidh $(^NameDA) a stàladh air a' choimpiutair agad.$\r$\n$\r$\nBriog air "Crìochnaich" gus an draoidh seo a dhùnadh."
+  ${LangFileString} MUI_TEXT_FINISH_INFO_TEXT "Chaidh $(^NameDA) a stàladh air a' choimpiutair agad.$\r$\n$\r$\nBriog air $\"Crìochnaich$\" gus an draoidh seo a dhùnadh."
   ${LangFileString} MUI_TEXT_FINISH_INFO_REBOOT "Tha ath-thòiseachadh a dhìth air a' choimpiutair agad gus an stàladh aig $(^NameDA) a choileanadh. A bheil thu airson ath-thòiseachadh an-dràsta?"
 !endif
 
