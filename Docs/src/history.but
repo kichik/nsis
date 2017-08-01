@@ -2,13 +2,15 @@
 
 \H{v3.02.1} 3.02.1
 
-Released on ???? ???, 201?
+Released on July 31st, 2017
 
 \S1{v3.02.1-cl} Changelog
 
 \S2{} Translations
 
 \b Fixed Chinese (Traditional) and Romanian translation bugs (\W{http://sf.net/p/nsis/bugs/1189}{bug #1189} and \W{http://sf.net/p/nsis/bugs/1191}{bug #1191})
+
+\b Fixed Scots Gaelic MUI finish page translation
 
 \H{v3.02} 3.02
 
