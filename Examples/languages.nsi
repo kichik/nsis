@@ -3,6 +3,8 @@
 ; This is an example of a multilingual installer
 ; The user can select the language on startup
 
+!pragma warning error all
+
 ;--------------------------------
 
 OutFile languages.exe

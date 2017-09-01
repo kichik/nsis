@@ -2,6 +2,8 @@
 ;Multilingual Example Script
 ;Written by Joost Verburg
 
+!pragma warning error all
+
 ;--------------------------------
 ;Include Modern UI
 
