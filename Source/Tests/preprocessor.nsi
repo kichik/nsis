@@ -12,6 +12,8 @@ code inside comments should not be executed
 */
 # invalid preprocessor should be ignored
 !hello
+!error valid_preprocessor_syntax_must_be_ignored
+!define /foo /bar /baz and the same with invalid parameters
 !endif
 
 !ifdef d1
@@ -215,6 +217,21 @@ PageEx un.instfiles
 PageExEnd
 
 !insertmacro TEST_SCOPES "global" y n n n n
+
+# test !pragma
+!pragma warning push
+  !pragma warning disable 7000
+  !include /NONFATAL doesnt_exist_nor_can_you_see_me.nsh
+!pragma warning pop
+
+!pragma warning push
+  !pragma warning disable all
+  !include /NONFATAL doesnt_exist_nor_can_you_see_me.nsh
+  !pragma warning push
+    !pragma warning error all
+  !pragma warning pop
+  !warning "You can't see me" ; "disable all" is still in effect
+!pragma warning pop
 
 !else
 

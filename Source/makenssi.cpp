@@ -37,7 +37,7 @@
 using namespace std;
 
 NSISRT_DEFINEGLOBALS();
-bool g_dopause=false, g_warnaserror=false;
+bool g_dopause=false;
 NStreamEncoding g_outputenc;
 #ifdef _WIN32
 UINT g_wincon_orgoutcp;
@@ -307,7 +307,7 @@ static inline int makensismain(int argc, TCHAR **argv)
   NStreamEncoding inputenc, &outputenc = g_outputenc;
   int argpos=0;
   bool do_cd=true, noconfig=false;
-  bool no_logo=true;
+  bool no_logo=true, warnaserror=false;
   bool initialparsefail=false, in_files=false;
   bool oneoutputstream=false;
   signed char pponly=0;
@@ -377,7 +377,7 @@ static inline int makensismain(int argc, TCHAR **argv)
     }
     else if (!_tcsicmp(swname,_T("WX")))
     {
-      g_warnaserror = true;
+      warnaserror = true;
     }
     // This must be parsed last because it will eat other switches
     else if (S7IsChEqualI('o',swname[0]) && swname[1]) stdoutredirname=swname+1;
@@ -423,7 +423,7 @@ static inline int makensismain(int argc, TCHAR **argv)
   unsigned int files_processed=0;
   unsigned int cmds_processed=0;
 
-  CEXEBuild build(pponly);
+  CEXEBuild build(pponly, warnaserror);
   try
   {
     build.initialize(argv[0]);

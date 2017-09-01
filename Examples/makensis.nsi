@@ -1,6 +1,9 @@
 ;NSIS Setup Script
 ;--------------------------------
 
+!pragma warning error all
+!pragma warning warning 7010 ; File /NonFatal
+
 !ifdef VER_MAJOR & VER_MINOR
   !define /ifndef VER_REVISION 0
   !define /ifndef VER_BUILD 0

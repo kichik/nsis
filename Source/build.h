@@ -37,6 +37,7 @@
 
 #include "tstring.h"
 #include <set>
+#include <map>
 
 #ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
 // Added by Sunil Kamath 11 June 2003
@@ -166,23 +167,45 @@ namespace MakensisAPI {
 #define FLAG_OFFSET(flag) (FIELD_OFFSET(exec_flags_t, flag)/sizeof(int))
 
 class DiagState {
+  template<class M> struct mapped_type_helper { typedef typename M::value_type::second_type type; }; // VC6 uses referent_type and not mapped_type
+  template<class C, class K, class V> void insert_or_assign(C&c, const K&k, V val)
+  {
+    typename C::value_type item(k, val);
+    std::pair<typename C::iterator, bool> ret = c.insert(item);
+    if (!ret.second) ret.first->second = val;
+  }
+  template<class C, class K> typename mapped_type_helper<C>::type get_paired_value(const C&c, const K&k, typename mapped_type_helper<C>::type defval) const
+  {
+    typename C::const_iterator it = c.find(k);
+    return c.end() == it ? defval : it->second;
+  }
+  template<class T> int get_code_state(T t, int def) const { return get_paired_value(m_Warnings, static_cast<unsigned short>(t), def); }
 public:
-  DiagState() : m_pStack(0) { assert(DIAGCODE_INTERNAL_LAST <= 0xffff); }
+  typedef enum { wunspecified = -1, wdisabled = 0, wwarning, wenabled, werror } WARNSTATE;
+  DiagState() : m_pStack(0), m_FallbackState(get_default_state()) { assert(DIAGCODE_INTERNAL_LAST <= 0xffff); }
   ~DiagState() { delete m_pStack; }
-  void Enable(DIAGCODE n) { m_Disabled.erase(static_cast<unsigned short>(n)); }
-  void Disable(DIAGCODE n) { m_Disabled.insert(static_cast<unsigned short>(n)); }
-  bool IsDisabled(DIAGCODE n) { return m_Disabled.find(static_cast<unsigned short>(n)) != m_Disabled.end(); }
-  void Push();
-  bool Pop();
-  static bool IsValidCode(unsigned int n) { return n >= DIAGCODE_INTERNAL_FIRST && n <= DIAGCODE_INTERNAL_LAST; }
+  static WARNSTATE get_default_state(DIAGCODE n = (DIAGCODE) 0) { return wenabled; } // All warnings currently default to enabled
+  void def(DIAGCODE n) { insert_or_assign(m_Warnings, static_cast<unsigned short>(n), get_default_state(n)); }
+  void enable(DIAGCODE n) { insert_or_assign(m_Warnings, static_cast<unsigned short>(n), wenabled); }
+  void disable(DIAGCODE n) { insert_or_assign(m_Warnings, static_cast<unsigned short>(n), wdisabled); }
+  void warning(DIAGCODE n) { insert_or_assign(m_Warnings, static_cast<unsigned short>(n), wwarning); } // Always !warning
+  void error(DIAGCODE n) { insert_or_assign(m_Warnings, static_cast<unsigned short>(n), werror); } // Always !error
+  bool is_disabled(DIAGCODE n) const { return get_code_state(n, m_FallbackState) == wdisabled; }
+  bool is_error(DIAGCODE n) const { int s = get_code_state(n, m_FallbackState); return s == werror; }
+  void push();
+  bool pop();
+  void set_all(WARNSTATE wm) { m_Warnings.clear(); m_FallbackState = wm; }
+  void set_warning_as_error() { set_all(werror); }
+  static bool is_valid_code(unsigned int n) { return n >= DIAGCODE_INTERNAL_FIRST && n <= DIAGCODE_INTERNAL_LAST; }
 protected:
   DiagState *m_pStack;
-  std::set<unsigned short> m_Disabled;
+  signed char m_FallbackState; // A fallback state so we don't have to fill the m_Warnings map with values for codes that are not explicitly set by the user
+  std::map<unsigned short, signed char> m_Warnings;
 };
 
 class CEXEBuild {
   public:
-    CEXEBuild(signed char pponly);
+    CEXEBuild(signed char pponly, bool warnaserror);
     void initialize(const TCHAR *makensis_path);
     ~CEXEBuild();
 
