@@ -34,11 +34,11 @@ TCHAR g_log_file[1024];
 #endif
 #endif
 
-// *** DO NOT DECLARE MORE VARIABLES INSIDE THIS PRAGMAS ***
+// *** DO NOT DECLARE MORE VARIABLES INSIDE THESE PRAGMAS ***
 // This will produce a special section called ".ndata" (stands for nsis data)
 // this way makensis during build time, can search for this section by name
 // and change the virtual size of this section
-// which result in extra memory for extra variables without code to do allocation :)
+// which results in extra memory for extra variables without code to do allocation :)
 // nsis then removes the "DISCARDABLE" style from section (for safe)
 #ifdef _MSC_VER
 #  pragma bss_seg(NSIS_VARS_SECTION)

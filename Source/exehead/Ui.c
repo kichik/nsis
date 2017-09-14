@@ -402,20 +402,20 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
 
 #ifdef NSIS_CONFIG_LICENSEPAGE
     { // load richedit DLL
-      static const CHAR riched20[]=("RichEd20");
-      static const CHAR riched32[]=("RichEd32");
+      static const CHAR riched20[]=("RichEd20"); // v2..3 DLL
+      static const CHAR riched32[]=("RichEd32"); // v1 DLL
 #ifdef UNICODE
       static const TCHAR richedit20t[]=_T("RichEdit20W");
 #else
       static const TCHAR richedit20t[]=_T("RichEdit20A");
 #endif
-      static const TCHAR richedit[]=_T("RichEdit");
+      static const TCHAR richedit[]=_T("RichEdit"); // v1 class
       if (!LoadSystemLibrary(riched20))
       {
         LoadSystemLibrary(riched32); // Win95 only ships with v1.0, NT4 has v2.0: web.archive.org/web/20030607222419/http://msdn.microsoft.com/library/en-us/shellcc/platform/commctls/richedit/richeditcontrols/aboutricheditcontrols.asp
       }
 
-      // make richedit20a/w point to RICHEDIT
+      // Register RichEdit20A/W as a RICHEDIT clone (for Win95)
       if (!GetClassInfo(NULL,richedit20t,&wc))
       {
         GetClassInfo(NULL,richedit,&wc);

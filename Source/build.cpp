@@ -2384,7 +2384,7 @@ int CEXEBuild::SetManifest()
   try {
     init_res_editor();
     // This should stay ANSI
-    string manifest = manifest::generate(manifest_comctl, manifest_exec_level, manifest_dpiaware, manifest_sosl);
+    string manifest = manifest::generate(manifest_comctl, manifest_exec_level, manifest_dpiaware, manifest_dpiawareness.c_str(), manifest_sosl);
 
     if (manifest == "")
       return PS_OK;
