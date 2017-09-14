@@ -670,6 +670,7 @@ class CEXEBuild {
     manifest::comctl manifest_comctl;
     manifest::exec_level manifest_exec_level;
     manifest::dpiaware manifest_dpiaware;
+    tstring manifest_dpiawareness;
     manifest::SupportedOSList manifest_sosl;
 
     CResourceEditor *res_editor;

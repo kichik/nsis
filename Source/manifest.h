@@ -42,7 +42,8 @@ namespace manifest
   {
     dpiaware_notset,
     dpiaware_false,
-    dpiaware_true,
+    dpiaware_true, // System DPI on Vista+
+    dpiaware_permonitor // System DPI on Vista/7/8, PerMonitor on 8.1+
   };
 
   class SupportedOSList
@@ -78,7 +79,7 @@ namespace manifest
     }
   };
 
-  std::string generate(comctl, exec_level, dpiaware, SupportedOSList&);
+  std::string generate(comctl, exec_level, dpiaware, const TCHAR*, SupportedOSList&);
 
 };
 

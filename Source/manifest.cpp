@@ -91,7 +91,7 @@ bool SupportedOSList::append(const TCHAR* osid)
 }
 
 
-string generate(comctl comctl_selection, exec_level exec_level_selection, dpiaware dpia, SupportedOSList& sosl)
+string generate(comctl comctl_selection, exec_level exec_level_selection, dpiaware dpia, const TCHAR*dpia2, SupportedOSList& sosl)
 {
   bool default_or_empty_sosl = sosl.isdefaultlist() || !sosl.getcount();
   if (comctl_selection == comctl_old && exec_level_selection == exec_level_none && default_or_empty_sosl && dpiaware_notset == dpia)
@@ -149,11 +149,22 @@ string generate(comctl comctl_selection, exec_level exec_level_selection, dpiawa
     xml += "</application></compatibility>";
   }
 
-  if (dpiaware_notset != dpia)
+  if (dpiaware_notset != dpia || *dpia2)
   {
-    xml += "<application xmlns=\"urn:schemas-microsoft-com:asm.v3\"><windowsSettings><dpiAware xmlns=\"http://schemas.microsoft.com/SMI/2005/WindowsSettings\">";
-    xml += dpiaware_false != dpia ? "true" : "false";
-    xml += "</dpiAware></windowsSettings></application>";
+    xml += "<application xmlns=\"urn:schemas-microsoft-com:asm.v3\"><windowsSettings>";
+    if (dpiaware_notset != dpia)
+    {
+      xml += "<dpiAware xmlns=\"http://schemas.microsoft.com/SMI/2005/WindowsSettings\">";
+      xml += dpia >= dpiaware_permonitor ? "True/PM" : dpiaware_false != dpia ? "true" : "false";
+      xml += "</dpiAware>";
+    }
+    if (*dpia2)
+    {
+      xml += "<dpiAwareness xmlns=\"http://schemas.microsoft.com/SMI/2016/WindowsSettings\">";
+      xml += TtoCString(dpia2);
+      xml += "</dpiAwareness>";
+    }
+    xml += "</windowsSettings></application>";
   }
 
   xml += "</assembly>";

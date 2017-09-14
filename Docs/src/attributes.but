@@ -285,6 +285,10 @@ Accepts variables. If variables are used, they must be initialized before the li
 
 \c \\<b\\>notset\\</b\\>|true|false
 
+\# Note: PerMonitor is not documented because it is not fully supported yet, we need to handle WM_DPICHANGED
+\# Example: ManifestDPIAware System ; System DPI on Vista/7/8/8.1/10(<10.1607(AU))
+\# Example: ManifestDPIAwareness "PerMonitorV2,System" ; PMv2 on 10.1703(CU)+, System on 10.1607(AU)
+
 Declare that the installer is DPI-aware. A DPI-aware application is not scaled by the DWM (DPI virtualization) so the text is never blurry. NSIS does not scale the bitmap used by the tree control on the component page and some plugins might have compatibility issues so make sure that you test your installer at different DPI settings if you select \e{true}.
 
 See \W{http://msdn.microsoft.com/en-us/library/dd464660}{MSDN} for more information about DPI-aware applications.
