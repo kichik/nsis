@@ -65,6 +65,7 @@ code
 <li><a href="#mref-onchange">NSD_OnChange</a></li>
 <li><a href="#mref-onclick">NSD_OnClick</a></li>
 <li><a href="#mref-onnotify">NSD_OnNotify</a></li>
+<li><a href="#mref-setfocus">NSD_SetFocus</a></li>
 <li><a href="#mref-createtimer">NSD_CreateTimer</a></li>
 <li><a href="#mref-killtimer">NSD_KillTimer</a></li>
 <li><a href="#mref-addstyle">NSD_AddStyle</a></li>
@@ -72,19 +73,27 @@ code
 <li><a href="#mref-gettext">NSD_GetText</a></li>
 <li><a href="#mref-settext">NSD_SetText</a></li>
 <li><a href="#mref-settextlimit">NSD_SetTextLimit</a></li>
-<li><a href="#mref-getstate">NSD_GetState</a></li>
-<li><a href="#mref-setstate">NSD_SetState</a></li>
-<li><a href="#mref-check">NSD_Check</a></li>
-<li><a href="#mref-uncheck">NSD_Uncheck</a></li>
-<li><a href="#mref-cbaddstring">NSD_CB_AddString</a></li>
-<li><a href="#mref-cbselectstring">NSD_CB_SelectString</a></li>
-<li><a href="#mref-lbaddstring">NSD_LB_AddString</a></li>
-<li><a href="#mref-lbdelstring">NSD_LB_DelString</a></li>
-<li><a href="#mref-lbclear">NSD_LB_Clear</a></li>
-<li><a href="#mref-lbgetcount">NSD_LB_GetCount</a></li>
-<li><a href="#mref-lbselectstring">NSD_LB_SelectString</a></li>
-<li><a href="#mref-lbgetselection">NSD_LB_GetSelection</a></li>
-<li><a href="#mref-setfocus">NSD_SetFocus</a></li>
+<li>CheckBox &amp; RadioButton:
+<a href="#mref-getstate">NSD_GetState</a>, 
+<a href="#mref-setstate">NSD_SetState</a>, 
+<a href="#mref-check">NSD_Check</a>, 
+<a href="#mref-uncheck">NSD_Uncheck</a>
+</li>
+<li>ComboBox &amp; DropList:
+<a href="#mref-cbaddstring">NSD_CB_AddString</a>, 
+<a href="#mref-cbselectstring">NSD_CB_SelectString</a>, 
+<a href="#mref-cbgetcount">NSD_CB_GetCount</a>
+</li>
+<li>ListBox:
+<a href="#mref-lbaddstring">NSD_LB_AddString</a>, 
+<a href="#mref-lbinsstring">NSD_LB_InsertString</a>, 
+<a href="#mref-lbdelstring">NSD_LB_DelString</a>, 
+<a href="#mref-lbdelitem">NSD_LB_DelItem</a>, 
+<a href="#mref-lbclear">NSD_LB_Clear</a>, 
+<a href="#mref-lbgetcount">NSD_LB_GetCount</a>, 
+<a href="#mref-lbselectstring">NSD_LB_SelectString</a>, 
+<a href="#mref-lbgetselection">NSD_LB_GetSelection</a>
+</li>
 <li><a href="#mref-setimage">NSD_SetImage</a></li>
 <li><a href="#mref-setsimage">NSD_SetStretchedImage</a></li>
 <li><a href="#mref-seticon">NSD_SetIcon</a></li>
@@ -287,6 +296,7 @@ SectionEnd</pre></blockquote>
 <li>ComboBox</li>
 <li>DropList</li>
 <li>ListBox</li>
+<li>SortedListBox</li>
 <li>ProgressBar</li>
 </ul>
 
@@ -644,6 +654,7 @@ SectionEnd</pre></blockquote>
 <li>${NSD_CreateComboBox}</li>
 <li>${NSD_CreateDropList}</li>
 <li>${NSD_CreateListBox}</li>
+<li>${NSD_CreateSortedListBox}</li>
 <li>${NSD_CreateProgressBar}</li>
 </ul>
 
@@ -767,15 +778,31 @@ SectionEnd</pre></blockquote>
 
 <p>Selects a string in a combo box.</p>
 
+<h3><a name="mref-cbgetcount">NSD_CB_GetCount</a></h3>
+
+<p><code>${NSD_CB_GetCount} <i>combo_HWND</i> <i>output_variable</i></code></p>
+
 <h3><a name="mref-lbaddstring"></a>NSD_LB_AddString</h3>
 
 <p><code>${NSD_LB_AddString} <i>listbox_HWND</i> <i>string</i></code></p>
 
 <p>Adds a string to a list box.</p>
 
+<h3><a name="mref-lbinsstring"></a>NSD_LB_InsertString</h3>
+
+<p><code>${NSD_LB_InsertString} <i>listbox_HWND</i> <i>index</i> <i>string</i></code></p>
+
+<p>Insert a string in a specified position in a list box.</p>
+
 <h3><a name="mref-lbdelstring"></a>NSD_LB_DelString</h3>
 
 <p><code>${NSD_LB_DelString} <i>listbox_HWND</i> <i>string</i></code></p>
+
+<p>Deletes a string from a list box.</p>
+
+<h3><a name="mref-lbdelitem"></a>NSD_LB_DelItem</h3>
+
+<p><code>${NSD_LB_DelItem} <i>listbox_HWND</i> <i>itemindex</i></code></p>
 
 <p>Deletes a string from a list box.</p>
 
