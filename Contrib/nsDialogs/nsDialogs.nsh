@@ -252,16 +252,17 @@ Header file for creating custom installer pages with nsDialogs
 !define __NSD_ListBox_STYLE ${DEFAULT_STYLES}|${WS_TABSTOP}|${WS_VSCROLL}|${LBS_DISABLENOSCROLL}|${LBS_HASSTRINGS}|${LBS_NOINTEGRALHEIGHT}|${LBS_NOTIFY}
 !define __NSD_ListBox_EXSTYLE ${WS_EX_WINDOWEDGE}|${WS_EX_CLIENTEDGE}
 
+!define __NSD_SortedListBox_CLASS LISTBOX
+!define __NSD_SortedListBox_STYLE ${DEFAULT_STYLES}|${WS_TABSTOP}|${WS_VSCROLL}|${LBS_DISABLENOSCROLL}|${LBS_HASSTRINGS}|${LBS_NOINTEGRALHEIGHT}|${LBS_NOTIFY}|${LBS_SORT}
+!define __NSD_SortedListBox_EXSTYLE ${WS_EX_WINDOWEDGE}|${WS_EX_CLIENTEDGE}
+
 !define __NSD_ProgressBar_CLASS msctls_progress32
 !define __NSD_ProgressBar_STYLE ${DEFAULT_STYLES}
 !define __NSD_ProgressBar_EXSTYLE ${WS_EX_WINDOWEDGE}|${WS_EX_CLIENTEDGE}
 
 !macro __NSD_DefineControl NAME
-
 	!define NSD_Create${NAME} "nsDialogs::CreateControl ${__NSD_${Name}_CLASS} ${__NSD_${Name}_STYLE} ${__NSD_${Name}_EXSTYLE}"
-
 !macroend
-
 !insertmacro __NSD_DefineControl HLine
 !insertmacro __NSD_DefineControl VLine
 !insertmacro __NSD_DefineControl Label
@@ -281,10 +282,10 @@ Header file for creating custom installer pages with nsDialogs
 !insertmacro __NSD_DefineControl ComboBox
 !insertmacro __NSD_DefineControl DropList
 !insertmacro __NSD_DefineControl ListBox
+!insertmacro __NSD_DefineControl SortedListBox
 !insertmacro __NSD_DefineControl ProgressBar
 
 !macro __NSD_OnControlEvent EVENT HWND FUNCTION
-
 	Push $0
 	Push $1
 
@@ -295,213 +296,271 @@ Header file for creating custom installer pages with nsDialogs
 
 	Pop $1
 	Pop $0
-
 !macroend
 
 !macro __NSD_DefineControlCallback EVENT
-
-	!define NSD_On${EVENT} `!insertmacro __NSD_OnControlEvent ${EVENT}`
-
+	!define NSD_On${EVENT} `!insertmacro __NSD_OnControlEvent ${EVENT} `
 !macroend
 
 !macro __NSD_OnDialogEvent EVENT FUNCTION
-
 	Push $0
 
 	GetFunctionAddress $0 "${FUNCTION}"
 	nsDialogs::On${EVENT} $0
 
 	Pop $0
-
 !macroend
 
 !macro __NSD_DefineDialogCallback EVENT
-
-	!define NSD_On${EVENT} `!insertmacro __NSD_OnDialogEvent ${EVENT}`
-
+	!define NSD_On${EVENT} `!insertmacro __NSD_OnDialogEvent ${EVENT} `
 !macroend
-
 !insertmacro __NSD_DefineControlCallback Click
 !insertmacro __NSD_DefineControlCallback Change
 !insertmacro __NSD_DefineControlCallback Notify
 !insertmacro __NSD_DefineDialogCallback Back
 
-!macro _NSD_CreateTimer FUNCTION INTERVAL
 
+!define NSD_CreateTimer `!insertmacro _NSD_CreateTimer `
+!macro _NSD_CreateTimer FUNCTION INTERVAL
 	Push $0
 
 	GetFunctionAddress $0 "${FUNCTION}"
 	nsDialogs::CreateTimer $0 "${INTERVAL}"
 
 	Pop $0
-
 !macroend
 
-!define NSD_CreateTimer `!insertmacro _NSD_CreateTimer`
 
+!define NSD_KillTimer `!insertmacro _NSD_KillTimer `
 !macro _NSD_KillTimer FUNCTION
-
 	Push $0
 
 	GetFunctionAddress $0 "${FUNCTION}"
 	nsDialogs::KillTimer $0
 
 	Pop $0
-
 !macroend
 
-!define NSD_KillTimer `!insertmacro _NSD_KillTimer`
-
-!macro _NSD_GWLAddFlags GWL HWND DATA
-
-	System::Call "user32::GetWindowLong(p${HWND},i${GWL})p.s"
-	System::Int64Op "${DATA}" |
-	System::Call "user32::SetWindowLong(p${HWND},p${GWL},ps)"
-
-!macroend
 
 !define NSD_AddStyle "!insertmacro _NSD_GWLAddFlags ${GWL_STYLE} "
 !define NSD_AddExStyle "!insertmacro _NSD_GWLAddFlags ${GWL_EXSTYLE} "
+!macro _NSD_GWLAddFlags GWL HWND DATA
+	System::Call "user32::GetWindowLong(p${HWND},i${GWL})p.s"
+	System::Int64Op "${DATA}" |
+	System::Call "user32::SetWindowLong(p${HWND},p${GWL},ps)"
+!macroend
 
+
+!define NSD_SetFocus `!insertmacro __NSD_SetFocus `
+!macro __NSD_SetFocus HWND
+	System::Call "user32::SetFocus(p${HWND})"
+!macroend
+
+
+!define NSD_GetText "!insertmacro __NSD_GetText "
 !macro __NSD_GetText CONTROL VAR
-
 	System::Call user32::GetWindowText(p${CONTROL},t.s,i${NSIS_MAX_STRLEN})
 	Pop ${VAR}
-
 !macroend
 
-!define NSD_GetText `!insertmacro __NSD_GetText`
 
+!define NSD_SetText "!insertmacro __NSD_SetText "
 !macro __NSD_SetText CONTROL TEXT
-
 	SendMessage ${CONTROL} ${WM_SETTEXT} 0 `STR:${TEXT}`
-
 !macroend
 
-!define NSD_SetText `!insertmacro __NSD_SetText`
 
+!define NSD_SetTextLimit "!insertmacro _NSD_SetTextLimit "
 !macro _NSD_SetTextLimit CONTROL LIMIT
-
 	SendMessage ${CONTROL} ${EM_SETLIMITTEXT} ${LIMIT} 0
-
 !macroend
 
-!define NSD_SetTextLimit "!insertmacro _NSD_SetTextLimit"
 
+!define NSD_GetState `!insertmacro __NSD_GetState `
 !macro __NSD_GetState CONTROL VAR
-
 	SendMessage ${CONTROL} ${BM_GETCHECK} 0 0 ${VAR}
-
 !macroend
 
-!define NSD_GetState `!insertmacro __NSD_GetState`
 
+!define NSD_SetState `!insertmacro __NSD_SetState `
 !macro __NSD_SetState CONTROL STATE
-
 	SendMessage ${CONTROL} ${BM_SETCHECK} ${STATE} 0
-
 !macroend
 
-!define NSD_SetState `!insertmacro __NSD_SetState`
 
+### CheckBox ###
+
+!define NSD_Check `!insertmacro __NSD_Check `
 !macro __NSD_Check CONTROL
-
 	${NSD_SetState} ${CONTROL} ${BST_CHECKED}
-
 !macroend
 
-!define NSD_Check `!insertmacro __NSD_Check`
 
+!define NSD_Uncheck `!insertmacro __NSD_Uncheck `
 !macro __NSD_Uncheck CONTROL
-
 	${NSD_SetState} ${CONTROL} ${BST_UNCHECKED}
-
 !macroend
 
-!define NSD_Uncheck `!insertmacro __NSD_Uncheck`
+!define NSD_GetChecked `!insertmacro __NSD_GetState `
 
-!macro __NSD_SetFocus HWND
 
-	System::Call "user32::SetFocus(p${HWND})"
-  
-!macroend
+### ComboBox ###
 
-!define NSD_SetFocus `!insertmacro __NSD_SetFocus`
-
+!define NSD_CB_AddString "!insertmacro _NSD_CB_AddString "
 !macro _NSD_CB_AddString CONTROL STRING
-
 	SendMessage ${CONTROL} ${CB_ADDSTRING} 0 `STR:${STRING}`
-
 !macroend
 
-!define NSD_CB_AddString "!insertmacro _NSD_CB_AddString"
 
+!define NSD_CB_SelectString "!insertmacro _NSD_CB_SelectString "
 !macro _NSD_CB_SelectString CONTROL STRING
-
 	SendMessage ${CONTROL} ${CB_SELECTSTRING} -1 `STR:${STRING}`
-
 !macroend
 
-!define NSD_CB_SelectString "!insertmacro _NSD_CB_SelectString"
 
+!define NSD_CB_Clear "!insertmacro _NSD_CB_Clear "
+!macro _NSD_CB_Clear CONTROL STRING
+	SendMessage ${CONTROL} ${CB_RESETCONTENT} 0 0
+!macroend
+
+
+!define NSD_CB_GetCount `!insertmacro __NSD_CB_GetCount `
+!macro __NSD_CB_GetCount CONTROL VAR
+	SendMessage ${CONTROL} ${CB_GETCOUNT} 0 0 ${VAR}
+!macroend
+
+
+!define NSD_CB_GetSelectionIndex `!insertmacro __NSD_CB_GetSelectionIndex `
+!macro __NSD_CB_GetSelectionIndex CONTROL VAR
+	SendMessage ${CONTROL} ${CB_GETCURSEL} 0 0 ${VAR}
+!macroend
+
+
+!define NSD_CB_SetSelectionIndex `!insertmacro __NSD_CB_SetSelectionIndex `
+!macro __NSD_CB_SetSelectionIndex CONTROL INDEX
+	SendMessage ${CONTROL} ${CB_SETCURSEL} ${INDEX} 0
+!macroend
+
+
+!define NSD_CB_GetItemData `!insertmacro __NSD_CB_GetItemData `
+!macro NSD_CB_GetItemData CONTROL INDEX VAR
+SendMessage ${CONTROL} ${CB_GETITEMDATA} ${INDEX} 0 ${VAR}
+!macroend
+
+
+!define NSD_CB_SetItemData `!insertmacro __NSD_CB_SetItemData `
+!macro NSD_CB_SetItemData CONTROL INDEX DATA
+SendMessage ${CONTROL} ${CB_SETITEMDATA} ${INDEX} ${DATA}
+!macroend
+
+
+### ListBox ###
+
+!define NSD_LB_AddString "!insertmacro _NSD_LB_AddString "
 !macro _NSD_LB_AddString CONTROL STRING
-
 	SendMessage ${CONTROL} ${LB_ADDSTRING} 0 `STR:${STRING}`
-
 !macroend
 
-!define NSD_LB_AddString "!insertmacro _NSD_LB_AddString"
 
+!define NSD_LB_InsertString "!insertmacro _NSD_LB_InsertString "
+!macro _NSD_LB_InsertString CONTROL INDEX STRING
+SendMessage ${CONTROL} ${LB_INSERTSTRING} ${INDEX} `STR:${STRING}`
+!macroend
+
+
+!define NSD_LB_DelString `!insertmacro __NSD_LB_DelString `
 !macro __NSD_LB_DelString CONTROL STRING
-
 	Push $0
-
 	SendMessage ${CONTROL} ${LB_FINDSTRINGEXACT} -1 `STR:${STRING}` $0
 	SendMessage ${CONTROL} ${LB_DELETESTRING} $0 0
-
 	Pop $0
-
 !macroend
 
-!define NSD_LB_DelString `!insertmacro __NSD_LB_DelString`
 
+!define NSD_LB_DelItem "!insertmacro __NSD_LB_DelItem "
+!macro __NSD_LB_DelItem CONTROL INDEX
+	SendMessage ${CONTROL} ${LB_DELETESTRING} ${INDEX}
+!macroend
+
+
+!define NSD_LB_Clear `!insertmacro __NSD_LB_Clear `
 !macro __NSD_LB_Clear CONTROL VAR
-
 	SendMessage ${CONTROL} ${LB_RESETCONTENT} 0 0 ${VAR}
-
 !macroend
 
-!define NSD_LB_Clear `!insertmacro __NSD_LB_Clear`
 
+!define NSD_LB_GetCount `!insertmacro __NSD_LB_GetCount `
 !macro __NSD_LB_GetCount CONTROL VAR
-
 	SendMessage ${CONTROL} ${LB_GETCOUNT} 0 0 ${VAR}
-
 !macroend
 
-!define NSD_LB_GetCount `!insertmacro __NSD_LB_GetCount`
 
+!define NSD_LB_SelectString "!insertmacro _NSD_LB_SelectString "
 !macro _NSD_LB_SelectString CONTROL STRING
-
 	SendMessage ${CONTROL} ${LB_SELECTSTRING} -1 `STR:${STRING}`
-
 !macroend
 
-!define NSD_LB_SelectString "!insertmacro _NSD_LB_SelectString"
 
+!define NSD_LB_GetSelection `!insertmacro __NSD_LB_GetSelection `
 !macro __NSD_LB_GetSelection CONTROL VAR
-
 	SendMessage ${CONTROL} ${LB_GETCURSEL} 0 0 ${VAR}
 	System::Call 'user32::SendMessage(p ${CONTROL}, i ${LB_GETTEXT}, p ${VAR}, t .s)'
 	Pop ${VAR}
-
 !macroend
 
-!define NSD_LB_GetSelection `!insertmacro __NSD_LB_GetSelection`
 
+!define NSD_LB_GetSelectionIndex `!insertmacro __NSD_LB_GetSelectionIndex `
+!macro __NSD_LB_GetSelectionIndex CONTROL VAR
+	SendMessage ${CONTROL} ${LB_GETCURSEL} 0 0 ${VAR}
+!macroend
+
+
+!define NSD_LB_SetSelectionIndex `!insertmacro __NSD_LB_SetSelectionIndex `
+!macro __NSD_LB_SetSelectionIndex CONTROL INDEX
+	SendMessage ${CONTROL} ${LB_SETCURSEL} ${INDEX} 0
+!macroend
+
+
+!define NSD_LB_GetSelectionCount `!insertmacro __NSD_LB_GetSelectionCount `
+!macro __NSD_LB_GetSelectionCount CONTROL VAR
+	SendMessage ${CONTROL} ${LB_GETSELCOUNT} 0 0 ${VAR}
+!macroend
+
+
+!define NSD_LB_GetItemText `!insertmacro __NSD_LB_GetItemText `
+!macro __NSD_LB_GetItemText CONTROL INDEX VAR
+	System::Call 'user32::SendMessage(p${CONTROL}, i${LB_GETTEXT}, p${INDEX}, t.s)'
+	Pop ${VAR}
+!macroend
+
+
+!define NSD_LB_GetItemData `!insertmacro __NSD_LB_GetItemData `
+!macro NSD_LB_GetItemData CONTROL INDEX VAR
+SendMessage ${CONTROL} ${LB_GETITEMDATA} ${INDEX} 0 ${VAR}
+!macroend
+
+
+!define NSD_LB_SetItemData `!insertmacro __NSD_LB_SetItemData `
+!macro NSD_LB_SetItemData CONTROL INDEX DATA
+SendMessage ${CONTROL} ${LB_SETITEMDATA} ${INDEX} ${DATA}
+!macroend
+
+
+!define NSD_LB_FindStringPrefix `!insertmacro __NSD_LB_FindStringPrefix `
+!macro __NSD_LB_FindStringPrefix CONTROL STRING VAR
+	SendMessage ${CONTROL} ${LB_FINDSTRING} -1 `STR:${STRING}` ${VAR}
+!macroend
+
+
+!define NSD_LB_FindStringExact `!insertmacro __NSD_LB_FindStringExact `
+!macro __NSD_LB_FindStringExact CONTROL STRING VAR
+	SendMessage ${CONTROL} ${LB_FINDSTRINGEXACT} -1 `STR:${STRING}` ${VAR}
+!macroend
+
+
+### Static ###
 
 !macro __NSD_LoadAndSetImage _LIHINSTMODE _IMGTYPE _LIHINSTSRC _LIFLAGS CONTROL IMAGE HANDLE
-
 	Push $0
 	Push $R0
 
@@ -521,7 +580,6 @@ Header file for creating custom installer pages with nsDialogs
 	Exch $0
 
 	Pop ${HANDLE}
-
 !macroend
 
 !macro __NSD_SetIconFromExeResource CONTROL IMAGE HANDLE
@@ -532,16 +590,16 @@ Header file for creating custom installer pages with nsDialogs
 	!insertmacro __NSD_SetIconFromExeResource "${CONTROL}" "#103" ${HANDLE}
 !macroend
 
-!define NSD_SetImage `!insertmacro __NSD_LoadAndSetImage file ${IMAGE_BITMAP} 0 "${LR_LOADFROMFILE}"`
+!define NSD_SetImage `!insertmacro __NSD_LoadAndSetImage file ${IMAGE_BITMAP} 0 "${LR_LOADFROMFILE}" `
 !define NSD_SetBitmap `${NSD_SetImage}`
 
-!define NSD_SetIcon `!insertmacro __NSD_LoadAndSetImage file ${IMAGE_ICON} 0 "${LR_LOADFROMFILE}|${LR_DEFAULTSIZE}"`
-!define NSD_SetIconFromExeResource `!insertmacro __NSD_SetIconFromExeResource`
-!define NSD_SetIconFromInstaller `!insertmacro __NSD_SetIconFromInstaller`
+!define NSD_SetIcon `!insertmacro __NSD_LoadAndSetImage file ${IMAGE_ICON} 0 "${LR_LOADFROMFILE}|${LR_DEFAULTSIZE}" `
+!define NSD_SetIconFromExeResource `!insertmacro __NSD_SetIconFromExeResource `
+!define NSD_SetIconFromInstaller `!insertmacro __NSD_SetIconFromInstaller `
 
 
+!define NSD_SetStretchedImage `!insertmacro __NSD_SetStretchedImage `
 !macro __NSD_SetStretchedImage CONTROL IMAGE HANDLE
-
 	Push $0
 	Push $R0
 
@@ -559,67 +617,54 @@ Header file for creating custom installer pages with nsDialogs
 	Exch $0
 
 	Pop ${HANDLE}
-
 !macroend
 
-!define NSD_SetStretchedImage `!insertmacro __NSD_SetStretchedImage`
 
+!define NSD_FreeImage `!insertmacro __NSD_FreeImage `
+!define NSD_FreeBitmap `${NSD_FreeImage} `
 !macro __NSD_FreeImage IMAGE
-
 	${If} ${IMAGE} P<> 0
 		System::Call gdi32::DeleteObject(ps) ${IMAGE}
 	${EndIf}
-
 !macroend
 
-!define NSD_FreeImage `!insertmacro __NSD_FreeImage`
-!define NSD_FreeBitmap `${NSD_FreeImage}`
 
+!define NSD_FreeIcon `!insertmacro __NSD_FreeIcon `
 !macro __NSD_FreeIcon IMAGE
 	System::Call user32::DestroyIcon(ps) ${IMAGE}
 !macroend
 
-!define NSD_FreeIcon `!insertmacro __NSD_FreeIcon`
 
+!define NSD_ClearImage `!insertmacro __NSD_ClearImage ${IMAGE_BITMAP} `
+!define NSD_ClearIcon  `!insertmacro __NSD_ClearImage ${IMAGE_ICON } `
 !macro __NSD_ClearImage _IMGTYPE CONTROL
-
 	SendMessage ${CONTROL} ${STM_SETIMAGE} ${_IMGTYPE} 0
-
 !macroend
 
-!define NSD_ClearImage `!insertmacro __NSD_ClearImage ${IMAGE_BITMAP}`
-!define NSD_ClearIcon  `!insertmacro __NSD_ClearImage ${IMAGE_ICON}`
 
+### INI ###
 
-!define NSD_Debug `System::Call kernel32::OutputDebugString(ts)`
+!define /IfNDef NSD_Debug `System::Call kernel32::OutputDebugString(ts)`
 
 !macro __NSD_ControlCase TYPE
-
 	${Case} ${TYPE}
 		${NSD_Create${TYPE}} $R3u $R4u $R5u $R6u $R7
 		Pop $R9
 		${Break}
-
 !macroend
 
 !macro __NSD_ControlCaseEx TYPE
-
 	${Case} ${TYPE}
 		Call ${TYPE}
 		${Break}
-
 !macroend
 
 !macro NSD_FUNCTION_INIFILE
-
 	!insertmacro NSD_INIFILE ""
-
 !macroend
 
 !macro NSD_UNFUNCTION_INIFILE
-
 	!insertmacro NSD_INIFILE un.
-
 !macroend
 
 !macro NSD_INIFILE UNINSTALLER_FUNCPREFIX
