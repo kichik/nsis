@@ -94,6 +94,18 @@ code
 <a href="#mref-lbselectstring">NSD_LB_SelectString</a>, 
 <a href="#mref-lbgetselection">NSD_LB_GetSelection</a>
 </li>
+<li>Animation:
+<a href="#mref-animopenfile">NSD_Anim_OpenFile</a>, 
+<a href="#mref-animplay">NSD_Anim_Play</a>, 
+<a href="#mref-animstop">NSD_Anim_Stop</a>
+</li>
+<li>HTrackBar &amp; VTrackBar:
+<a href="#mref-trackgetpos">NSD_TrackBar_GetPos</a>, 
+<a href="#mref-tracksetpos">NSD_TrackBar_SetPos</a>, 
+<a href="#mref-tracksetrmin">NSD_TrackBar_SetRangeMin</a>, 
+<a href="#mref-tracksetrmax">NSD_TrackBar_SetRangeMax</a>, 
+<a href="#mref-tracksetticfr">NSD_TrackBar_SetTicFreq</a>
+</li>
 <li><a href="#mref-setimage">NSD_SetImage</a></li>
 <li><a href="#mref-setsimage">NSD_SetStretchedImage</a></li>
 <li><a href="#mref-seticon">NSD_SetIcon</a></li>
@@ -298,6 +310,9 @@ SectionEnd</pre></blockquote>
 <li>ListBox</li>
 <li>SortedListBox</li>
 <li>ProgressBar</li>
+<li>Animation</li>
+<li>HTrackBar</li>
+<li>VTrackBar</li>
 </ul>
 
 <h3><a name="step-state"></a>Control State</h3>
@@ -656,6 +671,9 @@ SectionEnd</pre></blockquote>
 <li>${NSD_CreateListBox}</li>
 <li>${NSD_CreateSortedListBox}</li>
 <li>${NSD_CreateProgressBar}</li>
+<li>${NSD_CreateAnimation}</li>
+<li>${NSD_CreateHTrackBar}</li>
+<li>${NSD_CreateVTrackBar}</li>
 </ul>
 
 <p>Returns the new control's HWND on the stack or <i>error</i></p>
@@ -687,6 +705,12 @@ SectionEnd</pre></blockquote>
 <p><code>${NSD_OnNotify} <i>control_HWND</i> <i>function_name</i></code></p>
 
 <p>See <a href="#ref-onnotify">OnNotify</a> for more details.</p>
+
+<h3><a name="mref-setfocus"></a>NSD_SetFocus</h3>
+
+<p><code>${NSD_SetFocus} <i>control_HWND</i></code></p>
+
+<p>Sets focus to a control.</p>
 
 <h3><a name="mref-createtimer"></a>NSD_CreateTimer</h3>
 
@@ -830,11 +854,45 @@ SectionEnd</pre></blockquote>
 
 <p>Retrieves the selected stringed from a list box. Returns an empty string if no string is selected.</p>
 
-<h3><a name="mref-setfocus"></a>NSD_SetFocus</h3>
+<h3><a name="mref-animopenfile">NSD_Anim_OpenFile</a></h3>
 
-<p><code>${NSD_SetFocus} <i>control_HWND</i></code></p>
+<p><code>${NSD_Anim_OpenFile} <i>anim_HWND</i> <i>avi_path</i></code></p>
 
-<p>Sets focus to a control.</p>
+<p>Opens the specified (silent) .AVI movie clip.</p>
+
+<h3><a name="mref-animplay">NSD_Anim_Play</a></h3>
+
+<p><code>${NSD_Anim_Play} <i>anim_HWND</i></code></p>
+
+<p>Plays the movie clip repeatedly.</p>
+
+<h3><a name="mref-animstop">NSD_Anim_Stop</a></h3>
+
+<p><code>${NSD_Anim_Stop} <i>anim_HWND</i></code></p>
+
+<p>Stops playback.</p>
+
+<h3><a name="mref-trackgetpos">NSD_TrackBar_GetPos</a></h3>
+
+<p><code>${NSD_TrackBar_GetPos} <i>track_HWND</i> <i>output</i></code></p>
+
+<h3><a name="mref-tracksetpos">NSD_TrackBar_SetPos</a></h3>
+
+<p><code>${NSD_TrackBar_SetPos} <i>track_HWND</i> <i>pos</i></code></p>
+
+<h3><a name="mref-tracksetrmin">NSD_TrackBar_SetRangeMin</a></h3>
+
+<p><code>${NSD_TrackBar_SetRangeMin} <i>track_HWND</i> <i>minpos</i></code></p>
+
+<h3><a name="mref-tracksetrmax">NSD_TrackBar_SetRangeMax</a></h3>
+
+<p><code>${NSD_TrackBar_SetRangeMax} <i>track_HWND</i> <i>maxpos</i></code></p>
+
+<h3><a name="mref-tracksetticfr">NSD_TrackBar_SetTicFreq</a></h3>
+
+<p><code>${NSD_TrackBar_SetTicFreq} <i>track_HWND</i></code></p>
+
+<p>Sets the interval frequency for tick marks.</p>
 
 <h3><a name="mref-setimage"></a>NSD_SetImage</h3>
 

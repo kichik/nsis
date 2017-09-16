@@ -41,6 +41,8 @@ SBM     Scroll bar control
 STM     Static control
 TCM     Tab control
 PBM     Progress bar
+ACM     Animation control
+TBM     Track bar
 -----------------------------------
 
 NOT included messages (WM_USER + X)
@@ -56,7 +58,6 @@ PGM     Pager control
 PSM     Property sheet
 RB      Rebar control
 TB      Toolbar
-TBM     Trackbar
 TTM     Tooltip control
 TVM     Tree-view control
 UDM     Up-down control
@@ -637,13 +638,7 @@ ${_NSIS_DEFAW} LVM_INSERTCOLUMN
 ${_NSIS_DEFAW} LVM_SETITEMTEXT
 
 #Status bar window#
-!define SB_CONST_ALPHA      0x00000001
-!define SB_GRAD_RECT        0x00000010
-!define SB_GRAD_TRI         0x00000020
-!define SB_NONE             0x00000000
-!define SB_PIXEL_ALPHA      0x00000002
-!define SB_PREMULT_ALPHA    0x00000004
-!define SB_SIMPLEID         0x00ff
+!define SB_SIMPLEID 0x00ff
 
 #Scroll bar control#
 !define SBM_ENABLE_ARROWS           0x00E4  # Not in win3.1
@@ -657,14 +652,10 @@ ${_NSIS_DEFAW} LVM_SETITEMTEXT
 
 #Static control#
 !define STM_GETICON                 0x0171
-!define STM_GETIMAGE                0x0173
-!define STM_MSGMAX                  0x0174
-!define STM_ONLY_THIS_INTERFACE     0x00000001
-!define STM_ONLY_THIS_NAME          0x00000008
-!define STM_ONLY_THIS_PROTOCOL      0x00000002
-!define STM_ONLY_THIS_TYPE          0x00000004
 !define STM_SETICON                 0x0170
 !define STM_SETIMAGE                0x0172
+!define STM_GETIMAGE                0x0173
+!define STM_MSGMAX                  0x0174
 
 #Tab control#
 !define TCS_SCROLLOPPOSITE 0x0001
@@ -701,6 +692,51 @@ ${_NSIS_DEFAW} TCM_INSERTITEM
 !define PBST_NORMAL 1
 !define PBST_ERROR  2
 !define PBST_PAUSED 3
+
+#Animation control#
+!define /math ACM_OPENA ${WM_USER} + 100
+!define /math ACM_PLAY  ${WM_USER} + 101
+!define /math ACM_STOP  ${WM_USER} + 102
+!define /math ACM_OPENW ${WM_USER} + 103
+${_NSIS_DEFAW} ACM_OPEN
+
+#TrackBar control#
+!define /math TBM_GETPOS         ${WM_USER} + 0
+!define /math TBM_GETRANGEMIN    ${WM_USER} + 1
+!define /math TBM_GETRANGEMAX    ${WM_USER} + 2
+!define /math TBM_GETTIC         ${WM_USER} + 3
+!define /math TBM_SETTIC         ${WM_USER} + 4
+!define /math TBM_SETPOS         ${WM_USER} + 5
+!define /math TBM_SETRANGE       ${WM_USER} + 6
+!define /math TBM_SETRANGEMIN    ${WM_USER} + 7
+!define /math TBM_SETRANGEMAX    ${WM_USER} + 8
+!define /math TBM_CLEARTICS      ${WM_USER} + 9
+!define /math TBM_SETSEL         ${WM_USER} + 10
+!define /math TBM_SETSELSTART    ${WM_USER} + 11
+!define /math TBM_SETSELEND      ${WM_USER} + 12
+!define /math TBM_GETPTICS       ${WM_USER} + 14
+!define /math TBM_GETTICPOS      ${WM_USER} + 15
+!define /math TBM_GETNUMTICS     ${WM_USER} + 16
+!define /math TBM_GETSELSTART    ${WM_USER} + 17
+!define /math TBM_GETSELEND      ${WM_USER} + 18
+!define /math TBM_CLEARSEL       ${WM_USER} + 19
+!define /math TBM_SETTICFREQ     ${WM_USER} + 20 ; TBS_AUTOTICKS required
+!define /math TBM_SETPAGESIZE    ${WM_USER} + 21
+!define /math TBM_GETPAGESIZE    ${WM_USER} + 22
+!define /math TBM_SETLINESIZE    ${WM_USER} + 23
+!define /math TBM_GETLINESIZE    ${WM_USER} + 24
+!define /math TBM_GETTHUMBRECT   ${WM_USER} + 25
+!define /math TBM_GETCHANNELRECT ${WM_USER} + 26
+!define /math TBM_SETTHUMBLENGTH ${WM_USER} + 27
+!define /math TBM_GETTHUMBLENGTH ${WM_USER} + 28
+!define /math TBM_SETTOOLTIPS    ${WM_USER} + 29 ; IE3
+!define /math TBM_GETTOOLTIPS    ${WM_USER} + 30 ; IE3
+!define /math TBM_SETTIPSIDE     ${WM_USER} + 31 ; IE3
+!define /math TBM_SETBUDDY       ${WM_USER} + 32 ; IE3
+!define /math TBM_GETBUDDY       ${WM_USER} + 33 ; IE3
+!define TBM_SETUNICODEFORMAT     ${CCM_SETUNICODEFORMAT} ; IE4
+!define TBM_GETUNICODEFORMAT     ${CCM_GETUNICODEFORMAT} ; IE4
+!define /math TBM_SETPOSNOTIFY   ${WM_USER} + 34 ; 7?
 
 !verbose pop
 !endif
