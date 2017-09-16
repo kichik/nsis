@@ -73,18 +73,18 @@ code
 <li><a href="#mref-gettext">NSD_GetText</a></li>
 <li><a href="#mref-settext">NSD_SetText</a></li>
 <li><a href="#mref-settextlimit">NSD_SetTextLimit</a></li>
-<li>CheckBox &amp; RadioButton:
+<li>CheckBox &amp; RadioButton: 
 <a href="#mref-getstate">NSD_GetState</a>, 
 <a href="#mref-setstate">NSD_SetState</a>, 
 <a href="#mref-check">NSD_Check</a>, 
 <a href="#mref-uncheck">NSD_Uncheck</a>
 </li>
-<li>ComboBox &amp; DropList:
+<li>ComboBox &amp; DropList: 
 <a href="#mref-cbaddstring">NSD_CB_AddString</a>, 
 <a href="#mref-cbselectstring">NSD_CB_SelectString</a>, 
 <a href="#mref-cbgetcount">NSD_CB_GetCount</a>
 </li>
-<li>ListBox:
+<li>ListBox: 
 <a href="#mref-lbaddstring">NSD_LB_AddString</a>, 
 <a href="#mref-lbinsstring">NSD_LB_InsertString</a>, 
 <a href="#mref-lbdelstring">NSD_LB_DelString</a>, 
@@ -94,17 +94,20 @@ code
 <a href="#mref-lbselectstring">NSD_LB_SelectString</a>, 
 <a href="#mref-lbgetselection">NSD_LB_GetSelection</a>
 </li>
-<li>Animation:
+<li>Animation: 
 <a href="#mref-animopenfile">NSD_Anim_OpenFile</a>, 
 <a href="#mref-animplay">NSD_Anim_Play</a>, 
 <a href="#mref-animstop">NSD_Anim_Stop</a>
 </li>
-<li>HTrackBar &amp; VTrackBar:
+<li>HTrackBar &amp; VTrackBar: 
 <a href="#mref-trackgetpos">NSD_TrackBar_GetPos</a>, 
 <a href="#mref-tracksetpos">NSD_TrackBar_SetPos</a>, 
 <a href="#mref-tracksetrmin">NSD_TrackBar_SetRangeMin</a>, 
 <a href="#mref-tracksetrmax">NSD_TrackBar_SetRangeMax</a>, 
 <a href="#mref-tracksetticfr">NSD_TrackBar_SetTicFreq</a>
+</li>
+<li>HotKey: 
+<a href="#mref-hkgethk">NSD_HotKey_GetHotKey</a>, <a href="#mref-hksethk">NSD_HotKey_SetHotKey</a>
 </li>
 <li><a href="#mref-setimage">NSD_SetImage</a></li>
 <li><a href="#mref-setsimage">NSD_SetStretchedImage</a></li>
@@ -125,7 +128,7 @@ code
 
 <p>nsDialogs is a new NSIS plug-in, introduced in version 2.29 as a replacement for <a href="../InstallOptions/Readme.html">InstallOptions</a>. nsDialogs doesn't use INI files, so it's way faster than InstallOptions. Integration with the script is tighter and more natural - creating controls is done using plug-in functions and notification is done by directly calling a function in the script. Unlike InstallOptions, there isn't a predefined set of available control type and by providing a lower level access to Windows API, every type of control can be created and pages can be more customizable.</p>
 
-<p>The same thing that makes nsDialogs more flexible can also make it more complicated for users with no knowledge of Win32 API. This is solved by creating a library of predefined functions, defined in script, that allow creation and handling of controls. This way, novices get easy access to the flexibility, while advanced users still get access to the core functionality by modifying the library or simply avoid using it.</p>
+<p>The same thing that makes nsDialogs more flexible can also make it more complicated for users with no knowledge of Win32 API. This is solved by creating a library of predefined functions, defined in script, that allow creation and handling of controls. This way, novices get easy access to the flexibility, while advanced users still get access to the <a href="http://msdn.microsoft.com/en-us/library/bb773169">core functionality</a> by modifying the library or simply avoid using it.</p>
 
 <h2><a name="step"></a>Step-by-Step Tutorial</h2>
 
@@ -286,34 +289,34 @@ Section
 
 SectionEnd</pre></blockquote>
 
-<p>Available control types that can be created with <a href="#mref-create">${NSD_Create*}</a> are:</p>
-
-<ul>
-<li>HLine</li>
-<li>VLine</li>
-<li>Label</li>
-<li>Icon</li>
-<li>Bitmap</li>
-<li>BrowseButton</li>
-<li>Link</li>
-<li>Button</li>
-<li>GroupBox</li>
-<li>CheckBox</li>
-<li>RadioButton</li>
-<li>Text</li>
-<li>Password</li>
-<li>Number</li>
-<li>FileRequest</li>
-<li>DirRequest</li>
-<li>ComboBox</li>
-<li>DropList</li>
-<li>ListBox</li>
-<li>SortedListBox</li>
-<li>ProgressBar</li>
-<li>Animation</li>
-<li>HTrackBar</li>
-<li>VTrackBar</li>
-</ul>
+<p>Available control types that can be created with <a href="#mref-create">${NSD_Create*}</a> are: 
+HLine, 
+VLine, 
+Label, 
+Icon, 
+Bitmap, 
+BrowseButton, 
+Link, 
+Button, 
+GroupBox, 
+CheckBox, 
+RadioButton, 
+Text, 
+Password, 
+Number, 
+FileRequest, 
+DirRequest, 
+ComboBox, 
+DropList, 
+ListBox, 
+SortedListBox, 
+ProgressBar, 
+Animation, 
+HTrackBar, 
+VTrackBar, 
+HotKey,
+IPAddress.
+</p>
 
 <h3><a name="step-state"></a>Control State</h3>
 
@@ -674,6 +677,8 @@ SectionEnd</pre></blockquote>
 <li>${NSD_CreateAnimation}</li>
 <li>${NSD_CreateHTrackBar}</li>
 <li>${NSD_CreateVTrackBar}</li>
+<li>${NSD_CreateHotKey}</li>
+<li>${NSD_CreateIPAddress} <small>(Requires IE4)</small></li>
 </ul>
 
 <p>Returns the new control's HWND on the stack or <i>error</i></p>
@@ -893,6 +898,16 @@ SectionEnd</pre></blockquote>
 <p><code>${NSD_TrackBar_SetTicFreq} <i>track_HWND</i></code></p>
 
 <p>Sets the interval frequency for tick marks.</p>
+
+<h3><a name="mref-hkgethk">NSD_HotKey_GetHotKey</a></h3>
+
+<p><code>${NSD_HotKey_GetHotKey} <i>hk_HWND</i> <i>output</i></code></p>
+
+<p>Bits 0..7 specify the virtual key code and bits 8..15 specify the HOTKEYF modifier flags.</p>
+
+<h3><a name="mref-hksethk">NSD_HotKey_SetHotKey</a></h3>
+
+<p><code>${NSD_HotKey_SetHotKey} <i>hk_HWND</i> <i>packedhotkey</i></code></p>
 
 <h3><a name="mref-setimage"></a>NSD_SetImage</h3>
 

@@ -43,6 +43,8 @@ TCM     Tab control
 PBM     Progress bar
 ACM     Animation control
 TBM     Track bar
+HKM     Hot key control
+IPM     IP address control
 -----------------------------------
 
 NOT included messages (WM_USER + X)
@@ -51,8 +53,6 @@ CBEM    Extended combo box control
 CDM     Common dialog box
 DL      Drag list box
 DTM     Date and time picker control
-HKM     Hot key control
-IPM     IP address control
 MCM     Month calendar control
 PGM     Pager control
 PSM     Property sheet
@@ -651,8 +651,8 @@ ${_NSIS_DEFAW} LVM_SETITEMTEXT
 !define SBM_SETSCROLLINFO           0x00E9
 
 #Static control#
-!define STM_GETICON                 0x0171
 !define STM_SETICON                 0x0170
+!define STM_GETICON                 0x0171
 !define STM_SETIMAGE                0x0172
 !define STM_GETIMAGE                0x0173
 !define STM_MSGMAX                  0x0174
@@ -737,6 +737,31 @@ ${_NSIS_DEFAW} ACM_OPEN
 !define TBM_SETUNICODEFORMAT     ${CCM_SETUNICODEFORMAT} ; IE4
 !define TBM_GETUNICODEFORMAT     ${CCM_GETUNICODEFORMAT} ; IE4
 !define /math TBM_SETPOSNOTIFY   ${WM_USER} + 34 ; 7?
+
+#HotKey control#
+!define /math HKM_SETHOTKEY ${WM_USER} + 1
+!define /math HKM_GETHOTKEY ${WM_USER} + 2
+!define /math HKM_SETRULES  ${WM_USER} + 3
+!define /IfNDef HOTKEYF_SHIFT   0x01
+!define /IfNDef HOTKEYF_CONTROL 0x02
+!define /IfNDef HOTKEYF_ALT     0x04
+!define /IfNDef HOTKEYF_EXT     0x08
+!define HKCOMB_NONE 0x01
+!define HKCOMB_S    0x02
+!define HKCOMB_C    0x04
+!define HKCOMB_A    0x08
+!define HKCOMB_SC   0x10
+!define HKCOMB_SA   0x20
+!define HKCOMB_CA   0x40
+!define HKCOMB_SCA  0x80
+
+#IPAddress control#
+!define /math IPM_CLEARADDRESS ${WM_USER} + 100
+!define /math IPM_SETADDRESS   ${WM_USER} + 101
+!define /math IPM_GETADDRESS   ${WM_USER} + 102
+!define /math IPM_SETRANGE     ${WM_USER} + 103
+!define /math IPM_SETFOCUS     ${WM_USER} + 104
+!define /math IPM_ISBLANK      ${WM_USER} + 105
 
 !verbose pop
 !endif
