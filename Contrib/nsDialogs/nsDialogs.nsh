@@ -152,6 +152,29 @@ Header file for creating custom installer pages with nsDialogs
 !define LBS_NOSEL             0x4000
 !define LBS_COMBOBOX          0x8000
 
+!define ACS_CENTER      0x0001
+!define ACS_TRANSPARENT 0x0002 ;  The parent of the animation control must not have the WS_CLIPCHILDREN style
+!define ACS_AUTOPLAY    0x0004
+!define ACS_TIMER       0x0008 ; < CC6
+
+!define TBS_AUTOTICKS        0x0001
+!define TBS_VERT             0x0002
+!define TBS_HORZ             0x0000
+!define TBS_TOP              0x0004
+!define TBS_BOTTOM           0x0000
+!define TBS_LEFT             0x0004
+!define TBS_RIGHT            0x0000
+!define TBS_BOTH             0x0008
+!define TBS_NOTICKS          0x0010
+!define TBS_ENABLESELRANGE   0x0020
+!define TBS_FIXEDLENGTH      0x0040
+!define TBS_NOTHUMB          0x0080
+!define TBS_TOOLTIPS         0x0100 ; IE3
+!define TBS_REVERSED         0x0200 ; IE5
+!define TBS_DOWNISLEFT       0x0400 ; _WIN32_IE >= 0x0501
+!define TBS_NOTIFYBEFOREMOVE 0x0800 ; IE6?
+!define TBS_TRANSPARENTBKGND 0x1000 ; Vista
+
 !define /ifndef LR_DEFAULTCOLOR     0x0000
 !define /ifndef LR_MONOCHROME       0x0001
 !define /ifndef LR_COLOR            0x0002
@@ -173,6 +196,16 @@ Header file for creating custom installer pages with nsDialogs
 
 !define /ifndef GWL_STYLE           -16
 !define /ifndef GWL_EXSTYLE         -20
+
+!define /ifndef ICC_BAR_CLASSES      0x0004
+!define /ifndef ICC_UPDOWN_CLASS     0x0010
+!define /ifndef ICC_HOTKEY_CLASS     0x0040
+!define /ifndef ICC_ANIMATE_CLASS    0x0080
+!define /ifndef ICC_DATE_CLASSES     0x0100
+!define /ifndef ICC_USEREX_CLASSES   0x0200
+!define /ifndef ICC_INTERNET_CLASSES 0x0800
+!define /ifndef ICC_LINK_CLASS       0x8000
+
 
 !define DEFAULT_STYLES ${WS_CHILD}|${WS_VISIBLE}|${WS_CLIPSIBLINGS}
 
@@ -260,6 +293,19 @@ Header file for creating custom installer pages with nsDialogs
 !define __NSD_ProgressBar_STYLE ${DEFAULT_STYLES}
 !define __NSD_ProgressBar_EXSTYLE ${WS_EX_WINDOWEDGE}|${WS_EX_CLIENTEDGE}
 
+!define __NSD_Animation_CLASS SysAnimate32
+!define __NSD_Animation_STYLE ${DEFAULT_STYLES}|${ACS_TRANSPARENT}|${ACS_AUTOPLAY}
+!define __NSD_Animation_EXSTYLE 0
+
+!define __NSD_HTrackBar_CLASS msctls_trackbar32
+!define __NSD_HTrackBar_STYLE ${DEFAULT_STYLES}|${TBS_HORZ}|${TBS_AUTOTICKS}|${TBS_TOOLTIPS}
+!define __NSD_HTrackBar_EXSTYLE 0
+
+!define __NSD_VTrackBar_CLASS msctls_trackbar32
+!define __NSD_VTrackBar_STYLE ${DEFAULT_STYLES}|${TBS_VERT}|${TBS_AUTOTICKS}|${TBS_TOOLTIPS}
+!define __NSD_VTrackBar_EXSTYLE 0
+
+
 !macro __NSD_DefineControl NAME
 	!define NSD_Create${NAME} "nsDialogs::CreateControl ${__NSD_${Name}_CLASS} ${__NSD_${Name}_STYLE} ${__NSD_${Name}_EXSTYLE}"
 !macroend
@@ -284,6 +330,10 @@ Header file for creating custom installer pages with nsDialogs
 !insertmacro __NSD_DefineControl ListBox
 !insertmacro __NSD_DefineControl SortedListBox
 !insertmacro __NSD_DefineControl ProgressBar
+!insertmacro __NSD_DefineControl Animation
+!insertmacro __NSD_DefineControl HTrackBar
+!insertmacro __NSD_DefineControl VTrackBar
+
 
 !macro __NSD_OnControlEvent EVENT HWND FUNCTION
 	Push $0
@@ -318,6 +368,35 @@ Header file for creating custom installer pages with nsDialogs
 !insertmacro __NSD_DefineControlCallback Change
 !insertmacro __NSD_DefineControlCallback Notify
 !insertmacro __NSD_DefineDialogCallback Back
+
+
+!define __NSD_MkCtlCmd "!insertmacro __NSD_MkCtlCmd "
+!macro __NSD_MkCtlCmd msg wp lp hCtl
+SendMessage ${hCtl} ${${msg}} ${wp} ${lp}
+!macroend
+!define __NSD_MkCtlCmd_WP "!insertmacro __NSD_MkCtlCmd_WP "
+!macro __NSD_MkCtlCmd_WP msg lp hCtl wp
+SendMessage ${hCtl} ${${msg}} ${wp} ${lp}
+!macroend
+!define __NSD_MkCtlCmd_LP "!insertmacro __NSD_MkCtlCmd_LP "
+!macro __NSD_MkCtlCmd_LP msg wp hCtl lp
+SendMessage ${hCtl} ${${msg}} ${wp} ${lp}
+!macroend
+!define __NSD_MkCtlCmd_WPLP "!insertmacro __NSD_MkCtlCmd_WPLP "
+!macro __NSD_MkCtlCmd_WPLP msg hCtl wp lp
+SendMessage ${hCtl} ${${msg}} ${wp} ${lp}
+!macroend
+!define __NSD_MkCtlCmd_RV "!insertmacro __NSD_MkCtlCmd_RV "
+!macro __NSD_MkCtlCmd_RV msg wp lp hCtl VAR
+SendMessage ${hCtl} ${${msg}} ${wp} ${lp} ${VAR}
+!macroend
+
+!define NSD_InitCommonControlsEx "!insertmacro __NSD_InitCommonControlsEx "
+!macro __NSD_InitCommonControlsEx ICC
+System::Int64Op ${ICC} << 32
+System::Int64Op 0x08 | 
+System::Call 'COMCTL32::InitCommonControlsEx(*ls)' ; INITCOMMONCONTROLSEX as UINT64
+!macroend
 
 
 !define NSD_CreateTimer `!insertmacro _NSD_CreateTimer `
@@ -402,6 +481,7 @@ Header file for creating custom installer pages with nsDialogs
 !macroend
 
 !define NSD_GetChecked `!insertmacro __NSD_GetState `
+!define NSD_SetChecked `!insertmacro __NSD_SetState `
 
 
 ### ComboBox ###
@@ -556,6 +636,43 @@ SendMessage ${CONTROL} ${LB_SETITEMDATA} ${INDEX} ${DATA}
 !macro __NSD_LB_FindStringExact CONTROL STRING VAR
 	SendMessage ${CONTROL} ${LB_FINDSTRINGEXACT} -1 `STR:${STRING}` ${VAR}
 !macroend
+
+
+### Animation ###
+
+!define NSD_Anim_Close `${__NSD_MkCtlCmd} ACM_OPEN 0 0 `
+!define NSD_Anim_Play `${__NSD_MkCtlCmd} ACM_PLAY -1 0xFFFF0000 `
+!define NSD_Anim_PlayLoops `${__NSD_MkCtlCmd_WP} ACM_PLAY 0xFFFF0000 ` ; WP(UINT16):LoopCount
+!define NSD_Anim_Stop `${__NSD_MkCtlCmd} ACM_STOP 0 0 `
+!define NSD_Anim_IsPlaying `${__NSD_MkCtlCmd_RV} ACM_ISPLAYING 0 0 `
+
+!define NSD_Anim_OpenFile `!insertmacro __NSD_Anim_OpenFile `
+!macro __NSD_Anim_OpenFile CONTROL PATH
+SendMessage ${CONTROL} ${ACM_OPEN} 0 "STR:${PATH}"
+!macroend
+
+!define NSD_Anim_OpenResource `!insertmacro __NSD_Anim_OpenResource `
+!macro __NSD_Anim_OpenResource CONTROL HINSTANCE_CC471 RESID
+SendMessage ${CONTROL} ${ACM_OPEN} "${HINSTANCE_CC471}" "${RESID}"
+!macroend
+
+
+### TrackBar ###
+
+!define NSD_TrackBar_GetPos `${__NSD_MkCtlCmd_RV} TBM_GETPOS 0 0 `
+!define NSD_TrackBar_SetPos `${__NSD_MkCtlCmd_LP} TBM_SETPOS 1 `
+!define NSD_TrackBar_SetRangeMin `${__NSD_MkCtlCmd_LP} TBM_SETRANGEMIN 1 `
+!define NSD_TrackBar_SetRangeMax `${__NSD_MkCtlCmd_LP} TBM_SETRANGEMAX 1 `
+!define NSD_TrackBar_GetLineSize `${__NSD_MkCtlCmd_RV} TBM_GETLINESIZE 0 0 `
+!define NSD_TrackBar_SetLineSize `${__NSD_MkCtlCmd_LP} TBM_SETLINESIZE 0 `
+!define NSD_TrackBar_GetPageSize `${__NSD_MkCtlCmd_RV} TBM_GETPAGESIZE 0 0 `
+!define NSD_TrackBar_SetPageSize `${__NSD_MkCtlCmd_LP} TBM_SETPAGESIZE 0 `
+!define NSD_TrackBar_ClearTics `${__NSD_MkCtlCmd} TBM_CLEARTICS 0 0 `
+!define NSD_TrackBar_GetNumTics `${__NSD_MkCtlCmd_RV} TBM_GETNUMTICS 0 0 `
+!define NSD_TrackBar_SetTic `${__NSD_MkCtlCmd_LP} TBM_SETTIC 0 `
+!define NSD_TrackBar_SetTicFreq `${__NSD_MkCtlCmd_WP} TBM_SETTICFREQ 0 `
+!define NSD_TrackBar_GetThumbLength `${__NSD_MkCtlCmd_RV} TBM_GETTHUMBLENGTH 0 0 `
+!define NSD_TrackBar_SetBuddy `${__NSD_MkCtlCmd_WPLP} TBM_SETBUDDY ` ; WP(BOOL):Left/Right LP:HWND
 
 
 ### Static ###
