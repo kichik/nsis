@@ -305,6 +305,14 @@ Header file for creating custom installer pages with nsDialogs
 !define __NSD_VTrackBar_STYLE ${DEFAULT_STYLES}|${TBS_VERT}|${TBS_AUTOTICKS}|${TBS_TOOLTIPS}
 !define __NSD_VTrackBar_EXSTYLE 0
 
+!define __NSD_HotKey_CLASS msctls_hotkey32
+!define __NSD_HotKey_STYLE ${DEFAULT_STYLES}
+!define __NSD_HotKey_EXSTYLE ${WS_EX_WINDOWEDGE}|${WS_EX_CLIENTEDGE}
+
+!define __NSD_IPAddress_CLASS SysIPAddress32 ; IE4+/CC4.71+
+!define __NSD_IPAddress_STYLE ${DEFAULT_STYLES}
+!define __NSD_IPAddress_EXSTYLE 0
+
 
 !macro __NSD_DefineControl NAME
 	!define NSD_Create${NAME} "nsDialogs::CreateControl ${__NSD_${Name}_CLASS} ${__NSD_${Name}_STYLE} ${__NSD_${Name}_EXSTYLE}"
@@ -333,6 +341,8 @@ Header file for creating custom installer pages with nsDialogs
 !insertmacro __NSD_DefineControl Animation
 !insertmacro __NSD_DefineControl HTrackBar
 !insertmacro __NSD_DefineControl VTrackBar
+!insertmacro __NSD_DefineControl HotKey
+!insertmacro __NSD_DefineControl IPAddress
 
 
 !macro __NSD_OnControlEvent EVENT HWND FUNCTION
@@ -638,6 +648,16 @@ SendMessage ${CONTROL} ${LB_SETITEMDATA} ${INDEX} ${DATA}
 !macroend
 
 
+### ProgressBar ###
+!define NSD_ProgressBar_SetPos `${__NSD_MkCtlCmd_WP} PBM_SETPOS 0 `
+!define NSD_ProgressBar_SetStep `${__NSD_MkCtlCmd_WP} PBM_SETSTEP 0 `
+!define NSD_ProgressBar_StepIt `${__NSD_MkCtlCmd} PBM_STEPIT 0 0 `
+!define NSD_ProgressBar_AdvanceBy `${__NSD_MkCtlCmd_WP} PBM_DELTAPOS 0 `
+!define NSD_ProgressBar_SetPackedRange `${__NSD_MkCtlCmd_LP} PBM_SETRANGE 0 ` ; LP(DWORD):MAKELONG(min,max)
+!define NSD_ProgressBar_SetRange32 `${__NSD_MkCtlCmd_WPLP} PBM_SETRANGE32 ` ; [IE3+] WP:min LP:max
+!define NSD_ProgressBar_GetPos `${__NSD_MkCtlCmd_RV} PBM_GETPOS 0 0 ` ; [IE3+]
+
+
 ### Animation ###
 
 !define NSD_Anim_Close `${__NSD_MkCtlCmd} ACM_OPEN 0 0 `
@@ -673,6 +693,26 @@ SendMessage ${CONTROL} ${ACM_OPEN} "${HINSTANCE_CC471}" "${RESID}"
 !define NSD_TrackBar_SetTicFreq `${__NSD_MkCtlCmd_WP} TBM_SETTICFREQ 0 `
 !define NSD_TrackBar_GetThumbLength `${__NSD_MkCtlCmd_RV} TBM_GETTHUMBLENGTH 0 0 `
 !define NSD_TrackBar_SetBuddy `${__NSD_MkCtlCmd_WPLP} TBM_SETBUDDY ` ; WP(BOOL):Left/Right LP:HWND
+
+
+### HotKey ###
+
+!define NSD_HotKey_GetHotKey `${__NSD_MkCtlCmd_RV} HKM_GETHOTKEY 0 0 ` ; RV(WORD):MAKEWORD(VK,HOTKEYF)
+!define NSD_HotKey_SetHotKey `${__NSD_MkCtlCmd_WP} HKM_SETHOTKEY 0 `
+!define NSD_HotKey_SetRules `${__NSD_MkCtlCmd_WPLP} HKM_SETRULES `
+
+
+### IP Address ###
+
+!define NSD_IPAddress_Clear `${__NSD_MkCtlCmd} IPM_CLEARADDRESS 0 0 `
+!define NSD_IPAddress_SetPackedIPv4 `${__NSD_MkCtlCmd_LP} IPM_SETADDRESS 0 `
+!define NSD_IPAddress_IsBlank `${__NSD_MkCtlCmd_RV} IPM_ISBLANK 0 0 `
+
+!define NSD_IPAddress_GetPackedIPv4 `!insertmacro __NSD_IPAddress_GetPackedIPv4 `
+!macro __NSD_IPAddress_GetPackedIPv4 CONTROL VAR
+System::Call 'USER32::SendMessage(p${CONTROL},i${IPM_GETADDRESS},p0,*i0s)'
+Pop ${VAR}
+!macroend
 
 
 ### Static ###
