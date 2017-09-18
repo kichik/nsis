@@ -38,8 +38,17 @@ https://wayback.archive.org/web/20021221200122/http://msdn.microsoft.com/library
 #define LOCALE_SNATIVEDISPLAYNAME 0x0073
 #endif
 #ifndef CB_SETCUEBANNER
-#define CB_SETCUEBANNER  (0x1700+3)
+#define CB_SETCUEBANNER (0x1700+3)
 #endif
+
+#if defined(_MSC_VER) && _MSC_VER >= 1200
+EXTERN_C IMAGE_DOS_HEADER __ImageBase;
+#define HINST_THISCOMPONENT ( (HINSTANCE) &__ImageBase )
+#define HINST_APPLICATION HINST_THISCOMPONENT
+#else
+#define HINST_APPLICATION ( (HINSTANCE) GetModuleHandle(NULL) )
+#endif
+
 
 static INT_PTR StrToIntptr(LPCTSTR s, bool ForceHex = false)
 {
@@ -273,7 +282,7 @@ static void InitIntLangList(HWND hCtl)
 		#else
 		LPCTSTR name = g_IntLang[i].name;
 		#endif
-		AddLocale(hCtl, name,  g_IntLang[i].id);
+		AddLocale(hCtl, name, g_IntLang[i].id);
 	}
 }
 
@@ -372,7 +381,7 @@ NSIS_ENTRYPOINT_GUINOCRT
 EXTERN_C void NSISWinMainNOCRT()
 {
 	InitCommonControls();
-	HINSTANCE hInst = GetModuleHandle(0);
+	HINSTANCE hInst = HINST_APPLICATION;
 	HANDLE hIco = LoadImage(hInst, MAKEINTRESOURCE(IDI_ICON), IMAGE_ICON, 0, 0, LR_DEFAULTSIZE|LR_SHARED);
 	INT_PTR retval = DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_DIALOG), 0, DialogProc, (LPARAM) hIco);
 	ExitProcess((UINT) retval);
