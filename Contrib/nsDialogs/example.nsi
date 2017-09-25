@@ -3,14 +3,18 @@
 
 Name "nsDialogs Example"
 OutFile "nsDialogs Example.exe"
+Caption "$(^Name)"
 
 XPStyle on
 RequestExecutionLevel user
 
-LicenseText "All the action takes place on the next page..."
+LicenseText "All the action takes place on the next page..." "Start"
+SubCaption 0 ": Ready?"
 
 Page license
 Page custom nsDialogsPage
+Page custom LBPage
+Page custom RangesPage
 !pragma warning disable 8000 ; "Page instfiles not used, no sections will be executed!"
 
 Var BUTTON
@@ -18,7 +22,6 @@ Var EDIT
 Var CHECKBOX
 
 Function nsDialogsPage
-
 	nsDialogs::Create 1018
 	Pop $0
 
@@ -44,43 +47,115 @@ Function nsDialogsPage
 	Pop $0
 
 	nsDialogs::Show
-
 FunctionEnd
 
 Function OnClick
-
 	Pop $0 # HWND
-
 	MessageBox MB_OK clicky
-
 FunctionEnd
 
 Function OnChange
-
 	Pop $0 # HWND
 
 	System::Call user32::GetWindowText(p$EDIT,t.r0,i${NSIS_MAX_STRLEN})
-
 	${If} $0 == "hello there"
 		MessageBox MB_OK "right back at ya"
 	${EndIf}
-
 FunctionEnd
 
 Function OnBack
-
 	MessageBox MB_YESNO "are you sure?" IDYES +2
 	Abort
-
 FunctionEnd
 
 Function OnCheckbox
-
 	Pop $0 # HWND
-
 	MessageBox MB_OK "checkbox clicked"
-
 FunctionEnd
+
+!macro BeginControlsTestPage title
+	nsDialogs::Create 1018
+	Pop $0
+	${NSD_SetText} $hWndParent "$(^Name): ${title}"
+!macroend
+
+!macro CreateButton x y w h txt var handler data
+	${NSD_CreateButton} ${x} ${y} ${w} ${h} "${txt}"
+	Pop ${var}
+	nsDialogs::SetUserData ${var} ${data}
+	${NSD_OnClick} ${var} ${handler}
+!macroend
+
+
+Function LBPage
+	!insertmacro BeginControlsTestPage "ListBox"
+
+	${NSD_CreateSortedListBox} 1u 0 -2u 70u ""
+	Pop $1
+	${NSD_LB_AddString} $1 "Foo"
+	${NSD_LB_AddString} $1 "Bar"
+
+	StrCpy $9 1
+	${NSD_CreateText} 1u 75u -2u 12u "New item #$9"
+	Pop $EDIT
+	!insertmacro CreateButton 1u 90u 50u 12u "Add (&Sorted)" $0 LBAction Add
+	!insertmacro CreateButton 55u 90u 50u 12u "&Prepend" $0 LBAction Prepend
+	!insertmacro CreateButton 110u 90u 50u 12u "&Append" $0 LBAction Append
+	!insertmacro CreateButton 165u 90u 50u 12u "&Delete Last" $0 LBAction DL
+
+	nsDialogs::Show
+FunctionEnd
+
+Function LBAction
+	Pop $0
+	nsDialogs::GetUserData $0
+	Pop $0
+	${NSD_GetText} $EDIT $8
+
+	${Select} $0
+	${Case} "Add"
+		${NSD_LB_AddString} $1 $8
+	${Case} "Prepend"
+		${NSD_LB_PrependString} $1 $8
+	${Case} "Append"
+		${NSD_LB_AppendString} $1 $8
+	${Case} "DL"
+		${NSD_LB_GetCount} $1 $8
+		${If} $8 U> 0
+			IntOp $8 $8 - 1
+			${NSD_LB_DelItem} $1 $8
+		${EndIf}
+		Return
+	${EndSelect}
+
+	IntOp $9 $9 + 1
+	${NSD_SetText} $EDIT "New item #$9"
+FunctionEnd
+
+
+Function RangesPage
+	!insertmacro BeginControlsTestPage "Ranges"
+
+	${NSD_CreateHTrackBar} 1 0 -2 20u ""
+	Pop $1
+	${NSD_TrackBar_SetRangeMax} $1 10
+	${NSD_TrackBar_SetTicFreq} $1 1
+	${NSD_TrackBar_SetPos} $1 3
+
+	StrCpy $9 20 ; Progress pos
+	${NSD_CreateProgressBar} 1 25u -2 8u ""
+	Pop $2
+	${NSD_CreateTimer} RangesTimer 1000
+
+	nsDialogs::Show
+FunctionEnd
+
+Function RangesTimer
+	IntOp $9 $9 + 5
+	${IfThen} $9 > 100 ${|} StrCpy $9 0 ${|}
+	${NSD_ProgressBar_SetPos} $2 $9
+FunctionEnd
+
 
 Section
 SectionEnd
