@@ -736,17 +736,17 @@ SectionEnd</pre></blockquote>
 
 <p><code>${NSD_AddStyle} <i>control_HWND</i> <i>style</i></code></p>
 
-<p>Adds one or more window style to a control. Multiple styles should be separated with pipes `|'.</p>
+<p>Adds one or more window styles to a control. Multiple styles should be separated with pipes `|'.</p>
 
-<p>See MSDN for style description.</p>
+<p>See MSDN for style descriptions.</p>
 
 <h3><a name="mref-addexstyle"></a>NSD_AddExStyle</h3>
 
 <p><code>${NSD_AddExStyle} <i>control_HWND</i> <i>style</i></code></p>
 
-<p>Adds one or more extended window style to a control. Multiple styles should be separated with pipes `|'.</p>
+<p>Adds one or more extended window styles to a control. Multiple styles should be separated with pipes `|'.</p>
 
-<p>See MSDN for style description.</p>
+<p>See <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff700543">MSDN</a> for style descriptions.</p>
 
 <h3><a name="mref-gettext"></a>NSD_GetText</h3>
 
@@ -904,7 +904,7 @@ SectionEnd</pre></blockquote>
 
 <h3><a name="mref-tracksetticfr">NSD_TrackBar_SetTicFreq</a></h3>
 
-<p><code>${NSD_TrackBar_SetTicFreq} <i>track_HWND</i></code></p>
+<p><code>${NSD_TrackBar_SetTicFreq} <i>track_HWND</i> <i>frequency</i></code></p>
 
 <p>Sets the interval frequency for tick marks.</p>
 
@@ -1021,7 +1021,7 @@ SectionEnd</pre></blockquote>
 <li>
 <b>Q:</b> Can nsDialogs handle InstallOptions INI files?
 <blockquote>
-<p><b>A:</b> nsDialogs.nsh contains a function called <i>CreateDialogFromINI</i> that can create nsDialogs' dialog from an INI file. It can handle every type of control InstallOptions supports, but doesn't handle the flags or notification yet. <i>Examples\nsDialogs\InstallOptions.nsi</i> shows a usage example of this function.</p><p>In the future there'll also be a function that creates the script itself.
+<p><b>A:</b> nsDialogs.nsh contains a function called <i>CreateDialogFromINI</i> that can create nsDialogs' dialog from an INI file. It can handle every type of control InstallOptions supports, but doesn't handle the flags or notifications. <i>Examples\nsDialogs\InstallOptions.nsi</i> shows a usage example of this function.</p>
 </blockquote>
 </li>
 

@@ -598,7 +598,7 @@ SendMessage ${CONTROL} ${LB_INSERTSTRING} -1 `STR:${STRING}`
 
 !define NSD_LB_DelItem "!insertmacro __NSD_LB_DelItem "
 !macro __NSD_LB_DelItem CONTROL INDEX
-	SendMessage ${CONTROL} ${LB_DELETESTRING} ${INDEX}
+	SendMessage ${CONTROL} ${LB_DELETESTRING} ${INDEX} 0
 !macroend
 
 
