@@ -286,8 +286,8 @@ Header file for creating custom installer pages with nsDialogs
 !define __NSD_ListBox_EXSTYLE ${WS_EX_WINDOWEDGE}|${WS_EX_CLIENTEDGE}
 
 !define __NSD_SortedListBox_CLASS LISTBOX
-!define __NSD_SortedListBox_STYLE ${DEFAULT_STYLES}|${WS_TABSTOP}|${WS_VSCROLL}|${LBS_DISABLENOSCROLL}|${LBS_HASSTRINGS}|${LBS_NOINTEGRALHEIGHT}|${LBS_NOTIFY}|${LBS_SORT}
-!define __NSD_SortedListBox_EXSTYLE ${WS_EX_WINDOWEDGE}|${WS_EX_CLIENTEDGE}
+!define __NSD_SortedListBox_STYLE ${__NSD_ListBox_STYLE}|${LBS_SORT}
+!define __NSD_SortedListBox_EXSTYLE ${__NSD_ListBox_EXSTYLE}
 
 !define __NSD_ProgressBar_CLASS msctls_progress32
 !define __NSD_ProgressBar_STYLE ${DEFAULT_STYLES}
@@ -502,6 +502,22 @@ System::Call 'COMCTL32::InitCommonControlsEx(*ls)' ; INITCOMMONCONTROLSEX as UIN
 !macroend
 
 
+!define NSD_CB_InsertString "!insertmacro _NSD_CB_InsertString "
+!macro _NSD_CB_InsertString CONTROL INDEX STRING
+SendMessage ${CONTROL} ${CB_INSERTSTRING} ${INDEX} `STR:${STRING}`
+!macroend
+
+!define NSD_CB_PrependString "!insertmacro _NSD_CB_PrependString "
+!macro _NSD_CB_PrependString CONTROL STRING
+SendMessage ${CONTROL} ${CB_INSERTSTRING} 0 `STR:${STRING}`
+!macroend
+
+!define NSD_CB_AppendString "!insertmacro _NSD_CB_AppendString "
+!macro _NSD_CB_AppendString CONTROL STRING
+SendMessage ${CONTROL} ${CB_INSERTSTRING} -1 `STR:${STRING}`
+!macroend
+
+
 !define NSD_CB_SelectString "!insertmacro _NSD_CB_SelectString "
 !macro _NSD_CB_SelectString CONTROL STRING
 	SendMessage ${CONTROL} ${CB_SELECTSTRING} -1 `STR:${STRING}`
@@ -543,6 +559,9 @@ SendMessage ${CONTROL} ${CB_GETITEMDATA} ${INDEX} 0 ${VAR}
 SendMessage ${CONTROL} ${CB_SETITEMDATA} ${INDEX} ${DATA}
 !macroend
 
+!define NSD_CB_DelItem `${__NSD_MkCtlCmd_WP} CB_DELETESTRING 0 `
+!define NSD_CB_LimitText `${__NSD_MkCtlCmd_WP} CB_LIMITTEXT 0 `
+
 
 ### ListBox ###
 
@@ -555,6 +574,16 @@ SendMessage ${CONTROL} ${CB_SETITEMDATA} ${INDEX} ${DATA}
 !define NSD_LB_InsertString "!insertmacro _NSD_LB_InsertString "
 !macro _NSD_LB_InsertString CONTROL INDEX STRING
 SendMessage ${CONTROL} ${LB_INSERTSTRING} ${INDEX} `STR:${STRING}`
+!macroend
+
+!define NSD_LB_PrependString "!insertmacro _NSD_LB_PrependString "
+!macro _NSD_LB_PrependString CONTROL STRING
+SendMessage ${CONTROL} ${LB_INSERTSTRING} 0 `STR:${STRING}`
+!macroend
+
+!define NSD_LB_AppendString "!insertmacro _NSD_LB_AppendString "
+!macro _NSD_LB_AppendString CONTROL STRING
+SendMessage ${CONTROL} ${LB_INSERTSTRING} -1 `STR:${STRING}`
 !macroend
 
 

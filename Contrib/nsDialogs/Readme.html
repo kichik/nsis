@@ -81,8 +81,10 @@ code
 </li>
 <li>ComboBox &amp; DropList: 
 <a href="#mref-cbaddstring">NSD_CB_AddString</a>, 
+<a href="#mref-cbinsstring">NSD_CB_InsertString</a>, 
 <a href="#mref-cbselectstring">NSD_CB_SelectString</a>, 
-<a href="#mref-cbgetcount">NSD_CB_GetCount</a>
+<a href="#mref-cbgetcount">NSD_CB_GetCount</a>,
+NSD_CB_PrependString, NSD_CB_AppendString
 </li>
 <li>ListBox: 
 <a href="#mref-lbaddstring">NSD_LB_AddString</a>, 
@@ -92,7 +94,8 @@ code
 <a href="#mref-lbclear">NSD_LB_Clear</a>, 
 <a href="#mref-lbgetcount">NSD_LB_GetCount</a>, 
 <a href="#mref-lbselectstring">NSD_LB_SelectString</a>, 
-<a href="#mref-lbgetselection">NSD_LB_GetSelection</a>
+<a href="#mref-lbgetselection">NSD_LB_GetSelection</a>,
+NSD_LB_PrependString, NSD_LB_AppendString
 </li>
 <li>Animation: 
 <a href="#mref-animopenfile">NSD_Anim_OpenFile</a>, 
@@ -800,6 +803,12 @@ SectionEnd</pre></blockquote>
 <p><code>${NSD_CB_AddString} <i>combo_HWND</i> <i>string</i></code></p>
 
 <p>Adds a string to a combo box.</p>
+
+<h3><a name="mref-cbinsstring"></a>NSD_CB_InsertString</h3>
+
+<p><code>${NSD_CB_InsertString} <i>combo_HWND</i> <i>index</i> <i>string</i></code></p>
+
+<p>Insert a string in a specified position in a combo box.</p>
 
 <h3><a name="mref-cbselectstring"></a>NSD_CB_SelectString</h3>
 
