@@ -1,5 +1,6 @@
 !include nsDialogs.nsh
 !include LogicLib.nsh
+!include WinCore.nsh ; MAKELONG
 
 Name "nsDialogs Example"
 OutFile "nsDialogs Example.exe"
@@ -146,6 +147,14 @@ Function RangesPage
 	${NSD_CreateProgressBar} 1 25u -2 8u ""
 	Pop $2
 	${NSD_CreateTimer} RangesTimer 1000
+
+	${NSD_CreateNumber} 1 40u 50u 12u "42"
+	Pop $3
+	${NSD_CreateUpDown} 0 0 0 0 ""
+	Pop $4
+	${NSD_UD_SetBuddy} $4 $3
+	${MAKELONG} $5 $0 50 0 ; 0..50
+	${NSD_UD_SetPackedRange} $4 $5
 
 	nsDialogs::Show
 FunctionEnd
