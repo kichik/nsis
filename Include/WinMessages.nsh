@@ -43,6 +43,7 @@ TCM     Tab control
 PBM     Progress bar
 ACM     Animation control
 TBM     Track bar
+UDM     Up-down control
 HKM     Hot key control
 IPM     IP address control
 -----------------------------------
@@ -60,7 +61,6 @@ RB      Rebar control
 TB      Toolbar
 TTM     Tooltip control
 TVM     Tree-view control
-UDM     Up-down control
 -----------------------------------
 */
 
@@ -737,6 +737,24 @@ ${_NSIS_DEFAW} ACM_OPEN
 !define TBM_SETUNICODEFORMAT     ${CCM_SETUNICODEFORMAT} ; IE4
 !define TBM_GETUNICODEFORMAT     ${CCM_GETUNICODEFORMAT} ; IE4
 !define /math TBM_SETPOSNOTIFY   ${WM_USER} + 34 ; 7?
+
+#UpDown controls#
+!define /math UDM_SETRANGE   ${WM_USER} + 101
+!define /math UDM_GETRANGE   ${WM_USER} + 102
+!define /math UDM_SETPOS     ${WM_USER} + 103
+!define /math UDM_GETPOS     ${WM_USER} + 104
+!define /math UDM_SETBUDDY   ${WM_USER} + 105
+!define /math UDM_GETBUDDY   ${WM_USER} + 106
+!define /math UDM_SETACCEL   ${WM_USER} + 107
+!define /math UDM_GETACCEL   ${WM_USER} + 108
+!define /math UDM_SETBASE    ${WM_USER} + 109
+!define /math UDM_GETBASE    ${WM_USER} + 110
+!define /math UDM_SETRANGE32 ${WM_USER} + 111 ; IE4
+!define /math UDM_GETRANGE32 ${WM_USER} + 112 ; IE4
+!define UDM_SETUNICODEFORMAT ${CCM_SETUNICODEFORMAT} ; IE4
+!define UDM_GETUNICODEFORMAT ${CCM_GETUNICODEFORMAT} ; IE4
+!define /math UDM_SETPOS32   ${WM_USER} + 113 ; IE5
+!define /math UDM_GETPOS32   ${WM_USER} + 114 ; IE5
 
 #HotKey control#
 !define /math HKM_SETHOTKEY ${WM_USER} + 1

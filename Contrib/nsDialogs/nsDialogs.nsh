@@ -175,6 +175,16 @@ Header file for creating custom installer pages with nsDialogs
 !define TBS_NOTIFYBEFOREMOVE 0x0800 ; IE6?
 !define TBS_TRANSPARENTBKGND 0x1000 ; Vista
 
+!define UDS_WRAP        0x0001
+!define UDS_SETBUDDYINT 0x0002
+!define UDS_ALIGNRIGHT  0x0004
+!define UDS_ALIGNLEFT   0x0008
+!define UDS_AUTOBUDDY   0x0010
+!define UDS_ARROWKEYS   0x0020
+!define UDS_HORZ        0x0040
+!define UDS_NOTHOUSANDS 0x0080
+!define UDS_HOTTRACK    0x0100 ; 98+
+
 !define /ifndef LR_DEFAULTCOLOR     0x0000
 !define /ifndef LR_MONOCHROME       0x0001
 !define /ifndef LR_COLOR            0x0002
@@ -305,6 +315,14 @@ Header file for creating custom installer pages with nsDialogs
 !define __NSD_VTrackBar_STYLE ${DEFAULT_STYLES}|${TBS_VERT}|${TBS_AUTOTICKS}|${TBS_TOOLTIPS}
 !define __NSD_VTrackBar_EXSTYLE 0
 
+!define __NSD_UpDown_CLASS msctls_updown32
+!define __NSD_UpDown_STYLE ${DEFAULT_STYLES}|${UDS_SETBUDDYINT}|${UDS_ARROWKEYS}|${UDS_NOTHOUSANDS}|${UDS_ALIGNRIGHT}
+!define __NSD_UpDown_EXSTYLE 0
+
+!define __NSD_AutoUpDown_CLASS msctls_updown32
+!define __NSD_AutoUpDown_STYLE ${__NSD_UpDown_STYLE}|${UDS_AUTOBUDDY}
+!define __NSD_AutoUpDown_EXSTYLE ${__NSD_UpDown_EXSTYLE}
+
 !define __NSD_HotKey_CLASS msctls_hotkey32
 !define __NSD_HotKey_STYLE ${DEFAULT_STYLES}
 !define __NSD_HotKey_EXSTYLE ${WS_EX_WINDOWEDGE}|${WS_EX_CLIENTEDGE}
@@ -341,6 +359,8 @@ Header file for creating custom installer pages with nsDialogs
 !insertmacro __NSD_DefineControl Animation
 !insertmacro __NSD_DefineControl HTrackBar
 !insertmacro __NSD_DefineControl VTrackBar
+!insertmacro __NSD_DefineControl UpDown
+!insertmacro __NSD_DefineControl AutoUpDown
 !insertmacro __NSD_DefineControl HotKey
 !insertmacro __NSD_DefineControl IPAddress
 
@@ -678,6 +698,7 @@ SendMessage ${CONTROL} ${LB_SETITEMDATA} ${INDEX} ${DATA}
 
 
 ### ProgressBar ###
+
 !define NSD_ProgressBar_SetPos `${__NSD_MkCtlCmd_WP} PBM_SETPOS 0 `
 !define NSD_ProgressBar_SetStep `${__NSD_MkCtlCmd_WP} PBM_SETSTEP 0 `
 !define NSD_ProgressBar_StepIt `${__NSD_MkCtlCmd} PBM_STEPIT 0 0 `
@@ -697,12 +718,12 @@ SendMessage ${CONTROL} ${LB_SETITEMDATA} ${INDEX} ${DATA}
 
 !define NSD_Anim_OpenFile `!insertmacro __NSD_Anim_OpenFile `
 !macro __NSD_Anim_OpenFile CONTROL PATH
-SendMessage ${CONTROL} ${ACM_OPEN} 0 "STR:${PATH}"
+	SendMessage ${CONTROL} ${ACM_OPEN} 0 "STR:${PATH}"
 !macroend
 
 !define NSD_Anim_OpenResource `!insertmacro __NSD_Anim_OpenResource `
 !macro __NSD_Anim_OpenResource CONTROL HINSTANCE_CC471 RESID
-SendMessage ${CONTROL} ${ACM_OPEN} "${HINSTANCE_CC471}" "${RESID}"
+	SendMessage ${CONTROL} ${ACM_OPEN} "${HINSTANCE_CC471}" "${RESID}"
 !macroend
 
 
@@ -724,11 +745,38 @@ SendMessage ${CONTROL} ${ACM_OPEN} "${HINSTANCE_CC471}" "${RESID}"
 !define NSD_TrackBar_SetBuddy `${__NSD_MkCtlCmd_WPLP} TBM_SETBUDDY ` ; WP(BOOL):Left/Right LP:HWND
 
 
+### UpDown ###
+
+!define NSD_UD_SetBuddy `${__NSD_MkCtlCmd_WP} UDM_SETBUDDY 0 `
+!define NSD_UD_GetPos `${__NSD_MkCtlCmd_RV} UDM_GETPOS 0 0 `
+!define NSD_UD_SetPos `${__NSD_MkCtlCmd_LP} UDM_SETPOS 0 `
+!define NSD_UD_GetPackedRange `${__NSD_MkCtlCmd_RV} UDM_GETRANGE 0 0 `
+!define NSD_UD_SetPackedRange `${__NSD_MkCtlCmd_LP} UDM_SETRANGE 0 ` ; LP(DWORD):MAKELONG(min,max)
+!define NSD_UD_GetPos32 `${__NSD_MkCtlCmd_RV} UDM_GETPOS32 0 0 `
+!define NSD_UD_SetPos32 `${__NSD_MkCtlCmd_LP} UDM_SETPOS32 0 `
+!define NSD_UD_SetRange32 `${__NSD_MkCtlCmd_WPLP} UDM_SETRANGE32 ` ; WP(INT32):min LP(INT32):max
+
+!define NSD_UD_GetRange32 `!insertmacro __NSD_UD_GetRange32 `
+!macro __NSD_UD_GetRange32 CONTROL OUTLO OUTHI
+	System::Call 'USER32::SendMessage(p${CONTROL},i${UDM_GETRANGE32},*i.s,*i.s)'
+	Pop ${OUTLO}
+	Pop ${OUTHI}
+!macroend
+
+!define NSD_UD_SetStaticRange `!insertmacro __NSD_UD_SetStaticRange `
+!macro __NSD_UD_SetStaticRange CONTROL MI MA
+	!define /redef /math MI ${MI} << 16
+	!define /redef /math MA ${MA} & 0xffff
+	!define /redef /math MA ${MI} | ${MA}
+	SendMessage ${CONTROL} ${UDM_SETRANGE} 0 ${MA}
+!macroend
+
+
 ### HotKey ###
 
-!define NSD_HotKey_GetHotKey `${__NSD_MkCtlCmd_RV} HKM_GETHOTKEY 0 0 ` ; RV(WORD):MAKEWORD(VK,HOTKEYF)
-!define NSD_HotKey_SetHotKey `${__NSD_MkCtlCmd_WP} HKM_SETHOTKEY 0 `
-!define NSD_HotKey_SetRules `${__NSD_MkCtlCmd_WPLP} HKM_SETRULES `
+!define NSD_HK_GetHotKey `${__NSD_MkCtlCmd_RV} HKM_GETHOTKEY 0 0 ` ; RV(WORD):MAKEWORD(VK,HOTKEYF)
+!define NSD_HK_SetHotKey `${__NSD_MkCtlCmd_WP} HKM_SETHOTKEY 0 `
+!define NSD_HK_SetRules `${__NSD_MkCtlCmd_WPLP} HKM_SETRULES `
 
 
 ### IP Address ###
@@ -777,7 +825,7 @@ Pop ${VAR}
 !macroend
 
 !define NSD_SetImage `!insertmacro __NSD_LoadAndSetImage file ${IMAGE_BITMAP} 0 "${LR_LOADFROMFILE}" `
-!define NSD_SetBitmap `${NSD_SetImage}`
+!define NSD_SetBitmap `${NSD_SetImage} `
 
 !define NSD_SetIcon `!insertmacro __NSD_LoadAndSetImage file ${IMAGE_ICON} 0 "${LR_LOADFROMFILE}|${LR_DEFAULTSIZE}" `
 !define NSD_SetIconFromExeResource `!insertmacro __NSD_SetIconFromExeResource `
@@ -822,6 +870,7 @@ Pop ${VAR}
 
 
 !define NSD_ClearImage `!insertmacro __NSD_ClearImage ${IMAGE_BITMAP} `
+!define NSD_ClearBitmap `${NSD_ClearImage} `
 !define NSD_ClearIcon  `!insertmacro __NSD_ClearImage ${IMAGE_ICON } `
 !macro __NSD_ClearImage _IMGTYPE CONTROL
 	SendMessage ${CONTROL} ${STM_SETIMAGE} ${_IMGTYPE} 0
