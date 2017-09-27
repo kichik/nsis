@@ -4,16 +4,11 @@
 <title>nsDialogs</title>
 <meta http-equiv="Content-Type" content="text/html; charset=us-ascii">
 <style type="text/css">
-b
-{
-	color: red;
-}
-code
-{
-	margin-left: 20px;
-	padding: 7px;
-	background-color: rgb(240,240,240);
-}
+body { color: #000000; background-color: #ffffff; }
+b { color: red; }
+code { margin-left: 1.2em; padding: 0.5em; background-color: #f0f0f0; }
+span.inlcod i { padding: 0px 0.2em; color: #222222; font-family: monospace; font-style: normal; }
+blockquote pre { background-color: #fcfcfc; font-family: monospace; }
 </style>
 </head>
 <body>
@@ -28,10 +23,7 @@ code
 <li>
 <a href="#step">Step-by-Step Tutorial</a>
 <ul>
-<li><a href="#step-basic">Basic Script</a></li>
 <li><a href="#step-page">Custom Page</a></li>
-<li><a href="#step-create">Creating Page</a></li>
-<li><a href="#step-show">Showing Page</a></li>
 <li><a href="#step-add">Adding Controls</a></li>
 <li><a href="#step-state">Control State</a></li>
 <li><a href="#step-notify">Real-time Notification</a></li>
@@ -61,18 +53,13 @@ code
 <a href="#mref">Macro Reference</a>
 <ul>
 <li><a href="#mref-create">NSD_Create*</a></li>
-<li><a href="#mref-onback">NSD_OnBack</a></li>
-<li><a href="#mref-onchange">NSD_OnChange</a></li>
-<li><a href="#mref-onclick">NSD_OnClick</a></li>
-<li><a href="#mref-onnotify">NSD_OnNotify</a></li>
+<li><a href="#mref-onback">NSD_OnBack</a>, <a href="#mref-onchange">NSD_OnChange</a>, <a href="#mref-onclick">NSD_OnClick</a>, <a href="#mref-onnotify">NSD_OnNotify</a></li>
 <li><a href="#mref-setfocus">NSD_SetFocus</a></li>
-<li><a href="#mref-createtimer">NSD_CreateTimer</a></li>
-<li><a href="#mref-killtimer">NSD_KillTimer</a></li>
-<li><a href="#mref-addstyle">NSD_AddStyle</a></li>
-<li><a href="#mref-addexstyle">NSD_AddExStyle</a></li>
-<li><a href="#mref-gettext">NSD_GetText</a></li>
-<li><a href="#mref-settext">NSD_SetText</a></li>
-<li><a href="#mref-settextlimit">NSD_SetTextLimit</a></li>
+<li><a href="#mref-createtimer">NSD_CreateTimer</a>, <a href="#mref-killtimer">NSD_KillTimer</a></li>
+<li><a href="#mref-addstyle">NSD_AddStyle</a>, <a href="#mref-addexstyle">NSD_AddExStyle</a></li>
+<li><a href="#mref-gettext">NSD_GetText</a>, <a href="#mref-settext">NSD_SetText</a></li>
+<li>Text, Password &amp; Number: 
+<a href="#mref-settextlimit">NSD_SetTextLimit</a></li>
 <li>CheckBox &amp; RadioButton: 
 <a href="#mref-getstate">NSD_GetState</a>, 
 <a href="#mref-setstate">NSD_SetState</a>, 
@@ -137,123 +124,63 @@ NSD_LB_PrependString, NSD_LB_AppendString, <a href="#mref-lbinsstring">NSD_LB_In
 
 <p>nsDialogs allows creation of custom pages in the installer. On top of the built-in pages, nsDialogs can create pages with any type of controls in any order and arrangement. It can create everything from a simple page with one label to form which reacts to user's actions. <a href="../Modern UI 2/Readme.html">Modern UI 2</a>, for example, uses nsDialogs to create the welcome and finish pages.</p>
 
-<p>nsDialogs is a new NSIS plug-in, introduced in version 2.29 as a replacement for <a href="../InstallOptions/Readme.html">InstallOptions</a>. nsDialogs doesn't use INI files, so it's way faster than InstallOptions. Integration with the script is tighter and more natural - creating controls is done using plug-in functions and notification is done by directly calling a function in the script. Unlike InstallOptions, there isn't a predefined set of available control type and by providing a lower level access to Windows API, every type of control can be created and pages can be more customizable.</p>
+<p>nsDialogs is a NSIS plug-in, introduced in version 2.29 as a replacement for <a href="../InstallOptions/Readme.html">InstallOptions</a>. nsDialogs doesn't use INI files, so it's way faster than InstallOptions. Integration with the script is tighter and more natural - creating controls is done using plug-in functions and notification is done by directly calling a function in the script. Unlike InstallOptions, there isn't a predefined set of available control type and by providing a lower level access to Windows API, every type of control can be created and pages can be more customizable.</p>
 
 <p>The same thing that makes nsDialogs more flexible can also make it more complicated for users with no knowledge of Win32 API. This is solved by creating a library of predefined functions, defined in script, that allow creation and handling of controls. This way, novices get easy access to the flexibility, while advanced users still get access to the <a href="http://msdn.microsoft.com/en-us/library/bb773169">core functionality</a> by modifying the library or simply avoid using it.</p>
 
 <h2><a name="step"></a>Step-by-Step Tutorial</h2>
 
-<h3><a name="step-basic"></a>Basic Script</h3>
-
-<p>Before using nsDialogs, lets first create a basic script as our skeleton.</p>
-
-<blockquote><pre>Name nsDialogs
-OutFile nsDialogs.exe
-
-XPStyle on
-
-Page instfiles
-
-Section
-SectionEnd</pre></blockquote>
-
 <h3><a name="step-page"></a>Custom Page</h3>
 
-<p>Next, we'll add a custom page where we can use nsDialogs. nsDialogs cannot be used in sections or any other function but a custom page's function.</p>
-
-<blockquote><pre>Name nsDialogs
-OutFile nsDialogs.exe
-
-XPStyle on
-
-<b>Page custom nsDialogsPage</b>
-Page instfiles
-
-<b>Function nsDialogsPage
-FunctionEnd</b>
-
-Section
-SectionEnd</pre></blockquote>
-
-<h3><a name="step-create"></a>Creating Page</h3>
-
-<p>Now that the foundations are laid, it's time to use nsDialogs. The first call must always be to nsDialogs::Create. It will create a new dialog in the page and return its <i>HWND</i> on the stack. The result must be popped from the stack to prevent stack corruption. If the result is <i>error</i>, the dialog couldn't be created.</p>
-
-<p>nsDialogs::Create accepts one parameter. It has a very specific function, but to keep things simple for this tutorial, it must always be 1018.</p>
-
-<p><i>HWND</i> is a number that uniquely identifies the dialog and can be used with SendMessage, SetCtlColors and Win32 API.</p>
+<p>Before you can start adding controls you need to create a nsDialogs custom page. nsDialogs pages can only be created in a custom page's creator function, not in sections nor regular functions. Lets create a basic script with a empty nsDialogs page as our skeleton:</p>
 
 <blockquote><pre><b>!include LogicLib.nsh</b>
 
 Name nsDialogs
 OutFile nsDialogs.exe
-
 XPStyle on
 
-<b>Var Dialog</b>
-
-Page custom nsDialogsPage
-Page instfiles
-
-Function nsDialogsPage
 <b>
-	nsDialogs::Create 1018
-	Pop $Dialog
-
-	${If} $Dialog == error
-		Abort
-	${EndIf}
-</b>
-FunctionEnd
-
-Section
-SectionEnd</pre></blockquote>
-
-<h3><a name="step-show"></a>Showing Page</h3>
-
-<p>Now that the page is created, it's time to show it. This is done with nsDialogs::Show. This function will not return until the user clicks Next, Back or Cancel.</p>
-
-<blockquote><pre>!include LogicLib.nsh
-
-Name nsDialogs
-OutFile nsDialogs.exe
-
-XPStyle on
-
 Var Dialog
 
-Page custom nsDialogsPage
+Page custom nsDialogsPage</b>
 Page instfiles
 
-Function nsDialogsPage
+<b>Function nsDialogsPage
 	nsDialogs::Create 1018
 	Pop $Dialog
 
 	${If} $Dialog == error
 		Abort
 	${EndIf}
-<b>
+
 	nsDialogs::Show
-</b>
-FunctionEnd
+FunctionEnd</b>
 
 Section
 SectionEnd</pre></blockquote>
+<span class="inlcod">
+<p>The first call must always be to <i>nsDialogs::Create</i>. It will create a new dialog in the page and return its <i>HWND</i> on the stack. The result must be popped from the stack to prevent stack corruption. If the result is <i>error</i>, the dialog couldn't be created and the page must be aborted!</p>
+<p><i>nsDialogs::Create</i> accepts one parameter. It has a very specific function, but to keep things simple for this tutorial, it must always be 1018.</p>
+<p><i>HWND</i> is a number that uniquely identifies the dialog and can be used with <i>SendMessage</i>, <i>SetCtlColors</i> and Win32 API functions.</p>
+<p>The dialog is not fully constructed at this point and you can make modifications to it before it is displayed. To finalize and display the dialog you must call <i>nsDialogs::Show</i>. This function will not return until the user clicks Next, Back or Cancel.</p>
+</span>
+
 
 <h3><a name="step-add"></a>Adding Controls</h3>
 
-<p>Compiling the last script and running it results in an empty page which is not very useful. So now we'll add some controls to it to. To do so, we'll use <a href="#mref-create">${NSD_Create*}</a> macros from nsDialogs.nsh. Each of those macros takes 5 parameters - x, y, width, height and text. Each macro also returns one value on the stack, which is the new control's HWND. Like the dialogs HWND, it must be popped from the stack and saved.</p>
+<span class="inlcod">
+<p>Compiling the last script and running it results in an empty page which is not very useful. So now we'll add some controls to it to. To do so, we'll use <a href="#mref-create">${NSD_Create*}</a> macros from nsDialogs.nsh. Each of those macros takes 5 parameters - x, y, width, height and text. Each macro also returns one value on the stack, which is the new control's <i>HWND</i>. Like the dialogs <i>HWND</i>, it must be popped from the stack and saved.</p>
 
 <p>Each of the measurements that the macros take can use one of three unit types - pixels, dialog units or percentage of the dialog's size. It can also be negative to indicate it should be measured from the end. To use dialog units, the measurement must be suffixed with the letter <i>u</i>. To use percentage, the measurement must be suffixed with the percentage sign - <i>%</i>. Any other suffix, or no suffix, means pixels.</p>
 
-<p>Dialog units allow creation of dialogs that scale well when different fonts or DPI is used. Its size in pixels is determined on runtime based on the font and the DPI. For example, standard pages in the classic NSIS user interface are 266 dialog units wide and 130 dialog units high. Pages in Modern UI are 300 dialogs units wide and 140 dialog units high. In different resolutions, using different fonts or DPI settings, the dialogs will always have the same size in dialog units, but different size in pixels.</p>
-
+<p>Dialog units allow creation of dialogs that scale well when different fonts or <abbr title="Dots per Inch">DPI</abbr> is used. Its size in pixels is determined on runtime based on the font and the DPI. For example, standard pages in the classic NSIS user interface are 266 dialog units wide and 130 dialog units high. Pages in Modern UI are 300 dialogs units wide and 140 dialog units high. In different resolutions, using different fonts or DPI settings, the dialogs will always have the same size in dialog units, but different size in pixels.</p>
+</span>
 <blockquote><pre><b>!include nsDialogs.nsh</b>
 !include LogicLib.nsh
 
 Name nsDialogs
 OutFile nsDialogs.exe
-
 XPStyle on
 
 Var Dialog
@@ -317,16 +244,16 @@ IPAddress.
 
 <h3><a name="step-state"></a>Control State</h3>
 
-<p>Now that we have some controls that the user can interact with, it's time to see what the user actually does with them. For that, we'll first add a <i>leave callback</i> function to our page. In that function, we'll query the state of the text control we've created and display it to the user. To do so, we'll use the <a href="#mref-gettext">${NSD_GetText}</a> macro. Use the <a href="#mref-getstate">${NSD_GetState}</a> macro for RadioButton and CheckBox controls.</p>
+<span class="inlcod">
+<p>Now that we have some controls that the user can interact with, it's time to see what the user actually does with them. For that, we'll first add a "leave callback function" to our page. In that function, we'll query the state of the text control we've created and display it to the user. To do so, we'll use the <a href="#mref-gettext">${NSD_GetText}</a> macro. Use the <a href="#mref-getstate">${NSD_GetState}</a> macro for RadioButton and CheckBox controls.</p>
 
 <p>Note that not all controls support <a href="#mref-gettext">${NSD_GetText}</a> and some require special handling with specific messages defined in WinMessages.nsh. For example, the ListBox control requires usage of <i>LB_GETCURSEL</i> and <i>LB_GETTEXT</i>. With time, the library of macros in nsDialogs.nsh will fill with more and more macros that'll handle more cases like this.</p>
-
+</span>
 <blockquote><pre>!include nsDialogs.nsh
 !include LogicLib.nsh
 
 Name nsDialogs
 OutFile nsDialogs.exe
-
 XPStyle on
 
 Var Dialog
@@ -367,18 +294,18 @@ SectionEnd</pre></blockquote>
 
 <h3><a name="step-notify"></a>Real-time Notification</h3>
 
+<span class="inlcod">
 <p>One of the more exciting new features of nsDialogs is callback function notification of changes to the dialog. nsDialogs can call a function defined in a script in response to a user action such as changing of a text field or click of a button. To make nsDialogs notify us of events, we'll use <a href="#mref-onclick">${NSD_OnClick}</a> and <a href="#mref-onchange">${NSD_OnChange}</a>. Not every control supports both of the events. For example, there is nothing to notify about label changes, only clicks.</p>
 
-<p>When the callback function is called, the control's HWND will be waiting on the stack and must be popped to prevent stack corruption. In this simple example, this is not so useful. But in case of a bigger script where several controls are associated with the same callback function, the HWND can shed some light on which control originated the event.</p>
+<p>When the callback function is called, the control's <i>HWND</i> will be waiting on the stack and must be popped to prevent stack corruption. In this simple example, this is not so useful. But in case of a bigger script where several controls are associated with the same callback function, the <i>HWND</i> can shed some light on which control originated the event.</p>
 
-<p>The new example will respond to the user type <i>hello</i> in the text box.</p>
-
+<p>The new example will respond to the user typing "hello" in the text box.</p>
+</span>
 <blockquote><pre>!include nsDialogs.nsh
 !include LogicLib.nsh
 
 Name nsDialogs
 OutFile nsDialogs.exe
-
 XPStyle on
 
 Var Dialog
@@ -443,7 +370,6 @@ SectionEnd</pre></blockquote>
 
 Name nsDialogs
 OutFile nsDialogs.exe
-
 XPStyle on
 
 Var Dialog
@@ -652,7 +578,7 @@ SectionEnd</pre></blockquote>
 <h3><a name="mref-addstyle"></a>NSD_AddStyle</h3>
 <p><code>${NSD_AddStyle} <i>control_HWND</i> <i>style</i></code></p>
 <p>Adds one or more window styles to a control. Multiple styles should be separated with pipes `|'.</p>
-<p>See MSDN for style descriptions.</p>
+<p>See MSDN for shared and per-control style descriptions.</p>
 
 <h3><a name="mref-addexstyle"></a>NSD_AddExStyle</h3>
 <p><code>${NSD_AddExStyle} <i>control_HWND</i> <i>style</i></code></p>
