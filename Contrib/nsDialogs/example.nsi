@@ -38,6 +38,7 @@ Function nsDialogsPage
 	Pop $EDIT
 	GetFunctionAddress $0 OnChange
 	nsDialogs::OnChange $EDIT $0
+	${NSD_Edit_SetCueBannerText} $EDIT 0 "Type 'hello there' and get a free surprise"
 
 	${NSD_CreateCheckbox} 0 -50 100% 8u Test
 	Pop $CHECKBOX

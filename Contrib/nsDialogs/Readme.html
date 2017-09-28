@@ -59,7 +59,10 @@ blockquote pre { background-color: #fcfcfc; font-family: monospace; }
 <li><a href="#mref-addstyle">NSD_AddStyle</a>, <a href="#mref-addexstyle">NSD_AddExStyle</a></li>
 <li><a href="#mref-gettext">NSD_GetText</a>, <a href="#mref-settext">NSD_SetText</a></li>
 <li>Text, Password &amp; Number: 
-<a href="#mref-settextlimit">NSD_SetTextLimit</a></li>
+<a href="#mref-settextlimit">NSD_Edit_SetTextLimit</a>, 
+<a href="#mref-edsetro">NSD_Edit_SetReadOnly</a>,
+<a href="#mref-edsetcuebanner">NSD_Edit_SetCueBannerText</a>
+</li>
 <li>CheckBox &amp; RadioButton: 
 <a href="#mref-getstate">NSD_GetState</a>, 
 <a href="#mref-setstate">NSD_SetState</a>, 
@@ -68,13 +71,13 @@ blockquote pre { background-color: #fcfcfc; font-family: monospace; }
 </li>
 <li>ComboBox &amp; DropList: 
 <a href="#mref-cbaddstring">NSD_CB_AddString</a>, 
-NSD_CB_PrependString, NSD_CB_AppendString, <a href="#mref-cbinsstring">NSD_CB_InsertString</a>, 
+<a href="#mref-cbinsstring">NSD_CB_PrependString, NSD_CB_AppendString, NSD_CB_InsertString</a>, 
 <a href="#mref-cbselectstring">NSD_CB_SelectString</a>, 
 <a href="#mref-cbgetcount">NSD_CB_GetCount</a>
 </li>
 <li>ListBox: 
 <a href="#mref-lbaddstring">NSD_LB_AddString</a>, 
-NSD_LB_PrependString, NSD_LB_AppendString, <a href="#mref-lbinsstring">NSD_LB_InsertString</a>, 
+<a href="#mref-lbinsstring">NSD_LB_PrependString, NSD_LB_AppendString, NSD_LB_InsertString</a>, 
 <a href="#mref-lbdelstring">NSD_LB_DelString</a>, 
 <a href="#mref-lbdelitem">NSD_LB_DelItem</a>, 
 <a href="#mref-lbclear">NSD_LB_Clear</a>, 
@@ -594,9 +597,17 @@ SectionEnd</pre></blockquote>
 <p><code>${NSD_SetText} <i>control_HWND</i> <i>text</i></code></p>
 <p>Sets the text of a control.</p>
 
-<h3><a name="mref-settextlimit"></a>NSD_SetTextLimit</h3>
-<p><code>${NSD_SetTextLimit} <i>control_HWND</i> <i>limit</i></code></p>
-<p>Sets input size limit for a text control.</p>
+<h3><a name="mref-settextlimit"></a>NSD_Edit_SetTextLimit</h3>
+<p><code>${NSD_Edit_SetTextLimit} <i>control_HWND</i> <i>limit</i></code></p>
+<p>Sets the input length limit for a text control.</p>
+
+<h3><a name="mref-edsetro"></a>NSD_Edit_SetReadOnly</h3>
+<p><code>${NSD_Edit_SetReadOnly} <i>control_HWND</i> <i>readonly</i></code></p>
+<p>1 to make the text control read-only or 0 to allow the user to input data.</p>
+
+<h3><a name="mref-edsetcuebanner"></a>NSD_Edit_SetCueBannerText</h3>
+<p><code>${NSD_Edit_SetCueBannerText} <i>control_HWND</i> <i>displaywhenfocused</i> <i>text</i></code></p>
+<p>Set a text hint displayed when the control is empty. The text is only visible on WinXP and later. Requires <i>XPStyle on</i>.</p>
 
 <h3><a name="mref-getstate"></a>NSD_GetState</h3>
 <p><code>${NSD_GetState} <i>control_HWND</i> <i>$output_variable</i></code></p>
@@ -623,6 +634,8 @@ SectionEnd</pre></blockquote>
 
 <h3><a name="mref-cbinsstring"></a>NSD_CB_InsertString</h3>
 <p><code>${NSD_CB_InsertString} <i>combo_HWND</i> <i>index</i> <i>string</i></code></p>
+<p><code>${NSD_CB_PrependString} <i>combo_HWND</i> <i>string</i></code></p>
+<p><code>${NSD_CB_AppendString} <i>combo_HWND</i> <i>string</i></code></p>
 <p>Insert a string in a specified position in a combo box.</p>
 
 <h3><a name="mref-cbselectstring"></a>NSD_CB_SelectString</h3>
@@ -638,6 +651,8 @@ SectionEnd</pre></blockquote>
 
 <h3><a name="mref-lbinsstring"></a>NSD_LB_InsertString</h3>
 <p><code>${NSD_LB_InsertString} <i>listbox_HWND</i> <i>index</i> <i>string</i></code></p>
+<p><code>${NSD_LB_PrependString} <i>listbox_HWND</i> <i>string</i></code></p>
+<p><code>${NSD_LB_AppendString} <i>listbox_HWND</i> <i>string</i></code></p>
 <p>Insert a string in a specified position in a list box.</p>
 
 <h3><a name="mref-lbdelstring"></a>NSD_LB_DelString</h3>
