@@ -421,6 +421,7 @@ SendMessage ${hCtl} ${${msg}} ${wp} ${lp}
 SendMessage ${hCtl} ${${msg}} ${wp} ${lp} ${VAR}
 !macroend
 
+
 !define NSD_InitCommonControlsEx "!insertmacro __NSD_InitCommonControlsEx "
 !macro __NSD_InitCommonControlsEx ICC
 System::Int64Op ${ICC} << 32
@@ -459,6 +460,18 @@ System::Call 'COMCTL32::InitCommonControlsEx(*ls)' ; INITCOMMONCONTROLSEX as UIN
 	System::Call "user32::SetWindowLong(p${HWND},p${GWL},ps)"
 !macroend
 
+!define NSD_GetStyle "!insertmacro _NSD_GWLGetFlags ${GWL_STYLE} "
+!define NSD_GetExStyle "!insertmacro _NSD_GWLGetFlags ${GWL_EXSTYLE} "
+!macro _NSD_GWLGetFlags GWL HWND RET
+System::Call "user32::GetWindowLong(p${HWND},i${GWL})p.s"
+Pop ${RET}
+!macroend
+
+!macro __NSD_GetStyleBit GWL BIT HWND RET
+!insertmacro _NSD_GWLGetFlags ${GWL} ${HWND} ${RET}
+IntOp ${RET} ${RET} & ${BIT}
+!macroend
+
 
 !define NSD_SetFocus `!insertmacro __NSD_SetFocus `
 !macro __NSD_SetFocus HWND
@@ -479,11 +492,33 @@ System::Call 'COMCTL32::InitCommonControlsEx(*ls)' ; INITCOMMONCONTROLSEX as UIN
 !macroend
 
 
-!define NSD_SetTextLimit "!insertmacro _NSD_SetTextLimit "
-!macro _NSD_SetTextLimit CONTROL LIMIT
-	SendMessage ${CONTROL} ${EM_SETLIMITTEXT} ${LIMIT} 0
+### Edit ###
+
+!define NSD_Edit_GetTextLimit `${__NSD_MkCtlCmd_RV} EM_GETLIMITTEXT 0 0 `
+!define NSD_Edit_SetTextLimit `${__NSD_MkCtlCmd_WP} EM_SETLIMITTEXT 0 `
+!define NSD_Edit_SetPasswordChar `${__NSD_MkCtlCmd_WP} EM_SETPASSWORDCHAR 0 `
+!define NSD_Edit_GetReadOnly `!insertmacro __NSD_GetStyleBit ${GWL_STYLE} ${ES_READONLY} ` ; Non-zero if read-only
+!define NSD_Edit_SetReadOnly `${__NSD_MkCtlCmd_WP} EM_SETREADONLY 0 ` ; Toggles the ES_READONLY style
+!define NSD_Edit_GetModify `${__NSD_MkCtlCmd_RV} EM_GETMODIFY 0 0 `
+!define NSD_Edit_SetModify `${__NSD_MkCtlCmd_WP} EM_SETMODIFY 0 `
+!define NSD_Edit_EmptyUndoBuffer `${__NSD_MkCtlCmd} EM_EMPTYUNDOBUFFER 0 0 `
+!define NSD_Edit_CanUndo `${__NSD_MkCtlCmd_RV} EM_CANUNDO 0 0 `
+!define NSD_Edit_ScrollCaret `${__NSD_MkCtlCmd} EM_SCROLLCARET 0 0 `
+!define NSD_Edit_SetSel `${__NSD_MkCtlCmd_WPLP} EM_SETSEL ` ; WP:Start LP:End
+
+!define NSD_Edit_SetCueBannerText "!insertmacro __NSD_Edit_SetCueBannerText " ; CC6+
+!macro __NSD_Edit_SetCueBannerText CONTROL SHOWWHENFOCUSED TEXT
+!if ${NSIS_CHAR_SIZE} > 1
+	SendMessage ${CONTROL} ${EM_SETCUEBANNER} ${SHOWWHENFOCUSED} `STR:${TEXT}`
+!else
+	System::Call 'USER32::SendMessage(p${CONTROL},i${EM_SETCUEBANNER},p${SHOWWHENFOCUSED},ws)' `${TEXT}` ; Must be PWSTR
+!endif
 !macroend
 
+!define NSD_SetTextLimit `${NSD_Edit_SetTextLimit} ` ; Legacy alias
+
+
+### CheckBox ###
 
 !define NSD_GetState `!insertmacro __NSD_GetState `
 !macro __NSD_GetState CONTROL VAR
@@ -495,9 +530,6 @@ System::Call 'COMCTL32::InitCommonControlsEx(*ls)' ; INITCOMMONCONTROLSEX as UIN
 !macro __NSD_SetState CONTROL STATE
 	SendMessage ${CONTROL} ${BM_SETCHECK} ${STATE} 0
 !macroend
-
-
-### CheckBox ###
 
 !define NSD_Check `!insertmacro __NSD_Check `
 !macro __NSD_Check CONTROL

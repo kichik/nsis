@@ -170,6 +170,11 @@ TVM     Tree-view control
 !define CB_SETLOCALE                0x0159
 !define CB_SETTOPINDEX              0x015c
 !define CB_SHOWDROPDOWN             0x014F
+!define CBM_FIRST                   0x1700 ; Vista+
+!define /math CB_SETMINVISIBLE ${CBM_FIRST} + 1
+!define /math CB_GETMINVISIBLE ${CBM_FIRST} + 2
+!define /math CB_SETCUEBANNER  ${CBM_FIRST} + 3
+!define /math CB_GETCUEBANNER  ${CBM_FIRST} + 4
 
 !define CB_ERR                      -1
 
@@ -214,6 +219,8 @@ TVM     Tree-view control
 !define EM_SETTABSTOPS          0x00CB
 !define EM_SETWORDBREAKPROC     0x00D0
 !define EM_UNDO                 0x00C7
+!define ECM_FIRST               0x1500 ; CC6+
+!define /math EM_SETCUEBANNER ${ECM_FIRST} + 1
 
 #Listbox Messages#
 !define LB_ADDFILE              0x0196
