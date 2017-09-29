@@ -596,18 +596,6 @@ SendMessage ${CONTROL} ${CB_INSERTSTRING} -1 `STR:${STRING}`
 !macroend
 
 
-!define NSD_CB_Clear "!insertmacro _NSD_CB_Clear "
-!macro _NSD_CB_Clear CONTROL STRING
-	SendMessage ${CONTROL} ${CB_RESETCONTENT} 0 0
-!macroend
-
-
-!define NSD_CB_GetCount `!insertmacro __NSD_CB_GetCount `
-!macro __NSD_CB_GetCount CONTROL VAR
-	SendMessage ${CONTROL} ${CB_GETCOUNT} 0 0 ${VAR}
-!macroend
-
-
 !define NSD_CB_GetSelectionIndex `!insertmacro __NSD_CB_GetSelectionIndex `
 !macro __NSD_CB_GetSelectionIndex CONTROL VAR
 	SendMessage ${CONTROL} ${CB_GETCURSEL} 0 0 ${VAR}
@@ -633,6 +621,10 @@ SendMessage ${CONTROL} ${CB_SETITEMDATA} ${INDEX} ${DATA}
 
 !define NSD_CB_DelItem `${__NSD_MkCtlCmd_WP} CB_DELETESTRING 0 `
 !define NSD_CB_LimitText `${__NSD_MkCtlCmd_WP} CB_LIMITTEXT 0 `
+!define /IfNDef NSD_CB_Clear `${__NSD_MkCtlCmd} CB_RESETCONTENT 0 0 `
+!define /IfNDef NSD_CB_GetCount `${__NSD_MkCtlCmd_RV} CB_RESETCONTENT 0 0 `
+;define /IfNDef NSD_CB_DelString    ; /IfNDef to try to stay compatible with 
+;define /IfNDef NSD_CB_GetSelection ; the ListView header from the Wiki.
 
 
 ### ListBox ###
@@ -661,10 +653,8 @@ SendMessage ${CONTROL} ${LB_INSERTSTRING} -1 `STR:${STRING}`
 
 !define NSD_LB_DelString `!insertmacro __NSD_LB_DelString `
 !macro __NSD_LB_DelString CONTROL STRING
-	Push $0
-	SendMessage ${CONTROL} ${LB_FINDSTRINGEXACT} -1 `STR:${STRING}` $0
-	SendMessage ${CONTROL} ${LB_DELETESTRING} $0 0
-	Pop $0
+	System::Call 'USER32::SendMessage(p${CONTROL},i${LB_FINDSTRINGEXACT},p-1,ts)p.s' `${STRING}`
+	System::Call 'USER32::SendMessage(p${CONTROL},i${LB_DELETESTRING},ps,p0)'
 !macroend
 
 
@@ -674,10 +664,7 @@ SendMessage ${CONTROL} ${LB_INSERTSTRING} -1 `STR:${STRING}`
 !macroend
 
 
-!define NSD_LB_Clear `!insertmacro __NSD_LB_Clear `
-!macro __NSD_LB_Clear CONTROL VAR
-	SendMessage ${CONTROL} ${LB_RESETCONTENT} 0 0 ${VAR}
-!macroend
+!define NSD_LB_Clear `${__NSD_MkCtlCmd} LB_RESETCONTENT 0 0 `
 
 
 !define NSD_LB_GetCount `!insertmacro __NSD_LB_GetCount `
