@@ -226,16 +226,34 @@ TVM     Tree-view control
 !define /math EM_EXGETSEL        ${WM_USER} + 52
 !define /math EM_EXLIMITTEXT     ${WM_USER} + 53
 !define /math EM_EXLINEFROMCHAR  ${WM_USER} + 54
+!define /math EM_GETEVENTMASK    ${WM_USER} + 59
 !define /math EM_GETOLEINTERFACE ${WM_USER} + 60
 !define /math EM_HIDESELECTION   ${WM_USER} + 63
 !define /math EM_SETBKGNDCOLOR   ${WM_USER} + 67
+!define /math EM_SETEVENTMASK    ${WM_USER} + 69
 !define /math EM_STREAMIN        ${WM_USER} + 73
 !define /math EM_STREAMOUT       ${WM_USER} + 74
+!define /math EM_GETTEXTRANGE    ${WM_USER} + 75
 !define /math EM_SETOPTIONS      ${WM_USER} + 77
 !define /math EM_GETOPTIONS      ${WM_USER} + 78
 !define /math EM_SETUNDOLIMIT    ${WM_USER} + 82 ; v2+
 !define /math EM_AUTOURLDETECT   ${WM_USER} + 91
-!define /math EM_SETFONTSIZE     ${WM_USER} + 223 ; v3+
+!define /math EM_SETEDITSTYLE    ${WM_USER} + 204 ; v3+
+!define /math EM_SETFONTSIZE     ${WM_USER} + 223
+
+!define EN_MSGFILTER 0x0700
+!define EN_SELCHANGE 0x0702
+!define EN_LINK      0x070b
+
+!define ENM_NONE         0x00000000
+!define ENM_CHANGE       0x00000001
+!define ENM_UPDATE       0x00000002
+!define ENM_SCROLL       0x00000004
+!define ENM_SCROLLEVENTS 0x00000008
+!define ENM_KEYEVENTS    0x00010000
+!define ENM_MOUSEEVENTS  0x00020000
+!define ENM_SELCHANGE    0x00080000
+!define ENM_LINK         0x04000000 ; v2+
 
 #Listbox Messages#
 !define LB_ADDFILE              0x0196

@@ -533,6 +533,9 @@ IntOp ${RET} ${RET} & ${BIT}
 
 
 ### RichEdit ###
+!define NSD_RichEd_SetTextLimit `${__NSD_MkCtlCmd_LP} EM_EXLIMITTEXT 0 `
+!define NSD_RichEd_GetEventMask `${__NSD_MkCtlCmd_RV} EM_GETEVENTMASK 0 0 `
+!define NSD_RichEd_SetEventMask `${__NSD_MkCtlCmd_LP} EM_SETEVENTMASK 0 ` ; LP:ENM_*
 !define NSD_RichEd_SetSystemBackgroundColor `${__NSD_MkCtlCmd} EM_SETBKGNDCOLOR 1 0 ` ; COLOR_WINDOW
 !define NSD_RichEd_SetCustomBackgroundColor `${__NSD_MkCtlCmd_LP} EM_SETBKGNDCOLOR 0 ` ; LP:COLORREF
 !define NSD_RichEd_SetHideSelection `${__NSD_MkCtlCmd_WP} EM_HIDESELECTION 0 ` ; WP(BOOL):HideSelWithoutFocus (Toggles ES_NOHIDESEL & TXTBIT_HIDESELECTION)
