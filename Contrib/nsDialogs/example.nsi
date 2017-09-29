@@ -130,7 +130,7 @@ Function LBAction
 		${EndIf}
 		Return
 	${Case} "Clear"
-		${NSD_LB_Clear} $1 ""
+		${NSD_LB_Clear} $1
         Return
 	${EndSelect}
 
