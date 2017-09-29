@@ -63,6 +63,11 @@ blockquote pre { background-color: #fcfcfc; font-family: monospace; }
 <a href="#mref-edsetro">NSD_Edit_SetReadOnly</a>,
 <a href="#mref-edsetcuebanner">NSD_Edit_SetCueBannerText</a>
 </li>
+<li>RichEdit: 
+<a href="#mref-richsettextlimit">NSD_RichEd_SetTextLimit</a>, 
+<a href="#mref-richseteventmask">NSD_RichEd_SetEventMask</a>, 
+<a href="#mref-richsetbkclr">NSD_RichEd_SetCustomBackgroundColor</a>
+</li>
 <li>CheckBox &amp; RadioButton: 
 <a href="#mref-getstate">NSD_GetState</a>, 
 <a href="#mref-setstate">NSD_SetState</a>, 
@@ -494,7 +499,7 @@ SectionEnd</pre></blockquote>
 
 <h3><a name="ref-onnotify"></a>OnNotify</h3>
 <p><code>nsDialogs::OnNotify <i>control_HWND</i> <i>function_address</i></code></p>
-<p>Sets a notification callback function for the given control. Whenever the control receives the WM_NOTIFY message, the function will be called and the control's HWND, notification code and a pointer to the MNHDR structure will be waiting on its stack.</p>
+<p>Sets a notification callback function for the given control. Whenever the control receives the WM_NOTIFY message, the function will be called and the control's HWND, notification code and a pointer to the NMHDR structure will be waiting on its stack.</p>
 <p>Use GetFunctionAddress to get the address of the desired callback function.</p>
 <p>Returns nothing.</p>
 
@@ -610,6 +615,16 @@ SectionEnd</pre></blockquote>
 <h3><a name="mref-edsetcuebanner"></a>NSD_Edit_SetCueBannerText</h3>
 <p><code>${NSD_Edit_SetCueBannerText} <i>control_HWND</i> <i>displaywhenfocused</i> <i>text</i></code></p>
 <p>Set a text hint displayed when the control is empty. The text is only visible on WinXP and later. Requires <i>XPStyle on</i>.</p>
+
+<h3><a name="mref-richsettextlimit"></a>NSD_RichEd_SetTextLimit</h3>
+<p><code>${NSD_RichEd_SetTextLimit} <i>control_HWND</i> <i>limit</i></code></p>
+<p>Sets the input length limit.</p>
+
+<h3><a name="mref-richseteventmask"></a>NSD_RichEd_SetEventMask</h3>
+<p><code>${NSD_RichEd_SetEventMask} <i>control_HWND</i> <i>eventmask</i></code></p>
+
+<h3><a name="mref-richsetbkclr"></a>NSD_RichEd_SetCustomBackgroundColor</h3>
+<p><code>${NSD_RichEd_SetCustomBackgroundColor} <i>control_HWND</i> <i>COLORREF</i></code></p>
 
 <h3><a name="mref-getstate"></a>NSD_GetState</h3>
 <p><code>${NSD_GetState} <i>control_HWND</i> <i>$output_variable</i></code></p>

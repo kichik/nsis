@@ -1,5 +1,6 @@
 !include nsDialogs.nsh
 !include LogicLib.nsh
+!include Util.nsh ; IntPtrOp
 !include WinCore.nsh ; MAKELONG
 
 Name "nsDialogs Example"
@@ -16,6 +17,7 @@ Page license
 Page custom nsDialogsPage
 Page custom LBPage
 Page custom RangesPage
+Page custom NotifyPage
 !pragma warning disable 8000 ; "Page instfiles not used, no sections will be executed!"
 
 Var BUTTON
@@ -170,6 +172,39 @@ Function RangesTimer
 	${NSD_ProgressBar_SetPos} $2 $9
 FunctionEnd
 
+
+Function NotifyPage
+	!insertmacro BeginControlsTestPage "WM_NOTIFY"
+
+	${NSD_CreateRichEdit} 1 1 -2 -2 ""
+	Pop $9
+	${NSD_OnNotify} $9 OnNotify
+	${NSD_RichEd_SetEventMask} $9 ${ENM_LINK}
+	SendMessage $9 ${EM_AUTOURLDETECT} 1 0
+	${NSD_SetText} $9 "{\rtf1\ansi{\fonttbl\f0\fswiss Helvetica;}\f0\pard http://nsis.sf.net\par {\b Click the link}...} "
+
+	nsDialogs::Show
+FunctionEnd
+
+Function OnNotify
+	Pop $1 ; HWND
+	Pop $2 ; Code
+	Pop $3 ; NMHDR*
+	${IfThen} $2 <> ${EN_LINK} ${|} Return ${|}
+	System::Call '*$3(p,p,p,p.r2,p,p,i.r4,i.r5)' ; Extract from ENLINK*	
+	${IfThen} $2 <> ${WM_LBUTTONDOWN} ${|} Return ${|}
+	IntOp $2 $5 - $4
+	System::Call '*(ir4,ir5,l,&t$2,i)p.r2' ; Create TEXTRANGE and a text buffer
+	${If} $2 P<> 0
+		${IntPtrOp} $3 $2 + 16 ; Find buffer
+		System::Call '*$2(i,i,p$3)' ; Set buffer in TEXTRANGE
+		SendMessage $1 ${EM_GETTEXTRANGE} "" $2 $4
+		${If} $4 <> 0
+			System::Call 'SHELL32::ShellExecute(p$hWndParent, p0, pr3, p0, p0, i 1)'
+		${EndIf}
+		System::Free $2
+	${EndIf}
+FunctionEnd
 
 Section
 SectionEnd
