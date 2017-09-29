@@ -107,6 +107,7 @@ TVM     Tree-view control
 !define /math CCM_GETVERSION       ${CCM_FIRST} + 0x8
 !define /math CCM_SETWINDOWTHEME   ${CCM_FIRST} + 0xB ; WinXP
 !define /math CCM_DPISCALE         ${CCM_FIRST} + 0xC
+!define WM_USER 0x400
 
 !define CCS_TOP 1
 !define CCS_BOTTOM 3
@@ -182,7 +183,6 @@ TVM     Tree-view control
 !define EM_CANUNDO              0x00C6
 !define EM_CHARFROMPOS          0x00D7
 !define EM_EMPTYUNDOBUFFER      0x00CD
-!define EM_EXLIMITTEXT          0x0435
 !define EM_FMTLINES             0x00C8
 !define EM_GETFIRSTVISIBLELINE  0x00CE
 !define EM_GETHANDLE            0x00BD
@@ -221,6 +221,21 @@ TVM     Tree-view control
 !define EM_UNDO                 0x00C7
 !define ECM_FIRST               0x1500 ; CC6+
 !define /math EM_SETCUEBANNER ${ECM_FIRST} + 1
+
+#RichEdit Messages#
+!define /math EM_EXGETSEL        ${WM_USER} + 52
+!define /math EM_EXLIMITTEXT     ${WM_USER} + 53
+!define /math EM_EXLINEFROMCHAR  ${WM_USER} + 54
+!define /math EM_GETOLEINTERFACE ${WM_USER} + 60
+!define /math EM_HIDESELECTION   ${WM_USER} + 63
+!define /math EM_SETBKGNDCOLOR   ${WM_USER} + 67
+!define /math EM_STREAMIN        ${WM_USER} + 73
+!define /math EM_STREAMOUT       ${WM_USER} + 74
+!define /math EM_SETOPTIONS      ${WM_USER} + 77
+!define /math EM_GETOPTIONS      ${WM_USER} + 78
+!define /math EM_SETUNDOLIMIT    ${WM_USER} + 82 ; v2+
+!define /math EM_AUTOURLDETECT   ${WM_USER} + 91
+!define /math EM_SETFONTSIZE     ${WM_USER} + 223 ; v3+
 
 #Listbox Messages#
 !define LB_ADDFILE              0x0196
@@ -481,7 +496,6 @@ TVM     Tree-view control
 !define WM_UNICHAR                      0x0109
 !define WM_UNINITMENUPOPUP              0x0125
 !define WM_UPDATEUISTATE                0x0128
-!define WM_USER                         0x400
 !define WM_USERCHANGED                  0x0054
 !define WM_VKEYTOITEM                   0x002E
 !define WM_VSCROLL                      0x0115

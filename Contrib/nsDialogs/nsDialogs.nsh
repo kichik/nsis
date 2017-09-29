@@ -6,8 +6,8 @@ Header file for creating custom installer pages with nsDialogs
 */
 
 !ifndef NSDIALOGS_INCLUDED
+!verbose push 2
 !define NSDIALOGS_INCLUDED
-!verbose push
 !verbose 3
 
 !include LogicLib.nsh
@@ -58,6 +58,7 @@ Header file for creating custom installer pages with nsDialogs
 !define ES_READONLY          0x00000800
 !define ES_WANTRETURN        0x00001000
 !define ES_NUMBER            0x00002000
+!define ES_SAVESEL           0x00008000
 
 !define SS_LEFT              0x00000000
 !define SS_CENTER            0x00000001
@@ -283,6 +284,18 @@ Header file for creating custom installer pages with nsDialogs
 !define __NSD_DirRequest_STYLE ${DEFAULT_STYLES}|${WS_TABSTOP}|${ES_AUTOHSCROLL}
 !define __NSD_DirRequest_EXSTYLE ${WS_EX_WINDOWEDGE}|${WS_EX_CLIENTEDGE}
 
+!define __NSD_RichEdit_CLASS_10  "RICHEDIT"    ; 1.0 (Riched32.dll) Win95/NT4
+!define __NSD_RichEdit_CLASS_20A "RICHEDIT20A" ; 2.0 (Riched20.dll) Win98/NT4 (NSIS makes sure this is registered even on Windows 95)
+!define __NSD_RichEdit_CLASS_20W "RICHEDIT20W"
+!define __NSD_RichEdit_CLASS_41W "RICHEDIT50W" ; 4.1 (MsftEdit.DLL) WinXP.SP1
+!ifdef NSIS_UNICODE
+!define /ifndef __NSD_RichEdit_CLASS ${__NSD_RichEdit_CLASS_20W}
+!else
+!define /ifndef __NSD_RichEdit_CLASS ${__NSD_RichEdit_CLASS_20A}
+!endif
+!define __NSD_RichEdit_STYLE ${DEFAULT_STYLES}|${WS_TABSTOP}|${ES_AUTOHSCROLL}|${ES_AUTOVSCROLL}|${ES_MULTILINE}|${ES_WANTRETURN}|${ES_SAVESEL}|${WS_HSCROLL}|${WS_VSCROLL}
+!define __NSD_RichEdit_EXSTYLE ${WS_EX_WINDOWEDGE}|${WS_EX_CLIENTEDGE}
+
 !define __NSD_ComboBox_CLASS COMBOBOX
 !define __NSD_ComboBox_STYLE ${DEFAULT_STYLES}|${WS_TABSTOP}|${WS_VSCROLL}|${WS_CLIPCHILDREN}|${CBS_AUTOHSCROLL}|${CBS_HASSTRINGS}|${CBS_DROPDOWN}
 !define __NSD_ComboBox_EXSTYLE ${WS_EX_WINDOWEDGE}|${WS_EX_CLIENTEDGE}
@@ -351,6 +364,7 @@ Header file for creating custom installer pages with nsDialogs
 !insertmacro __NSD_DefineControl Number
 !insertmacro __NSD_DefineControl FileRequest
 !insertmacro __NSD_DefineControl DirRequest
+!insertmacro __NSD_DefineControl RichEdit
 !insertmacro __NSD_DefineControl ComboBox
 !insertmacro __NSD_DefineControl DropList
 !insertmacro __NSD_DefineControl ListBox
@@ -516,6 +530,12 @@ IntOp ${RET} ${RET} & ${BIT}
 !macroend
 
 !define NSD_SetTextLimit `${NSD_Edit_SetTextLimit} ` ; Legacy alias
+
+
+### RichEdit ###
+!define NSD_RichEd_SetSystemBackgroundColor `${__NSD_MkCtlCmd} EM_SETBKGNDCOLOR 1 0 ` ; COLOR_WINDOW
+!define NSD_RichEd_SetCustomBackgroundColor `${__NSD_MkCtlCmd_LP} EM_SETBKGNDCOLOR 0 ` ; LP:COLORREF
+!define NSD_RichEd_SetHideSelection `${__NSD_MkCtlCmd_WP} EM_HIDESELECTION 0 ` ; WP(BOOL):HideSelWithoutFocus (Toggles ES_NOHIDESEL & TXTBIT_HIDESELECTION)
 
 
 ### CheckBox ###

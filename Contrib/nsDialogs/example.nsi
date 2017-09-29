@@ -101,9 +101,10 @@ Function LBPage
 	${NSD_CreateText} 1u 75u -2u 12u "New item #$9"
 	Pop $EDIT
 	!insertmacro CreateButton 1u 90u 50u 12u "Add (&Sorted)" $0 LBAction Add
-	!insertmacro CreateButton 55u 90u 50u 12u "&Prepend" $0 LBAction Prepend
-	!insertmacro CreateButton 110u 90u 50u 12u "&Append" $0 LBAction Append
-	!insertmacro CreateButton 165u 90u 50u 12u "&Delete Last" $0 LBAction DL
+	!insertmacro CreateButton 53u 90u 50u 12u "&Prepend" $0 LBAction Prepend
+	!insertmacro CreateButton 105u 90u 50u 12u "&Append" $0 LBAction Append
+	!insertmacro CreateButton 160u 90u 50u 12u "&Delete Last" $0 LBAction DL
+	!insertmacro CreateButton 215u 90u 50u 12u "&Clear" $0 LBAction Clear
 
 	nsDialogs::Show
 FunctionEnd
@@ -128,6 +129,9 @@ Function LBAction
 			${NSD_LB_DelItem} $1 $8
 		${EndIf}
 		Return
+	${Case} "Clear"
+		${NSD_LB_Clear} $1 ""
+        Return
 	${EndSelect}
 
 	IntOp $9 $9 + 1
