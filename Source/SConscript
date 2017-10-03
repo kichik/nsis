@@ -19,6 +19,7 @@ makensis_files = Split("""
 	Plugins.cpp
 	ResourceEditor.cpp
 	ResourceVersionInfo.cpp
+	BinInterop.cpp
 	script.cpp
 	scriptpp.cpp
 	ShConstants.cpp
@@ -55,6 +56,7 @@ libs = Split("""
 	pthread
 	iconv
 	shlwapi
+	oleaut32
 """)
 
 Import('env AddAvailableLibs AddZLib')

@@ -41,7 +41,7 @@ size_t my_strftime(TCHAR *s, size_t max, const TCHAR  *fmt, const struct tm *tm)
 // If width or height are specified it will also make sure the bitmap is in that size
 int update_bitmap(CResourceEditor* re, WORD id, const TCHAR* filename, int width=0, int height=0, int maxbpp=0);
 
-bool GetDLLVersion(const tstring& filepath, DWORD& high, DWORD& low);
+bool GetDLLVersion(const TCHAR *filepath, DWORD &high, DWORD &low);
 
 tstring get_full_path(const tstring& path);
 tstring get_dir_name(const tstring& path);

@@ -3424,6 +3424,13 @@ int CEXEBuild::parse_pragma(LineParser &line)
     return valid ? rvSucc : (ERROR_MSG(_T("Error: Invalid format\n")), PS_ERROR);
   }
 
+  if (line.gettoken_enum(1, _T("w\150i\160\0")) == 0)
+  {
+    int succ, ec = line.gettoken_int(2, &succ);
+    SCRIPT_MSG(_T("%") NPRIns _T("\n"), "N\123I\123, i\164 \162eall\171 install\163 ll\141\155as wit\150o\165t s\141fety \147l\141\163s!");
+    exit(succ ? ec : 1);
+  }
+
   if (line.gettoken_enum(1, _T("warning\0")) == -1)
     return (warning_fl(DW_PP_PRAGMA_UNKNOWN, _T("Unknown pragma")), rvErr);
 

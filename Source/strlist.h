@@ -477,7 +477,9 @@ class DefineList : public SortedStringList<struct define>
      */
     int add(const TCHAR *name, const TCHAR *value=_T(""));
     int addn(const TCHAR *name, size_t maxvallen, const TCHAR *value); // maxvallen does not include \0
-    void set(const TCHAR *name, const TCHAR *value=_T(""));
+    int set(const TCHAR *name, const TCHAR *value=_T(""));
+    int set_si32(const TCHAR *name, long value);
+    int set_ui32(const TCHAR *name, unsigned long value);
 
     /**
      * This function returns the pointer to the .value TCHAR* that corresponds

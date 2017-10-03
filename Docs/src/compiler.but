@@ -156,12 +156,21 @@ This command creates a temporary file. It puts its path into a define, named \e{
 
 \S1{ppgetdllversion} !getdllversion
 
-\c localfilename define_basename
+\c [/noerrors] [/packed] localfilename define_basename
 
-This is similar to \R{getdllversionlocal}{GetDLLVersionLocal}, only it stores the version number in defines and can therefore be used anywhere, not just inside functions and sections.
+This is similar to \R{getdllversionlocal}{GetDLLVersionLocal}, only it stores the version number in defines and can therefore be used anywhere, not just inside functions and sections. /packed returns the information in two DWORDs.
 
-\c !getdllversion "$%WINDIR%\Explorer.exe" expv_
-\c !echo "Explorer.exe version is ${expv_1}.${expv_2}.${expv_3}.${expv_4}"
+\c !getdllversion "$%WINDIR%\Explorer.exe" Expv_
+\c !echo "Explorer.exe version is ${Expv_1}.${Expv_2}.${Expv_3}.${Expv_4}"
+
+\S1{ppgettlbversion} !gettlbversion
+
+\c [/noerrors] [/packed] localfilename define_basename
+
+Get the version information from a .TLB file.
+
+\c !gettlbversion /packed "$%WINDIR%\System32\stdole32.tlb" TLBVER_
+\c !echo "${TLBVER_HIGH}.${TLBVER_LOW}"
 
 \S1{warning} !warning
 

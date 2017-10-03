@@ -24,6 +24,7 @@
 #include "build.h"
 #include "utf.h"
 #include "util.h"
+#include "BinInterop.h"
 #include "dirreader.h"
 #include <cassert> // for assert(3)
 #include <time.h>
@@ -579,26 +580,61 @@ int CEXEBuild::pp_appendfile(LineParser&line)
   return PS_OK;
 }
 
-int CEXEBuild::pp_getdllversion(LineParser&line)
+enum { PPGVHF_VALID = 0x01, PPGVHF_NOERRORS = 0x02, PPGVHF_PACKED = 0x04, PPGVHF_TLB = 0x08 };
+int CEXEBuild::pp_getversionhelper(const TCHAR *cmdname, const TCHAR *path, const TCHAR *basesymname, DWORD high, DWORD low, DWORD flags)
 {
-  const TCHAR *cmdname = _T("!getdllversion");
-  DWORD low, high; 
-  if (!GetDLLVersion(line.gettoken_str(1), high, low))
+  TCHAR *symbuf = m_templinebuf;
+  DWORD tlb = (flags & PPGVHF_TLB);
+  FILE *pF = tlb ? MSTLB_fopen(path) : FOPEN(path, ("rb"));
+  if (pF) fclose(pF);
+  bool vnum = pF && (flags & PPGVHF_VALID); // LibraryLocal users want to detect "file not found" vs "no version info"
+  if (!vnum) high = low = 0;
+  DWORD vals[] = { high >> 16, high & 0xffff, low >> 16, low & 0xffff }, count = 4;
+  if (tlb) count = 2, vals[0] = high, vals[1] = low, vals[2] = vals[3] = 0;
+
+  if (!pF)
   {
-    ERROR_MSG(_T("%") NPRIs _T(": error reading version info from \"%") NPRIs _T("\"\n"), cmdname, line.gettoken_str(1));
+    if (flags & PPGVHF_NOERRORS) return PS_OK;
+    ERROR_MSG(_T("%") NPRIs _T(": error reading version info from \"%") NPRIs _T("\"\n"), cmdname, path);
     return PS_ERROR;
   }
-  TCHAR *symbuf = m_templinebuf, numbuf[30], *basesymname = line.gettoken_str(2);
-  DWORD vals[] = { high >> 16, high & 0xffff, low >> 16, low & 0xffff };
-  SCRIPT_MSG(_T("%") NPRIs _T(": %") NPRIs _T(" (%u.%u.%u.%u)->(%") NPRIs _T("<1..4>)\n"),
-    cmdname, line.gettoken_str(1), vals[0], vals[1], vals[2], vals[3], basesymname);
-  for (UINT i = 0; i < 4; ++i)
+
+  if (flags & PPGVHF_PACKED)
   {
-    _stprintf(symbuf,_T("%") NPRIs _T("%u"), basesymname, i+1);
-    _stprintf(numbuf,_T("%lu"), vals[i]);
-    definedlist.add(symbuf, numbuf);
+    SCRIPT_MSG(_T("%") NPRIs _T(": %") NPRIs _T(" (%lu.%lu)->(%") NPRIs _T("<HIGH/LOW>)\n"),
+      cmdname, path, high, low, basesymname);
+    _stprintf(symbuf,_T("%") NPRIs _T("HIGH"), basesymname), vnum ? definedlist.set_ui32(symbuf, high) : definedlist.set(symbuf, _T(""));
+    _stprintf(symbuf,_T("%") NPRIs _T("LOW"), basesymname), vnum ? definedlist.set_ui32(symbuf, low) : definedlist.set(symbuf, _T(""));
+  }
+  else
+  {
+    SCRIPT_MSG(_T("%") NPRIs _T(": %") NPRIs _T(" (%u.%u.%u.%u)->(%") NPRIs _T("<1..%d>)\n"),
+      cmdname, path, vals[0], vals[1], vals[2], vals[3], basesymname, (int) count);
+    for (UINT i = 0; i < count; ++i)
+    {
+      _stprintf(symbuf,_T("%") NPRIs _T("%u"), basesymname, i+1);
+      vnum ? definedlist.set_ui32(symbuf, vals[i]) : definedlist.set(symbuf, _T(""));
+    }
   }
   return PS_OK;
+}
+
+int CEXEBuild::pp_getversion(int which_token, LineParser&line)
+{
+  const bool tlb = TOK_P_GETTLBVERSION == which_token;
+  const TCHAR *cmdname = tlb ? _T("!gettlbversion") : _T("!getdllversion"), *path;
+  DWORD ti = 1, flags = tlb ? PPGVHF_TLB : 0, low, high;
+  for (;; ++ti)
+  {
+    if (!_tcsicmp(line.gettoken_str(ti), _T("/noerrors")))
+      flags |= PPGVHF_NOERRORS;
+    else if (!_tcsicmp(line.gettoken_str(ti), _T("/packed")))
+      flags |= PPGVHF_PACKED;
+    else
+      break;
+  }
+  if ((tlb ? GetTLBVersion : GetDLLVersion)(path = line.gettoken_str(ti), high, low)) flags |= PPGVHF_VALID;
+  return pp_getversionhelper(cmdname, path, line.gettoken_str(ti+1), high, low, flags);
 }
 
 int CEXEBuild::pp_searchreplacestring(LineParser&line)
@@ -1058,8 +1094,7 @@ int CEXEBuild::pp_execute(int which_token, LineParser&line)
 
   if (comp == 5)
   {
-    _stprintf(buf,_T("%d"),ret);
-    definedlist.set(define,buf);
+    definedlist.set_si32(define,ret);
   }
   else if (!check_external_exitcode(ret,comp,cmpv))
   {

@@ -153,6 +153,22 @@ CResourceEditor::~CResourceEditor() {
 // Methods
 //////////////////////////////////////////////////////////////////////
 
+#define FINDRESOURCE_NAME_FIRSTITEM ( (WINWCHAR*)(~(size_t)0) )
+CResourceDataEntry* CResourceEditor::FindResource(const WINWCHAR* Type, const WINWCHAR* Name, LANGID Language) {
+  int i = m_cResDir->Find(Type);
+  if (-1 != i) {
+    CResourceDirectory* pND = m_cResDir->GetEntry(i)->GetSubDirectory();
+    i = FINDRESOURCE_NAME_FIRSTITEM == Name ? 0 : pND->Find(Name);
+    if (-1 != i) {
+      CResourceDirectory* pLD = pND->GetEntry(i)->GetSubDirectory();
+      i = ANYLANGID == Language ? 0 : pLD->Find(Language);
+      if (-1 != i)
+        return pLD->GetEntry(i)->GetDataEntry();
+    }
+  }
+  return 0;
+}
+
 // Adds/Replaces/Removes a resource.
 // If lpData is 0 UpdateResource removes the resource.
 bool CResourceEditor::UpdateResourceW(const WINWCHAR* szType, WINWCHAR* szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize) {
@@ -258,33 +274,8 @@ bool CResourceEditor::UpdateResourceT(const TCHAR* szType, WORD szName, LANGID w
 // Returns a copy of the requested resource
 // Returns 0 if the requested resource can't be found
 BYTE* CResourceEditor::GetResourceW(const WINWCHAR* szType, WINWCHAR* szName, LANGID wLanguage) {
-  if (!m_bKeepData)
-    throw runtime_error("Can't GetResource() when bKeepData is false");
-
-  CResourceDirectory* nameDir = 0;
-  CResourceDirectory* langDir = 0;
-  CResourceDataEntry* data = 0;
-
-  int i = m_cResDir->Find(szType);
-  if (i > -1) {
-    nameDir = m_cResDir->GetEntry(i)->GetSubDirectory();
-    i = nameDir->Find(szName);
-    if (i > -1) {
-      langDir = nameDir->GetEntry(i)->GetSubDirectory();
-      i = wLanguage ? langDir->Find(wLanguage) : 0;
-      if (i > -1) {
-        data = langDir->GetEntry(i)->GetDataEntry();
-      }
-    }
-  }
-
-  if (data) {
-    BYTE* toReturn = new BYTE[data->GetSize()];
-    CopyMemory(toReturn, data->GetData(), data->GetSize());
-    return toReturn;
-  }
-  else
-    return NULL;
+  CResourceDataEntry* data = FindResource(szType, szName, wLanguage);
+  return DupData(data);
 }
 
 BYTE* CResourceEditor::GetResourceT(const TCHAR* szType, WORD szName, LANGID wLanguage) {
@@ -301,27 +292,8 @@ BYTE* CResourceEditor::GetResourceT(const TCHAR* szType, WORD szName, LANGID wLa
 // Returns the size of the requested resource
 // Returns -1 if the requested resource can't be found
 int CResourceEditor::GetResourceSizeW(const WINWCHAR* szType, WINWCHAR* szName, LANGID wLanguage) {
-  CResourceDirectory* nameDir = 0;
-  CResourceDirectory* langDir = 0;
-  CResourceDataEntry* data = 0;
-
-  int i = m_cResDir->Find(szType);
-  if (i > -1) {
-    nameDir = m_cResDir->GetEntry(i)->GetSubDirectory();
-    i = nameDir->Find(szName);
-    if (i > -1) {
-      langDir = nameDir->GetEntry(i)->GetSubDirectory();
-      i = wLanguage ? langDir->Find(wLanguage) : 0;
-      if (i > -1) {
-        data = langDir->GetEntry(i)->GetDataEntry();
-      }
-    }
-  }
-
-  if (data)
-    return (int) data->GetSize();
-  else
-    return -1;
+  CResourceDataEntry* data = FindResource(szType, szName, wLanguage);
+  return data ? data->GetSize() : -1;
 }
 
 int CResourceEditor::GetResourceSizeT(const TCHAR* szType, WORD szName, LANGID wLanguage) {
@@ -338,27 +310,8 @@ int CResourceEditor::GetResourceSizeT(const TCHAR* szType, WORD szName, LANGID w
 // Returns the offset of the requested resource in the original PE
 // Returns -1 if the requested resource can't be found
 DWORD CResourceEditor::GetResourceOffsetW(const WINWCHAR* szType, WINWCHAR* szName, LANGID wLanguage) {
-  CResourceDirectory* nameDir = 0;
-  CResourceDirectory* langDir = 0;
-  CResourceDataEntry* data = 0;
-
-  int i = m_cResDir->Find(szType);
-  if (i > -1) {
-    nameDir = m_cResDir->GetEntry(i)->GetSubDirectory();
-    i = nameDir->Find(szName);
-    if (i > -1) {
-      langDir = nameDir->GetEntry(i)->GetSubDirectory();
-      i = wLanguage ? langDir->Find(wLanguage) : 0;
-      if (i > -1) {
-        data = langDir->GetEntry(i)->GetDataEntry();
-      }
-    }
-  }
-
-  if (data)
-    return data->GetOffset();
-  else
-    return DWORD(-1);
+  CResourceDataEntry* data = FindResource(szType, szName, wLanguage);
+  return data ? data->GetOffset() : DWORD(-1);
 }
 
 DWORD CResourceEditor::GetResourceOffsetT(const TCHAR* szType, WORD szName, LANGID wLanguage) {
@@ -370,6 +323,41 @@ DWORD CResourceEditor::GetResourceOffsetT(const TCHAR* szType, WORD szName, LANG
   FreeUnicodeResString(szwType);
   return result;
 #endif
+}
+
+// Returns a copy of the resource data from the first resource of a specific type
+BYTE* CResourceEditor::GetFirstResourceW(const WINWCHAR* szType, size_t&cbData) {
+  CResourceDataEntry *pDE = FindResource(szType, FINDRESOURCE_NAME_FIRSTITEM, ANYLANGID);
+  if (pDE)
+  {
+    cbData = pDE->GetSize();
+    return DupData(pDE);
+  }
+  return NULL;
+}
+
+BYTE* CResourceEditor::GetFirstResourceT(const TCHAR* szType, size_t&cbData) {
+#if defined(_WIN32) && defined(_UNICODE)
+  return GetFirstResourceW((WINWCHAR*)szType, cbData);
+#else
+  WINWCHAR* szwType = ResStringToUnicode(szType);
+  BYTE* result = GetFirstResourceW(szwType, cbData);
+  FreeUnicodeResString(szwType);
+  return result;
+#endif
+}
+
+BYTE* CResourceEditor::DupData(CResourceDataEntry*pDE) {
+  if (!m_bKeepData)
+    throw runtime_error("Can't get resource data when bKeepData is false");
+  if (pDE)
+  {
+    size_t cb = pDE->GetSize();
+    BYTE* p = new BYTE[cb]; // Free with FreeResource()
+    if (p) CopyMemory(p, pDE->GetData(), cb);
+    return p;
+  }
+  return NULL;
 }
 
 void CResourceEditor::FreeResource(BYTE* pbResource)
@@ -521,7 +509,7 @@ DWORD CResourceEditor::Save(BYTE* pbBuf, DWORD &dwSize) {
 
 // This function scans exe sections and after find a match with given name
 // increments it's virtual size (auto fixes image size based on section alignment, etc)
-// Jim Park: The section name must be ASCII code.  Do not TCHAR this stuff.
+// Jim Park: The section name must be ASCII code. Do not TCHAR this stuff.
 bool CResourceEditor::SetPESectionVirtualSize(const char* pszSectionName, DWORD newsize)
 {
   PIMAGE_SECTION_HEADER sectionHeadersArray = IMAGE_FIRST_SECTION(m_ntHeaders);

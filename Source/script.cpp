@@ -891,7 +891,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_P_APPENDFILE:
     return pp_appendfile(line);
     case TOK_P_GETDLLVERSION:
-    return pp_getdllversion(line);
+    case TOK_P_GETTLBVERSION:
+    return pp_getversion(which_token, line);
 
     // page ordering stuff
     ///////////////////////////////////////////////////////////////////////////////
@@ -1996,7 +1997,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
         // Search for required items
         #define CUISEARCHERR(n,v) ERROR_MSG(_T("Error: Can't find %") NPRIs _T(" (%u) in the custom UI!\n"), n, v);
-        #define GET(x) if (!(dlg = uire->GetResource(RT_DIALOG, x, 0))) { CUISEARCHERR(_T(#x), x); return PS_ERROR; } CDialogTemplate UIDlg(dlg, build_unicode, uDefCodePage);
+        #define GET(x) if (!(dlg = uire->GetResource(RT_DIALOG, x, uire->ANYLANGID))) { CUISEARCHERR(_T(#x), x); return PS_ERROR; } CDialogTemplate UIDlg(dlg, build_unicode, uDefCodePage);
         #define SEARCH(x) if (!UIDlg.GetItem(x)) { CUISEARCHERR(_T(#x), x); uire->FreeResource(dlg); delete uire; return PS_ERROR; }
         #define SAVE(x) uire->FreeResource(dlg); dlg = UIDlg.Save(dwSize); res_editor->UpdateResource(RT_DIALOG, x, NSIS_DEFAULT_LANG, dlg, dwSize); UIDlg.FreeSavedTemplate(dlg);
 
