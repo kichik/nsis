@@ -330,10 +330,24 @@ int DefineList::add(const TCHAR *name, const TCHAR *value/*=_T("")*/)
   return addn(name, _tcslen(value), value);
 }
 
-void DefineList::set(const TCHAR *name, const TCHAR *value/*=_T("")*/)
+int DefineList::set(const TCHAR *name, const TCHAR *value/*=_T("")*/)
 {
   del(name);
-  add(name, value);
+  return add(name, value);
+}
+
+int DefineList::set_si32(const TCHAR *name, long value)
+{
+  TCHAR buf[50];
+  _stprintf(buf, _T("%ld"), value);
+  return set(name, buf);
+}
+
+int DefineList::set_ui32(const TCHAR *name, unsigned long value)
+{
+  TCHAR buf[50];
+  _stprintf(buf, _T("%lu"), value);
+  return set(name, buf);
 }
 
 TCHAR *DefineList::find(const TCHAR *name)

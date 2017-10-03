@@ -6,6 +6,7 @@ files = Split("""
 
 required_files = Split("""
 	#Source/ResourceEditor.cpp
+	#Source/BinInterop.cpp
 	#Source/util.cpp
 	#Source/winchar.cpp
 """)

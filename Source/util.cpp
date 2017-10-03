@@ -1201,11 +1201,12 @@ void FlushOutputAndResetPrintColor()
 }
 
 
-static bool GetDLLVersionUsingRE(const tstring& filepath, DWORD& high, DWORD & low)
+static bool GetDLLVersionUsingRE(const TCHAR *filepath, DWORD& high, DWORD & low)
 {
   bool found = false;
+  LANGID anylangid = CResourceEditor::ANYLANGID;
 
-  FILE *fdll = FOPEN(filepath.c_str(), ("rb"));
+  FILE *fdll = FOPEN(filepath, ("rb"));
   if (!fdll)
     return 0;
 
@@ -1232,12 +1233,12 @@ static bool GetDLLVersionUsingRE(const tstring& filepath, DWORD& high, DWORD & l
   try
   {
     CResourceEditor *dllre = new CResourceEditor(dll, len);
-    LPBYTE ver = dllre->GetResource(VS_FILE_INFO, VS_VERSION_INFO, 0);
-    size_t versize = (size_t) dllre->GetResourceSize(VS_FILE_INFO, VS_VERSION_INFO, 0);
+    LPBYTE ver = dllre->GetResource(VS_FILE_INFO, VS_VERSION_INFO, anylangid);
+    size_t versize = (size_t) dllre->GetResourceSize(VS_FILE_INFO, VS_VERSION_INFO, anylangid);
 
     if (ver)
     {
-      if ((size_t) versize > sizeof(WORD) * 3)
+      if (versize > sizeof(WORD) * 3)
       {
         // get VS_FIXEDFILEINFO from VS_VERSIONINFO
         WINWCHAR *szKey = (WINWCHAR *)(ver + sizeof(WORD) * 3);
@@ -1261,7 +1262,7 @@ static bool GetDLLVersionUsingRE(const tstring& filepath, DWORD& high, DWORD & l
   return found;
 }
 
-static bool GetDLLVersionUsingAPI(const tstring& filepath, DWORD& high, DWORD& low)
+static bool GetDLLVersionUsingAPI(const TCHAR *filepath, DWORD& high, DWORD& low)
 {
   bool found = false;
 
@@ -1270,7 +1271,7 @@ static bool GetDLLVersionUsingAPI(const tstring& filepath, DWORD& high, DWORD& l
   TCHAR *name;
   path[0] = 0;
 
-  GetFullPathName(filepath.c_str(), 1024, path, &name);
+  GetFullPathName(filepath, 1024, path, &name);
 
   DWORD d;
   DWORD verSize = GetFileVersionInfoSize(path, &d);
@@ -1449,11 +1450,11 @@ static BOOL GetVxdVersionInfo( LPCTSTR szFile, DWORD dwLen, LPVOID lpData )
 
 #endif //_WIN32
 
-static bool GetDLLVersionFromVXD(const tstring& filepath, DWORD& high, DWORD& low)
+static bool GetDLLVersionFromVXD(const TCHAR *filepath, DWORD& high, DWORD& low)
 {
   bool found = false;
 #ifdef _WIN32
-  DWORD verSize = GetVxdVersionInfoSize(filepath.c_str());
+  DWORD verSize = GetVxdVersionInfoSize(filepath);
   if (verSize)
   {
     void *buf = (void *) GlobalAlloc(GPTR, verSize);
@@ -1461,7 +1462,7 @@ static bool GetDLLVersionFromVXD(const tstring& filepath, DWORD& high, DWORD& lo
     {
       UINT uLen;
       VS_FIXEDFILEINFO *pvsf;
-      if (GetVxdVersionInfo(filepath.c_str(), verSize, buf) && VerQueryValue(buf, _T("\\"), (void**) &pvsf, &uLen))
+      if (GetVxdVersionInfo(filepath, verSize, buf) && VerQueryValue(buf, _T("\\"), (void**) &pvsf, &uLen))
       {
         found = true, low = pvsf->dwFileVersionLS, high = pvsf->dwFileVersionMS;
       }
@@ -1472,7 +1473,7 @@ static bool GetDLLVersionFromVXD(const tstring& filepath, DWORD& high, DWORD& lo
   return found;
 }
 
-bool GetDLLVersion(const tstring& filepath, DWORD& high, DWORD& low)
+bool GetDLLVersion(const TCHAR *filepath, DWORD& high, DWORD& low)
 {
   if (GetDLLVersionUsingAPI(filepath, high, low)) return true;
   if (GetDLLVersionUsingRE(filepath, high, low)) return true;

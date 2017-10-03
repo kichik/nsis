@@ -10,6 +10,10 @@ Released on ??? ??rd, 20??
 
 \b Added more NSD controls and macros (\W{http://sf.net/p/nsis/feature-requests/543}{RFE #543})
 
+\b Added \R{ppgettlbversion}{!gettlbversion}
+
+\b \R{library}{Library} TLB version support on POSIX
+
 \S2{} Minor Changes
 
 \b Removed unused NSD_LB_Clear macro parameter

@@ -121,51 +121,42 @@ class CResourceEditor {
 public:
   CResourceEditor(BYTE* pbPE, int iSize, bool bKeepData = true);
   virtual ~CResourceEditor();
+  enum { ANYLANGID = 0xffff };
 
-  // On POSIX+Unicode GetResource(RT_VERSION,..) is not TCHAR nor WINWCHAR, it is WCHAR/UINT16.
+  // On POSIX+Unicode GetResource(RT_VERSION,..) is not TCHAR nor WINWCHAR, it is WCHAR/UINT16 (MAKEINTRESOURCEW).
   // If it passes IS_INTRESOURCE we must allow it.
   // Use TCHAR* for real strings. If you need to pass in a WINWCHAR*, make GetResourceW public...
   template<class T> bool UpdateResource(const T*Type, WORD Name, LANGID Lang, BYTE*Data, DWORD Size)
   {
-    if (sizeof(T) != sizeof(TCHAR) && !IS_INTRESOURCE(Type))
-    {
-      assert(IS_INTRESOURCE(Type));
-      return false;
-    }
+    if (sizeof(T) != sizeof(TCHAR) && !IS_INTRESOURCE(Type)) { assert(IS_INTRESOURCE(Type)); return false; }
     return UpdateResourceT((const TCHAR*) Type, Name, Lang, Data, Size);
   }
   template<class T> BYTE* GetResource(const T*Type, WORD Name, LANGID Lang)
   {
-    if (sizeof(T) != sizeof(TCHAR) && !IS_INTRESOURCE(Type))
-    {
-      assert(IS_INTRESOURCE(Type));
-      return NULL;
-    }
+    if (sizeof(T) != sizeof(TCHAR) && !IS_INTRESOURCE(Type)) { assert(IS_INTRESOURCE(Type)); return NULL; }
     return GetResourceT((const TCHAR*) Type, Name, Lang);
   }
   template<class T> int GetResourceSize(const T*Type, WORD Name, LANGID Lang)
   {
-    if (sizeof(T) != sizeof(TCHAR) && !IS_INTRESOURCE(Type))
-    {
-      assert(IS_INTRESOURCE(Type));
-      return -1;
-    }
+    if (sizeof(T) != sizeof(TCHAR) && !IS_INTRESOURCE(Type)) { assert(IS_INTRESOURCE(Type)); return -1; }
     return GetResourceSizeT((const TCHAR*) Type, Name, Lang);
   }
   template<class T> DWORD GetResourceOffset(const T*Type, WORD Name, LANGID Lang)
   {
-    if (sizeof(T) != sizeof(TCHAR) && !IS_INTRESOURCE(Type))
-    {
-      assert(IS_INTRESOURCE(Type));
-      return -1;
-    }
+    if (sizeof(T) != sizeof(TCHAR) && !IS_INTRESOURCE(Type)) { assert(IS_INTRESOURCE(Type)); return -1; }
     return GetResourceOffsetT((const TCHAR*) Type, Name, Lang);
+  }
+  template<class T> BYTE* GetFirstResource(const T*Type, size_t&cbData)
+  {
+    if (sizeof(T) != sizeof(TCHAR) && !IS_INTRESOURCE(Type)) { assert(IS_INTRESOURCE(Type)); return NULL; }
+    return GetFirstResourceT((const TCHAR*) Type, cbData);
   }
 
   bool  UpdateResourceT   (const TCHAR* szType, WORD szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize);
   BYTE* GetResourceT      (const TCHAR* szType, WORD szName, LANGID wLanguage);
   int   GetResourceSizeT  (const TCHAR* szType, WORD szName, LANGID wLanguage);
   DWORD GetResourceOffsetT(const TCHAR* szType, WORD szName, LANGID wLanguage);
+  BYTE* GetFirstResourceT (const TCHAR* szType, size_t&cbData);
   void  FreeResource(BYTE* pbResource);
 
   // The section name must be in ASCII.
@@ -182,11 +173,21 @@ public:
     DWORD *pdwResSecVA = NULL,
     DWORD *pdwSectionIndex = NULL
   );
+
 private:
-  bool  UpdateResourceW(const WINWCHAR* szType, WINWCHAR* szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize);
-  BYTE* GetResourceW(const WINWCHAR* szType, WINWCHAR* szName, LANGID wLanguage);
-  int   GetResourceSizeW(const WINWCHAR* szType, WINWCHAR* szName, LANGID wLanguage);
+  bool  UpdateResourceW   (const WINWCHAR* szType, WINWCHAR* szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize);
+  BYTE* GetResourceW      (const WINWCHAR* szType, WINWCHAR* szName, LANGID wLanguage);
+  int   GetResourceSizeW  (const WINWCHAR* szType, WINWCHAR* szName, LANGID wLanguage);
   DWORD GetResourceOffsetW(const WINWCHAR* szType, WINWCHAR* szName, LANGID wLanguage);
+  BYTE* GetFirstResourceW (const WINWCHAR* szType, size_t&cbData);
+  CResourceDataEntry* FindResource(const WINWCHAR* Type, const WINWCHAR* Name, LANGID Language);
+
+  BYTE* DupData(CResourceDataEntry*pDE); // Free with FreeResource
+  CResourceDirectory* ScanDirectory(PRESOURCE_DIRECTORY rdRoot, PRESOURCE_DIRECTORY rdToScan);
+  void WriteRsrcSec(BYTE* pbRsrcSec);
+  void SetOffsets(CResourceDirectory* resDir, ULONG_PTR newResDirAt);
+  DWORD AdjustVA(DWORD dwVirtualAddress, DWORD dwAdjustment);
+  DWORD AlignVA(DWORD dwVirtualAddress);
 
 private:
   BYTE* m_pbPE;
@@ -197,16 +198,7 @@ private:
 
   DWORD m_dwResourceSectionIndex;
   DWORD m_dwResourceSectionVA;
-
   CResourceDirectory* m_cResDir;
-
-  CResourceDirectory* ScanDirectory(PRESOURCE_DIRECTORY rdRoot, PRESOURCE_DIRECTORY rdToScan);
-
-  void WriteRsrcSec(BYTE* pbRsrcSec);
-  void SetOffsets(CResourceDirectory* resDir, ULONG_PTR newResDirAt);
-
-  DWORD AdjustVA(DWORD dwVirtualAddress, DWORD dwAdjustment);
-  DWORD AlignVA(DWORD dwVirtualAddress);
 };
 
 class CResourceDirectory {
@@ -243,12 +235,9 @@ public:
   bool HasName() const;
   const WINWCHAR* GetName() const;
   int GetNameLength() const;
-
   WORD GetId() const;
-
   bool IsDataDirectory() const;
   CResourceDirectory* GetSubDirectory() const;
-
   CResourceDataEntry* GetDataEntry() const;
 
   ULONG_PTR m_ulWrittenAt;
@@ -271,7 +260,6 @@ public:
   ~CResourceDataEntry();
 
   BYTE* GetData();
-
   void SetData(BYTE* pbData, DWORD dwSize);
   void SetData(BYTE* pbData, DWORD dwSize, DWORD dwCodePage);
 

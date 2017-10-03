@@ -357,7 +357,8 @@ class CEXEBuild {
     int pp_tempfile(LineParser&line);
     int pp_delfile(LineParser&line);
     int pp_appendfile(LineParser&line);
-    int pp_getdllversion(LineParser&line);
+    int pp_getversionhelper(const TCHAR *cmdname, const TCHAR *path, const TCHAR *basesymname, DWORD high, DWORD low, DWORD flags);
+    int pp_getversion(int which_token, LineParser&line);
     int pp_searchreplacestring(LineParser&line);
     int pp_searchparsestring(LineParser&line);
     DefineList *searchParseString(const TCHAR *source_string, LineParser&line, int parmOffs, bool ignCase, bool noErrors, UINT*failParam = 0);
