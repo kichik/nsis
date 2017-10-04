@@ -114,36 +114,16 @@ struct NSISException : public NSISExceptionInner
   NSISException(const tstring& msg) : NSISExceptionInner(TtoCString(msg)) {}
 };
 
-namespace {
-// This function slurps the whole file into the vector.
-// Modified so the huge vector isn't returned by value.
-void read_file(const tstring& filename, vector<unsigned char>& data)
-{
-  FILE*file = FOPEN(filename.c_str(), ("rb"));
-  if (!file) throw NSISException(_T("Can't open file '") + filename + _T("'"));
-  MANAGE_WITH(file, fclose);
-  bool succ = false;
-
-  if (!fseek(file, 0, SEEK_END))
-  {
-    const long filesize = ftell(file);
-    rewind(file);
-    data.resize(filesize);
-    size_t cbio = fread(reinterpret_cast<char*>(&data[0]), 1, filesize, file);
-    succ = cbio == (size_t)filesize;
-  }
-  if (!succ) throw NSISException(_T("Couldn't read entire file '") + filename + _T("'"));
-}
-}
-
 void Plugins::GetExports(const tstring &pathToDll, bool pe64, bool displayInfo)
 {
-  vector<unsigned char> dlldata;
   PIMAGE_NT_HEADERS pNTHdrs;
+  unsigned long dllsize;
+  BYTE *dlldata = alloc_and_read_file(pathToDll.c_str(), dllsize);
+  MANAGE_WITH(dlldata, free);
+
   try {
-    read_file(pathToDll, dlldata);
-    if (dlldata.empty()) return;
-    pNTHdrs = CResourceEditor::GetNTHeaders(&dlldata[0]);
+    if (!dllsize) return ;
+    pNTHdrs = CResourceEditor::GetNTHeaders(&dlldata[0]); // This might throw
   } catch (std::runtime_error&) {
     return;
   }

@@ -584,7 +584,7 @@ enum { PPGVHF_VALID = 0x01, PPGVHF_NOERRORS = 0x02, PPGVHF_PACKED = 0x04, PPGVHF
 int CEXEBuild::pp_getversionhelper(const TCHAR *cmdname, const TCHAR *path, const TCHAR *basesymname, DWORD high, DWORD low, DWORD flags)
 {
   TCHAR *symbuf = m_templinebuf;
-  DWORD tlb = (flags & PPGVHF_TLB);
+  DWORD tlb = (flags & PPGVHF_TLB), noerrors = (flags & PPGVHF_NOERRORS);
   FILE *pF = tlb ? MSTLB_fopen(path) : FOPEN(path, ("rb"));
   if (pF) fclose(pF);
   bool vnum = pF && (flags & PPGVHF_VALID); // LibraryLocal users want to detect "file not found" vs "no version info"
@@ -594,7 +594,7 @@ int CEXEBuild::pp_getversionhelper(const TCHAR *cmdname, const TCHAR *path, cons
 
   if (!pF)
   {
-    if (flags & PPGVHF_NOERRORS) return PS_OK;
+    if (noerrors) return PS_OK;
     ERROR_MSG(_T("%") NPRIs _T(": error reading version info from \"%") NPRIs _T("\"\n"), cmdname, path);
     return PS_ERROR;
   }

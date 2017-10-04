@@ -23,6 +23,7 @@
 #include "winchar.h"
 #include "ResourceEditor.h"
 #include "DialogTemplate.h"
+#include "BinInterop.h"
 #include "lang.h"
 #include "dirreader.h"
 #include <nsis-version.h>

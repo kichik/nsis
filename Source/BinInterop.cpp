@@ -48,55 +48,12 @@ FILE* MSTLB_fopen(const TCHAR*filepath, size_t*pResId)
 
 #if !defined(_WIN32) || defined(NSIS_GETTLBVERSION_FORCEINTERNAL)
 
-unsigned long get_file_size32(FILE*f)
-{
-  unsigned long error = ~(0UL), result = error, restoreseek = false;
-  long cb;
-  fpos_t orgpos;
-  if (restoreseek ? 0 == fgetpos(f, &orgpos) : true)
-    if (0 == fseek(f, 0, SEEK_END))
-      if ((cb = ftell(f)) != -1L)
-        if (restoreseek ? 0 == fsetpos(f, &orgpos) : true)
-          result = cb;
-  return result;
-}
-
-void* alloc_and_read_file(FILE*f, unsigned long&size)
-{
-  void *result = 0, *mem = 0;
-  if (!f) return result;
-  size = get_file_size32(f);
-  mem = (~(0UL) != size) ? malloc(size) : 0;
-  if (mem)
-    if (0 == fseek(f, 0, SEEK_SET))
-      if (fread(mem, 1, size, f) == size)
-        result = mem, mem = 0;
-  free(mem);
-  return result;
-}
-
-/*void* alloc_and_read_file(const TCHAR*filepath, unsigned long&size)
-{
-  void *result = 0;
-  FILE*f = FOPEN(filepath, ("rb"));
-  if (f)
-    result = alloc_and_read_file(f, size), fclose(f);
-  return result;
-}*/
-
 #if 0
 // midl /DOLDTLB=1 /oldtlb /tlb SLTG.tlb test.idl && midl /DNEWTLB=1 /newtlb /tlb MSFT.tlb test.idl
 #ifdef NEWTLB
 import "unknwn.idl";
-[
-  object, uuid(42424242-1111-1111-0001-424242424242),
-  //oleautomation, //TYPEFLAG_FOLEAUTOMATION?
-  //dual, //"Specifying dual on an interface implies that the interface is compatible with Automation, and therefore causes both the TYPEFLAG_FDUAL and TYPEFLAG_FOLEAUTOMATION flags to be set"
-]
-interface IInTeRfAcE1 : IUnknown { HRESULT I1_MeThOd1(); };
-
-[ object, uuid(42424242-1111-1111-0002-424242424242) ]
-interface IInTeRfAcE2 : IUnknown { [idempotent] HRESULT I2_MeThOd1(); };
+[ object, uuid(42424242-1111-1111-0001-424242424242) ] interface IInTeRfAcE1 : IUnknown { HRESULT I1_MeThOd1(); };
+[ object, uuid(42424242-1111-1111-0002-424242424242) ] interface IInTeRfAcE2 : IUnknown { [idempotent] HRESULT I2_MeThOd1(); };
 #endif
 
 [ //msdn.microsoft.com/en-us/library/windows/desktop/aa367069
@@ -186,7 +143,7 @@ static bool MSTLB_GetVersion_MSFT(const void*pData, size_t cbData, DWORD &high, 
   if (cbData >= sizeof(MSTLB_MSFT_MINIHEADER))
   {
     const MSTLB_MSFT_MINIHEADER &h = *(MSTLB_MSFT_MINIHEADER*) pData;
-    if (FIX_ENDIAN_INT32(h.Sig) == 0x5446534D)
+    if (h.Sig == FIX_ENDIAN_INT32(0x5446534D))
     {
       if (FIX_ENDIAN_INT16(h.FmtVerMaj) == 2 && FIX_ENDIAN_INT16(h.FmtVerMin) == 1) // Is this always 2.1?
       {
@@ -223,7 +180,7 @@ static bool MSTLB_GetVersion_SLTG(const void*pData, size_t cbData, DWORD &high, 
   {
     size_t eofPtr = MKPTR(size_t, pData, cbData);
     const MSTLB_SLTG_HEADER &h = *(MSTLB_SLTG_HEADER*) pData;
-    if (FIX_ENDIAN_INT32(h.Sig) == 0x047544C53 && MSTLB_IsSerializedOleGuid(h.Guid, 0x00020400, 0xffffff00)) // 0x000204xx for IID_ITypeLib and friends
+    if (h.Sig == FIX_ENDIAN_INT32(0x047544C53) && MSTLB_IsSerializedOleGuid(h.Guid, 0x00020400, 0xffffff00)) // 0x000204xx for IID_ITypeLib and friends
     {
       MSTLB_SLTG_SD *pSD = MKPTR(MSTLB_SLTG_SD*, &h, sizeof(MSTLB_SLTG_HEADER));
       UINT32 streamCount = FIX_ENDIAN_INT16(h.Count);
@@ -281,7 +238,7 @@ static bool GetTLBVersionUsingRE(const void*pPEFile, size_t cbData, size_t resid
   {
     const TCHAR* rt = _T("TYPELIB");
     int rn = (int) resid, rl = CResourceEditor::ANYLANGID;
-    CResourceEditor re((BYTE*) pPEFile, (int) cbData);
+    CResourceEditor re((void*) pPEFile, (int) cbData);
     BYTE *pResData = resid == invalid_res_id ? re.GetFirstResource(rt, cbData) : GetResource(re, rt, rn, rl, cbData);
     if (pResData)
     {
@@ -301,19 +258,19 @@ static bool GetTLBVersionInterop(const TCHAR *filepath, DWORD &high, DWORD &low)
   size_t resid;
   FILE *f = MSTLB_fopen(filepath, &resid);
   bool result = false, resonly = invalid_res_id != resid;
-  void *filedata = alloc_and_read_file(f, size);
+  void *pFileData = alloc_and_read_file(f, size);
   if (f) fclose(f);
-  if (filedata)
+  if (pFileData)
   {
-    if (!result && !resonly) result = MSTLB_GetVersion(filedata, size, high, low); // A raw TLB file?
-    if (!result) result = GetTLBVersionUsingRE(filedata, size, resid, high, low);  // A resource in a PE file?
-    // TODO: if (!result) result = GetTLBVersion16(filedata, size, resid, high, low); // A resouce in a 16-bit executable?
-    free(filedata);
+    if (!result && !resonly) result = MSTLB_GetVersion(pFileData, size, high, low); // A raw TLB file?
+    if (!result) result = GetTLBVersionUsingRE(pFileData, size, resid, high, low);  // A resource in a PE file?
+    // TODO: if (!result) result = GetTLBVersion16(pFileData, size, resid, high, low); // A resouce in a 16-bit executable?
+    free(pFileData);
   }
   // Not supported: if (!result) result = GetTLBVersionFromMoniker(filepath, high, low);
   return result;
 }
-#else //! !_WIN32
+#else // !_WIN32
 static bool GetTLBVersionUsingAPI(const TCHAR *filepath, DWORD &high, DWORD &low)
 {
   bool found = false;
@@ -354,4 +311,207 @@ bool GetTLBVersion(const TCHAR *filepath, DWORD &high, DWORD &low)
   found = GetTLBVersionInterop(filepath, high, low);
 #endif //~ _WIN32
   return found;
+}
+
+static bool GetDLLVersionUsingRE(const TCHAR *filepath, DWORD &high, DWORD &low)
+{
+  bool found = false;
+  LANGID anylangid = CResourceEditor::ANYLANGID;
+  unsigned long fileSize;
+  void*pFileData = alloc_and_read_file(filepath, fileSize);
+  if (!pFileData) return false;
+  try
+  {
+    CResourceEditor re(pFileData, fileSize);
+    LPBYTE resdata = re.GetResource(VS_FILE_INFO, VS_VERSION_INFO, anylangid);
+    if (resdata)
+    {
+      size_t ressize = re.GetResourceSize(VS_FILE_INFO, VS_VERSION_INFO, anylangid);
+      size_t vsvhdrsize = sizeof(WORD) * 3;
+      if (ressize > vsvhdrsize)
+      {
+        // Locate VS_FIXEDFILEINFO inside VS_VERSIONINFO
+        WINWCHAR *szKey = (WINWCHAR*)(resdata + vsvhdrsize);
+        size_t len = vsvhdrsize + (WinWStrLen(szKey) + 1) * sizeof(WINWCHAR);
+        len = (len + 3) & ~3; // Align on DWORD boundary
+        VS_FIXEDFILEINFO *verinfo = (VS_FIXEDFILEINFO*)(resdata + len);
+        if (ressize >= len + sizeof(VS_FIXEDFILEINFO) && verinfo->dwSignature == FIX_ENDIAN_INT32(VS_FFI_SIGNATURE))
+        {
+          high = FIX_ENDIAN_INT32(verinfo->dwFileVersionMS), low = FIX_ENDIAN_INT32(verinfo->dwFileVersionLS);
+          found = true;
+        }
+      }
+      re.FreeResource(resdata);
+    }
+  }
+  catch (std::exception&)
+  {
+  }
+  free(pFileData);
+  return found;
+}
+
+static bool GetDLLVersionUsingAPI(const TCHAR *filepath, DWORD &high, DWORD &low)
+{
+  bool found = false;
+#ifdef _WIN32
+  TCHAR path[1024], *name;
+  path[0] = 0;
+  GetFullPathName(filepath, 1024, path, &name);
+
+  DWORD ignore, verSize = GetFileVersionInfoSize(path, &ignore);
+  if (verSize)
+  {
+    void *buf = malloc(verSize);
+    if (buf)
+    {
+      UINT valSize;
+      VS_FIXEDFILEINFO *pvsf;
+      if (GetFileVersionInfo(path, 0, verSize, buf) && VerQueryValue(buf, _T("\\"), (void**) &pvsf, &valSize))
+      {
+        high = pvsf->dwFileVersionMS, low = pvsf->dwFileVersionLS;
+        found = true;
+      }
+      free(buf);
+    }
+  }
+#endif
+  return found;
+}
+
+#pragma pack(push, pre_vxd_ver, 1)
+typedef struct _VXD_VERSION_RESOURCE {
+  char  cType;
+  WORD  wID;
+  char  cName;
+  WORD  wOrdinal;
+  WORD  wFlags;
+  DWORD dwResSize;
+  BYTE  bVerData;
+} VXD_VERSION_RESOURCE, *PVXD_VERSION_RESOURCE;
+#pragma pack(pop, pre_vxd_ver)
+
+#ifdef _WIN32
+static void* CreateReadOnlyFullMappedView(LPCTSTR szFile, DWORD Access, DWORD Share, DWORD Mode)
+{
+  void *pView = NULL;
+  HANDLE hFile = CreateFile(szFile, Access, Share, NULL, Mode, 0, NULL);
+  if (hFile == INVALID_HANDLE_VALUE) return pView;
+  HANDLE hMap = CreateFileMapping(hFile, NULL, PAGE_READONLY, 0, 0, NULL);
+  if (hMap != INVALID_HANDLE_VALUE)
+  {
+    CloseHandle(hFile);
+    if ((pView = MapViewOfFile(hMap, FILE_MAP_READ, 0, 0, 0)))
+    {
+      CloseHandle(hMap);
+    }
+    else
+    {
+      DWORD error = GetLastError();
+      CloseHandle(hMap);
+      SetLastError(error);
+    }
+  }
+  else
+  {
+      DWORD error = GetLastError();
+      CloseHandle(hFile);
+      SetLastError(error);
+  }
+  return pView;
+}
+
+static BOOL GetVxdVersion(LPCTSTR szFile, LPDWORD lpdwLen, LPVOID lpData)
+{
+  BOOL result = FALSE;
+  DWORD resSize = 0, outSize = *lpdwLen;
+  void *pView = CreateReadOnlyFullMappedView(szFile, GENERIC_READ, FILE_SHARE_READ, OPEN_EXISTING);
+  if (!pView) return FALSE;
+
+  PIMAGE_DOS_HEADER pDosHdr = (PIMAGE_DOS_HEADER) pView;
+  if (pDosHdr->e_magic == IMAGE_DOS_SIGNATURE)
+  {
+    PIMAGE_NT_HEADERS pNtHdr = (PIMAGE_NT_HEADERS) ((ULONG_PTR) pView + pDosHdr->e_lfanew);
+    if ((DWORD) pNtHdr->Signature == IMAGE_VXD_SIGNATURE) // Is it a little-endian VXD?
+    {
+      PIMAGE_VXD_HEADER pLEHdr = (PIMAGE_VXD_HEADER) pNtHdr;
+      if (pLEHdr->e32_winreslen != 0)
+      {
+        PVXD_VERSION_RESOURCE pVerRes;
+        pVerRes = (VXD_VERSION_RESOURCE*) ((ULONG_PTR) pView + pLEHdr->e32_winresoff);
+        resSize = pVerRes->dwResSize;
+        if (lpData && outSize >= resSize)
+        {
+          void *pResData = &(pVerRes->bVerData);
+          ZeroMemory(lpData, outSize);
+          CopyMemory(lpData, pResData, resSize);
+          result = TRUE;
+        }
+        else
+          SetLastError(ERROR_INSUFFICIENT_BUFFER);
+      }
+      else
+        SetLastError(ERROR_RESOURCE_DATA_NOT_FOUND);
+    }
+    else
+      SetLastError(ERROR_BAD_FORMAT);
+  }
+  else
+    SetLastError(ERROR_BAD_FORMAT);
+
+  UnmapViewOfFile(pView);
+  *lpdwLen = resSize;
+  return result;
+}
+
+static DWORD GetVxdVersionInfoSize(LPCTSTR szFile)
+{
+  DWORD result = 0;
+  if (!GetVxdVersion(szFile, &result, NULL))
+  {
+    if (GetLastError() == ERROR_INSUFFICIENT_BUFFER) // Successfully queried the required size?
+    {
+      SetLastError(0);
+      return result;
+    }
+  }
+  return result;
+}
+
+static BOOL GetVxdVersionInfo(LPCTSTR szFile, DWORD dwLen, LPVOID lpData)
+{
+  return GetVxdVersion(szFile, &dwLen, lpData);
+}
+#endif //_WIN32
+
+static bool GetDLLVersionFromVXD(const TCHAR *filepath, DWORD &high, DWORD &low)
+{
+  bool found = false;
+#ifdef _WIN32
+  DWORD verSize = GetVxdVersionInfoSize(filepath);
+  if (verSize)
+  {
+    void *buf = malloc(verSize);
+    if (buf)
+    {
+      UINT valSize;
+      VS_FIXEDFILEINFO *pvsf;
+      if (GetVxdVersionInfo(filepath, verSize, buf) && VerQueryValue(buf, _T("\\"), (void**) &pvsf, &valSize))
+      {
+        high = pvsf->dwFileVersionMS, low = pvsf->dwFileVersionLS;
+        found = true;
+      }
+      free(buf);
+    }
+  }
+#endif
+  return found;
+}
+
+bool GetDLLVersion(const TCHAR *filepath, DWORD &high, DWORD &low)
+{
+  bool result         = GetDLLVersionUsingAPI(filepath, high, low);
+  if (!result) result = GetDLLVersionUsingRE(filepath, high, low);
+  if (!result) result = GetDLLVersionFromVXD(filepath, high, low);
+  return result;
 }
