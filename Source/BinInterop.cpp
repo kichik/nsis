@@ -21,8 +21,6 @@
 #include <wchar.h> // _tcstoul
 #include <stdexcept>
 
-enum { DEBUGDUMP = 0 }; // Dump debug info on little-endian systems?
-
 #define MKPTR(cast, base, offset) ( (cast) ( ((char*)(base)) + (offset) ) )
 const size_t invalid_res_id = ~(size_t)0;
 
@@ -52,7 +50,8 @@ FILE* MSTLB_fopen(const TCHAR*filepath, size_t*pResId)
 
 unsigned long get_file_size32(FILE*f)
 {
-  unsigned long error = ~(0UL), result = error, cb, restoreseek = false;
+  unsigned long error = ~(0UL), result = error, restoreseek = false;
+  long cb;
   fpos_t orgpos;
   if (restoreseek ? 0 == fgetpos(f, &orgpos) : true)
     if (0 == fseek(f, 0, SEEK_END))
@@ -189,20 +188,8 @@ static bool MSTLB_GetVersion_MSFT(const void*pData, size_t cbData, DWORD &high, 
     const MSTLB_MSFT_MINIHEADER &h = *(MSTLB_MSFT_MINIHEADER*) pData;
     if (FIX_ENDIAN_INT32(h.Sig) == 0x5446534D)
     {
-      if (DEBUGDUMP)
-      {
-        for (UINT32 i = 0; i <= min(cbData / 4, 20) && DEBUGDUMP > 1; ++i)
-          _tprintf(_T("%2x=%.8x (%.4x:%.4x)\n"), i * 4, ((UINT32*)&h)[i], ((USHORT*)&h)[(i*2)+0], ((USHORT*)&h)[(i*2)+1]);
-      }
-
       if (FIX_ENDIAN_INT16(h.FmtVerMaj) == 2 && FIX_ENDIAN_INT16(h.FmtVerMin) == 1) // Is this always 2.1?
       {
-        if (DEBUGDUMP)
-        {
-          UINT32 fask = FIX_ENDIAN_INT32(h.FlagsAndSK), lcid = FIX_ENDIAN_INT32(h.Locale), lf = FIX_ENDIAN_INT16(h.LibFlags);
-          _tprintf(_T("lcid=%#.8x sk=%#.8x lf=%#.4x hc=%#x\n"), lcid, fask & 0x03, lf | 0x08, FIX_ENDIAN_INT32(h.HelpContext)); // 0x08 for LIBFLAG_FHASDISKIMAGE because it is not stored in the .TLB
-        }
-
         // lcid = FIX_ENDIAN_INT32(h.Locale);
         // sysk = FIX_ENDIAN_INT32(h.FlagsAndSK) & 0x03;
         // libf = FIX_ENDIAN_INT16(h.LibFlags) | 0x08; // 0x08 for LIBFLAG_FHASDISKIMAGE
@@ -218,21 +205,6 @@ static USHORT GetLenLEToHE(const MSTLB_SLTG_CSHDR &s)
 {
   USHORT len = FIX_ENDIAN_INT16(s.Len);
   return len != 0xffff ? len : 0;
-}
-
-static inline void DebugDumpLE(const MSTLB_SLTG_CSHDR &s, const char *prefix = 0)
-{
-  if (DEBUGDUMP)
-  {
-    USHORT len = GetLenLEToHE(s);
-    if (len)
-    {
-      if (prefix) _tprintf(_T("%") NPRIns _T(": "), prefix);
-      TCHAR fmt[50];
-      _stprintf(fmt, _T("\"%%.%u") NPRIns _T("\"\n"), len);
-      _tprintf(fmt, MKPTR(char*, &s, sizeof(USHORT)));
-    }
-  }
 }
 
 static bool MSTLB_IsSerializedOleGuid(const void*pData, UINT32 Bits1 = 0, UINT32 Mask1 = 0)
@@ -255,16 +227,7 @@ static bool MSTLB_GetVersion_SLTG(const void*pData, size_t cbData, DWORD &high, 
     {
       MSTLB_SLTG_SD *pSD = MKPTR(MSTLB_SLTG_SD*, &h, sizeof(MSTLB_SLTG_HEADER));
       UINT32 streamCount = FIX_ENDIAN_INT16(h.Count);
-      // compobjCount = streamCount >= 1 ? streamCount - 1 : 0, compobjHdrSize = 13;
-      if (DEBUGDUMP)
-      {
-        for (UINT32 i = 0; i <= min(cbData / 4, 100 / 4) && DEBUGDUMP > 1; ++i)
-          _tprintf(_T("%2x=%.8x (%.4x:%.4x)\n"), i * 4, ((UINT32*)&h)[i], ((USHORT*)&h)[(i*2)+0], ((USHORT*)&h)[(i*2)+1]);
-        _tprintf(_T("Count=%d First=%d\n"), FIX_ENDIAN_INT16(h.Count), FIX_ENDIAN_INT16(h.First));
-        for (UINT32 i = 0, c = streamCount; i < c; ++i)
-          _tprintf(_T("S%2d: %.8x=%-4u %.4x=%-2u %.4x=%-2u\n"), i, pSD[i].Size, pSD[i].Size, pSD[i].Unknown, pSD[i].Unknown, pSD[i].Next, pSD[i].Next);
-      }
-      
+
       // Check the data in each stream until we find the LIBATTR block
       void *pFirstStreamData = MKPTR(void*, pSD, (sizeof(MSTLB_SLTG_SD) * streamCount) + FIX_ENDIAN_INT16(h.CompObjHeaderSize) + FIX_ENDIAN_INT16(h.CompObjFooterSize));
       for (UINT32 tries = 0, i = FIX_ENDIAN_INT16(h.First), c = streamCount, o = 0; tries < c && i < c; ++tries)
@@ -272,29 +235,17 @@ static bool MSTLB_GetVersion_SLTG(const void*pData, size_t cbData, DWORD &high, 
         MSTLB_SLTG_BLOCK_LIBATTR_HEADER *pBH = MKPTR(MSTLB_SLTG_BLOCK_LIBATTR_HEADER*, pFirstStreamData, o), *pD1 = pBH;
         if (eofPtr < MKPTR(size_t, pBH, sizeof(USHORT))) break; // The stream must at least have a signature
 
-        if (DEBUGDUMP)
-        {
-          _tprintf(_T("Sig=%#.4x Size=%#.6x @ %#.6x in stream %u\n"), FIX_ENDIAN_INT16(pBH->Sig), FIX_ENDIAN_INT32(pSD[i].Size), (unsigned int) ((size_t) pBH - (size_t) pData), i);
-        }
-        
         if (FIX_ENDIAN_INT16(pBH->Sig) == pD1->SIG && eofPtr > MKPTR(size_t, pD1, sizeof(*pD1)))
         {
           unsigned long o2 = sizeof(USHORT) * 3; // Skip past the initial members
           for (UINT32 strIdx = 0; strIdx < pD1->CSCOUNT; ++strIdx)
           {
             MSTLB_SLTG_CSHDR *pS = MKPTR(MSTLB_SLTG_CSHDR*, pD1, o2);
-            if (DEBUGDUMP) DebugDumpLE(*pS);
             o2 += sizeof(MSTLB_SLTG_CSHDR) + GetLenLEToHE(*pS); // Skip past the embedded counted string
           }
 
           MSTLB_SLTG_BLOCK_LIBATTR_FOOTER *pD2 = MKPTR(MSTLB_SLTG_BLOCK_LIBATTR_FOOTER*, pD1, o2);
           if (eofPtr < MKPTR(size_t, pD2, sizeof(*pD2))) break;
-          
-          if (DEBUGDUMP)
-          {
-            UINT32 sk = FIX_ENDIAN_INT16(pD2->SysKind), lcid = FIX_ENDIAN_INT32(pD2->Locale), lf = FIX_ENDIAN_INT16(pD2->LibFlags);
-            _tprintf(_T("lcid=%#.8x sk=%#.8x lf=%#.4x hc=%#x\n"), lcid, sk, lf, FIX_ENDIAN_INT32(pD2->HelpContext));
-          }
 
           // lcid = FIX_ENDIAN_INT32(pD2->Locale);
           // sysk = FIX_ENDIAN_INT16(pD2->SysKind);
@@ -385,11 +336,6 @@ static bool GetTLBVersionUsingAPI(const TCHAR *filepath, DWORD &high, DWORD &low
     hr = pTL->GetLibAttr(&tlatt);
     if (SUCCEEDED(hr))
     {
-      if (DEBUGDUMP)
-      {
-        _tprintf(_T("lcid=%#.8x sk=%#.8x lf=%#.4x\n"), tlatt->lcid, tlatt->syskind, tlatt->wLibFlags);
-      }
-
       high = tlatt->wMajorVerNum, low = tlatt->wMinorVerNum;
       found = true;
     }
