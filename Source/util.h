@@ -41,8 +41,6 @@ size_t my_strftime(TCHAR *s, size_t max, const TCHAR  *fmt, const struct tm *tm)
 // If width or height are specified it will also make sure the bitmap is in that size
 int update_bitmap(CResourceEditor* re, WORD id, const TCHAR* filename, int width=0, int height=0, int maxbpp=0);
 
-bool GetDLLVersion(const TCHAR *filepath, DWORD &high, DWORD &low);
-
 tstring get_full_path(const tstring& path);
 tstring get_dir_name(const tstring& path);
 tstring get_file_name(const tstring& path);
@@ -259,8 +257,8 @@ int _wstat(const wchar_t *Path, struct stat *pS);
 
 TCHAR *my_convert(const TCHAR *path);
 void my_convert_free(TCHAR *converted_path);
-int my_open(const TCHAR *pathname, int flags);
 
+int my_open(const TCHAR *pathname, int flags);
 #define OPEN(a, b) my_open(a, b)
 
 #else // _WIN32
@@ -274,6 +272,10 @@ int my_open(const TCHAR *pathname, int flags);
 
 FILE* my_fopen(const TCHAR *path, const char *mode);
 #define FOPEN(a, b) my_fopen((a), (b))
+
+unsigned long get_file_size32(FILE *f);
+BYTE* alloc_and_read_file(FILE *f, unsigned long &size);
+BYTE* alloc_and_read_file(const TCHAR *filepath, unsigned long &size);
 
 // round a value up to be a multiple of 512
 // assumption: T is an int type

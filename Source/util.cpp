@@ -75,6 +75,11 @@ size_t my_strncpy(TCHAR*Dest, const TCHAR*Src, size_t cchMax)
   return cch;
 }
 
+size_t my_strftime(TCHAR *s, size_t max, const TCHAR  *fmt, const struct tm *tm)
+{
+  return _tcsftime(s, max, fmt, tm);
+}
+
 // Returns 0 if everything is OK
 // Returns -1 if can't find the file
 // Returns -2 if the file is an invalid bitmap
@@ -604,8 +609,43 @@ FILE* my_fopen(const TCHAR *path, const char *mode)
   return f;
 }
 
-size_t my_strftime(TCHAR *s, size_t max, const TCHAR  *fmt, const struct tm *tm) {
-  return _tcsftime(s, max, fmt, tm);
+unsigned long get_file_size32(FILE *f)
+{
+  unsigned long error = ~(0UL), result = error;
+  long cb, restoreseek = true;
+  fpos_t orgpos;
+  if (restoreseek ? 0 == fgetpos(f, &orgpos) : true)
+    if (0 == fseek(f, 0, SEEK_END))
+      if ((cb = ftell(f)) != -1L)
+        if (restoreseek ? 0 == fsetpos(f, &orgpos) : true)
+          result = cb;
+  return result;
+}
+
+BYTE* alloc_and_read_file(FILE *f, unsigned long &size)
+{
+  BYTE *result = 0, *mem = 0;
+  if (!f) return result;
+  size = get_file_size32(f);
+  mem = (~(0UL) != size) ? (BYTE*) malloc(size) : 0;
+  if (mem)
+    if (0 == fseek(f, 0, SEEK_SET))
+      if (fread(mem, 1, size, f) == size)
+        result = mem, mem = 0;
+  free(mem);
+  return result;
+}
+
+BYTE* alloc_and_read_file(const TCHAR *filepath, unsigned long &size)
+{
+  BYTE *result = 0;
+  FILE*f = FOPEN(filepath, ("rb"));
+  if (f)
+  {
+    result = alloc_and_read_file(f, size);
+    fclose(f);
+  }
+  return result;
 }
 
 tstring get_full_path(const tstring &path) {
@@ -1198,287 +1238,6 @@ void FlushOutputAndResetPrintColor()
 #ifdef _WIN32
   PrintColorFmtMsg(0, NULL, (va_list)NULL); //va_list is just a pointer on windows so this is ok
 #endif
-}
-
-
-static bool GetDLLVersionUsingRE(const TCHAR *filepath, DWORD& high, DWORD & low)
-{
-  bool found = false;
-  LANGID anylangid = CResourceEditor::ANYLANGID;
-
-  FILE *fdll = FOPEN(filepath, ("rb"));
-  if (!fdll)
-    return 0;
-
-  fseek(fdll, 0, SEEK_END);
-  unsigned int len = ftell(fdll);
-  fseek(fdll, 0, SEEK_SET);
-
-  LPBYTE dll = (LPBYTE) malloc(len);
-
-  if (!dll)
-  {
-    fclose(fdll);
-    return 0;
-  }
-
-  if (fread(dll, 1, len, fdll) != len)
-  {
-    fclose(fdll);
-    free(dll);
-    return 0;
-  }
-  fclose(fdll);
-
-  try
-  {
-    CResourceEditor *dllre = new CResourceEditor(dll, len);
-    LPBYTE ver = dllre->GetResource(VS_FILE_INFO, VS_VERSION_INFO, anylangid);
-    size_t versize = (size_t) dllre->GetResourceSize(VS_FILE_INFO, VS_VERSION_INFO, anylangid);
-
-    if (ver)
-    {
-      if (versize > sizeof(WORD) * 3)
-      {
-        // get VS_FIXEDFILEINFO from VS_VERSIONINFO
-        WINWCHAR *szKey = (WINWCHAR *)(ver + sizeof(WORD) * 3);
-        size_t len = (WinWStrLen(szKey) + 1) * sizeof(WINWCHAR) + sizeof(WORD) * 3;
-        len = (len + 3) & ~3; // align on DWORD boundary
-        VS_FIXEDFILEINFO *verinfo = (VS_FIXEDFILEINFO *)(ver + len);
-        if (versize > len && verinfo->dwSignature == VS_FFI_SIGNATURE)
-        {
-          found = true, low = verinfo->dwFileVersionLS, high = verinfo->dwFileVersionMS;
-        }
-      }
-      dllre->FreeResource(ver);
-    }
-
-    delete dllre;
-  }
-  catch (exception&)
-  {
-  }
-
-  return found;
-}
-
-static bool GetDLLVersionUsingAPI(const TCHAR *filepath, DWORD& high, DWORD& low)
-{
-  bool found = false;
-
-#ifdef _WIN32
-  TCHAR path[1024];
-  TCHAR *name;
-  path[0] = 0;
-
-  GetFullPathName(filepath, 1024, path, &name);
-
-  DWORD d;
-  DWORD verSize = GetFileVersionInfoSize(path, &d);
-  if (verSize)
-  {
-    void *buf = (void *) GlobalAlloc(GPTR, verSize);
-    if (buf)
-    {
-      UINT uLen;
-      VS_FIXEDFILEINFO *pvsf;
-      if (GetFileVersionInfo(path, 0, verSize, buf) && VerQueryValue(buf, _T("\\"), (void**) &pvsf, &uLen))
-      {
-        found = true, low = pvsf->dwFileVersionLS, high = pvsf->dwFileVersionMS;
-      }
-      GlobalFree(buf);
-    }
-  }
-#endif
-
-  return found;
-}
-
-#ifdef _WIN32
-
-// the following structure must be byte-aligned.
-#pragma pack( push, pre_vxd_ver, 1 )
-typedef struct _VXD_VERSION_RESOURCE {
-  char  cType; // Should not be converted to TCHAR (JP)
-  WORD  wID;
-  char  cName; // Should not be converted to TCHAR (JP)
-  WORD  wOrdinal;
-  WORD  wFlags;
-  DWORD dwResSize;
-  BYTE  bVerData;
-} VXD_VERSION_RESOURCE, *PVXD_VERSION_RESOURCE;
-#pragma pack( pop, pre_vxd_ver )
-
-static BOOL GetVxdVersion( LPCTSTR szFile, LPDWORD lpdwLen, LPVOID lpData ) 
-{
-
-  HANDLE hFile        = NULL;
-  HANDLE hFileMapping = NULL;
-  void * pView        = NULL;
-  DWORD  dwSize       = 0;
-  DWORD  dwError      = 0;
-
-  PIMAGE_DOS_HEADER       pDosExeHdr = NULL;
-  PIMAGE_NT_HEADERS       pNtExeHdr  = NULL;
-  PIMAGE_VXD_HEADER       pLEHdr     = NULL;
-  PVXD_VERSION_RESOURCE   pVerRes    = NULL;
-  LPVOID                  pRawRes    = NULL;
-
-  // Open the file for shared read access.
-  hFile = CreateFile( szFile, GENERIC_READ, FILE_SHARE_READ,
-       NULL, OPEN_EXISTING, 0, NULL );
-  if ( hFile == INVALID_HANDLE_VALUE )
-  {
-    return FALSE;
-  }
-
-  // Create a read-only file mapping object for the file.
-  hFileMapping = CreateFileMapping( hFile, NULL,
-       PAGE_READONLY, 0, 0, NULL);
-  if ( !hFileMapping )
-  {
-    dwError = GetLastError();
-    if ( hFile != INVALID_HANDLE_VALUE ) CloseHandle( hFile );
-    SetLastError( dwError );
-    return FALSE;
-  }
-
-  // Map a view of the the file.
-  pView = MapViewOfFile( hFileMapping, FILE_MAP_READ, 0, 0, 0 );
-  if ( !pView )
-  {
-    dwError = GetLastError();
-    if ( hFileMapping ) CloseHandle( hFileMapping );
-    if ( hFile != INVALID_HANDLE_VALUE ) CloseHandle( hFile );
-    SetLastError( dwError );
-    return FALSE;
-  }
-
-  // The DOS header begins at byte 0.
-  pDosExeHdr = (PIMAGE_DOS_HEADER) pView;
-
-  // Check to make sure the file has a DOS EXE header.
-  if ( pDosExeHdr->e_magic != IMAGE_DOS_SIGNATURE ) 
-  {
-    if ( pView ) UnmapViewOfFile( pView );
-    if ( hFileMapping ) CloseHandle( hFileMapping );
-    if ( hFile != INVALID_HANDLE_VALUE ) CloseHandle( hFile );
-    SetLastError( ERROR_BAD_FORMAT );
-    return FALSE;
-  }
-
-  // Find the beginning of the NT header at offset e_lfanew.
-  pNtExeHdr = (PIMAGE_NT_HEADERS) ( (ULONG_PTR) pView + pDosExeHdr->e_lfanew );
-
-  // Check to make sure the file is a VxD.
-  if ( (DWORD) pNtExeHdr->Signature != IMAGE_VXD_SIGNATURE ) 
-  {
-    if ( pView ) UnmapViewOfFile( pView );
-    if ( hFileMapping ) CloseHandle( hFileMapping );
-    if ( hFile != INVALID_HANDLE_VALUE ) CloseHandle( hFile );
-    SetLastError( ERROR_BAD_FORMAT );
-    return FALSE;
-  }
-
-  // The LE header begins at the same place as the NT header.
-  pLEHdr = (PIMAGE_VXD_HEADER) pNtExeHdr;
-
-  // e32_winreslen contains the size of the VxD's version resource.
-  if ( pLEHdr->e32_winreslen == 0 ) {
-    *lpdwLen = 0;
-    if ( pView ) UnmapViewOfFile( pView );
-    if ( hFileMapping ) CloseHandle( hFileMapping );
-    if ( hFile != INVALID_HANDLE_VALUE ) CloseHandle( hFile );
-    SetLastError( ERROR_RESOURCE_DATA_NOT_FOUND );
-    return FALSE;
-  }
-
-  // e32_winresoff contains the offset of the resource in the VxD.
-  pVerRes = (VXD_VERSION_RESOURCE *) ( (ULONG_PTR) pView + pLEHdr->e32_winresoff );
-  dwSize = pVerRes->dwResSize;
-  pRawRes = &(pVerRes->bVerData);
-
-  // Make sure the supplied buffer is large enough for the resource.
-  if ( ( lpData == NULL ) || ( *lpdwLen < dwSize ) ) {
-    *lpdwLen = dwSize;
-    if ( pView ) UnmapViewOfFile( pView );
-    if ( hFileMapping ) CloseHandle( hFileMapping );
-    if ( hFile != INVALID_HANDLE_VALUE ) CloseHandle( hFile );
-    SetLastError( ERROR_INSUFFICIENT_BUFFER );
-    return FALSE;
-  }
-
-  // Zero the passed buffer and copy the resource into it.
-  ZeroMemory( lpData, *lpdwLen );
-  CopyMemory( lpData, pRawRes, dwSize );
-  *lpdwLen = dwSize;
-
-  // Clean up resources.
-  if ( pView ) UnmapViewOfFile( pView );
-  if ( hFileMapping ) CloseHandle( hFileMapping );
-  if ( hFile != INVALID_HANDLE_VALUE ) CloseHandle( hFile );
-  SetLastError(0); // Why bother?
-  return TRUE;
-}
-
-static DWORD GetVxdVersionInfoSize( LPCTSTR szFile ) 
-{
-  DWORD dwResult = 0;
-
-  // Call GetVxdVersion() with NULL for the pointer to the buffer.
-  if ( !GetVxdVersion( szFile, &dwResult, NULL ) ) 
-  {
-    DWORD dwError = GetLastError();
-
-    // GetVxdVersion() will fail with ERROR_INSUFFICIENT_BUFFER and
-    // the required buffer size will be returned in dwResult.
-    if ( dwError == ERROR_INSUFFICIENT_BUFFER ) 
-    {
-      SetLastError( 0 );
-      return dwResult;
-    }
-  }
-
-  // The following line is never executed.
-  return 0;
-}
-
-static BOOL GetVxdVersionInfo( LPCTSTR szFile, DWORD dwLen, LPVOID lpData ) 
-{
-  return GetVxdVersion( szFile, &dwLen, lpData );
-}
-
-#endif //_WIN32
-
-static bool GetDLLVersionFromVXD(const TCHAR *filepath, DWORD& high, DWORD& low)
-{
-  bool found = false;
-#ifdef _WIN32
-  DWORD verSize = GetVxdVersionInfoSize(filepath);
-  if (verSize)
-  {
-    void *buf = (void *) GlobalAlloc(GPTR, verSize);
-    if (buf)
-    {
-      UINT uLen;
-      VS_FIXEDFILEINFO *pvsf;
-      if (GetVxdVersionInfo(filepath, verSize, buf) && VerQueryValue(buf, _T("\\"), (void**) &pvsf, &uLen))
-      {
-        found = true, low = pvsf->dwFileVersionLS, high = pvsf->dwFileVersionMS;
-      }
-      GlobalFree(buf);
-    }
-  }
-#endif
-  return found;
-}
-
-bool GetDLLVersion(const TCHAR *filepath, DWORD& high, DWORD& low)
-{
-  if (GetDLLVersionUsingAPI(filepath, high, low)) return true;
-  if (GetDLLVersionUsingRE(filepath, high, low)) return true;
-  if (GetDLLVersionFromVXD(filepath, high, low)) return true;
-  return false;
 }
 
 unsigned char Platform_SupportsUTF8Conversion()

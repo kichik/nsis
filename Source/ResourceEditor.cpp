@@ -120,9 +120,9 @@ PRESOURCE_DIRECTORY CResourceEditor::GetResourceDirectory(
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-CResourceEditor::CResourceEditor(BYTE* pbPE, int iSize, bool bKeepData /*=true*/) {
+CResourceEditor::CResourceEditor(void* pbPE, int iSize, bool bKeepData /*=true*/) {
   // Copy the data pointer
-  m_pbPE = pbPE;
+  m_pbPE = (BYTE*) pbPE;
   m_iSize = iSize;
   m_bKeepData = bKeepData;
 

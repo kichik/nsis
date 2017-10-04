@@ -119,7 +119,7 @@ typedef struct RESOURCE_DIRECTORY {
 
 class CResourceEditor {
 public:
-  CResourceEditor(BYTE* pbPE, int iSize, bool bKeepData = true);
+  CResourceEditor(void* pbPE, int iSize, bool bKeepData = true);
   virtual ~CResourceEditor();
   enum { ANYLANGID = 0xffff };
 

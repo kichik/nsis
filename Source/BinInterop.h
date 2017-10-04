@@ -25,4 +25,6 @@
 FILE* MSTLB_fopen(const TCHAR*filepath, size_t*pResId = 0);
 bool GetTLBVersion(const TCHAR *filepath, DWORD &high, DWORD &low);
 
+bool GetDLLVersion(const TCHAR *filepath, DWORD &high, DWORD &low);
+
 #endif //~ NSIS_BININTEROP_H
