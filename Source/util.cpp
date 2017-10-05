@@ -609,16 +609,37 @@ FILE* my_fopen(const TCHAR *path, const char *mode)
   return f;
 }
 
-unsigned long get_file_size32(FILE *f)
+#if (defined(_MSC_VER) && (_MSC_VER >= 1200)) || defined(__MINGW32__)
+#include <io.h>
+static UINT64 get_file_size64(FILE *f)
 {
-  unsigned long error = ~(0UL), result = error;
+  INT64 s = _filelengthi64(_fileno(f)); // Could also use _get_osfhandle+GetFileSize64
+  return (INT64) -1L != s ? s : invalid_file_size64;
+}
+#endif
+
+#include <sys/types.h>
+#include <sys/stat.h>
+UINT32 get_file_size32(FILE *f)
+{
+  UINT32 result = invalid_file_size32;
+#if (defined(_MSC_VER) && (_MSC_VER >= 1200)) || defined(__MINGW32__)
+  UINT64 size64 = get_file_size64(f);
+  if (invalid_file_size64 != size64 && size64 <= 0xffffffffUL)
+    result = (UINT32) size64;
+#elif _XOPEN_SOURCE >= 500 || _POSIX_C_SOURCE >= 200112L
+  struct stat st;
+  if (0 == fstat(fileno(f), &st) && st.st_size <= (sizeof(st.st_size) >= 8 ? 0xffffffffUL : LONG_MAX))
+    result = (UINT32) st.st_size;
+#else
   long cb, restoreseek = true;
   fpos_t orgpos;
-  if (restoreseek ? 0 == fgetpos(f, &orgpos) : true)
-    if (0 == fseek(f, 0, SEEK_END))
-      if ((cb = ftell(f)) != -1L)
-        if (restoreseek ? 0 == fsetpos(f, &orgpos) : true)
+  if (!restoreseek || 0 == fgetpos(f, &orgpos))
+    if (0 == fseek(f, 0, SEEK_END)) // Not fully portable!
+      if ((cb = ftell(f)) != -1L) // This might not be correct for files in text mode!
+        if (!restoreseek || 0 == fsetpos(f, &orgpos))
           result = cb;
+#endif
   return result;
 }
 
@@ -626,8 +647,8 @@ BYTE* alloc_and_read_file(FILE *f, unsigned long &size)
 {
   BYTE *result = 0, *mem = 0;
   if (!f) return result;
-  size = get_file_size32(f);
-  mem = (~(0UL) != size) ? (BYTE*) malloc(size) : 0;
+  UINT32 size32 = get_file_size32(f);
+  mem = (invalid_file_size32 != size32) ? (BYTE*) malloc(size = size32) : 0;
   if (mem)
     if (0 == fseek(f, 0, SEEK_SET))
       if (fread(mem, 1, size, f) == size)

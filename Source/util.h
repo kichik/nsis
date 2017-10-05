@@ -273,7 +273,9 @@ int my_open(const TCHAR *pathname, int flags);
 FILE* my_fopen(const TCHAR *path, const char *mode);
 #define FOPEN(a, b) my_fopen((a), (b))
 
-unsigned long get_file_size32(FILE *f);
+const UINT32 invalid_file_size32 = ~ (UINT32) 0;
+UINT32 get_file_size32(FILE *f);
+const UINT64 invalid_file_size64 = ~ (UINT64) 0;
 BYTE* alloc_and_read_file(FILE *f, unsigned long &size);
 BYTE* alloc_and_read_file(const TCHAR *filepath, unsigned long &size);
 

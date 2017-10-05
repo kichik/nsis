@@ -3974,34 +3974,16 @@ int CEXEBuild::load_stub()
 }
 
 int CEXEBuild::update_exehead(const tstring& file, size_t *size/*=NULL*/) {
-  FILE *tmpfile = FOPEN(file.c_str(), ("rb"));
-  if (!tmpfile)
-  {
-    ERROR_MSG(_T("Error: opening stub \"%") NPRIs _T("\"\n"), file.c_str());
-    return PS_ERROR;
-  }
-
-  fseek(tmpfile, 0, SEEK_END);
-  size_t exehead_size = ftell(tmpfile);
-
-  unsigned char *exehead = new unsigned char[exehead_size];
-  fseek(tmpfile, 0, SEEK_SET);
-  if (fread(exehead, 1, exehead_size, tmpfile) != exehead_size)
+  unsigned long exehead_size;
+  unsigned char *exehead = alloc_and_read_file(file.c_str(), exehead_size);
+  if (!exehead)
   {
     ERROR_MSG(_T("Error: reading stub \"%") NPRIs _T("\"\n"), file.c_str());
-    fclose(tmpfile);
-    delete [] exehead;
     return PS_ERROR;
   }
-  fclose(tmpfile);
-
   update_exehead(exehead, exehead_size);
-
-  if (size)
-    *size = exehead_size;
-
-  delete [] exehead;
-
+  if (size) *size = exehead_size;
+  free(exehead);
   return PS_OK;
 }
 
