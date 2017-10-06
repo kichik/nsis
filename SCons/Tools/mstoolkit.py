@@ -229,7 +229,7 @@ def RegServerFunc(target, source, env):
 		if ret:
 			raise SCons.Errors.UserError, "Unable to register %s" % target[0]
 		else:
-			print "Registered %s sucessfully" % target[0]
+			print("Registered %s sucessfully" % target[0])
 		return ret
 	return 0
 

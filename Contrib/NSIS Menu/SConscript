@@ -92,9 +92,9 @@ else:
    # no wxWidgets
    def err(target, source, env):
       if env['PLATFORM'] == 'win32':
-         print '*** error: WXWIN must be set to build NSIS Menu!'
+         print('*** error: WXWIN must be set to build NSIS Menu!')
       else:
-         print '*** error: wx-config must be in the PATH to build NSIS Menu!'
+         print('*** error: wx-config must be in the PATH to build NSIS Menu!')
       return 1
 
    cmd = env.Command(target, files, Action(err, ''))

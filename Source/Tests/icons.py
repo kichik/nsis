@@ -20,7 +20,7 @@ def build(icon, unicon):
   pw, pr = popen2(r'C:\Progra~1\NSIS\makensis.exe -')
   pw.write(SCRIPT % locals())
   pw.close()
-  print pr.read()
+  print(pr.read())
 
 from glob import glob
 from os import system
