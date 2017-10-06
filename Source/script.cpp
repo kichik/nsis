@@ -80,6 +80,13 @@ static UINT ParseCtlColor(const TCHAR*Str, int&CCFlags, int CCFlagmask)
 }
 #endif //~ NSIS_CONFIG_ENHANCEDUI_SUPPORT
 
+static LANGID ParseLangId(const TCHAR*Str)
+{
+  const TCHAR *p = Str;
+  if (_T('+') == *p || _T('-') == *p) ++p;
+  return _T('0') == p[0] && _T('x') == (p[1]|32) ? LineParser::parse_int(Str) : _ttoi(Str);
+}
+
 int CEXEBuild::process_script(NIStream&Strm, const TCHAR *filename)
 {
   NStreamLineReader linereader(Strm);
@@ -2162,7 +2169,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       unsigned char failed = 0;
       if (!_tcsnicmp(line.gettoken_str(1), _T("/LANG="), 6))
       {
-        LANGID lang_id = _ttoi(line.gettoken_str(1) + 6);
+        LANGID lang_id = ParseLangId(line.gettoken_str(1) + 6);
         LanguageTable *table = GetLangTable(lang_id);
         const TCHAR*facename = line.gettoken_str(2);
         table->nlf.m_szFont = _tcsdup(facename);
@@ -4815,7 +4822,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       const bool forceneutrallang = !_tcsicmp(line.gettoken_str(a),_T("/LANG=0"));
 
       if (!_tcsnicmp(line.gettoken_str(a),_T("/LANG="),6))
-        LangID=_ttoi(line.gettoken_str(a++)+6);
+        LangID=ParseLangId(line.gettoken_str(a++)+6);
       if (line.getnumtokens()!=a+2) PRINTHELP();
       TCHAR *pKey = line.gettoken_str(a);
       TCHAR *pValue = line.gettoken_str(a+1);
