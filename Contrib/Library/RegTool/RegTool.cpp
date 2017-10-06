@@ -46,6 +46,13 @@ template<class T> HANDLE CreateFile(const T*p1,DWORD p2,DWORD p3,LPSECURITY_ATTR
 template<class T> BOOL CreateProcess(const T*p1,const T*p2,LPSECURITY_ATTRIBUTES p3,LPSECURITY_ATTRIBUTES p4,BOOL p5,DWORD p6,LPVOID p7,const T*p8,STARTUPINFO*p9,LPPROCESS_INFORMATION p10) { return sizeof(T) > 1 ? ::CreateProcessW(WP(p1),WP(p2),p3,p4,p5,p6,p7,WP(p8),(STARTUPINFOW*)p9,p10) : ::CreateProcessA(NP(p1),NP(p2),p3,p4,p5,p6,p7,NP(p8),(STARTUPINFOA*)p9,p10); }
 }
 
+#if defined(_MSC_VER) && _MSC_VER >= 1200
+EXTERN_C IMAGE_DOS_HEADER __ImageBase;
+#define HINST_THISCOMPONENT ( (HINSTANCE) &__ImageBase )
+#define HINST_APPLICATION HINST_THISCOMPONENT
+#else
+#define HINST_APPLICATION ( (HINSTANCE) GetModuleHandle(NULL) )
+#endif
 
 static bool IsWinNT()
 {
@@ -239,7 +246,7 @@ template<class T> void RegFile(T cmd, const T *file, BOOL x64)
   }
   else if (!x64)
   {
-    if (CALL(GetModuleFileName)(GetModuleHandle(NULL), self, STR_SIZE))
+    if (CALL(GetModuleFileName)(HINST_APPLICATION, self, STR_SIZE))
     {
       CALL_wsprintf(cmdline, MKSTR("\"%s\" /%c%s"), self, cmd, file);
       ready++;
@@ -385,7 +392,7 @@ template<class T> int RegTool()
     }
 
     {
-      if (CALL(GetModuleFileName)(GetModuleHandle(NULL), file, STR_SIZE))
+      if (CALL(GetModuleFileName)(HINST_APPLICATION, file, STR_SIZE))
       {
         DeleteFileOnReboot(file);
       }
