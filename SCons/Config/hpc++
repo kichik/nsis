@@ -1,4 +1,4 @@
-print "Using hpc++ tools configuration"
+print("Using hpc++ tools configuration")
 
 Import('defenv')
 

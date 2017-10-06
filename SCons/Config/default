@@ -1,4 +1,4 @@
-print "Using default tools configuration"
+print("Using default tools configuration")
 
 Import('defenv')
 

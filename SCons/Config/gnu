@@ -1,4 +1,4 @@
-print "Using GNU tools configuration"
+print("Using GNU tools configuration")
 
 Import('defenv')
 
@@ -14,7 +14,7 @@ if GetOptionOrEnv('NSIS_SCONS_GNU_ENVPATHHACK'):
 	for var in import_env: 
 		if var in os.environ:
 			defenv['ENV'][var] = os.environ.get(var, '')
-	#print defenv.Dump()
+	#print(defenv.Dump())
 
 ### cross compiling
 
