@@ -507,7 +507,7 @@ HRESULT NSISCALL UTF16LEBOM(HANDLE h, INT_PTR ForWrite)
   if (0 == orgpos)
   {
     BYTE bom[2];
-    if (myReadFile(h, bom, 2) && (0xff == bom[0] && 0xfe == bom[1]))
+    if (myReadFile(h, bom, 2) && (0xfeff == *(UINT16*) &bom[0]))
     {
       return S_OK;
     }
