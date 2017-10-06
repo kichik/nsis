@@ -1,5 +1,5 @@
 Import('defenv')
-print "Using Microsoft tools configuration (%s)" % defenv.get('MSVS_VERSION','<Default>')
+print("Using Microsoft tools configuration (%s)" % defenv.get('MSVS_VERSION','<Default>'))
 
 ### flags
 
@@ -100,7 +100,7 @@ if float(defenv['MSVS_VERSION'].replace('Exp','')) < 8.0:
       except IOError:
         continue
     else:
-      print "*** Couldn't find a good version of libcp.lib"
+      print("*** Couldn't find a good version of libcp.lib")
       Exit(2)
 
 conf.Finish()
