@@ -75,39 +75,23 @@ void LineParser::eattoken()
   m_eat++;
 }
 
-double LineParser::gettoken_float(int token, int *success/*=0*/) const
+static unsigned int number_has_base_prefix(const TCHAR *str)
 {
-  token+=m_eat;
-  if (token < 0 || token >= m_nt)
+  unsigned int hasbase = false;
+  if (_T('-') == *str || _T('+') == *str) ++str;
+  if (_T('0') == str[0])
   {
-    if (success) *success=0;
-    return 0.0;
+    if (_T('x') == (str[1]|32)) ++hasbase;
+    if (_T('n') == (str[1]|32)) ++hasbase;
+    if (_T('b') == (str[1]|32) || _T('y') == (str[1]|32)) ++hasbase;
+    if (_T('o') == (str[1]|32) || _T('t') == (str[1]|32)) ++hasbase;
   }
-  if (success)
-  {
-    TCHAR *t=m_tokens[token];
-    if (_T('-') == *t || _T('+') == *t) ++t;
-    *success=*t?1:0;
-    unsigned int dotcount = 0;
-    while (*t)
-    {
-      if (_T('.') == *t && ++dotcount > 1) *success=0;
-      if ((*t < _T('0') || *t > _T('9'))&&*t != _T('.')) *success=0;
-      t++;
-    }
-  }
-  return _tstof(m_tokens[token]);
+  return hasbase;
 }
 
-int LineParser::gettoken_int(int token, int *success/*=0*/) const
+int LineParser::parse_int(const TCHAR *str, int *success/*=0*/)
 {
-  token+=m_eat;
-  if (token < 0 || token >= m_nt || !m_tokens[token][0])
-  {
-    if (success) *success=0;
-    return 0;
-  }
-  const TCHAR *p=m_tokens[token], *parse=p;
+  const TCHAR *p=str, *parse=p;
   TCHAR *end;
   int neg=0, base=0, num;
   if (_T('+') == *p)
@@ -134,18 +118,56 @@ int LineParser::gettoken_int(int token, int *success/*=0*/) const
   return num;
 }
 
+int LineParser::gettoken_int(int token, int *success/*=0*/) const
+{
+  token+=m_eat;
+  if (token < 0 || token >= m_nt || !m_tokens[token][0])
+  {
+    if (success) *success=0;
+    return 0;
+  }
+  return parse_int(m_tokens[token], success);
+}
+
+double LineParser::parse_float(const TCHAR *str, int *success/*=0*/)
+{
+  if (success)
+  {
+    const TCHAR *t=str;
+    if (_T('-') == *t || _T('+') == *t) ++t;
+    *success=*t ? 1 : 0;
+    unsigned int dotcount = 0;
+    while (*t)
+    {
+      if (_T('.') == *t && ++dotcount > 1) *success=0;
+      if ((*t < _T('0') || *t > _T('9')) && *t != _T('.')) *success=0;
+      t++;
+    }
+  }
+  return _tstof(str);
+}
+
+double LineParser::gettoken_float(int token, int *success/*=0*/) const
+{
+  token+=m_eat;
+  if (token < 0 || token >= m_nt)
+  {
+    if (success) *success=0;
+    return 0.0;
+  }
+  return parse_float(m_tokens[token], success);
+}
+
+double LineParser::parse_number(const TCHAR *str, int *success/*=0*/)
+{
+  const unsigned int forceint = number_has_base_prefix(str);
+  return forceint ? parse_int(str,success) : parse_float(str,success);
+}
+
 double LineParser::gettoken_number(int token, int *success/*=0*/) const
 {
   const TCHAR*str=gettoken_str(token);
-  if (_T('-') == *str || _T('+') == *str) ++str;
-  unsigned int forceint = false;
-  if (_T('0') == str[0])
-  {
-    if (_T('x') == (str[1]|32)) ++forceint;
-    if (_T('n') == (str[1]|32)) ++forceint;
-    if (_T('b') == (str[1]|32) || _T('y') == (str[1]|32)) ++forceint;
-    if (_T('o') == (str[1]|32) || _T('t') == (str[1]|32)) ++forceint;
-  }
+  const unsigned int forceint = number_has_base_prefix(str);
   return forceint ? gettoken_int(token,success) : gettoken_float(token,success);
 }
 
