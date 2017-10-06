@@ -27,7 +27,7 @@ def AddZLib(env, platform, alias='install-utils'):
 			if 'ZLIB_W32_NEW_DLL' in env and env['ZLIB_W32_NEW_DLL']:
 				env.DistributeW32Bin(env['ZLIB_W32_NEW_DLL'], alias=alias)
 		else:
-			print 'Please specify folder of zlib for Win32 via ZLIB_W32'
+			print('Please specify folder of zlib for Win32 via ZLIB_W32')
 			Exit(1)
 
 	# Avoid unnecessary configuring when cleaning targets 
@@ -35,7 +35,7 @@ def AddZLib(env, platform, alias='install-utils'):
 	if not env.GetOption('clean'):
 		conf = env.Configure()
 		if not conf.CheckLibWithHeader(zlib, 'zlib.h', 'c'):
-			print 'zlib (%s) is missing!' % (platform)
+			print('zlib (%s) is missing!' % (platform))
 			Exit(1)
 
 		env = conf.Finish()

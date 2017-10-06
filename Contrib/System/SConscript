@@ -50,7 +50,7 @@ elif (not msvc) and conf.TryCompile(src_ascpp, '.S'):
 elif (not msvc) and conf.TryCompile(src_ascpp, '.sx'):
 	files += ['Source/'+filename+'CPP.sx']
 else:
-	print 'WARNING: System.dll: unable to find assembler for '+filename+'.S'
+	print('WARNING: System.dll: unable to find assembler for '+filename+'.S')
 conf.Finish()
 
 BuildPlugin(

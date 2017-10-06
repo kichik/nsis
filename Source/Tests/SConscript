@@ -157,7 +157,7 @@ else:
 	
 	# no CppUnit
 	def err(target, source, env):
-		print '*** error: CppUnit must be installed for testing!'
+		print('*** error: CppUnit must be installed for testing!')
 		return 1
 
 	cmd = env.Command(target, [tests], Action(err, ''))
