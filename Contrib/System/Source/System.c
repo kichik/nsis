@@ -48,8 +48,8 @@ static const int ByteSizeByType[8] = {
     1, // PAT_INT
     1, // PAT_LONG
     1, // PAT_STRING
-    2, // PAT_WSTRING (special case for &wN notation: N is a number of WCHAR, not a number of bytes)
-    1, // PAT_GUID
+    2, // PAT_WSTRING (Special case for &wN notation: N is a number of WCHAR, not a number of bytes)
+    1, // PAT_GUID (Must stay 1 for compatibility with the old '*(&g16,i)i.s' syntax)
     1, // PAT_CALLBACK
     1 // PAT_REGMEM
 };
@@ -571,7 +571,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
                 // Is it '::'
                 if ((*(ib) == _T('-')) && (*(ib+1) == _T('>')))
                 {
-                    ProcType = PT_VTABLEPROC;    
+                    ProcType = PT_VTABLEPROC;
                 } else
                 {
                     if ((*(ib+1) != _T(':')) || (*(ib) == _T('-'))) break;
@@ -695,7 +695,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
                 break;
 
             case _T('s'):
-            case _T('S'): temp4 = -1; break;    // Stack
+            case _T('S'): temp4 = -1; break; // Stack
             case _T('c'):
             case _T('C'): temp4 = INST_CMDLINE+1; break;
             case _T('d'):
@@ -716,8 +716,8 @@ SystemProc *PrepareProc(BOOL NeedForCall)
                 proc->Params[ParamIndex].Type = temp2;
                 proc->Params[ParamIndex].Size = // Pointer sized or from type
                     (temp == -1)?(PARAMSIZEBYTYPE_PTR):((psbt>0)?(psbt):(1)); //BUGBUG64: Is it safe to fallback to 1 for CALLBACK?
-                // Get the parameter real special option value
-                if (temp == 1) temp = ((int) GetIntFromString(&ib)) + 1;
+                if (temp == 1) temp = // Get the parameter real special option value
+                    ((int) GetIntFromString(&ib)) + 1; // Read '&' type size specification
                 proc->Params[ParamIndex].Option = temp;
                 proc->Params[ParamIndex].Value = 0;
                 proc->Params[ParamIndex].Input = IOT_NONE;
@@ -903,7 +903,9 @@ void ParamsIn(SystemProc *proc)
 #ifndef _UNICODE
     LPWSTR wstr;
 #endif
-
+#if !defined(_WIN64) && defined(C_ASSERT)
+    C_ASSERT(FIELD_OFFSET(ProcParameter, Value) + sizeof(int) == FIELD_OFFSET(ProcParameter, _value)); // Make sure PAT_LONG writes to the correct places
+#endif
     i = (proc->ParamCount > 0)?(1):(0);
     while (TRUE)
     {
@@ -1078,7 +1080,7 @@ void ParamsOut(SystemProc *proc)
 #endif
             break;
         case PAT_CALLBACK:
-            wsprintf(realbuf, _T("%d"), BUGBUG64(proc->Params[i].Value));
+            wsprintf(realbuf, sizeof(void*) > 4 ? _T("%Id") : _T("%d"), proc->Params[i].Value);
             break;
         }
 
@@ -1160,7 +1162,7 @@ HANDLE CreateCallback(SystemProc *cbproc)
 
 void CallStruct(SystemProc *proc)
 {
-    BOOL ssflag;
+    BOOL ssflag; // "&l" struct size syntax
     int i, structsize = 0, size = 0;
     char *st, *ptr;
 
@@ -1213,7 +1215,7 @@ void CallStruct(SystemProc *proc)
         }
         else
         {
-            const int intmask[4] = {0xFFFFFFFF, 0x000000FF, 0x0000FFFF, 0x00FFFFFF};
+            static const int intmask[4] = {0xFFFFFFFF, 0x000000FF, 0x0000FFFF, 0x00FFFFFF};
 
             // Special
             size = (proc->Params[i].Option-1) * ByteSizeByType[proc->Params[i].Type];
@@ -1236,8 +1238,8 @@ void CallStruct(SystemProc *proc)
                 break;
 
             case PAT_STRING: 
-            case PAT_GUID: 
             case PAT_WSTRING: 
+            case PAT_GUID: 
                 // Jim Park: Pointer for memcopy, so keep as char*
                 ptr = (char*) proc->Params[i].Value; break;
             }

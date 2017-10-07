@@ -513,7 +513,7 @@ params_loop:
   cmp         dword ptr [eax+esi],2
   jne         params_default
 
-  ;# Long type
+  ;# Long type 'L'/'l' (64-bit)
   push        dword ptr [eax+ebx]
 
 params_default:
@@ -782,7 +782,7 @@ FUNC_DECL _RealCallBack
   mov         dword ptr [ebp-8],ebp
   add         dword ptr [ebp-8],8
 
-  ;# Our callback proc
+  ;# Our callback proc is in eax (set by the thunk created in CreateCallback)
   mov         dword ptr [ebp-4],eax
 
   IFDEF SYSTEM_LOG_DEBUG
