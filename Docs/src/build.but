@@ -9,7 +9,7 @@ The official release is built with MSVC6 \W{http://web.archive.org/web/200605091
 
 Source code is available in \W{http://nsis.svn.sourceforge.net/viewvc/nsis/}{SVN} and as a separate package with every \W{http://sourceforge.net/project/showfiles.php?group_id=22049}{NSIS distribution}.
 
-To build NSIS, \W{http://www.python.org/}{Python} and \W{http://www.scons.org/}{SCons} must be installed. Currently, the supported version of SCons is version 1.2.0 and above. Any version of Python above 2.6 is supported.
+To build NSIS, \W{http://www.python.org/}{Python} and \W{http://www.scons.org/}{SCons} must be installed. Currently, the supported version of SCons is version 1.2.0 and above. Any version of Python 2.7 and above is supported.
 
 NSIS uses the \W{http://zlib.net}{zlib} compression library. As a
 consequence the header and library files of zlib must be installed. 
