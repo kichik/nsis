@@ -39,8 +39,7 @@ IntOp ${_outvar} "${_in}" & 0xFFFF
 !define LOWORD "!insertmacro _Win_LOWORD "
 
 !macro _Win_HIWORD _outvar _in
-IntOp ${_outvar} "${_in}" >> 16 ;sign extended :(
-${LOWORD} ${_outvar} ${_outvar} ;make sure we strip off the upper word
+IntOp ${_outvar} "${_in}" >>> 16
 !macroend
 !define HIWORD "!insertmacro _Win_HIWORD "
 

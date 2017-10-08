@@ -402,7 +402,7 @@ PLUGINFUNCTIONSHORT(Int64Op)
     case _T('~'): i1 = ~i1; break;
     case _T('!'): i1 = !i1; break;
     case _T('<'): if (op[1] == _T('<')) i1 = i1 << i2; else i1 = i1 < i2; break;
-    case _T('>'): if (op[1] == _T('>')) i1 = i1 >> i2; else i1 = i1 > i2; break;
+    case _T('>'): if (op[1] == _T('>')) i1 = op[2] == _T('>') ? (UINT64)i1 >> (UINT64)i2 : i1 >> i2; else i1 = i1 > i2; break;
     case _T('='): i1 = (i1 == i2); break;
     }
     
