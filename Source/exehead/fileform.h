@@ -97,7 +97,7 @@ enum
 #endif
 #ifdef NSIS_SUPPORT_INTOPTS
   EW_INTCMP,            // IntCmp: 6 [val1, val2, equal, val1<val2, val1>val2, unsigned?]
-  EW_INTOP,             // IntOp: 4 [output, input1, input2, op] where op: 0=add, 1=sub, 2=mul, 3=div, 4=bor, 5=band, 6=bxor, 7=bnot input1, 8=lnot input1, 9=lor, 10=land], 11=1%2
+  EW_INTOP,             // IntOp: 4 [output, input1, input2, op] where op: 0=add, 1=sub, 2=mul, 3=div, 4=bor, 5=band, 6=bxor, 7=bnot input1, 8=lor, 9=land 10=mod, 11=shl, 12=sar, 13=shr (bneg is implemented with bxor in compiler)
   EW_INTFMT,            // IntFmt: [output, format, input]
 #endif
 #ifdef NSIS_SUPPORT_STACK

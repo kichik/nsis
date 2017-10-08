@@ -20,6 +20,8 @@ Released on ??? ??rd, 20??
 
 \S2{} Minor Changes
 
+\b Added IntOp and System::Int64Op >>> operator
+
 \b Removed unused NSD_LB_Clear macro parameter
 
 \S2{} Build System

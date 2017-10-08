@@ -595,8 +595,9 @@ good:
 <li>Multiplication -- <b>*</b></li>
 <li>Division -- <b>/</b></li>
 <li>Modulo -- <b>%</b></li>
-<li>Shift right -- <b>&gt;&gt;</b></li>
 <li>Shift left -- <b>&lt;&lt;</b></li>
+<li>Arithmetic shift right -- <b>&gt;&gt;</b></li>
+<li>Logical shift right -- <b>&gt;&gt;&gt;</b></li>
 <li>Bitwise or -- <b>|</b></li>
 <li>Bitwise and -- <b>&amp;</b></li>
 <li>Bitwise xor -- <b>^</b></li>
@@ -645,6 +646,14 @@ DetailPrint "1 &lt;&lt; 62 = $0" # 4611686018427387904
 System::<b>Int64Op</b> 0x4000000000000000 &gt;&gt; 62
 Pop $0
 DetailPrint "0x4000000000000000 &gt;&gt; 62 = $0" # 1
+
+System::<b>Int64Op</b> 0x8000000000000000 &gt;&gt; 1
+Pop $0
+DetailPrint "0x8000000000000000 &gt;&gt; 1 = $0" # -4611686018427387904 (0xC000000000000000)
+
+System::<b>Int64Op</b> 0x8000000000000000 &gt;&gt;&gt; 1
+Pop $0
+DetailPrint "0x8000000000000000 &gt;&gt;&gt; 1 = $0" # 4611686018427387904 (0x4000000000000000)
 </pre></blockquote>
 <blockquote><pre>
 System::<b>Int64Op</b> 0xF0F0F0F | 0xF0F0FFF
