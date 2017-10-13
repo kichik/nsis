@@ -60,11 +60,7 @@ Pop ${r}
 !verbose pop
 !macroend
 !macro IntPtrOp r a o b
-!if ${NSIS_PTR_SIZE} <= 4
-  ${Int32Op} `${r}` `${a}` `${o}` `${b}`
-!else
-  ${Int64Op} `${r}` `${a}` `${o}` `${b}`
-!endif
+IntPtrOp `${r}` `${a}` `${o}` `${b}`
 !macroend
 
 !define Int32Cmp '!insertmacro Int32Cmp '

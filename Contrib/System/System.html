@@ -585,7 +585,7 @@ good:
 <ul>
 
 <li>
-<b>Int64Op</b> <i>ARG1</i> <i>OP</i> [<i>ARG2</i>]
+<b id="Int64Op">Int64Op</b> <i>ARG1</i> <i>OP</i> [<i>ARG2</i>]
 <blockquote>
 <p>Performs <i>OP</i> on <i>ARG1</i> and optionally <i>ARG2</i> and returns the result on the stack. Both <i>ARG1</i> and <i>ARG2</i> are 64-bit integers. This means they can range between -2^63 and 2^63 - 1.</p>
 <h4>Available Operations</h4>
@@ -601,13 +601,13 @@ good:
 <li>Bitwise or -- <b>|</b></li>
 <li>Bitwise and -- <b>&amp;</b></li>
 <li>Bitwise xor -- <b>^</b></li>
+<li>Bitwise not (one argument) -- <b>~</b></li>
+<li>Logical not (one argument) -- <b>!</b></li>
 <li>Logical or -- <b>||</b></li>
 <li>Logical and -- <b>&amp;&amp;</b></li>
 <li>Less than -- <b>&lt;</b></li>
 <li>Equals -- <b>=</b></li>
 <li>Greater than -- <b>&gt;</b></li>
-<li>Bitwise not (one argument) -- <b>~</b></li>
-<li>Logical not (one argument) -- <b>!</b></li>
 </ul>
 
 <h4>Usage Examples</h4>
