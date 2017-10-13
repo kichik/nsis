@@ -161,6 +161,20 @@ int CEXEBuild::num_ifblock()
   return build_preprocessor_data.getlen() / sizeof(ifblock);
 }
 
+int CEXEBuild::doParse(int verbosity, const TCHAR *fmt, ...)
+{
+  ExpandoString<TCHAR, NSIS_MAX_STRLEN> buf;
+  int orgv = get_verbosity(), res;
+  va_list val;
+  va_start(val, fmt);
+  buf.StrVFmt(fmt, val);
+  va_end(val);
+  if (verbosity >= 0) set_verbosity(verbosity);
+  res = doParse(buf.GetPtr());
+  set_verbosity(orgv);
+  return res;
+}
+
 int CEXEBuild::doParse(const TCHAR *str)
 {
   LineParser line(inside_comment);
@@ -4122,17 +4136,30 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       return PS_ERROR;
 #endif //~ NSIS_SUPPORT_GETFILETIME
 #ifdef NSIS_SUPPORT_INTOPTS
-    case TOK_INTOP:
-      ent.which=EW_INTOP;
-      ent.offsets[0]=GetUserVarIndex(line, 1);
-      ent.offsets[3]=line.gettoken_enum(3,_T("+\0-\0*\0/\0|\0&\0^\0!\0||\0&&\0%\0<<\0>>\0>>>\0~\0"));
-      if (ent.offsets[0] < 0 || ent.offsets[3] < 0 ||
-        ((ent.offsets[3] == 7 || ent.offsets[3] == 14) && line.getnumtokens() > 4))
-        PRINTHELP()
-      ent.offsets[1]=add_string(line.gettoken_str(2));
-      if (ent.offsets[3] != 7 && ent.offsets[3] != 14) ent.offsets[2]=add_string(line.gettoken_str(4));
-      if (ent.offsets[3] == 14) ent.offsets[2]=add_asciistring(_T("0xFFFFFFFF")), ent.offsets[3]=6; // ~ using ^
-      SCRIPT_MSG(_T("IntOp: %") NPRIs _T("=%") NPRIs _T("%") NPRIs _T("%") NPRIs _T("\n"),line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(4));
+    case TOK_INTOP: case TOK_INTPTROP:
+      {
+        const TCHAR *val1=line.gettoken_str(2), *opstr=0, *val2=0, *cmdname=get_commandtoken_name(which_token);
+        int t64 = is_target_64bit(), res;
+        ent.which=EW_INTOP;
+        ent.offsets[0]=GetUserVarIndex(line, 1);
+        ent.offsets[3]=line.gettoken_enum(3,_T("+\0-\0*\0/\0|\0&\0^\0!\0||\0&&\0%\0<<\0>>\0>>>\0~\0"));
+        if (ent.offsets[0] < 0 || ent.offsets[3] < 0 || ((ent.offsets[3] == 7 || ent.offsets[3] == 14) && line.getnumtokens() > 4))
+          PRINTHELP()
+        if (ent.offsets[3] != 7 && ent.offsets[3] != 14) val2=line.gettoken_str(4);
+        if (ent.offsets[3] == 14) val2=t64?_T("0xFFFFFFFFFFFFFFFF"):_T("0xFFFFFFFF"), ent.offsets[3]=6, opstr = _T("^"); // ~ using ^
+        if (TOK_INTPTROP == which_token && t64)
+        {
+          res = doParse(2, _T("System::Int64Op %") NPRIs _T(" %") NPRIs _T(" %") NPRIs _T("\n"), val1, opstr ? opstr : line.gettoken_str(3), val2 ? val2 : _T(""));
+          if (res != PS_OK) return res;
+          ent.which=EW_PUSHPOP, ent.offsets[1]=1, ent.offsets[3]=0; // Pop $result
+        }
+        else
+        {
+          ent.offsets[1]=add_string(val1);
+          if (val2) ent.offsets[2]=add_string(val2);
+        }
+        SCRIPT_MSG(_T("%") NPRIs _T(": %") NPRIs _T("=%") NPRIs _T("%") NPRIs _T("%") NPRIs _T("\n"),cmdname,line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(4));
+      }
     return add_entry(&ent);
     case TOK_INTFMT:
       ent.which=EW_INTFMT;
@@ -5010,7 +5037,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
       // Call the DLL
       tstring funcname = get_string_suffix(command, _T("::"));
-      SCRIPT_MSG(_T("Plugin Command: %") NPRIs,funcname.c_str());
+      SCRIPT_MSG(_T("Plugin command: %") NPRIs,funcname.c_str());
 
       int i = 1;
       int nounload = 0;

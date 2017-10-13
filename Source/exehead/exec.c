@@ -702,7 +702,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       {
         int v,v2;
         TCHAR *p=var0;
-        v=GetIntFromParm(1); // BUGBUG64: TODO: These should be INT_PTR, the script might be playing with pointers and System::Call
+        v=GetIntFromParm(1);
         v2=GetIntFromParm(2);
         switch (parm3)
         {
@@ -728,7 +728,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       TCHAR *buf0=GetStringFromParm(0x01);
       wsprintf(var0,
                buf0,
-               GetIntPtrFromParm(2));
+               GetIntPtrFromParm(2)); // TODO: BUGBUG64: This sign-extends from INT32 to INT64, do we want that?
     }
     break;
 #endif//NSIS_SUPPORT_INTOPTS

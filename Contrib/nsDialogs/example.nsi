@@ -1,6 +1,5 @@
 !include nsDialogs.nsh
 !include LogicLib.nsh
-!include Util.nsh ; IntPtrOp
 !include WinCore.nsh ; MAKELONG
 
 Name "nsDialogs Example"
@@ -196,7 +195,7 @@ Function OnNotify
 	IntOp $2 $5 - $4
 	System::Call '*(ir4,ir5,l,&t$2,i)p.r2' ; Create TEXTRANGE and a text buffer
 	${If} $2 P<> 0
-		${IntPtrOp} $3 $2 + 16 ; Find buffer
+		IntPtrOp $3 $2 + 16 ; Find buffer
 		System::Call '*$2(i,i,p$3)' ; Set buffer in TEXTRANGE
 		SendMessage $1 ${EM_GETTEXTRANGE} "" $2 $4
 		${If} $4 <> 0

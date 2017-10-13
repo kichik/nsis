@@ -318,6 +318,7 @@ class CEXEBuild {
 #else
     void ps_addtoline(const TCHAR *str, GrowBuf &linedata, StringList &hist);
 #endif
+    int doParse(int verbosity, const TCHAR *fmt, ...);
     int doParse(const TCHAR *str);
     int doCommand(int which_token, LineParser &line);
     TCHAR m_templinebuf[MAX_LINELENGTH]; // Buffer used by parseScript() & doCommand(), not recursion safe!
