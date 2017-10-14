@@ -12,6 +12,8 @@
 
 \define{NsisFuncReqU} This function is only available when building a \R{intro-unicode}{Unicode installer}.
 
+\define{NsisFuncReq64} This function is only available when building a 64-bit installer.
+
 \define{NsisACPcp} system default ANSI codepage (ACP)
 
 \define{NsisInputCharset} ACP|OEM|CP#|UTF8|UTF16<LE|BE>

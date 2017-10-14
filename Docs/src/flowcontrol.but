@@ -185,6 +185,34 @@ Compares two integers val1 and val2. If val1 and val2 are equal, Gotos jump_if_e
 
 Same as \R{intcmp}{IntCmp}, but treats the values as unsigned integers.
 
+\S2{int64cmp} Int64Cmp
+
+\c val1 val2 jump_if_equal [jump_if_val1_less] [jump_if_val1_more]
+
+Same as \R{intcmp}{IntCmp}, but treats the values as 64-bit integers.
+
+\NsisFuncReq64
+
+\S2{int64cmpu} Int64CmpU
+
+\c val1 val2 jump_if_equal [jump_if_val1_less] [jump_if_val1_more]
+
+Same as \R{intcmp}{IntCmp}, but treats the values as 64-bit unsigned integers.
+
+\NsisFuncReq64
+
+\S2{intptrcmp} IntPtrCmp
+
+\c val1 val2 jump_if_equal [jump_if_val1_less] [jump_if_val1_more]
+
+Same as \R{intcmp}{IntCmp}, but treats the values as pointer sized integers.
+
+\S2{intptrcmpu} IntPtrCmpU
+
+\c val1 val2 jump_if_equal [jump_if_val1_less] [jump_if_val1_more]
+
+Same as \R{intcmp}{IntCmp}, but treats the values as pointer sized unsigned integers.
+
 \S2{messagebox} MessageBox
 
 \c mb_option_list messagebox_text [/SD return] [return_check jumpto [return_check_2 jumpto_2]]

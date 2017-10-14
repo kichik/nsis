@@ -87,6 +87,15 @@ static LANGID ParseLangId(const TCHAR*Str)
   return _T('0') == p[0] && _T('x') == (p[1]|32) ? LineParser::parse_int(Str) : _ttoi(Str);
 }
 
+LANGID CEXEBuild::ParseLangIdParameter(const LineParser&line, int token)
+{
+  int succ, lid = line.gettoken_int(token, &succ);
+  if (!lid) lid = last_used_lang;
+  if (!succ)
+    warning_fl(DW_BAD_LANGID, _T("\"%") NPRIs _T("\" is not a valid language id, using language id %u!"), line.gettoken_str(token), lid);
+  return lid;
+}
+
 int CEXEBuild::process_script(NIStream&Strm, const TCHAR *filename)
 {
   NStreamLineReader linereader(Strm);
@@ -4169,23 +4178,24 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.offsets[2]=add_string(line.gettoken_str(3));
       SCRIPT_MSG(_T("IntFmt: %") NPRIs _T("->%") NPRIs _T(" (fmt:%") NPRIs _T(")\n"),line.gettoken_str(3),line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
-    case TOK_INTCMP:
-    case TOK_INTCMPU:
-      ent.which=EW_INTCMP;
-      ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[1]=add_string(line.gettoken_str(2));
-      ent.offsets[5]=which_token == TOK_INTCMPU;
-      if (process_jump(line,3,&ent.offsets[2]) ||
-          process_jump(line,4,&ent.offsets[3]) ||
-          process_jump(line,5,&ent.offsets[4]))  PRINTHELP()
-      SCRIPT_MSG(_T("%") NPRIs _T(" %") NPRIs _T(":%") NPRIs _T(" equal=%") NPRIs _T(", < %") NPRIs _T(", > %") NPRIs _T("\n"),line.gettoken_str(0),
-        line.gettoken_str(1),line.gettoken_str(2), line.gettoken_str(3),line.gettoken_str(4),line.gettoken_str(5));
-    return add_entry(&ent);
+    case TOK_INTCMP: case TOK_INTCMPU: case TOK_INT64CMP: case TOK_INT64CMPU: case TOK_INTPTRCMP: case TOK_INTPTRCMPU:
+      {
+        int t64 = is_target_64bit(), o32 = TOK_INTCMP == which_token || TOK_INTCMPU == which_token, o64 = TOK_INT64CMP == which_token || TOK_INT64CMPU == which_token;
+        if (!t64 && o64) return (ERROR_MSG(_T("Instruction only supported by 64-bit targets!\n")), PS_ERROR);
+        ent.which=EW_INTCMP;
+        ent.offsets[0]=add_string(line.gettoken_str(1));
+        ent.offsets[1]=add_string(line.gettoken_str(2));
+        ent.offsets[5]=(which_token == TOK_INTCMPU || which_token == TOK_INT64CMPU || which_token == TOK_INTPTRCMPU) | (t64 && !o32 ? 0x8000 : 0);
+        if (process_jump(line,3,&ent.offsets[2]) | process_jump(line,4,&ent.offsets[3]) | process_jump(line,5,&ent.offsets[4]))
+          PRINTHELP()
+        SCRIPT_MSG(_T("%") NPRIs _T(" %") NPRIs _T(":%") NPRIs _T(" equal=%") NPRIs _T(", < %") NPRIs _T(", > %") NPRIs _T("\n"),line.gettoken_str(0),
+          line.gettoken_str(1),line.gettoken_str(2), line.gettoken_str(3),line.gettoken_str(4),line.gettoken_str(5));
+        return add_entry(&ent);
+      }
 #else
-    case TOK_INTOP:
-    case TOK_INTCMP:
+    case TOK_INTOP: case TOK_INTPTROP:
+    case TOK_INTCMP: case TOK_INTCMPU: case TOK_INT64CMP: case TOK_INT64CMPU: case TOK_INTPTRCMP: case TOK_INTPTRCMPU:
     case TOK_INTFMT:
-    case TOK_INTCMPU:
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_SUPPORT_INTOPTS not defined.\n"),  line.gettoken_str(0));
       return PS_ERROR;
 #endif //~ NSIS_SUPPORT_INTOPTS
@@ -5427,12 +5437,3 @@ int CEXEBuild::do_add_file_create_dir(const tstring& local_dir, const tstring& d
   return PS_OK;
 }
 #endif
-
-LANGID CEXEBuild::ParseLangIdParameter(const LineParser&line, int token)
-{
-  int succ, lid = line.gettoken_int(token, &succ);
-  if (!lid) lid = last_used_lang;
-  if (!succ)
-    warning_fl(DW_BAD_LANGID, _T("\"%") NPRIs _T("\" is not a valid language id, using language id %u!"), line.gettoken_str(token), lid);
-  return lid;
-}

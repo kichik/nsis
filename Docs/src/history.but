@@ -20,6 +20,8 @@ Released on ??? ??rd, 20??
 
 \S2{} Minor Changes
 
+\b Added \R{intptrcmp}{IntPtrCmp}, IntPtrCmpU, Int64Cmp and Int64CmpU
+
 \b Added \R{intptrop}{IntPtrOp}
 
 \b Added IntOp and System::Int64Op >>> operator
