@@ -683,18 +683,27 @@ static int NSISCALL ExecuteEntry(entry *entry_)
 #ifdef NSIS_SUPPORT_INTOPTS
     case EW_INTCMP:
       {
-        int v,v2;
-        v=GetIntFromParm(0);
-        v2=GetIntFromParm(1);
-        if (!parm5) {
-          // signed
-          if (v<v2) return parm3;
-          if (v>v2) return parm4;
+        UINT supp64=sizeof(void*) > 4, opu=supp64 ? (BYTE) parm5 : parm5, op64=supp64 ? (INT16) parm5 < 0 : FALSE;
+        INT_PTR v=GetIntPtrFromParm(0), v2=GetIntPtrFromParm(1); // Note: This needs to be INT64 if supp64 is ever set to true for 32-bit builds!
+        if (!opu) { // signed:
+          if (op64) {
+            if ((INT64)v < (INT64)v2) return parm3;
+            if ((INT64)v > (INT64)v2) return parm4;
+          }
+          else {
+            if ((signed int)v < (signed int)v2) return parm3;
+            if ((signed int)v > (signed int)v2) return parm4;
+          }
         }
-        else {
-          // unsigned
-          if ((unsigned int)v<(unsigned int)v2) return parm3;
-          if ((unsigned int)v>(unsigned int)v2) return parm4;
+        else { // unsigned:
+          if (op64) {
+            if ((UINT64)v < (UINT64)v2) return parm3;
+            if ((UINT64)v > (UINT64)v2) return parm4;
+          }
+          else {
+            if ((unsigned int)v < (unsigned int)v2) return parm3;
+            if ((unsigned int)v > (unsigned int)v2) return parm4;
+          }
         }
       }
     return parm2;
