@@ -300,7 +300,7 @@ parse_again:
         ERROR_MSG(_T("Plugin%") NPRIs _T(" not found, cannot call %") NPRIs _T("\n"),m_pPlugins && m_pPlugins->IsKnownPlugin(tokstr0) ? _T(" function") : _T(""),tokstr0);
       else
 #endif
-        ERROR_MSG(_T("Invalid command: %") NPRIs _T("\n"),tokstr0);
+        ERROR_MSG(_T("Invalid command: \"%") NPRIs _T("\"\n"),tokstr0);
       return PS_ERROR;
     }
   }
@@ -4170,18 +4170,20 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         SCRIPT_MSG(_T("%") NPRIs _T(": %") NPRIs _T("=%") NPRIs _T("%") NPRIs _T("%") NPRIs _T("\n"),cmdname,line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(4));
       }
     return add_entry(&ent);
-    case TOK_INTFMT:
+    case TOK_INTFMT: case TOK_INT64FMT:
       ent.which=EW_INTFMT;
       ent.offsets[0]=GetUserVarIndex(line, 1);
       if (ent.offsets[0]<0) PRINTHELP()
       ent.offsets[1]=add_string(line.gettoken_str(2));
       ent.offsets[2]=add_string(line.gettoken_str(3));
+      ent.offsets[3]=which_token == TOK_INT64FMT;
+      if (ent.offsets[3] && !is_target_64bit()) return (ERROR_MSG(_T("%") NPRIns _T("\n"), "Instruction only supported by 64-bit targets!"), PS_ERROR);
       SCRIPT_MSG(_T("IntFmt: %") NPRIs _T("->%") NPRIs _T(" (fmt:%") NPRIs _T(")\n"),line.gettoken_str(3),line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_INTCMP: case TOK_INTCMPU: case TOK_INT64CMP: case TOK_INT64CMPU: case TOK_INTPTRCMP: case TOK_INTPTRCMPU:
       {
         int t64 = is_target_64bit(), o32 = TOK_INTCMP == which_token || TOK_INTCMPU == which_token, o64 = TOK_INT64CMP == which_token || TOK_INT64CMPU == which_token;
-        if (!t64 && o64) return (ERROR_MSG(_T("Instruction only supported by 64-bit targets!\n")), PS_ERROR);
+        if (!t64 && o64) return (ERROR_MSG(_T("%") NPRIns _T("\n"), "Instruction only supported by 64-bit targets!"), PS_ERROR);
         ent.which=EW_INTCMP;
         ent.offsets[0]=add_string(line.gettoken_str(1));
         ent.offsets[1]=add_string(line.gettoken_str(2));
@@ -4194,8 +4196,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
 #else
     case TOK_INTOP: case TOK_INTPTROP:
+    case TOK_INTFMT: case TOK_INT64FMT:
     case TOK_INTCMP: case TOK_INTCMPU: case TOK_INT64CMP: case TOK_INT64CMPU: case TOK_INTPTRCMP: case TOK_INTPTRCMPU:
-    case TOK_INTFMT:
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_SUPPORT_INTOPTS not defined.\n"),  line.gettoken_str(0));
       return PS_ERROR;
 #endif //~ NSIS_SUPPORT_INTOPTS
@@ -5113,7 +5115,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     default:
       break;
   }
-  ERROR_MSG(_T("Error: doCommand: Invalid token \"%") NPRIs _T("\".\n"),line.gettoken_str(0));
+  ERROR_MSG(_T("Invalid command \"%") NPRIs _T("\"\n"),line.gettoken_str(0));
   return PS_ERROR;
 }
 
