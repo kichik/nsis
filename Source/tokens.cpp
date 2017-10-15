@@ -131,6 +131,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_INTPTRCMP,_T("IntPtrCmp"),3,2,_T("val1 val2 jump_if_equal [jump_if_val1_less] [jump_if_val1_more]"),TP_CODE},
 {TOK_INTPTRCMPU,_T("IntPtrCmpU"),3,2,_T("val1 val2 jump_if_equal [jump_if_val1_less] [jump_if_val1_more]"),TP_CODE},
 {TOK_INTFMT,_T("IntFmt"),3,0,_T("$(user_var: output) format_string input"),TP_CODE},
+{TOK_INT64FMT,_T("Int64Fmt"),3,0,_T("$(user_var: output) format_string input"),TP_CODE},
 {TOK_ISWINDOW,_T("IsWindow"),2,1,_T("hwnd jump_if_window [jump_if_not_window]"),TP_CODE},
 {TOK_GOTO,_T("Goto"),1,0,_T("label"),TP_CODE},
 {TOK_LANGSTRING,_T("LangString"),3,0,_T("[un.]name lang_id|0 string"),TP_GLOBAL},
@@ -319,15 +320,15 @@ static tokenType tokenlist[TOK__LAST] =
 
 const TCHAR* CEXEBuild::get_commandtoken_name(int tok)
 {
-  for (int x = 0; x < TOK__LAST; ++x)
+  for (UINT x = 0; x < TOK__LAST; ++x)
     if (tokenlist[x].id==tok) return tokenlist[x].name;
   return 0;
 }
 
 void CEXEBuild::print_help(const TCHAR *commandname)
 {
-  int x;
-  for (x = 0; x < TOK__LAST; x ++)
+  UINT x;
+  for (x = 0; x < TOK__LAST; ++x)
   {
     if (!commandname || !_tcsicmp(tokenlist[x].name,commandname))
     {
@@ -376,7 +377,7 @@ bool CEXEBuild::is_unsafe_pp_token(int tkid)
 
 int CEXEBuild::get_commandtoken(const TCHAR *s, int *np, int *op, int *pos)
 {
-  for (int x = 0; x < TOK__LAST; x ++)
+  for (UINT x = 0; x < TOK__LAST; ++x)
     if (!_tcsicmp(tokenlist[x].name,s)) 
     {
       *np=tokenlist[x].num_parms;

@@ -683,7 +683,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
 #ifdef NSIS_SUPPORT_INTOPTS
     case EW_INTCMP:
       {
-        UINT supp64=sizeof(void*) > 4, opu=supp64 ? (BYTE) parm5 : parm5, op64=supp64 ? (INT16) parm5 < 0 : FALSE;
+        UINT supp64=sizeof(void*) > 4, opu=supp64 ? (BYTE) parm5 : parm5, op64=supp64 ? (SHORT) parm5 < 0 : FALSE;
         INT_PTR v=GetIntPtrFromParm(0), v2=GetIntPtrFromParm(1); // Note: This needs to be INT64 if supp64 is ever set to true for 32-bit builds!
         if (!opu) { // signed:
           if (op64) {
@@ -735,9 +735,8 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     break;
     case EW_INTFMT: {
       TCHAR *buf0=GetStringFromParm(0x01);
-      wsprintf(var0,
-               buf0,
-               GetIntPtrFromParm(2)); // TODO: BUGBUG64: This sign-extends from INT32 to INT64, do we want that?
+      INT_PTR val=GetIntPtrFromParm(2), op64=sizeof(void*) > 4 && parm3;
+      wsprintf(var0,buf0,op64 ? val : (UINT)val);
     }
     break;
 #endif//NSIS_SUPPORT_INTOPTS

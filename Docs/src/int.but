@@ -9,6 +9,16 @@ Formats the number in "numberstring" using the format "format", and sets the out
 \c IntFmt $0 "0x%08X" 195948557
 \c IntFmt $0 "%c" 0x41
 
+\S2{int64fmt} Int64Fmt
+
+\c user_var(output) format numberstring
+
+\NsisFuncReq64
+
+\c Int64Fmt $0 "%I64x" 244837743786702
+
+\# InternalNote: There is no IntPtrFmt instruction because "%p" is 2000+ and "%Ix" is XP+. Consequently, all code needs to check ${NSIS_PTR_SIZE}.
+
 \S2{intop} IntOp
 
 \c user_var(output) value1 OP [value2]
