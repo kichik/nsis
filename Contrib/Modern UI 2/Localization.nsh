@@ -31,7 +31,9 @@ Localization
   !verbose push ${MUI_VERBOSE}
 
   !ifndef MUI_PAGE_UNINSTALLER_PREFIX
-    !warning "MUI_LANGUAGE[EX] should be inserted after the MUI_[UN]PAGE_* macros"
+    !ifndef MUI_DISABLE_INSERT_LANGUAGE_AFTER_PAGES_WARNING ; Define this to avoid the warning if you only have custom pages
+      !warning "MUI_LANGUAGE[EX] should be inserted after the MUI_[UN]PAGE_* macros"
+    !endif
   !endif
 
   !insertmacro MUI_INSERT

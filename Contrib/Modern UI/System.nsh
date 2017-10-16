@@ -2100,7 +2100,9 @@ Var MUI_TEMP2
 
   ; MUI_PAGE_UNINSTALLER_PREFIX is undefined by uninstaller pages so we check MUI_UNINSTALLER as well
   !ifndef MUI_PAGE_UNINSTALLER_PREFIX && MUI_UNINSTALLER
-    !warning "MUI_LANGUAGE should be inserted after the MUI_[UN]PAGE_* macros"
+    !ifndef MUI_DISABLE_INSERT_LANGUAGE_AFTER_PAGES_WARNING ; Define this to avoid the warning if you only have custom pages
+      !warning "MUI_LANGUAGE should be inserted after the MUI_[UN]PAGE_* macros"
+    !endif
   !endif
 
   !insertmacro MUI_INSERT
