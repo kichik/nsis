@@ -268,7 +268,7 @@ int my_open(const TCHAR *pathname, int flags);
 
 #define OPEN(a, b) _topen(a, b)
 
-#endif // ~_WIN32
+#endif //~ _WIN32
 
 FILE* my_fopen(const TCHAR *path, const char *mode);
 #define FOPEN(a, b) my_fopen((a), (b))
@@ -278,6 +278,10 @@ UINT32 get_file_size32(FILE *f);
 const UINT64 invalid_file_size64 = ~ (UINT64) 0;
 BYTE* alloc_and_read_file(FILE *f, unsigned long &size);
 BYTE* alloc_and_read_file(const TCHAR *filepath, unsigned long &size);
+
+typedef struct { char*base; size_t internal; } FILEVIEW;
+void close_file_view(FILEVIEW&mmfv);
+char* create_file_view_readonly(const TCHAR *filepath, FILEVIEW&mmfv);
 
 // round a value up to be a multiple of 512
 // assumption: T is an int type

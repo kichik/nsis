@@ -18,10 +18,14 @@
 #include "BinInterop.h"
 #include "ResourceEditor.h"
 #include "util.h"
+#include <string.h> // strlen
 #include <wchar.h> // _tcstoul
 #include <stdexcept>
 
 #define MKPTR(cast, base, offset) ( (cast) ( ((char*)(base)) + (offset) ) )
+#define LE2HE16 FIX_ENDIAN_INT16 // Little-endian 2 Host-endian
+#define LE2HE32 FIX_ENDIAN_INT32
+#define HE2LE16 LE2HE16
 const size_t invalid_res_id = ~(size_t)0;
 
 FILE* MSTLB_fopen(const TCHAR*filepath, size_t*pResId)
@@ -379,132 +383,57 @@ static bool GetDLLVersionUsingAPI(const TCHAR *filepath, DWORD &high, DWORD &low
   return found;
 }
 
-#pragma pack(push, pre_vxd_ver, 1)
-typedef struct _VXD_VERSION_RESOURCE {
-  char  cType;
-  WORD  wID;
-  char  cName;
-  WORD  wOrdinal;
-  WORD  wFlags;
-  DWORD dwResSize;
-  BYTE  bVerData;
-} VXD_VERSION_RESOURCE, *PVXD_VERSION_RESOURCE;
-#pragma pack(pop, pre_vxd_ver)
-
-#ifdef _WIN32
-static void* CreateReadOnlyFullMappedView(LPCTSTR szFile, DWORD Access, DWORD Share, DWORD Mode)
-{
-  void *pView = NULL;
-  HANDLE hFile = CreateFile(szFile, Access, Share, NULL, Mode, 0, NULL);
-  if (hFile == INVALID_HANDLE_VALUE) return pView;
-  HANDLE hMap = CreateFileMapping(hFile, NULL, PAGE_READONLY, 0, 0, NULL);
-  if (hMap != INVALID_HANDLE_VALUE)
-  {
-    CloseHandle(hFile);
-    if ((pView = MapViewOfFile(hMap, FILE_MAP_READ, 0, 0, 0)))
-    {
-      CloseHandle(hMap);
-    }
-    else
-    {
-      DWORD error = GetLastError();
-      CloseHandle(hMap);
-      SetLastError(error);
-    }
-  }
-  else
-  {
-      DWORD error = GetLastError();
-      CloseHandle(hFile);
-      SetLastError(error);
-  }
-  return pView;
-}
-
-static BOOL GetVxdVersion(LPCTSTR szFile, LPDWORD lpdwLen, LPVOID lpData)
-{
-  BOOL result = FALSE;
-  DWORD resSize = 0, outSize = *lpdwLen;
-  void *pView = CreateReadOnlyFullMappedView(szFile, GENERIC_READ, FILE_SHARE_READ, OPEN_EXISTING);
-  if (!pView) return FALSE;
-
-  PIMAGE_DOS_HEADER pDosHdr = (PIMAGE_DOS_HEADER) pView;
-  if (pDosHdr->e_magic == IMAGE_DOS_SIGNATURE)
-  {
-    PIMAGE_NT_HEADERS pNtHdr = (PIMAGE_NT_HEADERS) ((ULONG_PTR) pView + pDosHdr->e_lfanew);
-    if ((DWORD) pNtHdr->Signature == IMAGE_VXD_SIGNATURE) // Is it a little-endian VXD?
-    {
-      PIMAGE_VXD_HEADER pLEHdr = (PIMAGE_VXD_HEADER) pNtHdr;
-      if (pLEHdr->e32_winreslen != 0)
-      {
-        PVXD_VERSION_RESOURCE pVerRes;
-        pVerRes = (VXD_VERSION_RESOURCE*) ((ULONG_PTR) pView + pLEHdr->e32_winresoff);
-        resSize = pVerRes->dwResSize;
-        if (lpData && outSize >= resSize)
-        {
-          void *pResData = &(pVerRes->bVerData);
-          ZeroMemory(lpData, outSize);
-          CopyMemory(lpData, pResData, resSize);
-          result = TRUE;
-        }
-        else
-          SetLastError(ERROR_INSUFFICIENT_BUFFER);
-      }
-      else
-        SetLastError(ERROR_RESOURCE_DATA_NOT_FOUND);
-    }
-    else
-      SetLastError(ERROR_BAD_FORMAT);
-  }
-  else
-    SetLastError(ERROR_BAD_FORMAT);
-
-  UnmapViewOfFile(pView);
-  *lpdwLen = resSize;
-  return result;
-}
-
-static DWORD GetVxdVersionInfoSize(LPCTSTR szFile)
-{
-  DWORD result = 0;
-  if (!GetVxdVersion(szFile, &result, NULL))
-  {
-    if (GetLastError() == ERROR_INSUFFICIENT_BUFFER) // Successfully queried the required size?
-    {
-      SetLastError(0);
-      return result;
-    }
-  }
-  return result;
-}
-
-static BOOL GetVxdVersionInfo(LPCTSTR szFile, DWORD dwLen, LPVOID lpData)
-{
-  return GetVxdVersion(szFile, &dwLen, lpData);
-}
-#endif //_WIN32
+#pragma pack(push, 1)
+typedef struct tagMINI_IMAGE_VXD_HEADER {
+  WORD   e32_magic, endian;
+  BYTE   data[180];
+  DWORD  e32_winresoff, e32_winreslen;
+  WORD   e32_devid, e32_ddkver;
+} MINI_IMAGE_VXD_HEADER, *PMINI_IMAGE_VXD_HEADER;
+#pragma pack(pop)
 
 static bool GetDLLVersionFromVXD(const TCHAR *filepath, DWORD &high, DWORD &low)
 {
   bool found = false;
-#ifdef _WIN32
-  DWORD verSize = GetVxdVersionInfoSize(filepath);
-  if (verSize)
+  FILEVIEW map;
+  char *filedata = create_file_view_readonly(filepath, map);
+  if (filedata)
   {
-    void *buf = malloc(verSize);
-    if (buf)
+    PIMAGE_DOS_HEADER pDosHdr = (PIMAGE_DOS_HEADER) filedata;
+    if ((pDosHdr->e_magic == 0x5A4D) | (pDosHdr->e_magic == 0x4D5A))
     {
-      UINT valSize;
-      VS_FIXEDFILEINFO *pvsf;
-      if (GetVxdVersionInfo(filepath, verSize, buf) && VerQueryValue(buf, _T("\\"), (void**) &pvsf, &valSize))
+      PMINI_IMAGE_VXD_HEADER pVxdHdr = MKPTR(PMINI_IMAGE_VXD_HEADER, pDosHdr, LE2HE32(pDosHdr->e_lfanew));
+      if (pVxdHdr->e32_magic == HE2LE16(0x454C) && pVxdHdr->endian == 0) // Is it a little-endian VXD?
       {
-        high = pvsf->dwFileVersionMS, low = pvsf->dwFileVersionLS;
-        found = true;
+        UINT minvsvi16 = 2 + 2 + 16, minvsffi = 52, minressecsize = ((1 + 2) + (1 + 2) + 2 + 4) + minvsvi16 + minvsffi;
+        PMINI_IMAGE_VXD_HEADER pLEHdr = pVxdHdr;
+        UINT ressecsize = LE2HE32(pLEHdr->e32_winreslen);
+        if (ressecsize >= minressecsize && pLEHdr->e32_winresoff != 0)
+        {
+          // MSKB201685 just assumes that the first item is the version and we do the same.
+          char *pRes = MKPTR(char*, pDosHdr, LE2HE32(pLEHdr->e32_winresoff));
+          UINT ressize, ofs = 3, succ = *MKPTR(BYTE*, pRes, 0) == 0xff && *MKPTR(WORD*, pRes, 1) == HE2LE16(16); // RT_VERSION
+          if (succ) succ = *MKPTR(BYTE*, pRes, ofs) == 0xff ? (ofs += (1 + 2) + 2) : (ofs += (strlen(MKPTR(char*, pRes, ofs)) + !0) + 2); // Ordinal or string name
+          if (succ) succ = ofs + 4 < ressecsize;
+          if (succ) ressize = LE2HE32(*MKPTR(DWORD*, pRes, ofs)), ofs += 4;
+          if (succ && ressize >= minvsvi16 + minvsffi && ressize < ressecsize)
+          {
+            WORD *pVSVI = MKPTR(WORD*, pRes, ofs); // VS_VERSIONINFO (16-bit/ASCII version)
+            if (LE2HE16(pVSVI[0]) >= minvsvi16 + minvsffi && LE2HE16(pVSVI[1]) >= minvsffi && !memcmp(&pVSVI[2], "VS_VERSION_INFO", 16))
+            {
+              VS_FIXEDFILEINFO *pFFI = MKPTR(VS_FIXEDFILEINFO*, pVSVI, 2 + 2 + 16);
+              if (LE2HE32(pFFI->dwSignature) == 0xFEEF04BD)
+              {
+                high = LE2HE32(pFFI->dwFileVersionMS), low = LE2HE32(pFFI->dwFileVersionLS);
+                found = true;
+              }
+            }
+          }
+        }
       }
-      free(buf);
     }
+    close_file_view(map);
   }
-#endif
   return found;
 }
 

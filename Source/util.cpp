@@ -58,6 +58,38 @@ using namespace std;
 extern int g_display_errors;
 extern FILE *g_output, *g_errout;
 
+#ifdef _WIN32
+static char* CreateMappedFileView(LPCTSTR szFile, DWORD FAccess, DWORD FShare, DWORD FMode, DWORD PProtect, DWORD MAccess)
+{
+  char *pView = NULL, restoreGLE = false;
+  HANDLE hFile = CreateFile(szFile, FAccess, FShare, NULL, FMode, 0, NULL);
+  if (hFile == INVALID_HANDLE_VALUE) return pView;
+  HANDLE hMap = CreateFileMapping(hFile, NULL, PProtect, 0, 0, NULL);
+  if (hMap != INVALID_HANDLE_VALUE)
+  {
+    CloseHandle(hFile);
+    if ((pView = (char*) MapViewOfFile(hMap, MAccess, 0, 0, 0)))
+    {
+      CloseHandle(hMap);
+    }
+    else
+    {
+      DWORD error = restoreGLE ? GetLastError() : 0;
+      CloseHandle(hMap);
+      if (restoreGLE) SetLastError(error);
+    }
+  }
+  else
+  {
+      DWORD error = restoreGLE ? GetLastError() : 0;
+      CloseHandle(hFile);
+      if (restoreGLE) SetLastError(error);
+  }
+  return pView;
+}
+#endif //~ _WIN32
+
+
 double my_wtof(const wchar_t *str) 
 {
   char buf[100];
@@ -585,7 +617,7 @@ int my_open(const TCHAR *pathname, int flags)
 #endif
   return result;
 }
-#endif//!_WIN32
+#endif //! _WIN32
 
 FILE* my_fopen(const TCHAR *path, const char *mode)
 {
@@ -667,6 +699,23 @@ BYTE* alloc_and_read_file(const TCHAR *filepath, unsigned long &size)
     fclose(f);
   }
   return result;
+}
+
+void close_file_view(FILEVIEW&mmfv)
+{
+#ifdef _WIN32
+  if (mmfv.base) UnmapViewOfFile(mmfv.base);
+#else
+  // TODO
+#endif
+}
+char* create_file_view_readonly(const TCHAR *filepath, FILEVIEW&mmfv)
+{
+#ifdef _WIN32
+  return mmfv.base = CreateMappedFileView(filepath, GENERIC_READ, FILE_SHARE_READ, OPEN_EXISTING, PAGE_READONLY, FILE_MAP_READ);
+#else
+  return 0; // TODO
+#endif
 }
 
 tstring get_full_path(const tstring &path) {
