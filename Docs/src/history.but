@@ -28,6 +28,10 @@ Released on ??? ??rd, 20??
 
 \b Removed unused NSD_LB_Clear macro parameter
 
+\S2{} Translations
+
+\b Updated Italian (\W{http://sf.net/p/nsis/bugs/1194}{bug #1194})
+
 \S2{} Build System
 
 \b Added support for Python 3

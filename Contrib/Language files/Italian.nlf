@@ -11,7 +11,7 @@ NLF v6
 -
 # Translation orginally started by Orfanik - http://www.orfanik.hu
 # Updated v2 to v6 by Alessandro Staltari < staltari (a) geocities.com >
-# corrected by < mdalco@gmail.com >
+# corrected by < mdalco@gmail.com > and Bovirus
 # ^Branding
 Sistema di installazione Nullsoft %s
 # ^SetupCaption
@@ -19,25 +19,25 @@ Installazione di $(^Name)
 # ^UninstallCaption
 Disinstallazione di $(^Name)
 # ^LicenseSubCaption
-: Licenza d'uso
+: Accordo di licenza
 # ^ComponentsSubCaption
-: Opzioni di installazione
+: Opzioni installazione
 # ^DirSubCaption
-: Cartella di installazione
+: Cartella installazione
 # ^InstallingSubCaption
-: Installazione dei file
+: Installazione
 # ^CompletedSubCaption
-: Completata
+: Installazione completata
 # ^UnComponentsSubCaption
-: Opzioni di disinstallazione
+: Opzioni disinstallazione
 # ^UnDirSubCaption
-: Cartella di disinstallazione
+: Cartella disinstallazione
 # ^ConfirmSubCaption
 : Conferma
 # ^UninstallingSubCaption
-: Rimozione dei file
+: Disinstallazione
 # ^UnCompletedSubCaption
-: Completata
+: Disisntallazione completata
 # ^BackBtn
 < &Indietro
 # ^NextBtn
@@ -59,71 +59,71 @@ Annulla
 # ^BrowseBtn
 S&foglia...
 # ^ShowDetailsBtn
-Mostra &dettagli
+Visualizza &dettagli
 # ^ClickNext
-Per proseguire, scegliere Avanti.
+Per proseguire, seleziona 'Avanti'.
 # ^ClickInstall
-Per avviare l'installazione, selezionare Installa.
+Per avviare l'installazione, seleziona 'Installa'.
 # ^ClickUninstall
-Per avviare la disinstallazione, selezionare Disinstalla.
+Per avviare la disinstallazione, seleziona 'Disinstalla'.
 # ^Name
 Nome
 # ^Completed
-Completata
+Installazione completata
 # ^LicenseText
-Leggere la licenza prima di procedere con l'installazione di $(^NameDA). Se si accettano le condizioni di licenza, selezionare Accetto.
+Leggi la licenza prima di procedere con l'installazione di $(^NameDA). Se accetti le condizioni della licenza, seleziona 'Accetto'.
 # ^LicenseTextCB
-Leggere la licenza prima di procedere con l'installazione di $(^NameDA). Se si accettano pienamente le condizioni di licenza, selezionare la casella sottostante. $_CLICK
+Leggi licenza prima di procedere con l'installazione di $(^NameDA). Se accetti tutte le condizioni della licenza, seleziona la casella sottostante. $_CLICK
 # ^LicesnseTextRB
-Leggere la licenza prima di procedere con l'installazione di $(^NameDA). Se si accettano pienamente le condizioni di licenza, selezionare la prima delle opzioni sottoindicate. $_CLICK
+Leggi la licenza prima di procedere con l'installazione di $(^NameDA). Se accetti tutte le condizioni della licenza, seleziona la prima delle opzioni sottoindicate. $_CLICK
 # ^UnLicenseText
-Leggere la licenza prima di procedere con la disinstallazione di $(^NameDA). Se si accettano pienamente le condizioni di licenza, selezionare Accetto. $_CLICK
+Leggi la licenza prima di procedere con la disinstallazione di $(^NameDA). Se accetti tutte le condizioni della licenza, seleziona 'Accetto'. $_CLICK
 # ^UnLicenseTextCB
-Leggere la licenza prima di procedere con la disinstallazione di $(^NameDA). Se si accettano pienamente le condizioni di licenza, selezionare la casella sottostante. $_CLICK
+Leggi la licenza prima di procedere con la disinstallazione di $(^NameDA). Se accetti tutte le condizioni della licenza, seleziona la casella sottostante. $_CLICK
 # ^UnLicesnseTextRB
-Leggere la licenza prima di procedere con la disinstallazione di $(^NameDA). Se si accettano pienamente le condizioni di licenza, selezionare la prima delle opzioni sottoindicate. $_CLICK
+Leggi la licenza prima di procedere con la disinstallazione di $(^NameDA). Se accetti tutte le condizioni della licenza, seleziona la prima delle opzioni sottoindicate. $_CLICK
 # ^Custom
 Personalizzata
 # ^ComponentsText
-Selezionare i componenti che si desidera installare.
+Seleziona componenti da installare.
 # ^ComponentsSubText1
-Selezionare il tipo d'installazione:
+Seleziona tipo installazione:
 # ^ComponentsSubText2_NoInstTypes
-Selezionare i componenti da installare:
+Seleziona componenti da installare:
 # ^ComponentsSubText2
-Oppure, selezionare i componenti opzionali che si desidera installare:
+Oppure, seleziona componenti opzionali da installare:
 # ^UnComponentsText
-Selezionare i componenti che si desidera disinstallare.
+Seleziona componenti da disinstallare.
 # ^UnComponentsSubText1
-Selezionare il tipo di disinstallazione:
+Seleziona tipo disinstallazione:
 # ^UnComponentsSubText2_NoInstTypes
-Selezionare i componenti da disinstallare:
+Seleziona componenti da disinstallare:
 # ^UnComponentsSubText2
-Oppure, selezionare i componenti opzionali che si desidera disinstallare :
+Oppure, seleziona componenti opzionali da disinstallare :
 # ^DirText
-Questa procedura installerà $(^NameDA) nella cartella seguente. Per installare in una cartella diversa, selezionare Sfoglia e sceglierne un'altra. $_CLICK
+Questa procedura installerà $(^NameDA) in questa cartella.\r\nPer installare in una cartella diversa, seleziona 'Sfoglia' e scegli un'altra cartella.\r\n$_CLICK
 # ^DirSubText
-Cartella di destinazione
+Cartella destinazione
 # ^DirBrowseText
-Selezionare la cartella dove installare $(^NameDA):
+Seleziona la cartella dove installare $(^NameDA):
 # ^UnDirText
-Questa procedura disinstallerà $(^NameDA) nella cartella seguente. Per disinstallare da una cartella diversa, selezionare Sfoglia e sceglierene un'altra. $_CLICK
+Questa procedura disinstallerà $(^NameDA) da questa cartella.\r\nPer disinstallare da una cartella diversa, seleziona 'Sfoglia' e scegli un'altra cartella.\r\n$_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
-Selezionare la cartella dalla quale disinstallare $(^NameDA):
+Seleziona la cartella dalla quale disinstallare $(^NameDA):
 # ^SpaceAvailable
 "Spazio disponibile: "
 # ^SpaceRequired
 "Spazio richiesto: "
 # ^UninstallingText
-$(^NameDA) verrà disinstallato dalla cartella seguente. $_CLICK
+$(^NameDA) verrà disinstallato da questa cartella.\r\n$_CLICK
 # ^UninstallingSubText
 Rimozione da:
 # ^FileError
-Errore nell'apertura del file per la scrittura: \r\n\t"$0"\r\nSeleziona Termina per interrompere l'installazione,\r\nsu Riprova per ritentare, oppure\r\nsu Ignora per saltare questo file.
+Errore nell'apertura del file per la scrittura: \r\n\t"$0"\r\nSeleziona 'Termina' per interrompere l'installazione,\r\n'Riprova' per ritentare, oppure\r\n'Ignora' per saltare questo file.
 # ^FileError_NoIgnore
-Errore nell'apertura del file per la scrittura: \r\n\t"$0"\r\nSeleziona Riprova per ritentare, oppure\r\nsu Termina per interrompere l'installazione
+Errore nell'apertura del file per la scrittura: \r\n\t"$0"\r\nSeleziona 'Riprova' per ritentare, oppure\r\n'Termina' per interrompere l'installazione
 # ^CantWrite
 "Impossibile scrivere: "
 # ^CopyFailed
@@ -131,57 +131,57 @@ Copia fallita
 # ^CopyTo
 "Copia in "
 # ^Registering
-"Registrazione in corso: "
+"Registrazione di: "
 # ^Unregistering
-"Deregistrazione in corso: "
+"Deregistrazione di: "
 # ^SymbolNotFound
 "Impossibile trovare il simbolo: "
 # ^CouldNotLoad
 "Impossibile caricare: "
 # ^CreateFolder
-"Crea cartella: "
+"Creazione cartella: "
 # ^CreateShortcut
-"Crea collegamento: "
+"Creazione collegamento: "
 # ^CreatedUninstaller
-"Creato il programma di disinstallazione: "
+"Creazione programma disinstallazione: "
 # ^Delete
-"Elimina file: "
+"Eliminazione file: "
 # ^DeleteOnReboot
 "Elimina al riavvio: "
 # ^ErrorCreatingShortcut
 "Errore nella creazione del collegamento: "
 # ^ErrorCreating
-"Errore nella creazione: "
+"Errore nella creazione di: "
 # ^ErrorDecompressing
-Errore nella decompressione dei dati! Programma di installazione corrotto?
+Errore nella decompressione dei dati! Probabile programma di installazione corrotto.
 # ^ErrorRegistering
 Errore nella registrazione della DLL
 # ^ExecShell
 "ExecShell: "
 # ^Exec
-"Esecuzione: "
+"Esecuzione di: "
 # ^Extract
-"Estrazione: "
+"Estrazione di: "
 # ^ErrorWriting
-"Estrazione: errore nella scrittura sul file "
+"Estrazione: errore nella scrittura nel file "
 # ^InvalidOpcode
 Programma di installazione corrotto: opcode non valido
 # ^NoOLE
 "Nessuna OLE per: "
 # ^OutputFolder 
-"Cartella di destinazione: "
+"Cartella destinazione: "
 # ^RemoveFolder
-"Rimuovi cartella: "
+"Rimozione cartella: "
 # ^RenameOnReboot
-"Rinomina al riavvio: "
+"Al riavvio rinomina: "
 # ^Rename
 Rinomina 
 # ^Skipped
 "Saltato: "
 # ^CopyDetails
-Copia i dettagli negli appunti
+Copia i dettagli negli Appunti
 # ^LogInstall
-Log del processo di installazione
+Registro eventi processo installazione
 # ^Byte
 B
 # ^Kilo
