@@ -16,7 +16,7 @@ Released on ??? ??rd, 20??
 
 \b Added \R{ppgettlbversion}{!gettlbversion}
 
-\b \R{library}{Library} TLB version support on POSIX
+\b \R{library}{Library} TLB and VxD version support on POSIX (\W{http://sf.net/p/nsis/patches/284}{patch #284})
 
 \S2{} Minor Changes
 
