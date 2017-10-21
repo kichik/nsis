@@ -58,11 +58,12 @@ using namespace std;
 extern int g_display_errors;
 extern FILE *g_output, *g_errout;
 
+
 #ifdef _WIN32
-static char* CreateMappedFileView(LPCTSTR szFile, DWORD FAccess, DWORD FShare, DWORD FMode, DWORD PProtect, DWORD MAccess)
+static char* CreateMappedFileView(LPCTSTR Path, DWORD FAccess, DWORD FShare, DWORD FMode, DWORD PProtect, DWORD MAccess)
 {
   char *pView = NULL, restoreGLE = false;
-  HANDLE hFile = CreateFile(szFile, FAccess, FShare, NULL, FMode, 0, NULL);
+  HANDLE hFile = CreateFile(Path, FAccess, FShare, NULL, FMode, 0, NULL);
   if (hFile == INVALID_HANDLE_VALUE) return pView;
   HANDLE hMap = CreateFileMapping(hFile, NULL, PProtect, 0, 0, NULL);
   if (hMap != INVALID_HANDLE_VALUE)
@@ -84,6 +85,27 @@ static char* CreateMappedFileView(LPCTSTR szFile, DWORD FAccess, DWORD FShare, D
       DWORD error = restoreGLE ? GetLastError() : 0;
       CloseHandle(hFile);
       if (restoreGLE) SetLastError(error);
+  }
+  return pView;
+}
+#else
+#include <sys/stat.h>
+#include <sys/mman.h>
+static char* CreateMappedFileView(const TCHAR *Path, const char *FMode, int PProtect, int MFlags, size_t &FSize)
+{
+  char *pView = NULL;
+  FILE *pFile = FOPEN(Path, FMode);
+  if (pFile)
+  {
+    struct stat fs;
+    int fd = fileno(pFile), toobig;
+    if (-1 != fd && 0 == fstat(fd, &fs))
+    {
+      FSize = (size_t) fs.st_size, toobig = sizeof(size_t) < sizeof(fs.st_size) && (INT64)FSize != fs.st_size;
+      void *p = !toobig ? mmap(NULL, FSize, PProtect, MFlags, fd, 0) : MAP_FAILED;
+      if (p != MAP_FAILED) pView = (char*) p;
+    }
+    fclose(pFile);
   }
   return pView;
 }
@@ -706,7 +728,7 @@ void close_file_view(FILEVIEW&mmfv)
 #ifdef _WIN32
   if (mmfv.base) UnmapViewOfFile(mmfv.base);
 #else
-  // TODO
+  if (mmfv.base) munmap(mmfv.base, mmfv.internal);
 #endif
 }
 char* create_file_view_readonly(const TCHAR *filepath, FILEVIEW&mmfv)
@@ -714,7 +736,7 @@ char* create_file_view_readonly(const TCHAR *filepath, FILEVIEW&mmfv)
 #ifdef _WIN32
   return mmfv.base = CreateMappedFileView(filepath, GENERIC_READ, FILE_SHARE_READ, OPEN_EXISTING, PAGE_READONLY, FILE_MAP_READ);
 #else
-  return 0; // TODO
+  return mmfv.base = CreateMappedFileView(filepath, "rb", PROT_READ, MAP_SHARED, mmfv.internal);
 #endif
 }
 
