@@ -683,7 +683,7 @@ UINT32 get_file_size32(FILE *f)
     result = (UINT32) size64;
 #elif _XOPEN_SOURCE >= 500 || _POSIX_C_SOURCE >= 200112L
   struct stat st;
-  if (0 == fstat(fileno(f), &st) && st.st_size <= (sizeof(st.st_size) >= 8 ? 0xffffffffUL : LONG_MAX))
+  if (0 == fstat(fileno(f), &st) && st.st_size <= (sizeof(st.st_size) >= 8 ? (off_t)0xffffffffUL : LONG_MAX))
     result = (UINT32) st.st_size;
 #else
   long cb, restoreseek = true;
