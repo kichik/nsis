@@ -88,7 +88,9 @@ void PatchGenerator::execute(vector<SameBlock*>& sameBlocks) {
       }
 
       // we need to update the memory cache of target
-      tout << _T("[CacheReload] File position = ") << static_cast<unsigned int>(targetCDataBaseOffset) << _T("\n");
+      if (beVerbose) {
+        tout << _T("[CacheReload] File position = ") << static_cast<unsigned int>(targetCDataBaseOffset) << _T("\n");
+      }
 
       target.seekg(targetCDataBaseOffset,ios::beg);
       target.read(reinterpret_cast<char*>(targetCData),targetCDataSize);
