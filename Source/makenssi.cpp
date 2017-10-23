@@ -171,6 +171,7 @@ static void print_usage()
          _T("  ") OPT_STR _T("HDRINFO prints information about what options makensis was compiled with\n")
          _T("  ") OPT_STR _T("LICENSE prints the makensis software license\n")
          _T("  ") OPT_STR _T("VERSION prints the makensis version and exits\n")
+         //_T("  ") OPT_STR _T("HELP this usage info\n")
 #ifdef _WIN32
          _T("  ") OPT_STR _T("Px sets the compiler process priority, where x is 5=realtime,4=high,\n")
          _T("  ")         _T("  3=above normal,2=normal,1=below normal,0=idle\n")
@@ -419,7 +420,7 @@ static inline int makensismain(int argc, TCHAR **argv)
   // g_output is now initialized and Print*/_[f]tprintf can be used
   if (!stdoutredir) PrintColorFmtMsg_WARN(_T("Error opening output log for writing! Using stdout.\n"));
 
-  unsigned int nousage=0;
+  unsigned int nousage=0, performed=0;
   unsigned int files_processed=0;
   unsigned int cmds_processed=0;
 
@@ -466,10 +467,15 @@ static inline int makensismain(int argc, TCHAR **argv)
       else if (!_tcsicmp(swname,_T("NOCD"))) do_cd=false;
       else if (!_tcsicmp(swname,_T("NOCONFIG"))) noconfig=true;
       else if (!_tcsicmp(swname,_T("PAUSE"))) g_dopause=true;
+      else if (!_tcsicmp(swname,_T("HELP")))
+      {
+        print_usage();
+        performed |= ++nousage;
+      }
       else if (!_tcsicmp(swname,_T("LICENSE"))) 
       {
         if (build.display_info) print_license();
-        nousage++;
+        performed |= ++nousage;
       }
       else if (!_tcsicmp(swname,_T("CMDHELP")))
       {
@@ -477,12 +483,12 @@ static inline int makensismain(int argc, TCHAR **argv)
           build.print_help(argv[++argpos]);
         else
           build.print_help(NULL);
-        nousage++;
+        performed |= ++nousage;
       }
       else if (!_tcsicmp(swname,_T("HDRINFO")))
       {
         print_stub_info(build);
-        nousage++;
+        performed |= ++nousage;
       }
       else if (!_tcsicmp(swname,_T("INPUTCHARSET")) || !_tcsicmp(swname,_T("ICS")))
       {
@@ -639,13 +645,14 @@ static inline int makensismain(int argc, TCHAR **argv)
     argpos++;
   }
 
-  if (argpos < argc || (!files_processed && !cmds_processed))
+  bool parsed_all_params = argpos >= argc, processed_any = files_processed || cmds_processed;
+  if (!parsed_all_params || !processed_any)
   {
     if (build.display_errors && !nousage)
     {
       print_usage();
     }
-    return 1;
+    return performed && parsed_all_params ? 0 : 1;
   }
 
   if (build.preprocessonly) return 0;
