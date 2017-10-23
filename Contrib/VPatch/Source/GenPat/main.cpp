@@ -275,23 +275,24 @@ int _tmain( int argc, TCHAR * argv[] ) {
         *iter = NULL;
       }
 
-      patch.close();
+      patch.close(); // Close the temporary patch file so we can open it again for reading
       TFileOffset patchSize = POSIX::getFileSize(tempFileName.c_str());
+      char* buf = new char[patchSize];
+      if (!buf) throw _T("Out of memory"); // In case we switch to nothrow_t
 
       // finally: copy the temporary file to the actual patch
       bifstream tempF;
       tempF.open(tempFileName.c_str(), std::ios_base::binary | std::ios_base::in);
+      tempF.read(buf,patchSize);
+      if (tempF.fail()) throw _T("Could not read temp file");
+      tempF.close();
+      bofstream().open(tempFileName.c_str(), std::ios_base::binary | std::ios_base::out); // empty the temporary file
+
       bofstream patchF;
       patchF.open(patchFileName.c_str(), std::ios_base::binary | std::ios_base::out);
-      char* buf = new char[patchSize];
-      tempF.read(buf,patchSize);
       patchF.write(buf,patchSize);
+      if (patchF.fail()) throw _T("Could not write patch file");
       delete[] buf;
-      tempF.close();
-
-      // now empty the temporary file
-      bofstream clearF;
-      clearF.open(tempFileName.c_str(), std::ios_base::binary | std::ios_base::out);
     }
     catch(tstring s) {
       terr << _T("Error thrown: ") << s.c_str();
@@ -299,6 +300,10 @@ int _tmain( int argc, TCHAR * argv[] ) {
     }
     catch(const TCHAR* s) {
       terr << _T("Error thrown: ") << s;
+      return 2;
+    }
+    catch(...) {
+      terr << _T("Error thrown: Unknown error!\n");
       return 2;
     }
   } else {
