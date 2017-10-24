@@ -595,6 +595,7 @@ int InitBranding() {
       }
       szBuf[dwRead] = 0, ppi = &pi;
       int len = lstrlenA(szBuf);
+      while(len && ((szBuf[len - 1] == '\n')|(szBuf[len - 1] == '\r'))) szBuf[--len] = '\0';
       if (!len) retval = 0;
       g_sdata.branding = (TCHAR*) MemAlloc((len+6)*sizeof(TCHAR)); // LEAKED
       wsprintf(g_sdata.branding, _T("NSIS %hs"), szBuf);
