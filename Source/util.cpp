@@ -1069,7 +1069,7 @@ switchcp:   cp = orgwinconoutcp, mbtwcf = 0, utf8 = false;
         if (--cch) wbuf[cchwb++] = wchbuf[1];
         const bool fullbuf = cchwb+cch >= COUNTOF(wbuf)-1; // cch is 1 for surrogate pairs
         if (!okr || fullbuf || L'\n' == wchbuf[0]) // Stop on \n so \r\n conversion has enough context (...\r\n vs ...\n)
-        {
+        { finalwrite:
 #ifdef MAKENSIS
           extern WINSIO_OSDATA g_osdata_stdout;
           WinStdIO_OStreamWrite(g_osdata_stdout, wbuf, cchwb); // Faster than _ftprintf
@@ -1080,8 +1080,13 @@ switchcp:   cp = orgwinconoutcp, mbtwcf = 0, utf8 = false;
           cchwb = 0;
         }
       }
-      if (!okr) break;
+      if (!okr)
+      {
+        if (cchwb) goto finalwrite;
+        break;
+      }
     }
+    fflush(g_output);
     WaitForSingleObject(pi.hProcess, INFINITE);
     GetExitCodeProcess(pi.hProcess, &childec);
     CloseHandle(pi.hThread);
