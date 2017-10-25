@@ -131,4 +131,38 @@ def GetOptionOrEnv(name, defval = None):
 		return os.environ[name]
 	return defval
 
-Export('AddAvailableLibs AddZLib FlagsConfigure GetAvailableLibs GetOptionOrEnv')
+def EnablePESecurityFlagsHelper(filepath):
+	"""
+	Sets the [HE]ASLR, DEP and LAA flags in the PE header
+	"""
+	import struct
+	def ReadU16LE(f, fpos):
+		if not fpos is None: f.seek(fpos)
+		return struct.unpack("<H", f.read(2))[0]
+	def ReadU32LE(f, fpos):
+		if not fpos is None: f.seek(fpos)
+		return struct.unpack("<I", f.read(4))[0]
+	def WriteU16LE(f, v, fpos):
+		if not fpos is None: f.seek(fpos)
+		f.write(struct.pack("<H", v))
+	f = open(filepath, "r+b")
+	try:
+		if not 0x5A4D == ReadU16LE(f, 0): return
+		pepos = ReadU32LE(f, 60)
+		if not 0x00004550 == ReadU32LE(f, pepos): return
+		pe64 = 0x20b == ReadU16LE(f, pepos+4+20) # IMAGE_NT_OPTIONAL_HDR64_MAGIC?
+		ifh_c = ReadU16LE(f, pepos+4+18)
+		ifh_c |= 0x0020 # +IMAGE_FILE_LARGE_ADDRESS_AWARE
+		WriteU16LE(f, ifh_c, pepos+4+18)
+		ioh_dc = ReadU16LE(f, pepos+4+20+70)
+		ioh_dc |= 0x0100 # +IMAGE_DLLCHARACTERISTICS_NX_COMPAT
+		ioh_dc |= 0x0400 # +IMAGE_DLLCHARACTERISTICS_NO_SEH
+		if not (ifh_c & 0x0001): # IMAGE_FILE_RELOCS_STRIPPED?
+			ioh_dc |= 0x0040 # +IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE
+			if pe64: ioh_dc |= 0x0020 # +IMAGE_DLLCHARACTERISTICS_HIGH_ENTROPY_VA
+		# TODO: IMAGE_DLLCHARACTERISTICS_TERMINAL_SERVER_AWARE?
+		WriteU16LE(f, ioh_dc, pepos+4+20+70)
+	finally:
+		f.close()
+
+Export('AddAvailableLibs AddZLib FlagsConfigure GetAvailableLibs GetOptionOrEnv EnablePESecurityFlagsHelper')
