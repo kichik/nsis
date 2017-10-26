@@ -131,38 +131,85 @@ def GetOptionOrEnv(name, defval = None):
 		return os.environ[name]
 	return defval
 
-def EnablePESecurityFlagsHelper(filepath):
+import struct
+def FileUnpackRead(pack, size, f, fpos=None, defval=None):
+	r = defval
+	try:
+		if not fpos is None: f.seek(fpos)
+		r = struct.unpack(pack, f.read(size))[0]
+	finally:
+		return r
+def ReadU16LE(f, fpos=None, defval=None):
+	return FileUnpackRead("<H", 2, f, fpos, defval)
+def ReadU32LE(f, fpos=None, defval=None):
+	return FileUnpackRead("<I", 4, f, fpos, defval)
+def WriteU16LE(f, v, fpos):
+	if not fpos is None: f.seek(fpos)
+	f.write(struct.pack("<H", v))
+def WriteU32LE(f, v, fpos):
+	if not fpos is None: f.seek(fpos)
+	f.write(struct.pack("<I", v))
+
+class MSPE:
+	def __init__(self, path=None, open_for_write=False):
+		self._f = None
+		self._path = None
+		self.NTHOffset = 0
+		self.NTOHMagic = None
+		self.IsPEP = False # PE+ A.K.A IMAGE_NT_HEADERS64
+		if not path is None:
+			self.Open(path, open_for_write)
+	def __del__(self): self.Close()
+	def Close(self):
+		if getattr(self, '_f', None):
+			self._f.close()
+			self._f = None
+	def Open(self, path, open_for_write=False):
+		mode = "rb"
+		if open_for_write: mode = "r+b"
+		self._path = path
+		f = self._f = open(path, mode)
+		if not 0x5A4D == ReadU16LE(f, 0): return # IMAGE_DOS_SIGNATURE?
+		fanew = ReadU32LE(f, 60)
+		if not 0x00004550 == ReadU32LE(f, fanew): return # IMAGE_NT_SIGNATURE?
+		self.NTHOffset = fanew
+		self.NTOHMagic = ReadU16LE(f, fanew+4+20)
+		self.IsPEP = 0x20b == self.NTOHMagic # IMAGE_NT_OPTIONAL_HDR64_MAGIC?
+	def ReadCharacteristics(self):
+		return ReadU16LE(self._f, self.NTHOffset+4+18)
+	def WriteCharacteristics(self, value):
+		WriteU16LE(self._f, value, self.NTHOffset+4+18)
+	def ReadDllCharacteristics(self):
+		return ReadU16LE(self._f, self.NTHOffset+4+20+70)
+	def WriteDllCharacteristics(self, value):
+		WriteU16LE(self._f, value, self.NTHOffset+4+20+70)
+	def WriteChecksum(self, value):
+		WriteU32LE(self._f, value, self.NTHOffset+4+20+64)
+
+def IsPEExecutable(pe):
+	if not isinstance(pe, MSPE): pe = MSPE(pe)
+	if pe.ReadCharacteristics() & 0x0002: return True # IMAGE_FILE_EXECUTABLE_IMAGE?
+
+def SetPESecurityFlagsWorker(filepath):
 	"""
 	Sets the [HE]ASLR, DEP and LAA flags in the PE header
 	"""
-	import struct
-	def ReadU16LE(f, fpos):
-		if not fpos is None: f.seek(fpos)
-		return struct.unpack("<H", f.read(2))[0]
-	def ReadU32LE(f, fpos):
-		if not fpos is None: f.seek(fpos)
-		return struct.unpack("<I", f.read(4))[0]
-	def WriteU16LE(f, v, fpos):
-		if not fpos is None: f.seek(fpos)
-		f.write(struct.pack("<H", v))
-	f = open(filepath, "r+b")
+	pe = MSPE(filepath, open_for_write=True)
 	try:
-		if not 0x5A4D == ReadU16LE(f, 0): return
-		pepos = ReadU32LE(f, 60)
-		if not 0x00004550 == ReadU32LE(f, pepos): return
-		pe64 = 0x20b == ReadU16LE(f, pepos+4+20) # IMAGE_NT_OPTIONAL_HDR64_MAGIC?
-		ifh_c = ReadU16LE(f, pepos+4+18)
+		if not IsPEExecutable(pe): return
+		ifh_c = pe.ReadCharacteristics()
 		ifh_c |= 0x0020 # +IMAGE_FILE_LARGE_ADDRESS_AWARE
-		WriteU16LE(f, ifh_c, pepos+4+18)
-		ioh_dc = ReadU16LE(f, pepos+4+20+70)
-		ioh_dc |= 0x0100 # +IMAGE_DLLCHARACTERISTICS_NX_COMPAT
+		pe.WriteCharacteristics(ifh_c)
+		ioh_dc = pe.ReadDllCharacteristics()
+		ioh_dc |= 0x0100 # +IMAGE_DLLCHARACTERISTICS_NX_COMPAT (DEP)
 		ioh_dc |= 0x0400 # +IMAGE_DLLCHARACTERISTICS_NO_SEH
+		ioh_dc |= 0x8000 # +IMAGE_DLLCHARACTERISTICS_TERMINAL_SERVER_AWARE (TODO: Should we set this on .DLLs?)
 		if not (ifh_c & 0x0001): # IMAGE_FILE_RELOCS_STRIPPED?
-			ioh_dc |= 0x0040 # +IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE
-			if pe64: ioh_dc |= 0x0020 # +IMAGE_DLLCHARACTERISTICS_HIGH_ENTROPY_VA
-		# TODO: IMAGE_DLLCHARACTERISTICS_TERMINAL_SERVER_AWARE?
-		WriteU16LE(f, ioh_dc, pepos+4+20+70)
+			ioh_dc |= 0x0040 # +IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE (ASLR)
+			if pe.IsPEP: ioh_dc |= 0x0020 # +IMAGE_DLLCHARACTERISTICS_HIGH_ENTROPY_VA (HEASLR)
+		pe.WriteDllCharacteristics(ioh_dc)
+		pe.WriteChecksum(0)
 	finally:
-		f.close()
+		return
 
-Export('AddAvailableLibs AddZLib FlagsConfigure GetAvailableLibs GetOptionOrEnv EnablePESecurityFlagsHelper')
+Export('AddAvailableLibs AddZLib FlagsConfigure GetAvailableLibs GetOptionOrEnv IsPEExecutable SetPESecurityFlagsWorker')
