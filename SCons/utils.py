@@ -188,7 +188,7 @@ class MSPE:
 
 def IsPEExecutable(pe):
 	if not isinstance(pe, MSPE): pe = MSPE(pe)
-	if pe.ReadCharacteristics() & 0x0002: return True # IMAGE_FILE_EXECUTABLE_IMAGE?
+	if int(pe.ReadCharacteristics() or 0) & 0x0002: return True # IMAGE_FILE_EXECUTABLE_IMAGE?
 
 def SetPESecurityFlagsWorker(filepath):
 	"""
