@@ -19,7 +19,16 @@
 #include "checked_delete.hpp"
 #include "detail/workaround.hpp"
 
-#include <memory>          // for std::auto_ptr
+#include <memory>          // for std::auto_ptr or std::unique_ptr
+
+// std::auto_ptr was deprecated in C++11 and removed in C++17
+namespace NSIS { namespace CXX {
+#if __cplusplus >= 201103L
+template<class T> struct stdsmartptr { typedef std::unique_ptr<T> type; };
+#else
+template<class T> struct stdsmartptr { typedef std::auto_ptr<T> type; };
+#endif
+}} //~ NSIS::CXX
 
 namespace boost
 {
@@ -48,7 +57,7 @@ public:
     {
     }
 
-    explicit scoped_ptr(std::auto_ptr<T> p): ptr(p.release()) // never throws
+    explicit scoped_ptr(typename NSIS::CXX::stdsmartptr<T>::type p): ptr(p.release()) // never throws
     {
     }
 
