@@ -952,10 +952,10 @@ int CEXEBuild::pp_define(LineParser&line)
   }
   else if (!_tcsicmp(define, _T("/math")))
   {
-    int value1, value2;
+    int value1, value2, tc = line.getnumtokens(), onlyval1 = 0;
     TCHAR *mathop;
 
-    if (line.getnumtokens() != 6) PRINTHELPEX(cmdnam)
+    if (tc != 5 && tc != 6) badmathsyntax: PRINTHELPEX(cmdnam)
     define = line.gettoken_str(2);
     value1 = line.gettoken_int(3);
     mathop = line.gettoken_str(4);
@@ -974,6 +974,14 @@ int CEXEBuild::pp_define(LineParser&line)
       _stprintf(value, _T("%d"), value1 | value2);
     } else if (!_tcscmp(mathop, _T("^"))) {
       _stprintf(value, _T("%d"), value1 ^ value2);
+    } else if (!_tcscmp(mathop, _T("~"))) {
+      _stprintf(value, _T("%d"), ~ value1), ++onlyval1;
+    } else if (!_tcscmp(mathop, _T("!"))) {
+      _stprintf(value, _T("%d"), ! value1), ++onlyval1;
+    } else if (!_tcscmp(mathop, _T("&&"))) {
+      _stprintf(value, _T("%d"), value1 && value2);
+    } else if (!_tcscmp(mathop, _T("||"))) {
+      _stprintf(value, _T("%d"), value1 || value2);
     } else if (!_tcscmp(mathop, _T("<<")) || !_tcscmp(mathop, _T("<<<")) ) {
       _stprintf(value, _T("%d"), value1 << value2);
     } else if (!_tcscmp(mathop, _T(">>"))) {
@@ -987,8 +995,7 @@ int CEXEBuild::pp_define(LineParser&line)
         return PS_ERROR;
       }
       _stprintf(value, _T("%d"), value1 / value2);
-    } else if (!_tcscmp(mathop, _T("%")))
-    {
+    } else if (!_tcscmp(mathop, _T("%"))) {
       if (value2 == 0)
       {
         ERROR_MSG(_T("!define /math: division by zero! (\"%i %") NPRIs _T(" %i\")\n"),value1,mathop,value2);
@@ -997,7 +1004,9 @@ int CEXEBuild::pp_define(LineParser&line)
       _stprintf(value, _T("%d"), value1 % value2);
     }
     else
-      PRINTHELPEX(cmdnam)
+      goto badmathsyntax;
+
+    if (tc + onlyval1 != 6) goto badmathsyntax;
   }
   else
   {
