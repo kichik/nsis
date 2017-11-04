@@ -26,6 +26,8 @@ Released on ??? ??rd, 20??
 
 \b Added IntOp and System::Int64Op >>> operator
 
+\b Added more !define /math operators
+
 \b Plug-ins now set the ASLR, DEP, LAA, NOSEH and TS PE flags (\W{http://sf.net/p/nsis/bugs/1188}{bug #1188})
 
 \b MakeNSIS exits with code 0 for various information commands (\W{http://sf.net/p/nsis/bugs/1193}{bug #1193})
