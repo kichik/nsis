@@ -126,6 +126,13 @@ static void NSISCALL NotifyCurWnd(UINT uNotifyCode)
 #define GetUIItem(it) GetDlgItem(hwndDlg,it)
 
 #ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
+// "Link Window"/"SysLink" stores a pointer in GWLP_USERDATA on 2000/XP/2003 and it crashes if we clobber it (forums.winamp.com/showthread.php?t=333379).
+// Checking for ROLE_SYSTEM_LINK is probably more reliable but requires more code.
+#define IsNSISCtlColor(p) ( ( ((p)->lbStyle) <= 1 ) /* BS_SOLID||BS_HOLLOW */ \
+  && ( (UINT)((p)->bkmode) <= 2 ) /* TRANSPARENT||OPAQUE */ \
+  && ( ((p)->flags >> CC_FLAGSSHIFTFORZERO) == 0 ) /* CC_* flags */ \
+  )
+
 #define HandleStaticBkColor() _HandleStaticBkColor(uMsg, wParam, lParam)
 static INT_PTR NSISCALL _HandleStaticBkColor(UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -133,7 +140,7 @@ static INT_PTR NSISCALL _HandleStaticBkColor(UINT uMsg, WPARAM wParam, LPARAM lP
   {
     ctlcolors *c = (ctlcolors *)GetWindowLongPtr((HWND)lParam, GWLP_USERDATA);
 
-    if (c) {
+    if (c && IsNSISCtlColor(c)) {
       COLORREF text;
       LOGBRUSH lh;
 
@@ -156,7 +163,7 @@ static INT_PTR NSISCALL _HandleStaticBkColor(UINT uMsg, WPARAM wParam, LPARAM lP
         lh.lbStyle = c->lbStyle;
         if (c->bkb)
           DeleteObject(c->bkb);
-        c->bkb = CreateBrushIndirect(&lh);
+        c->bkb = CreateBrushIndirect(&lh); // LOGBRUSH::lbHatch is ignored by BS_SOLID and BS_HOLLOW
       }
 
       return (INT_PTR)c->bkb;
@@ -166,7 +173,7 @@ static INT_PTR NSISCALL _HandleStaticBkColor(UINT uMsg, WPARAM wParam, LPARAM lP
 }
 #else
 #define HandleStaticBkColor() 0
-#endif//!NSIS_CONFIG_ENHANCEDUI_SUPPORT
+#endif//~ NSIS_CONFIG_ENHANCEDUI_SUPPORT
 
 #ifdef NSIS_CONFIG_LOG
 #if !defined(NSIS_CONFIG_LOG_ODS) && !defined(NSIS_CONFIG_LOG_STDOUT)

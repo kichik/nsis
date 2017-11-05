@@ -467,12 +467,14 @@ typedef struct
   int parms[5];
 } page;
 
-// text/bg color
+// ctlcolors text/bg color flags
 #define CC_TEXT 1
 #define CC_TEXT_SYS 2
 #define CC_BK 4
 #define CC_BK_SYS 8
 #define CC_BKB 16
+#define CC_FLAGSMASK 0x1f
+#define CC_FLAGSSHIFTFORZERO 5
 
 typedef struct {
   COLORREF text;
