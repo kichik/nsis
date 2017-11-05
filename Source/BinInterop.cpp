@@ -268,7 +268,7 @@ static bool GetTLBVersionInterop(const TCHAR *filepath, DWORD &high, DWORD &low)
   {
     if (!result && !resonly) result = MSTLB_GetVersion(pFileData, size, high, low); // A raw TLB file?
     if (!result) result = GetTLBVersionUsingRE(pFileData, size, resid, high, low);  // A resource in a PE file?
-    // TODO: if (!result) result = GetTLBVersion16(pFileData, size, resid, high, low); // A resouce in a 16-bit executable?
+    // TODO: if (!result) result = GetTLBVersion16(pFileData, size, resid, high, low); // A resource in a 16-bit executable?
     free(pFileData);
   }
   // Not supported: if (!result) result = GetTLBVersionFromMoniker(filepath, high, low);
