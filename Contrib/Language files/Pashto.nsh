@@ -38,7 +38,7 @@
   ${LangFileString} MUI_TEXT_COMPONENTS_SUBTITLE ".کومې ځانګړتياوې چې لګول غواړﺉ، خوښ يې کړﺉ $(^NameDA) د"
 !endif
 
-!ifdef MUI_UNCOMPONENETSPAGE
+!ifdef MUI_UNCOMPONENTSPAGE
   ${LangFileString} MUI_UNTEXT_COMPONENTS_TITLE "رغتوکي خوښ کړﺉ"
   ${LangFileString} MUI_UNTEXT_COMPONENTS_SUBTITLE ".کومې ځانګړتياوې چې نالګول غواړﺉ، خوښ يې کړﺉ $(^NameDA) د"
 !endif

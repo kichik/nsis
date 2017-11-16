@@ -60,7 +60,7 @@
   ${LangFileString} MUI_TEXT_DIRECTORY_SUBTITLE "Valitse kansio, johon haluat asentaa $(^NameDA) -ohjelman."
 !endif
 
-!ifdef MUI_UNDIRECTORYSPAGE
+!ifdef MUI_UNDIRECTORYPAGE
   ${LangFileString} MUI_UNTEXT_DIRECTORY_TITLE "Valitse kansio, josta poistetaan"
   ${LangFileString} MUI_UNTEXT_DIRECTORY_SUBTITLE "Valitse kansio, josta $(^NameDA) poistetaan."
 !endif

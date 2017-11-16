@@ -57,15 +57,15 @@
   !insertmacro MUI_UNPAGE_WELCOME
   !insertmacro MUI_UNPAGE_CONFIRM
   !insertmacro MUI_UNPAGE_LICENSE "${NSISDIR}\Docs\Modern UI\License.txt"
-  #insertmacro MUI_UNPAGE_COMPONENTS ; BUGBUG:TODO: Missing Pashto translation
-  #insertmacro MUI_UNPAGE_DIRECTORY ; BUGBUG:TODO: Missing Finnish translation
+  !insertmacro MUI_UNPAGE_COMPONENTS
+  !insertmacro MUI_UNPAGE_DIRECTORY
   !insertmacro MUI_UNPAGE_INSTFILES
   !insertmacro MUI_UNPAGE_FINISH
 
 ;--------------------------------
 ;Languages
 
-  !insertmacro MUI_LANGUAGE "English" ;first language is the default language
+  !insertmacro MUI_LANGUAGE "English" ; The first language is the default language
   !insertmacro MUI_LANGUAGE "French"
   !insertmacro MUI_LANGUAGE "German"
   !insertmacro MUI_LANGUAGE "Spanish"
