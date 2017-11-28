@@ -2414,7 +2414,9 @@ int CEXEBuild::UpdatePEHeader()
       *GetCommonMemberFromPEOptHdr(headers->OptionalHeader, MinorSubsystemVersion) = FIX_ENDIAN_INT16(PESubsysVerMin);
     }
     // DllCharacteristics
-    *GetCommonMemberFromPEOptHdr(headers->OptionalHeader, DllCharacteristics) = FIX_ENDIAN_INT16(PEDllCharacteristics);
+    WORD dc = PEDllCharacteristics;
+    if ((dc & IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE) && is_target_64bit()) dc |= IMAGE_DLLCHARACTERISTICS_HIGH_ENTROPY_VA;
+    *GetCommonMemberFromPEOptHdr(headers->OptionalHeader, DllCharacteristics) = FIX_ENDIAN_INT16(dc);
   } catch (std::runtime_error& err) {
     ERROR_MSG(_T("Error updating PE headers: %") NPRIs _T("\n"), CtoTStrParam(err.what()));
     return PS_ERROR;
