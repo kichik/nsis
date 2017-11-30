@@ -20,6 +20,8 @@ Released on ??? ??rd, 20??
 
 \S2{} Minor Changes
 
+\b Added System plug-in B and H types
+
 \b Added \R{intptrcmp}{IntPtrCmp}, IntPtrCmpU, and \R{intptrop}{IntPtrOp}
 
 \b Added Int64Cmp, Int64CmpU and Int64Fmt (64-bit only)
