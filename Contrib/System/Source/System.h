@@ -157,9 +157,9 @@ extern void ParamsOut(SystemProc *proc);
 #ifdef SYSTEM_AMD64
 extern SystemProc* CallProc2(SystemProc *proc, UINT_PTR ParamCount);
 #define CallProc(p) CallProc2((p), (p)->ParamCount) // ParamCount is passed as a parameter so CallProc2 can determine the required stack size without a function call
-#else // !SYSTEM_AMD64
+#else //! SYSTEM_AMD64
 extern SystemProc* CallProc(SystemProc *proc);
-#endif // ~SYSTEM_AMD64
+#endif //~ SYSTEM_AMD64
 #ifndef SYSTEM_NOCALLBACKS
 extern SystemProc* CallBack(SystemProc *proc);
 extern SystemProc* RealCallBack();

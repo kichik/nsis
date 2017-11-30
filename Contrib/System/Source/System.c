@@ -283,7 +283,7 @@ SystemProc* CallBack(SystemProc *proc)
     proc->ProcResult = PR_ERROR;
     return proc;
 }
-#endif // ~_WIN64
+#endif //~ _WIN64
 
 
 PLUGINFUNCTION(Call)
@@ -631,7 +631,10 @@ SystemProc *PrepareProc(BOOL NeedForCall)
             case _T('@'): temp2 = PAT_REGMEM; break;
             case _T('v'):
             case _T('V'): temp2 = PAT_VOID; break;
-
+            case 'B': // INT8/BYTE/BOOLEAN
+            case 'b': temp2 = PAT_INT, temp = sizeof(BYTE) + 1; break;
+            case 'H': // INT16/WORD/SHORT: 'h' AKA printf type length specifier
+            case 'h': temp2 = PAT_INT, temp = sizeof(WORD) + 1; break;
 #ifndef _WIN64
             case _T('p'):
 #endif
@@ -1017,11 +1020,16 @@ void ParamsDeAllocate(SystemProc *proc)
         }
 }
 
+#define GetSpecialParamTypeSize(pPP) ( (((pPP)->Option)-1) * ByteSizeByType[(pPP)->Type] )
+static const int g_intmask[4] = { 0xFFFFFFFF, 0x000000FF, 0x0000FFFF, 0x00FFFFFF };
+#define GetMaskedInt32Value(val, size) ( (val) & g_intmask[(((size) >= 0) && ((size) < 4))?((size)):(0)] )
+#define GetSpecialParamInt32Value(pPP, size) GetMaskedInt32Value((pPP)->Value, (size))
+
 void ParamsOut(SystemProc *proc)
 {
     INT_PTR *place;
     LPWSTR wstr;
-    int i;
+    int i, intval, typsiz;
     TCHAR *realbuf = AllocString();
 
     i = proc->ParamCount;
@@ -1043,7 +1051,13 @@ void ParamsOut(SystemProc *proc)
         case PAT_REGMEM:
 #endif
         case PAT_INT:
-            wsprintf(realbuf, _T("%d"), (int)(*((INT_PTR*) place)));
+            intval = (int)(*((INT_PTR*) place));
+            if (proc->Params[i].Option > 0) // Note: We don't handle '*' pointers, "*h" and "*b" are not supported, use "*i" even on smaller types
+            {
+                typsiz = GetSpecialParamTypeSize(&proc->Params[i]);
+                intval = GetMaskedInt32Value(intval, typsiz);
+            }
+            wsprintf(realbuf, _T("%d"), intval);
             break;
 #ifdef _WIN64
         case PAT_REGMEM:
@@ -1056,7 +1070,7 @@ void ParamsOut(SystemProc *proc)
             MultiByteToWideChar(CP_ACP, 0, *((char**) place), g_stringsize, realbuf, g_stringsize-1);
             realbuf[g_stringsize-1] = _T('\0'); // make sure we have a null terminator
 #else
-            lstrcpyn(realbuf,*((TCHAR**) place), g_stringsize); // note: lstrcpyn always include a null terminator (unlike strncpy)
+            lstrcpyn(realbuf,*((TCHAR**) place), g_stringsize); // note: lstrcpyn always includes a null terminator (unlike strncpy)
 #endif
             break;
         case PAT_GUID:
@@ -1181,7 +1195,7 @@ void CallStruct(SystemProc *proc)
         if (proc->Params[i].Option < 1)
             structsize += proc->Params[i].Size * 4;
         else
-            structsize += ByteSizeByType[proc->Params[i].Type] * (proc->Params[i].Option - 1);
+            structsize += GetSpecialParamTypeSize(&proc->Params[i]);
     }
     
     // Struct exists?
@@ -1215,10 +1229,8 @@ void CallStruct(SystemProc *proc)
         }
         else
         {
-            static const int intmask[4] = {0xFFFFFFFF, 0x000000FF, 0x0000FFFF, 0x00FFFFFF};
-
             // Special
-            size = (proc->Params[i].Option-1) * ByteSizeByType[proc->Params[i].Type];
+            size = GetSpecialParamTypeSize(&proc->Params[i]);
             ptr = NULL;
             switch (proc->Params[i].Type)
             {
@@ -1231,8 +1243,7 @@ void CallStruct(SystemProc *proc)
 #endif
                 ssflag = TRUE; // System::Call '*(...,&l.r0)'
             case PAT_INT: 
-                // clear unused value bits
-                proc->Params[i].Value &= intmask[((size >= 0) && (size < 4))?(size):(0)];
+                proc->Params[i].Value = GetSpecialParamInt32Value(&proc->Params[i], size); // clears unused value bits
                 // pointer
                 ptr = (char*) &(proc->Params[i].Value); 
                 break;
