@@ -472,8 +472,19 @@ System::Free $0
 <th>u</th>
 <td>Unload DLL after call (using FreeLibrary, so you'll be able to delete it for example).</td>
 </tr>
+<tr>
+<th>2</th>
+<td>Experimental v2 syntax</td>
+</tr>
 </table>
 </blockquote>
+
+<h4>Experimental v2 syntax</h4>
+
+<ul>
+<li>Struct types in <a href="#v2typealign">uppercase are aligned</a> to their natural alignment. Lowercased types are packed without alignment.
+<li><a href="#v2callback">Callback id</a> based on the allocated callback
+</ul>
 
 <h4>Usage Examples</h4>
 
@@ -515,6 +526,19 @@ DetailPrint $1
 System::<b>Call</b> "*$0(i .r1)"
 System::Free $0
 DetailPrint $1
+</pre></blockquote>
+<a name="structsize"></a><blockquote><pre>
+System::Call '*0(p, <b>&l.r2,</b> &t2)' ; &l. is not part of the struct
+DetailPrint "Struct size=$2" 
+</pre></blockquote>
+<a name="structsizemember"></a><blockquote><pre>
+System::Call '*(<b>&l4</b>,i,i,i,i,&t128)p.r1' ; Fills dwOSVersionInfoSize with the struct size as a int32
+${If} $1 Z<> 0
+	System::Call 'kernel32::GetVersionEx(pr1)i.r0'
+	System::Call '*$1(i,i.R1,i.R2,i.R3)'
+	System::Free $1
+	${IfThen} $0 <> 0 ${|} DetailPrint "v$R1.$R2.$R3" ${|}
+${EndIf}
 </pre></blockquote>
 <blockquote><pre>
 <a name="directvarmemparam"></a>System::<b>Call</b> "user32::GetClientRect(p $hwndparent, @ r0)"
@@ -563,6 +587,29 @@ loop:
 	Goto loop
 done:
 System::Free $R0
+</pre></blockquote>
+<a name="v2callback"></a><blockquote><pre>
+System::Get '(m.r1)ir2r0 <b>?2</b>' ; v2 syntax
+Pop $9
+System::Call 'kernel32::EnumSystemLocalesA(k r9, i 0)'
+loop:
+	StrCmp <b>$0 "callback$9"</b> 0 done
+	DetailPrint "Locale: $1"
+	StrCpy $2 1 ; EnumLocalesProc return value
+	System::Call $9 ; return from EnumLocalesProc
+	Goto loop
+done:
+System::Free $9
+</pre></blockquote>
+<a name="v2typealign"></a><blockquote><pre>
+System::Call '*(&t50 "!")p.r2' ; DecimalSep
+System::Call '*(&t50 "`")p.r3' ; ThousandSep
+System::Call '*(i 2, i 0, i 3, <b>P r2, P r3</b>, i 1)p.r1 <b>?2</b>'
+System::Call 'kernel32::GetNumberFormat(i 0, i 0, t "1337.666" r4, p r1, t.r5, i ${NSIS_MAX_STRLEN})'
+DetailPrint "Custom formated $4: $5"
+System::Free $3
+System::Free $2
+System::Free $1
 </pre></blockquote>
 <blockquote><pre>
 <a name="repeat"></a>!define MB "user32::MessageBox(p$HWNDPARENT,t,t'NSIS System Plug-in',i0)"

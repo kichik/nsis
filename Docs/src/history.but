@@ -20,6 +20,8 @@ Released on ??? ??rd, 20??
 
 \S2{} Minor Changes
 
+\b Added System plug-in v2 syntax option
+
 \b Added System plug-in B and H types
 
 \b Added \R{intptrcmp}{IntPtrCmp}, IntPtrCmpU, and \R{intptrop}{IntPtrOp}
