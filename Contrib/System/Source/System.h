@@ -31,6 +31,10 @@
 #  define SYSTEM_API __declspec(dllimport) // BUGBUG: This is a plugin, who is going to import the functions directly?
 #endif
 
+#define SYS_ALIGNUP(num, al) ( ((num)+((al)-1)) & ~((al)-1) )
+#define SYS_UNSAFEALIGNON(num, al) ( (num) % (al) == 0 ? (num) : SYS_ALIGNUP((num), (al)) ) // al CANNOT be 0!
+#define SYS_ALIGNON(num, al) ( (al) ? SYS_UNSAFEALIGNON((num), (al)) : (num) )
+
 #define NEW_STACK_SIZE     256*256
 
 // Proc types:
@@ -59,6 +63,7 @@
 #define PAT_TSTRING     PAT_STRING
 #endif
 #define PAT_PTR ( (4==sizeof(void*)) ? PAT_INT : PAT_LONG )
+#define PAT_ALIGNFLAG 0x8000 // Type is aligned to its natural alignment
 
 // Input/Output Source/Destination
 #define IOT_NONE    0
@@ -75,13 +80,18 @@
 #define POPT_GENSTACK   0x10   // Use general stack (non temporary for callback)
 #define POPT_ERROR      0x20   // Call GetLastError after proc and push it to stack
 #define POPT_UNLOAD     0x40   // unload dll after call
-#define POPT_CLONE      0x80   // This is clone callback
+#define POPT_CLONE      0x80   // Callback clone
+#define POPT_SYNTAX2    0x100  // "?2" syntax mode (direct callback ids and aligned uppercased types)
 
-// Our single proc parameter
+// Proc argument (ProcParameter) options
+#define PAO_PTRFLAG -1 // Could be changed to 0x80000000 if we need to support "*&iN"
+#define PAO_ARRBASE 1
+#define ParamOptionIsPointer(opt) ( (opt) < 0 )
+
 typedef struct
 {
-    int Type;
-    int Option; // -1 -> Pointer, 1-... -> Special+1
+    int Type; // Can be ORed with PAT_ALIGNFLAG to request alignment in structs
+    int Option; // PAO_PTRFLAG -> Pointer, PAO_ARRBASE-... -> Special+PAO_ARRBASE
     INT_PTR Value; // it can hold any pointer sized value
 #ifndef _WIN64
     int _value; // Upper 32 bits of Value when type is 64 bit (2 pushes)
@@ -91,6 +101,16 @@ typedef struct
     INT_PTR Input;
     HGLOBAL allocatedBlock; // block allocated for passing string, wstring or guid param
 } ProcParameter;
+
+#define ParamIsSimple(par) ( (par).Option == 0 )
+#define ParamIsPointer(par) ParamOptionIsPointer((par).Option)
+#define ParamIsArray(par) ( (par).Option > 0 ) // AKA special
+#define GetParamArrayTypeSize GetSpecialParamTypeSize
+#ifdef POPT_SYNTAX2
+#define GetParamType(par) ( (BYTE) (par).Type ) 
+#else
+#define GetParamType(par) ( (par).Type )
+#endif
 
 // Our single proc (Since the user will free proc with GlobalFree, 
 // I've declared all variables as statics)
