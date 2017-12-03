@@ -413,7 +413,7 @@ static bool GetDLLVersionFromVXD(const TCHAR *filepath, DWORD &high, DWORD &low)
           // MSKB201685 just assumes that the first item is the version and we do the same.
           char *pRes = MKPTR(char*, pDosHdr, LE2HE32(pLEHdr->e32_winresoff));
           UINT ressize, ofs = 3, succ = *MKPTR(BYTE*, pRes, 0) == 0xff && *MKPTR(WORD*, pRes, 1) == HE2LE16(16); // RT_VERSION
-          if (succ) succ = *MKPTR(BYTE*, pRes, ofs) == 0xff ? (ofs += (1 + 2) + 2) : (ofs += (strlen(MKPTR(char*, pRes, ofs)) + !0) + 2); // Ordinal or string name
+          if (succ) succ = *MKPTR(BYTE*, pRes, ofs) == 0xff ? (ofs += (1 + 2) + 2) : (ofs += ((UINT)strlen(MKPTR(char*, pRes, ofs)) + !0) + 2); // Ordinal or string name
           if (succ) succ = ofs + 4 < ressecsize;
           if (succ) ressize = LE2HE32(*MKPTR(DWORD*, pRes, ofs)), ofs += 4;
           if (succ && ressize >= minvsvi16 + minvsffi && ressize < ressecsize)
