@@ -566,8 +566,7 @@ end:
 </pre></blockquote>
 <blockquote><pre>
 InitPluginsDir
-SetOutPath $PLUGINSDIR
-File MyDLL.dll
+File "/oname=$PLUGINSDIR\MyDLL.dll" MyDLL.dll
 System::<b>Call</b> "MyDLL::MyFunc(i 5) ? u"
 Delete $PLUGINSDIR\MyDLL.dll
 </pre></blockquote>
