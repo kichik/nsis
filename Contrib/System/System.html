@@ -528,16 +528,16 @@ System::Free $0
 DetailPrint $1
 </pre></blockquote>
 <a name="structsize"></a><blockquote><pre>
-System::Call '*0(p, <b>&l.r2,</b> &t2)' ; &l. is not part of the struct
+System::Call '*0(p, <b>&amp;l.r2,</b> &amp;t2)' ; &amp;l. is not part of the struct
 DetailPrint "Struct size=$2" 
 </pre></blockquote>
 <a name="structsizemember"></a><blockquote><pre>
-System::Call '*(<b>&l4</b>,i,i,i,i,&t128)p.r1' ; Fills dwOSVersionInfoSize with the struct size as a int32
-${If} $1 Z<> 0
+System::Call '*(<b>&amp;l4</b>,i,i,i,i,&amp;t128)p.r1' ; Fills dwOSVersionInfoSize with the struct size as a int32
+${If} $1 Z&lt;&gt; 0
 	System::Call 'kernel32::GetVersionEx(pr1)i.r0'
 	System::Call '*$1(i,i.R1,i.R2,i.R3)'
 	System::Free $1
-	${IfThen} $0 <> 0 ${|} DetailPrint "v$R1.$R2.$R3" ${|}
+	${IfThen} $0 &lt;&gt; 0 ${|} DetailPrint "v$R1.$R2.$R3" ${|}
 ${EndIf}
 </pre></blockquote>
 <blockquote><pre>
@@ -601,8 +601,8 @@ done:
 System::Free $9
 </pre></blockquote>
 <a name="v2typealign"></a><blockquote><pre>
-System::Call '*(&t50 "!")p.r2' ; DecimalSep
-System::Call '*(&t50 "`")p.r3' ; ThousandSep
+System::Call '*(&amp;t50 "!")p.r2' ; DecimalSep
+System::Call '*(&amp;t50 "`")p.r3' ; ThousandSep
 System::Call '*(i 2, i 0, i 3, <b>P r2, P r3</b>, i 1)p.r1 <b>?2</b>'
 System::Call 'kernel32::GetNumberFormat(i 0, i 0, t "1337.666" r4, p r1, t.r5, i ${NSIS_MAX_STRLEN})'
 DetailPrint "Custom formated $4: $5"
