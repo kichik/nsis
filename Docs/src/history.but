@@ -40,7 +40,7 @@ Released on ??? ??rd, 20??
 
 \S2{} Translations
 
-\b Fixed Scottish Gaelic MUI_UNPAGE_FINISH (\W{http://sf.net/p/nsis/patches/285}{patch #285})
+\b Fixed and updated Scottish Gaelic (\W{http://sf.net/p/nsis/patches/285}{patch #285}, \W{http://sf.net/p/nsis/bugs/1197}{bug #1197})
 
 \b Updated Italian (\W{http://sf.net/p/nsis/bugs/1194}{bug #1194})
 

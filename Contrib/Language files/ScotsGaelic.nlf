@@ -14,9 +14,9 @@ NLF v6
 # ^Branding
 Siostam stàlaidh %s aig Nullsoft
 # ^SetupCaption
-A' stàladh $(^Name)
+A’ stàladh $(^Name)
 # ^UninstallCaption
-A' dì-stàladh $(^Name)
+A’ dì-stàladh $(^Name)
 # ^LicenseSubCaption
 : Aonta ceadachais
 # ^ComponentsSubCaption
@@ -24,9 +24,9 @@ A' dì-stàladh $(^Name)
 # ^DirSubCaption
 : Pasgan an stàlaidh
 # ^InstallingSubCaption
-: Ga stàladh
+: ’Ga stàladh
 # ^CompletedSubCaption
-: Coileanta
+: Deiseil
 # ^UnComponentsSubCaption
 : Roghainnean an dì-stàlaidh
 # ^UnDirSubCaption
@@ -34,9 +34,9 @@ A' dì-stàladh $(^Name)
 # ^ConfirmSubCaption
 : Dearbhadh
 # ^UninstallingSubCaption
-: Ga dì-stàladh
+: ’Ga dhì-stàladh
 # ^UnCompletedSubCaption
-: Coileanta
+: Deiseil
 # ^BackBtn
 < Air ai&s
 # ^NextBtn
@@ -58,33 +58,33 @@ Sguir dheth
 # ^BrowseBtn
 &Rùraich...
 # ^ShowDetailsBtn
-Seall &mion-fhiosrachadh
+&Mion-fhiosrachadh
 # ^ClickNext
-Briog air "Air adhart" gus leantainn air adhart.
+Briog air “Air adhart” gus leantainn air adhart.
 # ^ClickInstall
-Briog air "Stàlaich" gus tòiseachadh air an stàladh.
+Briog air “Stàlaich” gus tòiseachadh air an stàladh.
 # ^ClickUninstall
-Briog air "Dì-stàlaich" gus tòiseachadh air an dì-stàladh.
+Briog air “Dì-stàlaich” gus tòiseachadh air an dì-stàladh.
 # ^Name
 Ainm
 # ^Completed
 Coileanta
 # ^LicenseText
-Feuch an toir thu sùil air an aonta cheadachais mus stàlaich thu $(^NameDA). Ma ghabhas tu ris a h-uile teirm aig an aonta, briog air "Gabhaidh mi ris".
+Feuch an doir thu sùil air an aonta cheadachais mus stàlaich thu $(^NameDA). Ma ghabhas tu ris a h-uile teirm san aonta, briog air “Gabhaidh mi ris”.
 # ^LicenseTextCB
-Feuch an toir thu sùil air an aonta cheadachais mus stàlaich thu $(^NameDA). Ma ghabhas tu ris a h-uile teirm an aonta, cuir cromag sa bhogsa gu h-ìosal. $_CLICK
+Feuch an doir thu sùil air an aonta cheadachais mus stàlaich thu $(^NameDA). Ma ghabhas tu ris a h-uile teirm san aonta, cuir cromag sa bhogsa gu h-ìosal. $_CLICK
 # ^LicenseTextRB
-Feuch an toir thu sùil air an aonta cheadachais mus stàlaich thu $(^NameDA). Ma ghabhas tu ris a h-uile teirm an aonta, tagh a' chiad roghainn gu h-ìosal. $_CLICK
+Feuch an doir thu sùil air an aonta cheadachais mus stàlaich thu $(^NameDA). Ma ghabhas tu ris a h-uile teirm san aonta, tagh a’ chiad roghainn gu h-ìosal. $_CLICK
 # ^UnLicenseText
-Feuch an toir thu sùil air an aonta cheadachais mus dì-stàlaich thu $(^NameDA). Ma ghabhas tu ris a h-uile teirm an aonta, Briog air "Gabhaidh mi ris".
+Feuch an doir thu sùil air an aonta cheadachais mus dì-stàlaich thu $(^NameDA). Ma ghabhas tu ris a h-uile teirm san aonta, Briog air “Gabhaidh mi ris”.
 # ^UnLicenseTextCB
-Feuch an toir thu sùil air an aonta cheadachais mus dì-stàlaich thu $(^NameDA). Ma ghabhas tu ris a h-uile teirm an aonta, cuir cromag sa bhogsa gu h-ìosal. $_CLICK
+Feuch an doir thu sùil air an aonta cheadachais mus dì-stàlaich thu $(^NameDA). Ma ghabhas tu ris a h-uile teirm san aonta, cuir cromag sa bhogsa gu h-ìosal. $_CLICK
 # ^UnLicenseTextRB
-Feuch an toir thu sùil air an aonta cheadachais mus dì-stàlaich thu $(^NameDA). Ma ghabhas tu ris a h-uile teirm an aonta, tagh a' chiad roghainn gu h-ìosal. $_CLICK
+Feuch an doir thu sùil air an aonta cheadachais mus dì-stàlaich thu $(^NameDA). Ma ghabhas tu ris a h-uile teirm san aonta, tagh a’ chiad roghainn gu h-ìosal. $_CLICK
 # ^Custom
 Gnàthaichte
 # ^ComponentsText
-Thoir cromag sa bhogsa leis na co-phàirtean a tha thu airson stàladh is thoir air falbh i leis na co-phàirtean nach eil thu airson stàladh. $_CLICK
+Thoir cromag ann am bogsaichean nan co-phàirtean a tha thu airson stàladh is thoir air falbh i o bhogsaichean nan co-phàirtean nach eil thu ag iarraidh. $_CLICK
 # ^ComponentsSubText1
 Tagh an seòrsa dhen stàladh:
 # ^ComponentsSubText2_NoInstTypes
@@ -92,7 +92,7 @@ Tagh na co-phàirtean a tha thu airson stàladh:
 # ^ComponentsSubText2
 No tagh na co-phàirtean roghainneil a tha thu airson stàladh:
 # ^UnComponentsText
-Thoir cromag sa bhogsa leis na co-phàirtean a tha thu airson dì-stàladh is thoir air falbh i leis na co-phàirtean a tha thu airson cumail. $_CLICK
+Thoir cromag ann am bogsaichean nan co-phàirtean a tha thu airson dì-stàladh is thoir air falbh i o bhogsaichean nan co-phàirtean a tha thu airson cumail. $_CLICK
 # ^UnComponentsSubText1
 Tagh an seòrsa dhen dì-stàladh:
 # ^UnComponentsSubText2_NoInstTypes
@@ -100,43 +100,43 @@ Tagh na co-phàirtean a tha thu airson dì-stàladh:
 # ^UnComponentsSubText2
 No tagh na co-phàirtean roghainneil a tha thu airson dì-stàladh:
 # ^DirText
-Thèid $(^NameDA) a stàladh sa phasgan seo. Gus stàladh ann am pasgan eile, briog air "Rùraich" is tagh pasgan eile. $_CLICK
+Thèid $(^NameDA) a stàladh sa phasgan seo. Gus stàladh ann am pasgan eile, briog air “Rùraich” is tagh pasgan eile. $_CLICK
 # ^DirSubText
 Pasgan-uidhe
 # ^DirBrowseText
-Tagh am pasgan sa thèid $(^NameDA) a stàladh:
+Tagh am pasgan san dèid $(^NameDA) a stàladh:
 # ^UnDirText
-Thèid $(^NameDA) a dhì-stàladh on phasgan seo. Gus dì-stàladh o phasgan eile, briog air "Rùraich" is tagh pasgan eile. $_CLICK
+Thèid $(^NameDA) a dhì-stàladh on phasgan seo. Gus dì-stàladh o phasgan eile, briog air “Rùraich” is tagh pasgan eile. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
 Tagh am pasgan on a tha thu airson $(^NameDA) a dhì-stàladh:
 # ^SpaceAvailable
-"Rum ri làimh: "
+"Àite ri fhaighinn: "
 # ^SpaceRequired
-"Rum air a bheil feum: "
+"Àite air a bheil feum: "
 # ^UninstallingText
 Thèid $(^NameDA) a dhì-stàladh on phasgan seo. $_CLICK
 # ^UninstallingSubText
-Ga dhì-stàladh o:
+’Ga dhì-stàladh o:
 # ^FileError
-Thachair mearachd a' fosgladh an fhaidhle airson sgrìobhadh: \r\n\r\n$0\r\n\r\nBriog air "Sguir dheth" gus sgur dhen stàladh, air\r\n"Feuch ris a-rithist" gus feuchainn ris a-rithist no air\r\n"Leig seachad" gus gearr leum thairis air an fhaidhle seo.
+Thachair mearachd a’ fosgladh an fhaidhle a chum sgrìobhaidh: \r\n\r\n$0\r\n\r\nBriog air “Sguir dheth” gus sgur dhen stàladh, air\r\n“Feuch ris a-rithist” gus feuchainn ris a-rithist no air\r\n“Leig seachad” gus leum a ghearradh thairis air an fhaidhle seo.
 # ^FileError_NoIgnore
-Thachair mearachd a' fosgladh an fhaidhle seo airson sgrìobhadh: \r\n\r\n$0\r\n\r\nBriog air "Feuch ris a-rithist" gus feuchainn ris a-rithist no air\r\n"Sguir dheth" gus sgur dhen stàladh.
+Thachair mearachd a’ fosgladh an fhaidhle seo a chum sgrìobhaidh: \r\n\r\n$0\r\n\r\nBriog air “Feuch ris a-rithist” gus feuchainn ris a-rithist no air\r\n“Sguir dheth” gus sgur dhen stàladh.
 # ^CantWrite
-"Cha ghabh sgrìobhadh: "
+"Cha ghabh sgrìobhadh ann: "
 # ^CopyFailed
-Dh'fhàillig le lethbhreac a dhèanamh
+Cha deach leinn lethbhreac dheth a dhèanamh
 # ^CopyTo
-"Cuir lethbhreac an-seo: "
+"Cuir lethbhreac gu "
 # ^Registering
-"A' clàradh: "
+"A’ clàradh: "
 # ^Unregistering
-"A' neo-chlàradh: "
+"A’ neo-chlàradh: "
 # ^SymbolNotFound
-"Cha deach samhla a lorg: "
+"Cha deach an samhla a lorg: "
 # ^CouldNotLoad
-"Cha b' urrainn dhuinn luchdadh: "
+"Cha b’ urrainn dhuinn a luchdadh: "
 # ^CreateFolder
 "Cruthaich pasgan: "
 # ^CreateShortcut
@@ -146,13 +146,13 @@ Dh'fhàillig le lethbhreac a dhèanamh
 # ^Delete
 "Sguab às dhan fhaidhle: "
 # ^DeleteOnReboot
-"Sguab às le ath-thòiseachadh: "
+"Sguab às leis an ath-thòiseachadh: "
 # ^ErrorCreatingShortcut
-"Mearachd le cruthachadh an ath-ghoirid: "
+"Mearachd le cruthachadh na h-ath-ghoirid: "
 # ^ErrorCreating
 "Mearachd le cruthachadh: "
 # ^ErrorDecompressing
-Thachair mearachd a' dì-dhùmhlachadh an dàta! Stàlaichear coirbte, 's dòcha?
+Thachair mearachd a’ dì-dhùmhlachadh an dàta! ’S dòcha gu bheil an t-inneal-stàlaidh coirbte.
 # ^ErrorRegistering
 Mearachd le clàradh DLL
 # ^ExecShell
@@ -162,25 +162,25 @@ Mearachd le clàradh DLL
 # ^Extract
 "Dì-dhùmhlaich: "
 # ^ErrorWriting
-"Dì-dhùmhlachadh: mearachd a' sgrìobhadh gu faidhle "
+"Dì-dhùmhlachadh: mearachd a’ sgrìobhadh gu faidhle "
 # ^InvalidOpcode
 Stàlaichear coirbte: opcode mì-dhligheach
 # ^NoOLE
-"OLE a dhìth airson: "
+"Chan eil OLE ann airson: "
 # ^OutputFolder
-"Pasgan às-chur: "
+"Pasgan às-chuir: "
 # ^RemoveFolder
 "Thoir pasgan air falbh: "
 # ^RenameOnReboot
-"Cuir ainm ùr air le ath-thòiseachadh: "
+"Cuir ainm ùr air leis an ath-thòiseachadh: "
 # ^Rename
 "Cuir ainm ùr air: "
 # ^Skipped
-"Air gearr leum: "
+"Air leum a ghearradh: "
 # ^CopyDetails
 Cuir lethbhreac dhen mhion-fhiosrachadh san stòr-bhòrd
 # ^LogInstall
-Dèan loga air an stàladh
+Dèan loga dhen stàladh
 # ^Byte
 B
 # ^Kilo
