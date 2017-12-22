@@ -659,6 +659,7 @@ TVM     Tree-view control
 !define /math LVM_SETCOLUMNWIDTH           ${LVM_FIRST} + 30
 !define /math LVM_SETITEMSTATE             ${LVM_FIRST} + 43
 !define /math LVM_GETITEMSTATE             ${LVM_FIRST} + 44
+!define /math LVM_GETITEMTEXTA             ${LVM_FIRST} + 45
 !define /math LVM_SETITEMTEXTA             ${LVM_FIRST} + 46
 !define /math LVM_SETITEMCOUNT             ${LVM_FIRST} + 47
 !define /math LVM_SORTITEMS                ${LVM_FIRST} + 48
@@ -668,12 +669,14 @@ TVM     Tree-view control
 !define /math LVM_SETITEMW                 ${LVM_FIRST} + 76
 !define /math LVM_INSERTITEMW              ${LVM_FIRST} + 77
 !define /math LVM_INSERTCOLUMNW            ${LVM_FIRST} + 97
+!define /math LVM_GETITEMTEXTW             ${LVM_FIRST} + 115
 !define /math LVM_SETITEMTEXTW             ${LVM_FIRST} + 116
 !define /math LVM_SETSELECTEDCOLUMN        ${LVM_FIRST} + 140
 ${_NSIS_DEFAW} LVM_GETITEM
 ${_NSIS_DEFAW} LVM_SETITEM
 ${_NSIS_DEFAW} LVM_INSERTITEM
 ${_NSIS_DEFAW} LVM_INSERTCOLUMN
+${_NSIS_DEFAW} LVM_GETITEMTEXT
 ${_NSIS_DEFAW} LVM_SETITEMTEXT
 
 #Status bar window#
