@@ -190,7 +190,7 @@ Function OnNotify
 	Pop $2 ; Code
 	Pop $3 ; NMHDR*
 	${IfThen} $2 <> ${EN_LINK} ${|} Return ${|}
-	System::Call '*$3(p,p,p,p.r2,p,p,i.r4,i.r5)' ; Extract from ENLINK*	
+	System::Call '*$3(p,p,p,p.r2,p,p,i.r4,i.r5)' ; Extract from ENLINK*
 	${IfThen} $2 <> ${WM_LBUTTONDOWN} ${|} Return ${|}
 	IntOp $2 $5 - $4
 	System::Call '*(ir4,ir5,l,&t$2,i)p.r2' ; Create TEXTRANGE and a text buffer
