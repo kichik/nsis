@@ -14,7 +14,7 @@ NLF v6
 # Corrections by the Mozilla.fi crew
 # Upd 11/08 by WTLib Team
 # ^Branding
-Nullsoftin asennusjärjestelmä %s
+Nullsoft Install System %s
 # ^SetupCaption
 $(^Name) -ohjelman asennus
 # ^UninstallCaption

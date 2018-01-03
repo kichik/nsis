@@ -13,7 +13,7 @@ NLF v6
 # Created on April 24th, 2016 for version 3.0rc1
 # Traduzzione corsa creata da Patriccollu di Santa Maria è Sichè
 # ^Branding
-Sistema d'Installazione Nullsoft %s
+Nullsoft Install System %s
 # ^SetupCaption
 Assistente d'Installazione di $(^Name)
 # ^UninstallCaption

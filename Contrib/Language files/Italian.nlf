@@ -13,7 +13,7 @@ NLF v6
 # Updated v2 to v6 by Alessandro Staltari < staltari (a) geocities.com >
 # corrected by < mdalco@gmail.com > and Bovirus
 # ^Branding
-Sistema di installazione Nullsoft %s
+Nullsoft Install System %s
 # ^SetupCaption
 Installazione di $(^Name)
 # ^UninstallCaption

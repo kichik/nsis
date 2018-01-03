@@ -12,7 +12,7 @@ NLF v6
 -
 # Translation by Kevin P. Scannell < scannell at slu dot edu >
 # ^Branding
-Córas Suiteála Nullsoft %s
+Nullsoft Install System %s
 # ^SetupCaption
 Socrú $(^Name)
 # ^UninstallCaption

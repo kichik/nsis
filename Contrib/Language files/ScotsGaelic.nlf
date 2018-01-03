@@ -12,7 +12,7 @@ NLF v6
 -
 # Translation by GunChleoc
 # ^Branding
-Siostam stàlaidh %s aig Nullsoft
+Nullsoft Install System %s
 # ^SetupCaption
 A’ stàladh $(^Name)
 # ^UninstallCaption

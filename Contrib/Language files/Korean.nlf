@@ -12,7 +12,7 @@ NLF v6
 -
 # Translation by dTomoyo dtomoyo@empal.com ( ~V2.0 BETA2 ) / By hardkoder@gmail.com (V2.0 BETA3 ~ )
 # ^Branding
-널소프트 설치 시스템 %s
+Nullsoft Install System %s
 # ^SetupCaption
 $(^Name) 설치
 # ^UninstallCaption
