@@ -11,7 +11,7 @@ NLF v6
 RTL
 # Translation by asdfuae@msn.com, updated by Rami Kattan
 # ^Branding
-نظام التنصيب نلسوفت %s
+Nullsoft Install System %s
 # ^SetupCaption
 تنصيب $(^Name)
 # ^UninstallCaption

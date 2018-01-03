@@ -12,7 +12,7 @@ NLF v6
 -
 # Translation v4.0.3 by DragonSoull <dragonsoull@madalien.tk> with help from Dre` - Updated by Ramon
 # ^Branding
-Sistema de Instalação Nullsoft %s
+Nullsoft Install System %s
 # ^SetupCaption
 Instalação de $(^Name)
 # ^UninstallCaption

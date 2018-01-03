@@ -12,7 +12,7 @@ NLF v6
 -
 # Translation by Diego Pedroso and Felipe, reviewed by Georger Araújo
 # ^Branding
-Sistema de Instalação Nullsoft %s
+Nullsoft Install System %s
 # ^SetupCaption
 Instalação do $(^Name)
 # ^UninstallCaption

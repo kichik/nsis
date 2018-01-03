@@ -11,7 +11,7 @@ NLF v6
 -
 # Translation by L.King, changes by R. Bisswanger, Tim Kosse, Frederik Schwarzer
 # ^Branding
-Nullsoft Installationssystem %s
+Nullsoft Install System %s
 # ^SetupCaption
 Installation von $(^Name)
 # ^UninstallCaption

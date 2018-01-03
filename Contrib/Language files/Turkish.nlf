@@ -13,7 +13,7 @@ NLF v6
 # Translation by ?atay Dilsiz(chagy) (amigos_cagi@hotmail.com)
 # Corrections by Mozilla Türkiye Yerelleştirme Topluluğu tarafından çevrilmiştir. http://mozilla.org.tr
 # ^Branding
-Nullsoft Kurulum Sistemi %s
+Nullsoft Install System %s
 # ^SetupCaption
 $(^Name) Kurulumu
 # ^UninstallCaption

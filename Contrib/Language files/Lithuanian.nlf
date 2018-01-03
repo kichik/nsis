@@ -12,7 +12,7 @@ NLF v6
 # Translation by Vytautas Krivickas (Vytautas)
 # Updated by Danielius Scepanskis (Daan daniel@takas.lt) 2004.03.24
 # ^Branding
-Nullsoft instaliavimo sistema %s
+Nullsoft Install System %s
 # ^SetupCaption
 $(^Name) Įdiegimas
 # ^UninstallCaption
