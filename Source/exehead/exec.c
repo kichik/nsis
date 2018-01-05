@@ -187,7 +187,7 @@ static LONG NSISCALL DeleteRegTree(HKEY hThisKey, LPCTSTR SubKey, REGSAM Samview
     TCHAR child[MAX_PATH+1]; // NB - don't change this to static (recursive function)
     while (RegEnumKey(hKey, 0, child, COUNTOF(child)) == ERROR_SUCCESS)
     {
-      if (onlyifempty) return (RegCloseKey(hKey), !ERROR_SUCCESS);
+      if (onlyifempty) return (RegCloseKey(hKey), ERROR_CAN_NOT_COMPLETE);
       if ((retval = DeleteRegTree(hKey, child, SamviewAndFlags)) != ERROR_SUCCESS) break;
     }
     RegCloseKey(hKey);
@@ -210,6 +210,7 @@ static LONG NSISCALL DeleteRegTree(HKEY hThisKey, LPCTSTR SubKey, REGSAM Samview
 static LONG NSISCALL RegDeleteScriptKey(int RootKey, LPCTSTR SubKey, REGSAM SamviewAndFlags)
 {
   HKEY hKey;
+  if (!SubKey[0]) return ERROR_CAN_NOT_COMPLETE; // Don't allow scripts to delete a HKEY root
   SamviewAndFlags |= KEY_FROMSCRIPT;
   hKey = GetRegKeyAndSAM(GetRegRootKey(RootKey), &SamviewAndFlags);
   return hKey ? DeleteRegTree(hKey, SubKey, SamviewAndFlags) : ERROR_INVALID_HANDLE; // ERROR_CANTOPEN?
