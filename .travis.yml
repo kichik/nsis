@@ -23,5 +23,7 @@ deploy:
   script: echo this is where we will deploy to SF
   on:
     branch: master
+    condition: "$CFG_LOG = no -a $TRAVIS_OS_NAME = linux"
 notifications:
-  slack: $SLACK_TOKEN
+  slack:
+    secure: Q61wSM9pOKiRp3WDNinMkZd+HWp6BFe+TlZDKoJgZJstMIT48TtkAaVmqW2h4HXtNxP9HvD1vzXqWGqGMG8vIO6hlQO5Rm/ruVa/rfb1kxLfD/dv+g/63ZloF3QmKKK++xeYKVNmPRVi7aSFjpx1wa+eG4rYPf0frc5XSFDuhVQ=
