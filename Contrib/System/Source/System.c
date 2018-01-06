@@ -1117,7 +1117,7 @@ void ParamsOut(SystemProc *proc)
 
         // memory cleanup
         if ((proc->Params[i].allocatedBlock != NULL)
-        && ((partype != PT_STRUCT) || ParamIsArray(proc->Params[i]))
+        && ((proc->ProcType != PT_STRUCT) || ParamIsArray(proc->Params[i]))
         )
             GlobalFree(proc->Params[i].allocatedBlock);
 
@@ -1195,11 +1195,10 @@ HANDLE CreateCallback(SystemProc *cbproc)
 #ifdef POPT_SYNTAX2
 static UINT GetStructParamAlignment(const ProcParameter *par)
 {
-    int partype = GetParamType(*par);
-    int isarr = ParamIsArray(*par);
+    int partype = GetParamType(*par), isarr = ParamIsArray(*par);
 // &l is used to get the final struct size "*(p, &l.r0)"
 // but it also allows you to write the struct size to the struct as a int<8|16|32|64> "*(p, &l4)"
-// so we can't stop that with: if ((par->Type & PAT_ALIGNFLAG) && (!isarr || partype != PAT_LONG))
+// so we can't stop that with: "if ((par->Type & PAT_ALIGNFLAG) && (!isarr || partype != PAT_LONG))"
     if (par->Type & PAT_ALIGNFLAG)
     {
         if ((partype == PAT_STRING) | (partype == PAT_WSTRING)) return ByteSizeByType[partype];
