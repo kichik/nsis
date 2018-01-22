@@ -57,6 +57,7 @@ languages = Split("""
 	Spanish
 	SpanishInternational
 	Swedish
+	Tatar
 	Thai
 	TradChinese
 	Turkish

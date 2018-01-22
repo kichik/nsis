@@ -130,6 +130,7 @@
   !insertmacro MUI_LANGUAGE "Welsh"
   !insertmacro MUI_LANGUAGE "Armenian"
   !insertmacro MUI_LANGUAGE "Corsican"
+  !insertmacro MUI_LANGUAGE "Tatar"
 
 ;--------------------------------
 ;Reserve Files
