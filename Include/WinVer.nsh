@@ -266,7 +266,8 @@
     IntOp $__WINVERSP $__WINVERSP | ${_WINVER_NTBIT}
     IntOp $__WINVERV  $__WINVERV  | ${_WINVER_NTBIT}
   _winver_notnt:
-
+!ifndef NSIS_UNICODE
+!if "${NSIS_PTR_SIZE}" <= 4
   # get service pack information
   IntCmp $0 ${VER_PLATFORM_WIN32_NT} _winver_nt "" _winver_nt  # win9x
 
@@ -294,7 +295,8 @@
     Goto _winver_sp_done
 
   _winver_nt: # nt
-
+!endif #~ 32-bit
+!endif #~ ANSI
     IntCmp $R0 ${OSVERSIONINFOEX_SIZE} "" _winver_sp_noex _winver_sp_noex
 
       # discard szCSDVersion
