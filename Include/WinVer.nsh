@@ -12,7 +12,8 @@
 ;     DetailPrint "Not running on NT. Installing ANSI application."
 ;   ${EndIf}
 ;
-; IsServerOS checks if the installer is running on a server version of Windows (NT4, 2003, 2008, etc.)
+; IsServerOS checks if the installer is running on a server version of Windows (2000, 2003, 2008, etc.)
+; IsDomainController checks if the server is a domain controller
 ;
 ; AtLeastWin<version> checks if the installer is running on Windows version at least as specified.
 ; IsWin<version> checks if the installer is running on Windows version exactly as specified.
@@ -108,15 +109,15 @@
 
 # masks for our variables
 
-!define _WINVER_VERXBIT  0x00000001
-!define _WINVER_MASKVMAJ 0x7F000000
-!define _WINVER_MASKVMIN 0x00FF0000
-
-!define _WINVER_NTBIT    0x80000000
-!define _WINVER_NTMASK   0x7FFFFFFF
-!define _WINVER_NTSRVBIT 0x40000000
-!define _WINVER_MASKVBLD 0x0000FFFF
-!define _WINVER_MASKSP   0x000F0000
+!define _WINVER_VERXBIT  0x00000001 ; Used to boost $__WINVERV
+!define _WINVER_MASKVMAJ 0x7F000000 ; $__WINVERV mask
+!define _WINVER_MASKVMIN 0x00FF0000 ; $__WINVERV mask
+!define _WINVER_NTMASK   0x7FFFFFFF ; $__WINVERV mask used by AtMost/AtLeast
+!define _WINVER_NTBIT    0x80000000 ; $__WINVERV bit used by Is and $__WINVERSP bit used by IsNT
+!define _WINVER_NTSRVBIT 0x40000000 ; $__WINVERSP bit for !VER_NT_WORKSTATION
+!define _WINVER_NTDCBIT  0x20000000 ; $__WINVERSP bit for VER_NT_DOMAIN_CONTROLLER
+!define _WINVER_MASKVBLD 0x0000FFFF ; $__WINVERSP mask for OS build number
+!define _WINVER_MASKSP   0x000F0000 ; $__WINVERSP mask for OS service pack
 
 # possible variable values for different versions
 
@@ -172,7 +173,9 @@
 !define OSVERSIONINFOA_SIZE   148
 !define OSVERSIONINFOEXA_SIZE 156
 !define /ifndef VER_PLATFORM_WIN32_NT 2
-!define /ifndef VER_NT_WORKSTATION    1
+!define /ifndef VER_NT_WORKSTATION       1
+!define /ifndef VER_NT_DOMAIN_CONTROLLER 2
+!define /ifndef VER_NT_SERVER            3
 
 !define SM_TABLETPC    86
 !define SM_MEDIACENTER 87
@@ -302,9 +305,12 @@
       Pop $0
 
       # is server?
-      IntCmp $0 ${VER_NT_WORKSTATION} _winver_noserver
+      IntCmp $0 ${VER_NT_WORKSTATION} _winver_nt_notsrv
         IntOp $__WINVERSP $__WINVERSP | ${_WINVER_NTSRVBIT}
-      _winver_noserver:
+        IntCmp $0 ${VER_NT_DOMAIN_CONTROLLER} "" _winver_nt_notdc _winver_nt_notdc
+          IntOp $__WINVERSP $__WINVERSP | ${_WINVER_NTDCBIT}
+        _winver_nt_notdc:
+      _winver_nt_notsrv:
 
       # get wServicePackMajor
       Pop $0
@@ -333,7 +339,7 @@
         StrCpy $0 0 # no service pack
 
 !ifdef WINVER_NT4_OVER_W95
-      IntOp $__WINVERV $__WINVERV | ${_WINVER_VERXBIT}
+      IntOp $__WINVERV $__WINVERV | ${_WINVER_VERXBIT} ; change NT 4.0.reserved.0 to 4.0.reserved.1
 !endif
 
   _winver_sp_done:
@@ -427,21 +433,16 @@
 
 # version feature LogicLib macros
 
-!macro _IsNT _a _b _t _f
+!macro __WinVer_LL_IsBitSet _v _b _t _f
   !insertmacro _LOGICLIB_TEMP
   ${CallArtificialFunction} __WinVer_InitVars
-  IntOp $_LOGICLIB_TEMP $__WINVERSP & ${_WINVER_NTBIT}
+  IntOp $_LOGICLIB_TEMP ${_v} & ${_b}
   !insertmacro _!= $_LOGICLIB_TEMP 0 `${_t}` `${_f}`
 !macroend
-!define IsNT `"" IsNT ""`
 
-!macro _IsServerOS _a _b _t _f
-  !insertmacro _LOGICLIB_TEMP
-  ${CallArtificialFunction} __WinVer_InitVars
-  IntOp $_LOGICLIB_TEMP $__WINVERSP & ${_WINVER_NTSRVBIT}
-  !insertmacro _!= $_LOGICLIB_TEMP 0 `${_t}` `${_f}`
-!macroend
-!define IsServerOS `"" IsServerOS ""`
+!define IsNT `$__WINVERSP _WinVer_LL_IsBitSet ${_WINVER_NTBIT}`
+!define IsServerOS `$__WINVERSP _WinVer_LL_IsBitSet ${_WINVER_NTSRVBIT}`
+!define IsDomainController `$__WINVERSP _WinVer_LL_IsBitSet ${_WINVER_NTDCBIT}`
 
 # service pack macros
 
