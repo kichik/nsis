@@ -1021,7 +1021,7 @@ int RunChildProcessRedirected(LPCWSTR cmdprefix, LPCWSTR cmdmain, bool ForceUTF8
   DWORD childec = -1;
   if (ok)
   {
-    bool utf8 = CP_UTF8 == cp, okt;
+    bool fullbuf = false, utf8 = CP_UTF8 == cp, okt;
     char iobuf[512];
     DWORD cbRead, cbOfs = 0, cchwb = 0;
     WCHAR wbuf[100], wchbuf[2+1]; // A surrogate pair + \0
@@ -1067,7 +1067,7 @@ switchcp:   cp = orgwinconoutcp, mbtwcf = 0, utf8 = false;
         if (!cch) continue;
         wbuf[cchwb++] = wchbuf[0];
         if (--cch) wbuf[cchwb++] = wchbuf[1];
-        const bool fullbuf = cchwb+cch >= COUNTOF(wbuf)-1; // cch is 1 for surrogate pairs
+        fullbuf = cchwb+cch >= COUNTOF(wbuf)-1; // cch is 1 for surrogate pairs
         if (!okr || fullbuf || L'\n' == wchbuf[0]) // Stop on \n so \r\n conversion has enough context (...\r\n vs ...\n)
         { finalwrite:
 #ifdef MAKENSIS
@@ -1082,7 +1082,7 @@ switchcp:   cp = orgwinconoutcp, mbtwcf = 0, utf8 = false;
       }
       if (!okr)
       {
-        if (cchwb) goto finalwrite;
+        if (cchwb) goto finalwrite; // End of stream without a ending newline, write out the remaining data.
         break;
       }
     }
