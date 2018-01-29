@@ -171,7 +171,7 @@ class DiagState {
   template<class C, class K, class V> void insert_or_assign(C&c, const K&k, V val)
   {
     typename C::value_type item(k, val);
-    std::pair<typename C::iterator, bool> ret = c.insert(item);
+    std::pair<C::iterator, bool> ret = c.insert(item);
     if (!ret.second) ret.first->second = val;
   }
   template<class C, class K> typename mapped_type_helper<C>::type get_paired_value(const C&c, const K&k, typename mapped_type_helper<C>::type defval) const
