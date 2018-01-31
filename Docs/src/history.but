@@ -38,6 +38,8 @@ Released on January 29th, 2018
 
 \b MakeNSIS exits with code 0 for various information commands (\W{http://sf.net/p/nsis/bugs/1193}{bug #1193})
 
+\b Added error and warning states to !pragma warning
+
 \b Removed unused NSD_LB_Clear macro parameter
 
 \S2{} Translations

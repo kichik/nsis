@@ -3447,34 +3447,20 @@ int CEXEBuild::parse_pragma(LineParser &line)
     if (!diagstate.pop())
       ret = rvWarn, warning_fl(DW_PP_PRAGMA_INVALID, _T("Unexpected"));
   }
-  else // warning: error/warning/disable/enable/default
+  else // warning: error/warning/disable/enable/default <%code%|all> [..]
   {
     for (int ti = 3; ti < line.getnumtokens(); ++ti)
     {
       DIAGCODE code = static_cast<DIAGCODE>(line.gettoken_int(ti));
-      bool all = 0 == line.gettoken_enum(ti, _T("all\0"));
-      if (diagstate.is_valid_code(code))
+      bool all = line.gettoken_enum(ti, _T("all\0")) == 0, isCode = diagstate.is_valid_code(code);
+      switch((isCode||all) ? warnOp : invalidwop)
       {
-        switch(warnOp)
-        {
-        case woperr: diagstate.error(code); break;
-        case wopwar: diagstate.warning(code); break;
-        case wopdis: diagstate.disable(code); break;
-        case wopena: diagstate.enable(code); break;
-        case wopdef: diagstate.def(code); break;
-        default: assert(0);
-        }
-      }
-      else
-      {
-        switch(all ? warnOp : invalidwop)
-        {
-        case woperr: diagstate.set_all(diagstate.werror); break;
-        case wopdis: diagstate.set_all(DiagState::wdisabled); break;
-        case wopena: diagstate.set_all(DiagState::wenabled); break;
-        case wopdef: diagstate.set_all(DiagState::get_default_state()); break;
-        default: ret = rvWarn, warning_fl(DW_PP_PRAGMA_INVALID, _T("Invalid number: \"%") NPRIs _T("\""), line.gettoken_str(ti));
-        }
+      case woperr: all ? diagstate.set_all(DiagState::werror) : diagstate.error(code); break;
+      case wopwar: all ? diagstate.set_all(DiagState::wwarning) : diagstate.warning(code); break;
+      case wopdis: all ? diagstate.set_all(DiagState::wdisabled) : diagstate.disable(code); break;
+      case wopena: all ? diagstate.set_all(DiagState::wenabled) : diagstate.enable(code); break;
+      case wopdef: all ? diagstate.set_all(DiagState::get_default_state()) : diagstate.def(code); break;
+      default: ret = rvWarn, warning_fl(DW_PP_PRAGMA_INVALID, _T("Invalid number: \"%") NPRIs _T("\""), line.gettoken_str(ti));
       }
     }
   }
