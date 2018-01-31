@@ -184,7 +184,7 @@ This command will issue a warning to the script compiler. You can also add a mes
 
 \S1{pragma} !pragma
 
-\c warning <enable|disable|default> code
+\c warning <enable|disable|default|error|warning> <code|all>
 \c warning <push|pop>
 
 The pragma commands allows you to change compiler features and behavior.
