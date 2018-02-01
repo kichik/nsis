@@ -47,6 +47,23 @@
 !macroend
 
 
+!define GetNativeProcessorArchitecture "!insertmacro GetNativeProcessorArchitecture "
+!macro GetNativeProcessorArchitecture outvar
+  !if ${outvar} != $1
+  Push $1
+  !endif
+  !if "${NSIS_PTR_SIZE}" <= 4
+  System::Call 'KERNEL32::GetSystemInfo(@r1)' ; < XP
+  !endif
+  System::Call 'KERNEL32::GetNativeSystemInfo(@r1)'
+  System::Call '*$1(&i2.s)' ; Extract wProcessorArchitecture (PROCESSOR_ARCHITECTURE_*)
+  Pop ${outvar}
+  !if ${outvar} != $1
+  Pop $1
+  !endif
+!macroend
+
+
 !define DisableX64FSRedirection "!insertmacro DisableX64FSRedirection"
 !macro DisableX64FSRedirection
   System::Call kernel32::Wow64EnableWow64FsRedirection(i0)
