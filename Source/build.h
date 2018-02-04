@@ -254,6 +254,7 @@ class CEXEBuild {
     int write_output(void);
 
     void print_help(const TCHAR *commandname=NULL);
+    bool print_cmdhelp(const TCHAR *commandname, bool cmdhelp=false);
 
     DefineList definedlist; // List of identifiers marked as "defined" like
                             // C++ macro definitions such as _UNICODE.

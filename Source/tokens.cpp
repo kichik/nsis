@@ -325,22 +325,30 @@ const TCHAR* CEXEBuild::get_commandtoken_name(int tok)
   return 0;
 }
 
-void CEXEBuild::print_help(const TCHAR *commandname)
+bool CEXEBuild::print_cmdhelp(const TCHAR *commandname, bool cmdhelp)
 {
+  // Print function chosen at run time because of bug #1203, -CMDHELP to stdout.
+  void (CEXEBuild::*printer)(const TCHAR *s, ...) const = cmdhelp ? &CEXEBuild::INFO_MSG : &CEXEBuild::ERROR_MSG;
   UINT x;
   for (x = 0; x < TOK__LAST; ++x)
   {
     if (!commandname || !_tcsicmp(tokenlist[x].name,commandname))
     {
-      ERROR_MSG(_T("%") NPRIs _T("%") NPRIs _T(" %") NPRIs _T("\n"),commandname?_T("Usage: "):_T(""),tokenlist[x].name,tokenlist[x].usage_str);
+      (this->*printer)(_T("%") NPRIs _T("%") NPRIs _T(" %") NPRIs _T("\n"),commandname?_T("Usage: "):_T(""),tokenlist[x].name,tokenlist[x].usage_str);
       if (commandname) break;
     }
   }
   if (x == TOK__LAST && commandname)
   {
     ERROR_MSG(_T("Invalid command \"%") NPRIs _T("\"\n"),commandname);
+    return false;
   }
+  return true;
+}
 
+void CEXEBuild::print_help(const TCHAR *commandname)
+{
+  print_cmdhelp(commandname);
 }
 
 bool CEXEBuild::is_ppbranch_token(const TCHAR *s)
