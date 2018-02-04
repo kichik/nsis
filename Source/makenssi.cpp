@@ -479,11 +479,8 @@ static inline int makensismain(int argc, TCHAR **argv)
       }
       else if (!_tcsicmp(swname,_T("CMDHELP")))
       {
-        if (argpos < argc-1)
-          build.print_help(argv[++argpos]);
-        else
-          build.print_help(NULL);
-        performed |= ++nousage;
+        if (build.print_cmdhelp(argpos < argc-1 ? argv[++argpos] : NULL, true))
+          performed |= ++nousage;
       }
       else if (!_tcsicmp(swname,_T("HDRINFO")))
       {
