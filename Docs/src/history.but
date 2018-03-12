@@ -10,6 +10,10 @@ Released on ??? ??th, 20??
 
 \b MakeNSIS prints -CMDHELP to stdout (\W{http://sf.net/p/nsis/bugs/1203}{bug #1203})
 
+\S2{} Translations
+
+\b Fixed minor Spanish bug (\W{http://sf.net/p/nsis/bugs/1205}{bug #1205})
+
 \H{v3.03} 3.03
 
 Released on January 29th, 2018
