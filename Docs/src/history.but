@@ -8,6 +8,8 @@ Released on ??? ??th, 20??
 
 \S2{} Minor Changes
 
+\b Added NTMARTA to preload list to fix rare Windows 7 security issue (\W{http://sf.net/p/nsis/bugs/1204}{bug #1204})
+
 \b MakeNSIS prints -CMDHELP to stdout (\W{http://sf.net/p/nsis/bugs/1203}{bug #1203})
 
 \S2{} Translations
