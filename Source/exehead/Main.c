@@ -126,6 +126,7 @@ EXTERN_C void NSISWinMainNOCRT()
         "CRYPTBASE\0" // Win7 without KB2533623: OleInitialize ... RPCRT4.UuidCreate ... RPCRT4.GenerateRandomNumber
         "OLEACC\0" // Vista: SHFileOperation ... SHELL32.CProgressDialogUI::_Setup ... SHELL32.GetRoleTextW
         "CLBCATQ\0" // XP.SP2&SP3: SHAutoComplete ... OLE32!InitializeCatalogIfNecessary ... OLE32!CComCatalog::TryToLoadCLB
+        "NTMARTA\0" // Win7 without KB2533623 (Bug #1204): SHGetFileInfo ... SetEntriesInAcl ... ADVAPI32!AccProvpLoadMartaFunctions
 #ifndef NSIS_SUPPORT_GETDLLVERSION
         "VERSION\0"
 #endif
