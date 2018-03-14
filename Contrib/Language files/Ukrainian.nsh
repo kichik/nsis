@@ -98,7 +98,7 @@
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Я хочу перезавантажитися власноруч пізніше"
   ${LangFileString} MUI_TEXT_FINISH_RUN "&Запустити $(^NameDA)"
   ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "&Показати інформацію про програму"
-  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Кінець"  
+  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Кінець"
 !endif
 
 !ifdef MUI_STARTMENUPAGE
