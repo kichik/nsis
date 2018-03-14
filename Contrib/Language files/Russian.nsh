@@ -97,7 +97,7 @@
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "Нет, я перезагружу ПК позже"
   ${LangFileString} MUI_TEXT_FINISH_RUN "&Запустить $(^NameDA)"
   ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "&Показать файл ReadMe"
-  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Готово"  
+  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Готово"
 !endif
 
 !ifdef MUI_STARTMENUPAGE
