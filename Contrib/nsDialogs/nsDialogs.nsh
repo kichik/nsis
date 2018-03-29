@@ -626,7 +626,7 @@ SendMessage ${CONTROL} ${CB_SETITEMDATA} ${INDEX} ${DATA}
 !define NSD_CB_DelItem `${__NSD_MkCtlCmd_WP} CB_DELETESTRING 0 `
 !define NSD_CB_LimitText `${__NSD_MkCtlCmd_WP} CB_LIMITTEXT 0 `
 !define /IfNDef NSD_CB_Clear `${__NSD_MkCtlCmd} CB_RESETCONTENT 0 0 `
-!define /IfNDef NSD_CB_GetCount `${__NSD_MkCtlCmd_RV} CB_RESETCONTENT 0 0 `
+!define /IfNDef NSD_CB_GetCount `${__NSD_MkCtlCmd_RV} CB_GETCOUNT 0 0 `
 ;define /IfNDef NSD_CB_DelString    ; /IfNDef to try to stay compatible with 
 ;define /IfNDef NSD_CB_GetSelection ; the ListView header from the Wiki.
 
