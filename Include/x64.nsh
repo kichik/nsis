@@ -63,6 +63,16 @@
   !endif
 !macroend
 
+!define IsNativeProcessorArchitecture `"" IsNativeProcessorArchitecture `
+!macro _IsNativeProcessorArchitecture _ignore _arc _t _f
+  !insertmacro _LOGICLIB_TEMP
+  ${GetNativeProcessorArchitecture} $_LOGICLIB_TEMP
+  !insertmacro _= $_LOGICLIB_TEMP ${_arc} `${_t}` `${_f}`
+!macroend
+!define IsNativeProcessorArchitectureIA32 '${IsNativeProcessorArchitecture} 0' ; Intel x86
+!define IsNativeProcessorArchitectureAMD64 '${IsNativeProcessorArchitecture} 9' ; x86-64/x64
+!define IsNativeProcessorArchitectureARM64 '${IsNativeProcessorArchitecture} 12'
+
 
 !define DisableX64FSRedirection "!insertmacro DisableX64FSRedirection"
 !macro DisableX64FSRedirection
