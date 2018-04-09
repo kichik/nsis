@@ -8,15 +8,17 @@ Released on ??? ??th, 20??
 
 \S2{} Minor Changes
 
+\b Added IsNativeProcessorArchitecture helper macros to x64.nsh
+
 \b Added NTMARTA to preload list to fix rare Windows 7 security issue (\W{http://sf.net/p/nsis/bugs/1204}{bug #1204})
 
 \b MakeNSIS prints -CMDHELP to stdout (\W{http://sf.net/p/nsis/bugs/1203}{bug #1203})
 
-\b Added IsNativeProcessorArchitecture helper macros to x64.nsh
-
 \S2{} Translations
 
 \b Fixed minor Spanish bug (\W{http://sf.net/p/nsis/bugs/1205}{bug #1205})
+
+\b Updated Mongolian
 
 \H{v3.03} 3.03
 
