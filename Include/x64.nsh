@@ -8,7 +8,19 @@
 ; IsWow64 checks if the installer is a 32-bit application running on a 64-bit OS.
 ;
 ;   ${If} ${RunningX64}
-;     MessageBox MB_OK "running on x64"
+;     MessageBox MB_OK "Running on 64-bit Windows"
+;   ${EndIf}
+;
+; IsNative* checks the OS native CPU architecture.
+;
+;   ${If} ${IsNativeAMD64}
+;     ; Install AMD64 64-bit driver/library
+;   ${ElseIf} ${IsNativeARM64}
+;     ; Install ARM64 64-bit driver/library
+;   ${ElseIf} ${IsNativeIA32}
+;     ; Install i386 32-bit driver/library
+;   ${Else}
+;     Abort "Unsupported CPU architecture!"
 ;   ${EndIf}
 ;
 ; DisableX64FSRedirection disables file system redirection.
@@ -16,9 +28,9 @@
 ;
 ;   SetOutPath $SYSDIR
 ;   ${DisableX64FSRedirection}
-;   File some.dll # extracts to C:\Windows\System32
+;   File something.bin # extracts to C:\Windows\System32
 ;   ${EnableX64FSRedirection}
-;   File some.dll # extracts to C:\Windows\SysWOW64
+;   File something.bin # extracts to C:\Windows\SysWOW64
 ;
 
 !ifndef ___X64__NSH___
@@ -69,9 +81,9 @@
   ${GetNativeProcessorArchitecture} $_LOGICLIB_TEMP
   !insertmacro _= $_LOGICLIB_TEMP ${_arc} `${_t}` `${_f}`
 !macroend
-!define IsNativeProcessorArchitectureIA32 '${IsNativeProcessorArchitecture} 0' ; Intel x86
-!define IsNativeProcessorArchitectureAMD64 '${IsNativeProcessorArchitecture} 9' ; x86-64/x64
-!define IsNativeProcessorArchitectureARM64 '${IsNativeProcessorArchitecture} 12'
+!define IsNativeIA32 '${IsNativeProcessorArchitecture} 0' ; Intel x86
+!define IsNativeAMD64 '${IsNativeProcessorArchitecture} 9' ; x86-64/x64
+!define IsNativeARM64 '${IsNativeProcessorArchitecture} 12'
 
 
 !define DisableX64FSRedirection "!insertmacro DisableX64FSRedirection"
