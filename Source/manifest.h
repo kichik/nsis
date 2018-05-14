@@ -24,13 +24,20 @@
 
 namespace manifest
 {
-  enum comctl
+  enum flags
+  {
+    disablewindowfiltering = 0x01, // Win8+
+    gdiscaling = 0x02, // Win10FU1703+
+    flags_default = 0
+  };
+
+  enum comctl // WinXP+
   {
     comctl_old,
     comctl_xp
   };
 
-  enum exec_level
+  enum exec_level // WinVista+
   {
     exec_level_none,
     exec_level_user,
@@ -38,7 +45,7 @@ namespace manifest
     exec_level_admin
   };
 
-  enum dpiaware
+  enum dpiaware // WinVista+
   {
     dpiaware_notset,
     dpiaware_false,
@@ -46,7 +53,7 @@ namespace manifest
     dpiaware_permonitor // System DPI on Vista/7/8, PerMonitor on 8.1+
   };
 
-  class SupportedOSList
+  class SupportedOSList // Win7+
   {
     StringList m_list;
     bool m_isdefaultlist;
@@ -79,7 +86,7 @@ namespace manifest
     }
   };
 
-  std::string generate(comctl, exec_level, dpiaware, const TCHAR*, SupportedOSList&);
+  std::string generate(flags, comctl, exec_level, dpiaware, const TCHAR*, SupportedOSList&);
 
 };
 

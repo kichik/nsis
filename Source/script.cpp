@@ -2293,6 +2293,24 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
     }
     return PS_OK;
+    case TOK_MANIFEST_DISABLEWINDOWFILTERING:
+      switch(line.gettoken_enum(1,_T("notset\0false\0true")))
+      {
+      case 0: 
+      case 1: manifest_flags &= ~manifest::disablewindowfiltering; break;
+      case 2: manifest_flags |= manifest::disablewindowfiltering; break;
+      default: PRINTHELP();
+      }
+      return PS_OK;
+    case TOK_MANIFEST_GDISCALING:
+      switch(line.gettoken_enum(1,_T("notset\0false\0true")))
+      {
+      case 0: 
+      case 1: manifest_flags &= ~manifest::gdiscaling; break;
+      case 2: manifest_flags |= manifest::gdiscaling; break;
+      default: PRINTHELP();
+      }
+      return PS_OK;
 
 #ifdef _UNICODE
     case TOK_TARGET:

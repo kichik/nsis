@@ -91,7 +91,7 @@ bool SupportedOSList::append(const TCHAR* osid)
 }
 
 
-string generate(comctl comctl_selection, exec_level exec_level_selection, dpiaware dpia, const TCHAR*dpia2, SupportedOSList& sosl)
+string generate(flags featureflags, comctl comctl_selection, exec_level exec_level_selection, dpiaware dpia, const TCHAR*dpia2, SupportedOSList& sosl)
 {
   bool default_or_empty_sosl = sosl.isdefaultlist() || !sosl.getcount();
   if (comctl_selection == comctl_old && exec_level_selection == exec_level_none && default_or_empty_sosl && dpiaware_notset == dpia)
@@ -149,21 +149,35 @@ string generate(comctl comctl_selection, exec_level exec_level_selection, dpiawa
     xml += "</application></compatibility>";
   }
 
-  if (dpiaware_notset != dpia || *dpia2)
+  string xml_aws = ""; // <application><windowsSettings>
+  if (featureflags & disablewindowfiltering)
+  {
+    xml_aws += "<disableWindowFiltering xmlns=\"http://schemas.microsoft.com/SMI/2011/WindowsSettings\">";
+    xml_aws += "true";
+    xml_aws += "</disableWindowFiltering>";
+  }
+  if (featureflags & gdiscaling)
+  {
+    xml_aws += "<gdiScaling xmlns=\"http://schemas.microsoft.com/SMI/2017/WindowsSettings\">";
+    xml_aws += "true";
+    xml_aws += "</gdiScaling>";
+  }
+  if (dpiaware_notset != dpia)
+  {
+    xml_aws += "<dpiAware xmlns=\"http://schemas.microsoft.com/SMI/2005/WindowsSettings\">";
+    xml_aws += dpia >= dpiaware_permonitor ? "True/PM" : dpiaware_false != dpia ? "true" : "false";
+    xml_aws += "</dpiAware>";
+  }
+  if (*dpia2)
+  {
+    xml_aws += "<dpiAwareness xmlns=\"http://schemas.microsoft.com/SMI/2016/WindowsSettings\">";
+    xml_aws += TtoCString(dpia2);
+    xml_aws += "</dpiAwareness>";
+  }
+  if (!xml_aws.empty())
   {
     xml += "<application xmlns=\"urn:schemas-microsoft-com:asm.v3\"><windowsSettings>";
-    if (dpiaware_notset != dpia)
-    {
-      xml += "<dpiAware xmlns=\"http://schemas.microsoft.com/SMI/2005/WindowsSettings\">";
-      xml += dpia >= dpiaware_permonitor ? "True/PM" : dpiaware_false != dpia ? "true" : "false";
-      xml += "</dpiAware>";
-    }
-    if (*dpia2)
-    {
-      xml += "<dpiAwareness xmlns=\"http://schemas.microsoft.com/SMI/2016/WindowsSettings\">";
-      xml += TtoCString(dpia2);
-      xml += "</dpiAwareness>";
-    }
+    xml += xml_aws;
     xml += "</windowsSettings></application>";
   }
 

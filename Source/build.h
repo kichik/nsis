@@ -674,6 +674,7 @@ class CEXEBuild {
 #endif
 
     WORD PEDllCharacteristics, PESubsysVerMaj, PESubsysVerMin;
+    unsigned int manifest_flags;
     manifest::comctl manifest_comctl;
     manifest::exec_level manifest_exec_level;
     manifest::dpiaware manifest_dpiaware;
