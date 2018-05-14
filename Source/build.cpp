@@ -281,6 +281,7 @@ CEXEBuild::CEXEBuild(signed char pponly, bool warnaserror) :
 
   PEDllCharacteristics = IMAGE_DLLCHARACTERISTICS_TERMINAL_SERVER_AWARE|IMAGE_DLLCHARACTERISTICS_NO_SEH|IMAGE_DLLCHARACTERISTICS_NX_COMPAT|IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE; //forums.winamp.com/showthread.php?t=344755
   PESubsysVerMaj = PESubsysVerMin = (WORD) -1;
+  manifest_flags = manifest::flags_default;
   manifest_comctl = manifest::comctl_old;
   manifest_exec_level = manifest::exec_level_admin;
   manifest_dpiaware = manifest::dpiaware_notset;
@@ -2384,7 +2385,7 @@ int CEXEBuild::SetManifest()
   try {
     init_res_editor();
     // This should stay ANSI
-    string manifest = manifest::generate(manifest_comctl, manifest_exec_level, manifest_dpiaware, manifest_dpiawareness.c_str(), manifest_sosl);
+    string manifest = manifest::generate((manifest::flags)manifest_flags, manifest_comctl, manifest_exec_level, manifest_dpiaware, manifest_dpiawareness.c_str(), manifest_sosl);
 
     if (manifest == "")
       return PS_OK;
