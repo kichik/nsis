@@ -48,6 +48,7 @@ RequestExecutionLevel admin
 !include "LogicLib.nsh"
 !include "Memento.nsh"
 !include "WordFunc.nsh"
+!include "Util.nsh"
 
 ;--------------------------------
 ;Definitions
@@ -844,6 +845,8 @@ Section -post
   WriteRegStr HKLM "${REG_UNINST_KEY}" "HelpLink" "http://nsis.sourceforge.net/Support"
   WriteRegDWORD HKLM "${REG_UNINST_KEY}" "NoModify" "1"
   WriteRegDWORD HKLM "${REG_UNINST_KEY}" "NoRepair" "1"
+  ${MakeARPInstallDate} $1
+  WriteRegStr HKLM "${REG_UNINST_KEY}" "InstallDate" $1
 
   WriteUninstaller $INSTDIR\uninst-nsis.exe
 

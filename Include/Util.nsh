@@ -153,5 +153,12 @@ IntPtrCmpU `${a}` `${b}` `${jeek}` `${jles}` `${jgtr}`
 !macroend
 
 
+!define MakeARPInstallDate "!insertmacro MakeARPInstallDate "
+!macro MakeARPInstallDate _outvar
+System::Call 'KERNEL32::GetDateFormat(i0x409,i0,p0,t"yyyyMMdd",t.s,i${NSIS_MAX_STRLEN})'
+Pop ${_outvar}
+!macroend
+
+
 !endif # !___UTIL__NSH___
 !verbose pop
