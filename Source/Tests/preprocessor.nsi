@@ -1,3 +1,5 @@
+### Preprocessor Tests ###
+
 !ifndef file_is_included
 !define file_is_included
 
@@ -233,6 +235,58 @@ PageExEnd
   !warning "You can't see me" ; "disable all" is still in effect
 !pragma warning pop
 
+
+!define ASSERT `!insertmacro ASSERT "${U+24}{__FILE__}" ${U+24}{__LINE__}`
+!macro ASSERT __file __line __xpr
+!if ${__xpr}
+!else
+!error `ASSERT: ${__xpr} (${__file}:${__line})`
+!endif
+!macroend
+
+
+# test !searchparse
+!searchparse "AbcDef" "Abc" OUT1
+${ASSERT} '${OUT1} S== "Def"'
+
+!define /redef OUT1 FAILED
+!searchparse /noerrors "AbcDef" "FailThis" OUT1
+${ASSERT} '${OUT1} S== "FAILED"'
+
+!searchparse /ignorecase "AbcDef" "ABC" OUT1
+${ASSERT} '${OUT1} S== "Def"'
+
+!searchparse "AbcDef" "Ab" OUT1 "D" OUT2
+${ASSERT} '"${OUT1}${OUT2}" S== "cef"'
+
+!searchparse /ignorecase /file "${__FILE__}" "### " OUT1 " Tests"
+${ASSERT} '${OUT1} == "Preprocessor"'
+
+!searchparse "AbcDef" "" OUT1 "Def" ; Empty first search string and chopping off the end without defining OUTPUTSYMBOL2
+${ASSERT} '${OUT1} S== "Abc"'
+
+
+# test !searchreplace
+!searchreplace OUT1 "FooBar" "Bar" "Baz"
+${ASSERT} '${OUT1} S== "FooBaz"'
+
+!searchreplace OUT1 "FooBarBar" "Bar" "Baz" ; "replacing all instances"
+${ASSERT} '${OUT1} S== "FooBazBaz"'
+
+!searchreplace OUT1 "FooBar" "BAR" "Baz"
+${ASSERT} '${OUT1} S== "FooBar"'
+
+!searchreplace /ignorecase OUT1 "FooBar" "BAR" "Baz"
+${ASSERT} '${OUT1} S== "FooBaz"'
+
+!searchreplace OUT1 "FooBar" "FailThis" "Baz" ; "allows you to redefine symbol_out without warning or error"
+${ASSERT} '${OUT1} S== "FooBar"'
+
+
+!verbose 4
+!echo "Completed tests"
+!verbose 2
+!pragma whip 0 # EOF
 !else
 
 # this should just give a warning, not an error
