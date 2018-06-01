@@ -97,6 +97,16 @@ this shouldn't be compiled
  !error "!if 'test' == 'test' is true!"
 !endif
 
+
+!define ASSERT `!insertmacro ASSERT "${U+24}{__FILE__}" ${U+24}{__LINE__} `
+!macro ASSERT __file __line __xpr
+!if ${__xpr}
+!else
+!error `ASSERT: ${__xpr} (${__file}:${__line})`
+!endif
+!macroend
+
+
 ; testing of two math functions and a macro hack :)
 !define increase "!insertmacro increase"
 !macro increase DEFINE
@@ -133,7 +143,18 @@ ${increase} number3
   !error "number5 != 1"
 !endif
 
+!define /redef /math OUT1 0xffffffff >> 31
+${ASSERT} '${OUT1} = -1'
+!define /redef /math OUT1 0xffffffff >>> 31
+${ASSERT} '${OUT1} = 1'
+!define /redef /math OUT1 1 << 31
+${ASSERT} '${OUT1} = 0x80000000'
+
+!define /redef /math OUT1 0x80000000 ^ 0x40000000
+${ASSERT} '${OUT1} = 0xC0000000'
+
 ; end math functions
+
 
 # this should just give a warning, not an error
 !include /NONFATAL file_that_doesnt_exist.nsh
@@ -141,12 +162,13 @@ ${increase} number3
 # this should include this file just one time.
 !include preprocessor.nsi
 
+
+# test scopes
+
 Section
 Return
 WriteUninstaller uninst.exe # avoid warning
 SectionEnd
-
-# test scopes
 
 !macro TEST_SCOPE scope def should_exist
 
@@ -220,6 +242,7 @@ PageExEnd
 
 !insertmacro TEST_SCOPES "global" y n n n n
 
+
 # test !pragma
 !pragma warning push
   !pragma warning disable 7000
@@ -234,15 +257,6 @@ PageExEnd
   !pragma warning pop
   !warning "You can't see me" ; "disable all" is still in effect
 !pragma warning pop
-
-
-!define ASSERT `!insertmacro ASSERT "${U+24}{__FILE__}" ${U+24}{__LINE__}`
-!macro ASSERT __file __line __xpr
-!if ${__xpr}
-!else
-!error `ASSERT: ${__xpr} (${__file}:${__line})`
-!endif
-!macroend
 
 
 # test !searchparse
