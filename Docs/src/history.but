@@ -14,6 +14,8 @@ Released on ??? ??th, 20??
 
 \b MakeNSIS prints -CMDHELP to stdout (\W{http://sf.net/p/nsis/bugs/1203}{bug #1203})
 
+\b Fixed !macroundef of last defined macro bug
+
 \S2{} Translations
 
 \b Fixed minor Spanish bug (\W{http://sf.net/p/nsis/bugs/1205}{bug #1205})
