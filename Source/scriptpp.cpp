@@ -235,15 +235,17 @@ void CEXEBuild::del_date_time_predefines()
 TCHAR* CEXEBuild::GetMacro(const TCHAR *macroname, TCHAR**macroend /*= 0*/)
 {
   TCHAR *t = (TCHAR*)m_macros.get(), *mbeg, *mbufbeg = t;
+  size_t cbAll = m_macros.getlen(), cchAll = cbAll / sizeof(TCHAR);
   for (; t && *t; ++t)
   {
     mbeg = t;
+    if (t-mbufbeg >= cchAll) break;
     const bool foundit = !_tcsicmp(mbeg, macroname);
     t += _tcslen(t) + 1; // advance over macro name
 
     // advance over parameters
     while (*t) t += _tcslen(t) + 1;
-    t++;
+    t++; // Separator between parameters and data
 
     // advance over data
     while (*t) t += _tcslen(t) + 1;
@@ -253,15 +255,13 @@ TCHAR* CEXEBuild::GetMacro(const TCHAR *macroname, TCHAR**macroend /*= 0*/)
       if (macroend) *macroend = ++t;
       return mbeg;
     }
-    
-    if (t-mbufbeg >= m_macros.getlen()-1) break;
   }
   return 0;
 }
 
 int CEXEBuild::pp_macro(LineParser&line)
 {
-  const TCHAR*const macroname = line.gettoken_str(1);
+  const TCHAR*const macroname = line.gettoken_str(1), *tokstr;
   if (!macroname[0]) PRINTHELP()
   if (MacroExists(macroname))
   {
@@ -272,22 +272,22 @@ int CEXEBuild::pp_macro(LineParser&line)
 
   for (int pc=2; pc < line.getnumtokens(); pc++)
   {
-    if (!line.gettoken_str(pc)[0])
+    if (!(tokstr = line.gettoken_str(pc))[0])
     {
       ERROR_MSG(_T("!macro: macro parameter %d is empty, not valid!\n"), pc-1);
       return PS_ERROR;
     }
     for (int a = 2; a < pc; a++)
     {
-      if (!_tcsicmp(line.gettoken_str(pc), line.gettoken_str(a)))
+      if (!_tcsicmp(tokstr, line.gettoken_str(a)))
       {
-        ERROR_MSG(_T("!macro: macro parameter named %") NPRIs _T(" is used multiple times!\n"), line.gettoken_str(pc));
+        ERROR_MSG(_T("!macro: macro parameter named %") NPRIs _T(" is used multiple times!\n"), tokstr);
         return PS_ERROR;
       }
     }
-    m_macros.add(line.gettoken_str(pc), (int)(_tcslen(line.gettoken_str(pc))+1)*sizeof(TCHAR));
+    m_macros.add(tokstr, (int)(_tcslen(tokstr)+1)*sizeof(TCHAR));
   }
-  m_macros.add(_T(""), sizeof(_T("")));
+  m_macros.add(_T(""), sizeof(_T(""))); // Separator between parameters and data
 
   for (;;)
   {
@@ -333,7 +333,7 @@ int CEXEBuild::pp_macro(LineParser&line)
     else m_macros.add(_T(" "), sizeof(_T(" ")));
     linecnt++;
   }
-  m_macros.add(_T(""), sizeof(_T("")));
+  m_macros.add(_T(""), sizeof(_T(""))); // End of data
   return PS_OK;
 }
 

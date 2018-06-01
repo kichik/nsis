@@ -107,6 +107,39 @@ this shouldn't be compiled
 !macroend
 
 
+; test macros
+!macro TM_0
+!macroend
+!macro TM_1
+!error "Wrong TM_1"
+!macroend
+!macro TM_2
+!error "Wrong TM_2"
+!macroend
+!macroundef TM_2 ; Undefine the last macro
+!macro TM_2
+!if 0
+!endif
+!macroend
+!ifmacrodef TM_1
+!macroundef TM_1 ; Undefine "in the middle" macro
+!endif
+!macro TM_1
+!macroend
+!insertmacro TM_1
+!insertmacro TM_2
+
+!macro TM_Recursion def
+!if '${${def}}' < 42
+  !define /redef /math ${def} '${${def}}' + 1
+  !insertmacro ${__MACRO__} ${def}
+!endif
+!macroend
+!define /redef OUT1 0
+!insertmacro TM_Recursion OUT1
+${ASSERT} '${OUT1} = 42'
+
+
 ; testing of two math functions and a macro hack :)
 !define increase "!insertmacro increase"
 !macro increase DEFINE
@@ -194,6 +227,7 @@ SectionEnd
 
 !macroend
 
+!insertmacro TEST_SCOPE "macro" __MACRO__ y
 !insertmacro TEST_SCOPES "global" y n n n n
 
 Section test
