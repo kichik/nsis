@@ -1354,5 +1354,5 @@ void *operator new[](size_t size) NSIS_CXX_THROWSPEC(bad_alloc)
 {
   return operator new(size);
 }
-void operator delete(void *p) throw() { if (p) free(p); }
-void operator delete [](void *p) throw() { if (p) free(p); }
+void operator delete(void *p) NSIS_CXX_NOEXCEPT() { if (p) free(p); }
+void operator delete [](void *p) NSIS_CXX_NOEXCEPT() { if (p) free(p); }

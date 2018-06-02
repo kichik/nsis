@@ -235,11 +235,11 @@ void CEXEBuild::del_date_time_predefines()
 TCHAR* CEXEBuild::GetMacro(const TCHAR *macroname, TCHAR**macroend /*= 0*/)
 {
   TCHAR *t = (TCHAR*)m_macros.get(), *mbeg, *mbufbeg = t;
-  size_t cbAll = m_macros.getlen(), cchAll = cbAll / sizeof(TCHAR);
+  size_t cbAll = m_macros.getlen();
   for (; t && *t; ++t)
   {
     mbeg = t;
-    if (t-mbufbeg >= cchAll) break;
+    if ((size_t)t - (size_t)mbufbeg >= cbAll) break;
     const bool foundit = !_tcsicmp(mbeg, macroname);
     t += _tcslen(t) + 1; // advance over macro name
 
