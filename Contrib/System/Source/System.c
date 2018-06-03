@@ -289,6 +289,32 @@ PLUGINFUNCTION(Get)
 } PLUGINFUNCTIONEND
 
 
+#ifdef SYSTEM_ARM64
+/*
+TODO: CallProc not implemeted.
+Fake the behavior of the System plugin for the LoadImage API function so MUI works.
+BUGBUG: MUI is leaking DeleteObject and failing GetClientRect
+*/
+SystemProc* CallProc(SystemProc *proc)
+{
+    INT_PTR ret, *place;
+    int cmp = lstrcmp(proc->ProcName, sizeof(TCHAR) > 1 ? _T("LoadImageW") : _T("LoadImageA"));
+    if (!cmp)
+    {
+        ret = (INT_PTR) LoadImage((HINSTANCE)proc->Params[1].Value,
+          (LPCTSTR)proc->Params[2].Value, (UINT)proc->Params[3].Value,
+          (int)proc->Params[4].Value, (int)proc->Params[5].Value,
+          (UINT)proc->Params[6].Value);
+        LastError = GetLastError();
+    }
+    else
+        proc->ProcResult = PR_ERROR, ret = 0, LastError = ERROR_INVALID_FUNCTION;
+    place = (INT_PTR*) proc->Params[0].Value;
+    if (proc->Params[0].Option != -1) place = (INT_PTR*) &(proc->Params[0].Value);
+    if (place) *place = ret;
+    return proc;
+}
+#endif //~ SYSTEM_ARM64
 #ifdef _WIN64
 /*
 BUGBUG: TODO: CallBack support not implemeted!
@@ -1158,7 +1184,7 @@ void ParamsOut(SystemProc *proc)
 
 HANDLE CreateCallback(SystemProc *cbproc)
 {
-#ifdef SYSTEM_AMD64
+#if defined(SYSTEM_AMD64) || defined(SYSTEM_ARM64)
     return BUGBUG64(HANDLE) NULL;
 #else
     char *mem;
@@ -1357,7 +1383,7 @@ BOOL WINAPI DllMain(HINSTANCE hInst, DWORD fdwReason, LPVOID lpReserved)
 #ifdef SYSTEM_X86
         retexpr[0] = (char) 0xC2;
         retexpr[2] = 0x00;
-#elif defined(SYSTEM_AMD64)
+#elif defined(SYSTEM_AMD64) || defined(SYSTEM_ARM64)
         retexpr[0] = BUGBUG64(0);
 #else
 #error TODO

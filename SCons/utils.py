@@ -175,6 +175,8 @@ class MSPE:
 		self.NTHOffset = fanew
 		self.NTOHMagic = ReadU16LE(f, fanew+4+20)
 		self.IsPEP = 0x20b == self.NTOHMagic # IMAGE_NT_OPTIONAL_HDR64_MAGIC?
+	def ReadMachine(self):
+		return ReadU16LE(self._f, self.NTHOffset+4+0)
 	def ReadCharacteristics(self):
 		return ReadU16LE(self._f, self.NTHOffset+4+18)
 	def WriteCharacteristics(self, value):
@@ -202,7 +204,8 @@ def SetPESecurityFlagsWorker(filepath):
 		pe.WriteCharacteristics(ifh_c)
 		ioh_dc = pe.ReadDllCharacteristics()
 		ioh_dc |= 0x0100 # +IMAGE_DLLCHARACTERISTICS_NX_COMPAT (DEP)
-		ioh_dc |= 0x0400 # +IMAGE_DLLCHARACTERISTICS_NO_SEH
+		if pe.ReadMachine() != 0xaa64: # ARM64 forces exception directory?
+			ioh_dc |= 0x0400 # +IMAGE_DLLCHARACTERISTICS_NO_SEH
 		ioh_dc |= 0x8000 # +IMAGE_DLLCHARACTERISTICS_TERMINAL_SERVER_AWARE (TODO: Should we set this on .DLLs?)
 		if not (ifh_c & 0x0001): # IMAGE_FILE_RELOCS_STRIPPED?
 			ioh_dc |= 0x0040 # +IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE (ASLR)

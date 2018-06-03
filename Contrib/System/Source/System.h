@@ -7,6 +7,8 @@
 #  define SYSTEM_AMD64
 #elif defined(_M_IX86) || defined(__i386__) || defined(_X86_)
 #  define SYSTEM_X86
+#elif defined(_M_ARM64)
+#  define SYSTEM_ARM64
 #else
 #  error "Unknown architecture!"
 #endif
@@ -147,7 +149,7 @@ struct tag_CallbackThunk
         #pragma pack(pop)
         */
         char asm_code[10];
-    #elif defined(SYSTEM_AMD64)
+    #elif defined(SYSTEM_AMD64) || defined(SYSTEM_ARM64)
         char asm_code[BUGBUG64(1)]; // TODO: BUGBUG64
     #else
         #error "Asm thunk not implemeted for this architecture!"
@@ -159,7 +161,7 @@ struct tag_CallbackThunk
 // Free() only knows about pNext in CallbackThunk, it does not know anything about the assembly, that is where this helper comes in...
 #ifdef SYSTEM_X86
 #   define GetAssociatedSysProcFromCallbackThunkPtr(pCbT) ( (SystemProc*)  *(unsigned int*) (((char*)(pCbT))+1) )
-#elif defined(SYSTEM_AMD64)
+#elif defined(SYSTEM_AMD64) || defined(SYSTEM_ARM64)
 #   define GetAssociatedSysProcFromCallbackThunkPtr(pCbT) BUGBUG64(NULL)
 #else
 #   error "GetAssociatedSysProcFromCallbackThunkPtr not defined for the current architecture!"

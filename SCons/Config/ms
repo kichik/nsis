@@ -144,8 +144,8 @@ stub_env.Append(LINKFLAGS = ['$NODEFLIBS_FLAG'])   # no default libraries
 stub_env.Append(LINKFLAGS = ['$MAP_FLAG'])         # generate map file
 
 if msvs_version >= 10.0:
-	# no relocations that our resource editor ignores
-	stub_env.Append(LINKFLAGS = ['/FIXED'])
+  if stub_env['TARGET_ARCH'] != 'arm64': # LNK1246: '/FIXED' not compatible with 'ARM64' target machine
+    stub_env.Append(LINKFLAGS = ['/FIXED']) # no relocations that our resource editor ignores
 
 stub_uenv = stub_env.Clone()
 stub_uenv.Append(CPPDEFINES = ['_UNICODE', 'UNICODE'])

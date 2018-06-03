@@ -230,6 +230,7 @@ class CEXEBuild {
       TARGET_X86ANSI = TARGETFIRST,
       TARGET_X86UNICODE,
       TARGET_AMD64, // Always Unicode
+      TARGET_ARM64, // Always Unicode
       TARGET_UNKNOWN,
       TARGETCOUNT = (TARGET_UNKNOWN-TARGETFIRST)
     } TARGETTYPE;
@@ -238,7 +239,7 @@ class CEXEBuild {
     bool m_previous_x86_unicode;
     const TCHAR* get_target_suffix(CEXEBuild::TARGETTYPE tt, const TCHAR*defval = _T("?")) const;
     const TCHAR* get_target_suffix() const { return get_target_suffix(m_target_type); }
-    static bool is_targettype_64bit(TARGETTYPE tt) { return TARGET_AMD64 == tt; }
+    static bool is_targettype_64bit(TARGETTYPE tt) { return TARGET_AMD64 == tt || TARGET_ARM64 == tt; }
     bool is_target_64bit() const { return is_targettype_64bit(m_target_type); }
     void print_bad_targettype_parameter(const TCHAR*cmdname, const TCHAR*prefix = _T("")) const;
     unsigned int get_header_size() const { return (unsigned int)sizeof(header) + (is_target_64bit() ? (4 * BLOCKS_NUM) : 0); }

@@ -313,7 +313,7 @@ def generate(env):
 	env.PrependENVPath('LIB', lib_path)
 	env.PrependENVPath('PATH', exe_path)
 
-	env['ENV']['CPU'] = (targ_arc.upper(), 'i386')['x86' in targ_arc.lower()] # i386 or AMD64
+	env['ENV']['CPU'] = (targ_arc.upper(), 'i386')['x86' in targ_arc.lower()] # AMD64/ARM64 or i386
 	env['ENV']['TARGETOS'] = 'BOTH'
 	env['ENV']['APPVER'] = '4.0'
 	env['ENV']['MSSDK'] = sdk_path
@@ -340,6 +340,8 @@ def generate(env):
 
 	if 'AMD64' in targ_arc.upper():
 		env['AS'] = 'ml64'
+	if 'ARM64' in targ_arc.upper():
+		env['AS'] = 'armasm64'
 
 	env['SHLINK']      = '$LINK'
 	env['SHLINKFLAGS'] = SCons.Util.CLVar('$LINKFLAGS /dll')
