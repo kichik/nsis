@@ -191,7 +191,9 @@ extern "C" BOOL APIENTRY DllMain(HINSTANCE _hModule, DWORD  ul_reason_for_call, 
   return TRUE;
 }
 
+#ifndef INT32_MAX
 #define INT32_MAX 0x7fffffff
+#endif
 
 int MulDiv64(int nNumber, __int64 nNumerator, __int64 nDenominator)
 {

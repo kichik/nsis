@@ -171,7 +171,7 @@ opts.Add(('PATH', 'A colon-separated list of system paths instead of the default
 opts.Add(('TOOLSET', 'A comma-separated list of specific tools used for building instead of the default', None))
 opts.Add(BoolVariable('MSTOOLKIT', 'Use Microsoft Visual C++ Toolkit', 'no'))
 opts.Add(EnumVariable('MSVS_VERSION', 'MS Visual C++ version', os.environ.get('MSVS_VERSION'), allowed_values=('6.0', '7.0', '7.1', '8.0', '8.0Exp', '9.0', '9.0Exp', '10.0', '10.0Exp')))
-opts.Add(EnumVariable('TARGET_ARCH', 'Target processor architecture', 'x86', allowed_values=('x86', 'amd64')))
+opts.Add(EnumVariable('TARGET_ARCH', 'Target processor architecture', 'x86', allowed_values=('x86', 'amd64', 'arm64')))
 opts.Add(ListVariable('DOCTYPES', 'A list of document types that will be built', default_doctype, doctypes))
 opts.Add(('CC', 'Override C compiler', None))
 opts.Add(('CXX', 'Override C++ compiler', None))
@@ -285,6 +285,19 @@ f.close()
 #######  Common Functions                                          ###
 ######################################################################
 
+def GetArcCPU(env):
+	if (not env.has_key('TARGET_ARCH')) or env['TARGET_ARCH'] == 'x86':
+		return 'x86'
+	return env['TARGET_ARCH']
+
+def GetArcSuffix(env, unicode = None):
+	if unicode is None:
+		unicode = 'UNICODE' in env['CPPDEFINES']
+	suff = '-unicode'
+	if not unicode:
+		suff = '-ansi'
+	return GetArcCPU(env) + suff
+
 def SafeFile(f):
 	from types import StringType
 
@@ -334,8 +347,8 @@ defenv['INSTDISTDIR'] = defenv.Dir('#.instdist')
 defenv['TESTDISTDIR'] = defenv.Dir('#.test')
 defenv['DISTSUFFIX'] = ''
 
-if defenv['TARGET_ARCH'] == 'amd64':
-	defenv['DISTSUFFIX'] += '-amd64'
+if GetArcCPU(defenv) != 'x86':
+	defenv['DISTSUFFIX'] += GetArcCPU(defenv)
 if defenv.has_key('CODESIGNER'):
 	defenv['DISTSUFFIX'] += '-signed'
 
@@ -524,19 +537,6 @@ stub_uenv = envs[6]
 plugin_uenv = envs[7]
 
 Export('plugin_env plugin_uenv')
-
-def GetArcCPU(env):
-	if (not env.has_key('TARGET_ARCH')) or env['TARGET_ARCH'] == 'x86':
-		return 'x86'
-	return env['TARGET_ARCH']
-
-def GetArcSuffix(env, unicode = None):
-	if unicode is None:
-		unicode = 'UNICODE' in env['CPPDEFINES']
-	suff = '-unicode'
-	if not unicode:
-		suff = '-ansi'
-	return GetArcCPU(env) + suff
 
 ######################################################################
 #######  Distribution                                              ###

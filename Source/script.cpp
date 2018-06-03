@@ -876,7 +876,7 @@ int CEXEBuild::process_jump(LineParser &line, int wt, int *offs)
 #define SECTION_FIELD_GET(field) (FIELD_OFFSET(section, field)/sizeof(int))
 #define SECTION_FIELD_SET(field) (-1 - (int)(FIELD_OFFSET(section, field)/sizeof(int)))
 
-#define INVALIDREGROOT ( (HKEY) 0x8000baad )
+#define INVALIDREGROOT ( (HKEY) (UINT_PTR) 0x8000baad )
 static HKEY ParseRegRootKey(LineParser &line, int tok)
 {
   static const TCHAR *rootkeys[2] = {

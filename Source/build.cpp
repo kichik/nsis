@@ -137,6 +137,9 @@ CEXEBuild::CEXEBuild(signed char pponly, bool warnaserror) :
 #ifdef _WIN32
   if (sizeof(void*) > 4) m_target_type = TARGET_AMD64; // BUGBUG: scons 'TARGET_ARCH' should specify the default
 #endif
+#ifdef _M_ARM64
+  m_target_type = TARGET_ARM64; // BUGBUG: scons 'TARGET_ARCH' should specify the default
+#endif
   build_unicode=TARGET_X86ANSI != m_target_type;
   build_lockedunicodetarget=false;
 
@@ -3880,17 +3883,34 @@ int CEXEBuild::set_target_architecture_data()
   }
   definedlist.set(_T("NSIS_PTR_SIZE"), is_target_64bit() ? _T("8") : _T("4"));
 
-  tstring cpu = get_string_prefix(get_target_suffix(m_target_type), _T("-"));
+  const TCHAR* tsuff = get_target_suffix(m_target_type, _T(""));
+  if (!*tsuff) return PS_ERROR;
+  tstring cpu = get_string_prefix(tsuff, _T("-"));
   definedlist.set(_T("NSIS_CPU"), cpu.c_str()); // Used by Library.nsh to pick the correct RegTool
 
-  definedlist.del(_T("NSIS_IX86"));
-  definedlist.del(_T("NSIS_AMD64"));
-  if (TARGET_AMD64 == m_target_type)
-    definedlist.set(_T("NSIS_AMD64"));
-  else
-    definedlist.set(_T("NSIS_IX86"), build_unicode ? _T("400") : _T("300"));
+  struct { TARGETTYPE tt; const TCHAR *def; const TCHAR *val; } static const tdef[] = {
+    { TARGET_X86ANSI,    _T("NSIS_IX86"),  _T("300") },
+    { TARGET_X86UNICODE, _T("NSIS_IX86"),  _T("400") },
+    { TARGET_AMD64,      _T("NSIS_AMD64"), _T("1")   },
+    { TARGET_ARM64,      _T("NSIS_ARM64"), _T("1")   }
+  };
+  size_t i;
+  for (i = 0; i < COUNTOF(tdef); ++i) definedlist.del(tdef[i].def);
+  for (i = 0; i < COUNTOF(tdef); ++i) if (tdef[i].tt == m_target_type) definedlist.set(tdef[i].def, tdef[i].val);
 
   return PS_OK;
+}
+
+const TCHAR* CEXEBuild::get_target_suffix(CEXEBuild::TARGETTYPE tt, const TCHAR*defval) const
+{
+  switch(tt)
+  {
+  case TARGET_X86ANSI   : return _T("x86-ansi");
+  case TARGET_X86UNICODE: return _T("x86-unicode");
+  case TARGET_AMD64     : return _T("amd64-unicode");
+  case TARGET_ARM64     : return _T("arm64-unicode");
+  default: return defval;
+  }
 }
 
 int CEXEBuild::change_target_architecture(TARGETTYPE tt)
@@ -3930,17 +3950,6 @@ CEXEBuild::TARGETTYPE CEXEBuild::get_target_type(const TCHAR*s) const
     if (!_tcsicmp(get_target_suffix(tt, _T("")),s) && *s) return tt;
   }
   return TARGET_UNKNOWN;
-}
-
-const TCHAR* CEXEBuild::get_target_suffix(CEXEBuild::TARGETTYPE tt, const TCHAR*defval) const
-{
-  switch(tt)
-  {
-  case TARGET_X86ANSI   : return _T("x86-ansi");
-  case TARGET_X86UNICODE: return _T("x86-unicode");
-  case TARGET_AMD64     : return _T("amd64-unicode");
-  default: return defval;
-  }
 }
 
 void CEXEBuild::print_bad_targettype_parameter(const TCHAR*cmdname, const TCHAR*prefix) const
