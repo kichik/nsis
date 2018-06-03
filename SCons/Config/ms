@@ -59,6 +59,8 @@ if defenv['DEBUG']:
 	defenv.Append(CCFLAGS = ['/Fd${TARGET.dir}\\${TARGET.dir.file}.pdb'])
 	defenv.Append(LINKFLAGS = ['/debug'])
 	defenv['MSVCRT_FLAG'] = defenv['MSVCRT_FLAG'] + 'd'
+elif msvs_version >= 14.0 or defenv['TARGET_ARCH'] == 'arm64':
+		defenv.Append(LINKFLAGS = ['/nocoffgrpinfo'])
 
 ### workarounds
 
