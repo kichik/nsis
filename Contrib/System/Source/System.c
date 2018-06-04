@@ -292,14 +292,13 @@ PLUGINFUNCTION(Get)
 #ifdef SYSTEM_ARM64
 /*
 TODO: CallProc not implemeted.
-Fake the behavior of the System plugin for the LoadImage API function so MUI works.
-BUGBUG: MUI is leaking DeleteObject and failing GetClientRect
+Fake the behavior of the System plugin for the LoadImage API function etc. so MUI works.
+BUGBUG: MUI is leaking DeleteObject
 */
 SystemProc* CallProc(SystemProc *proc)
 {
     INT_PTR ret, *place;
-    int cmp = lstrcmp(proc->ProcName, sizeof(TCHAR) > 1 ? _T("LoadImageW") : _T("LoadImageA"));
-    if (!cmp)
+    if (!lstrcmp(proc->ProcName, sizeof(TCHAR) > 1 ? _T("LoadImageW") : _T("LoadImageA")))
     {
         ret = (INT_PTR) LoadImage((HINSTANCE)proc->Params[1].Value,
           (LPCTSTR)proc->Params[2].Value, (UINT)proc->Params[3].Value,
@@ -307,10 +306,30 @@ SystemProc* CallProc(SystemProc *proc)
           (UINT)proc->Params[6].Value);
         LastError = GetLastError();
     }
+    else if (!lstrcmp(proc->ProcName, _T("GetClientRect")))
+        ret = GetClientRect((HWND)proc->Params[1].Value, (RECT*)proc->Params[2].Value);
+    else if (!lstrcmp(proc->ProcName, _T("GetWindowRect")))
+        ret = GetWindowRect((HWND)proc->Params[1].Value, (RECT*)proc->Params[2].Value);
+    else if (!lstrcmp(proc->ProcName, _T("MapWindowPoints")))
+        ret = MapWindowPoints((HWND)proc->Params[1].Value, (HWND)proc->Params[2].Value, (POINT*)proc->Params[3].Value, (UINT)proc->Params[4].Value);
+    else if (!lstrcmp(proc->ProcName, _T("SetWindowPos")))
+        ret = SetWindowPos((HWND)proc->Params[1].Value, (HWND)proc->Params[2].Value, (int)proc->Params[3].Value, (int)proc->Params[4].Value, (int)proc->Params[5].Value, (int)proc->Params[6].Value, (UINT)proc->Params[7].Value);
+    else if (!lstrcmp(proc->ProcName, _T("GetWindowLong")))
+        ret = GetWindowLong((HWND)proc->Params[1].Value, (int)proc->Params[2].Value);
+    else if (!lstrcmp(proc->ProcName, _T("SetWindowLong")))
+        ret = SetWindowLong((HWND)proc->Params[1].Value, (int)proc->Params[2].Value, (LONG)proc->Params[3].Value);
+    else if (!lstrcmp(proc->ProcName, _T("GetWindowText")))
+        ret = GetWindowText((HWND)proc->Params[1].Value, (LPTSTR)proc->Params[2].Value, (int)proc->Params[3].Value);
+    else if (!lstrcmp(proc->ProcName, _T("SendMessageA")))
+        ret = SendMessageA((HWND)proc->Params[1].Value, (UINT)proc->Params[2].Value, (WPARAM)proc->Params[3].Value, (LPARAM)proc->Params[4].Value);
+    else if (!lstrcmp(proc->ProcName, _T("SendMessage")) || !lstrcmp(proc->ProcName, _T("SendMessageW")))
+        ret = SendMessageW((HWND)proc->Params[1].Value, (UINT)proc->Params[2].Value, (WPARAM)proc->Params[3].Value, (LPARAM)proc->Params[4].Value);
+    else if (!lstrcmp(proc->ProcName, _T("GetNativeSystemInfo"))) // For x64:GetNativeProcessorArchitecture
+        GetNativeSystemInfo((SYSTEM_INFO*)(ret = proc->Params[1].Value));
     else
         proc->ProcResult = PR_ERROR, ret = 0, LastError = ERROR_INVALID_FUNCTION;
     place = (INT_PTR*) proc->Params[0].Value;
-    if (proc->Params[0].Option != -1) place = (INT_PTR*) &(proc->Params[0].Value);
+    if (!ParamIsPointer(proc->Params[0])) place = (INT_PTR*) &(proc->Params[0].Value);
     if (place) *place = ret;
     return proc;
 }
