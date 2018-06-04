@@ -79,6 +79,8 @@ namespace MakensisAPI {
   const TCHAR* SigintEventNameLegacy = _T("makensis win32 signint event"); // "sigNint" typo is part of the API now and cannot be changed
 }
 
+const WORD DefaultPEDllCharacteristics = IMAGE_DLLCHARACTERISTICS_TERMINAL_SERVER_AWARE|IMAGE_DLLCHARACTERISTICS_NO_SEH|IMAGE_DLLCHARACTERISTICS_NX_COMPAT|IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE; //forums.winamp.com/showthread.php?t=344755
+
 void CEXEBuild::define(const TCHAR *p, const TCHAR *v)
 {
   definedlist.add(p,v);
@@ -282,7 +284,7 @@ CEXEBuild::CEXEBuild(signed char pponly, bool warnaserror) :
 
   res_editor=0;
 
-  PEDllCharacteristics = IMAGE_DLLCHARACTERISTICS_TERMINAL_SERVER_AWARE|IMAGE_DLLCHARACTERISTICS_NO_SEH|IMAGE_DLLCHARACTERISTICS_NX_COMPAT|IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE; //forums.winamp.com/showthread.php?t=344755
+  PEDllCharacteristics = DefaultPEDllCharacteristics;
   PESubsysVerMaj = PESubsysVerMin = (WORD) -1;
   manifest_flags = manifest::flags_default;
   manifest_comctl = manifest::comctl_old;
@@ -2418,9 +2420,7 @@ int CEXEBuild::UpdatePEHeader()
       *GetCommonMemberFromPEOptHdr(headers->OptionalHeader, MinorSubsystemVersion) = FIX_ENDIAN_INT16(PESubsysVerMin);
     }
     // DllCharacteristics
-    WORD dc = PEDllCharacteristics;
-    if ((dc & IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE) && is_target_64bit()) dc |= IMAGE_DLLCHARACTERISTICS_HIGH_ENTROPY_VA;
-    *GetCommonMemberFromPEOptHdr(headers->OptionalHeader, DllCharacteristics) = FIX_ENDIAN_INT16(dc);
+    *GetCommonMemberFromPEOptHdr(headers->OptionalHeader, DllCharacteristics) = FIX_ENDIAN_INT16(PEDllCharacteristics);
   } catch (std::runtime_error& err) {
     ERROR_MSG(_T("Error updating PE headers: %") NPRIs _T("\n"), CtoTStrParam(err.what()));
     return PS_ERROR;
@@ -3870,6 +3870,12 @@ bool CEXEBuild::IsIntOrUserVar(const LineParser &line, int token) const
 int CEXEBuild::set_target_architecture_data()
 {
   build_strlist.setunicode(build_unicode), ubuild_strlist.setunicode(build_unicode);
+  size_t t64 = is_target_64bit(), i;
+
+  WORD dc = DefaultPEDllCharacteristics;
+  if ((dc & IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE) && t64) dc |= IMAGE_DLLCHARACTERISTICS_HIGH_ENTROPY_VA;
+  if (m_target_type == TARGET_ARM64) dc &= ~IMAGE_DLLCHARACTERISTICS_NO_SEH; // ARM64 forces exception directory?
+  PEDllCharacteristics = dc;
 
   if (build_unicode)
   {
@@ -3881,7 +3887,7 @@ int CEXEBuild::set_target_architecture_data()
     definedlist.del(_T("NSIS_UNICODE"));
     definedlist.set(_T("NSIS_CHAR_SIZE"), _T("1"));
   }
-  definedlist.set(_T("NSIS_PTR_SIZE"), is_target_64bit() ? _T("8") : _T("4"));
+  definedlist.set(_T("NSIS_PTR_SIZE"), t64 ? _T("8") : _T("4"));
 
   const TCHAR* tsuff = get_target_suffix(m_target_type, _T(""));
   if (!*tsuff) return PS_ERROR;
@@ -3894,7 +3900,6 @@ int CEXEBuild::set_target_architecture_data()
     { TARGET_AMD64,      _T("NSIS_AMD64"), _T("1")   },
     { TARGET_ARM64,      _T("NSIS_ARM64"), _T("1")   }
   };
-  size_t i;
   for (i = 0; i < COUNTOF(tdef); ++i) definedlist.del(tdef[i].def);
   for (i = 0; i < COUNTOF(tdef); ++i) if (tdef[i].tt == m_target_type) definedlist.set(tdef[i].def, tdef[i].val);
 
