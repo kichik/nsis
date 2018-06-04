@@ -300,10 +300,7 @@ SystemProc* CallProc(SystemProc *proc)
     INT_PTR ret, *place;
     if (!lstrcmp(proc->ProcName, sizeof(TCHAR) > 1 ? _T("LoadImageW") : _T("LoadImageA")))
     {
-        ret = (INT_PTR) LoadImage((HINSTANCE)proc->Params[1].Value,
-          (LPCTSTR)proc->Params[2].Value, (UINT)proc->Params[3].Value,
-          (int)proc->Params[4].Value, (int)proc->Params[5].Value,
-          (UINT)proc->Params[6].Value);
+        ret = (INT_PTR) LoadImage((HINSTANCE)proc->Params[1].Value, (LPCTSTR)proc->Params[2].Value, (UINT)proc->Params[3].Value, (int)proc->Params[4].Value, (int)proc->Params[5].Value, (UINT)proc->Params[6].Value);
         LastError = GetLastError();
     }
     else if (!lstrcmp(proc->ProcName, _T("GetClientRect")))
@@ -324,6 +321,8 @@ SystemProc* CallProc(SystemProc *proc)
         ret = SendMessageA((HWND)proc->Params[1].Value, (UINT)proc->Params[2].Value, (WPARAM)proc->Params[3].Value, (LPARAM)proc->Params[4].Value);
     else if (!lstrcmp(proc->ProcName, _T("SendMessage")) || !lstrcmp(proc->ProcName, _T("SendMessageW")))
         ret = SendMessageW((HWND)proc->Params[1].Value, (UINT)proc->Params[2].Value, (WPARAM)proc->Params[3].Value, (LPARAM)proc->Params[4].Value);
+    else if (!lstrcmp(proc->ProcName, _T("GetVersionEx"))) // For winver
+        GetVersionEx((OSVERSIONINFO*)(ret = proc->Params[1].Value));
     else if (!lstrcmp(proc->ProcName, _T("GetNativeSystemInfo"))) // For x64:GetNativeProcessorArchitecture
         GetNativeSystemInfo((SYSTEM_INFO*)(ret = proc->Params[1].Value));
     else
