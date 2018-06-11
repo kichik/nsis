@@ -322,7 +322,7 @@ SystemProc* CallProc(SystemProc *proc)
     else if (!lstrcmp(proc->ProcName, _T("SendMessage")) || !lstrcmp(proc->ProcName, _T("SendMessageW")))
         ret = SendMessageW((HWND)proc->Params[1].Value, (UINT)proc->Params[2].Value, (WPARAM)proc->Params[3].Value, (LPARAM)proc->Params[4].Value);
     else if (!lstrcmp(proc->ProcName, _T("GetVersionEx"))) // For winver
-        GetVersionEx((OSVERSIONINFO*)(ret = proc->Params[1].Value));
+        ret = GetVersionEx((OSVERSIONINFO*)proc->Params[1].Value), LastError = GetLastError();
     else if (!lstrcmp(proc->ProcName, _T("GetNativeSystemInfo"))) // For x64:GetNativeProcessorArchitecture
         GetNativeSystemInfo((SYSTEM_INFO*)(ret = proc->Params[1].Value));
     else
