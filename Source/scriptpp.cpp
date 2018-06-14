@@ -491,9 +491,8 @@ int CEXEBuild::pp_tempfile(LineParser&line)
 
 int CEXEBuild::pp_delfile(LineParser&line)
 {
-  int fatal = 1;
-  int a = 1;
-  TCHAR *fc = line.gettoken_str(a);
+  UINT fatal = true, a = 1, matchcount = 0;
+  const TCHAR *fc = line.gettoken_str(a);
   if (line.getnumtokens()==3)
   {
     if (!_tcsicmp(fc,_T("/nonfatal")))
@@ -502,7 +501,8 @@ int CEXEBuild::pp_delfile(LineParser&line)
       PRINTHELP();
   }
 
-  SCRIPT_MSG(_T("!delfile: \"%") NPRIs _T("\"\n"), line.gettoken_str(a));
+  SCRIPT_MSG(_T("!delfile: \"%") NPRIs _T("\"\n"), fc);
+  const TCHAR *fmt = _T("!delfile: \"%") NPRIs _T("\" couldn't be deleted.\n");
 
   tstring dir = get_dir_name(fc), spec = get_file_name(fc);
   tstring basedir = dir + PLATFORM_PATH_SEPARATOR_STR;
@@ -510,24 +510,32 @@ int CEXEBuild::pp_delfile(LineParser&line)
 
   boost::scoped_ptr<dir_reader> dr( new_dir_reader() );
   dr->read(dir); // BUGBUG: PATH_CONVERT?
-
-  for (dir_reader::iterator files_itr = dr->files().begin();
-       files_itr != dr->files().end();
-       files_itr++)
+  dir_reader::iterator files_itr = dr->files().begin();
+  for (; files_itr != dr->files().end(); files_itr++)
   {
     if (!dir_reader::matches(*files_itr, spec))
       continue;
 
+    ++matchcount;
     tstring file = basedir + *files_itr; // BUGBUG: PATH_CONVERT?
-
-    int result = _tunlink(file.c_str());
-    if (result == -1)
+    fc = file.c_str();
+    if (-1 == _tunlink(fc))
     {
-      ERROR_MSG(_T("!delfile: \"%") NPRIs _T("\" couldn't be deleted.\n"), file.c_str());
-      if (fatal) return PS_ERROR;
+      if (fatal)
+        return (ERROR_MSG(fmt, fc), PS_ERROR);
+      else
+        warning_fl(DW_PP_DELFILE_DELERROR, fmt, fc);
     }
     else
-      SCRIPT_MSG(_T("!delfile: deleted \"%") NPRIs _T("\"\n"), file.c_str());
+      SCRIPT_MSG(_T("!delfile: deleted \"%") NPRIs _T("\"\n"), fc);
+  }
+
+  if (!matchcount)
+  {
+    if (fatal)
+      return (ERROR_MSG(fmt, fc), PS_ERROR);
+    else
+      warning_fl(DW_PP_DELFILE_NOMATCH, fmt, fc);
   }
   return PS_OK;
 }
