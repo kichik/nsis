@@ -131,6 +131,7 @@
   !insertmacro MUI_LANGUAGE "Armenian"
   !insertmacro MUI_LANGUAGE "Corsican"
   !insertmacro MUI_LANGUAGE "Tatar"
+  !insertmacro MUI_LANGUAGE "Hindi"
 
 ;--------------------------------
 ;Reserve Files
