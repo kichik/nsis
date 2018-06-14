@@ -91,6 +91,8 @@ typedef enum {
   DW_PLUGIN_NOUNLOAD_PLACEMENT = 6080, // reserved ..6099
   DW_PP_PRAGMA_UNKNOWN = 6100, // reserved ..6199
   DW_PP_PRAGMA_INVALID = 6101,
+  DW_PP_DELFILE_DELERROR = 6149,
+  DW_PP_DELFILE_NOMATCH = DW_PP_DELFILE_DELERROR,
   DW_PP_VERBOSE_POP_EMPTY_STACK = 6150,
   //DW_PP_VERBOSE_BAD_LEVEL = 6151?, // 2.x failed to issue a warning. 3.x currently aborts with hard error.
   DW_INCLUDE_NONFATAL_NOT_FOUND = 7000, // reserved ..7009
