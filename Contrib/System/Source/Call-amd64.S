@@ -62,19 +62,15 @@ IF 0
 ENDIF
 
 
-EXTERN __imp_GetLastError : PROC
 IFDEF SYSTEM_LOG_DEBUG
   EXTERN __imp_IsDebuggerPresent : PROC
 ENDIF
-
-EXTERN LastError : DWORD
 
 EXTERN GetProcOffset       : PROC
 EXTERN GetParamsOffset     : PROC
 EXTERN GetSizeOfProcParam  : PROC
 EXTERN GetValueOffsetParam : PROC
-EXTERN SetProcResultOk     : PROC
-EXTERN GetErrorOption      : PROC
+EXTERN SetCallProcResultValues   : PROC
 
 
 SECTION_CODE
@@ -161,27 +157,11 @@ callthefunc:
   mov r10, qword ptr [pSystemProc+rax]
   xor rax, rax ;# Fix bug #1535007
   call r10
-  mov r13, rax ;# Save return value
-
   mov rcx, pSystemProc
-  call GetErrorOption
-  test eax, eax
-  jz capturegle_done
-  call qword ptr [__imp_GetLastError]
-  mov dword ptr [LastError], eax
-capturegle_done:
+  mov rdx, rax ;# Return value
+  call SetCallProcResultValues ;# Store GetLastError() and return value
+  ;# mov rax, pSystemProc has been performed by SetCallProcResultValues
 
-  ;# proc->Params[0].Value = pSystemProc->Proc's return value
-  call GetParamsOffset
-  mov rdx, rax ;# This assumes that the next function is not going to clobber rdx!
-  call GetValueOffsetParam
-  add rdx, rax
-  mov qword ptr [pSystemProc+rdx], r13
-
-  mov rcx, pSystemProc
-  call SetProcResultOk ;# BUGBUG: This is pointless, system.c should just assume we are OK
-
-  mov rax, pSystemProc ;# Return SystemProc*
   ;# Epilog:
   ;# http://msdn.microsoft.com/en-us/library/tawsa7cb claims that only 
   ;# add/lea rsp and pop is valid in the epilog. Unwind might fail on our version?

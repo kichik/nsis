@@ -146,7 +146,6 @@ ENDIF
 EXTERN    __alloca_probe         : PROC
 
 EXTERN    __imp__GlobalFree@4    : PROC
-EXTERN    __imp__GetLastError@0  : PROC
 
 IFDEF _UNICODE
 EXTERN    __imp__wsprintfW       : PROC
@@ -158,7 +157,6 @@ EXTERN    _GlobalCopy            : PROC
 
 EXTERN    _LastStackPlace        : DWORD
 EXTERN    _LastStackReal         : DWORD
-EXTERN    _LastError             : DWORD
 EXTERN    _LastProc              : DWORD
 EXTERN    _CallbackIndex         : DWORD
 
@@ -168,7 +166,6 @@ EXTERN    _retaddr               : PTR
 EXTERN    _GetNewStackSize       : PROC
 EXTERN    _GetGenStackOption     : PROC
 EXTERN    _GetCDeclOption        : PROC
-EXTERN    _GetErrorOption        : PROC
 EXTERN    _GetProcOffset         : PROC
 EXTERN    _GetCloneOffset        : PROC
 EXTERN    _GetProcNameOffset     : PROC
@@ -180,7 +177,7 @@ EXTERN    _GetSizeOffsetParam    : PROC
 EXTERN    _GetValueOffsetParam   : PROC
 EXTERN    _Get_valueOffsetParam  : PROC
 EXTERN    _SetCloneOption        : PROC
-EXTERN    _SetProcResultOk       : PROC
+EXTERN    _SetCallProcResultValues@12  : PROC
 EXTERN    _SetProcResultCallback : PROC
 
 SECTION_DATA
@@ -566,7 +563,7 @@ params_loop_done:
   ;# Call
   call        ecx
 
-  ;# Return
+  ;# Save return
   mov         dword ptr [_z1],eax
   mov         dword ptr [_z2],edx
 
@@ -707,34 +704,11 @@ stack_clear_done:
 stack_cleanup_done:
 
   ;# Save return
-
-  ;# Get offset for element Params of SystemProc structure
-  call        _GetParamsOffset
-  mov         edx,dword ptr [ebp+8]
-  add         edx,eax
-
-  ;# proc->Params[0].Value = Low double word of result
-  call        _GetValueOffsetParam
-  mov         ecx,dword ptr [_z1]
-  mov         dword ptr [edx+eax],ecx
-
-  ;# proc->Params[0]._value = High double word of result
-  call        _Get_valueOffsetParam
-  mov         ecx,dword ptr [_z2]
-  mov         dword ptr [edx+eax],ecx
-
-  ;# Proc result: OK
+  push        dword ptr [_z2]
+  push        dword ptr [_z1]
   push        dword ptr [ebp+8]
-  call        _SetProcResultOk
-  ;# In case of POPT_ERROR -> Get_LastError
-  call        _GetErrorOption
-  cmp         eax,0
-  pop         eax
-  je          handling_error_option_done
-  call        dword ptr [__imp__GetLastError@0]
-  mov         dword ptr [_LastError],eax
+  call        _SetCallProcResultValues@12
 
-handling_error_option_done:
   IFDEF SYSTEM_LOG_DEBUG
     SYSTEM_EVENT offset LogAfterCall
 

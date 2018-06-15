@@ -68,11 +68,7 @@ HANDLE retaddr;
 
 static TCHAR *MakeResultStr(SystemProc *proc, TCHAR *buf)
 {
-    if (proc->ProcResult == PR_OK)
-        lstrcpy(buf, _T("ok"));
-    else if (proc->ProcResult == PR_ERROR)
-        lstrcpy(buf, _T("error"));
-    else if (proc->ProcResult == PR_CALLBACK)
+    if (proc->ProcResult == PR_CALLBACK)
     {
         INT_PTR id = proc->CallbackIndex;
 #ifdef POPT_SYNTAX2
@@ -80,6 +76,13 @@ static TCHAR *MakeResultStr(SystemProc *proc, TCHAR *buf)
             id = (INT_PTR) GetAssociatedSysProcFromCallbackThunkPtr(proc->Proc);
 #endif
         wsprintf(buf, sizeof(void*) > 4 ? _T("callback%Id") : _T("callback%d"), id); // "%d" must match format used by system_pushintptr() in Get() because script will StrCmp!
+    }
+    else
+    {
+        const TCHAR *resstr = _T("error");
+        if (proc->ProcResult == PR_OK)
+            resstr = _T("ok");
+        lstrcpy(buf, resstr);
     }
     return buf;
 }
@@ -1437,7 +1440,7 @@ unsigned int GetCDeclOption(SystemProc *proc)
 /*
 Returns non-zero value if Error option is set
 */
-unsigned int GetErrorOption(SystemProc *proc)
+static unsigned int GetErrorOption(SystemProc *proc)
 {
     return (proc->Options & POPT_ERROR);
 }
@@ -1535,7 +1538,7 @@ void SetCloneOption(SystemProc *proc)
 /*
 Sets Result of procedure call to be "OK"
 */
-void SetProcResultOk(SystemProc *proc)
+static void SetProcResultOk(SystemProc *proc)
 {
     proc->ProcResult = PR_OK;
 }
@@ -1546,4 +1549,16 @@ Sets Result of procedure call to be "CALLBACK"
 void SetProcResultCallback(SystemProc *proc)
 {
     proc->ProcResult = PR_CALLBACK;
+}
+
+SystemProc* CALLBACK SetCallProcResultValues(SystemProc *proc, ULARGE_INTEGER retval)
+{
+    if (GetErrorOption(proc)) LastError = GetLastError();
+#ifdef _WIN64
+    proc->Params[0].Value = retval.QuadPart;
+#else
+    proc->Params[0].Value = retval.LowPart, proc->Params[0]._value = retval.HighPart;
+#endif
+    SetProcResultOk(proc);
+    return proc;
 }
