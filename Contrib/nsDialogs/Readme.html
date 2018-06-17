@@ -183,7 +183,7 @@ SectionEnd</pre></blockquote>
 
 <p>Each of the measurements that the macros take can use one of three unit types - pixels, dialog units or percentage of the dialog's size. It can also be negative to indicate it should be measured from the end. To use dialog units, the measurement must be suffixed with the letter <i>u</i>. To use percentage, the measurement must be suffixed with the percentage sign - <i>%</i>. Any other suffix, or no suffix, means pixels.</p>
 
-<p>Dialog units allow creation of dialogs that scale well when different fonts or <abbr title="Dots per Inch">DPI</abbr> is used. Its size in pixels is determined on runtime based on the font and the DPI. For example, standard pages in the classic NSIS user interface are 266 dialog units wide and 130 dialog units high. Pages in Modern UI are 300 dialogs units wide and 140 dialog units high. In different resolutions, using different fonts or DPI settings, the dialogs will always have the same size in dialog units, but different size in pixels.</p>
+<p>Dialog units allow creation of dialogs that scale well when different fonts or <abbr title="Dots per Inch">DPI</abbr> is used. Its size in pixels is determined at runtime based on the font and the DPI. For example, standard pages in the classic NSIS user interface are 266 dialog units wide and 130 dialog units high. Pages in Modern UI are 300 dialogs units wide and 140 dialog units high. In different resolutions, using different fonts or DPI settings, the dialogs will always have the same size in dialog units, but different size in pixels.</p>
 </span>
 <blockquote><pre><b>!include nsDialogs.nsh</b>
 !include LogicLib.nsh
@@ -695,7 +695,7 @@ SectionEnd</pre></blockquote>
 
 <h3><a name="mref-lbgetselection">NSD_LB_GetSelection</a></h3>
 <p><code>${NSD_LB_GetSelection} <i>listbox_HWND</i> <i>$output_variable</i></code></p>
-<p>Retrieves the selected stringed from a list box. Returns an empty string if no string is selected.</p>
+<p>Retrieves the selected string from a list box. Returns an empty string if no string is selected.</p>
 
 <h3><a name="mref-animopenfile">NSD_Anim_OpenFile</a></h3>
 <p><code>${NSD_Anim_OpenFile} <i>anim_HWND</i> <i>avi_path</i></code></p>
