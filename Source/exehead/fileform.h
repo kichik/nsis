@@ -516,7 +516,7 @@ typedef struct {
 
 #define REGROOTVIEW32 0x40000000
 #define REGROOTVIEW64 0x20000000
-#define REGROOTVIEWTOSAMVIEW(rv) ( ((UINT_PTR)(rv)&(REGROOTVIEW32|REGROOTVIEW64)) >> 21 ) // REGROOTVIEWxx to KEY_WOW64_xxKEY
+#define REGROOTVIEWTOSAMVIEW(rv) ( (UINT)(((UINT_PTR)(rv)&(REGROOTVIEW32|REGROOTVIEW64)) >> 21) ) // REGROOTVIEWxx to KEY_WOW64_xxKEY
 #define IsRegRootkeyForcedView(hKey) ( ((UINT_PTR) (hKey) & (REGROOTVIEW32|REGROOTVIEW64)) )
 #define MAKEREGROOTVIEW(r, fv) ( (HKEY) ((UINT_PTR)(r) | (fv)) )
 #define HKSHCTX ( (HKEY) 0 ) // Converted to HKCU or HKLM by GetRegRootKey

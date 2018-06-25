@@ -57,6 +57,7 @@ class Plugins
     int GetDllDataHandle(bool uninst, const tstring& command) const;
     void SetDllDataHandle(bool uninst, tstring&canoniccmd, int dataHandle);
     static bool IsPluginCallSyntax(const tstring& token);
+    void PrintPluginDirs();
 
   private: // methods
     void GetExports(const tstring &pathToDll, bool pe64, bool displayInfo);

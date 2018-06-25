@@ -297,7 +297,10 @@ parse_again:
     {
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
       if (Plugins::IsPluginCallSyntax(tokstr0))
+      {
+        if (m_pPlugins && display_warnings) m_pPlugins->PrintPluginDirs();
         ERROR_MSG(_T("Plugin%") NPRIs _T(" not found, cannot call %") NPRIs _T("\n"),m_pPlugins && m_pPlugins->IsKnownPlugin(tokstr0) ? _T(" function") : _T(""),tokstr0);
+      }
       else
 #endif
         ERROR_MSG(_T("Invalid command: \"%") NPRIs _T("\"\n"),tokstr0);
