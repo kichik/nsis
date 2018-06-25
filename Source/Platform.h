@@ -1046,6 +1046,11 @@ typedef struct tagVS_FIXEDFILEINFO {
 #else
 #  define NSIS_CXX_NOEXCEPT() throw() // Can't specialize __declspec(nothrow) because MSVC requires it before the function name
 #endif
+#if defined(_MSC_VER) && _MSC_VER <= 1200
+#  define NSIS_CXX_TYPENAME // VC6 can't handle typename in some places but GCC requires it
+#else
+#  define NSIS_CXX_TYPENAME typename
+#endif
 #define BUGBUG64TRUNCATE(cast,xpr) ( (cast) (xpr) )
 
 /*
@@ -1089,5 +1094,13 @@ FORCEINLINE BOOL NoDepr_GetVersionExW(OSVERSIONINFOW*p) { __pragma(warning(push)
 #define GetVersionExW NoDepr_GetVersionExW
 #endif //~ _MSC_VER >= 1500
 #endif //~ _MSC_VER
+
+
+#ifdef __cplusplus
+namespace STLHelpers 
+{
+  template<class M> struct mapped_type_helper { typedef typename M::value_type::second_type type; }; // VC6 uses referent_type and not mapped_type
+}
+#endif //~ __cplusplus
 
 #endif // EOF

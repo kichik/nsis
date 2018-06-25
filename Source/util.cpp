@@ -1023,14 +1023,14 @@ int RunChildProcessRedirected(LPCWSTR cmdprefix, LPCWSTR cmdmain, bool ForceUTF8
   {
     bool fullbuf = false, utf8 = CP_UTF8 == cp, okt;
     char iobuf[512];
-    DWORD cbRead, cbOfs = 0, cchwb = 0;
+    DWORD cbRead, cbOfs = 0, cchwb = 0, i;
     WCHAR wbuf[100], wchbuf[2+1]; // A surrogate pair + \0
     for(;;)
     {
       BOOL okr = ReadFile(hSORd, iobuf+cbOfs, sizeof(iobuf)-cbOfs, &cbRead, 0);
       cbRead += cbOfs, cbOfs = 0;
       unsigned char cbTrail, cch;
-      for(DWORD i = 0; i < cbRead;)
+      for(i = 0; i < cbRead;)
       {
         cch = 0;
         if (utf8)

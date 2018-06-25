@@ -76,6 +76,16 @@ V get_paired_value(const C& cntnr, const K& key, const V& defval)
 
 }
 
+static tstring GetDllPath(const tstring&fullpath)
+{
+  tstring::size_type platsep = fullpath.rfind(PLATFORM_PATH_SEPARATOR_STR);
+  tstring::size_type unixsep = platsep;
+  if (PLATFORM_PATH_SEPARATOR_C != _T('/')) unixsep = fullpath.rfind(_T("/")); // Ideally get_dir_name would do this for us
+  tstring::size_type lastsep = platsep != string::npos && unixsep != string::npos ? STD_MAX(platsep, unixsep) : STD_MIN(platsep, unixsep);
+  if (lastsep == string::npos) return _T("");
+  return fullpath.substr(0, lastsep);
+}
+
 static inline tstring GetDllName(const tstring&command)
 {
   return get_string_prefix(command, _T("::"));
@@ -251,6 +261,30 @@ bool Plugins::IsPluginCallSyntax(const tstring& token)
 {
   const tstring dllname = GetDllName(token);
   return dllname.length() + 2 < token.length();
+}
+
+struct PrintPluginDirsHelper {
+  template<class C> static void print(const C&c, const char*indent = "")
+  {
+    std::/*unordered_*/set<typename STLHelpers::mapped_type_helper<C>::type
+#ifdef _WIN32
+      , Plugins::strnocasecmp
+#endif
+    > seen;
+    for (NSIS_CXX_TYPENAME C::const_iterator it = c.begin(); it != c.end(); ++it)
+    {
+      const tstring path = GetDllPath(it->second);
+      if (contains(seen, path)) continue;
+      seen.insert(path);
+      _ftprintf(g_output, _T("%") NPRIns _T("%") NPRIs _T("\n"), indent, path.c_str());
+    }
+  }
+};
+
+void Plugins::PrintPluginDirs()
+{
+  _ftprintf(g_output, _T("Plugin directories:\n"));
+  PrintPluginDirsHelper::print(m_dllname_to_path, "  ");
 }
 
 #endif

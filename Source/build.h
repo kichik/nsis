@@ -169,15 +169,11 @@ namespace MakensisAPI {
 #define FLAG_OFFSET(flag) (FIELD_OFFSET(exec_flags_t, flag)/sizeof(int))
 
 class DiagState {
-  template<class M> struct mapped_type_helper { typedef typename M::value_type::second_type type; }; // VC6 uses referent_type and not mapped_type
+  template<class M> struct mapped_type_helper { typedef typename STLHelpers::mapped_type_helper<M>::type type; };
   template<class C, class K, class V> void insert_or_assign(C&c, const K&k, V val)
   {
     typename C::value_type item(k, val);
-#if defined(_MSC_VER) && _MSC_VER <= 1200
-    std::pair<C::iterator, bool> ret = c.insert(item);
-#else
-    std::pair<typename C::iterator, bool> ret = c.insert(item);
-#endif
+    std::pair<NSIS_CXX_TYPENAME C::iterator, bool> ret = c.insert(item);
     if (!ret.second) ret.first->second = val;
   }
   template<class C, class K> typename mapped_type_helper<C>::type get_paired_value(const C&c, const K&k, typename mapped_type_helper<C>::type defval) const
