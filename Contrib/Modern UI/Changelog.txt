@@ -1,6 +1,11 @@
 NSIS Modern User Interface
 Version History
 
+1.81
+* Added MUI_TEXTCOLOR (2018-09-09)
+* Added MUI_PAGE_CUSTOMFUNCTION_DESTROYED (2017-04-03)
+* Added support for MUI_UNCONFIRMPAGE_VARIABLE (RFE #511) (2016-12-30)
+
 1.8 - August 9, 2007
 * Uses the new language files
 * Updated documentation

@@ -327,22 +327,22 @@ Finish page (implemented using nsDialogs)
         ;Title text
         ${NSD_CreateLabel} 120u 10u 195u ${MUI_FINISHPAGE_TITLE_HEIGHT}u "${MUI_FINISHPAGE_TITLE}"
         Pop $mui.FinishPage.Title
-        SetCtlColors $mui.FinishPage.Title "" "${MUI_BGCOLOR}"
+        SetCtlColors $mui.FinishPage.Title "${MUI_TEXTCOLOR}" "${MUI_BGCOLOR}"
         CreateFont $mui.FinishPage.Title.Font "$(^Font)" "12" "700"
         SendMessage $mui.FinishPage.Title ${WM_SETFONT} $mui.FinishPage.Title.Font 0
 
         ;Finish text
         ${NSD_CreateLabel} 120u ${MUI_FINISHPAGE_TEXT_TOP}u 195u ${MUI_FINISHPAGE_TEXT_HEIGHT_BUTTONS}u "${MUI_FINISHPAGE_TEXT_REBOOT}"
         Pop $mui.FinishPage.Text
-        SetCtlColors $mui.FinishPage.Text "" "${MUI_BGCOLOR}"
+        SetCtlColors $mui.FinishPage.Text "${MUI_TEXTCOLOR}" "${MUI_BGCOLOR}"
       
         ;Radio buttons for reboot page
         ${NSD_CreateRadioButton} 120u ${MUI_FINISHPAGE_REBOOTNOW_TOP}u 195u 10u "${MUI_FINISHPAGE_TEXT_REBOOTNOW}"
         Pop $mui.FinishPage.RebootNow
-        SetCtlColors $mui.FinishPage.RebootNow "" "${MUI_BGCOLOR}"        
+        SetCtlColors $mui.FinishPage.RebootNow "${MUI_TEXTCOLOR}" "${MUI_BGCOLOR}"        
         ${NSD_CreateRadioButton} 120u ${MUI_FINISHPAGE_REBOOTLATER_TOP}u 195u 10u "${MUI_FINISHPAGE_TEXT_REBOOTLATER}"
         Pop $mui.FinishPage.RebootLater
-        SetCtlColors $mui.FinishPage.RebootLater "" "${MUI_BGCOLOR}"
+        SetCtlColors $mui.FinishPage.RebootLater "${MUI_TEXTCOLOR}" "${MUI_BGCOLOR}"
         !ifndef MUI_FINISHPAGE_REBOOTLATER_DEFAULT
           SendMessage $mui.FinishPage.RebootNow ${BM_SETCHECK} ${BST_CHECKED} 0
         !else
@@ -357,7 +357,7 @@ Finish page (implemented using nsDialogs)
         ;Title text
         ${NSD_CreateLabel} 120u 10u 195u ${MUI_FINISHPAGE_TITLE_HEIGHT}u "${MUI_FINISHPAGE_TITLE}"
         Pop $mui.FinishPage.Title
-        SetCtlColors $mui.FinishPage.Title "" "${MUI_BGCOLOR}"
+        SetCtlColors $mui.FinishPage.Title "${MUI_TEXTCOLOR}" "${MUI_BGCOLOR}"
         CreateFont $mui.FinishPage.Title.Font "$(^Font)" "12" "700"
         SendMessage $mui.FinishPage.Title ${WM_SETFONT} $mui.FinishPage.Title.Font 0
 
@@ -368,13 +368,13 @@ Finish page (implemented using nsDialogs)
           ${NSD_CreateLabel} 120u ${MUI_FINISHPAGE_TEXT_TOP}u 195u ${MUI_FINISHPAGE_TEXT_HEIGHT_BUTTONS}u "${MUI_FINISHPAGE_TEXT}"
         !endif
         Pop $mui.FinishPage.Text
-        SetCtlColors $mui.FinishPage.Text "" "${MUI_BGCOLOR}"
+        SetCtlColors $mui.FinishPage.Text "${MUI_TEXTCOLOR}" "${MUI_BGCOLOR}"
     
         ;Checkboxes
         !ifdef MUI_FINISHPAGE_RUN
           ${NSD_CreateCheckbox} 120u ${MUI_FINISHPAGE_RUN_TOP}u 195u 10u "${MUI_FINISHPAGE_RUN_TEXT}"
           Pop $mui.FinishPage.Run
-          SetCtlColors $mui.FinishPage.Run "" "${MUI_BGCOLOR}"
+          SetCtlColors $mui.FinishPage.Run "${MUI_TEXTCOLOR}" "${MUI_BGCOLOR}"
           !ifndef MUI_FINISHPAGE_RUN_NOTCHECKED
             SendMessage $mui.FinishPage.Run ${BM_SETCHECK} ${BST_CHECKED} 0
           !endif
@@ -383,7 +383,7 @@ Finish page (implemented using nsDialogs)
         !ifdef MUI_FINISHPAGE_SHOWREADME
           ${NSD_CreateCheckbox} 120u ${MUI_FINISHPAGE_SHOWREADME_TOP}u 195u 10u "${MUI_FINISHPAGE_SHOWREADME_TEXT}"
           Pop $mui.FinishPage.ShowReadme
-          SetCtlColors $mui.FinishPage.ShowReadme "" "${MUI_BGCOLOR}"
+          SetCtlColors $mui.FinishPage.ShowReadme "${MUI_TEXTCOLOR}" "${MUI_BGCOLOR}"
           !ifndef MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
             SendMessage $mui.FinishPage.ShowReadme ${BM_SETCHECK} ${BST_CHECKED} 0
           !endif
@@ -406,6 +406,24 @@ Finish page (implemented using nsDialogs)
 
     !ifdef MUI_FINISHPAGE_CANCEL_ENABLED
       StrCpy $mui.FinishPage.DisableAbortWarning "1"
+    !endif
+
+    !ifndef MUI_FORCECLASSICCONTROLS
+    ${If} ${IsHighContrastModeActive}
+    !endif
+      ; SetCtlColors does not change the check/radio text color (bug #443)
+      !ifndef MUI_FINISHPAGE_NOREBOOTSUPPORT
+        System::Call 'UXTHEME::SetWindowTheme(p$mui.FinishPage.RebootNow,w" ",w" ")'
+        System::Call 'UXTHEME::SetWindowTheme(p$mui.FinishPage.RebootLater,w" ",w" ")'
+      !endif
+      !ifdef MUI_FINISHPAGE_RUN
+        System::Call 'UXTHEME::SetWindowTheme(p$mui.FinishPage.Run,w" ",w" ")'
+      !endif
+      !ifdef MUI_FINISHPAGE_SHOWREADME
+        System::Call 'UXTHEME::SetWindowTheme(p$mui.FinishPage.ShowReadme,w" ",w" ")'
+      !endif
+    !ifndef MUI_FORCECLASSICCONTROLS
+    ${EndIf}
     !endif
 
     ;Show page
