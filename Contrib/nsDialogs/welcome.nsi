@@ -109,9 +109,9 @@ Function nsDialogsWelcome
 	nsDialogs::CreateControl STATIC ${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS} 0 120u 32u -130u -32u "nsDialogs is the next generation of user interfaces in NSIS. It gives the developer full control over custom pages. Some of the features include control text containing variables, callbacks directly into script functions and creation of any type of control. Create boring old edit boxes or load some external library and create custom controls with no need of creating your own plug-in.$\r$\n$\r$\nUnlike InstallOptions, nsDialogs doesn't use INI files to communicate with the script. By interacting directly with the script, nsDialogs can perform much faster without the need of costly, old and inefficient INI operations. Direct interaction also allows direct calls to functions defined in the script and removes the need of conversion functions like Io2Nsis.$\r$\n$\r$\nHit the Next button to see how it all fits into a mock directory page."
 	Pop $TEXT
 
-	SetCtlColors $DIALOG "" 0xffffff
-	SetCtlColors $HEADLINE "" 0xffffff
-	SetCtlColors $TEXT "" 0xffffff
+	SetCtlColors $DIALOG 0 0xffffff
+	SetCtlColors $HEADLINE 0 0xffffff
+	SetCtlColors $TEXT 0 0xffffff
 
 	Call HideControls
 

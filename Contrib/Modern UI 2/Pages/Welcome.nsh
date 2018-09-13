@@ -147,14 +147,14 @@ Welcome page (implemented using nsDialogs)
     ;Title
     ${NSD_CreateLabel} 120u 10u 195u ${MUI_WELCOMEPAGE_TITLE_HEIGHT}u "${MUI_WELCOMEPAGE_TITLE}"
     Pop $mui.WelcomePage.Title
-    SetCtlColors $mui.WelcomePage.Title "" "${MUI_BGCOLOR}"    
+    SetCtlColors $mui.WelcomePage.Title "${MUI_TEXTCOLOR}" "${MUI_BGCOLOR}"    
     CreateFont $mui.WelcomePage.Title.Font "$(^Font)" "12" "700"
     SendMessage $mui.WelcomePage.Title ${WM_SETFONT} $mui.WelcomePage.Title.Font 0
 
     ;Welcome text
     ${NSD_CreateLabel} 120u ${MUI_WELCOMEPAGE_TEXT_TOP}u 195u 130u "${MUI_WELCOMEPAGE_TEXT}"
     Pop $mui.WelcomePage.Text
-    SetCtlColors $mui.WelcomePage.Text "" "${MUI_BGCOLOR}"
+    SetCtlColors $mui.WelcomePage.Text "${MUI_TEXTCOLOR}" "${MUI_BGCOLOR}"
 
     ;Show page
     Call ${MUI_PAGE_UNINSTALLER_FUNCPREFIX}muiPageLoadFullWindow

@@ -112,7 +112,8 @@ Directory page
     GetDlgItem $mui.DirectoryPage.SpaceAvailable $mui.DirectoryPage 1024
   
     !ifdef MUI_DIRECTORYPAGE_BGCOLOR
-      SetCtlColors $mui.DirectoryPage.Directory "" "${MUI_DIRECTORYPAGE_BGCOLOR}"
+      !insertmacro MUI_DEFAULT MUI_DIRECTORYPAGE_TEXTCOLOR ""
+      SetCtlColors $mui.DirectoryPage.Directory "${MUI_DIRECTORYPAGE_TEXTCOLOR}" "${MUI_DIRECTORYPAGE_BGCOLOR}"
     !endif
     
     !insertmacro MUI_PAGE_FUNCTION_CUSTOM SHOW

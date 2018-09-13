@@ -160,5 +160,25 @@ Pop ${_outvar}
 !macroend
 
 
+!define /IfNDef SPI_GETHIGHCONTRAST 0x42
+!define /IfNDef HCF_HIGHCONTRASTON 0x01
+!define /IfNDef /math SYSSIZEOF_HIGHCONTRAST 8 + ${NSIS_PTR_SIZE}
+!define IsHighContrastModeActive '"" IsHighContrastModeActive ""'
+!macro _IsHighContrastModeActive _lhs _rhs _t _f
+!ifmacrondef _LOGICLIB_TEMP
+!include LogicLib.nsh
+!endif
+!insertmacro _LOGICLIB_TEMP
+Push $1
+System::Call '*(i${SYSSIZEOF_HIGHCONTRAST},i0,p)p.r1'
+System::Call 'USER32::SystemParametersInfo(i${SPI_GETHIGHCONTRAST},i${SYSSIZEOF_HIGHCONTRAST},pr1,i0)'
+System::Call '*$1(i,i.s)'
+Pop $_LOGICLIB_TEMP
+System::Free $1
+Pop $1
+!insertmacro _& $_LOGICLIB_TEMP ${HCF_HIGHCONTRASTON} `${_t}` `${_f}`
+!macroend
+
+
 !endif # !___UTIL__NSH___
 !verbose pop

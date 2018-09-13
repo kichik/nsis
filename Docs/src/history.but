@@ -6,9 +6,13 @@ Released on ??? ??th, 20??
 
 \S1{v3.04-cl} Changelog
 
-\S2{} Minor Changes
+\S2{} Major Changes
 
 \b Added IsNativeProcessorArchitecture helper macros to x64.nsh
+
+\S2{} Minor Changes
+
+\b Added MUI_TEXTCOLOR setting
 
 \b Added NTMARTA to preload list to fix rare Windows 7 security issue (\W{http://sf.net/p/nsis/bugs/1204}{bug #1204})
 

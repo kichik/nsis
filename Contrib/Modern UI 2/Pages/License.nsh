@@ -121,7 +121,7 @@ License page
 
   Function "${SHOW}"
 
-    ;Get conrol handles
+    ;Get control handles
     FindWindow $mui.LicensePage "#32770" "" $HWNDPARENT
     GetDlgItem $mui.LicensePage.TopText $mui.LicensePage 1040
     GetDlgItem $mui.LicensePage.Text $mui.LicensePage 1006

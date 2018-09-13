@@ -1,21 +1,21 @@
 /*
 
-NSIS Modern User Interface - Version 1.8
+NSIS Modern User Interface - Version 1.81
 Copyright 2002-2018 Joost Verburg
 
 */
 
 !ifndef MUI_INCLUDED
-!echo "NSIS Modern User Interface version 1.8 - Copyright 2002-2018 Joost Verburg"
+!verbose push 3
+!define MUI_INCLUDED
+!define MUI_SYSVERSION "1.81"
+!verbose pop
+!echo "NSIS Modern User Interface version ${MUI_SYSVERSION} - Copyright 2002-2018 Joost Verburg"
 
 ;--------------------------------
 !verbose push 3
 !define /IfNDef MUI_VERBOSE 3
 !verbose ${MUI_VERBOSE}
-
-!define MUI_INCLUDED
-!define MUI_SYSVERSION "1.8"
-
 
 ;--------------------------------
 ;HEADER FILES, DECLARATIONS
@@ -124,6 +124,7 @@ Var MUI_TEMP2
     !insertmacro MUI_DEFAULT MUI_INSTFILESPAGE_COLORS "/windows"
     !insertmacro MUI_DEFAULT MUI_INSTFILESPAGE_PROGRESSBAR "smooth"
     !insertmacro MUI_DEFAULT MUI_BGCOLOR "FFFFFF"
+    !insertmacro MUI_DEFAULT MUI_TEXTCOLOR "000000"
     !insertmacro MUI_DEFAULT MUI_WELCOMEFINISHPAGE_INI "${NSISDIR}\Contrib\Modern UI\ioSpecial.ini"
     !insertmacro MUI_DEFAULT MUI_UNWELCOMEFINISHPAGE_INI "${NSISDIR}\Contrib\Modern UI\ioSpecial.ini"
     !insertmacro MUI_DEFAULT MUI_WELCOMEFINISHPAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Wizard\win.bmp"
@@ -417,24 +418,24 @@ Var MUI_TEMP2
 
   !ifndef MUI_HEADER_TRANSPARENT_TEXT
 
-    SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
+    SetCtlColors $MUI_TEMP1 "${MUI_TEXTCOLOR}" "${MUI_BGCOLOR}"
 
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1038
-    SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
+    SetCtlColors $MUI_TEMP1 "${MUI_TEXTCOLOR}" "${MUI_BGCOLOR}"
 
   !else
 
-    SetCtlColors $MUI_TEMP1 "" "transparent"
+    SetCtlColors $MUI_TEMP1 "${MUI_TEXTCOLOR}" "transparent"
 
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1038
-    SetCtlColors $MUI_TEMP1 "" "transparent"
+    SetCtlColors $MUI_TEMP1 "${MUI_TEXTCOLOR}" "transparent"
 
   !endif
 
-  GetDlgItem $MUI_TEMP1 $HWNDPARENT 1034
+  GetDlgItem $MUI_TEMP1 $HWNDPARENT 1034 ; Header background
   SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
 
-  GetDlgItem $MUI_TEMP1 $HWNDPARENT 1039
+  GetDlgItem $MUI_TEMP1 $HWNDPARENT 1039 ; Header image
   SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
 
   GetDlgItem $MUI_TEMP1 $HWNDPARENT 1028
@@ -1284,16 +1285,16 @@ Var MUI_TEMP2
 
     !insertmacro INSTALLOPTIONS_INITDIALOG "ioSpecial.ini"
     Pop $MUI_HWND
-    SetCtlColors $MUI_HWND "" "${MUI_BGCOLOR}"
+    SetCtlColors $MUI_HWND "${MUI_TEXTCOLOR}" "${MUI_BGCOLOR}"
 
     GetDlgItem $MUI_TEMP1 $MUI_HWND 1201
-    SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
+    SetCtlColors $MUI_TEMP1 "${MUI_TEXTCOLOR}" "${MUI_BGCOLOR}"
 
     CreateFont $MUI_TEMP2 "$(^Font)" "12" "700"
     SendMessage $MUI_TEMP1 ${WM_SETFONT} $MUI_TEMP2 0
 
     GetDlgItem $MUI_TEMP1 $MUI_HWND 1202
-    SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
+    SetCtlColors $MUI_TEMP1 "${MUI_TEXTCOLOR}" "${MUI_BGCOLOR}"
 
     !insertmacro MUI_PAGE_FUNCTION_CUSTOM SHOW
 
@@ -1394,9 +1395,10 @@ Var MUI_TEMP2
 
   Function "${SHOW}"
     !ifdef MUI_DIRECTORYPAGE_BGCOLOR
+      !insertmacro MUI_DEFAULT MUI_DIRECTORYPAGE_TEXTCOLOR ""
       FindWindow $MUI_TEMP1 "#32770" "" $HWNDPARENT
       GetDlgItem $MUI_TEMP1 $MUI_TEMP1 1019
-      SetCtlColors $MUI_TEMP1 "" "${MUI_DIRECTORYPAGE_BGCOLOR}"
+      SetCtlColors $MUI_TEMP1 "${MUI_DIRECTORYPAGE_TEXTCOLOR}" "${MUI_DIRECTORYPAGE_BGCOLOR}"
     !endif
     
     !insertmacro MUI_PAGE_FUNCTION_CUSTOM SHOW
@@ -1444,10 +1446,11 @@ Var MUI_TEMP2
   Pop $MUI_HWND
 
   !ifdef MUI_STARTMENUPAGE_BGCOLOR
+    !insertmacro MUI_DEFAULT MUI_STARTMENUPAGE_TEXTCOLOR ""
     GetDlgItem $MUI_TEMP1 $MUI_HWND 1002
-    SetCtlColors $MUI_TEMP1 "" "${MUI_STARTMENUPAGE_BGCOLOR}"
+    SetCtlColors $MUI_TEMP1 "${MUI_STARTMENUPAGE_TEXTCOLOR}" "${MUI_STARTMENUPAGE_BGCOLOR}"
     GetDlgItem $MUI_TEMP1 $MUI_HWND 1004
-    SetCtlColors $MUI_TEMP1 "" "${MUI_STARTMENUPAGE_BGCOLOR}"
+    SetCtlColors $MUI_TEMP1 "${MUI_STARTMENUPAGE_TEXTCOLOR}" "${MUI_STARTMENUPAGE_BGCOLOR}"
   !endif
 
   !insertmacro MUI_PAGE_FUNCTION_CUSTOM SHOW
@@ -1593,11 +1596,11 @@ Var MUI_TEMP2
           !insertmacro INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 5" "Bottom" "120"
         !endif
         !ifdef MUI_FINISHPAGE_REBOOTLATER_DEFAULT
-		  !insertmacro INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "State" "0"
+          !insertmacro INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "State" "0"
           !insertmacro INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 5" "State" "1"
         !else
           !insertmacro INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "State" "1"
-		  !insertmacro INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 5" "State" "0"
+          !insertmacro INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 5" "State" "0"
         !endif
 
         Goto mui.finish_load
@@ -1762,26 +1765,26 @@ Var MUI_TEMP2
 
     !insertmacro INSTALLOPTIONS_INITDIALOG "ioSpecial.ini"
     Pop $MUI_HWND
-    SetCtlColors $MUI_HWND "" "${MUI_BGCOLOR}"
+    SetCtlColors $MUI_HWND "${MUI_TEXTCOLOR}" "${MUI_BGCOLOR}"
 
     GetDlgItem $MUI_TEMP1 $MUI_HWND 1201
-    SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
+    SetCtlColors $MUI_TEMP1 "${MUI_TEXTCOLOR}" "${MUI_BGCOLOR}"
 
     CreateFont $MUI_TEMP2 "$(^Font)" "12" "700"
     SendMessage $MUI_TEMP1 ${WM_SETFONT} $MUI_TEMP2 0
 
     GetDlgItem $MUI_TEMP1 $MUI_HWND 1202
-    SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
+    SetCtlColors $MUI_TEMP1 "${MUI_TEXTCOLOR}" "${MUI_BGCOLOR}"
 
     !ifndef MUI_FINISHPAGE_NOREBOOTSUPPORT
 
       IfRebootFlag 0 mui.finish_noreboot_show
 
         GetDlgItem $MUI_TEMP1 $MUI_HWND 1203
-        SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
+        SetCtlColors $MUI_TEMP1 "${MUI_TEXTCOLOR}" "${MUI_BGCOLOR}"
 
         GetDlgItem $MUI_TEMP1 $MUI_HWND 1204
-        SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
+        SetCtlColors $MUI_TEMP1 "${MUI_TEXTCOLOR}" "${MUI_BGCOLOR}"
 
         Goto mui.finish_show
 
@@ -1791,7 +1794,7 @@ Var MUI_TEMP2
 
     !ifdef MUI_FINISHPAGE_RUN
       GetDlgItem $MUI_TEMP1 $MUI_HWND 1203
-      SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
+      SetCtlColors $MUI_TEMP1 "${MUI_TEXTCOLOR}" "${MUI_BGCOLOR}"
     !endif
 
     !ifdef MUI_FINISHPAGE_SHOWREADME
@@ -1800,7 +1803,7 @@ Var MUI_TEMP2
       !else
         GetDlgItem $MUI_TEMP1 $MUI_HWND 1204
       !endif
-      SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
+      SetCtlColors $MUI_TEMP1 "${MUI_TEXTCOLOR}" "${MUI_BGCOLOR}"
     !endif
 
     !ifdef MUI_FINISHPAGE_LINK
@@ -1816,6 +1819,27 @@ Var MUI_TEMP2
 
     !ifndef MUI_FINISHPAGE_NOREBOOTSUPPORT
       mui.finish_show:
+    !endif
+
+    !ifndef MUI_FORCECLASSICCONTROLS
+    ${If} ${IsHighContrastModeActive}
+    !endif
+      ; SetCtlColors does not change the check/radio text color (bug #443)
+      !ifndef MUI_FINISHPAGE_NOREBOOTSUPPORT
+        GetDlgItem $MUI_TEMP1 $MUI_HWND 1203
+        System::Call 'UXTHEME::SetWindowTheme(p$MUI_TEMP1,w" ",w" ")'
+        GetDlgItem $MUI_TEMP1 $MUI_HWND 1204
+        System::Call 'UXTHEME::SetWindowTheme(p$MUI_TEMP1,w" ",w" ")'
+      !else ifdef MUI_FINISHPAGE_RUN | MUI_FINISHPAGE_SHOWREADME
+        GetDlgItem $MUI_TEMP1 $MUI_HWND 1203
+        System::Call 'UXTHEME::SetWindowTheme(p$MUI_TEMP1,w" ",w" ")'
+        !ifdef MUI_FINISHPAGE_RUN & MUI_FINISHPAGE_SHOWREADME
+        GetDlgItem $MUI_TEMP1 $MUI_HWND 1204
+        System::Call 'UXTHEME::SetWindowTheme(p$MUI_TEMP1,w" ",w" ")'
+        !endif
+      !endif
+    !ifndef MUI_FORCECLASSICCONTROLS
+    ${EndIf}
     !endif
 
     !insertmacro MUI_PAGE_FUNCTION_CUSTOM SHOW
