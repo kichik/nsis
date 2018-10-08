@@ -96,7 +96,9 @@
   !macroend
 
   !macro LogicLib_JumpToBranch _Jump _Skip
-    StrCmp "" ""  `${_Jump}` ${_Skip}
+    !if `${_Jump}` != ``
+      StrCmp "" "" `${_Jump}` ${_Skip}
+    !endif
   !macroend
 
   !macro _IncreaseCounter
