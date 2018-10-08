@@ -131,6 +131,10 @@ The Windows temp directory could be located on any volume, so you cannot use thi
 
 \b Not recommended for DLLs installed to $SYSDIR.
 
+\S2{} LIBRARY_INSTALL_EQUAL_VERSION
+
+\b Define this before inserting InstallLib macro to overwrite the file even if the version is the same as the existing file.
+
 \S1{library_install_notes} Notes
 
 \b If you need to support Windows 9x/ME, you can only use short filenames (8.3).
