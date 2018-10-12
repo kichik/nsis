@@ -43,7 +43,10 @@
 !macro _IsWow64 _a _b _t _f
   !insertmacro _LOGICLIB_TEMP
   System::Call kernel32::GetCurrentProcess()p.s
-  System::Call kernel32::IsWow64Process(ps,*i0s)
+  System::Call kernel32::IsWow64Process2(ps,*i0s,*i) ; [Win10.1511+] 0 if not WOW64
+  Push |
+  System::Call kernel32::IsWow64Process(p-1,*i0s) ; [WinXP+] FALSE for a 32-bit application on ARM64!
+  System::Int64Op
   Pop $_LOGICLIB_TEMP
   !insertmacro _!= $_LOGICLIB_TEMP 0 `${_t}` `${_f}`
 !macroend
@@ -59,31 +62,39 @@
 !macroend
 
 
-!define GetNativeProcessorArchitecture "!insertmacro GetNativeProcessorArchitecture "
-!macro GetNativeProcessorArchitecture outvar
-  !if ${outvar} != $1
-  Push $1
-  !endif
-  !if "${NSIS_PTR_SIZE}" <= 4
-  System::Call 'KERNEL32::GetSystemInfo(@r1)' ; < XP
-  !endif
-  System::Call 'KERNEL32::GetNativeSystemInfo(@r1)'
-  System::Call '*$1(&i2.s)' ; Extract wProcessorArchitecture (PROCESSOR_ARCHITECTURE_*)
+!define GetNativeMachineArchitecture "!insertmacro GetNativeMachineArchitecture "
+!macro GetNativeMachineArchitecture outvar
+  !define GetNativeMachineArchitecture_lbl lbl_GNMA_${__COUNTER__}
+  System::Call kernel32::GetCurrentProcess()p.s
+  System::Call kernel32::IsWow64Process2(ps,*i,*i0s)
   Pop ${outvar}
-  !if ${outvar} != $1
-  Pop $1
-  !endif
+  IntCmp ${outvar} 0 "" ${GetNativeMachineArchitecture_lbl}_done ${GetNativeMachineArchitecture_lbl}_done
+    !if "${NSIS_PTR_SIZE}" <= 4
+    !if "${NSIS_CHAR_SIZE}" <= 1
+    System::Call 'USER32::CharNextW(w"")p.s'
+    Pop ${outvar}
+    IntPtrCmpU ${outvar} 0 "" ${GetNativeMachineArchitecture_lbl}_oldnt ${GetNativeMachineArchitecture_lbl}_oldnt
+      StrCpy ${outvar} 332 ; Always IMAGE_FILE_MACHINE_I386 on Win9x
+      Goto ${GetNativeMachineArchitecture_lbl}_done
+    ${GetNativeMachineArchitecture_lbl}_oldnt:
+    !endif
+    !endif
+    System::Call '*0x7FFE002E(&i2.s)'
+    Pop ${outvar}
+  ${GetNativeMachineArchitecture_lbl}_done:
+  !undef GetNativeMachineArchitecture_lbl
 !macroend
 
-!define IsNativeProcessorArchitecture `"" IsNativeProcessorArchitecture `
-!macro _IsNativeProcessorArchitecture _ignore _arc _t _f
+!macro _IsNativeMachineArchitecture _ignore _arc _t _f
   !insertmacro _LOGICLIB_TEMP
-  ${GetNativeProcessorArchitecture} $_LOGICLIB_TEMP
+  ${GetNativeMachineArchitecture} $_LOGICLIB_TEMP
   !insertmacro _= $_LOGICLIB_TEMP ${_arc} `${_t}` `${_f}`
 !macroend
-!define IsNativeIA32 '${IsNativeProcessorArchitecture} 0' ; Intel x86
-!define IsNativeAMD64 '${IsNativeProcessorArchitecture} 9' ; x86-64/x64
-!define IsNativeARM64 '${IsNativeProcessorArchitecture} 12'
+
+!define IsNativeMachineArchitecture `"" IsNativeMachineArchitecture `
+!define IsNativeIA32 '${IsNativeMachineArchitecture} 332' ; Intel x86
+!define IsNativeAMD64 '${IsNativeMachineArchitecture} 34404' ; x86-64/x64
+!define IsNativeARM64 '${IsNativeMachineArchitecture} 43620'
 
 
 !define DisableX64FSRedirection "!insertmacro DisableX64FSRedirection"

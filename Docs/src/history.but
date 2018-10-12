@@ -8,7 +8,7 @@ Released on ??? ??th, 20??
 
 \S2{} Major Changes
 
-\b Added IsNativeProcessorArchitecture helper macros to x64.nsh
+\b Added IsNativeMachineArchitecture helper macros to x64.nsh
 
 \S2{} Minor Changes
 
@@ -3379,7 +3379,7 @@ Released on December 6th, 2002
 
 \b Licence text receives initial focus (page up & down work immediately, return key still works)
 
-\b Made win9x move/delete on reboot support proper and function like on win2k
+\b Made Win9x move/delete on reboot support proper and function like on Win2k
 
 \b Now always loads RichEdit v2 if present (links work on Win9x)
 
