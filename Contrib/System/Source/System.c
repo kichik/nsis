@@ -326,9 +326,28 @@ SystemProc* CallProc(SystemProc *proc)
         ret = SendMessageW((HWND)proc->Params[1].Value, (UINT)proc->Params[2].Value, (WPARAM)proc->Params[3].Value, (LPARAM)proc->Params[4].Value);
     else if (!lstrcmp(proc->ProcName, _T("GetVersionEx"))) // For winver
         ret = GetVersionEx((OSVERSIONINFO*)proc->Params[1].Value), LastError = GetLastError();
-    else if (!lstrcmp(proc->ProcName, _T("GetNativeSystemInfo"))) // For x64:GetNativeProcessorArchitecture
+    else if (!lstrcmp(proc->ProcName, _T("GetNativeSystemInfo")))
         GetNativeSystemInfo((SYSTEM_INFO*)(ret = proc->Params[1].Value));
-    else
+    else if (!lstrcmp(proc->ProcName, _T("CharNextW"))) // For x64
+        ret = (INT_PTR) CharNextW((LPWSTR)proc->Params[1].Value);
+    else if (!lstrcmp(proc->ProcName, _T("GetCurrentProcess"))) // For x64
+        ret = (INT_PTR) GetCurrentProcess();
+    else if (!lstrcmp(proc->ProcName, _T("IsWow64Process"))) // For x64
+    {
+        if (!(ret = (INT_PTR) GetProcAddress(LoadLibrary(_T("KERNEL32")), "IsWow64Process"))) goto fail;
+        ret = ((BOOL(WINAPI*)(HANDLE,BOOL*))ret)((HANDLE)proc->Params[1].Value, (BOOL*)proc->Params[2].Value);
+    }
+    else if (!lstrcmp(proc->ProcName, _T("IsWow64Process2"))) // For x64
+    {
+        if (!(ret = (INT_PTR) GetProcAddress(LoadLibrary(_T("KERNEL32")), "IsWow64Process2"))) goto fail;
+        ret = ((BOOL(WINAPI*)(HANDLE,USHORT*,USHORT*))ret)((HANDLE)proc->Params[1].Value, (USHORT*)proc->Params[2].Value, (USHORT*)proc->Params[3].Value);
+    }
+    else if (!lstrcmp(proc->ProcName, _T("Wow64EnableWow64FsRedirection"))) // For x64
+    {
+        if (!(ret = (INT_PTR) GetProcAddress(LoadLibrary(_T("KERNEL32")), "Wow64EnableWow64FsRedirection"))) goto fail;
+        ret = ((BYTE(WINAPI*)(BYTE))ret)((BYTE)proc->Params[1].Value);
+    }
+    else fail:
         proc->ProcResult = PR_ERROR, ret = 0, LastError = ERROR_INVALID_FUNCTION;
     place = (INT_PTR*) proc->Params[0].Value;
     if (!ParamIsPointer(proc->Params[0])) place = (INT_PTR*) &(proc->Params[0].Value);
