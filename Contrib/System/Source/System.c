@@ -1047,7 +1047,7 @@ void ParamsIn(SystemProc *proc)
             {
               LPTSTR straddr = system_getuservariableptr(par->Input - 1);
               par->Value = (INT_PTR) straddr;
-              par->Value += sizeof(void*) > 4 ? sizeof(_T("-9223372036854775807")) : sizeof(_T("-2147483647"));
+              par->Value += sizeof(void*) > 4 ? sizeof(_T("-9223372036854775807###")) : sizeof(_T("-2147483647")); // "###" for sizeof(void*) alignment
               IntPtrToStr(par->Value, straddr);
             }
             break;
