@@ -180,6 +180,19 @@ void ErrorMessage(HWND hwnd,const TCHAR *str) {
   LogMessage(hwnd,buf);
 }
 
+static void CenterOnParent(HWND hwnd, HWND hParent)
+{
+  RECT r;
+  GetWindowRect(hwnd, &r);
+  UINT w = (r.right - r.left), h = (r.bottom - r.top), swp = SWP_NOSIZE|SWP_NOZORDER|SWP_NOACTIVATE;
+  if (GetWindowRect(hParent, &r))
+    SetWindowPos(hwnd, 0, r.left + ((r.right - r.left)/2) - (w/2), r.top + ((r.bottom - r.top)/2) - (h/2), 0, 0, swp);
+}
+void CenterOnParent(HWND hwnd)
+{
+  CenterOnParent(hwnd, GetWindow(hwnd, GW_OWNER));
+}
+
 void SetDialogFocus(HWND hDlg, HWND hCtl)
 {
   //blogs.msdn.com/b/oldnewthing/archive/2004/08/02/205624.aspx
@@ -956,7 +969,7 @@ bool FileExists(const TCHAR *fname)
 
 bool OpenUrlInDefaultBrowser(HWND hwnd, LPCSTR Url)
 {
-  return (int)(INT_PTR) ShellExecuteA(hwnd, NULL , Url, NULL, NULL, SW_SHOWNORMAL) > 32;
+  return (int)(INT_PTR) ShellExecuteA(hwnd, NULL, Url, NULL, NULL, SW_SHOWNORMAL) > 32;
 }
 
 HMENU FindSubMenu(HMENU hMenu, UINT uId)
