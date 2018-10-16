@@ -10,9 +10,9 @@
 // This software is provided 'as-is', without any express or implied
 // warranty.
 
+#include "makensisw.h"
 #include <windows.h>
 #include <windowsx.h>
-#include "makensisw.h"
 #include "utils.h"
 #include "resource.h"
 
@@ -34,7 +34,7 @@ typedef struct _DPI {
 
 static INT_PTR WINAPI Compat_SetThreadDpiAwarenessContext(INT_PTR AC)
 {
-  return NULL;
+  return 0;
 }
 
 static void InitializeDpiApi()
@@ -53,7 +53,7 @@ typedef struct _DIALOGDATA {
   BOOL Dragging;
   HWND hWndTarget;
   int DialogAwarenessContext;
-  static struct _DIALOGDATA* Get(HWND hDlg) { return (DIALOGDATA*) GetWindowLongPtr(hDlg, DWLP_USER); }
+  static struct _DIALOGDATA* Get(HWND hDlg) { return (struct _DIALOGDATA*) GetWindowLongPtr(hDlg, DWLP_USER); }
 } DIALOGDATA;
 
 typedef struct {
@@ -102,21 +102,10 @@ static HWND GetChildWindowFromPointHelper(POINT pt)
   while(!includeHidden && hWnd && !IsWindowVisible(hWnd))
     if ((hWnd2 = GetParentWindow(hWnd)))
       hWnd = hWnd2;
-#if 0
-  for (HWND hWndChild;;)
-  {
-    POINT childpt = pt;
-    HWND hWndParent = GetParent(hWnd);
-    ScreenToClient(hWndParent, &childpt);
-    if (!(hWndChild = RealChildWindowFromPoint(hWndParent, childpt)) || hWndChild == hWnd)
-      break;
-    hWnd = hWndChild;
-  }
-#else
+
   FINDCHILDDATA fcd;
   fcd.Init(pt, includeHidden);
   hWnd = FindChildWindowFromPoint(hWnd, &fcd);
-#endif
   return hWnd;
 }
 
@@ -130,14 +119,15 @@ static BOOL IsHung(HWND hWnd)
   {
     static FARPROC g_func = GetProcAddress(LoadLibraryA("USER32"), "IsHungAppWindow");
     if (g_func) return ((BOOL(WINAPI*)(HWND))g_func)(hWnd);
-    LRESULT mr, rv = SendMessageTimeout(hWnd, WM_NULL, 0, 0, SMTO_ABORTIFHUNG, 500, &mr);
+    DWORD_PTR mr;
+    LRESULT rv = SendMessageTimeout(hWnd, WM_NULL, 0, 0, SMTO_ABORTIFHUNG, 500, &mr);
     return rv == 0;
   }
 }
 
 static void SetDragSourceImage(HWND hDlg, INT_PTR Dragging = false)
 {
-  HCURSOR hCur = Dragging ? NULL : LoadCursor(NULL, MAKEINTRESOURCE(IDC_CROSS));
+  HCURSOR hCur = Dragging ? NULL : LoadCursor(NULL, IDC_CROSS);
   SendDlgItemMessage(hDlg, IDC_SPYDRAG, STM_SETIMAGE, IMAGE_CURSOR, (LPARAM) hCur);
 }
 
@@ -210,7 +200,7 @@ static INT_PTR CALLBACK SpyDlgProc(HWND hDlg, UINT Msg, WPARAM WParam, LPARAM LP
       pDD->hWndTarget = 0;
       pDD->Dragging++;
       SetDragSourceImage(hDlg, (INT_PTR) hDlg);
-      SetCursor(LoadCursor(NULL, MAKEINTRESOURCE(IDC_CROSS)));
+      SetCursor(LoadCursor(NULL, IDC_CROSS));
       break;
     }
     break;
@@ -249,9 +239,9 @@ struct ScopedThreadDpiAwarenessContext { // Note: Assumes InitializeDpiApi() has
     UINT GetBits() const { return m_l; }
     UINT m_l;
   };
-  ScopedThreadDpiAwarenessContext(List ACList) : m_OrgAC(NULL)
+  ScopedThreadDpiAwarenessContext(List ACList) : m_OrgAC(0)
   {
-    for (UINT s = 4, list = ACList.GetBits(); m_AC = -(int)s; --s)
+    for (UINT s = 4, list = ACList.GetBits(); (m_AC = -(int)s); --s)
       if ((1 << s) & list)
         if ((m_OrgAC = DPI::SetThreadDpiAwarenessContext((INT_PTR) m_AC)))
           break;
