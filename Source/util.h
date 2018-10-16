@@ -306,7 +306,7 @@ template<class R, class T> inline R debugtruncate_cast(T t,const char*f,unsigned
 #ifdef MAKENSIS
   if (sizeof(T) > sizeof(R) && !( (t <= (T)(~((R)0))) )) {
     _tprintf(_T("unsafe truncate_cast: %") NPRIns _T(":%u\n"),f,l);
-    if (sizeof(T) <= sizeof(void*)) _tprintf(_T("\t0x%p > %0xp\n"),(void*)(UINT_PTR)(t),(void*)(UINT_PTR)(~((R)0)));
+    if (sizeof(T) <= sizeof(void*)) _tprintf(_T("\t%ph > %ph\n"),(void*)(UINT_PTR)(t),(void*)(UINT_PTR)(~((R)0)));
   }
 #endif
   return internaltruncate_cast<R>(t);
