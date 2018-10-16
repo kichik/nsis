@@ -51,6 +51,7 @@ void CopyToClipboard(HWND hwnd);
 void ClearLog(HWND hwnd);
 void LogMessage(HWND hwnd,const TCHAR *str);
 void ErrorMessage(HWND hwnd,const TCHAR *str);
+void CenterOnParent(HWND hwnd);
 void SetDialogFocus(HWND hDlg, HWND hCtl); // Use this and not SetFocus()!
 #define DisableItems(hwnd) EnableDisableItems(hwnd, 0)
 #define EnableItems(hwnd) EnableDisableItems(hwnd, 1)

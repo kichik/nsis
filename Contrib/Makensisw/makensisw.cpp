@@ -613,6 +613,11 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
           DialogBox(g_sdata.hInstance,MAKEINTRESOURCE(DLG_SETTINGS),g_sdata.hwnd,(DLGPROC)SettingsProc);
           return TRUE;
         }
+        case IDM_WNDSPY:
+        {
+          extern int ShowWndSpy(HWND hOwner);
+          return ShowWndSpy(g_sdata.hwnd);
+        }
         case IDM_TEST:
         case IDC_TEST:
         {
@@ -836,6 +841,7 @@ INT_PTR CALLBACK AboutProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
   switch(msg) {
     case WM_INITDIALOG:
     {
+      CenterOnParent(hwndDlg);
       HFONT fontnorm = CreateFont(13, FW_NORMAL, FIXED_PITCH|FF_DONTCARE, _T("Tahoma")),
             fontbold = CreateFont(13, FW_BOLD, FIXED_PITCH|FF_DONTCARE, _T("Tahoma"));
       if (!fontbold) {
@@ -918,6 +924,7 @@ INT_PTR CALLBACK SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lPar
   switch(msg) {
     case WM_INITDIALOG:
     {
+      CenterOnParent(hwndDlg);
       for(int i = (int)COMPRESSOR_SCRIPT; i <= (int)COMPRESSOR_BEST; i++)
         SendDlgItemMessage(hwndDlg, IDC_COMPRESSOR, CB_ADDSTRING, 0, (LPARAM)compressor_display_names[i]);
       SendDlgItemMessage(hwndDlg, IDC_COMPRESSOR, CB_SETCURSEL, (WPARAM)g_sdata.default_compressor, (LPARAM)0);
@@ -1086,9 +1093,8 @@ INT_PTR CALLBACK CompressorProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lP
   switch(msg) {
     case WM_INITDIALOG:
     {
-      int i=0;
-
-      for(i=(int)COMPRESSOR_SCRIPT; i<= (int)COMPRESSOR_BEST; i++) {
+      CenterOnParent(hwndDlg);
+      for(int i=(int)COMPRESSOR_SCRIPT; i <= (int)COMPRESSOR_BEST; i++) {
         SendDlgItemMessage(hwndDlg, IDC_COMPRESSOR, CB_ADDSTRING, 0, (LPARAM)compressor_display_names[i]);
       }
       SendDlgItemMessage(hwndDlg, IDC_COMPRESSOR, CB_SETCURSEL, (WPARAM)g_sdata.compressor, (LPARAM)0);
@@ -1129,6 +1135,7 @@ INT_PTR CALLBACK SymbolSetProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lPa
       HWND hwndEdit;
       HKEY hKey;
 
+      CenterOnParent(hwndDlg);
       EnableWindow(GetDlgItem(hwndDlg, IDC_DEL), FALSE);
       if (OpenRegSettingsKey(hKey)) {
         HKEY hSubKey;
