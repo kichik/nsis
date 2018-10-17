@@ -109,13 +109,18 @@ static HWND GetChildWindowFromPointHelper(POINT pt)
   return hWnd;
 }
 
+#if defined(__MINGW32_MAJOR_VERSION) && !defined(__MINGW64_VERSION_MAJOR) && (!defined(_WIN32_WINNT) || (_WIN32_WINNT < 0x0500))
+WINUSERAPI BOOL WINAPI IsHungAppWindow(HWND); // MinGW is wrong, IsHungAppWindow was added in WinNT4. MinGW < 3.20? does not even have it in their .lib!
+#endif
 static BOOL IsHung(HWND hWnd)
 {
+#if !(defined(__MINGW32_MAJOR_VERSION) && !defined(__MINGW64_VERSION_MAJOR) && (__MINGW64_VERSION_MAJOR <= 15))
   if (sizeof(void*) > 4 || sizeof(TCHAR) > 1)
   {
     return IsHungAppWindow(hWnd);
   }
   else
+#endif
   {
     static FARPROC g_func = GetProcAddress(LoadLibraryA("USER32"), "IsHungAppWindow");
     if (g_func) return ((BOOL(WINAPI*)(HWND))g_func)(hWnd);
