@@ -114,7 +114,7 @@ WINUSERAPI BOOL WINAPI IsHungAppWindow(HWND); // MinGW is wrong, IsHungAppWindow
 #endif
 static BOOL IsHung(HWND hWnd)
 {
-#if !(defined(__MINGW32_MAJOR_VERSION) && !defined(__MINGW64_VERSION_MAJOR) && (__MINGW64_VERSION_MAJOR <= 15))
+#if !(defined(__MINGW32_MAJOR_VERSION) && !defined(__MINGW64_VERSION_MAJOR) && (__MINGW32_MINOR_VERSION <= 15))
   if (sizeof(void*) > 4 || sizeof(TCHAR) > 1)
   {
     return IsHungAppWindow(hWnd);
