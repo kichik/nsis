@@ -97,7 +97,7 @@ void CreateToolBar()
     if (hasCC4_71) { // Version 4.71
       SendMessage(g_toolbar.hwnd, TB_SETEXTENDEDSTYLE, 0, TBSTYLE_EX_DRAWDDARROWS);
     }
-      
+
   }
   else {
     // Old Windows 95 toolbar, 256 color bitmap with system palette
