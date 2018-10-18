@@ -986,3 +986,42 @@ HFONT CreateFont(int Height, int Weight, DWORD PitchAndFamily, LPCTSTR Face)
                     OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
                     PitchAndFamily, Face);
 }
+
+#ifndef SP_GRIPPER
+#ifndef HTHEME
+#define HTHEME HTHEME_OLDSDK
+struct OLDSDK_TYPE_HTHEME {int unused;}; typedef struct OLDSDK_TYPE_HTHEME* HTHEME;
+#endif
+#define SP_GRIPPER 3
+#endif
+struct VisualStyles {
+  VisualStyles() : m_OpenThemeData(NULL) {}
+  static HTHEME WINAPI Compat_OpenThemeData(HWND hWnd, LPCWSTR Class) { return NULL; }
+  HTHEME OpenThemeData(HWND hWnd, LPCWSTR Class) { return (InitUXTheme(), m_OpenThemeData(hWnd, Class)); }
+  void InitUXTheme()
+  {
+    if (m_OpenThemeData) return ;
+    HMODULE hUXT = LoadLibraryA("UXTHEME");
+    if (!((FARPROC&) m_OpenThemeData = GetProcAddress(hUXT, "OpenThemeData"))) m_OpenThemeData = Compat_OpenThemeData;
+    (FARPROC&) CloseThemeData = GetProcAddress(hUXT, "CloseThemeData");
+    (FARPROC&) DrawThemeBackground = GetProcAddress(hUXT, "DrawThemeBackground");
+  }
+
+  HTHEME(WINAPI*m_OpenThemeData)(HWND,LPCWSTR);
+  HRESULT(WINAPI*CloseThemeData)(HTHEME);
+  HRESULT(WINAPI*DrawThemeBackground)(HTHEME,HDC,int,int,LPCRECT,LPCRECT);
+} VS;
+
+void DrawGripper(HWND hWnd, HDC hDC, const RECT&r)
+{
+  HTHEME hTheme = VS.OpenThemeData(hWnd, L"STATUS");
+  if (hTheme)
+  {
+    VS.DrawThemeBackground(hTheme, hDC, SP_GRIPPER, 0, &r, NULL);
+    VS.CloseThemeData(hTheme);
+  }
+  else
+  {
+    DrawFrameControl(hDC, const_cast<LPRECT>(&r), DFC_SCROLL, DFCS_SCROLLSIZEGRIP);
+  }
+}

@@ -84,10 +84,12 @@ bool OpenUrlInDefaultBrowser(HWND hwnd, LPCSTR Url);
 HMENU FindSubMenu(HMENU hMenu, UINT uId);
 HFONT CreateFont(int Height, int Weight, DWORD PitchAndFamily, LPCTSTR Face);
 
-inline void GetGripperPos(HWND hwnd, RECT&r)
+void DrawGripper(HWND hWnd, HDC hDC, const RECT&r);
+static inline void GetGripperPos(HWND hwnd, RECT&r)
 {
   GetClientRect(hwnd, &r);
   r.left = r.right - GetSystemMetrics(SM_CXVSCROLL);
   r.top = r.bottom - GetSystemMetrics(SM_CYVSCROLL);
 }
+
 #endif

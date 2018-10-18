@@ -242,7 +242,7 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
       PAINTSTRUCT ps;
       GetGripperPos(hwndDlg, g_resize.griprect);
       HDC hdc = BeginPaint(hwndDlg, &ps);
-      DrawFrameControl(hdc, &g_resize.griprect, DFC_SCROLL, DFCS_SCROLLSIZEGRIP);
+      DrawGripper(hwndDlg, hdc, g_resize.griprect);
       EndPaint(hwndDlg, &ps);
       return TRUE;
     }
