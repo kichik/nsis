@@ -77,7 +77,7 @@ void CreateToolBar()
   // For Comctl32.dll version detection
   #ifndef _WIN64
   HMODULE hMod = GetModuleHandle(_T("comctl32.dll"));
-  const FARPROC hasCC4_70 = GetProcAddress(hMod, "InitCommonControlsEx");
+  const FARPROC hasCC4_70 = sizeof(TCHAR) > 1 ? (FARPROC) TRUE : GetProcAddress(hMod, "InitCommonControlsEx"); // NT4 shipped with v4.70
   const FARPROC hasCC4_71 = GetProcAddress(hMod, "DllGetVersion");
   #else
   const bool hasCC4_70 = true, hasCC4_71 = true;
@@ -108,13 +108,6 @@ void CreateToolBar()
     tbBitmap.nID = IDB_TOOLBAR;
     SendMessage(g_toolbar.hwnd, TB_ADDBITMAP, IMAGECOUNT, (LPARAM) &tbBitmap);
   }
-
-  HMENU toolmenu = FindSubMenu(g_sdata.menu, IDM_SCRIPT);
-  g_toolbar.dropdownmenu = FindSubMenu(toolmenu, IDM_COMPRESSOR_SUBMENU);
-  RECT rect;
-  SendMessage(g_toolbar.hwnd, TB_GETITEMRECT, TBB_COMPRESSOR, (LPARAM) &rect);
-  g_toolbar.dropdownpoint.x = rect.left;
-  g_toolbar.dropdownpoint.y = rect.bottom+1;
 }
 
 void UpdateToolBarCompressorButton()
@@ -188,12 +181,28 @@ void EnableToolBarButton(int cmdid, BOOL enabled)
   SendMessage(g_toolbar.hwnd, TB_SETSTATE, cmdid, MAKELPARAM(state, 0));
 }
 
-void ShowToolbarDropdownMenu()
+static UINT IsRTL(HWND hWnd) { return ((UINT) GetWindowLongPtr(hWnd, GWL_EXSTYLE)) & (WS_EX_LAYOUTRTL); } // WS_EX_RIGHT? WS_EX_RTLREADING?
+
+static UINT GetToolbarDropdownMenuPos(HWND hTB, UINT Id, POINT&pt)
 {
-  RECT rect;
-  GetWindowRect(g_toolbar.hwnd, &rect);
-  TrackPopupMenu(g_toolbar.dropdownmenu, 0, 
-                 rect.left + g_toolbar.dropdownpoint.x, 
-                 rect.top + g_toolbar.dropdownpoint.y, 
-                 0, g_sdata.hwnd, 0);
+  RECT r;
+  INT_PTR idx = SendMessage(hTB, TB_COMMANDTOINDEX, Id, 0);
+  SendMessage(hTB, TB_GETITEMRECT, idx, (LPARAM) &r);
+  MapWindowPoints(hTB, NULL, (POINT*) &r, 2);
+  pt.x = IsRTL(hTB) ? r.right : r.left, pt.y = r.bottom;
+  return GetSystemMetrics(SM_MENUDROPALIGNMENT) ? TPM_RIGHTALIGN : TPM_LEFTALIGN;
+}
+
+static void ShowToolbarDropdownMenu(const NMTOOLBAR&nmtb, HWND hNotifyWnd, HMENU hParentMenu, UINT SubMenuId = -1)
+{
+  POINT pt;
+  HMENU hMenu = SubMenuId == -1 ? hParentMenu : FindSubMenu(hParentMenu, SubMenuId);
+  UINT tpmf = GetToolbarDropdownMenuPos(nmtb.hdr.hwndFrom, nmtb.iItem, pt);
+  TrackPopupMenu(hMenu, tpmf, pt.x, pt.y, 0, hNotifyWnd, NULL);
+}
+
+void ShowCompressorToolbarDropdownMenu(const NMTOOLBAR&nmtb)
+{
+  HMENU hParentMenu = FindSubMenu(g_sdata.menu, IDM_SCRIPT);
+  ShowToolbarDropdownMenu(nmtb, g_sdata.hwnd, hParentMenu, IDM_COMPRESSOR_SUBMENU);
 }

@@ -64,8 +64,6 @@
 
 typedef struct ToolBarStruct {
   HWND hwnd;
-  HMENU dropdownmenu;
-  POINT dropdownpoint;
   HIMAGELIST imagelist;
   HIMAGELIST imagelistd;
   HIMAGELIST imagelisth;
@@ -74,6 +72,6 @@ typedef struct ToolBarStruct {
 void CreateToolBar();
 void EnableToolBarButton(int, BOOL);
 void AddToolBarTooltips();
-void ShowToolbarDropdownMenu();
+void ShowCompressorToolbarDropdownMenu(const NMTOOLBAR&nmtb);
 void UpdateToolBarCompressorButton();
 #endif

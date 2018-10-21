@@ -478,13 +478,11 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
         case TBN_DROPDOWN:
         {
           LPNMTOOLBAR pToolBar = (LPNMTOOLBAR) lParam;
-          if(pToolBar->hdr.hwndFrom == g_toolbar.hwnd && pToolBar->iItem == IDM_COMPRESSOR) {
-            ShowToolbarDropdownMenu();
+          if (pToolBar->hdr.hwndFrom == g_toolbar.hwnd && pToolBar->iItem == IDM_COMPRESSOR) {
+            ShowCompressorToolbarDropdownMenu(*pToolBar);
             return TBDDRET_DEFAULT;
           }
-          else {
-            return TBDDRET_NODEFAULT;
-          }
+          return TBDDRET_NODEFAULT;
         }
       }
       return TRUE;
