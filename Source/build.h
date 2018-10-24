@@ -583,7 +583,10 @@ class CEXEBuild {
       struct postbuild_cmd*next;
       int cmpop, cmpval;
       TCHAR cmd[1];
+      void delete_all();
+      static postbuild_cmd* make(const TCHAR *cmdstr, int cmpop, int cmpval);
     } *postbuild_cmds;
+    int run_postbuild_cmds(const postbuild_cmd *cmds, const TCHAR *templatearg_pc1, const TCHAR* commandname);
     int check_external_exitcode(int exitcode, int op, int val);
 
     TCHAR build_packname[1024], build_packcmd[1024];

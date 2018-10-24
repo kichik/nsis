@@ -96,16 +96,11 @@ CEXEBuild::~CEXEBuild()
   int nlt = lang_tables.getlen() / sizeof(LanguageTable);
   LanguageTable *nla = (LanguageTable*)lang_tables.get();
 
-  for (int i = 0; i < nlt; i++) {
+  for (int i = 0; i < nlt; i++)
     DeleteLangTable(nla+i);
-  }
 
-  for (;postbuild_cmds;)
-  {
-    struct postbuild_cmd * tmp = postbuild_cmds;
-    postbuild_cmds = postbuild_cmds->next;
-    delete [] tmp;
-  }
+  if (postbuild_cmds)
+    postbuild_cmds->delete_all();
 }
 
 CEXEBuild::CEXEBuild(signed char pponly, bool warnaserror) :
@@ -3006,40 +3001,7 @@ int CEXEBuild::write_output(void)
       fileend,total_usize,pc/10,pc%10);
   }
   fclose(fp);
-  if (postbuild_cmds)
-  {
-    for (struct postbuild_cmd *cmd=postbuild_cmds; cmd; cmd = cmd->next)
-    {
-      TCHAR *cmdstr = cmd->cmd, *cmdstrbuf = NULL;
-      TCHAR *arg = _tcsstr(cmdstr, _T("%1"));
-      if (arg)    // if found, replace %1 by build_output_filename
-      {
-        const size_t cchbldoutfile = _tcslen(build_output_filename);
-        cmdstrbuf = (TCHAR*) malloc( (_tcslen(cmdstr) + cchbldoutfile + 1)*sizeof(TCHAR) );
-        if (!cmdstrbuf)
-        {
-          ERROR_MSG(_T("Error: can't allocate memory for finalize command\n"));
-          return PS_ERROR;
-        }
-        arg -= ((UINT_PTR)cmdstr)/sizeof(TCHAR), arg += ((UINT_PTR)cmdstrbuf)/sizeof(TCHAR);
-        _tcscpy(cmdstrbuf,cmdstr);
-        cmdstr = cmdstrbuf;
-        memmove(arg+cchbldoutfile, arg+2, (_tcslen(arg+2)+1)*sizeof(TCHAR));
-        memmove(arg, build_output_filename, cchbldoutfile*sizeof(TCHAR));
-        //BUGBUG: Should we call PathConvertWinToPosix on build_output_filename?
-      }
-
-      SCRIPT_MSG(_T("\nFinalize command: %") NPRIs _T("\n"),cmdstr);
-      int ret = sane_system(cmdstr);
-      if (!check_external_exitcode(ret, cmd->cmpop, cmd->cmpval))
-      {
-        ERROR_MSG(_T("%") NPRIs _T(" %d, aborting\n"), _T("Finalize command returned"), ret);
-        return PS_ERROR;
-      }
-      if (ret != 0) INFO_MSG(_T("%") NPRIs _T(" %d\n"), _T("Finalize command returned"), ret);
-      free(cmdstrbuf);
-    }
-  }
+  RET_UNLESS_OK(run_postbuild_cmds(postbuild_cmds, build_output_filename, _T("Finalize")));
   print_warnings();
   return PS_OK;
 }
@@ -4027,6 +3989,57 @@ void CEXEBuild::set_code_type_predefines(const TCHAR *value)
     default:
       definedlist.add(_T("__GLOBAL__"));
   }
+}
+
+void CEXEBuild::postbuild_cmd::delete_all()
+{
+  for (struct postbuild_cmd *p = this, *tmp; p;)
+  {
+    tmp = p, p = p->next;
+    delete [] tmp;
+  }
+}
+
+CEXEBuild::postbuild_cmd* CEXEBuild::postbuild_cmd::make(const TCHAR *cmdstr, int cmpop, int cmpval)
+{
+  postbuild_cmd *p = (postbuild_cmd*) (new BYTE[FIELD_OFFSET(postbuild_cmd, cmd[_tcsclen(cmdstr)+!0])]);
+  p->next = NULL, _tcscpy(p->cmd, cmdstr);
+  p->cmpop = cmpop, p->cmpval = cmpval;
+  return p;
+}
+
+int CEXEBuild::run_postbuild_cmds(const postbuild_cmd *cmds, const TCHAR *templatearg_pc1, const TCHAR* commandname)
+{
+  for (const postbuild_cmd *cmd = cmds; cmd; cmd = cmd->next)
+  {
+    const TCHAR *cmdstr = cmd->cmd;
+    TCHAR *arg = _tcsstr(const_cast<TCHAR*>(cmdstr), _T("%1")), *cmdstrbuf = NULL;
+    if (arg) // If found, replace %1 with templatearg_pc1
+    {
+      const size_t cchtpc1 = _tcslen(templatearg_pc1);
+      cmdstrbuf = (TCHAR*) malloc((_tcslen(cmdstr) + cchtpc1 + 1) * sizeof(TCHAR));
+      if (!cmdstrbuf)
+      {
+        ERROR_MSG(_T("Error: Can't allocate memory for %") NPRIs _T(" command\n"), commandname);
+        return PS_ERROR;
+      }
+      arg -= ((UINT_PTR)cmdstr)/sizeof(TCHAR), arg += ((UINT_PTR)cmdstrbuf)/sizeof(TCHAR);
+      _tcscpy(cmdstrbuf, cmdstr), cmdstr = cmdstrbuf;
+      memmove(arg+cchtpc1, arg+2, (_tcslen(arg+2)+1)*sizeof(TCHAR));
+      memmove(arg, templatearg_pc1, cchtpc1*sizeof(TCHAR));
+      //BUGBUG: Should we call PathConvertWinToPosix on templatearg_pc1?
+    }
+    SCRIPT_MSG(_T("\n%") NPRIs _T(" command: %") NPRIs _T("\n"), commandname, cmdstr);
+    int ret = sane_system(cmdstr);
+    if (!check_external_exitcode(ret, cmd->cmpop, cmd->cmpval))
+    {
+      ERROR_MSG(_T("%") NPRIs _T(" command returned %d, aborting\n"), commandname, ret);
+      return PS_ERROR;
+    }
+    if (ret != 0) INFO_MSG(_T("%") NPRIs _T(" command returned %d\n"), commandname, ret);
+    free(cmdstrbuf);
+  }
+  return PS_OK;
 }
 
 int CEXEBuild::check_external_exitcode(int exitcode, int op, int val)
