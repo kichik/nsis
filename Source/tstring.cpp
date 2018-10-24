@@ -24,6 +24,7 @@ void CtoTString::Init(const char* str, UINT cp)
 #if defined(_UNICODE) && !defined(_WIN32)
   if (CP_ACP == cp)
   {
+    assert(NSISRT_free_is_STDC_free());
     m_wStr = NSISRT_mbtowc(str); // Should be faster than iconv
     return ;
   }
@@ -45,6 +46,7 @@ CtoTString::~CtoTString() { free(m_wStr); m_wStr = 0; }
 void TtoCString::Init(const wchar_t* str)
 {
 #if defined(_UNICODE) && !defined(_WIN32)
+  assert(NSISRT_free_is_STDC_free());
   m_cStr = NSISRT_wctomb(str); // Should be faster than iconv
   return ;
 #endif
