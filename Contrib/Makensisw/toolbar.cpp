@@ -196,7 +196,7 @@ static UINT GetToolbarDropdownMenuPos(HWND hTB, UINT Id, POINT&pt)
 static void ShowToolbarDropdownMenu(const NMTOOLBAR&nmtb, HWND hNotifyWnd, HMENU hParentMenu, UINT SubMenuId = -1)
 {
   POINT pt;
-  HMENU hMenu = SubMenuId == -1 ? hParentMenu : FindSubMenu(hParentMenu, SubMenuId);
+  HMENU hMenu = SubMenuId == static_cast<UINT>(-1) ? hParentMenu : FindSubMenu(hParentMenu, SubMenuId);
   UINT tpmf = GetToolbarDropdownMenuPos(nmtb.hdr.hwndFrom, nmtb.iItem, pt);
   TrackPopupMenu(hMenu, tpmf, pt.x, pt.y, 0, hNotifyWnd, NULL);
 }
