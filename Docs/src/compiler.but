@@ -2,7 +2,7 @@
 
 \S0{compcommands} Compiler Utility Commands
 
-These commands are similar to the C preprocessor in terms of purpose and functionality. They allow file inclusion, conditional compilation, executable header packing and process execution during the build process. Note: None of these commands allow the use of variables.
+These commands are similar to the C preprocessor in terms of purpose and functionality. They allow file inclusion, conditional compilation, executable header packing and process execution during the build process. Note: None of these commands allow the use of \R{variables}{variables}.
 
 Number literals support the \c{0b}, \c{0o}, \c{0n} and \c{0x} radix prefixes (base 2, 8, 10 and 16 respectively). Note: The deprecated plain \c{0} octal prefix is also supported in some places but its usage is discouraged.
 
