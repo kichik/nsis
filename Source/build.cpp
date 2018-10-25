@@ -3863,9 +3863,10 @@ int CEXEBuild::set_target_architecture_data()
     { TARGET_ARM64,      _T("NSIS_ARM64"), _T("1")   }
   };
   for (i = 0; i < COUNTOF(tdef); ++i) definedlist.del(tdef[i].def);
-  for (i = 0; i < COUNTOF(tdef); ++i) if (tdef[i].tt == m_target_type) definedlist.set(tdef[i].def, tdef[i].val);
+  unsigned int success = false;
+  for (i = 0; i < COUNTOF(tdef); ++i) if (tdef[i].tt == m_target_type) definedlist.set(tdef[i].def, tdef[i].val), ++success;
 
-  return PS_OK;
+  return success ? PS_OK : PS_ERROR;
 }
 
 const TCHAR* CEXEBuild::get_target_suffix(CEXEBuild::TARGETTYPE tt, const TCHAR*defval) const
