@@ -78,7 +78,7 @@ Section "" ; empty string makes it hidden, so would starting with -
   SetOutPath $INSTDIR
   File /a "silent.nsi"
   CreateDirectory "$INSTDIR\MyProjectFamily\MyProject" ; 2 recursively create a directory for fun.
-  WriteUninstaller "bt-uninst.exe"
+  WriteUninstaller "$INSTDIR\bt-uninst.exe"
   
   Nop ; for fun
 

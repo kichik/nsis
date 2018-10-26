@@ -55,7 +55,7 @@ Section "Example2 (required)"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Example2" "UninstallString" '"$INSTDIR\uninstall.exe"'
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Example2" "NoModify" 1
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Example2" "NoRepair" 1
-  WriteUninstaller "uninstall.exe"
+  WriteUninstaller "$INSTDIR\uninstall.exe"
   
 SectionEnd
 
