@@ -62,7 +62,7 @@ Section ""
 	MessageBox MB_YESNO "We can change the branding image from within a section too!$\nDo you want me to change it?" IDNO done
 		!insertmacro BIMAGE "${NSISDIR}\Contrib\Graphics\Wizard\nsis.bmp" ""
 	done:
-	WriteUninstaller uninst.exe
+	WriteUninstaller $INSTDIR\uninst.exe
 SectionEnd
 
 ;--------------------------------
