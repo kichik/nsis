@@ -26,7 +26,7 @@
 #define TSTRINGIFY(x) TSTRINGIFY_(x)
 
 #ifdef RELEASE
-     const TCHAR *NSISW_VERSION = _T("MakeNSISW ") TSTRINGIFY(RELEASE) _T(" (NSIS Compiler Interface)");
+     const TCHAR *NSISW_VERSION = TSTRINGIFY(RELEASE);
 #else
-     const TCHAR *NSISW_VERSION = _T("MakeNSISW ") __TDATE__;
+     const TCHAR *NSISW_VERSION = __TDATE__;
 #endif
