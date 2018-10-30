@@ -166,10 +166,15 @@ ${MementoSection} "NSIS Core Files (required)" SecCore
   File ..\COPYING
   File ..\NSIS.chm
   !pragma verifychm "..\NSIS.chm"
-  File ..\NSIS.exe
-  !if /FileExists "..\NSIS.exe.manifest"
-    File "..\NSIS.exe.manifest"
+  !if /FileExists "..\NSIS.exe"
+    !if /FileExists "..\NSIS.exe.manifest"
+      File "..\NSIS.exe.manifest"
+    !endif
+  !else
+    !define NO_NSISMENU_HTML 1
+    !makensis '-v2 "NSISMenu.nsi" "-XOutFile ..\NSIS.exe"' = 0
   !endif
+  File ..\NSIS.exe
 
   SetOutPath $INSTDIR\Bin
   File ..\Bin\makensis.exe
@@ -227,12 +232,14 @@ ${MementoSection} "NSIS Core Files (required)" SecCore
   SetOutPath $INSTDIR\Docs\makensisw
   File ..\Docs\makensisw\*.txt
 
-  SetOutPath $INSTDIR\Menu
-  File ..\Menu\*.html
-  SetOutPath $INSTDIR\Menu\images
-  File ..\Menu\images\header.gif
-  File ..\Menu\images\line.gif
-  File ..\Menu\images\site.gif
+  !ifndef NO_NSISMENU_HTML
+    SetOutPath $INSTDIR\Menu
+    File ..\Menu\*.html
+    SetOutPath $INSTDIR\Menu\images
+    File ..\Menu\images\header.gif
+    File ..\Menu\images\line.gif
+    File ..\Menu\images\site.gif
+  !endif
 
   Delete $INSTDIR\makensis.htm
   Delete $INSTDIR\Docs\*.html
@@ -491,7 +498,7 @@ ${MementoSection} "Graphics" SecGraphics
   Delete $INSTDIR\Contrib\Icons\*.bmp
   RMDir $INSTDIR\Contrib\Icons
   SetOutPath $INSTDIR\Contrib\Graphics
-  File /r "..\Contrib\Graphics\*.ico"
+  File /r /x nsis-menu.ico "..\Contrib\Graphics\*.ico"
   File /r "..\Contrib\Graphics\*.bmp"
 ${MementoSectionEnd}
 
