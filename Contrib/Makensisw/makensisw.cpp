@@ -851,13 +851,14 @@ INT_PTR CALLBACK AboutProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
       SendDlgItemMessage(hwndDlg, IDC_ABOUTPORTIONS, WM_SETFONT, (WPARAM)fontnorm, FALSE);
       SendDlgItemMessage(hwndDlg, IDC_NSISVER, WM_SETFONT, (WPARAM)fontnorm, FALSE);
       SendDlgItemMessage(hwndDlg, IDC_OTHERCONTRIB, WM_SETFONT, (WPARAM)fontnorm, FALSE);
-      SetDlgItemText(hwndDlg, IDC_NSISVER, g_sdata.branding);
-      SetDlgItemText(hwndDlg, IDC_ABOUTVERSION, NSISW_VERSION);
+      SendMessage(hwndDlg, WM_APP, 0, 0); // Set IDC_ABOUTVERSION
       SetDlgItemText(hwndDlg, IDC_ABOUTCOPY, COPYRIGHT);
       SetDlgItemText(hwndDlg, IDC_OTHERCONTRIB, CONTRIB);
+      SetDlgItemText(hwndDlg, IDC_NSISVER, g_sdata.branding);
       break;
     }
     case WM_COMMAND:
+      if (wParam == MAKELONG(IDC_ABOUTVERSION, STN_DBLCLK)) goto showversion;
       if (IDOK != LOWORD(wParam)) break;
       // fall through
     case WM_CLOSE:
@@ -865,6 +866,13 @@ INT_PTR CALLBACK AboutProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
     case WM_DESTROY:
       DeleteObject((HGDIOBJ)SendDlgItemMessage(hwndDlg, IDC_ABOUTVERSION, WM_GETFONT, 0, 0));
       DeleteObject((HGDIOBJ)SendDlgItemMessage(hwndDlg, IDC_ABOUTCOPY, WM_GETFONT, 0, 0));
+      break;
+    case WM_APP: showversion:
+      {
+        TCHAR buf[200], showver = wParam != 0;
+        wsprintf(buf, _T("MakeNSISW %s%s(NSIS Compiler Interface)"), showver ? NSISW_VERSION : _T(""), showver ? _T(" ") : _T(""));
+        SetDlgItemText(hwndDlg, IDC_ABOUTVERSION, buf);
+      }
       break;
   }
   return FALSE;
