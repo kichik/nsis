@@ -28,6 +28,11 @@ https://wayback.archive.org/web/20021221200122/http://msdn.microsoft.com/library
 #include <commctrl.h>
 #include "resource.h"
 
+#if defined(_MSC_VER) && _MSC_VER-0 >= 1600 && _MSC_VER-0 <= 1800 // MSVC complains about math stuff we are not even using (bug #1159)
+EXTERN_C int _fltused = 0;
+EXTERN_C double _hypot(double x, double y) { return 0.0; }
+#endif
+
 #ifndef LOCALE_SNAME
 #define LOCALE_SNAME 0x005C
 #endif
