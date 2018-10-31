@@ -6,6 +6,10 @@
 
 #define STR_SIZE 1024
 
+#if defined(_MSC_VER) && _MSC_VER-0 >= 1600 && _MSC_VER-0 <= 1800 // MSVC complains about math stuff we are not even using (bug #1159)
+EXTERN_C int _fltused = 0;
+EXTERN_C double _hypot(double x, double y) { return 0.0; }
+#endif
 
 /*
 All A/W functions need this ugly hack so we can call them in template functions.
