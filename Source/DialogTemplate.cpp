@@ -432,7 +432,6 @@ void CDialogTemplate::CTrimToString(WORD id, TCHAR *str, int margins) {
 }
 #else //! WIN32
 void CDialogTemplate::PixelsToDlgUnits(short& x, short& y) { assert(0); }
-void CDialogTemplate::PixelsToDlgUnits(SIZE& siz) { assert(0); }
 void CDialogTemplate::DlgUnitsToPixels(short& x, short& y) { assert(0); }
 #endif //~ WIN32
 
