@@ -10,13 +10,13 @@ The commands below all adjust attributes of the installer. These attributes cont
 
 \c (left|right|top|bottom) (width|height) [padding]
 
-Adds a branding image on the top, bottom, left, or right of the installer. Its size will be set according to the width/height specified, the installer width/height and the installers font. The final size will not always be what you requested; have a look at the output of the command for the actual size. Because this depends on the installers font, you should use \R{asetfont}{SetFont} before \R{aaddbrandingimage}{AddBrandingImage}. The default padding value is 2.
+Adds a branding image on the top, bottom, left, or right of the installer. Its size will be set according to the width/height specified, the installer width/height and the installers font. The final size will not always be what you requested; have a look at the output of the command for the actual size. Because this depends on the installers font, you should use \R{asetfont}{SetFont} before AddBrandingImage. The default padding value is 2. The numbers can be suffixed with \c{u} to specify dialog units instead of pixels.
 
-\R{aaddbrandingimage}{AddBrandingImage} only adds a placeholder for an image. To set the image itself at runtime, use \R{setbrandingimage}{SetBrandingImage}.
+AddBrandingImage only adds a placeholder for an image. To set the image itself at runtime, use \R{setbrandingimage}{SetBrandingImage}.
 
 \c AddBrandingImage left 100
 \c AddBrandingImage right 50
-\c AddBrandingImage top 20
+\c AddBrandingImage top 20u 3u
 \c AddBrandingImage bottom 35
 \c AddBrandingImage left 100 5
 
