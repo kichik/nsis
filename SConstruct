@@ -147,8 +147,7 @@ if 'msvc' in defenv['TOOLS'] or 'mstoolkit' in defenv['TOOLS']:
 	ignore_tests = 'none'
 else:
 	ignore_tests = ','.join(Split("""
-Examples/makensis.nsi
-Examples/gfx.nsi"""))
+Examples/makensis.nsi"""))
 
 # version
 opts.Add(('VERSION', 'Version of NSIS', cvs_version))

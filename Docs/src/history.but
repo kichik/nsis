@@ -20,9 +20,11 @@ Released on ??? ??th, 20??
 
 \b Added NTMARTA to preload list to fix rare Windows 7 security issue (\W{http://sf.net/p/nsis/bugs/1204}{bug #1204})
 
-\b MakeNSIS prints -CMDHELP to stdout (\W{http://sf.net/p/nsis/bugs/1203}{bug #1203})
+\b AddBrandingImage now supports dialog units
 
 \b Fixed !macroundef of last defined macro bug
+
+\b MakeNSIS prints -CMDHELP to stdout (\W{http://sf.net/p/nsis/bugs/1203}{bug #1203})
 
 \S2{} Translations
 
