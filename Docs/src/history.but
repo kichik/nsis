@@ -1752,7 +1752,7 @@ Released on November 27th, 2006
 
 \S2{} Build System
 
-\b Added \W{http://msdn.microsoft.com/vstudio/express/visualc/}{Microsoft Visual C++ 2005 Express} support
+\b Added \W{https://web.archive.org/web/20060203051838/http://msdn.microsoft.com:80/vstudio/express/visualc/}{Microsoft Visual C++ 2005 Express} support
 
 \b SCons requirement upgraded to 0.96.93
 
@@ -2120,7 +2120,7 @@ Released on January 21st, 2006
 
 \S1{v2.13-rn} Release Notes
 
-\b Language detection has changed. The default language is now set to the user's user-interface language instead of the locale language, as suggested by \W{http://msdn.microsoft.com/library/default.asp?url=/library/en-us/intl/nls_0xrn.asp}{MSDN}. To restore the old behavior, use \c{System::Call "kernel32::GetUserDefaultLangID()i.a"} in \R{oninit}{.onInit}.
+\b Language detection has changed. The default language is now set to the user's user-interface language instead of the locale language, as suggested by \W{http://web.archive.org/web/20050913082611/http://msdn.microsoft.com/library/en-us/intl/nls_0xrn.asp}{MSDN}. To restore the old behavior, use \c{System::Call "kernel32::GetUserDefaultLangID()i.a"} in \R{oninit}{.onInit}.
 
 \S1{v2.13-cl} Changelog
 
@@ -2737,7 +2737,7 @@ Released on October 23rd, 2004
 
 \b Made the datablock optimizer much faster
 
-\b Made the installer deny reboots while running (\W{http://msdn.microsoft.com/library/en-us/sysinfo/base/wm_queryendsession.asp}{WM_QUERYENDSESSION})
+\b Made the installer deny reboots while running (\W{http://msdn.microsoft.com/en-us/library/aa376890}{WM_QUERYENDSESSION})
 
 \b Made the \R{reboot}{Reboot} command first quit and then reboot so everything is always cleaned-up
 

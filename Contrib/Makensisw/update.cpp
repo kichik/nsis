@@ -26,7 +26,7 @@ static LPSTR InetGetErrorStringAllocA(DWORD ec)
 
 static void InetWorkOnline(HINTERNET hInet)
 {
-  //msdn.microsoft.com/library/default.asp?url=/workshop/components/offline/offline.asp#Supporting Offline Browsing in Applications and Components
+  //msdn.microsoft.com/en-us/library/Aa768170#Supporting Offline Browsing in Applications and Components
   DWORD cbio = sizeof(DWORD), op32;
   if (InternetQueryOption(hInet, INTERNET_OPTION_CONNECTED_STATE, &op32, &cbio))
   {
