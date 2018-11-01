@@ -430,7 +430,11 @@ void CDialogTemplate::CTrimToString(WORD id, TCHAR *str, int margins) {
   item->sWidth = short(size.cx);
   item->sHeight = short(size.cy);
 }
-#endif
+#else //! WIN32
+void CDialogTemplate::PixelsToDlgUnits(short& x, short& y) { assert(0); }
+void CDialogTemplate::PixelsToDlgUnits(SIZE& siz) { assert(0); }
+void CDialogTemplate::DlgUnitsToPixels(short& x, short& y) { assert(0); }
+#endif //~ WIN32
 
 // Moves every item right and gives it the WS_EX_RIGHT extended style
 void CDialogTemplate::ConvertToRTL() {
