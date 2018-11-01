@@ -25,6 +25,10 @@ pre {
 pre b {
 	text-decoration: underline;
 }
+code {
+	font-family: Courier New, Courier, monospace,monospace; /* code.iamkate.com/html-and-css/fixing-browsers-broken-monospace-font-handling/ */
+	font-size: 1em;
+}
 a {
 	color: #567599;
 	text-decoration: none;
