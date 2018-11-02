@@ -1010,12 +1010,26 @@ int CEXEBuild::pp_define(LineParser&line)
 
 int CEXEBuild::pp_undef(LineParser&line)
 {
-  if (definedlist.del(line.gettoken_str(1)))
+  UINT noerr = false, stopswitch = false, ti = 1, handled = 0;
+  for (; ti < line.getnumtokens(); ++ti)
   {
-    ERROR_MSG(_T("!undef: \"%") NPRIs _T("\" not defined!\n"), line.gettoken_str(1));
-    return PS_ERROR; // Should this be a warning?
+    const TCHAR *name = line.gettoken_str(ti);
+    if (!stopswitch && !_tcsicmp(name, _T("/noerrors")))
+    {
+      ++noerr;
+      continue;
+    }
+    stopswitch = ++handled;
+    if (definedlist.del(name) && !noerr)
+      warning_fl(DW_PP_UNDEF_UNDEFINED, _T("!undef: \"%") NPRIs _T("\" not defined!"), name);
+    else
+      SCRIPT_MSG(_T("!undef: \"%") NPRIs _T("\"\n"), name);
   }
-  SCRIPT_MSG(_T("!undef: \"%") NPRIs _T("\"\n"), line.gettoken_str(1));
+  if (!handled)
+  {
+    PRINTHELP();
+    return PS_ERROR;
+  }
   return PS_OK;
 }
 

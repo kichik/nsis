@@ -95,6 +95,7 @@ typedef enum {
   DW_PP_DELFILE_NOMATCH = DW_PP_DELFILE_DELERROR,
   DW_PP_VERBOSE_POP_EMPTY_STACK = 6150,
   //DW_PP_VERBOSE_BAD_LEVEL = 6151?, // 2.x failed to issue a warning. 3.x currently aborts with hard error.
+  DW_PP_UNDEF_UNDEFINED = 6155,
   DW_INCLUDE_NONFATAL_NOT_FOUND = 7000, // reserved ..7009
   DW_FILE_NONFATAL_NOT_FOUND = 7010, // reserved ..7019
   DW_LANGSTRING_OVERLONGLENGTH = 7020, // reserved ..7024

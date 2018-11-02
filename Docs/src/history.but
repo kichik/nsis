@@ -24,6 +24,8 @@ Released on ??? ??th, 20??
 
 \b Fixed !macroundef of last defined macro bug
 
+\b !undef issues warnings instead of errors
+
 \b MakeNSIS prints -CMDHELP to stdout (\W{http://sf.net/p/nsis/bugs/1203}{bug #1203})
 
 \S2{} Translations

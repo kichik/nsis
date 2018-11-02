@@ -30,7 +30,7 @@ If \e{/file} is used, the entire text file specified (including whitespace and n
 
 \S1{undef} !undef
 
-\c gflag
+\c [/noerrors] gflag [...]
 
 Removes an item from the global define list. Note that $\{SYMBOL\} where SYMBOL is undefined will be translated to "$\{SYMBOL\}".
 
