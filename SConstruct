@@ -143,7 +143,7 @@ if 'NSIS_CONFIG_CONST_DATA_PATH' in defenv['NSIS_CPPDEFINES']:
 else:
 	dirs = install_dirs['relocatable']
 
-if 'msvc' in defenv['TOOLS'] or 'mstoolkit' in defenv['TOOLS']:
+if defenv['PLATFORM'] == 'win32':
 	ignore_tests = 'none'
 else:
 	ignore_tests = ','.join(Split("""
