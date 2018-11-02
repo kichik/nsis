@@ -100,16 +100,24 @@ Call ConfigureLink
 !define HF_HEADER $R8
 CreateFont ${HF_HEADER} "Arial" ${UY_SECTION} 700
 
-nsDialogs::CreateControl ${__NSD_Icon_CLASS} ${__NSD_Icon_STYLE}|${SS_CENTERIMAGE}|${SS_CENTER} ${__NSD_Icon_EXSTYLE} 0 0 30u ${UY_HEADER}u ""
+nsDialogs::CreateControl ${__NSD_Label_CLASS} ${__NSD_Label_STYLE} ${__NSD_Label_EXSTYLE} 33u 0 -33u ${UY_HEADER}u ""
+Pop $0
+SetCtlColors $0 0xffffff ${CB_HEADER} 
+
+nsDialogs::CreateControl ${__NSD_Icon_CLASS} ${__NSD_Icon_STYLE}|${SS_CENTERIMAGE}|${SS_CENTER} ${__NSD_Icon_EXSTYLE} 0 0 33u ${UY_HEADER}u ""
 Pop $0
 SetCtlColors $0 "" ${CB_HEADER}
 ${NSD_SetIconFromInstaller} $0 $1
 
-!searchreplace VERSTR "${NSIS_VERSION}" "v" ""
-nsDialogs::CreateControl ${__NSD_Label_CLASS} ${__NSD_Label_STYLE}|${SS_CENTERIMAGE}|${SS_ENDELLIPSIS} ${__NSD_Label_EXSTYLE} 30u 0 -30u ${UY_HEADER}u "nullsoft scriptable install system ${VERSTR}"
-Pop $0
-SetCtlColors $0 0xffffff ${CB_HEADER}
 CreateFont $1 "Trebuchet MS" 17
+!searchreplace VERSTR "${NSIS_VERSION}" "v" ""
+nsDialogs::CreateControl ${__NSD_Label_CLASS} ${__NSD_Label_STYLE}|${SS_CENTERIMAGE}|${SS_ENDELLIPSIS} ${__NSD_Label_EXSTYLE} 34u 1u -34u ${UY_HEADER}u "nullsoft scriptable install system ${VERSTR}"
+Pop $0
+SetCtlColors $0 0x3A2A42 transparent
+SendMessage $0 ${WM_SETFONT} $1 1
+nsDialogs::CreateControl ${__NSD_Label_CLASS} ${__NSD_Label_STYLE}|${SS_CENTERIMAGE}|${SS_ENDELLIPSIS} ${__NSD_Label_EXSTYLE} 33u 0 -33u ${UY_HEADER}u "nullsoft scriptable install system ${VERSTR}"
+Pop $0
+SetCtlColors $0 0xffffff transparent
 SendMessage $0 ${WM_SETFONT} $1 1
 
 
@@ -117,7 +125,7 @@ SendMessage $0 ${WM_SETFONT} $1 1
 !insertmacro StartColumn 90
 !insertmacro CreateHeader "Compiler" ${UX_W}
 !insertmacro CreateSimpleLink "Compile NSI scripts" "${PR}\MakeNSISW" ${UX_W}
-!insertmacro CreateSimpleLink "Installer based on .ZIP file" "${PR}\bin\Zip2Exe2" ${UX_W}
+!insertmacro CreateSimpleLink "Installer based on .ZIP file" "${PR}\bin\Zip2Exe" ${UX_W}
 
 
 !define /ReDef UY ${UY_ROW2}
@@ -153,7 +161,7 @@ SetCtlColors $0 00000000 ${CB_PAGE}
 !insertmacro CreateHeader "Plug-ins" ${UX_W}
 !macro CreatePluginLink Name Desc Url
 !define /ReDef SAVE_UY ${UY}
-!insertmacro CreateSimpleLinkHelper "${Name}" "!P=${Name}" ${UX_W} ; AdjustLinkPair will configure this link
+!insertmacro CreateSimpleLinkHelper "${Name}" "${Url}" ${UX_W} ; AdjustLinkPair will configure this link
 !define /ReDef UY ${SAVE_UY}
 !insertmacro CreateControl Label "${Name} - ${Desc}" ${UX_W} ${UY_TXT}
 Call AdjustLinkPair
@@ -193,7 +201,7 @@ nsDialogs::GetUserData $1
 Call SplitPipe
 Pop $0 ; First URL in UserData from SplitPipe
 StrCpy $3 ""
-StrCpy $1 $0 4
+StrCpy $1 $0 4 ; Copy length of ${PD}
 ${IfThen} $1 == "${PD}" ${|} StrCpy $3 "${PR}\" ${|}
 !ifdef QUIT_ON_EXECUTE
 System::Call 'USER32::GetKeyState(i0x11)i.r9' ; VK_CONTROL
