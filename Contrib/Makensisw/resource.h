@@ -36,14 +36,12 @@
 #define IDI_ASSOC_NSH                   113
 #define IDB_LOGO                        115
 #define DLG_SETTINGS                    116
-#define IDB_BITMAP1                     120
 #define IDB_TOOLBAR                     122
 #define DLG_COMPRESSOR                  124
 #define DLG_SYMBOLSET                   125
 #define IDB_TOOLBAR24                   129
 #define IDB_TOOLBAR24D                  130
-#define IDB_BITMAP2                     131
-#define IDB_TOOLBAR24H                  132
+#define IDB_TOOLBAR24H                  131
 #define DLG_WNDSPY                      133
 
 #define IDC_VERSION                     200
@@ -55,6 +53,7 @@
 #define IDC_CONTRIB                     223
 #define IDC_NSISVER                     224
 #define IDC_OTHERCONTRIB                225
+#define IDC_ABOUTHEADER                 226
 #define IDC_RIGHT                       230
 #define IDC_LEFT                        231
 #define IDC_CLEAR                       232

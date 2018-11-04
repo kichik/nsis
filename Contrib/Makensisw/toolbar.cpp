@@ -78,7 +78,7 @@ void CreateToolBar()
   #ifndef _WIN64
   HMODULE hMod = GetModuleHandle(_T("comctl32.dll"));
   const FARPROC hasCC4_70 = sizeof(TCHAR) > 1 ? (FARPROC) TRUE : GetProcAddress(hMod, "InitCommonControlsEx"); // NT4 shipped with v4.70
-  const FARPROC hasCC4_71 = GetProcAddress(hMod, "DllGetVersion");
+  const FARPROC hasCC4_71 = (SupportsWNT4() || SupportsW95()) ? GetProcAddress(hMod, "DllGetVersion") : (FARPROC) TRUE; // IE4 shipped with v4.71
   #else
   const bool hasCC4_70 = true, hasCC4_71 = true;
   #endif
