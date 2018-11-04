@@ -199,6 +199,22 @@ void SetDialogFocus(HWND hDlg, HWND hCtl)
   SendMessage(hDlg, WM_NEXTDLGCTL, (WPARAM)hCtl, TRUE);
 }
 
+HWND GetComboEdit(HWND hCB)
+{
+  /* CB_GETCOMBOBOXINFO crashes on 64-bit NT 5.x (KB947841).
+  We are left with GetComboBoxInfo(), FindWindowEx()*2 and 
+  ChildWindowFromPoint(h,{1,1}) (docs.microsoft.com/en-us/windows/desktop/Controls/subclass-a-combo-box#). */
+  if (!SupportsWNT4() && !SupportsW95())
+  {
+    COMBOBOXINFO cbi;
+    cbi.cbSize = FIELD_OFFSET(COMBOBOXINFO, hwndList) + sizeof(HWND);
+    BOOL succ = GetComboBoxInfo(hCB, &cbi);
+    return succ ? cbi.hwndItem : (HWND)(INT_PTR) succ;
+  }
+  HWND hList = FindWindowEx(hCB, 0, 0, 0);
+  return FindWindowEx(hCB, hList, 0, 0);
+}
+
 void EnableDisableItems(HWND hwnd, int on) 
 {
   const HWND hCloseBtn = GetDlgItem(hwnd, IDCANCEL);
@@ -980,12 +996,79 @@ HMENU FindSubMenu(HMENU hMenu, UINT uId)
   return GetMenuItemInfo(hMenu, uId, FALSE, &mii) ? mii.hSubMenu : 0;
 }
 
-HFONT CreateFont(int Height, int Weight, DWORD PitchAndFamily, LPCTSTR Face)
+static FARPROC GetProcAddr(LPCSTR Mod, LPCSTR FuncName) { return GetProcAddress(LoadLibraryA(Mod), FuncName); }
+static UINT DpiGetClassicSystemDpiY() { HDC hDC = GetDC(NULL); UINT dpi = GetDeviceCaps(hDC, LOGPIXELSY); ReleaseDC(NULL, hDC); return dpi; }
+static HRESULT WINAPI DpiFallbackGetDpiForMonitor(HMONITOR hMon, int MDT, UINT*pX, UINT*pY) { return (*pX = *pY = DpiGetClassicSystemDpiY(), S_OK); }
+static UINT WINAPI DpiFallbackGetDpiForWindow(HWND hWnd) { return 0; }
+
+static UINT DpiNativeGetForMonitor(HMONITOR hMon)
 {
-  return CreateFont(Height, 0, 0, 0, Weight, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
-                    OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
-                    PitchAndFamily, Face);
+  static HRESULT(WINAPI*f)(HMONITOR, int, UINT*, UINT*);
+  if (!f && !((FARPROC&)f = GetProcAddr("SHCORE", "GetDpiForMonitor"))) f = DpiFallbackGetDpiForMonitor;
+  UINT x, y, mdt_effective_dpi = 0;
+  return SUCCEEDED(f(hMon, mdt_effective_dpi, &x, &y)) ? y : 0; 
 }
+static UINT DpiGetForMonitor(HWND hWnd)
+{
+  HMONITOR hMon = MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST);
+  return hMon ? DpiNativeGetForMonitor(hMon) : (UINT)(UINT_PTR) hMon;
+}
+
+UINT DpiGetForWindow(HWND hWnd)
+{
+  UINT dpi;
+  if (DpiAwarePerMonitor() || DpiAwarePerMonitor2())
+  {
+    static UINT(WINAPI*f)(HWND);
+    if (!f && !((FARPROC&)f = GetProcAddr("USER32", "GetDpiForWindow"))) f = DpiFallbackGetDpiForWindow;
+    if ((dpi = f(hWnd))) return dpi;
+  }
+  if (DpiAwarePerMonitor() && (dpi = DpiGetForMonitor(hWnd))) return dpi;
+  return DpiGetClassicSystemDpiY();
+}
+
+int DpiScaleY(HWND hWnd, int Val)
+{
+  return MulDiv(Val, DpiGetForWindow(hWnd), 96);
+}
+
+HFONT CreateFontHelper(INT_PTR Data, int Height, DWORD p1, LPCTSTR Face)
+{
+  UINT16 w = LOBYTE(p1)<<2, flags = HIBYTE(p1), cs = HIWORD(LOBYTE(p1)), paf = HIWORD(HIBYTE(p1));
+  if (flags & CFF_DPIPT)
+  {
+    UINT dpi = (flags & CFF_DPIFROMHWND) ? DpiGetForWindow((HWND) Data) : (UINT) Data;
+    Height = -MulDiv(Height, dpi, 72);
+  }
+  return CreateFont(Height, 0, 0, 0, w, FALSE, FALSE, FALSE, cs, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, paf, Face);
+}
+
+static BOOL DrawHorzGradient(HDC hDC, const RECT&rect, COLOR16 r1, COLOR16 g1, COLOR16 b1, COLOR16 r2, COLOR16 g2, COLOR16 b2)
+{
+  TRIVERTEX v[2] = { {rect.left, rect.top, r1, g1, b1, 0xffff}, {rect.right, rect.bottom, r2, g2, b2, 0xffff} };
+  GRADIENT_RECT r = { 0, 1 };
+  BOOL(WINAPI*gf)(HDC,TRIVERTEX*,ULONG,VOID*,ULONG,ULONG);
+  if (SupportsWNT4() || SupportsW95())
+  {
+    if (!((FARPROC&)gf = GetProcAddr("MSIMG32", "GradientFill")))
+    {
+      COLORREF orgclr = SetBkColor(hDC, RGB((((UINT)r1+r2)/2)>>8, (((UINT)g1+g2)/2)>>8, (((UINT)b1+b2)/2)>>8));
+      ExtTextOut(hDC, rect.left, rect.top, ETO_OPAQUE, &rect, _T(""), 0, NULL); // TODO: Actually try to draw a gradient
+      return TRUE|SetBkColor(hDC, orgclr);
+    }
+  }
+  else
+    gf = GradientFill;
+  return gf(hDC, v, 2, &r, 1, GRADIENT_FILL_RECT_H);
+}
+
+BOOL DrawHorzGradient(HDC hDC, LONG l, LONG t, LONG r, LONG b, COLORREF c1, COLORREF c2)
+{
+  RECT rect = { l, t, r, b };
+  return DrawHorzGradient(hDC, rect, (UINT16)GetRValue(c1)<<8, (UINT16)GetGValue(c1)<<8, (UINT16)GetBValue(c1)<<8, (UINT16)GetRValue(c2)<<8, (UINT16)GetGValue(c2)<<8, (UINT16)GetBValue(c2)<<8);
+}
+
+long DlgUnitToPixelX(HWND hDlg, long x) { RECT r = { x, 0, 0, 0 }; MapDialogRect(hDlg, &r); return r.left; }
 
 #ifndef SP_GRIPPER
 #ifndef HTHEME

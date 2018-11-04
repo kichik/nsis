@@ -33,6 +33,11 @@
 #undef _RICHEDIT_VER
 
 // Defines
+#define DpiAwarePerMonitor2() ( FALSE ) // Not yet
+#define DpiAwarePerMonitor() ( FALSE )
+#define SupportsWNT4() ( sizeof(void*) == 4 && !DpiAwarePerMonitor() ) // NT4 does not support the MultiMon API
+#define SupportsW9X() ( sizeof(TCHAR) == 1 )
+#define SupportsW95() ( FALSE && SupportsW9X() && !DpiAwarePerMonitor() )
 #define NSIS_URL     "http://nsis.sourceforge.net/"
 #define NSIS_FORUM_URL "http://forums.winamp.com/forumdisplay.php?forumid=65"
 #define NSIS_UC_URL  "http://nsis.sourceforge.net/update.php?version="
@@ -155,13 +160,25 @@ int compressor_strings[] = {IDS_SCRIPT,
 // Extern Variables
 
 extern const TCHAR* NSISW_VERSION;
+extern void* g_ModalDlgData;
 
 DWORD WINAPI MakeNSISProc(LPVOID TreadParam);
 INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 BOOL CALLBACK DialogResize(HWND hWnd, LPARAM /* unused*/);
-INT_PTR CALLBACK AboutProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+
+typedef struct {
+  enum { TID_HEADER = 1 };
+  HFONT hHeaderFont, hFont, hBoldFont;
+  INT AnimPos, AnimDir;
+  UINT AnimSpeed, FinalHeaderPos;
+} ABOUTDLGDATA;
+INT_PTR ShowAboutDialog(HWND hwndOwner);
 INT_PTR CALLBACK SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
-INT_PTR CALLBACK SymbolSetProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+typedef struct {
+  void*pOldMDD;
+  BOOL LoadingMode;
+} SYMSETDLGDATA;
+INT_PTR ShowSymbolSetDialog(HWND hwndOwner, BOOL LoadingSet);
 INT_PTR CALLBACK CompressorProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 void           SetScript(const TCHAR *script, bool clearArgs = true);
 void           CompileNSISScript();

@@ -36,6 +36,8 @@
 #define MRU_DISPLAY_LENGTH 40
 #define SYMSETNAME_MAXLEN 40
 
+template<class T> inline T API_cast(INT_PTR(CALLBACK*p1)(HWND,UINT,WPARAM,LPARAM)) { return (DLGPROC) p1; } // DLGPROC in really old SDKs return BOOL
+
 void* MemAllocZI(SIZE_T cb);
 void MemSafeFree(void*mem);
 #define MemAlloc MemAllocZI
@@ -53,6 +55,7 @@ void LogMessage(HWND hwnd,const TCHAR *str);
 void ErrorMessage(HWND hwnd,const TCHAR *str);
 void CenterOnParent(HWND hwnd);
 void SetDialogFocus(HWND hDlg, HWND hCtl); // Use this and not SetFocus()!
+HWND GetComboEdit(HWND hCB);
 #define DisableItems(hwnd) EnableDisableItems(hwnd, 0)
 #define EnableItems(hwnd) EnableDisableItems(hwnd, 1)
 void EnableDisableItems(HWND hwnd, int on);
@@ -82,7 +85,24 @@ bool FileExists(const TCHAR *fname);
 bool OpenUrlInDefaultBrowser(HWND hwnd, LPCSTR Url);
 
 HMENU FindSubMenu(HMENU hMenu, UINT uId);
-HFONT CreateFont(int Height, int Weight, DWORD PitchAndFamily, LPCTSTR Face);
+
+typedef enum { CFF_RAWSIZE = 0x00, CFF_DPIPT = 0x01, CFF_DPIFROMHWND = 0x02 } CREATEFONTFLAGS;
+HFONT CreateFontHelper(INT_PTR Data, int Height, DWORD p1, LPCTSTR Face);
+inline HFONT CreateFont(INT_PTR Data, UINT16 Flags, int Height, UINT16 Weight, BYTE PitchAndFamily, BYTE CharSet, LPCTSTR Face)
+{
+  DWORD packed = MAKELONG(MAKEWORD(Weight>>2, Flags), MAKEWORD(CharSet, PitchAndFamily));
+  return CreateFontHelper(Data, Height, packed, Face);
+}
+inline HFONT CreateFontPt(HWND hWndDPI, int Height, UINT16 Weight, BYTE PitchAndFamily, BYTE CharSet, LPCTSTR Face)
+{
+  return CreateFont((INT_PTR) hWndDPI, CFF_DPIFROMHWND|CFF_DPIPT, Height, Weight, PitchAndFamily, CharSet, Face);
+}
+BOOL DrawHorzGradient(HDC hDC, LONG l, LONG t, LONG r, LONG b, COLORREF c1, COLORREF c2);
+inline long RectW(const RECT&r) { return r.right - r.left; }
+inline long RectH(const RECT&r) { return r.bottom - r.top; }
+long DlgUnitToPixelX(HWND hDlg, long x);
+UINT DpiGetForWindow(HWND hWnd);
+int DpiScaleY(HWND hWnd, int Val);
 
 void DrawGripper(HWND hWnd, HDC hDC, const RECT&r);
 static inline void GetGripperPos(HWND hwnd, RECT&r)

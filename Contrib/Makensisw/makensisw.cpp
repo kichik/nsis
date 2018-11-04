@@ -44,7 +44,7 @@ NRESIZEDATA g_resize;
 NFINDREPLACE g_find;
 TCHAR g_findbuf[128];
 extern NTOOLBAR g_toolbar;
-int g_symbol_set_mode;
+void* g_ModalDlgData;
 
 NSIS_ENTRYPOINT_SIMPLEGUI
 int WINAPI _tWinMain(HINSTANCE hInst,HINSTANCE hOldInst,LPTSTR CmdLineParams,int ShowCmd) {
@@ -54,7 +54,6 @@ int WINAPI _tWinMain(HINSTANCE hInst,HINSTANCE hOldInst,LPTSTR CmdLineParams,int
   // we need to prevent LoadLibrary from searching the current directory because it can contain untrusted DLLs!
   FARPROC SDDA = GetProcAddress(hK32, "SetDllDirectoryA"); // WinXP.SP1+
   if (SDDA) ((BOOL(WINAPI*)(LPCSTR))SDDA)(""); // Remove the current directory from the default DLL search order
-
   memset(&g_sdata,0,sizeof(NSCRIPTDATA));
   memset(&g_resize,0,sizeof(NRESIZEDATA));
   memset(&g_find,0,sizeof(NFINDREPLACE));
@@ -203,7 +202,7 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
       SetClassLongPtr(hwndDlg,GCLP_HICON,(LONG_PTR)hIcon);
       // Altered by Darren Owen (DrO) on 29/9/2003
       // Added in receiving of mouse and key events from the richedit control
-      SendMessage(GetDlgItem(hwndDlg,IDC_LOGWIN),EM_SETEVENTMASK,(WPARAM)NULL,ENM_SELCHANGE|ENM_MOUSEEVENTS|ENM_KEYEVENTS);
+      SendDlgItemMessage(hwndDlg,IDC_LOGWIN,EM_SETEVENTMASK,(WPARAM)NULL,ENM_SELCHANGE|ENM_MOUSEEVENTS|ENM_KEYEVENTS);
       DragAcceptFiles(g_sdata.hwnd,FALSE);
       g_sdata.menu = GetMenu(g_sdata.hwnd);
       g_sdata.fileSubmenu = FindSubMenu(g_sdata.menu, IDM_FILE);
@@ -213,7 +212,7 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
       CreateToolBar();
       InitTooltips(g_sdata.hwnd);
       SetDlgItemText(g_sdata.hwnd,IDC_VERSION,g_sdata.branding);
-      HFONT hFont = CreateFont(14,FW_NORMAL,FIXED_PITCH|FF_DONTCARE,_T("Courier New"));
+      HFONT hFont = CreateFontPt(hwndDlg,8,FW_NORMAL,FIXED_PITCH|FF_DONTCARE,DEFAULT_CHARSET,_T("Courier New"));
       SendDlgItemMessage(hwndDlg,IDC_LOGWIN,WM_SETFONT,(WPARAM)hFont,0);
       RestoreWindowPos(g_sdata.hwnd);
       RestoreCompressor();
@@ -521,31 +520,14 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
           }
           return TRUE;
         }
-        case IDM_ABOUT:
-        {
-          return DialogBox(g_sdata.hInstance,MAKEINTRESOURCE(DLG_ABOUT),hwndDlg,(DLGPROC)AboutProc);
-        }
-        case IDM_NSISHOME:
-        {
-          return OpenUrlInDefaultBrowser(g_sdata.hwnd, NSIS_URL);
-        }
-        case IDM_FORUM:
-        {
-          return OpenUrlInDefaultBrowser(g_sdata.hwnd, NSIS_FORUM_URL);
-        }
-        case IDM_NSISUPDATE:
-        {
-          CheckForUpdate();
-          return TRUE;
-        }
+        case IDM_DOCS: return (ShowDocs(), TRUE);
+        case IDM_NSISHOME: return OpenUrlInDefaultBrowser(g_sdata.hwnd, NSIS_URL);
+        case IDM_FORUM: return OpenUrlInDefaultBrowser(g_sdata.hwnd, NSIS_FORUM_URL);
+        case IDM_NSISUPDATE: return (CheckForUpdate(), TRUE);
+        case IDM_ABOUT: return ShowAboutDialog(hwndDlg)|TRUE;
         case IDM_SELECTALL:
         {
           SendDlgItemMessage(g_sdata.hwnd, IDC_LOGWIN, EM_SETSEL, 0, -1);
-          return TRUE;
-        }
-        case IDM_DOCS:
-        {
-          ShowDocs();
           return TRUE;
         }
         case IDM_LOADSCRIPT:
@@ -835,17 +817,70 @@ BOOL CALLBACK DialogResize(HWND hWnd, LPARAM /* unused */)
   return TRUE;
 }
 
-INT_PTR CALLBACK AboutProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
+static INT_PTR CALLBACK AboutProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
+  ABOUTDLGDATA &dd = *(ABOUTDLGDATA*) g_ModalDlgData;
   switch(msg) {
+    case WM_DRAWITEM:
+      if (wParam == IDC_ABOUTHEADER)
+      {
+        DRAWITEMSTRUCT &dis = *(DRAWITEMSTRUCT*) lParam;
+        RECT r, r2;
+        const TCHAR txt[] = TEXT("MakeNSISW");
+        INT dt = DT_NOCLIP|DT_NOPREFIX|DT_SINGLELINE|DT_VCENTER, cch = COUNTOF(txt) - 1, line = DpiScaleY(dis.hwndItem, 2), shadow = 1;
+        GetClientRect(dis.hwndItem, &r);
+        if (!dd.FinalHeaderPos)
+          dd.hHeaderFont = CreateFont(0, CFF_RAWSIZE, r.bottom / 2, FW_BOLD, DEFAULT_PITCH|FF_DONTCARE, ANSI_CHARSET, _T("Trebuchet MS")); // IE4.01SP2+
+        HGDIOBJ hOrgFont = SelectObject(dis.hDC, dd.hHeaderFont);
+        DrawHorzGradient(dis.hDC, r.left, r.top, r.right, r.bottom - line, RGB(22, 77, 160), RGB(29, 100, 207));
+        DrawHorzGradient(dis.hDC, r.left, r.bottom - line, r.right, r.bottom, RGB(255, 142, 42), RGB(190, 90, 2));
+        SetBkMode(dis.hDC, TRANSPARENT);
+        if (!dd.FinalHeaderPos)
+        {
+          r2 = r;
+          DrawText(dis.hDC, txt, cch, &r2, dt|DT_CALCRECT);
+          dd.FinalHeaderPos = r.right - (r2.right - r2.left);
+          dd.FinalHeaderPos -= DlgUnitToPixelX(hwndDlg, 7); // Margin
+        }
+        r.left += dd.AnimPos;
+        SetTextColor(dis.hDC, RGB(0, 0, 0)), OffsetRect(&r, +shadow, +shadow);
+        DrawText(dis.hDC, txt, cch, &r, dt);
+        SetTextColor(dis.hDC, RGB(255, 255, 255)), OffsetRect(&r, -shadow, -shadow);
+        DrawText(dis.hDC, txt, cch, &r, dt);
+        SelectObject(dis.hDC, hOrgFont);
+        return TRUE;
+      }
+      break;
+    case WM_TIMER:
+      if (wParam == ABOUTDLGDATA::TID_HEADER)
+      {
+        INT finalpos = dd.FinalHeaderPos, dir;
+        if (dd.AnimSpeed >= 4)
+        {
+          dd.AnimPos += (dir = (dd.AnimPos >= finalpos)) ? -(INT)dd.AnimSpeed : +(INT)dd.AnimSpeed;
+          if (dd.AnimDir != dir) dd.AnimDir = dir, dd.AnimSpeed /= 2;
+        }
+        else
+        {
+          dd.AnimPos = finalpos;
+          SetTimer(hwndDlg, ABOUTDLGDATA::TID_HEADER, INFINITE, NULL);
+        }
+        InvalidateRect(GetDlgItem(hwndDlg, IDC_ABOUTHEADER), NULL, false);
+      }
+      break;
+    case WM_DESTROY:
+      DeleteObject(dd.hFont);
+      DeleteObject(dd.hBoldFont);
+      break;
     case WM_INITDIALOG:
     {
       CenterOnParent(hwndDlg);
-      HFONT fontnorm = CreateFont(13, FW_NORMAL, FIXED_PITCH|FF_DONTCARE, _T("Tahoma")),
-            fontbold = CreateFont(13, FW_BOLD, FIXED_PITCH|FF_DONTCARE, _T("Tahoma"));
-      if (!fontbold) {
-        fontnorm = CreateFont(12, FW_NORMAL, FIXED_PITCH|FF_DONTCARE, _T("MS Shell Dlg"));
-        fontbold = CreateFont(12, FW_BOLD, FIXED_PITCH|FF_DONTCARE, _T("MS Shell Dlg"));
+      HFONT fontnorm = CreateFontPt(hwndDlg, 8, FW_NORMAL, FIXED_PITCH|FF_DONTCARE, ANSI_CHARSET, _T("Tahoma")),
+            fontbold = CreateFontPt(hwndDlg, 8, FW_BOLD, FIXED_PITCH|FF_DONTCARE, ANSI_CHARSET, _T("Tahoma"));
+      if (!fontbold && (SupportsWNT4() || SupportsW95())) { // Tahoma shipped with 98+ and 2000+
+        fontnorm = CreateFontPt(hwndDlg, 8, FW_NORMAL, FIXED_PITCH|FF_DONTCARE, ANSI_CHARSET, _T("MS Shell Dlg"));
+        fontbold = CreateFontPt(hwndDlg, 8, FW_BOLD, FIXED_PITCH|FF_DONTCARE, ANSI_CHARSET, _T("MS Shell Dlg"));
       }
+      dd.hFont = fontnorm, dd.hBoldFont = fontbold;
       SendDlgItemMessage(hwndDlg, IDC_ABOUTVERSION, WM_SETFONT, (WPARAM)fontbold, FALSE);
       SendDlgItemMessage(hwndDlg, IDC_ABOUTCOPY, WM_SETFONT, (WPARAM)fontnorm, FALSE);
       SendDlgItemMessage(hwndDlg, IDC_ABOUTPORTIONS, WM_SETFONT, (WPARAM)fontnorm, FALSE);
@@ -855,6 +890,7 @@ INT_PTR CALLBACK AboutProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
       SetDlgItemText(hwndDlg, IDC_ABOUTCOPY, COPYRIGHT);
       SetDlgItemText(hwndDlg, IDC_OTHERCONTRIB, CONTRIB);
       SetDlgItemText(hwndDlg, IDC_NSISVER, g_sdata.branding);
+      SetTimer(hwndDlg, ABOUTDLGDATA::TID_HEADER, 50, NULL);
       break;
     }
     case WM_COMMAND:
@@ -863,10 +899,6 @@ INT_PTR CALLBACK AboutProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
       // fall through
     case WM_CLOSE:
       return EndDialog(hwndDlg, TRUE);
-    case WM_DESTROY:
-      DeleteObject((HGDIOBJ)SendDlgItemMessage(hwndDlg, IDC_ABOUTVERSION, WM_GETFONT, 0, 0));
-      DeleteObject((HGDIOBJ)SendDlgItemMessage(hwndDlg, IDC_ABOUTCOPY, WM_GETFONT, 0, 0));
-      break;
     case WM_APP: showversion:
       {
         TCHAR buf[200], showver = wParam != 0;
@@ -876,6 +908,15 @@ INT_PTR CALLBACK AboutProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
       break;
   }
   return FALSE;
+}
+
+INT_PTR ShowAboutDialog(HWND hwndOwner)
+{
+  ABOUTDLGDATA dd;
+  g_ModalDlgData = &dd;
+  dd.hHeaderFont = NULL, dd.FinalHeaderPos = 0;
+  dd.AnimSpeed = 55, dd.AnimPos = 0, dd.AnimDir = 0;
+  return DialogBox(g_sdata.hInstance, MAKEINTRESOURCE(DLG_ABOUT), hwndOwner, API_cast<DLGPROC>(AboutProc));
 }
 
 static void EnableSymbolSetButtons(HWND hwndDlg)
@@ -1052,10 +1093,7 @@ INT_PTR CALLBACK SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lPar
         break;
         case IDC_LOAD:
         case IDC_SAVE:
-        {
-          g_symbol_set_mode = IDC_LOAD == LOWORD(wParam) ? 1 : 2;
-          DialogBox(g_sdata.hInstance,MAKEINTRESOURCE(DLG_SYMBOLSET),hwndDlg,(DLGPROC)SymbolSetProc);
-        }
+          ShowSymbolSetDialog(hwndDlg, IDC_LOAD == LOWORD(wParam));
         break;
         case IDC_DEL:
         {
@@ -1134,23 +1172,32 @@ INT_PTR CALLBACK CompressorProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lP
   return FALSE;
 }
 
-INT_PTR CALLBACK SymbolSetProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
+static void FixSimpleComboBoxSizeBug(HWND hCombo) // Fix Win10 CBS_SIMPLE height drawing bug when DPI != 96
+{
+  RECT r;
+  GetWindowRect(hCombo, &r);
+  SetWindowPos(hCombo, 0, 0, 0, RectW(r), RectH(r)-1, SWP_NOZORDER|SWP_NOACTIVATE|SWP_NOMOVE);
+  SetWindowPos(hCombo, 0, 0, 0, RectW(r), RectH(r), SWP_NOZORDER|SWP_NOACTIVATE|SWP_NOMOVE|SWP_FRAMECHANGED);
+}
+
+#define SymbolSetDlgDpiChanged(hwndDlg) ( FixSimpleComboBoxSizeBug(GetDlgItem((hwndDlg), IDC_NAMES)) )
+
+static INT_PTR CALLBACK SymbolSetProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
+  SYMSETDLGDATA &dd = *(SYMSETDLGDATA*) g_ModalDlgData;
   switch(msg) {
     case WM_INITDIALOG:
     {
-      HWND hwndEdit;
       HKEY hKey;
-
       CenterOnParent(hwndDlg);
       EnableWindow(GetDlgItem(hwndDlg, IDC_DEL), FALSE);
       if (OpenRegSettingsKey(hKey)) {
         HKEY hSubKey;
 
-        if (RegOpenKeyEx(hKey,REGSYMSUBKEY,0,KEY_READ,&hSubKey) == ERROR_SUCCESS) {
+        if (RegOpenKeyEx(hKey, REGSYMSUBKEY, 0, KEY_READ, &hSubKey) == ERROR_SUCCESS) {
           TCHAR subkey[1024];
           int i=0;
 
-          while (RegEnumKey(hSubKey,i,subkey,sizeof(subkey)) == ERROR_SUCCESS) {
+          while (RegEnumKey(hSubKey, i, subkey, sizeof(subkey)) == ERROR_SUCCESS) {
             SendDlgItemMessage(hwndDlg, IDC_NAMES, CB_ADDSTRING, 0, (LPARAM)subkey);
             i++;
           }
@@ -1158,11 +1205,9 @@ INT_PTR CALLBACK SymbolSetProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lPa
         }
         RegCloseKey(hKey);
       }
-
-      hwndEdit = FindWindowEx(GetDlgItem(hwndDlg, IDC_NAMES), 0, 0, 0); // Handle of list
-      hwndEdit = FindWindowEx(GetDlgItem(hwndDlg, IDC_NAMES), hwndEdit, 0, 0); //Handle of edit box
+      HWND hwndEdit = GetComboEdit(GetDlgItem(hwndDlg, IDC_NAMES));
       SendMessage(hwndEdit, EM_LIMITTEXT, (WPARAM)SYMSETNAME_MAXLEN, 0);
-      if(g_symbol_set_mode == 1) { //Load
+      if (dd.LoadingMode) {
         SetWindowText(hwndDlg, LOAD_SYMBOL_SET_DLG_NAME);
         SetWindowText(GetDlgItem(hwndDlg, IDOK), LOAD_BUTTON_TEXT);
         SendMessage(hwndEdit, EM_SETREADONLY, (WPARAM)TRUE, 0);
@@ -1171,6 +1216,7 @@ INT_PTR CALLBACK SymbolSetProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lPa
         SetWindowText(hwndDlg, SAVE_SYMBOL_SET_DLG_NAME);
         SetWindowText(GetDlgItem(hwndDlg, IDOK), SAVE_BUTTON_TEXT);
       }
+      SymbolSetDlgDpiChanged(hwndDlg);
       break;
     }
     case WM_COMMAND:
@@ -1178,28 +1224,18 @@ INT_PTR CALLBACK SymbolSetProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lPa
       switch (LOWORD(wParam)) {
         case IDOK:
         {
-          HWND hwndEdit;
           TCHAR name[SYMSETNAME_MAXLEN+1];
-
-          hwndEdit = FindWindowEx(GetDlgItem(hwndDlg, IDC_NAMES), 0, 0, 0); // Handle of list
-          hwndEdit = FindWindowEx(GetDlgItem(hwndDlg, IDC_NAMES), hwndEdit, 0, 0); //Handle of edit box
+          HWND hwndEdit = GetComboEdit(GetDlgItem(hwndDlg, IDC_NAMES));
           SendMessage(hwndEdit, WM_GETTEXT, (WPARAM)COUNTOF(name), (LPARAM)name);
-          if(!*name) {
-            if(g_symbol_set_mode == 1) { //Load
-              MessageBox(hwndDlg,LOAD_SYMBOL_SET_MESSAGE,LOAD_SYMBOL_SET_DLG_NAME,MB_OK|MB_ICONEXCLAMATION);
-            }
-            else {
-              MessageBox(hwndDlg,SAVE_SYMBOL_SET_MESSAGE,SAVE_SYMBOL_SET_DLG_NAME,MB_OK|MB_ICONEXCLAMATION);
-            }
+          if (!*name) {
+            LPCTSTR msg = dd.LoadingMode ? LOAD_SYMBOL_SET_MESSAGE : SAVE_SYMBOL_SET_MESSAGE;
+            LPCTSTR tit = dd.LoadingMode ? LOAD_SYMBOL_SET_DLG_NAME : SAVE_SYMBOL_SET_DLG_NAME;
+            MessageBox(hwndDlg, msg, tit, MB_OK|MB_ICONEXCLAMATION);
           }
           else {
             HWND hwndParent = GetParent(hwndDlg);
-            if(g_symbol_set_mode == 1) { //Load
-              SendMessage(hwndParent, WM_MAKENSIS_LOADSYMBOLSET, (WPARAM)name, (LPARAM)NULL);
-            }
-            else {
-              SendMessage(hwndParent, WM_MAKENSIS_SAVESYMBOLSET, (WPARAM)name, (LPARAM)NULL);
-            }
+            UINT msg = dd.LoadingMode ? WM_MAKENSIS_LOADSYMBOLSET : WM_MAKENSIS_SAVESYMBOLSET;
+            SendMessage(hwndParent, msg, (WPARAM)name, (LPARAM)NULL);
             EndDialog(hwndDlg, TRUE);
           }
           break;
@@ -1243,6 +1279,15 @@ INT_PTR CALLBACK SymbolSetProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lPa
     }
   }
   return FALSE;
+}
+
+INT_PTR ShowSymbolSetDialog(HWND hwndOwner, BOOL LoadingSet)
+{
+  SYMSETDLGDATA dd = { g_ModalDlgData, LoadingSet };
+  g_ModalDlgData = &dd;
+  INT_PTR retval = DialogBox(g_sdata.hInstance, MAKEINTRESOURCE(DLG_SYMBOLSET), hwndOwner, API_cast<DLGPROC>(SymbolSetProc));
+  g_ModalDlgData = dd.pOldMDD; // Restore the old pointer
+  return retval;
 }
 
 void SetCompressor(NCOMPRESSOR compressor)
