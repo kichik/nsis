@@ -88,12 +88,12 @@ HMENU FindSubMenu(HMENU hMenu, UINT uId);
 
 typedef enum { CFF_RAWSIZE = 0x00, CFF_DPIPT = 0x01, CFF_DPIFROMHWND = 0x02 } CREATEFONTFLAGS;
 HFONT CreateFontHelper(INT_PTR Data, int Height, DWORD p1, LPCTSTR Face);
-inline HFONT CreateFont(INT_PTR Data, UINT16 Flags, int Height, UINT16 Weight, BYTE PitchAndFamily, BYTE CharSet, LPCTSTR Face)
+inline HFONT CreateFont(INT_PTR Data, WORD Flags, int Height, WORD Weight, BYTE PitchAndFamily, BYTE CharSet, LPCTSTR Face)
 {
   DWORD packed = MAKELONG(MAKEWORD(Weight>>2, Flags), MAKEWORD(CharSet, PitchAndFamily));
   return CreateFontHelper(Data, Height, packed, Face);
 }
-inline HFONT CreateFontPt(HWND hWndDPI, int Height, UINT16 Weight, BYTE PitchAndFamily, BYTE CharSet, LPCTSTR Face)
+inline HFONT CreateFontPt(HWND hWndDPI, int Height, WORD Weight, BYTE PitchAndFamily, BYTE CharSet, LPCTSTR Face)
 {
   return CreateFont((INT_PTR) hWndDPI, CFF_DPIFROMHWND|CFF_DPIPT, Height, Weight, PitchAndFamily, CharSet, Face);
 }
@@ -101,6 +101,7 @@ BOOL DrawHorzGradient(HDC hDC, LONG l, LONG t, LONG r, LONG b, COLORREF c1, COLO
 inline long RectW(const RECT&r) { return r.right - r.left; }
 inline long RectH(const RECT&r) { return r.bottom - r.top; }
 long DlgUnitToPixelX(HWND hDlg, long x);
+long DlgUnitToPixelY(HWND hDlg, long y);
 UINT DpiGetForWindow(HWND hWnd);
 int DpiScaleY(HWND hWnd, int Val);
 

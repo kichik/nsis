@@ -166,7 +166,7 @@ FONT 8, "MS Shell Dlg"
 BEGIN
     CONTROL         "",IDC_LOGWIN,RICHEDIT_CLASS,ES_MULTILINE | ES_AUTOVSCROLL | 
                     ES_NOHIDESEL | ES_READONLY | ES_SAVESEL | 
-                    WS_TABSTOP | WS_BORDER | WS_VSCROLL,7,22,345,186
+                    WS_TABSTOP | WS_BORDER | WS_VSCROLL,7,22,348,190
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,7,220,346,1
     LTEXT           "",IDC_VERSION,7,230,200,12,WS_DISABLED
     DEFPUSHBUTTON   "Test &Installer",IDC_TEST,230,226,60,15,WS_DISABLED | WS_TABSTOP
@@ -327,11 +327,16 @@ END
 // Bitmap
 //
 
-//IDB_LOGO                BITMAP                  "logo.bmp"
 IDB_TOOLBAR             BITMAP                  "toolbar.bmp"
-IDB_TOOLBAR24           BITMAP                  "toolbar24.bmp"
-IDB_TOOLBAR24D          BITMAP                  "toolbar24d.bmp"
-IDB_TOOLBAR24H          BITMAP                  "toolbar24h.bmp"
+IDB_TOOLBAR16N24        BITMAP                  "toolbar16n24.bmp"
+IDB_TOOLBAR16D24        BITMAP                  "toolbar16d24.bmp" // Note: This image should NEVER be <= 256 colors because then Windows will create its own disabled effect
+IDB_TOOLBAR16H24        BITMAP                  "toolbar16h24.bmp"
+IDB_TOOLBAR24N24        BITMAP                  "toolbar24n24.bmp"
+IDB_TOOLBAR24D24        BITMAP                  "toolbar24d24.bmp" // Note: This image should NEVER be <= 256 colors because then Windows will create its own disabled effect
+IDB_TOOLBAR24H24        BITMAP                  "toolbar24h24.bmp"
+IDB_TOOLBAR32N24        BITMAP                  "toolbar32n24.bmp"
+IDB_TOOLBAR32D24        BITMAP                  "toolbar32d24.bmp" // Note: This image should NEVER be <= 256 colors because then Windows will create its own disabled effect
+IDB_TOOLBAR32H24        BITMAP                  "toolbar32h24.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //

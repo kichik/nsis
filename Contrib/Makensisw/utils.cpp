@@ -1034,7 +1034,7 @@ int DpiScaleY(HWND hWnd, int Val)
 
 HFONT CreateFontHelper(INT_PTR Data, int Height, DWORD p1, LPCTSTR Face)
 {
-  UINT16 w = LOBYTE(p1)<<2, flags = HIBYTE(p1), cs = HIWORD(LOBYTE(p1)), paf = HIWORD(HIBYTE(p1));
+  WORD w = LOBYTE(p1)<<2, flags = HIBYTE(p1), cs = HIWORD(LOBYTE(p1)), paf = HIWORD(HIBYTE(p1));
   if (flags & CFF_DPIPT)
   {
     UINT dpi = (flags & CFF_DPIFROMHWND) ? DpiGetForWindow((HWND) Data) : (UINT) Data;
@@ -1065,10 +1065,11 @@ static BOOL DrawHorzGradient(HDC hDC, const RECT&rect, COLOR16 r1, COLOR16 g1, C
 BOOL DrawHorzGradient(HDC hDC, LONG l, LONG t, LONG r, LONG b, COLORREF c1, COLORREF c2)
 {
   RECT rect = { l, t, r, b };
-  return DrawHorzGradient(hDC, rect, (UINT16)GetRValue(c1)<<8, (UINT16)GetGValue(c1)<<8, (UINT16)GetBValue(c1)<<8, (UINT16)GetRValue(c2)<<8, (UINT16)GetGValue(c2)<<8, (UINT16)GetBValue(c2)<<8);
+  return DrawHorzGradient(hDC, rect, (WORD)GetRValue(c1)<<8, (WORD)GetGValue(c1)<<8, (WORD)GetBValue(c1)<<8, (WORD)GetRValue(c2)<<8, (WORD)GetGValue(c2)<<8, (WORD)GetBValue(c2)<<8);
 }
 
 long DlgUnitToPixelX(HWND hDlg, long x) { RECT r = { x, 0, 0, 0 }; MapDialogRect(hDlg, &r); return r.left; }
+long DlgUnitToPixelY(HWND hDlg, long y) { RECT r = { 0, y, 0, 0 }; MapDialogRect(hDlg, &r); return r.top; }
 
 #ifndef SP_GRIPPER
 #ifndef HTHEME

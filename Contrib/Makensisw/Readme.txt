@@ -201,6 +201,8 @@ Version History
 
 2.3.4
 - Added Window Info/Spy feature
+- System DPI aware
+- New toolbar images
 
 
 Copyright Information

@@ -192,6 +192,44 @@ DWORD CALLBACK SaveFileStreamCallback(DWORD_PTR dwCookie, LPBYTE pbBuff, LONG cb
   return (*pcb = (LONG) cbio, !wop);
 }
 
+static void ToolBarSizeChanged(HWND hDlg)
+{
+  RECT r;
+  HWND hEd = GetDlgItem(hDlg, IDC_LOGWIN);
+  GetWindowRect(g_toolbar.hwnd, &r);
+  LONG tbh = RectH(r);
+  GetWindowRect(hEd, &r);
+  LONG oldh = RectH(r), margin = DlgUnitToPixelY(hDlg, 7), top = tbh + margin;
+  POINT pt = { r.left, r.top };
+  ScreenToClient(hDlg, &pt);
+  SetWindowPos(hEd, 0, pt.x, top, RectW(r), oldh + (pt.y - top), SWP_NOZORDER|SWP_NOACTIVATE); // Update IDC_LOGWIN position and size
+}
+
+static BOOL CALLBACK DialogResize(HWND hWnd, LPARAM /* unused */)
+{
+  RECT r, r2;
+  GetWindowRect(hWnd, &r);
+  ScreenToClient(g_sdata.hwnd, ((LPPOINT)&r)+0), ScreenToClient(g_sdata.hwnd, ((LPPOINT)&r)+1);
+  switch (GetDlgCtrlID(hWnd))
+  {
+  case IDC_TOOLBAR:
+    GetWindowRect(hWnd, &r2);
+    SetWindowPos(hWnd, 0, 0, 0, RectW(r) + g_resize.dx, RectH(r2), SWP_NOMOVE|SWP_NOZORDER|SWP_NOACTIVATE);
+    break;
+  case IDC_LOGWIN:
+    SetWindowPos(hWnd, 0, r.left, r.top, RectW(r) + g_resize.dx, RectH(r) + g_resize.dy, SWP_NOZORDER|SWP_NOMOVE|SWP_NOACTIVATE);
+    break;
+  case IDC_TEST:
+  case IDCANCEL:
+    SetWindowPos(hWnd, 0, r.left + g_resize.dx, r.top + g_resize.dy, 0, 0, SWP_NOZORDER|SWP_NOSIZE|SWP_NOACTIVATE);
+    break;
+  default:
+    SetWindowPos(hWnd, 0, r.left, r.top + g_resize.dy, RectW(r) + g_resize.dx, RectH(r), SWP_NOZORDER|SWP_NOACTIVATE);
+    break;
+  }
+  RedrawWindow(hWnd,NULL,NULL,RDW_INVALIDATE);
+  return TRUE;
+}
 
 INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
   switch (msg) {
@@ -219,6 +257,7 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
       SetScript(_T(""));
       g_sdata.compressor = COMPRESSOR_NONE_SELECTED;
       g_sdata.userSelectCompressor = FALSE;
+      ToolBarSizeChanged(hwndDlg);
 
       ProcessCommandLine();
 
@@ -227,7 +266,7 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
       }
 
       if(g_sdata.userSelectCompressor) {
-        if (DialogBox(g_sdata.hInstance,MAKEINTRESOURCE(DLG_COMPRESSOR),g_sdata.hwnd,(DLGPROC)CompressorProc)) {
+        if (DialogBox(g_sdata.hInstance,MAKEINTRESOURCE(DLG_COMPRESSOR),g_sdata.hwnd,API_cast<DLGPROC>(CompressorProc))) {
           EnableItems(g_sdata.hwnd);
           return TRUE;
         }
@@ -295,16 +334,12 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
     }
     case WM_SIZE:
     {
-      if ((wParam == SIZE_MAXHIDE)||(wParam == SIZE_MAXSHOW)) return TRUE;
-      RECT rSize;
-      if (hwndDlg == g_sdata.hwnd) {
-        GetClientRect(g_sdata.hwnd, &rSize);
-        if (((rSize.right==0)&&(rSize.bottom==0))||((g_resize.resizeRect.right==0)&&(g_resize.resizeRect.bottom==0)))  return TRUE;
-        g_resize.dx = rSize.right - g_resize.resizeRect.right;
-        g_resize.dy = rSize.bottom - g_resize.resizeRect.bottom;
-        EnumChildWindows(g_sdata.hwnd, DialogResize, (LPARAM)0);
-        g_resize.resizeRect = rSize;
-      }
+      if (wParam == SIZE_MAXHIDE || wParam == SIZE_MAXSHOW) return TRUE;
+      const LONG oldW = g_resize.resizeRect.right, oldH = g_resize.resizeRect.bottom;
+      GetClientRect(hwndDlg, &g_resize.resizeRect);
+      g_resize.dx = g_resize.resizeRect.right - oldW;
+      g_resize.dy = g_resize.resizeRect.bottom - oldH;
+      EnumChildWindows(g_sdata.hwnd, DialogResize, (LPARAM) 0);
       return TRUE;
     }
     case WM_SIZING:
@@ -317,7 +352,7 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
     {
       RECT r = g_resize.griprect;
       MapWindowPoints(hwndDlg, 0, (POINT*)&r, 2);
-      POINT pt = {GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)};
+      POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
       if (PtInRect(&r, pt))
       {
         SetWindowLongPtr(hwndDlg, DWLP_MSGRESULT, HTBOTTOMRIGHT);
@@ -590,7 +625,7 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
         }
         case IDM_SETTINGS:
         {
-          DialogBox(g_sdata.hInstance,MAKEINTRESOURCE(DLG_SETTINGS),g_sdata.hwnd,(DLGPROC)SettingsProc);
+          DialogBox(g_sdata.hInstance,MAKEINTRESOURCE(DLG_SETTINGS),g_sdata.hwnd,API_cast<DLGPROC>(SettingsProc));
           return TRUE;
         }
         case IDM_WNDSPY:
@@ -788,35 +823,6 @@ logappendfinal:
   return 0;
 }
 
-BOOL CALLBACK DialogResize(HWND hWnd, LPARAM /* unused */)
-{
-  RECT r;
-  GetWindowRect(hWnd, &r);
-  ScreenToClient(g_sdata.hwnd, (LPPOINT)&r);
-  ScreenToClient(g_sdata.hwnd, ((LPPOINT)&r)+1);
-  if(hWnd != g_toolbar.hwnd) {
-    switch (GetDlgCtrlID(hWnd)) {
-      case IDC_LOGWIN:
-        SetWindowPos(hWnd, 0, r.left, r.top,r.right - r.left + g_resize.dx, r.bottom - r.top + g_resize.dy, SWP_NOZORDER|SWP_NOMOVE);
-        break;
-      case IDC_TEST:
-      case IDCANCEL:
-        SetWindowPos(hWnd, 0, r.left + g_resize.dx, r.top + g_resize.dy, 0, 0, SWP_NOZORDER|SWP_NOSIZE);
-        break;
-      default:
-        SetWindowPos(hWnd, 0, r.left, r.top + g_resize.dy, r.right - r.left + g_resize.dx, r.bottom - r.top, SWP_NOZORDER);
-        break;
-    }
-  }
-  else {
-      RECT r2;
-      GetWindowRect(g_toolbar.hwnd, &r2);
-      SetWindowPos(hWnd, 0, 0, 0, r.right - r.left + g_resize.dx, r2.bottom-r2.top, SWP_NOMOVE|SWP_NOZORDER);
-  }
-  RedrawWindow(hWnd,NULL,NULL,RDW_INVALIDATE);
-  return TRUE;
-}
-
 static INT_PTR CALLBACK AboutProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
   ABOUTDLGDATA &dd = *(ABOUTDLGDATA*) g_ModalDlgData;
   switch(msg) {
@@ -828,7 +834,7 @@ static INT_PTR CALLBACK AboutProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM 
         const TCHAR txt[] = TEXT("MakeNSISW");
         INT dt = DT_NOCLIP|DT_NOPREFIX|DT_SINGLELINE|DT_VCENTER, cch = COUNTOF(txt) - 1, line = DpiScaleY(dis.hwndItem, 2), shadow = 1;
         GetClientRect(dis.hwndItem, &r);
-        if (!dd.FinalHeaderPos)
+        if (!dd.hHeaderFont)
           dd.hHeaderFont = CreateFont(0, CFF_RAWSIZE, r.bottom / 2, FW_BOLD, DEFAULT_PITCH|FF_DONTCARE, ANSI_CHARSET, _T("Trebuchet MS")); // IE4.01SP2+
         HGDIOBJ hOrgFont = SelectObject(dis.hDC, dd.hHeaderFont);
         DrawHorzGradient(dis.hDC, r.left, r.top, r.right, r.bottom - line, RGB(22, 77, 160), RGB(29, 100, 207));
