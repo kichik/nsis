@@ -64,8 +64,8 @@
 #define EXENAME      _T("makensis.exe")
 #define MAX_STRING   256
 #define TIMEOUT      100
-#define MINWIDTH     350
-#define MINHEIGHT    180
+#define MINWIDTH     400
+#define MINHEIGHT    220
 #define COMPRESSOR_MESSAGE _T("\n\nThe %s compressor created the smallest installer (%d bytes).")
 #define RESTORED_COMPRESSOR_MESSAGE _T("\n\nThe %s compressor created the smallest installer (%d bytes).")
 #define EXE_HEADER_COMPRESSOR_STAT _T("EXE header size:")
@@ -164,7 +164,6 @@ extern void* g_ModalDlgData;
 
 DWORD WINAPI MakeNSISProc(LPVOID TreadParam);
 INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
-BOOL CALLBACK DialogResize(HWND hWnd, LPARAM /* unused*/);
 
 typedef struct {
   enum { TID_HEADER = 1 };

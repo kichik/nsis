@@ -36,17 +36,24 @@
 #define IDI_ASSOC_NSH                   113
 #define IDB_LOGO                        115
 #define DLG_SETTINGS                    116
+#define DLG_WNDSPY                      117
 #define IDB_TOOLBAR                     122
 #define DLG_COMPRESSOR                  124
 #define DLG_SYMBOLSET                   125
-#define IDB_TOOLBAR24                   129
-#define IDB_TOOLBAR24D                  130
-#define IDB_TOOLBAR24H                  131
-#define DLG_WNDSPY                      133
+#define IDB_TOOLBAR16N24                129
+#define IDB_TOOLBAR16D24                130
+#define IDB_TOOLBAR16H24                131
+#define IDB_TOOLBAR24N24                132
+#define IDB_TOOLBAR24D24                133
+#define IDB_TOOLBAR24H24                134
+#define IDB_TOOLBAR32N24                135
+#define IDB_TOOLBAR32D24                136
+#define IDB_TOOLBAR32H24                137
 
 #define IDC_VERSION                     200
-#define IDC_LOGWIN                      201
-#define IDC_TEST                        202
+#define IDC_TOOLBAR                     201
+#define IDC_LOGWIN                      202
+#define IDC_TEST                        203
 #define IDC_ABOUTVERSION                220
 #define IDC_ABOUTCOPY                   221
 #define IDC_ABOUTPORTIONS               222
@@ -119,7 +126,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        134
+#define _APS_NEXT_RESOURCE_VALUE        138
 #define _APS_NEXT_COMMAND_VALUE         537
 #define _APS_NEXT_CONTROL_VALUE         241
 #define _APS_NEXT_SYMED_VALUE           101

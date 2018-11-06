@@ -51,21 +51,27 @@ static const TBBTNDESC g_TBBtnsDesc[BUTTONCOUNT] = {
 /*TBB_TEST      */ { MKNAMEDTBBTNDESC(TEST,       TBSTATE_INDETERMINATE, TBSTYLE_BUTTON  ) },
 /*TBB_COMPRESSOR*/ { MKNAMEDTBBTNDESC(COMPRESSOR, TBSTATE_ENABLED,       TBSTYLE_DROPDOWN) },
 /*TBB_EDITSCRIPT*/ { MKNAMEDTBBTNDESC(EDITSCRIPT, TBSTATE_INDETERMINATE, TBSTYLE_BUTTON  ) },
-/*TBB_BROWSESCR */ { MKNAMEDTBBTNDESC(BROWSESCR,  TBSTATE_INDETERMINATE, TBSTYLE_BUTTON  ) },
-/*TBB_SEP3      */ { TBSTYLE_SEP },
-/*TBB_NSISHOME  */ { MKNAMEDTBBTNDESC(NSISHOME,   TBSTATE_ENABLED,       TBSTYLE_BUTTON  ) },
-/*TBB_DOCS      */ { MKNAMEDTBBTNDESC(DOCS,       TBSTATE_ENABLED,       TBSTYLE_BUTTON  ) }
+/*TBB_BROWSESCR */ { MKNAMEDTBBTNDESC(BROWSESCR,  TBSTATE_INDETERMINATE, TBSTYLE_BUTTON  ) }
 };
+
+static const BYTE g_TBIL[] = {
+/* 16 */ IDB_TOOLBAR16N24, IDB_TOOLBAR16D24, IDB_TOOLBAR16H24,
+/* 24 */ IDB_TOOLBAR24N24, IDB_TOOLBAR24D24, IDB_TOOLBAR24H24,
+/* 32 */ IDB_TOOLBAR32N24, IDB_TOOLBAR32D24, IDB_TOOLBAR32H24
+};
+
+static void LoadToolBarImages();
 
 void CreateToolBar()
 {
   g_toolbar.hwnd = CreateWindowEx(0, TOOLBARCLASSNAME, NULL,
     WS_CHILD | WS_VISIBLE | TBSTYLE_TRANSPARENT | TBSTYLE_FLAT,
-    0, 0, 0, 30, g_sdata.hwnd, NULL, g_sdata.hInstance, NULL);
+    0, 0, 0, 0, g_sdata.hwnd, (HMENU) IDC_TOOLBAR, g_sdata.hInstance, NULL);
   
   TBBUTTON tbbs[BUTTONCOUNT];
   SendMessage(g_toolbar.hwnd, TB_BUTTONSTRUCTSIZE, sizeof(tbbs[0]), 0);
-  for (UINT i = 0; i < BUTTONCOUNT; ++i) {
+  for (UINT i = 0; i < BUTTONCOUNT; ++i)
+  {
     tbbs[i].iBitmap = g_TBBtnsDesc[i].ImgIdx;
     tbbs[i].idCommand = g_TBBtnsDesc[i].CmdId;
     tbbs[i].fsState = g_TBBtnsDesc[i].State;
@@ -73,47 +79,55 @@ void CreateToolBar()
     tbbs[i].dwData = 0, tbbs[i].iString = 0;
   }
   SendMessage(g_toolbar.hwnd, TB_ADDBUTTONS, BUTTONCOUNT, (LPARAM) &tbbs);
+  LoadToolBarImages();
+}
 
-  // For Comctl32.dll version detection
-  #ifndef _WIN64
+static void LoadToolBarImages()
+{
+  HWND hTB = g_toolbar.hwnd;
+  // Comctl32.dll version detection
+#ifndef _WIN64
   HMODULE hMod = GetModuleHandle(_T("comctl32.dll"));
-  const FARPROC hasCC4_70 = sizeof(TCHAR) > 1 ? (FARPROC) TRUE : GetProcAddress(hMod, "InitCommonControlsEx"); // NT4 shipped with v4.70
+  const FARPROC hasCC4_70 = (SupportsW95()) ? GetProcAddress(hMod, "InitCommonControlsEx") : (FARPROC) TRUE; // NT4 shipped with v4.70
   const FARPROC hasCC4_71 = (SupportsWNT4() || SupportsW95()) ? GetProcAddress(hMod, "DllGetVersion") : (FARPROC) TRUE; // IE4 shipped with v4.71
-  #else
+#else
   const bool hasCC4_70 = true, hasCC4_71 = true;
-  #endif
+#endif
 
-  if (hasCC4_70) { // Version 4.70
-    // Modern toolbar, 24-bit bitmaps
+  UINT iltypecount = 3, s16 = DpiScaleY(hTB, 16), imgsize, iloffs; // 144dpi(150%)=24 120dpi(125%)=20
+  if (s16 > 24)
+    imgsize = 32, iloffs = 2 * iltypecount;
+  else if (s16 > 16)
+    imgsize = 24, iloffs = 1 * iltypecount;
+  else
+    imgsize = 16, iloffs = 0 * iltypecount;
 
-    g_toolbar.imagelist = ImageList_LoadImage(g_sdata.hInstance, MAKEINTRESOURCE(IDB_TOOLBAR24), 16, 0, RGB(255, 0, 255), IMAGE_BITMAP, LR_CREATEDIBSECTION);
-    g_toolbar.imagelistd = ImageList_LoadImage(g_sdata.hInstance, MAKEINTRESOURCE(IDB_TOOLBAR24D), 16, 0, RGB(255, 0, 255), IMAGE_BITMAP, LR_CREATEDIBSECTION);
-    g_toolbar.imagelisth = ImageList_LoadImage(g_sdata.hInstance, MAKEINTRESOURCE(IDB_TOOLBAR24H),  16, 0, RGB(255, 0, 255), IMAGE_BITMAP, LR_CREATEDIBSECTION);
+  if (hasCC4_70)
+  {
+    // Version 4.70 => Modern toolbar, 24-bit bitmaps
+    g_toolbar.imagelist = ImageList_LoadImage(g_sdata.hInstance, MAKEINTRESOURCE(g_TBIL[iloffs+0]), imgsize, 0, RGB(255, 0, 255), IMAGE_BITMAP, LR_CREATEDIBSECTION);
+    g_toolbar.imagelistd = ImageList_LoadImage(g_sdata.hInstance, MAKEINTRESOURCE(g_TBIL[iloffs+1]), imgsize, 0, RGB(255, 0, 255), IMAGE_BITMAP, LR_CREATEDIBSECTION);
+    g_toolbar.imagelisth = ImageList_LoadImage(g_sdata.hInstance, MAKEINTRESOURCE(g_TBIL[iloffs+2]), imgsize, 0, RGB(255, 0, 255), IMAGE_BITMAP, LR_CREATEDIBSECTION);
+    SendMessage(hTB, TB_SETIMAGELIST, 0, (LPARAM) g_toolbar.imagelist);
+    SendMessage(hTB, TB_SETDISABLEDIMAGELIST, 0, (LPARAM) g_toolbar.imagelistd);
+    SendMessage(hTB, TB_SETHOTIMAGELIST, 0, (LPARAM) g_toolbar.imagelisth);
 
-    SendMessage(g_toolbar.hwnd, TB_SETIMAGELIST, 0, (LPARAM) g_toolbar.imagelist);
-    SendMessage(g_toolbar.hwnd, TB_SETDISABLEDIMAGELIST, 0, (LPARAM) g_toolbar.imagelistd);
-    SendMessage(g_toolbar.hwnd, TB_SETHOTIMAGELIST, 0, (LPARAM) g_toolbar.imagelisth);
-
-    if (hasCC4_71) { // Version 4.71
-      SendMessage(g_toolbar.hwnd, TB_SETEXTENDEDSTYLE, 0, TBSTYLE_EX_DRAWDDARROWS);
-    }
-
+    if (hasCC4_71)
+      SendMessage(hTB, TB_SETEXTENDEDSTYLE, 0, TBSTYLE_EX_DRAWDDARROWS);
   }
-  else {
-    // Old Windows 95 toolbar, 256 color bitmap with system palette
-
+  else 
+  {
+    // Version 4.00 => Old Windows 95 toolbar, 256 color bitmap with system palette
     TBADDBITMAP tbBitmap;
-
     tbBitmap.hInst = g_sdata.hInstance;
     tbBitmap.nID = IDB_TOOLBAR;
-    SendMessage(g_toolbar.hwnd, TB_ADDBITMAP, IMAGECOUNT, (LPARAM) &tbBitmap);
+    SendMessage(hTB, TB_ADDBITMAP, IMAGECOUNT, (LPARAM) &tbBitmap);
   }
 }
 
 void UpdateToolBarCompressorButton()
 {
-  int iBitmap;
-  int iString;
+  int iBitmap, iString;
   TCHAR szBuffer[124]; // increased to 124 for good measure, also.
   TCHAR temp[64]; // increased to 64.  Hit limit 08/20/2007 -- Jim Park.
 
