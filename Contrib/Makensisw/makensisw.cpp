@@ -479,12 +479,9 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
     case WM_NOTIFY:
       switch (((NMHDR*)lParam)->code ) {
         case EN_SELCHANGE:
-          SendDlgItemMessage(hwndDlg,IDC_LOGWIN, EM_EXGETSEL, 0, (LPARAM) &g_sdata.textrange);
-          {
-            BOOL enabled = (g_sdata.textrange.cpMax-g_sdata.textrange.cpMin<=0?FALSE:TRUE);
-            EnableMenuItem(g_sdata.menu,IDM_COPYSELECTED,(enabled?MF_ENABLED:MF_GRAYED));
-            EnableToolBarButton(IDM_COPY,enabled);
-          }
+          EnableMenuItem(g_sdata.menu, IDM_COPYSELECTED, RicheditHasSelection(GetDlgItem(hwndDlg, IDC_LOGWIN)) ? MF_ENABLED : MF_GRAYED);
+          break;
+        
         // Altered by Darren Owen (DrO) on 6/10/2003
         // Allows the detection of the right-click menu when running on OSes below Windows 2000
         // and will then simulate the effective WM_CONTEXTMENU message that would be received
@@ -492,10 +489,11 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
         // Windows 2000 and higher
         case EN_MSGFILTER:
           #define lpnmMsg ((MSGFILTER*)lParam)
-          if(WM_RBUTTONUP == lpnmMsg->msg || (WM_KEYUP == lpnmMsg->msg && lpnmMsg->wParam == VK_APPS)){
-          POINT pt;
-          HWND edit = GetDlgItem(g_sdata.hwnd,IDC_LOGWIN);
-          RECT r;
+          if(WM_RBUTTONUP == lpnmMsg->msg || (WM_KEYUP == lpnmMsg->msg && lpnmMsg->wParam == VK_APPS))
+          {
+            POINT pt;
+            HWND edit = GetDlgItem(g_sdata.hwnd,IDC_LOGWIN);
+            RECT r;
             GetCursorPos(&pt);
 
             // Added and altered by Darren Owen (DrO) on 29/9/2003
@@ -504,11 +502,11 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
             // from here...
             ScreenToClient(edit, &pt);
             GetClientRect(edit, &r);
-            if(!PtInRect(&r, pt))
-              pt.x = pt.y = 0;
+            if (!PtInRect(&r, pt)) pt.x = pt.y = 0;
             MapWindowPoints(edit, HWND_DESKTOP, &pt, 1);
             TrackPopupMenu(g_sdata.editSubmenu, TPM_LEFTALIGN | TPM_LEFTBUTTON | TPM_RIGHTBUTTON, pt.x, pt.y, 0, g_sdata.hwnd, 0);
           }
+          break;
         case TBN_DROPDOWN:
         {
           LPNMTOOLBAR pToolBar = (LPNMTOOLBAR) lParam;
@@ -526,8 +524,9 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
       switch (cds->dwData) {
         case MakensisAPI::NOTIFY_SCRIPT:
           MemSafeFree(g_sdata.input_script);
-          g_sdata.input_script = (TCHAR*) MemAlloc(cds->cbData * sizeof(TCHAR));
-          lstrcpy(g_sdata.input_script, (TCHAR *)cds->lpData);
+          if ((g_sdata.input_script = (TCHAR*) MemAlloc(cds->cbData * sizeof(TCHAR))))
+            lstrcpy(g_sdata.input_script, (TCHAR*) cds->lpData);
+          EnableUICommand(IDM_BROWSESCR, !!g_sdata.input_script);
           break;
         case MakensisAPI::NOTIFY_WARNING:
           g_sdata.warnings++;
@@ -541,6 +540,17 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
           break;
       }
       return TRUE;
+    }
+    case WM_INITMENU:
+      EnableMenuItem(g_sdata.menu, IDM_CANCEL, g_sdata.thread ? MF_ENABLED : MF_GRAYED);
+      break;
+    case WM_MAKENSIS_UPDATEUISTATE:
+    {
+      UINT i, emptylog = SendDlgItemMessage(hwndDlg, IDC_LOGWIN, WM_GETTEXTLENGTH, 0, 0) == 0;
+      static const PACKEDCMDID_T nonemptylogids [] = { PACKCMDID(IDM_COPY), PACKCMDID(IDM_COPYALL), PACKCMDID(IDM_CLEARLOG), PACKCMDID(IDM_SELECTALL) };
+      for (i = 0; i < COUNTOF(nonemptylogids); ++i) EnableUICommand(UNPACKCMDID(nonemptylogids[i]), !emptylog);
+      EnableUICommand(IDM_BROWSESCR, !!g_sdata.input_script);
+      break;
     }
     case WM_COMMAND:
     {
@@ -576,8 +586,6 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
             l.nMaxFile = MAX_STRING-1;
             l.lpstrTitle = _T("Load Script");
             l.lpstrDefExt = _T("log");
-            l.lpstrFileTitle = NULL;
-            l.lpstrInitialDir = NULL;
             l.Flags = OFN_HIDEREADONLY|OFN_EXPLORER|OFN_PATHMUSTEXIST|OFN_FILEMUSTEXIST;
             buf[0] = _T('\0');
             if (GetOpenFileName(&l)) {
@@ -671,15 +679,14 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
           return TRUE;
         }
         case IDM_COPY:
-        {
+          if (RicheditHasSelection(GetDlgItem(hwndDlg, IDC_LOGWIN))) goto logwndcopysel;
+          // fall through
+        case IDM_COPYALL:
           CopyToClipboard(g_sdata.hwnd);
           return TRUE;
-        }
-        case IDM_COPYSELECTED:
-        {
-          SendDlgItemMessage(g_sdata.hwnd,IDC_LOGWIN, WM_COPY, 0, 0);
+        case IDM_COPYSELECTED: logwndcopysel:
+          SendDlgItemMessage(g_sdata.hwnd, IDC_LOGWIN, WM_COPY, 0, 0);
           return TRUE;
-        }
         case IDM_SAVE:
         {
           OPENFILENAME l={sizeof(l),};

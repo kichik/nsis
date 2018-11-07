@@ -77,7 +77,7 @@ BEGIN
     POPUP "&Edit", IDM_EDIT
     BEGIN
         MENUITEM "&Copy\tCtrl+C",               IDM_COPYSELECTED
-        MENUITEM "Copy &All",                   IDM_COPY
+        MENUITEM "Copy &All",                   IDM_COPYALL
         MENUITEM "", -1, MFT_SEPARATOR
         MENUITEM "&Find...\tCtrl+F",            IDM_FIND
         MENUITEM "", -1, MFT_SEPARATOR
@@ -108,7 +108,7 @@ BEGIN
     END
     POPUP "&Tools", IDM_TOOLS
     BEGIN
-        MENUITEM "&Settings..\tCtrl+S",         IDM_SETTINGS
+        MENUITEM "&Settings\tCtrl+S",         IDM_SETTINGS
         MENUITEM "", -1, MFT_SEPARATOR
         MENUITEM "&Window Info",                IDM_WNDSPY
         MENUITEM "", -1, MFT_SEPARATOR
@@ -118,9 +118,10 @@ BEGIN
     BEGIN
         MENUITEM "NSIS Users &Manual\tF1",      IDM_DOCS
         MENUITEM "", -1, MFT_SEPARATOR
+        MENUITEM "Check for &Updates",          IDM_NSISUPDATE
+        MENUITEM "", -1, MFT_SEPARATOR
         MENUITEM "NSIS &Homepage",              IDM_NSISHOME
         MENUITEM "NSIS &Forum",                 IDM_FORUM
-        MENUITEM "Check for &Updates",           IDM_NSISUPDATE
         MENUITEM "", -1, MFT_SEPARATOR
         MENUITEM "&About MakeNSISW",            IDM_ABOUT
     END
