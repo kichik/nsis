@@ -117,11 +117,6 @@ static inline void GetGripperPos(HWND hwnd, RECT&r)
   r.top = r.bottom - GetSystemMetrics(SM_CYVSCROLL);
 }
 
-static bool RicheditHasSelection(HWND hRE)
-{
-  CHARRANGE tr;
-  SendMessage(hRE, EM_EXGETSEL, 0, (LPARAM) &tr);
-  return tr.cpMax - tr.cpMin <= 0 ? FALSE : TRUE;
-}
+bool RicheditHasSelection(HWND hRE);
 
 #endif

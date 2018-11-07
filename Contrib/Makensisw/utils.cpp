@@ -1125,3 +1125,10 @@ void DrawGripper(HWND hWnd, HDC hDC, const RECT&r)
     DrawFrameControl(hDC, const_cast<LPRECT>(&r), DFC_SCROLL, DFCS_SCROLLSIZEGRIP);
   }
 }
+
+bool RicheditHasSelection(HWND hRE)
+{
+  CHARRANGE tr;
+  SendMessage(hRE, EM_EXGETSEL, 0, (LPARAM) &tr);
+  return tr.cpMax - tr.cpMin <= 0 ? FALSE : TRUE;
+}
