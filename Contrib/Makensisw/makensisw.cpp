@@ -1334,4 +1334,3 @@ void SetCompressor(NCOMPRESSOR compressor)
     ResetObjects();
   }
 }
-
