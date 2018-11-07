@@ -247,10 +247,4 @@ typedef struct ToolTipStruct {
   HHOOK hook;
 } NTOOLTIP;
 
-static void EnableUICommand(UINT Id, INT_PTR Enabled)
-{
-  EnableToolBarButton(Id, !!Enabled);
-  EnableMenuItem(g_sdata.menu, Id, Enabled ? MF_ENABLED : MF_GRAYED);
-}
-
 #endif

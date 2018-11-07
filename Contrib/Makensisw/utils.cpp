@@ -36,7 +36,7 @@ WINUSERAPI HMONITOR WINAPI MonitorFromWindow(HWND hwnd, DWORD dwFlags);
 #if !defined(_WIN32_WINNT) || _WIN32_WINNT-0 < 0x0410
 typedef USHORT COLOR16;
 typedef struct _TRIVERTEX { LONG x, y; COLOR16 Red, Green, Blue, Alpha; } TRIVERTEX, *PTRIVERTEX, *LPTRIVERTEX;
-WINGDIAPI BOOL WINAPI GradientFill(HDC,PTRIVERTEX,ULONG,PVOID,ULONG,ULONG);
+WINGDIAPI BOOL WINAPI GradientFill(HDC,TRIVERTEX*,ULONG,PVOID,ULONG,ULONG);
 #endif
 #endif
 
@@ -1131,4 +1131,10 @@ bool RicheditHasSelection(HWND hRE)
   CHARRANGE tr;
   SendMessage(hRE, EM_EXGETSEL, 0, (LPARAM) &tr);
   return tr.cpMax - tr.cpMin <= 0 ? FALSE : TRUE;
+}
+
+void EnableUICommand(UINT Id, INT_PTR Enabled)
+{
+  EnableToolBarButton(Id, !!Enabled);
+  EnableMenuItem(g_sdata.menu, Id, Enabled ? MF_ENABLED : MF_GRAYED);
 }
