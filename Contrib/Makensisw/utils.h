@@ -47,6 +47,10 @@ bool WriteUTF16LEBOM(HANDLE hFile);
 void FreeSpawn(PROCESS_INFORMATION *pPI, HANDLE hRd, HANDLE hWr);
 BOOL InitSpawn(STARTUPINFO &si, HANDLE &hRd, HANDLE &hWr);
 
+typedef BYTE PACKEDCMDID_T;
+#define PACKCMDID(id) ( PACKEDCMDID_T((id) - IDM_CMDBASE) )
+#define UNPACKCMDID(id) ( IDM_CMDBASE + (id) )
+
 int SetArgv(const TCHAR *cmdLine, TCHAR ***argv);
 void SetTitle(HWND hwnd,const TCHAR *substr);
 void CopyToClipboard(HWND hwnd);
@@ -111,6 +115,13 @@ static inline void GetGripperPos(HWND hwnd, RECT&r)
   GetClientRect(hwnd, &r);
   r.left = r.right - GetSystemMetrics(SM_CXVSCROLL);
   r.top = r.bottom - GetSystemMetrics(SM_CYVSCROLL);
+}
+
+static bool RicheditHasSelection(HWND hRE)
+{
+  CHARRANGE tr;
+  SendMessage(hRE, EM_EXGETSEL, 0, (LPARAM) &tr);
+  return tr.cpMax - tr.cpMin <= 0 ? FALSE : TRUE;
 }
 
 #endif

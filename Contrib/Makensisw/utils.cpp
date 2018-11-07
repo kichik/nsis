@@ -27,9 +27,19 @@
 #include "toolbar.h"
 #include <shlwapi.h>
 
-typedef BYTE PACKEDCMDID_T;
-#define PACKCMDID(id) ( PACKEDCMDID_T((id) - IDM_CMDBASE) )
-#define UNPACKCMDID(id) ( IDM_CMDBASE + (id) )
+#ifndef MONITOR_DEFAULTTONEAREST
+#define MONITOR_DEFAULTTONEAREST 2
+WINUSERAPI HMONITOR WINAPI MonitorFromWindow(HWND hwnd, DWORD dwFlags);
+#endif
+#ifndef GRADIENT_FILL_RECT_H
+#define GRADIENT_FILL_RECT_H 0
+#if !defined(_WIN32_WINNT) || _WIN32_WINNT-0 < 0x0410
+typedef USHORT COLOR16;
+typedef struct _TRIVERTEX { LONG x, y; COLOR16 Red, Green, Blue, Alpha; } TRIVERTEX, *PTRIVERTEX, *LPTRIVERTEX;
+WINGDIAPI BOOL WINAPI GradientFill(HDC,PTRIVERTEX,ULONG,PVOID,ULONG,ULONG);
+#endif
+#endif
+
 
 NTOOLTIP g_tip;
 LRESULT CALLBACK TipHookProc(int nCode, WPARAM wParam, LPARAM lParam);
@@ -164,6 +174,7 @@ void CopyToClipboard(HWND hwnd) {
 
 void ClearLog(HWND hwnd) {
   SetDlgItemText(hwnd, IDC_LOGWIN, _T(""));
+  SendMessage(g_sdata.hwnd, WM_MAKENSIS_UPDATEUISTATE, 0, 0);
 }
 
 void LogMessage(HWND hwnd,const TCHAR *str) {
@@ -236,8 +247,7 @@ void EnableDisableItems(HWND hwnd, int on)
 
   static const PACKEDCMDID_T cmds [] = {
     PACKCMDID(IDM_EXIT), PACKCMDID(IDM_LOADSCRIPT), PACKCMDID(IDM_EDITSCRIPT), 
-    PACKCMDID(IDM_COPY), PACKCMDID(IDM_COPYSELECTED), PACKCMDID(IDM_SAVE), 
-    PACKCMDID(IDM_CLEARLOG), PACKCMDID(IDM_BROWSESCR), 
+    PACKCMDID(IDM_SAVE), PACKCMDID(IDM_CLEARLOG),
     PACKCMDID(IDM_COMPRESSOR), PACKCMDID(IDM_COMPRESSOR_SUBMENU),
     PACKCMDID(IDM_RECOMPILE), PACKCMDID(IDM_RECOMPILE_TEST)
   };
@@ -247,6 +257,10 @@ void EnableDisableItems(HWND hwnd, int on)
     if (IDM_COPYSELECTED != id && IDM_COMPRESSOR_SUBMENU != id)
       EnableToolBarButton(id, on);
   }
+
+  SendMessage(g_sdata.hwnd, WM_MAKENSIS_UPDATEUISTATE, 0 ,0);
+  EnableMenuItem(hMenu, IDM_FILE, mf); // Disable the whole File menu because of the MRU list
+  DrawMenuBar(g_sdata.hwnd);
 
   HWND hFocus = g_sdata.focused_hwnd, hOptimal = hTestBtn;
   if (on && hCloseBtn == hFocus) hFocus = hOptimal;
@@ -284,23 +298,25 @@ void SetCompressorStats()
   }
 }
 
+static void SetUIState_NoScript()
+{
+  static const PACKEDCMDID_T cmds [] = {
+    PACKCMDID(IDM_RECOMPILE),PACKCMDID(IDM_RECOMPILE_TEST),PACKCMDID(IDM_TEST), 
+    PACKCMDID(IDM_BROWSESCR),PACKCMDID(IDM_EDITSCRIPT)
+  };
+  for (UINT i = 0; i < COUNTOF(cmds); ++i)
+    EnableUICommand(UNPACKCMDID(cmds[i]), FALSE);
+  EnableWindow(GetDlgItem(g_sdata.hwnd, IDC_TEST), FALSE);
+}
+
 void CompileNSISScript() {
   DragAcceptFiles(g_sdata.hwnd,FALSE);
   ClearLog(g_sdata.hwnd);
   SetTitle(g_sdata.hwnd,NULL);
+  PostMessage(g_sdata.hwnd, WM_MAKENSIS_UPDATEUISTATE, 0, 0);
   if (lstrlen(g_sdata.script)==0) {
     LogMessage(g_sdata.hwnd,USAGE);
-
-    static const PACKEDCMDID_T cmds [] = {
-      PACKCMDID(IDM_RECOMPILE),PACKCMDID(IDM_RECOMPILE_TEST),PACKCMDID(IDM_TEST), 
-      PACKCMDID(IDM_BROWSESCR),PACKCMDID(IDM_EDITSCRIPT)
-    };
-    for (UINT i = 0; i < COUNTOF(cmds); ++i) {
-      int id = UNPACKCMDID(cmds[i]);
-      EnableMenuItem(g_sdata.menu,id,MF_GRAYED);
-      EnableToolBarButton(id,FALSE);
-    }
-    EnableWindow(GetDlgItem(g_sdata.hwnd,IDC_TEST),FALSE);
+    SetUIState_NoScript();
     DragAcceptFiles(g_sdata.hwnd,TRUE);
     return;
   }

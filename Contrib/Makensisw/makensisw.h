@@ -80,6 +80,7 @@
 #define WM_MAKENSIS_PROCESSCOMPLETE (WM_USER+1001)
 #define WM_MAKENSIS_LOADSYMBOLSET (WM_USER+1002)
 #define WM_MAKENSIS_SAVESYMBOLSET (WM_USER+1003)
+#define WM_MAKENSIS_UPDATEUISTATE (WM_USER+1004)
 
 namespace MakensisAPI {
   extern const TCHAR* SigintEventNameFmt;
@@ -216,7 +217,6 @@ typedef struct NSISScriptData {
   HANDLE sigint_event;
   HANDLE sigint_event_legacy;
   HWND focused_hwnd;
-  CHARRANGE textrange;
   NCOMPRESSOR default_compressor;
   NCOMPRESSOR compressor;
   LPCTSTR compressor_name;
@@ -246,5 +246,11 @@ typedef struct ToolTipStruct {
   HWND tip_p;
   HHOOK hook;
 } NTOOLTIP;
+
+static void EnableUICommand(UINT Id, INT_PTR Enabled)
+{
+  EnableToolBarButton(Id, !!Enabled);
+  EnableMenuItem(g_sdata.menu, Id, Enabled ? MF_ENABLED : MF_GRAYED);
+}
 
 #endif
