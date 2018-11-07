@@ -35,13 +35,7 @@ struct group
  TCHAR *name;
 };
 
-// Jim Park: Moved this array from inside the func to the outside.  While it
-// was probably "safe" for this array to be inside because the strings are in
-// the .data section and so the pointer to the string returned is probably
-// safe, this is a bad practice to have as that's making an assumption on what
-// the compiler will do.  Besides which, other types of data returned would
-// actually fail as the local vars would be popped off the stack.
-struct group groups[] = 
+static const struct group groups[] = 
 {
  {DOMAIN_ALIAS_RID_USERS, _T("User")},
  // every user belongs to the users group, hence users come before guests

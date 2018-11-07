@@ -1010,8 +1010,8 @@ int CEXEBuild::pp_define(LineParser&line)
 
 int CEXEBuild::pp_undef(LineParser&line)
 {
-  UINT noerr = false, stopswitch = false, ti = 1, handled = 0;
-  for (; ti < line.getnumtokens(); ++ti)
+  UINT noerr = false, stopswitch = false, handled = 0;
+  for (int ti = 1; ti < line.getnumtokens(); ++ti)
   {
     const TCHAR *name = line.gettoken_str(ti);
     if (!stopswitch && !_tcsicmp(name, _T("/noerrors")))

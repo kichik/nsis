@@ -1097,9 +1097,9 @@ FORCEINLINE BOOL NoDepr_GetVersionExW(OSVERSIONINFOW*p) { __pragma(warning(push)
 
 
 #ifdef __cplusplus
-namespace STLHelpers 
+namespace STL
 {
-  template<class M> struct mapped_type_helper { typedef typename M::value_type::second_type type; }; // VC6 uses referent_type and not mapped_type
+  template<class M> struct mapped_type { typedef typename M::value_type::second_type type; }; // VC6 uses referent_type and not mapped_type
 }
 #endif //~ __cplusplus
 

@@ -266,7 +266,7 @@ bool Plugins::IsPluginCallSyntax(const tstring& token)
 struct PrintPluginDirsHelper {
   template<class C> static void print(const C&c, const char*indent = "")
   {
-    std::/*unordered_*/set<typename STLHelpers::mapped_type_helper<C>::type
+    std::/*unordered_*/set<NSIS_CXX_TYPENAME STL::mapped_type<C>::type
 #ifdef _WIN32
       , Plugins::strnocasecmp
 #endif

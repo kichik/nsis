@@ -170,14 +170,13 @@ namespace MakensisAPI {
 #define FLAG_OFFSET(flag) (FIELD_OFFSET(exec_flags_t, flag)/sizeof(int))
 
 class DiagState {
-  template<class M> struct mapped_type_helper { typedef typename STLHelpers::mapped_type_helper<M>::type type; };
   template<class C, class K, class V> void insert_or_assign(C&c, const K&k, V val)
   {
     typename C::value_type item(k, val);
     std::pair<NSIS_CXX_TYPENAME C::iterator, bool> ret = c.insert(item);
     if (!ret.second) ret.first->second = val;
   }
-  template<class C, class K> typename mapped_type_helper<C>::type get_paired_value(const C&c, const K&k, typename mapped_type_helper<C>::type defval) const
+  template<class C, class K> typename STL::mapped_type<C>::type get_paired_value(const C&c, const K&k, typename STL::mapped_type<C>::type defval) const
   {
     typename C::const_iterator it = c.find(k);
     return c.end() == it ? defval : it->second;
