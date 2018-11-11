@@ -7,3 +7,7 @@
 #ifndef IDC_STATIC
 #define IDC_STATIC -1
 #endif
+
+#ifndef LWS_IGNORERETURN
+#define LWS_IGNORERETURN 0x0002
+#endif

@@ -50,6 +50,21 @@ extern const TCHAR *compressor_names[];
 void MemSafeFree(void*mem) { if (mem) GlobalFree(mem); }
 void*MemAllocZI(SIZE_T cb) { return GlobalAlloc(GPTR, cb); }
 
+HMODULE LoadSysLibrary(LPCSTR Mod)
+{
+  TCHAR buf[MAX_PATH+20], *path;
+  UINT dirmax = MAX_PATH, cch;
+  if ((cch = GetSystemDirectory(buf, dirmax)) >= dirmax) cch = 0;
+  wsprintf(buf + cch, _T("\\%hs.dll"), Mod); // Note: We always append ".dll"
+  path = buf + !cch; // Full path or just the filename
+  return LoadLibrary(path);
+}
+
+FARPROC GetSysProcAddr(LPCSTR Mod, LPCSTR FuncName)
+{
+  return GetProcAddress(LoadSysLibrary(Mod), FuncName);
+}
+
 static bool WriteFile(HANDLE hFile, const void*pData, DWORD cb)
 {
   DWORD cbio;
@@ -1010,7 +1025,6 @@ HMENU FindSubMenu(HMENU hMenu, UINT uId)
   return GetMenuItemInfo(hMenu, uId, FALSE, &mii) ? mii.hSubMenu : 0;
 }
 
-static FARPROC GetProcAddr(LPCSTR Mod, LPCSTR FuncName) { return GetProcAddress(LoadLibraryA(Mod), FuncName); }
 static UINT DpiGetClassicSystemDpiY() { HDC hDC = GetDC(NULL); UINT dpi = GetDeviceCaps(hDC, LOGPIXELSY); ReleaseDC(NULL, hDC); return dpi; }
 static HRESULT WINAPI DpiFallbackGetDpiForMonitor(HMONITOR hMon, int MDT, UINT*pX, UINT*pY) { return (*pX = *pY = DpiGetClassicSystemDpiY(), S_OK); }
 static UINT WINAPI DpiFallbackGetDpiForWindow(HWND hWnd) { return 0; }
@@ -1018,7 +1032,7 @@ static UINT WINAPI DpiFallbackGetDpiForWindow(HWND hWnd) { return 0; }
 static UINT DpiNativeGetForMonitor(HMONITOR hMon)
 {
   static HRESULT(WINAPI*f)(HMONITOR, int, UINT*, UINT*);
-  if (!f && !((FARPROC&)f = GetProcAddr("SHCORE", "GetDpiForMonitor"))) f = DpiFallbackGetDpiForMonitor;
+  if (!f && !((FARPROC&)f = GetSysProcAddr("SHCORE", "GetDpiForMonitor"))) f = DpiFallbackGetDpiForMonitor;
   UINT x, y, mdt_effective_dpi = 0;
   return SUCCEEDED(f(hMon, mdt_effective_dpi, &x, &y)) ? y : 0; 
 }
@@ -1034,7 +1048,7 @@ UINT DpiGetForWindow(HWND hWnd)
   if (DpiAwarePerMonitor() || DpiAwarePerMonitor2())
   {
     static UINT(WINAPI*f)(HWND);
-    if (!f && !((FARPROC&)f = GetProcAddr("USER32", "GetDpiForWindow"))) f = DpiFallbackGetDpiForWindow;
+    if (!f && !((FARPROC&)f = GetSysProcAddr("USER32", "GetDpiForWindow"))) f = DpiFallbackGetDpiForWindow;
     if ((dpi = f(hWnd))) return dpi;
   }
   if (DpiAwarePerMonitor() && (dpi = DpiGetForMonitor(hWnd))) return dpi;
@@ -1064,7 +1078,7 @@ static BOOL DrawHorzGradient(HDC hDC, const RECT&rect, COLOR16 r1, COLOR16 g1, C
   BOOL(WINAPI*gf)(HDC,TRIVERTEX*,ULONG,VOID*,ULONG,ULONG);
   if (SupportsWNT4() || SupportsW95())
   {
-    if (!((FARPROC&)gf = GetProcAddr("MSIMG32", "GradientFill")))
+    if (!((FARPROC&)gf = GetSysProcAddr("MSIMG32", "GradientFill")))
     {
       COLORREF orgclr = SetBkColor(hDC, RGB((((UINT)r1+r2)/2)>>8, (((UINT)g1+g2)/2)>>8, (((UINT)b1+b2)/2)>>8));
       ExtTextOut(hDC, rect.left, rect.top, ETO_OPAQUE, &rect, _T(""), 0, NULL); // TODO: Actually try to draw a gradient
@@ -1099,7 +1113,7 @@ struct VisualStyles {
   void InitUXTheme()
   {
     if (m_OpenThemeData) return ;
-    HMODULE hUXT = LoadLibraryA("UXTHEME");
+    HMODULE hUXT = LoadSysLibrary("UXTHEME");
     if (!((FARPROC&) m_OpenThemeData = GetProcAddress(hUXT, "OpenThemeData"))) m_OpenThemeData = Compat_OpenThemeData;
     (FARPROC&) CloseThemeData = GetProcAddress(hUXT, "CloseThemeData");
     (FARPROC&) DrawThemeBackground = GetProcAddress(hUXT, "DrawThemeBackground");

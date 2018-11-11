@@ -49,11 +49,27 @@ void* g_ModalDlgData;
 NSIS_ENTRYPOINT_SIMPLEGUI
 int WINAPI _tWinMain(HINSTANCE hInst,HINSTANCE hOldInst,LPTSTR CmdLineParams,int ShowCmd) {
 
-  HMODULE hK32 = LoadLibraryA("KERNEL32");
   // We can be associated with .nsi files and when launched from the shell we inherit the current directory so 
   // we need to prevent LoadLibrary from searching the current directory because it can contain untrusted DLLs!
-  FARPROC SDDA = GetProcAddress(hK32, "SetDllDirectoryA"); // WinXP.SP1+
+  FARPROC SDDA = GetSysProcAddr("KERNEL32", "SetDllDirectoryA"); // WinXP.SP1+
   if (SDDA) ((BOOL(WINAPI*)(LPCSTR))SDDA)(""); // Remove the current directory from the default DLL search order
+
+  // Try to register the SysLink class
+  DWORD iccestruct[2] = { 8, 0x8000 }; // ICC_LINK_CLASS (ComCtl32v6)
+  FARPROC icce = SupportsW95() ? GetSysProcAddr("COMCTL32", "InitCommonControlsEx") : (FARPROC) InitCommonControlsEx;
+  BOOL succ = ((BOOL(WINAPI*)(const void*))icce)(iccestruct);
+  if (!succ && (sizeof(void*) > 4 || LOBYTE(GetVersion()) >= 5))
+  {
+    FARPROC lwrc = GetSysProcAddr("SHELL32", (LPCSTR) 258); // LinkWindow_RegisterClass
+    if (lwrc) ((BOOL(WINAPI*)())lwrc)();
+    WNDCLASS wc;
+    if (GetClassInfo(NULL, _T("Link Window"), &wc))
+    {
+      wc.lpszClassName = _T("SysLink");
+      RegisterClass(&wc); // Superclass the old link window class if SysLink is not available
+    }
+  }
+
   memset(&g_sdata,0,sizeof(NSCRIPTDATA));
   memset(&g_resize,0,sizeof(NRESIZEDATA));
   memset(&g_find,0,sizeof(NFINDREPLACE));
@@ -63,8 +79,7 @@ int WINAPI _tWinMain(HINSTANCE hInst,HINSTANCE hOldInst,LPTSTR CmdLineParams,int
   g_sdata.verbosity = (unsigned char) ReadRegSettingDW(REGVERBOSITY, 4);
   if (g_sdata.verbosity > 4) g_sdata.verbosity = 4;
   RestoreSymbols();
-
-  HMODULE hRichEditDLL = LoadLibraryA("RichEd20.dll");
+  LoadSysLibrary("RichEd20");
 
   if (!InitBranding()) {
     MessageBox(0,NSISERROR,ERRBOXTITLE,MB_ICONEXCLAMATION|MB_OK|MB_TASKMODAL);
@@ -94,7 +109,6 @@ int WINAPI _tWinMain(HINSTANCE hInst,HINSTANCE hOldInst,LPTSTR CmdLineParams,int
   if (g_sdata.script_cmd_args) GlobalFree(g_sdata.script_cmd_args);
   if (g_sdata.sigint_event) CloseHandle(g_sdata.sigint_event);
   if (g_sdata.sigint_event_legacy) CloseHandle(g_sdata.sigint_event_legacy);
-  FreeLibrary(hRichEditDLL);
   return (int) msg.wParam;
 }
 
@@ -895,17 +909,32 @@ static INT_PTR CALLBACK AboutProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM 
       }
       dd.hFont = fontnorm, dd.hBoldFont = fontbold;
       SendDlgItemMessage(hwndDlg, IDC_ABOUTVERSION, WM_SETFONT, (WPARAM)fontbold, FALSE);
-      SendDlgItemMessage(hwndDlg, IDC_ABOUTCOPY, WM_SETFONT, (WPARAM)fontnorm, FALSE);
-      SendDlgItemMessage(hwndDlg, IDC_ABOUTPORTIONS, WM_SETFONT, (WPARAM)fontnorm, FALSE);
-      SendDlgItemMessage(hwndDlg, IDC_NSISVER, WM_SETFONT, (WPARAM)fontnorm, FALSE);
-      SendDlgItemMessage(hwndDlg, IDC_OTHERCONTRIB, WM_SETFONT, (WPARAM)fontnorm, FALSE);
+      static const BYTE fontnormctlids[] = { IDC_ABOUTCOPY, IDC_ABOUTPORTIONS, IDC_ABOUTDONATE, IDC_OTHERCONTRIB, IDC_NSISVER };
+      for (UINT i = 0; i < COUNTOF(fontnormctlids); ++i) SendDlgItemMessage(hwndDlg, fontnormctlids[i], WM_SETFONT, (WPARAM)fontnorm, FALSE);
       SendMessage(hwndDlg, WM_APP, 0, 0); // Set IDC_ABOUTVERSION
       SetDlgItemText(hwndDlg, IDC_ABOUTCOPY, COPYRIGHT);
       SetDlgItemText(hwndDlg, IDC_OTHERCONTRIB, CONTRIB);
+      SetDlgItemText(hwndDlg, IDC_ABOUTDONATE, DONATE);
       SetDlgItemText(hwndDlg, IDC_NSISVER, g_sdata.branding);
       SetTimer(hwndDlg, ABOUTDLGDATA::TID_HEADER, 50, NULL);
       break;
     }
+    case WM_NOTIFY:
+      switch (((NMHDR*)lParam)->code)
+      {
+        case NM_CLICK:
+        // fall through
+        case NM_RETURN:
+          if (((NMHDR*)lParam)->idFrom == IDC_ABOUTDONATE)
+          {
+            static const BYTE x = 128, encurl[] = DONATEURL;
+            char url[COUNTOF(encurl)];
+            for (UINT i = 0;; ++i) if (!(url[i] = (char) (encurl[i] & ~x))) break; // "Decrypt" URL
+            OpenUrlInDefaultBrowser(hwndDlg, url);
+          }
+          break;
+      }
+      break;
     case WM_COMMAND:
       if (wParam == MAKELONG(IDC_ABOUTVERSION, STN_DBLCLK)) goto showversion;
       if (IDOK != LOWORD(wParam)) break;

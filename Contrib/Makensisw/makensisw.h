@@ -32,12 +32,13 @@
 #include <richedit.h>
 #undef _RICHEDIT_VER
 
-// Defines
 #define DpiAwarePerMonitor2() ( FALSE ) // Not yet
 #define DpiAwarePerMonitor() ( FALSE )
 #define SupportsWNT4() ( sizeof(void*) == 4 && !DpiAwarePerMonitor() ) // NT4 does not support the MultiMon API
 #define SupportsW9X() ( sizeof(TCHAR) == 1 )
 #define SupportsW95() ( FALSE && SupportsW9X() && !DpiAwarePerMonitor() )
+
+// Defines
 #define NSIS_URL     "http://nsis.sourceforge.net/"
 #define NSIS_FORUM_URL "http://forums.winamp.com/forumdisplay.php?forumid=65"
 #define NSIS_UC_URL  "http://nsis.sourceforge.net/update.php?version="
@@ -45,6 +46,8 @@
 #define USAGE        _T("Usage:\r\n\r\n - File | Load Script...\r\n - Drag the .nsi file into this window\r\n - Right click the .nsi file and choose \"Compile NSIS Script\"")
 #define COPYRIGHT    _T("Copyright (C) 2002 Robert Rainwater")
 #define CONTRIB      _T("Fritz Elfert, Justin Frankel, Amir Szekely, Sunil Kamath, Joost Verburg, Anders Kjersem")
+#define DONATE       _T("<A ID=\"D\">Donate</A> to support NSIS development.")
+#define DONATEURL    { 'h'|x,'t','t'|x,'p',':'|x,'/'|x,'/'|x,'n'|x,'s'|x,'i'|x,'s'|x,'.'|x,'s'|x,'f'|x,'.','n'|x,'e'|x,'t'|x,'/'|x,'r','/'|x,'D'|x,'o'|x,'n'|x,'a'|x,'t'|x,'e'|x,'\0' } // "Encrypted"
 #define DOCPATH      "http://nsis.sourceforge.net/Docs/"
 #define LOCALDOCS    _T("\\NSIS.chm")
 #define ERRBOXTITLE  0 //_T("Error")
