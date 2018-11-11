@@ -16,9 +16,8 @@
 #include "utils.h"
 #include "resource.h"
 
-static FARPROC GetModProc(LPCSTR Mod, LPCSTR Func) { return GetProcAddress(LoadLibraryA(Mod), Func); }
-#define InitializeApiFuncWithFallback(mn, fn) { FARPROC f =  GetModProc((mn), (#fn)); g_##fn = Compat_##fn; if (f) (FARPROC&) g_##fn = f; }
-#define InitializeApiFunc(mn, fn) ( (FARPROC&)(g_##fn) = GetModProc((mn), (#fn)) )
+#define InitializeApiFuncWithFallback(mn, fn) { FARPROC f =  GetSysProcAddr((mn), (#fn)); g_##fn = Compat_##fn; if (f) (FARPROC&) g_##fn = f; }
+#define InitializeApiFunc(mn, fn) ( (FARPROC&)(g_##fn) = GetSysProcAddr((mn), (#fn)) )
 #define CallApiFunc(fn) ( g_##fn )
 #define HasApiFunc(fn) ( !!(g_##fn) )
 
@@ -122,7 +121,7 @@ static BOOL IsHung(HWND hWnd)
   else
 #endif
   {
-    static FARPROC g_func = GetProcAddress(LoadLibraryA("USER32"), "IsHungAppWindow");
+    static FARPROC g_func = GetSysProcAddr("USER32", "IsHungAppWindow");
     if (g_func) return ((BOOL(WINAPI*)(HWND))g_func)(hWnd);
     DWORD_PTR mr;
     LRESULT rv = SendMessageTimeout(hWnd, WM_NULL, 0, 0, SMTO_ABORTIFHUNG, 500, &mr);

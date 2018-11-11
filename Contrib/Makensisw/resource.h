@@ -61,6 +61,7 @@
 #define IDC_NSISVER                     224
 #define IDC_OTHERCONTRIB                225
 #define IDC_ABOUTHEADER                 226
+#define IDC_ABOUTDONATE                 227
 #define IDC_RIGHT                       230
 #define IDC_LEFT                        231
 #define IDC_CLEAR                       232
