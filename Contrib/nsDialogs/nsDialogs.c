@@ -19,6 +19,7 @@
 HINSTANCE g_hInstance;
 struct nsDialog g_dialog;
 extra_parameters* g_pluginParms;
+LPTSTR g_var0;
 
 static COLORREF GetLinkColor()
 {
@@ -149,6 +150,7 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPara
     {
       LPNMHDR nmhdr = (LPNMHDR) lParam;
       struct nsControl* ctl = GetControl(nmhdr->hwndFrom);
+      int *pFlag = &g_pluginParms->exec_flags->silent, orgFlag, ret; // The silent flag can only be changed in .onInit and custom pages will not be displayed in silent mode so we can use this flag in the callback
 
       if (ctl == NULL)
         break;
@@ -156,11 +158,16 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPara
       if (!ctl->callbacks.onNotify)
         break;
 
+      orgFlag = *pFlag, *pFlag = 0;
       pushintptr((INT_PTR) nmhdr);
       pushintptr(nmhdr->code);
       pushintptr((INT_PTR) nmhdr->hwndFrom);
       g_pluginParms->ExecuteCodeSegment(ctl->callbacks.onNotify - 1, 0);
+      ret = *pFlag, *pFlag = orgFlag;
+      if (ret)
+        return DlgRet(hwndDlg, StrToIntPtr(g_var0));
     }
+    break;
 
     // handle links
     case WM_DRAWITEM:
@@ -266,6 +273,7 @@ void __declspec(dllexport) Create(HWND hwndParent, int string_size, TCHAR *varia
 
   g_dialog.hwParent = hwndParent;
   g_pluginParms = extra;
+  g_var0 = variables;
 
   hwPlacementRect = GetDlgItem(hwndParent, popint());
   GetWindowRect(hwPlacementRect, &rcPlacement);

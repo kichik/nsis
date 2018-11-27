@@ -500,7 +500,7 @@ SectionEnd</pre></blockquote>
 
 <h3><a name="ref-onnotify"></a>OnNotify</h3>
 <p><code>nsDialogs::OnNotify <i>control_HWND</i> <i>function_address</i></code></p>
-<p>Sets a notification callback function for the given control. Whenever the control receives the WM_NOTIFY message, the function will be called and the control's HWND, notification code and a pointer to the NMHDR structure will be waiting on its stack.</p>
+<p>Sets a notification callback function for the given control. Whenever the control receives the WM_NOTIFY message, the function will be called and the control's HWND, notification code and a pointer to the NMHDR structure will be waiting on its stack. Use ${NSD_Return} to return a value.</p>
 <p>Use GetFunctionAddress to get the address of the desired callback function.</p>
 <p>Returns nothing.</p>
 
@@ -559,8 +559,6 @@ SectionEnd</pre></blockquote>
 <p><code>${NSD_OnBack} <i>function_name</i></code></p>
 <p>See <a href="#ref-onback">OnBack</a> for more details.</p>
 
-<p></p>
-
 <h3><a name="mref-onchange"></a>NSD_OnChange</h3>
 <p><code>${NSD_OnChange} <i>control_HWND</i> <i>function_name</i></code></p>
 <p>See <a href="#ref-onchange">OnChange</a> for more details.</p>
@@ -573,6 +571,10 @@ SectionEnd</pre></blockquote>
 <h3><a name="mref-onnotify"></a>NSD_OnNotify</h3>
 <p><code>${NSD_OnNotify} <i>control_HWND</i> <i>function_name</i></code></p>
 <p>See <a href="#ref-onnotify">OnNotify</a> for more details.</p>
+
+<h3><a name="mref-return"></a>NSD_Return</h3>
+<p><code>${NSD_Return} <i>value</i></code></p>
+<p>Used to return a value back to Windows from a OnNotify callback.</p>
 
 <h3><a name="mref-setfocus"></a>NSD_SetFocus</h3>
 <p><code>${NSD_SetFocus} <i>control_HWND</i></code></p>

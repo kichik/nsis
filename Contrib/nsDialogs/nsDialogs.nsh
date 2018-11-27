@@ -413,6 +413,15 @@ Header file for creating custom installer pages with nsDialogs
 !insertmacro __NSD_DefineControlCallback Notify
 !insertmacro __NSD_DefineDialogCallback Back
 
+!define NSD_Return "!insertmacro NSD_Return "
+!macro NSD_Return val
+!if "${val}" != "$0"
+	StrCpy $0 ${val}
+!endif
+SetSilent silent
+Return
+!macroend
+
 
 !define __NSD_MkCtlCmd "!insertmacro __NSD_MkCtlCmd "
 !macro __NSD_MkCtlCmd msg wp lp hCtl
