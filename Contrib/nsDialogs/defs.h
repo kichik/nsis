@@ -7,6 +7,7 @@
 
 #define NSDFUNC WINAPI
 
+#define GetVar(vars, varlen, varid) ( (vars) + ((varid) * (varlen)) )
 #define DlgRet(hDlg, val) ( SetWindowLongPtr((hDlg), DWLP_MSGRESULT, (val)) | TRUE )
 #define StrToIntPtr nsishelper_str_to_ptr
 

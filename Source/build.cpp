@@ -344,7 +344,7 @@ CEXEBuild::CEXEBuild(signed char pponly, bool warnaserror) :
   m_UserVarNames.add(_T("EXEFILE"),-1);      // 28
   m_UserVarNames.add(_T("HWNDPARENT"),-1);   // 29
   m_UserVarNames.add(_T("_CLICK"),-1);       // 30
-  m_UserVarNames.add(_T("_OUTDIR"),1);       // 31
+  m_UserVarNames.add(_T("_OUTDIR"),1);       // 31 Note: nsDialogs also uses this
 
   m_iBaseVarsNum = m_UserVarNames.getnum();
 

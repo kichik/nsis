@@ -415,9 +415,7 @@ Header file for creating custom installer pages with nsDialogs
 
 !define NSD_Return "!insertmacro NSD_Return "
 !macro NSD_Return val
-!if "${val}" != "$0"
-	StrCpy $0 ${val}
-!endif
+StrCpy $_OUTDIR ${val}
 SetSilent silent
 Return
 !macroend
