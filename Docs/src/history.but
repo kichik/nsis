@@ -16,6 +16,8 @@ Released on ??? ??th, 20??
 
 \b Added MUI_TEXTCOLOR setting
 
+\b nsDialogs::OnNotify can now return values back to Windows
+
 \b Added LIBRARY_INSTALL_EQUAL_VERSION \R{library_install}{InstallLib} option
 
 \b Added NTMARTA to preload list to fix rare Windows 7 security issue (\W{http://sf.net/p/nsis/bugs/1204}{bug #1204})

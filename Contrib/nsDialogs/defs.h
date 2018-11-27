@@ -5,7 +5,11 @@
 
 #include <windows.h>
 
-#define NSDFUNC __stdcall
+#define NSDFUNC WINAPI
+
+#define DlgRet(hDlg, val) ( SetWindowLongPtr((hDlg), DWLP_MSGRESULT, (val)) | TRUE )
+#define StrToIntPtr nsishelper_str_to_ptr
+
 
 typedef int nsFunction;
 

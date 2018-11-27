@@ -178,9 +178,10 @@ Function NotifyPage
 	${NSD_CreateRichEdit} 1 1 -2 -2 ""
 	Pop $9
 	${NSD_OnNotify} $9 OnNotify
-	${NSD_RichEd_SetEventMask} $9 ${ENM_LINK}
+	IntOp $8 ${ENM_LINK} | ${ENM_KEYEVENTS}
+	${NSD_RichEd_SetEventMask} $9 $8
 	SendMessage $9 ${EM_AUTOURLDETECT} 1 0
-	${NSD_SetText} $9 "{\rtf1\ansi{\fonttbl\f0\fswiss Helvetica;}\f0\pard http://nsis.sf.net\par {\b Click the link}...} "
+	${NSD_SetText} $9 "{\rtf1\ansi{\fonttbl\f0\fswiss Helvetica;}\f0\pard http://nsis.sf.net\par {\b Click the link!}\par\par Type something and I will block every other character...}"
 
 	nsDialogs::Show
 FunctionEnd
@@ -189,19 +190,29 @@ Function OnNotify
 	Pop $1 ; HWND
 	Pop $2 ; Code
 	Pop $3 ; NMHDR*
-	${IfThen} $2 <> ${EN_LINK} ${|} Return ${|}
-	System::Call '*$3(p,p,p,p.r2,p,p,i.r4,i.r5)' ; Extract from ENLINK*
-	${IfThen} $2 <> ${WM_LBUTTONDOWN} ${|} Return ${|}
-	IntOp $2 $5 - $4
-	System::Call '*(ir4,ir5,l,&t$2,i)p.r2' ; Create TEXTRANGE and a text buffer
-	${If} $2 P<> 0
-		IntPtrOp $3 $2 + 16 ; Find buffer
-		System::Call '*$2(i,i,p$3)' ; Set buffer in TEXTRANGE
-		SendMessage $1 ${EM_GETTEXTRANGE} "" $2 $4
-		${If} $4 <> 0
-			System::Call 'SHELL32::ShellExecute(p$hWndParent, p0, pr3, p0, p0, i 1)'
+	${If} $2 = ${EN_LINK}
+		System::Call '*$3(p,p,p,p.r2,p,p,i.r4,i.r5)' ; Extract from ENLINK*
+		${IfThen} $2 <> ${WM_LBUTTONDOWN} ${|} Return ${|}
+		IntOp $2 $5 - $4
+		System::Call '*(ir4,ir5,l,&t$2,i)p.r2' ; Create TEXTRANGE and a text buffer
+		${If} $2 P<> 0
+			IntPtrOp $3 $2 + 16 ; Find buffer
+			System::Call '*$2(i,i,p$3)' ; Set buffer in TEXTRANGE
+			SendMessage $1 ${EM_GETTEXTRANGE} "" $2 $4
+			${If} $4 <> 0
+				System::Call 'SHELL32::ShellExecute(p$hWndParent, p0, pr3, p0, p0, i 1)'
+			${EndIf}
+			System::Free $2
 		${EndIf}
-		System::Free $2
+	${ElseIf} $2 = ${EN_MSGFILTER}
+		Var /Global Toggle
+		System::Call '*$3(p,i,i,i.r4)' ; MSGFILTER->msg
+		${If} $4 = ${WM_CHAR}
+			IntOp $Toggle $Toggle ^ 1
+			${If} $Toggle & 1
+				${NSD_Return} 1
+			${EndIf}
+		${EndIf}
 	${EndIf}
 FunctionEnd
 
