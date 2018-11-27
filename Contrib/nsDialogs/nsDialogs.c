@@ -19,7 +19,7 @@
 HINSTANCE g_hInstance;
 struct nsDialog g_dialog;
 extra_parameters* g_pluginParms;
-LPTSTR g_var0;
+LPTSTR g_callbackRetVar;
 
 static COLORREF GetLinkColor()
 {
@@ -165,7 +165,7 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPara
       g_pluginParms->ExecuteCodeSegment(ctl->callbacks.onNotify - 1, 0);
       ret = *pFlag, *pFlag = orgFlag;
       if (ret)
-        return DlgRet(hwndDlg, StrToIntPtr(g_var0));
+        return DlgRet(hwndDlg, StrToIntPtr(g_callbackRetVar));
     }
     break;
 
@@ -273,7 +273,7 @@ void __declspec(dllexport) Create(HWND hwndParent, int string_size, TCHAR *varia
 
   g_dialog.hwParent = hwndParent;
   g_pluginParms = extra;
-  g_var0 = variables;
+  g_callbackRetVar = GetVar(variables, string_size, 31); // The undocumented $_OUTDIR variable
 
   hwPlacementRect = GetDlgItem(hwndParent, popint());
   GetWindowRect(hwPlacementRect, &rcPlacement);
