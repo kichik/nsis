@@ -18,6 +18,8 @@
 ; AtLeastWin<version> checks if the installer is running on Windows version at least as specified.
 ; IsWin<version> checks if the installer is running on Windows version exactly as specified.
 ; AtMostWin<version> checks if the installer is running on Windows version at most as specified.
+; AtLeastBuild <number> checks if the installer is running on a Windows version with a minimum build number.
+; AtMostBuild <number> checks if the installer is running on a Windows version with a maximum build number.
 ;
 ; <version> can be replaced with the following values:
 ;
@@ -508,7 +510,13 @@
 !define WinVerGetMinor '!insertmacro __WinVer_GetVer $__WINVERV  16 ${_WINVER_MASKVMIN}'
 !define WinVerGetBuild '!insertmacro __WinVer_GetVer $__WINVERSP "" ${_WINVER_MASKVBLD}'
 
-# done
+!macro _WinVer_BuildNumCheck op num _t _f
+  !insertmacro _LOGICLIB_TEMP
+  ${WinVerGetBuild} $_LOGICLIB_TEMP
+  !insertmacro _${op} $_LOGICLIB_TEMP ${num} `${_t}` `${_f}`
+!macroend
+!define AtLeastBuild `U>= WinVer_BuildNumCheck `
+!define AtMostBuild `U<= WinVer_BuildNumCheck `
 
 !endif # !___WINVER__NSH___
 

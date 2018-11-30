@@ -1,4 +1,3 @@
-
 !include nsDialogs.nsh
 !include LogicLib.nsh
 !include WinCore.nsh ; MAKELONG
