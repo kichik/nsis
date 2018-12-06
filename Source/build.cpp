@@ -126,9 +126,7 @@ CEXEBuild::CEXEBuild(signed char pponly, bool warnaserror) :
   ns_label.add(_T(""),0);
 
   definedlist.add(_T("NSIS_VERSION"), NSIS_VERSION);
-#ifdef NSIS_PACKEDVERSION
   definedlist.add(_T("NSIS_PACKEDVERSION"), NSIS_PACKEDVERSION);
-#endif
 
   m_target_type=TARGET_X86ANSI;
 #ifdef _WIN32
