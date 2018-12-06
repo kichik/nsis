@@ -34,9 +34,7 @@ Released on ??? ??th, 20??
 
 \b Added Hind\u012b{i} (\W{http://sf.net/p/nsis/patches/289}{patch #289})
 
-\b Fixed minor Spanish bug (\W{http://sf.net/p/nsis/bugs/1205}{bug #1205})
-
-\b Updated Belarusian and Mongolian
+\b Updated Belarusian, German (\W{http://sf.net/p/nsis/bugs/1023}{bug #1023}), Mongolian and Spanish (\W{http://sf.net/p/nsis/bugs/1205}{bug #1205})
 
 \H{v3.03} 3.03
 
