@@ -546,7 +546,6 @@
   !if "${WinVer_WaaS_Build}" <= 9600
     !error 'WinVer: Unknown WaaS name: ${id}'
   !endif
-  !warning '${op} ${WinVer_WaaS_Build} from ${id}'
   !insertmacro _WinVer_BuildNumCheck ${op} ${WinVer_WaaS_Build} `${_t}` `${_f}`
   !undef WinVer_WaaS_Build
 !macroend
