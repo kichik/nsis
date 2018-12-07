@@ -10,6 +10,8 @@ Released on ??? ??th, 20??
 
 \b Added IsNativeMachineArchitecture helper macros to x64.nsh
 
+\b Added experimental WinVer "Windows as a Service" detection macros
+
 \b Added MakeNSISW window info "spy" tool
 
 \S2{} Minor Changes
