@@ -26,6 +26,8 @@ Released on ??? ??th, 20??
 
 \b Fixed !macroundef of last defined macro bug
 
+\b Fixed MultiUser caption string bug (\W{http://sf.net/p/nsis/bugs/1012}{bug #1012})
+
 \b !undef issues warnings instead of errors
 
 \b MakeNSIS prints -CMDHELP to stdout (\W{http://sf.net/p/nsis/bugs/1203}{bug #1203})
