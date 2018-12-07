@@ -32,6 +32,8 @@ Released on ??? ??th, 20??
 
 \b MakeNSIS prints -CMDHELP to stdout (\W{http://sf.net/p/nsis/bugs/1203}{bug #1203})
 
+\b Removed LibraryLocal utility
+
 \S2{} Translations
 
 \b Added Hind\u012b{i} (\W{http://sf.net/p/nsis/patches/289}{patch #289})

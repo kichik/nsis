@@ -156,36 +156,19 @@
 ### Get library version
 !macro __InstallLib_Helper_GetVersion TYPE FILE
 
-  !ifdef LIBRARY_USELIBRARYLOCALHELPER
-    !tempfile LIBRARY_TEMP_NSH
+  !if "${TYPE}" == "D"
+   !getdllversion /NoErrors /Packed "${FILE}" LIBRARY_VERSION_
+  !else if "${TYPE}" == "T"
+    !gettlbversion /NoErrors /Packed "${FILE}" LIBRARY_VERSION_
+  !endif
 
-    !ifdef NSIS_WIN32_MAKENSIS
-      !execute '"${NSISDIR}\Bin\LibraryLocal.exe" "${TYPE}" "${FILE}" "${LIBRARY_TEMP_NSH}"'
-    !else
-      !execute 'LibraryLocal "${TYPE}" "${FILE}" "${LIBRARY_TEMP_NSH}"'
-    !endif
-
-    !include "${LIBRARY_TEMP_NSH}"
-    !delfile "${LIBRARY_TEMP_NSH}"
-    !undef LIBRARY_TEMP_NSH
-
-  !else
-
-    !if "${TYPE}" == "D"
-     !getdllversion /NoErrors /Packed "${FILE}" LIBRARY_VERSION_
-    !else if "${TYPE}" == "T"
-      !gettlbversion /NoErrors /Packed "${FILE}" LIBRARY_VERSION_
-    !endif
-
-    ; Emulate the old LibraryLocal defines
-    !ifndef LIBRARY_VERSION_HIGH
-      !define LIBRARY_VERSION_FILENOTFOUND
-    !else if "${LIBRARY_VERSION_HIGH}" == ""
-      !define LIBRARY_VERSION_NONE
-      !undef LIBRARY_VERSION_HIGH
-      !undef LIBRARY_VERSION_LOW
-    !endif
-
+  ; Emulate the old LibraryLocal defines
+  !ifndef LIBRARY_VERSION_HIGH
+    !define LIBRARY_VERSION_FILENOTFOUND
+  !else if "${LIBRARY_VERSION_HIGH}" == ""
+    !define LIBRARY_VERSION_NONE
+    !undef LIBRARY_VERSION_HIGH
+    !undef LIBRARY_VERSION_LOW
   !endif
 
 !macroend
