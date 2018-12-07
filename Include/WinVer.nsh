@@ -518,6 +518,42 @@
 !define AtLeastBuild `U>= WinVer_BuildNumCheck `
 !define AtMostBuild `U<= WinVer_BuildNumCheck `
 
+# Windows as a Service macros
+
+!macro WinVer_WaaS id build fu codename marketingname
+  !if "${id}" == ${fu}
+    !define WinVer_WaaS_Build ${build}
+  !else if "${id}" == "${codename}"
+    !define WinVer_WaaS_Build ${build}
+  !else if "${id}" == "${marketingname}"
+    !define WinVer_WaaS_Build ${build}
+  !endif
+!macroend
+
+!macro _WinVer_WaaS op id _t _f
+  !insertmacro WinVer_WaaS "${id}" 10240 1507 "Threshold" "RTM"
+  !insertmacro WinVer_WaaS "${id}" 10586 1511 "Threshold 2" "November Update"
+  !insertmacro WinVer_WaaS "${id}" 14393 1607 "Redstone" "Anniversary Update"
+  !insertmacro WinVer_WaaS "${id}" 15063 1703 "Redstone 2" "Creators Update"
+  !insertmacro WinVer_WaaS "${id}" 16299 1709 "Redstone 3" "Fall Creators Update"
+  !insertmacro WinVer_WaaS "${id}" 17134 1803 "Redstone 4" "April 2018 Update"
+  !insertmacro WinVer_WaaS "${id}" 17763 1809 "Redstone 5" "October 2018 Update"
+  ;insertmacro WinVer_WaaS "${id}" ????? 1903 "19H1" "?"
+  !ifmacrodef WinVerExternal_WaaS_MapToBuild
+    !insertmacro WinVerExternal_WaaS_MapToBuild ${op} "${id}" WinVer_WaaS_Build
+  !endif
+  !define /IfNDef WinVer_WaaS_Build 0
+  !if "${WinVer_WaaS_Build}" <= 9600
+    !error 'WinVer: Unknown WaaS name: ${id}'
+  !endif
+  !warning '${op} ${WinVer_WaaS_Build} from ${id}'
+  !insertmacro _WinVer_BuildNumCheck ${op} ${WinVer_WaaS_Build} `${_t}` `${_f}`
+  !undef WinVer_WaaS_Build
+!macroend
+
+!define AtLeastWaaS `U>= WinVer_WaaS `
+!define AtMostWaaS `U<= WinVer_WaaS `
+
 !endif # !___WINVER__NSH___
 
 !verbose pop
