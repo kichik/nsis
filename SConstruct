@@ -30,7 +30,6 @@ plugins = [
 ]
 
 utils = [
-	'Library/LibraryLocal',
 	'Library/RegTool',
 	'MakeLangId',
 	'Makensisw',

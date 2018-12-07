@@ -247,7 +247,6 @@ ${MementoSection} "NSIS Core Files (required)" SecCore
   RMDir $INSTDIR\Docs
 
   SetOutPath $INSTDIR\Bin
-  File ..\Bin\LibraryLocal.exe
   !if ${BITS} >= 64
     File /NonFatal  ..\Bin\RegTool-x86.bin
     File            ..\Bin\RegTool-amd64.bin
