@@ -336,6 +336,7 @@ ${MementoSection} "Script Examples" SecExample
   File ..\Examples\WordFuncTest.nsi
   File ..\Examples\Memento.nsi
   File ..\Examples\unicode.nsi
+  File ..\Examples\NSISMenu.nsi
 
   SetOutPath $INSTDIR\Examples\Plugin
   File ..\Examples\Plugin\exdll.c
@@ -497,7 +498,7 @@ ${MementoSection} "Graphics" SecGraphics
   Delete $INSTDIR\Contrib\Icons\*.bmp
   RMDir $INSTDIR\Contrib\Icons
   SetOutPath $INSTDIR\Contrib\Graphics
-  File /r /x nsis-menu.ico "..\Contrib\Graphics\*.ico"
+  File /r "..\Contrib\Graphics\*.ico"
   File /r "..\Contrib\Graphics\*.bmp"
 ${MementoSectionEnd}
 
