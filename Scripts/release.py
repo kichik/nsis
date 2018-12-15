@@ -271,7 +271,7 @@ def TestInstaller():
 	)
 
 	run(
-		'diff -r insttest insttestscons | grep -v uninst-nsis.exe',
+		'diff -r insttest insttestscons | grep -v uninst-nsis.exe | grep -v NSIS.exe',
 		LOG_ALL,
 		'scons and installer installations differ',
 		1
