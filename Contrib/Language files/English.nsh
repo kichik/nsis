@@ -1,7 +1,7 @@
 ﻿;Language: English (1033)
 ;By Joost Verburg
 
-!insertmacro LANGFILE "English" "English" "English" "English"
+!insertmacro LANGFILE "English" "English" "English" "English" ; See \Include\LangFile.nsh for a description of these parameters
 
 !ifdef MUI_WELCOMEPAGE
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Welcome to $(^NameDA) Setup"
