@@ -27,6 +27,7 @@ WTypes.h
 !define VT_SAFEARRAY 27
 !define VT_LPSTR     30
 !define VT_LPWSTR    31
+!define VT_FILETIME  64
 
 !define /ifndef VARIANT_TRUE -1
 !define /ifndef VARIANT_FALSE 0
@@ -80,41 +81,58 @@ ShlGuid.h & ShlObj.h
 /**************************************************
 Helper macros
 **************************************************/
+!define V_GetVT '!insertmacro V_GetVT '
 !macro V_GetVT pPV sysdst
 System::Call '*${pPV}(&i2.${sysdst})'
 !macroend
+!define V_SetVT '!insertmacro V_SetVT '
 !macro V_SetVT pPV syssrc
 System::Call '*${pPV}(&i2 ${syssrc})'
 !macroend
-!macro V_GetI1 pPV sysdst
-System::Call '*${pPV}(l,&i1.${sysdst})'
+!macro V_GetHelper sysvaltyp pPV sysdst
+System::Call '*${pPV}(l,${sysvaltyp}.${sysdst})'
 !macroend
-!macro V_SetI1 pPV syssrc
-System::Call '*${pPV}(l,&i1 ${syssrc})'
+!macro V_GenericSetHelper sysvaltyp pPV VT syssrc
+!if "${VT}" != "" ; Setting the VT is optional
+  System::Call '*${pPV}(&i2 ${VT},&i6,${sysvaltyp}${syssrc})'
+!else
+  System::Call '*${pPV}(l,${sysvaltyp}${syssrc})'
+!endif
 !macroend
-!macro V_GetI2 pPV sysdst
-System::Call '*${pPV}(l,&i2.${sysdst})'
+!macro V_SpecificSetHelper VT sysvaltyp pPV syssrc
+System::Call '*${pPV}(&i2 ${VT},&i6,${sysvaltyp}${syssrc})'
 !macroend
-!macro V_SetI2 pPV syssrc
-System::Call '*${pPV}(l,&i2 ${syssrc})'
+!macro Make_V_GetterSetter name sysvaltyp setsep
+!define V_Get${name} '!insertmacro V_GetHelper "${sysvaltyp}" '
+!ifdef VT_${name}
+  !define V_Set${name} '!insertmacro V_SpecificSetHelper ${VT_${name}} "${sysvaltyp}${setsep}" '
+!else
+  !define V_Set${name} '!insertmacro V_GenericSetHelper "${sysvaltyp}${setsep}" '
+!endif
 !macroend
-!macro V_GetI4 pPV sysdst
-System::Call '*${pPV}(l,i.${sysdst})'
+!insertmacro Make_V_GetterSetter Int8 "&i1" " "  ; Generic
+!insertmacro Make_V_GetterSetter Int16 "&i2" " " ; Generic
+!insertmacro Make_V_GetterSetter Int32 "i" ""    ; Generic
+!insertmacro Make_V_GetterSetter Int64 "l" ""    ; Generic
+!insertmacro Make_V_GetterSetter Pointer "p" ""  ; Generic
+!insertmacro Make_V_GetterSetter I4 "i" " "
+!insertmacro Make_V_GetterSetter BOOL "&i2" " "
+!insertmacro Make_V_GetterSetter FILETIME "l" ""
+
+!macro VariantInit pV
+${V_SetVT} ${pV} ${VT_EMPTY}
 !macroend
-!macro V_SetI4 pPV syssrc
-System::Call '*${pPV}(l,i${syssrc})'
+!macro VariantClear pV
+System::Call 'OLEAUT32::#9(p${pV})'
 !macroend
-!macro V_GetI8 pPV sysdst
-System::Call '*${pPV}(l,l.${sysdst})'
+!macro VariantCopy pDstV pSrcV sysretHR
+System::Call 'OLEAUT32::#10(p${pDstV},p${pSrcV})i.${sysretHR}'
 !macroend
-!macro V_SetI8 pPV syssrc
-System::Call '*${pPV}(l,l${syssrc})'
+!macro VariantChangeType pDstV pSrcV Flags VT sysretHR
+System::Call 'OLEAUT32::#12(p${pDstV},p${pSrcV},i${Flags},i${VT})i.${sysretHR}'
 !macroend
-!macro V_GetPtr pPV sysdst
-System::Call '*${pPV}(l,p.${sysdst})'
-!macroend
-!macro V_SetPtr pPV syssrc
-System::Call '*${pPV}(l,p${syssrc})'
+!macro PropVariantClear pPV
+System::Call 'OLE32::PropVariantClear(p${pV})' ; Win95+, WinNT4.SP2+
 !macroend
 
 !macro IPropertyStorage_ReadPropById pPS ID pPV sysoutHR
