@@ -125,5 +125,5 @@
   ${LangFileString} MULTIUSER_TEXT_INSTALLMODE_SUBTITLE "वे उपयोगकर्ता चुनें जिनके लिए आप $(^NameDA) इनस्टॉल करना चाहते हैं।"
   ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_TOP "चयन करें कि क्या आप $(^NameDA) को केवल अपने लिए इनस्टॉल करना चाहते हैं या इस कंप्यूटर के सभी उपयोगकर्ताओं के लिए। $(^ClickNext)"
   ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_ALLUSERS "इस कंप्यूटर का उपयोग करने वाले किसी भी व्यक्ति के लिए इनस्टॉल करें"
-  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_CURRENTUSER "केवल मेरे लिए इनस्टॉल करें
+  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_CURRENTUSER "केवल मेरे लिए इनस्टॉल करें"
 !endif
