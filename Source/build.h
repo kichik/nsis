@@ -108,6 +108,7 @@ typedef enum {
   DW_ATTRIBUTE_OVERLONGSTRING = 7060,
   DW_PARSE_BADNUMBER = 7070,
   DW_PARSE_LNK_HK = 7075,
+  DW_GENERIC_DEPRECATED = 7998,
   DW_PARSE_REGPATHPREFIX = 7999,
   DW_INSTFILESPAGE_NOT_USED = 8000, // reserved ..8019
   DW_COMP_FINAL = 8020, // reserved ..8059
@@ -441,6 +442,7 @@ class CEXEBuild {
     void print_warnings();
     void warninghelper(DIAGCODE dc, bool fl, const TCHAR *fmt, va_list args);
     DiagState diagstate;
+    bool changed_target;
 
     /** Are we defining an uninstall version of the code?
      * @param un Use like a boolean to define whether in uninstall mode.
