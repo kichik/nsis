@@ -416,6 +416,7 @@ void CEXEBuild::initialize(const TCHAR *makensis_path)
 
   tstring uninst = stubs_dir + PLATFORM_PATH_SEPARATOR_STR + _T("uninst");
   uninstaller_icon = load_icon_file(uninst.c_str());
+  changed_target = false;
 }
 
 
@@ -2568,6 +2569,8 @@ int CEXEBuild::write_output(void)
   RET_UNLESS_OK( check_write_output_errors() );
 
   has_called_write_output=true;
+  if (!changed_target && !build_unicode)
+    warning(DW_GENERIC_DEPRECATED, _T("ANSI targets are deprecated"));
 
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
   RET_UNLESS_OK( add_plugins_dir_initializer() );
@@ -3898,6 +3901,7 @@ int CEXEBuild::change_target_architecture(TARGETTYPE tt)
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
   if (PS_OK == ec) ec = initialize_default_plugins(true);
 #endif
+  changed_target = true;
   return ec;
 }
 
