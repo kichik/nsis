@@ -174,6 +174,8 @@ const TCHAR * NSISCALL loadHeaders(int cl_flags)
 #ifdef C_ASSERT
 {C_ASSERT(sizeof(firstheader) == sizeof(int) * 7);}
 {C_ASSERT(sizeof(struct block_header) == sizeof(UINT_PTR) + sizeof(int));}
+{C_ASSERT(LASIF_FITCTLW >> LASIS_FITCTLW == 1);}
+{C_ASSERT(LASIF_LR_LOADFROMFILE == LR_LOADFROMFILE);}
 #endif
 
 #ifdef NSIS_CONFIG_CRC_SUPPORT

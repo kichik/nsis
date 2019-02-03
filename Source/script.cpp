@@ -4822,18 +4822,14 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_SETBRANDINGIMAGE:
     {
       SCRIPT_MSG(_T("SetBrandingImage: "));
-      if (!branding_image_found) {
-        ERROR_MSG(_T("\nError: no branding image found in chosen UI!\n"));
-        return PS_ERROR;
-      }
-      ent.which=EW_SETBRANDINGIMAGE;
+      ent.which=EW_LOADANDSETIMAGE;
       for (int i = 1; i < line.getnumtokens(); i++)
         if (!_tcsnicmp(line.gettoken_str(i),_T("/IMGID="),7)) {
           ent.offsets[1]=_ttoi(line.gettoken_str(i)+7);
           SCRIPT_MSG(_T("/IMGID=%d "),ent.offsets[1]);
         }
         else if (!_tcsicmp(line.gettoken_str(i),_T("/RESIZETOFIT"))) {
-          ent.offsets[2]=1; // must be 1 or 0
+          ent.offsets[2]=LASIF_FITCTLW|LASIF_FITCTLH;
           SCRIPT_MSG(_T("/RESIZETOFIT "));
         }
         else if (!ent.offsets[0]) {
@@ -4844,14 +4840,46 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           SCRIPT_MSG(_T("\n"));
           PRINTHELP();
         }
-
-      if (!ent.offsets[1])
-        ent.offsets[1]=branding_image_id;
       SCRIPT_MSG(_T("\n"));
+      if (!ent.offsets[1])
+      {
+        ent.offsets[1]=branding_image_id;
+        if (!branding_image_found) {
+          ERROR_MSG(_T("\nError: no branding image found in chosen UI!\n"));
+          return PS_ERROR;
+        }
+      }
+      ent.offsets[2]|=LASIF_LR_LOADFROMFILE|LASIF_STRID;
+    }
+    return add_entry(&ent);
+    case TOK_LOADANDSETIMAGE:
+    {
+      SCRIPT_MSG(_T("LoadAndSetImage: "));
+      ent.which=EW_LOADANDSETIMAGE;
+      int tidx = 1, conv = 1, fail = 0;
+      unsigned int flags = LASIF_HWND;
+      for (; tidx < line.getnumtokens(); tidx++)
+      {
+        if (!_tcsicmp(line.gettoken_str(tidx),_T("/EXERESOURCE"))) flags |= LASIF_EXERES;
+        else if (!_tcsicmp(line.gettoken_str(tidx),_T("/STRINGID"))) flags |= LASIF_STRID;
+        else if (!_tcsicmp(line.gettoken_str(tidx),_T("/RESIZETOFIT"))) flags |= LASIF_FITCTLW|LASIF_FITCTLH;
+        else if (!_tcsicmp(line.gettoken_str(tidx),_T("/RESIZETOFITWIDTH"))) flags |= LASIF_FITCTLW;
+        else if (!_tcsicmp(line.gettoken_str(tidx),_T("/RESIZETOFITHEIGHT"))) flags |= LASIF_FITCTLH;
+        else if (!_tcsicmp(line.gettoken_str(tidx),_T("/GETDLGITEM"))) flags &= ~LASIF_HWND; // Reuses TOK_SETBRANDINGIMAGE functionality
+        else { if (line.gettoken_str(tidx)[0] == '/') ++fail; break; }
+      }
+      ent.offsets[1]=(flags & LASIF_HWND) ? add_string(line.gettoken_str(tidx+0)) : line.gettoken_int(tidx+0, &conv); fail += !conv; // HWND/CtrlId
+      flags |= (line.gettoken_int(tidx+1, &conv) & LASIM_IMAGE); fail += !conv;
+      flags |= (line.gettoken_int(tidx+2, &conv) & LASIM_LR); fail += !conv;
+      ent.offsets[0]=(flags & LASIF_STRID) ? add_string(line.gettoken_str(tidx+3)) : line.gettoken_int(tidx+3, &conv); fail += !conv; // Image path/resid
+      ent.offsets[2]=flags;
+      SCRIPT_MSG(_T("%") NPRIs _T(" %#x \"%") NPRIs _T("\" \n"), line.gettoken_str(tidx+0), flags, line.gettoken_str(tidx+3));
+      if (fail) PRINTHELP();
     }
     return add_entry(&ent);
 #else
     case TOK_SETBRANDINGIMAGE:
+    case TOK_LOADANDSETIMAGE:
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_CONFIG_ENHANCEDUI_SUPPORT not defined.\n"),line.gettoken_str(0));
       return PS_ERROR;
 #endif //~ NSIS_SUPPORT_CREATEFONT

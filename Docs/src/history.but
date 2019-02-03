@@ -6,6 +6,10 @@ Released on ? ?th, 201?
 
 \S1{v3.05-cl} Changelog
 
+\S2{} Minor Changes
+
+\b Added \R{loadandsetimage}{LoadAndSetImage}
+
 \S2{} Translations
 
 \b Updated Hindi (\W{http://sf.net/p/nsis/patches/291}{patch #291}) and Portuguese (\W{http://sf.net/p/nsis/bugs/1219}{bug #1219})

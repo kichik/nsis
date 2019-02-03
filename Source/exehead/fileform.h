@@ -112,7 +112,7 @@ enum
 #ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
   EW_GETDLGITEM,        // GetDlgItem:        3: [outputvar, dialog, item_id]
   EW_SETCTLCOLORS,      // SerCtlColors:      3: [hwnd, pointer to struct colors]
-  EW_SETBRANDINGIMAGE,  // SetBrandingImage:  1: [Bitmap file]
+  EW_LOADANDSETIMAGE,   // SetBrandingImage/LoadAndSetImage: 3: [imgid ctl flags]
   EW_CREATEFONT,        // CreateFont:        5: [handle output, face name, height, weight, flags]
   EW_SHOWWINDOW,        // ShowWindow:        2: [hwnd, show state]
 #endif
@@ -466,6 +466,19 @@ typedef struct
 
   int parms[5];
 } page;
+
+
+// EW_LOADANDSETIMAGE flags, masks and shifts
+#define LASIS_FITCTLW 31 // Top bit because it MUST shift to a value of 0 or 1
+#define LASIF_FITCTLW ( (unsigned int)1 << LASIS_FITCTLW )
+#define LASIF_FITCTLH ( (unsigned int)1 << 30 )
+#define LASIM_IMAGE  0x00000003 // IMAGE_*
+#define LASIF_EXERES 0x00000004 // GetModuleHandle(NULL).
+#define LASIF_HWND   0x00000100 // Don't call GetDlgItem.
+#define LASIF_STRID  0x00010000
+#define LASIM_LR   ( 0x0000fff0 & ~(LASIM_IMAGE|LASIF_EXERES|LASIF_HWND|LASIF_STRID) )
+#define LASIF_LR_LOADFROMFILE 0x00000010
+
 
 // ctlcolors text/bg color flags
 #define CC_TEXT 1

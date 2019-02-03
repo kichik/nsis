@@ -831,28 +831,17 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       SetWindowLongPtr(GetHwndFromParm(0), GWLP_USERDATA, (LONG_PTR) c);
     }
     break;
-    case EW_SETBRANDINGIMAGE:
+    case EW_LOADANDSETIMAGE:
     {
       RECT r;
       HANDLE hImage;
-      HWND hwImage=GetDlgItem(g_hwnd, parm1);
-      GetClientRect(hwImage, &r);
-      hImage=LoadImage(
-        0,
-        GetStringFromParm(0x00),
-        IMAGE_BITMAP,
-        parm2*r.right,
-        parm2*r.bottom,
-        LR_LOADFROMFILE
-      );
-      hImage = (HANDLE)SendMessage(
-        hwImage,
-        STM_SETIMAGE,
-        IMAGE_BITMAP,
-        (LPARAM)hImage
-      );
-      // delete old image
-      if (hImage) DeleteObject(hImage);
+      HWND hCtl=(parm2 & LASIF_HWND) ? GetHwndFromParm(1) : GetDlgItem(g_hwnd, parm1);
+      UINT it=parm2 & LASIM_IMAGE, exeres=parm2 & LASIF_EXERES, fitw=(UINT)parm2 >> LASIS_FITCTLW, fith=(parm2 & LASIF_FITCTLH) != 0;
+      LPCTSTR imgname = (parm2 & LASIF_STRID) ? GetStringFromParm(0x00) : MAKEINTRESOURCE(parm0);
+      GetClientRect(hCtl, &r);
+      hImage=LoadImage(exeres ? g_hInstance : NULL, imgname, it, fitw*r.right, fith*r.bottom, parm2 & LASIM_LR);
+      hImage=(HANDLE)SendMessage(hCtl, STM_SETIMAGE, it, (LPARAM)hImage);
+      if (hImage && IMAGE_BITMAP == it) DeleteObject(hImage); // Delete the old image
     }
     break;
     case EW_CREATEFONT:
