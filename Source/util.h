@@ -40,6 +40,7 @@ size_t my_strftime(TCHAR *s, size_t max, const TCHAR  *fmt, const struct tm *tm)
 // Adds the bitmap in filename using resource editor re as id id.
 // If width or height are specified it will also make sure the bitmap is in that size
 int update_bitmap(CResourceEditor* re, WORD id, const TCHAR* filename, int width=0, int height=0, int maxbpp=0);
+tstring make_friendly_resource_path(const TCHAR*rt, const TCHAR*rn, LANGID rl);
 
 TCHAR* create_tempfile_path();
 tstring get_full_path(const tstring& path);

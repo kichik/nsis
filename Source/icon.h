@@ -26,7 +26,7 @@
 typedef struct
 {
   WORD wReserved;
-  WORD wIsIcon;
+  WORD wType;
   WORD wCount;
 } IconGroupHeader;
 
@@ -66,7 +66,7 @@ IconGroup load_icon_file(const TCHAR* filename);
 IconGroup load_icon_res(CResourceEditor* re, WORD id);
 void free_loaded_icon(IconGroup icon);
 
-void set_icon(CResourceEditor* re, WORD wIconId, IconGroup icon1, IconGroup icon2);
+void set_main_icon(CResourceEditor* re, WORD wIconId, IconGroup icon1, IconGroup icon2);
 
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
 // returns the data of the uninstaller icon (inside filename) that should replace the installer icon data

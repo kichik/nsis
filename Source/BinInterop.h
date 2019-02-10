@@ -27,4 +27,25 @@ bool GetTLBVersion(const TCHAR *filepath, DWORD &high, DWORD &low);
 
 bool GetDLLVersion(const TCHAR *filepath, DWORD &high, DWORD &low);
 
+typedef struct {
+  UINT32 Width, Height;
+  WORD BPP, Planes;
+} GENERICIMAGEINFO;
+
+DWORD GetDIBHeaderInfo(const void*pData, size_t DataSize, GENERICIMAGEINFO&Info);
+DWORD IsBMPFile(const void*pData, size_t DataSize, GENERICIMAGEINFO*pInfo = 0);
+
+inline WORD IsICOCURFile(const void*pData)
+{
+  WORD *p16 = (WORD*) pData, ico = 1, cur = 2, type, count;
+  if (p16[0] == FIX_ENDIAN_INT16(0x0000))
+    if ((type = FIX_ENDIAN_INT16(p16[1])) == ico || type == cur)
+      return count = FIX_ENDIAN_INT16(p16[2]);
+  return 0;
+}
+inline WORD IsICOCURFile(const void*pData, size_t DataSize)
+{
+  return DataSize >= 6 ? IsICOCURFile(pData) : 0;
+}
+
 #endif //~ NSIS_BININTEROP_H

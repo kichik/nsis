@@ -2389,6 +2389,10 @@ int CEXEBuild::SetManifest()
     if (manifest == "")
       return PS_OK;
 
+    // TODO: Ideally we should allow this but we must be sure that the manifest is custom and not a manifest from the stub
+    //if (res_editor->ResourceExists(MAKEINTRESOURCE(24), 1, CResourceEditor::ANYLANGID))
+    //  return PS_OK; // Allow user to completely override the manifest with PEAddResource
+
     // Saved directly as binary into the exe.
     res_editor->UpdateResource(MAKEINTRESOURCE(24), 1, NSIS_DEFAULT_LANG, (LPBYTE) manifest.c_str(), (DWORD)manifest.length());
   }
@@ -2616,7 +2620,7 @@ int CEXEBuild::write_output(void)
     }
 
     // Set icon
-    set_icon(res_editor, IDI_ICON2, installer_icon, uninstaller_icon);
+    set_main_icon(res_editor, IDI_ICON2, installer_icon, uninstaller_icon);
 
     // Save all changes to the exe header
     close_res_editor();

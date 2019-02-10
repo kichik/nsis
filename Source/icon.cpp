@@ -31,6 +31,17 @@ extern int g_display_errors;
 extern FILE *g_output;
 
 #define SIZEOF_RSRC_ICON_GROUP_ENTRY 14
+enum { ICO_TYPE_ICON = 1, ICO_TYPE_CURSOR = 2 };
+
+static bool is_valid_header(const void*headerdata)
+{
+  assert(sizeof(IconGroupHeader) == 6);
+  IconGroupHeader*pGH = (IconGroupHeader*) headerdata;
+  if (pGH->wReserved != FIX_ENDIAN_INT16(0x0000)) return false;
+  WORD type = FIX_ENDIAN_INT16(pGH->wType);
+  if (type != ICO_TYPE_ICON && type != ICO_TYPE_CURSOR) return false;
+  return FIX_ENDIAN_INT16(pGH->wCount) != 0;
+}
 
 static FILE * open_icon(const TCHAR* filename, IconGroupHeader& igh)
 {
@@ -44,16 +55,15 @@ static FILE * open_icon(const TCHAR* filename, IconGroupHeader& igh)
     throw runtime_error("unable to read header from file");
   }
 
-  FIX_ENDIAN_INT16_INPLACE(igh.wIsIcon);
-  FIX_ENDIAN_INT16_INPLACE(igh.wReserved);
-  FIX_ENDIAN_INT16_INPLACE(igh.wCount);
-
-  if (igh.wIsIcon != 1 || igh.wReserved != 0)
+  if (!is_valid_header(&igh))
   {
     fclose(f);
     throw runtime_error("invalid icon file");
   }
 
+  FIX_ENDIAN_INT16_INPLACE(igh.wReserved);
+  FIX_ENDIAN_INT16_INPLACE(igh.wType);
+  FIX_ENDIAN_INT16_INPLACE(igh.wCount);
   return f;
 }
 
@@ -270,7 +280,7 @@ static LPBYTE generate_icon_group(IconGroup icon, IconPairs order, bool first)
   IconGroupHeader* header = (IconGroupHeader*) group;
 
   header->wReserved = 0;
-  header->wIsIcon   = FIX_ENDIAN_INT16(1);
+  header->wType     = FIX_ENDIAN_INT16(ICO_TYPE_ICON);
   header->wCount    = FIX_ENDIAN_INT16((WORD)icon.size());
 
   order = sort_pairs(order, first);
@@ -289,7 +299,7 @@ static LPBYTE generate_icon_group(IconGroup icon, IconPairs order, bool first)
 }
 
 // set_icon, must get an initialized resource editor
-void set_icon(CResourceEditor* re, WORD wIconId, IconGroup icon1, IconGroup icon2)
+void set_main_icon(CResourceEditor* re, WORD wIconId, IconGroup icon1, IconGroup icon2)
 {
   IconPairs order = get_icon_order(icon1, icon2);
 
@@ -300,12 +310,12 @@ void set_icon(CResourceEditor* re, WORD wIconId, IconGroup icon1, IconGroup icon
   size_t group_size = sizeof(IconGroupHeader) // header
     + order.size() * SIZEOF_RSRC_ICON_GROUP_ENTRY; // entries
 
-  re->UpdateResource(RT_GROUP_ICON, wIconId, NSIS_DEFAULT_LANG, group1, (DWORD)group_size);
+  re->UpdateResource(RT_GROUP_ICON, wIconId, NSIS_DEFAULT_LANG, group1, (DWORD)group_size, CResourceEditor::TM_RAW); // Update the group entries but not the images
   destroy_icon_group(group1);
 
   // delete old icons
   unsigned i = 1;
-  while (re->UpdateResource(RT_ICON, i++, NSIS_DEFAULT_LANG, 0, 0));
+  while (i <= MAIN_ICON_LAST_IMAGE && re->UpdateResource(RT_ICON, i++, NSIS_DEFAULT_LANG, 0, 0));
 
   // set new icons
   IconGroup::size_type order_index;
@@ -391,7 +401,8 @@ unsigned char* generate_uninstall_icon_data(IconGroup icon1, IconGroup icon2, si
 
 // Fill the array of icons for uninstall with their offsets
 // Returns zero on failure
-int generate_unicons_offsets(LPBYTE exeHeader, size_t exeHeaderSize, LPBYTE uninstIconData, WORD wIconId) {
+int generate_unicons_offsets(LPBYTE exeHeader, size_t exeHeaderSize, LPBYTE uninstIconData, WORD wIconId)
+{
   try
   {
     DWORD offset;

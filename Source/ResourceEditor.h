@@ -29,6 +29,8 @@
 #include <vector>
 #include <cassert>
 
+#define MAIN_ICON_LAST_IMAGE 99 // Main icon is special, we must reserve space for installer/uninstaller images
+
 #ifdef _WIN32
 #include <winnt.h>
 #else
@@ -121,15 +123,26 @@ class CResourceEditor {
 public:
   CResourceEditor(void* pbPE, int iSize, bool bKeepData = true);
   virtual ~CResourceEditor();
-  enum { ANYLANGID = 0xffff };
+  enum { ANYLANGID = 0xffff, INVALIDLANGID = 0xffff-1, ALLLANGID = 0xffff-2 };
+  typedef enum { TM_RAW = 0, TM_ICONFILE = 0x01, TM_ICONRSRC = 0x02, TM_ICON = (TM_ICONFILE|TM_ICONRSRC), TM_AUTO = 0x04 } TYPEMANIPULATION;
 
   // On POSIX+Unicode GetResource(RT_VERSION,..) is not TCHAR nor WINWCHAR, it is WCHAR/UINT16 (MAKEINTRESOURCEW).
   // If it passes IS_INTRESOURCE we must allow it.
   // Use TCHAR* for real strings. If you need to pass in a WINWCHAR*, make GetResourceW public...
-  template<class T> bool UpdateResource(const T*Type, WORD Name, LANGID Lang, BYTE*Data, DWORD Size)
+  template<class T> bool UpdateResource(const T*Type, WORD Name, LANGID Lang, BYTE*Data, DWORD Size, TYPEMANIPULATION Manip = TM_RAW)
   {
     if (sizeof(T) != sizeof(TCHAR) && !IS_INTRESOURCE(Type)) { assert(IS_INTRESOURCE(Type)); return false; }
-    return UpdateResourceT((const TCHAR*) Type, Name, Lang, Data, Size);
+    return UpdateResourceT((const TCHAR*) Type, Name, Lang, Data, Size, Manip);
+  }
+  template<class T> bool UpdateResource(const T*Type, WORD Name, LANGID Lang, FILE*Data, TYPEMANIPULATION Manip = TM_AUTO)
+  {
+    if (sizeof(T) != sizeof(TCHAR) && !IS_INTRESOURCE(Type)) { assert(IS_INTRESOURCE(Type)); return false; }
+    return UpdateResourceT((const TCHAR*) Type, Name, Lang, Data, Manip);
+  }
+  template<class T> bool DeleteResource(const T*Type, WORD Name, LANGID Lang, TYPEMANIPULATION Manip = TM_RAW)
+  {
+    if (sizeof(T) != sizeof(TCHAR) && !IS_INTRESOURCE(Type)) { assert(IS_INTRESOURCE(Type)); return false; }
+    return DeleteResourceT((const TCHAR*) Type, Name, Lang, Manip);
   }
   template<class T> BYTE* GetResource(const T*Type, WORD Name, LANGID Lang)
   {
@@ -146,16 +159,24 @@ public:
     if (sizeof(T) != sizeof(TCHAR) && !IS_INTRESOURCE(Type)) { assert(IS_INTRESOURCE(Type)); return -1; }
     return GetResourceOffsetT((const TCHAR*) Type, Name, Lang);
   }
+  template<class T> bool ResourceExists(const T*Type, WORD Name, LANGID Lang, LANGID*pFoundLanguage = 0)
+  {
+    if (sizeof(T) != sizeof(TCHAR) && !IS_INTRESOURCE(Type)) { assert(IS_INTRESOURCE(Type)); return false; }
+    return ResourceExistsT((const TCHAR*) Type, Name, Lang, pFoundLanguage);
+  }
   template<class T> BYTE* GetFirstResource(const T*Type, size_t&cbData)
   {
     if (sizeof(T) != sizeof(TCHAR) && !IS_INTRESOURCE(Type)) { assert(IS_INTRESOURCE(Type)); return NULL; }
     return GetFirstResourceT((const TCHAR*) Type, cbData);
   }
 
-  bool  UpdateResourceT   (const TCHAR* szType, WORD szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize);
+  bool  UpdateResourceT   (const TCHAR* szType, WORD szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize, TYPEMANIPULATION Manip = TM_RAW);
+  bool  UpdateResourceT   (const TCHAR* szType, WORD szName, LANGID wLanguage, FILE*Data, TYPEMANIPULATION Manip = TM_AUTO);
+  bool  DeleteResourceT   (const TCHAR* szType, WORD szName, LANGID wLanguage, TYPEMANIPULATION Manip = TM_RAW);
   BYTE* GetResourceT      (const TCHAR* szType, WORD szName, LANGID wLanguage);
   int   GetResourceSizeT  (const TCHAR* szType, WORD szName, LANGID wLanguage);
   DWORD GetResourceOffsetT(const TCHAR* szType, WORD szName, LANGID wLanguage);
+  bool  ResourceExistsT   (const TCHAR* szType, WORD szName, LANGID wLanguage, LANGID*pFoundLanguage = 0);
   BYTE* GetFirstResourceT (const TCHAR* szType, size_t&cbData);
   void  FreeResource(BYTE* pbResource);
 
@@ -174,13 +195,24 @@ public:
     DWORD *pdwSectionIndex = NULL
   );
 
+  static const TCHAR* ParseResourceTypeString(const TCHAR*String);
+  static const TCHAR* ParseResourceNameString(const TCHAR*String);
+  static LANGID ParseResourceLangString(const TCHAR*String);
+  static LANGID ParseResourceTypeNameLangString(const TCHAR**Type, const TCHAR**Name, const TCHAR*Lang);
+  static bool EditorSupportsStringNames() { return false; } // UpdateResource/GetResource do not support string names (yet)
+
 private:
-  bool  UpdateResourceW   (const WINWCHAR* szType, WINWCHAR* szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize);
+  bool  UpdateResourceW   (const WINWCHAR* szType, WINWCHAR* szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize, TYPEMANIPULATION Manip = TM_RAW);
   BYTE* GetResourceW      (const WINWCHAR* szType, WINWCHAR* szName, LANGID wLanguage);
   int   GetResourceSizeW  (const WINWCHAR* szType, WINWCHAR* szName, LANGID wLanguage);
   DWORD GetResourceOffsetW(const WINWCHAR* szType, WINWCHAR* szName, LANGID wLanguage);
   BYTE* GetFirstResourceW (const WINWCHAR* szType, size_t&cbData);
   CResourceDataEntry* FindResource(const WINWCHAR* Type, const WINWCHAR* Name, LANGID Language);
+  CResourceDirectoryEntry* FindResourceLanguageDirEntryW(const WINWCHAR* Type, const WINWCHAR* Name, LANGID Language);
+  CResourceDirectoryEntry* FindResourceLanguageDirEntryT(const TCHAR* Type, const TCHAR* Name, LANGID Language);
+  bool DeleteIconImages(const CResourceDirectoryEntry& LangDir);
+  bool DeleteIconImagesW(const WINWCHAR* OwnerType, WINWCHAR* Name, LANGID LangId);
+  bool AddExtraIconFromFile(const WINWCHAR* Type, WINWCHAR* Name, LANGID LangId, BYTE* Data, DWORD Size);
 
   BYTE* DupData(CResourceDataEntry*pDE); // Free with FreeResource
   CResourceDirectory* ScanDirectory(PRESOURCE_DIRECTORY rdRoot, PRESOURCE_DIRECTORY rdToScan);

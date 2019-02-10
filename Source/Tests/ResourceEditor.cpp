@@ -3,16 +3,19 @@
 
 #include <stdlib.h>
 
+extern unsigned char original_pe[8704];
+
 class CResourceEditorTest : public CppUnit::TestFixture {
 
   CPPUNIT_TEST_SUITE( CResourceEditorTest );
   CPPUNIT_TEST( testCorrectness );
+  CPPUNIT_TEST( testBMP );
   CPPUNIT_TEST_SUITE_END();
 
 public:
+  enum { defnameid = 1337, deflangid = 1033 };
+
   void testCorrectness() {
-    extern unsigned char original_pe[8704];
-    
     CResourceEditor re(original_pe, sizeof(original_pe));
 
     DWORD size;
@@ -30,6 +33,31 @@ public:
     CPPUNIT_ASSERT_EQUAL( 0, memcmp(saved_pe, original_pe, size) );
 
     delete [] saved_pe;
+  }
+
+  void testBMP() {
+    CResourceEditor re(original_pe, sizeof(original_pe));
+    static const BYTE file_12_4bpp [] = { // BMP with the old header
+      66,77,134,0,0,0,0,0,0,0,74,0,0,0,12,0,0,0,19,0,5,0,1,0,4,0,222,24,0,74,74,74,0,255,0,255,255,255,
+      255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,
+      255,255,255,255,255,255,255,255,255,255,255,255,2,34,2,0,2,32,0,32,0,32,0,0,2,32,2,34,32,34,2,34,
+      34,0,0,0,2,2,2,32,2,34,2,34,0,32,0,0,0,34,2,2,34,34,2,32,34,32,0,0,2,34,2,32,0,32,0,34,0,0,0,0
+    };
+    bool succ;
+    int ressize, bmpfilehdrsize = 14;
+    BYTE *resdata;
+
+    CPPUNIT_ASSERT( (succ = re.UpdateResource(RT_BITMAP, defnameid, deflangid, (BYTE*) file_12_4bpp, sizeof(file_12_4bpp), CResourceEditor::TM_AUTO)) );
+    if (succ)
+    {
+      ressize = re.GetResourceSize(RT_BITMAP, defnameid, deflangid);
+      CPPUNIT_ASSERT( ressize == sizeof(file_12_4bpp) - bmpfilehdrsize );
+      if ((resdata = re.GetResource(RT_BITMAP, defnameid, deflangid)))
+      {
+        CPPUNIT_ASSERT_EQUAL( 0, memcmp(resdata, file_12_4bpp + bmpfilehdrsize, ressize) );
+        re.FreeResource(resdata);
+      }
+    }
   }
 
 };

@@ -26,6 +26,7 @@
 #define LE2HE16 FIX_ENDIAN_INT16 // Little-endian 2 Host-endian
 #define LE2HE32 FIX_ENDIAN_INT32
 #define HE2LE16 LE2HE16
+#define HE2BE32 BE2HE32
 const size_t invalid_res_id = ~(size_t)0;
 
 FILE* MSTLB_fopen(const TCHAR*filepath, size_t*pResId)
@@ -443,4 +444,42 @@ bool GetDLLVersion(const TCHAR *filepath, DWORD &high, DWORD &low)
   if (!result) result = GetDLLVersionUsingRE(filepath, high, low);
   if (!result) result = GetDLLVersionFromVXD(filepath, high, low);
   return result;
+}
+
+DWORD GetDIBHeaderInfo(const void*pData, size_t DataSize, GENERICIMAGEINFO&Info)
+{
+  DWORD *p32 = (DWORD*) pData;
+  WORD *p16 = (WORD*) pData;
+  if (DataSize >= 12)
+  {
+    DWORD size = LE2HE32(p32[0]);
+    if (size == 12) // BITMAPCOREHEADER
+    {
+      Info.Width = LE2HE16(p16[2]), Info.Height = (INT32) (SHORT) LE2HE16(p16[3]);
+      Info.Planes = LE2HE16(p16[4]), Info.BPP = LE2HE16(p16[5]);
+      return size;
+    }
+    if (size >= 16) // OS22XBITMAPHEADER/BITMAPINFOHEADER/BITMAPV*HEADER
+    {
+      Info.Width = LE2HE32(p32[1]), Info.Height = (INT32) LE2HE32(p32[2]);
+      Info.Planes = LE2HE16(p16[6+0]), Info.BPP = LE2HE16(p16[6+1]);
+      return size;
+    }
+  }
+  return 0;
+}
+
+DWORD IsBMPFile(const void*pData, size_t DataSize, GENERICIMAGEINFO*pInfo)
+{
+  BYTE *p8 = (BYTE*) pData;
+  if (DataSize >= 14+12 && p8[0] == 'B' && p8[1] == 'M')
+  {
+    DWORD *p32 = (DWORD*) (&p8[2]), fsize = LE2HE32(p32[0]), bitsoffs = LE2HE32(p32[2]);
+    if ((!fsize || fsize > 14+12) && (!bitsoffs || bitsoffs > 14+12))
+    {
+      GENERICIMAGEINFO info;
+      return GetDIBHeaderInfo(p8 + 14, DataSize - 14, pInfo ? *pInfo : info);
+    }
+  }
+  return 0;
 }

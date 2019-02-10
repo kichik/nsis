@@ -25,6 +25,7 @@
 #include "strlist.h"
 #include "winchar.h"
 #include "utf.h"
+#include "BinInterop.h"
 
 #ifndef _WIN32
 #  include <ctype.h>
@@ -142,62 +143,35 @@ size_t my_strftime(TCHAR *s, size_t max, const TCHAR  *fmt, const struct tm *tm)
 int update_bitmap(CResourceEditor* re, WORD id, const TCHAR* filename, int width/*=0*/, int height/*=0*/, int maxbpp/*=0*/) {
   FILE *f = FOPEN(filename, ("rb"));
   if (!f) return -1;
-  if (fgetc(f) != 'B' || fgetc(f) != 'M') {
-    fclose(f);
-    return -2;
+  signed char hdr[14+124], retval = -2;
+  size_t size = fread(hdr, 1, sizeof(hdr), f);
+  GENERICIMAGEINFO info;
+  if (IsBMPFile(hdr, size, &info) && 0 == fseek(f, 0, SEEK_SET))
+  {
+    if ((width && width != (int) info.Width) || (height && height != (int) info.Height))
+      retval = -3;
+    else if (maxbpp && maxbpp < info.BPP)
+      retval = -4;
+    else if (re->UpdateResource(RT_BITMAP, id, NSIS_DEFAULT_LANG, f, CResourceEditor::TM_AUTO))
+      retval = 0;
   }
-  if (width != 0) {
-    INT32 biWidth;
-    fseek(f, 18, SEEK_SET); // Seek to the width member of the header
-    size_t nio = fread(&biWidth, sizeof(INT32), 1, f);
-    FIX_ENDIAN_INT32_INPLACE(biWidth);
-    if (nio != 1 || width != biWidth) {
-      fclose(f);
-      return -3;
-    }
-  }
-  if (height != 0) {
-    INT32 biHeight;
-    fseek(f, 22, SEEK_SET); // Seek to the height member of the header
-    size_t nio = fread(&biHeight, sizeof(INT32), 1, f);
-    FIX_ENDIAN_INT32_INPLACE(biHeight);
-    // Bitmap height can be negative too...
-    if (nio != 1 || height != abs(biHeight)) {
-      fclose(f);
-      return -3;
-    }
-  }
-  if (maxbpp != 0) {
-    WORD biBitCount;
-    fseek(f, 28, SEEK_SET); // Seek to the bitcount member of the header
-    size_t nio = fread(&biBitCount, sizeof(WORD), 1, f);
-    FIX_ENDIAN_INT16_INPLACE(biBitCount);
-    if (nio != 1 || biBitCount > maxbpp) {
-      fclose(f);
-      return -4;
-    }
-  }
-  DWORD dwSize;
-  fseek(f, 2, SEEK_SET);
-  size_t nio = fread(&dwSize, sizeof(DWORD), 1, f);
-  if (nio != 1) {
-    fclose(f);
-    return -3;
-  }
-  FIX_ENDIAN_INT32_INPLACE(dwSize);
-  dwSize -= 14;
-  unsigned char* bitmap = (unsigned char*)malloc(dwSize);
-  if (!bitmap) {
-    fclose(f);
-    throw bad_alloc();
-  }
-  bool gotbmdata = !fseek(f, 14, SEEK_SET) && dwSize == fread(bitmap, 1, dwSize, f);
-  int retval = gotbmdata ? 0 : -2;
   fclose(f);
-  if (gotbmdata)
-    re->UpdateResource(RT_BITMAP, id, NSIS_DEFAULT_LANG, bitmap, dwSize);
-  free(bitmap);
   return retval;
+}
+
+tstring make_friendly_resource_path(const TCHAR*rt, const TCHAR*rn, LANGID rl)
+{
+  tstring s = _T("");
+  TCHAR buf[42], sep = _T('\\');
+  s += IS_INTRESOURCE(rt) ? (wsprintf(buf, _T("#%d"), (int)(size_t) rt), buf) : rt;
+  s += sep;
+  s += IS_INTRESOURCE(rn) ? (wsprintf(buf, _T("#%d"), (int)(size_t) rn), buf) : rn;
+  s += sep;
+  if (rl == CResourceEditor::ALLLANGID)
+    s += _T("All");
+  else
+    s += (wsprintf(buf, _T("%d"), (int)(size_t) rl), buf);
+  return s;
 }
 
 #ifndef _WIN32
