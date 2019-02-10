@@ -8,6 +8,8 @@ Released on ? ?th, 201?
 
 \S2{} Minor Changes
 
+\b Added \R{apeaddresource}{PEAddResource} and \R{aperemoveresource}{PERemoveResource}
+
 \b Added \R{loadandsetimage}{LoadAndSetImage}
 
 \S2{} Translations

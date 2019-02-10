@@ -2240,6 +2240,65 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return PS_ERROR;
 #endif //~ NSIS_CONFIG_VISIBLE_SUPPORT
 
+    case TOK_PEADDRESOURCE:
+    {
+      init_res_editor();
+      int tokidx = 1, ovr = 0, rep = 0;
+      if (!_tcsicmp(line.gettoken_str(tokidx), _T("/OVERWRITE"))) // Update the resource even if it exists
+        ++ovr, ++tokidx;
+      else if (!_tcsicmp(line.gettoken_str(tokidx), _T("/REPLACE"))) // Only update existing resource
+        ++rep, ++tokidx;
+      const TCHAR *rt = line.gettoken_str(tokidx+1), *rnraw = line.gettoken_str(tokidx+2), *rlraw = line.gettoken_str(tokidx+3);
+      if (!*rlraw)
+        rlraw = _T("Default"); // Language parameter is optional
+      LANGID rl = res_editor->ParseResourceTypeNameLangString(&rt, &rnraw, rlraw), foundrl;
+      if (rl == CResourceEditor::INVALIDLANGID || rl == CResourceEditor::ALLLANGID)
+        PRINTHELP();
+      WORD rn = (WORD)(size_t) rnraw; assert(!CResourceEditor::EditorSupportsStringNames());
+      bool exists = res_editor->ResourceExists(rt, rn, rl, &foundrl);
+      if (rl == CResourceEditor::ANYLANGID)
+        rl = exists ? foundrl : NSIS_DEFAULT_LANG;
+      if ((rep && !exists) || (!ovr && exists))
+      {
+        ERROR_MSG(_T("Error: Resource %") NPRIns _T("\n"), rep ? ("does not exist") : ("already exists"));
+        return PS_ERROR;
+      }
+      int result = PS_ERROR;
+      if (FILE*f = FOPEN(line.gettoken_str(tokidx+0), ("rb")))
+      {
+        if (res_editor->UpdateResource(rt, rn, rl, f, CResourceEditor::TM_AUTO))
+        {
+          SCRIPT_MSG(_T("PEAddResource: %") NPRIs _T("=%") NPRIs _T("\n"), make_friendly_resource_path(rt, rnraw, rl).c_str(), line.gettoken_str(tokidx+0));
+          result = PS_OK;
+        }
+        fclose(f);
+      }
+      return result;
+    }
+    return PS_OK;
+    case TOK_PEREMOVERESOURCE:
+    {
+      init_res_editor();
+      int tokidx = 1, noerr = 0;
+      if (!_tcsicmp(line.gettoken_str(tokidx), _T("/NOERRORS")))
+        ++noerr, ++tokidx;
+      const TCHAR *rt = line.gettoken_str(tokidx+0), *rnraw = line.gettoken_str(tokidx+1), *rlraw = line.gettoken_str(tokidx+2);
+      LANGID rl = res_editor->ParseResourceTypeNameLangString(&rt, &rnraw, rlraw);
+      if (rl == CResourceEditor::INVALIDLANGID || rl == CResourceEditor::ANYLANGID)
+        PRINTHELP();
+      WORD rn = (WORD)(size_t) rnraw; assert(!CResourceEditor::EditorSupportsStringNames());
+      if (!noerr && !res_editor->ResourceExists(rt, rn, rl))
+      {
+        ERROR_MSG(_T("Error: Resource %") NPRIns _T("\n"), ("does not exist"));
+        return PS_ERROR;
+      }
+      if (res_editor->DeleteResource(rt, rn, rl, CResourceEditor::TM_AUTO))
+        SCRIPT_MSG(_T("PERemoveResource: %") NPRIs _T("\n"), make_friendly_resource_path(rt, rnraw, rl).c_str());
+      else if (!noerr)
+        return PS_ERROR;
+    }
+    return PS_OK;
+
     case TOK_PEDLLCHARACTERISTICS:
       {
         int s1, s2;
@@ -2249,7 +2308,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         SCRIPT_MSG(_T("PEDllCharacteristics: 0x%.4x -> 0x%.4x\n"), org, PEDllCharacteristics);
       }
       return PS_OK;
-  
+
     case TOK_PESUBSYSVER:
       {
         unsigned int mj, mi;

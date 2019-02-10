@@ -20,8 +20,10 @@
 #include "util.h"
 #include "winchar.h"
 #include <queue>
+#include <cassert>
 #include "tchar.h"
 #include "utf.h"
+#include "BinInterop.h"
 using namespace std;
 
 //////////////////////////////////////////////////////////////////////
@@ -29,16 +31,11 @@ using namespace std;
 //////////////////////////////////////////////////////////////////////
 
 #define WCHARPTR2WINWCHARPTR(s) ( (WINWCHAR*) (s) ) // Only for WinSDK structs like IMAGE_RESOURCE_DIR_STRING_U where we cannot change the WCHAR type!
-#define ALIGN(dwToAlign, dwAlignOn) dwToAlign = (dwToAlign%dwAlignOn == 0) ? dwToAlign : dwToAlign - (dwToAlign%dwAlignOn) + dwAlignOn
 #define RALIGN(dwToAlign, dwAlignOn) ((dwToAlign%dwAlignOn == 0) ? dwToAlign : dwToAlign - (dwToAlign%dwAlignOn) + dwAlignOn)
+#define ALIGN(dwToAlign, dwAlignOn) dwToAlign = RALIGN((dwToAlign), (dwAlignOn))
 
-static inline DWORD ConvertEndianness(DWORD d) {
-  return FIX_ENDIAN_INT32(d);
-}
-
-static inline WORD ConvertEndianness(WORD w) {
-  return FIX_ENDIAN_INT16(w);
-}
+static inline DWORD ConvertEndianness(DWORD d) { return FIX_ENDIAN_INT32(d); }
+static inline WORD ConvertEndianness(WORD w) { return FIX_ENDIAN_INT16(w); }
 
 PIMAGE_NT_HEADERS CResourceEditor::GetNTHeaders(BYTE* pbPE) {
   // Get dos header
@@ -110,6 +107,74 @@ PRESOURCE_DIRECTORY CResourceEditor::GetResourceDirectory(
   return PRESOURCE_DIRECTORY(pbPE + dwResSecPtr);
 }
 
+static int ParseSimpleInt(const TCHAR*parse, int*success)
+{
+  int base = 0, num;
+  TCHAR *end;
+  if (parse[0] == _T('0') && (parse[1] >= _T('0') && parse[1] <= _T('9'))) base = 10; // Avoid evil octal
+  num = (int)_tcstoul(parse, &end, base);
+  if (success) *success = !(int)(*end);
+  return num;
+}
+
+const TCHAR* CResourceEditor::ParseResourceTypeString(const TCHAR*Str)
+{
+  if (Str[0] == _T('#')) // Special character used by KERNEL32!FindResource
+  {
+    ++Str;
+    if (!_tcsicmp(Str, _T("Bitmap"))) return (TCHAR*) RT_BITMAP;
+    if (!_tcsicmp(Str, _T("IconImage"))) return (TCHAR*) RT_ICON;
+    if (!_tcsicmp(Str, _T("Icon"))) return (TCHAR*) RT_GROUP_ICON;
+    if (!_tcsicmp(Str, _T("CursorImage"))) return (TCHAR*) RT_CURSOR;
+    if (!_tcsicmp(Str, _T("Cursor"))) return (TCHAR*) RT_GROUP_CURSOR;
+    if (!_tcsicmp(Str, _T("Dialog"))) return (TCHAR*) RT_DIALOG;
+    if (!_tcsicmp(Str, _T("Menu"))) return (TCHAR*) MAKEINTRESOURCE(4);
+    if (!_tcsicmp(Str, _T("Version"))) return (TCHAR*) RT_VERSION;
+    if (!_tcsicmp(Str, _T("HTML"))) return (TCHAR*) MAKEINTRESOURCE(23);
+    if (!_tcsicmp(Str, _T("Manifest"))) return (TCHAR*) MAKEINTRESOURCE(24);
+    int succ, num = ParseSimpleInt(Str, &succ);
+    return succ && IS_INTRESOURCE(num) ? (TCHAR*) MAKEINTRESOURCE(num) : NULL;
+  }
+  return *Str ? Str : NULL;
+}
+
+#include "exehead/resource.h" // IDI_ICON2
+#include "exehead/config.h" // NSIS_DEFAULT_LANG
+const TCHAR* CResourceEditor::ParseResourceNameString(const TCHAR*Str) {
+  if (Str[0] == _T('#'))
+  {
+    ++Str;
+    if (!_tcsicmp(Str, _T("Version"))) return (TCHAR*) MAKEINTRESOURCE(1);
+    if (!_tcsicmp(Str, _T("Icon"))) return (TCHAR*) MAKEINTRESOURCE(IDI_ICON2);
+    int succ, num = ParseSimpleInt(Str, &succ);
+    return succ && IS_INTRESOURCE(num) ? (TCHAR*) MAKEINTRESOURCE(num) : NULL;
+  }
+  return EditorSupportsStringNames() && *Str ? Str : NULL;
+}
+
+LANGID CResourceEditor::ParseResourceLangString(const TCHAR*Str) {
+  if (!_tcsicmp(Str, _T("Any"))) return ANYLANGID;
+  if (!_tcsicmp(Str, _T("All"))) return ALLLANGID;
+  if (!_tcsicmp(Str, _T("Neutral"))) return 0x0000; //MAKELANGID(0, 0);
+  if (!_tcsicmp(Str, _T("Default"))) return NSIS_DEFAULT_LANG;
+  int succ, num = ParseSimpleInt(Str, &succ);
+  return succ ? num : INVALIDLANGID;
+}
+
+LANGID CResourceEditor::ParseResourceTypeNameLangString(const TCHAR**Type, const TCHAR**Name, const TCHAR*Lang) {
+  if (!(*Type = ParseResourceTypeString(*Type))) return INVALIDLANGID;
+  if (!(*Name = ParseResourceNameString(*Name))) return INVALIDLANGID;
+  return ParseResourceLangString(Lang);
+}
+
+template<class T> static WORD GetDependentType(T Type)
+{
+  if (!IS_INTRESOURCE((size_t) Type)) return 0;
+  if (MAKEINTRESOURCE((size_t) Type) == RT_GROUP_ICON) return (WORD)(size_t) RT_ICON;
+  if (MAKEINTRESOURCE((size_t) Type) == RT_GROUP_CURSOR) return (WORD)(size_t) RT_CURSOR;
+  return 0;
+}
+
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 // CResourceEditor
@@ -154,7 +219,8 @@ CResourceEditor::~CResourceEditor() {
 //////////////////////////////////////////////////////////////////////
 
 #define FINDRESOURCE_NAME_FIRSTITEM ( (WINWCHAR*)(~(size_t)0) )
-CResourceDataEntry* CResourceEditor::FindResource(const WINWCHAR* Type, const WINWCHAR* Name, LANGID Language) {
+
+CResourceDirectoryEntry* CResourceEditor::FindResourceLanguageDirEntryW(const WINWCHAR* Type, const WINWCHAR* Name, LANGID Language) {
   int i = m_cResDir->Find(Type);
   if (-1 != i) {
     CResourceDirectory* pND = m_cResDir->GetEntry(i)->GetSubDirectory();
@@ -163,15 +229,20 @@ CResourceDataEntry* CResourceEditor::FindResource(const WINWCHAR* Type, const WI
       CResourceDirectory* pLD = pND->GetEntry(i)->GetSubDirectory();
       i = ANYLANGID == Language ? 0 : pLD->Find(Language);
       if (-1 != i)
-        return pLD->GetEntry(i)->GetDataEntry();
+        return pLD->GetEntry(i);
     }
   }
   return 0;
 }
 
-// Adds/Replaces/Removes a resource.
+CResourceDataEntry* CResourceEditor::FindResource(const WINWCHAR* Type, const WINWCHAR* Name, LANGID Language) {
+  CResourceDirectoryEntry*pRDE = FindResourceLanguageDirEntryW(Type, Name, Language);
+  return pRDE ? pRDE->GetDataEntry() : 0;
+}
+
+// Adds/Replaces/Removes a simple resource.
 // If lpData is 0 UpdateResource removes the resource.
-bool CResourceEditor::UpdateResourceW(const WINWCHAR* szType, WINWCHAR* szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize) {
+bool CResourceEditor::UpdateResourceW(const WINWCHAR* szType, WINWCHAR* szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize, TYPEMANIPULATION Manip) {
   CResourceDirectory* nameDir = 0;
   CResourceDirectory* langDir = 0;
   CResourceDataEntry* data = 0;
@@ -190,9 +261,42 @@ bool CResourceEditor::UpdateResourceW(const WINWCHAR* szType, WINWCHAR* szName, 
       }
     }
   }
-  
-  if (lpData) {
+
+  bool deleteoperation = !lpData, success = true, handlecomplexicon = false;
+  WORD dependenttype = GetDependentType(szType);
+
+  if (dependenttype && Manip != TM_RAW) {
+    if (Manip == TM_AUTO && ((size_t) szType == (size_t) RT_GROUP_ICON || (size_t) szType == (size_t) RT_GROUP_CURSOR))
+      Manip = TM_ICON;
+
+    if (Manip & TM_ICON)
+      handlecomplexicon = true;
+
+    if (handlecomplexicon && !deleteoperation)
+      if (Manip == TM_AUTO || (Manip & TM_ICONRSRC))
+        return false; // It is impossible to add a resource icon from a plain data buffer because it doesn't use offsets for the images
+
+    if ((size_t) szType == (size_t) RT_GROUP_ICON && (size_t) szName == (size_t) IDI_ICON2)
+      return false; // The main icon is special, don't allow high-level RT_GROUP_ICON updates to touch RT_ICON.
+  }
+
+  if (lpData && Manip == TM_AUTO && (size_t) szType == (size_t) RT_BITMAP)
+  {
+    if (IsBMPFile(lpData, dwSize))
+    {
+      lpData += 14, dwSize -= 14; // Remove BITMAPFILEHEADER (blogs.msdn.microsoft.com/oldnewthing/20091211-00/?p=15693#)
+      Manip = TM_RAW;
+    }
+  }
+
+  if (!deleteoperation) {
     // Replace/Add the resource
+    if (handlecomplexicon) {
+      if (data)
+        DeleteIconImagesW(szType, szName, wLanguage); // Delete the RT_ICONs that belong to the RT_GROUP_ICON we are replacing
+      return AddExtraIconFromFile(szType, szName, wLanguage, lpData, dwSize); // Add RT_GROUP_ICON and RT_ICONs
+    }
+
     if (data) {
       data->SetData(lpData, dwSize);
       return true;
@@ -218,6 +322,9 @@ bool CResourceEditor::UpdateResourceW(const WINWCHAR* szType, WINWCHAR* szName, 
     }
   }
   else if (data) {
+    if (handlecomplexicon) {
+      success = DeleteIconImagesW(szType, szName, wLanguage); // Delete the RT_ICONs that belong to the RT_GROUP_ICON we are deleting
+    }
     // Delete the resource
     delete data;
     langDir->RemoveEntry(iLangIdx);
@@ -231,8 +338,9 @@ bool CResourceEditor::UpdateResourceW(const WINWCHAR* szType, WINWCHAR* szName, 
       }
     }
   }
-  else return false;
-  return true;
+  else
+    success = false;
+  return success;
 }
 
 #ifndef _UNICODE
@@ -259,16 +367,58 @@ static void FreeUnicodeResString(WINWCHAR* s) {
 #endif // ~_WIN32
 #endif // ~_UNICODE
 
-
-bool CResourceEditor::UpdateResourceT(const TCHAR* szType, WORD szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize) {
+CResourceDirectoryEntry* CResourceEditor::FindResourceLanguageDirEntryT(const TCHAR* Type, const TCHAR* Name, LANGID Language) {
+  assert(!EditorSupportsStringNames() && sizeof(Name));
 #if defined(_WIN32) && defined(_UNICODE)
-  return UpdateResourceW((WINWCHAR*)szType, MAKEINTRESOURCEWINW(szName), wLanguage, lpData, dwSize);
+  return FindResourceLanguageDirEntryW((WINWCHAR*)Type, (WINWCHAR*)Name, Language);
 #else
-  WINWCHAR* szwType = ResStringToUnicode(szType); 
-  bool result = UpdateResourceW(szwType, MAKEINTRESOURCEWINW(szName), wLanguage, lpData, dwSize);
+  WINWCHAR* szwType = ResStringToUnicode(Type); 
+  CResourceDirectoryEntry* result = FindResourceLanguageDirEntryW(szwType, (WINWCHAR*)Name, Language);
   FreeUnicodeResString(szwType);
   return result;
 #endif
+}
+
+bool CResourceEditor::UpdateResourceT(const TCHAR* szType, WORD szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize, TYPEMANIPULATION Manip) {
+  assert(!EditorSupportsStringNames() && sizeof(szName));
+#if defined(_WIN32) && defined(_UNICODE)
+  return UpdateResourceW((WINWCHAR*)szType, MAKEINTRESOURCEWINW(szName), wLanguage, lpData, dwSize, Manip);
+#else
+  WINWCHAR* szwType = ResStringToUnicode(szType); 
+  bool result = UpdateResourceW(szwType, MAKEINTRESOURCEWINW(szName), wLanguage, lpData, dwSize, Manip);
+  FreeUnicodeResString(szwType);
+  return result;
+#endif
+}
+
+bool CResourceEditor::UpdateResourceT(const TCHAR* szType, WORD szName, LANGID wLanguage, FILE*Data, TYPEMANIPULATION Manip) {
+  assert(!EditorSupportsStringNames() && sizeof(szName));
+  bool result = false;
+  unsigned long size;
+  BYTE *data = alloc_and_read_file(Data, size);
+  if (!data)
+    return false;
+  WORD dependenttype = GetDependentType(szType);
+  if (Manip == TM_AUTO)
+    if (dependenttype && IsICOCURFile(data, size))
+      Manip = TM_ICONFILE;
+  result = UpdateResourceT(szType, szName, wLanguage, data, size, Manip);
+  free(data);
+  return result;
+}
+
+bool CResourceEditor::DeleteResourceT(const TCHAR* szType, WORD szName, LANGID wLanguage, TYPEMANIPULATION Manip) {
+  if (wLanguage != ALLLANGID)
+    return UpdateResourceT(szType, szName, wLanguage, 0, 0, Manip);
+
+  assert(!EditorSupportsStringNames() && sizeof(szName));
+  const TCHAR*name = MAKEINTRESOURCE(szName);
+  unsigned int deleted = 0;
+  for (;; ++deleted) {
+    CResourceDirectoryEntry*pDir = FindResourceLanguageDirEntryT(szType, name, ANYLANGID);
+    if (!pDir || !UpdateResourceT(szType, szName, pDir->GetId(), 0, 0, Manip)) break;
+  }
+  return deleted != 0;
 }
 
 // Returns a copy of the requested resource
@@ -279,6 +429,7 @@ BYTE* CResourceEditor::GetResourceW(const WINWCHAR* szType, WINWCHAR* szName, LA
 }
 
 BYTE* CResourceEditor::GetResourceT(const TCHAR* szType, WORD szName, LANGID wLanguage) {
+  assert(!EditorSupportsStringNames() && sizeof(szName));
 #if defined(_WIN32) && defined(_UNICODE)
   return GetResourceW((WINWCHAR*)szType, MAKEINTRESOURCEWINW(szName), wLanguage);
 #else
@@ -297,6 +448,7 @@ int CResourceEditor::GetResourceSizeW(const WINWCHAR* szType, WINWCHAR* szName, 
 }
 
 int CResourceEditor::GetResourceSizeT(const TCHAR* szType, WORD szName, LANGID wLanguage) {
+  assert(!EditorSupportsStringNames());
 #if defined(_WIN32) && defined(_UNICODE)
   return GetResourceSizeW((WINWCHAR*)szType, MAKEINTRESOURCEWINW(szName), wLanguage);
 #else
@@ -307,6 +459,14 @@ int CResourceEditor::GetResourceSizeT(const TCHAR* szType, WORD szName, LANGID w
 #endif
 }
 
+bool CResourceEditor::ResourceExistsT(const TCHAR* szType, WORD szName, LANGID wLanguage, LANGID*pFoundLanguage) {
+  assert(!EditorSupportsStringNames() && sizeof(szName));
+  if (wLanguage == ALLLANGID) wLanguage = ANYLANGID;
+  CResourceDirectoryEntry *pRDE = FindResourceLanguageDirEntryT(szType, MAKEINTRESOURCE(szName), wLanguage);
+  if (pFoundLanguage) *pFoundLanguage = pRDE ? pRDE->GetId() : INVALIDLANGID;
+  return pRDE != 0;
+}
+
 // Returns the offset of the requested resource in the original PE
 // Returns -1 if the requested resource can't be found
 DWORD CResourceEditor::GetResourceOffsetW(const WINWCHAR* szType, WINWCHAR* szName, LANGID wLanguage) {
@@ -315,6 +475,7 @@ DWORD CResourceEditor::GetResourceOffsetW(const WINWCHAR* szType, WINWCHAR* szNa
 }
 
 DWORD CResourceEditor::GetResourceOffsetT(const TCHAR* szType, WORD szName, LANGID wLanguage) {
+  assert(!EditorSupportsStringNames() && sizeof(szName));
 #if defined(_WIN32) && defined(_UNICODE)
   return GetResourceOffsetW((WINWCHAR*)szType, MAKEINTRESOURCEWINW(szName), wLanguage);
 #else
@@ -545,6 +706,97 @@ bool CResourceEditor::SetPESectionVirtualSize(const char* pszSectionName, DWORD 
   return false;
 }
 
+static char* GetFirstICOCURGroupEntry(const void*headerdata, WORD*pImgType, WORD*pCount) {
+  WORD *p16 = (WORD*) headerdata;
+  if (IsICOCURFile(headerdata)) { // The first 6+ bytes of the resource format matches the file format
+    if (pImgType)
+      *pImgType = FIX_ENDIAN_INT16(p16[1]) == 2 ? (WORD)(size_t) RT_CURSOR : (WORD)(size_t) RT_ICON;
+    if (pCount)
+      *pCount = FIX_ENDIAN_INT16(p16[2]);
+    return ((char*) headerdata) + 6;
+  }
+  return 0;
+}
+
+bool CResourceEditor::DeleteIconImages(const CResourceDirectoryEntry& LangDir) {
+  WORD imgType, count, *pRGE = (WORD*) GetFirstICOCURGroupEntry(LangDir.GetDataEntry()->GetData(), &imgType, &count);
+  if (!pRGE)
+    return false;
+  for (unsigned int i = 0, cbRGE = 14; i < count; ++i, pRGE += cbRGE / sizeof(*pRGE))
+    if (!DeleteResource(MAKEINTRESOURCE(imgType), FIX_ENDIAN_INT16(pRGE[6]), LangDir.GetId()))
+      return false;
+  return true;
+}
+
+bool CResourceEditor::DeleteIconImagesW(const WINWCHAR* OwnerType, WINWCHAR* Name, LANGID LangId) {
+  CResourceDirectoryEntry*pLangDir = FindResourceLanguageDirEntryW(OwnerType, Name, LangId);
+  return pLangDir ? DeleteIconImages(*pLangDir) : false;
+}
+
+static WORD FindFreeIconImageId(CResourceEditor& re, WORD ImgType) {
+  for (unsigned int i = MAIN_ICON_LAST_IMAGE + 1; i <= 0xffff; ++i)
+    if (!re.ResourceExists(MAKEINTRESOURCE(ImgType), (WORD) i, CResourceEditor::ANYLANGID))
+      return (WORD) i;
+  return 0;
+}
+
+bool CResourceEditor::AddExtraIconFromFile(const WINWCHAR* Type, WINWCHAR* Name, LANGID LangId, BYTE* Data, DWORD Size) {
+  typedef struct { BYTE Width, Height, Palette, Reserved; WORD Planes, BPP; UINT32 Size, Offset; } FILEICOGROUPENTRY;
+  typedef struct { BYTE Width, Height, Palette, Reserved; WORD Planes, BPP, SizeLo, SizeHi, Id; } RSRCICOGROUPENTRY;
+  typedef struct { WORD Width, Height;                    WORD Planes, BPP, SizeLo, SizeHi, Id; } RSRCCURGROUPENTRY; //msdn.microsoft.com/en-us/library/windows/desktop/ms648011(v=vs.85).aspx
+  assert(sizeof(RSRCICOGROUPENTRY) == 12+2 && sizeof(FILEICOGROUPENTRY) == 12+4);
+  assert(sizeof(RSRCICOGROUPENTRY) == sizeof(RSRCCURGROUPENTRY));
+
+  WORD failed = 0, count, imgType, imgId;
+  FILEICOGROUPENTRY *pSrcFGE = (FILEICOGROUPENTRY*) GetFirstICOCURGroupEntry(Data, &imgType, &count);
+  if (!pSrcFGE)
+    return false;
+
+  unsigned int cbDstGrp = 6 + (count * sizeof(RSRCICOGROUPENTRY));
+  BYTE *pDstGrp = new BYTE[cbDstGrp], isCursor = MAKEINTRESOURCE(imgType) == RT_CURSOR;
+  memcpy(pDstGrp, Data, 6);
+  RSRCICOGROUPENTRY *pDstRGE = (RSRCICOGROUPENTRY*) (((char*) pDstGrp) + 6);
+
+  for (unsigned int i = 0; i < count; ++i) {
+    if (!(imgId = FindFreeIconImageId(*this, imgType)))
+      goto fail;
+    memcpy(&pDstRGE[i], &pSrcFGE[i], sizeof(RSRCICOGROUPENTRY)); // Copy the image information
+    pDstRGE[i].Id = FIX_ENDIAN_INT16(imgId);                     // and assign the new resource id
+    UINT32 imgSize = FIX_ENDIAN_INT32(pSrcFGE[i].Size);
+    BYTE *pImg = (BYTE*) (((char*) Data) + FIX_ENDIAN_INT32(pSrcFGE[i].Offset)), *pCursor = 0;
+
+    if (isCursor) { // We must prepend the hotspot to the image data and change the group entry
+      GENERICIMAGEINFO info;
+      if (/*!IsPNGFile(pImg, imgSize, &info) &&*/ !GetDIBHeaderInfo(pImg, imgSize, info)) // Are PNG cursor images allowed?
+        goto fail;
+
+      typedef struct { WORD x, y; } CURSORIMGHDR; //msdn.microsoft.com/en-us/library/windows/desktop/ms648017(v=vs.85).aspx
+      pCursor = new BYTE[imgSize + 4];
+      CURSORIMGHDR *pLH = (CURSORIMGHDR*) pCursor;
+      pLH->x = pSrcFGE[i].Planes, pLH->y = pSrcFGE[i].BPP;
+      memcpy(pCursor + sizeof(CURSORIMGHDR), pImg, imgSize);
+      pImg = pCursor, imgSize += 4; // Our new image data is ready
+
+      RSRCCURGROUPENTRY *pCGE = (RSRCCURGROUPENTRY*) &pDstRGE[i];
+      pCGE->Width = FIX_ENDIAN_INT16(info.Width > 0xffff ? 0 : (WORD) info.Width);
+      pCGE->Height = FIX_ENDIAN_INT16(info.Height > 0xffff ? 0 : (WORD) info.Height);
+      pCGE->Planes = FIX_ENDIAN_INT16(info.Planes), pCGE->BPP = FIX_ENDIAN_INT16(info.BPP);
+      ((FILEICOGROUPENTRY*)pCGE)->Size = FIX_ENDIAN_INT32(imgSize); // The size of the image data has changed
+    }
+
+    bool succ = UpdateResource(MAKEINTRESOURCE(imgType), imgId, LangId, pImg, imgSize);
+    if (pCursor)
+      delete [] pCursor;
+    if (!succ)
+      goto fail;
+  }
+  if (!UpdateResourceW(Type, Name, LangId, pDstGrp, cbDstGrp))
+    fail: ++failed;
+
+  delete [] pDstGrp;
+  return !failed;
+}
+
 //////////////////////////////////////////////////////////////////////
 // Private Methods
 //////////////////////////////////////////////////////////////////////
@@ -699,15 +951,16 @@ void CResourceEditor::WriteRsrcSec(BYTE* pbRsrcSec) {
   while (!qStrings.empty()) {
     CResourceDirectoryEntry* cRDirE = qStrings.front();
 
-    PMY_IMAGE_RESOURCE_DIRECTORY_ENTRY(cRDirE->m_ulWrittenAt)->UName.NameString.NameOffset = ConvertEndianness((DWORD) (seeker - pbRsrcSec));
+    size_t resdirstr = (size_t)(seeker - pbRsrcSec);
+    assert(RALIGN(resdirstr, 4) == resdirstr); // PE spec says these are ?machine? word aligned
+    PMY_IMAGE_RESOURCE_DIRECTORY_ENTRY(cRDirE->m_ulWrittenAt)->UName.NameString.NameOffset = ConvertEndianness((DWORD) resdirstr);
 
     const WINWCHAR* szName = cRDirE->GetName();
-    WORD iLen = (WORD) WinWStrLen(szName) + 1;
-
+    WORD iLen = (WORD) (WinWStrLen(szName)); // No terminator
     *(WORD*)seeker = ConvertEndianness(iLen);
-    CopyMemory(seeker + sizeof(WORD), szName, iLen*sizeof(WINWCHAR));
+    CopyMemory(seeker + sizeof(WORD), szName, iLen * sizeof(WINWCHAR));
 
-    seeker += RALIGN(iLen * sizeof(WINWCHAR) + sizeof(WORD), 4);
+    seeker += RALIGN(sizeof(WORD) + (iLen * sizeof(WINWCHAR)), 4);
 
     qStrings.pop();
   }
