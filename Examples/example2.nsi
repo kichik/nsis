@@ -13,15 +13,18 @@ Name "Example2"
 ; The file to write
 OutFile "example2.exe"
 
+; Request application privileges for Windows Vista
+RequestExecutionLevel admin
+
+; Build Unicode installer
+Unicode True
+
 ; The default installation directory
 InstallDir $PROGRAMFILES\Example2
 
 ; Registry key to check for directory (so if you install again, it will 
 ; overwrite the old one automatically)
 InstallDirRegKey HKLM "Software\NSIS_Example2" "Install_Dir"
-
-; Request application privileges for Windows Vista
-RequestExecutionLevel admin
 
 ;--------------------------------
 
