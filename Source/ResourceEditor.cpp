@@ -412,7 +412,7 @@ bool CResourceEditor::DeleteResourceT(const TCHAR* szType, WORD szName, LANGID w
     return UpdateResourceT(szType, szName, wLanguage, 0, 0, Manip);
 
   assert(!EditorSupportsStringNames() && sizeof(szName));
-  const TCHAR*name = MAKEINTRESOURCE(szName);
+  const TCHAR *name = (const TCHAR*) MAKEINTRESOURCE(szName);
   unsigned int deleted = 0;
   for (;; ++deleted) {
     CResourceDirectoryEntry*pDir = FindResourceLanguageDirEntryT(szType, name, ANYLANGID);
@@ -461,8 +461,9 @@ int CResourceEditor::GetResourceSizeT(const TCHAR* szType, WORD szName, LANGID w
 
 bool CResourceEditor::ResourceExistsT(const TCHAR* szType, WORD szName, LANGID wLanguage, LANGID*pFoundLanguage) {
   assert(!EditorSupportsStringNames() && sizeof(szName));
+  const TCHAR *name = (const TCHAR*) MAKEINTRESOURCE(szName);
   if (wLanguage == ALLLANGID) wLanguage = ANYLANGID;
-  CResourceDirectoryEntry *pRDE = FindResourceLanguageDirEntryT(szType, MAKEINTRESOURCE(szName), wLanguage);
+  CResourceDirectoryEntry *pRDE = FindResourceLanguageDirEntryT(szType, name, wLanguage);
   if (pFoundLanguage) *pFoundLanguage = pRDE ? pRDE->GetId() : INVALIDLANGID;
   return pRDE != 0;
 }
