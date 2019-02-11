@@ -4,6 +4,10 @@
 
 Released on ? ?th, 201?
 
+\S1{v3.05-rl} Release Notes
+
+ANSI targets are deprecated, consider moving to Unicode.
+
 \S1{v3.05-cl} Changelog
 
 \S2{} Minor Changes

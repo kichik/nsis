@@ -13,11 +13,14 @@ Name "Example1"
 ; The file to write
 OutFile "example1.exe"
 
-; The default installation directory
-InstallDir $DESKTOP\Example1
-
 ; Request application privileges for Windows Vista
 RequestExecutionLevel user
+
+; Build Unicode installer
+Unicode True
+
+; The default installation directory
+InstallDir $DESKTOP\Example1
 
 ;--------------------------------
 

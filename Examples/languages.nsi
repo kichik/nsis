@@ -13,6 +13,7 @@ XPStyle on
 
 RequestExecutionLevel user
 
+Unicode True
 ;--------------------------------
 
 Page license
