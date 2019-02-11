@@ -331,7 +331,7 @@ Specifies the output file that the MakeNSIS should write the installer to. This 
 
 \c [/OVERWRITE|/REPLACE] file restype resname [reslang]
 
-Adds \cw{file} as a resource to the installer and uninstaller. \cw{restype} specifies the resource type and can be any string or # followed by a standard type or number. \cw{resname} must be # followed by a number. \cw{reslang} is optional and specifies the language id of the resource. Replacing standard NSIS resource are not supported, you should use \R{aicon}{Icon} and \R{achangeui}{ChangeUI} instead.
+Adds \cw{file} as a resource to the installer and uninstaller. \cw{restype} specifies the resource type and can be any string or # followed by a standard type or number. \cw{resname} must be # followed by a number. \cw{reslang} is optional and specifies the language id of the resource. Replacing standard NSIS resource is not supported, you should use \R{aicon}{Icon} and \R{achangeui}{ChangeUI} instead.
 
 \c PEAddResource "myimage.bmp" "#2" "#1337"
 \c PEAddResource "mybonus.ico" "#Icon" "#200"

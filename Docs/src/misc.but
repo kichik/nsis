@@ -83,7 +83,7 @@ Note that, if used in installer code, this will only affect the installer, and i
 
 \c sleeptime_in_ms
 
-Pauses execution in the installer for sleeptime_in_ms milliseconds. sleeptime_in_ms can be a variable, e.g. "$0" or a number, i.e. "666".
+Pauses execution in the installer for sleeptime_in_ms milliseconds. sleeptime_in_ms can be a variable, e.g. "$0" or a number, i.e. "4321".
 
 \c DetailPrint "sleeping..."
 \c Sleep 3000
