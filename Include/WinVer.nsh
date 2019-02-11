@@ -81,7 +81,7 @@
 ;   check if running on the NT family.
 ;
 ;     ${If} ${AtLeastWin95}
-;     ${And} ${AtMostWinME}
+;     ${AndIf} ${AtMostWinME}
 ;       DetailPrint "Running 95, 98 or ME."
 ;       DetailPrint "Actually, maybe it's NT4?"
 ;       ${If} ${IsNT}

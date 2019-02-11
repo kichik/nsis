@@ -187,7 +187,7 @@ DetailPrint $4
 
 <p><i>PARAMS</i>, <i>RETURN</i> and <i>OPTIONS</i> can be repeated many times in one Get/Call line. When repeating, a lot can be omitted, and only what you wish to change can be used. <i>Type</i>, <i>source</i> and/or <i>destination</i> can be omitted for each parameter, even the return value. Options can be added or removed. This allows you to define function prototypes and save on some typing. The <a href="#repeat">last two examples</a> show this.</p>
 
-<p><i>PROC</i> can also be repeated but must be prefixed with a hash sign (`#') except if the hash sign is preceded by a double colon (<code>shell32::#18</code>).</p>
+<p><i>PROC</i> can also be <a href="#repeatproc">repeated</a> but it must be prefixed with a hash sign (`#') except if the hash sign is preceded by a double colon (<code>shell32::#18</code>) in which case it is interpreted as a function ordinal.</p>
 
 <h4>Possible <i>PROC</i> Values and Meanings</h4>
 
@@ -617,7 +617,7 @@ System::<b>Call</b> "${MB}(,'another message',,) i.r0"
 MessageBox MB_OK "last call returned $0"
 </pre></blockquote>
 <blockquote><pre>
-System::<b>Call</b> "user32::SendMessage(p $HWNDPARENT, t 'test', t 'test', p 0) p.s ? \
+<a name="repeatproc"></a>System::<b>Call</b> "user32::SendMessage(p $HWNDPARENT, t 'test', t 'test', p 0) p.s ? \
 	e (,t'test replacement',,) i.r0 ? !e #user32::MessageBox"
 DetailPrint $0
 ClearErrors
