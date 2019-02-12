@@ -70,8 +70,10 @@ static void myatexit()
 {
   dopause();
   ResetPrintColor();
-  if (g_output != stdout && g_output) fclose(g_output), g_output = 0;
-  if (g_errout != stderr && g_errout) fclose(g_errout), g_errout = 0;
+  bool oneoutputstream = g_output == g_errout;
+  if (g_output != stdout && g_output                    ) fclose(g_output);
+  if (g_errout != stderr && g_errout && !oneoutputstream) fclose(g_errout);
+  g_output = g_errout = 0;
 #ifdef _WIN32
   SetConsoleOutputCP(g_wincon_orgoutcp);
 #endif

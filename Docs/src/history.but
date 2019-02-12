@@ -16,6 +16,8 @@ ANSI targets are deprecated, consider moving to Unicode.
 
 \b Added \R{loadandsetimage}{LoadAndSetImage}
 
+\b Fixed -O stderr stream issue (\W{http://sf.net/p/nsis/bugs/1221}{bug #1221})
+
 \S2{} Translations
 
 \b Updated Hindi (\W{http://sf.net/p/nsis/patches/291}{patch #291}) and Portuguese (\W{http://sf.net/p/nsis/bugs/1219}{bug #1219})
