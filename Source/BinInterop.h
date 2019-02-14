@@ -29,6 +29,7 @@ bool GetDLLVersion(const TCHAR *filepath, DWORD &high, DWORD &low);
 
 typedef struct {
   UINT32 Width, Height;
+  INT32 RawHeight;
   WORD BPP, Planes;
 } GENERICIMAGEINFO;
 

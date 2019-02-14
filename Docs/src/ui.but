@@ -75,7 +75,7 @@ If HWND is a window, Gotos jump_if_window, otherwise, Gotos jump_if_not_window (
 
 \c [/EXERESOURCE] [/STRINGID] [/RESIZETOFIT[WIDTH|HEIGHT]] ctrl imagetype lrflags image
 
-Loads and sets a image on a static control. \cw{ctrl} is the handle of the control. \cw{imagetype} must 0 for bitmaps and 1 for icons (and the control style must match the image type). \cw{lrflags} must be 0x10 to load from a file or 0 to load from a resource. \cw{image} specifies the file path or resource name. Use \cw{/EXERESOURCE} to load a resource from the installer .EXE. Use \cw{/STRINGID} if \cw{image} is a string, otherwise it is interpreted as a number. Use \cw{/RESIZETOFIT[WIDTH|HEIGHT]} to resize the image to the dimensions of the control.
+Loads and sets a image on a static control. \cw{ctrl} is the handle of the control. \cw{imagetype} must 0 for bitmaps and 1 for icons (and the control style must match the image type). \cw{lrflags} should be 0x10 to load from a file or 0 to load from a resource. \cw{image} specifies the file path or resource name. Use \cw{/EXERESOURCE} to load a resource from the installer .EXE. Use \cw{/STRINGID} if \cw{image} is a string, otherwise it is interpreted as a number. Use \cw{/RESIZETOFIT[WIDTH|HEIGHT]} to resize the image to the dimensions of the control.
 
 \c LoadAndSetImage /EXERESOURCE $hIconStatic 1 0 103
 \c LoadAndSetImage /STRINGID /RESIZETOFITWIDTH $hBmpStatic 0 0x10 "$PluginsDir\myimg.bmp"

@@ -461,7 +461,8 @@ DWORD GetDIBHeaderInfo(const void*pData, size_t DataSize, GENERICIMAGEINFO&Info)
     }
     if (size >= 16) // OS22XBITMAPHEADER/BITMAPINFOHEADER/BITMAPV*HEADER
     {
-      Info.Width = LE2HE32(p32[1]), Info.Height = (INT32) LE2HE32(p32[2]);
+      Info.Width = LE2HE32(p32[1]), Info.RawHeight = (INT32) LE2HE32(p32[2]);
+      Info.Height = abs(Info.RawHeight);
       Info.Planes = LE2HE16(p16[6+0]), Info.BPP = LE2HE16(p16[6+1]);
       return size;
     }
@@ -475,7 +476,7 @@ DWORD IsBMPFile(const void*pData, size_t DataSize, GENERICIMAGEINFO*pInfo)
   if (DataSize >= 14+12 && p8[0] == 'B' && p8[1] == 'M')
   {
     DWORD *p32 = (DWORD*) (&p8[2]), fsize = LE2HE32(p32[0]), bitsoffs = LE2HE32(p32[2]);
-    if ((!fsize || fsize > 14+12) && (!bitsoffs || bitsoffs > 14+12))
+    if ((!fsize || fsize > 14+12) && (!bitsoffs || bitsoffs >= 14+12))
     {
       GENERICIMAGEINFO info;
       return GetDIBHeaderInfo(p8 + 14, DataSize - 14, pInfo ? *pInfo : info);
