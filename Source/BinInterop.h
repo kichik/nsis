@@ -31,6 +31,7 @@ typedef struct {
   UINT32 Width, Height;
   INT32 RawHeight;
   WORD BPP, Planes;
+  bool IsTopDownBitmap() const { return Height != (UINT32) RawHeight; }
 } GENERICIMAGEINFO;
 
 DWORD GetDIBHeaderInfo(const void*pData, size_t DataSize, GENERICIMAGEINFO&Info);

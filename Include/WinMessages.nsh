@@ -46,6 +46,7 @@ TBM     Track bar
 UDM     Up-down control
 HKM     Hot key control
 IPM     IP address control
+NCM     Network address control
 -----------------------------------
 
 NOT included messages (WM_USER + X)
@@ -822,6 +823,12 @@ ${_NSIS_DEFAW} ACM_OPEN
 !define /math IPM_SETRANGE     ${WM_USER} + 103
 !define /math IPM_SETFOCUS     ${WM_USER} + 104
 !define /math IPM_ISBLANK      ${WM_USER} + 105
+
+#NetworkAddress control#
+!define /math NCM_GETADDRESS ${WM_USER} + 1 ; Vista+
+!define /math NCM_SETALLOWTYPE ${WM_USER} + 2
+!define /math NCM_GETALLOWTYPE ${WM_USER} + 3
+!define /math NCM_DISPLAYERRORTIP ${WM_USER} + 4
 
 !verbose pop
 !endif
