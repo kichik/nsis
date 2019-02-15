@@ -57,7 +57,7 @@ abbr { font-variant: none; cursor: help; }
 <li><a href="#mref-onback">NSD_OnBack</a>, <a href="#mref-onchange">NSD_OnChange</a>, <a href="#mref-onclick">NSD_OnClick</a>, <a href="#mref-onnotify">NSD_OnNotify</a></li>
 <li><a href="#mref-setfocus">NSD_SetFocus</a></li>
 <li><a href="#mref-createtimer">NSD_CreateTimer</a>, <a href="#mref-killtimer">NSD_KillTimer</a></li>
-<li><a href="#mref-addstyle">NSD_AddStyle</a>, <a href="#mref-addexstyle">NSD_AddExStyle</a></li>
+<li><a href="#mref-addstyle">NSD_AddStyle</a>, <a href="#mref-addexstyle">NSD_AddExStyle</a>, <a href="#mref-removestyle">NSD_RemoveStyle</a>, <a href="#mref-removeexstyle">NSD_RemoveExStyle</a></li>
 <li><a href="#mref-gettext">NSD_GetText</a>, <a href="#mref-settext">NSD_SetText</a></li>
 <li>Text, Password &amp; Number: 
 <a href="#mref-settextlimit">NSD_Edit_SetTextLimit</a>, 
@@ -597,6 +597,14 @@ SectionEnd</pre></blockquote>
 <p><code>${NSD_AddExStyle} <i>control_HWND</i> <i>style</i></code></p>
 <p>Adds one or more extended window styles to a control. Multiple styles should be separated with pipes `|'.</p>
 <p>See <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff700543">MSDN</a> for style descriptions.</p>
+
+<h3><a name="mref-removestyle"></a>NSD_RemoveStyle</h3>
+<p><code>${NSD_RemoveStyle} <i>control_HWND</i> <i>style</i></code></p>
+<p>Removes one or more window styles from a control.</p>
+
+<h3><a name="mref-removeexstyle"></a>NSD_RemoveExStyle</h3>
+<p><code>${NSD_RemoveExStyle} <i>control_HWND</i> <i>style</i></code></p>
+<p>Removes one or more extended window styles from a control.</p>
 
 <h3><a name="mref-gettext"></a>NSD_GetText</h3>
 <p><code>${NSD_GetText} <i>control_HWND</i> <i>$output_variable</i></code></p>

@@ -481,6 +481,15 @@ System::Call 'COMCTL32::InitCommonControlsEx(*ls)' ; INITCOMMONCONTROLSEX as UIN
 	System::Call "user32::SetWindowLong(p${HWND},p${GWL},ps)"
 !macroend
 
+!define NSD_RemoveStyle "!insertmacro _NSD_GWLRemoveFlags ${GWL_STYLE} " 
+!define NSD_RemoveExStyle "!insertmacro _NSD_GWLRemoveFlags ${GWL_EXSTYLE} "
+!macro _NSD_GWLRemoveFlags GWL HWND DATA
+System::Call "user32::GetWindowLong(p${HWND},i${GWL})p.s"
+System::Int64Op "${DATA}" ~ & ; Perform ~ and prepare the stack for &
+System::Int64Op ; Perform &
+System::Call "user32::SetWindowLong(p${HWND},i${GWL},ps)"
+!macroend 
+
 !define NSD_GetStyle "!insertmacro _NSD_GWLGetFlags ${GWL_STYLE} "
 !define NSD_GetExStyle "!insertmacro _NSD_GWLGetFlags ${GWL_EXSTYLE} "
 !macro _NSD_GWLGetFlags GWL HWND RET

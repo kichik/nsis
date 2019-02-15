@@ -770,7 +770,7 @@ bool CResourceEditor::AddExtraIconFromFile(const WINWCHAR* Type, WINWCHAR* Name,
       GENERICIMAGEINFO info;
       if (/*!IsPNGFile(pImg, imgSize, &info) &&*/ !GetDIBHeaderInfo(pImg, imgSize, info)) // Are PNG cursor images allowed?
         goto fail;
-      //if (info.RawHeight != info.Height && isDib)
+      //if (info.IsTopDownBitmap() && isDib)
       //  goto fail; // Are TopDown DIBs allowed? Probably not but we play it safe.
 
       typedef struct { WORD x, y; } CURSORIMGHDR; //msdn.microsoft.com/en-us/library/windows/desktop/ms648017(v=vs.85).aspx
