@@ -82,21 +82,38 @@ BOOL WINAPI DllMain(HINSTANCE hInst, ULONG ul_reason_for_call, LPVOID lpReserved
 #define TAB_REPLACE _T("        ")
 #define TAB_REPLACE_SIZE (sizeof(TAB_REPLACE)-1)
 
-BOOL IsWOW64() {
-  typedef BOOL (WINAPI *LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
-  BOOL wow64;
-  LPFN_ISWOW64PROCESS fnIsWow64Process;
-
-  fnIsWow64Process = (LPFN_ISWOW64PROCESS) GetProcAddress(
-    GetModuleHandle(_T("kernel32")), "IsWow64Process");
-
-  if (fnIsWow64Process != NULL) {
-    if (fnIsWow64Process(GetCurrentProcess(), &wow64)) {
-      return wow64;
+static BOOL IsWOW64() {
+#ifdef _WIN64
+  return FALSE;
+#else
+  typedef BOOL (WINAPI*ISWOW64PROCESS)(HANDLE, BOOL*);
+  ISWOW64PROCESS pfIsWow64Process;
+  typedef BOOL (WINAPI*ISWOW64PROCESS2)(HANDLE, USHORT*, USHORT*);
+  ISWOW64PROCESS2 pfIsWow64Process2;
+  HANDLE hProcess = GetCurrentProcess();
+  HMODULE hK32 = GetModuleHandleA("KERNEL32");
+  UINT_PTR retval;
+  USHORT appmach, image_file_machine_unknown = 0;
+  CHAR funcnam[16]
+#if defined(_MSC_VER) && (_MSC_VER-0 <= 1400)
+    = "IsWow64Process2"; // MOVSD * 4
+#else
+    ; lstrcpyA(funcnam, "IsWow64Process2");
+#endif
+  pfIsWow64Process2 = (ISWOW64PROCESS2) GetProcAddress(hK32, funcnam);
+  if (pfIsWow64Process2 && pfIsWow64Process2(hProcess, &appmach, NULL)) {
+    retval = image_file_machine_unknown != appmach;
+  }
+  else {
+    BOOL wow64;
+    pfIsWow64Process = (ISWOW64PROCESS) GetProcAddress(hK32, (funcnam[14] = '\0', funcnam));
+    retval = (UINT_PTR) pfIsWow64Process;
+    if (pfIsWow64Process && (retval = pfIsWow64Process(hProcess, &wow64))) {
+      retval = wow64;
     }
   }
-
-  return FALSE;
+  return (BOOL) (UINT) retval;
+#endif
 }
 
 /**
