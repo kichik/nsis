@@ -1,13 +1,14 @@
-!include nsDialogs.nsh
-!include LogicLib.nsh
-!include WinCore.nsh ; MAKELONG
-
 Name "nsDialogs Example"
 OutFile "nsDialogs Example.exe"
 Caption "$(^Name)"
 
+Unicode True
 XPStyle on
 RequestExecutionLevel user
+
+!include nsDialogs.nsh
+!include LogicLib.nsh
+!include WinCore.nsh ; MAKELONG
 
 LicenseText "All the action takes place on the next page..." "Start"
 SubCaption 0 ": Ready?"
@@ -175,7 +176,7 @@ FunctionEnd
 Function NotifyPage
 	!insertmacro BeginControlsTestPage "WM_NOTIFY"
 
-	${NSD_CreateRichEdit} 1 1 -2 -2 ""
+	nsDialogs::CreateControl "${__NSD_RichEdit_CLASS_20A}" "${__NSD_RichEdit_STYLE}" "${__NSD_RichEdit_EXSTYLE}" 1 1 -2 -2 "" ; Forcing ANSI control, see forums.winamp.com/showthread.php?p=3169999
 	Pop $9
 	${NSD_OnNotify} $9 OnNotify
 	IntOp $8 ${ENM_LINK} | ${ENM_KEYEVENTS}
