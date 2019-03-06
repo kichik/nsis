@@ -239,7 +239,8 @@ TVM     Tree-view control
 !define /math EM_GETOPTIONS      ${WM_USER} + 78
 !define /math EM_SETUNDOLIMIT    ${WM_USER} + 82 ; v2+
 !define /math EM_AUTOURLDETECT   ${WM_USER} + 91
-!define /math EM_SETEDITSTYLE    ${WM_USER} + 204 ; v3+
+!define /Math EM_SETTEXTEX       ${WM_USER} + 97 ; v3+
+!define /math EM_SETEDITSTYLE    ${WM_USER} + 204
 !define /math EM_SETFONTSIZE     ${WM_USER} + 223
 
 !define EN_MSGFILTER 0x0700
