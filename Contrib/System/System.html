@@ -434,8 +434,9 @@ System::Free $0
 
 <blockquote>
 <ul>
-<li>To find out the index of a member in a COM interface, you need to search for the definition of this COM interface in the header files that come with Visual C/C++ or the Platform SDK. Remember the index is zero based.</li>
+<li>To find out the index of a member in a COM interface, you need to search for the definition of this COM interface in the header files that come with Visual C/C++ or the Platform SDK. The index is zero based.</li>
 <li>If a function can't be found or the <code>t</code> parameter type was used, an `A' or `W' will be appended to its name and it will be looked up again. This is done because a lot of Windows API functions have two versions, one for ANSI strings and one for Unicode strings. The ANSI version of the function is marked with `A' and the Unicode version is marked with `W'. For example: lstrcpyA and lstrcpyW.</li>
+<li>Libraries in the system32 directory can be loaded without a path. All other libraries should be loaded with a <a href="#funcqpath">quoted full path</a>.</li>
 </ul>
 </blockquote>
 
@@ -489,7 +490,8 @@ System::Free $0
 <h4>Usage Examples</h4>
 
 <blockquote><pre>
-<a name="func"></a>System::<b>Call</b> "user32::MessageBox(p $HWNDPARENT, t 'NSIS System Plug-in', t 'Test', i 0)"
+<a name="func"></a>System::<b>Call</b> 'user32::MessageBox(p $HWNDPARENT, t "NSIS System Plug-in", t "Test", i 0)'
+<a name="funcqpath"></a>System::<b>Call</b> '"$InstDir\MyLibrary.dll"::MyFunction(i 42)'
 </pre></blockquote>
 <blockquote><pre>
 <a name="funcaddr"></a>System::<b>Call</b> "kernel32::GetModuleHandle(t 'user32.dll') p .s"
@@ -672,11 +674,6 @@ Pop $0
 DetailPrint "5 + 5 = $0" # 10
 </pre></blockquote>
 <blockquote><pre>
-System::<b>Int64Op</b> 64 - 25
-Pop $0
-DetailPrint "64 - 25 = $0" # 39
-</pre></blockquote>
-<blockquote><pre>
 System::<b>Int64Op</b> 526355 * 1565487
 Pop $0
 DetailPrint "526355 * 1565487 = $0" # 824001909885
@@ -708,13 +705,6 @@ DetailPrint "0x8000000000000000 &gt;&gt; 1 = $0" # -4611686018427387904 (0xC0000
 System::<b>Int64Op</b> 0x8000000000000000 &gt;&gt;&gt; 1
 Pop $0
 DetailPrint "0x8000000000000000 &gt;&gt;&gt; 1 = $0" # 4611686018427387904 (0x4000000000000000)
-</pre></blockquote>
-<blockquote><pre>
-System::<b>Int64Op</b> 0xF0F0F0F | 0xF0F0FFF
-Pop $0
-# IntFmt is 32-bit, this is just for the example
-IntFmt $0 "0x%X" $0
-DetailPrint "0xF0F0F0F | 0xF0F0FFF = $0" # 0xF0F0FFF
 </pre></blockquote>
 <blockquote><pre>
 System::<b>Int64Op</b> 0x12345678 &amp; 0xF0F0F0F0

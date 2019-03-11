@@ -519,7 +519,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
     BOOL param_defined = FALSE;
     SystemProc *proc = NULL;
     TCHAR *ibuf, *ib, *sbuf, *cbuf, *cb;
-    unsigned int UsedTString = 0, aligntype;
+    unsigned int UsedTString = 0, aligntype, inpathq = 0;
 #ifdef POPT_SYNTAX2
     const UINT alignflag = PAT_ALIGNFLAG;
 #else
@@ -550,22 +550,39 @@ SystemProc *PrepareProc(BOOL NeedForCall)
 
         switch (*ib)
         {
-        case 0x0: SectionType = -1; break;
+        case 0x0:
+          SectionType = -1;
+          break;
         case _T('#'): // "...#" redefines proc unless preceded by ":", then it's an ordinal (dll::#123)
-          if (ib <= ibuf || *(ib-1) != _T(':') || PST_PROC != SectionType)
+          if ((ib <= ibuf || *(ib-1) != _T(':') || PST_PROC != SectionType) && !inpathq)
             SectionType = PST_PROC, ProcType = PT_NOTHING;
           else
             changed = FALSE;
           break;
-        case _T('('): 
-            SectionType = PST_PARAMS; 
-            // fake-real parameter: for COM interfaces first param is Interface Pointer
-            ParamIndex = ((ProcType == PT_VTABLEPROC)?(2):(1));
-            temp3 = temp = 0;
-            param_defined = FALSE;
+        case _T('('):
+            if (inpathq)
+              changed = FALSE;
+            else
+            {
+              SectionType = PST_PARAMS; 
+              // fake-real parameter: for COM interfaces first param is Interface Pointer
+              ParamIndex = ((ProcType == PT_VTABLEPROC)?(2):(1));
+              temp3 = temp = 0;
+              param_defined = FALSE;
+            }
             break;
-        case _T(')'): SectionType = PST_RETURN; temp3 = temp = 0; break;
-        case _T('?'): SectionType = PST_OPTIONS; temp = 1; break;
+        case _T(')'):
+          if (inpathq)
+            changed = FALSE;
+          else
+          {
+            SectionType = PST_RETURN;
+            temp3 = temp = 0;
+          }
+          break;
+        case _T('?'):
+          SectionType = PST_OPTIONS; temp = 1;
+          break;
         default:
             changed = FALSE;
         }
@@ -651,16 +668,29 @@ SystemProc *PrepareProc(BOOL NeedForCall)
         switch (SectionType)
         {
         // Proc sections parser
-        case PST_PROC:
+        case PST_PROC: parse_next_proc_section_char:
             switch (*ib)
             {
+            case _T('\"'):
+              ib++; // Skip '\"'
+              if (inpathq)
+              {
+                inpathq = 0;
+                goto parse_next_proc_section_char;
+              }
+              else
+              {
+                inpathq++;
+              }
+              break;
             case _T(':'):
             case _T('-'):
                 // Is it '::'
                 if ((*(ib) == _T('-')) && (*(ib+1) == _T('>')))
                 {
                     ProcType = PT_VTABLEPROC;
-                } else
+                }
+                else
                 {
                     if ((*(ib+1) != _T(':')) || (*(ib) == _T('-'))) break;
                     ProcType = PT_PROC;
@@ -671,7 +701,9 @@ SystemProc *PrepareProc(BOOL NeedForCall)
                 {
                     *cb = 0;
                     lstrcpy(sbuf, cbuf);
-                } else  *sbuf = 0; // No dll - system proc
+                }
+                else 
+                  *sbuf = 0; // No dll - system proc
                 
                 // Ok
                 ChangesDone = PCD_DONE;
