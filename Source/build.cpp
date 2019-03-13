@@ -4019,22 +4019,24 @@ int CEXEBuild::run_postbuild_cmds(const postbuild_cmd *cmds, const TCHAR *templa
 {
   for (const postbuild_cmd *cmd = cmds; cmd; cmd = cmd->next)
   {
-    const TCHAR *cmdstr = cmd->cmd;
-    TCHAR *arg = _tcsstr(const_cast<TCHAR*>(cmdstr), _T("%1")), *cmdstrbuf = NULL;
-    if (arg) // If found, replace %1 with templatearg_pc1
+    const TCHAR *cmdstr = cmd->cmd, *searchstart = cmdstr;
+    TCHAR *arg, *cmdstrbuf = NULL, *tmpbuf;
+    for (; arg = _tcsstr(const_cast<TCHAR*>(searchstart), _T("%1"));) // While found, replace %1 with templatearg_pc1
     {
       const size_t cchtpc1 = _tcslen(templatearg_pc1);
-      cmdstrbuf = (TCHAR*) malloc((_tcslen(cmdstr) + cchtpc1 + 1) * sizeof(TCHAR));
-      if (!cmdstrbuf)
+      tmpbuf = (TCHAR*) malloc((_tcslen(cmdstr) + cchtpc1 + !0) * sizeof(TCHAR));
+      if (!tmpbuf)
       {
         ERROR_MSG(_T("Error: Can't allocate memory for %") NPRIs _T(" command\n"), commandname);
         return PS_ERROR;
       }
-      arg -= ((UINT_PTR)cmdstr)/sizeof(TCHAR), arg += ((UINT_PTR)cmdstrbuf)/sizeof(TCHAR);
-      _tcscpy(cmdstrbuf, cmdstr), cmdstr = cmdstrbuf;
-      memmove(arg+cchtpc1, arg+2, (_tcslen(arg+2)+1)*sizeof(TCHAR));
-      memmove(arg, templatearg_pc1, cchtpc1*sizeof(TCHAR));
-      //BUGBUG: Should we call PathConvertWinToPosix on templatearg_pc1?
+      arg -= ((UINT_PTR)cmdstr)/sizeof(TCHAR), arg += ((UINT_PTR)tmpbuf)/sizeof(TCHAR);
+      _tcscpy(tmpbuf, cmdstr);
+      free(cmdstrbuf);
+      memmove(arg + cchtpc1, arg + 2, (_tcslen(arg + 2) + !0) * sizeof(TCHAR));
+      memmove(arg, templatearg_pc1, cchtpc1 * sizeof(TCHAR));
+      // BUGBUG: Should we call PathConvertWinToPosix on templatearg_pc1?
+      cmdstr = cmdstrbuf = tmpbuf, searchstart = arg + cchtpc1;
     }
     SCRIPT_MSG(_T("\n%") NPRIs _T(" command: %") NPRIs _T("\n"), commandname, cmdstr);
     int ret = sane_system(cmdstr);

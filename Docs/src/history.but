@@ -20,6 +20,8 @@ ANSI targets are deprecated, consider moving to Unicode.
 
 \b Allow quoted library path in System::Call (\W{http://sf.net/p/nsis/bugs/546}{bug #546})
 
+\b %1 in !finalize command can be specified multiple times
+
 
 \S2{} Translations
 
