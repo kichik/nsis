@@ -148,8 +148,8 @@
 
 !macro __InstallLib_Helper_CmpPackedVer64 oldhi oldlo newhi newlo jeq jle jgt
 
-  IntCmpU ${oldhi} ${newhi} 0      ${jle} ${jgt}
-  IntCmpU ${oldlo} ${newlo} ${jeq} ${jle} ${jgt}
+  IntCmpU ${oldhi} ${newhi} "0"      "${jle}" "${jgt}"
+  IntCmpU ${oldlo} ${newlo} "${jeq}" "${jle}" "${jgt}"
 
 !macroend
 
