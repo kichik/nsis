@@ -219,9 +219,9 @@ static void ToolBarSizeChanged(HWND hDlg)
   SetWindowPos(hEd, 0, pt.x, top, RectW(r), oldh + (pt.y - top), SWP_NOZORDER|SWP_NOACTIVATE); // Update IDC_LOGWIN position and size
 }
 
-static BOOL CALLBACK DialogResize(HWND hWnd, LPARAM /* unused */)
+static BOOL CALLBACK DialogResize(HWND hWnd, LPARAM param)
 {
-  RECT r, r2;
+  RECT r, r2, &dlgrect = *(RECT*) param;
   GetWindowRect(hWnd, &r);
   ScreenToClient(g_sdata.hwnd, ((LPPOINT)&r)+0), ScreenToClient(g_sdata.hwnd, ((LPPOINT)&r)+1);
   switch (GetDlgCtrlID(hWnd))
@@ -231,7 +231,13 @@ static BOOL CALLBACK DialogResize(HWND hWnd, LPARAM /* unused */)
     SetWindowPos(hWnd, 0, 0, 0, RectW(r) + g_resize.dx, RectH(r2), SWP_NOMOVE|SWP_NOZORDER|SWP_NOACTIVATE);
     break;
   case IDC_LOGWIN:
-    SetWindowPos(hWnd, 0, r.left, r.top, RectW(r) + g_resize.dx, RectH(r) + g_resize.dy, SWP_NOZORDER|SWP_NOMOVE|SWP_NOACTIVATE);
+    if (!g_resize.bottompanelsize)
+    {
+      r2.top = 246, r2.bottom = 22 + 190; // Dialog units from the .rc file
+      MapDialogRect(GetParent(hWnd), &r2);
+      g_resize.bottompanelsize = r2.top - r2.bottom;
+    }
+    SetWindowPos(hWnd, 0, r.left, r.top, dlgrect.right - (r.left * 2), dlgrect.bottom - (r.top + g_resize.bottompanelsize), SWP_NOZORDER|SWP_NOMOVE|SWP_NOACTIVATE);
     break;
   case IDC_TEST:
   case IDCANCEL:
@@ -353,7 +359,7 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
       GetClientRect(hwndDlg, &g_resize.resizeRect);
       g_resize.dx = g_resize.resizeRect.right - oldW;
       g_resize.dy = g_resize.resizeRect.bottom - oldH;
-      EnumChildWindows(g_sdata.hwnd, DialogResize, (LPARAM) 0);
+      EnumChildWindows(g_sdata.hwnd, DialogResize, (LPARAM) &g_resize.resizeRect);
       return TRUE;
     }
     case WM_SIZING:
