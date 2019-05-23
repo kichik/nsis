@@ -236,6 +236,7 @@ typedef struct ResizeData {
   RECT griprect;
   int dx;
   int dy;
+  UINT bottompanelsize;
 } NRESIZEDATA;
 
 typedef struct FindReplaceDialog {
