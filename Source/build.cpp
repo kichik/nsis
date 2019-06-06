@@ -2383,8 +2383,8 @@ int CEXEBuild::SetManifest()
 {
   try {
     init_res_editor();
-    // This should stay ANSI
-    string manifest = manifest::generate((manifest::flags)manifest_flags, manifest_comctl, manifest_exec_level, manifest_dpiaware, manifest_dpiawareness.c_str(), manifest_sosl);
+    manifest::SPECIFICATION spec = { (manifest::flags) manifest_flags, manifest_dpiaware, manifest_dpiawareness.c_str(), manifest_sosl, manifest_maxversiontested.c_str() };
+    string manifest = manifest::generate(manifest_comctl, manifest_exec_level, spec);
 
     if (manifest == "")
       return PS_OK;
@@ -2394,7 +2394,7 @@ int CEXEBuild::SetManifest()
     //  return PS_OK; // Allow user to completely override the manifest with PEAddResource
 
     // Saved directly as binary into the exe.
-    res_editor->UpdateResource(MAKEINTRESOURCE(24), 1, NSIS_DEFAULT_LANG, (LPBYTE) manifest.c_str(), (DWORD)manifest.length());
+    res_editor->UpdateResource(MAKEINTRESOURCE(24), 1, NSIS_DEFAULT_LANG, (LPBYTE) const_cast<char*>(manifest.c_str()), (DWORD) manifest.length());
   }
   catch (exception& err) {
     ERROR_MSG(_T("Error setting manifest: %") NPRIs _T("\n"), CtoTStrParam(err.what()));

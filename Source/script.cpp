@@ -2331,7 +2331,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       return PS_OK;
 
     case TOK_MANIFEST_DPIAWARE:
-      switch(line.gettoken_enum(1,_T("none\0notset\0false\0true\0system\0permonitor\0")))
+      switch(line.gettoken_enum(1,_T("none\0notset\0false\0true\0system\0permonitor\0explorer\0")))
       {
       case 0: // A lot of attributes use "none" so we support that along with the documented value
       case 1: manifest_dpiaware = manifest::dpiaware_notset; break;
@@ -2339,6 +2339,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       case 3: // "True" == "System DPI"
       case 4: manifest_dpiaware = manifest::dpiaware_true; break;
       case 5: manifest_dpiaware = manifest::dpiaware_permonitor; break;
+      case 6: manifest_dpiaware = manifest::dpiaware_explorer; break;
       default: PRINTHELP();
       }
       return PS_OK;
@@ -2360,6 +2361,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           PRINTHELP();
     }
     return PS_OK;
+    case TOK_MANIFEST_MAXVERSIONTESTED:
+      manifest_maxversiontested = line.gettoken_enum(1, _T("none\0notset\0")) == -1 ? line.gettoken_str(1) : _T("");
+      return PS_OK;
+
     case TOK_MANIFEST_DISABLEWINDOWFILTERING:
       switch(line.gettoken_enum(1,_T("notset\0false\0true")))
       {

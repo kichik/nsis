@@ -50,7 +50,8 @@ namespace manifest
     dpiaware_notset,
     dpiaware_false,
     dpiaware_true, // System DPI on Vista+
-    dpiaware_permonitor // System DPI on Vista/7/8, PerMonitor on 8.1+
+    dpiaware_permonitor, // System DPI on Vista/7/8, PerMonitor on 8.1+
+    dpiaware_explorer // Win8.1+? Undocumented?
   };
 
   class SupportedOSList // Win7+
@@ -86,7 +87,15 @@ namespace manifest
     }
   };
 
-  std::string generate(flags, comctl, exec_level, dpiaware, const TCHAR*, SupportedOSList&);
+  typedef struct {
+    flags Flags;
+    dpiaware DPIA;
+    const TCHAR *DPIA2; // Win10FU1607+
+    SupportedOSList& SOSL;
+    const TCHAR *MaxVersionTested; // Win10FU1903+ github.com/microsoft/AppConsult-WinAppsModernizationWorkshop/tree/master/Exercise2
+  } SPECIFICATION;
+
+  std::string generate(comctl, exec_level, const SPECIFICATION&);
 
 };
 
