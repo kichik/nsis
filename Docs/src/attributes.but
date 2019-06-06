@@ -301,6 +301,10 @@ Declare that the installer is compatible with the specified Windows version(s). 
 
 Windows 8.1 and later will fake its version number if you don't declare support for that particular version. You can read more about the other changes in behavior on \W{http://msdn.microsoft.com/en-us/library/windows/desktop/hh848036}{MSDN}.
 
+\# \S2{amanifestmaxversiontested} ManifestMaxVersionTested
+\# 
+\# \c maj.min.bld.rev
+
 \S2{amiscbuttontext} MiscButtonText
 
 \c [back_button_text [next_button_text] [cancel_button_text] [close_button_text]]

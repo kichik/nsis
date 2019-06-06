@@ -16,6 +16,8 @@ ANSI targets are deprecated, consider moving to Unicode.
 
 \b Added \R{loadandsetimage}{LoadAndSetImage}
 
+\# Undocumented: \b Added ManifestMaxVersionTested
+
 \b Allow quoted library path in System::Call (\W{http://sf.net/p/nsis/bugs/546}{bug #546})
 
 \b %1 in !finalize command can be specified multiple times
@@ -54,6 +56,8 @@ Released on December 15th, 2018
 \b Added NTMARTA to preload list to fix rare Windows 7 security issue (\W{http://sf.net/p/nsis/bugs/1204}{bug #1204})
 
 \b AddBrandingImage now supports dialog units
+
+\# Undocumented: \b Added ManifestDisableWindowFiltering and ManifestGdiScaling
 
 \b Fixed !macroundef of last defined macro bug
 
@@ -102,6 +106,8 @@ Released on January 29th, 2018
 \b Added IntOp and System::Int64Op >>> operator
 
 \b Added more !define /math operators
+
+\# Undocumented: \b Added ManifestDPIAwareness
 
 \b Added WinVer.nsh IsDomainController (\W{http://sf.net/p/nsis/patches/286}{patch #286})
 

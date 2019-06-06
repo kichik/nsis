@@ -259,6 +259,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_MANIFEST_DPIAWARE,_T("ManifestDPIAware"),1,0,_T("notset|true|false"),TP_GLOBAL},
 {TOK_MANIFEST_DPIAWARENESS,_T("ManifestDPIAwareness"),1,0,_T("comma_separated_string"),TP_GLOBAL},
 {TOK_MANIFEST_SUPPORTEDOS,_T("ManifestSupportedOS"),1,-1,_T("none|all|WinVista|Win7|Win8|Win8.1|Win10|{GUID} [...]"),TP_GLOBAL},
+{TOK_MANIFEST_MAXVERSIONTESTED,_T("ManifestMaxVersionTested"),1,0,_T("maj.min.bld.rev"),TP_GLOBAL},
 {TOK_MANIFEST_DISABLEWINDOWFILTERING,_T("ManifestDisableWindowFiltering"),1,0,_T("notset|true"),TP_GLOBAL},
 {TOK_MANIFEST_GDISCALING,_T("ManifestGdiScaling"),1,0,_T("notset|true"),TP_GLOBAL},
 {TOK_P_PACKEXEHEADER,_T("!packhdr"),2,0,_T("temp_file_name command_line_to_compress_that_temp_file"),TP_ALL},

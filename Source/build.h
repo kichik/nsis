@@ -684,6 +684,7 @@ class CEXEBuild {
     manifest::dpiaware manifest_dpiaware;
     tstring manifest_dpiawareness;
     manifest::SupportedOSList manifest_sosl;
+    tstring manifest_maxversiontested;
 
     CResourceEditor *res_editor;
     void init_res_editor();
