@@ -58,7 +58,7 @@
 struct block_header g_blocks[BLOCKS_NUM];
 header *g_header;
 int g_flags;
-int g_filehdrsize;
+UINT g_filehdrsize;
 int g_is_uninstaller;
 
 HANDLE g_db_hFile=INVALID_HANDLE_VALUE;
@@ -68,8 +68,8 @@ HANDLE dbd_hFile=INVALID_HANDLE_VALUE;
 static int dbd_size, dbd_pos, dbd_srcpos, dbd_fulllen;
 #endif//NSIS_COMPRESS_WHOLE
 
-static int m_length;
-static int m_pos;
+static MAXSIZETYPE m_length;
+static UINT m_pos;
 
 #define _calc_percent() (MulDiv(min(m_pos,m_length),100,m_length))
 #ifdef NSIS_COMPRESS_WHOLE
@@ -159,7 +159,7 @@ static z_stream g_inflate_stream;
 
 const TCHAR * NSISCALL loadHeaders(int cl_flags)
 {
-  int left;
+  MAXSIZETYPE left;
 #ifdef NSIS_CONFIG_CRC_SUPPORT
   crc32_t crc = 0;
   int do_crc = 0;
@@ -199,7 +199,7 @@ const TCHAR * NSISCALL loadHeaders(int cl_flags)
   while (left > 0)
   {
     static char temp[32768];
-    DWORD l = min(left, (g_filehdrsize ? 32768 : 512));
+    DWORD l = min(left, (g_filehdrsize ? 32768UL : 512UL));
     if (!ReadSelfFile(temp, l))
     {
 #if defined(NSIS_CONFIG_CRC_SUPPORT) && defined(NSIS_CONFIG_VISIBLE_SUPPORT)
@@ -229,7 +229,7 @@ const TCHAR * NSISCALL loadHeaders(int cl_flags)
         g_exec_flags.silent |= cl_flags & FH_FLAGS_SILENT;
 #endif
 
-        if (h.length_of_all_following_data > left)
+        if ((MAXEXEDATASIZETYPE) h.length_of_all_following_data > left)
           return _LANG_INVALIDCRC;
 
 #ifdef NSIS_CONFIG_CRC_SUPPORT
@@ -374,7 +374,7 @@ int NSISCALL _dodecomp(int offset, HANDLE hFileOut, unsigned char *outbuf, int o
   if (offset>=0)
   {
     UINT_PTR datofs=g_blocks[NB_DATA].offset+offset;
-#if (NSIS_MAX_EXESIZE+0) > 0x7fffffff
+#if (NSIS_MAX_EXEDATASIZE+0) > 0x7fffffffUL
 #error "SetFilePointer is documented to only support signed 32-bit offsets in lDistanceToMove"
 #endif
     const int pos=(int)datofs;
@@ -472,8 +472,8 @@ int NSISCALL _dodecomp(int offset, HANDLE hFileOut, unsigned char *outbuf, int o
 
 static char _inbuffer[IBUFSIZE];
 static char _outbuffer[OBUFSIZE];
-extern int m_length;
-extern int m_pos;
+extern MAXSIZETYPE m_length;
+extern UINT m_pos;
 extern INT_PTR CALLBACK verProc(HWND, UINT, WPARAM, LPARAM);
 extern INT_PTR CALLBACK DialogProc(HWND, UINT, WPARAM, LPARAM);
 static int NSISCALL __ensuredata(int amount)
@@ -549,7 +549,7 @@ int NSISCALL _dodecomp(int offset, HANDLE hFileOut, unsigned char *outbuf, int o
   if (offset>=0)
   {
     UINT_PTR datofs=g_blocks[NB_DATA].offset+offset;
-#if (NSIS_MAX_EXESIZE+0) > 0x7fffffff
+#if (NSIS_MAX_EXEDATASIZE+0) > 0x7fffffffUL
 #error "SetFilePointer is documented to only support signed 32-bit offsets in lDistanceToMove"
 #endif
     dbd_pos=(int)datofs;

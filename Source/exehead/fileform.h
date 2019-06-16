@@ -584,9 +584,20 @@ typedef struct {
 
 #pragma pack(pop)
 
-#ifdef EXEHEAD
+#define NSIS_MAX_EXEDATASIZE 0x7fffffffUL // Maximum size of .exe including compressed installer data.
+#ifndef NSIS_CONFIG_CRC_ANAL
+#define NSIS_MAX_EXEFILESIZE 0xffffffffUL // Maximum size of .exe including compressed installer data AND 3rd-party appended data. (Windows refuses to run .EXE files larger than 4 GiB)
+#else
+#define NSIS_MAX_EXEFILESIZE NSIS_MAX_EXEDATASIZE
+#endif
 
+#ifdef EXEHEAD
 // the following are only used/implemented in exehead, not makensis.
+
+#if NSIS_MAX_EXEDATASIZE <= 0xffffffffUL
+#define MAXEXEDATASIZETYPE UINT // Maximum size of .exe including compressed installer data. (Unsigned allows size including 3rd-party appeded data to be 4 GiB instead of 2 GiB)
+#endif
+#define MAXSIZETYPE UINT
 
 int NSISCALL isheader(firstheader *h); // returns 0 on not header, length_of_datablock on success
 
@@ -610,7 +621,7 @@ DWORD NSISCALL SetSelfFilePointer(LONG lDistanceToMove);
 extern struct block_header g_blocks[BLOCKS_NUM];
 extern header *g_header;
 extern int g_flags;
-extern int g_filehdrsize;
+extern UINT g_filehdrsize;
 extern int g_is_uninstaller;
 
 #define g_pages ( (page*) g_blocks[NB_PAGES].offset )
