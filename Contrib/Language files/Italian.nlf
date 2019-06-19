@@ -1,19 +1,19 @@
-﻿# Header, don't edit
+# Header, don't edit
 NLF v6
 # Language ID
 1040
 # Font and size - dash (-) means default
 -
 -
-# Codepage - dash (-) means ASCII code page
+# Codepage - dash (-) means ANSI code page
 1252
 # RTL - anything else than RTL means LTR
 -
 # Translation orginally started by Orfanik - http://www.orfanik.hu
 # Updated v2 to v6 by Alessandro Staltari < staltari (a) geocities.com >
-# corrected by < mdalco@gmail.com > and Bovirus
+# revised by <mdalco@gmail.com> and bovirus <bovirus@gmail.com> 19.06.2019
 # ^Branding
-Nullsoft Install System %s
+Sistema di installazione Nullsoft %s
 # ^SetupCaption
 Installazione di $(^Name)
 # ^UninstallCaption
@@ -185,8 +185,8 @@ Registro eventi processo installazione
 # ^Byte
 B
 # ^Kilo
- K
+K
 # ^Mega
- M
+M
 # ^Giga
- G
+G
