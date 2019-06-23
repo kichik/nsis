@@ -1,6 +1,6 @@
 /*
 o-----------------------------------------------------------------------------o
-|String Functions Header File 1.09                                            |
+|String Functions Header File 1.10                                            |
 (-----------------------------------------------------------------------------)
 | By deguix                                     / A Header file for NSIS 2.01 |
 | <cevo_deguix@yahoo.com.br>                   -------------------------------|
@@ -26,13 +26,13 @@ o-----------------------------------------------------------------------------o
   ;Header File Identification
 
   !define STRFUNC `String Functions Header File`
-  !define STRFUNC_SHORT `StrFunc`
+  ;define STRFUNC_SHORT `StrFunc`
   !define STRFUNC_CREDITS `2004 Diego Pedroso`
 
   ;Header File Version
 
   !define STRFUNC_VERMAJ 1
-  !define STRFUNC_VERMED 09
+  !define STRFUNC_VERMED 10
  ;!define STRFUNC_VERMIN 0
  ;!define STRFUNC_VERBLD 0
 
@@ -49,148 +49,100 @@ o-----------------------------------------------------------------------------o
   !echo `${STRFUNC_INITMSGPRE}NSIS ${STRFUNC} ${STRFUNC_VER} - Copyright ${STRFUNC_CREDITS}${STRFUNC_INITMSGPOST}`
   !verbose pop
 
-  ;Header File Function Init Message Prefix and Postfix
-
-  !define STRFUNC_FUNCMSGPRE ``
-  !define STRFUNC_FUNCMSGPOST ``
-  
   ;Header File Function Macros
+
+  !ifdef STRFUNC_USECALLARTIFICIALFUNCTION
+    !include Util.nsh
+  !endif
+
+  !define "Using:StrFunc" `!insertmacro STRFUNC_USING `
+  !macro STRFUNC_USING Name
+    !if "${STRFUNC_VERBOSITY}" > 4
+      !verbose push 4
+    !endif
+    !ifndef ${Name}_INCLUDED
+      ${${Name}} ; Invoke !insertmacro STRFUNC_MAKEFUNC
+    !endif
+    !if "${STRFUNC_VERBOSITY}" > 4
+      !verbose pop
+    !endif
+  !macroend
 
   !macro STRFUNC_FUNCLIST_INSERT Name
     !ifdef StrFunc_List
-      !define StrFunc_List2 `${StrFunc_List}`
-      !undef StrFunc_List
-      !define StrFunc_List `${StrFunc_List2}|${Name}`
-      !undef StrFunc_List2
+      !define /ReDef StrFunc_List `${StrFunc_List}|${Name}`
     !else
       !define StrFunc_List `${Name}`
     !endif
   !macroend
 
-  !macro STRFUNC_DEFFUNC Name
+  !macro STRFUNC_DEFFUNC Name List TypeList
     !insertmacro STRFUNC_FUNCLIST_INSERT ${Name}
-  
-    !define `${Name}` `!insertmacro FUNCTION_STRING_${Name}`
-    !define `Un${Name}` `!insertmacro FUNCTION_STRING_Un${Name}`
-  !macroend
-  
-  !macro STRFUNC_FUNC ShortName Credits
-    !verbose push ${_STRFUNC_CREDITVERBOSITY}
-
-    !ifndef `Un${ShortName}`
-      !echo `${STRFUNC_FUNCMSGPRE}$ {Un${ShortName}} - Copyright ${Credits}${STRFUNC_FUNCMSGPOST}`
-      !verbose pop
-      !define `Un${ShortName}` `!insertmacro FUNCTION_STRING_Un${ShortName}_Call`
-      !define `Un${ShortName}_INCLUDED`
-      Function `un.${ShortName}`
+    !define `${Name}_List` `${List}`
+    !define `${Name}_TypeList` `${TypeList}`
+    !ifdef STRFUNC_USECALLARTIFICIALFUNCTION
+      !define `${Name}` `!insertmacro STRFUNC_CALL_${Name} "${un}" `
+      !define `Un${Name}` `!insertmacro STRFUNC_CALL_${Name} "${un}" `
     !else
-      !echo `${STRFUNC_FUNCMSGPRE}$ {${ShortName}} - Copyright ${Credits}${STRFUNC_FUNCMSGPOST}`
-      !verbose pop
-      !undef `${ShortName}`
-      !define `${ShortName}` `!insertmacro FUNCTION_STRING_${ShortName}_Call`
-      !define `${ShortName}_INCLUDED`
-      Function `${ShortName}`
+      !define `${Name}` `!insertmacro STRFUNC_MAKEFUNC ${Name} ""`
+      !define `Un${Name}` `!insertmacro STRFUNC_MAKEFUNC ${Name} Un`
     !endif
   !macroend
 
-  ;Function Names Startup Definition
-
-  !insertmacro STRFUNC_DEFFUNC StrCase
-  !define StrCase_List `ResultVar|String|Type`
-  !define StrCase_TypeList `Output|Text|Option  U L T S <>`
-  !macro `FUNCTION_STRING_UnStrCase`
-    !undef UnStrCase
-    !insertmacro FUNCTION_STRING_StrCase
-  !macroend
-  
-  !insertmacro STRFUNC_DEFFUNC StrClb
-  !define StrClb_List `ResultVar|String|Action`
-  !define StrClb_TypeList `Output|Text|Option  > < <>`
-  !macro `FUNCTION_STRING_UnStrClb`
-    !undef UnStrClb
-    !insertmacro FUNCTION_STRING_StrClb
+  !macro STRFUNC_MAKEFUNC basename un
+    !insertmacro STRFUNC_MAKEFUNC_${basename}
   !macroend
 
-  !insertmacro STRFUNC_DEFFUNC StrIOToNSIS
-  !define StrIOToNSIS_List `ResultVar|String`
-  !define StrIOToNSIS_TypeList `Output|Text`
-  !macro `FUNCTION_STRING_UnStrIOToNSIS`
-    !undef UnStrIOToNSIS
-    !insertmacro FUNCTION_STRING_StrIOToNSIS
+  !macro STRFUNC_BEGINFUNC basename un credits
+    !verbose push ${_STRFUNC_CREDITVERBOSITY}
+    !echo `${U+24}{${un}${basename}} - Copyright ${credits}`
+    !verbose pop
+    !define ${un}${basename}_INCLUDED
+    !ifndef STRFUNC_USECALLARTIFICIALFUNCTION
+      !define /ReDef ${un}${basename} `!insertmacro STRFUNC_CALL_${basename} "${un}" `
+      !if "${un}" != ""
+        Function un.${basename}
+      !else
+        Function ${basename}
+      !endif
+    !endif
+  !macroend
+  !macro STRFUNC_ENDFUNC
+    !ifndef STRFUNC_USECALLARTIFICIALFUNCTION
+      FunctionEnd
+    !endif
   !macroend
 
-  !insertmacro STRFUNC_DEFFUNC StrLoc
-  !define StrLoc_List `ResultVar|String|StrToSearchFor|CounterDirection`
-  !define StrLoc_TypeList `Output|Text|Text|Option > <`
-  !macro `FUNCTION_STRING_UnStrLoc`
-    !undef UnStrLoc
-    !insertmacro FUNCTION_STRING_StrLoc
+  !macro STRFUNC_CALL basename un
+    !ifdef STRFUNC_USECALLARTIFICIALFUNCTION
+      ${CallArtificialFunction} STRFUNC_MAKEFUNC_${basename}
+    !else
+      !if "${un}" != ""
+        Call un.${basename}
+      !else
+        Call ${basename}
+      !endif
+    !endif
   !macroend
 
-  !insertmacro STRFUNC_DEFFUNC StrNSISToIO
-  !define StrNSISToIO_List `ResultVar|String`
-  !define StrNSISToIO_TypeList `Output|Text`
-  !macro `FUNCTION_STRING_UnStrNSISToIO`
-    !undef UnStrNSISToIO
-    !insertmacro FUNCTION_STRING_StrNSISToIO
+
+  ############################################################################  
+  # StrCase
+  !insertmacro STRFUNC_DEFFUNC StrCase `ResultVar|String|Type` `Output|Text|Option  U L T S <>`
+
+  !macro STRFUNC_CALL_StrCase un ResultVar String Type
+    !verbose push ${STRFUNC_VERBOSITY}
+    !echo `${U+24}{${un}StrCase} "${ResultVar}" "${String}" "${Type}"`
+    !verbose 2
+    Push `${String}`
+    Push `${Type}`
+    !insertmacro STRFUNC_CALL StrCase "${un}"
+    Pop ${ResultVar}
+    !verbose pop
   !macroend
 
-  !insertmacro STRFUNC_DEFFUNC StrRep
-  !define StrRep_List `ResultVar|String|StrToReplace|ReplacementString`
-  !define StrRep_TypeList `Output|Text|Text|Text`
-  !macro `FUNCTION_STRING_UnStrRep`
-    !undef UnStrRep
-    !insertmacro FUNCTION_STRING_StrRep
-  !macroend
-
-  !insertmacro STRFUNC_DEFFUNC StrSort
-  !define StrSort_List `ResultVar|String|LeftStr|CenterStr|RightStr|IncludeLeftStr|IncludeCenterStr|IncludeRightStr`
-  !define StrSort_TypeList `Output|Text|Text|Text|Text|Option 1 0|Option 1 0|Option 1 0`
-  !macro `FUNCTION_STRING_UnStrSort`
-    !undef UnStrSort
-    !insertmacro FUNCTION_STRING_StrSort
-  !macroend
-
-  !insertmacro STRFUNC_DEFFUNC StrStr
-  !define StrStr_List `ResultVar|String|StrToSearchFor`
-  !define StrStr_TypeList `Output|Text|Text`
-  !macro `FUNCTION_STRING_UnStrStr`
-    !undef UnStrStr
-    !insertmacro FUNCTION_STRING_StrStr
-  !macroend
-
-  !insertmacro STRFUNC_DEFFUNC StrStrAdv
-  !define StrStrAdv_List `ResultVar|String|StrToSearchFor|SearchDirection|ResultStrDirection|DisplayStrToSearch|Loops|CaseSensitive`
-  !define StrStrAdv_TypeList `Output|Text|Text|Option > <|Option > <|Option 1 0|Text|Option 0 1`
-  !macro `FUNCTION_STRING_UnStrStrAdv`
-    !undef UnStrStrAdv
-    !insertmacro FUNCTION_STRING_StrStrAdv
-  !macroend
-
-  !insertmacro STRFUNC_DEFFUNC StrTok
-  !define StrTok_List `ResultVar|String|Separators|ResultPart|SkipEmptyParts`
-  !define StrTok_TypeList `Output|Text|Text|Mixed L|Option 1 0`
-  !macro `FUNCTION_STRING_UnStrTok`
-    !undef UnStrTok
-    !insertmacro FUNCTION_STRING_StrTok
-  !macroend
-
-  !insertmacro STRFUNC_DEFFUNC StrTrimNewLines
-  !define StrTrimNewLines_List `ResultVar|String`
-  !define StrTrimNewLines_TypeList `Output|Text`
-  !macro `FUNCTION_STRING_UnStrTrimNewLines`
-    !undef UnStrTrimNewLines
-    !insertmacro FUNCTION_STRING_StrTrimNewLines
-  !macroend
-
-  ;Function Codes for Install and Uninstall
-
-  # Function StrCase
-  ################
-
-  !macro FUNCTION_STRING_StrCase
-    !insertmacro STRFUNC_FUNC `StrCase` `2004 Diego Pedroso - Based on functions by Dave Laundon`
-
+  !macro STRFUNC_MAKEFUNC_StrCase
+    !insertmacro STRFUNC_BEGINFUNC ${basename} `${un}` `2004 Diego Pedroso - Based on functions by Dave Laundon`
     /*After this point:
       ------------------------------------------
        $0 = String (input)
@@ -361,12 +313,27 @@ o-----------------------------------------------------------------------------o
       Pop $2
       Pop $1
       Exch $0
-    FunctionEnd
+    !insertmacro STRFUNC_ENDFUNC
 
   !macroend
 
-  !macro FUNCTION_STRING_StrClb
-    !insertmacro STRFUNC_FUNC `StrClb` `2004 Diego Pedroso - Based on functions by Nik Medved`
+  ############################################################################  
+  # StrClb
+  !insertmacro STRFUNC_DEFFUNC StrClb `ResultVar|String|Action` `Output|Text|Option  > < <>`
+
+  !macro STRFUNC_CALL_StrClb un ResultVar String Type
+    !verbose push ${STRFUNC_VERBOSITY}
+    !echo `${U+24}{${un}StrClb} "${ResultVar}" "${String}" "${Action}"`
+    !verbose 2
+    Push `${String}`
+    Push `${Type}`
+    !insertmacro STRFUNC_CALL StrClb "${un}"
+    Pop ${ResultVar}
+    !verbose pop
+  !macroend
+
+  !macro STRFUNC_MAKEFUNC_StrClb
+    !insertmacro STRFUNC_BEGINFUNC ${basename} `${un}` `2004 Diego Pedroso - Based on functions by Nik Medved`
 
     /*After this point:
       ------------------------------------------
@@ -483,15 +450,27 @@ o-----------------------------------------------------------------------------o
       Pop $2
       Pop $1
       Exch $0
-    FunctionEnd
+    !insertmacro STRFUNC_ENDFUNC
 
   !macroend
 
-  # Function StrIOToNSIS
-  ####################
+  ############################################################################  
+  # StrIOToNSIS
+  !insertmacro STRFUNC_DEFFUNC StrIOToNSIS `ResultVar|String` `Output|Text`
 
-  !macro FUNCTION_STRING_StrIOToNSIS
-    !insertmacro STRFUNC_FUNC `StrIOToNSIS` `2004 "bluenet" - Based on functions by Amir Szekely, Joost Verburg, Dave Laundon and Diego Pedroso`
+  !macro STRFUNC_CALL_StrIOToNSIS un ResultVar String Type
+    !verbose push ${STRFUNC_VERBOSITY}
+    !echo `${U+24}{${un}StrIOToNSIS} "${ResultVar}" "${String}"`
+    !verbose 2
+    Push `${String}`
+    Push `${Type}`
+    !insertmacro STRFUNC_CALL StrIOToNSIS "${un}"
+    Pop ${ResultVar}
+    !verbose pop
+  !macroend
+
+  !macro STRFUNC_MAKEFUNC_StrIOToNSIS
+    !insertmacro STRFUNC_BEGINFUNC ${basename} `${un}` `2004 "bluenet" - Based on functions by Amir Szekely, Joost Verburg, Dave Laundon and Diego Pedroso`
 
     /*After this point:
       ------------------------------------------
@@ -545,14 +524,27 @@ o-----------------------------------------------------------------------------o
       Pop $R2
       Pop $R1
       Exch $R0
-    FunctionEnd
+    !insertmacro STRFUNC_ENDFUNC
   !macroend
 
-  # Function StrLoc
-  ###############
+  ############################################################################  
+  # StrLoc
+  !insertmacro STRFUNC_DEFFUNC StrLoc `ResultVar|String|StrToSearchFor|CounterDirection` `Output|Text|Text|Option > <`
 
-  !macro FUNCTION_STRING_StrLoc
-    !insertmacro STRFUNC_FUNC `StrLoc` `2004 Diego Pedroso - Based on functions by Ximon Eighteen`
+  !macro STRFUNC_CALL_StrLoc un ResultVar String Type
+    !verbose push ${STRFUNC_VERBOSITY}
+    !echo `${U+24}{${un}StrLoc} "${ResultVar}" "${String}" "${StrToSearchFor}" "${OffsetDirection}"`
+    !verbose 2
+    Push `${String}`
+    Push `${StrToSearchFor}`
+    Push `${OffsetDirection}`
+    !insertmacro STRFUNC_CALL StrLoc "${un}"
+    Pop ${ResultVar}
+    !verbose pop
+  !macroend
+
+  !macro STRFUNC_MAKEFUNC_StrLoc
+    !insertmacro STRFUNC_BEGINFUNC ${basename} `${un}` `2004 Diego Pedroso - Based on functions by Ximon Eighteen`
 
     /*After this point:
       ------------------------------------------
@@ -614,15 +606,26 @@ o-----------------------------------------------------------------------------o
       Exch
       Pop $R1
       Exch $R0
-    FunctionEnd
+    !insertmacro STRFUNC_ENDFUNC
 
   !macroend
 
-  # Function StrNSISToIO
-  ####################
+  ############################################################################  
+  # StrNSISToIO
+  !insertmacro STRFUNC_DEFFUNC StrNSISToIO `ResultVar|String` `Output|Text`
 
-  !macro FUNCTION_STRING_StrNSISToIO
-    !insertmacro STRFUNC_FUNC `StrNSISToIO` `2004 "bluenet" - Based on functions by Amir Szekely, Joost Verburg, Dave Laundon and Diego Pedroso`
+  !macro STRFUNC_CALL_StrNSISToIO un ResultVar String Type
+    !verbose push ${STRFUNC_VERBOSITY}
+    !echo `${U+24}{${un}StrNSISToIO} "${ResultVar}" "${String}"`
+    !verbose 2
+    Push `${String}`
+    !insertmacro STRFUNC_CALL StrNSISToIO "${un}"
+    Pop ${ResultVar}
+    !verbose pop
+  !macroend
+
+  !macro STRFUNC_MAKEFUNC_StrNSISToIO
+    !insertmacro STRFUNC_BEGINFUNC ${basename} `${un}` `2004 "bluenet" - Based on functions by Amir Szekely, Joost Verburg, Dave Laundon and Diego Pedroso`
 
     /*After this point:
       ------------------------------------------
@@ -677,14 +680,27 @@ o-----------------------------------------------------------------------------o
       Pop $R2
       Pop $R1
       Exch $R0
-    FunctionEnd
+    !insertmacro STRFUNC_ENDFUNC
   !macroend
 
-  # Function StrRep
-  ###############
+  ############################################################################  
+  # StrRep
+  !insertmacro STRFUNC_DEFFUNC StrRep `ResultVar|String|StrToReplace|ReplacementString` `Output|Text|Text|Text`
 
-  !macro FUNCTION_STRING_StrRep
-    !insertmacro STRFUNC_FUNC `StrRep` `2004 Diego Pedroso - Based on functions by Hendri Adriaens`
+  !macro STRFUNC_CALL_StrRep un ResultVar String Type
+    !verbose push ${STRFUNC_VERBOSITY}
+    !echo `${U+24}{${un}StrRep} "${ResultVar}" "${String}" "${StringToReplace}" "${ReplacementString}"`
+    !verbose 2
+    Push `${String}`
+    Push `${StringToReplace}`
+    Push `${ReplacementString}`
+    !insertmacro STRFUNC_CALL StrRep "${un}"
+    Pop ${ResultVar}
+    !verbose pop
+  !macroend
+
+  !macro STRFUNC_MAKEFUNC_StrRep
+    !insertmacro STRFUNC_BEGINFUNC ${basename} `${un}` `2004 Diego Pedroso - Based on functions by Hendri Adriaens`
 
     /*After this point:
       ------------------------------------------
@@ -768,15 +784,32 @@ o-----------------------------------------------------------------------------o
       Pop $R2
       Pop $R1
       Exch $R0
-    FunctionEnd
+    !insertmacro STRFUNC_ENDFUNC
 
   !macroend
 
-  # Function StrSort
-  ################
+  ############################################################################  
+  # StrSort
+  !insertmacro STRFUNC_DEFFUNC StrSort `ResultVar|String|LeftStr|CenterStr|RightStr|IncludeLeftStr|IncludeCenterStr|IncludeRightStr` `Output|Text|Text|Text|Text|Option 1 0|Option 1 0|Option 1 0`
 
-  !macro FUNCTION_STRING_StrSort
-    !insertmacro STRFUNC_FUNC `StrSort` `2004 Diego Pedroso - Based on functions by Stuart Welch`
+  !macro STRFUNC_CALL_StrSort un ResultVar String Type
+    !verbose push ${STRFUNC_VERBOSITY}
+    !echo `${U+24}{${un}StrSort} "${ResultVar}" "${String}" "${CenterStr}" "${LeftStr}" "${RightStr}" "${IncludeCenterStr}" "${IncludeLeftStr}" "${IncludeRightStr}"`
+    !verbose 2
+    Push `${String}`
+    Push `${CenterStr}`
+    Push `${LeftStr}`
+    Push `${RightStr}`
+    Push `${IncludeCenterStr}`
+    Push `${IncludeLeftStr}`
+    Push `${IncludeRightStr}`
+    !insertmacro STRFUNC_CALL StrSort "${un}"
+    Pop ${ResultVar}
+    !verbose pop
+  !macroend
+
+  !macro STRFUNC_MAKEFUNC_StrSort
+    !insertmacro STRFUNC_BEGINFUNC ${basename} `${un}` `2004 Diego Pedroso - Based on functions by Stuart Welch`
 
     /*After this point:
       ------------------------------------------
@@ -975,15 +1008,27 @@ o-----------------------------------------------------------------------------o
       Pop $R2
       Pop $R1
       Exch $R0
-    FunctionEnd
+    !insertmacro STRFUNC_ENDFUNC
 
   !macroend
-  
-  # Function StrStr
-  ###############
 
-  !macro FUNCTION_STRING_StrStr
-    !insertmacro STRFUNC_FUNC `StrStr` `2004 Diego Pedroso - Based on functions by Ximon Eighteen`
+  ############################################################################  
+  # StrStr
+  !insertmacro STRFUNC_DEFFUNC StrStr `ResultVar|String|StrToSearchFor` `Output|Text|Text`
+
+  !macro STRFUNC_CALL_StrStr un ResultVar String Type
+    !verbose push ${STRFUNC_VERBOSITY}
+    !echo `${U+24}{${un}StrStr} "${ResultVar}" "${String}" "${StrToSearchFor}"`
+    !verbose 2
+    Push `${String}`
+    Push `${StrToSearchFor}`
+    !insertmacro STRFUNC_CALL StrStr "${un}"
+    Pop ${ResultVar}
+    !verbose pop
+  !macroend
+
+  !macro STRFUNC_MAKEFUNC_StrStr
+    !insertmacro STRFUNC_BEGINFUNC ${basename} `${un}` `2004 Diego Pedroso - Based on functions by Ximon Eighteen`
 
     /*After this point:
       ------------------------------------------
@@ -1036,15 +1081,32 @@ o-----------------------------------------------------------------------------o
       Pop $R2
       Pop $R1
       Exch $R0
-    FunctionEnd
+    !insertmacro STRFUNC_ENDFUNC
 
   !macroend
 
-  # Function StrStrAdv
-  ##################
+  ############################################################################  
+  # StrStrAdv
+  !insertmacro STRFUNC_DEFFUNC StrStrAdv `ResultVar|String|StrToSearchFor|SearchDirection|ResultStrDirection|DisplayStrToSearch|Loops|CaseSensitive` `Output|Text|Text|Option > <|Option > <|Option 1 0|Text|Option 0 1`
 
-  !macro FUNCTION_STRING_StrStrAdv
-    !insertmacro STRFUNC_FUNC `StrStrAdv` `2003-2004 Diego Pedroso`
+  !macro STRFUNC_CALL_StrStrAdv un ResultVar String Type
+    !verbose push ${STRFUNC_VERBOSITY}
+    !echo `${U+24}{${un}StrStrAdv} "${ResultVar}" "${String}" "${StrToSearchFor}" "${SearchDirection}" "${ResultStrDirection}" "${DisplayStrToSearch}" "${Loops}" "${CaseSensitive}"`
+    !verbose 2
+    Push `${String}`
+    Push `${StrToSearchFor}`
+    Push `${SearchDirection}`
+    Push `${ResultStrDirection}`
+    Push `${DisplayStrToSearch}`
+    Push `${Loops}`
+    Push `${CaseSensitive}`
+    !insertmacro STRFUNC_CALL StrStrAdv "${un}"
+    Pop ${ResultVar}
+    !verbose pop
+  !macroend
+
+  !macro STRFUNC_MAKEFUNC_StrStrAdv
+    !insertmacro STRFUNC_BEGINFUNC ${basename} `${un}` `2003-2004 Diego Pedroso`
 
     /*After this point:
       ------------------------------------------
@@ -1299,15 +1361,29 @@ o-----------------------------------------------------------------------------o
       Exch
       Pop $0
 
-    FunctionEnd
+    !insertmacro STRFUNC_ENDFUNC
 
   !macroend
 
-  # Function StrTok
-  ###############
+  ############################################################################  
+  # StrTok
+  !insertmacro STRFUNC_DEFFUNC StrTok `ResultVar|String|Separators|ResultPart|SkipEmptyParts` `Output|Text|Text|Mixed L|Option 1 0`
 
-  !macro FUNCTION_STRING_StrTok
-    !insertmacro STRFUNC_FUNC `StrTok` `2004 Diego Pedroso - Based on functions by "bigmac666"`
+  !macro STRFUNC_CALL_StrTok un ResultVar String Type
+    !verbose push ${STRFUNC_VERBOSITY}
+    !echo `${U+24}{${un}StrTok} "${ResultVar}" "${String}" "${Separators}" "${ResultPart}" "${SkipEmptyParts}"`
+    !verbose 2
+    Push `${String}`
+    Push `${Separators}`
+    Push `${ResultPart}`
+    Push `${SkipEmptyParts}`
+    !insertmacro STRFUNC_CALL StrTok "${un}"
+    Pop ${ResultVar}
+    !verbose pop
+  !macroend
+
+  !macro STRFUNC_MAKEFUNC_StrTok
+    !insertmacro STRFUNC_BEGINFUNC ${basename} `${un}` `2004 Diego Pedroso - Based on functions by "bigmac666"`
     /*After this point:
       ------------------------------------------
        $0 = SkipEmptyParts (input)
@@ -1445,15 +1521,29 @@ o-----------------------------------------------------------------------------o
       Pop $1
       Pop $2
       Exch $3
-    FunctionEnd
+    !insertmacro STRFUNC_ENDFUNC
 
   !macroend
 
-  # Function StrTrimNewLines
-  ########################
+  ############################################################################  
+  # StrTrimNewLines
+  !insertmacro STRFUNC_DEFFUNC StrTrimNewLines `ResultVar|String` `Output|Text`
 
-  !macro FUNCTION_STRING_StrTrimNewLines
-    !insertmacro STRFUNC_FUNC `StrTrimNewLines` `2004 Diego Pedroso - Based on functions by Ximon Eighteen`
+  !macro STRFUNC_CALL_StrTrimNewLines un ResultVar String Type
+    !verbose push ${STRFUNC_VERBOSITY}
+    !echo `${U+24}{${un}StrTrimNewLines} "${ResultVar}" "${String}"`
+    !verbose 2
+    Push `${String}`
+    Push `${Separators}`
+    Push `${ResultPart}`
+    Push `${SkipEmptyParts}`
+    !insertmacro STRFUNC_CALL StrTrimNewLines "${un}"
+    Pop ${ResultVar}
+    !verbose pop
+  !macroend
+
+  !macro STRFUNC_MAKEFUNC_StrTrimNewLines
+    !insertmacro STRFUNC_BEGINFUNC ${basename} `${un}` `2004 Diego Pedroso - Based on functions by Ximon Eighteen`
 
     /*After this point:
       ------------------------------------------
@@ -1494,264 +1584,11 @@ o-----------------------------------------------------------------------------o
       Pop $R2
       Pop $R1
       Exch $R0
-    FunctionEnd
+    !insertmacro STRFUNC_ENDFUNC
 
   !macroend
 
-  ;Function Calls for Install and Uninstall
-
-  !macro FUNCTION_STRING_StrCase_Call ResultVar String Type
-    !verbose push ${_STRFUNC_CREDITVERBOSITY}
-    !echo `$ {StrCase} "${ResultVar}" "${String}" "${Type}"`
-    !verbose pop
-
-    Push `${String}`
-    Push `${Type}`
-    Call StrCase
-    Pop `${ResultVar}`
-  !macroend
-  !macro FUNCTION_STRING_UnStrCase_Call ResultVar String Type
-    !verbose push ${_STRFUNC_CREDITVERBOSITY}
-    !echo `$ {UnStrCase} "${ResultVar}" "${String}" "${Type}"`
-    !verbose pop
-
-    Push `${String}`
-    Push `${Type}`
-    Call un.StrCase
-    Pop `${ResultVar}`
-  !macroend
-
-  !macro FUNCTION_STRING_StrClb_Call ResultVar String Action
-    !verbose push ${_STRFUNC_CREDITVERBOSITY}
-    !echo `$ {StrClb} "${ResultVar}" "${String}" "${Action}"`
-    !verbose pop
-
-    Push `${String}`
-    Push `${Action}`
-    Call StrClb
-    Pop `${ResultVar}`
-  !macroend
-  !macro FUNCTION_STRING_UnStrClb_Call ResultVar String Action
-    !verbose push ${_STRFUNC_CREDITVERBOSITY}
-    !echo `$ {UnStrClb} "${ResultVar}" "${String}" "${Action}"`
-    !verbose pop
-
-    Push `${String}`
-    Push `${Action}`
-    Call un.StrClb
-    Pop `${ResultVar}`
-  !macroend
-
-  !macro FUNCTION_STRING_StrIOToNSIS_Call ResultVar String
-    !verbose push ${_STRFUNC_CREDITVERBOSITY}
-    !echo `$ {StrIOToNSIS} "${ResultVar}" "${String}"`
-    !verbose pop
-
-    Push `${String}`
-    Call StrIOToNSIS
-    Pop `${ResultVar}`
-  !macroend
-  !macro FUNCTION_STRING_UnStrIOToNSIS_Call ResultVar String
-    !verbose push ${_STRFUNC_CREDITVERBOSITY}
-    !echo `$ {UnStrIOToNSIS} "${ResultVar}" "${String}"`
-    !verbose pop
-
-    Push `${String}`
-    Call un.StrIOToNSIS
-    Pop `${ResultVar}`
-  !macroend
-
-  !macro FUNCTION_STRING_StrLoc_Call ResultVar String StrToSearchFor OffsetDirection
-    !verbose push ${_STRFUNC_CREDITVERBOSITY}
-    !echo `$ {StrLoc} "${ResultVar}" "${String}" "${StrToSearchFor}" "${OffsetDirection}"`
-    !verbose pop
-
-    Push `${String}`
-    Push `${StrToSearchFor}`
-    Push `${OffsetDirection}`
-    Call StrLoc
-    Pop `${ResultVar}`
-  !macroend
-  !macro FUNCTION_STRING_UnStrLoc_Call ResultVar String StrToSearchFor OffsetDirection
-    !verbose push ${_STRFUNC_CREDITVERBOSITY}
-    !echo `$ {UnStrLoc} "${ResultVar}" "${String}" "${StrToSearchFor}" "${OffsetDirection}"`
-    !verbose pop
-
-    Push `${String}`
-    Push `${StrToSearchFor}`
-    Push `${OffsetDirection}`
-    Call un.StrLoc
-    Pop `${ResultVar}`
-  !macroend
-
-  !macro FUNCTION_STRING_StrNSISToIO_Call ResultVar String
-    !verbose push ${_STRFUNC_CREDITVERBOSITY}
-    !echo `$ {StrNSISToIO} "${ResultVar}" "${String}"`
-    !verbose pop
-
-    Push `${String}`
-    Call StrNSISToIO
-    Pop `${ResultVar}`
-  !macroend
-  !macro FUNCTION_STRING_UnStrNSISToIO_Call ResultVar String
-    !verbose push ${_STRFUNC_CREDITVERBOSITY}
-    !echo `$ {UnStrNSISToIO} "${ResultVar}" "${String}"`
-    !verbose pop
-
-    Push `${String}`
-    Call un.StrNSISToIO
-    Pop `${ResultVar}`
-  !macroend
-
-  !macro FUNCTION_STRING_StrRep_Call ResultVar String StringToReplace ReplacementString
-    !verbose push ${_STRFUNC_CREDITVERBOSITY}
-    !echo `$ {StrRep} "${ResultVar}" "${String}" "${StringToReplace}" "${ReplacementString}"`
-    !verbose pop
-
-    Push `${String}`
-    Push `${StringToReplace}`
-    Push `${ReplacementString}`
-    Call StrRep
-    Pop `${ResultVar}`
-  !macroend
-  !macro FUNCTION_STRING_UnStrRep_Call ResultVar String StringToReplace ReplacementString
-    !verbose push ${_STRFUNC_CREDITVERBOSITY}
-    !echo `$ {UnStrRep} "${ResultVar}" "${String}" "${StringToReplace}" "${ReplacementString}"`
-    !verbose pop
-
-    Push `${String}`
-    Push `${StringToReplace}`
-    Push `${ReplacementString}`
-    Call un.StrRep
-    Pop `${ResultVar}`
-  !macroend
-
-  !macro FUNCTION_STRING_StrSort_Call ResultVar String CenterStr LeftStr RightStr IncludeCenterStr IncludeLeftStr IncludeRightStr
-    !verbose push ${_STRFUNC_CREDITVERBOSITY}
-    !echo `$ {StrSort} "${ResultVar}" "${String}" "${CenterStr}" "${LeftStr}" "${RightStr}" "${IncludeCenterStr}" "${IncludeLeftStr}" "${IncludeRightStr}"`
-    !verbose pop
-
-    Push `${String}`
-    Push `${CenterStr}`
-    Push `${LeftStr}`
-    Push `${RightStr}`
-    Push `${IncludeCenterStr}`
-    Push `${IncludeLeftStr}`
-    Push `${IncludeRightStr}`
-    Call StrSort
-    Pop `${ResultVar}`
-  !macroend
-  !macro FUNCTION_STRING_UnStrSort_Call ResultVar String CenterStr LeftStr RightStr IncludeCenterStr IncludeLeftStr IncludeRightStr
-    !verbose push ${_STRFUNC_CREDITVERBOSITY}
-    !echo `$ {UnStrSort} "${ResultVar}" "${String}" "${CenterStr}" "${LeftStr}" "${RightStr}" "${IncludeCenterStr}" "${IncludeLeftStr}" "${IncludeRightStr}"`
-    !verbose pop
-
-    Push `${String}`
-    Push `${CenterStr}`
-    Push `${LeftStr}`
-    Push `${RightStr}`
-    Push `${IncludeCenterStr}`
-    Push `${IncludeLeftStr}`
-    Push `${IncludeRightStr}`
-    Call un.StrSort
-    Pop `${ResultVar}`
-  !macroend
-
-  !macro FUNCTION_STRING_StrStr_Call ResultVar String StrToSearchFor
-    !verbose push ${_STRFUNC_CREDITVERBOSITY}
-    !echo `$ {StrStr} "${ResultVar}" "${String}" "${StrToSearchFor}"`
-    !verbose pop
-
-    Push `${String}`
-    Push `${StrToSearchFor}`
-    Call StrStr
-    Pop `${ResultVar}`
-  !macroend
-  !macro FUNCTION_STRING_UnStrStr_Call ResultVar String StrToSearchFor
-    !verbose push ${_STRFUNC_CREDITVERBOSITY}
-    !echo `$ {UnStrStr} "${ResultVar}" "${String}" "${StrToSearchFor}"`
-    !verbose pop
-
-    Push `${String}`
-    Push `${StrToSearchFor}`
-    Call un.StrStr
-    Pop `${ResultVar}`
-  !macroend
-
-  !macro FUNCTION_STRING_StrStrAdv_Call ResultVar String StrToSearchFor SearchDirection ResultStrDirection DisplayStrToSearch Loops CaseSensitive
-    !verbose push ${_STRFUNC_CREDITVERBOSITY}
-    !echo `$ {StrStrAdv} "${ResultVar}" "${String}" "${StrToSearchFor}" "${SearchDirection}" "${ResultStrDirection}" "${DisplayStrToSearch}" "${Loops}" "${CaseSensitive}"`
-    !verbose pop
-
-    Push `${String}`
-    Push `${StrToSearchFor}`
-    Push `${SearchDirection}`
-    Push `${ResultStrDirection}`
-    Push `${DisplayStrToSearch}`
-    Push `${Loops}`
-    Push `${CaseSensitive}`
-    Call StrStrAdv
-    Pop `${ResultVar}`
-  !macroend
-  !macro FUNCTION_STRING_UnStrStrAdv_Call ResultVar String StrToSearchFor SearchDirection ResultStrDirection DisplayStrToSearch Loops CaseSensitive
-    !verbose push ${_STRFUNC_CREDITVERBOSITY}
-    !echo `$ {UnStrStrAdv} "${ResultVar}" "${String}" "${StrToSearchFor}" "${SearchDirection}" "${ResultStrDirection}" "${DisplayStrToSearch}" "${Loops}" "${CaseSensitive}"`
-    !verbose pop
-
-    Push `${String}`
-    Push `${StrToSearchFor}`
-    Push `${SearchDirection}`
-    Push `${ResultStrDirection}`
-    Push `${DisplayStrToSearch}`
-    Push `${Loops}`
-    Push `${CaseSensitive}`
-    Call un.StrStrAdv
-    Pop `${ResultVar}`
-  !macroend
-
-  !macro FUNCTION_STRING_StrTok_Call ResultVar String Separators ResultPart SkipEmptyParts
-    !verbose push ${_STRFUNC_CREDITVERBOSITY}
-    !echo `$ {StrTok} "${ResultVar}" "${String}" "${Separators}" "${ResultPart}" "${SkipEmptyParts}"`
-    !verbose pop
-
-    Push `${String}`
-    Push `${Separators}`
-    Push `${ResultPart}`
-    Push `${SkipEmptyParts}`
-    Call StrTok
-    Pop `${ResultVar}`
-  !macroend
-  !macro FUNCTION_STRING_UnStrTok_Call ResultVar String Separators ResultPart SkipEmptyParts
-    !verbose push ${_STRFUNC_CREDITVERBOSITY}
-    !echo `$ {UnStrTok} "${ResultVar}" "${String}" "${Separators}" "${ResultPart}" "${SkipEmptyParts}"`
-    !verbose pop
-
-    Push `${String}`
-    Push `${Separators}`
-    Push `${ResultPart}`
-    Push `${SkipEmptyParts}`
-    Call un.StrTok
-    Pop `${ResultVar}`
-  !macroend
-
-  !macro FUNCTION_STRING_StrTrimNewLines_Call ResultVar String
-    !verbose push ${_STRFUNC_CREDITVERBOSITY}
-    !echo `$ {StrTrimNewLines} "${ResultVar}" "${String}"`
-    !verbose pop
-
-    Push `${String}`
-    Call StrTrimNewLines
-    Pop `${ResultVar}`
-  !macroend
-  !macro FUNCTION_STRING_UnStrTrimNewLines_Call ResultVar String
-    !verbose push ${_STRFUNC_CREDITVERBOSITY}
-    !echo `$ {UnStrTrimNewLines} "${ResultVar}" "${String}"`
-    !verbose pop
-
-    Push `${String}`
-    Call un.StrTrimNewLines
-    Pop `${ResultVar}`
-  !macroend
+  ############################################################################  
 
 !endif
 !verbose 3
