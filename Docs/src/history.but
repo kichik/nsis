@@ -26,6 +26,7 @@ ANSI targets are deprecated, consider moving to Unicode.
 
 \b Fixed InstallLib .NSI space-in-path bug (\W{http://sf.net/p/nsis/bugs/1222}{bug #1222})
 
+\b StrFunc.nsh now supports a "using" idiom to help with forward-declaration of functions (\W{http://sf.net/p/nsis/bugs/1229}{bug #1229})
 
 \S2{} Translations
 

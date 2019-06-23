@@ -32,7 +32,7 @@ How to use
 
     !include "StrFunc.nsh"
 
-    StrFunc.nsh has to be inside Include directory, so you don't have to
+    StrFunc.nsh is inside the Include directory, so you don't have to
     specify a path.
 
     You have to put this command before any command used in this header file.
@@ -93,25 +93,25 @@ How to use
     3.1 How To Use Commands In Install Sections and Functions
     ---------------------------------------------------------
 
-    Every command used in install sections and functions have to be called
-    first before and out of any sections and functions, and without
+    Every command used in install sections and functions have to be declared
+    before (and outside of) any sections and functions, and without
     parameters.
 
     Example:
     --------
 
-    ${StrStr}
+    ${UsingStrFunc} StrStr
     
     3.2 How To Use Commands In Uninstall Sections and Functions
     -----------------------------------------------------------
 
-    Commands with Uninstall Sections and Functions support have "Un" before
-    the words inside curly brackets "{}".
+    Commands for uninstall sections and functions have "Un" before
+    the name.
 
     Example:
     --------
     
-    ${UnStrStr}
+    ${UsingStrFunc} UnStrStr
 
     A complete example with both Install and Uninstall Commands:
     ------------------------------------------------------------
@@ -119,9 +119,9 @@ How to use
 
     !include "StrFunc.nsh"
 
-    ${StrStr} # Supportable for Install Sections and Functions
+    ${UsingStrFunc} StrStr # Supportable for Install Sections and Functions
 
-    ${UnStrStr} # Supportable for Uninstall Sections and Functions
+    ${UsingStrFunc} UnStrStr # Supportable for Uninstall Sections and Functions
 
     Section
 
