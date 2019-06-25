@@ -321,12 +321,12 @@ o-----------------------------------------------------------------------------o
   # StrClb
   !insertmacro STRFUNC_DEFFUNC StrClb `ResultVar|String|Action` `Output|Text|Option  > < <>`
 
-  !macro STRFUNC_CALL_StrClb un ResultVar String Type
+  !macro STRFUNC_CALL_StrClb un ResultVar String Action
     !verbose push ${STRFUNC_VERBOSITY}
     !echo `${U+24}{${un}StrClb} "${ResultVar}" "${String}" "${Action}"`
     !verbose 2
     Push `${String}`
-    Push `${Type}`
+    Push `${Action}`
     !insertmacro STRFUNC_CALL StrClb "${un}"
     Pop ${ResultVar}
     !verbose pop
@@ -458,12 +458,11 @@ o-----------------------------------------------------------------------------o
   # StrIOToNSIS
   !insertmacro STRFUNC_DEFFUNC StrIOToNSIS `ResultVar|String` `Output|Text`
 
-  !macro STRFUNC_CALL_StrIOToNSIS un ResultVar String Type
+  !macro STRFUNC_CALL_StrIOToNSIS un ResultVar String
     !verbose push ${STRFUNC_VERBOSITY}
     !echo `${U+24}{${un}StrIOToNSIS} "${ResultVar}" "${String}"`
     !verbose 2
     Push `${String}`
-    Push `${Type}`
     !insertmacro STRFUNC_CALL StrIOToNSIS "${un}"
     Pop ${ResultVar}
     !verbose pop
@@ -531,7 +530,7 @@ o-----------------------------------------------------------------------------o
   # StrLoc
   !insertmacro STRFUNC_DEFFUNC StrLoc `ResultVar|String|StrToSearchFor|CounterDirection` `Output|Text|Text|Option > <`
 
-  !macro STRFUNC_CALL_StrLoc un ResultVar String Type
+  !macro STRFUNC_CALL_StrLoc un ResultVar String StrToSearchFor OffsetDirection
     !verbose push ${STRFUNC_VERBOSITY}
     !echo `${U+24}{${un}StrLoc} "${ResultVar}" "${String}" "${StrToSearchFor}" "${OffsetDirection}"`
     !verbose 2
@@ -614,7 +613,7 @@ o-----------------------------------------------------------------------------o
   # StrNSISToIO
   !insertmacro STRFUNC_DEFFUNC StrNSISToIO `ResultVar|String` `Output|Text`
 
-  !macro STRFUNC_CALL_StrNSISToIO un ResultVar String Type
+  !macro STRFUNC_CALL_StrNSISToIO un ResultVar String
     !verbose push ${STRFUNC_VERBOSITY}
     !echo `${U+24}{${un}StrNSISToIO} "${ResultVar}" "${String}"`
     !verbose 2
@@ -687,7 +686,7 @@ o-----------------------------------------------------------------------------o
   # StrRep
   !insertmacro STRFUNC_DEFFUNC StrRep `ResultVar|String|StrToReplace|ReplacementString` `Output|Text|Text|Text`
 
-  !macro STRFUNC_CALL_StrRep un ResultVar String Type
+  !macro STRFUNC_CALL_StrRep un ResultVar String StringToReplace ReplacementString
     !verbose push ${STRFUNC_VERBOSITY}
     !echo `${U+24}{${un}StrRep} "${ResultVar}" "${String}" "${StringToReplace}" "${ReplacementString}"`
     !verbose 2
@@ -790,9 +789,9 @@ o-----------------------------------------------------------------------------o
 
   ############################################################################  
   # StrSort
-  !insertmacro STRFUNC_DEFFUNC StrSort `ResultVar|String|LeftStr|CenterStr|RightStr|IncludeLeftStr|IncludeCenterStr|IncludeRightStr` `Output|Text|Text|Text|Text|Option 1 0|Option 1 0|Option 1 0`
+  !insertmacro STRFUNC_DEFFUNC StrSort `ResultVar|String|CenterStr|LeftStr|RightStr|IncludeLeftStr|IncludeCenterStr|IncludeRightStr` `Output|Text|Text|Text|Text|Option 1 0|Option 1 0|Option 1 0`
 
-  !macro STRFUNC_CALL_StrSort un ResultVar String Type
+  !macro STRFUNC_CALL_StrSort un ResultVar String CenterStr LeftStr RightStr IncludeCenterStr IncludeLeftStr IncludeRightStr
     !verbose push ${STRFUNC_VERBOSITY}
     !echo `${U+24}{${un}StrSort} "${ResultVar}" "${String}" "${CenterStr}" "${LeftStr}" "${RightStr}" "${IncludeCenterStr}" "${IncludeLeftStr}" "${IncludeRightStr}"`
     !verbose 2
@@ -1016,7 +1015,7 @@ o-----------------------------------------------------------------------------o
   # StrStr
   !insertmacro STRFUNC_DEFFUNC StrStr `ResultVar|String|StrToSearchFor` `Output|Text|Text`
 
-  !macro STRFUNC_CALL_StrStr un ResultVar String Type
+  !macro STRFUNC_CALL_StrStr un ResultVar String StrToSearchFor
     !verbose push ${STRFUNC_VERBOSITY}
     !echo `${U+24}{${un}StrStr} "${ResultVar}" "${String}" "${StrToSearchFor}"`
     !verbose 2
@@ -1089,7 +1088,7 @@ o-----------------------------------------------------------------------------o
   # StrStrAdv
   !insertmacro STRFUNC_DEFFUNC StrStrAdv `ResultVar|String|StrToSearchFor|SearchDirection|ResultStrDirection|DisplayStrToSearch|Loops|CaseSensitive` `Output|Text|Text|Option > <|Option > <|Option 1 0|Text|Option 0 1`
 
-  !macro STRFUNC_CALL_StrStrAdv un ResultVar String Type
+  !macro STRFUNC_CALL_StrStrAdv un ResultVar String StrToSearchFor SearchDirection ResultStrDirection DisplayStrToSearch Loops CaseSensitive
     !verbose push ${STRFUNC_VERBOSITY}
     !echo `${U+24}{${un}StrStrAdv} "${ResultVar}" "${String}" "${StrToSearchFor}" "${SearchDirection}" "${ResultStrDirection}" "${DisplayStrToSearch}" "${Loops}" "${CaseSensitive}"`
     !verbose 2
@@ -1369,7 +1368,7 @@ o-----------------------------------------------------------------------------o
   # StrTok
   !insertmacro STRFUNC_DEFFUNC StrTok `ResultVar|String|Separators|ResultPart|SkipEmptyParts` `Output|Text|Text|Mixed L|Option 1 0`
 
-  !macro STRFUNC_CALL_StrTok un ResultVar String Type
+  !macro STRFUNC_CALL_StrTok un ResultVar String Separators ResultPart SkipEmptyParts
     !verbose push ${STRFUNC_VERBOSITY}
     !echo `${U+24}{${un}StrTok} "${ResultVar}" "${String}" "${Separators}" "${ResultPart}" "${SkipEmptyParts}"`
     !verbose 2
@@ -1529,14 +1528,11 @@ o-----------------------------------------------------------------------------o
   # StrTrimNewLines
   !insertmacro STRFUNC_DEFFUNC StrTrimNewLines `ResultVar|String` `Output|Text`
 
-  !macro STRFUNC_CALL_StrTrimNewLines un ResultVar String Type
+  !macro STRFUNC_CALL_StrTrimNewLines un ResultVar String
     !verbose push ${STRFUNC_VERBOSITY}
     !echo `${U+24}{${un}StrTrimNewLines} "${ResultVar}" "${String}"`
     !verbose 2
     Push `${String}`
-    Push `${Separators}`
-    Push `${ResultPart}`
-    Push `${SkipEmptyParts}`
     !insertmacro STRFUNC_CALL StrTrimNewLines "${un}"
     Pop ${ResultVar}
     !verbose pop
