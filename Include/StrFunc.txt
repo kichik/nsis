@@ -328,7 +328,7 @@ How to use
     =========================================================================
     ***                                                            ${StrSort}
     -------------------------------------------------------------------------
-    ResultVar String LeftStr CenterStr RightStr IncludeLeftStr(1|0)
+    ResultVar String CenterStr LeftStr RightStr IncludeLeftStr(1|0)
     IncludeCenterStr(1|0) IncludeRightStr(1|0)
     =========================================================================
     Searches for "CenterStr" in "String", and returns only the value
@@ -344,13 +344,13 @@ How to use
       String
       String where to search "CenterStr".
 
+      CenterStr
+      String to search in "String".
+
       LeftStr
       The first occurrence of "LeftStr" on the left of "CenterStr".
       If it is an empty value, or was not found, will return
       everything on the left of "CenterStr".
-
-      CenterStr
-      String to search in "String".
 
       RightStr
       The first occurrence of "RightStr" on the right of "CenterStr".
