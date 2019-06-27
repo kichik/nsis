@@ -5,6 +5,8 @@
 
 Name "System Plugin Example"
 OutFile "System.exe"
+RequestExecutionLevel User
+Unicode True
 
 !include "SysFunc.nsh"
 
@@ -133,5 +135,27 @@ enumex: ; End of drives or user cancel
      MessageBox MB_OK "Splash (callbacks) demo result $R0"
 
 SectionEnd 
+
+
+Section "Quoted path"
+
+  !define /IfNDef CSIDL_FONTS 0x14
+  StrCpy $9 "$PluginsDir\N(S # I)S" ; Directory with '(', ' ', '#' or ')' needs to be quoted
+  CreateDirectory "$9"
+  CopyFiles /Silent /FilesOnly "$sysdir\shfolder.dll" "$9\" ; This could fail on 95 & NT4?
+
+  System::Call '"$9\shfolder.dll"::SHGetFolderPathA(p $hWndParent, i ${CSIDL_FONTS}, p 0, i 0, m "?" r1) ?u'
+  DetailPrint Fonts=$1
+
+SectionEnd
+
+
+Section "Ordinal"
+
+  System::Call 'OLEAUT32::#2(w "OLE string")p.r0' ; SysAllocString
+  System::Call 'USER32::MessageBoxW(p $hWndParent, p r0, w "OLE:", i 0)'
+  System::Call 'OLEAUT32::#6(p r0)'
+
+SectionEnd
 
 ; eof

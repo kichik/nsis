@@ -18,7 +18,7 @@ ANSI targets are deprecated, consider moving to Unicode.
 
 \# Undocumented: \b Added ManifestMaxVersionTested
 
-\b Allow quoted library path in System::Call (\W{http://sf.net/p/nsis/bugs/546}{bug #546})
+\b Allow quoted library path in System::Call (\W{http://sf.net/p/nsis/bugs/546}{bug #546} and \W{http://sf.net/p/nsis/bugs/1225}{bug #1225})
 
 \b %1 in !finalize command can be specified multiple times
 
