@@ -272,10 +272,11 @@ static IconPairs get_icon_order(IconGroup icon1, IconGroup icon2)
 #define destroy_icon_group(p) ( delete [] (p) )
 static LPBYTE generate_icon_group(IconGroup icon, IconPairs order, bool first)
 {
-  LPBYTE group = new BYTE[
+  size_t groupsize = 
     sizeof(IconGroupHeader) // header
-    + order.size() * SIZEOF_RSRC_ICON_GROUP_ENTRY // entries
-  ];
+    + order.size() * SIZEOF_RSRC_ICON_GROUP_ENTRY; // entries
+  LPBYTE group = new BYTE[groupsize];
+  memset(group, 0, groupsize); // Reproducible builds (bug #1230)
 
   IconGroupHeader* header = (IconGroupHeader*) group;
 
