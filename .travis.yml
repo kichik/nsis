@@ -1,11 +1,10 @@
 language: cpp
 compiler:
 - gcc
-matrix:
-  include:
-    - os: linux
-      dist: trusty
-    - os: osx
+os:
+- linux
+- osx
+dist: trusty
 before_install:
 - if [[ $TRAVIS_OS_NAME == 'linux' ]]; then sudo apt-get install scons mingw32 mingw32-binutils zlib1g-dev libcppunit-dev; fi
 - if [[ $TRAVIS_OS_NAME == 'osx' ]]; then brew update; fi
