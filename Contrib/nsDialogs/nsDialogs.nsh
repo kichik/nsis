@@ -268,6 +268,10 @@ Header file for creating custom installer pages with nsDialogs
 !define __NSD_Text_STYLE ${DEFAULT_STYLES}|${WS_TABSTOP}|${ES_AUTOHSCROLL}
 !define __NSD_Text_EXSTYLE ${WS_EX_WINDOWEDGE}|${WS_EX_CLIENTEDGE}
 
+!define __NSD_MLText_CLASS EDIT
+!define __NSD_MLText_STYLE ${DEFAULT_STYLES}|${WS_TABSTOP}|${ES_AUTOHSCROLL}|${ES_AUTOVSCROLL}|${ES_MULTILINE}|${ES_WANTRETURN}|${WS_HSCROLL}|${WS_VSCROLL}
+!define __NSD_MLText_EXSTYLE ${WS_EX_WINDOWEDGE}|${WS_EX_CLIENTEDGE}
+
 !define __NSD_Password_CLASS EDIT
 !define __NSD_Password_STYLE ${DEFAULT_STYLES}|${WS_TABSTOP}|${ES_AUTOHSCROLL}|${ES_PASSWORD}
 !define __NSD_Password_EXSTYLE ${WS_EX_WINDOWEDGE}|${WS_EX_CLIENTEDGE}
@@ -360,6 +364,7 @@ Header file for creating custom installer pages with nsDialogs
 !insertmacro __NSD_DefineControl CheckBox
 !insertmacro __NSD_DefineControl RadioButton
 !insertmacro __NSD_DefineControl Text
+!insertmacro __NSD_DefineControl MLText
 !insertmacro __NSD_DefineControl Password
 !insertmacro __NSD_DefineControl Number
 !insertmacro __NSD_DefineControl FileRequest
@@ -534,6 +539,7 @@ IntOp ${RET} ${RET} & ${BIT}
 !define NSD_Edit_EmptyUndoBuffer `${__NSD_MkCtlCmd} EM_EMPTYUNDOBUFFER 0 0 `
 !define NSD_Edit_CanUndo `${__NSD_MkCtlCmd_RV} EM_CANUNDO 0 0 `
 !define NSD_Edit_ScrollCaret `${__NSD_MkCtlCmd} EM_SCROLLCARET 0 0 `
+!define NSD_Edit_LineScroll `${__NSD_MkCtlCmd_WPLP} EM_LINESCROLL `
 !define NSD_Edit_SetSel `${__NSD_MkCtlCmd_WPLP} EM_SETSEL ` ; WP:Start LP:End
 
 !define NSD_Edit_SetCueBannerText "!insertmacro __NSD_Edit_SetCueBannerText " ; CC6+
@@ -543,6 +549,16 @@ IntOp ${RET} ${RET} & ${BIT}
 !else
 	System::Call 'USER32::SendMessage(p${CONTROL},i${EM_SETCUEBANNER},p${SHOWWHENFOCUSED},ws)' `${TEXT}` ; Must be PWSTR
 !endif
+!macroend
+
+!define NSD_Edit_GetLineCount `${__NSD_MkCtlCmd_RV} EM_GETLINECOUNT 0 0 `
+!define NSD_Edit_GetLine "!insertmacro __NSD_Edit_GetLine "
+!macro __NSD_Edit_GetLine CONTROL LINEINDEX OUTPUT
+	System::Call '*(&i2 ${NSIS_MAX_STRLEN},&t${NSIS_MAX_STRLEN})p.s'
+	System::Call 'USER32::SendMessage(p${CONTROL},i${EM_GETLINE},p${LINEINDEX},pss)'
+	System::Call 'KERNEL32::lstrcpyn(t.s,pss,i${NSIS_MAX_STRLEN})'
+	Pop ${OUTPUT}
+	System::Free
 !macroend
 
 !define NSD_SetTextLimit `${NSD_Edit_SetTextLimit} ` ; Legacy alias
