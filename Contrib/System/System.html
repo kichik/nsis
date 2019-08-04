@@ -491,12 +491,12 @@ System::Free $0
 
 <blockquote><pre>
 <a name="func"></a>System::<b>Call</b> 'user32::MessageBox(p $HWNDPARENT, t "NSIS System Plug-in", t "Test", i 0)'
-<a name="funcqpath"></a>System::<b>Call</b> '"$InstDir\MyLibrary.dll"::MyFunction(i 42)'
+<a name="funcqpath"></a>System::<b>Call</b> '"$SysDir\MyLibrary.dll"::MyFunction(i 42)'
 </pre></blockquote>
 <blockquote><pre>
 <a name="funcaddr"></a>System::<b>Call</b> "kernel32::GetModuleHandle(t 'user32.dll') p .s"
 System::<b>Call</b> "kernel32::GetProcAddress(p s, m 'MessageBoxA') p .r0"
-System::<b>Call</b> "::$0(p $HWNDPARENT, t 'GetProcAddress test', t 'NSIS System Plug-in', i 0)"
+System::<b>Call</b> "::$0(p $HWNDPARENT, m 'GetProcAddress test', m 'NSIS System Plug-in', i 0)"
 </pre></blockquote>
 <blockquote><pre>
 <a name="get"></a>System::<b>Get</b> "user32::MessageBox(p $HWNDPARENT, t 'This is a default text', t 'Default', i 0)"
@@ -569,7 +569,10 @@ end:
 <blockquote><pre>
 InitPluginsDir
 File "/oname=$PLUGINSDIR\MyDLL.dll" MyDLL.dll
-System::<b>Call</b> "MyDLL::MyFunc(i 5) ? u"
+System::<b>Call</b> 'KERNEL32::AddDllDirectory(w "$PLUGINSDIR")'
+System::<b>Call</b> 'KERNEL32::LoadLibrary(t "$PLUGINSDIR\MyDLL.dll")p.r1'
+System::<b>Call</b> 'MyDLL::MyFunc(i 5) ? u'
+System::<b>Call</b> 'KERNEL32::FreeLibrary(pr1)'
 Delete $PLUGINSDIR\MyDLL.dll
 </pre></blockquote>
 <blockquote><pre>
@@ -588,6 +591,7 @@ loop:
 	Goto loop
 done:
 System::Free $R0
+DetailPrint "EnumChildWindows returned $0"
 </pre></blockquote>
 <a name="v2callback"></a><blockquote><pre>
 System::Get '(m.r1)ir2r0 <b>?2</b>' ; v2 syntax
