@@ -16,6 +16,7 @@ plugins = [
 	'Banner',
 	'BgImage',
 	'Dialer',
+	'ExecDos',
 	'InstallOptions',
 	'LangDLL',
 	'Library/TypeLib',
@@ -23,11 +24,15 @@ plugins = [
 	'nsDialogs',
 	'nsExec',
 	'NSISdl',
+	'NSutils',
+	'NSxfer',
+	'ShellLink',
 	'Splash',
 	'StartMenu',
 	'System',
 	'UserInfo',
 	'VPatch/Source/Plugin',
+	'w7tbp',
 ]
 
 utils = [
