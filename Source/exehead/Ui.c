@@ -1247,7 +1247,11 @@ static void FORCE_INLINE NSISCALL RefreshComponents(HWND hwTree, HTREEITEM *item
   // be a good idea to figure out where the state images are and
   // redraw only those.
 
-  InvalidateRect(hwTree, NULL, TRUE);
+  // [Marius]
+  // this workaround creates heavy flickering
+  // and it's not necessary in NT4+
+  if (LOWORD(g_WinVer) < MAKEWORD(4, 0))
+    InvalidateRect(hwTree, NULL, TRUE);
 }
 
 int NSISCALL TreeGetSelectedSection(HWND tree, BOOL mouse)
