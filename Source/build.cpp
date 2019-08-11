@@ -4013,7 +4013,7 @@ void CEXEBuild::postbuild_cmd::delete_all()
 
 CEXEBuild::postbuild_cmd* CEXEBuild::postbuild_cmd::make(const TCHAR *cmdstr, int cmpop, int cmpval)
 {
-  postbuild_cmd *p = (postbuild_cmd*) (new BYTE[FIELD_OFFSET(postbuild_cmd, cmd[_tcsclen(cmdstr)+!0])]);
+  postbuild_cmd *p = (postbuild_cmd*) (new BYTE[FIELD_OFFSET(postbuild_cmd, cmd) + (_tcsclen(cmdstr)+1)*sizeof(TCHAR)]);
   p->next = NULL, _tcscpy(p->cmd, cmdstr);
   p->cmpop = cmpop, p->cmpval = cmpval;
   return p;
