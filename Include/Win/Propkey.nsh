@@ -28,6 +28,12 @@ WTypes.h
 !define VT_LPSTR     30
 !define VT_LPWSTR    31
 !define VT_FILETIME  64
+!define VT_STREAM    66
+!define VT_CLSID     72
+!define VT_TYPEMASK 0xFFF
+!define VT_VECTOR  0x1000
+!define VT_ARRAY   0x2000
+!define VT_BYREF   0x4000
 
 !define /ifndef VARIANT_TRUE -1
 !define /ifndef VARIANT_FALSE 0
@@ -43,10 +49,22 @@ WTypes.h
 
 
 /**************************************************
+OAIdl.h
+**************************************************/
+!define /ifndef SYSSIZEOF_VARIANT 16
+!define /ifndef SYSSTRUCT_VARIANT (&i2,&i6,&i8)
+
+
+/**************************************************
 PropIdl.h
 **************************************************/
+!if "${NSIS_PTR_SIZE}" > 4
+!define SYSSIZEOF_PROPVARIANT 24
+!define SYSSTRUCT_PROPVARIANT (&i2,&i6,&i8,&i8)
+!else
 !define SYSSIZEOF_PROPVARIANT 16
 !define SYSSTRUCT_PROPVARIANT (&i2,&i6,&i8)
+!endif
 
 !define PRSPEC_LPWSTR 0
 !define PRSPEC_PROPID 1
