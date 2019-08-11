@@ -1341,25 +1341,26 @@ static INT_PTR CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
     HTREEITEM Par;
     HBITMAP hBMcheck1;
     int x, i, noCombo=2;
+    int cx=GetSystemMetrics(SM_CXSMICON), cy=GetSystemMetrics(SM_CYSMICON);
 
     g_SectionHack=hwndDlg;
 
     hTreeItems=(HTREEITEM*)GlobalAlloc(GPTR,sizeof(HTREEITEM)*num_sections);
 
-    hBMcheck1=LoadImage(g_hInstance, MAKEINTRESOURCE(IDB_BITMAP1), IMAGE_BITMAP, 0, 0, LR_DEFAULTCOLOR); // LR_CREATEDIBSECTION required to load TopDown bitmaps but that breaks modern.bmp
+    hBMcheck1=LoadImage(g_hInstance, MAKEINTRESOURCE(IDB_BITMAP1), IMAGE_BITMAP, cx*6, cy, LR_DEFAULTCOLOR); // LR_CREATEDIBSECTION required to load TopDown bitmaps but that breaks modern.bmp
 
     last_selected_tree_item=-1;
     oldTreeWndProc=(WNDPROC)SetWindowLongPtr(hwndTree1,GWLP_WNDPROC,(LONG_PTR)newTreeWndProc);
 
-    hImageList = ImageList_Create(16,16, ILC_COLOR32|ILC_MASK, 6, 0);
+    hImageList = ImageList_Create(cx,cy, ILC_COLOR32|ILC_MASK, 6, 0);
     ImageList_AddMasked(hImageList,hBMcheck1,RGB(255,0,255));
 
     {
       const HIMAGELIST UNUSED hDummy1 = TreeView_SetImageList(hwndTree1, hImageList, TVSIL_STATE);
     }
 
-    if (TreeView_GetItemHeight(hwndTree1) < 16)
-      TreeView_SetItemHeight(hwndTree1, 16);
+    if (TreeView_GetItemHeight(hwndTree1) < cy)
+      TreeView_SetItemHeight(hwndTree1, cy);
 
     DeleteObject(hBMcheck1);
 
