@@ -49,6 +49,7 @@ RequestExecutionLevel admin
 !include "Memento.nsh"
 !include "WordFunc.nsh"
 !include "Util.nsh"
+!include "WinVer.nsh"
 
 ;--------------------------------
 ;Definitions
@@ -118,32 +119,84 @@ Page custom PageReinstall PageLeaveReinstall
 ;Version information
 
 !ifdef VER_MAJOR & VER_MINOR & VER_REVISION & VER_BUILD
+VIFileVersion    ${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}
 VIProductVersion ${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}
-VIAddVersionKey "FileVersion" "${VERSION}"
-VIAddVersionKey "FileDescription" "NSIS Setup"
-VIAddVersionKey "LegalCopyright" "http://nsis.sf.net/License"
+!ifdef VER_PRODUCTNAME
+	VIAddVersionKey "ProductName" "${VER_PRODUCTNAME}"
+!else
+	VIAddVersionKey "ProductName" "NSIS Setup"
+!endif
+!ifdef VER_PRODUCTVERSION
+	VIAddVersionKey "ProductVersion" "${VER_PRODUCTVERSION}"
+!else
+	VIAddVersionKey "ProductVersion" "${VERSION}"
+!endif
+!ifdef VER_COMMENTS
+	VIAddVersionKey "Comments" "${VER_COMMENTS}"
+!endif
+!ifdef VER_COMPANYNAME
+	VIAddVersionKey "CompanyName" "${VER_COMPANYNAME}"
+!endif
+!ifdef VER_FILEVERSION
+	VIAddVersionKey "FileVersion" "${VER_FILEVERSION}"
+!else
+	VIAddVersionKey "FileVersion" "${VERSION}"
+!endif
+!ifdef VER_FILEDESCRIPTION
+	VIAddVersionKey "FileDescription" "${VER_FILEDESCRIPTION}"
+!else
+	VIAddVersionKey "FileDescription" "NSIS Setup"
+!endif
+!ifdef VER_LEGALCOPYRIGHT
+	VIAddVersionKey "LegalCopyright" "${VER_LEGALCOPYRIGHT}"
+!else
+	VIAddVersionKey "LegalCopyright" "http://nsis.sf.net/License"
+!endif
+!ifdef VER_LEGALTRADEMARKS
+	VIAddVersionKey "LegalTrademarks" "${VER_LEGALTRADEMARKS}"
+!endif
 !endif
 
 ;--------------------------------
 ;Installer Sections
 
-!macro InstallPlugin pi
-  !if ${BITS} >= 64
-    File "/oname=$InstDir\Plugins\amd64-unicode\${pi}.dll" ..\Plugins\amd64-unicode\${pi}.dll
-  !else
-    File "/oname=$InstDir\Plugins\x86-ansi\${pi}.dll" ..\Plugins\x86-ansi\${pi}.dll
-    File "/oname=$InstDir\Plugins\x86-unicode\${pi}.dll" ..\Plugins\x86-unicode\${pi}.dll
+!macro MultiArchFile fn outdir
+  !if /FileExists "..\${fn}"
+    Push $OUTDIR
+	SetOutPath "${outdir}"
+    File "..\${fn}"
+	Pop $OUTDIR
+  !else if /FileExists "${NSIS_BIN2}\${fn}"
+    Push $OUTDIR
+	SetOutPath "${outdir}"
+    File "${NSIS_BIN2}\${fn}"
+	Pop $OUTDIR
+  !else if /FileExists "${NSIS_BIN3}\${fn}"
+    Push $OUTDIR
+	SetOutPath "${outdir}"
+    File "${NSIS_BIN3}\${fn}"
+	Pop $OUTDIR
   !endif
 !macroend
 
-!macro InstallStub stub
-  !if ${BITS} >= 64
-    File ..\Stubs\${stub}-amd64-unicode
-  !else
-    File ..\Stubs\${stub}-x86-ansi
-    File ..\Stubs\${stub}-x86-unicode
-  !endif
+!macro InstallPlugin pi
+  !insertmacro MultiArchFile Plugins\amd64-unicode\${pi}.dll "$INSTDIR\Plugins\amd64-unicode"
+  !insertmacro MultiArchFile Plugins\x86-ansi\${pi}.dll      "$INSTDIR\Plugins\x86-ansi"
+  !insertmacro MultiArchFile Plugins\x86-unicode\${pi}.dll   "$INSTDIR\Plugins\x86-unicode"
+  !insertmacro MultiArchFile Plugins\arm64-unicode\${pi}.dll "$INSTDIR\Plugins\arm64-unicode"   ; coming soon...
 !macroend
+
+!macro InstallStub stub
+  !insertmacro MultiArchFile Stubs\${stub}-amd64-unicode     "$INSTDIR\Stubs"
+  !insertmacro MultiArchFile Stubs\${stub}-x86-ansi          "$INSTDIR\Stubs"
+  !insertmacro MultiArchFile Stubs\${stub}-x86-unicode       "$INSTDIR\Stubs"
+  !insertmacro MultiArchFile Stubs\${stub}-arm64-unicode     "$INSTDIR\Stubs"                   ; coming soon...
+!macroend
+
+Section -Init
+	; Taskbar progress
+	w7tbp::Start /NOUNLOAD
+SectionEnd
 
 ${MementoSection} "NSIS Core Files (required)" SecCore
 
@@ -247,21 +300,10 @@ ${MementoSection} "NSIS Core Files (required)" SecCore
   RMDir $INSTDIR\Docs
 
   SetOutPath $INSTDIR\Bin
-  !if ${BITS} >= 64
-    File /NonFatal  ..\Bin\RegTool-x86.bin
-    File            ..\Bin\RegTool-amd64.bin
-  !else
-    File            ..\Bin\RegTool-x86.bin
-    !if /FileExists ..\Bin\RegTool-amd64.bin ; It is unlikely that this exists, avoid the /NonFatal warning.
-      File          ..\Bin\RegTool-amd64.bin
-    !endif
-  !endif
+  !insertmacro MultiArchFile Bin\RegTool-x86.bin "$INSTDIR\Bin"
+  !insertmacro MultiArchFile Bin\RegTool-amd64.bin "$INSTDIR\Bin"
+  !insertmacro MultiArchFile Bin\RegTool-arm64.bin "$INSTDIR\Bin"   ; coming soon
 
-  CreateDirectory $INSTDIR\Plugins\x86-ansi
-  CreateDirectory $INSTDIR\Plugins\x86-unicode
-  !if ${BITS} >= 64
-    CreateDirectory $INSTDIR\Plugins\amd64-unicode
-  !endif
   !insertmacro InstallPlugin TypeLib
 
   ReadRegStr $R0 HKCR ".nsi" ""
@@ -631,6 +673,19 @@ ${MementoSection} "BgImage" SecPluginsBgImage
   File ..\Examples\BgImage\Example.nsi
 ${MementoSectionEnd}
 
+${MementoSection} "ExecDos" SecPluginsExecDos
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Plug-ins | ExecDos..."
+  SetDetailsPrint listonly
+
+  SectionIn 1
+
+  !insertmacro InstallPlugin ExecDos
+  SetOutPath $INSTDIR\Docs\ExecDos
+  File ..\Docs\ExecDos\Readme.txt
+${MementoSectionEnd}
+
 ${MementoSection} "InstallOptions" SecPluginsIO
 
   SetDetailsPrint textonly
@@ -707,6 +762,45 @@ ${MementoSection} "NSISdl" SecPluginsNSISDL
   File ..\Docs\NSISdl\License.txt
 ${MementoSectionEnd}
 
+${MementoSection} "NSutils" SecPluginsNSutils
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Plug-ins | NSutils..."
+  SetDetailsPrint listonly
+
+  SectionIn 1
+
+  !insertmacro InstallPlugin NSutils
+  SetOutPath $INSTDIR\Docs\NSutils
+  File ..\Docs\NSutils\NSutils.Readme.txt
+${MementoSectionEnd}
+
+${MementoSection} "NSxfer" SecPluginsNSxfer
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Plug-ins | NSxfer..."
+  SetDetailsPrint listonly
+
+  SectionIn 1
+
+  !insertmacro InstallPlugin NSxfer
+  SetOutPath $INSTDIR\Docs\NSxfer
+  File ..\Docs\NSxfer\NSxfer.Readme.txt
+${MementoSectionEnd}
+
+${MementoSection} "ShellLink" SecPluginsShellLink
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Plug-ins | ShellLink..."
+  SetDetailsPrint listonly
+
+  SectionIn 1
+
+  !insertmacro InstallPlugin ShellLink
+  SetOutPath $INSTDIR\Docs\ShellLink
+  File ..\Docs\ShellLink\Readme.html
+${MementoSectionEnd}
+
 ${MementoSection} "System" SecPluginsSystem
 
   SetDetailsPrint textonly
@@ -739,6 +833,19 @@ ${MementoSection} "StartMenu" SecPluginsStartMenu
   File ..\Docs\StartMenu\Readme.txt
   SetOutPath $INSTDIR\Examples\StartMenu
   File ..\Examples\StartMenu\Example.nsi
+${MementoSectionEnd}
+
+${MementoSection} "TaskbarProgress" SecPluginsTaskbarProgress
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Plug-ins | TaskbarProgress..."
+  SetDetailsPrint listonly
+
+  SectionIn 1
+
+  !insertmacro InstallPlugin w7tbp
+  SetOutPath $INSTDIR\Docs\w7tbp
+  File ..\Docs\w7tbp\w7tbp.Readme.txt
 ${MementoSectionEnd}
 
 ${MementoSection} "UserInfo" SecPluginsUserInfo
@@ -893,8 +1000,13 @@ SectionEnd
   !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsDialogs} "Plugin that lets you add custom pages to an installer"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsStartMenu} "Plugin that lets the user select the start menu folder"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsBgImage} "Plugin that lets you show a persistent background image plugin and play sounds"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsExecDos} "Plugin with extended support for running child processes"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsUserInfo} "Plugin that that gives you the user name and the user account type"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsNSISDL} "Plugin that lets you create a web based installer"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsNSutils} "Plugin with multiple goodies packed in one basket"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsNSxfer} "Plugin with extended HTTP/S support"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsShellLink} "Plugin that gives your full control over link files (.lnk)"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsTaskbarProgress} "Plugin that displays the progress on the taskbar (Win7+)"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsVPatch} "Plugin that lets you create patches to upgrade older files"
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
@@ -902,6 +1014,11 @@ SectionEnd
 ;Installer Functions
 
 Function .onInit
+
+  ${IfNot} ${AtLeastWinXP}
+    MessageBox MB_ICONSTOP "This installer requires Windows XP or newer" /SD IDOK
+	Abort
+  ${EndIf}
 
   ${MementoSectionRestore}
 

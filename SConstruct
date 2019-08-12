@@ -359,8 +359,10 @@ defenv['INSTDISTDIR'] = defenv.Dir('#.instdist')
 defenv['TESTDISTDIR'] = defenv.Dir('#.test')
 defenv['DISTSUFFIX'] = ''
 
-if GetArcCPU(defenv) != 'x86':
-	defenv['DISTSUFFIX'] += GetArcCPU(defenv)
+if ARGUMENTS.get('DISTNAME') != None:
+	defenv['DISTSUFFIX'] = '-' + ARGUMENTS.get('DISTNAME')
+defenv['DISTSUFFIX'] += '-' + GetArcCPU(defenv)
+
 if 'CODESIGNER' in defenv:
 	defenv['DISTSUFFIX'] += '-signed'
 
@@ -590,6 +592,7 @@ def build_installer(target, source, env):
 	cmdline = FindMakeNSIS(env, str(env['INSTDISTDIR'])) + ' %sDOUTFILE=%s %s' % (optchar, target[0].abspath, env['INSTVER'])
 	if 'ZLIB_W32_NEW_DLL' in env and env['ZLIB_W32_NEW_DLL']:
 		cmdline += ' %sDUSE_NEW_ZLIB' % optchar
+	cmdline += ' ' + ARGUMENTS.get('NSIS_EXTRA_PARAM', '')
 	cmd = env.Command(None, source, cmdline + ' $SOURCE')
 	AlwaysBuild(cmd)
 	# Comment out the following if you want to see the installation directory
@@ -597,7 +600,7 @@ def build_installer(target, source, env):
 	#AlwaysBuild(env.AddPostAction(cmd, Delete('$INSTDISTDIR')))
 	env.Alias('dist-installer', cmd)
 
-installer_target = defenv.Command('nsis-${VERSION}-setup${DISTSUFFIX}.exe',
+installer_target = defenv.Command('nsis-${VERSION}${DISTSUFFIX}.exe',
                                   os.path.join('$INSTDISTDIR', 'Examples', 'makensis.nsi'),
                                   build_installer,
                                   ENV = inst_env)
