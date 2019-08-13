@@ -1,0 +1,53 @@
+
+if not exist "%PF32%" set PF32=%PROGRAMFILES(X86)%
+if not exist "%PF32%" set PF32=%PROGRAMFILES%
+
+if not exist "%MSYS2%" set MSYS2=%SYSTEMDRIVE%\MSYS2
+if not exist "%MSYS2%" set MSYS2=%SYSTEMDRIVE%\MSYS64
+
+REM =================================================
+
+REM :: CONFIG_ARCH=x86|amd64
+if not defined CONFIG_ARCH set CONFIG_ARCH=x86
+REM :: CONFIG_TAG=-crypto
+if not defined CONFIG_TAG set CONFIG_TAG=
+
+if %CONFIG_ARCH% == x86   goto :CONFIG_X86
+if %CONFIG_ARCH% == amd64 goto :CONFIG_AMD64
+echo ERROR: Invalid architecture && pause && goto :EOF
+
+REM :: https://gcc.gnu.org/onlinedocs/gcc/Option-Summary.html
+REM :: http://linux.die.net/man/1/gcc
+REM :: http://linux.die.net/man/1/ld
+
+REM :: Run "gcc -Q --help=target" to see the defaults
+:CONFIG_X86
+set CONFIG_CFLAGS=-s -Os -ffunction-sections -march=pentium2
+set CONFIG_LFLAGS=-Wl,--gc-sections -Wl,--nxcompat -Wl,--dynamicbase -Wl,--enable-auto-image-base -Wl,--enable-stdcall-fixup
+set MINGW=%MSYS2%\mingw32
+goto :CONFIG_END
+
+:CONFIG_AMD64
+set CONFIG_CFLAGS=-s -Os -ffunction-sections -march=x86-64
+set CONFIG_LFLAGS=-Wl,--gc-sections -Wl,--nxcompat -Wl,--dynamicbase -Wl,--enable-auto-image-base -Wl,--enable-stdcall-fixup -Wl,--high-entropy-va
+set MINGW=%MSYS2%\mingw64
+goto :CONFIG_END
+
+:CONFIG_END
+
+REM =================================================
+
+pushd "%~dp0"
+set DEV_PATH=%CD%
+popd
+
+set PYTHON_PATH=%SYSTEMDRIVE%\Python27
+REM set PYTHON_PATH=%LOCALAPPDATA%\Programs\Python\Python37
+set ZLIB_PATH=%DEV_PATH%\zlib
+set HTMLHELP_PATH=%PF32%\HTML Help Workshop
+
+if not exist "%PYTHON_PATH%"	echo WARNING: Missing "%PYTHON_PATH%"
+if not exist "%HTMLHELP_PATH%"	echo WARNING: Missing "%HTMLHELP_PATH%"
+if not exist "%ZLIB_PATH%"		echo WARNING: Missing "%ZLIB_PATH%"
+if not exist "%MSYS2%"			echo WARNING: Missing MSYS2
+if not exist "%MINGW%"			echo WARNING: Missing MINGW(%CONFIG_ARCH%)
