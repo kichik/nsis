@@ -115,7 +115,7 @@ Sets the current bitmap file displayed as the branding image. If no IMGID is spe
 
 \c show|hide
 
-Shows or hides the details, depending on which parameter you pass. Overrides the default details view, which is set via \R{ashowinstdetails}{ShowInstDetails}.
+Shows or hides the details on the InstFiles page, depending on which parameter you pass. Overrides the default details view, which is set via \R{ashowinstdetails}{ShowInstDetails}.
 
 \S2{setdetailsprint} SetDetailsPrint
 
