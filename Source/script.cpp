@@ -2347,6 +2347,17 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       manifest_dpiawareness = line.gettoken_str(1);
       return PS_OK;
 
+    case TOK_MANIFEST_LPAWARE:
+      switch(line.gettoken_enum(1,_T("none\0notset\0true\0false\0")))
+      {
+      case 0: // A lot of attributes use "none" so we support that along with the documented value
+      case 1: manifest_lpaware = manifest::lpaware_notset; break;
+      case 2: manifest_lpaware = manifest::lpaware_true; break;
+      case 3: manifest_lpaware = manifest::lpaware_false; break;
+      default: PRINTHELP();
+      }
+      return PS_OK;
+
     case TOK_MANIFEST_SUPPORTEDOS:
     {
       manifest_sosl.deleteall();
@@ -2374,6 +2385,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       default: PRINTHELP();
       }
       return PS_OK;
+
     case TOK_MANIFEST_GDISCALING:
       switch(line.gettoken_enum(1,_T("notset\0false\0true")))
       {

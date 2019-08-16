@@ -683,6 +683,7 @@ class CEXEBuild {
     manifest::exec_level manifest_exec_level;
     manifest::dpiaware manifest_dpiaware;
     tstring manifest_dpiawareness;
+    manifest::longpathaware manifest_lpaware;
     manifest::SupportedOSList manifest_sosl;
     tstring manifest_maxversiontested;
 

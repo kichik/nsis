@@ -1192,7 +1192,7 @@ bool WINAPI WinStdIO_OStreamWrite(WINSIO_OSDATA&osd, const wchar_t *Str, UINT cc
   if ((UINT)-1 == cch) cch = (UINT)_tcslen(Str);
   DWORD cbio;
   if (WinStdIO_IsConsole(osd))
-    return !!WriteConsoleW(osd.hNative, Str, cch, &cbio, 0) || !cch;
+    return WriteConsoleW(osd.hNative, Str, cch, &cbio, 0) || !cch;
   NOStream strm(osd.hCRT);
   NStreamEncoding &enc = strm.StreamEncoding();
   enc.SetCodepage(osd.cp);
