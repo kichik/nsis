@@ -26,10 +26,10 @@ WTypes.h
 !define VT_PTR       26
 !define VT_SAFEARRAY 27
 !define VT_LPSTR     30
-!define VT_LPWSTR    31
+!define VT_LPWSTR    31 ; SHStrDupW
 !define VT_FILETIME  64
 !define VT_STREAM    66
-!define VT_CLSID     72
+!define VT_CLSID     72 ; Pointer to CoTaskMem allocated GUID
 !define VT_TYPEMASK 0xFFF
 !define VT_VECTOR  0x1000
 !define VT_ARRAY   0x2000
@@ -74,12 +74,19 @@ PropIdl.h
 /**************************************************
 Propkey.h
 **************************************************/
-!define PKEY_AppUserModel_ID                          '"{9F4C2855-9F79-4B39-A8D0-E1D42DE1D5F3}",5'
+!define PKEY_AppUserModel_RelaunchCommand             '"{9F4C2855-9F79-4B39-A8D0-E1D42DE1D5F3}",2' ; VT_LPWSTR (SHGetPropertyStoreForWindow)
+!define PKEY_AppUserModel_RelaunchIconResource        '"{9F4C2855-9F79-4B39-A8D0-E1D42DE1D5F3}",3' ; VT_LPWSTR (SHGetPropertyStoreForWindow, optional. Path to icon or module, with resource ID or index.)
+!define PKEY_AppUserModel_RelaunchDisplayNameResource '"{9F4C2855-9F79-4B39-A8D0-E1D42DE1D5F3}",4' ; VT_LPWSTR (SHGetPropertyStoreForWindow. @ style indirect resource string or a plain string.)
+!define PKEY_AppUserModel_ID                          '"{9F4C2855-9F79-4B39-A8D0-E1D42DE1D5F3}",5' ; VT_LPWSTR
+!define PKEY_AppUserModel_IsDestListSeparator         '"{9F4C2855-9F79-4B39-A8D0-E1D42DE1D5F3}",6' ; VT_BOOL
 !define PKEY_AppUserModel_ExcludeFromShowInNewInstall '"{9F4C2855-9F79-4B39-A8D0-E1D42DE1D5F3}",8' ; VT_BOOL
 !define PKEY_AppUserModel_PreventPinning              '"{9F4C2855-9F79-4B39-A8D0-E1D42DE1D5F3}",9' ; VT_BOOL
+!define PKEY_AppUserModel_IsDualMode '"{9F4C2855-9F79-4B39-A8D0-E1D42DE1D5F3}",11' ; [Eight+] VT_BOOL
 !define APPUSERMODEL_STARTPINOPTION_NOPINONINSTALL 1
 !define APPUSERMODEL_STARTPINOPTION_USERPINNED 2
-!define PKEY_AppUserModel_StartPinOption '"{9F4C2855-9F79-4B39-A8D0-E1D42DE1D5F3}",12' ; VT_UI4 [Eight+]
+!define PKEY_AppUserModel_StartPinOption '"{9F4C2855-9F79-4B39-A8D0-E1D42DE1D5F3}",12' ; [Eight+] VT_UI4
+!define PKEY_AppUserModel_ToastActivatorCLSID '"{9F4C2855-9F79-4B39-A8D0-E1D42DE1D5F3}",26' ; [10FU1507+] VT_CLSID
+!define PKEY_EdgeGesture_DisableTouchWhenFullscreen '"{32CE38B2-2C9A-41B1-9BC5-B3784394AA44}",2' ; [Eight+] VT_BOOL (SHGetPropertyStoreForWindow)
 
 
 /**************************************************
