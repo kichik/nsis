@@ -26,7 +26,7 @@ namespace manifest
 {
   enum flags
   {
-    disablewindowfiltering = 0x01, // Win8+
+    disablewindowfiltering = 0x01, // Win8+ (Allow EnumWindows() to return Windows 8 immersive apps)
     gdiscaling = 0x02, // Win10FU1703+
     flags_default = 0
   };
@@ -50,8 +50,15 @@ namespace manifest
     dpiaware_notset,
     dpiaware_false,
     dpiaware_true, // System DPI on Vista+
-    dpiaware_permonitor, // System DPI on Vista/7/8, PerMonitor on 8.1+
+    dpiaware_permonitor, // System DPI on Vista/7/8, PerMonitor on 8.1+ (Undocumented because we don't handle WM_DPICHANGED)
     dpiaware_explorer // Win8.1+? Undocumented?
+  };
+
+  enum longpathaware
+  {
+    lpaware_notset,
+    lpaware_false,
+    lpaware_true // Win10.0.14352+
   };
 
   class SupportedOSList // Win7+
@@ -91,6 +98,7 @@ namespace manifest
     flags Flags;
     dpiaware DPIA;
     const TCHAR *DPIA2; // Win10FU1607+
+    longpathaware lpaware;
     SupportedOSList& SOSL;
     const TCHAR *MaxVersionTested; // Win10FU1903+ github.com/microsoft/AppConsult-WinAppsModernizationWorkshop/tree/master/Exercise2
   } SPECIFICATION;

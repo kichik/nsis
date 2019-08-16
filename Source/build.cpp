@@ -283,6 +283,7 @@ CEXEBuild::CEXEBuild(signed char pponly, bool warnaserror) :
   manifest_comctl = manifest::comctl_old;
   manifest_exec_level = manifest::exec_level_admin;
   manifest_dpiaware = manifest::dpiaware_notset;
+  manifest_lpaware = manifest::lpaware_notset;
   manifest_sosl.setdefault();
 
   enable_last_page_cancel=0;
@@ -2383,11 +2384,14 @@ int CEXEBuild::SetManifest()
 {
   try {
     init_res_editor();
-    manifest::SPECIFICATION spec = { (manifest::flags) manifest_flags, manifest_dpiaware, manifest_dpiawareness.c_str(), manifest_sosl, manifest_maxversiontested.c_str() };
+    manifest::SPECIFICATION spec = { (manifest::flags) manifest_flags, manifest_dpiaware, manifest_dpiawareness.c_str(), manifest_lpaware, manifest_sosl, manifest_maxversiontested.c_str() };
     string manifest = manifest::generate(manifest_comctl, manifest_exec_level, spec);
 
     if (manifest == "")
       return PS_OK;
+
+    if (!build_unicode && manifest_lpaware >= manifest::lpaware_true)
+      throw std::runtime_error("Incompatible option");
 
     // TODO: Ideally we should allow this but we must be sure that the manifest is custom and not a manifest from the stub
     //if (res_editor->ResourceExists(MAKEINTRESOURCE(24), 1, CResourceEditor::ANYLANGID))

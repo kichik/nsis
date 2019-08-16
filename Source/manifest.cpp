@@ -96,6 +96,7 @@ string generate(comctl comctl_selection, exec_level exec_level_selection, const 
   flags featureflags = spec.Flags;
   dpiaware dpia = spec.DPIA;
   const TCHAR *dpia2 = spec.DPIA2;
+  longpathaware lpa = spec.lpaware;
   SupportedOSList& sosl = spec.SOSL;
   const TCHAR *mvt = spec.MaxVersionTested;
 
@@ -185,6 +186,12 @@ string generate(comctl comctl_selection, exec_level exec_level_selection, const 
     xml_aws += "<dpiAwareness xmlns=\"http://schemas.microsoft.com/SMI/2016/WindowsSettings\">";
     xml_aws += TtoCString(dpia2);
     xml_aws += "</dpiAwareness>";
+  }
+  if (lpaware_notset != lpa)
+  {
+    xml_aws += "<longPathAware xmlns=\"http://schemas.microsoft.com/SMI/2016/WindowsSettings\">";
+    xml_aws += lpaware_false != lpa ? "true" : "false"; 
+    xml_aws += "</longPathAware>";
   }
   if (!xml_aws.empty())
   {
