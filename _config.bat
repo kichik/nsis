@@ -9,12 +9,10 @@ REM =================================================
 
 REM :: CONFIG_ARCH=x86|amd64
 if not defined CONFIG_ARCH set CONFIG_ARCH=x86
-REM :: CONFIG_TAG=-crypto
-if not defined CONFIG_TAG set CONFIG_TAG=
 
 if %CONFIG_ARCH% == x86   goto :CONFIG_X86
 if %CONFIG_ARCH% == amd64 goto :CONFIG_AMD64
-echo ERROR: Invalid architecture && pause && goto :EOF
+echo ERROR: Invalid architecture & pause & goto :EOF
 
 REM :: https://gcc.gnu.org/onlinedocs/gcc/Option-Summary.html
 REM :: http://linux.die.net/man/1/gcc
@@ -46,11 +44,11 @@ REM set PYTHON_PATH=%LOCALAPPDATA%\Programs\Python\Python37
 set ZLIB_PATH=%DEV_PATH%\zlib
 set HTMLHELP_PATH=%PF32%\HTML Help Workshop
 
-if not exist "%PYTHON_PATH%"	echo ERROR: Missing "%PYTHON_PATH%" & exit /B 2
+if not exist "%PYTHON_PATH%"	echo ERROR: Missing "%PYTHON_PATH%"			& exit /B 2
 if not exist "%PYTHON_PATH%\Scripts\scons.bat"	echo ERROR: Missing "%PYTHON_PATH%\Scripts\scons.bat" & exit /B 2
-if not exist "%HTMLHELP_PATH%"	echo ERROR: Missing "%HTMLHELP_PATH%" & exit /B 2
-if not exist "%ZLIB_PATH%"		echo ERROR: Missing "%ZLIB_PATH%" & exit /B 2
-if not exist "%MSYS2%"			echo ERROR: Missing MSYS2 & exit /B 2
-if not exist "%MINGW%"			echo ERROR: Missing MINGW(%CONFIG_ARCH%) & exit /B 2
+if not exist "%HTMLHELP_PATH%"	echo ERROR: Missing "%HTMLHELP_PATH%"		& exit /B 2
+if not exist "%ZLIB_PATH%"		echo ERROR: Missing "%ZLIB_PATH%"			& exit /B 2
+if not exist "%MSYS2%"			echo ERROR: Missing MSYS2					& exit /B 2
+if not exist "%MINGW%"			echo ERROR: Missing MINGW(%CONFIG_ARCH%)	& exit /B 2
 
 exit /B 0

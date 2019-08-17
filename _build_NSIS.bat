@@ -11,27 +11,27 @@ set FLAGS_ERROR=%~dp0\flag-error-nsis
 :PARAMETERS
 :: ----------------------------------------------------------------
 if /I "%1" neq "/compile-x86" goto :COMPILE_X86_END
-	set CONFIG_ARCH=x86&& set CONFIG_ACTIONS=install-compiler install-stubs install-plugins install-utils
+	set CONFIG_ARCH=x86& set CONFIG_ACTIONS=install-compiler install-stubs install-plugins install-utils
 	goto :BUILD
 :COMPILE_X86_END
 
 if /I "%1" neq "/compile-amd64" goto :COMPILE_AMD64_END
-	set CONFIG_ARCH=amd64&& set CONFIG_ACTIONS=install-compiler install-stubs install-plugins install-utils
+	set CONFIG_ARCH=amd64& set CONFIG_ACTIONS=install-compiler install-stubs install-plugins install-utils
 	goto :BUILD
 :COMPILE_AMD64_END
 
 if /I "%1" neq "/distro-x86" goto :DISTRO_X86_END
-	set CONFIG_ARCH=x86&& set CONFIG_ACTIONS=dist-installer
+	set CONFIG_ARCH=x86& set CONFIG_ACTIONS=dist-installer
 	goto :BUILD
 :DISTRO_X86_END
 
 if /I "%1" neq "/distro-amd64" goto :DISTRO_AMD64_END
-	set CONFIG_ARCH=amd64&& set CONFIG_ACTIONS=dist-installer
+	set CONFIG_ARCH=amd64& set CONFIG_ACTIONS=dist-installer
 	goto :BUILD
 :DISTRO_AMD64_END
 
 :: Unknown argument?
-if "%1" neq "" echo ERROR: Unknown argument "%1" && pause && exit /B 57
+if "%1" neq "" echo ERROR: Unknown argument "%1" & pause & exit /B 57
 
 
 :: ----------------------------------------------------------------
@@ -41,14 +41,14 @@ echo Compiling...
 start "" "%COMSPEC%" /C "%~f0" /compile-x86
 start "" "%COMSPEC%" /C "%~f0" /compile-amd64
 call :WAIT
-if %ERRORLEVEL% neq 0 exit /B %ERRORLEVEL%
+if %errorlevel% neq 0 exit /B %errorlevel%
 
 
 echo Building installers...
 start "" "%COMSPEC%" /C "%~f0" /distro-x86
 start "" "%COMSPEC%" /C "%~f0" /distro-amd64
 call :WAIT
-if %ERRORLEVEL% neq 0 exit /B %ERRORLEVEL%
+if %errorlevel% neq 0 exit /B %errorlevel%
 
 
 :: NOTE: .instdist is recreated after each build
@@ -94,7 +94,7 @@ timeout /T 2 /NOBREAK > NUL
 	goto :WAIT_LOOP
 :WAIT_END
 if exist "%FLAGS_ERROR%-*" exit /B 666
-exit /B %ERRORLEVEL%
+exit /B %errorlevel%
 
 
 ::---------------------------------
@@ -108,7 +108,7 @@ cd /d "%~dp0"
 :: Extract current GIT branch
 set BRANCH=
 for /f "usebackq delims=@ " %%f in (`git rev-parse --abbrev-ref HEAD`) do set BRANCH=%%f
-if "%BRANCH%" equ "" echo. && set EXITCODE=3&& echo ERROR: Can't extract GIT branch name&& goto :BUILD_END
+if "%BRANCH%" equ "" echo. & set EXITCODE=3& echo ERROR: Can't extract GIT branch name& goto :BUILD_END
 
 :: e.g. "nsis-mingw-amd64"
 set DISTRO=nsis-mingw-%BRANCH%-%CONFIG_ARCH%
@@ -124,7 +124,7 @@ set PATH=%MINGW%\bin;%PATH%;%HTMLHELP_PATH%
 :: e.g. Extract 7012 from "git-svn-id: https://svn.code.sf.net/p/nsis/code/NSIS/trunk@7012 212acab6-be3b-0410-9dea-997c60f758d6"
 set VER_REVISION=0
 for /f "usebackq tokens=3 delims=@ " %%f in (`git log -1 remotes/origin/master ^| find "trunk@"`) do set VER_REVISION=%%f
-if "%VER_REVISION%" equ "0" echo. && set EXITCODE=3&& echo ERROR: Can't extract the last SVN revision number&& goto :BUILD_END
+if "%VER_REVISION%" equ "0" echo. & set EXITCODE=3& echo ERROR: Can't extract the last SVN revision number& goto :BUILD_END
 
 set VER_MAJOR=3
 set VER_MINOR=5
@@ -172,21 +172,21 @@ call "%PYTHON_PATH%\Scripts\scons.bat" ^
 	APPEND_CCFLAGS="%CONFIG_CFLAGS%" ^
 	APPEND_LINKFLAGS="%CONFIG_CFLAGS% %CONFIG_LFLAGS% -static -lpthread" ^
 	%CONFIG_ACTIONS%
-set EXITCODE=%ERRORLEVEL%
+set EXITCODE=%errorlevel%
 
 :: 7z source code
 if "%CONFIG_ACTIONS%" neq "dist-installer" goto :SRC_7z_END
 	echo --------------------------------------------------------------------------------
 	if defined ProgramW6432 set Z7=%ProgramW6432%\7-Zip\7z.exe
 	if not defined ProgramW6432 set Z7=%PROGRAMFILES%\7-Zip\7z.exe
-	if not exist "%Z7%" echo. && echo WARNING: Missing "%Z7%" && echo. && goto :SRC_7z_END
+	if not exist "%Z7%" echo. & echo WARNING: Missing "%Z7%" & echo. & goto :SRC_7z_END
 	del /Q "%BASENAME%-src.7z" 2> NUL
 	"%Z7%" a "%BASENAME%-src.7z" * -mx=9 -myx=9 -ms=e -mqs=on -stl -x!*.exe -x!*.7z -x!.instdist -x!.sconf_temp -x!BIN -x!build -x!.sconsign.dblite
 	echo --------------------------------------------------------------------------------
 :SRC_7z_END
 
 :BUILD_END
-if %EXITCODE% neq 0 echo %EXITCODE% > "%FLAG_ERROR%" && pause
+if %EXITCODE% neq 0 echo %EXITCODE% > "%FLAG_ERROR%" & pause
 REM pause
 del "%FLAG_BUILD%"
 exit /B %EXITCODE%
