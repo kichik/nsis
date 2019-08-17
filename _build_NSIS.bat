@@ -112,13 +112,13 @@ if "%BRANCH%" equ "" echo. && set EXITCODE=3&& echo ERROR: Can't extract GIT bra
 
 :: e.g. "nsis-mingw-amd64"
 set DISTRO=nsis-mingw-%BRANCH%-%CONFIG_ARCH%
-
-call _config.bat
-if not exist "%MINGW%"				set EXITCODE=2&& echo ERROR: Missing "%MINGW%"&& goto :BUILD_END
-if not exist "%HTMLHELP_PATH%"		set EXITCODE=2&& echo ERROR: Missing "%HTMLHELP_PATH%"&& goto :BUILD_END
 title %DISTRO%: %CONFIG_ACTIONS%
 
+
+call _config.bat
+if %errorlevel% neq 0 echo Aborted. & pause & exit /B %errorlevel%
 set PATH=%MINGW%\bin;%PATH%;%HTMLHELP_PATH%
+
 
 :: Extract SVN revision number from GIT commit message
 :: e.g. Extract 7012 from "git-svn-id: https://svn.code.sf.net/p/nsis/code/NSIS/trunk@7012 212acab6-be3b-0410-9dea-997c60f758d6"
