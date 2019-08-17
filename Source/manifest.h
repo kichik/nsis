@@ -99,7 +99,7 @@ namespace manifest
     dpiaware DPIA;
     const TCHAR *DPIA2; // Win10FU1607+
     longpathaware lpaware;
-    SupportedOSList& SOSL;
+    SupportedOSList*pSOSL;
     const TCHAR *MaxVersionTested; // Win10FU1903+ github.com/microsoft/AppConsult-WinAppsModernizationWorkshop/tree/master/Exercise2
   } SPECIFICATION;
 
