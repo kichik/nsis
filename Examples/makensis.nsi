@@ -39,6 +39,8 @@ InstallDir $PROGRAMFILES${BITS}\NSIS
 InstallDirRegKey HKLM Software\NSIS ""
 
 RequestExecutionLevel admin
+ManifestDPIAware true
+ManifestSupportedOS all
 
 ;--------------------------------
 ;Header Files
