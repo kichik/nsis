@@ -151,14 +151,20 @@ ${V_SetVT} ${pV} ${VT_EMPTY}
 System::Call 'OLEAUT32::#9(p${pV})'
 !macroend
 !macro VariantCopy pDstV pSrcV sysretHR
-System::Call 'OLEAUT32::#10(p${pDstV},p${pSrcV})i.${sysretHR}'
+System::Call 'OLEAUT32::#10(p${pDstV},p${pSrcV})i.${sysretHR}' ; (Frees the destination variant before it copies the source)
 !macroend
 !macro VariantChangeType pDstV pSrcV Flags VT sysretHR
 System::Call 'OLEAUT32::#12(p${pDstV},p${pSrcV},i${Flags},i${VT})i.${sysretHR}'
 !macroend
+
+
 !macro PropVariantClear pPV
-System::Call 'OLE32::PropVariantClear(p${pV})' ; Win95+, WinNT4.SP2+
+System::Call 'OLE32::PropVariantClear(p${pV})' ; WinNT4.SP0+, Win98+, IE4+
 !macroend
+!macro PropVariantCopy pDstV pSrcV sysretHR
+System::Call 'OLE32::PropVariantCopy(p${pDstV},p${pSrcV})i.${sysretHR}' ; WinNT4.SP0+, Win98+, IE4+ (PropVariantCopy does not free the destination before it copies the source)
+!macroend
+
 
 !macro IPropertyStorage_ReadPropById pPS ID pPV sysoutHR
 System::Call '*(p${PRSPEC_PROPID},p${ID})p.s'

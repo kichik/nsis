@@ -2384,7 +2384,7 @@ int CEXEBuild::SetManifest()
 {
   try {
     init_res_editor();
-    manifest::SPECIFICATION spec = { (manifest::flags) manifest_flags, manifest_dpiaware, manifest_dpiawareness.c_str(), manifest_lpaware, manifest_sosl, manifest_maxversiontested.c_str() };
+    manifest::SPECIFICATION spec = { (manifest::flags) manifest_flags, manifest_dpiaware, manifest_dpiawareness.c_str(), manifest_lpaware, &manifest_sosl, manifest_maxversiontested.c_str() };
     string manifest = manifest::generate(manifest_comctl, manifest_exec_level, spec);
 
     if (manifest == "")

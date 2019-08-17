@@ -97,7 +97,7 @@ string generate(comctl comctl_selection, exec_level exec_level_selection, const 
   dpiaware dpia = spec.DPIA;
   const TCHAR *dpia2 = spec.DPIA2;
   longpathaware lpa = spec.lpaware;
-  SupportedOSList& sosl = spec.SOSL;
+  SupportedOSList& sosl = *spec.pSOSL;
   const TCHAR *mvt = spec.MaxVersionTested;
 
   bool default_or_empty_sosl = sosl.isdefaultlist() || !sosl.getcount();
