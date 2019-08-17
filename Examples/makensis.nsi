@@ -11,6 +11,13 @@
 
 !define /ifndef VERSION 'anonymous-build'
 
+!ifndef LINK_INFO
+  !define LINK_INFO "http://nsis.sourceforge.net/"
+!endif
+!ifndef LINK_HELP
+  !define LINK_HELP "http://nsis.sourceforge.net/Support"
+!endif
+
 ;--------------------------------
 ;Configuration
 
@@ -85,8 +92,11 @@ Caption "NSIS ${VERSION}${NAMESUFFIX} Setup"
 !define MUI_COMPONENTSPAGE_SMALLDESC
 
 ;Pages
+!ifndef EXTRA_WELCOME_TEXT
+	!define EXTRA_WELCOME_TEXT ""
+!endif
 !define MUI_WELCOMEPAGE_TITLE "Welcome to the NSIS ${VERSION} Setup Wizard"
-!define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of NSIS (Nullsoft Scriptable Install System) ${VERSION}, the next generation of the Windows installer and uninstaller system that doesn't suck and isn't huge.$\r$\n$\r$\nNSIS includes a Modern User Interface, LZMA compression, support for multiple languages and an easy plug-in system.$\r$\n$\r$\n$_CLICK"
+!define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of NSIS (Nullsoft Scriptable Install System) ${VERSION}, the next generation of the Windows installer and uninstaller system that doesn't suck and isn't huge.$\r$\n$\r$\nNSIS includes a Modern User Interface, LZMA compression, support for multiple languages and an easy plug-in system.${EXTRA_WELCOME_TEXT}$\r$\n$\r$\n$_CLICK"
 
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_LICENSE "..\COPYING"
@@ -98,7 +108,7 @@ Page custom PageReinstall PageLeaveReinstall
 !insertmacro MUI_PAGE_INSTFILES
 
 !define MUI_FINISHPAGE_LINK "Visit the NSIS site for the latest news, FAQs and support"
-!define MUI_FINISHPAGE_LINK_LOCATION "http://nsis.sf.net/"
+!define MUI_FINISHPAGE_LINK_LOCATION "${LINK_INFO}"
 
 !define MUI_FINISHPAGE_RUN "$INSTDIR\NSIS.exe"
 !define MUI_FINISHPAGE_NOREBOOTSUPPORT
@@ -959,8 +969,8 @@ Section -post
   WriteRegDWORD HKLM "${REG_UNINST_KEY}" "VersionMinor" "${VER_MINOR}" ; Required by WACK
 !endif
   WriteRegStr HKLM "${REG_UNINST_KEY}" "Publisher" "Nullsoft and Contributors" ; Required by WACK
-  WriteRegStr HKLM "${REG_UNINST_KEY}" "URLInfoAbout" "http://nsis.sourceforge.net/"
-  WriteRegStr HKLM "${REG_UNINST_KEY}" "HelpLink" "http://nsis.sourceforge.net/Support"
+  WriteRegStr HKLM "${REG_UNINST_KEY}" "URLInfoAbout" "${LINK_INFO}"
+  WriteRegStr HKLM "${REG_UNINST_KEY}" "HelpLink" "${LINK_HELP}"
   WriteRegDWORD HKLM "${REG_UNINST_KEY}" "NoModify" "1"
   WriteRegDWORD HKLM "${REG_UNINST_KEY}" "NoRepair" "1"
   ${MakeARPInstallDate} $1
