@@ -548,6 +548,17 @@ Export('plugin_env plugin_uenv')
 #######  Distribution                                              ###
 ######################################################################
 
+if defenv['PLATFORM'] == 'win32':
+	def build_nsis_menu_for_zip(target, source, env):
+		cmdline = FindMakeNSIS(env, str(env['ZIPDISTDIR']))
+		cmd = env.Command(None, source, cmdline + ' $SOURCE /X"OutFile %s"' % (target[0].abspath, ))
+		AlwaysBuild(cmd)
+
+	nsis_menu_target = defenv.Command(os.path.join('$ZIPDISTDIR', 'NSIS.exe'),
+																		os.path.join('$ZIPDISTDIR', 'Examples', 'NSISMenu.nsi'),
+																		build_nsis_menu_for_zip)
+	defenv.Sign(nsis_menu_target)
+
 dist_zip = 'nsis-${VERSION}${DISTSUFFIX}.zip'
 zip_target = defenv.Zip(dist_zip, '$ZIPDISTDIR')
 defenv.Alias('dist-zip', zip_target)
