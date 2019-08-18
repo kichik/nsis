@@ -23,6 +23,7 @@
 #include <cstring> // for memcpy
 #include <cstdio> // for f*
 #include <algorithm> // for std::min
+#include <cassert>
 #include "tchar.h"
 #include "util.h"
 
@@ -63,10 +64,12 @@ void GrowBuf::resize(GrowBuf::size_type newlen)
     if (!newstor)
     {
       extern int g_display_errors;
+#ifdef _DEBUG
       if (g_display_errors)
       {
-        PrintColorFmtMsg_ERR(_T("\nack! realloc(%d) failed, trying malloc(%d)!\n"),m_alloc,newlen);
-      }
+        PrintColorFmtMsg_WARN(_T("\nwarning: realloc(%d) failed, trying malloc(%d)!\n"),m_alloc,newlen);
+      };
+#endif
       m_alloc=newlen; // try to malloc the minimum needed
       newstor=malloc(m_alloc);
       if (!newstor)
@@ -74,6 +77,7 @@ void GrowBuf::resize(GrowBuf::size_type newlen)
         extern void quit();
         if (g_display_errors)
         {
+          assert(sizeof(size_type) == sizeof(int));
           PrintColorFmtMsg_ERR(_T("\nInternal compiler error #12345: GrowBuf realloc/malloc(%d) failed.\n"),m_alloc);
         }
         quit();
