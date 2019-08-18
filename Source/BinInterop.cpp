@@ -455,7 +455,8 @@ DWORD GetDIBHeaderInfo(const void*pData, size_t DataSize, GENERICIMAGEINFO&Info)
     DWORD size = LE2HE32(p32[0]);
     if (size == 12) // BITMAPCOREHEADER
     {
-      Info.Width = LE2HE16(p16[2]), Info.Height = (INT32) (SHORT) LE2HE16(p16[3]);
+      Info.Width = LE2HE16(p16[2]), Info.RawHeight = (INT32) (SHORT) LE2HE16(p16[3]);
+      Info.Height = Info.RawHeight; // BITMAPCOREHEADER bitmaps cannot be top-down bitmaps (docs.microsoft.com/en-us/windows/win32/gdi/bitmap-header-types)
       Info.Planes = LE2HE16(p16[4]), Info.BPP = LE2HE16(p16[5]);
       return size;
     }

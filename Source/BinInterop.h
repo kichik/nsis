@@ -27,11 +27,12 @@ bool GetTLBVersion(const TCHAR *filepath, DWORD &high, DWORD &low);
 
 bool GetDLLVersion(const TCHAR *filepath, DWORD &high, DWORD &low);
 
-typedef struct {
+typedef struct GENERICIMAGEINFO {
   UINT32 Width, Height;
   INT32 RawHeight;
   WORD BPP, Planes;
-  bool IsTopDownBitmap() const { return Height != (UINT32) RawHeight; }
+  GENERICIMAGEINFO() : RawHeight(0) {}
+  bool IsTopDownBitmap() const { return Height != (UINT32) RawHeight && RawHeight; }
 } GENERICIMAGEINFO;
 
 DWORD GetDIBHeaderInfo(const void*pData, size_t DataSize, GENERICIMAGEINFO&Info);
@@ -47,7 +48,7 @@ inline WORD IsICOCURFile(const void*pData)
 }
 inline WORD IsICOCURFile(const void*pData, size_t DataSize)
 {
-  return DataSize >= 6 ? IsICOCURFile(pData) : 0;
+  return DataSize > 6 ? IsICOCURFile(pData) : 0;
 }
 
 #endif //~ NSIS_BININTEROP_H
