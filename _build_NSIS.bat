@@ -7,6 +7,13 @@ title %~nx0
 set FLAGS_BUILD=%~dp0\flag-build-nsis
 set FLAGS_ERROR=%~dp0\flag-error-nsis
 
+cd /d "%~dp0"
+
+:: Extract current GIT branch
+set BRANCH=
+for /f "usebackq delims=@ " %%f in (`git rev-parse --abbrev-ref HEAD`) do set BRANCH=%%f
+if "%BRANCH%" equ "" echo ERROR: Can't extract GIT branch name & exit /B 2
+
 :: ----------------------------------------------------------------
 :PARAMETERS
 :: ----------------------------------------------------------------
@@ -54,8 +61,8 @@ if %errorlevel% neq 0 exit /B %errorlevel%
 :: NOTE: .instdist is recreated after each build
 echo Moving files around...
 cd /d "%~dp0"
-call :COPYFILES nsis-mingw-x86 nsis-mingw-amd64
-call :COPYFILES nsis-mingw-amd64 nsis-mingw-x86
+call :COPYFILES nsis-mingw-%BRANCH%-x86   nsis-mingw-%BRANCH%-amd64
+call :COPYFILES nsis-mingw-%BRANCH%-amd64 nsis-mingw-%BRANCH%-x86
 
 :: Finish
 REM pause
@@ -105,11 +112,6 @@ set FLAG_ERROR=%FLAGS_ERROR%-%CONFIG_ARCH%
 echo Building> "%FLAG_BUILD%"
 cd /d "%~dp0"
 
-:: Extract current GIT branch
-set BRANCH=
-for /f "usebackq delims=@ " %%f in (`git rev-parse --abbrev-ref HEAD`) do set BRANCH=%%f
-if "%BRANCH%" equ "" echo. & set EXITCODE=3& echo ERROR: Can't extract GIT branch name& goto :BUILD_END
-
 :: e.g. "nsis-mingw-amd64"
 set DISTRO=nsis-mingw-%BRANCH%-%CONFIG_ARCH%
 title %DISTRO%: %CONFIG_ACTIONS%
@@ -135,7 +137,7 @@ for /f "usebackq" %%f in (`cscript.exe //nologo "%~dp0\DecToHex.vbs" %VER_MINOR%
 for /f "usebackq" %%f in (`cscript.exe //nologo "%~dp0\DecToHex.vbs" %VER_BUILD% 1`) do set VER_BUILD_PACKED=%%f
 set VER_PACKED=0x%VER_MAJOR_PACKED%%VER_MINOR_PACKED%00%VER_BUILD_PACKED%
 
-:: "nsis" -> "nsis-mingw-[arch]"
+:: "nsis" -> "nsis-mingw-DISTRO-[arch]"
 cd /d "%~dp0"
 robocopy . %DISTRO%\ *.* /E /XO /XD .git nsis-* zlib-* ... /XF flag-* .git* _*.bat ... /NJH /NJS /NDL
 
@@ -166,7 +168,7 @@ call "%PYTHON_PATH%\Scripts\scons.bat" ^
 	NSIS_CONFIG_LOG=yes ^
 	NSIS_CONFIG_LOG_TIMESTAMP=yes ^
 	NSIS_MAX_STRLEN=4096 ^
-	NSIS_EXTRA_PARAM="/DLINK_INFO=https://github.com/negrutiu/nsis /DNSIS_BIN2=..\..\..\nsis-mingw-x86\BIN /DNSIS_BIN3=..\..\..\nsis-mingw-amd64\BIN /DVER_PRODUCTNAME=""Unofficial NSIS build by Marius Negrutiu"" /DVER_LEGALTRADEMARKS=https://github.com/negrutiu/nsis /DEXTRA_WELCOME_TEXT=""$\r$\n________________________________________________$\r$\n$\r$\nThis is an *unofficial* build by Marius Negrutiu$\r$\nhttps://github.com/negrutiu/nsis""" ^
+	NSIS_EXTRA_PARAM="/DLINK_INFO=https://github.com/negrutiu/nsis /DNSIS_BIN2=..\..\..\nsis-mingw-%BRANCH%-x86\BIN /DNSIS_BIN3=..\..\..\nsis-mingw-%BRANCH%-amd64\BIN /DVER_PRODUCTNAME=""Unofficial NSIS build by Marius Negrutiu"" /DVER_LEGALTRADEMARKS=https://github.com/negrutiu/nsis /DEXTRA_WELCOME_TEXT=""$\r$\n________________________________________________$\r$\n$\r$\nThis is an *unofficial* build by Marius Negrutiu$\r$\nhttps://github.com/negrutiu/nsis""" ^
 	PREFIX="%CD%\BIN" ^
 	ZLIB_W32="%ZLIB_PATH%-mingw-%CONFIG_ARCH%" ^
 	APPEND_CCFLAGS="%CONFIG_CFLAGS%" ^
