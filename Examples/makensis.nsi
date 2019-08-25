@@ -798,6 +798,9 @@ ${MementoSection} "NSxfer" SecPluginsNSxfer
   !insertmacro InstallPlugin NSxfer
   SetOutPath $INSTDIR\Docs\NSxfer
   File ..\Docs\NSxfer\NSxfer.Readme.txt
+  SetOutPath $INSTDIR\Examples\NSxfer
+  File ..\Examples\NSxfer\*.nsi
+  File ..\Examples\NSxfer\*.bat
 ${MementoSectionEnd}
 
 ${MementoSection} "ShellLink" SecPluginsShellLink
