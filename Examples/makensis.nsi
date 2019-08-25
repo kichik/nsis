@@ -785,6 +785,9 @@ ${MementoSection} "NSutils" SecPluginsNSutils
   !insertmacro InstallPlugin NSutils
   SetOutPath $INSTDIR\Docs\NSutils
   File ..\Docs\NSutils\NSutils.Readme.txt
+  SetOutPath $INSTDIR\Examples\NSutils
+  File ..\Examples\NSutils\*.nsi
+  File ..\Examples\NSutils\*.bat
 ${MementoSectionEnd}
 
 ${MementoSection} "NSxfer" SecPluginsNSxfer
