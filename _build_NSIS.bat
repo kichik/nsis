@@ -140,15 +140,6 @@ set VER_PACKED=0x%VER_MAJOR_PACKED%%VER_MINOR_PACKED%00%VER_BUILD_PACKED%
 cd /d "%~dp0"
 robocopy . %DISTRO%\ *.* /E /XO /XD .git nsis-* zlib-* ... /XF flag-* .git* _*.bat ... /NJH /NJS /NDL
 
-:: Inject extra plugins
-echo on
-call "%~dp0..\ExecDos\_copy_to_NSIS.bat"		"%CD%\%DISTRO%"
-call "%~dp0..\NSutils\_copy_to_NSIS.bat"		"%CD%\%DISTRO%"
-call "%~dp0..\NSxfer\_copy_to_NSIS.bat"		"%CD%\%DISTRO%"
-call "%~dp0..\ShellLink\_copy_to_NSIS.bat"	"%CD%\%DISTRO%"
-call "%~dp0..\w7tbp\_copy_to_NSIS.bat"		"%CD%\%DISTRO%"
-@echo off
-
 :: BASENAME
 set BASENAME=nsis-%VER_MAJOR%.%VER_MINOR%.%VER_REVISION%.%VER_BUILD%-%BRANCH%-%CONFIG_ARCH%
 

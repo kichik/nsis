@@ -2,3 +2,23 @@
 	path = zlib
 	url = https://github.com/madler/zlib.git
 	branch = develop
+[submodule "Contrib/w7tbp"]
+	path = Contrib/w7tbp
+	url = https://github.com/negrutiu/nsis-taskbarprogress.git
+	branch = master
+[submodule "Contrib/ShellLink"]
+	path = Contrib/ShellLink
+	url = https://github.com/negrutiu/nsis-shelllink
+	branch = master
+[submodule "Contrib/ExecDos"]
+	path = Contrib/ExecDos
+	url = https://github.com/negrutiu/nsis-execdos
+	branch = master
+[submodule "Contrib/NSutils"]
+	path = Contrib/NSutils
+	url = https://github.com/negrutiu/nsis-nsutils.git
+	branch = master
+[submodule "Contrib/NSxfer"]
+	path = Contrib/NSxfer
+	url = https://github.com/negrutiu/nsis-nsxfer.git
+	branch = master
