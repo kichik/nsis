@@ -57,7 +57,6 @@ start "" "%COMSPEC%" /C "%~f0" /distro-amd64
 call :WAIT
 if %errorlevel% neq 0 exit /B %errorlevel%
 
-
 :: NOTE: .instdist is recreated after each build
 echo Moving files around...
 cd /d "%~dp0"
@@ -177,15 +176,15 @@ call "%PYTHON_PATH%\Scripts\scons.bat" ^
 set EXITCODE=%errorlevel%
 
 :: 7z source code
-if "%CONFIG_ACTIONS%" neq "dist-installer" goto :SRC_7z_END
-	echo --------------------------------------------------------------------------------
-	if defined ProgramW6432 set Z7=%ProgramW6432%\7-Zip\7z.exe
-	if not defined ProgramW6432 set Z7=%PROGRAMFILES%\7-Zip\7z.exe
-	if not exist "%Z7%" echo. & echo WARNING: Missing "%Z7%" & echo. & goto :SRC_7z_END
-	del /Q "%BASENAME%-src.7z" 2> NUL
-	"%Z7%" a "%BASENAME%-src.7z" * -mx=9 -myx=9 -ms=e -mqs=on -stl -x!*.exe -x!*.7z -x!.instdist -x!.sconf_temp -x!BIN -x!build -x!.sconsign.dblite
-	echo --------------------------------------------------------------------------------
-:SRC_7z_END
+REM | if "%CONFIG_ACTIONS%" neq "dist-installer" goto :SRC_7z_END
+REM | 	echo --------------------------------------------------------------------------------
+REM | 	if defined ProgramW6432 set Z7=%ProgramW6432%\7-Zip\7z.exe
+REM | 	if not defined ProgramW6432 set Z7=%PROGRAMFILES%\7-Zip\7z.exe
+REM | 	if not exist "%Z7%" echo. & echo WARNING: Missing "%Z7%" & echo. & goto :SRC_7z_END
+REM | 	del /Q "%BASENAME%-src.7z" 2> NUL
+REM | 	"%Z7%" a "%BASENAME%-src.7z" * -mx=9 -myx=9 -ms=e -mqs=on -stl -x!*.exe -x!*.7z -x!.instdist -x!.sconf_temp -x!BIN -x!build -x!.sconsign.dblite
+REM | 	echo --------------------------------------------------------------------------------
+REM | :SRC_7z_END
 
 :BUILD_END
 if %EXITCODE% neq 0 echo %EXITCODE% > "%FLAG_ERROR%" & pause
