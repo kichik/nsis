@@ -50,8 +50,8 @@ chapters = 5
 appendices = 9
 
 htmls = Split('IndexPage.html Contents.html') \
-	+ map(lambda ch: 'Chapter' + str(ch + 1) + '.html', range(chapters)) \
-	+ map(lambda ap: 'Appendix' + chr(ord('A') + ap) + '.html', range(appendices))
+	+ list(map(lambda ch: 'Chapter' + str(ch + 1) + '.html', range(chapters))) \
+	+ list(map(lambda ap: 'Appendix' + chr(ord('A') + ap) + '.html', range(appendices)))
 
 docsdefault_install_basepath = 'Docs'
 
@@ -137,7 +137,7 @@ def docs_fixer(target, source, env):
 		data = open(html.path,'rb').read()
 
 		for pat, repl in fixes.items():
-			data = re.sub(env.subst(pat), env.subst(repl), data)
+			data = re.sub(env.subst(pat).encode(), env.subst(repl).encode(), data)
 
 		open(html.path, 'wb').write(data)
 

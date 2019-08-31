@@ -123,11 +123,11 @@ def GetOptionOrEnv(name, defval = None):
 	Get option set on scons command line or in os.environ
 	"""
 	import os
-	#if optenv and optenv.has_key(name):
+	#if optenv and name in optenv:
 	#	return optenv[name]
-	if ARGUMENTS.has_key(name):
+	if name in ARGUMENTS:
 		return ARGUMENTS[name]
-	if os.environ.has_key(name):
+	if name in os.environ:
 		return os.environ[name]
 	return defval
 
