@@ -25,7 +25,7 @@ WTypes.h
 !define VT_HRESULT   25
 !define VT_PTR       26
 !define VT_SAFEARRAY 27
-!define VT_LPSTR     30
+!define VT_LPSTR     30 ; SHStrDupA
 !define VT_LPWSTR    31 ; SHStrDupW
 !define VT_FILETIME  64
 !define VT_STREAM    66
@@ -153,8 +153,11 @@ System::Call 'OLEAUT32::#9(p${pV})'
 !macro VariantCopy pDstV pSrcV sysretHR
 System::Call 'OLEAUT32::#10(p${pDstV},p${pSrcV})i.${sysretHR}' ; (Frees the destination variant before it copies the source)
 !macroend
+!macro VariantCopyInd pDstV pSrcV sysretHR
+System::Call 'OLEAUT32::#11(p${pDstV},p${pSrcV})i.${sysretHR}' ; (Frees the destination variant before it copies the source)
+!macroend
 !macro VariantChangeType pDstV pSrcV Flags VT sysretHR
-System::Call 'OLEAUT32::#12(p${pDstV},p${pSrcV},i${Flags},i${VT})i.${sysretHR}'
+System::Call 'OLEAUT32::#12(p${pDstV},p${pSrcV},i${Flags},i${VT})i.${sysretHR}' ; (Might free the destination on success)
 !macroend
 
 
@@ -162,7 +165,32 @@ System::Call 'OLEAUT32::#12(p${pDstV},p${pSrcV},i${Flags},i${VT})i.${sysretHR}'
 System::Call 'OLE32::PropVariantClear(p${pV})' ; WinNT4.SP0+, Win98+, IE4+
 !macroend
 !macro PropVariantCopy pDstV pSrcV sysretHR
-System::Call 'OLE32::PropVariantCopy(p${pDstV},p${pSrcV})i.${sysretHR}' ; WinNT4.SP0+, Win98+, IE4+ (PropVariantCopy does not free the destination before it copies the source)
+System::Call 'OLE32::PropVariantCopy(p${pDstV},p${pSrcV})i.${sysretHR}' ; WinNT4.SP0+, Win98+, IE4+ (Does NOT free the destination before it copies the source)
+!macroend
+!macro PropVariantChangeType pDstV pSrcV VT sysretHR
+!ifdef NSIS_ARM | NSIS_ARM32 | NSIS_ARMNT | NSIS_ARM64
+  System::Call 'PROPSYS::PropVariantChangeType(p${pDstV},p${pSrcV},i0,i${VT})i.${sysretHR}'
+!else
+  Push "${VT}"
+  Push ${pSrcV}
+  Push ${pDstV}
+  !include Util.nsh
+  ${CallArtificialFunction} TryPropVariantChangeType
+  System::Call 'KERNEL32::SetLastError(is${sysretHR})' ; A hack to move the result from the stack to somewhere with System variable syntax
+!endif
+!macroend
+!macro TryPropVariantChangeType
+System::Store S
+System::Call 'PROPSYS::PropVariantChangeType(psr1,psr2,i0,isr3)i.r0' ; Vista+ (Source and destination cannot be the same address)
+StrCmp $0 error "" done
+System::Call 'OLE32::PropVariantChangeType(pr1,pr2,i0,i0,ir3})i.r0' ; 2000+ (Source and destination cannot be the same address)
+!if ${NSIS_PTR_SIZE} < 8
+  StrCmp $0 error "" done
+  !insertmacro VariantChangeType $1 $2 0 $3 r0 ; This is not really correct but there is no PROPVARIANT support on these platforms. Might free the destination!
+!endif
+done:
+Push $0
+System::Store L
 !macroend
 
 
