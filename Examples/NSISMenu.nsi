@@ -13,6 +13,14 @@ InstallButtonText " "
 CompletedText " "
 LangString ^ClickInstall 0 " "
 Caption "$(^Name)"
+!ifdef VER_MAJOR & VER_MINOR & VER_REVISION & VER_BUILD
+!searchreplace VERSTR "${NSIS_VERSION}" "v" ""
+VIProductVersion ${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}
+VIAddVersionKey "ProductName" "NSIS"
+VIAddVersionKey "ProductVersion" "${VERSTR}"
+VIAddVersionKey "FileVersion" "${VERSTR}"
+VIAddVersionKey "FileDescription" "NSIS Menu"
+!endif
 
 !include nsDialogs.nsh
 !include WinMessages.nsh
