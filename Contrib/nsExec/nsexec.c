@@ -42,7 +42,6 @@ HWND g_hwndList;
 HINSTANCE g_hInst;
 
 void ExecScript(BOOL log);
-void LogMessage(const TCHAR *pStr, BOOL bOEM);
 TCHAR *my_strstr(TCHAR *a, TCHAR *b);
 unsigned int my_atoi(TCHAR *s);
 int WINAPI AsExeWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow);
@@ -70,9 +69,19 @@ BOOL WINAPI DllMain(HINSTANCE hInst, ULONG ul_reason_for_call, LPVOID lpReserved
   return TRUE;
 }
 
-static BOOL IsLeadSurrogateUTF16(unsigned short c) {
-  return c >= 0xd800 && c <= 0xdbff;
+static BOOL IsLeadSurrogateUTF16(unsigned short c) { return c >= 0xd800 && c <= 0xdbff; }
+static BOOL IsTrailSurrogateUTF16(unsigned short c) { return c >= 0xdc00 && c <= 0xdfff; }
+
+static PWSTR MyCharNext(PCWSTR p) 
+{
+  // Note: This is wrong for surrogate pair combining characters but CharNextW 
+  // does not properly surrogate pairs so we have to manually handle the pairs.
+  if (!p[0]) return (PWSTR) p;
+  if (IsLeadSurrogateUTF16(p[0]) && IsTrailSurrogateUTF16(p[1])) return (PWSTR) p + 2; // Current is a surrogate pair, we incorrectly assume that it is not followed by combining characters.
+  if (IsLeadSurrogateUTF16(p[1]) && IsTrailSurrogateUTF16(p[2])) return (PWSTR) p + 1; // Next is a surrogate pair, we incorrectly assume that it is not a combining character for the current character.
+  return (CharNextW)(p);
 }
+#define CharNextW MyCharNext
 
 static void TruncateStringUTF16LE(LPWSTR Buffer, SIZE_T Length, LPCWSTR Overflow, SIZE_T lenOver) {
   if (Length) {
@@ -139,6 +148,28 @@ static BOOL IsWOW64() {
   }
   return (BOOL) (UINT) retval;
 #endif
+}
+
+// Tim Kosse's LogMessage
+#ifdef UNICODE
+static void LogMessage(const TCHAR *pStr, BOOL bOEM) {
+#else
+static void LogMessage(TCHAR *pStr, BOOL bOEM) {
+#endif
+  LVITEM item;
+  int nItemCount;
+  if (!g_hwndList) return;
+  //if (!*pStr) return;
+#ifndef UNICODE
+  if (bOEM == TRUE) OemToCharBuff(pStr, pStr, lstrlen(pStr));
+#endif
+  nItemCount=(int) SendMessage(g_hwndList, LVM_GETITEMCOUNT, 0, 0);
+  item.mask=LVIF_TEXT;
+  item.pszText=(TCHAR *)pStr;
+  item.cchTextMax=0;
+  item.iItem=nItemCount, item.iSubItem=0;
+  ListView_InsertItem(g_hwndList, &item);
+  ListView_EnsureVisible(g_hwndList, item.iItem, 0);
 }
 
 
@@ -277,6 +308,8 @@ params:
     SIZE_T cbSrcTot = sizeof(bufSrc), cbSrc = 0, cbSrcFree;
     TCHAR *bufOutput = 0, *pNewAlloc, *pD;
     SIZE_T cchAlloc, cbAlloc, cchFree;
+
+    pi.hProcess = pi.hThread = NULL;
     codepage = bOEM ? CP_OEMCP : CP_ACP;
 
     if (!ignoreData) {
@@ -313,7 +346,6 @@ params:
     si.hStdOutput = newstdout;
     si.hStdError = newstdout;
     if (!CreateProcess(NULL, g_exec, NULL, NULL, TRUE, CREATE_NEW_CONSOLE, NULL, NULL, &si, &pi)) {
-      pi.hProcess = pi.hThread = NULL;
       lstrcpy(szRet, _T("error"));
       goto done;
     }
@@ -388,11 +420,11 @@ parseLines:
         }
         else { // DBCS --> ?:
           if (utfOutput) { // DBCS --> UTF-16LE:
-            BOOL isMb = IsDBCSLeadByteEx(codepage,((CHAR*)pSrc)[0]);
+            BOOL isMb = IsDBCSLeadByteEx(codepage, ((CHAR*)pSrc)[0]);
             if (isMb && cbSrc < ++cbSrcChar) {
               goto readMore;
             }
-            cchDstChar = MultiByteToWideChar(codepage,0,pSrc,cbSrcChar,(WCHAR*) bufCh,2);
+            cchDstChar = MultiByteToWideChar(codepage, 0, pSrc, cbSrcChar, (WCHAR*) bufCh, 2);
           }
           else { // DBCS --> DBCS:
             bufCh[0] = ((CHAR*)pSrc)[0], cchDstChar = 1; // Note: OEM codepage will be converted by LogMessage
@@ -426,7 +458,7 @@ resizeOutputBuffer:
               goto waitForProcess;
             }
             cchAlloc += 1024, cbAlloc = cchAlloc / sizeof(TCHAR);
-            pNewAlloc = GlobalReAlloc(bufOutput,cbAlloc + sizeof(TCHAR),GPTR|GMEM_MOVEABLE); // Include "hidden" space for a \0
+            pNewAlloc = GlobalReAlloc(bufOutput, cbAlloc + sizeof(TCHAR),GPTR|GMEM_MOVEABLE); // Include "hidden" space for a \0
             if (!pNewAlloc) {
               lstrcpy(szRet, _T("error"));
               ignoreData = TRUE;
@@ -465,24 +497,6 @@ done:
     if (bufOutput)
       GlobalFree(bufOutput);
   }
-}
-
-// Tim Kosse's LogMessage
-void LogMessage(const TCHAR *pStr, BOOL bOEM) {
-  LVITEM item={0};
-  int nItemCount;
-  if (!g_hwndList) return;
-  //if (!lstrlen(pStr)) return;
-#ifndef _UNICODE
-  if (bOEM == TRUE) OemToCharBuff(pStr, (char*)pStr, lstrlen(pStr));
-#endif
-  nItemCount=(int) SendMessage(g_hwndList, LVM_GETITEMCOUNT, 0, 0);
-  item.mask=LVIF_TEXT;
-  item.pszText=(TCHAR *)pStr;
-  item.cchTextMax=0;
-  item.iItem=nItemCount;
-  ListView_InsertItem(g_hwndList, &item);
-  ListView_EnsureVisible(g_hwndList, item.iItem, 0);
 }
 
 TCHAR *my_strstr(TCHAR *a, TCHAR *b)
