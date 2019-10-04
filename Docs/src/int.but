@@ -4,14 +4,16 @@
 
 \c user_var(output) format numberstring
 
-Formats the number in "numberstring" using the format "format", and sets the output to user variable $x. Example format strings include "%08X" "%u"
+Formats the number in "numberstring" using the format "format", and sets the output to user variable $x. The format string supports the same syntax as \W{https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-wsprintfw}{wsprintf} except that the \cw{I[32|64]} length fields and the \cw{p} type are not supported. Example format strings include "%08X" and "%u".
 
 \c IntFmt $0 "0x%08X" 195948557
-\c IntFmt $0 "%c" 0x41
+\c IntFmt $1 "%c" 0x41
 
 \S2{int64fmt} Int64Fmt
 
 \c user_var(output) format numberstring
+
+Supports the \cw{I} and \cw{I64} length fields and the \cw{p} type in addition to the syntax supported by \cw{IntFmt}.
 
 \NsisFuncReq64
 
