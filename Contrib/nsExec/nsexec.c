@@ -74,8 +74,8 @@ static BOOL IsTrailSurrogateUTF16(unsigned short c) { return c >= 0xdc00 && c <=
 
 static PWSTR MyCharNext(PCWSTR p) 
 {
-  // Note: This is wrong for surrogate pair combining characters but CharNextW 
-  // does not properly surrogate pairs so we have to manually handle the pairs.
+  // Note: This is wrong for surrogate pair combining characters but CharNextW does 
+  // not support surrogate pairs correctly so we have to manually handle the pairs.
   if (!p[0]) return (PWSTR) p;
   if (IsLeadSurrogateUTF16(p[0]) && IsTrailSurrogateUTF16(p[1])) return (PWSTR) p + 2; // Current is a surrogate pair, we incorrectly assume that it is not followed by combining characters.
   if (IsLeadSurrogateUTF16(p[1]) && IsTrailSurrogateUTF16(p[2])) return (PWSTR) p + 1; // Next is a surrogate pair, we incorrectly assume that it is not a combining character for the current character.
@@ -374,13 +374,13 @@ readMore:
       }
 
       dwLastOutput = GetTickCount();
-      ReadFile(read_stdout, bufSrc + cbSrc, cbSrcFree = cbSrcTot - cbSrc, &cbRead, NULL);
+      ReadFile(read_stdout, bufSrc + cbSrc, (DWORD) (cbSrcFree = cbSrcTot - cbSrc), &cbRead, NULL);
       cbSrcFree -= cbRead, cbSrc = cbSrcTot - cbSrcFree;
       pSrc = bufSrc;
 
       if (utfSource < 0 && cbSrc) { // Simple UTF-16LE detection
 #ifdef UNICODE
-        utfSource = IsTextUnicode(pSrc, cbSrc & ~1, NULL) != FALSE;
+        utfSource = IsTextUnicode(pSrc, (UINT) (cbSrc & ~1), NULL) != FALSE;
 #else
         utfSource = (cbSrc >= 3 && pSrc[0] && !pSrc[1]) || (cbSrc > 4 && pSrc[2] && !pSrc[3]); // Lame latin-only test
         utfSource |= (cbSrc > 3 && pSrc[0] == 0xFF && pSrc[1] == 0xFE && (pSrc[2] | pSrc[3])); // Lame BOM test
