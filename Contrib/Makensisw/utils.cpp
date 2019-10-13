@@ -166,6 +166,25 @@ void SetTitle(HWND hwnd,const TCHAR *substr) {
   SetWindowText(hwnd,title);
 }
 
+typedef struct { LPCSTR SoundName; int MBFallback; } PLAYAPPSOUNDDATA;
+static DWORD CALLBACK PlayAppSoundProc(LPVOID ThreadParam) {
+  PLAYAPPSOUNDDATA *p = (PLAYAPPSOUNDDATA*) ThreadParam;
+  BOOL succ = PlaySoundA(p->SoundName, NULL, (SND_APPLICATION|SND_ALIAS|SND_NODEFAULT) & ~SND_ASYNC); // Cannot use SND_ASYNC because we need to detect if the sound played
+  if (!succ && p->MBFallback >= 0) succ = MessageBeep(p->MBFallback);
+  MemFree(p);
+  return succ;
+}
+
+void PlayAppSoundAsync(LPCSTR SoundName, int MBFallback) {
+  DWORD tid;
+  PLAYAPPSOUNDDATA *p = (PLAYAPPSOUNDDATA*) MemAlloc(sizeof(PLAYAPPSOUNDDATA));
+  if (p) {
+    p->SoundName = SoundName, p->MBFallback = MBFallback; // Note: The string must be valid until the sound has started because we don't copy it
+    HANDLE hThread = CreateThread(NULL, 0, PlayAppSoundProc, p, 0, &tid);
+    if (hThread) CloseHandle(hThread); else PlayAppSoundProc(p);
+  }
+}
+
 void CopyToClipboard(HWND hwnd) {
   if (!hwnd || !OpenClipboard(hwnd)) return;
   LRESULT len = SendDlgItemMessage(hwnd, IDC_LOGWIN, WM_GETTEXTLENGTH, 0, 0);
@@ -185,8 +204,24 @@ void CopyToClipboard(HWND hwnd) {
   CloseClipboard();
 }
 
+void SetLogColor(enum LOGCOLOR lc)
+{
+  enum { em_seteditstyle = (WM_USER + 204), ses_extendbackcolor = 4 };
+  HWND hEd = GetDlgItem(g_sdata.hwnd, IDC_LOGWIN);
+  bool sysclr = lc >= LC_SYSCOLOR || !ReadRegSettingDW(REGCOLORIZE, true);
+  COLORREF clrs[] = { RGB(0, 50, 0), RGB(210, 255, 210), RGB(50, 30, 0), RGB(255, 220, 190), RGB(50, 0, 0), RGB(255, 210, 210) };
+  CHARFORMAT cf;
+  cf.cbSize = sizeof(cf), cf.dwMask = CFM_COLOR;
+  cf.dwEffects = sysclr ? CFE_AUTOCOLOR : 0;
+  cf.crTextColor = sysclr ? RGB(0, 0, 0) : clrs[(lc * 2) + 0];
+  SendMessage(hEd, em_seteditstyle, sysclr ? 0 : ses_extendbackcolor, ses_extendbackcolor);
+  SendMessage(hEd, EM_SETCHARFORMAT, 0, (LPARAM) &cf);
+  SendMessage(hEd, EM_SETBKGNDCOLOR, sysclr, sysclr ? sysclr /*Irrelevant*/ : clrs[(lc * 2) + 1]);
+}
+
 void ClearLog(HWND hwnd) {
   SetDlgItemText(hwnd, IDC_LOGWIN, _T(""));
+  SetLogColor(LC_SYSCOLOR);
   SendMessage(g_sdata.hwnd, WM_MAKENSIS_UPDATEUISTATE, 0, 0);
 }
 

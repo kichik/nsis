@@ -62,6 +62,7 @@
 #define REGLOC       _T("MakeNSISWPlacement")
 #define REGVERBOSITY _T("MakeNSISWVerbosity")
 #define REGCOMPRESSOR _T("MakeNSISWCompressor")
+#define REGCOLORIZE  _T("MakeNSISWColorize")
 #define REGSYMSUBKEY _T("Symbols")
 #define REGMRUSUBKEY _T("MRU")
 #define EXENAME      _T("makensis.exe")
