@@ -204,6 +204,10 @@ Version History
 - System DPI aware
 - New toolbar images
 
+2.3.5
+- Added log window colors
+- Basic AppEvents custom sound support for BuildComplete, BuildWarning and BuildError
+
 
 Copyright Information
 ---------------------

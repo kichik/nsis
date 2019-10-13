@@ -55,7 +55,10 @@ typedef BYTE PACKEDCMDID_T;
 
 int SetArgv(const TCHAR *cmdLine, TCHAR ***argv);
 void SetTitle(HWND hwnd,const TCHAR *substr);
+void PlayAppSoundAsync(LPCSTR SoundName, int MBFallback = -1);
 void CopyToClipboard(HWND hwnd);
+enum LOGCOLOR { LC_SUCCESS, LC_WARNING, LC_ERROR, LC_SYSCOLOR };
+void SetLogColor(enum LOGCOLOR lc);
 void ClearLog(HWND hwnd);
 void LogMessage(HWND hwnd,const TCHAR *str);
 void ErrorMessage(HWND hwnd,const TCHAR *str);

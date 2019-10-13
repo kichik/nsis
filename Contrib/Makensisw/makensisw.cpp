@@ -468,18 +468,24 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
       }
       EnableItems(g_sdata.hwnd);
       if (!g_sdata.retcode) {
-        MessageBeep(MB_ICONASTERISK);
-        if (g_sdata.warnings)
+        if (g_sdata.warnings) {
           SetTitle(g_sdata.hwnd,_T("Finished with Warnings"));
-        else
+          PlayAppSoundAsync(("BuildWarning"), MB_ICONWARNING);
+          SetLogColor(LC_WARNING);
+        }
+        else {
           SetTitle(g_sdata.hwnd,_T("Finished Sucessfully"));
+          PlayAppSoundAsync(("BuildComplete"), MB_ICONASTERISK);
+          SetLogColor(LC_SUCCESS);
+        }
         // Added by Darren Owen (DrO) on 1/10/2003
         if(g_sdata.recompile_test)
           PostMessage(g_sdata.hwnd, WM_COMMAND, LOWORD(IDC_TEST), 0);
       }
       else {
-        MessageBeep(MB_ICONEXCLAMATION);
         SetTitle(g_sdata.hwnd,_T("Compile Error: See Log for Details"));
+        PlayAppSoundAsync(("BuildError"), MB_ICONEXCLAMATION);
+        SetLogColor(LC_ERROR);
       }
 
       // Added by Darren Owen (DrO) on 1/10/2003
