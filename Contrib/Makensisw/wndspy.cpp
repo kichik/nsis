@@ -17,29 +17,81 @@
 #include "resource.h"
 
 #define InitializeApiFuncWithFallback(mn, fn) { FARPROC f =  GetSysProcAddr((mn), (#fn)); g_##fn = Compat_##fn; if (f) (FARPROC&) g_##fn = f; }
+#define InitializeApiFuncEx(mn, fn, ptr) ( (FARPROC&)(g_##ptr) = GetSysProcAddr((mn), (#fn)) )
 #define InitializeApiFunc(mn, fn) ( (FARPROC&)(g_##fn) = GetSysProcAddr((mn), (#fn)) )
 #define CallApiFunc(fn) ( g_##fn )
 #define HasApiFunc(fn) ( !!(g_##fn) )
 
 INT_PTR(WINAPI*g_SetThreadDpiAwarenessContext)(INT_PTR);
 UINT(WINAPI*g_GetDpiForWindow)(HWND);
+BOOL(WINAPI*g_LogicalToPhysicalPoint)(HWND hWnd, LPPOINT lpPoint);
+BOOL(WINAPI*g_PhysicalToLogicalPoint)(HWND hWnd, LPPOINT lpPoint);
 
 typedef struct _DPI {
   enum { a_invalid = -1, a_unaware = 0, a_system = 1, a_pm = 2 };
-  enum { ac_invalid = 0, ac_unaware = -1, ac_system = -2, ac_pm1 = -3, ac_pm2 = -4 };
+  enum { ac_invalid = 0, ac_unaware = -1, ac_system = -2, ac_pm1 = -3, ac_pm2 = -4, ac_count = ac_pm2 * -1 };
   static inline INT_PTR SetThreadDpiAwarenessContext(INT_PTR a1) { return g_SetThreadDpiAwarenessContext(a1); }
   static inline UINT GetDpiForWindow(HWND a1) { return HasApiFunc(GetDpiForWindow) ? CallApiFunc(GetDpiForWindow)(a1) : 0; }
+  static inline UINT GetDpiForMonitor(HWND hWnd) { return DpiGetForMonitor(hWnd); }
 } DPI;
 
-static INT_PTR WINAPI Compat_SetThreadDpiAwarenessContext(INT_PTR AC)
-{
-  return 0;
-}
+static INT_PTR WINAPI Compat_SetThreadDpiAwarenessContext(INT_PTR AC) { return 0; }
+static BOOL WINAPI Compat_LogicalToPhysicalPoint(HWND hWnd, LPPOINT lpPoint) { return TRUE; }
+static BOOL WINAPI Compat_PhysicalToLogicalPoint(HWND hWnd, LPPOINT lpPoint) { return TRUE; }
 
 static void InitializeDpiApi()
 {
   InitializeApiFuncWithFallback("USER32", SetThreadDpiAwarenessContext);
   InitializeApiFunc("USER32", GetDpiForWindow);
+  InitializeApiFuncEx("USER32", LogicalToPhysicalPointForPerMonitorDPI, LogicalToPhysicalPoint);
+  if (!HasApiFunc(LogicalToPhysicalPoint)) InitializeApiFuncWithFallback("USER32", LogicalToPhysicalPoint);
+  InitializeApiFuncEx("USER32", PhysicalToLogicalPointForPerMonitorDPI, PhysicalToLogicalPoint);
+  if (!HasApiFunc(PhysicalToLogicalPoint)) InitializeApiFuncWithFallback("USER32", PhysicalToLogicalPoint);
+}
+
+static BOOL LogicalToPhysical(HWND hWnd, POINT&Pt) { return CallApiFunc(LogicalToPhysicalPoint)(hWnd, &Pt); }
+static BOOL PhysicalToLogical(HWND hWnd, POINT&Pt) { return CallApiFunc(PhysicalToLogicalPoint)(hWnd, &Pt); }
+
+static void LogicalToPhysical(HWND hWnd, RECT&Rect)
+{
+  POINT *p = (POINT*) &Rect;
+  LogicalToPhysical(hWnd, p[0]), LogicalToPhysical(hWnd, p[1]);
+}
+static void PhysicalToLogical(HWND hWnd, RECT&Rect)
+{
+  POINT *p = (POINT*) &Rect;
+  PhysicalToLogical(hWnd, p[0]), PhysicalToLogical(hWnd, p[1]);
+}
+
+static BOOL GetPhysicalWindowRect(HWND hWnd, RECT&Rect, HWND hWndCaller)
+{
+  BOOL succ = GetWindowRect(hWnd, &Rect);
+  LogicalToPhysical(hWndCaller, Rect);
+  return succ;
+}
+
+static BOOL GetPhysicalClientRect(HWND hWnd, RECT&Rect, HWND hWndCaller)
+{
+  BOOL succ = GetClientRect(hWnd, &Rect);
+  LogicalToPhysical(hWndCaller, Rect);
+  return succ;
+}
+
+static inline void PhysicalToLogical(HWND hWnd, RECT&Rect, HWND hWndCaller)
+{
+  PhysicalToLogical(hWndCaller, Rect);
+}
+
+static void ConvertLogicalToLogical(RECT&Rect, HWND hSrc, HWND hDst)
+{
+  LogicalToPhysical(hSrc, Rect), PhysicalToLogical(hDst, Rect);
+}
+
+static BOOL GetLogicalWindowRect(HWND hWnd, RECT&Rect, HWND hWndCaller)
+{
+  BOOL succ = GetWindowRect(hWnd, &Rect);
+  if (succ) ConvertLogicalToLogical(Rect, hWndCaller, hWnd);
+  return succ;
 }
 
 static HWND GetParentWindow(HWND hWnd)
@@ -50,8 +102,9 @@ static HWND GetParentWindow(HWND hWnd)
 
 typedef struct _DIALOGDATA {
   BOOL Dragging;
-  HWND hWndTarget;
-  int DialogAwarenessContext;
+  HWND hWndTarget, hWndOutline;
+  int DialogAwarenessContext; // Canonical DPI awareness context
+  _DIALOGDATA() : hWndOutline(0) {}
   static struct _DIALOGDATA* Get(HWND hDlg) { return (struct _DIALOGDATA*) GetWindowLongPtr(hDlg, DWLP_USER); }
 } DIALOGDATA;
 
@@ -129,6 +182,36 @@ static BOOL IsHung(HWND hWnd)
   }
 }
 
+static LRESULT CALLBACK OutlineWindowProc(HWND hWnd, UINT Msg, WPARAM WParam, LPARAM LParam)
+{
+  WNDPROC orgProc = (WNDPROC) GetWindowLongPtr(hWnd, GWLP_USERDATA);
+  switch(Msg)
+  {
+  case WM_WINDOWPOSCHANGED:
+    {
+      WINDOWPOS wp = *(WINDOWPOS*) LParam;
+      int size = GetSystemMetrics(SM_CXBORDER) * 2, sizeX = size, sizeY = size;
+      if (sizeX >= wp.cx) sizeX = 1;
+      if (sizeY >= wp.cy) sizeY = 1;
+      HRGN hRgn = CreateRectRgn(0, 0, wp.cx, wp.cy);
+      HRGN hRgnInner = CreateRectRgn(sizeX, sizeY, wp.cx - sizeX, wp.cy - sizeY);
+      if (sizeX * 2 < wp.cx && sizeY * 2 < wp.cy) CombineRgn(hRgn, hRgn, hRgnInner, RGN_XOR);
+      DeleteObject(hRgnInner);
+      SetWindowRgn(hWnd, hRgn, TRUE);
+    }
+    return 0;
+  case WM_PAINT:
+    {
+      PAINTSTRUCT ps;
+      HDC hDC = BeginPaint(hWnd, &ps);
+      FillRectColor(hDC, ps.rcPaint, RGB(255, 0, 255));
+      EndPaint(hWnd, &ps);
+    }
+    return 0;
+  }
+  return orgProc ? CallWindowProc(orgProc, hWnd, Msg, WParam, LParam) : DefWindowProc(hWnd, Msg, WParam, LParam);
+}
+
 static void SetDragSourceImage(HWND hDlg, INT_PTR Dragging = false)
 {
   HCURSOR hCur = Dragging ? NULL : LoadCursor(NULL, IDC_CROSS);
@@ -159,35 +242,52 @@ static void ShowWindowInfo(HWND hDlg, HWND hWnd)
   SetDlgItemText(hDlg, IDC_WNDSTYLE, buf);
 
   RECT rw, rc;
-  GetWindowRect(hWnd, &rw), GetClientRect(hWnd, &rc);
-  wsprintf(buf, _T("%dx%d..%dx%d \x2248 %dx%d (%dx%d)"), rw.left, rw.top, rw.right, rw.bottom, rw.right - rw.left, rw.bottom - rw.top, rc.right - rc.left, rc.bottom - rc.top); // '\x2245' is not present on XP
-  SetDlgItemText(hDlg, IDC_WNDSIZE, hWnd ? buf : NULL);
+  GetLogicalWindowRect(hWnd, rw, hDlg);
+  wsprintf(buf, _T("%dx%d..%dx%d \x2248 %dx%d"), rw.left, rw.top, rw.right, rw.bottom, rw.right - rw.left, rw.bottom - rw.top); // '\x2245' is not present on XP
+  SetDlgItemText(hDlg, IDC_WNDLOGISIZE, hWnd ? buf : NULL);
+
+  GetPhysicalWindowRect(hWnd, rw, hDlg);
+  GetPhysicalClientRect(hWnd, rc, hDlg);
+  wsprintf(buf, _T("%dx%d..%dx%d \x2248 %dx%d (%dx%d)"), rw.left, rw.top, rw.right, rw.bottom, rw.right - rw.left, rw.bottom - rw.top, rc.right - rc.left, rc.bottom - rc.top);
+  SetDlgItemText(hDlg, IDC_WNDPHYSSIZE, hWnd ? buf : NULL);
 
   *buf = _T('\0');
   if (IsWindowUnicode(hWnd)) lstrcat(buf, _T("Unicode"));
   if (IsWindowVisible(hWnd)) lstrcat(*buf ? lstrcat(buf, _T(", ")) : buf, _T("Visible")); // IsWindowVisible is not exactly the same as WS_VISIBLE
   if (!(style & WS_DISABLED)) lstrcat(*buf ? lstrcat(buf, _T(", ")) : buf, _T("Enabled"));
+  if (GetWindow(hWnd, GW_OWNER)) lstrcat(*buf ? lstrcat(buf, _T(", ")) : buf, _T("Owned"));
   if (IsHung(hWnd)) lstrcat(*buf ? lstrcat(buf, _T(", ")) : buf, _T("Hung"));
   SetDlgItemText(hDlg, IDC_WNDINFO, hWnd ? buf : NULL);
 
-  UINT dpi = DPI::GetDpiForWindow(hWnd);
-  wsprintf(buf, dpi ? _T("%u") : _T("?"), dpi);
+  UINT dpi = DPI::GetDpiForWindow(hWnd), mondpi = DPI::GetDpiForMonitor(hWnd);
+#ifndef _M_ARM64 // Not i386, AMD64 nor ARM(32-bit)
+  if (!dpi)
+  {
+    OSVERSIONINFO osv;
+    GetVersionEx((osv.dwOSVersionInfoSize = sizeof(osv), &osv));
+    if (MAKELONG(osv.dwMinorVersion, osv.dwMajorVersion) < MAKELONG(3, 6))
+      dpi = mondpi; // <= 8.0 has the same DPI on all monitors (blogs.windows.com/windowsexperience/2013/07/15/windows-8-1-dpi-scaling-enhancements/)
+  }
+#endif
+  UINT cch = wsprintf(buf, dpi ? _T("%u") : _T("?"), dpi);
+  if ((DpiAwarePerMonitor() || dpi) && dpi != mondpi) wsprintf(buf + cch, _T(" (on %u)"), mondpi); // Don't display on >= 8.1 && < 10FU1607 (because we are not PMv1). GetDpiForWindow will also fail on those systems.
   SetDlgItemText(hDlg, IDC_WNDDPI, hWnd ? buf : NULL);
 }
 
 static INT_PTR CALLBACK SpyDlgProc(HWND hDlg, UINT Msg, WPARAM WParam, LPARAM LParam)
 {
+  enum { TID_OUTLINE = 1 };
   DIALOGDATA*pDD = DIALOGDATA::Get(hDlg);
   switch(Msg)
   {
   case WM_INITDIALOG:
     SetWindowLongPtr(hDlg, DWLP_USER, (LONG_PTR) (pDD = (DIALOGDATA*) LParam));
     CenterOnParent(hDlg);
-    // On >= 10.1703 we are PMv2 and Windows scales our dialog and child controls.
-    // On >= 10.1607 && < 10.1703 we are System aware but try to upgrade this thread to 
+    // On >= 10FU1703 we are PMv2 and Windows scales our dialog and child controls.
+    // On >= 10FU1607 && < 10FU1703 we are System aware but try to upgrade this thread to 
     // PMv1 to reduce compatibility handling in other USER32 functions. We don't want 
-    // the dialog HWND to be PMv1 because we are not going to reposition our controls.
-    // On < 10.1607 we only have the process awareness (not ideal).
+    // the dialog HWND to be PMv1 because we are not going to manually reposition our controls.
+    // On < 10FU1607 we only have the process awareness (not ideal).
     if (pDD->DialogAwarenessContext > DPI::ac_pm2) // Is the dialog AC < PMv2? Note: The canonical AC numbers are negative.
       DPI::SetThreadDpiAwarenessContext(DPI::ac_pm1);
     SendMessage(hDlg, WM_CAPTURECHANGED, 0, 0);
@@ -225,12 +325,33 @@ static INT_PTR CALLBACK SpyDlgProc(HWND hDlg, UINT Msg, WPARAM WParam, LPARAM LP
     }
     break;
   case WM_LBUTTONUP:
+    if (pDD->Dragging && pDD->hWndTarget)
+    {
+      if (!pDD->hWndOutline)
+      {
+        pDD->hWndOutline = CreateWindowEx(WS_EX_TOOLWINDOW|WS_EX_TOPMOST, WC_STATIC, NULL, WS_POPUP|WS_DISABLED|SS_BLACKRECT, 0, 0, 0, 0, hDlg, 0, 0, 0);
+        SetWindowLongPtr(pDD->hWndOutline, GWLP_USERDATA, SetWindowLongPtr(pDD->hWndOutline, GWLP_WNDPROC, (LONG_PTR) OutlineWindowProc));
+      }
+      SetWindowPos(pDD->hWndOutline, HWND_BOTTOM, -32767, -32767, 1, 1, SWP_SHOWWINDOW|SWP_NOCOPYBITS|SWP_NOACTIVATE|SWP_NOOWNERZORDER); // MSDN says LogicalToPhysicalPoint requires a visible window
+      RECT r;
+      GetPhysicalWindowRect(pDD->hWndTarget, r, hDlg), PhysicalToLogical(pDD->hWndOutline, r, hDlg);
+      if (GetAncestor(pDD->hWndTarget, GA_ROOT) != hDlg)
+        SetWindowPos(pDD->hWndOutline, HWND_TOPMOST, r.left, r.top, r.right - r.left, r.bottom - r.top, SWP_SHOWWINDOW|SWP_NOCOPYBITS|SWP_NOACTIVATE|SWP_NOOWNERZORDER);
+      SetTimer(hDlg, TID_OUTLINE, 2 * 1000, NULL);
+    }
     ReleaseCapture();
     break;
   case WM_CAPTURECHANGED:
     SetFocus(GetDlgItem(hDlg, IDC_SPYDRAG));
     pDD->Dragging = 0;
     SetDragSourceImage(hDlg, FALSE);
+    break;
+  case WM_TIMER:
+    if (WParam == TID_OUTLINE)
+    {
+      KillTimer(hDlg, WParam);
+      ShowWindow(pDD->hWndOutline, SW_HIDE);
+    }
     break;
   }
   return FALSE;
@@ -245,7 +366,7 @@ struct ScopedThreadDpiAwarenessContext { // Note: Assumes InitializeDpiApi() has
   };
   ScopedThreadDpiAwarenessContext(List ACList) : m_OrgAC(0)
   {
-    for (UINT s = 4, list = ACList.GetBits(); (m_AC = -(int)s); --s)
+    for (UINT s = DPI::ac_count, list = ACList.GetBits(); (m_AC = -(int)s); --s)
       if ((1 << s) & list)
         if ((m_OrgAC = DPI::SetThreadDpiAwarenessContext((INT_PTR) m_AC)))
           break;
