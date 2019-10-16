@@ -79,9 +79,10 @@
 #define IDC_WNDCLASS                    223
 #define IDC_WNDUSERDATA                 224
 #define IDC_WNDSTYLE                    225
-#define IDC_WNDSIZE                     226
-#define IDC_WNDINFO                     227
-#define IDC_WNDDPI                      228
+#define IDC_WNDLOGISIZE                 226
+#define IDC_WNDPHYSSIZE                 227
+#define IDC_WNDINFO                     229
+#define IDC_WNDDPI                      230
 
 #define IDM_MRU_FILE                    6000
 #define IDM_CMDBASE                     500

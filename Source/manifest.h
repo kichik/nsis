@@ -27,7 +27,7 @@ namespace manifest
   enum flags
   {
     disablewindowfiltering = 0x01, // Win8+ (Allow EnumWindows() to return Windows 8 immersive apps)
-    gdiscaling = 0x02, // Win10FU1703+
+    gdiscaling = 0x02, // Win10FU1703+ blogs.windows.com/windowsdeveloper/2017/05/19/improving-high-dpi-experience-gdi-based-desktop-apps/
     flags_default = 0
   };
 

@@ -106,11 +106,13 @@ inline HFONT CreateFontPt(HWND hWndDPI, int Height, WORD Weight, BYTE PitchAndFa
 {
   return CreateFont((INT_PTR) hWndDPI, CFF_DPIFROMHWND|CFF_DPIPT, Height, Weight, PitchAndFamily, CharSet, Face);
 }
+BOOL FillRectColor(HDC hDC, const RECT &Rect, COLORREF Color);
 BOOL DrawHorzGradient(HDC hDC, LONG l, LONG t, LONG r, LONG b, COLORREF c1, COLORREF c2);
 inline long RectW(const RECT&r) { return r.right - r.left; }
 inline long RectH(const RECT&r) { return r.bottom - r.top; }
 long DlgUnitToPixelX(HWND hDlg, long x);
 long DlgUnitToPixelY(HWND hDlg, long y);
+UINT DpiGetForMonitor(HWND hWnd);
 UINT DpiGetForWindow(HWND hWnd);
 int DpiScaleY(HWND hWnd, int Val);
 

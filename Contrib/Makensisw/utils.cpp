@@ -209,7 +209,7 @@ void SetLogColor(enum LOGCOLOR lc)
   enum { em_seteditstyle = (WM_USER + 204), ses_extendbackcolor = 4 };
   HWND hEd = GetDlgItem(g_sdata.hwnd, IDC_LOGWIN);
   bool sysclr = lc >= LC_SYSCOLOR || !ReadRegSettingDW(REGCOLORIZE, true);
-  COLORREF clrs[] = { RGB(0, 50, 0), RGB(210, 255, 210), RGB(50, 30, 0), RGB(255, 220, 190), RGB(50, 0, 0), RGB(255, 210, 210) };
+  static const COLORREF clrs[] = { RGB(0, 50, 0), RGB(210, 255, 210), RGB(50, 30, 0), RGB(255, 220, 190), RGB(50, 0, 0), RGB(255, 210, 210) };
   CHARFORMAT cf;
   cf.cbSize = sizeof(cf), cf.dwMask = CFM_COLOR;
   cf.dwEffects = sysclr ? CFE_AUTOCOLOR : 0;
@@ -644,8 +644,8 @@ void FreeSpawn(PROCESS_INFORMATION *pPI, HANDLE hRd, HANDLE hWr) {
   CloseHandle(hWr);
 }
 BOOL InitSpawn(STARTUPINFO &si, HANDLE &hRd, HANDLE &hWr) {
-  OSVERSIONINFO osv = {sizeof(osv)};
-  GetVersionEx(&osv);
+  OSVERSIONINFO osv;
+  GetVersionEx((osv.dwOSVersionInfoSize = sizeof(osv), &osv));
   const bool winnt = VER_PLATFORM_WIN32_NT == osv.dwPlatformId;
 
   memset(&si, 0, sizeof(STARTUPINFO));
@@ -1063,6 +1063,7 @@ HMENU FindSubMenu(HMENU hMenu, UINT uId)
 static UINT DpiGetClassicSystemDpiY() { HDC hDC = GetDC(NULL); UINT dpi = GetDeviceCaps(hDC, LOGPIXELSY); ReleaseDC(NULL, hDC); return dpi; }
 static HRESULT WINAPI DpiFallbackGetDpiForMonitor(HMONITOR hMon, int MDT, UINT*pX, UINT*pY) { return (*pX = *pY = DpiGetClassicSystemDpiY(), S_OK); }
 static UINT WINAPI DpiFallbackGetDpiForWindow(HWND hWnd) { return 0; }
+static HMONITOR WINAPI DpiFallbackMonitorFromWindow(HWND hWnd, DWORD Flags) { return NULL; }
 
 static UINT DpiNativeGetForMonitor(HMONITOR hMon)
 {
@@ -1071,9 +1072,20 @@ static UINT DpiNativeGetForMonitor(HMONITOR hMon)
   UINT x, y, mdt_effective_dpi = 0;
   return SUCCEEDED(f(hMon, mdt_effective_dpi, &x, &y)) ? y : 0; 
 }
-static UINT DpiGetForMonitor(HWND hWnd)
+UINT DpiGetForMonitor(HWND hWnd)
 {
-  HMONITOR hMon = MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST);
+  HMONITOR(WINAPI*monitorfromwindow)(HWND, DWORD);
+  if (SupportsWNT4() || SupportsW95())
+  {
+    static HMONITOR(WINAPI*g)(HWND, DWORD);
+    if (!g && !((FARPROC&)g = GetSysProcAddr("USER32", "MonitorFromWindow"))) g = DpiFallbackMonitorFromWindow;
+    monitorfromwindow = g;
+  }
+  else
+  {
+    monitorfromwindow = MonitorFromWindow;
+  }
+  HMONITOR hMon = monitorfromwindow(hWnd, MONITOR_DEFAULTTONEAREST);
   return hMon ? DpiNativeGetForMonitor(hMon) : (UINT)(UINT_PTR) hMon;
 }
 
@@ -1106,6 +1118,13 @@ HFONT CreateFontHelper(INT_PTR Data, int Height, DWORD p1, LPCTSTR Face)
   return CreateFont(Height, 0, 0, 0, w, FALSE, FALSE, FALSE, cs, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, paf, Face);
 }
 
+BOOL FillRectColor(HDC hDC, const RECT &Rect, COLORREF Color)
+{
+  COLORREF orgclr = SetBkColor(hDC, Color);
+  ExtTextOut(hDC, 0, 0, ETO_OPAQUE, &Rect, _T(""), 0, NULL);
+  return TRUE|SetBkColor(hDC, orgclr);
+}
+
 static BOOL DrawHorzGradient(HDC hDC, const RECT&rect, COLOR16 r1, COLOR16 g1, COLOR16 b1, COLOR16 r2, COLOR16 g2, COLOR16 b2)
 {
   TRIVERTEX v[2] = { {rect.left, rect.top, r1, g1, b1, 0xffff}, {rect.right, rect.bottom, r2, g2, b2, 0xffff} };
@@ -1115,9 +1134,7 @@ static BOOL DrawHorzGradient(HDC hDC, const RECT&rect, COLOR16 r1, COLOR16 g1, C
   {
     if (!((FARPROC&)gf = GetSysProcAddr("MSIMG32", "GradientFill")))
     {
-      COLORREF orgclr = SetBkColor(hDC, RGB((((UINT)r1+r2)/2)>>8, (((UINT)g1+g2)/2)>>8, (((UINT)b1+b2)/2)>>8));
-      ExtTextOut(hDC, rect.left, rect.top, ETO_OPAQUE, &rect, _T(""), 0, NULL); // TODO: Actually try to draw a gradient
-      return TRUE|SetBkColor(hDC, orgclr);
+      return FillRectColor(hDC, rect, RGB((((UINT)r1+r2)/2)>>8, (((UINT)g1+g2)/2)>>8, (((UINT)b1+b2)/2)>>8)); // TODO: Actually try to draw a gradient
     }
   }
   else
