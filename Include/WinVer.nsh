@@ -20,6 +20,7 @@
 ; AtMostWin<version> checks if the installer is running on Windows version at most as specified.
 ; AtLeastBuild <number> checks if the installer is running on a Windows version with a minimum build number.
 ; AtMostBuild <number> checks if the installer is running on a Windows version with a maximum build number.
+; AtLeastWaaS <name> and AtMostWaaS <name> checks Windows 10 "friendly names" against the build number.
 ;
 ; <version> can be replaced with the following values:
 ;
@@ -531,14 +532,16 @@
 !macroend
 
 !macro _WinVer_WaaS op id _t _f
-  !insertmacro WinVer_WaaS "${id}" 10240 1507 "Threshold" "RTM"
+  !insertmacro WinVer_WaaS "${id}" 10240 1507 "Threshold"   "RTM"
   !insertmacro WinVer_WaaS "${id}" 10586 1511 "Threshold 2" "November Update"
-  !insertmacro WinVer_WaaS "${id}" 14393 1607 "Redstone" "Anniversary Update"
-  !insertmacro WinVer_WaaS "${id}" 15063 1703 "Redstone 2" "Creators Update"
-  !insertmacro WinVer_WaaS "${id}" 16299 1709 "Redstone 3" "Fall Creators Update"
-  !insertmacro WinVer_WaaS "${id}" 17134 1803 "Redstone 4" "April 2018 Update"
-  !insertmacro WinVer_WaaS "${id}" 17763 1809 "Redstone 5" "October 2018 Update"
-  ;insertmacro WinVer_WaaS "${id}" ????? 1903 "19H1" "?"
+  !insertmacro WinVer_WaaS "${id}" 14393 1607 "Redstone"    "Anniversary Update"
+  !insertmacro WinVer_WaaS "${id}" 15063 1703 "Redstone 2"  "Creators Update"
+  !insertmacro WinVer_WaaS "${id}" 16299 1709 "Redstone 3"  "Fall Creators Update"
+  !insertmacro WinVer_WaaS "${id}" 17134 1803 "Redstone 4"  "April 2018 Update"
+  !insertmacro WinVer_WaaS "${id}" 17763 1809 "Redstone 5"  "October 2018 Update"
+  !insertmacro WinVer_WaaS "${id}" 18362 1903 "19H1"        "May 2019 Update"
+  !insertmacro WinVer_WaaS "${id}" 18363 1909 "19H2"        "November 2019 Update"
+  ;insertmacro WinVer_WaaS "${id}" ????? 20?? "20H1"        "????"
   !ifmacrodef WinVerExternal_WaaS_MapToBuild
     !insertmacro WinVerExternal_WaaS_MapToBuild ${op} "${id}" WinVer_WaaS_Build
   !endif
