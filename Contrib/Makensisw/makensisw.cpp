@@ -581,6 +581,9 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
     case WM_COMMAND:
     {
       switch (LOWORD(wParam)) {
+        case IDM_UI_SWITCHSECTION: //devblogs.microsoft.com/oldnewthing/20191022-00/?p=103016
+          SetDialogFocus(hwndDlg, g_toolbar.hwnd); // Toolbar does not have WS_TABSTOP and we have no other "UI areas" to switch to so just go there
+          break;
         case IDM_BROWSESCR: {
           if (g_sdata.input_script) {
             TCHAR str[MAX_PATH],*str2;
@@ -740,6 +743,7 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
         }
         case IDM_FIND:
         {
+          bool reuseWindow = true;
           if (!g_find.uFindReplaceMsg) g_find.uFindReplaceMsg = RegisterWindowMessage(FINDMSGSTRING);
           memset(&g_find.fr, 0, sizeof(FINDREPLACE));
           g_find.fr.lStructSize = sizeof(FINDREPLACE);
@@ -747,7 +751,8 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
           g_find.fr.Flags = FR_NOUPDOWN;
           g_find.fr.lpstrFindWhat = g_findbuf;
           g_find.fr.wFindWhatLen = COUNTOF(g_findbuf);
-          g_find.hwndFind = FindText(&g_find.fr);
+          if (!reuseWindow || !SetForegroundWindow(g_find.hwndFind))
+            g_find.hwndFind = FindText(&g_find.fr);
           return TRUE;
         }
         default:
@@ -764,7 +769,7 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
       }
     }
   }
-  if (g_find.uFindReplaceMsg && msg == g_find.uFindReplaceMsg) {
+  if (msg == g_find.uFindReplaceMsg && msg) {
     LPFINDREPLACE lpfr = (LPFINDREPLACE)lParam;
     if (lpfr->Flags & FR_FINDNEXT) {
       WPARAM flags = FR_DOWN;
