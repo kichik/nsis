@@ -517,7 +517,7 @@ int CEXEBuild::SetLangString(const TCHAR *name, LANGID lang, const TCHAR *str)
 // @return If the id is invalid or the string is not valid, it will return a
 // PS_ERROR.  If this function call is overwriting a set user string, this
 // will return a PS_WARNING.
-int CEXEBuild::SetInnerString(int id, TCHAR *str) {
+int CEXEBuild::SetInnerString(int id, const TCHAR *str) {
   if ((unsigned int)id >= NLF_STRINGS || !str) return PS_ERROR;
 
   int ret = PS_OK;

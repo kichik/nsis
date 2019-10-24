@@ -880,6 +880,16 @@ bool IsWindowsPathRelative(const TCHAR *p)
   return PathGetDosDriveNumber(p) < 0;
 }
 
+tstring replace_all(const TCHAR *str, const TCHAR *find, const TCHAR *repl)
+{
+  tstring out = str;
+  for (size_t cchF = _tcslen(find), cchR = _tcslen(repl), i = 0; ; i += cchR)
+    if ((i = out.find(find, i)) == tstring::npos)
+      return out;
+    else
+      out.replace(i, cchF, repl);
+}
+
 struct ToLower
 {
    TCHAR operator() (TCHAR c) const { return _totlower(c); }
