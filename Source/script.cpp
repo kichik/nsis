@@ -1279,7 +1279,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       {
         if (SetInnerString(NLF_NAME,line.gettoken_str(1)) == PS_WARNING)
           warning_fl(DW_INNERSTRING_MULTISETWASTE, _T("%") NPRIs _T(": specified multiple times, wasting space"),line.gettoken_str(0));
-        SetInnerString(NLF_NAME_DA,line.gettoken_str(2));
+        tstring da;
+        const TCHAR *normstr = line.gettoken_str(1), *dastr = line.gettoken_str(2);
+        if (!*dastr && _tcschr(normstr,_T('&'))) dastr = (da = replace_all(normstr,_T("&"),_T("&&"))).c_str();
+        SetInnerString(NLF_NAME_DA,dastr);
         SCRIPT_MSG(_T("Name: \"%") NPRIs _T("\""),line.gettoken_str(1));
         if (*line.gettoken_str(2))
           SCRIPT_MSG(_T(" \"%") NPRIs _T("\""),line.gettoken_str(2));

@@ -508,7 +508,7 @@ class CEXEBuild {
      * a PS_ERROR.  If this function call is overwriting a set user string,
      * this will return a PS_WARNING.
      */
-    int SetInnerString(int id, TCHAR *str);
+    int SetInnerString(int id, const TCHAR *str);
 
     int GenerateLangTable(LanguageTable *lt, int num_lang_tables);
     int GenerateLangTables();
