@@ -4025,7 +4025,7 @@ int CEXEBuild::run_postbuild_cmds(const postbuild_cmd *cmds, const TCHAR *templa
   {
     const TCHAR *cmdstr = cmd->cmd, *searchstart = cmdstr;
     TCHAR *arg, *cmdstrbuf = NULL, *tmpbuf;
-    for (; arg = _tcsstr(const_cast<TCHAR*>(searchstart), _T("%1"));) // While found, replace %1 with templatearg_pc1
+    for (; (arg = _tcsstr(const_cast<TCHAR*>(searchstart), _T("%1")));) // While found, replace %1 with templatearg_pc1
     {
       const size_t cchtpc1 = _tcslen(templatearg_pc1);
       tmpbuf = (TCHAR*) malloc((_tcslen(cmdstr) + cchtpc1 + !0) * sizeof(TCHAR));

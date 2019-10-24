@@ -308,6 +308,10 @@ params:
     SIZE_T cbSrcTot = sizeof(bufSrc), cbSrc = 0, cbSrcFree;
     TCHAR *bufOutput = 0, *pNewAlloc, *pD;
     SIZE_T cchAlloc, cbAlloc, cchFree;
+#ifndef _MSC_VER // Avoid GCC "may be used uninitialized in this function" warnings
+    pD = NULL;
+    cchAlloc = 0;
+#endif
 
     pi.hProcess = pi.hThread = NULL;
     codepage = bOEM ? CP_OEMCP : CP_ACP;
@@ -424,7 +428,7 @@ parseLines:
             if (isMb && cbSrc < ++cbSrcChar) {
               goto readMore;
             }
-            cchDstChar = MultiByteToWideChar(codepage, 0, pSrc, cbSrcChar, (WCHAR*) bufCh, 2);
+            cchDstChar = MultiByteToWideChar(codepage, 0, (CHAR*)pSrc, cbSrcChar, (WCHAR*) bufCh, 2);
           }
           else { // DBCS --> DBCS:
             bufCh[0] = ((CHAR*)pSrc)[0], cchDstChar = 1; // Note: OEM codepage will be converted by LogMessage
