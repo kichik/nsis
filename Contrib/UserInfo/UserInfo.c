@@ -23,7 +23,10 @@ void __declspec(dllexport) GetName(HWND hwndParent, int string_size,
     stack_t *th;
     if (!g_stacktop) return;
     th = (stack_t*) GlobalAlloc(GPTR, sizeof(stack_t) + g_stringsize*sizeof(TCHAR));
-    GetUserName(th->text, &dwStringSize);
+    if (!GetUserName(th->text, &dwStringSize)) // Fails with ERROR_NOT_LOGGED_ON on Win9x if you cancel the logon dialog.
+    {
+      *th->text = _T('\0');
+    }
     th->next = *g_stacktop;
     *g_stacktop = th;
   }
