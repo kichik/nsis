@@ -71,22 +71,30 @@ To access the section index, curly brackets must be used and the code must be lo
 
 This command closes the current open section.
 
+\S2{ssectioninsttype} SectionInstType
+
+\c insttype_index [insttype_index [...]] [RO]
+
+This command specifies which install types (see \R{ainsttype}{InstType}) the current section defaults to the enabled state in. Multiple \cw{SectionInstType} commands can be specified (they are combined). If you specify RO as a parameter, then the section will be read-only, meaning the user won't be able to change its state.
+
+\c InstType "Full" IT_FULL
+\c InstType "Minimal" IT_MIN
+\c
+\c Section "Help"
+\c SectionInstType ${IT_FULL} ${IT_MIN}
+\c SectionEnd
+\c
+\c Section "Bonus content"
+\c SectionInstType ${IT_FULL}
+\c SectionEnd
+
 \S2{ssectionin} SectionIn
 
-\c insttype_index [insttype_index] [RO]
+\c insttype_index [insttype_index [...]] [RO]
 
-This command specifies which install types (see \R{ainsttype}{InstType}) the current section defaults to the enabled state in. Multiple \R{ssectionin}{SectionIn} commands can be specified (they are combined). If you specify RO as a parameter, then the section will be read-only, meaning the user won't be able to change its state. The first install type defined using \R{ainsttype}{InstType} is indexed 1, the next 2 and so on.
+Works like \cw{SectionInstType} except that the first install type defined using \R{ainsttype}{InstType} is indexed 1, the next 2 and so on.
 
-\c InstType "full"
-\c InstType "minimal"
-\c
-\c Section "a section"
-\c SectionIn 1 2
-\c SectionEnd
-\c
-\c Section "another section"
-\c SectionIn 1
-\c SectionEnd
+\# DEPRECATED 
 
 \S2{ssectiongroup} SectionGroup
 

@@ -199,7 +199,7 @@ int LineParser::gettoken_binstrdata(int token, char*buffer, int bufcap) const
 TCHAR* LineParser::gettoken_str(int token) const
 {
   token+=m_eat;
-  if (token < 0 || token >= m_nt) return (TCHAR*) _T("");
+  if (token < 0 || token >= m_nt) return const_cast<TCHAR*>(_T(""));
   return m_tokens[token];
 }
 

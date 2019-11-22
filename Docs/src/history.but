@@ -34,6 +34,8 @@ ANSI targets are deprecated, consider moving to Unicode.
 
 \b StrFunc.nsh now supports a "using" idiom to help with forward-declaration of functions (\W{http://sf.net/p/nsis/bugs/1229}{bug #1229})
 
+\b Added \R{ssectioninsttype}{SectionInstType}
+
 \b Zero uninitialized data in icon group (\W{http://sf.net/p/nsis/bugs/1230}{bug #1230})
 
 \b Automatically doubles ampersands in the name attribute
