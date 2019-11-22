@@ -1462,12 +1462,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
         else
         {
-          TCHAR *itname = line.gettoken_str(1);
-
-          if (!_tcsnicmp(itname, _T("un."), 3)) {
-            set_uninstall_mode(1);
-            itname += 3;
-          }
+          const TCHAR *itname = line.gettoken_str(1), *defname = line.gettoken_str(2), setdef = *defname, *eqstr = setdef ? _T("=") : _T("");
+          if (!_tcsnicmp(itname, _T("un."), 3)) set_uninstall_mode(1), itname += 3;
 
           for (x = 0; x < NSIS_MAX_INST_TYPES && cur_header->install_types[x]; x++);
           if (x == NSIS_MAX_INST_TYPES)
@@ -1478,7 +1474,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           else
           {
             cur_header->install_types[x] = add_string(itname);
-            SCRIPT_MSG(_T("InstType: %") NPRIs _T("%d=\"%") NPRIs _T("\"\n"), uninstall_mode ? _T("(uninstall) ") : _T(""), x+1, itname);
+            if (setdef) definedlist.set_si32(defname, x);
+            SCRIPT_MSG(_T("InstType: %") NPRIs _T("\"%") NPRIs _T("\" (%") NPRIs _T("%") NPRIs _T("%d)\n"), uninstall_mode ? _T("(uninstall) ") : _T(""), itname, defname, eqstr, x);
           }
 
           set_uninstall_mode(0);
@@ -2674,12 +2671,15 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_SECTIONEND:
       SCRIPT_MSG(_T("SectionEnd\n"));
     return section_end();
-    case TOK_SECTIONIN:
+    case TOK_SECTIONINSTTYPE: // 0 based
+    case TOK_SECTIONIN: // Legacy 1 based instruction
       {
-        SCRIPT_MSG(_T("SectionIn: "));
-        for (int wt = 1; wt < line.getnumtokens(); wt++)
+        int zerobased = which_token == TOK_SECTIONINSTTYPE, itid, succ;
+        const TCHAR *cmdname = get_commandtoken_name(which_token);
+        SCRIPT_MSG(_T("%") NPRIs _T(": "), cmdname);
+        for (int ti = 0; ++ti < line.getnumtokens();)
         {
-          TCHAR *p=line.gettoken_str(wt);
+          const TCHAR *p = line.gettoken_str(ti);
           if (!_tcsicmp(p, _T("RO")))
           {
             if (section_add_flags(SF_RO) != PS_OK) return PS_ERROR;
@@ -2687,22 +2687,17 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           }
           else
           {
-            int x=_ttoi(p)-1;
-            if (x >= 0 && x < NSIS_MAX_INST_TYPES)
+            itid = line.gettoken_int(ti, &succ) - (zerobased ? 0 : 1);
+            if (succ && itid >= 0 && itid < NSIS_MAX_INST_TYPES)
             {
-              if (section_add_install_type(1<<x) != PS_OK) return PS_ERROR;
-              SCRIPT_MSG(_T("[%d] "),x);
-            }
-            else if (x < 0)
-            {
-              PRINTHELP()
+              if (section_add_install_type(1<<itid) != PS_OK) return PS_ERROR;
+              SCRIPT_MSG(_T("[%d] "), itid);
             }
             else
             {
-              ERROR_MSG(_T("Error: SectionIn section %d out of range 1-%d\n"),x+1,NSIS_MAX_INST_TYPES);
+              ERROR_MSG(_T("Error: %") NPRIs _T(" %") NPRIs _T(" out of range %d..%d\n"), cmdname, p, 1 - zerobased, NSIS_MAX_INST_TYPES - zerobased);
               return PS_ERROR;
             }
-            p++;
           }
         }
         SCRIPT_MSG(_T("\n"));
