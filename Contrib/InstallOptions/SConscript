@@ -41,6 +41,6 @@ Import('BuildPlugin env PerformPluginExtrasDistOperationOnce')
 
 unicodetarget = 'UNICODE' in env['CPPDEFINES']
 
-BuildPlugin(target, files, libs, examples, docs, res = resources)
+BuildPlugin(target, files, libs, examples, docs, res = resources, cppused = True)
 if PerformPluginExtrasDistOperationOnce(env, unicodetarget):
 	env.DistributeInclude(includes)
