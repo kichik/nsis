@@ -51,8 +51,13 @@ WTypes.h
 /**************************************************
 OAIdl.h
 **************************************************/
-!define /ifndef SYSSIZEOF_VARIANT 16
-!define /ifndef SYSSTRUCT_VARIANT (&i2,&i6,&i8)
+!if "${NSIS_PTR_SIZE}" > 4
+!define SYSSIZEOF_VARIANT 24
+!define SYSSTRUCT_VARIANT (&i2,&i6,&i8,&i8)
+!else
+!define SYSSIZEOF_VARIANT 16
+!define SYSSTRUCT_VARIANT (&i2,&i6,&i8)
+!endif
 
 
 /**************************************************
