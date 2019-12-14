@@ -645,15 +645,11 @@ SendMessage ${CONTROL} ${CB_INSERTSTRING} -1 `STR:${STRING}`
 
 
 !define NSD_CB_GetItemData `!insertmacro __NSD_CB_GetItemData `
-!macro NSD_CB_GetItemData CONTROL INDEX VAR
+!macro __NSD_CB_GetItemData CONTROL INDEX VAR
 SendMessage ${CONTROL} ${CB_GETITEMDATA} ${INDEX} 0 ${VAR}
 !macroend
+!define NSD_CB_SetItemData `${__NSD_MkCtlCmd_WPLP} CB_SETITEMDATA ` ; Index Data
 
-
-!define NSD_CB_SetItemData `!insertmacro __NSD_CB_SetItemData `
-!macro NSD_CB_SetItemData CONTROL INDEX DATA
-SendMessage ${CONTROL} ${CB_SETITEMDATA} ${INDEX} ${DATA}
-!macroend
 
 !define NSD_CB_DelItem `${__NSD_MkCtlCmd_WP} CB_DELETESTRING 0 `
 !define NSD_CB_LimitText `${__NSD_MkCtlCmd_WP} CB_LIMITTEXT 0 `
@@ -749,15 +745,10 @@ SendMessage ${CONTROL} ${LB_INSERTSTRING} -1 `STR:${STRING}`
 
 
 !define NSD_LB_GetItemData `!insertmacro __NSD_LB_GetItemData `
-!macro NSD_LB_GetItemData CONTROL INDEX VAR
+!macro __NSD_LB_GetItemData CONTROL INDEX VAR
 SendMessage ${CONTROL} ${LB_GETITEMDATA} ${INDEX} 0 ${VAR}
 !macroend
-
-
-!define NSD_LB_SetItemData `!insertmacro __NSD_LB_SetItemData `
-!macro NSD_LB_SetItemData CONTROL INDEX DATA
-SendMessage ${CONTROL} ${LB_SETITEMDATA} ${INDEX} ${DATA}
-!macroend
+!define NSD_LB_SetItemData `${__NSD_MkCtlCmd_WPLP} LB_SETITEMDATA ` ; Index Data
 
 
 !define NSD_LB_FindStringPrefix `!insertmacro __NSD_LB_FindStringPrefix `
