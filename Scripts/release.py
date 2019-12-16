@@ -62,6 +62,8 @@ TODO
 """
 
 import os
+import os.path
+import shutil
 import sys
 import time
 import Image, ImageFont, ImageDraw
@@ -70,6 +72,10 @@ import time
 import pysvn
 
 ### read config
+
+if not os.path.isfile('release.cfg'):
+    print 'Unable to find release.cfg. Is this the right working directory?'
+    sys.exit(1)
 
 cfg = ConfigParser()
 cfg.read('release.cfg')
@@ -161,6 +167,12 @@ def Confirm():
 
 def StartLog():
 	open('release-%s.log' % VERSION, 'w').write('releasing version %s at %s\n\n' % (VERSION, time.ctime()))
+	
+def DeleteOldFolders():
+    for d in ['strlen_8192', 'log', 'insttest', 'insttestscons']:
+        if os.path.isdir(d):
+            log('Deleting %s' % d)
+            shutil.rmtree(d)
 
 def RunTests():
 	print 'running tests...'
@@ -445,6 +457,7 @@ def UpdateWiki():
 def ToDo():
 	print 'automatic phase done\n'
 	print """
+ * Make new release files the default download
  * Edit update.php
  * Post news item
  * http://en.wikipedia.org/w/index.php?title=Nullsoft_Scriptable_Install_System&action=edit
@@ -459,6 +472,7 @@ def CloseLog():
 
 Confirm()
 StartLog()
+DeleteOldFolders()
 RunTests()
 TestSubversionEOL()
 CreateMenuImage()
