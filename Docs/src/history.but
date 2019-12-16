@@ -2,7 +2,7 @@
 
 \H{v3.05} 3.05
 
-Released on ? ?th, 201?
+Released on December 15th, 2019
 
 \S1{v3.05-rl} Release Notes
 
@@ -18,7 +18,7 @@ ANSI targets are deprecated, consider moving to Unicode.
 
 \b Allow quoted library path in System::Call (\W{http://sf.net/p/nsis/bugs/546}{bug #546} and \W{http://sf.net/p/nsis/bugs/1225}{bug #1225})
 
-\b Improved nsExec Unicode and tab output parsing (\W{http://sf.net/p/nsis/bugs/1232}{bug #1232})
+\b Improved \L{../Docs/nsExec/nsExec.txt}{nsExec} Unicode and tab output parsing (\W{http://sf.net/p/nsis/bugs/1232}{bug #1232})
 
 \S2{} Minor Changes
 
@@ -26,22 +26,21 @@ ANSI targets are deprecated, consider moving to Unicode.
 
 \# Undocumented: \b Added ManifestMaxVersionTested
 
-\b %1 in !finalize command can be specified multiple times
+\b %1 in \R{finalize}{!finalize} command can be specified multiple times
 
 \b Fixed -O stderr stream issue (\W{http://sf.net/p/nsis/bugs/1221}{bug #1221})
 
-\b Fixed InstallLib .NSI space-in-path bug (\W{http://sf.net/p/nsis/bugs/1222}{bug #1222})
+\b Fixed \R{library_install}{InstallLib} .NSI space-in-path bug (\W{http://sf.net/p/nsis/bugs/1222}{bug #1222})
 
-\b StrFunc.nsh now supports a "using" idiom to help with forward-declaration of functions (\W{http://sf.net/p/nsis/bugs/1229}{bug #1229})
+\b \L{../Docs/StrFunc/StrFunc.txt}{StrFunc} now supports a "using" idiom to help with forward-declaration of functions (\W{http://sf.net/p/nsis/bugs/1229}{bug #1229})
 
 \b Added \R{ssectioninsttype}{SectionInstType}
 
 \b Zero uninitialized data in icon group (\W{http://sf.net/p/nsis/bugs/1230}{bug #1230})
 
-\b Automatically doubles ampersands in the name attribute
+\b Automatically doubles ampersands in the \R{aname}{Name} attribute
 
-\b Fixed nsDialogs CB/LB_Get/SetItemData macros (\W{http://sf.net/p/nsis/bugs/1238}{bug #1238})
-
+\b Fixed \L{../Docs/nsDialogs/Readme.html}{nsDialogs} CB/LB_Get/SetItemData macros (\W{http://sf.net/p/nsis/bugs/1238}{bug #1238})
 
 \S2{} Translations
 
@@ -191,7 +190,7 @@ Released on July 23rd, 2017
 
 \b Added support for MUI_UNCONFIRMPAGE_VARIABLE (\W{http://sf.net/p/nsis/feature-requests/511}{RFE #511}) and MUI_PAGE_CUSTOMFUNCTION_DESTROYED
 
-\b Unicode nsExec now supports the /OEM switch (\W{http://sf.net/p/nsis/bugs/1171}{bug #1171})
+\b Unicode \L{../Docs/nsExec/nsExec.txt}{nsExec} now supports the /OEM switch (\W{http://sf.net/p/nsis/bugs/1171}{bug #1171})
 
 \S2{} Translations
 
