@@ -21,10 +21,15 @@ env:
 - CFG_LOG=no
 deploy:
   provider: script
-  script: echo this is where we will deploy to SF
+  skip_cleanup: true
+  script: echo $DEPLOY_KEY | base64 -d > deploy_key && chmod 600 deploy_key && cat nsis-*.zip | ssh -i deploy_key kichik,nsis@shell.sourceforge.net /home/project-web/nsis/bin/nightly-deploy.sh
   on:
     branch: master
-    condition: "$CFG_LOG = no -a $TRAVIS_OS_NAME = linux"
+    repo: kichik/nsis
+    condition: "$CFG_LOG = no && $TRAVIS_OS_NAME = linux"
+after_deploy: rm -f deploy_key
+addons:
+  ssh_known_hosts: shell.sourceforge.net
 notifications:
   slack:
     secure: Q61wSM9pOKiRp3WDNinMkZd+HWp6BFe+TlZDKoJgZJstMIT48TtkAaVmqW2h4HXtNxP9HvD1vzXqWGqGMG8vIO6hlQO5Rm/ruVa/rfb1kxLfD/dv+g/63ZloF3QmKKK++xeYKVNmPRVi7aSFjpx1wa+eG4rYPf0frc5XSFDuhVQ=
