@@ -1,5 +1,11 @@
 \A{headers} Useful Headers
 
+\b \R{tut-logic}{LogicLib} - Evalute various logic statements with helper macros.
+
+\b \R{modernui}{Modern User Interface} - A MSI inspired interface.
+
+\b \L{../Docs/MultiUser/Readme.html}{Multi-User} - Install for a single user or for all users on the computer.
+
 
 \H{filefunc} File Functions Header
 
