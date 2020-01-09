@@ -13,6 +13,7 @@ cd /d "%~dp0"
 set BRANCH=
 for /f "usebackq delims=@ " %%f in (`git rev-parse --abbrev-ref HEAD`) do set BRANCH=%%f
 if "%BRANCH%" equ "" echo ERROR: Can't extract GIT branch name && exit /B 2
+if "%BRANCH%" equ "master" set BRANCH=negrutiu
 
 :: ----------------------------------------------------------------
 :PARAMETERS
