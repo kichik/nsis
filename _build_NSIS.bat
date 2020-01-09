@@ -129,7 +129,7 @@ for /f "usebackq tokens=3 delims=@ " %%f in (`git log -1 remotes/origin/master ^
 if "%VER_REVISION%" equ "0" echo. && set EXITCODE=3 && echo ERROR: Can't extract the last SVN revision number && goto :BUILD_END
 
 set VER_MAJOR=3
-set VER_MINOR=5
+set VER_MINOR=6
 set VER_BUILD=0
 
 for /f "usebackq" %%f in (`cscript.exe //nologo "%~dp0\DecToHex.vbs" %VER_MAJOR% 2`) do set VER_MAJOR_PACKED=%%f
