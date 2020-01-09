@@ -10,12 +10,12 @@ set ORIGINAL_PATH=%PATH%
 
 set CONFIG_ARCH=x86
 call :BUILD
-if %errorlevel% neq 0 pause & exit /B %errorlevel%
+if %errorlevel% neq 0 pause && exit /B %errorlevel%
 set PATH=%ORIGINAL_PATH%
 
 set CONFIG_ARCH=amd64
 call :BUILD
-if %errorlevel% neq 0 pause & exit /B %errorlevel%
+if %errorlevel% neq 0 pause && exit /B %errorlevel%
 set PATH=%ORIGINAL_PATH%
 
 :: Finish
@@ -25,7 +25,7 @@ exit /B 0
 
 :BUILD
 call "%~dp0\_config.bat"
-if %errorlevel% neq 0 echo Aborted. & pause & exit /B %errorlevel%
+if %errorlevel% neq 0 echo Aborted. && pause && exit /B %errorlevel%
 set PATH=%MINGW%\bin;%MSYS2%\usr\bin;%PATH%
 
 title zlib-mingw-%CONFIG_ARCH%...
