@@ -61,27 +61,27 @@ S&foglia...
 # ^ShowDetailsBtn
 Visualizza &dettagli
 # ^ClickNext
-Per proseguire, seleziona 'Avanti'.
+Per proseguire seleziona 'Avanti'.
 # ^ClickInstall
-Per avviare l'installazione, seleziona 'Installa'.
+Per avviare l'installazione seleziona 'Installa'.
 # ^ClickUninstall
-Per avviare la disinstallazione, seleziona 'Disinstalla'.
+Per avviare la disinstallazione seleziona 'Disinstalla'.
 # ^Name
 Nome
 # ^Completed
 Installazione completata
 # ^LicenseText
-Leggi la licenza prima di procedere con l'installazione di $(^NameDA). Se accetti le condizioni della licenza, seleziona 'Accetto'.
+Leggi la licenza prima di procedere con l'installazione di $(^NameDA).r\n\Se accetti le condizioni della licenza, seleziona 'Accetto'.
 # ^LicenseTextCB
-Leggi licenza prima di procedere con l'installazione di $(^NameDA). Se accetti tutte le condizioni della licenza, seleziona la casella sottostante. $_CLICK
+Leggi licenza prima di procedere con l'installazione di $(^NameDA).r\n\Se accetti tutte le condizioni della licenza, seleziona la casella sottostante. $_CLICK
 # ^LicesnseTextRB
-Leggi la licenza prima di procedere con l'installazione di $(^NameDA). Se accetti tutte le condizioni della licenza, seleziona la prima delle opzioni sottoindicate. $_CLICK
+Leggi la licenza prima di procedere con l'installazione di $(^NameDA).r\n\Se accetti tutte le condizioni della licenza, seleziona la prima delle opzioni sottoindicate. $_CLICK
 # ^UnLicenseText
-Leggi la licenza prima di procedere con la disinstallazione di $(^NameDA). Se accetti tutte le condizioni della licenza, seleziona 'Accetto'. $_CLICK
+Leggi la licenza prima di procedere con la disinstallazione di $(^NameDA).r\n\Se accetti tutte le condizioni della licenza, seleziona 'Accetto'. $_CLICK
 # ^UnLicenseTextCB
-Leggi la licenza prima di procedere con la disinstallazione di $(^NameDA). Se accetti tutte le condizioni della licenza, seleziona la casella sottostante. $_CLICK
+Leggi la licenza prima di procedere con la disinstallazione di $(^NameDA).r\n\Se accetti tutte le condizioni della licenza, seleziona la casella sottostante. $_CLICK
 # ^UnLicesnseTextRB
-Leggi la licenza prima di procedere con la disinstallazione di $(^NameDA). Se accetti tutte le condizioni della licenza, seleziona la prima delle opzioni sottoindicate. $_CLICK
+Leggi la licenza prima di procedere con la disinstallazione di $(^NameDA).r\n\Se accetti tutte le condizioni della licenza, seleziona la prima delle opzioni sottoindicate. $_CLICK
 # ^Custom
 Personalizzata
 # ^ComponentsText
@@ -91,7 +91,7 @@ Seleziona tipo installazione:
 # ^ComponentsSubText2_NoInstTypes
 Seleziona componenti da installare:
 # ^ComponentsSubText2
-Oppure, seleziona componenti opzionali da installare:
+Oppure seleziona componenti opzionali da installare:
 # ^UnComponentsText
 Seleziona componenti da disinstallare.
 # ^UnComponentsSubText1
@@ -153,7 +153,7 @@ Copia fallita
 # ^ErrorCreating
 "Errore nella creazione di: "
 # ^ErrorDecompressing
-Errore nella decompressione dei dati! Probabile programma di installazione corrotto.
+Errore nella decompressione dei dati!r\n\Probabile programma di installazione corrotto.
 # ^ErrorRegistering
 Errore nella registrazione della DLL
 # ^ExecShell
