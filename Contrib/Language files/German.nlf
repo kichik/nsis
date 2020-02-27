@@ -1,4 +1,4 @@
-﻿# Header, don't edit
+# Header, don't edit
 NLF v6
 # Language ID
 1031
@@ -9,7 +9,7 @@ NLF v6
 1252
 # RTL - anything else than RTL means LTR
 -
-# Translation by L.King, changes by R. Bisswanger, Tim Kosse, Frederik Schwarzer
+# Translation by L.King, changes by R. Bisswanger, Tim Kosse, Frederik Schwarzer & Sebastian Stange
 # ^Branding
 Nullsoft Install System %s
 # ^SetupCaption
@@ -19,7 +19,7 @@ Deinstallation von $(^Name)
 # ^LicenseSubCaption
 : Lizenzabkommen
 # ^ComponentsSubCaption
-: Installations-Optionen
+: Installationsoptionen
 # ^DirSubCaption
 : Zielverzeichnis
 # ^InstallingSubCaption
@@ -27,7 +27,7 @@ Deinstallation von $(^Name)
 # ^CompletedSubCaption
 : Fertig
 # ^UnComponentsSubCaption
-: Deinstallations-Optionen
+: Deinstallationsoptionen
 # ^UnDirSubCaption
 : Quellverzeichnis
 # ^ConfirmSubCaption
@@ -141,7 +141,7 @@ Kopieren fehlgeschlagen
 # ^CreateShortcut
 "Verknüpfung wird erstellt: "
 # ^CreatedUninstaller
-"Deinstallations-Programm wird erstellt: "
+"Deinstallationsprogramm wird erstellt: "
 # ^Delete
 "Datei wird gelöscht: "
 # ^DeleteOnReboot
@@ -151,7 +151,7 @@ Kopieren fehlgeschlagen
 # ^ErrorCreating
 "Fehler beim Erstellen: "
 # ^ErrorDecompressing
-Fehler beim Entpacken. Ist das Installations-Programm beschädigt?
+Fehler beim Entpacken. Ist das Installationsprogramm beschädigt?
 # ^ErrorRegistering
 Fehler beim Registrieren der DLL
 # ^ExecShell
@@ -163,7 +163,7 @@ Fehler beim Registrieren der DLL
 # ^ErrorWriting
 "Entpacken: Fehler beim Schreiben der Datei "
 # ^InvalidOpcode
-Beschädigtes Installations-Programm: ungültiger Befehlscode
+Beschädigtes Installationsprogramm: ungültiger Befehlscode
 # ^NoOLE
 "Kein OLE für: "
 # ^OutputFolder

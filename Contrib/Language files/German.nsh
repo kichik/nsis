@@ -1,15 +1,15 @@
-﻿;Language: German (1031)
-;By L.King, changes by K. Windszus & R. Bisswanger & M. Simmack & D. Weiß & Frederik Schwarzer
+;Language: German (1031)
+;By L.King, changes by K. Windszus, R. Bisswanger, M. Simmack, D. Weiß, Frederik Schwarzer & S. Stange
 
 !insertmacro LANGFILE "German" = "Deutsch" =
 
 !ifdef MUI_WELCOMEPAGE
-  ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Willkommen beim Installations-$\r$\nAssistenten für $(^NameDA)"
+  ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Willkommen zur Installation$\r$\nvon $(^NameDA)"
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Dieser Assistent wird Sie durch die Installation von $(^NameDA) begleiten.$\r$\n$\r$\nEs wird empfohlen, vor der Installation alle anderen Programme zu schließen, damit bestimmte Systemdateien ohne Neustart ersetzt werden können.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_UNWELCOMEPAGE
-  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "Willkommen beim Deinstallations-$\r$\nAssistenten für $(^NameDA)"
+  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "Willkommen zur Deinstallation$\r$\nvon $(^NameDA)"
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Dieser Assistent wird Sie durch die Deinstallation von $(^NameDA) begleiten.$\r$\n$\r$\nBitte beenden Sie $(^NameDA), bevor Sie mit der Deinstallation fortfahren.$\r$\n$\r$\n$_CLICK"
 !endif
 
@@ -82,7 +82,7 @@
 
 !ifdef MUI_FINISHPAGE
   ${LangFileString} MUI_TEXT_FINISH_INFO_TITLE "Die Installation von $(^NameDA) wird abgeschlossen"
-  ${LangFileString} MUI_TEXT_FINISH_INFO_TEXT "$(^NameDA) wurde auf Ihrem Computer installiert.$\r$\n$\r$\nKlicken Sie auf Fertigstellen, um den Installations-Assistenten zu schließen."
+  ${LangFileString} MUI_TEXT_FINISH_INFO_TEXT "$(^NameDA) wurde auf Ihrem Computer installiert.$\r$\n$\r$\nKlicken Sie auf Fertigstellen, um den Installationsassistenten zu schließen."
   ${LangFileString} MUI_TEXT_FINISH_INFO_REBOOT "Windows muss neu gestartet werden, um die Installation von $(^NameDA) zu vervollständigen. Möchten Sie Windows jetzt neu starten?"
 !endif
 
