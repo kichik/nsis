@@ -15,4 +15,5 @@ Import('BuildUtil')
 
 substart = BuildUtil(target, files, libs, cli = True, noinstall = True, nodeflib = True)
 
-env.DistributeBin(substart, names=['makensis.exe'], alias='install-compiler') # install as makensis
+if env['PLATFORM'] == 'win32':
+	env.DistributeBin(substart, names=['makensis.exe'], alias='install-compiler') # install as makensis
