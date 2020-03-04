@@ -1,4 +1,4 @@
-;Language: German (1031)
+﻿;Language: German (1031)
 ;By L.King, changes by K. Windszus, R. Bisswanger, M. Simmack, D. Weiß, Frederik Schwarzer & S. Stange
 
 !insertmacro LANGFILE "German" = "Deutsch" =
@@ -30,7 +30,7 @@
 !endif
 
 !ifdef MUI_LICENSEPAGE | MUI_UNLICENSEPAGE
-  ${LangFileString} MUI_INNERTEXT_LICENSE_TOP "Drücken Sie die Bild-Runter-Taste, um den Rest des Abkommens zu sehen."
+  ${LangFileString} MUI_INNERTEXT_LICENSE_TOP "Drücken Sie die BILD-AB-Taste, um den Rest des Abkommens zu lesen."
 !endif
 
 !ifdef MUI_COMPONENTSPAGE
@@ -46,9 +46,9 @@
 !ifdef MUI_COMPONENTSPAGE | MUI_UNCOMPONENTSPAGE
   ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Beschreibung"
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
-    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Bewegen Sie den Mauszeiger über eine Komponente, um ihre Beschreibung zu sehen."
+    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Bewegen Sie den Mauszeiger über eine Komponente, um die Beschreibung zu lesen."
   !else
-    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Selektieren Sie eine Komponente, um ihre Beschreibung zu sehen."
+    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Wählen Sie eine Komponente, um die Beschreibung zu lesen."
   !endif
 !endif
 

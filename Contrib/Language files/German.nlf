@@ -1,4 +1,4 @@
-# Header, don't edit
+﻿# Header, don't edit
 NLF v6
 # Language ID
 1031
@@ -83,21 +83,21 @@ Bitte lesen Sie das Lizenzabkommen, bevor Sie $(^NameDA) entfernen. Wenn Sie all
 # ^Custom
 Benutzerdefiniert
 # ^ComponentsText
-Wählen Sie die Komponenten aus, die Sie installieren möchten, und wählen Sie diejenigen ab, die Sie nicht installiert werden sollen. $_CLICK
+Wählen Sie die Komponenten, welche Sie installieren wollen. $_CLICK
 # ^ComponentsSubText1
-Installations-Typ bestimmen:
+Installationstyp bestimmen:
 # ^ComponentsSubText2_NoInstTypes
-Wählen Sie die Komponenten aus, die Sie installieren möchten:
+Wählen Sie die zu installierenden Komponenten:
 # ^ComponentsSubText2
-oder wählen Sie zusätzliche Komponenten aus, die Sie installieren möchten:
+oder wählen Sie zusätzliche zu installierende Komponenten:
 # ^UnComponentsText
-Wählen Sie die Komponenten aus, die Sie entfernen möchten, und wählen Sie diejenigen ab, die Sie nicht entfernt werden sollen. $_CLICK
+Wählen Sie die Komponenten, welche Sie entfernen wollen. $_CLICK
 # ^UnComponentsSubText1
-Deinstallations-Typ bestimmen:
+Deinstallationstyp bestimmen:
 # ^UnComponentsSubText2_NoInstTypes
-Wählen Sie die Komponenten aus, die Sie entfernen möchten:
+Wählen Sie die zu entfernenden Komponenten:
 # ^UnComponentsSubText2
-oder wählen Sie zusätzliche Komponenten aus, die Sie entfernen möchten:
+oder wählen Sie zusätzliche Komponenten, welche Sie entfernen möchten:
 # ^DirText
 $(^NameDA) wird in das unten angegebene Verzeichnis installiert. Falls Sie in ein anderes Verzeichnis installieren möchten, klicken Sie auf Durchsuchen und wählen Sie ein anderes Verzeichnis aus. $_CLICK
 # ^DirSubText
