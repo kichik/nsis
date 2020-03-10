@@ -14,9 +14,9 @@ Released on ? ?th, 2020
 
 \S2{} Minor Changes
 
-\b Added \R{ifshellvarcontextall} IfShellVarContextAll}
+\b Added \R{ifshellvarcontextall}{IfShellVarContextAll} and \R{ifrtllanguage}{IfRtlLanguage}
 
-\# Undocumented: \b Added GetShellVarContext | Documenting this would require documenting the all/current to number mapping
+\# Undocumented: \b Added GetShellVarContext, IfAltRegView and GetRegView | Documenting these would require documenting the parameter name to number mapping
 
 \H{v3.05} 3.05
 

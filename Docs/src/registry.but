@@ -221,11 +221,4 @@ Does not affect \R{ainstalldirregkey}{InstallDirRegKey}. Instead, the registry m
 \c   ReadRegStr $0 HKLM Software\Microsoft\Windows\CurrentVersion ProgramFilesDir
 \c   DetailPrint $0 # prints C:\Program Files
 \c ${EndIf}
-
-\c Function .onInit
-\c   ${If} ${RunningX64}
-\c     SetRegView 64
-\c     ReadRegStr $INSTDIR HKLM Software\NSIS ""
-\c     SetRegView Default
-\c   ${EndIf}
-\c FunctionEnd
+\c SetRegView Default

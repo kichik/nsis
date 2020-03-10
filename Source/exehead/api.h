@@ -42,15 +42,15 @@ typedef struct
 {
   int autoclose;          // SetAutoClose
   int all_user_var;       // SetShellVarContext: User context = 0, Machine context = 1
-  int exec_error;         // IfErrors
+  int exec_error;         // IfErrors/ClearErrors/SetErrors
   int abort;              // IfAbort
-  int exec_reboot;        // IfRebootFlag (NSIS_SUPPORT_REBOOT)
+  int exec_reboot;        // IfRebootFlag/SetRebootFlag (NSIS_SUPPORT_REBOOT)
   int reboot_called;      // NSIS_SUPPORT_REBOOT
   int XXX_cur_insttype;   // Deprecated
   int plugin_api_version; // Plug-in ABI. See NSISPIAPIVER_CURR (Note: used to be XXX_insttype_changed)
-  int silent;             // IfSilent (NSIS_CONFIG_SILENT_SUPPORT)
+  int silent;             // IfSilent/SetSilent (NSIS_CONFIG_SILENT_SUPPORT)
   int instdir_error;      // GetInstDirError
-  int rtl;                // 1 if $LANGUAGE is a RTL language
+  int rtl;                // IfRtlLanguage: 1 if $LANGUAGE is a RTL language
   int errlvl;             // SetErrorLevel
   int alter_reg_view;     // SetRegView: Default View = 0, Alternative View = (sizeof(void*) > 4 ? KEY_WOW64_32KEY : KEY_WOW64_64KEY)
   int status_update;      // SetDetailsPrint
