@@ -327,6 +327,7 @@ class CEXEBuild {
     int doParse(const TCHAR *str);
     int doCommand(int which_token, LineParser &line);
     TCHAR m_templinebuf[MAX_LINELENGTH]; // Buffer used by parseScript() & doCommand(), not recursion safe!
+    int add_flag_instruction_entry(int which_token, int opcode, LineParser &line, int offset, int data = 0);
 
     int do_add_file(const TCHAR *lgss, int attrib, int recurse, int *total_files, const TCHAR 
       *name_override=0, int generatecode=1, int *data_handle=0, 

@@ -335,6 +335,11 @@
   !macroend
   !define Silent `"" Silent ""`
 
+  !macro _ShellVarContextAll _a _b _t _f
+    IfShellVarContextAll `${_t}` `${_f}`
+  !macroend
+  !define ShellVarContextAll `"" ShellVarContextAll ""`
+
   ; "Any instruction" test
   !macro _Cmd _a _b _t _f
     !define _t=${_t}

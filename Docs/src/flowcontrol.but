@@ -161,6 +161,12 @@ Checks the silent flag, and jumps to jump_if_silent if the installer is silent, 
 \c IfSilent +2
 \c   ExecWait '"$INSTDIR\nonsilentprogram.exe"'
 
+\S2{ifshellvarcontextall} IfShellVarContextAll
+
+\c jump_if_true [jump_if_false]
+
+Checks if \R{setshellvarcontext}{SetShellVarContext} is set to \e{all}.
+
 \S2{intcmp} IntCmp
 
 \c val1 val2 jump_if_equal [jump_if_val1_less] [jump_if_val1_more]

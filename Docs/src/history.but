@@ -14,6 +14,10 @@ Released on ? ?th, 2020
 
 \S2{} Minor Changes
 
+\b Added \R{ifshellvarcontextall} IfShellVarContextAll}
+
+\# Undocumented: \b Added GetShellVarContext | Documenting this would require documenting the all/current to number mapping
+
 \H{v3.05} 3.05
 
 Released on December 15th, 2019
