@@ -920,18 +920,18 @@ int CEXEBuild::add_flag_instruction_entry(int which_token, int opcode, LineParse
     case EW_SETFLAG:
       ent.offsets[0] = offset;
       ent.offsets[1] = data;
-      SCRIPT_MSG(_T("%") NPRIs _T(": %") NPRIs _T("\n"), get_commandtoken_name(which_token), line.gettoken_str(1));
+      if (display_script) SCRIPT_MSG(_T("%") NPRIs _T(": %") NPRIs _T("\n"), get_commandtoken_name(which_token), line.gettoken_str(1));
       return add_entry(&ent);
     case EW_IFFLAG:
       if (process_jump(line, 1, &ent.offsets[0]) || process_jump(line, 2, &ent.offsets[1])) PRINTHELP()
       ent.offsets[2]=offset;
       ent.offsets[3]=data;
-      SCRIPT_MSG(_T("%") NPRIs _T(" ?%") NPRIs _T(":%") NPRIs _T("\n"), get_commandtoken_name(which_token), line.gettoken_str(1), line.gettoken_str(2));
+      if (display_script) SCRIPT_MSG(_T("%") NPRIs _T(" ?%") NPRIs _T(":%") NPRIs _T("\n"), get_commandtoken_name(which_token), line.gettoken_str(1), line.gettoken_str(2));
       return add_entry(&ent);
     case EW_GETFLAG:
       if ((ent.offsets[0] = GetUserVarIndex(line, 1)) < 0) PRINTHELP();
       ent.offsets[1] = offset;
-      SCRIPT_MSG(_T("%") NPRIs _T(": %") NPRIs _T("\n"), get_commandtoken_name(which_token), line.gettoken_str(1));
+      if (display_script) SCRIPT_MSG(_T("%") NPRIs _T(": %") NPRIs _T("\n"), get_commandtoken_name(which_token), line.gettoken_str(1));
       return add_entry(&ent);
   }
   return PS_ERROR;
@@ -1717,6 +1717,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_CONFIG_SILENT_SUPPORT not defined.\n"),  line.gettoken_str(0));
     return PS_ERROR;
 #endif //~ NSIS_CONFIG_SILENT_SUPPORT
+    case TOK_IFRTLLANG:
+      return add_flag_instruction_entry(which_token, EW_IFFLAG, line, FLAG_OFFSET(rtl), ~0); //new value mask - keep flag
     case TOK_OUTFILE:
       my_strncpy(build_output_filename,line.gettoken_str(1),COUNTOF(build_output_filename));
       SCRIPT_MSG(_T("OutFile: \"%") NPRIs _T("\"\n"),build_output_filename);
@@ -3012,19 +3014,23 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       if (process_jump(line,1,&ent.offsets[0])) PRINTHELP()
       SCRIPT_MSG(_T("Goto: %") NPRIs _T("\n"),line.gettoken_str(1));
     return add_entry(&ent);
+    case TOK_GETREGVIEW:
+      return add_flag_instruction_entry(which_token, EW_GETFLAG, line, FLAG_OFFSET(alter_reg_view));
     case TOK_SETREGVIEW:
     {
       ent.which=EW_SETFLAG;
       ent.offsets[0]=FLAG_OFFSET(alter_reg_view);
       int k=line.gettoken_enum(1,_T("32\0") _T("64\0default\0lastused\0"));
       if (k == 0) ent.offsets[1]=add_intstring(is_target_64bit() ? KEY_WOW64_32KEY : 0); // 32
-      else if (k == 1) ent.offsets[1]=add_intstring(KEY_WOW64_64KEY); // 64
+      else if (k == 1) ent.offsets[1]=add_intstring(is_target_64bit() ? 0 : KEY_WOW64_64KEY); // 64
       else if (k == 2) ent.offsets[1]=add_intstring(0); // default
       else if (k == 3) ent.offsets[2]=1; // last used
       else PRINTHELP()
       SCRIPT_MSG(_T("SetRegView: %") NPRIs _T("\n"),line.gettoken_str(1));
     }
     return add_entry(&ent);
+    case TOK_IFALTREGVIEW:
+      return add_flag_instruction_entry(which_token, EW_IFFLAG, line, FLAG_OFFSET(alter_reg_view), ~0); //new value mask - keep flag
     case TOK_GETSHELLVARCONTEXT:
       return add_flag_instruction_entry(which_token, EW_GETFLAG, line, FLAG_OFFSET(all_user_var));
     case TOK_SETSHELLVARCONTEXT: 
