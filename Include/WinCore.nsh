@@ -227,5 +227,37 @@ Shobjidl.h
 
 
 
+
+
+/**************************************************
+ShlGuid.h
+**************************************************/
+!ifndef __WIN_NOINC_SHLGUID
+!define FOLDERID_Public {DFDF76A2-C82A-4D63-906A-5644AC457385} ; Vista+ Fixed=%SystemDrive%\Users\Public
+!define FOLDERID_Games {CAC52C1A-B53D-4edc-92D7-6B2E8AC19434} ; Vista+ && < 10 (1803) Virtual
+!define FOLDERID_SavedGames {4C5C32FF-BB9D-43b0-B5B4-2D72E54EAAA4} ; Vista+ PerUser=%USERPROFILE%\Saved Games
+!define FOLDERID_GameTasks {054FAE61-4DD8-4787-80B6-090220C4B700} ; Vista+ PerUser=%LOCALAPPDATA%\Microsoft\Windows\GameExplorer
+!define FOLDERID_PublicGameTasks {DEBF2536-E1A8-4c59-B6A2-414586476AEA} ; Vista+ Common=%ALLUSERSPROFILE%\Microsoft\Windows\GameExplorer
+!define FOLDERID_Contacts {56784854-C6CB-462b-8169-88E350ACB882} ; Vista+ PerUser=%USERPROFILE%\Contacts
+!define FOLDERID_Downloads {374DE290-123F-4565-9164-39C4925E467B} ; Vista+ PerUser=%USERPROFILE%\Downloads
+!define FOLDERID_PublicDownloads {3D644C9B-1FB8-4f30-9B45-F670235F79C0} ; Vista+ Common=%PUBLIC%\Downloads
+!define FOLDERID_UserProfiles {0762D272-C50A-4BB0-A382-697DCD729B80} ; Vista+ Fixed=%SystemDrive%\Users
+!define FOLDERID_UserProgramFiles {5CD7AEE2-2219-4A67-B85D-6C9CE15660CB} ; 7+ PerUser=%LOCALAPPDATA%\Programs
+!define FOLDERID_UserProgramFilesCommon {BCBD3057-CA5C-4622-B42D-BC56DB0AE516} ; 7+ PerUser=%LOCALAPPDATA%\Programs\Common
+!define FOLDERID_PublicLibraries {48DAF80B-E6CF-4F4E-B800-0E69D84EE384} ; 7+ Common=%ALLUSERSPROFILE%\Microsoft\Windows\Libraries
+!define FOLDERID_UserPinned {9E3995AB-1F9C-4F13-B827-48B24B6C7174} ; 7+ PerUser=%APPDATA%\Microsoft\Internet Explorer\Quick Launch\User Pinned
+!define FOLDERID_ImplicitAppShortcuts {BCB5256F-79F6-4CEE-B725-DC34E402FD46} ; 7+ PerUser=%APPDATA%\Microsoft\Internet Explorer\Quick Launch\User Pinned\ImplicitAppShortcuts
+!define FOLDERID_DeviceMetadataStore {5CE4A5E9-E4EB-479D-B89F-130C02886155} ; 7+ Common=%ALLUSERSPROFILE%\Microsoft\Windows\DeviceMetadataStore
+!define FOLDERID_ApplicationShortcuts {A3918781-E5F2-4890-B3D9-A7E54332328C} ; 8.0+ PerUser=%LOCALAPPDATA%\Microsoft\Windows\Application Shortcuts
+!define FOLDERID_RoamingTiles {00BCFC5A-ED94-4e48-96A1-3F6217F21990} ; 8.0+ PerUser=%LOCALAPPDATA%\Microsoft\Windows\RoamingTiles
+!define FOLDERID_RoamedTileImages {AAA8D5A5-F1D6-4259-BAA8-78E7EF60835E} ; 8.0+ PerUser=%LOCALAPPDATA%\Microsoft\Windows\RoamedTileImages
+!define FOLDERID_PublicUserTiles {0482af6c-08f1-4c34-8c90-e17ec98b1e17} ; 8.0+ Common=%PUBLIC%\AccountPictures
+!define FOLDERID_AccountPictures {008ca0b1-55b4-4c56-b8a8-4de4b299d3be} ; 8.0+ PerUser=%APPDATA%\Microsoft\Windows\AccountPictures
+!define FOLDERID_Screenshots {b7bede81-df94-4682-a7d8-57a52620b86f} ; 8.0+ PerUser=%USERPROFILE%\Pictures\Screenshots
+!define FOLDERID_SkyDrive {A52BBA46-E9E1-435f-B3D9-28DAA648C0F6} ; 8.1+ PerUser=%USERPROFILE%\OneDrive
+!define FOLDERID_AppDataProgramData {559D40A3-A036-40FA-AF61-84CB430A4D34} ; 10 (1709)+ PerUser=%LOCALAPPDATA%\ProgramData
+!endif /* __WIN_NOINC_SHLGUID */
+
+
 !verbose pop
 !endif /* __WIN_WINDOWS__INC */

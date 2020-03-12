@@ -1390,7 +1390,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         else if (which==EW_FPUTS)
         {
           GetStringFromParm(0x21); // load string in buf2, convert it to ANSI in buf1
-          WideCharToMultiByte(CP_ACP, 0, buf2, -1, (LPSTR) buf1, NSIS_MAX_STRLEN, NULL, NULL);
+          StrWideToACP(buf2, (LPSTR) buf1, NSIS_MAX_STRLEN);
           l=lstrlenA((LPCSTR)buf1);
         }
 #endif
@@ -1704,6 +1704,32 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     break;
 #endif//NSIS_CONFIG_COMPONENTPAGE
 
+    case EW_GETOSINFO:
+    {
+      //switch(parm0)
+      {
+#ifdef NSIS_SUPPORT_FNUTIL
+      //case 0:
+        {
+          TCHAR *outstr = var1;
+          IID kfid;
+          HRESULT(WINAPI*SHGKFP)(REFIID,DWORD,HANDLE,PWSTR*) = (HRESULT(WINAPI*)(REFIID,DWORD,HANDLE,PWSTR*)) myGetProcAddress(MGA_SHGetKnownFolderPath);
+          TCHAR *buf2 = GetStringFromParm(0x22), succ = FALSE;
+          if (SHGKFP && SUCCEEDED(ComIIDFromString(buf2, &kfid)))
+          {
+            PWSTR path;
+            HRESULT hr = SHGKFP(&kfid, parm3, NULL, &path);
+            if (SUCCEEDED(hr))
+              strcpyWideToT(outstr, path), CoTaskMemFree(path), ++succ;
+          }
+          if (!succ)
+            exec_error++, *outstr = _T('\0');
+        }
+        //break;
+#endif
+      }
+    }
+    break;
 #ifdef NSIS_LOCKWINDOW_SUPPORT
     case EW_LOCKWINDOW:
     {

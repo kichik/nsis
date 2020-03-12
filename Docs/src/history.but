@@ -12,6 +12,8 @@ Released on ? ?th, 2020
 
 \S2{} Major Changes
 
+\b Added \R{getknownfolderpath}{GetKnownFolderPath}
+
 \S2{} Minor Changes
 
 \b Added \R{ifshellvarcontextall}{IfShellVarContextAll} and \R{ifrtllanguage}{IfRtlLanguage}

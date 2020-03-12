@@ -4187,6 +4187,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           line.gettoken_str(2+a),line.gettoken_str(1+a),a?_T("sfn"):_T("lfn"));
       }
     return add_entry(&ent);
+    case TOK_GETKNOWNFOLDERPATH:
+      ent.which=EW_GETOSINFO;
+      ent.offsets[0]=0; // Operation
+      ent.offsets[1]=GetUserVarIndex(line, 1);
+      ent.offsets[2]=add_string(line.gettoken_str(2));
+    return add_entry(&ent);
     case TOK_SEARCHPATH:
       ent.which=EW_SEARCHPATH;
       ent.offsets[0]=GetUserVarIndex(line, 1);
@@ -4198,6 +4204,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_SEARCHPATH:
     case TOK_GETTEMPFILENAME:
     case TOK_GETFULLPATHNAME:
+    case TOK_GETKNOWNFOLDERPATH:
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_SUPPORT_FNUTIL not defined.\n"),  line.gettoken_str(0));
       return PS_ERROR;
 #endif //~ NSIS_SUPPORT_FNUTIL

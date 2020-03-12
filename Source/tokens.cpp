@@ -110,6 +110,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_GETDLGITEM,_T("GetDlgItem"),3,0,_T("$(user_var: handle output) dialog item_id"),TP_CODE},
 {TOK_GETFULLPATHNAME,_T("GetFullPathName"),2,1,_T("[/SHORT] $(user_var: result) path_or_file"),TP_CODE},
 {TOK_GETTEMPFILENAME,_T("GetTempFileName"),1,1,_T("$(user_var: name output) [base_dir]"),TP_CODE},
+{TOK_GETKNOWNFOLDERPATH,_T("GetKnownFolderPath"),2,0,_T("$(user_var: result) knownfolderid"),TP_CODE},
 {TOK_HIDEWINDOW,_T("HideWindow"),0,0,_T(""),TP_CODE},
 {TOK_ICON,_T("Icon"),1,0,_T("local_icon.ico"),TP_GLOBAL},
 {TOK_IFABORT,_T("IfAbort"),1,1,_T("label_to_goto_if_abort [label_to_goto_if_no_abort]"),TP_CODE},
