@@ -771,6 +771,30 @@ TCHAR * NSISCALL mystrcat(TCHAR *out, const TCHAR *concat)
   return lstrcat(out, concat);
 }
 
+int StrWideToACP(LPCWSTR Src, char* Dst, int DstCap)
+{
+  return WideCharToMultiByte(CP_ACP, 0, Src, -1, Dst, DstCap, NULL, NULL);
+}
+
+#ifndef UNICODE
+void strcpyWideToT(TCHAR *out, LPCWSTR in)
+{
+  StrWideToACP(in, out, NSIS_MAX_STRLEN);
+}
+#endif
+
+#if !defined(_WIN64) && !defined(UNICODE)
+HRESULT ComIIDFromString(LPCTSTR str, IID*out)
+{
+  WCHAR buf[130];
+  signed char i;
+  for (i = 0; i >= 0; ++i)
+    if (!(buf[i] = str[i]))
+      return IIDFromString(buf, out);
+  return E_FAIL;
+}
+#endif
+
 TCHAR ps_tmpbuf[NSIS_MAX_STRLEN*2];
 
 const TCHAR SYSREGKEY[]   = _T("Software\\Microsoft\\Windows\\CurrentVersion");
@@ -1145,6 +1169,7 @@ struct MGA_FUNC MGA_FUNCS[] = {
   {"ADVAPI32", "RegDeleteKeyExW"},
 #endif
   {"ADVAPI32", "InitiateShutdownW"},
+  {"SHELL32", "SHGetKnownFolderPath"},
   {"SHELL32", (CHAR*) 680}, // IsUserAnAdmin
 #ifndef _WIN64
   {"SHLWAPI", (CHAR*) 437}, // IsOS
@@ -1163,6 +1188,7 @@ struct MGA_FUNC MGA_FUNCS[] = {
   {"KERNEL32", "GetUserDefaultUILanguage"},
   {"ADVAPI32", "RegDeleteKeyExA"},
   {"ADVAPI32", "InitiateShutdownA"},
+  {"SHELL32", "SHGetKnownFolderPath"},
   {"SHELL32", (CHAR*) 680}, // IsUserAnAdmin
 #ifndef _WIN64
   {"SHLWAPI", (CHAR*) 437}, // IsOS
@@ -1234,7 +1260,7 @@ void * NSISCALL NSISGetProcAddress(HANDLE dllHandle, TCHAR* funcName)
 {
 #ifdef _UNICODE
   char ansiName[256];
-  if (WideCharToMultiByte(CP_ACP, 0, funcName, -1, ansiName, 256, NULL, NULL) != 0)
+  if (StrWideToACP(funcName, ansiName, 256) != 0)
     return GetProcAddress(dllHandle, ansiName);
   return NULL;
 #else
