@@ -88,9 +88,16 @@ This is similar to \R{getfiletime}{GetFileTime}, only it acts on the system buil
 Get the path of a \W{https://docs.microsoft.com/en-us/windows/win32/shell/knownfolderid}{known folder}. The error flag is set and the output variable is empty if the call fails or the knownfolderid guid is not available. This function is only able to resolve known folders Windows Vista or higher.
 
 \c !include WinCore.nsh
-\c GetKnownFolderPath $InstDir ${FOLDERID_UserProgramFiles}
-\c StrCmp $InstDir "" 0 +2 
-\c StrCpy $InstDir "$LocalAppData\Programs"
+\c !include LogicLib.nsh
+\c 
+\c Function .onInit
+\c ${If} $InstDir == ""
+\c   GetKnownFolderPath $InstDir ${FOLDERID_UserProgramFiles} ; This exists on Win7+
+\c   StrCmp $InstDir "" 0 +2 
+\c   StrCpy $InstDir "$LocalAppData\Programs" ; Fallback directory
+\c   StrCpy $InstDir "$InstDir\$(^Name)"
+\c ${EndIf}
+\c FunctionEnd
 
 \S2{getfullpathname} GetFullPathName
 
