@@ -312,6 +312,7 @@ ${MementoSection} "Script Examples" SecExample
   File ..\Examples\example1.nsi
   File ..\Examples\example2.nsi
   File ..\Examples\install-per-user.nsi
+  File ..\Examples\install-shared.nsi
   File ..\Examples\viewhtml.nsi
   File ..\Examples\waplugin.nsi
   File ..\Examples\bigtest.nsi
