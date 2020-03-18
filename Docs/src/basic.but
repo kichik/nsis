@@ -40,7 +40,7 @@ Execute the specified program using ShellExecuteEx. Note that action is usually 
 
 \c [/INVOKEIDLIST] action command [parameters] [SW_SHOWDEFAULT | SW_SHOWNORMAL | SW_SHOWMAXIMIZED | SW_SHOWMINIMIZED | SW_HIDE]
 
-Execute the specified program using ExecShell and wait for executed process to quit. It will only wait for executable files and not other file types nor URLs.
+Execute the specified program using ExecShell and wait for executed process to quit. It will only wait for executable files, not other file types nor URLs.
 
 \S2{execwait} ExecWait
 
