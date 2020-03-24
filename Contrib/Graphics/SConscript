@@ -90,8 +90,8 @@ wizards = Split("""
 
 Import('defenv')
 
-def join(prefix, list):
-	return map(lambda x: '%s/%s' % (prefix, x), list)
+def join(prefix, list_):
+	return list(map(lambda x: '%s/%s' % (prefix, x), list_))
 
 def dist(dir, files):
 	defenv.DistributeContrib(join(dir, files), path='Graphics/%s' % dir)
