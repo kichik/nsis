@@ -20,6 +20,8 @@ Released on ? ?th, 2020
 
 \# Undocumented: \b Added GetShellVarContext, IfAltRegView and GetRegView | Documenting these would require documenting the parameter name to number mapping
 
+\b MultiUser: Fixed INSTALLMODE_FUNCTION and added INSTALLMODEPAGE_SHOWUSERNAME
+
 \H{v3.05} 3.05
 
 Released on December 15th, 2019
