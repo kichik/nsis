@@ -34,8 +34,8 @@ pages = Split("""
 
 Import('defenv')
 
-def join(prefix, list):
-	return map(lambda x: '%s/%s' % (prefix, x), list)
+def join(prefix, list_):
+	return list(map(lambda x: '%s/%s' % (prefix, x), list_))
 
 defenv.DistributeDocs(docs, path=target)
 defenv.DistributeDocs(join('../Modern UI/images',doc_images), path='%s/%s'%(target,'images'))
