@@ -323,7 +323,6 @@ ${MementoSection} "Script Examples" SecExample
   File ..\Examples\languages.nsi
   File ..\Examples\Library.nsi
   File ..\Examples\VersionInfo.nsi
-  File ..\Examples\UserVars.nsi
   File ..\Examples\LogicLib.nsi
   File ..\Examples\silent.nsi
   File ..\Examples\StrFunc.nsi
