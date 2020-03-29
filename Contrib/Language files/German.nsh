@@ -1,15 +1,15 @@
 ﻿;Language: German (1031)
-;By L.King, changes by K. Windszus & R. Bisswanger & M. Simmack & D. Weiß & Frederik Schwarzer
+;By L.King, changes by K. Windszus, R. Bisswanger, M. Simmack, D. Weiß, Frederik Schwarzer & S. Stange
 
 !insertmacro LANGFILE "German" = "Deutsch" =
 
 !ifdef MUI_WELCOMEPAGE
-  ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Willkommen beim Installations-$\r$\nAssistenten für $(^NameDA)"
+  ${LangFileString} MUI_TEXT_WELCOME_INFO_TITLE "Willkommen zur Installation$\r$\nvon $(^NameDA)"
   ${LangFileString} MUI_TEXT_WELCOME_INFO_TEXT "Dieser Assistent wird Sie durch die Installation von $(^NameDA) begleiten.$\r$\n$\r$\nEs wird empfohlen, vor der Installation alle anderen Programme zu schließen, damit bestimmte Systemdateien ohne Neustart ersetzt werden können.$\r$\n$\r$\n$_CLICK"
 !endif
 
 !ifdef MUI_UNWELCOMEPAGE
-  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "Willkommen beim Deinstallations-$\r$\nAssistenten für $(^NameDA)"
+  ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TITLE "Willkommen zur Deinstallation$\r$\nvon $(^NameDA)"
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "Dieser Assistent wird Sie durch die Deinstallation von $(^NameDA) begleiten.$\r$\n$\r$\nBitte beenden Sie $(^NameDA), bevor Sie mit der Deinstallation fortfahren.$\r$\n$\r$\n$_CLICK"
 !endif
 
@@ -30,7 +30,7 @@
 !endif
 
 !ifdef MUI_LICENSEPAGE | MUI_UNLICENSEPAGE
-  ${LangFileString} MUI_INNERTEXT_LICENSE_TOP "Drücken Sie die Bild-Runter-Taste, um den Rest des Abkommens zu sehen."
+  ${LangFileString} MUI_INNERTEXT_LICENSE_TOP "Drücken Sie die BILD-AB-Taste, um den Rest des Abkommens zu lesen."
 !endif
 
 !ifdef MUI_COMPONENTSPAGE
@@ -46,9 +46,9 @@
 !ifdef MUI_COMPONENTSPAGE | MUI_UNCOMPONENTSPAGE
   ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Beschreibung"
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
-    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Bewegen Sie den Mauszeiger über eine Komponente, um ihre Beschreibung zu sehen."
+    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Bewegen Sie den Mauszeiger über eine Komponente, um die Beschreibung zu lesen."
   !else
-    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Selektieren Sie eine Komponente, um ihre Beschreibung zu sehen."
+    ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Wählen Sie eine Komponente, um die Beschreibung zu lesen."
   !endif
 !endif
 
@@ -82,7 +82,7 @@
 
 !ifdef MUI_FINISHPAGE
   ${LangFileString} MUI_TEXT_FINISH_INFO_TITLE "Die Installation von $(^NameDA) wird abgeschlossen"
-  ${LangFileString} MUI_TEXT_FINISH_INFO_TEXT "$(^NameDA) wurde auf Ihrem Computer installiert.$\r$\n$\r$\nKlicken Sie auf Fertigstellen, um den Installations-Assistenten zu schließen."
+  ${LangFileString} MUI_TEXT_FINISH_INFO_TEXT "$(^NameDA) wurde auf Ihrem Computer installiert.$\r$\n$\r$\nKlicken Sie auf Fertigstellen, um den Installationsassistenten zu schließen."
   ${LangFileString} MUI_TEXT_FINISH_INFO_REBOOT "Windows muss neu gestartet werden, um die Installation von $(^NameDA) zu vervollständigen. Möchten Sie Windows jetzt neu starten?"
 !endif
 
