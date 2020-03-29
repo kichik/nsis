@@ -791,6 +791,22 @@ ${MementoSection} "NSutils" SecPluginsNSutils
   File ..\Examples\NSutils\*.bat
 ${MementoSectionEnd}
 
+${MementoSection} "NScurl" SecPluginsNScurl
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Plug-ins | NScurl..."
+  SetDetailsPrint listonly
+
+  SectionIn 1
+
+  !insertmacro InstallPlugin NScurl
+  SetOutPath $INSTDIR\Docs\NScurl
+  File ..\Docs\NScurl\NScurl.Readme.htm
+  SetOutPath $INSTDIR\Examples\NScurl
+  File ..\Examples\NScurl\*.nsi
+  File ..\Examples\NScurl\*.bat
+${MementoSectionEnd}
+
 ${MementoSection} "NSxfer" SecPluginsNSxfer
 
   SetDetailsPrint textonly
@@ -1023,6 +1039,7 @@ SectionEnd
   !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsUserInfo} "Plugin that that gives you the user name and the user account type"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsNSISDL} "Plugin that lets you create a web based installer"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsNSutils} "Plugin with multiple goodies packed in one basket"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsNScurl} "Plugin with extended HTTP/S support"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsNSxfer} "Plugin with extended HTTP/S support"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsShellLink} "Plugin that gives your full control over link files (.lnk)"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsTaskbarProgress} "Plugin that displays the progress on the taskbar (Win7+)"

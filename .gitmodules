@@ -22,3 +22,7 @@
 	path = Contrib/NSxfer
 	url = https://github.com/negrutiu/nsis-nsxfer.git
 	branch = master
+[submodule "Contrib/NScurl"]
+	path = Contrib/NScurl
+	url = https://github.com/negrutiu/nsis-nscurl.git
+	branch = master

@@ -8,14 +8,15 @@ Original project's GitHub page: https://github.com/kichik/nsis<br>
 [![Downloads](https://img.shields.io/github/downloads/negrutiu/nsis/total.svg?label=Downloads&colorB=orange)](../../releases/latest)
 [![GitHub issues](https://img.shields.io/github/issues/negrutiu/nsis.svg?label=Issues)](../../issues)
 
-This fork was started mainly to give you early access to the 64-bit support in NSIS.<br>
-I've also included a bunch of improvements and extra plugins for you to play with... Enjoy!
+This project was started mainly to offer you early access to the NSIS 64-bit features.<br>
+I've also included a bunch of extra plugins for you to play with... Enjoy!
 
 ### Features:
 * Native **x86** and **amd64** NSIS compilers
 * Can produce native **x86** and **amd64** installers, compatible with all Windows versions (NT4+)
 * Extra builtin plugins:
-  * [NSxfer](https://github.com/negrutiu/nsis-nsxfer) - Plugin with advanced HTTP/S support. Useful for file transfers, REST API calls, etc.
+  * [NScurl](https://github.com/negrutiu/nsis-nscurl) - Plugin with advanced HTTP/S capabilities. Useful for file transfers, REST API calls, etc.
+  * [NSxfer](https://github.com/negrutiu/nsis-nsxfer) - Plugin with advanced HTTP/S capabilities. (Consider switching to NScurl)
   * [NSutils](https://github.com/negrutiu/nsis-nsutils) - Plugin with multiple goodies packed in one basket
   * [ExecDos](https://github.com/negrutiu/nsis-execdos) - Extended support for launching child processes
   * [TaskbarProgress](https://github.com/negrutiu/nsis-taskbarprogress) - Display progress in Windows' taskbar

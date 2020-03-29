@@ -45,6 +45,18 @@ if "%1" neq "" echo ERROR: Unknown argument "%1" && pause && exit /B 57
 :: ----------------------------------------------------------------
 :MAIN
 :: ----------------------------------------------------------------
+if exist "Contrib\NScurl" (
+	echo ----------------------------------------------------------------
+	echo Updating cacert.pem ...
+	echo ----------------------------------------------------------------
+	powershell.exe -NonInteractive -ExecutionPolicy unrestricted "Contrib\NScurl\_acquire_cacert.ps1"
+
+	echo ----------------------------------------------------------------
+	echo Updating libcurl-devel ...
+	echo ----------------------------------------------------------------
+	powershell.exe -NonInteractive -ExecutionPolicy unrestricted "Contrib\NScurl\_acquire_libcurl.ps1"
+)
+
 echo Compiling...
 start "" "%COMSPEC%" /C "%~f0" /compile-x86
 start "" "%COMSPEC%" /C "%~f0" /compile-amd64
@@ -139,7 +151,11 @@ set VER_PACKED=0x%VER_MAJOR_PACKED%%VER_MINOR_PACKED%00%VER_BUILD_PACKED%
 
 :: "nsis" -> "nsis-mingw-DISTRO-[arch]"
 cd /d "%~dp0"
-robocopy . %DISTRO%\ *.* /E /XO /XD .git nsis-* zlib-* ... /XF flag-* .git* _*.bat ... /NJH /NJS /NDL
+robocopy . %DISTRO%\ *.* /E /XO /XD .git nsis-* zlib-* libcurl-devel* ... /XF flag-* .git* _*.bat libcurl-devel* ... /NJH /NJS /NDL /SJ /SL
+if exist Contrib\NScurl (
+	rmdir %DISTRO%\Contrib\NScurl\libcurl-devel > NUL 2> NUL
+	mklink /J %DISTRO%\Contrib\NScurl\libcurl-devel Contrib\NScurl\libcurl-devel
+)
 
 :: Build
 echo.
