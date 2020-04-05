@@ -10,11 +10,13 @@ languages = Split("""
 	Breton
 	Bulgarian
 	Catalan
+	Cibemba
 	Corsican
 	Croatian
 	Czech
 	Danish
 	Dutch
+	Efik
 	English
 	Esperanto
 	Estonian
@@ -29,16 +31,19 @@ languages = Split("""
 	Hindi
 	Hungarian
 	Icelandic
+	Igbo
 	Indonesian
 	Irish
 	Italian
 	Japanese
+	Khmer
 	Korean
 	Kurdish
 	Latvian
 	Lithuanian
 	Luxembourgish
 	Macedonian
+	Malagasy
 	Malay
 	Mongolian
 	Norwegian
@@ -57,6 +62,7 @@ languages = Split("""
 	Slovenian
 	Spanish
 	SpanishInternational
+	Swahili
 	Swedish
 	Tatar
 	Thai
@@ -64,8 +70,10 @@ languages = Split("""
 	Turkish
 	Ukrainian
 	Uzbek
+	Valencian
 	Vietnamese
 	Welsh
+	Yoruba
 """)
 
 language_files = Flatten([(i + '.nlf', i + '.nsh') for i in languages])
