@@ -68,6 +68,8 @@
 ;         ${SectionIsSectionGroupEnd} a; ${SectionIsBold} a;
 ;         ${SectionIsReadOnly} a; ${SectionIsExpanded} a;
 ;         ${SectionIsPartiallySelected} a
+;       Additional tests:
+;         HK RegKeyIsEmpty SubKey
 ;
 ; Examples:
 ;   See LogicLib.nsi in the Examples folder for lots of example usage.
@@ -350,6 +352,22 @@
     IfAltRegView `${_t}` `${_f}`
   !macroend
   !define AltRegView `"" AltRegView ""`
+
+  !macro _RegKeyIsEmpty _a _b _t _f
+    !insertmacro _LOGICLIB_TEMP
+    ClearErrors
+    EnumRegValue $_LOGICLIB_TEMP ${_a} `${_b}` ""
+    !if `${_f}` != ``
+    IfErrors "" `${_f}` ; Skip calls to EnumRegKey and _== if possible
+    !else
+    IfErrors +3
+    StrCpy $_LOGICLIB_TEMP "1" ; The default value is also named "", make sure we don't mistake it as empty
+    Goto +2
+    !endif
+    EnumRegKey $_LOGICLIB_TEMP ${_a} `${_b}` ""
+    !insertmacro _== $_LOGICLIB_TEMP "" `${_t}` `${_f}`
+  !macroend
+  !define RegKeyIsEmpty `RegKeyIsEmpty`
 
   ; "Any instruction" test
   !macro _Cmd _a _b _t _f
