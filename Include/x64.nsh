@@ -23,6 +23,15 @@
 ;     Abort "Unsupported CPU architecture!"
 ;   ${EndIf}
 ;
+;   ${If} ${IsNativeAMD64}
+;       File "amd64\myapp.exe"
+;   ${ElseIf} ${IsNativeIA32}
+;   ${OrIf} ${IsWow64}
+;       File "x86\myapp.exe"
+;   ${Else}
+;       Abort "Unsupported CPU architecture!"
+;   ${EndIf}
+;
 ; DisableX64FSRedirection disables file system redirection.
 ; EnableX64FSRedirection enables file system redirection.
 ;

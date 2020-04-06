@@ -85,7 +85,7 @@ This is similar to \R{getfiletime}{GetFileTime}, only it acts on the system buil
 
 \c user_var(output) knownfolderid
 
-Get the path of a \W{https://docs.microsoft.com/en-us/windows/win32/shell/knownfolderid}{known folder}. The error flag is set and the output variable is empty if the call fails or the knownfolderid guid is not available. This function is only able to resolve known folders Windows Vista or higher.
+Get the path of a \W{https://docs.microsoft.com/en-us/windows/win32/shell/knownfolderid}{known folder}. The error flag is set and the output variable is empty if the call fails or the knownfolderid guid is not available. This function is only able to resolve known folders on Windows Vista or higher.
 
 \c !include WinCore.nsh
 \c !include LogicLib.nsh
