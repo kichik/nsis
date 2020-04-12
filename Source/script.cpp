@@ -4319,11 +4319,15 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         int a=1, iskeyop;
         if ((iskeyop = which_token == TOK_DELETEREGKEY))
         {
-          TCHAR *s=line.gettoken_str(a);
-          if (s[0] == _T('/'))
+          for (;; ++a)
           {
-            if (_tcsicmp(s,_T("/ifempty"))) PRINTHELP()
-            a++, ent.offsets[4]|=(DELREGKEY_ONLYIFNOSUBKEYS<<DELREGKEYFLAGSSHIFT);
+            switch(line.gettoken_enum(a,_T("/ifempty\0/ifnosubkeys\0/ifnovalues\0")))
+            {
+            case 0: ent.offsets[4]|=((DELREGKEY_ONLYIFNOSUBKEYS|DELREGKEY_ONLYIFNOVALUES)<<DELREGKEYFLAGSSHIFT); continue;
+            case 1: ent.offsets[4]|=((DELREGKEY_ONLYIFNOSUBKEYS                         )<<DELREGKEYFLAGSSHIFT); continue;
+            case 2: ent.offsets[4]|=((                          DELREGKEY_ONLYIFNOVALUES)<<DELREGKEYFLAGSSHIFT); continue;
+            }
+            break;
           }
           if (line.gettoken_str(a+2)[0]) PRINTHELP()
         }

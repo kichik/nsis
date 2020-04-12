@@ -29,9 +29,9 @@ Deletes the string str_name from section [section_name] from ini_filename. If th
 
 \S2{deleteregkey} DeleteRegKey
 
-\c [/ifempty] root_key subkey
+\c [/ifempty | /ifnosubkeys | /ifnovalues] root_key subkey
 
-Deletes a registry key. If /ifempty is specified, the registry key will only be deleted if it has no subkeys (otherwise, the whole registry tree will be removed). Valid values for root_key are listed under \R{writeregstr}{WriteRegStr}. The error flag is set if the key could not be removed from the registry (or if it didn't exist to begin with).
+Deletes a registry key. If /ifempty is specified, the registry key will only be deleted if it has no subkeys and no values (otherwise, the whole registry tree will be removed). Valid values for root_key are listed under \R{writeregstr}{WriteRegStr}. The error flag is set if the key could not be removed from the registry (or if it didn't exist to begin with).
 
 \c DeleteRegKey HKLM "Software\My Company\My Software"
 \c DeleteRegKey /ifempty HKLM "Software\A key that might have subkeys"

@@ -12,6 +12,8 @@ Released on ? ?th, 2020
 
 \S2{} Major Changes
 
+\b \cw{DeleteRegKey /ifempty} now also checks for values, not just subkeys. Use \cw{/ifnosubkeys} for the old behavior.
+
 \b Added \R{getknownfolderpath}{GetKnownFolderPath}
 
 \S2{} Minor Changes
