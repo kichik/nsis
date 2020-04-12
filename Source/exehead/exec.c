@@ -176,33 +176,42 @@ static HKEY NSISCALL RegCreateScriptKey(int RootKey, LPCTSTR SubKey, REGSAM RS)
 // RegDeleteKeyEx on 32-bit Windows accepts but ignores the KEY_WOW64_xxKEY flags and always uses the 
 // one and only native key. Our RegKeyOpen will intentionally fail if a incompatible WoW64 flag is used.
 #define DRTF_ONLYIFNOSUBKEYS DELREGKEY_ONLYIFNOSUBKEYS
+#define DRTF_ONLYIFNOVALUES  DELREGKEY_ONLYIFNOVALUES
 static LONG NSISCALL DeleteRegTree(HKEY hThisKey, LPCTSTR SubKey, REGSAM SamviewAndFlags)
 {
   HKEY hKey;
-  UINT onlyifempty = SamviewAndFlags & DRTF_ONLYIFNOSUBKEYS;
+  UINT onlyifnosubkeys = SamviewAndFlags & DRTF_ONLYIFNOSUBKEYS;
+  UINT onlyifnovalues  = SamviewAndFlags & DRTF_ONLYIFNOVALUES, valuesexistcheckinsubkeys = TRUE;
   REGSAM samview = SamviewAndFlags & (KEY_WOW64_32KEY|KEY_WOW64_64KEY);
-  LONG retval = RegKeyOpen(hThisKey, SubKey, KEY_ENUMERATE_SUB_KEYS|samview, &hKey);
+  LONG retval = RegKeyOpen(hThisKey, SubKey, KEY_ENUMERATE_SUB_KEYS|KEY_QUERY_VALUE|samview, &hKey);
   if (retval == ERROR_SUCCESS)
   {
     TCHAR child[MAX_PATH+1]; // NB - don't change this to static (recursive function)
+    if (onlyifnovalues)
+    {
+      DWORD cchName = 0;
+      retval = RegEnumValue(hKey, 0, child, &cchName, NULL, NULL, NULL, NULL);
+      if (retval != ERROR_NO_MORE_ITEMS) goto notempty;
+      if (!valuesexistcheckinsubkeys) SamviewAndFlags &= ~DRTF_ONLYIFNOVALUES;
+    }
     while (RegEnumKey(hKey, 0, child, COUNTOF(child)) == ERROR_SUCCESS)
     {
-      if (onlyifempty) return (RegCloseKey(hKey), ERROR_CAN_NOT_COMPLETE);
+      if (onlyifnosubkeys) notempty: return (RegCloseKey(hKey), ERROR_CAN_NOT_COMPLETE);
       if ((retval = DeleteRegTree(hKey, child, SamviewAndFlags)) != ERROR_SUCCESS) break;
     }
     RegCloseKey(hKey);
     {
-      typedef LONG (WINAPI * RegDeleteKeyExPtr)(HKEY, LPCTSTR, REGSAM, DWORD);
-      RegDeleteKeyExPtr RDKE = (RegDeleteKeyExPtr)
-      #ifdef _WIN64
-        RegDeleteKeyEx;
-      #else
+      typedef LONG (WINAPI * RegDeleteKeyExType)(HKEY, LPCTSTR, REGSAM, DWORD);
+      RegDeleteKeyExType RDKE = (RegDeleteKeyExType)
+      #if !defined(_WIN64) || defined(_M_IA64)
         myGetProcAddress(MGA_RegDeleteKeyEx);
-      #endif
-      if (RDKE)
-        retval = RDKE(hThisKey, SubKey, samview, 0);
-      else
+      if (!RDKE)
         retval = RegDeleteKey(hThisKey, SubKey);
+      else
+      #else
+        RegDeleteKeyEx;
+      #endif
+        retval = RDKE(hThisKey, SubKey, samview, 0);
     }
   }
   return retval;

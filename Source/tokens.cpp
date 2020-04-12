@@ -62,7 +62,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_DBOPTIMIZE,_T("SetDatablockOptimize"),1,0,_T("(off|on)"),TP_ALL},
 {TOK_DELETEINISEC,_T("DeleteINISec"),2,0,_T("ini_file section_name"),TP_CODE},
 {TOK_DELETEINISTR,_T("DeleteINIStr"),3,0,_T("ini_file section_name entry_name"),TP_CODE},
-{TOK_DELETEREGKEY,_T("DeleteRegKey"),2,1,_T("[/ifempty] root_key subkey\n    root_key=(HKCR[32|64]|HKLM[32|64]|HKCU[32|64]|HKU|HKCC|HKDD|HKPD|SHCTX)"),TP_CODE},
+{TOK_DELETEREGKEY,_T("DeleteRegKey"),2,-1,_T("[/ifempty | /ifnosubkeys | /ifnovalues] root_key subkey\n    root_key=(HKCR[32|64]|HKLM[32|64]|HKCU[32|64]|HKU|HKCC|HKDD|HKPD|SHCTX)"),TP_CODE},
 {TOK_DELETEREGVALUE,_T("DeleteRegValue"),3,0,_T("root_key subkey entry_name\n    root_key=(HKCR[32|64]|HKLM[32|64]|HKCU[32|64]|HKU|HKCC|HKDD|HKPD|SHCTX)"),TP_CODE},
 {TOK_DELETE,_T("Delete"),1,1,_T("[/REBOOTOK] filespec"),TP_CODE},
 {TOK_DETAILPRINT,_T("DetailPrint"),1,0,_T("message"),TP_CODE},

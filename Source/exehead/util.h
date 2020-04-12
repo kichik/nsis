@@ -164,6 +164,8 @@ enum myGetProcAddressFunctions {
 #ifndef _WIN64
   MGA_GetDiskFreeSpaceEx,
   MGA_GetUserDefaultUILanguage,
+#endif
+#if !defined(_WIN64) || defined(_M_IA64)
   MGA_RegDeleteKeyEx,
 #endif
   MGA_InitiateShutdown,
