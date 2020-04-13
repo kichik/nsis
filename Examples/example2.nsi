@@ -3,7 +3,10 @@
 ; This script is based on example1.nsi, but it remember the directory, 
 ; has uninstall support and (optionally) installs start menu shortcuts.
 ;
-; It will install example2.nsi into a directory that the user selects,
+; It will install example2.nsi into a directory that the user selects.
+;
+; See install-shared.nsi for a more robust way of checking for administrator rights.
+; See install-per-user.nsi for a file association example.
 
 ;--------------------------------
 
@@ -13,7 +16,7 @@ Name "Example2"
 ; The file to write
 OutFile "example2.exe"
 
-; Request application privileges for Windows Vista
+; Request application privileges for Windows Vista and higher
 RequestExecutionLevel admin
 
 ; Build Unicode installer
@@ -66,9 +69,9 @@ SectionEnd
 Section "Start Menu Shortcuts"
 
   CreateDirectory "$SMPROGRAMS\Example2"
-  CreateShortcut "$SMPROGRAMS\Example2\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
-  CreateShortcut "$SMPROGRAMS\Example2\Example2 (MakeNSISW).lnk" "$INSTDIR\example2.nsi" "" "$INSTDIR\example2.nsi" 0
-  
+  CreateShortcut "$SMPROGRAMS\Example2\Uninstall.lnk" "$INSTDIR\uninstall.exe"
+  CreateShortcut "$SMPROGRAMS\Example2\Example2 (MakeNSISW).lnk" "$INSTDIR\example2.nsi"
+
 SectionEnd
 
 ;--------------------------------
@@ -86,9 +89,9 @@ Section "Uninstall"
   Delete $INSTDIR\uninstall.exe
 
   ; Remove shortcuts, if any
-  Delete "$SMPROGRAMS\Example2\*.*"
+  Delete "$SMPROGRAMS\Example2\*.lnk"
 
-  ; Remove directories used
+  ; Remove directories
   RMDir "$SMPROGRAMS\Example2"
   RMDir "$INSTDIR"
 
