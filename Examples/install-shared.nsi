@@ -56,14 +56,12 @@ Section "Program files (Required)"
   SetOutPath $InstDir
   WriteUninstaller "$InstDir\Uninst.exe"
   WriteRegStr HKLM "${REGPATH_UNINSTSUBKEY}" "DisplayName" "${NAME}"
+  WriteRegStr HKCU "${REGPATH_UNINSTSUBKEY}" "DisplayIcon" "$InstDir\MyApp.exe,0"
   WriteRegStr HKLM "${REGPATH_UNINSTSUBKEY}" "UninstallString" '"$InstDir\Uninst.exe"'
   WriteRegDWORD HKLM "${REGPATH_UNINSTSUBKEY}" "NoModify" 1
   WriteRegDWORD HKLM "${REGPATH_UNINSTSUBKEY}" "NoRepair" 1
 
   File "/oname=$InstDir\MyApp.exe" "${NSISDIR}\Bin\MakeLangId.exe" ; Pretend that we have a real application to install
-
-  ;WriteRegStr HKLM "Software\Classes\.myfileext" "myfiletype"
-  ;WriteRegStr HKLM "Software\Classes\myfiletype\shell\myapp\command" "" '"$InstDir\MyApp.exe" "%1"'
 SectionEnd
 
 Section "Start Menu shortcut"
@@ -76,9 +74,6 @@ Section -Uninstall
   Delete "$InstDir\Uninst.exe"
   RMDir "$InstDir"
   DeleteRegKey HKLM "${REGPATH_UNINSTSUBKEY}"
-  ;DeleteRegKey HKLM "Software\Classes\myfiletype\shell\myapp"
-  ;DeleteRegKey /IfEmpty HKLM "Software\Classes\myfiletype\shell"
-  ;DeleteRegKey /IfEmpty HKLM "Software\Classes\myfiletype"
 
   Delete "$SMPrograms\${NAME}.lnk"
 SectionEnd

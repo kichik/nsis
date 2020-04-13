@@ -552,6 +552,7 @@ typedef struct {
 #define DELREG_KEY 1 // TOK_DELETEREGKEY
 #define DELREGKEY_ONLYIFNOSUBKEYS 0x01 // Note: Shifted (stored as 2 in the binary) for compatibility with <= v3.1
 #define DELREGKEY_ONLYIFNOVALUES  0x02
+//      DELREGKEY_SAMVIEWMASK     REGROOTVIEWTOSAMVIEW(REGROOTVIEW32|REGROOTVIEW64) // Reserved for KEY_WOW64_xxKEY, cannot be used as flags!
 #define DELREGKEYFLAGSSHIFT 1 // exehead removes the DELREG_KEY bit in parm4 by shifting. After shifting the bits are DELREGKEY_*.
 
 

@@ -4,6 +4,8 @@
 ; optional settings are left to their default settings. The installer simply 
 ; prompts the user asking them where to install, and drops a copy of example1.nsi
 ; there. 
+;
+; example2.nsi expands on this by adding a uninstaller and start menu shortcuts.
 
 ;--------------------------------
 

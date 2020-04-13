@@ -144,6 +144,12 @@ This command writes a block of binary data to the registry. Valid values for roo
 
 \c WriteRegBin HKLM "Software\My Company\My Software" "Binary Value" DEADBEEF01223211151
 
+\S2{writeregnone} WriteRegNone
+
+\c root_key subkey key_name
+
+Writes a value without data to the registry.
+
 \S2{writeregdword} WriteRegDWORD
 
 \c root_key subkey key_name value
