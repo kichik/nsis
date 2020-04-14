@@ -2,102 +2,80 @@
 
 \H{getieversion} Get Internet Explorer version
 
-\c  ; GetIEVersion
-\c  ;
-\c  ; Based on Yazno's function, http://yazno.tripod.com/powerpimpit/
-\c  ; Returns 1-6 (IE Version) or '' (IE is not installed) on top of the stack
-\c  ;
-\c  ; Usage:
-\c  ;   Call GetIEVersion
-\c  ;   Pop $R0 ; at this point $R0 is "5" or whatnot
+\c ; GetIEVersion
+\c ;
+\c ; Returns 1-11 (IE Version) or '' (IE is not installed) on top of the stack
+\c ;
+\c ; Usage:
+\c ;   Call GetIEVersion
+\c ;   Pop $R0 ; $R0 is "5" etc.
 \c
-\c  Function GetIEVersion
-\c  Push $R0
-\c    ClearErrors
-\c    ReadRegStr $R0 HKLM "Software\Microsoft\Internet Explorer" "Version"
-\c    IfErrors lbl_123 lbl_456
-\c
-\c    lbl_456: ; ie 4+
-\c      Strcpy $R0 $R0 1
-\c    Goto lbl_done
-\c
-\c    lbl_123: ; older ie version
-\c      ClearErrors
-\c      ReadRegStr $R0 HKLM "Software\Microsoft\Internet Explorer" "IVer"
-\c      IfErrors lbl_error
-\c
-\c        StrCpy $R0 $R0 3
-\c        StrCmp $R0 '100' lbl_ie1
-\c        StrCmp $R0 '101' lbl_ie2
-\c        StrCmp $R0 '102' lbl_ie2
-\c
-\c        StrCpy $R0 '3' ; default to ie3 if not 100, 101, or 102.
-\c        Goto lbl_done
-\c          lbl_ie1:
-\c            StrCpy $R0 '1'
-\c          Goto lbl_done
-\c          lbl_ie2:
-\c            StrCpy $R0 '2'
-\c          Goto lbl_done
-\c      lbl_error:
-\c        StrCpy $R0 ''
-\c    lbl_done:
-\c    Exch $R0
-\c  FunctionEnd
+\c Function GetIEVersion
+\c   Push $R0
+\c   ReadRegStr $R0 HKLM "Software\Microsoft\Internet Explorer" "svcVersion" ; IE v10+
+\c   StrCpy $R0 $R0 2
+\c   IntCmp $R0 9 "" "" lbl_done
+\c   ClearErrors
+\c   ReadRegStr $R0 HKLM "Software\Microsoft\Internet Explorer" "Version" ; IE v4..9
+\c   IfErrors lbl_123
+\c     StrCpy $R0 $R0 1 ; Note: This truncates 5.50 to 5 etc.
+\c     Goto lbl_done
+\c   lbl_123:
+\c   !if "${NSIS_PTR_SIZE}" > 4
+\c   StrCpy $R0 ""
+\c   !else
+\c   ReadRegStr $R0 HKLM "Software\Microsoft\Internet Explorer" "IVer" ; IE v1..3
+\c   IntCmp $R0 99 "" "" +3
+\c     StrCpy $R0 ""
+\c     Goto lbl_done
+\c   IntOp $R0 $R0 & 3 ; 100..103->0..3
+\c   IntCmp $R0 2 +2 "" +2
+\c     IntOp $R0 $R0 + 1 ; Bump 100->v1 and 101->v2 (Is 101 v1.5 or 2.0?)
+\c   !endif
+\c   lbl_done:
+\c   Exch $R0
+\c FunctionEnd
 
 \H{detect.netframework} Is .NET Framework installed?
 
-\c  ; IsDotNETInstalled
-\c  ;
-\c  ; Based on GetDotNETVersion
-\c  ;   http://nsis.sourceforge.net/Get_.NET_Version
-\c  ;
-\c  ; Usage:
-\c  ;   Call IsDotNETInstalled
-\c  ;   Pop $0
-\c  ;   StrCmp $0 1 found_dotNETFramework no_dotNETFramework
-\c
-\c  Function IsDotNETInstalled
-\c    Push $0
-\c    Push $1
-\c
-\c    StrCpy $0 1
-\c    System::Call "mscoree::GetCORVersion(w, i ${NSIS_MAX_STRLEN}, *i) i .r1"
-\c    StrCmp $1 0 +2
-\c      StrCpy $0 0
-\c
-\c    Pop $1
-\c    Exch $0
-\c  FunctionEnd
+\c ; IsDotNETInstalled
+\c ;
+\c ; NOTE: This is only able to detect .NET v1.x and v2.x!
+\c ;
+\c ; Based on GetDotNETVersion
+\c ;   http://nsis.sourceforge.net/Get_.NET_Version
+\c ;
+\c ; Usage:
+\c ;   Call IsDotNETInstalled
+\c ;   Pop $0 ; 0 or 1
+\c ;   StrCmp $0 1 found_dotNETFramework_v1_or_v2 no_dotNETFramework
+\c 
+\c Function IsDotNETInstalled
+\c   Push $0
+\c   System::Call '"$SysDir\MSCOREE.dll"::GetCORVersion(w,i${NSIS_MAX_STRLEN},*i)i.r0?u'
+\c   IntOp $0 $0 ! ; HRESULT (S_OK) -> BOOL
+\c   Exch $0
+\c FunctionEnd
 
 \H{isflashinstalled} Is Macromedia Flash Player installed?
 
-\c  ; IsFlashInstalled
-\c  ;
-\c  ; By Yazno, http://yazno.tripod.com/powerpimpit/
-\c  ; Returns the result on top of the stack
-\c  ;
-\c  ; Usage:
-\c  ;   Call IsFlashInstalled
-\c  ;   Pop $R0 ; $R0 is "1" or "0" at this point 
+\c ; IsFlashInstalled
+\c ;
+\c ; Usage:
+\c ;   Call IsFlashInstalled
+\c ;   Pop $R0 ; 1 or ""
 \c
-\c  Function IsFlashInstalled
-\c   Push $R0
-\c   ClearErrors
-\c   ReadRegStr $R0 HKCR "CLSID\{D27CDB6E-AE6D-11cf-96B8-444553540000}" ""
-\c   IfErrors lbl_na
-\c     StrCpy $R0 1
-\c   Goto lbl_end
-\c   lbl_na:
-\c     StrCpy $R0 0
-\c   lbl_end:
-\c   Exch $R0
-\c  FunctionEnd
+\c Function IsFlashInstalled
+\c Push $R0
+\c ReadRegStr $R0 HKCR "CLSID\{D27CDB6E-AE6D-11cf-96B8-444553540000}" ""
+\c StrCmp $R0 "" +2
+\c   StrCpy $R0 "1"
+\c Exch $R0
+\c FunctionEnd
 
 \H{connectinternet} Connect to the Internet
 
-\c  ; ConnectInternet (uses Dialer plug-in)
-\c  ; Written by Joost Verburg 
+\c  ; ConnectInternet (uses Dialer plug-in) - Written by Joost Verburg 
 \c  ;
 \c  ; This function attempts to make a connection to the internet if there is no
 \c  ; connection available. If you are not sure that a system using the installer
@@ -118,7 +96,7 @@
 \c      Pop $R0
 \c      StrCmp $R0 "online" connected
 \c        MessageBox MB_OK|MB_ICONSTOP "Cannot connect to the internet."
-\c        Quit ;This will quit the installer. You might want to add your own error handling.
+\c        Quit ; This will quit the installer. You might want to add your own error handling.
 \c      
 \c      noie3:
 \c    
@@ -131,11 +109,6 @@
 \c    
 \c  FunctionEnd
 
-\H{installerfilename} Get Installer Filename
-
-\c  System::Call 'kernel32::GetModuleFileName(p 0, t .R0, i ${NSIS_MAX_STRLEN}) i.r1'
-\c  ;$R0 will contain the installer filename
-
 \H{multipleinstances} Prevent Multiple Instances
 
 Put the following code in your \R{oninit}{.onInit function}:
@@ -147,7 +120,7 @@ Put the following code in your \R{oninit}{.onInit function}:
 \c    MessageBox MB_OK|MB_ICONEXCLAMATION "The installer is already running."
 \c    Abort
 
-'myMutex' must be replaced by a unique value!
+'myMutex' \e{must} be replaced by a unique string or GUID!
 
 \H{morefuncs} More
 
