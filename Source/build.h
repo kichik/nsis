@@ -143,11 +143,12 @@ namespace MakensisAPI {
   extern const TCHAR* SigintEventNameFmt;
   extern const TCHAR* SigintEventNameLegacy;
 
-  enum notify_e {
-    NOTIFY_SCRIPT, // main nsi file(s)
+  enum datatransfer_e {
+    NOTIFY_SCRIPT, // Compiler -> Host: main nsi file(s)
     NOTIFY_WARNING,
     NOTIFY_ERROR,
-    NOTIFY_OUTPUT // generated .exe file
+    NOTIFY_OUTPUT, // Compiler -> Host: Generated .exe file
+    PROMPT_FILEPATH // [0x03006000] Compiler -> Host -> Compiler
   };
 #ifdef _WIN32
   enum sndmsg_e {
@@ -156,8 +157,14 @@ namespace MakensisAPI {
 #endif
   enum QUERYHOST_e {
     QH_OUTPUTCHARSET = 1, // [0x03000000] return (wincodepage+1) or 0 for default (This encoding is used by stdout, stderr and the notify messages)
-    QH_ENABLESTDERR // [0x03001000] return 1 to output error messages to stderr or 0 to output error messages to stdout
+    QH_ENABLESTDERR, // [0x03001000] return 1 to output error messages to stderr or 0 to output error messages to stdout
+    QH_SUPPORTEDVERSION, // [0x03006000] The host must return new highest makensis compiler version it supports
   };
+  typedef struct {
+    unsigned char Platform; // Bitness OR'ed with sizeof(TCHAR) of the compiler
+    unsigned char Reserved;
+    TCHAR Path[1];
+  } PROMPT_FILEPATH_DATA;
 }
 
 #define PAGE_CUSTOM 0
@@ -273,7 +280,14 @@ class CEXEBuild {
     NStreamLineReader* curlinereader;
 
     HWND notify_hwnd;
-    void notify(MakensisAPI::notify_e code, const TCHAR *data) const;
+    void notify(MakensisAPI::datatransfer_e code, const TCHAR *data) const;
+    #ifdef _WIN32
+    typedef bool (CALLBACK*HOSTAPIREQUESTDATAPROC)(void*cookie, HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
+    #else
+    typedef bool (*HOSTAPIREQUESTDATAPROC)(void*cookie);
+    #endif
+    bool hostapi_request_data(MakensisAPI::datatransfer_e operation, UINT minver, HOSTAPIREQUESTDATAPROC proc, void*cookie, const void* input, UINT inputsize) const;
+    bool prompt_for_output_path(TCHAR*path, UINT pathcap) const;
 
   private:
     int check_write_output_errors() const;

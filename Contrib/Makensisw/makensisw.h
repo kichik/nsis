@@ -94,18 +94,26 @@ namespace MakensisAPI {
   extern const TCHAR* SigintEventNameFmt;
   extern const TCHAR* SigintEventNameLegacy;
 
-  enum notify_e {
+  enum datatransfer_e {
     NOTIFY_SCRIPT,
     NOTIFY_WARNING,
     NOTIFY_ERROR,
-    NOTIFY_OUTPUT
+    NOTIFY_OUTPUT,
+    PROMPT_FILEPATH
   };
   enum sndmsg_e {
     QUERYHOST = WM_APP
   };
   enum QUERYHOST_e {
-    QH_OUTPUTCHARSET = 1
+    QH_OUTPUTCHARSET = 1,
+    QH_ENABLESTDERR,
+    QH_SUPPORTEDVERSION
   };
+  typedef struct {
+    unsigned char Platform;
+    unsigned char Reserved;
+    TCHAR Path[1];
+  } PROMPT_FILEPATH_DATA;
 }
 
 typedef enum {

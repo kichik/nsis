@@ -497,9 +497,10 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
     case MakensisAPI::QUERYHOST: {
       if (MakensisAPI::QH_OUTPUTCHARSET == wParam) {
         const UINT reqcp = 1200; // We want UTF-16LE
-        SetWindowLongPtr(hwndDlg, DWLP_MSGRESULT, (LONG_PTR)(1+reqcp));
-        return TRUE;
+        return DlgRet(hwndDlg, (LONG_PTR)(1+reqcp));
       }
+      else if (MakensisAPI::QH_SUPPORTEDVERSION == wParam)
+        return DlgRet(hwndDlg, 0x03006000);
       return FALSE;
     }
     case WM_NOTIFY:
@@ -546,7 +547,8 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
       return TRUE;
     case WM_COPYDATA:
     {
-      PCOPYDATASTRUCT cds = PCOPYDATASTRUCT(lParam);
+      using namespace MakensisAPI;
+      COPYDATASTRUCT *cds = (COPYDATASTRUCT*) lParam, cdsret;
       switch (cds->dwData) {
         case MakensisAPI::NOTIFY_SCRIPT:
           MemSafeFree(g_sdata.input_script);
@@ -564,6 +566,24 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
           g_sdata.output_exe = (TCHAR*) MemAlloc(cds->cbData * sizeof(TCHAR));
           lstrcpy(g_sdata.output_exe, (TCHAR *)cds->lpData);
           break;
+        case MakensisAPI::PROMPT_FILEPATH:
+          if ((((PROMPT_FILEPATH_DATA*)cds->lpData)->Platform & 7) == sizeof(TCHAR))
+          {
+            TCHAR buf[MAX_PATH];
+            lstrcpyn(buf, FSPath::FindLastComponent(((PROMPT_FILEPATH_DATA*)cds->lpData)->Path), COUNTOF(buf));
+            OPENFILENAME of = { sizeof(of) };
+            of.hwndOwner = hwndDlg;
+            of.lpstrFilter = _T("*.exe\0*.exe\0*\0*.*\0");
+            of.lpstrFile = buf, of.nMaxFile = COUNTOF(buf);
+            of.Flags = OFN_EXPLORER|OFN_ENABLESIZING|OFN_HIDEREADONLY|OFN_OVERWRITEPROMPT|OFN_PATHMUSTEXIST|OFN_NOCHANGEDIR;
+            if (GetSaveFileName(&of))
+            {
+              cdsret.dwData = cds->dwData, cdsret.cbData = (lstrlen(buf) + 1) * sizeof(TCHAR), cdsret.lpData = buf;
+              SendMessage((HWND) wParam, WM_COPYDATA, (SIZE_T) hwndDlg, (SIZE_T) &cdsret);
+            }
+            return TRUE;
+          }
+          return FALSE;
       }
       return TRUE;
     }
