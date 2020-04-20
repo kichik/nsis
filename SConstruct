@@ -278,12 +278,15 @@ if int(defenv['VER_PACKED'], 0) < int('0x03000000', 0) or int(defenv['VER_PACKED
 	Exit(1)
 f.write('#define NSIS_PACKEDVERSION _T("%s")\n' % defenv['VER_PACKED'])
 
-if 'VER_MAJOR' in defenv and defenv.get('VERSION','') == '':
+if defenv.get('VERSION','') == '' and 'VER_MAJOR' in defenv:
 	defenv['VERSION'] = defenv['VER_MAJOR']
 	if 'VER_MINOR' in defenv:
 		defenv['VERSION'] += '.' + defenv['VER_MINOR']
 	if 'VER_REVISION' in defenv:
 		defenv['VERSION'] += '.' + defenv['VER_REVISION']
+if defenv.get('VERSION','') == '' and int(defenv['VER_PACKED'], 0) > int('0x02000000', 0):
+	defenv['VERSION'] = '%i' % int(defenv['VER_PACKED'][2:][:2]) # Default to major version
+	print('WARNING: VERSION not set, defaulting to %s!' % defenv['VERSION'])
 f.write('#define NSIS_VERSION _T("v%s")\n' % defenv['VERSION'])
 
 f.close()
