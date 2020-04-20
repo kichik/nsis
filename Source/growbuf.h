@@ -122,6 +122,7 @@ class GrowBuf : public IGrowBuf
 class TinyGrowBuf : public GrowBuf {
   public:
     TinyGrowBuf() : GrowBuf() { m_bs=1024; }
+    TinyGrowBuf(size_type cb) : GrowBuf() { m_bs=1024; resize(cb); }
 };
 
 #endif
