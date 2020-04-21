@@ -208,6 +208,8 @@ Version History
 - Added log window colors
 - Basic AppEvents custom sound support for BuildComplete, BuildWarning and BuildError
 
+2.3.6
+- Added GUID generator tool
 
 Copyright Information
 ---------------------
