@@ -261,7 +261,7 @@ Here is the function:
 \c     Pop $2
 \c     Pop $1
 \c     Pop $0
-\c     Exch $5
+\c     Pop $5
 \c FunctionEnd
 
 \H{readreg_multi_sz} How to Read REG_MULTI_SZ Values
