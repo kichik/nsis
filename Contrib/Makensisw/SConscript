@@ -58,7 +58,7 @@ BuildUtil(
 	res = res,
 	resources = resources,
 	entry = None,
-	defines = ['RELEASE=2.3.5'],
+	defines = ['RELEASE=2.3.6'],
 	docs = docs,
 	root_util = True
 )

@@ -111,6 +111,7 @@ BEGIN
         MENUITEM "&Settings\tCtrl+S",         IDM_SETTINGS
         MENUITEM "", -1, MFT_SEPARATOR
         MENUITEM "&Window Info",                IDM_WNDSPY
+        MENUITEM "Generate &GUID",              IDM_GUIDGEN
         MENUITEM "", -1, MFT_SEPARATOR
         MENUITEM "Clear Recent &Files List",    IDM_CLEAR_MRU_LIST
     END

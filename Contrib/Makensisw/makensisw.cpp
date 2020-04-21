@@ -690,6 +690,17 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
           extern int ShowWndSpy(HWND hOwner);
           return ShowWndSpy(g_sdata.hwnd);
         }
+        case IDM_GUIDGEN:
+        {
+          GUID guid;
+          TCHAR buf[41 * (1 + (sizeof(TCHAR) < 2))];
+          FARPROC func = GetKeyState(VK_CONTROL) < 0 ? GetSysProcAddr("RPCRT4", "UuidCreateSequential") : NULL;
+          ((HRESULT(WINAPI*)(GUID*))(func ? func : GetSysProcAddr("RPCRT4", "UuidCreate")))(&guid);
+          ((int(WINAPI*)(GUID*, TCHAR*, int))(GetSysProcAddr("OLE32", "StringFromGUID2")))(&guid, buf, 39);
+          for (UINT i = 0; sizeof(TCHAR) < 2; ++i) if (!(buf[i] = (CHAR) ((WCHAR*)buf)[i])) break; // WCHAR to TCHAR if ANSI
+          LogMessage(g_sdata.hwnd, (buf[38] = '\r', buf[39] = '\n', buf[40] = '\0', buf));
+          break;
+        }
         case IDM_TEST:
         case IDC_TEST:
         {
