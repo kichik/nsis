@@ -89,11 +89,11 @@ void __declspec(dllexport) SelectFolderDialog(HWND hwndParent, int string_size, 
 
 void __declspec(dllexport) SelectFileDialog(HWND hwndParent, int string_size, TCHAR *variables, stack_t **stacktop, extra_parameters *extra)
 {
-  OPENFILENAME ofn={0,}; // XXX WTF
+  OPENFILENAME ofn={0,};
   int save;
   TCHAR type[5];
   static TCHAR path[1024];
-  static TCHAR filter[1024];
+  static TCHAR filter[1024+1];
   static TCHAR currentDirectory[1024];
   static TCHAR initialDir[1024];
   DWORD gfa;
@@ -110,7 +110,7 @@ void __declspec(dllexport) SelectFileDialog(HWND hwndParent, int string_size, TC
 
   popstringn(type, COUNTOF(type));
   popstringn(path, COUNTOF(path));
-  popstringn(filter, COUNTOF(filter));
+  popstringn(filter, COUNTOF(filter)-1);
 
   save = !lstrcmpi(type, _T("save"));
 
@@ -133,7 +133,7 @@ void __declspec(dllexport) SelectFileDialog(HWND hwndParent, int string_size, TC
     // Convert the filter to the format required by Windows: NULL after each
     // item followed by a terminating NULL
     TCHAR *p = filter;
-    while (*p) // XXX take care for 1024
+    while (*p)
     {
       if (*p == _T('|'))
       {
