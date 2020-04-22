@@ -458,9 +458,15 @@ SectionEnd</pre></blockquote>
 
 <h3><a name="ref-selectfiledialog"></a>SelectFileDialog</h3>
 <p><code>nsDialogs::SelectFileDialog <i>mode</i> <i>initial_selection</i> <i>filter</i></code></p>
-<p>Displays a file selection dialog to the user. If <i>mode</i> is set to <i>save</i>, displays a file save dialog. If <i>mode</i> is set to <i>open</i>, displays a file open dialog. <i>filter</i> is a list of available file filters separated by pipes. If an empty string is passed, the default is used - <i>All Files|*.*</i>.</p>
+<p>Displays a file selection dialog to the user. If <i>mode</i> is set to <i>save</i>, displays a file save dialog. If <i>mode</i> is set to <i>open</i>, displays a file open dialog.
 <p><i>initial_selection</i> can be used to provide the user with a default file to look for and/or a default folder to look in. If <i>initial_selection</i> is empty no default filename will be provided for the user and the dialog will start in the current working directory. If <i>initial_selection</i> specifies just a filename, for example "test.exe", the dialog will be set up to look for a file called test.exe in the current working directory. If <i>initial_selection</i> specifies just a directory, for example "C:\Program Files", the dialog starts in the provided directory with no file name provided. If <i>initial_selection</i> specifies a directory and a filename, for example "C:\Windows\System32\calc.exe", the dialog will be set up to look for a file called calc.exe in the directory C:\Windows\System32.</p>
+<i>filter</i> is a list of available file filter pairs separated by pipes. A filter pair consists of a display string and a <a href="https://blogs.msdn.microsoft.com/jeremykuhne/2017/06/04/wildcards-in-windows/">DOS-style wildcard pattern</a>. If an empty string is passed, the default is used (<i>"All Files|*.*"</i>).</p>
 <p>Returns the selected file on the stack or an empty string if the user canceled the operation.</p>
+<blockquote><pre>
+nsDialogs::SelectFileDialog open "$DOCUMENTS\Config.ini" ".ini files|*.ini|All Files|*.*"
+Pop $0
+StrCmp $0 "" ...
+</pre></blockquote>
 
 <h3><a name="ref-selectfolderdialog"></a>SelectFolderDialog</h3>
 <p><code>nsDialogs::SelectFolderDialog <i>title</i> <i>initial_selection</i></code></p>
