@@ -992,6 +992,12 @@ int CEXEBuild::pp_define(LineParser&line)
 
     if (tc + onlyval1 != 6) goto badmathsyntax;
   }
+  else if (!_tcsicmp(define, _T("/intfmt")))
+  {
+    if (line.getnumtokens() != 5) PRINTHELPEX(cmdnam)
+    define = line.gettoken_str(2);
+    _stprintf(value = mathbuf, line.gettoken_str(3), line.gettoken_int(4));
+  }
   else
   {
     if (line.getnumtokens() >= 4) PRINTHELPEX(cmdnam)

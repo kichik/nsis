@@ -212,10 +212,16 @@ Header file for creating custom installer pages with nsDialogs
 !define /ifndef ICC_UPDOWN_CLASS     0x0010
 !define /ifndef ICC_HOTKEY_CLASS     0x0040
 !define /ifndef ICC_ANIMATE_CLASS    0x0080
+#define /ifndef ICC_WIN95_CLASSES    0x00FF
 !define /ifndef ICC_DATE_CLASSES     0x0100
 !define /ifndef ICC_USEREX_CLASSES   0x0200
+!define /ifndef ICC_USEREX_CLASSES   0x0200
+!define /ifndef ICC_COOL_CLASSES     0x0400
 !define /ifndef ICC_INTERNET_CLASSES 0x0800
-!define /ifndef ICC_LINK_CLASS       0x8000
+!define /ifndef ICC_PAGESCROLLER_CLASS 0x1000
+!define /ifndef ICC_NATIVEFNTCTL_CLASS 0x2000
+#define /ifndef ICC_STANDARD_CLASSES 0x4000 ; WinXP+
+!define /ifndef ICC_LINK_CLASS       0x8000 ; WinXP+
 
 
 !define DEFAULT_STYLES ${WS_CHILD}|${WS_VISIBLE}|${WS_CLIPSIBLINGS}
@@ -450,9 +456,18 @@ SendMessage ${hCtl} ${${msg}} ${wp} ${lp} ${VAR}
 
 !define NSD_InitCommonControlsEx "!insertmacro __NSD_InitCommonControlsEx "
 !macro __NSD_InitCommonControlsEx ICC
+!pragma warning push
+!pragma warning disable 7070 ; Invalid number
+!if ${ICC} <> 0
+!define /ReDef /IntFmt NSD_InitCommonControlsEx_TEMP "0x%X" ${ICC}
+System::Call 'COMCTL32::InitCommonControlsEx(*l${NSD_InitCommonControlsEx_TEMP}00000008)'
+!undef NSD_InitCommonControlsEx_TEMP
+!else
 System::Int64Op ${ICC} << 32
-System::Int64Op 0x08 | 
+System::Int64Op 8 | 
 System::Call 'COMCTL32::InitCommonControlsEx(*ls)' ; INITCOMMONCONTROLSEX as UINT64
+!endif
+!pragma warning pop
 !macroend
 
 
