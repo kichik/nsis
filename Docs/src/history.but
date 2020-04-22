@@ -22,6 +22,8 @@ Released on ? ?th, 2020
 
 \# Undocumented: \b Added GetShellVarContext, IfAltRegView and GetRegView | Documenting these would require documenting the parameter name to number mapping
 
+\b Added \cw{!define /intfmt}
+
 \b MultiUser: Fixed INSTALLMODE_FUNCTION and added INSTALLMODEPAGE_SHOWUSERNAME
 
 \S2{} Translations
