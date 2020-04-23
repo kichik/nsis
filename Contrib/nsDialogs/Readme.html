@@ -6,7 +6,7 @@
 <style type="text/css">
 body { color: #000000; background-color: #ffffff; }
 b { color: red; }
-code { margin-left: 1.2em; padding: 0.5em; background-color: #f0f0f0; }
+code { margin-left: 1.2em; padding: 0.5em; background-color: #f0f0f0; display:inline-block; }
 span.inlcod i { padding: 0px 0.2em; color: #222222; font-family: monospace; font-style: normal; }
 blockquote pre { background-color: #fcfcfc; font-family: monospace; }
 abbr { font-variant: none; cursor: help; }
@@ -78,8 +78,11 @@ abbr { font-variant: none; cursor: help; }
 <li>ComboBox &amp; DropList: 
 <a href="#mref-cbaddstring">NSD_CB_AddString</a>, 
 <a href="#mref-cbinsstring">NSD_CB_PrependString, NSD_CB_AppendString, NSD_CB_InsertString</a>, 
-<a href="#mref-cbselectstring">NSD_CB_SelectString</a>, 
-<a href="#mref-cbgetcount">NSD_CB_GetCount</a>
+NSD_CB_DelString, 
+NSD_CB_DelItem, 
+NSD_CB_Clear, 
+<a href="#mref-cbgetcount">NSD_CB_GetCount</a>, 
+<a href="#mref-cbselectstring">NSD_CB_SelectString</a>
 </li>
 <li>ListBox: 
 <a href="#mref-lbaddstring">NSD_LB_AddString</a>, 
@@ -250,6 +253,7 @@ HTrackBar,
 VTrackBar, 
 UpDown, 
 HotKey,
+DatePicker,
 IPAddress.
 </p>
 
@@ -559,7 +563,8 @@ StrCmp $0 "" ...
 <li>${NSD_CreateVTrackBar}</li>
 <li>${NSD_CreateUpDown}</li>
 <li>${NSD_CreateHotKey}</li>
-<li>${NSD_CreateIPAddress} <small>(Requires <abbr title="Internet Explorer">IE</abbr>4)</small></li>
+<li>${NSD_CreateDatePicker} <small>(Requires <abbr title="Internet Explorer">IE</abbr> 3.1)</small></li>
+<li>${NSD_CreateIPAddress} <small>(Requires <abbr title="Internet Explorer">IE</abbr> 4)</small></li>
 </ul>
 <p>Returns the new control's HWND on the stack or <i>error</i></p>
 

@@ -186,6 +186,24 @@ Header file for creating custom installer pages with nsDialogs
 !define UDS_NOTHOUSANDS 0x0080
 !define UDS_HOTTRACK    0x0100 ; 98+
 
+!define MCS_DAYSTATE        0x0001
+!define MCS_MULTISELECT     0x0002
+!define MCS_WEEKNUMBERS     0x0004
+!define MCS_NOTODAYCIRCLE   0x0008
+!define MCS_NOTODAY         0x0010 ; IE4+?
+!define MCS_NOTRAILINGDATES  0x0040 ; Vista+
+!define MCS_SHORTDAYSOFWEEK  0x0080 ; Vista+
+!define MCS_NOSELCHANGEONNAV 0x0100 ; Vista+
+
+!define DTS_UPDOWN          0x01
+!define DTS_SHOWNONE        0x02
+!define DTS_SHORTDATEFORMAT 0x00
+!define DTS_LONGDATEFORMAT  0x04
+!define DTS_SHORTDATECENTURYFORMAT 0x0C
+!define DTS_TIMEFORMAT      0x09
+!define DTS_APPCANPARSE     0x10
+!define DTS_RIGHTALIGN      0x20
+
 !define /ifndef LR_DEFAULTCOLOR     0x0000
 !define /ifndef LR_MONOCHROME       0x0001
 !define /ifndef LR_COLOR            0x0002
@@ -208,20 +226,19 @@ Header file for creating custom installer pages with nsDialogs
 !define /ifndef GWL_STYLE           -16
 !define /ifndef GWL_EXSTYLE         -20
 
-!define /ifndef ICC_BAR_CLASSES      0x0004
+!define /ifndef ICC_BAR_CLASSES      0x0004 ; Toolbar, Statusbar, Trackbar and ToolTip
 !define /ifndef ICC_UPDOWN_CLASS     0x0010
 !define /ifndef ICC_HOTKEY_CLASS     0x0040
 !define /ifndef ICC_ANIMATE_CLASS    0x0080
 #define /ifndef ICC_WIN95_CLASSES    0x00FF
-!define /ifndef ICC_DATE_CLASSES     0x0100
-!define /ifndef ICC_USEREX_CLASSES   0x0200
-!define /ifndef ICC_USEREX_CLASSES   0x0200
-!define /ifndef ICC_COOL_CLASSES     0x0400
+!define /ifndef ICC_DATE_CLASSES     0x0100 ; CC4.70+ (NT4+/IE3.1+/Win95 OSR2) SysDateTimePick32 and SysMonthCal32
+!define /ifndef ICC_USEREX_CLASSES   0x0200 ; CC4.??+ (NT4+/IE3.?+/Win95 OSR2) ComboBoxEx32
+!define /ifndef ICC_COOL_CLASSES     0x0400 ; CC4.70+ (NT4+/IE3.1+/Win95 OSR2) ReBarWindow32
 !define /ifndef ICC_INTERNET_CLASSES 0x0800
-!define /ifndef ICC_PAGESCROLLER_CLASS 0x1000
+!define /ifndef ICC_PAGESCROLLER_CLASS 0x1000 ; CC4.71+ (IE4+) SysPager
 !define /ifndef ICC_NATIVEFNTCTL_CLASS 0x2000
 #define /ifndef ICC_STANDARD_CLASSES 0x4000 ; WinXP+
-!define /ifndef ICC_LINK_CLASS       0x8000 ; WinXP+
+!define /ifndef ICC_LINK_CLASS       0x8000 ; WinXP+ SysLink
 
 
 !define DEFAULT_STYLES ${WS_CHILD}|${WS_VISIBLE}|${WS_CLIPSIBLINGS}
@@ -350,6 +367,18 @@ Header file for creating custom installer pages with nsDialogs
 !define __NSD_HotKey_STYLE ${DEFAULT_STYLES}
 !define __NSD_HotKey_EXSTYLE ${WS_EX_WINDOWEDGE}|${WS_EX_CLIENTEDGE}
 
+!define __NSD_Calendar_CLASS SysMonthCal32
+!define __NSD_Calendar_STYLE ${DEFAULT_STYLES}|${WS_TABSTOP}
+!define __NSD_Calendar_EXSTYLE 0
+
+!define __NSD_DatePicker_CLASS SysDateTimePick32
+!define __NSD_DatePicker_STYLE ${DEFAULT_STYLES}|${WS_TABSTOP}
+!define __NSD_DatePicker_EXSTYLE ${WS_EX_WINDOWEDGE}|${WS_EX_CLIENTEDGE}
+
+!define __NSD_TimePicker_CLASS SysDateTimePick32
+!define __NSD_TimePicker_STYLE ${DEFAULT_STYLES}|${WS_TABSTOP}|${DTS_TIMEFORMAT}
+!define __NSD_TimePicker_EXSTYLE ${WS_EX_WINDOWEDGE}|${WS_EX_CLIENTEDGE}
+
 !define __NSD_IPAddress_CLASS SysIPAddress32 ; IE4+/CC4.71+
 !define __NSD_IPAddress_STYLE ${DEFAULT_STYLES}
 !define __NSD_IPAddress_EXSTYLE 0
@@ -387,6 +416,9 @@ Header file for creating custom installer pages with nsDialogs
 !insertmacro __NSD_DefineControl UpDown
 !insertmacro __NSD_DefineControl AutoUpDown
 !insertmacro __NSD_DefineControl HotKey
+!insertmacro __NSD_DefineControl Calendar
+!insertmacro __NSD_DefineControl DatePicker
+!insertmacro __NSD_DefineControl TimePicker
 !insertmacro __NSD_DefineControl IPAddress
 
 
@@ -670,8 +702,14 @@ SendMessage ${CONTROL} ${CB_GETITEMDATA} ${INDEX} 0 ${VAR}
 !define NSD_CB_LimitText `${__NSD_MkCtlCmd_WP} CB_LIMITTEXT 0 `
 !define /IfNDef NSD_CB_Clear `${__NSD_MkCtlCmd} CB_RESETCONTENT 0 0 `
 !define /IfNDef NSD_CB_GetCount `${__NSD_MkCtlCmd_RV} CB_GETCOUNT 0 0 `
-;define /IfNDef NSD_CB_DelString    ; /IfNDef to try to stay compatible with 
-;define /IfNDef NSD_CB_GetSelection ; the ListView header from the Wiki.
+!ifndef NSD_CB_DelString
+!define NSD_CB_DelString `!insertmacro __NSD_CB_DelString `
+!macro __NSD_CB_DelString CONTROL STRING
+	System::Call 'USER32::SendMessage(p${CONTROL},i${CB_FINDSTRINGEXACT},p-1,ts)p.s' `${STRING}`
+	System::Call 'USER32::SendMessage(p${CONTROL},i${CB_DELETESTRING},ps,p0)'
+!macroend
+!endif
+;define /IfNDef NSD_CB_GetSelection
 
 
 ### ListBox ###
