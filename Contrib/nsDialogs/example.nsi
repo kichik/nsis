@@ -176,13 +176,31 @@ FunctionEnd
 Function NotifyPage
 	!insertmacro BeginControlsTestPage "WM_NOTIFY"
 
-	nsDialogs::CreateControl "${__NSD_RichEdit_CLASS_20A}" "${__NSD_RichEdit_STYLE}" "${__NSD_RichEdit_EXSTYLE}" 1 1 -2 -2 "" ; Forcing ANSI control, see forums.winamp.com/showthread.php?p=3169999
+	nsDialogs::CreateControl "${__NSD_RichEdit_CLASS_20A}" "${__NSD_RichEdit_STYLE}" "${__NSD_RichEdit_EXSTYLE}" 1 1 -2 50u "" ; Forcing ANSI control, see forums.winamp.com/showthread.php?p=3169999
 	Pop $9
 	${NSD_OnNotify} $9 OnNotify
 	IntOp $8 ${ENM_LINK} | ${ENM_KEYEVENTS}
 	${NSD_RichEd_SetEventMask} $9 $8
 	SendMessage $9 ${EM_AUTOURLDETECT} 1 0
 	${NSD_SetText} $9 "{\rtf1\ansi{\fonttbl\f0\fswiss Helvetica;}\f0\pard http://nsis.sf.net\par {\b Click the link!}\par\par Type something and I will block every other character...}"
+
+	${NSD_InitCommonControlsEx} ${ICC_DATE_CLASSES}
+	${NSD_CreateDatePicker} 1% 55u 48% 12u ""
+	Pop $1
+	${NSD_OnNotify} $1 onDateTimeNotify
+	${NSD_CreateLabel} 51% 56u 48% 12u "Change the date..."
+	Pop $9
+
+	/*
+	${NSD_CreateCalendar} 1% 23% 150u 90u ""
+	Pop $1
+	${NSD_AddStyle} $1 ${MCS_NOTODAY}
+	System::Call 'USER32::SendMessage(p$1, i${MCM_GETMINREQRECT}, p0, @r2)'
+	System::Call '*$2(i,i,i.r2,i.r3)'
+	#System::Call 'USER32::SendMessage(p$1, i${MCM_GETMAXTODAYWIDTH}, p0, *i0r4)'
+	#${IfThen} $4 > $2 ${|} StrCpy $2 $4 ${|}
+	System::Call 'USER32::SetWindowPos(p$1,p0,i,i,ir2,ir3,i0x16)'
+	*/
 
 	nsDialogs::Show
 FunctionEnd
@@ -215,6 +233,22 @@ Function OnNotify
 			${EndIf}
 		${EndIf}
 	${EndIf}
+FunctionEnd
+
+Function onDateTimeNotify
+Pop $1 ; HWND
+Pop $2 ; Code
+Pop $3 ; NMHDR*
+${If} $2 = ${DTN_DATETIMECHANGE}
+	System::Call 'USER32::SendMessage(p$1, i${DTM_GETSYSTEMTIME}, p0, @r3)i.r0'
+	${If} $0 = ${GDT_VALID}
+		System::Call '*$3(&i2.R1, &i2.R2, &i2, &i2.R3, &i2, &i2, &i2, &i2)' ; SYSTEMTIME
+		StrCpy $0 "$R1/$R2/$R3"
+	${Else}
+		StrCpy $0 "N/A"
+	${EndIf}
+	${NSD_SetText} $9 $0
+${EndIf}
 FunctionEnd
 
 Section
