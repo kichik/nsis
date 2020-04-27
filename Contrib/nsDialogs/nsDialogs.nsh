@@ -226,18 +226,22 @@ Header file for creating custom installer pages with nsDialogs
 !define /ifndef GWL_STYLE           -16
 !define /ifndef GWL_EXSTYLE         -20
 
-!define /ifndef ICC_BAR_CLASSES      0x0004 ; Toolbar, Statusbar, Trackbar and ToolTip
-!define /ifndef ICC_UPDOWN_CLASS     0x0010
-!define /ifndef ICC_HOTKEY_CLASS     0x0040
-!define /ifndef ICC_ANIMATE_CLASS    0x0080
+#define /ifndef ICC_LISTVIEW_CLASSES 0x0001 ; SysListView32 and SysHeader32
+#define /ifndef ICC_TREEVIEW_CLASSES 0x0002 ; SysTabControl32 and tooltips_class32
+#define /ifndef ICC_BAR_CLASSES      0x0004 ; ToolbarWindow32, msctls_statusbar32, msctls_trackbar32 and tooltips_class32
+#define /ifndef ICC_TAB_CLASSES      0x0008 ; SysTabControl32 and tooltips_class32
+#define /ifndef ICC_UPDOWN_CLASS     0x0010 ; msctls_updown32
+#define /ifndef ICC_PROGRESS_CLASS   0x0020 ; msctls_progress32
+#define /ifndef ICC_HOTKEY_CLASS     0x0040 ; msctls_hotkey32
+#define /ifndef ICC_ANIMATE_CLASS    0x0080 ; SysAnimate32
 #define /ifndef ICC_WIN95_CLASSES    0x00FF
-!define /ifndef ICC_DATE_CLASSES     0x0100 ; CC4.70+ (NT4+/IE3.1+/Win95 OSR2) SysDateTimePick32 and SysMonthCal32
+!define /ifndef ICC_DATE_CLASSES     0x0100 ; CC4.70+ (NT4+/IE3.1+/Win95 OSR2) SysDateTimePick32, SysMonthCal32 and CC6.10+(Vista+) DropDown
 !define /ifndef ICC_USEREX_CLASSES   0x0200 ; CC4.??+ (NT4+/IE3.?+/Win95 OSR2) ComboBoxEx32
 !define /ifndef ICC_COOL_CLASSES     0x0400 ; CC4.70+ (NT4+/IE3.1+/Win95 OSR2) ReBarWindow32
-!define /ifndef ICC_INTERNET_CLASSES 0x0800
+!define /ifndef ICC_INTERNET_CLASSES 0x0800 ; CC4.71+ (IE4+) SysIPAddress32
 !define /ifndef ICC_PAGESCROLLER_CLASS 0x1000 ; CC4.71+ (IE4+) SysPager
-!define /ifndef ICC_NATIVEFNTCTL_CLASS 0x2000
-#define /ifndef ICC_STANDARD_CLASSES 0x4000 ; WinXP+
+!define /ifndef ICC_NATIVEFNTCTL_CLASS 0x2000 ; CC4.71+ (IE4+) NativeFontCtl
+!define /ifndef ICC_STANDARD_CLASSES 0x4000 ; WinXP+ Button, Static, Edit, ListBox, ComboBox, ComboLBox, ScrollBar and ReaderModeCtl
 !define /ifndef ICC_LINK_CLASS       0x8000 ; WinXP+ SysLink
 
 
@@ -380,8 +384,12 @@ Header file for creating custom installer pages with nsDialogs
 !define __NSD_TimePicker_EXSTYLE ${WS_EX_WINDOWEDGE}|${WS_EX_CLIENTEDGE}
 
 !define __NSD_IPAddress_CLASS SysIPAddress32 ; IE4+/CC4.71+
-!define __NSD_IPAddress_STYLE ${DEFAULT_STYLES}
+!define __NSD_IPAddress_STYLE ${DEFAULT_STYLES}|${WS_TABSTOP}
 !define __NSD_IPAddress_EXSTYLE 0
+
+!define __NSD_NetAddress_CLASS msctls_netaddress ; Vista+
+!define __NSD_NetAddress_STYLE ${DEFAULT_STYLES}|${WS_TABSTOP}
+!define __NSD_NetAddress_EXSTYLE ${WS_EX_WINDOWEDGE}|${WS_EX_CLIENTEDGE}
 
 
 !macro __NSD_DefineControl NAME
@@ -420,6 +428,7 @@ Header file for creating custom installer pages with nsDialogs
 !insertmacro __NSD_DefineControl DatePicker
 !insertmacro __NSD_DefineControl TimePicker
 !insertmacro __NSD_DefineControl IPAddress
+!insertmacro __NSD_DefineControl NetAddress
 
 
 !macro __NSD_OnControlEvent EVENT HWND FUNCTION
@@ -501,6 +510,9 @@ System::Call 'COMCTL32::InitCommonControlsEx(*ls)' ; INITCOMMONCONTROLSEX as UIN
 !endif
 !pragma warning pop
 !macroend
+!define NSD_InitCommonControl_IPAddress `${NSD_InitCommonControlsEx} ${ICC_INTERNET_CLASSES}`
+!define NSD_InitCommonControl_NetAddress `System::Call SHELL32::InitNetworkAddressControl()i`
+!define NSD_InitCommonControl_SysLink `${NSD_InitCommonControlsEx} ${ICC_LINK_CLASS}`
 
 
 !define NSD_CreateTimer `!insertmacro _NSD_CreateTimer `
@@ -911,6 +923,27 @@ Pop ${VAR}
 !macroend
 
 
+### Date ###
+!define NSD_Date_GetDateFields `!insertmacro __NSD_Date_GetDateFields `
+!macro __NSD_Date_GetDateFields CONTROL
+Push $0
+System::Call 'USER32::SendMessage(p${CONTROL},i${DTM_GETSYSTEMTIME},p0,@r0)'
+System::Call '*$0(&i2.s,&i2.s,&i2,&i2.s)'
+Exch 3
+Pop $0
+!macroend
+
+!define NSD_Time_GetTimeFields `!insertmacro __NSD_Time_GetTimeFields `
+!macro __NSD_Time_GetTimeFields CONTROL
+Push $0
+System::Call 'USER32::SendMessage(p${CONTROL},i${DTM_GETSYSTEMTIME},p0,@r0)'
+System::Call '*$0(&i2,&i2,&i2,&i2,&i2.s,&i2.s,&i2.s)'
+Exch 3
+Pop $0
+Exch
+!macroend
+
+
 ### Static ###
 
 !macro __NSD_LoadAndSetImage _LIHINSTMODE _IMGTYPE _LIHINSTSRC _LIFLAGS CONTROL IMAGE HANDLE
@@ -952,6 +985,7 @@ Pop ${VAR}
 
 
 !define NSD_SetStretchedImage `!insertmacro __NSD_SetStretchedImage `
+!define NSD_SetStretchedBitmap `!insertmacro __NSD_SetStretchedImage `
 !macro __NSD_SetStretchedImage CONTROL IMAGE HANDLE
 	Push $0
 	Push $R0

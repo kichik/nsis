@@ -24,6 +24,8 @@ Released on ? ?th, 2020
 
 \b Added \cw{!define /intfmt}
 
+\b Added Date/Time NSD controls and macros
+
 \b MultiUser: Fixed INSTALLMODE_FUNCTION and added INSTALLMODEPAGE_SHOWUSERNAME
 
 \S2{} Translations
