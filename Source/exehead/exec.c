@@ -843,14 +843,15 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     case EW_LOADANDSETIMAGE:
     {
       RECT r;
-      HANDLE hImage;
-      HWND hCtl=(parm2 & LASIF_HWND) ? GetHwndFromParm(1) : GetDlgItem(g_hwnd, parm1);
-      UINT it=parm2 & LASIM_IMAGE, exeres=parm2 & LASIF_EXERES, fitw=(UINT)parm2 >> LASIS_FITCTLW, fith=(parm2 & LASIF_FITCTLH) != 0;
-      LPCTSTR imgname = (parm2 & LASIF_STRID) ? GetStringFromParm(0x00) : MAKEINTRESOURCE(parm0);
+      HANDLE hNewImage, hPrevImage;
+      HWND hCtl=(parm3 & LASIF_HWND) ? GetHwndFromParm(2) : GetDlgItem(g_hwnd, parm2);
+      UINT it=parm3 & LASIM_IMAGE, exeres=parm3 & LASIF_EXERES, fitw=(UINT)parm3 >> LASIS_FITCTLW, fith=(parm3 & LASIF_FITCTLH) != 0;
+      LPCTSTR imgid = (parm3 & LASIF_STRID) ? GetStringFromParm(0x11) : MAKEINTRESOURCE(parm1);
       GetClientRect(hCtl, &r);
-      hImage=LoadImage(exeres ? g_hInstance : NULL, imgname, it, fitw*r.right, fith*r.bottom, parm2 & LASIM_LR);
-      hImage=(HANDLE)SendMessage(hCtl, STM_SETIMAGE, it, (LPARAM)hImage);
-      if (hImage && IMAGE_BITMAP == it) DeleteObject(hImage); // Delete the old image
+      hNewImage=LoadImage(exeres ? g_hInstance : NULL, imgid, it, fitw*r.right, fith*r.bottom, parm3 & LASIM_LR);
+      hPrevImage=(HANDLE)SendMessage(hCtl, STM_SETIMAGE, it, (LPARAM)hNewImage);
+      if (hPrevImage && IMAGE_BITMAP == it) DeleteObject(hPrevImage); // Delete the old bitmap
+      if (parm0 >=0) iptrtostr(var0, (INT_PTR)hNewImage); // Optional output handle
     }
     break;
     case EW_CREATEFONT:

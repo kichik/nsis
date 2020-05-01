@@ -112,7 +112,7 @@ enum
 #ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
   EW_GETDLGITEM,        // GetDlgItem:        3: [outputvar, dialog, item_id]
   EW_SETCTLCOLORS,      // SerCtlColors:      3: [hwnd, pointer to struct colors]
-  EW_LOADANDSETIMAGE,   // SetBrandingImage/LoadAndSetImage: 3: [imgid ctl flags]
+  EW_LOADANDSETIMAGE,   // SetBrandingImage/LoadAndSetImage: 5: [ctrl imagetype lrflags imageid [output]]
   EW_CREATEFONT,        // CreateFont:        5: [handle output, face name, height, weight, flags]
   EW_SHOWWINDOW,        // ShowWindow:        2: [hwnd, show state]
 #endif

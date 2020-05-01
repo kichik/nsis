@@ -969,11 +969,11 @@ Exch
 !macroend
 
 !macro __NSD_SetIconFromExeResource CONTROL IMAGE HANDLE
-	!insertmacro __NSD_LoadAndSetImage exeresource ${IMAGE_ICON} 0 ${LR_DEFAULTSIZE} "${CONTROL}" "${IMAGE}" ${HANDLE}
+	LoadAndSetImage /EXERESOURCE /STRINGID "${CONTROL}" ${IMAGE_ICON} ${LR_DEFAULTSIZE} "${IMAGE}" ${HANDLE}
 !macroend
 
 !macro __NSD_SetIconFromInstaller CONTROL HANDLE
-	!insertmacro __NSD_SetIconFromExeResource "${CONTROL}" "#103" ${HANDLE}
+	LoadAndSetImage /EXERESOURCE "${CONTROL}" ${IMAGE_ICON} ${LR_DEFAULTSIZE} 103 ${HANDLE}
 !macroend
 
 !define NSD_SetImage `!insertmacro __NSD_LoadAndSetImage file ${IMAGE_BITMAP} 0 "${LR_LOADFROMFILE}" `

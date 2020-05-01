@@ -4913,10 +4913,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return add_entry(&ent);
     case TOK_LOADANDSETIMAGE:
     {
-      SCRIPT_MSG(_T("LoadAndSetImage: "));
       ent.which=EW_LOADANDSETIMAGE;
       int tidx = 1, conv = 1, fail = 0;
-      unsigned int flags = LASIF_HWND;
+      unsigned int flags = LASIF_HWND, lrflagsin;
       for (; tidx < line.getnumtokens(); tidx++)
       {
         if (!_tcsicmp(line.gettoken_str(tidx),_T("/EXERESOURCE"))) flags |= LASIF_EXERES;
@@ -4927,12 +4926,16 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         else if (!_tcsicmp(line.gettoken_str(tidx),_T("/GETDLGITEM"))) flags &= ~LASIF_HWND; // Reuses TOK_SETBRANDINGIMAGE functionality
         else { if (line.gettoken_str(tidx)[0] == '/') ++fail; break; }
       }
-      ent.offsets[1]=(flags & LASIF_HWND) ? add_string(line.gettoken_str(tidx+0)) : line.gettoken_int(tidx+0, &conv); fail += !conv; // HWND/CtrlId
-      flags |= (line.gettoken_int(tidx+1, &conv) & LASIM_IMAGE); fail += !conv;
-      flags |= (line.gettoken_int(tidx+2, &conv) & LASIM_LR); fail += !conv;
-      ent.offsets[0]=(flags & LASIF_STRID) ? add_string(line.gettoken_str(tidx+3)) : line.gettoken_int(tidx+3, &conv); fail += !conv; // Image path/resid
-      ent.offsets[2]=flags;
-      SCRIPT_MSG(_T("%") NPRIs _T(" %#x \"%") NPRIs _T("\" \n"), line.gettoken_str(tidx+0), flags, line.gettoken_str(tidx+3));
+      ent.offsets[2] = (flags & LASIF_HWND) ? add_string(line.gettoken_str(tidx+0)) : line.gettoken_int(tidx+0, &conv); fail |= !conv; // HWND/CtrlId
+      flags |= (line.gettoken_int(tidx+1, &conv) & LASIM_IMAGE); fail |= !conv; // IMAGE_*
+      flags |= ((lrflagsin = line.gettoken_int(tidx+2, &conv)) & LASIM_LR); fail |= !conv; // LR_*
+      ent.offsets[1] = (flags & LASIF_STRID) ? add_string(line.gettoken_str(tidx+3)) : line.gettoken_int(tidx+3, &conv); fail |= !conv; // Image path/resid
+      ent.offsets[3] = flags; // Packed flags, IMAGE_* and LR_*
+      ent.offsets[0] = GetUserVarIndex(line, tidx+4); // Outvar
+      SCRIPT_MSG(_T("LoadAndSetImage %") NPRIs _T(" %#x \"%") NPRIs _T("\""), line.gettoken_str(tidx+0), flags, line.gettoken_str(tidx+3));
+      if (ent.offsets[0] >= 0) SCRIPT_MSG(_T(" -> %") NPRIs _T(""), line.gettoken_str(tidx+4));
+      SCRIPT_MSG(_T("\n"));
+      if ((lrflagsin & LASIM_LR) != lrflagsin) warning_fl(DW_PARSE_NUMBEROUTOFSPEC, _T("Out of spec: \"%") NPRIs _T("\""), line.gettoken_str(tidx+2));
       if (fail) PRINTHELP();
     }
     return add_entry(&ent);
@@ -4941,7 +4944,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_LOADANDSETIMAGE:
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_CONFIG_ENHANCEDUI_SUPPORT not defined.\n"),line.gettoken_str(0));
       return PS_ERROR;
-#endif //~ NSIS_SUPPORT_CREATEFONT
+#endif //~ NSIS_CONFIG_ENHANCEDUI_SUPPORT
     case TOK_DEFVAR:
     {
       int a=1;

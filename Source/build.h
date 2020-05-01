@@ -61,7 +61,7 @@
 // 5000..5999 Important generic warnings
 // 6000..6999 Script warnings
 // 7000..7499 Recovered from bad input etc. warnings
-// 7500..7999 Discouraged usage warnings (allocated top to bottom to reserve as much space as possible for more bad input codes)
+// 7500..7999 Discouraged usage warnings (allocated high to low to reserve as much space as possible for more bad input codes)
 // 8000..8999 Generic warnings
 // 9000..9999 Breaking our and/or MS guidelines warnings
 typedef enum {
@@ -107,6 +107,7 @@ typedef enum {
   DW_LICENSE_EMPTY = 7050,
   DW_ATTRIBUTE_OVERLONGSTRING = 7060,
   DW_PARSE_BADNUMBER = 7070,
+  DW_PARSE_NUMBEROUTOFSPEC = 7071,
   DW_PARSE_LNK_HK = 7075,
   DW_GENERIC_DEPRECATED = 7998,
   DW_PARSE_REGPATHPREFIX = 7999,
