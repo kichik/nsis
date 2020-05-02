@@ -947,25 +947,11 @@ Exch
 ### Static ###
 
 !macro __NSD_LoadAndSetImage _LIHINSTMODE _IMGTYPE _LIHINSTSRC _LIFLAGS CONTROL IMAGE HANDLE
-	Push $0
-	Push $R0
-
-	Push "${IMAGE}" # in case ${IMAGE} is $R0
-	StrCpy $R0 ${CONTROL} # in case ${CONTROL} is $0
-	
 	!if "${_LIHINSTMODE}" == "exeresource"
-		!undef _LIHINSTSRC     # If (internal?) _* macro params starts using $0, 
-		!define _LIHINSTSRC r0 # _LIHINSTSRC can be changed to s
-		System::Call 'kernel32::GetModuleHandle(p0)p.${_LIHINSTSRC}' 
+		LoadAndSetImage /EXERESOURCE /STRINGID "${CONTROL}" ${_IMGTYPE} ${_LIFLAGS} "${IMAGE}" ${HANDLE}
+	!else #if "${_LIHINSTMODE}" == "file"
+		LoadAndSetImage /STRINGID "${CONTROL}" ${_IMGTYPE} ${_LIFLAGS} "${IMAGE}" ${HANDLE}
 	!endif
-	
-	System::Call 'user32::LoadImage(p ${_LIHINSTSRC}, ts, i ${_IMGTYPE}, i0, i0, i${_LIFLAGS})p.r0'
-	SendMessage $R0 ${STM_SETIMAGE} ${_IMGTYPE} $0
-
-	Pop $R0
-	Exch $0
-
-	Pop ${HANDLE}
 !macroend
 
 !macro __NSD_SetIconFromExeResource CONTROL IMAGE HANDLE
@@ -987,23 +973,7 @@ Exch
 !define NSD_SetStretchedImage `!insertmacro __NSD_SetStretchedImage `
 !define NSD_SetStretchedBitmap `!insertmacro __NSD_SetStretchedImage `
 !macro __NSD_SetStretchedImage CONTROL IMAGE HANDLE
-	Push $0
-	Push $R0
-
-	Push "${IMAGE}" # in case ${IMAGE} is $0 or $R0
-	StrCpy $R0 ${CONTROL} # in case ${CONTROL} is $0
-
-	System::Call 'user32::GetClientRect(pR0,@r0)'
-	System::Call '*$0(i,i,i.r0,i.s)'
-	Exch # swap so stack contains ImagePath and then ControlHeight
-
-	System::Call 'user32::LoadImage(p0, ts, i${IMAGE_BITMAP}, ir0, is, i${LR_LOADFROMFILE}) p.r0'
-	SendMessage $R0 ${STM_SETIMAGE} ${IMAGE_BITMAP} $0
-
-	Pop $R0
-	Exch $0
-
-	Pop ${HANDLE}
+	LoadAndSetImage /STRINGID /RESIZETOFIT "${CONTROL}" ${IMAGE_BITMAP} ${LR_LOADFROMFILE} "${IMAGE}" ${HANDLE}
 !macroend
 
 

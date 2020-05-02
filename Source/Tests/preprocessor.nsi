@@ -189,6 +189,11 @@ ${ASSERT} '${OUT1} = 0xC0000000'
 !define /redef /intfmt OUT1 "0x%.3X" 42
 ${ASSERT} '${OUT1} = 0x02A'
 
+!pragma internal x OUT "0x10 | 0x40" ; NSD requires this when using LoadAndSetImage
+!if "${OUT}" <> 80
+  !error "math expression failed"
+!endif
+
 ; end math functions
 
 

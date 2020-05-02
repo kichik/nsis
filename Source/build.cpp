@@ -3392,6 +3392,17 @@ int CEXEBuild::parse_pragma(LineParser &line)
   const int rvSucc = PS_OK, rvWarn = PS_WARNING, rvErr = PS_WARNING; // rvErr is not PS_ERROR because we want !pragma parsing to be very forgiving.
   const TCHAR badParamMsg[] = _T("Unknown pragma");
 
+  if (line.gettoken_enum(1, _T("internal\0")) == 0)
+  {
+    if (line.gettoken_enum(2, _T("x\0")) == 0)
+    {
+      const TCHAR *name = line.gettoken_str(3);
+      int succ, num = line.gettoken_intx(4, &succ);SCRIPT_MSG(_T("%#x %d\n"),num,succ);
+      return ((succ ? definedlist.set_si32(name, num) : definedlist.set(name, _T(""))), rvSucc);
+    }
+    return rvErr;
+  }
+
   // 2.47 shipped with a corrupted CHM file (bug #1129). This minimal verification command exists because the !searchparse hack we added does not work with codepage 936!
   if (line.gettoken_enum(1, _T("verifychm\0")) == 0)
   {
@@ -3847,16 +3858,16 @@ int CEXEBuild::DeclaredUserVar(const TCHAR *szVarName)
 int CEXEBuild::GetUnsafeUserVarIndex(LineParser &line, int token)
 {
   TCHAR *p = line.gettoken_str(token);
-  int idx = (*p == _T('$') && *++p) ? m_UserVarNames.get(p) : -1;
+  int idx = IsVarPrefix(p) ? m_UserVarNames.get(++p) : -1;
   if (idx >= 0 && m_UserVarNames.get_reference(idx) >= 0) m_UserVarNames.inc_reference(idx);
   return idx;
 }
 int CEXEBuild::GetUserVarIndex(LineParser &line, int token)
 {
   TCHAR *p = line.gettoken_str(token);
-  if ( *p == _T('$') && *(p+1) )
+  if (IsVarPrefix(p))
   {
-    int idxUserVar = m_UserVarNames.get((TCHAR *)p+1);
+    int idxUserVar = m_UserVarNames.get(p+1);
     if (idxUserVar >= 0 && m_UserVarNames.get_reference(idxUserVar) >= 0)
     {
       m_UserVarNames.inc_reference(idxUserVar);
@@ -3864,7 +3875,7 @@ int CEXEBuild::GetUserVarIndex(LineParser &line, int token)
     }
     else
     {
-      int idxConst = m_ShellConstants.get((TCHAR *)p+1);
+      int idxConst = m_ShellConstants.get(p+1);
       if (idxConst >= 0)
       {
         ERROR_MSG(_T("Error: cannot change constants : %") NPRIs _T("\n"), p);
@@ -3888,7 +3899,7 @@ void CEXEBuild::VerifyDeclaredUserVarRefs(UserVarsStringList *pVarsStringList)
 bool CEXEBuild::IsIntOrUserVar(const LineParser &line, int token) const
 {
   const TCHAR *p = line.gettoken_str(token);
-  if ( *p == _T('$') && *(p+1) )
+  if (IsVarPrefix(p))
   {
     int idxUserVar = m_UserVarNames.get(p+1);
     return (idxUserVar >= 0 && m_UserVarNames.get_reference(idxUserVar) >= 0);
