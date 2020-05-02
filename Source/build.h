@@ -568,6 +568,7 @@ class CEXEBuild {
     int DeclaredUserVar(const TCHAR *VarName);
     void VerifyDeclaredUserVarRefs(UserVarsStringList *pVarsStringList);
     bool IsIntOrUserVar(const LineParser &line, int token) const;
+    static bool IsVarPrefix(const TCHAR*s) { return *s++ == _T('$') && *s > ' '; }
 
     ConstantsStringList m_ShellConstants;
 

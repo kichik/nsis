@@ -196,7 +196,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_SETAUTOCLOSE,_T("SetAutoClose"),1,0,_T("(false|true)"),TP_CODE},
 {TOK_SETCTLCOLORS,_T("SetCtlColors"),2,2,_T("hwnd [/BRANDING] [text_color] [transparent|bg_color]"),TP_CODE},
 {TOK_SETBRANDINGIMAGE,_T("SetBrandingImage"),1,2,_T("[/IMGID=image_item_id_in_dialog] [/RESIZETOFIT] bitmap.bmp"),TP_CODE},
-{TOK_LOADANDSETIMAGE,_T("LoadAndSetImage"),4,5,_T("[/EXERESOURCE] [/STRINGID] [/RESIZETOFIT[WIDTH|HEIGHT]] ctrl imagetype lrflags imageid [$(user_var: imagehandle)]"),TP_CODE},
+{TOK_LOADANDSETIMAGE,_T("LoadAndSetImage"),4,6,_T("[/EXERESOURCE] [/STRINGID] [/RESIZETOFIT[WIDTH|HEIGHT]] ctrl imagetype lrflags imageid [$(user_var: imagehandle)]"),TP_CODE},
 {TOK_SETCOMPRESS,_T("SetCompress"),1,0,_T("(off|auto|force)"),TP_ALL},
 {TOK_SETCOMPRESSOR,_T("SetCompressor"),1,2,_T("[/FINAL] [/SOLID] (zlib|bzip2|lzma)"),TP_GLOBAL},
 {TOK_SETCOMPRESSORDICTSIZE,_T("SetCompressorDictSize"),1,0,_T("dict_size_mb"),TP_ALL},
