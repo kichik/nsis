@@ -269,7 +269,7 @@ void licence(void);
  * version.c
  */
 void initversionstring(void);
-const char *const version;
+extern const char *const version;
 
 /*
  * misc.c
