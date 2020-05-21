@@ -16,6 +16,8 @@ Released on ? ?th, 2020
 
 \b Added \R{getknownfolderpath}{GetKnownFolderPath}
 
+\b Added UnpinShortcut macro (Integration.nsh)
+
 \S2{} Minor Changes
 
 \b Added \R{ifshellvarcontextall}{IfShellVarContextAll} and \R{ifrtllanguage}{IfRtlLanguage}

@@ -22,6 +22,7 @@ InstallDirRegKey HKCU "${REGPATH_UNINSTSUBKEY}" "UninstallString"
 
 !include LogicLib.nsh
 !include WinCore.nsh
+!include Integration.nsh
 
 
 Page Directory
@@ -103,7 +104,7 @@ Section -ShellAssoc
   WriteRegStr ShCtx "Software\RegisteredApplications" "Nullsoft Test App" "Software\Classes\Applications\${ASSOC_APPEXE}\Capabilities"
   !endif
 
-  System::Call 'SHELL32::SHChangeNotify(i0x08000000, i0, p0, p0)' ; Notify the shell with SHCNE_ASSOCCHANGED
+  ${NotifyShell_AssocChanged}
 SectionEnd
 
 
@@ -153,14 +154,15 @@ Section -un.ShellAssoc
   ;DeleteRegKey HKCU "Software\Microsoft\Windows\Roaming\OpenWith\FileExts\${ASSOC_EXT}"
   ;DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Explorer\RecentDocs\${ASSOC_EXT}"
 
-  System::Call 'SHELL32::SHChangeNotify(i0x08000000, i0, p0, p0)' ; Notify the shell with SHCNE_ASSOCCHANGED
+  ${NotifyShell_AssocChanged}
 SectionEnd
 
 Section -Uninstall
+  ${UnpinShortcut} "$SMPrograms\${NAME}.lnk"
+  Delete "$SMPrograms\${NAME}.lnk"
+
   Delete "$InstDir\MyApp.exe"
   Delete "$InstDir\Uninst.exe"
   RMDir "$InstDir"
   DeleteRegKey HKCU "${REGPATH_UNINSTSUBKEY}"
-
-  Delete "$SMPrograms\${NAME}.lnk"
 SectionEnd
