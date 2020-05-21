@@ -21,13 +21,14 @@ RequestExecutionLevel Admin ; Request admin rights on WinVista+ (when UAC is tur
 InstallDir "$ProgramFiles\$(^Name)"
 InstallDirRegKey HKLM "${REGPATH_UNINSTSUBKEY}" "UninstallString"
 
+!include LogicLib.nsh
+!include Integration.nsh
+
 Page Directory
 Page InstFiles
 
 Uninstpage UninstConfirm
 Uninstpage InstFiles
-
-!include LogicLib.nsh
 
 !macro EnsureAdminRights
   UserInfo::GetAccountType
@@ -70,10 +71,11 @@ SectionEnd
 
 
 Section -Uninstall
+  ${UnpinShortcut} "$SMPrograms\${NAME}.lnk"
+  Delete "$SMPrograms\${NAME}.lnk"
+
   Delete "$InstDir\MyApp.exe"
   Delete "$InstDir\Uninst.exe"
   RMDir "$InstDir"
   DeleteRegKey HKLM "${REGPATH_UNINSTSUBKEY}"
-
-  Delete "$SMPrograms\${NAME}.lnk"
 SectionEnd
