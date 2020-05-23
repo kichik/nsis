@@ -275,7 +275,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_P_SYSTEMEXEC,_T("!system"),1,2,_T("command [<OP retval> | <retvalsymbol>]\n    OP=(< > <> =)"),TP_ALL},
 {TOK_P_EXECUTE,_T("!execute"),1,2,_T("command [<OP retval> | <retvalsymbol>]\n    OP=(< > <> =)"),TP_ALL},
 {TOK_P_MAKENSIS,_T("!makensis"),1,2,_T("parameters [<OP retval> | <retvalsymbol>]"),TP_ALL},
-{TOK_P_ADDINCLUDEDIR,_T("!AddIncludeDir"),1,0,_T("dir"),TP_ALL},
+{TOK_P_ADDINCLUDEDIR,_T("!addincludedir"),1,0,_T("dir"),TP_ALL},
 {TOK_P_INCLUDE,_T("!include"),1,2,_T("[/NONFATAL] [/CHARSET=<") TSTR_INPUTCHARSET _T(">] filename.nsh"),TP_ALL},
 {TOK_P_CD,_T("!cd"),1,0,_T("absolute_or_relative_new_directory"),TP_ALL},
 {TOK_P_IF,_T("!if"),1,3,_T("[!] (value [(==,!=,S==,S!=,=,<>,<=,<,>,>=,&,&&,||) value2] | /FILEEXISTS path)"),TP_ALL},
@@ -319,7 +319,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_GETLABELADDR,_T("GetLabelAddress"),2,0,_T("output label"),TP_CODE},
 {TOK_GETCURRENTADDR,_T("GetCurrentAddress"),1,0,_T("output"),TP_CODE},
 
-{TOK_PLUGINDIR,_T("!AddPluginDir"),1,1,_T("[/target] new_plugin_directory"),TP_ALL},
+{TOK_PLUGINDIR,_T("!addplugindir"),1,1,_T("[/target] new_plugin_directory"),TP_ALL},
 {TOK_INITPLUGINSDIR,_T("InitPluginsDir"),0,0,_T(""),TP_CODE},
 // Added by ramon 23 May 2003
 {TOK_ALLOWSKIPFILES,_T("AllowSkipFiles"),1,0,_T("(off|on)"),TP_ALL},
