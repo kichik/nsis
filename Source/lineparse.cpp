@@ -118,6 +118,9 @@ nextnum:
   const TCHAR *p=str, *parse=p, *xoperandpfixstart, *xoperandpfixend;
   TCHAR *end;
   int neg=0, base=0, num;
+#ifndef _MSC_VER
+  xoperandpfixstart=xoperandpfixend=0; // Avoid GCC maybe-uninitialized warning
+#endif
 
   if (expressions)
   {
