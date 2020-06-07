@@ -32,7 +32,7 @@ Released on ? ?th, 2020
 
 \S2{} Translations
 
-\b Updated German (SebStange PR)
+\b Updated German (SebStange PR\#{github.com/SebStange}) and Simplified Chinese (\W{http://sf.net/p/nsis/patches/297}{patch #297})
 
 \S2{} Build System
 
@@ -944,7 +944,7 @@ Released on November 20th, 2008
 
 \b Brazilian Portuguese corrections
 
-\b Consistency fixes for Simple Chinese (\W{http://sourceforge.net/support/tracker.php?aid=2189117}{patch #2189117})
+\b Consistency fixes for Simplified Chinese (\W{http://sourceforge.net/support/tracker.php?aid=2189117}{patch #2189117})
 
 \S2{} Build System
 
@@ -2436,7 +2436,7 @@ Released on October 4th, 2005
 
 \b Fixed typos in Thai translation
 
-\b Updated Simple Chinese translation
+\b Updated Simplified Chinese translation
 
 \S2{} Build System
 
