@@ -41,23 +41,15 @@ Install mingw (both x86 and amd64):
 *********************************
 ** Python + SCons
 *********************************
-Python 2.7.16 is known to work fine
-(NSIS won't build with Python 3.x)
-Install to C:\Python27
+Python 3.7 and 3.8 (x64) are known to work well
 
 Download:
-	https://www.python.org/downloads/release/python-2716/
-	https://www.python.org/ftp/python/2.7.16/python-2.7.16.msi (direct link)
+	https://www.python.org/downloads/release
 	https://scons.org/ (No need to download it. We'll install it with pip)
 
 Install/Update Python modules:
-	Open a Windows command prompt:
-	cd "C:\Python27\Scripts"
-    pip list
-	pip install -U pip
-    pip install -U setuptools
-    pip install wheel
-	pip install scons
+	py.exe -3 -m pip install --upgrade pip
+	py.exe -3 -m pip install --upgrade scons
 
 *********************************
 ** HTML Help Workshop

@@ -39,8 +39,7 @@ pushd "%~dp0"
 set DEV_PATH=%CD%
 popd
 
-set PYTHON_PATH=%SYSTEMDRIVE%\Python27
-REM set PYTHON_PATH=%LOCALAPPDATA%\Programs\Python\Python37
+for /F "tokens=2" %%f in ('py.exe -0p 2^> NUL ^| findstr /C:"-3."') do if not defined PYTHON_PATH set PYTHON_PATH=%%~dpf
 set ZLIB_PATH=%DEV_PATH%\zlib
 set HTMLHELP_PATH=%PF32%\HTML Help Workshop
 
