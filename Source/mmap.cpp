@@ -150,7 +150,17 @@ void MMapFile::resize(int newsize)
     {
       TCHAR buf[MAX_PATH], buf2[MAX_PATH];
 
+/*
+      [Marius]
+      When building the NSIS package itself, makensis.exe is launched by python.exe/scons without having its environment block properly initialized. (scons bug??)
+      Because TEMP and TMP environment variables are missing, GetTempPath(..) returns "C:\Windows".
+      Our build fails (ERROR_ACCESS_DENIED) because makensis.exe is unable to create temporary files in C:\Windows
+	  We'll use the current directory (".") to store temporary files.
+	  (2020-06)
+      --------------------------------------
       GetTempPath(MAX_PATH, buf);
+*/
+	  lstrcpy( buf, _T("."));
       GetTempFileName(buf, _T("nsd"), 0, buf2);
 
       m_hFile = CreateFile(
@@ -162,6 +172,8 @@ void MMapFile::resize(int newsize)
         FILE_ATTRIBUTE_TEMPORARY | FILE_FLAG_DELETE_ON_CLOSE | FILE_FLAG_SEQUENTIAL_SCAN,
         NULL
       );
+	  if (m_hFile == INVALID_HANDLE_VALUE)
+		  PrintColorFmtMsg_ERR(_T("\nCreateFile(\"%s\") = 0x%x\n"), buf2, GetLastError());
 
       m_bTempHandle = TRUE;
     }
@@ -176,6 +188,8 @@ void MMapFile::resize(int newsize)
         m_iSize,
         NULL
       );
+	  if (!m_hFileMap)
+		  PrintColorFmtMsg_ERR(_T("\nCreateFileMapping(RO:%d, Size:%d) = 0x%x\n"), m_bReadOnly ? 1 : 0, m_iSize, GetLastError());
     }
 #else
     if (m_hFile == NULL)
