@@ -137,7 +137,7 @@ set PATH=%MINGW%\bin;%PATH%;%HTMLHELP_PATH%
 :: Extract SVN revision number from GIT commit message
 :: e.g. Extract 7012 from "git-svn-id: https://svn.code.sf.net/p/nsis/code/NSIS/trunk@7012 212acab6-be3b-0410-9dea-997c60f758d6"
 set VER_REVISION=0
-for /f "usebackq tokens=3 delims=@ " %%f in (`git log --grep=git-svn-id: -1 remotes/origin/master ^| find "trunk@"`) do set VER_REVISION=%%f
+for /f "usebackq tokens=3 delims=@ " %%f in (`git log --grep=git-svn-id: -1 ^| find "trunk@"`) do set VER_REVISION=%%f
 if "%VER_REVISION%" equ "0" echo. && set EXITCODE=3 && echo ERROR: Can't extract the last SVN revision number && goto :BUILD_END
 
 set VER_MAJOR=3
