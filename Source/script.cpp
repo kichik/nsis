@@ -4891,15 +4891,15 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.which=EW_LOADANDSETIMAGE;
       for (int i = 1; i < line.getnumtokens(); i++)
         if (!_tcsnicmp(line.gettoken_str(i),_T("/IMGID="),7)) {
-          ent.offsets[1]=_ttoi(line.gettoken_str(i)+7);
-          SCRIPT_MSG(_T("/IMGID=%d "),ent.offsets[1]);
+          ent.offsets[2]=_ttoi(line.gettoken_str(i)+7);
+          SCRIPT_MSG(_T("/IMGID=%d "),ent.offsets[2]);
         }
         else if (!_tcsicmp(line.gettoken_str(i),_T("/RESIZETOFIT"))) {
-          ent.offsets[2]=LASIF_FITCTLW|LASIF_FITCTLH;
+          ent.offsets[3]=LASIF_FITCTLW|LASIF_FITCTLH;
           SCRIPT_MSG(_T("/RESIZETOFIT "));
         }
-        else if (!ent.offsets[0]) {
-          ent.offsets[0]=add_string(line.gettoken_str(i));
+        else if (!ent.offsets[1]) {
+          ent.offsets[1]=add_string(line.gettoken_str(i));
           SCRIPT_MSG(_T("\"%") NPRIs _T("\" "), line.gettoken_str(i));
         }
         else {
@@ -4915,7 +4915,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           return PS_ERROR;
         }
       }
-      ent.offsets[2]|=LASIF_LR_LOADFROMFILE|LASIF_STRID;
+      ent.offsets[3]|=LASIF_LR_LOADFROMFILE|LASIF_STRID;
     }
     return add_entry(&ent);
     case TOK_LOADANDSETIMAGE:
