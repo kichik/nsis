@@ -61,10 +61,9 @@ TCHAR* GetAccountTypeHelper(BOOL CheckTokenForGroupDeny)
   (2020-06, gcc/10.1.0-3)
 */
   typedef BOOL (WINAPI *TOpenThreadToken)( HANDLE ThreadHandle, DWORD DesiredAccess, BOOL OpenAsSelf, PHANDLE TokenHandle );
-  TOpenThreadToken fnOpenThreadToken =
-    (TOpenThreadToken)GetProcAddress( GetModuleHandle(_T("advapi32")), "OpenThreadToken") ?
-    (TOpenThreadToken)GetProcAddress( GetModuleHandle(_T("kernel32")), "OpenThreadToken") :
-    NULL;
+  TOpenThreadToken fnOpenThreadToken = (TOpenThreadToken)GetProcAddress( GetModuleHandle(_T("advapi32")), "OpenThreadToken");
+  if (!fnOpenThreadToken)
+    fnOpenThreadToken = (TOpenThreadToken)GetProcAddress( GetModuleHandle(_T("kernel32")), "OpenThreadToken");
   if (!fnOpenThreadToken)
     return _T("Admin");
 
