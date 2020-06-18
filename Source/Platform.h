@@ -1071,9 +1071,13 @@ functions from tchar.h (Similar to the way <inttypes.h> works)
 Example: _tprintf(_T("%") NPRIs _T(" %") NPRIws _T("\n"), _T("Hello"), L"World");
 */
 #ifdef _WIN32
-#  define NPRIs _T("s")
 #  define NPRIns _T("hs")
 #  define NPRIws _T("ls") // ws also works, not sure which is most compatible
+#  ifdef _UNICODE
+#    define NPRIs _T("ls")
+#  else // !_UNICODE
+#    define NPRIs _T("hs")
+#  endif // ~_UNICODE
 #  ifndef _WIN64
 #    define NPRIp _T(".8x")
 #    define NPRIpN ".8x"
