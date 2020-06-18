@@ -26,7 +26,7 @@ exit /B 0
 :BUILD
 call "%~dp0\_config.bat"
 if %errorlevel% neq 0 echo Aborted. && pause && exit /B %errorlevel%
-set PATH=%MINGW%\bin;%MSYS2%\usr\bin;%PATH%
+set PATH=%MINGW%\bin;%PATH%
 
 title zlib-mingw-%CONFIG_ARCH%...
 
