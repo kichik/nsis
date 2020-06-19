@@ -263,16 +263,7 @@ Int32 NSISCALL BZ2_decompress ( DState* s )
          for (i = 0; i < nSelectors; i++) {
             v = s->selectorMtf[i];
             tmp = pos[v];
-/*
-            [Marius]
-            gcc/10.1.0-3 compiler optimizer replace the following line with a msvcrt!memmove() call.
-            This file is built into projects compiled with the -nostdlib parameter, therefore a linker error will occur.
-            We'll qualify the destination array as `volatile` to prevent GCC from optimizing it.
-            Related topic: https://stackoverflow.com/questions/2219829/how-to-prevent-gcc-optimizing-some-statements-in-c
-            -----------------------------------------
             while (v > 0) { pos[v] = pos[v-1]; v--; }
-*/
-            while (v > 0) { ((volatile UChar*)pos)[v] = pos[v-1]; v--; }
             pos[0] = tmp;
             s->selector[i] = tmp;
          }
@@ -397,14 +388,7 @@ Int32 NSISCALL BZ2_decompress ( DState* s )
                   }
                   */
                   while (nn > 0) {
-/*
-                     [Marius]
-                     Mark destination array as `volatile` to prevent GCC optimizer to generate msvcrt!memmove() calls.
-					 See comments above.
-                     -----------------------------------------
                      s->mtfa[(pp+nn)] = s->mtfa[(pp+nn)-1]; nn--;
-*/
-                     ((volatile UChar*)s->mtfa)[(pp+nn)] = s->mtfa[(pp+nn)-1]; nn--;
                   };
                   s->mtfa[pp] = uc;
                } else {
@@ -414,14 +398,7 @@ Int32 NSISCALL BZ2_decompress ( DState* s )
                   pp = s->mtfbase[lno] + off;
                   uc = s->mtfa[pp];
                   while (pp > s->mtfbase[lno]) {
-/*
-                     [Marius]
-                     Mark destination array as `volatile` to prevent GCC optimizer to generate msvcrt!memmove() calls.
-					 See comments above.
-                     -----------------------------------------
                      s->mtfa[pp] = s->mtfa[pp-1]; pp--;
-*/
-                     ((volatile UChar*)s->mtfa)[pp] = s->mtfa[pp-1]; pp--;
                   };
                   s->mtfbase[lno]++;
                   while (lno > 0) {
