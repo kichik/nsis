@@ -103,6 +103,10 @@ stub_env.Append(LINKFLAGS = ['$NODEFLIBS_FLAG'])    # no standard libraries
 stub_env.Append(LINKFLAGS = ['$ALIGN_FLAG'])        # 512 bytes align
 stub_env.Append(LINKFLAGS = ['$MAP_FLAG'])          # generate map file
 
+conf = FlagsConfigure(stub_env)
+conf.CheckCompileFlag('-fno-tree-loop-distribute-patterns')  # don't generate msvcrt!memmove calls
+conf.Finish()
+
 stub_uenv = stub_env.Clone()
 stub_uenv.Append(CPPDEFINES = ['_UNICODE', 'UNICODE'])
 
