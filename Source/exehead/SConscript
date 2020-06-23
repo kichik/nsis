@@ -65,9 +65,6 @@ else:
 
 if compression == 'bzip2':
 	env.Append(CPPDEFINES = ['NSIS_COMPRESS_USE_BZIP2'])
-	if 'gcc' in env['TOOLS']:
-		# Prevent gcc from generating calls to msvcrt!memmove
-		env.Append(CCFLAGS = ['-fno-tree-loop-distribute-patterns'])
 	files += bzip2_files
 elif compression == 'lzma':
 	env.Append(CPPDEFINES = ['NSIS_COMPRESS_USE_LZMA'])
