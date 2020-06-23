@@ -175,6 +175,7 @@ call "%PYTHON_PATH%\Scripts\scons.bat" ^
 	NSIS_EXTRA_PARAM="/DLINK_INFO=https://github.com/negrutiu/nsis /DNSIS_BIN2=..\..\..\nsis-mingw-%BRANCH%-x86\BIN /DNSIS_BIN3=..\..\..\nsis-mingw-%BRANCH%-amd64\BIN /DVER_PRODUCTNAME=""Unofficial NSIS build by Marius Negrutiu"" /DVER_LEGALTRADEMARKS=https://github.com/negrutiu/nsis /DEXTRA_WELCOME_TEXT=""$\r$\n________________________________________________$\r$\n$\r$\nThis is an *unofficial* build by Marius Negrutiu$\r$\nhttps://github.com/negrutiu/nsis""" ^
 	PREFIX="%CD%\BIN" ^
 	ZLIB_W32="%ZLIB_PATH%-mingw-%CONFIG_ARCH%" ^
+	STRIP=1 ^
 	APPEND_CCFLAGS="%CONFIG_CFLAGS%" ^
 	APPEND_LINKFLAGS="%CONFIG_CFLAGS% %CONFIG_LFLAGS% -static" ^
 	%CONFIG_ACTIONS%

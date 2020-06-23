@@ -23,13 +23,13 @@ REM :: http://linux.die.net/man/1/ld
 
 REM :: Run "gcc -Q --help=target" to see the defaults
 :CONFIG_X86
-set CONFIG_CFLAGS=-s -march=pentium2
+set CONFIG_CFLAGS=-march=pentium2
 set CONFIG_LFLAGS=-Wl,--gc-sections -Wl,--nxcompat -Wl,--dynamicbase -Wl,--enable-auto-image-base -Wl,--enable-stdcall-fixup
 set MINGW=%MINGW32%
 goto :CONFIG_END
 
 :CONFIG_AMD64
-set CONFIG_CFLAGS=-s -march=x86-64
+set CONFIG_CFLAGS=-march=x86-64
 set CONFIG_LFLAGS=-Wl,--gc-sections -Wl,--nxcompat -Wl,--dynamicbase -Wl,--enable-auto-image-base -Wl,--enable-stdcall-fixup -Wl,--high-entropy-va
 set MINGW=%MINGW64%
 goto :CONFIG_END
