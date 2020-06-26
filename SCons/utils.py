@@ -1,3 +1,31 @@
+def IsExecutingOnWindows():
+	import sys, os
+	if sys.platform.startswith('win') or os.name == 'nt': return True
+	return False
+
+def GetWindowsStdSysEnvVarList(path=False, temp=True, user=True, os=True, shell=True, cpu=True):
+	ret = []
+	if os: ret += 'OS WINDIR SYSTEMDRIVE SYSTEMROOT ALLUSERSPROFILE Public ProgramData CommonProgramFiles CommonProgramFiles(x86) CommonProgramW6432 ProgramFiles ProgramFiles(x86) ProgramW6432'.split()
+	if cpu: ret += 'NUMBER_OF_PROCESSORS PROCESSOR_ARCHITECTURE PROCESSOR_ARCHITEW6432 PROCESSOR_IDENTIFIER PROCESSOR_LEVEL PROCESSOR_REVISION'.split()
+	if user: ret += 'COMPUTERNAME USERNAME USERPROFILE APPDATA LOCALAPPDATA HOMEDRIVE HOMESHARE HOMEPATH LOGONSERVER USERDNSDOMAIN USERDOMAIN USERDOMAIN_ROAMINGPROFILE ClientName SessionName'.split()
+	if shell: ret += 'COMSPEC PATHEXT PSModulePath'.split() # PROMPT
+	if temp: ret += 'TEMP TMP'.split()
+	if path: ret += 'PATH'.split()
+	return ret
+def GetPosixStdSysEnvVarList(path=False, temp=True, user=True, os=True, shell=True, cpu=True):
+	ret = []
+	if os: ret += 'HOSTALIASES'.split()
+	if user: ret += 'HOME USER LOGNAME DATEMSK UID'.split() # XDG_* TZ LANGUAGE LANG LC_* NLSPATH
+	if shell: ret += 'SHELL TERM TERMCAP'.split()
+	if temp: ret += 'TMPDIR'.split()
+	if path: ret += 'PATH MANPATH'.split()
+	return ret
+def GetStdSysEnvVarList(path=False, temp=True, user=True, os=True, shell=True, cpu=True):
+	func = GetPosixStdSysEnvVarList
+	if IsExecutingOnWindows(): func = GetWindowsStdSysEnvVarList
+	return func(path=path, temp=temp, user=user, os=os, shell=shell, cpu=cpu)
+
+
 def AddAvailableLibs(env, libs):
 	"""
 	Scans through a list of libraries and adds
@@ -145,10 +173,10 @@ def ReadU32LE(f, fpos=None, defval=None):
 	return FileUnpackRead("<I", 4, f, fpos, defval)
 def WriteU16LE(f, v, fpos):
 	if not fpos is None: f.seek(fpos)
-	f.write(struct.pack("<H", v))
+	return f.write(struct.pack("<H", v))
 def WriteU32LE(f, v, fpos):
 	if not fpos is None: f.seek(fpos)
-	f.write(struct.pack("<I", v))
+	return f.write(struct.pack("<I", v))
 
 class MSPE:
 	def __init__(self, path=None, open_for_write=False):
@@ -177,16 +205,24 @@ class MSPE:
 		self.IsPEP = 0x20b == self.NTOHMagic # IMAGE_NT_OPTIONAL_HDR64_MAGIC?
 	def ReadMachine(self):
 		return ReadU16LE(self._f, self.NTHOffset+4+0)
+	def WriteTimeDateStamp(self, value):
+		return WriteU32LE(self._f, value, self.NTHOffset+4+4)
 	def ReadCharacteristics(self):
 		return ReadU16LE(self._f, self.NTHOffset+4+18)
 	def WriteCharacteristics(self, value):
-		WriteU16LE(self._f, value, self.NTHOffset+4+18)
+		return WriteU16LE(self._f, value, self.NTHOffset+4+18)
 	def ReadDllCharacteristics(self):
 		return ReadU16LE(self._f, self.NTHOffset+4+20+70)
 	def WriteDllCharacteristics(self, value):
-		WriteU16LE(self._f, value, self.NTHOffset+4+20+70)
+		return WriteU16LE(self._f, value, self.NTHOffset+4+20+70)
 	def WriteChecksum(self, value):
-		WriteU32LE(self._f, value, self.NTHOffset+4+20+64)
+		return WriteU32LE(self._f, value, self.NTHOffset+4+20+64)
+	def InvalidateChecksum(self):
+		return self.WriteChecksum(0) and 0
+
+def IsPE(pe):
+	if not isinstance(pe, MSPE): pe = MSPE(pe)
+	if not pe.NTOHMagic is None: return True
 
 def IsPEExecutable(pe):
 	if not isinstance(pe, MSPE): pe = MSPE(pe)
@@ -211,8 +247,25 @@ def SetPESecurityFlagsWorker(filepath):
 			ioh_dc |= 0x0040 # +IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE (ASLR)
 			if pe.IsPEP: ioh_dc |= 0x0020 # +IMAGE_DLLCHARACTERISTICS_HIGH_ENTROPY_VA (HEASLR)
 		pe.WriteDllCharacteristics(ioh_dc)
-		pe.WriteChecksum(0)
+		pe.InvalidateChecksum()
 	finally:
 		return
 
-Export('AddAvailableLibs AddZLib FlagsConfigure GetAvailableLibs GetOptionOrEnv IsPEExecutable SetPESecurityFlagsWorker')
+def SetPETimestamp(filepath, timestamp):
+	pe = MSPE(filepath, open_for_write=True)
+	try:
+		if not IsPE(pe): return
+		pe.WriteTimeDateStamp(int(timestamp or 0))
+		pe.InvalidateChecksum()
+		return True
+	finally:
+		return
+
+def MakeReproducibleAction(target, source, env):
+	if env.get('SOURCE_DATE_EPOCH','') is not '':
+		SetPETimestamp(target[0].path, env['SOURCE_DATE_EPOCH'])
+
+def SilentActionEcho(target, source, env):
+	return None
+
+Export('GetStdSysEnvVarList AddAvailableLibs AddZLib FlagsConfigure GetAvailableLibs GetOptionOrEnv SilentActionEcho IsPEExecutable SetPESecurityFlagsWorker MakeReproducibleAction')

@@ -4,13 +4,13 @@ Import('defenv')
 
 ### imports
 
-Import('FlagsConfigure GetOptionOrEnv')
+Import('FlagsConfigure GetOptionOrEnv GetStdSysEnvVarList')
 
 ### HACKS!
 if GetOptionOrEnv('NSIS_SCONS_GNU_ENVPATHHACK'):
 	import os
 	defenv['ENV']['PATH'] = os.getenv('PATH') # Major hack!
-	import_env = ['SystemDrive', 'SystemRoot', 'TEMP', 'TMP', 'PATHEXT']
+	import_env = GetStdSysEnvVarList(path=True, temp=True)
 	for var in import_env: 
 		if var in os.environ:
 			defenv['ENV'][var] = os.environ.get(var, '')

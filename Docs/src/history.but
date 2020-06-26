@@ -36,6 +36,8 @@ Released on ? ?th, 2020
 
 \S2{} Build System
 
+\b Primitive SOURCE_DATE_EPOCH support (\W{http://sf.net/p/nsis/patches/294}{patch #294})
+
 \b Python 3 fixes (\W{http://sf.net/p/nsis/patches/296}{patch #296})
 
 \H{v3.05} 3.05
