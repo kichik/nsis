@@ -290,7 +290,7 @@ def generate(env):
 	targ_arc = env.get('TARGET_ARCH', 'x86')
 
 	if "None" == env.get('MSVC_USE_SCRIPT', '!'):
-		for x in ['INCLUDE', 'LIB', 'PATH', 'CL', 'LINK', 'ML']: env['ENV'][x] = ""
+		for x in ['INCLUDE', 'LIB', 'PATH', 'CL', '_CL_', 'LINK', '_LINK_', 'ML']: env['ENV'][x] = ""
 		if not env.WhereIs('cl', os.environ['PATH']):
 			raise SCons.Errors.InternalError("CL not found in %s" % os.environ['PATH'])
 		include_path = os.environ['INCLUDE']
@@ -312,6 +312,7 @@ def generate(env):
 	env.PrependENVPath('INCLUDE', include_path)
 	env.PrependENVPath('LIB', lib_path)
 	env.PrependENVPath('PATH', exe_path)
+	# 'LIBPATH' = ?
 
 	env['ENV']['CPU'] = (targ_arc.upper(), 'i386')['x86' in targ_arc.lower()] # AMD64/ARM64 or i386
 	env['ENV']['TARGETOS'] = 'BOTH'
