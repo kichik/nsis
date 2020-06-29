@@ -31,7 +31,6 @@ resources = Split("""
 """)
 
 libs = Split("""
-	kernel32
 	advapi32
 	user32
 	gdi32
@@ -42,6 +41,7 @@ libs = Split("""
 	comctl32
 	wininet
 	winmm
+	kernel32
 """)
 
 docs = Split("""

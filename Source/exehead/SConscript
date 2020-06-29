@@ -35,14 +35,14 @@ zlib_files = Split("""
 """)
 
 libs = Split("""
-	kernel32
-	user32
-	gdi32
-	shell32
 	advapi32
+	shell32
+	ole32
 	comdlg32
 	comctl32
-	ole32
+	user32
+	gdi32
+	kernel32
 	uuid
 """)
 
