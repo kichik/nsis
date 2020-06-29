@@ -14,12 +14,12 @@ resources = Split("""
 rc = 'res.rc'
 
 libs = Split("""
-	user32
-	gdi32
-	comctl32
-	comdlg32
 	advapi32
 	shell32
+	comctl32
+	comdlg32
+	user32
+	gdi32
 	z
 """)
 

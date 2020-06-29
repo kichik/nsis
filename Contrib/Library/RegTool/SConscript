@@ -5,11 +5,11 @@ files = Split("""
 """)
 
 libs = Split("""
-	kernel32
-	oleaut32
 	advapi32
-	user32
+	oleaut32
 	ole32
+	user32
+	kernel32
 """)
 
 Import('BuildUtil env GetArcCPU')
