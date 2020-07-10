@@ -47,14 +47,8 @@ if "%1" neq "" echo ERROR: Unknown argument "%1" && pause && exit /B 57
 :: ----------------------------------------------------------------
 if exist "Contrib\NScurl" (
 	echo ----------------------------------------------------------------
-	echo Updating cacert.pem ...
-	echo ----------------------------------------------------------------
-	powershell.exe -NonInteractive -ExecutionPolicy unrestricted "Contrib\NScurl\_acquire_cacert.ps1"
-
-	echo ----------------------------------------------------------------
-	echo Updating libcurl-devel ...
-	echo ----------------------------------------------------------------
-	powershell.exe -NonInteractive -ExecutionPolicy unrestricted "Contrib\NScurl\_acquire_libcurl.ps1"
+	call Contrib\NScurl\_acquire_curl-ca-bundle.bat
+	call Contrib\NScurl\_acquire_libcurl-devel.bat
 )
 
 echo Compiling...
