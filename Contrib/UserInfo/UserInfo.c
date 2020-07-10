@@ -70,21 +70,6 @@ TCHAR* GetAccountTypeHelper(BOOL CheckTokenForGroupDeny)
   TCHAR  *group = NULL;
   HANDLE  hToken = NULL;
 
-/*
-  [Marius]
-  https://sourceforge.net/p/mingw-w64/bugs/821/
-  Sometime in 2019 a change was made to mingw-x86 libraries that would generate code linked to kernel32!OpenThreadToken instead of advapi32!OpenThreadToken.
-  Starting with Win7 OpenThreadToken exists in both kernel32.dll and advapi32.dll, but before that it was only present in advapi32.
-  We'll call advapi32!OpenThreadToken dynamically to avoid compatibility problems.
-  (2020-06, gcc/10.1.0-3)
-*/
-  typedef BOOL (WINAPI *TOpenThreadToken)( HANDLE ThreadHandle, DWORD DesiredAccess, BOOL OpenAsSelf, PHANDLE TokenHandle );
-  TOpenThreadToken fnOpenThreadToken = (TOpenThreadToken)GetProcAddress( GetModuleHandle(_T("advapi32")), "OpenThreadToken");
-  if (!fnOpenThreadToken)
-    fnOpenThreadToken = (TOpenThreadToken)GetProcAddress( GetModuleHandle(_T("kernel32")), "OpenThreadToken");
-  if (!fnOpenThreadToken)
-    return _T("Admin");
-
 #ifndef _WIN64
   if (GetVersion() & 0x80000000) // Not NT
   {
@@ -93,7 +78,7 @@ TCHAR* GetAccountTypeHelper(BOOL CheckTokenForGroupDeny)
 #endif
 
   // First we must open a handle to the access token for this thread.
-  if (fnOpenThreadToken(GetCurrentThread(), TOKEN_QUERY, FALSE, &hToken) ||
+  if (OpenThreadToken(GetCurrentThread(), TOKEN_QUERY, FALSE, &hToken) ||
     OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &hToken))
   {
     SID_IDENTIFIER_AUTHORITY SystemSidAuthority = {SECURITY_NT_AUTHORITY};
