@@ -104,6 +104,7 @@ namespace manifest
   } SPECIFICATION;
 
   std::string generate(comctl, exec_level, const SPECIFICATION&);
+  bool addappendstring(const TCHAR*path, const TCHAR*data);
 
 };
 
