@@ -2342,6 +2342,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
       return PS_OK;
 
+    case TOK_MANIFEST_APPENDCUSTOMSTRING:
+      if (!manifest::addappendstring(line.gettoken_str(1), line.gettoken_str(2))) PRINTHELP();
+      return PS_OK;
     case TOK_MANIFEST_DPIAWARE:
       switch(line.gettoken_enum(1,_T("none\0notset\0false\0true\0system\0permonitor\0explorer\0")))
       {

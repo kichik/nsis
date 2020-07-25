@@ -24,6 +24,8 @@ Released on ? ?th, 2020
 
 \# Undocumented: \b Added GetShellVarContext, IfAltRegView and GetRegView | Documenting these would require documenting the parameter name to number mapping
 
+\# Undocumented: \b Added ManifestAppendCustomString
+
 \b Added \cw{!define /intfmt}
 
 \b Added Date/Time NSD controls and macros
