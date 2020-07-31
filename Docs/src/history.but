@@ -2,11 +2,11 @@
 
 \H{v3.06} 3.06
 
-Released on ? ?th, 2020
+Released on July 31st, 2020
 
 \S1{v3.06-rl} Release Notes
 
-20th anniversary
+20th anniversary! The first public release of NSIS was v1.0f on July 31st, 2000.
 
 \S1{v3.06-cl} Changelog
 
@@ -28,9 +28,9 @@ Released on ? ?th, 2020
 
 \b Added \cw{!define /intfmt}
 
-\b Added Date/Time NSD controls and macros
+\b Added Date/Time \L{../Docs/nsDialogs/Readme.html}{nsDialogs} controls and macros
 
-\b MultiUser: Fixed INSTALLMODE_FUNCTION and added INSTALLMODEPAGE_SHOWUSERNAME
+\b \L{../Docs/MultiUser/Readme.html}{MultiUser}: Fixed INSTALLMODE_FUNCTION and added INSTALLMODEPAGE_SHOWUSERNAME
 
 \S2{} Translations
 
@@ -120,7 +120,7 @@ Released on December 15th, 2018
 
 \b Fixed !macroundef of last defined macro bug
 
-\b Fixed MultiUser caption string bug (\W{http://sf.net/p/nsis/bugs/1012}{bug #1012})
+\b Fixed \L{../Docs/MultiUser/Readme.html}{MultiUser} caption string bug (\W{http://sf.net/p/nsis/bugs/1012}{bug #1012})
 
 \b !undef issues warnings instead of errors
 
