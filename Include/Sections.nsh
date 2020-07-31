@@ -148,7 +148,7 @@
 ;
 ; Written by Robert Kehl
 ;
-; For details, see http://nsis.sourceforge.net/wiki/SetSectionInInstType%2C_ClearSectionInInstType
+; For details, see https://nsis.sourceforge.io/wiki/SetSectionInInstType%2C_ClearSectionInInstType
 ;
 ; Use the defines below for the WANTED_INSTTYPE parameter.
 

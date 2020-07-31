@@ -846,8 +846,8 @@ Section -post
   WriteRegDWORD HKLM "${REG_UNINST_KEY}" "VersionMinor" "${VER_MINOR}" ; Required by WACK
 !endif
   WriteRegStr HKLM "${REG_UNINST_KEY}" "Publisher" "Nullsoft and Contributors" ; Required by WACK
-  WriteRegStr HKLM "${REG_UNINST_KEY}" "URLInfoAbout" "http://nsis.sourceforge.net/"
-  WriteRegStr HKLM "${REG_UNINST_KEY}" "HelpLink" "http://nsis.sourceforge.net/Support"
+  WriteRegStr HKLM "${REG_UNINST_KEY}" "URLInfoAbout" "https://nsis.sourceforge.io/"
+  WriteRegStr HKLM "${REG_UNINST_KEY}" "HelpLink" "https://nsis.sourceforge.io/Support"
   WriteRegDWORD HKLM "${REG_UNINST_KEY}" "NoModify" "1"
   WriteRegDWORD HKLM "${REG_UNINST_KEY}" "NoRepair" "1"
   ${MakeARPInstallDate} $1
@@ -1034,7 +1034,7 @@ Function ShowReleaseNotes
   ${If} ${FileExists} $0
     Exec '"$0" mk:@MSITStore:$INSTDIR\NSIS.chm::/SectionF.1.html'
   ${Else}
-    ExecShell "" "http://nsis.sourceforge.net/Docs/AppendixF.html#F.1"
+    ExecShell "" "https://nsis.sourceforge.io/Docs/AppendixF.html#F.1"
   ${EndIf}
 FunctionEnd
 

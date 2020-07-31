@@ -240,7 +240,7 @@ nsDialogs::CreateControl ${__NSD_Label_CLASS} ${__NSD_Label_STYLE}|${SS_CENTERIM
 Pop $0
 ${SetCtlColors} $0 ${CT_FOOTER} transparent transparent
 SendMessage $0 ${WM_SETFONT} ${HF_HEADER} 1
-nsDialogs::SetUserData $0 "http://nsis.sourceforge.net"
+nsDialogs::SetUserData $0 "https://nsis.sourceforge.io"
 ${NSD_OnClick} $0 OnLinkClick
 
 nsDialogs::Show
