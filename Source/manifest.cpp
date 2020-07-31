@@ -127,7 +127,7 @@ static bool append(string& xml, const TCHAR*path, const char*prefix = 0, const c
   bool any = false;
   int i = isvalidappendpath(path);
   if (i >= 0)
-    for (std::size_t j = 0; j < g_appendstrings[i].size(); ++j)
+    for (size_t j = 0; j < g_appendstrings[i].size(); ++j)
     {
       if (!any && prefix) xml += prefix, any = true;
       xml += g_appendstrings[i][j];

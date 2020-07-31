@@ -3650,7 +3650,7 @@ bool CEXEBuild::prompt_for_output_path(TCHAR*path, UINT pathcap) const
       if (Msg == WM_COPYDATA && pCDS->cbData > sizeof(TCHAR) && pCDS->cbData <= io[2] * sizeof(TCHAR))
       {
         _tcscpy((TCHAR*) io[1], (TCHAR*) ((COPYDATASTRUCT*)lParam)->lpData);
-        return (io[0] = (pCDS->dwData == PROMPT_FILEPATH));
+        return (io[0] = (pCDS->dwData == MakensisAPI::PROMPT_FILEPATH));
       }
       return false;
     }
