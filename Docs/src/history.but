@@ -1470,7 +1470,7 @@ Released on July 14th, 2007
 
 \S1{v2.29-rl} Release Notes
 
-\b The most notable addition in this release is nsDialogs - a faster and far more capable replacement for InstallOptions. It allows creating controls of any type directly from the script and removes the need to mess with slow INI files. It integrates directly into the script by calling functions for notification, including change notification for edit boxes. \W{http://nsis.sourceforge.net/Community}{Speak up} if you have any suggestions/comments/patches for it.
+\b The most notable addition in this release is nsDialogs - a faster and far more capable replacement for InstallOptions. It allows creating controls of any type directly from the script and removes the need to mess with slow INI files. It integrates directly into the script by calling functions for notification, including change notification for edit boxes. \W{https://nsis.sourceforge.io/Community}{Speak up} if you have any suggestions/comments/patches for it.
 
 \S1{v2.29-cl} Changelog
 
@@ -1818,7 +1818,7 @@ Released on November 27th, 2006
 
 \S1{v2.22-rl} Release Notes
 
-\b Some changes have been made to the credit and license files in order to avoid copyrights and license related confusions. This does not change in any way how NSIS should or could be used. NSIS itself is still licensed with the permissive BSD-like \W{http://nsis.sourceforge.net/License}{zlib license}.
+\b Some changes have been made to the credit and license files in order to avoid copyrights and license related confusions. This does not change in any way how NSIS should or could be used. NSIS itself is still licensed with the permissive BSD-like \W{https://nsis.sourceforge.io/License}{zlib license}.
 
 \b Upgrade is recommended for early adopters of WinVer.nsh, due to a bug in Windows 98 and ME detection.
 
@@ -2504,7 +2504,7 @@ Released on July 23rd, 2005
 
 \S1{v2.08-rn} Release Notes
 
-\b The Archive has been replaced with a \W{http://nsis.sourceforge.net/wiki/}{Wiki}. The new Wiki allows everyone to edit all pages so there's no longer need to hunt for the original author. It also allows everyone to upload plug-ins and not just administrators. And as if that's not enough, it looks better and provides easier and more feature-rich syntax.
+\b The Archive has been replaced with a \W{https://nsis.sourceforge.io/wiki/}{Wiki}. The new Wiki allows everyone to edit all pages so there's no longer need to hunt for the original author. It also allows everyone to upload plug-ins and not just administrators. And as if that's not enough, it looks better and provides easier and more feature-rich syntax.
 
 \S1{v2.08-cl} Changelog
 
@@ -2557,7 +2557,7 @@ Released on June 20th, 2005
 
 \b Solid compression is no longer the default for bzip2 and lzma, use \c{SetCompressor /SOLID bzip2} or \c{SetCompressor /SOLID lzma} for solid compression.
 
-\b Source code is no longer supplied with the installer package. Source code can be downloaded from CVS or from the \W{http://nsis.sourceforge.net/download/}{download page}.
+\b Source code is no longer supplied with the installer package. Source code can be downloaded from CVS or from the \W{https://nsis.sourceforge.io/download/}{download page}.
 
 \b The directory structure of the installation has been changed. All documentation is now in the Docs folder and all examples are in the Examples folder.
 

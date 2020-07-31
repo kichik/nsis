@@ -7,7 +7,7 @@ Setup of Visual Basic 6.0 run-time files, including the Oleaut32.dll security up
 Copyright 2008-2020 Joost Verburg
 
 To obtain the run-time files, download and extract
-http://nsis.sourceforge.net/vb6runtime.zip
+https://nsis.sourceforge.io/vb6runtime.zip
 
 Script code for installation:
 

@@ -6,6 +6,6 @@ NSIS (Nullsoft Scriptable Install System) is a professional open source system t
 
 ## External Links
 
-   * [Simple tutorial](http://nsis.sourceforge.net/Simple_tutorials)
-   * [NSIS Homepage](http://nsis.sourceforge.net/)
-   * [User Manual](http://nsis.sourceforge.net/Docs/)
+   * [Simple tutorial](https://nsis.sourceforge.io/Simple_tutorials)
+   * [NSIS Homepage](https://nsis.sourceforge.io/)
+   * [User Manual](https://nsis.sourceforge.io/Docs/)

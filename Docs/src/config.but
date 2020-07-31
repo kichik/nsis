@@ -6,9 +6,9 @@
 
 \copyright \NsisCopyright
 
-\preamble Check \W{http://nsis.sourceforge.net/}{http://nsis.sf.net} for news, information, support, examples, tutorials and more.
+\preamble Check \W{https://nsis.sourceforge.io/}{http://nsis.sf.net} for news, information, support, examples, tutorials and more.
 
-\preamble Quick links:\\<br\\>\W{http://nsis.sourceforge.net/support/faq/}{FAQ} - A list of frequently asked questions\\<br\\>\W{http://nsis.sourceforge.net/wiki/}{NSIS Wiki} - Examples, functions, tutorials, plug-ins, software and more\\<br\\>\W{http://forums.winamp.com/forumdisplay.php?forumid=65}{Forum} - Post questions or discuss NSIS features
+\preamble Quick links:\\<br\\>\W{https://nsis.sourceforge.io/support/faq/}{FAQ} - A list of frequently asked questions\\<br\\>\W{https://nsis.sourceforge.io/wiki/}{NSIS Wiki} - Examples, functions, tutorials, plug-ins, software and more\\<br\\>\W{http://forums.winamp.com/forumdisplay.php?forumid=65}{Forum} - Post questions or discuss NSIS features
 
 \define{NsisFuncReqU} This function is only available when building a \R{intro-unicode}{Unicode installer}.
 
