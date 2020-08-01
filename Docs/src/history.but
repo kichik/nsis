@@ -1,5 +1,15 @@
 \A{history} Changelog and Release Notes
 
+\H{v3.06.1} 3.06.1
+
+Released on July 31st, 2020
+
+\S1{v3.06.1-cl} Changelog
+
+\S2{} Major Changes
+
+\b Fixed SetBrandingImage crash
+
 \H{v3.06} 3.06
 
 Released on July 31st, 2020
