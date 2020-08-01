@@ -4,19 +4,19 @@
 
 Released on July 31st, 2020
 
+\S1{v3.06.1-rl} Release Notes
+
+20th anniversary! The first public release of NSIS was v1.0f on July 31st, 2000.
+
 \S1{v3.06.1-cl} Changelog
 
 \S2{} Major Changes
 
-\b Fixed SetBrandingImage crash
+\b Fixed \R{setbrandingimage}{SetBrandingImage} crash
 
 \H{v3.06} 3.06
 
 Released on July 31st, 2020
-
-\S1{v3.06-rl} Release Notes
-
-20th anniversary! The first public release of NSIS was v1.0f on July 31st, 2000.
 
 \S1{v3.06-cl} Changelog
 
