@@ -50,7 +50,7 @@
 #endif
 #define COPYRIGHT    _T("Copyright (C) 2002 Robert Rainwater")
 #define CONTRIB      _T("Fritz Elfert, Justin Frankel, Amir Szekely, Sunil Kamath, Joost Verburg, Anders Kjersem")
-#define DONATE       _T("<A ID=\"D\">Donate</A> to support NSIS development.")
+#define DONATE       _T("<A>Donate</A> to support NSIS development.")
 #define DONATEURL    { 'h'|x,'t','t'|x,'p',':'|x,'/'|x,'/'|x,'n'|x,'s'|x,'i'|x,'s'|x,'.'|x,'s'|x,'f'|x,'.','n'|x,'e'|x,'t'|x,'/'|x,'r','/'|x,'D'|x,'o'|x,'n'|x,'a'|x,'t'|x,'e'|x,'\0' } // "Encrypted"
 #define DOCPATH      "https://nsis.sourceforge.io/Docs/"
 #define LOCALDOCS    _T("\\NSIS.chm")
