@@ -104,7 +104,7 @@ std::vector<string> g_appendstrings[COUNTOF(g_appendpaths)];
 
 static int isvalidappendpath(const TCHAR*path)
 {
-  for (int i = 0; i < COUNTOF(g_appendpaths); ++i)
+  for (int i = 0; i < (int) COUNTOF(g_appendpaths); ++i)
     if (!_tcsicmp(path, g_appendpaths[i]))
       return i;
   return -1;
@@ -115,7 +115,8 @@ bool addappendstring(const TCHAR*path, const TCHAR*data)
   int i = isvalidappendpath(path);
   if (i >= 0)
   {
-    string str = TtoCString(data);
+    string str = "";
+    str += TtoCString(data);
     g_appendstrings[i].push_back(str);
     return true;
   }
