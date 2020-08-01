@@ -58,7 +58,7 @@ int WINAPI _tWinMain(HINSTANCE hInst,HINSTANCE hOldInst,LPTSTR CmdLineParams,int
   DWORD iccestruct[2] = { 8, 0x8000 }; // ICC_LINK_CLASS (ComCtl32v6)
   FARPROC icce = SupportsW95() ? GetSysProcAddr("COMCTL32", "InitCommonControlsEx") : (FARPROC) InitCommonControlsEx;
   BOOL succ = ((BOOL(WINAPI*)(const void*))icce)(iccestruct);
-  if (!succ && (sizeof(void*) > 4 || LOBYTE(GetVersion()) >= 5))
+  if (!succ && (sizeof(void*) > 4 || LOBYTE(GetVersion()) >= 5)) // Must check the version because older shell32 versions have a incompatible function at the same ordinal
   {
     FARPROC lwrc = GetSysProcAddr("SHELL32", (LPCSTR) 258); // LinkWindow_RegisterClass
     if (lwrc) ((BOOL(WINAPI*)())lwrc)();
