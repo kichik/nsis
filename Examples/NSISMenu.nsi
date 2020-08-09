@@ -155,10 +155,14 @@ nsDialogs::CreateControl ${__NSD_Label_CLASS} ${__NSD_Label_STYLE} ${__NSD_Label
 Pop $0
 ${SetCtlColors} $0 0xffffff 0xffffff ${CB_HEADER}
 
-nsDialogs::CreateControl ${__NSD_Icon_CLASS} ${__NSD_Icon_STYLE}|${SS_CENTERIMAGE}|${SS_CENTER} ${__NSD_Icon_EXSTYLE} 0 0 33u ${UY_HEADER}u ""
+; CCv5 does not paint the background outside of the icon correctly when SS_CENTERIMAGE is used so we have to overlay a small icon on top of the background
+nsDialogs::CreateControl ${__NSD_Icon_CLASS} ${__NSD_Icon_STYLE} ${__NSD_Icon_EXSTYLE} 4u 4u 33u ${UY_HEADER}u ""
 Pop $0
 ${SetCtlColors} $0 "" "" ${CB_HEADER}
 ${NSD_SetIconFromInstaller} $0 $1
+nsDialogs::CreateControl ${__NSD_Icon_CLASS} ${__NSD_Icon_STYLE}|${SS_CENTERIMAGE}|${SS_CENTER} ${__NSD_Icon_EXSTYLE} 0 0 33u ${UY_HEADER}u ""
+Pop $0
+${SetCtlColors} $0 "" "" ${CB_HEADER}
 
 CreateFont $1 "Trebuchet MS" 17
 !searchreplace VERSTR "${NSIS_VERSION}" "v" ""
