@@ -12,10 +12,10 @@
 !define /ifndef VERSION 'anonymous-build'
 
 !ifndef LINK_INFO
-  !define LINK_INFO "http://nsis.sourceforge.net/"
+  !define LINK_INFO "https://nsis.sourceforge.io/"
 !endif
 !ifndef LINK_HELP
-  !define LINK_HELP "http://nsis.sourceforge.net/Support"
+  !define LINK_HELP "https://nsis.sourceforge.io/Support"
 !endif
 
 ;--------------------------------
