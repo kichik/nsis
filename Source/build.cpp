@@ -128,7 +128,7 @@ CEXEBuild::CEXEBuild(signed char pponly, bool warnaserror) :
   definedlist.add(_T("NSIS_VERSION"), NSIS_VERSION);
   definedlist.add(_T("NSIS_PACKEDVERSION"), NSIS_PACKEDVERSION);
 
-  m_target_type=TARGET_X86ANSI;
+  m_target_type=TARGET_X86UNICODE;
 #ifdef _WIN32
   if (sizeof(void*) > 4) m_target_type = TARGET_AMD64; // BUGBUG: scons 'TARGET_ARCH' should specify the default
 #endif
