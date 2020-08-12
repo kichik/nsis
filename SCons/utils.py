@@ -262,7 +262,7 @@ def SetPETimestamp(filepath, timestamp):
 		return
 
 def MakeReproducibleAction(target, source, env):
-	if env.get('SOURCE_DATE_EPOCH','') is not '':
+	if env.get('SOURCE_DATE_EPOCH','') != '':
 		SetPETimestamp(target[0].path, env['SOURCE_DATE_EPOCH'])
 
 def SilentActionEcho(target, source, env):
