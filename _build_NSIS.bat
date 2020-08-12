@@ -154,7 +154,7 @@ if exist Contrib\NScurl (
 :: Build
 echo.
 cd /d "%~dp0\%DISTRO%"
-call "%PYTHON_PATH%\Scripts\scons.bat" ^
+call "%PYTHON_PATH%\Scripts\scons" ^
 	TOOLSET=gcc,gnulink,mingw ^
 	NSIS_SCONS_GNU_ENVPATHHACK=1 ^
 	PATH="%MINGW%/bin" ^

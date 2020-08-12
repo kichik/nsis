@@ -47,10 +47,10 @@ for /F "tokens=2" %%f in ('py.exe -0p 2^> NUL ^| findstr /C:"-3."') do if not de
 set ZLIB_PATH=%DEV_PATH%\zlib
 set HTMLHELP_PATH=%PF32%\HTML Help Workshop
 
-if not exist "%PYTHON_PATH%"	echo ERROR: Missing "%PYTHON_PATH%"			&& exit /B 2
-if not exist "%PYTHON_PATH%\Scripts\scons.bat"	echo ERROR: Missing "%PYTHON_PATH%\Scripts\scons.bat" && exit /B 2
-if not exist "%HTMLHELP_PATH%"	echo ERROR: Missing "%HTMLHELP_PATH%"		&& exit /B 2
-if not exist "%ZLIB_PATH%"		echo ERROR: Missing "%ZLIB_PATH%"			&& exit /B 2
-if not exist "%MINGW%\bin\gcc.exe" echo ERROR: Missing MINGW(%CONFIG_ARCH%)	&& exit /B 2
+if not exist "%PYTHON_PATH%"	echo ERROR: Missing Python("%PYTHON_PATH%") && exit /B 2
+if not exist "%PYTHON_PATH%\Scripts\scons.*" echo ERROR: Missing Scons("%PYTHON_PATH%\Scripts\scons.*") && exit /B 2
+if not exist "%HTMLHELP_PATH%"	echo ERROR: Missing HtmlHelp("%HTMLHELP_PATH%") && exit /B 2
+if not exist "%ZLIB_PATH%"		echo ERROR: Missing zlib("%ZLIB_PATH%") && exit /B 2
+if not exist "%MINGW%\bin\gcc.exe" echo ERROR: Missing MINGW(%CONFIG_ARCH%) && exit /B 2
 
 exit /B 0
