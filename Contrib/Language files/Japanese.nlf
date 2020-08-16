@@ -9,7 +9,7 @@ NLF v6
 932
 # RTL - anything else than RTL means LTR
 -
-# Translation by Dnanako, updated by Takahiro Yoshimura <takahiro_y@monolithworks.co.jp>
+# Translation by Dnanako(2002), Updated by Takahiro Yoshimura(2003) <takahiro_y@monolithworks.co.jp>, maboroshin(2020)
 # ^Branding
 Nullsoft Install System %s
 # ^SetupCaption
@@ -17,25 +17,25 @@ $(^Name) セットアップ
 # ^UninstallCaption
 $(^Name) アンインストール
 # ^LicenseSubCaption
-：ライセンス契約書
+:使用許諾契約
 # ^ComponentsSubCaption
-：インストール オプション
+:インストール オプション
 # ^DirSubCaption
-：インストール フォルダ
+:インストール フォルダ
 # ^InstallingSubCaption
-：インストール
+:インストール
 # ^CompletedSubCaption
-：完了
+:完了
 # ^UnComponentsSubCaption
 : アンインストール オプション
 # ^UnDirSubCaption
 : アンインストール フォルダ
 # ^ComfirmSubCaption
-：確認
+:確認
 # ^UninstallingSubCaption
-：アンインストール
+:アンインストール
 # ^UnCompletedSubCaption
-：完了
+:完了
 # ^BackBtn
 < 戻る(&B)
 # ^NextBtn
@@ -43,11 +43,11 @@ $(^Name) アンインストール
 # ^AgreeBtn
 同意する(&A)
 # ^AcceptBtn
-このライセンス契約書に同意します(&A)
+この使用許諾契約に同意する(&A)
 # ^DontAcceptBtn
-このライセンス契約書には同意できません(&D)
+この使用許諾契約に同意しません(&D)
 # ^InstallBtn
-インストール
+インストール(&I)
 # ^UninstallBtn
 ｱﾝｲﾝｽﾄｰﾙ(&U)
 # ^CancelBtn
@@ -59,127 +59,127 @@ $(^Name) アンインストール
 # ^ShowDetailsBtn
 詳細を表示(&D)
 # ^ClickNext
-続けるには [次へ] をクリックして下さい。
+「次へ」をクリックし続行します。
 # ^ClickInstall
-インストールを始めるには [インストール] をクリックして下さい。
+「インストール」をクリックしインストールを開始します。
 # ^ClickUninstall
-アンインストールを始めるには [ｱﾝｲﾝｽﾄｰﾙ] をクリックして下さい。
+「アンインストール」をクリックしアンインストールを開始します。
 # ^Name
 アプリケーション
 # ^Completed
 完了
 # ^LicenseText
-$(^NameDA)をインストールする前に、ライセンス契約書を確認して下さい。契約書の全ての条件に同意するならば、[同意する] ボタンをクリックして下さい。
+$(^NameDA) をインストールする前に、使用許諾契約を確認してください。契約のすべての条件に同意するなら、「同意する」をクリックしてください。
 # ^LicenseTextCB
-$(^NameDA)をインストールする前に、ライセンス契約書を確認して下さい。契約書の全ての条件に同意するならば、下のチェックボックスをクリックして下さい。 $_CLICK
+$(^NameDA) をインストールする前に、使用許諾契約を確認してください。契約のすべての条件に同意するなら、下のチェックボックスをクリックしてください。 $_CLICK
 # ^LicenseTextRB
-$(^NameDA)をインストールする前に、ライセンス契約書を確認して下さい。契約書の全ての条件に同意するならば、下に表示されているオプションのうち、最初のものを選んで下さい。 $_CLICK
+$(^NameDA) をインストールする前に、使用許諾契約を確認してください。契約のすべての条件に同意するなら、下の選択肢から最初のものを選択してください。 $_CLICK
 # ^UnLicenseText
-$(^NameDA)をアンインストールする前に、ライセンス契約書を確認して下さい。契約書の全ての条件に同意するならば、[同意する] ボタンをクリックして下さい。
+$(^NameDA) をアンインストールする前に、使用許諾契約を確認してください。契約のすべての条件に同意するなら、「同意する」をクリックしてください。
 # ^UnLicenseTextCB
-$(^NameDA)をアンインストールする前に、ライセンス契約書を確認して下さい。契約書の全ての条件に同意するならば、下のチェックボックスをクリックして下さい。 $_CLICK
+$(^NameDA) をアンインストールする前に、使用許諾契約を確認してください。契約のすべての条件に同意するなら、下のチェックボックスをクリックしてください。 $_CLICK
 # ^UnLicenseTextRB
-$(^NameDA)をアンインストールする前に、ライセンス契約書を確認して下さい。契約書の全ての条件に同意するならば、下に表示されているオプションのうち、最初のものを選んで下さい。 $_CLICK
+$(^NameDA) をアンインストールする前に、使用許諾契約を確認してください。契約のすべての条件に同意するなら、下の選択肢から最初のものを選択してください。 $_CLICK
 # ^Custom
 カスタム
 # ^ComponentsText
-インストールしたいコンポーネントにチェックを付けて下さい。不要なものについては、チェックを外して下さい。 $_CLICK
+インストールしたい構成要素にチェックしてください。不要なものはチェックを外してください。 $_CLICK
 # ^ComponentsSubText1
-インストール タイプを選択：
+インストールの種類を選択:
 # ^ComponentsSubText2_NoInstTypes
-インストール コンポーネントを選択：
+インストールする構成要素を選択:
 # ^ComponentsSubText2
-または、インストール オプション コンポーネントを選択：
+またはインストールしたい構成要素を選択:
 # ^UnComponentsText
-アンインストールしたいコンポーネントにチェックを付けて下さい。そうでないものについては、チェックを外して下さい。 $_CLICK
+アンインストールしたい構成要素にチェックしてください。そうでないものはチェックを外してください。 $_CLICK
 # ^UnComponentsSubText1
-アンインストール タイプを選択：
+アンインストールの種類を選択:
 # ^UnComponentsSubText2_NoInstTypes
-アンインストール コンポーネントを選択：
+アンインストールする構成要素を選択:
 # ^UnComponentsSubText2
-または、アンインストール オプション コンポーネントを選択：
+またはアンインストールしたい構成要素を選択:
 # ^DirText
-$(^NameDA)を以下のフォルダにインストールします。異なったフォルダにインストールするには、[参照] を押して、別のフォルダを選択してください。 $_CLICK
+$(^NameDA) を以下のフォルダにインストールします。別のフォルダにインストールするには、「参照」 を押しフォルダを選択してください。 $_CLICK
 # ^DirSubText
-インストール先 フォルダ
+インストール先のフォルダ
 # ^DirBrowseText
-$(^NameDA)をインストールするフォルダを選択してください：
+$(^NameDA) をインストールするフォルダを選択:
 # ^UnDirText
-$(^NameDA)を以下のフォルダからアンインストールします。異なったフォルダからアンインストールするには、[参照] を押して、別のフォルダを選択してください。 $_CLICK
+$(^NameDA) を以下のフォルダからアンインストールします。別のフォルダからアンインストールするには、「参照」 を押しフォルダを選択してください。 $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
-$(^NameDA)をアンインストールするフォルダを選択してください：
+$(^NameDA) をアンインストールするフォルダを選択:
 # ^SpaceAvailable
-利用可能なディスクスペース： 
+空き容量: 
 # ^SpaceRequired
-必要なディスクスペース： 
+必要容量: 
 # ^UninstallingText
-$(^NameDA)は、以下のフォルダからアンインストールされます。 $_CLICK
+$(^NameDA) を以下のフォルダからアンインストールされます。 $_CLICK
 # ^UninstallingSubText
-アンインストール元：
+アンインストール元:
 # ^FileError
-初期ファイルの作成エラー：\r\n\t"$0"\r\nインストールを中止するには中止を,\r\n再びこのファイルの作成を試みるには再試行を, また\r\nこのファイルをスキップして続けるには無視を押してください
+書き込みファイルオープンのエラー:\r\n\t"$0"\r\nインストールを中止するには「中止」、\r\n再びこのファイルの作成を試みるには「再試行」、\r\nこのファイルをスキップして続けるには「無視」を押してください。
 # ^FileError_NoIgnore
-初期ファイルの作成エラー: \r\n\t"$0"\r\n再びこのファイルの作成を試みるには再試行を, また\r\nインストールを中止するにはキャンセルを押して下さい
+書き込みファイルオープンのエラー: \r\n\t"$0"\r\n再びこのファイルの作成を試みるには「再試行」、\r\nインストールを中止するには「キャンセル」を押してください。
 # ^CantWrite
-作成できません：
+書き込めません:
 # ^CopyFailed
-コピーは失敗しました
+コピー失敗
 # ^CopyTo
-コピーします
+コピー
 # ^Registering
 登録中:
 # ^Unregistering
 登録解除中:
 # ^SymbolNotFound
-シンボルを見つけることができません：
+シンボルが見つかりません:
 # ^CouldNotLoad
-ロードすることができません：
+読み込みに失敗:
 # ^CreateFolder
-フォルダの作成：
+フォルダ作成:
 # ^CreateShortcut
-ショートカットの作成：
+ショートカット作成:
 # ^CreatedUninstaller
-アンインストーラの作成：
+アンインストーラ作成:
 # ^Delete
-ファイルの削除：
+ファイル削除:
 # ^DeleteOnReboot
-リブート時に削除：
+再起動時に削除:
 # ^ErrorCreatingShortcut
-ショートカットの作成エラー：
+ショートカット作成エラー:
 # ^ErrorCreating
-作成エラー：
+作成エラー:
 # ^ErrorDecompressing
-データの抽出エラー\r\n\r\nインストーラが破損しています。
+データの展開エラー\r\n\r\nインストーラが破損していませんか？
 # ^ErrorRegistering
-DLLの登録エラー
+DLL の登録エラー
 # ^ExecShell
 拡張子の関連付け実行: 
 # ^Execute
-実行：
+実行:
 # ^Extract
-抽出：
+展開:
 # ^ErrorWriting
-抽出：ファイル作成エラー
+展開:ファイルへの書き込みエラー
 # ^InvalidOpcode
-インストールの不正：無効なopcode
+インストーラーが壊れている:無効な opcode
 # ^NoOLE
-OLEがありません：
+OLE がありません:
 # ^OutputFolder
-出力先フォルダ：
+出力先フォルダ:
 # ^RemoveFolder
-フォルダの削除：
+フォルダ削除:
 # ^RenameOnReboot
-リブート時に名前の変更：
+再起動時に名前の変更:
 # ^Rename
-名前の変更：
+名前の変更:
 # ^Skipped
-スキップ：
+省略:
 # ^CopyDetails
 クリップボードへ詳細をコピー
 # ^LogInstall
-インストールプロセスをログヘ記録
+インストールの経過をログヘ記録
 # ^Byte
 B
 # ^Kilo
