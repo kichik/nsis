@@ -687,7 +687,7 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
         }
         case IDM_WNDSPY:
         {
-          extern int ShowWndSpy(HWND hOwner);
+          extern INT_PTR ShowWndSpy(HWND hOwner);
           return ShowWndSpy(g_sdata.hwnd);
         }
         case IDM_GUIDGEN:
@@ -943,6 +943,7 @@ static INT_PTR CALLBACK AboutProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM 
       }
       break;
     case WM_DESTROY:
+      DeleteObject(dd.hHeaderFont);
       DeleteObject(dd.hFont);
       DeleteObject(dd.hBoldFont);
       break;
