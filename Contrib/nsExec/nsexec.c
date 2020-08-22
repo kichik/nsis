@@ -181,7 +181,7 @@ void ExecScript(int mode) {
   int ignoreData = mode == MODE_IGNOREOUTPUT;
   int logMode = mode == MODE_LINES, stackMode = mode == MODE_STACK;
   unsigned int to, tabExpandLength = logMode ? TAB_REPLACE_CCH : 0, codepage;
-  BOOL bOEM;
+  BOOL bOEM, forceNarrowInput = FALSE;
 
   *szRet = _T('\0');
 
@@ -275,7 +275,12 @@ params:
     goto params;
   }
   if (!lstrcmpi(pExec, _T("/OEM"))) {
-    bOEM = TRUE;
+    bOEM = forceNarrowInput = TRUE;
+    *pExec = 0;
+    goto params;
+  }
+  if (!lstrcmpi(pExec, _T("/MBCS"))) {
+    forceNarrowInput = TRUE;
     *pExec = 0;
     goto params;
   }
@@ -300,7 +305,7 @@ params:
     const BOOL isNT = sizeof(void*) > 4 || (GetVersion() < 0x80000000);
     HANDLE newstdout = 0, read_stdout = 0;
     HANDLE newstdin = 0, read_stdin = 0;
-    int utfSource = sizeof(TCHAR) > 1 ? -1 : FALSE, utfOutput = sizeof(TCHAR) > 1;
+    int utfSource = sizeof(TCHAR) > 1 && !forceNarrowInput ? -1 : FALSE, utfOutput = sizeof(TCHAR) > 1;
     DWORD cbRead, dwLastOutput;
     DWORD dwExit = 0, waitResult = WAIT_TIMEOUT;
     static BYTE bufSrc[1024];

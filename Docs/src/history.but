@@ -14,6 +14,10 @@ Unicode is the now default.
 
 \b Unicode is the now default
 
+\S2{} Minor Changes
+
+\b Added nsExec /MBCS switch
+
 \S2{} Translations
 
 \b Updated Corsican\#{(forum)} and Japanese (maboroshin PR\#{github.com/maboroshin})
