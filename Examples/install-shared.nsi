@@ -62,7 +62,10 @@ Section "Program files (Required)"
   WriteRegDWORD HKLM "${REGPATH_UNINSTSUBKEY}" "NoModify" 1
   WriteRegDWORD HKLM "${REGPATH_UNINSTSUBKEY}" "NoRepair" 1
 
-  File "/oname=$InstDir\MyApp.exe" "${NSISDIR}\Bin\MakeLangId.exe" ; Pretend that we have a real application to install
+  !tempfile APP
+  !makensis '-v2 "-DOUTFILE=${APP}" "-DNAME=NSISSharedAppExample" -DCOMPANY=Nullsoft "AppGen.nsi"' = 0
+  File "/oname=$InstDir\MyApp.exe" "${APP}" ; Pretend that we have a real application to install
+  !delfile "${APP}"
 SectionEnd
 
 Section "Start Menu shortcut"
