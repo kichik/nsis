@@ -307,6 +307,7 @@ ${MementoSection} "Script Examples" SecExample
   File ..\Examples\makensis.nsi
   File ..\Examples\example1.nsi
   File ..\Examples\example2.nsi
+  File ..\Examples\AppGen.nsi
   File ..\Examples\install-per-user.nsi
   File ..\Examples\install-shared.nsi
   File ..\Examples\waplugin.nsi
