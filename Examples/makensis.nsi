@@ -473,9 +473,21 @@ ${MementoSection} "Modern User Interface" SecInterfacesModernUI
   File "..\Contrib\UIs\modern_headerbmpr.exe"
   File "..\Contrib\UIs\modern_nodesc.exe"
   File "..\Contrib\UIs\modern_smalldesc.exe"
+  File "..\Contrib\UIs\xl.exe"
+  File "..\Contrib\UIs\xl_headerbmp.exe"
+  File "..\Contrib\UIs\xl_headerbmpr.exe"
+  File "..\Contrib\UIs\xl_nodesc.exe"
+  File "..\Contrib\UIs\xl_smalldesc.exe"
+  File "..\Contrib\UIs\xxl.exe"
+  File "..\Contrib\UIs\xxl_headerbmp.exe"
+  File "..\Contrib\UIs\xxl_headerbmpr.exe"
+  File "..\Contrib\UIs\xxl_nodesc.exe"
+  File "..\Contrib\UIs\xxl_smalldesc.exe"
 
   SetOutPath $INSTDIR\Include
   File "..\Include\MUI.nsh"
+  File "..\Include\ModernXL.nsh"
+  File "..\Include\ModernXXL.nsh"
 
   SetOutPath "$INSTDIR\Contrib\Modern UI 2"
   File "..\Contrib\Modern UI 2\Deprecated.nsh"

@@ -77,6 +77,8 @@ wizards = Split("""
 	llama.bmp
 	modern-xl-install.bmp
 	modern-xl-uninstall.bmp
+	modern-xxl-install.bmp
+	modern-xxl-uninstall.bmp
 	nsis.bmp
 	nsis3-branding.bmp
 	nsis3-grey.bmp
