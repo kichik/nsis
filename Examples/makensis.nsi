@@ -23,10 +23,10 @@
 
 !if ${NSIS_PTR_SIZE} > 4
   !define BITS 64
-  !define NAMESUFFIX " (64 bit)"
+  !define ARCHSUFFIX " (64 bit)"
 !else
   !define BITS 32
-  !define NAMESUFFIX ""
+  !define ARCHSUFFIX ""
 !endif
 
 !ifndef OUTFILE
@@ -65,7 +65,7 @@ ManifestSupportedOS all
 
 ;Names
 Name "NSIS"
-Caption "NSIS ${VERSION}${NAMESUFFIX} Setup"
+Caption "NSIS Setup - ${VERSION}${ARCHSUFFIX}"
 
 !define REG_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS"
 
@@ -86,11 +86,9 @@ Caption "NSIS ${VERSION}${NAMESUFFIX} Setup"
 !define MUI_COMPONENTSPAGE_SMALLDESC
 
 ;Pages
-!ifndef EXTRA_WELCOME_TEXT
-	!define EXTRA_WELCOME_TEXT ""
-!endif
-!define MUI_WELCOMEPAGE_TITLE "Welcome to the NSIS ${VERSION} Setup Wizard"
-!define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of NSIS (Nullsoft Scriptable Install System) ${VERSION}, the next generation of the Windows installer and uninstaller system that doesn't suck and isn't huge.$\r$\n$\r$\nNSIS includes a Modern User Interface, LZMA compression, support for multiple languages and an easy plug-in system.${EXTRA_WELCOME_TEXT}$\r$\n$\r$\n$_CLICK"
+!define /ifndef EXTRA_WELCOME_TEXT ""
+!define MUI_WELCOMEPAGE_TITLE "Welcome to the NSIS Setup Wizard"
+!define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of NSIS (Nullsoft Scriptable Install System), the next generation of the Windows installer and uninstaller system that doesn't suck and isn't huge.$\r$\n$\r$\nNSIS includes a Modern User Interface, LZMA compression, support for multiple languages and an easy plug-in system.${EXTRA_WELCOME_TEXT}$\r$\n$\r$\n$_CLICK"
 
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_LICENSE "..\COPYING"
@@ -425,10 +423,10 @@ ${MementoSection} "Desktop Shortcut" SecShortcuts
   SectionIn 1 2
   SetOutPath $INSTDIR
 !ifndef NO_STARTMENUSHORTCUTS
-  CreateShortcut "$SMPROGRAMS\NSIS${NAMESUFFIX}.lnk" "$INSTDIR\NSIS.exe"
+  CreateShortcut "$SMPROGRAMS\NSIS${ARCHSUFFIX}.lnk" "$INSTDIR\NSIS.exe"
 !endif
 
-  CreateShortcut "$DESKTOP\NSIS${NAMESUFFIX}.lnk" "$INSTDIR\NSIS.exe"
+  CreateShortcut "$DESKTOP\NSIS${ARCHSUFFIX}.lnk" "$INSTDIR\NSIS.exe"
 
 ${MementoSectionEnd}
 
@@ -979,7 +977,7 @@ Section -post
   WriteRegExpandStr HKLM "${REG_UNINST_KEY}" "UninstallString" '"$INSTDIR\uninst-nsis.exe"'
   ;WriteRegStr HKLM "${REG_UNINST_KEY}" "QuietUninstallString" '"$INSTDIR\uninst-nsis.exe" /S' ; Ideally WACK would use this
   WriteRegExpandStr HKLM "${REG_UNINST_KEY}" "InstallLocation" "$INSTDIR"
-  WriteRegStr HKLM "${REG_UNINST_KEY}" "DisplayName" "Nullsoft Install System${NAMESUFFIX}"
+  WriteRegStr HKLM "${REG_UNINST_KEY}" "DisplayName" "Nullsoft Install System${ARCHSUFFIX}"
   WriteRegStr HKLM "${REG_UNINST_KEY}" "DisplayIcon" "$INSTDIR\uninst-nsis.exe,0"
   WriteRegStr HKLM "${REG_UNINST_KEY}" "DisplayVersion" "${VERSION}"
 !ifdef VER_MAJOR & VER_MINOR & VER_REVISION & VER_BUILD
@@ -1228,8 +1226,8 @@ Section Uninstall
   DetailPrint "Deleting Files..."
   SetDetailsPrint listonly
 
-  Delete "$SMPROGRAMS\NSIS${NAMESUFFIX}.lnk"
-  Delete "$DESKTOP\NSIS${NAMESUFFIX}.lnk"
+  Delete "$SMPROGRAMS\NSIS${ARCHSUFFIX}.lnk"
+  Delete "$DESKTOP\NSIS${ARCHSUFFIX}.lnk"
   Delete $INSTDIR\makensis.exe
   Delete $INSTDIR\makensisw.exe
   Delete $INSTDIR\NSIS.exe

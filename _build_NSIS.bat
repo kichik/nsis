@@ -166,7 +166,7 @@ call "%PYTHON_PATH%\Scripts\scons" ^
 	NSIS_CONFIG_LOG=yes ^
 	NSIS_CONFIG_LOG_TIMESTAMP=yes ^
 	NSIS_MAX_STRLEN=4096 ^
-	NSIS_EXTRA_PARAM="/DLINK_INFO=https://github.com/negrutiu/nsis /DNSIS_BIN2=..\..\..\nsis-mingw-%BRANCH%-x86\BIN /DNSIS_BIN3=..\..\..\nsis-mingw-%BRANCH%-amd64\BIN /DVER_PRODUCTNAME=""Unofficial NSIS build by Marius Negrutiu"" /DVER_LEGALTRADEMARKS=https://github.com/negrutiu/nsis /DEXTRA_WELCOME_TEXT=""$\r$\n________________________________________________$\r$\n$\r$\nThis is an *unofficial* build by Marius Negrutiu$\r$\nhttps://github.com/negrutiu/nsis""" ^
+	NSIS_EXTRA_PARAM="/DLINK_INFO=https://github.com/negrutiu/nsis /DNSIS_BIN2=..\..\..\nsis-mingw-%BRANCH%-x86\BIN /DNSIS_BIN3=..\..\..\nsis-mingw-%BRANCH%-amd64\BIN /DVER_PRODUCTNAME=""Unofficial NSIS build by Marius Negrutiu"" /DVER_LEGALTRADEMARKS=https://github.com/negrutiu/nsis /DEXTRA_WELCOME_TEXT=""$\r$\n$\r$\n$\r$\n(*) This is an unofficial build from https://github.com/negrutiu/nsis$\r$\n""" ^
 	PREFIX="%CD%\BIN" ^
 	ZLIB_W32="%ZLIB_PATH%-mingw-%CONFIG_ARCH%" ^
 	STRIP=1 ^
