@@ -127,7 +127,7 @@ Welcome page (implemented using nsDialogs)
     SetCtlColors $mui.WelcomePage "" "${MUI_BGCOLOR}"    
 
     ;Image control
-    ${NSD_CreateBitmap} 0u 0u 109u 193u ""
+    ${NSD_CreateBitmap} 0u 0u 109u 100% ""
     Pop $mui.WelcomePage.Image
     !insertmacro MUI_INTERNAL_FULLWINDOW_LOADWIZARDIMAGE "${MUI_PAGE_UNINSTALLER_PREFIX}" $mui.WelcomePage.Image $PLUGINSDIR\modern-wizard.bmp $mui.WelcomePage.Image.Bitmap
 
@@ -145,14 +145,14 @@ Welcome page (implemented using nsDialogs)
     !define /math MUI_WELCOMEPAGE_TEXT_TOP 17 + ${MUI_WELCOMEPAGE_TITLE_HEIGHT}
 
     ;Title
-    ${NSD_CreateLabel} 120u 10u 195u ${MUI_WELCOMEPAGE_TITLE_HEIGHT}u "${MUI_WELCOMEPAGE_TITLE}"
+    ${NSD_CreateLabel} 120u 10u -130u ${MUI_WELCOMEPAGE_TITLE_HEIGHT}u "${MUI_WELCOMEPAGE_TITLE}"
     Pop $mui.WelcomePage.Title
     SetCtlColors $mui.WelcomePage.Title "${MUI_TEXTCOLOR}" "${MUI_BGCOLOR}"    
     CreateFont $mui.WelcomePage.Title.Font "$(^Font)" "12" "700"
     SendMessage $mui.WelcomePage.Title ${WM_SETFONT} $mui.WelcomePage.Title.Font 0
 
     ;Welcome text
-    ${NSD_CreateLabel} 120u ${MUI_WELCOMEPAGE_TEXT_TOP}u 195u 130u "${MUI_WELCOMEPAGE_TEXT}"
+    ${NSD_CreateLabel} 120u ${MUI_WELCOMEPAGE_TEXT_TOP}u -130u 130u "${MUI_WELCOMEPAGE_TEXT}"
     Pop $mui.WelcomePage.Text
     SetCtlColors $mui.WelcomePage.Text "${MUI_TEXTCOLOR}" "${MUI_BGCOLOR}"
 

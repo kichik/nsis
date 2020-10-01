@@ -52,6 +52,7 @@ ManifestSupportedOS all
 ;--------------------------------
 ;Header Files
 
+!include "ModernXL.nsh"
 !include "MUI2.nsh"
 !include "Sections.nsh"
 !include "LogicLib.nsh"
@@ -81,7 +82,10 @@ Caption "NSIS Setup - ${VERSION}${ARCHSUFFIX}"
 
 !define MUI_HEADERIMAGE
 !define MUI_HEADERIMAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Header\nsis3-branding.bmp"
-!define MUI_WELCOMEFINISHPAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Wizard\nsis3-branding.bmp"
+;!define MUI_WELCOMEFINISHPAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Wizard\nsis3-branding.bmp"
+
+!define MUI_HEADERIMAGE_UNBITMAP "${NSISDIR}\Contrib\Graphics\Header\nsis3-grey.bmp"
+;!define MUI_UNWELCOMEFINISHPAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Wizard\nsis3-grey.bmp"
 
 !define MUI_COMPONENTSPAGE_SMALLDESC
 

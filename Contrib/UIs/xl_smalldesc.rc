@@ -1,0 +1,6 @@
+
+#define cxMAIN 351
+#define cyMAIN 326
+#define RC_COMP_SMALLDESC 1
+
+#include "ui.rc"

@@ -265,7 +265,7 @@ Finish page (implemented using nsDialogs)
     SetCtlColors $mui.FinishPage "" "${MUI_BGCOLOR}"
 
     ;Image control
-    ${NSD_CreateBitmap} 0u 0u 109u 193u ""
+    ${NSD_CreateBitmap} 0u 0u 109u 100% ""
     Pop $mui.FinishPage.Image
     !insertmacro MUI_INTERNAL_FULLWINDOW_LOADWIZARDIMAGE "${MUI_PAGE_UNINSTALLER_PREFIX}" $mui.FinishPage.Image $PLUGINSDIR\modern-wizard.bmp $mui.FinishPage.Image.Bitmap
     
@@ -325,22 +325,22 @@ Finish page (implemented using nsDialogs)
       ${if} ${RebootFlag}
 
         ;Title text
-        ${NSD_CreateLabel} 120u 10u 195u ${MUI_FINISHPAGE_TITLE_HEIGHT}u "${MUI_FINISHPAGE_TITLE}"
+        ${NSD_CreateLabel} 120u 10u -130u ${MUI_FINISHPAGE_TITLE_HEIGHT}u "${MUI_FINISHPAGE_TITLE}"
         Pop $mui.FinishPage.Title
         SetCtlColors $mui.FinishPage.Title "${MUI_TEXTCOLOR}" "${MUI_BGCOLOR}"
         CreateFont $mui.FinishPage.Title.Font "$(^Font)" "12" "700"
         SendMessage $mui.FinishPage.Title ${WM_SETFONT} $mui.FinishPage.Title.Font 0
 
         ;Finish text
-        ${NSD_CreateLabel} 120u ${MUI_FINISHPAGE_TEXT_TOP}u 195u ${MUI_FINISHPAGE_TEXT_HEIGHT_BUTTONS}u "${MUI_FINISHPAGE_TEXT_REBOOT}"
+        ${NSD_CreateLabel} 120u ${MUI_FINISHPAGE_TEXT_TOP}u -130u ${MUI_FINISHPAGE_TEXT_HEIGHT_BUTTONS}u "${MUI_FINISHPAGE_TEXT_REBOOT}"
         Pop $mui.FinishPage.Text
         SetCtlColors $mui.FinishPage.Text "${MUI_TEXTCOLOR}" "${MUI_BGCOLOR}"
       
         ;Radio buttons for reboot page
-        ${NSD_CreateRadioButton} 120u ${MUI_FINISHPAGE_REBOOTNOW_TOP}u 195u 10u "${MUI_FINISHPAGE_TEXT_REBOOTNOW}"
+        ${NSD_CreateRadioButton} 120u ${MUI_FINISHPAGE_REBOOTNOW_TOP}u -130u 10u "${MUI_FINISHPAGE_TEXT_REBOOTNOW}"
         Pop $mui.FinishPage.RebootNow
         SetCtlColors $mui.FinishPage.RebootNow "${MUI_TEXTCOLOR}" "${MUI_BGCOLOR}"        
-        ${NSD_CreateRadioButton} 120u ${MUI_FINISHPAGE_REBOOTLATER_TOP}u 195u 10u "${MUI_FINISHPAGE_TEXT_REBOOTLATER}"
+        ${NSD_CreateRadioButton} 120u ${MUI_FINISHPAGE_REBOOTLATER_TOP}u -130u 10u "${MUI_FINISHPAGE_TEXT_REBOOTLATER}"
         Pop $mui.FinishPage.RebootLater
         SetCtlColors $mui.FinishPage.RebootLater "${MUI_TEXTCOLOR}" "${MUI_BGCOLOR}"
         !ifndef MUI_FINISHPAGE_REBOOTLATER_DEFAULT
@@ -355,7 +355,7 @@ Finish page (implemented using nsDialogs)
     !endif
         
         ;Title text
-        ${NSD_CreateLabel} 120u 10u 195u ${MUI_FINISHPAGE_TITLE_HEIGHT}u "${MUI_FINISHPAGE_TITLE}"
+        ${NSD_CreateLabel} 120u 10u -130u ${MUI_FINISHPAGE_TITLE_HEIGHT}u "${MUI_FINISHPAGE_TITLE}"
         Pop $mui.FinishPage.Title
         SetCtlColors $mui.FinishPage.Title "${MUI_TEXTCOLOR}" "${MUI_BGCOLOR}"
         CreateFont $mui.FinishPage.Title.Font "$(^Font)" "12" "700"
@@ -363,16 +363,16 @@ Finish page (implemented using nsDialogs)
 
         ;Finish text
         !ifndef MUI_FINISHPAGE_RUN & MUI_FINISHPAGE_SHOWREADME
-          ${NSD_CreateLabel} 120u ${MUI_FINISHPAGE_TEXT_TOP}u 195u ${MUI_FINISHPAGE_TEXT_HEIGHT}u "${MUI_FINISHPAGE_TEXT}"
+          ${NSD_CreateLabel} 120u ${MUI_FINISHPAGE_TEXT_TOP}u -130u ${MUI_FINISHPAGE_TEXT_HEIGHT}u "${MUI_FINISHPAGE_TEXT}"
         !else
-          ${NSD_CreateLabel} 120u ${MUI_FINISHPAGE_TEXT_TOP}u 195u ${MUI_FINISHPAGE_TEXT_HEIGHT_BUTTONS}u "${MUI_FINISHPAGE_TEXT}"
+          ${NSD_CreateLabel} 120u ${MUI_FINISHPAGE_TEXT_TOP}u -130u ${MUI_FINISHPAGE_TEXT_HEIGHT_BUTTONS}u "${MUI_FINISHPAGE_TEXT}"
         !endif
         Pop $mui.FinishPage.Text
         SetCtlColors $mui.FinishPage.Text "${MUI_TEXTCOLOR}" "${MUI_BGCOLOR}"
     
         ;Checkboxes
         !ifdef MUI_FINISHPAGE_RUN
-          ${NSD_CreateCheckbox} 120u ${MUI_FINISHPAGE_RUN_TOP}u 195u 10u "${MUI_FINISHPAGE_RUN_TEXT}"
+          ${NSD_CreateCheckbox} 120u ${MUI_FINISHPAGE_RUN_TOP}u -130u 10u "${MUI_FINISHPAGE_RUN_TEXT}"
           Pop $mui.FinishPage.Run
           SetCtlColors $mui.FinishPage.Run "${MUI_TEXTCOLOR}" "${MUI_BGCOLOR}"
           !ifndef MUI_FINISHPAGE_RUN_NOTCHECKED
@@ -381,7 +381,7 @@ Finish page (implemented using nsDialogs)
           ${NSD_SetFocus} $mui.FinishPage.Run
         !endif
         !ifdef MUI_FINISHPAGE_SHOWREADME
-          ${NSD_CreateCheckbox} 120u ${MUI_FINISHPAGE_SHOWREADME_TOP}u 195u 10u "${MUI_FINISHPAGE_SHOWREADME_TEXT}"
+          ${NSD_CreateCheckbox} 120u ${MUI_FINISHPAGE_SHOWREADME_TOP}u -130u 10u "${MUI_FINISHPAGE_SHOWREADME_TEXT}"
           Pop $mui.FinishPage.ShowReadme
           SetCtlColors $mui.FinishPage.ShowReadme "${MUI_TEXTCOLOR}" "${MUI_BGCOLOR}"
           !ifndef MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
@@ -394,7 +394,7 @@ Finish page (implemented using nsDialogs)
     
         ;Link
         !ifdef MUI_FINISHPAGE_LINK
-          ${NSD_CreateLink} 120u 175u 195u 10u "${MUI_FINISHPAGE_LINK}"
+          ${NSD_CreateLink} 120u 175u -130u 10u "${MUI_FINISHPAGE_LINK}"
           Pop $mui.FinishPage.Link
           SetCtlColors $mui.FinishPage.Link "${MUI_FINISHPAGE_LINK_COLOR}" "${MUI_BGCOLOR}"
           ${NSD_OnClick} $mui.FinishPage.Link "${LINK}"

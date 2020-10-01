@@ -75,6 +75,8 @@ icons = Split("""
 wizards = Split("""
 	arrow.bmp
 	llama.bmp
+	modern-xl-install.bmp
+	modern-xl-uninstall.bmp
 	nsis.bmp
 	nsis3-branding.bmp
 	nsis3-grey.bmp

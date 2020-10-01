@@ -6,6 +6,7 @@ includes = Split("""
 	Library.nsh
 	LogicLib.nsh
 	Memento.nsh
+    ModernXL.nsh
 	MUI.nsh
 	MUI2.nsh
 	Sections.nsh

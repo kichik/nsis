@@ -1,0 +1,5 @@
+
+#define cxMAIN 351
+#define cyMAIN 326
+
+#include "ui.rc"

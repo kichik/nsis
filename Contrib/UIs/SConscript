@@ -8,6 +8,11 @@ uis = Split("""
 	modern_nodesc
 	modern_smalldesc
 	sdbarker_tiny
+    xl
+    xl_headerbmp
+    xl_headerbmpr
+    xl_nodesc
+    xl_smalldesc
 """)
 
 libs = Split("""
