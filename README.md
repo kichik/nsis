@@ -21,5 +21,6 @@ I've also included a bunch of extra plugins for you to play with... Enjoy!
   * [ExecDos](https://github.com/negrutiu/nsis-execdos) - Extended support for launching child processes
   * [TaskbarProgress](https://github.com/negrutiu/nsis-taskbarprogress) - Display progress in Windows' taskbar
   * [ShellLink](https://github.com/negrutiu/nsis-shelllink) - Complex operations with shortcuts (`*.lnk`)
+* Two new [ModernXL](https://github.com/negrutiu/nsis/wiki/ModernXL/) and [ModernXXL](https://github.com/negrutiu/nsis/wiki/ModernXL/) extra-large UI themes
 * Advanced logging enabled (`NSIS_CONFIG_LOG`)
 * Large strings (`NSIS_MAX_STRLEN=4096`)
