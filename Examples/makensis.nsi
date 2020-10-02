@@ -389,6 +389,7 @@ ${MementoSection} "Script Examples" SecExample
   File ..\Examples\Memento.nsi
   File ..\Examples\unicode.nsi
   File ..\Examples\NSISMenu.nsi
+  File ..\Examples\ModernXL.nsi
 
   SetOutPath $INSTDIR\Examples\Plugin
   File ..\Examples\Plugin\exdll.c
