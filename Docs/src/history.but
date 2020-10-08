@@ -18,6 +18,8 @@ Unicode is the now default.
 
 \b Added nsExec /MBCS switch
 
+\b Fixed Unicode compiler crash (\W{http://sf.net/p/nsis/bugs/1254}{bug #1254}, \W{http://sf.net/p/nsis/patches/300}{patch #300})
+
 \S2{} Translations
 
 \b Updated Corsican\#{(forum)} and Japanese (maboroshin PR\#{github.com/maboroshin})
