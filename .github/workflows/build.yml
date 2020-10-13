@@ -35,7 +35,7 @@ jobs:
           $arguments = "/S /D=$HOME\cppunit"
           Start-Process ./cppunit-msvc-1.12.1.exe $arguments -NoNewWindow -Wait
           pip install scons
-          choco install html-help-workshop
+          choco install html-help-workshop zip
           echo "${Env:ProgramFiles(x86)}\HTML Help Workshop" >> $Env:GITHUB_PATH
         if: startsWith(matrix.os, 'windows')
       - name: Zlib Dependency
@@ -61,10 +61,10 @@ jobs:
           rm nsis-*.zip
           scons ZLIB_W32=$HOME/zlib SKIPUTILS="NSIS Menu" DOCTYPES=html dist-zip
           echo https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID > build.log
-          #Compress-Archive -Path build.log -DestinationPath nsis-*.zip -Update
+          zip nsis-*.zip build.log
           scp -oStrictHostKeyChecking=no -oBatchMode=yes -i $HOME/deploy_key nsis-*.zip kichik@web.sourceforge.net:/home/project-web/nsis/gh-build.zip
           ssh -oStrictHostKeyChecking=no -oBatchMode=yes -i $HOME/deploy_key -T kichik,nsis@shell.sourceforge.net create
-          ssh -oStrictHostKeyChecking=no -oBatchMode=yes -i $HOME/deploy_key -t kichik,nsis@shell.sourceforge.net "cat /home/project-web/nsis/gh-build.zip | /home/project-web/nsis/bin/nightly-deploy.sh"
+          ssh -oStrictHostKeyChecking=no -oBatchMode=yes -i $HOME/deploy_key kichik,nsis@shell.sourceforge.net "cat /home/project-web/nsis/gh-build.zip | /home/project-web/nsis/bin/nightly-deploy.sh"
         env:
           DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
         if: matrix.nightly == 'nightly' && github.ref == 'refs/heads/master'
