@@ -56,13 +56,15 @@ jobs:
         run: cat config.log
       - name: Deploy
         run: |
+          echo $Env:DEPLOY_KEY > $HOME/deploy_key
+          Set-PSDebug -Trace 1
           rm nsis-*.zip
           scons ZLIB_W32=$HOME/zlib SKIPUTILS="NSIS Menu" DOCTYPES=html dist-zip
           echo https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID > build.log
           #Compress-Archive -Path build.log -DestinationPath nsis-*.zip -Update
-          echo $Env:DEPLOY_KEY > $HOME/deploy_key
+          scp -oStrictHostKeyChecking=no -oBatchMode=yes -i $HOME/deploy_key nsis-*.zip kichik,nsis@shell.sourceforge.net:/home/project-web/nsis/gh-build.zip
           ssh -oStrictHostKeyChecking=no -oBatchMode=yes -i $HOME/deploy_key -T kichik,nsis@shell.sourceforge.net create
-          Get-Content nsis-*.zip -Raw | ssh -oStrictHostKeyChecking=no -oBatchMode=yes -i $HOME/deploy_key kichik,nsis@shell.sourceforge.net /home/project-web/nsis/bin/nightly-deploy.sh
+          ssh -oStrictHostKeyChecking=no -oBatchMode=yes -i $HOME/deploy_key kichik,nsis@shell.sourceforge.net "/home/project-web/nsis/bin/nightly-deploy.sh < /home/project-web/nsis/gh-build.zip"
         env:
           DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
         if: matrix.nightly == 'nightly' && github.ref == 'refs/heads/master'
