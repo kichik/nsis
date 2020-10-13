@@ -89,7 +89,7 @@ This command sets the overwrite flag which is used by the \R{file}{File} command
 
 \S2{aunicodetarget} Unicode
 
-\c true|\\<b\\>false\\</b\\>
+\c \\<b\\>true\\</b\\>|false
 
 Generate a \R{intro-unicode}{Unicode installer}. It can only be used outside of sections and functions and before any data is compressed.
 
