@@ -62,8 +62,7 @@ jobs:
           #Compress-Archive -Path build.log -DestinationPath nsis-*.zip -Update
           echo $Env:DEPLOY_KEY > $HOME/deploy_key
           ssh -oStrictHostKeyChecking=no -oBatchMode=yes -i $HOME/deploy_key -T kichik,nsis@shell.sourceforge.net create
-          $arguments = "-oStrictHostKeyChecking=no -oBatchMode=yes -i $HOME/deploy_key kichik,nsis@shell.sourceforge.net /home/project-web/nsis/bin/nightly-deploy.sh"
-          Start-Process ssh $arguments -RedirectStandardInput nsis-*.zip -NoNewWindow -Wait
+          Get-Content nsis-*.zip -Raw | ssh -oStrictHostKeyChecking=no -oBatchMode=yes -i $HOME/deploy_key kichik,nsis@shell.sourceforge.net /home/project-web/nsis/bin/nightly-deploy.sh
         env:
           DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
         if: matrix.nightly == 'nightly' && github.ref == 'refs/heads/master'
