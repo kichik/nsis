@@ -6,13 +6,13 @@ Released on ??? ??th, 20??
 
 \S1{v3.07-rl} Release Notes
 
-Unicode is the now default.
+Unicode is now the default.
 
 \S1{v3.07-cl} Changelog
 
 \S2{} Major Changes
 
-\b Unicode is the now default
+\b \R{aunicodetarget}{Unicode} is now the default
 
 \S2{} Minor Changes
 
