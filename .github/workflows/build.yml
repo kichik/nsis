@@ -64,7 +64,7 @@ jobs:
           #Compress-Archive -Path build.log -DestinationPath nsis-*.zip -Update
           scp -oStrictHostKeyChecking=no -oBatchMode=yes -i $HOME/deploy_key nsis-*.zip kichik,nsis@shell.sourceforge.net:/home/project-web/nsis/gh-build.zip
           ssh -oStrictHostKeyChecking=no -oBatchMode=yes -i $HOME/deploy_key -T kichik,nsis@shell.sourceforge.net create
-          ssh -oStrictHostKeyChecking=no -oBatchMode=yes -i $HOME/deploy_key kichik,nsis@shell.sourceforge.net "/home/project-web/nsis/bin/nightly-deploy.sh < /home/project-web/nsis/gh-build.zip"
+          ssh -oStrictHostKeyChecking=no -oBatchMode=yes -i $HOME/deploy_key -t kichik,nsis@shell.sourceforge.net "cat /home/project-web/nsis/gh-build.zip | /home/project-web/nsis/bin/nightly-deploy.sh"
         env:
           DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
         if: matrix.nightly == 'nightly' && github.ref == 'refs/heads/master'
