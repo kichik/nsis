@@ -12,7 +12,7 @@ Unicode is now the default.
 
 \S2{} Major Changes
 
-\b \R{aunicodetarget}{Unicode} is now the default
+\b \R{aunicodetarget}{Unicode} now defaults to \cw{true}
 
 \S2{} Minor Changes
 
