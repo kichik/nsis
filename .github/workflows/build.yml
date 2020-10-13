@@ -61,8 +61,9 @@ jobs:
           rm nsis-*.zip
           scons ZLIB_W32=$HOME/zlib SKIPUTILS="NSIS Menu" DOCTYPES=html dist-zip
           echo https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID > build.log
-          zip nsis-*.zip build.log
-          scp -oStrictHostKeyChecking=no -oBatchMode=yes -i $HOME/deploy_key nsis-*.zip kichik@web.sourceforge.net:/home/project-web/nsis/gh-build.zip
+          ls -Name nsis-*.zip -OutVariable zip
+          zip $zip build.log
+          scp -oStrictHostKeyChecking=no -oBatchMode=yes -i $HOME/deploy_key $zip kichik@web.sourceforge.net:/home/project-web/nsis/gh-build.zip
           ssh -oStrictHostKeyChecking=no -oBatchMode=yes -i $HOME/deploy_key -T kichik,nsis@shell.sourceforge.net create
           ssh -oStrictHostKeyChecking=no -oBatchMode=yes -i $HOME/deploy_key kichik,nsis@shell.sourceforge.net "cat /home/project-web/nsis/gh-build.zip | /home/project-web/nsis/bin/nightly-deploy.sh"
         env:
