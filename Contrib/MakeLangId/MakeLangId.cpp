@@ -81,9 +81,14 @@ typedef struct { WORD id; LPCSTR name; } INTLNG; // Storing the names as ASCII s
 
 #define IL(p, s, pn, sn) { MAKELANGID(p, s), #pn ":" #sn }
 static const INTLNG g_IntLang[] = {
-	//(0x00, 0x00, NEUTRAL, NEUTRAL),
-	//(0x00, 0x01, NEUTRAL, DEFAULT),
+	IL(0x00, 0x00, NEUTRAL, NEUTRAL),
+	IL(0x00, 0x01, NEUTRAL, DEFAULT),
+	IL(0x00, 0x03, NEUTRAL, CUSTOM_DEFAULT), // Vista+? //archives.miloush.net/michkap/archive/2007/09/02/4701403.html
+	IL(0x00, 0x04, NEUTRAL, CUSTOM_UNSPECIFIED), // Vista+?
+	IL(0x00, 0x05, NEUTRAL, UI_CUSTOM_DEFAULT), // Vista+?
+	IL(0x00, 0x08, NEUTRAL, DYNAMIC),
 	IL(0x7f, 0x00, INVARIANT, NEUTRAL), // Invariant locale
+
 	IL(0x36, 0x01, AFRIKAANS, AFRIKAANS_SOUTH_AFRICA),
 	IL(0x1c, 0x01, ALBANIAN, ALBANIAN_ALBANIA),
 	IL(0x01, 0x01, ARABIC, ARABIC_SAUDI_ARABIA),
