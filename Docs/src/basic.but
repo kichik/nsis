@@ -27,9 +27,9 @@ Execute the specified program and continue immediately. Note that the file speci
 
 \S2{execshell} ExecShell
 
-\c [/INVOKEIDLIST] action command [parameters] [SW_SHOWDEFAULT | SW_SHOWNORMAL | SW_SHOWMAXIMIZED | SW_SHOWMINIMIZED | SW_HIDE]
+\c [/INVOKEIDLIST] action file [parameters] [SW_SHOWDEFAULT | SW_SHOWNORMAL | SW_SHOWMAXIMIZED | SW_SHOWMINIMIZED | SW_HIDE]
 
-Execute the specified program using ShellExecuteEx. Note that action is usually "open", "print", etc, but can be an empty string to use the default action. Parameters and the show type are optional. $OUTDIR is used as the working directory. The error flag is set if the process could not be launched.
+Execute the specified file using ShellExecuteEx. Note that action is usually "open", "print", etc, but can be an empty string to use the default action. Parameters and the show type are optional. $OUTDIR is used as the working directory. The error flag is set if the process could not be launched.
 
 \c ExecShell "open" "http://nsis.sf.net/"
 \c ExecShell "" "$SysDir\Notepad.exe" "" SW_SHOWMAXIMIZED
@@ -38,9 +38,9 @@ Execute the specified program using ShellExecuteEx. Note that action is usually 
 
 \S2{execshellwait} ExecShellWait
 
-\c [/INVOKEIDLIST] action command [parameters] [SW_SHOWDEFAULT | SW_SHOWNORMAL | SW_SHOWMAXIMIZED | SW_SHOWMINIMIZED | SW_HIDE]
+\c [/INVOKEIDLIST] action file [parameters] [SW_SHOWDEFAULT | SW_SHOWNORMAL | SW_SHOWMAXIMIZED | SW_SHOWMINIMIZED | SW_HIDE]
 
-Execute the specified program using ExecShell and wait for executed process to quit. It will only wait for executable files, not other file types nor URLs.
+Execute the specified file using ExecShell and wait for executed process to quit. It will only wait for executable files, not other file types nor URLs.
 
 \S2{execwait} ExecWait
 
