@@ -79,23 +79,23 @@ jobs:
           name: build.zip
       - name: Upload to SourceForge
         run: |
-          echo $DEPLOY_KEY > $HOME/deploy_key
+          echo "$DEPLOY_KEY" > $HOME/deploy_key
           set -ex
           chmod 600 $HOME/deploy_key
           mkdir nightly
           unzip nsis-*.zip -d nightly
-          LocalNightly=nightly/nsis-*
+          LocalNightly=`ls -d nightly/nsis-*`
           RemoteNightly=kichik,nsis@web.sourceforge.net:/home/project-web/nsis/htdocs/nightly
-          scp -oStrictHostKeyChecking=no -oBatchMode=yes -i $HOME/deploy_key nsis-*.zip kichik,nsis@web.sourceforge.net:/home/project-web/nsis/htdocs/nightly/nsis.zip
-          scp -oStrictHostKeyChecking=no -oBatchMode=yes -i $HOME/deploy_key $LocalNightly/build.log kichik,nsis@web.sourceforge.net:/home/project-web/nsis/htdocs/nightly/build.log
+          scp -oStrictHostKeyChecking=no -oBatchMode=yes -i $HOME/deploy_key nsis-*.zip $RemoteNightly/nsis.zip
+          scp -oStrictHostKeyChecking=no -oBatchMode=yes -i $HOME/deploy_key nightly/build.log $RemoteNightly/build.log
           cp $LocalNightly/Docs/Contents.html $LocalNightly/Docs/index.html
           echo "Options +indexes" > $LocalNightly/Docs/.htaccess
           echo "Options +indexes" > $LocalNightly/Examples/.htaccess
           echo "Options +indexes" > $LocalNightly/Include/.htaccess
           echo "Options +indexes" > $LocalNightly/Contrib/.htaccess
-          rsync -e "ssh -oStrictHostKeyChecking=no -oBatchMode=yes" -va --delete $LocalNightly/Docs/ $RemoteNightly/Docs/
-          rsync -e "ssh -oStrictHostKeyChecking=no -oBatchMode=yes" -va --delete $LocalNightly/Examples/ $RemoteNightly/Examples/
-          rsync -e "ssh -oStrictHostKeyChecking=no -oBatchMode=yes" -va --delete $LocalNightly/Include/ $RemoteNightly/Include/
-          rsync -e "ssh -oStrictHostKeyChecking=no -oBatchMode=yes" -va --delete $LocalNightly/Contrib/ $RemoteNightly/Contrib/
+          rsync -e "ssh -i $HOME/deploy_key -oStrictHostKeyChecking=no -oBatchMode=yes" -va --delete $LocalNightly/Docs/ $RemoteNightly/Docs/
+          rsync -e "ssh -i $HOME/deploy_key -oStrictHostKeyChecking=no -oBatchMode=yes" -va --delete $LocalNightly/Examples/ $RemoteNightly/Examples/
+          rsync -e "ssh -i $HOME/deploy_key -oStrictHostKeyChecking=no -oBatchMode=yes" -va --delete $LocalNightly/Include/ $RemoteNightly/Include/
+          rsync -e "ssh -i $HOME/deploy_key -oStrictHostKeyChecking=no -oBatchMode=yes" -va --delete $LocalNightly/Contrib/ $RemoteNightly/Contrib/
         env:
           DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
