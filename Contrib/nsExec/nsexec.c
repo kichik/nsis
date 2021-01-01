@@ -1,6 +1,6 @@
 /*
 Copyright (C) 2002 Robert Rainwater <rrainwater@yahoo.com>
-Copyright (C) 2002-2020 Nullsoft and Contributors
+Copyright (C) 2002-2021 Nullsoft and Contributors
 
 This software is provided 'as-is', without any express or implied
 warranty.  In no event will the authors be held liable for any damages
