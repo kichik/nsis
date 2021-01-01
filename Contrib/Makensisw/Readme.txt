@@ -211,6 +211,9 @@ Version History
 2.3.6
 - Added GUID generator tool
 
+2.3.7
+- Use Consolas font if it exists
+
 Copyright Information
 ---------------------
 Copyright (c) 2002 Robert Rainwater

@@ -1118,6 +1118,20 @@ HFONT CreateFontHelper(INT_PTR Data, int Height, DWORD p1, LPCTSTR Face)
   return CreateFont(Height, 0, 0, 0, w, FALSE, FALSE, FALSE, cs, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, paf, Face);
 }
 
+BOOL CALLBACK FontExistsCallback(const LOGFONT*pLF, const TEXTMETRIC*pTM, DWORD Type, LPARAM Cookie)
+{
+  *((BOOL*) Cookie) = TRUE;
+  return FALSE;
+}
+BOOL FontExists(LPCTSTR Face)
+{
+  BOOL ret = FALSE;
+  HDC hDC = GetDC(0);
+  EnumFonts(hDC, Face, FontExistsCallback, (LPARAM) &ret);
+  ReleaseDC(0, hDC);
+  return ret;
+}
+
 BOOL FillRectColor(HDC hDC, const RECT &Rect, COLORREF Color)
 {
   COLORREF orgclr = SetBkColor(hDC, Color);
