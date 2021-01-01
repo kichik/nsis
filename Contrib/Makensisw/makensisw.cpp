@@ -270,7 +270,21 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
       CreateToolBar();
       InitTooltips(g_sdata.hwnd);
       SetDlgItemText(g_sdata.hwnd,IDC_VERSION,g_sdata.branding);
-      HFONT hFont = CreateFontPt(hwndDlg,8,FW_NORMAL,FIXED_PITCH|FF_DONTCARE,DEFAULT_CHARSET,_T("Courier New"));
+      LPCTSTR fontname = _T("Courier New"), fontconsolas = _T("Consolas");
+      BYTE fontsize = 8, fontcharset = DEFAULT_CHARSET, suppwin4 = SupportsWNT4() || SupportsW9X();
+      if (FontExists(fontconsolas))
+      {
+        fontname = fontconsolas, ++fontsize;
+      }
+      else if (SupportsW2000() && GetACP() == 932) // According to older Inno, Courier New cannot display Japanese on < WinXP
+      {
+        LPCWSTR msgothlocalutf = L"\xff2d\xff33 \xff30\x30b4\x30b7\x30c3\x30af";
+        const CHAR msgothlocal932[] = { -126, 'l', -126, 'r', ' ', -125, 'S', -125, 'V', -125, 'b', -125, 'N', '\0' };
+        fontcharset = SHIFTJIS_CHARSET, ++fontsize;
+        fontname = _T("MS Gothic"); // Win2000 can handle this, downlevel cannot
+        if (suppwin4 && !FontExists(fontname)) fontname = sizeof(TCHAR) > 1 ? (LPCTSTR) msgothlocalutf : (LPCTSTR) msgothlocal932;
+      }
+      HFONT hFont = CreateFontPt(hwndDlg,fontsize,FW_NORMAL,FIXED_PITCH|FF_DONTCARE,fontcharset,fontname);
       SendDlgItemMessage(hwndDlg,IDC_LOGWIN,WM_SETFONT,(WPARAM)hFont,0);
       RestoreWindowPos(g_sdata.hwnd);
       RestoreCompressor();

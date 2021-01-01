@@ -37,6 +37,7 @@
 #define SupportsWNT4() ( sizeof(void*) == 4 && !DpiAwarePerMonitor() ) // NT4 does not support the MultiMon API
 #define SupportsW9X() ( sizeof(TCHAR) == 1 )
 #define SupportsW95() ( FALSE && SupportsW9X() && !DpiAwarePerMonitor() )
+#define SupportsW2000() ( sizeof(void*) == 4 )
 
 // Defines
 #define NSIS_URL     "https://nsis.sourceforge.io/"
