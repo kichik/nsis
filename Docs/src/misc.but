@@ -65,6 +65,10 @@ Sets the error level of the installer or uninstaller to \e{error_level}. See \R{
 \c IfRebootFlag 0 +2
 \c   SetErrorLevel 4
 
+\NsisWarnBlockContainerBegin
+\\<b\\>Warning:\\</b\\> -1 is reserved for internal use. Negative numbers should be avoided for compatibility with batch scripts.
+\NsisWarnBlockContainerEnd
+
 \S2{setshellvarcontext} SetShellVarContext
 
 \c \\<b\\>current\\</b\\>|all
