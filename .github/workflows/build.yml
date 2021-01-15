@@ -70,6 +70,7 @@ jobs:
         if: matrix.nightly == 'nightly' && github.ref == 'refs/heads/master'
 
   nightly:
+    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-20.04
     needs: [build]
     steps:
