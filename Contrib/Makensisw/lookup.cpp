@@ -13,7 +13,7 @@
 #include "makensisw.h"
 #include <windows.h>
 #include <windowsx.h>
-#include <Shlobj.h>
+#include <shlobj.h>
 #include <shlwapi.h>
 #include "utils.h"
 #include "resource.h"
@@ -34,6 +34,7 @@ template<class T> static LPWSTR SmartStrTToW(T*Src, LPWSTR Dst, UINT cch)
   return (StrTToW(Src, Dst, cch), Dst);
 }
 
+#define StrToSInt StrBase10ToSInt
 template<class T> static int WINAPI StrBase10ToSInt(const T*str)
 {
   unsigned int v = 0, neg = 0, c, i = 0, base = 10;
@@ -42,8 +43,9 @@ template<class T> static int WINAPI StrBase10ToSInt(const T*str)
   return neg ? (int) v * -1 : v;
 }
 
-template<class T> static int WINAPI PathParseIconLocationFallback(T*Path)
+template<class T> static ULARGE_INTEGER WINAPI PathParseIconLocationEx(T*Path)
 {
+  ULARGE_INTEGER li;
   int idx = 0;
   SIZE_T i, comma = 0;
   for (i = 0; Path[i]; ++i)
@@ -56,7 +58,13 @@ template<class T> static int WINAPI PathParseIconLocationFallback(T*Path)
     Path[comma] = T('\0');
     idx = StrBase10ToSInt(Path + comma + 1);
   }
-  return idx;
+  return (li.HighPart = (UINT) comma, li.LowPart = idx, li);
+}
+
+template<class T> static int WINAPI PathParseIconLocationFallback(T*Path)
+{
+  ULARGE_INTEGER li = PathParseIconLocationEx(Path);
+  return li.LowPart;
 }
 
 static HRESULT GetSpecialFolderPath(HWND hWnd, LPTSTR Buf, UINT csidl)
@@ -142,8 +150,8 @@ static LSTATUS WINAPI RegLoadMUIStringFallbackW(HKEY hKey, LPCWSTR Name, LPWSTR 
   return ERROR_NOT_SUPPORTED;
 }
 
-enum { LM_SHGLN, LM_SHLIS, LM_RLMS, LM_PPIL };
-LPCSTR g_ModeLbl[] = { "Path:", "Path:", "Registry:", "Path:" };
+enum { LM_SHGLN, LM_SHLIS, LM_RLMS, LM_PPIL, LM_FMTMSG };
+LPCSTR g_ModeLbl[] = { "Path:", "Path:", "Registry:", "Path:", "[Path,]Number:" };
 
 struct DIALOGDATA {
   HRESULT (WINAPI*SHGLN)(PCWSTR p, PWSTR m, UINT cch, int*rid);
@@ -179,6 +187,7 @@ static INT_PTR CALLBACK LookupDlgProc(HWND hDlg, UINT Msg, WPARAM WParam, LPARAM
     if (g_SHLIS) AddComboStringWithData(pDD->hMode, "SHLoadIndirectString", LM_SHLIS);
     if (pDD->RLMS) AddComboStringWithData(pDD->hMode, "RegLoadMUIString", LM_RLMS);
     if (pDD->PPIL) AddComboStringWithData(pDD->hMode, "PathParseIconLocation", LM_PPIL);
+    AddComboStringWithData(pDD->hMode, "FormatMessage", LM_FMTMSG);
     SNDMSG(pDD->hExtra, EM_LIMITTEXT, COUNTOF(buf), 0);
     SNDMSG(pDD->hMode, CB_SETCURSEL, (SIZE_T) 0, 0), SNDMSG(hDlg, WM_COMMAND, MAKELONG(IDC_LUMODE, CBN_SELENDOK), (SIZE_T) pDD->hMode);
     return TRUE;
@@ -213,6 +222,9 @@ static INT_PTR CALLBACK LookupDlgProc(HWND hDlg, UINT Msg, WPARAM WParam, LPARAM
           break;
         case LM_PPIL:
           extra = _T("%WINDIR%\\Explorer.exe,-101");
+          break;
+        case LM_FMTMSG:
+          extra = _T("wininet.dll,12005");
           break;
         }
         ShowWindow(pDD->hOutIco, SW_HIDE);
@@ -291,6 +303,29 @@ static INT_PTR CALLBACK LookupDlgProc(HWND hDlg, UINT Msg, WPARAM WParam, LPARAM
           hOld = (HICON) SNDMSG(pDD->hOutIco, STM_SETICON, (SIZE_T) hIco, 0);
           if (hOld) DestroyIcon(hOld);
           if (!hIco) goto die_hr;
+        }
+        break;
+      case LM_FMTMSG:
+        {
+          UINT flags = FORMAT_MESSAGE_FROM_SYSTEM|FORMAT_MESSAGE_IGNORE_INSERTS;
+          ULARGE_INTEGER li = PathParseIconLocationEx(buf);
+          LPCTSTR numstr = buf;
+          HMODULE hMod = 0;
+          if (li.HighPart)
+          {
+            numstr = buf + ++li.HighPart;
+            hMod = LoadLibraryEx(buf, 0, LOAD_LIBRARY_AS_DATAFILE), flags |= FORMAT_MESSAGE_FROM_HMODULE;
+            if (!hMod) goto badmsgmod;
+          }
+          hr = StrToSInt(numstr);
+          if (!FormatMessage(flags, hMod, hr, 0, buf, COUNTOF(buf), NULL)) badmsgmod:
+          {
+            hr = GetLastError();
+            AppendText(pDD->hOutTxt, "(Could not find message) ");
+            goto die_hr;
+          }
+          if (hMod) FreeLibrary(hMod);
+          SetWindowText(pDD->hOutTxt, buf);
         }
         break;
       }
