@@ -111,6 +111,29 @@ struct FSPath {
   }
 };
 
+template<class T> UINT StrLenT(const T*s) { return sizeof(T) > 1 ? lstrlenW((WCHAR*) s) : lstrlenA((CHAR*) s) ; }
+template<class T> T AsciiLoCh(T ch) { return ch >= 'A' && ch <= 'Z' ? (ch | 32) : ch; }
+
+template<class A, class B> int AsciiCmpNI(const A*a, const B*b, SIZE_T len)
+{
+	int cmp = 0;
+	for (SIZE_T i = 0;; ++i)
+		if (i == len || (cmp = AsciiLoCh(a[i]) - AsciiLoCh(b[i])) || !a[i])
+			return cmp;
+}
+template<class A, class B> inline bool AsciiMatchNI(const A*a, const B*b, SIZE_T c) { return !AsciiCmpNI(a, b, c); }
+template<class A, class B> bool AsciiMatchPrefixI(const A*s, const B*p) { return AsciiMatchNI(s, p, StrLenT(p)); }
+
+template<class T> HKEY GetRegRootKey(const T*Str)
+{
+	if (AsciiMatchPrefixI(Str, "HKEY_CLASSES_ROOT") || AsciiMatchPrefixI(Str, "HKCR")) return HKEY_CLASSES_ROOT;
+	if (AsciiMatchPrefixI(Str, "HKEY_CURRENT_USER") || AsciiMatchPrefixI(Str, "HKCU")) return HKEY_CURRENT_USER;
+	if (AsciiMatchPrefixI(Str, "HKEY_LOCAL_MACHINE") || AsciiMatchPrefixI(Str, "HKLM")) return HKEY_LOCAL_MACHINE;
+	if (AsciiMatchPrefixI(Str, "HKEY_USERS") || AsciiMatchPrefixI(Str, "HKU")) return HKEY_USERS;
+	return (HKEY) NULL;
+}
+DWORD RegOpenKeyForReading(HKEY hRoot, LPCTSTR SubKey, HKEY*pKey);
+
 bool FileExists(const TCHAR *fname);
 bool OpenUrlInDefaultBrowser(HWND hwnd, LPCSTR Url);
 

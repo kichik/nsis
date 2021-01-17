@@ -106,6 +106,7 @@ typedef struct _DIALOGDATA {
   int DialogAwarenessContext; // Canonical DPI awareness context
   _DIALOGDATA() : hWndOutline(0) {}
   static struct _DIALOGDATA* Get(HWND hDlg) { return (struct _DIALOGDATA*) GetWindowLongPtr(hDlg, DWLP_USER); }
+  static void Set(HWND hDlg, void*pDD) { SetWindowLongPtr(hDlg, DWLP_USER, (LONG_PTR) pDD); }
 } DIALOGDATA;
 
 typedef struct {
@@ -281,7 +282,7 @@ static INT_PTR CALLBACK SpyDlgProc(HWND hDlg, UINT Msg, WPARAM WParam, LPARAM LP
   switch(Msg)
   {
   case WM_INITDIALOG:
-    SetWindowLongPtr(hDlg, DWLP_USER, (LONG_PTR) (pDD = (DIALOGDATA*) LParam));
+    DIALOGDATA::Set(hDlg, (pDD = (DIALOGDATA*) LParam));
     CenterOnParent(hDlg);
     // On >= 10FU1703 we are PMv2 and Windows scales our dialog and child controls.
     // On >= 10FU1607 && < 10FU1703 we are System aware but try to upgrade this thread to 
@@ -336,7 +337,10 @@ static INT_PTR CALLBACK SpyDlgProc(HWND hDlg, UINT Msg, WPARAM WParam, LPARAM LP
       RECT r;
       GetPhysicalWindowRect(pDD->hWndTarget, r, hDlg), PhysicalToLogical(pDD->hWndOutline, r, hDlg);
       if (GetAncestor(pDD->hWndTarget, GA_ROOT) != hDlg)
-        SetWindowPos(pDD->hWndOutline, HWND_TOPMOST, r.left, r.top, r.right - r.left, r.bottom - r.top, SWP_SHOWWINDOW|SWP_NOCOPYBITS|SWP_NOACTIVATE|SWP_NOOWNERZORDER);
+      {
+        SetWindowPos(pDD->hWndOutline, HWND_TOPMOST, r.left, r.top, r.right - r.left, r.bottom - r.top, SWP_HIDEWINDOW|SWP_NOCOPYBITS|SWP_NOACTIVATE|SWP_NOOWNERZORDER);
+        ShowWindow(pDD->hWndOutline, SW_SHOW); // To avoid a small Windows redraw bug, don't show the window until after it has the correct size
+      }
       SetTimer(hDlg, TID_OUTLINE, 2 * 1000, NULL);
     }
     ReleaseCapture();

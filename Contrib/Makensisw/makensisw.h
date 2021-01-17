@@ -39,6 +39,9 @@
 #define SupportsW95() ( FALSE && SupportsW9X() && !DpiAwarePerMonitor() )
 #define SupportsW2000() ( sizeof(void*) == 4 )
 
+static bool IsWin9598ME() { return SupportsW9X() && (int) GetVersion() < 0; }
+static bool IsWin95() { return SupportsW95() && (GetVersion() & (0x8000FFFF & ~0x0300)) == 0x80000004; }
+
 // Defines
 #define NSIS_URL     "https://nsis.sourceforge.io/"
 #define NSIS_FORUM_URL "http://forums.winamp.com/forumdisplay.php?forumid=65"
@@ -220,7 +223,6 @@ typedef struct NSISScriptData {
   char  *brandingv;
   TCHAR **symbols;
   int retcode;
-  bool userSelectCompressor;
   unsigned char verbosity;
   DWORD logLength;
   DWORD warnings;
@@ -264,5 +266,9 @@ typedef struct ToolTipStruct {
   HWND tip_p;
   HHOOK hook;
 } NTOOLTIP;
+
+
+extern INT_PTR ShowWndSpy(HWND hOwner);
+extern INT_PTR ShowLookupDialog(HWND hOwner);
 
 #endif
