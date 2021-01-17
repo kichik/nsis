@@ -37,6 +37,7 @@
 #define IDB_LOGO                        115
 #define DLG_SETTINGS                    116
 #define DLG_WNDSPY                      117
+#define DLG_LOOKUP                      118
 #define IDB_TOOLBAR                     122
 #define DLG_COMPRESSOR                  124
 #define DLG_SYMBOLSET                   125
@@ -83,6 +84,11 @@
 #define IDC_WNDPHYSSIZE                 227
 #define IDC_WNDINFO                     229
 #define IDC_WNDDPI                      230
+#define IDC_LUMODE                      220
+#define IDC_LUEXTRALABEL                221
+#define IDC_LUEXTRATEXT                 222
+#define IDC_LUOUTPUTTEXT                223
+#define IDC_LUOUTPUTICON                224
 
 #define IDM_MRU_FILE                    6000
 #define IDM_CMDBASE                     500
@@ -127,6 +133,7 @@
 #define IDM_UI_SWITCHOWNEDWINDOW        538 // Alt+F6
 #define IDM_UI_SWITCHSECTION            539 // F6
 #define IDM_GUIDGEN                     540
+#define IDM_LOOKUP                      541
 
 
 // Next default values for new objects
@@ -134,7 +141,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        138
-#define _APS_NEXT_COMMAND_VALUE         541
+#define _APS_NEXT_COMMAND_VALUE         542
 #define _APS_NEXT_CONTROL_VALUE         241
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

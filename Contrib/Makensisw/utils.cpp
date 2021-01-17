@@ -60,6 +60,9 @@ HMODULE LoadSysLibrary(LPCSTR Mod)
   return LoadLibrary(path);
 }
 
+#ifdef DECLSPEC_NOINLINE
+DECLSPEC_NOINLINE
+#endif
 FARPROC GetSysProcAddr(LPCSTR Mod, LPCSTR FuncName)
 {
   return GetProcAddress(LoadSysLibrary(Mod), FuncName);
@@ -436,7 +439,7 @@ static DWORD RegReadString(HKEY hKey, LPCTSTR Name, LPTSTR Buf, DWORD cbBufSize)
   return ec;
 }
 
-static DWORD RegOpenKeyForReading(HKEY hRoot, LPCTSTR SubKey, HKEY*pKey) {
+DWORD RegOpenKeyForReading(HKEY hRoot, LPCTSTR SubKey, HKEY*pKey) {
   return RegOpenKeyEx(hRoot, SubKey, 0, KEY_READ, pKey);
 }
 
@@ -519,9 +522,9 @@ void SaveWindowPos(HWND hwnd) {
   HKEY hKey;
   WINDOWPLACEMENT p;
   p.length = sizeof(p);
-  GetWindowPlacement(hwnd, &p);
-  if (CreateRegSettingsKey(hKey)) {
-    RegSetValueEx(hKey, REGLOC, 0, REG_BINARY, (LPBYTE)&p, sizeof(p));
+  if (!GetWindowPlacement(hwnd, &p)) p.length = 0;
+  if (p.length && CreateRegSettingsKey(hKey)) {
+    RegSetValueEx(hKey, REGLOC, 0, REG_BINARY, (LPBYTE)&p, p.length);
     RegCloseKey(hKey);
   }
 }

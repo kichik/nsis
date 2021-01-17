@@ -211,7 +211,8 @@ Version History
 2.3.6
 - Added GUID generator tool
 
-2.3.7
+2.4
+- Added Lookup tool
 - Use Consolas font if it exists
 
 Copyright Information
