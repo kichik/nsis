@@ -34,16 +34,19 @@ template<class T> static LPWSTR SmartStrTToW(T*Src, LPWSTR Dst, UINT cch)
   return (StrTToW(Src, Dst, cch), Dst);
 }
 
-#define StrToSInt StrBase10ToSInt
-template<class T> static int WINAPI StrBase10ToSInt(const T*str)
+#define StrBase10ToSInt(s) StrToSInt((s), 10)
+template<class T> static int WINAPI StrToSInt(const T*Str, UINT Base = 0)
 {
-  unsigned int v = 0, neg = 0, c, i = 0, base = 10;
-  if (str[i] == '-') ++neg, ++i;
-  for (; (c = str[i]) >= T('0') && c <= T('9'); ++i) c -= T('0'), v *= base, v += c;
-  return neg ? (int) v * -1 : v;
+  if (Base && !(*Str >= '0' && *Str <= '9') && *Str != '-') return 0; // Don't allow leading space
+  int v, succ;
+  if (sizeof(*Str) > 1)
+    succ = StrToIntExW((WCHAR*) Str, Base != 10 ? STIF_SUPPORT_HEX : STIF_DEFAULT, &v);
+  else
+    succ = StrToIntExA((CHAR *) Str, Base != 10 ? STIF_SUPPORT_HEX : STIF_DEFAULT, &v);
+  return succ ? v : 0; // Not full base support, we only need 10 and 16
 }
 
-template<class T> static ULARGE_INTEGER WINAPI PathParseIconLocationEx(T*Path)
+template<class T> static ULARGE_INTEGER PathParseIconLocationEx(T*Path)
 {
   ULARGE_INTEGER li;
   int idx = 0;
@@ -130,7 +133,6 @@ template<class I, class O> static HKEY ParseRegPath(I*In, O*&Path, O*&Name)
   return (Path = const_cast<O*>(pp), Name = const_cast<O*>(pn), hKey);
 }
 
-HRESULT (WINAPI*g_SHLIS)(LPCWSTR s, LPWSTR o, UINT cch, PVOID*ppvReserved);
 HRESULT (WINAPI*g_RLMSOld)(HKEY hKey, LPCWSTR pszValue, LPWSTR pszOutBuf, DWORD cbOutBuf);
 
 static LSTATUS WINAPI RegLoadMUIStringFallbackW(HKEY hKey, LPCWSTR Name, LPWSTR Out, DWORD cbOutBuf, LPDWORD pcbData, DWORD Flags, LPCSTR pszDirectory)
@@ -154,6 +156,7 @@ enum { LM_SHGLN, LM_SHLIS, LM_RLMS, LM_PPIL, LM_FMTMSG };
 LPCSTR g_ModeLbl[] = { "Path:", "Path:", "Registry:", "Path:", "[Path,]Number:" };
 
 struct DIALOGDATA {
+  HRESULT (WINAPI*SHLIS)(LPCWSTR s, LPWSTR o, UINT cch, PVOID*ppvReserved);
   HRESULT (WINAPI*SHGLN)(PCWSTR p, PWSTR m, UINT cch, int*rid);
   LSTATUS (WINAPI*RLMS)(HKEY hKey, LPCWSTR pszValue, LPWSTR pszOutBuf, DWORD cbOutBuf, LPDWORD pcbData, DWORD Flags, LPCSTR pszDirectory);
   int (WINAPI*PPIL)(LPTSTR p);
@@ -183,9 +186,9 @@ static INT_PTR CALLBACK LookupDlgProc(HWND hDlg, UINT Msg, WPARAM WParam, LPARAM
     pDD->hExtra = GetDlgItem(hDlg, IDC_LUEXTRATEXT);
     pDD->hOutTxt = GetDlgItem(hDlg, IDC_LUOUTPUTTEXT);
     pDD->hOutIco = CreateWindowEx(WS_EX_TRANSPARENT, _T("STATIC"), 0, WS_CHILD|WS_VISIBLE|SS_ICON|SS_CENTERIMAGE|SS_REALSIZECONTROL, 0, 0, 0, 0, pDD->hOutTxt, 0, 0, 0);
-    if (pDD->SHGLN) AddComboStringWithData(pDD->hMode, "SHGetLocalizedName", LM_SHGLN);
-    if (g_SHLIS) AddComboStringWithData(pDD->hMode, "SHLoadIndirectString", LM_SHLIS);
+    if (pDD->SHLIS) AddComboStringWithData(pDD->hMode, "SHLoadIndirectString", LM_SHLIS);
     if (pDD->RLMS) AddComboStringWithData(pDD->hMode, "RegLoadMUIString", LM_RLMS);
+    if (pDD->SHGLN) AddComboStringWithData(pDD->hMode, "SHGetLocalizedName", LM_SHGLN);
     if (pDD->PPIL) AddComboStringWithData(pDD->hMode, "PathParseIconLocation", LM_PPIL);
     AddComboStringWithData(pDD->hMode, "FormatMessage", LM_FMTMSG);
     SNDMSG(pDD->hExtra, EM_LIMITTEXT, COUNTOF(buf), 0);
@@ -270,7 +273,7 @@ static INT_PTR CALLBACK LookupDlgProc(HWND hDlg, UINT Msg, WPARAM WParam, LPARAM
         {
           WCHAR is[COUNTOF(buf)], os[MAX_PATH], *pis;
           pis = SmartStrTToW(buf, is, COUNTOF(is));
-          hr = g_SHLIS(pis, os, COUNTOF(os), NULL);
+          hr = pDD->SHLIS(pis, os, COUNTOF(os), NULL);
           if (FAILED(hr)) goto die_hr;
           AppendText(pDD->hOutTxt, os);
         }
@@ -321,7 +324,6 @@ static INT_PTR CALLBACK LookupDlgProc(HWND hDlg, UINT Msg, WPARAM WParam, LPARAM
           if (!FormatMessage(flags, hMod, hr, 0, buf, COUNTOF(buf), NULL)) badmsgmod:
           {
             hr = GetLastError();
-            AppendText(pDD->hOutTxt, "(Could not find message) ");
             goto die_hr;
           }
           if (hMod) FreeLibrary(hMod);
@@ -339,18 +341,18 @@ static INT_PTR CALLBACK LookupDlgProc(HWND hDlg, UINT Msg, WPARAM WParam, LPARAM
 INT_PTR ShowLookupDialog(HWND hOwner)
 {
   DIALOGDATA dd;
-  (FARPROC&) dd.SHGLN = GetSysProcAddr("SHELL32", "SHGetLocalizedName");
-  (FARPROC&) g_SHLIS = GetSysProcAddr("SHLWAPI", (LPCSTR) 487);
-  (FARPROC&) dd.RLMS = GetSysProcAddr("ADVAPI32", "RegLoadMUIStringW"); // Note: RegLoadMUIStringA always returns ERROR_CALL_NOT_IMPLEMENTED
-  if (!dd.RLMS && ((FARPROC&) g_RLMSOld = GetSysProcAddr("SHLWAPI", (LPCSTR) 439))) dd.RLMS = RegLoadMUIStringFallbackW;
+  (FARPROC&) dd.SHLIS = GetSysProcAddr("SHLWAPI", "SHLoadIndirectString"); // WXP+
+  (FARPROC&) dd.SHGLN = GetSysProcAddr("SHELL32", "SHGetLocalizedName"); // WVista+
+  (FARPROC&) dd.RLMS = GetSysProcAddr("ADVAPI32", "RegLoadMUIStringW"); // WVista+ Note: RegLoadMUIStringA always returns ERROR_CALL_NOT_IMPLEMENTED
+  if (!dd.RLMS && ((FARPROC&) g_RLMSOld = GetSysProcAddr("SHLWAPI", (LPCSTR) 439))) dd.RLMS = RegLoadMUIStringFallbackW; // W98SE+,IE5+
   (FARPROC&) dd.PPIL = 
   #ifdef _WIN64
     (FARPROC) PathParseIconLocation;
   #else
-    GetSysProcAddr("SHLWAPI", sizeof(TCHAR) == 1 ? "PathParseIconLocationA" : "PathParseIconLocationW");
+    GetSysProcAddr("SHLWAPI", sizeof(TCHAR) == 1 ? "PathParseIconLocationA" : "PathParseIconLocationW"); // W95OSR2+,IE3.1+
   if (!dd.PPIL || (SupportsWNT4() || IsWin9598ME()))
   {
-    (FARPROC&) dd.PPIL = GetSysProcAddr("SHELL32", (LPCSTR) 249); // PathParseIconLocationT
+    (FARPROC&) dd.PPIL = GetSysProcAddr("SHELL32", (LPCSTR) 249); // WNT4+ PathParseIconLocationT
     if (sizeof(TCHAR) == 1) (FARPROC&) dd.PPIL = (FARPROC) PathParseIconLocationFallback<CHAR>;
   }
   #endif
