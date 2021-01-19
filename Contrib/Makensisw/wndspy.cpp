@@ -95,9 +95,16 @@ static BOOL GetLogicalWindowRect(HWND hWnd, RECT&Rect, HWND hWndCaller)
 }
 
 static HWND GetParentWindow(HWND hWnd)
+{ 
+  HWND r = GetParent(hWnd); // Parent or owner
+  return r != GetWindow(hWnd, GW_OWNER) ? r : NULL;
+}
+
+static HWND GetAncestorRoot(HWND hWnd)
 {
-  HWND hParent = GetAncestor(hWnd, GA_PARENT); // Parent but NOT owner.
-  return hParent == GetParent(hWnd) ? hParent : NULL; // Filter away GetDesktopWindow().
+  if (!SupportsWNT4() && !SupportsW95()) return GetAncestor(hWnd, GA_ROOT);
+  for (HWND hTmp; (hTmp = GetParentWindow(hWnd)); ) hWnd = hTmp;
+  return hWnd;
 }
 
 typedef struct _DIALOGDATA {
@@ -319,7 +326,7 @@ static INT_PTR CALLBACK SpyDlgProc(HWND hDlg, UINT Msg, WPARAM WParam, LPARAM LP
         break;
 
       pDD->hWndTarget = hWnd;
-      if (GetAncestor(hWnd, GA_ROOT) == hDlg)
+      if (GetAncestorRoot(hWnd) == hDlg)
         hWnd = 0;
 
       ShowWindowInfo(hDlg, hWnd);
@@ -336,7 +343,7 @@ static INT_PTR CALLBACK SpyDlgProc(HWND hDlg, UINT Msg, WPARAM WParam, LPARAM LP
       SetWindowPos(pDD->hWndOutline, HWND_BOTTOM, -32767, -32767, 1, 1, SWP_SHOWWINDOW|SWP_NOCOPYBITS|SWP_NOACTIVATE|SWP_NOOWNERZORDER); // MSDN says LogicalToPhysicalPoint requires a visible window
       RECT r;
       GetPhysicalWindowRect(pDD->hWndTarget, r, hDlg), PhysicalToLogical(pDD->hWndOutline, r, hDlg);
-      if (GetAncestor(pDD->hWndTarget, GA_ROOT) != hDlg)
+      if (GetAncestorRoot(pDD->hWndTarget) != hDlg)
       {
         SetWindowPos(pDD->hWndOutline, HWND_TOPMOST, r.left, r.top, r.right - r.left, r.bottom - r.top, SWP_HIDEWINDOW|SWP_NOCOPYBITS|SWP_NOACTIVATE|SWP_NOOWNERZORDER);
         ShowWindow(pDD->hWndOutline, SW_SHOW); // To avoid a small Windows redraw bug, don't show the window until after it has the correct size
