@@ -61,7 +61,9 @@ o-----------------------------------------------------------------------------o
       !verbose push 4
     !endif
     !ifndef ${Name}_INCLUDED
-      ${${Name}} ; Invoke !insertmacro STRFUNC_MAKEFUNC
+      !ifndef STRFUNC_USECALLARTIFICIALFUNCTION
+        ${${Name}} ; Invoke !insertmacro STRFUNC_MAKEFUNC
+      !endif
     !endif
     !if "${STRFUNC_VERBOSITY}" > 4
       !verbose pop
