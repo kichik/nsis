@@ -42,6 +42,8 @@ Example:
 
 Some of the following values will not be used by older Windows versions.
 
+\e{QuietUninstallString} (string) - Quiet uninstall command (\cw{"$INSTDIR\\uninst.exe" /S})
+
 \e{InstallLocation} (string) - Installation directory ($INSTDIR) \\<br\\>
 \e{DisplayIcon} (string) - Path, filename and index of the icon that will be displayed next to your application name
 
