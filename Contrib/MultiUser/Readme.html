@@ -109,7 +109,7 @@
     <p>
         Insert the MULTIUSER_INIT and MULTIUSER_UNINT macros in the .onInit and un.onInit
         function to verify these privileges. If no uninstaller is created in the script,
-        set MULTIUSER_NOUNINSTALL.</p>
+        define MULTIUSER_NOUNINSTALL.</p>
     <code>
         <pre>!define MULTIUSER_EXECUTIONLEVEL Highest
 ;!define MULTIUSER_NOUNINSTALL ;Uncomment if no uninstaller is created
@@ -214,7 +214,7 @@ FunctionEnd</pre>
         if Administrator or Power User rights are available (this is always the case if
         the execution level is set to Admin or Power, if Highest is set it depends on the
         user account). For the Standard execution level the installation will always be
-        for a single user. On Windows 95/98/Me installation for a single user is not possible.</p>
+        for a single user. On Windows 95/98/Me installation for a single user is not possible, a per-machine installation will be performed.</p>
     <p>
         The following settings are available to change the default installation mode:
         <table>
