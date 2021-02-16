@@ -148,7 +148,6 @@ ${MementoSection} "NSIS Core Files (required)" SecCore
 
   SectionIn 1 2 3 RO
   SetOutPath $INSTDIR
-  RMDir /r $SMPROGRAMS\NSIS
 
   IfFileExists $INSTDIR\nsisconf.nsi "" +2
   Rename $INSTDIR\nsisconf.nsi $INSTDIR\nsisconf.nsh
@@ -354,28 +353,15 @@ ${MementoSection} "Script Examples" SecExample
 
 ${MementoSectionEnd}
 
-!ifndef NO_STARTMENUSHORTCUTS
-${MementoSection} "Start Menu and Desktop Shortcuts" SecShortcuts
+${MementoSection} "Start Menu Shortcut" SecShortcuts
 
   SetDetailsPrint textonly
-  DetailPrint "Installing Start Menu and Desktop Shortcuts..."
+  DetailPrint "Installing Start Menu shortcut..."
   SetDetailsPrint listonly
 
-!else
-${MementoSection} "Desktop Shortcut" SecShortcuts
-
-  SetDetailsPrint textonly
-  DetailPrint "Installing Desktop Shortcut..."
-  SetDetailsPrint listonly
-
-!endif
   SectionIn 1 2
   SetOutPath $INSTDIR
-!ifndef NO_STARTMENUSHORTCUTS
   CreateShortcut "$SMPROGRAMS\NSIS${NAMESUFFIX}.lnk" "$INSTDIR\NSIS.exe"
-!endif
-
-  CreateShortcut "$DESKTOP\NSIS${NAMESUFFIX}.lnk" "$INSTDIR\NSIS.exe"
 
 ${MementoSectionEnd}
 
@@ -868,7 +854,7 @@ SectionEnd
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
   !insertmacro MUI_DESCRIPTION_TEXT ${SecCore} "The core files required to use NSIS (compiler etc.)"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecExample} "Example installation scripts that show you how to use NSIS"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecShortcuts} "Adds icons to your start menu and your desktop for easy access"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecShortcuts} "Add icon to your start menu for easy access"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecInterfaces} "User interface designs that can be used to change the installer look and feel"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecInterfacesModernUI} "A modern user interface like the wizards of recent Windows versions"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecInterfacesDefaultUI} "The default NSIS user interface which you can customize to make your own UI"
@@ -1078,7 +1064,7 @@ Section Uninstall
   SetDetailsPrint listonly
 
   Delete "$SMPROGRAMS\NSIS${NAMESUFFIX}.lnk"
-  Delete "$DESKTOP\NSIS${NAMESUFFIX}.lnk"
+  Delete "$DESKTOP\NSIS${NAMESUFFIX}.lnk" ; Remove legacy shortcut
   Delete $INSTDIR\makensis.exe
   Delete $INSTDIR\makensisw.exe
   Delete $INSTDIR\NSIS.exe
