@@ -108,7 +108,7 @@ void Plugins::AddPluginsDir(const tstring &path, bool pe64, bool displayInfo)
     if (!dir_reader::matches(*files_itr, _T("*.dll")))
       continue;
 
-    const tstring plugin = path + PLATFORM_PATH_SEPARATOR_C + *files_itr;
+    const tstring plugin = get_full_path(path + PLATFORM_PATH_SEPARATOR_C + *files_itr);
     GetExports(plugin, pe64, displayInfo);
   }
 }
