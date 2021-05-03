@@ -92,8 +92,8 @@ o-----------------------------------------------------------------------------o
     !define `${Name}_List` `${List}`
     !define `${Name}_TypeList` `${TypeList}`
     !ifdef STRFUNC_USECALLARTIFICIALFUNCTION
-      !define `${Name}` `!insertmacro STRFUNC_CALL_${Name} "${un}" `
-      !define `Un${Name}` `!insertmacro STRFUNC_CALL_${Name} "${un}" `
+      !define `${Name}` `!insertmacro STRFUNC_CALL_${Name} "" `
+      !define `Un${Name}` `!insertmacro STRFUNC_CALL_${Name} Un `
     !else
       !define `${Name}` `!insertmacro STRFUNC_MAKEFUNC ${Name} "" #`
       !define `Un${Name}` `!insertmacro STRFUNC_MAKEFUNC ${Name} Un #`
@@ -111,7 +111,7 @@ o-----------------------------------------------------------------------------o
     !verbose push ${_STRFUNC_CREDITVERBOSITY}
     !echo `${U+24}{${un}${basename}} - Copyright ${credits}`
     !verbose pop
-    !define ${un}${basename}_INCLUDED
+    !define /IfNDef ${un}${basename}_INCLUDED
     !ifndef STRFUNC_USECALLARTIFICIALFUNCTION
       !define /ReDef ${un}${basename} `!insertmacro STRFUNC_CALL_${basename} "${un}" `
       !if "${un}" != ""
