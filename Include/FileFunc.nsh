@@ -1395,8 +1395,8 @@ RefreshShellIcons
 	Push $0
 	Push $1
 	Push $2
-	System::Call 'kernel32::GetModuleFileName(p 0, t .r0, i 1024)'
-	System::Call 'kernel32::GetLongPathName(t r0, t .r1, i 1024)i .r2'
+	System::Call 'kernel32::GetModuleFileName(p 0, t.r0, i ${NSIS_MAX_STRLEN})'
+	System::Call 'kernel32::GetLongPathName(t r0, t.r1, i ${NSIS_MAX_STRLEN})i.r2'
 	StrCmp $2 error +2
 	StrCpy $0 $1
 	Pop $2
@@ -1423,7 +1423,7 @@ RefreshShellIcons
 	Push $1
 	Push $2
 	StrCpy $0 $EXEDIR
-	System::Call 'kernel32::GetLongPathName(t r0, t .r1, i 1024)i .r2'
+	System::Call 'kernel32::GetLongPathName(t r0, t.r1, i ${NSIS_MAX_STRLEN})i.r2'
 	StrCmp $2 error +2
 	StrCpy $0 $1
 	Pop $2
