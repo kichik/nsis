@@ -23,10 +23,10 @@
 
 !if ${NSIS_PTR_SIZE} > 4
   !define BITS 64
-  !define ARCHSUFFIX " (64 bit)"
+  !define NAMESUFFIX " (64 bit)"
 !else
   !define BITS 32
-  !define ARCHSUFFIX ""
+  !define NAMESUFFIX ""
 !endif
 
 !ifndef OUTFILE
@@ -66,7 +66,7 @@ ManifestSupportedOS all
 
 ;Names
 Name "NSIS"
-Caption "NSIS Setup - ${VERSION}${ARCHSUFFIX}"
+Caption "NSIS Setup - ${VERSION}${NAMESUFFIX}"
 
 !define REG_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS"
 
@@ -428,10 +428,10 @@ ${MementoSection} "Desktop Shortcut" SecShortcuts
   SectionIn 1 2
   SetOutPath $INSTDIR
 !ifndef NO_STARTMENUSHORTCUTS
-  CreateShortcut "$SMPROGRAMS\NSIS${ARCHSUFFIX}.lnk" "$INSTDIR\NSIS.exe"
+  CreateShortcut "$SMPROGRAMS\NSIS${NAMESUFFIX}.lnk" "$INSTDIR\NSIS.exe"
 !endif
 
-  CreateShortcut "$DESKTOP\NSIS${ARCHSUFFIX}.lnk" "$INSTDIR\NSIS.exe"
+  CreateShortcut "$DESKTOP\NSIS${NAMESUFFIX}.lnk" "$INSTDIR\NSIS.exe"
 
 ${MementoSectionEnd}
 
@@ -994,7 +994,7 @@ Section -post
   WriteRegExpandStr HKLM "${REG_UNINST_KEY}" "UninstallString" '"$INSTDIR\uninst-nsis.exe"'
   ;WriteRegStr HKLM "${REG_UNINST_KEY}" "QuietUninstallString" '"$INSTDIR\uninst-nsis.exe" /S' ; Ideally WACK would use this
   WriteRegExpandStr HKLM "${REG_UNINST_KEY}" "InstallLocation" "$INSTDIR"
-  WriteRegStr HKLM "${REG_UNINST_KEY}" "DisplayName" "Nullsoft Install System${ARCHSUFFIX}"
+  WriteRegStr HKLM "${REG_UNINST_KEY}" "DisplayName" "Nullsoft Install System${NAMESUFFIX}"
   WriteRegStr HKLM "${REG_UNINST_KEY}" "DisplayIcon" "$INSTDIR\uninst-nsis.exe,0"
   WriteRegStr HKLM "${REG_UNINST_KEY}" "DisplayVersion" "${VERSION}"
 !ifdef VER_MAJOR & VER_MINOR & VER_REVISION & VER_BUILD
@@ -1243,8 +1243,8 @@ Section Uninstall
   DetailPrint "Deleting Files..."
   SetDetailsPrint listonly
 
-  Delete "$SMPROGRAMS\NSIS${ARCHSUFFIX}.lnk"
-  Delete "$DESKTOP\NSIS${ARCHSUFFIX}.lnk"
+  Delete "$SMPROGRAMS\NSIS${NAMESUFFIX}.lnk"
+  Delete "$DESKTOP\NSIS${NAMESUFFIX}.lnk"
   Delete $INSTDIR\makensis.exe
   Delete $INSTDIR\makensisw.exe
   Delete $INSTDIR\NSIS.exe
