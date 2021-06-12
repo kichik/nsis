@@ -145,7 +145,7 @@ set VER_PACKED=0x%VER_MAJOR_PACKED%%VER_MINOR_PACKED%00%VER_BUILD_PACKED%
 
 :: "nsis" -> "nsis-mingw-DISTRO-[arch]"
 cd /d "%~dp0"
-robocopy . %DISTRO%\ *.* /E /XO /XD .git nsis-* zlib-* libcurl-devel* ... /XF flag-* .git* _*.bat libcurl-devel* ... /NJH /NJS /NDL /XJ
+robocopy . %DISTRO%\ *.* /E /XO /XD .git nsis-* zlib-* libcurl-devel* Debug-* Release-* ... /XF flag-* .git* _*.bat *.7z ... /NJH /NJS /NDL /XJ
 if exist Contrib\NScurl (
 	rmdir %DISTRO%\Contrib\NScurl\libcurl-devel > NUL 2> NUL
 	mklink /J %DISTRO%\Contrib\NScurl\libcurl-devel Contrib\NScurl\libcurl-devel
