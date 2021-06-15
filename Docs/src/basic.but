@@ -8,7 +8,7 @@ The instructions that NSIS uses for scripting are sort of a cross between PHP an
 
 \c [/REBOOTOK] file
 
-Delete file (which can be a file or wildcard, but should be specified with a full path) from the target system. If /REBOOTOK is specified and the file cannot be deleted then the file is deleted when the system reboots -- if the file will be deleted on a reboot, the reboot flag will be set. The error flag is set if files are found and cannot be deleted. The error flag is not set when trying to delete a file that does not exist.
+Delete file (which can be a file or wildcard, but should be specified with a full path) on the target system. If /REBOOTOK is specified and the file cannot be deleted then the file is deleted when the system reboots -- if the file will be deleted on a reboot, the reboot flag will be set. The error flag is set if files are found and cannot be deleted. The error flag is not set when trying to delete a file that does not exist.
 
 \c Delete $INSTDIR\somefile.dat
 
@@ -121,6 +121,10 @@ If no absolute path is specified the current folder will be used. The current fo
 
 \NsisWarnBlockContainerBegin
 \\<b\\>Warning:\\</b\\> The /REBOOTOK switch requires administrator rights on Windows NT and later.
+\NsisWarnBlockContainerEnd
+
+\NsisWarnBlockContainerBegin
+\\<b\\>Warning:\\</b\\> Files cannot be moved from one drive to another if a reboot is required.
 \NsisWarnBlockContainerEnd
 
 \S2{reservefile} ReserveFile
