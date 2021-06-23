@@ -1,0 +1,243 @@
+Only in zstd-1.5.6/lib/: BUCK
+diff -ru zstd-1.5.6/lib/common/mem.h zstd/common/mem.h
+--- zstd-1.5.6/lib/common/mem.h	2024-03-21 23:05:51.000000000 +0100
++++ zstd/common/mem.h	2025-01-28 22:46:51.545505900 +0100
+@@ -241,10 +241,10 @@
+ 
+ MEM_STATIC U32 MEM_swap32(U32 in)
+ {
+-#if defined(_MSC_VER)     /* Visual Studio */
++#if !defined(EXEHEAD) && defined(_MSC_VER)     /* Visual Studio */
+     return _byteswap_ulong(in);
+-#elif (defined (__GNUC__) && (__GNUC__ * 100 + __GNUC_MINOR__ >= 403)) \
+-  || (defined(__clang__) && __has_builtin(__builtin_bswap32))
++#elif (!defined(EXEHEAD) && defined (__GNUC__) && (__GNUC__ * 100 + __GNUC_MINOR__ >= 403)) \
++  || (!defined(EXEHEAD) && defined(__clang__) && __has_builtin(__builtin_bswap32))
+     return __builtin_bswap32(in);
+ #else
+     return MEM_swap32_fallback(in);
+@@ -265,10 +265,10 @@
+ 
+ MEM_STATIC U64 MEM_swap64(U64 in)
+ {
+-#if defined(_MSC_VER)     /* Visual Studio */
++#if !defined(EXEHEAD) && defined(_MSC_VER)     /* Visual Studio */
+     return _byteswap_uint64(in);
+-#elif (defined (__GNUC__) && (__GNUC__ * 100 + __GNUC_MINOR__ >= 403)) \
+-  || (defined(__clang__) && __has_builtin(__builtin_bswap64))
++#elif (!defined(EXEHEAD) && defined (__GNUC__) && (__GNUC__ * 100 + __GNUC_MINOR__ >= 403)) \
++  || (!defined(EXEHEAD) && defined(__clang__) && __has_builtin(__builtin_bswap64))
+     return __builtin_bswap64(in);
+ #else
+     return MEM_swap64_fallback(in);
+diff -ru zstd-1.5.6/lib/decompress/zstd_decompress.c zstd/decompress/zstd_decompress.c
+--- zstd-1.5.6/lib/decompress/zstd_decompress.c	2024-03-21 23:05:51.000000000 +0100
++++ zstd/decompress/zstd_decompress.c	2025-01-28 22:49:02.992708200 +0100
+@@ -89,6 +89,7 @@
+ #define DDICT_HASHSET_TABLE_BASE_SIZE 64
+ #define DDICT_HASHSET_RESIZE_FACTOR 2
+ 
++#if !defined(EXEHEAD)
+ /* Hash function to determine starting position of dict insertion within the table
+  * Returns an index between [0, hashSet->ddictPtrTableSize]
+  */
+@@ -214,6 +215,7 @@
+     FORWARD_IF_ERROR(ZSTD_DDictHashSet_emplaceDDict(hashSet, ddict), "");
+     return 0;
+ }
++#endif
+ 
+ /*-*************************************************************
+ *   Context management
+@@ -222,7 +224,9 @@
+ {
+     if (dctx==NULL) return 0;   /* support sizeof NULL */
+     return sizeof(*dctx)
++#if !defined(EXEHEAD)
+            + ZSTD_sizeof_DDict(dctx->ddictLocal)
++#endif
+            + dctx->inBuffSize + dctx->outBuffSize;
+ }
+ 
+@@ -315,7 +319,9 @@
+ 
+ static void ZSTD_clearDict(ZSTD_DCtx* dctx)
+ {
++#if !defined(EXEHEAD)
+     ZSTD_freeDDict(dctx->ddictLocal);
++#endif
+     dctx->ddictLocal = NULL;
+     dctx->ddict = NULL;
+     dctx->dictUses = ZSTD_dont_use;
+@@ -333,10 +339,12 @@
+         if (dctx->legacyContext)
+             ZSTD_freeLegacyStreamContext(dctx->legacyContext, dctx->previousLegacyVersion);
+ #endif
++#if !defined(EXEHEAD)
+         if (dctx->ddictSet) {
+             ZSTD_freeDDictHashSet(dctx->ddictSet, cMem);
+             dctx->ddictSet = NULL;
+         }
++#endif
+         ZSTD_customFree(dctx, cMem);
+         return 0;
+     }
+@@ -358,6 +366,7 @@
+  * ZSTD_d_refMultipleDDicts must be enabled for this function to be called.
+  */
+ static void ZSTD_DCtx_selectFrameDDict(ZSTD_DCtx* dctx) {
++#if !defined(EXEHEAD)
+     assert(dctx->refMultipleDDicts && dctx->ddictSet);
+     DEBUGLOG(4, "Adjusting DDict based on requested dict ID from frame");
+     if (dctx->ddict) {
+@@ -370,6 +379,7 @@
+             dctx->dictUses = ZSTD_use_indefinitely;
+         }
+     }
++#endif
+ }
+ 
+ 
+@@ -716,7 +726,9 @@
+                     dictionary_wrong, "");
+ #endif
+     dctx->validateChecksum = (dctx->fParams.checksumFlag && !dctx->forceIgnoreChecksum) ? 1 : 0;
++#if !defined(EXEHEAD)
+     if (dctx->validateChecksum) XXH64_reset(&dctx->xxhState, 0);
++#endif
+     dctx->processedCSize += headerSize;
+     return 0;
+ }
+@@ -1028,9 +1040,11 @@
+         }
+         FORWARD_IF_ERROR(decodedSize, "Block decompression failure");
+         DEBUGLOG(5, "Decompressed block of dSize = %u", (unsigned)decodedSize);
++#if !defined(EXEHEAD)
+         if (dctx->validateChecksum) {
+             XXH64_update(&dctx->xxhState, op, decodedSize);
+         }
++#endif
+         if (decodedSize) /* support dst = NULL,0 */ {
+             op += decodedSize;
+         }
+@@ -1044,6 +1058,7 @@
+         RETURN_ERROR_IF((U64)(op-ostart) != dctx->fParams.frameContentSize,
+                         corruption_detected, "");
+     }
++#if !defined(EXEHEAD)
+     if (dctx->fParams.checksumFlag) { /* Frame content checksum verification */
+         RETURN_ERROR_IF(remainingSrcSize<4, checksum_wrong, "");
+         if (!dctx->forceIgnoreChecksum) {
+@@ -1055,6 +1070,7 @@
+         ip += 4;
+         remainingSrcSize -= 4;
+     }
++#endif
+     ZSTD_DCtx_trace_end(dctx, (U64)(op-ostart), (U64)(ip-istart), /* streaming */ 0);
+     /* Allow caller to get size read */
+     DEBUGLOG(4, "ZSTD_decompressFrame: decompressed frame of size %zi, consuming %zi bytes of input", op-ostart, ip - (const BYTE*)*srcPtr);
+@@ -1077,10 +1093,12 @@
+     DEBUGLOG(5, "ZSTD_decompressMultiFrame");
+     assert(dict==NULL || ddict==NULL);  /* either dict or ddict set, not both */
+ 
++#if !defined(EXEHEAD)
+     if (ddict) {
+         dict = ZSTD_DDict_dictContent(ddict);
+         dictSize = ZSTD_DDict_dictSize(ddict);
+     }
++#endif
+ 
+     while (srcSize >= ZSTD_startingInputLength(dctx->format)) {
+ 
+@@ -1365,7 +1383,9 @@
+             RETURN_ERROR_IF(rSize > dctx->fParams.blockSizeMax, corruption_detected, "Decompressed Block Size Exceeds Maximum");
+             DEBUGLOG(5, "ZSTD_decompressContinue: decoded size from block : %u", (unsigned)rSize);
+             dctx->decodedSize += rSize;
++#if !defined(EXEHEAD)
+             if (dctx->validateChecksum) XXH64_update(&dctx->xxhState, dst, rSize);
++#endif
+             dctx->previousDstEnd = (char*)dst + rSize;
+ 
+             /* Stay on the same stage until we are finished streaming the block. */
+@@ -1397,12 +1417,14 @@
+     case ZSTDds_checkChecksum:
+         assert(srcSize == 4);  /* guaranteed by dctx->expected */
+         {
++#if !defined(EXEHEAD)
+             if (dctx->validateChecksum) {
+                 U32 const h32 = (U32)XXH64_digest(&dctx->xxhState);
+                 U32 const check32 = MEM_readLE32(src);
+                 DEBUGLOG(4, "ZSTD_decompressContinue: checksum : calculated %08X :: %08X read", (unsigned)h32, (unsigned)check32);
+                 RETURN_ERROR_IF(check32 != h32, checksum_wrong, "");
+             }
++#endif
+             ZSTD_DCtx_trace_end(dctx, dctx->decodedSize, dctx->processedCSize, /* streaming */ 1);
+             dctx->expected = 0;
+             dctx->stage = ZSTDds_getFrameHeaderSize;
+@@ -1600,6 +1622,7 @@
+ {
+     DEBUGLOG(4, "ZSTD_decompressBegin_usingDDict");
+     assert(dctx != NULL);
++#if !defined(EXEHEAD)
+     if (ddict) {
+         const char* const dictStart = (const char*)ZSTD_DDict_dictContent(ddict);
+         size_t const dictSize = ZSTD_DDict_dictSize(ddict);
+@@ -1608,10 +1631,13 @@
+         DEBUGLOG(4, "DDict is %s",
+                     dctx->ddictIsCold ? "~cold~" : "hot!");
+     }
++#endif
+     FORWARD_IF_ERROR( ZSTD_decompressBegin(dctx) , "");
++#if !defined(EXEHEAD)
+     if (ddict) {   /* NULL ddict is equivalent to no dictionary */
+         ZSTD_copyDDictParameters(dctx, ddict);
+     }
++#endif
+     return 0;
+ }
+ 
+@@ -1701,12 +1727,14 @@
+ {
+     RETURN_ERROR_IF(dctx->streamStage != zdss_init, stage_wrong, "");
+     ZSTD_clearDict(dctx);
++#if !defined(EXEHEAD)
+     if (dict && dictSize != 0) {
+         dctx->ddictLocal = ZSTD_createDDict_advanced(dict, dictSize, dictLoadMethod, dictContentType, dctx->customMem);
+         RETURN_ERROR_IF(dctx->ddictLocal == NULL, memory_allocation, "NULL pointer!");
+         dctx->ddict = dctx->ddictLocal;
+         dctx->dictUses = ZSTD_use_indefinitely;
+     }
++#endif
+     return 0;
+ }
+ 
+@@ -1780,6 +1808,7 @@
+     RETURN_ERROR_IF(dctx->streamStage != zdss_init, stage_wrong, "");
+     ZSTD_clearDict(dctx);
+     if (ddict) {
++#if !defined(EXEHEAD)
+         dctx->ddict = ddict;
+         dctx->dictUses = ZSTD_use_indefinitely;
+         if (dctx->refMultipleDDicts == ZSTD_rmd_refMultipleDDicts) {
+@@ -1792,6 +1821,10 @@
+             assert(!dctx->staticSize);  /* Impossible: ddictSet cannot have been allocated if static dctx */
+             FORWARD_IF_ERROR(ZSTD_DDictHashSet_addDDict(dctx->ddictSet, ddict, dctx->customMem), "");
+         }
++#else
++        RETURN_ERROR(parameter_unsupported, "Dictionaries unsupported in NSIS EXEHEAD!");
++        return -1;
++#endif
+     }
+     return 0;
+ }
+Only in zstd-1.5.6/lib/: deprecated
+Only in zstd-1.5.6/lib/: dictBuilder
+Only in zstd-1.5.6/lib/: dll
+Only in zstd-1.5.6/lib/: .gitignore
+Only in zstd-1.5.6/lib/: legacy
+Only in zstd-1.5.6/lib/: libzstd.mk
+Only in zstd-1.5.6/lib/: libzstd.pc.in
+Only in zstd-1.5.6/lib/: Makefile
+Only in zstd-1.5.6/lib/: module.modulemap
+Only in zstd-1.5.6/lib/: README.md
+Only in zstd/: zstd-v1.5.6.diff
