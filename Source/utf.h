@@ -185,7 +185,8 @@ public:
     UTF8 = CP_UTF8,
     UNKNOWN = (0xffff-0),
     AUTO = (0xffff-1),
-    CPCOUNT = (0xffff-2) // Must be less than our other magic numbers
+    BINARY = (0xffff-2),
+    CPCOUNT = (0xffff-3) // Must be less than our other magic numbers
   };
 
   NStreamEncoding() { Reset(); }

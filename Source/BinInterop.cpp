@@ -485,3 +485,29 @@ DWORD IsBMPFile(const void*pData, size_t DataSize, GENERICIMAGEINFO*pInfo)
   }
   return 0;
 }
+
+bool LoadImageCanLoadFile(const void*pData, size_t DataSize)
+{
+  bool valid = IsICOCURFile(pData, DataSize) != 0;
+  if (!valid)
+  {
+    GENERICIMAGEINFO info;
+    UINT headersize = GetBMPFileHeaderSize(pData, DataSize, &info);
+    valid = headersize == 12 || headersize == 40; // Only supports BITMAPCOREHEADER and BITMAPINFOHEADER (Bug #681 & FR #559)
+    valid = valid && !info.IsTopDownBitmap(); // TopDown bitmaps are only valid if they are loaded with LR_CREATEDIBSECTION, and if loaded from a resource, and if running on Vista+? and therefore we deny!
+  }
+  return valid;
+}
+
+bool LoadImageCanLoadFile(const TCHAR *filepath)
+{
+  bool valid = false;
+  unsigned char header[14+124];
+  FILE *f = my_fopen(filepath, "rb");
+  if (f)
+  {
+    valid = LoadImageCanLoadFile(header, fread(header, 1, sizeof(header), f));
+    fclose(f);
+  }
+  return valid;
+}

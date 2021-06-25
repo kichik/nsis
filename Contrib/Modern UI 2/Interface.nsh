@@ -214,12 +214,14 @@ Var mui.Button.Back
       ${if} $(^RTL) == 1
 
         File "/oname=$PLUGINSDIR\modern-header.bmp" "${MUI_HEADERIMAGE_${UN}BITMAP_RTL}"
+        !pragma verifyloadimage "${MUI_HEADERIMAGE_${UN}BITMAP_RTL}"
         !insertmacro MUI_HEADERIMAGE_INITHELPER_LOADIMAGE "${UN}" "_RTL" ${IMGRESID} "$PLUGINSDIR\modern-header.bmp"
 
       ${else}
     !endif
 
         File "/oname=$PLUGINSDIR\modern-header.bmp" "${MUI_HEADERIMAGE_${UN}BITMAP}"
+        !pragma verifyloadimage "${MUI_HEADERIMAGE_${UN}BITMAP}"
         !insertmacro MUI_HEADERIMAGE_INITHELPER_LOADIMAGE "${UN}" "" ${IMGRESID} "$PLUGINSDIR\modern-header.bmp"
 
     !ifdef MUI_HEADERIMAGE_${UN}BITMAP_RTL

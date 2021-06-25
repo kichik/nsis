@@ -363,6 +363,7 @@ void NStreamEncoding::GetCPDisplayName(WORD CP, TCHAR*Buf)
   case UTF32LE: p = _T("UTF32LE"); break;
   case UTF32BE: p = _T("UTF32BE"); break;
   case UTF8: p = _T("UTF8"); break;
+  case BINARY: p = _T("BIN"); break;
   default: 
     _stprintf(mybuf,_T("CP%u"),CP);
     if (CP >= NStreamEncoding::CPCOUNT) p = _T("?");
@@ -376,13 +377,17 @@ bool NBaseStream::Attach(FILE*hFile, WORD enc, bool Seek /*= true*/)
   m_hFile = hFile;
   if (!m_hFile) return false;
   if (!NStream::SetBinaryMode(m_hFile) && m_hFile != stdin) return false;
-  fpos_t pos;
-  if (Seek && !fgetpos(m_hFile, &pos)) rewind(m_hFile); else Seek = false;
-  WORD cp = DetectUTFBOM(m_hFile);
-  if (Seek)
+  WORD cp = 0;
+  if (enc != NStreamEncoding::BINARY)
   {
-    fsetpos(m_hFile, &pos);
-    if (cp) DetectUTFBOM(m_hFile); // parseScript() etc does not like the BOM, make sure we skip past it
+    fpos_t pos;
+    if (Seek && !fgetpos(m_hFile, &pos)) rewind(m_hFile); else Seek = false;
+    cp = DetectUTFBOM(m_hFile);
+    if (Seek)
+    {
+      fsetpos(m_hFile, &pos);
+      if (cp) DetectUTFBOM(m_hFile); // parseScript() etc does not like the BOM, make sure we skip past it
+    }
   }
   if (!cp) cp = enc;
   m_Enc.SafeSetCodepage(cp);

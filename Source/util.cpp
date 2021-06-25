@@ -146,7 +146,7 @@ int update_bitmap(CResourceEditor* re, WORD id, const TCHAR* filename, int width
   signed char hdr[14+124], retval = -2;
   size_t size = fread(hdr, 1, sizeof(hdr), f);
   GENERICIMAGEINFO info;
-  if (IsBMPFile(hdr, size, &info) && 0 == fseek(f, 0, SEEK_SET) && !info.IsTopDownBitmap())
+  if (IsBMPFile(hdr, size, &info) && 0 == fseek(f, 0, SEEK_SET) && LoadImageCanLoadFileFromResource(hdr, size))
   {
     if ((width && width != (int) info.Width) || (height && height != (int) info.Height))
       retval = -3;
