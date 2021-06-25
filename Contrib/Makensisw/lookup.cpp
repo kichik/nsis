@@ -135,7 +135,7 @@ template<class I, class O> static HKEY ParseRegPath(I*In, O*&Path, O*&Name)
 
 HRESULT (WINAPI*g_RLMSOld)(HKEY hKey, LPCWSTR pszValue, LPWSTR pszOutBuf, DWORD cbOutBuf);
 
-static LSTATUS WINAPI RegLoadMUIStringFallbackW(HKEY hKey, LPCWSTR Name, LPWSTR Out, DWORD cbOutBuf, LPDWORD pcbData, DWORD Flags, LPCSTR pszDirectory)
+static LONG WINAPI RegLoadMUIStringFallbackW(HKEY hKey, LPCWSTR Name, LPWSTR Out, DWORD cbOutBuf, LPDWORD pcbData, DWORD Flags, LPCSTR pszDirectory)
 {
   if ((Flags & reg_mui_string_truncate) && pcbData) return ERROR_INVALID_PARAMETER;
   if (g_RLMSOld)
@@ -158,7 +158,7 @@ LPCSTR g_ModeLbl[] = { "Path:", "Path:", "Registry:", "Path:", "[Path,]Number:" 
 struct DIALOGDATA {
   HRESULT (WINAPI*SHLIS)(LPCWSTR s, LPWSTR o, UINT cch, PVOID*ppvReserved);
   HRESULT (WINAPI*SHGLN)(PCWSTR p, PWSTR m, UINT cch, int*rid);
-  LSTATUS (WINAPI*RLMS)(HKEY hKey, LPCWSTR pszValue, LPWSTR pszOutBuf, DWORD cbOutBuf, LPDWORD pcbData, DWORD Flags, LPCSTR pszDirectory);
+  LONG (WINAPI*RLMS)(HKEY hKey, LPCWSTR pszValue, LPWSTR pszOutBuf, DWORD cbOutBuf, LPDWORD pcbData, DWORD Flags, LPCSTR pszDirectory);
   int (WINAPI*PPIL)(LPTSTR p);
   void*OrgParentDlgData;
   HWND hMode, hExtra, hOutTxt, hOutIco;
@@ -249,11 +249,11 @@ static INT_PTR CALLBACK LookupDlgProc(HWND hDlg, UINT Msg, WPARAM WParam, LPARAM
           {
             AppendText(pDD->hOutTxt, mod);
             AppendText(pDD->hOutTxt, (wsprintfW(path, L",%d\r\n\r\n", resid), path));
-            if (ExpandEnvironmentStringsW(mod, path, ARRAYSIZE(path)))
+            if (ExpandEnvironmentStringsW(mod, path, COUNTOF(path)))
             {
               if (HMODULE hMod = LoadLibraryExW(path, NULL, LOAD_LIBRARY_AS_DATAFILE))
               {
-                if (LoadStringW(hMod, resid, mod, ARRAYSIZE(mod)))
+                if (LoadStringW(hMod, resid, mod, COUNTOF(mod)))
                 {
                   AppendText(pDD->hOutTxt, mod);
                 }
