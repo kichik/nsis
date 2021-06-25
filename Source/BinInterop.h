@@ -37,6 +37,7 @@ typedef struct GENERICIMAGEINFO {
 
 DWORD GetDIBHeaderInfo(const void*pData, size_t DataSize, GENERICIMAGEINFO&Info);
 DWORD IsBMPFile(const void*pData, size_t DataSize, GENERICIMAGEINFO*pInfo = 0);
+#define GetBMPFileHeaderSize IsBMPFile
 
 inline WORD IsICOCURFile(const void*pData)
 {
@@ -50,5 +51,9 @@ inline WORD IsICOCURFile(const void*pData, size_t DataSize)
 {
   return DataSize > 6 ? IsICOCURFile(pData) : 0;
 }
+
+bool LoadImageCanLoadFile(const void*pData, size_t DataSize);
+bool LoadImageCanLoadFile(const TCHAR *filepath);
+#define LoadImageCanLoadFileFromResource LoadImageCanLoadFile
 
 #endif //~ NSIS_BININTEROP_H

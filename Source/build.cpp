@@ -31,6 +31,7 @@
 #include "manifest.h"
 #include "icon.h"
 #include "utf.h" // For NStream
+#include "BinInterop.h"
 
 #include "exehead/api.h"
 #include "exehead/resource.h"
@@ -3403,12 +3404,18 @@ int CEXEBuild::parse_pragma(LineParser &line)
     return rvErr;
   }
 
+  if (line.gettoken_enum(1, _T("verifyloadimage\0")) == 0)
+  {
+    bool valid = LoadImageCanLoadFile(line.gettoken_str(2));
+    return valid ? rvSucc : (warning_fl(DW_BADFORMAT_EXTERNAL_FILE, _T("Unsupported format %") NPRIs, line.gettoken_str(2)), rvWarn);
+  }
+
   // 2.47 shipped with a corrupted CHM file (bug #1129). This minimal verification command exists because the !searchparse hack we added does not work with codepage 936!
   if (line.gettoken_enum(1, _T("verifychm\0")) == 0)
   {
     struct { UINT32 Sig, Ver, cbH; } chm;
     NIStream f;
-    bool valid = f.OpenFileForReading(line.gettoken_str(2));
+    bool valid = f.OpenFileForReading(line.gettoken_str(2), NStreamEncoding::BINARY);
     valid = valid && 12 == f.ReadOctets(&chm, 12);
     valid = valid && FIX_ENDIAN_INT32(chm.Sig) == 0x46535449 && (FIX_ENDIAN_INT32(chm.Ver)|1) == 3; // 'ITSF' v2..3
     return valid ? rvSucc : (ERROR_MSG(_T("Error: Invalid format\n")), PS_ERROR);
