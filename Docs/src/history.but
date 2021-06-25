@@ -28,7 +28,7 @@ Unicode is now the default.
 
 \S2{} Translations
 
-\b Updated Corsican\#{(forum)} and Japanese (maboroshin PR\#{github.com/maboroshin})
+\b Updated Albanian (\W{http://sf.net/p/nsis/patches/303}{patch #303}), Corsican\#{(forum)} and Japanese (maboroshin PR\#{github.com/maboroshin})
 
 \b Fixed clipped Chinese text (\W{http://sf.net/p/nsis/bugs/1261}{bug #1261})
 
