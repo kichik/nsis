@@ -34,6 +34,17 @@ zlib_files = Split("""
 	#Source/zlib/INFBLOCK.C
 """)
 
+zstd_files = Split("""
+	crt_replacements.c
+	#Source/zstd/decompress/zstd_decompress.c
+	#Source/zstd/decompress/zstd_decompress_block.c
+	#Source/zstd/decompress/huf_decompress.c
+	#Source/zstd/common/entropy_common.c
+	#Source/zstd/common/fse_decompress.c
+	#Source/zstd/common/error_private.c
+	#Source/zstd/common/zstd_common.c
+""")
+
 libs = Split("""
 	advapi32
 	shell32
@@ -74,6 +85,15 @@ elif compression == 'zlib':
 	env.Append(CPPDEFINES = ['NSIS_COMPRESS_USE_ZLIB'])
 	env.Append(CPPDEFINES = ['ZEXPORT=__stdcall'])
 	files += zlib_files
+elif compression == 'zstd':
+	env.Append(CPPDEFINES = ['NSIS_COMPRESS_USE_ZSTD'])
+	env.Append(CPPDEFINES = ['ZSTD_NO_UNUSED_FUNCTIONS'])
+	# Performance / Size tradeoff: those seems to have no impact, 
+	# but if general exehead performance is improved this should be re-evaluated
+	env.Append(CPPDEFINES = ['DYNAMIC_BMI2=0']) # x64 only, saves probably 3kiB
+	env.Append(CPPDEFINES = ['HUF_FORCE_DECOMPRESS_X1=1']) # saves 5.5kiB
+	env.Append(CPPDEFINES = ['ZSTD_FORCE_DECOMPRESS_SEQUENCES_SHORT=1']) # saves 3.5kiB
+	files += zstd_files
 
 if solid_compression:
 	env.Append(CPPDEFINES = ['NSIS_COMPRESS_WHOLE'])

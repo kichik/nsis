@@ -1,0 +1,8 @@
+.sconf_temp/
+.sconsign.dblite
+config.log
+.test/
+build/
+.vscode/
+.vs/
+Source/zstd-orig/

@@ -53,7 +53,72 @@
 #define Z_OK BZ_OK
 #define Z_STREAM_END BZ_STREAM_END
 #endif//NSIS_COMPRESS_USE_BZIP2
+
+#ifdef NSIS_COMPRESS_USE_ZSTD
+
+#define ZSTD_STATIC_LINKING_ONLY
+#include "../zstd/zstd.h"
+
+#define z_stream ZStdContext
+#define Z_OK 0
+#define Z_ERR -1
+#define Z_STREAM_END 1
+
+//unused?
+//#define inflateInit(x) ZSTD_initDStream(x)
+
+typedef struct ZStdContext_s {
+  ZSTD_DStream*   dstream;
+  ZSTD_outBuffer  outBuffer;
+  ZSTD_inBuffer   inBuffer;
+  unsigned char*  next_in;   /* next input byte */
+  unsigned int    avail_in;  /* number of bytes available at next_in */
+  unsigned char*  next_out;  /* next output byte should be put there */
+  unsigned int    avail_out; /* remaining free space at next_out */
+} ZStdContext;
+
+int inflate(ZStdContext* ctx)
+{
+  ctx->inBuffer.src = ctx->next_in;
+  ctx->inBuffer.size = ctx->avail_in;
+  ctx->inBuffer.pos = 0;
+  ctx->outBuffer.dst = ctx->next_out;
+  ctx->outBuffer.size = ctx->avail_out;
+  ctx->outBuffer.pos = 0;
+  size_t ret = ZSTD_decompressStream(ctx->dstream, &ctx->outBuffer, &ctx->inBuffer);
+  ctx->avail_in = ctx->inBuffer.size - ctx->inBuffer.pos;
+  ctx->next_in = (unsigned char*)ctx->inBuffer.src + ctx->inBuffer.pos;
+  ctx->avail_out = ctx->outBuffer.size - ctx->outBuffer.pos;
+  ctx->next_out = (unsigned char*)ctx->outBuffer.dst + ctx->outBuffer.pos;
+  if (ret == 0) return Z_STREAM_END;
+  if (ZSTD_isError(ret)) return Z_ERR;
+  return Z_OK;
+}
+
+void inflateReset(ZStdContext* ctx)
+{
+  if (!ctx->dstream)
+  {
+    ctx->dstream = ZSTD_createDStream();
+    ZSTD_DCtx_setParameter(ctx->dstream, ZSTD_d_format, ZSTD_f_zstd1_magicless);
+  }
+
+  ZSTD_initDStream(ctx->dstream);
+}
+
+#endif//NSIS_COMPRESS_USE_ZSTD
+
 #endif//NSIS_CONFIG_COMPRESSION_SUPPORT
+
+#ifdef NSIS_COMPRESS_USE_ZSTD
+  // As of Zstd 1.5.0, those are 128kiB each
+  // This is a static copy of the implementation of ZSTD_DStream[In/Out]Size()
+  #define IBUFSIZE ZSTD_BLOCKSIZE_MAX + 3 // ZSTD_BLOCKHEADERSIZE is 3, but not public 
+  #define OBUFSIZE ZSTD_BLOCKSIZE_MAX
+#else
+  #define IBUFSIZE 16384
+  #define OBUFSIZE 32768
+#endif
 
 struct block_header g_blocks[BLOCKS_NUM];
 header *g_header;
@@ -154,7 +219,7 @@ void handle_ver_dlg(BOOL kill)
 #endif//NSIS_CONFIG_VISIBLE_SUPPORT
 
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
-static z_stream g_inflate_stream;
+static z_stream g_inflate_stream = { 0 };
 #endif
 
 const TCHAR * NSISCALL loadHeaders(int cl_flags)
@@ -352,9 +417,6 @@ const TCHAR * NSISCALL loadHeaders(int cl_flags)
 
   return 0;
 }
-
-#define IBUFSIZE 16384
-#define OBUFSIZE 32768
 
 // returns -3 if compression error/eof/etc
 

@@ -114,6 +114,10 @@
 
 \b NSIS 3 POSIX support
 
+\e{David Beinder}
+
+\b Zstandard compression support
+
 \H{testers} Testers
 
 \e{Jason Ross aka JasonFriday13}
@@ -206,7 +210,7 @@ Korean - \e{dTomoyo, linak, koder}
 
 Kurdish - \e{Erdal Ronahi}
 
-Latvian - \e{Valdis Griíis, Kristaps Meòìelis}
+Latvian - \e{Valdis Gri\u00ED{i}is, Kristaps Me\u00F2{o}\u00ED{i}elis}
 
 Lithuanian - \e{NorCis, Vytautas Krivickas, Danielius Scepanskis}
 
