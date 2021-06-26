@@ -52,6 +52,7 @@
 #define IDB_COMPRESSOR_ZLIB              11
 #define IDB_COMPRESSOR_BEST              12
 #define IDB_COMPRESSOR_LZMA              13
+#define IDB_COMPRESSOR_ZSTD              11
 #define IMAGECOUNT                       14
 #define IDB_COMPRESSOR IDB_COMPRESSOR_SCRIPT
 

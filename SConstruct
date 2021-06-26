@@ -5,7 +5,8 @@ EnsurePythonVersion(2,7)
 stubs = [
 	'bzip2',
 	'lzma',
-	'zlib'
+	'zlib',
+	'zstd'
 ]
 
 plugin_libs = [

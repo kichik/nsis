@@ -20,6 +20,9 @@
 #endif
 
 /*
+version 0.40
+* Add zstd compression
+
 version 0.39 (by Anders Kjersem)
 * Accept .zip as command line parameter
 
@@ -514,6 +517,8 @@ void makeEXE(HWND hwndDlg)
   if (g_compressor == 2)
     _ftprintf(fp,_T("!define ZIP2EXE_COMPRESSOR_BZIP2\n"));
   if (g_compressor == 3)
+    _ftprintf(fp,_T("!define ZIP2EXE_COMPRESSOR_ZSTD\n"));
+  if (g_compressor == 4)
     _ftprintf(fp,_T("!define ZIP2EXE_COMPRESSOR_LZMA\n"));
   if (g_compressor_solid == 1)
     _ftprintf(fp,_T("!define ZIP2EXE_COMPRESSOR_SOLID\n"));
@@ -637,7 +642,7 @@ int SetZip(HWND hwndDlg, TCHAR *path)
 INT_PTR CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   static int ids[]={IDC_INFO,IDC_NSISICON,IDC_SZIPFRAME,IDC_BROWSE,IDC_ZIPFILE,IDC_ZIPINFO_SUMMARY,IDC_ZIPINFO_FILES,IDC_OFRAME,IDC_INAMEST,
-                        IDC_INSTNAME,IDC_INSTPATH,IDC_OEFST,IDC_OUTFILE,IDC_BROWSE2,IDC_COMPRESSOR,IDC_ZLIB,IDC_BZIP2,IDC_LZMA,IDC_SOLID,IDC_INTERFACE,IDC_MODERNUI,IDC_CLASSICUI,IDC_UNICODE};
+                        IDC_INSTNAME,IDC_INSTPATH,IDC_OEFST,IDC_OUTFILE,IDC_BROWSE2,IDC_COMPRESSOR,IDC_ZLIB,IDC_BZIP2,IDC_ZSTD,IDC_LZMA,IDC_SOLID,IDC_INTERFACE,IDC_MODERNUI,IDC_CLASSICUI,IDC_UNICODE};
   static HICON hIcon=0;
   static HFONT hFont=0;
   switch (uMsg)
@@ -806,8 +811,10 @@ INT_PTR CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
                 g_compressor = 1;
               if (IsDlgButtonChecked(hwndDlg,IDC_BZIP2))
                 g_compressor = 2;
-              if (IsDlgButtonChecked(hwndDlg,IDC_LZMA))
+              if (IsDlgButtonChecked(hwndDlg,IDC_ZSTD))
                 g_compressor = 3;
+              if (IsDlgButtonChecked(hwndDlg,IDC_LZMA))
+                g_compressor = 4;
               if (IsDlgButtonChecked(hwndDlg,IDC_SOLID))
                 g_compressor_solid = 1;
               else
