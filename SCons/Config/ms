@@ -156,6 +156,9 @@ if msvs_version >= 10.0:
   if stub_env['TARGET_ARCH'] != 'arm64': # LNK1246: '/FIXED' not compatible with 'ARM64' target machine
     stub_env.Append(LINKFLAGS = ['/FIXED']) # no relocations that our resource editor ignores
 
+if msvs_version >= 8.0 and 'x86' in defenv.get('TARGET_ARCH','x86'):
+	stub_env.Append(CCFLAGS = ['/arch:IA32']) # disable SSE
+
 stub_uenv = stub_env.Clone()
 stub_uenv.Append(CPPDEFINES = ['_UNICODE', 'UNICODE'])
 
@@ -184,6 +187,9 @@ plugin_env = defenv.Clone(no_import_lib = 1)
 
 if defenv['TARGET_ARCH'] == 'amd64':
 	plugin_env.Append(LINKFLAGS = ['/MACHINE:AMD64']) # Contrib\System\Resource will not link without this
+
+if msvs_version >= 8.0 and 'x86' in defenv.get('TARGET_ARCH','x86'):
+	plugin_env.Append(CCFLAGS = ['/arch:IA32']) # disable SSE
 
 if not defenv['DEBUG']:
 	plugin_env.Append(CCFLAGS = ['/O1'])             # optimize for size

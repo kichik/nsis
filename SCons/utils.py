@@ -223,6 +223,22 @@ class MSPE:
 		return ReadU16LE(self._f, self.NTHOffset+4+20+70)
 	def WriteDllCharacteristics(self, value):
 		return WriteU16LE(self._f, value, self.NTHOffset+4+20+70)
+	def ReadOsMajor(self):
+		return ReadU16LE(self._f, self.NTHOffset+4+20+40)
+	def WriteOsMajor(self, value):
+		return WriteU16LE(self._f, value, self.NTHOffset+4+20+40)
+	def ReadOsMinor(self):
+		return ReadU16LE(self._f, self.NTHOffset+4+20+42)
+	def WriteOsMinor(self, value):
+		return WriteU16LE(self._f, value, self.NTHOffset+4+20+42)
+	def ReadSubsystemMajor(self):
+		return ReadU16LE(self._f, self.NTHOffset+4+20+48)
+	def WriteSubsystemMajor(self, value):
+		return WriteU16LE(self._f, value, self.NTHOffset+4+20+48)
+	def ReadSubsystemMinor(self):
+		return ReadU16LE(self._f, self.NTHOffset+4+20+50)
+	def WriteSubsystemMinor(self, value):
+		return WriteU16LE(self._f, value, self.NTHOffset+4+20+50)
 	def WriteChecksum(self, value):
 		return WriteU32LE(self._f, value, self.NTHOffset+4+20+64)
 	def InvalidateChecksum(self):
@@ -269,6 +285,22 @@ def SetPETimestamp(filepath, timestamp):
 	finally:
 		return
 
+def SetPESupportedOS(filepath, osMajor, osMinor, ssMajor, ssMinor):
+	pe = MSPE(filepath, open_for_write=True)
+	try:
+		if not IsPE(pe): return
+		pe.WriteOsMajor(osMajor)
+		pe.WriteOsMinor(osMinor)
+		pe.WriteSubsystemMajor(ssMajor)
+		pe.WriteSubsystemMinor(ssMinor)
+		pe.InvalidateChecksum()
+		return True
+	finally:
+		return
+
+def SetPEWin95Supported(target, source, env):
+	SetPESupportedOS(target[0].path, 4, 0, 4, 0)
+
 def MakeReproducibleAction(target, source, env):
 	if env.get('SOURCE_DATE_EPOCH','') != '':
 		SetPETimestamp(target[0].path, env['SOURCE_DATE_EPOCH'])
@@ -276,4 +308,4 @@ def MakeReproducibleAction(target, source, env):
 def SilentActionEcho(target, source, env):
 	return None
 
-Export('GetStdSysEnvVarList AddAvailableLibs AddZLib GenerateTryLinkCode FlagsConfigure GetAvailableLibs GetOptionOrEnv SilentActionEcho IsPEExecutable SetPESecurityFlagsWorker MakeReproducibleAction')
+Export('GetStdSysEnvVarList AddAvailableLibs AddZLib GenerateTryLinkCode FlagsConfigure GetAvailableLibs GetOptionOrEnv SilentActionEcho IsPEExecutable SetPESecurityFlagsWorker MakeReproducibleAction SetPEWin95Supported')
