@@ -31,6 +31,7 @@
 #endif
 
 #include "compressor.h"
+#include "DynamicCondVars.h"
 
 #define ZSTD_STATIC_LINKING_ONLY
 #include "zstd/zstd.h"
@@ -55,8 +56,11 @@ class CZstd : public ICompressor
         if (!cstream) return -ZSTD_error_memory_allocation;
 
         #if defined(ZSTD_MULTITHREAD)
-        res = ZSTD_CCtx_setParameter(cstream, ZSTD_c_nbWorkers, getCoreCountLogical());
-        if (ZSTD_isError(res)) return -ZSTD_getErrorCode(res);
+        if (ConditionVarsSupported())
+        {
+          res = ZSTD_CCtx_setParameter(cstream, ZSTD_c_nbWorkers, getCoreCountLogical());
+          if (ZSTD_isError(res)) return -ZSTD_getErrorCode(res);
+        }
         #endif
         
         //skip zstd magic in header, saves 4 bytes per file

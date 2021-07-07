@@ -71,6 +71,7 @@ zstd_files = Split("""
 	zstd/compress/zstd_ldm.c
 	zstd/compress/zstd_opt.c
 	zstd/compress/zstdmt_compress.c
+	DynamicCondVars.c
 """)
 
 libs = Split("""
