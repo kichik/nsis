@@ -77,8 +77,11 @@ ReadRegDWORD $UseLightTheme HKCU "Software\Microsoft\Windows\CurrentVersion\Them
 StrCmp $UseLightTheme "" 0 +2
 StrCpy $UseLightTheme 1 ; Default
 
-StrCmp $UseLightTheme "0" 0 +2
-System::Call 'USER32::SetProp(p$hWndParent,t"UseImmersiveDarkModeColors",i1)'
+StrCmp $UseLightTheme "0" 0 +5
+System::Call 'DWMAPI::DwmSetWindowAttribute(p$hWndParent,i20,*i1,i4)i.r0' ; 20H1
+IntCmp $0 0 +3 +3
+System::Call 'DWMAPI::DwmSetWindowAttribute(p$hWndParent,i19,*i1,i4)i.r0' ; ; 19H1
+System::Call 'USER32::SetProp(p$hWndParent,t"UseImmersiveDarkModeColors",i1)' ; 1809
 FunctionEnd
 
 !define SetCtlColors "!insertmacro SetCtlColors "
