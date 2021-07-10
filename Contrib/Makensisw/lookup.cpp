@@ -64,7 +64,7 @@ template<class T> static ULARGE_INTEGER PathParseIconLocationEx(T*Path)
   return (li.HighPart = (UINT) comma, li.LowPart = idx, li);
 }
 
-template<class T> static int WINAPI PathParseIconLocationFallback(T*Path)
+static int WINAPI PathParseIconLocationFallback(LPSTR Path)
 {
   ULARGE_INTEGER li = PathParseIconLocationEx(Path);
   return li.LowPart;
@@ -353,7 +353,7 @@ INT_PTR ShowLookupDialog(HWND hOwner)
   if (!dd.PPIL || (SupportsWNT4() || IsWin9598ME()))
   {
     (FARPROC&) dd.PPIL = GetSysProcAddr("SHELL32", (LPCSTR) 249); // WNT4+ PathParseIconLocationT
-    if (sizeof(TCHAR) == 1) (FARPROC&) dd.PPIL = (FARPROC) PathParseIconLocationFallback<CHAR>;
+    if (sizeof(TCHAR) == 1) (FARPROC&) dd.PPIL = (FARPROC) PathParseIconLocationFallback;
   }
   #endif
 

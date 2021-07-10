@@ -145,13 +145,17 @@ BEGIN
     "F",            IDM_FIND,               VIRTKEY, CONTROL, NOINVERT
     "L",            IDM_LOADSCRIPT,         VIRTKEY, CONTROL, NOINVERT
     "M",            IDM_RECOMPILE_TEST,     VIRTKEY, CONTROL, NOINVERT
+    VK_F5,          IDM_RECOMPILE_TEST,     VIRTKEY, NOINVERT
     "R",            IDM_RECOMPILE,          VIRTKEY, CONTROL, NOINVERT
+    VK_F7,          IDM_RECOMPILE,          VIRTKEY, NOINVERT
     "S",            IDM_SETTINGS,           VIRTKEY, CONTROL, NOINVERT
     "T",            IDM_TEST,               VIRTKEY, CONTROL, NOINVERT
+    VK_F5,          IDM_TEST,               VIRTKEY, CONTROL, NOINVERT
     VK_F1,          IDM_DOCS,               VIRTKEY, NOINVERT
     "W",            IDM_CLEARLOG,           VIRTKEY, CONTROL, NOINVERT
     "X",            IDM_EXIT,               VIRTKEY, ALT, NOINVERT
     "K",            IDM_CANCEL,             VIRTKEY, CONTROL, NOINVERT
+    VK_CANCEL,      IDM_CANCEL,             VIRTKEY, CONTROL, NOINVERT
 END
 
 
