@@ -1,0 +1,453 @@
+Only in libm-orig/: e_acosf.c
+Only in libm-orig/: e_acosh.c
+Only in libm-orig/: e_acoshf.c
+Only in libm-orig/: e_asinf.c
+Only in libm-orig/: e_atan2f.c
+Only in libm-orig/: e_atanh.c
+Only in libm-orig/: e_atanhf.c
+Only in libm-orig/: e_coshf.c
+Only in libm-orig/: e_expf.c
+Only in libm-orig/: e_fmodf.c
+Only in libm-orig/: e_gamma.c
+Only in libm-orig/: e_gammaf.c
+Only in libm-orig/: e_gammaf_r.c
+Only in libm-orig/: e_gamma_r.c
+Only in libm-orig/: e_hypot.c
+Only in libm-orig/: e_hypotf.c
+Only in libm-orig/: e_j0.c
+Only in libm-orig/: e_j0f.c
+Only in libm-orig/: e_j1.c
+Only in libm-orig/: e_j1f.c
+Only in libm-orig/: e_jn.c
+Only in libm-orig/: e_jnf.c
+Only in libm-orig/: e_ldexpf.c
+Only in libm-orig/: e_lgamma.c
+Only in libm-orig/: e_lgammaf.c
+Only in libm-orig/: e_lgammaf_r.c
+Only in libm-orig/: e_lgamma_r.c
+diff -r -u libm-orig/e_log10.c mathlib/e_log10.c
+--- libm-orig/e_log10.c	2021-07-08 16:11:48.000000000 +0200
++++ mathlib/e_log10.c	2021-07-12 22:50:35.254075700 +0200
+@@ -71,7 +71,7 @@
+         k=0;
+         if (hx < 0x00100000) {                  /* x < 2**-1022  */
+             if (((hx&0x7fffffff)|lx)==0)
+-                return -two54/zero;             /* log(+-0)=-inf */
++                return -INFINITY;             /* log(+-0)=-inf */
+             if (hx<0) return (x-x)/zero;        /* log(-#) = NaN */
+             k -= 54; x *= two54; /* subnormal number, scale up x */
+ 	    GET_HIGH_WORD(hx,x);
+Only in libm-orig/: e_log10f.c
+diff -r -u libm-orig/e_log.c mathlib/e_log.c
+--- libm-orig/e_log.c	2021-07-08 16:11:48.000000000 +0200
++++ mathlib/e_log.c	2021-07-12 22:50:25.618895300 +0200
+@@ -95,7 +95,7 @@
+ 	k=0;
+ 	if (hx < 0x00100000) {			/* x < 2**-1022  */
+ 	    if (((hx&0x7fffffff)|lx)==0) 
+-		return -two54/zero;		/* log(+-0)=-inf */
++		return -INFINITY;		/* log(+-0)=-inf */
+ 	    if (hx<0) return (x-x)/zero;	/* log(-#) = NaN */
+ 	    k -= 54; x *= two54; /* subnormal number, scale up x */
+ 	    GET_HIGH_WORD(hx,x);
+Only in libm-orig/: e_logf.c
+Only in libm-orig/: e_powf.c
+Only in libm-orig/: e_remainder.c
+Only in libm-orig/: e_remainderf.c
+Only in libm-orig/: e_rem_pio2f.c
+Only in libm-orig/: e_scalbf.c
+Only in libm-orig/: e_sinhf.c
+Only in libm-orig/: e_sqrtf.c
+diff -r -u libm-orig/fpmath.h mathlib/fpmath.h
+--- libm-orig/fpmath.h	2021-07-08 16:11:48.000000000 +0200
++++ mathlib/fpmath.h	2021-07-12 23:12:58.188312800 +0200
+@@ -27,8 +27,11 @@
+  * $FreeBSD: src/lib/libc/include/fpmath.h,v 1.3 2005/02/06 03:23:31 das Exp $
+  */
+ 
+-#include <endian.h>
+-#include "_fpmath.h"
++#if defined(_M_ARM) || defined(__arm__)
++	#include "_fpmath_arm.h"
++#else
++	#include "_fpmath_i386.h"
++#endif
+ 
+ union IEEEf2bits {
+ 	float	f;
+diff -r -u libm-orig/isinf.c mathlib/isinf.c
+--- libm-orig/isinf.c	2021-07-08 16:11:48.000000000 +0200
++++ mathlib/isinf.c	2021-07-13 00:00:05.063779500 +0200
+@@ -26,9 +26,8 @@
+  * $FreeBSD$
+  */
+ 
+-#include <math.h>
+-#include <sys/cdefs.h>
+-#include "src/fpmath.h"
++#include "math.h"
++#include "fpmath.h"
+ 
+ /*
+  * XXX These routines belong in libm, but they must remain in libc for
+Only in libm-orig/: k_cosf.c
+Only in libm-orig/: k_rem_pio2f.c
+Only in libm-orig/: k_sinf.c
+Only in libm-orig/: k_tanf.c
+diff -r -u libm-orig/math.h mathlib/math.h
+--- libm-orig/math.h	2021-07-08 16:11:48.000000000 +0200
++++ mathlib/math.h	2021-07-12 23:56:29.737942200 +0200
+@@ -17,10 +17,11 @@
+ #ifndef _MATH_H_
+ #define	_MATH_H_
+ 
+-#include <sys/cdefs.h>
+-#include <sys/types.h>
++#include <stdint.h>
+ #include <limits.h>
+ 
++typedef uint32_t u_int32_t;
++
+ #define __pure2
+ 
+ /*
+@@ -36,43 +37,15 @@
+ 	float		__uf;
+ } __nan;
+ 
+-/* #if __GNUC_PREREQ__(3, 3) || (defined(__INTEL_COMPILER) && __INTEL_COMPILER >= 800) */
+-#if 1
+-#define	__MATH_BUILTIN_CONSTANTS
+-#endif
+-
+-/* #if __GNUC_PREREQ__(3, 0) && !defined(__INTEL_COMPILER) */
+-#if 1
+-#define	__MATH_BUILTIN_RELOPS
+-#endif
+-
+-/* #ifdef __MATH_BUILTIN_CONSTANTS */
+-#if 1
+-#define	HUGE_VAL	__builtin_huge_val()
+-#else
+-#define	HUGE_VAL	(__infinity.__ud)
+-#endif
+-
+-/* #if __ISO_C_VISIBLE >= 1999 */
+-#if 0
+-#define	FP_ILOGB0	(-__INT_MAX)
+-#define	FP_ILOGBNAN	__INT_MAX
+-#else
+-#define	FP_ILOGB0	(-INT_MAX)
+-#define	FP_ILOGBNAN	INT_MAX
++#ifndef _HUGE_ENUF
++    #define _HUGE_ENUF  1e+300  // _HUGE_ENUF*_HUGE_ENUF must overflow
+ #endif
+ 
+-#ifdef __MATH_BUILTIN_CONSTANTS
+-#define	HUGE_VALF	__builtin_huge_valf()
+-#define	HUGE_VALL	__builtin_huge_vall()
+-#define	INFINITY	__builtin_inf()
+-#define	NAN		__builtin_nan("")
+-#else
+-#define	HUGE_VALF	(float)HUGE_VAL
+-#define	HUGE_VALL	(long double)HUGE_VAL
+-#define	INFINITY	HUGE_VALF
+-#define	NAN		(__nan.__uf)
+-#endif /* __MATH_BUILTIN_CONSTANTS */
++#define INFINITY   ((float)(_HUGE_ENUF * _HUGE_ENUF))
++#define HUGE_VAL   ((double)INFINITY)
++#define HUGE_VALF  ((float)INFINITY)
++#define HUGE_VALL  ((long double)INFINITY)
++#define NAN        ((float)(INFINITY * 0.0F))
+ 
+ #define	MATH_ERRNO	1
+ #define	MATH_ERREXCEPT	2
+@@ -93,27 +66,12 @@
+ #define	FP_NORMAL	0x04
+ #define	FP_SUBNORMAL	0x08
+ #define	FP_ZERO		0x10
+-#define	fpclassify(x) \
+-    ((sizeof (x) == sizeof (float)) ? __fpclassifyf(x) \
+-    : (sizeof (x) == sizeof (double)) ? __fpclassifyd(x) \
+-    : __fpclassifyl(x))
+-
+-#define	isfinite(x)					\
+-    ((sizeof (x) == sizeof (float)) ? __isfinitef(x)	\
+-    : (sizeof (x) == sizeof (double)) ? __isfinite(x)	\
+-    : __isfinitel(x))
+-#define	isinf(x)					\
+-    ((sizeof (x) == sizeof (float)) ? __isinff(x)	\
+-    : (sizeof (x) == sizeof (double)) ? __isinf(x)	\
+-    : __isinfl(x))
+-#define	isnan(x)					\
+-    ((sizeof (x) == sizeof (float)) ? isnanf(x)		\
+-    : (sizeof (x) == sizeof (double)) ? isnan(x)	\
+-    : __isnanl(x))
+-#define	isnormal(x)					\
+-    ((sizeof (x) == sizeof (float)) ? __isnormalf(x)	\
+-    : (sizeof (x) == sizeof (double)) ? __isnormal(x)	\
+-    : __isnormall(x))
++
++#define	fpclassify(x)  __fpclassifyd(x)
++#define	isfinite(x) __isfinite(x)
++#define	isinf(x) __isinf(x)
++#define	isnan(x) isnan(x)
++#define	isnormal(x) __isnormal(x)
+ 
+ #ifdef __MATH_BUILTIN_RELOPS
+ #define	isgreater(x, y)		__builtin_isgreater((x), (y))
+@@ -165,21 +123,12 @@
+ extern int signgam;
+ /* #endif */ /* __BSD_VISIBLE || __XSI_VISIBLE */
+ 
+-#if __BSD_VISIBLE
+-#if 0
+-/* Old value from 4.4BSD-Lite math.h; this is probably better. */
+-#define	HUGE		HUGE_VAL
+-#else
+-#define	HUGE		MAXFLOAT
+-#endif
+-#endif /* __BSD_VISIBLE */
+-
+ /*
+  * Most of these functions depend on the rounding mode and have the side
+  * effect of raising floating-point exceptions, so they are not declared
+  * as __pure2.  In C99, FENV_ACCESS affects the purity of these functions.
+  */
+-__BEGIN_DECLS
++
+ /*
+  * ANSI/POSIX
+  */
+@@ -190,7 +139,7 @@
+ int	__isfinite(double) __pure2;
+ int	__isfinitel(long double) __pure2;
+ int	__isinff(float) __pure2;
+-int     __isinf(double) __pure2;
++int	__isinf(double) __pure2;
+ int	__isinfl(long double) __pure2;
+ int	__isnanl(long double) __pure2;
+ int	__isnormalf(float) __pure2;
+@@ -491,6 +440,5 @@
+ #endif
+ 
+ /* #endif */ /* __ISO_C_VISIBLE >= 1999 */
+-__END_DECLS
+ 
+ #endif /* !_MATH_H_ */
+diff -r -u libm-orig/math_private.h mathlib/math_private.h
+--- libm-orig/math_private.h	2021-07-08 16:11:48.000000000 +0200
++++ mathlib/math_private.h	2021-07-12 23:12:45.662018600 +0200
+@@ -17,8 +17,7 @@
+ #ifndef _MATH_PRIVATE_H_
+ #define	_MATH_PRIVATE_H_
+ 
+-#include <sys/types.h>
+-#include <endian.h>
++#include <stdint.h>
+ 
+ /*
+  * The original fdlibm code used statements like:
+@@ -38,7 +37,7 @@
+  * ints.
+  */
+ 
+-#if (__BYTE_ORDER == __BIG_ENDIAN) || (defined(__arm__) && !defined(__VFP_FP__))
++#if (__BYTE_ORDER == __BIG_ENDIAN) || defined(_M_ARM) || (defined(__arm__) && !defined(__VFP_FP__))
+ 
+ typedef union
+ {
+@@ -52,7 +51,7 @@
+ 
+ #endif
+ 
+-#if __BYTE_ORDER == __LITTLE_ENDIAN  && !(defined(__arm__) && !defined(__VFP_FP__))
++#if __BYTE_ORDER == __LITTLE_ENDIAN  && !defined(_M_ARM) && !(defined(__arm__) && !defined(__VFP_FP__))
+ 
+ typedef union
+ {
+Only in libm-orig/: s_asinh.c
+Only in libm-orig/: s_asinhf.c
+Only in libm-orig/: s_atanf.c
+Only in libm-orig/: s_cbrt.c
+Only in libm-orig/: s_cbrtf.c
+Only in libm-orig/: s_ceilf.c
+Only in libm-orig/: s_ceill.c
+Only in libm-orig/: s_cimag.c
+Only in libm-orig/: s_cimagf.c
+Only in libm-orig/: s_cimagl.c
+Only in libm-orig/: s_conj.c
+Only in libm-orig/: s_conjf.c
+Only in libm-orig/: s_conjl.c
+Only in libm-orig/: s_copysignf.c
+Only in libm-orig/: s_copysignl.c
+Only in libm-orig/: s_cosf.c
+Only in libm-orig/: s_creal.c
+Only in libm-orig/: s_crealf.c
+Only in libm-orig/: s_creall.c
+Only in libm-orig/: s_erf.c
+Only in libm-orig/: s_erff.c
+Only in libm-orig/: s_exp2.c
+Only in libm-orig/: s_exp2f.c
+Only in libm-orig/: s_expm1f.c
+Only in libm-orig/: s_fabsf.c
+Only in libm-orig/: s_fabsl.c
+Only in libm-orig/: s_fdim.c
+Only in libm-orig/: s_finitef.c
+Only in libm-orig/: s_floorf.c
+Only in libm-orig/: s_floorl.c
+Only in libm-orig/: s_fma.c
+Only in libm-orig/: s_fmaf.c
+Only in libm-orig/: s_fmal.c
+Only in libm-orig/: s_fmax.c
+Only in libm-orig/: s_fmaxf.c
+Only in libm-orig/: s_fmaxl.c
+Only in libm-orig/: s_fmin.c
+Only in libm-orig/: s_fminf.c
+Only in libm-orig/: s_fminl.c
+diff -r -u libm-orig/s_frexp.c mathlib/s_frexp.c
+--- libm-orig/s_frexp.c	2021-07-08 16:11:48.000000000 +0200
++++ mathlib/s_frexp.c	2021-07-12 22:56:13.978800400 +0200
+@@ -24,7 +24,6 @@
+  * with *exp=0.
+  */
+ 
+-#include <sys/cdefs.h>
+ #include <float.h>
+ 
+ #include "math.h"
+@@ -52,7 +51,3 @@
+ 	SET_HIGH_WORD(x,hx);
+ 	return x;
+ }
+-
+-#if (LDBL_MANT_DIG == 53)
+-__weak_reference(frexp, frexpl);
+-#endif
+Only in libm-orig/: s_frexpf.c
+Only in libm-orig/: s_frexpl.c
+Only in libm-orig/: s_ilogb.c
+Only in libm-orig/: s_ilogbf.c
+Only in libm-orig/: s_ilogbl.c
+Only in libm-orig/: s_isfinite.c
+diff -r -u libm-orig/s_isnan.c mathlib/s_isnan.c
+--- libm-orig/s_isnan.c	2021-07-08 16:11:48.000000000 +0200
++++ mathlib/s_isnan.c	2021-07-12 22:13:11.396184100 +0200
+@@ -26,12 +26,9 @@
+  * $FreeBSD: src/lib/msun/src/s_isnan.c,v 1.8 2004/08/05 01:46:11 das Exp $
+  */
+ 
+-#include <math.h>
+-
++#include "math.h"
+ #include "fpmath.h"
+ 
+-/* Provided by libc */
+-#if 1
+ int
+ (isnan)(double d)
+ {
+@@ -40,23 +37,3 @@
+ 	u.d = d;
+ 	return (u.bits.exp == 2047 && (u.bits.manl != 0 || u.bits.manh != 0));
+ }
+-#endif
+-
+-int
+-isnanf(float f)
+-{
+-	union IEEEf2bits u;
+-
+-	u.f = f;
+-	return (u.bits.exp == 255 && u.bits.man != 0);
+-}
+-
+-int
+-__isnanl(long double e)
+-{
+-	union IEEEl2bits u;
+-
+-	u.e = e;
+-	mask_nbit_l(u);
+-	return (u.bits.exp == 32767 && (u.bits.manl != 0 || u.bits.manh != 0));
+-}
+Only in libm-orig/: s_isnormal.c
+Only in libm-orig/: s_llrint.c
+Only in libm-orig/: s_llrintf.c
+Only in libm-orig/: s_llround.c
+Only in libm-orig/: s_llroundf.c
+Only in libm-orig/: s_llroundl.c
+Only in libm-orig/: s_log1p.c
+Only in libm-orig/: s_log1pf.c
+Only in libm-orig/: s_logb.c
+Only in libm-orig/: s_logbf.c
+Only in libm-orig/: s_lrint.c
+Only in libm-orig/: s_lrintf.c
+Only in libm-orig/: s_lround.c
+Only in libm-orig/: s_lroundf.c
+Only in libm-orig/: s_lroundl.c
+Only in libm-orig/: s_modff.c
+Only in libm-orig/: s_nan.c
+Only in libm-orig/: s_nearbyint.c
+Only in libm-orig/: s_nextafter.c
+Only in libm-orig/: s_nextafterf.c
+Only in libm-orig/: s_nextafterl.c
+Only in libm-orig/: s_nexttoward.c
+Only in libm-orig/: s_nexttowardf.c
+Only in libm-orig/: s_remquo.c
+Only in libm-orig/: s_remquof.c
+Only in libm-orig/: s_rintf.c
+Only in libm-orig/: s_round.c
+Only in libm-orig/: s_roundf.c
+Only in libm-orig/: s_roundl.c
+Only in libm-orig/: s_scalbln.c
+diff -r -u libm-orig/s_scalbn.c mathlib/s_scalbn.c
+--- libm-orig/s_scalbn.c	2021-07-08 16:11:48.000000000 +0200
++++ mathlib/s_scalbn.c	2021-07-12 22:57:34.289435300 +0200
+@@ -21,7 +21,6 @@
+  * exponentiation or a multiplication.
+  */
+ 
+-#include <sys/cdefs.h>
+ #include <float.h>
+ 
+ #include "math.h"
+@@ -59,21 +58,3 @@
+ 	SET_HIGH_WORD(x,(hx&0x800fffff)|(k<<20));
+         return x*twom54;
+ }
+-
+-// this is normally in FreeBSD's libc.
+-double
+-ldexp (double x, int n)
+-{
+-    return scalbn(x,n);
+-}
+-
+-#if (LDBL_MANT_DIG == 53)    //XXX: brian FIXME __weak_reference doesn work
+-long double ldexpl (long double x, int n) {
+-    return scalbn((double)x,n);
+-}
+-long double scalbnl (long double x, int n) {
+-    return scalbn((double)x,n);
+-}
+-__weak_reference(scalbn, ldexpl);
+-__weak_reference(scalbn, scalbnl);
+-#endif
+Only in libm-orig/: s_scalbnf.c
+Only in libm-orig/: s_scalbnl.c
+Only in libm-orig/: s_signbit.c
+Only in libm-orig/: s_signgam.c
+Only in libm-orig/: s_significand.c
+Only in libm-orig/: s_significandf.c
+Only in libm-orig/: s_sinf.c
+Only in libm-orig/: s_tanf.c
+Only in libm-orig/: s_tanhf.c
+Only in libm-orig/: s_tgammaf.c
+Only in libm-orig/: s_trunc.c
+Only in libm-orig/: s_truncf.c
+Only in libm-orig/: s_truncl.c
+Only in libm-orig/: w_cabs.c
+Only in libm-orig/: w_cabsf.c
+Only in libm-orig/: w_drem.c
+Only in libm-orig/: w_dremf.c
