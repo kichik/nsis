@@ -4,6 +4,7 @@
 #include <nsis/pluginapi.h> // nsis plugin
 #include "MyMath.h"
 #include "Math.h"
+#include "mathlib/math.h"
 
 extern "C" int _fltused;
 
@@ -1525,7 +1526,20 @@ void __declspec(dllexport) Script(HWND hwndParent, int string_size,
 }
 
 double _infinity;
-extern "C" void _fpreset();
+
+void FpuReset()
+{
+#if defined(_M_ARM ) || defined(__arm__)
+//TODO
+#else
+    #if defined(_MSC_VER)
+        __asm { finit }
+    #else
+        asm("finit");
+    #endif
+#endif
+}
+
 
 void CleanAll(int init)
 {
@@ -1534,7 +1548,7 @@ void CleanAll(int init)
     unsigned char _infinity_base[8] = {0, 0, 0, 0, 0, 0, 0xf0, 0x7f};
     _fltused = 0;
     _infinity = *((double*)(_infinity_base));
-    _fpreset();
+    FpuReset();
 
     stack = NULL;
     UserVarsCount = 0;
@@ -1564,3 +1578,22 @@ extern "C" BOOL WINAPI DllMain(HINSTANCE hInst, ULONG ul_reason_for_call, LPVOID
     return TRUE;
 }
 
+//TODO: use NSISdl/util.cpp?
+void *memset(void *mem, int c, size_t len)
+{
+  /*
+  ** Prevent MSVC 14.00.40310.41-AMD64 from generating a recursive call to memset
+  **
+  ** #pragma optimize("", off) + #pragma optimize("ty", on) can also
+  ** be used but it generates a lot more code.
+  */
+#if defined(_MSC_VER) && _MSC_VER > 1200 && _MSC_FULL_VER <= 140040310
+  volatile 
+#endif
+  char *p=(char*)mem;
+  while (len-- > 0)
+  {
+    *p++=c;
+  }
+  return mem;
+}

@@ -1,9 +1,9 @@
 // Unicode support by Jim Park -- 08/22/2007
 
 #include <windows.h>
-#include <stdio.h>
 #include "MyMath.h"
 #include "Math.h"
+#include "xprintf.h"
 
 // Converts String to Int (Dec, Hex) or Float value
 void StringToItem(TCHAR *&s, ExpressionItem *item, int options)
@@ -203,7 +203,7 @@ void itoa64(__int64 i, TCHAR *buffer)
 
 void FloatFormat(TCHAR *s, double value, int options)
 {
-    TCHAR format[128];
+    char format[32];
     int prec = options & 0xF;
 
     *s = 0;
@@ -219,22 +219,30 @@ void FloatFormat(TCHAR *s, double value, int options)
 
     if (options & FF_NOEXP)
     {
-        _stprintf(format, _T("%%.%df"), prec);
+        xsprintf(format, "%%.%df", prec);
     }
     else if (options & FF_EXP)
     {
-        _stprintf(format, _T("%%.%de"), prec);
+        xsprintf(format, "%%.%de", prec);
     }
     else if (options & FF_LEXP)
     {
-        _stprintf(format, _T("%%.%dE"), prec);
+        xsprintf(format, "%%.%dE", prec);
     }
     else
     {
-        _stprintf(format, _T("%%.%dg"), prec);
+        xsprintf(format, "%%.%dg", prec);
     }
 
-    _stprintf(s, format, value);
+#ifdef UNICODE
+    char buffer[128];
+    xsprintf(buffer, format, value);
+    int cnt = strlen(buffer);
+    for (int n = 0; n < cnt; n++) s[n] = buffer[n];
+    s[cnt] = 0;
+#else
+    xsprintf(s, format, value);
+#endif
 }
 
 int lstrcmpn(TCHAR *s1, const TCHAR *s2, int chars)
