@@ -196,9 +196,9 @@ TCHAR *CharPrev(const TCHAR *s, const TCHAR *p) {
 }
 
 char *CharNextA(const char *s) {
-  int l = 0;
+  int l = 0, mbl;
   if (s && *s)
-    l = max(1, mblen(s, MB_CUR_MAX));
+    mbl = mblen(s, MB_CUR_MAX), l = max(1, mbl);
   return const_cast<char*>(s + l);
 }
 
