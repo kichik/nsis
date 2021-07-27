@@ -164,8 +164,7 @@ int SetArgv(const TCHAR *cmdLine, TCHAR ***argv) {
 
 void SetTitle(HWND hwnd,const TCHAR *substr) {
   TCHAR title[64];
-  if (substr==NULL) wsprintf(title,_T("MakeNSISW"));
-  else wsprintf(title,_T("MakeNSISW - %s"),substr); 
+  wsprintf(title,substr ? _T("MakeNSISW - %s") : _T("MakeNSISW"),substr);
   SetWindowText(hwnd,title);
 }
 
@@ -183,7 +182,7 @@ void PlayAppSoundAsync(LPCSTR SoundName, int MBFallback) {
   PLAYAPPSOUNDDATA *p = (PLAYAPPSOUNDDATA*) MemAlloc(sizeof(PLAYAPPSOUNDDATA));
   if (p) {
     p->SoundName = SoundName, p->MBFallback = MBFallback; // Note: The string must be valid until the sound has started because we don't copy it
-    HANDLE hThread = CreateThread(NULL, 0, PlayAppSoundProc, p, 0, &tid);
+    HANDLE hThread = CreateThread(NULL, 0, PlayAppSoundProc, p, 0, SupportsW9X() ? &tid : (tid, NULL));
     if (hThread) CloseHandle(hThread); else PlayAppSoundProc(p);
   }
 }
