@@ -182,7 +182,7 @@ void PlayAppSoundAsync(LPCSTR SoundName, int MBFallback) {
   PLAYAPPSOUNDDATA *p = (PLAYAPPSOUNDDATA*) MemAlloc(sizeof(PLAYAPPSOUNDDATA));
   if (p) {
     p->SoundName = SoundName, p->MBFallback = MBFallback; // Note: The string must be valid until the sound has started because we don't copy it
-    HANDLE hThread = CreateThread(NULL, 0, PlayAppSoundProc, p, 0, SupportsW9X() ? &tid : (tid, NULL));
+    HANDLE hThread = CreateThread(NULL, 0, PlayAppSoundProc, p, 0, SupportsW9X() ? &tid : 0);
     if (hThread) CloseHandle(hThread); else PlayAppSoundProc(p);
   }
 }
