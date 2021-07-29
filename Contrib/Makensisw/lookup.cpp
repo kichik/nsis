@@ -310,7 +310,7 @@ static INT_PTR CALLBACK LookupDlgProc(HWND hDlg, UINT Msg, WPARAM WParam, LPARAM
         break;
       case LM_FMTMSG:
         {
-          UINT flags = FORMAT_MESSAGE_FROM_SYSTEM|FORMAT_MESSAGE_IGNORE_INSERTS;
+          UINT flags = FORMAT_MESSAGE_FROM_SYSTEM|FORMAT_MESSAGE_IGNORE_INSERTS, succ = false;
           ULARGE_INTEGER li = PathParseIconLocationEx(buf);
           LPCTSTR numstr = buf;
           HMODULE hMod = 0;
@@ -321,12 +321,11 @@ static INT_PTR CALLBACK LookupDlgProc(HWND hDlg, UINT Msg, WPARAM WParam, LPARAM
             if (!hMod) goto badmsgmod;
           }
           hr = StrToSInt(numstr);
-          if (!FormatMessage(flags, hMod, hr, 0, buf, COUNTOF(buf), NULL)) badmsgmod:
-          {
-            hr = GetLastError();
-            goto die_hr;
-          }
+          succ = FormatMessage(flags, hMod, hr, 0, buf, COUNTOF(buf), NULL) != 0;
+badmsgmod:
+          hr = GetLastError();
           if (hMod) FreeLibrary(hMod);
+          if (!succ) goto die_hr;
           SetWindowText(pDD->hOutTxt, buf);
         }
         break;
