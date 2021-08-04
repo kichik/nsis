@@ -343,6 +343,10 @@ INT_PTR CALLBACK DialogProc(HWND hDlg, UINT Msg, WPARAM wp, LPARAM lp)
 	HWND hCtl, hCtl2;
 	switch(Msg)
 	{
+	case WM_SIZE:
+		if (wp == SIZE_MAXIMIZED) ShowWindow(hDlg, SW_SHOWNOACTIVATE); // Disallow STARTF_USESHOWWINDOW+SW_MAXIMIZE
+		break;
+
 	case WM_COMMAND:
 		switch(wp)
 		{

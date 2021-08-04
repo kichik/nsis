@@ -288,6 +288,9 @@ static INT_PTR CALLBACK SpyDlgProc(HWND hDlg, UINT Msg, WPARAM WParam, LPARAM LP
   DIALOGDATA*pDD = DIALOGDATA::Get(hDlg);
   switch(Msg)
   {
+  case WM_SIZE:
+    if (WParam == SIZE_MAXIMIZED) ShowWindow(hDlg, SW_SHOWNOACTIVATE); // Disallow STARTF_USESHOWWINDOW+SW_MAXIMIZE
+    break;
   case WM_INITDIALOG:
     DIALOGDATA::Set(hDlg, (pDD = (DIALOGDATA*) LParam));
     CenterOnParent(hDlg);

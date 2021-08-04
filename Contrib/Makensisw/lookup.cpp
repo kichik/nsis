@@ -179,6 +179,9 @@ static INT_PTR CALLBACK LookupDlgProc(HWND hDlg, UINT Msg, WPARAM WParam, LPARAM
 
   switch(Msg)
   {
+  case WM_SIZE:
+    if (WParam == SIZE_MAXIMIZED) ShowWindow(hDlg, SW_SHOWNOACTIVATE); // Disallow STARTF_USESHOWWINDOW+SW_MAXIMIZE
+    break;
   case WM_INITDIALOG:
     DIALOGDATA::Set(hDlg, (pDD = (DIALOGDATA*) LParam));
     CenterOnParent(hDlg);

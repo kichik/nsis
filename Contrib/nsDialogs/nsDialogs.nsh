@@ -39,9 +39,12 @@ Header file for creating custom installer pages with nsDialogs
 !define /ifndef WS_CLIPSIBLINGS      0x04000000
 !define /ifndef WS_CLIPCHILDREN      0x02000000
 !define /ifndef WS_MAXIMIZE          0x01000000
+!define /ifndef WS_BORDER            0x00800000
 !define /ifndef WS_VSCROLL           0x00200000
 !define /ifndef WS_HSCROLL           0x00100000
 !define /ifndef WS_GROUP             0x00020000
+!define /ifndef WS_MINIMIZEBOX       0x00020000
+!define /ifndef WS_MAXIMIZEBOX       0x00010000
 !define /ifndef WS_TABSTOP           0x00010000
 
 !define ES_LEFT              0x00000000

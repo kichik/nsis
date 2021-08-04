@@ -633,6 +633,9 @@ INT_PTR CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
   static HFONT hFont=0;
   switch (uMsg)
   {
+    case WM_SIZE:
+      if (wParam == SIZE_MAXIMIZED) ShowWindow(hwndDlg, SW_SHOWNOACTIVATE); // Disallow STARTF_USESHOWWINDOW+SW_MAXIMIZE
+    break;
     case WM_INITDIALOG:
       g_hwnd=hwndDlg;
       CheckDlgButton(hwndDlg,IDC_LZMA,BST_CHECKED);
