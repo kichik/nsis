@@ -253,6 +253,7 @@ class CEXEBuild {
     unsigned int get_header_size() const { return (unsigned int)sizeof(header) + (is_target_64bit() ? (4 * BLOCKS_NUM) : 0); }
 
     void set_default_output_filename(const tstring& filename);
+    const TCHAR* get_output_filename() const { return build_output_filename; }
 
     // process a script (you can process as many scripts as you want,
     // it is as if they are concatenated)

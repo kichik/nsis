@@ -19,6 +19,8 @@ If you want to use MakeNSIS on the command line, the syntax of makensis is:
 
 \b The /O switch followed by a filename tells the compiler to print its log to that file (instead of the screen)
 
+\b /LAUNCH executes the generated installer.
+
 \b /PAUSE makes makensis pause before quitting, which is useful when executing directly from Windows.
 
 \b /NOCONFIG disables inclusion of nsisconf.nsh. Without this parameter, installer defaults are set from nsisconf.nsh.

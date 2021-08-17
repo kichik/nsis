@@ -181,6 +181,7 @@ static void print_usage()
          _T("  ") OPT_STR _T("Vx verbosity where x is 4=all,3=no script,2=no info,1=no warnings,0=none\n")
          _T("  ") OPT_STR _T("WX treat warnings as errors\n")
          _T("  ") OPT_STR _T("Ofile specifies a text file to log compiler output (default is stdout)\n")
+         _T("  ") OPT_STR _T("LAUNCH executes the generated installer\n")
          _T("  ") OPT_STR _T("PAUSE pauses after execution\n")
          _T("  ") OPT_STR _T("NOCONFIG disables inclusion of <path to makensis.exe>") PLATFORM_PATH_SEPARATOR_STR _T("nsisconf.nsh\n")
          _T("  ") OPT_STR _T("NOCD disables the current directory change to that of the .nsi file\n")
@@ -309,7 +310,7 @@ static inline int makensismain(int argc, TCHAR **argv)
   const TCHAR*stdoutredirname=0;
   NStreamEncoding inputenc, &outputenc = g_outputenc;
   int argpos=0;
-  bool do_cd=true, noconfig=false;
+  unsigned char do_cd=true, noconfig=false, do_exec=false;
   bool no_logo=true, warnaserror=false;
   bool initialparsefail=false, in_files=false;
   bool oneoutputstream=false;
@@ -467,8 +468,9 @@ static inline int makensismain(int argc, TCHAR **argv)
       if (!_tcsicmp(swname,_T("PPO")) || !_tcsicmp(swname,_T("SafePPO"))) {} // Already parsed
       else if (!_tcsicmp(swname,_T("WX"))) {} // Already parsed
       else if (!_tcsicmp(swname,_T("NOCD"))) do_cd=false;
-      else if (!_tcsicmp(swname,_T("NOCONFIG"))) noconfig=true;
+      else if (!_tcsicmp(swname,_T("NOCONFIG"))) noconfig++;
       else if (!_tcsicmp(swname,_T("PAUSE"))) g_dopause=true;
+      else if (!_tcsicmp(swname,_T("LAUNCH"))) do_exec++;
       else if (!_tcsicmp(swname,_T("HELP")))
       {
         print_usage();
@@ -670,6 +672,18 @@ static inline int makensismain(int argc, TCHAR **argv)
     build.ERROR_MSG(_T("Error - aborting creation process\n"));
     return 1;
   }
+
+  if (do_exec)
+  {
+    const TCHAR *app = build.get_output_filename();
+#ifdef _WIN32
+    ShellExecute(0, 0, app, 0, 0, SW_SHOW);
+#else
+    const TCHAR *cmd = _tgetenv(_T("NSISLAUNCHCOMMAND"));
+    sane_system(replace_all(cmd ? cmd : _T("wine start '%1'"), _T("%1"), app).c_str());
+#endif
+  }
+
   return 0;
 }
 
