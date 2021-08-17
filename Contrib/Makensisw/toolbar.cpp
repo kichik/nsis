@@ -87,7 +87,7 @@ static void LoadToolBarImages()
   HWND hTB = g_toolbar.hwnd;
   // Comctl32.dll version detection
 #ifndef _WIN64
-  HMODULE hMod = GetModuleHandle(_T("comctl32.dll"));
+  HMODULE hMod = LoadSysLibrary("COMCTL32");
   const FARPROC hasCC4_70 = (SupportsW95()) ? GetProcAddress(hMod, "InitCommonControlsEx") : (FARPROC) TRUE; // NT4 shipped with v4.70
   const FARPROC hasCC4_71 = (SupportsWNT4() || SupportsW95()) ? GetProcAddress(hMod, "DllGetVersion") : (FARPROC) TRUE; // IE4 shipped with v4.71
 #else
