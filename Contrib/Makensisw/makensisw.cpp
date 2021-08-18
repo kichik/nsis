@@ -555,7 +555,7 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
             GetClientRect(edit, &r);
             if (!PtInRect(&r, pt)) pt.x = pt.y = 0;
             MapWindowPoints(edit, HWND_DESKTOP, &pt, 1);
-            TrackPopupMenu(g_sdata.editSubmenu, TPM_LEFTALIGN | TPM_LEFTBUTTON | TPM_RIGHTBUTTON, pt.x, pt.y, 0, g_sdata.hwnd, 0);
+            TrackPopupMenu(g_sdata.editSubmenu, GetMenuDropAlignment() | TPM_LEFTBUTTON | TPM_RIGHTBUTTON, pt.x, pt.y, 0, g_sdata.hwnd, 0);
           }
           break;
         case TBN_DROPDOWN:

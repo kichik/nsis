@@ -138,6 +138,7 @@ bool FileExists(const TCHAR *fname);
 bool OpenUrlInDefaultBrowser(HWND hwnd, LPCSTR Url);
 
 HMENU FindSubMenu(HMENU hMenu, UINT uId);
+static UINT GetMenuDropAlignment() { return GetSystemMetrics(SM_MENUDROPALIGNMENT) ? TPM_RIGHTALIGN : TPM_LEFTALIGN; }
 
 typedef enum { CFF_RAWSIZE = 0x00, CFF_DPIPT = 0x01, CFF_DPIFROMHWND = 0x02 } CREATEFONTFLAGS;
 HFONT CreateFontHelper(INT_PTR Data, int Height, DWORD p1, LPCTSTR Face);

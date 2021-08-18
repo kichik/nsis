@@ -38,6 +38,7 @@
 #define SupportsW9X() ( sizeof(TCHAR) == 1 )
 #define SupportsW95() ( FALSE && SupportsW9X() && !DpiAwarePerMonitor() )
 #define SupportsW2000() ( sizeof(void*) == 4 )
+#define SupportsRTLUI() ( FALSE ) // UI is English only
 
 static inline bool IsWin9598ME() { return SupportsW9X() && (int) GetVersion() < 0; }
 static inline bool IsWin95() { return SupportsW95() && (GetVersion() & (0x8000FFFF & ~0x0300)) == 0x80000004; }

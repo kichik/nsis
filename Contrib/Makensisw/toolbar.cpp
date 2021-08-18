@@ -195,16 +195,18 @@ void EnableToolBarButton(int cmdid, BOOL enabled)
   SendMessage(g_toolbar.hwnd, TB_SETSTATE, cmdid, MAKELPARAM(state, 0));
 }
 
-static UINT IsRTL(HWND hWnd) { return ((UINT) GetWindowLongPtr(hWnd, GWL_EXSTYLE)) & (WS_EX_LAYOUTRTL); } // WS_EX_RIGHT? WS_EX_RTLREADING?
+static bool IsRTL(HWND hWnd) { return (((UINT) GetWindowLongPtr(hWnd, GWL_EXSTYLE)) & (WS_EX_LAYOUTRTL)) != 0; } // WS_EX_RIGHT? WS_EX_RTLREADING?
 
 static UINT GetToolbarDropdownMenuPos(HWND hTB, UINT Id, POINT&pt)
 {
   RECT r;
   INT_PTR idx = SendMessage(hTB, TB_COMMANDTOINDEX, Id, 0);
+  UINT tpm_align = GetMenuDropAlignment();
+  bool ralign = tpm_align != TPM_LEFTALIGN, rtl = SupportsRTLUI() && IsRTL(hTB);
   SendMessage(hTB, TB_GETITEMRECT, idx, (LPARAM) &r);
   MapWindowPoints(hTB, NULL, (POINT*) &r, 2);
-  pt.x = IsRTL(hTB) ? r.right : r.left, pt.y = r.bottom;
-  return GetSystemMetrics(SM_MENUDROPALIGNMENT) ? TPM_RIGHTALIGN : TPM_LEFTALIGN;
+  pt.x = (rtl ^ ralign) ? r.right : r.left, pt.y = r.bottom;
+  return tpm_align | (rtl ? TPM_LAYOUTRTL : 0) | TPM_VERTICAL;
 }
 
 static void ShowToolbarDropdownMenu(const NMTOOLBAR&nmtb, HWND hNotifyWnd, HMENU hParentMenu, UINT SubMenuId = -1)
