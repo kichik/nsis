@@ -72,6 +72,8 @@ int WINAPI _tWinMain(HINSTANCE hInst,HINSTANCE hOldInst,LPTSTR CmdLineParams,int
       RegisterClass(&wc); // Superclass the old link window class if SysLink is not available
     }
   }
+  #else
+  if (succ) {} // Unreferenced variable
   #endif
 
   memset(&g_sdata,0,sizeof(NSCRIPTDATA));
@@ -265,6 +267,7 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
       // Altered by Darren Owen (DrO) on 29/9/2003
       // Added in receiving of mouse and key events from the richedit control
       SendDlgItemMessage(hwndDlg,IDC_LOGWIN,EM_SETEVENTMASK,(WPARAM)NULL,ENM_SELCHANGE|ENM_MOUSEEVENTS|ENM_KEYEVENTS);
+      InitializeLogWindow();
       g_sdata.menu = GetMenu(g_sdata.hwnd);
       g_sdata.fileSubmenu = FindSubMenu(g_sdata.menu, IDM_FILE);
       g_sdata.editSubmenu = FindSubMenu(g_sdata.menu, IDM_EDIT);
@@ -333,6 +336,7 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
       SaveSymbols();
       SaveMRUList();
       SaveWindowPos(g_sdata.hwnd);
+      ReleaseLogWindow();
       ImageList_Destroy(g_toolbar.imagelist);
       ImageList_Destroy(g_toolbar.imagelistd);
       ImageList_Destroy(g_toolbar.imagelisth);

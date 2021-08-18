@@ -237,6 +237,7 @@ typedef struct NSISScriptData {
   HANDLE sigint_event;
   HANDLE sigint_event_legacy;
   HWND focused_hwnd;
+  void*pLogTextDoc;
   NCOMPRESSOR default_compressor;
   NCOMPRESSOR compressor;
   LPCTSTR compressor_name;

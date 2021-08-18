@@ -215,6 +215,10 @@ Version History
 - Added Lookup tool
 - Use Consolas font if it exists
 
+2.4.1
+- Prevent user from modifying the log
+
+
 Copyright Information
 ---------------------
 Copyright (c) 2002 Robert Rainwater

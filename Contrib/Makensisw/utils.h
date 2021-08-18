@@ -65,6 +65,8 @@ int SetArgv(const TCHAR *cmdLine, TCHAR ***argv);
 void SetTitle(HWND hwnd,const TCHAR *substr);
 void PlayAppSoundAsync(LPCSTR SoundName, int MBFallback = -1);
 void CopyToClipboard(HWND hwnd);
+void InitializeLogWindow();
+void ReleaseLogWindow();
 enum LOGCOLOR { LC_SUCCESS, LC_WARNING, LC_ERROR, LC_SYSCOLOR };
 void SetLogColor(enum LOGCOLOR lc);
 void ClearLog(HWND hwnd);
@@ -138,7 +140,7 @@ bool FileExists(const TCHAR *fname);
 bool OpenUrlInDefaultBrowser(HWND hwnd, LPCSTR Url);
 
 HMENU FindSubMenu(HMENU hMenu, UINT uId);
-static UINT GetMenuDropAlignment() { return GetSystemMetrics(SM_MENUDROPALIGNMENT) ? TPM_RIGHTALIGN : TPM_LEFTALIGN; }
+static inline UINT GetMenuDropAlignment() { return GetSystemMetrics(SM_MENUDROPALIGNMENT) ? TPM_RIGHTALIGN : TPM_LEFTALIGN; }
 
 typedef enum { CFF_RAWSIZE = 0x00, CFF_DPIPT = 0x01, CFF_DPIFROMHWND = 0x02 } CREATEFONTFLAGS;
 HFONT CreateFontHelper(INT_PTR Data, int Height, DWORD p1, LPCTSTR Face);

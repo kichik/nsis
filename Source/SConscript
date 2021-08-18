@@ -57,6 +57,7 @@ libs = Split("""
 	iconv
 	shlwapi
 	oleaut32
+	version
 	shell32
 """)
 

@@ -64,11 +64,13 @@ template<class T> static ULARGE_INTEGER PathParseIconLocationEx(T*Path)
   return (li.HighPart = (UINT) comma, li.LowPart = idx, li);
 }
 
+#ifndef _WIN64
 static int WINAPI PathParseIconLocationFallback(LPSTR Path)
 {
   ULARGE_INTEGER li = PathParseIconLocationEx(Path);
   return li.LowPart;
 }
+#endif
 
 static HRESULT GetSpecialFolderPath(HWND hWnd, LPTSTR Buf, UINT csidl)
 {

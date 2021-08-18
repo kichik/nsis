@@ -206,6 +206,29 @@ void CopyToClipboard(HWND hwnd) {
   CloseClipboard();
 }
 
+#include <shlobj.h>
+#if defined(MSFTEDIT_CLASS)
+#include <tom.h>
+#define RE_HAS_TOM
+#define IID_ITextDocument NSIS_IID_ITextDocument
+static const GUID IID_ITextDocument = { 0x8cc497c0, 0xa1df, 0x11ce, { 0x80,0x98,0x0,0xaa,0x0,0x47,0xbe,0x5d } };
+#endif
+void ReleaseLogWindow() {
+#ifdef RE_HAS_TOM
+  if (g_sdata.pLogTextDoc) ((IUnknown*)g_sdata.pLogTextDoc)->Release();
+#endif
+}
+void InitializeLogWindow() {
+#ifdef RE_HAS_TOM
+  IUnknown *pTD = 0, *pREO;
+  if (SendDlgItemMessage(g_sdata.hwnd, IDC_LOGWIN, EM_GETOLEINTERFACE, 0, (LPARAM)&pREO) && pREO) {
+    if (FAILED(pREO->QueryInterface(IID_ITextDocument, (void**) &pTD))) pTD = 0;
+    pREO->Release();
+  }
+  g_sdata.pLogTextDoc = pTD;
+#endif
+}
+
 void SetLogColor(enum LOGCOLOR lc)
 {
   enum { em_seteditstyle = (WM_USER + 204), ses_extendbackcolor = 4 };
@@ -228,10 +251,18 @@ void ClearLog(HWND hwnd) {
 }
 
 void LogMessage(HWND hwnd,const TCHAR *str) {
-  SendDlgItemMessage(hwnd, IDC_LOGWIN, EM_SETSEL, g_sdata.logLength, g_sdata.logLength);
+  HWND hLogWin = GetDlgItem(hwnd, IDC_LOGWIN);
+#ifdef RE_HAS_TOM
+  ITextDocument*pTD = (ITextDocument*) g_sdata.pLogTextDoc;
+  if (pTD) pTD->Freeze(0);
+#endif
+  SendMessage(hLogWin, EM_SETSEL, g_sdata.logLength, g_sdata.logLength);
+  SendMessage(hLogWin, EM_REPLACESEL, 0, (LPARAM)str);
+  SendMessage(hLogWin, EM_SCROLLCARET, 0, 0);
+#ifdef RE_HAS_TOM
+  if (pTD) pTD->Unfreeze(0), InvalidateRect(hLogWin, NULL, false);
+#endif
   g_sdata.logLength += lstrlen(str);
-  SendDlgItemMessage(hwnd, IDC_LOGWIN, EM_REPLACESEL, 0, (LPARAM)str);
-  SendDlgItemMessage(hwnd, IDC_LOGWIN, EM_SCROLLCARET, 0, 0);
 }
 
 void ErrorMessage(HWND hwnd,const TCHAR *str) {

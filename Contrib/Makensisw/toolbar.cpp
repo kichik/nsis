@@ -197,6 +197,9 @@ void EnableToolBarButton(int cmdid, BOOL enabled)
 
 static bool IsRTL(HWND hWnd) { return (((UINT) GetWindowLongPtr(hWnd, GWL_EXSTYLE)) & (WS_EX_LAYOUTRTL)) != 0; } // WS_EX_RIGHT? WS_EX_RTLREADING?
 
+#ifndef TPM_LAYOUTRTL
+#define TPM_LAYOUTRTL 0x8000 // For MinGW (w32api-4.0.3-1)
+#endif
 static UINT GetToolbarDropdownMenuPos(HWND hTB, UINT Id, POINT&pt)
 {
   RECT r;
