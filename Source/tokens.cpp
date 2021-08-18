@@ -273,6 +273,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_MANIFEST_GDISCALING,_T("ManifestGdiScaling"),1,0,_T("notset|true"),TP_GLOBAL},
 {TOK_P_PACKEXEHEADER,_T("!packhdr"),2,0,_T("temp_file_name command_line_to_compress_that_temp_file"),TP_ALL},
 {TOK_P_FINALIZE,_T("!finalize"),1,2,_T("command_with_%1 [<OP retval>]"),TP_ALL},
+{TOK_P_UNINSTFINALIZE,_T("!uninstfinalize"),1,2,_T("command_with_%1 [<OP retval>]"),TP_ALL},
 {TOK_P_SYSTEMEXEC,_T("!system"),1,2,_T("command [<OP retval> | <retvalsymbol>]\n    OP=(< > <> =)"),TP_ALL},
 {TOK_P_EXECUTE,_T("!execute"),1,2,_T("command [<OP retval> | <retvalsymbol>]\n    OP=(< > <> =)"),TP_ALL},
 {TOK_P_MAKENSIS,_T("!makensis"),1,2,_T("parameters [<OP retval> | <retvalsymbol>]"),TP_ALL},

@@ -714,6 +714,15 @@ char* create_file_view_readonly(const TCHAR *filepath, FILEVIEW&mmfv)
 #endif
 }
 
+size_t write_octets_to_file(const TCHAR *filename, const void *data, size_t cb)
+{
+  FILE *hfile = FOPEN(filename, ("wb"));
+  if (!hfile) return 0;
+  size_t ret = fwrite(data, 1, cb, hfile);
+  fclose(hfile);
+  return ret;
+}
+
 TCHAR* create_tempfile_path()
 {
   TCHAR *tfpath = NULL;

@@ -10,6 +10,10 @@ Released on ???? ??th, 20??
 
 \S1{v3.08-cl} Changelog
 
+\S2{} Major Changes
+
+\b Added \R{uninstfinalize}{!uninstfinalize} (\W{http://sf.net/p/nsis/patches/280}{patch #280}, \W{http://sf.net/p/nsis/bugs/1241}{bug #1241})
+
 \S2{} Minor Changes
 
 \b Disallow start maximized mode

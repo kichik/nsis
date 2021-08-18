@@ -1563,36 +1563,41 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         hFile=myOpenFile(buf1,GENERIC_WRITE,CREATE_ALWAYS);
         if (hFile != INVALID_HANDLE_VALUE)
         {
-          unsigned char *filebuf;
-          int filehdrsize = g_filehdrsize;
-          filebuf=(unsigned char *)GlobalAlloc(GPTR,filehdrsize);
-          if (filebuf)
+          int dboffset = parm1;
+          if (parm2)
           {
-            SetSelfFilePointer(0);
-            ReadSelfFile((char*)filebuf,filehdrsize);
+            unsigned char *filebuf;
+            int filehdrsize = g_filehdrsize;
+            filebuf=(unsigned char *)GlobalAlloc(GPTR,filehdrsize);
+            if (filebuf)
             {
-              // parm1 = uninstdata_offset
-              // parm2 = m_unicon_size
-              unsigned char* seeker;
-              unsigned char* unicon_data = seeker = (unsigned char*)GlobalAlloc(GPTR,parm2);
-              if (unicon_data) {
-                GetCompressedDataFromDataBlockToMemory(parm1,unicon_data,parm2);
-                while (*seeker) {
-                  struct icondata {
-                    DWORD dwSize;
-                    DWORD dwOffset;
-                  } id = *(struct icondata *) seeker;
-                  seeker += sizeof(struct icondata);
-                  mini_memcpy(filebuf+id.dwOffset, seeker, id.dwSize);
-                  seeker += id.dwSize;
+              SetSelfFilePointer(0);
+              ReadSelfFile((char*)filebuf,filehdrsize);
+              {
+                // parm1 = uninstdata_offset
+                // parm2 = m_unicon_size
+                unsigned char* seeker;
+                unsigned char* unicon_data = seeker = (unsigned char*)GlobalAlloc(GPTR,parm2);
+                if (unicon_data) {
+                  GetCompressedDataFromDataBlockToMemory(parm1,unicon_data,parm2);
+                  while (*seeker) {
+                    struct icondata {
+                      DWORD dwSize;
+                      DWORD dwOffset;
+                    } id = *(struct icondata *) seeker;
+                    seeker += sizeof(struct icondata);
+                    mini_memcpy(filebuf+id.dwOffset, seeker, id.dwSize);
+                    seeker += id.dwSize;
+                  }
+                  GlobalFree(unicon_data);
                 }
-                GlobalFree(unicon_data);
               }
+              myWriteFile(hFile,(char*)filebuf,filehdrsize);
+              GlobalFree(filebuf);
+              dboffset = -1;
             }
-            myWriteFile(hFile,(char*)filebuf,filehdrsize);
-            GlobalFree(filebuf);
-            ret=GetCompressedDataFromDataBlock(-1,hFile);
           }
+          ret=GetCompressedDataFromDataBlock(dboffset, hFile);
           CloseHandle(hFile);
         }
         log_printf3(_T("created uninstaller: %d, \"%s\""),ret,buf1);

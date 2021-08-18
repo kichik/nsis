@@ -120,9 +120,17 @@ This option makes the compiler use an external EXE packer (such as \W{http://www
 
 \c command [compare comparevalue]
 
-This option will execute 'command' using a call to system() after the output EXE has been generated. You can typically use it to sign (Authenticode) your installer. If 'command' contains a '%1' it will be replaced by the executables filename.
+This option will execute 'command' using a call to system() after the installer EXE has been generated. You can typically use it to sign (Authenticode) your installer. If 'command' contains a '%1' it will be replaced by the executables filename.
 
-\c !finalize 'sign.bat "%1" "Product Installer" http://example.com'
+\c !finalize 'sign.bat "%1" "MyProduct Installer" http://example.com'
+
+\S1{uninstfinalize} !uninstfinalize
+
+\c command [compare comparevalue]
+
+This option will execute 'command' using a call to system() after the uninstaller EXE has been generated. You can typically use it to sign (Authenticode) your uninstaller. If 'command' contains a '%1' it will be replaced by the executables filename.
+
+\c !uninstfinalize 'sign.bat "%1" "MyProduct Installer" http://example.com'
 
 \S1{system} !system
 

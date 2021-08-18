@@ -390,7 +390,7 @@ class CEXEBuild {
     int pp_define(LineParser&line);
     int pp_undef(LineParser&line);
     int pp_packhdr(LineParser&line);
-    int pp_finalize(LineParser&line);
+    int pp_finalize(int which_token, LineParser&line);
     int pp_execute(int which_token, LineParser&line);
     int pp_addincludedir(LineParser&line);
     int pp_include(LineParser&line);
@@ -606,7 +606,7 @@ class CEXEBuild {
       TCHAR cmd[1];
       void delete_all();
       static postbuild_cmd* make(const TCHAR *cmdstr, int cmpop, int cmpval);
-    } *postbuild_cmds;
+    } *postbuild_cmds, *postubuild_cmds;
     int run_postbuild_cmds(const postbuild_cmd *cmds, const TCHAR *templatearg_pc1, const TCHAR* commandname);
     int check_external_exitcode(int exitcode, int op, int val);
 

@@ -287,6 +287,8 @@ typedef struct { char*base; size_t internal; } FILEVIEW;
 void close_file_view(FILEVIEW&mmfv);
 char* create_file_view_readonly(const TCHAR *filepath, FILEVIEW&mmfv);
 
+size_t write_octets_to_file(const TCHAR *filename, const void *data, size_t cb);
+
 // round a value up to be a multiple of 512
 // assumption: T is an int type
 template <class T> inline T align_to_512(const T x) { return (x+511) & ~511; }

@@ -530,7 +530,7 @@ parse_again:
       extern FILE *g_output;
       bool pptok = is_pp_token(tkid), docmd = pptok;
       bool both = TOK_P_VERBOSE == tkid || TOK_P_WARNING == tkid || TOK_P_ECHO == tkid;
-      if (TOK_P_FINALIZE == tkid || TOK_P_PACKEXEHEADER == tkid) docmd = false;
+      if (TOK_P_FINALIZE == tkid || TOK_P_UNINSTFINALIZE == tkid || TOK_P_PACKEXEHEADER == tkid) docmd = false;
       if (docmd && is_unsafe_pp_token(tkid) && preprocessonly > 0) docmd = false;
       if (!docmd || both) _ftprintf(g_output,(_T("%") NPRIs _T("\n")),ppoline.get());
       if (!docmd && !both) return PS_OK;
@@ -2553,7 +2553,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_P_PACKEXEHEADER:
     return pp_packhdr(line);
     case TOK_P_FINALIZE:
-    return pp_finalize(line);
+    case TOK_P_UNINSTFINALIZE:
+    return pp_finalize(which_token, line);
     case TOK_P_SYSTEMEXEC:
     case TOK_P_EXECUTE:
     case TOK_P_MAKENSIS:
