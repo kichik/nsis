@@ -54,6 +54,11 @@ HMODULE LoadSysLibrary(LPCSTR Mod);
 FARPROC GetSysProcAddr(LPCSTR Mod, LPCSTR FuncName);
 bool WriteUTF16LEBOM(HANDLE hFile);
 
+BOOL InitCCExHelper(UINT icc);
+static inline BOOL InitCCEx(UINT icc) { return icc > 0xff ? InitCCExHelper(icc) : true; }
+static inline UINT SizeOfStruct(const TOOLINFO&x) { return FIELD_OFFSET(TOOLINFO, lParam); }
+static inline UINT SizeOfStruct(const OPENFILENAME&x) { return sizeof(void*) < 8 ? 76 : sizeof(x); }
+
 void FreeSpawn(PROCESS_INFORMATION *pPI, HANDLE hRd, HANDLE hWr);
 BOOL InitSpawn(STARTUPINFO &si, HANDLE &hRd, HANDLE &hWr);
 
@@ -89,7 +94,9 @@ void ResetSymbols();
 int InitBranding();
 void InitTooltips(HWND h);
 void DestroyTooltips();
-void AddTip(HWND hWnd,LPCTSTR lpszToolTip);
+void AddTip(HWND hWnd, LPCTSTR lpszToolTip);
+LRESULT SetTooltipText(HWND hWnd, UINT_PTR Id, LPCTSTR Text);
+void UpdateCloseButtonTooltip();
 void ShowDocs();
 void RestoreCompressor();
 void SaveCompressor();

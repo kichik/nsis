@@ -599,7 +599,7 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
           {
             TCHAR buf[MAX_PATH];
             lstrcpyn(buf, FSPath::FindLastComponent(((PROMPT_FILEPATH_DATA*)cds->lpData)->Path), COUNTOF(buf));
-            OPENFILENAME of = { sizeof(of) };
+            OPENFILENAME of = { SizeOfStruct(of) };
             of.hwndOwner = hwndDlg;
             of.lpstrFilter = _T("*.exe\0*.exe\0*\0*.*\0");
             of.lpstrFile = buf, of.nMaxFile = COUNTOF(buf);
@@ -633,6 +633,7 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
         case TID_CONFIGURECLOSEORABORT:
           SendMessage(hCtl = GetDlgItem(hwndDlg, IDCANCEL), WM_SETTEXT, 0, (LPARAM) (g_sdata.thread ? _T("&Abort") : _T("&Close")));
           EnableWindow(hCtl, true);
+          UpdateCloseButtonTooltip();
           return KillTimer(hwndDlg, wParam);
       }
       break;
@@ -666,7 +667,7 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
         case IDM_LOADSCRIPT:
         {
           if (!g_sdata.thread) {
-            OPENFILENAME l={sizeof(l),};
+            OPENFILENAME l = { SizeOfStruct(l) };
             TCHAR buf[MAX_PATH];
             l.hwndOwner = hwndDlg;
             l.lpstrFilter = _T("NSIS Script (*.nsi)\0*.nsi\0All Files (*.*)\0*.*\0");
@@ -783,7 +784,7 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
           return TRUE;
         case IDM_SAVE:
         {
-          OPENFILENAME l={sizeof(l),};
+          OPENFILENAME l = { SizeOfStruct(l) };
           TCHAR buf[MAX_STRING];
           l.hwndOwner = hwndDlg;
           l.lpstrFilter = _T("Log Files (*.log)\0*.log\0Text Files (*.txt)\0*.txt\0All Files (*.*)\0*.*\0");

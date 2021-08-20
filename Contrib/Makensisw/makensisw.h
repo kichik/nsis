@@ -89,6 +89,8 @@ static inline bool IsWin95() { return SupportsW95() && (GetVersion() & (0x8000FF
 #define SAVE_BUTTON_TEXT _T("Save")
 #define LOAD_SYMBOL_SET_MESSAGE _T("Please select a name for the Symbol Definitions Set to load.")
 #define SAVE_SYMBOL_SET_MESSAGE _T("Please enter or select a name for the Symbol Definitions Set to save.")
+#define TESTBTN_TIPTEXT _T("Test the generated installer")
+#define CLOSEBTN_TIPTEXT _T("Close MakeNSISW")
 
 #define WM_MAKENSIS_PROCESSCOMPLETE (WM_USER+1001)
 #define WM_MAKENSIS_LOADSYMBOLSET (WM_USER+1002)

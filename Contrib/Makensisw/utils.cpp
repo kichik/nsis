@@ -79,6 +79,13 @@ bool WriteUTF16LEBOM(HANDLE hFile)
   return WriteFile(hFile, u16lb, sizeof(u16lb));
 }
 
+BOOL InitCCExHelper(UINT icc) {
+  INITCOMMONCONTROLSEX icx = { sizeof(icx), icc };
+  BOOL suppw95 = SupportsW95();
+  FARPROC icce = suppw95 ? GetSysProcAddr("COMCTL32", "InitCommonControlsEx") : (FARPROC) InitCommonControlsEx;
+  return (!suppw95 || icce) && ((BOOL(WINAPI*)(const INITCOMMONCONTROLSEX*))icce)(&icx);
+}
+
 int SetArgv(const TCHAR *cmdLine, TCHAR ***argv) {
   const TCHAR *p;
   TCHAR *arg, *argSpace;
@@ -736,21 +743,31 @@ int InitBranding() {
   return retval;
 }
 
+LRESULT SetTooltipText(HWND hWnd, UINT_PTR Id, LPCTSTR Text) {
+  TOOLINFO ti;
+  ti.cbSize = SizeOfStruct(ti);
+  ti.uFlags = Id > 0x7fff ? TTF_IDISHWND : 0;
+  ti.hwnd = hWnd, ti.uId = Id;
+  ti.hinst = g_sdata.hInstance, ti.lpszText = const_cast<LPTSTR>(Text);
+  return SendMessage(g_tip.tip, TTM_UPDATETIPTEXT, 0, (LPARAM) (LPTOOLINFO) &ti); 
+}
+
+void UpdateCloseButtonTooltip() {
+  LPCTSTR txt = g_sdata.thread ? _T("") : CLOSEBTN_TIPTEXT;
+  SetTooltipText(g_tip.tip_p, (UINT_PTR) GetDlgItem(g_sdata.hwnd, IDCANCEL), txt);
+}
+
 void InitTooltips(HWND h) {
   if (h == NULL)  return;
-  memset(&g_tip,0,sizeof(NTOOLTIP));
+  InitCCEx(ICC_BAR_CLASSES);
+  DWORD s = WS_POPUP | WS_BORDER | TTS_ALWAYSTIP, xs = WS_EX_TOOLWINDOW | WS_EX_TOPMOST;
+  g_tip.hook = 0;
   g_tip.tip_p = h;
-  INITCOMMONCONTROLSEX icx;
-  icx.dwSize = sizeof(icx);
-  icx.dwICC  = ICC_BAR_CLASSES;
-  InitCommonControlsEx(&icx);
-  DWORD dwStyle = WS_POPUP | WS_BORDER | TTS_ALWAYSTIP;
-  DWORD dwExStyle = WS_EX_TOOLWINDOW | WS_EX_TOPMOST;
-  g_tip.tip = CreateWindowEx(dwExStyle,TOOLTIPS_CLASS,NULL,dwStyle,0,0,0,0,h,NULL,HINST_APPLICATION,NULL);
+  g_tip.tip = CreateWindowEx(xs, TOOLTIPS_CLASS, NULL, s, 0, 0, 0, 0, h, NULL, HINST_APPLICATION, NULL);
   if (!g_tip.tip) return;
-  g_tip.hook = SetWindowsHookEx(WH_GETMESSAGE,TipHookProc,NULL, GetCurrentThreadId());
-  AddTip(GetDlgItem(h,IDCANCEL),_T("Close MakeNSISW"));
-  AddTip(GetDlgItem(h,IDC_TEST),_T("Test the generated installer"));
+  g_tip.hook = SetWindowsHookEx(WH_GETMESSAGE, TipHookProc, NULL, GetCurrentThreadId());
+  AddTip(GetDlgItem(h, IDCANCEL), CLOSEBTN_TIPTEXT);
+  AddTip(GetDlgItem(h, IDC_TEST), TESTBTN_TIPTEXT);
   AddToolBarTooltips();
 }
 
@@ -758,9 +775,9 @@ void DestroyTooltips() {
   UnhookWindowsHookEx(g_tip.hook);
 }
 
-void AddTip(HWND hWnd,LPCTSTR lpszToolTip) {
+void AddTip(HWND hWnd, LPCTSTR lpszToolTip) {
   TOOLINFO ti;
-  ti.cbSize = sizeof(TOOLINFO);
+  ti.cbSize = SizeOfStruct(ti);
   ti.uFlags = TTF_IDISHWND;
   ti.hwnd   = g_tip.tip_p;
   ti.uId = (UINT_PTR) hWnd;

@@ -78,7 +78,7 @@ void CreateToolBar()
     tbbs[i].fsStyle = g_TBBtnsDesc[i].Style;
     tbbs[i].dwData = 0, tbbs[i].iString = 0;
   }
-  SendMessage(g_toolbar.hwnd, TB_ADDBUTTONS, BUTTONCOUNT, (LPARAM) &tbbs);
+  SendMessage(g_toolbar.hwnd, TB_ADDBUTTONS, BUTTONCOUNT, (LPARAM) &tbbs); // Note: TB_ADDBUTTONSW is IE4+
   LoadToolBarImages();
 }
 
@@ -148,35 +148,18 @@ void UpdateToolBarCompressorButton()
   lstrcat(szBuffer,_T("]"));
 
   SendMessage(g_toolbar.hwnd, TB_CHANGEBITMAP, (WPARAM) IDM_COMPRESSOR, (LPARAM) MAKELPARAM(iBitmap, 0));
-
-  TOOLINFO ti = { sizeof(TOOLINFO), 0 };
-  ti.hwnd = g_toolbar.hwnd;
-  ti.uId = (UINT)TBB_COMPRESSOR;
-  ti.hinst = g_sdata.hInstance;
-  SendMessage(g_tip.tip, TTM_GETTOOLINFO, 0, (LPARAM) (LPTOOLINFO) &ti);
-  ti.lpszText = (LPTSTR)szBuffer;
-  SendMessage(g_tip.tip, TTM_SETTOOLINFO, 0, (LPARAM) (LPTOOLINFO) &ti);
+  SetTooltipText(g_toolbar.hwnd, (UINT) TBB_COMPRESSOR, szBuffer);
 }
 
 void AddToolBarButtonTooltip(UINT idx, int iString)
 {
   TOOLINFO ti;
-  TCHAR   szBuffer[64];
-  RECT rect;
-
-  memset(&ti, 0, sizeof(TOOLINFO));
-  ti.cbSize = sizeof(TOOLINFO);
+  ti.cbSize = SizeOfStruct(ti);
   ti.uFlags = 0;
   ti.hwnd = g_toolbar.hwnd;
-  ti.hinst = g_sdata.hInstance;
   ti.uId = idx;
-  LoadString(g_sdata.hInstance, iString, szBuffer, COUNTOF(szBuffer));
-  ti.lpszText = (LPTSTR) szBuffer;
-  SendMessage(g_toolbar.hwnd, TB_GETITEMRECT, idx, (LPARAM) &rect);
-  ti.rect.left =rect.left;
-  ti.rect.top = rect.top;
-  ti.rect.right = rect.right;
-  ti.rect.bottom = rect.bottom;
+  ti.hinst = g_sdata.hInstance, ti.lpszText = MAKEINTRESOURCE(iString);
+  SendMessage(g_toolbar.hwnd, TB_GETITEMRECT, idx, (LPARAM) &ti.rect);
 
   SendMessage(g_tip.tip, TTM_ADDTOOL, 0, (LPARAM) &ti);
 }
