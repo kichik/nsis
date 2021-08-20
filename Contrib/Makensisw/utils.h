@@ -76,9 +76,9 @@ void CenterOnParent(HWND hwnd);
 void SetDialogFocus(HWND hDlg, HWND hCtl); // Use this and not SetFocus()!
 #define DlgRet(hDlg, val) ( SetWindowLongPtr((hDlg), DWLP_MSGRESULT, (val)) | TRUE )
 HWND GetComboEdit(HWND hCB);
-#define DisableItems(hwnd) EnableDisableItems(hwnd, 0)
-#define EnableItems(hwnd) EnableDisableItems(hwnd, 1)
-void EnableDisableItems(HWND hwnd, int on);
+#define DisableItems(hwnd) EnableDisableItems(((hwnd), 0))
+#define EnableItems(hwnd) EnableDisableItems(((hwnd), 1))
+void EnableDisableItems(int on);
 bool OpenRegSettingsKey(HKEY &hKey, bool create = false);
 #define CreateRegSettingsKey(refhkey) OpenRegSettingsKey((refhkey), true)
 DWORD ReadRegSettingDW(LPCTSTR name, const DWORD defval);

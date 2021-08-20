@@ -14,10 +14,6 @@
 #define IDS_EDITSCRIPT                  10
 #define IDS_BROWSESCR                   11
 #define IDS_CLEARLOG                    12
-#define IDS_NSISHOME                    13
-#define IDS_FORUM                       15
-#define IDS_NSISUPDATE                  16
-#define IDS_DOCS                        17
 #define IDS_SCRIPT                      18
 #define IDS_ZLIB                        19
 #define IDS_ZLIB_SOLID                  20

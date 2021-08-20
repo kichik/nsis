@@ -307,10 +307,11 @@ HWND GetComboEdit(HWND hCB)
   return FindWindowEx(hCB, hList, 0, 0);
 }
 
-void EnableDisableItems(HWND hwnd, int on) 
+void EnableDisableItems(int on) 
 {
-  const HWND hCloseBtn = GetDlgItem(hwnd, IDCANCEL);
-  const HWND hTestBtn = GetDlgItem(hwnd, IDC_TEST);
+  HWND hwndDlg = g_sdata.hwnd;
+  const HWND hCloseBtn = GetDlgItem(hwndDlg, IDCANCEL);
+  const HWND hTestBtn = GetDlgItem(hwndDlg, IDC_TEST);
   const HMENU hMenu = g_sdata.menu;
   const UINT mf = (!on ? MF_GRAYED : MF_ENABLED);
   const UINT nmf = (!on ? MF_ENABLED : MF_GRAYED);
@@ -324,7 +325,7 @@ void EnableDisableItems(HWND hwnd, int on)
     EnableMenuItem(hMenu, IDM_TEST, mf);
   }
   EnableMenuItem(hMenu, IDM_CANCEL, nmf);
-  EnableWindow(hCloseBtn, on);
+  EnableWindow(hCloseBtn, false);
 
   static const PACKEDCMDID_T cmds [] = {
     PACKCMDID(IDM_EXIT), PACKCMDID(IDM_LOADSCRIPT), PACKCMDID(IDM_EDITSCRIPT), 
@@ -339,15 +340,16 @@ void EnableDisableItems(HWND hwnd, int on)
       EnableToolBarButton(id, on);
   }
 
-  SendMessage(g_sdata.hwnd, WM_MAKENSIS_UPDATEUISTATE, 0 ,0);
+  SendMessage(hwndDlg, WM_MAKENSIS_UPDATEUISTATE, 0 ,0);
   EnableMenuItem(hMenu, IDM_FILE, mf); // Disable the whole File menu because of the MRU list
-  DrawMenuBar(g_sdata.hwnd);
+  DrawMenuBar(hwndDlg);
 
   HWND hFocus = g_sdata.focused_hwnd, hOptimal = hTestBtn;
   if (on && hCloseBtn == hFocus) hFocus = hOptimal;
-  if (!IsWindowEnabled(hFocus)) hFocus = GetDlgItem(hwnd, IDC_LOGWIN);
-  SetDialogFocus(hwnd, hOptimal);
-  SetDialogFocus(hwnd, hFocus);
+  if (!IsWindowEnabled(hFocus)) hFocus = GetDlgItem(hwndDlg, IDC_LOGWIN);
+  SetDialogFocus(hwndDlg, hOptimal);
+  SetDialogFocus(hwndDlg, hFocus);
+  SetTimer(hwndDlg, TID_CONFIGURECLOSEORABORT, 1000, 0);
 }
 
 void SetCompressorStats()

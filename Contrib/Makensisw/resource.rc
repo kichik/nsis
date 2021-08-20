@@ -380,14 +380,10 @@ BEGIN
     IDS_EDITSCRIPT          "Edit Script"
     IDS_BROWSESCR           "Open Script Folder"
     IDS_CLEARLOG            "Clear Log Window"
-    IDS_NSISHOME            "NSIS Homepage"
-    IDS_FORUM               "NSIS Forum"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_NSISUPDATE          "NSIS Update"
-    IDS_DOCS                "NSIS Users Manual"
     IDS_SCRIPT              "Defined in Script/Compiler Default"
     IDS_ZLIB                "ZLIB"
     IDS_ZLIB_SOLID          "ZLIB (solid)"

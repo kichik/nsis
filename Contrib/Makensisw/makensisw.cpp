@@ -626,6 +626,17 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
       EnableUICommand(IDM_BROWSESCR, !!g_sdata.input_script);
       break;
     }
+    case WM_TIMER:
+    {
+      HWND hCtl;
+      switch(wParam) {
+        case TID_CONFIGURECLOSEORABORT:
+          SendMessage(hCtl = GetDlgItem(hwndDlg, IDCANCEL), WM_SETTEXT, 0, (LPARAM) (g_sdata.thread ? _T("&Abort") : _T("&Close")));
+          EnableWindow(hCtl, true);
+          return KillTimer(hwndDlg, wParam);
+      }
+      break;
+    }
     case WM_COMMAND:
     {
       switch (LOWORD(wParam)) {
@@ -750,6 +761,8 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
           return TRUE;
         }
         case IDCANCEL:
+          if (g_sdata.thread)
+            return PostMessage(hwndDlg, WM_COMMAND, IDM_CANCEL, 0);
         case IDM_EXIT:
           wParam = 0;
           goto tryquitapp;

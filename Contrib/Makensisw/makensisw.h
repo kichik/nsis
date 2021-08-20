@@ -94,6 +94,7 @@ static inline bool IsWin95() { return SupportsW95() && (GetVersion() & (0x8000FF
 #define WM_MAKENSIS_LOADSYMBOLSET (WM_USER+1002)
 #define WM_MAKENSIS_SAVESYMBOLSET (WM_USER+1003)
 #define WM_MAKENSIS_UPDATEUISTATE (WM_USER+1004)
+#define TID_CONFIGURECLOSEORABORT 1
 
 namespace MakensisAPI {
   extern const TCHAR* SigintEventNameFmt;
