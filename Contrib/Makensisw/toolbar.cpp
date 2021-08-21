@@ -102,7 +102,8 @@ static void LoadToolBarImages()
   else
     imgsize = 16, iloffs = 0 * iltypecount;
 
-  if (hasCC4_70)
+  UINT dispbpp = GetScreenBPP(hTB);
+  if (hasCC4_70 && dispbpp > 8)
   {
     // Version 4.70 => Modern toolbar, 24-bit bitmaps
     g_toolbar.imagelist = ImageList_LoadImage(g_sdata.hInstance, MAKEINTRESOURCE(g_TBIL[iloffs+0]), imgsize, 0, RGB(255, 0, 255), IMAGE_BITMAP, LR_CREATEDIBSECTION);
@@ -111,9 +112,6 @@ static void LoadToolBarImages()
     SendMessage(hTB, TB_SETIMAGELIST, 0, (LPARAM) g_toolbar.imagelist);
     SendMessage(hTB, TB_SETDISABLEDIMAGELIST, 0, (LPARAM) g_toolbar.imagelistd);
     SendMessage(hTB, TB_SETHOTIMAGELIST, 0, (LPARAM) g_toolbar.imagelisth);
-
-    if (hasCC4_71)
-      SendMessage(hTB, TB_SETEXTENDEDSTYLE, 0, TBSTYLE_EX_DRAWDDARROWS);
   }
   else 
   {
@@ -123,6 +121,7 @@ static void LoadToolBarImages()
     tbBitmap.nID = IDB_TOOLBAR;
     SendMessage(hTB, TB_ADDBITMAP, IMAGECOUNT, (LPARAM) &tbBitmap);
   }
+  if (hasCC4_71) SendMessage(hTB, TB_SETEXTENDEDSTYLE, 0, TBSTYLE_EX_DRAWDDARROWS);
 }
 
 void UpdateToolBarCompressorButton()
@@ -200,7 +199,9 @@ static void ShowToolbarDropdownMenu(const NMTOOLBAR&nmtb, HWND hNotifyWnd, HMENU
   POINT pt;
   HMENU hMenu = SubMenuId == static_cast<UINT>(-1) ? hParentMenu : FindSubMenu(hParentMenu, SubMenuId);
   UINT tpmf = GetToolbarDropdownMenuPos(nmtb.hdr.hwndFrom, nmtb.iItem, pt);
+  SendMessage(g_tip.tip, TTM_ACTIVATE, false, 0);
   TrackPopupMenu(hMenu, tpmf, pt.x, pt.y, 0, hNotifyWnd, NULL);
+  SendMessage(g_tip.tip, TTM_ACTIVATE, true, 0);
 }
 
 void ShowCompressorToolbarDropdownMenu(const NMTOOLBAR&nmtb)

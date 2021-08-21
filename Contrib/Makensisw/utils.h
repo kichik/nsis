@@ -58,6 +58,7 @@ BOOL InitCCExHelper(UINT icc);
 static inline BOOL InitCCEx(UINT icc) { return icc > 0xff ? InitCCExHelper(icc) : true; }
 static inline UINT SizeOfStruct(const TOOLINFO&x) { return FIELD_OFFSET(TOOLINFO, lParam); }
 static inline UINT SizeOfStruct(const OPENFILENAME&x) { return sizeof(void*) < 8 ? 76 : sizeof(x); }
+UINT GetScreenBPP(HWND hWnd = NULL);
 
 void FreeSpawn(PROCESS_INFORMATION *pPI, HANDLE hRd, HANDLE hWr);
 BOOL InitSpawn(STARTUPINFO &si, HANDLE &hRd, HANDLE &hWr);

@@ -86,6 +86,13 @@ BOOL InitCCExHelper(UINT icc) {
   return (!suppw95 || icce) && ((BOOL(WINAPI*)(const INITCOMMONCONTROLSEX*))icce)(&icx);
 }
 
+UINT GetScreenBPP(HWND hWnd) {
+  HDC hDc = GetDC(hWnd);
+  UINT bpp = GetDeviceCaps(hDc, BITSPIXEL) * GetDeviceCaps(hDc, PLANES); // TODO: COLORRES if RASTERCAPS&RC_PALETTE?
+  ReleaseDC(hWnd, hDc);
+  return bpp;
+}
+
 int SetArgv(const TCHAR *cmdLine, TCHAR ***argv) {
   const TCHAR *p;
   TCHAR *arg, *argSpace;

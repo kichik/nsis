@@ -56,12 +56,9 @@ int WINAPI _tWinMain(HINSTANCE hInst,HINSTANCE hOldInst,LPTSTR CmdLineParams,int
   if (SDDA) ((BOOL(WINAPI*)(LPCSTR))SDDA)(""); // Remove the current directory from the default DLL search order
 
   // Try to register the SysLink class
-  DWORD iccestruct[2] = { 8, 0x8000 }; // ICC_LINK_CLASS (ComCtl32v6)
-  BOOL suppw95 = SupportsW95();
-  FARPROC icce = suppw95 ? GetSysProcAddr("COMCTL32", "InitCommonControlsEx") : (FARPROC) InitCommonControlsEx;
-  BOOL succ = (!suppw95 || icce) && ((BOOL(WINAPI*)(const void*))icce)(iccestruct);
+  enum { icc_link_class = 0x8000 }; // ComCtl32v6
   #if (!defined(_MSC_VER) && !defined(_WIN64)) || (defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_IA64))) // x86 or Itanium
-  if (!succ && (sizeof(void*) > 4 || LOBYTE(GetVersion()) >= 5)) // Must check the version because older shell32 versions have a incompatible function at the same ordinal
+  if (!InitCCEx(icc_link_class) && (sizeof(void*) > 4 || LOBYTE(GetVersion()) >= 5)) // Must check the version because older shell32 versions have a incompatible function at the same ordinal
   {
     FARPROC lwrc = GetSysProcAddr("SHELL32", (LPCSTR) 258); // LinkWindow_RegisterClass
     if (lwrc) ((BOOL(WINAPI*)())lwrc)();
@@ -72,8 +69,6 @@ int WINAPI _tWinMain(HINSTANCE hInst,HINSTANCE hOldInst,LPTSTR CmdLineParams,int
       RegisterClass(&wc); // Superclass the old link window class if SysLink is not available
     }
   }
-  #else
-  if (succ) {} // Unreferenced variable
   #endif
 
   memset(&g_sdata,0,sizeof(NSCRIPTDATA));
@@ -972,7 +967,7 @@ static INT_PTR CALLBACK AboutProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM 
         else
         {
           dd.AnimPos = finalpos;
-          SetTimer(hwndDlg, ABOUTDLGDATA::TID_HEADER, INFINITE, NULL);
+          KillTimer(hwndDlg, ABOUTDLGDATA::TID_HEADER);
         }
         InvalidateRect(GetDlgItem(hwndDlg, IDC_ABOUTHEADER), NULL, false);
       }
