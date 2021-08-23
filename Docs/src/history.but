@@ -20,6 +20,8 @@ Released on ???? ??th, 20??
 
 \b Added /LAUNCH compiler switch
 
+\b PEAddResource now supports the res:// protocol
+
 \H{v3.07} 3.07
 
 Released on July 24th, 2021

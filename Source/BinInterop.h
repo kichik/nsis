@@ -22,6 +22,9 @@
 #include "tchar.h"
 #include <stdio.h> // FILE*
 
+signed char GetExeType(const void*pData, size_t Size);
+signed char GetExeType(const TCHAR*filepath);
+
 FILE* MSTLB_fopen(const TCHAR*filepath, size_t*pResId = 0);
 bool GetTLBVersion(const TCHAR *filepath, DWORD &high, DWORD &low);
 

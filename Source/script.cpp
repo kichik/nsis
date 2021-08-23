@@ -2255,7 +2255,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_PEADDRESOURCE:
     {
       init_res_editor();
-      int tokidx = 1, ovr = 0, rep = 0;
+      int tokidx = 1, ovr = 0, rep = 0, result = PS_ERROR;
       if (!_tcsicmp(line.gettoken_str(tokidx), _T("/OVERWRITE"))) // Update the resource even if it exists
         ++ovr, ++tokidx;
       else if (!_tcsicmp(line.gettoken_str(tokidx), _T("/REPLACE"))) // Only update existing resource
@@ -2275,15 +2275,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         ERROR_MSG(_T("Error: Resource %") NPRIns _T("\n"), rep ? ("does not exist") : ("already exists"));
         return PS_ERROR;
       }
-      int result = PS_ERROR;
-      if (FILE*f = FOPEN(line.gettoken_str(tokidx+0), ("rb")))
+      if (res_editor->UpdateResourceFromExternal(rt, rn, rl, line.gettoken_str(tokidx+0), CResourceEditor::TM_AUTO))
       {
-        if (res_editor->UpdateResource(rt, rn, rl, f, CResourceEditor::TM_AUTO))
-        {
-          SCRIPT_MSG(_T("PEAddResource: %") NPRIs _T("=%") NPRIs _T("\n"), make_friendly_resource_path(rt, rnraw, rl).c_str(), line.gettoken_str(tokidx+0));
-          result = PS_OK;
-        }
-        fclose(f);
+        SCRIPT_MSG(_T("PEAddResource: %") NPRIs _T("=%") NPRIs _T("\n"), make_friendly_resource_path(rt, rnraw, rl).c_str(), line.gettoken_str(tokidx+0));
+        result = PS_OK;
       }
       return result;
     }

@@ -360,6 +360,7 @@ Adds \cw{file} as a resource to the installer and uninstaller. \cw{restype} spec
 \c PEAddResource "myimage.bmp" "#2" "#1337"
 \c PEAddResource "mybonus.ico" "#Icon" "#200"
 \c PEAddResource "myimage.png" "PNG" "#1234"
+\c PEAddResource "res://$%WINDIR%/Explorer.exe/#Icon/#101" "#Icon" "#1337"
 
 \S2{aperemoveresource} PERemoveResource
 

@@ -29,6 +29,33 @@
 #define HE2BE32 BE2HE32
 const size_t invalid_res_id = ~(size_t)0;
 
+signed char GetExeType(const void*pData, size_t Size) // Returns 'P', 'N', 'L', -'E' or '\0'
+{
+  char *filedata = (char*) pData, type = '\0';
+  PIMAGE_DOS_HEADER pIDH = (PIMAGE_DOS_HEADER) filedata;
+  if (Size > sizeof(*pIDH) && (pIDH->e_magic == 0x5A4D) | (pIDH->e_magic == 0x4D5A))
+  {
+    type = -'E'; // Basic DOS EXE
+    UINT32 nho = LE2HE32(pIDH->e_lfanew);
+    if (Size > nho + 4 && MKPTR(BYTE*, pIDH, nho)[1] == 'E')
+    {
+      if (pIDH->e_magic == IMAGE_DOS_SIGNATURE && MKPTR(PIMAGE_NT_HEADERS, pIDH, nho)->Signature == IMAGE_NT_SIGNATURE)
+        type = 'P';
+      else if (MKPTR(BYTE*, pIDH, nho)[0] == 'L' || MKPTR(BYTE*, pIDH, nho)[0] == 'N')
+        type = MKPTR(BYTE*, pIDH, nho)[0];
+    }
+  }
+  return type;
+}
+
+signed char GetExeType(const TCHAR*filepath)
+{
+  FILEVIEW map;
+  char *filedata = create_file_view_readonly(filepath, map), type = '\0';
+  if (filedata) type = GetExeType(filedata, map.size), close_file_view(map);
+  return type;
+}
+
 FILE* MSTLB_fopen(const TCHAR*filepath, size_t*pResId)
 {
   size_t resid = invalid_res_id; // MSDN:"By default, the type library is extracted from the first resource of type ITypeLib"

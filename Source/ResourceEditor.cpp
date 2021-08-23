@@ -167,12 +167,66 @@ LANGID CResourceEditor::ParseResourceTypeNameLangString(const TCHAR**Type, const
   return ParseResourceLangString(Lang);
 }
 
-template<class T> static WORD GetDependentType(T Type)
-{
+static TCHAR* ParseResProtocolAlloc(const TCHAR*Url, const TCHAR*&Type, const TCHAR*&Name, LANGID&Lang) {
+  //msdn.microsoft.com/library/aa767740#res Protocol
+  TCHAR proto[42], *path = 0, *buf = 0, *pD, ch;
+  UINT prefix = 6, mswin = Platform_IsWindows(), bad = false, pipe = 0, skip = 0;
+  my_strncpy(proto, Url, prefix+!0);
+  size_t pathend = 0, typestart = 0, namestart = 0, i, cch;
+  if (lowercase(tstring(proto)).compare(_T("res://")) != 0)
+    return path;
+  for (Url += prefix, i = 0; Url[i]; ++i)
+    if (Url[i] == '/')
+      typestart = namestart, namestart = i;
+  const TCHAR*pS = Url;
+  if (namestart > 2 && (buf = (TCHAR*) malloc((cch = ++i) * sizeof(*Url)))) {
+    if (pS[0] == '/') ++pS;
+    ch = S7ChLwr(pS[0]);
+    if (ch >= 'a' && ch <= 'z' && (pS[1] == ':' || pS[1] == '|') && IsAgnosticPathSeparator(pS[2])) { // IEBlog:"File URIs in Windows" says %3A is not a drive delimiter.
+      if (Url[0] == '/') ++skip; // "res:///C:/.." => "res://C:/.." (Even on POSIX so that our FOPEN can do "c:/.." => "/c/..")
+      pipe = (UINT)(size_t) ((pS + 1) - (Url + skip));
+    }
+    typestart -= skip, namestart -= skip;
+    const TCHAR *rt = buf + typestart + 1, *rn = buf + namestart + 1, *rl = _T("Any");
+    my_strncpy(buf, Url + skip, cch);
+    buf[typestart] = buf[namestart] = '\0'; // Note: Type and Name are not decoded.
+    if (pipe) buf[pipe] = ':'; // "res://C|/.." => "res://C:/.." (The | replacement is technically a file:// legacy feature but we support it for res:// as well)
+    for (pD = buf, pS = pD;; ++pS, ++pD) {
+      if ((ch = *pS) == '%') { // Deal with percent-encoding
+        if (*++pS != '%') {
+          TCHAR hex[3] = { pS[0], pS[0] ? pS[1] : '\0', '\0' };
+          ch = ChIsHex(pS[0]) && ChIsHex(pS[1]) ? (TCHAR) _tcstol(hex, 0, 16) : 0;
+          if (ch) ++pS; else ++bad;
+        }
+      }
+      if (!(*pD = (mswin && ch == '/') ? '\\' : ch)) break; // Convert path if needed and stop at the end.
+    }
+    Lang = CResourceEditor::ParseResourceTypeNameLangString(&rt, &rn, rl);
+    if (!bad && Lang != CResourceEditor::INVALIDLANGID)
+      path = buf, Type = rt, Name = rn;
+  }
+  if (!path) free(buf);
+  return path;
+}
+
+template<class T> static WORD GetDependentType(T Type) {
   if (!IS_INTRESOURCE((size_t) Type)) return 0;
   if (MAKEINTRESOURCE((size_t) Type) == RT_GROUP_ICON) return (WORD)(size_t) RT_ICON;
   if (MAKEINTRESOURCE((size_t) Type) == RT_GROUP_CURSOR) return (WORD)(size_t) RT_CURSOR;
   return 0;
+}
+
+template<class T> static WORD IsIcoCurSingleImageType(T Type) {
+  WORD t = IS_INTRESOURCE((size_t) Type) ? (WORD)(size_t) Type : 0;
+  return t == (WORD)(size_t) RT_ICON || t == (WORD)(size_t) RT_CURSOR;
+}
+
+template<class T> static WORD IsIcoCurGroupType(T Type) {
+  return IsIcoCurSingleImageType(GetDependentType(Type));
+}
+
+template<class T> static WORD IsIcoCurType(T Type) {
+  return IsIcoCurSingleImageType(Type) || IsIcoCurGroupType(Type);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -190,6 +244,9 @@ CResourceEditor::CResourceEditor(void* pbPE, int iSize, bool bKeepData /*=true*/
   m_pbPE = (BYTE*) pbPE;
   m_iSize = iSize;
   m_bKeepData = bKeepData;
+
+  assert(!EditorSupportsStringNames());
+  assert(!EditorSupportsCursorPng());
 
   // Get NT headers
   m_ntHeaders = GetNTHeaders(m_pbPE);
@@ -240,6 +297,13 @@ CResourceDataEntry* CResourceEditor::FindResource(const WINWCHAR* Type, const WI
   return pRDE ? pRDE->GetDataEntry() : 0;
 }
 
+template<class T> static void UpdateManipulationType(CResourceEditor::TYPEMANIPULATION &Manip, const T* szType, const void*Data, size_t Size) {
+  WORD dependenttype = GetDependentType(szType);
+  if (Manip == CResourceEditor::TM_AUTO)
+    if (IsIcoCurSingleImageType(dependenttype) && IsICOCURFile(Data, Size))
+      Manip = CResourceEditor::TM_ICONFILE;
+}
+
 // Adds/Replaces/Removes a simple resource.
 // If lpData is 0 UpdateResource removes the resource.
 bool CResourceEditor::UpdateResourceW(const WINWCHAR* szType, WINWCHAR* szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize, TYPEMANIPULATION Manip) {
@@ -263,18 +327,19 @@ bool CResourceEditor::UpdateResourceW(const WINWCHAR* szType, WINWCHAR* szName, 
   }
 
   bool deleteoperation = !lpData, success = true, handlecomplexicon = false;
+  UpdateManipulationType(Manip, szType, lpData, dwSize);
   WORD dependenttype = GetDependentType(szType);
 
   if (dependenttype && Manip != TM_RAW) {
-    if (Manip == TM_AUTO && ((size_t) szType == (size_t) RT_GROUP_ICON || (size_t) szType == (size_t) RT_GROUP_CURSOR))
-      Manip = TM_ICON;
+    if (Manip == TM_AUTO && IsIcoCurSingleImageType(dependenttype))
+      Manip = TM_ICON; // A non-TM_ICONFILE operation that is probably going to fail
 
     if (Manip & TM_ICON)
-      handlecomplexicon = true;
+      handlecomplexicon = true; // Group and images
 
     if (handlecomplexicon && !deleteoperation)
       if (Manip == TM_AUTO || (Manip & TM_ICONRSRC))
-        return false; // It is impossible to add a resource icon from a plain data buffer because it doesn't use offsets for the images
+        return false; // It is impossible to add a icon from a resource-based plain data buffer because it doesn't use offsets for the images
 
     if ((size_t) szType == (size_t) RT_GROUP_ICON && (size_t) szName == (size_t) IDI_ICON2)
       return false; // The main icon is special, don't allow high-level RT_GROUP_ICON updates to touch RT_ICON.
@@ -398,10 +463,6 @@ bool CResourceEditor::UpdateResourceT(const TCHAR* szType, WORD szName, LANGID w
   BYTE *data = alloc_and_read_file(Data, size);
   if (!data)
     return false;
-  WORD dependenttype = GetDependentType(szType);
-  if (Manip == TM_AUTO)
-    if (dependenttype && IsICOCURFile(data, size))
-      Manip = TM_ICONFILE;
   result = UpdateResourceT(szType, szName, wLanguage, data, size, Manip);
   free(data);
   return result;
@@ -741,10 +802,11 @@ static WORD FindFreeIconImageId(CResourceEditor& re, WORD ImgType) {
   return 0;
 }
 
+typedef struct { BYTE Width, Height, Palette, Reserved; WORD Planes, BPP; UINT32 Size, Offset; } FILEICOGROUPENTRY;
+typedef struct { BYTE Width, Height, Palette, Reserved; WORD Planes, BPP, SizeLo, SizeHi, Id; } RSRCICOGROUPENTRY;
+typedef struct { WORD Width, Height;                    WORD Planes, BPP, SizeLo, SizeHi, Id; } RSRCCURGROUPENTRY; //msdn.microsoft.com/en-us/library/windows/desktop/ms648011(v=vs.85).aspx
+
 bool CResourceEditor::AddExtraIconFromFile(const WINWCHAR* Type, WINWCHAR* Name, LANGID LangId, BYTE* Data, DWORD Size) {
-  typedef struct { BYTE Width, Height, Palette, Reserved; WORD Planes, BPP; UINT32 Size, Offset; } FILEICOGROUPENTRY;
-  typedef struct { BYTE Width, Height, Palette, Reserved; WORD Planes, BPP, SizeLo, SizeHi, Id; } RSRCICOGROUPENTRY;
-  typedef struct { WORD Width, Height;                    WORD Planes, BPP, SizeLo, SizeHi, Id; } RSRCCURGROUPENTRY; //msdn.microsoft.com/en-us/library/windows/desktop/ms648011(v=vs.85).aspx
   assert(sizeof(RSRCICOGROUPENTRY) == 12+2 && sizeof(FILEICOGROUPENTRY) == 12+4);
   assert(sizeof(RSRCICOGROUPENTRY) == sizeof(RSRCCURGROUPENTRY));
 
@@ -767,6 +829,7 @@ bool CResourceEditor::AddExtraIconFromFile(const WINWCHAR* Type, WINWCHAR* Name,
     BYTE *pImg = (BYTE*) (((char*) Data) + FIX_ENDIAN_INT32(pSrcFGE[i].Offset)), *pCursor = 0;
 
     if (isCursor) { // We must prepend the hotspot to the image data and change the group entry
+      assert(!EditorSupportsCursorPng());
       GENERICIMAGEINFO info;
       if (/*!IsPNGFile(pImg, imgSize, &info) &&*/ !GetDIBHeaderInfo(pImg, imgSize, info)) // Are PNG cursor images allowed?
         goto fail;
@@ -799,6 +862,128 @@ bool CResourceEditor::AddExtraIconFromFile(const WINWCHAR* Type, WINWCHAR* Name,
   delete [] pDstGrp;
   return !failed;
 }
+
+bool CResourceEditor::UpdateResourceFromExternalT(const TCHAR* Type, WORD Name, LANGID Lang, const TCHAR*File, TYPEMANIPULATION Manip)
+{
+  bool success = false;
+  const TCHAR *srctype, *srcname;
+  LANGID srclang;
+  TCHAR *resproto = ParseResProtocolAlloc(File, srctype, srcname, srclang);
+  if (resproto) {
+    File = resproto;
+  }
+
+  FILEVIEW map;
+  size_t datasize;
+  char *filedata = create_file_view_readonly(File, map), *data = 0, *dataalloc = 0;
+  if (filedata) {
+    if (resproto) {
+      signed char exetype = GetExeType(filedata, map.size);
+      if (exetype == 'P') {
+        CResourceEditor re(filedata, (int) map.size);
+        WORD ordsrcname = (WORD)(size_t) srcname;
+        if (!re.EditorSupportsStringNames() && !IS_INTRESOURCE(srcname)) {
+          assert(!"Unsupported name");
+          srclang = INVALIDLANGID;
+        }
+        DWORD ofs = re.GetResourceOffset(srctype, ordsrcname, srclang);
+        DWORD siz = re.GetResourceSize(srctype, ordsrcname, srclang);
+        if (IsIcoCurGroupType(srctype) && (Manip == TM_AUTO || (Manip & TM_ICON))) { // Must create a fake .ico file
+          data = dataalloc = (char*) re.ExtractIcoCur(srctype, ordsrcname, srclang, datasize), siz = 0;
+        }
+        if (siz && siz != DWORD(-1)) {
+          data = filedata + ofs, datasize = siz; // Raw resource data
+        }
+      }
+    }
+    else {
+      data = filedata, datasize = map.size; // Just a normal file
+    }
+    if (data && (DWORD) datasize == datasize) {
+      success = this->UpdateResource(Type, Name, Lang, (BYTE*) data, (DWORD) datasize, Manip);
+    }
+    close_file_view(map);
+  }
+  free(dataalloc);
+  free(resproto);
+  return success;
+}
+
+CResourceDataEntry* CResourceEditor::FindIcoCurDataEntry(WORD Type, WORD Id, LANGID PrefLang) {
+  CResourceDataEntry*pRDE = FindResource(MAKEINTRESOURCEWINW(Type), MAKEINTRESOURCEWINW(Id), PrefLang);
+  return pRDE ? pRDE : FindResource(MAKEINTRESOURCEWINW(Type), MAKEINTRESOURCEWINW(Id), ANYLANGID);
+}
+
+BYTE* CResourceEditor::ExtractIcoCurW(const WINWCHAR* szType, WINWCHAR* szName, LANGID wLanguage, size_t&cbData) {
+  CResourceDirectoryEntry*pLangDir = FindResourceLanguageDirEntryW(szType, szName, wLanguage);
+  if (!pLangDir)
+    return 0;
+  CResourceDataEntry*pRDE = pLangDir->GetDataEntry();
+  BYTE*pSH = pRDE->GetData(), cbRGE = 14, cbFGE = 16, *pResData;
+  DWORD succ = false, i, cbRes, failed = false;
+  if (pRDE->GetSize() < 6) // Must at least have a ICO file header
+    return 0;
+  WORD imgResType, count, *pFirstRGE = (WORD*) GetFirstICOCURGroupEntry(pSH, &imgResType, &count), *pRGE;
+  if (!pFirstRGE)
+    return 0;
+
+  WORD *pDH = 0, isCursor = imgResType == (size_t) RT_CURSOR;
+  DWORD imgsOfs = 6 + (count * cbFGE), cbTot = imgsOfs, cbImages = 0, grpsOfs = 6;
+
+  // Get the size of all images
+  for (i = 0, pRGE = pFirstRGE; i < count; ++i, pRGE += cbRGE / sizeof(*pRGE)) {
+    pRDE = FindIcoCurDataEntry(imgResType, ((RSRCICOGROUPENTRY*)pRGE)->Id, wLanguage);
+    if (pRDE && pRDE->GetData()) cbImages += ((FILEICOGROUPENTRY*)pRGE)->Size; else count = 0;
+  }
+  // Build the .ICO file
+  GENERICIMAGEINFO ii;
+  if (count && (pDH = (WORD*) malloc(cbTot += cbImages))) {
+    pDH[0] = 0x0000, pDH[1] = FIX_ENDIAN_INT16(isCursor ? 2 : 1), pDH[2] = FIX_ENDIAN_INT16(count);
+    for (i = 0, pRGE = pFirstRGE; i < count; ++i, pRGE += cbRGE / sizeof(*pRGE)) {
+      pRDE = FindIcoCurDataEntry(imgResType, ((RSRCICOGROUPENTRY*)pRGE)->Id, wLanguage);
+      pResData = pRDE->GetData(), cbRes = pRDE->GetSize();
+      FILEICOGROUPENTRY*pFGE = (FILEICOGROUPENTRY*) ((char*)pDH + grpsOfs);
+      memcpy(pFGE, pRGE, cbRGE), pFGE->Offset = FIX_ENDIAN_INT32(imgsOfs); // Initialize ICO group entry
+      DWORD cbImgFromGrp = FIX_ENDIAN_INT32(pFGE->Size), cbImg = cbImgFromGrp;
+      if (isCursor) {
+        pFGE->Width = (BYTE) FIX_ENDIAN_INT16(pRGE[0]), pFGE->Height = (BYTE) FIX_ENDIAN_INT16(pRGE[1]);
+        if (cbRes >= 4+12) {
+          assert(!EditorSupportsCursorPng());
+          pFGE->Planes = ((WORD*)pResData)[0], pFGE->BPP = ((WORD*)pResData)[0], cbImg -= 4; // Hotspot
+          DWORD cbBMH = GetDIBHeaderInfo(pResData += 4, cbRes - 4, ii), cd = ii.BPP * ii.Planes;
+          pFGE->Palette = cbBMH && cd < 8 ? (BYTE)(1 << cd) : 0; // devblogs.microsoft.com/oldnewthing/20101018-00/?p=12513 says only for depths < 8!
+          pFGE->Reserved = 0;
+        }
+        else
+          ++failed;
+      }
+      if (cbImg <= cbRes) {
+        memcpy((char*)pDH + imgsOfs, pResData, cbImg);
+        pFGE->Size = FIX_ENDIAN_INT32(cbImg);
+        imgsOfs += cbImg, grpsOfs += cbFGE;
+      }
+      else
+        ++failed;
+    }
+  }
+  cbData = cbTot;
+  if (!count || failed)
+    free(pDH), pDH = 0;
+  return (BYTE*) pDH;
+}
+
+BYTE* CResourceEditor::ExtractIcoCurT(const TCHAR* szType, WORD szName, LANGID wLanguage, size_t&cbData) {
+  assert(!EditorSupportsStringNames() && sizeof(szName));
+#if defined(_WIN32) && defined(_UNICODE)
+  return ExtractIcoCurW((WINWCHAR*)szType, MAKEINTRESOURCEWINW(szName), wLanguage, cbData);
+#else
+  WINWCHAR* szwType = ResStringToUnicode(szType);
+  BYTE* result = ExtractIcoCurW(szwType, MAKEINTRESOURCEWINW(szName), wLanguage, cbData);
+  FreeUnicodeResString(szwType);
+  return result;
+#endif
+}
+
 
 //////////////////////////////////////////////////////////////////////
 // Private Methods

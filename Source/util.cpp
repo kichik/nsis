@@ -61,12 +61,16 @@ extern FILE *g_output, *g_errout;
 
 
 #ifdef _WIN32
-static char* CreateMappedFileView(LPCTSTR Path, DWORD FAccess, DWORD FShare, DWORD FMode, DWORD PProtect, DWORD MAccess)
+bool GetFileSize64(HANDLE hFile, ULARGE_INTEGER &uli);
+static char* CreateMappedFileView(LPCTSTR Path, DWORD FAccess, DWORD FShare, DWORD FMode, DWORD PProtect, DWORD MAccess, size_t &FSize)
 {
-  char *pView = NULL, restoreGLE = false;
+  char *pView = NULL, restoreGLE = false, validSize;
   HANDLE hFile = CreateFile(Path, FAccess, FShare, NULL, FMode, 0, NULL);
   if (hFile == INVALID_HANDLE_VALUE) return pView;
-  HANDLE hMap = CreateFileMapping(hFile, NULL, PProtect, 0, 0, NULL);
+  ULARGE_INTEGER fs;
+  validSize = GetFileSize64(hFile, fs) && sizeof(size_t) >= 8 || !fs.HighPart;
+  FSize = sizeof(size_t) >= 8 ? (size_t) fs.QuadPart : fs.LowPart;
+  HANDLE hMap = validSize ? CreateFileMapping(hFile, NULL, PProtect, 0, 0, NULL) : INVALID_HANDLE_VALUE;
   if (hMap != INVALID_HANDLE_VALUE)
   {
     CloseHandle(hFile);
@@ -702,15 +706,15 @@ void close_file_view(FILEVIEW&mmfv)
 #ifdef _WIN32
   if (mmfv.base) UnmapViewOfFile(mmfv.base);
 #else
-  if (mmfv.base) munmap(mmfv.base, mmfv.internal);
+  if (mmfv.base) munmap(mmfv.base, mmfv.size);
 #endif
 }
 char* create_file_view_readonly(const TCHAR *filepath, FILEVIEW&mmfv)
 {
 #ifdef _WIN32
-  return mmfv.base = CreateMappedFileView(filepath, GENERIC_READ, FILE_SHARE_READ, OPEN_EXISTING, PAGE_READONLY, FILE_MAP_READ);
+  return mmfv.base = CreateMappedFileView(filepath, GENERIC_READ, FILE_SHARE_READ, OPEN_EXISTING, PAGE_READONLY, FILE_MAP_READ, mmfv.size);
 #else
-  return mmfv.base = CreateMappedFileView(filepath, "rb", PROT_READ, MAP_SHARED, mmfv.internal);
+  return mmfv.base = CreateMappedFileView(filepath, "rb", PROT_READ, MAP_SHARED, mmfv.size);
 #endif
 }
 

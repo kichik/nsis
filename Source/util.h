@@ -36,6 +36,7 @@ extern double my_wtof(const wchar_t *str);
 extern size_t my_strncpy(TCHAR*Dest, const TCHAR*Src, size_t cchMax);
 template<class T> bool strtrycpy(T*Dest, const T*Src, size_t cchCap) { size_t c = my_strncpy(Dest, Src, cchCap); return c < cchCap && !Src[c]; }
 size_t my_strftime(TCHAR *s, size_t max, const TCHAR  *fmt, const struct tm *tm);
+template<class T> bool ChIsHex(T c) { return (c >= '0' && c <= '9') || ((c|32) >= 'a' && (c|32) <= 'f'); }
 
 // Adds the bitmap in filename using resource editor re as id id.
 // If width or height are specified it will also make sure the bitmap is in that size
@@ -283,7 +284,7 @@ const UINT64 invalid_file_size64 = ~ (UINT64) 0;
 BYTE* alloc_and_read_file(FILE *f, unsigned long &size);
 BYTE* alloc_and_read_file(const TCHAR *filepath, unsigned long &size);
 
-typedef struct { char*base; size_t internal; } FILEVIEW;
+typedef struct { char*base; size_t size; } FILEVIEW;
 void close_file_view(FILEVIEW&mmfv);
 char* create_file_view_readonly(const TCHAR *filepath, FILEVIEW&mmfv);
 
@@ -390,5 +391,10 @@ RM_DEFINE_FREEFUNC(my_convert_free);
 // Platform detection
 inline bool Platform_IsBigEndian() { return FIX_ENDIAN_INT16(0x00ff) != 0x00ff; }
 unsigned char Platform_SupportsUTF8Conversion();
+#ifdef _WIN32
+#define Platform_IsWindows() ( !0 )
+#else
+#define Platform_IsWindows() ( 0 )
+#endif
 
 #endif //_UTIL_H_
