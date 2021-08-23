@@ -172,7 +172,7 @@ static TCHAR* ParseResProtocolAlloc(const TCHAR*Url, const TCHAR*&Type, const TC
   TCHAR proto[42], *path = 0, *buf = 0, *pD, ch;
   UINT prefix = 6, mswin = Platform_IsWindows(), bad = false, pipe = 0, skip = 0;
   my_strncpy(proto, Url, prefix+!0);
-  size_t pathend = 0, typestart = 0, namestart = 0, i, cch;
+  size_t typestart = 0, namestart = 0, i, cch;
   if (lowercase(tstring(proto)).compare(_T("res://")) != 0)
     return path;
   for (Url += prefix, i = 0; Url[i]; ++i)
@@ -933,7 +933,7 @@ BYTE* CResourceEditor::ExtractIcoCurW(const WINWCHAR* szType, WINWCHAR* szName, 
   // Get the size of all images
   for (i = 0, pRGE = pFirstRGE; i < count; ++i, pRGE += cbRGE / sizeof(*pRGE)) {
     pRDE = FindIcoCurDataEntry(imgResType, ((RSRCICOGROUPENTRY*)pRGE)->Id, wLanguage);
-    if (pRDE && pRDE->GetData()) cbImages += ((FILEICOGROUPENTRY*)pRGE)->Size; else count = 0;
+    if (pRDE && pRDE->GetData()) cbImages += FIX_ENDIAN_INT32(((FILEICOGROUPENTRY*)pRGE)->Size); else count = 0;
   }
   // Build the .ICO file
   GENERICIMAGEINFO ii;
