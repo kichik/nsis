@@ -144,6 +144,9 @@ This command will execute 'command' using a call to system(). You can store the 
 \c !ifdef something
 \c   !echo "something is defined"
 \c !endif
+\c !system 'attrib +H Secret.txt' = 0
+\c !system 'ping localhost' ERRLVL
+\c !echo "Ping returned ${ERRLVL}"
 
 \S1{tempfile} !tempfile
 

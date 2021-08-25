@@ -1436,7 +1436,9 @@ static void xhtml_doheader(FILE * fp, word * title)
   fprintf(fp,
           "\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n");
   fprintf(fp,
-          "<html xmlns='http://www.w3.org/1999/xhtml'>\n\n<head>\n<title>");
+    "<html xmlns='http://www.w3.org/1999/xhtml'><head>\n" \
+    "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n" \
+    "<title>");
   if (title == NULL)
     fprintf(fp, "Documentation");
   else

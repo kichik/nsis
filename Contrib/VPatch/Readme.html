@@ -3,23 +3,33 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title>VPatch 3</title>
-<meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <style type="text/css">
 /*<![CDATA[*/
+html, body { font-family: Verdana, Arial, Helvetica, sans-serif; color: #000000; background-color: #ffffff; }
+html { font-size: 0.84em; }
+body { font-size: 1em; font-size: 1rem; }
+pre, code { font-family: Courier New, Courier, monospace,serif; font-size: 100%; }
+h1 { font-size: 170%; }
+h2 { font-size: 150%; }
+h3 { font-size: 130%; }
+h4 { font-size: 120%; }
+h5 { font-size: 115%; }
+h6 { font-size: 110%; }
 
 body
         {
-        padding: 10px;
+        padding:1.5em 0; margin:0;
         background-color: #F0F0F0;
         font-family: Verdana, Arial, Helvetica, sans-serif;
-        font-size: 13px;
         font-weight: normal;
         text-align: left;
         }
 
 p, li
         {
-        font-size: 13px;
+        font-size: 1em;
         }
 
 .center
@@ -30,13 +40,14 @@ p, li
 table
         {
         margin: auto;
-        font-size: 13px;
+        font-size: 1em;
         background-color: #FFFFFF;
         }
 
 .maintable
         {
         border: 2px solid #376EAB;
+        width: 90%;
         }
 
 .parameter
@@ -48,34 +59,30 @@ table
 
 h1
         {
-        font-size: 30px;
+        font-size: 250%;
         color: #333333;
         font-weight: normal;
         text-align: center;
-        margin-top: 20px;
+        margin-top: 2em;
         }
 
 h2
         {
-        font-size: 20px;
+        font-size: 150%;
         color: #7A7272;
         font-weight: normal;
         }
 
 h3
         {
-        font-size: 17px;
+        font-size: 130%;
         font-weight: bold;
         color: #303030;
         }
 
-pre     {
-        font-size: 13px;
-        }
-
 div
         {
-        margin: 20px;
+        margin: 1.5em;
         }
 
 a:link, a:visited, a:active
@@ -89,6 +96,9 @@ a:hover
         color: #182634;
         text-decoration: underline;
         }
+.T tr:nth-child(odd) { background-color: #fafafa; }
+.T tr, .T td { border: 1px solid #f2f2f2; border-collapse: collapse; padding: 0.2em; }
+
 
 /*]]>*/
 </style>
@@ -167,9 +177,9 @@ vpatch::vpatchfile "patch.pat" "oldfile.txt" "temporary_newfile.txt"
               the DOS period) can be returned by GenPat. GenPat will return an 
               exit code based on success of the patch generation. Here is a list 
               of the possible exit codes:</p>
-            <table width="547" border="0" cellspacing="0" cellpadding="0">
+            <table border="0" cellspacing="0" cellpadding="0" class="T">
               <tr> 
-                <td><b>Exit code</b></td>
+                <td nowrap><b>Exit code</b></td>
                 <td><b>Description</b></td>
               </tr>
               <tr> 

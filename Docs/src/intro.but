@@ -13,8 +13,6 @@ Because it's based on script files you can fully control every part of your inst
 The scripting language supports variables, functions and string manipulation, just like a normal programming language - but designed for the creation of installers.
 Even with all these features, NSIS is still the smallest installer system available. With the default options, it has an overhead of only 34 KB.
 
-With NSIS 3 you can also create \R{intro-unicode}{Unicode installers}, targeting all the languages supported by the OS without display issues.
-
 \H{intro-features} Main Features
 
 \\<b\\>Small overhead size\\</b\\>
@@ -31,11 +29,11 @@ You can choose between three different integrated compression methods (ZLib, BZi
 
 \\<b\\>Script based\\</b\\>
 
-Unlike other systems that can only generate installers based on a list of files and registry keys, NSIS has a powerful scripting language. This script language is designed for installers and has commands that help you to perform many installation tasks. You can easily add custom logic and handle different upgrades, version checks and more. On the \W{https://nsis.sourceforge.io/wiki/}{NSIS Wiki} you can find a lot more.
+Unlike other systems that can only generate installers based on a list of files and registry keys, NSIS has a powerful \R{tutscriptfiles}{scripting language}. This script language is designed for installers and has commands that help you to perform many installation tasks. You can easily add custom logic and handle different upgrades, version checks and more. On the \W{https://nsis.sourceforge.io/wiki/}{NSIS Wiki} you can find a lot more.
 
 \\<b\\>Multiple languages in one installer\\</b\\>
 
-One installer can support multiple interface languages. More than 60 translations are already included and you can also create your own language files. RTL (right-to-left) languages such as Arabic and Hebrew are fully supported. Creating a Unicode native installer is also possible for even more supported languages.
+One installer can support multiple interface languages. More than 60 translations are already included and you can also create your own language files. RTL (right-to-left) languages such as Arabic and Hebrew are fully supported. Creating a \R{intro-unicode}{Unicode native installer} is also possible, targeting all the languages supported by the OS without display issues.
 
 \\<b\\>Many features and checks for the target system\\</b\\>
 

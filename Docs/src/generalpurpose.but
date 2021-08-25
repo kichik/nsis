@@ -45,6 +45,7 @@ keyboard_shortcut should be in the form of 'flag|c' where flag can be a combinat
 description should be the description of the shortcut, or comment as it is called under XP.
 The error flag is set if the shortcut cannot be created (i.e. either of the paths (link or target) does not exist, or some other error).
 
+\c CreateShortcut "$DESKTOP\My Program.lnk" "$INSTDIR\My Program.exe"
 \c CreateDirectory "$SMPROGRAMS\My Company"
 \c CreateShortcut "$SMPROGRAMS\My Company\My Program.lnk" "$INSTDIR\My Program.exe" \
 \c   "some command line parameters" "$INSTDIR\My Program.exe" 2 SW_SHOWNORMAL \

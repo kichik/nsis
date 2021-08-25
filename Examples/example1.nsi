@@ -42,4 +42,4 @@ Section "" ;No components page, name is not important
   ; Put file there
   File example1.nsi
   
-SectionEnd ; end the section
+SectionEnd

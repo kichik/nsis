@@ -1,7 +1,7 @@
-body {
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-size: 0.8em;
-}
+html, body { font-family: Verdana, Arial, Helvetica, sans-serif; }
+html { font-size: 0.8em; }
+body { font-size: 1em; font-size: 1rem; }
+
 p, li {
 	font-size: 100%;
 }
@@ -17,18 +17,25 @@ h3 {
 h4 {
 	font-size: 120%;
 }
+h5 {
+	font-size: 115%;
+}
+h6 {
+	font-size: 110%;
+}
+pre, code {
+	font-family: Courier New, Courier, monospace,serif; /* code.iamkate.com/html-and-css/fixing-browsers-broken-monospace-font-handling/ */
+}
+code {
+	font-size: 100%;
+}
 pre {
-	font-family: Courier New, Courier, monospace,monospace;
-	font-size: 1.05em;
+	font-size: 100%;
 	background-color: #F7F7F7;
 	padding: 1px;
 }
 pre b {
 	text-decoration: underline;
-}
-code {
-	font-family: Courier New, Courier, monospace,monospace; /* code.iamkate.com/html-and-css/fixing-browsers-broken-monospace-font-handling/ */
-	font-size: 1em;
 }
 a {
 	color: #567599;

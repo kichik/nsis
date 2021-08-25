@@ -92,6 +92,20 @@ Line extension for long commands works for comments as well. It can be a bit con
 \c # A comment \
 \c     still a comment here...
 
+\\<b\\>Compiler Commands\\</b\\>
+
+Compiler commands start with a ! and are executed at compile time.
+
+\c !define MESSAGE "Hello"
+\c
+\c !ifdef MESSAGE
+\c   MessageBox MB_OK "${MESSAGE}"
+\c !else
+\c   !error "MESSAGE not defined, cannot continue!"
+\c !endif
+
+\R{comptime}{More information...}
+
 \\<b\\>Configuration file\\</b\\>
 
 If a file named "nsisconf.nsh" in the config directory exists, it will be included by default before any scripts (unless the /NOCONFIG command line parameter is used). The config directory on Windows is the same directory as makensis.exe is in. On other platforms this is set at install time and defaults to $PREFIX/etc/. You can alter this at runtime, see \k{usageenvironment} for more information.

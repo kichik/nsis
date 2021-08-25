@@ -61,11 +61,11 @@ Note that some of the new constants will not work on every OS. For example, $CDB
 
 \e{$PROGRAMFILES}, \e{$PROGRAMFILES32}, \e{$PROGRAMFILES64}
 
-The program files directory (usually \c{C:\\Program Files} but detected at runtime). On Windows x64, $PROGRAMFILES and $PROGRAMFILES32 point to \c{C:\\Program Files (x86)} while $PROGRAMFILES64 points to \c{C:\\Program Files}. Use $PROGRAMFILES64 when installing x64 applications.
+The program files directory (usually \c{C:\\Program Files} but detected at runtime). On 64-bit Windows, $PROGRAMFILES and $PROGRAMFILES32 point to \c{C:\\Program Files (x86)} while $PROGRAMFILES64 points to \c{C:\\Program Files}. Use $PROGRAMFILES64 when installing 64-bit applications.
 
 \e{$COMMONFILES}, \e{$COMMONFILES32}, \e{$COMMONFILES64}
 
-The common files directory. This is a directory for components that are shared across applications (usually \c{C:\\Program Files\\Common Files} but detected at runtime). On Windows x64, $COMMONFILES and $COMMONFILES32 point to \c{C:\\Program Files (x86)\\Common Files} while $COMMONFILES64 points to \c{C:\\Program Files\\Common Files}. Use $COMMONFILES64 when installing x64 applications.
+The common files directory. This is a directory for components that are shared across applications (usually \c{C:\\Program Files\\Common Files} but detected at runtime). On 64-bit Windows, $COMMONFILES and $COMMONFILES32 point to \c{C:\\Program Files (x86)\\Common Files} while $COMMONFILES64 points to \c{C:\\Program Files\\Common Files}. Use $COMMONFILES64 when installing 64-bit applications.
 
 \e{$DESKTOP}
 
