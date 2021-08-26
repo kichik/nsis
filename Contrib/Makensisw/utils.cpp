@@ -233,14 +233,16 @@ void ReleaseLogWindow() {
 #endif
 }
 void InitializeLogWindow() {
+  HWND hRE = GetDlgItem(g_sdata.hwnd, IDC_LOGWIN);
 #ifdef RE_HAS_TOM
   IUnknown *pTD = 0, *pREO;
-  if (SendDlgItemMessage(g_sdata.hwnd, IDC_LOGWIN, EM_GETOLEINTERFACE, 0, (LPARAM)&pREO) && pREO) {
+  if (SendMessage(hRE, EM_GETOLEINTERFACE, 0, (LPARAM)&pREO) && pREO) {
     if (FAILED(pREO->QueryInterface(IID_ITextDocument, (void**) &pTD))) pTD = 0;
     pREO->Release();
   }
   g_sdata.pLogTextDoc = pTD;
 #endif
+  SendMessage(hRE, EM_SETTEXTMODE, TM_PLAINTEXT, 0);
 }
 
 void SetLogColor(enum LOGCOLOR lc)
@@ -268,13 +270,13 @@ void LogMessage(HWND hwnd,const TCHAR *str) {
   HWND hLogWin = GetDlgItem(hwnd, IDC_LOGWIN);
 #ifdef RE_HAS_TOM
   ITextDocument*pTD = (ITextDocument*) g_sdata.pLogTextDoc;
-  if (pTD) pTD->Freeze(0);
+  HRESULT hr = (HRESULT) SendMessage(hwnd, WM_MAKENSIS_FREEZEEDITOR, 0, true); // Force COM calls to UI thread
 #endif
   SendMessage(hLogWin, EM_SETSEL, g_sdata.logLength, g_sdata.logLength);
   SendMessage(hLogWin, EM_REPLACESEL, 0, (LPARAM)str);
   SendMessage(hLogWin, EM_SCROLLCARET, 0, 0);
 #ifdef RE_HAS_TOM
-  if (pTD) pTD->Unfreeze(0), InvalidateRect(hLogWin, NULL, false);
+  if (SUCCEEDED(hr)) SendMessage(hwnd, WM_MAKENSIS_FREEZEEDITOR, 0, false);
 #endif
   g_sdata.logLength += lstrlen(str);
 }

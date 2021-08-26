@@ -621,6 +621,17 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
       EnableUICommand(IDM_BROWSESCR, !!g_sdata.input_script);
       break;
     }
+    case WM_MAKENSIS_FREEZEEDITOR:
+    {
+      ITextDocument*pTD = (ITextDocument*) g_sdata.pLogTextDoc;
+      if (pTD) {
+        if (lParam)
+          return pTD->Freeze(0);
+        else
+          pTD->Unfreeze(0);
+      }
+      break;
+    }
     case WM_TIMER:
     {
       HWND hCtl;
