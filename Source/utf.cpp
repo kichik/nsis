@@ -486,7 +486,7 @@ l_restart:
       BYTE chU8[6];
       if (!strm.ReadOctet(&chU8[0])) goto l_ioerror;
       UINT cchWC;
-#if defined(WIN32) // TODO: Is wchar_t==UTF16LE under cygwin?
+#if defined(_WIN32) || defined(__CYGWIN__) // wchar_t==UTF16LE on Cygwin: www.mail-archive.com/bug-gnulib@gnu.org/msg21543.html
       // Fast path if wchar_t == UTF16 and in ASCII range
       if (chU8[0] <= 127 && sizeof(wchar_t) == 2)
       {
