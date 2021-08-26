@@ -16,6 +16,8 @@ Released on ???? ??th, 20??
 
 \S2{} Minor Changes
 
+\b Added \cw{$USER..} and \cw{$COMMON..} alias constants
+
 \b Disallow start maximized mode
 
 \b Added /LAUNCH compiler switch

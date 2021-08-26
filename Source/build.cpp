@@ -377,6 +377,21 @@ CEXEBuild::CEXEBuild(signed char pponly, bool warnaserror) :
   m_ShellConstants.add(_T("RESOURCES"), CSIDL_RESOURCES, CSIDL_RESOURCES);
   m_ShellConstants.add(_T("RESOURCES_LOCALIZED"), CSIDL_RESOURCES_LOCALIZED, CSIDL_RESOURCES_LOCALIZED);
   m_ShellConstants.add(_T("CDBURN_AREA"), CSIDL_CDBURN_AREA, CSIDL_CDBURN_AREA);
+
+  // Contants that are not affected by SetShellVarContext
+  m_ShellConstants.add(_T("USERAPPDATA"), CSIDL_APPDATA, CSIDL_APPDATA);
+  m_ShellConstants.add(_T("USERLOCALAPPDATA"), CSIDL_LOCAL_APPDATA, CSIDL_LOCAL_APPDATA);
+  m_ShellConstants.add(_T("USERTEMPLATES"), CSIDL_TEMPLATES, CSIDL_TEMPLATES);
+  m_ShellConstants.add(_T("USERSTARTMENU"), CSIDL_STARTMENU, CSIDL_STARTMENU);
+  m_ShellConstants.add(_T("USERSMPROGRAMS"), CSIDL_PROGRAMS, CSIDL_PROGRAMS);
+  m_ShellConstants.add(_T("USERDESKTOP"), CSIDL_DESKTOPDIRECTORY, CSIDL_DESKTOPDIRECTORY);
+  m_ShellConstants.add(_T("COMMONLOCALAPPDATA"), CSIDL_COMMON_APPDATA, CSIDL_COMMON_APPDATA);
+  m_ShellConstants.add(_T("COMMONPROGRAMDATA"), CSIDL_COMMON_APPDATA, CSIDL_COMMON_APPDATA); // a.k.a. %ProgramData%
+  m_ShellConstants.add(_T("COMMONTEMPLATES"), CSIDL_COMMON_TEMPLATES, CSIDL_COMMON_TEMPLATES);
+  m_ShellConstants.add(_T("COMMONSTARTMENU"), CSIDL_COMMON_STARTMENU, CSIDL_COMMON_STARTMENU);
+  m_ShellConstants.add(_T("COMMONSMPROGRAMS"), CSIDL_COMMON_PROGRAMS, CSIDL_COMMON_PROGRAMS);
+  m_ShellConstants.add(_T("COMMONDESKTOP"), CSIDL_COMMON_DESKTOPDIRECTORY, CSIDL_COMMON_DESKTOPDIRECTORY);
+
   // PROGRAMFILES&COMMONFILES does a registry lookup and the required string offsets are filled in later.
   // We do this later because the unicode mode has to be locked when we call add_string...
   m_ShellConstants.add(_T("PROGRAMFILES"),   0, 0);

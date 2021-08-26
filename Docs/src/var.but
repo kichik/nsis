@@ -119,7 +119,7 @@ The quick launch folder for IE4 active desktop and above. If quick launch is not
 
 \e{$DOCUMENTS}
 
-The documents directory. A typical path for the current user is \c{C:\\Documents and Settings\\Foo\\My Documents}. The context of this constant (All Users or Current user) depends on the \R{setshellvarcontext}{SetShellVarContext} setting. The default is the current user.
+The documents directory. A typical path for the current user is \c{C:\\Users\\Foo\\My Documents}. The context of this constant (All Users or Current user) depends on the \R{setshellvarcontext}{SetShellVarContext} setting. The default is the current user.
 
 This constant is not available on Windows 95 unless Internet Explorer 4 is installed.
 
@@ -207,7 +207,7 @@ This constant is not available on Windows 95 nor Windows NT 4 unless Internet Ex
 
 \e{$PROFILE}
 
-The user's profile directory. A typical path is \c{C:\\Documents and Settings\\Foo}.
+The user's profile directory. A typical path is \c{C:\\Users\\Foo}.
 
 This constant is available on Windows 2000 and above.
 
@@ -242,6 +242,10 @@ HWND of the main window (in decimal).
 \e{$PLUGINSDIR}
 
 The path to a temporary folder created upon the first usage of a plug-in or a call to \R{initpluginsdir}{InitPluginsDir}. This folder is automatically deleted when the installer exits. This makes this folder the ideal folder to hold INI files for \L{../Docs/InstallOptions/Readme.html}{InstallOptions}, bitmaps for the splash plug-in, or any other file that a plug-in needs to work.
+
+\e{$USER..} and \e{$COMMON..}
+
+A handful of constants are available as aliases that are not affected by \R{setshellvarcontext}{SetShellVarContext}: \e{$USERTEMPLATES}, \e{$USERSTARTMENU}, \e{$USERSMPROGRAMS}, \e{$USERDESKTOP}, \e{$COMMONTEMPLATES}, \e{$COMMONSTARTMENU}, \e{$COMMONSMPROGRAMS}, \e{$COMMONDESKTOP} and \e{$COMMONPROGRAMDATA}.
 
 \S1{varstrings} Constants Used in Strings
 

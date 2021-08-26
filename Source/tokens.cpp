@@ -217,7 +217,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_SETREGVIEW,_T("SetRegView"),1,0,_T("32|64|default|lastused"),TP_CODE},
 {TOK_IFALTREGVIEW,_T("IfAltRegView"),1,1,_T("goto_true [goto_false]"),TP_CODE},
 {TOK_GETSHELLVARCONTEXT,_T("GetShellVarContext"),1,0,_T("$(user_var: output)"),TP_CODE},
-{TOK_SETSHELLVARCONTEXT,_T("SetShellVarContext"),1,0,_T("all|current"),TP_CODE},
+{TOK_SETSHELLVARCONTEXT,_T("SetShellVarContext"),1,0,_T("all|current|lastused"),TP_CODE},
 {TOK_IFSHELLVARCONTEXTALL,_T("IfShellVarContextAll"),1,1,_T("goto_true [goto_false]"),TP_CODE},
 {TOK_SETSILENT,_T("SetSilent"),1,0,_T("silent|normal"),TP_CODE},
 {TOK_SHOWDETAILS,_T("ShowInstDetails"),1,0,_T("(hide|show|nevershow)"),TP_GLOBAL},

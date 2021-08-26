@@ -912,6 +912,7 @@ static HKEY ParseRegRootKey(LineParser &line, int tok)
   return k == -1 ? INVALIDREGROOT : rootkey_tab[k];
 }
 
+#define AFIE_LASTUSED ( -1 )
 int CEXEBuild::add_flag_instruction_entry(int which_token, int opcode, LineParser &line, int offset, int data)
 {
   entry ent = { opcode, };
@@ -919,7 +920,7 @@ int CEXEBuild::add_flag_instruction_entry(int which_token, int opcode, LineParse
   {
     case EW_SETFLAG:
       ent.offsets[0] = offset;
-      ent.offsets[1] = data;
+      if (data != AFIE_LASTUSED) ent.offsets[1] = data; else ent.offsets[2] = 1;
       if (display_script) SCRIPT_MSG(_T("%") NPRIs _T(": %") NPRIs _T("\n"), get_commandtoken_name(which_token), line.gettoken_str(1));
       return add_entry(&ent);
     case EW_IFFLAG:
@@ -3033,9 +3034,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_GETSHELLVARCONTEXT:
       return add_flag_instruction_entry(which_token, EW_GETFLAG, line, FLAG_OFFSET(all_user_var));
     case TOK_SETSHELLVARCONTEXT: 
-      ent.offsets[1] = line.gettoken_enum(1,_T("current\0all\0"));
+      ent.offsets[1] = line.gettoken_enum(1,_T("current\0all\0lastused\0"));
       if (ent.offsets[1] < 0 ) PRINTHELP()
-      return add_flag_instruction_entry(which_token, EW_SETFLAG, line, FLAG_OFFSET(all_user_var), add_intstring(ent.offsets[1]));
+      return add_flag_instruction_entry(which_token, EW_SETFLAG, line, FLAG_OFFSET(all_user_var), ent.offsets[1] != 2 ? add_intstring(ent.offsets[1]) : AFIE_LASTUSED);
     case TOK_IFSHELLVARCONTEXTALL:
       return add_flag_instruction_entry(which_token, EW_IFFLAG, line, FLAG_OFFSET(all_user_var), ~0); //new value mask - keep flag
     case TOK_RET:
