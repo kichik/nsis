@@ -24,6 +24,8 @@ Released on ???? ??th, 20??
 
 \b PEAddResource now supports the res:// protocol
 
+\b System::Store can push/pop the flags state
+
 \H{v3.07} 3.07
 
 Released on July 24th, 2021
