@@ -96,6 +96,8 @@
 Name winver
 OutFile winver.exe
 
+RequestExecutionLevel User
+Unicode False
 XPStyle on
 ShowInstDetails show
 
@@ -105,6 +107,8 @@ Var OSVERSIONINFO_INIT
 Var OSVERSIONINFOEX_RES
 Var OSVERSIONINFOEX_CSD
 Var OSVERSIONINFOEX_INIT
+Var WVSTATS_TESTS
+Var WVSTATS_FAILS
 
 !macro __WinVer_Call_GetVersionEx STRUCT_SIZE
 
@@ -140,8 +144,10 @@ Var OSVERSIONINFOEX_INIT
 			DetailPrint "   Got: ${V_}"
 
 			StrCpy $R0 "FAILURE"
+			IntOp $WVSTATS_FAILS $WVSTATS_FAILS + 1
 
 		${EndIf}
+		IntOp $WVSTATS_TESTS $WVSTATS_TESTS + 1
 
 	!endif
 
@@ -170,8 +176,10 @@ Var OSVERSIONINFOEX_INIT
 			DetailPrint "   Got: ${VER} < ${V_}"
 
 			StrCpy $R0 "FAILURE"
+			IntOp $WVSTATS_FAILS $WVSTATS_FAILS + 1
 
 		${EndIf}
+		IntOp $WVSTATS_TESTS $WVSTATS_TESTS + 1
 
 	!endif
 
@@ -184,8 +192,10 @@ Var OSVERSIONINFOEX_INIT
 			DetailPrint "   Got: ${VER} > ${V_}"
 
 			StrCpy $R0 "FAILURE"
+			IntOp $WVSTATS_FAILS $WVSTATS_FAILS + 1
 
 		${EndIf}
+		IntOp $WVSTATS_TESTS $WVSTATS_TESTS + 1
 
 	!endif
 
@@ -207,8 +217,10 @@ Var OSVERSIONINFOEX_INIT
 		DetailPrint "Version detection failed for ${NAME}"
 
 		StrCpy $R0 "FAILURE"
+		IntOp $WVSTATS_FAILS $WVSTATS_FAILS + 1
 
 	${EndIf}
+	IntOp $WVSTATS_TESTS $WVSTATS_TESTS + 1
 
 	!insertmacro TestWinVerDiff "${NAME}" ${VER} 95
 	!insertmacro TestWinVerDiff "${NAME}" ${VER} 98
@@ -252,8 +264,10 @@ Var OSVERSIONINFOEX_INIT
 		DetailPrint "   Got: $2"
 
 		StrCpy $R0 "FAILURE"
+		IntOp $WVSTATS_FAILS $WVSTATS_FAILS + 1
 
 	${EndIf}
+	IntOp $WVSTATS_TESTS $WVSTATS_TESTS + 1
 
 	# test service pack comparison
 
@@ -265,8 +279,11 @@ Var OSVERSIONINFOEX_INIT
 		DetailPrint "Service pack comparison failed for ${NAME}"
 
 		StrCpy $R0 "FAILURE"
+		IntOp $WVSTATS_FAILS $WVSTATS_FAILS + 1
 
 	${EndIf}
+	IntOp $WVSTATS_TESTS $WVSTATS_TESTS + 1
+
 
 	# test server detection
 
@@ -282,8 +299,10 @@ Var OSVERSIONINFOEX_INIT
 		DetailPrint "   Got: $0"
 
 		StrCpy $R0 "FAILURE"
+		IntOp $WVSTATS_FAILS $WVSTATS_FAILS + 1
 
 	${EndIf}
+	IntOp $WVSTATS_TESTS $WVSTATS_TESTS + 1
 
 	# test platform
 
@@ -299,8 +318,10 @@ Var OSVERSIONINFOEX_INIT
 		DetailPrint "   Got: $0"
 
 		StrCpy $R0 "FAILURE"
+		IntOp $WVSTATS_FAILS $WVSTATS_FAILS + 1
 
 	${EndIf}
+	IntOp $WVSTATS_TESTS $WVSTATS_TESTS + 1
 
 	DetailPrint "$R0 ${NAME}"
 
@@ -376,7 +397,7 @@ Section
 
 	!insertmacro TestWinVer "Windows ME" ME 0 client 9x
 
-	#### WINDOWS NT4 SP1
+	#### WINDOWS NT4 SP1 (Client/Server unspecified)
 
 	# OSVERSIONINFOEX
 	StrCpy $OSVERSIONINFOEX_RES 0
@@ -390,9 +411,9 @@ Section
 	StrCpy $OSVERSIONINFO_INIT "i 148, i 4, i 0, i 1381, i 2, &t128s, &i2 0, &i2 0, &i2 0, &i1 0, &i1 0"
 	# 940000000400000000000000650500000200000053657276696365205061636b2031000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 
-	!insertmacro TestWinVer "Windows NT4 SP1" NT4 1 server nt
+	!insertmacro TestWinVer "Windows NT4 SP1" NT4 1 client nt ; Server can only be detected by reading the registry, cannot be performed in test environment.
 
-	#### WINDOWS NT4 SP6
+	#### WINDOWS NT4 SP6 Server
 
 	# OSVERSIONINFOEX
 	StrCpy $OSVERSIONINFOEX_RES 1
@@ -744,4 +765,13 @@ Section
 
 	!insertmacro TestWinVer "Windows 2008 R2 x64" 2008R2 0 server nt
 
+SectionEnd
+
+Section "-Results"
+	IntOp $0 $WVSTATS_TESTS - $WVSTATS_FAILS
+	StrCpy $1 "Passed $0 of $WVSTATS_TESTS tests"
+	DetailPrint $1
+	${If} $0 <> $WVSTATS_TESTS
+		MessageBox mb_iconstop $1 /SD IDOK
+	${EndIf}
 SectionEnd
