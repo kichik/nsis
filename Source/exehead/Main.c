@@ -96,18 +96,50 @@ EXTERN_C void NSISWinMainNOCRT()
   TCHAR *realcmds;
   TCHAR seekchar=_T(' ');
   TCHAR *cmdline;
+  OSVERSIONINFOEX ovi;
 
   SetErrorMode(SEM_NOOPENFILEERRORBOX | SEM_FAILCRITICALERRORS);
-  g_WinVer = GetVersion() & ~(NSIS_WINVER_WOW64FLAG); // We store a private flag in the build number bits
+
+  // Get the version as reported by Windows
+  if (sizeof(void*) < 8)
+  {
+    *((UINT32*)&ovi.szCSDVersion[0]) = 0; // Zero out SP
+    *((UINT64*)&ovi.wServicePackMajor) = 0; // wServicePackMajor, wSuiteMask and wProductType
+  }
+  ovi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+  if (!GetVersionEx((OSVERSIONINFO*) &ovi) && sizeof(void*) < 8)
+  {
+    ovi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+    GetVersionEx((OSVERSIONINFO*) &ovi);
+    if (sizeof(TCHAR) == 2 || ovi.dwPlatformId == VER_PLATFORM_WIN32_NT)
+    {
+      ovi.wProductType = 4; // TODO: For < NT4SP6, look it up in the registry. 4 means not W9x and not VER_NT_*
+      ovi.wServicePackMajor = ovi.szCSDVersion[0] == 'S' ? ovi.szCSDVersion[13] - '0' : 0;
+    }
+  }
+  if (sizeof(TCHAR) == 1 && ovi.dwPlatformId < VER_PLATFORM_WIN32_NT)
+  {
+    ovi.wProductType = 0;
+    ovi.wServicePackMajor = ovi.szCSDVersion[1] >= 'A' ? ovi.szCSDVersion[1] - ('A'-1) : 0; // A, B or C
+  }
+  if (sizeof(void*) < 8 && ovi.dwMajorVersion < 10) // Ideally (sizeof(TCHAR) == 1 && ovi.dwMajorVersion < 5) but the compatibility tab emulates this bug
+  {
+    ovi.dwBuildNumber &= 0xffff; // Remove W9x garbage
+  }
+  // Save the packed version information
+  {
+    UINT32 *p = &g_osinfo.WVBuild;
+    p[0] = ovi.dwBuildNumber;
+    p[1] = MAKELONG(MAKEWORD(ovi.wProductType, ovi.wServicePackMajor), MAKEWORD(ovi.dwMinorVersion, ovi.dwMajorVersion));
+  }
 
   {
     // bug #1125: Don't load modules from the application nor current directory.
     // SetDefaultDllDirectories() allows us to restrict implicitly loaded and 
     // dynamically loaded modules to just %windir%\System32 and directories 
     // added with AddDllDirectory(). This prevents DLL search order attacks (CAPEC-471).
-    DWORD winver = g_WinVer;
     // CoCreateInstance(CLSID_ShellLink, ...) fails on Vista if SetDefaultDllDirectories is called
-    BOOL avoidwinbug = LOWORD(winver) == MAKEWORD(6, 0);
+    BOOL avoidwinbug = IsWinVista();
     if (!avoidwinbug)
     {
       FARPROC fp = myGetProcAddress(MGA_SetDefaultDllDirectories);
@@ -160,7 +192,7 @@ EXTERN_C void NSISWinMainNOCRT()
     // accessing a unsupported view and RegKey* takes care of that by looking at the WOW64 flag.
     FARPROC fp = myGetProcAddress(MGA_IsOS);
     enum { os_wow6432 = 30 };
-    if (fp && ((BOOL(WINAPI*)(UINT))fp)(os_wow6432)) g_WinVer |= NSIS_WINVER_WOW64FLAG;
+    if (fp && ((BOOL(WINAPI*)(UINT))fp)(os_wow6432)) g_osinfo.WVProd |= NSIS_OSINFO_PROD_WOW64FLAG;
   }
 #endif
 

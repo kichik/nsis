@@ -45,8 +45,9 @@ typedef struct _stack_t {
 static stack_t *g_st;
 #endif
 
-exec_flags_t g_exec_flags;
+
 exec_flags_t g_exec_flags_last_used;
+execflags_and_osinfo g_execflags_and_osinfo;
 
 extra_parameters plugin_extra_parameters = {
   &g_exec_flags,
@@ -1721,10 +1722,10 @@ static int NSISCALL ExecuteEntry(entry *entry_)
 
     case EW_GETOSINFO:
     {
-      //switch(parm0)
+      switch(parm3)
       {
 #ifdef NSIS_SUPPORT_FNUTIL
-      //case 0:
+        case GETOSINFO_KNOWNFOLDER:
         {
           TCHAR *outstr = var1;
           IID kfid;
@@ -1740,8 +1741,18 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           if (!succ)
             exec_error++, *outstr = _T('\0');
         }
-        //break;
+        break;
 #endif
+        case GETOSINFO_READMEMORY:
+        {
+          TCHAR *outstr = var1;
+          SIZE_T addr = GetIntPtrFromParm(2), spec = GetIntPtrFromParm(4), value = 0;
+          UINT cb = LOBYTE(spec), offset = (UINT)(spec) >> 24;
+          if (addr == ABI_OSINFOADDRESS) addr = (SIZE_T) (&g_execflags_and_osinfo);
+          mini_memcpy(&value, ((char*) addr) + offset, cb);
+          iptrtostr(outstr, value);
+        }
+        break;
       }
     }
     break;

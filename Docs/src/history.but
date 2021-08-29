@@ -18,6 +18,8 @@ Released on ???? ??th, 20??
 
 \b Added \cw{$USER..} and \cw{$COMMON..} alias constants
 
+\b Added \R{getwinver}{GetWinVer} instruction
+
 \b Disallow start maximized mode
 
 \b Added /LAUNCH compiler switch

@@ -68,10 +68,13 @@ LONG NSISCALL RegKeyCreate(HKEY hBase, LPCTSTR SubKey, REGSAM RS, HKEY*phKey);
 void NSISCALL myRegGetStr(HKEY root, const TCHAR *sub, const TCHAR *name, TCHAR *out, UINT altview);
 
 
-extern DWORD g_WinVer; // GetVersion()
-#define IsWin95NT4() ( sizeof(void*) == 4 && LOWORD(g_WinVer) == 0x0004 )
-#define NSIS_WINVER_WOW64FLAG ( sizeof(void*) > 4 ? ( 0 ) : ( 0x40000000 ) )
-#define IsWow64() ( sizeof(void*) > 4 ? ( FALSE ) : ( g_WinVer & NSIS_WINVER_WOW64FLAG ) )
+#define GetWinVerNTDDIMajMin() ( *(UINT16*)(&g_osinfo.WVMin) )
+#define IsWin95NT4() ( sizeof(void*) == 4 && GetWinVerNTDDIMajMin() == 0x0400 )
+#define IsWin9598ME() ( sizeof(TCHAR) == 1 && g_osinfo.WVProd == 0 )
+#define IsWin9598() ( IsWin9598ME() && GetWinVerNTDDIMajMin() < MAKEWORD(90, 4) )
+#define IsWinVista() ( GetWinVerNTDDIMajMin() == 0x0600 )
+#define NSIS_OSINFO_PROD_WOW64FLAG ( sizeof(void*) > 4 ? ( 0 ) : ( 0x80 ) )
+#define IsWow64() ( sizeof(void*) > 4 ? ( FALSE ) : ( (signed char) g_osinfo.WVProd < 0 ) ) // NSIS_OSINFO_PROD_WOW64FLAG
 #define SystemSupportsAltRegView() ( sizeof(void*) > 4 ? ( TRUE ) : ( IsWow64() ) )
 
 

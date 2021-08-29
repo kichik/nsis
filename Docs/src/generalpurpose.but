@@ -51,6 +51,14 @@ The error flag is set if the shortcut cannot be created (i.e. either of the path
 \c   "some command line parameters" "$INSTDIR\My Program.exe" 2 SW_SHOWNORMAL \
 \c   ALT|CONTROL|SHIFT|F5 "a description"
 
+\S2{getwinver} GetWinVer
+
+\c user_var(output) Major|Minor|Build|ServicePack
+
+Gets the Windows version as reported by GetVersionEx. WinVer.nsh is the preferred method for performing Windows version checks.
+
+\c GetWinVer $1 Build
+
 \S2{getdllversion} GetDLLVersion
 
 \c filename user_var(high dword output) user_var(low dword output)

@@ -1,5 +1,5 @@
 /*
- * fileform.h
+ * state.h
  * 
  * This file is a part of NSIS.
  * 
@@ -16,7 +16,10 @@
  * Unicode support by Jim Park -- 08/22/2007
  */
 
+#ifndef NSIS_EXEHEAD_STATE_H
+#define NSIS_EXEHEAD_STATE_H
 #include "fileform.h"
+#include "api.h"
 
 #ifdef __GNUC__
 // GCC warns about array bounds when accessing g_usrvarssection[2] because it is only [1] at compile time, 
@@ -50,3 +53,15 @@ extern HWND insthwnd,insthwndbutton;
 #define g_hwnd 0
 #define g_hInstance 0
 #endif//NSIS_CONFIG_VISIBLE_SUPPORT
+
+
+typedef struct {
+  exec_flags_t exec_flags;
+  osinfo osi;
+} execflags_and_osinfo;
+
+extern execflags_and_osinfo g_execflags_and_osinfo;
+#define g_exec_flags (g_execflags_and_osinfo.exec_flags)
+#define g_osinfo (g_execflags_and_osinfo.osi)
+
+#endif //~ Include guard

@@ -111,6 +111,8 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_GETFULLPATHNAME,_T("GetFullPathName"),2,1,_T("[/SHORT] $(user_var: result) path_or_file"),TP_CODE},
 {TOK_GETTEMPFILENAME,_T("GetTempFileName"),1,1,_T("$(user_var: name output) [base_dir]"),TP_CODE},
 {TOK_GETKNOWNFOLDERPATH,_T("GetKnownFolderPath"),2,0,_T("$(user_var: result) knownfolderid"),TP_CODE},
+{TOK_GETWINVER,_T("GetWinVer"),2,0,_T("$(user_var: result) field\n    field=MAJOR|MINOR|BUILD|SERVICEPACK"),TP_CODE},
+{TOK_READMEMORY,_T("ReadMemory"),3,0,_T("$(user_var: result) address size"),TP_CODE},
 {TOK_HIDEWINDOW,_T("HideWindow"),0,0,_T(""),TP_CODE},
 {TOK_ICON,_T("Icon"),1,0,_T("local_icon.ico"),TP_GLOBAL},
 {TOK_IFABORT,_T("IfAbort"),1,1,_T("label_to_goto_if_abort [label_to_goto_if_no_abort]"),TP_CODE},

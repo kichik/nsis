@@ -4183,9 +4183,39 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return add_entry(&ent);
     case TOK_GETKNOWNFOLDERPATH:
       ent.which=EW_GETOSINFO;
-      ent.offsets[0]=0; // Operation
       ent.offsets[1]=GetUserVarIndex(line, 1);
       ent.offsets[2]=add_string(line.gettoken_str(2));
+      ent.offsets[3]=GETOSINFO_KNOWNFOLDER;
+      SCRIPT_MSG(_T("%") NPRIs _T(": %") NPRIs _T("->%") NPRIs _T("\n"), get_commandtoken_name(which_token), line.gettoken_str(2), line.gettoken_str(1));
+    return add_entry(&ent);
+    case TOK_GETWINVER:
+      {
+        int k = line.gettoken_enum(2, _T("major\0minor\0build\0servicepack\0product\0ntddimajmin")), cb = 0, ofs = 0;
+        switch(k)
+        {
+        case 0: cb = 1, ofs = ABI_OSINFOOFFSET + FIELD_OFFSET(osinfo, WVMaj); break;
+        case 1: cb = 1, ofs = ABI_OSINFOOFFSET + FIELD_OFFSET(osinfo, WVMin); break;
+        case 2: cb = 4, ofs = ABI_OSINFOOFFSET + FIELD_OFFSET(osinfo, WVBuild); break;
+        case 3: cb = 1, ofs = ABI_OSINFOOFFSET + FIELD_OFFSET(osinfo, WVSP); break;
+        case 4: cb = 1, ofs = ABI_OSINFOOFFSET + FIELD_OFFSET(osinfo, WVProd); break;
+        case 5: cb = 2, ofs = ABI_OSINFOOFFSET + FIELD_OFFSET(osinfo, WVMin); break;
+        default: PRINTHELP();
+        }
+        ent.which=EW_GETOSINFO;
+        ent.offsets[1]=GetUserVarIndex(line, 1);
+        ent.offsets[2]=add_intstring(ABI_OSINFOADDRESS);
+        ent.offsets[3]=GETOSINFO_READMEMORY;
+        ent.offsets[4]=add_intstring((cb << 0) | (ofs << 24));
+        SCRIPT_MSG(_T("%") NPRIs _T(": %") NPRIs _T("=%") NPRIs _T("\n"), get_commandtoken_name(which_token), line.gettoken_str(1), line.gettoken_str(2));
+      }
+      return add_entry(&ent);
+    case TOK_READMEMORY:
+      ent.which=EW_GETOSINFO;
+      ent.offsets[1]=GetUserVarIndex(line, 1);
+      ent.offsets[2]=add_string(line.gettoken_str(2));
+      ent.offsets[3]=GETOSINFO_READMEMORY;
+      ent.offsets[4]=add_string(line.gettoken_str(3));
+      SCRIPT_MSG(_T("%") NPRIs _T(": %") NPRIs _T("=*%") NPRIs _T("\n"), get_commandtoken_name(which_token), line.gettoken_str(1), line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_SEARCHPATH:
       ent.which=EW_SEARCHPATH;

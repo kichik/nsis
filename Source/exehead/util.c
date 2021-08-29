@@ -851,7 +851,7 @@ TCHAR * NSISCALL GetNSISString(TCHAR *outbuf, int strtab)
         LPITEMIDLIST idl;
 
         int x = 2;
-        DWORD ver = sizeof(void*) > 4 ? MAKEWORD(5, 2) : g_WinVer; // We only care about 95/98 vs ME/NT4+
+        BOOL isWin9598 = IsWin9598();
         /*
         SHGetFolderPath as provided by shfolder.dll is used to get special folders
         unless the installer is running on Windows 95/98. For 95/98 shfolder.dll is
@@ -869,8 +869,7 @@ TCHAR * NSISCALL GetNSISString(TCHAR *outbuf, int strtab)
         */
         BOOL use_shfolder =
           // Use shfolder if not on 95/98
-          !((ver & 0x80000000) && (LOWORD(ver) != MAKEWORD(4,90))) ||
-
+          !isWin9598 ||
           // Unless the Application Data or Documents folder is requested
           (
             (fldrs[3] == CSIDL_COMMON_APPDATA) ||
