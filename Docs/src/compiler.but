@@ -167,7 +167,7 @@ This command creates a temporary file. It puts its path into a define, named \e{
 
 \S1{ppgetdllversion} !getdllversion
 
-\c [/noerrors] [/packed] localfilename define_basename
+\c [/noerrors] [/packed] [/productversion] localfilename define_basename
 
 This is similar to \R{getdllversionlocal}{GetDLLVersionLocal}, only it stores the version number in defines and can therefore be used anywhere, not just inside functions and sections. /packed returns the information in two DWORDs.
 

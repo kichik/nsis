@@ -130,7 +130,7 @@ enum
 #endif
 
 #ifdef NSIS_SUPPORT_GETDLLVERSION
-  EW_GETDLLVERSION,     // GetDLLVersion: 3 [file highout lowout]
+  EW_GETDLLVERSION,     // GetDLLVersion: 4 [file highout lowout fixedoffset]
 #endif
 
 #ifdef NSIS_SUPPORT_ACTIVEXREG

@@ -987,8 +987,8 @@ static int NSISCALL ExecuteEntry(entry *entry_)
             if ( ((BOOL(WINAPI*)(LPCTSTR,DWORD,DWORD,LPVOID))gfvi)(buf1,0,s1,b1)
               && ((BOOL(WINAPI*)(LPCVOID,LPCTSTR,LPVOID*,UINT*))vqv)(b1,_T("\\"),(void*)&pvsf1,&uLen) )
             {
-              myitoa(highout,pvsf1->dwFileVersionMS);
-              myitoa(lowout,pvsf1->dwFileVersionLS);
+              myitoa(highout,(&pvsf1->dwFileVersionMS)[parm3]);
+              myitoa(lowout,(&pvsf1->dwFileVersionLS)[parm3]);
 
               exec_error--;
             }

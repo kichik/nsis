@@ -4022,8 +4022,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_GETDLLVERSIONLOCAL:
       {
         const TCHAR*cmdname=_T("GetDLLVersionLocal");
-        DWORD low, high;
-        if (!GetDLLVersion(line.gettoken_str(1),high,low))
+        DWORD low, high, prod = line.gettoken_enum(1, _T("/ProductVersion\0")) == 0 ? 2 : 0;
+        if (prod) line.eattoken();
+        if (!GetDLLVersion(line.gettoken_str(1),high,low,!!prod))
         {
           ERROR_MSG(_T("%") NPRIs _T(": error reading version info from \"%") NPRIs _T("\"\n"),cmdname,line.gettoken_str(1));
           return PS_ERROR;
@@ -4190,7 +4191,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return add_entry(&ent);
     case TOK_GETWINVER:
       {
-        int k = line.gettoken_enum(2, _T("major\0minor\0build\0servicepack\0product\0ntddimajmin")), cb = 0, ofs = 0;
+        int k = line.gettoken_enum(2, _T("major\0minor\0build\0servicepack\0product\0ntddimajmin\0")), cb = 0, ofs = 0;
         switch(k)
         {
         case 0: cb = 1, ofs = ABI_OSINFOOFFSET + FIELD_OFFSET(osinfo, WVMaj); break;
@@ -4235,6 +4236,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_GETDLLVERSION:
 #ifdef NSIS_SUPPORT_GETDLLVERSION
       ent.which=EW_GETDLLVERSION;
+      if ((ent.offsets[3]=line.gettoken_enum(1, _T("/ProductVersion\0")) == 0 ? 2 : 0)) line.eattoken();
       ent.offsets[0]=GetUserVarIndex(line, 2);
       ent.offsets[1]=GetUserVarIndex(line, 3);
       ent.offsets[2]=add_string(line.gettoken_str(1));

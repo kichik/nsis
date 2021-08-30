@@ -61,7 +61,7 @@ Gets the Windows version as reported by GetVersionEx. WinVer.nsh is the preferre
 
 \S2{getdllversion} GetDLLVersion
 
-\c filename user_var(high dword output) user_var(low dword output)
+\c [/ProductVersion] filename user_var(high dword output) user_var(low dword output)
 
 Gets the version information from the DLL (or any other executable containing version information) in "filename". Sets the user output variables with the high and low dwords of version information on success; on failure the outputs are empty and the error flag is set. The following example reads the DLL version and copies a human readable version of it into $0:
 
@@ -74,7 +74,7 @@ Gets the version information from the DLL (or any other executable containing ve
 
 \S2{getdllversionlocal} GetDLLVersionLocal
 
-\c localfilename user_var(high dword output) user_var(low dword output)
+\c [/ProductVersion] localfilename user_var(high dword output) user_var(low dword output)
 
 This is similar to \R{getdllversion}{GetDLLVersion}, only it acts on the system building the installer (it actually compiles into two \R{StrCpy}{StrCpy} commands). Sets the two output variables with the DLL version information of the DLL on the build system. Use \R{ppgetdllversion}{!getdllversion} if you need to use the values with \R{viproductversion}{VIProductVersion}.
 

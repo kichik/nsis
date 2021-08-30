@@ -607,17 +607,19 @@ int CEXEBuild::pp_getversion(int which_token, LineParser&line)
 {
   const bool tlb = TOK_P_GETTLBVERSION == which_token;
   const TCHAR *cmdname = tlb ? _T("!gettlbversion") : _T("!getdllversion"), *path;
-  DWORD ti = 1, flags = tlb ? PPGVHF_TLB : 0, low, high;
+  DWORD ti = 1, flags = tlb ? PPGVHF_TLB : 0, low, high, prod = 0;
   for (;; ++ti)
   {
     if (!_tcsicmp(line.gettoken_str(ti), _T("/noerrors")))
       flags |= PPGVHF_NOERRORS;
     else if (!_tcsicmp(line.gettoken_str(ti), _T("/packed")))
       flags |= PPGVHF_PACKED;
+    else if (!_tcsicmp(line.gettoken_str(ti), _T("/productversion")))
+      ++prod;
     else
       break;
   }
-  if ((tlb ? GetTLBVersion : GetDLLVersion)(path = line.gettoken_str(ti), high, low)) flags |= PPGVHF_VALID;
+  if ((tlb ? GetTLBVersion : GetDLLVersion)(path = line.gettoken_str(ti), high, low, !!prod)) flags |= PPGVHF_VALID;
   return pp_getversionhelper(cmdname, path, line.gettoken_str(ti+1), high, low, flags);
 }
 
