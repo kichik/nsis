@@ -423,8 +423,9 @@ typedef struct tagMINI_IMAGE_VXD_HEADER {
 static bool GetDLLVersionFromVXD(const TCHAR *filepath, DWORD &high, DWORD &low, bool Product)
 {
   bool found = false;
+  UINT fieldofs = Product ? 2 : 0;
   FILEVIEW map;
-  char *filedata = create_file_view_readonly(filepath, map), fieldofs = Product ? 2 : 0;
+  char *filedata = create_file_view_readonly(filepath, map);
   if (filedata)
   {
     PIMAGE_DOS_HEADER pDosHdr = (PIMAGE_DOS_HEADER) filedata;

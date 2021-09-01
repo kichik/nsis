@@ -194,7 +194,7 @@ static TCHAR* ParseResProtocolAlloc(const TCHAR*Url, const TCHAR*&Type, const TC
     for (pD = buf, pS = pD;; ++pS, ++pD) {
       if ((ch = *pS) == '%') { // Deal with percent-encoding
         if (*++pS != '%') {
-          TCHAR hex[3] = { pS[0], pS[0] ? pS[1] : '\0', '\0' };
+          TCHAR hex[3] = { pS[0], pS[0] ? pS[1] : _T('\0'), _T('\0') };
           ch = ChIsHex(pS[0]) && ChIsHex(pS[1]) ? (TCHAR) _tcstol(hex, 0, 16) : 0;
           if (ch) ++pS; else ++bad;
         }
@@ -920,7 +920,7 @@ BYTE* CResourceEditor::ExtractIcoCurW(const WINWCHAR* szType, WINWCHAR* szName, 
     return 0;
   CResourceDataEntry*pRDE = pLangDir->GetDataEntry();
   BYTE*pSH = pRDE->GetData(), cbRGE = 14, cbFGE = 16, *pResData;
-  DWORD succ = false, i, cbRes, failed = false;
+  DWORD i, cbRes, failed = false;
   if (pRDE->GetSize() < 6) // Must at least have a ICO file header
     return 0;
   WORD imgResType, count, *pFirstRGE = (WORD*) GetFirstICOCURGroupEntry(pSH, &imgResType, &count), *pRGE;

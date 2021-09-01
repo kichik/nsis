@@ -68,7 +68,7 @@ static char* CreateMappedFileView(LPCTSTR Path, DWORD FAccess, DWORD FShare, DWO
   HANDLE hFile = CreateFile(Path, FAccess, FShare, NULL, FMode, 0, NULL);
   if (hFile == INVALID_HANDLE_VALUE) return pView;
   ULARGE_INTEGER fs;
-  validSize = GetFileSize64(hFile, fs) && sizeof(size_t) >= 8 || !fs.HighPart;
+  validSize = GetFileSize64(hFile, fs) && (sizeof(size_t) >= 8 || !fs.HighPart);
   FSize = sizeof(size_t) >= 8 ? (size_t) fs.QuadPart : fs.LowPart;
   HANDLE hMap = validSize ? CreateFileMapping(hFile, NULL, PProtect, 0, 0, NULL) : INVALID_HANDLE_VALUE;
   if (hMap != INVALID_HANDLE_VALUE)

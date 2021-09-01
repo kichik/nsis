@@ -245,6 +245,21 @@ void InitializeLogWindow() {
   SendMessage(hRE, EM_SETTEXTMODE, TM_PLAINTEXT, 0);
 }
 
+HRESULT RicheditFreeze(void*pITextDocument, SIZE_T Freeze)
+{
+  HRESULT hr = E_NOTIMPL;
+#ifdef RE_HAS_TOM
+  ITextDocument*pTD = (ITextDocument*) pITextDocument;
+  if (pTD) {
+    if (Freeze)
+      hr = pTD->Freeze(0);
+    else
+      hr = pTD->Unfreeze(0);
+  }
+#endif
+  return hr;
+}
+
 void SetLogColor(enum LOGCOLOR lc)
 {
   enum { em_seteditstyle = (WM_USER + 204), ses_extendbackcolor = 4 };
@@ -269,7 +284,6 @@ void ClearLog(HWND hwnd) {
 void LogMessage(HWND hwnd,const TCHAR *str) {
   HWND hLogWin = GetDlgItem(hwnd, IDC_LOGWIN);
 #ifdef RE_HAS_TOM
-  ITextDocument*pTD = (ITextDocument*) g_sdata.pLogTextDoc;
   HRESULT hr = (HRESULT) SendMessage(hwnd, WM_MAKENSIS_FREEZEEDITOR, 0, true); // Force COM calls to UI thread
 #endif
   SendMessage(hLogWin, EM_SETSEL, g_sdata.logLength, g_sdata.logLength);

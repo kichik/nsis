@@ -13,10 +13,12 @@ FORCEINLINE DWORD NoDepr_GetVersion() { __pragma(warning(push))__pragma(warning(
 typedef BOOL (WINAPI*CHECKTOKENMEMBERSHIP)(HANDLE TokenHandle,PSID SidToCheck,PBOOL IsMember);
 CHECKTOKENMEMBERSHIP _CheckTokenMembership=NULL;
 
+#if !defined(_WIN64) || defined(NSIS_FORCERUNTIMELINKING)
 static FARPROC GetAA32ProcAddress(LPCSTR FuncName)
 {
   return GetProcAddress(GetModuleHandleA("ADVAPI32"), FuncName);
 }
+#endif
 
 #if defined(NSIS_FORCERUNTIMELINKING) //__MINGW64_VERSION_MAJOR+0 >= 1
 // OpenThreadToken is exported by kernel32.lib in mingw-w64 breaking < Win7 where it only exists in advapi32.

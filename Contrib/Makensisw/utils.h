@@ -181,6 +181,7 @@ static inline void GetGripperPos(HWND hwnd, RECT&r)
 }
 
 bool RicheditHasSelection(HWND hRE);
+HRESULT RicheditFreeze(void*pITextDocument, SIZE_T Freeze);
 
 void EnableUICommand(UINT Id, INT_PTR Enabled);
 
