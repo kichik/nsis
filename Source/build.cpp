@@ -2795,20 +2795,14 @@ retry_output:
   if (PAGE_COMPLETED != PAGE_INSTFILES && np) --np; // Special page not part of count
   INFO_MSG(_T("%d page%") NPRIs _T(" (%d bytes), "),np,np==1?_T(""):_T("s"),np*sizeof(page));
 #endif
+#define IsRequiredSection(s) ( !(s).name_ptr || (((s).flags & (SF_RO|SF_SELECTED)) == (SF_RO|SF_SELECTED)))
   {
-    int ns=build_sections.getlen()/sizeof(section);
+    int ns=build_sections.getlen()/sizeof(section), x;
     section *s=(section*)build_sections.get();
-    int x;
     unsigned int req=0;
-    for (x = 1; x < ns; x ++)
-    {
-      if (!s[x].name_ptr || s[x].flags & SF_RO) req++;
-    }
+    for (x = 0; x < ns; x ++) if (IsRequiredSection(s[x])) ++req;
     INFO_MSG(_T("%d section%") NPRIs,ns,ns==1?_T(""):_T("s"));
-    if (req)
-    {
-      INFO_MSG(_T(" (%u required)"),req);
-    }
+    if (req) INFO_MSG(_T(" (%u required)"),req);
     INFO_MSG(_T(" (%d bytes), "), build_sections.getlen());
   }
   int ne=build_header.blocks[NB_ENTRIES].num;
@@ -2826,19 +2820,12 @@ retry_output:
     INFO_MSG(_T("%d page%") NPRIs _T(" (%d bytes), "),np,np==1?_T(""):_T("s"),ubuild_pages.getlen());
 #endif
     {
-      int ns=ubuild_sections.getlen()/sizeof(section);
+      int ns=ubuild_sections.getlen()/sizeof(section), x;
       section *s=(section*)ubuild_sections.get();
-      int x;
       unsigned int req=0;
-      for (x = 1; x < ns; x ++)
-      {
-        if (!s[x].name_ptr || s[x].flags & SF_RO) req++;
-      }
+      for (x = 0; x < ns; x ++) if (IsRequiredSection(s[x])) ++req;
       INFO_MSG(_T("%d section%") NPRIs,ns,ns==1?_T(""):_T("s"));
-      if (req)
-      {
-        INFO_MSG(_T(" (%u required)"),req);
-      }
+      if (req) INFO_MSG(_T(" (%u required)"),req);
       INFO_MSG(_T(" (%d bytes), "), ubuild_sections.getlen());
     }
     ne=build_uninst.blocks[NB_ENTRIES].num;
