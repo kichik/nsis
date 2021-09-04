@@ -2795,7 +2795,7 @@ retry_output:
   if (PAGE_COMPLETED != PAGE_INSTFILES && np) --np; // Special page not part of count
   INFO_MSG(_T("%d page%") NPRIs _T(" (%d bytes), "),np,np==1?_T(""):_T("s"),np*sizeof(page));
 #endif
-#define IsRequiredSection(s) ( !(s).name_ptr || (((s).flags & (SF_RO|SF_SELECTED)) == (SF_RO|SF_SELECTED)))
+#define IsRequiredSection(s) ( (!(s).name_ptr && ((s).flags & SF_SELECTED)) || (((s).flags & (SF_RO|SF_SELECTED)) == (SF_RO|SF_SELECTED)))
   {
     int ns=build_sections.getlen()/sizeof(section), x;
     section *s=(section*)build_sections.get();
