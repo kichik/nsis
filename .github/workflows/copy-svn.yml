@@ -10,6 +10,8 @@ on:
       force:
         description: 'Force push (CAREFUL!)'     
         required: false
+  schedule:
+    - cron:  '4 10 * * *'
 
 jobs:
   copy:
@@ -44,12 +46,10 @@ jobs:
           else
             echo '::set-output name=cache-hit::false'
           fi
-
       - name: Initial SVN clone
         if: steps.restore-cache.outputs.cache-hit != 'true'
         run: |
           git svn clone -A.github/workflows/svn-authors -s https://svn.code.sf.net/p/nsis/code/NSIS svn2git
-
       - name: SVN fetch
         working-directory: svn2git
         run: |
@@ -81,11 +81,9 @@ jobs:
             do
                   TAG_NAME=`echo $BRANCH | cut -d / -f 3-`
                   BODY="$(git log -1 --format=format:%B $REF)"
-
                   echo "ref=$REF parent=$(git rev-parse $REF^) tagname=$TAG_NAME body=$BODY" >&2
                   git tag -l "$TAG_NAME"
                   echo XXX
-
                   if [ $(git tag -l "$TAG_NAME") ]; then
                     echo tag already exists
                   else
@@ -125,5 +123,7 @@ jobs:
           rm -f svn2git-cache.tar.gz
           tar czf svn2git-cache.tar.gz svn2git
           git add svn2git-cache.tar.gz
+          cp svn2git/.github/workflows/* .github/workflows/
+          git add .github/workflows/*
           git commit --amend -m "update cache" svn2git-cache.tar.gz
-          git push --force origin svn2git-cache
+          git push --force git@github.com:${GITHUB_REPOSITORY}.git svn2git-cache
