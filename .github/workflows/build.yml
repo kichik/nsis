@@ -1,5 +1,9 @@
 name: Build, Test and Publish
-on: [push, pull_request]
+on:
+  push:
+    branches-ignore:
+      - trunk
+  pull_request:
 jobs:
   build:
     strategy:
