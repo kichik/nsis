@@ -18,15 +18,15 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
-          
+
       - name: Install git-svn
         run: sudo add-apt-repository ppa:git-core/ppa && sudo apt update && sudo apt install git-svn
-        
+
       - name: Configure git
         run: |
           git config --global user.email "kichik@gmail.com"
           git config --global user.name "Amir Szekely"
-                  
+
       - name: Restore cache
         id: restore-cache
         run: |
@@ -46,16 +46,18 @@ jobs:
           else
             echo '::set-output name=cache-hit::false'
           fi
+
       - name: Initial SVN clone
         if: steps.restore-cache.outputs.cache-hit != 'true'
         run: |
           git svn clone -A.github/workflows/svn-authors -s https://svn.code.sf.net/p/nsis/code/NSIS svn2git
+
       - name: SVN fetch
         working-directory: svn2git
         run: |
           git svn fetch --fetch-all
           git svn rebase
-          
+
       - name: SVN branches
         working-directory: svn2git
         run: |
@@ -70,28 +72,23 @@ jobs:
             git svn rebase
           done
           git checkout master
-          
+
       - name: SVN tags
         working-directory: svn2git
         run: |
-          git tag
-        
           git for-each-ref --format="%(refname:short) %(objectname)" refs/remotes/origin/tags \
           | while read BRANCH REF
             do
                   TAG_NAME=`echo $BRANCH | cut -d / -f 3-`
                   BODY="$(git log -1 --format=format:%B $REF)"
                   echo "ref=$REF parent=$(git rev-parse $REF^) tagname=$TAG_NAME body=$BODY" >&2
-                  git tag -l "$TAG_NAME"
-                  echo XXX
                   if [ $(git tag -l "$TAG_NAME") ]; then
                     echo tag already exists
                   else
                     git tag -a -m "$BODY" $TAG_NAME $REF^
-                    #git branch -r -d $BRANCH
                   fi
             done
-      
+
       - name: Setup GitHub access
         env:
           SSH_KEY: ${{ secrets.SSH_KEY }}
@@ -100,7 +97,7 @@ jobs:
           touch ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
           echo "$SSH_KEY" >> ~/.ssh/id_ed25519
-      
+
       - name: Push to GitHub
         working-directory: svn2git
         run: |
@@ -111,13 +108,13 @@ jobs:
           remote_repo="git@github.com:${GITHUB_REPOSITORY}.git"
           git push "$remote_repo" --all $flags
           git push "$remote_repo" --tags $flags
-          
+
       - name: GC
         working-directory: svn2git
         run: |
           echo run garbage collection so caching does not fail while files are changing
           git gc --auto
-          
+
       - name: Save cache
         run: |
           rm -f svn2git-cache.tar.gz
