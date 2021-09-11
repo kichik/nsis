@@ -763,7 +763,10 @@ static void read_file(paragraph *** ret, input * in, indexdata * idx, tree234 *m
         break;
       case c__comment:
         if (isbrace(in))
+        {
+          needkw = -1; // Upstream 56b96573 (r8312)
           break;                /* `\#{': isn't a comment para */
+        }
         do
         {
           dtor(t), t = get_token(in);

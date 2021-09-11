@@ -119,7 +119,7 @@ wchar_t *ustrlow(wchar_t * s)
   return s;
 }
 
-int utoi(wchar_t * s)
+int utoi(const wchar_t *s)
 {
   int sign = +1;
   int n;
@@ -138,7 +138,7 @@ int utoi(wchar_t * s)
     s++;
   }
 
-  return n;
+  return n * sign;
 }
 
 int utob(wchar_t * s)

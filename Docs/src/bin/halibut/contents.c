@@ -55,6 +55,8 @@ static void dotext(word *** wret, wchar_t * text)
   mnewword->type = word_Normal;
   mnewword->alt = NULL;
   mnewword->next = NULL;
+  mnewword->breaks = FALSE;
+  mnewword->aux = 0;
   **wret = mnewword;
   *wret = &mnewword->next;
 }
@@ -66,6 +68,8 @@ static void dospace(word *** wret)
   mnewword->type = word_WhiteSpace;
   mnewword->alt = NULL;
   mnewword->next = NULL;
+  mnewword->breaks = FALSE;
+  mnewword->aux = 0;
   **wret = mnewword;
   *wret = &mnewword->next;
 }

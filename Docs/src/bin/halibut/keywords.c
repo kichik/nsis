@@ -156,6 +156,8 @@ void subst_keywords(paragraph * source, keywordlist * kl)
         close->alt = NULL;
         close->type = word_XrefEnd;
         close->fpos = ptr->fpos;
+        close->breaks = FALSE;
+        close->aux = 0;
 
         close->next = ptr->next;
         ptr->next = subst;
