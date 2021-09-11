@@ -2,6 +2,10 @@
 \#{* Common config shared by all output formats *}
 \#{**********************************************}
 
+\cfg{html-lang}{en}
+
+\cfg{html-suppress-address}{true}
+
 \define{NsisCopyright} Copyright (C) 1999-2021 Contributors
 
 \copyright \NsisCopyright

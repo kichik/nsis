@@ -21,6 +21,12 @@ wchar_t *ustrdup(wchar_t * s)
   return r;
 }
 
+wchar_t *ustrreplacedup(wchar_t **dest, wchar_t *src)
+{
+  sfree(*dest);
+  return *dest = ustrdup(src);
+}
+
 char *ustrtoa(wchar_t * s, char *outbuf, int size)
 {
   char *p;
@@ -62,7 +68,7 @@ wchar_t *ustrcpy(wchar_t * dest, wchar_t * source)
   return ret;
 }
 
-int ustrcmp(wchar_t * lhs, wchar_t * rhs)
+int ustrcmp(const wchar_t * lhs, const wchar_t * rhs)
 {
   if (!lhs && !rhs)
     return 0;
@@ -89,7 +95,7 @@ wchar_t utolower(wchar_t c)
   return c;
 }
 
-int ustricmp(wchar_t * lhs, wchar_t * rhs)
+int ustricmp(const wchar_t * lhs, const wchar_t * rhs)
 {
   wchar_t lc, rc;
   while ((lc = utolower(*lhs)) == (rc = utolower(*rhs)) && lc && rc)

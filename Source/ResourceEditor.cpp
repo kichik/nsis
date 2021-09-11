@@ -867,7 +867,7 @@ bool CResourceEditor::UpdateResourceFromExternalT(const TCHAR* Type, WORD Name, 
 {
   bool success = false;
   const TCHAR *srctype, *srcname;
-  LANGID srclang;
+  LANGID srclang = 0;
   TCHAR *resproto = ParseResProtocolAlloc(File, srctype, srcname, srclang);
   if (resproto) {
     File = resproto;
