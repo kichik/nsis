@@ -3,6 +3,7 @@ on:
   push:
     branches-ignore:
       - trunk
+      - svn2git-cache
   pull_request:
 jobs:
   build:
