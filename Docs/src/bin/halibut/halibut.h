@@ -242,17 +242,17 @@ char *dupstr(char *s);
  */
 #define asciistrdef(s, d) ( (s) ? (s) : (d) )
 #define ustrdef(s, d) ( (s) ? (s) : (d) )
-wchar_t *ustrdup(wchar_t * s);
-wchar_t *ustrreplacedup(wchar_t **dest, wchar_t *src);
-char *ustrtoa(wchar_t * s, char *outbuf, int size);
-int ustrlen(wchar_t * s);
-wchar_t *uadv(wchar_t * s);
-wchar_t *ustrcpy(wchar_t * dest, wchar_t * source);
+wchar_t *ustrdup(const wchar_t * s);
+wchar_t *ustrreplacedup(wchar_t **dest, const wchar_t *src);
+char *ustrtoa(const wchar_t * s, char *outbuf, int size);
+int ustrlen(const wchar_t * s);
+wchar_t *uadv(const wchar_t * s);
+wchar_t *ustrcpy(wchar_t * dest, const wchar_t * source);
 wchar_t utolower(wchar_t);
 int ustrcmp(const wchar_t * lhs, const wchar_t * rhs);
 int ustricmp(const wchar_t * lhs, const wchar_t * rhs);
-int utoi(wchar_t *);
-int utob(wchar_t *);
+int utoi(const wchar_t *);
+int utob(const wchar_t *);
 int uisdigit(wchar_t);
 wchar_t *ustrlow(wchar_t * s);
 wchar_t *ustrftime(wchar_t * fmt, struct tm *timespec);

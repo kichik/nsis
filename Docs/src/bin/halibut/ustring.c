@@ -6,7 +6,7 @@
 #include <time.h>
 #include "halibut.h"
 
-wchar_t *ustrdup(wchar_t * s)
+wchar_t *ustrdup(const wchar_t * s)
 {
   wchar_t *r;
   if (s)
@@ -21,13 +21,13 @@ wchar_t *ustrdup(wchar_t * s)
   return r;
 }
 
-wchar_t *ustrreplacedup(wchar_t **dest, wchar_t *src)
+wchar_t *ustrreplacedup(wchar_t **dest, const wchar_t *src)
 {
   sfree(*dest);
   return *dest = ustrdup(src);
 }
 
-char *ustrtoa(wchar_t * s, char *outbuf, int size)
+char *ustrtoa(const wchar_t * s, char *outbuf, int size)
 {
   char *p;
   if (!s)
@@ -44,7 +44,7 @@ char *ustrtoa(wchar_t * s, char *outbuf, int size)
   return outbuf;
 }
 
-int ustrlen(wchar_t * s)
+int ustrlen(const wchar_t * s)
 {
   int len = 0;
   while (*s++)
@@ -52,12 +52,12 @@ int ustrlen(wchar_t * s)
   return len;
 }
 
-wchar_t *uadv(wchar_t * s)
+wchar_t *uadv(const wchar_t * s)
 {
-  return s + 1 + ustrlen(s);
+  return ((wchar_t*) s) + 1 + ustrlen(s);
 }
 
-wchar_t *ustrcpy(wchar_t * dest, wchar_t * source)
+wchar_t *ustrcpy(wchar_t * dest, const wchar_t * source)
 {
   wchar_t *ret = dest;
   do
@@ -141,7 +141,7 @@ int utoi(const wchar_t *s)
   return n * sign;
 }
 
-int utob(wchar_t * s)
+int utob(const wchar_t * s)
 {
   if (!ustricmp(s, L"yes") || !ustricmp(s, L"y") ||
       !ustricmp(s, L"true") || !ustricmp(s, L"t"))
