@@ -1,12 +1,13 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
 <title>VPatch 3</title>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
 <style type="text/css">
 /*<![CDATA[*/
+:root { color-scheme: light dark; }
 html, body { font-family: Verdana, Arial, Helvetica, sans-serif; color: #000000; background-color: #ffffff; }
 html { font-size: 0.84em; }
 body { font-size: 1em; font-size: 1rem; }
@@ -21,49 +22,23 @@ h6 { font-size: 110%; }
 body
         {
         padding:1.5em 0; margin:0;
-        background-color: #F0F0F0;
         font-family: Verdana, Arial, Helvetica, sans-serif;
         font-weight: normal;
         text-align: left;
         }
 
-p, li
-        {
-        font-size: 1em;
-        }
-
-.center
-        {
-        text-align: center;
-        }
-
+p, li { font-size: 1em; }
 table
         {
         margin: auto;
         font-size: 1em;
-        background-color: #FFFFFF;
         }
-
-.maintable
-        {
-        border: 2px solid #376EAB;
-        width: 90%;
-        }
-
-.parameter
-        {
-        font-weight: bold;
-        color: #6586AC;
-        }
-
-
 h1
         {
         font-size: 250%;
         color: #333333;
         font-weight: normal;
         text-align: center;
-        margin-top: 2em;
         }
 
 h2
@@ -85,30 +60,25 @@ div
         margin: 1.5em;
         }
 
-a:link, a:visited, a:active
-        {
-        color: #294F75;
-        text-decoration: none;
-        }
+a:link, a:visited, a:active { color: #294F75; text-decoration: none; }
+a:hover { color: #182634; text-decoration: underline; }
 
-a:hover
-        {
-        color: #182634;
-        text-decoration: underline;
-        }
 .T tr:nth-child(odd) { background-color: #fafafa; }
-.T tr, .T td { border: 1px solid #f2f2f2; border-collapse: collapse; padding: 0.2em; }
+.T tr, .T td { border: 1px solid #f5f5f5; border-collapse: collapse; padding: 0.2em; }
 
+@media (prefers-color-scheme: dark) {
+html, body { color: #eeeeee; background-color:#161616; }
+h1, h2, h3, h4, h5, h5 { color: inherit; }
+a, a:link, a:visited, a:active { color: #4be; } a:hover { color: #6df; }
+.T tr:nth-child(odd) { background-color: #222222; }
+.T tr, .T td { border: 1px solid #202020; border-collapse: collapse; padding: 0.2em; }
+}
 
 /*]]>*/
 </style>
 </head>
 <body>
-<table width="750" class="maintable" cellspacing="0" cellpadding="0" align="center">
-    <tr> 
-      <td> 
-        
-      <h1>VPatch 3.1</h1>
+  <h1>VPatch 3.1</h1>
         <div> 
           <h2>Introduction</h2>
           <div>
@@ -126,9 +96,7 @@ a:hover
             file (version to update to). For example, DATA.DTA (currently on user 
             system) and DATA_20.DTA (version 2.0 of this data file). Now call 
             the command line tool GenPat.exe:</p>
-          <pre>
-GENPAT oldfile.txt newfile.txt patch.pat
-</pre>
+          <pre>GENPAT oldfile.txt newfile.txt patch.pat</pre>
           <p>Now, the patch will be generated, this will take some time.</p>
             <p>Using the /B=(BlockSize) parameter of the GenPat utility (put it 
               after the filenames), you can use a different block size. A smaller 
@@ -141,9 +109,7 @@ GENPAT oldfile.txt newfile.txt patch.pat
           <h3>Update the file during installation</h3>
           <div>
           <p>Use the VPatch plug-in to update a file using a patch file:</p>
-          <pre>
-vpatch::vpatchfile "patch.pat" "oldfile.txt" "temporary_newfile.txt"
-</pre>
+          <pre>vpatch::vpatchfile "patch.pat" "oldfile.txt" "temporary_newfile.txt"</pre>
           <p>The result of the patch operating will be added to the stack and 
             can be one of the following texts:</p>
           <ul>
@@ -226,8 +192,7 @@ vpatch::vpatchfile "patch.pat" "oldfile.txt" "temporary_newfile.txt"
           <p>A user interface is included as well, which you will have to build 
             yourself because the GUI executable was too large to include. Besides 
             Borland Delphi 6 or higher (you can use the freely available Personal 
-            edition), you will also need to install the <a href=
-"http://www.delphi-gems.com">VirtualTreeView</a> component by Mike Lischke.</p>
+            edition), you will also need to install the <a href="http://www.delphi-gems.com">VirtualTreeView</a> component by Mike Lischke.</p>
           </div>
           </div>
           <h2>Version history</h2>
@@ -310,13 +275,12 @@ vpatch::vpatchfile "patch.pat" "oldfile.txt" "temporary_newfile.txt"
           </div>
           <h2>Credits</h2>
           <div>
-          <p>Written by Koen van de Sande<br />
-            C plug-in initially by Edgewize, updated by Koen van de Sande<br />
-            New documentation and example by Joost Verburg and Koen van de Sande</p>
+          <p>Written by Koen van de Sande.<br>
+            C plug-in initially by Edgewize, updated by Koen van de Sande.<br>
+            New documentation and example by Joost Verburg and Koen van de Sande.</p>
           </div>
           <h2>License</h2>
-          <div>
-          <pre>
+          <div><pre>
 Copyright (C) 2001-2005 Koen van de Sande / Van de Sande Productions
 
 This software is provided 'as-is', without any express or implied
@@ -334,11 +298,8 @@ it freely, subject to the following restrictions:
 2. Altered versions must be plainly marked as such,
    and must not be misrepresented as being the original software.
 3. This notice may not be removed or altered from any distribution.
-</pre>
-</div>
-        </div>
-      </td>
-</tr>
-</table>
+</pre></div>
+  </div>
+
 </body>
 </html>
