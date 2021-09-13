@@ -205,3 +205,21 @@ wchar_t *ustrftime(wchar_t * wfmt, struct tm * timespec)
   sfree(text);
   return wblk;
 }
+
+ustr_slist* ustr_slist_append(ustr_slist**headaddr, const wchar_t*str)
+{
+  size_t cch = ustrlen(str) + 1;
+  size_t cb = sizeof(ustr_slist) + (cch * sizeof(wchar_t));
+  ustr_slist *p = (ustr_slist*) mknewa(char, cb), *walk;
+  if (p)
+  {
+    ustrcpy(p->string, str);
+    p->next = NULL;
+    for (walk = *headaddr; walk; walk = walk->next)
+      if (!walk->next)
+        walk->next = p, walk = p;
+    if (!*headaddr)
+      *headaddr = p;
+  }
+  return p;
+}

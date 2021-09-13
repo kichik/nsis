@@ -1,34 +1,39 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
 <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
     <title>Multi-User Header File (MultiUser.nsh)</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style type="text/css">
-      html, body { font-family: Verdana, Arial, Helvetica, sans-serif; font-weight: normal; background-color: #fefefe; color: #050505; }
-      html { font-size: 0.9em; }
-      body { font-size: 1em; font-size: 1rem; }
-      pre, code { font-family: Courier New, Courier, monospace,serif; font-size: 100%; }
-      code { background-color: #f6f6f6; }
-      pre { background-color: inherit; }
-      tr:nth-child(odd) { background-color: #fafafa; }
-      table, tr, td { border: 1px solid #dddddd; border-collapse: collapse; }
-      td { padding: 0.3em; vertical-align: top; }
+:root { color-scheme: light dark; }
+html, body { font-family: Verdana, Arial, Helvetica, sans-serif; font-weight: normal; color: #050505; background-color: #fefefe; }
+html { font-size: 0.9em; }
+body { font-size: 1em; font-size: 1rem; }
+pre, code { font-family: Courier New, Courier, monospace,serif; font-size: 100%; }
+pre, pre code {background-color: #f6f6f6;  }
+tr:nth-child(odd) { background-color: #fafafa; }
+table, tr, td { border: 1px solid #dddddd; border-collapse: collapse; }
+td { padding: 0.3em; vertical-align: top; }
+
+@media (prefers-color-scheme: dark) {
+html, body { color: #eeeeee; background-color: #161616; }
+a, a:link, a:visited, a:active { color: #79b; } a:hover { color: #3ad; }
+pre, pre code {background-color: #202020; }
+table, tr, td { border-color: #202020; }
+tr:nth-child(odd) { background-color: #181818; }
+}
     </style>
 </head>
 <body>
-    <h1>
-        Multi-User Header File (MultiUser.nsh)</h1>
-    <p>
-        <i>Installer configuration for multi-user Windows environments</i></p>
-    <h2>
-        Table of Contents</h2>
+    <h1>Multi-User Header File (MultiUser.nsh)</h1>
+    <p><i>Installer configuration for multi-user Windows environments</i></p>
+    <h2>Table of Contents</h2>
     <ul>
         <li><a href="#introduction">Introduction</a></li>
         <li><a href="#executionlevel">Initalization and Execution Level</a>
             <li><a href="#installationmode">Installation Mode</a></ul>
-    <h2>
-        <a name="introduction"></a>Introduction</h2>
+    <h2><a name="introduction"></a>Introduction</h2>
     <p>
         Modern Windows versions support multiple users accounts on a single computer, each
         with different privileges. For security reasons, the privileges of applications
@@ -43,8 +48,7 @@
     <p>
         Note that all settings need to be set before including the MultiUser.nsh header
         file.</p>
-    <h2>
-        Initialization and <a name="executionlevel"></a>Execution Level&nbsp;</h2>
+    <h2>Initialization and <a name="executionlevel"></a>Execution Level&nbsp;</h2>
     <p>
         Before the MultiUser.nsh file is included, the MULTIUSER_EXECUTIONLEVEL define should
         be set to one of the following values depending on the execution level that is required:</p>
@@ -76,7 +80,7 @@
                 Power
             </td>
             <td>
-                Power User privileges are required<br />
+                Power User privileges are required<br>
                 (Power Users no longer exist in Windows Vista. For Vista this is equivalent to Admin)
             </td>
             <td>
@@ -111,8 +115,7 @@
         Insert the MULTIUSER_INIT and MULTIUSER_UNINT macros in the .onInit and un.onInit
         function to verify these privileges. If no uninstaller is created in the script,
         define MULTIUSER_NOUNINSTALL.</p>
-    <code>
-        <pre>!define MULTIUSER_EXECUTIONLEVEL Highest
+        <pre><code>!define MULTIUSER_EXECUTIONLEVEL Highest
 ;!define MULTIUSER_NOUNINSTALL ;Uncomment if no uninstaller is created
 !include MultiUser.nsh
 
@@ -124,8 +127,7 @@ FunctionEnd
 
 Function un.onInit
   !insertmacro MULTIUSER_UNINIT
-FunctionEnd</pre>
-    </code>
+FunctionEnd</code></pre>
     <p>
         Whether the required privileges can be obtained depends on the user that starts
         the installer:</p>
@@ -152,10 +154,8 @@ FunctionEnd</pre>
         The following additional settings are available to customize the initialization:</p>
     <table>
         <tr>
-            <td>
-                <b>Setting<td>
-                    <b>Description</b>
-                </td>
+            <td><b>Setting</b></td>
+            <td><b>Description</b></td>
         </tr>
         <tr>
             <td>
@@ -193,7 +193,7 @@ FunctionEnd</pre>
         </tr>
         <tr>
             <td>
-                MULTIUSER_INIT_FUNCTIONQUIT<br />
+                MULTIUSER_INIT_FUNCTIONQUIT<br>
                 MULTIUSER_INIT_UNFUNCTIONQUIT
             </td>
             <td>
@@ -202,8 +202,7 @@ FunctionEnd</pre>
             </td>
         </tr>
     </table>
-    <h2>
-        <a name="installationmode"></a>Installation Mode</h2>
+    <h2><a name="installationmode"></a>Installation Mode</h2>
     <p>
         As mentioned before, applications can both be installed for a single users or for
         all users on a computer. Applications for all users are typically installed in the
@@ -220,13 +219,8 @@ FunctionEnd</pre>
         The following settings are available to change the default installation mode:
         <table>
             <tr>
-                <td>
-                    <b>Setting</b>
-                </td>
-                <td>
-                    <b>Description</b>
-                </td>
-                </td>
+                <td><b>Setting</b></td>
+                <td><b>Description</b></td>
             </tr>
             <tr>
                 <td>
@@ -252,8 +246,7 @@ FunctionEnd</pre>
             After initialization, the variable $MultiUser.InstallMode will contain the current
             installation mode (AllUsers or CurrentUser).
         </p>
-        <h3>
-            Mixed-Mode Installation</h3>
+        <h3>Mixed-Mode Installation</h3>
         <p>
             For the Admin and Power levels, both a per-machine as well as a per-user installation
             is possible. If the Highest level is set and the user is an Administrator or Power
@@ -264,7 +257,7 @@ FunctionEnd</pre>
             installation mode. To use this page, define MULTIUSER_MUI before including User.nsh.
             Then, the MULTIUSER_PAGE_INSTALLMODE macro can be used just like a normal Modern
             UI page (this page will automatically be skipped when running Windows 95/98/Me):</p>
-        <code><pre>!define MULTIUSER_EXECUTIONLEVEL Highest
+        <pre><code>!define MULTIUSER_EXECUTIONLEVEL Highest
 <b>!define MULTIUSER_MUI</b>
 !define MULTIUSER_INSTALLMODE_COMMANDLINE
 !include MultiUser.nsh
@@ -284,8 +277,7 @@ FunctionEnd
 
 Function un.onInit
   !insertmacro MULTIUSER_UNINIT
-FunctionEnd
-</pre></code>
+FunctionEnd</code></pre>
         <p>
             The MULTIUSER_INSTALLMODE_COMMANDLINE setting that also appears in this example
             enables the installation mode to be set using the /AllUsers or /CurrentUser command
@@ -315,8 +307,7 @@ FunctionEnd
                 <td>Append the username to the per-user radio button.</td>
             </tr>
         </table>
-        <h3>
-            Installation Mode Initalization</h3>
+        <h3>Installation Mode Initalization</h3>
         <p>
             The SetShellVarContext flag (which determines the folders for e.g. shortcuts, like
             $DESKTOP) is automatically set depending on the installation mode. In addition,
@@ -324,18 +315,11 @@ FunctionEnd
             mode is initialized:</p>
         <table>
             <tr>
-                <td>
-                    <b>Setting</b>
-                </td>
-                <td>
-                    <b>Description</b>
-                </td>
-                </td>
+                <td><b>Setting</b></td>
+                <td><b>Description</b></td>
             </tr>
             <tr>
-                <td>
-                    MULTIUSER_INSTALLMODE_INSTDIR
-                </td>
+                <td>MULTIUSER_INSTALLMODE_INSTDIR</td>
                 <td>
                     Name of the folder in which to install the application, without a path. This folder
                     will be located in Program Files for a per-machine installation and in the local
@@ -343,9 +327,7 @@ FunctionEnd
                 </td>
             </tr>
             <tr>
-                <td>
-                    MULTIUSER_INSTALLMODE_INSTDIR_REGISTRY_KEY MULTIUSER_INSTALLMODE_INSTDIR_REGISTRY_VALUENAME
-                </td>
+                <td>MULTIUSER_INSTALLMODE_INSTDIR_REGISTRY_KEY MULTIUSER_INSTALLMODE_INSTDIR_REGISTRY_VALUENAME</td>
                 <td>
                     Registry key from which to obtain a previously stored installation folder. It will
                     be retrieved from HKCU for per-user and HKLM for per-machine.
@@ -353,7 +335,7 @@ FunctionEnd
             </tr>
             <tr>
                 <td>
-                    MULTIUSER_INSTALLMODE_FUNCTION<br />
+                    MULTIUSER_INSTALLMODE_FUNCTION<br>
                     MULTIUSER_INSTALLMODE_UNFUNCTION
                 </td>
                 <td>

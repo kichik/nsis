@@ -39,6 +39,11 @@ typedef struct indextag_Tag indextag;
 typedef struct indexentry_Tag indexentry;
 typedef struct macrostack_Tag macrostack;
 
+typedef struct ustr_slist_Tag {
+  struct ustr_slist_Tag *next;
+  wchar_t string[1];
+} ustr_slist;
+
 /*
  * Data structure to hold a file name and index, a line and a
  * column number, for reporting errors
@@ -256,6 +261,7 @@ int utob(const wchar_t *);
 int uisdigit(wchar_t);
 wchar_t *ustrlow(wchar_t * s);
 wchar_t *ustrftime(wchar_t * fmt, struct tm *timespec);
+ustr_slist* ustr_slist_append(ustr_slist**headaddr, const wchar_t*str);
 
 /*
  * help.c

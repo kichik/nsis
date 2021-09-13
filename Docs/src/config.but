@@ -6,6 +6,8 @@
 
 \cfg{html-suppress-address}{true}
 
+\cfg{html-append-meta}{name="viewport" content="width=device-width, initial-scale=1"}
+
 \define{NsisCopyright} Copyright (C) 1999-2021 Contributors
 
 \copyright \NsisCopyright

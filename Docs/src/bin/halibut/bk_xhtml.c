@@ -86,6 +86,7 @@ typedef struct {
   wchar_t *author, *description;
   wchar_t *html_lang, *meta_charset;
   wchar_t *head_start, *head_middle, *head_end, *body, *body_start, *body_end;
+  ustr_slist *meta_append;
   wchar_t *address_start, *address_end, *nav_attrs;
   wchar_t *rlink_prefix, *rlink_suffix;
   wchar_t *chm_toc_file, *chm_ind_file;
@@ -177,6 +178,7 @@ static xhtmlconfig xhtml_configure(paragraph * source)
   ret.body = NULL;
   ret.body_start = NULL;
   ret.body_end = NULL;
+  ret.meta_append = NULL;
   ret.address_start = NULL;
   ret.address_end = NULL;
   ret.nav_attrs = NULL;
@@ -268,6 +270,9 @@ static xhtmlconfig xhtml_configure(paragraph * source)
       } else if (ishtmlkeyword(source->keyword, L"xhtml-body-end"))
       {
         ret.body_end = uadv(source->keyword);
+      } else if (ishtmlkeyword(source->keyword, L"html-append-meta"))
+      {
+        ustr_slist_append(&ret.meta_append, uadv(source->keyword));
       } else if (ishtmlkeyword(source->keyword, L"xhtml-address-start"))
       {
         ret.address_start = uadv(source->keyword);
@@ -1500,14 +1505,15 @@ static void xhtml_doheader(FILE * fp, word * title)
 {
   const int xhtml = is_xhtml(), html5 = is_html5();
   const char *xhtmldoctype = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n";
-  const char *html4doctype = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">";
-  const char *xmlns = xhtml ? " xmlns=\"http://www.w3.org/1999/xhtml\"" : 0;
+  const char *html4doctype = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n";
+  const char *xhtmlxmlns = xhtml ? " xmlns=\"http://www.w3.org/1999/xhtml\"" : 0;
   const char *voidend = xhtml ? " /" : "";
   const wchar_t *tmpwstr;
+  const ustr_slist *pussl;
 
   if (xhtml && html5) fatal(err_whatever, "indeterminate format");
   fprintf(fp, html5 ? "<!DOCTYPE html>\n" : xhtml ? xhtmldoctype : html4doctype);
-  fprintf(fp, "<html%s", xhtml ? xmlns : "");
+  fprintf(fp, "<html%s", xhtml ? xhtmlxmlns : "");
   //www.w3.org/International/questions/qa-html-language-declarations
   if (*(tmpwstr = ustrdef(conf.html_lang, L"")))
     fprintf(fp, "%s%ls%s lang=\"%ls\"", xhtml ? " xml:lang=\"" : "", xhtml ? tmpwstr : L"", xhtml ? "\"" : "", tmpwstr);
@@ -1515,12 +1521,14 @@ static void xhtml_doheader(FILE * fp, word * title)
   if (ustricmp(L"none", (tmpwstr = ustrdef(conf.meta_charset, L"UTF-8"))))
     fprintf(fp, (xhtml || !html5) ? "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=%ls\"%s>" : "<meta charset=\"%ls\">\n", tmpwstr, voidend);
   printoptstr(fp, "", conf.head_start, "\n");
-  fprintf(fp, "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"%s>\n" "<title>", voidend);
+  fprintf(fp, "<title>");
   if (title == NULL)
     fprintf(fp, "Documentation");
   else
     xhtml_para(fp, title);
   fprintf(fp, "</title>\n");
+  for (pussl = conf.meta_append; pussl; pussl = pussl->next)
+    fprintf(fp, "<meta %ls%s>", pussl->string, voidend);
   printoptstr(fp, "", conf.head_middle, "\n");
   fprintf(fp, "<meta name=\"generator\" content=\"Halibut %s xhtml-backend\"%s>\n", version, voidend);
   if (conf.author)
@@ -1546,7 +1554,11 @@ static void chm_doheader(FILE * fp, word * title)
  */
 static void xhtml_dofooter(FILE * fp)
 {
-  fprintf(fp, "\n%s\n\n", gettagtxt_hr());
+  int hr = conf.body_end || !conf.suppress_address;
+
+  if (hr)
+    fprintf(fp, "\n%s\n\n", gettagtxt_hr());
+
   if (conf.body_end)
     fprintf(fp, "%ls\n", conf.body_end);
   if (!conf.suppress_address)
@@ -1570,7 +1582,7 @@ static void xhtml_dofooter(FILE * fp)
       fprintf(fp, "%ls\n", conf.address_end);
     fprintf(fp, "</address>\n");
   }
-  fprintf(fp, "</body>\n\n</html>\n");
+  fprintf(fp, "</body></html>\n");
 }
 static void chm_dofooter(FILE * fp)
 {

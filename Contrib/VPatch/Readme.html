@@ -8,7 +8,7 @@
 <style type="text/css">
 /*<![CDATA[*/
 :root { color-scheme: light dark; }
-html, body { font-family: Verdana, Arial, Helvetica, sans-serif; color: #000000; background-color: #ffffff; }
+html, body { font-family: Verdana, Arial, Helvetica, sans-serif; color: #050505; background-color: #fefefe; }
 html { font-size: 0.84em; }
 body { font-size: 1em; font-size: 1rem; }
 pre, code { font-family: Courier New, Courier, monospace,serif; font-size: 100%; }
@@ -67,7 +67,7 @@ a:hover { color: #182634; text-decoration: underline; }
 .T tr, .T td { border: 1px solid #f5f5f5; border-collapse: collapse; padding: 0.2em; }
 
 @media (prefers-color-scheme: dark) {
-html, body { color: #eeeeee; background-color:#161616; }
+html, body { color: #eeeeee; background-color: #161616; }
 h1, h2, h3, h4, h5, h5 { color: inherit; }
 a, a:link, a:visited, a:active { color: #4be; } a:hover { color: #6df; }
 .T tr:nth-child(odd) { background-color: #222222; }
@@ -79,12 +79,12 @@ a, a:link, a:visited, a:active { color: #4be; } a:hover { color: #6df; }
 </head>
 <body>
   <h1>VPatch 3.1</h1>
-        <div> 
+          <div>
           <h2>Introduction</h2>
           <div>
           <p>VPatch allows to create a patch file to update previous versions 
-            of your software. The GenPat utility generates the patch file. The 
-            plug-in can use the patch to update a file. Using a patch, you can 
+            of your software. The GenPat utility generates the patch file.
+            The plug-in can use the patch to update a file. Using a patch, you can 
             reduce the download size of your updates because only the differences 
             between the files are included in the patch file.</p>
           </div>
@@ -119,8 +119,9 @@ a, a:link, a:visited, a:active { color: #4be; } a:hover { color: #6df; }
             <li>Patch data is invalid or corrupt</li>
             <li>No suitable patches were found</li>
           </ul>
-            <p>Check <a href="../../Examples/VPatch/example.nsi">example.nsi</a> for an example. You 
-              should check whether the stack string starts with &quot;OK&quot; 
+            <p>Check <a href="../../Examples/VPatch/example.nsi">example.nsi</a> for an example. 
+              You 
+should check whether the stack string starts with &quot;OK&quot; 
               because then the patch has succeeded and you can rename &quot;temporary_newfile.txt&quot; 
               to &quot;oldfile.txt&quot; to replace the original, if you want.</p>
           </div>
@@ -128,9 +129,11 @@ a, a:link, a:visited, a:active { color: #4be; } a:hover { color: #6df; }
           <div>
           <p>GenPat appends a patch to the file you specified. If there is already 
             a patch for the same original file, with the same CRC/MD5, in the patch file,
+ 
             the patch will be replaced. For example, if you want to be able to upgrade
-            version 1 and 2 to version 3, you can put a 1 &gt; 3 and 2 &gt; 3 patch in 
-            one file.</p>
+ version 1 and 2 to version 3, 
+            you can put a 1 &gt; 3 and 2 &gt; 3 patch in 
+one file.</p>
           <p>You can also put patches for different files in one patch file, for 
             example, a patch from file A version 1 to file A version 2 and a patch 
             from file B version 1 to file B version 2. Just call the plug-in multiple 
@@ -175,6 +178,7 @@ a, a:link, a:visited, a:active { color: #4be; } a:hover { color: #6df; }
           <h2>Source code</h2>
           <div>
           <p>Source code is available in the original package and in the SVN repository of NSIS.</p>
+
           <h3>NSIS plug-in (C++)</h3>
           <div>
           <p>The source of the NSIS plug-in that applies patches can be found 
@@ -183,9 +187,10 @@ a, a:link, a:visited, a:active { color: #4be; } a:hover { color: #6df; }
           <h3>Patch Generator (C++)</h3>
           <div>
             <p>The most interesting part of VPatch, the actual patch generation 
-              algorithm, can be found in Source\GenPat\PatchGenerator.cpp. The 
-              header of that file contains a brief explanation of the algorithm 
-              as well.</p>
+              algorithm, can be found in Source\GenPat\PatchGenerator.cpp. 
+              The 
+header of that file contains a brief explanation of the algorithm as well.
+            </p>
           </div>
           <h3>User interface (Delphi)</h3>
           <div>
