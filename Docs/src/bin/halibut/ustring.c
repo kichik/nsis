@@ -2,9 +2,17 @@
  * ustring.c: Unicode string routines
  */
 
+#include "halibut.h"
 #include <wchar.h>
 #include <time.h>
-#include "halibut.h"
+#include <stdio.h>
+
+static void asciitou(wchar_t *dest, const char *src)
+{
+  for (;;)
+    if (!(*dest++ = *src++))
+      break;
+}
 
 wchar_t *ustrdup(const wchar_t * s)
 {
@@ -117,6 +125,13 @@ wchar_t *ustrlow(wchar_t * s)
     p++;
   }
   return s;
+}
+
+void ultou(unsigned long v, wchar_t *o)
+{
+  char buf[42];
+  sprintf(buf, "%lu", v);
+  asciitou(o, buf);
 }
 
 int utoi(const wchar_t *s)

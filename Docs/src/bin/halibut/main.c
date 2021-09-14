@@ -20,6 +20,9 @@ int main(int argc, char **argv)
   int errs;
   int reportcols;
   int debug;
+#ifdef C_ASSERT
+  { C_ASSERT(!word_Normal); /* For getcmdstyle */ }
+#endif
 
   initversionstring();
 

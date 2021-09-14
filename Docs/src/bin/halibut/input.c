@@ -175,12 +175,16 @@ enum {
   tok_rbrace                    /* } */
 };
 
+#define tokiscmd(t,c) ( (t).type == tok_cmd && (t).cmd == (c) )
+
 /* Halibut command keywords. */
 enum {
   c__invalid,                   /* invalid command */
   c__comment,                   /* comment command (\#) */
   c__escaped,                   /* escaped character */
+  c__nop,                       /* no-op */
   c__nbsp,                      /* nonbreaking space */
+  c__midparacmd_unixnow,
   c_A,                          /* appendix heading */
   c_B,                          /* bibliography entry */
   c_BR,                         /* bibliography rewrite */
@@ -214,6 +218,13 @@ enum {
   c_u,                          /* aux field is char code */
   c_versionid                   /* document RCS id */
 };
+
+#define getcmdstyle(c) \
+  (c) == c_c ? word_Code : \
+  (c) == c_cw ? word_WeakCode : \
+  (c) == c_e ? word_Emph : \
+  word_Normal
+
 
 /* Perhaps whitespace should be defined in a more Unicode-friendly way? */
 #define iswhite(c) ( (c)==32 || (c)==9 || (c)==13 || (c)==10 )
@@ -260,6 +271,7 @@ static void match_kw(token * tok)
     {
     "-", c__escaped}
     ,                           /* nonbreaking hyphen */
+    { ".", c__nop },
     {
     "A", c_A}
     ,                           /* appendix heading */
@@ -326,6 +338,7 @@ static void match_kw(token * tok)
     {
     "e", c_e}
     ,                           /* emphasis */
+    { "hackunixnow", c__midparacmd_unixnow },
     {
     "i", c_i}
     ,                           /* visible index mark */
@@ -474,7 +487,7 @@ token get_token(input * in)
   {                             /* tok_cmd */
     c = get(in, &cpos);
     if (c == '-' || c == '\\' || c == '_' ||
-        c == '#' || c == '{' || c == '}')
+        c == '#' || c == '{' || c == '}' || c == '.')
     {
       /* single-char command */
       rdadd(&rs, (wchar_t)c);
@@ -635,6 +648,36 @@ static paragraph *addpara(paragraph newpara, paragraph *** hptrptr)
  */
 #define dtor(t) ( sfree(t.text) )
 
+static int is_special_midpara_cmd(token*t)
+{
+  return tokiscmd(*t, c__midparacmd_unixnow);
+}
+
+static int handle_special_midpara_cmd(token*t, rdstring*rs, paragraph ***hptrptr)
+{
+  wchar_t wbuf[100];
+  paragraph par;
+
+  if (t->type != tok_cmd) return 0;
+  initpara(par);
+  par.fpos = t->pos;
+  switch(t->cmd)
+  {
+  case c__midparacmd_unixnow:
+    ultou(getutcunixtime(), wbuf);
+    rdadds(rs, wbuf);
+    return 1;
+  }
+  return 0;
+}
+
+#define stack_item_push(stck__, sitype__) do { \
+    struct stack_item *si__ = mknew(struct stack_item); \
+    si__->type = sitype__; \
+    stk_push((stck__), si__); \
+  } while(!__LINE__)
+
+
 /*
  * Reads a single file (ie until get() returns EOF)
  */
@@ -644,7 +687,7 @@ static void read_file(paragraph *** ret, input * in, indexdata * idx, tree234 *m
   paragraph par;
   word wd, **whptr, **idximplicit;
   wchar_t utext[2], *wdtext;
-  int style, spcstyle;
+  int style, spcstyle, tmpstyle;
   int already;
   int iswhite, seenwhite;
   int type;
@@ -883,12 +926,14 @@ static void read_file(paragraph *** ret, input * in, indexdata * idx, tree234 *m
                  t.type == tok_word ||
                  t.type == tok_white ||
                  (t.type == tok_cmd && t.cmd == c__nbsp) ||
-                 (t.type == tok_cmd && t.cmd == c__escaped))
+                 (t.type == tok_cmd && t.cmd == c__escaped) ||
+                 /* TODO: Merge from upstream?: (t.type == tok_cmd && t.cmd == c_u) || */
+                is_special_midpara_cmd(&t))
           {
             if (t.type == tok_white ||
                 (t.type == tok_cmd && t.cmd == c__nbsp))
               rdadd(&rs, ' ');
-            else
+            else if (!handle_special_midpara_cmd(&t, &rs, ret))
               rdadds(&rs, t.text);
           }
           if (t.type != tok_rbrace)
@@ -994,6 +1039,10 @@ static void read_file(paragraph *** ret, input * in, indexdata * idx, tree234 *m
         break;
       }
 
+      if (t.type == tok_cmd && t.cmd == c__nop) {
+        dtor(t), t = get_token(in);
+        continue;              /* do nothing! */
+      }
       if (t.type == tok_cmd && t.cmd == c__escaped)
       {
         t.type = tok_word;      /* nice and simple */
@@ -1283,15 +1332,13 @@ static void read_file(paragraph *** ret, input * in, indexdata * idx, tree234 *m
              */
             sitem = mknew(struct stack_item);
             sitem->type = stack_hyper;
-            if (t.type == tok_cmd &&
-                (t.cmd == c_e || t.cmd == c_c || t.cmd == c_cw))
+            if (t.type == tok_cmd && (tmpstyle = getcmdstyle(t.cmd)))
             {
               if (style != word_Normal)
                 error(err_nestedstyles, &t.pos);
               else
               {
-                style = (t.cmd == c_c ? word_Code :
-                         t.cmd == c_cw ? word_WeakCode : word_Emph);
+                style = tmpstyle;
                 spcstyle = tospacestyle(style);
                 sitem->type |= stack_style;
               }
@@ -1326,8 +1373,7 @@ static void read_file(paragraph *** ret, input * in, indexdata * idx, tree234 *m
             error(err_explbr, &t.pos);
           } else
           {
-            style = (type == c_c ? word_Code :
-                     type == c_cw ? word_WeakCode : word_Emph);
+            style = getcmdstyle(type);
             spcstyle = tospacestyle(style);
             sitem = mknew(struct stack_item);
             sitem->type = stack_style;
@@ -1354,15 +1400,13 @@ static void read_file(paragraph *** ret, input * in, indexdata * idx, tree234 *m
            * Special cases: \i\c, \i\e, \i\cw
            */
           wd.fpos = t.pos;
-          if (t.type == tok_cmd &&
-              (t.cmd == c_e || t.cmd == c_c || t.cmd == c_cw))
+          if (t.type == tok_cmd && (tmpstyle = getcmdstyle(t.cmd)))
           {
             if (style != word_Normal)
               error(err_nestedstyles, &t.pos);
             else
             {
-              style = (t.cmd == c_c ? word_Code :
-                       t.cmd == c_cw ? word_WeakCode : word_Emph);
+              style = tmpstyle;
               spcstyle = tospacestyle(style);
               sitem->type |= stack_style;
             }

@@ -864,6 +864,7 @@ xhtml_backend(paragraph * sourceform, keywordlist * in_keywords,
       sfree(conf.fsect[i].number_suffix);
     sfree(conf.fsect);
   }
+  free_ustr_slist(conf.meta_append);
 }
 
 static int xhtml_para_level(paragraph * p)

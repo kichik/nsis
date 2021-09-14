@@ -2,6 +2,7 @@
  * misc.c: miscellaneous useful items
  */
 #include <string.h>
+#include <time.h>
 #include "halibut.h"
 
 struct stackTag {
@@ -354,4 +355,22 @@ void wrap_free(wrappedline * w)
     sfree(w);
     w = t;
   }
+}
+
+unsigned long getutcunixtime()
+{
+#ifndef _WIN32
+  struct timespec ts;
+  ts.tv_sec = 0;
+  /* gettimeofday()? */
+#if (_XOPEN_SOURCE >= 500 || _POSIX_C_SOURCE >= 199309L)
+  if (0 == clock_gettime(CLOCK_REALTIME, &ts))
+    return ts.tv_sec;
+#endif
+#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
+  if (timespec_get(&ts, TIME_UTC)) /* implementation defined epoch :( */
+    return ts.tv_sec;
+#endif
+#endif /*~ _WIN32 */
+  return (unsigned long) time(NULL);
 }

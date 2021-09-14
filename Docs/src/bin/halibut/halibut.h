@@ -1,6 +1,10 @@
 #ifndef HALIBUT_HALIBUT_H
 #define HALIBUT_HALIBUT_H
 
+#ifdef _WIN32
+#define _CRT_SECURE_NO_DEPRECATE 1
+#endif
+
 #include <stdio.h>
 #include <wchar.h>
 #include <time.h>
@@ -92,6 +96,7 @@ struct paragraph_Tag {
 
   void *private_data;           /* for temp use in backends */
 };
+#define initpara(p) ( (p).type = para_NotParaType, (p).keyword = NULL, (p).words = NULL )
 enum {
   para_IM,                      /* index merge */
   para_BR,                      /* bibliography rewrite */
@@ -232,6 +237,7 @@ void *smalloc(int size);
 void *srealloc(void *p, int size);
 void sfree(void *p);
 #endif
+void free_list(void*p);
 void free_word_list(word * w);
 void free_para_list(paragraph * p);
 word *dup_word_list(word * w);
@@ -256,11 +262,13 @@ wchar_t *ustrcpy(wchar_t * dest, const wchar_t * source);
 wchar_t utolower(wchar_t);
 int ustrcmp(const wchar_t * lhs, const wchar_t * rhs);
 int ustricmp(const wchar_t * lhs, const wchar_t * rhs);
+void ultou(unsigned long v, wchar_t *o);
 int utoi(const wchar_t *);
 int utob(const wchar_t *);
 int uisdigit(wchar_t);
 wchar_t *ustrlow(wchar_t * s);
 wchar_t *ustrftime(wchar_t * fmt, struct tm *timespec);
+#define free_ustr_slist free_list
 ustr_slist* ustr_slist_append(ustr_slist**headaddr, const wchar_t*str);
 
 /*
@@ -321,6 +329,7 @@ struct tagWrappedLine {
 };
 wrappedline *wrap_para(word *, int, int, int (*)(word *));
 void wrap_free(wrappedline *);
+unsigned long getutcunixtime();
 
 /*
  * input.c
