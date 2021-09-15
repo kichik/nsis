@@ -349,6 +349,9 @@ static xhtmlconfig xhtml_configure(paragraph * source)
   return ret;
 }
 
+#define element_close(rs__, tagname__) rdaddsc((rs__), "</" tagname__ ">")
+#define element_open(rs__, tagname__) rdaddsc((rs__), "<" tagname__ ">")
+
 static xhtmlsection *xhtml_new_section(xhtmlsection * last)
 {
   xhtmlsection *ret = mknew(xhtmlsection);
@@ -1737,7 +1740,7 @@ static void xhtml_rdaddwc(rdstringc * rs, word * text, word * end)
   keyword *kwl;
   xhtmlsection *sect;
   indextag *itag;
-  int ti;
+  int ti, style, type;
   wchar_t *s;
 
   for (; text && text != end; text = text->next)
@@ -1887,29 +1890,43 @@ static void xhtml_rdaddwc(rdstringc * rs, word * text, word * end)
       rdaddsc(rs, "</a>");
       break;
 
+    case word_Html:
+      xhtml_utostr(text->text, &c);
+      rdaddsc(rs, c);
+      sfree(c);
+      break;
+
     case word_Normal:
     case word_Emph:
+    case word_Strong:
+    case word_Bold:
     case word_Code:
     case word_WeakCode:
     case word_WhiteSpace:
     case word_EmphSpace:
+    case word_StrongSpace:
+    case word_BoldSpace:
     case word_CodeSpace:
     case word_WkCodeSpace:
     case word_Quote:
     case word_EmphQuote:
+    case word_StrongQuote:
+    case word_BoldQuote:
     case word_CodeQuote:
     case word_WkCodeQuote:
       assert(text->type != word_CodeQuote &&
              text->type != word_WkCodeQuote);
-      if (towordstyle(text->type) == word_Emph &&
-          (attraux(text->aux) == attr_First ||
-           attraux(text->aux) == attr_Only))
-        rdaddsc(rs, "<em>");
-      else if ((towordstyle(text->type) == word_Code
-                || towordstyle(text->type) == word_WeakCode)
-               && (attraux(text->aux) == attr_First
-                   || attraux(text->aux) == attr_Only))
-        rdaddsc(rs, "<code>");
+      style = towordstyle(text->type);
+      type = removeattr(text->type);
+
+      switch((attraux(text->aux) == attr_First || attraux(text->aux) == attr_Only) ? style : word_NotWordType)
+      {
+      case word_Emph: element_open(rs, "em"); break;
+      case word_Strong: element_open(rs, "strong"); break;
+      case word_Bold: element_open(rs, "b"); break;
+      case word_Code: element_open(rs, "code"); break;
+      case word_WeakCode: element_open(rs, "code"); break;
+      }
 
       if (removeattr(text->type) == word_Normal)
       {
@@ -1951,15 +1968,14 @@ static void xhtml_rdaddwc(rdstringc * rs, word * text, word * end)
         rdaddsc(rs, "&quot;");
       }
 
-      if (towordstyle(text->type) == word_Emph &&
-          (attraux(text->aux) == attr_Last ||
-           attraux(text->aux) == attr_Only))
-        rdaddsc(rs, "</em>");
-      else if ((towordstyle(text->type) == word_Code
-                || towordstyle(text->type) == word_WeakCode)
-               && (attraux(text->aux) == attr_Last
-                   || attraux(text->aux) == attr_Only))
-        rdaddsc(rs, "</code>");
+      switch((attraux(text->aux) == attr_Last || attraux(text->aux) == attr_Only) ? style : word_NotWordType)
+      {
+      case word_Emph: element_close(rs, "em"); break;
+      case word_Strong: element_close(rs, "strong"); break;
+      case word_Bold: element_close(rs, "b"); break;
+      case word_Code: element_close(rs, "code"); break;
+      case word_WeakCode: element_close(rs, "code"); break;
+      }
       break;
     }
   }

@@ -306,11 +306,12 @@ See \W{http://msdn.microsoft.com/en-us/library/dd464660}{MSDN} for more informat
 Declare that the installer can handle paths longer than MAX_PATH. Only supported on Windows 10 Anniversary Update and later.
 
 \NsisWarnBlockContainerBegin
-\\<b\\>Note: \\</b\\> Instructions like CopyFiles and CreateShortcut do not support long paths!
+\NsisBlockHeaderNote
+Instructions like CopyFiles and CreateShortcut do not support long paths!
 \NsisWarnBlockContainerEnd
 
 \NsisWarnBlockContainerBegin
-\\<b\\>Note: \\</b\\> Has no effect if the "Enable Win32 long paths" policy is not enabled.
+\NsisBlockHeaderNote Has no effect if the "Enable Win32 long paths" policy is not enabled.
 \NsisWarnBlockContainerEnd
 
 \S2{amanifestsupportedos} ManifestSupportedOS

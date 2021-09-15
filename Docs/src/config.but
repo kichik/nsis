@@ -30,5 +30,8 @@
 
 \define{NsisWarnBlockContainerEnd} \\</div\\>
 
-\define{NsisBlockHeaderExeheadU} \\<b\\>Unicode: \\</b\\>
+\define{NsisBlockHeaderWarning} \s{Warning:}
 
+\define{NsisBlockHeaderNote} \s{Note:}
+
+\define{NsisBlockHeaderExeheadU} \s{Unicode:}

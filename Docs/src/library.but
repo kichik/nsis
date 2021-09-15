@@ -109,7 +109,7 @@ The Windows temp directory could be located on any volume, so you cannot use thi
 
 \b Installs a DLL built for Windows x64.
 
-\b \\<b\\>Warning:\\</b\\> This resets \R{setregview}{SetRegView} and file system redirection.
+\b \s{Warning:} This resets \R{setregview}{SetRegView} and file system redirection.
 
 \S2{} LIBRARY_SHELL_EXTENSION
 
@@ -139,7 +139,7 @@ The Windows temp directory could be located on any volume, so you cannot use thi
 
 \b If you need to support Windows 9x/ME, you can only use short filenames (8.3).
 
-\b \\<b\\>Warning:\\</b\\> Always use redistributable files when deploying DLLs, never copy files from your system directory!
+\b \s{Warning:} Always use redistributable files when deploying DLLs, never copy files from your system directory!
 
 \S1{library_install_examples} Example
 
@@ -233,7 +233,7 @@ Location of the library
 
 \b Uninstalls a DLL built for Windows x64.
 
-\b \\<b\\>Warning:\\</b\\> This resets \R{setregview}{SetRegView} and file system redirection.
+\b \s{Warning:} This resets \R{setregview}{SetRegView} and file system redirection.
 
 \S2{} LIBRARY_SHELL_EXTENSION
 

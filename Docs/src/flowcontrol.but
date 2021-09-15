@@ -174,7 +174,7 @@ Checks if \R{setshellvarcontext}{SetShellVarContext} is set to \e{all}.
 Checks if active language is a RTL language.
 
 \NsisWarnBlockContainerBegin
-\\<b\\>Warning:\\</b\\> Do not call this in [un].onInit because the language file has not been fully initialized.
+\NsisBlockHeaderWarning Do not call this in [un].onInit because the language file has not been fully initialized.
 \NsisWarnBlockContainerEnd
 
 \S2{intcmp} IntCmp
