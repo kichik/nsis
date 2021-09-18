@@ -180,6 +180,7 @@ public:
     return ExtractIcoCurT((const TCHAR*) Type, Name, Lang, cbData);
   }
 
+  CResourceDataEntry* FindResourceT(const TCHAR*RT, const TCHAR*RN, LANGID RL, CResourceDirectoryEntry**pTE, CResourceDirectoryEntry**pNE, CResourceDirectoryEntry**pLE) const;
   bool  UpdateResourceFromExternalT(const TCHAR* Type, WORD Name, LANGID Lang, const TCHAR*File, TYPEMANIPULATION Manip = TM_AUTO);
   bool  UpdateResourceT   (const TCHAR* szType, WORD szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize, TYPEMANIPULATION Manip = TM_RAW);
   bool  UpdateResourceT   (const TCHAR* szType, WORD szName, LANGID wLanguage, FILE*Data, TYPEMANIPULATION Manip = TM_AUTO);
@@ -189,7 +190,8 @@ public:
   DWORD GetResourceOffsetT(const TCHAR* szType, WORD szName, LANGID wLanguage);
   bool  ResourceExistsT   (const TCHAR* szType, WORD szName, LANGID wLanguage, LANGID*pFoundLanguage = 0);
   BYTE* GetFirstResourceT (const TCHAR* szType, size_t&cbData);
-  BYTE* ExtractIcoCurT    (const TCHAR* szType, WORD szName, LANGID wLanguage, size_t&cbData);
+  BYTE* ExtractIcoCurT    (const TCHAR* szType, WORD szName, LANGID wLanguage, size_t&cbData) const;
+  BYTE* ExtractIcoCur(const CResourceDataEntry&rde, LANGID ChildLang, size_t&cbData) const;
   void  FreeResource(BYTE* pbResource);
 
   // The section name must be in ASCII.
@@ -208,9 +210,14 @@ public:
   );
 
   static const TCHAR* ParseResourceTypeString(const TCHAR*String);
-  static const TCHAR* ParseResourceNameString(const TCHAR*String);
+  static const TCHAR* ParseResourceNameString(const TCHAR*String, bool AllowFirst = false);
   static LANGID ParseResourceLangString(const TCHAR*String);
-  static LANGID ParseResourceTypeNameLangString(const TCHAR**Type, const TCHAR**Name, const TCHAR*Lang);
+  static LANGID ParseResourceTypeNameLangString(const TCHAR**Type, const TCHAR**Name, const TCHAR*Lang, bool AllowFirst = false);
+  static bool CanOpen(const void*Data, size_t Size);
+  static UINT IsResProtocol(const TCHAR*Url);
+  typedef struct { BYTE*Data; size_t cbData, Map[2]; void*FreeThis; const TCHAR*RT, *RN; LANGID RL; } EXTERNAL;
+  static void FreeExternal(EXTERNAL&External);
+  static const TCHAR* MapExternal(const TCHAR*File, TYPEMANIPULATION Manip, EXTERNAL&External);
   static bool EditorSupportsStringNames() { return false; } // UpdateResource/GetResource do not support string names (yet)
   static bool EditorSupportsCursorPng() { return false; }
 
@@ -220,14 +227,15 @@ private:
   int   GetResourceSizeW  (const WINWCHAR* szType, WINWCHAR* szName, LANGID wLanguage);
   DWORD GetResourceOffsetW(const WINWCHAR* szType, WINWCHAR* szName, LANGID wLanguage);
   BYTE* GetFirstResourceW (const WINWCHAR* szType, size_t&cbData);
-  BYTE* ExtractIcoCurW    (const WINWCHAR* szType, WINWCHAR* szName, LANGID wLanguage, size_t&cbData);
-  CResourceDataEntry* FindResource(const WINWCHAR* Type, const WINWCHAR* Name, LANGID Language);
-  CResourceDirectoryEntry* FindResourceLanguageDirEntryW(const WINWCHAR* Type, const WINWCHAR* Name, LANGID Language);
-  CResourceDirectoryEntry* FindResourceLanguageDirEntryT(const TCHAR* Type, const TCHAR* Name, LANGID Language);
+  BYTE* ExtractIcoCurW    (const WINWCHAR* szType, const WINWCHAR* szName, LANGID wLanguage, size_t&cbData) const;
+  CResourceDataEntry* FindResource(const WINWCHAR*RT, const WINWCHAR*RN, LANGID RL) const;
+  CResourceDataEntry* FindResourceW(const WINWCHAR*RT, const WINWCHAR*RN, LANGID RL, CResourceDirectoryEntry**ppTE, CResourceDirectoryEntry**ppNE, CResourceDirectoryEntry**ppLE) const;
+  CResourceDirectoryEntry* FindResourceLanguageDirEntryW(const WINWCHAR* RT, const WINWCHAR* RN, LANGID RL) const;
+  CResourceDirectoryEntry* FindResourceLanguageDirEntryT(const TCHAR* RT, const TCHAR* RN, LANGID RL) const;
   bool DeleteIconImages(const CResourceDirectoryEntry& LangDir);
   bool DeleteIconImagesW(const WINWCHAR* OwnerType, WINWCHAR* Name, LANGID LangId);
   bool AddExtraIconFromFile(const WINWCHAR* Type, WINWCHAR* Name, LANGID LangId, BYTE* Data, DWORD Size);
-  CResourceDataEntry* FindIcoCurDataEntry(WORD Type, WORD Id, LANGID PrefLang);
+  CResourceDataEntry* FindIcoCurDataEntry(WORD Type, WORD Id, LANGID PrefLang) const;
 
   BYTE* DupData(CResourceDataEntry*pDE); // Free with FreeResource
   CResourceDirectory* ScanDirectory(PRESOURCE_DIRECTORY rdRoot, PRESOURCE_DIRECTORY rdToScan);
@@ -279,6 +287,7 @@ public:
   CResourceDirectoryEntry(const WINWCHAR* szName, CResourceDataEntry* rdeData);
   virtual ~CResourceDirectoryEntry();
 
+  const WINWCHAR* GetNameOrId() const { return HasName() ? GetName() : (WINWCHAR*)(size_t) GetId(); }
   bool HasName() const;
   const WINWCHAR* GetName() const;
   int GetNameLength() const;
@@ -306,13 +315,13 @@ public:
   CResourceDataEntry(BYTE* pbData, DWORD dwSize, DWORD dwCodePage = 0, DWORD dwOffset = DWORD(-1));
   ~CResourceDataEntry();
 
-  BYTE* GetData();
+  BYTE* GetData() const;
   void SetData(BYTE* pbData, DWORD dwSize);
   void SetData(BYTE* pbData, DWORD dwSize, DWORD dwCodePage);
 
-  DWORD GetSize();
-  DWORD GetCodePage();
-  DWORD GetOffset();
+  DWORD GetSize() const;
+  DWORD GetCodePage() const;
+  DWORD GetOffset() const;
 
   ULONG_PTR m_ulWrittenAt;
 

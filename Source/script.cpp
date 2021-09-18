@@ -1333,7 +1333,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       SCRIPT_MSG(_T("Icon: \"%") NPRIs _T("\"\n"),line.gettoken_str(1));
       try {
         free_loaded_icon(installer_icon);
-        installer_icon = load_icon_file(line.gettoken_str(1));
+        installer_icon = load_icon(line.gettoken_str(1));
       }
       catch (exception& err) {
         ERROR_MSG(_T("Error while loading icon from \"%") NPRIs _T("\": %") NPRIs _T("\n"), line.gettoken_str(1), CtoTStrParam(err.what()));
@@ -2593,7 +2593,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       SCRIPT_MSG(_T("UninstallIcon: \"%") NPRIs _T("\"\n"),line.gettoken_str(1));
       try {
         free_loaded_icon(uninstaller_icon);
-        uninstaller_icon = load_icon_file(line.gettoken_str(1));
+        uninstaller_icon = load_icon(line.gettoken_str(1));
       }
       catch (exception& err) {
         ERROR_MSG(_T("Error while loading icon from \"%") NPRIs _T("\": %") NPRIs _T("\n"), line.gettoken_str(1), CtoTStrParam(err.what()));

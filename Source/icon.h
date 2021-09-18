@@ -62,9 +62,10 @@ typedef struct
 
 typedef std::vector<Icon> IconGroup;
 
+IconGroup load_icon(const TCHAR* filename);
 IconGroup load_icon_file(const TCHAR* filename);
 IconGroup load_icon_res(CResourceEditor* re, WORD id);
-void free_loaded_icon(IconGroup icon);
+void free_loaded_icon(IconGroup&icon);
 
 void set_main_icon(CResourceEditor* re, WORD wIconId, IconGroup icon1, IconGroup icon2);
 
