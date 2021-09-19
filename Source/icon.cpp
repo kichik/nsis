@@ -71,7 +71,7 @@ void free_loaded_icon(IconGroup&icon)
   icon.clear();
 }
 
-IconGroup load_icon_res(CResourceEditor* re, const TCHAR*RT, WORD RN, LANGID RL)
+IconGroup load_icon_res(CResourceEditor* re, LPWSTR RT, WORD RN, LANGID RL)
 {
   IconGroupHeader* header;
   IconGroup result;

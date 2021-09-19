@@ -43,7 +43,7 @@ static void FreeUnicodeResString(WINWCHAR* s) {
   if (!IS_INTRESOURCE(s) && FIRSTRESDIRSTRADDRESS != (WINWCHAR*) s)
     free(s);
 }
-static WINWCHAR* ResStringToUnicode(const char *s) {
+static WINWCHAR* ResStringToUnicode(const TCHAR *s) {
   if (IS_INTRESOURCE(s)) return MAKEINTRESOURCEWINW((ULONG_PTR)s);
   if (FIRSTRESDIRSTRADDRESS == (WINWCHAR*) s) return (WINWCHAR*) s;
   WINWCHAR *ws = WinWStrDupFromTChar(s);
@@ -892,7 +892,7 @@ bool CResourceEditor::AddExtraIconFromFile(const WINWCHAR* Type, WINWCHAR* Name,
 }
 
 template<class C, class P> static bool Contains(C&Map, P*p) {
-  return p && (SIZE_T) Map.base <= (SIZE_T) p && (SIZE_T) Map.base + Map.size > (SIZE_T) p;
+  return p && (size_t) Map.base <= (size_t) p && (size_t) Map.base + Map.size > (size_t) p;
 }
 
 void CResourceEditor::FreeExternal(EXTERNAL&X) {
@@ -925,7 +925,7 @@ const TCHAR* CResourceEditor::MapExternal(const TCHAR*File, TYPEMANIPULATION Man
         CResourceDataEntry*pRE = re.FindResourceT(X.RT, X.RN, X.RL, 0, &pNRDE, &pLRDE);
         if (pRE) {
           const WINWCHAR *wrn = pNRDE->GetNameOrId();
-          if (firstname) X.RN = IS_INTRESOURCE(wrn) ? MAKEINTRESOURCE((size_t) wrn) : _T("");
+          if (firstname) X.RN = IS_INTRESOURCE(wrn) ? (TCHAR*)(size_t) wrn : _T("");
           X.RL = pLRDE->GetId();
           ofs = pRE->GetOffset(), siz = pRE->GetSize();
         }
