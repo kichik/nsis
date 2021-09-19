@@ -200,12 +200,71 @@
 
 !macroend
 
+!macro __WinVer_Optimize
+!ifndef __WINVER_NOOPTIMIZE
+!if "${NSIS_CHAR_SIZE}" > 1
+!define /ReDef AtMostWin95 '"" LogicLib_AlwaysFalse ""'
+!define /ReDef AtMostWin98 '"" LogicLib_AlwaysFalse ""'
+!define /ReDef AtMostWinME '"" LogicLib_AlwaysFalse ""'
+!define /ReDef IsWin95 '"" LogicLib_AlwaysFalse ""'
+!define /ReDef IsWin98 '"" LogicLib_AlwaysFalse ""'
+!define /ReDef IsWinME '"" LogicLib_AlwaysFalse ""'
+!endif
+!if "${NSIS_PTR_SIZE}" > 4
+!define /ReDef AtMostWin95 '"" LogicLib_AlwaysFalse ""'
+!define /ReDef AtMostWin98 '"" LogicLib_AlwaysFalse ""'
+!define /ReDef AtMostWinME '"" LogicLib_AlwaysFalse ""'
+!define /ReDef AtMostWinNT4 '"" LogicLib_AlwaysFalse ""'
+!define /ReDef IsWin95 '"" LogicLib_AlwaysFalse ""'
+!define /ReDef IsWin98 '"" LogicLib_AlwaysFalse ""'
+!define /ReDef IsWinME '"" LogicLib_AlwaysFalse ""'
+!define /ReDef IsWinNT4 '"" LogicLib_AlwaysFalse ""'
+!define /ReDef AtLeastWin95 '"" LogicLib_AlwaysTrue ""'
+!define /ReDef AtLeastWin98 '"" LogicLib_AlwaysTrue ""'
+!define /ReDef AtLeastWinME '"" LogicLib_AlwaysTrue ""'
+!define /ReDef AtLeastWinNT4 '"" LogicLib_AlwaysTrue ""'
+!define /ReDef AtLeastWin2000 '"" LogicLib_AlwaysTrue ""'
+!endif
+!ifdef NSIS_ARM | NSIS_ARM32 | NSIS_ARMNT | NSIS_ARM64
+!define /ReDef AtMostWin2000 '"" LogicLib_AlwaysFalse ""'
+!define /ReDef AtMostWinXP '"" LogicLib_AlwaysFalse ""'
+!define /ReDef AtMostWin2003 '"" LogicLib_AlwaysFalse ""'
+!define /ReDef AtMostWinVista '"" LogicLib_AlwaysFalse ""'
+!define /ReDef AtMostWin7 '"" LogicLib_AlwaysFalse ""'
+!define /ReDef IsWin95 '"" LogicLib_AlwaysFalse ""'
+!define /ReDef IsWin98 '"" LogicLib_AlwaysFalse ""'
+!define /ReDef IsWinME '"" LogicLib_AlwaysFalse ""'
+!define /ReDef IsWinNT4 '"" LogicLib_AlwaysFalse ""'
+!define /ReDef IsWin2000 '"" LogicLib_AlwaysFalse ""'
+!define /ReDef IsWinXP '"" LogicLib_AlwaysFalse ""'
+!define /ReDef IsWin2003 '"" LogicLib_AlwaysFalse ""'
+!define /ReDef IsWinVista '"" LogicLib_AlwaysFalse ""'
+!define /ReDef IsWin2008 '"" LogicLib_AlwaysFalse ""'
+!define /ReDef IsWin7 '"" LogicLib_AlwaysFalse ""'
+!define /ReDef IsWin2008R2 '"" LogicLib_AlwaysFalse ""'
+!define /ReDef AtLeastWin95 '"" LogicLib_AlwaysTrue ""'
+!define /ReDef AtLeastWin98 '"" LogicLib_AlwaysTrue ""'
+!define /ReDef AtLeastWinME '"" LogicLib_AlwaysTrue ""'
+!define /ReDef AtLeastWinNT4 '"" LogicLib_AlwaysTrue ""'
+!define /ReDef AtLeastWin2000 '"" LogicLib_AlwaysTrue ""'
+!define /ReDef AtLeastWinXP '"" LogicLib_AlwaysTrue ""'
+!define /ReDef AtLeastWin2003 '"" LogicLib_AlwaysTrue ""'
+!define /ReDef AtLeastWinVista '"" LogicLib_AlwaysTrue ""'
+!define /ReDef AtLeastWin2008 '"" LogicLib_AlwaysTrue ""'
+!define /ReDef AtLeastWin7 '"" LogicLib_AlwaysTrue ""'
+!define /ReDef AtLeastWin2008R2 '"" LogicLib_AlwaysTrue ""'
+!define /ReDef AtLeastWin8 '"" LogicLib_AlwaysTrue ""'
+!endif
+!endif
+!macroend
+
 # lazy initialization macro
 
 !define /IfNDef __WinVer_GWV GetWinVer
 
 !macro __WinVer_InitVars_NEW
   !insertmacro __WinVer_DeclareVars
+  !insertmacro __WinVer_Optimize
 
   # only calculate version once
   StrCmp $__WINVERV "" _winver_noveryet
@@ -218,29 +277,31 @@
   IntOp $__WINVERV $__WINVERV << 16 ; _WINVER_MASKVMAJ & _WINVER_MASKVMIN
   IntOp $__WINVERSP $0 & 2
   IntOp $__WINVERSP $__WINVERSP << 29 ; _WINVER_NTSRVBIT & _WINVER_NTDCBIT
-
-  ${If} $__WINVERSP <> 0 ; Server?
-    ${If} $__WINVERV U>= 0x06000000
-    ${AndIf} $__WINVERV U< 0x09000000
+  !ifndef NSIS_ARM64
+  IntCmp $__WINVERSP 0 notServer
+    IntCmpU 0x06000000 $__WINVERV "" "" not2008 ; ${If} $__WINVERV U>= 0x06000000
+    IntCmpU 0x09000000 $__WINVERV not2008 not2008 "" ; ${AndIf} $__WINVERV U< 0x09000000
       IntOp $__WINVERV $__WINVERV | ${_WINVER_VERXBIT} ; Extra bit so Server 2008 comes after Vista SP1 that has the same minor version, same for Win7 vs 2008R2
-    ${EndIf}
-  ${Else}
-    ${If} $__WINVERV = 0x05020000
+    not2008:
+  Goto endServer
+  notServer:
+    IntCmp $__WINVERV 0x05020000 "" notXP64 notXP64
       StrCpy $__WINVERV 0x05010000 ; Change XP 64-bit from 5.2 to 5.1 so it's still XP
-    ${EndIf}
-  ${EndIf} ;~ Server
+    notXP64:
+  endServer:
+  !endif
 
-  ${If} $0 <> 0 ; WNT?
+  IntCmp $0 0 notNT
 !if "${NSIS_PTR_SIZE}" <= 4
 !ifdef WINVER_NT4_OVER_W95
-    ${If} $__WINVERV = 0x04000000
+    IntCmp $__WINVERV 0x04000000 "" nt4eq95 nt4eq95
       IntOp $__WINVERV $__WINVERV | ${_WINVER_VERXBIT} ; change NT 4.0.reserved.0 to 4.0.reserved.1
-    ${EndIf}
+    nt4eq95:
 !endif
 !endif
     IntOp $__WINVERSP $__WINVERSP | ${_WINVER_NTBIT} ; _WINVER_NTBIT
     IntOp $__WINVERV $__WINVERV | ${_WINVER_NTBIT}  ; _WINVER_NTBIT
-  ${EndIf} ;~ WNT
+  notNT:
 
   ${__WinVer_GWV} $0 Build
   IntOp $__WINVERSP $__WINVERSP | $0 ; _WINVER_MASKVBLD
@@ -264,6 +325,7 @@
 !macro __WinVer_InitVars_OLD
   # variables
   !insertmacro __WinVer_DeclareVars
+  !insertmacro __WinVer_Optimize
 
   # only calculate version once
   StrCmp $__WINVERV "" _winver_noveryet

@@ -815,8 +815,9 @@ SectionEnd
 Section "-Results"
 	IntOp $0 $WVSTATS_TESTS - $WVSTATS_FAILS
 	StrCpy $1 "Passed $0 of $WVSTATS_TESTS tests"
-	DetailPrint $1
 	${If} $0 <> $WVSTATS_TESTS
-		MessageBox mb_iconstop $1 /SD IDOK
+		Abort $1
+	${Else}
+		DetailPrint $1
 	${EndIf}
 SectionEnd

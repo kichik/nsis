@@ -144,6 +144,13 @@
     !endif
   !macroend
 
+  !macro _LogicLib_AlwaysTrue _a _b _t _f
+    !insertmacro LogicLib_JumpToBranch `${_t}` `${_f}`
+  !macroend
+  !macro _LogicLib_AlwaysFalse _a _b _t _f
+    !insertmacro LogicLib_JumpToBranch `${_f}` `${_t}`
+  !macroend
+
   ; String tests
   !macro _== _a _b _t _f
     StrCmp `${_a}` `${_b}` `${_t}` `${_f}`
