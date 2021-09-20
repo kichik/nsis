@@ -203,14 +203,14 @@ void PlayAppSoundAsync(LPCSTR SoundName, int MBFallback) {
 
 void CopyToClipboard(HWND hwnd) {
   if (!hwnd || !OpenClipboard(hwnd)) return;
-  LRESULT len = SendDlgItemMessage(hwnd, IDC_LOGWIN, WM_GETTEXTLENGTH, 0, 0);
+  LRESULT len = SendMessage(g_sdata.logwnd, WM_GETTEXTLENGTH, 0, 0);
   HGLOBAL mem = GlobalAlloc(GMEM_MOVEABLE, (++len)*sizeof(TCHAR));
   if (!mem) { CloseClipboard(); return; }
   TCHAR *txt = (TCHAR *)GlobalLock(mem);
   if (!txt) { CloseClipboard(); return; }
   EmptyClipboard();
   txt[0] = 0;
-  SendDlgItemMessage(hwnd, IDC_LOGWIN, WM_GETTEXT, (WPARAM)(len), (LPARAM)txt);
+  SendMessage(g_sdata.logwnd, WM_GETTEXT, (WPARAM)(len), (LPARAM)txt);
   GlobalUnlock(mem);
 #ifdef _UNICODE
   SetClipboardData(CF_UNICODETEXT, mem);
@@ -233,7 +233,7 @@ void ReleaseLogWindow() {
 #endif
 }
 void InitializeLogWindow() {
-  HWND hRE = GetDlgItem(g_sdata.hwnd, IDC_LOGWIN);
+  HWND hRE = g_sdata.logwnd;
 #ifdef RE_HAS_TOM
   IUnknown *pTD = 0, *pREO;
   if (SendMessage(hRE, EM_GETOLEINTERFACE, 0, (LPARAM)&pREO) && pREO) {
@@ -263,7 +263,7 @@ HRESULT RicheditFreeze(void*pITextDocument, SIZE_T Freeze)
 void SetLogColor(enum LOGCOLOR lc)
 {
   enum { em_seteditstyle = (WM_USER + 204), ses_extendbackcolor = 4 };
-  HWND hEd = GetDlgItem(g_sdata.hwnd, IDC_LOGWIN);
+  HWND hEd = g_sdata.logwnd;
   bool sysclr = lc >= LC_SYSCOLOR || !ReadRegSettingDW(REGCOLORIZE, true);
   static const COLORREF clrs[] = { RGB(0, 50, 0), RGB(210, 255, 210), RGB(50, 30, 0), RGB(255, 220, 190), RGB(50, 0, 0), RGB(255, 210, 210) };
   CHARFORMAT cf;
@@ -275,14 +275,14 @@ void SetLogColor(enum LOGCOLOR lc)
   SendMessage(hEd, EM_SETBKGNDCOLOR, sysclr, sysclr ? sysclr /*Irrelevant*/ : clrs[(lc * 2) + 1]);
 }
 
-void ClearLog(HWND hwnd) {
-  SetDlgItemText(hwnd, IDC_LOGWIN, _T(""));
+void ClearLog() {
+  SetWindowText(g_sdata.logwnd, _T(""));
   SetLogColor(LC_SYSCOLOR);
   SendMessage(g_sdata.hwnd, WM_MAKENSIS_UPDATEUISTATE, 0, 0);
 }
 
 void LogMessage(HWND hwnd,const TCHAR *str) {
-  HWND hLogWin = GetDlgItem(hwnd, IDC_LOGWIN);
+  HWND hLogWin = g_sdata.logwnd;
 #ifdef RE_HAS_TOM
   HRESULT hr = (HRESULT) SendMessage(hwnd, WM_MAKENSIS_FREEZEEDITOR, 0, true); // Force COM calls to UI thread
 #endif
@@ -376,7 +376,7 @@ void EnableDisableItems(int on)
 
   HWND hFocus = g_sdata.focused_hwnd, hOptimal = hTestBtn;
   if (on && hCloseBtn == hFocus) hFocus = hOptimal;
-  if (!IsWindowEnabled(hFocus)) hFocus = GetDlgItem(hwndDlg, IDC_LOGWIN);
+  if (!IsWindowEnabled(hFocus)) hFocus = g_sdata.logwnd;
   SetDialogFocus(hwndDlg, hOptimal);
   SetDialogFocus(hwndDlg, hFocus);
   SetTimer(hwndDlg, TID_CONFIGURECLOSEORABORT, 1000, 0);
@@ -388,10 +388,10 @@ void SetCompressorStats()
   TCHAR buf[1024];
   bool found = false;
 
-  line_count = SendDlgItemMessage(g_sdata.hwnd, IDC_LOGWIN, EM_GETLINECOUNT, 0, 0);
+  line_count = SendMessage(g_sdata.logwnd, EM_GETLINECOUNT, 0, 0);
   for(i=0; i<line_count; i++) {
     *((LPWORD)buf) = COUNTOF(buf); 
-    LRESULT cchLine = SendDlgItemMessage(g_sdata.hwnd, IDC_LOGWIN, EM_GETLINE, (WPARAM)i, (LPARAM)buf);
+    LRESULT cchLine = SendMessage(g_sdata.logwnd, EM_GETLINE, (WPARAM)i, (LPARAM)buf);
     buf[cchLine] = _T('\0');
     if(found) {
       DWORD len = lstrlen(TOTAL_SIZE_COMPRESSOR_STAT);
@@ -424,7 +424,7 @@ static void SetUIState_NoScript()
 
 void CompileNSISScript() {
   DragAcceptFiles(g_sdata.hwnd,FALSE);
-  ClearLog(g_sdata.hwnd);
+  ClearLog();
   SetTitle(g_sdata.hwnd,NULL);
   PostMessage(g_sdata.hwnd, WM_MAKENSIS_UPDATEUISTATE, 0, 0);
   if (!g_sdata.script[0]) {

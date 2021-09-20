@@ -75,7 +75,7 @@ void InitializeLogWindow();
 void ReleaseLogWindow();
 enum LOGCOLOR { LC_SUCCESS, LC_WARNING, LC_ERROR, LC_SYSCOLOR };
 void SetLogColor(enum LOGCOLOR lc);
-void ClearLog(HWND hwnd);
+void ClearLog();
 void LogMessage(HWND hwnd,const TCHAR *str);
 void ErrorMessage(HWND hwnd,const TCHAR *str);
 void CenterOnParent(HWND hwnd);

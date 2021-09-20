@@ -235,6 +235,7 @@ typedef struct NSISScriptData {
   DWORD warnings;
   HINSTANCE hInstance;
   HWND hwnd;
+  HWND logwnd;
   HMENU menu;
   HMENU fileSubmenu;
   HMENU editSubmenu;

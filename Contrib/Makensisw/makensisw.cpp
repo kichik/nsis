@@ -211,7 +211,7 @@ DWORD CALLBACK SaveFileStreamCallback(DWORD_PTR dwCookie, LPBYTE pbBuff, LONG cb
 static void ToolBarSizeChanged(HWND hDlg)
 {
   RECT r;
-  HWND hEd = GetDlgItem(hDlg, IDC_LOGWIN);
+  HWND hEd = g_sdata.logwnd;
   GetWindowRect(g_toolbar.hwnd, &r);
   LONG tbh = RectH(r);
   GetWindowRect(hEd, &r);
@@ -257,17 +257,18 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
   switch (msg) {
     case WM_INITDIALOG:
     {
-      g_sdata.hwnd=hwndDlg;
+      g_sdata.hwnd=hwndDlg, g_sdata.logwnd = GetDlgItem(hwndDlg, IDC_LOGWIN);
       HICON hIcon = LoadIcon(g_sdata.hInstance,MAKEINTRESOURCE(IDI_ICON));
       SetClassLongPtr(hwndDlg,GCLP_HICON,(LONG_PTR)hIcon);
       // Altered by Darren Owen (DrO) on 29/9/2003
       // Added in receiving of mouse and key events from the richedit control
-      SendDlgItemMessage(hwndDlg,IDC_LOGWIN,EM_SETEVENTMASK,(WPARAM)NULL,ENM_SELCHANGE|ENM_MOUSEEVENTS|ENM_KEYEVENTS);
+      SendMessage(g_sdata.logwnd,EM_SETEVENTMASK,(WPARAM)NULL,ENM_SELCHANGE|ENM_MOUSEEVENTS|ENM_KEYEVENTS);
       InitializeLogWindow();
       g_sdata.menu = GetMenu(g_sdata.hwnd);
       g_sdata.fileSubmenu = FindSubMenu(g_sdata.menu, IDM_FILE);
       g_sdata.editSubmenu = FindSubMenu(g_sdata.menu, IDM_EDIT);
       g_sdata.toolsSubmenu = FindSubMenu(g_sdata.menu, IDM_TOOLS);
+      SetMenuDefaultItem(FindSubMenu(g_sdata.menu, IDM_SCRIPT), IDM_RECOMPILE_TEST, MF_BYCOMMAND);
       RestoreMRUList();
       CreateToolBar();
       InitTooltips(g_sdata.hwnd);
@@ -287,7 +288,7 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
         if (suppwin4 && !FontExists(fontname)) fontname = sizeof(TCHAR) > 1 ? (LPCTSTR) msgothlocalutf : (LPCTSTR) msgothlocal932;
       }
       HFONT hFont = CreateFontPt(hwndDlg,fontsize,FW_NORMAL,FIXED_PITCH|FF_DONTCARE,fontcharset,fontname);
-      SendDlgItemMessage(hwndDlg,IDC_LOGWIN,WM_SETFONT,(WPARAM)hFont,0);
+      SendMessage(g_sdata.logwnd,WM_SETFONT,(WPARAM)hFont,0);
       g_sdata.compressor = COMPRESSOR_NONE_SELECTED;
       SetScript(_T(""));
       RestoreCompressor();
@@ -530,7 +531,7 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
     case WM_NOTIFY:
       switch (((NMHDR*)lParam)->code ) {
         case EN_SELCHANGE:
-          EnableMenuItem(g_sdata.menu, IDM_COPYSELECTED, RicheditHasSelection(GetDlgItem(hwndDlg, IDC_LOGWIN)) ? MF_ENABLED : MF_GRAYED);
+          EnableMenuItem(g_sdata.menu, IDM_COPYSELECTED, RicheditHasSelection(g_sdata.logwnd) ? MF_ENABLED : MF_GRAYED);
           break;
         
         // Altered by Darren Owen (DrO) on 6/10/2003
@@ -543,7 +544,7 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
           if(WM_RBUTTONUP == lpnmMsg->msg || (WM_KEYUP == lpnmMsg->msg && lpnmMsg->wParam == VK_APPS))
           {
             POINT pt;
-            HWND edit = GetDlgItem(g_sdata.hwnd,IDC_LOGWIN);
+            HWND edit = g_sdata.logwnd;
             RECT r;
             GetCursorPos(&pt);
 
@@ -616,7 +617,7 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
       break;
     case WM_MAKENSIS_UPDATEUISTATE:
     {
-      UINT i, emptylog = SendDlgItemMessage(hwndDlg, IDC_LOGWIN, WM_GETTEXTLENGTH, 0, 0) == 0;
+      UINT i, emptylog = SendMessage(g_sdata.logwnd, WM_GETTEXTLENGTH, 0, 0) == 0;
       static const PACKEDCMDID_T nonemptylogids [] = { PACKCMDID(IDM_COPY), PACKCMDID(IDM_COPYALL), PACKCMDID(IDM_CLEARLOG), PACKCMDID(IDM_SELECTALL) };
       for (i = 0; i < COUNTOF(nonemptylogids); ++i) EnableUICommand(UNPACKCMDID(nonemptylogids[i]), !emptylog);
       EnableUICommand(IDM_BROWSESCR, !!g_sdata.input_script);
@@ -660,7 +661,7 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
         case IDM_ABOUT: return ShowAboutDialog(hwndDlg)|TRUE;
         case IDM_SELECTALL:
         {
-          SendDlgItemMessage(g_sdata.hwnd, IDC_LOGWIN, EM_SETSEL, 0, -1);
+          SendMessage(g_sdata.logwnd, EM_SETSEL, 0, -1);
           return TRUE;
         }
         case IDM_LOADSCRIPT:
@@ -703,20 +704,17 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
         case IDM_CLEARLOG:
         {
           if (!g_sdata.thread) {
-            ClearLog(g_sdata.hwnd);
+            ClearLog();
           }
           return TRUE;
         }
         case IDM_ZOOM_INC: g_sdata.log_zoom += 25; goto set_log_zoom;
         case IDM_ZOOM_DEC: g_sdata.log_zoom -= 25; goto set_log_zoom;
         case IDM_ZOOM_RST:
-        {
           g_sdata.log_zoom = 100; set_log_zoom:
-          HWND hLog = GetDlgItem(hwndDlg, IDC_LOGWIN);
-          SendMessage(hLog, EM_SETZOOM, g_sdata.log_zoom = STD_MAX((int)g_sdata.log_zoom, 25), 100);
-          InvalidateRect(hLog, 0, false);
+          SendMessage(g_sdata.logwnd, EM_SETZOOM, g_sdata.log_zoom = STD_MAX((int)g_sdata.log_zoom, 25), 100);
+          InvalidateRect(g_sdata.logwnd, 0, false);
           break;
-        }
         case IDM_RECOMPILE:
         {
           CompileNSISScript();
@@ -784,13 +782,13 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
           return TRUE;
         }
         case IDM_COPY:
-          if (RicheditHasSelection(GetDlgItem(hwndDlg, IDC_LOGWIN))) goto logwndcopysel;
+          if (RicheditHasSelection(g_sdata.logwnd)) goto logwndcopysel;
           // fall through
         case IDM_COPYALL:
           CopyToClipboard(g_sdata.hwnd);
           return TRUE;
         case IDM_COPYSELECTED: logwndcopysel:
-          SendDlgItemMessage(g_sdata.hwnd, IDC_LOGWIN, WM_COPY, 0, 0);
+          SendMessage(g_sdata.logwnd, WM_COPY, 0, 0);
           return TRUE;
         case IDM_SAVE:
         {
@@ -811,7 +809,7 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
               WPARAM opts = sizeof(TCHAR) > 1 ? (SF_TEXT|SF_UNICODE) : (SF_TEXT);
               DWORD_PTR cookie[2] = { (DWORD_PTR)hFile, FALSE };
               EDITSTREAM es = { (DWORD_PTR)&cookie, 0, SaveFileStreamCallback };
-              SendMessage(GetDlgItem(g_sdata.hwnd, IDC_LOGWIN), EM_STREAMOUT, opts, (LPARAM)&es);
+              SendMessage(g_sdata.logwnd, EM_STREAMOUT, opts, (LPARAM)&es);
               CloseHandle(hFile);
             }
           }
@@ -852,13 +850,13 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
       if (lpfr->Flags & FR_MATCHCASE) flags |= FR_MATCHCASE;
       if (lpfr->Flags & FR_WHOLEWORD) flags |= FR_WHOLEWORD;
       FINDTEXTEX ft;
-      SendDlgItemMessage(hwndDlg, IDC_LOGWIN, EM_EXGETSEL, 0, (LPARAM)&ft.chrg);
+      SendMessage(g_sdata.logwnd, EM_EXGETSEL, 0, (LPARAM)&ft.chrg);
       ft.chrg.cpMin = (ft.chrg.cpMax == ft.chrg.cpMin) ? 0 : ft.chrg.cpMax;
-      ft.chrg.cpMax = (LONG) SendDlgItemMessage(hwndDlg, IDC_LOGWIN, WM_GETTEXTLENGTH, 0, 0);
+      ft.chrg.cpMax = (LONG) SendMessage(g_sdata.logwnd, WM_GETTEXTLENGTH, 0, 0);
       ft.lpstrText = lpfr->lpstrFindWhat;
-      ft.chrg.cpMin = (LONG) SendDlgItemMessage(hwndDlg, IDC_LOGWIN, EM_FINDTEXTEX, flags, (LPARAM)&ft);
+      ft.chrg.cpMin = (LONG) SendMessage(g_sdata.logwnd, EM_FINDTEXTEX, flags, (LPARAM)&ft);
       if (ft.chrg.cpMin != -1)
-        SendDlgItemMessage(hwndDlg, IDC_LOGWIN, EM_SETSEL, ft.chrgText.cpMin, ft.chrgText.cpMax);
+        SendMessage(g_sdata.logwnd, EM_SETSEL, ft.chrgText.cpMin, ft.chrgText.cpMax);
       else
         MessageBeep(MB_ICONASTERISK);
     }
