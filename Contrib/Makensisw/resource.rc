@@ -137,25 +137,28 @@ END
 
 IDK_ACCEL ACCELERATORS 
 BEGIN
-    VK_F6,          IDM_UI_SWITCHSECTION,   VIRTKEY, NOINVERT
-    "A",            IDM_SELECTALL,          VIRTKEY, CONTROL, NOINVERT
-    "B",            IDM_BROWSESCR,          VIRTKEY, CONTROL, NOINVERT
-    "C",            IDM_COPYSELECTED,       VIRTKEY, CONTROL, NOINVERT
-    "E",            IDM_EDITSCRIPT,         VIRTKEY, CONTROL, NOINVERT
-    "F",            IDM_FIND,               VIRTKEY, CONTROL, NOINVERT
-    "L",            IDM_LOADSCRIPT,         VIRTKEY, CONTROL, NOINVERT
-    "M",            IDM_RECOMPILE_TEST,     VIRTKEY, CONTROL, NOINVERT
-    VK_F5,          IDM_RECOMPILE_TEST,     VIRTKEY, NOINVERT
-    "R",            IDM_RECOMPILE,          VIRTKEY, CONTROL, NOINVERT
-    VK_F7,          IDM_RECOMPILE,          VIRTKEY, NOINVERT
-    "S",            IDM_SETTINGS,           VIRTKEY, CONTROL, NOINVERT
-    "T",            IDM_TEST,               VIRTKEY, CONTROL, NOINVERT
-    VK_F5,          IDM_TEST,               VIRTKEY, CONTROL, NOINVERT
-    VK_F1,          IDM_DOCS,               VIRTKEY, NOINVERT
-    "W",            IDM_CLEARLOG,           VIRTKEY, CONTROL, NOINVERT
-    "X",            IDM_EXIT,               VIRTKEY, ALT, NOINVERT
-    "K",            IDM_CANCEL,             VIRTKEY, CONTROL, NOINVERT
-    VK_CANCEL,      IDM_CANCEL,             VIRTKEY, CONTROL, NOINVERT
+    VK_F6,          IDM_UI_SWITCHSECTION,   VIRTKEY
+    "A",            IDM_SELECTALL,          VIRTKEY, CONTROL
+    "B",            IDM_BROWSESCR,          VIRTKEY, CONTROL
+    "C",            IDM_COPYSELECTED,       VIRTKEY, CONTROL
+    "E",            IDM_EDITSCRIPT,         VIRTKEY, CONTROL
+    "F",            IDM_FIND,               VIRTKEY, CONTROL
+    "L",            IDM_LOADSCRIPT,         VIRTKEY, CONTROL
+    "M",            IDM_RECOMPILE_TEST,     VIRTKEY, CONTROL
+    VK_F5,          IDM_RECOMPILE_TEST,     VIRTKEY
+    "R",            IDM_RECOMPILE,          VIRTKEY, CONTROL
+    VK_F7,          IDM_RECOMPILE,          VIRTKEY
+    "S",            IDM_SETTINGS,           VIRTKEY, CONTROL
+    "T",            IDM_TEST,               VIRTKEY, CONTROL
+    VK_F5,          IDM_TEST,               VIRTKEY, CONTROL
+    VK_F1,          IDM_DOCS,               VIRTKEY
+    "W",            IDM_CLEARLOG,           VIRTKEY, CONTROL
+    "X",            IDM_EXIT,               VIRTKEY, ALT
+    "K",            IDM_CANCEL,             VIRTKEY, CONTROL
+    VK_CANCEL,      IDM_CANCEL,             VIRTKEY, CONTROL
+    VK_ADD,         IDM_ZOOM_INC,           VIRTKEY, CONTROL
+    VK_SUBTRACT,    IDM_ZOOM_DEC,           VIRTKEY, CONTROL
+    "0",            IDM_ZOOM_RST,           VIRTKEY, CONTROL
 END
 
 

@@ -79,6 +79,7 @@ int WINAPI _tWinMain(HINSTANCE hInst,HINSTANCE hOldInst,LPTSTR CmdLineParams,int
   g_sdata.sigint_event_legacy = CreateEvent(NULL, FALSE, FALSE, MakensisAPI::SigintEventNameLegacy);
   g_sdata.verbosity = (unsigned char) ReadRegSettingDW(REGVERBOSITY, 4);
   if (g_sdata.verbosity > 4) g_sdata.verbosity = 4;
+  g_sdata.log_zoom = 100;
   RestoreSymbols();
   LoadSysLibrary("RichEd20");
 
@@ -706,6 +707,16 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
           }
           return TRUE;
         }
+        case IDM_ZOOM_INC: g_sdata.log_zoom += 25; goto set_log_zoom;
+        case IDM_ZOOM_DEC: g_sdata.log_zoom -= 25; goto set_log_zoom;
+        case IDM_ZOOM_RST:
+        {
+          g_sdata.log_zoom = 100; set_log_zoom:
+          HWND hLog = GetDlgItem(hwndDlg, IDC_LOGWIN);
+          SendMessage(hLog, EM_SETZOOM, g_sdata.log_zoom = STD_MAX((int)g_sdata.log_zoom, 25), 100);
+          InvalidateRect(hLog, 0, false);
+          break;
+        }
         case IDM_RECOMPILE:
         {
           CompileNSISScript();
@@ -734,6 +745,7 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
           ((int(WINAPI*)(GUID*, TCHAR*, int))(GetSysProcAddr("OLE32", "StringFromGUID2")))(&guid, buf, 39);
           for (UINT i = 0; sizeof(TCHAR) < 2; ++i) if (!(buf[i] = (CHAR) ((WCHAR*)buf)[i])) break; // WCHAR to TCHAR if ANSI
           LogMessage(g_sdata.hwnd, (buf[38] = '\r', buf[39] = '\n', buf[40] = '\0', buf));
+          SendMessage(g_sdata.hwnd, WM_MAKENSIS_UPDATEUISTATE, 0, 0); // Update clear log command state
           break;
         }
         case IDM_TEST:

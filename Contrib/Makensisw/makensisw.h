@@ -198,12 +198,14 @@ typedef struct {
   UINT AnimSpeed, FinalHeaderPos;
 } ABOUTDLGDATA;
 INT_PTR ShowAboutDialog(HWND hwndOwner);
+
 INT_PTR CALLBACK SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 typedef struct {
   void*pOldMDD;
   BOOL LoadingMode;
 } SYMSETDLGDATA;
 INT_PTR ShowSymbolSetDialog(HWND hwndOwner, BOOL LoadingSet);
+
 INT_PTR CALLBACK CompressorProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 void           SetScript(const TCHAR *script, bool clearArgs = true);
 void           CompileNSISScript();
@@ -247,8 +249,8 @@ typedef struct NSISScriptData {
   LPCTSTR compressor_name;
   TCHAR compressor_stats[512];
   LPCTSTR best_compressor_name;
-  // Added by Darren Owen (DrO) on 1/10/2003
   int recompile_test;
+  WORD log_zoom;
 } NSCRIPTDATA;
 
 extern NSCRIPTDATA g_sdata;
