@@ -2,11 +2,11 @@
 
 \H{v3.08} 3.08
 
-Released on ???? ??th, 20??
+Released on September 25th, 2021
 
 \S1{v3.08-rl} Release Notes
 
-????????
+This release is filled with features that a lot of people have been requesting for a while. Enjoy!
 
 \S1{v3.08-cl} Changelog
 
@@ -18,7 +18,7 @@ Released on ???? ??th, 20??
 
 \b Added \cw{$USER..} and \cw{$COMMON..} alias constants
 
-\b Added GetDllVersion /ProductVersion switch
+\b Added \R{getdllversion}{GetDLLVersion} /ProductVersion switch
 
 \b Added \R{getwinver}{GetWinVer} instruction
 
