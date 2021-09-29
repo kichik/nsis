@@ -18,7 +18,7 @@ Instalação do $(^Name)
 # ^UninstallCaption
 Desinstalação do $(^Name)
 # ^LicenseSubCaption
-: Acordo de licença
+: Acordo de Licença
 # ^ComponentsSubCaption
 : Opções da Instalação
 # ^DirSubCaption
@@ -60,29 +60,29 @@ P&rocurar...
 # ^ShowDetailsBtn
 Mostrar &detalhes
 # ^ClickNext
-Clique em Próximo para continuar.
+Clique em Próximo pra continuar.
 # ^ClickInstall
-Clique em Instalar para iniciar a instalação.
+Clique em Instalar pra iniciar a instalação.
 # ^ClickUninstall
-Clique em Desinstalar para iniciar a desinstalação.
+Clique em Desinstalar pra iniciar a desinstalação.
 # ^Name
 Nome
 # ^Completed
 Completado
 # ^LicenseText
-Por favor, leia com atenção o acordo de licença antes de instalar o $(^NameDA). Se você aceita todos os termos do acordo, clique em Eu Concordo.
+Por favor reveja o acordo de licença antes de instalar o $(^NameDA). Se você aceita todos os termos do acordo clique em Eu Concordo.
 # ^LicenseTextCB
-Por favor, leia com atenção o acordo de licença antes de instalar o $(^NameDA). Se você aceita todos os termos do acordo, clique na caixa de seleção abaixo. $_CLICK
+Por favor reveja o acordo de licença antes de instalar o $(^NameDA). Se você aceita todos os termos do acordo clique na caixa de seleção abaixo. $_CLICK
 # ^LicenseTextRB
-Por favor, leia com atenção o acordo de licença antes de instalar o $(^NameDA). Se você aceita todos os termos do acordo, selecione a primeira opção abaixo. $_CLICK
+Por favor reveja o acordo de licença antes de instalar o $(^NameDA). Se você aceita todos os termos do acordo selecione a primeira opção abaixo. $_CLICK
 # ^UnLicenseText
-Por favor, leia com atenção o acordo de licença antes de desinstalar o $(^NameDA). Se você aceita todos os termos do acordo, clique em Eu Concordo.
+Por favor reveja o acordo de licença antes de desinstalar o $(^NameDA). Se você aceita todos os termos do acordo clique em Eu Concordo.
 # ^UnLicenseTextCB
-Por favor, leia com atenção o acordo de licença antes de desinstalar o $(^NameDA). Se você aceita todos os termos do acordo, clique na caixa de seleção abaixo. $_CLICK
+Por favor reveja o acordo de licença antes de desinstalar o $(^NameDA). Se você aceita todos os termos do acordo clique na caixa de seleção abaixo. $_CLICK
 # ^UnLicenseTextRB
-Por favor, leia com atenção o acordo de licença antes de desinstalar o $(^NameDA). Se você aceita todos os termos do acordo, selecione a primeira opção abaixo. $_CLICK
+Por favor reveja o acordo de licença antes de desinstalar o $(^NameDA). Se você aceita todos os termos do acordo selecione a primeira opção abaixo. $_CLICK
 # ^Custom
-Personalizado
+Personalizar
 # ^ComponentsText
 Marque os componentes que você quer instalar e desmarque os componentes que você não quer instalar. $_CLICK
 # ^ComponentsSubText1
@@ -90,7 +90,7 @@ Selecione o tipo de instalação:
 # ^ComponentsSubText2_NoInstTypes
 Selecione os componentes a instalar:
 # ^ComponentsSubText2
-Ou, selecione os componentes opcionais que você deseja instalar:
+Ou selecione os componentes opcionais que você deseja instalar:
 # ^UnComponentsText
 Marque os componentes que você quer desinstalar e desmarque os componentes que você não quer desinstalar. $_CLICK
 # ^UnComponentsSubText1
@@ -98,35 +98,35 @@ Selecione o tipo de desinstalação:
 # ^UnComponentsSubText2_NoInstTypes
 Selecione os componentes a desinstalar:
 # ^UnComponentsSubText2
-Ou, selecione os componentes opcionais que você deseja desinstalar:
+Ou selecione os componentes opcionais que você deseja desinstalar:
 # ^DirText
-O $(^NameDA) será instalado na pasta a seguir. Para instalar em uma pasta diferente, clique em Procurar e selecione outra pasta. $_CLICK
+O Instalador instalará o $(^NameDA) na seguinte pasta. Pra instalar em uma pasta diferente clique em Procurar e selecione outra pasta. $_CLICK
 # ^DirSubText
-Pasta de Destino
+Pasta Destino
 # ^DirBrowseText
-Selecione a pasta para instalar o $(^NameDA):
+Selecione a pasta pra instalar o $(^NameDA):
 # ^UnDirText
-O $(^NameDA) será desinstalado da pasta a seguir. Para desinstalar de uma pasta diferente, clique em Procurar e selecione outra pasta. $_CLICK
+O Instalador desinstalará o $(^NameDA) da seguinte pasta. Pra desinstalar de uma pasta diferente clique em Procurar e selecione outra pasta. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
-Selecione a pasta de onde desinstalar o $(^NameDA):
+Selecione a pasta pra desinstalar o $(^NameDA):
 # ^SpaceAvailable
 "Espaço disponível: "
 # ^SpaceRequired
-"Espaço necessário: "
+"Espaço requerido: "
 # ^UninstallingText
-O $(^NameDA) será desinstalado da pasta a seguir. $_CLICK
+O $(^NameDA) será desinstalado da seguinte pasta. $_CLICK
 # ^UninstallingSubText
 Desinstalando de:
 # ^FileError
-Erro ao abrir o arquivo para gravação: \r\n\r\n$0\r\n\r\nClique em Abortar para parar a instalação,\r\nRepetir para tentar de novo, ou\r\nIgnorar para pular este arquivo.
+Erro ao abrir o arquivo pra gravação: \r\n\r\n$0\r\n\r\nClique em Abortar pra parar a instalação,\r\nRepetir pra tentar de novo ou em\r\nIgnorar pra ignorar este arquivo.
 # ^FileError_NoIgnore
-Erro ao abrir o arquivo para gravação: \r\n\r\n$0\r\n\r\nClique em Repetir para tentar de novo, ou\r\nCancelar para parar a instalação.
+Erro ao abrir o arquivo pra gravação: \r\n\r\n$0\r\n\r\nClique em Repetir pra tentar de novo ou em\r\nCancelar pra parar a instalação.
 # ^CantWrite
-"Não foi possível gravar: "
+"Não pôde gravar: "
 # ^CopyFailed
-Falha ao copiar
+Falhou em copiar
 # ^CopyTo
 "Copiar para "
 # ^Registering
@@ -134,9 +134,9 @@ Falha ao copiar
 # ^Unregistering
 "Desfazendo o registro: "
 # ^SymbolNotFound
-"Não foi possível localizar o símbolo: "
+"Não pôde achar o símbolo: "
 # ^CouldNotLoad
-"Não foi possível carregar: "
+"Não pôde carregar: "
 # ^CreateFolder
 "Criar pasta: "
 # ^CreateShortcut
@@ -144,11 +144,11 @@ Falha ao copiar
 # ^CreatedUninstaller
 "Desinstalador criado: "
 # ^Delete
-"Excluir o arquivo: "
+"Apagar o arquivo: "
 # ^DeleteOnReboot
-"Excluir ao reiniciar: "
+"Apagar ao reiniciar: "
 # ^ErrorCreatingShortcut
-"Erro ao criar atalho: "
+"Erro ao criar o atalho: "
 # ^ErrorCreating
 "Erro ao criar: "
 # ^ErrorDecompressing
@@ -162,7 +162,7 @@ Erro ao registar a DLL
 # ^Extract
 "Extrair: "
 # ^ErrorWriting
-"Extrair: erro ao gravar o arquivo "
+"Extrair: erro ao gravar no arquivo "
 # ^InvalidOpcode
 Instalador corrompido: opcode inválido
 # ^NoOLE
@@ -170,7 +170,7 @@ Instalador corrompido: opcode inválido
 # ^OutputFolder
 "Pasta de saída: "
 # ^RemoveFolder
-"Excluir a pasta: "
+"Remover a pasta: "
 # ^RenameOnReboot
 "Renomear ao reiniciar: "
 # ^Rename
@@ -178,9 +178,9 @@ Instalador corrompido: opcode inválido
 # ^Skipped
 "Ignorado: "
 # ^CopyDetails
-Copiar os Detalhes para a Área de Transferência
+Copiar os Detalhes pra Área de Transferência
 # ^LogInstall
-Registrar o processo de instalação
+Gravar no log o processo de instalação
 # ^Byte
 B
 # ^Kilo
