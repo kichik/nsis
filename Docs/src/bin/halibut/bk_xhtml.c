@@ -903,22 +903,22 @@ static char *xhtml_index_filename = "IndexPage.html";
 static void xhtml_donavlinks(FILE * fp, xhtmlfile * file)
 {
   xhtmlfile *xhtml_next_file = NULL;
-  fprintf(fp, "<p");
+  fputs("<p", fp);
   if (conf.nav_attrs != NULL)
   {
     fprintf(fp, " %ls>", conf.nav_attrs);
   } else
   {
-    fprintf(fp, ">");
+    fputs(">", fp);
   }
   if (xhtml_last_file == NULL)
   {
-    fprintf(fp, "Previous | ");
+    fputs("Previous | ", fp);
   } else
   {
     fprintf(fp, "<a href='%s'>Previous</a> | ", xhtml_last_file->filename);
   }
-  fprintf(fp, "<a href='Contents.html'>Contents</a> | ");
+  fputs("<a href='Contents.html'>Contents</a> | ", fp);
   if (file != NULL)
   {                             /* otherwise we're doing nav links for the index */
     if (xhtml_next_file == NULL)
@@ -932,7 +932,7 @@ static void xhtml_donavlinks(FILE * fp, xhtmlfile * file)
   {
     if (file == NULL)
     {                           /* index, so no next file */
-      fprintf(fp, "Next	");
+      fputs("Next	", fp);
     } else
     {
       fprintf(fp, "<a href='%s'>Next</a>", xhtml_index_filename);
@@ -941,7 +941,7 @@ static void xhtml_donavlinks(FILE * fp, xhtmlfile * file)
   {
     fprintf(fp, "<a href='%s'>Next</a>", xhtml_next_file->filename);
   }
-  fprintf(fp, "</p>\n");
+  fputs("</p>\n", fp);
 }
 
 /* Write out the index file */
@@ -953,7 +953,7 @@ static void xhtml_do_index_body(FILE * fp)
   if (count234(idx->entries) == 0)
     return;                     /* don't write anything at all */
 
-  fprintf(fp, "<dl>\n");
+  fputs("<dl>\n", fp);
   /* iterate over idx->entries using the tree functions and display everything */
   for (ti = 0; (y = (indexentry *) index234(idx->entries, ti)) != NULL;
        ti++)
@@ -963,9 +963,9 @@ static void xhtml_do_index_body(FILE * fp)
       int i;
       xhtmlindex *xi;
 
-      fprintf(fp, "<dt>");
+      fputs("<dt>", fp);
       xhtml_para(fp, y->text);
-      fprintf(fp, "</dt>\n<dd>");
+      fputs("</dt>\n<dd>", fp);
 
       xi = (xhtmlindex *) y->backend_data;
       for (i = 0; i < xi->nsection; i++)
@@ -983,17 +983,17 @@ static void xhtml_do_index_body(FILE * fp)
           {
             xhtml_para(fp, sect->para->words);
           }
-          fprintf(fp, "</a>");
+          fputs("</a>", fp);
           if (i + 1 < xi->nsection)
           {
-            fprintf(fp, ", ");
+            fputs(", ", fp);
           }
         }
       }
-      fprintf(fp, "</dd>\n");
+      fputs("</dd>\n", fp);
     }
   }
-  fprintf(fp, "</dl>\n");
+  fputs("</dl>\n", fp);
 }
 static void xhtml_do_index()
 {
@@ -1111,20 +1111,20 @@ static void xhtml_do_top_file(xhtmlfile * file, paragraph * sourceform)
   {
     if (p->type == para_Preamble)
     {
-      fprintf(fp, "<p>");
+      fputs("<p>", fp);
       xhtml_hack_xhtmlify(p->words);
       xhtml_para(fp, p->words);
-      fprintf(fp, "</p>\n");
+      fputs("</p>\n", fp);
     }
   }
   for (p = sourceform; p; p = p->next)
   {
     if (p->type == para_Copyright)
     {
-      fprintf(fp, "<p>");
+      fputs("<p>", fp);
       xhtml_hack_xhtmlify(p->words);
       xhtml_para(fp, p->words);
-      fprintf(fp, "</p>\n");
+      fputs("</p>\n", fp);
     }
   }
 
@@ -1137,7 +1137,7 @@ static void xhtml_do_top_file(xhtmlfile * file, paragraph * sourceform)
    */
   if (conf.leaf_level == 0 && count234(idx->entries) > 0)
   {
-    fprintf(fp, "<a name=\"index\"></a><h1>Index</h1>\n");
+    fputs("<a name=\"index\"></a><h1>Index</h1>\n", fp);
     xhtml_do_index_body(fp);
   }
 
@@ -1198,7 +1198,7 @@ static int xhtml_do_contents(FILE * fp, xhtmlfile * file)
     while (last_level > start_level)
     {
       last_level--;
-      fprintf(fp, "</ul>\n");
+      fputs("</ul>\n", fp);
       if(chm_toc)fprintf(chm_toc, "</ul>\n");
     }
   }
@@ -1223,7 +1223,7 @@ static int xhtml_do_naked_contents(FILE * fp, xhtmlfile * file)
     while (last_level > start_level)
     {
       last_level--;
-      fprintf(fp, "</ul>\n");
+      fputs("</ul>\n", fp);
       if(chm_toc)fprintf(chm_toc, "</ul>\n");
     }
   }
@@ -1303,13 +1303,13 @@ xhtml_add_contents_entry(FILE * fp, xhtmlsection * section, int limit)
   while (last_level > section->level)
   {
     last_level--;
-    fprintf(fp, "</ul>\n");
+    fputs("</ul>\n", fp);
     if(chm_toc)fprintf(chm_toc, "</ul>\n");
   }
   while (last_level < section->level)
   {
     last_level++;
-    fprintf(fp, "<ul>\n");
+    fputs("<ul>\n", fp);
     if(chm_toc)fprintf(chm_toc, "<ul>\n");
   }
   filename = conf.leaf_level ? section->file->filename : "";
@@ -1317,7 +1317,7 @@ xhtml_add_contents_entry(FILE * fp, xhtmlsection * section, int limit)
   if (section->para->type != para_Chapter || !conf.leaf_level)
     fragment = xhtml_get_fragmentname(section, fragmentbuf);
 
-  fprintf(fp, "<li>");
+  fputs("<li>", fp);
   fprintf(fp, "<a %shref=\"%s#%s\">",
           (section->para->type == para_Chapter|| section->para->type == para_Appendix) ? "class=\"btitle\" " : "",
           filename, fragment);
@@ -1328,7 +1328,7 @@ xhtml_add_contents_entry(FILE * fp, xhtmlsection * section, int limit)
           //%s
   if (section->para->type == para_Chapter
       || section->para->type == para_Appendix)
-    fprintf(fp, "<b>");
+    fputs("<b>", fp);
   if ((section->para->type != para_Heading
        && section->para->type != para_Subsect) || (section->para->kwtext
                                                    && !section->para->
@@ -1337,20 +1337,20 @@ xhtml_add_contents_entry(FILE * fp, xhtmlsection * section, int limit)
     xhtml_para(fp, section->para->kwtext);
     if(chm_toc)xhtml_para(chm_toc, section->para->kwtext);
     if (section->para->words){
-      fprintf(fp, ": ");
+      fputs(": ", fp);
       if(chm_toc)fprintf(chm_toc, ": ");
     }
   }
   if (section->para->type == para_Chapter
       || section->para->type == para_Appendix)
-    fprintf(fp, "</b>");
+    fputs("</b>", fp);
   if (section->para->words)
   {
     xhtml_para(fp, section->para->words);
     if(chm_toc)xhtml_para(chm_toc, section->para->words);
     if(chm_ind)xhtml_para(chm_ind, section->para->words);
   }
-  fprintf(fp, "</a></li>\n");
+  fputs("</a></li>\n", fp);
   if(chm_toc)fprintf(chm_toc,"\"></OBJECT></li>\n");
   if(chm_ind)fprintf(chm_ind,"\"></OBJECT></li>\n");
   return TRUE;
@@ -1417,9 +1417,9 @@ static void xhtml_do_paras(FILE * fp, paragraph * p)
       break;
 
     case para_Normal:
-      fprintf(fp, "\n<p>");
+      fputs("\n<p>", fp);
       xhtml_para(fp, p->words);
-      fprintf(fp, "</p>\n");
+      fputs("</p>\n", fp);
       break;
 
     case para_Bullet:
@@ -1430,30 +1430,30 @@ static void xhtml_do_paras(FILE * fp, paragraph * p)
         /* start up list if necessary */
         if (p->type == para_Bullet)
         {
-          fprintf(fp, "<ul>\n");
+          fputs("<ul>\n", fp);
         } else if (p->type == para_NumberedList)
         {
-          fprintf(fp, "<ol>\n");
+          fputs("<ol>\n", fp);
         } else if (p->type == para_BiblioCited)
         {
-          fprintf(fp, "<dl>\n");
+          fputs("<dl>\n", fp);
         }
       }
       if (p->type == para_Bullet || p->type == para_NumberedList)
-        fprintf(fp, "<li>");
+        fputs("<li>", fp);
       else if (p->type == para_BiblioCited)
       {
-        fprintf(fp, "<dt>");
+        fputs("<dt>", fp);
         xhtml_para(fp, p->kwtext);
-        fprintf(fp, "</dt>\n<dd>");
+        fputs("</dt>\n<dd>", fp);
       }
       xhtml_para(fp, p->words);
       if (p->type == para_BiblioCited)
       {
-        fprintf(fp, "</dd>\n");
+        fputs("</dd>\n", fp);
       } else if (p->type == para_Bullet || p->type == para_NumberedList)
       {
-        fprintf(fp, "</li>");
+        fputs("</li>", fp);
       }
       if (p->type == para_Bullet || p->type == para_NumberedList
           || p->type == para_BiblioCited)
@@ -1474,13 +1474,13 @@ static void xhtml_do_paras(FILE * fp, paragraph * p)
         {
           if (p->type == para_Bullet)
           {
-            fprintf(fp, "</ul>\n");
+            fputs("</ul>\n", fp);
           } else if (p->type == para_NumberedList)
           {
-            fprintf(fp, "</ol>\n");
+            fputs("</ol>\n", fp);
           } else if (p->type == para_BiblioCited)
           {
-            fprintf(fp, "</dl>\n");
+            fputs("</dl>\n", fp);
           }
         }
       }
@@ -1516,21 +1516,21 @@ static void xhtml_doheader(FILE * fp, word * title)
   const ustr_slist *pussl;
 
   if (xhtml && html5) fatal(err_whatever, "indeterminate format");
-  fprintf(fp, html5 ? "<!DOCTYPE html>\n" : xhtml ? xhtmldoctype : html4doctype);
+  fputs(html5 ? "<!DOCTYPE html>\n" : xhtml ? xhtmldoctype : html4doctype, fp);
   fprintf(fp, "<html%s", xhtml ? xhtmlxmlns : "");
   //www.w3.org/International/questions/qa-html-language-declarations
   if (*(tmpwstr = ustrdef(conf.html_lang, L"")))
     fprintf(fp, "%s%ls%s lang=\"%ls\"", xhtml ? " xml:lang=\"" : "", xhtml ? tmpwstr : L"", xhtml ? "\"" : "", tmpwstr);
-  fprintf(fp, "><head>\n");
+  fputs("><head>\n", fp);
   if (ustricmp(L"none", (tmpwstr = ustrdef(conf.meta_charset, L"UTF-8"))))
     fprintf(fp, (xhtml || !html5) ? "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=%ls\"%s>" : "<meta charset=\"%ls\">\n", tmpwstr, voidend);
   printoptstr(fp, "", conf.head_start, "\n");
-  fprintf(fp, "<title>");
+  fputs("<title>", fp);
   if (title == NULL)
-    fprintf(fp, "Documentation");
+    fputs("Documentation", fp);
   else
     xhtml_para(fp, title);
-  fprintf(fp, "</title>\n");
+  fputs("</title>\n", fp);
   for (pussl = conf.meta_append; pussl; pussl = pussl->next)
     fprintf(fp, "<meta %ls%s>", pussl->string, voidend);
   printoptstr(fp, "", conf.head_middle, "\n");
@@ -1540,7 +1540,7 @@ static void xhtml_doheader(FILE * fp, word * title)
   if (conf.description)
     fprintf(fp, "<meta name=\"description\" content=\"%ls\"%s>\n", conf.description, voidend);
   printoptstr(fp, "", conf.head_end, "\n");
-  fprintf(fp, "</head>\n");
+  fputs("</head>\n", fp);
   fprintf(fp, "%ls\n", conf.body ? conf.body : L"<body>");
   if (conf.body_start)
     fprintf(fp, "%ls\n", conf.body_start);
@@ -1548,9 +1548,9 @@ static void xhtml_doheader(FILE * fp, word * title)
 
 static void chm_doheader(FILE * fp, word * title)
 {
-	fprintf(fp, "<HTML><BODY><UL><LI><OBJECT type=\"text/sitemap\"><param name=\"Name\" value=\"");
+	fputs("<HTML><BODY><UL><LI><OBJECT type=\"text/sitemap\"><param name=\"Name\" value=\"", fp);
 	xhtml_para(fp, title);
-	fprintf(fp,"\"><param name=\"Local\" value=\"Contents.html\"></OBJECT></li>\n");
+	fputs("\"><param name=\"Local\" value=\"Contents.html\"></OBJECT></li>\n", fp);
 }
 
 /*
@@ -1567,7 +1567,7 @@ static void xhtml_dofooter(FILE * fp)
     fprintf(fp, "%ls\n", conf.body_end);
   if (!conf.suppress_address)
   {
-    fprintf(fp, "<address>\n");
+    fputs("<address>\n", fp);
     if (conf.address_start)
       fprintf(fp, "%ls\n", conf.address_start);
     /* Do the version ID */
@@ -1584,13 +1584,13 @@ static void xhtml_dofooter(FILE * fp)
     }
     if (conf.address_end)
       fprintf(fp, "%ls\n", conf.address_end);
-    fprintf(fp, "</address>\n");
+    fputs("</address>\n", fp);
   }
-  fprintf(fp, "</body></html>\n");
+  fputs("</body></html>\n", fp);
 }
 static void chm_dofooter(FILE * fp)
 {
-	fprintf(fp, "</ul></BODY></HTML>\n");
+	fputs("</ul></BODY></HTML>\n", fp);
 }
 
 /*
@@ -2077,7 +2077,7 @@ static void xhtml_para(FILE * fp, word * text)
  */
 static void xhtml_codepara(FILE * fp, word * text)
 {
-  fprintf(fp, "<pre>");
+  fputs("<pre>", fp);
   for (; text; text = text->next)
     if (text->type == word_WeakCode)
     {
@@ -2086,5 +2086,5 @@ static void xhtml_codepara(FILE * fp, word * text)
       fprintf(fp, "%s\n", c);
       sfree(c);
     }
-  fprintf(fp, "</pre>\n");
+  fputs("</pre>\n", fp);
 }

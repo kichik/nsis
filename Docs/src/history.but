@@ -10,9 +10,13 @@ Released on ????, 20??
 
 \S1{v3.09-cl} Changelog
 
+\S2{} Minor Changes
+
+\b Fixed halibut fprintf format security warnings (\W{http://sf.net/p/nsis/patches/304}{patch #304})
+
 \S2{} Translations
 
-\b Updated Brazilian Portuguese (\W{http://sf.net/p/nsis/bugs/1269}{bug #1269}))
+\b Updated Brazilian Portuguese (\W{http://sf.net/p/nsis/bugs/1269}{bug #1269})
 
 \H{v3.08} 3.08
 
