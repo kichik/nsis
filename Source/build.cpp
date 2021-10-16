@@ -3624,7 +3624,7 @@ bool CEXEBuild::hostapi_request_data(MakensisAPI::datatransfer_e operation, UINT
       return data && ((HOSTAPIREQUESTDATAPROC)data[0])((void*) data[1], hWnd, Msg, wParam, lParam); // We don't set DWLP_MSGRESULT nor care about the return value
     }
   };
-  if (!notify_hwnd || (minver && SendMessage(notify_hwnd, QUERYHOST, QH_SUPPORTEDVERSION, 0) < minver)) return false;
+  if (!notify_hwnd || (minver && (UINT) SendMessage(notify_hwnd, QUERYHOST, QH_SUPPORTEDVERSION, 0) < minver)) return false;
   size_t data[] = { (size_t) proc, (size_t) cookie };
   COPYDATASTRUCT cds = { (DWORD) operation, inputsize, (void*) input };
   HWND hWnd = CreateWindowEx(WS_EX_TOOLWINDOW, WC_DIALOG, NULL, WS_POPUP|WS_DISABLED, 0, 0, 0, 0, NULL, NULL, NULL, NULL);

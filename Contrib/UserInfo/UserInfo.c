@@ -13,6 +13,24 @@ FORCEINLINE DWORD NoDepr_GetVersion() { __pragma(warning(push))__pragma(warning(
 typedef BOOL (WINAPI*CHECKTOKENMEMBERSHIP)(HANDLE TokenHandle,PSID SidToCheck,PBOOL IsMember);
 CHECKTOKENMEMBERSHIP _CheckTokenMembership=NULL;
 
+static FARPROC GetAA32ProcAddress(LPCSTR FuncName)
+{
+  return GetProcAddress(GetModuleHandleA("ADVAPI32"), FuncName);
+}
+
+#if defined(NSIS_FORCERUNTIMELINKING) //__MINGW64_VERSION_MAJOR+0 >= 1
+// OpenThreadToken is exported by kernel32.lib in mingw-w64 breaking < Win7 where it only exists in advapi32.
+// sourceforge.net/p/mingw-w64/bugs/235/# & 821 with fix adapted from the negrutiu NSIS fork.
+// We try to work around this by specifying advapi32 before kernel32 in the list of libraries but if that fails, set the preceding define.
+#define OpenThreadToken DelayedOpenThreadToken
+static BOOL WINAPI DelayedOpenThreadToken(HANDLE Thread, DWORD Access, BOOL OpenAsSelf, HANDLE*Token)
+{
+  typedef BOOL (WINAPI*OTT)(HANDLE, DWORD, BOOL, HANDLE*);
+  OTT func = (OTT) GetAA32ProcAddress("OpenThreadToken");
+  return func(Thread, Access, OpenAsSelf, Token);
+}
+#endif
+
 void __declspec(dllexport) GetName(HWND hwndParent, int string_size, 
                                    TCHAR *variables, stack_t **stacktop)
 {
@@ -89,8 +107,7 @@ TCHAR* GetAccountTypeHelper(BOOL CheckTokenForGroupDeny)
       // GetUserName is in advapi32.dll so we can avoid Load/Freelibrary
       _CheckTokenMembership=
       #ifndef _WIN64
-        (CHECKTOKENMEMBERSHIP) GetProcAddress(
-          GetModuleHandle(_T("ADVAPI32")), "CheckTokenMembership");
+        (CHECKTOKENMEMBERSHIP) GetAA32ProcAddress("CheckTokenMembership");
       #else
         CheckTokenMembership;
       #endif

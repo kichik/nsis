@@ -4,13 +4,13 @@ Import('defenv')
 
 ### imports
 
-Import('FlagsConfigure GetOptionOrEnv')
+Import('FlagsConfigure GetOptionOrEnv GetStdSysEnvVarList')
 
 ### HACKS!
 if GetOptionOrEnv('NSIS_SCONS_GNU_ENVPATHHACK'):
 	import os
 	defenv['ENV']['PATH'] = os.getenv('PATH') # Major hack!
-	import_env = ['SystemDrive', 'SystemRoot', 'TEMP', 'TMP', 'PATHEXT']
+	import_env = GetStdSysEnvVarList(path=True, temp=True)
 	for var in import_env: 
 		if var in os.environ:
 			defenv['ENV'][var] = os.environ.get(var, '')
@@ -104,7 +104,7 @@ stub_env.Append(LINKFLAGS = ['$ALIGN_FLAG'])        # 512 bytes align
 stub_env.Append(LINKFLAGS = ['$MAP_FLAG'])          # generate map file
 
 conf = FlagsConfigure(stub_env)
-conf.CheckCompileFlag('-fno-tree-loop-distribute-patterns')  # don't generate msvcrt!memmove calls
+conf.CheckCompileFlag('-fno-tree-loop-distribute-patterns')  # GCC 10: Don't generate msvcrt!memmove calls (bug #1248)
 conf.Finish()
 
 stub_uenv = stub_env.Clone()

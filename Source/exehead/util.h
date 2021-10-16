@@ -69,6 +69,7 @@ void NSISCALL myRegGetStr(HKEY root, const TCHAR *sub, const TCHAR *name, TCHAR 
 
 
 extern DWORD g_WinVer; // GetVersion()
+#define IsWin95NT4() ( sizeof(void*) == 4 && LOWORD(g_WinVer) == 0x0004 )
 #define NSIS_WINVER_WOW64FLAG ( sizeof(void*) > 4 ? ( 0 ) : ( 0x40000000 ) )
 #define IsWow64() ( sizeof(void*) > 4 ? ( FALSE ) : ( g_WinVer & NSIS_WINVER_WOW64FLAG ) )
 #define SystemSupportsAltRegView() ( sizeof(void*) > 4 ? ( TRUE ) : ( IsWow64() ) )

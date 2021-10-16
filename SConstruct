@@ -70,20 +70,20 @@ doctypes = [
 #######  Build Environment                                         ###
 ######################################################################
 
+import os
 path = ARGUMENTS.get('PATH', '')
 toolset = ARGUMENTS.get('TOOLSET', '')
-arch = ARGUMENTS.get('TARGET_ARCH', 'x86')
 
-if toolset and path:
-	defenv = Environment(TARGET_ARCH = arch, ENV = {'PATH' : path}, TOOLS = toolset.split(',') + ['zip'])
-else:
-	if path:
-		defenv = Environment(TARGET_ARCH = arch, ENV = {'PATH' : path})
-	if toolset:
-		defenv = Environment(TARGET_ARCH = arch, TOOLS = toolset.split(',') + ['zip'])
-if not toolset and not path:
-	defenv = Environment(TARGET_ARCH = arch)
+defenv = {
+	'TARGET_ARCH': ARGUMENTS.get('TARGET_ARCH', 'x86'),
+	'ENV': {}
+}
 
+if path: defenv['ENV']['PATH'] = path
+if toolset: defenv['TOOLS'] = toolset.split(',') + ['zip']
+
+if len(defenv['ENV']) == 0: del defenv['ENV']
+defenv = Environment(**defenv)
 Export('defenv')
 
 ######################################################################
@@ -91,12 +91,12 @@ Export('defenv')
 ######################################################################
 
 SConscript('SCons/utils.py')
+Import('GetOptionOrEnv')
 
 ######################################################################
 #######  Options                                                   ###
 ######################################################################
 
-import os
 default_doctype = 'html'
 if defenv.WhereIs('hhc', os.environ['PATH']):
 	default_doctype = 'chm'
@@ -201,6 +201,8 @@ opts.Add(('PREFIX_DATA', 'Path to install nsis data to (plugins, includes, stubs
 opts.Add(('PREFIX_DOC','Path to install nsis README / INSTALL / TODO files to.', dirs['doc']))
 opts.Add(('PREFIX_PLUGINAPI_INC','Path to install plugin API headers to.', None))
 opts.Add(('PREFIX_PLUGINAPI_LIB','Path to install plugin static library to.', None))
+# reproducible builds
+opts.Add(('SOURCE_DATE_EPOCH', 'UNIX timestamp (in seconds)', os.environ.get('SOURCE_DATE_EPOCH')))
 
 opts.Update(defenv)
 Help(opts.GenerateHelpText(defenv))
@@ -216,6 +218,10 @@ if 'NSIS_CONFIG_CONST_DATA_PATH' in defenv['NSIS_CPPDEFINES']:
 	defenv.Append(NSIS_CPPDEFINES = [('PREFIX_CONF', '"%s"' % defenv.subst('$PREFIX_CONF'))])
 	defenv.Append(NSIS_CPPDEFINES = [('PREFIX_DATA', '"%s"' % defenv.subst('$PREFIX_DATA'))])
 	defenv.Append(NSIS_CPPDEFINES = [('PREFIX_DOC', '"%s"' % defenv.subst('$PREFIX_DOC'))])
+
+if defenv.get('SOURCE_DATE_EPOCH','') is not '':
+	defenv['ENV']['SOURCE_DATE_EPOCH'] = defenv['SOURCE_DATE_EPOCH'] = int(defenv['SOURCE_DATE_EPOCH'], 0) # Normalize and apply to ENV for child processes
+	defenv.Append(NSIS_CPPDEFINES = [('NSIS_SOURCE_DATE_EPOCH', '%s' % defenv['SOURCE_DATE_EPOCH'])]) # Display in /HDRINFO
 
 # Need this early for the config header files to be placed in
 if defenv['UNICODE']:
@@ -449,7 +455,7 @@ def Sign(targets):
 			a = defenv.Action('$CODESIGNER "%s"' % t.path)
 			defenv.AddPostAction(t, a)
 
-Import('IsPEExecutable SetPESecurityFlagsWorker')
+Import('SilentActionEcho IsPEExecutable SetPESecurityFlagsWorker MakeReproducibleAction')
 def SetPESecurityFlagsAction(target, source, env):
 	for t in target:
 		SetPESecurityFlagsWorker(t.path)
@@ -461,6 +467,10 @@ def SetPESecurityFlags(targets):
 	for t in targets:
 		a = defenv.Action(SetPESecurityFlagsAction, strfunction=SetPESecurityFlagsActionEcho)
 		defenv.AddPostAction(t, a)
+
+def MakeReproducible(targets):
+	for t in targets:
+		defenv.AddPostAction(t, defenv.Action(MakeReproducibleAction, strfunction=SilentActionEcho))
 
 def TestScript(scripts):
 	defenv.Install('$TESTDISTDIR/Tests', scripts)
@@ -479,6 +489,7 @@ defenv.DistributeDocs = DistributeDocs
 defenv.DistributeExamples = DistributeExamples
 defenv.Sign = Sign
 defenv.SetPESecurityFlags = SetPESecurityFlags
+defenv.MakeReproducible = MakeReproducible
 defenv.TestScript = TestScript
 
 def DistributeExtras(env, target, examples, docs):
@@ -492,7 +503,6 @@ def DistributeExtras(env, target, examples, docs):
 ######################################################################
 
 if defenv['MSTOOLKIT']:
-	Import('GetOptionOrEnv')
 	if GetOptionOrEnv('MSVC_USE_SCRIPT', '!') != '!':
 		defenv['MSVC_USE_SCRIPT'] = GetOptionOrEnv('MSVC_USE_SCRIPT')
 	defenv.Tool('mstoolkit', toolpath = [Dir('SCons/Tools').rdir()])
@@ -567,6 +577,7 @@ if defenv['PLATFORM'] == 'win32':
 	nsis_menu_target = defenv.Command(os.path.join('$ZIPDISTDIR', 'NSIS.exe'),
 																		os.path.join('$ZIPDISTDIR', 'Examples', 'NSISMenu.nsi'),
 																		build_nsis_menu_for_zip)
+	defenv.MakeReproducible(nsis_menu_target)
 	defenv.Sign(nsis_menu_target)
 
 dist_zip = 'nsis-${VERSION}${DISTSUFFIX}.zip'
@@ -650,6 +661,7 @@ def BuildStub(compression, solid, unicode):
 	target = defenv.SConscript(dirs = 'Source/exehead', variant_dir = build_dir, duplicate = False, exports = exports)
 	env.SideEffect('%s/stub_%s.map' % (build_dir, stub), target)
 
+	env.MakeReproducible(target)
 	env.DistributeStubs(target, names=compression+suffix)
 
 	defenv.Alias(compression, target)
@@ -681,6 +693,7 @@ makensis = defenv.SConscript(dirs = 'Source', variant_dir = build_dir, duplicate
 
 makensis_env.SideEffect('%s/makensis.map' % build_dir, makensis)
 
+defenv.MakeReproducible(makensis)
 defenv.Alias('makensis', makensis)
 
 if defenv['PLATFORM'] == 'win32': 
@@ -718,6 +731,7 @@ def BuildPluginWorker(target, source, libs, examples = None, docs = None,
 	defenv.Alias('plugins', plugin)
 
 	defenv.SetPESecurityFlags(plugin)
+	defenv.MakeReproducible(plugin)
 	defenv.Sign(plugin)
 
 	CleanMap(env, plugin, target)
@@ -812,6 +826,7 @@ def BuildUtil(target, source, libs, entry = None, res = None,
 	defenv.Alias(target, util)
 	defenv.Alias('utils', util)
 
+	defenv.MakeReproducible(util)
 	defenv.Sign(util)
 
 	CleanMap(env, util, target)
