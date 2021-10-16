@@ -1,15 +1,30 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
 <title>nsDialogs</title>
-<meta http-equiv="Content-Type" content="text/html; charset=us-ascii">
 <style type="text/css">
-body { color: #000000; background-color: #ffffff; }
-b { color: red; }
-code { margin-left: 1.2em; padding: 0.5em; background-color: #f0f0f0; display:inline-block; font-size:95%; }
-span.inlcod i { padding: 0px 0.2em; color: #222222; font-family: monospace; font-style: normal; }
-blockquote pre { background-color: #fcfcfc; font-family: monospace; }
+:root { color-scheme: light dark; }
+html, body { font-family: Verdana, Arial, Helvetica, sans-serif; color: #050505; background-color: #fefefe; }
+html { font-size: 0.85em; }
+body { font-size: 1em; font-size: 1rem; }
+blockquote { margin: 0.75em; } .faq blockquote { margin-left: 0; }
+pre, code { font-family: Courier New, Courier, monospace,serif; font-size: 100%; }
+span.inlcod i { padding: 0px 0.2em; color: #444444; font-size:95%; }
+code { margin-left: 1.2em; padding: 0.5em; background-color: #f0f0f0; display:inline-block; }
+blockquote pre { background-color: #fafafa; padding:0.5em; overflow: auto; }
+blockquote pre > b { color: #bb0000; }
 abbr { font-variant: none; cursor: help; }
+
+@media (prefers-color-scheme: dark) {
+html, body { color: #eeeeee; background-color: #161616; }
+span.inlcod i { color: #bbbbbb; }
+code { background-color: #202020; }
+blockquote pre { background-color: #222222; }
+blockquote pre > b { color: #eebbbb; }
+}
 </style>
 </head>
 <body>
@@ -137,7 +152,7 @@ NSD_CB_Clear,
 
 <h2><a name="intro"></a>Introduction</h2>
 
-<p>nsDialogs allows creation of custom pages in the installer. On top of the built-in pages, nsDialogs can create pages with any type of controls in any order and arrangement. It can create everything from a simple page with one label to form which reacts to user's actions. <a href="../Modern UI 2/Readme.html">Modern UI 2</a>, for example, uses nsDialogs to create the welcome and finish pages.</p>
+<p>nsDialogs allows creation of custom pages in the installer. On top of the built-in pages, nsDialogs can create pages with any type of controls in any order and arrangement. It can create everything from a simple page with one label to form which reacts to user's actions. <a href="../Modern%20UI%202/Readme.html">Modern UI 2</a>, for example, uses nsDialogs to create the welcome and finish pages.</p>
 
 <p>nsDialogs is a NSIS plug-in, introduced in version 2.29 as a replacement for <a href="../InstallOptions/Readme.html">InstallOptions</a>. nsDialogs doesn't use INI files, so it's way faster than InstallOptions. Integration with the script is tighter and more natural - creating controls is done using plug-in functions and notification is done by directly calling a function in the script. Unlike InstallOptions, there isn't a predefined set of available control type and by providing a lower level access to Windows API, every type of control can be created and pages can be more customizable.</p>
 
@@ -468,7 +483,7 @@ SectionEnd</pre></blockquote>
 <p><code>nsDialogs::SelectFileDialog <i>mode</i> <i>initial_selection</i> <i>filter</i></code></p>
 <p>Displays a file selection dialog to the user. If <i>mode</i> is set to <i>save</i>, displays a file save dialog. If <i>mode</i> is set to <i>open</i>, displays a file open dialog.
 <p><i>initial_selection</i> can be used to provide the user with a default file to look for and/or a default folder to look in. If <i>initial_selection</i> is empty no default filename will be provided for the user and the dialog will start in the current working directory. If <i>initial_selection</i> specifies just a filename, for example "test.exe", the dialog will be set up to look for a file called test.exe in the current working directory. If <i>initial_selection</i> specifies just a directory, for example "C:\Program Files", the dialog starts in the provided directory with no file name provided. If <i>initial_selection</i> specifies a directory and a filename, for example "C:\Windows\System32\calc.exe", the dialog will be set up to look for a file called calc.exe in the directory C:\Windows\System32.</p>
-<i>filter</i> is a list of available file filter pairs separated by pipes. A filter pair consists of a display string and a <a href="https://blogs.msdn.microsoft.com/jeremykuhne/2017/06/04/wildcards-in-windows/">DOS-style wildcard pattern</a>. If an empty string is passed, the default is used (<i>"All Files|*.*"</i>).</p>
+<p><i>filter</i> is a list of available file filter pairs separated by pipes. A filter pair consists of a display string and a <a href="https://blogs.msdn.microsoft.com/jeremykuhne/2017/06/04/wildcards-in-windows/">DOS-style wildcard pattern</a>. If an empty string is passed, the default is used (<i>"All Files|*.*"</i>).</p>
 <p>Returns the selected file on the stack or an empty string if the user canceled the operation.</p>
 <blockquote><pre>
 nsDialogs::SelectFileDialog open "$DOCUMENTS\Config.ini" ".ini files|*.ini|All Files|*.*"
@@ -848,20 +863,15 @@ SectionEnd</pre></blockquote>
 
 
 <h2><a name="faq"></a>FAQ</h2>
-
-<div>
-
+<div class="faq">
 <ul>
-
 <li>
 <b>Q:</b> Can nsDialogs handle InstallOptions INI files?
 <blockquote>
 <p><b>A:</b> nsDialogs.nsh contains a function called <i>CreateDialogFromINI</i> that can create nsDialogs' dialog from an INI file. It can handle every type of control InstallOptions supports, but doesn't handle the flags or notifications. <i>Examples\nsDialogs\InstallOptions.nsi</i> shows a usage example of this function.</p>
 </blockquote>
 </li>
-
 </ul>
-
 </div>
 
 </body>

@@ -145,7 +145,7 @@ Sets the text and background color of a static control, edit control, button or 
 \c FunctionEnd
 
 \NsisWarnBlockContainerBegin
-\\<b\\>Warning:\\</b\\> Setting the background color of check boxes to \c{transparent} may not function properly when using \c{\R{axpstyle}{XPStyle} on}. The background may be completely black instead of transparent when using certain Windows themes. The text color might also be ignored when Visual Styles are enabled.
+\NsisBlockHeaderWarning Setting the background color of check boxes to \c{transparent} may not function properly when using \c{\R{axpstyle}{XPStyle} on}. The background may be completely black instead of transparent when using certain Windows themes. The text color might also be ignored when Visual Styles are enabled.
 \NsisWarnBlockContainerEnd
 
 \S2{setsilent} SetSilent

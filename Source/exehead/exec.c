@@ -45,8 +45,9 @@ typedef struct _stack_t {
 static stack_t *g_st;
 #endif
 
-exec_flags_t g_exec_flags;
+
 exec_flags_t g_exec_flags_last_used;
+execflags_and_osinfo g_execflags_and_osinfo;
 
 extra_parameters plugin_extra_parameters = {
   &g_exec_flags,
@@ -986,8 +987,8 @@ static int NSISCALL ExecuteEntry(entry *entry_)
             if ( ((BOOL(WINAPI*)(LPCTSTR,DWORD,DWORD,LPVOID))gfvi)(buf1,0,s1,b1)
               && ((BOOL(WINAPI*)(LPCVOID,LPCTSTR,LPVOID*,UINT*))vqv)(b1,_T("\\"),(void*)&pvsf1,&uLen) )
             {
-              myitoa(highout,pvsf1->dwFileVersionMS);
-              myitoa(lowout,pvsf1->dwFileVersionLS);
+              myitoa(highout,(&pvsf1->dwFileVersionMS)[parm3]);
+              myitoa(lowout,(&pvsf1->dwFileVersionLS)[parm3]);
 
               exec_error--;
             }
@@ -1563,36 +1564,41 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         hFile=myOpenFile(buf1,GENERIC_WRITE,CREATE_ALWAYS);
         if (hFile != INVALID_HANDLE_VALUE)
         {
-          unsigned char *filebuf;
-          int filehdrsize = g_filehdrsize;
-          filebuf=(unsigned char *)GlobalAlloc(GPTR,filehdrsize);
-          if (filebuf)
+          int dboffset = parm1;
+          if (parm2)
           {
-            SetSelfFilePointer(0);
-            ReadSelfFile((char*)filebuf,filehdrsize);
+            unsigned char *filebuf;
+            int filehdrsize = g_filehdrsize;
+            filebuf=(unsigned char *)GlobalAlloc(GPTR,filehdrsize);
+            if (filebuf)
             {
-              // parm1 = uninstdata_offset
-              // parm2 = m_unicon_size
-              unsigned char* seeker;
-              unsigned char* unicon_data = seeker = (unsigned char*)GlobalAlloc(GPTR,parm2);
-              if (unicon_data) {
-                GetCompressedDataFromDataBlockToMemory(parm1,unicon_data,parm2);
-                while (*seeker) {
-                  struct icondata {
-                    DWORD dwSize;
-                    DWORD dwOffset;
-                  } id = *(struct icondata *) seeker;
-                  seeker += sizeof(struct icondata);
-                  mini_memcpy(filebuf+id.dwOffset, seeker, id.dwSize);
-                  seeker += id.dwSize;
+              SetSelfFilePointer(0);
+              ReadSelfFile((char*)filebuf,filehdrsize);
+              {
+                // parm1 = uninstdata_offset
+                // parm2 = m_unicon_size
+                unsigned char* seeker;
+                unsigned char* unicon_data = seeker = (unsigned char*)GlobalAlloc(GPTR,parm2);
+                if (unicon_data) {
+                  GetCompressedDataFromDataBlockToMemory(parm1,unicon_data,parm2);
+                  while (*seeker) {
+                    struct icondata {
+                      DWORD dwSize;
+                      DWORD dwOffset;
+                    } id = *(struct icondata *) seeker;
+                    seeker += sizeof(struct icondata);
+                    mini_memcpy(filebuf+id.dwOffset, seeker, id.dwSize);
+                    seeker += id.dwSize;
+                  }
+                  GlobalFree(unicon_data);
                 }
-                GlobalFree(unicon_data);
               }
+              myWriteFile(hFile,(char*)filebuf,filehdrsize);
+              GlobalFree(filebuf);
+              dboffset = -1;
             }
-            myWriteFile(hFile,(char*)filebuf,filehdrsize);
-            GlobalFree(filebuf);
-            ret=GetCompressedDataFromDataBlock(-1,hFile);
           }
+          ret=GetCompressedDataFromDataBlock(dboffset, hFile);
           CloseHandle(hFile);
         }
         log_printf3(_T("created uninstaller: %d, \"%s\""),ret,buf1);
@@ -1716,10 +1722,10 @@ static int NSISCALL ExecuteEntry(entry *entry_)
 
     case EW_GETOSINFO:
     {
-      //switch(parm0)
+      switch(parm3)
       {
 #ifdef NSIS_SUPPORT_FNUTIL
-      //case 0:
+        case GETOSINFO_KNOWNFOLDER:
         {
           TCHAR *outstr = var1;
           IID kfid;
@@ -1735,8 +1741,18 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           if (!succ)
             exec_error++, *outstr = _T('\0');
         }
-        //break;
+        break;
 #endif
+        case GETOSINFO_READMEMORY:
+        {
+          TCHAR *outstr = var1;
+          SIZE_T addr = GetIntPtrFromParm(2), spec = GetIntPtrFromParm(4), value = 0;
+          UINT cb = LOBYTE(spec), offset = (UINT)(spec) >> 24;
+          if (addr == ABI_OSINFOADDRESS) addr = (SIZE_T) (&g_execflags_and_osinfo);
+          mini_memcpy(&value, ((char*) addr) + offset, cb);
+          iptrtostr(outstr, value);
+        }
+        break;
       }
     }
     break;

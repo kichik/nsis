@@ -54,6 +54,12 @@ HMODULE LoadSysLibrary(LPCSTR Mod);
 FARPROC GetSysProcAddr(LPCSTR Mod, LPCSTR FuncName);
 bool WriteUTF16LEBOM(HANDLE hFile);
 
+BOOL InitCCExHelper(UINT icc);
+static inline BOOL InitCCEx(UINT icc) { return icc > 0xff ? InitCCExHelper(icc) : true; }
+static inline UINT SizeOfStruct(const TOOLINFO&x) { return FIELD_OFFSET(TOOLINFO, lParam); }
+static inline UINT SizeOfStruct(const OPENFILENAME&x) { return sizeof(void*) < 8 ? 76 : sizeof(x); }
+UINT GetScreenBPP(HWND hWnd = NULL);
+
 void FreeSpawn(PROCESS_INFORMATION *pPI, HANDLE hRd, HANDLE hWr);
 BOOL InitSpawn(STARTUPINFO &si, HANDLE &hRd, HANDLE &hWr);
 
@@ -65,18 +71,20 @@ int SetArgv(const TCHAR *cmdLine, TCHAR ***argv);
 void SetTitle(HWND hwnd,const TCHAR *substr);
 void PlayAppSoundAsync(LPCSTR SoundName, int MBFallback = -1);
 void CopyToClipboard(HWND hwnd);
+void InitializeLogWindow();
+void ReleaseLogWindow();
 enum LOGCOLOR { LC_SUCCESS, LC_WARNING, LC_ERROR, LC_SYSCOLOR };
 void SetLogColor(enum LOGCOLOR lc);
-void ClearLog(HWND hwnd);
+void ClearLog();
 void LogMessage(HWND hwnd,const TCHAR *str);
 void ErrorMessage(HWND hwnd,const TCHAR *str);
 void CenterOnParent(HWND hwnd);
 void SetDialogFocus(HWND hDlg, HWND hCtl); // Use this and not SetFocus()!
 #define DlgRet(hDlg, val) ( SetWindowLongPtr((hDlg), DWLP_MSGRESULT, (val)) | TRUE )
 HWND GetComboEdit(HWND hCB);
-#define DisableItems(hwnd) EnableDisableItems(hwnd, 0)
-#define EnableItems(hwnd) EnableDisableItems(hwnd, 1)
-void EnableDisableItems(HWND hwnd, int on);
+#define DisableItems(hwnd) EnableDisableItems(((hwnd), 0))
+#define EnableItems(hwnd) EnableDisableItems(((hwnd), 1))
+void EnableDisableItems(int on);
 bool OpenRegSettingsKey(HKEY &hKey, bool create = false);
 #define CreateRegSettingsKey(refhkey) OpenRegSettingsKey((refhkey), true)
 DWORD ReadRegSettingDW(LPCTSTR name, const DWORD defval);
@@ -87,7 +95,9 @@ void ResetSymbols();
 int InitBranding();
 void InitTooltips(HWND h);
 void DestroyTooltips();
-void AddTip(HWND hWnd,LPCTSTR lpszToolTip);
+void AddTip(HWND hWnd, LPCTSTR lpszToolTip);
+LRESULT SetTooltipText(HWND hWnd, UINT_PTR Id, LPCTSTR Text);
+void UpdateCloseButtonTooltip();
 void ShowDocs();
 void RestoreCompressor();
 void SaveCompressor();
@@ -138,6 +148,7 @@ bool FileExists(const TCHAR *fname);
 bool OpenUrlInDefaultBrowser(HWND hwnd, LPCSTR Url);
 
 HMENU FindSubMenu(HMENU hMenu, UINT uId);
+static inline UINT GetMenuDropAlignment() { return GetSystemMetrics(SM_MENUDROPALIGNMENT) ? TPM_RIGHTALIGN : TPM_LEFTALIGN; }
 
 typedef enum { CFF_RAWSIZE = 0x00, CFF_DPIPT = 0x01, CFF_DPIFROMHWND = 0x02 } CREATEFONTFLAGS;
 HFONT CreateFontHelper(INT_PTR Data, int Height, DWORD p1, LPCTSTR Face);
@@ -170,6 +181,7 @@ static inline void GetGripperPos(HWND hwnd, RECT&r)
 }
 
 bool RicheditHasSelection(HWND hRE);
+HRESULT RicheditFreeze(void*pITextDocument, SIZE_T Freeze);
 
 void EnableUICommand(UINT Id, INT_PTR Enabled);
 

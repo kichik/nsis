@@ -200,7 +200,116 @@
 
 !macroend
 
+!macro __WinVer_Optimize
+!ifndef __WINVER_NOOPTIMIZE
+!if "${NSIS_CHAR_SIZE}" > 1
+!define /ReDef AtMostWin95 '"" LogicLib_AlwaysFalse ""'
+!define /ReDef AtMostWin98 '"" LogicLib_AlwaysFalse ""'
+!define /ReDef AtMostWinME '"" LogicLib_AlwaysFalse ""'
+!define /ReDef IsWin95 '"" LogicLib_AlwaysFalse ""'
+!define /ReDef IsWin98 '"" LogicLib_AlwaysFalse ""'
+!define /ReDef IsWinME '"" LogicLib_AlwaysFalse ""'
+!endif
+!if "${NSIS_PTR_SIZE}" > 4
+!define /ReDef AtMostWin95 '"" LogicLib_AlwaysFalse ""'
+!define /ReDef AtMostWin98 '"" LogicLib_AlwaysFalse ""'
+!define /ReDef AtMostWinME '"" LogicLib_AlwaysFalse ""'
+!define /ReDef AtMostWinNT4 '"" LogicLib_AlwaysFalse ""'
+!define /ReDef IsWin95 '"" LogicLib_AlwaysFalse ""'
+!define /ReDef IsWin98 '"" LogicLib_AlwaysFalse ""'
+!define /ReDef IsWinME '"" LogicLib_AlwaysFalse ""'
+!define /ReDef IsWinNT4 '"" LogicLib_AlwaysFalse ""'
+!define /ReDef AtLeastWin95 '"" LogicLib_AlwaysTrue ""'
+!define /ReDef AtLeastWin98 '"" LogicLib_AlwaysTrue ""'
+!define /ReDef AtLeastWinME '"" LogicLib_AlwaysTrue ""'
+!define /ReDef AtLeastWinNT4 '"" LogicLib_AlwaysTrue ""'
+!define /ReDef AtLeastWin2000 '"" LogicLib_AlwaysTrue ""'
+!endif
+!ifdef NSIS_ARM | NSIS_ARM32 | NSIS_ARMNT | NSIS_ARM64
+!define /ReDef AtMostWin2000 '"" LogicLib_AlwaysFalse ""'
+!define /ReDef AtMostWinXP '"" LogicLib_AlwaysFalse ""'
+!define /ReDef AtMostWin2003 '"" LogicLib_AlwaysFalse ""'
+!define /ReDef AtMostWinVista '"" LogicLib_AlwaysFalse ""'
+!define /ReDef AtMostWin7 '"" LogicLib_AlwaysFalse ""'
+!define /ReDef IsWin95 '"" LogicLib_AlwaysFalse ""'
+!define /ReDef IsWin98 '"" LogicLib_AlwaysFalse ""'
+!define /ReDef IsWinME '"" LogicLib_AlwaysFalse ""'
+!define /ReDef IsWinNT4 '"" LogicLib_AlwaysFalse ""'
+!define /ReDef IsWin2000 '"" LogicLib_AlwaysFalse ""'
+!define /ReDef IsWinXP '"" LogicLib_AlwaysFalse ""'
+!define /ReDef IsWin2003 '"" LogicLib_AlwaysFalse ""'
+!define /ReDef IsWinVista '"" LogicLib_AlwaysFalse ""'
+!define /ReDef IsWin2008 '"" LogicLib_AlwaysFalse ""'
+!define /ReDef IsWin7 '"" LogicLib_AlwaysFalse ""'
+!define /ReDef IsWin2008R2 '"" LogicLib_AlwaysFalse ""'
+!define /ReDef AtLeastWin95 '"" LogicLib_AlwaysTrue ""'
+!define /ReDef AtLeastWin98 '"" LogicLib_AlwaysTrue ""'
+!define /ReDef AtLeastWinME '"" LogicLib_AlwaysTrue ""'
+!define /ReDef AtLeastWinNT4 '"" LogicLib_AlwaysTrue ""'
+!define /ReDef AtLeastWin2000 '"" LogicLib_AlwaysTrue ""'
+!define /ReDef AtLeastWinXP '"" LogicLib_AlwaysTrue ""'
+!define /ReDef AtLeastWin2003 '"" LogicLib_AlwaysTrue ""'
+!define /ReDef AtLeastWinVista '"" LogicLib_AlwaysTrue ""'
+!define /ReDef AtLeastWin2008 '"" LogicLib_AlwaysTrue ""'
+!define /ReDef AtLeastWin7 '"" LogicLib_AlwaysTrue ""'
+!define /ReDef AtLeastWin2008R2 '"" LogicLib_AlwaysTrue ""'
+!define /ReDef AtLeastWin8 '"" LogicLib_AlwaysTrue ""'
+!endif
+!endif
+!macroend
+
 # lazy initialization macro
+
+!define /IfNDef __WinVer_GWV GetWinVer
+
+!macro __WinVer_InitVars_NEW
+  !insertmacro __WinVer_DeclareVars
+  !insertmacro __WinVer_Optimize
+
+  # only calculate version once
+  StrCmp $__WINVERV "" _winver_noveryet
+    Return
+  _winver_noveryet:
+
+  Push $0
+  ${__WinVer_GWV} $0 Product
+  ${__WinVer_GWV} $__WINVERV NTDDIMajMin
+  IntOp $__WINVERV $__WINVERV << 16 ; _WINVER_MASKVMAJ & _WINVER_MASKVMIN
+  IntOp $__WINVERSP $0 & 2
+  IntOp $__WINVERSP $__WINVERSP << 29 ; _WINVER_NTSRVBIT & _WINVER_NTDCBIT
+  !ifndef NSIS_ARM64
+  IntCmp $__WINVERSP 0 notServer
+    IntCmpU 0x06000000 $__WINVERV "" "" not2008 ; ${If} $__WINVERV U>= 0x06000000
+    IntCmpU 0x09000000 $__WINVERV not2008 not2008 "" ; ${AndIf} $__WINVERV U< 0x09000000
+      IntOp $__WINVERV $__WINVERV | ${_WINVER_VERXBIT} ; Extra bit so Server 2008 comes after Vista SP1 that has the same minor version, same for Win7 vs 2008R2
+    not2008:
+  Goto endServer
+  notServer:
+    IntCmp $__WINVERV 0x05020000 "" notXP64 notXP64
+      StrCpy $__WINVERV 0x05010000 ; Change XP 64-bit from 5.2 to 5.1 so it's still XP
+    notXP64:
+  endServer:
+  !endif
+
+  IntCmp $0 0 notNT
+!if "${NSIS_PTR_SIZE}" <= 4
+!ifdef WINVER_NT4_OVER_W95
+    IntCmp $__WINVERV 0x04000000 "" nt4eq95 nt4eq95
+      IntOp $__WINVERV $__WINVERV | ${_WINVER_VERXBIT} ; change NT 4.0.reserved.0 to 4.0.reserved.1
+    nt4eq95:
+!endif
+!endif
+    IntOp $__WINVERSP $__WINVERSP | ${_WINVER_NTBIT} ; _WINVER_NTBIT
+    IntOp $__WINVERV $__WINVERV | ${_WINVER_NTBIT}  ; _WINVER_NTBIT
+  notNT:
+
+  ${__WinVer_GWV} $0 Build
+  IntOp $__WINVERSP $__WINVERSP | $0 ; _WINVER_MASKVBLD
+  ${__WinVer_GWV} $0 ServicePack
+  IntOp $0 $0 << 16
+  IntOp $__WINVERSP $__WINVERSP | $0 ; _WINVER_MASKSP
+  Pop $0
+!macroend
 
 !ifmacrondef __WinVer_Call_GetVersionEx
 
@@ -213,9 +322,10 @@
 
 !endif
 
-!macro __WinVer_InitVars
+!macro __WinVer_InitVars_OLD
   # variables
   !insertmacro __WinVer_DeclareVars
+  !insertmacro __WinVer_Optimize
 
   # only calculate version once
   StrCmp $__WINVERV "" _winver_noveryet
@@ -389,6 +499,14 @@
 
 !macroend
 
+!macro __WinVer_InitVars
+  !ifndef WinVer_v3_7
+  !insertmacro __WinVer_InitVars_NEW
+  !else
+  !insertmacro __WinVer_InitVars_OLD
+  !endif
+!macroend
+
 # version comparison LogicLib macros
 
 !macro _WinVerAtLeast _a _b _t _f
@@ -452,9 +570,13 @@
 # service pack macros
 
 !macro _WinVer_GetServicePackLevel OUTVAR
+  !ifndef WinVer_v3_7
+  ${__WinVer_GWV} ${OUTVAR} ServicePack
+  !else
   ${CallArtificialFunction} __WinVer_InitVars
   IntOp ${OUTVAR} $__WINVERSP & ${_WINVER_MASKSP}
   IntOp ${OUTVAR} ${OUTVAR} >> 16
+  !endif
 !macroend
 !define WinVerGetServicePackLevel '!insertmacro _WinVer_GetServicePackLevel '
 
@@ -492,6 +614,7 @@
 !define IsStarterEdition   `${SM_STARTER}     WinVer_SysMetricCheck ""`
 !define OSHasMediaCenter   `${SM_MEDIACENTER} WinVer_SysMetricCheck ""`
 !define OSHasTabletSupport `${SM_TABLETPC}    WinVer_SysMetricCheck ""`
+!define IsSafeBootMode     `67                WinVer_SysMetricCheck ""`
 
 # version retrieval macros
 
@@ -509,7 +632,14 @@
 
 !define WinVerGetMajor '!insertmacro __WinVer_GetVer $__WINVERV  24 ${_WINVER_MASKVMAJ}'
 !define WinVerGetMinor '!insertmacro __WinVer_GetVer $__WINVERV  16 ${_WINVER_MASKVMIN}'
+!ifndef WinVer_v3_7
+!macro __WinVer_GetVerBuild outvar
+  ${__WinVer_GWV} ${outvar} Build
+!macroend
+!define WinVerGetBuild '!insertmacro __WinVer_GetVerBuild '
+!else
 !define WinVerGetBuild '!insertmacro __WinVer_GetVer $__WINVERSP "" ${_WINVER_MASKVBLD}'
+!endif
 
 !macro _WinVer_BuildNumCheck op num _t _f
   !insertmacro _LOGICLIB_TEMP

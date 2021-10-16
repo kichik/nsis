@@ -57,6 +57,8 @@ libs = Split("""
 	iconv
 	shlwapi
 	oleaut32
+	version
+	shell32
 """)
 
 Import('env AddAvailableLibs AddZLib')

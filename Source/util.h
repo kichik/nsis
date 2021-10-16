@@ -29,13 +29,14 @@
 #  include <stdio.h>
 #  include <unistd.h>
 #endif
-
 #include <stdarg.h>
+#include <stdio.h>
 
 extern double my_wtof(const wchar_t *str);
 extern size_t my_strncpy(TCHAR*Dest, const TCHAR*Src, size_t cchMax);
 template<class T> bool strtrycpy(T*Dest, const T*Src, size_t cchCap) { size_t c = my_strncpy(Dest, Src, cchCap); return c < cchCap && !Src[c]; }
 size_t my_strftime(TCHAR *s, size_t max, const TCHAR  *fmt, const struct tm *tm);
+template<class T> bool ChIsHex(T c) { return (c >= '0' && c <= '9') || ((c|32) >= 'a' && (c|32) <= 'f'); }
 
 // Adds the bitmap in filename using resource editor re as id id.
 // If width or height are specified it will also make sure the bitmap is in that size
@@ -107,6 +108,49 @@ public:
 };
 
 int sane_system(const TCHAR *command);
+
+template<class S> static size_t freadall(void*b, size_t cb, S*s) { return cb == fread(b, 1, cb, s) ? cb : 0; }
+template<class T, class S> static inline size_t freadpod(T&b, S*s) { return freadall(b, sizeof(T), s); }
+
+struct CStdFileStreamOnMemory
+{
+  typedef CStdFileStreamOnMemory S_t;
+  BYTE*m_Base;
+  size_t m_cb, m_pos;
+  template<class T> CStdFileStreamOnMemory(T*p, size_t cb) : m_Base((BYTE*)p), m_cb(cb), m_pos(0) {}
+  template<class V> static inline bool assignfp(fpos_t*p, V v)
+  {
+    if (sizeof(p) >= sizeof(v)) return (*(V*)p = v, true);
+    UINT t = (UINT) v; 
+    return t == v && sizeof(p) >= sizeof(t) && assignfp(p, t);
+  }
+  template<class V> static inline void readfp(V&v, const fpos_t*p) { v = sizeof(p) >= sizeof(v) ? *(V*)p : *(UINT*)p; }
+  friend inline size_t fclose(S_t*s) { return 0; }
+  friend int fgetpos(S_t*s, fpos_t*pos) { return assignfp(pos, s->m_pos) ? 0 : 1; }
+  friend int fsetpos(S_t*s, const fpos_t*pos) { size_t v; readfp(v, pos); return v < s->m_cb ? (s->m_pos = v, 0) : 1; }
+  friend int fseek(S_t*s, long int offset, int origin)
+  {
+    if ((unsigned long) offset != (size_t) offset) return 1; // long int will usually fit in our size_t
+    size_t newpos, invalid = 0;
+    switch(origin)
+    {
+    case SEEK_SET: newpos = (size_t) offset, invalid = offset < 0; break;
+    case SEEK_CUR: newpos = s->m_pos + offset; break;
+    case SEEK_END: newpos = s->m_cb + offset; break;
+    default: ++invalid;
+    }
+    if (!(invalid += s->m_cb <= newpos)) s->m_pos = newpos;
+    return (int) invalid;
+  }
+  friend size_t fread(void*b, size_t e, size_t c, S_t*s)
+  {
+    size_t cb = e * c, endpos = s->m_pos + cb;
+    if (endpos < s->m_pos || cb < c) return 0; // EOF/Overflow
+    if (s->m_cb < endpos) cb = s->m_cb - s->m_pos; // EOF
+    memcpy(b, s->m_Base + s->m_pos, cb);
+    return (s->m_pos += cb, cb);
+  }
+};
 
 #define NSISRT_DEFINEGLOBALS() int g_display_errors=1; FILE *g_output=stdout, *g_errout=stderr
 void PrintColorFmtErrMsg(const TCHAR *fmtstr, va_list args);
@@ -283,9 +327,11 @@ const UINT64 invalid_file_size64 = ~ (UINT64) 0;
 BYTE* alloc_and_read_file(FILE *f, unsigned long &size);
 BYTE* alloc_and_read_file(const TCHAR *filepath, unsigned long &size);
 
-typedef struct { char*base; size_t internal; } FILEVIEW;
+typedef struct { char*base; size_t size; } FILEVIEW;
 void close_file_view(FILEVIEW&mmfv);
 char* create_file_view_readonly(const TCHAR *filepath, FILEVIEW&mmfv);
+
+size_t write_octets_to_file(const TCHAR *filename, const void *data, size_t cb);
 
 // round a value up to be a multiple of 512
 // assumption: T is an int type
@@ -388,5 +434,10 @@ RM_DEFINE_FREEFUNC(my_convert_free);
 // Platform detection
 inline bool Platform_IsBigEndian() { return FIX_ENDIAN_INT16(0x00ff) != 0x00ff; }
 unsigned char Platform_SupportsUTF8Conversion();
+#ifdef _WIN32
+#define Platform_IsWindows() ( !0 )
+#else
+#define Platform_IsWindows() ( 0 )
+#endif
 
 #endif //_UTIL_H_

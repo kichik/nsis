@@ -38,6 +38,7 @@
 #define SupportsW9X() ( sizeof(TCHAR) == 1 )
 #define SupportsW95() ( FALSE && SupportsW9X() && !DpiAwarePerMonitor() )
 #define SupportsW2000() ( sizeof(void*) == 4 )
+#define SupportsRTLUI() ( FALSE ) // UI is English only
 
 static inline bool IsWin9598ME() { return SupportsW9X() && (int) GetVersion() < 0; }
 static inline bool IsWin95() { return SupportsW95() && (GetVersion() & (0x8000FFFF & ~0x0300)) == 0x80000004; }
@@ -88,11 +89,15 @@ static inline bool IsWin95() { return SupportsW95() && (GetVersion() & (0x8000FF
 #define SAVE_BUTTON_TEXT _T("Save")
 #define LOAD_SYMBOL_SET_MESSAGE _T("Please select a name for the Symbol Definitions Set to load.")
 #define SAVE_SYMBOL_SET_MESSAGE _T("Please enter or select a name for the Symbol Definitions Set to save.")
+#define TESTBTN_TIPTEXT _T("Test the generated installer")
+#define CLOSEBTN_TIPTEXT _T("Close MakeNSISW")
 
 #define WM_MAKENSIS_PROCESSCOMPLETE (WM_USER+1001)
 #define WM_MAKENSIS_LOADSYMBOLSET (WM_USER+1002)
 #define WM_MAKENSIS_SAVESYMBOLSET (WM_USER+1003)
 #define WM_MAKENSIS_UPDATEUISTATE (WM_USER+1004)
+#define WM_MAKENSIS_FREEZEEDITOR (WM_USER+1005)
+#define TID_CONFIGURECLOSEORABORT 1
 
 namespace MakensisAPI {
   extern const TCHAR* SigintEventNameFmt;
@@ -193,12 +198,14 @@ typedef struct {
   UINT AnimSpeed, FinalHeaderPos;
 } ABOUTDLGDATA;
 INT_PTR ShowAboutDialog(HWND hwndOwner);
+
 INT_PTR CALLBACK SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 typedef struct {
   void*pOldMDD;
   BOOL LoadingMode;
 } SYMSETDLGDATA;
 INT_PTR ShowSymbolSetDialog(HWND hwndOwner, BOOL LoadingSet);
+
 INT_PTR CALLBACK CompressorProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 void           SetScript(const TCHAR *script, bool clearArgs = true);
 void           CompileNSISScript();
@@ -228,6 +235,7 @@ typedef struct NSISScriptData {
   DWORD warnings;
   HINSTANCE hInstance;
   HWND hwnd;
+  HWND logwnd;
   HMENU menu;
   HMENU fileSubmenu;
   HMENU editSubmenu;
@@ -236,13 +244,14 @@ typedef struct NSISScriptData {
   HANDLE sigint_event;
   HANDLE sigint_event_legacy;
   HWND focused_hwnd;
+  void*pLogTextDoc;
   NCOMPRESSOR default_compressor;
   NCOMPRESSOR compressor;
   LPCTSTR compressor_name;
   TCHAR compressor_stats[512];
   LPCTSTR best_compressor_name;
-  // Added by Darren Owen (DrO) on 1/10/2003
   int recompile_test;
+  WORD log_zoom;
 } NSCRIPTDATA;
 
 extern NSCRIPTDATA g_sdata;

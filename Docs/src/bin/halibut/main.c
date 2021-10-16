@@ -20,6 +20,9 @@ int main(int argc, char **argv)
   int errs;
   int reportcols;
   int debug;
+#ifdef C_ASSERT
+  { C_ASSERT(!word_Normal); /* For getcmdstyle */ }
+#endif
 
   initversionstring();
 
@@ -312,6 +315,8 @@ static void dbg_prtwordlist(int level, word * w)
       printf("\"");
     } else
       printf("(no text)");
+    if (w->breaks)
+      printf(" [breaks]");
     if (w->alt)
     {
       printf(" alt = {\n");

@@ -130,7 +130,7 @@ enum
 #endif
 
 #ifdef NSIS_SUPPORT_GETDLLVERSION
-  EW_GETDLLVERSION,     // GetDLLVersion: 3 [file highout lowout]
+  EW_GETDLLVERSION,     // GetDLLVersion: 4 [file highout lowout fixedoffset]
 #endif
 
 #ifdef NSIS_SUPPORT_ACTIVEXREG
@@ -567,6 +567,18 @@ typedef struct {
 #define CS_II_MAX (CS_II_MASK >> CS_II_SHIFT)
 #endif
 
+
+#define GETOSINFO_KNOWNFOLDER 0
+#define GETOSINFO_READMEMORY 1
+typedef struct {
+  UINT32 WVBuild;
+  BYTE WVProd; // W9x: 0, WNT:AnyServer: & 2, WNT:DC: & 7 == 3
+  BYTE WVSP;
+  BYTE WVMin;
+  BYTE WVMaj;
+} osinfo;
+#define ABI_OSINFOOFFSET ( sizeof(exec_flags_t) )
+#define ABI_OSINFOADDRESS ( 0 )
 
 // special escape characters used in strings: (we use control codes in order to minimize conflicts with normal characters)
 #define NS_LANG_CODE  _T('\x01')    // for a langstring

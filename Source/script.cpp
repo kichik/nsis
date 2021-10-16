@@ -530,7 +530,7 @@ parse_again:
       extern FILE *g_output;
       bool pptok = is_pp_token(tkid), docmd = pptok;
       bool both = TOK_P_VERBOSE == tkid || TOK_P_WARNING == tkid || TOK_P_ECHO == tkid;
-      if (TOK_P_FINALIZE == tkid || TOK_P_PACKEXEHEADER == tkid) docmd = false;
+      if (TOK_P_FINALIZE == tkid || TOK_P_UNINSTFINALIZE == tkid || TOK_P_PACKEXEHEADER == tkid) docmd = false;
       if (docmd && is_unsafe_pp_token(tkid) && preprocessonly > 0) docmd = false;
       if (!docmd || both) _ftprintf(g_output,(_T("%") NPRIs _T("\n")),ppoline.get());
       if (!docmd && !both) return PS_OK;
@@ -912,6 +912,7 @@ static HKEY ParseRegRootKey(LineParser &line, int tok)
   return k == -1 ? INVALIDREGROOT : rootkey_tab[k];
 }
 
+#define AFIE_LASTUSED ( -1 )
 int CEXEBuild::add_flag_instruction_entry(int which_token, int opcode, LineParser &line, int offset, int data)
 {
   entry ent = { opcode, };
@@ -919,7 +920,7 @@ int CEXEBuild::add_flag_instruction_entry(int which_token, int opcode, LineParse
   {
     case EW_SETFLAG:
       ent.offsets[0] = offset;
-      ent.offsets[1] = data;
+      if (data != AFIE_LASTUSED) ent.offsets[1] = data; else ent.offsets[2] = 1;
       if (display_script) SCRIPT_MSG(_T("%") NPRIs _T(": %") NPRIs _T("\n"), get_commandtoken_name(which_token), line.gettoken_str(1));
       return add_entry(&ent);
     case EW_IFFLAG:
@@ -1332,7 +1333,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       SCRIPT_MSG(_T("Icon: \"%") NPRIs _T("\"\n"),line.gettoken_str(1));
       try {
         free_loaded_icon(installer_icon);
-        installer_icon = load_icon_file(line.gettoken_str(1));
+        installer_icon = load_icon(line.gettoken_str(1));
       }
       catch (exception& err) {
         ERROR_MSG(_T("Error while loading icon from \"%") NPRIs _T("\": %") NPRIs _T("\n"), line.gettoken_str(1), CtoTStrParam(err.what()));
@@ -2255,7 +2256,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_PEADDRESOURCE:
     {
       init_res_editor();
-      int tokidx = 1, ovr = 0, rep = 0;
+      int tokidx = 1, ovr = 0, rep = 0, result = PS_ERROR;
       if (!_tcsicmp(line.gettoken_str(tokidx), _T("/OVERWRITE"))) // Update the resource even if it exists
         ++ovr, ++tokidx;
       else if (!_tcsicmp(line.gettoken_str(tokidx), _T("/REPLACE"))) // Only update existing resource
@@ -2275,15 +2276,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         ERROR_MSG(_T("Error: Resource %") NPRIns _T("\n"), rep ? ("does not exist") : ("already exists"));
         return PS_ERROR;
       }
-      int result = PS_ERROR;
-      if (FILE*f = FOPEN(line.gettoken_str(tokidx+0), ("rb")))
+      if (res_editor->UpdateResourceFromExternal(rt, rn, rl, line.gettoken_str(tokidx+0), CResourceEditor::TM_AUTO))
       {
-        if (res_editor->UpdateResource(rt, rn, rl, f, CResourceEditor::TM_AUTO))
-        {
-          SCRIPT_MSG(_T("PEAddResource: %") NPRIs _T("=%") NPRIs _T("\n"), make_friendly_resource_path(rt, rnraw, rl).c_str(), line.gettoken_str(tokidx+0));
-          result = PS_OK;
-        }
-        fclose(f);
+        SCRIPT_MSG(_T("PEAddResource: %") NPRIs _T("=%") NPRIs _T("\n"), make_friendly_resource_path(rt, rnraw, rl).c_str(), line.gettoken_str(tokidx+0));
+        result = PS_OK;
       }
       return result;
     }
@@ -2553,7 +2549,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_P_PACKEXEHEADER:
     return pp_packhdr(line);
     case TOK_P_FINALIZE:
-    return pp_finalize(line);
+    case TOK_P_UNINSTFINALIZE:
+    return pp_finalize(which_token, line);
     case TOK_P_SYSTEMEXEC:
     case TOK_P_EXECUTE:
     case TOK_P_MAKENSIS:
@@ -2596,7 +2593,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       SCRIPT_MSG(_T("UninstallIcon: \"%") NPRIs _T("\"\n"),line.gettoken_str(1));
       try {
         free_loaded_icon(uninstaller_icon);
-        uninstaller_icon = load_icon_file(line.gettoken_str(1));
+        uninstaller_icon = load_icon(line.gettoken_str(1));
       }
       catch (exception& err) {
         ERROR_MSG(_T("Error while loading icon from \"%") NPRIs _T("\": %") NPRIs _T("\n"), line.gettoken_str(1), CtoTStrParam(err.what()));
@@ -3037,9 +3034,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_GETSHELLVARCONTEXT:
       return add_flag_instruction_entry(which_token, EW_GETFLAG, line, FLAG_OFFSET(all_user_var));
     case TOK_SETSHELLVARCONTEXT: 
-      ent.offsets[1] = line.gettoken_enum(1,_T("current\0all\0"));
+      ent.offsets[1] = line.gettoken_enum(1,_T("current\0all\0lastused\0"));
       if (ent.offsets[1] < 0 ) PRINTHELP()
-      return add_flag_instruction_entry(which_token, EW_SETFLAG, line, FLAG_OFFSET(all_user_var), add_intstring(ent.offsets[1]));
+      return add_flag_instruction_entry(which_token, EW_SETFLAG, line, FLAG_OFFSET(all_user_var), ent.offsets[1] != 2 ? add_intstring(ent.offsets[1]) : AFIE_LASTUSED);
     case TOK_IFSHELLVARCONTEXTALL:
       return add_flag_instruction_entry(which_token, EW_IFFLAG, line, FLAG_OFFSET(all_user_var), ~0); //new value mask - keep flag
     case TOK_RET:
@@ -3137,14 +3134,14 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #ifdef NSIS_SUPPORT_SHELLEXECUTE
     {
       UINT to=0, xflags=0;
-      static const TCHAR*fn=_T("/INVOKEIDLIST\0/CONNECTNETDRV\0/DOENVSUBST\0/NOIDLIST\0/NOCONSOLE\0/NOZONECHECKS\0/WAITFORINPUTIDLE\0/LOGUSAGE\0/ASYNCOK\0");
-      static const UINT fv[]={  0x0000000C,    0x00000080,     0x00000200,  0x00001000,0x00008000, 0x00800000,    0x02000000,        0x04000000,0x00100000 };
+      static const TCHAR*fn=_T("/INVOKEIDLIST\0/CONNECTNETDRV\0/DOENVSUBST\0/NOIDLIST\0/NOCONSOLE\0/NOZONECHECKS\0/WAITFORINPUTIDLE\0/LOGUSAGE\0/ASYNCOK\0/ALLOWERRORUI\0");
+      static const UINT fv[]={  0x0000000C,    0x00000080,     0x00000200,  0x00001000,0x00008000, 0x00800000,    0x02000000,        0x04000000,0x100000, 0x0100     };
       for (int k;;) if ((k = line.gettoken_enum(to+1,fn)) < 0) { if (line.gettoken_str(to+1)[0]=='/') PRINTHELP(); break; } else xflags|=fv[k], to++;
       const TCHAR *verb=line.gettoken_str(to+1), *file=line.gettoken_str(to+2), *params=line.gettoken_str(to+3), *cnam=get_commandtoken_name(which_token);
       ent.which=EW_SHELLEXEC;
       ent.offsets[0]=add_string(verb), ent.offsets[1]=add_string(file);
       ent.offsets[2]=add_string(params), ent.offsets[3]=SW_SHOWNORMAL;
-      ent.offsets[4]=SEE_MASK_FLAG_NO_UI|SEE_MASK_FLAG_DDEWAIT|xflags|(which_token==TOK_EXECSHELLWAIT ? SEE_MASK_NOCLOSEPROCESS : 0);
+      ent.offsets[4]=SEE_MASK_FLAG_DDEWAIT|((xflags&0x0100)?0:SEE_MASK_FLAG_NO_UI)|xflags|(which_token==TOK_EXECSHELLWAIT ? SEE_MASK_NOCLOSEPROCESS : 0);
       if (line.getnumtokens()-to > 4)
       {
         int tab[8]={SW_SHOWDEFAULT,SW_SHOWNORMAL,SW_SHOWMAXIMIZED,SW_SHOWMINIMIZED,SW_HIDE,SW_SHOW,SW_SHOWNA,SW_SHOWMINNOACTIVE};
@@ -4025,8 +4022,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_GETDLLVERSIONLOCAL:
       {
         const TCHAR*cmdname=_T("GetDLLVersionLocal");
-        DWORD low, high;
-        if (!GetDLLVersion(line.gettoken_str(1),high,low))
+        DWORD low, high, prod = line.gettoken_enum(1, _T("/ProductVersion\0")) == 0 ? 2 : 0;
+        if (prod) line.eattoken();
+        if (!GetDLLVersion(line.gettoken_str(1),high,low,!!prod))
         {
           ERROR_MSG(_T("%") NPRIs _T(": error reading version info from \"%") NPRIs _T("\"\n"),cmdname,line.gettoken_str(1));
           return PS_ERROR;
@@ -4186,9 +4184,39 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return add_entry(&ent);
     case TOK_GETKNOWNFOLDERPATH:
       ent.which=EW_GETOSINFO;
-      ent.offsets[0]=0; // Operation
       ent.offsets[1]=GetUserVarIndex(line, 1);
       ent.offsets[2]=add_string(line.gettoken_str(2));
+      ent.offsets[3]=GETOSINFO_KNOWNFOLDER;
+      SCRIPT_MSG(_T("%") NPRIs _T(": %") NPRIs _T("->%") NPRIs _T("\n"), get_commandtoken_name(which_token), line.gettoken_str(2), line.gettoken_str(1));
+    return add_entry(&ent);
+    case TOK_GETWINVER:
+      {
+        int k = line.gettoken_enum(2, _T("major\0minor\0build\0servicepack\0product\0ntddimajmin\0")), cb = 0, ofs = 0;
+        switch(k)
+        {
+        case 0: cb = 1, ofs = ABI_OSINFOOFFSET + FIELD_OFFSET(osinfo, WVMaj); break;
+        case 1: cb = 1, ofs = ABI_OSINFOOFFSET + FIELD_OFFSET(osinfo, WVMin); break;
+        case 2: cb = 4, ofs = ABI_OSINFOOFFSET + FIELD_OFFSET(osinfo, WVBuild); break;
+        case 3: cb = 1, ofs = ABI_OSINFOOFFSET + FIELD_OFFSET(osinfo, WVSP); break;
+        case 4: cb = 1, ofs = ABI_OSINFOOFFSET + FIELD_OFFSET(osinfo, WVProd); break;
+        case 5: cb = 2, ofs = ABI_OSINFOOFFSET + FIELD_OFFSET(osinfo, WVMin); break;
+        default: PRINTHELP();
+        }
+        ent.which=EW_GETOSINFO;
+        ent.offsets[1]=GetUserVarIndex(line, 1);
+        ent.offsets[2]=add_intstring(ABI_OSINFOADDRESS);
+        ent.offsets[3]=GETOSINFO_READMEMORY;
+        ent.offsets[4]=add_intstring((cb << 0) | (ofs << 24));
+        SCRIPT_MSG(_T("%") NPRIs _T(": %") NPRIs _T("=%") NPRIs _T("\n"), get_commandtoken_name(which_token), line.gettoken_str(1), line.gettoken_str(2));
+      }
+      return add_entry(&ent);
+    case TOK_READMEMORY:
+      ent.which=EW_GETOSINFO;
+      ent.offsets[1]=GetUserVarIndex(line, 1);
+      ent.offsets[2]=add_string(line.gettoken_str(2));
+      ent.offsets[3]=GETOSINFO_READMEMORY;
+      ent.offsets[4]=add_string(line.gettoken_str(3));
+      SCRIPT_MSG(_T("%") NPRIs _T(": %") NPRIs _T("=*%") NPRIs _T("\n"), get_commandtoken_name(which_token), line.gettoken_str(1), line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_SEARCHPATH:
       ent.which=EW_SEARCHPATH;
@@ -4208,6 +4236,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_GETDLLVERSION:
 #ifdef NSIS_SUPPORT_GETDLLVERSION
       ent.which=EW_GETDLLVERSION;
+      if ((ent.offsets[3]=line.gettoken_enum(1, _T("/ProductVersion\0")) == 0 ? 2 : 0)) line.eattoken();
       ent.offsets[0]=GetUserVarIndex(line, 2);
       ent.offsets[1]=GetUserVarIndex(line, 3);
       ent.offsets[2]=add_string(line.gettoken_str(1));

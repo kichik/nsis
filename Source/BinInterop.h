@@ -22,10 +22,13 @@
 #include "tchar.h"
 #include <stdio.h> // FILE*
 
-FILE* MSTLB_fopen(const TCHAR*filepath, size_t*pResId = 0);
-bool GetTLBVersion(const TCHAR *filepath, DWORD &high, DWORD &low);
+signed char GetExeType(const void*pData, size_t Size);
+signed char GetExeType(const TCHAR*filepath);
 
-bool GetDLLVersion(const TCHAR *filepath, DWORD &high, DWORD &low);
+FILE* MSTLB_fopen(const TCHAR*filepath, size_t*pResId = 0);
+bool GetTLBVersion(const TCHAR *filepath, DWORD &high, DWORD &low, bool NotUsed = false);
+
+bool GetDLLVersion(const TCHAR *filepath, DWORD &high, DWORD &low, bool Product = false);
 
 typedef struct GENERICIMAGEINFO {
   UINT32 Width, Height;
@@ -37,6 +40,7 @@ typedef struct GENERICIMAGEINFO {
 
 DWORD GetDIBHeaderInfo(const void*pData, size_t DataSize, GENERICIMAGEINFO&Info);
 DWORD IsBMPFile(const void*pData, size_t DataSize, GENERICIMAGEINFO*pInfo = 0);
+#define GetBMPFileHeaderSize IsBMPFile
 
 inline WORD IsICOCURFile(const void*pData)
 {
@@ -50,5 +54,9 @@ inline WORD IsICOCURFile(const void*pData, size_t DataSize)
 {
   return DataSize > 6 ? IsICOCURFile(pData) : 0;
 }
+
+bool LoadImageCanLoadFile(const void*pData, size_t DataSize);
+bool LoadImageCanLoadFile(const TCHAR *filepath);
+#define LoadImageCanLoadFileFromResource LoadImageCanLoadFile
 
 #endif //~ NSIS_BININTEROP_H

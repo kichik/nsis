@@ -672,9 +672,14 @@ skipPage:
   }
   if (uMsg == WM_SIZE) {
     ShowWindow(m_bgwnd, wParam == SIZE_MINIMIZED ? SW_HIDE : SW_SHOW);
+#else //! NSIS_SUPPORT_BGBG
+  if (uMsg == WM_SIZE) {
+#endif //~ NSIS_SUPPORT_BGBG
+    if (wParam == SIZE_MAXIMIZED) {
+      DWORD style = (DWORD) GetWindowLongPtr(hwndDlg, GWL_STYLE), mask = WS_MAXIMIZEBOX|WS_MAXIMIZE|WS_MINIMIZE;
+      if ((style & mask) == WS_MAXIMIZE) ShowWindow(hwndDlg, SW_SHOWNOACTIVATE); // Disallow STARTF_USESHOWWINDOW+SW_MAXIMIZE unless someone does ${NSD_AddStyle} $hWndParent ${WS_MAXIMIZEBOX}
+    }
   }
-#endif //NSIS_SUPPORT_BGBG
-
   if (uMsg == WM_NOTIFY_CUSTOM_READY) {
     DestroyWindow(m_curwnd);
     m_curwnd = (HWND)wParam;

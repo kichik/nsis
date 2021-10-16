@@ -143,7 +143,7 @@ Gets the size of the section specified by section_index and stores the value in 
 
 \c inst_type_idx
 
-Sets the current \R{ainsttype}{InstType}. inst_type_idx should be between 0 and 31. The error flag is \\<b\\>not\\</b\\> set if an out of range \R{ainsttype}{InstType} was used.
+Sets the current \R{ainsttype}{InstType}. inst_type_idx should be between 0 and 31. The error flag is \s{not} set if an out of range \R{ainsttype}{InstType} was used.
 
 \S2{sgetcurinsttype} GetCurInstType
 

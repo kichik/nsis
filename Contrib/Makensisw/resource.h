@@ -14,10 +14,6 @@
 #define IDS_EDITSCRIPT                  10
 #define IDS_BROWSESCR                   11
 #define IDS_CLEARLOG                    12
-#define IDS_NSISHOME                    13
-#define IDS_FORUM                       15
-#define IDS_NSISUPDATE                  16
-#define IDS_DOCS                        17
 #define IDS_SCRIPT                      18
 #define IDS_ZLIB                        19
 #define IDS_ZLIB_SOLID                  20
@@ -134,6 +130,9 @@
 #define IDM_UI_SWITCHSECTION            539 // F6
 #define IDM_GUIDGEN                     540
 #define IDM_LOOKUP                      541
+#define IDM_ZOOM_INC                    542
+#define IDM_ZOOM_DEC                    543
+#define IDM_ZOOM_RST                    544
 
 
 // Next default values for new objects
@@ -141,7 +140,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        138
-#define _APS_NEXT_COMMAND_VALUE         542
+#define _APS_NEXT_COMMAND_VALUE         545
 #define _APS_NEXT_CONTROL_VALUE         241
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

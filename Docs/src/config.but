@@ -2,6 +2,12 @@
 \#{* Common config shared by all output formats *}
 \#{**********************************************}
 
+\cfg{html-lang}{en}
+
+\cfg{html-suppress-address}{true}
+
+\cfg{html-append-meta}{name="viewport" content="width=device-width, initial-scale=1"}
+
 \define{NsisCopyright} Copyright (C) 1999-2021 Contributors
 
 \copyright \NsisCopyright
@@ -24,5 +30,8 @@
 
 \define{NsisWarnBlockContainerEnd} \\</div\\>
 
-\define{NsisBlockHeaderExeheadU} \\<b\\>Unicode: \\</b\\>
+\define{NsisBlockHeaderWarning} \s{Warning:}
 
+\define{NsisBlockHeaderNote} \s{Note:}
+
+\define{NsisBlockHeaderExeheadU} \s{Unicode:}

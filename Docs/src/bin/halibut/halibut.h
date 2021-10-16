@@ -1,6 +1,10 @@
 #ifndef HALIBUT_HALIBUT_H
 #define HALIBUT_HALIBUT_H
 
+#if defined(_WIN32) && !defined(_CRT_SECURE_NO_DEPRECATE)
+#define _CRT_SECURE_NO_DEPRECATE 1
+#endif
+
 #include <stdio.h>
 #include <wchar.h>
 #include <time.h>
@@ -38,6 +42,11 @@ typedef struct indexdata_Tag indexdata;
 typedef struct indextag_Tag indextag;
 typedef struct indexentry_Tag indexentry;
 typedef struct macrostack_Tag macrostack;
+
+typedef struct ustr_slist_Tag {
+  struct ustr_slist_Tag *next;
+  wchar_t string[1];
+} ustr_slist;
 
 /*
  * Data structure to hold a file name and index, a line and a
@@ -87,6 +96,7 @@ struct paragraph_Tag {
 
   void *private_data;           /* for temp use in backends */
 };
+#define initpara(p) ( (p).type = para_NotParaType, (p).keyword = NULL, (p).words = NULL )
 enum {
   para_IM,                      /* index merge */
   para_BR,                      /* bibliography rewrite */
@@ -126,16 +136,22 @@ enum {
   /* ORDERING CONSTRAINT: these normal-word types ... */
   word_Normal,
   word_Emph,
+  word_Strong,
+  word_Bold,
   word_Code,                    /* monospaced; `quoted' in text */
   word_WeakCode,                /* monospaced, normal in text */
   /* ... must be in the same order as these space types ... */
   word_WhiteSpace,              /* text is NULL or ignorable */
   word_EmphSpace,               /* WhiteSpace when emphasised */
+  word_StrongSpace,             /* WhiteSpace when strong */
+  word_BoldSpace,
   word_CodeSpace,               /* WhiteSpace when code */
   word_WkCodeSpace,             /* WhiteSpace when weak code */
   /* ... and must be in the same order as these quote types ... */
   word_Quote,                   /* text is NULL or ignorable */
   word_EmphQuote,               /* Quote when emphasised */
+  word_StrongQuote,             /* Quote when strong */
+  word_BoldQuote,
   word_CodeQuote,               /* (can't happen) */
   word_WkCodeQuote,             /* (can't happen) */
   /* END ORDERING CONSTRAINT */
@@ -147,7 +163,9 @@ enum {
   word_HyperLink,               /* (invisible) */
   word_HyperEnd,                /* (also invisible; no text) */
   word_LocalHyperLink,          /* (invisible) */
-  word_FreeTextXref             /* \R */
+  word_FreeTextXref,            /* \R */
+  word_Html,
+  word_NotWordType              /* placeholder value */
 };
 /* aux values for attributed words */
 enum {
@@ -165,11 +183,12 @@ enum {
 };
 #define isattr(x) ( ( (x) > word_Normal && (x) < word_WhiteSpace ) || \
                     ( (x) > word_WhiteSpace && (x) < word_internal_endattrs ) )
-#define sameattr(x,y) ( (((x)-(y)) & 3) == 0 )
-#define towordstyle(x) ( word_Normal + ((x) & 3) )
-#define tospacestyle(x) ( word_WhiteSpace + ((x) & 3) )
-#define toquotestyle(x) ( word_Quote + ((x) & 3) )
-#define removeattr(x) ( word_Normal + ((x) &~ 3) )
+#define NATTRS (word_WhiteSpace - word_Normal)
+#define sameattr(x,y) ( (((x)-(y)) % NATTRS) == 0 )
+#define towordstyle(x) ( word_Normal + ((x) % NATTRS) )
+#define tospacestyle(x) ( word_WhiteSpace + ((x) % NATTRS) )
+#define toquotestyle(x) ( word_Quote + ((x) % NATTRS) )
+#define removeattr(x) ( word_Normal + ((x)/NATTRS * NATTRS) )
 
 #define attraux(x) ( (x) & attr_mask )
 #define quoteaux(x) ( (x) & quote_mask )
@@ -227,6 +246,7 @@ void *smalloc(int size);
 void *srealloc(void *p, int size);
 void sfree(void *p);
 #endif
+void free_list(void*p);
 void free_word_list(word * w);
 void free_para_list(paragraph * p);
 word *dup_word_list(word * w);
@@ -240,19 +260,25 @@ char *dupstr(char *s);
 /*
  * ustring.c
  */
-wchar_t *ustrdup(wchar_t * s);
-char *ustrtoa(wchar_t * s, char *outbuf, int size);
-int ustrlen(wchar_t * s);
-wchar_t *uadv(wchar_t * s);
-wchar_t *ustrcpy(wchar_t * dest, wchar_t * source);
+#define asciistrdef(s, d) ( (s) ? (s) : (d) )
+#define ustrdef(s, d) ( (s) ? (s) : (d) )
+wchar_t *ustrdup(const wchar_t * s);
+wchar_t *ustrreplacedup(wchar_t **dest, const wchar_t *src);
+char *ustrtoa(const wchar_t * s, char *outbuf, int size);
+int ustrlen(const wchar_t * s);
+wchar_t *uadv(const wchar_t * s);
+wchar_t *ustrcpy(wchar_t * dest, const wchar_t * source);
 wchar_t utolower(wchar_t);
-int ustrcmp(wchar_t * lhs, wchar_t * rhs);
-int ustricmp(wchar_t * lhs, wchar_t * rhs);
-int utoi(wchar_t *);
-int utob(wchar_t *);
+int ustrcmp(const wchar_t * lhs, const wchar_t * rhs);
+int ustricmp(const wchar_t * lhs, const wchar_t * rhs);
+void ultou(unsigned long v, wchar_t *o);
+int utoi(const wchar_t *);
+int utob(const wchar_t *);
 int uisdigit(wchar_t);
 wchar_t *ustrlow(wchar_t * s);
 wchar_t *ustrftime(wchar_t * fmt, struct tm *timespec);
+#define free_ustr_slist free_list
+ustr_slist* ustr_slist_append(ustr_slist**headaddr, const wchar_t*str);
 
 /*
  * help.c
@@ -312,6 +338,7 @@ struct tagWrappedLine {
 };
 wrappedline *wrap_para(word *, int, int, int (*)(word *));
 void wrap_free(wrappedline *);
+unsigned long getutcunixtime();
 
 /*
  * input.c

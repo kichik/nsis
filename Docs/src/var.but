@@ -33,7 +33,7 @@ Registers. These variables can be used just like user variables, but are usually
 
 The installation directory ($INSTDIR is modifiable using \R{StrCpy}{StrCpy}, \R{readregstr}{ReadRegStr}, \R{readinistr}{ReadINIStr}, etc. - This could be used, for example, in the \R{oninit}{.onInit} function to do a more advanced detection of install location).
 
-Note that in uninstaller code, $INSTDIR contains the directory where the uninstaller lies. It does \\<b\\>not\\</b\\> necessarily contain the same value it contained in the installer. For example, if you write the uninstaller to $WINDIR and the user doesn't move it, $INSTDIR will be $WINDIR in the uninstaller. If you write the uninstaller to another location, you should keep the installer's $INSTDIR in the registry or an alternative storing facility and read it in the uninstaller.
+Note that in uninstaller code, $INSTDIR contains the directory where the uninstaller lies. It does \s{not} necessarily contain the same value it contained in the installer. For example, if you write the uninstaller to $WINDIR and the user doesn't move it, $INSTDIR will be $WINDIR in the uninstaller. If you write the uninstaller to another location, you should keep the installer's $INSTDIR in the registry or an alternative storing facility and read it in the uninstaller.
 
 \e{$OUTDIR}
 
@@ -61,11 +61,11 @@ Note that some of the new constants will not work on every OS. For example, $CDB
 
 \e{$PROGRAMFILES}, \e{$PROGRAMFILES32}, \e{$PROGRAMFILES64}
 
-The program files directory (usually \c{C:\\Program Files} but detected at runtime). On Windows x64, $PROGRAMFILES and $PROGRAMFILES32 point to \c{C:\\Program Files (x86)} while $PROGRAMFILES64 points to \c{C:\\Program Files}. Use $PROGRAMFILES64 when installing x64 applications.
+The program files directory (usually \c{C:\\Program Files} but detected at runtime). On 64-bit Windows, $PROGRAMFILES and $PROGRAMFILES32 point to \c{C:\\Program Files (x86)} while $PROGRAMFILES64 points to \c{C:\\Program Files}. Use $PROGRAMFILES64 when installing 64-bit applications.
 
 \e{$COMMONFILES}, \e{$COMMONFILES32}, \e{$COMMONFILES64}
 
-The common files directory. This is a directory for components that are shared across applications (usually \c{C:\\Program Files\\Common Files} but detected at runtime). On Windows x64, $COMMONFILES and $COMMONFILES32 point to \c{C:\\Program Files (x86)\\Common Files} while $COMMONFILES64 points to \c{C:\\Program Files\\Common Files}. Use $COMMONFILES64 when installing x64 applications.
+The common files directory. This is a directory for components that are shared across applications (usually \c{C:\\Program Files\\Common Files} but detected at runtime). On 64-bit Windows, $COMMONFILES and $COMMONFILES32 point to \c{C:\\Program Files (x86)\\Common Files} while $COMMONFILES64 points to \c{C:\\Program Files\\Common Files}. Use $COMMONFILES64 when installing 64-bit applications.
 
 \e{$DESKTOP}
 
@@ -119,7 +119,7 @@ The quick launch folder for IE4 active desktop and above. If quick launch is not
 
 \e{$DOCUMENTS}
 
-The documents directory. A typical path for the current user is \c{C:\\Documents and Settings\\Foo\\My Documents}. The context of this constant (All Users or Current user) depends on the \R{setshellvarcontext}{SetShellVarContext} setting. The default is the current user.
+The documents directory. A typical path for the current user is \c{C:\\Users\\Foo\\My Documents}. The context of this constant (All Users or Current user) depends on the \R{setshellvarcontext}{SetShellVarContext} setting. The default is the current user.
 
 This constant is not available on Windows 95 unless Internet Explorer 4 is installed.
 
@@ -207,7 +207,7 @@ This constant is not available on Windows 95 nor Windows NT 4 unless Internet Ex
 
 \e{$PROFILE}
 
-The user's profile directory. A typical path is \c{C:\\Documents and Settings\\Foo}.
+The user's profile directory. A typical path is \c{C:\\Users\\Foo}.
 
 This constant is available on Windows 2000 and above.
 
@@ -242,6 +242,10 @@ HWND of the main window (in decimal).
 \e{$PLUGINSDIR}
 
 The path to a temporary folder created upon the first usage of a plug-in or a call to \R{initpluginsdir}{InitPluginsDir}. This folder is automatically deleted when the installer exits. This makes this folder the ideal folder to hold INI files for \L{../Docs/InstallOptions/Readme.html}{InstallOptions}, bitmaps for the splash plug-in, or any other file that a plug-in needs to work.
+
+\e{$USER..} and \e{$COMMON..}
+
+A handful of constants are available as aliases that are not affected by \R{setshellvarcontext}{SetShellVarContext}: \e{$USERTEMPLATES}, \e{$USERSTARTMENU}, \e{$USERSMPROGRAMS}, \e{$USERDESKTOP}, \e{$COMMONTEMPLATES}, \e{$COMMONSTARTMENU}, \e{$COMMONSMPROGRAMS}, \e{$COMMONDESKTOP} and \e{$COMMONPROGRAMDATA}.
 
 \S1{varstrings} Constants Used in Strings
 

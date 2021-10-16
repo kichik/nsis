@@ -1,5 +1,7 @@
 \S1{stackinst} Stack Support
 
+The stack is a temporary storage area useful for saving the state of registers/variables and for communicating with functions and plug-ins. See \W{https://en.wikipedia.org/wiki/Stack_(abstract_data_type)}{Wikipedia} for a general introduction to stacks.
+
 \S2{Exch} Exch
 
 \c [user_var | stack_index]

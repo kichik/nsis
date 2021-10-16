@@ -2,11 +2,19 @@
  * ustring.c: Unicode string routines
  */
 
+#include "halibut.h"
 #include <wchar.h>
 #include <time.h>
-#include "halibut.h"
+#include <stdio.h>
 
-wchar_t *ustrdup(wchar_t * s)
+static void asciitou(wchar_t *dest, const char *src)
+{
+  for (;;)
+    if (!(*dest++ = *src++))
+      break;
+}
+
+wchar_t *ustrdup(const wchar_t * s)
 {
   wchar_t *r;
   if (s)
@@ -21,7 +29,13 @@ wchar_t *ustrdup(wchar_t * s)
   return r;
 }
 
-char *ustrtoa(wchar_t * s, char *outbuf, int size)
+wchar_t *ustrreplacedup(wchar_t **dest, const wchar_t *src)
+{
+  sfree(*dest);
+  return *dest = ustrdup(src);
+}
+
+char *ustrtoa(const wchar_t * s, char *outbuf, int size)
 {
   char *p;
   if (!s)
@@ -38,7 +52,7 @@ char *ustrtoa(wchar_t * s, char *outbuf, int size)
   return outbuf;
 }
 
-int ustrlen(wchar_t * s)
+int ustrlen(const wchar_t * s)
 {
   int len = 0;
   while (*s++)
@@ -46,12 +60,12 @@ int ustrlen(wchar_t * s)
   return len;
 }
 
-wchar_t *uadv(wchar_t * s)
+wchar_t *uadv(const wchar_t * s)
 {
-  return s + 1 + ustrlen(s);
+  return ((wchar_t*) s) + 1 + ustrlen(s);
 }
 
-wchar_t *ustrcpy(wchar_t * dest, wchar_t * source)
+wchar_t *ustrcpy(wchar_t * dest, const wchar_t * source)
 {
   wchar_t *ret = dest;
   do
@@ -62,7 +76,7 @@ wchar_t *ustrcpy(wchar_t * dest, wchar_t * source)
   return ret;
 }
 
-int ustrcmp(wchar_t * lhs, wchar_t * rhs)
+int ustrcmp(const wchar_t * lhs, const wchar_t * rhs)
 {
   if (!lhs && !rhs)
     return 0;
@@ -89,7 +103,7 @@ wchar_t utolower(wchar_t c)
   return c;
 }
 
-int ustricmp(wchar_t * lhs, wchar_t * rhs)
+int ustricmp(const wchar_t * lhs, const wchar_t * rhs)
 {
   wchar_t lc, rc;
   while ((lc = utolower(*lhs)) == (rc = utolower(*rhs)) && lc && rc)
@@ -113,7 +127,14 @@ wchar_t *ustrlow(wchar_t * s)
   return s;
 }
 
-int utoi(wchar_t * s)
+void ultou(unsigned long v, wchar_t *o)
+{
+  char buf[42];
+  sprintf(buf, "%lu", v);
+  asciitou(o, buf);
+}
+
+int utoi(const wchar_t *s)
 {
   int sign = +1;
   int n;
@@ -132,10 +153,10 @@ int utoi(wchar_t * s)
     s++;
   }
 
-  return n;
+  return n * sign;
 }
 
-int utob(wchar_t * s)
+int utob(const wchar_t * s)
 {
   if (!ustricmp(s, L"yes") || !ustricmp(s, L"y") ||
       !ustricmp(s, L"true") || !ustricmp(s, L"t"))
@@ -198,4 +219,22 @@ wchar_t *ustrftime(wchar_t * wfmt, struct tm * timespec)
     sfree(fmt);
   sfree(text);
   return wblk;
+}
+
+ustr_slist* ustr_slist_append(ustr_slist**headaddr, const wchar_t*str)
+{
+  size_t cch = ustrlen(str) + 1;
+  size_t cb = sizeof(ustr_slist) + (cch * sizeof(wchar_t));
+  ustr_slist *p = (ustr_slist*) mknewa(char, cb), *walk;
+  if (p)
+  {
+    ustrcpy(p->string, str);
+    p->next = NULL;
+    for (walk = *headaddr; walk; walk = walk->next)
+      if (!walk->next)
+        walk->next = p, walk = p;
+    if (!*headaddr)
+      *headaddr = p;
+  }
+  return p;
 }

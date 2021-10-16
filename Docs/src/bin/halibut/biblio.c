@@ -112,8 +112,10 @@ void gen_citations(paragraph * source, keywordlist * kl)
         word *wd = smalloc(sizeof(word));
         wd->text = gentext(++bibnum);
         wd->type = word_Normal;
+        wd->breaks = FALSE;
         wd->alt = NULL;
         wd->next = NULL;
+        wd->aux = 0;
         kw->text = wd;
       }
       para->kwtext = kw->text;

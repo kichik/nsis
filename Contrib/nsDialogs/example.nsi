@@ -18,6 +18,7 @@ Page custom nsDialogsPage
 Page custom LBPage
 Page custom RangesPage
 Page custom NotifyPage
+Page custom RadioPage RadioLeave
 !pragma warning disable 8000 ; "Page instfiles not used, no sections will be executed!"
 
 Var BUTTON
@@ -248,6 +249,49 @@ ${If} $2 = ${DTN_DATETIMECHANGE}
 		StrCpy $0 "N/A"
 	${EndIf}
 	${NSD_SetText} $9 $0
+${EndIf}
+FunctionEnd
+
+
+Function RadioPage
+	!insertmacro BeginControlsTestPage "Radio buttons"
+
+	; Group 1
+	${NSD_CreateFirstRadioButton} 4u 0 40% 6% "NPR"
+	Pop $1
+	${NSD_OnClick} $1 onStationChanged
+	${NSD_CreateAdditionalRadioButton} 4u 12% 40% 6% "BBC"
+	Pop $2
+	${NSD_OnClick} $2 onStationChanged
+	${NSD_CreateLabel} 4u 30u 80% 12u ""
+	Pop $3
+
+	; Group 2
+	${NSD_CreateFirstRadioButton} 4u 50u 50% 12u "FM"
+	Pop $4
+	${NSD_CreateAdditionalRadioButton} 4u 64u 50% 12u "AM"
+	Pop $5
+
+	SendMessage $4 ${BM_CLICK} "" "" ; Must select a default
+	SendMessage $2 ${BM_CLICK} "" "" ; Must select a default
+	nsDialogs::Show
+FunctionEnd
+
+Function onStationChanged
+Pop $0
+${NSD_GetText} $0 $0
+${If} $0 == "NPR"
+	${NSD_SetText} $3 "America, f*(# yeah!"
+${Else}
+	${NSD_SetText} $3 "Keep Calm and Carry On"
+${EndIf}
+FunctionEnd
+
+Function RadioLeave
+${NSD_GetChecked} $5 $0
+${If} $0 <> 0
+	MessageBox MB_YESNO "Are you sure you want to keep living in the past?" IDYES +2
+		Abort
 ${EndIf}
 FunctionEnd
 

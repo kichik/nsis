@@ -8,12 +8,12 @@ The instructions that NSIS uses for scripting are sort of a cross between PHP an
 
 \c [/REBOOTOK] file
 
-Delete file (which can be a file or wildcard, but should be specified with a full path) from the target system. If /REBOOTOK is specified and the file cannot be deleted then the file is deleted when the system reboots -- if the file will be deleted on a reboot, the reboot flag will be set. The error flag is set if files are found and cannot be deleted. The error flag is not set when trying to delete a file that does not exist.
+Delete file (which can be a file or wildcard, but should be specified with a full path) on the target system. If /REBOOTOK is specified and the file cannot be deleted then the file is deleted when the system reboots -- if the file will be deleted on a reboot, the reboot flag will be set. The error flag is set if files are found and cannot be deleted. The error flag is not set when trying to delete a file that does not exist.
 
 \c Delete $INSTDIR\somefile.dat
 
 \NsisWarnBlockContainerBegin
-\\<b\\>Warning:\\</b\\> The /REBOOTOK switch requires administrator rights on Windows NT and later.
+\NsisBlockHeaderWarning The /REBOOTOK switch requires administrator rights on Windows NT and later.
 \NsisWarnBlockContainerEnd
 
 \S2{exec} Exec
@@ -27,9 +27,9 @@ Execute the specified program and continue immediately. Note that the file speci
 
 \S2{execshell} ExecShell
 
-\c [/INVOKEIDLIST] action file [parameters] [SW_SHOWDEFAULT | SW_SHOWNORMAL | SW_SHOWMAXIMIZED | SW_SHOWMINIMIZED | SW_HIDE]
+\c [flags] action file [parameters] [SW_SHOWDEFAULT | SW_SHOWNORMAL | SW_SHOWMAXIMIZED | SW_SHOWMINIMIZED | SW_HIDE]
 
-Execute the specified file using ShellExecuteEx. Note that action is usually "open", "print", etc, but can be an empty string to use the default action. Parameters and the show type are optional. $OUTDIR is used as the working directory. The error flag is set if the process could not be launched.
+Execute the specified file using ShellExecuteEx. Note that \cw{action} is usually "open", "print", etc, but can be an empty string to use the default action. \cw{Parameters} and the show type are optional. $OUTDIR is used as the working directory. The error flag is set if the file could not be launched. \cw{Flags} can be any combination of /ALLOWERRORUI, /DOENVSUBST and /INVOKEIDLIST.
 
 \c ExecShell "open" "http://nsis.sf.net/"
 \c ExecShell "" "$SysDir\Notepad.exe" "" SW_SHOWMAXIMIZED
@@ -38,7 +38,7 @@ Execute the specified file using ShellExecuteEx. Note that action is usually "op
 
 \S2{execshellwait} ExecShellWait
 
-\c [/INVOKEIDLIST] action file [parameters] [SW_SHOWDEFAULT | SW_SHOWNORMAL | SW_SHOWMAXIMIZED | SW_SHOWMINIMIZED | SW_HIDE]
+\c [flags] action file [parameters] [SW_SHOWDEFAULT | SW_SHOWNORMAL | SW_SHOWMAXIMIZED | SW_SHOWMINIMIZED | SW_HIDE]
 
 Execute the specified file using ExecShell and wait for executed process to quit. It will only wait for executable files, not other file types nor URLs.
 
@@ -86,7 +86,7 @@ Adds file(s) to be extracted to the current output path ($OUTDIR).
 \c File /r /x CVS myproject\*.*
 \c File /r /x *.res /x *.obj /x *.pch source\*.*
 
-\\<b\\>Note:\\</b\\> when using the \e{/r} switch, both matching directories and files will be searched. This is always done with or without the use of wildcards, even if the given path perfectly matches one directory. That means, the following directory structure:
+\s{Note:} When using the \e{/r} switch, both matching directories and files will be searched. This is always done with or without the use of wildcards, even if the given path perfectly matches one directory. That means, the following directory structure:
 
 \c <DIR> something
 \c   file.dat
@@ -120,7 +120,11 @@ If no absolute path is specified the current folder will be used. The current fo
 \c Rename $INSTDIR\file.ext $INSTDIR\file.dat
 
 \NsisWarnBlockContainerBegin
-\\<b\\>Warning:\\</b\\> The /REBOOTOK switch requires administrator rights on Windows NT and later.
+\NsisBlockHeaderWarning The /REBOOTOK switch requires administrator rights on Windows NT and later.
+\NsisWarnBlockContainerEnd
+
+\NsisWarnBlockContainerBegin
+\NsisBlockHeaderWarning Files cannot be moved from one drive to another if a reboot is required.
 \NsisWarnBlockContainerEnd
 
 \S2{reservefile} ReserveFile
@@ -156,11 +160,11 @@ The next example will succeed in deleting the directory.
 \c RMDir $TEMP\dir
 
 \NsisWarnBlockContainerBegin
-\\<b\\>Warning:\\</b\\> Using \e{RMDir /r $INSTDIR} in the uninstaller is not safe. Though it is unlikely, the user might select to install to the root of the Program Files folder and this command would wipe out the entire Program Files folder, including all other installed programs! The user can also put other files in the installation folder and wouldn't expect them to get deleted along with the program. Solutions are \W{https://nsis.sourceforge.io/Uninstall_only_installed_files}{available} for easily uninstalling only files which were installed by the installer.
+\NsisBlockHeaderWarning Using \e{RMDir /r $INSTDIR} in the uninstaller is not safe. Though it is unlikely, the user might select to install to the root of the Program Files folder and this command would wipe out the entire Program Files folder, including all other installed programs! The user can also put other files in the installation folder and wouldn't expect them to get deleted along with the program. Solutions are \W{https://nsis.sourceforge.io/Uninstall_only_installed_files}{available} for easily uninstalling only files which were installed by the installer.
 \NsisWarnBlockContainerEnd
 
 \NsisWarnBlockContainerBegin
-\\<b\\>Warning:\\</b\\> The /REBOOTOK switch requires administrator rights on Windows NT and later.
+\NsisBlockHeaderWarning The /REBOOTOK switch requires administrator rights on Windows NT and later.
 \NsisWarnBlockContainerEnd
 
 \S2{setoutpath} SetOutPath

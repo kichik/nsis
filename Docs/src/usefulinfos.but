@@ -33,12 +33,12 @@ Example:
 \c WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\MyProduct" "DisplayName" "Application Name"
 \c WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\MyProduct" "UninstallString" '"$INSTDIR\uninst.exe"'
 
-\\<b\\>Required values\\</b\\>
+\s{Required values:}
 
 \e{DisplayName} (string) - Name of the application \\<br\\>
-\e{UninstallString} (string) - Path and filename of the uninstaller. You should \\<b\\>always\\</b\\> quote the path.
+\e{UninstallString} (string) - Path and filename of the uninstaller. You should \s{always} quote the path.
 
-\\<b\\>Optional values\\</b\\>
+\s{Optional values:}
 
 Some of the following values will not be used by older Windows versions.
 

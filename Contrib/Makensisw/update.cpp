@@ -13,11 +13,11 @@ static LPSTR InetGetErrorStringAllocA(DWORD ec)
   DWORD flags = FORMAT_MESSAGE_ALLOCATE_BUFFER|FORMAT_MESSAGE_IGNORE_INSERTS;
   if (FormatMessageA(flags|FORMAT_MESSAGE_FROM_SYSTEM, 0, ec, 0, (LPSTR) &buf, 0, 0))
     return buf;
-  HMODULE hMod = GetModuleHandle(TEXT("WinInet"));
+  HMODULE hMod = LoadSysLibrary("WinInet");
   if (hMod && FormatMessageA(flags|FORMAT_MESSAGE_FROM_HMODULE, hMod, ec, 0, (LPSTR) &buf, 0, 0))
     return buf;
 #if 0 // We are not using WinHttp* functions
-  hMod = GetModuleHandle(TEXT("WinHTTP"));
+  hMod = LoadSysLibrary("WinHTTP");
   if (hMod && FormatMessageA(flags|FORMAT_MESSAGE_FROM_HMODULE, hMod, ec, 0, (LPSTR) &buf, 0, 0))
     return buf;
 #endif

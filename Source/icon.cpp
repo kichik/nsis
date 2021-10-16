@@ -43,13 +43,9 @@ static bool is_valid_header(const void*headerdata)
   return FIX_ENDIAN_INT16(pGH->wCount) != 0;
 }
 
-static FILE * open_icon(const TCHAR* filename, IconGroupHeader& igh)
+template<class S> static WORD read_icon_header(S*f, IconGroupHeader& igh)
 {
-  FILE* f = FOPEN(filename, ("rb"));
-  if (!f)
-    throw runtime_error("can't open file");
-
-  if (!fread(&igh, sizeof(IconGroupHeader), 1, f))
+  if (!freadall(&igh, sizeof(IconGroupHeader), f))
   {
     fclose(f);
     throw runtime_error("unable to read header from file");
@@ -57,6 +53,7 @@ static FILE * open_icon(const TCHAR* filename, IconGroupHeader& igh)
 
   if (!is_valid_header(&igh))
   {
+    igh.wType = igh.wCount = 0;
     fclose(f);
     throw runtime_error("invalid icon file");
   }
@@ -64,29 +61,30 @@ static FILE * open_icon(const TCHAR* filename, IconGroupHeader& igh)
   FIX_ENDIAN_INT16_INPLACE(igh.wReserved);
   FIX_ENDIAN_INT16_INPLACE(igh.wType);
   FIX_ENDIAN_INT16_INPLACE(igh.wCount);
-  return f;
+  return igh.wCount;
 }
 
-void free_loaded_icon(IconGroup icon)
+void free_loaded_icon(IconGroup&icon)
 {
   for (IconGroup::size_type i = 0; i < icon.size(); i++)
-  {
     delete [] icon[i].data;
-  }
+  icon.clear();
 }
 
-IconGroup load_icon_res(CResourceEditor* re, WORD id)
+IconGroup load_icon_res(CResourceEditor* re, LPWSTR RT, WORD RN, LANGID RL)
 {
   IconGroupHeader* header;
   IconGroup result;
 
-  LPBYTE group = re->GetResource(
-    RT_GROUP_ICON, id, NSIS_DEFAULT_LANG);
-
+  LPBYTE group = re->GetResource(RT, RN, RL);
   if (!group)
     throw runtime_error("can't find icon group");
 
   header = (IconGroupHeader*) group;
+
+  // Note: To handle cursors, use CResourceEditor::ExtractIcoCur
+  if (MAKEINTRESOURCE((size_t) RT) != RT_GROUP_ICON)
+    throw runtime_error("unsupported type");
 
   for (WORD i = 0; i < FIX_ENDIAN_INT16(header->wCount); i++)
   {
@@ -99,9 +97,7 @@ IconGroup load_icon_res(CResourceEditor* re, WORD id)
     memcpy(&icon.meta, &entry->header, sizeof(IconGroupEntry));
 
     WORD rsrc_id = FIX_ENDIAN_INT16(entry->wRsrcId);
-
-    icon.data = re->GetResource(RT_ICON, rsrc_id, NSIS_DEFAULT_LANG);
-
+    icon.data = re->GetResource(RT_ICON, rsrc_id, RL);
     if (!icon.data)
     {
       free_loaded_icon(result);
@@ -115,13 +111,14 @@ IconGroup load_icon_res(CResourceEditor* re, WORD id)
   return result;
 }
 
-IconGroup load_icon_file(const TCHAR* filename)
+IconGroup load_icon_res(CResourceEditor* re, WORD id)
 {
-  IconGroupHeader iconHeader;
-  IconGroup result;
+  return load_icon_res(re, RT_GROUP_ICON, id, NSIS_DEFAULT_LANG);
+}
 
-  FILE *file = open_icon(filename, iconHeader);
-  MANAGE_WITH(file, fclose);
+template<class S> static IconGroup load_iconimages_from_stream(const IconGroupHeader&iconHeader, S&file)
+{
+  IconGroup result;
 
   for (WORD i = 0; i < iconHeader.wCount; i++)
   {
@@ -129,7 +126,7 @@ IconGroup load_icon_file(const TCHAR* filename)
     icon.index = i;
     icon.data = NULL;
 
-    if (!fread(&icon.meta, sizeof(IconGroupEntry), 1, file))
+    if (!freadall(&icon.meta, sizeof(IconGroupEntry), file))
     {
       free_loaded_icon(result);
       throw runtime_error("unable to read entry from file");
@@ -143,8 +140,7 @@ IconGroup load_icon_file(const TCHAR* filename)
     }
 
     DWORD iconOffset;
-
-    if (!fread(&iconOffset, sizeof(DWORD), 1, file))
+    if (!freadall(&iconOffset, sizeof(DWORD), file))
     {
       free_loaded_icon(result);
       throw runtime_error("unable to read offset from file");
@@ -154,7 +150,6 @@ IconGroup load_icon_file(const TCHAR* filename)
 
     fpos_t pos;
     fgetpos(file, &pos);
-
     if (fseek(file, iconOffset, SEEK_SET))
     {
       free_loaded_icon(result);
@@ -162,19 +157,52 @@ IconGroup load_icon_file(const TCHAR* filename)
     }
 
     icon.data = new BYTE[size];
-
-    if (!fread(icon.data, size, 1, file))
+    if (!freadall(icon.data, size, file)) die:
     {
       free_loaded_icon(result);
       throw runtime_error("unable to read icon from file");
     }
 
-    fsetpos(file, &pos);
+    if (fsetpos(file, &pos))
+      goto die;
 
     result.push_back(icon);
   }
 
   return result;
+}
+
+template<class S> static IconGroup load_icon_from_stream(S*file)
+{
+  IconGroupHeader iconHeader;
+  read_icon_header(file, iconHeader);
+  return load_iconimages_from_stream(iconHeader, file);
+}
+
+IconGroup load_icon_file(const TCHAR* filename)
+{
+  FILE* f = FOPEN(filename, ("rb"));
+  if (!f)
+    throw runtime_error("can't open file");
+
+  MANAGE_WITH(f, fclose);
+  return load_icon_from_stream(f);
+}
+
+IconGroup load_icon(const TCHAR* filename)
+{
+  if (CResourceEditor::IsResProtocol(filename)) // Try opening embedded resource
+  {
+    CResourceEditor::EXTERNAL x;
+    if (CResourceEditor::MapExternal(filename, CResourceEditor::TM_ICON, x))
+    {
+      CStdFileStreamOnMemory stream(x.Data, x.cbData);
+      IconGroup icon = load_icon_from_stream(&stream);
+      CResourceEditor::FreeExternal(x);
+      return icon;
+    }
+  }
+  return load_icon_file(filename);
 }
 
 typedef struct

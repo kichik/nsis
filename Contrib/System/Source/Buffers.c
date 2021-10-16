@@ -11,7 +11,7 @@ struct tagTempStack
     TempStack *Next;
     TCHAR Data[0];
 };
-TempStack *tempstack = NULL;
+TempStack *g_tempstack = NULL;
 
 static void AllocWorker(unsigned int mult)
 {
@@ -69,10 +69,14 @@ PLUGINFUNCTIONSHORT(Copy)
 }
 PLUGINFUNCTIONEND
 
+#define EXECFLAGSSTACKMARKER ( sizeof(TCHAR) > 1 ? (TCHAR) 0x2691 : 0x1E ) // U+2691 Black Flag
+
 PLUGINFUNCTION(Store)
 {
     TempStack *tmp;
+    stack_t*pNSE;
     int size = ((INST_R9+1)*g_stringsize*sizeof(TCHAR));
+    int tmpint;
 
     TCHAR *command, *cmd = command = system_popstring();
     while (*cmd != 0)
@@ -83,23 +87,20 @@ PLUGINFUNCTION(Store)
         case _T('S'):
             // Store the whole variables range
             tmp = (TempStack*) GlobalAlloc(GPTR, sizeof(TempStack)+size);
-            tmp->Next = tempstack;
-            tempstack = tmp;
-
             // Fill with data
-            copymem(tempstack->Data, g_variables, size);
+            copymem(tmp->Data, g_variables, size);
+            // Push to private stack
+            tmp->Next = g_tempstack, g_tempstack = tmp;
             break;
         case _T('l'):
         case _T('L'):
-            if (tempstack == NULL) break;
+            if (g_tempstack == NULL) break;
 
             // Fill with data
-            copymem(g_variables, tempstack->Data, size);
-
-            // Restore stack
-            tmp = tempstack->Next;
-            GlobalFree((HANDLE) tempstack);
-            tempstack = tmp;
+            copymem(g_variables, g_tempstack->Data, size);
+            // Pop from private stack
+            tmp = g_tempstack, g_tempstack = g_tempstack->Next;
+            GlobalFree((HANDLE) tmp);
             break;
         case _T('P'):
             *cmd += 10;
@@ -110,6 +111,24 @@ PLUGINFUNCTION(Store)
             *cmd += 10;
         case _T('r'):
             GlobalFree((HANDLE) system_setuservariable(*(cmd++)-_T('0'), system_popstring()));
+            break;
+        case _T('f'):
+            // Pop from stack
+            pNSE = *g_stacktop, *g_stacktop = pNSE->next;
+            // Restore data
+            tmpint = extra->exec_flags->abort;
+            if (pNSE->text[0] == EXECFLAGSSTACKMARKER)
+              copymem(extra->exec_flags, pNSE->text+2, sizeof(exec_flags_t));
+            extra->exec_flags->abort = tmpint; // Don't allow overriding the abort flag
+            GlobalFree((HANDLE) pNSE);
+            break;
+        case _T('F'):
+            // Store the data
+             pNSE = (stack_t*) GlobalAlloc(GPTR, sizeof(stack_t)+(g_stringsize*sizeof(TCHAR)));
+            *((UINT32*)pNSE->text) = EXECFLAGSSTACKMARKER; // marker + '\0'
+            copymem(pNSE->text+2, extra->exec_flags, sizeof(exec_flags_t));
+            // Push to stack
+            pNSE->next = *g_stacktop, *g_stacktop = pNSE;
             break;
         }
     }

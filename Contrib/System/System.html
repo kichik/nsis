@@ -1,8 +1,30 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
 <head>
-<title>NSIS System Plug-in</title>
-<meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>System Plug-in (NSIS)</title>
+<style type="text/css">
+:root { color-scheme: light dark; }
+html, body { font-family: Verdana, Arial, Helvetica, sans-serif; color: #050505; background-color: #fefefe; }
+html { font-size: 0.84em; }
+body { font-size: 1em; font-size: 1rem; }
+pre, code { font-family: Courier New, Courier, monospace,serif; font-size: 100%; }
+h1 { font-size: 170%; }
+h2 { font-size: 150%; }
+h3 { font-size: 130%; }
+h4 { font-size: 120%; }
+h5 { font-size: 115%; }
+h6 { font-size: 110%; }
+blockquote { margin:0; padding:0; margin-left: 0.5em; }
+blockquote pre { background-color: #fefefe; }
+
+@media (prefers-color-scheme: dark) {
+html, body { color: #eeeeee; background-color: #161616; }
+blockquote pre { background-color: #202020; }
+}
+</style>
 </head>
 <body>
 <h1>NSIS System Plug-in</h1>
@@ -139,6 +161,8 @@ System::<b>Free</b> $0
 <li>To pop $R<i>#</i>, use R<i>#</i>, where <i>#</i> is a digit from 0 to 9.</li>
 <li>To push $0-$9 and $R0-$R9 to System's private stack, use s or S.</li>
 <li>To pop $0-$9 and $R0-$R9 from System's private stack, use l or L.</li>
+<li>To push the internal NSIS flags state <small>(exec_flags_t in api.h)</small> to the stack, use F.</li>
+<li>To pop the internal NSIS flags state <small>(exec_flags_t in api.h)</small> from the stack, use f.</li>
 </ul>
 <h4>Usage Examples</h4>
 <blockquote><pre>
@@ -220,7 +244,7 @@ DetailPrint $4
 </tr>
 <tr>
 <th><i>IPTR</i>-><i>IDX</i></th>
-<td>Member indexed <i>IDX</i> from<br/>interface pointed by <i>IPTR</i></td>
+<td>Member indexed <i>IDX</i> from<br>interface pointed by <i>IPTR</i></td>
 <td><a href="#com">see below</a></td>
 </tr>
 <tr>
@@ -289,10 +313,10 @@ DetailPrint $4
 <th>k</th>
 <td>callback</td>
 </tr>
+<tr>
 <th>@</th>
 <td>Direct register memory access (Buffer is limited to <code>(NSIS_MAX_STRLEN - 24) * NSIS_CHAR_SIZE</code> bytes)</td>
 </tr>
-<tr>
 <tr>
 <th>&amp;v<i>N</i></th>
 <td><i>N</i> bytes padding (structures only)</td>
@@ -343,7 +367,7 @@ DetailPrint $4
 <td>concrete hex, decimal or octal integer value. several integers can be or'ed using the pipe symbol (`|')</td>
 </tr>
 <tr>
-<th>'<i>string</i>'<br/>"<i>string</i>"<br/>`<i>string</i>`</th>
+<th>'<i>string</i>'<br>"<i>string</i>"<br>`<i>string</i>`</th>
 <td>concrete string value</td>
 </tr>
 <tr>
@@ -351,7 +375,7 @@ DetailPrint $4
 <td>$0 through $9 respectively</td>
 </tr>
 <tr>
-<th><i>r10</i> through <i>r19</i><br/><i>R0</i> through <i>R9</i></th>
+<th><i>r10</i> through <i>r19</i><br><i>R0</i> through <i>R9</i></th>
 <td>$R0 through $R9 respectively</td>
 </tr>
 <tr>

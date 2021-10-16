@@ -1,8 +1,56 @@
 \A{history} Changelog and Release Notes
 
+\H{v3.09} 3.09
+
+Released on ????, 20??
+
+\S1{v3.09-rl} Release Notes
+
+????
+
+\S1{v3.09-cl} Changelog
+
+\S2{} Minor Changes
+
+\b Fixed halibut fprintf format security warnings (\W{http://sf.net/p/nsis/patches/304}{patch #304})
+
+\S2{} Translations
+
+\b Updated Brazilian Portuguese (\W{http://sf.net/p/nsis/bugs/1269}{bug #1269})
+
+\H{v3.08} 3.08
+
+Released on September 25th, 2021
+
+\S1{v3.08-rl} Release Notes
+
+This release is filled with features that a lot of people have been requesting for a while. Enjoy!
+
+\S1{v3.08-cl} Changelog
+
+\S2{} Major Changes
+
+\b Added \R{uninstfinalize}{!uninstfinalize} (\W{http://sf.net/p/nsis/patches/280}{patch #280}, \W{http://sf.net/p/nsis/bugs/1241}{bug #1241})
+
+\S2{} Minor Changes
+
+\b Added \cw{$USER..} and \cw{$COMMON..} alias constants
+
+\b Added \R{getdllversion}{GetDLLVersion} /ProductVersion switch
+
+\b Added \R{getwinver}{GetWinVer} instruction
+
+\b Disallow start maximized mode
+
+\b Added /LAUNCH compiler switch
+
+\b PEAddResource now supports the res:// protocol
+
+\b System::Store can push/pop the flags state
+
 \H{v3.07} 3.07
 
-Released on ??? ??th, 20??
+Released on July 24th, 2021
 
 \S1{v3.07-rl} Release Notes
 
@@ -18,6 +66,8 @@ Unicode is now the default.
 
 \b Added nsExec /MBCS switch
 
+\b Memento now supports overridable storage macros
+
 \b Fixed Unicode compiler crash (\W{http://sf.net/p/nsis/bugs/1254}{bug #1254}, \W{http://sf.net/p/nsis/patches/300}{patch #300})
 
 \b Fixed !addplugindir relative path bug (\W{http://sf.net/p/nsis/bugs/1264}{bug #1264})
@@ -28,7 +78,7 @@ Unicode is now the default.
 
 \S2{} Translations
 
-\b Updated Corsican\#{(forum)} and Japanese (maboroshin PR\#{github.com/maboroshin})
+\b Updated Albanian (\W{http://sf.net/p/nsis/patches/303}{patch #303}), Corsican\#{(forum)} and Japanese (maboroshin PR\#{github.com/maboroshin})
 
 \b Fixed clipped Chinese text (\W{http://sf.net/p/nsis/bugs/1261}{bug #1261})
 

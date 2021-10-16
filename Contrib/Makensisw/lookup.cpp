@@ -64,11 +64,13 @@ template<class T> static ULARGE_INTEGER PathParseIconLocationEx(T*Path)
   return (li.HighPart = (UINT) comma, li.LowPart = idx, li);
 }
 
-template<class T> static int WINAPI PathParseIconLocationFallback(T*Path)
+#ifndef _WIN64
+static int WINAPI PathParseIconLocationFallback(LPSTR Path)
 {
   ULARGE_INTEGER li = PathParseIconLocationEx(Path);
   return li.LowPart;
 }
+#endif
 
 static HRESULT GetSpecialFolderPath(HWND hWnd, LPTSTR Buf, UINT csidl)
 {
@@ -135,7 +137,7 @@ template<class I, class O> static HKEY ParseRegPath(I*In, O*&Path, O*&Name)
 
 HRESULT (WINAPI*g_RLMSOld)(HKEY hKey, LPCWSTR pszValue, LPWSTR pszOutBuf, DWORD cbOutBuf);
 
-static LSTATUS WINAPI RegLoadMUIStringFallbackW(HKEY hKey, LPCWSTR Name, LPWSTR Out, DWORD cbOutBuf, LPDWORD pcbData, DWORD Flags, LPCSTR pszDirectory)
+static LONG WINAPI RegLoadMUIStringFallbackW(HKEY hKey, LPCWSTR Name, LPWSTR Out, DWORD cbOutBuf, LPDWORD pcbData, DWORD Flags, LPCSTR pszDirectory)
 {
   if ((Flags & reg_mui_string_truncate) && pcbData) return ERROR_INVALID_PARAMETER;
   if (g_RLMSOld)
@@ -158,7 +160,7 @@ LPCSTR g_ModeLbl[] = { "Path:", "Path:", "Registry:", "Path:", "[Path,]Number:" 
 struct DIALOGDATA {
   HRESULT (WINAPI*SHLIS)(LPCWSTR s, LPWSTR o, UINT cch, PVOID*ppvReserved);
   HRESULT (WINAPI*SHGLN)(PCWSTR p, PWSTR m, UINT cch, int*rid);
-  LSTATUS (WINAPI*RLMS)(HKEY hKey, LPCWSTR pszValue, LPWSTR pszOutBuf, DWORD cbOutBuf, LPDWORD pcbData, DWORD Flags, LPCSTR pszDirectory);
+  LONG (WINAPI*RLMS)(HKEY hKey, LPCWSTR pszValue, LPWSTR pszOutBuf, DWORD cbOutBuf, LPDWORD pcbData, DWORD Flags, LPCSTR pszDirectory);
   int (WINAPI*PPIL)(LPTSTR p);
   void*OrgParentDlgData;
   HWND hMode, hExtra, hOutTxt, hOutIco;
@@ -179,6 +181,9 @@ static INT_PTR CALLBACK LookupDlgProc(HWND hDlg, UINT Msg, WPARAM WParam, LPARAM
 
   switch(Msg)
   {
+  case WM_SIZE:
+    if (WParam == SIZE_MAXIMIZED) ShowWindow(hDlg, SW_SHOWNOACTIVATE); // Disallow STARTF_USESHOWWINDOW+SW_MAXIMIZE
+    break;
   case WM_INITDIALOG:
     DIALOGDATA::Set(hDlg, (pDD = (DIALOGDATA*) LParam));
     CenterOnParent(hDlg);
@@ -249,11 +254,11 @@ static INT_PTR CALLBACK LookupDlgProc(HWND hDlg, UINT Msg, WPARAM WParam, LPARAM
           {
             AppendText(pDD->hOutTxt, mod);
             AppendText(pDD->hOutTxt, (wsprintfW(path, L",%d\r\n\r\n", resid), path));
-            if (ExpandEnvironmentStringsW(mod, path, ARRAYSIZE(path)))
+            if (ExpandEnvironmentStringsW(mod, path, COUNTOF(path)))
             {
               if (HMODULE hMod = LoadLibraryExW(path, NULL, LOAD_LIBRARY_AS_DATAFILE))
               {
-                if (LoadStringW(hMod, resid, mod, ARRAYSIZE(mod)))
+                if (LoadStringW(hMod, resid, mod, COUNTOF(mod)))
                 {
                   AppendText(pDD->hOutTxt, mod);
                 }
@@ -310,7 +315,7 @@ static INT_PTR CALLBACK LookupDlgProc(HWND hDlg, UINT Msg, WPARAM WParam, LPARAM
         break;
       case LM_FMTMSG:
         {
-          UINT flags = FORMAT_MESSAGE_FROM_SYSTEM|FORMAT_MESSAGE_IGNORE_INSERTS;
+          UINT flags = FORMAT_MESSAGE_FROM_SYSTEM|FORMAT_MESSAGE_IGNORE_INSERTS, succ = false;
           ULARGE_INTEGER li = PathParseIconLocationEx(buf);
           LPCTSTR numstr = buf;
           HMODULE hMod = 0;
@@ -321,12 +326,11 @@ static INT_PTR CALLBACK LookupDlgProc(HWND hDlg, UINT Msg, WPARAM WParam, LPARAM
             if (!hMod) goto badmsgmod;
           }
           hr = StrToSInt(numstr);
-          if (!FormatMessage(flags, hMod, hr, 0, buf, COUNTOF(buf), NULL)) badmsgmod:
-          {
-            hr = GetLastError();
-            goto die_hr;
-          }
+          succ = FormatMessage(flags, hMod, hr, 0, buf, COUNTOF(buf), NULL) != 0;
+badmsgmod:
+          hr = GetLastError();
           if (hMod) FreeLibrary(hMod);
+          if (!succ) goto die_hr;
           SetWindowText(pDD->hOutTxt, buf);
         }
         break;
@@ -353,7 +357,7 @@ INT_PTR ShowLookupDialog(HWND hOwner)
   if (!dd.PPIL || (SupportsWNT4() || IsWin9598ME()))
   {
     (FARPROC&) dd.PPIL = GetSysProcAddr("SHELL32", (LPCSTR) 249); // WNT4+ PathParseIconLocationT
-    if (sizeof(TCHAR) == 1) (FARPROC&) dd.PPIL = (FARPROC) PathParseIconLocationFallback<CHAR>;
+    if (sizeof(TCHAR) == 1) (FARPROC&) dd.PPIL = (FARPROC) PathParseIconLocationFallback;
   }
   #endif
 

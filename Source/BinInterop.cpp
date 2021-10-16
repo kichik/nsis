@@ -29,6 +29,33 @@
 #define HE2BE32 BE2HE32
 const size_t invalid_res_id = ~(size_t)0;
 
+signed char GetExeType(const void*pData, size_t Size) // Returns 'P', 'N', 'L', -'E' or '\0'
+{
+  char *filedata = (char*) pData, type = '\0';
+  PIMAGE_DOS_HEADER pIDH = (PIMAGE_DOS_HEADER) filedata;
+  if (Size > sizeof(*pIDH) && (pIDH->e_magic == 0x5A4D) | (pIDH->e_magic == 0x4D5A))
+  {
+    type = -'E'; // Basic DOS EXE
+    UINT32 nho = LE2HE32(pIDH->e_lfanew);
+    if (Size > nho + 4 && MKPTR(BYTE*, pIDH, nho)[1] == 'E')
+    {
+      if (pIDH->e_magic == IMAGE_DOS_SIGNATURE && MKPTR(PIMAGE_NT_HEADERS, pIDH, nho)->Signature == IMAGE_NT_SIGNATURE)
+        type = 'P';
+      else if (MKPTR(BYTE*, pIDH, nho)[0] == 'L' || MKPTR(BYTE*, pIDH, nho)[0] == 'N')
+        type = MKPTR(BYTE*, pIDH, nho)[0];
+    }
+  }
+  return type;
+}
+
+signed char GetExeType(const TCHAR*filepath)
+{
+  FILEVIEW map;
+  char *filedata = create_file_view_readonly(filepath, map), type = '\0';
+  if (filedata) type = GetExeType(filedata, map.size), close_file_view(map);
+  return type;
+}
+
 FILE* MSTLB_fopen(const TCHAR*filepath, size_t*pResId)
 {
   size_t resid = invalid_res_id; // MSDN:"By default, the type library is extracted from the first resource of type ITypeLib"
@@ -307,7 +334,7 @@ static bool GetTLBVersionUsingAPI(const TCHAR *filepath, DWORD &high, DWORD &low
 }
 #endif //~ !_WIN32
 
-bool GetTLBVersion(const TCHAR *filepath, DWORD &high, DWORD &low)
+bool GetTLBVersion(const TCHAR *filepath, DWORD &high, DWORD &low, bool NotUsed)
 {
   bool found = false;
 #if defined(_WIN32) && !defined(NSIS_GETTLBVERSION_FORCEINTERNAL)
@@ -318,11 +345,11 @@ bool GetTLBVersion(const TCHAR *filepath, DWORD &high, DWORD &low)
   return found;
 }
 
-static bool GetDLLVersionUsingRE(const TCHAR *filepath, DWORD &high, DWORD &low)
+static bool GetDLLVersionUsingRE(const TCHAR *filepath, DWORD &high, DWORD &low, bool Product)
 {
   bool found = false;
   LANGID anylangid = CResourceEditor::ANYLANGID;
-  unsigned long fileSize;
+  unsigned long fileSize, fieldofs = Product ? 2 : 0;
   void*pFileData = alloc_and_read_file(filepath, fileSize);
   if (!pFileData) return false;
   try
@@ -342,7 +369,7 @@ static bool GetDLLVersionUsingRE(const TCHAR *filepath, DWORD &high, DWORD &low)
         VS_FIXEDFILEINFO *verinfo = (VS_FIXEDFILEINFO*)(resdata + len);
         if (ressize >= len + sizeof(VS_FIXEDFILEINFO) && verinfo->dwSignature == FIX_ENDIAN_INT32(VS_FFI_SIGNATURE))
         {
-          high = FIX_ENDIAN_INT32(verinfo->dwFileVersionMS), low = FIX_ENDIAN_INT32(verinfo->dwFileVersionLS);
+          high = FIX_ENDIAN_INT32((&verinfo->dwFileVersionMS)[fieldofs]), low = FIX_ENDIAN_INT32((&verinfo->dwFileVersionLS)[fieldofs]);
           found = true;
         }
       }
@@ -356,11 +383,11 @@ static bool GetDLLVersionUsingRE(const TCHAR *filepath, DWORD &high, DWORD &low)
   return found;
 }
 
-static bool GetDLLVersionUsingAPI(const TCHAR *filepath, DWORD &high, DWORD &low)
+static bool GetDLLVersionUsingAPI(const TCHAR *filepath, DWORD &high, DWORD &low, bool Product)
 {
   bool found = false;
 #ifdef _WIN32
-  TCHAR path[1024], *name;
+  TCHAR path[1024], *name, fieldofs = Product ? 2 : 0;
   path[0] = 0;
   GetFullPathName(filepath, 1024, path, &name);
 
@@ -374,7 +401,7 @@ static bool GetDLLVersionUsingAPI(const TCHAR *filepath, DWORD &high, DWORD &low
       VS_FIXEDFILEINFO *pvsf;
       if (GetFileVersionInfo(path, 0, verSize, buf) && VerQueryValue(buf, _T("\\"), (void**) &pvsf, &valSize))
       {
-        high = pvsf->dwFileVersionMS, low = pvsf->dwFileVersionLS;
+        high = (&pvsf->dwFileVersionMS)[fieldofs], low = (&pvsf->dwFileVersionLS)[fieldofs];
         found = true;
       }
       free(buf);
@@ -393,9 +420,10 @@ typedef struct tagMINI_IMAGE_VXD_HEADER {
 } MINI_IMAGE_VXD_HEADER, *PMINI_IMAGE_VXD_HEADER;
 #pragma pack(pop)
 
-static bool GetDLLVersionFromVXD(const TCHAR *filepath, DWORD &high, DWORD &low)
+static bool GetDLLVersionFromVXD(const TCHAR *filepath, DWORD &high, DWORD &low, bool Product)
 {
   bool found = false;
+  UINT fieldofs = Product ? 2 : 0;
   FILEVIEW map;
   char *filedata = create_file_view_readonly(filepath, map);
   if (filedata)
@@ -425,7 +453,7 @@ static bool GetDLLVersionFromVXD(const TCHAR *filepath, DWORD &high, DWORD &low)
               VS_FIXEDFILEINFO *pFFI = MKPTR(VS_FIXEDFILEINFO*, pVSVI, 2 + 2 + 16);
               if (LE2HE32(pFFI->dwSignature) == 0xFEEF04BD)
               {
-                high = LE2HE32(pFFI->dwFileVersionMS), low = LE2HE32(pFFI->dwFileVersionLS);
+                high = LE2HE32((&pFFI->dwFileVersionMS)[fieldofs]), low = LE2HE32((&pFFI->dwFileVersionLS)[fieldofs]);
                 found = true;
               }
             }
@@ -438,11 +466,11 @@ static bool GetDLLVersionFromVXD(const TCHAR *filepath, DWORD &high, DWORD &low)
   return found;
 }
 
-bool GetDLLVersion(const TCHAR *filepath, DWORD &high, DWORD &low)
+bool GetDLLVersion(const TCHAR *filepath, DWORD &high, DWORD &low, bool Product)
 {
-  bool result         = GetDLLVersionUsingAPI(filepath, high, low);
-  if (!result) result = GetDLLVersionUsingRE(filepath, high, low);
-  if (!result) result = GetDLLVersionFromVXD(filepath, high, low);
+  bool result         = GetDLLVersionUsingAPI(filepath, high, low, Product);
+  if (!result) result = GetDLLVersionUsingRE(filepath, high, low, Product);
+  if (!result) result = GetDLLVersionFromVXD(filepath, high, low, Product);
   return result;
 }
 
@@ -484,4 +512,30 @@ DWORD IsBMPFile(const void*pData, size_t DataSize, GENERICIMAGEINFO*pInfo)
     }
   }
   return 0;
+}
+
+bool LoadImageCanLoadFile(const void*pData, size_t DataSize)
+{
+  bool valid = IsICOCURFile(pData, DataSize) != 0;
+  if (!valid)
+  {
+    GENERICIMAGEINFO info;
+    UINT headersize = GetBMPFileHeaderSize(pData, DataSize, &info);
+    valid = headersize == 12 || headersize == 40; // Only supports BITMAPCOREHEADER and BITMAPINFOHEADER (Bug #681 & FR #559)
+    valid = valid && !info.IsTopDownBitmap(); // TopDown bitmaps are only valid if they are loaded with LR_CREATEDIBSECTION, and if loaded from a resource, and if running on Vista+? and therefore we deny!
+  }
+  return valid;
+}
+
+bool LoadImageCanLoadFile(const TCHAR *filepath)
+{
+  bool valid = false;
+  unsigned char header[14+124];
+  FILE *f = my_fopen(filepath, "rb");
+  if (f)
+  {
+    valid = LoadImageCanLoadFile(header, fread(header, 1, sizeof(header), f));
+    fclose(f);
+  }
+  return valid;
 }

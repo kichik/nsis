@@ -11,6 +11,6 @@
 
 \cfg{xhtml-contents-depth-0}{3}
 
-\cfg{xhtml-head-end}{<link rel="stylesheet" href="style.css" type='text/css' /><style>body\{background-image:url(unreleased.png)\}</style>}
+\cfg{xhtml-head-end}{<link rel="stylesheet" href="style.css?cache=\hackunixnow" type='text/css' /><style>body\{background-image:url(unreleased.png?cache=\hackunixnow)\}</style>}
 
 \cfg{xhtml-body-end}{<a href="https://sourceforge.net"><img border=0 src="https://sourceforge.net/sflogo.php?group_id=22049&amp;type=1" alt="SourceForge Logo" /></a>}

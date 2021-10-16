@@ -31,6 +31,7 @@
 #include "manifest.h"
 #include "icon.h"
 #include "utf.h" // For NStream
+#include "BinInterop.h"
 
 #include "exehead/api.h"
 #include "exehead/resource.h"
@@ -99,8 +100,8 @@ CEXEBuild::~CEXEBuild()
   for (int i = 0; i < nlt; i++)
     DeleteLangTable(nla+i);
 
-  if (postbuild_cmds)
-    postbuild_cmds->delete_all();
+  if (postbuild_cmds) postbuild_cmds->delete_all();
+  if (postubuild_cmds) postubuild_cmds->delete_all();
 }
 
 CEXEBuild::CEXEBuild(signed char pponly, bool warnaserror) :
@@ -190,7 +191,7 @@ CEXEBuild::CEXEBuild(signed char pponly, bool warnaserror) :
   build_cursection=NULL;
   // init public data.
   build_packname[0]=build_packcmd[0]=build_output_filename[0]=0;
-  postbuild_cmds=NULL;
+  postbuild_cmds=postubuild_cmds=NULL;
 
   // Added by ramon 23 May 2003
   build_allowskipfiles=1;
@@ -376,6 +377,21 @@ CEXEBuild::CEXEBuild(signed char pponly, bool warnaserror) :
   m_ShellConstants.add(_T("RESOURCES"), CSIDL_RESOURCES, CSIDL_RESOURCES);
   m_ShellConstants.add(_T("RESOURCES_LOCALIZED"), CSIDL_RESOURCES_LOCALIZED, CSIDL_RESOURCES_LOCALIZED);
   m_ShellConstants.add(_T("CDBURN_AREA"), CSIDL_CDBURN_AREA, CSIDL_CDBURN_AREA);
+
+  // Contants that are not affected by SetShellVarContext
+  m_ShellConstants.add(_T("USERAPPDATA"), CSIDL_APPDATA, CSIDL_APPDATA);
+  m_ShellConstants.add(_T("USERLOCALAPPDATA"), CSIDL_LOCAL_APPDATA, CSIDL_LOCAL_APPDATA);
+  m_ShellConstants.add(_T("USERTEMPLATES"), CSIDL_TEMPLATES, CSIDL_TEMPLATES);
+  m_ShellConstants.add(_T("USERSTARTMENU"), CSIDL_STARTMENU, CSIDL_STARTMENU);
+  m_ShellConstants.add(_T("USERSMPROGRAMS"), CSIDL_PROGRAMS, CSIDL_PROGRAMS);
+  m_ShellConstants.add(_T("USERDESKTOP"), CSIDL_DESKTOPDIRECTORY, CSIDL_DESKTOPDIRECTORY);
+  m_ShellConstants.add(_T("COMMONLOCALAPPDATA"), CSIDL_COMMON_APPDATA, CSIDL_COMMON_APPDATA);
+  m_ShellConstants.add(_T("COMMONPROGRAMDATA"), CSIDL_COMMON_APPDATA, CSIDL_COMMON_APPDATA); // a.k.a. %ProgramData%
+  m_ShellConstants.add(_T("COMMONTEMPLATES"), CSIDL_COMMON_TEMPLATES, CSIDL_COMMON_TEMPLATES);
+  m_ShellConstants.add(_T("COMMONSTARTMENU"), CSIDL_COMMON_STARTMENU, CSIDL_COMMON_STARTMENU);
+  m_ShellConstants.add(_T("COMMONSMPROGRAMS"), CSIDL_COMMON_PROGRAMS, CSIDL_COMMON_PROGRAMS);
+  m_ShellConstants.add(_T("COMMONDESKTOP"), CSIDL_COMMON_DESKTOPDIRECTORY, CSIDL_COMMON_DESKTOPDIRECTORY);
+
   // PROGRAMFILES&COMMONFILES does a registry lookup and the required string offsets are filled in later.
   // We do this later because the unicode mode has to be locked when we call add_string...
   m_ShellConstants.add(_T("PROGRAMFILES"),   0, 0);
@@ -1730,21 +1746,21 @@ int CEXEBuild::add_page(int type)
 #ifndef NSIS_CONFIG_LICENSEPAGE
   if (type == PAGE_LICENSE)
   {
-    ERROR_MSG(_T("Error: can't add license page, NSIS_CONFIG_LICENSEPAGE not defined.\n"));
+    ERROR_MSG(_T("Error: can't add %") NPRIns _T(" page, %") NPRIns _T(" not defined.\n"), "license", "NSIS_CONFIG_LICENSEPAGE");
     return PS_ERROR;
   }
 #endif
 #ifndef NSIS_CONFIG_COMPONENTPAGE
   if (type == PAGE_COMPONENTS)
   {
-    ERROR_MSG(_T("Error: can't add components page, NSIS_CONFIG_COMPONENTPAGE not defined.\n"));
+    ERROR_MSG(_T("Error: can't add %") NPRIns _T(" page, %") NPRIns _T(" not defined.\n"), "components", "NSIS_CONFIG_COMPONENTPAGE");
     return PS_ERROR;
   }
 #endif
 #ifndef NSIS_CONFIG_UNINSTALL_SUPPORT
   if (type == PAGE_COMPONENTS)
   {
-    ERROR_MSG(_T("Error: can't add uninstConfirm page, NSIS_CONFIG_UNINSTALL_SUPPORT not defined.\n"));
+    ERROR_MSG(_T("Error: can't add %") NPRIns _T(" page, %") NPRIns _T(" not defined.\n"), "uninstConfirm", "NSIS_CONFIG_UNINSTALL_SUPPORT");
     return PS_ERROR;
   }
 #endif
@@ -2538,14 +2554,11 @@ int CEXEBuild::pack_exe_header()
 
   // write out exe header, pack, read back in, and
   // update the header info
-  FILE *tmpfile=FOPEN(build_packname,("wb"));
-  if (!tmpfile)
+  if (m_exehead_size != write_octets_to_file(build_packname, m_exehead, m_exehead_size))
   {
     ERROR_MSG(_T("Error: writing temporary file \"%") NPRIs _T("\" for pack\n"),build_packname);
     return PS_ERROR;
   }
-  fwrite(m_exehead,1,m_exehead_size,tmpfile);
-  fclose(tmpfile);
   int ec = sane_system(build_packcmd);
   if (ec == -1)
   {
@@ -2782,20 +2795,14 @@ retry_output:
   if (PAGE_COMPLETED != PAGE_INSTFILES && np) --np; // Special page not part of count
   INFO_MSG(_T("%d page%") NPRIs _T(" (%d bytes), "),np,np==1?_T(""):_T("s"),np*sizeof(page));
 #endif
+#define IsRequiredSection(s) ( (!(s).name_ptr && ((s).flags & SF_SELECTED)) || (((s).flags & (SF_RO|SF_SELECTED)) == (SF_RO|SF_SELECTED)))
   {
-    int ns=build_sections.getlen()/sizeof(section);
+    int ns=build_sections.getlen()/sizeof(section), x;
     section *s=(section*)build_sections.get();
-    int x;
     unsigned int req=0;
-    for (x = 1; x < ns; x ++)
-    {
-      if (!s[x].name_ptr || s[x].flags & SF_RO) req++;
-    }
+    for (x = 0; x < ns; x ++) if (IsRequiredSection(s[x])) ++req;
     INFO_MSG(_T("%d section%") NPRIs,ns,ns==1?_T(""):_T("s"));
-    if (req)
-    {
-      INFO_MSG(_T(" (%u required)"),req);
-    }
+    if (req) INFO_MSG(_T(" (%u required)"),req);
     INFO_MSG(_T(" (%d bytes), "), build_sections.getlen());
   }
   int ne=build_header.blocks[NB_ENTRIES].num;
@@ -2813,19 +2820,12 @@ retry_output:
     INFO_MSG(_T("%d page%") NPRIs _T(" (%d bytes), "),np,np==1?_T(""):_T("s"),ubuild_pages.getlen());
 #endif
     {
-      int ns=ubuild_sections.getlen()/sizeof(section);
+      int ns=ubuild_sections.getlen()/sizeof(section), x;
       section *s=(section*)ubuild_sections.get();
-      int x;
       unsigned int req=0;
-      for (x = 1; x < ns; x ++)
-      {
-        if (!s[x].name_ptr || s[x].flags & SF_RO) req++;
-      }
+      for (x = 0; x < ns; x ++) if (IsRequiredSection(s[x])) ++req;
       INFO_MSG(_T("%d section%") NPRIs,ns,ns==1?_T(""):_T("s"));
-      if (req)
-      {
-        INFO_MSG(_T(" (%u required)"),req);
-      }
+      if (req) INFO_MSG(_T(" (%u required)"),req);
       INFO_MSG(_T(" (%d bytes), "), ubuild_sections.getlen());
     }
     ne=build_uninst.blocks[NB_ENTRIES].num;
@@ -3063,23 +3063,33 @@ int CEXEBuild::uninstall_generate()
   {
     SCRIPT_MSG(_T("Generating uninstaller... "));
 
+    const int start_offset = postubuild_cmds ? truncate_cast(int, m_exehead_size) : 0;
+    entry *ent = (entry *) build_entries.get();
+    if (!ent) return PS_ERROR; // Check this early
+
+    MMapBuf udata;
     firstheader fh={0,};
 
     GrowBuf uhd;
     {
-      GrowBuf udata;
+      GrowBuf udata_exehead;
 
       set_uninstall_mode(1);
 
-      PrepareHeaders(&udata);
+      PrepareHeaders(&udata_exehead);
 
-      fh.length_of_header=udata.getlen();
-      int err=add_data((char*)udata.get(),udata.getlen(),&uhd);
+      fh.length_of_header=udata_exehead.getlen();
+      int err=add_data((char*)udata_exehead.get(),udata_exehead.getlen(),&uhd);
       set_uninstall_mode(0);
       if (err < 0) return PS_ERROR;
     }
 
     crc32_t crc=0;
+#ifdef NSIS_CONFIG_CRC_SUPPORT
+    bool calc_crc = true;
+#else
+    bool calc_crc = false;
+#endif
 
     // Get offsets of icons to replace for uninstall
     // Also makes sure that the icons are there and in the right size.
@@ -3090,41 +3100,34 @@ int CEXEBuild::uninstall_generate()
       return PS_ERROR;
     }
 
-    entry *ent = (entry *) build_entries.get();
-    if (!ent)
-    {
-      delete [] unicon_data;
-      return PS_ERROR;
-    }
-
-    int ents = build_header.blocks[NB_ENTRIES].num;
     int uns = uninstaller_writes_used;
     int uninstdata_offset = build_datablock.getlen();
-    while (ents--)
+    for (int ents = build_header.blocks[NB_ENTRIES].num; ents--; ent++)
     {
       if (ent->which == EW_WRITEUNINSTALLER)
       {
         ent->offsets[1] = uninstdata_offset;
-        ent->offsets[2] = (int) m_unicon_size;
-        uns--;
-        if (!uns)
+        ent->offsets[2] = start_offset ? 0 : (int) m_unicon_size;
+        if (!--uns)
           break;
       }
-      ent++;
     }
 
-    if (add_db_data((char *)unicon_data,m_unicon_size) < 0)
+    if (!start_offset && add_db_data((char *)unicon_data,m_unicon_size) < 0)
     {
       delete [] unicon_data;
       return PS_ERROR;
     }
 
-#ifdef NSIS_CONFIG_CRC_SUPPORT
+    if (start_offset || calc_crc)
     {
-      // "create" the uninstaller
+      // create the uninstaller
       LPBYTE uninst_header = (LPBYTE) malloc(m_exehead_size);
       if (!uninst_header)
+      {
+        delete [] unicon_data;
         return PS_ERROR;
+      }
 
       memcpy(uninst_header, m_exehead, m_exehead_size);
 
@@ -3139,17 +3142,25 @@ int CEXEBuild::uninstall_generate()
         seeker += dwSize;
       }
 
-      delete [] unicon_data;
-
+      if (calc_crc)
+      {
+#ifdef NSIS_CONFIG_CRC_SUPPORT
 #ifdef NSIS_CONFIG_CRC_ANAL
-      crc=CRC32(crc, uninst_header, (DWORD)m_exehead_size);
+        crc=CRC32(crc, uninst_header, (DWORD)m_exehead_size);
 #else
-      crc=CRC32(crc, uninst_header + 512, (DWORD)m_exehead_size - 512);
+        crc=CRC32(crc, uninst_header + 512, (DWORD)m_exehead_size - 512);
 #endif
+#endif
+      }
+
+      // write the exehead
+      if (start_offset)
+        udata.add((char *)uninst_header, truncate_cast(int, m_exehead_size));
 
       free(uninst_header);
     }
-#endif
+    delete [] unicon_data;
+
     fh.nsinst[0]=FH_INT1;
     fh.nsinst[1]=FH_INT2;
     fh.nsinst[2]=FH_INT3;
@@ -3163,8 +3174,6 @@ int CEXEBuild::uninstall_generate()
     fh.siginfo=FH_SIG;
     fh.length_of_all_following_data=
       uhd.getlen()+ubuild_datablock.getlen()+(int)sizeof(firstheader)+(build_crcchk?sizeof(crc32_t):0);
-
-    MMapBuf udata;
 
     {
       growbuf_writer_sink sink(&udata, mk_writer_target_info());
@@ -3230,8 +3239,8 @@ int CEXEBuild::uninstall_generate()
         compressor->End();
       }
 
-      firstheader *_fh=(firstheader *)udata.get(0, sizeof(firstheader));
-      _fh->length_of_all_following_data=FIX_ENDIAN_INT32(udata.getlen()+(build_crcchk?sizeof(crc32_t):0));
+      firstheader *ufh=(firstheader *)udata.get(start_offset, sizeof(firstheader));
+      ufh->length_of_all_following_data=FIX_ENDIAN_INT32((udata.getlen()-start_offset)+(build_crcchk?sizeof(crc32_t):0));
       udata.release();
     }
     else
@@ -3263,11 +3272,11 @@ int CEXEBuild::uninstall_generate()
     if (build_crcchk)
     {
       int pos = 0;
-      int left = udata.getlen();
+      int left = udata.getlen() - start_offset;
       while (left > 0)
       {
         int l = min(build_filebuflen, left);
-        crc = CRC32(crc, (unsigned char *) udata.get(pos, l), l);
+        crc = CRC32(crc, (unsigned char *) udata.get(pos + start_offset, l), l);
         udata.release();
         pos += l;
         left -= l;
@@ -3279,13 +3288,56 @@ int CEXEBuild::uninstall_generate()
     }
 #endif
 
-    if (add_db_data(&udata) < 0)
-      return PS_ERROR;
+    if (start_offset)
+    {
+      TCHAR* fpath;
+      unsigned long in_len;
+      if (!(fpath = create_tempfile_path()))
+      {
+        ERROR_MSG(_T("Error: can't get temporary path\n"));
+        return PS_ERROR;
+      }
+      size_t ret_size = write_octets_to_file(fpath, (unsigned char*)udata.get(0, udata.getlen()), udata.getlen());
+      udata.release();
+      if ((size_t)udata.getlen() != ret_size)
+      {
+        ERROR_MSG(_T("Error: can't write %d bytes to output\n"), udata.getlen());
+        free(fpath);
+        return PS_ERROR;
+      }
+      if (PS_OK != run_postbuild_cmds(postubuild_cmds, fpath, _T("UninstFinalize")))
+      {
+        free(fpath);
+        return PS_ERROR;
+      }
+      BYTE* in_buf = alloc_and_read_file(fpath, in_len);
+      _tremove(fpath);
+      free(fpath);
+      if (!in_buf)
+      {
+        ERROR_MSG(_T("Error: can't read %d bytes from input\n"), in_len);
+        return PS_ERROR;
+      }
+      MMapBuf udata_in;
+      udata_in.add(in_buf, in_len);
+      free(in_buf);
+
+      if (add_db_data(&udata_in) < 0)
+        return PS_ERROR;
+
+      uninstall_size_full = udata_in.getlen();
+      udata_in.clear();
+    }
+    else
+    {
+      if (add_db_data(&udata) < 0)
+        return PS_ERROR;
+
+      //uninstall_size_full=fh.length_of_all_following_data + sizeof(int) + unicondata_size - 32 + sizeof(int);
+      uninstall_size_full = fh.length_of_all_following_data+(int)m_unicon_size;
+    }
 
     udata.clear();
-
-    //uninstall_size_full=fh.length_of_all_following_data + sizeof(int) + unicondata_size - 32 + sizeof(int);
-    uninstall_size_full=fh.length_of_all_following_data+(int)m_unicon_size;
 
     // compressed size
     uninstall_size=build_datablock.getlen()-uninstdata_offset;
@@ -3403,12 +3455,18 @@ int CEXEBuild::parse_pragma(LineParser &line)
     return rvErr;
   }
 
+  if (line.gettoken_enum(1, _T("verifyloadimage\0")) == 0)
+  {
+    bool valid = LoadImageCanLoadFile(line.gettoken_str(2));
+    return valid ? rvSucc : (warning_fl(DW_BADFORMAT_EXTERNAL_FILE, _T("Unsupported format %") NPRIs, line.gettoken_str(2)), rvWarn);
+  }
+
   // 2.47 shipped with a corrupted CHM file (bug #1129). This minimal verification command exists because the !searchparse hack we added does not work with codepage 936!
   if (line.gettoken_enum(1, _T("verifychm\0")) == 0)
   {
     struct { UINT32 Sig, Ver, cbH; } chm;
     NIStream f;
-    bool valid = f.OpenFileForReading(line.gettoken_str(2));
+    bool valid = f.OpenFileForReading(line.gettoken_str(2), NStreamEncoding::BINARY);
     valid = valid && 12 == f.ReadOctets(&chm, 12);
     valid = valid && FIX_ENDIAN_INT32(chm.Sig) == 0x46535449 && (FIX_ENDIAN_INT32(chm.Ver)|1) == 3; // 'ITSF' v2..3
     return valid ? rvSucc : (ERROR_MSG(_T("Error: Invalid format\n")), PS_ERROR);

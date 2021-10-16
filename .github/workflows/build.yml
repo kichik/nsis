@@ -1,5 +1,10 @@
-name: CI
-on: [push, pull_request]
+name: Build, Test and Publish
+on:
+  push:
+    branches-ignore:
+      - trunk
+      - svn2git-cache
+  pull_request:
 jobs:
   build:
     strategy:
@@ -14,12 +19,12 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Brew Dependencies
         run: |
           brew install scons mingw-w64 zlib
-          curl -sLo cppunit.rb "https://sourceforge.net/p/nsis/code/HEAD/tree/web-scripts/trunk/cppunit.rb?format=raw"
-          brew install -s cppunit.rb
+          curl --retry 9 -sLo cppunit.rb "https://sourceforge.net/p/nsis/code/HEAD/tree/web-scripts/trunk/cppunit.rb?format=raw"
+          brew install -s --formula cppunit.rb
         if: startsWith(matrix.os, 'macos')
       - name: Apt Dependencies
         run: sudo DEBIAN_FRONTEND=noninteractive apt-get install -y scons g++-mingw-w64-i686 binutils-mingw-w64-i686 zlib1g-dev libcppunit-dev
@@ -31,7 +36,7 @@ jobs:
         if: startsWith(matrix.os, 'windows')
       - name: Choco Dependencies
         run: |
-          curl -sLo cppunit-msvc-1.12.1.exe https://downloads.sourceforge.net/project/cppunit-msvc/cppunit-msvc-1.12.1.exe
+          curl --retry 9 -sLo cppunit-msvc-1.12.1.exe https://downloads.sourceforge.net/project/cppunit-msvc/cppunit-msvc-1.12.1.exe
           $arguments = "/S /D=$HOME\cppunit"
           Start-Process ./cppunit-msvc-1.12.1.exe $arguments -NoNewWindow -Wait
           pip install scons
@@ -42,7 +47,7 @@ jobs:
         if: startsWith(matrix.os, 'windows')
       - name: Zlib Dependency
         run: |
-          curl -sLo $HOME/zlib.zip "https://downloads.sourceforge.net/project/libpng/zlib/1.2.8/zlib128-dll.zip?r=&ts=1403402496&use_mirror=hivelocity"
+          curl --retry 9 -sLo $HOME/zlib.zip "https://downloads.sourceforge.net/project/libpng/zlib/1.2.8/zlib128-dll.zip?r=&ts=1403402496&use_mirror=hivelocity"
           mkdir $HOME/zlib
           unzip $HOME/zlib.zip -d $HOME/zlib
       - name: Build

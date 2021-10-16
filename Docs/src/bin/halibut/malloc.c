@@ -130,6 +130,20 @@ word *dup_word_list(word * w)
 }
 
 /*
+ * Free a generic linked list
+ */
+void free_list(void*p)
+{
+  void *s = p, *n;
+  for (; p; p = n)
+  {
+    n = *(void**) p; /* Assmumes next pointer is the first member! */
+    if (n == s) n = NULL; /* Around the ring? */
+    sfree(p);
+  }
+}
+
+/*
  * Free a linked list of words
  */
 void free_word_list(word * w)

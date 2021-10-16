@@ -78,7 +78,7 @@ void CreateToolBar()
     tbbs[i].fsStyle = g_TBBtnsDesc[i].Style;
     tbbs[i].dwData = 0, tbbs[i].iString = 0;
   }
-  SendMessage(g_toolbar.hwnd, TB_ADDBUTTONS, BUTTONCOUNT, (LPARAM) &tbbs);
+  SendMessage(g_toolbar.hwnd, TB_ADDBUTTONS, BUTTONCOUNT, (LPARAM) &tbbs); // Note: TB_ADDBUTTONSW is IE4+
   LoadToolBarImages();
 }
 
@@ -87,7 +87,7 @@ static void LoadToolBarImages()
   HWND hTB = g_toolbar.hwnd;
   // Comctl32.dll version detection
 #ifndef _WIN64
-  HMODULE hMod = GetModuleHandle(_T("comctl32.dll"));
+  HMODULE hMod = LoadSysLibrary("COMCTL32");
   const FARPROC hasCC4_70 = (SupportsW95()) ? GetProcAddress(hMod, "InitCommonControlsEx") : (FARPROC) TRUE; // NT4 shipped with v4.70
   const FARPROC hasCC4_71 = (SupportsWNT4() || SupportsW95()) ? GetProcAddress(hMod, "DllGetVersion") : (FARPROC) TRUE; // IE4 shipped with v4.71
 #else
@@ -102,7 +102,8 @@ static void LoadToolBarImages()
   else
     imgsize = 16, iloffs = 0 * iltypecount;
 
-  if (hasCC4_70)
+  UINT dispbpp = GetScreenBPP(hTB);
+  if (hasCC4_70 && dispbpp > 8)
   {
     // Version 4.70 => Modern toolbar, 24-bit bitmaps
     g_toolbar.imagelist = ImageList_LoadImage(g_sdata.hInstance, MAKEINTRESOURCE(g_TBIL[iloffs+0]), imgsize, 0, RGB(255, 0, 255), IMAGE_BITMAP, LR_CREATEDIBSECTION);
@@ -111,9 +112,6 @@ static void LoadToolBarImages()
     SendMessage(hTB, TB_SETIMAGELIST, 0, (LPARAM) g_toolbar.imagelist);
     SendMessage(hTB, TB_SETDISABLEDIMAGELIST, 0, (LPARAM) g_toolbar.imagelistd);
     SendMessage(hTB, TB_SETHOTIMAGELIST, 0, (LPARAM) g_toolbar.imagelisth);
-
-    if (hasCC4_71)
-      SendMessage(hTB, TB_SETEXTENDEDSTYLE, 0, TBSTYLE_EX_DRAWDDARROWS);
   }
   else 
   {
@@ -123,6 +121,7 @@ static void LoadToolBarImages()
     tbBitmap.nID = IDB_TOOLBAR;
     SendMessage(hTB, TB_ADDBITMAP, IMAGECOUNT, (LPARAM) &tbBitmap);
   }
+  if (hasCC4_71) SendMessage(hTB, TB_SETEXTENDEDSTYLE, 0, TBSTYLE_EX_DRAWDDARROWS);
 }
 
 void UpdateToolBarCompressorButton()
@@ -148,35 +147,18 @@ void UpdateToolBarCompressorButton()
   lstrcat(szBuffer,_T("]"));
 
   SendMessage(g_toolbar.hwnd, TB_CHANGEBITMAP, (WPARAM) IDM_COMPRESSOR, (LPARAM) MAKELPARAM(iBitmap, 0));
-
-  TOOLINFO ti = { sizeof(TOOLINFO), 0 };
-  ti.hwnd = g_toolbar.hwnd;
-  ti.uId = (UINT)TBB_COMPRESSOR;
-  ti.hinst = g_sdata.hInstance;
-  SendMessage(g_tip.tip, TTM_GETTOOLINFO, 0, (LPARAM) (LPTOOLINFO) &ti);
-  ti.lpszText = (LPTSTR)szBuffer;
-  SendMessage(g_tip.tip, TTM_SETTOOLINFO, 0, (LPARAM) (LPTOOLINFO) &ti);
+  SetTooltipText(g_toolbar.hwnd, (UINT) TBB_COMPRESSOR, szBuffer);
 }
 
 void AddToolBarButtonTooltip(UINT idx, int iString)
 {
   TOOLINFO ti;
-  TCHAR   szBuffer[64];
-  RECT rect;
-
-  memset(&ti, 0, sizeof(TOOLINFO));
-  ti.cbSize = sizeof(TOOLINFO);
+  ti.cbSize = SizeOfStruct(ti);
   ti.uFlags = 0;
   ti.hwnd = g_toolbar.hwnd;
-  ti.hinst = g_sdata.hInstance;
   ti.uId = idx;
-  LoadString(g_sdata.hInstance, iString, szBuffer, COUNTOF(szBuffer));
-  ti.lpszText = (LPTSTR) szBuffer;
-  SendMessage(g_toolbar.hwnd, TB_GETITEMRECT, idx, (LPARAM) &rect);
-  ti.rect.left =rect.left;
-  ti.rect.top = rect.top;
-  ti.rect.right = rect.right;
-  ti.rect.bottom = rect.bottom;
+  ti.hinst = g_sdata.hInstance, ti.lpszText = MAKEINTRESOURCE(iString);
+  SendMessage(g_toolbar.hwnd, TB_GETITEMRECT, idx, (LPARAM) &ti.rect);
 
   SendMessage(g_tip.tip, TTM_ADDTOOL, 0, (LPARAM) &ti);
 }
@@ -195,16 +177,21 @@ void EnableToolBarButton(int cmdid, BOOL enabled)
   SendMessage(g_toolbar.hwnd, TB_SETSTATE, cmdid, MAKELPARAM(state, 0));
 }
 
-static UINT IsRTL(HWND hWnd) { return ((UINT) GetWindowLongPtr(hWnd, GWL_EXSTYLE)) & (WS_EX_LAYOUTRTL); } // WS_EX_RIGHT? WS_EX_RTLREADING?
+static bool IsRTL(HWND hWnd) { return (((UINT) GetWindowLongPtr(hWnd, GWL_EXSTYLE)) & (WS_EX_LAYOUTRTL)) != 0; } // WS_EX_RIGHT? WS_EX_RTLREADING?
 
+#ifndef TPM_LAYOUTRTL
+#define TPM_LAYOUTRTL 0x8000 // For MinGW (w32api-4.0.3-1)
+#endif
 static UINT GetToolbarDropdownMenuPos(HWND hTB, UINT Id, POINT&pt)
 {
   RECT r;
   INT_PTR idx = SendMessage(hTB, TB_COMMANDTOINDEX, Id, 0);
+  UINT tpm_align = GetMenuDropAlignment();
+  bool ralign = tpm_align != TPM_LEFTALIGN, rtl = SupportsRTLUI() && IsRTL(hTB);
   SendMessage(hTB, TB_GETITEMRECT, idx, (LPARAM) &r);
   MapWindowPoints(hTB, NULL, (POINT*) &r, 2);
-  pt.x = IsRTL(hTB) ? r.right : r.left, pt.y = r.bottom;
-  return GetSystemMetrics(SM_MENUDROPALIGNMENT) ? TPM_RIGHTALIGN : TPM_LEFTALIGN;
+  pt.x = (rtl ^ ralign) ? r.right : r.left, pt.y = r.bottom;
+  return tpm_align | (rtl ? TPM_LAYOUTRTL : 0) | TPM_VERTICAL;
 }
 
 static void ShowToolbarDropdownMenu(const NMTOOLBAR&nmtb, HWND hNotifyWnd, HMENU hParentMenu, UINT SubMenuId = -1)
@@ -212,7 +199,9 @@ static void ShowToolbarDropdownMenu(const NMTOOLBAR&nmtb, HWND hNotifyWnd, HMENU
   POINT pt;
   HMENU hMenu = SubMenuId == static_cast<UINT>(-1) ? hParentMenu : FindSubMenu(hParentMenu, SubMenuId);
   UINT tpmf = GetToolbarDropdownMenuPos(nmtb.hdr.hwndFrom, nmtb.iItem, pt);
+  SendMessage(g_tip.tip, TTM_ACTIVATE, false, 0);
   TrackPopupMenu(hMenu, tpmf, pt.x, pt.y, 0, hNotifyWnd, NULL);
+  SendMessage(g_tip.tip, TTM_ACTIVATE, true, 0);
 }
 
 void ShowCompressorToolbarDropdownMenu(const NMTOOLBAR&nmtb)

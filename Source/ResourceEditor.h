@@ -129,6 +129,11 @@ public:
   // On POSIX+Unicode GetResource(RT_VERSION,..) is not TCHAR nor WINWCHAR, it is WCHAR/UINT16 (MAKEINTRESOURCEW).
   // If it passes IS_INTRESOURCE we must allow it.
   // Use TCHAR* for real strings. If you need to pass in a WINWCHAR*, make GetResourceW public...
+  template<class T> bool UpdateResourceFromExternal(const T*Type, WORD Name, LANGID Lang, const TCHAR*File, TYPEMANIPULATION Manip = TM_AUTO)
+  {
+    if (sizeof(T) != sizeof(TCHAR) && !IS_INTRESOURCE(Type)) { assert(IS_INTRESOURCE(Type)); return false; }
+    return UpdateResourceFromExternalT((const TCHAR*) Type, Name, Lang, File, Manip);
+  }
   template<class T> bool UpdateResource(const T*Type, WORD Name, LANGID Lang, BYTE*Data, DWORD Size, TYPEMANIPULATION Manip = TM_RAW)
   {
     if (sizeof(T) != sizeof(TCHAR) && !IS_INTRESOURCE(Type)) { assert(IS_INTRESOURCE(Type)); return false; }
@@ -169,7 +174,14 @@ public:
     if (sizeof(T) != sizeof(TCHAR) && !IS_INTRESOURCE(Type)) { assert(IS_INTRESOURCE(Type)); return NULL; }
     return GetFirstResourceT((const TCHAR*) Type, cbData);
   }
+  template<class T> BYTE* ExtractIcoCur(const T*Type, WORD Name, LANGID Lang, size_t&cbData)
+  {
+    if (sizeof(T) != sizeof(TCHAR) && !IS_INTRESOURCE(Type)) { assert(IS_INTRESOURCE(Type)); return NULL; }
+    return ExtractIcoCurT((const TCHAR*) Type, Name, Lang, cbData);
+  }
 
+  CResourceDataEntry* FindResourceT(const TCHAR*RT, const TCHAR*RN, LANGID RL, CResourceDirectoryEntry**pTE, CResourceDirectoryEntry**pNE, CResourceDirectoryEntry**pLE) const;
+  bool  UpdateResourceFromExternalT(const TCHAR* Type, WORD Name, LANGID Lang, const TCHAR*File, TYPEMANIPULATION Manip = TM_AUTO);
   bool  UpdateResourceT   (const TCHAR* szType, WORD szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize, TYPEMANIPULATION Manip = TM_RAW);
   bool  UpdateResourceT   (const TCHAR* szType, WORD szName, LANGID wLanguage, FILE*Data, TYPEMANIPULATION Manip = TM_AUTO);
   bool  DeleteResourceT   (const TCHAR* szType, WORD szName, LANGID wLanguage, TYPEMANIPULATION Manip = TM_RAW);
@@ -178,6 +190,8 @@ public:
   DWORD GetResourceOffsetT(const TCHAR* szType, WORD szName, LANGID wLanguage);
   bool  ResourceExistsT   (const TCHAR* szType, WORD szName, LANGID wLanguage, LANGID*pFoundLanguage = 0);
   BYTE* GetFirstResourceT (const TCHAR* szType, size_t&cbData);
+  BYTE* ExtractIcoCurT    (const TCHAR* szType, WORD szName, LANGID wLanguage, size_t&cbData) const;
+  BYTE* ExtractIcoCur(const CResourceDataEntry&rde, LANGID ChildLang, size_t&cbData) const;
   void  FreeResource(BYTE* pbResource);
 
   // The section name must be in ASCII.
@@ -196,10 +210,16 @@ public:
   );
 
   static const TCHAR* ParseResourceTypeString(const TCHAR*String);
-  static const TCHAR* ParseResourceNameString(const TCHAR*String);
+  static const TCHAR* ParseResourceNameString(const TCHAR*String, bool AllowFirst = false);
   static LANGID ParseResourceLangString(const TCHAR*String);
-  static LANGID ParseResourceTypeNameLangString(const TCHAR**Type, const TCHAR**Name, const TCHAR*Lang);
+  static LANGID ParseResourceTypeNameLangString(const TCHAR**Type, const TCHAR**Name, const TCHAR*Lang, bool AllowFirst = false);
+  static bool CanOpen(const void*Data, size_t Size);
+  static UINT IsResProtocol(const TCHAR*Url);
+  typedef struct { BYTE*Data; size_t cbData, Map[2]; void*FreeThis; const TCHAR*RT, *RN; LANGID RL; } EXTERNAL;
+  static void FreeExternal(EXTERNAL&External);
+  static const TCHAR* MapExternal(const TCHAR*File, TYPEMANIPULATION Manip, EXTERNAL&External);
   static bool EditorSupportsStringNames() { return false; } // UpdateResource/GetResource do not support string names (yet)
+  static bool EditorSupportsCursorPng() { return false; }
 
 private:
   bool  UpdateResourceW   (const WINWCHAR* szType, WINWCHAR* szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize, TYPEMANIPULATION Manip = TM_RAW);
@@ -207,12 +227,15 @@ private:
   int   GetResourceSizeW  (const WINWCHAR* szType, WINWCHAR* szName, LANGID wLanguage);
   DWORD GetResourceOffsetW(const WINWCHAR* szType, WINWCHAR* szName, LANGID wLanguage);
   BYTE* GetFirstResourceW (const WINWCHAR* szType, size_t&cbData);
-  CResourceDataEntry* FindResource(const WINWCHAR* Type, const WINWCHAR* Name, LANGID Language);
-  CResourceDirectoryEntry* FindResourceLanguageDirEntryW(const WINWCHAR* Type, const WINWCHAR* Name, LANGID Language);
-  CResourceDirectoryEntry* FindResourceLanguageDirEntryT(const TCHAR* Type, const TCHAR* Name, LANGID Language);
+  BYTE* ExtractIcoCurW    (const WINWCHAR* szType, const WINWCHAR* szName, LANGID wLanguage, size_t&cbData) const;
+  CResourceDataEntry* FindResource(const WINWCHAR*RT, const WINWCHAR*RN, LANGID RL) const;
+  CResourceDataEntry* FindResourceW(const WINWCHAR*RT, const WINWCHAR*RN, LANGID RL, CResourceDirectoryEntry**ppTE, CResourceDirectoryEntry**ppNE, CResourceDirectoryEntry**ppLE) const;
+  CResourceDirectoryEntry* FindResourceLanguageDirEntryW(const WINWCHAR* RT, const WINWCHAR* RN, LANGID RL) const;
+  CResourceDirectoryEntry* FindResourceLanguageDirEntryT(const TCHAR* RT, const TCHAR* RN, LANGID RL) const;
   bool DeleteIconImages(const CResourceDirectoryEntry& LangDir);
   bool DeleteIconImagesW(const WINWCHAR* OwnerType, WINWCHAR* Name, LANGID LangId);
   bool AddExtraIconFromFile(const WINWCHAR* Type, WINWCHAR* Name, LANGID LangId, BYTE* Data, DWORD Size);
+  CResourceDataEntry* FindIcoCurDataEntry(WORD Type, WORD Id, LANGID PrefLang) const;
 
   BYTE* DupData(CResourceDataEntry*pDE); // Free with FreeResource
   CResourceDirectory* ScanDirectory(PRESOURCE_DIRECTORY rdRoot, PRESOURCE_DIRECTORY rdToScan);
@@ -264,6 +287,7 @@ public:
   CResourceDirectoryEntry(const WINWCHAR* szName, CResourceDataEntry* rdeData);
   virtual ~CResourceDirectoryEntry();
 
+  const WINWCHAR* GetNameOrId() const { return HasName() ? GetName() : (WINWCHAR*)(size_t) GetId(); }
   bool HasName() const;
   const WINWCHAR* GetName() const;
   int GetNameLength() const;
@@ -291,13 +315,13 @@ public:
   CResourceDataEntry(BYTE* pbData, DWORD dwSize, DWORD dwCodePage = 0, DWORD dwOffset = DWORD(-1));
   ~CResourceDataEntry();
 
-  BYTE* GetData();
+  BYTE* GetData() const;
   void SetData(BYTE* pbData, DWORD dwSize);
   void SetData(BYTE* pbData, DWORD dwSize, DWORD dwCodePage);
 
-  DWORD GetSize();
-  DWORD GetCodePage();
-  DWORD GetOffset();
+  DWORD GetSize() const;
+  DWORD GetCodePage() const;
+  DWORD GetOffset() const;
 
   ULONG_PTR m_ulWrittenAt;
 

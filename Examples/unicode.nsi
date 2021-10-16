@@ -1,5 +1,4 @@
-﻿; Unicode is not enabled by default
-; Unicode installers will not be able to run on Windows 9x!
+﻿; Unicode installers will not be able to run on Windows 9x!
 Unicode true
 
 Name "Unicode Games"

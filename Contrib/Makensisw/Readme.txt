@@ -5,10 +5,8 @@ MakeNSISW - MakeNSIS Windows Wrapper
 
 About MakeNSISW
 ---------------
-MakeNSISW is a wrapper for the MakeNSIS that is distributed with
-NSIS (http://www.nullsoft.com/free/nsis/).  MakeNSISW allows you 
-to compile NSIS scripts using a Windows GUI interface.  To install
-MakeNSISW, compile the source using Visual C++ or Mingw.
+MakeNSISW is a wrapper for the NSIS compiler (MakeNSIS).
+MakeNSISW allows you to compile NSIS scripts using a Windows GUI interface.
 
 
 Requirements
@@ -31,18 +29,21 @@ For the options, please see the MakeNSIS documentation.
 
 Shortcut Keys
 -------------
-Ctrl+A: Select All text
+Ctrl+A: Select all text
 Ctrl+B: Open Script Folder
 Ctrl+C: Copy selected text
-Ctrl+D: Opens the Define Symbols dialog
-Ctrl+E: Edits the script
+Ctrl+D: Open the Define Symbols dialog
+Ctrl+E: Edit the script
 Ctrl+F: Find text
+Ctrl+K: Abort compiler
 Ctrl+L: Load a script
-Ctrl+R: Recompiles the script
-Ctrl+T: Tests the installer
-Ctrl+W: Clear Log Window
-Alt+X: Exits the application
+Ctrl+R, F7: Recompile the script
+Ctrl+T, Ctrl+F5: Test the installer
+Ctrl+W: Clear log window
+Ctrl+<+|-|0>: Zoom log window
+Alt+X: Exit the application
 F1: View Documentation
+F5: Recompile and Test
 
 
 Version History
@@ -214,6 +215,12 @@ Version History
 2.4
 - Added Lookup tool
 - Use Consolas font if it exists
+
+2.4.1
+- Close button transforms to Abort when appropriate
+- Prevent user from modifying the log
+- Log zoom
+
 
 Copyright Information
 ---------------------

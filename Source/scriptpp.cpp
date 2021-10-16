@@ -607,17 +607,19 @@ int CEXEBuild::pp_getversion(int which_token, LineParser&line)
 {
   const bool tlb = TOK_P_GETTLBVERSION == which_token;
   const TCHAR *cmdname = tlb ? _T("!gettlbversion") : _T("!getdllversion"), *path;
-  DWORD ti = 1, flags = tlb ? PPGVHF_TLB : 0, low, high;
+  DWORD ti = 1, flags = tlb ? PPGVHF_TLB : 0, low, high, prod = 0;
   for (;; ++ti)
   {
     if (!_tcsicmp(line.gettoken_str(ti), _T("/noerrors")))
       flags |= PPGVHF_NOERRORS;
     else if (!_tcsicmp(line.gettoken_str(ti), _T("/packed")))
       flags |= PPGVHF_PACKED;
+    else if (!_tcsicmp(line.gettoken_str(ti), _T("/productversion")))
+      ++prod;
     else
       break;
   }
-  if ((tlb ? GetTLBVersion : GetDLLVersion)(path = line.gettoken_str(ti), high, low)) flags |= PPGVHF_VALID;
+  if ((tlb ? GetTLBVersion : GetDLLVersion)(path = line.gettoken_str(ti), high, low, !!prod)) flags |= PPGVHF_VALID;
   return pp_getversionhelper(cmdname, path, line.gettoken_str(ti+1), high, low, flags);
 }
 
@@ -1058,8 +1060,15 @@ template<class T> void slist_append(T&list, T&item)
   (prev ? prev->next : list) = item;
 }
 
-int CEXEBuild::pp_finalize(LineParser&line)
+int CEXEBuild::pp_finalize(int which_token, LineParser&line)
 {
+#ifndef NSIS_CONFIG_UNINSTALL_SUPPORT
+  if (which_token == TOK_P_UNINSTFINALIZE)
+  {
+    ERROR_MSG(_T("Error: %") NPRIs _T(" specified, %") NPRIns _T(" not defined.\n"), line.gettoken_str(0), "NSIS_CONFIG_UNINSTALL_SUPPORT");
+    return PS_ERROR;
+  }
+#endif
   TCHAR* cmdstr = line.gettoken_str(1);
   int validparams = false;
   postbuild_cmd *newcmd = postbuild_cmd::make(cmdstr, line.gettoken_enum(2, _T("<\0>\0<>\0=\0ignore\0")), line.gettoken_int(3, &validparams));
@@ -1067,8 +1076,8 @@ int CEXEBuild::pp_finalize(LineParser&line)
     newcmd->cmpop = 4, validparams = true; // Just a command, ignore the exit code
   if (newcmd->cmpop == -1 || !validparams)
     PRINTHELP();
-  slist_append(postbuild_cmds, newcmd);
-  SCRIPT_MSG(_T("!finalize: \"%") NPRIs _T("\"\n"), cmdstr);
+  slist_append(which_token == TOK_P_UNINSTFINALIZE ? postubuild_cmds : postbuild_cmds, newcmd);
+  SCRIPT_MSG(_T("!%") NPRIns _T("finalize: \"%") NPRIs _T("\"\n"), which_token == TOK_P_UNINSTFINALIZE ? "uninst" : "", cmdstr);
   return PS_OK;
 }
 
