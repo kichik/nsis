@@ -6,6 +6,7 @@ examples = Split("""
 	FileFunc.nsi
 	FileFuncTest.nsi
 	gfx.nsi
+	AppGen.nsi
 	install-per-user.nsi
 	install-shared.nsi
 	languages.nsi

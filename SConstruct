@@ -934,6 +934,7 @@ def test_scripts(target, source, env):
 	tdlen = len(env.subst('$TESTDISTDIR'))
 	skipped_tests = env['SKIPTESTS'].split(',')
 	ignored_tests = env['IGNORETESTS'].split(',')
+	skipped_tests += ['Examples' + sep + 'AppGen.nsi'] # Never test this, not a real installer
 
 	compiler = FindMakeNSIS(env, env.subst('$TESTDISTDIR'))
 
