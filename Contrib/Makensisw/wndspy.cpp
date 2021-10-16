@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2020 Anders Kjersem
+// Copyright (C) 2018-2021 Anders Kjersem
 //
 // This file is a part of NSIS.
 //
@@ -95,9 +95,16 @@ static BOOL GetLogicalWindowRect(HWND hWnd, RECT&Rect, HWND hWndCaller)
 }
 
 static HWND GetParentWindow(HWND hWnd)
+{ 
+  HWND r = GetParent(hWnd); // Parent or owner
+  return r != GetWindow(hWnd, GW_OWNER) ? r : NULL;
+}
+
+static HWND GetAncestorRoot(HWND hWnd)
 {
-  HWND hParent = GetAncestor(hWnd, GA_PARENT); // Parent but NOT owner.
-  return hParent == GetParent(hWnd) ? hParent : NULL; // Filter away GetDesktopWindow().
+  if (!SupportsWNT4() && !SupportsW95()) return GetAncestor(hWnd, GA_ROOT);
+  for (HWND hTmp; (hTmp = GetParentWindow(hWnd)); ) hWnd = hTmp;
+  return hWnd;
 }
 
 typedef struct _DIALOGDATA {
@@ -106,6 +113,7 @@ typedef struct _DIALOGDATA {
   int DialogAwarenessContext; // Canonical DPI awareness context
   _DIALOGDATA() : hWndOutline(0) {}
   static struct _DIALOGDATA* Get(HWND hDlg) { return (struct _DIALOGDATA*) GetWindowLongPtr(hDlg, DWLP_USER); }
+  static void Set(HWND hDlg, void*pDD) { SetWindowLongPtr(hDlg, DWLP_USER, (LONG_PTR) pDD); }
 } DIALOGDATA;
 
 typedef struct {
@@ -281,7 +289,7 @@ static INT_PTR CALLBACK SpyDlgProc(HWND hDlg, UINT Msg, WPARAM WParam, LPARAM LP
   switch(Msg)
   {
   case WM_INITDIALOG:
-    SetWindowLongPtr(hDlg, DWLP_USER, (LONG_PTR) (pDD = (DIALOGDATA*) LParam));
+    DIALOGDATA::Set(hDlg, (pDD = (DIALOGDATA*) LParam));
     CenterOnParent(hDlg);
     // On >= 10FU1703 we are PMv2 and Windows scales our dialog and child controls.
     // On >= 10FU1607 && < 10FU1703 we are System aware but try to upgrade this thread to 
@@ -318,7 +326,7 @@ static INT_PTR CALLBACK SpyDlgProc(HWND hDlg, UINT Msg, WPARAM WParam, LPARAM LP
         break;
 
       pDD->hWndTarget = hWnd;
-      if (GetAncestor(hWnd, GA_ROOT) == hDlg)
+      if (GetAncestorRoot(hWnd) == hDlg)
         hWnd = 0;
 
       ShowWindowInfo(hDlg, hWnd);
@@ -335,8 +343,11 @@ static INT_PTR CALLBACK SpyDlgProc(HWND hDlg, UINT Msg, WPARAM WParam, LPARAM LP
       SetWindowPos(pDD->hWndOutline, HWND_BOTTOM, -32767, -32767, 1, 1, SWP_SHOWWINDOW|SWP_NOCOPYBITS|SWP_NOACTIVATE|SWP_NOOWNERZORDER); // MSDN says LogicalToPhysicalPoint requires a visible window
       RECT r;
       GetPhysicalWindowRect(pDD->hWndTarget, r, hDlg), PhysicalToLogical(pDD->hWndOutline, r, hDlg);
-      if (GetAncestor(pDD->hWndTarget, GA_ROOT) != hDlg)
-        SetWindowPos(pDD->hWndOutline, HWND_TOPMOST, r.left, r.top, r.right - r.left, r.bottom - r.top, SWP_SHOWWINDOW|SWP_NOCOPYBITS|SWP_NOACTIVATE|SWP_NOOWNERZORDER);
+      if (GetAncestorRoot(pDD->hWndTarget) != hDlg)
+      {
+        SetWindowPos(pDD->hWndOutline, HWND_TOPMOST, r.left, r.top, r.right - r.left, r.bottom - r.top, SWP_HIDEWINDOW|SWP_NOCOPYBITS|SWP_NOACTIVATE|SWP_NOOWNERZORDER);
+        ShowWindow(pDD->hWndOutline, SW_SHOW); // To avoid a small Windows redraw bug, don't show the window until after it has the correct size
+      }
       SetTimer(hDlg, TID_OUTLINE, 2 * 1000, NULL);
     }
     ReleaseCapture();

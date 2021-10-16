@@ -3,7 +3,7 @@
  * 
  * This file is a part of NSIS.
  * 
- * Copyright (C) 1999-2020 Nullsoft and Contributors
+ * Copyright (C) 1999-2021 Nullsoft and Contributors
  * 
  * Licensed under the zlib/libpng license (the "License");
  * you may not use this file except in compliance with the License.
@@ -723,6 +723,9 @@ typedef DWORDLONG ULONGLONG,*PULONGLONG;
 #ifndef DEFAULT_CHARSET
 #  define DEFAULT_CHARSET 1
 #endif
+#ifndef SHIFTJIS_CHARSET
+#  define SHIFTJIS_CHARSET 128
+#endif
 #ifndef OUT_DEFAULT_PRECIS
 #  define OUT_DEFAULT_PRECIS 0
 #endif
@@ -759,6 +762,9 @@ typedef DWORDLONG ULONGLONG,*PULONGLONG;
 #  define FILE_ATTRIBUTE_NORMAL 0x00000080
 #  define FILE_ATTRIBUTE_TEMPORARY 0x00000100
 #  define FILE_ATTRIBUTE_OFFLINE 0x00001000
+#endif
+#ifndef FILE_ATTRIBUTE_NOT_CONTENT_INDEXED
+#  define FILE_ATTRIBUTE_NOT_CONTENT_INDEXED 0x002000
 #endif
 
 

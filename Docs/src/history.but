@@ -24,6 +24,8 @@ Unicode is now the default.
 
 \b Updated Corsican\#{(forum)} and Japanese (maboroshin PR\#{github.com/maboroshin})
 
+\b Fixed clipped Chinese text (\W{http://sf.net/p/nsis/bugs/1261}{bug #1261})
+
 \H{v3.06.1} 3.06.1
 
 Released on July 31st, 2020

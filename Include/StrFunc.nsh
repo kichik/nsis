@@ -6,6 +6,15 @@ o-----------------------------------------------------------------------------o
 | <cevo_deguix@yahoo.com.br>                   -------------------------------|
 |                                                                             |
 |    This header file contains NSIS functions for string manipulation.        |
+|                                                                    ---------|
+| !include "StrFunc.nsh"                                            / Example |
+| ${Using:StrFunc} StrRep                                          -----------|
+|                                                                             |
+| Section                                                                     |
+| ${StrRep} $0 "Hello world!" "world" "everyone"                              |
+| MessageBox mb_ok $0                                                         |
+| SectionEnd                                                                  |
+|                                                                             |
 o-----------------------------------------------------------------------------o
 */
 
@@ -61,7 +70,9 @@ o-----------------------------------------------------------------------------o
       !verbose push 4
     !endif
     !ifndef ${Name}_INCLUDED
-      ${${Name}} ; Invoke !insertmacro STRFUNC_MAKEFUNC
+      !ifndef STRFUNC_USECALLARTIFICIALFUNCTION
+        ${${Name}} ; Invoke !insertmacro STRFUNC_MAKEFUNC
+      !endif
     !endif
     !if "${STRFUNC_VERBOSITY}" > 4
       !verbose pop
@@ -84,12 +95,15 @@ o-----------------------------------------------------------------------------o
       !define `${Name}` `!insertmacro STRFUNC_CALL_${Name} "${un}" `
       !define `Un${Name}` `!insertmacro STRFUNC_CALL_${Name} "${un}" `
     !else
-      !define `${Name}` `!insertmacro STRFUNC_MAKEFUNC ${Name} ""`
-      !define `Un${Name}` `!insertmacro STRFUNC_MAKEFUNC ${Name} Un`
+      !define `${Name}` `!insertmacro STRFUNC_MAKEFUNC ${Name} "" #`
+      !define `Un${Name}` `!insertmacro STRFUNC_MAKEFUNC ${Name} Un #`
     !endif
   !macroend
 
   !macro STRFUNC_MAKEFUNC basename un
+    !ifndef __GLOBAL__
+      !error "You forgot ${U+24}{Using:StrFunc} ${un}${basename}"
+    !endif
     !insertmacro STRFUNC_MAKEFUNC_${basename}
   !macroend
 

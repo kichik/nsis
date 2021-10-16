@@ -274,13 +274,13 @@ Standard predefines that contain information about the current code scope.
 Defined in the global scope.
 
 \c Section test
-\c   !ifdef ${__GLOBAL__}
+\c   !ifdef __GLOBAL__
 \c     !error "this shouldn't be here!"
 \c   !endif
 \c SectionEnd
 \c
 \c PageEx instfiles
-\c   !ifdef ${__GLOBAL__}
+\c   !ifdef __GLOBAL__
 \c     !error "this shouldn't be here!"
 \c   !endif
 \c PageExEnd

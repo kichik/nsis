@@ -60,6 +60,9 @@ HMODULE LoadSysLibrary(LPCSTR Mod)
   return LoadLibrary(path);
 }
 
+#ifdef DECLSPEC_NOINLINE
+DECLSPEC_NOINLINE
+#endif
 FARPROC GetSysProcAddr(LPCSTR Mod, LPCSTR FuncName)
 {
   return GetProcAddress(LoadSysLibrary(Mod), FuncName);
@@ -436,7 +439,7 @@ static DWORD RegReadString(HKEY hKey, LPCTSTR Name, LPTSTR Buf, DWORD cbBufSize)
   return ec;
 }
 
-static DWORD RegOpenKeyForReading(HKEY hRoot, LPCTSTR SubKey, HKEY*pKey) {
+DWORD RegOpenKeyForReading(HKEY hRoot, LPCTSTR SubKey, HKEY*pKey) {
   return RegOpenKeyEx(hRoot, SubKey, 0, KEY_READ, pKey);
 }
 
@@ -519,9 +522,9 @@ void SaveWindowPos(HWND hwnd) {
   HKEY hKey;
   WINDOWPLACEMENT p;
   p.length = sizeof(p);
-  GetWindowPlacement(hwnd, &p);
-  if (CreateRegSettingsKey(hKey)) {
-    RegSetValueEx(hKey, REGLOC, 0, REG_BINARY, (LPBYTE)&p, sizeof(p));
+  if (!GetWindowPlacement(hwnd, &p)) p.length = 0;
+  if (p.length && CreateRegSettingsKey(hKey)) {
+    RegSetValueEx(hKey, REGLOC, 0, REG_BINARY, (LPBYTE)&p, p.length);
     RegCloseKey(hKey);
   }
 }
@@ -1116,6 +1119,20 @@ HFONT CreateFontHelper(INT_PTR Data, int Height, DWORD p1, LPCTSTR Face)
     Height = -MulDiv(Height, dpi, 72);
   }
   return CreateFont(Height, 0, 0, 0, w, FALSE, FALSE, FALSE, cs, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, paf, Face);
+}
+
+BOOL CALLBACK FontExistsCallback(const LOGFONT*pLF, const TEXTMETRIC*pTM, DWORD Type, LPARAM Cookie)
+{
+  *((BOOL*) Cookie) = TRUE;
+  return FALSE;
+}
+BOOL FontExists(LPCTSTR Face)
+{
+  BOOL ret = FALSE;
+  HDC hDC = GetDC(0);
+  EnumFonts(hDC, Face, FontExistsCallback, (LPARAM) &ret);
+  ReleaseDC(0, hDC);
+  return ret;
 }
 
 BOOL FillRectColor(HDC hDC, const RECT &Rect, COLORREF Color)

@@ -45,6 +45,7 @@ NFINDREPLACE g_find;
 TCHAR g_findbuf[128];
 extern NTOOLBAR g_toolbar;
 void* g_ModalDlgData;
+BYTE g_MiniCommand = false;
 
 NSIS_ENTRYPOINT_SIMPLEGUI
 int WINAPI _tWinMain(HINSTANCE hInst,HINSTANCE hOldInst,LPTSTR CmdLineParams,int ShowCmd) {
@@ -86,12 +87,12 @@ int WINAPI _tWinMain(HINSTANCE hInst,HINSTANCE hOldInst,LPTSTR CmdLineParams,int
     return 1;
   }
   ResetObjects();
+  HACCEL haccel = LoadAccelerators(g_sdata.hInstance, MAKEINTRESOURCE(IDK_ACCEL));
   HWND hDialog = CreateDialog(g_sdata.hInstance,MAKEINTRESOURCE(DLG_MAIN),0,DialogProc);
-  if (!hDialog) {
+  if (!hDialog && !g_MiniCommand) {
     MessageBox(0,DLGERROR,ERRBOXTITLE,MB_ICONEXCLAMATION|MB_OK|MB_TASKMODAL);
     return 1;
   }
-  HACCEL haccel = LoadAccelerators(g_sdata.hInstance, MAKEINTRESOURCE(IDK_ACCEL));
   MSG  msg;
   int status;
   while ((status=GetMessage(&msg,0,0,0))!=0) {
@@ -146,22 +147,21 @@ static void AddScriptCmdArgs(const TCHAR *arg)
   GlobalUnlock(g_sdata.script_cmd_args);
 }
 
-static void ProcessCommandLine()
+enum { CMD_PICKCOMP = 0x0001, CMD_SPY = 0x0080, CMD_LOOKUP = 0x8000 };
+static UINT ProcessCommandLine()
 {
   TCHAR **argv;
-  int i, j;
+  int i, j, retflags = 0;
   int argc = SetArgv((TCHAR *)GetCommandLine(), &argv);
   if (argc > 1) {
     for (i = 1; i < argc; i++)
     {
-      if (!StrCmpNI(argv[i], _T("/XSetCompressor "), lstrlen(_T("/XSetCompressor "))))
+      if (!lstrcmpi(argv[i], _T("/Spy"))) retflags |= CMD_SPY;
+      else if (!lstrcmpi(argv[i], _T("/Lookup"))) retflags |= CMD_LOOKUP;
+      else if (!StrCmpNI(argv[i], _T("/XSetCompressor "), COUNTOF("/XSetCompressor ") - !0))
       {
-        TCHAR *p = argv[i] + lstrlen(_T("/XSetCompressor "));
-        if(!StrCmpNI(p,_T("/FINAL "), lstrlen(_T("/FINAL "))))
-        {
-          p += lstrlen(_T("/FINAL "));
-        }
-
+        TCHAR *p = argv[i] + lstrlen(_T("/XSetCompressor ")), cchSlashFinalSpace = COUNTOF("/FINAL ") - !0;
+        if (!StrCmpNI(p,_T("/FINAL "), cchSlashFinalSpace)) p += cchSlashFinalSpace;
         while (*p == _T(' ')) p++;
 
         for (j = (int) COMPRESSOR_SCRIPT + 1; j < (int) COMPRESSOR_BEST; j++)
@@ -174,7 +174,7 @@ static void ProcessCommandLine()
       }
       else if (!lstrcmpi(argv[i], _T("/ChooseCompressor")))
       {
-        g_sdata.userSelectCompressor = TRUE;
+        retflags |= CMD_PICKCOMP;
       }
       else if (argv[i][0] == _T('-') || argv[i][0] == _T('/'))
       {
@@ -189,6 +189,7 @@ static void ProcessCommandLine()
     }
   }
   MemSafeFree(argv);
+  return retflags;
 }
 
 DWORD CALLBACK SaveFileStreamCallback(DWORD_PTR dwCookie, LPBYTE pbBuff, LONG cb, LONG *pcb)
@@ -261,7 +262,6 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
       // Altered by Darren Owen (DrO) on 29/9/2003
       // Added in receiving of mouse and key events from the richedit control
       SendDlgItemMessage(hwndDlg,IDC_LOGWIN,EM_SETEVENTMASK,(WPARAM)NULL,ENM_SELCHANGE|ENM_MOUSEEVENTS|ENM_KEYEVENTS);
-      DragAcceptFiles(g_sdata.hwnd,FALSE);
       g_sdata.menu = GetMenu(g_sdata.hwnd);
       g_sdata.fileSubmenu = FindSubMenu(g_sdata.menu, IDM_FILE);
       g_sdata.editSubmenu = FindSubMenu(g_sdata.menu, IDM_EDIT);
@@ -270,22 +270,43 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
       CreateToolBar();
       InitTooltips(g_sdata.hwnd);
       SetDlgItemText(g_sdata.hwnd,IDC_VERSION,g_sdata.branding);
-      HFONT hFont = CreateFontPt(hwndDlg,8,FW_NORMAL,FIXED_PITCH|FF_DONTCARE,DEFAULT_CHARSET,_T("Courier New"));
+      LPCTSTR fontname = _T("Courier New"), fontconsolas = _T("Consolas");
+      BYTE fontsize = 8, fontcharset = DEFAULT_CHARSET, suppwin4 = SupportsWNT4() || SupportsW9X();
+      if (FontExists(fontconsolas))
+      {
+        fontname = fontconsolas, ++fontsize;
+      }
+      else if (SupportsW2000() && GetACP() == 932) // According to older Inno, Courier New cannot display Japanese on < WinXP
+      {
+        LPCWSTR msgothlocalutf = L"\xff2d\xff33 \xff30\x30b4\x30b7\x30c3\x30af";
+        const CHAR msgothlocal932[] = { -126, 'l', -126, 'r', ' ', -125, 'S', -125, 'V', -125, 'b', -125, 'N', '\0' };
+        fontcharset = SHIFTJIS_CHARSET, ++fontsize;
+        fontname = _T("MS Gothic"); // Win2000 can handle this, downlevel cannot
+        if (suppwin4 && !FontExists(fontname)) fontname = sizeof(TCHAR) > 1 ? (LPCTSTR) msgothlocalutf : (LPCTSTR) msgothlocal932;
+      }
+      HFONT hFont = CreateFontPt(hwndDlg,fontsize,FW_NORMAL,FIXED_PITCH|FF_DONTCARE,fontcharset,fontname);
       SendDlgItemMessage(hwndDlg,IDC_LOGWIN,WM_SETFONT,(WPARAM)hFont,0);
-      RestoreWindowPos(g_sdata.hwnd);
-      RestoreCompressor();
-      SetScript(_T(""));
       g_sdata.compressor = COMPRESSOR_NONE_SELECTED;
-      g_sdata.userSelectCompressor = FALSE;
+      SetScript(_T(""));
+      RestoreCompressor();
       ToolBarSizeChanged(hwndDlg);
 
-      ProcessCommandLine();
+      UINT docmd = ProcessCommandLine();
+      if ((docmd & (CMD_SPY|CMD_LOOKUP)))
+      {
+        INT_PTR r = ((docmd & CMD_LOOKUP) ? ShowLookupDialog : ShowWndSpy)(0);
+        g_sdata.hwnd = NULL; // Don't save window pos
+        g_MiniCommand++;
+        return SendMessage(hwndDlg, WM_CLOSE, r, r);
+      }
+
+      RestoreWindowPos(g_sdata.hwnd);
 
       if(g_sdata.compressor == COMPRESSOR_NONE_SELECTED) {
         SetCompressor(g_sdata.default_compressor);
       }
 
-      if(g_sdata.userSelectCompressor) {
+      if(docmd & CMD_PICKCOMP) {
         if (DialogBox(g_sdata.hInstance,MAKEINTRESOURCE(DLG_COMPRESSOR),g_sdata.hwnd,API_cast<DLGPROC>(CompressorProc))) {
           EnableItems(g_sdata.hwnd);
           return TRUE;
@@ -306,7 +327,6 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
     }
     case WM_DESTROY:
     {
-      DragAcceptFiles(g_sdata.hwnd, FALSE);
       SaveSymbols();
       SaveMRUList();
       SaveWindowPos(g_sdata.hwnd);
@@ -317,10 +337,11 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
       PostQuitMessage(0);
       return TRUE;
     }
-    case WM_CLOSE:
+    case WM_CLOSE: tryquitapp:
     {
       if (!g_sdata.thread) {
         DestroyWindow(hwndDlg);
+        PostQuitMessage((int) wParam);
       }
       return TRUE;
     }
@@ -685,11 +706,8 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
           DialogBox(g_sdata.hInstance,MAKEINTRESOURCE(DLG_SETTINGS),g_sdata.hwnd,API_cast<DLGPROC>(SettingsProc));
           return TRUE;
         }
-        case IDM_WNDSPY:
-        {
-          extern INT_PTR ShowWndSpy(HWND hOwner);
-          return ShowWndSpy(g_sdata.hwnd);
-        }
+        case IDM_WNDSPY: return ShowWndSpy(hwndDlg);
+        case IDM_LOOKUP: return ShowLookupDialog(hwndDlg);
         case IDM_GUIDGEN:
         {
           GUID guid;
@@ -726,12 +744,8 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
         }
         case IDCANCEL:
         case IDM_EXIT:
-        {
-          if (!g_sdata.thread) {
-            DestroyWindow(g_sdata.hwnd);
-          }
-          return TRUE;
-        }
+          wParam = 0;
+          goto tryquitapp;
         case IDM_CANCEL:
         {
           SetEvent(g_sdata.sigint_event);

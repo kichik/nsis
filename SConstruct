@@ -102,8 +102,8 @@ default_doctype = 'html'
 if defenv.WhereIs('hhc', os.environ['PATH']):
 	default_doctype = 'chm'
 
-from time import strftime, gmtime
-cvs_version = strftime('%d-%b-%Y.cvs', gmtime())
+import time
+cvs_version = time.strftime('%d-%b-%Y.cvs', time.gmtime(int(os.environ.get('SOURCE_DATE_EPOCH', time.time()))))
 
 opts = Variables()
 

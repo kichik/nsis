@@ -2,7 +2,7 @@
  * substart.c - This app runs the executable of the same name in the 'Bin' 
  *              sub-folder and passes along the command line options.
  *
- * Copyright (c) 2013-2020 Anders Kjersem
+ * Copyright (c) 2013-2021 Anders Kjersem
  *
  * Licensed under the zlib/libpng license (the "License");
  * you may not use this file except in compliance with the License.

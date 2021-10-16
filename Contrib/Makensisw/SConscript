@@ -6,6 +6,7 @@ files = Split("""
 	utils.cpp
 	version.cpp
 	update.cpp
+	lookup.cpp
 	wndspy.cpp
 """)
 
@@ -42,6 +43,7 @@ libs = Split("""
 	wininet
 	winmm
 	kernel32
+	ole32
 """)
 
 docs = Split("""
@@ -58,7 +60,7 @@ BuildUtil(
 	res = res,
 	resources = resources,
 	entry = None,
-	defines = ['RELEASE=2.3.6'],
+	defines = ['RELEASE=2.4'],
 	docs = docs,
 	root_util = True
 )

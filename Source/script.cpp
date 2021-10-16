@@ -3,7 +3,7 @@
  * 
  * This file is a part of NSIS.
  * 
- * Copyright (C) 1999-2020 Nullsoft and Contributors
+ * Copyright (C) 1999-2021 Nullsoft and Contributors
  * 
  * Licensed under the zlib/libpng license (the "License");
  * you may not use this file except in compliance with the License.
@@ -3151,7 +3151,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         int a=line.gettoken_enum(to+4,_T("SW_SHOWDEFAULT\0SW_SHOWNORMAL\0SW_SHOWMAXIMIZED\0SW_SHOWMINIMIZED\0SW_HIDE\0SW_SHOW\0SW_SHOWNA\0SW_SHOWMINNOACTIVE\0"));
         if (a >= 0) ent.offsets[3]=tab[a]; else PRINTHELP()
       }
-      tstring detail=tstring(verb)+(_T(" ")[!*verb])+tstring(file);
+      tstring detail=tstring(verb) + (*verb ? _T(" ") : _T("")) + tstring(file);
       ent.offsets[5]=add_string(detail.c_str());
       SCRIPT_MSG(_T("%") NPRIs _T(": %") NPRIs _T(": \"%") NPRIs _T("\" \"%") NPRIs _T("\" %") NPRIs _T("\n"),cnam,verb,file,params,line.gettoken_str(to+4));
       DefineInnerLangString(NLF_EXEC_SHELL);
@@ -3862,20 +3862,14 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       {
         #define MBD(x) {x,_T(#x)},
         struct { int id; const TCHAR *str; } list[] = {
-          MBD(FILE_ATTRIBUTE_NORMAL)
-          MBD(FILE_ATTRIBUTE_ARCHIVE)
-          MBD(FILE_ATTRIBUTE_HIDDEN)
-          MBD(FILE_ATTRIBUTE_OFFLINE)
-          MBD(FILE_ATTRIBUTE_READONLY)
-          MBD(FILE_ATTRIBUTE_SYSTEM)
-          MBD(FILE_ATTRIBUTE_TEMPORARY)
-          {FILE_ATTRIBUTE_NORMAL,_T("NORMAL")}, // Short alias
-          {FILE_ATTRIBUTE_ARCHIVE,_T("ARCHIVE")},
-          {FILE_ATTRIBUTE_HIDDEN,_T("HIDDEN")},
-          {FILE_ATTRIBUTE_OFFLINE,_T("OFFLINE")},
-          {FILE_ATTRIBUTE_READONLY,_T("READONLY")},
-          {FILE_ATTRIBUTE_SYSTEM,_T("SYSTEM")},
-          {FILE_ATTRIBUTE_TEMPORARY,_T("TEMPORARY")},
+          MBD(FILE_ATTRIBUTE_NORMAL) {FILE_ATTRIBUTE_NORMAL,_T("NORMAL")}, // Short alias
+          MBD(FILE_ATTRIBUTE_ARCHIVE) {FILE_ATTRIBUTE_ARCHIVE,_T("ARCHIVE")},
+          MBD(FILE_ATTRIBUTE_HIDDEN) {FILE_ATTRIBUTE_HIDDEN,_T("HIDDEN")},
+          MBD(FILE_ATTRIBUTE_OFFLINE) {FILE_ATTRIBUTE_OFFLINE,_T("OFFLINE")},
+          MBD(FILE_ATTRIBUTE_READONLY) {FILE_ATTRIBUTE_READONLY,_T("READONLY")},
+          MBD(FILE_ATTRIBUTE_SYSTEM) {FILE_ATTRIBUTE_SYSTEM,_T("SYSTEM")},
+          MBD(FILE_ATTRIBUTE_TEMPORARY) {FILE_ATTRIBUTE_TEMPORARY,_T("TEMPORARY")},
+          MBD(FILE_ATTRIBUTE_NOT_CONTENT_INDEXED) {FILE_ATTRIBUTE_NOT_CONTENT_INDEXED,_T("NOTINDEXED")},
           {FILE_ATTRIBUTE_NORMAL,_T("0")},
         };
         #undef MBD

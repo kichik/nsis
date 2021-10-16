@@ -2,7 +2,7 @@
 //
 // This file is a part of Unicode NSIS.
 //
-// Copyright (C) 2007-2020 Jim Park
+// Copyright (C) 2007-2021 Jim Park
 //
 // Licensed under the zlib/libpng license (the "License");
 // you may not use this file except in compliance with the License.

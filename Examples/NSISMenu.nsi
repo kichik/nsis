@@ -206,7 +206,7 @@ ${SetCtlColors} $0 ${CT_PAGE} ${CB_PAGE}
 ;"Project Tracker" "http://sourceforge.net/tracker/?group_id=22049"
 !insertmacro CreateSimpleLink "Bug Tracker" "http://sourceforge.net/tracker/?group_id=22049&atid=373085" ${UX_W}
 !insertmacro CreateSimpleLink "Stackoverflow" "http://stackoverflow.com/questions/tagged/nsis" ${UX_W}
-!insertmacro CreateSimpleLink "Slack collaboration hub" "${WWW}/r/Slack" ${UX_W}
+!insertmacro CreateSimpleLink "Chat" "${WWW}/r/Chat" ${UX_W}
 ;insertmacro CreateSimpleLink "IRC channel" "irc://irc.landoleet.org/nsis" ${UX_W}
 ;"Pastebin" "http://nsis.pastebin.com/index/1FtyKP89"
 ;"Search" "http://www.google.com/cse/home?cx=005317984255499820329:c_glv1-6a6a"

@@ -35,7 +35,9 @@ jobs:
           $arguments = "/S /D=$HOME\cppunit"
           Start-Process ./cppunit-msvc-1.12.1.exe $arguments -NoNewWindow -Wait
           pip install scons
-          choco install html-help-workshop zip
+          choco install zip
+          # microsoft removed the download of htmlhelp.exe -- https://chocolatey.org/packages/html-help-workshop#comment-5245282888
+          #choco install html-help-workshop 
           echo "${Env:ProgramFiles(x86)}\HTML Help Workshop" >> $Env:GITHUB_PATH
         if: startsWith(matrix.os, 'windows')
       - name: Zlib Dependency
@@ -70,6 +72,7 @@ jobs:
         if: matrix.nightly == 'nightly' && github.ref == 'refs/heads/master'
 
   nightly:
+    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-20.04
     needs: [build]
     steps:

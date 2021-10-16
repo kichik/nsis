@@ -291,6 +291,14 @@ Header file for creating custom installer pages with nsDialogs
 !define __NSD_RadioButton_STYLE ${DEFAULT_STYLES}|${WS_TABSTOP}|${BS_TEXT}|${BS_VCENTER}|${BS_AUTORADIOBUTTON}|${BS_MULTILINE}
 !define __NSD_RadioButton_EXSTYLE 0
 
+!define __NSD_FirstRadioButton_CLASS ${__NSD_RadioButton_CLASS}
+!define __NSD_FirstRadioButton_STYLE ${DEFAULT_STYLES}|${WS_TABSTOP}|${WS_GROUP}|${BS_TEXT}|${BS_VCENTER}|${BS_AUTORADIOBUTTON}|${BS_MULTILINE}
+!define __NSD_FirstRadioButton_EXSTYLE ${__NSD_RadioButton_EXSTYLE}
+
+!define __NSD_AdditionalRadioButton_CLASS ${__NSD_RadioButton_CLASS}
+!define __NSD_AdditionalRadioButton_STYLE ${DEFAULT_STYLES}|${BS_TEXT}|${BS_VCENTER}|${BS_AUTORADIOBUTTON}|${BS_MULTILINE}
+!define __NSD_AdditionalRadioButton_EXSTYLE ${__NSD_RadioButton_EXSTYLE}
+
 !define __NSD_Text_CLASS EDIT
 !define __NSD_Text_STYLE ${DEFAULT_STYLES}|${WS_TABSTOP}|${ES_AUTOHSCROLL}
 !define __NSD_Text_EXSTYLE ${WS_EX_WINDOWEDGE}|${WS_EX_CLIENTEDGE}
@@ -406,6 +414,8 @@ Header file for creating custom installer pages with nsDialogs
 !insertmacro __NSD_DefineControl GroupBox
 !insertmacro __NSD_DefineControl CheckBox
 !insertmacro __NSD_DefineControl RadioButton
+!insertmacro __NSD_DefineControl FirstRadioButton
+!insertmacro __NSD_DefineControl AdditionalRadioButton
 !insertmacro __NSD_DefineControl Text
 !insertmacro __NSD_DefineControl MLText
 !insertmacro __NSD_DefineControl Password
