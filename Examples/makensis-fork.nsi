@@ -11,6 +11,13 @@
 
 !define /ifndef VERSION 'anonymous-build'
 
+!ifndef LINK_INFO
+  !define LINK_INFO "https://nsis.sourceforge.io/"
+!endif
+!ifndef LINK_HELP
+  !define LINK_HELP "https://nsis.sourceforge.io/Support"
+!endif
+
 ;--------------------------------
 ;Configuration
 
@@ -39,13 +46,17 @@ InstallDir $PROGRAMFILES${BITS}\NSIS
 InstallDirRegKey HKLM Software\NSIS ""
 
 RequestExecutionLevel admin
+ManifestDPIAware true
+ManifestSupportedOS all
 
 ;--------------------------------
 ;Header Files
 
+!include "ModernXL.nsh"
 !include "MUI2.nsh"
 !include "Sections.nsh"
 !include "LogicLib.nsh"
+!include "WinVer.nsh"
 !include "Memento.nsh"
 !include "WordFunc.nsh"
 !include "Util.nsh"
@@ -56,7 +67,7 @@ RequestExecutionLevel admin
 
 ;Names
 Name "NSIS"
-Caption "NSIS ${VERSION}${NAMESUFFIX} Setup"
+Caption "NSIS Setup - ${VERSION}${NAMESUFFIX}"
 
 !define REG_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS"
 
@@ -72,13 +83,17 @@ Caption "NSIS ${VERSION}${NAMESUFFIX} Setup"
 
 !define MUI_HEADERIMAGE
 !define MUI_HEADERIMAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Header\nsis3-branding.bmp"
-!define MUI_WELCOMEFINISHPAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Wizard\nsis3-branding.bmp"
+;!define MUI_WELCOMEFINISHPAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Wizard\nsis3-branding.bmp"
+
+!define MUI_HEADERIMAGE_UNBITMAP "${NSISDIR}\Contrib\Graphics\Header\nsis3-grey.bmp"
+;!define MUI_UNWELCOMEFINISHPAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Wizard\nsis3-grey.bmp"
 
 !define MUI_COMPONENTSPAGE_SMALLDESC
 
 ;Pages
-!define MUI_WELCOMEPAGE_TITLE "Welcome to the NSIS ${VERSION} Setup Wizard"
-!define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of NSIS (Nullsoft Scriptable Install System) ${VERSION}, the next generation of the Windows installer and uninstaller system that doesn't suck and isn't huge.$\r$\n$\r$\nNSIS includes a Modern User Interface, LZMA compression, support for multiple languages and an easy plug-in system.$\r$\n$\r$\n$_CLICK"
+!define /ifndef EXTRA_WELCOME_TEXT ""
+!define MUI_WELCOMEPAGE_TITLE "Welcome to the NSIS Setup Wizard"
+!define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of NSIS (Nullsoft Scriptable Install System), the next generation of the Windows installer and uninstaller system that doesn't suck and isn't huge.$\r$\n$\r$\nNSIS includes a Modern User Interface, LZMA compression, support for multiple languages and an easy plug-in system.${EXTRA_WELCOME_TEXT}$\r$\n$\r$\n$_CLICK"
 
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_LICENSE "..\COPYING"
@@ -90,7 +105,7 @@ Page custom PageReinstall PageLeaveReinstall
 !insertmacro MUI_PAGE_INSTFILES
 
 !define MUI_FINISHPAGE_LINK "Visit the NSIS site for the latest news, FAQs and support"
-!define MUI_FINISHPAGE_LINK_LOCATION "http://nsis.sf.net/"
+!define MUI_FINISHPAGE_LINK_LOCATION "${LINK_INFO}"
 
 !define MUI_FINISHPAGE_RUN "$INSTDIR\NSIS.exe"
 !define MUI_FINISHPAGE_NOREBOOTSUPPORT
@@ -113,32 +128,84 @@ Page custom PageReinstall PageLeaveReinstall
 ;Version information
 
 !ifdef VER_MAJOR & VER_MINOR & VER_REVISION & VER_BUILD
+VIFileVersion    ${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}
 VIProductVersion ${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}
-VIAddVersionKey "FileVersion" "${VERSION}"
-VIAddVersionKey "FileDescription" "NSIS Setup"
-VIAddVersionKey "LegalCopyright" "http://nsis.sf.net/License"
+!ifdef VER_PRODUCTNAME
+	VIAddVersionKey "ProductName" "${VER_PRODUCTNAME}"
+!else
+	VIAddVersionKey "ProductName" "NSIS Setup"
+!endif
+!ifdef VER_PRODUCTVERSION
+	VIAddVersionKey "ProductVersion" "${VER_PRODUCTVERSION}"
+!else
+	VIAddVersionKey "ProductVersion" "${VERSION}"
+!endif
+!ifdef VER_COMMENTS
+	VIAddVersionKey "Comments" "${VER_COMMENTS}"
+!endif
+!ifdef VER_COMPANYNAME
+	VIAddVersionKey "CompanyName" "${VER_COMPANYNAME}"
+!endif
+!ifdef VER_FILEVERSION
+	VIAddVersionKey "FileVersion" "${VER_FILEVERSION}"
+!else
+	VIAddVersionKey "FileVersion" "${VERSION}"
+!endif
+!ifdef VER_FILEDESCRIPTION
+	VIAddVersionKey "FileDescription" "${VER_FILEDESCRIPTION}"
+!else
+	VIAddVersionKey "FileDescription" "NSIS Setup"
+!endif
+!ifdef VER_LEGALCOPYRIGHT
+	VIAddVersionKey "LegalCopyright" "${VER_LEGALCOPYRIGHT}"
+!else
+	VIAddVersionKey "LegalCopyright" "http://nsis.sf.net/License"
+!endif
+!ifdef VER_LEGALTRADEMARKS
+	VIAddVersionKey "LegalTrademarks" "${VER_LEGALTRADEMARKS}"
+!endif
 !endif
 
 ;--------------------------------
 ;Installer Sections
 
-!macro InstallPlugin pi
-  !if ${BITS} >= 64
-    File "/oname=$InstDir\Plugins\amd64-unicode\${pi}.dll" ..\Plugins\amd64-unicode\${pi}.dll
-  !else
-    File "/oname=$InstDir\Plugins\x86-ansi\${pi}.dll" ..\Plugins\x86-ansi\${pi}.dll
-    File "/oname=$InstDir\Plugins\x86-unicode\${pi}.dll" ..\Plugins\x86-unicode\${pi}.dll
+!macro MultiArchFile fn outdir
+  !if /FileExists "..\${fn}"
+    Push $OUTDIR
+	SetOutPath "${outdir}"
+    File "..\${fn}"
+	Pop $OUTDIR
+  !else if /FileExists "${NSIS_BIN2}\${fn}"
+    Push $OUTDIR
+	SetOutPath "${outdir}"
+    File "${NSIS_BIN2}\${fn}"
+	Pop $OUTDIR
+  !else if /FileExists "${NSIS_BIN3}\${fn}"
+    Push $OUTDIR
+	SetOutPath "${outdir}"
+    File "${NSIS_BIN3}\${fn}"
+	Pop $OUTDIR
   !endif
 !macroend
 
-!macro InstallStub stub
-  !if ${BITS} >= 64
-    File ..\Stubs\${stub}-amd64-unicode
-  !else
-    File ..\Stubs\${stub}-x86-ansi
-    File ..\Stubs\${stub}-x86-unicode
-  !endif
+!macro InstallPlugin pi
+  !insertmacro MultiArchFile Plugins\amd64-unicode\${pi}.dll "$INSTDIR\Plugins\amd64-unicode"
+  !insertmacro MultiArchFile Plugins\x86-ansi\${pi}.dll      "$INSTDIR\Plugins\x86-ansi"
+  !insertmacro MultiArchFile Plugins\x86-unicode\${pi}.dll   "$INSTDIR\Plugins\x86-unicode"
+  !insertmacro MultiArchFile Plugins\arm64-unicode\${pi}.dll "$INSTDIR\Plugins\arm64-unicode"   ; coming soon...
 !macroend
+
+!macro InstallStub stub
+  !insertmacro MultiArchFile Stubs\${stub}-amd64-unicode     "$INSTDIR\Stubs"
+  !insertmacro MultiArchFile Stubs\${stub}-x86-ansi          "$INSTDIR\Stubs"
+  !insertmacro MultiArchFile Stubs\${stub}-x86-unicode       "$INSTDIR\Stubs"
+  !insertmacro MultiArchFile Stubs\${stub}-arm64-unicode     "$INSTDIR\Stubs"                   ; coming soon...
+!macroend
+
+Section -Init
+	; Taskbar progress
+	w7tbp::Start /NOUNLOAD
+SectionEnd
 
 ${MementoSection} "NSIS Core Files (required)" SecCore
 
@@ -242,21 +309,10 @@ ${MementoSection} "NSIS Core Files (required)" SecCore
   RMDir $INSTDIR\Docs
 
   SetOutPath $INSTDIR\Bin
-  !if ${BITS} >= 64
-    File /NonFatal  ..\Bin\RegTool-x86.bin
-    File            ..\Bin\RegTool-amd64.bin
-  !else
-    File            ..\Bin\RegTool-x86.bin
-    !if /FileExists ..\Bin\RegTool-amd64.bin ; It is unlikely that this exists, avoid the /NonFatal warning.
-      File          ..\Bin\RegTool-amd64.bin
-    !endif
-  !endif
+  !insertmacro MultiArchFile Bin\RegTool-x86.bin "$INSTDIR\Bin"
+  !insertmacro MultiArchFile Bin\RegTool-amd64.bin "$INSTDIR\Bin"
+  !insertmacro MultiArchFile Bin\RegTool-arm64.bin "$INSTDIR\Bin"   ; coming soon
 
-  CreateDirectory $INSTDIR\Plugins\x86-ansi
-  CreateDirectory $INSTDIR\Plugins\x86-unicode
-  !if ${BITS} >= 64
-    CreateDirectory $INSTDIR\Plugins\amd64-unicode
-  !endif
   !insertmacro InstallPlugin TypeLib
 
   ReadRegStr $R0 HKCR ".nsi" ""
@@ -333,6 +389,7 @@ ${MementoSection} "Script Examples" SecExample
   File ..\Examples\Memento.nsi
   File ..\Examples\unicode.nsi
   File ..\Examples\NSISMenu.nsi
+  File ..\Examples\ModernXL.nsi
 
   SetOutPath $INSTDIR\Examples\Plugin
   File ..\Examples\Plugin\exdll.c
@@ -404,9 +461,21 @@ ${MementoSection} "Modern User Interface" SecInterfacesModernUI
   File "..\Contrib\UIs\modern_headerbmpr.exe"
   File "..\Contrib\UIs\modern_nodesc.exe"
   File "..\Contrib\UIs\modern_smalldesc.exe"
+  File "..\Contrib\UIs\xl.exe"
+  File "..\Contrib\UIs\xl_headerbmp.exe"
+  File "..\Contrib\UIs\xl_headerbmpr.exe"
+  File "..\Contrib\UIs\xl_nodesc.exe"
+  File "..\Contrib\UIs\xl_smalldesc.exe"
+  File "..\Contrib\UIs\xxl.exe"
+  File "..\Contrib\UIs\xxl_headerbmp.exe"
+  File "..\Contrib\UIs\xxl_headerbmpr.exe"
+  File "..\Contrib\UIs\xxl_nodesc.exe"
+  File "..\Contrib\UIs\xxl_smalldesc.exe"
 
   SetOutPath $INSTDIR\Include
   File "..\Include\MUI.nsh"
+  File "..\Include\ModernXL.nsh"
+  File "..\Include\ModernXXL.nsh"
 
   SetOutPath "$INSTDIR\Contrib\Modern UI 2"
   File "..\Contrib\Modern UI 2\Deprecated.nsh"
@@ -614,6 +683,19 @@ ${MementoSection} "BgImage" SecPluginsBgImage
   File ..\Examples\BgImage\Example.nsi
 ${MementoSectionEnd}
 
+${MementoSection} "ExecDos" SecPluginsExecDos
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Plug-ins | ExecDos..."
+  SetDetailsPrint listonly
+
+  SectionIn 1
+
+  !insertmacro InstallPlugin ExecDos
+  SetOutPath $INSTDIR\Docs\ExecDos
+  File ..\Docs\ExecDos\Readme.txt
+${MementoSectionEnd}
+
 ${MementoSection} "InstallOptions" SecPluginsIO
 
   SetDetailsPrint textonly
@@ -690,6 +772,67 @@ ${MementoSection} "NSISdl" SecPluginsNSISDL
   File ..\Docs\NSISdl\License.txt
 ${MementoSectionEnd}
 
+${MementoSection} "NSutils" SecPluginsNSutils
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Plug-ins | NSutils..."
+  SetDetailsPrint listonly
+
+  SectionIn 1
+
+  !insertmacro InstallPlugin NSutils
+  SetOutPath $INSTDIR\Docs\NSutils
+  File ..\Docs\NSutils\NSutils.Readme.txt
+  SetOutPath $INSTDIR\Examples\NSutils
+  File ..\Examples\NSutils\*.nsi
+  File ..\Examples\NSutils\*.bat
+${MementoSectionEnd}
+
+${MementoSection} "NScurl" SecPluginsNScurl
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Plug-ins | NScurl..."
+  SetDetailsPrint listonly
+
+  SectionIn 1
+
+  !insertmacro InstallPlugin NScurl
+  SetOutPath $INSTDIR\Docs\NScurl
+  File ..\Docs\NScurl\NScurl.Readme.htm
+  SetOutPath $INSTDIR\Examples\NScurl
+  File ..\Examples\NScurl\*.nsi
+  File ..\Examples\NScurl\*.bat
+${MementoSectionEnd}
+
+${MementoSection} "NSxfer" SecPluginsNSxfer
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Plug-ins | NSxfer..."
+  SetDetailsPrint listonly
+
+  SectionIn 1
+
+  !insertmacro InstallPlugin NSxfer
+  SetOutPath $INSTDIR\Docs\NSxfer
+  File ..\Docs\NSxfer\NSxfer.Readme.txt
+  SetOutPath $INSTDIR\Examples\NSxfer
+  File ..\Examples\NSxfer\*.nsi
+  File ..\Examples\NSxfer\*.bat
+${MementoSectionEnd}
+
+${MementoSection} "ShellLink" SecPluginsShellLink
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Plug-ins | ShellLink..."
+  SetDetailsPrint listonly
+
+  SectionIn 1
+
+  !insertmacro InstallPlugin ShellLink
+  SetOutPath $INSTDIR\Docs\ShellLink
+  File ..\Docs\ShellLink\Readme.html
+${MementoSectionEnd}
+
 ${MementoSection} "System" SecPluginsSystem
 
   SetDetailsPrint textonly
@@ -722,6 +865,19 @@ ${MementoSection} "StartMenu" SecPluginsStartMenu
   File ..\Docs\StartMenu\Readme.txt
   SetOutPath $INSTDIR\Examples\StartMenu
   File ..\Examples\StartMenu\Example.nsi
+${MementoSectionEnd}
+
+${MementoSection} "TaskbarProgress" SecPluginsTaskbarProgress
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Plug-ins | TaskbarProgress..."
+  SetDetailsPrint listonly
+
+  SectionIn 1
+
+  !insertmacro InstallPlugin w7tbp
+  SetOutPath $INSTDIR\Docs\w7tbp
+  File ..\Docs\w7tbp\w7tbp.Readme.txt
 ${MementoSectionEnd}
 
 ${MementoSection} "UserInfo" SecPluginsUserInfo
@@ -833,8 +989,8 @@ Section -post
   WriteRegDWORD HKLM "${REG_UNINST_KEY}" "VersionMinor" "${VER_MINOR}" ; Required by WACK
 !endif
   WriteRegStr HKLM "${REG_UNINST_KEY}" "Publisher" "Nullsoft and Contributors" ; Required by WACK
-  WriteRegStr HKLM "${REG_UNINST_KEY}" "URLInfoAbout" "https://nsis.sourceforge.io/"
-  WriteRegStr HKLM "${REG_UNINST_KEY}" "HelpLink" "https://nsis.sourceforge.io/Support"
+  WriteRegStr HKLM "${REG_UNINST_KEY}" "URLInfoAbout" "${LINK_INFO}"
+  WriteRegStr HKLM "${REG_UNINST_KEY}" "HelpLink" "${LINK_HELP}"
   WriteRegDWORD HKLM "${REG_UNINST_KEY}" "NoModify" "1"
   WriteRegDWORD HKLM "${REG_UNINST_KEY}" "NoRepair" "1"
   ${MakeARPInstallDate} $1
@@ -876,8 +1032,14 @@ SectionEnd
   !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsDialogs} "Plugin that lets you add custom pages to an installer"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsStartMenu} "Plugin that lets the user select the start menu folder"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsBgImage} "Plugin that lets you show a persistent background image plugin and play sounds"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsExecDos} "Plugin with extended support for running child processes"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsUserInfo} "Plugin that that gives you the user name and the user account type"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsNSISDL} "Plugin that lets you create a web based installer"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsNSutils} "Plugin with multiple goodies packed in one basket"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsNScurl} "Plugin with extended HTTP/S support"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsNSxfer} "Plugin with extended HTTP/S support"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsShellLink} "Plugin that gives your full control over link files (.lnk)"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsTaskbarProgress} "Plugin that displays the progress on the taskbar (Win7+)"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsVPatch} "Plugin that lets you create patches to upgrade older files"
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
@@ -885,6 +1047,11 @@ SectionEnd
 ;Installer Functions
 
 Function .onInit
+
+  ${IfNot} ${AtLeastWinXP}
+    MessageBox MB_ICONSTOP "This installer requires Windows XP or newer" /SD IDOK
+	Abort
+  ${EndIf}
 
   ${MementoSectionRestore}
 

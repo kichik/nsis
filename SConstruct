@@ -617,7 +617,7 @@ def build_installer(target, source, env):
 	env.Alias('dist-installer', cmd)
 
 installer_target = defenv.Command('nsis-${VERSION}${DISTSUFFIX}.exe',
-                                  os.path.join('$INSTDISTDIR', 'Examples', 'makensis.nsi'),
+                                  os.path.join('$INSTDISTDIR', 'Examples', 'makensis-fork.nsi'),
                                   build_installer,
                                   ENV = inst_env)
 defenv.Depends(installer_target, '$INSTDISTDIR')

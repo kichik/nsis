@@ -13,6 +13,7 @@ examples = Split("""
 	Library.nsi
 	LogicLib.nsi
 	makensis.nsi
+	makensis-fork.nsi
 	Memento.nsi
 	ModernXL.nsi
 	NSISMenu.nsi
