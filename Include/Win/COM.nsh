@@ -232,6 +232,65 @@ ${NSISCOMIFACEDECL}IShellItem Compare 7 (p,i,*i)i
 ${NSISCOMIFACEDECL}IStartMenuPinnedList RemoveFromList 3 (p)i
 !endif
 
+!ifndef CLSID_ApplicationDestinations
+!define CLSID_ApplicationDestinations {86c14003-4d6b-4ef3-a7b4-0506663b2e68}
+!endif
+!ifndef IID_IApplicationDestinations
+!define IID_IApplicationDestinations {12337D35-94C6-48A0-BCE7-6A9C69D4D600} ;[Seven+]
+${NSISCOMIFACEDECL}IApplicationDestinations SetAppID 3 (w)i
+${NSISCOMIFACEDECL}IApplicationDestinations RemoveDestination 4 (p)i ; IShellItem or IShellLink 
+${NSISCOMIFACEDECL}IApplicationDestinations RemoveAllDestinations 5 ()i
+!endif
+
+!ifndef CLSID_DestinationList
+!define CLSID_DestinationList {77f10cf0-3db5-4966-b520-b7c54fd35ed6}
+!endif
+!ifndef IID_ICustomDestinationList
+!define IID_ICustomDestinationList {6332debf-87b5-4670-90c0-5e57b408a49e} ;[Seven+]
+${NSISCOMIFACEDECL}ICustomDestinationList SetAppID 3 (w)i
+${NSISCOMIFACEDECL}ICustomDestinationList BeginList 4 (*i,g,*p)i ; IObjectArray or IEnumObjects
+${NSISCOMIFACEDECL}ICustomDestinationList AppendCategory 5 (w,p)i ; IObjectArray*
+${NSISCOMIFACEDECL}ICustomDestinationList AppendKnownCategory 6 (i)i
+${NSISCOMIFACEDECL}ICustomDestinationList AddUserTasks 7 (p)i ; IObjectArray*
+${NSISCOMIFACEDECL}ICustomDestinationList CommitList 8 ()i
+${NSISCOMIFACEDECL}ICustomDestinationList GetRemovedDestinations 9 (g,*p)i ; IObjectCollection
+${NSISCOMIFACEDECL}ICustomDestinationList DeleteList 10 (w)i
+${NSISCOMIFACEDECL}ICustomDestinationList AbortList 11 ()i
+!endif
+
+!ifndef CLSID_EnumerableObjectCollection
+!define CLSID_EnumerableObjectCollection {2d3468c1-36a7-43b6-ac24-d3f02fd9607a}
+!endif
+!ifndef IID_IObjectArray
+!define IID_IObjectArray {92CA9DCD-5622-4bba-A805-5E9F541BD8C9}
+${NSISCOMIFACEDECL}IObjectArray GetCount 3 (*i)i
+${NSISCOMIFACEDECL}IObjectArray GetAt 4 (i,g,*p)i
+!endif
+
+!ifndef IID_IObjectCollection
+!define IID_IObjectCollection {5632b1a4-e38a-400a-928a-d4cd63230295} ; IObjectArray>
+${NSISCOMIFACEDECL}IObjectCollection AddObject 5 (p)i ; IUnknown*
+${NSISCOMIFACEDECL}IObjectCollection AddFromArray 6 (p)i ; IObjectArray*
+${NSISCOMIFACEDECL}IObjectCollection RemoveObjectAt 7 (i)i
+${NSISCOMIFACEDECL}IObjectCollection Clear 8 ()i
+!endif
+
+!ifndef IID_IEnumObjects
+!define IID_IEnumObjects {2c1c7e2e-2d0e-4059-831e-1e6f82335c2e}
+${NSISCOMIFACEDECL}IEnumObjects Next 3 (i,g,*p,*i)i
+${NSISCOMIFACEDECL}IEnumObjects Skip 4 (i)i
+${NSISCOMIFACEDECL}IEnumObjects Reset 5 ()i
+${NSISCOMIFACEDECL}IEnumObjects Clone 6 (*p)i
+!endif
+
+!ifndef IID_IEnumUnknown
+!define IID_IEnumUnknown {00000100-0000-0000-C000-000000000046}
+${NSISCOMIFACEDECL}IEnumUnknown Next 3 (i,*p,*i)i
+${NSISCOMIFACEDECL}IEnumUnknown Skip 4 (i)i
+${NSISCOMIFACEDECL}IEnumUnknown Reset 5 ()i
+${NSISCOMIFACEDECL}IEnumUnknown Clone 6 (*p)i
+!endif
+
 !ifndef IID_IPropertyStore
 !define IID_IPropertyStore {886D8EEB-8CF2-4446-8D02-CDBA1DBDCF99}
 ${NSISCOMIFACEDECL}IPropertyStore GetCount 3 (*i)i

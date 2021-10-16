@@ -11,7 +11,7 @@ folders inside the users profile.
 
 */
 
-!define NAME "Per-User example"
+!define NAME "Per-user example"
 !define REGPATH_UNINSTSUBKEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${NAME}"
 Name "${NAME}"
 OutFile "Install ${NAME}.exe"
@@ -48,6 +48,7 @@ Function un.onInit
   SetShellVarContext Current
 FunctionEnd
 
+
 Section "Program files (Required)"
   SectionIn Ro
 
@@ -56,6 +57,7 @@ Section "Program files (Required)"
   WriteRegStr HKCU "${REGPATH_UNINSTSUBKEY}" "DisplayName" "${NAME}"
   WriteRegStr HKCU "${REGPATH_UNINSTSUBKEY}" "DisplayIcon" "$InstDir\MyApp.exe,0"
   WriteRegStr HKCU "${REGPATH_UNINSTSUBKEY}" "UninstallString" '"$InstDir\Uninst.exe"'
+  WriteRegStr HKCU "${REGPATH_UNINSTSUBKEY}" "QuietUninstallString" '"$InstDir\Uninst.exe" /S'
   WriteRegDWORD HKCU "${REGPATH_UNINSTSUBKEY}" "NoModify" 1
   WriteRegDWORD HKCU "${REGPATH_UNINSTSUBKEY}" "NoRepair" 1
 
@@ -160,12 +162,20 @@ Section -un.ShellAssoc
   ${NotifyShell_AssocChanged}
 SectionEnd
 
-Section -Uninstall
-  ${UnpinShortcut} "$SMPrograms\${NAME}.lnk"
-  Delete "$SMPrograms\${NAME}.lnk"
+!macro DeleteFileOrAskAbort path
+  ClearErrors
+  Delete "${path}"
+  IfErrors 0 +3
+    MessageBox MB_ABORTRETRYIGNORE|MB_ICONSTOP 'Unable to delete "${path}"!' IDRETRY -3 IDIGNORE +2
+    Abort "Aborted"
+!macroend
 
-  Delete "$InstDir\MyApp.exe"
+Section -Uninstall
+  !insertmacro DeleteFileOrAskAbort "$InstDir\MyApp.exe"
   Delete "$InstDir\Uninst.exe"
   RMDir "$InstDir"
   DeleteRegKey HKCU "${REGPATH_UNINSTSUBKEY}"
+
+  ${UnpinShortcut} "$SMPrograms\${NAME}.lnk"
+  Delete "$SMPrograms\${NAME}.lnk"
 SectionEnd

@@ -1146,17 +1146,14 @@ RefreshShellIcons
 	System::Call 'kernel32::FileTimeToSystemTime(*l,i)i(r3,r7)'
 
 	FileFunc_GetTime_convert:
-	System::Call '*$7(&i2,&i2,&i2,&i2,&i2,&i2,&i2,&i2)p(.r5,.r6,.r4,.r0,.r3,.r2,.r1,)'
+	System::Call '*$7(&i2.r5,&i2.r6,&i2.r4,&i2.r0,&i2.r3,&i2.r2,&i2.r1,&i2)'
 	System::Free $7
 
-	IntCmp $0 9 0 0 +2
-	StrCpy $0 '0$0'
-	IntCmp $1 9 0 0 +2
-	StrCpy $1 '0$1'
-	IntCmp $2 9 0 0 +2
-	StrCpy $2 '0$2'
-	IntCmp $6 9 0 0 +2
-	StrCpy $6 '0$6'
+	IntFmt $6 "%.2u" $6 ; Month
+	IntFmt $0 "%.2u" $0 ; Day
+	IntFmt $3 "%.2u" $3 ; Hour
+	IntFmt $2 "%.2u" $2 ; Minute
+	IntFmt $1 "%.2u" $1 ; Second
 
 	StrCmp $4 0 0 +3
 	StrCpy $4 Sunday
@@ -1398,8 +1395,8 @@ RefreshShellIcons
 	Push $0
 	Push $1
 	Push $2
-	System::Call 'kernel32::GetModuleFileName(p 0, t .r0, i 1024)'
-	System::Call 'kernel32::GetLongPathName(t r0, t .r1, i 1024)i .r2'
+	System::Call 'kernel32::GetModuleFileName(p 0, t.r0, i ${NSIS_MAX_STRLEN})'
+	System::Call 'kernel32::GetLongPathName(t r0, t.r1, i ${NSIS_MAX_STRLEN})i.r2'
 	StrCmp $2 error +2
 	StrCpy $0 $1
 	Pop $2
@@ -1426,7 +1423,7 @@ RefreshShellIcons
 	Push $1
 	Push $2
 	StrCpy $0 $EXEDIR
-	System::Call 'kernel32::GetLongPathName(t r0, t .r1, i 1024)i .r2'
+	System::Call 'kernel32::GetLongPathName(t r0, t.r1, i ${NSIS_MAX_STRLEN})i.r2'
 	StrCmp $2 error +2
 	StrCpy $0 $1
 	Pop $2

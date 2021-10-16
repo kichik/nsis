@@ -20,6 +20,12 @@ Unicode is now the default.
 
 \b Fixed Unicode compiler crash (\W{http://sf.net/p/nsis/bugs/1254}{bug #1254}, \W{http://sf.net/p/nsis/patches/300}{patch #300})
 
+\b Fixed !addplugindir relative path bug (\W{http://sf.net/p/nsis/bugs/1264}{bug #1264})
+
+\b Fixed StrClb Unicode bug (\W{http://sf.net/p/nsis/patches/302}{patch #302})
+
+\b Fixed $\{GetTime\} hour padding (\W{http://sf.net/p/nsis/bugs/980}{bug #980})
+
 \S2{} Translations
 
 \b Updated Corsican\#{(forum)} and Japanese (maboroshin PR\#{github.com/maboroshin})

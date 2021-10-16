@@ -92,8 +92,8 @@ o-----------------------------------------------------------------------------o
     !define `${Name}_List` `${List}`
     !define `${Name}_TypeList` `${TypeList}`
     !ifdef STRFUNC_USECALLARTIFICIALFUNCTION
-      !define `${Name}` `!insertmacro STRFUNC_CALL_${Name} "${un}" `
-      !define `Un${Name}` `!insertmacro STRFUNC_CALL_${Name} "${un}" `
+      !define `${Name}` `!insertmacro STRFUNC_CALL_${Name} "" `
+      !define `Un${Name}` `!insertmacro STRFUNC_CALL_${Name} Un `
     !else
       !define `${Name}` `!insertmacro STRFUNC_MAKEFUNC ${Name} "" #`
       !define `Un${Name}` `!insertmacro STRFUNC_MAKEFUNC ${Name} Un #`
@@ -111,7 +111,7 @@ o-----------------------------------------------------------------------------o
     !verbose push ${_STRFUNC_CREDITVERBOSITY}
     !echo `${U+24}{${un}${basename}} - Copyright ${credits}`
     !verbose pop
-    !define ${un}${basename}_INCLUDED
+    !define /IfNDef ${un}${basename}_INCLUDED
     !ifndef STRFUNC_USECALLARTIFICIALFUNCTION
       !define /ReDef ${un}${basename} `!insertmacro STRFUNC_CALL_${basename} "${un}" `
       !if "${un}" != ""
@@ -382,7 +382,9 @@ o-----------------------------------------------------------------------------o
         ;Step 2: Allocate global heap
         StrLen $2 $0
         IntOp $2 $2 + 1
+        !if "${NSIS_CHAR_SIZE}" > 1
         IntOp $2 $2 * ${NSIS_CHAR_SIZE}
+        !endif
         System::Call 'kernel32::GlobalAlloc(i 2, i r2) p.r2'
 
         ;Step 3: Lock the handle
@@ -395,14 +397,22 @@ o-----------------------------------------------------------------------------o
         System::Call 'kernel32::GlobalUnlock(p r2)'
 
         ;Step 6: Set the information to the clipboard
+        !if "${NSIS_CHAR_SIZE}" > 1
+        System::Call 'user32::SetClipboardData(i 13, p r2)'
+        !else
         System::Call 'user32::SetClipboardData(i 1, p r2)'
+        !endif
 
         StrCpy $0 ""
 
       ${ElseIf} $1 == "<" ;Get
 
         ;Step 1: Get clipboard data
-        System::Call 'user32::GetClipboardData(i 1) p .r2'
+        !if "${NSIS_CHAR_SIZE}" > 1
+        System::Call 'user32::GetClipboardData(i 13)p.r2'
+        !else
+        System::Call 'user32::GetClipboardData(i 1)p.r2'
+        !endif
 
         ;Step 2: Lock and copy data (kichik's fix)
         System::Call 'kernel32::GlobalLock(p r2) t .r0'
@@ -413,7 +423,11 @@ o-----------------------------------------------------------------------------o
       ${ElseIf} $1 == "<>" ;Swap
 
         ;Step 1: Get clipboard data
-        System::Call 'user32::GetClipboardData(i 1) p .r2'
+        !if "${NSIS_CHAR_SIZE}" > 1
+        System::Call 'user32::GetClipboardData(i 13)p.r2'
+        !else
+        System::Call 'user32::GetClipboardData(i 1)p.r2'
+        !endif
 
         ;Step 2: Lock and copy data (kichik's fix)
         System::Call 'kernel32::GlobalLock(p r2) t .r4'
@@ -427,7 +441,9 @@ o-----------------------------------------------------------------------------o
         ;Step 5: Allocate global heap
         StrLen $2 $0
         IntOp $2 $2 + 1
+        !if "${NSIS_CHAR_SIZE}" > 1
         IntOp $2 $2 * ${NSIS_CHAR_SIZE}
+        !endif
         System::Call 'kernel32::GlobalAlloc(i 2, i r2) p.r2'
 
         ;Step 6: Lock the handle
@@ -440,7 +456,11 @@ o-----------------------------------------------------------------------------o
         System::Call 'kernel32::GlobalUnlock(p r2)'
 
         ;Step 9: Set the information to the clipboard
+        !if "${NSIS_CHAR_SIZE}" > 1
+        System::Call 'user32::SetClipboardData(i 13, p r2)'
+        !else
         System::Call 'user32::SetClipboardData(i 1, p r2)'
+        !endif
         
         StrCpy $0 $4
       ${Else} ;Clear

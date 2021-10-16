@@ -5123,7 +5123,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       // Add the DLL to the installer
       if (data_handle == -1)
       {
-        int files_added;
+        int files_added=0;
         const int old_build_allowskipfiles=build_allowskipfiles;
         build_allowskipfiles=1; // on
         const int old_build_overwrite=build_overwrite;
@@ -5136,8 +5136,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         // because of CEXEBuild::datablock_optimize() that tries to discover
         // duplicates and reuse them.
         ret=do_add_file(dllPath.c_str(),0,0,&files_added,tempDLL,2,&data_handle); // 2 means no size add
-        if (ret != PS_OK) {
-          return ret;
+        if (ret != PS_OK || files_added == 0) {
+          return files_added ? ret : PS_ERROR;
         }
         m_pPlugins->SetDllDataHandle(!!uninstall_mode, command, data_handle);
         build_overwrite=old_build_overwrite;
