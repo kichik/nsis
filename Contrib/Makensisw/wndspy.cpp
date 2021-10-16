@@ -380,12 +380,12 @@ struct ScopedThreadDpiAwarenessContext { // Note: Assumes InitializeDpiApi() has
   int m_AC; // Canonical "active" DPI_AWARENESS_CONTEXT
 };
 
-int ShowWndSpy(HWND hOwner)
+INT_PTR ShowWndSpy(HWND hOwner)
 {
   InitializeDpiApi();
   ScopedThreadDpiAwarenessContext::List aclist;
   ScopedThreadDpiAwarenessContext stdac(aclist << DPI::ac_pm2 << DPI::ac_system);
   DIALOGDATA dd;
   dd.DialogAwarenessContext = stdac.GetCanonicalActiveAwarenessContext();
-  return DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(DLG_WNDSPY), hOwner, SpyDlgProc, (LPARAM) &dd);
+  return DialogBoxParam(HINST_APPLICATION, MAKEINTRESOURCE(DLG_WNDSPY), hOwner, SpyDlgProc, (LPARAM) &dd);
 }

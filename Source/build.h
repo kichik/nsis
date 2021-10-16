@@ -287,7 +287,7 @@ class CEXEBuild {
     #else
     typedef bool (*HOSTAPIREQUESTDATAPROC)(void*cookie);
     #endif
-    bool hostapi_request_data(MakensisAPI::datatransfer_e operation, UINT minver, HOSTAPIREQUESTDATAPROC proc, void*cookie, const void* input, UINT inputsize) const;
+    bool hostapi_request_data(MakensisAPI::datatransfer_e operation, UINT minver, HOSTAPIREQUESTDATAPROC proc, void*cookie, const void* input, size_t inputsize) const;
     bool prompt_for_output_path(TCHAR*path, UINT pathcap) const;
 
   private:

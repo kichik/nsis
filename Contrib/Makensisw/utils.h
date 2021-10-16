@@ -32,6 +32,14 @@
 #endif
 #define COUNTOF(a) (sizeof(a)/sizeof(a[0]))
 
+#if defined(_MSC_VER) && _MSC_VER >= 1200
+EXTERN_C IMAGE_DOS_HEADER __ImageBase;
+#define HINST_THISCOMPONENT ( (HINSTANCE) &__ImageBase )
+#define HINST_APPLICATION HINST_THISCOMPONENT
+#else
+#define HINST_APPLICATION ( (HINSTANCE) GetModuleHandle(NULL) )
+#endif
+
 #define MRU_LIST_SIZE 5
 #define MRU_DISPLAY_LENGTH 40
 #define SYMSETNAME_MAXLEN 40

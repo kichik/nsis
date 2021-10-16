@@ -1,5 +1,27 @@
 \A{history} Changelog and Release Notes
 
+\H{v3.07} 3.07
+
+Released on ??? ??th, 20??
+
+\S1{v3.07-rl} Release Notes
+
+Unicode is the now default.
+
+\S1{v3.07-cl} Changelog
+
+\S2{} Major Changes
+
+\b Unicode is the now default
+
+\S2{} Minor Changes
+
+\b Added nsExec /MBCS switch
+
+\S2{} Translations
+
+\b Updated Corsican\#{(forum)} and Japanese (maboroshin PR\#{github.com/maboroshin})
+
 \H{v3.06.1} 3.06.1
 
 Released on July 31st, 2020

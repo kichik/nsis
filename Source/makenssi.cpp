@@ -685,7 +685,8 @@ int _tmain(int argc, TCHAR **argv)
 {
 #ifndef NDEBUG
 #ifdef _MSC_VER
-  _CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) | _CRTDBG_CHECK_ALWAYS_DF);
+  const int dbgchkthorough = true, checkeveryallocfree = dbgchkthorough ? _CRTDBG_CHECK_ALWAYS_DF : 0;
+  _CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) | _CRTDBG_ALLOC_MEM_DF | checkeveryallocfree | _CRTDBG_LEAK_CHECK_DF);
   _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE), _CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDOUT);
   _CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_FILE), _CrtSetReportFile(_CRT_ERROR, _CRTDBG_FILE_STDOUT);
   //_CrtSetReportMode(_CRT_ASSERT, _CRTDBG_MODE_FILE), _CrtSetReportFile(_CRT_ASSERT, _CRTDBG_FILE_STDOUT);
@@ -694,7 +695,6 @@ int _tmain(int argc, TCHAR **argv)
   int retval = makensismain(argc,argv);
 #ifndef NDEBUG
 #ifdef _MSC_VER
-  _CrtDumpMemoryLeaks();
   assert(_CrtCheckMemory());
 #endif
 #endif

@@ -128,7 +128,7 @@ CEXEBuild::CEXEBuild(signed char pponly, bool warnaserror) :
   definedlist.add(_T("NSIS_VERSION"), NSIS_VERSION);
   definedlist.add(_T("NSIS_PACKEDVERSION"), NSIS_PACKEDVERSION);
 
-  m_target_type=TARGET_X86ANSI;
+  m_target_type=TARGET_X86UNICODE;
 #ifdef _WIN32
   if (sizeof(void*) > 4) m_target_type = TARGET_AMD64; // BUGBUG: scons 'TARGET_ARCH' should specify the default
 #endif
@@ -3608,7 +3608,7 @@ void CEXEBuild::notify(MakensisAPI::datatransfer_e code, const TCHAR *data) cons
 #endif
 }
 
-bool CEXEBuild::hostapi_request_data(MakensisAPI::datatransfer_e operation, UINT minver, HOSTAPIREQUESTDATAPROC proc, void*cookie, const void* input, UINT inputsize) const
+bool CEXEBuild::hostapi_request_data(MakensisAPI::datatransfer_e operation, UINT minver, HOSTAPIREQUESTDATAPROC proc, void*cookie, const void* input, size_t inputsize) const
 {
   using namespace MakensisAPI;
 #ifdef _WIN32
@@ -3626,7 +3626,7 @@ bool CEXEBuild::hostapi_request_data(MakensisAPI::datatransfer_e operation, UINT
   };
   if (!notify_hwnd || (minver && (UINT) SendMessage(notify_hwnd, QUERYHOST, QH_SUPPORTEDVERSION, 0) < minver)) return false;
   size_t data[] = { (size_t) proc, (size_t) cookie };
-  COPYDATASTRUCT cds = { (DWORD) operation, inputsize, (void*) input };
+  COPYDATASTRUCT cds = { (DWORD) operation, (DWORD) inputsize, (void*) input };
   HWND hWnd = CreateWindowEx(WS_EX_TOOLWINDOW, WC_DIALOG, NULL, WS_POPUP|WS_DISABLED, 0, 0, 0, 0, NULL, NULL, NULL, NULL);
   SetWindowLongPtr(hWnd, DWLP_USER, (LONG_PTR) data);
   SetWindowLongPtr(hWnd, DWLP_DLGPROC, (LONG_PTR) helper::Proc);
@@ -3656,7 +3656,7 @@ bool CEXEBuild::prompt_for_output_path(TCHAR*path, UINT pathcap) const
     }
   };
   size_t io[] = { false, (size_t) path, pathcap }, cb;
-  TinyGrowBuf inputbuf((cb = FIELD_OFFSET(PROMPT_FILEPATH_DATA, Path[pathcap])));
+  TinyGrowBuf inputbuf((IGrowBuf::size_type) (cb = FIELD_OFFSET(PROMPT_FILEPATH_DATA, Path[pathcap])));
   PROMPT_FILEPATH_DATA *p = (PROMPT_FILEPATH_DATA*) inputbuf.get();
   p->Platform = (sizeof(void*) * 8) | sizeof(TCHAR), p->Reserved = 0;
   _tcscpy(p->Path, path);
