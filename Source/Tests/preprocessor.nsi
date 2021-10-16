@@ -186,6 +186,14 @@ ${ASSERT} '${OUT1} = 0x80000000'
 !define /redef /math OUT1 0x80000000 ^ 0x40000000
 ${ASSERT} '${OUT1} = 0xC0000000'
 
+!define /redef /intfmt OUT1 "0x%.3X" 42
+${ASSERT} '${OUT1} = 0x02A'
+
+!pragma internal x OUT "0x10 | 0x40" ; NSD requires this when using LoadAndSetImage
+!if "${OUT}" <> 80
+  !error "math expression failed"
+!endif
+
 ; end math functions
 
 
@@ -292,6 +300,15 @@ PageExEnd
   !warning "You can't see me" ; "disable all" is still in effect
 !pragma warning pop
 
+!if ! 1 <> 0
+  !error "1 is not 0"
+!endif
+!pragma warning push
+!pragma warning disable 7070 ; Invalid number
+!if Hello <> 0
+  !error "Hello is not a number"
+!endif
+!pragma warning pop
 
 # test !searchparse
 !searchparse "AbcDef" "Abc" OUT1

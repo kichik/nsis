@@ -22,6 +22,13 @@
 #include "tstring.h"
 #include "util.h"
 
+#ifndef _istspace
+#define _istspace my_istspace
+template<class T> static int my_istspace(T c) { return c == 0x20 || (c >= 0x09 && c <= 0x0D); }
+#endif
+template<class T> static T skipspace(T s) { while(*s && _istspace(*s)) ++s; return s; }
+
+
 LineParser::LineParser(bool bCommentBlock)
 {
   m_incommentblock=bCommentBlock;
@@ -75,58 +82,133 @@ void LineParser::eattoken()
   m_eat++;
 }
 
-static unsigned int number_has_base_prefix(const TCHAR *str)
+inline int LineParser::validate_token_index(int token, int *success/*=0*/) const
 {
-  unsigned int hasbase = false;
+  token += m_eat;
+  if (token < 0 || token >= m_nt || !m_tokens[token][0])
+  {
+    if (success) *success = 0;
+    return -1;
+  }
+  return token;
+}
+
+
+static unsigned int get_base_from_prefix(const TCHAR *str)
+{
+  unsigned int hasbase = 0;
   if (_T('-') == *str || _T('+') == *str) ++str;
   if (_T('0') == str[0])
   {
-    if (_T('x') == (str[1]|32)) ++hasbase;
-    if (_T('n') == (str[1]|32)) ++hasbase;
-    if (_T('b') == (str[1]|32) || _T('y') == (str[1]|32)) ++hasbase;
-    if (_T('o') == (str[1]|32) || _T('t') == (str[1]|32)) ++hasbase;
+    if (_T('x') == (str[1]|32)) hasbase = 16;
+    // Special support for 0n, 0y and 0t MASM style and 0b and 0o Python style radix prefix:
+    if (_T('n') == (str[1]|32)) hasbase = 10;
+    if (_T('b') == (str[1]|32) || _T('y') == (str[1]|32)) hasbase = 2;
+    if (_T('o') == (str[1]|32) || _T('t') == (str[1]|32)) hasbase = 8;
   }
   return hasbase;
 }
+static unsigned int number_has_base_prefix(const TCHAR *str) { return get_base_from_prefix(str); }
 
-int LineParser::parse_int(const TCHAR *str, int *success/*=0*/)
+static int parse_int_expression(const TCHAR *str, bool expressions, int *success=0)
 {
-  const TCHAR *p=str, *parse=p;
+  enum { XOP_NONE = 0, XOP_BITAND, XOP_BITXOR, XOP_BITOR, XOP_LOGAND, XOP_LOGOR };
+  int tot=0, xop=XOP_NONE, hasfailed=0;
+nextnum:
+  const TCHAR *p=str, *parse=p, *xoperandpfixstart, *xoperandpfixend;
   TCHAR *end;
   int neg=0, base=0, num;
+#ifndef _MSC_VER
+  xoperandpfixstart=xoperandpfixend=0; // Avoid GCC maybe-uninitialized warning
+#endif
+
+  if (expressions)
+  {
+    xoperandpfixstart=p=skipspace(p);
+    while (*p == '~' || *p == '!') p=skipspace(++p);
+    xoperandpfixend=parse=p;
+  }
+
   if (_T('+') == *p)
     ++p;
   else if (_T('-') == *p)
     ++p, ++neg;
   if (_T('0') == p[0])
   {
-    // Special support for 0n, 0y and 0t MASM style and 0b and 0o Python style radix prefix:
-    if (_T('n') == (p[1]|32)) parse=&p[2], base=10;
-    if (_T('b') == (p[1]|32) || _T('y') == (p[1]|32)) parse=&p[2], base=2;
-    if (_T('o') == (p[1]|32) || _T('t') == (p[1]|32)) parse=&p[2], base=8;
+    if ((base=get_base_from_prefix(p))) parse=&p[2];
   }
   if (neg)
   {
-    num=_tcstol(parse,&end,base);
+    num=(int)(long)_tcstol(parse,&end,base);
     if (base) num*=-1; // Input was "-0n012" but we have only parsed "012" and need to fix the sign
   }
   else
   {
-    num=(int)_tcstoul(parse,&end,base);
+    num=(int)(long)_tcstoul(parse,&end,base);
   }
-  if (success) *success=! (int)(*end);
-  return num;
+  const bool parseddigits=end > parse;
+  if (!parseddigits) ++hasfailed; // "0x", "1 | ~" etc.
+
+  if (expressions)
+  {
+    for (p=xoperandpfixstart; p < xoperandpfixend; p=skipspace(++p))
+      switch(*p)
+      {
+      case '~': num=~num; break;
+      case '!': num=!num; break;
+      default: assert(!"op");
+      }
+
+    // Simple left-to-right parsing, no operator precedence
+    switch(xop)
+    {
+    case XOP_NONE: tot=num; break;
+    case XOP_BITAND: tot&=num; break;
+    case XOP_BITXOR: tot^=num; break;
+    case XOP_BITOR: tot|=num; break;
+    case XOP_LOGAND: tot=tot && num; break;
+    case XOP_LOGOR: tot=tot || num; break;
+    default: assert(!"op");
+    }
+
+    str=end=skipspace(end);
+    switch(*str)
+    {
+    case '&': xop=XOP_BITAND; if (*++str == '&') xop=XOP_LOGAND, ++str; goto nextnum;
+    case '^': xop=XOP_BITXOR, ++str; goto nextnum;
+    case '|': xop=XOP_BITOR; if (*++str == '|') xop=XOP_LOGOR, ++str; goto nextnum;
+    default: xop=XOP_NONE; // Done
+    }
+  }
+  else
+  {
+    tot=num;
+  }
+
+  if (success) *success=!(int)(*end) && !hasfailed;
+  return tot;
+}
+
+int LineParser::parse_int(const TCHAR *str, int *success/*=0*/)
+{
+  return parse_int_expression(str, false, success);
+}
+
+int LineParser::parse_intx(const TCHAR *str, int *success/*=0*/)
+{
+  return parse_int_expression(str, true, success);
 }
 
 int LineParser::gettoken_int(int token, int *success/*=0*/) const
 {
-  token+=m_eat;
-  if (token < 0 || token >= m_nt || !m_tokens[token][0])
-  {
-    if (success) *success=0;
-    return 0;
-  }
-  return parse_int(m_tokens[token], success);
+  if ((token = validate_token_index(token,success)) < 0) return 0;
+  return parse_int(m_tokens[token],success);
+}
+
+int LineParser::gettoken_intx(int token, int *success/*=0*/) const
+{
+  if ((token = validate_token_index(token,success)) < 0) return 0;
+  return parse_intx(m_tokens[token],success);
 }
 
 double LineParser::parse_float(const TCHAR *str, int *success/*=0*/)
@@ -149,26 +231,20 @@ double LineParser::parse_float(const TCHAR *str, int *success/*=0*/)
 
 double LineParser::gettoken_float(int token, int *success/*=0*/) const
 {
-  token+=m_eat;
-  if (token < 0 || token >= m_nt)
-  {
-    if (success) *success=0;
-    return 0.0;
-  }
-  return parse_float(m_tokens[token], success);
+  if ((token = validate_token_index(token,success)) < 0) return 0.0;
+  return parse_float(m_tokens[token],success);
 }
 
 double LineParser::parse_number(const TCHAR *str, int *success/*=0*/)
 {
-  const unsigned int forceint = number_has_base_prefix(str);
+  const unsigned int forceint=number_has_base_prefix(str);
   return forceint ? parse_int(str,success) : parse_float(str,success);
 }
 
 double LineParser::gettoken_number(int token, int *success/*=0*/) const
 {
-  const TCHAR*str=gettoken_str(token);
-  const unsigned int forceint = number_has_base_prefix(str);
-  return forceint ? gettoken_int(token,success) : gettoken_float(token,success);
+  if ((token = validate_token_index(token,success)) < 0) return 0.0;
+  return parse_number(m_tokens[token],success);
 }
 
 int LineParser::gettoken_binstrdata(int token, char*buffer, int bufcap) const

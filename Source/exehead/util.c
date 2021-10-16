@@ -1166,6 +1166,8 @@ struct MGA_FUNC MGA_FUNCS[] = {
 #ifndef _WIN64
   {"KERNEL32", "GetDiskFreeSpaceExW"},
   {"KERNEL32", "GetUserDefaultUILanguage"},
+#endif
+#if !defined(_WIN64) || defined(_M_IA64)
   {"ADVAPI32", "RegDeleteKeyExW"},
 #endif
   {"ADVAPI32", "InitiateShutdownW"},

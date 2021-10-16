@@ -58,13 +58,7 @@ ManifestSupportedOS all
 !include "Memento.nsh"
 !include "WordFunc.nsh"
 !include "Util.nsh"
-!include "WinVer.nsh"
-
-;--------------------------------
-;Definitions
-
-!define SHCNE_ASSOCCHANGED 0x8000000
-!define SHCNF_IDLIST 0
+!include "Integration.nsh"
 
 ;--------------------------------
 ;Configuration
@@ -278,6 +272,7 @@ ${MementoSection} "NSIS Core Files (required)" SecCore
   File ..\Include\MultiUser.nsh
   File ..\Include\VB6RunTime.nsh
   File ..\Include\Util.nsh
+  File ..\Include\Integration.nsh
   File ..\Include\WinCore.nsh
 
   SetOutPath $INSTDIR\Include\Win
@@ -350,7 +345,7 @@ ${MementoSection} "NSIS Core Files (required)" SecCore
     WriteRegStr HKCR "NSIS.Header\shell\open\command" "" 'notepad.exe "%1"'
   ${EndIf}
 
-  System::Call 'Shell32::SHChangeNotify(i ${SHCNE_ASSOCCHANGED}, i ${SHCNF_IDLIST}, p0, p0)'
+  ${NotifyShell_AssocChanged}
 
 ${MementoSectionEnd}
 
@@ -367,7 +362,6 @@ ${MementoSection} "Script Examples" SecExample
   File ..\Examples\example2.nsi
   File ..\Examples\install-per-user.nsi
   File ..\Examples\install-shared.nsi
-  File ..\Examples\viewhtml.nsi
   File ..\Examples\waplugin.nsi
   File ..\Examples\bigtest.nsi
   File ..\Examples\primes.nsi
@@ -1224,7 +1218,7 @@ Section Uninstall
   !insertmacro AssocDeleteFileExtAndProgId HKLM ".nsi" "NSIS.Script"
   !insertmacro AssocDeleteFileExtAndProgId HKLM ".nsh" "NSIS.Header"
 
-  System::Call 'Shell32::SHChangeNotify(i ${SHCNE_ASSOCCHANGED}, i ${SHCNF_IDLIST}, p0, p0)'
+  ${NotifyShell_AssocChanged}
 
   DeleteRegKey HKLM "${REG_UNINST_KEY}"
   DeleteRegKey HKLM "Software\NSIS"

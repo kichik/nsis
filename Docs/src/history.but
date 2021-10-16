@@ -6,13 +6,17 @@ Released on ? ?th, 2020
 
 \S1{v3.06-rl} Release Notes
 
-?
+20th anniversary
 
 \S1{v3.06-cl} Changelog
 
 \S2{} Major Changes
 
+\b \cw{DeleteRegKey /ifempty} now also checks for values, not just subkeys. Use \cw{/ifnosubkeys} for the old behavior.
+
 \b Added \R{getknownfolderpath}{GetKnownFolderPath}
+
+\b Added UnpinShortcut macro (Integration.nsh)
 
 \S2{} Minor Changes
 
@@ -20,7 +24,17 @@ Released on ? ?th, 2020
 
 \# Undocumented: \b Added GetShellVarContext, IfAltRegView and GetRegView | Documenting these would require documenting the parameter name to number mapping
 
+\b Added \cw{!define /intfmt}
+
+\b Added Date/Time NSD controls and macros
+
 \b MultiUser: Fixed INSTALLMODE_FUNCTION and added INSTALLMODEPAGE_SHOWUSERNAME
+
+\S2{} Translations
+
+\b Updated German (SebStange PR)
+
+\S2{} Build System
 
 \b Python 3 fixes (\W{http://sf.net/p/nsis/patches/296}{patch #296})
 

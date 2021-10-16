@@ -64,6 +64,7 @@ void LogMessage(HWND hwnd,const TCHAR *str);
 void ErrorMessage(HWND hwnd,const TCHAR *str);
 void CenterOnParent(HWND hwnd);
 void SetDialogFocus(HWND hDlg, HWND hCtl); // Use this and not SetFocus()!
+#define DlgRet(hDlg, val) ( SetWindowLongPtr((hDlg), DWLP_MSGRESULT, (val)) | TRUE )
 HWND GetComboEdit(HWND hCB);
 #define DisableItems(hwnd) EnableDisableItems(hwnd, 0)
 #define EnableItems(hwnd) EnableDisableItems(hwnd, 1)
@@ -89,6 +90,18 @@ void PushMRUFile(TCHAR* fname);
 void BuildMRUMenus();
 void LoadMRUFile(int position);
 void ClearMRUList();
+
+struct FSPath {
+  template<class T> static inline bool IsAgnosticSeparator(const T c) { return '\\' == c || '/' == c; }
+  template<class T> static T* FindLastComponent(T*p) // Note: Returns "" for "dir\"
+  {
+    for (T *sep = 0, *start = p;; ++p)
+      if (!*p)
+        return sep ? ++sep : start;
+      else if (IsAgnosticSeparator(*p))
+        sep = p;
+  }
+};
 
 bool FileExists(const TCHAR *fname);
 bool OpenUrlInDefaultBrowser(HWND hwnd, LPCSTR Url);

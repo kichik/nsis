@@ -6,7 +6,7 @@
 <style type="text/css">
 body { color: #000000; background-color: #ffffff; }
 b { color: red; }
-code { margin-left: 1.2em; padding: 0.5em; background-color: #f0f0f0; }
+code { margin-left: 1.2em; padding: 0.5em; background-color: #f0f0f0; display:inline-block; font-size:95%; }
 span.inlcod i { padding: 0px 0.2em; color: #222222; font-family: monospace; font-style: normal; }
 blockquote pre { background-color: #fcfcfc; font-family: monospace; }
 abbr { font-variant: none; cursor: help; }
@@ -78,8 +78,11 @@ abbr { font-variant: none; cursor: help; }
 <li>ComboBox &amp; DropList: 
 <a href="#mref-cbaddstring">NSD_CB_AddString</a>, 
 <a href="#mref-cbinsstring">NSD_CB_PrependString, NSD_CB_AppendString, NSD_CB_InsertString</a>, 
-<a href="#mref-cbselectstring">NSD_CB_SelectString</a>, 
-<a href="#mref-cbgetcount">NSD_CB_GetCount</a>
+NSD_CB_DelString, 
+NSD_CB_DelItem, 
+NSD_CB_Clear, 
+<a href="#mref-cbgetcount">NSD_CB_GetCount</a>, 
+<a href="#mref-cbselectstring">NSD_CB_SelectString</a>
 </li>
 <li>ListBox: 
 <a href="#mref-lbaddstring">NSD_LB_AddString</a>, 
@@ -112,11 +115,14 @@ abbr { font-variant: none; cursor: help; }
 <li>HotKey: 
 <a href="#mref-hkgethk">NSD_HK_GetHotKey</a>, <a href="#mref-hksethk">NSD_HK_SetHotKey</a>
 </li>
+<li>DatePicker: 
+<a href="#mref-dategetdatefields">NSD_Date_GetDateFields</a>
+</li>
 <li>Bitmap: 
-<a href="#mref-setimage">NSD_SetImage</a>, 
-<a href="#mref-setsimage">NSD_SetStretchedImage</a>, 
-<a href="#mref-clearimage">NSD_ClearImage</a>, 
-<a href="#mref-freeimage">NSD_FreeImage</a>
+<a href="#mref-setbitmap">NSD_SetBitmap</a>, 
+<a href="#mref-setsbitmap">NSD_SetStretchedBitmap</a>, 
+<a href="#mref-clearbitmap">NSD_ClearBitmap</a>, 
+<a href="#mref-freebitmap">NSD_FreeBitmap</a>
 </li>
 <li>Icon: 
 <a href="#mref-seticon">NSD_SetIcon</a>, 
@@ -249,8 +255,10 @@ Animation,
 HTrackBar, 
 VTrackBar, 
 UpDown, 
-HotKey,
-IPAddress.
+HotKey, 
+DatePicker, 
+IPAddress, 
+NetAddress.
 </p>
 
 <h3><a name="step-state"></a>Control State</h3>
@@ -458,9 +466,15 @@ SectionEnd</pre></blockquote>
 
 <h3><a name="ref-selectfiledialog"></a>SelectFileDialog</h3>
 <p><code>nsDialogs::SelectFileDialog <i>mode</i> <i>initial_selection</i> <i>filter</i></code></p>
-<p>Displays a file selection dialog to the user. If <i>mode</i> is set to <i>save</i>, displays a file save dialog. If <i>mode</i> is set to <i>open</i>, displays a file open dialog. <i>filter</i> is a list of available file filters separated by pipes. If an empty string is passed, the default is used - <i>All Files|*.*</i>.</p>
+<p>Displays a file selection dialog to the user. If <i>mode</i> is set to <i>save</i>, displays a file save dialog. If <i>mode</i> is set to <i>open</i>, displays a file open dialog.
 <p><i>initial_selection</i> can be used to provide the user with a default file to look for and/or a default folder to look in. If <i>initial_selection</i> is empty no default filename will be provided for the user and the dialog will start in the current working directory. If <i>initial_selection</i> specifies just a filename, for example "test.exe", the dialog will be set up to look for a file called test.exe in the current working directory. If <i>initial_selection</i> specifies just a directory, for example "C:\Program Files", the dialog starts in the provided directory with no file name provided. If <i>initial_selection</i> specifies a directory and a filename, for example "C:\Windows\System32\calc.exe", the dialog will be set up to look for a file called calc.exe in the directory C:\Windows\System32.</p>
+<i>filter</i> is a list of available file filter pairs separated by pipes. A filter pair consists of a display string and a <a href="https://blogs.msdn.microsoft.com/jeremykuhne/2017/06/04/wildcards-in-windows/">DOS-style wildcard pattern</a>. If an empty string is passed, the default is used (<i>"All Files|*.*"</i>).</p>
 <p>Returns the selected file on the stack or an empty string if the user canceled the operation.</p>
+<blockquote><pre>
+nsDialogs::SelectFileDialog open "$DOCUMENTS\Config.ini" ".ini files|*.ini|All Files|*.*"
+Pop $0
+StrCmp $0 "" ...
+</pre></blockquote>
 
 <h3><a name="ref-selectfolderdialog"></a>SelectFolderDialog</h3>
 <p><code>nsDialogs::SelectFolderDialog <i>title</i> <i>initial_selection</i></code></p>
@@ -553,7 +567,9 @@ SectionEnd</pre></blockquote>
 <li>${NSD_CreateVTrackBar}</li>
 <li>${NSD_CreateUpDown}</li>
 <li>${NSD_CreateHotKey}</li>
-<li>${NSD_CreateIPAddress} <small>(Requires <abbr title="Internet Explorer">IE</abbr>4)</small></li>
+<li>${NSD_CreateDatePicker} <small>(Requires <abbr title="Internet Explorer">IE</abbr> 3.1 and <span class="inlcod"><i>${NSD_InitCommonControlsEx}</i></span>)</small></li>
+<li>${NSD_CreateIPAddress} <small>(Requires <abbr title="Internet Explorer">IE</abbr> 4 and <span class="inlcod"><i>${NSD_InitCommonControl_IPAddress}</i></span>)</small></li>
+<li>${NSD_CreateNetAddress} <small>(Requires Vista and <span class="inlcod"><i>${NSD_InitCommonControl_NetAddress}</i></span>)</small></li>
 </ul>
 <p>Returns the new control's HWND on the stack or <i>error</i></p>
 
@@ -757,9 +773,13 @@ SectionEnd</pre></blockquote>
 <h3><a name="mref-hksethk">NSD_HK_SetHotKey</a></h3>
 <p><code>${NSD_HK_SetHotKey} <i>hk_HWND</i> <i>packedhotkey</i></code></p>
 
-<h3><a name="mref-setimage"></a>NSD_SetImage</h3>
-<p><code>${NSD_SetImage} <i>control_HWND</i> <i>image_path</i> <i>$output_variable</i></code></p>
-<p>Loads a bitmap from <i>image_path</i> and displays it on <i>control_HWND</i> created by <a href="#mref-create">${NSD_CreateBitmap}</a>. The image handle is stored in <i>output_variable</i> and should be freed using <a href="#mref-freeimage">${NSD_FreeImage}</a> once no longer necessary.</p>
+<h3><a name="mref-dategetdatefields">NSD_Date_GetDateFields</a></h3>
+<p><code>${NSD_Date_GetDateFields} <i>HWND</i></code></p>
+<p>Returns the month, day and year on the stack.</p>
+
+<h3><a name="mref-setbitmap"></a><a name="mref-setimage"></a>NSD_SetBitmap</h3>
+<p><code>${NSD_SetBitmap} <i>control_HWND</i> <i>image_path</i> <i>$output_variable</i></code></p>
+<p>Loads a bitmap from <i>image_path</i> and displays it on <i>control_HWND</i> created by <a href="#mref-create">${NSD_CreateBitmap}</a>. The image handle is stored in <i>output_variable</i> and should be freed using <a href="#mref-freebitmap">${NSD_FreeBitmap}</a> once no longer necessary.</p>
 <p>The image must be extracted to the user's computer prior to calling this macro. A good place to extract images is $PLUGINSDIR.</p>
 <blockquote><pre>!include nsDialogs.nsh
 
@@ -770,8 +790,8 @@ Page custom nsDialogsImage
 Page instfiles
 
 Var Dialog
-Var Image
-Var ImageHandle
+Var ImageCtrl
+Var BmpHandle
 
 Function .onInit
 	InitPluginsDir
@@ -787,28 +807,28 @@ Function nsDialogsImage
 	${EndIf}
 
 	${NSD_CreateBitmap} 0 0 100% 100% ""
-	Pop $Image
-	${NSD_SetImage} $Image $PLUGINSDIR\image.bmp $ImageHandle
+	Pop $ImageCtrl
+	${NSD_SetBitmap} $ImageCtrl $PLUGINSDIR\image.bmp $BmpHandle
 
 	nsDialogs::Show
 
-	${NSD_FreeImage} $ImageHandle
+	${NSD_FreeBitmap} $BmpHandle
 FunctionEnd
 
 Section
 SectionEnd</pre></blockquote>
 
-<h3><a name="mref-setsimage"></a>NSD_SetStretchedImage</h3>
-<p><code>${NSD_SetStretchedImage} <i>control_HWND</i> <i>image_path</i> <i>$output_variable</i></code></p>
-<p>Loads and displays a bitmap just like <a href="#mref-setimage">${NSD_SetImage}</a>, but stretched the image to fit the control.</p>
+<h3><a name="mref-setsbitmap"></a><a name="mref-setsimage"></a>NSD_SetStretchedBitmap</h3>
+<p><code>${NSD_SetStretchedBitmap} <i>control_HWND</i> <i>image_path</i> <i>$output_variable</i></code></p>
+<p>Loads and displays a bitmap just like <a href="#mref-setbitmap">${NSD_SetImage}</a> but stretches the image to fit the control.</p>
 
-<h3><a name="mref-clearimage"></a>NSD_ClearImage</h3>
-<p><code>${NSD_ClearImage} <i>control_HWND</i></code></p>
-<p>Clears an image from a control.</p>
+<h3><a name="mref-clearbitmap"></a><a name="mref-clearimage"></a>NSD_ClearBitmap</h3>
+<p><code>${NSD_ClearBitmap} <i>control_HWND</i></code></p>
+<p>Clears a bitmap from a image control.</p>
 
-<h3><a name="mref-freeimage"></a>NSD_FreeImage</h3>
+<h3><a name="mref-freebitmap"></a><a name="mref-freeimage"></a>NSD_FreeBitmap</h3>
 <p><code>${NSD_FreeImage} <i>image_handle</i></code></p>
-<p>Frees an image handle previously loaded with <a href="#mref-setimage">${NSD_SetImage}</a> or <a href="#mref-setsimage">${NSD_SetStretchedImage}</a>.</p>
+<p>Frees an image handle previously loaded with <a href="#mref-setbitmap">${NSD_SetImage}</a> or <a href="#mref-setsbitmap">${NSD_SetStretchedBitmap}</a>.</p>
 
 <h3><a name="mref-seticon"></a>NSD_SetIcon</h3>
 <p><code>${NSD_SetIcon} <i>control_HWND</i> <i>image_path</i> <i>$output_variable</i></code></p>

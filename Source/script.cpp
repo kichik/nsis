@@ -4319,11 +4319,15 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         int a=1, iskeyop;
         if ((iskeyop = which_token == TOK_DELETEREGKEY))
         {
-          TCHAR *s=line.gettoken_str(a);
-          if (s[0] == _T('/'))
+          for (;; ++a)
           {
-            if (_tcsicmp(s,_T("/ifempty"))) PRINTHELP()
-            a++, ent.offsets[4]|=(DELREGKEY_ONLYIFNOSUBKEYS<<DELREGKEYFLAGSSHIFT);
+            switch(line.gettoken_enum(a,_T("/ifempty\0/ifnosubkeys\0/ifnovalues\0")))
+            {
+            case 0: ent.offsets[4]|=((DELREGKEY_ONLYIFNOSUBKEYS|DELREGKEY_ONLYIFNOVALUES)<<DELREGKEYFLAGSSHIFT); continue;
+            case 1: ent.offsets[4]|=((DELREGKEY_ONLYIFNOSUBKEYS                         )<<DELREGKEYFLAGSSHIFT); continue;
+            case 2: ent.offsets[4]|=((                          DELREGKEY_ONLYIFNOVALUES)<<DELREGKEYFLAGSSHIFT); continue;
+            }
+            break;
           }
           if (line.gettoken_str(a+2)[0]) PRINTHELP()
         }
@@ -4770,7 +4774,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.offsets[2]=SECTION_FIELD_SET(name_ptr);
       ent.offsets[4]=add_string(line.gettoken_str(2));
       if (!IsIntOrUserVar(line,1)) PRINTHELP()
-      SCRIPT_MSG(_T("SectionSetText: %") NPRIs _T("->%") NPRIs _T("\n"),line.gettoken_str(1),line.gettoken_str(2));
+      SCRIPT_MSG(_T("SectionSetText: %") NPRIs _T("=%") NPRIs _T("\n"),line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_SECTIONGETTEXT:
       ent.which=EW_SECTIONSET;
@@ -4781,14 +4785,17 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       SCRIPT_MSG(_T("SectionGetText: %") NPRIs _T("->%") NPRIs _T("\n"),line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_SECTIONSETFLAGS:
+    {
+      int num, conv;
       ent.which=EW_SECTIONSET;
       ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[1]=add_string(line.gettoken_str(2));
+      ent.offsets[1]=(num=line.gettoken_intx(2,&conv), conv) ? add_intstring(num) : add_string(line.gettoken_str(2));
       ent.offsets[2]=SECTION_FIELD_SET(flags);
       ent.offsets[3]=1;
-      if (!IsIntOrUserVar(line,1) || !IsIntOrUserVar(line,2)) PRINTHELP()
-      SCRIPT_MSG(_T("SectionSetFlags: %") NPRIs _T("->%") NPRIs _T("\n"),line.gettoken_str(1),line.gettoken_str(2));
-    return add_entry(&ent);
+      if (!IsIntOrUserVar(line,1) || (!conv && !IsIntOrUserVar(line,2))) PRINTHELP()
+      SCRIPT_MSG(_T("SectionSetFlags: %") NPRIs _T("=%") NPRIs _T("\n"),line.gettoken_str(1),line.gettoken_str(2));
+      return add_entry(&ent);
+    }
     case TOK_SECTIONGETFLAGS:
       ent.which=EW_SECTIONSET;
       ent.offsets[0]=add_string(line.gettoken_str(1));
@@ -4802,7 +4809,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.offsets[0]=add_string(line.gettoken_str(1));
       ent.offsets[1]=add_string(line.gettoken_str(2));
       ent.offsets[2]=1;
-      SCRIPT_MSG(_T("InstTypeSetText: %") NPRIs _T("->%") NPRIs _T("\n"),line.gettoken_str(1),line.gettoken_str(2));
+      SCRIPT_MSG(_T("InstTypeSetText: %") NPRIs _T("=%") NPRIs _T("\n"),line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_INSTTYPEGETTEXT:
       ent.which=EW_INSTTYPESET;
@@ -4813,12 +4820,16 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       SCRIPT_MSG(_T("InstTypeGetText: %") NPRIs _T("->%") NPRIs _T("\n"),line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_SECTIONSETINSTTYPES:
+    {
+      int num, conv;
       ent.which=EW_SECTIONSET;
       ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[1]=add_string(line.gettoken_str(2));
+      ent.offsets[1]=(num=line.gettoken_intx(2,&conv), conv) ? add_intstring(num) : add_string(line.gettoken_str(2));
       ent.offsets[2]=SECTION_FIELD_SET(install_types);
-      SCRIPT_MSG(_T("SectionSetInstTypes: %") NPRIs _T("->%") NPRIs _T("\n"),line.gettoken_str(1),line.gettoken_str(2));
-    return add_entry(&ent);
+      if (!IsIntOrUserVar(line,1) || (!conv && !IsIntOrUserVar(line,2))) PRINTHELP()
+      SCRIPT_MSG(_T("SectionSetInstTypes: %") NPRIs _T("=%") NPRIs _T("\n"),line.gettoken_str(1),line.gettoken_str(2));
+      return add_entry(&ent);
+    }
     case TOK_SECTIONGETINSTTYPES:
       ent.which=EW_SECTIONSET;
       ent.offsets[0]=add_string(line.gettoken_str(1));
@@ -4832,7 +4843,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.offsets[0]=add_string(line.gettoken_str(1));
       ent.offsets[1]=add_string(line.gettoken_str(2));
       ent.offsets[2]=SECTION_FIELD_SET(size_kb);
-      SCRIPT_MSG(_T("SectionSetSize: %") NPRIs _T("->%") NPRIs _T("\n"),line.gettoken_str(1),line.gettoken_str(2));
+      SCRIPT_MSG(_T("SectionSetSize: %") NPRIs _T("=%") NPRIs _T("\n"),line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_SECTIONGETSIZE:
       ent.which=EW_SECTIONSET;
@@ -4909,10 +4920,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return add_entry(&ent);
     case TOK_LOADANDSETIMAGE:
     {
-      SCRIPT_MSG(_T("LoadAndSetImage: "));
       ent.which=EW_LOADANDSETIMAGE;
       int tidx = 1, conv = 1, fail = 0;
-      unsigned int flags = LASIF_HWND;
+      unsigned int flags = LASIF_HWND, lrflagsin;
       for (; tidx < line.getnumtokens(); tidx++)
       {
         if (!_tcsicmp(line.gettoken_str(tidx),_T("/EXERESOURCE"))) flags |= LASIF_EXERES;
@@ -4923,12 +4933,16 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         else if (!_tcsicmp(line.gettoken_str(tidx),_T("/GETDLGITEM"))) flags &= ~LASIF_HWND; // Reuses TOK_SETBRANDINGIMAGE functionality
         else { if (line.gettoken_str(tidx)[0] == '/') ++fail; break; }
       }
-      ent.offsets[1]=(flags & LASIF_HWND) ? add_string(line.gettoken_str(tidx+0)) : line.gettoken_int(tidx+0, &conv); fail += !conv; // HWND/CtrlId
-      flags |= (line.gettoken_int(tidx+1, &conv) & LASIM_IMAGE); fail += !conv;
-      flags |= (line.gettoken_int(tidx+2, &conv) & LASIM_LR); fail += !conv;
-      ent.offsets[0]=(flags & LASIF_STRID) ? add_string(line.gettoken_str(tidx+3)) : line.gettoken_int(tidx+3, &conv); fail += !conv; // Image path/resid
-      ent.offsets[2]=flags;
-      SCRIPT_MSG(_T("%") NPRIs _T(" %#x \"%") NPRIs _T("\" \n"), line.gettoken_str(tidx+0), flags, line.gettoken_str(tidx+3));
+      ent.offsets[2] = (flags & LASIF_HWND) ? add_string(line.gettoken_str(tidx+0)) : line.gettoken_int(tidx+0, &conv); fail |= !conv; // HWND/CtrlId
+      flags |= (line.gettoken_int(tidx+1, &conv) & LASIM_IMAGE); fail |= !conv; // IMAGE_*
+      flags |= ((lrflagsin = line.gettoken_intx(tidx+2, &conv)) & LASIM_LR); fail |= !conv; // LR_*
+      ent.offsets[1] = (flags & LASIF_STRID) ? add_string(line.gettoken_str(tidx+3)) : line.gettoken_int(tidx+3, &conv); fail |= !conv; // Image path/resid
+      ent.offsets[3] = flags; // Packed flags, IMAGE_* and LR_*
+      ent.offsets[0] = GetUserVarIndex(line, tidx+4); // Outvar
+      SCRIPT_MSG(_T("LoadAndSetImage %") NPRIs _T(" %#x \"%") NPRIs _T("\""), line.gettoken_str(tidx+0), flags, line.gettoken_str(tidx+3));
+      if (ent.offsets[0] >= 0) SCRIPT_MSG(_T(" ->%") NPRIs _T(""), line.gettoken_str(tidx+4));
+      SCRIPT_MSG(_T("\n"));
+      if ((lrflagsin & LASIM_LR) != lrflagsin) warning_fl(DW_PARSE_NUMBEROUTOFSPEC, _T("Out of spec: \"%") NPRIs _T("\""), line.gettoken_str(tidx+2));
       if (fail) PRINTHELP();
     }
     return add_entry(&ent);
@@ -4937,7 +4951,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_LOADANDSETIMAGE:
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_CONFIG_ENHANCEDUI_SUPPORT not defined.\n"),line.gettoken_str(0));
       return PS_ERROR;
-#endif //~ NSIS_SUPPORT_CREATEFONT
+#endif //~ NSIS_CONFIG_ENHANCEDUI_SUPPORT
     case TOK_DEFVAR:
     {
       int a=1;

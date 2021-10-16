@@ -21,13 +21,14 @@ RequestExecutionLevel Admin ; Request admin rights on WinVista+ (when UAC is tur
 InstallDir "$ProgramFiles\$(^Name)"
 InstallDirRegKey HKLM "${REGPATH_UNINSTSUBKEY}" "UninstallString"
 
+!include LogicLib.nsh
+!include Integration.nsh
+
 Page Directory
 Page InstFiles
 
 Uninstpage UninstConfirm
 Uninstpage InstFiles
-
-!include LogicLib.nsh
 
 !macro EnsureAdminRights
   UserInfo::GetAccountType
@@ -56,14 +57,12 @@ Section "Program files (Required)"
   SetOutPath $InstDir
   WriteUninstaller "$InstDir\Uninst.exe"
   WriteRegStr HKLM "${REGPATH_UNINSTSUBKEY}" "DisplayName" "${NAME}"
+  WriteRegStr HKLM "${REGPATH_UNINSTSUBKEY}" "DisplayIcon" "$InstDir\MyApp.exe,0"
   WriteRegStr HKLM "${REGPATH_UNINSTSUBKEY}" "UninstallString" '"$InstDir\Uninst.exe"'
   WriteRegDWORD HKLM "${REGPATH_UNINSTSUBKEY}" "NoModify" 1
   WriteRegDWORD HKLM "${REGPATH_UNINSTSUBKEY}" "NoRepair" 1
 
   File "/oname=$InstDir\MyApp.exe" "${NSISDIR}\Bin\MakeLangId.exe" ; Pretend that we have a real application to install
-
-  ;WriteRegStr HKLM "Software\Classes\.myfileext" "myfiletype"
-  ;WriteRegStr HKLM "Software\Classes\myfiletype\shell\myapp\command" "" '"$InstDir\MyApp.exe" "%1"'
 SectionEnd
 
 Section "Start Menu shortcut"
@@ -72,13 +71,11 @@ SectionEnd
 
 
 Section -Uninstall
+  ${UnpinShortcut} "$SMPrograms\${NAME}.lnk"
+  Delete "$SMPrograms\${NAME}.lnk"
+
   Delete "$InstDir\MyApp.exe"
   Delete "$InstDir\Uninst.exe"
   RMDir "$InstDir"
   DeleteRegKey HKLM "${REGPATH_UNINSTSUBKEY}"
-  ;DeleteRegKey HKLM "Software\Classes\myfiletype\shell\myapp"
-  ;DeleteRegKey /IfEmpty HKLM "Software\Classes\myfiletype\shell"
-  ;DeleteRegKey /IfEmpty HKLM "Software\Classes\myfiletype"
-
-  Delete "$SMPrograms\${NAME}.lnk"
 SectionEnd

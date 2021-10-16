@@ -61,7 +61,7 @@
 // 5000..5999 Important generic warnings
 // 6000..6999 Script warnings
 // 7000..7499 Recovered from bad input etc. warnings
-// 7500..7999 Discouraged usage warnings (allocated top to bottom to reserve as much space as possible for more bad input codes)
+// 7500..7999 Discouraged usage warnings (allocated high to low to reserve as much space as possible for more bad input codes)
 // 8000..8999 Generic warnings
 // 9000..9999 Breaking our and/or MS guidelines warnings
 typedef enum {
@@ -107,6 +107,7 @@ typedef enum {
   DW_LICENSE_EMPTY = 7050,
   DW_ATTRIBUTE_OVERLONGSTRING = 7060,
   DW_PARSE_BADNUMBER = 7070,
+  DW_PARSE_NUMBEROUTOFSPEC = 7071,
   DW_PARSE_LNK_HK = 7075,
   DW_GENERIC_DEPRECATED = 7998,
   DW_PARSE_REGPATHPREFIX = 7999,
@@ -143,11 +144,12 @@ namespace MakensisAPI {
   extern const TCHAR* SigintEventNameFmt;
   extern const TCHAR* SigintEventNameLegacy;
 
-  enum notify_e {
-    NOTIFY_SCRIPT, // main nsi file(s)
+  enum datatransfer_e {
+    NOTIFY_SCRIPT, // Compiler -> Host: main nsi file(s)
     NOTIFY_WARNING,
     NOTIFY_ERROR,
-    NOTIFY_OUTPUT // generated .exe file
+    NOTIFY_OUTPUT, // Compiler -> Host: Generated .exe file
+    PROMPT_FILEPATH // [0x03006000] Compiler -> Host -> Compiler
   };
 #ifdef _WIN32
   enum sndmsg_e {
@@ -156,8 +158,14 @@ namespace MakensisAPI {
 #endif
   enum QUERYHOST_e {
     QH_OUTPUTCHARSET = 1, // [0x03000000] return (wincodepage+1) or 0 for default (This encoding is used by stdout, stderr and the notify messages)
-    QH_ENABLESTDERR // [0x03001000] return 1 to output error messages to stderr or 0 to output error messages to stdout
+    QH_ENABLESTDERR, // [0x03001000] return 1 to output error messages to stderr or 0 to output error messages to stdout
+    QH_SUPPORTEDVERSION, // [0x03006000] The host must return new highest makensis compiler version it supports
   };
+  typedef struct {
+    unsigned char Platform; // Bitness OR'ed with sizeof(TCHAR) of the compiler
+    unsigned char Reserved;
+    TCHAR Path[1];
+  } PROMPT_FILEPATH_DATA;
 }
 
 #define PAGE_CUSTOM 0
@@ -273,7 +281,14 @@ class CEXEBuild {
     NStreamLineReader* curlinereader;
 
     HWND notify_hwnd;
-    void notify(MakensisAPI::notify_e code, const TCHAR *data) const;
+    void notify(MakensisAPI::datatransfer_e code, const TCHAR *data) const;
+    #ifdef _WIN32
+    typedef bool (CALLBACK*HOSTAPIREQUESTDATAPROC)(void*cookie, HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
+    #else
+    typedef bool (*HOSTAPIREQUESTDATAPROC)(void*cookie);
+    #endif
+    bool hostapi_request_data(MakensisAPI::datatransfer_e operation, UINT minver, HOSTAPIREQUESTDATAPROC proc, void*cookie, const void* input, UINT inputsize) const;
+    bool prompt_for_output_path(TCHAR*path, UINT pathcap) const;
 
   private:
     int check_write_output_errors() const;
@@ -553,6 +568,7 @@ class CEXEBuild {
     int DeclaredUserVar(const TCHAR *VarName);
     void VerifyDeclaredUserVarRefs(UserVarsStringList *pVarsStringList);
     bool IsIntOrUserVar(const LineParser &line, int token) const;
+    static bool IsVarPrefix(const TCHAR*s) { return *s++ == _T('$') && *s > ' '; }
 
     ConstantsStringList m_ShellConstants;
 

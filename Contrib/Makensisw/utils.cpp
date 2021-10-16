@@ -295,7 +295,7 @@ void EnableDisableItems(HWND hwnd, int on)
 
   static const PACKEDCMDID_T cmds [] = {
     PACKCMDID(IDM_EXIT), PACKCMDID(IDM_LOADSCRIPT), PACKCMDID(IDM_EDITSCRIPT), 
-    PACKCMDID(IDM_SAVE), PACKCMDID(IDM_CLEARLOG),
+    PACKCMDID(IDM_SAVE), PACKCMDID(IDM_CLEARLOG), PACKCMDID(IDM_GUIDGEN),
     PACKCMDID(IDM_COMPRESSOR), PACKCMDID(IDM_COMPRESSOR_SUBMENU),
     PACKCMDID(IDM_RECOMPILE), PACKCMDID(IDM_RECOMPILE_TEST)
   };
@@ -362,7 +362,7 @@ void CompileNSISScript() {
   ClearLog(g_sdata.hwnd);
   SetTitle(g_sdata.hwnd,NULL);
   PostMessage(g_sdata.hwnd, WM_MAKENSIS_UPDATEUISTATE, 0, 0);
-  if (lstrlen(g_sdata.script)==0) {
+  if (!g_sdata.script[0]) {
     LogMessage(g_sdata.hwnd,USAGE);
     SetUIState_NoScript();
     DragAcceptFiles(g_sdata.hwnd,TRUE);

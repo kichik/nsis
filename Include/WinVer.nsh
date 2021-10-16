@@ -532,16 +532,16 @@
 !macroend
 
 !macro _WinVer_WaaS op id _t _f
-  !insertmacro WinVer_WaaS "${id}" 10240 1507 "Threshold"   "RTM"
-  !insertmacro WinVer_WaaS "${id}" 10586 1511 "Threshold 2" "November Update"
-  !insertmacro WinVer_WaaS "${id}" 14393 1607 "Redstone"    "Anniversary Update"
-  !insertmacro WinVer_WaaS "${id}" 15063 1703 "Redstone 2"  "Creators Update"
-  !insertmacro WinVer_WaaS "${id}" 16299 1709 "Redstone 3"  "Fall Creators Update"
-  !insertmacro WinVer_WaaS "${id}" 17134 1803 "Redstone 4"  "April 2018 Update"
-  !insertmacro WinVer_WaaS "${id}" 17763 1809 "Redstone 5"  "October 2018 Update"
-  !insertmacro WinVer_WaaS "${id}" 18362 1903 "19H1"        "May 2019 Update"
-  !insertmacro WinVer_WaaS "${id}" 18363 1909 "19H2"        "November 2019 Update"
-  ;insertmacro WinVer_WaaS "${id}" ????? 20?? "20H1"        "????"
+  !insertmacro WinVer_WaaS "${id}" 10240 1507 "Threshold"   "RTM" ; 10240.16384
+  !insertmacro WinVer_WaaS "${id}" 10586 1511 "Threshold 2" "November Update" ; 10586.0?
+  !insertmacro WinVer_WaaS "${id}" 14393 1607 "Redstone"    "Anniversary Update" ; 14393.10
+  !insertmacro WinVer_WaaS "${id}" 15063 1703 "Redstone 2"  "Creators Update" ; 15063.13
+  !insertmacro WinVer_WaaS "${id}" 16299 1709 "Redstone 3"  "Fall Creators Update" ; 16299.19
+  !insertmacro WinVer_WaaS "${id}" 17134 1803 "Redstone 4"  "April 2018 Update" ; 17134.1
+  !insertmacro WinVer_WaaS "${id}" 17763 1809 "Redstone 5"  "October 2018 Update" ; 17763.1
+  !insertmacro WinVer_WaaS "${id}" 18362 1903 "19H1"        "May 2019 Update" ; 18362.116
+  !insertmacro WinVer_WaaS "${id}" 18363 1909 "19H2"        "November 2019 Update" ; 18363.418
+  !insertmacro WinVer_WaaS "${id}" 19041 2004 "20H1"        "May 2020 Update" ; 19041.264?
   !ifmacrodef WinVerExternal_WaaS_MapToBuild
     !insertmacro WinVerExternal_WaaS_MapToBuild ${op} "${id}" WinVer_WaaS_Build
   !endif

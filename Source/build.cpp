@@ -2646,8 +2646,8 @@ int CEXEBuild::write_output(void)
 
   RET_UNLESS_OK( uninstall_generate() );
 
-  crc32_t crc=0;
-
+  unsigned char limit = 0; // Limit the number of retries in case the host has some kind of bug
+retry_output:
   {
     tstring full_path = get_full_path(build_output_filename), fnamebuf = get_file_name(build_output_filename);
     notify(MakensisAPI::NOTIFY_OUTPUT, full_path.c_str());
@@ -2667,6 +2667,7 @@ int CEXEBuild::write_output(void)
   if (!fp)
   {
     ERROR_MSG(_T("Can't open output file\n"));
+    if (++limit && prompt_for_output_path(build_output_filename, COUNTOF(CEXEBuild::build_output_filename))) goto retry_output;
     return PS_ERROR;
   }
 
@@ -2677,6 +2678,7 @@ int CEXEBuild::write_output(void)
     return PS_ERROR;
   }
 
+  crc32_t crc=0;
 #ifdef NSIS_CONFIG_CRC_SUPPORT
   #ifdef NSIS_CONFIG_CRC_ANAL
     crc=CRC32(crc,m_exehead,(DWORD)m_exehead_size);
@@ -3390,6 +3392,17 @@ int CEXEBuild::parse_pragma(LineParser &line)
   const int rvSucc = PS_OK, rvWarn = PS_WARNING, rvErr = PS_WARNING; // rvErr is not PS_ERROR because we want !pragma parsing to be very forgiving.
   const TCHAR badParamMsg[] = _T("Unknown pragma");
 
+  if (line.gettoken_enum(1, _T("internal\0")) == 0)
+  {
+    if (line.gettoken_enum(2, _T("x\0")) == 0)
+    {
+      const TCHAR *name = line.gettoken_str(3);
+      int succ, num = line.gettoken_intx(4, &succ);SCRIPT_MSG(_T("%#x %d\n"),num,succ);
+      return ((succ ? definedlist.set_si32(name, num) : definedlist.set(name, _T(""))), rvSucc);
+    }
+    return rvErr;
+  }
+
   // 2.47 shipped with a corrupted CHM file (bug #1129). This minimal verification command exists because the !searchparse hack we added does not work with codepage 936!
   if (line.gettoken_enum(1, _T("verifychm\0")) == 0)
   {
@@ -3479,7 +3492,7 @@ void CEXEBuild::warninghelper(DIAGCODE dc, bool fl, const TCHAR *fmt, va_list ar
 
   m_warnings.add(msg,0); // Add to list of warnings to display at the end
 
-  MakensisAPI::notify_e hostevent = MakensisAPI::NOTIFY_WARNING;
+  MakensisAPI::datatransfer_e hostevent = MakensisAPI::NOTIFY_WARNING;
   if (aserror)
     hostevent = MakensisAPI::NOTIFY_ERROR, display_warnings = display_errors;
 
@@ -3571,7 +3584,7 @@ void CEXEBuild::print_warnings()
   FlushOutputAndResetPrintColor();
 }
 
-void CEXEBuild::notify(MakensisAPI::notify_e code, const TCHAR *data) const
+void CEXEBuild::notify(MakensisAPI::datatransfer_e code, const TCHAR *data) const
 {
 #ifdef _WIN32
   if (notify_hwnd)
@@ -3592,6 +3605,64 @@ void CEXEBuild::notify(MakensisAPI::notify_e code, const TCHAR *data) const
     COPYDATASTRUCT cds = {(DWORD) code, cb, (void*) data};
     SendMessage(notify_hwnd, WM_COPYDATA, 0, (LPARAM)&cds);
   }
+#endif
+}
+
+bool CEXEBuild::hostapi_request_data(MakensisAPI::datatransfer_e operation, UINT minver, HOSTAPIREQUESTDATAPROC proc, void*cookie, const void* input, UINT inputsize) const
+{
+  using namespace MakensisAPI;
+#ifdef _WIN32
+  struct helper {
+    static INT_PTR CALLBACK Proc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
+    {
+      size_t *data = (size_t*) GetWindowLongPtr(hWnd, DWLP_USER);
+      if (Msg == WM_CLOSE)
+      {
+        if (lParam) SendMessage((HWND) wParam, WM_COPYDATA, (SIZE_T) hWnd, lParam);
+        return DestroyWindow(hWnd) | PostMessage(NULL, WM_QUIT, 0, 0);
+      }
+      return data && ((HOSTAPIREQUESTDATAPROC)data[0])((void*) data[1], hWnd, Msg, wParam, lParam); // We don't set DWLP_MSGRESULT nor care about the return value
+    }
+  };
+  if (!notify_hwnd || (minver && SendMessage(notify_hwnd, QUERYHOST, QH_SUPPORTEDVERSION, 0) < minver)) return false;
+  size_t data[] = { (size_t) proc, (size_t) cookie };
+  COPYDATASTRUCT cds = { (DWORD) operation, inputsize, (void*) input };
+  HWND hWnd = CreateWindowEx(WS_EX_TOOLWINDOW, WC_DIALOG, NULL, WS_POPUP|WS_DISABLED, 0, 0, 0, 0, NULL, NULL, NULL, NULL);
+  SetWindowLongPtr(hWnd, DWLP_USER, (LONG_PTR) data);
+  SetWindowLongPtr(hWnd, DWLP_DLGPROC, (LONG_PTR) helper::Proc);
+  SendMessage(hWnd, WM_CLOSE, (SIZE_T) notify_hwnd, (SIZE_T) &cds);
+  for (MSG msg; (int) GetMessage(&msg, NULL, 0, 0) > 0;) DispatchMessage(&msg);
+  return true;
+#else
+  return false;
+#endif
+}
+
+bool CEXEBuild::prompt_for_output_path(TCHAR*path, UINT pathcap) const
+{
+  using namespace MakensisAPI;
+#ifdef _WIN32
+  struct handler {
+    static bool CALLBACK proc(void*cookie, HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
+    {
+      size_t *io = (size_t*) cookie;
+      COPYDATASTRUCT*pCDS = (COPYDATASTRUCT*) lParam;
+      if (Msg == WM_COPYDATA && pCDS->cbData > sizeof(TCHAR) && pCDS->cbData <= io[2] * sizeof(TCHAR))
+      {
+        _tcscpy((TCHAR*) io[1], (TCHAR*) ((COPYDATASTRUCT*)lParam)->lpData);
+        return (io[0] = pCDS->dwData == PROMPT_FILEPATH);
+      }
+      return false;
+    }
+  };
+  size_t io[] = { false, (size_t) path, pathcap }, cb;
+  TinyGrowBuf inputbuf((cb = FIELD_OFFSET(PROMPT_FILEPATH_DATA, Path[pathcap])));
+  PROMPT_FILEPATH_DATA *p = (PROMPT_FILEPATH_DATA*) inputbuf.get();
+  p->Platform = (sizeof(void*) * 8) | sizeof(TCHAR), p->Reserved = 0;
+  _tcscpy(p->Path, path);
+  return hostapi_request_data(PROMPT_FILEPATH, 0x03006000, handler::proc, io, p, cb) && io[0];
+#else
+  return false;
 #endif
 }
 
@@ -3787,16 +3858,16 @@ int CEXEBuild::DeclaredUserVar(const TCHAR *szVarName)
 int CEXEBuild::GetUnsafeUserVarIndex(LineParser &line, int token)
 {
   TCHAR *p = line.gettoken_str(token);
-  int idx = (*p == _T('$') && *++p) ? m_UserVarNames.get(p) : -1;
+  int idx = IsVarPrefix(p) ? m_UserVarNames.get(++p) : -1;
   if (idx >= 0 && m_UserVarNames.get_reference(idx) >= 0) m_UserVarNames.inc_reference(idx);
   return idx;
 }
 int CEXEBuild::GetUserVarIndex(LineParser &line, int token)
 {
   TCHAR *p = line.gettoken_str(token);
-  if ( *p == _T('$') && *(p+1) )
+  if (IsVarPrefix(p))
   {
-    int idxUserVar = m_UserVarNames.get((TCHAR *)p+1);
+    int idxUserVar = m_UserVarNames.get(p+1);
     if (idxUserVar >= 0 && m_UserVarNames.get_reference(idxUserVar) >= 0)
     {
       m_UserVarNames.inc_reference(idxUserVar);
@@ -3804,7 +3875,7 @@ int CEXEBuild::GetUserVarIndex(LineParser &line, int token)
     }
     else
     {
-      int idxConst = m_ShellConstants.get((TCHAR *)p+1);
+      int idxConst = m_ShellConstants.get(p+1);
       if (idxConst >= 0)
       {
         ERROR_MSG(_T("Error: cannot change constants : %") NPRIs _T("\n"), p);
@@ -3828,7 +3899,7 @@ void CEXEBuild::VerifyDeclaredUserVarRefs(UserVarsStringList *pVarsStringList)
 bool CEXEBuild::IsIntOrUserVar(const LineParser &line, int token) const
 {
   const TCHAR *p = line.gettoken_str(token);
-  if ( *p == _T('$') && *(p+1) )
+  if (IsVarPrefix(p))
   {
     int idxUserVar = m_UserVarNames.get(p+1);
     return (idxUserVar >= 0 && m_UserVarNames.get_reference(idxUserVar) >= 0);

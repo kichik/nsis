@@ -44,9 +44,9 @@
 #define NSIS_UC_URL  "http://nsis.sourceforge.net/update.php?version="
 #define NSIS_DL_URL  "http://nsis.sourceforge.net/download/"
 #ifdef UNICODE
-#define USAGE        _T("Usage:\r\n\r\n \x2022 File \x203a Load Script...\r\n \x2022 Drag the .nsi file into this window\r\n \x2022 Right click the .nsi file and choose \"Compile NSIS Script\"")
+#define USAGE        _T("Usage:\r\n\r\n \x2022 File \x203a Load Script...\r\n \x2022 Drag the .nsi file into this window\r\n \x2022 Right click the .nsi file and choose \"Compile NSIS Script\"\r\n")
 #else
-#define USAGE        _T("Usage:\r\n\r\n - File | Load Script...\r\n - Drag the .nsi file into this window\r\n - Right click the .nsi file and choose \"Compile NSIS Script\"")
+#define USAGE        _T("Usage:\r\n\r\n - File | Load Script...\r\n - Drag the .nsi file into this window\r\n - Right click the .nsi file and choose \"Compile NSIS Script\"\r\n")
 #endif
 #define COPYRIGHT    _T("Copyright (C) 2002 Robert Rainwater")
 #define CONTRIB      _T("Fritz Elfert, Justin Frankel, Amir Szekely, Sunil Kamath, Joost Verburg, Anders Kjersem")
@@ -94,18 +94,26 @@ namespace MakensisAPI {
   extern const TCHAR* SigintEventNameFmt;
   extern const TCHAR* SigintEventNameLegacy;
 
-  enum notify_e {
+  enum datatransfer_e {
     NOTIFY_SCRIPT,
     NOTIFY_WARNING,
     NOTIFY_ERROR,
-    NOTIFY_OUTPUT
+    NOTIFY_OUTPUT,
+    PROMPT_FILEPATH
   };
   enum sndmsg_e {
     QUERYHOST = WM_APP
   };
   enum QUERYHOST_e {
-    QH_OUTPUTCHARSET = 1
+    QH_OUTPUTCHARSET = 1,
+    QH_ENABLESTDERR,
+    QH_SUPPORTEDVERSION
   };
+  typedef struct {
+    unsigned char Platform;
+    unsigned char Reserved;
+    TCHAR Path[1];
+  } PROMPT_FILEPATH_DATA;
 }
 
 typedef enum {

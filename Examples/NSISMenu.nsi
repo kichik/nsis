@@ -13,13 +13,31 @@ InstallButtonText " "
 CompletedText " "
 LangString ^ClickInstall 0 " "
 Caption "$(^Name)"
-!ifdef VER_MAJOR & VER_MINOR & VER_REVISION & VER_BUILD
+
+!macro UNPACKVERFIELD out in shr mask fmt
+!define /redef /math ${out} ${in} >>> ${shr}
+!define /redef /math ${out} ${${out}} & ${mask}
+!define /redef /intfmt ${out} "${fmt}" ${${out}}
+!macroend
+
+!ifndef VER_MAJOR & VER_MINOR
+!ifdef NSIS_PACKEDVERSION
+!insertmacro UNPACKVERFIELD VER_MAJOR ${NSIS_PACKEDVERSION} 24 0x0ff "%X"
+!insertmacro UNPACKVERFIELD VER_MINOR ${NSIS_PACKEDVERSION} 12 0xfff "%X"
+!insertmacro UNPACKVERFIELD VER_REVISION ${NSIS_PACKEDVERSION} 4 255 "%X"
+!insertmacro UNPACKVERFIELD VER_BUILD ${NSIS_PACKEDVERSION} 00 0x00f "%X"
+!endif
+!endif
+!ifdef VER_MAJOR & VER_MINOR
+!define /ifndef VER_REVISION 0
+!define /ifndef VER_BUILD 0
 !searchreplace VERSTR "${NSIS_VERSION}" "v" ""
 VIProductVersion ${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}
 VIAddVersionKey "ProductName" "NSIS"
 VIAddVersionKey "ProductVersion" "${VERSTR}"
 VIAddVersionKey "FileVersion" "${VERSTR}"
 VIAddVersionKey "FileDescription" "NSIS Menu"
+VIAddVersionKey "LegalCopyright" "http://nsis.sf.net/License"
 !endif
 
 !include nsDialogs.nsh

@@ -112,7 +112,7 @@ enum
 #ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
   EW_GETDLGITEM,        // GetDlgItem:        3: [outputvar, dialog, item_id]
   EW_SETCTLCOLORS,      // SerCtlColors:      3: [hwnd, pointer to struct colors]
-  EW_LOADANDSETIMAGE,   // SetBrandingImage/LoadAndSetImage: 3: [imgid ctl flags]
+  EW_LOADANDSETIMAGE,   // SetBrandingImage/LoadAndSetImage: 5: [ctrl imagetype lrflags imageid [output]]
   EW_CREATEFONT,        // CreateFont:        5: [handle output, face name, height, weight, flags]
   EW_SHOWWINDOW,        // ShowWindow:        2: [hwnd, show state]
 #endif
@@ -550,8 +550,10 @@ typedef struct {
 #define HKLMANY MAKEREGROOTVIEW(HKEY_LOCAL_MACHINE, REGROOTVIEW32|REGROOTVIEW64)
 #define DELREG_VALUE 0 // TOK_DELETEREGVALUE
 #define DELREG_KEY 1 // TOK_DELETEREGKEY
-#define DELREGKEY_ONLYIFNOSUBKEYS 1 // Shifted and stored as 2 in the binary for compatibility with <= 3.1
-#define DELREGKEYFLAGSSHIFT 1 // parm4 is shifted so exehead can remove the DELREG_KEY bit
+#define DELREGKEY_ONLYIFNOSUBKEYS 0x01 // Note: Shifted (stored as 2 in the binary) for compatibility with <= v3.1
+#define DELREGKEY_ONLYIFNOVALUES  0x02
+//      DELREGKEY_SAMVIEWMASK     REGROOTVIEWTOSAMVIEW(REGROOTVIEW32|REGROOTVIEW64) // Reserved for KEY_WOW64_xxKEY, cannot be used as flags!
+#define DELREGKEYFLAGSSHIFT 1 // exehead removes the DELREG_KEY bit in parm4 by shifting. After shifting the bits are DELREGKEY_*.
 
 
 #ifdef NSIS_SUPPORT_CREATESHORTCUT
