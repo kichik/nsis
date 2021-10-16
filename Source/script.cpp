@@ -2342,6 +2342,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
       return PS_OK;
 
+    case TOK_MANIFEST_APPENDCUSTOMSTRING:
+      if (!manifest::addappendstring(line.gettoken_str(1), line.gettoken_str(2))) PRINTHELP();
+      return PS_OK;
     case TOK_MANIFEST_DPIAWARE:
       switch(line.gettoken_enum(1,_T("none\0notset\0false\0true\0system\0permonitor\0explorer\0")))
       {
@@ -4907,14 +4910,15 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           PRINTHELP();
         }
       SCRIPT_MSG(_T("\n"));
-      if (!ent.offsets[1])
+      if (!ent.offsets[2])
       {
-        ent.offsets[1]=branding_image_id;
+        ent.offsets[2]=branding_image_id;
         if (!branding_image_found) {
           ERROR_MSG(_T("\nError: no branding image found in chosen UI!\n"));
           return PS_ERROR;
         }
       }
+      ent.offsets[0]=-1; // Outvar
       ent.offsets[3]|=LASIF_LR_LOADFROMFILE|LASIF_STRID;
     }
     return add_entry(&ent);

@@ -851,7 +851,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       hNewImage=LoadImage(exeres ? g_hInstance : NULL, imgid, it, fitw*r.right, fith*r.bottom, parm3 & LASIM_LR);
       hPrevImage=(HANDLE)SendMessage(hCtl, STM_SETIMAGE, it, (LPARAM)hNewImage);
       if (hPrevImage && IMAGE_BITMAP == it) DeleteObject(hPrevImage); // Delete the old bitmap
-      if (parm0 >=0) iptrtostr(var0, (INT_PTR)hNewImage); // Optional output handle
+      if (parm0 >= 0) iptrtostr(var0, (INT_PTR)hNewImage); // Optional output handle
     }
     break;
     case EW_CREATEFONT:

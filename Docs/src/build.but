@@ -119,4 +119,4 @@ To build a native version of NSIS Menu, install \W{http://www.wxwidgets.org/}{wx
 
 \H{build_nightly} Nightly Builds
 
-There is no need to manually build the latest SVN version for Windows. A \W{http://nsis.sourceforge.net/nightly/nsis.zip}{nightly build} is available. The nightly build is automatically generated every night, using the latest version of the source code from SVN. There is no official nightly build for other platforms.
+There is no need to manually build the latest SVN version for Windows. A \W{https://nsis.sourceforge.io/nightly/nsis.zip}{nightly build} is available. The nightly build is automatically generated every night, using the latest version of the source code from SVN. There is no official nightly build for other platforms.

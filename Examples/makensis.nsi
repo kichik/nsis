@@ -1185,7 +1185,7 @@ Function ShowReleaseNotes
   ${If} ${FileExists} $0
     Exec '"$0" mk:@MSITStore:$INSTDIR\NSIS.chm::/SectionF.1.html'
   ${Else}
-    ExecShell "" "http://nsis.sourceforge.net/Docs/AppendixF.html#F.1"
+    ExecShell "" "https://nsis.sourceforge.io/Docs/AppendixF.html#F.1"
   ${EndIf}
 FunctionEnd
 

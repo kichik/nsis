@@ -39,10 +39,10 @@
 #define SupportsW95() ( FALSE && SupportsW9X() && !DpiAwarePerMonitor() )
 
 // Defines
-#define NSIS_URL     "http://nsis.sourceforge.net/"
+#define NSIS_URL     "https://nsis.sourceforge.io/"
 #define NSIS_FORUM_URL "http://forums.winamp.com/forumdisplay.php?forumid=65"
-#define NSIS_UC_URL  "http://nsis.sourceforge.net/update.php?version="
-#define NSIS_DL_URL  "http://nsis.sourceforge.net/download/"
+#define NSIS_UC_URL  "https://nsis.sourceforge.io/update.php?version="
+#define NSIS_DL_URL  "https://nsis.sourceforge.io/download/"
 #ifdef UNICODE
 #define USAGE        _T("Usage:\r\n\r\n \x2022 File \x203a Load Script...\r\n \x2022 Drag the .nsi file into this window\r\n \x2022 Right click the .nsi file and choose \"Compile NSIS Script\"\r\n")
 #else
@@ -50,9 +50,9 @@
 #endif
 #define COPYRIGHT    _T("Copyright (C) 2002 Robert Rainwater")
 #define CONTRIB      _T("Fritz Elfert, Justin Frankel, Amir Szekely, Sunil Kamath, Joost Verburg, Anders Kjersem")
-#define DONATE       _T("<A ID=\"D\">Donate</A> to support NSIS development.")
+#define DONATE       _T("<A>Donate</A> to support NSIS development.")
 #define DONATEURL    { 'h'|x,'t','t'|x,'p',':'|x,'/'|x,'/'|x,'n'|x,'s'|x,'i'|x,'s'|x,'.'|x,'s'|x,'f'|x,'.','n'|x,'e'|x,'t'|x,'/'|x,'r','/'|x,'D'|x,'o'|x,'n'|x,'a'|x,'t'|x,'e'|x,'\0' } // "Encrypted"
-#define DOCPATH      "http://nsis.sourceforge.net/Docs/"
+#define DOCPATH      "https://nsis.sourceforge.io/Docs/"
 #define LOCALDOCS    _T("\\NSIS.chm")
 #define ERRBOXTITLE  0 //_T("Error")
 #define NSISERROR    _T("Unable to intialize MakeNSIS. Please verify that makensis.exe is in the same directory as makensisw.exe.")

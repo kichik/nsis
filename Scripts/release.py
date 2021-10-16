@@ -33,8 +33,8 @@ RSH="C:\Program Files\PuTTY\plink.exe" -2 -l kichik nsis.sourceforge.net
 SFTP="C:\Program Files\PuTTY\psftp.exe" -2 -l kichik,nsis -batch -b %s frs.sourceforge.net
 
 [wiki]
-PURGE_URL=http://nsis.sourceforge.net/%s?action=purge
-UPDATE_URL=http://nsis.sourceforge.net/Special:Simpleupdate?action=raw
+PURGE_URL=https://nsis.sourceforge.io/%s?action=purge
+UPDATE_URL=https://nsis.sourceforge.io/Special:Simpleupdate?action=raw
 
 [svn2cl]
 SVN2CL_XSL=svn2cl.xsl

@@ -3621,7 +3621,7 @@ bool CEXEBuild::hostapi_request_data(MakensisAPI::datatransfer_e operation, UINT
         if (lParam) SendMessage((HWND) wParam, WM_COPYDATA, (SIZE_T) hWnd, lParam);
         return DestroyWindow(hWnd) | PostMessage(NULL, WM_QUIT, 0, 0);
       }
-      return data && ((HOSTAPIREQUESTDATAPROC)data[0])((void*) data[1], hWnd, Msg, wParam, lParam); // We don't set DWLP_MSGRESULT nor care about the return value
+      return data && ((CEXEBuild::HOSTAPIREQUESTDATAPROC)data[0])((void*) data[1], hWnd, Msg, wParam, lParam); // We don't set DWLP_MSGRESULT nor care about the return value
     }
   };
   if (!notify_hwnd || (minver && (UINT) SendMessage(notify_hwnd, QUERYHOST, QH_SUPPORTEDVERSION, 0) < minver)) return false;
@@ -3631,8 +3631,8 @@ bool CEXEBuild::hostapi_request_data(MakensisAPI::datatransfer_e operation, UINT
   SetWindowLongPtr(hWnd, DWLP_USER, (LONG_PTR) data);
   SetWindowLongPtr(hWnd, DWLP_DLGPROC, (LONG_PTR) helper::Proc);
   SendMessage(hWnd, WM_CLOSE, (SIZE_T) notify_hwnd, (SIZE_T) &cds);
-  for (MSG msg; (int) GetMessage(&msg, NULL, 0, 0) > 0;) DispatchMessage(&msg);
-  return true;
+  if (hWnd) for (MSG msg; (int) GetMessage(&msg, NULL, 0, 0) > 0;) DispatchMessage(&msg);
+  return !!hWnd;
 #else
   return false;
 #endif
@@ -3650,7 +3650,7 @@ bool CEXEBuild::prompt_for_output_path(TCHAR*path, UINT pathcap) const
       if (Msg == WM_COPYDATA && pCDS->cbData > sizeof(TCHAR) && pCDS->cbData <= io[2] * sizeof(TCHAR))
       {
         _tcscpy((TCHAR*) io[1], (TCHAR*) ((COPYDATASTRUCT*)lParam)->lpData);
-        return (io[0] = pCDS->dwData == PROMPT_FILEPATH);
+        return (io[0] = (pCDS->dwData == MakensisAPI::PROMPT_FILEPATH));
       }
       return false;
     }

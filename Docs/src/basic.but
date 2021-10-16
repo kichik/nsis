@@ -156,7 +156,7 @@ The next example will succeed in deleting the directory.
 \c RMDir $TEMP\dir
 
 \NsisWarnBlockContainerBegin
-\\<b\\>Warning:\\</b\\> Using \e{RMDir /r $INSTDIR} in the uninstaller is not safe. Though it is unlikely, the user might select to install to the root of the Program Files folder and this command would wipe out the entire Program Files folder, including all other installed programs! The user can also put other files in the installation folder and wouldn't expect them to get deleted along with the program. Solutions are \W{http://nsis.sourceforge.net/Uninstall_only_installed_files}{available} for easily uninstalling only files which were installed by the installer.
+\\<b\\>Warning:\\</b\\> Using \e{RMDir /r $INSTDIR} in the uninstaller is not safe. Though it is unlikely, the user might select to install to the root of the Program Files folder and this command would wipe out the entire Program Files folder, including all other installed programs! The user can also put other files in the installation folder and wouldn't expect them to get deleted along with the program. Solutions are \W{https://nsis.sourceforge.io/Uninstall_only_installed_files}{available} for easily uninstalling only files which were installed by the installer.
 \NsisWarnBlockContainerEnd
 
 \NsisWarnBlockContainerBegin

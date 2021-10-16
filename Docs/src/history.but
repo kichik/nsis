@@ -1,12 +1,22 @@
 \A{history} Changelog and Release Notes
 
+\H{v3.06.1} 3.06.1
+
+Released on July 31st, 2020
+
+\S1{v3.06.1-rl} Release Notes
+
+20th anniversary! The first public release of NSIS was v1.0f on July 31st, 2000.
+
+\S1{v3.06.1-cl} Changelog
+
+\S2{} Major Changes
+
+\b Fixed \R{setbrandingimage}{SetBrandingImage} crash
+
 \H{v3.06} 3.06
 
-Released on ? ?th, 2020
-
-\S1{v3.06-rl} Release Notes
-
-20th anniversary
+Released on July 31st, 2020
 
 \S1{v3.06-cl} Changelog
 
@@ -24,11 +34,13 @@ Released on ? ?th, 2020
 
 \# Undocumented: \b Added GetShellVarContext, IfAltRegView and GetRegView | Documenting these would require documenting the parameter name to number mapping
 
+\# Undocumented: \b Added ManifestAppendCustomString
+
 \b Added \cw{!define /intfmt}
 
-\b Added Date/Time NSD controls and macros
+\b Added Date/Time \L{../Docs/nsDialogs/Readme.html}{nsDialogs} controls and macros
 
-\b MultiUser: Fixed INSTALLMODE_FUNCTION and added INSTALLMODEPAGE_SHOWUSERNAME
+\b \L{../Docs/MultiUser/Readme.html}{MultiUser}: Fixed INSTALLMODE_FUNCTION and added INSTALLMODEPAGE_SHOWUSERNAME
 
 \S2{} Translations
 
@@ -118,7 +130,7 @@ Released on December 15th, 2018
 
 \b Fixed !macroundef of last defined macro bug
 
-\b Fixed MultiUser caption string bug (\W{http://sf.net/p/nsis/bugs/1012}{bug #1012})
+\b Fixed \L{../Docs/MultiUser/Readme.html}{MultiUser} caption string bug (\W{http://sf.net/p/nsis/bugs/1012}{bug #1012})
 
 \b !undef issues warnings instead of errors
 
@@ -1468,7 +1480,7 @@ Released on July 14th, 2007
 
 \S1{v2.29-rl} Release Notes
 
-\b The most notable addition in this release is nsDialogs - a faster and far more capable replacement for InstallOptions. It allows creating controls of any type directly from the script and removes the need to mess with slow INI files. It integrates directly into the script by calling functions for notification, including change notification for edit boxes. \W{http://nsis.sourceforge.net/Community}{Speak up} if you have any suggestions/comments/patches for it.
+\b The most notable addition in this release is nsDialogs - a faster and far more capable replacement for InstallOptions. It allows creating controls of any type directly from the script and removes the need to mess with slow INI files. It integrates directly into the script by calling functions for notification, including change notification for edit boxes. \W{https://nsis.sourceforge.io/Community}{Speak up} if you have any suggestions/comments/patches for it.
 
 \S1{v2.29-cl} Changelog
 
@@ -1816,7 +1828,7 @@ Released on November 27th, 2006
 
 \S1{v2.22-rl} Release Notes
 
-\b Some changes have been made to the credit and license files in order to avoid copyrights and license related confusions. This does not change in any way how NSIS should or could be used. NSIS itself is still licensed with the permissive BSD-like \W{http://nsis.sourceforge.net/License}{zlib license}.
+\b Some changes have been made to the credit and license files in order to avoid copyrights and license related confusions. This does not change in any way how NSIS should or could be used. NSIS itself is still licensed with the permissive BSD-like \W{https://nsis.sourceforge.io/License}{zlib license}.
 
 \b Upgrade is recommended for early adopters of WinVer.nsh, due to a bug in Windows 98 and ME detection.
 
@@ -2502,7 +2514,7 @@ Released on July 23rd, 2005
 
 \S1{v2.08-rn} Release Notes
 
-\b The Archive has been replaced with a \W{http://nsis.sourceforge.net/wiki/}{Wiki}. The new Wiki allows everyone to edit all pages so there's no longer need to hunt for the original author. It also allows everyone to upload plug-ins and not just administrators. And as if that's not enough, it looks better and provides easier and more feature-rich syntax.
+\b The Archive has been replaced with a \W{https://nsis.sourceforge.io/wiki/}{Wiki}. The new Wiki allows everyone to edit all pages so there's no longer need to hunt for the original author. It also allows everyone to upload plug-ins and not just administrators. And as if that's not enough, it looks better and provides easier and more feature-rich syntax.
 
 \S1{v2.08-cl} Changelog
 
@@ -2555,7 +2567,7 @@ Released on June 20th, 2005
 
 \b Solid compression is no longer the default for bzip2 and lzma, use \c{SetCompressor /SOLID bzip2} or \c{SetCompressor /SOLID lzma} for solid compression.
 
-\b Source code is no longer supplied with the installer package. Source code can be downloaded from CVS or from the \W{http://nsis.sourceforge.net/download/}{download page}.
+\b Source code is no longer supplied with the installer package. Source code can be downloaded from CVS or from the \W{https://nsis.sourceforge.io/download/}{download page}.
 
 \b The directory structure of the installation has been changed. All documentation is now in the Docs folder and all examples are in the Examples folder.
 

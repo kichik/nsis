@@ -21,6 +21,7 @@
 #include <nsis-version.h>
 #include "tstring.h"
 #include "util.h" // RawTStrToASCII
+#include <vector>
 
 // Jim Park: The manifest must stay UTF-8.  Do not convert.
 
@@ -91,6 +92,52 @@ bool SupportedOSList::append(const TCHAR* osid)
 }
 
 
+static const TCHAR*g_appendpaths[] = { // Basic simulated XPath support
+  _T("/"),
+  _T("/assembly"),
+  _T("/assembly/dependency"),
+  _T("/assembly/dependency/dependentAssembly"),
+  _T("/assembly/compatibility/application"),
+  _T("/assembly/application/windowsSettings")
+};
+std::vector<string> g_appendstrings[COUNTOF(g_appendpaths)];
+
+static int isvalidappendpath(const TCHAR*path)
+{
+  for (int i = 0; i < (int) COUNTOF(g_appendpaths); ++i)
+    if (!_tcsicmp(path, g_appendpaths[i]))
+      return i;
+  return -1;
+}
+
+bool addappendstring(const TCHAR*path, const TCHAR*data)
+{
+  int i = isvalidappendpath(path);
+  if (i >= 0)
+  {
+    string str = "";
+    str += TtoCString(data);
+    g_appendstrings[i].push_back(str);
+    return true;
+  }
+  return false;
+}
+
+static bool append(string& xml, const TCHAR*path, const char*prefix = 0, const char*suffix = 0)
+{
+  bool any = false;
+  int i = isvalidappendpath(path);
+  if (i >= 0)
+    for (size_t j = 0; j < g_appendstrings[i].size(); ++j)
+    {
+      if (!any && prefix) xml += prefix, any = true;
+      xml += g_appendstrings[i][j];
+    }
+  if (any && suffix)
+    xml += suffix;
+  return any;
+}
+
 string generate(comctl comctl_selection, exec_level exec_level_selection, const SPECIFICATION&spec)
 {
   flags featureflags = spec.Flags;
@@ -100,18 +147,28 @@ string generate(comctl comctl_selection, exec_level exec_level_selection, const 
   SupportedOSList& sosl = *spec.pSOSL;
   const TCHAR *mvt = spec.MaxVersionTested;
 
-  bool default_or_empty_sosl = sosl.isdefaultlist() || !sosl.getcount();
+  bool default_or_empty_sosl = sosl.isdefaultlist() || !sosl.getcount(), any;
   if (comctl_selection == comctl_old && exec_level_selection == exec_level_none && default_or_empty_sosl && dpiaware_notset == dpia)
     return "";
 
+  string xmltmp;
   string xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><assembly xmlns=\"urn:schemas-microsoft-com:asm.v1\" manifestVersion=\"1.0\"><assemblyIdentity version=\"1.0.0.0\" processorArchitecture=\"*\" name=\"Nullsoft.NSIS.exehead\" type=\"win32\"/><description>Nullsoft Install System ";
   xml += TtoCString(NSIS_VERSION);
   xml += "</description>";
 
   if (comctl_selection == comctl_xp)
   {
-    xml += "<dependency><dependentAssembly><assemblyIdentity type=\"win32\" name=\"Microsoft.Windows.Common-Controls\" version=\"6.0.0.0\" processorArchitecture=\"*\" publicKeyToken=\"6595b64144ccf1df\" language=\"*\" /></dependentAssembly></dependency>";
+    addappendstring(_T("/assembly/dependency/dependentAssembly"), _T("<assemblyIdentity type=\"win32\" name=\"Microsoft.Windows.Common-Controls\" version=\"6.0.0.0\" processorArchitecture=\"*\" publicKeyToken=\"6595b64144ccf1df\" language=\"*\" />"));
   }
+  xmltmp = "<dependency>";
+  any = append(xmltmp, _T("/assembly/dependency"));
+  any |= append(xmltmp, _T("/assembly/dependency/dependentAssembly"), "<dependentAssembly>", "</dependentAssembly>");
+  if (any)
+  {
+    xmltmp += "</dependency>";
+    xml += xmltmp;
+  }
+
 
   if (exec_level_selection != exec_level_none)
   {
@@ -142,8 +199,9 @@ string generate(comctl comctl_selection, exec_level exec_level_selection, const 
     sosl.deleteall();
   }
 
+  xmltmp = "", append(xmltmp, _T("/assembly/compatibility/application"));
   int soslcount = sosl.getcount();
-  if (soslcount || *mvt)
+  if (!xmltmp.empty() || soslcount || *mvt)
   {
     char buf[38+1];
     xml += "<compatibility xmlns=\"urn:schemas-microsoft-com:compatibility.v1\"><application>";
@@ -159,6 +217,7 @@ string generate(comctl comctl_selection, exec_level exec_level_selection, const 
       xml += TtoCString(mvt);
       xml += "\"/>";
     }
+    xml += xmltmp;
     xml += "</application></compatibility>";
   }
 
@@ -193,6 +252,7 @@ string generate(comctl comctl_selection, exec_level exec_level_selection, const 
     xml_aws += lpaware_false != lpa ? "true" : "false"; 
     xml_aws += "</longPathAware>";
   }
+  append(xml_aws, _T("/assembly/application/windowsSettings"));
   if (!xml_aws.empty())
   {
     xml += "<application xmlns=\"urn:schemas-microsoft-com:asm.v3\"><windowsSettings>";
@@ -200,7 +260,9 @@ string generate(comctl comctl_selection, exec_level exec_level_selection, const 
     xml += "</windowsSettings></application>";
   }
 
+  append(xml, _T("/assembly"));
   xml += "</assembly>";
+  append(xml, _T("/"));
 
   return xml;
 }
