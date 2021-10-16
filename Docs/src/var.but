@@ -141,7 +141,7 @@ This constant is not available on Windows 95 unless Internet Explorer 4 is insta
 
 The user's music files directory. The context of this constant (All Users or Current user) depends on the \R{setshellvarcontext}{SetShellVarContext} setting. The default is the current user.
 
-This constant is available on Windows XP, ME and above.
+This constant is available on Windows ME, XP and above.
 
 \e{$PICTURES}
 
@@ -153,7 +153,7 @@ This constant is available on Windows 2000, XP, ME and above.
 
 The user's video files directory. The context of this constant (All Users or Current user) depends on the \R{setshellvarcontext}{SetShellVarContext} setting. The default is the current user.
 
-This constant is available on Windows XP, ME and above.
+This constant is available on Windows ME, XP and above.
 
 \e{$NETHOOD}
 
@@ -171,13 +171,13 @@ The document templates directory. The context of this constant (All Users or Cur
 
 \e{$APPDATA}
 
-The application data directory. Detection of the current user path requires Internet Explorer 4 and above. Detection of the all users path requires Internet Explorer 5 and above. The context of this constant (All Users or Current user) depends on the \R{setshellvarcontext}{SetShellVarContext} setting. The default is the current user.
+The (roaming) application data directory.\#{ Detection of the current user path requires Internet Explorer 4 and above. Detection of the all users path requires Internet Explorer 5 and above. The context of this constant (All Users or Current user) depends on the \R{setshellvarcontext}{SetShellVarContext} setting. The default is the current user.}
 
 This constant is not available on Windows 95 unless Internet Explorer 4 with Active Desktop is installed.
 
 \e{$LOCALAPPDATA}
 
-The local (non-roaming) application data directory. The context of this constant (All Users or Current user) depends on the \R{setshellvarcontext}{SetShellVarContext} setting. The default is the current user.
+The local (non-roaming) application data directory. The context of this constant (All Users or Current user) depends on the \R{setshellvarcontext}{SetShellVarContext} setting. The default is the current user. The All Users location is also known as \cw{%ProgramData%} on Vista and above.
 
 This constant is available on Windows ME, 2000 and above.
 

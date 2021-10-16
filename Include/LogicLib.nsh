@@ -57,7 +57,8 @@
 ;       size_t integer tests
 ;         a Z= b; a Z<> b; a Z< b; a Z>= b; a Z> b; a Z<= b
 ;       Built-in NSIS flag tests:
-;         ${Abort}; ${Errors}; ${RebootFlag}; ${Silent}
+;         ${Abort}; ${Errors}; ${RebootFlag}; ${Silent}; ${RtlLanguage};
+;         ${ShellVarContextAll}
 ;       Built-in NSIS other tests:
 ;         ${FileExists} a
 ;       Any conditional NSIS instruction test:
@@ -334,6 +335,21 @@
     IfSilent `${_t}` `${_f}`
   !macroend
   !define Silent `"" Silent ""`
+
+  !macro _ShellVarContextAll _a _b _t _f
+    IfShellVarContextAll `${_t}` `${_f}`
+  !macroend
+  !define ShellVarContextAll `"" ShellVarContextAll ""`
+
+  !macro _RtlLanguage _a _b _t _f
+    IfRtlLanguage `${_t}` `${_f}`
+  !macroend
+  !define RtlLanguage `"" RtlLanguage ""`
+
+  !macro _AltRegView _a _b _t _f
+    IfAltRegView `${_t}` `${_f}`
+  !macroend
+  !define AltRegView `"" AltRegView ""`
 
   ; "Any instruction" test
   !macro _Cmd _a _b _t _f

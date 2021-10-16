@@ -4,6 +4,9 @@
     <title>Multi-User Header File (MultiUser.nsh)</title>
     <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
     <style type="text/css">
+        body { background-color: #fefefe; color: #050505; }
+        code { background-color: #f6f6f6; }
+        pre { background-color: inherit; }
         td
         {
             padding: 5px;
@@ -107,7 +110,7 @@
         Insert the MULTIUSER_INIT and MULTIUSER_UNINT macros in the .onInit and un.onInit
         function to verify these privileges. If no uninstaller is created in the script,
         set MULTIUSER_NOUNINSTALL.</p>
-    <blockquote>
+    <code>
         <pre>!define MULTIUSER_EXECUTIONLEVEL Highest
 ;!define MULTIUSER_NOUNINSTALL ;Uncomment if no uninstaller is created
 !include MultiUser.nsh
@@ -121,7 +124,7 @@ FunctionEnd
 Function un.onInit
   !insertmacro MULTIUSER_UNINIT
 FunctionEnd</pre>
-    </blockquote>
+    </code>
     <p>
         Whether the required privileges can be obtained depends on the user that starts
         the installer:</p>
@@ -260,7 +263,7 @@ FunctionEnd</pre>
             installation mode. To use this page, define MULTIUSER_MUI before including User.nsh.
             Then, the MULTIUSER_PAGE_INSTALLMODE macro can be used just like a normal Modern
             UI page (this page will automatically be skipped when running Windows 95/98/Me):</p>
-        <pre>!define MULTIUSER_EXECUTIONLEVEL Highest
+        <code><pre>!define MULTIUSER_EXECUTIONLEVEL Highest
 <b>!define MULTIUSER_MUI</b>
 !define MULTIUSER_INSTALLMODE_COMMANDLINE
 !include MultiUser.nsh
@@ -281,7 +284,7 @@ FunctionEnd
 Function un.onInit
   !insertmacro MULTIUSER_UNINIT
 FunctionEnd
-</pre>
+</pre></code>
         <p>
             The MULTIUSER_INSTALLMODE_COMMANDLINE setting that also appears in this example
             enables the installation mode to be set using the /AllUsers or /CurrentUser command
@@ -291,36 +294,24 @@ FunctionEnd
             to the general Modern UI page settings):</p>
         <table>
             <tr>
-                <td>
-                    <b>Setting</b>
-                </td>
-                <td>
-                    <b>Description</b>
-                </td>
+                <td><b>Setting</b></td>
+                <td><b>Description</b></td>
             </tr>
             <tr>
-                <td>
-                    MULTIUSER_INSTALLMODEPAGE_TEXT_TOP
-                </td>
-                <td>
-                    Text to display on the top of the page.
-                </td>
+                <td>MULTIUSER_INSTALLMODEPAGE_TEXT_TOP</td>
+                <td>Text to display on the top of the page.</td>
             </tr>
             <tr>
-                <td>
-                    MULTIUSER_INSTALLMODEPAGE_TEXT_ALLUSERS
-                </td>
-                <td>
-                    Text to display on the combo button for a per-machine installation.
-                </td>
+                <td>MULTIUSER_INSTALLMODEPAGE_TEXT_ALLUSERS</td>
+                <td>Text to display on the radio button for a per-machine installation.</td>
             </tr>
             <tr>
-                <td>
-                    MULTIUSER_INSTALLMODEPAGE_TEXT_CURRENTUSER
-                </td>
-                <td>
-                    Text to display on the combo button for a per-user installation.
-                </td>
+                <td>MULTIUSER_INSTALLMODEPAGE_TEXT_CURRENTUSER</td>
+                <td>Text to display on the radio button for a per-user installation.</td>
+            </tr>
+            <tr>
+                <td>MULTIUSER_INSTALLMODEPAGE_SHOWUSERNAME</td>
+                <td>Append the username to the per-user radio button.</td>
             </tr>
         </table>
         <h3>
@@ -365,7 +356,7 @@ FunctionEnd
                     MULTIUSER_INSTALLMODE_UNFUNCTION
                 </td>
                 <td>
-                    A custom fuction to be called during the initialization of the installation mode
+                    A custom function to be called during the initialization of the installation mode
                     to set additional installer settings that depend on the mode
                 </td>
         </table>

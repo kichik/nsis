@@ -373,7 +373,7 @@ defenv.Execute(Delete('$TESTDISTDIR'))
 def Distribute(files, names, component, path, subpath, alias, install_alias=None):
 	files = MakeFileList(files)
 
-	names = names or map(lambda x: x.name, files)
+	names = names or list(map(lambda x: x.name, files))
 	if isinstance(names, str):
 		names = [names]
 

@@ -23,7 +23,7 @@ env:
 deploy:
   provider: script
   skip_cleanup: true
-  script: echo $DEPLOY_KEY | base64 -d > deploy_key && chmod 600 deploy_key && ssh -T kichik,nsis@shell.sourceforge.net create && cat nsis-*.zip | ssh -i deploy_key kichik,nsis@shell.sourceforge.net /home/project-web/nsis/bin/nightly-deploy.sh
+  script: echo $DEPLOY_KEY | base64 -d > deploy_key && chmod 600 deploy_key && ssh -o "BatchMode yes" -i deploy_key -T kichik,nsis@shell.sourceforge.net create && cat nsis-*.zip | ssh -o "BatchMode yes" -i deploy_key kichik,nsis@shell.sourceforge.net /home/project-web/nsis/bin/nightly-deploy.sh
   on:
     branch: master
     repo: kichik/nsis

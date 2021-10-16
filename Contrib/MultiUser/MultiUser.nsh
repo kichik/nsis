@@ -9,19 +9,23 @@ Copyright 2008-2020 Joost Verburg
 */
 
 !ifndef MULTIUSER_INCLUDED
-!define MULTIUSER_INCLUDED
-!verbose push
-!verbose 3
+!define MULTIUSER_INCLUDED 20200319
+!verbose push 3
 
 ;Standard NSIS header files
 
 !ifdef MULTIUSER_MUI
   !include MUI2.nsh
 !endif
-!include nsDialogs.nsh
 !include LogicLib.nsh
 !include WinVer.nsh
 !include FileFunc.nsh
+
+!if ${NSIS_PTR_SIZE} > 4
+!define /IfNDef MULTIUSER_MINWIN 0x501
+!else
+!define /IfNDef MULTIUSER_MINWIN 0x400
+!endif
 
 ;Variables
 
@@ -123,39 +127,46 @@ Install modes
 !macro MULTIUSER_INSTALLMODE_CURRENTUSER UNINSTALLER_PREFIX UNINSTALLER_FUNCPREFIX
 
   ;Install mode initialization - per-user
-  
-  ${if} ${IsNT}  
-  
+
+  !if ${MULTIUSER_MINWIN} < 0x500
+  ${if} ${IsNT}
+  !endif
+
     StrCpy $MultiUser.InstallMode CurrentUser
-    
     SetShellVarContext current
   
     !if "${UNINSTALLER_PREFIX}" != UN
       ;Set default installation location for installer  
       !ifdef MULTIUSER_INSTALLMODE_INSTDIR
+        !if ${MULTIUSER_MINWIN} < 0x490
         ${if} ${AtLeastWin2000}
-          StrCpy $INSTDIR "$LOCALAPPDATA\${MULTIUSER_INSTALLMODE_INSTDIR}"
+        !endif
+          GetKnownFolderPath $INSTDIR {5CD7AEE2-2219-4A67-B85D-6C9CE15660CB} ; FOLDERID_UserProgramFiles
+          StrCmp $INSTDIR "" 0 +2
+          StrCpy $INSTDIR "$LocalAppData\Programs" ; Fallback directory
+          StrCpy $INSTDIR "$INSTDIR\${MULTIUSER_INSTALLMODE_INSTDIR}"
+        !if ${MULTIUSER_MINWIN} < 0x490
         ${else}
           StrCpy $INSTDIR "$PROGRAMFILES\${MULTIUSER_INSTALLMODE_INSTDIR}"
         ${endif}
+        !endif
       !endif
     !endif
   
     !ifdef MULTIUSER_INSTALLMODE_INSTDIR_REGISTRY_KEY & MULTIUSER_INSTALLMODE_INSTDIR_REGISTRY_VALUENAME
-  
       ReadRegStr $MultiUser.InstDir HKCU "${MULTIUSER_INSTALLMODE_INSTDIR_REGISTRY_KEY}" "${MULTIUSER_INSTALLMODE_INSTDIR_REGISTRY_VALUENAME}"
-  
       ${if} $MultiUser.InstDir != ""
         StrCpy $INSTDIR $MultiUser.InstDir
       ${endif}
-  
     !endif
-  
+
     !ifdef MULTIUSER_INSTALLMODE_${UNINSTALLER_PREFIX}FUNCTION
       Call "${MULTIUSER_INSTALLMODE_${UNINSTALLER_PREFIX}FUNCTION}"
     !endif
-  
+
+  !if ${MULTIUSER_MINWIN} < 0x500
   ${endif}
+  !endif
 
 !macroend
 
@@ -188,7 +199,7 @@ Installer/uninstaller initialization
 !macro MULTIUSER_INIT_QUIT UNINSTALLER_FUNCPREFIX
 
   !ifdef MULTIUSER_INIT_${UNINSTALLER_FUNCPREFIX}FUNCTIONQUIT
-    Call "${MULTIUSER_INIT_${UNINSTALLER_FUNCPREFIX}FUCTIONQUIT}
+    Call "${MULTIUSER_INIT_${UNINSTALLER_FUNCPREFIX}FUNCTIONQUIT}"
   !else
     Quit
   !endif
@@ -203,17 +214,9 @@ Installer/uninstaller initialization
     !define /ReDef MULTIUSER_TMPSTR_CAPTION "$(^Name)"
   !endif
 
-  !ifndef MULTIUSER_INIT_TEXT_ADMINREQUIRED
-    !define MULTIUSER_INIT_TEXT_ADMINREQUIRED "${MULTIUSER_TMPSTR_CAPTION} requires administrator privileges."
-  !endif
-
-  !ifndef MULTIUSER_INIT_TEXT_POWERREQUIRED
-    !define MULTIUSER_INIT_TEXT_POWERREQUIRED "${MULTIUSER_TMPSTR_CAPTION} requires at least Power User privileges."
-  !endif
-
-  !ifndef MULTIUSER_INIT_TEXT_ALLUSERSNOTPOSSIBLE
-    !define MULTIUSER_INIT_TEXT_ALLUSERSNOTPOSSIBLE "Your user account does not have sufficient privileges to install $(^Name) for all users of this computer."
-  !endif
+  !define /IfNDef MULTIUSER_INIT_TEXT_ADMINREQUIRED "${MULTIUSER_TMPSTR_CAPTION} requires administrator privileges."
+  !define /IfNDef MULTIUSER_INIT_TEXT_POWERREQUIRED "${MULTIUSER_TMPSTR_CAPTION} requires at least Power User privileges."
+  !define /IfNDef MULTIUSER_INIT_TEXT_ALLUSERSNOTPOSSIBLE "Your user account does not have sufficient privileges to install $(^Name) for all users of this computer."
 
   !undef MULTIUSER_TMPSTR_CAPTION
 
@@ -228,7 +231,9 @@ Installer/uninstaller initialization
   UserInfo::GetAccountType
   Pop $MultiUser.Privileges
   
+  !if ${MULTIUSER_MINWIN} < 0x500
   ${if} ${IsNT}
+  !endif
   
     ;Check privileges
   
@@ -324,46 +329,50 @@ Installer/uninstaller initialization
   
     !endif
 
-  !if ${NSIS_PTR_SIZE} <= 4
+  !if ${MULTIUSER_MINWIN} < 0x500
   ${else}
   
     ;Not running Windows NT, per-user installation not supported
     Call ${UNINSTALLER_FUNCPREFIX}MultiUser.InstallMode.AllUsers
 
-  !endif
   ${endif}
+  !endif
 
 !macroend
 
 !macro MULTIUSER_INIT
-  !verbose push
-  !verbose 3
-  
-  !insertmacro MULTIUSER_INIT_CHECKS "" ""
-  
+  !verbose push 3
+  !ifdef __UNINSTALL__
+    !insertmacro MULTIUSER_UNINIT
+  !else
+    !insertmacro MULTIUSER_INIT_CHECKS "" ""
+  !endif
   !verbose pop 
 !macroend
 
 !ifndef MULTIUSER_NOUNINSTALL
-
 !macro MULTIUSER_UNINIT
-  !verbose push
-  !verbose 3
-  
+  !verbose push 3
   !insertmacro MULTIUSER_INIT_CHECKS Un un.
-  
   !verbose pop 
 !macroend
-
 !endif
 
 /*
 
-Modern UI 2 page
+Mode selection page
 
 */
 
-!ifdef MULTIUSER_MUI
+!macro MULTIUSER_PAGE_FUNCTION_CUSTOM TYPE
+  !ifmacrodef MUI_PAGE_FUNCTION_CUSTOM
+    !insertmacro MUI_PAGE_FUNCTION_CUSTOM "${TYPE}"
+  !endif
+  !ifdef MULTIUSER_PAGE_CUSTOMFUNCTION_${TYPE}
+    Call "${MULTIUSER_PAGE_CUSTOMFUNCTION_${TYPE}}"
+    !undef MULTIUSER_PAGE_CUSTOMFUNCTION_${TYPE}
+  !endif
+!macroend
 
 !macro MULTIUSER_INSTALLMODEPAGE_INTERFACE
 
@@ -375,30 +384,30 @@ Modern UI 2 page
     
     Var MultiUser.InstallModePage.AllUsers
     Var MultiUser.InstallModePage.CurrentUser
-    
-    Var MultiUser.InstallModePage.ReturnValue
+
   !endif
 
 !macroend
 
-!macro MULTIUSER_PAGEDECLARATION_INSTALLMODE
+!macro MULTIUSER_PAGEDECLARATION_INSTALLMODE UNPREFIX UNIQUEID
 
-  !insertmacro MUI_SET MULTIUSER_${MUI_PAGE_UNINSTALLER_PREFIX}INSTALLMODEPAGE ""
+  !define /ReDef MULTIUSER_${UNPREFIX}INSTALLMODEPAGE "" ; Unlock strings in the language file(s)
   !insertmacro MULTIUSER_INSTALLMODEPAGE_INTERFACE
 
-  !insertmacro MUI_DEFAULT MULTIUSER_INSTALLMODEPAGE_TEXT_TOP "$(MULTIUSER_INNERTEXT_INSTALLMODE_TOP)"
-  !insertmacro MUI_DEFAULT MULTIUSER_INSTALLMODEPAGE_TEXT_ALLUSERS "$(MULTIUSER_INNERTEXT_INSTALLMODE_ALLUSERS)"
-  !insertmacro MUI_DEFAULT MULTIUSER_INSTALLMODEPAGE_TEXT_CURRENTUSER "$(MULTIUSER_INNERTEXT_INSTALLMODE_CURRENTUSER)"  
+  !define /IfNDef MULTIUSER_INSTALLMODEPAGE_TEXT_TOP "$(MULTIUSER_INNERTEXT_INSTALLMODE_TOP)"
+  !define /IfNDef MULTIUSER_INSTALLMODEPAGE_TEXT_ALLUSERS "$(MULTIUSER_INNERTEXT_INSTALLMODE_ALLUSERS)"
+  !define /IfNDef MULTIUSER_INSTALLMODEPAGE_TEXT_CURRENTUSER "$(MULTIUSER_INNERTEXT_INSTALLMODE_CURRENTUSER)"  
 
   PageEx custom
 
-    PageCallbacks MultiUser.InstallModePre_${MUI_UNIQUEID} MultiUser.InstallModeLeave_${MUI_UNIQUEID}
+    PageCallbacks MultiUser.InstallModePre_${UNIQUEID} MultiUser.InstallModeLeave_${UNIQUEID}
 
-    Caption " "
+    !define /IfNDef MULTIUSER_INSTALLMODEPAGE_CAPTION " "
+    Caption "${MULTIUSER_INSTALLMODEPAGE_CAPTION}"
 
   PageExEnd
 
-  !insertmacro MULTIUSER_FUNCTION_INSTALLMODEPAGE MultiUser.InstallModePre_${MUI_UNIQUEID} MultiUser.InstallModeLeave_${MUI_UNIQUEID}
+  !insertmacro MULTIUSER_FUNCTION_INSTALLMODEPAGE MultiUser.InstallModePre_${UNIQUEID} MultiUser.InstallModeLeave_${UNIQUEID}
 
   !undef MULTIUSER_INSTALLMODEPAGE_TEXT_TOP
   !undef MULTIUSER_INSTALLMODEPAGE_TEXT_ALLUSERS
@@ -408,17 +417,16 @@ Modern UI 2 page
 
 !macro MULTIUSER_PAGE_INSTALLMODE
 
-  ;Modern UI page for install mode
-
-  !verbose push
-  !verbose 3
+  !verbose push 3
   
   !ifndef MULTIUSER_EXECUTIONLEVEL_ALLUSERS
     !error "A mixed-mode installation requires MULTIUSER_EXECUTIONLEVEL to be set to Admin, Power or Highest."
   !endif
-  
-  !insertmacro MUI_PAGE_INIT
-  !insertmacro MULTIUSER_PAGEDECLARATION_INSTALLMODE
+
+  !ifmacrodef MUI_PAGE_INIT
+    !insertmacro MUI_PAGE_INIT
+  !endif
+  !insertmacro MULTIUSER_PAGEDECLARATION_INSTALLMODE "" ${__COUNTER__}
   
   !verbose pop
 
@@ -426,61 +434,75 @@ Modern UI 2 page
 
 !macro MULTIUSER_FUNCTION_INSTALLMODEPAGE PRE LEAVE
 
-  ;Page functions of Modern UI page
+  !include nsDialogs.nsh
 
   Function "${PRE}"
-  
+
+    !if ${MULTIUSER_MINWIN} < 0x500
     ${ifnot} ${IsNT}
       Abort
     ${endif}
-  
+    !endif
+
     ${if} $MultiUser.Privileges != "Power"
       ${andif} $MultiUser.Privileges != "Admin"
       Abort
     ${endif}
-    
-    !insertmacro MUI_PAGE_FUNCTION_CUSTOM PRE
-    !insertmacro MUI_HEADER_TEXT_PAGE $(MULTIUSER_TEXT_INSTALLMODE_TITLE) $(MULTIUSER_TEXT_INSTALLMODE_SUBTITLE)
-    
+
+    !insertmacro MULTIUSER_PAGE_FUNCTION_CUSTOM PRE
+    !ifmacrodef MUI_HEADER_TEXT_PAGE
+      !insertmacro MUI_HEADER_TEXT_PAGE $(MULTIUSER_TEXT_INSTALLMODE_TITLE) $(MULTIUSER_TEXT_INSTALLMODE_SUBTITLE)
+    !endif
+
     nsDialogs::Create 1018
     Pop $MultiUser.InstallModePage
 
-    ${NSD_CreateLabel} 0u 0u 300u 40u "${MULTIUSER_INSTALLMODEPAGE_TEXT_TOP}"
+    ${NSD_CreateLabel} 0 2u 100% 42u "${MULTIUSER_INSTALLMODEPAGE_TEXT_TOP}"
     Pop $MultiUser.InstallModePage.Text
 
-    ${NSD_CreateRadioButton} 20u 50u 280u 10u "${MULTIUSER_INSTALLMODEPAGE_TEXT_ALLUSERS}"
+    ${NSD_CreateRadioButton} 15u 50u -15u 10u "${MULTIUSER_INSTALLMODEPAGE_TEXT_ALLUSERS}"
     Pop $MultiUser.InstallModePage.AllUsers
-    
-    ${NSD_CreateRadioButton} 20u 70u 280u 10u "${MULTIUSER_INSTALLMODEPAGE_TEXT_CURRENTUSER}"
+
+    !ifdef MULTIUSER_INSTALLMODEPAGE_SHOWUSERNAME
+    !ifdef NOSYSTEMCALLS
+    ReadEnvStr $0 USERNAME
+    !else
+    System::Call 'ADVAPI32::GetUserName(t""r0,*i${NSIS_MAX_STRLEN})'
+    !endif
+    StrCmp $0 "" +2
+      StrCpy $0 " ($0)"
+    ${NSD_CreateRadioButton} 15u 70u -15u 10u "${MULTIUSER_INSTALLMODEPAGE_TEXT_CURRENTUSER}$0"
+    !else
+    ${NSD_CreateRadioButton} 15u 70u -15u 10u "${MULTIUSER_INSTALLMODEPAGE_TEXT_CURRENTUSER}"
+    !endif
     Pop $MultiUser.InstallModePage.CurrentUser
-    
+
     ${if} $MultiUser.InstallMode == "AllUsers"
       SendMessage $MultiUser.InstallModePage.AllUsers ${BM_SETCHECK} ${BST_CHECKED} 0
     ${else}
       SendMessage $MultiUser.InstallModePage.CurrentUser ${BM_SETCHECK} ${BST_CHECKED} 0
     ${endif}
     
-    !insertmacro MUI_PAGE_FUNCTION_CUSTOM SHOW
+    !insertmacro MULTIUSER_PAGE_FUNCTION_CUSTOM SHOW
     nsDialogs::Show
-    !insertmacro MUI_PAGE_FUNCTION_CUSTOM DESTROYED
+    !insertmacro MULTIUSER_PAGE_FUNCTION_CUSTOM DESTROYED
     
   FunctionEnd
 
   Function "${LEAVE}"
-     SendMessage $MultiUser.InstallModePage.AllUsers ${BM_GETCHECK} 0 0 $MultiUser.InstallModePage.ReturnValue
+     SendMessage $MultiUser.InstallModePage.AllUsers ${BM_GETCHECK} 0 0 $0
      
-     ${if} $MultiUser.InstallModePage.ReturnValue = ${BST_CHECKED}
+     ${if} $0 = ${BST_CHECKED}
         Call MultiUser.InstallMode.AllUsers
      ${else}
         Call MultiUser.InstallMode.CurrentUser
      ${endif}
   
-    !insertmacro MUI_PAGE_FUNCTION_CUSTOM LEAVE
+    !insertmacro MULTIUSER_PAGE_FUNCTION_CUSTOM LEAVE
   FunctionEnd
 
 !macroend
 
-!endif
 
 !verbose pop
 !endif

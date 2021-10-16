@@ -912,6 +912,31 @@ static HKEY ParseRegRootKey(LineParser &line, int tok)
   return k == -1 ? INVALIDREGROOT : rootkey_tab[k];
 }
 
+int CEXEBuild::add_flag_instruction_entry(int which_token, int opcode, LineParser &line, int offset, int data)
+{
+  entry ent = { opcode, };
+  switch(opcode)
+  {
+    case EW_SETFLAG:
+      ent.offsets[0] = offset;
+      ent.offsets[1] = data;
+      if (display_script) SCRIPT_MSG(_T("%") NPRIs _T(": %") NPRIs _T("\n"), get_commandtoken_name(which_token), line.gettoken_str(1));
+      return add_entry(&ent);
+    case EW_IFFLAG:
+      if (process_jump(line, 1, &ent.offsets[0]) || process_jump(line, 2, &ent.offsets[1])) PRINTHELP()
+      ent.offsets[2]=offset;
+      ent.offsets[3]=data;
+      if (display_script) SCRIPT_MSG(_T("%") NPRIs _T(" ?%") NPRIs _T(":%") NPRIs _T("\n"), get_commandtoken_name(which_token), line.gettoken_str(1), line.gettoken_str(2));
+      return add_entry(&ent);
+    case EW_GETFLAG:
+      if ((ent.offsets[0] = GetUserVarIndex(line, 1)) < 0) PRINTHELP();
+      ent.offsets[1] = offset;
+      if (display_script) SCRIPT_MSG(_T("%") NPRIs _T(": %") NPRIs _T("\n"), get_commandtoken_name(which_token), line.gettoken_str(1));
+      return add_entry(&ent);
+  }
+  return PS_ERROR;
+}
+
 int CEXEBuild::doCommand(int which_token, LineParser &line)
 {
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
@@ -1408,10 +1433,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     }
     return PS_OK;
     case TOK_GETINSTDIRERROR:
-      ent.which = EW_GETFLAG;
-      ent.offsets[0] = GetUserVarIndex(line, 1);
-      ent.offsets[1] = FLAG_OFFSET(instdir_error);
-    return add_entry(&ent);
+      return add_flag_instruction_entry(which_token, EW_GETFLAG, line, FLAG_OFFSET(instdir_error));
 #ifdef NSIS_CONFIG_COMPONENTPAGE
     case TOK_COMPTEXT:
       {
@@ -1682,23 +1704,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return PS_ERROR;
 #endif
     case TOK_IFSILENT:
-      ent.which=EW_IFFLAG;
-      if (process_jump(line,1,&ent.offsets[0]) ||
-          process_jump(line,2,&ent.offsets[1])) PRINTHELP()
-      ent.offsets[2]=FLAG_OFFSET(silent);
-      ent.offsets[3]=~0;//new value mask - keep flag
-      SCRIPT_MSG(_T("IfSilent ?%") NPRIs _T(":%") NPRIs _T("\n"),line.gettoken_str(1),line.gettoken_str(2));
-    return add_entry(&ent);
+      return add_flag_instruction_entry(which_token, EW_IFFLAG, line, FLAG_OFFSET(silent), ~0); //new value mask - keep flag
     case TOK_SETSILENT:
-    {
-      ent.which=EW_SETFLAG;
-      ent.offsets[0]=FLAG_OFFSET(silent);
-      int k=line.gettoken_enum(1,_T("normal\0silent\0"));
-      if (k<0) PRINTHELP()
-      ent.offsets[1]=add_intstring(k);
-      SCRIPT_MSG(_T("SetSilent: %") NPRIs _T("\n"),line.gettoken_str(1));
-    }
-    return add_entry(&ent);
+      ent.offsets[1] = line.gettoken_enum(1,_T("normal\0silent\0"));
+      if (ent.offsets[1] < 0 ) PRINTHELP()
+      return add_flag_instruction_entry(which_token, EW_SETFLAG, line, FLAG_OFFSET(silent), add_intstring(ent.offsets[1]));
 #else 
     case TOK_SILENTINST:
     case TOK_SILENTUNINST:
@@ -1707,6 +1717,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_CONFIG_SILENT_SUPPORT not defined.\n"),  line.gettoken_str(0));
     return PS_ERROR;
 #endif //~ NSIS_CONFIG_SILENT_SUPPORT
+    case TOK_IFRTLLANG:
+      return add_flag_instruction_entry(which_token, EW_IFFLAG, line, FLAG_OFFSET(rtl), ~0); //new value mask - keep flag
     case TOK_OUTFILE:
       my_strncpy(build_output_filename,line.gettoken_str(1),COUNTOF(build_output_filename));
       SCRIPT_MSG(_T("OutFile: \"%") NPRIs _T("\"\n"),build_output_filename);
@@ -3002,29 +3014,31 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       if (process_jump(line,1,&ent.offsets[0])) PRINTHELP()
       SCRIPT_MSG(_T("Goto: %") NPRIs _T("\n"),line.gettoken_str(1));
     return add_entry(&ent);
+    case TOK_GETREGVIEW:
+      return add_flag_instruction_entry(which_token, EW_GETFLAG, line, FLAG_OFFSET(alter_reg_view));
     case TOK_SETREGVIEW:
     {
       ent.which=EW_SETFLAG;
       ent.offsets[0]=FLAG_OFFSET(alter_reg_view);
       int k=line.gettoken_enum(1,_T("32\0") _T("64\0default\0lastused\0"));
       if (k == 0) ent.offsets[1]=add_intstring(is_target_64bit() ? KEY_WOW64_32KEY : 0); // 32
-      else if (k == 1) ent.offsets[1]=add_intstring(KEY_WOW64_64KEY); // 64
+      else if (k == 1) ent.offsets[1]=add_intstring(is_target_64bit() ? 0 : KEY_WOW64_64KEY); // 64
       else if (k == 2) ent.offsets[1]=add_intstring(0); // default
       else if (k == 3) ent.offsets[2]=1; // last used
       else PRINTHELP()
       SCRIPT_MSG(_T("SetRegView: %") NPRIs _T("\n"),line.gettoken_str(1));
     }
     return add_entry(&ent);
-    case TOK_SETSHELLVARCONTEXT:
-    {
-      ent.which=EW_SETFLAG;
-      ent.offsets[0]=FLAG_OFFSET(all_user_var);
-      int k=line.gettoken_enum(1,_T("current\0all\0"));
-      if (k<0) PRINTHELP()
-      ent.offsets[1]=add_intstring(k);
-      SCRIPT_MSG(_T("SetShellVarContext: %") NPRIs _T("\n"),line.gettoken_str(1));
-    }
-    return add_entry(&ent);
+    case TOK_IFALTREGVIEW:
+      return add_flag_instruction_entry(which_token, EW_IFFLAG, line, FLAG_OFFSET(alter_reg_view), ~0); //new value mask - keep flag
+    case TOK_GETSHELLVARCONTEXT:
+      return add_flag_instruction_entry(which_token, EW_GETFLAG, line, FLAG_OFFSET(all_user_var));
+    case TOK_SETSHELLVARCONTEXT: 
+      ent.offsets[1] = line.gettoken_enum(1,_T("current\0all\0"));
+      if (ent.offsets[1] < 0 ) PRINTHELP()
+      return add_flag_instruction_entry(which_token, EW_SETFLAG, line, FLAG_OFFSET(all_user_var), add_intstring(ent.offsets[1]));
+    case TOK_IFSHELLVARCONTEXTALL:
+      return add_flag_instruction_entry(which_token, EW_IFFLAG, line, FLAG_OFFSET(all_user_var), ~0); //new value mask - keep flag
     case TOK_RET:
       SCRIPT_MSG(_T("Return\n"));
       ent.which=EW_RET;
@@ -3939,46 +3953,17 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     }
     return add_entry(&ent);
     case TOK_IFERRORS:
-      ent.which=EW_IFFLAG;
-      if (process_jump(line,1,&ent.offsets[0]) ||
-          process_jump(line,2,&ent.offsets[1])) PRINTHELP()
-      ent.offsets[2]=FLAG_OFFSET(exec_error);
-      ent.offsets[3]=0;//new value mask - clean error
-      SCRIPT_MSG(_T("IfErrors ?%") NPRIs _T(":%") NPRIs _T("\n"),line.gettoken_str(1),line.gettoken_str(2));
-    return add_entry(&ent);
+      return add_flag_instruction_entry(which_token, EW_IFFLAG, line, FLAG_OFFSET(exec_error), 0); //new value mask - clean error
     case TOK_IFABORT:
-      ent.which=EW_IFFLAG;
-      if (process_jump(line,1,&ent.offsets[0]) ||
-          process_jump(line,2,&ent.offsets[1])) PRINTHELP()
-      ent.offsets[2]=FLAG_OFFSET(abort);
-      ent.offsets[3]=~0;//new value mask - keep flag
-      SCRIPT_MSG(_T("IfAbort ?%") NPRIs _T(":%") NPRIs _T("\n"),line.gettoken_str(1),line.gettoken_str(2));
-    return add_entry(&ent);
+      return add_flag_instruction_entry(which_token, EW_IFFLAG, line, FLAG_OFFSET(abort), ~0); //new value mask - keep flag
     case TOK_CLEARERRORS:
-      ent.which=EW_SETFLAG;
-      ent.offsets[0]=FLAG_OFFSET(exec_error);
-      ent.offsets[1]=add_intstring(0);
-      SCRIPT_MSG(_T("ClearErrors\n"));
-    return add_entry(&ent);
+      return add_flag_instruction_entry(which_token, EW_SETFLAG, line, FLAG_OFFSET(exec_error), add_intstring(0));
     case TOK_SETERRORS:
-      ent.which=EW_SETFLAG;
-      ent.offsets[0]=FLAG_OFFSET(exec_error);
-      ent.offsets[1]=add_intstring(1);
-      SCRIPT_MSG(_T("SetErrors\n"));
-    return add_entry(&ent);
+      return add_flag_instruction_entry(which_token, EW_SETFLAG, line, FLAG_OFFSET(exec_error), add_intstring(1));
     case TOK_SETERRORLEVEL:
-      ent.which=EW_SETFLAG;
-      ent.offsets[0]=FLAG_OFFSET(errlvl);
-      ent.offsets[1]=add_string(line.gettoken_str(1));
-      SCRIPT_MSG(_T("SetErrorLevel: %") NPRIs _T("\n"),line.gettoken_str(1));
-    return add_entry(&ent);
+      return add_flag_instruction_entry(which_token, EW_SETFLAG, line, FLAG_OFFSET(errlvl), add_string(line.gettoken_str(1)));
     case TOK_GETERRORLEVEL:
-      ent.which=EW_GETFLAG;
-      ent.offsets[0]=GetUserVarIndex(line, 1);
-      ent.offsets[1]=FLAG_OFFSET(errlvl);
-      if (line.gettoken_str(1)[0] && ent.offsets[0]<0) PRINTHELP()
-      SCRIPT_MSG(_T("GetErrorLevel: %") NPRIs _T("\n"),line.gettoken_str(1));
-    return add_entry(&ent);
+      return add_flag_instruction_entry(which_token, EW_GETFLAG, line, FLAG_OFFSET(errlvl));
 #ifdef NSIS_SUPPORT_STROPTS
     case TOK_STRLEN:
       ent.which=EW_STRLEN;
@@ -4202,6 +4187,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           line.gettoken_str(2+a),line.gettoken_str(1+a),a?_T("sfn"):_T("lfn"));
       }
     return add_entry(&ent);
+    case TOK_GETKNOWNFOLDERPATH:
+      ent.which=EW_GETOSINFO;
+      ent.offsets[0]=0; // Operation
+      ent.offsets[1]=GetUserVarIndex(line, 1);
+      ent.offsets[2]=add_string(line.gettoken_str(2));
+    return add_entry(&ent);
     case TOK_SEARCHPATH:
       ent.which=EW_SEARCHPATH;
       ent.offsets[0]=GetUserVarIndex(line, 1);
@@ -4213,6 +4204,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_SEARCHPATH:
     case TOK_GETTEMPFILENAME:
     case TOK_GETFULLPATHNAME:
+    case TOK_GETKNOWNFOLDERPATH:
       ERROR_MSG(_T("Error: %") NPRIs _T(" specified, NSIS_SUPPORT_FNUTIL not defined.\n"),  line.gettoken_str(0));
       return PS_ERROR;
 #endif //~ NSIS_SUPPORT_FNUTIL
@@ -4733,28 +4725,17 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ret = add_entry_direct(EW_QUIT);
       if (ret != PS_OK) return ret;
 
-      SCRIPT_MSG(_T("Reboot! (WOW)\n"));
+      SCRIPT_MSG(_T("Reboot!\n"));
 
       DefineInnerLangString(NLF_INST_CORRUPTED);
     }
     return PS_OK;
     case TOK_IFREBOOTFLAG:
-      ent.which=EW_IFFLAG;
-      if (process_jump(line,1,&ent.offsets[0]) ||
-          process_jump(line,2,&ent.offsets[1])) PRINTHELP()
-      ent.offsets[2]=FLAG_OFFSET(exec_reboot);
-      ent.offsets[3]=~0;//new value mask - keep flag
-      SCRIPT_MSG(_T("IfRebootFlag ?%") NPRIs _T(":%") NPRIs _T("\n"),line.gettoken_str(1),line.gettoken_str(2));
-    return add_entry(&ent);
+      return add_flag_instruction_entry(which_token, EW_IFFLAG, line, FLAG_OFFSET(exec_reboot), ~0); //new value mask - keep flag
     case TOK_SETREBOOTFLAG:
-    {
-      ent.which=EW_SETFLAG;
-      ent.offsets[0]=FLAG_OFFSET(exec_reboot);
-      int k=line.gettoken_enum(1,_T("false\0true\0"));
-      if (k < 0) PRINTHELP()
-      ent.offsets[1]=add_intstring(k);
-    }
-    return add_entry(&ent);
+      ent.offsets[1] = line.gettoken_enum(1,_T("false\0true\0"));
+      if (ent.offsets[1] < 0) PRINTHELP()
+      return add_flag_instruction_entry(which_token, EW_SETFLAG, line, FLAG_OFFSET(exec_reboot), add_intstring(ent.offsets[1]));
 #else
     case TOK_REBOOT:
     case TOK_IFREBOOTFLAG:

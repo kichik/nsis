@@ -161,6 +161,22 @@ Checks the silent flag, and jumps to jump_if_silent if the installer is silent, 
 \c IfSilent +2
 \c   ExecWait '"$INSTDIR\nonsilentprogram.exe"'
 
+\S2{ifshellvarcontextall} IfShellVarContextAll
+
+\c jump_if_true [jump_if_false]
+
+Checks if \R{setshellvarcontext}{SetShellVarContext} is set to \e{all}.
+
+\S2{ifrtllanguage} IfRtlLanguage
+
+\c jump_if_true [jump_if_false]
+
+Checks if active language is a RTL language.
+
+\NsisWarnBlockContainerBegin
+\\<b\\>Warning:\\</b\\> Do not call this in [un].onInit because the language file has not been fully initialized.
+\NsisWarnBlockContainerEnd
+
 \S2{intcmp} IntCmp
 
 \c val1 val2 jump_if_equal [jump_if_val1_less] [jump_if_val1_more]
