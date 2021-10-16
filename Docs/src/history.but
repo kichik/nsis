@@ -6,17 +6,19 @@ Released on ??? ??th, 20??
 
 \S1{v3.07-rl} Release Notes
 
-Unicode is the now default.
+Unicode is now the default.
 
 \S1{v3.07-cl} Changelog
 
 \S2{} Major Changes
 
-\b Unicode is the now default
+\b \R{aunicodetarget}{Unicode} now defaults to \cw{true}
 
 \S2{} Minor Changes
 
 \b Added nsExec /MBCS switch
+
+\b Fixed Unicode compiler crash (\W{http://sf.net/p/nsis/bugs/1254}{bug #1254}, \W{http://sf.net/p/nsis/patches/300}{patch #300})
 
 \S2{} Translations
 

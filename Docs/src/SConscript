@@ -80,6 +80,18 @@ DOCS_CONFIG = {
 		'NSISDOCINSTALLBASEPATH' : docsdefault_install_basepath,
 		'NSISEXTRADIST' : File(Split('#Docs/style.css')),
 	},
+	'web' :
+	{
+		'NSISDOCCONFIG' : 'config_web.but',
+		'NSISDOCEXTRAFILES' : File(Split('#Docs/style.css #Docs/unreleased.png')),
+		'NSISDOCEXTRAACTION' : '',
+		'NSISDOCHTMLFIXES' :
+		{
+		},
+		'NSISDOCTARGET' : htmls,
+		'NSISDOCINSTALLBASEPATH' : docsdefault_install_basepath,
+		'NSISEXTRADIST' : File(Split('#Docs/style.css #Docs/unreleased.png')),
+	},
 	'htmlsingle' :
 	{
 		'NSISDOCCONFIG' : 'config_htmlsingle.but',

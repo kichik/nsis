@@ -43,7 +43,7 @@ unsigned int ExeHeadStringList::getnum() const
     for(;;)
     {
       if ((pos+=cb) >= cbList) break;
-      cb = StrLenUTF16(p+=cb) + 1, ++num;
+      cb = (StrLenUTF16(p+=cb) + 1) * 2, ++num;
     }
   }
   else
