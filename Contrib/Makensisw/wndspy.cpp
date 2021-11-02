@@ -116,7 +116,7 @@ typedef struct _DIALOGDATA {
   static void Set(HWND hDlg, void*pDD) { SetWindowLongPtr(hDlg, DWLP_USER, (LONG_PTR) pDD); }
 } DIALOGDATA;
 
-typedef struct {
+typedef struct _FINDCHILDDATA {
   HWND hWnd;
   POINT pt;
   ULONG Area;
