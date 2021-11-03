@@ -1,4 +1,4 @@
-import platform; print("Using Python", platform.python_version())
+import platform; print("Using Python " + platform.python_version())
 
 EnsureSConsVersion(1,2)
 EnsurePythonVersion(2,7)
