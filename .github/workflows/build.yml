@@ -16,6 +16,7 @@ jobs:
           - nightly: nightly
             os: windows-2019
             log: no
+            python-version: 3.x
     
     runs-on: ${{ matrix.os }}
     steps:
