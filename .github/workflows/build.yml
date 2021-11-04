@@ -9,12 +9,14 @@ jobs:
   build:
     strategy:
       matrix:
+        python-version: ['2.x', '3.x']
         os: [ubuntu-18.04, macos-10.15, windows-2019]
         log: [yes, no]
         include:
           - nightly: nightly
             os: windows-2019
             log: no
+            python-version: 3.x
     
     runs-on: ${{ matrix.os }}
     steps:
@@ -30,9 +32,9 @@ jobs:
         run: sudo DEBIAN_FRONTEND=noninteractive apt-get install -y scons g++-mingw-w64-i686 binutils-mingw-w64-i686 zlib1g-dev libcppunit-dev
         if: startsWith(matrix.os, 'ubuntu')
       - name: Setup Python
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v2
         with:
-          python-version: '3.8'
+          python-version: ${{ matrix.python-version }}
         if: startsWith(matrix.os, 'windows')
       - name: Choco Dependencies
         run: |
