@@ -22,7 +22,6 @@
 #include "state.h"
 #include "ui.h"
 #include "lang.h"
-#include "state.h"
 #include "exec.h"
 #include "plugin.h"
 

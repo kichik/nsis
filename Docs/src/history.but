@@ -14,11 +14,15 @@ Released on ????, 20??
 
 \b Fixed plug-in call overwriting SetDetailsPrint lastused (\W{http://sf.net/p/nsis/bugs/1271}{bug #1271})
 
-\b Fixed halibut fprintf format security warnings (\W{http://sf.net/p/nsis/patches/304}{patch #304})
-
 \S2{} Translations
 
 \b Updated Brazilian Portuguese (\W{http://sf.net/p/nsis/bugs/1269}{bug #1269})
+
+\S2{} Build System
+
+\b Fixed halibut \#{fprintf format security}compiler warnings (\W{http://sf.net/p/nsis/patches/304}{patch #304})
+
+\b Fixed issues with very old GCC versions (\W{http://sf.net/p/nsis/bugs/1275}{bug #1275})
 
 \H{v3.08} 3.08
 
