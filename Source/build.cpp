@@ -3896,7 +3896,7 @@ int CEXEBuild::DeclaredUserVar(const TCHAR *szVarName)
     {
       if (!isSimpleChar(*pVarName))
       {
-        ERROR_MSG(_T("Error: invalid characters in variable name \"%") NPRIs _T("\", use only characters [a-z][A-Z][0-9] and '_'\n"), szVarName);
+        ERROR_MSG(_T("Error: invalid characters in variable name \"%") NPRIs _T("\", use only characters [a-z][A-Z][0-9], '.' and '_'\n"), szVarName);
         return PS_ERROR;
       }
       pVarName++;
