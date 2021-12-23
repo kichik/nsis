@@ -2,6 +2,7 @@
  * misc.c: miscellaneous useful items
  */
 #include <string.h>
+#include <stdlib.h>
 #include <time.h>
 #include "halibut.h"
 
@@ -373,4 +374,19 @@ unsigned long getutcunixtime()
 #endif
 #endif /*~ _WIN32 */
   return (unsigned long) time(NULL);
+}
+
+/*
+ * Wrapper around the standard C time() function, which allows its
+ * return value to be overridden by the environment variable
+ * SOURCE_DATE_EPOCH, used to achieve reproducible builds by avoiding
+ * baking different datestamps into repetitions of what ought to be
+ * the same build.
+ */
+time_t current_time(void)
+{
+  const char *epoch = getenv("SOURCE_DATE_EPOCH");
+  if (epoch)
+    return atol(epoch);
+  return time(NULL);
 }
