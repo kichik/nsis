@@ -6,6 +6,9 @@
 Name preprocessor
 OutFile preprocessor.exe
 
+# Line comment 1
+; Line comment 2
+
 !ifdef some_define_that_doesnt_exist
 this should not be executed, so no error should be raised
 /*
@@ -97,6 +100,15 @@ this shouldn't be compiled
  !error "!if 'test' == 'test' is true!"
 !endif
 
+; !assert
+!assert 1 "" ; No message
+!assert 0 < 1 "Must be tiny" ; Custom message
+
+; Built-in defines that should always exist
+!assert ${__LINE__} ""
+!assert "${__FILE__}" != "" ""
+!assert ${NSIS_CHAR_SIZE} ""
+!assert ${NSIS_PTR_SIZE} >= 4 ""
 
 !define ASSERT `!insertmacro ASSERT "${U+24}{__FILE__}" ${U+24}{__LINE__} `
 !macro ASSERT __file __line __xpr

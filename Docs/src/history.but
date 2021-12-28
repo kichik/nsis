@@ -12,6 +12,8 @@ Released on ????, 20??
 
 \S2{} Minor Changes
 
+\b Added \R{assert}{!assert}
+
 \b Fixed plug-in call overwriting SetDetailsPrint lastused (\W{http://sf.net/p/nsis/bugs/1271}{bug #1271})
 
 \S2{} Translations

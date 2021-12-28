@@ -395,87 +395,11 @@ parse_again:
       return PS_OK;
     }
 
-    int istrue=0, mod=0, logicneg=0;
+    int istrue=0, mod=0;
 
     if (tkid == TOK_P_IF) {
-      const TCHAR *cmdnam = line.gettoken_str(0); // Must save name now before eattoken!
-      if (!_tcscmp(line.gettoken_str(1),_T("!")))
-        logicneg++, line.eattoken();
-
-      if (line.getnumtokens() == 2)
-        istrue = line.gettoken_number(1) || line.gettoken_int(1);
-
-      else if (line.getnumtokens() == 3) {
-        if (!_tcsicmp(line.gettoken_str(1),_T("/fileexists"))) {
-          TCHAR *fc = my_convert(line.gettoken_str(2));
-          tstring dir = get_dir_name(fc), spec = get_file_name(fc);
-          my_convert_free(fc);
-          if (dir == spec) dir = _T("."); 
-
-          boost::scoped_ptr<dir_reader> dr( new_dir_reader() );
-          dr->hack_simpleexcluded().erase(_T("."));
-          dr->read(dir);
-
-          for (dir_reader::iterator fit = dr->files().begin();
-             fit != dr->files().end() && !istrue; fit++)
-          {
-            if (dir_reader::matches(*fit, spec)) istrue = true;
-          }
-          if (!istrue) for (dir_reader::iterator dit = dr->dirs().begin();
-             dit != dr->dirs().end() && !istrue; dit++)
-          {
-            if (dir_reader::matches(*dit, spec)) istrue = true;
-          }
-        }
-        else PRINTHELPEX(cmdnam)
-      }
-
-      else if (line.getnumtokens() == 4) {
-        mod = line.gettoken_enum(2,
-          _T("==\0!=\0S==\0S!=\0")
-          _T("=\0<>\0<=\0<\0>\0>=\0")
-          _T("&\0&&\0|\0||\0")
-          );
-
-        int cnv1 = 1, cnv2 = 1;
-        switch(mod) {
-          case 0:
-            istrue = _tcsicmp(line.gettoken_str(1),line.gettoken_str(3)) == 0; break;
-          case 1:
-            istrue = _tcsicmp(line.gettoken_str(1),line.gettoken_str(3)) != 0; break;
-          case 2:
-            istrue = _tcscmp(line.gettoken_str(1),line.gettoken_str(3)) == 0; break;
-          case 3:
-            istrue = _tcscmp(line.gettoken_str(1),line.gettoken_str(3)) != 0; break;
-          case 4:
-             istrue = line.gettoken_number(1,&cnv1) == line.gettoken_number(3,&cnv2); break;
-          case 5:
-             istrue = line.gettoken_number(1,&cnv1) != line.gettoken_number(3,&cnv2); break;
-          case 6:
-            istrue = line.gettoken_number(1,&cnv1) <= line.gettoken_number(3,&cnv2); break;
-          case 7:
-            istrue = line.gettoken_number(1,&cnv1) <  line.gettoken_number(3,&cnv2); break;
-          case 8:
-            istrue = line.gettoken_number(1,&cnv1) >  line.gettoken_number(3,&cnv2); break;
-          case 9:
-            istrue = line.gettoken_number(1,&cnv1) >= line.gettoken_number(3,&cnv2); break;
-          case 10:
-            istrue = (line.gettoken_int(1,&cnv1) & line.gettoken_int(3,&cnv2)) != 0; break;
-          case 11:
-            istrue = line.gettoken_int(1,&cnv1) && line.gettoken_int(3,&cnv2); break;
-          case 12:
-          case 13:
-            istrue = line.gettoken_int(1,&cnv1) || line.gettoken_int(3,&cnv2); break;
-          default:
-            PRINTHELPEX(cmdnam)
-        }
-        if (!cnv1 || !cnv2) {
-          warning_fl(DW_PARSE_BADNUMBER, _T("Invalid number: \"%") NPRIs _T("\""), line.gettoken_str(!cnv1 ? 1 : 3));
-        }
-      }
-      else PRINTHELPEX(cmdnam)
-        
-      if (logicneg) istrue = !istrue;
+      res = pp_boolifyexpression(line, istrue, true);
+      if (res != PS_OK) return res;
     }
     else {
   
@@ -2572,6 +2496,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_P_ECHO:
       SCRIPT_MSG(_T("%") NPRIs _T(" (%") NPRIs _T(":%d)\n"), line.gettoken_str(1),curfilename,linecnt);
     return PS_OK;
+    case TOK_P_ASSERT:
+    return pp_assert(line);
     case TOK_P_SEARCHPARSESTRING:
     return pp_searchparsestring(line);
     case TOK_P_SEARCHREPLACESTRING:

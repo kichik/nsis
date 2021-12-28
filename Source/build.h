@@ -375,6 +375,8 @@ class CEXEBuild {
     bool inside_comment;
     int multiple_entries_instruction;  // 1 (true) or 0 (false)
 
+    int pp_boolifyexpression(LineParser&line, int &result, bool allow_logicneg = true, int ignore_last_tokens = 0);
+    int pp_assert(LineParser&line);
     int pp_macro(LineParser&line);
     int pp_macroundef(LineParser&line);
     int pp_insertmacro(LineParser&line);
