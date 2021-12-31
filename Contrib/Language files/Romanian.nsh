@@ -5,7 +5,7 @@
 ;New revision by Vlad Rusu (vlad@bitattack.ro)
 ;	- Use Romanian letters ăâîşţ
 ;	- ".. produsului" removed as unnecessary
-;	- "Elimină" related terms replaced with more appropiate "Dezinstalează"
+;	- "Elimină" related terms replaced with more appropriate "Dezinstalează"
 ;	- Misc language tweaks
 
 !insertmacro LANGFILE "Romanian" = "Română" "Romana"

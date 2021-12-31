@@ -18,8 +18,8 @@ NLF v6
 #   - Use imperative forms on buttons
 #   - Replace some neologisms
 # New revision by Vlad Rusu (vlad@bitattack.ro)
-#	- "Rasfoieşte" replaced with "Alege" - more appropiate
-#	- "Elimină" related terms replaced with more appropiate "Dezinstalează"
+#	- "Rasfoieşte" replaced with "Alege" - more appropriate
+#	- "Elimină" related terms replaced with more appropriate "Dezinstalează"
 #	- Fixed: Wrong translation in ^FileError and ^FileError_NoIgnore -> no translation
 #	  needed Abort/Retry/Ignore, as these are not translated into local language, OS related
 # ^Branding

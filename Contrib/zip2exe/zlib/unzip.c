@@ -298,11 +298,11 @@ local int strcmpcasenosensitive_internal (fileName1,fileName2)
 
 /*
    Compare two filename (fileName1,fileName2).
-   If iCaseSenisivity = 1, comparison is case sensitivity (like strcmp)
-   If iCaseSenisivity = 2, comparison is not case sensitivity (like strcmpi
+   If iCaseSensitivity = 1, comparison is case sensitive (like strcmp)
+   If iCaseSensitivity = 2, comparison is not case sensitive (like strcmpi
                                                                 or strcasecmp)
-   If iCaseSenisivity = 0, case sensitivity is default of your operating system
-        (like 1 on Unix, 2 on Windows)
+   If iCaseSensitivity = 0, case sensitivity is the default from your 
+     operating system (like 1 on Unix, 2 on Windows)
 
 */
 extern int ZEXPORT unzStringFileNameCompare (fileName1,fileName2,iCaseSensitivity)

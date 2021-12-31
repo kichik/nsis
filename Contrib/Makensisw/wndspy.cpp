@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2021 Anders Kjersem
+// Copyright (C) 2018-2022 Anders Kjersem
 //
 // This file is a part of NSIS.
 //
