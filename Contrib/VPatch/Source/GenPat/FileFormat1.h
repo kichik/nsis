@@ -36,7 +36,7 @@
   using namespace std;
 
   namespace FileFormat1 {
-    TFileOffset removeExistingPatch(bistream& in, TFileOffset inSize, bostream& out, TChecksum* removeCRC, bool existanceIsError);
+    TFileOffset removeExistingPatch(bistream& in, TFileOffset inSize, bostream& out, TChecksum* removeCRC, bool existenceIsError);
     void writePatch(bostream& patch, bistream& target, vector<SameBlock*>& sameBlocks, TChecksum* sourceCRC, TChecksum* targetCRC, TFileOffset currentFileCount, POSIX::ALT_FILETIME targetTime);
   }
 

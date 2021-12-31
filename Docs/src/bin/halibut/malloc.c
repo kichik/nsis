@@ -137,7 +137,7 @@ void free_list(void*p)
   void *s = p, *n;
   for (; p; p = n)
   {
-    n = *(void**) p; /* Assmumes next pointer is the first member! */
+    n = *(void**) p; /* Assumes next pointer is the first member! */
     if (n == s) n = NULL; /* Around the ring? */
     sfree(p);
   }

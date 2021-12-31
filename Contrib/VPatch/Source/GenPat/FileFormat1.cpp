@@ -84,7 +84,7 @@ namespace FileFormat1 {
     writeDword(f,currentCount);
   }
 
-  TFileOffset removeExistingPatch(bistream& in, TFileOffset inSize, bostream& out, TChecksum* removeCRC, bool existanceIsError) {
+  TFileOffset removeExistingPatch(bistream& in, TFileOffset inSize, bostream& out, TChecksum* removeCRC, bool existenceIsError) {
     TFileOffset fileCount = 0x80000000;        // MD5 mode
     if(in.bad() || in.eof() || (inSize == 0)) {        // empty file/does not yet exist
       writeDword(out,MAGIC_VPAT);
@@ -127,7 +127,7 @@ namespace FileFormat1 {
       in.seekg(bodySize,ios::cur);
       TFileOffset endOffset = in.tellg();
       if(sourceChecksum == *removeCRC) {
-        if(existanceIsError) {
+        if(existenceIsError) {
           throw _T("Source file with the exact same contents already exists in patch!\nUse /R option (replace) to replace it with this patch!");
         }
         fileCount--;

@@ -328,7 +328,7 @@ conf.Finish()
 
 #
 # GCC doesn't define __BIG_ENDIAN__ or __LITTLE_ENDIAN__, so manually check
-# for the endianess and define __BIG_ENDIAN__ if needed.
+# for the endianness and define __BIG_ENDIAN__ if needed.
 #
 
 def check_big_endian(ctx):

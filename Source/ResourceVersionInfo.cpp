@@ -237,7 +237,7 @@ void CResourceVersionInfo::ExportToStream(GrowBuf &strm, int Index)
       *(WORD*)((PBYTE)strm.get()+p)=wSize;
     }
 
-    // Show all languages avaiable using Var-Translations
+    // Show all languages available using Var-Translations
     if ( m_ChildStringLists.getnum() > 0 )
     {
       PadStream (strm);

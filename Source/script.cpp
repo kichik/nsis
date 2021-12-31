@@ -2843,7 +2843,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           td.FreeSavedTemplate(dlg);
         }
         catch (exception& err) {
-          ERROR_MSG(_T("Error while triming branding text control: %") NPRIs _T("\n"), CtoTStrParam(err.what()));
+          ERROR_MSG(_T("Error while trimming branding text control: %") NPRIs _T("\n"), CtoTStrParam(err.what()));
           return PS_ERROR;
         }
 #else

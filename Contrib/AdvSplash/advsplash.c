@@ -159,7 +159,7 @@ void CALLBACK TimeProc(UINT uID, UINT uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWO
       break;
     }
   }
-  // Transparency value aquired, and could be set...
+  // Transparency value acquired, and could be set...
   if ((call >= 0) && IsLayeredWnd())
   {
     SetLayeredWindowAttributesProc((HWND) dwUser, keycolor, (BYTE) call, alphaparam);

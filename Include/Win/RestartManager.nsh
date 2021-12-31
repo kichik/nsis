@@ -34,7 +34,7 @@ RestartManager.h
 !define RmCritical 1000 ; Application is critical system process where a reboot is required to restart
 
 !define RmForceShutdown           0x1 ; Force unresponsive applications and services to shut down after the timeout period
-!define RmShutdownOnlyRegistered 0x10 ; Only shudown apps if all apps registered for restart (RegisterApplicationRestart)
+!define RmShutdownOnlyRegistered 0x10 ; Only shutdown apps if all apps registered for restart (RegisterApplicationRestart)
 
 !define RmStatusUnknown           0
 !define RmStatusRunning           1

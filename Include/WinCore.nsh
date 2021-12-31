@@ -167,7 +167,7 @@ ShlObj.h
 !define CSIDL_COMMON_DESKTOPDIRECTORY 0x0019 ;All Users\Desktop
 !define CSIDL_APPDATA                 0x001a ;<user name>\Application Data
 !define CSIDL_PRINTHOOD               0x001b ;<user name>\PrintHood
-!define CSIDL_LOCAL_APPDATA           0x001c ;<user name>\Local Settings\Applicaiton Data (non roaming)
+!define CSIDL_LOCAL_APPDATA           0x001c ;<user name>\Local Settings\Application Data (non roaming)
 !define CSIDL_ALTSTARTUP              0x001d ;non localized startup
 !define CSIDL_COMMON_ALTSTARTUP       0x001e ;non localized common startup
 !define CSIDL_COMMON_FAVORITES        0x001f
@@ -192,8 +192,8 @@ ShlObj.h
 !define CSIDL_COMMON_MUSIC            0x0035 ;All Users\My Music
 !define CSIDL_COMMON_PICTURES         0x0036 ;All Users\My Pictures
 !define CSIDL_COMMON_VIDEO            0x0037 ;All Users\My Video
-!define CSIDL_RESOURCES               0x0038 ;Resource Direcotry
-!define CSIDL_RESOURCES_LOCALIZED     0x0039 ;Localized Resource Direcotry
+!define CSIDL_RESOURCES               0x0038 ;Resource Directory
+!define CSIDL_RESOURCES_LOCALIZED     0x0039 ;Localized Resource Directory
 !define CSIDL_COMMON_OEM_LINKS        0x003a ;Links to All Users OEM specific apps
 !define CSIDL_CDBURN_AREA             0x003b ;USERPROFILE\Local Settings\Application Data\Microsoft\CD Burning
 !define CSIDL_COMPUTERSNEARME         0x003d ;Computers Near Me (computered from Workgroup membership)

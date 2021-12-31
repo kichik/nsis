@@ -635,7 +635,7 @@ System::Call '*(&amp;t50 "!")p.r2' ; DecimalSep
 System::Call '*(&amp;t50 "`")p.r3' ; ThousandSep
 System::Call '*(i 2, i 0, i 3, <b>P r2, P r3</b>, i 1)p.r1 <b>?2</b>'
 System::Call 'kernel32::GetNumberFormat(i 0, i 0, t "1337.666" r4, p r1, t.r5, i ${NSIS_MAX_STRLEN})'
-DetailPrint "Custom formated $4: $5"
+DetailPrint "Custom formatted $4: $5"
 System::Free $3
 System::Free $2
 System::Free $1

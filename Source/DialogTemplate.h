@@ -101,7 +101,7 @@ typedef struct {
   short  cx;
   short  cy;
   WORD   id;
-  WORD   _miscrosoft_docs_are_wrong;
+  WORD   _microsoft_docs_are_wrong;
 } DLGITEMTEMPLATEEX;
 
 #pragma pack()

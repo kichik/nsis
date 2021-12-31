@@ -612,7 +612,7 @@ typedef struct {
 // the following are only used/implemented in exehead, not makensis.
 
 #if NSIS_MAX_EXEDATASIZE <= 0xffffffffUL
-#define MAXEXEDATASIZETYPE UINT // Maximum size of .exe including compressed installer data. (Unsigned allows size including 3rd-party appeded data to be 4 GiB instead of 2 GiB)
+#define MAXEXEDATASIZETYPE UINT // Maximum size of .exe including compressed installer data. (Unsigned allows size including 3rd-party appended data to be 4 GiB instead of 2 GiB)
 #endif
 #define MAXSIZETYPE UINT
 

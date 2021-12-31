@@ -201,10 +201,10 @@ class MMapFake : public IMMap
 
 /**
  * A data structure that can be used to create a scratch file to do
- * work in.  When it's smaller than 16mb, it's all in memory using the
- * GrowBuf class.  But when it gets biggered than 16mb, then it uses
+ * work in. When it's smaller than 16mb, it's all in memory using the
+ * GrowBuf class. But when it gets larger than 16mb, then it uses
  * the MMapFile class to create a memory map to a temporary file and
- * then uses it.  This reduces memory overhead of the installer.
+ * then uses it. This reduces memory overhead of the installer.
  *
  * This is sort of our virtual memory manager.
  */

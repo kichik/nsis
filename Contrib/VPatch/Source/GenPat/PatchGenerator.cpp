@@ -145,7 +145,7 @@ SameBlock* PatchGenerator::findBlock(ChunkedFile* sourceTree,
 //                                          currentOffset);
                                      //unsigned char* targetData,  // target data contains a memory part of target stream
                                      //TFileOffset targetDataPreSize, // this specifies how many bytes we can access in front (required to be at least blockSize)
-                                     //TFileOffset targetDataSize,    // this specifies how many bytes we can acces in the pointer (must be at least blockSize)
+                                     //TFileOffset targetDataSize,    // this specifies how many bytes we can access in the pointer (must be at least blockSize)
 
   // read the current data part into memory
   TChunkChecksum checksum;

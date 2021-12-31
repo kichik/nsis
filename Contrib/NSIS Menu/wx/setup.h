@@ -538,7 +538,7 @@
 // Recommended setting: 1
 #define wxUSE_MEDIACTRL     0
 
-// Use GStreamer for Unix (req a lot of dependancies)
+// Use GStreamer for Unix (req a lot of dependencies)
 //
 // Default is 0
 //
@@ -1102,7 +1102,7 @@
 
 // For backward compatibility reasons, this parameter now only controls the
 // default scrolling method used by cursors.  This default behavior can be
-// overriden by setting the second param of wxDB::wxDbGetConnection() or
+// overridden by setting the second param of wxDB::wxDbGetConnection() or
 // wxDb() constructor to indicate whether the connection (and any wxDbTable()s
 // that use the connection) should support forward only scrolling of cursors,
 // or both forward and backward support for backward scrolling cursors is
@@ -1259,7 +1259,7 @@
 // Recommended setting: 1, required by wxMediaCtrl
 #define wxUSE_ACTIVEX 0
 
-// wxDC cacheing implementation
+// wxDC caching implementation
 #define wxUSE_DC_CACHEING 0
 
 // Set this to 1 to enable the use of DIB's for wxBitmap to support

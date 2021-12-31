@@ -434,7 +434,7 @@ static inline int makensismain(int argc, TCHAR **argv)
   }
   catch (exception& err)
   {
-    PrintColorFmtMsg_ERR(_T("Error initalizing CEXEBuild: %") NPRIs _T("\n"), CtoTStrParam(err.what()));
+    PrintColorFmtMsg_ERR(_T("Error initializing CEXEBuild: %") NPRIs _T("\n"), CtoTStrParam(err.what()));
     return 1;
   }
 

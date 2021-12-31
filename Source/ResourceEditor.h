@@ -198,7 +198,7 @@ public:
   bool  SetPESectionVirtualSize(const char* pszSectionName, DWORD newsize);
   DWORD Save(BYTE* pbBuf, DWORD &dwSize);
 
-  // utitlity functions
+  // utility functions
   static PIMAGE_NT_HEADERS GetNTHeaders(BYTE* pbPE);
 
   static PRESOURCE_DIRECTORY GetResourceDirectory(

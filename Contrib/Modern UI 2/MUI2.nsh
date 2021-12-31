@@ -45,7 +45,7 @@ Contributors: Amir Szekely, Anders Kjersem
 
 !macro MUI_SET SYMBOL CONTENT
 
-  ;Define symbol and undefine if neccesary
+  ;Define symbol and undefine if necessary
   
   !insertmacro MUI_UNSET "${SYMBOL}"
   !define "${SYMBOL}" "${CONTENT}"

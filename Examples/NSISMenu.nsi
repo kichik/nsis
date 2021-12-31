@@ -189,7 +189,7 @@ SendMessage $0 ${WM_SETFONT} $1 1
 !define /ReDef UY ${UY_ROW2}
 !insertmacro CreateHeader "Developer Center" ${UX_W}
 !define /ReDef UY_MULTILINE 42
-!insertmacro CreateControl Label "Many more examples, tutorials, plug-ins and NSIS-releted software are available at the online Developer Center." ${UX_W} ${UY_MULTILINE}
+!insertmacro CreateControl Label "Many more examples, tutorials, plug-ins and NSIS-related software are available at the online Developer Center." ${UX_W} ${UY_MULTILINE}
 Pop $0
 ${SetCtlColors} $0 ${CT_PAGE} ${CB_PAGE}
 

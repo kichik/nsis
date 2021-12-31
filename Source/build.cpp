@@ -378,7 +378,7 @@ CEXEBuild::CEXEBuild(signed char pponly, bool warnaserror) :
   m_ShellConstants.add(_T("RESOURCES_LOCALIZED"), CSIDL_RESOURCES_LOCALIZED, CSIDL_RESOURCES_LOCALIZED);
   m_ShellConstants.add(_T("CDBURN_AREA"), CSIDL_CDBURN_AREA, CSIDL_CDBURN_AREA);
 
-  // Contants that are not affected by SetShellVarContext
+  // Constants that are not affected by SetShellVarContext
   m_ShellConstants.add(_T("USERAPPDATA"), CSIDL_APPDATA, CSIDL_APPDATA);
   m_ShellConstants.add(_T("USERLOCALAPPDATA"), CSIDL_LOCAL_APPDATA, CSIDL_LOCAL_APPDATA);
   m_ShellConstants.add(_T("USERTEMPLATES"), CSIDL_TEMPLATES, CSIDL_TEMPLATES);
@@ -632,7 +632,7 @@ int CEXEBuild::preprocess_string(TCHAR *out, const TCHAR *in, WORD codepage/*=CP
             int idxUserVar = m_UserVarNames.get(p, truncate_cast(int, (size_t)(pUserVarName - p)));
             if (idxUserVar >= 0)
             {
-              // Well, using variables inside string formating doens't mean
+              // Well, using variables inside string formatting doesn't mean
               // using the variable, because it will be always an empty string
               // which is also memory wasting
               // So the line below must be commented !??

@@ -71,7 +71,7 @@ bool dir_reader::matches(const tstring& name, const tstring& spec) {
   while (name_itr != name_end && spec_itr != spec_end) {
     switch (*spec_itr) {
       case _T('?'):
-        // question mark mathes one char
+        // question mark matches one char
         name_itr++;
         spec_itr++;
         break;

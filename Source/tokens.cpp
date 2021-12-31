@@ -28,7 +28,7 @@ typedef struct
   int id;
   const TCHAR *name;
   int num_parms; // minimum number of parameters
-  int opt_parms; // optional parmaters, usually 0, can be -1 for unlimited.
+  int opt_parms; // optional parameters, usually 0, can be -1 for unlimited.
   const TCHAR *usage_str;
   int placement; // where the token can be placed
 } tokenType;

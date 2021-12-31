@@ -75,7 +75,7 @@ int _tmain( int argc, TCHAR * argv[] ) {
   int maxMatches = 500;
   bool beVerbose = false;
   bool beOptimal = false;
-  bool existanceIsError = true;     // flag error if patch already has source's MD5/CRC32?
+  bool existenceIsError = true;     // flag error if patch already has source's MD5/CRC32?
   int fileNameArgument = 0;
   if(argc > 1) {
     for(int i = 1; i < argc; i++) {
@@ -90,7 +90,7 @@ int _tmain( int argc, TCHAR * argv[] ) {
               beOptimal = true;
             }
             if((s[1] == _T('r')) || (s[1] == _T('R'))) {
-              existanceIsError = false;
+              existenceIsError = false;
             }
           }
           if(s.size() > 2) {
@@ -208,7 +208,7 @@ int _tmain( int argc, TCHAR * argv[] ) {
 
     try {
       // this will copy the contents of previousPatch to patch, but without sourceCRC
-      fileCount = FileFormat1::removeExistingPatch(previousPatch,previousPatchSize,patch,sourceCRC,existanceIsError);
+      fileCount = FileFormat1::removeExistingPatch(previousPatch,previousPatchSize,patch,sourceCRC,existenceIsError);
     } catch(const TCHAR* s) {
       terr << _T("ERROR: ") << s << _T("\n");
       patch.close();

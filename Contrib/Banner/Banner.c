@@ -127,7 +127,7 @@ void __declspec(dllexport) show(HWND hwndParent, int string_size, TCHAR *variabl
 
     hThread = CreateThread(0, 0, BannerThread, (LPVOID) hwndParent, 0, &dwThreadId);
 
-    // wait for the window to initalize and for the stack operations to finish
+    // wait for the window to initialize and for the stack operations to finish
     while (hThread && !hwBanner && !bFailed)
     {
       ProcessMessages();

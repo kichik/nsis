@@ -294,7 +294,7 @@ PLUGINFUNCTION(Get)
 
 #ifdef SYSTEM_ARM64
 /*
-TODO: CallProc not implemeted.
+TODO: CallProc not implemented.
 Fake the behavior of the System plugin for the LoadImage API function etc. so MUI works.
 BUGBUG: MUI is leaking DeleteObject
 */
@@ -357,7 +357,7 @@ SystemProc* CallProc(SystemProc *proc)
 #endif //~ SYSTEM_ARM64
 #ifdef _WIN64
 /*
-BUGBUG: TODO: CallBack support not implemeted!
+BUGBUG: TODO: CallBack support not implemented!
 */
 SystemProc* CallBack(SystemProc *proc)
 {
@@ -473,8 +473,8 @@ PLUGINFUNCTIONSHORT(Int64Op)
     case _T('*'): i1 *= i2; break;
     case _T('/'): 
     case _T('%'): 
-        // It's unclear, but in this case compiler will use DivMod rountine
-        // instead of two separate Div and Mod rountines.
+        // It's unclear, but in this case compiler will use DivMod routine
+        // instead of two separate Div and Mod routines.
         if (i2 == 0) { i3 = 0; i4 = i1; }
         else {i3 = i1 / i2; i4 = i1 % i2; }
         if (*op == _T('/')) i1 = i3; else i1 = i4; 
@@ -609,7 +609,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
                 proc->ProcType = ProcType;
                 proc->ProcResult = PR_OK;
     
-                // Section changed and previos section was Proc
+                // Section changed and previous section was Proc
                 switch (ProcType)
                 {
                 case PT_NOTHING:
@@ -709,7 +709,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
                 ChangesDone = PCD_DONE;
                 break;
             case _T('*'):
-                // Structure defenition
+                // Structure definition
                 ProcType = PT_STRUCT;
                 ChangesDone = PCD_DONE;
                 break;
@@ -732,7 +732,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
                 if (proc->ParamCount != ((ProcType == PT_VTABLEPROC) ? 1 : 0))
                 {
                   // only define params if the last count wasn't zero
-                  // this prevents errornous param count for:
+                  // this prevents erroneous param count for:
                   //   'user32::CloseClipboard()(_)'
                   // for vtable calls, param count should not be one
                   param_defined = TRUE;
@@ -918,7 +918,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
     GlobalFree(cbuf);
     GlobalFree(sbuf);
 
-    // Ok, the final step: check proc for existance
+    // Ok, the final step: check proc for existence
     if (proc != NULL && proc->Proc == NULL)
     {
         switch (proc->ProcType)
@@ -1029,7 +1029,7 @@ void ParamsIn(SystemProc *proc)
     {
         ProcParameter *par = &proc->Params[i];
         UINT partype;
-        // Step 1: retrive value
+        // Step 1: retrieve value
         if ((par->Input == IOT_NONE) || (par->Input == IOT_INLINE)) 
             realbuf = AllocStr(_T(""));
         else if (par->Input == IOT_STACK) realbuf = system_popstring();
@@ -1042,7 +1042,7 @@ void ParamsIn(SystemProc *proc)
             par->Input = IOT_INLINE;
         }
 
-        // Retreive pointer to place
+        // Retrieve pointer to place
         place = ParamIsPointer(*par) ? (HGLOBAL*) par->Value : (HGLOBAL*) &(par->Value);
 
         // by default no blocks are allocated
@@ -1150,13 +1150,13 @@ void ParamsOut(SystemProc *proc)
     i = proc->ParamCount;
     do
     {
-        // Retreive pointer to place
+        // Retrieve pointer to place
         if (ParamIsPointer(proc->Params[i]))
             place = (INT_PTR*) proc->Params[i].Value;
         else 
             place = (INT_PTR*) &(proc->Params[i].Value);
 
-        // Step 1: retrive value
+        // Step 1: retrieve value
         switch (partype = GetParamType(proc->Params[i]))
         {
         case PAT_VOID:
@@ -1280,7 +1280,7 @@ HANDLE CreateCallback(SystemProc *cbproc)
         *((int *)mem) = (int) RealCallBack;
         *((int *)mem) -= ((int) mem) + 4;
 #else
-#error "Asm thunk not implemeted for this architecture!"
+#error "Asm thunk not implemented for this architecture!"
 #endif
 
     }

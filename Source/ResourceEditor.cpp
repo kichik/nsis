@@ -432,7 +432,7 @@ bool CResourceEditor::UpdateResourceW(const WINWCHAR* szType, WINWCHAR* szName, 
       if (!nameDir->AddEntry(pRDE)) delete pRDE;
     }
     if (!data) {
-      // Language doesn't yet exist, hence data nither
+      // Language doesn't yet exist, hence data neither
       data = new CResourceDataEntry(lpData, dwSize);
       CResourceDirectoryEntry *pRDE = new CResourceDirectoryEntry(MAKEINTRESOURCEWINW(wLanguage), data);
       if (!langDir->AddEntry(pRDE)) delete pRDE;
@@ -1120,7 +1120,7 @@ CResourceDirectory* CResourceEditor::ScanDirectory(PRESOURCE_DIRECTORY rdRoot, P
       if (!rdc->AddEntry(pRDE)) delete pRDE;
     }
 
-    // Delete the dynamicly allocated name if it is a name and not an id
+    // Delete the dynamically allocated name if it is a name and not an id
     if (!IS_INTRESOURCE(szName))
       delete [] szName;
   }

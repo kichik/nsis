@@ -133,7 +133,7 @@
     !ifndef _${Type}
       !error "Cannot use _Pop${Type} without a preceding _Push${Type}"
     !endif
-    !ifdef ${_${Type}}Prev${Type}                         ; If a previous statment was active then restore it
+    !ifdef ${_${Type}}Prev${Type}                         ; If a previous statement was active then restore it
       !define _Cur${Type} ${_${Type}}
       !undef _${Type}
       !define _${Type} ${${_Cur${Type}}Prev${Type}}
@@ -819,7 +819,7 @@
     !verbose ${LOGICLIB_VERBOSITY}
     !insertmacro _PushLogic
     !insertmacro _PushScope Switch ${_Logic}              ; Keep a separate stack for switch data
-    !insertmacro _PushScope Break _LogicLib_Label_${LOGICLIB_COUNTER} ; Get a lable for beyond the end of the switch
+    !insertmacro _PushScope Break _LogicLib_Label_${LOGICLIB_COUNTER} ; Get a label for beyond the end of the switch
     !insertmacro _IncreaseCounter
     !define ${_Switch}Var `${_a}`                         ; Remember the left hand side of the comparison
     !tempfile ${_Switch}Tmp                               ; Create a temporary file

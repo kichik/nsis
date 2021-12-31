@@ -394,7 +394,7 @@ int NSISCALL is_valid_instpath(TCHAR *s)
     return 0;
 
   // must be called after skip_root or AllowRootDirInstall won't work.
-  // validate_filename removes trailing blackslashes and so converts
+  // validate_filename removes trailing backslashes and so converts
   // "C:\" to "C:" which is not a valid directory. skip_root returns
   // NULL for "C:" so the above test returns 0.
   // validate_filename is called so directories such as "C:\ " will

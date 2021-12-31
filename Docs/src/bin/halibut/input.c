@@ -202,7 +202,7 @@ enum {
   c_U,                          /* unnumbered-chapter heading */
   c_W,                          /* Web hyperlink */
   c_L,                          /* Relative/local hyperlink */
-  c_b,                          /* bulletted list */
+  c_b,                          /* bulleted list */
   c_bold,
   c_c,                          /* code */
   c_cfg,                        /* configuration directive */
@@ -293,7 +293,7 @@ static void match_kw(token * tok)
     { "W", c_W },                    /* Web hyperlink */
     { "\\", c__escaped },            /* escaped backslash (\\) */
     { "_", c__nbsp },                /* nonbreaking space (\_) */
-    { "b", c_b },                    /* bulletted list */
+    { "b", c_b },                    /* bulleted list */
     { "bold", c_bold },
     { "c", c_c },                    /* code */
     { "cfg", c_cfg },                /* configuration directive */

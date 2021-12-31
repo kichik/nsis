@@ -24,7 +24,7 @@ Localization
 
 
 ;--------------------------------
-;Include langauge files
+;Include language files
 
 !macro MUI_LANGUAGEEX LangDir NLFID
 
@@ -90,7 +90,7 @@ Localization
     ReadRegStr $mui.LangDLL.RegistryLanguage "${MUI_LANGDLL_REGISTRY_ROOT}" "${MUI_LANGDLL_REGISTRY_KEY}" "${MUI_LANGDLL_REGISTRY_VALUENAME}"
     
     ${if} $mui.LangDLL.RegistryLanguage != ""
-      ;Set default langauge to registry language
+      ;Set default language to registry language
       StrCpy $LANGUAGE $mui.LangDLL.RegistryLanguage
     ${endif}
 
@@ -106,7 +106,7 @@ Localization
   !endif
   !endif
   
-  ;Show langauge selection dialog
+  ;Show language selection dialog
   !ifdef MUI_LANGDLL_ALLLANGUAGES
     LangDLL::LangDialog "${MUI_LANGDLL_WINDOWTITLE}" "${MUI_LANGDLL_INFO}" A ${MUI_LANGDLL_LANGUAGES} ""
   !else

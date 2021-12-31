@@ -1,4 +1,4 @@
-# to boostrap this action, create an empty repo with just this file and svn-authors
+# to bootstrap this action, create an empty repo with just this file and svn-authors
 # run the action once with force parameter set to "yes"
 
 # git commit -m "xxx" * && git push -f && gh workflow run -R kichik/nsis-travis copy-svn.yml -f force=yes
