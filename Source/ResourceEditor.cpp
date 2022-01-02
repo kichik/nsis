@@ -1007,7 +1007,7 @@ BYTE* CResourceEditor::ExtractIcoCur(const CResourceDataEntry&rde, LANGID ChildL
         pFGE->Width = (BYTE) FIX_ENDIAN_INT16(pRGE[0]), pFGE->Height = (BYTE) FIX_ENDIAN_INT16(pRGE[1]);
         if (cbRes >= 4+12) {
           assert(!EditorSupportsCursorPng());
-          pFGE->Planes = ((WORD*)pResData)[0], pFGE->BPP = ((WORD*)pResData)[0], cbImg -= 4; // Hotspot
+          pFGE->Planes = ((WORD*)pResData)[0], pFGE->BPP = ((WORD*)pResData)[1], cbImg -= 4; // Hotspot
           DWORD cbBMH = GetDIBHeaderInfo(pResData += 4, cbRes - 4, ii), cd = ii.BPP * ii.Planes;
           pFGE->Palette = cbBMH && cd < 8 ? (BYTE)(1 << cd) : 0; // devblogs.microsoft.com/oldnewthing/20101018-00/?p=12513 says only for depths < 8!
           pFGE->Reserved = 0;
