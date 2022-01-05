@@ -351,7 +351,7 @@ static inline int makensismain(int argc, TCHAR **argv)
       WORD cp=GetEncodingFromString(argv[argpos],bom);
       if (NStreamEncoding::UNKNOWN == cp)
       {
-        ++initialparsefail;
+        initialparsefail = true;
       }
       else
       {
