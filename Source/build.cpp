@@ -3714,7 +3714,7 @@ bool CEXEBuild::prompt_for_output_path(TCHAR*path, UINT pathcap) const
     }
   };
   size_t io[] = { false, (size_t) path, pathcap }, cb;
-  TinyGrowBuf inputbuf((IGrowBuf::size_type) (cb = FIELD_OFFSET(PROMPT_FILEPATH_DATA, Path[pathcap])));
+  TinyGrowBuf inputbuf((IGrowBuf::size_type) (cb = FIELD_OFFSET(PROMPT_FILEPATH_DATA, Path) + pathcap));
   PROMPT_FILEPATH_DATA *p = (PROMPT_FILEPATH_DATA*) inputbuf.get();
   p->Platform = (sizeof(void*) * 8) | sizeof(TCHAR), p->Reserved = 0;
   _tcscpy(p->Path, path);
