@@ -19,7 +19,9 @@ files = Split("""
 	version.c
 """)
 
-Import('env')
+Import('env AddAvailableLibs')
+
+AddAvailableLibs(env, ['rt'])
 
 halibut = env.Program(target, files)
 

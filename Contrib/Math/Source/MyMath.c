@@ -68,7 +68,7 @@ void StringToItem(TCHAR *&s, ExpressionItem *item, int options)
           ((c == (_T('e')-_T('0'))) || (c==(_T('E')-_T('0'))) || (c==(_T('.')-_T('0')))
           || (numsignif > 18)))
       {
-          // Switch to floating point conversion rountine
+          // Switch to floating point conversion routine
           item->type = IT_CONST | ITC_FLOAT;
           double& d = *((double*)&(item->param1));
           d = (double) v;

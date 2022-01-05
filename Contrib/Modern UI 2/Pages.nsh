@@ -14,7 +14,7 @@ Support code for all pages
     !warning "MUI_PAGE_* inserted after MUI_LANGUAGE"
   !endif
 
-  ;Include interface settings in neccesary
+  ;Include interface settings if necessary
   !insertmacro MUI_INTERFACE
 
   ;Define settings for installer page

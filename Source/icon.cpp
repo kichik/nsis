@@ -3,7 +3,7 @@
  * 
  * This file is a part of NSIS.
  * 
- * Copyright (C) 1999-2021 Nullsoft and Contributors
+ * Copyright (C) 1999-2022 Nullsoft and Contributors
  * 
  * Licensed under the zlib/libpng license (the "License");
  * you may not use this file except in compliance with the License.
@@ -332,7 +332,7 @@ void set_main_icon(CResourceEditor* re, WORD wIconId, IconGroup icon1, IconGroup
 {
   IconPairs order = get_icon_order(icon1, icon2);
 
-  // genreate group
+  // generate group
   LPBYTE group1 = generate_icon_group(icon1, order, true);
 
   // set group
@@ -374,7 +374,7 @@ unsigned char* generate_uninstall_icon_data(IconGroup icon1, IconGroup icon2, si
   IconGroup::size_type i;
   IconPairs order = get_icon_order(icon1, icon2);
 
-  // genreate group
+  // generate group
   LPBYTE group = generate_icon_group(icon2, order, false);
 
   // calculate size

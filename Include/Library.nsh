@@ -37,7 +37,7 @@
 !include LogicLib.nsh
 !include x64.nsh
 
-### GetParent macro, don't pass $1 or $2 as INTPUT or OUTPUT
+### GetParent macro, don't pass $1 or $2 as INPUT or OUTPUT
 !macro __InstallLib_Helper_GetParent INPUT OUTPUT
 
   # Copied from FileFunc.nsh

@@ -20,7 +20,7 @@ static void do_error(int code, va_list ap)
   char auxbuf[256];
   char *sp, *sp2;
   wchar_t *wsp;
-  filepos fpos, fpos2;
+  filepos *fpos, fpos2;
   int flags=0;
 
   switch (code)
@@ -53,39 +53,39 @@ static void do_error(int code, va_list ap)
     flags = PREFIX;
     break;
   case err_brokencodepara:
-    fpos = *va_arg(ap, filepos *);
+    fpos = va_arg(ap, filepos *);
     sprintf(error, "every line of a code paragraph should begin `\\c'");
     flags = FILEPOS;
     break;
   case err_kwunclosed:
-    fpos = *va_arg(ap, filepos *);
+    fpos = va_arg(ap, filepos *);
     sprintf(error, "expected `}' after paragraph keyword");
     flags = FILEPOS;
     break;
   case err_kwexpected:
-    fpos = *va_arg(ap, filepos *);
+    fpos = va_arg(ap, filepos *);
     sprintf(error, "expected a paragraph keyword");
     flags = FILEPOS;
     break;
   case err_kwillegal:
-    fpos = *va_arg(ap, filepos *);
+    fpos = va_arg(ap, filepos *);
     sprintf(error, "expected no paragraph keyword");
     flags = FILEPOS;
     break;
   case err_kwtoomany:
-    fpos = *va_arg(ap, filepos *);
+    fpos = va_arg(ap, filepos *);
     sprintf(error, "expected only one paragraph keyword");
     flags = FILEPOS;
     break;
   case err_bodyillegal:
-    fpos = *va_arg(ap, filepos *);
+    fpos = va_arg(ap, filepos *);
     sprintf(error, "expected no text after paragraph keyword");
     flags = FILEPOS;
     break;
   case err_badparatype:
     wsp = va_arg(ap, wchar_t *);
     sp = ustrtoa(wsp, auxbuf, sizeof(auxbuf));
-    fpos = *va_arg(ap, filepos *);
+    fpos = va_arg(ap, filepos *);
     sprintf(error, "command `%.200s' unrecognised at start of"
             " paragraph", sp);
     flags = FILEPOS;
@@ -93,54 +93,54 @@ static void do_error(int code, va_list ap)
   case err_badmidcmd:
     wsp = va_arg(ap, wchar_t *);
     sp = ustrtoa(wsp, auxbuf, sizeof(auxbuf));
-    fpos = *va_arg(ap, filepos *);
+    fpos = va_arg(ap, filepos *);
     sprintf(error, "command `%.200s' unexpected in mid-paragraph", sp);
     flags = FILEPOS;
     break;
   case err_unexbrace:
-    fpos = *va_arg(ap, filepos *);
+    fpos = va_arg(ap, filepos *);
     sprintf(error, "brace character unexpected in mid-paragraph");
     flags = FILEPOS;
     break;
   case err_explbr:
-    fpos = *va_arg(ap, filepos *);
+    fpos = va_arg(ap, filepos *);
     sprintf(error, "expected `{' after command");
     flags = FILEPOS;
     break;
   case err_commenteof:
-    fpos = *va_arg(ap, filepos *);
+    fpos = va_arg(ap, filepos *);
     sprintf(error, "end of file unexpected inside `\\#{...}' comment");
     flags = FILEPOS;
     break;
   case err_kwexprbr:
-    fpos = *va_arg(ap, filepos *);
+    fpos = va_arg(ap, filepos *);
     sprintf(error, "expected `}' after cross-reference");
     flags = FILEPOS;
     break;
   case err_missingrbrace:
-    fpos = *va_arg(ap, filepos *);
+    fpos = va_arg(ap, filepos *);
     sprintf(error, "unclosed braces at end of paragraph");
     flags = FILEPOS;
     break;
   case err_nestedstyles:
-    fpos = *va_arg(ap, filepos *);
+    fpos = va_arg(ap, filepos *);
     sprintf(error, "unable to nest text styles");
     flags = FILEPOS;
     break;
   case err_nestedindex:
-    fpos = *va_arg(ap, filepos *);
+    fpos = va_arg(ap, filepos *);
     sprintf(error, "unable to nest index markings");
     flags = FILEPOS;
     break;
   case err_nosuchkw:
-    fpos = *va_arg(ap, filepos *);
+    fpos = va_arg(ap, filepos *);
     wsp = va_arg(ap, wchar_t *);
     sp = ustrtoa(wsp, auxbuf, sizeof(auxbuf));
     sprintf(error, "unable to resolve cross-reference to `%.200s'", sp);
     flags = FILEPOS;
     break;
   case err_multiBR:
-    fpos = *va_arg(ap, filepos *);
+    fpos = va_arg(ap, filepos *);
     wsp = va_arg(ap, wchar_t *);
     sp = ustrtoa(wsp, auxbuf, sizeof(auxbuf));
     sprintf(error, "multiple `\\BR' entries given for `%.200s'", sp);
@@ -159,19 +159,19 @@ static void do_error(int code, va_list ap)
     flags = PREFIX;
     break;
   case err_macroexists:
-    fpos = *va_arg(ap, filepos *);
+    fpos = va_arg(ap, filepos *);
     wsp = va_arg(ap, wchar_t *);
     sp = ustrtoa(wsp, auxbuf, sizeof(auxbuf));
     sprintf(error, "macro `%.200s' already defined", sp);
     flags = FILEPOS;
     break;
   case err_sectjump:
-    fpos = *va_arg(ap, filepos *);
+    fpos = va_arg(ap, filepos *);
     sprintf(error, "expected higher heading levels before this one");
     flags = FILEPOS;
     break;
   case err_winhelp_ctxclash:
-    fpos = *va_arg(ap, filepos *);
+    fpos = va_arg(ap, filepos *);
     sp = va_arg(ap, char *);
     sp2 = va_arg(ap, char *);
     sprintf(error, "Windows Help context id `%.200s' clashes with "
@@ -179,7 +179,7 @@ static void do_error(int code, va_list ap)
     flags = FILEPOS;
     break;
   case err_multikw:
-    fpos = *va_arg(ap, filepos *);
+    fpos = va_arg(ap, filepos *);
     fpos2 = *va_arg(ap, filepos *);
     wsp = va_arg(ap, wchar_t *);
     sp = ustrtoa(wsp, auxbuf, sizeof(auxbuf));
@@ -187,6 +187,10 @@ static void do_error(int code, va_list ap)
     sprintf(error + strlen(error), "%s:%d", fpos2.filename, fpos2.line);
     flags = FILEPOS;
     break;
+  case err_unicodezero:
+    fpos = va_arg(ap, filepos *);
+    sprintf(error, "the Unicode zero character is not permitted in input");
+    flags = FILEPOS;
   case err_whatever:
     sp = va_arg(ap, char *);
     vsprintf(error, sp, ap);
@@ -196,11 +200,13 @@ static void do_error(int code, va_list ap)
 
   if (flags & PREFIX)
     fputs("halibut: ", stderr);
-  if (flags & FILEPOS)
+  if ((flags & FILEPOS) && fpos)
   {
-    fprintf(stderr, "%s:%d:", fpos.filename, fpos.line);
-    if (fpos.col > 0)
-      fprintf(stderr, "%d:", fpos.col);
+    fprintf(stderr, "%s:", fpos->filename ? fpos->filename : "<standard input>");
+    if (fpos->line > 0)
+      fprintf(stderr, "%d:", fpos->line);
+    if (fpos->col > 0)
+      fprintf(stderr, "%d:", fpos->col);
     fputc(' ', stderr);
   }
   fputs(error, stderr);

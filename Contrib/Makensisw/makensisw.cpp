@@ -499,7 +499,7 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
           SetLogColor(LC_WARNING);
         }
         else {
-          SetTitle(g_sdata.hwnd,_T("Finished Sucessfully"));
+          SetTitle(g_sdata.hwnd,_T("Finished Successfully"));
           PlayAppSoundAsync(("BuildComplete"), MB_ICONASTERISK);
           SetLogColor(LC_SUCCESS);
         }

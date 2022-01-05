@@ -4,7 +4,7 @@
  * This file is a part of LZMA compression module for NSIS.
  * 
  * Original LZMA SDK Copyright (C) 1999-2006 Igor Pavlov
- * Modifications Copyright (C) 2003-2021 Amir Szekely <kichik@netvision.net.il>
+ * Modifications Copyright (C) 2003-2022 Amir Szekely <kichik@netvision.net.il>
  * 
  * Licensed under the Common Public License version 1.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -171,8 +171,8 @@ public:
 
 #define MY_ADDREF_RELEASE \
 STDMETHOD_(ULONG, AddRef)() { return ++__m_RefCount; } \
-STDMETHOD_(ULONG, Release)() { if (--__m_RefCount != 0)  \
-  return __m_RefCount; delete this; return 0; }
+STDMETHOD_(ULONG, Release)() { if (--__m_RefCount != 0) return __m_RefCount; \
+  delete this; return 0; }
 
 #define MY_UNKNOWN_IMP_SPEC(i) \
   MY_QUERYINTERFACE_BEGIN \

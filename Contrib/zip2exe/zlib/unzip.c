@@ -162,7 +162,7 @@ typedef struct
 /* ===========================================================================
      Read a byte from a gz_stream; update next_in and avail_in. Return EOF
    for end of file.
-   IN assertion: the stream s has been sucessfully opened for reading.
+   IN assertion: the stream s has been successfully opened for reading.
 */
 
 
@@ -298,11 +298,11 @@ local int strcmpcasenosensitive_internal (fileName1,fileName2)
 
 /*
    Compare two filename (fileName1,fileName2).
-   If iCaseSenisivity = 1, comparision is case sensitivity (like strcmp)
-   If iCaseSenisivity = 2, comparision is not case sensitivity (like strcmpi
+   If iCaseSensitivity = 1, comparison is case sensitive (like strcmp)
+   If iCaseSensitivity = 2, comparison is not case sensitive (like strcmpi
                                                                 or strcasecmp)
-   If iCaseSenisivity = 0, case sensitivity is defaut of your operating system
-        (like 1 on Unix, 2 on Windows)
+   If iCaseSensitivity = 0, case sensitivity is the default from your 
+     operating system (like 1 on Unix, 2 on Windows)
 
 */
 extern int ZEXPORT unzStringFileNameCompare (fileName1,fileName2,iCaseSensitivity)
@@ -406,9 +406,9 @@ extern unzFile ZEXPORT unzOpen2 (path, pzlib_filefunc_def)
     uLong central_pos,uL;
 
     uLong number_disk;          /* number of the current dist, used for
-                                   spaning ZIP, unsupported, always 0*/
+                                   spanning ZIP, unsupported, always 0*/
     uLong number_disk_with_CD;  /* number the the disk with central dir, used
-                                   for spaning ZIP, unsupported, always 0*/
+                                   for spanning ZIP, unsupported, always 0*/
     uLong number_entry_CD;      /* total number of entries in
                                    the central dir
                                    (same than number_entry on nospan) */
@@ -1225,7 +1225,7 @@ extern int ZEXPORT unzOpenCurrentFile2 (file,method,level,raw)
   buf contain buffer where data must be copied
   len the size of buf.
 
-  return the number of byte copied if somes bytes are copied
+  return the number of bytes copied if some bytes are copied
   return 0 if the end of file was reached
   return <0 with error code if there is an error
     (UNZ_ERRNO for IO error, or zLib error for uncompress error)

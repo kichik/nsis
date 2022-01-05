@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2021 Anders Kjersem
+// Copyright (C) 2018-2022 Anders Kjersem
 //
 // This file is a part of NSIS.
 //
@@ -116,13 +116,13 @@ typedef struct _DIALOGDATA {
   static void Set(HWND hDlg, void*pDD) { SetWindowLongPtr(hDlg, DWLP_USER, (LONG_PTR) pDD); }
 } DIALOGDATA;
 
-typedef struct {
+struct FINDCHILDDATA {
   HWND hWnd;
   POINT pt;
   ULONG Area;
   bool IncludeHidden;
   void Init(POINT pt, bool IncludeHidden) { Area = 0, Area = ~Area, this->pt = pt, this->IncludeHidden = IncludeHidden; }
-} FINDCHILDDATA;
+};
 
 static BOOL CALLBACK FindChildWindowFromPointProc(HWND hWnd, LPARAM LParam)
 {

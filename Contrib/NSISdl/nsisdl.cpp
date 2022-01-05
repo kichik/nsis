@@ -153,7 +153,7 @@ static LRESULT CALLBACK ParentWndProc(HWND hwnd, UINT message, WPARAM wParam, LP
         hwndL = NULL;
       }
 
-      // Prevent wierd stuff happening if the cancel button happens to be
+      // Prevent weird stuff happening if the cancel button happens to be
       // pressed at the moment we are finishing and restore the previous focus
       // and cancel button states
       SendMessage(hwnd, WM_NEXTDLGCTL, (WPARAM)hwndPrevFocus, TRUE);

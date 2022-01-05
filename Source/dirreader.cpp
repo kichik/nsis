@@ -3,7 +3,7 @@
  * 
  * This file is a part of NSIS.
  * 
- * Copyright (C) 1999-2021 Nullsoft and Contributors
+ * Copyright (C) 1999-2022 Nullsoft and Contributors
  * 
  * Licensed under the zlib/libpng license (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,7 +71,7 @@ bool dir_reader::matches(const tstring& name, const tstring& spec) {
   while (name_itr != name_end && spec_itr != spec_end) {
     switch (*spec_itr) {
       case _T('?'):
-        // question mark mathes one char
+        // question mark matches one char
         name_itr++;
         spec_itr++;
         break;

@@ -152,7 +152,7 @@ struct tag_CallbackThunk
     #elif defined(SYSTEM_AMD64) || defined(SYSTEM_ARM64)
         char asm_code[BUGBUG64(1)]; // TODO: BUGBUG64
     #else
-        #error "Asm thunk not implemeted for this architecture!"
+        #error "Asm thunk not implemented for this architecture!"
     #endif
 
     CallbackThunk* pNext;

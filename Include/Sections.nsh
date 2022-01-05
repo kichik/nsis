@@ -96,7 +96,7 @@
 ; be initialized to the default section's index.
 ;
 ; As this macro uses $R0 and $R1 you can't use those two as the
-; varible which will keep the selected section.
+; variable which will keep the selected section.
 
 !macro StartRadioButtons var
 

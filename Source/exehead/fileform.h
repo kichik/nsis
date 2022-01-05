@@ -3,7 +3,7 @@
  * 
  * This file is a part of NSIS.
  * 
- * Copyright (C) 1999-2021 Nullsoft and Contributors
+ * Copyright (C) 1999-2022 Nullsoft and Contributors
  * 
  * Licensed under the zlib/libpng license (the "License");
  * you may not use this file except in compliance with the License.
@@ -612,7 +612,7 @@ typedef struct {
 // the following are only used/implemented in exehead, not makensis.
 
 #if NSIS_MAX_EXEDATASIZE <= 0xffffffffUL
-#define MAXEXEDATASIZETYPE UINT // Maximum size of .exe including compressed installer data. (Unsigned allows size including 3rd-party appeded data to be 4 GiB instead of 2 GiB)
+#define MAXEXEDATASIZETYPE UINT // Maximum size of .exe including compressed installer data. (Unsigned allows size including 3rd-party appended data to be 4 GiB instead of 2 GiB)
 #endif
 #define MAXSIZETYPE UINT
 

@@ -72,7 +72,7 @@ enumex: ; End of drives or user cancel
      ; Message box      
      System::Call '${sysMessageBox}($HWNDPARENT, s, "System Example 2", ${MB_OKCANCEL})' "$7"
 
-     ; ----- Sample 3 ----- Direct proc defenition -----
+     ; ----- Sample 3 ----- Direct proc definition -----
 
      ; Direct specification demo
      System::Call 'user32::MessageBox(p $HWNDPARENT, t "Just direct MessageBox specification demo ;)", t "System Example 3", i ${MB_OK}) i.s'
@@ -86,8 +86,8 @@ enumex: ; End of drives or user cancel
      System::Int64Op $2 "*" $3
      Pop $4
 
-     ; Cdecl demo (uses 3 defenitions (simple example))
-     System::Call "${syswsprintf}(.R1, s,,, t, ir0) .R0 (,,tr2,tr3,$4_)" "Int64 ops and strange defenition demo, %s x %s == %s, and previous msgbox result = %d"
+     ; Cdecl demo (uses 3 definitions (simple example))
+     System::Call "${syswsprintf}(.R1, s,,, t, ir0) .R0 (,,tr2,tr3,$4_)" "Int64 ops and strange definition demo, %s x %s == %s, and previous msgbox result = %d"
      MessageBox MB_OKCANCEL "Cool: '$R1'"
 
      ; ----- Sample 5 ----- Small structure example -----

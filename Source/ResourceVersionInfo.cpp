@@ -3,7 +3,7 @@
  * 
  * This file is a part of NSIS.
  * 
- * Copyright (C) 1999-2021 Nullsoft and Contributors
+ * Copyright (C) 1999-2022 Nullsoft and Contributors
  * 
  * Licensed under the zlib/libpng license (the "License");
  * you may not use this file except in compliance with the License.
@@ -237,7 +237,7 @@ void CResourceVersionInfo::ExportToStream(GrowBuf &strm, int Index)
       *(WORD*)((PBYTE)strm.get()+p)=wSize;
     }
 
-    // Show all languages avaiable using Var-Translations
+    // Show all languages available using Var-Translations
     if ( m_ChildStringLists.getnum() > 0 )
     {
       PadStream (strm);

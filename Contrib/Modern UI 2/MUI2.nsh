@@ -1,7 +1,7 @@
 /*
 
 NSIS Modern User Interface - Version 2.1
-Copyright 2002-2021 Joost Verburg
+Copyright 2002-2022 Joost Verburg
 Contributors: Amir Szekely, Anders Kjersem
 
 */
@@ -11,7 +11,7 @@ Contributors: Amir Szekely, Anders Kjersem
 !define MUI_INCLUDED
 !define MUI_SYSVERSION "2.1"
 !verbose pop
-!echo "NSIS Modern User Interface version ${MUI_SYSVERSION} - Copyright 2002-2021 Joost Verburg"
+!echo "NSIS Modern User Interface version ${MUI_SYSVERSION} - Copyright 2002-2022 Joost Verburg"
 
 ;--------------------------------
 !verbose push 3
@@ -45,7 +45,7 @@ Contributors: Amir Szekely, Anders Kjersem
 
 !macro MUI_SET SYMBOL CONTENT
 
-  ;Define symbol and undefine if neccesary
+  ;Define symbol and undefine if necessary
   
   !insertmacro MUI_UNSET "${SYMBOL}"
   !define "${SYMBOL}" "${CONTENT}"

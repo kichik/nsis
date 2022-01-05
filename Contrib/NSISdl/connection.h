@@ -35,7 +35,7 @@
 **            closed, the state will transition to:
 **        JNL_Connection::STATE_CLOSED
 **          - the connection has closed, generally without error. There still
-**            might be data in the receieve buffer, use recv_bytes_available().
+**            might be data in the receive buffer, use recv_bytes_available().
 **   5. Use send() and send_string() to send data. You can use 
 **      send_bytes_in_queue() to see how much has yet to go out, or 
 **      send_bytes_available() to see how much you can write. If you use send()

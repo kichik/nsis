@@ -30,7 +30,7 @@ Controls whether or not installs are allowed in the root directory of a drive, o
 
 \c true|\\<b\\>false\\</b\\>
 
-Sets whether or not the install window automatically closes when completed. This is overrideable from a section using \R{setautoclose}{SetAutoClose}.
+Sets whether or not the install window automatically closes when completed. This is overridable from a section using \R{setautoclose}{SetAutoClose}.
 
 \S2{abgfont} BGFont
 

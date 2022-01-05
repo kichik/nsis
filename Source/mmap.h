@@ -3,7 +3,7 @@
  * 
  * This file is a part of NSIS.
  * 
- * Copyright (C) 1999-2021 Nullsoft and Contributors
+ * Copyright (C) 1999-2022 Nullsoft and Contributors
  * 
  * Licensed under the zlib/libpng license (the "License");
  * you may not use this file except in compliance with the License.
@@ -201,10 +201,10 @@ class MMapFake : public IMMap
 
 /**
  * A data structure that can be used to create a scratch file to do
- * work in.  When it's smaller than 16mb, it's all in memory using the
- * GrowBuf class.  But when it gets biggered than 16mb, then it uses
+ * work in. When it's smaller than 16mb, it's all in memory using the
+ * GrowBuf class. But when it gets larger than 16mb, then it uses
  * the MMapFile class to create a memory map to a temporary file and
- * then uses it.  This reduces memory overhead of the installer.
+ * then uses it. This reduces memory overhead of the installer.
  *
  * This is sort of our virtual memory manager.
  */

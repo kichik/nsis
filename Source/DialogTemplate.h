@@ -3,7 +3,7 @@
  * 
  * This file is a part of NSIS.
  * 
- * Copyright (C) 2002-2021 Amir Szekely <kichik@netvision.net.il> and Contributors
+ * Copyright (C) 2002-2022 Amir Szekely <kichik@netvision.net.il> and Contributors
  * 
  * Licensed under the zlib/libpng license (the "License");
  * you may not use this file except in compliance with the License.
@@ -101,7 +101,7 @@ typedef struct {
   short  cx;
   short  cy;
   WORD   id;
-  WORD   _miscrosoft_docs_are_wrong;
+  WORD   _microsoft_docs_are_wrong;
 } DLGITEMTEMPLATEEX;
 
 #pragma pack()

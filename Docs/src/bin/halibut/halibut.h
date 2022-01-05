@@ -198,6 +198,7 @@ enum {
  */
 void fatal(int code, ...) NORETURN;
 void error(int code, ...);
+#define err_zerochar(fpos) error(err_unicodezero, (fpos))
 enum {
   err_nomemory,                 /* out of memory */
   err_optnoarg,                 /* option `-%s' requires an argument */
@@ -228,6 +229,7 @@ enum {
   err_sectjump,                 /* jump a heading level, eg \C -> \S */
   err_winhelp_ctxclash,         /* WinHelp context ID hash clash */
   err_multikw,                  /* keyword clash in sections */
+  err_unicodezero,
   err_whatever                  /* random error of another type */
 };
 
@@ -339,6 +341,7 @@ struct tagWrappedLine {
 wrappedline *wrap_para(word *, int, int, int (*)(word *));
 void wrap_free(wrappedline *);
 unsigned long getutcunixtime();
+time_t current_time(void);      /* use in place of time(NULL) */
 
 /*
  * input.c

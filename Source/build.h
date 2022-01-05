@@ -3,7 +3,7 @@
  * 
  * This file is a part of NSIS.
  * 
- * Copyright (C) 1999-2021 Nullsoft and Contributors
+ * Copyright (C) 1999-2022 Nullsoft and Contributors
  * 
  * Licensed under the zlib/libpng license (the "License");
  * you may not use this file except in compliance with the License.
@@ -375,6 +375,8 @@ class CEXEBuild {
     bool inside_comment;
     int multiple_entries_instruction;  // 1 (true) or 0 (false)
 
+    int pp_boolifyexpression(LineParser&line, int &result, bool allow_logicneg = true, int ignore_last_tokens = 0);
+    int pp_assert(LineParser&line);
     int pp_macro(LineParser&line);
     int pp_macroundef(LineParser&line);
     int pp_insertmacro(LineParser&line);

@@ -202,7 +202,7 @@ void PlaceFunction(TCHAR *&vb, TCHAR *&sp, ParseInfo *pi, int redefine)
         }
     }
 
-    // oops, we need no item for function defenition
+    // oops, we need no item for function definition
     CleanupItems(item); pi->item = NULL;
 
     // it's user function define
@@ -419,7 +419,7 @@ void ParseString(TCHAR *&sp, ExpressionItem* &itemplace)
             sp++;
             break;
         case _T(';'):
-            // expression delimeter
+            // expression delimiter
             PlaceNewItem(vb, &pi, 255);
             if (*pi.root) pi.SetupNewRoot = 1;
             sp++;
@@ -453,7 +453,7 @@ void ParseString(TCHAR *&sp, ExpressionItem* &itemplace)
             redefine = 0;
             break;
 
-        case _T('#'):   // start of one of logical expresions
+        case _T('#'):   // start of one of logical expressions
             sp++;
             if ((*sp != _T('[')) && (*sp != _T('{')))
             {
@@ -508,7 +508,7 @@ void ParseString(TCHAR *&sp, ExpressionItem* &itemplace)
 
         case _T('{'):   // start of array define
             {
-                // array define - constists of array copy operator and array define itself
+                // array define - consists of array copy operator and array define itself
 
                 // type conversion item (to create a copy of array)
                 pi.item = AllocItem();
@@ -1168,7 +1168,7 @@ void RunTree(ExpressionItem *from, ExpressionItem* &result, int options)
                 ExpressionItem *ifbr = *((ExpressionItem**)&(item->param1)),
                     *dobr = *((ExpressionItem**)&(item->param2)),
                     *thbr = NULL, *elbr = NULL;
-                // check do branche for existance
+                // check do branche for existence
                 if (dobr && ifmode)
                 {
                     // then...
@@ -1396,7 +1396,7 @@ void RunTree(ExpressionItem *from, ExpressionItem* &result, int options)
                         int pos = (int) *((__int64*)&(index->param1));
                         if (pos < 0) pos += len; // -index - means from end
                         if ((pos > len) || (pos < 0))
-                            *str = 0; // index is accross string boundaries
+                            *str = 0; // index is across string boundaries
                         else
                         {
                             // new string - just a single char

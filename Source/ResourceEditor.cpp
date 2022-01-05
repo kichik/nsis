@@ -3,7 +3,7 @@
  * 
  * This file is a part of NSIS.
  * 
- * Copyright (C) 2002-2021 Amir Szekely <kichik@users.sourceforge.net>
+ * Copyright (C) 2002-2022 Amir Szekely <kichik@users.sourceforge.net>
  * 
  * Licensed under the zlib/libpng license (the "License");
  * you may not use this file except in compliance with the License.
@@ -432,7 +432,7 @@ bool CResourceEditor::UpdateResourceW(const WINWCHAR* szType, WINWCHAR* szName, 
       if (!nameDir->AddEntry(pRDE)) delete pRDE;
     }
     if (!data) {
-      // Language doesn't yet exist, hence data nither
+      // Language doesn't yet exist, hence data neither
       data = new CResourceDataEntry(lpData, dwSize);
       CResourceDirectoryEntry *pRDE = new CResourceDirectoryEntry(MAKEINTRESOURCEWINW(wLanguage), data);
       if (!langDir->AddEntry(pRDE)) delete pRDE;
@@ -1007,7 +1007,7 @@ BYTE* CResourceEditor::ExtractIcoCur(const CResourceDataEntry&rde, LANGID ChildL
         pFGE->Width = (BYTE) FIX_ENDIAN_INT16(pRGE[0]), pFGE->Height = (BYTE) FIX_ENDIAN_INT16(pRGE[1]);
         if (cbRes >= 4+12) {
           assert(!EditorSupportsCursorPng());
-          pFGE->Planes = ((WORD*)pResData)[0], pFGE->BPP = ((WORD*)pResData)[0], cbImg -= 4; // Hotspot
+          pFGE->Planes = ((WORD*)pResData)[0], pFGE->BPP = ((WORD*)pResData)[1], cbImg -= 4; // Hotspot
           DWORD cbBMH = GetDIBHeaderInfo(pResData += 4, cbRes - 4, ii), cd = ii.BPP * ii.Planes;
           pFGE->Palette = cbBMH && cd < 8 ? (BYTE)(1 << cd) : 0; // devblogs.microsoft.com/oldnewthing/20101018-00/?p=12513 says only for depths < 8!
           pFGE->Reserved = 0;
@@ -1120,7 +1120,7 @@ CResourceDirectory* CResourceEditor::ScanDirectory(PRESOURCE_DIRECTORY rdRoot, P
       if (!rdc->AddEntry(pRDE)) delete pRDE;
     }
 
-    // Delete the dynamicly allocated name if it is a name and not an id
+    // Delete the dynamically allocated name if it is a name and not an id
     if (!IS_INTRESOURCE(szName))
       delete [] szName;
   }

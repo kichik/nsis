@@ -3,7 +3,7 @@
  * 
  * This file is a part of NSIS.
  * 
- * Copyright (C) 2002-2021 Amir Szekely <kichik@users.sourceforge.net>
+ * Copyright (C) 2002-2022 Amir Szekely <kichik@users.sourceforge.net>
  * 
  * Licensed under the zlib/libpng license (the "License");
  * you may not use this file except in compliance with the License.
@@ -198,7 +198,7 @@ public:
   bool  SetPESectionVirtualSize(const char* pszSectionName, DWORD newsize);
   DWORD Save(BYTE* pbBuf, DWORD &dwSize);
 
-  // utitlity functions
+  // utility functions
   static PIMAGE_NT_HEADERS GetNTHeaders(BYTE* pbPE);
 
   static PRESOURCE_DIRECTORY GetResourceDirectory(

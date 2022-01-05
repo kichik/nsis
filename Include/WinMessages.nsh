@@ -320,7 +320,7 @@ TVM     Tree-view control
 !define WM_CLEAR                        0x0303
 !define WM_CLOSE                        0x0010
 !define WM_COMMAND                      0x0111
-!define WM_COMMNOTIFY                   0x0044  # no longer suported
+!define WM_COMMNOTIFY                   0x0044  # no longer supported
 !define WM_COMPACTING                   0x0041
 !define WM_COMPAREITEM                  0x0039
 !define WM_CONTEXTMENU                  0x007B

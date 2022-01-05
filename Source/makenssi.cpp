@@ -3,7 +3,7 @@
  * 
  * This file is a part of NSIS.
  * 
- * Copyright (C) 1999-2021 Nullsoft and Contributors
+ * Copyright (C) 1999-2022 Nullsoft and Contributors
  * 
  * Licensed under the zlib/libpng license (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@
 #include "winchar.h" // assert(sizeof(WINWCHAR)...)
 
 #include <nsis-version.h>
-#define NSIS_COPYYEARS _T("1999-2021")
+#define NSIS_COPYYEARS _T("1999-2022")
 
 using namespace std;
 
@@ -434,7 +434,7 @@ static inline int makensismain(int argc, TCHAR **argv)
   }
   catch (exception& err)
   {
-    PrintColorFmtMsg_ERR(_T("Error initalizing CEXEBuild: %") NPRIs _T("\n"), CtoTStrParam(err.what()));
+    PrintColorFmtMsg_ERR(_T("Error initializing CEXEBuild: %") NPRIs _T("\n"), CtoTStrParam(err.what()));
     return 1;
   }
 

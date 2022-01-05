@@ -26,6 +26,7 @@ includes = Split("""
 includesWin = Split("""
 	Win/COM.nsh
 	Win/Propkey.nsh
+	Win/RestartManager.nsh
 	Win/WinDef.nsh
 	Win/WinError.nsh
 	Win/WinNT.nsh

@@ -1,4 +1,4 @@
-String Functions Header File Readme
+ï»¿String Functions Header File Readme
 -----------------------------------
 
 String Functions Header File contains a set of good string manipulation
@@ -72,13 +72,13 @@ How to use
 
                    - Text   - Needs text or number to be input.
 
-                   - Mixed  - Needs text, number or option to be inputed.
+                   - Mixed  - Needs text, number or option to be input.
                               Each subitem following the "Mixed" word is an
                               option. The first option is ever the default
                               one. Two following spaces "  " means that
                               that subitem is empty.
 
-                   - Option - Needs an option to be inputed. Each subitem
+                   - Option - Needs an option to be input. Each subitem
                               following the "Option" word is an option.
                               The first option is ever the default one. Two
                               following spaces "  " means that that subitem
@@ -171,10 +171,10 @@ How to use
 
     Example:
 
-      ${StrCase} $0 '"Você" is "You" in English.' "U"
+      ${StrCase} $0 '"VocÃª" is "You" in English.' "U"
                     [__(_)__()___()__()__(____)_]
 
-      $0 = '"VOCÊ" IS "YOU" IN ENGLISH.'
+      $0 = '"VOCÃŠ" IS "YOU" IN ENGLISH.'
 
     =========================================================================
     *                                                               ${StrClb}
@@ -587,8 +587,7 @@ Version History
 1.09 - 10/22/2004
 
 - Fixed stack problems involving: StrCase, StrRep, StrSort, StrTok.
-- Fixed StrClb: When "Action" = "<>", handle was wrongly outputed as
-  text.
+- Fixed StrClb: When "Action" = "<>", handle was wrongly output as text.
 - Fixed StrSort, StrStrAdv documentation examples.
 - Fixed StrIOToNSIS, StrLoc, StrNSISToIO, StrRep, StrStr: sometimes
   didn't find "StrToSearch" at all.
@@ -601,8 +600,7 @@ Version History
 - StrTok: "ResultPart" has to start from 0 and it can break old scripts.
   See documentation for details.
 - Added defines: StrFunc_List, *_List and *_TypeList.
-- Fixed StrStrAdv: Variables $R0-$R3 couldn't be used on scripts before
-  calling.
+- Fixed StrStrAdv: Variables $R0-$R3 couldn't be used in scripts before calling.
 - StrRep: Cut down some variables.
 - Arranged correctly the order of StrSort on the documentation.
 
@@ -611,9 +609,9 @@ Version History
 - Removed ${UnStrFunc} command. Now you can just include uninstall
   functions commands like ${UnStrStr} to be supported by uninstall functions
   and sections.
-- Added case-sensitive comparation option for StrStrAdv.
+- Added case-sensitive comparison option for StrStrAdv.
 - StrCase now uses System.dll which makes case conversions effective with
-all latin letters (i.e. ê).
+all latin letters (i.e. Ãª).
 - Added switch case and original case for StrCase.
 - StrClbSet and StrClbGet removed, added StrClb.
 - Made compact the most usual operations inside the header file. File size

@@ -3,7 +3,7 @@
  * 
  * This file is a part of NSIS.
  * 
- * Copyright (C) 1999-2021 Nullsoft and Contributors
+ * Copyright (C) 1999-2022 Nullsoft and Contributors
  * 
  * Licensed under the zlib/libpng license (the "License");
  * you may not use this file except in compliance with the License.
@@ -312,9 +312,10 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     break;
 #endif//NSIS_CONFIG_VISIBLE_SUPPORT
     case EW_SETFLAG:
-      if (!parm2)
+      if (parm2 <= 0)
       {
-        FIELDN(g_exec_flags_last_used,parm0)=FIELDN(g_exec_flags,parm0);
+        if (parm2 == 0)
+          FIELDN(g_exec_flags_last_used,parm0)=FIELDN(g_exec_flags,parm0);
         FIELDN(g_exec_flags,parm0)=GetIntFromParm(1);
         log_printf3(_T("SetFlag: %d=%d"),parm0,FIELDN(g_exec_flags,parm0));
       }

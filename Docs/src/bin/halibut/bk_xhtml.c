@@ -1534,7 +1534,7 @@ static void xhtml_doheader(FILE * fp, word * title)
   for (pussl = conf.meta_append; pussl; pussl = pussl->next)
     fprintf(fp, "<meta %ls%s>", pussl->string, voidend);
   printoptstr(fp, "", conf.head_middle, "\n");
-  fprintf(fp, "<meta name=\"generator\" content=\"Halibut %s xhtml-backend\"%s>\n", version, voidend);
+  fprintf(fp, "<meta name=\"generator\" content=\"Halibut %s\"%s>\n", version, voidend);
   if (conf.author)
     fprintf(fp, "<meta name=\"author\" content=\"%ls\"%s>\n", conf.author, voidend);
   if (conf.description)

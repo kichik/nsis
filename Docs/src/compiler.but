@@ -89,6 +89,14 @@ This command will issue an error to the script compiler and will stop execution 
 \c   !error "both VERSION and NOVERSION are defined"
 \c !endif
 
+\S1{assert} !assert
+
+\c value [op value2] message
+
+This command will stop the compiler if the expression is not true. The expression is evaluated in a similar fashion to \R{if}{!if}.
+
+\c !assert ${NSIS_CHAR_SIZE} = 2 "Unicode required"
+
 \S1{execute} !execute
 
 \c command [compare comparevalue | symbol]
