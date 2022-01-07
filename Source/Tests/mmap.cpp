@@ -19,6 +19,7 @@ class MMapTest : public CppUnit::TestFixture {
 
   CPPUNIT_TEST_SUITE( MMapTest );
   CPPUNIT_TEST( testMMapFile );
+  CPPUNIT_TEST( testMMapBuf );
   CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -68,6 +69,21 @@ public:
       mmap.release();
       mmap.release(p2, size2);
     }
+  }
+
+  void testMMapBuf() {
+    struct Internal : public MMapBuf { static int threshold() { return getmodethreshold(); } };
+    int threshold = Internal::threshold(), tmpint;
+
+    MMapBuf mmap;
+
+    // GrowBuf -> MMapFile -> Unspecified
+    mmap.resize(tmpint = threshold - 1);
+    CPPUNIT_ASSERT_EQUAL( tmpint, mmap.getsize() );
+    mmap.resize(tmpint = threshold + 1);
+    CPPUNIT_ASSERT_EQUAL( tmpint, mmap.getsize() );
+    mmap.resize(tmpint = threshold - 1);
+    CPPUNIT_ASSERT_EQUAL( tmpint, mmap.getsize() ); // We don't care if it does not go back to GrowBuf but the size still has to be correct
   }
 
 };

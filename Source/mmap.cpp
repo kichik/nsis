@@ -414,7 +414,7 @@ void MMapBuf::setro(BOOL bRO)
 
 void MMapBuf::resize(int newlen)
 {
-  if (!m_gb_u && newlen < (16 << 20)) // still in db mode
+  if (!m_gb_u && newlen < getmodethreshold()) // still in db mode
   {
     m_gb.resize(newlen);
     return;
@@ -426,9 +426,8 @@ void MMapBuf::resize(int newlen)
 
   if (newlen > m_alloc)
   {
-    m_alloc = newlen + (16 << 20); // add 16mb to top of mapping
-    if (m_alloc < 0) // we've hit a signed integer overflow
-        m_alloc = INT_MAX;
+    if (!si_add(m_alloc, newlen, (16 << 20))) // add 16mb to top of mapping
+      m_alloc = INT_MAX; // we've hit a signed integer overflow
 
     m_fm.resize(m_alloc);
 
@@ -444,9 +443,7 @@ void MMapBuf::resize(int newlen)
 
 int MMapBuf::getsize() const
 {
-  if (m_gb_u)
-    return m_fm.getsize();
-  return m_gb.getlen();
+  return getlen();
 }
 
 int MMapBuf::getlen() const

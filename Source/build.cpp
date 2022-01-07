@@ -868,10 +868,19 @@ int CEXEBuild::add_db_data(IMMap *mmap) // returns offset
   if (length && !build_compress_whole && build_compress)
   {
     // grow datablock so that there is room to compress into
-    int bufferlen = length + 1024 + length / 4; // give a nice 25% extra space
-    if (st+bufferlen+(signed)sizeof(int) < 0) // we've hit a signed integer overflow (file is over 1.6 GB)
-        bufferlen = INT_MAX-st-sizeof(int); //   so maximize compressor room and hope the file compresses well
-      db->resize(st + bufferlen + sizeof(int));
+    int bufferlen, of = false, tmp = 0;
+    of |= !si_add(tmp, length, 1024);
+    of |= !si_add(tmp, tmp, length / 4); // give a nice 25% extra space
+    if (!of)
+    {
+      bufferlen = tmp;
+      of |= !si_add(tmp, st, bufferlen);
+      of |= !si_add(tmp, tmp, sizeof(int));
+    }
+    if (of) // we've hit a signed integer overflow (file is over 1.6 GB)
+      bufferlen = INT_MAX - st - sizeof(int); // so maximize compressor room and hope the file compresses well
+
+    db->resize(st + bufferlen + sizeof(int));
 
     int n = compressor->Init(build_compress_level, build_compress_dict_size);
     if (n != C_OK)
@@ -3318,15 +3327,11 @@ int CEXEBuild::uninstall_generate()
         ERROR_MSG(_T("Error: can't read %d bytes from input\n"), in_len);
         return PS_ERROR;
       }
-      MMapBuf udata_in;
-      udata_in.add(in_buf, in_len);
+      int tmp_offset = add_db_data((char*) in_buf, truncate_cast(int,in_len));
       free(in_buf);
-
-      if (add_db_data(&udata_in) < 0)
+      if (tmp_offset < 0)
         return PS_ERROR;
-
-      uninstall_size_full = udata_in.getlen();
-      udata_in.clear();
+      uninstall_size_full = in_len;
     }
     else
     {

@@ -32,6 +32,13 @@
 #include <stdarg.h>
 #include <stdio.h>
 
+static inline bool ui_add(unsigned int &r, unsigned int a, unsigned int b) { return (r = a + b) >= a; }
+static inline bool si_add(int &r, int a, int b)
+{
+  unsigned int na = a < 0, aa = na ? a * -1 : a, nb = b < 0, ab = nb ? b * -1 : b, t = aa + ab, uz = 0;
+  return na == nb && (t > INT_MAX || (~uz / 2 > INT_MAX && t < aa)) ? false : (r = a + b, true); // Good enough for our use
+}
+
 extern double my_wtof(const wchar_t *str);
 extern size_t my_strncpy(TCHAR*Dest, const TCHAR*Src, size_t cchMax);
 template<class T> bool strtrycpy(T*Dest, const T*Src, size_t cchCap) { size_t c = my_strncpy(Dest, Src, cchCap); return c < cchCap && !Src[c]; }

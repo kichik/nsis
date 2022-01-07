@@ -6,6 +6,7 @@ tests = Split("""
 	DialogTemplate.cpp
 	endian.cpp
 	mmap.cpp
+	Platform.cpp
 	ResourceEditor.cpp
 	specmatch.cpp
 	textrunner.cpp
