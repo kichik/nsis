@@ -1,7 +1,7 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include "../Platform.h"
 #include "../tchar.h"
-#include "../Util.h"
+#include "../util.h"
 
 class PlatformTest : public CppUnit::TestFixture {
 
@@ -13,7 +13,7 @@ class PlatformTest : public CppUnit::TestFixture {
 
 public:
   void testCore() {
-    CPPUNIT_ASSERT_EQUAL(sizeof(WINWCHAR), 2);
+    CPPUNIT_ASSERT(sizeof(WINWCHAR) == 2);
     CPPUNIT_ASSERT(sizeof(wchar_t) >= sizeof(WINWCHAR));
   }
 
@@ -22,6 +22,9 @@ public:
 
     CPPUNIT_ASSERT(3 == my_strncpy(tbuf, _T("abc"), 4) && tbuf[2] == _T('c') && tbuf[3] == _T('\0'));
     CPPUNIT_ASSERT(2 == my_strncpy(tbuf, _T("abc"), 3) && tbuf[1] == _T('b') && tbuf[2] == _T('\0'));
+    CPPUNIT_ASSERT(ChIsHex('f')); CPPUNIT_ASSERT(ChIsHex('F'));
+    CPPUNIT_ASSERT(ChIsHex(L'f')); CPPUNIT_ASSERT(ChIsHex(L'F'));
+
   }
 
   void testCoreMath() {
