@@ -1374,7 +1374,7 @@ Released on December 24th, 2007
 
 \b Fixed build issues on Mac OS (\W{http://sourceforge.net/support/tracker.php?aid=1851365}{bug #1851365})
 
-\b Fixed endianity issues introduced in version 2.32 (\W{http://sourceforge.net/support/tracker.php?aid=1851365}{bug #1851365})
+\b Fixed endianness issues introduced in version 2.32 (\W{http://sourceforge.net/support/tracker.php?aid=1851365}{bug #1851365})
 
 \H{v2.33} 2.33
 
@@ -2156,7 +2156,7 @@ Released on April 7th, 2006
 
 \b The script compiler, makensis, builds and works on big-endian platforms. This change enlarges the portability range of NSIS to theoretically every POSIX platform. Please \W{http://sourceforge.net/tracker/?group_id=22049&atid=373085}{report} any incompatibility with specific platforms or build-tools.
 
-\b The internal changes made to support big-endian platforms also pave the road to x64 installers. There is now a central function which writes data to disk. This function currently only converts the endianity of integers, but it can be changed to selectively write 64-bit integers. Hopefully, there'll soon be a simple method of compiling a script to both x86 and x64 installers.
+\b The internal changes made to support big-endian platforms also pave the road to x64 installers. There is now a central function which writes data to disk. This function currently only converts the endianness of integers, but it can be changed to selectively write 64-bit integers. Hopefully, there'll soon be a simple method of compiling a script to both x86 and x64 installers.
 
 \b Changing Source/exehead/fileform.h to alter the internal structure of installers is no longer enough. The compiler has its own definitions of the structures which must also be changed in Source/fileform.cpp. In the future, fileform.cpp should be automatically generated from fileform.h, but for now, the synchronization must be done manually.
 
