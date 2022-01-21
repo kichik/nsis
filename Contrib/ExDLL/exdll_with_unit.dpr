@@ -14,12 +14,12 @@
 Section
   exdll_with_unit::registerplugincallback
 
-  StrCpy $0 "Hello"
+  StrCpy $3 "Hello"
   Push "World"
   exdll_with_unit::pop_dlg_push
   Pop $1
-  DetailPrint $$0=$0
   DetailPrint $$1=$1
+  DetailPrint $$3=$3
 
   GetFunctionAddress $0 nsistest
   Push $0
@@ -37,22 +37,29 @@ library exdll;
 uses
   nsis, windows;
 
+{$IFDEF UNICODE}
+type TString = System.WideString; // UnicodeString?
+type PTChar = PWideChar;
+{$ELSE}
+type TString = AnsiString;
+type PTChar = PAnsiChar;
+{$ENDIF}
 
-procedure pop_dlg_push(const hwndParent: HWND; const string_size: integer; const variables: PChar; const stacktop: pointer); cdecl;
+procedure pop_dlg_push(const hwndParent: HWND; const string_size: integer; const variables: PTChar; const stacktop: pointer); cdecl;
 begin
   // set up global variables
   Init(hwndParent, string_size, variables, stacktop);
 
-  NSISDialog(GetUserVariable(INST_0), 'The value of $0', MB_OK);
+  NSISDialog(GetUserVariable(INST_3), 'The value of $3', MB_OK);
   NSISDialog(PopString, 'pop', MB_OK);
   PushString('Hello, this is a push');
-  SetUserVariable(INST_0, 'This is user var $0');
+  SetUserVariable(INST_3, 'This is user var $3');
 end;
 
 
-procedure callnsisfunc(const hwndParent: HWND; const string_size: integer; const variables: PChar; const stacktop: pointer; const extraparameters: pointer); cdecl;
+procedure callnsisfunc(const hwndParent: HWND; const string_size: integer; const variables: PTChar; const stacktop: pointer; const extraparameters: pointer); cdecl;
 var
-  FuncAddr : String;
+  FuncAddr : TString;
 begin
   Init(hwndParent, string_size, variables, stacktop, extraparameters);
 
@@ -66,12 +73,12 @@ begin
   Result := nil;
   if NSPIM = NSPIM_UNLOAD then
     begin
-      NSISDialog(PChar('NSPIM_UNLOAD is the final callback, goodbye...'), PChar('mynsiscallback'), MB_OK);
+      NSISDialog(PTChar('NSPIM_UNLOAD is the final callback, goodbye...'), PTChar('mynsiscallback'), MB_OK);
     end;
 end;
 
 
-procedure registerplugincallback(const hwndParent: HWND; const string_size: integer; const variables: PChar; const stacktop: pointer; const extraparameters: pointer); cdecl;
+procedure registerplugincallback(const hwndParent: HWND; const string_size: integer; const variables: PTChar; const stacktop: pointer; const extraparameters: pointer); cdecl;
 var
   ThisDllInstance : HMODULE;
 begin
