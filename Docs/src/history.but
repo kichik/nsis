@@ -18,6 +18,8 @@ Released on ????, 20??
 
 \b Fixed plug-in call overwriting \cw{SetDetailsPrint lastused} (\W{http://sf.net/p/nsis/bugs/1271}{bug #1271})
 
+\b Fixed MakeNSISW editor zoom level bug (\W{http://sf.net/p/nsis/bugs/1282}{bug #1282})
+
 \S2{} Translations
 
 \b Updated Brazilian Portuguese (\W{http://sf.net/p/nsis/bugs/1269}{bug #1269})
