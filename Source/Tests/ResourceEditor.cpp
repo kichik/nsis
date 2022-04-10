@@ -16,6 +16,17 @@ public:
   enum { defnameid = 1337, deflangid = 1033 };
 
   void testCorrectness() {
+
+    unsigned char not_pe[] = { 'M', 'Z', 0 };
+
+    CPPUNIT_ASSERT( !CResourceEditor::CanOpen(not_pe, sizeof(not_pe)) );
+
+    CPPUNIT_ASSERT( CResourceEditor::IsResProtocol(_T("res:")) == 0 );
+    CPPUNIT_ASSERT( CResourceEditor::IsResProtocol(_T("res://")) == 6 );
+    CPPUNIT_ASSERT( CResourceEditor::IsResProtocol(_T("RES://")) == 6 );
+    CPPUNIT_ASSERT( CResourceEditor::IsResProtocol(_T("res://abc")) == 6 );
+    CPPUNIT_ASSERT( CResourceEditor::IsResProtocol(_T("rez://abc")) == 0 );
+
     CResourceEditor re(original_pe, sizeof(original_pe));
 
     DWORD size;

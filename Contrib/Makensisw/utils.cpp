@@ -277,6 +277,7 @@ void SetLogColor(enum LOGCOLOR lc)
 
 void ClearLog() {
   SetWindowText(g_sdata.logwnd, _T(""));
+  SendMessage(g_sdata.logwnd, EM_SETZOOM, g_sdata.log_zoom, 100); // Bug #1282: SetWindowText resets zoom.
   SetLogColor(LC_SYSCOLOR);
   SendMessage(g_sdata.hwnd, WM_MAKENSIS_UPDATEUISTATE, 0, 0);
 }

@@ -14,7 +14,11 @@ Released on ????, 20??
 
 \b Added \R{assert}{!assert}
 
-\b Fixed plug-in call overwriting SetDetailsPrint lastused (\W{http://sf.net/p/nsis/bugs/1271}{bug #1271})
+\b Fixed \cw{!uninstfinalize} bug on large uninstallers
+
+\b Fixed plug-in call overwriting \cw{SetDetailsPrint lastused} (\W{http://sf.net/p/nsis/bugs/1271}{bug #1271})
+
+\b Fixed MakeNSISW editor zoom level bug (\W{http://sf.net/p/nsis/bugs/1282}{bug #1282})
 
 \S2{} Translations
 

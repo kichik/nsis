@@ -232,6 +232,9 @@ class MMapBuf : public IGrowBuf, public IMMap
     void clear();
     void flush(int num);
 
+  protected:
+    static inline int getmodethreshold() { return 16 << 20; }
+
   private:
     GrowBuf m_gb;
     MMapFile m_fm;
