@@ -368,7 +368,7 @@ unsigned long getutcunixtime()
   if (0 == clock_gettime(CLOCK_REALTIME, &ts))
     return ts.tv_sec;
 #endif
-#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
+#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L && defined(TIME_UTC)
   if (timespec_get(&ts, TIME_UTC)) /* implementation defined epoch :( */
     return ts.tv_sec;
 #endif
