@@ -20,6 +20,8 @@ Released on ????, 20??
 
 \b Fixed \cw{!appendfile} not writing to non-empty files with a BOM
 
+\b Fixed LogicLib \cw{$\{Switch\}} Unicode bug\#{ stackoverflow.com/q/73530905/ }
+
 \b Fixed MakeNSISW editor zoom level bug (\W{http://sf.net/p/nsis/bugs/1282}{bug #1282})
 
 \S2{} Translations
