@@ -45,10 +45,21 @@ defenv['SUBSYS_WIN'] = '-Wl,--subsystem,windows'
 defenv['MSVCRT_FLAG'] = ''
 defenv['STDCALL'] = '"__attribute__((__stdcall__))"'
 
-# Don't allow mingw to link with LIBGCC*.DLL and LIBSTDC++-*.DLL 
+# Don't allow mingw to link with LIBGCC*.DLL and LIBSTDC++-*.DLL
+def configure_static_libs(env):
+	env.Append(LINKFLAGS = ['-static-libgcc'])
+	code = """
+		#define G_V (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
+		#if G_V >= 10000 && G_V < 40503 // Might not be correct, 4.5.2 is known not to support it
+		#error !
+		#endif
+	"""
+	conf = FlagsConfigure(env)
+	conf.CheckLinkFlag('-static-libstdc++', codeprepend = code)
+	conf.Finish()
+
 if defenv['PLATFORM'] == 'win32':
-	defenv.Append(LINKFLAGS = ['-static-libgcc'])
-	defenv.Append(LINKFLAGS = ['-static-libstdc++'])
+	configure_static_libs(defenv)
 
 ### defines
 
@@ -144,8 +155,7 @@ if not defenv['DEBUG'] and defenv['STRIP'] and defenv['STRIP_W32']:
 plugin_env.Append(LINKFLAGS = ['-mwindows'])        # build windows executables
 plugin_env.Append(LINKFLAGS = ['$ALIGN_FLAG'])      # 512 bytes align
 plugin_env.Append(LINKFLAGS = ['$MAP_FLAG'])        # generate map file
-plugin_env.Append(LINKFLAGS = ['-static-libgcc'])   # remove libgcc*.dll dependency
-plugin_env.Append(LINKFLAGS = ['-static-libstdc++']) # remove libstdc++*.dll dependency
+configure_static_libs(plugin_env)                   # remove libgcc*.dll & libstdc++*.dll dependency
 
 plugin_uenv = plugin_env.Clone()
 plugin_uenv.Append(CPPDEFINES = ['_UNICODE', 'UNICODE'])

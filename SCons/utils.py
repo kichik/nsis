@@ -108,7 +108,7 @@ def check_compile_flag(ctx, flag):
 
 	return result
 
-def check_link_flag(ctx, flag, run = 0, extension = '.c', code = None):
+def check_link_flag(ctx, flag, run = 0, extension = '.c', code = None, codeprepend = ''):
 	"""
 	Checks if a linker flag is valid.
 	"""
@@ -120,7 +120,11 @@ def check_link_flag(ctx, flag, run = 0, extension = '.c', code = None):
 	if code:
 		test =  code
 	else:
-		test = """
+		test = codeprepend + """
+			#ifdef _WIN32
+			#include <windows.h>
+			extern int WINAPI WinMain(HINSTANCE hI,HINSTANCE hOld,char*cl,int sc) { return 0; } // '-Wl,-e,___main' substitute for -nostdlib (GCC 4.5.2)
+			#endif
 			int main() {
 				return 0;
 			}
