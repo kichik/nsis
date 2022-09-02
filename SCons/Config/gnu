@@ -117,6 +117,9 @@ stub_env.Append(LINKFLAGS = ['$MAP_FLAG'])          # generate map file
 conf = FlagsConfigure(stub_env)
 conf.CheckCompileFlag('-fno-tree-loop-distribute-patterns')  # GCC 10: Don't generate msvcrt!memmove calls (bug #1248)
 conf.Finish()
+conf = FlagsConfigure(stub_env)
+conf.CheckLinkFlag('-Wl,--disable-reloc-section') # binutils 2.36, ld will include a .reloc section by default (bug #1283)
+conf.Finish()
 
 stub_uenv = stub_env.Clone()
 stub_uenv.Append(CPPDEFINES = ['_UNICODE', 'UNICODE'])
