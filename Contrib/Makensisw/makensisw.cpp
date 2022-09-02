@@ -650,7 +650,7 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
             lstrcpy(str,g_sdata.input_script);
             str2=_tcsrchr(str,_T('\\'));
             if(str2!=NULL) *(str2+1)=0;
-            ShellExecute(g_sdata.hwnd,_T("open"),str,NULL,NULL,SW_SHOWNORMAL);
+            ShellExecuteWithErrorBox(hwndDlg, str);
           }
           return TRUE;
         }
@@ -750,20 +750,18 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
         case IDC_TEST:
         {
           if (g_sdata.output_exe) {
-            ShellExecute(g_sdata.hwnd,_T("open"),g_sdata.output_exe,NULL,NULL,SW_SHOWNORMAL);
+            ShellExecuteWithErrorBox(hwndDlg, g_sdata.output_exe);
           }
           return TRUE;
         }
         case IDM_EDITSCRIPT:
         {
           if (g_sdata.input_script) {
-            LPCTSTR verb = _T("open"); // BUGBUG: Should not force the open verb?
-            HINSTANCE hi = ShellExecute(g_sdata.hwnd,verb,g_sdata.input_script,NULL,NULL,SW_SHOWNORMAL);
-            if ((UINT_PTR)hi <= 32) {
-              TCHAR path[MAX_PATH];
-              if (GetWindowsDirectory(path,sizeof(path))) {
-                lstrcat(path,_T("\\notepad.exe"));
-                ShellExecute(g_sdata.hwnd,verb,path,g_sdata.input_script,NULL,SW_SHOWNORMAL);
+            if (!ShellExecuteSilent(hwndDlg, g_sdata.input_script)) {
+              TCHAR app[MAX_PATH];
+              if (GetWindowsDirectory(app, COUNTOF(app))) {
+                lstrcat(app,_T("\\notepad.exe"));
+                ShellExecuteWithErrorBox(hwndDlg, app, g_sdata.input_script);
               }
             }
           }
