@@ -85,6 +85,19 @@ def GetAvailableLibs(env, libs):
 
 	return avail_libs
 
+def GenerateTryLinkCode(codeprepend = ''):
+	code = codeprepend + """
+	int main() {
+		#ifdef CONFCHECK_CALLFUNC
+		CONFCHECK_CALLFUNC();
+		#endif
+		return 0;
+	}
+	int _main() { return main(); } // mingw GCC _WIN64
+	int __main() { return main(); } // mingw GCC -nostdlib: undefined reference to __main()
+	"""
+	return code
+
 def check_compile_flag(ctx, flag):
 	"""
 	Checks if a compiler flag is valid.
@@ -113,22 +126,13 @@ def check_link_flag(ctx, flag, run = 0, extension = '.c', code = None, codeprepe
 	Checks if a linker flag is valid.
 	"""
 	ctx.Message('Checking for linker flag %s... ' % flag)
-
 	old_flags = ctx.env['LINKFLAGS']
 	ctx.env.Append(LINKFLAGS = [flag])
 
 	if code:
-		test =  code
+		test = code
 	else:
-		test = codeprepend + """
-			#ifdef _WIN32
-			#include <windows.h>
-			extern int WINAPI WinMain(HINSTANCE hI,HINSTANCE hOld,char*cl,int sc) { return 0; } // '-Wl,-e,___main' substitute for -nostdlib (GCC 4.5.2)
-			#endif
-			int main() {
-				return 0;
-			}
-		"""
+		test = GenerateTryLinkCode(codeprepend = codeprepend)
 
 	result = ctx.TryLink(test, extension)
 
@@ -272,4 +276,4 @@ def MakeReproducibleAction(target, source, env):
 def SilentActionEcho(target, source, env):
 	return None
 
-Export('GetStdSysEnvVarList AddAvailableLibs AddZLib FlagsConfigure GetAvailableLibs GetOptionOrEnv SilentActionEcho IsPEExecutable SetPESecurityFlagsWorker MakeReproducibleAction')
+Export('GetStdSysEnvVarList AddAvailableLibs AddZLib GenerateTryLinkCode FlagsConfigure GetAvailableLibs GetOptionOrEnv SilentActionEcho IsPEExecutable SetPESecurityFlagsWorker MakeReproducibleAction')

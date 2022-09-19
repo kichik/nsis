@@ -34,6 +34,8 @@ Released on ????, 20??
 
 \b Fixed issues with very old GCC versions (\W{http://sf.net/p/nsis/bugs/1275}{bug #1275})
 
+\b Disable stub relocations in newer GCC (\W{http://sf.net/p/nsis/bugs/1283}{bug #1283})
+
 \H{v3.08} 3.08
 
 Released on September 25th, 2021

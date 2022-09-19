@@ -24,6 +24,12 @@ def cross_env(env):
 
 ### flags
 
+code_failonmswin = """
+	#ifdef _WIN32
+	#error Not supported on Windows
+	#endif
+"""
+
 def entry(x,u):
 	if defenv['TARGET_ARCH'] == 'x86':
 		if x == 'NSISWinMainNOCRT':
@@ -48,15 +54,7 @@ defenv['STDCALL'] = '"__attribute__((__stdcall__))"'
 # Don't allow mingw to link with LIBGCC*.DLL and LIBSTDC++-*.DLL
 def configure_static_libs(env):
 	env.Append(LINKFLAGS = ['-static-libgcc'])
-	code = """
-		#define G_V (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
-		#if G_V >= 10000 && G_V < 40503 // Might not be correct, 4.5.2 is known not to support it
-		#error !
-		#endif
-	"""
-	conf = FlagsConfigure(env)
-	conf.CheckLinkFlag('-static-libstdc++', codeprepend = code)
-	conf.Finish()
+	env.Append(LINKFLAGS = ['-static-libstdc++']) # MinGW GCC 4.5.2 warns about unrecognized option but it also actually needs it!
 
 if defenv['PLATFORM'] == 'win32':
 	configure_static_libs(defenv)
@@ -110,16 +108,13 @@ stub_env.Append(CCFLAGS = ['-fno-strict-aliasing']) # not safe for strict aliasi
 if not defenv['DEBUG'] and defenv['STRIP'] and defenv['STRIP_W32']:
 	stub_env.Append(LINKFLAGS = ['-s'])               # strip
 stub_env.Append(LINKFLAGS = ['-mwindows'])          # build windows executables
-stub_env.Append(LINKFLAGS = ['$NODEFLIBS_FLAG'])    # no standard libraries
 stub_env.Append(LINKFLAGS = ['$ALIGN_FLAG'])        # 512 bytes align
 stub_env.Append(LINKFLAGS = ['$MAP_FLAG'])          # generate map file
-
 conf = FlagsConfigure(stub_env)
 conf.CheckCompileFlag('-fno-tree-loop-distribute-patterns')  # GCC 10: Don't generate msvcrt!memmove calls (bug #1248)
-conf.Finish()
-conf = FlagsConfigure(stub_env)
 conf.CheckLinkFlag('-Wl,--disable-reloc-section') # binutils 2.36, ld will include a .reloc section by default (bug #1283)
 conf.Finish()
+stub_env.Append(LINKFLAGS = ['$NODEFLIBS_FLAG'])    # no standard libraries
 
 stub_uenv = stub_env.Clone()
 stub_uenv.Append(CPPDEFINES = ['_UNICODE', 'UNICODE'])
@@ -252,22 +247,18 @@ def check_requirement(ctx, func, trigger):
 	ctx.Message('Checking for %s requirement... ' % func)
 
 	flags = ctx.env['LINKFLAGS']
-
 	ctx.env.Append(LINKFLAGS = ['$NODEFLIBS_FLAG'])
-	ctx.env.Append(LINKFLAGS = ['-Wl,-e,___main'])
 
-	test = """
-		int __main() {
-			%s
-			return 0;
-		}
+	codeprepend = """
+		#define CONFCHECK_CALLFUNC() check
+		static int check() { %s }
 	""" % trigger
-
-	result = not ctx.TryLink(test, '.c')
+	Import('GenerateTryLinkCode')
+	code = GenerateTryLinkCode(codeprepend = codeprepend)
+	result = not ctx.TryLink(code, '.c')
 	ctx.Result(result)
 
 	ctx.env['LINKFLAGS'] = flags
-
 	return result
 
 def add_file_to_emitter(env, emitter_name, file):
@@ -302,17 +293,10 @@ cross_env(cenv)
 conf = cenv.Configure(custom_tests = { 'CheckRequirement' : check_requirement })
 
 memcpy_test = """
-struct s // gcc 3
-{
-  char c[128];
-} t = { "test" };
-char a[] = // gcc 4
-  {'/', 'F', 'I' ,'L', 'L', 'S', 'C', 'R', 'E', 'E', 'N', 0};
+struct s { char c[128]; } t = { "test" }; // gcc 3
+char a[] = {'/', 'F', 'I' ,'L', 'L', 'S', 'C', 'R', 'E', 'E', 'N', 0}; // gcc 4
 int i;
-for (i = 0; i < 100; i++) // avoid a and t being optimized out
-{
-  i += a[i] ^ t.c[i];
-}
+for (i = 0; i < 100; i++) i += a[i % sizeof(a)] ^ t.c[i]; // avoid a and t being optimized out
 return i;
 """
 
@@ -336,7 +320,7 @@ conf.Finish()
 #
 
 conf = FlagsConfigure(makensis_env)
-conf.CheckLinkFlag('-pthread')
+conf.CheckLinkFlag('-pthread', codeprepend = code_failonmswin)
 conf.Finish()
 
 #
