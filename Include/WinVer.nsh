@@ -679,9 +679,9 @@
   !insertmacro WinVer_WaaS "${id}" 19041 2004 "20H1"        "May 2020 Update" ; 19041.264?
   !insertmacro WinVer_WaaS "${id}" 19042 20H2 "20H2"        "October 2020 Update" ; 19042.572? A.K.A. 2009
   !insertmacro WinVer_WaaS "${id}" 19043 21H1 "21H1"        "May 2021 Update" ; 19043.928
-  !insertmacro WinVer_WaaS "${id}" 19044 21H2 "21H2"        "November 2021 Update "
+  !insertmacro WinVer_WaaS "${id}" 19044 21H2 "21H2"        "November 2021 Update"
   !insertmacro WinVer_WaaS "${id}" 22000 "?"  "Sun Valley"  "Windows 11" ; 10.0.22000.194 21H2
-  !insertmacro WinVer_WaaS "${id}" 22621 22H2 "Sun Valley 2" "?"
+  !insertmacro WinVer_WaaS "${id}" 22621 22H2 "Sun Valley 2" "2022 Update" ; 10.0.22621.521
 
   !ifmacrodef WinVerExternal_WaaS_MapToBuild
     !insertmacro WinVerExternal_WaaS_MapToBuild ${op} "${id}" WinVer_WaaS_Build
