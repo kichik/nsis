@@ -57,7 +57,7 @@ static inline bool IsWin95() { return SupportsW95() && (GetVersion() & (0x8000FF
 #define CONTRIB      _T("Fritz Elfert, Justin Frankel, Amir Szekely, Sunil Kamath, Joost Verburg, Anders Kjersem")
 #define DONATE       _T("<A>Donate</A> to support NSIS development.")
 #define DONATEURL    { 'h'|x,'t','t'|x,'p',':'|x,'/'|x,'/'|x,'n'|x,'s'|x,'i'|x,'s'|x,'.'|x,'s'|x,'f'|x,'.','n'|x,'e'|x,'t'|x,'/'|x,'r','/'|x,'D'|x,'o'|x,'n'|x,'a'|x,'t'|x,'e'|x,'\0' } // "Encrypted"
-#define DOCPATH      "https://nsis.sourceforge.io/Docs/"
+#define DOCURL       "https://nsis.sourceforge.io/Docs/"
 #define LOCALDOCS    _T("\\NSIS.chm")
 #define ERRBOXTITLE  0 //_T("Error")
 #define NSISERROR    _T("Unable to initialize MakeNSIS. Please verify that makensis.exe is in the same directory as makensisw.exe.")

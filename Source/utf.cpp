@@ -386,7 +386,11 @@ bool NBaseStream::Attach(FILE*hFile, WORD enc, bool Seek /*= true*/)
     if (Seek)
     {
       fsetpos(m_hFile, &pos);
-      if (cp) DetectUTFBOM(m_hFile); // parseScript() etc does not like the BOM, make sure we skip past it
+      if (cp) 
+      {
+        DetectUTFBOM(m_hFile); // parseScript() etc does not like the BOM, make sure we skip past it
+        fseek(m_hFile, 0, SEEK_CUR); // Force intervening call to a file positioning function so writes works for files with BOM opened with "a+"
+      }
     }
   }
   if (!cp) cp = enc;

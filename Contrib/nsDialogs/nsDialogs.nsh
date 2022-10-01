@@ -1007,7 +1007,7 @@ Exch
 
 !define NSD_ClearImage `!insertmacro __NSD_ClearImage ${IMAGE_BITMAP} `
 !define NSD_ClearBitmap `${NSD_ClearImage} `
-!define NSD_ClearIcon  `!insertmacro __NSD_ClearImage ${IMAGE_ICON } `
+!define NSD_ClearIcon  `!insertmacro __NSD_ClearImage ${IMAGE_ICON} `
 !macro __NSD_ClearImage _IMGTYPE CONTROL
 	SendMessage ${CONTROL} ${STM_SETIMAGE} ${_IMGTYPE} 0
 !macroend

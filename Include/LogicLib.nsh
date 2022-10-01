@@ -99,7 +99,7 @@
   !macroend
 
   !macro LogicLib_JumpToBranch _Jump _Skip
-    !if `${_Jump}` != ``
+    !if `${_Jump}${_Skip}` != ``
       StrCmp "" "" `${_Jump}` ${_Skip}
     !endif
   !macroend
@@ -823,6 +823,9 @@
     !insertmacro _IncreaseCounter
     !define ${_Switch}Var `${_a}`                         ; Remember the left hand side of the comparison
     !tempfile ${_Switch}Tmp                               ; Create a temporary file
+    !if "${NSIS_CHAR_SIZE}" > 1
+      !appendfile /CHARSET=UTF8SIG "${${_Switch}Tmp}" ""  ; Make sure the file uses Unicode
+    !endif
     !define ${_Logic}Switch _LogicLib_Label_${LOGICLIB_COUNTER} ; Get a label for the end of the switch
     !insertmacro _IncreaseCounter
     Goto ${${_Logic}Switch}                               ; and go there

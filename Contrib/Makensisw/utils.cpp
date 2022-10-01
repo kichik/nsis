@@ -700,6 +700,19 @@ void ResetSymbols() {
   g_sdata.symbols = NULL;
 }
 
+BOOL ShellExecuteWithErrorBox(HWND hWnd, LPCTSTR File, LPCTSTR Parameters) {
+  SHELLEXECUTEINFO sei;
+  sei.cbSize = sizeof(SHELLEXECUTEINFO);
+  sei.fMask = SEE_MASK_FLAG_DDEWAIT;
+  if (!(sei.hwnd = hWnd)) sei.fMask |= SEE_MASK_FLAG_NO_UI;
+  sei.lpVerb = NULL;
+  sei.lpFile = File;
+  sei.lpParameters = Parameters;
+  sei.lpDirectory = NULL;
+  sei.nShow = SW_SHOW;
+  return ShellExecuteEx(&sei);
+}
+
 void FreeSpawn(PROCESS_INFORMATION *pPI, HANDLE hRd, HANDLE hWr) {
   if (pPI) {
     GetExitCodeProcess(pPI->hProcess, &pPI->dwProcessId);
@@ -824,12 +837,12 @@ LRESULT CALLBACK TipHookProc(int nCode, WPARAM wParam, LPARAM lParam) {
 
 void ShowDocs() {
   TCHAR pathf[MAX_PATH],*path;
-  GetModuleFileName(NULL,pathf,sizeof(pathf));
+  GetModuleFileName(NULL,pathf,COUNTOF(pathf));
   path=_tcsrchr(pathf,_T('\\'));
   if(path!=NULL) *path=0;
   lstrcat(pathf,LOCALDOCS);
-  if ((int)(INT_PTR) ShellExecute(g_sdata.hwnd,_T("open"),pathf,NULL,NULL,SW_SHOWNORMAL) <= 32) 
-    ShellExecuteA(g_sdata.hwnd,"open",DOCPATH,NULL,NULL,SW_SHOWNORMAL);
+  if (!ShellExecuteSilent(g_sdata.hwnd, pathf))
+    OpenUrlInDefaultBrowser(g_sdata.hwnd, DOCURL);
 }
 
 TCHAR* BuildSymbols()

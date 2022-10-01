@@ -18,6 +18,10 @@ Released on ????, 20??
 
 \b Fixed plug-in call overwriting \cw{SetDetailsPrint lastused} (\W{http://sf.net/p/nsis/bugs/1271}{bug #1271})
 
+\b Fixed \cw{!appendfile} not writing to non-empty files with a BOM
+
+\b Fixed LogicLib \cw{$\{Switch\}} Unicode bug\#{ stackoverflow.com/q/73530905/ }
+
 \b Fixed MakeNSISW editor zoom level bug (\W{http://sf.net/p/nsis/bugs/1282}{bug #1282})
 
 \S2{} Translations
@@ -29,6 +33,8 @@ Released on ????, 20??
 \b Fixed halibut \#{fprintf format security}compiler warnings (\W{http://sf.net/p/nsis/patches/304}{patch #304})
 
 \b Fixed issues with very old GCC versions (\W{http://sf.net/p/nsis/bugs/1275}{bug #1275})
+
+\b Disable stub relocations in newer GCC (\W{http://sf.net/p/nsis/bugs/1283}{bug #1283})
 
 \H{v3.08} 3.08
 

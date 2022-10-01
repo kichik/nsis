@@ -60,6 +60,8 @@ static inline UINT SizeOfStruct(const TOOLINFO&x) { return FIELD_OFFSET(TOOLINFO
 static inline UINT SizeOfStruct(const OPENFILENAME&x) { return sizeof(void*) < 8 ? 76 : sizeof(x); }
 UINT GetScreenBPP(HWND hWnd = NULL);
 
+BOOL ShellExecuteWithErrorBox(HWND hWnd, LPCTSTR File, LPCTSTR Parameters = NULL);
+inline BOOL ShellExecuteSilent(HWND hWnd, LPCTSTR File) { return ShellExecuteWithErrorBox(NULL, File); }
 void FreeSpawn(PROCESS_INFORMATION *pPI, HANDLE hRd, HANDLE hWr);
 BOOL InitSpawn(STARTUPINFO &si, HANDLE &hRd, HANDLE &hWr);
 
