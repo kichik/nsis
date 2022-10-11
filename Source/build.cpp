@@ -2446,6 +2446,8 @@ int CEXEBuild::UpdatePEHeader()
       *GetCommonMemberFromPEOptHdr(headers->OptionalHeader, MajorSubsystemVersion) = FIX_ENDIAN_INT16(PESubsysVerMaj);
       *GetCommonMemberFromPEOptHdr(headers->OptionalHeader, MinorSubsystemVersion) = FIX_ENDIAN_INT16(PESubsysVerMin);
     }
+    // Run as console application
+    *GetCommonMemberFromPEOptHdr(headers->OptionalHeader, Subsystem) = FIX_ENDIAN_INT16(3);
     // DllCharacteristics
     *GetCommonMemberFromPEOptHdr(headers->OptionalHeader, DllCharacteristics) = FIX_ENDIAN_INT16(PEDllCharacteristics);
   } catch (std::runtime_error& err) {
