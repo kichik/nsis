@@ -16,6 +16,8 @@ Released on ????, 20??
 
 \b Fixed \cw{!uninstfinalize} bug on large uninstallers
 
+\b Fixed creation of missing special folders on old Windows versions where SHGetFolderPath is not available.
+
 \b Fixed plug-in call overwriting \cw{SetDetailsPrint lastused} (\W{http://sf.net/p/nsis/bugs/1271}{bug #1271})
 
 \b Fixed \cw{!appendfile} not writing to non-empty files with a BOM

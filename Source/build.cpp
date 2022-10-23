@@ -379,7 +379,7 @@ CEXEBuild::CEXEBuild(signed char pponly, bool warnaserror) :
   m_ShellConstants.add(_T("CDBURN_AREA"), CSIDL_CDBURN_AREA, CSIDL_CDBURN_AREA);
 
   // Constants that are not affected by SetShellVarContext
-  m_ShellConstants.add(_T("USERAPPDATA"), CSIDL_APPDATA, CSIDL_APPDATA);
+  m_ShellConstants.add(_T("USERAPPDATA"), CSIDL_APPDATA, CSIDL_APPDATA|0x40); // 0x40 to differentiate it from $QUICKLAUNCH
   m_ShellConstants.add(_T("USERLOCALAPPDATA"), CSIDL_LOCAL_APPDATA, CSIDL_LOCAL_APPDATA);
   m_ShellConstants.add(_T("USERTEMPLATES"), CSIDL_TEMPLATES, CSIDL_TEMPLATES);
   m_ShellConstants.add(_T("USERSTARTMENU"), CSIDL_STARTMENU, CSIDL_STARTMENU);

@@ -175,6 +175,7 @@ enum myGetProcAddressFunctions {
   MGA_InitiateShutdown,
   MGA_SHGetKnownFolderPath,
   MGA_IsUserAnAdmin,
+  MGA_SHCloneSpecialIDList,
 #ifndef _WIN64
   MGA_IsOS,
 #endif
