@@ -24,10 +24,17 @@
 
 namespace STL 
 {
-  template<class S, class C>
-  struct string_nocasecmpless : std::binary_function<S, S, bool> 
+  template <class Arg1, class Arg2, class Result>
+  struct binary_function
   {
-    struct cmp : public std::binary_function<C, C, bool> 
+    typedef Arg1 first_argument_type;
+    typedef Arg2 second_argument_type;
+    typedef Result result_type;
+  };
+  template<class S, class C>
+  struct string_nocasecmpless : binary_function<S, S, bool> 
+  {
+    struct cmp : public binary_function<C, C, bool> 
     {
       bool operator() (const C&a, const C&b) const 
       {

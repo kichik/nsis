@@ -34,7 +34,7 @@ Released on ????, 20??
 
 \b Fixed halibut \#{fprintf format security}compiler warnings (\W{http://sf.net/p/nsis/patches/304}{patch #304})
 
-\b Fixed issues with very old GCC versions (\W{http://sf.net/p/nsis/bugs/1275}{bug #1275})
+\b Fixed various issues with very old and new GCC versions (\W{http://sf.net/p/nsis/bugs/1275}{bug #1275}, \W{http://sf.net/p/nsis/patches/307}{patch #307})
 
 \b Disable stub relocations in newer GCC (\W{http://sf.net/p/nsis/bugs/1283}{bug #1283})
 

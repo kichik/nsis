@@ -913,7 +913,7 @@ const TCHAR* CResourceEditor::MapExternal(const TCHAR*File, TYPEMANIPULATION Man
   }
 
   FILEVIEW &map = *(FILEVIEW*) &X.Map;
-  size_t datasize;
+  size_t datasize = 0;
   char *filedata = create_file_view_readonly(File, map), *data = 0, *dataalloc = 0;
   if (filedata) {
     if (resproto) {
