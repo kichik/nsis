@@ -127,7 +127,7 @@ extern int ZEXPORT unzStringFileNameCompare OF ((const char* fileName1,
                                                  const char* fileName2,
                                                  int iCaseSensitivity));
 /*
-   Compare two filename (fileName1,fileName2).
+   Compare two filenames (fileName1,fileName2).
    If iCaseSensitivity = 1, comparison is case sensitive (like strcmp)
    If iCaseSensitivity = 2, comparison is not case sensitive (like strcmpi
                                 or strcasecmp)
