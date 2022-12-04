@@ -14,7 +14,7 @@ Released on ????, 20??
 
 \b Added \R{assert}{!assert}
 
-\b Fixed \cw{!uninstfinalize} bug on large uninstallers
+\b Fixed \cw{!uninstfinalize} bug on large uninstallers (\W{http://sf.net/p/nsis/bugs/1279}{bug #1279})
 
 \b Fixed creation of missing special folders on old Windows versions where SHGetFolderPath is not available.
 

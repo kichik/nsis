@@ -5302,52 +5302,33 @@ int CEXEBuild::add_file(const tstring& dir, const tstring& file, int attrib, con
   const TCHAR *newfn = newfn_s.c_str();
   const TCHAR *filename = file.c_str();
   MMapFile mmap;
-  DWORD len;
+  UINT64 filesize;
 
 #ifdef _WIN32
-  HANDLE hFile = CreateFile(
-    newfn,
-    GENERIC_READ,
-    FILE_SHARE_READ,
-    NULL,
-    OPEN_EXISTING,
-    FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN,
-    NULL
-  );
+  HANDLE hFile = mmap.openfilehelper(newfn, filesize);
   if (hFile == INVALID_HANDLE_VALUE)
   {
     ERROR_MSG(_T("%") NPRIs _T("File: failed opening file \"%") NPRIs _T("\"\n"),generatecode?_T(""):_T("Reserve"),newfn);
     return PS_ERROR;
   }
   MANAGE_WITH(hFile, CloseHandle);
-
-  len = GetFileSize(hFile, NULL);
-  if (len && !mmap.setfile(hFile, len))
-  {
-    ERROR_MSG(_T("%") NPRIs _T("File: failed creating mmap of \"%") NPRIs _T("\"\n"),generatecode?_T(""):_T("Reserve"),newfn);
-    return PS_ERROR;
-  }
-#else // !_WIN32
-  int fd = OPEN(newfn, O_RDONLY);
-  if (fd == -1)
+#else
+  FILE *hFile = mmap.openfilehelper(newfn, filesize);
+  if (!hFile)
   {
     ERROR_MSG(_T("%") NPRIs _T("File: failed opening file \"%") NPRIs _T("\"\n"),generatecode?_T(""):_T("Reserve"),newfn);
     return PS_ERROR;
   }
-  MANAGE_WITH(fd, close); // Will auto-close(2) fd
-
-  struct stat s;
-  if (fstat(fd, &s)) {
-    ERROR_MSG(_T("%") NPRIs _T("File: failed stating file \"%") NPRIs _T("\"\n"),generatecode?_T(""):_T("Reserve"),newfn);
-    return PS_ERROR;
-  }
-  len = (DWORD) s.st_size;
-  if (len && !mmap.setfile(fd, len))
+  MANAGE_WITH(hFile, fclose);
+  const int fd = fileno(hFile);
+#endif
+  if (!mmap.setfile(hFile, filesize))
   {
     ERROR_MSG(_T("%") NPRIs _T("File: failed creating mmap of \"%") NPRIs _T("\"\n"),generatecode?_T(""):_T("Reserve"),newfn);
     return PS_ERROR;
   }
-#endif // ~_WIN32
+  DWORD len = (DWORD) filesize;
+  if (len != filesize) len = 0xffffffffUL;
 
   if (generatecode&1)
     section_add_size_kb((len+1023)/1024);
@@ -5402,9 +5383,9 @@ int CEXEBuild::add_file(const tstring& dir, const tstring& file, int attrib, con
     DWORD s=getcurdbsize()-last_build_datablock_used;
     if (s) s-=4;
     if (s != len)
-      SCRIPT_MSG(_T(" %d/%d bytes\n"),s,len);
+      SCRIPT_MSG(_T(" %u/%u bytes\n"),s,len);
     else
-      SCRIPT_MSG(_T(" %d bytes\n"),len);
+      SCRIPT_MSG(_T(" %u bytes\n"),len);
   }
 
   if (generatecode)

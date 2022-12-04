@@ -619,7 +619,7 @@ class CEXEBuild {
 
     header build_header, build_uninst, *cur_header;
     int uninstall_mode; // Are we in uninstall mode?  Acts like a bool.
-    int uninstall_size,uninstall_size_full;
+    UINT32 uninstall_size,uninstall_size_full;
     int uninstaller_writes_used;
 
     TCHAR build_output_filename[1024];

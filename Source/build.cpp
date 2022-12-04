@@ -228,7 +228,7 @@ CEXEBuild::CEXEBuild(signed char pponly, bool warnaserror) :
 
   uninstall_mode=0;
   uninstall_size_full=0;
-  uninstall_size=-1;
+  uninstall_size=UINT_MAX;
 
   memset(&build_uninst,-1,sizeof(build_uninst));
 
@@ -2664,7 +2664,7 @@ int CEXEBuild::write_output(void)
 
   build_optimize_datablock=0;
 
-  int data_block_size_before_uninst = build_datablock.getlen();
+  UINT data_block_size_before_uninst = build_datablock.getlen();
 
   RET_UNLESS_OK( uninstall_generate() );
 
@@ -2880,7 +2880,7 @@ retry_output:
     unsigned int dbsize;
     UINT64 dbsizeu;
     dbsize = build_datablock.getlen();
-    if (uninstall_size>0) dbsize -= uninstall_size;
+    if (uninstall_size > 0 && uninstall_size < UINT_MAX) dbsize -= uninstall_size;
 
     if (build_compress_whole) {
       dbsizeu = dbsize;
@@ -2893,17 +2893,17 @@ retry_output:
       INFO_MSG(_T("Install data:             %10u%") NPRIs _T(" / %u%") NPRIs _T("\n"),
         cs.UInt(),cs.Scale(),us.UInt(),us.Scale()); // "123 / 456 bytes" or "123 KiB / 456 MiB"
     }
-    UINT future = (build_crcchk ? sizeof(int) : 0) + (uninstall_size > 0 ? uninstall_size_full : 0);
+    UINT future = (build_crcchk ? sizeof(int) : 0) + (uninstall_size > 0 && uninstall_size < UINT_MAX ? uninstall_size_full : 0);
     UINT maxsize = (~(UINT)0) - (total_usize + future), totsizadd = dbsizeu < maxsize ? (UINT)dbsizeu : maxsize;
     total_usize += totsizadd; // Might not be accurate, it is more important to not overflow the additions coming up
   }
 
-  if (uninstall_size>=0)
+  if (uninstall_size < UINT_MAX)
   {
     if (build_compress_whole)
-      INFO_MSG(_T("Uninstall code+data:                   (%d bytes)\n"),uninstall_size_full);
+      INFO_MSG(_T("Uninstall code+data:                   (%u bytes)\n"),uninstall_size_full);
     else
-      INFO_MSG(_T("Uninstall code+data:          %6d / %d bytes\n"),uninstall_size,uninstall_size_full);
+      INFO_MSG(_T("Uninstall code+data:      %10u / %u bytes\n"),uninstall_size,uninstall_size_full);
     total_usize += uninstall_size_full;
   }
 
@@ -3300,38 +3300,46 @@ int CEXEBuild::uninstall_generate()
     if (start_offset)
     {
       TCHAR* fpath;
-      unsigned long in_len;
       if (!(fpath = create_tempfile_path()))
       {
         ERROR_MSG(_T("Error: can't get temporary path\n"));
         return PS_ERROR;
       }
-      size_t ret_size = write_octets_to_file(fpath, (unsigned char*)udata.get(0, udata.getlen()), udata.getlen());
-      udata.release();
-      if ((size_t)udata.getlen() != ret_size)
+      MANAGE_WITH(fpath, free);
+      FILE *hfile = FOPEN(fpath, ("wb"));
+      if (!hfile)
+      {
+        ERROR_MSG(_T("Error: failed opening file \"%") NPRIs _T("\"\n"), fpath);
+        return PS_ERROR;
+      }
+      int succ = udata.write_to_external_file(hfile);
+      fclose(hfile);
+      if (!succ)
       {
         ERROR_MSG(_T("Error: can't write %d bytes to output\n"), udata.getlen());
-        free(fpath);
         return PS_ERROR;
       }
+      udata.clear();
+
       if (PS_OK != run_postbuild_cmds(postubuild_cmds, fpath, _T("UninstFinalize")))
       {
-        free(fpath);
         return PS_ERROR;
       }
-      BYTE* in_buf = alloc_and_read_file(fpath, in_len);
-      _tremove(fpath);
-      free(fpath);
-      if (!in_buf)
+
+      MMapFile udata_in;
+      UINT64 udata_size;
+      if (!(udata_size = udata_in.setfile(fpath)))
       {
-        ERROR_MSG(_T("Error: can't read %d bytes from input\n"), in_len);
+        ERROR_MSG(_T("Error: failed creating mmap of \"%") NPRIs _T("\"\n"), fpath);
         return PS_ERROR;
       }
-      int tmp_offset = add_db_data((char*) in_buf, truncate_cast(int,in_len));
-      free(in_buf);
-      if (tmp_offset < 0)
+      if (add_db_data(&udata_in) < 0)
         return PS_ERROR;
-      uninstall_size_full = in_len;
+
+      assert(NSIS_MAX_EXEFILESIZE <= ~(UINT32)0);
+      uninstall_size_full = (UINT32) udata_size;
+      udata_in.clear();
+      _tremove(fpath);
     }
     else
     {
@@ -3342,11 +3350,8 @@ int CEXEBuild::uninstall_generate()
       uninstall_size_full = fh.length_of_all_following_data+(int)m_unicon_size;
     }
 
-    udata.clear();
-
     // compressed size
     uninstall_size=build_datablock.getlen()-uninstdata_offset;
-
     SCRIPT_MSG(_T("Done!\n"));
   }
 #endif

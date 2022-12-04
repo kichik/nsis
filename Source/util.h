@@ -317,6 +317,7 @@ int my_open(const TCHAR *pathname, int flags);
 #define OPEN(a, b) my_open(a, b)
 
 #else // _WIN32
+bool GetFileSize64(HANDLE hFile, ULARGE_INTEGER &uli);
 
 #define my_convert(x) (x)
 #define my_convert_free(x)
@@ -328,9 +329,11 @@ int my_open(const TCHAR *pathname, int flags);
 FILE* my_fopen(const TCHAR *path, const char *mode);
 #define FOPEN(a, b) my_fopen((a), (b))
 
+UINT64 Platform_GetMaxFileSize();
 const UINT32 invalid_file_size32 = ~ (UINT32) 0;
 UINT32 get_file_size32(FILE *f);
 const UINT64 invalid_file_size64 = ~ (UINT64) 0;
+UINT64 get_file_size64(FILE *f);
 BYTE* alloc_and_read_file(FILE *f, unsigned long &size);
 BYTE* alloc_and_read_file(const TCHAR *filepath, unsigned long &size);
 
