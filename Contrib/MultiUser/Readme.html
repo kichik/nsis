@@ -32,7 +32,9 @@ tr:nth-child(odd) { background-color: #181818; }
     <ul>
         <li><a href="#introduction">Introduction</a></li>
         <li><a href="#executionlevel">Initialization and Execution Level</a>
-            <li><a href="#installationmode">Installation Mode</a></ul>
+        <li><a href="#installationmode">Installation Mode</a>
+		<li><a href="#examples">Example</a>
+    </ul>
     <h2><a name="introduction"></a>Introduction</h2>
     <p>
         Modern Windows versions support multiple users accounts on a single computer, each
@@ -254,7 +256,7 @@ FunctionEnd</code></pre>
         <p>
             Usually it's a good thing to give the user to choice between these options. For
             users of the Modern UI version 2, a page is provided that asks the user for the
-            installation mode. To use this page, define MULTIUSER_MUI before including User.nsh.
+            installation mode. To use this page, define MULTIUSER_MUI before including MultiUser.nsh.
             Then, the MULTIUSER_PAGE_INSTALLMODE macro can be used just like a normal Modern
             UI page (this page will automatically be skipped when running Windows 95/98/Me):</p>
         <pre><code>!define MULTIUSER_EXECUTIONLEVEL Highest
@@ -382,5 +384,8 @@ FunctionEnd</code></pre>
                     </td>
             </tr>
         </table>
+
+    <h2><a name="examples"></a>Example</h2>
+    Basic: <a href="../../Examples/MultiUser.nsi">MultiUser.nsi</a><br />
 </body>
 </html>
