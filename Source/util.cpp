@@ -853,34 +853,30 @@ tstring get_executable_path(const TCHAR* argv0) {
   assert(rc == 0);
   return tstring(CtoTString(temp_buf));
 #else /* Linux/BSD/POSIX/etc */
-  const TCHAR *envpath = _tgetenv(_T("_"));
-  if (envpath)
-    return get_full_path(envpath);
-  else {
-    char *path = NULL, *pathtmp;
-    size_t len = 100;
-    int nchars;
-    while(1){
-      pathtmp = (char*)realloc(path,len+1);
-      if (pathtmp == NULL) {
-        free(path);
-        return get_full_path(argv0);
-      }
-      path = pathtmp;
-      nchars = readlink("/proc/self/exe", path, len);
-      if (nchars == -1) {
-        free(path);
-        return get_full_path(argv0);
-      }
-      if (nchars < (int) len) {
-        path[nchars] = '\0';
-        tstring result;
-        result = CtoTString(path);
-        free(path);
-        return result;
-      }
-      len *= 2;
+  char *path = NULL, *pathtmp;
+  size_t len = 100;
+  int nchars;
+  while(1){
+    pathtmp = (char*)realloc(path,len+1);
+    if (!pathtmp) {
+basic:
+      free(path);
+      // Note: Not using _tgetenv(_T("_")) here because it is not always set correctly. !makensis instruction in SVN r7372 will execute "/usr/bin/scons"!
+      return get_full_path(argv0);
     }
+    path = pathtmp;
+    nchars = readlink("/proc/self/exe", path, len);
+    if (nchars == -1) {
+      goto basic;
+    }
+    if (nchars < (int) len) {
+      path[nchars] = '\0';
+      tstring result;
+      result = CtoTString(path);
+      free(path);
+      return result;
+    }
+    len *= 2;
   }
 #endif
 }
