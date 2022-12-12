@@ -317,9 +317,9 @@ UINT64 MMapFile::setfile(const TCHAR*fpath)
   if (hFile)
   {
     if (!setfile(hFile, size)) size = 0;
-    // NOTE: mmap() requires the file to stay open for get(), otherwise
-    // get() will fail with errno code EBADFD (bad file descriptor).
-    //fclose(hFile);
+    // NOTE: mmap() requires the file descriptor to stay open for get(), 
+    // otherwise get() will fail with errno code EBADFD (bad file descriptor).
+    m_hFile = hFile, m_bTempHandle = TRUE;
   }
 #endif
   return size;

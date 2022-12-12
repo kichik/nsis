@@ -3333,7 +3333,7 @@ int CEXEBuild::uninstall_generate()
         ERROR_MSG(_T("Error: failed creating mmap of \"%") NPRIs _T("\"\n"), fpath);
         return PS_ERROR;
       }
-      if (add_db_data(&udata_in) < 0)
+      if (udata_size > NSIS_MAX_EXEFILESIZE || add_db_data(&udata_in) < 0)
         return PS_ERROR;
 
       assert(NSIS_MAX_EXEFILESIZE <= ~(UINT32)0);

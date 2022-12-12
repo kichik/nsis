@@ -5322,13 +5322,13 @@ int CEXEBuild::add_file(const tstring& dir, const tstring& file, int attrib, con
   MANAGE_WITH(hFile, fclose);
   const int fd = fileno(hFile);
 #endif
-  if (!mmap.setfile(hFile, filesize))
+  if (!mmap.setfile(hFile, filesize) && filesize)
   {
     ERROR_MSG(_T("%") NPRIs _T("File: failed creating mmap of \"%") NPRIs _T("\"\n"),generatecode?_T(""):_T("Reserve"),newfn);
     return PS_ERROR;
   }
   DWORD len = (DWORD) filesize;
-  if (len != filesize) len = 0xffffffffUL;
+  if (len != filesize) len = 0xffffffffUL - 1024; // truncate_cast but as large as possible
 
   if (generatecode&1)
     section_add_size_kb((len+1023)/1024);
