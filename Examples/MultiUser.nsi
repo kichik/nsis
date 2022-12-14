@@ -1,4 +1,5 @@
 Name "MultiUser example"
+OutFile "MultiUser.exe"
 
 !define UNINSTKEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)"
 !define MULTIUSER_INSTALLMODE_DEFAULT_REGISTRY_KEY "${UNINSTKEY}"
