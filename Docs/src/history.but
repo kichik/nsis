@@ -30,6 +30,8 @@ Released on ????, 20??
 
 \b Updated Brazilian Portuguese (\W{http://sf.net/p/nsis/bugs/1269}{bug #1269})
 
+\b Updated Ukrainian (\W{http://sf.net/p/nsis/patches/308}{patch #308})
+
 \S2{} Build System
 
 \b Fixed halibut \#{fprintf format security}compiler warnings (\W{http://sf.net/p/nsis/patches/304}{patch #304})
