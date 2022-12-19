@@ -622,12 +622,12 @@ static inline int makensismain(int argc, TCHAR **argv)
               return 1;
             }
           }
+          build.set_default_output_filename(remove_file_extension(get_full_path(nsifile))+_T(".exe"));
           if (do_cd)
           {
             if (change_to_script_dir(build, nsifile))
               return 1;
           }
-          build.set_default_output_filename(remove_file_extension(nsifile)+_T(".exe"));
         }
 
         build.notify(MakensisAPI::NOTIFY_SCRIPT,nsifile.c_str());
