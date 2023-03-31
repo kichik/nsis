@@ -393,7 +393,50 @@ run_again:
         char *p=buf+9; while (*p== ' ') p++;
         if (*p)
         {
-          connect(p);
+          char newurl[1024];
+
+          lstrcpyA(newurl, p);
+          if (my_strnicmp(newurl, "http://", 7))
+          {
+            char *q;
+
+            // generate full URL from original
+            lstrcpyA(newurl, m_http_url);
+
+            if (p[0] == '/')
+            {
+              // new location is an absolute path
+              q=&(newurl[7]);
+              while (*q != 0)
+              {
+                if (*q == '/')
+                {
+                  *q=0;
+                  break;
+                }
+                q++;
+              }
+            }
+            else
+            {
+              // new location is an relative path
+              q=&(newurl[lstrlenA(newurl) - 1]);
+              while (q >= newurl)
+              {
+                if (*q == '/')
+                {
+                  *q=0;
+                  break;
+                }
+                q--;
+              }
+
+              lstrcatA(newurl, "/");
+            }
+
+            lstrcatA(newurl, p);
+          }
+          connect(newurl);
           return 0;
         }
       }
