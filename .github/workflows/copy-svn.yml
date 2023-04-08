@@ -8,16 +8,16 @@ on:
   workflow_dispatch:
     inputs:
       force:
-        description: 'Force push (CAREFUL!)'     
+        description: 'Force push (CAREFUL!)'
         required: false
   schedule:
     - cron:  '4 10 * * *'
 
 jobs:
   copy:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Install git-svn
         run: sudo add-apt-repository ppa:git-core/ppa && sudo apt update && sudo apt install git-svn
@@ -37,14 +37,14 @@ jobs:
             git rm -rf --cached .
             git add .github/workflows/*
             git commit -m "Empty cache"
-            echo '::set-output name=cache-hit::false'
+            echo "cache-hit=false" >> $GITHUB_OUTPUT
           fi
           
           if [ -f svn2git-cache.tar.gz ]; then
             tar xzf svn2git-cache.tar.gz
-            echo '::set-output name=cache-hit::true'
+            echo "cache-hit=true" >> $GITHUB_OUTPUT
           else
-            echo '::set-output name=cache-hit::false'
+            echo "cache-hit=false" >> $GITHUB_OUTPUT
           fi
 
       - name: Initial SVN clone
@@ -79,14 +79,14 @@ jobs:
           git for-each-ref --format="%(refname:short) %(objectname)" refs/remotes/origin/tags \
           | while read BRANCH REF
             do
-                  TAG_NAME=`echo $BRANCH | cut -d / -f 3-`
-                  BODY="$(git log -1 --format=format:%B $REF)"
-                  echo "ref=$REF parent=$(git rev-parse $REF^) tagname=$TAG_NAME body=$BODY" >&2
-                  if [ $(git tag -l "$TAG_NAME") ]; then
-                    echo tag already exists
-                  else
-                    git tag -a -m "$BODY" $TAG_NAME $REF^
-                  fi
+              TAG_NAME=`echo $BRANCH | cut -d / -f 3-`
+              BODY="$(git log -1 --format=format:%B $REF)"
+              echo "ref=$REF parent=$(git rev-parse $REF^) tagname=$TAG_NAME body=$BODY" >&2
+              if [ $(git tag -l "$TAG_NAME") ]; then
+                echo tag already exists
+              else
+                git tag -a -m "$BODY" $TAG_NAME $REF^
+              fi
             done
 
       - name: Setup GitHub access

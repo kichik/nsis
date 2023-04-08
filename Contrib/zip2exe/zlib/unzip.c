@@ -297,7 +297,7 @@ local int strcmpcasenosensitive_internal (fileName1,fileName2)
 #endif
 
 /*
-   Compare two filename (fileName1,fileName2).
+   Compare two filenames (fileName1,fileName2).
    If iCaseSensitivity = 1, comparison is case sensitive (like strcmp)
    If iCaseSensitivity = 2, comparison is not case sensitive (like strcmpi
                                                                 or strcasecmp)

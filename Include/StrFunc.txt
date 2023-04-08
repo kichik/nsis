@@ -660,7 +660,7 @@ reduced.
 - Renamed header file to "StrFunc.nsh".
 - Added 1 function, StrLoc.
 - Modified StrStrAdv, removed some lines.
-- Fixed StrTok, 2 simple numbers made it loop everytime.
+- Fixed StrTok, 2 simple numbers made it loop every time.
 - Fixed some small issues on the header file.
 
 0.02 - 01/24/2004

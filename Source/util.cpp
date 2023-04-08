@@ -3,7 +3,7 @@
  * 
  * This file is a part of NSIS.
  * 
- * Copyright (C) 1999-2022 Nullsoft and Contributors
+ * Copyright (C) 1999-2023 Nullsoft and Contributors
  * 
  * Licensed under the zlib/libpng license (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,7 +61,6 @@ extern FILE *g_output, *g_errout;
 
 
 #ifdef _WIN32
-bool GetFileSize64(HANDLE hFile, ULARGE_INTEGER &uli);
 static char* CreateMappedFileView(LPCTSTR Path, DWORD FAccess, DWORD FShare, DWORD FMode, DWORD PProtect, DWORD MAccess, size_t &FSize)
 {
   char *pView = NULL, restoreGLE = false, validSize;
@@ -641,28 +640,24 @@ FILE* my_fopen(const TCHAR *path, const char *mode)
   return f;
 }
 
+#include <sys/types.h>
+#include <sys/stat.h>
 #if (defined(_MSC_VER) && (_MSC_VER >= 1200)) || defined(__MINGW32__)
 #include <io.h>
-static UINT64 get_file_size64(FILE *f)
+UINT64 get_file_size64(FILE *f)
 {
   INT64 s = _filelengthi64(_fileno(f)); // Could also use _get_osfhandle+GetFileSize64
   return (INT64) -1L != s ? s : invalid_file_size64;
 }
-#endif
-
-#include <sys/types.h>
-#include <sys/stat.h>
-UINT32 get_file_size32(FILE *f)
+#else
+UINT64 get_file_size64(FILE *f)
 {
-  UINT32 result = invalid_file_size32;
-#if (defined(_MSC_VER) && (_MSC_VER >= 1200)) || defined(__MINGW32__)
-  UINT64 size64 = get_file_size64(f);
-  if (invalid_file_size64 != size64 && size64 <= 0xffffffffUL)
-    result = (UINT32) size64;
-#elif _XOPEN_SOURCE >= 500 || _POSIX_C_SOURCE >= 200112L
+  UINT64 result = invalid_file_size64;
+  // 32bit plaforms require _FILE_OFFSET_BITS = 64 to correctly return the size
+#if _XOPEN_SOURCE >= 500 || _POSIX_C_SOURCE >= 200112L
   struct stat st;
-  if (0 == fstat(fileno(f), &st) && st.st_size <= (sizeof(st.st_size) >= 8 ? (off_t)0xffffffffUL : LONG_MAX))
-    result = (UINT32) st.st_size;
+  if (0 == fstat(fileno(f), &st) && st.st_size <= (sizeof(st.st_size) >= 8 ? (off_t)0x7fffffffffffffffLL : LONG_MAX))
+    result = (UINT64) st.st_size;
 #else
   long cb, restoreseek = true;
   fpos_t orgpos;
@@ -673,6 +668,41 @@ UINT32 get_file_size32(FILE *f)
           result = cb;
 #endif
   return result;
+}
+#endif
+
+UINT32 get_file_size32(FILE *f)
+{
+  UINT32 result = invalid_file_size32;
+#if _XOPEN_SOURCE >= 500 || _POSIX_C_SOURCE >= 200112L
+  struct stat st;
+  if (0 == fstat(fileno(f), &st) && st.st_size <= (sizeof(st.st_size) >= 8 ? (off_t)0xffffffffUL : LONG_MAX))
+    result = (UINT32) st.st_size;
+#else
+  UINT64 size64 = get_file_size64(f);
+  if (size64 <= 0xffffffffUL && invalid_file_size64 != size64)
+    result = (UINT32) size64;
+#endif
+  return result;
+}
+
+UINT64 Platform_GetMaxFileSize()
+{
+#ifdef _WIN32
+  return ~(UINT64)0;
+#elif _XOPEN_SOURCE >= 500 || _POSIX_C_SOURCE >= 200112L
+  struct stat st;
+  if (sizeof(st.st_size) >= 8)
+  {
+#ifdef LLONG_MAX
+    return (UINT64)(off_t)LLONG_MAX;
+#endif
+    const UINT64 sixthree = (~(UINT64)0) >> 1;
+    return (off_t)sixthree > 0 ? sixthree : (UINT32)(off_t)0xffffffffUL;
+  }
+  return (UINT64)(off_t)LONG_MAX;
+#endif
+  return (UINT)INT_MAX;
 }
 
 BYTE* alloc_and_read_file(FILE *f, unsigned long &size)
@@ -823,34 +853,30 @@ tstring get_executable_path(const TCHAR* argv0) {
   assert(rc == 0);
   return tstring(CtoTString(temp_buf));
 #else /* Linux/BSD/POSIX/etc */
-  const TCHAR *envpath = _tgetenv(_T("_"));
-  if (envpath)
-    return get_full_path(envpath);
-  else {
-    char *path = NULL, *pathtmp;
-    size_t len = 100;
-    int nchars;
-    while(1){
-      pathtmp = (char*)realloc(path,len+1);
-      if (pathtmp == NULL) {
-        free(path);
-        return get_full_path(argv0);
-      }
-      path = pathtmp;
-      nchars = readlink("/proc/self/exe", path, len);
-      if (nchars == -1) {
-        free(path);
-        return get_full_path(argv0);
-      }
-      if (nchars < (int) len) {
-        path[nchars] = '\0';
-        tstring result;
-        result = CtoTString(path);
-        free(path);
-        return result;
-      }
-      len *= 2;
+  char *path = NULL, *pathtmp;
+  size_t len = 100;
+  int nchars;
+  while(1){
+    pathtmp = (char*)realloc(path,len+1);
+    if (!pathtmp) {
+basic:
+      free(path);
+      // Note: Not using _tgetenv(_T("_")) here because it is not always set correctly. !makensis instruction in SVN r7372 will execute "/usr/bin/scons"!
+      return get_full_path(argv0);
     }
+    path = pathtmp;
+    nchars = readlink("/proc/self/exe", path, len);
+    if (nchars == -1) {
+      goto basic;
+    }
+    if (nchars < (int) len) {
+      path[nchars] = '\0';
+      tstring result;
+      result = CtoTString(path);
+      free(path);
+      return result;
+    }
+    len *= 2;
   }
 #endif
 }

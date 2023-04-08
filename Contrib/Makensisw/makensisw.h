@@ -18,7 +18,6 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 
-  Unicode support by Jim Park -- 08/10/2007
 */
 #ifndef MAKENSIS_H
 #define MAKENSIS_H

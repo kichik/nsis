@@ -3,7 +3,7 @@
  * 
  * This file is a part of NSIS.
  * 
- * Copyright (C) 1999-2022 Nullsoft and Contributors
+ * Copyright (C) 1999-2023 Nullsoft and Contributors
  * 
  * Licensed under the zlib/libpng license (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@
 #include "winchar.h" // assert(sizeof(WINWCHAR)...)
 
 #include <nsis-version.h>
-#define NSIS_COPYYEARS _T("1999-2022")
+#define NSIS_COPYYEARS _T("1999-2023")
 
 using namespace std;
 
@@ -622,12 +622,12 @@ static inline int makensismain(int argc, TCHAR **argv)
               return 1;
             }
           }
+          build.set_default_output_filename(remove_file_extension(get_full_path(nsifile))+_T(".exe"));
           if (do_cd)
           {
             if (change_to_script_dir(build, nsifile))
               return 1;
           }
-          build.set_default_output_filename(remove_file_extension(nsifile)+_T(".exe"));
         }
 
         build.notify(MakensisAPI::NOTIFY_SCRIPT,nsifile.c_str());

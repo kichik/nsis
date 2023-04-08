@@ -3,7 +3,7 @@
  * 
  * This file is a part of NSIS.
  * 
- * Copyright (C) 1999-2022 Nullsoft and Contributors
+ * Copyright (C) 1999-2023 Nullsoft and Contributors
  * 
  * Licensed under the zlib/libpng license (the "License");
  * you may not use this file except in compliance with the License.
@@ -800,8 +800,9 @@ TCHAR ps_tmpbuf[NSIS_MAX_STRLEN*2];
 const TCHAR SYSREGKEY[]   = _T("Software\\Microsoft\\Windows\\CurrentVersion");
 const TCHAR QUICKLAUNCH[] = _T("\\Microsoft\\Internet Explorer\\Quick Launch");
 
-typedef HRESULT (__stdcall * PFNSHGETFOLDERPATH)(HWND, int, HANDLE, DWORD, LPTSTR);
+typedef HRESULT (WINAPI* PFNSHGETFOLDERPATH)(HWND, int, HANDLE, DWORD, LPTSTR);
 extern void *g_SHGetFolderPath;
+typedef LPITEMIDLIST (WINAPI* PFNSHCLONESPECIALIDLIST)(HWND, int, BOOL);
 
 // Based on Dave Laundon's simplified process_string
 // The string actually has a lot of different data encoded into it.  This
@@ -903,16 +904,22 @@ TCHAR * NSISCALL GetNSISString(TCHAR *outbuf, int strtab)
 
         while (x--)
         {
+          PFNSHCLONESPECIALIDLIST SHCSILFunc;
+          int idandflags = fldrs[x] & ~0x40, create = idandflags & CSIDL_FLAG_CREATE;
+
           if (g_SHGetFolderPath && use_shfolder)
           {
             PFNSHGETFOLDERPATH SHGetFolderPathFunc = (PFNSHGETFOLDERPATH) g_SHGetFolderPath;
-            if (!SHGetFolderPathFunc(g_hwnd, fldrs[x], NULL, SHGFP_TYPE_CURRENT, out))
+            if (!SHGetFolderPathFunc(g_hwnd, idandflags, NULL, SHGFP_TYPE_CURRENT, out))
             {
               break;
             }
           }
-            
-          if (!SHGetSpecialFolderLocation(g_hwnd, fldrs[x], &idl))
+
+          // This function exists in 95 & NT4 but was undocumented back then so we have to import it by ordinal.
+          SHCSILFunc = (PFNSHCLONESPECIALIDLIST) myGetProcAddress(MGA_SHCloneSpecialIDList);
+          idl = SHCSILFunc(g_hwnd, LOBYTE(idandflags), create);
+          if (idl)
           {
             BOOL res = SHGetPathFromIDList(idl, out);
             CoTaskMemFree(idl);
@@ -1172,6 +1179,7 @@ struct MGA_FUNC MGA_FUNCS[] = {
   {"ADVAPI32", "InitiateShutdownW"},
   {"SHELL32", "SHGetKnownFolderPath"},
   {"SHELL32", (CHAR*) 680}, // IsUserAnAdmin
+  {"SHELL32", (CHAR*) 89}, // SHCloneSpecialIDList
 #ifndef _WIN64
   {"SHLWAPI", (CHAR*) 437}, // IsOS
 #endif
@@ -1191,6 +1199,7 @@ struct MGA_FUNC MGA_FUNCS[] = {
   {"ADVAPI32", "InitiateShutdownA"},
   {"SHELL32", "SHGetKnownFolderPath"},
   {"SHELL32", (CHAR*) 680}, // IsUserAnAdmin
+  {"SHELL32", (CHAR*) 89}, // SHCloneSpecialIDList
 #ifndef _WIN64
   {"SHLWAPI", (CHAR*) 437}, // IsOS
 #endif
