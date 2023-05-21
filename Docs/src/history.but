@@ -10,6 +10,10 @@ Released on ????, 20??
 
 \S1{v3.09-cl} Changelog
 
+\S2{} Major Changes
+
+\b Use isolated uninstaller directory for every instance
+
 \S2{} Minor Changes
 
 \b Added \R{assert}{!assert}

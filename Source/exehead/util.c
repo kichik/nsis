@@ -68,14 +68,10 @@ const UINT32 g_restrictedacl[] = {
 
 DWORD NSISCALL CreateRestrictedDirectory(LPCTSTR path)
 {
-  const SECURITY_INFORMATION si = OWNER_SECURITY_INFORMATION|GROUP_SECURITY_INFORMATION|DACL_SECURITY_INFORMATION|PROTECTED_DACL_SECURITY_INFORMATION;
   PSID admingrpsid = GetAdminGrpSid();
   SECURITY_DESCRIPTOR sd = { 1, 0, SE_DACL_PRESENT, admingrpsid, admingrpsid, NULL, GetAdminGrpAcl() };
   SECURITY_ATTRIBUTES sa = { sizeof(SECURITY_ATTRIBUTES), &sd, FALSE };
-  DWORD ec = CreateDirectory(path, &sa) ? ERROR_SUCCESS : GetLastError();
-  if (ERROR_ALREADY_EXISTS == ec)
-    ec = SetFileSecurity(path, si, &sd) ? ERROR_SUCCESS : GetLastError();
-  return ec;
+  return CreateDirectory(path, &sa) ? ERROR_SUCCESS : GetLastError();
 }
 DWORD NSISCALL CreateNormalDirectory(LPCTSTR path)
 {
