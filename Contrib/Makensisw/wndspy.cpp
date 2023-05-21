@@ -349,7 +349,7 @@ static INT_PTR CALLBACK SpyDlgProc(HWND hDlg, UINT Msg, WPARAM WParam, LPARAM LP
       if (GetAncestorRoot(pDD->hWndTarget) != hDlg)
       {
         SetWindowPos(pDD->hWndOutline, HWND_TOPMOST, r.left, r.top, r.right - r.left, r.bottom - r.top, SWP_HIDEWINDOW|SWP_NOCOPYBITS|SWP_NOACTIVATE|SWP_NOOWNERZORDER);
-        ShowWindow(pDD->hWndOutline, SW_SHOW); // To avoid a small Windows redraw bug, don't show the window until after it has the correct size
+        ShowWindow(pDD->hWndOutline, SW_SHOWNA); // To avoid a small Windows redraw bug, don't show the window until after it has the correct size
       }
       SetTimer(hDlg, TID_OUTLINE, 2 * 1000, NULL);
     }
