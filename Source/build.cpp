@@ -3462,6 +3462,24 @@ int CEXEBuild::parse_pragma(LineParser &line)
       int succ, num = line.gettoken_intx(4, &succ);SCRIPT_MSG(_T("%#x %d\n"),num,succ);
       return ((succ ? definedlist.set_si32(name, num) : definedlist.set(name, _T(""))), rvSucc);
     }
+    if (line.gettoken_enum(2, _T("dump\0")) == 0)
+    {
+      if (line.gettoken_enum(3, _T("defines\0")) == 0)
+      {
+        for (UINT i = 0, c = definedlist.getnum(); i < c; ++i)
+          SCRIPT_MSG(_T("%") NPRIs _T("=%") NPRIs _T("\n"), definedlist.getname(i), definedlist.getvalue(i));
+      }
+      else if (line.gettoken_enum(3, _T("macros\0")) == 0)
+      {
+        const TCHAR *mnam;
+        for (size_t i = 0; (mnam = GetMacro(i)) != 0; ++i)
+          SCRIPT_MSG(_T("%") NPRIs _T("\n"), mnam);
+      }
+      else
+      {
+        SCRIPT_MSG(_T("V=%d\n"), get_verbosity());
+      }
+    }
     return rvErr;
   }
 

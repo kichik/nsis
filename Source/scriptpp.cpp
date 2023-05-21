@@ -259,6 +259,21 @@ TCHAR* CEXEBuild::GetMacro(const TCHAR *macroname, TCHAR**macroend /*= 0*/)
   return 0;
 }
 
+TCHAR* CEXEBuild::GetMacro(size_t idx)
+{
+  TCHAR *t = (TCHAR*)m_macros.get(), *mbeg, *mbufbeg = t;
+  for (size_t i = 0, cbAll = m_macros.getlen(); t && *t; ++t)
+  {
+    if ((size_t)t - (size_t)mbufbeg >= cbAll) break;
+    if (i++ == idx) return t;
+    t += _tcslen(t) + 1; // advance over macro name
+    while (*t) t += _tcslen(t) + 1; // advance over parameters
+    t++; // Separator between parameters and data
+    while (*t) t += _tcslen(t) + 1; // advance over data
+  }
+  return 0;
+}
+
 int CEXEBuild::pp_macro(LineParser&line)
 {
   const TCHAR*const macroname = line.gettoken_str(1), *tokstr;
