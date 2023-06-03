@@ -261,7 +261,7 @@ TCHAR* CEXEBuild::GetMacro(const TCHAR *macroname, TCHAR**macroend /*= 0*/)
 
 TCHAR* CEXEBuild::GetMacro(size_t idx)
 {
-  TCHAR *t = (TCHAR*)m_macros.get(), *mbeg, *mbufbeg = t;
+  TCHAR *t = (TCHAR*)m_macros.get(), *mbufbeg = t;
   for (size_t i = 0, cbAll = m_macros.getlen(); t && *t; ++t)
   {
     if ((size_t)t - (size_t)mbufbeg >= cbAll) break;
@@ -890,7 +890,6 @@ int CEXEBuild::pp_define(LineParser&line)
   {
     line.eattoken();
     define = line.gettoken_str(1);
-    if (dupemode == 1 && definedlist.find(define)) return PS_OK;
   }
 
   if (!_tcsicmp(define, _T("/date")) || !_tcsicmp(define, _T("/utcdate")))
@@ -1024,6 +1023,7 @@ int CEXEBuild::pp_define(LineParser&line)
   if (dupemode == 2) definedlist.del(define);
   if (definedlist.add(define, value))
   {
+    if (dupemode == 1) return PS_OK;
     ERROR_MSG(_T("!define: \"%") NPRIs _T("\" already defined!\n"), define);
     return PS_ERROR;
   }
