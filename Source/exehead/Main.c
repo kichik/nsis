@@ -376,10 +376,10 @@ retry_un_dir:
 
         if (ec)
         {
-          // Delete previous uninstaller
-          if (DeleteFile(unexe))
+          // Delete previous uninstaller (if it is safe to do so)
+          if (!(GetFileAttributes(unexe) & FILE_ATTRIBUTE_REPARSE_POINT) && DeleteFile(unexe))
           {
-            myDelete(state_temp_dir, DEL_DIR|DEL_RECURSE);
+            myDelete(state_temp_dir, DEL_DIR);
             if (!retry++) goto retry_un_dir;
           }
         }
