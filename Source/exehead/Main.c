@@ -376,7 +376,7 @@ retry_un_dir:
 
         if (ec)
         {
-          // Delete previous uninstaller (if it is safe to do so)
+          // Delete previous uninstaller (if it is safe to do so) (Bug #1296)
           if (!(GetFileAttributes(unexe) & FILE_ATTRIBUTE_REPARSE_POINT) && DeleteFile(unexe))
           {
             myDelete(state_temp_dir, DEL_DIR);

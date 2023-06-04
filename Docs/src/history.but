@@ -12,7 +12,7 @@ Released on ????, 20??
 
 \S2{} Major Changes
 
-\b Use isolated uninstaller directory for every instance
+\b Use isolated uninstaller directory for every instance (\W{http://sf.net/p/nsis/bugs/1296}{bug #1296})
 
 \S2{} Minor Changes
 
