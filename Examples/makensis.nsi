@@ -580,7 +580,7 @@ ${MementoSection} "Splash" SecPluginsSplash
 
   SectionIn 1
 
-  !insertmacro InstallPlugin splash
+  !insertmacro InstallPlugin Splash
   SetOutPath $INSTDIR\Docs\Splash
   File ..\Docs\Splash\splash.txt
   SetOutPath $INSTDIR\Examples\Splash
@@ -595,7 +595,7 @@ ${MementoSection} "AdvSplash" SecPluginsSplashT
 
   SectionIn 1
 
-  !insertmacro InstallPlugin advsplash
+  !insertmacro InstallPlugin AdvSplash
   SetOutPath $INSTDIR\Docs\AdvSplash
   File ..\Docs\AdvSplash\advsplash.txt
   SetOutPath $INSTDIR\Examples\AdvSplash
@@ -687,7 +687,7 @@ ${MementoSection} "NSISdl" SecPluginsNSISDL
 
   SectionIn 1
 
-  !insertmacro InstallPlugin nsisdl
+  !insertmacro InstallPlugin NSISdl
   SetOutPath $INSTDIR\Docs\NSISdl
   File ..\Docs\NSISdl\ReadMe.txt
   File ..\Docs\NSISdl\License.txt
