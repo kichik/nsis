@@ -5,6 +5,10 @@ NSIS version 2.07 introduced a new build system, based on \W{http://www.scons.or
 \#{ MSVC6.SP5 direct link: http://web.archive.org/web/20060509123628/http://download.microsoft.com/download/vstudio60ent/SP5/Wideband-Full/WIN98Me/EN-US/vs6sp5.exe }
 The official release is built with MSVC6 \W{http://web.archive.org/web/20060509123628/http://msdn2.microsoft.com/en-us/vstudio/aa718363.aspx}{Service Pack 5} \W{http://dl.dropbox.com/u/20029891/vs6sp5.exe}{(Mirror)} with the \W{http://wayback.archive.org/web/20100923113933/http://msdn.microsoft.com/en-us/vstudio/aa718349.aspx}{Processor Pack} and the February 2003 Platform SDK (5.2.3790.0).
 
+For recent versions of Windows you may need to follow \W{https://www.codeproject.com/Articles/1191047/Install-Visual-Studio-on-Windows}{special instructions} to install VC6.
+
+For recent versions of SCons to work with VC6, use \c{scons TOOLSET=msvc,mssdk,mslink,mslib,masm} or you may get compile errors about \c{GetWindowLongPtr} or missing symbols in libraries.
+
 \H{build_general} Building in General
 
 Source code is available in \W{http://nsis.svn.sourceforge.net/viewvc/nsis/}{SVN} and as a separate package with every \W{http://sourceforge.net/project/showfiles.php?group_id=22049}{NSIS distribution}.
