@@ -73,6 +73,7 @@ from configparser import RawConfigParser
 import time
 import pysvn
 import requests
+import urllib.parse
 
 ### read config
 
@@ -439,13 +440,13 @@ def UpdateWiki():
 
 		import urllib
 
-		post =  'su_user=' + urllib.quote(USER)
-		post += '&su_password=' + urllib.quote(WIKI_PASSWORD)
-		post += '&su_title=' + urllib.quote(page)
-		post += '&su_data=' + urllib.quote(data)
-		post += '&su_summary=' + urllib.quote(summary)
+		post =  'su_user=' + urllib.parse.quote(USER)
+		post += '&su_password=' + urllib.parse.quote(WIKI_PASSWORD)
+		post += '&su_title=' + urllib.parse.quote(page)
+		post += '&su_data=' + urllib.parse.quote(data)
+		post += '&su_summary=' + urllib.parse.quote(summary)
 		
-		if urllib.urlopen(UPDATE_URL, post).read().strip() != 'success':
+		if requests.get(UPDATE_URL, post).text.strip() != 'success':
 			log('*** failed updating `%s` wiki page' % page)
 			print('	*** failed updating `%s` wiki page' % page)
 
