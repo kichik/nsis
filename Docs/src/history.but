@@ -2,17 +2,13 @@
 
 \H{v3.09} 3.09
 
-Released on ????, 20??
-
-\S1{v3.09-rl} Release Notes
-
-????
+Released on July 1st, 2023
 
 \S1{v3.09-cl} Changelog
 
 \S2{} Major Changes
 
-\b Use isolated uninstaller directory for every instance (\W{http://sf.net/p/nsis/bugs/1296}{bug #1296})
+\b Use isolated uninstaller directory for every instance (\W{http://sf.net/p/nsis/bugs/1296}{bug #1296}, thanks Richard Warren)
 
 \S2{} Minor Changes
 
@@ -20,7 +16,7 @@ Released on ????, 20??
 
 \b Fixed \cw{!uninstfinalize} bug on large uninstallers (\W{http://sf.net/p/nsis/bugs/1279}{bug #1279})
 
-\b Fixed creation of missing special folders on old Windows versions where SHGetFolderPath is not available.
+\b Fixed creation of missing special folders on old Windows versions where SHGetFolderPath is not available
 
 \b Fixed plug-in call overwriting \cw{SetDetailsPrint lastused} (\W{http://sf.net/p/nsis/bugs/1271}{bug #1271})
 
@@ -28,7 +24,7 @@ Released on ????, 20??
 
 \b Fixed LogicLib \cw{$\{Switch\}} Unicode bug\#{ stackoverflow.com/q/73530905/ }
 
-\b Fixed MakeNSISW editor zoom level bug (\W{http://sf.net/p/nsis/bugs/1282}{bug #1282})
+\b Fixed \L{../Docs/makensisw/Readme.txt}{MakeNSISW} editor zoom level bug (\W{http://sf.net/p/nsis/bugs/1282}{bug #1282})
 
 \S2{} Translations
 
@@ -220,7 +216,7 @@ Released on December 15th, 2018
 
 \b Added experimental WinVer "Windows as a Service" detection macros
 
-\b Added MakeNSISW window info "spy" tool
+\b Added \L{../Docs/makensisw/Readme.txt}{MakeNSISW} window info "spy" tool
 
 \S2{} Minor Changes
 
@@ -488,7 +484,7 @@ Released on December 26th, 2015
 
 \b Preprocessor now warns when invalid floating point numbers are used in math operations
 
-\b MakeNSISW now uses WinInet when checking for updates
+\b \L{../Docs/makensisw/Readme.txt}{MakeNSISW} now uses WinInet when checking for updates
 
 \S2{} Translations
 
@@ -654,7 +650,7 @@ It's the holiday gift you've been waiting for!
 
 \b Unicode stubs create WCHAR richedit controls (\W{http://sf.net/p/nsis/bugs/1080/}{bug #1080})
 
-\b Fixed MakeNSISW default pushbutton and tab order
+\b Fixed \L{../Docs/makensisw/Readme.txt}{MakeNSISW} default pushbutton and tab order
 
 \b Fixed incorrect page count in compiler statistics
 
@@ -676,7 +672,7 @@ Released on July 14th, 2013
 
 \S2{} Major Changes
 
-\b Default verbosity is /V3 without logo, MakeNSISW still uses /V4.
+\b Default verbosity is /V3 without logo, \L{../Docs/makensisw/Readme.txt}{MakeNSISW} still uses /V4.
 
 \b \R{amanifestsupportedos}{ManifestSupportedOS} added support for the Windows 8.1 GUID and it is set by default to avoid GetVersionEx compatibility behavior.
 
@@ -688,7 +684,7 @@ Released on July 14th, 2013
 
 \b Made installers always respect /S on command line, even when installer file can't be read (\W{https://sourceforge.net/p/nsis/bugs/1076/}{bug #1076})
 
-\b Minor MakeNSISW fixes and tweaks
+\b Minor \L{../Docs/makensisw/Readme.txt}{MakeNSISW} fixes and tweaks
 
 \b Added Zip2Exe Unicode checkbox
 
@@ -2422,7 +2418,7 @@ Released on December 17th, 2005
 
 \b Added drag & drop support for zip2exe
 
-\b Better drag & drop error handling in MakeNSISw
+\b Better drag & drop error handling in \L{../Docs/makensisw/Readme.txt}{MakeNSISW}
 
 \b Fixed Math plug-in array issues (\W{http://sourceforge.net/support/tracker.php?aid=1235875}{bug #1235875})
 
