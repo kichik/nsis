@@ -751,7 +751,7 @@ l_errwcconv:
   return PS_OK;
 }
 
-int CEXEBuild::process_oneline(const TCHAR *line, const TCHAR *filename, int linenum)
+int CEXEBuild::process_oneline(const TCHAR *line, const TCHAR *filename, int linenum, unsigned int plflags)
 {
   const TCHAR *last_filename = curfilename;
   int last_linecnt = linecnt;
@@ -762,13 +762,14 @@ int CEXEBuild::process_oneline(const TCHAR *line, const TCHAR *filename, int lin
 
 #ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
   TCHAR *oldfilename = NULL, *oldtimestamp = NULL, *oldline = NULL;
-  bool is_commandline = !_tcscmp(filename, get_commandlinecode_filename());
-  bool is_macro = !_tcsncmp(filename,_T("macro:"),6);
+  bool realfile = !(plflags & PLF_VIRTUALFILE);
+  bool is_macro = (plflags & PLF_MACRO);
+  bool setline = linenum != 0;
 
-  if (!is_commandline) { // Don't set the predefines for command line /X option
+  if (setline) {
     if (!is_macro) {
       oldfilename = set_file_predefine(curfilename);
-      oldtimestamp = set_timestamp_predefine(curfilename);
+      if (realfile) oldtimestamp = set_timestamp_predefine(curfilename);
     }
     oldline = set_line_predefine(linecnt, is_macro);
   }
@@ -779,10 +780,10 @@ int CEXEBuild::process_oneline(const TCHAR *line, const TCHAR *filename, int lin
   int ret = doParse((TCHAR*)linedata.get());
 
 #ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
-  if (!is_commandline) { // Don't set the predefines for command line /X option
+  if (setline) {
     if (!is_macro) {
       restore_file_predefine(oldfilename);
-      restore_timestamp_predefine(oldtimestamp);
+      if (realfile) restore_timestamp_predefine(oldtimestamp);
     }
     restore_line_predefine(oldline);
   }
@@ -891,6 +892,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return pp_delfile(line);
     case TOK_P_APPENDFILE:
     return pp_appendfile(line);
+    case TOK_P_APPENDMEMFILE:
+    return pp_appendmemfile(line);
     case TOK_P_GETDLLVERSION:
     case TOK_P_GETTLBVERSION:
     return pp_getversion(which_token, line);

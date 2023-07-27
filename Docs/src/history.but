@@ -1,5 +1,15 @@
 \A{history} Changelog and Release Notes
 
+\H{v3.10} 3.10
+
+Released on ???? ???, ????
+
+\S1{v3.10-cl} Changelog
+
+\S2{} Minor Changes
+
+\b Fixed LogicLib SafePPO bug (\W{http://sf.net/p/nsis/bugs/1291}{bug #1291})
+
 \H{v3.09} 3.09
 
 Released on July 1st, 2023

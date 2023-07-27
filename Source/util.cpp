@@ -640,6 +640,47 @@ FILE* my_fopen(const TCHAR *path, const char *mode)
   return f;
 }
 
+static inline const TCHAR* getptrstrfmt()
+{
+#ifdef _WIN32
+  return sizeof(void*) > 4 ? _T("%I64u") : _T("%u");
+#else
+  assert(sizeof(void*) <= sizeof(unsigned long long));
+  return sizeof(void*) > sizeof(unsigned long) ? _T("%llu") : _T("%lu");
+#endif
+}
+
+int ptrtostr(const void* Src, TCHAR*Dst)
+{
+  return wsprintf(Dst, getptrstrfmt(), Src);
+}
+
+void* strtoptr(const TCHAR*Src)
+{
+#ifdef _WIN32
+  void*v;
+  return _stscanf(Src, getptrstrfmt(), &v) == 1 ? v : 0;
+#else
+#ifdef _UNICODE
+  char buf[42];
+  size_t cb = wcsrtombs(buf, &Src, sizeof(buf), 0);
+  if (cb >= sizeof(buf)) return 0;
+#else
+  const char* buf = Src;
+#endif
+  if (sizeof(void*) > sizeof(unsigned long))
+  {
+    unsigned long long v;
+    return sscanf(buf, getptrstrfmt(), &v) == 1 ? (void*) v : 0;
+  }
+  else
+  {
+    unsigned long v;
+    return sscanf(buf, getptrstrfmt(), &v) == 1 ? (void*) v : 0;
+  }
+#endif
+}
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #if (defined(_MSC_VER) && (_MSC_VER >= 1200)) || defined(__MINGW32__)
