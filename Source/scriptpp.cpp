@@ -1331,7 +1331,7 @@ int CEXEBuild::pp_include(LineParser&line)
 
   const TCHAR *fc = my_convert(f);
   tstring dir = get_dir_name(fc), spec = get_file_name(fc), basedir = dir;
-  my_convert_free(fc);
+  my_convert_free(const_cast<TCHAR*>(fc));
   path_append_separator(basedir);
   if (dir == spec) basedir = _T(""), dir = _T("."); // no path, just file name
 
