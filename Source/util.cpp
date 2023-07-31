@@ -640,7 +640,7 @@ FILE* my_fopen(const TCHAR *path, const char *mode)
   return f;
 }
 
-static inline const TCHAR* getptrstrfmt()
+static inline const TCHAR* getptrstrfmt_tstr()
 {
 #ifdef _WIN32
   return sizeof(void*) > 4 ? _T("%I64u") : _T("%u");
@@ -650,16 +650,26 @@ static inline const TCHAR* getptrstrfmt()
 #endif
 }
 
+static inline const char* getptrstrfmt_cstr()
+{
+#ifdef _WIN32
+  return sizeof(void*) > 4 ? "%I64u" : "%u";
+#else
+  assert(sizeof(void*) <= sizeof(unsigned long long));
+  return sizeof(void*) > sizeof(unsigned long) ? "%llu" : "%lu";
+#endif
+}
+
 int ptrtostr(const void* Src, TCHAR*Dst)
 {
-  return wsprintf(Dst, getptrstrfmt(), Src);
+  return wsprintf(Dst, getptrstrfmt_tstr(), Src);
 }
 
 void* strtoptr(const TCHAR*Src)
 {
 #ifdef _WIN32
   void*v;
-  return _stscanf(Src, getptrstrfmt(), &v) == 1 ? v : 0;
+  return _stscanf(Src, getptrstrfmt_tstr(), &v) == 1 ? v : 0;
 #else
 #ifdef _UNICODE
   char buf[42];
@@ -671,12 +681,12 @@ void* strtoptr(const TCHAR*Src)
   if (sizeof(void*) > sizeof(unsigned long))
   {
     unsigned long long v;
-    return sscanf(buf, getptrstrfmt(), &v) == 1 ? (void*) v : 0;
+    return sscanf(buf, getptrstrfmt_cstr(), &v) == 1 ? (void*) v : 0;
   }
   else
   {
     unsigned long v;
-    return sscanf(buf, getptrstrfmt(), &v) == 1 ? (void*) v : 0;
+    return sscanf(buf, getptrstrfmt_cstr(), &v) == 1 ? (void*) v : 0;
   }
 #endif
 }
