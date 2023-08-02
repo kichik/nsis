@@ -10,6 +10,8 @@ Released on ???? ???, ????
 
 \b Fixed LogicLib SafePPO bug (\W{http://sf.net/p/nsis/bugs/1291}{bug #1291})
 
+\b NSISdl now supports relative URLs in location redirects (belphegor-belbel PR)
+
 \H{v3.09} 3.09
 
 Released on July 1st, 2023
