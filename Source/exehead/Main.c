@@ -348,60 +348,69 @@ EXTERN_C void NSISWinMainNOCRT()
     }
     else
     {
-      int x, admin = UserIsAdminGrpMember();
-
-      mystrcat(state_temp_dir,_T("~nsu"));
-      if (admin) mystrcat(state_temp_dir,_T("A")); // Don't lock down the directory used by non-admins
-      mystrcat(state_temp_dir,_T(".tmp"));
-
-      // check if already running from uninstaller temp dir
-      // this prevents recursive uninstaller calls
-      if (!lstrcmpi(state_temp_dir,state_exe_directory))
-        goto end;
-
-      admin ? CreateRestrictedDirectory(state_temp_dir) : CreateNormalDirectory(state_temp_dir);
-      SetCurrentDirectory(state_temp_dir);
-
-      if (!(*state_install_directory))
-        mystrcpy(state_install_directory,state_exe_directory);
+      int admin = UserIsAdminGrpMember();
+      WORD tries; // 0xfffe attempts or bust
+      size_t cchtmpslash = mystrlen(state_temp_dir);
+      LPTSTR unexe = g_usrvars[5], unexecmd = g_usrvars[6];
 
       mystrcpy(g_usrvars[0], realcmds);
-      SET2CHAR(g_usrvars[1], _T("A\0"));
-
-      for (x = 0; x < 26; x ++)
+      if (!(*state_install_directory))
       {
-        static TCHAR buf2[NSIS_MAX_STRLEN];
+        mystrcpy(state_install_directory, state_exe_directory);
+      }
 
-        GetNSISString(buf2,g_header->str_uninstchild); // $TEMP\Un_$1.exe
-
-        DeleteFile(buf2); // clean up after all the other ones if they are there
-
-        if (m_Err) // not done yet
+      for (tries = 0; ++tries != 0;)
+      {
+        DWORD retry = 0, ec;
+retry_un_dir:
+        wsprintf(state_temp_dir + cchtmpslash, _T("~nsu%X.tmp"), tries);
+        GetNSISString(unexe, g_header->str_uninstchild); // '$TEMP\Un.exe'
+        if (admin)
         {
-          // copy file
-          if (CopyFile(state_exe_path,buf2,TRUE))
+          ec = CreateRestrictedDirectory(state_temp_dir);
+        }
+        else
+        {
+          ec = CreateNormalDirectory(state_temp_dir);
+        }
+
+        if (ec)
+        {
+          // Delete previous uninstaller (if it is safe to do so) (Bug #1296)
+          if (!(GetFileAttributes(unexe) & FILE_ATTRIBUTE_REPARSE_POINT) && DeleteFile(unexe))
           {
-            HANDLE hProc;
+            myDelete(state_temp_dir, DEL_DIR);
+            if (!retry++) goto retry_un_dir;
+          }
+        }
+        else
+        {
+          HANDLE hProc;
+          SetCurrentDirectory(state_temp_dir);
 #ifdef NSIS_SUPPORT_MOVEONREBOOT
-            MoveFileOnReboot(buf2,NULL);
+          MoveFileOnReboot(state_temp_dir, NULL);
 #endif
-            GetNSISString(buf2,g_header->str_uninstcmd); // '"$TEMP\Un_$1.exe" $0 _?=$INSTDIR\'
-            hProc=myCreateProcess(buf2);
+          if (CopyFile(state_exe_path, unexe, TRUE))
+          {
+#ifdef NSIS_SUPPORT_MOVEONREBOOT
+            MoveFileOnReboot(unexe, NULL);
+#endif
+            GetNSISString(unexecmd, g_header->str_uninstcmd); // '"$TEMP\Un.exe" $0 _?=$INSTDIR\'
+            hProc = myCreateProcess(unexecmd);
             if (hProc)
             {
               CloseHandle(hProc);
-              // success
-              m_Err = 0;
+              m_Err = 0; // Success
+            }
+            else if (!retry++ && !file_exists(unexe))
+            {
+              // Another instance deleted us between CopyFile and CreateProcess
+              goto retry_un_dir;
             }
           }
+          break; // We called CreateProcess; success or failure, we are done.
         }
-        (*(((NSIS_STRING *)g_usrvars)[1]))++;
       }
-
-#ifdef NSIS_SUPPORT_MOVEONREBOOT
-      MoveFileOnReboot(state_temp_dir,NULL);
-#endif
-
       goto end;
     }
   }

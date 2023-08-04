@@ -307,6 +307,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_P_TEMPFILE,_T("!tempfile"),1,0,_T("symbol"),TP_ALL},
 {TOK_P_DELFILE,_T("!delfile"),1,1,_T("[/nonfatal] file"),TP_ALL},
 {TOK_P_APPENDFILE,_T("!appendfile"),2,2,_T("[/CHARSET=<") TSTR_OUTPUTCHARSET _T(">] [/RAWNL] file appended_line"),TP_ALL},
+{TOK_P_APPENDMEMFILE,_T("!appendmemfile"),1,1,_T("memfile [append]"),TP_ALL},
 {TOK_P_GETDLLVERSION,_T("!getdllversion"),2,3,_T("[/noerrors] [/packed] [/productversion] localfilename define_basename"),TP_ALL},
 {TOK_P_GETTLBVERSION,_T("!gettlbversion"),2,2,_T("[/noerrors] [/packed] localfilename define_basename"),TP_ALL},
 

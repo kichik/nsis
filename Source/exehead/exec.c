@@ -271,7 +271,14 @@ static int NSISCALL ExecuteEntry(entry *entry_)
   //var4 = g_usrvars[parm4];
   //var5 = g_usrvars[parm5];
 
+#if __GNUC__ >= 12
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdangling-pointer"
+#endif
   g_parms = lent.offsets;
+#if __GNUC__ >= 12
+#pragma GCC diagnostic pop
+#endif
 
   switch (which)
   {

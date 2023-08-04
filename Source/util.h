@@ -329,6 +329,10 @@ bool GetFileSize64(HANDLE hFile, ULARGE_INTEGER &uli);
 FILE* my_fopen(const TCHAR *path, const char *mode);
 #define FOPEN(a, b) my_fopen((a), (b))
 
+int ptrtostr(const void* Src, TCHAR*Dst);
+void* strtoptr(const TCHAR*Src);
+template<class T> T strtoptr(const TCHAR*Src, T&Dst) { return Dst = (T) strtoptr(Src); }
+
 UINT64 Platform_GetMaxFileSize();
 const UINT32 invalid_file_size32 = ~ (UINT32) 0;
 UINT32 get_file_size32(FILE *f);

@@ -124,6 +124,13 @@ if msvs_version >= 7.0:
     defenv['MSVCRT_NEEDSMANIFEST'] = result
 conf.Finish()
 
+# SCons 3.0.5 started including /nologo for rc.exe but it's not always supported
+
+confenv = defenv.Clone()
+conf = confenv.Configure()
+if not conf.TryAction('$RCCOM', '', '.rc')[0]:
+    defenv['RCFLAGS'] = ''
+conf.Finish()
 
 ### unicode
 tdefenv = defenv.Clone()

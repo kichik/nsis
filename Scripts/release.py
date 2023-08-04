@@ -4,6 +4,7 @@ requires grep and diff - http://www.mingw.org/msys.shtml
 requires command line svn - http://subversion.tigris.org/
 requires pysvn - http://pysvn.tigris.org/
 requires win32com - http://starship.python.net/~skippy/win32/Downloads.html
+requires requests - https://requests.readthedocs.io/en/latest/
 
 example release.cfg:
 =========================
@@ -41,6 +42,7 @@ SVN2CL_XSL=svn2cl.xsl
 
 [options]
 SKIP_CPPUNIT=no
+SCONS_ARGS="TOOLSET=msvc,mssdk,mslink,mslib,masm"
 =========================
 
 7zatarbz2.bat:
@@ -66,18 +68,20 @@ import os.path
 import shutil
 import sys
 import time
-import Image, ImageFont, ImageDraw
-from ConfigParser import ConfigParser
+from PIL import Image, ImageFont, ImageDraw
+from configparser import RawConfigParser
 import time
 import pysvn
+import requests
+import urllib.parse
 
 ### read config
 
 if not os.path.isfile('release.cfg'):
-    print 'Unable to find release.cfg. Is this the right working directory?'
+    print('Unable to find release.cfg. Is this the right working directory?')
     sys.exit(1)
 
-cfg = ConfigParser()
+cfg = RawConfigParser()
 cfg.read('release.cfg')
 
 USER = cfg.get('auth', 'USER')
@@ -108,13 +112,15 @@ SVN2CL_XSL = cfg.get('svn2cl', 'SVN2CL_XSL')
 
 SKIP_CPPUINT = cfg.get('options', 'SKIP_CPPUNIT')
 
+SCONS_ARGS = cfg.get('options', 'SCONS_ARGS')
+
 ### config env
 
 SVN_TAG = 'v' + ''.join(VERSION.split('.'))
 
 newverdir = 'nsis-%s-src' % VERSION
-scons_line = 'scons -C %s VERSION=%s VER_MAJOR=%s VER_MINOR=%s VER_REVISION=%s VER_BUILD=%s ' \
-						 % (newverdir, VERSION, VER_MAJOR, VER_MINOR, VER_REVISION, VER_BUILD)
+scons_line = 'scons %s -C %s VERSION=%s VER_MAJOR=%s VER_MINOR=%s VER_REVISION=%s VER_BUILD=%s ' \
+						 % (SCONS_ARGS, newverdir, VERSION, VER_MAJOR, VER_MINOR, VER_REVISION, VER_BUILD)
 
 ### utility functions
 
@@ -150,13 +156,13 @@ def run(command, log_level, err, wanted_ret = 0, log_dir = '.'):
 	time.sleep(5)
 
 	if ret != wanted_ret:
-		print '*** ' + err
+		print('*** ' + err)
 		log('*** ' + err, log_dir)
 		exit(log_dir)
 
 def confirm(question):
-	print question
-	if raw_input() != 'y':
+	print(question)
+	if input() != 'y':
 		sys.exit(2)
 
 ### process functions
@@ -175,16 +181,16 @@ def DeleteOldFolders():
             shutil.rmtree(d)
 
 def RunTests():
-	print 'running tests...'
+	print('running tests...')
 
 	run(
-		'scons -C .. %s' % (SKIP_CPPUINT == 'yes' and 'test-scripts' or 'test'),
+		'scons %s -C .. %s' % (SCONS_ARGS, SKIP_CPPUINT == 'yes' and 'test-scripts' or 'test'),
 		LOG_ALL,
 		'tests failed - see test.log for details'
 	)
 
 def TestSubversionEOL():
-	print 'ensuring EOL...'
+	print('ensuring EOL...')
 
 	from os import walk
 	from os.path import join
@@ -203,37 +209,39 @@ def TestSubversionEOL():
 
 	svn = pysvn.Client()
 
+	bad_eol = False
 	for root, dirs, files in walk('..'):
 		def versioned(f):
 			try:
 				s = svn.status(join(root, f))[0].text_status
-			except pysvn.ClientError, e:
-				if 'not a working copy' in e.message:
+			except pysvn.ClientError as e:
+				if 'not a working copy' in e.args[0]:
 					return False
-				else:
-					raise
+				if 'was not found' in e.args[0]:
+					return False
+				raise
 			return s != pysvn.wc_status_kind.unversioned
 
 		svn_files = filter(versioned, files)
 		svn_files = filter(lambda x: x not in exceptions, svn_files)
 
-		bad_eol = False
 		for f in svn_files:
 			ext = splitext(f)[1]
 			if ext in eoldict.keys():
 				eol = eoldict[ext]
 				path = join(root, f)
-				s = svn.propget('svn:eol-style', path).values()
+				s = list(svn.propget('svn:eol-style', path).values())
 				if not s or s[0] != eol:
-					print '*** %s has bad eol-style' % path
-					log('*** %s has bad eol-style' % path)
+					error = f'*** {path} has bad eol-style (expected "{eol}", got "{s}")'
+					print(error)
+					log(error)
 					bad_eol = True
 					
-		if bad_eol:
-			exit()
+	if bad_eol:
+		exit()
 
 def CreateMenuImage():
-	print 'creating images...'
+	print('creating images...')
 
 	## create new header.gif for menu
 
@@ -257,7 +265,7 @@ def CreateMenuImage():
 	im.save(r'..\Menu\images\header.gif')
 
 def CommitMenuImage():
-	print 'committing header.gif...'
+	print('committing header.gif...')
 
 	run(
 		'%s commit -m %s ..\\Menu\\images\\header.gif' % (SVN, VERSION),
@@ -266,12 +274,12 @@ def CommitMenuImage():
 	)
 
 def TestInstaller():
-	print 'testing installer...'
+	print('testing installer...')
 
 	os.mkdir('insttestscons')
 
 	run(
-		'scons -C .. VERSION=test PREFIX=%s\\insttestscons install dist-installer' % os.getcwd(),
+		'scons %s -C .. VERSION=test PREFIX=%s\\insttestscons install dist-installer' % (SCONS_ARGS, os.getcwd()),
 		LOG_ALL,
 		'installer creation failed'
 	)
@@ -290,7 +298,7 @@ def TestInstaller():
 	)
 
 def Tag():
-	print 'tagging...'
+	print('tagging...')
 
 	run(
 		'%s copy %s/trunk %s/tags/%s -m "Tagging for release %s"' % (SVN, SVNROOT, SVNROOT, SVN_TAG, VERSION),
@@ -299,7 +307,7 @@ def Tag():
 	)
 
 def Export():
-	print 'exporting a fresh copy...'
+	print('exporting a fresh copy...')
 
 	run(
 		'%s export %s/tags/%s %s' % (SVN, SVNROOT, SVN_TAG, newverdir),
@@ -312,16 +320,15 @@ def CreateChangeLog():
 	import codecs
 
 	if not os.path.isfile(SVN2CL_XSL):
+		print('downloading svn2cl.xsl stylesheet...')
+		r = requests.get('http://svn.apache.org/repos/asf/subversion/trunk/contrib/client-side/svn2cl/svn2cl.xsl')
+		r.raise_for_status()
+		with open(SVN2CL_XSL, 'w') as f:
+			f.write(r.text)
 
-		import urllib
+	print('generating ChangeLog...')
 
-		print 'downloading svn2cl.xsl stylesheet...'
-
-		urllib.urlretrieve('http://svn.apache.org/repos/asf/subversion/trunk/contrib/client-side/svn2cl/svn2cl.xsl', SVN2CL_XSL)
-
-	print 'generating ChangeLog...'
-
-	changelog = os.path.join(newverdir,'ChangeLog')
+	changelog = os.path.join(newverdir, 'ChangeLog')
 
 	# generate changelog xml
 	run(
@@ -332,14 +339,14 @@ def CreateChangeLog():
 
 	# load changelog xml
 	xmlo = win32com.client.Dispatch('Microsoft.XMLDOM')
-	xmlo.loadXML(file(changelog).read())
+	xmlo.loadXML(open(changelog).read())
 	xmlo.preserveWhiteSpace = True
 
 	# load xsl
 	xslo = win32com.client.Dispatch('Microsoft.XMLDOM')
 	xslo.validateOnParse = False
 	xslo.preserveWhiteSpace = True
-	xslo.loadXML(file(SVN2CL_XSL).read())
+	xslo.loadXML(open(SVN2CL_XSL).read())
 
 	# set strip-prefix to ''
 	for a in xslo.selectNodes("/xsl:stylesheet/xsl:param[@name = 'strip-prefix']")[0].attributes:
@@ -351,7 +358,7 @@ def CreateChangeLog():
 	codecs.open(changelog, 'w', 'utf-8').write(transformed)
 
 def CreateSourceTarball():
-	print 'creating source tarball...'
+	print('creating source tarball...')
 
 	run(
 		TAR_BZ2 % (newverdir + '.tar.bz2', newverdir),
@@ -360,7 +367,7 @@ def CreateSourceTarball():
 	)
 
 def BuildRelease():
-	print 'creating distribution files...'
+	print('creating distribution files...')
 
 	run(
 		scons_line + 'dist',
@@ -370,7 +377,7 @@ def BuildRelease():
 
 def CreateSpecialBuilds():
 	def create_special_build(name, option):
-		print 'creating %s special build...' % name
+		print('creating %s special build...' % name)
 
 		os.mkdir(name)
 
@@ -393,13 +400,13 @@ def CreateSpecialBuilds():
 	create_special_build('log', 'NSIS_CONFIG_LOG=yes')
 
 def UploadFiles():
-	print 'uploading files to SourceForge...'
+	print('uploading files to SourceForge...')
 
 	folder = 'NSIS 3/' + VERSION
 	if PRE_RELEASE_VERSION:
 		folder = 'NSIS 3 Pre-release/' + VERSION
 
-	sftpcmds = file('sftp-commands', 'w')
+	sftpcmds = open('sftp-commands', 'w')
 	sftpcmds.write('mkdir "/home/frs/project/nsis/%s"\n' % folder)
 	sftpcmds.write('cd "/home/frs/project/nsis/%s"\n' % folder)
 	sftpcmds.write('put %s.tar.bz2\n' % newverdir)
@@ -419,29 +426,29 @@ def UploadFiles():
 	os.unlink('sftp-commands')
 
 def ManualRelease():
-	print 'go fix release notes...'
-	print '  http://nsis.sf.net/rn/new'
-	print
+	print('go fix release notes...')
+	print('  http://nsis.sf.net/rn/new')
+	print()
 
-	raw_input()
+	input()
 
 def UpdateWiki():
-	print 'updating wiki...'
+	print('updating wiki...')
 
 	def update_wiki_page(page, data, summary):
-		print '  updating `%s` to `%s`' % (page, data)
+		print('  updating `%s` to `%s`' % (page, data))
 
 		import urllib
 
-		post =  'su_user=' + urllib.quote(USER)
-		post += '&su_password=' + urllib.quote(WIKI_PASSWORD)
-		post += '&su_title=' + urllib.quote(page)
-		post += '&su_data=' + urllib.quote(data)
-		post += '&su_summary=' + urllib.quote(summary)
+		post =  'su_user=' + urllib.parse.quote(USER)
+		post += '&su_password=' + urllib.parse.quote(WIKI_PASSWORD)
+		post += '&su_title=' + urllib.parse.quote(page)
+		post += '&su_data=' + urllib.parse.quote(data)
+		post += '&su_summary=' + urllib.parse.quote(summary)
 		
-		if urllib.urlopen(UPDATE_URL, post).read().strip() != 'success':
+		if requests.get(UPDATE_URL, post).text.strip() != 'success':
 			log('*** failed updating `%s` wiki page' % page)
-			print '	*** failed updating `%s` wiki page' % page
+			print('	*** failed updating `%s` wiki page' % page)
 
 	if not PRE_RELEASE_VERSION:
 		update_wiki_page('Template:NSISVersion', VERSION, 'new version')
@@ -455,15 +462,15 @@ def UpdateWiki():
 	os.system('start ' + PURGE_URL % 'Download')
 
 def ToDo():
-	print 'automatic phase done\n'
-	print """
+	print('automatic phase done\n')
+	print("""
  * Make new release files the default download
  * Edit update.php
  * Post news item
  * http://en.wikipedia.org/w/index.php?title=Nullsoft_Scriptable_Install_System&action=edit
  * Update Freshmeat
  * Update BetaNews
-	"""
+	""")
 
 def CloseLog():
 	log('done')

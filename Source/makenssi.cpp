@@ -550,7 +550,7 @@ static inline int makensismain(int argc, TCHAR **argv)
       }
       else if (S7IsChEqualI('x',swname[0]) && swname[1])
       {
-        if (build.process_oneline(swname+1,build.get_commandlinecode_filename(),argpos+1) != PS_OK)
+        if (build.process_oneline(swname+1,build.get_commandlinecode_filename(),argpos+1,build.PLF_VIRTUALFILE) != PS_OK)
         {
           return 1;
         }

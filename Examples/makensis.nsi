@@ -71,7 +71,8 @@ Caption "NSIS ${VERSION}${NAMESUFFIX} Setup"
 !define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\nsis3-uninstall.ico"
 
 !define MUI_HEADERIMAGE
-!define MUI_HEADERIMAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Header\nsis3-branding.bmp"
+!define MUI_HEADERIMAGE_RIGHT
+!define MUI_HEADERIMAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Header\nsis3-branding-r.bmp"
 !define MUI_WELCOMEFINISHPAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Wizard\nsis3-branding.bmp"
 
 !define MUI_COMPONENTSPAGE_SMALLDESC
@@ -579,7 +580,7 @@ ${MementoSection} "Splash" SecPluginsSplash
 
   SectionIn 1
 
-  !insertmacro InstallPlugin splash
+  !insertmacro InstallPlugin Splash
   SetOutPath $INSTDIR\Docs\Splash
   File ..\Docs\Splash\splash.txt
   SetOutPath $INSTDIR\Examples\Splash
@@ -594,7 +595,7 @@ ${MementoSection} "AdvSplash" SecPluginsSplashT
 
   SectionIn 1
 
-  !insertmacro InstallPlugin advsplash
+  !insertmacro InstallPlugin AdvSplash
   SetOutPath $INSTDIR\Docs\AdvSplash
   File ..\Docs\AdvSplash\advsplash.txt
   SetOutPath $INSTDIR\Examples\AdvSplash
@@ -686,7 +687,7 @@ ${MementoSection} "NSISdl" SecPluginsNSISDL
 
   SectionIn 1
 
-  !insertmacro InstallPlugin nsisdl
+  !insertmacro InstallPlugin NSISdl
   SetOutPath $INSTDIR\Docs\NSISdl
   File ..\Docs\NSISdl\ReadMe.txt
   File ..\Docs\NSISdl\License.txt

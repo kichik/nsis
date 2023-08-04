@@ -96,7 +96,7 @@ TCHAR *CEXEBuild::set_file_predefine(const TCHAR *filename)
   TCHAR dir[260]; // BUGBUG: MAX_PATH outside #ifdef _WIN32, should be PATH/NAME_MAX on POSIX?
 #ifdef _WIN32
   LPTSTR lpFilePart;
-  GetFullPathName(filename, COUNTOF(dir), dir, &lpFilePart);
+  if (!GetFullPathName(filename, COUNTOF(dir), dir, &lpFilePart)) *dir = _T('\0');
   PathRemoveFileSpec(dir);
 #else
   if (p == filename)
@@ -259,6 +259,21 @@ TCHAR* CEXEBuild::GetMacro(const TCHAR *macroname, TCHAR**macroend /*= 0*/)
   return 0;
 }
 
+TCHAR* CEXEBuild::GetMacro(size_t idx)
+{
+  TCHAR *t = (TCHAR*)m_macros.get(), *mbufbeg = t;
+  for (size_t i = 0, cbAll = m_macros.getlen(); t && *t; ++t)
+  {
+    if ((size_t)t - (size_t)mbufbeg >= cbAll) break;
+    if (i++ == idx) return t;
+    t += _tcslen(t) + 1; // advance over macro name
+    while (*t) t += _tcslen(t) + 1; // advance over parameters
+    t++; // Separator between parameters and data
+    while (*t) t += _tcslen(t) + 1; // advance over data
+  }
+  return 0;
+}
+
 int CEXEBuild::pp_macro(LineParser&line)
 {
   const TCHAR*const macroname = line.gettoken_str(1), *tokstr;
@@ -412,7 +427,7 @@ int CEXEBuild::pp_insertmacro(LineParser&line)
     lp++;
     if (_tcscmp(t, _T(" ")))
     {
-      int ret = process_oneline(t, str, lp);
+      int ret = process_oneline(t, str, lp, PLF_MACRO);
       if (ret != PS_OK)
       {
         ERROR_MSG(_T("Error in macro %") NPRIs _T(" on macroline %d\n"), macroname, lp);
@@ -561,6 +576,52 @@ int CEXEBuild::pp_appendfile(LineParser&line)
     return PS_ERROR;
   }
   SCRIPT_MSG(_T("!appendfile: \"%") NPRIs _T("\" \"%") NPRIs _T("\"\n"), param, text);
+  return PS_OK;
+}
+
+
+static TinyGrowBuf* getmemfileinfo(CEXEBuild&bld, const TCHAR *id, const TCHAR **start = 0, const TCHAR **end = 0)
+{
+  id = bld.definedlist.find(id);
+  if (!id || id[0] != _T('~') || id[1] != _T('M')) return 0;
+  TinyGrowBuf *buf;
+  if (strtoptr(id + 2, buf) && start)
+  {
+    *start = (TCHAR*) buf->get();
+    *end = *start + (buf->getlen() / sizeof(TCHAR));
+  }
+  return buf;
+}
+
+int CEXEBuild::pp_appendmemfile(LineParser&line)
+{
+  bool del = line.gettoken_str(1)[0] == _T('\0');
+  const TCHAR *name = line.gettoken_str(1 + del);
+  TinyGrowBuf *file;
+
+  if (line.getnumtokens() == 2) // Create file
+  {
+    if (!*name) return PS_ERROR;
+    file = new TinyGrowBuf;
+    TCHAR buf[42];
+    buf[0] = _T('~'), buf[1] = _T('M');
+    ptrtostr(file, buf + 2);
+    definedlist.set(name, buf);
+    return PS_OK;
+  }
+
+  file = getmemfileinfo(*this, name);
+  if (!file) return PS_ERROR;
+  if (del) // Delete file
+  {
+    delete file;
+    definedlist.del(name);
+  }
+  else
+  {
+    const TCHAR *data = line.gettoken_str(2);
+    file->add(data, GrowBuf::size_type(_tcslen(data) * sizeof(*data)));
+  }
   return PS_OK;
 }
 
@@ -875,7 +936,6 @@ int CEXEBuild::pp_define(LineParser&line)
   {
     line.eattoken();
     define = line.gettoken_str(1);
-    if (dupemode == 1 && definedlist.find(define)) return PS_OK;
   }
 
   if (!_tcsicmp(define, _T("/date")) || !_tcsicmp(define, _T("/utcdate")))
@@ -1009,6 +1069,7 @@ int CEXEBuild::pp_define(LineParser&line)
   if (dupemode == 2) definedlist.del(define);
   if (definedlist.add(define, value))
   {
+    if (dupemode == 1) return PS_OK;
     ERROR_MSG(_T("!define: \"%") NPRIs _T("\" already defined!\n"), define);
     return PS_ERROR;
   }
@@ -1139,6 +1200,9 @@ int CEXEBuild::pp_addincludedir(LineParser&line)
   return PS_OK;
 }
 
+static const TCHAR *g_incerrfmtstr = _T("!include: error in script: \"%") NPRIs _T("\" on line %d\n");
+static const TCHAR *g_incerrlvlfmtstr = _T("!include: too many levels of includes (%d max).\n");
+
 int CEXEBuild::includeScript(const TCHAR *file, NStreamEncoding&enc)
 {
   NIStream incstrm;
@@ -1162,7 +1226,7 @@ int CEXEBuild::includeScript(const TCHAR *file, NStreamEncoding&enc)
 
   if (build_include_depth >= MAX_INCLUDEDEPTH)
   {
-    ERROR_MSG(_T("!include: too many levels of includes (%d max).\n"),MAX_INCLUDEDEPTH);
+    ERROR_MSG(g_incerrlvlfmtstr, MAX_INCLUDEDEPTH);
     return PS_ERROR;
   }
   build_include_depth++;
@@ -1191,23 +1255,58 @@ int CEXEBuild::includeScript(const TCHAR *file, NStreamEncoding&enc)
   build_include_depth--;
   if (r != PS_EOF && r != PS_OK)
   {
-    ERROR_MSG(_T("!include: error in script: \"%") NPRIs _T("\" on line %d\n"), file, errline);
+    ERROR_MSG(g_incerrfmtstr, file, errline);
     return PS_ERROR;
   }
   SCRIPT_MSG(_T("!include: closed: \"%") NPRIs _T("\"\n"), file);
   return PS_OK;
 }
 
+int CEXEBuild::includeScriptLines(const TCHAR *start, const TCHAR *end, const TCHAR *name)
+{
+  if (build_include_depth >= MAX_INCLUDEDEPTH)
+  {
+    ERROR_MSG(g_incerrlvlfmtstr, MAX_INCLUDEDEPTH);
+    return PS_ERROR;
+  }
+
+  build_include_depth++;
+  tstring buf;
+  int ret = PS_OK;
+  bool unicode = sizeof(*start) > sizeof(char);
+  for (unsigned int ln = 0; start < end && ret == PS_OK;)
+  {
+    const TCHAR *line = start, eot = 4;
+    size_t i, nl;
+    for (i = 0, nl = 0;; ++i)
+    {
+      nl = &line[i] < end ? NStream::IsNewline(line[i], unicode) : eot;
+      if (nl || !line[i]) break;
+    }
+    if (nl)
+    {
+      buf.assign(line, i);
+      line = buf.c_str();
+    }
+    if (*line) ret = process_oneline(line, name, ++ln, PLF_VIRTUALFILE);
+    if (ret != PS_OK) ERROR_MSG(g_incerrfmtstr, name, ln);
+    start += i + 1;
+  }
+  build_include_depth--;
+  return ret;
+}
+
 int CEXEBuild::pp_include(LineParser&line)
 {
-  bool required = true;
+  bool required = true, memfile = false, done = false;
   NStreamEncoding enc(NStreamEncoding::AUTO);
-  TCHAR *f;
+  const TCHAR *f;
   unsigned int toks = line.getnumtokens() - 1, included = 0;
   for(unsigned int tok = 0; toks;)
   {
     f = line.gettoken_str(++tok);
     if (tok >= toks) break;
+    if (!_tcsicmp(f,_T("/memfile"))) memfile = true;
     if (!_tcsicmp(f,_T("/nonfatal"))) required = false;
     TCHAR buf[9+1];
     my_strncpy(buf, f, COUNTOF(buf));
@@ -1220,9 +1319,19 @@ int CEXEBuild::pp_include(LineParser&line)
   }
   if (!toks || !*f) PRINTHELP();
 
-  TCHAR *fc = my_convert(f);
+  if (memfile)
+  {
+    const TCHAR *s, *e, *n = get_memorycode_filename();
+    if (getmemfileinfo(*this, f, &s, &e))
+    {
+      return includeScriptLines(s, e, n);
+    }
+    done = true, f = n;
+  }
+
+  const TCHAR *fc = my_convert(f);
   tstring dir = get_dir_name(fc), spec = get_file_name(fc), basedir = dir;
-  my_convert_free(fc);
+  my_convert_free(const_cast<TCHAR*>(fc));
   path_append_separator(basedir);
   if (dir == spec) basedir = _T(""), dir = _T("."); // no path, just file name
 
@@ -1230,7 +1339,7 @@ int CEXEBuild::pp_include(LineParser&line)
   boost::scoped_ptr<dir_reader> dr( new_dir_reader() );
   dr->read(dir);
   for (dir_reader::iterator files_itr = dr->files().begin();
-       files_itr != dr->files().end();
+       !done && files_itr != dr->files().end();
        files_itr++)
   {
     if (!dir_reader::matches(*files_itr, spec)) continue;
@@ -1246,7 +1355,7 @@ int CEXEBuild::pp_include(LineParser&line)
   // search include dirs
   TCHAR *incdir = include_dirs.get();
   int incdirs = include_dirs.getnum();
-  for (int i = 0; i < incdirs; i++, incdir += _tcslen(incdir) + 1)
+  for (int i = 0; !done && i < incdirs; i++, incdir += _tcslen(incdir) + 1)
   {
     tstring curincdir(incdir), incfile;
     if (_T(".") != dir) path_append(curincdir, dir);

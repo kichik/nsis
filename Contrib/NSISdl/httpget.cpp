@@ -12,6 +12,35 @@
 #include "util.h"
 #include "httpget.h"
 
+static const char g_errstr_oom[] = "error allocating memory";
+
+template<class T> static int classify_scheme_char(T c)
+{
+  if (('A' <= c && c <= 'Z') || ('a' <= c && c <= 'z')) return 0;
+  return c == '+' || c == '-' || c == '.' ? 1 : -1;
+}
+
+template<class T> static unsigned int get_scheme_length(T*s)
+{
+  if (classify_scheme_char(s[0]) != 0) return 0; // The first character MUST be a-z||A-Z. (RFC 3986 3.1)
+  for (unsigned int i=0;;)
+  {
+    if (s[++i] == ':') return ++i; // Length including ':'
+    if (classify_scheme_char(s[i]) < 0) return 0;
+  }
+}
+
+enum { GLT_ABS=0, GLT_NETREL, GLT_ROOTREL, GLT_PATHREL };
+template<class T> static unsigned int get_location_type(T*s)
+{
+  unsigned int len=get_scheme_length(s);
+  if (len) return GLT_ABS; // "xyz:..."
+  s+=len;
+  // Note: The authority section is not skipped here because it is assumed to not exist without a scheme!
+  if (s[0] != '/') return GLT_PATHREL; // "xyz..." or "./xyz..." (or "" but don't rely on this)
+  if (s[1] == '/') return GLT_NETREL; // "//..." (relative "network-path reference")
+  return GLT_ROOTREL; // "/" or "/xyz..."
+}
 
 JNL_HTTPGet::JNL_HTTPGet(JNL_AsyncDNS *dns, int recvbufsize, char *proxy)
 {
@@ -175,7 +204,7 @@ void JNL_HTTPGet::connect(const char *url)
   char *str=(char*)malloc(sendbufferlen+1024);
   if (!str)
   {
-    seterrstr("error allocating memory");
+    seterrstr(g_errstr_oom);
     m_http_state=-1;    
   }
 
@@ -361,6 +390,11 @@ run_again:
       m_con->recv_line(buf,4095);
       buf[4095]=0;
       m_reply=(char*)malloc(strlen(buf)+1);
+      if (!m_reply)
+      {
+        seterrstr(g_errstr_oom);
+        return m_http_state=-1;
+      }
       strcpy(m_reply,buf);
 
       if (strstr(buf,"200")) m_http_state=2; // proceed to read headers normally
@@ -393,7 +427,58 @@ run_again:
         char *p=buf+9; while (*p== ' ') p++;
         if (*p)
         {
-          connect(p);
+          const char *orgloc=m_http_url, *e;
+          char *newloc=p, *newbuf=0;
+          if (my_strnicmp(newloc, "http://",7))
+          {
+            unsigned int lenorg=0, sep=0, lennew=0;
+            unsigned int newloctype=get_location_type(newloc);
+
+            for (e=orgloc, lenorg=7; e[lenorg]; ++lenorg) // This assumes the original URL starts with "http://"
+            {
+              if (e[lenorg] == '/' || e[lenorg] == '?' || e[lenorg] == '#') // Is it the end of the authority section?
+                break;
+            }
+
+            if (newloctype == GLT_ABS)
+            {
+              // A scheme we don't understand, let connect deal with it.
+            }
+            else
+            {
+              lennew=strlen(newloc);
+              if (newloctype == GLT_NETREL)
+              {
+                lenorg=sizeof("http:")-1; // The new location is "//...", we must prepend the original scheme.
+              }
+              else if (newloctype != GLT_ROOTREL)
+              {
+                ++sep; // We need a separator between the original path and the new path.
+                unsigned int lastsep=lenorg;
+                for (e=orgloc; e[lastsep]; ++lastsep)
+                {
+                  if (e[lastsep] == '/')
+                    lenorg = lastsep;
+                  if (e[lastsep] == '?' || e[lastsep] == '#') // Is it the end of the path section?
+                    break;
+                }
+              }
+
+              p=malloc(lenorg+sep+lennew+1);
+              if (!p)
+              {
+                seterrstr(g_errstr_oom);
+                return m_http_state=-1;
+              }
+              strncpy(p,orgloc,++lenorg), p[lenorg]='\0';
+              if (sep) strcat(p, "/");
+              strcat(p,newloc);
+              newbuf=newloc=p;
+            }
+          }
+
+          connect(newloc);
+          free(newbuf);
           return 0;
         }
       }

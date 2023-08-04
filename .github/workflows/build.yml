@@ -9,7 +9,7 @@ jobs:
   build:
     strategy:
       matrix:
-        python-version: ['2.x', '3.x']
+        python-version: ['3.x']  # 2.x is supported but EOL on GitHub Actions
         os: [ubuntu-20.04, ubuntu-22.04, macos-11, macos-12, windows-2019]  # TODO fails to find VC windows-2022
         log: [yes, no]
         include:
