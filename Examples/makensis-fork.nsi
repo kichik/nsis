@@ -233,7 +233,7 @@ ${MementoSection} "NSIS Core Files (required)" SecCore
     !endif
   !else
     !define NO_NSISMENU_HTML 1
-    !makensis '-v2 "NSISMenu.nsi" "-XOutFile ..\NSIS.exe"' = 0
+    !makensis '-DVER_MAJOR=${VER_MAJOR} -DVER_MINOR=${VER_MINOR} -DVER_REVISION=${VER_REVISION} -DVER_BUILD=${VER_BUILD} -v2 "NSISMenu.nsi" "-XOutFile ..\NSIS.exe"' = 0
   !endif
   File ..\NSIS.exe
 
