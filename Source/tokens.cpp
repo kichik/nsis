@@ -125,7 +125,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_INSTCOLORS,_T("InstallColors"),1,1,_T("(/windows | (foreground_color background_color))"),TP_GLOBAL},
 {TOK_INSTDIR,_T("InstallDir"),1,0,_T("default_install_directory"),TP_GLOBAL},
 {TOK_INSTPROGRESSFLAGS,_T("InstProgressFlags"),0,-1,_T("[flag [...]]\n    flag={smooth|colored}"),TP_GLOBAL},
-{TOK_INSTTYPE,_T("InstType"),1,1,_T("[un.]install_type_name [index_output] | /NOCUSTOM | /CUSTOMSTRING=str | /COMPONENTSONLYONCUSTOM"),TP_GLOBAL},
+{TOK_INSTTYPE,_T("InstType"),1,1,_T("[un.]install_type_name [index_output] | /[UNINST]NOCUSTOM | /CUSTOMSTRING=str | /[UNINST]COMPONENTSONLYONCUSTOM"),TP_GLOBAL},
 {TOK_INTOP,_T("IntOp"),3,1,_T("$(user_var: result) val1 OP [val2]\n    OP=(+ - * / % | & ^ ~ ! || && << >> >>>)"),TP_CODE},
 {TOK_INTPTROP,_T("IntPtrOp"),3,1,_T("$(user_var: result) val1 OP [val2]"),TP_CODE},
 {TOK_INTCMP,_T("IntCmp"),3,2,_T("val1 val2 jump_if_equal [jump_if_val1_less] [jump_if_val1_more]"),TP_CODE},
