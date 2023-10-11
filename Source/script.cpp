@@ -1393,12 +1393,22 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (!_tcsicmp(line.gettoken_str(1),_T("/NOCUSTOM")))
         {
           build_header.flags|=CH_FLAGS_NO_CUSTOM;
-          SCRIPT_MSG(_T("InstType: disabling custom install type\n"));
+          SCRIPT_MSG(_T("InstType: disabling custom %") NPRIs _T("install type\n"), _T(""));
+        }
+        else if (!_tcsicmp(line.gettoken_str(1),_T("/UNINSTNOCUSTOM")))
+        {
+          build_uninst.flags|=CH_FLAGS_NO_CUSTOM;
+          SCRIPT_MSG(_T("InstType: disabling custom %") NPRIs _T("install type\n"), _T("un"));
         }
         else if (!_tcsicmp(line.gettoken_str(1),_T("/COMPONENTSONLYONCUSTOM")))
         {
           build_header.flags|=CH_FLAGS_COMP_ONLY_ON_CUSTOM;
-          SCRIPT_MSG(_T("InstType: making components viewable only on custom install type\n"));
+          SCRIPT_MSG(_T("InstType: making components viewable only on custom %") NPRIs _T("install type\n"), _T(""));
+        }
+        else if (!_tcsicmp(line.gettoken_str(1),_T("/UNINSTCOMPONENTSONLYONCUSTOM")))
+        {
+          build_uninst.flags|=CH_FLAGS_COMP_ONLY_ON_CUSTOM;
+          SCRIPT_MSG(_T("InstType: making components viewable only on custom %") NPRIs _T("install type\n"), _T("un"));
         }
         else if (!_tcsnicmp(line.gettoken_str(1),_T("/CUSTOMSTRING="),14))
         {

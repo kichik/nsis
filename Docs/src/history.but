@@ -12,6 +12,8 @@ Released on ???? ???, ????
 
 \b NSISdl now supports relative URLs in location redirects (belphegor-belbel PR)
 
+\b Added InstType /UNINSTNOCUSTOM and /UNINSTCOMPONENTSONLYONCUSTOM
+
 \H{v3.09} 3.09
 
 Released on July 1st, 2023
