@@ -1,0 +1,3 @@
+[codespell]
+skip = Language files,GenPat,7zip,boost,bzip2,exehead,zlib
+ignore-words-list = atleast,claus,complies,fave,fo,htmp,inbetween,isnt,msdos,nd,nnumber,pard,parms,,pres,ptd,ressize,ro,siz,statics,thats,unknwn,wit
