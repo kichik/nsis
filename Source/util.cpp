@@ -704,7 +704,7 @@ UINT64 get_file_size64(FILE *f)
 UINT64 get_file_size64(FILE *f)
 {
   UINT64 result = invalid_file_size64;
-  // 32bit plaforms require _FILE_OFFSET_BITS = 64 to correctly return the size
+  // 32bit platforms require _FILE_OFFSET_BITS = 64 to correctly return the size
 #if _XOPEN_SOURCE >= 500 || _POSIX_C_SOURCE >= 200112L
   struct stat st;
   if (0 == fstat(fileno(f), &st) && st.st_size <= (sizeof(st.st_size) >= 8 ? (off_t)0x7fffffffffffffffLL : LONG_MAX))
