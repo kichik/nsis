@@ -3800,7 +3800,7 @@ again:
   // don't move this, depends on [un.]
   zero_offset=add_asciistring(_T("$0"));
 
-  // SetDetailsPrint none (don't update lastused)
+  // SetDetailsPrint none (special)
   ret=add_entry_direct(EW_SETFLAG, FLAG_OFFSET(status_update), add_intstring(6), -1);
   if (ret != PS_OK) return ret;
 

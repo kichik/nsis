@@ -5132,8 +5132,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if ((ret=add_entry(&ent)) != PS_OK) return ret;
       }
 
-      // SetDetailsPrint lastused
-      ret=add_entry_direct(EW_SETFLAG, FLAG_OFFSET(status_update), 0, 1);
+      // SetDetailsPrint lastused (special)
+      ret=add_entry_direct(EW_SETFLAG, FLAG_OFFSET(status_update), 0, 1, -1);
       if (ret != PS_OK) return ret;
 
       // Call the DLL
