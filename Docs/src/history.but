@@ -2,7 +2,7 @@
 
 \H{v3.10} 3.10
 
-Released on ???? ???, ????
+Released on March 30th, 2024
 
 \S1{v3.10-cl} Changelog
 
@@ -10,9 +10,15 @@ Released on ???? ???, ????
 
 \b Fixed LogicLib SafePPO bug (\W{http://sf.net/p/nsis/bugs/1291}{bug #1291})
 
-\b NSISdl now supports relative URLs in location redirects (belphegor-belbel PR)
+\b NSISdl now supports relative URLs in location redirects (\W{https://github.com/kichik/nsis/pull/24}{PR #24})
 
-\b Added InstType /UNINSTNOCUSTOM and /UNINSTCOMPONENTSONLYONCUSTOM
+\b Added \R{ainsttype}{InstType} /UNINSTNOCUSTOM and /UNINSTCOMPONENTSONLYONCUSTOM
+
+\b Fixed bug with \cw{SetDetailsPrint lastused} and plugins introduced in 3.09 (\W{http://sf.net/p/nsis/bugs/1300}{bug #1300})
+
+\b Added \cw{NSD_CB_Find} \cw{SelectStringExact} support for nsDialogs
+
+\b Fix RTL text in section selection page
 
 \H{v3.09} 3.09
 

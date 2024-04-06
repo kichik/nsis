@@ -319,16 +319,24 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     break;
 #endif//NSIS_CONFIG_VISIBLE_SUPPORT
     case EW_SETFLAG:
-      if (parm2 <= 0)
       {
-        if (parm2 == 0)
-          FIELDN(g_exec_flags_last_used,parm0)=FIELDN(g_exec_flags,parm0);
-        FIELDN(g_exec_flags,parm0)=GetIntFromParm(1);
-        log_printf3(_T("SetFlag: %d=%d"),parm0,FIELDN(g_exec_flags,parm0));
-      }
-      else
-      {
-        FIELDN(g_exec_flags,parm0)=FIELDN(g_exec_flags_last_used,parm0);
+        // TODO push/pop flags instead -- https://sourceforge.net/p/nsis/patches/222/
+        static int g_statusuphack = 0;
+        if (parm2 <= 0)
+        {
+          if (parm2 < 0)
+            g_statusuphack=FIELDN(g_exec_flags,parm0);
+          else
+            FIELDN(g_exec_flags_last_used,parm0)=FIELDN(g_exec_flags,parm0);
+          FIELDN(g_exec_flags,parm0)=GetIntFromParm(1);
+          log_printf3(_T("SetFlag: %d=%d"),parm0,FIELDN(g_exec_flags,parm0));
+        }
+        else
+        {
+          FIELDN(g_exec_flags,parm0)=FIELDN(g_exec_flags_last_used,parm0);
+          if (parm3 < 0)
+            FIELDN(g_exec_flags,parm0)=g_statusuphack;
+        }
       }
     break;
     case EW_IFFLAG:
