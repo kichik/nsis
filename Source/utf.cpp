@@ -274,6 +274,7 @@ UINT DetectUTFBOM(void*Buffer, UINT cb)
   }
   return 0;
 }
+
 UINT DetectUTFBOM(FILE*strm)
 {
   /*\
@@ -325,25 +326,39 @@ UINT DetectUTFBOM(FILE*strm)
   return 0;
 }
 
+static bool IsUTFEncodingString(const TCHAR*s, const TCHAR*suff)
+{
+  if (S7ChLwr(s[0]) == 'u' && S7ChLwr(s[1]) == 't' && S7ChLwr(s[2]) == 'f')
+  {
+    s += 3 + (s[3] == '-' || s[3] == '_');
+    return !_tcsicmp(s, suff);
+  }
+  return false;
+}
+
 WORD GetEncodingFromString(const TCHAR*s, bool&BOM)
 {
   BOM = false;
-  if (!_tcsicmp(s,_T("ACP"))) return NStreamEncoding::ACP;
-  if (!_tcsicmp(s,_T("OEM"))) return NStreamEncoding::OEMCP;
-  if (!_tcsicmp(s,_T("UTF8"))) return NStreamEncoding::UTF8;
-  if ((!_tcsicmp(s,_T("UTF8SIG")) || !_tcsicmp(s,_T("UTF8BOM"))) && (BOM = true))
+  if (!_tcsicmp(s,_T("ACP")))
+    return NStreamEncoding::ACP;
+  if (!_tcsicmp(s,_T("OEM")))
+    return NStreamEncoding::OEMCP;
+  if (IsUTFEncodingString(s, _T("8")))
     return NStreamEncoding::UTF8;
-  if (!_tcsicmp(s,_T("UTF16LE")) || (!_tcsicmp(s,_T("UTF16LEBOM")) && (BOM = true)))
+  if (IsUTFEncodingString(s, _T("8SIG")) || IsUTFEncodingString(s, _T("8BOM")))
+    return (BOM = true, NStreamEncoding::UTF8);
+  if (IsUTFEncodingString(s, _T("16LE")) || (IsUTFEncodingString(s, _T("16LEBOM")) && (BOM = true)))
     return NStreamEncoding::UTF16LE;
-  if (!_tcsicmp(s,_T("UTF16BE")) || (!_tcsicmp(s,_T("UTF16BEBOM")) && (BOM = true)))
-    return NStreamEncoding::UTF16BE;
-  if (S7IsChEqualI('C',*s++) && S7IsChEqualI('P',*s++))
+  if (IsUTFEncodingString(s, _T("16BE")) || (IsUTFEncodingString(s, _T("16BEBOM")) && (BOM = true)))
+    return NStreamEncoding::UTF16LE;
+  if (S7IsChEqualI('C', *s++) && S7IsChEqualI('P', *s++))
   {
     int cp = _tstoi(s);
     if (cp > 0 && cp < NStreamEncoding::CPCOUNT) return (WORD) cp;
   }
   return NStreamEncoding::UNKNOWN;
 }
+
 WORD GetEncodingFromString(const TCHAR*s)
 {
   bool bom;
@@ -365,10 +380,10 @@ void NStreamEncoding::GetCPDisplayName(WORD CP, TCHAR*Buf)
   case UTF8: p = _T("UTF8"); break;
   case BINARY: p = _T("BIN"); break;
   default: 
-    _stprintf(mybuf,_T("CP%u"),CP);
+    _stprintf(mybuf,_T("CP%u"), CP);
     if (CP >= NStreamEncoding::CPCOUNT) p = _T("?");
   }
-  _tcscpy(Buf,p);
+  _tcscpy(Buf, p);
 }
 
 bool NBaseStream::Attach(FILE*hFile, WORD enc, bool Seek /*= true*/)

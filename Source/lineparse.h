@@ -20,6 +20,7 @@
 #define _LINEPARSE_H_
 
 #include "tchar.h"
+#include "utf.h"
 
 class LineParser {
   public:
@@ -29,7 +30,7 @@ class LineParser {
 
     bool inComment();
     bool inCommentBlock();
-    int parse(TCHAR *line, int ignore_escaping=0); // returns -1 on error
+    int parse(const TCHAR *line, int ignore_escaping=0, NStreamEncoding*pEncChange=NULL); // returns -1 on error
     int getnumtokens();
     void eattoken();
     int gettoken_int(int token, int *success=0) const;
@@ -48,7 +49,7 @@ class LineParser {
   private:
 
     void freetokens();
-    int doline(TCHAR *line, int ignore_escaping=0);
+    int doline(const TCHAR *line, int ignore_escaping=0, NStreamEncoding*pEncChange=NULL);
     inline int validate_token_index(int token, int *success=0) const;
 
     int m_eat;
