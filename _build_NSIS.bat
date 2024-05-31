@@ -12,7 +12,7 @@ cd /d "%~dp0"
 :: Extract current GIT branch
 set BRANCH=
 for /f "usebackq delims=@ " %%f in (`git rev-parse --abbrev-ref HEAD`) do set BRANCH=%%f
-if "%BRANCH%" equ "" echo ERROR: Can't extract GIT branch name && exit /B 2
+if "%BRANCH%" equ "" echo ERROR: Can't extract GIT branch name && exit /b 2
 if "%BRANCH%" equ "master" set BRANCH=negrutiu
 
 :: ----------------------------------------------------------------
@@ -39,30 +39,24 @@ if /I "%1" neq "/distro-amd64" goto :DISTRO_AMD64_END
 :DISTRO_AMD64_END
 
 :: Unknown argument?
-if "%1" neq "" echo ERROR: Unknown argument "%1" && pause && exit /B 57
+if "%1" neq "" echo ERROR: Unknown argument "%1" && pause && exit /b 57
 
 
 :: ----------------------------------------------------------------
 :MAIN
 :: ----------------------------------------------------------------
-if exist "Contrib\NScurl" (
-	echo ----------------------------------------------------------------
-	call Contrib\NScurl\_acquire_curl-ca-bundle.bat
-	call Contrib\NScurl\_acquire_libcurl-devel.bat
-)
-
 echo Compiling...
 start "" "%COMSPEC%" /C "%~f0" /compile-x86
 start "" "%COMSPEC%" /C "%~f0" /compile-amd64
 call :WAIT
-if %errorlevel% neq 0 exit /B %errorlevel%
+if %errorlevel% neq 0 exit /b %errorlevel%
 
 
 echo Building installers...
 start "" "%COMSPEC%" /C "%~f0" /distro-x86
 start "" "%COMSPEC%" /C "%~f0" /distro-amd64
 call :WAIT
-if %errorlevel% neq 0 exit /B %errorlevel%
+if %errorlevel% neq 0 exit /b %errorlevel%
 
 :: NOTE: .instdist is recreated after each build
 echo Moving files around...
@@ -72,14 +66,14 @@ call :COPYFILES nsis-mingw-%BRANCH%-amd64 nsis-mingw-%BRANCH%-x86
 
 :: Finish
 REM pause
-exit /B 0
+exit /b 0
 
 
 :COPYFILES
 set dir1=%~1
 set dir2=%~2
-if not exist %dir1% exit /B 2
-if not exist %dir2% exit /B 2
+if not exist %dir1% exit /b 2
+if not exist %dir2% exit /b 2
 
 xcopy %dir1%\.instdist\Plugins\x86-ansi        %dir2%\.instdist\Plugins\x86-ansi      /DEIY
 xcopy %dir1%\.instdist\Plugins\x86-unicode     %dir2%\.instdist\Plugins\x86-unicode   /DEIY
@@ -91,7 +85,7 @@ xcopy %dir1%\.instdist\Stubs\*-amd64-unicode   %dir2%\.instdist\Stubs\ /DY
 
 xcopy %dir1%\.instdist\Bin\RegTool-x86.bin     %dir2%\.instdist\Bin\ /DY
 xcopy %dir1%\.instdist\Bin\RegTool-amd64.bin   %dir2%\.instdist\Bin\ /DY
-exit /B 0
+exit /b 0
 
 
 :: ----------------------------------------------------------------
@@ -106,8 +100,8 @@ timeout /T 2 /NOBREAK > NUL
 	timeout /T 1 /NOBREAK > NUL
 	goto :WAIT_LOOP
 :WAIT_END
-if exist "%FLAGS_ERROR%-*" exit /B 666
-exit /B %errorlevel%
+if exist "%FLAGS_ERROR%-*" exit /b 666
+exit /b %errorlevel%
 
 
 ::---------------------------------
@@ -124,7 +118,7 @@ title %DISTRO%: %CONFIG_ACTIONS%
 
 
 call _config.bat
-if %errorlevel% neq 0 echo Aborted. && pause && exit /B %errorlevel%
+if %errorlevel% neq 0 echo Aborted. && pause && exit /b %errorlevel%
 set PATH=%MINGW%\bin;%PATH%;%HTMLHELP_PATH%
 
 
@@ -145,11 +139,7 @@ set VER_PACKED=0x%VER_MAJOR_PACKED%%VER_MINOR_PACKED%00%VER_BUILD_PACKED%
 
 :: "nsis" -> "nsis-mingw-DISTRO-[arch]"
 cd /d "%~dp0"
-robocopy . %DISTRO%\ *.* /E /XO /XD .git nsis-* zlib-* libcurl-devel* Debug-* Release-* ... /XF flag-* .git* _*.bat *.7z ... /NJH /NJS /NDL /XJ
-if exist Contrib\NScurl (
-	rmdir %DISTRO%\Contrib\NScurl\libcurl-devel > NUL 2> NUL
-	mklink /J %DISTRO%\Contrib\NScurl\libcurl-devel Contrib\NScurl\libcurl-devel
-)
+robocopy . %DISTRO%\ *.* /E /XO /XD .git nsis-* zlib-* Debug-* Release-* ... /XF flag-* .git* _*.bat *.7z ... /NJH /NJS /NDL /XJ
 
 :: Build
 echo.
@@ -179,4 +169,4 @@ set EXITCODE=%errorlevel%
 if %EXITCODE% neq 0 echo %EXITCODE% > "%FLAG_ERROR%" && pause
 REM pause
 del "%FLAG_BUILD%"
-exit /B %EXITCODE%
+exit /b %EXITCODE%
