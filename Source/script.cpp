@@ -219,7 +219,7 @@ int CEXEBuild::doParse(const TCHAR *str)
     LineParser prevline(inside_comment);
     prevline.parse((TCHAR*)m_linebuild.get());
     LineParser thisline(inside_comment);
-    thisline.parse((TCHAR*)str);
+    thisline.parse(str);
 
     if (prevline.inComment() && !thisline.inComment())
     {
@@ -242,7 +242,13 @@ int CEXEBuild::doParse(const TCHAR *str)
   // escaped quotes should be ignored for compile time commands that set defines
   // because defines can be inserted in commands at a later stage
   bool ignore_escaping = (!_tcsnicmp((TCHAR*)m_linebuild.get(),_T("!define"),7) || !_tcsncicmp((TCHAR*)m_linebuild.get(),_T("!insertmacro"),12));
-  res=line.parse((TCHAR*)m_linebuild.get(), ignore_escaping);
+
+  NStreamEncoding enc(NStreamEncoding::UNKNOWN);
+
+  res=line.parse((TCHAR*)m_linebuild.get(), ignore_escaping, linecnt < 3 ? &enc : NULL);
+
+  if (enc.GetCodepage() != NStreamEncoding::UNKNOWN && curlinereader)
+      curlinereader->StreamEncoding().SafeSetCodepage(enc.GetCodepage());
 
   inside_comment = line.inCommentBlock();
 

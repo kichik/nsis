@@ -76,4 +76,5 @@ resources = Split("""
 
 env.Depends(res_target, resources)
 
-env.SharedLibrary('Resource', res_target + res_main)
+resource = env.SharedLibrary('Resource', res_target + res_main)
+env.MakeReproducible(resource)

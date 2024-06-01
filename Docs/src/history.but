@@ -1,5 +1,25 @@
 \A{history} Changelog and Release Notes
 
+\H{v3.11} 3.11
+
+Released on ??? ??th, 202?
+
+\S1{v3.11-rl} Release Notes
+
+Workgroups party? The end of 16-bit?
+
+\S1{v3.11-cl} Changelog
+
+\S2{} Minor Changes
+
+\b Support setting source file decoding charset with magic comment (\W{http://sf.net/p/nsis/patches/292}{patch #292})
+
+\b Make System/Resource.dll reproducible (\W{http://sf.net/p/nsis/patches/312}{patch #312})
+
+\S2{} Translations
+
+\b Updated Finnish (\W{http://sf.net/p/nsis/patches/313}{patch #313})
+
 \H{v3.10} 3.10
 
 Released on March 30th, 2024

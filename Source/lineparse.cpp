@@ -52,11 +52,11 @@ bool LineParser::inCommentBlock()
   return m_incommentblock;
 }
 
-int LineParser::parse(TCHAR *line, int ignore_escaping/*=0*/) // returns -1 on error
+int LineParser::parse(const TCHAR *line, int ignore_escaping/*=0*/, NStreamEncoding*pEncChange) // returns -1 on error
 {
   freetokens();
   bool bPrevCB=m_incommentblock;
-  int n=doline(line, ignore_escaping);
+  int n=doline(line, ignore_escaping, pEncChange);
   if (n) return n;
   if (m_nt)
   {
@@ -305,7 +305,13 @@ void LineParser::freetokens()
   m_nt=0;
 }
 
-int LineParser::doline(TCHAR *line, int ignore_escaping/*=0*/)
+static bool IsPEP263EncodingCharacter(TCHAR c)
+{
+  TCHAR low = S7ChLwr(c);
+  return ('a' <= low && low <= 'z') || ('0' <= c && c <= '9') || c == '.' || c == '-' || c == '_';
+}
+
+int LineParser::doline(const TCHAR *line, int ignore_escaping/*=0*/, NStreamEncoding*pEncChange)
 {
   m_nt=0;
   m_incomment = false;
@@ -332,6 +338,21 @@ int LineParser::doline(TCHAR *line, int ignore_escaping/*=0*/)
       if (*line == _T(';') || *line == _T('#'))
       {
         m_incomment = true;
+        TCHAR *p = const_cast<TCHAR*>(line);
+        if (pEncChange && *++p) // Check for Python PEP 263 magic encoding comment
+        {
+            p = _tcsstr(p, L"coding");
+            if (p) p += sizeof("coding") - 1; else break;
+            if (*p == ':' || *p == '=') ++p; else break;
+            while (*p == _T(' ') || *p == _T('\t')) ++p;
+            TCHAR buf[200];
+            if (strtrycpy(buf, p, COUNTOF(buf)))
+            {
+                for (p = buf; IsPEP263EncodingCharacter(*p);) ++p;
+                *p = '\0';
+                pEncChange->SetCodepage(GetEncodingFromString(buf));
+            }
+        }
         break;
       }
       if (*line == _T('/') && *(line+1) == _T('*'))
@@ -346,7 +367,7 @@ int LineParser::doline(TCHAR *line, int ignore_escaping/*=0*/)
         else if (*line == _T('`')) lstate=4;
         if (lstate) line++;
         int nc=0;
-        TCHAR *p = line;
+        const TCHAR *p = line;
         while (*line)
         {
           if (line[0] == _T('$') && line[1] == _T('\\'))
