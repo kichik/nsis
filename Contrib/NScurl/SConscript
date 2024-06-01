@@ -1,0 +1,73 @@
+from pathlib import Path
+import shutil
+from zipfile import ZipFile
+from urllib import request
+
+target = 'NScurl'
+
+Import('BuildPlugin env')
+
+# print('----------------------------------------------------------------------')
+# print(env.Dump())
+# print('----------------------------------------------------------------------')
+
+unicode = 'UNICODE' in env['CPPDEFINES']
+archdir = env['TARGET_ARCH'] + ('-unicode' if unicode else '-ansi')    # x86-unicode|x86-amsi|amd64-unicode
+root = Path(env['PREFIX']).parent   # 'PREFIX': '<root>\nsis-mingw-negrutiu-amd64\BIN'
+
+# Download
+pluginUrl = 'https://github.com/negrutiu/nsis-nscurl/releases/latest/download/NScurl.zip'
+pluginZip = root.joinpath('Contrib', 'NScurl', 'latest', 'NScurl.zip')
+pluginEtag = root.joinpath('Contrib', 'NScurl', 'latest', 'NScurl.etag')
+pluginDir = root.joinpath('Contrib', 'NScurl', 'latest', 'package')
+
+print(f"Download {pluginUrl} ({archdir}) ...")
+headers = {}
+
+if pluginEtag.exists() and pluginZip.exists():
+    with open(pluginEtag) as etagfile:
+        etag = etagfile.read()
+        headers['If-None-Match'] = etag.encode()
+
+try:
+    with request.urlopen(request.Request(pluginUrl, headers=headers)) as http:
+        pluginZip.parent.mkdir(parents=True, exist_ok=True)
+        with open(pluginZip, 'wb') as outfile:
+            outfile.write(http.read())
+        print(f"  {http.status} {http.reason}, {http.getheader('Content-Length')} bytes, ETag:{http.getheader('ETag')}")
+        if http.getheader('ETag') != None:
+            with open(pluginEtag, 'w') as etagfile:
+                etagfile.write(http.getheader('ETag'))
+except request.HTTPError as ex:
+    if ex.code == 304:
+        print("  file already up-to-date")
+    else:
+        raise
+
+# Extract
+print (f"{pluginZip.name} contents:")
+with ZipFile(pluginZip) as myzip:
+    for zfile in myzip.filelist:
+        if not zfile.is_dir():
+            date = "%d-%02d-%02d %02d:%02d:%02d" % zfile.date_time[:6]
+            print("  %-46s %s %12d" % (zfile.filename, date, zfile.file_size))
+    shutil.rmtree(pluginDir, ignore_errors=True)
+    myzip.extractall(pluginDir)
+
+# BuildPlugin
+examples = [
+    pluginDir.joinpath("Examples/NScurl/NScurl-Test.nsi"),
+    pluginDir.joinpath("Examples/NScurl/NScurl-Test-build.bat")
+]
+
+docs = [
+    pluginDir.joinpath("Docs/NScurl/NScurl.readme.md")
+]
+
+BuildPlugin(target, [], [], examples, docs)
+
+# The previous BuildPlugin() call generates a dummy NScurl.dll
+# We overwrite the dummy file with the real one downloaded from GitHub
+outdir = root.joinpath(env['BUILD_PREFIX'], 'NScurl', archdir)       # <root>/nsis-mingw-negrutiu-x86/build/urelease/NScurl/x86-unicode, ('BUILD_PREFIX': 'build/urelease')
+outdir.mkdir(parents=True, exist_ok=True)
+shutil.copytree(pluginDir.joinpath('Plugins', archdir), outdir, dirs_exist_ok=True)

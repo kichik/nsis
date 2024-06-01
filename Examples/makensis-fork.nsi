@@ -798,7 +798,7 @@ ${MementoSection} "NScurl" SecPluginsNScurl
 
   !insertmacro InstallPlugin NScurl
   SetOutPath $INSTDIR\Docs\NScurl
-  File ..\Docs\NScurl\NScurl.Readme.htm
+  File ..\Docs\NScurl\NScurl.readme.md
   SetOutPath $INSTDIR\Examples\NScurl
   File ..\Examples\NScurl\*.nsi
   File ..\Examples\NScurl\*.bat
