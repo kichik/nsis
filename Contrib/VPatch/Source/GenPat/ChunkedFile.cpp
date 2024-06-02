@@ -29,8 +29,6 @@
 #include "ChunkedFile.h"
 #include "tchar.h"
 
-using namespace std;
-
       ChunkedFile::ChunkedFile(bistream& f, TFileOffset fSize, TFileOffset chunkSize) :
         chunks(NULL) {
 

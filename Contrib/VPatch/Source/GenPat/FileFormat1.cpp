@@ -148,7 +148,7 @@ namespace FileFormat1 {
     return fileCount;
   }
 
-  void writePatch(bostream& patch, bistream& target, vector<SameBlock*>& sameBlocks, TChecksum* sourceCRC, TChecksum* targetCRC, TFileOffset currentFileCount, POSIX::ALT_FILETIME targetTime) {
+  void writePatch(bostream& patch, bistream& target, std::vector<SameBlock*>& sameBlocks, TChecksum* sourceCRC, TChecksum* targetCRC, TFileOffset currentFileCount, POSIX::ALT_FILETIME targetTime) {
     TFileOffset bodySize = 0;
     TFileOffset noBlocks = 0;
     TFileOffset noBlocksOffset = patch.tellp();
@@ -163,7 +163,7 @@ namespace FileFormat1 {
     TFileOffset bodySizeOffset = patch.tellp();
     writeDword(patch,bodySize);
 
-    for(vector<SameBlock*>::iterator iter = sameBlocks.begin(); iter != sameBlocks.end(); iter++) {
+    for(auto iter = sameBlocks.begin(); iter != sameBlocks.end(); iter++) {
       SameBlock* current = *iter;
 
       // store current block

@@ -31,8 +31,6 @@
   #include <string>
   #include "tchar.h"
 
-  using namespace std;
-
   namespace POSIX {
     typedef struct ALT_FILETIME {
       uint32_t dwLowDateTime;

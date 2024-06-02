@@ -4,8 +4,8 @@
 #include <sstream>
 
 #ifdef _UNICODE
-#  define tout        wcout
-#  define terr        wcerr
+#  define tout        std::wcout
+#  define terr        std::wcerr
 #  define __T(x)      L ## x
 #  define _T(x)       __T(x)
 #  define _tmain      wmain
@@ -17,8 +17,8 @@
 
    typedef wchar_t      TCHAR;
 #else
-#  define tout        cout
-#  define terr        cerr
+#  define tout        std::cout
+#  define terr        std::cerr
 #  define _T(x)       x
 #  define _tmain      main
 #  ifdef _WIN32

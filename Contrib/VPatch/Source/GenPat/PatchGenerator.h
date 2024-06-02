@@ -33,8 +33,6 @@
   #include "GlobalTypes.h"
   #include "ChunkedFile.h"
 
-  using namespace std;
-
   typedef struct SameBlock {
     TFileOffset sourceOffset;
     TFileOffset targetOffset;
@@ -68,7 +66,7 @@
     ~PatchGenerator();
 
     // construct the actual patch
-    void execute(vector<SameBlock*>& sameBlocks);
+    void execute(std::vector<SameBlock*>& sameBlocks);
   };
 
 #endif // PatchGenerator_H

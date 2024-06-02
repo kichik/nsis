@@ -33,11 +33,9 @@
   #include "PatchGenerator.h"
   #include "POSIXUtil.h"
 
-  using namespace std;
-
   namespace FileFormat1 {
     TFileOffset removeExistingPatch(bistream& in, TFileOffset inSize, bostream& out, TChecksum* removeCRC, bool existenceIsError);
-    void writePatch(bostream& patch, bistream& target, vector<SameBlock*>& sameBlocks, TChecksum* sourceCRC, TChecksum* targetCRC, TFileOffset currentFileCount, POSIX::ALT_FILETIME targetTime);
+    void writePatch(bostream& patch, bistream& target, std::vector<SameBlock*>& sameBlocks, TChecksum* sourceCRC, TChecksum* targetCRC, TFileOffset currentFileCount, POSIX::ALT_FILETIME targetTime);
   }
 
 #endif // FileFormat1_H

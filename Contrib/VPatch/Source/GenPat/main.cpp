@@ -264,13 +264,13 @@ int _tmain( int argc, TCHAR * argv[] ) {
       }
 
       // create sameBlock storage
-      vector<SameBlock*> sameBlocks;
+      std::vector<SameBlock*> sameBlocks;
       // run the patch generator to find similar blocks
       gen->execute(sameBlocks);
       // construct the actual patch in FileFormat1
       FileFormat1::writePatch(patch,target,sameBlocks,sourceCRC,targetCRC,fileCount,POSIX::getFileTime(targetFileName.c_str()));
       // cleanup sameblocks
-      for(vector<SameBlock*>::iterator iter = sameBlocks.begin(); iter != sameBlocks.end(); iter++) {
+      for(auto iter = sameBlocks.begin(); iter != sameBlocks.end(); iter++) {
         delete *iter;
         *iter = NULL;
       }

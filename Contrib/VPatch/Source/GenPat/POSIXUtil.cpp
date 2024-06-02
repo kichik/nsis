@@ -44,8 +44,6 @@
   #include <windows.h>
 #endif
 
-using namespace std;
-
 namespace POSIX {
 
   void TimeT_To_FILETIME(time_t t, ALT_FILETIME *pft ) {

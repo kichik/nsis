@@ -36,7 +36,10 @@
   #include <ios>
   #include <string>
 
-  using namespace std;
+  using ios = std::ios;
+  using ios_base = std::ios_base;
+  using streamsize = std::streamsize;
+  using streamoff = std::streamoff;
 
   #ifdef _MSC_VER
     typedef unsigned char uint8_t;

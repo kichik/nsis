@@ -44,7 +44,7 @@ PatchGenerator::~PatchGenerator() {
   if(targetCData != NULL) delete[] targetCData;
 }
 
-void PatchGenerator::execute(vector<SameBlock*>& sameBlocks) {
+void PatchGenerator::execute(std::vector<SameBlock*>& sameBlocks) {
   ChunkedFile* sourceTree = new ChunkedFile(source,sourceSize,blockSize);
 
   // sameBlocks: this vector will store blocks that have been found to be the same
