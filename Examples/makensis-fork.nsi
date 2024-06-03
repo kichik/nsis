@@ -4,10 +4,11 @@
 !pragma warning error all
 !pragma warning warning 7010 ; File /NonFatal
 
-!ifdef VER_MAJOR & VER_MINOR
-  !define /ifndef VER_REVISION 0
-  !define /ifndef VER_BUILD 0
-!endif
+
+!define /ifndef VER_MAJOR 0
+!define /ifndef VER_MINOR 0
+!define /ifndef VER_REVISION 0
+!define /ifndef VER_BUILD 0
 
 !define /ifndef VERSION 'anonymous-build'
 
