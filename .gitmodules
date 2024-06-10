@@ -1,7 +1,3 @@
-[submodule "zlib"]
-	path = zlib
-	url = https://github.com/madler/zlib.git
-	branch = develop
 [submodule "Contrib/w7tbp"]
 	path = Contrib/w7tbp
 	url = https://github.com/negrutiu/nsis-taskbarprogress.git
