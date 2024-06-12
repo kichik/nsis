@@ -133,6 +133,7 @@
 #define IDM_ZOOM_INC                    542
 #define IDM_ZOOM_DEC                    543
 #define IDM_ZOOM_RST                    544
+#define IDM_ARP                         545
 
 
 // Next default values for new objects

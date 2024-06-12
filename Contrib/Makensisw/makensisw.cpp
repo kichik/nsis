@@ -746,6 +746,13 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
           SendMessage(g_sdata.hwnd, WM_MAKENSIS_UPDATEUISTATE, 0, 0); // Update clear log command state
           break;
         }
+        case IDM_ARP:
+        {
+          TCHAR dir[MAX_PATH];
+          GetSystemDirectory(dir, COUNTOF(dir));
+          ShellExecute(hwndDlg, NULL, TEXT("control.exe"), TEXT("appwiz.cpl"), dir, SW_SHOW);
+          break;
+        }
         case IDM_TEST:
         case IDC_TEST:
         {
