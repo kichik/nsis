@@ -110,6 +110,7 @@ if not defenv['DEBUG'] and defenv['STRIP'] and defenv['STRIP_W32']:
 stub_env.Append(LINKFLAGS = ['-mwindows'])          # build windows executables
 stub_env.Append(LINKFLAGS = ['$ALIGN_FLAG'])        # 512 bytes align
 stub_env.Append(LINKFLAGS = ['$MAP_FLAG'])          # generate map file
+configure_static_libs(stub_env)                     # remove libgcc*.dll & libstdc++*.dll dependency
 conf = FlagsConfigure(stub_env)
 conf.CheckCompileFlag('-fno-tree-loop-distribute-patterns')  # GCC 10: Don't generate msvcrt!memmove calls (bug #1248)
 conf.CheckLinkFlag('-Wl,--disable-reloc-section') # binutils 2.36, ld will include a .reloc section by default (bug #1283)
@@ -193,6 +194,7 @@ util_env.Append(CCFLAGS = ['-fno-strict-aliasing']) # not safe for strict aliasi
 
 util_env.Append(LINKFLAGS = ['-mwindows'])          # build windows executables
 util_env.Append(LINKFLAGS = ['$ALIGN_FLAG'])        # 512 bytes align
+configure_static_libs(util_env)                     # remove libgcc*.dll & libstdc++*.dll dependency
 
 
 conf = FlagsConfigure(util_env)
