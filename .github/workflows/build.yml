@@ -1,10 +1,11 @@
 name: Build, Test and Publish
 on:
-  push:
-    branches-ignore:
-      - trunk
-      - svn2git-cache
-  pull_request:
+#  push:
+#    branches-ignore:
+#      - trunk
+#      - svn2git-cache
+#  pull_request:
+  workflow_dispatch:
 jobs:
   build:
     strategy:

@@ -10,8 +10,8 @@ on:
       force:
         description: 'Force push (CAREFUL!)'
         required: false
-  schedule:
-    - cron:  '4 10 * * *'
+#  schedule:
+#    - cron:  '4 10 * * *'
 
 jobs:
   copy:
