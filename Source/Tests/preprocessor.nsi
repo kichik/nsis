@@ -141,15 +141,18 @@ this shouldn't be compiled
 !insertmacro TM_1
 !insertmacro TM_2
 
+; marius: 42 works for string size of 1024. 37 works for string size of 4096
+!define TM_MaxIterations 35
 !macro TM_Recursion def
-!if '${${def}}' < 42
+!if '${${def}}' < ${TM_MaxIterations}
+  ;!warning 'TM_Recursion: def = ${${def}}'
   !define /redef /math ${def} '${${def}}' + 1
   !insertmacro ${__MACRO__} ${def}
 !endif
 !macroend
 !define /redef OUT1 0
 !insertmacro TM_Recursion OUT1
-${ASSERT} '${OUT1} = 42'
+${ASSERT} '${OUT1} = ${TM_MaxIterations}'
 
 
 ; testing of two math functions and a macro hack :)
