@@ -284,6 +284,7 @@ ${MementoSection} "NSIS Core Files (required)" SecCore
   File ..\Include\Win\WinUser.nsh
   File ..\Include\Win\COM.nsh
   File ..\Include\Win\Propkey.nsh
+  File ..\Include\Win\RestartManager.nsh
 
   SetOutPath $INSTDIR\Docs\StrFunc
   File ..\Docs\StrFunc\StrFunc.txt
@@ -387,6 +388,7 @@ ${MementoSection} "Script Examples" SecExample
   File ..\Examples\WordFunc.ini
   File ..\Examples\WordFuncTest.nsi
   File ..\Examples\Memento.nsi
+  File ..\Examples\MultiUser.nsi
   File ..\Examples\unicode.nsi
   File ..\Examples\NSISMenu.nsi
   File ..\Examples\ModernXL.nsi
@@ -646,7 +648,7 @@ ${MementoSection} "Splash" SecPluginsSplash
 
   SectionIn 1
 
-  !insertmacro InstallPlugin splash
+  !insertmacro InstallPlugin Splash
   SetOutPath $INSTDIR\Docs\Splash
   File ..\Docs\Splash\splash.txt
   SetOutPath $INSTDIR\Examples\Splash
@@ -661,7 +663,7 @@ ${MementoSection} "AdvSplash" SecPluginsSplashT
 
   SectionIn 1
 
-  !insertmacro InstallPlugin advsplash
+  !insertmacro InstallPlugin AdvSplash
   SetOutPath $INSTDIR\Docs\AdvSplash
   File ..\Docs\AdvSplash\advsplash.txt
   SetOutPath $INSTDIR\Examples\AdvSplash
@@ -766,7 +768,7 @@ ${MementoSection} "NSISdl" SecPluginsNSISDL
 
   SectionIn 1
 
-  !insertmacro InstallPlugin nsisdl
+  !insertmacro InstallPlugin NSISdl
   SetOutPath $INSTDIR\Docs\NSISdl
   File ..\Docs\NSISdl\ReadMe.txt
   File ..\Docs\NSISdl\License.txt
@@ -982,7 +984,7 @@ Section -post
   WriteRegStr HKLM "${REG_UNINST_KEY}" "QuietUninstallString" '"$INSTDIR\uninst-nsis.exe" /S'
   WriteRegStr HKLM "${REG_UNINST_KEY}" "InstallLocation" "$INSTDIR"
   WriteRegStr HKLM "${REG_UNINST_KEY}" "DisplayName" "Nullsoft Install System${NAMESUFFIX}"
-  WriteRegStr HKLM "${REG_UNINST_KEY}" "DisplayIcon" "$INSTDIR\uninst-nsis.exe,0"
+  WriteRegStr HKLM "${REG_UNINST_KEY}" "DisplayIcon" "$INSTDIR\NSIS.exe"
   WriteRegStr HKLM "${REG_UNINST_KEY}" "DisplayVersion" "${VERSION}"
 !ifdef VER_MAJOR & VER_MINOR & VER_REVISION & VER_BUILD
   WriteRegDWORD HKLM "${REG_UNINST_KEY}" "VersionMajor" "${VER_MAJOR}" ; Required by WACK
@@ -1050,7 +1052,7 @@ Function .onInit
 
   ${IfNot} ${AtLeastWinXP}
     MessageBox MB_ICONSTOP "This installer requires Windows XP or newer" /SD IDOK
-	Abort
+    Abort
   ${EndIf}
 
   ${MementoSectionRestore}
