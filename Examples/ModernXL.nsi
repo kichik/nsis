@@ -8,8 +8,6 @@
 ; BUILD_MODERN_XL    | Build a "Modern XL" UI installer
 ; BUILD_MODERN_XXL   | Build a "Modern XXL" UI installer
 
-Target x86-unicode
-
 InstallDir "$DESKTOP"	; No files will be actually written
 
 ManifestDPIAware true
