@@ -176,16 +176,6 @@ VIProductVersion ${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}
 	SetOutPath "${outdir}"
     File "..\${fn}"
 	Pop $OUTDIR
-  !else if /FileExists "${NSIS_BIN2}\${fn}"
-    Push $OUTDIR
-	SetOutPath "${outdir}"
-    File "${NSIS_BIN2}\${fn}"
-	Pop $OUTDIR
-  !else if /FileExists "${NSIS_BIN3}\${fn}"
-    Push $OUTDIR
-	SetOutPath "${outdir}"
-    File "${NSIS_BIN3}\${fn}"
-	Pop $OUTDIR
   !endif
 !macroend
 

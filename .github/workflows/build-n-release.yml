@@ -12,9 +12,291 @@ jobs:
 
   build:
     name: Build
-    runs-on: ubuntu-latest
+    outputs:
+      # accessible from other jobs as ${{needs.build.outputs.version_full}}
+      version_full: ${{steps.version.outputs.version_full}}
+      version_packed: ${{steps.version.outputs.version_packed}}
+      version_major: ${{steps.version.outputs.version_major}}
+      version_minor: ${{steps.version.outputs.version_minor}}
+      version_revision: ${{steps.version.outputs.version_revision}}
+      version_build: ${{steps.version.outputs.version_build}}
+
+    strategy:
+      matrix:
+        python-version: ['3.x']  # 2.x is supported but EOL on GitHub Actions
+        os: [ubuntu-latest, macos-13, windows-latest] # [ubuntu-20.04, ubuntu-22.04, macos-11, macos-12, macos-13, windows-latest]  # TODO fails to find cppunit macos-14
+        log: [yes, no]
+        arch: [x86, amd64]
+    
+    runs-on: ${{ matrix.os }}
     steps:
 
-    - name: TODO
-      run: echo TODO
+      - name: Brew Dependencies
+        if: startsWith(matrix.os, 'macos')
+        run: |
+          brew install scons mingw-w64 zlib
+          curl --retry 9 -sLo cppunit.rb "https://sourceforge.net/p/nsis/code/HEAD/tree/web-scripts/trunk/cppunit.rb?format=raw"
+          brew install -s --formula cppunit.rb
+          echo "cppunit installed in $(brew --prefix cppunit)"
+          find $(brew --prefix cppunit)/* -ls
 
+      - name: Apt Dependencies
+        if: startsWith(matrix.os, 'ubuntu')
+        run: sudo DEBIAN_FRONTEND=noninteractive apt-get install -y scons mingw-w64 zlib1g-dev libcppunit-dev
+
+      - name: Setup Python
+        if: startsWith(matrix.os, 'windows')
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Choco Dependencies
+        run: |
+          curl --retry 9 -sLo cppunit-msvc-1.12.1.exe https://downloads.sourceforge.net/project/cppunit-msvc/cppunit-msvc-1.12.1.exe
+          $arguments = "/S /D=$HOME\cppunit"
+          Start-Process ./cppunit-msvc-1.12.1.exe $arguments -NoNewWindow -Wait
+          pip install scons
+          # microsoft removed the download of htmlhelp.exe -- https://chocolatey.org/packages/html-help-workshop#comment-5245282888
+          #choco install html-help-workshop 
+          echo "${Env:ProgramFiles(x86)}\HTML Help Workshop" >> $Env:GITHUB_PATH
+        if: startsWith(matrix.os, 'windows')
+
+      # `fetch-depth: 0` pulls full branch history. Needed to extract the SVN revision number from git comments
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          path: nsis
+          submodules: 'true'
+          fetch-depth: 0
+
+      - name: Version
+        id: version
+        shell: python
+        working-directory: nsis
+        run: |
+          import sys, os
+          sys.path.insert(0, os.path.join(r'${{github.workspace}}', r'nsis'))
+          from nsis_version import *
+
+          version_full = nsis_version(${{github.run_number}})
+          version_packed = nsis_packed_version(${{github.run_number}})
+          version_major = nsis_major_version()
+          version_minor = nsis_minor_version()
+          version_revision = nsis_revision_number()
+          version_build = nsis_build_number(${{github.run_number}})
+
+          print(f"version_full={version_full}")
+          print(f"version_full=[{version_major}, {version_minor}, {version_revision}, {version_build}]")
+          print(f"version_packed={version_packed}")
+
+          with open(os.getenv('GITHUB_OUTPUT'), "a") as fout:
+            fout.write(f"version_full={version_full}\n")
+            fout.write(f"version_packed={version_packed}\n")
+            fout.write(f"version_major={version_major}\n")
+            fout.write(f"version_minor={version_minor}\n")
+            fout.write(f"version_revision={version_revision}\n")
+            fout.write(f"version_build={version_build}\n")
+
+      - name: Zlib Checkout
+        uses: actions/Checkout@v4
+        with:
+          repository: madler/zlib
+          path: zlib
+
+      - name: Zlib Build (posix)
+        if: "!startsWith(matrix.os, 'windows')"
+        working-directory: zlib
+        run: |
+          if [ "${{matrix.arch}}" = "x86" ]
+          then
+            make -fwin32/Makefile.gcc PREFIX=i686-w64-mingw32- LOC="-D_WIN32_WINNT=0x0400 -static" zlib1.dll
+          elif [ "${{matrix.arch}}" = "amd64" ]
+          then
+            make -fwin32/Makefile.gcc PREFIX=x86_64-w64-mingw32- LOC="-D_WIN32_WINNT=0x0502 -static" zlib1.dll
+          fi
+
+      - name: Zlib Build (windows)
+        if: startsWith(matrix.os, 'windows')
+        working-directory: zlib
+        shell: cmd
+        run: |
+          for /f "delims=*" %%p in ('"%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath') do set vcshell=%%~p\VC\Auxiliary\Build\vcvarsall.bat
+          call "%vcshell%" ${{matrix.arch}}
+          nmake -f win32/Makefile.msc LOC=/MT zlib1.dll
+
+      - name: NSIS Build (posix)
+        if: "!startsWith(matrix.os, 'windows')"
+        working-directory: nsis
+        #shell: bash
+        run: |
+          scons \
+            TARGET_ARCH=${{matrix.arch}} \
+            ZLIB_W32=${{github.workspace}}/zlib \
+            VERSION=${{steps.version.outputs.version_full}} \
+            VER_MAJOR=${{steps.version.outputs.version_major}} \
+            VER_MINOR=${{steps.version.outputs.version_minor}} \
+            VER_REVISION=${{steps.version.outputs.version_revision}} \
+            VER_BUILD=${{steps.version.outputs.version_build}} \
+            VER_PACKED=${{steps.version.outputs.version_packed}} \
+            DISTNAME=negrutiu \
+            STRIP=1 \
+            SKIPUTILS="NSIS Menu" \
+            NSIS_CONFIG_LOG=${{ matrix.log }} \
+            NSIS_CONFIG_LOG_TIMESTAMP=${{ matrix.log }} \
+            NSIS_MAX_STRLEN=4096 \
+            test dist-zip
+
+      - name: NSIS Build (windows)
+        if: startsWith(matrix.os, 'windows')
+        working-directory: nsis
+        #shell: pwsh
+        run: |
+          if ('${{matrix.arch}}' -eq 'x86')   {$vcarch = 'Win32'}
+          if ('${{matrix.arch}}' -eq 'amd64') {$vcarch = 'x64'}
+          scons `
+            TARGET_ARCH=${{matrix.arch}} `
+            ZLIB_W32=${{github.workspace}}/zlib `
+            VERSION=${{steps.version.outputs.version_full}} `
+            VER_MAJOR=${{steps.version.outputs.version_major}} `
+            VER_MINOR=${{steps.version.outputs.version_minor}} `
+            VER_REVISION=${{steps.version.outputs.version_revision}} `
+            VER_BUILD=${{steps.version.outputs.version_build}} `
+            VER_PACKED=${{steps.version.outputs.version_packed}} `
+            DISTNAME=negrutiu `
+            STRIP=1 `
+            SKIPUTILS="NSIS Menu" `
+            NSIS_CONFIG_LOG=${{ matrix.log }} `
+            NSIS_CONFIG_LOG_TIMESTAMP=${{ matrix.log }} `
+            NSIS_MAX_STRLEN=4096 `
+            APPEND_CPPPATH=$HOME/cppunit/include `
+            APPEND_LIBPATH=$HOME/cppunit/lib/Release-$vcarch `
+            test dist
+
+      - name: Upload Artifacts
+        if: matrix.log == 'yes'
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-${{matrix.arch}}_${{matrix.os}}
+          path: nsis/nsis-*.zip
+
+      - name: Config Errors
+        if: failure()
+        run: cat config.log
+
+  package:
+    name: Package
+    needs: build
+    runs-on: windows-latest
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Download Artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: artifacts
+        pattern: dist-*
+
+    - name: Merge Architectures
+      shell: python
+      run: |
+        import sys, os
+        sys.path.insert(0, r'${{github.workspace}}')
+        from build_package import *
+        build_package(os.path.join(r'${{github.workspace}}', 'artifacts'), r'${{github.workspace}}')
+
+    - name: Build NSIS Setup (x86)
+      shell: cmd
+      working-directory: .instdist-ubuntu-x86
+      run: |
+        makensis ^
+          /DOUTFILE="../nsis-${{needs.build.outputs.version_full}}-negrutiu-x86.exe" ^
+          /DVERSION=${{needs.build.outputs.version_full}} ^
+          /DVER_MAJOR=${{needs.build.outputs.version_major}} ^
+          /DVER_MINOR=${{needs.build.outputs.version_minor}} ^
+          /DVER_REVISION=${{needs.build.outputs.version_revision}} ^
+          /DVER_BUILD=${{needs.build.outputs.version_build}} ^
+          /DLINK_INFO=https://github.com/negrutiu/nsis ^
+          /DVER_PRODUCTNAME="Unofficial NSIS fork by Marius Negrutiu" ^
+          /DVER_LEGALTRADEMARKS=https://github.com/negrutiu/nsis ^
+          /DEXTRA_WELCOME_TEXT="$\r$\n$\r$\n$\r$\n(*) This is an unofficial fork from https://github.com/negrutiu/nsis$\r$\n" ^
+          /V4 ^
+          Examples\makensis-fork.nsi
+
+    - name: Build NSIS Setup (amd64)
+      shell: cmd
+      working-directory: .instdist-ubuntu-amd64
+      run: |
+        makensis ^
+          /DOUTFILE="../nsis-${{needs.build.outputs.version_full}}-negrutiu-amd64.exe" ^
+          /DVERSION=${{needs.build.outputs.version_full}} ^
+          /DVER_MAJOR=${{needs.build.outputs.version_major}} ^
+          /DVER_MINOR=${{needs.build.outputs.version_minor}} ^
+          /DVER_REVISION=${{needs.build.outputs.version_revision}} ^
+          /DVER_BUILD=${{needs.build.outputs.version_build}} ^
+          /DLINK_INFO=https://github.com/negrutiu/nsis ^
+          /DVER_PRODUCTNAME="Unofficial NSIS fork by Marius Negrutiu" ^
+          /DVER_LEGALTRADEMARKS=https://github.com/negrutiu/nsis ^
+          /DEXTRA_WELCOME_TEXT="$\r$\n$\r$\n$\r$\n(*) This is an unofficial fork from https://github.com/negrutiu/nsis$\r$\n" ^
+          /V4 ^
+          Examples\makensis-fork.nsi
+
+    - name: Upload NSIS Setup (x86)
+      uses: actions/upload-artifact@v4
+      with:
+        name: nsis-x86-setup
+        path: .instdist-ubuntu-x86/nsis*-x86.exe
+
+    - name: Upload NSIS Setup (amd64)
+      uses: actions/upload-artifact@v4
+      with:
+        name: nsis-amd64-setup
+        path: .instdist-ubuntu-amd64/nsis*-amd64.exe
+  
+  release:
+    name: Release Draft
+    if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/github/')
+    needs: [build, package]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Download NSIS
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          pattern: nsis-*-setup
+          merge-multiple: true
+      
+      - name: Prepare release notes
+        shell: python
+        run: |
+          lines = []
+          with open(".github/workflows/release-body.md") as fin:
+            line = fin.read()
+            line = line.replace('{version-gcc}', 'todo')
+            line = line.replace('{url-workflow}', 'https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}')
+            lines.append(line)
+          with open(".github/workflows/release-body.md", "w") as fout:
+            for line in lines:
+              fout.write(line)
+        
+      - name: Create GitHub release draft
+        uses: ncipollo/release-action@v1
+        with:
+          # note: `tag` is the release key
+          tag: release-candidate
+          name: v${{needs.build.outputs.version_full}}
+          artifacts: artifacts/*.exe
+          bodyFile: .github/workflows/release-body.md
+          draft: true
+          makeLatest: true
+          allowUpdates: true
+          updateOnlyUnreleased: true
+          artifactErrorsFailBuild: true
+          removeArtifacts: true
