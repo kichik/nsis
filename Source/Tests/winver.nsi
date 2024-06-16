@@ -88,7 +88,9 @@ Name winver
 OutFile winver.exe
 
 RequestExecutionLevel User
+!if ${NSIS_PTR_SIZE} = 4
 Unicode False
+!endif
 XPStyle on
 ShowInstDetails show
 
