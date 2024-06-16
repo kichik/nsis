@@ -60,7 +60,11 @@ Section ""
 
   ; File to extract
   #File "C:\program files\winamp\plugins\vis_nsfs.dll"
-  File /oname=vis_nsfs.dll "${NSISDIR}\Plugins\x86-ansi\TypeLib.dll" # dummy plug-in
+!if ${NSIS_PTR_SIZE} = 8
+  File /oname=vis_nsfs.dll "${NSISDIR}\Plugins\amd64-unicode\TypeLib.dll" # dummy plug-in
+!else
+  File /oname=vis_nsfs.dll "${NSISDIR}\Plugins\x86-unicode\TypeLib.dll" # dummy plug-in
+!endif
 
   ; prompt user, and if they select no, go to NoWinamp
   MessageBox MB_YESNO|MB_ICONQUESTION \
