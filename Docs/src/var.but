@@ -171,7 +171,9 @@ The document templates directory. The context of this constant (All Users or Cur
 
 \e{$APPDATA}
 
-The (roaming) application data directory.\#{ Detection of the current user path requires Internet Explorer 4 and above. Detection of the all users path requires Internet Explorer 5 and above. The context of this constant (All Users or Current user) depends on the \R{setshellvarcontext}{SetShellVarContext} setting. The default is the current user.}
+The (roaming) application data directory. The context of this constant (All Users or Current user) depends on the \R{setshellvarcontext}{SetShellVarContext} setting. The default is the current user.
+
+Detection of the current user path requires Internet Explorer 4 and above. Detection of the all users path requires Internet Explorer 5 and above. 
 
 This constant is not available on Windows 95 unless Internet Explorer 4 with Active Desktop is installed.
 
