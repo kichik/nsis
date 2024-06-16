@@ -1,0 +1,20 @@
+name: Build and Release
+on:
+  push:
+    branches:
+      - master
+      - 'feature/**'
+      - 'bugfix/**'
+      - 'github/**'
+  workflow_dispatch:
+
+jobs:
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: TODO
+      run: echo TODO
+
