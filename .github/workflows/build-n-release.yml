@@ -203,8 +203,8 @@ jobs:
       run: |
         import sys, os
         sys.path.insert(0, r'${{github.workspace}}')
-        from build_package import *
-        build_package(os.path.join(r'${{github.workspace}}', 'artifacts'), r'${{github.workspace}}')
+        from nsis_package import *
+        build_nsis_package(os.path.join(r'${{github.workspace}}', 'artifacts'), r'${{github.workspace}}')
 
     - name: Build NSIS Setup (x86)
       shell: cmd
