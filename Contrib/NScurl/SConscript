@@ -5,23 +5,27 @@ from urllib import request
 
 target = 'NScurl'
 
-Import('BuildPlugin env')
+Import('env')
+
+scriptpath = Path((lambda x:x).__code__.co_filename)
+scriptdir = scriptpath.parent
 
 # print('----------------------------------------------------------------------')
 # print(env.Dump())
 # print('----------------------------------------------------------------------')
+# print(f"scriptdir: {scriptdir}")
+# print('----------------------------------------------------------------------')
 
 unicode = 'UNICODE' in env['CPPDEFINES']
 archdir = env['TARGET_ARCH'] + ('-unicode' if unicode else '-ansi')    # x86-unicode|x86-amsi|amd64-unicode
-root = Path(env['PREFIX']).parent   # 'PREFIX': '<root>\nsis-mingw-negrutiu-amd64\BIN'
 
 # Download
 pluginUrl = 'https://github.com/negrutiu/nsis-nscurl/releases/latest/download/NScurl.zip'
-pluginZip = root.joinpath('Contrib', 'NScurl', 'latest', 'NScurl.zip')
-pluginEtag = root.joinpath('Contrib', 'NScurl', 'latest', 'NScurl.etag')
-pluginDir = root.joinpath('Contrib', 'NScurl', 'latest', 'package')
+pluginZip = scriptdir.joinpath('github', 'NScurl.zip')
+pluginEtag = scriptdir.joinpath('github', 'NScurl.etag')
+pluginDir = scriptdir.joinpath('github', 'package')
 
-print(f"Download {pluginUrl} ({archdir}) ...")
+print(f"Download {pluginUrl} to {pluginZip} ({archdir}) ...")
 headers = {}
 
 if pluginEtag.exists() and pluginZip.exists():
@@ -54,20 +58,22 @@ with ZipFile(pluginZip) as myzip:
     shutil.rmtree(pluginDir, ignore_errors=True)
     myzip.extractall(pluginDir)
 
-# BuildPlugin
+# Distribute
+Import('defenv')
+
 examples = [
-    pluginDir.joinpath("Examples/NScurl/NScurl-Test.nsi"),
-    pluginDir.joinpath("Examples/NScurl/NScurl-Test-build.bat")
+    pluginDir.joinpath('Examples', 'NScurl', 'NScurl-Test.nsi'),
+    pluginDir.joinpath('Examples', 'NScurl', 'NScurl-Test-build.bat')
 ]
 
 docs = [
-    pluginDir.joinpath("Docs/NScurl/NScurl.readme.md")
+    pluginDir.joinpath('Docs', 'NScurl', 'NScurl.readme.md')
 ]
 
-BuildPlugin(target, [], [], examples, docs)
+plugins = [
+    pluginDir.joinpath('Plugins', archdir, 'NScurl.dll')
+]
 
-# The previous BuildPlugin() call generates a dummy NScurl.dll
-# We overwrite the dummy file with the real one downloaded from GitHub
-outdir = root.joinpath(env['BUILD_PREFIX'], 'NScurl', archdir)       # <root>/nsis-mingw-negrutiu-x86/build/urelease/NScurl/x86-unicode, ('BUILD_PREFIX': 'build/urelease')
-outdir.mkdir(parents=True, exist_ok=True)
-shutil.copytree(pluginDir.joinpath('Plugins', archdir), outdir, dirs_exist_ok=True)
+defenv.DistributeExamples(examples, path=target)
+defenv.DistributeDocs(docs, path=target)
+defenv.DistributePlugin(plugins, arcsubpath=archdir)
