@@ -155,7 +155,8 @@ if defenv['PLATFORM'] == 'win32':
 	ignore_tests = 'none'
 else:
 	ignore_tests = ','.join(Split("""
-Examples/makensis.nsi"""))
+Examples/makensis.nsi
+Examples/makensis-fork.nsi"""))
 
 # version
 opts.Add(('VERSION', 'Version of NSIS', cvs_version))
