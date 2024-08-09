@@ -13,12 +13,16 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <commctrl.h>
+#include <shlwapi.h>
 
 #ifndef COUNTOF
 #define COUNTOF(a) (sizeof(a)/sizeof(a[0]))
 #endif
 
 /*
+version 0.39 (by Anders Kjersem)
+* Accept .zip as command line parameter
+
 version 0.38 (by Anders Kjersem)
 * Aborts if the zip file is encrypted
 
@@ -601,7 +605,7 @@ void makeEXE(HWND hwndDlg)
 
 }
 
-void SetZip(HWND hwndDlg, TCHAR *path)
+int SetZip(HWND hwndDlg, TCHAR *path)
 {
   TCHAR buf2[1024];
   lstrcpy(buf2,path);
@@ -618,10 +622,15 @@ void SetZip(HWND hwndDlg, TCHAR *path)
   }
   _tcscpy(t,_T(".exe"));
   SetDlgItemText(hwndDlg,IDC_OUTFILE,path);
-  if (tempzip_make(hwndDlg,buf2)) tempzip_cleanup(hwndDlg,1);
+  if (tempzip_make(hwndDlg,buf2))
+  {
+    tempzip_cleanup(hwndDlg,1);
+    return 1;
+  }
   else
   {
     EnableWindow(GetDlgItem(hwndDlg,IDOK),1);
+    return 0;
   }
 }
 
@@ -669,6 +678,18 @@ INT_PTR CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       SendDlgItemMessage(hwndDlg,IDC_OUTPUTTEXT,WM_SETFONT,(WPARAM)hFont,0);
 
       DragAcceptFiles(hwndDlg,TRUE);
+
+      {
+        LPTSTR args = PathGetArgs(GetCommandLine());
+        TCHAR buf[100];
+        lstrcpyn(buf, args, sizeof("/GENERATE"));
+        BOOL generate = !_tcsicmp(buf, _T("/GENERATE"));
+        args += generate ? sizeof("/GENERATE") : 0;
+        while (*args <= ' ' && *args) ++args;
+        PathUnquoteSpaces(args);
+        if (*args && !SetZip(hwndDlg, args) && generate)
+            PostMessage(hwndDlg, WM_COMMAND, IDOK, 0);
+      }
     return 1;
     case WM_NCDESTROY:
       DeleteObject(hIcon); hIcon=0;
