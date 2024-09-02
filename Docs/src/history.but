@@ -14,6 +14,8 @@ Workgroups party? The end of 16-bit?
 
 \b Support setting source file decoding charset with magic comment (\W{http://sf.net/p/nsis/patches/292}{patch #292})
 
+\b Handle CHARSET command line parameter in MakeNSISW (\W{http://sf.net/p/nsis/patches/315}{patch #315})
+
 \b Make System/Resource.dll reproducible (\W{http://sf.net/p/nsis/patches/312}{patch #312})
 
 \b Zip2Exe accepts .zip as command line parameter

@@ -151,13 +151,16 @@ static void AddScriptCmdArgs(const TCHAR *arg)
 enum { CMD_PICKCOMP = 0x0001, CMD_SPY = 0x0080, CMD_LOOKUP = 0x8000 };
 static UINT ProcessCommandLine()
 {
+  LPCWSTR alwaysextraparam[] = { _T("INPUTCHARSET"), _T("ICS"), _T("OUTPUTCHARSET"), _T("OCS") };
   TCHAR **argv;
-  int i, j, retflags = 0;
+  int i, j, retflags = 0, in_files = 0;
   int argc = SetArgv((TCHAR *)GetCommandLine(), &argv);
   if (argc > 1) {
     for (i = 1; i < argc; i++)
     {
-      if (!lstrcmpi(argv[i], _T("/Spy"))) retflags |= CMD_SPY;
+      if (in_files) goto openfile;
+      else if (!lstrcmpi(argv[i], _T("--"))) ++in_files;
+      else if (!lstrcmpi(argv[i], _T("/Spy"))) retflags |= CMD_SPY;
       else if (!lstrcmpi(argv[i], _T("/Lookup"))) retflags |= CMD_LOOKUP;
       else if (!StrCmpNI(argv[i], _T("/XSetCompressor "), COUNTOF("/XSetCompressor ") - !0))
       {
@@ -179,9 +182,12 @@ static UINT ProcessCommandLine()
       }
       else if (argv[i][0] == _T('-') || argv[i][0] == _T('/'))
       {
-        AddScriptCmdArgs(argv[i]);
+          AddScriptCmdArgs(argv[i]);
+          for (SIZE_T k = 0; k < COUNTOF(alwaysextraparam); ++k)
+              if (!lstrcmpi(argv[i] + 1, alwaysextraparam[k]) && ++i < argc)
+                AddScriptCmdArgs(argv[i]);
       }
-      else
+      else openfile:
       {
         SetScript(argv[i], false);
         PushMRUFile(g_sdata.script);
