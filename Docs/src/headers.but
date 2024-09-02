@@ -2,10 +2,17 @@
 
 \b \R{tut-logic}{LogicLib} - Evaluate various logic statements with helper macros.
 
+\b Memento.nsh - Remember the users components selection.
+
 \b \R{modernui}{Modern User Interface} - A MSI inspired interface.
 
 \b \L{../Docs/MultiUser/Readme.html}{Multi-User} - Install for a single user or for all users on the computer.
 
+\b Sections.nsh - Manipulate Sections.
+
+\b WinVer.nsh - Detect Windows version.
+
+\b x64.nsh - Detect CPU architecture and bitness.
 
 \H{filefunc} File Functions Header
 
