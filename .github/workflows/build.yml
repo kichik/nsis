@@ -21,7 +21,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Brew Dependencies
         run: |
           brew install scons mingw-w64 zlib
@@ -72,7 +72,7 @@ jobs:
           zip $zip build.log
         if: matrix.nightly == 'nightly' && github.ref == 'refs/heads/master'
       - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build.zip
           path: nsis-*.zip
@@ -84,7 +84,7 @@ jobs:
     needs: [build]
     steps:
       - name: Download a single artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: build.zip
       - name: Upload to SourceForge
