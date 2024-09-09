@@ -186,7 +186,15 @@ const TCHAR * NSISCALL loadHeaders(int cl_flags)
 
   GetModuleFileName(NULL, state_exe_path, NSIS_MAX_STRLEN);
 
-  g_db_hFile = db_hFile = myOpenFile(state_exe_path, GENERIC_READ, OPEN_EXISTING);
+  // Windows Defender blocks reading exe file now and then
+  for (int i = 0; i < 5; ++i) {
+    Sleep(i * 200);
+    g_db_hFile = db_hFile = myOpenFile(state_exe_path, GENERIC_READ, OPEN_EXISTING);
+    if (db_hFile != INVALID_HANDLE_VALUE)
+    {
+      break;
+    }
+  }
   if (db_hFile == INVALID_HANDLE_VALUE)
   {
     return _LANG_CANTOPENSELF;
