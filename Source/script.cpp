@@ -1573,25 +1573,26 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return PS_OK;
     case TOK_LICENSEBKCOLOR:
       {
-        const TCHAR *cmdname = _T("LicenseBkColor");
-        TCHAR *p = line.gettoken_str(1);
-        if (!_tcsicmp(p,_T("/windows")))
+        const TCHAR *cmdname = _T("LicenseBkColor"), *paramname;
+        TCHAR *p = line.gettoken_str(1), *p2;
+        if (!_tcsicmp(p,paramname = _T("/windows")) || !_tcsicmp(p,_T("/window")))
         {
           build_header.license_bg=-COLOR_WINDOW;
-          SCRIPT_MSG(_T("%") NPRIs _T(": /windows\n"),cmdname);
+          SCRIPT_MSG(_T("%") NPRIs _T(": %") NPRIs _T("\n"),cmdname,paramname);
         }
-        else if (!_tcsicmp(p,_T("/grey")) || !_tcsicmp(p,_T("/gray")))
+        else if (!_tcsicmp(p,paramname = _T("/grey")) || !_tcsicmp(p,_T("/gray")))
         {
-          build_header.license_bg=-COLOR_BTNFACE;
-          SCRIPT_MSG(_T("%") NPRIs _T(": /grey\n"),cmdname);
+          build_header.license_bg=-COLOR_BTNFACE; /* Note: This might not actually be gray */
+          SCRIPT_MSG(_T("%") NPRIs _T(": %") NPRIs _T("\n"),cmdname,paramname);
         }
         else
         {
-          const int v=_tcstoul(p,&p,16);
+          const int v=_tcstoul(p,&p2,16);
+          if (p2 == p) return PS_ERROR;
           build_header.license_bg=((v&0xff)<<16)|(v&0xff00)|((v&0xff0000)>>16);
-          build_uninst.license_bg=build_header.license_bg;
           SCRIPT_MSG(_T("%") NPRIs _T(": %06X\n"),cmdname,v);
         }
+        build_uninst.license_bg=build_header.license_bg;
       }
     return PS_OK;
 #else
