@@ -10,7 +10,7 @@ jobs:
     strategy:
       matrix:
         python-version: ['3.x']  # 2.x is supported but EOL on GitHub Actions
-        os: [ubuntu-20.04, ubuntu-22.04, macos-11, macos-12, windows-2019]  # TODO fails to find VC windows-2022
+        os: [ubuntu-20.04, ubuntu-22.04, ubuntu-24.04, macos-12, macos-13, windows-2019, windows-2022]  # TODO fails to find cppunit on macos-14/15
         log: [yes, no]
         include:
           - nightly: nightly
