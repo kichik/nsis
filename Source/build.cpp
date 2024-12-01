@@ -3787,10 +3787,8 @@ int CEXEBuild::add_plugins_dir_initializer(void)
   bool uninstall = !plugin_used;
 
   int ret;
-  int zero_offset;
-
-  int var_zero;
-  var_zero=m_UserVarNames.get(_T("0"));
+  int var_r0=m_UserVarNames.get(_T("0")), r0_offset;
+  int var_r1=m_UserVarNames.get(_T("1")), r1_offset;
 
 again:
   // Function [un.]Initialize_____Plugins
@@ -3798,7 +3796,8 @@ again:
   if (ret != PS_OK) return ret;
 
   // don't move this, depends on [un.]
-  zero_offset=add_asciistring(_T("$0"));
+  r0_offset=add_asciistring(_T("$0"));
+  r1_offset=add_asciistring(_T("$1"));
 
   // SetDetailsPrint none (special)
   ret=add_entry_direct(EW_SETFLAG, FLAG_OFFSET(status_update), add_intstring(6), -1);
@@ -3808,38 +3807,56 @@ again:
   ret=add_entry_direct(EW_STRCMP, add_asciistring(_T("$PLUGINSDIR")), 0, 0, ns_label.add(_T("Initialize_____Plugins_done"),0));
   if (ret != PS_OK) return ret;
   // Push $0
-  ret=add_entry_direct(EW_PUSHPOP, zero_offset);
+  ret=add_entry_direct(EW_PUSHPOP, r0_offset);
   if (ret != PS_OK) return ret;
+  // Push $1
+  ret=add_entry_direct(EW_PUSHPOP, r1_offset);
+  if (ret != PS_OK) return ret;
+  // Copy "" to $1
+  ret=add_entry_direct(EW_ASSIGNVAR, var_r1, r0_offset, 0, -1);
+  if (ret != PS_OK) return ret;
+
+  // retry:
+  if (add_label(_T("Initialize_____Plugins_retry"))) return PS_ERROR;
   // ClearErrors
   ret=add_entry_direct(EW_SETFLAG, FLAG_OFFSET(exec_error));
   if (ret != PS_OK) return ret;
   // GetTempFileName $0
-  ret=add_entry_direct(EW_GETTEMPFILENAME, var_zero, add_asciistring(_T("$TEMP")));
+  ret=add_entry_direct(EW_GETTEMPFILENAME, var_r0, add_asciistring(_T("$TEMP")));
   if (ret != PS_OK) return ret;
   // Delete $0 [simple, nothing that could clash with special temp permissions]
-  ret=add_entry_direct(EW_DELETEFILE, zero_offset, DEL_SIMPLE);
+  ret=add_entry_direct(EW_DELETEFILE, r0_offset, DEL_SIMPLE);
   if (ret != PS_OK) return ret;
   // CreateDirectory $0 - a dir instead of that temp file
-  ret=add_entry_direct(EW_CREATEDIR, zero_offset, 0, 1);
+  ret=add_entry_direct(EW_CREATEDIR, r0_offset, 0, 1);
   if (ret != PS_OK) return ret;
   // IfErrors Initialize_____Plugins_error - detect errors
   ret=add_entry_direct(EW_IFFLAG, ns_label.add(_T("Initialize_____Plugins_error"),0), 0, FLAG_OFFSET(exec_error));
   if (ret != PS_OK) return ret;
   // Copy $0 to $PLUGINSDIR
-  ret=add_entry_direct(EW_ASSIGNVAR, m_UserVarNames.get(_T("PLUGINSDIR")), zero_offset);
+  ret=add_entry_direct(EW_ASSIGNVAR, m_UserVarNames.get(_T("PLUGINSDIR")), r0_offset);
+  if (ret != PS_OK) return ret;
+  // Pop $1
+  ret=add_entry_direct(EW_PUSHPOP, var_r1, 1);
   if (ret != PS_OK) return ret;
   // Pop $0
-  ret=add_entry_direct(EW_PUSHPOP, var_zero, 1);
+  ret=add_entry_direct(EW_PUSHPOP, var_r0, 1);
   if (ret != PS_OK) return ret;
 
-  // done
+  // done:
   if (add_label(_T("Initialize_____Plugins_done"))) return PS_ERROR;
   // Return
   ret=add_entry_direct(EW_RET);
   if (ret != PS_OK) return ret;
 
-  // error
+  // error:
   if (add_label(_T("Initialize_____Plugins_error"))) return PS_ERROR;
+  // IntOp $1 $1 + 1
+  ret=add_entry_direct(EW_INTOP, var_r1, r1_offset, add_asciistring(_T("1")), 0);
+  if (ret != PS_OK) return ret;
+  // StrCmp $1 "9"
+  ret=add_entry_direct(EW_STRCMP, r1_offset, add_asciistring(_T("9")), 0, ns_label.add(_T("Initialize_____Plugins_retry"),0));
+  if (ret != PS_OK) return ret;
   // error message box
   ret=add_entry_direct(EW_MESSAGEBOX, MB_OK|MB_ICONSTOP|(IDOK<<21), add_asciistring(_T("Error! Can't initialize plug-ins directory. Please try again later.")));
   if (ret != PS_OK) return ret;

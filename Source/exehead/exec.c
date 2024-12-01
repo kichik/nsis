@@ -378,7 +378,10 @@ static int NSISCALL ExecuteEntry(entry *entry_)
             p = findchar(p, _T('\\'));
             c = *p, *p = 0;
             if (!c && parm2 && UserIsAdminGrpMember()) // Lock down the final directory?
+            {
               ec = CreateRestrictedDirectory(buf1);
+              if (ec) exec_error++; // Report error to add_plugins_dir_initializer
+            }
             else
               ec = CreateNormalDirectory(buf1);
             if (ec)
