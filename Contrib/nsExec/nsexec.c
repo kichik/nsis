@@ -185,7 +185,7 @@ void ExecScript(int mode) {
 
   *szRet = _T('\0');
 
-  if (!IsWOW64()) {
+  if (sizeof(void*) < 8 && !IsWOW64()) {
     TCHAR* p;
     int nComSpecSize;
 
