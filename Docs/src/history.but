@@ -12,7 +12,7 @@ Workgroups party? The end of 16-bit?
 
 \S2{} Minor Changes
 
-\b Retry creating restricted $PLUGINSDIR (\W{http://sf.net/p/nsis/bugs/1315}{bug #1315})
+\b Retry creating restricted $PLUGINSDIR (thanks Sandro Poppi, \W{http://sf.net/p/nsis/bugs/1315}{bug #1315})
 
 \b Support setting source file decoding charset with magic comment (\W{http://sf.net/p/nsis/patches/292}{patch #292})
 
