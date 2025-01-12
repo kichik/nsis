@@ -684,7 +684,7 @@
   !insertmacro WinVer_WaaS "${id}" 22000 "?"  "Sun Valley"   "Windows 11" ; 10.0.22000.194 21H2
   !insertmacro WinVer_WaaS "${id}" 22621 22H2 "Sun Valley 2" "2022 Update" ; 10.0.22621.521
   !insertmacro WinVer_WaaS "${id}" 22631 23H2 "Sun Valley 3" "2023 Update"
-  !insertmacro WinVer_WaaS "${id}" 26100 24H2 "?"            "2024 Update"
+  !insertmacro WinVer_WaaS "${id}" 26100 24H2 "Hudson Valley" "2024 Update"
 
   !ifmacrodef WinVerExternal_WaaS_MapToBuild
     !insertmacro WinVerExternal_WaaS_MapToBuild ${op} "${id}" WinVer_WaaS_Build
