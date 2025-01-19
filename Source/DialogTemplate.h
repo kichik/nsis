@@ -3,7 +3,7 @@
  * 
  * This file is a part of NSIS.
  * 
- * Copyright (C) 2002-2023 Amir Szekely <kichik@netvision.net.il> and Contributors
+ * Copyright (C) 2002-2025 Amir Szekely <kichik@netvision.net.il> and Contributors
  * 
  * Licensed under the zlib/libpng license (the "License");
  * you may not use this file except in compliance with the License.

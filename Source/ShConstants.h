@@ -4,7 +4,7 @@
  * This file is a part of NSIS.
  * 
  * Copyright (C) 2003 Ramon
- * Copyright (C) 2003-2023 NSIS Contributors
+ * Copyright (C) 2003-2025 NSIS Contributors
  * 
  * Licensed under the zlib/libpng license (the "License");
  * you may not use this file except in compliance with the License.
