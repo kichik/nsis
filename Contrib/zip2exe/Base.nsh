@@ -16,6 +16,8 @@ AllowRootDirInstall true
   SetCompressor ${SETCOMPRESSOR_SWITCH} zlib
 !else ifdef ZIP2EXE_COMPRESSOR_BZIP2
   SetCompressor ${SETCOMPRESSOR_SWITCH} bzip2
+!else ifdef ZIP2EXE_COMPRESSOR_ZSTD
+  SetCompressor ${SETCOMPRESSOR_SWITCH} zstd
 !else ifdef ZIP2EXE_COMPRESSOR_LZMA
   SetCompressor ${SETCOMPRESSOR_SWITCH} lzma
 !endif

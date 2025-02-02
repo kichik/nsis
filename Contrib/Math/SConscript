@@ -4,6 +4,44 @@ files = Split("""
 	Source/Math.c
 	Source/MyMath.c
 	Source/plugin.c
+	Source/xprintf.c
+""")
+
+libm_files = Split("""
+	Source/mathlib/e_acos.c
+	Source/mathlib/e_atan2.c
+	Source/mathlib/e_asin.c
+	Source/mathlib/e_cosh.c
+	Source/mathlib/e_exp.c
+	Source/mathlib/e_fmod.c
+	Source/mathlib/e_log.c
+	Source/mathlib/e_log10.c
+	Source/mathlib/e_pow.c
+	Source/mathlib/e_rem_pio2.c
+	Source/mathlib/e_scalb.c
+	Source/mathlib/e_sinh.c
+	Source/mathlib/e_sqrt.c
+	Source/mathlib/isinf.c
+	Source/mathlib/k_cos.c
+	Source/mathlib/k_rem_pio2.c
+	Source/mathlib/k_sin.c
+	Source/mathlib/k_tan.c
+	Source/mathlib/s_atan.c
+	Source/mathlib/s_ceil.c
+	Source/mathlib/s_copysign.c
+	Source/mathlib/s_cos.c
+	Source/mathlib/s_expm1.c
+	Source/mathlib/s_fabs.c
+	Source/mathlib/s_finite.c
+	Source/mathlib/s_floor.c
+	Source/mathlib/s_frexp.c
+	Source/mathlib/s_isnan.c
+	Source/mathlib/s_modf.c
+	Source/mathlib/s_rint.c
+	Source/mathlib/s_scalbn.c
+	Source/mathlib/s_sin.c
+	Source/mathlib/s_tan.c
+	Source/mathlib/s_tanh.c
 """)
 
 libs = Split("""
@@ -22,6 +60,10 @@ docs = Split("""
 	Math.txt
 """)
 
+defines = ['__BIG_ENDIAN=4321', '__LITTLE_ENDIAN=1234', '__BYTE_ORDER=1234', 'lint=1']
+
 Import('BuildPlugin env')
 
-BuildPlugin(target, files, libs, examples, docs, nodeflib = False, flags = ['$CPP_FLAG'], entry = None)
+files += libm_files
+
+BuildPlugin(target, files, libs, examples, docs, nodeflib = False, flags = ['$CPP_FLAG'], defines = defines)

@@ -5,7 +5,8 @@ EnsurePythonVersion(2,7)
 stubs = [
 	'bzip2',
 	'lzma',
-	'zlib'
+	'zlib',
+	'zstd'
 ]
 
 plugin_libs = [
@@ -449,7 +450,7 @@ def Sign(targets):
 			a = defenv.Action('$CODESIGNER "%s"' % t.path)
 			defenv.AddPostAction(t, a)
 
-Import('SilentActionEcho IsPEExecutable SetPESecurityFlagsWorker MakeReproducibleAction')
+Import('SilentActionEcho IsPEExecutable SetPESecurityFlagsWorker MakeReproducibleAction SetPEWin95Supported')
 def SetPESecurityFlagsAction(target, source, env):
 	for t in target:
 		SetPESecurityFlagsWorker(t.path)
@@ -467,6 +468,9 @@ def SetPESecurityFlags(targets):
 def MakeReproducible(targets):
 	for t in targets:
 		defenv.AddPostAction(t, defenv.Action(MakeReproducibleAction, strfunction=SilentActionEcho))
+def MakeWin95Compatible(targets):
+	for t in targets:
+		defenv.AddPostAction(t, defenv.Action(SetPEWin95Supported, strfunction=SilentActionEcho))
 
 def TestScript(scripts):
 	defenv.Install('$TESTDISTDIR/Tests', scripts)
@@ -486,6 +490,7 @@ defenv.DistributeExamples = DistributeExamples
 defenv.Sign = Sign
 defenv.SetPESecurityFlags = SetPESecurityFlags
 defenv.MakeReproducible = MakeReproducible
+defenv.MakeWin95Compatible = MakeWin95Compatible
 defenv.TestScript = TestScript
 
 def DistributeExtras(env, target, examples, docs):
@@ -657,6 +662,7 @@ def BuildStub(compression, solid, unicode):
 	env.SideEffect('%s/stub_%s.map' % (build_dir, stub), target)
 
 	env.MakeReproducible(target)
+	env.MakeWin95Compatible(target)
 	env.DistributeStubs(target, names=compression+suffix)
 
 	defenv.Alias(compression, target)
@@ -727,6 +733,7 @@ def BuildPluginWorker(target, source, libs, examples = None, docs = None,
 
 	defenv.SetPESecurityFlags(plugin)
 	defenv.MakeReproducible(plugin)
+	defenv.MakeWin95Compatible(plugin)
 	defenv.Sign(plugin)
 
 	CleanMap(env, plugin, target)

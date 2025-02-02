@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include <math.h>
+#include "mathlib/math.h"
 #include <float.h>
 #include <nsis/nsis_tchar.h>
 

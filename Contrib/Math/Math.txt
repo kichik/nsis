@@ -195,3 +195,27 @@ SUCH IS NOT POSSIBLE: "#[a<0, #func()(1), #func()(2)]"
 IT WILL SIMPLY DEFINE #func as (2), as the latest variant.
         
 (c) Nik Medved (brainsucker)
+
+
+
+XPRINTF LIBRARY
+Copyright (C) 2021, ChaN, all right reserved.
+
+xprintf module is an open source software. Redistribution and use of
+xprintf module in source and binary forms, with or without modification,
+are permitted provided that the following condition is met:
+1. Redistributions of source code must retain the above copyright notice,
+   this condition and the following disclaimer.
+This software is provided by the copyright holder and contributors "AS IS"
+and any warranties related to this software are DISCLAIMED.
+The copyright owner or contributors be NOT LIABLE for any damages caused
+by use of this software.
+
+
+
+MATH LIBRARY:
+Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
+
+Developed at SunSoft, a Sun Microsystems, Inc. business.
+Permission to use, copy, modify, and distribute this
+software is freely granted, provided that this notice is preserved.

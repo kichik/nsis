@@ -50,6 +50,30 @@ lzma_files = Split("""
 	7zip/Common/CRC.cpp
 """)
 
+zstd_files = Split("""
+	zstd/common/entropy_common.c
+	zstd/common/error_private.c
+	zstd/common/fse_decompress.c
+	zstd/common/pool.c
+	zstd/common/threading.c
+	zstd/common/xxhash.c
+	zstd/common/zstd_common.c
+	zstd/compress/fse_compress.c
+	zstd/compress/hist.c
+	zstd/compress/huf_compress.c
+	zstd/compress/zstd_compress.c
+	zstd/compress/zstd_compress_literals.c
+	zstd/compress/zstd_compress_sequences.c
+	zstd/compress/zstd_compress_superblock.c
+	zstd/compress/zstd_double_fast.c
+	zstd/compress/zstd_fast.c
+	zstd/compress/zstd_lazy.c
+	zstd/compress/zstd_ldm.c
+	zstd/compress/zstd_opt.c
+	zstd/compress/zstdmt_compress.c
+	DynamicCondVars.c
+""")
+
 libs = Split("""
 	gdi32
 	user32
@@ -77,6 +101,7 @@ AddZLib(env, env['PLATFORM'], 'install-compiler')
 
 env.Append(CPPDEFINES = ['MAKENSIS'])
 env.Append(CPPDEFINES = ['_WIN32_IE=0x0500'])
+env.Append(CPPDEFINES = ['ZSTD_MULTITHREAD'])
 
 ##### Set PCH
 
@@ -92,7 +117,7 @@ lzma_files = lzma_env.Object(lzma_files)
 
 ##### Compile makensis
 
-files = makensis_files + bzip2_files + lzma_files
+files = makensis_files + bzip2_files + lzma_files + zstd_files
 
 makensis = env.Program(target, files)
 
