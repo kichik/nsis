@@ -227,7 +227,11 @@ void ExecScript(int mode) {
         pNTHeaders = (PIMAGE_NT_HEADERS)(pMapView + ((PIMAGE_DOS_HEADER)pMapView)->e_lfanew);
         // Turning the copied DLL into a stripped down executable.
         pNTHeaders->FileHeader.Characteristics = IMAGE_FILE_32BIT_MACHINE | IMAGE_FILE_LOCAL_SYMS_STRIPPED | 
-          IMAGE_FILE_LINE_NUMS_STRIPPED | IMAGE_FILE_EXECUTABLE_IMAGE;
+          IMAGE_FILE_LINE_NUMS_STRIPPED | IMAGE_FILE_EXECUTABLE_IMAGE
+        #ifdef _WIN64
+        | IMAGE_FILE_LARGE_ADDRESS_AWARE // For ARM64 (feature request #579)
+        #endif
+        ;
         // Windows character-mode user interface (CUI) subsystem.
         pNTHeaders->OptionalHeader.Subsystem = IMAGE_SUBSYSTEM_WINDOWS_CUI;
         // g_hInst is assumed to be the very base of the DLL in memory.
