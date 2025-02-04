@@ -170,12 +170,15 @@ const TCHAR * NSISCALL loadHeaders(int cl_flags)
   header *header;
 
   HANDLE db_hFile;
+  enum { opentotalwait = 1500, opentrywait = 250, maxopentries = opentotalwait / opentrywait };
+  UINT opentries = 0;
 
 #ifdef C_ASSERT
 {C_ASSERT(sizeof(firstheader) == sizeof(int) * 7);}
 {C_ASSERT(sizeof(struct block_header) == sizeof(UINT_PTR) + sizeof(int));}
 {C_ASSERT(LASIF_FITCTLW >> LASIS_FITCTLW == 1);}
 {C_ASSERT(LASIF_LR_LOADFROMFILE == LR_LOADFROMFILE);}
+{C_ASSERT(opentotalwait == opentrywait * maxopentries);}
 #endif
 
 #ifdef NSIS_CONFIG_CRC_SUPPORT
@@ -185,10 +188,16 @@ const TCHAR * NSISCALL loadHeaders(int cl_flags)
 #endif//NSIS_CONFIG_CRC_SUPPORT
 
   GetModuleFileName(NULL, state_exe_path, NSIS_MAX_STRLEN);
-
+retry:
   g_db_hFile = db_hFile = myOpenFile(state_exe_path, GENERIC_READ, OPEN_EXISTING);
   if (db_hFile == INVALID_HANDLE_VALUE)
   {
+    UINT error = GetLastError();
+    if (error == ERROR_SHARING_VIOLATION && ++opentries <= maxopentries)
+    {
+        Sleep(opentrywait);
+        goto retry;
+    }
     return _LANG_CANTOPENSELF;
   }
 
