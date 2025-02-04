@@ -22,17 +22,17 @@
 #define IDC_TEST                        1017
 #define IDC_BACK                        1018
 #define IDC_COMPILER                    1019
-#define IDC_ZLIB                        1020
+#define IDC_UNICODE                     1020
 #define IDC_MODERNUI                    1021
 #define IDC_COMPRESSOR                  1022
 #define IDC_INTERFACE                   1023
-#define IDC_BZIP2                       1024
+#define IDC_SOLID                       1024
 #define IDC_CLASSICUI                   1025
 #define IDC_INFO                        1026
 #define IDC_NSISICON                    1027
-#define IDC_LZMA                        1028
-#define IDC_SOLID                       1029
-#define IDC_UNICODE                     1030
+#define IDC_ZLIB                        1028
+#define IDC_BZIP2                       1029
+#define IDC_LZMA                        1030
 
 // Next default values for new objects
 //

@@ -20,6 +20,9 @@
 #endif
 
 /*
+version 0.40 (by Anders Kjersem)
+* The compressor can be specified with the ZIP2EXE_COMPRESSOR define
+
 version 0.39 (by Anders Kjersem)
 * Accept .zip as command line parameter
 
@@ -97,6 +100,30 @@ int WINAPI _tWinMain(HINSTANCE hInst,HINSTANCE hOldInst,LPTSTR CmdLineParams,int
   InitCommonControls();
   g_hInstance=hInst;
   return (int) DialogBox(g_hInstance,MAKEINTRESOURCE(IDD_DIALOG1),0,DlgProc);
+}
+
+enum { COMPRESSORID_FIRST = IDC_ZLIB, COMPRESSORID_LAST = IDC_LZMA };
+
+static LPCTSTR GetCompressorName()
+{
+  #ifdef C_ASSERT
+  C_ASSERT(3 == COMPRESSORID_LAST - COMPRESSORID_FIRST + 1);
+  #endif
+  switch (g_compressor)
+  {
+  case IDC_ZLIB  + 1 - COMPRESSORID_FIRST: return _T("ZLIB");
+  case IDC_BZIP2 + 1 - COMPRESSORID_FIRST: return _T("BZIP2");
+  case IDC_LZMA  + 1 - COMPRESSORID_FIRST: return _T("LZMA");
+  default: return _T("?");
+  }
+}
+
+static int GetCheckedCompressor(HWND hwndDlg)
+{
+  for (UINT id = COMPRESSORID_FIRST; id <= COMPRESSORID_LAST; ++id)
+    if (IsDlgButtonChecked(hwndDlg,id))
+      return id + 1 - COMPRESSORID_FIRST;
+  return 0;
 }
 
 static bool IsEncrypted(unz_file_info&zfi)
@@ -509,12 +536,9 @@ void makeEXE(HWND hwndDlg)
   _ftprintf(fp,_T("!define ZIP2EXE_NAME `%s`\n"),buf);
   GetDlgItemText(hwndDlg,IDC_OUTFILE,buf,sizeof(buf));
   _ftprintf(fp,_T("!define ZIP2EXE_OUTFILE `%s`\n"),buf);
-  if (g_compressor == 1)
-    _ftprintf(fp,_T("!define ZIP2EXE_COMPRESSOR_ZLIB\n"));
-  if (g_compressor == 2)
-    _ftprintf(fp,_T("!define ZIP2EXE_COMPRESSOR_BZIP2\n"));
-  if (g_compressor == 3)
-    _ftprintf(fp,_T("!define ZIP2EXE_COMPRESSOR_LZMA\n"));
+  LPCTSTR compname = GetCompressorName();
+  _ftprintf(fp,_T("!define ZIP2EXE_COMPRESSOR %s\n"), compname);
+  _ftprintf(fp,_T("!define ZIP2EXE_COMPRESSOR_%s\n"), compname); // Compatibility define
   if (g_compressor_solid == 1)
     _ftprintf(fp,_T("!define ZIP2EXE_COMPRESSOR_SOLID\n"));
   GetDlgItemText(hwndDlg,IDC_INSTPATH,buf,sizeof(buf));
@@ -802,16 +826,8 @@ INT_PTR CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
           {
             if (!g_made)
             {
-              if (IsDlgButtonChecked(hwndDlg,IDC_ZLIB))
-                g_compressor = 1;
-              if (IsDlgButtonChecked(hwndDlg,IDC_BZIP2))
-                g_compressor = 2;
-              if (IsDlgButtonChecked(hwndDlg,IDC_LZMA))
-                g_compressor = 3;
-              if (IsDlgButtonChecked(hwndDlg,IDC_SOLID))
-                g_compressor_solid = 1;
-              else
-                g_compressor_solid = 0;
+              g_compressor = GetCheckedCompressor(hwndDlg);
+              g_compressor_solid = IsDlgButtonChecked(hwndDlg,IDC_SOLID) != false;
               g_mui=!IsDlgButtonChecked(hwndDlg,IDC_CLASSICUI);
               SetDlgItemText(g_hwnd, IDC_OUTPUTTEXT, _T(""));
               for (size_t x = 0; x < COUNTOF(ids); x ++)
