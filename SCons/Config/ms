@@ -43,6 +43,16 @@ if msvs_version >= 11.0:
 	defenv['SUBSYS_CON'] = '/subsystem:console,5.01' # support windows xp
 	defenv['SUBSYS_WIN'] = '/subsystem:windows,5.01' # support windows xp
 
+def setoptimizeflags(env):
+	if not env['DEBUG']:
+		env.Append(CCFLAGS = ['/Gy'])
+		env.Append(LINKFLAGS = ['/OPT:REF'])
+		env.Append(LINKFLAGS = ['/OPT:ICF,9'])
+		#if msvs_version >= 7.0:
+		#	env.Append(CCFLAGS = ['/GL']) # FIXME: Creates problems with memset in VS v8.0 (CL v14.00)
+		#	env.Append(LINKFLAGS = ['/LTCG'])
+		return
+
 ### defines
 
 defenv.Append(CPPDEFINES = [('NSISCALL', '$STDCALL')])
@@ -141,6 +151,7 @@ if tdefenv['UNICODE']:
 
 stub_env = defenv.Clone()
 
+setoptimizeflags(stub_env)
 stub_env.Append(CPPPATH = ['#$BUILD_CONFIG'])
 
 if not defenv['DEBUG']:
@@ -182,6 +193,7 @@ if defenv['UNICODE']:
 
 plugin_env = defenv.Clone(no_import_lib = 1)
 
+setoptimizeflags(plugin_env)
 if defenv['TARGET_ARCH'] == 'amd64':
 	plugin_env.Append(LINKFLAGS = ['/MACHINE:AMD64']) # Contrib\System\Resource will not link without this
 
@@ -198,6 +210,7 @@ plugin_uenv.Append(CPPDEFINES = ['_UNICODE', 'UNICODE'])
 
 util_env = tdefenv.Clone()
 
+setoptimizeflags(util_env)
 if not defenv['DEBUG']:
 	util_env.Append(CCFLAGS = ['/O1'])            # optimize for speed
 util_env.Append(CCFLAGS = ['/W3'])              # level 3 warnings
