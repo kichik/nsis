@@ -40,6 +40,8 @@ scons checks for zlib header files in %ZLIB_W32%\\include, the
 import library zdll.lib in %ZLIB_W32%\\lib and the dynamic link library
 zlib1.dll in %ZLIB_W32% respectively %ZLIB_W32%\\lib.
 
+\cw{SOURCE_DATE_EPOCH} must be set to create reproducible builds. \cw{makensis /hdrinfo} will list \cw{NSIS_SOURCE_DATE_EPOCH} with the epoch if applicable.
+
 To build, open a console, change the working directory to the root directory of NSIS and type \c{scons}. That's it. For example:
 
 \c C:\>cd dev\nsis
