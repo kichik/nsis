@@ -118,9 +118,13 @@ SCONS_ARGS = cfg.get('options', 'SCONS_ARGS')
 
 SVN_TAG = 'v' + ''.join(VERSION.split('.'))
 
+SOURCE_DATE_EPOCH = str(int(time.time()))
+SCONS_REPRODUCIBLE_ARGS = 'SOURCE_DATE_EPOCH=%s' % (SOURCE_DATE_EPOCH)
+
 newverdir = 'nsis-%s-src' % VERSION
-scons_line = 'scons %s -C %s VERSION=%s VER_MAJOR=%s VER_MINOR=%s VER_REVISION=%s VER_BUILD=%s ' \
-						 % (SCONS_ARGS, newverdir, VERSION, VER_MAJOR, VER_MINOR, VER_REVISION, VER_BUILD)
+scons_line = 'scons %s %s -C %s VERSION=%s VER_MAJOR=%s VER_MINOR=%s VER_REVISION=%s VER_BUILD=%s ' \
+						 % (SCONS_ARGS, SCONS_REPRODUCIBLE_ARGS, newverdir, \
+						    VERSION, VER_MAJOR, VER_MINOR, VER_REVISION, VER_BUILD)
 
 ### utility functions
 
@@ -391,7 +395,7 @@ def CreateSpecialBuilds():
 		run(
 			ZIP % ('..\\nsis-%s-%s.zip' % (VERSION, name), '*'),
 			LOG_ALL,
-			'copmression of %s special build failed' % name,
+			'compression of %s special build failed' % name,
 			log_dir = '..'
 		)
 		os.chdir('..')
