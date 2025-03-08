@@ -587,12 +587,17 @@ Export('plugin_env plugin_uenv')
 if defenv['PLATFORM'] == 'win32':
 	def build_nsis_menu_for_zip(target, source, env):
 		cmdline = FindMakeNSIS(env, str(env['ZIPDISTDIR']))
-		cmd = env.Command(None, source, cmdline + ' $SOURCE /X"OutFile %s"' % (target[0].abspath, ))
-		AlwaysBuild(cmd)
+		if Execute(f'"{cmdline}" "{source[0].abspath}" /X"OutFile {target[0].abspath}"'):
+			Exit(1)
 
-	nsis_menu_target = defenv.Command(os.path.join('$ZIPDISTDIR', 'NSIS.exe'),
-																		os.path.join('$ZIPDISTDIR', 'Examples', 'NSISMenu.nsi'),
-																		build_nsis_menu_for_zip)
+	nsis_menu_target = defenv.Command(
+		os.path.join('$ZIPDISTDIR', 'NSIS.exe'),
+		os.path.join('$ZIPDISTDIR', 'Examples', 'NSISMenu.nsi'),
+		build_nsis_menu_for_zip
+	)
+	defenv.Depends(nsis_menu_target, r'$ZIPDISTDIR\makensis.exe')
+	defenv.Depends(nsis_menu_target, r'$ZIPDISTDIR\Stubs')
+	defenv.Depends(nsis_menu_target, r'$ZIPDISTDIR\Plugins')
 	defenv.MakeReproducible(nsis_menu_target)
 	defenv.Sign(nsis_menu_target)
 
