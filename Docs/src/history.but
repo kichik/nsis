@@ -2,19 +2,21 @@
 
 \H{v3.11} 3.11
 
-Released on ??? ??th, 202?
+Released on March 8th, 2025
 
 \S1{v3.11-rl} Release Notes
 
-Workgroups party? The end of 16-bit?
+Your installer will still fit on a single floppy disk. Or even eight.
 
 \S1{v3.11-cl} Changelog
+
+\S2{} Security
+
+\b Retry creating restricted $PLUGINSDIR (thanks Sandro Poppi for responsibly disclosing, \W{http://sf.net/p/nsis/bugs/1315}{bug #1315})\\<br\\>This stops a possible privilege escalation. A malicious actor can create the temporary plugins directory ($PLUGINSDIR) at just the right time and fill it with malicious files that the installer might use. Installers running as SYSTEM use \cw{C:\\windows\\temp} which is accessible by all users on the system. Any user can use this bug to gain SYSTEM privileges by winning the race condition with an installer that starts as SYSTEM.
 
 \S2{} Minor Changes
 
 \b Retry opening self if there is a sharing error (partial \W{http://sf.net/p/nsis/patches/316}{patch #316})
-
-\b Retry creating restricted $PLUGINSDIR (thanks Sandro Poppi, \W{http://sf.net/p/nsis/bugs/1315}{bug #1315})
 
 \b Support setting source file decoding charset with magic comment (\W{http://sf.net/p/nsis/patches/292}{patch #292})
 
