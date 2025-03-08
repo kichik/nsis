@@ -1,0 +1,45 @@
+target = 'nsDialogs'
+
+files = Split("""
+	browse.c
+	input.c
+	nsDialogs.c
+	nsDialogs.def
+	rtl.c
+""")
+
+resources = Split("""
+	dialog.rc
+""")
+
+libs = Split("""
+	kernel32
+	user32
+	gdi32
+	shell32
+	comdlg32
+	ole32
+""")
+
+docs = Split("""
+	Readme.html
+""")
+
+examples = Split("""
+	example.nsi
+	InstallOptions.nsi
+	timer.nsi
+	welcome.nsi
+""")
+
+includes = Split("""
+	nsDialogs.nsh
+""")
+
+Import('BuildPlugin env PerformPluginExtrasDistOperationOnce')
+
+unicodetarget = 'UNICODE' in env['CPPDEFINES']
+
+BuildPlugin(target, files, libs, examples, docs, res = resources)
+if PerformPluginExtrasDistOperationOnce(env, unicodetarget):
+	env.DistributeInclude(includes)

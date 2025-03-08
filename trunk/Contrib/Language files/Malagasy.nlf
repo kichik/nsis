@@ -1,0 +1,191 @@
+﻿# Header, don't edit
+NLF v6
+# Start editing here
+# Language ID
+1536
+# Font and size - dash (-) means default
+-
+-
+# Codepage - dash (-) means ASCII code page
+-
+# RTL - anything else than RTL means LTR
+-
+# Translation by ..... (any credits should go here)
+# ^Branding
+Nullsoft Install System %s
+# ^SetupCaption
+Fampidirana ny $(^Name)
+# ^UninstallCaption
+Fanesorana ny $(^Name)
+# ^LicenseSubCaption
+: Fifanekena
+# ^ComponentsSubCaption
+: Safidy
+# ^DirSubCaption
+: Toerana Fampirimana
+# ^InstallingSubCaption
+: Eo Am-panaovana Azy
+# ^CompletedSubCaption
+: Vita
+# ^UnComponentsSubCaption
+: Safidy
+# ^UnDirSubCaption
+: Toerana Fampirimana
+# ^ConfirmSubCaption
+: Hanamafy
+# ^UninstallingSubCaption
+: Eo Am-panaovana Azy
+# ^UnCompletedSubCaption
+: Vita
+# ^BackBtn
+< &Hiverina
+# ^NextBtn
+&Manaraka >
+# ^AgreeBtn
+&Ekeko
+# ^AcceptBtn
+E&keko izay voalaza ao amin'ny Fifanekena
+# ^DontAcceptBtn
+&Tsy ekeko izay voalaza ao amin'ny Fifanekena
+# ^InstallBtn
+&Hampiditra
+# ^UninstallBtn
+&Hanaisotra
+# ^CancelBtn
+Hanafoana
+# ^CloseBtn
+&Hanidy
+# ^BrowseBtn
+&Toerana...
+# ^ShowDetailsBtn
+Ha&moaka ny tsipiriany
+# ^ClickNext
+Tsindrio ny Manaraka raha te hanohy.
+# ^ClickInstall
+Tsindrio ny Hampiditra raha te hanomboka ny fampidirana an'ity programa ity.
+# ^ClickUninstall
+Tsindrio ny Hanaisotra raha te hanomboka ny fanesorana an'ity programa ity.
+# ^Name
+Anarana
+# ^Completed
+Vita
+# ^LicenseText
+Jereo aloha ny fifanekena, alohan'ny hampidirana ny $(^NameDA). Tsindrio ny Ekeko raha ekenao daholo izay voalazan'ny fifanekena.
+# ^LicenseTextCB
+Jereo aloha ny fifanekena, alohan'ny hampidirana ny $(^NameDA). Mariho ny efajoro kely eto ambany raha ekenao daholo izay voalazan'ny fifanekena. $_CLICK
+# ^LicenseTextRB
+Jereo aloha ny fifanekena, alohan'ny hampidirana ny $(^NameDA). Mariho ilay safidy voalohany eto ambany raha ekenao daholo izay voalazan'ny fifanekena. $_CLICK
+# ^UnLicenseText
+Jereo aloha ny fifanekena, alohan'ny hanesorana ny $(^NameDA). Tsindrio ny Ekeko raha ekenao daholo izay voalazan'ny fifanekena.
+# ^UnLicenseTextCB
+Jereo aloha ny fifanekena, alohan'ny hanesorana ny $(^NameDA). Mariho ny efajoro kely eto ambany raha ekenao daholo izay voalazan'ny fifanekena. $_CLICK
+# ^UnLicenseTextRB
+Jereo aloha ny fifanekena, alohan'ny hanesorana ny $(^NameDA). Mariho ilay safidy voalohany eto ambany raha ekenao daholo izay voalazan'ny fifanekena. $_CLICK
+# ^Custom
+Mahazatra
+# ^ComponentsText
+Mariho izay tianao hampidirina, ary aza marihina izay tsy tianao hampidirina. $_CLICK
+# ^ComponentsSubText1
+Fidio ny fomba fampidirana tianao:
+# ^ComponentsSubText2_NoInstTypes
+Fidio izay tianao hampidirina:
+# ^ComponentsSubText2
+Na, afaka mampiditra izay tianao amin'ireto ianao:
+# ^UnComponentsText
+Mariho izay tianao hesorina, ary aza marihina izay tsy tianao hesorina. $_CLICK
+# ^UnComponentsSubText1
+Fidio ny fomba fanesorana tianao:
+# ^UnComponentsSubText2_NoInstTypes
+Fidio izay tianao hesorina:
+# ^UnComponentsSubText2
+Na, afaka manaisotra izay tianao amin'ireto ianao:
+# ^DirText
+Ato amin'ity toerana fampirimana ity no hisy ny $(^NameDA). Tsindrio ny Toerana ary mifidiana toerana fampirimana hafa raha te hametraka azy any an-toerana-kafa ianao. $_CLICK
+# ^DirSubText
+Toerana Hametrahana Azy
+# ^DirBrowseText
+Fidio ilay toerana fampirimana tianao hampidirana ny $(^NameDA):
+# ^UnDirText
+Hesorina ato amin'ity toerana fampirimana ity ny $(^NameDA). Tsindrio ny Toerana ary mifidiana toerana fampirimana hafa raha te hanaisotra azy any an-toerana-kafa ianao. $_CLICK
+# ^UnDirSubText
+""
+# ^UnDirBrowseText
+Fidio ilay toerana fampirimana tianao hanesorana ny $(^NameDA):
+# ^SpaceAvailable
+"Toerana malalaka: "
+# ^SpaceRequired
+"Toerana ilaina: "
+# ^UninstallingText
+Hesorina ato amin'ity toerana fampirimana ity ny $(^NameDA). $_CLICK
+# ^UninstallingSubText
+Hesorina ao amin'ny:
+# ^FileError
+Misy olana ny: \r\n\r\n$0\r\n\r\nTsindrio ny Hamarana mba hampijanonana ny fampidirana, ny\r\nHaverina mba hamerenana ny fampidirana, na ny\r\nTsy Hiraharaha mba hanohizana indray.
+# ^FileError_NoIgnore
+Misy olana ny: \r\n\r\n$0\r\n\r\nTsindrio ny Haverina mba hamerenana ny fampidirana, na ny\r\nHanafoana mba hampijanonana ny fampidirana.
+# ^CantWrite
+"Tsy voafindra: "
+# ^CopyFailed
+Tsy voadika
+# ^CopyTo
+"Hadika ao amin'ny "
+# ^Registering
+"Eo am-pandraketana ny fanazavana: "
+# ^Unregistering
+"Eo am-pamafana ny fanazavana: "
+# ^SymbolNotFound
+"Tsy hita ny: "
+# ^CouldNotLoad
+"Tsy azo ny: "
+# ^CreateFolder
+"Hamorona toerana fampirimana: "
+# ^CreateShortcut
+"Hamorona hitsin-dalana: "
+# ^CreatedUninstaller
+"Programa fanesorana efa misy: "
+# ^Delete
+"Hamafa ny rakitra: "
+# ^DeleteOnReboot
+"Ho voafafa rehefa mamelona ordinatera indray: "
+# ^ErrorCreatingShortcut
+"Olana rehefa namorona hitsin-dalana: "
+# ^ErrorCreating
+"Olana rehefa namorona ny: "
+# ^ErrorDecompressing
+Nisy olana rehefa naka rakitra! Sao dia simba ny programa fampidirana?
+# ^ErrorRegistering
+Nisy olana teo am-pandraketana ny fanazavana momba ny DLL
+# ^ExecShell
+"ExecShell: "
+# ^Exec
+"Mandefa: "
+# ^Extract
+"Maka: "
+# ^ErrorWriting
+"Maka: Nisy olana rehefa nandika "
+# ^InvalidOpcode
+Simba ny programa fampidirana: tsy mety ny opcode
+# ^NoOLE
+"Tsy misy OLE ho an'ny: "
+# ^OutputFolder
+"Toerana fampirimana ny asa vita: "
+# ^RemoveFolder
+"Hanala an'ity toerana fampirimana ity: "
+# ^RenameOnReboot
+"Hanova anarana rehefa mamelona ordinatera indray: "
+# ^Rename
+"Hanova anarana: "
+# ^Skipped
+"Nodinganina: "
+# ^CopyDetails
+Handika ny Tsipiriany ho ao Amin'ny Fitehirizana
+# ^LogInstall
+Log install process
+# ^Byte
+B
+# ^Kilo
+ K
+# ^Mega
+ M
+# ^Giga
+ G

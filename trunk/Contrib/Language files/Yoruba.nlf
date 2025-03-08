@@ -1,0 +1,190 @@
+﻿# Header, don't edit
+NLF v6
+# Start editing here
+# Language ID
+1130
+# Font and size - dash (-) means default
+-
+-
+# Codepage - dash (-) means ASCII code page
+1252
+# RTL - anything else than RTL means LTR
+-
+# Translation by ..... (any credits should go here)
+# ^Branding
+Nullsoft Install System %s
+# ^SetupCaption
+$(^Name) Ètò Ìṣiṣẹ́
+# ^UninstallCaption
+$(^Name) Yọ Ọ́ Kúrò
+# ^LicenseSubCaption
+: Àdéhùn Ìfúnniláṣẹ
+# ^ComponentsSubCaption
+: Ibi Tó O Fẹ́ Kó Fi Sí
+# ^DirSubCaption
+: Ibi Tó Máa Kó Ìsọfúnni Sí
+# ^InstallingSubCaption
+: Ó Ti Ń Fi Sí I
+# ^CompletedSubCaption
+: Ó Ti Parí
+# ^UnComponentsSubCaption
+: Ṣé Kó Yọ Ọ́?
+# ^UnDirSubCaption
+: Ibi Tó O Fẹ́ Kó Fi Èyí Tó Yọ Sí
+# ^ConfirmSubCaption
+: Ṣ̣é Kó Ṣ̣e É?
+# ^UninstallingSubCaption
+: Ó Ti Ń Yọ Ọ̣́
+# ^UnCompletedSubCaption
+: Ó Ti Parí
+# ^BackBtn
+< &Pa Dà
+# ^NextBtn
+&Èyí Tó Tẹ̀ Lé E >
+# ^AgreeBtn
+Mo &Gbà
+# ^AcceptBtn
+Mo &fara mọ́ ohun tẹ́ ẹ sọ sínú Àdéhùn Ìfúnniláṣẹ
+# ^DontAcceptBtn
+Mi &ò fara mọ́ ohun tẹ́ ẹ sọ sínú Àdéhùn Ìfúnniláṣe# ^InstallBtn
+&Fi sí i
+# ^UninstallBtn
+&Yọ ọ́ kúrò
+# ^CancelBtn
+Má ṣe é
+# ^CloseBtn
+&Pa á dé
+# ^BrowseBtn
+Y&ẹ̀ ẹ́ wò...
+# ^ShowDetailsBtn
+Fi &gbogbo rẹ̀ hàn
+# ^ClickNext
+Tẹ Èyí Tó Tẹ̀ Lé E kó o lè máa bá a lọ.
+# ^ClickInstall
+Tẹ Fi Sí I kó lè bẹ̀rẹ̀ fífi sí i.
+# ^ClickUninstall
+Tẹ Yọ Ọ́ Kúrò kó lè bẹ̀rẹ̀ yíyọ ọ́.
+# ^Name
+Orúkọ
+# ^Completed
+Ó ti parí
+# ^LicenseText
+Jọ̀wọ́ ka àdéhùn ìfúnniláṣẹ kó o tó fi $(^NameDA) sí i. Tó o bá fara mọ́ ohun tá a sọ nínú àdéhùn yìí, tẹ Mo Gbà.
+# ^LicenseTextCB
+Jọ̀wọ́ ka àdéhùn ìfúnniláṣẹ kó o tó fi $(^NameDA) sí i. Tó o bá fara mọ́ ohun tá a sọ nínú àdéhùn yìí, tẹ àpótí tóńtó nísàlẹ̀. $_CLICK
+# ^LicenseTextRB
+Jọ̀wọ́ ka àdéhùn ìfúnniláṣẹ kó o tó fi $(^NameDA) sí i. Tó o bá fara mọ́ ohun tá a sọ nínú àdéhùn yìí, mú tàkọ́kọ́ nísàlẹ̀. $_CLICK
+# ^UnLicenseText
+Jọ̀wọ́ ka àdéhùn ìfúnniláṣẹ kó o tó yọ $(^NameDA) kúrò. Tó o bá fara mọ́ ohun tá a sọ nínú àdéhùn yìí, tẹ Mo Gbà.
+# ^UnLicenseTextCB
+Jọ̀wọ́ ka àdéhùn ìfúnniláṣẹ kó o tó yọ $(^NameDA) kúrò. Tó o bá fara mọ́ ohun tá a sọ nínú àdéhùn yìí, tẹ àpótí tóńtó nísàlẹ̀. $_CLICK
+# ^UnLicenseTextRB
+Jọ̀wọ́ ka àdéhùn ìfúnniláṣẹ kó o tó yọ $(^NameDA) kúrò. Tó o bá fara mọ́ ohun tá a sọ nínú àdéhùn yìí, mú tàkọ́kọ́ nísàlẹ̀. $_CLICK
+# ^Custom
+Ohun tó o fẹ́
+# ^ComponentsText
+#FIXME:Check the components you want to install and uncheck the components you don't want to install. $_CLICK
+# ^ComponentsSubText1
+Yan bó o ṣe fẹ́ kó fi sí i:
+# ^ComponentsSubText2_NoInstTypes
+Yan àwọn tó o fẹ́ kó fi sí i:
+# ^ComponentsSubText2
+Tàbí kó o yan àwọn tó wù ọ́ kó fi sí i:
+# ^UnComponentsText
+#FIXME:Check the components you want to uninstall and uncheck the components you don't want to uninstall. $_CLICK
+# ^UnComponentsSubText1
+Yan bó o ṣe fẹ́ kó yọ ọ́:
+# ^UnComponentsSubText2_NoInstTypes
+Yan àwọn tó o fẹ́ kó yọ:
+# ^UnComponentsSubText2
+Tàbí kó o yan àwọn tó wù ọ́ kó yọ:
+# ^DirText
+Ètò Ìṣiṣẹ́ $(^NameDA) yóò kó ohun tó ní síbí yìí. Láti kó o sí ibòmíràn, tẹ Yẹ̀ Ẹ́ Wò kó o sì yan ibi tó o fẹ́. $_CLICK
+# ^DirSubText
+Ibi Tó O Fẹ́ Kó Wà
+# ^DirBrowseText
+Yan ibi tó o fẹ́ kó fi $(^NameDA) sí:
+# ^UnDirText
+Ètò Ìṣiṣẹ́ $(^NameDA) yóò kó ohun tó ní kúrò níbí. Láti kó o kúrò nínú ibòmíràn, tẹ Yẹ̀ Ẹ́ Wò kó o sì yan ibi tó o fẹ́. $_CLICK
+# ^UnDirSubText
+""
+# ^UnDirBrowseText
+Tan ibi tó o ti fẹ́ kó yọ $(^NameDA) kúrò:
+# ^SpaceAvailable
+"Àyè tó wà: "
+# ^SpaceRequired
+"Àyè tó nílò: "
+# ^UninstallingText
+$(^NameDA) yóò kúrò ní ibí yìí. $_CLICK
+# ^UninstallingSubText
+Ó ń yọ kúrò níbí:
+# ^FileError
+Kò rí i ṣí fún lílò: \r\n\r\n$0\r\n\r\nTẹ Ṣíwọ́ kó lè dáwọ́ dúró láìfi sí i,\r\nTún Dán An Wò kó lè tún un ṣe, tàbí\r\nGbójú fò ó láti fo fáìlì yìí.
+# ^FileError_NoIgnore
+Kò rí i ṣí fún lílò: \r\n\r\n$0\r\n\r\nTún Dán An Wò kó lè tún un ṣe, tàbí\r\nMá Ṣe É kó lè jáwọ́ fífi sí i.
+# ^CantWrite
+#FIXME:"Can't write: "
+# ^CopyFailed
+Kò rí ẹ̀dà ṣe
+# ^CopyTo
+"Ṣe ẹ̀dà sí"
+# ^Registering
+#FIXME:"Registering: "
+# ^Unregistering
+#FIXME:"Unregistering: "
+# ^SymbolNotFound
+"Kò rí àmì yẹn: "
+# ^CouldNotLoad
+"Kò rí i ṣe: "
+# ^CreateFolder
+"Ṣe ibi ìkóǹkansí: "
+# ^CreateShortcut
+"Ṣe àbùjá: "
+# ^CreatedUninstaller
+"Ó ti ṣe ohun táá máa fi yọ ọ́: "
+# ^Delete
+"Yọ fáìlì dà nù: "
+# ^DeleteOnReboot
+"Yọ ọ́ dà nù tó o bá ti pa dà wọlé: "
+# ^ErrorCreatingShortcut
+"Kò rọ́nà àbùjá ṣe: "
+# ^ErrorCreating
+"Kò rí i ṣe: "
+# ^ErrorDecompressing
+#FIXME:Error decompressing data! Corrupted installer?
+# ^ErrorRegistering
+#FIXME:Error registering DLL
+# ^ExecShell
+"ExecShell: "
+# ^Exec
+"Ṣe ohun tó sọ: "
+# ^Extract
+"Wà á jáde: "
+# ^ErrorWriting
+"Wà á jáde: error writing to file "
+# ^InvalidOpcode
+#FIXME:Installer corrupted: invalid opcode
+# ^NoOLE
+"No OLE for: "
+# ^OutputFolder
+"Ibi tó ń kó ohun tó ṣe sí: "
+# ^RemoveFolder
+"Yọ ibi ìkóǹkansí kúrò: "
+# ^RenameOnReboot
+"Yí orúkọ rẹ̀ pa dà tó o bá ti pa dà wọlé: "
+# ^Rename
+"Yí orúkọ rẹ̀ pa dà: "
+# ^Skipped
+"Ó fò ó: "
+# ^CopyDetails
+Ṣe Ẹ̀dà Kúkẹ̀kúlẹ̀ sí Ibi Ìfiǹkansí fúngbà díẹ̀
+# ^LogInstall
+Kọ gbogbo ìgbésẹ̀ sílẹ̀
+# ^Byte
+B
+# ^Kilo
+ K
+# ^Mega
+ M
+# ^Giga
+ G

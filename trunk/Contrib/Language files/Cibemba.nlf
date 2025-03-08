@@ -1,0 +1,191 @@
+﻿# Header, don't edit
+NLF v6
+# Start editing here
+# Language ID
+1537
+# Font and size - dash (-) means default
+-
+-
+# Codepage - dash (-) means ASCII code page
+-
+# RTL - anything else than RTL means LTR
+-
+# Translation by ..... (any credits should go here)
+# ^Branding
+Nullsoft Install System %s
+# ^SetupCaption
+$(^Name) Apa Kutampila
+# ^UninstallCaption
+$(^Name) Ukufuuta
+# ^LicenseSubCaption
+: Ukusuminishanya
+# ^ComponentsSubCaption
+: Ifya Kusalapo
+# ^DirSubCaption
+: Umuli Ifya Kucita pa Kukopolola
+# ^InstallingSubCaption
+: Ilekopolola
+# ^CompletedSubCaption
+: Capwa
+# ^UnComponentsSubCaption
+: Ifya Kusalapo pa Kufuuta
+# ^UnDirSubCaption
+: Umuli Ifya Kucita pa Kufuuta
+# ^ConfirmSubCaption
+: Confirmation
+# ^UninstallingSubCaption
+: Ilefuuta
+# ^UnCompletedSubCaption
+: Capwa
+# ^BackBtn
+< &Ku Numa
+# ^NextBtn
+&Ifyakonkapo >
+# ^AgreeBtn
+Nasumina
+# ^AcceptBtn
+Nasumina Ifili mu Kusuminishanya
+# ^DontAcceptBtn
+Nakaana Ifili mu Kusuminishanya
+# ^InstallBtn
+&Ukukopolola
+# ^UninstallBtn
+&Ukufuuta
+# ^CancelBtn
+Ukuleka
+# ^CloseBtn
+&Ukwisala
+# ^BrowseBtn
+Ukufwaya...
+# ^ShowDetailsBtn
+Ukumona Fyonse
+# ^ClickNext
+Tinikeni pa Ifyakonkapo pa kuti mutwalilile.
+# ^ClickInstall
+Tinikeni pa Ukukopolola pa kuti mutendeke ukukopolola.
+# ^ClickUninstall
+Tinikeni pa Ukufuuta pa kuti mutendeke ukufuuta.
+# ^Name
+Ishina
+# ^Completed
+Capwa
+# ^LicenseText
+Mukwai pitulukeni mu kusuminishanya ilyo mushilatendeka ukukopolola $(^NameDA). Nga mulesumina fyonse ifili mu kusuminishanya, tinikeni pali Nasumina.
+# ^LicenseTextCB
+Mukwai pitulukeni mu kusuminishanya ilyo mushilatendeka ukukopolola $(^NameDA). Nga mulesumina fyonse ifili mu kusuminishanya, tinikeni pa kabokoshi kali pe samba. $_CLICK
+# ^LicenseTextRB
+Mukwai pitulukeni mu kusuminishanya ilyo mushilatendeka ukukopolola $(^NameDA). Nga mulesumina fyonse ifili mu kusuminishanya, tinikeni apa kubalilapo pe samba. $_CLICK
+# ^UnLicenseText
+Mukwai pitulukeni mu kusuminishanya ilyo mushilatendeka ukufuuta $(^NameDA). Nga mulesumina fyonse ifili mu kusuminishanya, tinikeni pali Nasumina.
+# ^UnLicenseTextCB
+Mukwai pitulukeni mu kusuminishanya ilyo mushilatendeka ukufuuta $(^NameDA). Nga mulesumina fyonse ifili mu kusuminishanya, tinikeni pa kabokoshi kali pe samba. $_CLICK
+# ^UnLicenseTextRB
+Mukwai pitulukeni mu kusuminishanya ilyo mushilatendeka ukufuuta $(^NameDA). Nga mulesumina fyonse ifili mu kusuminishanya, tinikeni apa kubalilapo pe samba. $_CLICK
+# ^Custom
+Custom
+# ^ComponentsText
+Saleni ifyo mulefwaya ukukopolola kabili mwisala ifyo mushilefwaya ukukopolola. $_CLICK
+# ^ComponentsSubText1
+Saleni umusango wa kukopolwelamo:
+# ^ComponentsSubText2_NoInstTypes
+Saleni ifyo mulefwaya ukukopolola:
+# ^ComponentsSubText2
+Nelyo, saleni ifishikabilwa ifyo mulefwaya ukukopolola:
+# ^UnComponentsText
+Saleni ifyo mulefwaya ukufuuta kabili mwisala ifyo mushilefwaya ukufuuta. $_CLICK
+# ^UnComponentsSubText1
+Saleni umusango wa kufuutilamo:
+# ^UnComponentsSubText2_NoInstTypes
+Saleni ifyo mulefwaya ukufuuta:
+# ^UnComponentsSubText2
+Nelyo, saleni ifishikabilwa ifyo mulefwaya ukufuuta:
+# ^DirText
+Nomba programu yalakopolwela $(^NameDA) mu. Nga mulefwaya ukukopolwela kumbi, tinikeni pa Ukufwaya no kusala kumbi. $_CLICK
+# ^DirSubText
+Ukwa Kukopolwela
+# ^DirBrowseText
+Saleni ukwa $(^NameDA) kukopolwela:
+# ^UnDirText
+Nomba programu yalafuuta $(^NameDA) ukufuma mu. Nga mulefwaya ukufuuta ukufuma kumbi, tinikeni pa Ukufwaya no kusala kumbi. $_CLICK
+# ^UnDirSubText
+""
+# ^UnDirBrowseText
+Saleni ukwa $(^NameDA) kufuutila:
+# ^SpaceAvailable
+"Incende iilipo: "
+# ^SpaceRequired
+"Incende iilekabilwa: "
+# ^UninstallingText
+$(^NameDA) yalafuutwa mu. $_CLICK
+# ^UninstallingSubText
+Ukufuuta mu:
+# ^FileError
+Tafilekopololwa bwino: \r\n\r\n$0\r\n\r\nTinikeni pa Ukuleka pa kuti muleke ukukopolola,\r\nTinikeni pali Na Kabili pa kuti mweshe na kabili, nelyo\r\n pa Ukutwalilila pa kuti mutwalilile.
+# ^FileError_NoIgnore
+Tafilekopololwa bwino: \r\n\r\n$0\r\n\r\nTinikeni pali Na Kabili pa kuti mweshe na kabili, nelyo\r\npa Ukuleka pa kuti muleke ukukopolola.
+# ^CantWrite
+"Yakaana: "
+# ^CopyFailed
+Yafilwa ukukopolola
+# ^CopyTo
+"Ukukopolwela ku "
+# ^Registering
+"Registering: "
+# ^Unregistering
+"Unregistering: "
+# ^SymbolNotFound
+"Could not find symbol: "
+# ^CouldNotLoad
+"Could not load: "
+# ^CreateFolder
+"Create folder: "
+# ^CreateShortcut
+"Create shortcut: "
+# ^CreatedUninstaller
+"Created uninstaller: "
+# ^Delete
+"Ukufuuta: "
+# ^DeleteOnReboot
+"Ikafuuta ilyo mwa-asha kompyuta: "
+# ^ErrorCreatingShortcut
+"Error creating shortcut: "
+# ^ErrorCreating
+"Error creating: "
+# ^ErrorDecompressing
+Error decompressing data! Corrupted installer?
+# ^ErrorRegistering
+Error registering DLL
+# ^ExecShell
+"ExecShell: "
+# ^Exec
+"Execute: "
+# ^Extract
+"Extract: "
+# ^ErrorWriting
+"Extract: error writing to file "
+# ^InvalidOpcode
+Installer corrupted: invalid opcode
+# ^NoOLE
+"No OLE for: "
+# ^OutputFolder
+"Output folder: "
+# ^RemoveFolder
+"Remove folder: "
+# ^RenameOnReboot
+"Ukwinika ishina limbi pa kwasha: "
+# ^Rename
+"Inikeni Ishina Limbi: "
+# ^Skipped
+"Ifikeene: "
+# ^CopyDetails
+Copy Details To Clipboard
+# ^LogInstall
+Log install process
+# ^Byte
+B
+# ^Kilo
+ K
+# ^Mega
+ M
+# ^Giga
+ G

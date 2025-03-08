@@ -1,0 +1,191 @@
+﻿# Header, don't edit
+NLF v6
+# Start editing here
+# Language ID
+1136
+# Font and size - dash (-) means default
+-
+-
+# Codepage - dash (-) means ASCII code page
+1200
+# RTL - anything else than RTL means LTR
+-
+# Translation by ..... (any credits should go here)
+# ^Branding
+Nullsoft Install System %s
+# ^SetupCaption
+Ntinye $(^Name) 
+# ^UninstallCaption
+Mwepụ $(^Name) 
+# ^LicenseSubCaption
+: Nkwekọrịta Akwụkwọ Ikike
+# ^ComponentsSubCaption
+: Ụzọ Isi Tinye Ya
+# ^DirSubCaption
+: Ebe E Debere Ụzọ Isi Tinye Ya
+# ^InstallingSubCaption
+: O Tinyewela Ya
+# ^CompletedSubCaption
+: Ọ Gwụla
+# ^UnComponentsSubCaption
+: Ụzọ Isi Wepụ Ya
+# ^UnDirSubCaption
+: Ebe E Debere Ụzọ Isi Wepụ Ya
+# ^ConfirmSubCaption
+: Ì Kwere?
+# ^UninstallingSubCaption
+: O Wepụwala Ya
+# ^UnCompletedSubCaption
+: Ọ Gwụla
+# ^BackBtn
+< &Azụ
+# ^NextBtn
+&Ọzọ >
+# ^AgreeBtn
+M &Kwere
+# ^AcceptBtn
+M &nabatara ihe e dere ná Nkwekọrịta Akwụkwọ Ikike
+# ^DontAcceptBtn
+A&nabataghị m ihe e dere ná Nkwekọrịta Akwụkwọ Ikike
+# ^InstallBtn
+&Tinye Ya
+# ^UninstallBtn
+&Wepụ Ya
+# ^CancelBtn
+Kagbuo Ya
+# ^CloseBtn
+&Mechie
+# ^BrowseBtn
+C&họọ...
+# ^ShowDetailsBtn
+Gosi &nkọwa
+# ^ClickNext
+Pịa Ọzọ iji gaa n'ihu.
+# ^ClickInstall
+Pịa Tinye Ya iji malite itinye ya.
+# ^ClickUninstall
+Pịa Wepụ Ya iji malite iwepụ ya.
+# ^Name
+Aha
+# ^Completed
+Ọ Gwụla
+# ^LicenseText
+Biko gụgharịa nkwekọrịta akwụkwọ ikike tupu i tinyewe ya $(^NameDA). Ọ bụrụ na ị nabatara ihe niile e dere ná nkwekọrịta ahụ, pịa M Kwere.
+# ^LicenseTextCB
+Biko gụgharịa nkwekọrịta akwụkwọ ikike tupu i tinyewe ya $(^NameDA). Ọ bụrụ na ị nabatara ihe niile e dere ná nkwekọrịta ahụ, pịa igbe nta dị n'okpuru. $_CLICK
+# ^LicenseTextRB
+Biko gụgharịa nkwekọrịta akwụkwọ ikike tupu i tinyewe ya $(^NameDA). Ọ bụrụ na ị nabatara ihe niile e dere ná nkwekọrịta ahụ, pịa nhọrọ nke mbụ dị n'okpuru. $_CLICK
+# ^UnLicenseText
+Biko gụgharịa nkwekọrịta akwụkwọ ikike tupu i wepụwa ya $(^NameDA). Ọ bụrụ na ị nabatara ihe niile e dere ná nkwekọrịta ahụ, pịa M Kwere.
+# ^UnLicenseTextCB
+Biko gụgharịa nkwekọrịta akwụkwọ ikike tupu i wepụwa ya $(^NameDA). Ọ bụrụ na ị nabatara ihe niile e dere ná nkwekọrịta ahụ, pịa igbe nta dị n'okpuru. $_CLICK
+# ^UnLicenseTextRB
+Biko gụgharịa nkwekọrịta akwụkwọ ikike tupu i wepụwa ya $(^NameDA). Ọ bụrụ na ị nabatara ihe niile e dere ná nkwekọrịta ahụ, pịa nhọrọ nke mbụ dị n'okpuru. $_CLICK
+# ^Custom
+Otú Ị Chọrọ
+# ^ComponentsText
+Pịnye akara n'ihe ndị ị chọrọ itinye, pịpụkwa akara n'ihe ndị ị na-achọghị itinye. $_CLICK
+# ^ComponentsSubText1
+Họrọ ụzọ isi tinye ya:
+# ^ComponentsSubText2_NoInstTypes
+Họrọ ihe ndị ị chọrọ itinye:
+# ^ComponentsSubText2
+Ma ọ bụ, họrọ ihe ndị ọzọ ị chọrọ itinye:
+# ^UnComponentsText
+Pịnye akara n'ihe ndị ị chọrọ iwepụ, pịpụkwa akara n'ihe ndị ị na-achọghị iwepụ. $_CLICK
+# ^UnComponentsSubText1
+Họrọ ụzọ isi wepụ ya:
+# ^UnComponentsSubText2_NoInstTypes
+Họrọ ihe ndị ị chọrọ iwepụ:
+# ^UnComponentsSubText2
+Ma ọ bụ, họrọ ihe ndị ọzọ ị chọrọ iwepụ:
+# ^DirText
+Ntinye ga-etinye $(^NameDA) n'ebe ndebe na-esonu. Iji tinye ya n'ebe ndebe ọzọ, pịa Chọọ ma họrọ ebe ndebe ọzọ. $_CLICK
+# ^DirSubText
+Ebe Ndebe Ọ Ga-abanye
+# ^DirBrowseText
+Họrọ ebe ndebe ị ga-etinye $(^NameDA) na ya:
+# ^UnDirText
+Ntinye ga-ewepụ $(^NameDA) n'ebe ndebe na-esonụ. Iji wepụ ya n'ebe ndebe ọzọ, pịa Chọọ ma họrọ ebe ndebe ọzọ. $_CLICK
+# ^UnDirSubText
+""
+# ^UnDirBrowseText
+Họrọ ebe ndebe ị ga-ewepụ $(^NameDA) na ya:
+# ^SpaceAvailable
+"Ohere dịnụ: "
+# ^SpaceRequired
+"Ohere a chọrọ: "
+# ^UninstallingText
+A ga-ewepụ $(^NameDA) n'ebe ndebe na-esonụ. $_CLICK
+# ^UninstallingSubText
+O wepụwala ya na:
+# ^FileError
+Nsogbu imepe faịlụ ide ihe na ya: \r\n\r\n$0\r\n\r\nPịa Kwụsị iji kwụsị itinye ya,\r\nNwaa Ọzọ iji nwaa ọzọ, ma ọ bụ\r\nLeghara Ya iji mafee faịlụ a.
+# ^FileError_NoIgnore
+Nsogbu imepe faịlụ ide ihe na ya: \r\n\r\n$0\r\n\r\nPịa Nwaa Ọzọ iji nwaa ọzọ, ma ọ bụ\r\nKagbuo Ya iji kwụsị itinye ya.
+# ^CantWrite
+"O denyelighị: "
+# ^CopyFailed
+Ọ depụtaghachighị
+# ^CopyTo
+"Depụtaghachi ya na "
+# ^Registering
+"Ọ banyewala: "
+# ^Unregistering
+"Ọ pụwala: "
+# ^SymbolNotFound
+"Ọ hụghị akara: "
+# ^CouldNotLoad
+"O bupụtalighị: "
+# ^CreateFolder
+"Mepụta ebe ndebe: "
+# ^CreateShortcut
+"Mepụta ụzọ ka mfe: "
+# ^CreatedUninstaller
+"Ihe mwepụ o mepụtara: "
+# ^Delete
+"Kachapụ faịlụ: "
+# ^DeleteOnReboot
+"Kachapụ ya ná mmaliteghachi: "
+# ^ErrorCreatingShortcut
+"Nsogbu imepụta ụzọ ka mfe: "
+# ^ErrorCreating
+"Nsogbu imepụta: "
+# ^ErrorDecompressing
+Nsogbu ịgbasa ihe odide! Ihe na-etinye ya ò mebiela?
+# ^ErrorRegistering
+Nsogbu ime ka DLL banye
+# ^ExecShell
+"ExecShell: "
+# ^Exec
+"Mewe: "
+# ^Extract
+"Wepụtasịa: "
+# ^ErrorWriting
+"Wepụtasịa: nsogbu idenye ihe na faịlụ "
+# ^InvalidOpcode
+Ihe na-etinye ihe emebiela: akara op adịghịzi mma
+# ^NoOLE
+"E nweghị OLE maka: "
+# ^OutputFolder
+"Ebe ndebe na-ebupụta ihe: "
+# ^RemoveFolder
+"Wepụ ebe ndebe: "
+# ^RenameOnReboot
+"Gụgharịa ya aha ná mmaliteghachi: "
+# ^Rename
+"Gụgharịa aha: "
+# ^Skipped
+"A mafere: "
+# ^CopyDetails
+Depụtaghachi Nkọwa n'Igbe Ncheta
+# ^LogInstall
+Ndepụta otú e si tinye ya
+# ^Byte
+B
+# ^Kilo
+ K
+# ^Mega
+ M
+# ^Giga
+ G

@@ -1,0 +1,30 @@
+target = 'NSISdl'
+
+files = Split("""
+	asyncdns.cpp
+	connection.cpp
+	httpget.cpp
+	nsisdl.cpp
+	util.cpp
+""")
+
+libs = Split("""
+	advapi32
+	wsock32
+	user32
+	kernel32
+""")
+
+docs = Split("""
+	License.txt
+	ReadMe.txt
+""")
+
+Import('BuildPlugin')
+
+BuildPlugin(
+	target, files, libs,
+	docs = docs,
+	cppused = True,
+	nodeflib = False,
+)

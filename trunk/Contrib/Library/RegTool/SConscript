@@ -1,0 +1,19 @@
+target = 'RegTool'
+
+files = Split("""
+	RegTool.cpp
+""")
+
+libs = Split("""
+	advapi32
+	oleaut32
+	ole32
+	user32
+	kernel32
+""")
+
+Import('BuildUtil env GetArcCPU')
+
+filename = 'RegTool-' + GetArcCPU(env) + '.bin'
+
+BuildUtil(target, files, libs, entry = 'NSISWinMainNOCRT', nodeflib = True, file_name = filename)

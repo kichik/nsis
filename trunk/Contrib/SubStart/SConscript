@@ -1,0 +1,19 @@
+Import('env')
+
+target = "substart"
+
+files = Split("""
+	substart.c
+""")
+
+libs = Split("""
+	kernel32
+	user32
+""")
+
+Import('BuildUtil')
+
+substart = BuildUtil(target, files, libs, cli = True, noinstall = True, nodeflib = True)
+
+if env['PLATFORM'] == 'win32':
+	env.DistributeBin(substart, names=['makensis.exe'], alias='install-compiler') # install as makensis

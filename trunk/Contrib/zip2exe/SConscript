@@ -1,0 +1,37 @@
+target = "zip2exe"
+
+files = Split("""
+	main.cpp
+	zlib/ioapi.c
+	zlib/unzip.c
+""")
+
+resources = Split("""
+	zip2exe.xml
+	icon.ico
+""")
+
+rc = 'res.rc'
+
+libs = Split("""
+	advapi32
+	shell32
+	shlwapi
+	comctl32
+	comdlg32
+	user32
+	gdi32
+	z
+""")
+
+headers = Split("""
+	Base.nsh
+	Classic.nsh
+	Modern.nsh
+""")
+
+Import('BuildUtil defenv')
+
+BuildUtil(target, files, libs, res = rc, resources = resources)
+
+defenv.DistributeContrib(headers,path=target)

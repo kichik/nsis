@@ -1,0 +1,191 @@
+﻿# Header, don't edit
+NLF v6
+# Start editing here
+# Language ID
+1538
+# Font and size - dash (-) means default
+-
+-
+# Codepage - dash (-) means ASCII code page (I don't know the correct codepage, forcing Unicode for now)
+1200
+# RTL - anything else than RTL means LTR
+-
+# Translation by ..... (any credits should go here)
+# ^Branding
+Nullsoft Install System %s
+# ^SetupCaption
+$(^Name) Nte Etịmde
+# ^UninstallCaption
+$(^Name) Sio Fep
+# ^LicenseSubCaption
+: Ediomi Unyịme
+# ^ComponentsSubCaption
+: Mme Usụn̄ Ẹdade Ẹsịn
+# ^DirSubCaption
+: Ntọt Edisịn Odu Mi
+# ^InstallingSubCaption
+: Edisịn
+# ^CompletedSubCaption
+: Esịn Ama
+# ^UnComponentsSubCaption
+: Mme Usụn̄ Edisio Mfep
+# ^UnDirSubCaption
+: Ntọt Edisio Mfep Odu Mi
+# ^ConfirmSubCaption
+: Fiak Se
+# ^UninstallingSubCaption
+: Edisio Mfep
+# ^UnCompletedSubCaption
+: Osio Efep
+# ^BackBtn
+< &Fiak Edem
+# ^NextBtn
+&Ka Iso >
+# ^AgreeBtn
+Ami &Mmenyịme
+# ^AcceptBtn
+Ami &mmenyịme se ẹtịn̄de ke Ediomi Unyịme
+# ^DontAcceptBtn
+Ami &nnyịmeke se ẹtịn̄de ke Ediomi Unyịme
+# ^InstallBtn
+&Sịn
+# ^UninstallBtn
+&Sio Fep
+# ^CancelBtn
+Kûnam
+# ^CloseBtn
+&Men Fep
+# ^BrowseBtn
+Y&om...
+# ^ShowDetailsBtn
+Wụt &ọyọhọ ntọt
+# ^ClickNext
+Fịk Ka Iso man aka iso.
+# ^ClickInstall
+Fịk Sịn man ọtọn̄ọ ndisịn.
+# ^ClickUninstall
+Fịk Sio Fep man ọtọn̄ọ ndisio mfep.
+# ^Name
+Enyịn̄
+# ^Completed
+Osio Efep
+# ^LicenseText
+Mbọk kot ediomi unyịme mbemiso esịnde $(^NameDA). Edieke enyịmede kpukpru se ẹtịn̄de ke ediomi emi, fịk Ami Mmenyịme.
+# ^LicenseTextCB
+Mbọk kot ediomi unyịme mbemiso esịnde $(^NameDA). Edieke enyịmede kpukpru se ẹtịn̄de ke ediomi emi, fịk ekebe odude mi ke idak. $_CLICK
+# ^LicenseTextRB
+Mbọk kot ediomi unyịme mbemiso esịnde $(^NameDA). Edieke enyịmede kpukpru se ẹtịn̄de ke ediomi emi, mek akpa n̄kpọ mi ke idak. $_CLICK
+# ^UnLicenseText
+Mbọk kot ediomi unyịme mbemiso osiode efep $(^NameDA). Edieke enyịmede kpukpru se ẹtịn̄de ke ediomi emi, fịk Ami Mmenyịme.
+# ^UnLicenseTextCB
+Mbọk kot ediomi unyịme mbemiso osiode efep $(^NameDA). Edieke enyịmede kpukpru se ẹtịn̄de ke ediomi emi, fịk ekebe odude mi ke idak. $_CLICK
+# ^UnLicenseTextRB
+Mbọk kot ediomi unyịme mbemiso osiode efep $(^NameDA). Edieke enyịmede kpukpru se ẹtịn̄de ke ediomi emi, mek akpa n̄kpọ mi ke idak. $_CLICK
+# ^Custom
+Nte oyomde etie
+# ^ComponentsText
+Sịn idiọn̄ọ ke mme ikpehe oro oyomde ndisịn nyụn̄ sio idiọn̄ọ ke mme ikpehe oro mûyomke ndisịn. $_CLICK
+# ^ComponentsSubText1
+Mme usụn̄ edida nsịn:
+# ^ComponentsSubText2_NoInstTypes
+Mek mme ikpehe oro edisịnde:
+# ^ComponentsSubText2
+Mîdịghe, mek mme ikpehe oro ẹmekde-mek emi amade ndisịn:
+# ^UnComponentsText
+Sịn idiọn̄ọ ke mme ikpehe oro oyomde ndisio mfep nyụn̄ sio idiọn̄ọ ke mme ikpehe oro mûyomke ndisio mfep. $_CLICK
+# ^UnComponentsSubText1
+Mek usụn̄ edisio mfep:
+# ^UnComponentsSubText2_NoInstTypes
+Mek mme ikpehe oro edisiode ifep:
+# ^UnComponentsSubText2
+Mîdịghe, mek mme ikpehe oro ẹmekde-mek emi amade ndisio mfep:
+# ^DirText
+Nte Etịmde ọmọn̄ esịn $(^NameDA) ke ebiet etienede mi. Man esịn ke ebiet en̄wen, fịk Yom nyụn̄ mek ebiet en̄wen. $_CLICK
+# ^DirSubText
+Ebiet Oro Oyomde Esịn
+# ^DirBrowseText
+Mek ebiet man esịn $(^NameDA) ke:
+# ^UnDirText
+Nte Ẹtịmde ọmọn̄ osio $(^NameDA) efep ke ebiet etienede mi. Man osio efep ke ebiet en̄wen, fịk Yom nyụn̄ mek ebiet en̄wen. $_CLICK
+# ^UnDirSubText
+""
+# ^UnDirBrowseText
+Mek ebiet man osio $(^NameDA) efep ke:
+# ^SpaceAvailable
+"Ufan̄ oro osụhọde: "
+# ^SpaceRequired
+"Ufan̄ oro oyomde: "
+# ^UninstallingText
+$(^NameDA) ọmọn̄ ọwọrọ ke ebiet oro etienede mi. $_CLICK
+# ^UninstallingSubText
+Ke osion̄o n̄kpọ:
+# ^FileError
+Mfịna odu ikemeke ndikụbọde: \r\n\r\n$0\r\n\r\nFịk Tre man etre ndisịn,\r\nFiak Domo man esịn, m̀mê\r\nFụmi man ebe ebiet emi.
+# ^FileError_NoIgnore
+Mfịna odu ikemeke ndikụbọde: \r\n\r\n$0\r\n\r\nFịk Fiak Domo, m̀mê\r\nKûnam man etre ndisịn.
+# ^CantWrite
+"Ikemeke ndisịn: "
+# ^CopyFailed
+Ikemeke ndikọpi
+# ^CopyTo
+"Kọpi ka "
+# ^Registering
+"Ke anam: "
+# ^Unregistering
+"Inamke: "
+# ^SymbolNotFound
+"Ikwe idion̄ọ: "
+# ^CouldNotLoad
+"Ikemeke ndikụbọde: "
+# ^CreateFolder
+"Nam ebiet ndisịn: "
+# ^CreateShortcut
+"Kọpi nị̣m ke ebiet ẹdisọpde ikụt: "
+# ^CreatedUninstaller
+"Se ẹdade ẹsio n̄kpọ ẹfep: "
+# ^Delete
+"Sọhi udọn̄n̄kpọ: "
+# ^DeleteOnReboot
+"Sọhi ama afiak ọtọn̄ọ: "
+# ^ErrorCreatingShortcut
+"Mfịna odu ikemeke ndikọ̣pi nnịm ke ebiet ẹdisọpde ikụt: "
+# ^ErrorCreating
+"Mfịna odu ikemeke ndinam: "
+# ^ErrorDecompressing
+Mfịna odu ikemeke ndifiak ntie nte eketiede! Se ẹdade ẹsio n̄kpọ abiara?
+# ^ErrorRegistering
+Mfịna odu ikemeke ndinam DLL
+# ^ExecShell
+"EbietEdimekSeẸyomde: "
+# ^Exec
+"Nam: "
+# ^Extract
+"Sio di: "
+# ^ErrorWriting
+"Sio di: mfịna odu ikemeke ndisio ndi "
+# ^InvalidOpcode
+Se ẹdade ẹsio n̄kpọ abiara: idiọk usụn̄ edinam
+# ^NoOLE
+"OLE idụhe ke: "
+# ^OutputFolder
+"Ebiet ntọt ọdọn̄ọde: "
+# ^RemoveFolder
+"Sio ebiet fep: "
+# ^RenameOnReboot
+"Kpụhọ enyịn̄ ama afiak ọtọn̄ọ: "
+# ^Rename
+"Kpụhọ enyịn̄: "
+# ^Skipped
+"Be kpọn̄: "
+# ^CopyDetails
+Kọpi Ọyọhọ Ntọt Kama
+# ^LogInstall
+Ntọt ndutịm edisịn n̄kpọ
+# ^Byte
+B
+# ^Kilo
+ K
+# ^Mega
+ M
+# ^Giga
+ G

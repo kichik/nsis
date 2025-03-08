@@ -1,0 +1,194 @@
+# TODO FIXME extra files should be targets too, so they're rebuilt in case they're gone
+
+buts = Split("""
+	config.but
+	intro.but
+	tutorial.but
+	usage.but
+	script.but
+	var.but
+	labels.but
+	jumps.but
+	pages.but
+	sections.but
+	usection.but
+	functions.but
+	callback.but
+	attributes.but
+	compilerflags.but
+	basic.but
+	registry.but
+	generalpurpose.but
+	flowcontrol.but
+	file.but
+	uninstall.but
+	misc.but
+	string.but
+	stack.but
+	int.but
+	reboot.but
+	log.but
+	sec.but
+	ui.but
+	langs.but
+	plugin.but
+	silent.but
+	compiler.but
+	defines.but
+	modernui.but
+	library.but
+	usefulfunc.but
+	usefulinfos.but
+	headers.but
+	history.but
+	build.but
+	credits.but
+	license.but
+""")
+
+chapters = 5
+appendices = 9
+
+htmls = Split('IndexPage.html Contents.html') \
+	+ list(map(lambda ch: 'Chapter' + str(ch + 1) + '.html', range(chapters))) \
+	+ list(map(lambda ap: 'Appendix' + chr(ord('A') + ap) + '.html', range(appendices)))
+
+docsdefault_install_basepath = 'Docs'
+
+DOCS_CONFIG = {
+	'chm' :
+	{
+		'NSISDOCCONFIG' : 'config_chm.but',
+		'NSISDOCEXTRAFILES' : File(Split('#Docs/style.css chmlink.js nsis.hhp')),
+		'NSISDOCEXTRAACTION' : Action('cd $BUILDDIR && "$HHC" nsis.hhp'),
+		'NSISDOCHTMLFIXES' :
+		{
+		},
+		'NSISDOCTARGET' : 'NSIS.chm',
+		'NSISDOCINSTALLBASEPATH' : '',
+		'NSISEXTRADIST' : [],
+	},
+	'html' :
+	{
+		'NSISDOCCONFIG' : 'config_html.but',
+		'NSISDOCEXTRAFILES' : File(Split('#Docs/style.css')),
+		'NSISDOCEXTRAACTION' : '',
+		'NSISDOCHTMLFIXES' :
+		{
+		},
+		'NSISDOCTARGET' : htmls,
+		'NSISDOCINSTALLBASEPATH' : docsdefault_install_basepath,
+		'NSISEXTRADIST' : File(Split('#Docs/style.css')),
+	},
+	'web' :
+	{
+		'NSISDOCCONFIG' : 'config_web.but',
+		'NSISDOCEXTRAFILES' : File(Split('#Docs/style.css #Docs/unreleased.png')),
+		'NSISDOCEXTRAACTION' : '',
+		'NSISDOCHTMLFIXES' :
+		{
+		},
+		'NSISDOCTARGET' : htmls,
+		'NSISDOCINSTALLBASEPATH' : docsdefault_install_basepath,
+		'NSISEXTRADIST' : File(Split('#Docs/style.css #Docs/unreleased.png')),
+	},
+	'htmlsingle' :
+	{
+		'NSISDOCCONFIG' : 'config_htmlsingle.but',
+		'NSISDOCEXTRAFILES' : [],
+		'NSISDOCEXTRAACTION' : '',
+		'NSISDOCHTMLFIXES' :
+		{
+			'---HTML:HEAD:STYLE:CSS---' : File('#/Docs/style.css').get_contents(),
+		},
+		'NSISDOCTARGET' : 'Manual.html',
+		'NSISDOCINSTALLBASEPATH' : docsdefault_install_basepath,
+		'NSISEXTRADIST' : [],
+	},
+}
+
+import os
+import re
+
+Import('halibut env build_doctype')
+
+# set up environment
+
+env['HHC'] = env.WhereIs('hhc', os.environ['PATH'])
+env['HALIBUT'] = halibut
+env['BUILDDIR'] = build_dir = Dir(GetBuildPath('.')).abspath
+env.Replace(**DOCS_CONFIG[build_doctype])
+
+if not env['PLATFORM'] == 'win32':
+	env['NSISDOCHTMLFIXES']['<a href="../(Include|Stubs|Plugins|Contrib)/'] = '<a href="$PREFIX_DATA/\\1/'
+
+
+# builder
+
+def docs_emitter(target, source, env):
+	env.Depends(target, '$HALIBUT')
+	for i in env['NSISDOCEXTRAFILES']:
+		env.Depends(target, i)
+	return target, source
+
+def docs_halibut_action(target, source, env):
+	buts = ' '.join(i.abspath for i in source if i.get_suffix() == '.but')
+	result = Execute(env.Action(
+		'${HALIBUT[0].abspath} ' + buts,
+		'', # empty display string
+		chdir = '$BUILDDIR',
+	))
+	#raw_input('meh?')
+
+def docs_fixer(target, source, env):
+	fixes = env['NSISDOCHTMLFIXES']
+	if not fixes:
+		return
+
+	for i, html in enumerate(target):
+		data = open(html.path,'rb').read()
+
+		for pat, repl in fixes.items():
+			data = re.sub(env.subst(pat).encode(), env.subst(repl).encode(), data)
+
+		open(html.path, 'wb').write(data)
+
+
+def docs_extras(target, source, env):
+	for i in env['NSISDOCEXTRAFILES']:
+		env.Execute(Copy('$BUILDDIR', i))
+
+docs_builder = env.Builder(
+	action = [
+		Action(docs_halibut_action),
+		Action(docs_fixer),
+		Action(docs_extras),
+		'$NSISDOCEXTRAACTION'
+	],
+	emitter = docs_emitter
+)
+
+env.Append(BUILDERS = {'Halibut' : docs_builder})
+
+# fix hhc.exe reverse return value - UGLY
+old_spawn = env['SPAWN']
+def env_trimming_spawn(*args, **kw):
+	# hhc.exe crashes and produces corrupt CHM files with big environment variables
+	# removing os env doesn't seem to break anything else and it's local to this doc building scons env
+	if len(args) == 5:
+		# env is passed arg (old scons versions maybe?)
+		args = (args[0], args[1], args[2], args[3], {})
+	else:
+		# env is passed as kwargs
+		kw['env'] = {}
+	result = old_spawn(*args, **kw)
+	# hhc returns 1 when it's successful, because why not...
+	for p in args[3]:
+		if 'hhc.exe' in p.lower():
+			return not result
+	return result
+env['SPAWN'] = env_trimming_spawn
+
+# BUILD!
+docs = env.Halibut(env['NSISDOCTARGET'], ['$NSISDOCCONFIG'] + buts)
+env.DistributeDocs(docs + env['NSISEXTRADIST'], basepath=env['NSISDOCINSTALLBASEPATH'])

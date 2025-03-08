@@ -1,0 +1,183 @@
+\S1{fileinst} File Instructions
+
+\S2{FileClose} FileClose
+
+\c handle
+
+Closes a file handle opened with \R{FileOpen}{FileOpen}.
+
+\S2{FileOpen} FileOpen
+
+\c user_var(handle output) filename openmode
+
+Opens a file named "filename" and sets the handle output variable with the handle. The openmode should be one of "r" (read) "w" (write, all contents of file are destroyed) or "a" (append, meaning opened for both read and write, contents preserved). In all open modes, the file pointer is placed at the beginning of the file. If the file cannot be opened the handle output is set to empty and the error flag is set.
+
+If no absolute path is specified the current folder will be used. The current folder is the folder set using the last \R{setoutpath}{SetOutPath} instruction. If you have not used \R{setoutpath}{SetOutPath} the current folder is \R{varother}{$EXEDIR}.
+
+\c FileOpen $0 $INSTDIR\file.dat r
+\c FileClose $0
+
+\S2{FileRead} FileRead
+
+\c handle user_var(output) [maxlen]
+
+Reads a string (ANSI characters) from a file opened with \R{FileOpen}{FileOpen}. The string is read until either a newline (or carriage return newline pair) occurs, or until a null byte is read, or until maxlen is met (if specified). By default, strings are limited to 1024 characters (a special build with larger NSIS_MAX_STRLEN can be compiled or downloaded). If the end of file is reached and no more data is available, the output string will be empty and the error flag will be set.
+
+\NsisWarnBlockContainerBegin
+\NsisBlockHeaderExeheadU
+\#{This is a bug in exehead but it is probably a good idea to document it here...}
+DBCS text is supported but conversion output is limited to UCS-2/BMP, surrogate pairs are not supported. The \NsisACPcp is used during the conversion.
+\NsisWarnBlockContainerEnd
+
+
+\c ClearErrors
+\c FileOpen $0 $INSTDIR\file.dat r
+\c IfErrors done
+\c FileRead $0 $1
+\c DetailPrint $1
+\c FileClose $0
+\c done:
+
+\S2{FileReadUTF16LE} FileReadUTF16LE
+
+\c handle user_var(output) [maxlen]
+
+\NsisFuncReqU
+
+Reads a string (UTF-16LE characters) from a file opened with \R{FileOpen}{FileOpen}. The string is read until either a newline (or carriage return newline pair) occurs, or until a null wide-character is read, or until maxlen is met (if specified). By default, strings are limited to 1024 characters (a special build with larger NSIS_MAX_STRLEN can be compiled or downloaded). If the end of file is reached and no more data is available, the output string will be empty and the error flag will be set. If present, the BOM at the start of the file is skipped.
+
+\c ClearErrors
+\c FileOpen $0 $INSTDIR\file.dat r
+\c IfErrors done
+\c FileReadUTF16LE $0 $1
+\c DetailPrint $1
+\c FileClose $0
+\c done:
+
+\S2{FileReadByte} FileReadByte
+
+\c handle user_var(output)
+
+Reads a byte from a file opened with \R{FileOpen}{FileOpen}. The byte is stored in the output as an integer (0-255). If the end of file is reached and no more data is available, the output will be empty and the error flag will be set.
+
+\c ClearErrors
+\c FileOpen $0 $INSTDIR\file.dat r
+\c IfErrors done
+\c FileReadByte $0 $1
+\c FileReadByte $0 $2
+\c DetailPrint "$1 $2"
+\c FileClose $0
+\c done:
+
+\S2{FileReadWord} FileReadWord
+
+\c handle user_var(output)
+
+\NsisFuncReqU
+
+Reads a word (2-bytes) from a file opened with \R{FileOpen}{FileOpen}. The word is stored in the output as an integer (0-65535). If the end of file is reached and no more data is available, the output will be empty and the error flag will be set.
+
+\c ClearErrors
+\c FileOpen $0 $INSTDIR\file.dat r
+\c IfErrors done
+\c FileReadWord $0 $1
+\c FileReadWord $0 $2
+\c DetailPrint "$1 $2"
+\c FileClose $0
+\c done:
+
+\S2{FileSeek} FileSeek
+
+\c handle offset [mode] [user_var(new position)]
+
+Seeks a file opened with \R{FileOpen}{FileOpen}. If mode is omitted or specified as SET, the file is positioned to "offset", relative to the beginning of the file. If mode is specified as CUR, then the file is positioned to "offset", relative to the current file position. If mode is specified as END, then the file is positioned to "offset", relative to the end of the file. If the final parameter "new position" is specified, the new file position will be stored in that variable.
+
+\c ClearErrors
+\c FileOpen $0 $INSTDIR\file.dat r
+\c IfErrors done
+\c FileSeek $0 -5 END
+\c FileRead $0 $1
+\c DetailPrint $1
+\c FileClose $0
+\c done:
+
+\S2{FileWrite} FileWrite
+
+\c handle string
+
+Writes an ANSI string to a file opened with \R{FileOpen}{FileOpen}. If an error occurs writing, the error flag will be set.
+
+(If you are building a \R{intro-unicode}{Unicode installer}, the function converts the string to ANSI/MBCS. The \NsisACPcp is used during the conversion)
+
+\c ClearErrors
+\c FileOpen $0 $INSTDIR\file.dat w
+\c IfErrors done
+\c FileWrite $0 "some text"
+\c FileClose $0
+\c done:
+
+\S2{FileWriteUTF16LE} FileWriteUTF16LE
+
+\c [/BOM] handle string
+
+\NsisFuncReqU
+
+Writes a Unicode (UTF-16LE) string to a file opened with \R{FileOpen}{FileOpen}. If an error occurs, the error flag will be set. A BOM can be added to empty files with /BOM.
+
+\c ClearErrors
+\c FileOpen $0 $INSTDIR\file.dat w
+\c IfErrors done
+\c FileWriteUTF16LE $0 "some text"
+\c FileClose $0
+\c done:
+
+\S2{FileWriteByte} FileWriteByte
+
+\c handle string
+
+Writes the integer interpretation of 'string' to a file opened with \R{FileOpen}{FileOpen}. The error flag is set if an error occurs while writing. The following code writes a "Carriage Return / Line Feed" pair to the file.
+
+\c FileWriteByte file_handle "13"
+\c FileWriteByte file_handle "10"
+
+Note that only the low byte of the integer is used, i.e. writing 256 is the same as writing 0, etc.
+
+\S2{FileWriteWord} FileWriteWord
+
+\c handle string
+
+\NsisFuncReqU
+
+Writes the integer interpretation of 'string' as a WORD (2-bytes, range: 0-65535) to a file opened with \R{FileOpen}{FileOpen}. The error flag is set if an error occurs while writing. The following code writes a "Carriage Return / Line Feed" pair to the file.
+
+\c FileWriteWord file_handle "13"
+\c FileWriteWord file_handle "10"
+
+Note that only the low WORD of the integer is used, i.e. writing 65536 is the same as writing 0, etc.
+
+\S2{FindClose} FindClose
+
+\c handle
+
+Closes a search opened with \R{FindFirst}{FindFirst}.
+
+\S2{FindFirst} FindFirst
+
+\c user_var(handle output) user_var(filename output) filespec
+
+Performs a search for 'filespec', placing the first file found in filename_output (a user variable). It also puts the handle of the search into handle_output (also a user variable). If no files are found, both outputs are set to empty and the error flag is set. \R{FindClose}{FindClose} must be used to close the handle. Note that the filename output is without path.
+
+\c FindFirst $0 $1 $INSTDIR\*.txt
+\c loop:
+\c   StrCmp $1 "" done
+\c   DetailPrint $1
+\c   FindNext $0 $1
+\c   Goto loop
+\c done:
+\c FindClose $0
+
+\S2{FindNext} FindNext
+
+\c handle user_var(filename_output)
+
+Continues a search began with \R{FindFirst}{FindFirst}. handle should be the handle_output_variable returned by \R{FindFirst}{FindFirst}. If the search is completed (there are no more files), filename_output is set to empty and the error flag is set. Note that the filename output is without path.

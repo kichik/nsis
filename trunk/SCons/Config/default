@@ -1,0 +1,68 @@
+print("Using default tools configuration")
+
+Import('defenv')
+
+### flags
+
+defenv['ENTRY_FLAG'] = lambda x,u: ''
+defenv['MAP_FLAG'] = ''
+defenv['EXCEPTION_FLAG'] = ''
+defenv['NODEFLIBS_FLAG'] = ''
+defenv['C_FLAG'] = ''
+defenv['CPP_FLAG'] = ''
+defenv['CPP_REQUIRES_STDLIB'] = 0
+defenv['SUBSYS_CON'] = ''
+defenv['SUBSYS_WIN'] = ''
+defenv['MSVCRT_FLAG'] = ''
+defenv['STDCALL'] = ''
+
+### defines
+
+defenv.Append(CPPDEFINES = [('NSISCALL', '$STDCALL')])
+
+### unicode
+tdefenv = defenv.Clone()
+if tdefenv['UNICODE']:
+	tdefenv.Append(CPPDEFINES = ['_UNICODE', 'UNICODE'])
+
+### stub environment
+
+stub_env = defenv.Clone()
+
+stub_env.Append(CPPPATH = ['#$BUILD_CONFIG'])
+
+stub_uenv = stub_env.Clone()
+stub_uenv.Append(CPPDEFINES = ['_UNICODE', 'UNICODE'])
+
+### makensis environment
+
+makensis_env = tdefenv.Clone()
+
+makensis_env.Append(CPPPATH = ['#$BUILD_CONFIG'])
+
+### plugin environment
+
+plugin_env = defenv.Clone(no_import_lib = 1)
+
+plugin_uenv = plugin_env.Clone()
+plugin_uenv.Append(CPPDEFINES = ['_UNICODE', 'UNICODE'])
+
+### util environment
+
+util_env = tdefenv.Clone()
+
+### cross-platform util environment
+
+cp_util_env = tdefenv.Clone()
+
+cp_util_env.Append(CPPPATH = ['#$BUILD_CONFIG'])
+
+### test environment
+
+test_env = defenv.Clone()
+
+test_env.Append(CPPPATH = ['#$BUILD_CONFIG'])
+
+# return
+
+Return('stub_env makensis_env plugin_env util_env cp_util_env test_env stub_uenv plugin_uenv')

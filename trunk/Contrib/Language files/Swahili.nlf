@@ -1,0 +1,191 @@
+﻿# Header, don't edit
+NLF v6
+# Start editing here
+# Language ID
+1089
+# Font and size - dash (-) means default
+-
+-
+# Codepage - dash (-) means ASCII code page
+1252
+# RTL - anything else than RTL means LTR
+-
+# Translation by MK, Kenya Branch
+# ^Branding
+Nullsoft Install System %s
+# ^SetupCaption
+$(^Name) Usanidi
+# ^UninstallCaption
+$(^Name) Sakinusha
+# ^LicenseSubCaption
+: Mapatano ya Leseni
+# ^ComponentsSubCaption
+: Machaguo ya Kusakinisha
+# ^DirSubCaption
+: Folda ya Kusakinisha
+# ^InstallingSubCaption
+: Inasakinisha
+# ^CompletedSubCaption
+: Imekamilika
+# ^UnComponentsSubCaption
+: Machaguo ya Kusakinusha
+# ^UnDirSubCaption
+: Folda ya Kusakinusha
+# ^ConfirmSubCaption
+: Uthibitisho
+# ^UninstallingSubCaption
+: Inasakinusha
+# ^UnCompletedSubCaption
+: Imekamilika
+# ^BackBtn
+< Inayo&tangulia
+# ^NextBtn
+&Ifuatayo >
+# ^AgreeBtn
+&Nakubali
+# ^AcceptBtn
+&Nakubali matakwa ya Mapatano ya Leseni
+# ^DontAcceptBtn
+&Sikubali matakwa ya Mapatano ya Leseni
+# ^InstallBtn
+&Sakinisha
+# ^UninstallBtn
+&Sakinusha
+# ^CancelBtn
+Ghairi
+# ^CloseBtn
+&Funga
+# ^BrowseBtn
+&Vinjari...
+# ^ShowDetailsBtn
+&Onyesha utondoti
+# ^ClickNext
+Bofya Ifuatayo ili kuendelea.
+# ^ClickInstall
+Bofya Sakinisha ili kuanza usakinishaji.
+# ^ClickUninstall
+Bofya Sakinusha ili kuanza usakinushaji.
+# ^Name
+Jina
+# ^Completed
+Imekamilika
+# ^LicenseText
+Tafadhali soma mapatano ya leseni kabla ya kusakinisha (kuweka kwenye kompyuta) $(^NameDA). Ikiwa unakubali matakwa yote ya mapatano, bofya Nakubali.
+# ^LicenseTextCB
+Tafadhali soma mapatano ya leseni kabla ya kusakinisha (kuweka kwenye kompyuta) $(^NameDA). Ikiwa unakubali matakwa yote ya mapatano, bofya kisanduku cha alama kilicho hapa chini. $_CLICK
+# ^LicenseTextRB
+Tafadhali soma mapatano ya leseni kabla ya kusakinisha (kuweka kwenye kompyuta) $(^NameDA). Ikiwa unakubali matakwa yote ya mapatano, teua chaguo la kwanza hapa chini. $_CLICK
+# ^UnLicenseText
+Tafadhali soma mapatano ya leseni kabla ya kusakinusha (kufuta) $(^NameDA). Ikiwa unakubali matakwa yote ya mapatano, bofya Nakubali.
+# ^UnLicenseTextCB
+Tafadhali soma mapatano ya leseni kabla ya kusakinusha (kufuta) $(^NameDA). Ikiwa unakubali matakwa yote ya mapatano, bofya kisanduku cha alama kilicho hapa chini. $_CLICK
+# ^UnLicenseTextRB
+Tafadhali soma leseni ya mapatano kabla ya kusakinusha (kufuta) $(^NameDA). Ikiwa unakubali matakwa yote ya mapatano, teua chaguo la kwanza hapa chini. $_CLICK
+# ^Custom
+Kaida
+# ^ComponentsText
+Tia alama vijenzi unavyotaka kusakinisha na utoe alama kando ya vijenzi usivyotaka kusakinisha. $_CLICK
+# ^ComponentsSubText1
+Teua aina ya usakinishaji:
+# ^ComponentsSubText2_NoInstTypes
+Teua vijenzi vitakavyosakinishwa:
+# ^ComponentsSubText2
+Au, uteue vijenzi vya hiari unavyotaka kusakinisha:
+# ^UnComponentsText
+Tia alama vijenzi unavyotaka kusakinusha na utoe alama kando ya vijenzi usivyotaka kusakinusha. $_CLICK
+# ^UnComponentsSubText1
+Teua aina ya usakinushaji:
+# ^UnComponentsSubText2_NoInstTypes
+Teua vijenzi vitakavyosakinushwa:
+# ^UnComponentsSubText2
+Au, uteue vijenzi vya hiari unavyotaka kusakinusha:
+# ^DirText
+Usanidi utasakinisha $(^NameDA) katika folda ifuatayo. Ili kusakinisha katika folda tofauti, bofya Vinjari kisha uteue folda nyingine. $_CLICK
+# ^DirSubText
+Folda Inayokusudiwa
+# ^DirBrowseText
+Teua folda itakayotumika katika usakinishaji  $(^NameDA):
+# ^UnDirText
+Usanidi utasakinusha $(^NameDA) kutoka katika folda ifuatayo. Ili kusakinusha kutoka katika folda tofauti, bofya Vinjari kisha uteue folda nyingine. $_CLICK
+# ^UnDirSubText
+""
+# ^UnDirBrowseText
+Teua folda itakayotumika katika usakinushaji $(^NameDA):
+# ^SpaceAvailable
+"Nafasi iliyopo: "
+# ^SpaceRequired
+"Nafasi inayohitajika: "
+# ^UninstallingText
+$(^NameDA) itasakinushwa kutoka katika folda ifuatayo. $_CLICK
+# ^UninstallingSubText
+Usakinushaji kutoka:
+# ^FileError
+Hitilafu katika kufungua faili ili kuandika: \r\n\r\n$0\r\n\r\nBofya Katiza ili kusimamisha usakinishaji,\r\nJaribu Upya ili kujaribu upya, au\r\nPuuza ili kuruka faili hii.
+# ^FileError_NoIgnore
+Hitilafu katika kufungua faili ili kuandika: \r\n\r\n$0\r\n\r\nBofya Jaribu Tena ili kujaribu tena, au\r\nGhairi ili kusimamisha usakinishaji.
+# ^CantWrite
+"Haiwezekani kuandika: "
+# ^CopyFailed
+Haikuwezekana Kunakili
+# ^CopyTo
+"Nakili katika"
+# ^Registering
+"Inaandikisha: "
+# ^Unregistering
+"Inatangua Uandikishaji: "
+# ^SymbolNotFound
+"Alama haikupatikana: "
+# ^CouldNotLoad
+"Haikupakia: "
+# ^CreateFolder
+"Unda Folda: "
+# ^CreateShortcut
+"Unda Mkato: "
+# ^CreatedUninstaller
+"Kisakinushaji Kimeundwa: "
+# ^Delete
+"Futa Faili: "
+# ^DeleteOnReboot
+"Futa itakapowashwa upya: "
+# ^ErrorCreatingShortcut
+"Hitilafu katika kuunda mkato: "
+# ^ErrorCreating
+"Hitilafu katika kuunda: "
+# ^ErrorDecompressing
+Hitilafu katika kugandamua data! Kisakinishaji kimevurugika?
+# ^ErrorRegistering
+Hitilafu katika kuandikisha DLL
+# ^ExecShell
+"ExecShell: "
+# ^Exec
+"Tekeleza: "
+# ^Extract
+"Chopoa: "
+# ^ErrorWriting
+"Zidua: hitilafu katika kuandika faili "
+# ^InvalidOpcode
+Kisakinishi kimevurugika: msimbo batili
+# ^NoOLE
+"Hakuna UPV (OLE) kwa ajili ya: "
+# ^OutputFolder
+"Folda ya zao: "
+# ^RemoveFolder
+"Ondoa Folda: "
+# ^RenameOnReboot
+"Badili jina itakapowashwa upya: "
+# ^Rename
+"Badili jina: "
+# ^Skipped
+"Imerukwa: "
+# ^CopyDetails
+Nakili Utondoti Kwenye Clipboard
+# ^LogInstall
+Unda batli ya mchakato wa kusakinisha
+# ^Byte
+B
+# ^Kilo
+ K
+# ^Mega
+ M
+# ^Giga
+ G

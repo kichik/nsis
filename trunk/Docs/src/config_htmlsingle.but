@@ -1,0 +1,13 @@
+\title NSIS Users Manual
+
+\preamble NSIS is a free scriptable win32 installer/uninstaller system that doesn't suck and isn't huge.
+
+
+\cfg{xhtml-leaf-level}{0}
+
+
+\#SConscript will replace ---HTML:HEAD:STYLE:CSS--- with the CSS from style.css
+\#To avoid a horizontal scrollbar for the whole document, pre blocks (code samples) use overflow:auto; and the extra padding is to prevent the scrollbar from obscuring single lines (In some versions of IE?) forums.winamp.com/showthread.php?t=365132
+
+\cfg{xhtml-head-end}{<style type='text/css'>---HTML:HEAD:STYLE:CSS--- pre\{overflow:auto;padding-top:0.35em;padding-bottom:0.35em;\}</style>}
+

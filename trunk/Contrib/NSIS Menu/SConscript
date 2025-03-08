@@ -1,0 +1,101 @@
+target = "NSIS"
+Import('BuildUtil env')
+
+files = Split("""
+   nsismenu/nsismenu.cpp
+   nsismenu/nslinks.cpp
+""")
+
+resources = Split("""
+   nsismenu/nsisicon.ico
+""")
+
+rc = 'nsismenu/nsismenu.rc'
+
+libs = Split("""
+   advapi32
+   comctl32
+   gdi32
+   shell32
+   user32
+""")
+
+if env['UNICODE']:
+   libs.append(["wxbase28u", "wxmsw28u_core", "wxmsw28u_html"])
+else:
+   libs.append(["wxbase28", "wxmsw28_core", "wxmsw28_html"])
+
+html = Split("""
+   #Menu/index.html
+   #Menu/notinstalled.html
+""")
+
+images = Split("""
+   #Menu/images/line.gif
+   #Menu/images/site.gif
+   #Menu/images/header.gif
+""")
+
+import os
+from os.path import join
+
+if env['PLATFORM'] != 'win32' and WhereIs('wx-config') or \
+   env['PLATFORM'] == 'win32' and env.get('WXWIN'):
+
+   # build
+
+   if env['PLATFORM'] != 'win32':
+      rc = libs = []
+
+   nsis_menu = BuildUtil(
+      target,
+      files,
+      libs,
+      res = rc,
+      resources = resources,
+      flags = ['$EXCEPTION_FLAG'],
+      root_util = True,
+      cross_platform = True,
+   )
+
+   # manifest
+   if env.get('MSVCRT_NEEDSMANIFEST'):
+      manifest = env.SideEffect('%s.exe.manifest' % target, nsis_menu)
+      env.DistributeBin(manifest, alias='install-utils')
+
+   # set directories
+
+   if nsis_menu[0].env['PLATFORM'] == 'win32':
+      wxinc = [join(env['WXWIN'], 'include')]
+
+      if env['UNICODE']:
+         wxlib = [join(os.environ['WXWIN'], 'lib', 'vc_libunsis')]
+         wxinc.append(join(os.environ['WXWIN'], 'lib', 'vc_libunsis', 'mswu'))
+      else:
+         wxlib = [join(os.environ['WXWIN'], 'lib', 'vc_libnsis')]
+         wxinc.append(join(os.environ['WXWIN'], 'lib', 'vc_libnsis', 'msw'))
+
+      nsis_menu[0].env.Append(LIBPATH = wxlib)
+      nsis_menu[0].env.Append(CPPPATH = wxinc)
+   else:
+      nsis_menu[0].env.ParseConfig('wx-config --cxxflags --libs')
+
+   # install menu files
+
+   env.DistributeMenu(html, alias='install-utils')
+   env.DistributeMenu(images, path='images', alias='install-utils')
+   if env['PLATFORM'] != 'win32':
+      env.DistributeBin(resources);
+
+else:
+   
+   # no wxWidgets
+   def err(target, source, env):
+      if env['PLATFORM'] == 'win32':
+         print('*** error: WXWIN must be set to build NSIS Menu!')
+      else:
+         print('*** error: wx-config must be in the PATH to build NSIS Menu!')
+      return 1
+
+   cmd = env.Command(target, files, Action(err, ''))
+   env.Alias('NSIS Menu', cmd)
